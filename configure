@@ -271,7 +271,7 @@ PACKAGE_VERSION=
 PACKAGE_STRING=
 PACKAGE_BUGREPORT=
 
-ac_subst_vars='SHELL PATH_SEPARATOR PACKAGE_NAME PACKAGE_TARNAME PACKAGE_VERSION PACKAGE_STRING PACKAGE_BUGREPORT exec_prefix prefix program_transform_name bindir sbindir libexecdir datadir sysconfdir sharedstatedir localstatedir libdir includedir oldincludedir infodir mandir build_alias host_alias target_alias DEFS ECHO_C ECHO_N ECHO_T LIBS CXX CXXFLAGS LDFLAGS CPPFLAGS ac_ct_CXX EXEEXT OBJEXT build build_cpu build_vendor build_os host host_cpu host_vendor host_os CC CFLAGS ac_ct_CC MODFLAGS INCLUDES MODULES MODTARGET VERSION LIBOBJS LTLIBOBJS'
+ac_subst_vars='SHELL PATH_SEPARATOR PACKAGE_NAME PACKAGE_TARNAME PACKAGE_VERSION PACKAGE_STRING PACKAGE_BUGREPORT exec_prefix prefix program_transform_name bindir sbindir libexecdir datadir sysconfdir sharedstatedir localstatedir libdir includedir oldincludedir infodir mandir build_alias host_alias target_alias DEFS ECHO_C ECHO_N ECHO_T LIBS CXX CXXFLAGS LDFLAGS CPPFLAGS ac_ct_CXX EXEEXT OBJEXT build build_cpu build_vendor build_os host host_cpu host_vendor host_os CC CFLAGS ac_ct_CC MODFLAGS INCLUDES MODULES MODTARGET VERSION NOSSL LIBOBJS LTLIBOBJS'
 ac_subst_files=''
 
 # Initialize some variables set by options.
@@ -3023,6 +3023,7 @@ VERSION=`grep '#define VERSION' Modules.h | awk '{print $3}'`
 
 
 
+
           ac_config_files="$ac_config_files Makefile"
 
           ac_config_files="$ac_config_files znc-config"
@@ -3690,6 +3691,7 @@ s,@INCLUDES@,$INCLUDES,;t t
 s,@MODULES@,$MODULES,;t t
 s,@MODTARGET@,$MODTARGET,;t t
 s,@VERSION@,$VERSION,;t t
+s,@NOSSL@,$NOSSL,;t t
 s,@LIBOBJS@,$LIBOBJS,;t t
 s,@LTLIBOBJS@,$LTLIBOBJS,;t t
 CEOF
