@@ -22,7 +22,10 @@ if [ "$1" = "--libs" ]; then
 fi
 
 if [ "$1" = "--all" ]; then
-	FILES=`ls`
+	FILES="email raw sample shell"
+	if `echo $CXXFLAGS | grep 'HAVE_LIBSSL' >/dev/null 2>/dev/null`; then
+		FILES="$FILES schat savebuff"
+	fi
 else
 	FILES=$@
 fi

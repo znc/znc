@@ -56,6 +56,9 @@ if test "$MODULES" = "yes"; then
 	MODFLAGS="$MODFLAGS -I`pwd`"
 	MODTARGET="modules"
 	appendLib -ldl
+	if `echo $host_os | grep -i 'sol' >/dev/null 2>/dev/null`; then
+		appendCXX -mimpure-text
+	fi
 fi
 
 #
