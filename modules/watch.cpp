@@ -179,7 +179,7 @@ public:
 
 	virtual bool OnUserRaw(string& sLine) {
 		if (strncasecmp(sLine.c_str(), "WATCH ", 6) == 0) {
-			Watch(CUtils::Token(sLine, 1), CUtils::Token(sLine, 2), CUtils::Token(sLine, 3, true));
+			Watch(CUtils::Token(sLine, 1), CUtils::Token(sLine, 2), CUtils::Token(sLine, 3, true), true);
 			return true;
 		}
 
@@ -438,21 +438,33 @@ private:
 		}
 	}
 
-	void Watch(const string& sHostMask, const string& sTarget, const string& sPattern) {
+	void Watch(const string& sHostMask, const string& sTarget, const string& sPattern, bool bNotice = false) {
+		string sMessage;
+
 		if (sHostMask.size()) {
 			CWatchEntry WatchEntry(sHostMask, sTarget, sPattern);
 
+			bool bExists = false;
 			for (list<CWatchEntry>::iterator it = m_lsWatchers.begin(); it != m_lsWatchers.end(); it++) {
 				if (*it == WatchEntry) {
-					PutModule("Entry for [" + WatchEntry.GetHostMask() + "] already exists.");
-					return;
+					sMessage = "Entry for [" + WatchEntry.GetHostMask() + "] already exists.";
+					bExists = true;
+					break;
 				}
 			}
 
-			PutModule("Adding entry: [" + WatchEntry.GetHostMask() + "] watching for [" + WatchEntry.GetPattern() + "] -> [" + WatchEntry.GetTarget() + "]");
-			m_lsWatchers.push_back(WatchEntry);
+			if (!bExists) {
+				sMessage = "Adding entry: [" + WatchEntry.GetHostMask() + "] watching for [" + WatchEntry.GetPattern() + "] -> [" + WatchEntry.GetTarget() + "]";
+				m_lsWatchers.push_back(WatchEntry);
+			}
 		} else {
-			PutModule("Watch: Not enough arguments.  Try Help");
+			sMessage = "Watch: Not enough arguments.  Try Help";
+		}
+
+		if (bNotice) {
+			PutModNotice(sMessage);
+		} else {
+			PutModule(sMessage);
 		}
 	}
 
