@@ -56,7 +56,7 @@ bool CUser::AddAllowedHost(const string& sHostMask) {
 
 bool CUser::IsHostAllowed(const string& sHostMask) {
 	for (set<string>::iterator a = m_ssAllowedHosts.begin(); a != m_ssAllowedHosts.end(); a++) {
-		if (CUtils::WildCmp(*a, sHostMask)) {
+		if (CUtils::wildcmp(*a, sHostMask)) {
 			return true;
 		}
 	}

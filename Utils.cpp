@@ -212,51 +212,42 @@ string CUtils::Ellipsize(const string& s, unsigned int uLen) {
 	return sRet;
 }
 
-bool CUtils::WildCmp(const string& sWild, const string& sString) {
-	char *wild = (char*) sWild.c_str();
-	char *string = (char*) sString.c_str();
+bool CUtils::wildcmp(const string& sWild, const string& sString) {
+	// Written by Jack Handy - jakkhandy@hotmail.com
+	const char *wild = sWild.c_str(), *string = sString.c_str();
+	const char *cp = NULL, *mp = NULL;
 
-	register int i, len;
-	char *copy, *cp, *p, *lastmatch = string;
-
-	if ((p = strchr (wild, '*')) == NULL) {
-		return (strcasecmp(wild, string) ? false : true);
-	}
-
-	if (wild[0] != '*' && strncasecmp(string, wild, p-wild)) {
-		return false;
-	}
-
-	len = strlen(wild) + 1;
-
-	if (wild[len -2] != '*') {
-		p = strrchr(wild, '*') + 1;
-		if (strcasecmp(string + strlen(string) - strlen(p), p) != 0) {
+	while ((*string) && (*wild != '*')) {
+		if ((*wild != *string) && (*wild != '?')) {
 			return false;
 		}
+
+		wild++;
+		string++;
 	}
 
-	cp = copy = (char*) malloc(len);
-	memset((char*) copy, 0, len);
-
-	for (i=0; i<len; i++) {
-		if (wild[i] == '*' || wild[i] == '\0') {
-			if ((p = strcasestr(lastmatch, copy)) != NULL) {
-				lastmatch = p + strlen(copy);
-				memset((char*) copy, 0, len);
-				cp = copy;
-				continue;
-			} else {
-				free(copy);
-				return false;
+	while (*string) {
+		if (*wild == '*') {
+			if (!*++wild) {
+				return true;
 			}
-		}
 
-		*cp++ = wild[i];
+			mp = wild;
+			cp = string+1;
+		} else if ((*wild == *string) || (*wild == '?')) {
+			wild++;
+			string++;
+		} else {
+			wild = mp;
+			string = cp++;
+		}
 	}
 
-	free(copy);
-	return true;
+	while (*wild == '*') {
+		wild++;
+	}
+
+	return (*wild == 0);
 }
 
 CTable::CTable() {}

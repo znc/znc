@@ -48,7 +48,7 @@ public:
 	static string& RightChomp(string& s, unsigned int uLen = 1);
 	static string Token(const string& s, unsigned int uPos, bool bRest = false, char cSep = ' ');
 	static string Ellipsize(const string& s, unsigned int uLen);
-	static bool WildCmp(const string& sWild, const string& sString);
+	static bool wildcmp(const string& sWild, const string& sString);
 private:
 protected:
 };

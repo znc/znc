@@ -62,7 +62,7 @@ void CIRCSock::ReadLine(const string& sData) {
 
 	if (strncasecmp(sLine.c_str(), "PING ", 5) == 0) {
 		PutServ("PONG " + sLine.substr(5));
-	} else if (CUtils::WildCmp(":* * *", sLine.c_str())) { //"^:(\\S+) (\\d\\d\\d) (.*?) (.*)$", vCap)) {
+	} else if (CUtils::wildcmp(":* * *", sLine.c_str())) { //"^:(\\S+) (\\d\\d\\d) (.*?) (.*)$", vCap)) {
 		string sCmd = CUtils::Token(sLine, 1);
 
 		if ((sCmd.length() == 3) && (isdigit(sCmd[0])) && (isdigit(sCmd[1])) && (isdigit(sCmd[2]))) {
@@ -284,7 +284,7 @@ void CIRCSock::ReadLine(const string& sData) {
 					return;	// return so we don't send them the raw twice
 				}
 			}
-		} else { //if (CUtils::WildCmp(":*!*@* * *", sLine.c_str())) {
+		} else { //if (CUtils::wildcmp(":*!*@* * *", sLine.c_str())) {
 			string sNickMask = CUtils::Token(sLine, 0);
 			CUtils::LeftChomp(sNickMask);
 
@@ -428,7 +428,7 @@ void CIRCSock::ReadLine(const string& sData) {
 				string sMsg = CUtils::Token(sRest, 1, true);
 				CUtils::LeftChomp(sMsg);
 
-				if (CUtils::WildCmp("\001*\001", sMsg.c_str())) {
+				if (CUtils::wildcmp("\001*\001", sMsg.c_str())) {
 					CUtils::LeftChomp(sMsg);
 					CUtils::RightChomp(sMsg);
 
@@ -465,7 +465,7 @@ void CIRCSock::ReadLine(const string& sData) {
 					CUtils::LeftChomp(sMsg);
 				}
 
-				if (CUtils::WildCmp("\001*\001", sMsg.c_str())) {
+				if (CUtils::wildcmp("\001*\001", sMsg.c_str())) {
 					CUtils::LeftChomp(sMsg);
 					CUtils::RightChomp(sMsg);
 

@@ -67,7 +67,7 @@ public:
 			for (unsigned int a = 0; a < m_vsSources.size(); a++) {
 				const CWatchSource& WatchSource = m_vsSources[a];
 
-				if (CUtils::WildCmp(Lower(WatchSource.GetSource()), Lower(sSource))) {
+				if (CUtils::wildcmp(Lower(WatchSource.GetSource()), Lower(sSource))) {
 					if (WatchSource.IsNegated()) {
 						return false;
 					} else {
@@ -77,7 +77,7 @@ public:
 			}
 		}
 
-		return (bGoodSource && CUtils::WildCmp(Lower(m_sHostMask), Lower(Nick.GetHostMask())) && CUtils::WildCmp(Lower(m_sPattern), Lower(sText)));
+		return (bGoodSource && CUtils::wildcmp(Lower(m_sHostMask), Lower(Nick.GetHostMask())) && CUtils::wildcmp(Lower(m_sPattern), Lower(sText)));
 	}
 
 	bool operator ==(const CWatchEntry& WatchEntry) {
