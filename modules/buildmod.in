@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/usr/bin/bash
 CXXFLAGS="@MODFLAGS@"
 LIBS="@LIBS@"
 
@@ -31,7 +31,7 @@ fi
 
 for arg in "$FILES"
 do
-	if test -d $arg; then
+	if test -d $arg && test "$arg" != "CVS"; then
 		(cd $arg && make || exit 1)
 	elif test -f "$arg"; then
 		FILE="$arg"
