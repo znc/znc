@@ -14,7 +14,7 @@ depend::
 	g++ -M $(CXXFLAGS) $(SRCS) $(INCLUDES) >.depend
 
 install: all create_install_dir $(INSTALL_TARGS)
-	install -m 0711 *.so $(DEST)$(prefix)/share/znc
+	@echo -n ""
 
 create_install_dir:
 	mkdir -p $(DEST)$(prefix)/share/znc
