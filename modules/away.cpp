@@ -20,6 +20,9 @@
  *
  * 
  * $Log$
+ * Revision 1.2  2005/04/01 08:49:46  imaginos
+ * woops actually delete the message
+ *
  * Revision 1.1  2005/04/01 08:30:47  imaginos
  * simple away script
  *
@@ -58,7 +61,7 @@ public:
 	{
 		if ( m_sPassword.empty() )
 		{
-			char *pTmp = getpass( "Enter Encryption Key for savebuff.so: " );
+			char *pTmp = getpass( "Enter Encryption Key for away.so: " );
 
 			if ( pTmp )
 				m_sPassword = CBlowfish::MD5( pTmp );
@@ -158,6 +161,9 @@ public:
 			if ( sWhich == "all" )
 			{
 				PutModNotice( "Deleted " + CUtils::ToString( m_vMessages.size() ) + " Messages.", "away" );
+				for( u_int a = 0; a < m_vMessages.size(); a++ )
+					m_vMessages.erase( m_vMessages.begin() + a-- );
+
 			} 
 			else if ( sWhich.empty() )
 			{
@@ -247,7 +253,11 @@ public:
 	{
 		if ( ( !m_bIsAway ) || ( bForce ) )
 		{
-			m_sReason = sReason;
+			if ( !bForce )
+				m_sReason = sReason;
+			else if ( !sReason.empty() )
+				m_sReason = sReason;
+
 			time_t iTime = time( NULL );
 			char *pTime = ctime( &iTime );
 			string sTime;
