@@ -28,6 +28,7 @@ public:
 	static string GetIP(unsigned long addr);
 	static unsigned long GetLongIP(const string& sIP);
 	static string ChangeDir(const string& sPath, const string& sAdd, const string& sHomeDir);
+	static int MakeDir(const string& sPath, mode_t iMode = 0700);
 
 	static string ToString(short i);
 	static string ToString(unsigned short i);

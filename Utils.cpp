@@ -109,6 +109,57 @@ string CUtils::ChangeDir(const string& sPath, const string& sAdd, const string& 
 	return (sRet.empty()) ? "/" : sRet;
 }
 
+int CUtils::MakeDir(const string& sPath, mode_t iMode) {
+	string sDir = sPath;
+	string::size_type iFind = sDir.find("/");
+
+	if (iFind == string::npos) {
+		return mkdir(sDir.c_str(), iMode);
+	}
+
+	string sWorkDir = sDir.substr(0, iFind + 1);  // include the trailing slash
+	string sNewDir = sDir.erase(0, iFind + 1);
+
+	struct stat st;
+
+	if (sWorkDir.length() > 1) {
+		sWorkDir = sWorkDir.erase( sWorkDir.length() - 1, 1 );  // trim off the trailing slash
+	}
+
+	if (stat(sWorkDir.c_str(), &st) == 0)
+	{ 
+		int iChdir = chdir(sWorkDir.c_str());
+		if (iChdir != 0) {
+			return iChdir;   // could not change to dir
+		}
+
+		// go ahead and call the next step
+		return MakeDir(sNewDir.c_str(), iMode);
+	}
+
+	switch(errno)
+	{
+		case ENOENT: {
+			// ok, file doesn't exists, lets create it and cd into it
+			int iMkdir = mkdir(sWorkDir.c_str(), iMode);
+			if (iMkdir != 0) {
+				return iMkdir; // could not create dir
+			}
+
+			int iChdir = chdir(sWorkDir.c_str());
+			if (iChdir != 0) {
+				return iChdir;       // could not change to dir
+			}
+
+			return MakeDir(sNewDir.c_str(), iMode);
+		}
+		default:
+			break;
+	}
+
+	return -1;
+}
+
 string CUtils::ToString(short i) { stringstream s; s << i; return s.str(); }
 string CUtils::ToString(unsigned short i) { stringstream s; s << i; return s.str(); }
 string CUtils::ToString(int i) { stringstream s; s << i; return s.str(); }
