@@ -1,0 +1,64 @@
+AC_INIT
+AC_PROG_CXX
+AC_CANONICAL_HOST
+CXXFLAGS=""
+INCLUDES=""
+LIBS=""
+function appendLib {
+	if test "$LIBS" != ""; then
+		LIBS="$LIBS $*"
+	else
+		LIBS=$*
+	fi
+}
+
+function appendInc {
+	if test "$INCLUDES" != ""; then
+		INCLUDES="$INCLUDES $*"
+	else
+		INCLUDES=$*
+	fi
+}
+
+function appendCXX {
+	if test "$CXXFLAGS" != ""; then
+		CXXFLAGS="$CXXFLAGS $*"
+	else
+		CXXFLAGS=$*
+	fi
+}
+if `echo $host_os | grep -qi 'freebsd'`; then
+	appendInc -I/usr/local/include
+	appendLib -L/usr/local/lib -lcompat
+fi
+
+AC_ARG_WITH( openssl, [  --with-openssl=/path/to/openssl], OPENSSL=$withval,)
+AC_ARG_ENABLE( debug, [  --enable-debug  enable debuging], appendCXX -Wall -ggdb -D_DEBUG, appendCXX -Wall -s -O2 -fomit-frame-pointer )
+AC_ARG_ENABLE( modules, [  --disable-modules  disable modules], MODULES="no", MODULES="yes")
+
+if test -n "$OPENSSL"; then
+	appendLib -L${OPENSSL}/lib
+	appendInc -I${OPENSSL}/include
+fi
+
+AC_CHECK_LIB( crypto, BIO_new,,NOSSL=1, )
+AC_CHECK_LIB( ssl, SSL_shutdown,,NOSSL=1, )
+
+if test -z "$NOSSL"; then
+	appendCXX -DHAVE_LIBSSL
+fi
+
+if test "$MODULES" = "yes"; then
+	AC_CHECK_LIB( dl, dlopen, appendCXX -D_MODULES -rdynamic,, )
+fi
+
+#
+# Auto detect modules
+
+AC_SUBST([CXXFLAGS])
+AC_SUBST([INCLUDES])
+AC_SUBST([LIBS])
+AC_CONFIG_FILES([Makefile])
+AC_OUTPUT
+
+touch .depend
