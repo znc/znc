@@ -32,6 +32,7 @@ if `echo $host_os | grep -i 'freebsd' >/dev/null 2>/dev/null`; then
 	appendLib -L/usr/local/lib -lcompat
 elif `echo $host_os | grep -i 'sol' >/dev/null 2>/dev/null`; then
 	appendLib -lsocket -lnsl
+	ISSUN=1
 fi
 
 AC_ARG_WITH( openssl, [  --with-openssl=/path/to/openssl], OPENSSL=$withval,)
@@ -56,7 +57,7 @@ if test "$MODULES" = "yes"; then
 	MODFLAGS="$MODFLAGS -I`pwd`"
 	MODTARGET="modules"
 	appendLib -ldl
-	if `echo $host_os | grep -i 'sol' >/dev/null 2>/dev/null`; then
+	if test -n "$ISSUN"; then
 		appendCXX -mimpure-text
 	fi
 fi
