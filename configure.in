@@ -58,7 +58,7 @@ if test "$MODULES" = "yes"; then
 	MODTARGET="modules"
 	appendLib -ldl
 	if test -n "$ISSUN"; then
-		appendCXX -mimpure-text
+		MODFLAGS="$MODFLAGS -mimpure-text"
 	fi
 fi
 

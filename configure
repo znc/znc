@@ -2762,7 +2762,7 @@ fi
 	MODTARGET="modules"
 	appendLib -ldl
 	if test -n "$ISSUN"; then
-		appendCXX -mimpure-text
+		MODFLAGS="$MODFLAGS -mimpure-text"
 	fi
 fi
 
