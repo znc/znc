@@ -11,12 +11,12 @@ SRC_URI="mirror://sourceforge/${PN}/${P}.tar.gz"
 LICENSE="GPL-2"
 SLOT="0"
 KEYWORDS="alpha amd64 arm ppc sparc x86"
-IUSE="nossl nomodules debug"
+IUSE="ssl nomodules debug"
 
 RDEPEND="virtual/libc"
 DEPEND="virtual/libc
 		>=sys-devel/gcc-3.2.3-r4
-		!nossl? ( dev-libs/openssl-0.9.7d )"
+		ssl? ( >=dev-libs/openssl-0.9.7d )"
 
 S="${WORKDIR}/${P}"
 
@@ -27,7 +27,7 @@ src_unpack() {
 src_compile() {
 	local MY_CONFARGS=""
 
-	use nossl && MY_CONFARGS="${MY_CONFARGS} --disable-openssl"
+	use ssl || MY_CONFARGS="${MY_CONFARGS} --disable-openssl"
 	use nomodules && MY_CONFARGS="${MY_CONFARGS} --disable-modules"
 	use debug && MY_CONFARGS="${MY_CONFARGS} --enable-debug"
 
