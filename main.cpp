@@ -22,6 +22,9 @@ void die(int sig) {
 int main(int argc, char** argv) {
 	string sConfig = "znc.conf";
 
+	// initialize ssl, allow client to have compression enabled if desired
+	InitSSL( CT_ZLIB );
+	
 	if (argc > 1) {
 		if ((argc > 2) || (strcasecmp(argv[1], "--help") == 0) || (strcasecmp(argv[1], "-h") == 0)) {
 			cerr << "Usage: " << argv[0] << " [--makepass|--help|znc.conf]" << endl;

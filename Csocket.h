@@ -54,6 +54,7 @@
 #ifdef HAVE_LIBSSL
 #include <openssl/ssl.h>
 #include <openssl/err.h>
+#include <openssl/rand.h>
 #endif /* HAVE_LIBSSL */
 
 #ifdef __sun
@@ -93,12 +94,66 @@
 
 using namespace std;
 
+
 #ifndef _NO_CSOCKET_NS // some people may not want to use a namespace
 namespace Csocket
 {
 #endif /* _NO_CSOCKET_NS */
 	const u_int CS_BLOCKSIZE = 4096;
 	template <class T> inline void CS_Delete( T * & p ) { if( p ) { delete p; p = NULL; } }
+
+#ifdef HAVE_LIBSSL
+	enum ECompType
+	{
+		CT_NONE	= 0,
+		CT_ZLIB	= 1,
+		CT_RLE	= 2
+	};
+
+	/**
+	 * @brief You HAVE to call this in order to use the SSL library
+	 * @return true on success
+	 */
+
+	inline bool InitSSL( ECompType eCompressionType = CT_NONE )
+	{
+		SSL_load_error_strings();
+		if ( SSL_library_init() != 1 )
+		{
+			CS_DEBUG( "SSL_library_init() failed!" );
+			return( false );
+		}
+
+		if ( access( "/dev/urandom", R_OK ) == 0 )
+			RAND_load_file( "/dev/urandom", 1024 );
+		else if( access( "/dev/random", R_OK ) == 0 )
+			RAND_load_file( "/dev/random", 1024 );
+		else
+		{
+			CS_DEBUG( "Unable to locate entropy location! Tried /dev/urandom and /dev/random" );
+			return( false );
+		}
+		
+
+		COMP_METHOD *cm = NULL;
+		
+		if ( CT_ZLIB & eCompressionType )
+		{
+			cm = COMP_zlib();
+			if ( cm )
+				SSL_COMP_add_compression_method( CT_ZLIB, cm );
+		}
+
+		if ( CT_RLE & eCompressionType )
+		{
+			cm = COMP_rle();
+			if ( cm )
+				SSL_COMP_add_compression_method( CT_RLE, cm );
+		}
+		
+		return( true );
+	}
+#endif /* HAVE_LIBSSL */
 
 	// wrappers for FD_SET and such to work in templates
 	inline void TFD_ZERO( fd_set *set )
@@ -148,11 +203,12 @@ namespace Csocket
 	}
 
 #ifdef HAVE_LIBSSL
-	inline void SSLErrors()
+	inline void SSLErrors( const char *filename, u_int iLineNum )
 	{
 		unsigned long iSSLError = 0;
 		while( ( iSSLError = ERR_get_error() ) != 0 )
 		{
+			CS_DEBUG( "at " << filename << ":" << iLineNum );
 			char szError[512];
 			memset( (char *) szError, '\0', 512 );
 			ERR_error_string_n( iSSLError, szError, 511 );
@@ -357,7 +413,7 @@ namespace Csocket
 
 #endif /* HAVE_LIBSSL */				
 			// delete any left over crons
-			for( unsigned int i = 0; i < m_vcCrons.size(); i++ )
+			for( vector<CCron *>::size_type i = 0; i < m_vcCrons.size(); i++ )
 				CS_Delete( m_vcCrons[i] );
 		}
 
@@ -682,7 +738,6 @@ namespace Csocket
 			if ( !m_ssl )
 				if ( !SSLServerSetup() )
 					return( false );
-				
 			
 			int err = SSL_accept( m_ssl );
 
@@ -699,7 +754,7 @@ namespace Csocket
 			if ( ( sslErr == SSL_ERROR_WANT_READ ) || ( sslErr == SSL_ERROR_WANT_WRITE ) )
 				return( true );
 
-			SSLErrors();
+			SSLErrors( __FILE__, __LINE__ );
 
 #endif /* HAVE_LIBSSL */
 			
@@ -714,8 +769,6 @@ namespace Csocket
 			FREE_SSL();
 			FREE_CTX();
 
-			SSLeay_add_ssl_algorithms();
-		
 			switch( m_iMethod )
 			{
 				case SSL2:
@@ -747,7 +800,6 @@ namespace Csocket
 					break;
 			}
 
-			SSL_load_error_strings ();
 			// wrap some warnings in here
 			m_ssl_ctx = SSL_CTX_new ( m_ssl_method );
 			if ( !m_ssl_ctx )
@@ -763,13 +815,13 @@ namespace Csocket
 				if ( SSL_CTX_use_certificate_file( m_ssl_ctx, m_sPemFile.c_str() , SSL_FILETYPE_PEM ) <= 0 )
 				{
 					CS_DEBUG( "Error with PEM file [" << m_sPemFile << "]" );
-					SSLErrors();
+					SSLErrors( __FILE__, __LINE__ );
 				}
 			
 				if ( SSL_CTX_use_PrivateKey_file( m_ssl_ctx, m_sPemFile.c_str(), SSL_FILETYPE_PEM ) <= 0 )
 				{
 					CS_DEBUG( "Error with PEM file [" << m_sPemFile << "]" );
-					SSLErrors();
+					SSLErrors( __FILE__, __LINE__ );
 				}
 			}
 			
@@ -796,8 +848,6 @@ namespace Csocket
 			FREE_SSL();			
 			FREE_CTX();
 					
-			SSLeay_add_ssl_algorithms();
-		
 			switch( m_iMethod )
 			{
 				case SSL2:
@@ -829,7 +879,6 @@ namespace Csocket
 					break;
 			}
 
-			SSL_load_error_strings ();
 			// wrap some warnings in here
 			m_ssl_ctx = SSL_CTX_new ( m_ssl_method );
 			if ( !m_ssl_ctx )
@@ -850,14 +899,14 @@ namespace Csocket
 			if ( SSL_CTX_use_certificate_file( m_ssl_ctx, m_sPemFile.c_str() , SSL_FILETYPE_PEM ) <= 0 )
 			{
 				CS_DEBUG( "Error with PEM file [" << m_sPemFile << "]" );
-				SSLErrors();
+				SSLErrors( __FILE__, __LINE__ );
 				return( false );
 			}
 			
 			if ( SSL_CTX_use_PrivateKey_file( m_ssl_ctx, m_sPemFile.c_str(), SSL_FILETYPE_PEM ) <= 0 )
 			{
 				CS_DEBUG( "Error with PEM file [" << m_sPemFile << "]" );
-				SSLErrors();
+				SSLErrors( __FILE__, __LINE__ );
 				return( false );
 			}
 			
@@ -1031,7 +1080,7 @@ namespace Csocket
 						
 					case SSL_ERROR_SSL:
 					{
-						SSLErrors();
+						SSLErrors( __FILE__, __LINE__ );
 						return( false );
 					}
 				}
@@ -1272,18 +1321,21 @@ namespace Csocket
 			if ( !m_bEnableReadLine )
 				return;	// If the ReadLine event is disabled, just ditch here
 
+			u_int iStartPos = ( m_sbuffer.empty() ? 0 : m_sbuffer.length() - 1 );
+
 			if ( data )
 				m_sbuffer.append( data, len );
 			
 			while( true )
 			{
-				u_int iFind = m_sbuffer.find( "\n" );
+				CS_STRING::size_type iFind = m_sbuffer.find( "\n", iStartPos );
 			
 				if ( iFind != CS_STRING::npos )
 				{
 					CS_STRING sBuff = m_sbuffer.substr( 0, iFind + 1 );	// read up to(including) the newline
 					m_sbuffer.erase( 0, iFind + 1 );					// erase past the newline
 					ReadLine( sBuff );
+					iStartPos = 0; // reset this back to 0, since we need to look for the next newline here.
 
 				} else
 					break;
@@ -1602,7 +1654,7 @@ namespace Csocket
 		//! This has a garbage collecter, and is used internall to call the jobs
 		virtual void Cron()
 		{
-			for( unsigned int a = 0; a < m_vcCrons.size(); a++ )
+			for( vector<CCron *>::size_type a = 0; a < m_vcCrons.size(); a++ )
 			{		
 				CCron *pcCron = m_vcCrons[a];
 
