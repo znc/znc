@@ -25,6 +25,9 @@
  * better solution then plain text.
  * 
  * $Log$
+ * Revision 1.1  2005/03/30 19:36:20  imaginos
+ * rename files
+ *
  * Revision 1.3  2005/01/28 04:37:47  imaginos
  * force requirements on main class to so savebuff can be sure to save all data needed. added todo list
  *
