@@ -535,7 +535,7 @@ bool CIRCSock::OnPrivCTCP(const string& sNickMask, string& sMessage) {
 
 			unsigned short uBNCPort = CDCCBounce::DCCRequest(FromNick.GetNick(), uLongIP, uPort, sFile, false, m_pUser, GetLocalIP(), CUtils::GetIP(uLongIP));
 			if (uBNCPort) {
-				PutUser(":" + sNickMask + " PRIVMSG " + GetNick() + " :\001DCC SEND " + sFile + " " + CUtils::ToString(CUtils::GetLongIP(GetLocalIP())) + " " + CUtils::ToString(uBNCPort) + " " + CUtils::ToString(uFileSize));
+				PutUser(":" + sNickMask + " PRIVMSG " + GetNick() + " :\001DCC SEND " + sFile + " " + CUtils::ToString(CUtils::GetLongIP(GetLocalIP())) + " " + CUtils::ToString(uBNCPort) + " " + CUtils::ToString(uFileSize) + "\001");
 			}
 		} else if (strcasecmp(sType.c_str(), "RESUME") == 0) {
 			// Need to lookup the connection by port, filter the port, and forward to the user
