@@ -469,7 +469,6 @@ void CUserSock::UserCommand(const string& sLine) {
 			Table.AddColumn("Users");
 			Table.AddColumn("+o");
 			Table.AddColumn("+v");
-			Table.AddColumn("Topic");
 
 			for (unsigned int a = 0; a < vChans.size(); a++) {
 				CChan* pChan = vChans[a];
@@ -489,6 +488,30 @@ void CUserSock::UserCommand(const string& sLine) {
 				Table.SetCell("Users", CUtils::ToString(pChan->GetNickCount()));
 				Table.SetCell("+o", CUtils::ToString(pChan->GetOpCount()));
 				Table.SetCell("+v", CUtils::ToString(pChan->GetVoiceCount()));
+			}
+
+			if (Table.size()) {
+				unsigned int uTableIdx = 0;
+				string sLine;
+
+				while (Table.GetLine(uTableIdx++, sLine)) {
+					PutStatus(sLine);
+				}
+			}
+		}
+	} else if (strcasecmp(sCommand.c_str(), "TOPICS") == 0) {
+		if (m_pUser) {
+			const vector<CChan*>& vChans = m_pUser->GetChans();
+			CTable Table;
+			Table.AddColumn("Name");
+			Table.AddColumn("Set By");
+			Table.AddColumn("Topic");
+
+			for (unsigned int a = 0; a < vChans.size(); a++) {
+				CChan* pChan = vChans[a];
+				Table.AddRow();
+				Table.SetCell("Name", pChan->GetName());
+				Table.SetCell("Set By", pChan->GetTopicOwner());
 				Table.SetCell("Topic", pChan->GetTopic());
 			}
 
