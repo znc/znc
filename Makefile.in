@@ -14,6 +14,7 @@ all: znc @MODTARGET@
 
 depend::
 	g++ -M $(CXXFLAGS) $(SRCS) $(INCLUDES) >.depend
+	(cd modules; $(MAKE) depend)
 
 znc: $(OBJS)
 	$(CXX) $(CXXFLAGS) $(INCLUDES) -o $@ $(LIBS) $(OBJS)
@@ -23,10 +24,11 @@ znc-static: $(OBJS)
 	strip $@
 
 modules::
-	cd modules && ./buildmod --all
+	(cd modules; $(MAKE) all)
 
 clean:
 	rm -rf znc znc-static *.o core core.*
+	(cd modules; $(MAKE) clean)
 
 -include .depend
 

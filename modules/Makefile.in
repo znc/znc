@@ -4,14 +4,14 @@ endif
 
 CXX=g++
 CXXFLAGS=@CXXFLAGS@
-INCLUDES=@INCLUDES@
+INCLUDES=@INCLUDES@ -I..
 LIBS=@LIBS@
 VPATH=.:..
 OBJS=$(addsuffix .o, $(basename $(wildcard *.cpp)))
 SRCS=$(wildcard *.cpp) $(wildcard ../*.cpp)
 
 
-all: $(addsuffix .so, $(basename $(wildcard *.cpp)))
+all: $(OBJS) $(addsuffix .so, $(basename $(wildcard *.cpp)))
 
 depend::
 	g++ -M $(CXXFLAGS) $(SRCS) $(INCLUDES) >.depend
