@@ -477,7 +477,7 @@ CModule* CModules::FindModule(const string& sModule) {
 	return NULL;
 }
 
-bool CModules::LoadModule(const string& sModule, const string& sArgs, CUser* pUser, const string& sPath, string& sRetMsg) {
+bool CModules::LoadModule(const string& sModule, const string& sArgs, CUser* pUser, string& sRetMsg) {
 	sRetMsg = "";
 
 	if (!pUser) {
@@ -497,7 +497,27 @@ bool CModules::LoadModule(const string& sModule, const string& sArgs, CUser* pUs
 		return false;
 	}
 
-	void* p = dlopen((pUser->GetModPath() + "/" + sModule + ".so").c_str(), RTLD_LAZY);
+	string sModPath = pUser->GetModPath();
+
+	if (!CFile::Exists(sModPath + "/" + sModule + ".so")) {
+		DEBUG_ONLY(cout << "[" << sModPath << "/" << sModule << ".so] Not found..." << endl);
+		sModPath = _MODDIR_;
+
+		if (!CFile::Exists(sModPath + "/" + sModule + ".so"))
+		{
+			DEBUG_ONLY(cout << "[" << sModPath << "/" << sModule << ".so] Not found..." << endl);
+			sModPath = pUser->GetBinPath() + "/modules";
+
+			if (!CFile::Exists(sModPath + "/" + sModule + ".so"))
+			{
+				DEBUG_ONLY(cout << "[" << sModPath << "/" << sModule << ".so] Not found... giving up!" << endl);
+				sRetMsg = "Unable to load module [" + sModule + "] No such module.";
+				return false;
+			}
+		}
+	}
+
+	void* p = dlopen((sModPath + "/" + sModule + ".so").c_str(), RTLD_LAZY);
 
 	if (!p) {
 		sRetMsg = "Unable to load module [" + sModule + "] [" + dlerror() + "]";
@@ -579,13 +599,13 @@ bool CModules::UnloadModule(const string& sModule, string& sRetMsg) {
 	return false;
 }
 
-bool CModules::ReloadModule(const string& sModule, const string& sArgs, CUser* pUser, const string& sPath, string& sRetMsg) {
+bool CModules::ReloadModule(const string& sModule, const string& sArgs, CUser* pUser, string& sRetMsg) {
 	sRetMsg = "";
 	if (!UnloadModule(sModule, sRetMsg)) {
 		return false;
 	}
 
-	if (!LoadModule(sModule, sArgs, pUser, sPath, sRetMsg)) {
+	if (!LoadModule(sModule, sArgs, pUser, sRetMsg)) {
 		return false;
 	}
 
