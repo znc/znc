@@ -2698,6 +2698,10 @@ if test -z "$NOSSL"; then
 	appendCXX -DHAVE_LIBSSL
 fi
 
+if test -z "$prefix" || test $prefix = "NONE"; then
+	prefix="/usr/local"
+fi
+
 if test "$MODULES" = "yes"; then
 	if test -n "$ISSUN"; then
 		echo "$as_me:$LINENO: checking for dlopen in -ldl" >&5

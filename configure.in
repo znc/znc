@@ -51,6 +51,10 @@ if test -z "$NOSSL"; then
 	appendCXX -DHAVE_LIBSSL
 fi
 
+if test -z "$prefix" || test $prefix = "NONE"; then
+	prefix="/usr/local"
+fi
+
 if test "$MODULES" = "yes"; then
 	if test -n "$ISSUN"; then
 		AC_CHECK_LIB( dl, dlopen, appendCXX -D_MODULES,, )
