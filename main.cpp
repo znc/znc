@@ -9,6 +9,12 @@ void die(int sig) {
 	signal( SIGABRT, SIG_DFL );
 	signal( SIGPIPE, SIG_DFL );
 
+#ifdef _DEBUG
+	cerr << "Exiting on SIG [" << sig << "]" << endl;
+	if ( ( sig == SIGABRT ) || ( sig == SIGSEGV ) )
+		abort();
+#endif /* _DEBUG */
+
 	delete CZNC::New();
 	exit(sig);
 }
