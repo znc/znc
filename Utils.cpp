@@ -505,7 +505,7 @@ CFile::CFile(const string& sLongName) {
 		CUtils::LeftChomp(m_sShortName);
 	}
 
-	unsigned int uPos = m_sShortName.rfind('/');
+	string::size_type uPos = m_sShortName.rfind('/');
 	if (uPos != string::npos) {
 		m_sShortName = m_sShortName.substr(uPos +1);
 	}
@@ -685,7 +685,7 @@ bool CFile::ReadLine(string & sData) {
 	bool bEOF = false;
 
 	while(true) {
-		u_int iFind = m_sBuffer.find("\n");
+		string::size_type iFind = m_sBuffer.find("\n");
 		if (iFind != string::npos) {
 			sData = m_sBuffer.substr(0, (iFind + 1));
 			m_sBuffer.erase(0, (iFind + 1));
@@ -714,7 +714,7 @@ bool CFile::ReadLine(string & sData) {
 		}
 	}
 
-	u_int iFind = m_sBuffer.find("\n");
+	string::size_type iFind = m_sBuffer.find("\n");
 	if (iFind != string::npos) {
 		return true;
 	}

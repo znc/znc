@@ -191,7 +191,7 @@ void CZNC::InitDirs(const string& sArgvPath) {
 	getcwd(buf, PATH_MAX);
 
 	// If the bin was not ran from the current directory, we need to add that dir onto our cwd
-	unsigned int uPos = sArgvPath.rfind('/');
+	string::size_type uPos = sArgvPath.rfind('/');
 	m_sCurPath = (uPos == string::npos) ? string(buf) : CUtils::ChangeDir(buf, sArgvPath.substr(0, uPos), "");
 
 	// Try to set the user's home dir, default to binpath on failure

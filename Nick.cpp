@@ -18,7 +18,7 @@ void CNick::Parse(const string& sNickMask) {
 		return;
 	}
 
-	unsigned int uPos = sNickMask.find('!');
+	string::size_type uPos = sNickMask.find('!');
 
 	if (uPos == string::npos) {
 		m_sNick = sNickMask.substr((sNickMask[0] == ':'));
