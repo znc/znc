@@ -51,15 +51,15 @@
 #include <sys/ioctl.h>
 #include <sys/timeb.h>
 
-#ifdef __sun
-#include <strings.h>
-#include <fcntl.h>
-#endif /* __sun */
-
 #ifdef HAVE_LIBSSL
 #include <openssl/ssl.h>
 #include <openssl/err.h>
 #endif /* HAVE_LIBSSL */
+
+#ifdef __sun
+#include <strings.h>
+#include <fcntl.h>
+#endif /* __sun */
 
 #include <vector>
 #include <iostream>
@@ -333,9 +333,7 @@ namespace Csocket
 			Init( sHostname, iport, itimeout );
 		}
 		
-		//! override this for accept sockets
-		//! returning NULL will cause it to return a new instance of 
-		//! type T
+		// override this for accept sockets
 		virtual Csock *GetSockObj( const CS_STRING & sHostname, int iPort ) 
 		{ 
 			return( NULL ); 
@@ -540,6 +538,9 @@ namespace Csocket
 		*/
 		virtual int WriteSelect()
 		{
+			if ( m_iWriteSock < 0 )
+				return( SEL_ERR );
+
 			struct timeval tv;
 			fd_set wfds;
 
@@ -571,6 +572,9 @@ namespace Csocket
 		*/
 		virtual int ReadSelect()
 		{
+			if ( m_iReadSock < 0 )
+				return( SEL_ERR );
+
 			struct timeval tv;
 			fd_set rfds;
 
@@ -1091,15 +1095,17 @@ namespace Csocket
 		*/
 		virtual int Read( char *data, int len )
 		{
-		
+			int bytes = 0;
+			memset( (char *)data, '\0', len );
+
+			if ( ( IsReadPaused() ) && ( SslIsEstablished() ) )
+				return( READ_EAGAIN ); // allow the handshake to complete first
+
 			if ( m_bBLOCK )
 			{
 				if ( ReadSelect() != SEL_OK )
 					return( READ_ERR );
 			}
-			
-			int bytes = 0;
-			memset( (char *)data, '\0', len );
 			
 #ifdef HAVE_LIBSSL
 			if ( m_bssl )
@@ -1190,6 +1196,15 @@ namespace Csocket
 		//! resets the time counter
 		void ResetTimer() { m_iTcount = 0; }
 		
+		//! will pause/unpause reading on this socket
+		void PauseRead() { m_bPauseRead = true; }
+		void UnPauseRead() 
+		{ 
+			m_bPauseRead = false; 
+			ResetTimer();
+		}
+		bool IsReadPaused() { return( m_bPauseRead ); }
+
 		/**
 		* this timeout isn't just connection timeout, but also timeout on
 		* NOT recieving data, to disable this set it to 0
@@ -1202,6 +1217,9 @@ namespace Csocket
 		//! returns true if the socket has timed out
 		virtual bool CheckTimeout()
 		{
+			if ( IsReadPaused() )
+				return( false );
+			
 			if ( m_itimeout > 0 )
 			{
 				if ( m_iTcount >= m_itimeout )
@@ -1297,7 +1315,7 @@ namespace Csocket
 			unsigned long long iDifference = ( millitime() - m_iStartTime );
 			
 			if ( ( m_iBytesWritten == 0 ) || ( iSample > iDifference ) )
-				return( (double)m_iBytesRead );
+				return( (double)m_iBytesWritten );
 
 			return( ( (double)m_iBytesWritten / ( (double)iDifference / (double)iSample ) ) );
 		}
@@ -1408,15 +1426,12 @@ namespace Csocket
 #endif /* HAVE_LIBSSL */
 		
 		//! Get the send buffer
-		const CS_STRING & GetSendBuff() { return( m_sSend ); }
+		const CS_STRING & GetWriteBuffer() { return( m_sSend ); }
 
 		//! is SSL_accept finished ?
 		bool FullSSLAccept() { return ( m_bFullsslAccept ); }
 		//! is the ssl properly finished (from write no error)
 		bool SslIsEstablished() { return ( m_bsslEstablished ); }
-
-		//! returns the underlying buffer
-		CS_STRING & GetBuffer() { return( m_sSend ); }
 
 		//! Use this to bind this socket to inetd
 		bool ConnectInetd( bool bIsSSL = false, const CS_STRING & sHostname = "" )
@@ -1702,12 +1717,6 @@ namespace Csocket
 		 */
 		virtual void ConnectionRefused() {}
 
-		/**
-		 * This is ONLY called on the LISTENER, returning false from this
-		 * will cause the LISTENER to ABORT on the connection and disregard the 
-		 * object.
-		 */
-		virtual bool CreatedChild( Csock *pSock ) { return( true ); }
 		//! return the data imediatly ready for read
 		virtual int GetPending()
 		{
@@ -1726,7 +1735,7 @@ namespace Csocket
 	private:
 		int			m_iReadSock, m_iWriteSock, m_itimeout, m_iport, m_iConnType, m_iTcount, m_iMethod, m_iRemotePort, m_iLocalPort;
 		bool		m_bssl, m_bIsConnected, m_bClosed, m_bBLOCK, m_bFullsslAccept;
-		bool		m_bsslEstablished, m_bEnableReadLine, m_bRequireClientCert;
+		bool		m_bsslEstablished, m_bEnableReadLine, m_bRequireClientCert, m_bPauseRead;
 		CS_STRING	m_shostname, m_sbuffer, m_sSockName, m_sPemFile, m_sCipherType, m_sParentName;
 		CS_STRING	m_sSend, m_sSSLBuffer, m_sPemPass, m_sLocalIP, m_sRemoteIP;
 
@@ -1814,6 +1823,7 @@ namespace Csocket
 			m_iBytesRead = 0;
 			m_iBytesWritten = 0;
 			m_iStartTime = millitime();
+			m_bPauseRead = false;
 		}
 	};
 
@@ -2019,12 +2029,8 @@ namespace Csocket
 						T * pcSock = itSock->first;
 						EMessages iErrno = itSock->second;
 						
-						// mark that this sock was ready
-						spReadySocks.insert( pcSock );
 						if ( iErrno == SUCCESS )
 						{					
-							pcSock->ResetTimer();	// reset the timeout timer
-							
 							// read in data
 							// if this is a 
 							char *buff;
@@ -2076,6 +2082,7 @@ namespace Csocket
 
 								default:
 								{
+									pcSock->ResetTimer();	// reset the timeout timer
 									pcSock->PushBuff( buff, bytes );
 									pcSock->ReadData( buff, bytes );
 									break;
@@ -2107,19 +2114,8 @@ namespace Csocket
 				// call timeout on all the sockets that recieved no data
 				for( unsigned int i = 0; i < size(); i++ )
 				{
-					if ( (*this)[i]->GetType() != T::LISTENER )
-					{
-						// are we in the map of found socks ?
-						if ( spReadySocks.find( (*this)[i] ) == spReadySocks.end() )
-						{
-							if ( (*this)[i]->CheckTimeout() )
-								DelSock( i-- );
-						}
-					} else
-					{
-						if ( (*this)[i]->CheckTimeout() )
-							DelSock( i-- );
-					}
+					if ( (*this)[i]->CheckTimeout() )
+						DelSock( i-- );
 				}
 			}
 			// run any Manager Crons we may have
@@ -2241,9 +2237,10 @@ namespace Csocket
 			}
 		}
 
-		//! Get the Select Timeout in MILLISECONDS
+		//! Get the Select Timeout in MICROSECONDS ( 1000 == 1 millisecond )
 		u_int GetSelectTimeout() { return( m_iSelectWait ); }
-		//! Set the Select Timeout in MILLISECONDS
+		//! Set the Select Timeout in MICROSECODS ( 1000 == 1 millisecond )
+		//! Setting this to 0 will cause no timeout to happen, select will return instantly
 		void  SetSelectTimeout( u_int iTimeout ) { m_iSelectWait = iTimeout; }
 
 		vector<CCron *> & GetCrons() { return( m_vcCrons ); }
@@ -2297,7 +2294,11 @@ namespace Csocket
 			
 			tv.tv_sec = 0;
 			tv.tv_usec = m_iSelectWait;
-		
+			
+			u_int iQuickReset = 1000;
+			if ( m_iSelectWait == 0 )
+				iQuickReset = 0;
+
 			TFD_ZERO( &rfds );						
 			TFD_ZERO( &wfds );
 
@@ -2317,23 +2318,30 @@ namespace Csocket
 
 				T *pcSock = (*this)[i];
 
+				int & iRSock = pcSock->GetRSock();
+				int & iWSock = pcSock->GetWSock();
+		
+				if ( ( iRSock < 0 ) || ( iWSock < 0 ) )
+				{
+					SelectSock( mpeSocks, SUCCESS, pcSock );
+					continue;	// invalid sock fd
+				}
+
 				if ( pcSock->GetType() != T::LISTENER )
 				{
-					int & iRSock = pcSock->GetRSock();
-					int & iWSock = pcSock->GetWSock();
 					
 					if ( ( pcSock->GetSSL() ) && ( pcSock->GetType() == T::INBOUND ) && ( !pcSock->FullSSLAccept() ) )
 					{
-						tv.tv_usec = 1000;	// just make sure this returns quick incase we still need pending
+						tv.tv_usec = iQuickReset;	// just make sure this returns quick incase we still need pending
 						// try accept on this socket again
 						if ( !pcSock->AcceptSSL() )
 							pcSock->Close();
 
-					} else if ( ( pcSock->IsConnected() ) && ( pcSock->GetSendBuff().empty() ) )
+					} else if ( ( pcSock->IsConnected() ) && ( pcSock->GetWriteBuffer().empty() ) && ( !pcSock->IsReadPaused() ) )
 					{
 						TFD_SET( iRSock, &rfds );
 					
-					} else if ( ( pcSock->GetSSL() ) && ( !pcSock->SslIsEstablished() ) && ( !pcSock->GetSendBuff().empty() ) )
+					} else if ( ( pcSock->GetSSL() ) && ( !pcSock->SslIsEstablished() ) && ( !pcSock->GetWriteBuffer().empty() ) )
 					{
 						// do this here, cause otherwise ssl will cause a small
 						// cpu spike waiting for the handshake to finish
@@ -2346,13 +2354,15 @@ namespace Csocket
 		
 					} else 
 					{
-						TFD_SET( iRSock, &rfds );
+						if ( !pcSock->IsReadPaused() )
+							TFD_SET( iRSock, &rfds );
+
 						TFD_SET( iWSock, &wfds );
 						bHasWriteable = true;
 					}
 
 				} else
-					TFD_SET( pcSock->GetRSock(), &rfds );
+					TFD_SET( iRSock, &rfds );
 			}
 		
 			// first check to see if any ssl sockets are ready for immediate read
@@ -2363,7 +2373,7 @@ namespace Csocket
 		
 				if ( ( pcSock->GetSSL() ) && ( pcSock->GetType() != Csock::LISTENER ) )
 				{
-					if ( pcSock->GetPending() > 0 )
+					if ( ( pcSock->GetPending() > 0 ) && ( !pcSock->IsReadPaused() ) )
 						SelectSock( mpeSocks, SUCCESS, pcSock );
 				}
 			}
@@ -2372,7 +2382,7 @@ namespace Csocket
 			int iSel;
 
 			if ( !mpeSocks.empty() )
-				tv.tv_usec = 1000;	// this won't be a timeout, 1 ms pause to see if anything else is ready (IE if there is SSL data pending, don't wait too long)
+				tv.tv_usec = iQuickReset;	// this won't be a timeout, 1 ms pause to see if anything else is ready (IE if there is SSL data pending, don't wait too long)
 				
 			if ( bHasWriteable )
 				iSel = select(FD_SETSIZE, &rfds, &wfds, NULL, &tv);
@@ -2419,13 +2429,21 @@ namespace Csocket
 				int & iRSock = pcSock->GetRSock();
 				int & iWSock = pcSock->GetWSock();
 				EMessages iErrno = SUCCESS;
-				
+			
+				if ( ( iRSock < 0 ) || ( iWSock < 0 ) )
+				{
+					// trigger a success so it goes through the normal motions
+					// and an error is produced
+					SelectSock( mpeSocks, SUCCESS, pcSock );
+					continue; // watch for invalid socks
+				}
+
 				if ( TFD_ISSET( iWSock, &wfds ) )
 				{
 					if ( iSel > 0 )
 					{
 						iErrno = SUCCESS;
-						if ( ( !pcSock->GetSendBuff().empty() ) && ( pcSock->IsConnected() ) )
+						if ( ( !pcSock->GetWriteBuffer().empty() ) && ( pcSock->IsConnected() ) )
 						{ // write whats in the socks send buffer
 							if ( !pcSock->Write( "" ) )
 							{
@@ -2488,21 +2506,15 @@ namespace Csocket
 								// set the name of the listener
 								NewpcSock->SetParentSockName( pcSock->GetSockName() );
 								NewpcSock->SetRate( pcSock->GetRateBytes(), pcSock->GetRateTime() );
-								
-								if ( pcSock->CreatedChild( (T *)NewpcSock ) )
-								{	// last step, notify the listener that this socket was created succesfully
-									if ( NewpcSock->GetSockName().empty() )
-									{
-										stringstream s;
-										s << sHost << ":" << port;
-										AddSock( NewpcSock,  s.str() );
+								if ( NewpcSock->GetSockName().empty() )
+								{
+									stringstream s;
+									s << sHost << ":" << port;
+									AddSock( NewpcSock,  s.str() );
 
-									} else
-										AddSock( NewpcSock, NewpcSock->GetSockName() );
 								} else
-									CS_Delete( NewpcSock );
-						
-									
+									AddSock( NewpcSock, NewpcSock->GetSockName() );
+							
 							} else
 								CS_Delete( NewpcSock );
 						}
