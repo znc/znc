@@ -374,7 +374,8 @@ namespace Csocket
 			READ_EOF			= 0,			//!< End Of File, done reading
 			READ_ERR			= -1,			//!< Error on the socket, socket closed, done reading
 			READ_EAGAIN			= -2,			//!< Try to get data again
-			READ_CONNREFUSED	= -3	//!< Connection Refused
+			READ_CONNREFUSED	= -3,			//!< Connection Refused
+			READ_TIMEDOUT		= -4			//!< Connection timed out
 			
 		};
 		
@@ -1041,7 +1042,9 @@ namespace Csocket
 					m_sSend.erase( 0, iErr );
 					// reset the timer on successful write (we have to set it here because the write
 					// bit might not always be set, so need to trigger)
-					ResetTimer();	
+					if ( TMO_WRITE & GetTimeoutType() )
+						ResetTimer();	
+
 					m_iBytesWritten += (unsigned long long)iErr;
 				}
 
@@ -1063,7 +1066,8 @@ namespace Csocket
 			if ( bytes > 0 )
 			{
 				m_sSend.erase( 0, bytes );
-				ResetTimer();	// reset the timer on successful write
+				if ( TMO_WRITE & GetTimeoutType() )
+					ResetTimer();	// reset the timer on successful write
 				m_iBytesWritten += (unsigned long long)bytes;
 			}
 
@@ -1091,6 +1095,7 @@ namespace Csocket
 		* Returns READ_ERR for ERROR
 		* Returns READ_EAGAIN for Try Again ( EAGAIN )
 		* Returns READ_CONNREFUSED for connection refused
+		* Returns READ_TIMEDOUT for a connection that timed out at the TCP level
 		* Otherwise returns the bytes read into data
 		*/
 		virtual int Read( char *data, int len )
@@ -1103,8 +1108,15 @@ namespace Csocket
 
 			if ( m_bBLOCK )
 			{
-				if ( ReadSelect() != SEL_OK )
-					return( READ_ERR );
+				switch( ReadSelect() )
+				{
+					case SEL_OK:
+						break;
+					case SEL_TIMEOUT:
+						return( READ_TIMEDOUT );
+					default:
+						return( READ_ERR );
+				}
 			}
 			
 #ifdef HAVE_LIBSSL
@@ -1118,7 +1130,10 @@ namespace Csocket
 			{
 				if ( errno == ECONNREFUSED )
 					return( READ_CONNREFUSED );	
-				
+			
+				if ( errno == ETIMEDOUT )
+					return( READ_TIMEDOUT );
+
 				if ( ( errno == EINTR ) || ( errno == EAGAIN ) )
 					return( READ_EAGAIN );
 #ifdef HAVE_LIBSSL
@@ -1204,15 +1219,30 @@ namespace Csocket
 			ResetTimer();
 		}
 		bool IsReadPaused() { return( m_bPauseRead ); }
-
 		/**
 		* this timeout isn't just connection timeout, but also timeout on
 		* NOT recieving data, to disable this set it to 0
 		* then the normal TCP timeout will apply (basically TCP will kill a dead connection)
 		* Set the timeout, set to 0 to never timeout
 		*/
-		void SetTimeout( int iTimeout ) { m_itimeout = iTimeout; }
+		enum
+		{
+			TMO_READ	= 1,
+			TMO_WRITE	= 2,
+			TMO_ACCEPT	= 4,
+			TMO_ALL		= TMO_READ|TMO_WRITE|TMO_ACCEPT
+		};
+
+		//! Currently this uses the same value for all timeouts, and iTimeoutType merely states which event will be checked
+		//! for timeouts
+		void SetTimeout( int iTimeout, u_int iTimeoutType = TMO_ALL ) 
+		{ 
+			m_iTimeoutType = iTimeoutType;
+			m_itimeout = iTimeout; 
+		}
+		void SetTimeoutType( u_int iTimeoutType ) { m_iTimeoutType = iTimeoutType; }
 		int GetTimeout() const { return m_itimeout; }
+		u_int GetTimeoutType() const { return( m_iTimeoutType ); }
 		
 		//! returns true if the socket has timed out
 		virtual bool CheckTimeout()
@@ -1268,6 +1298,7 @@ namespace Csocket
 		//! not going to use GetLine(), then you may want to clear this out
 		//! (if its binary data and not many '\n'
 		CS_STRING & GetInternalBuffer() { return( m_sbuffer ); }	
+		//! sets the max buffered threshold when enablereadline() is enabled
 		void SetMaxBufferThreshold( u_int iThreshold ) { m_iMaxStoredBufferLength = iThreshold; }
 		u_int GetMaxBufferThreshold() { return( m_iMaxStoredBufferLength ); }
 
@@ -1427,6 +1458,7 @@ namespace Csocket
 		
 		//! Get the send buffer
 		const CS_STRING & GetWriteBuffer() { return( m_sSend ); }
+		void ClearWriteBuffer() { m_sSend.clear(); }
 
 		//! is SSL_accept finished ?
 		bool FullSSLAccept() { return ( m_bFullsslAccept ); }
@@ -1716,6 +1748,10 @@ namespace Csocket
 		 *
 		 */
 		virtual void ConnectionRefused() {}
+		/**
+		 * This gets called every iteration of Select() if the socket is ReadPaused
+		 */
+		virtual void ReadPaused() {}
 
 		//! return the data imediatly ready for read
 		virtual int GetPending()
@@ -1740,7 +1776,7 @@ namespace Csocket
 		CS_STRING	m_sSend, m_sSSLBuffer, m_sPemPass, m_sLocalIP, m_sRemoteIP;
 
 		unsigned long long	m_iMaxMilliSeconds, m_iLastSendTime, m_iBytesRead, m_iBytesWritten, m_iStartTime;
-		unsigned int		m_iMaxBytes, m_iLastSend, m_iMaxStoredBufferLength;
+		unsigned int		m_iMaxBytes, m_iLastSend, m_iMaxStoredBufferLength, m_iTimeoutType;
 		
 		struct sockaddr_in 	m_address;
 				
@@ -1824,6 +1860,7 @@ namespace Csocket
 			m_iBytesWritten = 0;
 			m_iStartTime = millitime();
 			m_bPauseRead = false;
+			m_iTimeoutType = TMO_ALL;
 		}
 	};
 
@@ -1868,7 +1905,7 @@ namespace Csocket
 
 		void clear()
 		{
-			for( unsigned int i = 0; i < size(); i++ )
+			for( unsigned int i = 0; i < this->size(); i++ )
 				CS_Delete( (*this)[i] );
 
 			vector<T *>::clear();
@@ -2051,7 +2088,8 @@ namespace Csocket
 		
 							int bytes = pcSock->Read( buff, iLen );
 
-							if ( ( bytes != T::READ_CONNREFUSED ) && ( !pcSock->IsConnected() ) )
+							if ( ( bytes != T::READ_TIMEDOUT ) && ( bytes != T::READ_CONNREFUSED ) 
+								&& ( !pcSock->IsConnected() ) )
 							{
 								pcSock->SetIsConnected( true );
 								pcSock->Connected();
@@ -2080,9 +2118,16 @@ namespace Csocket
 									DelSockByAddr( pcSock );
 									break;
 
+								case T::READ_TIMEDOUT:
+									pcSock->Timeout();
+									DelSockByAddr( pcSock );
+									break;
+
 								default:
 								{
-									pcSock->ResetTimer();	// reset the timeout timer
+									if ( T::TMO_READ & pcSock->GetTimeoutType() )
+										pcSock->ResetTimer();	// reset the timeout timer
+
 									pcSock->PushBuff( buff, bytes );
 									pcSock->ReadData( buff, bytes );
 									break;
@@ -2112,7 +2157,7 @@ namespace Csocket
 			{
 				m_iCallTimeouts = iMilliNow;
 				// call timeout on all the sockets that recieved no data
-				for( unsigned int i = 0; i < size(); i++ )
+				for( unsigned int i = 0; i < this->size(); i++ )
 				{
 					if ( (*this)[i]->CheckTimeout() )
 						DelSock( i-- );
@@ -2135,7 +2180,7 @@ namespace Csocket
 		//! returns a pointer to the FIRST sock found by port or NULL on no match
 		virtual T * FindSockByRemotePort( int iPort )
 		{
-			for( unsigned int i = 0; i < size(); i++ )
+			for( unsigned int i = 0; i < this->size(); i++ )
 			{
 				if ( (*this)[i]->GetRemotePort() == iPort )
 					return( (*this)[i] );
@@ -2147,7 +2192,7 @@ namespace Csocket
 		//! returns a pointer to the FIRST sock found by port or NULL on no match
 		virtual T * FindSockByLocalPort( int iPort )
 		{
-			for( unsigned int i = 0; i < size(); i++ )
+			for( unsigned int i = 0; i < this->size(); i++ )
 				if ( (*this)[i]->GetLocalPort() == iPort )
 					return( (*this)[i] );
 
@@ -2157,7 +2202,7 @@ namespace Csocket
 		//! returns a pointer to the FIRST sock found by name or NULL on no match
 		virtual T * FindSockByName( const CS_STRING & sName )
 		{
-			for( unsigned int i = 0; i < size(); i++ )
+			for( unsigned int i = 0; i < this->size(); i++ )
 				if ( (*this)[i]->GetSockName() == sName )
 					return( (*this)[i] );
 			
@@ -2168,7 +2213,7 @@ namespace Csocket
 		{
 			vector<T *> vpSocks;
 			
-			for( unsigned int i = 0; i < size(); i++ )
+			for( unsigned int i = 0; i < this->size(); i++ )
 				if ( (*this)[i]->GetSockName() == sName )
 					vpSocks.push_back( (*this)[i] );
 
@@ -2180,7 +2225,7 @@ namespace Csocket
 		{
 			vector<T *> vpSocks;
 			
-			for( unsigned int i = 0; i < size(); i++ )
+			for( unsigned int i = 0; i < this->size(); i++ )
 				if ( (*this)[i]->GetHostName() == sHostname )
 					vpSocks.push_back( (*this)[i] );
 			
@@ -2251,7 +2296,7 @@ namespace Csocket
 		//! and its instance is removed from the manager
 		virtual void DelSockByAddr( T *pcSock )
 		{
-			for( u_int a = 0; a < size(); a++ )
+			for( u_int a = 0; a < this->size(); a++ )
 			{
 				if ( pcSock == (*this)[a] )
 				{
@@ -2267,7 +2312,7 @@ namespace Csocket
 		//! ie for( u_int a = 0; a < size(); a++ ) DelSock( a-- );
 		virtual void DelSock( u_int iPos )
 		{
-			if ( iPos >= size() )
+			if ( iPos >= this->size() )
 			{
 				CS_DEBUG( "Invalid Sock Position Requested! [" << iPos << "]" );
 				return;
@@ -2276,7 +2321,7 @@ namespace Csocket
 				(*this)[iPos]->Disconnected(); // only call disconnected event if connected event was called (IE IsConnected was set)
 					
 			CS_Delete( (*this)[iPos] );
-			erase( begin() + iPos );
+			this->erase( this->begin() + iPos );
 		}
 
 	private:
@@ -2303,7 +2348,7 @@ namespace Csocket
 			TFD_ZERO( &wfds );
 
 			// before we go any further, Process work needing to be done on the job
-			for( unsigned int i = 0; i < size(); i++ )
+			for( unsigned int i = 0; i < this->size(); i++ )
 			{
 				if ( (*this)[i]->isClosed() )
 					DelSock( i-- ); // close any socks that have requested it
@@ -2313,14 +2358,19 @@ namespace Csocket
 
 			bool bHasWriteable = false;
 
-			for( unsigned int i = 0; i < size(); i++ )
+			for( unsigned int i = 0; i < this->size(); i++ )
 			{
 
 				T *pcSock = (*this)[i];
 
 				int & iRSock = pcSock->GetRSock();
 				int & iWSock = pcSock->GetWSock();
-		
+				bool bIsReadPaused = pcSock->IsReadPaused();
+				if ( bIsReadPaused )
+				{
+					pcSock->ReadPaused();
+					bIsReadPaused = pcSock->IsReadPaused(); // re-read it again, incase it changed status)
+				}
 				if ( ( iRSock < 0 ) || ( iWSock < 0 ) )
 				{
 					SelectSock( mpeSocks, SUCCESS, pcSock );
@@ -2337,9 +2387,10 @@ namespace Csocket
 						if ( !pcSock->AcceptSSL() )
 							pcSock->Close();
 
-					} else if ( ( pcSock->IsConnected() ) && ( pcSock->GetWriteBuffer().empty() ) && ( !pcSock->IsReadPaused() ) )
+					} else if ( ( pcSock->IsConnected() ) && ( pcSock->GetWriteBuffer().empty() ) )
 					{
-						TFD_SET( iRSock, &rfds );
+						if ( !bIsReadPaused )
+							TFD_SET( iRSock, &rfds );
 					
 					} else if ( ( pcSock->GetSSL() ) && ( !pcSock->SslIsEstablished() ) && ( !pcSock->GetWriteBuffer().empty() ) )
 					{
@@ -2354,7 +2405,7 @@ namespace Csocket
 		
 					} else 
 					{
-						if ( !pcSock->IsReadPaused() )
+						if ( !bIsReadPaused )
 							TFD_SET( iRSock, &rfds );
 
 						TFD_SET( iWSock, &wfds );
@@ -2367,7 +2418,7 @@ namespace Csocket
 		
 			// first check to see if any ssl sockets are ready for immediate read
 			// a mini select() type deal for ssl
-			for( unsigned int i = 0; i < size(); i++ )
+			for( unsigned int i = 0; i < this->size(); i++ )
 			{
 				T *pcSock = (*this)[i];
 		
@@ -2423,7 +2474,7 @@ namespace Csocket
 			}							
 			
 			// find out wich one is ready
-			for( unsigned int i = 0; i < size(); i++ )
+			for( unsigned int i = 0; i < this->size(); i++ )
 			{
 				T *pcSock = (*this)[i];
 				int & iRSock = pcSock->GetRSock();
@@ -2473,7 +2524,8 @@ namespace Csocket
 						
 						if ( inSock != -1 )
 						{
-							pcSock->ResetTimer();	// let them now it got dinged
+							if ( T::TMO_ACCEPT & pcSock->GetTimeoutType() )
+								pcSock->ResetTimer();	// let them now it got dinged
 
 							// if we have a new sock, then add it
 							T *NewpcSock = (T *)pcSock->GetSockObj( sHost, port );
