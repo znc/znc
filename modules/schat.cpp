@@ -14,6 +14,9 @@
  * Author: imaginos <imaginos@imaginos.net>
  * 
  * $Log$
+ * Revision 1.6  2005/04/03 23:03:06  imaginos
+ * show this requires ssl
+ *
  * Revision 1.5  2005/04/03 08:19:42  prozacx
  * Use GetPemLocation() for the pemfile path
  *
@@ -40,6 +43,10 @@
  *
  *
  */     
+
+#ifndef HAVE_LIBSSL
+#error This plugin only works with OpenSSL
+#endif /* HAVE_LIBSSL */
 
 class CSChat;
 
