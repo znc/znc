@@ -15,7 +15,8 @@ IUSE="nossl nomodules debug"
 
 RDEPEND="virtual/libc"
 DEPEND="virtual/libc
-		!nossl? ( dev-libs/openssl )"
+		>=sys-devel/gcc-3.2.3-r4
+		!nossl? ( dev-libs/openssl-0.9.7d )"
 
 S="${WORKDIR}/${P}"
 
