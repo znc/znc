@@ -497,27 +497,27 @@ bool CModules::LoadModule(const string& sModule, const string& sArgs, CUser* pUs
 		return false;
 	}
 
-	string sModPath = pUser->GetModPath();
+	string sModPath = pUser->GetBinPath() + "/modules/" + sModule + ".so";
 
-	if (!CFile::Exists(sModPath + "/" + sModule + ".so")) {
-		DEBUG_ONLY(cout << "[" << sModPath << "/" << sModule << ".so] Not found..." << endl);
-		sModPath = _MODDIR_;
+	if (!CFile::Exists(sModPath)) {
+		DEBUG_ONLY(cout << "[" << sModPath << "] Not found..." << endl);
+		sModPath = pUser->GetModPath() + "/" + sModule + ".so";
 
-		if (!CFile::Exists(sModPath + "/" + sModule + ".so"))
+		if (!CFile::Exists(sModPath))
 		{
-			DEBUG_ONLY(cout << "[" << sModPath << "/" << sModule << ".so] Not found..." << endl);
-			sModPath = pUser->GetBinPath() + "/modules";
+			DEBUG_ONLY(cout << "[" << sModPath << "] Not found..." << endl);
+			sModPath = _MODDIR_ + string("/") + sModule + ".so";
 
-			if (!CFile::Exists(sModPath + "/" + sModule + ".so"))
+			if (!CFile::Exists(sModPath))
 			{
-				DEBUG_ONLY(cout << "[" << sModPath << "/" << sModule << ".so] Not found... giving up!" << endl);
-				sRetMsg = "Unable to load module [" + sModule + "] No such module.";
+				DEBUG_ONLY(cout << "[" << sModPath << "] Not found... giving up!" << endl);
+				sRetMsg = "Unable to find module [" + sModule + "]";
 				return false;
 			}
 		}
 	}
 
-	void* p = dlopen((sModPath + "/" + sModule + ".so").c_str(), RTLD_LAZY);
+	void* p = dlopen((sModPath).c_str(), RTLD_LAZY);
 
 	if (!p) {
 		sRetMsg = "Unable to load module [" + sModule + "] [" + dlerror() + "]";
@@ -526,6 +526,7 @@ bool CModules::LoadModule(const string& sModule, const string& sArgs, CUser* pUs
 
 	typedef double (*fpp)();
 	fpp Version = (fpp) dlsym(p, "GetVersion");
+
 	if (!Version) {
 		dlclose(p);
 		sRetMsg = "Could not find Version() in module [" + sModule + "]";
@@ -556,7 +557,7 @@ bool CModules::LoadModule(const string& sModule, const string& sArgs, CUser* pUs
 		return false;
 	}
 
-	sRetMsg = "Loaded module [" + sModule + "]";
+	sRetMsg = "Loaded module [" + sModule + "] [" + sModPath + "]";
 	return true;
 }
 
