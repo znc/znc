@@ -1,5 +1,5 @@
 Name: znc
-Version: 2.0
+Version: 0.023
 Release: 1
 Packager: imaginos@imaginos.net
 Summary: znc
