@@ -14,6 +14,9 @@
  * Author: imaginos <imaginos@imaginos.net>
  * 
  * $Log$
+ * Revision 1.4  2005/04/03 07:48:31  prozacx
+ * Renamed BinPath to CurPath
+ *
  * Revision 1.3  2005/03/31 20:59:43  imaginos
  * typo on column
  *
@@ -140,7 +143,7 @@ public:
 
 		if ( m_sPemFile.empty() )
 		{
-			m_sPemFile = m_pUser->GetBinPath() + "/znc.pem";
+			m_sPemFile = m_pUser->GetCurPath() + "/znc.pem";
 		}
 
 		if (!CFile::Exists(m_sPemFile)) {

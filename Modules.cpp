@@ -497,7 +497,7 @@ bool CModules::LoadModule(const string& sModule, const string& sArgs, CUser* pUs
 		return false;
 	}
 
-	string sModPath = pUser->GetBinPath() + "/modules/" + sModule + ".so";
+	string sModPath = pUser->GetCurPath() + "/modules/" + sModule + ".so";
 
 	if (!CFile::Exists(sModPath)) {
 		DEBUG_ONLY(cout << "[" << sModPath << "] Not found..." << endl);

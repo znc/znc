@@ -28,7 +28,7 @@ public:
 	// Getters
 	TSocketManager<Csock>& GetManager() { return m_Manager; }
 	unsigned int GetListenPort() const { return m_uListenPort; }
-	const string& GetBinPath() const { if (!CFile::Exists(m_sBinPath)) { CUtils::MakeDir(m_sBinPath); } return m_sBinPath; }
+	const string& GetCurPath() const { if (!CFile::Exists(m_sCurPath)) { CUtils::MakeDir(m_sCurPath); } return m_sCurPath; }
 	const string& GetDLPath() const { if (!CFile::Exists(m_sDLPath)) { CUtils::MakeDir(m_sDLPath); } return m_sDLPath; }
 	const string& GetModPath() const { if (!CFile::Exists(m_sModPath)) { CUtils::MakeDir(m_sModPath); } return m_sModPath; }
 	const string& GetHomePath() const { if (!CFile::Exists(m_sHomePath)) { CUtils::MakeDir(m_sHomePath); } return m_sHomePath; }
@@ -55,7 +55,7 @@ protected:
 	map<string,CUser*>		m_msUsers;
 	TSocketManager<Csock>	m_Manager;
 
-	string					m_sBinPath;
+	string					m_sCurPath;
 	string					m_sDLPath;
 	string					m_sModPath;
 	string					m_sHomePath;

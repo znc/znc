@@ -81,7 +81,7 @@ public:
 	const string& GetVHost() const;
 	const string& GetPass() const;
 
-	const string& GetBinPath() const;
+	const string& GetCurPath() const;
 	const string& GetDLPath() const;
 	const string& GetModPath() const;
 	const string& GetHomePath() const;

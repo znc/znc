@@ -383,7 +383,7 @@ const string& CUser::GetRealName() const { return m_sRealName; }
 const string& CUser::GetVHost() const { return m_sVHost; }
 const string& CUser::GetPass() const { return m_sPass; }
 
-const string& CUser::GetBinPath() const { return m_pZNC->GetBinPath(); }
+const string& CUser::GetCurPath() const { return m_pZNC->GetCurPath(); }
 const string& CUser::GetDLPath() const { return m_pZNC->GetDLPath(); }
 const string& CUser::GetModPath() const { return m_pZNC->GetModPath(); }
 const string& CUser::GetHomePath() const { return m_pZNC->GetHomePath(); }
