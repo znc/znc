@@ -14,6 +14,9 @@
  * Author: imaginos <imaginos@imaginos.net>
  * 
  * $Log$
+ * Revision 1.3  2005/03/31 20:59:43  imaginos
+ * typo on column
+ *
  * Revision 1.2  2005/03/31 20:39:10  imaginos
  * add ability to show all socks (debugging)
  *
@@ -345,9 +348,9 @@ public:
 				if ( pSock->GetType() != Csock::LISTENER )
 				{
 					if ( pSock->GetType() == Csock::OUTBOUND )
-						Table.SetCell( "Status", "Outbound" );	
+						Table.SetCell( "Type", "Outbound" );	
 					else
-						Table.SetCell( "Status", "Inbound" );	
+						Table.SetCell( "Type", "Inbound" );	
 					Table.SetCell( "LocalIP:Port", pSock->GetLocalIP() + ":" + CUtils::ToString( pSock->GetLocalPort() ) );
 					Table.SetCell( "RemoteIP:Port", pSock->GetRemoteIP() + ":" + CUtils::ToString( pSock->GetRemotePort() ) );
 					SSL_SESSION *pSession = pSock->GetSSLSession();
@@ -358,7 +361,7 @@ public:
 
 				} else
 				{
-					Table.SetCell( "Status", "Listener" );
+					Table.SetCell( "Type", "Listener" );
 					Table.SetCell( "LocalIP:Port", pSock->GetLocalIP() + ":" + CUtils::ToString( pSock->GetLocalPort() ) );
 					Table.SetCell( "RemoteIP:Port", "0.0.0.0:0" );
 				}
