@@ -68,6 +68,12 @@ int main(int argc, char** argv) {
 		pZNC->WritePidFile(iPid);
 		exit(0);
 	}
+	
+	/* keep the term from hanging on logout */
+	close( 0 );
+	close( 1 );
+	close( 2 );
+
 #endif
 
 	struct sigaction sa;
