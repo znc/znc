@@ -94,7 +94,7 @@ int CZNC::Loop() {
 #ifdef HAVE_LIBSSL
 			if (pServer->IsSSL()) {
 				bSSL = true;
-				pIRCSock->SetPemLocation(GetBinPath() + "/znc.pem");
+				pIRCSock->SetPemLocation(GetCurPath() + "/znc.pem");
 			}
 #endif
 			if (!m_Manager.Connect(pServer->GetName(), pServer->GetPort(), sSockName, 20, bSSL, pUser->GetVHost(), pIRCSock)) {
@@ -170,7 +170,7 @@ bool CZNC::Listen() {
 #ifdef HAVE_LIBSSL
 	if (IsSSL()) {
 		bSSL = true;
-		pUserSock->SetPemLocation(GetBinPath() + "/znc.pem");
+		pUserSock->SetPemLocation(GetCurPath() + "/znc.pem");
 	}
 #endif
 	return m_Manager.ListenAll(m_uListenPort, "_LISTENER", bSSL, SOMAXCONN, pUserSock);
@@ -192,7 +192,7 @@ void CZNC::InitDirs(const string& sArgvPath) {
 
 	// If the bin was not ran from the current directory, we need to add that dir onto our cwd
 	unsigned int uPos = sArgvPath.rfind('/');
-	m_sBinPath = (uPos == string::npos) ? string(buf) : CUtils::ChangeDir(buf, sArgvPath.substr(0, uPos), "");
+	m_sCurPath = (uPos == string::npos) ? string(buf) : CUtils::ChangeDir(buf, sArgvPath.substr(0, uPos), "");
 
 	// Try to set the user's home dir, default to binpath on failure
 	struct passwd* pUserInfo = getpwuid(getuid());
@@ -202,7 +202,7 @@ void CZNC::InitDirs(const string& sArgvPath) {
 	}
 
 	if (m_sHomePath.empty()) {
-		m_sHomePath = m_sBinPath;
+		m_sHomePath = m_sCurPath;
 	}
 
 	m_sZNCPath = m_sHomePath + "/.znc";
@@ -216,16 +216,13 @@ bool CZNC::ParseConfig(const string& sConfigFile) {
 	string sStatusPrefix;
 	string sFilePath;
 
-	if (CUtils::Left(sConfigFile, 1) != "/") {
-		sFilePath = GetBinPath() + "/" + sConfigFile;
-	}
-
-	if (!CFile::Exists(sFilePath)) {
-		sFilePath = GetZNCPath() + "/" + sConfigFile;
-
-		if (!CFile::Exists(sFilePath)) {
-			cerr << "Unable to find config [" << sConfigFile << "]" << endl;
-			return false;
+	if (sConfigFile.empty()) {
+		sFilePath = GetZNCPath() + "/znc.conf";
+	} else {
+		if (CUtils::Left(sConfigFile, 1) != "/") {
+			sFilePath = GetCurPath() + "/" + sConfigFile;
+		} else {
+			sFilePath = sConfigFile;
 		}
 	}
 
@@ -453,8 +450,8 @@ bool CZNC::ParseConfig(const string& sConfigFile) {
 					}
 #endif
 
-					if ((m_bSSL) && (!CFile::Exists(GetBinPath() + "/znc.pem"))) {
-						cerr << "Unable to locate pem file: [" << GetBinPath() << "/znc.pem]" << endl;
+					if ((m_bSSL) && (!CFile::Exists(GetCurPath() + "/znc.pem"))) {
+						cerr << "Unable to locate pem file: [" << GetCurPath() << "/znc.pem]" << endl;
 						return false;
 					}
 
@@ -468,7 +465,12 @@ bool CZNC::ParseConfig(const string& sConfigFile) {
 					m_sISpoofFile = sValue;
 					continue;
 				} else if (strcasecmp(sName.c_str(), "PidFile") == 0) {
-					m_sPidFile = sValue;
+					if (!sValue.empty() && sValue[0] != '/') {
+						m_sPidFile = GetZNCPath() + "/" + sValue;
+					} else {
+						m_sPidFile = sValue;
+					}
+
 					continue;
 				} else if (strcasecmp(sName.c_str(), "StatusPrefix") == 0) {
 					sStatusPrefix = sValue;
@@ -491,5 +493,6 @@ bool CZNC::ParseConfig(const string& sConfigFile) {
 		return false;
 	}
 
+	cout << "Loaded config [" << sFilePath << "]" << endl;
 	return true;
 }
