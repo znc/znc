@@ -166,9 +166,9 @@ public:
 	virtual bool OnChanNotice(const CNick& Nick, const CChan& Channel, string& sMessage);
 
 	CModule* FindModule(const string& sModule);
-	bool LoadModule(const string& sModule, const string& sArgs, CUser* pUser, const string& sPath, string& sRetMsg);
+	bool LoadModule(const string& sModule, const string& sArgs, CUser* pUser, string& sRetMsg);
 	bool UnloadModule(const string& sModule, string& sRetMsg);
-	bool ReloadModule(const string& sModule, const string& sArgs, CUser* pUser, const string& sPath, string& sRetMsg);
+	bool ReloadModule(const string& sModule, const string& sArgs, CUser* pUser, string& sRetMsg);
 };
 
 #endif // !_MODULES_H
