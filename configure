@@ -1835,7 +1835,7 @@ host_vendor=`echo $ac_cv_host | sed 's/^\([^-]*\)-\([^-]*\)-\(.*\)$/\2/'`
 host_os=`echo $ac_cv_host | sed 's/^\([^-]*\)-\([^-]*\)-\(.*\)$/\3/'`
 
 
-CXXFLAGS=""
+CXXFLAGS="-D_GNU_SOURCE"
 INCLUDES=""
 LIBS=""
 function appendLib {
