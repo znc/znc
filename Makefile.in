@@ -36,7 +36,7 @@ include .depend
 
 install: znc @MODTARGET@
 	mkdir -p $(DEST)
-	mkdir $(DEST)/modules
+	mkdir -p $(DEST)/modules
 	install -m 0711 znc $(DEST)
 	install -m 0711 modules/*.so $(DEST)/modules
 	
