@@ -73,6 +73,7 @@ if test "$MODULES" = "yes"; then
 	appendCXX "-D_MODDIR_=\\\"${prefix}/share/znc\\\""
 fi
 
+VERSION=`grep '#define VERSION' Modules.h | awk '{print $3}'`
 #
 # Auto detect modules
 
@@ -82,7 +83,9 @@ AC_SUBST([INCLUDES])
 AC_SUBST([LIBS])
 AC_SUBST([MODULES])
 AC_SUBST([MODTARGET])
+AC_SUBST([VERSION])
 AC_CONFIG_FILES([Makefile])
+AC_CONFIG_FILES([znc-config])
 if test "$MODULES" = "yes"; then
 	AC_CONFIG_FILES([modules/Makefile])
 fi
