@@ -40,8 +40,7 @@ char *strcasestr(const char *big, const char *little)
 #endif /* __sun */
 
 #ifdef HAVE_LIBSSL
-void CUtils::GenerateCert( FILE *pOut, bool bEncPrivKey )
-{
+void CUtils::GenerateCert( FILE *pOut, bool bEncPrivKey ) {
 	RSA *pRSA = RSA_generate_key( 1024, 17, NULL, NULL );
 	PEM_write_RSAPrivateKey( pOut, pRSA, ( bEncPrivKey ? EVP_des_ede3_cbc() : NULL ), NULL, 0, NULL, NULL );
 

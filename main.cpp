@@ -46,22 +46,22 @@ void die(int sig) {
 int main(int argc, char** argv) {
 	string sConfig;
 
+#ifdef HAVE_LIBSSL
 	// initialize ssl, allow client to have compression enabled if desired
 	InitSSL( CT_ZLIB );
+#endif /* HAVE_LIBSSL */
+
 	int iArg, iOptIndex = -1;
 #ifdef HAVE_LIBSSL
 	bool bMakePem = false;
 	bool bEncPem = false;
 #endif /* HAVE_LIBSSL */	
 	bool bMakePass = false;
-	while( ( iArg = getopt_long( argc, argv, "h", g_LongOpts, &iOptIndex ) != -1 ) )
-	{
-		switch( iArg )
-		{
+	while( ( iArg = getopt_long( argc, argv, "h", g_LongOpts, &iOptIndex ) != -1 ) ) {
+		switch( iArg ) {
 			case 1:
 			{ // long options
-				if ( iOptIndex >= 0 )
-				{
+				if ( iOptIndex >= 0 ) {
 					string sOption = Lower( g_LongOpts[iOptIndex].name );
 					if ( sOption == "makepass" )
 						bMakePass = true;
@@ -71,14 +71,11 @@ int main(int argc, char** argv) {
 					else if ( sOption == "encrypt-pem" )
 						bEncPem = true;
 #endif /* HAVE_LIBSSL */	
-					else if ( sOption == "help" )
-					{
+					else if ( sOption == "help" ) {
 						GenerateHelp( argv[0] );
 						return( 0 );
 					}
-				} 
-				else
-				{
+				} else {
 					GenerateHelp( argv[0] );
 					return( 1 );
 				}
@@ -99,11 +96,9 @@ int main(int argc, char** argv) {
 		sConfig = argv[optind];
 
 #ifdef HAVE_LIBSSL
-	if ( bMakePem )
-	{
+	if ( bMakePem ) {
 		FILE *f = fopen( "znc.pem", "w" );
-		if ( !f )
-		{
+		if ( !f ) {
 			cerr << "Unable to open znc.pem!" << endl;
 			return( 1 );
 		}
@@ -112,8 +107,7 @@ int main(int argc, char** argv) {
 		return( 0 );
 	}
 #endif /* HAVE_LIBSSL */	
-	if ( bMakePass )
-	{
+	if ( bMakePass ) {
 		char* pass = getpass( "Enter Password: " );
 		int iLen = strlen(pass);
 		cout << "Use this in the <User> section of your config:" << endl << endl << "Pass = " << CMD5(pass, iLen) << " -" << endl << endl;
