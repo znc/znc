@@ -14,13 +14,13 @@ depend::
 	g++ -M $(CXXFLAGS) $(SRCS) $(INCLUDES) >.depend
 
 install: all create_install_dir $(INSTALL_TARGS)
-	install -m 0711 *.so $(prefix)/modules
+	install -m 0711 *.so $(prefix)/share/znc
 
 create_install_dir:
-	mkdir -p $(prefix)/modules
+	mkdir -p $(prefix)/share/znc
 
 install_%:
-	install -m 0711 $(subst install_,,$@) $(prefix)/modules
+	install -m 0711 $(subst install_,,$@) $(prefix)/share
 
 clean:
 	rm -rf *.so *.o core core.*

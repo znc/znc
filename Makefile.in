@@ -33,6 +33,6 @@ clean:
 	$(CXX) $(CXXFLAGS) $(INCLUDES) -c -o $*.o $*.cpp
 
 install: znc @MODTARGET@
-	mkdir -p $(prefix)
-	install -m 0711 znc $(prefix)
-	(cd modules; $(MAKE))	
+	mkdir -p $(DEST)$(prefix)/bin
+	install -m 0711 znc $(DEST)$(prefix)/bin
+	(cd modules; $(DEST)$(MAKE))	

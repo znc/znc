@@ -65,6 +65,8 @@ if test "$MODULES" = "yes"; then
 	if test -n "$ISSUN"; then
 		MODFLAGS="$MODFLAGS -mimpure-text"
 	fi
+
+	appendCXX "-D_MODDIR_=\\\"${prefix}/share/znc\\\""
 fi
 
 #
