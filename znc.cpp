@@ -205,9 +205,11 @@ void CZNC::InitDirs(const string& sArgvPath) {
 		m_sHomePath = m_sBinPath;
 	}
 
+	m_sZNCPath = m_sHomePath + "/.znc";
+
 	// Other dirs that we use
-	m_sDLPath = m_sBinPath + "/downloads";
-	m_sModPath = m_sBinPath + "/modules";
+	m_sDLPath = m_sZNCPath + "/downloads";
+	m_sModPath = m_sZNCPath + "/modules";
 }
 
 bool CZNC::ParseConfig(const string& sConfigFile) {
@@ -416,7 +418,7 @@ bool CZNC::ParseConfig(const string& sConfigFile) {
 						string sModName = CUtils::Token(sValue, 0);
 						string sArgs = CUtils::Token(sValue, 1, true);
 
-						pUser->GetModules().LoadModule(sModName, sArgs, pUser, m_sBinPath, sModRet);
+						pUser->GetModules().LoadModule(sModName, sArgs, pUser, sModRet);
 						cout << sModRet << endl;
 #else
 						cerr << "Unable to load [" << sValue << "] Modules are not enabled." << endl;

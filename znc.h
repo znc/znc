@@ -28,10 +28,13 @@ public:
 	// Getters
 	TSocketManager<Csock>& GetManager() { return m_Manager; }
 	unsigned int GetListenPort() const { return m_uListenPort; }
-	const string& GetBinPath() const { return m_sBinPath; }
-	const string& GetDLPath() const { return m_sDLPath; }
-	const string& GetModPath() const { return m_sModPath; }
-	const string& GetHomePath() const { return m_sHomePath; }
+	const string& GetBinPath() const { if (!CFile::Exists(m_sBinPath)) { CUtils::MakeDir(m_sBinPath); } return m_sBinPath; }
+	const string& GetDLPath() const { if (!CFile::Exists(m_sDLPath)) { CUtils::MakeDir(m_sDLPath); } return m_sDLPath; }
+	const string& GetModPath() const { if (!CFile::Exists(m_sModPath)) { CUtils::MakeDir(m_sModPath); } return m_sModPath; }
+	const string& GetHomePath() const { if (!CFile::Exists(m_sHomePath)) { CUtils::MakeDir(m_sHomePath); } return m_sHomePath; }
+	const string& GetZNCPath() const { if (!CFile::Exists(m_sZNCPath)) { CUtils::MakeDir(m_sZNCPath); } return m_sZNCPath; }
+	const string& GetDataPath() const { if (!CFile::Exists(m_sDataPath)) { CUtils::MakeDir(m_sDataPath); } return m_sDataPath; }
+
 	bool IsSSL() const {
 #ifdef HAVE_LIBSSL
 		return m_bSSL;
@@ -56,6 +59,8 @@ protected:
 	string					m_sDLPath;
 	string					m_sModPath;
 	string					m_sHomePath;
+	string					m_sZNCPath;
+	string					m_sDataPath;
 
 	string					m_sISpoofFile;
 	string					m_sOrigISpoof;
