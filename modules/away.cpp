@@ -20,6 +20,9 @@
  *
  * 
  * $Log$
+ * Revision 1.4  2005/04/02 22:22:24  imaginos
+ * ability to change pass
+ *
  * Revision 1.3  2005/04/01 08:55:41  imaginos
  * keep things in synch
  *
@@ -198,6 +201,13 @@ public:
 		else if ( sCmdName == "ping" )
 		{
 			Ping();
+			if ( m_bIsAway )
+				Back();
+		}
+		else if ( sCmdName == "pass" )
+		{
+			m_sPassword = CUtils::Token( sCommand, 1 );
+			PutModNotice( "Password Updated to [" + m_sPassword + "]" );
 		}
 		else if ( sCmdName == "show" )
 		{
@@ -305,6 +315,14 @@ public:
 		return( false );	
 	}
 	
+	virtual bool OnUserNotice(const string& sTarget, string& sMessage)
+	{
+		Ping();
+		if( m_bIsAway )
+			Back();
+		
+		return( false );	
+	}
 	virtual bool OnUserMsg(const string& sTarget, string& sMessage)
 	{
 		Ping();
@@ -376,10 +394,7 @@ void CAwayJob::RunJob()
 		time_t iNow = time( NULL );
 
 		if ( ( iNow - p->GetTimeStamp() ) > 300 )
-		{
-			p->PutModNotice( "You have been marked as away", "away" );
 			p->Away();
-		}
 	}
 }
 
