@@ -249,6 +249,8 @@ public:
 			Help();
 		} else if (strcasecmp(sCmdName.c_str(), "LIST") == 0) {
 			List();
+		} else if (strcasecmp(sCmdName.c_str(), "DUMP") == 0) {
+			Dump();
 		} else if (strcasecmp(sCmdName.c_str(), "ENABLE") == 0) {
 			string sTok = CUtils::Token(sCommand, 1);
 
@@ -358,6 +360,34 @@ private:
 		}
 	}
 
+	void Dump() {
+		if (!m_lsWatchers.size()) {
+			PutModule("You have no entries.");
+			return;
+		}
+
+		PutModule("---------------");
+		PutModule("/msg " + GetModNick() + " CLEAR");
+
+		unsigned int uIdx = 1;
+
+		for (list<CWatchEntry>::iterator it = m_lsWatchers.begin(); it != m_lsWatchers.end(); it++, uIdx++) {
+			CWatchEntry& WatchEntry = *it;
+
+			PutModule("/msg " + GetModNick() + " WATCH " + WatchEntry.GetHostMask() + " " + WatchEntry.GetTarget() + " " + WatchEntry.GetPattern());
+
+			if (WatchEntry.GetSourcesStr().size()) {
+				PutModule("/msg " + GetModNick() + " SETSOURCES " + CUtils::ToString(uIdx) + " " + WatchEntry.GetSourcesStr());
+			}
+
+			if (WatchEntry.IsDisabled()) {
+				PutModule("/msg " + GetModNick() + " DISABLE " + CUtils::ToString(uIdx));
+			}
+		}
+
+		PutModule("---------------");
+	}
+
 	void SetSources(unsigned int uIdx, const string& sSources) {
 		uIdx--;	// "convert" index to zero based
 		if (uIdx >= m_lsWatchers.size()) {
@@ -399,6 +429,10 @@ private:
 		Table.AddRow();
 		Table.SetCell("Command", "List");
 		Table.SetCell("Description", "List all entries being watched.");
+
+		Table.AddRow();
+		Table.SetCell("Command", "Dump");
+		Table.SetCell("Description", "Dump a list of all current entries to be used later.");
 
 		Table.AddRow();
 		Table.SetCell("Command", "Del <Id>");
