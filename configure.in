@@ -30,6 +30,8 @@ function appendCXX {
 if `echo $host_os | grep -qi 'freebsd'`; then
 	appendInc -I/usr/local/include
 	appendLib -L/usr/local/lib -lcompat
+elif `echo $host_os | grep -qi 'sol'`; then
+	appendLib -lsocket -lnsl
 fi
 
 AC_ARG_WITH( openssl, [  --with-openssl=/path/to/openssl], OPENSSL=$withval,)
@@ -50,15 +52,25 @@ fi
 
 if test "$MODULES" = "yes"; then
 	AC_CHECK_LIB( dl, dlopen, appendCXX -D_MODULES -rdynamic,, )
+	MODFLAGS=`echo $CXXFLAGS | sed 's/-rdynamic//g'`
+	MODTARGET="modules"
 fi
 
 #
 # Auto detect modules
 
 AC_SUBST([CXXFLAGS])
+AC_SUBST([MODFLAGS])
 AC_SUBST([INCLUDES])
 AC_SUBST([LIBS])
+AC_SUBST([MODULES])
+AC_SUBST([MODTARGET])
 AC_CONFIG_FILES([Makefile])
+if test "$MODULES" = "yes"; then
+	AC_CONFIG_FILES([modules/buildmod])
+fi
 AC_OUTPUT
-
+if test -f modules/buildmod; then
+	chmod 0711 modules/buildmod
+fi
 touch .depend
