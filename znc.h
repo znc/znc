@@ -34,6 +34,7 @@ public:
 	const string& GetHomePath() const { if (!CFile::Exists(m_sHomePath)) { CUtils::MakeDir(m_sHomePath); } return m_sHomePath; }
 	const string& GetZNCPath() const { if (!CFile::Exists(m_sZNCPath)) { CUtils::MakeDir(m_sZNCPath); } return m_sZNCPath; }
 	const string& GetDataPath() const { if (!CFile::Exists(m_sDataPath)) { CUtils::MakeDir(m_sDataPath); } return m_sDataPath; }
+	string GetPemLocation() const { return GetZNCPath() + "/znc.pem"; }
 
 	bool IsSSL() const {
 #ifdef HAVE_LIBSSL

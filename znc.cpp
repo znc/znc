@@ -94,7 +94,7 @@ int CZNC::Loop() {
 #ifdef HAVE_LIBSSL
 			if (pServer->IsSSL()) {
 				bSSL = true;
-				pIRCSock->SetPemLocation(GetCurPath() + "/znc.pem");
+				pIRCSock->SetPemLocation(GetPemLocation());
 			}
 #endif
 			if (!m_Manager.Connect(pServer->GetName(), pServer->GetPort(), sSockName, 20, bSSL, pUser->GetVHost(), pIRCSock)) {
@@ -170,7 +170,7 @@ bool CZNC::Listen() {
 #ifdef HAVE_LIBSSL
 	if (IsSSL()) {
 		bSSL = true;
-		pUserSock->SetPemLocation(GetCurPath() + "/znc.pem");
+		pUserSock->SetPemLocation(GetPemLocation());
 	}
 #endif
 	return m_Manager.ListenAll(m_uListenPort, "_LISTENER", bSSL, SOMAXCONN, pUserSock);
@@ -450,8 +450,8 @@ bool CZNC::ParseConfig(const string& sConfigFile) {
 					}
 #endif
 
-					if ((m_bSSL) && (!CFile::Exists(GetCurPath() + "/znc.pem"))) {
-						cerr << "Unable to locate pem file: [" << GetCurPath() << "/znc.pem]" << endl;
+					if ((m_bSSL) && (!CFile::Exists(GetPemLocation()))) {
+						cerr << "Unable to locate pem file: [" << GetPemLocation() << "]" << endl;
 						return false;
 					}
 
