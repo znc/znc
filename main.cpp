@@ -97,13 +97,24 @@ int main(int argc, char** argv) {
 
 #ifdef HAVE_LIBSSL
 	if ( bMakePem ) {
-		FILE *f = fopen( "znc.pem", "w" );
+		CZNC* pZNC = CZNC::New();
+		pZNC->InitDirs("");
+		string sPemFile = pZNC->GetPemLocation();
+
+		FILE *f = fopen( sPemFile.c_str(), "w" );
+
 		if ( !f ) {
-			cerr << "Unable to open znc.pem!" << endl;
+			cerr << "Unable to open pem file [" << sPemFile << "]" << endl;
+			delete pZNC;
 			return( 1 );
 		}
+
 		CUtils::GenerateCert( f, bEncPem );
 		fclose( f );
+
+		cout << "Wrote pem file to [" << sPemFile << "]" << endl;
+
+		delete pZNC;
 		return( 0 );
 	}
 #endif /* HAVE_LIBSSL */	
@@ -116,7 +127,6 @@ int main(int argc, char** argv) {
 	}
 
 	CZNC* pZNC = CZNC::New();
-
 	pZNC->InitDirs(((argc) ? argv[0] : ""));
 
 	if (!pZNC->ParseConfig(sConfig)) {
