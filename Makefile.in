@@ -38,7 +38,8 @@ distclean: clean
 install: znc @MODTARGET@
 	mkdir -p $(DESTDIR)$(prefix)/bin
 	mkdir -p $(DESTDIR)$(prefix)/include/znc
-	install -m 0711 znc $(DESTDIR)$(prefix)/bin
+	install -m 0755 znc $(DESTDIR)$(prefix)/bin
+	install -m 0755 znchk $(DESTDIR)$(prefix)/bin
 	install -m 0755 znc-config $(DESTDIR)$(prefix)/bin
 	install -m 0644 *.h $(DESTDIR)$(prefix)/include/znc
 	if test -n "@MODTARGET@"; then (cd modules; $(MAKE) install DESTDIR=$(DESTDIR)); fi
