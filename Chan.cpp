@@ -6,6 +6,8 @@
 void CChan::Reset() {
 	m_bWhoDone = false;
 	m_bIsOn = false;
+	m_bIsOp = false;
+	m_bIsVoice = false;
 	m_uOpCount = 0;
 	m_uVoiceCount =	0;
 	m_uModes = 0;
@@ -182,9 +184,17 @@ bool CChan::AddNick(const string& sNick) {
 	if ((bIsOp) && (!pNick->IsOp())) {
 		IncOpCount();
 		pNick->SetOp(true);
+
+		if (strcasecmp(pNick->GetNick().c_str(), m_pUser->GetCurNick().c_str()) == 0) {
+			SetOpped(true);
+		}
 	} else if ((bIsVoice) && (!pNick->IsVoice())) {
 		IncVoiceCount();
 		pNick->SetVoice(true);
+
+		if (strcasecmp(pNick->GetNick().c_str(), m_pUser->GetCurNick().c_str()) == 0) {
+			SetVoiced(true);
+		}
 	}
 
 	m_msNicks[pNick->GetNick()] = pNick;
@@ -240,16 +250,20 @@ void CChan::OnOp(const string& sOpNick, const string& sNick, bool bOpped) {
 	if (pNick) {
 		bool bNoChange = (pNick->IsOp() == bOpped);
 #ifdef _MODULES
-	CNick* pOpNick = FindNick(sOpNick);
+		CNick* pOpNick = FindNick(sOpNick);
 
-	if (pOpNick) {
-		if (bOpped) {
-			m_pUser->GetModules().OnOp(*pOpNick, *pNick, *this, bNoChange);
-		} else {
-			m_pUser->GetModules().OnDeop(*pOpNick, *pNick, *this, bNoChange);
+		if (pOpNick) {
+			if (bOpped) {
+				m_pUser->GetModules().OnOp(*pOpNick, *pNick, *this, bNoChange);
+			} else {
+				m_pUser->GetModules().OnDeop(*pOpNick, *pNick, *this, bNoChange);
+			}
 		}
-	}
 #endif
+
+		if (strcasecmp(sNick.c_str(), m_pUser->GetCurNick().c_str()) == 0) {
+			SetOpped(bOpped);
+		}
 
 		if (bNoChange) {
 			// If no change, return
@@ -278,6 +292,10 @@ void CChan::OnVoice(const string& sOpNick, const string& sNick, bool bVoiced) {
 			}
 		}
 #endif
+
+		if (strcasecmp(sNick.c_str(), m_pUser->GetCurNick().c_str()) == 0) {
+			SetVoiced(bVoiced);
+		}
 
 		if (bNoChange) {
 			// If no change, return

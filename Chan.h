@@ -71,6 +71,8 @@ public:
 
 	// Setters
 	void SetIsOn(bool b) { m_bIsOn = b; if (!b) { Reset(); } else { Joined(); } }
+	void SetOpped(bool b) { m_bIsOp = b; }
+	void SetVoiced(bool b) { m_bIsVoice = b; }
 	void SetKey(const string& s) { m_sKey = s; }
 	void SetTopic(const string& s) { m_sTopic = s; }
 	void SetDefaultModes(const string& s) { m_sDefaultModes = s; }
@@ -87,6 +89,8 @@ public:
 
 	// Getters
 	const bool IsOn() const { return m_bIsOn; }
+	const bool IsOp() const { return m_bIsOp; }
+	const bool IsVoice() const { return m_bIsVoice; }
 	const string& GetName() const { return m_sName; }
 	unsigned int GetModes() const { return m_uModes; }
 	const string& GetKey() const { return m_sKey; }
@@ -109,6 +113,8 @@ private:
 protected:
 	bool				m_bDetached;
 	bool				m_bIsOn;
+	bool				m_bIsOp;
+	bool				m_bIsVoice;
 	bool				m_bWhoDone;
 	bool				m_bKeepBuffer;
 	bool				m_bAutoCycle;
