@@ -464,9 +464,9 @@ void CUserSock::UserCommand(const string& sLine) {
 			for (unsigned int a = 0; a < vChans.size(); a++) {
 				CChan* pChan = vChans[a];
 				Table.AddRow();
-				Table.SetCell("Name", pChan->GetName());
+				Table.SetCell("Name", string((pChan->IsOp()) ? "@" : ((pChan->IsVoice()) ? "+" : "")) + pChan->GetName());
 				Table.SetCell("Status", ((vChans[a]->IsOn()) ? ((vChans[a]->IsDetached()) ? "Detached" : "Joined") : "Trying"));
-				Table.SetCell("Buf", CUtils::ToString(pChan->GetBufferCount()));
+				Table.SetCell("Buf", string((pChan->KeepBuffer()) ? "*" : "") + CUtils::ToString(pChan->GetBufferCount()));
 
 				string sModes = pChan->GetModeString();
 				unsigned int uLimit = pChan->GetLimit();
