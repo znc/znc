@@ -84,8 +84,15 @@ void CUserSock::ReadLine(const string& sData) {
 		if (m_pUser) {
 			CChan* pChan = m_pUser->FindChan(sChan);
 
-			if ((pChan) && (!pChan->IsOn())) {
-				pChan->IncClientRequests();
+			if (pChan) {
+				if (!pChan->IsOn()) {
+					pChan->IncClientRequests();
+				} else if (pChan->IsDetached()) {
+					PutServ(":" + m_pUser->GetCurNick() + " JOIN :" + pChan->GetName());
+					PutIRC("NAMES " + pChan->GetName());
+				}
+
+				pChan->SetDetached(false);
 			}
 		}
 	} else if (strcasecmp(sCommand.c_str(), "QUIT") == 0) {
@@ -413,6 +420,25 @@ void CUserSock::UserCommand(const string& sLine) {
 
 		while (Table.GetLine(uTableIdx++, sLine)) {
 			PutStatus(sLine);
+		}
+	} else if (strcasecmp(sCommand.c_str(), "DETACH") == 0) {
+		if (m_pUser) {
+			string sChan = CUtils::Token(sLine, 1);
+
+			if (sChan.empty()) {
+				PutStatus("Usage: Detach <#chan>");
+				return;
+			}
+
+			CChan* pChan = m_pUser->FindChan(sChan);
+			if (!pChan) {
+				PutStatus("You are not on [" + sChan + "]");
+				return;
+			}
+
+			PutStatus("Detaching you from [" + sChan + "]");
+			pChan->SetDetached();
+			PutServ(":" + m_pUser->GetCurNick() + "!x@x.com PART " + pChan->GetName());
 		}
 	} else if (strcasecmp(sCommand.c_str(), "JUMP") == 0) {
 		if (m_pUser) {

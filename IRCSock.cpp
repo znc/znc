@@ -352,6 +352,9 @@ void CIRCSock::ReadLine(const string& sData) {
 #ifdef _MODULES
 					m_pUser->GetModules().OnJoin(sNickMask, *pChan);
 #endif
+					if (pChan->IsDetached()) {
+						return;
+					}
 				}
 			} else if (strcasecmp(sCmd.c_str(), "PART") == 0) {
 				string sChan = CUtils::Token(sRest, 0);
@@ -370,6 +373,10 @@ void CIRCSock::ReadLine(const string& sData) {
 				if (strcasecmp(sNick.c_str(), GetNick().c_str()) == 0) {
 					m_pUser->DelChan(sChan);
 				}
+
+				if ((pChan) && (pChan->IsDetached())) {
+					return;
+				}
 			} else if (strcasecmp(sCmd.c_str(), "MODE") == 0) {
 				string sChan = CUtils::Token(sRest, 0);
 				string sModes = CUtils::Token(sRest, 1, true);
@@ -377,6 +384,10 @@ void CIRCSock::ReadLine(const string& sData) {
 				CChan* pChan = m_pUser->FindChan(sChan);
 				if (pChan) {
 					pChan->ModeChange(sModes, sNick);
+
+					if (pChan->IsDetached()) {
+						return;
+					}
 				}
 			} else if (strcasecmp(sCmd.c_str(), "KICK") == 0) {
 				// :opnick!ident@host.com KICK #chan nick :msg
@@ -403,6 +414,10 @@ void CIRCSock::ReadLine(const string& sData) {
 					}
 
 					PutServ("JOIN " + sChan + " " + sKey);
+				}
+
+				if ((pChan) && (pChan->IsDetached())) {
+					return;
 				}
 			} else if (strcasecmp(sCmd.c_str(), "NOTICE") == 0) {
 				// :nick!ident@host.com NOTICE #chan :Message
@@ -597,7 +612,7 @@ bool CIRCSock::OnChanCTCP(const string& sNickMask, const string& sChan, string& 
 	CChan* pChan = m_pUser->FindChan(sChan);
 	if (pChan) {
 #ifdef _MODULES
-		if (m_pUser->GetModules().OnChanCTCP(sNickMask, *pChan, sMessage)) {
+		if ((m_pUser->GetModules().OnChanCTCP(sNickMask, *pChan, sMessage)) || (pChan->IsDetached())) {
 			return true;
 		}
 #endif
@@ -619,7 +634,7 @@ bool CIRCSock::OnChanNotice(const string& sNickMask, const string& sChan, string
 		}
 	}
 
-	return false;
+	return ((pChan) && (pChan->IsDetached()));
 }
 
 bool CIRCSock::OnChanMsg(const string& sNickMask, const string& sChan, string& sMessage) {
@@ -635,7 +650,7 @@ bool CIRCSock::OnChanMsg(const string& sNickMask, const string& sChan, string& s
 		}
 	}
 
-	return false;
+	return ((pChan) && (pChan->IsDetached()));
 }
 
 void CIRCSock::UserConnected(CUserSock* pUserSock) {
@@ -660,7 +675,7 @@ void CIRCSock::UserConnected(CUserSock* pUserSock) {
 
 	const vector<CChan*>& vChans = m_pUser->GetChans();
 	for (unsigned int a = 0; a < vChans.size(); a++) {
-		if (vChans[a]->IsOn()) {
+		if ((vChans[a]->IsOn()) && (!vChans[a]->IsDetached())) {
 			PutUser(":" + m_Nick.GetNickMask() + " JOIN :" + vChans[a]->GetName());
 			PutServ("NAMES " + vChans[a]->GetName());
 		}

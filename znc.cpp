@@ -340,6 +340,9 @@ bool CZNC::ParseConfig(const string& sConfigFile) {
 					} else if (strcasecmp(sName.c_str(), "KeepBuffer") == 0) {
 						pChan->SetKeepBuffer((strcasecmp(sValue.c_str(), "true") == 0));
 						continue;
+					} else if (strcasecmp(sName.c_str(), "Detached") == 0) {
+						pChan->SetDetached((strcasecmp(sValue.c_str(), "true") == 0));
+						continue;
 					} else if (strcasecmp(sName.c_str(), "AutoCycle") == 0) {
 						pChan->SetAutoCycle((strcasecmp(sValue.c_str(), "true") == 0));
 						continue;

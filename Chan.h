@@ -28,6 +28,7 @@ public:
 		m_pUser = pUser;
 		m_bKeepBuffer = false;
 		m_bAutoCycle = true;
+		m_bDetached = false;
 		m_uBufferCount = uBufferCount;
 		Reset();
 	}
@@ -81,6 +82,7 @@ public:
 	void SetKeepBuffer(bool b) { m_bKeepBuffer = b; }
 	void SetAutoCycle(bool b) { m_bAutoCycle = b; }
 	void SetWhoDone(bool b = true) { m_bWhoDone = b; }
+	void SetDetached(bool b = true) { m_bDetached = b; }
 	// !Setters
 
 	// Getters
@@ -101,9 +103,11 @@ public:
 	bool HasMode(EMode eMode) const { return (m_uModes & eMode); }
 	bool KeepBuffer() const { return m_bKeepBuffer; }
 	bool AutoCycle() const { return m_bAutoCycle; }
+	bool IsDetached() const { return m_bDetached; }
 	// !Getters
 private:
 protected:
+	bool				m_bDetached;
 	bool				m_bIsOn;
 	bool				m_bWhoDone;
 	bool				m_bKeepBuffer;
