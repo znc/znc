@@ -301,9 +301,9 @@ void CIRCSock::ReadLine(const string& sData) {
 				m_pUser->GetModules().OnNick(sNickMask, sNewNick);
 #endif
 			} else if (strcasecmp(sCmd.c_str(), "QUIT") == 0) {
-				string sChan = sRest;
-				if (CUtils::Left(sChan, 1) == ":") {
-					CUtils::LeftChomp(sChan);
+				string sMessage = sRest;
+				if (CUtils::Left(sMessage, 1) == ":") {
+					CUtils::LeftChomp(sMessage);
 				}
 
 				// :nick!ident@host.com QUIT :message
@@ -319,10 +319,10 @@ void CIRCSock::ReadLine(const string& sData) {
 				}
 
 #ifdef _MODULES
-				m_pUser->GetModules().OnQuit(Nick, sChan);
+				m_pUser->GetModules().OnQuit(Nick, sMessage);
 #endif
 			} else if (strcasecmp(sCmd.c_str(), "JOIN") == 0) {
-				string sChan = sRest;
+				string sChan = CUtils::Token(sRest, 0);
 				if (CUtils::Left(sChan, 1) == ":") {
 					CUtils::LeftChomp(sChan);
 				}
@@ -339,7 +339,7 @@ void CIRCSock::ReadLine(const string& sData) {
 #endif
 				}
 			} else if (strcasecmp(sCmd.c_str(), "PART") == 0) {
-				string sChan = sRest;
+				string sChan = CUtils::Token(sRest, 0);
 				if (CUtils::Left(sChan, 1) == ":") {
 					CUtils::LeftChomp(sChan);
 				}
