@@ -38,17 +38,20 @@ fi
 AC_ARG_WITH( openssl, [  --with-openssl=/path/to/openssl], OPENSSL=$withval,)
 AC_ARG_ENABLE( debug, [  --enable-debug  enable debuging], appendCXX -Wall -ggdb -D_DEBUG, appendCXX -Wall -s -O2 -fomit-frame-pointer )
 AC_ARG_ENABLE( modules, [  --disable-modules  disable modules], MODULES="no", MODULES="yes")
-
-if test -n "$OPENSSL"; then
-	appendLib -L${OPENSSL}/lib
-	appendInc -I${OPENSSL}/include
-fi
-
-AC_CHECK_LIB( crypto, BIO_new,,NOSSL=1, )
-AC_CHECK_LIB( ssl, SSL_shutdown,,NOSSL=1, )
+AC_ARG_ENABLE( openssl, [  --disable-openssl  disable openssl], NOSSL=1,)
 
 if test -z "$NOSSL"; then
-	appendCXX -DHAVE_LIBSSL
+	if test -n "$OPENSSL"; then
+		appendLib -L${OPENSSL}/lib
+		appendInc -I${OPENSSL}/include
+	fi
+
+	AC_CHECK_LIB( crypto, BIO_new,,NOSSL=1, )
+	AC_CHECK_LIB( ssl, SSL_shutdown,,NOSSL=1, )
+
+	if test -z "$NOSSL"; then
+		appendCXX -DHAVE_LIBSSL
+	fi
 fi
 
 if test -z "$prefix" || test $prefix = "NONE"; then
