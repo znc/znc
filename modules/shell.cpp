@@ -180,7 +180,7 @@ public:
 	void PutShell(const string& sLine) {
 		string sPath = m_sPath;
 
-		unsigned int a = sPath.find(' ');
+		string::size_type a = sPath.find(' ');
 		while (a != string::npos) {
 			sPath.replace(a, 1, "_");
 			a = sPath.find(' ');
@@ -203,7 +203,7 @@ void CExecSock::ReadLine(const string& sData) {
 		sLine = sLine.substr(0, sLine.length() -1);
 	}
 
-	unsigned int a = sLine.find('\t');
+	string::size_type a = sLine.find('\t');
 	while (a != string::npos) {
 		sLine.replace(a, 1, "    ");
 		a = sLine.find('\t');

@@ -14,6 +14,9 @@
  * Author: imaginos <imaginos@imaginos.net>
  * 
  * $Log$
+ * Revision 1.7  2005/04/04 06:35:19  imaginos
+ * fixed int32's that test against npos to string::size_type
+ *
  * Revision 1.6  2005/04/03 23:03:06  imaginos
  * show this requires ssl
  *
@@ -212,7 +215,7 @@ public:
 	}	
 	virtual void OnModCommand( const string& sCommand ) 
 	{
-		u_int iPos = sCommand.find( " " );
+		string::size_type iPos = sCommand.find( " " );
 		string sCom, sArgs;
 		if ( iPos == string::npos )
 			sCom = sCommand;

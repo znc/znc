@@ -25,6 +25,9 @@
  * better solution then plain text.
  * 
  * $Log$
+ * Revision 1.2  2005/04/04 06:35:19  imaginos
+ * fixed int32's that test against npos to string::size_type
+ *
  * Revision 1.1  2005/03/30 19:36:20  imaginos
  * rename files
  *
@@ -153,7 +156,7 @@ public:
 	
 	virtual void OnModCommand( const string& sCommand )
 	{
-		u_int iPos = sCommand.find( " " );
+		string::size_type iPos = sCommand.find( " " );
 		string sCom, sArgs;
 		if ( iPos == string::npos )
 			sCom = sCommand;
