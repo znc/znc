@@ -18,11 +18,6 @@ CIRCSock::CIRCSock(CZNC* pZNC, CUser* pUser) : Csock() {
 }
 
 CIRCSock::~CIRCSock() {
-
-#ifdef _MODULES
-	m_pUser->GetModules().OnIRCDisconnected();
-#endif
-
 	const vector<CChan*>& vChans = m_pUser->GetChans();
 	for (unsigned int a = 0; a < vChans.size(); a++) {
 		vChans[a]->SetIsOn(false);
@@ -738,6 +733,11 @@ void CIRCSock::Connected() {
 }
 
 void CIRCSock::Disconnected() {
+#ifdef _MODULES
+	cerr << "OnIRCDisconnected()" << endl;
+	m_pUser->GetModules().OnIRCDisconnected();
+#endif
+
 	DEBUG_ONLY(cout << GetSockName() << " == Disconnected()" << endl);
 	m_pUser->PutStatus("Disconnected from IRC.  Reconnecting...");
 }
