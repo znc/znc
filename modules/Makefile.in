@@ -4,11 +4,20 @@ CXXFLAGS=@CXXFLAGS@
 INCLUDES=@INCLUDES@ -I..
 LIBS=@LIBS@
 VPATH=.:..
+
+ifeq "@NOSSL@" "1" 
+TARGETS=$(foreach file, $(wildcard *.cpp), $(if $(shell grep HAVE_LIBSSL $(file)),, $(addsuffix .so, $(basename $(file)))))
+INSTALL_TARGS=$(foreach file, $(wildcard *.cpp), $(if $(shell grep HAVE_LIBSSL $(file)),, install_$(addsuffix .so, $(basename $(file)))))
+OBJS=$(foreach file, $(wildcard *.cpp), $(if $(shell grep HAVE_LIBSSL $(file)),, $(addsuffix .o, $(basename $(file)))))
+SRCS=$(wildcard ../*.cpp) $(foreach file, $(wildcard *.cpp), $(if $(shell grep HAVE_LIBSSL $(file)),,$(file)))
+else
+TARGETS=$(addsuffix .so, $(basename $(wildcard *.cpp)))
+INSTALL_TARGS=$(foreach file, $(addsuffix .so, $(basename $(wildcard *.cpp))), install_$(file))
 OBJS=$(addsuffix .o, $(basename $(wildcard *.cpp)))
 SRCS=$(wildcard *.cpp) $(wildcard ../*.cpp)
-INSTALL_TARGS=$(foreach file, $(addsuffix .so, $(basename $(wildcard *.cpp))), install_$(file))
+endif
 
-all: $(OBJS) $(addsuffix .so, $(basename $(wildcard *.cpp)))
+all: $(OBJS) $(TARGETS)
 
 depend::
 	g++ -M $(CXXFLAGS) $(SRCS) $(INCLUDES) >.depend
