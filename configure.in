@@ -53,6 +53,7 @@ fi
 if test "$MODULES" = "yes"; then
 	AC_CHECK_LIB( dl, dlopen, appendCXX -D_MODULES -rdynamic,, )
 	MODFLAGS=`echo $CXXFLAGS | sed 's/-rdynamic//g'`
+	MODFLAGS="$MODFLAGS -I`pwd`"
 	MODTARGET="modules"
 	appendLib -ldl
 fi

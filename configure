@@ -2757,6 +2757,7 @@ if test $ac_cv_lib_dl_dlopen = yes; then
 fi
 
 	MODFLAGS=`echo $CXXFLAGS | sed 's/-rdynamic//g'`
+	MODFLAGS="$MODFLAGS -I`pwd`"
 	MODTARGET="modules"
 	appendLib -ldl
 fi

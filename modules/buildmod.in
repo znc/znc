@@ -22,14 +22,12 @@ if [ "$1" = "--libs" ]; then
 fi
 
 if [ "$1" = "--all" ]; then
-	for i in *; do
-		FILE="$FILE $i"
-	done
+	FILES=`ls`
 else
 	FILES=$@
 fi
 
-for arg in "$FILES"
+for arg in $FILES
 do
 	if test -d $arg && test "$arg" != "CVS"; then
 		(cd $arg && make || exit 1)
