@@ -1,7 +1,4 @@
-ifneq ($(MAKE),gmake)
-# If you got an ERROR on the previous line, then you aren't using gmake
-endif
-
+prefix=@prefix@
 CXX=g++
 CXXFLAGS=@CXXFLAGS@
 INCLUDES=@INCLUDES@ -I..
@@ -17,8 +14,8 @@ depend::
 	g++ -M $(CXXFLAGS) $(SRCS) $(INCLUDES) >.depend
 
 install: all
-	mkdir -p $(DEST)/modules
-	install -m 0711 *.so $(DEST)/modules
+	mkdir -p $(prefix)/modules
+	install -m 0711 *.so $(prefix)/modules
 
 clean:
 	rm -rf *.so *.o core core.*

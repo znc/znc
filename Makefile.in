@@ -1,11 +1,8 @@
-ifneq ($(MAKE),gmake)
-# If you got an ERROR on the previous line, then you aren't using gmake
-endif
-
 CXX=g++
 CXXFLAGS=@CXXFLAGS@
 INCLUDES=@INCLUDES@
 LIBS=@LIBS@
+prefix=@prefix@
 
 OBJS=main.o znc.o User.o IRCSock.o UserSock.o DCCBounce.o DCCSock.o Chan.o Nick.o Server.o Modules.o md5.o Buffer.o Utils.o
 SRCS=main.cpp znc.cpp User.cpp IRCSock.cpp UserSock.cpp DCCBounce.cpp DCCSock.cpp Chan.cpp Nick.cpp Server.cpp Modules.cpp md5.cpp Buffer.cpp Utils.cpp
@@ -36,6 +33,6 @@ clean:
 	$(CXX) $(CXXFLAGS) $(INCLUDES) -c -o $*.o $*.cpp
 
 install: znc @MODTARGET@
-	mkdir -p $(DEST)
-	install -m 0711 znc $(DEST)
-	(cd modules; $(MAKE) DEST=$(DEST))	
+	mkdir -p $(prefix)
+	install -m 0711 znc $(prefix)
+	(cd modules; $(MAKE))	
