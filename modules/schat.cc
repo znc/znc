@@ -14,8 +14,11 @@
  * Author: imaginos <imaginos@imaginos.net>
  * 
  * $Log$
- * Revision 1.1  2004/08/24 00:08:52  prozacx
- * Initial revision
+ * Revision 1.2  2004/08/25 23:14:35  imaginos
+ * just remove trailing \r\n
+ *
+ * Revision 1.1.1.1  2004/08/24 00:08:52  prozacx
+ *
  *
  *
  */     
@@ -419,7 +422,12 @@ void CSChatSock::ReadLine( const CS_STRING & sLine )
 	if ( m_pModule )
 	{
 		string sText = sLine;
-		CUtils::Trim( sText );
+		if ( sText[sText.length()-1] == '\n' )
+			sText.erase( sText.length()-1, 1 );
+		
+		if ( sText[sText.length()-1] == '\r' )
+			sText.erase( sText.length()-1, 1 );
+
 		if ( m_pModule->IsAttached() )
 			m_pModule->SendToUser( m_sChatNick + "!" + m_sChatNick + "@" + GetRemoteIP(), sText );
 		else
