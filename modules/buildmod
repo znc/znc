@@ -1,0 +1,45 @@
+#!/bin/sh
+CXXFLAGS="-Wall -D_GNU_SOURCE -DHAVE_LIBSSL -I.."
+LIBS="-lssl"
+
+if test -z "$1"; then
+	echo "Usage: $0 <module> [...]"
+	exit 1
+fi
+
+for arg in "$@"
+do
+	if test -d $arg; then
+		(cd $arg && make || exit 1)
+	elif test -f "$arg"; then
+		FILE="$arg"
+		MOD="${FILE%.cpp}"
+		MOD="${MOD%.cc}"
+	elif test -f "$arg.cpp"; then
+		FILE="$arg.cpp"
+		MOD="$arg"
+	elif test -f "$arg.cc"; then
+		FILE="$arg.cc"
+		MOD="$arg"
+	fi
+
+	rm -f "$MOD.so"
+
+	if test -n "$FILE"; then
+		COMMAND="g++ $CXXFLAGS -c $FILE"
+		echo $COMMAND 
+		$COMMAND || exit 1
+		COMMAND="g++ $CXXFLAGS -shared -o $MOD.so $MOD.o $LIBS"
+		echo $COMMAND
+		$COMMAND || exit 1
+	fi
+
+	if ! test -f "$MOD.so"; then
+		echo "Failed to build $MOD.so!"
+		exit 1
+	else
+		echo "Built $MOD.so"
+	fi
+done
+
+exit 0

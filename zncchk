@@ -1,0 +1,25 @@
+#!/bin/sh
+dir="."
+cmd="znc"
+pidfile="znc.pid"
+
+PATH=.:$PATH
+export PATH
+
+cd $dir
+
+if test -s $pidfile; then
+	pid=`cat $pidfile`
+
+	if `kill -0 $pid >/dev/null 2>&1`; then
+		exit 0
+	fi
+
+	rm -f $pidfile
+fi
+
+echo ""
+echo "Reloading..."
+echo ""
+$cmd
+exit 0
