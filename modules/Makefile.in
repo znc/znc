@@ -1,0 +1,28 @@
+ifneq ($(MAKE),gmake)
+# If you got an ERROR on the previous line, then you aren't using gmake
+endif
+
+CXX=g++
+CXXFLAGS=@CXXFLAGS@
+INCLUDES=@INCLUDES@
+LIBS=@LIBS@
+VPATH=.:..
+OBJS=$(addsuffix .o, $(basename $(wildcard *.cpp)))
+SRCS=$(wildcard *.cpp) $(wildcard ../*.cpp)
+
+
+all: $(addsuffix .so, $(basename $(wildcard *.cpp)))
+
+depend::
+	g++ -M $(CXXFLAGS) $(SRCS) $(INCLUDES) >.depend
+
+clean:
+	rm -rf *.so *.o core core.*
+
+-include .depend
+
+%.so: %.o
+	$(CXX) $(CXXFLAGS) -shared -o $@ $< $(INCLUDES) $(LIBS)
+
+%.o: %.cpp
+	$(CXX) $(CXXFLAGS) $(INCLUDES) -c -o $@ $<

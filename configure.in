@@ -78,10 +78,6 @@ AC_SUBST([MODULES])
 AC_SUBST([MODTARGET])
 AC_CONFIG_FILES([Makefile])
 if test "$MODULES" = "yes"; then
-	AC_CONFIG_FILES([modules/buildmod])
+	AC_CONFIG_FILES([modules/Makefile])
 fi
 AC_OUTPUT
-if test -f modules/buildmod; then
-	chmod 0711 modules/buildmod
-fi
-touch .depend

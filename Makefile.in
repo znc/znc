@@ -13,7 +13,6 @@ SRCS=main.cpp znc.cpp User.cpp IRCSock.cpp UserSock.cpp DCCBounce.cpp DCCSock.cp
 all: znc @MODTARGET@
 
 depend::
-	cat /dev/null >.depend
 	g++ -M $(CXXFLAGS) $(SRCS) $(INCLUDES) >.depend
 
 znc: $(OBJS)
@@ -29,9 +28,9 @@ modules::
 clean:
 	rm -rf znc znc-static *.o core core.*
 
-include .depend
+-include .depend
 
-.cpp.o:
+%.o: %.cpp
 	$(CXX) $(CXXFLAGS) $(INCLUDES) -c -o $*.o $*.cpp
 
 install: znc @MODTARGET@

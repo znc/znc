@@ -14,8 +14,11 @@
  * Author: imaginos <imaginos@imaginos.net>
  *
  * $Log$
- * Revision 1.1  2004/08/24 00:08:52  prozacx
- * Initial revision
+ * Revision 1.1  2005/03/30 18:46:35  imaginos
+ * moving to standard makefile system, and cpp only extension
+ *
+ * Revision 1.1.1.1  2004/08/24 00:08:52  prozacx
+ *
  *
  *
  */
