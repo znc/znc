@@ -35,4 +35,4 @@ clean:
 install: znc @MODTARGET@
 	mkdir -p $(DEST)$(prefix)/bin
 	install -m 0711 znc $(DEST)$(prefix)/bin
-	(cd modules; $(DEST)$(MAKE))	
+	(cd modules; $(MAKE) install DEST=$(DEST))	
