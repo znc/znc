@@ -465,7 +465,7 @@ void CUserSock::UserCommand(const string& sLine) {
 				CChan* pChan = vChans[a];
 				Table.AddRow();
 				Table.SetCell("Name", pChan->GetName());
-				Table.SetCell("Status", ((vChans[a]->IsOn()) ? "Joined" : "Trying"));
+				Table.SetCell("Status", ((vChans[a]->IsOn()) ? ((vChans[a]->IsDetached()) ? "Detached" : "Joined") : "Trying"));
 				Table.SetCell("Buf", CUtils::ToString(pChan->GetBufferCount()));
 
 				string sModes = pChan->GetModeString();
