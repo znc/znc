@@ -162,9 +162,16 @@ int CUtils::MakeDir(const string& sPath, mode_t iMode) {
 	if (iFind == string::npos) {
 		return mkdir(sDir.c_str(), iMode);
 	}
+	iFind++;
 
-	string sWorkDir = sDir.substr(0, iFind + 1);  // include the trailing slash
-	string sNewDir = sDir.erase(0, iFind + 1);
+	while( ( iFind < sDir.length() ) && ( sDir[iFind] == '/' ) )
+		iFind++; // eat up extra /'s
+
+	if ( iFind >= sDir.length() )
+		return mkdir(sDir.c_str(), iMode);
+
+	string sWorkDir = sDir.substr(0, iFind);  // include the trailing slash
+	string sNewDir = sDir.erase(0, iFind);
 
 	struct stat st;
 
