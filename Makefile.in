@@ -27,6 +27,9 @@ clean:
 	rm -rf znc znc-static *.o core core.*
 	(cd modules; $(MAKE) clean)
 
+distclean: clean
+	rm -rf Makefile config.log config.status znc/Makefile
+	
 -include .depend
 
 %.o: %.cpp
