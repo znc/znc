@@ -20,6 +20,9 @@
  *
  * 
  * $Log$
+ * Revision 1.3  2005/04/01 08:55:41  imaginos
+ * keep things in synch
+ *
  * Revision 1.2  2005/04/01 08:49:46  imaginos
  * woops actually delete the message
  *
@@ -78,7 +81,9 @@ public:
 	virtual void OnIRCConnected()
 	{
 		if( m_bIsAway )
-			Away( true );
+			Away( true ); // reset away if we are reconnected
+		else
+			Back();	// ircd seems to remember your away if you killed the client and came back
 	}
 
 	bool BootStrap()
