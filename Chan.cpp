@@ -18,7 +18,9 @@ void CChan::Joined() {
 }
 
 void CChan::Cycle() const {
-	m_pUser->PutIRC("PART " + GetName() + "\r\nJOIN " + GetName() + " " + GetKey());
+	if (AutoCycle()) {
+		m_pUser->PutIRC("PART " + GetName() + "\r\nJOIN " + GetName() + " " + GetKey());
+	}
 }
 
 string CChan::GetModeString() const {

@@ -227,6 +227,7 @@ bool CZNC::ParseConfig(const string& sConfigFile) {
 
 	string sLine;
 	bool bCommented = false;	// support for /**/ style comments
+	bool bAutoCycle = true;
 	CUser* pUser = NULL;	// Used to keep track of which user block we are in
 	CChan* pChan = NULL;	// Used to keep track of which chan block we are in
 
@@ -298,6 +299,8 @@ bool CZNC::ParseConfig(const string& sConfigFile) {
 				}
 
 				pUser = new CUser(sValue, this);
+				bAutoCycle = true;
+
 				if (!sStatusPrefix.empty()) {
 					if (!pUser->SetStatusPrefix(sStatusPrefix)) {
 						cerr << "Invalid StatusPrefix [" + sStatusPrefix + "] Must be 1-5 chars, no spaces." << endl;
@@ -317,6 +320,7 @@ bool CZNC::ParseConfig(const string& sConfigFile) {
 				}
 
 				pChan = new CChan(sValue, pUser);
+				pChan->SetAutoCycle(bAutoCycle);
 				continue;
 			}
 		}
@@ -335,6 +339,9 @@ bool CZNC::ParseConfig(const string& sConfigFile) {
 						continue;
 					} else if (strcasecmp(sName.c_str(), "KeepBuffer") == 0) {
 						pChan->SetKeepBuffer((strcasecmp(sValue.c_str(), "true") == 0));
+						continue;
+					} else if (strcasecmp(sName.c_str(), "AutoCycle") == 0) {
+						pChan->SetAutoCycle((strcasecmp(sValue.c_str(), "true") == 0));
 						continue;
 					} else if (strcasecmp(sName.c_str(), "Key") == 0) {
 						pChan->SetKey(sValue);
@@ -359,6 +366,9 @@ bool CZNC::ParseConfig(const string& sConfigFile) {
 							pUser->SetPass(sValue, false);
 						}
 
+						continue;
+					} else if (strcasecmp(sName.c_str(), "AutoCycle") == 0) {
+						bAutoCycle = (strcasecmp(sValue.c_str(), "true") == 0);
 						continue;
 					} else if (strcasecmp(sName.c_str(), "Ident") == 0) {
 						pUser->SetIdent(sValue);

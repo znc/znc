@@ -27,6 +27,7 @@ public:
 		m_sName = sName;
 		m_pUser = pUser;
 		m_bKeepBuffer = false;
+		m_bAutoCycle = true;
 		m_uBufferCount = uBufferCount;
 		Reset();
 	}
@@ -78,6 +79,7 @@ public:
 	void DecVoiceCount() { m_uVoiceCount -= (m_uVoiceCount > 0); }
 	void SetBufferCount(unsigned int u) { m_uBufferCount = u; }
 	void SetKeepBuffer(bool b) { m_bKeepBuffer = b; }
+	void SetAutoCycle(bool b) { m_bAutoCycle = b; }
 	void SetWhoDone(bool b = true) { m_bWhoDone = b; }
 	// !Setters
 
@@ -98,12 +100,14 @@ public:
 	unsigned int GetBufferCount() const { return m_uBufferCount; }
 	bool HasMode(EMode eMode) const { return (m_uModes & eMode); }
 	bool KeepBuffer() const { return m_bKeepBuffer; }
+	bool AutoCycle() const { return m_bAutoCycle; }
 	// !Getters
 private:
 protected:
 	bool				m_bIsOn;
 	bool				m_bWhoDone;
 	bool				m_bKeepBuffer;
+	bool				m_bAutoCycle;
 	string				m_sName;
 	string				m_sKey;
 	string				m_sTopic;
