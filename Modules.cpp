@@ -478,6 +478,10 @@ CModule* CModules::FindModule(const string& sModule) {
 }
 
 bool CModules::LoadModule(const string& sModule, const string& sArgs, CUser* pUser, string& sRetMsg) {
+#ifndef _MODULES
+	sRetMsg = "Unable to load module [" + sModule + "] module support was not enabled.";
+	return false;
+#else
 	sRetMsg = "";
 
 	if (!pUser) {
@@ -559,9 +563,14 @@ bool CModules::LoadModule(const string& sModule, const string& sArgs, CUser* pUs
 
 	sRetMsg = "Loaded module [" + sModule + "] [" + sModPath + "]";
 	return true;
+#endif // !_MODULES
 }
 
 bool CModules::UnloadModule(const string& sModule, string& sRetMsg) {
+#ifndef _MODULES
+	sRetMsg = "Unable to unload module [" + sModule + "] module support was not enabled.";
+	return false;
+#else
 	CModule* pModule = FindModule(sModule);
 	sRetMsg = "";
 
@@ -598,6 +607,7 @@ bool CModules::UnloadModule(const string& sModule, string& sRetMsg) {
 
 	sRetMsg = "Unable to unload module [" + sModule + "]";
 	return false;
+#endif // !_MODULES
 }
 
 bool CModules::ReloadModule(const string& sModule, const string& sArgs, CUser* pUser, string& sRetMsg) {
