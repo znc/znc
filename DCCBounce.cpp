@@ -77,7 +77,7 @@ void CDCCBounce::Disconnected() {
 
 void CDCCBounce::Shutdown() {
 	m_pPeer = NULL;
-	DEBUG_ONLY(cerr << GetSockName() << " == Close(); because my peer told me to" << endl);
+	DEBUG_ONLY(cout << GetSockName() << " == Close(); because my peer told me to" << endl);
 	Close();
 }
 
