@@ -1,12 +1,6 @@
 #!/bin/sh
-dir="."
 cmd="znc"
-pidfile="znc.pid"
-
-PATH=.:$PATH
-export PATH
-
-cd $dir
+pidfile="${HOME}/.znc/znc.pid"
 
 if test -s $pidfile; then
 	pid=`cat $pidfile`
