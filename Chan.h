@@ -39,6 +39,8 @@ public:
 	void Reset();
 	void Joined();
 	void Cycle() const;
+	void JoinUser();
+	void DetachUser();
 
 	void IncClientRequests();
 	bool DecClientRequests(); 

@@ -44,7 +44,9 @@ public:
 	void PutIRC(const string& sLine);
 	void PutServ(const string& sLine);
 	void PutStatus(const string& sLine);
+	void PutStatusNotice(const string& sLine);
 	void PutModule(const string& sModule, const string& sLine);
+	void PutModNotice(const string& sModule, const string& sLine);
 
 	virtual void ReadLine(const string& sData);
 	void AuthUser();

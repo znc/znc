@@ -7,6 +7,7 @@
 
 #include <vector>
 #include <set>
+#include "Nick.h"
 
 using std::vector;
 using std::set;
@@ -66,6 +67,7 @@ public:
 	void SetDenyLoadMod(bool b);
 	bool SetStatusPrefix(const string& s);
 	void SetDefaultChanModes(const string& s);
+	void SetIRCNick(const CNick& n);
 	// !Setters
 
 	// Getters
@@ -93,6 +95,7 @@ public:
 	const string& GetStatusPrefix() const;
 	const string& GetDefaultChanModes() const;
 	const vector<CChan*>& GetChans() const;
+	const CNick& GetIRCNick() const;
 	// !Getters
 private:
 protected:
@@ -107,6 +110,7 @@ protected:
 	string			m_sPass;
 	string			m_sStatusPrefix;
 	string			m_sDefaultChanModes;
+	CNick			m_IRCNick;
 
 	bool				m_bPassHashed;
 	bool				m_bUseClientIP;

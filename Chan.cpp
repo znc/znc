@@ -25,6 +25,24 @@ void CChan::Cycle() const {
 	}
 }
 
+void CChan::JoinUser() {
+	if (!IsOn()) {
+		IncClientRequests();
+		m_pUser->PutIRC("JOIN " + GetName());
+	}
+
+	m_pUser->PutUser(":" + m_pUser->GetIRCNick().GetNickMask() + " JOIN :" + GetName());
+	m_pUser->PutIRC("NAMES " + GetName());
+	m_pUser->PutIRC("TOPIC " + GetName());
+
+	m_bDetached = false;
+}
+
+void CChan::DetachUser() {
+	m_pUser->PutUser(":" + m_pUser->GetIRCNick().GetNickMask() + " PART " + GetName());
+	m_bDetached = true;
+}
+
 string CChan::GetModeString() const {
 	string sRet;
 

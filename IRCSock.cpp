@@ -201,6 +201,8 @@ void CIRCSock::ReadLine(const string& sData) {
 						m_Nick.SetHost(sHost);
 					}
 
+					m_pUser->SetIRCNick(m_Nick);
+
 					const vector<CChan*>& vChans = m_pUser->GetChans();
 
 					for (unsigned int a = 0; a < vChans.size(); a++) {
@@ -687,9 +689,7 @@ void CIRCSock::UserConnected(CUserSock* pUserSock) {
 	const vector<CChan*>& vChans = m_pUser->GetChans();
 	for (unsigned int a = 0; a < vChans.size(); a++) {
 		if ((vChans[a]->IsOn()) && (!vChans[a]->IsDetached())) {
-			PutUser(":" + m_Nick.GetNickMask() + " JOIN :" + vChans[a]->GetName());
-			PutServ("NAMES " + vChans[a]->GetName());
-			PutServ("TOPIC " + vChans[a]->GetName());
+			vChans[a]->JoinUser();
 		}
 	}
 

@@ -28,6 +28,25 @@ void CUserSock::ReadLine(const string& sData) {
 	if (strcasecmp(sCommand.c_str(), "ZNC") == 0) {
 		PutStatus("Hello.  How may I help you?");
 		return;
+	} else if (strcasecmp(sCommand.c_str(), "DETACH") == 0) {
+		if (m_pUser) {
+			string sChan = CUtils::Token(sLine, 1);
+
+			if (sChan.empty()) {
+				PutStatusNotice("Usage: /detach <#chan>");
+				return;
+			}
+
+			CChan* pChan = m_pUser->FindChan(sChan);
+			if (!pChan) {
+				PutStatusNotice("You are not on [" + sChan + "]");
+				return;
+			}
+
+			pChan->DetachUser();
+			PutStatusNotice("Detached from [" + sChan + "]");
+			return;
+		}
 	} else if (strcasecmp(sCommand.c_str(), "PONG") == 0) {
 		return;	// Block pong replies, we already responded to the pings
 	} else if (strcasecmp(sCommand.c_str(), "PASS") == 0) {
@@ -85,15 +104,8 @@ void CUserSock::ReadLine(const string& sData) {
 			CChan* pChan = m_pUser->FindChan(sChan);
 
 			if (pChan) {
-				if (!pChan->IsOn()) {
-					pChan->IncClientRequests();
-				} else if (pChan->IsDetached()) {
-					PutServ(":" + m_pUser->GetCurNick() + " JOIN :" + pChan->GetName());
-					PutIRC("NAMES " + pChan->GetName());
-					PutIRC("TOPIC " + pChan->GetName());
-				}
-
-				pChan->SetDetached(false);
+				pChan->JoinUser();
+				return;
 			}
 		}
 	} else if (strcasecmp(sCommand.c_str(), "QUIT") == 0) {
@@ -435,8 +447,7 @@ void CUserSock::UserCommand(const string& sLine) {
 			}
 
 			PutStatus("Detaching you from [" + sChan + "]");
-			pChan->SetDetached();
-			PutServ(":" + m_pUser->GetCurNick() + "!x@x.com PART " + pChan->GetName());
+			pChan->DetachUser();
 		}
 	} else if (strcasecmp(sCommand.c_str(), "JUMP") == 0) {
 		if (m_pUser) {
@@ -837,8 +848,21 @@ void CUserSock::PutServ(const string& sLine) {
 	Write(sLine + "\r\n");   
 }
 
+void CUserSock::PutStatusNotice(const string& sLine) {
+	PutModNotice("status", sLine);
+}
+
 void CUserSock::PutStatus(const string& sLine) {
 	PutModule("status", sLine);
+}
+
+void CUserSock::PutModNotice(const string& sModule, const string& sLine) {
+	if (!m_pUser) {
+		return;
+	}
+
+	DEBUG_ONLY(cout << GetSockName() << " -> [:" + m_pUser->GetStatusPrefix() + ((sModule.empty()) ? "status" : sModule) + "!znc@znc.com NOTICE " << GetNick() << " :" << sLine << "]" << endl);
+	Write(":" + m_pUser->GetStatusPrefix() + ((sModule.empty()) ? "status" : sModule) + "!znc@znc.com NOTICE " + GetNick() + " :" + sLine + "\r\n");
 }
 
 void CUserSock::PutModule(const string& sModule, const string& sLine) {
