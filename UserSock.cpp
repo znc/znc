@@ -469,6 +469,7 @@ void CUserSock::UserCommand(const string& sLine) {
 			Table.AddColumn("Users");
 			Table.AddColumn("+o");
 			Table.AddColumn("+v");
+			Table.AddColumn("Topic");
 
 			for (unsigned int a = 0; a < vChans.size(); a++) {
 				CChan* pChan = vChans[a];
@@ -488,6 +489,7 @@ void CUserSock::UserCommand(const string& sLine) {
 				Table.SetCell("Users", CUtils::ToString(pChan->GetNickCount()));
 				Table.SetCell("+o", CUtils::ToString(pChan->GetOpCount()));
 				Table.SetCell("+v", CUtils::ToString(pChan->GetVoiceCount()));
+				Table.SetCell("Topic", pChan->GetTopic());
 			}
 
 			if (Table.size()) {

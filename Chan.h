@@ -77,6 +77,8 @@ public:
 	void SetVoiced(bool b) { m_bIsVoice = b; }
 	void SetKey(const string& s) { m_sKey = s; }
 	void SetTopic(const string& s) { m_sTopic = s; }
+	void SetTopicOwner(const string& s) { m_sTopicOwner = s; }
+	void SetTopicDate(unsigned long u) { m_ulTopicDate = u; }
 	void SetDefaultModes(const string& s) { m_sDefaultModes = s; }
 	void IncOpCount() { m_uOpCount++; }
 	void DecOpCount() { m_uOpCount -= (m_uOpCount > 0); }
@@ -98,6 +100,8 @@ public:
 	const string& GetKey() const { return m_sKey; }
 	unsigned int GetLimit() const { return m_uLimit; }
 	const string& GetTopic() const { return m_sTopic; }
+	const string& GetTopicOwner() const { return m_sTopicOwner; }
+	unsigned int GetTopicDate() const { return m_ulTopicDate; }
 	const string& GetDefaultModes() const { return m_sDefaultModes; }
 	const vector<string>& GetBans() const { return m_vsBans; }
 	const vector<string>& GetBuffer() const { return m_vsBuffer; }
@@ -123,6 +127,8 @@ protected:
 	string				m_sName;
 	string				m_sKey;
 	string				m_sTopic;
+	string				m_sTopicOwner;
+	unsigned long		m_ulTopicDate;
 	CUser*				m_pUser;
 	unsigned int		m_uLimit;
 	unsigned int		m_uModes;

@@ -2,6 +2,7 @@
 #include "IRCSock.h"
 #include "DCCBounce.h"
 #include "UserSock.h"
+#include <time.h>
 
 CIRCSock::CIRCSock(CZNC* pZNC, CUser* pUser) : Csock() {
 	m_pZNC = pZNC;
@@ -189,12 +190,53 @@ void CIRCSock::ReadLine(const string& sData) {
 					if (pChan) {
 						pChan->SetWhoDone();
 					}
+
+					break;
+				}
+				case 331: {
+					// :irc.server.com 331 yournick #chan :No topic is set.
+					CChan* pChan = m_pUser->FindChan(CUtils::Token(sLine, 3));
+
+					if (pChan) {
+						pChan->SetTopic("");
+					}
+
+					break;
+				}
+				case 332: {
+					// :irc.server.com 332 yournick #chan :This is a topic
+					CChan* pChan = m_pUser->FindChan(CUtils::Token(sLine, 3));
+
+					if (pChan) {
+						string sTopic = CUtils::Token(sLine, 4, true);
+						CUtils::LeftChomp(sTopic);
+						pChan->SetTopic(sTopic);
+					}
+
+					break;
+				}
+				case 333: {
+					// :irc.server.com 333 yournick #chan setternick 1112320796
+					CChan* pChan = m_pUser->FindChan(CUtils::Token(sLine, 3));
+
+					if (pChan) {
+						string sNick = CUtils::Token(sLine, 4);
+						unsigned long ulDate = strtoul(CUtils::Token(sLine, 5).c_str(), NULL, 10);
+
+						pChan->SetTopicOwner(sNick);
+						pChan->SetTopicDate(ulDate);
+					}
+
+					break;
 				}
 				case 352: {
 					// :irc.yourserver.com 352 yournick #chan ident theirhost.com irc.theirserver.com theirnick H :0 Real Name
+					string sServer = CUtils::Token(sLine, 0);
 					string sNick = CUtils::Token(sLine, 7);
 					string sIdent = CUtils::Token(sLine, 4);
 					string sHost = CUtils::Token(sLine, 5);
+
+					CUtils::LeftChomp(sServer);
 
 					if (strcasecmp(sNick.c_str(), GetNick().c_str()) == 0) {
 						m_Nick.SetIdent(sIdent);
@@ -202,6 +244,7 @@ void CIRCSock::ReadLine(const string& sData) {
 					}
 
 					m_pUser->SetIRCNick(m_Nick);
+					m_pUser->SetIRCServer(sServer);
 
 					const vector<CChan*>& vChans = m_pUser->GetChans();
 
@@ -467,6 +510,18 @@ void CIRCSock::ReadLine(const string& sData) {
 
 				PutUser(":" + sNickMask + " NOTICE " + sTarget + " :" + sMsg);
 				return;
+			} else if (strcasecmp(sCmd.c_str(), "TOPIC") == 0) {
+				// :nick!ident@host.com TOPIC #chan :This is a topic
+				CChan* pChan = m_pUser->FindChan(CUtils::Token(sLine, 2));
+
+				if (pChan) {
+					CNick Nick(sNickMask);
+					string sTopic = CUtils::Token(sLine, 3, true);
+					CUtils::LeftChomp(sTopic);
+					pChan->SetTopicOwner(Nick.GetNick());
+					pChan->SetTopicDate((unsigned long) time(NULL));	// @todo use local time
+					pChan->SetTopic(sTopic);
+				}
 			} else if (strcasecmp(sCmd.c_str(), "PRIVMSG") == 0) {
 				// :nick!ident@host.com PRIVMSG #chan :Message
 

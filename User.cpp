@@ -364,6 +364,7 @@ void CUser::SetKeepNick(bool b) { m_bKeepNick = b; }
 void CUser::SetDenyLoadMod(bool b) { m_bDenyLoadMod = b; }
 void CUser::SetDefaultChanModes(const string& s) { m_sDefaultChanModes = s; }
 void CUser::SetIRCNick(const CNick& n) { m_IRCNick = n; }
+void CUser::SetIRCServer(const string& s) { m_sIRCServer = s; }
 
 bool CUser::SetStatusPrefix(const string& s) {
 	if ((!s.empty()) && (s.length() < 6) && (s.find(' ') == string::npos)) {
@@ -397,4 +398,5 @@ const string& CUser::GetStatusPrefix() const { return m_sStatusPrefix; }
 const string& CUser::GetDefaultChanModes() const { return m_sDefaultChanModes; }
 const vector<CChan*>& CUser::GetChans() const { return m_vChans; }
 const CNick& CUser::GetIRCNick() const { return m_IRCNick; }
+const string& CUser::GetIRCServer() const { return m_sIRCServer; }
 // !Getters

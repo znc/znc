@@ -32,8 +32,14 @@ void CChan::JoinUser() {
 	}
 
 	m_pUser->PutUser(":" + m_pUser->GetIRCNick().GetNickMask() + " JOIN :" + GetName());
+
+	if (!GetTopic().empty()) {
+		m_pUser->PutUser(":" + m_pUser->GetIRCServer() + " 332 " + m_pUser->GetIRCNick().GetNick() + " " + GetName() + " :" + GetTopic());
+		m_pUser->PutUser(":" + m_pUser->GetIRCServer() + " 333 " + m_pUser->GetIRCNick().GetNick() + " " + GetName() + " " + GetTopicOwner() + " " + CUtils::ToString(GetTopicDate()));
+	}
+
 	m_pUser->PutIRC("NAMES " + GetName());
-	m_pUser->PutIRC("TOPIC " + GetName());
+	//m_pUser->PutIRC("TOPIC " + GetName());
 
 	m_bDetached = false;
 }

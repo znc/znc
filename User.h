@@ -68,6 +68,7 @@ public:
 	bool SetStatusPrefix(const string& s);
 	void SetDefaultChanModes(const string& s);
 	void SetIRCNick(const CNick& n);
+	void SetIRCServer(const string& s);
 	// !Setters
 
 	// Getters
@@ -96,6 +97,7 @@ public:
 	const string& GetDefaultChanModes() const;
 	const vector<CChan*>& GetChans() const;
 	const CNick& GetIRCNick() const;
+	const string& GetIRCServer() const;
 	// !Getters
 private:
 protected:
@@ -111,6 +113,7 @@ protected:
 	string			m_sStatusPrefix;
 	string			m_sDefaultChanModes;
 	CNick			m_IRCNick;
+	string			m_sIRCServer;
 
 	bool				m_bPassHashed;
 	bool				m_bUseClientIP;
