@@ -20,7 +20,7 @@ void die(int sig) {
 }
 
 int main(int argc, char** argv) {
-	string sConfig = "znc.conf";
+	string sConfig;
 
 	// initialize ssl, allow client to have compression enabled if desired
 	InitSSL( CT_ZLIB );
@@ -47,7 +47,7 @@ int main(int argc, char** argv) {
 	pZNC->InitDirs(((argc) ? argv[0] : ""));
 
 	if (!pZNC->ParseConfig(sConfig)) {
-		cerr << endl << "*** Unrecoverable error while parsing [" << sConfig << "]" << endl;
+		cerr << endl << "*** Unrecoverable error while parsing config." << endl;
 		delete pZNC;
 		return 1;
 	}
