@@ -6,6 +6,11 @@
 #include "Utils.h"
 #include <pwd.h>
 
+/* TODO list
+ * store timestamp to be displayed
+ * store OnJoin, OnQuit, OnPart, etc send down as messages
+ */
+
 #ifndef HAVE_LIBSSL
 #error This plugin only works with OpenSSL
 #endif /* HAVE_LIBSSL */
@@ -20,6 +25,9 @@
  * better solution then plain text.
  * 
  * $Log$
+ * Revision 1.3  2005/01/28 04:37:47  imaginos
+ * force requirements on main class to so savebuff can be sure to save all data needed. added todo list
+ *
  * Revision 1.2  2004/11/07 02:53:32  imaginos
  * added replay to savebuff so one can 'replay' a channel
  *
@@ -71,25 +79,34 @@ public:
 		const vector<CChan *>& vChans = m_pUser->GetChans();
 		for( u_int a = 0; a < vChans.size(); a++ )
 		{
-			string sFile;
-			if ( DecryptChannel( vChans[a]->GetName(), sFile ) )
-			{
-				string sLine;
-				u_int iPos = 0;
-				while( ReadLine( sFile, sLine, iPos ) )
-				{
-					CUtils::Trim( sLine );
-					vChans[a]->AddBuffer( sLine );
-				}
-			} else
-			{
-				cerr << "Failed to Decrypt [" << vChans[a]->GetName() << "]" << endl;
+			if ( !BootStrap( vChans[a] ) )
 				return( false );
-			}
 		}
 
 		return true;
 	}
+
+	bool BootStrap( CChan *pChan )
+	{
+		string sFile;
+		if ( DecryptChannel( pChan->GetName(), sFile ) )
+		{
+			string sLine;
+			u_int iPos = 0;
+			while( ReadLine( sFile, sLine, iPos ) )
+			{
+				CUtils::Trim( sLine );
+				pChan->AddBuffer( sLine );
+			}
+		} else
+		{
+			cerr << "Failed to Decrypt [" << pChan->GetName() << "]" << endl;
+			return( false );
+		}
+
+		return( true );
+	}
+	
 	void SaveBufferToDisk()
 	{
 		if ( !m_sPassword.empty() )
@@ -98,8 +115,16 @@ public:
 			for( u_int a = 0; a < vChans.size(); a++ )
 			{
 				const vector<string> & vBuffer = vChans[a]->GetBuffer();
+				vChans[a]->SetKeepBuffer( true );
+				vChans[a]->SetBufferCount( 500 );
+
 				if ( vBuffer.empty() )
+				{
+					if ( !m_sPassword.empty() )
+						BootStrap( vChans[a] );
+					
 					continue;
+				}
 
 				string sFile = CRYPT_VERIFICATION_TOKEN;
 			
