@@ -14,6 +14,9 @@
  * Author: imaginos <imaginos@imaginos.net>
  * 
  * $Log$
+ * Revision 1.2  2005/03/31 20:39:10  imaginos
+ * add ability to show all socks (debugging)
+ *
  * Revision 1.1  2005/03/30 19:36:24  imaginos
  * rename files
  *
@@ -314,6 +317,60 @@ public:
 				}
 				PutModule( "No Such Chat [" + sArgs + "]" );
 			}
+		
+		} else if ( strcasecmp( sCom.c_str(), "showsocks" ) == 0 )
+		{
+			CTable Table;
+			Table.AddColumn( "SockName" );
+			Table.AddColumn( "Created" );
+			Table.AddColumn( "LocalIP:Port" );
+			Table.AddColumn( "RemoteIP:Port" );
+			Table.AddColumn( "Type" );
+			Table.AddColumn( "Cipher" );
+			for( u_int a = 0; a < m_pManager->size(); a++ )
+			{
+				Table.AddRow();
+				Csock *pSock = (*m_pManager)[a];
+				Table.SetCell( "SockName", pSock->GetSockName() );
+				unsigned long long iStartTime = pSock->GetStartTime();
+				time_t iTime = iStartTime / 1000;
+				char *pTime = ctime( &iTime );
+				if ( pTime )
+				{
+					string sTime = pTime;
+					CUtils::Trim( sTime );
+					Table.SetCell( "Created", sTime );
+				}
+				
+				if ( pSock->GetType() != Csock::LISTENER )
+				{
+					if ( pSock->GetType() == Csock::OUTBOUND )
+						Table.SetCell( "Status", "Outbound" );	
+					else
+						Table.SetCell( "Status", "Inbound" );	
+					Table.SetCell( "LocalIP:Port", pSock->GetLocalIP() + ":" + CUtils::ToString( pSock->GetLocalPort() ) );
+					Table.SetCell( "RemoteIP:Port", pSock->GetRemoteIP() + ":" + CUtils::ToString( pSock->GetRemotePort() ) );
+					SSL_SESSION *pSession = pSock->GetSSLSession();
+					if ( ( pSession ) && ( pSession->cipher ) && ( pSession->cipher->name ) )
+						Table.SetCell( "Cipher", pSession->cipher->name );
+					else
+						Table.SetCell( "Cipher", "None" );
+
+				} else
+				{
+					Table.SetCell( "Status", "Listener" );
+					Table.SetCell( "LocalIP:Port", pSock->GetLocalIP() + ":" + CUtils::ToString( pSock->GetLocalPort() ) );
+					Table.SetCell( "RemoteIP:Port", "0.0.0.0:0" );
+				}
+			}
+			if ( Table.size() ) 
+			{
+				unsigned int uTableIdx = 0;
+				string sLine;
+				while ( Table.GetLine( uTableIdx++, sLine ) )
+					PutModule( sLine );
+			} else
+				PutModule( "Error Finding Sockets" );
 
 		} else if ( strcasecmp( sCom.c_str(), "help" ) == 0 )
 		{
@@ -323,6 +380,7 @@ public:
 			PutModule( "    list           - List current chats." );
 			PutModule( "    close <nick>   - Close a chat to a nick." );
 			PutModule( "    timers         - Shows related timers." );
+			PutModule( "    showsocks      - Shows all socket connections." );
 		} else if ( strcasecmp( sCom.c_str(), "timers" ) == 0 )
 			ListTimers();
 		else
