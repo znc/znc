@@ -750,7 +750,7 @@ void CIRCSock::Connected() {
 
 void CIRCSock::Disconnected() {
 #ifdef _MODULES
-	cerr << "OnIRCDisconnected()" << endl;
+	DEBUG_ONLY(cout << "OnIRCDisconnected()" << endl);
 	m_pUser->GetModules().OnIRCDisconnected();
 #endif
 
