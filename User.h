@@ -85,6 +85,7 @@ public:
 	const string& GetDLPath() const;
 	const string& GetModPath() const;
 	const string& GetHomePath() const;
+	string GetPemLocation() const;
 
 	bool UseClientIP() const;
 	bool KeepNick() const;
