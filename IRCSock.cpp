@@ -289,13 +289,17 @@ void CIRCSock::ReadLine(const string& sData) {
 
 			if (strcasecmp(sCmd.c_str(), "NICK") == 0) {
 				string sNewNick = sRest;
+				bool bIsVisible = false;
+
 				if (CUtils::Left(sNewNick, 1) == ":") {
 					CUtils::LeftChomp(sNewNick);
 				}
 
 				const vector<CChan*>& vChans = m_pUser->GetChans();
 				for (unsigned int a = 0; a < vChans.size(); a++) {
-					vChans[a]->ChangeNick(sNick, sNewNick);
+					if ((vChans[a]->ChangeNick(sNick, sNewNick)) && (!vChans[a]->IsDetached())) {
+						bIsVisible = true;
+					}
 				}
 
 				if (strcasecmp(sNick.c_str(), GetNick().c_str()) == 0) {
@@ -310,8 +314,14 @@ void CIRCSock::ReadLine(const string& sData) {
 #ifdef _MODULES
 				m_pUser->GetModules().OnNick(sNickMask, sNewNick);
 #endif
+
+				if (!bIsVisible) {
+					return;
+				}
 			} else if (strcasecmp(sCmd.c_str(), "QUIT") == 0) {
 				string sMessage = sRest;
+				bool bIsVisible = false;
+
 				if (CUtils::Left(sMessage, 1) == ":") {
 					CUtils::LeftChomp(sMessage);
 				}
@@ -321,7 +331,9 @@ void CIRCSock::ReadLine(const string& sData) {
 
 				const vector<CChan*>& vChans = m_pUser->GetChans();
 				for (unsigned int a = 0; a < vChans.size(); a++) {
-					vChans[a]->RemNick(sNick);
+					if ((vChans[a]->RemNick(sNick)) && (!vChans[a]->IsDetached())) {
+						bIsVisible = true;
+					}
 				}
 
 				if (strcasecmp(Nick.GetNick().c_str(), m_pUser->GetNick().c_str()) == 0) {
@@ -331,6 +343,10 @@ void CIRCSock::ReadLine(const string& sData) {
 #ifdef _MODULES
 				m_pUser->GetModules().OnQuit(Nick, sMessage);
 #endif
+
+				if (!bIsVisible) {
+					return;
+				}
 			} else if (strcasecmp(sCmd.c_str(), "JOIN") == 0) {
 				string sChan = CUtils::Token(sRest, 0);
 				if (CUtils::Left(sChan, 1) == ":") {
