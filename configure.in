@@ -52,8 +52,13 @@ if test -z "$NOSSL"; then
 fi
 
 if test "$MODULES" = "yes"; then
-	AC_CHECK_LIB( dl, dlopen, appendCXX -D_MODULES -rdynamic,, )
-	MODFLAGS=`echo $CXXFLAGS | sed 's/-rdynamic//g'`
+	if test -n "$ISSUN"; then
+		AC_CHECK_LIB( dl, dlopen, appendCXX -D_MODULES,, )
+		MODFLAGS="$CXXFLAGS"
+	else
+		AC_CHECK_LIB( dl, dlopen, appendCXX -D_MODULES -rdynamic,, )
+		MODFLAGS=`echo $CXXFLAGS | sed 's/-rdynamic//g'`
+	fi
 	MODFLAGS="$MODFLAGS -I`pwd`"
 	MODTARGET="modules"
 	appendLib -ldl
