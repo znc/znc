@@ -20,8 +20,11 @@
  * better solution then plain text.
  * 
  * $Log$
- * Revision 1.1  2004/08/24 00:08:52  prozacx
- * Initial revision
+ * Revision 1.2  2004/11/07 02:53:32  imaginos
+ * added replay to savebuff so one can 'replay' a channel
+ *
+ * Revision 1.1.1.1  2004/08/24 00:08:52  prozacx
+ *
  *
  *
  */
@@ -69,23 +72,8 @@ public:
 		for( u_int a = 0; a < vChans.size(); a++ )
 		{
 			string sFile;
-			string sPath = GetPath( vChans[a]->GetName() );
-
-			if ( ( sPath.empty() ) || ( !ReadFile( sPath, sFile ) ) )
-				continue;
-			if ( !sFile.empty() )
+			if ( DecryptChannel( vChans[a]->GetName(), sFile ) )
 			{
-				CBlowfish c( m_sPassword, BF_DECRYPT );
-				sFile = c.Crypt( sFile );
-
-				if ( sFile.substr( 0, strlen( CRYPT_VERIFICATION_TOKEN ) ) != CRYPT_VERIFICATION_TOKEN )
-				{
-					// failed to decode :(
-					cerr << "Unable to decode Encrypted file [" << sPath << "]" << endl;
-					continue;
-				}
-				sFile.erase( 0, strlen( CRYPT_VERIFICATION_TOKEN ) );
-
 				string sLine;
 				u_int iPos = 0;
 				while( ReadLine( sFile, sLine, iPos ) )
@@ -93,6 +81,10 @@ public:
 					CUtils::Trim( sLine );
 					vChans[a]->AddBuffer( sLine );
 				}
+			} else
+			{
+				cerr << "Failed to Decrypt [" << vChans[a]->GetName() << "]" << endl;
+				return( false );
 			}
 		}
 
@@ -150,28 +142,9 @@ public:
 		
 		} else if ( strcasecmp( sCom.c_str(), "dumpbuff" ) == 0 )
 		{
-			string sChannel = GetPath( sArgs );
 			string sFile;
-		
-			if ( ( sChannel.empty() ) || ( !ReadFile( sChannel, sFile ) ) )
+			if ( DecryptChannel( sArgs, sFile ) )
 			{
-				 PutModule( "Unable to find buffer for that channel" );
-				 return;
-			}
-
-			if ( !sFile.empty() )
-			{
-				CBlowfish c( m_sPassword, BF_DECRYPT );
-				sFile = c.Crypt( sFile );
-
-				if ( sFile.substr( 0, strlen( CRYPT_VERIFICATION_TOKEN ) ) != CRYPT_VERIFICATION_TOKEN )
-				{
-					// failed to decode :(
-					PutModule( "Unable to decode Encrypted file [" + sChannel + "]" );
-					return;
-				}
-				sFile.erase( 0, strlen( CRYPT_VERIFICATION_TOKEN ) );
-
 				string sLine;
 				u_int iPos = 0;
 				while( ReadLine( sFile, sLine, iPos ) )
@@ -180,6 +153,24 @@ public:
 					PutModule( "[" + sLine + "]" );
 				}
 			}
+			PutModule( "//!-- EOF " + sArgs );
+		} else if ( strcasecmp( sCom.c_str(), "replay" ) == 0 )
+		{
+			string sFile;
+			PutUser( ":***!znc@znc.com PRIVMSG " + sArgs + " :Replaying ..." );
+			if ( DecryptChannel( sArgs, sFile ) )
+			{
+				string sLine;
+				u_int iPos = 0;
+				while( ReadLine( sFile, sLine, iPos ) )
+				{
+					CUtils::Trim( sLine );
+					PutUser( sLine );
+				}
+			}
+			PutModule( "Replayed " + sArgs );
+			PutUser( ":***!znc@znc.com PRIVMSG " + sArgs + " :Done!" );
+
 		} else if ( strcasecmp( sCom.c_str(), "save" ) == 0 )
 		{
 			SaveBufferToDisk();
@@ -197,7 +188,34 @@ public:
 	}
 
 private:
-	string			m_sPassword;
+	string	m_sPassword;
+	bool DecryptChannel( const string & sChan, string & sBuffer )
+	{
+		string sChannel = GetPath( sChan );
+		string sFile;
+		sBuffer = "";
+	
+		if ( ( sChannel.empty() ) || ( !ReadFile( sChannel, sFile ) ) )
+		{
+			 PutModule( "Unable to find buffer for that channel" );
+			 return( true ); // gonna be successful here
+		}
+
+		if ( !sFile.empty() )
+		{
+			CBlowfish c( m_sPassword, BF_DECRYPT );
+			sBuffer = c.Crypt( sFile );
+
+			if ( sBuffer.substr( 0, strlen( CRYPT_VERIFICATION_TOKEN ) ) != CRYPT_VERIFICATION_TOKEN )
+			{
+				// failed to decode :(
+				PutModule( "Unable to decode Encrypted file [" + sChannel + "]" );
+				return( false );
+			}
+			sBuffer.erase( 0, strlen( CRYPT_VERIFICATION_TOKEN ) );
+		}
+		return( true );
+	}
 };
 
 
