@@ -243,7 +243,7 @@ public:
 
 	virtual void OnModCommand(const string& sCommand) {
 		string sCmdName = CUtils::Token(sCommand, 0);
-		if (strcasecmp(sCmdName.c_str(), "WATCH") == 0) {
+		if (strcasecmp(sCmdName.c_str(), "ADD") == 0 || strcasecmp(sCmdName.c_str(), "WATCH") == 0) {
 			Watch(CUtils::Token(sCommand, 1), CUtils::Token(sCommand, 2), CUtils::Token(sCommand, 3, true));
 		} else if (strcasecmp(sCmdName.c_str(), "HELP") == 0) {
 			Help();
@@ -374,7 +374,7 @@ private:
 		for (list<CWatchEntry>::iterator it = m_lsWatchers.begin(); it != m_lsWatchers.end(); it++, uIdx++) {
 			CWatchEntry& WatchEntry = *it;
 
-			PutModule("/msg " + GetModNick() + " WATCH " + WatchEntry.GetHostMask() + " " + WatchEntry.GetTarget() + " " + WatchEntry.GetPattern());
+			PutModule("/msg " + GetModNick() + " ADD " + WatchEntry.GetHostMask() + " " + WatchEntry.GetTarget() + " " + WatchEntry.GetPattern());
 
 			if (WatchEntry.GetSourcesStr().size()) {
 				PutModule("/msg " + GetModNick() + " SETSOURCES " + CUtils::ToString(uIdx) + " " + WatchEntry.GetSourcesStr());
@@ -423,7 +423,7 @@ private:
 		Table.AddColumn("Description");
 
 		Table.AddRow();
-		Table.SetCell("Command", "Watch <HostMask> [Target] [Pattern]");
+		Table.SetCell("Command", "Add <HostMask> [Target] [Pattern]");
 		Table.SetCell("Description", "Used to add an entry to watch for.");
 
 		Table.AddRow();
