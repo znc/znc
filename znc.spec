@@ -26,7 +26,7 @@ make all
 rm -rf $RPM_BUILD_ROOT
 
 %install
-make install DEST=$RPM_BUILD_ROOT
+make install DESTDIR=$RPM_BUILD_ROOT
 
 
 %files

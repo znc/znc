@@ -36,9 +36,9 @@ distclean: clean
 	$(CXX) $(CXXFLAGS) $(INCLUDES) -c -o $*.o $*.cpp
 
 install: znc @MODTARGET@
-	mkdir -p $(DEST)$(prefix)/bin
-	mkdir -p $(DEST)$(prefix)/include/znc
-	install -m 0711 znc $(DEST)$(prefix)/bin
-	install -m 0755 znc-config $(DEST)$(prefix)/bin
-	install -m 0644 *.h $(DEST)$(prefix)/include/znc
-	(cd modules; $(MAKE) install DEST=$(DEST))
+	mkdir -p $(DESTDIR)$(prefix)/bin
+	mkdir -p $(DESTDIR)$(prefix)/include/znc
+	install -m 0711 znc $(DESTDIR)$(prefix)/bin
+	install -m 0755 znc-config $(DESTDIR)$(prefix)/bin
+	install -m 0644 *.h $(DESTDIR)$(prefix)/include/znc
+	if test -n "@MODTARGET@"; then (cd modules; $(MAKE) install DESTDIR=$(DESTDIR)); fi
