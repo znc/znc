@@ -14,6 +14,9 @@
  * Author: imaginos <imaginos@imaginos.net>
  * 
  * $Log$
+ * Revision 1.3  2004/09/01 21:13:35  imaginos
+ * no longer using CreatedChild
+ *
  * Revision 1.2  2004/08/25 23:14:35  imaginos
  * just remove trailing \r\n
  *
@@ -22,6 +25,7 @@
  *
  *
  */     
+
 class CSChat;
 
 class CRemMarkerJob : public CTimer 
@@ -63,6 +67,9 @@ public:
 	virtual Csock *GetSockObj( const CS_STRING & sHostname, int iPort )
 	{
 		CSChatSock *p = new CSChatSock( sHostname, iPort );
+		p->SetModule( m_pModule );
+		p->SetChatNick( m_sChatNick );
+		p->SetSockName( GetSockName() + "::" + m_sChatNick );
 		return( p );
 	}
 
@@ -73,15 +80,6 @@ public:
 	}
 
 	virtual void Connected();
-	virtual bool CreatedChild( Csock *pSock )
-	{
-		CSChatSock *p = (CSChatSock *)pSock;
-		p->SetModule( m_pModule );
-		p->SetChatNick( m_sChatNick );
-		p->SetSockName( GetSockName() + "::" + m_sChatNick );
-		return( true );
-	}
-	
 	virtual void Timeout();
 
 	void SetModule( CSChat *p )
