@@ -7,7 +7,7 @@ License: GPL
 Group: none
 URL: http://sourceforge.net/projects/znc/
 BuildRequires: gcc >= 3.2
-BuildRequires: openssl >= 0.9b
+BuildRequires: openssl >= 0.9.7d
 BuildRoot: /tmp/znc-TMP/
 Prefix: /usr
 Source: znc-%{version}.tar.gz
