@@ -2758,6 +2758,7 @@ fi
 
 	MODFLAGS=`echo $CXXFLAGS | sed 's/-rdynamic//g'`
 	MODTARGET="modules"
+	appendLib -ldl
 fi
 
 #
