@@ -214,10 +214,19 @@ void CZNC::InitDirs(const string& sArgvPath) {
 
 bool CZNC::ParseConfig(const string& sConfigFile) {
 	string sStatusPrefix;
+	string sFilePath;
 
-	string sFilePath = sConfigFile;
 	if (CUtils::Left(sConfigFile, 1) != "/") {
-		sFilePath = m_sBinPath + "/" + sFilePath;
+		sFilePath = GetBinPath() + "/" + sConfigFile;
+	}
+
+	if (!CFile::Exists(sFilePath)) {
+		sFilePath = GetZNCPath() + "/" + sConfigFile;
+
+		if (!CFile::Exists(sFilePath)) {
+			cerr << "Unable to find config [" << sConfigFile << "]" << endl;
+			return false;
+		}
 	}
 
 	CFile File(sFilePath);
