@@ -51,6 +51,11 @@
 #include <sys/ioctl.h>
 #include <sys/timeb.h>
 
+#ifdef __sun
+#include <strings.h>
+#include <fcntl.h>
+#endif /* __sun */
+
 #ifdef HAVE_LIBSSL
 #include <openssl/ssl.h>
 #include <openssl/err.h>
@@ -121,12 +126,16 @@ namespace Csocket
 
 	inline void __Perror( const CS_STRING & s )
 	{
+#ifdef __sun
+		CS_DEBUG( s << ": " << strerror( errno ) );
+#else
 		char buff[512];
 		memset( (char *)buff, '\0', 512 );
 		if ( strerror_r( errno, buff, 511 ) == 0 )
 			CS_DEBUG( s << ": " << buff );
 		else
 			CS_DEBUG( s << ": Unknown Error Occured" );
+#endif /* __sun */
 	}
 	inline unsigned long long millitime()
 	{

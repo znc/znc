@@ -11,6 +11,30 @@ using std::stringstream;
 CUtils::CUtils() {}
 CUtils::~CUtils() {}
 
+#ifdef __sun
+char *strcasestr(const char *big, const char *little)
+{
+	int len;
+
+	if (!little || !big || !little[0])
+		return (char *) big;
+
+	len = strlen(little);
+	while (*big)
+	{
+		if (tolower(*big) == tolower(*little))
+		{
+			if (strncasecmp(big, little, len) == 0)
+				return (char *) big;
+		}
+
+		big++;
+	}
+
+	return NULL;
+}
+#endif /* __sun */
+
 string CUtils::GetIP(unsigned long addr) {
 	char szBuf[16];
 	memset((char*) szBuf, 0, 16);
