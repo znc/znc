@@ -206,11 +206,8 @@ void CUserSock::ReadLine(const string& sData) {
 
 							string sPath = m_pUser->GetDLPath();
 							if (!CFile::Exists(sPath)) {
-								PutStatus("Directory [" + sPath + "] not found, creating.");
-								if (mkdir(sPath.c_str(), 0700)) {
-									PutStatus("Could not create [" + sPath + "] directory.");
-									return;
-								}
+								PutStatus("Could not create [" + sPath + "] directory.");
+								return;
 							} else if (!CFile::IsDir(sPath)) {
 								PutStatus("Error: [" + sPath + "] is not a directory.");
 								return;
@@ -657,7 +654,7 @@ void CUserSock::UserCommand(const string& sLine) {
 		}
 
 		string sModRet;
-		m_pUser->GetModules().LoadModule(sMod, sArgs, m_pUser, m_pZNC->GetBinPath(), sModRet);
+		m_pUser->GetModules().LoadModule(sMod, sArgs, m_pUser, sModRet);
 		PutStatus(sModRet);
 #else
 		PutStatus("Unable to load [" + sMod + "] Modules are not enabled.");
@@ -698,7 +695,7 @@ void CUserSock::UserCommand(const string& sLine) {
 		}
 
 		string sModRet;
-		m_pUser->GetModules().ReloadModule(sMod, sArgs, m_pUser, m_pZNC->GetBinPath(), sModRet);
+		m_pUser->GetModules().ReloadModule(sMod, sArgs, m_pUser, sModRet);
 		PutStatus(sModRet);
 #else
 		PutStatus("Unable to unload [" + sMod + "] Modules are not enabled.");
