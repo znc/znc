@@ -27,10 +27,10 @@ function appendCXX {
 		CXXFLAGS=$*
 	fi
 }
-if `echo $host_os | grep -qi 'freebsd'`; then
+if `echo $host_os | grep -i 'freebsd' >/dev/null 2>/dev/null`; then
 	appendInc -I/usr/local/include
 	appendLib -L/usr/local/lib -lcompat
-elif `echo $host_os | grep -qi 'sol'`; then
+elif `echo $host_os | grep -i 'sol' >/dev/null 2>/dev/null`; then
 	appendLib -lsocket -lnsl
 fi
 

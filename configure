@@ -270,7 +270,7 @@ PACKAGE_VERSION=
 PACKAGE_STRING=
 PACKAGE_BUGREPORT=
 
-ac_subst_vars='SHELL PATH_SEPARATOR PACKAGE_NAME PACKAGE_TARNAME PACKAGE_VERSION PACKAGE_STRING PACKAGE_BUGREPORT exec_prefix prefix program_transform_name bindir sbindir libexecdir datadir sysconfdir sharedstatedir localstatedir libdir includedir oldincludedir infodir mandir build_alias host_alias target_alias DEFS ECHO_C ECHO_N ECHO_T LIBS CXX CXXFLAGS LDFLAGS CPPFLAGS ac_ct_CXX EXEEXT OBJEXT build build_cpu build_vendor build_os host host_cpu host_vendor host_os CC CFLAGS ac_ct_CC INCLUDES LIBOBJS LTLIBOBJS'
+ac_subst_vars='SHELL PATH_SEPARATOR PACKAGE_NAME PACKAGE_TARNAME PACKAGE_VERSION PACKAGE_STRING PACKAGE_BUGREPORT exec_prefix prefix program_transform_name bindir sbindir libexecdir datadir sysconfdir sharedstatedir localstatedir libdir includedir oldincludedir infodir mandir build_alias host_alias target_alias DEFS ECHO_C ECHO_N ECHO_T LIBS CXX CXXFLAGS LDFLAGS CPPFLAGS ac_ct_CXX EXEEXT OBJEXT build build_cpu build_vendor build_os host host_cpu host_vendor host_os CC CFLAGS ac_ct_CC MODFLAGS INCLUDES MODULES MODTARGET LIBOBJS LTLIBOBJS'
 ac_subst_files=''
 
 # Initialize some variables set by options.
@@ -1861,9 +1861,11 @@ function appendCXX {
 		CXXFLAGS=$*
 	fi
 }
-if `echo $host_os | grep -qi 'freebsd'`; then
+if `echo $host_os | grep -i 'freebsd' >/dev/null 2>/dev/null`; then
 	appendInc -I/usr/local/include
 	appendLib -L/usr/local/lib -lcompat
+elif `echo $host_os | grep -i 'sol' >/dev/null 2>/dev/null`; then
+	appendLib -lsocket -lnsl
 fi
 
 
@@ -2754,6 +2756,8 @@ if test $ac_cv_lib_dl_dlopen = yes; then
   appendCXX -D_MODULES -rdynamic
 fi
 
+	MODFLAGS=`echo $CXXFLAGS | sed 's/-rdynamic//g'`
+	MODTARGET="modules"
 fi
 
 #
@@ -2762,8 +2766,15 @@ fi
 
 
 
+
+
+
           ac_config_files="$ac_config_files Makefile"
 
+if test "$MODULES" = "yes"; then
+	          ac_config_files="$ac_config_files modules/buildmod"
+
+fi
 cat >confcache <<\_ACEOF
 # This file is a shell script that caches the results of configure
 # tests run on this system so they can be shared between configure
@@ -3314,6 +3325,7 @@ do
   case "$ac_config_target" in
   # Handling of arguments.
   "Makefile" ) CONFIG_FILES="$CONFIG_FILES Makefile" ;;
+  "modules/buildmod" ) CONFIG_FILES="$CONFIG_FILES modules/buildmod" ;;
   *) { { echo "$as_me:$LINENO: error: invalid argument: $ac_config_target" >&5
 echo "$as_me: error: invalid argument: $ac_config_target" >&2;}
    { (exit 1); exit 1; }; };;
@@ -3415,7 +3427,10 @@ s,@host_os@,$host_os,;t t
 s,@CC@,$CC,;t t
 s,@CFLAGS@,$CFLAGS,;t t
 s,@ac_ct_CC@,$ac_ct_CC,;t t
+s,@MODFLAGS@,$MODFLAGS,;t t
 s,@INCLUDES@,$INCLUDES,;t t
+s,@MODULES@,$MODULES,;t t
+s,@MODTARGET@,$MODTARGET,;t t
 s,@LIBOBJS@,$LIBOBJS,;t t
 s,@LTLIBOBJS@,$LTLIBOBJS,;t t
 CEOF
@@ -3648,5 +3663,7 @@ if test "$no_create" != yes; then
   $ac_cs_success || { (exit 1); exit 1; }
 fi
 
-
+if test -f modules/buildmod; then
+	chmod 0711 modules/buildmod
+fi
 touch .depend

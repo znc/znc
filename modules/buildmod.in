@@ -1,13 +1,35 @@
 #!/bin/sh
-CXXFLAGS="-Wall -D_GNU_SOURCE -DHAVE_LIBSSL -I.."
-LIBS="-lssl"
+CXXFLAGS="@MODFLAGS@"
+LIBS="@LIBS@"
 
 if test -z "$1"; then
-	echo "Usage: $0 <module> [...]"
+	echo "Usage: $0 [--cflags] [--libs] | --all | <module> [...]"
 	exit 1
 fi
 
-for arg in "$@"
+if [ -z "$CXX" ]; then
+	CXX="g++"
+fi
+
+if [ "$1" = "--cflags" ]; then
+	echo "$CXXFLAGS"
+	exit 0
+fi
+
+if [ "$1" = "--libs" ]; then
+	echo "$LIBS"
+	exit 0
+fi
+
+if [ "$1" = "--all" ]; then
+	for i in *; do
+		FILE="$FILE $i"
+	done
+else
+	FILES=$@
+fi
+
+for arg in "$FILES"
 do
 	if test -d $arg; then
 		(cd $arg && make || exit 1)
@@ -21,15 +43,17 @@ do
 	elif test -f "$arg.cc"; then
 		FILE="$arg.cc"
 		MOD="$arg"
+	else
+		continue
 	fi
 
 	rm -f "$MOD.so"
 
 	if test -n "$FILE"; then
-		COMMAND="g++ $CXXFLAGS -c $FILE"
+		COMMAND="$CXX $CXXFLAGS -c $FILE"
 		echo $COMMAND 
 		$COMMAND || exit 1
-		COMMAND="g++ $CXXFLAGS -shared -o $MOD.so $MOD.o $LIBS"
+		COMMAND="$CXX $CXXFLAGS -shared -o $MOD.so $MOD.o $LIBS"
 		echo $COMMAND
 		$COMMAND || exit 1
 	fi
