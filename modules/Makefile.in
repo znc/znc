@@ -29,7 +29,7 @@ create_install_dir:
 	mkdir -p $(DESTDIR)$(prefix)/share/znc
 
 install_%:
-	install -m 0644 $(subst install_,,$@) $(DESTDIR)$(prefix)/share/znc
+	install -m 0755 $(subst install_,,$@) $(DESTDIR)$(prefix)/share/znc
 
 clean:
 	rm -rf *.so *.o core core.*
