@@ -206,8 +206,9 @@ bool CChan::RemNick(const string& sNick) {
 
 	delete it->second;
 	m_msNicks.erase(it);
+	CNick* pNick = m_msNicks.begin()->second;
 
-	if ((m_msNicks.size() == 1) && (!m_msNicks.begin()->second->IsOp())) {
+	if ((m_msNicks.size() == 1) && (!pNick->IsOp()) && (strcasecmp(pNick->GetNick().c_str(), m_pUser->GetCurNick().c_str()) == 0)) {
 		Cycle();
 	}
 
