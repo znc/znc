@@ -90,6 +90,7 @@ void CUserSock::ReadLine(const string& sData) {
 				} else if (pChan->IsDetached()) {
 					PutServ(":" + m_pUser->GetCurNick() + " JOIN :" + pChan->GetName());
 					PutIRC("NAMES " + pChan->GetName());
+					PutIRC("TOPIC " + pChan->GetName());
 				}
 
 				pChan->SetDetached(false);

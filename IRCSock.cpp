@@ -678,6 +678,7 @@ void CIRCSock::UserConnected(CUserSock* pUserSock) {
 		if ((vChans[a]->IsOn()) && (!vChans[a]->IsDetached())) {
 			PutUser(":" + m_Nick.GetNickMask() + " JOIN :" + vChans[a]->GetName());
 			PutServ("NAMES " + vChans[a]->GetName());
+			PutServ("TOPIC " + vChans[a]->GetName());
 		}
 	}
 
