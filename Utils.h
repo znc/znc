@@ -50,6 +50,10 @@ public:
 	static string Token(const string& s, unsigned int uPos, bool bRest = false, char cSep = ' ');
 	static string Ellipsize(const string& s, unsigned int uLen);
 	static bool wildcmp(const string& sWild, const string& sString);
+#ifdef HAVE_LIBSSL
+	static void GenerateCert( FILE *pOut, bool bEncPrivKey = false );
+#endif /* HAVE_LIBSSL */
+	
 private:
 protected:
 };
