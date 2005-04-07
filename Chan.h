@@ -41,6 +41,7 @@ public:
 	void Cycle() const;
 	void JoinUser();
 	void DetachUser();
+	void SendBuffer();
 
 	void IncClientRequests();
 	bool DecClientRequests(); 
