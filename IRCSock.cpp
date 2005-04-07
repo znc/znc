@@ -748,8 +748,6 @@ void CIRCSock::UserConnected(CUserSock* pUserSock) {
 		}
 	}
 
-	//PutUser("");
-
 	string sBufLine;
 	while (m_QueryBuffer.GetNextLine(GetNick(), sBufLine)) {
 		PutUser(sBufLine);
