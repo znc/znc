@@ -29,6 +29,7 @@ void CChan::JoinUser() {
 	if (!IsOn()) {
 		IncClientRequests();
 		m_pUser->PutIRC("JOIN " + GetName());
+		return;
 	}
 
 	m_pUser->PutUser(":" + m_pUser->GetIRCNick().GetNickMask() + " JOIN :" + GetName());
@@ -38,10 +39,54 @@ void CChan::JoinUser() {
 		m_pUser->PutUser(":" + m_pUser->GetIRCServer() + " 333 " + m_pUser->GetIRCNick().GetNick() + " " + GetName() + " " + GetTopicOwner() + " " + CUtils::ToString(GetTopicDate()));
 	}
 
-	m_pUser->PutIRC("NAMES " + GetName());
+	string sPre = ":" + m_pUser->GetIRCServer() + " 353 " + m_pUser->GetIRCNick().GetNick() + " = " + GetName() + " :";
+	string sLine = sPre;
+
+	for (map<string,CNick*>::iterator a = m_msNicks.begin(); a != m_msNicks.end(); a++) {
+		if (a->second->IsOp()) {
+			sLine += "@";
+		} else if (a->second->IsVoice()) {
+			sLine += "+";
+		}
+
+		sLine += a->first;
+
+		if (sLine.size() >= 490 || a == (--m_msNicks.end())) {
+			m_pUser->PutUser(sLine);
+			sLine = sPre;
+		} else {
+			sLine += " ";
+		}
+	}
+
+	m_pUser->PutUser(":" + m_pUser->GetIRCServer() + " 366 " + m_pUser->GetIRCNick().GetNick() + " " + GetName() + " :End of /NAMES list.");
+
+	//m_pUser->PutIRC("NAMES " + GetName());
 	//m_pUser->PutIRC("TOPIC " + GetName());
 
+	SendBuffer();
+
 	m_bDetached = false;
+}
+
+void CChan::SendBuffer() {
+	if (m_pUser->IsUserAttached()) {
+		const vector<string>& vsBuffer = GetBuffer();
+
+		if (vsBuffer.size()) {
+			m_pUser->PutUser(":***!znc@znc.com PRIVMSG " + GetName() + " :Buffer Playback...");
+
+			for (unsigned int a = 0; a < vsBuffer.size(); a++) {
+				m_pUser->PutUser(vsBuffer[a]);
+			}
+
+			if (!KeepBuffer()) {
+				ClearBuffer();
+			}
+
+			m_pUser->PutUser(":***!znc@znc.com PRIVMSG " + GetName() + " :Playback Complete.");
+		}
+	}
 }
 
 void CChan::DetachUser() {
