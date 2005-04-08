@@ -5,7 +5,7 @@
 inherit eutils
 
 DESCRIPTION="znc - Advanced IRC Bouncer"
-HOMEPAGE="http://sourceforge.net/projects/znc"
+HOMEPAGE="http://znc.sourceforge.net"
 SRC_URI="mirror://sourceforge/${PN}/${P}.tar.gz"
 
 LICENSE="GPL-2"
