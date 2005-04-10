@@ -382,7 +382,9 @@ void CUserSock::UserCommand(const string& sLine) {
 
 	string sCommand = CUtils::Token(sLine, 0);
 
-	if (strcasecmp(sCommand.c_str(), "LISTNICKS") == 0) {
+	if (strcasecmp(sCommand.c_str(), "HELP") == 0) {
+		HelpUser();
+	} else if (strcasecmp(sCommand.c_str(), "LISTNICKS") == 0) {
 		string sChan = CUtils::Token(sLine, 1);
 
 		if (sChan.empty()) {
@@ -772,6 +774,35 @@ void CUserSock::UserCommand(const string& sLine) {
 	}
 }
 
+void CUserSock::HelpUser() {
+	CTable Table;
+	Table.AddColumn("Command");
+	Table.AddColumn("Arguments");
+	Table.AddColumn("Description");
+
+	Table.AddRow(); Table.SetCell("Command", "ListDCCs");	Table.SetCell("Arguments", "");						Table.SetCell("Description", "List all active DCCs");
+	Table.AddRow(); Table.SetCell("Command", "ListMods");	Table.SetCell("Arguments", "");						Table.SetCell("Description", "List all loaded modules");
+	Table.AddRow(); Table.SetCell("Command", "ListChans");	Table.SetCell("Arguments", "");						Table.SetCell("Description", "List all channels");
+	Table.AddRow(); Table.SetCell("Command", "ListNicks");	Table.SetCell("Arguments", "<#chan>");				Table.SetCell("Description", "List all nicks on a channel");
+	Table.AddRow(); Table.SetCell("Command", "Topics");		Table.SetCell("Arguments", "");						Table.SetCell("Description", "Show topics in all channels");
+	Table.AddRow(); Table.SetCell("Command", "SetBuffer");	Table.SetCell("Arguments", "<#chan> [linecount]");	Table.SetCell("Description", "Set the buffer count for a channel");
+	Table.AddRow(); Table.SetCell("Command", "Jump");		Table.SetCell("Arguments", "");						Table.SetCell("Description", "Jump to the next server in the list");
+	Table.AddRow(); Table.SetCell("Command", "Send");		Table.SetCell("Arguments", "<nick> <file>");		Table.SetCell("Description", "Send a shell file to a nick on IRC");
+	Table.AddRow(); Table.SetCell("Command", "Get");		Table.SetCell("Arguments", "<file>");				Table.SetCell("Description", "Send a shell file to yourself");
+	Table.AddRow(); Table.SetCell("Command", "LoadMod");	Table.SetCell("Arguments", "<module>");				Table.SetCell("Description", "Load a module");
+	Table.AddRow(); Table.SetCell("Command", "UnloadMod");	Table.SetCell("Arguments", "<module>");				Table.SetCell("Description", "Unload a module");
+	Table.AddRow(); Table.SetCell("Command", "ReloadMod");	Table.SetCell("Arguments", "<module>");				Table.SetCell("Description", "Reload a module");
+
+	if (Table.size()) {
+		unsigned int uTableIdx = 0;
+		string sLine;
+
+		while (Table.GetLine(uTableIdx++, sLine)) {
+			PutStatus(sLine);
+		}
+	}
+}
+
 bool CUserSock::ConnectionFrom(const string& sHost, int iPort) {
 	DEBUG_ONLY(cout << GetSockName() << " == ConnectionFrom(" << sHost << ", " << iPort << ")" << endl);
 	return m_pZNC->IsHostAllowed(sHost);
@@ -916,4 +947,3 @@ string CUserSock::GetNickMask() const {
 
 	return GetNick() + "!" + m_pUser->GetIdent() + "@" + m_pUser->GetVHost();
 }
-
