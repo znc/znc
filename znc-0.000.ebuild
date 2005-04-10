@@ -10,15 +10,13 @@ SRC_URI="mirror://sourceforge/${PN}/${P}.tar.gz"
 
 LICENSE="GPL-2"
 SLOT="0"
-KEYWORDS="alpha amd64 arm ppc sparc x86"
+KEYWORDS="x86 ~amd64 ~sparc"
 IUSE="ssl nomodules debug"
 
 RDEPEND="virtual/libc"
 DEPEND="virtual/libc
 		>=sys-devel/gcc-3.2.3-r4
 		ssl? ( >=dev-libs/openssl-0.9.7d )"
-
-S="${WORKDIR}/${P}"
 
 src_unpack() {
 	unpack ${A} || die "unpack failed"
