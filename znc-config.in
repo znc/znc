@@ -22,7 +22,7 @@ case $1 in
 	--libs)
 		echo $LIBS;;
 	--version)
-		echo $VERSION";;
+		echo $VERSION;;
 esac
 
 exit 0
