@@ -1,0 +1,14 @@
+#/bin/bash
+
+CXXFLAGS=`znc-config --cflags`
+INCLUDES=`znc-config --include`
+LIBS=`znc-config --libs`
+
+for FILE in "$@"
+do
+	MOD="${FILE%.cpp}"
+	MOD="${MOD%.cc}"
+
+	echo -e " \033[1m\033[32m*\033[39m\033[22m Building ${MOD}.so... "
+	(g++ ${CXXFLAGS} ${INCLUDES} ${LIBS} -shared -o ${MOD}.so ${FILE} && echo -e "\b\b\b\b\b\b\033[1m\033[34m[ \033[32mok \033[34m]") || echo "[Error]"
+done
