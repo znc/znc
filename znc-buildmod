@@ -1,14 +1,32 @@
-#/bin/bash
+#/bin/sh
+
+if test -z "$1"; then
+	echo -e " \033[1m\033[31m*\033[39m\033[22m USAGE: $0 <file.cpp> [file.cpp ...]"
+	exit 1
+fi
 
 CXXFLAGS=`znc-config --cflags`
 INCLUDES=`znc-config --include`
 LIBS=`znc-config --libs`
+
+if test ! -d ${INCLUDES:2}; then
+	echo -e " \033[1m\033[31m*\033[39m\033[22m Unable to find znc include dir [${INCLUDES:2}], please (re)install znc."
+	echo -e "\b\b\b\b\b\b\033[1m\033[34m[ \033[31m!! \033[34m]"
+	exit 1
+fi
 
 for FILE in "$@"
 do
 	MOD="${FILE%.cpp}"
 	MOD="${MOD%.cc}"
 
-	echo -e " \033[1m\033[32m*\033[39m\033[22m Building ${MOD}.so... "
-	(g++ ${CXXFLAGS} ${INCLUDES} ${LIBS} -shared -o ${MOD}.so ${FILE} && echo -e "\b\b\b\b\b\b\033[1m\033[34m[ \033[32mok \033[34m]") || echo "[Error]"
+	if test ! -f ${FILE}; then
+		echo -e " \033[1m\033[31m*\033[39m\033[22m Could not find ${MOD}.so... "
+		echo -e "\b\b\b\b\b\b\033[1m\033[34m[ \033[31m!! \033[34m]"
+	else
+		echo -e " \033[1m\033[32m*\033[39m\033[22m Building ${MOD}.so... "
+		(g++ ${CXXFLAGS} ${INCLUDES} ${LIBS} -shared -o ${MOD}.so ${FILE} && echo -e "\b\b\b\b\b\b\033[1m\033[34m[ \033[32mok \033[34m]") || echo "[Error]"
+	fi
 done
+
+exit 0
