@@ -50,17 +50,18 @@ void CUserSock::ReadLine(const string& sData) {
 	} else if (strcasecmp(sCommand.c_str(), "PONG") == 0) {
 		return;	// Block pong replies, we already responded to the pings
 	} else if (strcasecmp(sCommand.c_str(), "PASS") == 0) {
-		m_sPass = CUtils::Token(sLine, 1);
+		if (!m_bAuthed) {
+			m_bGotPass = true;
+			m_sPass = CUtils::Token(sLine, 1);
 
-		if (m_sPass.find(":") != string::npos) {
-			m_sUser = CUtils::Token(m_sPass, 0, false, ':');
-			m_sPass = CUtils::Token(m_sPass, 1, true, ':');
-		}
+			if (m_sPass.find(":") != string::npos) {
+				m_sUser = CUtils::Token(m_sPass, 0, false, ':');
+				m_sPass = CUtils::Token(m_sPass, 1, true, ':');
+			}
 
-		m_bGotUser = (!m_sUser.empty());
-
-		if ((m_bGotNick) && (m_bGotUser)) {
-			AuthUser();
+			if ((m_bGotNick) && (m_bGotUser)) {
+				AuthUser();
+			}
 		}
 
 		return;		// Don't forward this msg.  ZNC has already registered us.
@@ -74,23 +75,24 @@ void CUserSock::ReadLine(const string& sData) {
 			m_sNick = sNick;
 			m_bGotNick = true;
 
-			if (m_bGotUser) {
+			if ((m_bGotPass) && (m_bGotUser)) {
 				AuthUser();
 			}
-			return;		// Don't forward this msg.  The bnc will handle nick changes until auth is complete 
+			return;		// Don't forward this msg.  ZNC will handle nick changes until auth is complete 
 		}
 
 		if ((m_pUser) && (strcasecmp(sNick.c_str(), m_pUser->GetNick().c_str()) == 0)) {
 			m_uKeepNickCounter++;
 		}
 	} else if (strcasecmp(sCommand.c_str(), "USER") == 0) {
-		if ((!m_bGotUser) && (!m_bAuthed)) {
+		if ((!m_bAuthed) && (m_sUser.empty())) {
 			m_sUser = CUtils::Token(sLine, 1);
-			m_bGotUser = true;
+		}
 
-			if (m_bGotNick) {
-				AuthUser();
-			}
+		m_bGotUser = true;
+
+		if ((m_bGotPass) && (m_bGotNick)) {
+			AuthUser();
 		}
 
 		return;		// Don't forward this msg.  ZNC has already registered us.
@@ -877,7 +879,7 @@ void CUserSock::IRCConnected(CIRCSock* pIRCSock) {
 }
 
 void CUserSock::BouncedOff() {
-	PutStatus("You are being disconnected because another user just authenticated as you.");
+	PutStatusNotice("You are being disconnected because another user just authenticated as you.");
 	m_pIRCSock = NULL;
 	Close();
 }

@@ -25,6 +25,7 @@ public:
 		m_pUser = NULL;
 		m_pIRCSock = NULL;
 		m_bAuthed = false;
+		m_bGotPass = false;
 		m_bGotNick = false;
 		m_bGotUser = false;
 		m_uKeepNickCounter = 0;
@@ -62,6 +63,7 @@ public:
 private:
 protected:
 	bool		m_bAuthed;
+	bool		m_bGotPass;
 	bool		m_bGotNick;
 	bool		m_bGotUser;
 	CZNC*		m_pZNC;
