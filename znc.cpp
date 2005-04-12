@@ -210,6 +210,7 @@ void CZNC::InitDirs(const string& sArgvPath) {
 	// Other dirs that we use
 	m_sDLPath = m_sZNCPath + "/downloads";
 	m_sModPath = m_sZNCPath + "/modules";
+	m_sDataPath = m_sZNCPath + "/data";
 }
 
 bool CZNC::ParseConfig(const string& sConfigFile) {
