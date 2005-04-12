@@ -389,6 +389,7 @@ const string& CUser::GetCurPath() const { return m_pZNC->GetCurPath(); }
 const string& CUser::GetDLPath() const { return m_pZNC->GetDLPath(); }
 const string& CUser::GetModPath() const { return m_pZNC->GetModPath(); }
 const string& CUser::GetHomePath() const { return m_pZNC->GetHomePath(); }
+const string& CUser::GetDataPath() const { return m_pZNC->GetDataPath(); }
 string CUser::GetPemLocation() const { return m_pZNC->GetPemLocation(); }
 
 bool CUser::UseClientIP() const { return m_bUseClientIP; }

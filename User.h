@@ -88,6 +88,7 @@ public:
 	const string& GetDLPath() const;
 	const string& GetModPath() const;
 	const string& GetHomePath() const;
+	const string& GetDataPath() const;
 	string GetPemLocation() const;
 
 	bool UseClientIP() const;
