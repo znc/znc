@@ -13,7 +13,7 @@ CIRCSock::CIRCSock(CZNC* pZNC, CUser* pUser) : Csock() {
 	m_bKeepNick = true;
 	m_bAuthed = false;
 	EnableReadLine();
-	m_RawBuffer.SetLineCount(100);	// This should be more than enough raws, especially since we are asking the server to resend MOTD
+	m_RawBuffer.SetLineCount(100);		// This should be more than enough raws, especially since we are buffering the MOTD separately
 	m_Nick.SetIdent(pUser->GetIdent());
 	m_Nick.SetHost(pUser->GetVHost());
 }
@@ -116,8 +116,10 @@ void CIRCSock::ReadLine(const string& sData) {
 					m_RawBuffer.AddLine(":" + sServer + " " + sCmd + " ", " " + sRest);
 					break;
 				case 372:	// motd
+					m_vsMotdBuffer.clear();
 				case 375:	// begin motd
 				case 376:	// end motd
+					m_vsMotdBuffer.push_back(sLine);
 					break;
 				case 471: // :irc.server.net 471 nick #chan :Cannot join channel (+l)
 				case 473: // :irc.server.net 473 nick #chan :Cannot join channel (+i)
@@ -739,7 +741,10 @@ void CIRCSock::UserConnected(CUserSock* pUserSock) {
 		}
 	}
 
-	PutServ("MOTD");
+	// Send the cached MOTD
+	for (unsigned int a = 0; a < m_vsMotdBuffer.size(); a++) {
+		PutUser(m_vsMotdBuffer[a]);
+	}
 
 	const vector<CChan*>& vChans = m_pUser->GetChans();
 	for (unsigned int a = 0; a < vChans.size(); a++) {

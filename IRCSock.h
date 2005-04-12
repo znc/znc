@@ -63,6 +63,7 @@ protected:
 	CNick					m_Nick;
 	string					m_sPass;
 	CBuffer					m_RawBuffer;
+	vector<string>			m_vsMotdBuffer;
 	CUserSock*				m_pUserSock;
 	map<string, CChan*>		m_msChans;
 	unsigned int			m_uQueryBufferCount;
