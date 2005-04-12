@@ -1,4 +1,5 @@
 #include "main.h"
+#include "znc.h"
 #include "User.h"
 #include "Nick.h"
 #include "Modules.h"
@@ -25,6 +26,9 @@
  * better solution then plain text.
  * 
  * $Log$
+ * Revision 1.3  2005/04/12 07:33:45  prozacx
+ * Changed path to DataPath
+ *
  * Revision 1.2  2005/04/04 06:35:19  imaginos
  * fixed int32's that test against npos to string::size_type
  *
@@ -213,7 +217,8 @@ public:
 	string GetPath( const string & sChannel )
 	{
 		string sBuffer = m_pUser->GetUserName() + Lower( sChannel );
-		string sRet = m_pUser->GetHomePath();
+		string sRet = m_pUser->GetDataPath() + "/savebuff";
+		CUtils::MakeDir(sRet);
 		sRet += "/.znc-savebuff-" + CBlowfish::MD5( sBuffer, true );
 		return( sRet );
 	}
