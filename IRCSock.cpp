@@ -115,9 +115,9 @@ void CIRCSock::ReadLine(const string& sData) {
 				case 266:	// global users
 					m_RawBuffer.AddLine(":" + sServer + " " + sCmd + " ", " " + sRest);
 					break;
-				case 372:	// motd
-					m_vsMotdBuffer.clear();
 				case 375:	// begin motd
+					m_vsMotdBuffer.clear();
+				case 372:	// motd
 				case 376:	// end motd
 					m_vsMotdBuffer.push_back(sLine);
 					break;
