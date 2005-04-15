@@ -191,16 +191,18 @@ CZNC* CUser::GetZNC() {
 CUserSock* CUser::GetUserSock() {
 	// Todo: optimize this by saving a pointer to the sock
 	TSocketManager<Csock>& Manager = m_pZNC->GetManager();
+	string sSockName = "USR::" + m_sUserName;
 
 	for (unsigned int a = 0; a < Manager.size(); a++) {
 		Csock* pSock = Manager[a];
-		if (strncasecmp(pSock->GetSockName().c_str(), "USR::", 5) == 0) {
+		if (strcasecmp(pSock->GetSockName().c_str(), sSockName.c_str()) == 0) {
 			if (!pSock->isClosed()) {
 				return (CUserSock*) pSock;
 			}
 		}
 	}
-	return (CUserSock*) m_pZNC->GetManager().FindSockByName("USR::" + m_sUserName);
+
+	return (CUserSock*) m_pZNC->GetManager().FindSockByName(sSockName);
 }
 
 bool CUser::IsUserAttached() {
