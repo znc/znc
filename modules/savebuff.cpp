@@ -26,6 +26,9 @@
  * better solution then plain text.
  * 
  * $Log$
+ * Revision 1.5  2005/04/17 23:58:26  prozacx
+ * Added OnLoad() for setting pass from config
+ *
  * Revision 1.4  2005/04/17 23:46:06  prozacx
  * Upgraded output print msgs to new schema
  *
@@ -79,6 +82,17 @@ public:
 		{
 			SaveBufferToDisk();
 		}
+	}
+
+	virtual bool OnLoad(const string& sArgs)
+	{
+		if (!sArgs.empty())
+		{
+			m_sPassword = CBlowfish::MD5( sArgs );
+			return( OnBoot() );
+		}
+
+		return true;
 	}
 
 	virtual bool OnBoot()
