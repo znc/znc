@@ -213,32 +213,43 @@ int CUtils::MakeDir(const string& sPath, mode_t iMode) {
 	return -1;
 }
 
+char* CUtils::GetPass(const string& sPrompt) {
+	PrintPrompt(sPrompt);
+	return getpass("");
+}
+
 void CUtils::PrintError(const string& sMessage) {
-	fprintf(stdout, "\033[1m\033[31m*\033[39m\033[22m %s", sMessage.c_str());
-	PrintStatus(false);
+	fprintf(stdout, "\033[1m\033[34m[\033[31m ** \033[34m]\033[39m\033[22m %s\n", sMessage.c_str());
+}
+
+void CUtils::PrintPrompt(const string& sMessage) {
+	fprintf(stdout, "\033[1m\033[34m[\033[33m ?? \033[34m]\033[39m\033[22m %s\n", sMessage.c_str());
 }
 
 void CUtils::PrintMessage(const string& sMessage) {
-	fprintf(stdout, "\033[1m\033[33m*\033[39m\033[22m %s\n", sMessage.c_str());
+	fprintf(stdout, "\033[1m\033[34m[\033[33m ** \033[34m]\033[39m\033[22m %s\n", sMessage.c_str());
 }
 
 void CUtils::PrintAction(const string& sMessage) {
-	fprintf(stdout, "\033[1m\033[32m*\033[39m\033[22m %s... ", sMessage.c_str());
+	fprintf(stdout, "\033[1m\033[34m[\033[32m    \033[34m]\033[39m\033[22m %s... ", sMessage.c_str());
 	fflush(stdout);
 }
 
 void CUtils::PrintStatus(bool bSuccess, const string& sMessage) {
 	if (!sMessage.empty()) {
-		fprintf(stdout, "%s", sMessage.c_str());
+		if (bSuccess) {
+			fprintf(stdout, "%s", sMessage.c_str());
+		} else {
+			fprintf(stdout, "\033[1m\033[34m[\033[31m %s \033[34m]\033[39m\033[22m", sMessage.c_str());
+		}
 	}
 
-	fprintf(stdout, "\n\b\b\b\b\b\b");
+	fprintf(stdout, "\r");
 
 	if (bSuccess) {
-		fprintf(stdout, "\033[1m\033[34m[ \033[32mok \033[34m]\033[39m\033[22m\n");
+		fprintf(stdout, "\033[1m\033[34m[\033[32m ok \033[34m]\033[39m\033[22m\n");
 	} else {
-		fprintf(stdout, "\033[1m\033[34m[ \033[31m!! \033[34m]\033[39m\033[22m");
-		fprintf(stdout, "\r\033[1m\033[31m*\033[39m\033[22m\n");
+		fprintf(stdout, "\033[1m\033[34m[\033[31m !! \033[34m]\033[39m\033[22m\n");
 	}
 }
 

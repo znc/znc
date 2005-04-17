@@ -31,8 +31,10 @@ public:
 	static int MakeDir(const string& sPath, mode_t iMode = 0700);
 	static void PrintError(const string& sMessage);
 	static void PrintMessage(const string& sMessage);
+	static void PrintPrompt(const string& sMessage);
 	static void PrintAction(const string& sMessage);
 	static void PrintStatus(bool bSuccess, const string& sMessage = "");
+	static char* GetPass(const string& sPrompt);
 
 	static string ToString(short i);
 	static string ToString(unsigned short i);
