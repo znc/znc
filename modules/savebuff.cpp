@@ -26,6 +26,9 @@
  * better solution then plain text.
  * 
  * $Log$
+ * Revision 1.4  2005/04/17 23:46:06  prozacx
+ * Upgraded output print msgs to new schema
+ *
  * Revision 1.3  2005/04/12 07:33:45  prozacx
  * Changed path to DataPath
  *
@@ -66,19 +69,23 @@ class CSaveBuff : public CModule
 public:
 	MODCONSTRUCTOR(CSaveBuff)
 	{
+		m_bBootError = false;
 		// m_sPassword = CBlowfish::MD5( "" );
 		AddTimer( new CSaveBuffJob( this, 60, 0, "SaveBuff", "Saves the current buffer to disk every 1 minute" ) );
 	}
 	virtual ~CSaveBuff() 
 	{
-		SaveBufferToDisk();
+		if ( !m_bBootError )
+		{
+			SaveBufferToDisk();
+		}
 	}
 
 	virtual bool OnBoot()
 	{
 		if ( m_sPassword.empty() )
 		{
-			char *pTmp = getpass( "Enter Encryption Key for savebuff.so: " );
+			char *pTmp = CUtils::GetPass( "Enter Encryption Key for savebuff.so: " );
 
 			if ( pTmp )
 				m_sPassword = CBlowfish::MD5( pTmp );
@@ -90,7 +97,10 @@ public:
 		for( u_int a = 0; a < vChans.size(); a++ )
 		{
 			if ( !BootStrap( vChans[a] ) )
+			{
+				m_bBootError = true;
 				return( false );
+			}
 		}
 
 		return true;
@@ -110,7 +120,7 @@ public:
 			}
 		} else
 		{
-			cerr << "Failed to Decrypt [" << pChan->GetName() << "]" << endl;
+			CUtils::PrintError("Failed to Decrypt [" + pChan->GetName() + "]");
 			return( false );
 		}
 
@@ -224,6 +234,7 @@ public:
 	}
 
 private:
+	bool	m_bBootError;
 	string	m_sPassword;
 	bool DecryptChannel( const string & sChan, string & sBuffer )
 	{
