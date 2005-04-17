@@ -139,7 +139,7 @@ int main(int argc, char** argv) {
 	pZNC->InitDirs(((argc) ? argv[0] : ""));
 
 	if (!pZNC->ParseConfig(sConfig)) {
-		CUtils::PrintError("Unrecoverable error while parsing config.");
+		CUtils::PrintError("Unrecoverable config error.");
 		delete pZNC;
 		return 1;
 	}
