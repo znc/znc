@@ -220,19 +220,23 @@ bool CZNC::ParseConfig(const string& sConfigFile) {
 	if (sConfigFile.empty()) {
 		sFilePath = GetZNCPath() + "/znc.conf";
 	} else {
-		if (CUtils::Left(sConfigFile, 1) != "/") {
+		if (CUtils::Left(sConfigFile, 2) == "./" || CUtils::Left(sConfigFile, 3) == "../") {
 			sFilePath = GetCurPath() + "/" + sConfigFile;
-		} else {
-			sFilePath = sConfigFile;
+		} else if (CUtils::Left(sConfigFile, 1) != "/") {
+			sFilePath = GetZNCPath() + "/" + sConfigFile;
 		}
 	}
+
+	CUtils::PrintAction("Opening Config [" + sFilePath + "]");
 
 	CFile File(sFilePath);
 
 	if (!File.Open(O_RDONLY)) {
-		cerr << "Could not open config [" << sFilePath << "]" << endl;
+		CUtils::PrintStatus(false);
 		return false;
 	}
+
+	CUtils::PrintStatus(true);
 
 	string sLine;
 	bool bCommented = false;	// support for /**/ style comments
@@ -293,17 +297,17 @@ bool CZNC::ParseConfig(const string& sConfigFile) {
 				}
 			} else if (strcasecmp(sTag.c_str(), "User") == 0) {
 				if (pUser) {
-					cerr << "You may not nest <User> tags inside of other <User> tags." << endl;
+					CUtils::PrintStatus(false, "You may not nest <User> tags inside of other <User> tags.");
 					return false;
 				}
 
 				if (sValue.empty()) {
-					cerr << "You must supply a username in the <User> tag." << endl;
+					CUtils::PrintStatus(false, "You must supply a username in the <User> tag.");
 					return false;
 				}
 
 				if (m_msUsers.find(sValue) != m_msUsers.end()) {
-					cerr << "User [" << sValue << "] defined more than once." << endl;
+					CUtils::PrintStatus(false, "User [" + sValue + "] defined more than once.");
 					return false;
 				}
 
@@ -312,19 +316,19 @@ bool CZNC::ParseConfig(const string& sConfigFile) {
 
 				if (!sStatusPrefix.empty()) {
 					if (!pUser->SetStatusPrefix(sStatusPrefix)) {
-						cerr << "Invalid StatusPrefix [" + sStatusPrefix + "] Must be 1-5 chars, no spaces." << endl;
+						CUtils::PrintStatus(false, "Invalid StatusPrefix [" + sStatusPrefix + "] Must be 1-5 chars, no spaces.");
 					}
 				}
 				m_msUsers[sValue] = pUser;
 				continue;
 			} else if (strcasecmp(sTag.c_str(), "Chan") == 0) {
 				if (!pUser) {
-					cerr << "<Chan> tags must be nested inside of a <User> tag." << endl;
+					CUtils::PrintStatus(false, "<Chan> tags must be nested inside of a <User> tag.");
 					return false;
 				}
 
 				if (pChan) {
-					cerr << "You may not nest <Chan> tags inside of other <Chan> tags." << endl;
+					CUtils::PrintStatus(false, "You may not nest <Chan> tags inside of other <Chan> tags.");
 					return false;
 				}
 
@@ -390,7 +394,7 @@ bool CZNC::ParseConfig(const string& sConfigFile) {
 						continue;
 					} else if (strcasecmp(sName.c_str(), "StatusPrefix") == 0) {
 						if (!pUser->SetStatusPrefix(sValue)) {
-							cerr << "Invalid StatusPrefix [" + sValue + "] Must be 1-5 chars, no spaces." << endl;
+							CUtils::PrintStatus(false, "Invalid StatusPrefix [" + sValue + "] Must be 1-5 chars, no spaces.");
 						}
 						continue;
 					} else if (strcasecmp(sName.c_str(), "DCCLookupMethod") == 0) {
@@ -412,23 +416,23 @@ bool CZNC::ParseConfig(const string& sConfigFile) {
 						pUser->AddAllowedHost(sValue);
 						continue;
 					} else if (strcasecmp(sName.c_str(), "Server") == 0) {
-						if (!pUser->AddServer(sValue)) {
-							cerr << "Unable to add server [" << sValue << "]" << endl;
-						}
+						CUtils::PrintAction("Adding Server [" + sValue + "]");
+						CUtils::PrintStatus(pUser->AddServer(sValue));
 						continue;
 					} else if (strcasecmp(sName.c_str(), "Chan") == 0) {
 						pUser->AddChan(sValue);
 						continue;
 					} else if (strcasecmp(sName.c_str(), "LoadModule") == 0) {
+						string sModName = CUtils::Token(sValue, 0);
+						CUtils::PrintAction("Loading Module [" + sModName + "]");
 #ifdef _MODULES
 						string sModRet;
-						string sModName = CUtils::Token(sValue, 0);
 						string sArgs = CUtils::Token(sValue, 1, true);
 
-						pUser->GetModules().LoadModule(sModName, sArgs, pUser, sModRet);
-						cout << sModRet << endl;
+						bool bModRet = pUser->GetModules().LoadModule(sModName, sArgs, pUser, sModRet);
+						CUtils::PrintStatus(bModRet, (bModRet) ? "" : sModRet);
 #else
-						cerr << "Unable to load [" << sValue << "] Modules are not enabled." << endl;
+						CUtils::PrintStatus(false, "Modules are not enabled.");
 #endif
 						continue;
 					}
@@ -443,23 +447,26 @@ bool CZNC::ParseConfig(const string& sConfigFile) {
 					}
 
 					m_uListenPort = strtol(sPort.c_str(), NULL, 10);
+					CUtils::PrintAction("Binding to port [" + string((m_bSSL) ? "+" : "") + CUtils::ToString(m_uListenPort) + "]");
 
 #ifndef HAVE_LIBSSL
 					if (m_bSSL) {
-						cerr << "SSL is not enabled, could not bind to ssl port [" << m_uListenPort << "]" << endl;
+						CUtils::PrintStatus(false, "SSL is not enabled");
 						return false;
 					}
 #endif
 
 					if ((m_bSSL) && (!CFile::Exists(GetPemLocation()))) {
-						cerr << "Unable to locate pem file: [" << GetPemLocation() << "]" << endl;
+						CUtils::PrintStatus(false, "Unable to locate pem file: [" + GetPemLocation() + "]");
 						return false;
 					}
 
 					if (!Listen()) {
-						cerr << "Could not bind to port [" << m_uListenPort << "]" << endl;
+						CUtils::PrintStatus(false);
 						return false;
 					}
+
+					CUtils::PrintStatus(true);
 
 					continue;
 				} else if (strcasecmp(sName.c_str(), "ISpoofFile") == 0) {
@@ -480,7 +487,7 @@ bool CZNC::ParseConfig(const string& sConfigFile) {
 			}
 		}
 
-		cerr << "Unhandled line in config: [" << sLine << "]" << endl;
+		CUtils::PrintError("Unhandled line in config: [" + sLine + "]");
 	}
 
 	if (pChan) {
@@ -490,10 +497,9 @@ bool CZNC::ParseConfig(const string& sConfigFile) {
 	File.Close();
 
 	if (!m_msUsers.size()) {
-		cerr << "You must define at least one user in your config." << endl;
+		CUtils::PrintStatus(false, "You must define at least one user in your config.");
 		return false;
 	}
 
-	cout << "Loaded config [" << sFilePath << "]" << endl;
 	return true;
 }

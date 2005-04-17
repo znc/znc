@@ -29,6 +29,10 @@ public:
 	static unsigned long GetLongIP(const string& sIP);
 	static string ChangeDir(const string& sPath, const string& sAdd, const string& sHomeDir);
 	static int MakeDir(const string& sPath, mode_t iMode = 0700);
+	static void PrintError(const string& sMessage);
+	static void PrintMessage(const string& sMessage);
+	static void PrintAction(const string& sMessage);
+	static void PrintStatus(bool bSuccess, const string& sMessage = "");
 
 	static string ToString(short i);
 	static string ToString(unsigned short i);
