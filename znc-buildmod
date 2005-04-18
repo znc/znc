@@ -1,7 +1,7 @@
 #/bin/sh
 
 if test -z "$1"; then
-	echo -e " \033[1m\033[31m*\033[39m\033[22m USAGE: $0 <file.cpp> [file.cpp ...]"
+	echo -e "\033[1m\033[34m[\033[33m ** \033[34m]\033[39m\033[22m USAGE: $0 <file.cpp> [file.cpp ...]"
 	exit 1
 fi
 
@@ -10,8 +10,7 @@ INCLUDES=`znc-config --include`
 LIBS=`znc-config --libs`
 
 if test ! -d ${INCLUDES:2}; then
-	echo -e " \033[1m\033[31m*\033[39m\033[22m Unable to find znc include dir [${INCLUDES:2}], please (re)install znc."
-	echo -e "\b\b\b\b\b\b\033[1m\033[34m[ \033[31m!! \033[34m]\033[39m\033[22m"
+	echo -e "\033[1m\033[34m[\033[31m ** \033[34m]\033[39m\033[22m Unable to find znc include dir [${INCLUDES:2}], please (re)install znc."
 	exit 1
 fi
 
@@ -20,13 +19,14 @@ do
 	MOD="${FILE%.cpp}"
 	MOD="${MOD%.cc}"
 
+	echo -en "\033[1m\033[34m[    ]\033[39m\033[22m Building ${MOD}.so... "
+
 	if test ! -f ${FILE}; then
-		echo -e " \033[1m\033[31m*\033[39m\033[22m Could not find ${MOD}.so... "
-		echo -e "\b\b\b\b\b\b\033[1m\033[34m[ \033[31m!! \033[34m]\033[39m\033[22m"
+		echo -en "\033[1m\033[34m[\033[31m File not found \033[34m]\033[39m\033[22m"
+		echo -e "\r\033[1m\033[34m[\033[31m !! \033[34m]\033[39m\033[22m"
 	else
-		echo -e " \033[1m\033[32m*\033[39m\033[22m Building ${MOD}.so... "
-		(g++ ${CXXFLAGS} ${INCLUDES} ${LIBS} -shared -o ${MOD}.so ${FILE} && echo -e "\b\b\b\b\b\b\033[1m\033[34m[ \033[32mok \033[34m]\033[39m\033[22m") \
-			|| (echo -e " \033[1m\033[31m*\033[39m\033[22m Error while building ${MOD}.so" && echo -e "\b\b\b\b\b\b\033[1m\033[34m[ \033[31m!! \033[34m]\033[39m\033[22m")
+		(g++ ${CXXFLAGS} ${INCLUDES} ${LIBS} -shared -o ${MOD}.so ${FILE} && echo -e "\r\033[1m\033[34m[\033[32m ok \033[34m]\033[39m\033[22m") \
+			|| (echo -e "\033[1m\033[34m[\033[31m ** \033[34m]\033[39m\033[22m Error while building ${MOD}.so")
 	fi
 done
 
