@@ -176,13 +176,11 @@ int main(int argc, char** argv) {
 		exit(0);
 	}
 	
-	/* keep the term from hanging on logout */
-	if ( daemon( 1, 0 ) != 0 ) {
-		cerr << "Unable to daemonize!" << endl;
-		exit( 1 );
-	}
+	// Redirect std in/out/err to /dev/null
+	close(0); open("/dev/null", O_RDONLY);
+	close(1); open("/dev/null", O_WRONLY);
+	close(2); open("/dev/null", O_WRONLY);
 
-	
 #endif
 
 	struct sigaction sa;
