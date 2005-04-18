@@ -26,6 +26,9 @@
  * better solution then plain text.
  * 
  * $Log$
+ * Revision 1.10  2005/04/18 22:56:42  prozacx
+ * Call OnBoot() in OnLoad() again since closing stdout bug is now fixed
+ *
  * Revision 1.9  2005/04/18 22:32:24  imaginos
  * move password reset into BootStrap
  *
@@ -101,6 +104,7 @@ public:
 		if (!sArgs.empty())
 		{
 			m_sPassword = CBlowfish::MD5( sArgs );
+			return( OnBoot() );
 		}
 
 		return true;
