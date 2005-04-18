@@ -177,10 +177,12 @@ int main(int argc, char** argv) {
 	}
 	
 	/* keep the term from hanging on logout */
-	close( 0 );
-	close( 1 );
-	close( 2 );
+	if ( daemon( 1, 0 ) != 0 ) {
+		cerr << "Unable to daemonize!" << endl;
+		exit( 1 );
+	}
 
+	
 #endif
 
 	struct sigaction sa;
