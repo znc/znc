@@ -20,6 +20,9 @@
  *
  * 
  * $Log$
+ * Revision 1.6  2005/04/18 04:44:40  imaginos
+ * fixed bug where attempting to set a bad pass trashes existing buffer
+ *
  * Revision 1.5  2005/04/18 00:18:46  prozacx
  * Upgraded output msgs and changed path of file
  *
@@ -59,11 +62,13 @@ public:
 	{
 		Ping();	
 		m_bIsAway = false;
+		m_bBootError = false;
 		AddTimer( new CAwayJob( this, 60, 0, "AwayJob", "Checks for idle and saves messages every 1 minute" ) );
 	}
 	virtual ~CAway() 
 	{
-		SaveBufferToDisk();
+		if ( !m_bBootError )
+			SaveBufferToDisk();
 	}
 
 	virtual bool OnBoot()
@@ -79,7 +84,11 @@ public:
 		}
 		
 		if ( !BootStrap() )
+		{
+			m_sPassword = "";
+			m_bBootError = true;
 			return( false );
+		}
 
 		return( true );
 	}
@@ -343,6 +352,7 @@ public:
 
 private:
 	string	m_sPassword;
+	bool	m_bBootError;
 	bool DecryptMessages( string & sBuffer )
 	{
 		string sMessages = GetPath();

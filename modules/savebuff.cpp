@@ -26,6 +26,9 @@
  * better solution then plain text.
  * 
  * $Log$
+ * Revision 1.6  2005/04/18 04:44:40  imaginos
+ * fixed bug where attempting to set a bad pass trashes existing buffer
+ *
  * Revision 1.5  2005/04/17 23:58:26  prozacx
  * Added OnLoad() for setting pass from config
  *
@@ -113,6 +116,7 @@ public:
 			if ( !BootStrap( vChans[a] ) )
 			{
 				m_bBootError = true;
+				m_sPassword = "";
 				return( false );
 			}
 		}
