@@ -20,6 +20,9 @@
  *
  * 
  * $Log$
+ * Revision 1.5  2005/04/18 00:18:46  prozacx
+ * Upgraded output msgs and changed path of file
+ *
  * Revision 1.4  2005/04/02 22:22:24  imaginos
  * ability to change pass
  *
@@ -67,7 +70,7 @@ public:
 	{
 		if ( m_sPassword.empty() )
 		{
-			char *pTmp = getpass( "Enter Encryption Key for away.so: " );
+			char *pTmp = CUtils::GetPass( "Enter Encryption Key for away.so: " );
 
 			if ( pTmp )
 				m_sPassword = CBlowfish::MD5( pTmp );
@@ -103,7 +106,7 @@ public:
 			}
 		} else
 		{
-			cerr << "Failed to Decrypt Messages" << endl;
+			CUtils::PrintError("Failed to Decrypt Messages");
 			return( false );
 		}
 
@@ -259,7 +262,8 @@ public:
 	string GetPath()
 	{
 		string sBuffer = m_pUser->GetUserName();
-		string sRet = m_pUser->GetHomePath();
+		string sRet = m_pUser->GetDataPath() + "/away";
+		CUtils::MakeDir(sRet);
 		sRet += "/.znc-away-" + CBlowfish::MD5( sBuffer, true );
 		return( sRet );
 	}
