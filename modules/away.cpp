@@ -20,6 +20,9 @@
  *
  * 
  * $Log$
+ * Revision 1.8  2005/04/18 22:32:24  imaginos
+ * move password reset into BootStrap
+ *
  * Revision 1.7  2005/04/18 05:41:43  prozacx
  * Added OnLoad() and print modname in error msg
  *
@@ -98,7 +101,6 @@ public:
 		
 		if ( !BootStrap() )
 		{
-			m_sPassword = "";
 			m_bBootError = true;
 			return( false );
 		}
@@ -128,6 +130,7 @@ public:
 			}
 		} else
 		{
+			m_sPassword = "";
 			CUtils::PrintError("[" + GetModName() + ".so] Failed to Decrypt Messages");
 			return( false );
 		}

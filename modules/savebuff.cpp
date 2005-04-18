@@ -26,6 +26,9 @@
  * better solution then plain text.
  * 
  * $Log$
+ * Revision 1.9  2005/04/18 22:32:24  imaginos
+ * move password reset into BootStrap
+ *
  * Revision 1.8  2005/04/18 17:26:23  imaginos
  * ditch warning message
  *
@@ -121,7 +124,6 @@ public:
 			if ( !BootStrap( vChans[a] ) )
 			{
 				m_bBootError = true;
-				m_sPassword = "";
 				return( false );
 			}
 		}
@@ -143,6 +145,7 @@ public:
 			}
 		} else
 		{
+			m_sPassword = "";
 			CUtils::PrintError("[" + GetModName() + ".so] Failed to Decrypt [" + pChan->GetName() + "]");
 			return( false );
 		}
