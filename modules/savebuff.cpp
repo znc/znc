@@ -26,6 +26,9 @@
  * better solution then plain text.
  * 
  * $Log$
+ * Revision 1.8  2005/04/18 17:26:23  imaginos
+ * ditch warning message
+ *
  * Revision 1.7  2005/04/18 05:39:19  prozacx
  * Don't call OnBoot() in OnLoad() and print modname in error msg
  *
@@ -155,6 +158,7 @@ public:
 			for( u_int a = 0; a < vChans.size(); a++ )
 			{
 				const vector<string> & vBuffer = vChans[a]->GetBuffer();
+				// TODO make this configureable
 				vChans[a]->SetKeepBuffer( true );
 				vChans[a]->SetBufferCount( 500 );
 
@@ -263,10 +267,7 @@ private:
 		sBuffer = "";
 	
 		if ( ( sChannel.empty() ) || ( !ReadFile( sChannel, sFile ) ) )
-		{
-			 PutModule( "Unable to find buffer for that channel" );
 			 return( true ); // gonna be successful here
-		}
 
 		if ( !sFile.empty() )
 		{
