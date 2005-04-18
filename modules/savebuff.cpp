@@ -26,6 +26,9 @@
  * better solution then plain text.
  * 
  * $Log$
+ * Revision 1.7  2005/04/18 05:39:19  prozacx
+ * Don't call OnBoot() in OnLoad() and print modname in error msg
+ *
  * Revision 1.6  2005/04/18 04:44:40  imaginos
  * fixed bug where attempting to set a bad pass trashes existing buffer
  *
@@ -92,7 +95,6 @@ public:
 		if (!sArgs.empty())
 		{
 			m_sPassword = CBlowfish::MD5( sArgs );
-			return( OnBoot() );
 		}
 
 		return true;
@@ -138,7 +140,7 @@ public:
 			}
 		} else
 		{
-			CUtils::PrintError("Failed to Decrypt [" + pChan->GetName() + "]");
+			CUtils::PrintError("[" + GetModName() + ".so] Failed to Decrypt [" + pChan->GetName() + "]");
 			return( false );
 		}
 
