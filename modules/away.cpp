@@ -20,6 +20,9 @@
  *
  * 
  * $Log$
+ * Revision 1.7  2005/04/18 05:41:43  prozacx
+ * Added OnLoad() and print modname in error msg
+ *
  * Revision 1.6  2005/04/18 04:44:40  imaginos
  * fixed bug where attempting to set a bad pass trashes existing buffer
  *
@@ -71,6 +74,16 @@ public:
 			SaveBufferToDisk();
 	}
 
+	virtual bool OnLoad(const string& sArgs)
+	{
+		if (!sArgs.empty())
+		{
+			m_sPassword = CBlowfish::MD5( sArgs );
+		}
+
+		return true;
+	}
+
 	virtual bool OnBoot()
 	{
 		if ( m_sPassword.empty() )
@@ -115,7 +128,7 @@ public:
 			}
 		} else
 		{
-			CUtils::PrintError("Failed to Decrypt Messages");
+			CUtils::PrintError("[" + GetModName() + ".so] Failed to Decrypt Messages");
 			return( false );
 		}
 
