@@ -26,6 +26,9 @@
  * better solution then plain text.
  * 
  * $Log$
+ * Revision 1.12  2005/04/19 20:54:38  imaginos
+ * cut&paste madness
+ *
  * Revision 1.11  2005/04/19 20:50:24  imaginos
  * only fill the buffer if its empty
  *
@@ -143,7 +146,7 @@ public:
 		string sFile;
 		if ( DecryptChannel( pChan->GetName(), sFile ) )
 		{
-			if ( !vChans[a]->GetBuffer().empty() )
+			if ( !pChan->GetBuffer().empty() )
 				return( true ); // reloaded a module probably in this case, so just verify we can decrypt the file
 
 			string sLine;
