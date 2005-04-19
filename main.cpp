@@ -198,7 +198,20 @@ int main(int argc, char** argv) {
 	sigaction(SIGSEGV, &sa, (struct sigaction *)NULL);
 	sigaction(SIGTERM, &sa, (struct sigaction *)NULL);
 
-	int iRet = pZNC->Loop();
+	int iRet = 0;
+
+	try {
+		iRet = pZNC->Loop();
+	} catch (CException e) {
+		// EX_Shutdown is thrown to exit
+		switch (e.GetType()) {
+			case CException::EX_Shutdown:
+				iRet = 0;
+			default:
+				iRet = 1;
+		}
+	}
+
 	delete pZNC;
 
 	return iRet;

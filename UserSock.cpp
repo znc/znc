@@ -453,6 +453,8 @@ void CUserSock::UserCommand(const string& sLine) {
 			PutStatus("Detaching you from [" + sChan + "]");
 			pChan->DetachUser();
 		}
+	} else if (strcasecmp(sCommand.c_str(), "SHUTDOWN") == 0) {
+		throw CException(CException::EX_Shutdown);
 	} else if (strcasecmp(sCommand.c_str(), "JUMP") == 0) {
 		if (m_pUser) {
 			if (m_pIRCSock) {
@@ -788,6 +790,7 @@ void CUserSock::HelpUser() {
 	Table.AddRow(); Table.SetCell("Command", "ListNicks");	Table.SetCell("Arguments", "<#chan>");				Table.SetCell("Description", "List all nicks on a channel");
 	Table.AddRow(); Table.SetCell("Command", "Topics");		Table.SetCell("Arguments", "");						Table.SetCell("Description", "Show topics in all channels");
 	Table.AddRow(); Table.SetCell("Command", "SetBuffer");	Table.SetCell("Arguments", "<#chan> [linecount]");	Table.SetCell("Description", "Set the buffer count for a channel");
+	Table.AddRow(); Table.SetCell("Command", "Shutdown");	Table.SetCell("Arguments", "");						Table.SetCell("Description", "Shutdown znc completely");
 	Table.AddRow(); Table.SetCell("Command", "Jump");		Table.SetCell("Arguments", "");						Table.SetCell("Description", "Jump to the next server in the list");
 	Table.AddRow(); Table.SetCell("Command", "Send");		Table.SetCell("Arguments", "<nick> <file>");		Table.SetCell("Description", "Send a shell file to a nick on IRC");
 	Table.AddRow(); Table.SetCell("Command", "Get");		Table.SetCell("Arguments", "<file>");				Table.SetCell("Description", "Send a shell file to yourself");

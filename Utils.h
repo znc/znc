@@ -65,6 +65,24 @@ protected:
 };
 
 
+class CException {
+public:
+	typedef enum {
+		EX_Shutdown,
+	} EType;
+
+	CException(EType e) {
+		m_eType = e;
+	}
+	virtual ~CException() {}
+
+	EType GetType() const { return m_eType; }
+private:
+protected:
+	EType	m_eType;
+};
+
+
 class CTable : public vector<map<string, string>* > {
 public:
 	CTable();
