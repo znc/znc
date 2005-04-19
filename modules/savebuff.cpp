@@ -26,6 +26,9 @@
  * better solution then plain text.
  * 
  * $Log$
+ * Revision 1.11  2005/04/19 20:50:24  imaginos
+ * only fill the buffer if its empty
+ *
  * Revision 1.10  2005/04/18 22:56:42  prozacx
  * Call OnBoot() in OnLoad() again since closing stdout bug is now fixed
  *
@@ -140,6 +143,9 @@ public:
 		string sFile;
 		if ( DecryptChannel( pChan->GetName(), sFile ) )
 		{
+			if ( !vChans[a]->GetBuffer().empty() )
+				return( true ); // reloaded a module probably in this case, so just verify we can decrypt the file
+
 			string sLine;
 			u_int iPos = 0;
 			while( ReadLine( sFile, sLine, iPos ) )
