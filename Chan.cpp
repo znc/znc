@@ -20,9 +20,7 @@ void CChan::Joined() {
 }
 
 void CChan::Cycle() const {
-	if (AutoCycle()) {
-		m_pUser->PutIRC("PART " + GetName() + "\r\nJOIN " + GetName() + " " + GetKey());
-	}
+	m_pUser->PutIRC("PART " + GetName() + "\r\nJOIN " + GetName() + " " + GetKey());
 }
 
 void CChan::JoinUser() {
@@ -290,7 +288,9 @@ bool CChan::RemNick(const string& sNick) {
 	CNick* pNick = m_msNicks.begin()->second;
 
 	if ((m_msNicks.size() == 1) && (!pNick->IsOp()) && (strcasecmp(pNick->GetNick().c_str(), m_pUser->GetCurNick().c_str()) == 0)) {
-		Cycle();
+		if (AutoCycle()) {
+			Cycle();
+		}
 	}
 
 	return true;
