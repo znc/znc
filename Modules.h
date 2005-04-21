@@ -1,6 +1,7 @@
 #ifndef _MODULES_H
 #define _MODULES_H
 
+#include "main.h"
 #include <dlfcn.h>
 #include <string.h>
 #include <vector>
