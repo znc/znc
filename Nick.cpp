@@ -1,4 +1,6 @@
 #include "Nick.h"
+#include "Chan.h"
+#include "User.h"
 
 CNick::CNick() {
 	m_bIsOp = false;
@@ -32,6 +34,26 @@ void CNick::Parse(const string& sNickMask) {
 		m_sIdent = m_sHost.substr(0, uPos);
 		m_sHost = m_sHost.substr(uPos +1);
 	}
+}
+
+unsigned int CNick::GetCommonChans(vector<CChan*>& vRetChans, CUser* pUser) const {
+	vRetChans.clear();
+
+	const vector<CChan*>& vChans = pUser->GetChans();
+
+	for (unsigned int a = 0; a < vChans.size(); a++) {
+		CChan* pChan = vChans[a];
+		const map<string,CNick*>& msNicks = pChan->GetNicks();
+
+		for (map<string,CNick*>::const_iterator it = msNicks.begin(); it != msNicks.end(); it++) {
+			if (strcasecmp(it->first.c_str(), m_sNick.c_str()) == 0) {
+				vRetChans.push_back(pChan);
+				continue;
+			}
+		}
+	}
+
+	return vRetChans.size();
 }
 
 void CNick::SetNick(const string& s) { m_sNick = s; }

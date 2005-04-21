@@ -1,8 +1,15 @@
 #ifndef _NICK_H
 #define _NICK_H
 
+#include <vector>
 #include <string>
 using std::string;
+using std::vector;
+
+// Forward Decl
+class CUser;
+class CChan;
+// !Forward Decl
 
 class CNick
 {
@@ -13,6 +20,7 @@ public:
 
 	void Parse(const string& sNickMask);
 	string GetHostMask() const;
+	unsigned int GetCommonChans(vector<CChan*>& vChans, CUser* pUser) const;
 
 	// Setters
 	void SetNick(const string& s);
