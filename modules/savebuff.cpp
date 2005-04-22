@@ -26,6 +26,9 @@
  * better solution then plain text.
  * 
  * $Log$
+ * Revision 1.13  2005/04/22 03:35:48  imaginos
+ * start logging certain events
+ *
  * Revision 1.12  2005/04/19 20:54:38  imaginos
  * cut&paste madness
  *
@@ -271,6 +274,44 @@ public:
 		CUtils::MakeDir(sRet);
 		sRet += "/.znc-savebuff-" + CBlowfish::MD5( sBuffer, true );
 		return( sRet );
+	}
+
+	string SpoofChanMsg( const string & sChannel, const string & sMesg )
+	{
+		string sReturn = ":*" + GetModName() + "!znc@znc.com PRIVMSG " + sChannel + " :" + CUtils::ToString( time( NULL ) ) + " " + sMesg;
+		return( sReturn );
+	}
+
+	virtual void OnRawMode(const CNick& cOpNick, const CChan& cChannel, const string& sModes, const string& sArgs)
+	{
+		((CChan &)cChannel).AddBuffer( SpoofChanMsg( cChannel.GetName(), cOpNick.GetNickMask() + " MODE " + sModes + " " + sArgs ) );
+	}
+	virtual void OnQuit(const CNick& cNick, const string& sMessage)
+	{ 
+		vector<CChan*> vChans;
+		cNick.GetCommonChans( vChans, m_pUser );
+		for( u_int a = 0; a < vChans.size(); a++ )
+			vChans[a]->AddBuffer( SpoofChanMsg( vChans[a]->GetName(), cNick.GetNickMask() + " QUIT " + sMessage ) ); 
+	}
+
+	virtual void OnNick(const CNick& cNick, const string& sNewNick)
+	{
+		vector<CChan*> vChans;
+		cNick.GetCommonChans( vChans, m_pUser );
+		for( u_int a = 0; a < vChans.size(); a++ )
+			vChans[a]->AddBuffer( SpoofChanMsg( vChans[a]->GetName(), cNick.GetNickMask() + " NICK " + sNewNick ) ); 
+	}
+	virtual void OnKick(const CNick& cNick, const string& sOpNick, const CChan& cChannel, const string& sMessage)
+	{
+		((CChan &)cChannel).AddBuffer( SpoofChanMsg( cChannel.GetName(), sOpNick + " KICK " + cNick.GetNickMask() + " " + sMessage ) );
+	}
+	virtual void OnJoin(const CNick& cNick, const CChan& cChannel)
+	{
+		((CChan &)cChannel).AddBuffer( SpoofChanMsg( cChannel.GetName(), cNick.GetNickMask() + " JOIN" ) );
+	}
+	virtual void OnPart(const CNick& cNick, const CChan& cChannel)
+	{
+		((CChan &)cChannel).AddBuffer( SpoofChanMsg( cChannel.GetName(), cNick.GetNickMask() + " PART" ) );
 	}
 
 private:
