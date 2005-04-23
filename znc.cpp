@@ -6,6 +6,7 @@
 #include "Utils.h"
 
 #include <pwd.h>
+#include <signal.h>
 #include <sys/types.h>
 
 #ifdef _MODULES
@@ -123,6 +124,46 @@ void CZNC::ReleaseISpoof() {
 	}
 
 	m_bISpoofLocked = false;
+}
+
+bool CZNC::SetPidFile(const string& sFile) {
+	CUtils::PrintAction("Checking PidFile [" + sFile + "]");
+
+	if (!sFile.empty() && sFile[0] != '/') {
+		m_sPidFile = GetZNCPath() + "/" + sFile;
+	} else {
+		m_sPidFile = sFile;
+	}
+
+	if (!m_sPidFile.empty()) {
+		unsigned int uPid = 0;
+		CFile File(m_sPidFile);
+
+		if (File.Open(O_RDONLY)) {
+			string sPid;
+
+			if (File.ReadLine(sPid)) {
+				uPid = atoi(sPid.c_str());
+
+				if (uPid > 0 && kill(uPid, 0) == 0) {
+					CUtils::PrintStatus(false, "ZNC already running [pid: " + CUtils::ToString(uPid) + "]");
+					File.Close();
+
+					return false;
+				} else {
+					CUtils::PrintStatus(true, "Stale pid, relaunching");
+					File.Close();
+
+					return true;
+				}
+			}
+
+			File.Close();
+		}
+	}
+
+	CUtils::PrintStatus(true);
+	return true;
 }
 
 bool CZNC::WritePidFile(int iPid) {
@@ -485,10 +526,10 @@ bool CZNC::ParseConfig(const string& sConfigFile) {
 					m_sISpoofFile = sValue;
 					continue;
 				} else if (strcasecmp(sName.c_str(), "PidFile") == 0) {
-					if (!sValue.empty() && sValue[0] != '/') {
-						m_sPidFile = GetZNCPath() + "/" + sValue;
-					} else {
-						m_sPidFile = sValue;
+					if (!sValue.empty()) {
+						if (!SetPidFile(sValue)) {
+							return false;
+						}
 					}
 
 					continue;

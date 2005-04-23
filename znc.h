@@ -16,6 +16,7 @@ public:
 	void DeleteUsers();
 	int Loop();
 	void ReleaseISpoof();
+	bool SetPidFile(const string& sFile);
 	bool WritePidFile(int iPid);
 	CUser* GetUser(const string& sUser);
 	Csock* FindSockByName(const string& sSockName);
