@@ -26,6 +26,9 @@
  * better solution then plain text.
  * 
  * $Log$
+ * Revision 1.17  2005/04/23 18:24:38  imaginos
+ * only work on chans where keepbuffer is true
+ *
  * Revision 1.16  2005/04/23 08:10:34  prozacx
  * Changed vChans to a reference in OnNick and OnQuit (oops)
  *
@@ -143,6 +146,9 @@ public:
 		const vector<CChan *>& vChans = m_pUser->GetChans();
 		for( u_int a = 0; a < vChans.size(); a++ )
 		{
+			if ( !vChans[a]->KeepBuffer() )
+				continue;
+
 			if ( !BootStrap( vChans[a] ) )
 			{
 				m_bBootError = true;
@@ -185,10 +191,10 @@ public:
 			const vector<CChan *>& vChans = m_pUser->GetChans();
 			for( u_int a = 0; a < vChans.size(); a++ )
 			{
+				if ( !vChans[a]->KeepBuffer() )
+					continue;
+
 				const vector<string> & vBuffer = vChans[a]->GetBuffer();
-				// TODO make this configureable
-				vChans[a]->SetKeepBuffer( true );
-				vChans[a]->SetBufferCount( 500 );
 
 				if ( vBuffer.empty() )
 				{
@@ -293,29 +299,46 @@ public:
 
 	virtual void OnRawMode(const CNick& cOpNick, const CChan& cChannel, const string& sModes, const string& sArgs)
 	{
+		if ( !cChannel.KeepBuffer() )
+			return;
+		
 		((CChan &)cChannel).AddBuffer( SpoofChanMsg( cChannel.GetName(), cOpNick.GetNickMask() + " MODE " + sModes + " " + sArgs ) );
 	}
 	virtual void OnQuit(const CNick& cNick, const string& sMessage, const vector<CChan*>& vChans)
 	{ 
 		for( u_int a = 0; a < vChans.size(); a++ )
+		{
+			if ( !vChans[a]->KeepBuffer() )
+				continue;
 			vChans[a]->AddBuffer( SpoofChanMsg( vChans[a]->GetName(), cNick.GetNickMask() + " QUIT " + sMessage ) ); 
+		}
 	}
 
 	virtual void OnNick(const CNick& cNick, const string& sNewNick, const vector<CChan*>& vChans)
 	{
 		for( u_int a = 0; a < vChans.size(); a++ )
+		{
+			if ( !vChans[a]->KeepBuffer() )
+				continue;
 			vChans[a]->AddBuffer( SpoofChanMsg( vChans[a]->GetName(), cNick.GetNickMask() + " NICK " + sNewNick ) ); 
+		}
 	}
 	virtual void OnKick(const CNick& cNick, const string& sOpNick, const CChan& cChannel, const string& sMessage)
 	{
+		if ( !cChannel.KeepBuffer() )
+			return;
 		((CChan &)cChannel).AddBuffer( SpoofChanMsg( cChannel.GetName(), sOpNick + " KICK " + cNick.GetNickMask() + " " + sMessage ) );
 	}
 	virtual void OnJoin(const CNick& cNick, const CChan& cChannel)
 	{
+		if ( !cChannel.KeepBuffer() )
+			return;
 		((CChan &)cChannel).AddBuffer( SpoofChanMsg( cChannel.GetName(), cNick.GetNickMask() + " JOIN" ) );
 	}
 	virtual void OnPart(const CNick& cNick, const CChan& cChannel)
 	{
+		if ( !cChannel.KeepBuffer() )
+			return;
 		((CChan &)cChannel).AddBuffer( SpoofChanMsg( cChannel.GetName(), cNick.GetNickMask() + " PART" ) );
 	}
 
