@@ -1,0 +1,63 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+<meta name="robots" content="index,follow" />
+<meta name="language" content="en" />
+<title>ZNC - Using Commands</title>
+</head>
+
+<body bgcolor="#FFFFFF" text="#000000" alink="#993333" link="#333399" vlink="#666666">
+[<a href="index.php">Home</a>]
+-
+[<a href="http://sourceforge.net/projects/znc">Project Page</a>]
+
+<hr noshade>
+<p />
+<h2>
+ Commands
+</h2>
+<p>
+Commands are given to ZNC by messaging the virtual user *status.  Likewise, modules are communicated to by messaging *modname as well.
+</p>
+<h3>
+ Example: /msg *status listmods
+</h3>
+<pre>
+ &lt;prozac&gt; listmods
+ &lt;*status&gt; +---------+------------------------------------------------------+
+ &lt;*status&gt; | Name    | Description                                          |
+ &lt;*status&gt; +---------+------------------------------------------------------+
+ &lt;*status&gt; | email   | Monitors Email activity on local disk /var/mail/user |
+ &lt;*status&gt; | shell   | Gives shell access.                                  |
+ &lt;*status&gt; | schat   | Secure cross platform (:P) chat system               |
+ &lt;*status&gt; +---------+------------------------------------------------------+
+</pre>
+<p>
+The prefix for these virtual users can be changed from * in the znc.conf file.  It is wise to use a character that is illegal to use on IRC so that you don't lose the ability to talk to a real person who happens to be using the same prefix on their IRC nick.
+</p>
+<h2>
+ Command List
+</h2>
+<pre>
+ &lt;zncuser&gt; help
+ &lt;*status&gt; +-----------+---------------------+-------------------------------------+
+ &lt;*status&gt; | Command   | Arguments           | Description                         |
+ &lt;*status&gt; +-----------+---------------------+-------------------------------------+
+ &lt;*status&gt; | ListDCCs  |                     | List all active DCCs                |
+ &lt;*status&gt; | ListMods  |                     | List all loaded modules             |
+ &lt;*status&gt; | ListChans |                     | List all channels                   |
+ &lt;*status&gt; | ListNicks | &lt;#chan&gt;             | List all nicks on a channel         |
+ &lt;*status&gt; | Topics    |                     | Show topics in all channels         |
+ &lt;*status&gt; | SetBuffer | &lt;#chan&gt; [linecount] | Set the buffer count for a channel  |
+ &lt;*status&gt; | Jump      |                     | Jump to the next server in the list |
+ &lt;*status&gt; | Send      | &lt;nick&gt; &lt;file&gt;       | Send a shell file to a nick on IRC  |
+ &lt;*status&gt; | Get       | &lt;file&gt;              | Send a shell file to yourself       |
+ &lt;*status&gt; | LoadMod   | &lt;module&gt;            | Load a module                       |
+ &lt;*status&gt; | UnloadMod | &lt;module&gt;            | Unload a module                     |
+ &lt;*status&gt; | ReloadMod | &lt;module&gt;            | Reload a module                     |
+ &lt;*status&gt; +-----------+---------------------+-------------------------------------+
+</pre>
+
+</body>
+</html>
