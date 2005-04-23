@@ -23,18 +23,8 @@ public:
 		Key			= 1 << 6
 	} EMode;
 
-	CChan(const string& sName, CUser* pUser, unsigned int uBufferCount = 0) {
-		m_sName = sName;
-		m_pUser = pUser;
-		m_bKeepBuffer = false;
-		m_bAutoCycle = true;
-		m_bDetached = false;
-		m_uBufferCount = uBufferCount;
-		Reset();
-	}
-	virtual ~CChan() {
-		ClearNicks();
-	}
+	CChan(const string& sName, CUser* pUser);
+	virtual ~CChan();
 
 	void Reset();
 	void Joined();

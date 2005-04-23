@@ -21,6 +21,8 @@ CUser::CUser(const string& sUserName, CZNC* pZNC) {
 	m_bKeepNick = false;
 	m_bDenyLoadMod = false;
 	m_sStatusPrefix = "*";
+	m_uBufferCount = 50;
+	m_bKeepBuffer = false;
 	m_pZNC->GetManager().AddCron(new CKeepNickTimer(this));
 	m_pZNC->GetManager().AddCron(new CJoinTimer(this));
 }
@@ -80,7 +82,7 @@ bool CUser::AddChan(CChan* pChan) {
 	return true;
 }
 
-bool CUser::AddChan(const string& sName, unsigned int uBufferCount) {
+bool CUser::AddChan(const string& sName) {
 	if (sName.empty()) {
 		return false;
 	}
@@ -91,7 +93,7 @@ bool CUser::AddChan(const string& sName, unsigned int uBufferCount) {
 		}
 	}
 
-	CChan* pChan = new CChan(sName, this, uBufferCount);
+	CChan* pChan = new CChan(sName, this);
 	m_vChans.push_back(pChan);
 	return true;
 }
@@ -379,6 +381,8 @@ void CUser::SetIRCNick(const CNick& n) { m_IRCNick = n; }
 void CUser::SetIRCServer(const string& s) { m_sIRCServer = s; }
 void CUser::SetQuitMsg(const string& s) { m_sQuitMsg = s; }
 void CUser::SetVersionReply(const string& s) { m_sVersionReply = s; }
+void CUser::SetBufferCount(unsigned int u) { m_uBufferCount = u; }
+void CUser::SetKeepBuffer(bool b) { m_bKeepBuffer = b; }
 
 bool CUser::SetStatusPrefix(const string& s) {
 	if ((!s.empty()) && (s.length() < 6) && (s.find(' ') == string::npos)) {
@@ -416,4 +420,6 @@ const CNick& CUser::GetIRCNick() const { return m_IRCNick; }
 const string& CUser::GetIRCServer() const { return m_sIRCServer; }
 const string& CUser::GetQuitMsg() const { return m_sQuitMsg; }
 const string& CUser::GetVersionReply() const { return m_sVersionReply; }
+unsigned int CUser::GetBufferCount() const { return m_uBufferCount; }
+bool CUser::KeepBuffer() const { return m_bKeepBuffer; }
 // !Getters

@@ -25,7 +25,7 @@ public:
 
 	CChan* FindChan(const string& sName);
 	bool AddChan(CChan* pChan);
-	bool AddChan(const string& sName, unsigned int uBufferCount = 50);
+	bool AddChan(const string& sName);
 	bool DelChan(const string& sName);
 	bool AddServer(const string& sName);
 	bool AddServer(const string& sName, unsigned short uPort, const string& sPass = "", bool bSSL = false);
@@ -71,6 +71,8 @@ public:
 	void SetIRCServer(const string& s);
 	void SetQuitMsg(const string& s);
 	void SetVersionReply(const string& s);
+	void SetBufferCount(unsigned int u);
+	void SetKeepBuffer(bool b);
 	// !Setters
 
 	// Getters
@@ -103,6 +105,8 @@ public:
 	const string& GetIRCServer() const;
 	const string& GetQuitMsg() const;
 	const string& GetVersionReply() const;
+	unsigned int GetBufferCount() const;
+	bool KeepBuffer() const;
 	// !Getters
 private:
 protected:
@@ -126,10 +130,13 @@ protected:
 	bool				m_bUseClientIP;
 	bool				m_bKeepNick;
 	bool				m_bDenyLoadMod;
+	bool				m_bKeepBuffer;
+
 	vector<CServer*>	m_vServers;
 	vector<CChan*>		m_vChans;
 	set<string>			m_ssAllowedHosts;
 	unsigned int		m_uServerIdx;
+	unsigned int		m_uBufferCount;
 
 #ifdef _MODULES
 	CModules		m_Modules;

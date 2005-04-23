@@ -367,7 +367,13 @@ bool CZNC::ParseConfig(const string& sConfigFile) {
 						continue;
 					}
 				} else {
-					if (strcasecmp(sName.c_str(), "Nick") == 0) {
+					if (strcasecmp(sName.c_str(), "Buffer") == 0) {
+						pUser->SetBufferCount(strtoul(sValue.c_str(), NULL, 10));
+						continue;
+					} else if (strcasecmp(sName.c_str(), "KeepBuffer") == 0) {
+						pUser->SetKeepBuffer((strcasecmp(sValue.c_str(), "true") == 0));
+						continue;
+					} else if (strcasecmp(sName.c_str(), "Nick") == 0) {
 						pUser->SetNick(sValue);
 						continue;
 					} else if (strcasecmp(sName.c_str(), "VersionReply") == 0) {

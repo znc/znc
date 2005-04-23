@@ -3,6 +3,19 @@
 #include "User.h"
 #include "Utils.h"
 
+CChan::CChan(const string& sName, CUser* pUser) {
+	m_sName = sName;
+	m_pUser = pUser;
+	m_bAutoCycle = true;
+	m_bDetached = false;
+	m_uBufferCount = m_pUser->GetBufferCount();
+	m_bKeepBuffer = m_pUser->KeepBuffer();
+	Reset();
+}
+CChan::~CChan() {
+	ClearNicks();
+}
+
 void CChan::Reset() {
 	m_bWhoDone = false;
 	m_bIsOn = false;
