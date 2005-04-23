@@ -39,7 +39,6 @@ install: znc @MODTARGET@
 	mkdir -p $(DESTDIR)$(prefix)/bin
 	mkdir -p $(DESTDIR)$(prefix)/include/znc
 	install -m 0755 znc $(DESTDIR)$(prefix)/bin
-	install -m 0755 zncchk $(DESTDIR)$(prefix)/bin
 	install -m 0755 znc-config $(DESTDIR)$(prefix)/bin
 	install -m 0755 znc-buildmod $(DESTDIR)$(prefix)/bin
 	install -m 0644 *.h $(DESTDIR)$(prefix)/include/znc
