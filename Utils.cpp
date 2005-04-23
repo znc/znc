@@ -75,7 +75,13 @@ void CUtils::GenerateCert( FILE *pOut, bool bEncPrivKey ) {
 	X509_REQ_set_subject_name( pReq, pName );
 	X509_REQ_sign( pReq, pKey, EVP_md5() );
 	
-	PEM_write_X509_REQ( pOut, pReq );
+	X509 *pX509 = X509_REQ_to_X509( pReq, 365, pKey );
+	if ( pX509 )
+	{
+		PEM_write_X509( pOut, pX509 );
+		X509_free( pX509 );
+	}
+
 	X509_REQ_free( pReq );
 	EVP_PKEY_free( pKey );
 };
