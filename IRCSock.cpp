@@ -342,10 +342,18 @@ void CIRCSock::ReadLine(const string& sData) {
 					CUtils::LeftChomp(sNewNick);
 				}
 
+				vector<CChan*> vFoundChans;
 				const vector<CChan*>& vChans = m_pUser->GetChans();
+
 				for (unsigned int a = 0; a < vChans.size(); a++) {
-					if ((vChans[a]->ChangeNick(sNick, sNewNick)) && (!vChans[a]->IsDetached())) {
-						bIsVisible = true;
+					CChan* pChan = vChans[a];
+
+					if (pChan->ChangeNick(sNick, sNewNick)) {
+						vFoundChans.push_back(pChan);
+
+						if (!pChan->IsDetached()) {
+							bIsVisible = true;
+						}
 					}
 				}
 
@@ -359,7 +367,7 @@ void CIRCSock::ReadLine(const string& sData) {
 					KeepNick();
 				}
 #ifdef _MODULES
-				m_pUser->GetModules().OnNick(sNickMask, sNewNick);
+				m_pUser->GetModules().OnNick(sNickMask, sNewNick, vFoundChans);
 #endif
 
 				if (!bIsVisible) {
@@ -376,10 +384,18 @@ void CIRCSock::ReadLine(const string& sData) {
 				// :nick!ident@host.com QUIT :message
 				CNick Nick(sNickMask);
 
+				vector<CChan*> vFoundChans;
 				const vector<CChan*>& vChans = m_pUser->GetChans();
+
 				for (unsigned int a = 0; a < vChans.size(); a++) {
-					if ((vChans[a]->RemNick(sNick)) && (!vChans[a]->IsDetached())) {
-						bIsVisible = true;
+					CChan* pChan = vChans[a];
+
+					if (pChan->RemNick(sNick)) {
+						vFoundChans.push_back(pChan);
+
+						if (!pChan->IsDetached()) {
+							bIsVisible = true;
+						}
 					}
 				}
 
@@ -388,7 +404,7 @@ void CIRCSock::ReadLine(const string& sData) {
 				}
 
 #ifdef _MODULES
-				m_pUser->GetModules().OnQuit(Nick, sMessage);
+				m_pUser->GetModules().OnQuit(Nick, sMessage, vFoundChans);
 #endif
 
 				if (!bIsVisible) {

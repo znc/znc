@@ -190,7 +190,7 @@ public:
 		Process(OpNick, "* " + OpNick.GetNick() + " kicked " + sKickedNick + " from " + Channel.GetName() + " because [" + sMessage + "]", Channel.GetName());
 	}
 
-	virtual void OnQuit(const CNick& Nick, const string& sMessage) {
+	virtual void OnQuit(const CNick& Nick, const string& sMessage, const vector<CChan*> vChans) {
 		Process(Nick, "* Quits: " + Nick.GetNick() + " (" + Nick.GetIdent() + "@" + Nick.GetHost() + ") (" + sMessage + ")", "");
 	}
 
@@ -202,7 +202,7 @@ public:
 		Process(Nick, "* " + Nick.GetNick() + " (" + Nick.GetIdent() + "@" + Nick.GetHost() + ") parts " + Channel.GetName(), Channel.GetName());
 	}
 
-	virtual void OnNick(const CNick& OldNick, const string& sNewNick) {
+	virtual void OnNick(const CNick& OldNick, const string& sNewNick, const vector<CChan*> vChans) {
 		Process(OldNick, "* " + OldNick.GetNick() + " is now known as " + sNewNick, "");
 	}
 

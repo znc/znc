@@ -84,7 +84,7 @@ public:
 		PutModule("[" + OpNick.GetNick() + "] kicked [" + sKickedNick + "] from [" + Channel.GetName() + "] with the msg [" + sMessage + "]");
 	}
 
-	virtual void OnQuit(const CNick& Nick, const string& sMessage) {
+	virtual void OnQuit(const CNick& Nick, const string& sMessage, const vector<CChan*> vChans) {
 		PutModule("* Quits: " + Nick.GetNick() + " (" + Nick.GetIdent() + "!" + Nick.GetHost() + ") (" + sMessage + ")");
 	}
 
@@ -96,7 +96,7 @@ public:
 		PutModule("* Parts: " + Nick.GetNick() + " (" + Nick.GetIdent() + "!" + Nick.GetHost() + ")");
 	}
 
-	virtual void OnNick(const CNick& OldNick, const string& sNewNick) {
+	virtual void OnNick(const CNick& OldNick, const string& sNewNick, const vector<CChan*> vChans) {
 		PutModule("* " + OldNick.GetNick() + " is now known as " + sNewNick);
 	}
 

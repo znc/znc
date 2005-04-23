@@ -149,8 +149,8 @@ void CModule::OnModCommand(const string& sCommand) {}
 void CModule::OnModNotice(const string& sMessage) {}
 void CModule::OnModCTCP(const string& sMessage) {}
 
-void CModule::OnQuit(const CNick& Nick, const string& sMessage) {}
-void CModule::OnNick(const CNick& Nick, const string& sNewNick) {}
+void CModule::OnQuit(const CNick& Nick, const string& sMessage, const vector<CChan*> vChans) {}
+void CModule::OnNick(const CNick& Nick, const string& sNewNick, const vector<CChan*> vChans) {}
 void CModule::OnKick(const CNick& Nick, const string& sKickedNick, const CChan& Channel, const string& sMessage) {}
 void CModule::OnJoin(const CNick& Nick, const CChan& Channel) {}
 void CModule::OnPart(const CNick& Nick, const CChan& Channel) {}
@@ -299,15 +299,15 @@ bool CModules::OnUserRaw(string& sLine) {
 	return false;
 }
 
-void CModules::OnQuit(const CNick& Nick, const string& sMessage) {
+void CModules::OnQuit(const CNick& Nick, const string& sMessage, const vector<CChan*> vChans) {
 	for (unsigned int a = 0; a < size(); a++) {
-		(*this)[a]->OnQuit(Nick, sMessage);
+		(*this)[a]->OnQuit(Nick, sMessage, vChans);
 	}
 }
 
-void CModules::OnNick(const CNick& Nick, const string& sNewNick) {
+void CModules::OnNick(const CNick& Nick, const string& sNewNick, const vector<CChan*> vChans) {
 	for (unsigned int a = 0; a < size(); a++) {
-		(*this)[a]->OnNick(Nick, sNewNick);
+		(*this)[a]->OnNick(Nick, sNewNick, vChans);
 	}
 }
 
