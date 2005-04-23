@@ -69,6 +69,7 @@ public:
 	void SetDefaultChanModes(const string& s);
 	void SetIRCNick(const CNick& n);
 	void SetIRCServer(const string& s);
+	void SetQuitMsg(const string& s);
 	// !Setters
 
 	// Getters
@@ -99,6 +100,7 @@ public:
 	const vector<CChan*>& GetChans() const;
 	const CNick& GetIRCNick() const;
 	const string& GetIRCServer() const;
+	const string& GetQuitMsg() const;
 	// !Getters
 private:
 protected:
@@ -115,6 +117,7 @@ protected:
 	string			m_sDefaultChanModes;
 	CNick			m_IRCNick;
 	string			m_sIRCServer;
+	string			m_sQuitMsg;
 
 	bool				m_bPassHashed;
 	bool				m_bUseClientIP;

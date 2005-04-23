@@ -37,7 +37,7 @@ CIRCSock::~CIRCSock() {
 		m_pZNC->ReleaseISpoof();
 	}
 
-	PutServ("QUIT :");
+	PutServ("QUIT :" + m_pUser->GetQuitMsg());
 	m_msChans.clear();
 }
 
