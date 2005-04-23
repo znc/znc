@@ -26,6 +26,9 @@
  * better solution then plain text.
  * 
  * $Log$
+ * Revision 1.16  2005/04/23 08:10:34  prozacx
+ * Changed vChans to a reference in OnNick and OnQuit (oops)
+ *
  * Revision 1.15  2005/04/23 07:24:58  prozacx
  * Changed OnNick() and OnQuit() to take a vector<CChan*> of common channels
  *
@@ -292,13 +295,13 @@ public:
 	{
 		((CChan &)cChannel).AddBuffer( SpoofChanMsg( cChannel.GetName(), cOpNick.GetNickMask() + " MODE " + sModes + " " + sArgs ) );
 	}
-	virtual void OnQuit(const CNick& cNick, const string& sMessage, const vector<CChan*> vChans)
+	virtual void OnQuit(const CNick& cNick, const string& sMessage, const vector<CChan*>& vChans)
 	{ 
 		for( u_int a = 0; a < vChans.size(); a++ )
 			vChans[a]->AddBuffer( SpoofChanMsg( vChans[a]->GetName(), cNick.GetNickMask() + " QUIT " + sMessage ) ); 
 	}
 
-	virtual void OnNick(const CNick& cNick, const string& sNewNick, const vector<CChan*> vChans)
+	virtual void OnNick(const CNick& cNick, const string& sNewNick, const vector<CChan*>& vChans)
 	{
 		for( u_int a = 0; a < vChans.size(); a++ )
 			vChans[a]->AddBuffer( SpoofChanMsg( vChans[a]->GetName(), cNick.GetNickMask() + " NICK " + sNewNick ) ); 
