@@ -35,7 +35,7 @@ src_compile() {
 
 src_install() {
 	make install DESTDIR=${D}
-	dodoc znc.conf
+	dodoc znc.conf || die "dodoc failed"
 }
 
 pkg_postinst() {
