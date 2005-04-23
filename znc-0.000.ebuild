@@ -37,7 +37,7 @@ src_compile() {
 src_install() {
 	make install DESTDIR=${D}
 	dodoc docs/*.html || die "dodoc failed"
-	dodoc znc.conf || die "dodoc failed"
+	dodoc AUTHORS znc.conf || die "dodoc failed"
 }
 
 pkg_postinst() {
