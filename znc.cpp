@@ -370,6 +370,9 @@ bool CZNC::ParseConfig(const string& sConfigFile) {
 					if (strcasecmp(sName.c_str(), "Nick") == 0) {
 						pUser->SetNick(sValue);
 						continue;
+					} else if (strcasecmp(sName.c_str(), "VersionReply") == 0) {
+						pUser->SetVersionReply(sValue);
+						continue;
 					} else if (strcasecmp(sName.c_str(), "QuitMsg") == 0) {
 						pUser->SetQuitMsg(sValue);
 						continue;

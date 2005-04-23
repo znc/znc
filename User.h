@@ -70,6 +70,7 @@ public:
 	void SetIRCNick(const CNick& n);
 	void SetIRCServer(const string& s);
 	void SetQuitMsg(const string& s);
+	void SetVersionReply(const string& s);
 	// !Setters
 
 	// Getters
@@ -101,6 +102,7 @@ public:
 	const CNick& GetIRCNick() const;
 	const string& GetIRCServer() const;
 	const string& GetQuitMsg() const;
+	const string& GetVersionReply() const;
 	// !Getters
 private:
 protected:
@@ -118,6 +120,7 @@ protected:
 	CNick			m_IRCNick;
 	string			m_sIRCServer;
 	string			m_sQuitMsg;
+	string			m_sVersionReply;
 
 	bool				m_bPassHashed;
 	bool				m_bUseClientIP;

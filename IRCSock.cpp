@@ -613,8 +613,18 @@ bool CIRCSock::OnPrivCTCP(const string& sNickMask, string& sMessage) {
 	}
 #endif
 
-	// DCC CHAT chat 2453612361 44592
-	if (strncasecmp(sMessage.c_str(), "DCC ", 4) == 0) {
+	if (strcasecmp(sMessage.c_str(), "VERSION") == 0) {
+		if (!IsUserAttached()) {
+			string sVersionReply = m_pUser->GetVersionReply();
+
+			if (sVersionReply.empty()) {
+				sVersionReply = "ZNC by prozac - http://znc.sourceforge.net";
+			}
+
+			PutServ("NOTICE " + CNick(sNickMask).GetNick() + " :\001VERSION " + sVersionReply + "\001");
+		}
+	} else if (strncasecmp(sMessage.c_str(), "DCC ", 4) == 0) {
+		// DCC CHAT chat 2453612361 44592
 		string sType = CUtils::Token(sMessage, 1);
 		string sFile = CUtils::Token(sMessage, 2);
 		unsigned long uLongIP = strtoul(CUtils::Token(sMessage, 3).c_str(), NULL, 10);
