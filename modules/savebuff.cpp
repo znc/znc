@@ -26,6 +26,9 @@
  * better solution then plain text.
  * 
  * $Log$
+ * Revision 1.14  2005/04/23 06:44:19  prozacx
+ * Changed buffer playback messages to mirror engine behavior
+ *
  * Revision 1.13  2005/04/22 03:35:48  imaginos
  * start logging certain events
  *
@@ -245,7 +248,7 @@ public:
 		} else if ( strcasecmp( sCom.c_str(), "replay" ) == 0 )
 		{
 			string sFile;
-			PutUser( ":***!znc@znc.com PRIVMSG " + sArgs + " :Replaying ..." );
+			PutUser( ":***!znc@znc.com PRIVMSG " + sArgs + " :Buffer Playback..." );
 			if ( DecryptChannel( sArgs, sFile ) )
 			{
 				string sLine;
@@ -257,7 +260,7 @@ public:
 				}
 			}
 			PutModule( "Replayed " + sArgs );
-			PutUser( ":***!znc@znc.com PRIVMSG " + sArgs + " :Done!" );
+			PutUser( ":***!znc@znc.com PRIVMSG " + sArgs + " :Playback Complete." );
 
 		} else if ( strcasecmp( sCom.c_str(), "save" ) == 0 )
 		{
