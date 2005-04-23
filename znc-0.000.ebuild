@@ -12,6 +12,7 @@ LICENSE="GPL-2"
 SLOT="0"
 KEYWORDS="x86 ~amd64 ~sparc"
 IUSE="ssl nomodules debug"
+RESTRICT="nostrip"
 
 RDEPEND="virtual/libc"
 DEPEND="virtual/libc
@@ -35,10 +36,17 @@ src_compile() {
 
 src_install() {
 	make install DESTDIR=${D}
+	dodoc docs/*.html || die "dodoc failed"
 	dodoc znc.conf || die "dodoc failed"
 }
 
 pkg_postinst() {
+	einfo "You can browse the documentation here:"
+	einfo "    /usr/share/doc/${PF}/*.html.gz"
+	einfo "Also check out the online documentation at:"
+	einfo "    http://znc.sourceforge.net"
+	einfo " "
 	einfo "You can find an example znc.conf file here:"
-	einfo " /usr/share/doc/${PF}/znc.conf.gz"
+	einfo "    /usr/share/doc/${PF}/znc.conf.gz"
+	einfo " "
 }
