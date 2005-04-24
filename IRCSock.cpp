@@ -815,6 +815,7 @@ void CIRCSock::PutStatus(const string& sLine) {
 
 void CIRCSock::SetNick(const string& sNick) {
 	m_Nick.SetNick(sNick);
+	m_pUser->SetIRCNick(m_Nick);
 
 	if (m_pUserSock) {
 		m_pUserSock->SetNick(sNick);
