@@ -71,10 +71,6 @@ void CChan::JoinUser() {
 	}
 
 	m_pUser->PutUser(":" + m_pUser->GetIRCServer() + " 366 " + m_pUser->GetIRCNick().GetNick() + " " + GetName() + " :End of /NAMES list.");
-
-	//m_pUser->PutIRC("NAMES " + GetName());
-	//m_pUser->PutIRC("TOPIC " + GetName());
-
 	SendBuffer();
 
 	m_bDetached = false;
