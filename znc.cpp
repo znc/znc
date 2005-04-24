@@ -137,9 +137,10 @@ bool CZNC::WritePidFile(int iPid) {
 			CUtils::PrintStatus(true);
 			return true;
 		}
+
+		CUtils::PrintStatus(false);
 	}
 
-	CUtils::PrintStatus(false);
 	return false;
 }
 
