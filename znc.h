@@ -16,7 +16,6 @@ public:
 	void DeleteUsers();
 	int Loop();
 	void ReleaseISpoof();
-	bool SetPidFile(const string& sFile);
 	bool WritePidFile(int iPid);
 	CUser* GetUser(const string& sUser);
 	Csock* FindSockByName(const string& sSockName);
@@ -67,6 +66,7 @@ protected:
 	string					m_sISpoofFile;
 	string					m_sOrigISpoof;
 	string					m_sPidFile;
+	CLockFile				m_LockFile;
 	bool					m_bISpoofLocked;
 	bool					m_bSSL;
 	map<string,CUser*>::iterator	m_itUserIter;	// This needs to be reset to m_msUsers.begin() if anything is added or removed to the map

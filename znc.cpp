@@ -126,46 +126,6 @@ void CZNC::ReleaseISpoof() {
 	m_bISpoofLocked = false;
 }
 
-bool CZNC::SetPidFile(const string& sFile) {
-	CUtils::PrintAction("Checking PidFile [" + sFile + "]");
-
-	if (!sFile.empty() && sFile[0] != '/') {
-		m_sPidFile = GetZNCPath() + "/" + sFile;
-	} else {
-		m_sPidFile = sFile;
-	}
-
-	if (!m_sPidFile.empty()) {
-		unsigned int uPid = 0;
-		CFile File(m_sPidFile);
-
-		if (File.Open(O_RDONLY)) {
-			string sPid;
-
-			if (File.ReadLine(sPid)) {
-				uPid = atoi(sPid.c_str());
-
-				if (uPid > 0 && kill(uPid, 0) == 0) {
-					CUtils::PrintStatus(false, "ZNC already running [pid: " + CUtils::ToString(uPid) + "]");
-					File.Close();
-
-					return false;
-				} else {
-					CUtils::PrintStatus(true, "Stale pid, relaunching");
-					File.Close();
-
-					return true;
-				}
-			}
-
-			File.Close();
-		}
-	}
-
-	CUtils::PrintStatus(true);
-	return true;
-}
-
 bool CZNC::WritePidFile(int iPid) {
 	if (!m_sPidFile.empty()) {
 		CFile File(m_sPidFile);
@@ -269,6 +229,11 @@ bool CZNC::ParseConfig(const string& sConfigFile) {
 	}
 
 	CUtils::PrintAction("Opening Config [" + sFilePath + "]");
+
+	if (!m_LockFile.TryExLock(sFilePath, 50)) {
+		CUtils::PrintStatus(false, "ZNC is already running on this config.");
+		return false;
+	}
 
 	CFile File(sFilePath);
 
@@ -526,10 +491,10 @@ bool CZNC::ParseConfig(const string& sConfigFile) {
 					m_sISpoofFile = sValue;
 					continue;
 				} else if (strcasecmp(sName.c_str(), "PidFile") == 0) {
-					if (!sValue.empty()) {
-						if (!SetPidFile(sValue)) {
-							return false;
-						}
+					if (!sValue.empty() && sValue[0] != '/') {
+						m_sPidFile = GetZNCPath() + "/" + sValue;
+					} else {
+						m_sPidFile = sValue;
 					}
 
 					continue;
