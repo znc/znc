@@ -14,6 +14,7 @@ CIRCSock::CIRCSock(CZNC* pZNC, CUser* pUser) : Csock() {
 	m_bAuthed = false;
 	EnableReadLine();
 	m_RawBuffer.SetLineCount(100);		// This should be more than enough raws, especially since we are buffering the MOTD separately
+	m_MotdBuffer.SetLineCount(200);		// This should be more than enough motd lines
 	m_Nick.SetIdent(pUser->GetIdent());
 	m_Nick.SetHost(pUser->GetVHost());
 }
@@ -116,10 +117,10 @@ void CIRCSock::ReadLine(const string& sData) {
 					m_RawBuffer.AddLine(":" + sServer + " " + sCmd + " ", " " + sRest);
 					break;
 				case 375:	// begin motd
-					m_vsMotdBuffer.clear();
+					m_MotdBuffer.Clear();
 				case 372:	// motd
 				case 376:	// end motd
-					m_vsMotdBuffer.push_back(sLine);
+					m_MotdBuffer.AddLine(":" + sServer + " " + sCmd + " ", " " + sRest);
 					break;
 				case 471: // :irc.server.net 471 nick #chan :Cannot join channel (+l)
 				case 473: // :irc.server.net 473 nick #chan :Cannot join channel (+i)
@@ -768,8 +769,14 @@ void CIRCSock::UserConnected(CUserSock* pUserSock) {
 	}
 
 	// Send the cached MOTD
-	for (unsigned int a = 0; a < m_vsMotdBuffer.size(); a++) {
-		PutUser(m_vsMotdBuffer[a]);
+	if (m_MotdBuffer.IsEmpty()) {
+	} else {
+		unsigned int uIdx = 0;
+		string sLine;
+
+		while (m_MotdBuffer.GetLine(GetNick(), sLine, uIdx++)) {
+			PutUser(sLine);
+		}
 	}
 
 	const vector<CChan*>& vChans = m_pUser->GetChans();
