@@ -129,14 +129,17 @@ void CZNC::ReleaseISpoof() {
 bool CZNC::WritePidFile(int iPid) {
 	if (!m_sPidFile.empty()) {
 		CFile File(m_sPidFile);
+		CUtils::PrintAction("Writing pid file [" + m_sPidFile + "]");
 
 		if (File.Open(O_WRONLY | O_TRUNC | O_CREAT)) {
 			File.Write(CUtils::ToString(iPid) + "\n");
 			File.Close();
+			CUtils::PrintStatus(true);
 			return true;
 		}
 	}
 
+	CUtils::PrintStatus(false);
 	return false;
 }
 
