@@ -170,8 +170,8 @@ int main(int argc, char** argv) {
 	if (iPid > 0) {
 		CUtils::PrintStatus(true, "[pid: " + CUtils::ToString(iPid) + "]");
 
-		CUtils::PrintMessage("ZNC - by prozac@gmail.com");
 		pZNC->WritePidFile(iPid);
+		CUtils::PrintMessage("ZNC - by prozac@gmail.com");
 		exit(0);
 	}
 	
