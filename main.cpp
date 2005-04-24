@@ -171,7 +171,6 @@ int main(int argc, char** argv) {
 		CUtils::PrintStatus(true, "[pid: " + CUtils::ToString(iPid) + "]");
 
 		CUtils::PrintMessage("ZNC - by prozac@gmail.com");
-	//	[port: " << ((pZNC->IsSSL()) ? "+" : "") << pZNC->GetListenPort() << "] [pid: " << iPid << "]" << endl;
 		pZNC->WritePidFile(iPid);
 		exit(0);
 	}
