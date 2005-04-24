@@ -26,6 +26,9 @@
  * better solution then plain text.
  * 
  * $Log$
+ * Revision 1.18  2005/04/24 08:05:41  prozacx
+ * Fixed literal strings of 'savebuff' to now use GetModName() and removed redundant prefix from filenames
+ *
  * Revision 1.17  2005/04/23 18:24:38  imaginos
  * only work on chans where keepbuffer is true
  *
@@ -135,7 +138,7 @@ public:
 	{
 		if ( m_sPassword.empty() )
 		{
-			char *pTmp = CUtils::GetPass( "Enter Encryption Key for savebuff.so: " );
+			char *pTmp = CUtils::GetPass( "Enter Encryption Key for " + GetModName() + ".so" );
 
 			if ( pTmp )
 				m_sPassword = CBlowfish::MD5( pTmp );
@@ -285,9 +288,9 @@ public:
 	string GetPath( const string & sChannel )
 	{
 		string sBuffer = m_pUser->GetUserName() + Lower( sChannel );
-		string sRet = m_pUser->GetDataPath() + "/savebuff";
+		string sRet = m_pUser->GetDataPath() + "/" + GetModName();
 		CUtils::MakeDir(sRet);
-		sRet += "/.znc-savebuff-" + CBlowfish::MD5( sBuffer, true );
+		sRet += "/" + CBlowfish::MD5( sBuffer, true );
 		return( sRet );
 	}
 
