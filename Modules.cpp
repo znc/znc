@@ -539,7 +539,8 @@ bool CModules::LoadModule(const string& sModule, const string& sArgs, CUser* pUs
 
 	if (CModule::GetVersion() != Version()) {
 		dlclose(p);
-		sRetMsg = "Version mismatch in module [" + sModule + "] - You need to recompile your modules using this version of znc.";
+		sRetMsg = "Version mismatch, recompile this module.";
+		throw CException(CException::EX_BadModVersion);
 		return false;
 	}
 
