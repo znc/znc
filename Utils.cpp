@@ -229,7 +229,7 @@ void CUtils::PrintError(const string& sMessage) {
 }
 
 void CUtils::PrintPrompt(const string& sMessage) {
-	fprintf(stdout, "\033[1m\033[34m[\033[33m ?? \033[34m]\033[39m\033[22m %s:", sMessage.c_str());
+	fprintf(stdout, "\033[1m\033[34m[\033[33m ?? \033[34m]\033[39m\033[22m %s: ", sMessage.c_str());
 }
 
 void CUtils::PrintMessage(const string& sMessage) {
