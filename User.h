@@ -33,6 +33,7 @@ public:
 	bool CheckPass(const string& sPass);
 	bool AddAllowedHost(const string& sHostMask);
 	bool IsHostAllowed(const string& sHostMask);
+	bool IsValid(string& sErrMsg);
 
 #ifdef _MODULES
 	// Modules
