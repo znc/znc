@@ -127,11 +127,23 @@ int main(int argc, char** argv) {
 	}
 #endif /* HAVE_LIBSSL */	
 	if ( bMakePass ) {
-		char* pass = getpass( "Enter Password: " );
-		int iLen = strlen(pass);
-		CUtils::PrintMessage("Use this in the <User> section of your config:");
-		CUtils::PrintMessage("Pass = " + string((const char*) CMD5(pass, iLen)) + " -");
-		memset((char*) pass, 0, iLen);	// null out our pass so it doesn't sit in memory
+		char* pass = CUtils::GetPass("Enter Password");
+		char* pass1 = (char*) malloc(strlen(pass) +1);
+		strcpy(pass1, pass);	// Make a copy of this since it is stored in a static buffer and will be overwritten when we fill pass2 below
+		memset((char*) pass, 0, strlen(pass));	// null out our pass so it doesn't sit in memory
+		char* pass2 = CUtils::GetPass("Confirm Password");
+		int iLen = strlen(pass1);
+
+		if (strcmp(pass1, pass2) == 0) {
+			CUtils::PrintMessage("Use this in the <User> section of your config:");
+			CUtils::PrintMessage("Pass = " + string((const char*) CMD5(pass1, iLen)) + " -");
+		} else {
+			CUtils::PrintError("The supplied passwords do not match");
+		}
+
+		memset((char*) pass1, 0, iLen);	// null out our pass so it doesn't sit in memory
+		memset((char*) pass2, 0, strlen(pass2));	// null out our pass so it doesn't sit in memory
+		free(pass1);
 		return 0;
 	}
 
