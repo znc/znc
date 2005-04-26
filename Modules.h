@@ -8,7 +8,7 @@
 using std::vector;
 using std::string;
 
-#define VERSION 0.032
+#define VERSION 0.033
 #define MODULEDEFS(CLASS) extern "C" { CModule* Load(void* p, CUser* pUser, const string& sModName); void Unload(CModule* pMod); double GetVersion(); } double GetVersion() { return VERSION; } CModule* Load(void* p, CUser* pUser, const string& sModName) { return new CLASS(p, pUser, sModName); } void Unload(CModule* pMod) { if (pMod) { delete pMod; } }
 #define MODCONSTRUCTOR(CLASS) CLASS(void *pDLL, CUser* pUser, const string& sModName) : CModule(pDLL, pUser, sModName) 
 
