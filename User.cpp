@@ -57,6 +57,10 @@ bool CUser::AddAllowedHost(const string& sHostMask) {
 }
 
 bool CUser::IsHostAllowed(const string& sHostMask) {
+	if (m_ssAllowedHosts.empty()) {
+		return true;
+	}
+
 	for (set<string>::iterator a = m_ssAllowedHosts.begin(); a != m_ssAllowedHosts.end(); a++) {
 		if (CUtils::wildcmp(*a, sHostMask)) {
 			return true;
@@ -64,6 +68,27 @@ bool CUser::IsHostAllowed(const string& sHostMask) {
 	}
 
 	return false;
+}
+
+bool CUser::IsValid(string& sErrMsg) {
+	sErrMsg.clear();
+
+	if (m_sPass.empty()) {
+		sErrMsg = "Pass is empty";
+		return false;
+	}
+
+	if (m_sUserName.empty()) {
+		sErrMsg = "User is empty";
+		return false;
+	}
+
+	if (m_vServers.empty()) {
+		sErrMsg = "No servers defined";
+		return false;
+	}
+
+	return true;
 }
 
 bool CUser::AddChan(CChan* pChan) {
