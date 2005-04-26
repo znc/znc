@@ -234,6 +234,16 @@ bool CZNC::ParseConfig(const string& sConfigFile) {
 
 	CUtils::PrintAction("Opening Config [" + sFilePath + "]");
 
+	if (!CFile::Exists(sFilePath)) {
+		CUtils::PrintStatus(false, "No such file");
+		return false;
+	}
+
+	if (!CFile::IsReg(sFilePath)) {
+		CUtils::PrintStatus(false, "Not a file");
+		return false;
+	}
+
 	if (!m_LockFile.TryExLock(sFilePath, 50)) {
 		CUtils::PrintStatus(false, "ZNC is already running on this config.");
 		return false;
@@ -301,23 +311,32 @@ bool CZNC::ParseConfig(const string& sConfigFile) {
 							continue;
 						}
 					} else if (strcasecmp(sTag.c_str(), "User") == 0) {
+						string sErr;
+
+						if (!pUser->IsValid(sErr)) {
+							CUtils::PrintError("Invalid user [" + pUser->GetUserName() + "] " + sErr);
+							return false;
+						}
+
+						m_msUsers[pUser->GetUserName()] = pUser;
+
 						pUser = NULL;
 						continue;
 					}
 				}
 			} else if (strcasecmp(sTag.c_str(), "User") == 0) {
 				if (pUser) {
-					CUtils::PrintStatus(false, "You may not nest <User> tags inside of other <User> tags.");
+					CUtils::PrintError("You may not nest <User> tags inside of other <User> tags.");
 					return false;
 				}
 
 				if (sValue.empty()) {
-					CUtils::PrintStatus(false, "You must supply a username in the <User> tag.");
+					CUtils::PrintError("You must supply a username in the <User> tag.");
 					return false;
 				}
 
 				if (m_msUsers.find(sValue) != m_msUsers.end()) {
-					CUtils::PrintStatus(false, "User [" + sValue + "] defined more than once.");
+					CUtils::PrintError("User [" + sValue + "] defined more than once.");
 					return false;
 				}
 
@@ -326,19 +345,20 @@ bool CZNC::ParseConfig(const string& sConfigFile) {
 
 				if (!sStatusPrefix.empty()) {
 					if (!pUser->SetStatusPrefix(sStatusPrefix)) {
-						CUtils::PrintStatus(false, "Invalid StatusPrefix [" + sStatusPrefix + "] Must be 1-5 chars, no spaces.");
+						CUtils::PrintError("Invalid StatusPrefix [" + sStatusPrefix + "] Must be 1-5 chars, no spaces.");
+						return false;
 					}
 				}
-				m_msUsers[sValue] = pUser;
+
 				continue;
 			} else if (strcasecmp(sTag.c_str(), "Chan") == 0) {
 				if (!pUser) {
-					CUtils::PrintStatus(false, "<Chan> tags must be nested inside of a <User> tag.");
+					CUtils::PrintError("<Chan> tags must be nested inside of a <User> tag.");
 					return false;
 				}
 
 				if (pChan) {
-					CUtils::PrintStatus(false, "You may not nest <Chan> tags inside of other <Chan> tags.");
+					CUtils::PrintError("You may not nest <Chan> tags inside of other <Chan> tags.");
 					return false;
 				}
 
@@ -416,7 +436,8 @@ bool CZNC::ParseConfig(const string& sConfigFile) {
 						continue;
 					} else if (strcasecmp(sName.c_str(), "StatusPrefix") == 0) {
 						if (!pUser->SetStatusPrefix(sValue)) {
-							CUtils::PrintStatus(false, "Invalid StatusPrefix [" + sValue + "] Must be 1-5 chars, no spaces.");
+							CUtils::PrintError("Invalid StatusPrefix [" + sValue + "] Must be 1-5 chars, no spaces.");
+							return false;
 						}
 						continue;
 					} else if (strcasecmp(sName.c_str(), "DCCLookupMethod") == 0) {
@@ -451,8 +472,13 @@ bool CZNC::ParseConfig(const string& sConfigFile) {
 						string sModRet;
 						string sArgs = CUtils::Token(sValue, 1, true);
 
-						bool bModRet = pUser->GetModules().LoadModule(sModName, sArgs, pUser, sModRet);
-						CUtils::PrintStatus(bModRet, (bModRet) ? "" : sModRet);
+						try {
+							bool bModRet = pUser->GetModules().LoadModule(sModName, sArgs, pUser, sModRet);
+							CUtils::PrintStatus(bModRet, (bModRet) ? "" : sModRet);
+						} catch (CException e) {
+							CUtils::PrintStatus(false, sModRet);
+							return false;
+						}
 #else
 						CUtils::PrintStatus(false, "Modules are not enabled.");
 #endif
@@ -510,6 +536,7 @@ bool CZNC::ParseConfig(const string& sConfigFile) {
 		}
 
 		CUtils::PrintError("Unhandled line in config: [" + sLine + "]");
+		return false;
 	}
 
 	if (pChan) {
@@ -519,7 +546,7 @@ bool CZNC::ParseConfig(const string& sConfigFile) {
 	File.Close();
 
 	if (!m_msUsers.size()) {
-		CUtils::PrintStatus(false, "You must define at least one user in your config.");
+		CUtils::PrintError("You must define at least one user in your config.");
 		return false;
 	}
 
