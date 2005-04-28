@@ -136,12 +136,39 @@ bool CUser::DelChan(const string& sName) {
 
 CChan* CUser::FindChan(const string& sName) {
 	for (unsigned int a = 0; a < m_vChans.size(); a++) {
-		if (strcasecmp(sName.c_str(), m_vChans[a]->GetName().c_str()) == 0) {
-			return m_vChans[a];
+		CChan* pChan = m_vChans[a];
+		if (strcasecmp(sName.c_str(), pChan->GetName().c_str()) == 0) {
+			return pChan;
 		}
 	}
 
 	return NULL;
+}
+
+CServer* CUser::FindServer(const string& sName) {
+	for (unsigned int a = 0; a < m_vServers.size(); a++) {
+		CServer* pServer = m_vServers[a];
+		if (strcasecmp(sName.c_str(), pServer->GetName().c_str()) == 0) {
+			return pServer;
+		}
+	}
+
+	return NULL;
+}
+
+bool CUser::DelServer(const string& sName) {
+	if (sName.empty()) {
+		return false;
+	}
+
+	for (vector<CServer*>::iterator it = m_vServers.begin(); it != m_vServers.end(); it++) {
+		if (strcasecmp((*it)->GetName().c_str(), sName.c_str()) == 0) {
+			m_vServers.erase(it);
+			return true;
+		}
+	}
+
+	return false;
 }
 
 bool CUser::AddServer(const string& sName) {
@@ -441,6 +468,7 @@ bool CUser::DenyLoadMod() const { return m_bDenyLoadMod; }
 const string& CUser::GetStatusPrefix() const { return m_sStatusPrefix; }
 const string& CUser::GetDefaultChanModes() const { return m_sDefaultChanModes; }
 const vector<CChan*>& CUser::GetChans() const { return m_vChans; }
+const vector<CServer*>& CUser::GetServers() const { return m_vServers; }
 const CNick& CUser::GetIRCNick() const { return m_IRCNick; }
 const string& CUser::GetIRCServer() const { return m_sIRCServer; }
 const string& CUser::GetQuitMsg() const { return m_sQuitMsg; }
