@@ -407,4 +407,3 @@ int CChan::AddBuffer(const string& sLine) {
 void CChan::ClearBuffer() {
 	m_vsBuffer.clear();
 }
-

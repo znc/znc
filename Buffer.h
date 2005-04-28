@@ -11,7 +11,7 @@ public:
 	CBufLine(const string& sPre, const string& sPost);
 	virtual ~CBufLine();
 	void GetLine(const string& sTarget, string& sRet);
- 
+
 private:
 protected:
 	string	m_sPre;
@@ -42,4 +42,3 @@ protected:
 };
 
 #endif // !_BUFFER_H
-
