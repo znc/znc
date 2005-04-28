@@ -159,7 +159,7 @@ namespace Csocket
 	{
 	public:
 		CCron() ;
-		virtual ~CCron();
+		virtual ~CCron() {}
 
 		//! This is used by the Job Manager, and not you directly
 		void run();
@@ -221,9 +221,9 @@ namespace Csocket
 		/**
 		* Advanced constructor, for creating a simple connection
 		*
-		* sHostname the hostname your are connecting to
-		* iport the port you are connectint to
-		* itimeout how long to wait before ditching the connection, default is 60 seconds
+		* @param sHostname the hostname your are connecting to
+		* @param iport the port you are connectint to
+		* @param itimeout how long to wait before ditching the connection, default is 60 seconds
 		*/
 		Csock( const CS_STRING & sHostname, int iport, int itimeout = 60 );
 
@@ -276,8 +276,8 @@ namespace Csocket
 		/**
 		* Create the connection
 		*
-		* \param sBindHost the ip you want to bind to locally
-		* \return true on success
+		* @param sBindHost the ip you want to bind to locally
+		* @return true on success
 		*/
 		virtual bool Connect( const CS_STRING & sBindHost = "" );
 
@@ -296,8 +296,8 @@ namespace Csocket
 		/**
 		* Listens for connections
 		*
-		* \param iPort the port to listen on
-		* \param iMaxConns the maximum amount of connections to allow
+		* @param iPort the port to listen on
+		* @param iMaxConns the maximum amount of connections to allow
 		*/
 		virtual bool Listen( int iPort, int iMaxConns = SOMAXCONN, const CS_STRING & sBindHost = "", u_int iTimeout = 0 );
 
@@ -316,8 +316,8 @@ namespace Csocket
 		/**
 		* Create the SSL connection
 		*
-		* \param sBindhost the ip you want to bind to locally
-		* \return true on success
+		* @param sBindhost the ip you want to bind to locally
+		* @return true on success
 		*/		
 		virtual bool ConnectSSL( const CS_STRING & sBindhost = "" );
 
@@ -328,8 +328,8 @@ namespace Csocket
 		* an internal buffer, and tried again with next call to Write
 		* if the socket is blocking, it will send everything, its ok to check ernno after this (nothing else is processed)
 		*
-		* \param data the data to send
-		* \param len the length of data
+		* @param data the data to send
+		* @param len the length of data
 		* 
 		*/
 		virtual bool Write( const char *data, int len );
@@ -344,10 +344,10 @@ namespace Csocket
 		* Read from the socket
 		* Just pass in a pointer, big enough to hold len bytes
 		*
-		* \param data the buffer to read into
-		* \param len the size of the buffer
+		* @param data the buffer to read into
+		* @param len the size of the buffer
 		*
-		* \return
+		* @return
 		* Returns READ_EOF for EOF
 		* Returns READ_ERR for ERROR
 		* Returns READ_EAGAIN for Try Again ( EAGAIN )

@@ -165,8 +165,6 @@ CCron::CCron()
 	m_bPause = false;
 }
 
-CCron::~CCron() {}
-
 //! This is used by the Job Manager, and not you directly
 void CCron::run() 
 {
