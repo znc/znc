@@ -27,6 +27,8 @@ public:
 	bool AddChan(CChan* pChan);
 	bool AddChan(const string& sName);
 	bool DelChan(const string& sName);
+	CServer* FindServer(const string& sName);
+	bool DelServer(const string& sName);
 	bool AddServer(const string& sName);
 	bool AddServer(const string& sName, unsigned short uPort, const string& sPass = "", bool bSSL = false);
 	CServer* GetNextServer();
@@ -102,6 +104,7 @@ public:
 	const string& GetStatusPrefix() const;
 	const string& GetDefaultChanModes() const;
 	const vector<CChan*>& GetChans() const;
+	const vector<CServer*>& GetServers() const;
 	const CNick& GetIRCNick() const;
 	const string& GetIRCServer() const;
 	const string& GetQuitMsg() const;
