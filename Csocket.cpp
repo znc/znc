@@ -2,29 +2,29 @@
 *
 *    Copyright (c) 1999-2004 Jim Hull <imaginos@imaginos.net>
 *    All rights reserved
-*    
-* Redistribution and use in source and binary forms, with or without modification, 
+*
+* Redistribution and use in source and binary forms, with or without modification,
 * are permitted provided that the following conditions are met:
-* Redistributions of source code must retain the above copyright notice, this 
+* Redistributions of source code must retain the above copyright notice, this
 * list of conditions and the following disclaimer.
-* Redistributions in binary form must reproduce the above copyright notice, this list 
+* Redistributions in binary form must reproduce the above copyright notice, this list
 * of conditions and the following disclaimer in the documentation and/or other materials
 *  provided with the distribution.
-* Redistributions in any form must be accompanied by information on how to obtain 
-* complete source code for the DB software and any accompanying software that uses the DB software. 
-* The source code must either be included in the distribution or be available for no more than 
-* the cost of distribution plus a nominal fee, and must be freely redistributable 
-* under reasonable conditions. For an executable file, complete source code means the source 
-* code for all modules it contains. It does not include source code for modules or files 
+* Redistributions in any form must be accompanied by information on how to obtain
+* complete source code for the DB software and any accompanying software that uses the DB software.
+* The source code must either be included in the distribution or be available for no more than
+* the cost of distribution plus a nominal fee, and must be freely redistributable
+* under reasonable conditions. For an executable file, complete source code means the source
+* code for all modules it contains. It does not include source code for modules or files
 * that typically accompany the major components of the operating system on which the executable file runs.
 *
-* THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, 
-* BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, 
-* OR NON-INFRINGEMENT, ARE DISCLAIMED. IN NO EVENT SHALL SLEEPYCAT SOFTWARE BE LIABLE FOR ANY DIRECT, 
-* INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, 
-* PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) 
-* HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR 
-* TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, 
+* THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING,
+* BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE,
+* OR NON-INFRINGEMENT, ARE DISCLAIMED. IN NO EVENT SHALL SLEEPYCAT SOFTWARE BE LIABLE FOR ANY DIRECT,
+* INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+* PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+* HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR
+* TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
 * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 *
 *
@@ -108,7 +108,7 @@ unsigned long long millitime()
 	unsigned long long iTime = 0;
 	gettimeofday( &tv, NULL );
 	iTime = (unsigned long long )tv.tv_sec * 1000;
-	iTime += ( (unsigned long long)tv.tv_usec / 1000 );		
+	iTime += ( (unsigned long long)tv.tv_usec / 1000 );
 	return( iTime );
 }
 
@@ -121,7 +121,7 @@ bool GetHostByName( const CS_STRING & sHostName, struct in_addr *paddr )
 	struct hostent hentbuff;
 
 	int err;
-	for( u_int a = 0; a < 20; a++ ) 
+	for( u_int a = 0; a < 20; a++ )
 	{
 		memset( (char *)hbuff, '\0', 2048 );
 		int iRet = gethostbyname_r( sHostName.c_str(), &hentbuff, hbuff, 2048, &hent, &err );
@@ -130,7 +130,7 @@ bool GetHostByName( const CS_STRING & sHostName, struct in_addr *paddr )
 		{
 			bRet = true;
 			break;
-		}	
+		}
 
 		if ( iRet != TRY_AGAIN )
 			break;
@@ -155,7 +155,7 @@ bool GetHostByName( const CS_STRING & sHostName, struct in_addr *paddr )
 	return( bRet );
 }
 
-CCron::CCron() 
+CCron::CCron()
 {
 	m_iCycles = 0;
 	m_iMaxCycles = 0;
@@ -166,7 +166,7 @@ CCron::CCron()
 }
 
 //! This is used by the Job Manager, and not you directly
-void CCron::run() 
+void CCron::run()
 {
 	if ( m_bPause )
 		return;
@@ -229,20 +229,20 @@ const CS_STRING & CCron::GetName() const { return( m_sName ); }
 void CCron::SetName( const CS_STRING & sName ) { m_sName = sName; }
 void CCron::RunJob() { CS_DEBUG( "This should be overriden" ); }
 
-Csock::Csock( int itimeout ) 
-{ 
-	Init( "", 0, itimeout ); 
+Csock::Csock( int itimeout )
+{
+	Init( "", 0, itimeout );
 }
 
-Csock::Csock( const CS_STRING & sHostname, int iport, int itimeout ) 
+Csock::Csock( const CS_STRING & sHostname, int iport, int itimeout )
 {
 	Init( sHostname, iport, itimeout );
 }
 
 // override this for accept sockets
-Csock *Csock::GetSockObj( const CS_STRING & sHostname, int iPort ) 
-{ 
-	return( NULL ); 
+Csock *Csock::GetSockObj( const CS_STRING & sHostname, int iPort )
+{
+	return( NULL );
 }
 
 Csock::~Csock()
@@ -261,13 +261,13 @@ Csock::~Csock()
 	FREE_SSL();
 	FREE_CTX();
 
-#endif /* HAVE_LIBSSL */				
+#endif /* HAVE_LIBSSL */
 	// delete any left over crons
 	for( vector<CCron *>::size_type i = 0; i < m_vcCrons.size(); i++ )
 		CS_Delete( m_vcCrons[i] );
 }
 
-Csock & Csock::operator<<( const CS_STRING & s ) 
+Csock & Csock::operator<<( const CS_STRING & s )
 {
 	Write( s );
 	return( *this );
@@ -279,55 +279,55 @@ Csock & Csock::operator<<( ostream & ( *io )( ostream & ) )
 	return( *this );
 }
 
-Csock & Csock::operator<<( int i ) 
+Csock & Csock::operator<<( int i )
 {
 	stringstream s;
 	s << i;
 	Write( s.str() );
 	return( *this );
 }
-Csock & Csock::operator<<( unsigned int i ) 
+Csock & Csock::operator<<( unsigned int i )
 {
 	stringstream s;
 	s << i;
 	Write( s.str() );
 	return( *this );
 }
-Csock & Csock::operator<<( long i ) 
-{ 
-	stringstream s;
-	s << i;
-	Write( s.str() );
-	return( *this );
-}
-Csock & Csock::operator<<( unsigned long i ) 
+Csock & Csock::operator<<( long i )
 {
 	stringstream s;
 	s << i;
 	Write( s.str() );
 	return( *this );
 }
-Csock & Csock::operator<<( unsigned long long i ) 
+Csock & Csock::operator<<( unsigned long i )
 {
 	stringstream s;
 	s << i;
 	Write( s.str() );
 	return( *this );
 }
-Csock & Csock::operator<<( float i ) 
+Csock & Csock::operator<<( unsigned long long i )
 {
 	stringstream s;
 	s << i;
 	Write( s.str() );
 	return( *this );
 }
-Csock & Csock::operator<<( double i ) 
+Csock & Csock::operator<<( float i )
 {
 	stringstream s;
 	s << i;
 	Write( s.str() );
 	return( *this );
-}		
+}
+Csock & Csock::operator<<( double i )
+{
+	stringstream s;
+	s << i;
+	Write( s.str() );
+	return( *this );
+}
 
 bool Csock::Connect( const CS_STRING & sBindHost )
 {
@@ -387,10 +387,10 @@ bool Csock::Connect( const CS_STRING & sBindHost )
 	}
 
 	if ( m_bBLOCK )
-	{	
+	{
 		// unset the flags afterwords, rather than have connect block
-		int fdflags = fcntl (m_iReadSock, F_GETFL, 0); 
-		fdflags &= ~O_NONBLOCK;	
+		int fdflags = fcntl (m_iReadSock, F_GETFL, 0);
+		fdflags &= ~O_NONBLOCK;
 		fcntl( m_iReadSock, F_SETFL, fdflags );
 	}
 
@@ -536,7 +536,7 @@ bool Csock::AcceptSSL()
 	if ( err == 1 )
 	{
 		m_bFullsslAccept = true;
-		return( true );				
+		return( true );
 	}
 
 	m_bFullsslAccept = false;
@@ -550,13 +550,13 @@ bool Csock::AcceptSSL()
 
 #endif /* HAVE_LIBSSL */
 
-	return( false );	
+	return( false );
 }
 
 //! This sets up the SSL Client, this is used internally
 bool Csock::SSLClientSetup()
 {
-#ifdef HAVE_LIBSSL		
+#ifdef HAVE_LIBSSL
 	m_bssl = true;
 	FREE_SSL();
 	FREE_CTX();
@@ -578,7 +578,7 @@ bool Csock::SSLClientSetup()
 			{
 				CS_DEBUG( "WARNING: MakeConnection .... SSLv3_client_method failed!" );
 				return( false );
-			}		
+			}
 			break;
 
 		case SSL23:
@@ -629,14 +629,14 @@ bool Csock::SSLClientSetup()
 #else
 	return( false );
 
-#endif /* HAVE_LIBSSL */		
+#endif /* HAVE_LIBSSL */
 }
 
 bool Csock::SSLServerSetup()
 {
 #ifdef HAVE_LIBSSL
 	m_bssl = true;
-	FREE_SSL();			
+	FREE_SSL();
 	FREE_CTX();
 
 	switch( m_iMethod )
@@ -656,7 +656,7 @@ bool Csock::SSLServerSetup()
 			{
 				CS_DEBUG( "WARNING: MakeConnection .... SSLv3_server_method failed!" );
 				return( false );
-			}		
+			}
 			break;
 
 		case SSL23:
@@ -680,7 +680,7 @@ bool Csock::SSLServerSetup()
 	SSL_CTX_set_default_passwd_cb_userdata( m_ssl_ctx, (void *)this );
 
 	if ( ( m_sPemFile.empty() ) || ( access( m_sPemFile.c_str(), R_OK ) != 0 ) )
-	{	
+	{
 		CS_DEBUG( "There is a problem with [" << m_sPemFile << "]" );
 		return( false );
 	}
@@ -724,12 +724,12 @@ bool Csock::SSLServerSetup()
 	return( true );
 #else
 	return( false );
-#endif /* HAVE_LIBSSL */		
-}		
+#endif /* HAVE_LIBSSL */
+}
 
 bool Csock::ConnectSSL( const CS_STRING & sBindhost )
 {
-#ifdef HAVE_LIBSSL		
+#ifdef HAVE_LIBSSL
 	if ( m_iReadSock == -1 )
 		if ( !Connect( sBindhost ) )
 			return( false );
@@ -744,7 +744,7 @@ bool Csock::ConnectSSL( const CS_STRING & sBindhost )
 	{
 		int fdflags = fcntl ( m_iReadSock, F_GETFL, 0);
 		fcntl( m_iReadSock, F_SETFL, fdflags|O_NONBLOCK );
-	}	
+	}
 
 	int iErr = SSL_connect( m_ssl );
 	if ( iErr != 1 )
@@ -757,13 +757,13 @@ bool Csock::ConnectSSL( const CS_STRING & sBindhost )
 		bPass = true;
 
 	if ( m_bBLOCK )
-	{	
+	{
 		// unset the flags afterwords, rather then have connect block
-		int fdflags = fcntl (m_iReadSock, F_GETFL, 0); 
-		fdflags &= ~O_NONBLOCK;	
+		int fdflags = fcntl (m_iReadSock, F_GETFL, 0);
+		fdflags &= ~O_NONBLOCK;
 		fcntl( m_iReadSock, F_SETFL, fdflags );
 
-	}				
+	}
 
 	return( bPass );
 #else
@@ -790,7 +790,7 @@ bool Csock::Write( const char *data, int len )
 	if ( ( m_iMaxBytes > 0 ) && ( m_iMaxMilliSeconds > 0 ) )
 	{
 		unsigned long long iNOW = millitime();
-		// figure out the shaping here				
+		// figure out the shaping here
 		// if NOW - m_iLastSendTime > m_iMaxMilliSeconds then send a full length of ( iBytesToSend )
 		if ( ( iNOW - m_iLastSendTime ) > m_iMaxMilliSeconds )
 		{
@@ -815,9 +815,9 @@ bool Csock::Write( const char *data, int len )
 	} else
 		iBytesToSend = m_sSend.length();
 
-#ifdef HAVE_LIBSSL	
+#ifdef HAVE_LIBSSL
 	if ( m_bssl )
-	{ 
+	{
 
 		if ( m_sSSLBuffer.empty() ) // on retrying to write data, ssl wants the data in the SAME spot and the SAME size
 			m_sSSLBuffer.append( m_sSend.data(), iBytesToSend );
@@ -825,7 +825,7 @@ bool Csock::Write( const char *data, int len )
 		int iErr = SSL_write( m_ssl, m_sSSLBuffer.data(), m_sSSLBuffer.length() );
 
 		if ( ( iErr < 0 ) && ( errno == ECONNREFUSED ) )
-		{ 	
+		{
 			// If ret == -1, the underlying BIO reported an I/O error (man SSL_get_error)
 			ConnectionRefused();
 			return( false );
@@ -834,7 +834,7 @@ bool Csock::Write( const char *data, int len )
 		switch( SSL_get_error( m_ssl, iErr ) )
 		{
 			case SSL_ERROR_NONE:
-			m_bsslEstablished = true;					
+			m_bsslEstablished = true;
 			// all ok
 			break;
 
@@ -859,14 +859,14 @@ bool Csock::Write( const char *data, int len )
 			}
 		}
 
-		if ( iErr > 0 )				
+		if ( iErr > 0 )
 		{
 			m_sSSLBuffer.clear();
 			m_sSend.erase( 0, iErr );
 			// reset the timer on successful write (we have to set it here because the write
 			// bit might not always be set, so need to trigger)
 			if ( TMO_WRITE & GetTimeoutType() )
-				ResetTimer();	
+				ResetTimer();
 
 			m_iBytesWritten += (unsigned long long)iErr;
 		}
@@ -933,7 +933,7 @@ int Csock::Read( char *data, int len )
 	if ( bytes == -1 )
 	{
 		if ( errno == ECONNREFUSED )
-			return( READ_CONNREFUSED );	
+			return( READ_CONNREFUSED );
 
 		if ( errno == ETIMEDOUT )
 			return( READ_TIMEDOUT );
@@ -951,7 +951,7 @@ int Csock::Read( char *data, int len )
 		}
 #else
 		return( READ_ERR );
-#endif /* HAVE_LIBSSL */								
+#endif /* HAVE_LIBSSL */
 	}
 
 	m_iBytesRead += (unsigned long long)bytes;
@@ -999,7 +999,7 @@ CS_STRING Csock::GetRemoteIP()
 }
 
 bool Csock::IsConnected() { return( m_bIsConnected ); }
-void Csock::SetIsConnected( bool b ) { m_bIsConnected = b; }	
+void Csock::SetIsConnected( bool b ) { m_bIsConnected = b; }
 
 int & Csock::GetRSock() { return( m_iReadSock ); }
 void Csock::SetRSock( int iSock ) { m_iReadSock = iSock; }
@@ -1011,16 +1011,16 @@ void Csock::ResetTimer() { m_iTcount = 0; }
 void Csock::PauseRead() { m_bPauseRead = true; }
 bool Csock::IsReadPaused() { return( m_bPauseRead ); }
 
-void Csock::UnPauseRead() 
-{ 
-	m_bPauseRead = false; 
+void Csock::UnPauseRead()
+{
+	m_bPauseRead = false;
 	ResetTimer();
 }
 
-void Csock::SetTimeout( int iTimeout, u_int iTimeoutType ) 
-{ 
+void Csock::SetTimeout( int iTimeout, u_int iTimeoutType )
+{
 	m_iTimeoutType = iTimeoutType;
-	m_itimeout = iTimeout; 
+	m_itimeout = iTimeout;
 }
 
 void Csock::SetTimeoutType( u_int iTimeoutType ) { m_iTimeoutType = iTimeoutType; }
@@ -1042,7 +1042,7 @@ bool Csock::CheckTimeout()
 		}
 
 		m_iTcount++;
-	}	
+	}
 	return( false );
 }
 
@@ -1076,7 +1076,7 @@ void Csock::PushBuff( const char *data, int len )
 
 }
 
-CS_STRING & Csock::GetInternalBuffer() { return( m_sbuffer ); }	
+CS_STRING & Csock::GetInternalBuffer() { return( m_sbuffer ); }
 void Csock::SetMaxBufferThreshold( u_int iThreshold ) { m_iMaxStoredBufferLength = iThreshold; }
 u_int Csock::GetMaxBufferThreshold() { return( m_iMaxStoredBufferLength ); }
 int Csock::GetType() { return( m_iConnType ); }
@@ -1085,7 +1085,7 @@ const CS_STRING & Csock::GetSockName() { return( m_sSockName ); }
 void Csock::SetSockName( const CS_STRING & sName ) { m_sSockName = sName; }
 const CS_STRING & Csock::GetHostName() { return( m_shostname ); }
 void Csock::SetHostName( const CS_STRING & sHostname ) { m_shostname = sHostname; }
-unsigned long long Csock::GetStartTime() const { return( m_iStartTime ); } 
+unsigned long long Csock::GetStartTime() const { return( m_iStartTime ); }
 void Csock::ResetStartTime() { m_iStartTime = 0; }
 unsigned long long Csock::GetBytesRead() const { return( m_iBytesRead ); }
 void Csock::ResetBytesRead() { m_iBytesRead = 0; }
@@ -1112,14 +1112,14 @@ double Csock::GetAvgWrite( unsigned long long iSample )
 	return( ( (double)m_iBytesWritten / ( (double)iDifference / (double)iSample ) ) );
 }
 
-int Csock::GetRemotePort() 
+int Csock::GetRemotePort()
 {
 	if ( m_iRemotePort > 0 )
 		return( m_iRemotePort );
 
 	int iSock = GetSock();
 
-	if ( iSock >= 0 ) 
+	if ( iSock >= 0 )
 	{
 		struct sockaddr_in mAddr;
 		socklen_t mLen = sizeof(struct sockaddr);
@@ -1130,14 +1130,14 @@ int Csock::GetRemotePort()
 	return( m_iRemotePort );
 }
 
-int Csock::GetLocalPort() 
+int Csock::GetLocalPort()
 {
 	if ( m_iLocalPort > 0 )
 		return( m_iLocalPort );
 
 	int iSock = GetSock();
 
-	if ( iSock >= 0 ) 
+	if ( iSock >= 0 )
 	{
 		struct sockaddr_in mLocalAddr;
 		socklen_t mLocalLen = sizeof(struct sockaddr);
@@ -1203,10 +1203,10 @@ void Csock::SetSSLObject( SSL *ssl ) { m_ssl = ssl; }
 void Csock::SetCTXObject( SSL_CTX *sslCtx ) { m_ssl_ctx = sslCtx; }
 void Csock::SetFullSSLAccept() { m_bFullsslAccept = true; }
 
-SSL_SESSION * Csock::GetSSLSession() 
+SSL_SESSION * Csock::GetSSLSession()
 {
-	if ( m_ssl )	
-		return( SSL_get_session( m_ssl ) ); 
+	if ( m_ssl )
+		return( SSL_get_session( m_ssl ) );
 
 	return( NULL );
 }
@@ -1318,7 +1318,7 @@ CS_STRING Csock::GetPeerPubKey()
 			}
 			EVP_PKEY_free( pKey );
 		}
-	} 
+	}
 	return( sKey );
 }
 bool Csock::RequiresClientCert() { return( m_bRequireClientCert ); }
@@ -1341,7 +1341,7 @@ unsigned long long Csock::GetRateTime() { return( m_iMaxMilliSeconds ); }
 void Csock::Cron()
 {
 	for( vector<CCron *>::size_type a = 0; a < m_vcCrons.size(); a++ )
-	{		
+	{
 		CCron *pcCron = m_vcCrons[a];
 
 		if ( !pcCron->isValid() )
@@ -1461,12 +1461,12 @@ int Csock::SOCKET( bool bListen )
 
 void Csock::Init( const CS_STRING & sHostname, int iport, int itimeout )
 {
-#ifdef HAVE_LIBSSL	
+#ifdef HAVE_LIBSSL
 	m_ssl = NULL;
 	m_ssl_ctx = NULL;
-#endif /* HAVE_LIBSSL */		
+#endif /* HAVE_LIBSSL */
 	m_iReadSock = -1;
-	m_iWriteSock = -1;	
+	m_iWriteSock = -1;
 	m_itimeout = itimeout;
 	m_bssl = false;
 	m_bIsConnected = false;

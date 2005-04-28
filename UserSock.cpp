@@ -79,7 +79,7 @@ void CUserSock::ReadLine(const string& sData) {
 			if ((m_bGotPass) && (m_bGotUser)) {
 				AuthUser();
 			}
-			return;		// Don't forward this msg.  ZNC will handle nick changes until auth is complete 
+			return;		// Don't forward this msg.  ZNC will handle nick changes until auth is complete
 		}
 
 		if ((m_pUser) && (strcasecmp(sNick.c_str(), m_pUser->GetNick().c_str()) == 0)) {
@@ -981,7 +981,7 @@ void CUserSock::PutIRC(const string& sLine) {
 
 void CUserSock::PutServ(const string& sLine) {
 	DEBUG_ONLY(cout << GetSockName() << " -> [" << sLine << "]" << endl);
-	Write(sLine + "\r\n");   
+	Write(sLine + "\r\n");
 }
 
 void CUserSock::PutStatusNotice(const string& sLine) {

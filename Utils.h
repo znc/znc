@@ -114,7 +114,7 @@ public:
 		m_sFileName = sFile;
 	}
 
-	//! timeout in milliseconds	
+	//! timeout in milliseconds
 	bool TryExLock(const string& sLockFile, unsigned long long iTimeout = 0) {
 		Open(sLockFile);
 		return TryExLock(iTimeout);
@@ -359,7 +359,7 @@ private:
 #define RF_BUFF 4096
 inline bool ReadFile(const string & sFilename, string & sLine) {
 	char inbuff[RF_BUFF];
-	int bytes;	
+	int bytes;
 	// clear ourselves out
 	sLine.clear();
 
@@ -408,7 +408,7 @@ inline bool ReadLine(const string & sData, string & sLine, u_int & iPos) {
 	u_int iFind = sData.find("\n", iPos);
 
 	if (iFind == string::npos) {
-		sLine = sData.substr(iPos, (sData.length() - iPos));    
+		sLine = sData.substr(iPos, (sData.length() - iPos));
 		iPos = string::npos;
 		return true;
 	}

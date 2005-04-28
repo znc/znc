@@ -10,7 +10,7 @@ using std::string;
 
 #define VERSION 0.033
 #define MODULEDEFS(CLASS) extern "C" { CModule* Load(void* p, CUser* pUser, const string& sModName); void Unload(CModule* pMod); double GetVersion(); } double GetVersion() { return VERSION; } CModule* Load(void* p, CUser* pUser, const string& sModName) { return new CLASS(p, pUser, sModName); } void Unload(CModule* pMod) { if (pMod) { delete pMod; } }
-#define MODCONSTRUCTOR(CLASS) CLASS(void *pDLL, CUser* pUser, const string& sModName) : CModule(pDLL, pUser, sModName) 
+#define MODCONSTRUCTOR(CLASS) CLASS(void *pDLL, CUser* pUser, const string& sModName) : CModule(pDLL, pUser, sModName)
 
 // Forward Declarations
 class CUser;
@@ -43,7 +43,7 @@ protected:
 };
 
 class CModule {
-public:  
+public:
 	CModule(void* pDLL, CUser* pUser, const string& sModName);
 	virtual ~CModule();
 
@@ -119,7 +119,7 @@ protected:
 };
 
 class CModules : public vector<CModule*> {
-public: 
+public:
 	CModules();
 	virtual ~CModules();
 

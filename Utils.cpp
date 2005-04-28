@@ -185,7 +185,7 @@ int CUtils::MakeDir(const string& sPath, mode_t iMode) {
 	}
 
 	if (stat(sWorkDir.c_str(), &st) == 0)
-	{ 
+	{
 		int iChdir = chdir(sWorkDir.c_str());
 		if (iChdir != 0) {
 			return iChdir;   // could not change to dir
@@ -582,7 +582,7 @@ CFile::CFile(const string& sLongName) {
 	if (uPos != string::npos) {
 		m_sShortName = m_sShortName.substr(uPos +1);
 	}
-}	
+}
 CFile::~CFile() {
 	if (m_iFD != -1) {
 		Close();

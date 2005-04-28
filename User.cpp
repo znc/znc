@@ -300,7 +300,7 @@ bool CUser::PutIRC(const string& sLine) {
 	pIRCSock->PutServ(sLine);
 	return true;
 }
-	
+
 bool CUser::PutUser(const string& sLine) {
 	CUserSock* pUserSock = GetUserSock();
 

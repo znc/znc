@@ -29,7 +29,7 @@ clean:
 
 distclean: clean
 	rm -rf Makefile config.log config.status znc/Makefile
-	
+
 -include .depend
 
 %.o: %.cpp

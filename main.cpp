@@ -5,7 +5,7 @@
 #include "znc.h"
 #include "md5.h"
 
-static struct option g_LongOpts[] = 
+static struct option g_LongOpts[] =
 {
 	{ "help",				0,	NULL,	0 },
 	{ "makepass",			0,	NULL,	0 },
@@ -25,7 +25,7 @@ void GenerateHelp( const char *appname )
 #ifdef HAVE_LIBSSL
 	CUtils::PrintMessage("\t--makepem       Generates a pemfile for use with SSL");
 	CUtils::PrintMessage("\t--encrypt-pem   Encrypts the pemfile");
-#endif /* HAVE_LIBSSL */	
+#endif /* HAVE_LIBSSL */
 }
 
 void die(int sig) {
@@ -55,7 +55,7 @@ int main(int argc, char** argv) {
 #ifdef HAVE_LIBSSL
 	bool bMakePem = false;
 	bool bEncPem = false;
-#endif /* HAVE_LIBSSL */	
+#endif /* HAVE_LIBSSL */
 	bool bMakePass = false;
 	while( ( iArg = getopt_long( argc, argv, "h", g_LongOpts, &iOptIndex ) != -1 ) ) {
 		switch( iArg ) {
@@ -70,7 +70,7 @@ int main(int argc, char** argv) {
 						bMakePem = true;
 					else if ( sOption == "encrypt-pem" )
 						bEncPem = true;
-#endif /* HAVE_LIBSSL */	
+#endif /* HAVE_LIBSSL */
 					else if ( sOption == "help" ) {
 						GenerateHelp( argv[0] );
 						return( 0 );
@@ -83,7 +83,7 @@ int main(int argc, char** argv) {
 			}
 			case 'h':
 				GenerateHelp( argv[0] );
-				return( 0 );	
+				return( 0 );
 			default	:
 			{
 				GenerateHelp( argv[0] );
@@ -125,7 +125,7 @@ int main(int argc, char** argv) {
 		delete pZNC;
 		return 0;
 	}
-#endif /* HAVE_LIBSSL */	
+#endif /* HAVE_LIBSSL */
 	if ( bMakePass ) {
 		char* pass = CUtils::GetPass("Enter Password");
 		char* pass1 = (char*) malloc(strlen(pass) +1);
@@ -186,7 +186,7 @@ int main(int argc, char** argv) {
 		CUtils::PrintMessage("ZNC - by prozac@gmail.com");
 		exit(0);
 	}
-	
+
 	// Redirect std in/out/err to /dev/null
 	close(0); open("/dev/null", O_RDONLY);
 	close(1); open("/dev/null", O_WRONLY);

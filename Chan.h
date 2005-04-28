@@ -34,7 +34,7 @@ public:
 	void SendBuffer();
 
 	void IncClientRequests();
-	bool DecClientRequests(); 
+	bool DecClientRequests();
 
 	bool Who();
 	void OnWho(const string& sNick, const string& sIdent, const string& sHost);

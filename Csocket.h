@@ -2,29 +2,29 @@
 *
 *    Copyright (c) 1999-2004 Jim Hull <imaginos@imaginos.net>
 *    All rights reserved
-*    
-* Redistribution and use in source and binary forms, with or without modification, 
+*
+* Redistribution and use in source and binary forms, with or without modification,
 * are permitted provided that the following conditions are met:
-* Redistributions of source code must retain the above copyright notice, this 
+* Redistributions of source code must retain the above copyright notice, this
 * list of conditions and the following disclaimer.
-* Redistributions in binary form must reproduce the above copyright notice, this list 
+* Redistributions in binary form must reproduce the above copyright notice, this list
 * of conditions and the following disclaimer in the documentation and/or other materials
 *  provided with the distribution.
-* Redistributions in any form must be accompanied by information on how to obtain 
-* complete source code for the DB software and any accompanying software that uses the DB software. 
-* The source code must either be included in the distribution or be available for no more than 
-* the cost of distribution plus a nominal fee, and must be freely redistributable 
-* under reasonable conditions. For an executable file, complete source code means the source 
-* code for all modules it contains. It does not include source code for modules or files 
+* Redistributions in any form must be accompanied by information on how to obtain
+* complete source code for the DB software and any accompanying software that uses the DB software.
+* The source code must either be included in the distribution or be available for no more than
+* the cost of distribution plus a nominal fee, and must be freely redistributable
+* under reasonable conditions. For an executable file, complete source code means the source
+* code for all modules it contains. It does not include source code for modules or files
 * that typically accompany the major components of the operating system on which the executable file runs.
 *
-* THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, 
-* BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, 
-* OR NON-INFRINGEMENT, ARE DISCLAIMED. IN NO EVENT SHALL SLEEPYCAT SOFTWARE BE LIABLE FOR ANY DIRECT, 
-* INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, 
-* PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) 
-* HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR 
-* TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, 
+* THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING,
+* BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE,
+* OR NON-INFRINGEMENT, ARE DISCLAIMED. IN NO EVENT SHALL SLEEPYCAT SOFTWARE BE LIABLE FOR ANY DIRECT,
+* INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+* PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+* HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR
+* TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
 * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 *
 *
@@ -318,7 +318,7 @@ namespace Csocket
 		*
 		* @param sBindhost the ip you want to bind to locally
 		* @return true on success
-		*/		
+		*/
 		virtual bool ConnectSSL( const CS_STRING & sBindhost = "" );
 
 
@@ -330,7 +330,7 @@ namespace Csocket
 		*
 		* @param data the data to send
 		* @param len the length of data
-		* 
+		*
 		*/
 		virtual bool Write( const char *data, int len );
 
@@ -432,7 +432,7 @@ namespace Csocket
 
 
 		//! Gets the starting time of this socket
-		unsigned long long GetStartTime() const; 
+		unsigned long long GetStartTime() const;
 		//! Resets the start time
 		void ResetStartTime();
 
@@ -618,7 +618,7 @@ namespace Csocket
 		* Don't bother using these callbacks if you are using this class directly (without Socket Manager)
 		* as the Socket Manager calls most of these callbacks
 		*
-		* 
+		*
 		* Incoming Connection Event
 		* return false and the connection will fail
 		* default returns true
@@ -642,7 +642,7 @@ namespace Csocket
 		//! return the data imediatly ready for read
 		virtual int GetPending();
 
-		//////////////////////////////////////////////////	
+		//////////////////////////////////////////////////
 
 	private:
 		int			m_iReadSock, m_iWriteSock, m_itimeout, m_iport, m_iConnType, m_iTcount, m_iMethod, m_iRemotePort, m_iLocalPort;
@@ -684,11 +684,11 @@ namespace Csocket
 	* Another thing to note, is that all sockets are deleted implicitly, so obviously you
 	* cant pass in Csock classes created on the stack. For those of you who don't
 	* know STL very well, the reason I did this is because whenever you add to certain stl containers
-	* (ie vector, or map), its completely rebuilt using the copy constructor on each element. 
-	* That then means the constructor and destructor are called on every item in the container. 
-	* Not only is this more overhead then just moving pointers around, its dangerous as if you have 
-	* an object that is newed and deleted in the destructor the value of its pointer is copied in the 
-	* default copy constructor. This means everyone has to know better and create a copy constructor, 
+	* (ie vector, or map), its completely rebuilt using the copy constructor on each element.
+	* That then means the constructor and destructor are called on every item in the container.
+	* Not only is this more overhead then just moving pointers around, its dangerous as if you have
+	* an object that is newed and deleted in the destructor the value of its pointer is copied in the
+	* default copy constructor. This means everyone has to know better and create a copy constructor,
 	* or I just make everyone new their object :)
 	*
 	* class CBlahSock : public TSocketManager<SomeSock>
@@ -701,13 +701,13 @@ namespace Csocket
 	{
 	public:
 		TSocketManager() : vector<T *>()
-		{ 
-			m_errno = SUCCESS; 
+		{
+			m_errno = SUCCESS;
 			m_iCallTimeouts = millitime();
 			m_iSelectWait = 100000; // Default of 100 milliseconds
 		}
 
-		virtual ~TSocketManager() 
+		virtual ~TSocketManager()
 		{
 			Cleanup();
 		}
@@ -720,13 +720,13 @@ namespace Csocket
 			vector<T *>::clear();
 		}
 
-		virtual void Cleanup() 
+		virtual void Cleanup()
 		{
 			for( u_int a = 0; a < m_vcCrons.size(); a++ )
 				CS_Delete( m_vcCrons[a] );
 
-	  		m_vcCrons.clear();	
-			clear(); 
+	  		m_vcCrons.clear();
+			clear();
 		}
 
 		enum EMessages
@@ -792,7 +792,7 @@ namespace Csocket
 
 		/**
 		* Create a listening socket
-		* 
+		*
 		* \param iPort the port to listen on
 		* \param sSockName the name of the socket
 		* \param isSSL if the sockets created require an ssl layer
@@ -831,7 +831,7 @@ namespace Csocket
 			T *pNewSock = ListenHost( 0,  sSockName, sBindHost, isSSL, iMaxConns, pcSock, iTimeout );
 			if ( pNewSock )
 			{
-				int iSock = pNewSock->GetSock();	
+				int iSock = pNewSock->GetSock();
 
 				if ( iSock < 0 )
 				{
@@ -858,7 +858,7 @@ namespace Csocket
 		* Best place to call this class for running, all the call backs are called
 		* You should through this in your main while loop (long as its not blocking)
 		* all the events are called as needed
-		*/ 
+		*/
 		virtual void Loop ()
 		{
 			map<T *, EMessages> mpeSocks;
@@ -875,9 +875,9 @@ namespace Csocket
 						EMessages iErrno = itSock->second;
 
 						if ( iErrno == SUCCESS )
-						{					
+						{
 							// read in data
-							// if this is a 
+							// if this is a
 							char *buff;
 							int iLen = 0;
 
@@ -895,7 +895,7 @@ namespace Csocket
 
 							int bytes = pcSock->Read( buff, iLen );
 
-							if ( ( bytes != T::READ_TIMEDOUT ) && ( bytes != T::READ_CONNREFUSED ) 
+							if ( ( bytes != T::READ_TIMEDOUT ) && ( bytes != T::READ_CONNREFUSED )
 								&& ( !pcSock->IsConnected() ) )
 							{
 								pcSock->SetIsConnected( true );
@@ -938,7 +938,7 @@ namespace Csocket
 									pcSock->PushBuff( buff, bytes );
 									pcSock->ReadData( buff, bytes );
 									break;
-								}						
+								}
 							}
 
 							// free up the buff
@@ -959,7 +959,7 @@ namespace Csocket
 					break;
 			}
 
-			unsigned long long iMilliNow = millitime();	
+			unsigned long long iMilliNow = millitime();
 			if ( ( iMilliNow - m_iCallTimeouts ) > 1000 )
 			{
 				m_iCallTimeouts = iMilliNow;
@@ -1138,7 +1138,7 @@ namespace Csocket
 		* @see GetErrno()
 		*/
 		virtual void Select( map<T *, EMessages> & mpeSocks )
-		{		
+		{
 			mpeSocks.clear();
 			struct timeval tv;
 			fd_set rfds, wfds;
@@ -1150,7 +1150,7 @@ namespace Csocket
 			if ( m_iSelectWait == 0 )
 				iQuickReset = 0;
 
-			TFD_ZERO( &rfds );						
+			TFD_ZERO( &rfds );
 			TFD_ZERO( &wfds );
 
 			// before we go any further, Process work needing to be done on the job
@@ -1207,7 +1207,7 @@ namespace Csocket
 						{
 							pcSock->Close();
 						}
-					} else 
+					} else
 					{
 						if ( !bIsReadPaused )
 							TFD_SET( iRSock, &rfds );
@@ -1273,7 +1273,7 @@ namespace Csocket
 			} else
 			{
 				m_errno = SUCCESS;
-			}							
+			}
 
 			// find out wich one is ready
 			for( unsigned int i = 0; i < this->size(); i++ )
@@ -1341,7 +1341,7 @@ namespace Csocket
 							NewpcSock->SetWSock( inSock );
 
 							bool bAddSock = true;
-#ifdef HAVE_LIBSSL						
+#ifdef HAVE_LIBSSL
 							//
 							// is this ssl ?
 							if ( pcSock->GetSSL() )
@@ -1373,7 +1373,7 @@ namespace Csocket
 					}
 				}
 			}
-		}			
+		}
 
 
 		//! internal use only
@@ -1389,7 +1389,7 @@ namespace Csocket
 		virtual void Cron()
 		{
 			for( unsigned int a = 0; a < m_vcCrons.size(); a++ )
-			{		
+			{
 				CCron *pcCron = m_vcCrons[a];
 
 				if ( !pcCron->isValid() )
@@ -1403,7 +1403,7 @@ namespace Csocket
 
 		EMessages				m_errno;
 		vector<CCron *>			m_vcCrons;
-		unsigned long long		m_iCallTimeouts;	
+		unsigned long long		m_iCallTimeouts;
 		u_int					m_iSelectWait;
 	};
 
