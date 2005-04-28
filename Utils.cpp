@@ -47,7 +47,7 @@ void CUtils::GenerateCert( FILE *pOut, bool bEncPrivKey ) {
 	X509_REQ *pReq = X509_REQ_new();
 	EVP_PKEY *pKey = EVP_PKEY_new();
 	X509_NAME *pName = X509_NAME_new();
-	
+
 	EVP_PKEY_assign( pKey, EVP_PKEY_RSA, (char *)pRSA);
 	X509_REQ_set_pubkey( pReq, pKey );
 
@@ -63,8 +63,7 @@ void CUtils::GenerateCert( FILE *pOut, bool bEncPrivKey ) {
 	string sEmailAddr = pLogName;
 	sEmailAddr += "@";
 	sEmailAddr += pHostName;
-	
-	
+
 	X509_NAME_add_entry_by_txt( pName, "C", MBSTRING_ASC, (unsigned char *)"SomeCountry", -1, -1, 0);
 	X509_NAME_add_entry_by_txt( pName, "ST", MBSTRING_ASC, (unsigned char *)"SomeState", -1, -1, 0);
 	X509_NAME_add_entry_by_txt( pName, "L", MBSTRING_ASC, (unsigned char *)"SomeCity", -1, -1, 0);
@@ -74,7 +73,7 @@ void CUtils::GenerateCert( FILE *pOut, bool bEncPrivKey ) {
 	X509_NAME_add_entry_by_txt( pName, "emailAddress", MBSTRING_ASC, (unsigned char *)sEmailAddr.c_str(), -1, -1, 0);
 	X509_REQ_set_subject_name( pReq, pName );
 	X509_REQ_sign( pReq, pKey, EVP_md5() );
-	
+
 	X509 *pX509 = X509_REQ_to_X509( pReq, 365, pKey );
 	if ( pX509 )
 	{
@@ -222,6 +221,34 @@ int CUtils::MakeDir(const string& sPath, mode_t iMode) {
 char* CUtils::GetPass(const string& sPrompt) {
 	PrintPrompt(sPrompt);
 	return getpass("");
+}
+
+bool CUtils::GetBoolInput(const string& sPrompt) {
+	string sRet;
+	GetInput(sPrompt + " [yes/no]", sRet);
+
+	if (strcasecmp(sRet.c_str(), "yes") == 0) {
+		return true;
+	} else if (strcasecmp(sRet.c_str(), "no") == 0) {
+		return false;
+	}
+
+	return GetBoolInput(sPrompt);
+}
+
+bool CUtils::GetInput(const string& sPrompt, string& sRet) {
+	PrintPrompt(sPrompt);
+	char szBuf[1024];
+	memset(szBuf, 0, 1024);
+	fgets(szBuf, 1024, stdin);
+
+	sRet = szBuf;
+
+	if (CUtils::Right(sRet, 1) == "\n") {
+		CUtils::RightChomp(sRet);
+	}
+
+	return !sRet.empty();
 }
 
 void CUtils::PrintError(const string& sMessage) {
@@ -791,7 +818,7 @@ CBlowfish::CBlowfish(const string & sPassword, int iEncrypt, const string & sIve
 	m_iEncrypt = iEncrypt;
 	m_ivec = (unsigned char *)calloc(sizeof(unsigned char), 8);
 	m_num = 0;
-	
+
 	if (sIvec.length() >= 8) {
 		memcpy(m_ivec, sIvec.data(), 8);
 	}
@@ -814,7 +841,7 @@ unsigned char *CBlowfish::MD5(const unsigned char *input, u_int ilen) {
 string CBlowfish::MD5(const string & sInput, bool bHexEncode) {
 	string sRet;
 	unsigned char *data = MD5((const unsigned char *)sInput.data(), sInput.length());
-	
+
 	if (!bHexEncode) {
 		sRet.append((const char *)data, MD5_DIGEST_LENGTH);
 	} else {
@@ -823,7 +850,7 @@ string CBlowfish::MD5(const string & sInput, bool bHexEncode) {
 			sRet += g_HexDigits[data[a] & 0xf];
 		}
 	}
-	
+
 	free(data);
 	return sRet;
 }
@@ -839,7 +866,7 @@ unsigned char * CBlowfish::Crypt(unsigned char *input, u_int ibytes) {
 	Crypt(input, buff, ibytes);
 	return buff;
 }
-	
+
 string CBlowfish::Crypt(const string & sData) {
 	unsigned char *buff = Crypt((unsigned char *)sData.data(), sData.length());
 	string sOutput;

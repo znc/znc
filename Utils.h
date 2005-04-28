@@ -36,6 +36,8 @@ public:
 	static void PrintAction(const string& sMessage);
 	static void PrintStatus(bool bSuccess, const string& sMessage = "");
 	static char* GetPass(const string& sPrompt);
+	static bool GetInput(const string& sPrompt, string& sRet);
+	static bool GetBoolInput(const string& sPrompt);
 
 	static string ToString(short i);
 	static string ToString(unsigned short i);
