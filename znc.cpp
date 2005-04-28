@@ -502,13 +502,38 @@ bool CZNC::ParseConfig(const string& sConfigFile) {
 						CUtils::PrintStatus(false, "SSL is not enabled");
 						return false;
 					}
-#endif
+#else
+					string sPemFile = GetPemLocation();
 
-					if ((m_bSSL) && (!CFile::Exists(GetPemLocation()))) {
-						CUtils::PrintStatus(false, "Unable to locate pem file: [" + GetPemLocation() + "]");
-						return false;
+					if ((m_bSSL) && (!CFile::Exists(sPemFile))) {
+						CUtils::PrintStatus(false, "Unable to locate pem file: [" + sPemFile + "]");
+
+						if (CUtils::GetBoolInput("Would you like to create a new pem file")) {
+							CUtils::PrintAction("Writing Pem file [" + sPemFile + "]");
+
+							if (CFile::Exists(sPemFile)) {
+								CUtils::PrintStatus(false, "File already exists");
+								return false;
+							}
+
+							FILE *f = fopen(sPemFile.c_str(), "w");
+
+							if (!f) {
+								CUtils::PrintStatus(false, "Unable to open");
+								return false;
+							}
+
+							CUtils::GenerateCert(f, false);
+							fclose(f);
+
+							CUtils::PrintStatus(true);
+						} else {
+							return false;
+						}
+
+						CUtils::PrintAction("Resuming");
 					}
-
+#endif
 					if (!Listen()) {
 						CUtils::PrintStatus(false);
 						return false;
