@@ -5,6 +5,7 @@
 #include "IRCSock.h"
 #include "DCCBounce.h"
 #include "DCCSock.h"
+#include "Server.h"
 
 void CUserSock::ReadLine(const string& sData) {
 	string sLine = sData;
@@ -511,6 +512,71 @@ void CUserSock::UserCommand(const string& sLine) {
 				}
 			}
 		}
+	} else if (strcasecmp(sCommand.c_str(), "ADDSERVER") == 0) {
+		string sServer = CUtils::Token(sLine, 1);
+
+		if (sServer.empty()) {
+			PutStatus("Usage: AddServer <host> [[+]port] [pass]");
+			return;
+		}
+
+		if (m_pUser->FindServer(CUtils::Token(sLine, 1))) {
+			PutStatus("That server already exists");
+			return;
+		}
+
+		if (m_pUser && m_pUser->AddServer(CUtils::Token(sLine, 1, true))) {
+			PutStatus("Server added");
+		} else {
+			PutStatus("Unable to add that server");
+		}
+	} else if (strcasecmp(sCommand.c_str(), "REMSERVER") == 0 || strcasecmp(sCommand.c_str(), "DELSERVER") == 0) {
+		string sServer = CUtils::Token(sLine, 1);
+
+		if (sServer.empty()) {
+			PutStatus("Usage: RemServer <host>");
+			return;
+		}
+
+		const vector<CServer*>& vServers = m_pUser->GetServers();
+
+		if (vServers.size() <= 1) {
+			PutStatus("You must have at least one server at all times.");
+			return;
+		}
+
+		if (m_pUser && m_pUser->DelServer(sServer)) {
+			PutStatus("Server removed");
+		} else {
+			PutStatus("No such server");
+		}
+	} else if (strcasecmp(sCommand.c_str(), "LISTSERVERS") == 0) {
+		if (m_pUser) {
+			const vector<CServer*>& vServers = m_pUser->GetServers();
+			CTable Table;
+			Table.AddColumn("Host");
+			Table.AddColumn("Port");
+			Table.AddColumn("SSL");
+			Table.AddColumn("Pass");
+
+			for (unsigned int a = 0; a < vServers.size(); a++) {
+				CServer* pServer = vServers[a];
+				Table.AddRow();
+				Table.SetCell("Host", pServer->GetName());
+				Table.SetCell("Port", CUtils::ToString(pServer->GetPort()));
+				Table.SetCell("SSL", (pServer->IsSSL()) ? "SSL" : "");
+				Table.SetCell("Pass", pServer->GetPass());
+			}
+
+			if (Table.size()) {
+				unsigned int uTableIdx = 0;
+				string sLine;
+
+				while (Table.GetLine(uTableIdx++, sLine)) {
+					PutStatus(sLine);
+				}
+			}
+		}
 	} else if (strcasecmp(sCommand.c_str(), "TOPICS") == 0) {
 		if (m_pUser) {
 			const vector<CChan*>& vChans = m_pUser->GetChans();
@@ -794,6 +860,9 @@ void CUserSock::HelpUser() {
 	Table.AddRow(); Table.SetCell("Command", "ListMods");	Table.SetCell("Arguments", "");						Table.SetCell("Description", "List all loaded modules");
 	Table.AddRow(); Table.SetCell("Command", "ListChans");	Table.SetCell("Arguments", "");						Table.SetCell("Description", "List all channels");
 	Table.AddRow(); Table.SetCell("Command", "ListNicks");	Table.SetCell("Arguments", "<#chan>");				Table.SetCell("Description", "List all nicks on a channel");
+	Table.AddRow(); Table.SetCell("Command", "ListServers");	Table.SetCell("Arguments", "");					Table.SetCell("Description", "List all servers");
+	Table.AddRow(); Table.SetCell("Command", "AddServer");	Table.SetCell("Arguments", "<host> [[+]port] [pass]");	Table.SetCell("Description", "Add a server to the list");
+	Table.AddRow(); Table.SetCell("Command", "RemServer");	Table.SetCell("Arguments", "<host>");				Table.SetCell("Description", "Remove a server from the list");
 	Table.AddRow(); Table.SetCell("Command", "Topics");		Table.SetCell("Arguments", "");						Table.SetCell("Description", "Show topics in all channels");
 	Table.AddRow(); Table.SetCell("Command", "SetBuffer");	Table.SetCell("Arguments", "<#chan> [linecount]");	Table.SetCell("Description", "Set the buffer count for a channel");
 	Table.AddRow(); Table.SetCell("Command", "Shutdown");	Table.SetCell("Arguments", "[message]");			Table.SetCell("Description", "Shutdown znc completely");
