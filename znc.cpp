@@ -508,7 +508,7 @@ bool CZNC::ParseConfig(const string& sConfigFile) {
 					if ((m_bSSL) && (!CFile::Exists(sPemFile))) {
 						CUtils::PrintStatus(false, "Unable to locate pem file: [" + sPemFile + "]");
 
-						if (CUtils::GetBoolInput("Would you like to create a new pem file")) {
+						if (CUtils::GetBoolInput("Would you like to create a new pem file", true)) {
 							CUtils::PrintAction("Writing Pem file [" + sPemFile + "]");
 
 							if (CFile::Exists(sPemFile)) {
@@ -531,11 +531,16 @@ bool CZNC::ParseConfig(const string& sConfigFile) {
 							return false;
 						}
 
-						CUtils::PrintAction("Resuming");
+						CUtils::PrintAction("Binding to port [" + string((m_bSSL) ? "+" : "") + CUtils::ToString(m_uListenPort) + "]");
 					}
 #endif
+					if (!m_uListenPort) {
+						CUtils::PrintStatus(false, "Invalid port");
+						return false;
+					}
+
 					if (!Listen()) {
-						CUtils::PrintStatus(false);
+						CUtils::PrintStatus(false, "Unable to bind");
 						return false;
 					}
 
