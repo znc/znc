@@ -1,4 +1,5 @@
 #include "Utils.h"
+#include "md5.h"
 #include <sys/stat.h>
 #include <unistd.h>
 #include <sys/types.h>
@@ -216,6 +217,36 @@ int CUtils::MakeDir(const string& sPath, mode_t iMode) {
 	}
 
 	return -1;
+}
+
+string CUtils::GetHashPass() {
+	while (true) {
+		char* pass = CUtils::GetPass("Enter Password");
+		char* pass1 = (char*) malloc(strlen(pass) +1);
+		strcpy(pass1, pass);	// Make a copy of this since it is stored in a static buffer and will be overwritten when we fill pass2 below
+		memset((char*) pass, 0, strlen(pass));	// null out our pass so it doesn't sit in memory
+		char* pass2 = CUtils::GetPass("Confirm Password");
+		int iLen = strlen(pass1);
+
+		if (strcmp(pass1, pass2) != 0) {
+			CUtils::PrintError("The supplied passwords did not match");
+		} else if (!iLen) {
+			CUtils::PrintError("You can not use an empty password");
+		} else {
+			string sRet((const char*) CMD5(pass1, iLen));
+			memset((char*) pass1, 0, iLen);	// null out our pass so it doesn't sit in memory
+			memset((char*) pass2, 0, strlen(pass2));	// null out our pass so it doesn't sit in memory
+			free(pass1);
+
+			return sRet;
+		}
+
+		memset((char*) pass1, 0, iLen);	// null out our pass so it doesn't sit in memory
+		memset((char*) pass2, 0, strlen(pass2));	// null out our pass so it doesn't sit in memory
+		free(pass1);
+	}
+
+	return "";
 }
 
 char* CUtils::GetPass(const string& sPrompt) {

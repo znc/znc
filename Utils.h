@@ -35,6 +35,7 @@ public:
 	static void PrintPrompt(const string& sMessage);
 	static void PrintAction(const string& sMessage);
 	static void PrintStatus(bool bSuccess, const string& sMessage = "");
+	static string GetHashPass();
 	static char* GetPass(const string& sPrompt);
 	static bool GetInput(const string& sPrompt, string& sRet, const string& sDefault = "");
 	static bool GetBoolInput(const string& sPrompt, bool bDefault);
