@@ -223,9 +223,19 @@ char* CUtils::GetPass(const string& sPrompt) {
 	return getpass("");
 }
 
-bool CUtils::GetBoolInput(const string& sPrompt) {
-	string sRet;
-	GetInput(sPrompt + " [yes/no]", sRet);
+bool CUtils::GetBoolInput(const string& sPrompt, bool bDefault) {
+	return CUtils::GetBoolInput(sPrompt, &bDefault);
+}
+
+bool CUtils::GetBoolInput(const string& sPrompt, bool *pbDefault) {
+	string sRet, sDefault;
+	string sExtra = " (yes/no)";
+
+	if (pbDefault) {
+		sDefault = (*pbDefault) ? "yes" : "no";
+	}
+
+	GetInput(sPrompt + sExtra, sRet, sDefault);
 
 	if (strcasecmp(sRet.c_str(), "yes") == 0) {
 		return true;
@@ -233,19 +243,23 @@ bool CUtils::GetBoolInput(const string& sPrompt) {
 		return false;
 	}
 
-	return GetBoolInput(sPrompt);
+	return GetBoolInput(sPrompt, pbDefault);
 }
 
-bool CUtils::GetInput(const string& sPrompt, string& sRet) {
-	PrintPrompt(sPrompt);
+bool CUtils::GetInput(const string& sPrompt, string& sRet, const string& sDefault) {
+	string sExtra = (!sDefault.empty()) ? (" [" + sDefault + "]") : "";
+	PrintPrompt(sPrompt + sExtra);
 	char szBuf[1024];
 	memset(szBuf, 0, 1024);
 	fgets(szBuf, 1024, stdin);
-
 	sRet = szBuf;
 
 	if (CUtils::Right(sRet, 1) == "\n") {
 		CUtils::RightChomp(sRet);
+	}
+
+	if (sRet.empty()) {
+		sRet = sDefault;
 	}
 
 	return !sRet.empty();
