@@ -24,6 +24,8 @@ public:
 	bool IsHostAllowed(const string& sHostMask);
 	void InitDirs(const string& sArgvPath);
 	bool OnBoot();
+	string GetConfigPath(const string& sConfigFile);
+	bool WriteNewConfig(const string& sConfigFile);
 
 	// Getters
 	TSocketManager<Csock>& GetManager() { return m_Manager; }

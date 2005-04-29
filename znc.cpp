@@ -218,25 +218,146 @@ void CZNC::InitDirs(const string& sArgvPath) {
 	m_sDataPath = m_sZNCPath + "/data";
 }
 
-bool CZNC::ParseConfig(const string& sConfigFile) {
-	string sStatusPrefix;
-	string sFilePath;
+
+string CZNC::GetConfigPath(const string& sConfigFile) {
+	string sRetPath;
 
 	if (sConfigFile.empty()) {
-		sFilePath = GetZNCPath() + "/znc.conf";
+		sRetPath = GetZNCPath() + "/znc.conf";
 	} else {
 		if (CUtils::Left(sConfigFile, 2) == "./" || CUtils::Left(sConfigFile, 3) == "../") {
-			sFilePath = GetCurPath() + "/" + sConfigFile;
+			sRetPath = GetCurPath() + "/" + sConfigFile;
 		} else if (CUtils::Left(sConfigFile, 1) != "/") {
-			sFilePath = GetZNCPath() + "/" + sConfigFile;
+			sRetPath = GetZNCPath() + "/" + sConfigFile;
 		}
 	}
+
+	return sRetPath;
+}
+
+bool CZNC::WriteNewConfig(const string& sConfigFile) {
+	string sAnswer;
+	vector<string> vsLines;
+	bool bAnswer = false;
+
+	CUtils::PrintMessage("");
+	CUtils::PrintMessage("First lets start with some global settings...");
+	CUtils::PrintMessage("");
+
+	// ListenPort
+	CUtils::GetInput("What port would you like ZNC to listen on", sAnswer);
+#ifdef HAVE_LIBSSL
+	bAnswer = CUtils::GetBoolInput("Would you like ZNC to listen using SSL (encryption)");
+#endif
+
+	vsLines.push_back("ListenPort = " + string((bAnswer) ? "+" : "") + sAnswer);
+	// !ListenPort
+
+	// User
+	CUtils::PrintMessage("");
+	CUtils::PrintMessage("Now we need to setup a user...");
+	CUtils::PrintMessage("");
+
+	do {
+		vsLines.push_back("");
+		string sUser;
+		CUtils::GetInput("Username (no spaces)", sUser);	vsLines.push_back("<User " + sUser + ">");
+		sAnswer = CUtils::GetHashPass();					vsLines.push_back("\tPass       = " + sAnswer + " -");
+		CUtils::GetInput("Nick", sAnswer, sUser);			vsLines.push_back("\tNick       = " + sAnswer);
+		CUtils::GetInput("Alt Nick", sAnswer);				if (!sAnswer.empty()) { vsLines.push_back("\tAltNick    = " + sAnswer); }
+		CUtils::GetInput("Ident", sAnswer, sUser);			vsLines.push_back("\tIdent      = " + sAnswer);
+		CUtils::GetInput("Real Name", sAnswer, "Got ZNC?");	vsLines.push_back("\tRealName   = " + sAnswer);
+
+		if (CUtils::GetBoolInput("Would you like ZNC to keep trying for your primary nick", true)) {
+			vsLines.push_back("\tKeepNick   = true");
+		} else {
+			vsLines.push_back("\tKeepNick   = false");
+		}
+
+		CUtils::GetInput("Number of lines to buffer per channel", sAnswer, "50");	vsLines.push_back("\tBuffer     = " + sAnswer);
+		if (CUtils::GetBoolInput("Would you like your buffer to be sticky", true)) {
+			vsLines.push_back("\tKeepBuffer = true");
+		} else {
+			vsLines.push_back("\tKeepBuffer = false");
+		}
+
+		CUtils::GetInput("Default channel modes", sAnswer, "+stn");
+		if (!sAnswer.empty()) {
+			vsLines.push_back("\tChanModes  = " + sAnswer);
+		}
+
+		vsLines.push_back("");
+		CUtils::PrintMessage("");
+		CUtils::PrintMessage("Now we need to setup some servers for this user to connect to...");
+		CUtils::PrintMessage("");
+
+		do {
+			string sHost, sPort, sPass;
+			bool bSSL = false;
+			CUtils::GetInput("Server Hostname", sHost);
+			CUtils::GetInput("[" + sHost + "] Port", sPort, "6667");
+			CUtils::GetInput("[" + sHost + "] Password (probably empty)", sPass);
+
+#ifdef HAVE_LIBSSL
+			bSSL = CUtils::GetBoolInput("Does this server use SSL (probably no)", false);
+#endif
+
+			vsLines.push_back("\tServer     = " + sHost + ((bSSL) ? " +" : " ") + sPort + " " + sPass);
+		} while (CUtils::GetBoolInput("Would you like to add another server", false));
+
+		vsLines.push_back("");
+		CUtils::PrintMessage("");
+		CUtils::PrintMessage("Now we need to setup some channels that this user will join once connected...");
+		CUtils::PrintMessage("");
+
+		string sArg = "a";
+		string sPost = " for ZNC to automatically join";
+
+		while (CUtils::GetBoolInput("Would you like to add " + sArg + " channel" + sPost, false)) {
+			CUtils::GetInput("Channel name", sAnswer);
+			vsLines.push_back("\t<Chan " + sAnswer + ">");
+			vsLines.push_back("\t</Chan>");
+			sArg = "another";
+			sPost = "";
+		}
+
+		vsLines.push_back("</User>");
+
+		CUtils::PrintMessage("");
+	} while (CUtils::GetBoolInput("Would you like to setup another user", false));
+	// !User
+
+	CUtils::PrintAction("Writing config [" + sConfigFile + "]");
+	CFile File(sConfigFile);
+
+	if (!File.Open(O_WRONLY | O_CREAT)) {
+		CUtils::PrintStatus(false, "Unable to open file");
+		return false;
+	}
+
+	for (unsigned int a = 0; a < vsLines.size(); a++) {
+		File.Write(vsLines[a] + "\n");
+	}
+
+	File.Close();
+	CUtils::PrintStatus(true);
+	return true;
+}
+
+bool CZNC::ParseConfig(const string& sConfigFile) {
+	string sStatusPrefix;
+	string sFilePath = GetConfigPath(sConfigFile);
 
 	CUtils::PrintAction("Opening Config [" + sFilePath + "]");
 
 	if (!CFile::Exists(sFilePath)) {
 		CUtils::PrintStatus(false, "No such file");
-		return false;
+		if (!CUtils::GetBoolInput("Would you like to create this config now")) {
+			return false;
+		}
+
+		WriteNewConfig(sFilePath);
+		CUtils::PrintAction("Opening Config [" + sFilePath + "]");
 	}
 
 	if (!CFile::IsReg(sFilePath)) {
