@@ -5,6 +5,11 @@
 
 CChan::CChan(const string& sName, CUser* pUser) {
 	m_sName = sName;
+
+	if (CUtils::Left(m_sName, 1) != "#" && CUtils::Left(m_sName, 1) != "&") {
+		m_sName = "#" + m_sName;
+	}
+
 	m_pUser = pUser;
 	m_bAutoCycle = true;
 	m_bDetached = false;
