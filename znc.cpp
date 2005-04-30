@@ -245,12 +245,14 @@ bool CZNC::WriteNewConfig(const string& sConfigFile) {
 	CUtils::PrintMessage("");
 
 	// ListenPort
-	CUtils::GetInput("What port would you like ZNC to listen on", sAnswer);
+	unsigned int uPort = 0;
+	while(!CUtils::GetNumInput("What port would you like ZNC to listen on?", uPort, 1, 65535));
 #ifdef HAVE_LIBSSL
-	bAnswer = CUtils::GetBoolInput("Would you like ZNC to listen using SSL (encryption)");
+	bAnswer = CUtils::GetBoolInput("Would you like ZNC to listen using SSL?", false);
 #endif
 
-	vsLines.push_back("ListenPort = " + string((bAnswer) ? "+" : "") + sAnswer);
+	vsLines.push_back("ListenPort = " + string((bAnswer) ? "+" : "") + CUtils::ToString(uPort));
+	cerr << "ListenPort = " + string((bAnswer) ? "+" : "") + CUtils::ToString(uPort) << endl;
 	// !ListenPort
 
 	// User
@@ -264,18 +266,20 @@ bool CZNC::WriteNewConfig(const string& sConfigFile) {
 		CUtils::GetInput("Username (no spaces)", sUser);	vsLines.push_back("<User " + sUser + ">");
 		sAnswer = CUtils::GetHashPass();					vsLines.push_back("\tPass       = " + sAnswer + " -");
 		CUtils::GetInput("Nick", sAnswer, sUser);			vsLines.push_back("\tNick       = " + sAnswer);
-		CUtils::GetInput("Alt Nick", sAnswer);				if (!sAnswer.empty()) { vsLines.push_back("\tAltNick    = " + sAnswer); }
+		CUtils::GetInput("Alt Nick", sAnswer, sUser + "_");				if (!sAnswer.empty()) { vsLines.push_back("\tAltNick    = " + sAnswer); }
 		CUtils::GetInput("Ident", sAnswer, sUser);			vsLines.push_back("\tIdent      = " + sAnswer);
 		CUtils::GetInput("Real Name", sAnswer, "Got ZNC?");	vsLines.push_back("\tRealName   = " + sAnswer);
 
-		if (CUtils::GetBoolInput("Would you like ZNC to keep trying for your primary nick", true)) {
+		if (CUtils::GetBoolInput("Would you like ZNC to keep trying for your primary nick?", true)) {
 			vsLines.push_back("\tKeepNick   = true");
 		} else {
 			vsLines.push_back("\tKeepNick   = false");
 		}
 
-		CUtils::GetInput("Number of lines to buffer per channel", sAnswer, "50");	vsLines.push_back("\tBuffer     = " + sAnswer);
-		if (CUtils::GetBoolInput("Would you like your buffer to be sticky", true)) {
+		unsigned int uBufferCount = 0;
+
+		CUtils::GetNumInput("Number of lines to buffer per channel", uBufferCount, 0, ~0, 50);	if (uBufferCount) { vsLines.push_back("\tBuffer     = " + CUtils::ToString(uBufferCount)); }
+		if (CUtils::GetBoolInput("Would you like your buffer to be sticky?", true)) {
 			vsLines.push_back("\tKeepBuffer = true");
 		} else {
 			vsLines.push_back("\tKeepBuffer = false");
@@ -292,18 +296,20 @@ bool CZNC::WriteNewConfig(const string& sConfigFile) {
 		CUtils::PrintMessage("");
 
 		do {
-			string sHost, sPort, sPass;
+			string sHost, sPass;
 			bool bSSL = false;
+			unsigned int uPort = 0;
+
 			CUtils::GetInput("Server Hostname", sHost);
-			CUtils::GetInput("[" + sHost + "] Port", sPort, "6667");
+			while(!CUtils::GetNumInput("[" + sHost + "] Port", uPort, 1, 65535, 6667));
 			CUtils::GetInput("[" + sHost + "] Password (probably empty)", sPass);
 
 #ifdef HAVE_LIBSSL
-			bSSL = CUtils::GetBoolInput("Does this server use SSL (probably no)", false);
+			bSSL = CUtils::GetBoolInput("Does this server use SSL? (probably no)", false);
 #endif
 
-			vsLines.push_back("\tServer     = " + sHost + ((bSSL) ? " +" : " ") + sPort + " " + sPass);
-		} while (CUtils::GetBoolInput("Would you like to add another server", false));
+			vsLines.push_back("\tServer     = " + sHost + ((bSSL) ? " +" : " ") + CUtils::ToString(uPort) + " " + sPass);
+		} while (CUtils::GetBoolInput("Would you like to add another server?", false));
 
 		vsLines.push_back("");
 		CUtils::PrintMessage("");
@@ -311,20 +317,20 @@ bool CZNC::WriteNewConfig(const string& sConfigFile) {
 		CUtils::PrintMessage("");
 
 		string sArg = "a";
-		string sPost = " for ZNC to automatically join";
+		string sPost = " for ZNC to automatically join?";
 
 		while (CUtils::GetBoolInput("Would you like to add " + sArg + " channel" + sPost, false)) {
 			CUtils::GetInput("Channel name", sAnswer);
 			vsLines.push_back("\t<Chan " + sAnswer + ">");
 			vsLines.push_back("\t</Chan>");
 			sArg = "another";
-			sPost = "";
+			sPost = "?";
 		}
 
 		vsLines.push_back("</User>");
 
 		CUtils::PrintMessage("");
-	} while (CUtils::GetBoolInput("Would you like to setup another user", false));
+	} while (CUtils::GetBoolInput("Would you like to setup another user?", false));
 	// !User
 
 	CUtils::PrintAction("Writing config [" + sConfigFile + "]");
@@ -352,7 +358,7 @@ bool CZNC::ParseConfig(const string& sConfigFile) {
 
 	if (!CFile::Exists(sFilePath)) {
 		CUtils::PrintStatus(false, "No such file");
-		if (!CUtils::GetBoolInput("Would you like to create this config now")) {
+		if (!CUtils::GetBoolInput("Would you like to create this config now?", true)) {
 			return false;
 		}
 
@@ -629,7 +635,7 @@ bool CZNC::ParseConfig(const string& sConfigFile) {
 					if ((m_bSSL) && (!CFile::Exists(sPemFile))) {
 						CUtils::PrintStatus(false, "Unable to locate pem file: [" + sPemFile + "]");
 
-						if (CUtils::GetBoolInput("Would you like to create a new pem file", true)) {
+						if (CUtils::GetBoolInput("Would you like to create a new pem file?", true)) {
 							CUtils::PrintAction("Writing Pem file [" + sPemFile + "]");
 
 							if (CFile::Exists(sPemFile)) {
