@@ -36,6 +36,7 @@ public:
 	bool AddAllowedHost(const string& sHostMask);
 	bool IsHostAllowed(const string& sHostMask);
 	bool IsValid(string& sErrMsg);
+	static bool IsValidUserName(const string& sUserName);
 
 #ifdef _MODULES
 	// Modules

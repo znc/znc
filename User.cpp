@@ -70,6 +70,22 @@ bool CUser::IsHostAllowed(const string& sHostMask) {
 	return false;
 }
 
+bool CUser::IsValidUserName(const string& sUserName) {
+	const char* p = sUserName.c_str();
+
+	if (sUserName.empty()) {
+		return false;
+	}
+
+	while (*p) {
+		if (!isalnum(*p++)) {
+			return false;
+		}
+	}
+
+	return true;
+}
+
 bool CUser::IsValid(string& sErrMsg) {
 	sErrMsg.clear();
 
