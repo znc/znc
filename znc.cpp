@@ -262,12 +262,17 @@ bool CZNC::WriteNewConfig(const string& sConfigFile) {
 	do {
 		vsLines.push_back("");
 		string sUser;
-		CUtils::GetInput("Username (no spaces)", sUser);	vsLines.push_back("<User " + sUser + ">");
+		do {
+			CUtils::GetInput("Username", sUser, "", "AlphaNumeric");
+		} while (!CUser::IsValidUserName(sUser));
+
+		vsLines.push_back("<User " + sUser + ">");
 		sAnswer = CUtils::GetHashPass();					vsLines.push_back("\tPass       = " + sAnswer + " -");
 		CUtils::GetInput("Nick", sAnswer, sUser);			vsLines.push_back("\tNick       = " + sAnswer);
-		CUtils::GetInput("Alt Nick", sAnswer, sUser + "_");				if (!sAnswer.empty()) { vsLines.push_back("\tAltNick    = " + sAnswer); }
+		CUtils::GetInput("Alt Nick", sAnswer, sUser + "_");	if (!sAnswer.empty()) { vsLines.push_back("\tAltNick    = " + sAnswer); }
 		CUtils::GetInput("Ident", sAnswer, sUser);			vsLines.push_back("\tIdent      = " + sAnswer);
 		CUtils::GetInput("Real Name", sAnswer, "Got ZNC?");	vsLines.push_back("\tRealName   = " + sAnswer);
+		CUtils::GetInput("VHost", sAnswer, "", "optional");	if (!sAnswer.empty()) { vsLines.push_back("\tVHost      = " + sAnswer); }
 
 		if (CUtils::GetBoolInput("Would you like ZNC to keep trying for your primary nick?", true)) {
 			vsLines.push_back("\tKeepNick   = true");
@@ -299,7 +304,7 @@ bool CZNC::WriteNewConfig(const string& sConfigFile) {
 			bool bSSL = false;
 			unsigned int uPort = 0;
 
-			CUtils::GetInput("Server Hostname", sHost);
+			while(!CUtils::GetInput("IRC server", sHost, "", "host only") || !CServer::IsValidHostName(sHost));
 			while(!CUtils::GetNumInput("[" + sHost + "] Port", uPort, 1, 65535, 6667));
 			CUtils::GetInput("[" + sHost + "] Password (probably empty)", sPass);
 
@@ -317,13 +322,15 @@ bool CZNC::WriteNewConfig(const string& sConfigFile) {
 
 		string sArg = "a";
 		string sPost = " for ZNC to automatically join?";
+		bool bDefault = true;
 
-		while (CUtils::GetBoolInput("Would you like to add " + sArg + " channel" + sPost, false)) {
-			CUtils::GetInput("Channel name", sAnswer);
+		while (CUtils::GetBoolInput("Would you like to add " + sArg + " channel" + sPost, bDefault)) {
+			while (!CUtils::GetInput("Channel name", sAnswer));
 			vsLines.push_back("\t<Chan " + sAnswer + ">");
 			vsLines.push_back("\t</Chan>");
 			sArg = "another";
 			sPost = "?";
+			bDefault = false;
 		}
 
 		vsLines.push_back("</User>");
