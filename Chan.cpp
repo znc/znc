@@ -4,7 +4,8 @@
 #include "Utils.h"
 
 CChan::CChan(const string& sName, CUser* pUser) {
-	m_sName = sName;
+	m_sName = CUtils::Token(sName, 0);
+	m_sKey = CUtils::Token(sName, 1);
 
 	if (CUtils::Left(m_sName, 1) != "#" && CUtils::Left(m_sName, 1) != "&") {
 		m_sName = "#" + m_sName;
