@@ -260,13 +260,12 @@ bool CUtils::GetBoolInput(const string& sPrompt, bool bDefault) {
 
 bool CUtils::GetBoolInput(const string& sPrompt, bool *pbDefault) {
 	string sRet, sDefault;
-	string sExtra = " (yes/no)";
 
 	if (pbDefault) {
 		sDefault = (*pbDefault) ? "yes" : "no";
 	}
 
-	GetInput(sPrompt + sExtra, sRet, sDefault);
+	GetInput(sPrompt, sRet, sDefault, "yes/no");
 
 	if (strcasecmp(sRet.c_str(), "yes") == 0) {
 		return true;
@@ -277,8 +276,43 @@ bool CUtils::GetBoolInput(const string& sPrompt, bool *pbDefault) {
 	return GetBoolInput(sPrompt, pbDefault);
 }
 
-bool CUtils::GetInput(const string& sPrompt, string& sRet, const string& sDefault) {
-	string sExtra = (!sDefault.empty()) ? (" [" + sDefault + "]") : "";
+bool CUtils::GetNumInput(const string& sPrompt, unsigned int& uRet, unsigned int uMin, unsigned int uMax, unsigned int uDefault) {
+	if (uMin > uMax) {
+		return false;
+	}
+
+	string sDefault = (uDefault != (unsigned int) ~0) ? CUtils::ToString(uDefault) : "";
+	string sNum, sHint;
+
+	if (uMax != (unsigned int) ~0) {
+		sHint = CUtils::ToString(uMin) + " to " + CUtils::ToString(uMax);
+	} else if (uMin > 0) {
+		sHint = CUtils::ToString(uMin) + " and up";
+	}
+
+	while (true) {
+		GetInput(sPrompt, sNum, sDefault, sHint);
+		if (sNum.empty()) {
+			return false;
+		}
+
+		uRet = atoi(sNum.c_str());
+
+		if ((uRet >= uMin && uRet <= uMax)) {
+			break;
+		}
+
+		CUtils::PrintError("Number must be " + sHint);
+	}
+
+	return true;
+}
+
+bool CUtils::GetInput(const string& sPrompt, string& sRet, const string& sDefault, const string& sHint) {
+	string sExtra;
+	sExtra += (!sHint.empty()) ? (" (" + sHint + ")") : "";
+	sExtra += (!sDefault.empty()) ? (" [" + sDefault + "]") : "";
+
 	PrintPrompt(sPrompt + sExtra);
 	char szBuf[1024];
 	memset(szBuf, 0, 1024);

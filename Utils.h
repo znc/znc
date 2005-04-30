@@ -37,9 +37,10 @@ public:
 	static void PrintStatus(bool bSuccess, const string& sMessage = "");
 	static string GetHashPass();
 	static char* GetPass(const string& sPrompt);
-	static bool GetInput(const string& sPrompt, string& sRet, const string& sDefault = "");
+	static bool GetInput(const string& sPrompt, string& sRet, const string& sDefault = "", const string& sHint = "");
 	static bool GetBoolInput(const string& sPrompt, bool bDefault);
 	static bool GetBoolInput(const string& sPrompt, bool *pbDefault = NULL);
+	static bool GetNumInput(const string& sPrompt, unsigned int& uRet, unsigned int uMin = 0, unsigned int uMax = ~0, unsigned int uDefault = ~0);
 
 	static string ToString(short i);
 	static string ToString(unsigned short i);
