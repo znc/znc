@@ -252,7 +252,6 @@ bool CZNC::WriteNewConfig(const string& sConfigFile) {
 #endif
 
 	vsLines.push_back("ListenPort = " + string((bAnswer) ? "+" : "") + CUtils::ToString(uPort));
-	cerr << "ListenPort = " + string((bAnswer) ? "+" : "") + CUtils::ToString(uPort) << endl;
 	// !ListenPort
 
 	// User
