@@ -26,6 +26,7 @@ public:
 	bool OnBoot();
 	string GetConfigPath(const string& sConfigFile);
 	bool WriteNewConfig(const string& sConfig);
+	static string GetTag(bool bIncludeVersion = true);
 
 	// Getters
 	TSocketManager<Csock>& GetManager() { return m_Manager; }

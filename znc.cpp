@@ -23,6 +23,18 @@ CZNC::~CZNC() {
 	DeleteUsers();
 }
 
+string CZNC::GetTag(bool bIncludeVersion) {
+	if (!bIncludeVersion) {
+		return "ZNC - by prozac@gmail.com";
+	}
+
+	char szBuf[32];
+	memset(szBuf, 0, 32);
+	snprintf(szBuf, 32, "ZNC %1.3f - by prozac@gmail.com", VERSION);
+
+	return szBuf;
+}
+
 bool CZNC::OnBoot() {
 	for (map<string,CUser*>::iterator it = m_msUsers.begin(); it != m_msUsers.end(); it++) {
 		if (!it->second->OnBoot()) {
