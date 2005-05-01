@@ -454,6 +454,8 @@ void CUserSock::UserCommand(const string& sLine) {
 			PutStatus("Detaching you from [" + sChan + "]");
 			pChan->DetachUser();
 		}
+	} else if (strcasecmp(sCommand.c_str(), "VERSION") == 0) {
+		PutStatus(CZNC::GetTag());
 	} else if (strcasecmp(sCommand.c_str(), "SHUTDOWN") == 0) {
 		string sQuitMsg = CUtils::Token(sLine, 1, true);
 
@@ -856,6 +858,7 @@ void CUserSock::HelpUser() {
 	Table.AddColumn("Arguments");
 	Table.AddColumn("Description");
 
+	Table.AddRow(); Table.SetCell("Command", "Version");	Table.SetCell("Arguments", "");						Table.SetCell("Description", "Prints which version of znc this is");
 	Table.AddRow(); Table.SetCell("Command", "ListDCCs");	Table.SetCell("Arguments", "");						Table.SetCell("Description", "List all active DCCs");
 	Table.AddRow(); Table.SetCell("Command", "ListMods");	Table.SetCell("Arguments", "");						Table.SetCell("Description", "List all loaded modules");
 	Table.AddRow(); Table.SetCell("Command", "ListChans");	Table.SetCell("Arguments", "");						Table.SetCell("Description", "List all channels");
