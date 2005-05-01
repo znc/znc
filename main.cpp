@@ -3,11 +3,12 @@
 #include <stdlib.h>
 #include <signal.h>
 #include "znc.h"
+#include "Modules.h"
 #include "md5.h"
 
-static struct option g_LongOpts[] =
-{
+static struct option g_LongOpts[] = {
 	{ "help",				0,	NULL,	0 },
+	{ "version",			0,	NULL,	0 },
 	{ "makepass",			0,	NULL,	0 },
 #ifdef HAVE_LIBSSL
 	{ "makepem",			0,	NULL,	0 },
@@ -16,11 +17,11 @@ static struct option g_LongOpts[] =
 	{ NULL }
 };
 
-void GenerateHelp( const char *appname )
-{
+void GenerateHelp(const char *appname) {
 	CUtils::PrintMessage("USAGE: " + string(appname) + " [options] [config]");
 	CUtils::PrintMessage("Options are:");
 	CUtils::PrintMessage("\t--help");
+	CUtils::PrintMessage("\t--version       Output version information and exit");
 	CUtils::PrintMessage("\t--makepass      Generates a password for use in config");
 #ifdef HAVE_LIBSSL
 	CUtils::PrintMessage("\t--makepem       Generates a pemfile for use with SSL");
@@ -29,14 +30,15 @@ void GenerateHelp( const char *appname )
 }
 
 void die(int sig) {
-	signal( SIGSEGV, SIG_DFL );
-	signal( SIGABRT, SIG_DFL );
-	signal( SIGPIPE, SIG_DFL );
+	signal(SIGSEGV, SIG_DFL);
+	signal(SIGABRT, SIG_DFL);
+	signal(SIGPIPE, SIG_DFL);
 
 #ifdef _DEBUG
 	CUtils::PrintMessage("Exiting on SIG [" + CUtils::ToString(sig) + "]");
-	if ( ( sig == SIGABRT ) || ( sig == SIGSEGV ) )
+	if ((sig == SIGABRT) || (sig == SIGSEGV)) {
 		abort();
+	}
 #endif /* _DEBUG */
 
 	delete CZNC::New();
@@ -48,7 +50,7 @@ int main(int argc, char** argv) {
 
 #ifdef HAVE_LIBSSL
 	// initialize ssl, allow client to have compression enabled if desired
-	InitSSL( CT_ZLIB );
+	InitSSL(CT_ZLIB);
 #endif /* HAVE_LIBSSL */
 
 	int iArg, iOptIndex = -1;
@@ -57,43 +59,45 @@ int main(int argc, char** argv) {
 	bool bEncPem = false;
 #endif /* HAVE_LIBSSL */
 	bool bMakePass = false;
-	while( ( iArg = getopt_long( argc, argv, "h", g_LongOpts, &iOptIndex ) != -1 ) ) {
-		switch( iArg ) {
-			case 1:
-			{ // long options
-				if ( iOptIndex >= 0 ) {
-					string sOption = Lower( g_LongOpts[iOptIndex].name );
-					if ( sOption == "makepass" )
+	while ((iArg = getopt_long(argc, argv, "h", g_LongOpts, &iOptIndex) != -1)) {
+		switch (iArg) {
+			case 1: { // long options
+				if (iOptIndex >= 0) {
+					string sOption = Lower(g_LongOpts[iOptIndex].name);
+					if (sOption == "version") {
+						printf("ZNC %1.3f - by prozac@gmail.com\n", VERSION);
+						return 0;
+					} else if (sOption == "makepass") {
 						bMakePass = true;
 #ifdef HAVE_LIBSSL
-					else if ( sOption == "makepem" )
+					} else if (sOption == "makepem") {
 						bMakePem = true;
-					else if ( sOption == "encrypt-pem" )
+					} else if (sOption == "encrypt-pem") {
 						bEncPem = true;
 #endif /* HAVE_LIBSSL */
-					else if ( sOption == "help" ) {
-						GenerateHelp( argv[0] );
-						return( 0 );
+					} else if (sOption == "help") {
+						GenerateHelp(argv[0]);
+						return 0;
 					}
 				} else {
-					GenerateHelp( argv[0] );
-					return( 1 );
+					GenerateHelp(argv[0]);
+					return 1;
 				}
 				break;
 			}
 			case 'h':
-				GenerateHelp( argv[0] );
-				return( 0 );
-			default	:
-			{
-				GenerateHelp( argv[0] );
-				return( 1 );
+				GenerateHelp(argv[0]);
+				return 0;
+			default: {
+				GenerateHelp(argv[0]);
+				return 1;
 			}
 		}
 	}
 
-	if ( optind < argc )
+	if (optind < argc) {
 		sConfig = argv[optind];
+	}
 
 #ifdef HAVE_LIBSSL
 	if (bMakePem) {
@@ -109,7 +113,7 @@ int main(int argc, char** argv) {
 			return 1;
 		}
 
-		FILE *f = fopen( sPemFile.c_str(), "w" );
+		FILE *f = fopen(sPemFile.c_str(), "w");
 
 		if (!f) {
 			CUtils::PrintStatus(false, "Unable to open");
@@ -117,7 +121,7 @@ int main(int argc, char** argv) {
 			return 1 ;
 		}
 
-		CUtils::GenerateCert( f, bEncPem );
+		CUtils::GenerateCert(f, bEncPem);
 		fclose(f);
 
 		CUtils::PrintStatus(true);
@@ -126,7 +130,7 @@ int main(int argc, char** argv) {
 		return 0;
 	}
 #endif /* HAVE_LIBSSL */
-	if ( bMakePass ) {
+	if (bMakePass) {
 		string sHash = CUtils::GetHashPass();
 		CUtils::PrintMessage("Use this in the <User> section of your config:");
 		CUtils::PrintMessage("Pass = " + sHash + " -");
