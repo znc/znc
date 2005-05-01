@@ -108,8 +108,8 @@ public:
 	const vector<CServer*>& GetServers() const;
 	const CNick& GetIRCNick() const;
 	const string& GetIRCServer() const;
-	const string& GetQuitMsg() const;
-	const string& GetVersionReply() const;
+	string GetQuitMsg() const;
+	string GetVersionReply() const;
 	unsigned int GetBufferCount() const;
 	bool KeepBuffer() const;
 	// !Getters

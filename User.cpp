@@ -487,8 +487,8 @@ const vector<CChan*>& CUser::GetChans() const { return m_vChans; }
 const vector<CServer*>& CUser::GetServers() const { return m_vServers; }
 const CNick& CUser::GetIRCNick() const { return m_IRCNick; }
 const string& CUser::GetIRCServer() const { return m_sIRCServer; }
-const string& CUser::GetQuitMsg() const { return m_sQuitMsg; }
-const string& CUser::GetVersionReply() const { return m_sVersionReply; }
+string CUser::GetQuitMsg() const { return (!m_sQuitMsg.empty()) ? m_sQuitMsg : "ZNC by prozac - http://znc.sourceforge.net"; }
+string CUser::GetVersionReply() const { return (!m_sVersionReply.empty()) ? m_sVersionReply : "ZNC by prozac - http://znc.sourceforge.net"; }
 unsigned int CUser::GetBufferCount() const { return m_uBufferCount; }
 bool CUser::KeepBuffer() const { return m_bKeepBuffer; }
 // !Getters
