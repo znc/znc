@@ -20,12 +20,12 @@ public:
 	CUser* GetUser(const string& sUser);
 	Csock* FindSockByName(const string& sSockName);
 	bool Listen();
-	bool ParseConfig(const string& sConfigFile);
+	bool ParseConfig(const string& sConfig);
 	bool IsHostAllowed(const string& sHostMask);
 	void InitDirs(const string& sArgvPath);
 	bool OnBoot();
 	string GetConfigPath(const string& sConfigFile);
-	bool WriteNewConfig(const string& sConfigFile);
+	bool WriteNewConfig(const string& sConfig);
 
 	// Getters
 	TSocketManager<Csock>& GetManager() { return m_Manager; }

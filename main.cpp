@@ -18,7 +18,7 @@ static struct option g_LongOpts[] =
 
 void GenerateHelp( const char *appname )
 {
-	CUtils::PrintMessage("USAGE: " + string(appname) + " [options] [znc.conf]");
+	CUtils::PrintMessage("USAGE: " + string(appname) + " [options] [config]");
 	CUtils::PrintMessage("Options are:");
 	CUtils::PrintMessage("\t--help");
 	CUtils::PrintMessage("\t--makepass      Generates a password for use in config");

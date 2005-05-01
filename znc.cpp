@@ -235,7 +235,7 @@ string CZNC::GetConfigPath(const string& sConfigFile) {
 	return sRetPath;
 }
 
-bool CZNC::WriteNewConfig(const string& sConfigFile) {
+bool CZNC::WriteNewConfig(const string& sConfig) {
 	string sAnswer;
 	vector<string> vsLines;
 	bool bAnswer = false;
@@ -339,6 +339,7 @@ bool CZNC::WriteNewConfig(const string& sConfigFile) {
 	} while (CUtils::GetBoolInput("Would you like to setup another user?", false));
 	// !User
 
+	string sConfigFile = GetConfigPath(sConfig);
 	CUtils::PrintAction("Writing config [" + sConfigFile + "]");
 	CFile File(sConfigFile);
 
@@ -356,33 +357,33 @@ bool CZNC::WriteNewConfig(const string& sConfigFile) {
 	return true;
 }
 
-bool CZNC::ParseConfig(const string& sConfigFile) {
+bool CZNC::ParseConfig(const string& sConfig) {
 	string sStatusPrefix;
-	string sFilePath = GetConfigPath(sConfigFile);
+	string sConfigFile = GetConfigPath(sConfig);
 
-	CUtils::PrintAction("Opening Config [" + sFilePath + "]");
+	CUtils::PrintAction("Opening Config [" + sConfigFile + "]");
 
-	if (!CFile::Exists(sFilePath)) {
+	if (!CFile::Exists(sConfigFile)) {
 		CUtils::PrintStatus(false, "No such file");
 		if (!CUtils::GetBoolInput("Would you like to create this config now?", true)) {
 			return false;
 		}
 
-		WriteNewConfig(sFilePath);
-		CUtils::PrintAction("Opening Config [" + sFilePath + "]");
+		WriteNewConfig(sConfigFile);
+		CUtils::PrintAction("Opening Config [" + sConfigFile + "]");
 	}
 
-	if (!CFile::IsReg(sFilePath)) {
+	if (!CFile::IsReg(sConfigFile)) {
 		CUtils::PrintStatus(false, "Not a file");
 		return false;
 	}
 
-	if (!m_LockFile.TryExLock(sFilePath, 50)) {
+	if (!m_LockFile.TryExLock(sConfigFile, 50)) {
 		CUtils::PrintStatus(false, "ZNC is already running on this config.");
 		return false;
 	}
 
-	CFile File(sFilePath);
+	CFile File(sConfigFile);
 
 	if (!File.Open(O_RDONLY)) {
 		CUtils::PrintStatus(false);
