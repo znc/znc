@@ -617,11 +617,6 @@ bool CIRCSock::OnPrivCTCP(const string& sNickMask, string& sMessage) {
 	if (strcasecmp(sMessage.c_str(), "VERSION") == 0) {
 		if (!IsUserAttached()) {
 			string sVersionReply = m_pUser->GetVersionReply();
-
-			if (sVersionReply.empty()) {
-				sVersionReply = "ZNC by prozac - http://znc.sourceforge.net";
-			}
-
 			PutServ("NOTICE " + CNick(sNickMask).GetNick() + " :\001VERSION " + sVersionReply + "\001");
 		}
 	} else if (strncasecmp(sMessage.c_str(), "DCC ", 4) == 0) {
