@@ -229,6 +229,8 @@ string CZNC::GetConfigPath(const string& sConfigFile) {
 			sRetPath = GetCurPath() + "/" + sConfigFile;
 		} else if (CUtils::Left(sConfigFile, 1) != "/") {
 			sRetPath = GetZNCPath() + "/" + sConfigFile;
+		} else {
+			sRetPath = sConfigFile;
 		}
 	}
 
@@ -261,16 +263,16 @@ bool CZNC::WriteNewConfig(const string& sConfig) {
 
 	do {
 		vsLines.push_back("");
-		string sUser;
+		string sUser, sNick;
 		do {
 			CUtils::GetInput("Username", sUser, "", "AlphaNumeric");
 		} while (!CUser::IsValidUserName(sUser));
 
 		vsLines.push_back("<User " + sUser + ">");
 		sAnswer = CUtils::GetHashPass();					vsLines.push_back("\tPass       = " + sAnswer + " -");
-		CUtils::GetInput("Nick", sAnswer, sUser);			vsLines.push_back("\tNick       = " + sAnswer);
-		CUtils::GetInput("Alt Nick", sAnswer, sUser + "_");	if (!sAnswer.empty()) { vsLines.push_back("\tAltNick    = " + sAnswer); }
-		CUtils::GetInput("Ident", sAnswer, sUser);			vsLines.push_back("\tIdent      = " + sAnswer);
+		CUtils::GetInput("Nick", sNick, sUser);			vsLines.push_back("\tNick       = " + sNick);
+		CUtils::GetInput("Alt Nick", sAnswer, sNick + "_");	if (!sAnswer.empty()) { vsLines.push_back("\tAltNick    = " + sAnswer); }
+		CUtils::GetInput("Ident", sAnswer, sNick);			vsLines.push_back("\tIdent      = " + sAnswer);
 		CUtils::GetInput("Real Name", sAnswer, "Got ZNC?");	vsLines.push_back("\tRealName   = " + sAnswer);
 		CUtils::GetInput("VHost", sAnswer, "", "optional");	if (!sAnswer.empty()) { vsLines.push_back("\tVHost      = " + sAnswer); }
 
