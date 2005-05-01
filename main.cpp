@@ -65,7 +65,7 @@ int main(int argc, char** argv) {
 				if (iOptIndex >= 0) {
 					string sOption = Lower(g_LongOpts[iOptIndex].name);
 					if (sOption == "version") {
-						printf("ZNC %1.3f - by prozac@gmail.com\n", VERSION);
+						cout << CZNC::GetTag() << endl;
 						return 0;
 					} else if (sOption == "makepass") {
 						bMakePass = true;
@@ -174,7 +174,7 @@ int main(int argc, char** argv) {
 		CUtils::PrintStatus(true, "[pid: " + CUtils::ToString(iPid) + "]");
 
 		pZNC->WritePidFile(iPid);
-		CUtils::PrintMessage("ZNC - by prozac@gmail.com");
+		CUtils::PrintMessage(CZNC::GetTag(false));
 		exit(0);
 	}
 
@@ -190,15 +190,15 @@ int main(int argc, char** argv) {
 	sigemptyset(&sa.sa_mask);
 
 	sa.sa_handler = SIG_IGN;
-	sigaction(SIGPIPE, &sa, (struct sigaction *)NULL);
+	sigaction(SIGPIPE, &sa, (struct sigaction*) NULL);
 
 	sa.sa_handler = die;
-	sigaction(SIGINT,  &sa, (struct sigaction *)NULL);
-	sigaction(SIGILL,  &sa, (struct sigaction *)NULL);
-	sigaction(SIGQUIT, &sa, (struct sigaction *)NULL);
-	sigaction(SIGBUS,  &sa, (struct sigaction *)NULL);
-	sigaction(SIGSEGV, &sa, (struct sigaction *)NULL);
-	sigaction(SIGTERM, &sa, (struct sigaction *)NULL);
+	sigaction(SIGINT,  &sa, (struct sigaction*) NULL);
+	sigaction(SIGILL,  &sa, (struct sigaction*) NULL);
+	sigaction(SIGQUIT, &sa, (struct sigaction*) NULL);
+	sigaction(SIGBUS,  &sa, (struct sigaction*) NULL);
+	sigaction(SIGSEGV, &sa, (struct sigaction*) NULL);
+	sigaction(SIGTERM, &sa, (struct sigaction*) NULL);
 
 	int iRet = 0;
 
