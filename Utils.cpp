@@ -17,20 +17,19 @@ CUtils::CUtils() {}
 CUtils::~CUtils() {}
 
 #ifdef __sun
-char *strcasestr(const char *big, const char *little)
-{
+char *strcasestr(const char *big, const char *little) {
 	int len;
 
-	if (!little || !big || !little[0])
+	if (!little || !big || !little[0]) {
 		return (char *) big;
+	}
 
 	len = strlen(little);
-	while (*big)
-	{
-		if (tolower(*big) == tolower(*little))
-		{
-			if (strncasecmp(big, little, len) == 0)
+	while (*big) {
+		if (tolower(*big) == tolower(*little)) {
+			if (strncasecmp(big, little, len) == 0) {
 				return (char *) big;
+			}
 		}
 
 		big++;
@@ -41,49 +40,50 @@ char *strcasestr(const char *big, const char *little)
 #endif /* __sun */
 
 #ifdef HAVE_LIBSSL
-void CUtils::GenerateCert( FILE *pOut, bool bEncPrivKey ) {
-	RSA *pRSA = RSA_generate_key( 1024, 17, NULL, NULL );
-	PEM_write_RSAPrivateKey( pOut, pRSA, ( bEncPrivKey ? EVP_des_ede3_cbc() : NULL ), NULL, 0, NULL, NULL );
+void CUtils::GenerateCert(FILE *pOut, bool bEncPrivKey) {
+	RSA *pRSA = RSA_generate_key(1024, 17, NULL, NULL);
+	PEM_write_RSAPrivateKey(pOut, pRSA, (bEncPrivKey ? EVP_des_ede3_cbc() : NULL), NULL, 0, NULL, NULL);
 
 	X509_REQ *pReq = X509_REQ_new();
 	EVP_PKEY *pKey = EVP_PKEY_new();
 	X509_NAME *pName = X509_NAME_new();
 
-	EVP_PKEY_assign( pKey, EVP_PKEY_RSA, (char *)pRSA);
-	X509_REQ_set_pubkey( pReq, pKey );
+	EVP_PKEY_assign(pKey, EVP_PKEY_RSA, (char *)pRSA);
+	X509_REQ_set_pubkey(pReq, pKey);
 
-	char *pLogName = getenv( "LOGNAME" );
-	char *pHostName = getenv( "HOSTNAME" );
+	char *pLogName = getenv("LOGNAME");
+	char *pHostName = getenv("HOSTNAME");
 
-	if ( !pLogName )
+	if (!pLogName) {
 		pLogName = "Unknown";
+	}
 
-	if ( !pHostName )
+	if (!pHostName) {
 		pHostName = "unknown.com";
+	}
 
 	string sEmailAddr = pLogName;
 	sEmailAddr += "@";
 	sEmailAddr += pHostName;
 
-	X509_NAME_add_entry_by_txt( pName, "C", MBSTRING_ASC, (unsigned char *)"SomeCountry", -1, -1, 0);
-	X509_NAME_add_entry_by_txt( pName, "ST", MBSTRING_ASC, (unsigned char *)"SomeState", -1, -1, 0);
-	X509_NAME_add_entry_by_txt( pName, "L", MBSTRING_ASC, (unsigned char *)"SomeCity", -1, -1, 0);
-	X509_NAME_add_entry_by_txt( pName, "O", MBSTRING_ASC, (unsigned char *)"SomeCompany", -1, -1, 0);
-	X509_NAME_add_entry_by_txt( pName, "OU", MBSTRING_ASC, (unsigned char *)pLogName, -1, -1, 0);
-	X509_NAME_add_entry_by_txt( pName, "CN", MBSTRING_ASC, (unsigned char *)pHostName, -1, -1, 0);
-	X509_NAME_add_entry_by_txt( pName, "emailAddress", MBSTRING_ASC, (unsigned char *)sEmailAddr.c_str(), -1, -1, 0);
-	X509_REQ_set_subject_name( pReq, pName );
-	X509_REQ_sign( pReq, pKey, EVP_md5() );
+	X509_NAME_add_entry_by_txt(pName, "C", MBSTRING_ASC, (unsigned char *)"SomeCountry", -1, -1, 0);
+	X509_NAME_add_entry_by_txt(pName, "ST", MBSTRING_ASC, (unsigned char *)"SomeState", -1, -1, 0);
+	X509_NAME_add_entry_by_txt(pName, "L", MBSTRING_ASC, (unsigned char *)"SomeCity", -1, -1, 0);
+	X509_NAME_add_entry_by_txt(pName, "O", MBSTRING_ASC, (unsigned char *)"SomeCompany", -1, -1, 0);
+	X509_NAME_add_entry_by_txt(pName, "OU", MBSTRING_ASC, (unsigned char *)pLogName, -1, -1, 0);
+	X509_NAME_add_entry_by_txt(pName, "CN", MBSTRING_ASC, (unsigned char *)pHostName, -1, -1, 0);
+	X509_NAME_add_entry_by_txt(pName, "emailAddress", MBSTRING_ASC, (unsigned char *)sEmailAddr.c_str(), -1, -1, 0);
+	X509_REQ_set_subject_name(pReq, pName);
+	X509_REQ_sign(pReq, pKey, EVP_md5());
 
-	X509 *pX509 = X509_REQ_to_X509( pReq, 365, pKey );
-	if ( pX509 )
-	{
-		PEM_write_X509( pOut, pX509 );
-		X509_free( pX509 );
+	X509 *pX509 = X509_REQ_to_X509(pReq, 365, pKey);
+	if (pX509) {
+		PEM_write_X509(pOut, pX509);
+		X509_free(pX509);
 	}
 
-	X509_REQ_free( pReq );
-	EVP_PKEY_free( pKey );
+	X509_REQ_free(pReq);
+	EVP_PKEY_free(pKey);
 };
 #endif /* HAVE_LIBSSL */
 
@@ -170,11 +170,13 @@ int CUtils::MakeDir(const string& sPath, mode_t iMode) {
 	}
 	iFind++;
 
-	while( ( iFind < sDir.length() ) && ( sDir[iFind] == '/' ) )
+	while ((iFind < sDir.length()) && (sDir[iFind] == '/')) {
 		iFind++; // eat up extra /'s
+	}
 
-	if ( iFind >= sDir.length() )
+	if (iFind >= sDir.length()) {
 		return mkdir(sDir.c_str(), iMode);
+	}
 
 	string sWorkDir = sDir.substr(0, iFind);  // include the trailing slash
 	string sNewDir = sDir.erase(0, iFind);
@@ -182,11 +184,10 @@ int CUtils::MakeDir(const string& sPath, mode_t iMode) {
 	struct stat st;
 
 	if (sWorkDir.length() > 1) {
-		sWorkDir = sWorkDir.erase( sWorkDir.length() - 1, 1 );  // trim off the trailing slash
+		sWorkDir = sWorkDir.erase(sWorkDir.length() - 1, 1);  // trim off the trailing slash
 	}
 
-	if (stat(sWorkDir.c_str(), &st) == 0)
-	{
+	if (stat(sWorkDir.c_str(), &st) == 0) {
 		int iChdir = chdir(sWorkDir.c_str());
 		if (iChdir != 0) {
 			return iChdir;   // could not change to dir
@@ -196,8 +197,7 @@ int CUtils::MakeDir(const string& sPath, mode_t iMode) {
 		return MakeDir(sNewDir.c_str(), iMode);
 	}
 
-	switch(errno)
-	{
+	switch(errno) {
 		case ENOENT: {
 			// ok, file doesn't exists, lets create it and cd into it
 			int iMkdir = mkdir(sWorkDir.c_str(), iMode);
@@ -338,8 +338,12 @@ void CUtils::PrintPrompt(const string& sMessage) {
 	fprintf(stdout, "\033[1m\033[34m[\033[33m ?? \033[34m]\033[39m\033[22m %s: ", sMessage.c_str());
 }
 
-void CUtils::PrintMessage(const string& sMessage) {
-	fprintf(stdout, "\033[1m\033[34m[\033[33m ** \033[34m]\033[39m\033[22m %s\n", sMessage.c_str());
+void CUtils::PrintMessage(const string& sMessage, bool bStrong) {
+	fprintf(stdout, "\033[1m\033[34m[\033[33m ** \033[34m]\033[39m\033[22m %s%s%s\n",
+		((bStrong) ? "\033[1m" : ""),
+		sMessage.c_str(),
+		((bStrong) ? "\033[22m" : "")
+	);
 }
 
 void CUtils::PrintAction(const string& sMessage) {
