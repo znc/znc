@@ -1,5 +1,6 @@
 #include "main.h"
 #include "Modules.h"
+#include "znc.h"
 #include "Utils.h"
 #include "User.h"
 #include "Nick.h"
@@ -625,8 +626,21 @@ bool CModules::ReloadModule(const string& sModule, const string& sArgs, CUser* p
 	return true;
 }
 
-void CModules::GetAvailableMods(set<CModInfo>& ssMods) {
+void CModules::GetAvailableMods(set<CModInfo>& ssMods, CZNC* pZNC) {
 	ssMods.clear();
-	//ssMods.insert(CModInfo("foo", "/usr/share/znc/foo", true));
-	//ssMods.insert(CModInfo("bar", "/home/user/.znc/modules/bar", false));
+
+	unsigned int a = 0;
+	CDir Dir;
+
+	Dir.FillByWildcard(pZNC->GetModPath(), "*.so");
+	for (a = 0; a < Dir.size(); a++) {
+		CFile& File = *Dir[a];
+		ssMods.insert(CModInfo(File.GetShortName(), File.GetLongName(), false));
+	}
+
+	Dir.FillByWildcard(_MODDIR_, "*.so");
+	for (a = 0; a < Dir.size(); a++) {
+		CFile& File = *Dir[a];
+		ssMods.insert(CModInfo(File.GetShortName(), File.GetLongName(), true));
+	}
 }
