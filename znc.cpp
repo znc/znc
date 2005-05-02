@@ -309,7 +309,7 @@ bool CZNC::WriteNewConfig(const string& sConfig) {
 		}
 
 		set<CModInfo> ssMods;
-		CModules::GetAvailableMods(ssMods);
+		CModules::GetAvailableMods(ssMods, this);
 
 		if (ssMods.size()) {
 			vsLines.push_back("");
@@ -317,10 +317,18 @@ bool CZNC::WriteNewConfig(const string& sConfig) {
 			CUtils::PrintMessage("-- Modules --");
 			CUtils::PrintMessage("");
 
-			for (set<CModInfo>::iterator it = ssMods.begin(); it != ssMods.end(); it++) {
-				const CModInfo& Info = *it;
-				if (CUtils::GetBoolInput("Do you want to auto load \033[1m" + Info.GetName() + "\033[22m", false)) {
-					vsLines.push_back("\tLoadModule = " + Info.GetName());
+			if (CUtils::GetBoolInput("Do you want to automatically load any modules at all?")) {
+				for (set<CModInfo>::iterator it = ssMods.begin(); it != ssMods.end(); it++) {
+					const CModInfo& Info = *it;
+					string sName = Info.GetName();
+
+					if (strcasecmp(CUtils::Right(sName, 3).c_str(), ".so") == 0) {
+						CUtils::RightChomp(sName, 3);
+					}
+
+					if (CUtils::GetBoolInput("Load " + string((Info.IsSystem()) ? "system" : "local") + " module <\033[1m" + sName + "\033[22m>?", false)) {
+						vsLines.push_back("\tLoadModule = " + sName);
+					}
 				}
 			}
 		}
