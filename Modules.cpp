@@ -624,3 +624,9 @@ bool CModules::ReloadModule(const string& sModule, const string& sArgs, CUser* p
 	sRetMsg = "Reloaded module [" + sModule + "]";
 	return true;
 }
+
+void CModules::GetAvailableMods(set<CModInfo>& ssMods) {
+	ssMods.clear();
+	//ssMods.insert(CModInfo("foo", "/usr/share/znc/foo", true));
+	//ssMods.insert(CModInfo("bar", "/home/user/.znc/modules/bar", false));
+}

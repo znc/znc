@@ -42,6 +42,32 @@ protected:
 	string		m_sDescription;
 };
 
+class CModInfo {
+public:
+
+	CModInfo(const string& sName, const string& sPath, bool bSystem) {
+		m_bSystem = bSystem;
+		m_sName = sName;
+		m_sPath = sPath;
+	}
+	virtual ~CModInfo() {}
+
+	bool operator < (const CModInfo& Info) const {
+		return (GetName() < Info.GetName());
+	}
+
+	// Getters
+	const string& GetName() const { return m_sName; }
+	const string& GetPath() const { return m_sPath; }
+	bool IsSystem() const { return m_bSystem; }
+	// !Getters
+private:
+protected:
+	bool	m_bSystem;
+	string	m_sName;
+	string	m_sPath;
+};
+
 class CModule {
 public:
 	CModule(void* pDLL, CUser* pUser, const string& sModName);
@@ -170,6 +196,8 @@ public:
 	bool LoadModule(const string& sModule, const string& sArgs, CUser* pUser, string& sRetMsg);
 	bool UnloadModule(const string& sModule, string& sRetMsg);
 	bool ReloadModule(const string& sModule, const string& sArgs, CUser* pUser, string& sRetMsg);
+
+	static void GetAvailableMods(set<CModInfo>& ssMods);
 };
 
 #endif // !_MODULES_H
