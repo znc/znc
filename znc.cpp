@@ -250,7 +250,7 @@ string CZNC::GetConfigPath(const string& sConfigFile) {
 }
 
 bool CZNC::WriteNewConfig(const string& sConfig) {
-	string sAnswer;
+	string sAnswer, sUser;
 	vector<string> vsLines;
 	bool bAnswer = false;
 
@@ -275,7 +275,7 @@ bool CZNC::WriteNewConfig(const string& sConfig) {
 
 	do {
 		vsLines.push_back("");
-		string sUser, sNick;
+		string sNick;
 		do {
 			CUtils::GetInput("Username", sUser, "", "AlphaNumeric");
 		} while (!CUser::IsValidUserName(sUser));
@@ -368,6 +368,16 @@ bool CZNC::WriteNewConfig(const string& sConfig) {
 
 	File.Close();
 	CUtils::PrintStatus(true);
+
+	CUtils::PrintMessage("");
+	CUtils::PrintMessage("To connect to this znc you need to connect to it as your irc server", true);
+	CUtils::PrintMessage("using the port that you supplied.  You have to supply your login info", true);
+	CUtils::PrintMessage("as the irc server password like so.. user:pass.", true);
+	CUtils::PrintMessage("");
+	CUtils::PrintMessage("Try something like this in your IRC client...", true);
+	CUtils::PrintMessage("/server <znc_server_ip> " + CUtils::ToString(uPort) + " " + sUser + ":<pass>", true);
+	CUtils::PrintMessage("");
+
 	return true;
 }
 
