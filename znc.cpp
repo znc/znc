@@ -308,9 +308,26 @@ bool CZNC::WriteNewConfig(const string& sConfig) {
 			vsLines.push_back("\tChanModes  = " + sAnswer);
 		}
 
+		set<CModInfo> ssMods;
+		CModules::GetAvailableMods(ssMods);
+
+		if (ssMods.size()) {
+			vsLines.push_back("");
+			CUtils::PrintMessage("");
+			CUtils::PrintMessage("-- Modules --");
+			CUtils::PrintMessage("");
+
+			for (set<CModInfo>::iterator it = ssMods.begin(); it != ssMods.end(); it++) {
+				const CModInfo& Info = *it;
+				if (CUtils::GetBoolInput("Do you want to auto load \033[1m" + Info.GetName() + "\033[22m", false)) {
+					vsLines.push_back("\tLoadModule = " + Info.GetName());
+				}
+			}
+		}
+
 		vsLines.push_back("");
 		CUtils::PrintMessage("");
-		CUtils::PrintMessage("Now we need to setup some servers for this user to connect to...");
+		CUtils::PrintMessage("-- IRC Servers --");
 		CUtils::PrintMessage("");
 
 		do {
@@ -331,7 +348,7 @@ bool CZNC::WriteNewConfig(const string& sConfig) {
 
 		vsLines.push_back("");
 		CUtils::PrintMessage("");
-		CUtils::PrintMessage("Now we need to setup some channels that this user will join once connected...");
+		CUtils::PrintMessage("-- Channels --");
 		CUtils::PrintMessage("");
 
 		string sArg = "a";
