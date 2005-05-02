@@ -3,6 +3,7 @@
 
 #include "main.h"
 #include "Utils.h"
+#include "FileUtils.h"
 #include "User.h"
 
 class CDCCSock : public Csock {

@@ -4,6 +4,7 @@
 #include "Modules.h"
 #include "Chan.h"
 #include "Utils.h"
+#include "FileUtils.h"
 #include "md5.h"
 #include <pwd.h>
 #include <sstream>
@@ -14,6 +15,9 @@
  * Author: imaginos <imaginos@imaginos.net>
  *
  * $Log$
+ * Revision 1.3  2005/05/02 22:34:52  prozacx
+ * Get CFile from FileUtils.h now
+ *
  * Revision 1.2  2005/04/04 06:35:19  imaginos
  * fixed int32's that test against npos to string::size_type
  *

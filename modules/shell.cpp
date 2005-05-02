@@ -8,6 +8,7 @@
 #include "Modules.h"
 #include "Chan.h"
 #include "Utils.h"
+#include "FileUtils.h"
 #include <sys/wait.h>
 
 // Forward Declaration

@@ -2,6 +2,7 @@
 #define _ZNC_H
 
 #include "main.h"
+#include "FileUtils.h"
 #include <map>
 using std::map;
 
