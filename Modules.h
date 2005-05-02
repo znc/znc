@@ -13,6 +13,7 @@ using std::string;
 #define MODCONSTRUCTOR(CLASS) CLASS(void *pDLL, CUser* pUser, const string& sModName) : CModule(pDLL, pUser, sModName)
 
 // Forward Declarations
+class CZNC;
 class CUser;
 class CNick;
 class CChan;
@@ -197,7 +198,7 @@ public:
 	bool UnloadModule(const string& sModule, string& sRetMsg);
 	bool ReloadModule(const string& sModule, const string& sArgs, CUser* pUser, string& sRetMsg);
 
-	static void GetAvailableMods(set<CModInfo>& ssMods);
+	static void GetAvailableMods(set<CModInfo>& ssMods, CZNC* pZNC);
 };
 
 #endif // !_MODULES_H
