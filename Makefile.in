@@ -4,8 +4,8 @@ INCLUDES=@INCLUDES@
 LIBS=@LIBS@
 prefix=@prefix@
 
-OBJS=Csocket.o main.o znc.o User.o IRCSock.o UserSock.o DCCBounce.o DCCSock.o Chan.o Nick.o Server.o Modules.o md5.o Buffer.o Utils.o FileUtils.o
-SRCS=Csocket.cpp main.cpp znc.cpp User.cpp IRCSock.cpp UserSock.cpp DCCBounce.cpp DCCSock.cpp Chan.cpp Nick.cpp Server.cpp Modules.cpp md5.cpp Buffer.cpp Utils.cpp FileUtils.cpp
+OBJS=String.o Csocket.o main.o znc.o User.o IRCSock.o UserSock.o DCCBounce.o DCCSock.o Chan.o Nick.o Server.o Modules.o md5.o Buffer.o Utils.o FileUtils.o
+SRCS=String.cpp Csocket.cpp main.cpp znc.cpp User.cpp IRCSock.cpp UserSock.cpp DCCBounce.cpp DCCSock.cpp Chan.cpp Nick.cpp Server.cpp Modules.cpp md5.cpp Buffer.cpp Utils.cpp FileUtils.cpp
 
 all: znc @MODTARGET@
 
