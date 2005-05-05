@@ -7,7 +7,7 @@
 #include "Chan.h"
 
 /////////////////// Timer ///////////////////
-CTimer::CTimer(CModule* pModule, unsigned int uInterval, unsigned int uCycles, const string& sLabel, const string& sDescription) : CCron() {
+CTimer::CTimer(CModule* pModule, unsigned int uInterval, unsigned int uCycles, const CString& sLabel, const CString& sDescription) : CCron() {
 	SetName(sLabel);
 	m_sDescription = sDescription;
 	m_pModule = pModule;
@@ -24,12 +24,12 @@ CTimer::~CTimer() {
 }
 
 void CTimer::SetModule(CModule* p) { m_pModule = p; }
-void CTimer::SetDescription(const string& s) { m_sDescription = s; }
+void CTimer::SetDescription(const CString& s) { m_sDescription = s; }
 CModule* CTimer::GetModule() const { return m_pModule; }
-const string& CTimer::GetDescription() const { return m_sDescription; }
+const CString& CTimer::GetDescription() const { return m_sDescription; }
 /////////////////// !Timer ///////////////////
 
-CModule::CModule(void* pDLL, CUser* pUser, const string& sModName) {
+CModule::CModule(void* pDLL, CUser* pUser, const CString& sModName) {
 	m_pDLL = pDLL;
 	m_pManager = pUser->GetManager();
 	m_pUser = pUser;
@@ -53,7 +53,7 @@ bool CModule::AddTimer(CTimer* pTimer) {
 	return true;
 }
 
-bool CModule::RemTimer(const string& sLabel) {
+bool CModule::RemTimer(const CString& sLabel) {
 	for (unsigned int a = 0; a < m_vTimers.size(); a++) {
 		CTimer* pTimer = m_vTimers[a];
 
@@ -78,7 +78,7 @@ bool CModule::UnlinkTimer(CTimer* pTimer) {
 	return false;
 }
 
-CTimer* CModule::FindTimer(const string& sLabel) {
+CTimer* CModule::FindTimer(const CString& sLabel) {
 	for (unsigned int a = 0; a < m_vTimers.size(); a++) {
 		CTimer* pTimer = m_vTimers[a];
 		if (strcasecmp(pTimer->GetName().c_str(), sLabel.c_str()) == 0) {
@@ -114,7 +114,7 @@ void CModule::ListTimers() {
 
 	if (Table.size()) {
 		unsigned int uTableIdx = 0;
-		string sLine;
+		CString sLine;
 
 		while (Table.GetLine(uTableIdx++, sLine)) {
 			PutModule(sLine);
@@ -122,66 +122,66 @@ void CModule::ListTimers() {
 	}
 }
 
-const string& CModule::GetModName() { return m_sModName; }
-string CModule::GetModNick() { return ((m_pUser) ? m_pUser->GetStatusPrefix() : "*") + m_sModName; }
+const CString& CModule::GetModName() { return m_sModName; }
+CString CModule::GetModNick() { return ((m_pUser) ? m_pUser->GetStatusPrefix() : "*") + m_sModName; }
 
-string CModule::GetDescription() { return "Unknown"; }
+CString CModule::GetDescription() { return "Unknown"; }
 
-bool CModule::OnLoad(const string& sArgs) { return true; }
+bool CModule::OnLoad(const CString& sArgs) { return true; }
 bool CModule::OnBoot() { return true; }
 void CModule::OnUserAttached() {}
 void CModule::OnUserDetached() {}
 void CModule::OnIRCDisconnected() {}
 void CModule::OnIRCConnected() {}
 
-bool CModule::OnDCCUserSend(const CNick& RemoteNick, unsigned long uLongIP, unsigned short uPort, const string& sFile, unsigned long uFileSize) { return false; }
+bool CModule::OnDCCUserSend(const CNick& RemoteNick, unsigned long uLongIP, unsigned short uPort, const CString& sFile, unsigned long uFileSize) { return false; }
 
 void CModule::OnOp(const CNick& OpNick, const CNick& Nick, const CChan& Channel, bool bNoChange) {}
 void CModule::OnDeop(const CNick& OpNick, const CNick& Nick, const CChan& Channel, bool bNoChange) {}
 void CModule::OnVoice(const CNick& OpNick, const CNick& Nick, const CChan& Channel, bool bNoChange) {}
 void CModule::OnDevoice(const CNick& OpNick, const CNick& Nick, const CChan& Channel, bool bNoChange) {}
-void CModule::OnRawMode(const CNick& OpNick, const CChan& Channel, const string& sModes, const string& sArgs) {}
+void CModule::OnRawMode(const CNick& OpNick, const CChan& Channel, const CString& sModes, const CString& sArgs) {}
 
-bool CModule::OnUserRaw(string& sLine) { return false; }
-bool CModule::OnRaw(string& sLine) { return false; }
+bool CModule::OnUserRaw(CString& sLine) { return false; }
+bool CModule::OnRaw(CString& sLine) { return false; }
 
-bool CModule::OnStatusCommand(const string& sCommand) { return false; }
-void CModule::OnModCommand(const string& sCommand) {}
-void CModule::OnModNotice(const string& sMessage) {}
-void CModule::OnModCTCP(const string& sMessage) {}
+bool CModule::OnStatusCommand(const CString& sCommand) { return false; }
+void CModule::OnModCommand(const CString& sCommand) {}
+void CModule::OnModNotice(const CString& sMessage) {}
+void CModule::OnModCTCP(const CString& sMessage) {}
 
-void CModule::OnQuit(const CNick& Nick, const string& sMessage, const vector<CChan*>& vChans) {}
-void CModule::OnNick(const CNick& Nick, const string& sNewNick, const vector<CChan*>& vChans) {}
-void CModule::OnKick(const CNick& Nick, const string& sKickedNick, const CChan& Channel, const string& sMessage) {}
+void CModule::OnQuit(const CNick& Nick, const CString& sMessage, const vector<CChan*>& vChans) {}
+void CModule::OnNick(const CNick& Nick, const CString& sNewNick, const vector<CChan*>& vChans) {}
+void CModule::OnKick(const CNick& Nick, const CString& sKickedNick, const CChan& Channel, const CString& sMessage) {}
 void CModule::OnJoin(const CNick& Nick, const CChan& Channel) {}
 void CModule::OnPart(const CNick& Nick, const CChan& Channel) {}
 
-bool CModule::OnUserCTCPReply(const CNick& Nick, string& sMessage) { return false; }
-bool CModule::OnCTCPReply(const CNick& Nick, string& sMessage) { return false; }
-bool CModule::OnUserCTCP(const string& sTarget, string& sMessage) { return false; }
-bool CModule::OnPrivCTCP(const CNick& Nick, string& sMessage) { return false; }
-bool CModule::OnChanCTCP(const CNick& Nick, const CChan& Channel, string& sMessage) { return false; }
-bool CModule::OnUserMsg(const string& sTarget, string& sMessage) { return false; }
-bool CModule::OnPrivMsg(const CNick& Nick, string& sMessage) { return false; }
-bool CModule::OnChanMsg(const CNick& Nick, const CChan& Channel, string& sMessage) { return false; }
-bool CModule::OnUserNotice(const string& sTarget, string& sMessage) { return false; }
-bool CModule::OnPrivNotice(const CNick& Nick, string& sMessage) { return false; }
-bool CModule::OnChanNotice(const CNick& Nick, const CChan& Channel, string& sMessage) { return false; }
+bool CModule::OnUserCTCPReply(const CNick& Nick, CString& sMessage) { return false; }
+bool CModule::OnCTCPReply(const CNick& Nick, CString& sMessage) { return false; }
+bool CModule::OnUserCTCP(const CString& sTarget, CString& sMessage) { return false; }
+bool CModule::OnPrivCTCP(const CNick& Nick, CString& sMessage) { return false; }
+bool CModule::OnChanCTCP(const CNick& Nick, const CChan& Channel, CString& sMessage) { return false; }
+bool CModule::OnUserMsg(const CString& sTarget, CString& sMessage) { return false; }
+bool CModule::OnPrivMsg(const CNick& Nick, CString& sMessage) { return false; }
+bool CModule::OnChanMsg(const CNick& Nick, const CChan& Channel, CString& sMessage) { return false; }
+bool CModule::OnUserNotice(const CString& sTarget, CString& sMessage) { return false; }
+bool CModule::OnPrivNotice(const CNick& Nick, CString& sMessage) { return false; }
+bool CModule::OnChanNotice(const CNick& Nick, const CChan& Channel, CString& sMessage) { return false; }
 
 void* CModule::GetDLL() { return m_pDLL; }
-bool CModule::PutIRC(const string& sLine) {
+bool CModule::PutIRC(const CString& sLine) {
 	return (m_pUser) ? m_pUser->PutIRC(sLine) : false;
 }
-bool CModule::PutUser(const string& sLine) {
+bool CModule::PutUser(const CString& sLine) {
 	return (m_pUser) ? m_pUser->PutUser(sLine) : false;
 }
-bool CModule::PutStatus(const string& sLine) {
+bool CModule::PutStatus(const CString& sLine) {
 	return (m_pUser) ? m_pUser->PutStatus(sLine) : false;
 }
-bool CModule::PutModule(const string& sLine, const string& sIdent, const string& sHost) {
+bool CModule::PutModule(const CString& sLine, const CString& sIdent, const CString& sHost) {
 	return (m_pUser) ? m_pUser->PutUser(":" + GetModNick() + "!" + sIdent + "@" + sHost + " PRIVMSG " + m_pUser->GetCurNick() + " :" + sLine) : false;
 }
-bool CModule::PutModNotice(const string& sLine, const string& sIdent, const string& sHost) {
+bool CModule::PutModNotice(const CString& sLine, const CString& sIdent, const CString& sHost) {
 	return (m_pUser) ? m_pUser->PutUser(":" + GetModNick() + "!" + sIdent + "@" + sHost + " NOTICE " + m_pUser->GetCurNick() + " :" + sLine) : false;
 }
 
@@ -190,8 +190,8 @@ CModules::~CModules() {}
 
 void CModules::UnloadAll() {
 	while (size()) {
-		string sRetMsg;
-		string sModName = (*this)[0]->GetModName();
+		CString sRetMsg;
+		CString sModName = (*this)[0]->GetModName();
 		UnloadModule(sModName, sRetMsg);
 	}
 }
@@ -202,7 +202,7 @@ void CModules::OnIRCConnected() {
 	}
 }
 
-bool CModules::OnLoad(const string& sArgs) {
+bool CModules::OnLoad(const CString& sArgs) {
 	for (unsigned int a = 0; a < size(); a++) {
 		if (!(*this)[a]->OnLoad(sArgs)) {
 			return false;
@@ -240,7 +240,7 @@ void CModules::OnIRCDisconnected() {
 	}
 }
 
-bool CModules::OnDCCUserSend(const CNick& RemoteNick, unsigned long uLongIP, unsigned short uPort, const string& sFile, unsigned long uFileSize) {
+bool CModules::OnDCCUserSend(const CNick& RemoteNick, unsigned long uLongIP, unsigned short uPort, const CString& sFile, unsigned long uFileSize) {
 	for (unsigned int a = 0; a < size(); a++) {
 		if ((*this)[a]->OnDCCUserSend(RemoteNick, uLongIP, uPort, sFile, uFileSize)) {
 			return true;
@@ -274,13 +274,13 @@ void CModules::OnDevoice(const CNick& OpNick, const CNick& Nick, const CChan& Ch
 	}
 }
 
-void CModules::OnRawMode(const CNick& OpNick, const CChan& Channel, const string& sModes, const string& sArgs) {
+void CModules::OnRawMode(const CNick& OpNick, const CChan& Channel, const CString& sModes, const CString& sArgs) {
 	for (unsigned int a = 0; a < size(); a++) {
 		(*this)[a]->OnRawMode(OpNick, Channel, sModes, sArgs);
 	}
 }
 
-bool CModules::OnRaw(string& sLine) {
+bool CModules::OnRaw(CString& sLine) {
 	for (unsigned int a = 0; a < size(); a++) {
 		if ((*this)[a]->OnRaw(sLine)) {
 			return true;
@@ -290,7 +290,7 @@ bool CModules::OnRaw(string& sLine) {
 	return false;
 }
 
-bool CModules::OnUserRaw(string& sLine) {
+bool CModules::OnUserRaw(CString& sLine) {
 	for (unsigned int a = 0; a < size(); a++) {
 		if ((*this)[a]->OnUserRaw(sLine)) {
 			return true;
@@ -300,19 +300,19 @@ bool CModules::OnUserRaw(string& sLine) {
 	return false;
 }
 
-void CModules::OnQuit(const CNick& Nick, const string& sMessage, const vector<CChan*>& vChans) {
+void CModules::OnQuit(const CNick& Nick, const CString& sMessage, const vector<CChan*>& vChans) {
 	for (unsigned int a = 0; a < size(); a++) {
 		(*this)[a]->OnQuit(Nick, sMessage, vChans);
 	}
 }
 
-void CModules::OnNick(const CNick& Nick, const string& sNewNick, const vector<CChan*>& vChans) {
+void CModules::OnNick(const CNick& Nick, const CString& sNewNick, const vector<CChan*>& vChans) {
 	for (unsigned int a = 0; a < size(); a++) {
 		(*this)[a]->OnNick(Nick, sNewNick, vChans);
 	}
 }
 
-void CModules::OnKick(const CNick& Nick, const string& sKickedNick, const CChan& Channel, const string& sMessage) {
+void CModules::OnKick(const CNick& Nick, const CString& sKickedNick, const CChan& Channel, const CString& sMessage) {
 	for (unsigned int a = 0; a < size(); a++) {
 		(*this)[a]->OnKick(Nick, sKickedNick, Channel, sMessage);
 	}
@@ -330,7 +330,7 @@ void CModules::OnPart(const CNick& Nick, const CChan& Channel) {
 	}
 }
 
-bool CModules::OnUserCTCP(const string& sTarget, string& sMessage) {
+bool CModules::OnUserCTCP(const CString& sTarget, CString& sMessage) {
 	for (unsigned int a = 0; a < size(); a++) {
 		if ((*this)[a]->OnUserCTCP(sTarget, sMessage)) {
 			return true;
@@ -340,7 +340,7 @@ bool CModules::OnUserCTCP(const string& sTarget, string& sMessage) {
 	return false;
 }
 
-bool CModules::OnUserCTCPReply(const CNick& Nick, string& sMessage) {
+bool CModules::OnUserCTCPReply(const CNick& Nick, CString& sMessage) {
 	for (unsigned int a = 0; a < size(); a++) {
 		if ((*this)[a]->OnUserCTCPReply(Nick, sMessage)) {
 			return true;
@@ -350,7 +350,7 @@ bool CModules::OnUserCTCPReply(const CNick& Nick, string& sMessage) {
 	return false;
 }
 
-bool CModules::OnCTCPReply(const CNick& Nick, string& sMessage) {
+bool CModules::OnCTCPReply(const CNick& Nick, CString& sMessage) {
 	for (unsigned int a = 0; a < size(); a++) {
 		if ((*this)[a]->OnCTCPReply(Nick, sMessage)) {
 			return true;
@@ -360,7 +360,7 @@ bool CModules::OnCTCPReply(const CNick& Nick, string& sMessage) {
 	return false;
 }
 
-bool CModules::OnPrivCTCP(const CNick& Nick, string& sMessage) {
+bool CModules::OnPrivCTCP(const CNick& Nick, CString& sMessage) {
 	for (unsigned int a = 0; a < size(); a++) {
 		if ((*this)[a]->OnPrivCTCP(Nick, sMessage)) {
 			return true;
@@ -370,7 +370,7 @@ bool CModules::OnPrivCTCP(const CNick& Nick, string& sMessage) {
 	return false;
 }
 
-bool CModules::OnChanCTCP(const CNick& Nick, const CChan& Channel, string& sMessage) {
+bool CModules::OnChanCTCP(const CNick& Nick, const CChan& Channel, CString& sMessage) {
 	for (unsigned int a = 0; a < size(); a++) {
 		if ((*this)[a]->OnChanCTCP(Nick, Channel, sMessage)) {
 			return true;
@@ -380,7 +380,7 @@ bool CModules::OnChanCTCP(const CNick& Nick, const CChan& Channel, string& sMess
 	return false;
 }
 
-bool CModules::OnUserMsg(const string& sTarget, string& sMessage) {
+bool CModules::OnUserMsg(const CString& sTarget, CString& sMessage) {
 	for (unsigned int a = 0; a < size(); a++) {
 		if ((*this)[a]->OnUserMsg(sTarget, sMessage)) {
 			return true;
@@ -390,7 +390,7 @@ bool CModules::OnUserMsg(const string& sTarget, string& sMessage) {
 	return false;
 }
 
-bool CModules::OnPrivMsg(const CNick& Nick, string& sMessage) {
+bool CModules::OnPrivMsg(const CNick& Nick, CString& sMessage) {
 	for (unsigned int a = 0; a < size(); a++) {
 		if ((*this)[a]->OnPrivMsg(Nick, sMessage)) {
 			return true;
@@ -400,7 +400,7 @@ bool CModules::OnPrivMsg(const CNick& Nick, string& sMessage) {
 	return false;
 }
 
-bool CModules::OnChanMsg(const CNick& Nick, const CChan& Channel, string& sMessage) {
+bool CModules::OnChanMsg(const CNick& Nick, const CChan& Channel, CString& sMessage) {
 	for (unsigned int a = 0; a < size(); a++) {
 		if ((*this)[a]->OnChanMsg(Nick, Channel, sMessage)) {
 			return true;
@@ -410,7 +410,7 @@ bool CModules::OnChanMsg(const CNick& Nick, const CChan& Channel, string& sMessa
 	return false;
 }
 
-bool CModules::OnUserNotice(const string& sTarget, string& sMessage) {
+bool CModules::OnUserNotice(const CString& sTarget, CString& sMessage) {
 	for (unsigned int a = 0; a < size(); a++) {
 		if ((*this)[a]->OnUserNotice(sTarget, sMessage)) {
 			return true;
@@ -420,7 +420,7 @@ bool CModules::OnUserNotice(const string& sTarget, string& sMessage) {
 	return false;
 }
 
-bool CModules::OnPrivNotice(const CNick& Nick, string& sMessage) {
+bool CModules::OnPrivNotice(const CNick& Nick, CString& sMessage) {
 	for (unsigned int a = 0; a < size(); a++) {
 		if ((*this)[a]->OnPrivNotice(Nick, sMessage)) {
 			return true;
@@ -430,7 +430,7 @@ bool CModules::OnPrivNotice(const CNick& Nick, string& sMessage) {
 	return false;
 }
 
-bool CModules::OnChanNotice(const CNick& Nick, const CChan& Channel, string& sMessage) {
+bool CModules::OnChanNotice(const CNick& Nick, const CChan& Channel, CString& sMessage) {
 	for (unsigned int a = 0; a < size(); a++) {
 		if ((*this)[a]->OnChanNotice(Nick, Channel, sMessage)) {
 			return true;
@@ -440,7 +440,7 @@ bool CModules::OnChanNotice(const CNick& Nick, const CChan& Channel, string& sMe
 	return false;
 }
 
-bool CModules::OnStatusCommand(const string& sCommand) {
+bool CModules::OnStatusCommand(const CString& sCommand) {
 	for (unsigned int a = 0; a < size(); a++) {
 		if ((*this)[a]->OnStatusCommand(sCommand)) {
 			return true;
@@ -450,25 +450,25 @@ bool CModules::OnStatusCommand(const string& sCommand) {
 	return false;
 }
 
-void CModules::OnModCommand(const string& sCommand) {
+void CModules::OnModCommand(const CString& sCommand) {
 	for (unsigned int a = 0; a < size(); a++) {
 		(*this)[a]->OnModCommand(sCommand);
 	}
 }
 
-void CModules::OnModNotice(const string& sMessage) {
+void CModules::OnModNotice(const CString& sMessage) {
 	for (unsigned int a = 0; a < size(); a++) {
 		(*this)[a]->OnModNotice(sMessage);
 	}
 }
 
-void CModules::OnModCTCP(const string& sMessage) {
+void CModules::OnModCTCP(const CString& sMessage) {
 	for (unsigned int a = 0; a < size(); a++) {
 		(*this)[a]->OnModCTCP(sMessage);
 	}
 }
 
-CModule* CModules::FindModule(const string& sModule) {
+CModule* CModules::FindModule(const CString& sModule) {
 	for (unsigned int a = 0; a < size(); a++) {
 		if (strcasecmp(sModule.c_str(), (*this)[a]->GetModName().c_str()) == 0) {
 			return (*this)[a];
@@ -478,7 +478,7 @@ CModule* CModules::FindModule(const string& sModule) {
 	return NULL;
 }
 
-bool CModules::LoadModule(const string& sModule, const string& sArgs, CUser* pUser, string& sRetMsg) {
+bool CModules::LoadModule(const CString& sModule, const CString& sArgs, CUser* pUser, CString& sRetMsg) {
 #ifndef _MODULES
 	sRetMsg = "Unable to load module [" + sModule + "] module support was not enabled.";
 	return false;
@@ -502,7 +502,7 @@ bool CModules::LoadModule(const string& sModule, const string& sArgs, CUser* pUs
 		return false;
 	}
 
-	string sModPath = pUser->GetCurPath() + "/modules/" + sModule + ".so";
+	CString sModPath = pUser->GetCurPath() + "/modules/" + sModule + ".so";
 
 	if (!CFile::Exists(sModPath)) {
 		DEBUG_ONLY(cout << "[" << sModPath << "] Not found..." << endl);
@@ -511,7 +511,7 @@ bool CModules::LoadModule(const string& sModule, const string& sArgs, CUser* pUs
 		if (!CFile::Exists(sModPath))
 		{
 			DEBUG_ONLY(cout << "[" << sModPath << "] Not found..." << endl);
-			sModPath = _MODDIR_ + string("/") + sModule + ".so";
+			sModPath = _MODDIR_ + CString("/") + sModule + ".so";
 
 			if (!CFile::Exists(sModPath))
 			{
@@ -545,7 +545,7 @@ bool CModules::LoadModule(const string& sModule, const string& sArgs, CUser* pUs
 		return false;
 	}
 
-	typedef CModule* (*fp)(void*, CUser* pUser, const string& sModName);
+	typedef CModule* (*fp)(void*, CUser* pUser, const CString& sModName);
 	fp Load = (fp) dlsym(p, "Load");
 
 	if (!Load) {
@@ -568,7 +568,7 @@ bool CModules::LoadModule(const string& sModule, const string& sArgs, CUser* pUs
 #endif // !_MODULES
 }
 
-bool CModules::UnloadModule(const string& sModule, string& sRetMsg) {
+bool CModules::UnloadModule(const CString& sModule, CString& sRetMsg) {
 #ifndef _MODULES
 	sRetMsg = "Unable to unload module [" + sModule + "] module support was not enabled.";
 	return false;
@@ -612,7 +612,7 @@ bool CModules::UnloadModule(const string& sModule, string& sRetMsg) {
 #endif // !_MODULES
 }
 
-bool CModules::ReloadModule(const string& sModule, const string& sArgs, CUser* pUser, string& sRetMsg) {
+bool CModules::ReloadModule(const CString& sModule, const CString& sArgs, CUser* pUser, CString& sRetMsg) {
 	sRetMsg = "";
 	if (!UnloadModule(sModule, sRetMsg)) {
 		return false;

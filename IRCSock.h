@@ -17,16 +17,16 @@ public:
 	virtual ~CIRCSock();
 
 	// Message Handlers
-	bool OnCTCPReply(const string& sNickMask, string& sMessage);
-	bool OnPrivCTCP(const string& sNickMask, string& sMessage);
-	bool OnChanCTCP(const string& sNickMask, const string& sChan, string& sMessage);
-	bool OnPrivMsg(const string& sNickMask, string& sMessage);
-	bool OnChanMsg(const string& sNickMask, const string& sChan, string& sMessage);
-	bool OnPrivNotice(const string& sNickMask, string& sMessage);
-	bool OnChanNotice(const string& sNickMask, const string& sChan, string& sMessage);
+	bool OnCTCPReply(const CString& sNickMask, CString& sMessage);
+	bool OnPrivCTCP(const CString& sNickMask, CString& sMessage);
+	bool OnChanCTCP(const CString& sNickMask, const CString& sChan, CString& sMessage);
+	bool OnPrivMsg(const CString& sNickMask, CString& sMessage);
+	bool OnChanMsg(const CString& sNickMask, const CString& sChan, CString& sMessage);
+	bool OnPrivNotice(const CString& sNickMask, CString& sMessage);
+	bool OnChanNotice(const CString& sNickMask, const CString& sChan, CString& sMessage);
 	// !Message Handlers
 
-	virtual void ReadLine(const string& sData);
+	virtual void ReadLine(const CString& sData);
 	virtual void Connected();
 	virtual void Disconnected();
 	virtual void ConnectionRefused();
@@ -37,23 +37,23 @@ public:
 	bool IsUserAttached() { return (m_pUserSock != NULL); }
 	void UserConnected(CUserSock* pUserSock);
 	void UserDisconnected();
-	void PutServ(const string& sLine);
-	void PutUser(const string& sLine);
-	void PutStatus(const string& sLine);
+	void PutServ(const CString& sLine);
+	void PutUser(const CString& sLine);
+	void PutStatus(const CString& sLine);
 
 	// Setters
-	void SetPass(const string& s) { m_sPass = s; }
+	void SetPass(const CString& s) { m_sPass = s; }
 	// !Setters
 
 	// Getters
-	string GetNickMask() const {
+	CString GetNickMask() const {
 		return m_Nick.GetNickMask();
 	}
-	const string& GetNick() const { return m_Nick.GetNick(); }
-	const string& GetPass() const { return m_sPass; }
+	const CString& GetNick() const { return m_Nick.GetNick(); }
+	const CString& GetPass() const { return m_sPass; }
 	// !Getters
 private:
-	void SetNick(const string& sNick);
+	void SetNick(const CString& sNick);
 protected:
 	bool					m_bISpoofReleased;
 	bool					m_bAuthed;
@@ -61,11 +61,11 @@ protected:
 	CZNC*					m_pZNC;
 	CUser*					m_pUser;
 	CNick					m_Nick;
-	string					m_sPass;
+	CString					m_sPass;
 	CBuffer					m_RawBuffer;
 	CBuffer					m_MotdBuffer;
 	CUserSock*				m_pUserSock;
-	map<string, CChan*>		m_msChans;
+	map<CString, CChan*>		m_msChans;
 	unsigned int			m_uQueryBufferCount;
 	CBuffer					m_QueryBuffer;
 };

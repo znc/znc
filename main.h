@@ -3,15 +3,14 @@
 
 
 #ifndef CS_STRING
-#define CS_STRING string
+#define CS_STRING CString
 #endif
 
 #ifndef _NO_CSOCKET_NS
 #define _NO_CSOCKET_NS
 #endif
 
-#include <string>
-using std::string;
+#include "String.h"
 #include "Csocket.h"
 #include "Utils.h"
 

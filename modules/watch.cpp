@@ -11,14 +11,14 @@ using std::list;
 
 class CWatchSource {
 public:
-	CWatchSource(const string& sSource, bool bNegated) {
+	CWatchSource(const CString& sSource, bool bNegated) {
 		m_sSource = sSource;
 		m_bNegated = bNegated;
 	}
 	virtual ~CWatchSource() {}
 
 	// Getters
-	const string& GetSource() const { return m_sSource; }
+	const CString& GetSource() const { return m_sSource; }
 	bool IsNegated() const { return m_bNegated; }
 	// !Getters
 
@@ -27,12 +27,12 @@ public:
 private:
 protected:
 	bool	m_bNegated;
-	string	m_sSource;
+	CString	m_sSource;
 };
 
 class CWatchEntry {
 public:
-	CWatchEntry(const string& sHostMask, const string& sTarget, const string& sPattern) {
+	CWatchEntry(const CString& sHostMask, const CString& sTarget, const CString& sPattern) {
 		m_bDisabled = false;
 		m_sPattern = (sPattern.size()) ? sPattern : "*";
 
@@ -54,7 +54,7 @@ public:
 	}
 	virtual ~CWatchEntry() {}
 
-	bool IsMatch(const CNick& Nick, const string& sText, const string& sSource) {
+	bool IsMatch(const CNick& Nick, const CString& sText, const CString& sSource) {
 		if (IsDisabled()) {
 			return false;
 		}
@@ -88,13 +88,13 @@ public:
 	}
 
 	// Getters
-	const string& GetHostMask() const { return m_sHostMask; }
-	const string& GetTarget() const { return m_sTarget; }
-	const string& GetPattern() const { return m_sPattern; }
+	const CString& GetHostMask() const { return m_sHostMask; }
+	const CString& GetTarget() const { return m_sTarget; }
+	const CString& GetPattern() const { return m_sPattern; }
 	bool IsDisabled() const { return m_bDisabled; }
 	const vector<CWatchSource>& GetSources() const { return m_vsSources; }
-	string GetSourcesStr() const {
-		string sRet;
+	CString GetSourcesStr() const {
+		CString sRet;
 
 		for (unsigned int a = 0; a < m_vsSources.size(); a++) {
 			const CWatchSource& WatchSource = m_vsSources[a];
@@ -115,13 +115,13 @@ public:
 	// !Getters
 
 	// Setters
-	void SetHostMask(const string& s) { m_sHostMask = s; }
-	void SetTarget(const string& s) { m_sTarget = s; }
-	void SetPattern(const string& s) { m_sPattern = s; }
+	void SetHostMask(const CString& s) { m_sHostMask = s; }
+	void SetTarget(const CString& s) { m_sTarget = s; }
+	void SetPattern(const CString& s) { m_sPattern = s; }
 	void SetDisabled(bool b = true) { m_bDisabled = b; }
-	void SetSources(const string& sSources) {
+	void SetSources(const CString& sSources) {
 		unsigned int uIdx = 1;
-		string sSrc = CUtils::Token(sSources, 0);
+		CString sSrc = CUtils::Token(sSources, 0);
 
 		m_vsSources.clear();
 
@@ -140,9 +140,9 @@ public:
 	// !Setters
 private:
 protected:
-	string		m_sHostMask;
-	string		m_sTarget;
-	string		m_sPattern;
+	CString		m_sHostMask;
+	CString		m_sTarget;
+	CString		m_sPattern;
 	bool		m_bDisabled;
 	vector<CWatchSource>	m_vsSources;
 };
@@ -153,23 +153,23 @@ public:
 		m_Buffer.SetLineCount(500);
 	}
 
-	virtual bool OnLoad(const string& sArgs) {
+	virtual bool OnLoad(const CString& sArgs) {
 		return true;
 	}
 
 	virtual ~CWatcherMod() {
 	}
 
-	virtual string GetDescription() {
+	virtual CString GetDescription() {
 		return "Copy activity from a specific user into a separate window.";
 	}
 
-	virtual void OnRawMode(const CNick& OpNick, const CChan& Channel, const string& sModes, const string& sArgs) {
+	virtual void OnRawMode(const CNick& OpNick, const CChan& Channel, const CString& sModes, const CString& sArgs) {
 		Process(OpNick, "* " + OpNick.GetNick() + " sets mode: " + sModes + " " + sArgs + " on " + Channel.GetName(), Channel.GetName());
 	}
 
 	virtual void OnUserAttached() {
-		string sBufLine;
+		CString sBufLine;
 		while (m_Buffer.GetNextLine(m_pUser->GetCurNick(), sBufLine)) {
 			PutUser(sBufLine);
 		}
@@ -177,7 +177,7 @@ public:
 		m_Buffer.Clear();
 	}
 
-	virtual bool OnUserRaw(string& sLine) {
+	virtual bool OnUserRaw(CString& sLine) {
 		if (strncasecmp(sLine.c_str(), "WATCH ", 6) == 0) {
 			Watch(CUtils::Token(sLine, 1), CUtils::Token(sLine, 2), CUtils::Token(sLine, 3, true), true);
 			return true;
@@ -186,11 +186,11 @@ public:
 		return false;
 	}
 
-	virtual void OnKick(const CNick& OpNick, const string& sKickedNick, const CChan& Channel, const string& sMessage) {
+	virtual void OnKick(const CNick& OpNick, const CString& sKickedNick, const CChan& Channel, const CString& sMessage) {
 		Process(OpNick, "* " + OpNick.GetNick() + " kicked " + sKickedNick + " from " + Channel.GetName() + " because [" + sMessage + "]", Channel.GetName());
 	}
 
-	virtual void OnQuit(const CNick& Nick, const string& sMessage, const vector<CChan*>& vChans) {
+	virtual void OnQuit(const CNick& Nick, const CString& sMessage, const vector<CChan*>& vChans) {
 		Process(Nick, "* Quits: " + Nick.GetNick() + " (" + Nick.GetIdent() + "@" + Nick.GetHost() + ") (" + sMessage + ")", "");
 	}
 
@@ -202,47 +202,47 @@ public:
 		Process(Nick, "* " + Nick.GetNick() + " (" + Nick.GetIdent() + "@" + Nick.GetHost() + ") parts " + Channel.GetName(), Channel.GetName());
 	}
 
-	virtual void OnNick(const CNick& OldNick, const string& sNewNick, const vector<CChan*>& vChans) {
+	virtual void OnNick(const CNick& OldNick, const CString& sNewNick, const vector<CChan*>& vChans) {
 		Process(OldNick, "* " + OldNick.GetNick() + " is now known as " + sNewNick, "");
 	}
 
-	virtual bool OnCTCPReply(const CNick& Nick, string& sMessage) {
+	virtual bool OnCTCPReply(const CNick& Nick, CString& sMessage) {
 		Process(Nick, "* CTCP: " + Nick.GetNick() + " reply [" + sMessage + "]", "priv");
 		return false;
 	}
 
-	virtual bool OnPrivCTCP(const CNick& Nick, string& sMessage) {
+	virtual bool OnPrivCTCP(const CNick& Nick, CString& sMessage) {
 		Process(Nick, "* CTCP: " + Nick.GetNick() + " [" + sMessage + "]", "priv");
 		return false;
 	}
 
-	virtual bool OnChanCTCP(const CNick& Nick, const CChan& Channel, string& sMessage) {
+	virtual bool OnChanCTCP(const CNick& Nick, const CChan& Channel, CString& sMessage) {
 		Process(Nick, "* CTCP: " + Nick.GetNick() + " [" + sMessage + "] to [" + Channel.GetName() + "]", Channel.GetName());
 		return false;
 	}
 
-	virtual bool OnPrivNotice(const CNick& Nick, string& sMessage) {
+	virtual bool OnPrivNotice(const CNick& Nick, CString& sMessage) {
 		Process(Nick, "-" + Nick.GetNick() + "- " + sMessage, "priv");
 		return false;
 	}
 
-	virtual bool OnChanNotice(const CNick& Nick, const CChan& Channel, string& sMessage) {
+	virtual bool OnChanNotice(const CNick& Nick, const CChan& Channel, CString& sMessage) {
 		Process(Nick, "-" + Nick.GetNick() + ":" + Channel.GetName() + "- " + sMessage, Channel.GetName());
 		return false;
 	}
 
-	virtual bool OnPrivMsg(const CNick& Nick, string& sMessage) {
+	virtual bool OnPrivMsg(const CNick& Nick, CString& sMessage) {
 		Process(Nick, "<" + Nick.GetNick() + "> " + sMessage, "priv");
 		return false;
 	}
 
-	virtual bool OnChanMsg(const CNick& Nick, const CChan& Channel, string& sMessage) {
+	virtual bool OnChanMsg(const CNick& Nick, const CChan& Channel, CString& sMessage) {
 		Process(Nick, "<" + Nick.GetNick() + ":" + Channel.GetName() + "> " + sMessage, Channel.GetName());
 		return false;
 	}
 
-	virtual void OnModCommand(const string& sCommand) {
-		string sCmdName = CUtils::Token(sCommand, 0);
+	virtual void OnModCommand(const CString& sCommand) {
+		CString sCmdName = CUtils::Token(sCommand, 0);
 		if (strcasecmp(sCmdName.c_str(), "ADD") == 0 || strcasecmp(sCmdName.c_str(), "WATCH") == 0) {
 			Watch(CUtils::Token(sCommand, 1), CUtils::Token(sCommand, 2), CUtils::Token(sCommand, 3, true));
 		} else if (strcasecmp(sCmdName.c_str(), "HELP") == 0) {
@@ -252,7 +252,7 @@ public:
 		} else if (strcasecmp(sCmdName.c_str(), "DUMP") == 0) {
 			Dump();
 		} else if (strcasecmp(sCmdName.c_str(), "ENABLE") == 0) {
-			string sTok = CUtils::Token(sCommand, 1);
+			CString sTok = CUtils::Token(sCommand, 1);
 
 			if (sTok == "*") {
 				SetDisabled(~0, false);
@@ -260,7 +260,7 @@ public:
 				SetDisabled(atoi(sTok.c_str()), false);
 			}
 		} else if (strcasecmp(sCmdName.c_str(), "DISABLE") == 0) {
-			string sTok = CUtils::Token(sCommand, 1);
+			CString sTok = CUtils::Token(sCommand, 1);
 
 			if (sTok == "*") {
 				SetDisabled(~0, true);
@@ -273,7 +273,7 @@ public:
 			m_lsWatchers.clear();
 			PutModule("All entries cleared.");
 		} else if (strcasecmp(sCmdName.c_str(), "BUFFER") == 0) {
-			string sCount = CUtils::Token(sCommand, 1);
+			CString sCount = CUtils::Token(sCommand, 1);
 
 			if (sCount.size()) {
 				m_Buffer.SetLineCount(atoi(sCount.c_str()));
@@ -288,7 +288,7 @@ public:
 	}
 
 private:
-	void Process(const CNick& Nick, const string& sMessage, const string& sSource) {
+	void Process(const CNick& Nick, const CString& sMessage, const CString& sSource) {
 		for (list<CWatchEntry>::iterator it = m_lsWatchers.begin(); it != m_lsWatchers.end(); it++) {
 			CWatchEntry& WatchEntry = *it;
 
@@ -350,7 +350,7 @@ private:
 
 		if (Table.size()) {
 			unsigned int uTableIdx = 0;
-			string sLine;
+			CString sLine;
 
 			while (Table.GetLine(uTableIdx++, sLine)) {
 				PutModule(sLine);
@@ -388,7 +388,7 @@ private:
 		PutModule("---------------");
 	}
 
-	void SetSources(unsigned int uIdx, const string& sSources) {
+	void SetSources(unsigned int uIdx, const CString& sSources) {
 		uIdx--;	// "convert" index to zero based
 		if (uIdx >= m_lsWatchers.size()) {
 			PutModule("Invalid Id");
@@ -464,7 +464,7 @@ private:
 
 		if (Table.size()) {
 			unsigned int uTableIdx = 0;
-			string sLine;
+			CString sLine;
 
 			while (Table.GetLine(uTableIdx++, sLine)) {
 				PutModule(sLine);
@@ -472,8 +472,8 @@ private:
 		}
 	}
 
-	void Watch(const string& sHostMask, const string& sTarget, const string& sPattern, bool bNotice = false) {
-		string sMessage;
+	void Watch(const CString& sHostMask, const CString& sTarget, const CString& sPattern, bool bNotice = false) {
+		CString sMessage;
 
 		if (sHostMask.size()) {
 			CWatchEntry WatchEntry(sHostMask, sTarget, sPattern);

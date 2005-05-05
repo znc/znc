@@ -23,7 +23,7 @@ public:
 		Key			= 1 << 6
 	} EMode;
 
-	CChan(const string& sName, CUser* pUser);
+	CChan(const CString& sName, CUser* pUser);
 	virtual ~CChan();
 
 	void Reset();
@@ -37,28 +37,28 @@ public:
 	bool DecClientRequests();
 
 	bool Who();
-	void OnWho(const string& sNick, const string& sIdent, const string& sHost);
+	void OnWho(const CString& sNick, const CString& sIdent, const CString& sHost);
 
 	// Modes
-	void SetModes(const string& s);
-	void ModeChange(const string& sModes, const string& sNick = "");
-	void OnOp(const string& sOpNick, const string& sNick, bool bOpped);
-	void OnVoice(const string& sOpNick, const string& sNick, bool bVoiced);
-	string GetModeString() const;
-	string GetModeArg(string& sArgs) const;
+	void SetModes(const CString& s);
+	void ModeChange(const CString& sModes, const CString& sNick = "");
+	void OnOp(const CString& sOpNick, const CString& sNick, bool bOpped);
+	void OnVoice(const CString& sOpNick, const CString& sNick, bool bVoiced);
+	CString GetModeCString() const;
+	CString GetModeArg(CString& sArgs) const;
 	// !Modes
 
 	// Nicks
 	void ClearNicks();
-	CNick* FindNick(const string& sNick) const;
-	int AddNicks(const string& sNicks);
-	bool AddNick(const string& sNick);
-	bool RemNick(const string& sNick);
-	bool ChangeNick(const string& sOldNick, const string& sNewNick);
+	CNick* FindNick(const CString& sNick) const;
+	int AddNicks(const CString& sNicks);
+	bool AddNick(const CString& sNick);
+	bool RemNick(const CString& sNick);
+	bool ChangeNick(const CString& sOldNick, const CString& sNewNick);
 	// !Nicks
 
 	// Buffer
-	int AddBuffer(const string& sLine);
+	int AddBuffer(const CString& sLine);
 	void ClearBuffer();
 	// !Buffer
 
@@ -66,11 +66,11 @@ public:
 	void SetIsOn(bool b) { m_bIsOn = b; if (!b) { Reset(); } else { Joined(); } }
 	void SetOpped(bool b) { m_bIsOp = b; }
 	void SetVoiced(bool b) { m_bIsVoice = b; }
-	void SetKey(const string& s) { m_sKey = s; }
-	void SetTopic(const string& s) { m_sTopic = s; }
-	void SetTopicOwner(const string& s) { m_sTopicOwner = s; }
+	void SetKey(const CString& s) { m_sKey = s; }
+	void SetTopic(const CString& s) { m_sTopic = s; }
+	void SetTopicOwner(const CString& s) { m_sTopicOwner = s; }
 	void SetTopicDate(unsigned long u) { m_ulTopicDate = u; }
-	void SetDefaultModes(const string& s) { m_sDefaultModes = s; }
+	void SetDefaultModes(const CString& s) { m_sDefaultModes = s; }
 	void IncOpCount() { m_uOpCount++; }
 	void DecOpCount() { m_uOpCount -= (m_uOpCount > 0); }
 	void IncVoiceCount() { m_uVoiceCount++; }
@@ -86,17 +86,17 @@ public:
 	const bool IsOn() const { return m_bIsOn; }
 	const bool IsOp() const { return m_bIsOp; }
 	const bool IsVoice() const { return m_bIsVoice; }
-	const string& GetName() const { return m_sName; }
+	const CString& GetName() const { return m_sName; }
 	unsigned int GetModes() const { return m_uModes; }
-	const string& GetKey() const { return m_sKey; }
+	const CString& GetKey() const { return m_sKey; }
 	unsigned int GetLimit() const { return m_uLimit; }
-	const string& GetTopic() const { return m_sTopic; }
-	const string& GetTopicOwner() const { return m_sTopicOwner; }
+	const CString& GetTopic() const { return m_sTopic; }
+	const CString& GetTopicOwner() const { return m_sTopicOwner; }
 	unsigned int GetTopicDate() const { return m_ulTopicDate; }
-	const string& GetDefaultModes() const { return m_sDefaultModes; }
-	const vector<string>& GetBans() const { return m_vsBans; }
-	const vector<string>& GetBuffer() const { return m_vsBuffer; }
-	const map<string,CNick*>& GetNicks() const { return m_msNicks; }
+	const CString& GetDefaultModes() const { return m_sDefaultModes; }
+	const vector<CString>& GetBans() const { return m_vsBans; }
+	const vector<CString>& GetBuffer() const { return m_vsBuffer; }
+	const map<CString,CNick*>& GetNicks() const { return m_msNicks; }
 	unsigned int GetNickCount() const { return m_msNicks.size(); }
 	unsigned int GetOpCount() const { return m_uOpCount; }
 	unsigned int GetVoiceCount() const { return m_uVoiceCount; }
@@ -115,22 +115,22 @@ protected:
 	bool				m_bWhoDone;
 	bool				m_bKeepBuffer;
 	bool				m_bAutoCycle;
-	string				m_sName;
-	string				m_sKey;
-	string				m_sTopic;
-	string				m_sTopicOwner;
+	CString				m_sName;
+	CString				m_sKey;
+	CString				m_sTopic;
+	CString				m_sTopicOwner;
 	unsigned long		m_ulTopicDate;
 	CUser*				m_pUser;
 	unsigned int		m_uLimit;
 	unsigned int		m_uModes;
-	string				m_sDefaultModes;
-	vector<string>		m_vsBans;
-	map<string,CNick*>	m_msNicks;	// Todo: make this caseless (irc style)
+	CString				m_sDefaultModes;
+	vector<CString>		m_vsBans;
+	map<CString,CNick*>	m_msNicks;	// Todo: make this caseless (irc style)
 	unsigned int		m_uBufferCount;
 	unsigned int		m_uOpCount;
 	unsigned int		m_uVoiceCount;
 	unsigned int		m_uClientRequests;	// Used to tell how many times a client tried to join this chan
-	vector<string>		m_vsBuffer;
+	vector<CString>		m_vsBuffer;
 };
 
 #endif // !_CHAN_H

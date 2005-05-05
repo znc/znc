@@ -7,7 +7,7 @@
 
 class CDCCBounce : public Csock {
 public:
-	CDCCBounce(CUser* pUser, unsigned long uLongIP, unsigned short uPort, const string& sFileName, const string& sRemoteNick, const string& sRemoteIP, string sLocalIP, bool bIsChat = false) : Csock() {
+	CDCCBounce(CUser* pUser, unsigned long uLongIP, unsigned short uPort, const CString& sFileName, const CString& sRemoteNick, const CString& sRemoteIP, CString sLocalIP, bool bIsChat = false) : Csock() {
 		m_uRemotePort = uPort;
 		m_sConnectIP = CUtils::GetIP(uLongIP);
 		m_sRemoteIP = sRemoteIP;
@@ -25,7 +25,7 @@ public:
 		}
 	}
 
-	CDCCBounce(const string& sHostname, int iport, CUser* pUser, const string& sRemoteNick, const string& sRemoteIP, const string& sFileName, int itimeout = 60, bool bIsChat = false) : Csock(sHostname, iport, itimeout) {
+	CDCCBounce(const CString& sHostname, int iport, CUser* pUser, const CString& sRemoteNick, const CString& sRemoteIP, const CString& sFileName, int itimeout = 60, bool bIsChat = false) : Csock(sHostname, iport, itimeout) {
 		m_uRemotePort = 0;
 		m_bIsChat = bIsChat;
 		m_pManager = pUser->GetManager();
@@ -47,9 +47,9 @@ public:
 		}
 	}
 
-	static unsigned short DCCRequest(const string& sNick, unsigned long uLongIP, unsigned short uPort, const string& sFileName, bool bIsChat, CUser* pUser, const string& sLocalIP, const string& sRemoteIP);
+	static unsigned short DCCRequest(const CString& sNick, unsigned long uLongIP, unsigned short uPort, const CString& sFileName, bool bIsChat, CUser* pUser, const CString& sLocalIP, const CString& sRemoteIP);
 
-	void ReadLine(const string& sData);
+	void ReadLine(const CString& sData);
 	virtual void ReadData(const char* data, int len);
 	virtual void Timeout();
 	virtual void ConnectionRefused();
@@ -57,35 +57,35 @@ public:
 	virtual void Connected();
 	virtual void Disconnected();
 	void Shutdown();
-	Csock* GetSockObj(const string& sHost, int iPort);
-	void PutServ(const string& sLine);
-	void PutPeer(const string& sLine);
+	Csock* GetSockObj(const CString& sHost, int iPort);
+	void PutServ(const CString& sLine);
+	void PutPeer(const CString& sLine);
 	bool IsPeerConnected() { return (m_pPeer) ? m_pPeer->IsConnected() : false; }
 
 	// Setters
 	void SetPeer(CDCCBounce* p) { m_pPeer = p; }
-	void SetRemoteIP(const string& s) { m_sRemoteIP = s; }
-	void SetRemoteNick(const string& s) { m_sRemoteNick = s; }
+	void SetRemoteIP(const CString& s) { m_sRemoteIP = s; }
+	void SetRemoteNick(const CString& s) { m_sRemoteNick = s; }
 	void SetManager(TSocketManager<Csock>* p) { m_pManager = p; }
 	void SetRemote(bool b) { m_bIsRemote = b; }
 	// !Setters
 
 	// Getters
 	unsigned short GetUserPort() const { return m_uRemotePort; }
-	const string& GetRemoteIP() const { return m_sRemoteIP; }
-	const string& GetRemoteNick() const { return m_sRemoteNick; }
-	const string& GetFileName() const { return m_sFileName; }
+	const CString& GetRemoteIP() const { return m_sRemoteIP; }
+	const CString& GetRemoteNick() const { return m_sRemoteNick; }
+	const CString& GetFileName() const { return m_sFileName; }
 	CDCCBounce* GetPeer() const { return m_pPeer; }
 	TSocketManager<Csock>* GetManager() const { return m_pManager; }
 	bool IsRemote() { return m_bIsRemote; }
 	// !Getters
 private:
 protected:
-	string					m_sRemoteNick;
-	string					m_sRemoteIP;
-	string					m_sConnectIP;
-	string					m_sLocalIP;
-	string					m_sFileName;
+	CString					m_sRemoteNick;
+	CString					m_sRemoteIP;
+	CString					m_sConnectIP;
+	CString					m_sLocalIP;
+	CString					m_sFileName;
 	CUser*					m_pUser;
 	CDCCBounce*				m_pPeer;
 	TSocketManager<Csock>*	m_pManager;

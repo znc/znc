@@ -15,7 +15,7 @@ public:
 	CUserSock() : Csock() {
 		Init();
 	}
-	CUserSock(const string& sHostname, int iport, int itimeout = 60) : Csock(sHostname, iport, itimeout) {
+	CUserSock(const CString& sHostname, int iport, int itimeout = 60) : Csock(sHostname, iport, itimeout) {
 		Init();
 	}
 	virtual ~CUserSock() {}
@@ -32,34 +32,34 @@ public:
 		EnableReadLine();
 	}
 
-	string GetNick() const;
-	string GetNickMask() const;
+	CString GetNick() const;
+	CString GetNickMask() const;
 
 	bool DecKeepNickCounter();
-	void UserCommand(const string& sCommand);
+	void UserCommand(const CString& sCommand);
 	void IRCConnected(CIRCSock* pIRCSock);
 	void IRCDisconnected();
 	void BouncedOff();
 	bool IsAttached() const { return m_bAuthed; }
 
-	void PutIRC(const string& sLine);
-	void PutServ(const string& sLine);
-	void PutStatus(const string& sLine);
-	void PutStatusNotice(const string& sLine);
-	void PutModule(const string& sModule, const string& sLine);
-	void PutModNotice(const string& sModule, const string& sLine);
+	void PutIRC(const CString& sLine);
+	void PutServ(const CString& sLine);
+	void PutStatus(const CString& sLine);
+	void PutStatusNotice(const CString& sLine);
+	void PutModule(const CString& sModule, const CString& sLine);
+	void PutModNotice(const CString& sModule, const CString& sLine);
 
-	virtual void ReadLine(const string& sData);
+	virtual void ReadLine(const CString& sData);
 	void HelpUser();
 	void AuthUser();
 	virtual void Connected();
 	virtual void Disconnected();
 	virtual void ConnectionRefused();
-	virtual bool ConnectionFrom(const string& sHost, int iPort);
-	virtual Csock* GetSockObj(const string& sHost, int iPort);
+	virtual bool ConnectionFrom(const CString& sHost, int iPort);
+	virtual Csock* GetSockObj(const CString& sHost, int iPort);
 
 	void SetZNC(CZNC* pZNC) { m_pZNC = pZNC; }
-	void SetNick(const string& s);
+	void SetNick(const CString& s);
 private:
 protected:
 	bool		m_bAuthed;
@@ -68,9 +68,9 @@ protected:
 	bool		m_bGotUser;
 	CZNC*		m_pZNC;
 	CUser*		m_pUser;
-	string		m_sNick;
-	string		m_sPass;
-	string		m_sUser;
+	CString		m_sNick;
+	CString		m_sPass;
+	CString		m_sUser;
 	CIRCSock*	m_pIRCSock;
 	unsigned int	m_uKeepNickCounter;
 };

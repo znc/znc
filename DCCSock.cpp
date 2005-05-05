@@ -96,7 +96,7 @@ void CDCCSock::SendPacket() {
 	}
 }
 
-Csock* CDCCSock::GetSockObj(const string& sHost, int iPort) {
+Csock* CDCCSock::GetSockObj(const CString& sHost, int iPort) {
 	Close();
 
 	CDCCSock* pSock = new CDCCSock(m_pUser, m_sRemoteNick, m_sLocalFile, m_sModuleName, m_uFileSize, m_pFile);

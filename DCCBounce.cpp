@@ -1,7 +1,7 @@
 #include "DCCBounce.h"
 
-void CDCCBounce::ReadLine(const string& sData) {
-	string sLine = sData;
+void CDCCBounce::ReadLine(const CString& sData) {
+	CString sLine = sData;
 
 	while ((CUtils::Right(sLine, 1) == "\r") || (CUtils::Right(sLine, 1) == "\n")) {
 		CUtils::RightChomp(sLine);
@@ -20,10 +20,10 @@ void CDCCBounce::ReadData(const char* data, int len) {
 
 void CDCCBounce::Timeout() {
 	DEBUG_ONLY(cout << GetSockName() << " == Timeout()" << endl);
-	string sType = (m_bIsChat) ? "Chat" : "Xfer";
+	CString sType = (m_bIsChat) ? "Chat" : "Xfer";
 
 	if (IsRemote()) {
-		string sHost = Csock::GetHostName();
+		CString sHost = Csock::GetHostName();
 		if (!sHost.empty()) {
 			sHost = " to [" + sHost + ":" + CUtils::ToString(Csock::GetPort()) + "]";
 		} else {
@@ -39,8 +39,8 @@ void CDCCBounce::Timeout() {
 void CDCCBounce::ConnectionRefused() {
 	DEBUG_ONLY(cout << GetSockName() << " == ConnectionRefused()" << endl);
 
-	string sType = (m_bIsChat) ? "Chat" : "Xfer";
-	string sHost = Csock::GetHostName();
+	CString sType = (m_bIsChat) ? "Chat" : "Xfer";
+	CString sHost = Csock::GetHostName();
 	if (!sHost.empty()) {
 		sHost = " to [" + sHost + ":" + CUtils::ToString(Csock::GetPort()) + "]";
 	} else {
@@ -52,17 +52,17 @@ void CDCCBounce::ConnectionRefused() {
 
 void CDCCBounce::SockError(int iErrno) {
 	DEBUG_ONLY(cout << GetSockName() << " == SockError(" << iErrno << ")" << endl);
-	string sType = (m_bIsChat) ? "Chat" : "Xfer";
+	CString sType = (m_bIsChat) ? "Chat" : "Xfer";
 
 	if (IsRemote()) {
-		string sHost = Csock::GetHostName();
+		CString sHost = Csock::GetHostName();
 		if (!sHost.empty()) {
 			sHost = "[" + sHost + ":" + CUtils::ToString(Csock::GetPort()) + "]";
 		}
 
-		m_pUser->PutStatus("DCC " + sType + " Bounce (" + m_sRemoteNick + "): Socket error [" + string(strerror(iErrno)) + "]" + sHost);
+		m_pUser->PutStatus("DCC " + sType + " Bounce (" + m_sRemoteNick + "): Socket error [" + CString(strerror(iErrno)) + "]" + sHost);
 	} else {
-		m_pUser->PutStatus("DCC " + sType + " Bounce (" + m_sRemoteNick + "): Socket error [" + string(strerror(iErrno)) + "] [" + Csock::GetLocalIP() + ":" + CUtils::ToString(Csock::GetLocalPort()) + "]");
+		m_pUser->PutStatus("DCC " + sType + " Bounce (" + m_sRemoteNick + "): Socket error [" + CString(strerror(iErrno)) + "] [" + Csock::GetLocalIP() + ":" + CUtils::ToString(Csock::GetLocalPort()) + "]");
 	}
 }
 
@@ -81,7 +81,7 @@ void CDCCBounce::Shutdown() {
 	Close();
 }
 
-Csock* CDCCBounce::GetSockObj(const string& sHost, int iPort) {
+Csock* CDCCBounce::GetSockObj(const CString& sHost, int iPort) {
 	Close();
 
 	if (!m_pManager) {
@@ -99,7 +99,7 @@ Csock* CDCCBounce::GetSockObj(const string& sHost, int iPort) {
 	pRemoteSock->SetRemote(true);
 	pSock->SetRemote(false);
 
-	if (!m_pManager->Connect(m_sConnectIP, m_uRemotePort, "DCC::" + string((m_bIsChat) ? "Chat" : "XFER") + "::Remote::" + m_sRemoteNick, 60, false, m_sLocalIP, pRemoteSock)) {
+	if (!m_pManager->Connect(m_sConnectIP, m_uRemotePort, "DCC::" + CString((m_bIsChat) ? "Chat" : "XFER") + "::Remote::" + m_sRemoteNick, 60, false, m_sLocalIP, pRemoteSock)) {
 		pRemoteSock->Close();
 	}
 
@@ -108,12 +108,12 @@ Csock* CDCCBounce::GetSockObj(const string& sHost, int iPort) {
 	return pSock;
 }
 
-void CDCCBounce::PutServ(const string& sLine) {
+void CDCCBounce::PutServ(const CString& sLine) {
 	DEBUG_ONLY(cout << GetSockName() << " -> [" << sLine << "]" << endl);
 	Write(sLine + "\r\n");
 }
 
-void CDCCBounce::PutPeer(const string& sLine) {
+void CDCCBounce::PutPeer(const CString& sLine) {
 	if (m_pPeer) {
 		m_pPeer->PutServ(sLine);
 	} else {
@@ -121,9 +121,9 @@ void CDCCBounce::PutPeer(const string& sLine) {
 	}
 }
 
-unsigned short CDCCBounce::DCCRequest(const string& sNick, unsigned long uLongIP, unsigned short uPort, const string& sFileName, bool bIsChat, CUser* pUser, const string& sLocalIP, const string& sRemoteIP) {
+unsigned short CDCCBounce::DCCRequest(const CString& sNick, unsigned long uLongIP, unsigned short uPort, const CString& sFileName, bool bIsChat, CUser* pUser, const CString& sLocalIP, const CString& sRemoteIP) {
 	CDCCBounce* pDCCBounce = new CDCCBounce(pUser, uLongIP, uPort, sFileName, sNick, sRemoteIP, sLocalIP, bIsChat);
-	unsigned short uListenPort = pUser->GetManager()->ListenAllRand("DCC::" + string((bIsChat) ? "Chat" : "Xfer") + "::Local::" + sNick, false, SOMAXCONN, pDCCBounce, 120);
+	unsigned short uListenPort = pUser->GetManager()->ListenAllRand("DCC::" + CString((bIsChat) ? "Chat" : "Xfer") + "::Local::" + sNick, false, SOMAXCONN, pDCCBounce, 120);
 
 	return uListenPort;
 }

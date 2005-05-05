@@ -4,6 +4,7 @@
 #include "Modules.h"
 #include "Chan.h"
 #include "Utils.h"
+#include "String.h"
 #include "FileUtils.h"
 #include "Csocket.h"
 #include "md5.h"
@@ -15,11 +16,14 @@
  * Author: imaginos <imaginos@imaginos.net>
  * 
  * $Log$
+ * Revision 1.9  2005/05/05 18:11:04  prozacx
+ * Changed all references to std::string over to CString
+ *
  * Revision 1.8  2005/05/02 22:34:52  prozacx
  * Get CFile from FileUtils.h now
  *
  * Revision 1.7  2005/04/04 06:35:19  imaginos
- * fixed int32's that test against npos to string::size_type
+ * fixed int32's that test against npos to CString::size_type
  *
  * Revision 1.6  2005/04/03 23:03:06  imaginos
  * show this requires ssl
@@ -60,18 +64,18 @@ class CSChat;
 class CRemMarkerJob : public CTimer 
 {
 public:
-	CRemMarkerJob( CModule* pModule, unsigned int uInterval, unsigned int uCycles, const string& sLabel, const string& sDescription ) 
+	CRemMarkerJob( CModule* pModule, unsigned int uInterval, unsigned int uCycles, const CString& sLabel, const CString& sDescription ) 
 		: CTimer( pModule, uInterval, uCycles, sLabel, sDescription) {}
 
 	virtual ~CRemMarkerJob() {}
-	void SetNick( const string & sNick )
+	void SetNick( const CString & sNick )
 	{
 		m_sNick = sNick;
 	}
 
 protected:
 	virtual void RunJob();
-	string		m_sNick;
+	CString		m_sNick;
 };
 
 class CSChatSock : public Csock
@@ -115,17 +119,17 @@ public:
 	{
 		m_pModule = p;
 	}
-	void SetChatNick( const string & sNick )
+	void SetChatNick( const CString & sNick )
 	{
 		m_sChatNick = sNick;
 	}
 
-	const string & GetChatNick() const { return( m_sChatNick ); }
+	const CString & GetChatNick() const { return( m_sChatNick ); }
 
 	virtual void ReadLine( const CS_STRING & sLine );
 	virtual void Disconnected();
 
-	virtual void AddLine( const string & sLine )
+	virtual void AddLine( const CString & sLine )
 	{
 		m_vBuffer.insert( m_vBuffer.begin(), sLine );
 		if ( m_vBuffer.size() > 200 )
@@ -142,7 +146,7 @@ public:
 
 private:
 	CSChat 					*m_pModule;	
-	string					m_sChatNick;
+	CString					m_sChatNick;
 	vector<CS_STRING>		m_vBuffer;	
 };
 
@@ -154,7 +158,7 @@ public:
 	MODCONSTRUCTOR(CSChat) {}
 	virtual ~CSChat() { CleanSocks(); }
 
-	virtual bool OnLoad( const string & sArgs )
+	virtual bool OnLoad( const CString & sArgs )
 	{
 		m_sPemFile = sArgs;
 
@@ -173,7 +177,7 @@ public:
 
 	virtual void OnUserAttached() 
 	{
-		string sName = "SCHAT::" + m_pUser->GetUserName();
+		CString sName = "SCHAT::" + m_pUser->GetUserName();
 		for( u_int a = 0; a < m_pManager->size(); a++ )
 		{
 			if ( ( strncmp( (*m_pManager)[a]->GetSockName().c_str(), sName.c_str(), sName.length() ) != 0 ) || ( (*m_pManager)[a]->GetType() == CSChatSock::LISTENER ) )
@@ -187,7 +191,7 @@ public:
 
 	void CleanSocks()
 	{
-		string sName = "SCHAT::" + m_pUser->GetUserName();
+		CString sName = "SCHAT::" + m_pUser->GetUserName();
 		for( u_int a= 0; a < m_pManager->size(); a++ )
 		{
 			if ( strncmp( (*m_pManager)[a]->GetSockName().c_str(), sName.c_str(), sName.length() ) == 0 )
@@ -195,16 +199,16 @@ public:
 		}
 	}
 	
-	virtual string GetDescription() 
+	virtual CString GetDescription() 
 	{
 		return ( "Secure cross platform (:P) chat system" );
 	}
 
-	virtual bool OnUserRaw( string & sLine )
+	virtual bool OnUserRaw( CString & sLine )
 	{
 		if ( strncasecmp( sLine.c_str(), "schat ", 6 ) == 0 )
 		{
-			OnModCommand( "chat " + sLine.substr( 6, string::npos ) );
+			OnModCommand( "chat " + sLine.substr( 6, CString::npos ) );
 			return( true );
 
 		} else if ( strcasecmp( sLine.c_str(), "schat" ) == 0 )
@@ -217,22 +221,22 @@ public:
 		
 		return( false );
 	}	
-	virtual void OnModCommand( const string& sCommand ) 
+	virtual void OnModCommand( const CString& sCommand ) 
 	{
-		string::size_type iPos = sCommand.find( " " );
-		string sCom, sArgs;
-		if ( iPos == string::npos )
+		CString::size_type iPos = sCommand.find( " " );
+		CString sCom, sArgs;
+		if ( iPos == CString::npos )
 			sCom = sCommand;
 		else
 		{
 			sCom = sCommand.substr( 0, iPos );
-			sArgs = sCommand.substr( iPos + 1, string::npos );
+			sArgs = sCommand.substr( iPos + 1, CString::npos );
 		}
 
 		if ( ( strcasecmp( sCom.c_str(), "chat" ) == 0 ) && ( !sArgs.empty() ) )
 		{
-			string sSockName = "SCHAT::" + m_pUser->GetUserName();
-			string sNick = "(s)" + sArgs;
+			CString sSockName = "SCHAT::" + m_pUser->GetUserName();
+			CString sNick = "(s)" + sArgs;
 			for( u_int a= 0; a < m_pManager->size(); a++ )
 			{
 				if ( strncmp( (*m_pManager)[a]->GetSockName().c_str(), sSockName.c_str(), sSockName.length() ) != 0 )
@@ -270,7 +274,7 @@ public:
 
 		} else if ( strcasecmp( sCom.c_str(), "list" ) == 0 )
 		{
-			string sName = "SCHAT::" + m_pUser->GetUserName();
+			CString sName = "SCHAT::" + m_pUser->GetUserName();
 			CTable Table;
 			Table.AddColumn( "Nick" );
 			Table.AddColumn( "Created" );
@@ -292,7 +296,7 @@ public:
 				char *pTime = ctime( &iTime );
 				if ( pTime )
 				{
-					string sTime = pTime;
+					CString sTime = pTime;
 					CUtils::Trim( sTime );
 					Table.SetCell( "Created", sTime );
 				}
@@ -315,7 +319,7 @@ public:
 			if ( Table.size() ) 
 			{
 				unsigned int uTableIdx = 0;
-				string sLine;
+				CString sLine;
 				while ( Table.GetLine( uTableIdx++, sLine ) )
 					PutModule( sLine );
 			} else
@@ -323,7 +327,7 @@ public:
 
 		} else if ( strcasecmp( sCom.c_str(), "close" ) == 0 )
 		{
-			string sName = "SCHAT::" + m_pUser->GetUserName();
+			CString sName = "SCHAT::" + m_pUser->GetUserName();
 			for( u_int a= 0; a < m_pManager->size(); a++ )
 			{
 				if ( strncmp( (*m_pManager)[a]->GetSockName().c_str(), sName.c_str(), sName.length() ) != 0 )
@@ -360,7 +364,7 @@ public:
 				char *pTime = ctime( &iTime );
 				if ( pTime )
 				{
-					string sTime = pTime;
+					CString sTime = pTime;
 					CUtils::Trim( sTime );
 					Table.SetCell( "Created", sTime );
 				}
@@ -389,7 +393,7 @@ public:
 			if ( Table.size() ) 
 			{
 				unsigned int uTableIdx = 0;
-				string sLine;
+				CString sLine;
 				while ( Table.GetLine( uTableIdx++, sLine ) )
 					PutModule( sLine );
 			} else
@@ -410,7 +414,7 @@ public:
 			PutModule( "Unknown command [" + sCom + "] [" + sArgs + "]" );
 	}
 
-	virtual bool OnPrivCTCP( const CNick& Nick, string& sMessage )
+	virtual bool OnPrivCTCP( const CNick& Nick, CString& sMessage )
 	{
 		if ( strncasecmp( sMessage.c_str(), "DCC SCHAT ", 10 ) == 0 )
 		{
@@ -435,24 +439,24 @@ public:
 		return( false );
 	}
 
-	void AcceptSDCC( const string & sNick, u_long iIP, u_short iPort )
+	void AcceptSDCC( const CString & sNick, u_long iIP, u_short iPort )
 	{
 		CSChatSock *p = new CSChatSock( CUtils::GetIP( iIP ), iPort, 60 );
 		p->SetModule( this );
 		p->SetChatNick( sNick );
-		string sSockName = "SCHAT::" + m_pUser->GetUserName() +  "::" + sNick;
+		CString sSockName = "SCHAT::" + m_pUser->GetUserName() +  "::" + sNick;
 		m_pManager->Connect( CUtils::GetIP( iIP ), iPort, sSockName, 60, true, m_pUser->GetLocalIP(), p );
 		RemTimer( "Remove " + sNick ); // delete any associated timer to this nick
 	}
-	virtual bool OnUserMsg( const string& sTarget, string& sMessage )
+	virtual bool OnUserMsg( const CString& sTarget, CString& sMessage )
 	{
 		if ( strncmp( sTarget.c_str(), "(s)", 3 ) == 0 )
 		{
-			string sSockName = "SCHAT::" + m_pUser->GetUserName() + "::" + sTarget;
+			CString sSockName = "SCHAT::" + m_pUser->GetUserName() + "::" + sTarget;
 			CSChatSock *p = (CSChatSock *)m_pManager->FindSockByName( sSockName );
 			if ( !p )
 			{
-				map< string,pair< u_long,u_short > >::iterator it = m_siiWaitingChats.find( sTarget );
+				map< CString,pair< u_long,u_short > >::iterator it = m_siiWaitingChats.find( sTarget );
 				if ( it != m_siiWaitingChats.end() )
 				{
 					if ( strcasecmp( sMessage.c_str(), "yes" ) != 0 )
@@ -472,17 +476,17 @@ public:
 		return( false );
 	}
 
-	virtual void RemoveMarker( const string & sNick )
+	virtual void RemoveMarker( const CString & sNick )
 	{
-		map< string,pair< u_long,u_short > >::iterator it = m_siiWaitingChats.find( sNick );
+		map< CString,pair< u_long,u_short > >::iterator it = m_siiWaitingChats.find( sNick );
 		if ( it != m_siiWaitingChats.end() )
 			m_siiWaitingChats.erase( it );
 	}
 
-	void SendToUser( const string & sFrom, const string & sText )
+	void SendToUser( const CString & sFrom, const CString & sText )
 	{
 		//:*schat!znc@znc.com PRIVMSG Jim :
-		string sSend = ":" + sFrom + " PRIVMSG " + m_pUser->GetCurNick() + " :" + sText;
+		CString sSend = ":" + sFrom + " PRIVMSG " + m_pUser->GetCurNick() + " :" + sText;
 		PutUser( sSend );
 	}
 
@@ -492,8 +496,8 @@ public:
 	}
 	
 private:
-	map< string,pair< u_long,u_short > >		m_siiWaitingChats;
-	string		m_sPemFile;
+	map< CString,pair< u_long,u_short > >		m_siiWaitingChats;
+	CString		m_sPemFile;
 };
 
 
@@ -503,7 +507,7 @@ void CSChatSock::ReadLine( const CS_STRING & sLine )
 {
 	if ( m_pModule )
 	{
-		string sText = sLine;
+		CString sText = sLine;
 		if ( sText[sText.length()-1] == '\n' )
 			sText.erase( sText.length()-1, 1 );
 		

@@ -7,7 +7,7 @@
 class CSampleTimer : public CTimer {
 public:
 
-	CSampleTimer(CModule* pModule, unsigned int uInterval, unsigned int uCycles, const string& sLabel, const string& sDescription) : CTimer(pModule, uInterval, uCycles, sLabel, sDescription) {}
+	CSampleTimer(CModule* pModule, unsigned int uInterval, unsigned int uCycles, const CString& sLabel, const CString& sDescription) : CTimer(pModule, uInterval, uCycles, sLabel, sDescription) {}
 	virtual ~CSampleTimer() {}
 
 private:
@@ -21,7 +21,7 @@ class CSampleMod : public CModule {
 public:
 	MODCONSTRUCTOR(CSampleMod) {}
 
-	virtual bool OnLoad(const string& sArgs) {
+	virtual bool OnLoad(const CString& sArgs) {
 		PutModule("I'm being loaded with the arguments: [" + sArgs + "]");
 		//AddTimer(new CSampleTimer(this, 300, 0, "Sample", "Sample timer for sample things."));
 		//AddTimer(new CSampleTimer(this, 5, 20, "Another", "Another sample timer."));
@@ -38,7 +38,7 @@ public:
 		return true;
 	}
 
-	virtual string GetDescription() {
+	virtual CString GetDescription() {
 		return "To be used as a sample for writing modules.";
 	}
 
@@ -66,25 +66,25 @@ public:
 		PutModule(((bNoChange) ? "[0] " : "[1] [") + OpNick.GetNick() + "] devoiced [" + Nick.GetNick() + "] on [" + Channel.GetName() + "]");
 	}
 
-	virtual void OnRawMode(const CNick& OpNick, const CChan& Channel, const string& sModes, const string& sArgs) {
+	virtual void OnRawMode(const CNick& OpNick, const CChan& Channel, const CString& sModes, const CString& sArgs) {
 		PutModule("* " + OpNick.GetNick() + " sets mode: " + sModes + " " + sArgs + " (" + Channel.GetName() + ")");
 	}
 
-	virtual bool OnRaw(string& sLine) {
+	virtual bool OnRaw(CString& sLine) {
 	//	PutModule("OnRaw() [" + sLine + "]");
 		return false;
 	}
 
-	virtual bool OnUserRaw(string& sLine) {
+	virtual bool OnUserRaw(CString& sLine) {
 	//	PutModule("UserRaw() [" + sLine + "]");
 		return false;
 	}
 
-	virtual void OnKick(const CNick& OpNick, const string& sKickedNick, const CChan& Channel, const string& sMessage) {
+	virtual void OnKick(const CNick& OpNick, const CString& sKickedNick, const CChan& Channel, const CString& sMessage) {
 		PutModule("[" + OpNick.GetNick() + "] kicked [" + sKickedNick + "] from [" + Channel.GetName() + "] with the msg [" + sMessage + "]");
 	}
 
-	virtual void OnQuit(const CNick& Nick, const string& sMessage, const vector<CChan*>& vChans) {
+	virtual void OnQuit(const CNick& Nick, const CString& sMessage, const vector<CChan*>& vChans) {
 		PutModule("* Quits: " + Nick.GetNick() + " (" + Nick.GetIdent() + "!" + Nick.GetHost() + ") (" + sMessage + ")");
 	}
 
@@ -96,79 +96,79 @@ public:
 		PutModule("* Parts: " + Nick.GetNick() + " (" + Nick.GetIdent() + "!" + Nick.GetHost() + ")");
 	}
 
-	virtual void OnNick(const CNick& OldNick, const string& sNewNick, const vector<CChan*>& vChans) {
+	virtual void OnNick(const CNick& OldNick, const CString& sNewNick, const vector<CChan*>& vChans) {
 		PutModule("* " + OldNick.GetNick() + " is now known as " + sNewNick);
 	}
 
-	virtual bool OnUserCTCPReply(const CNick& Nick, string& sMessage) {
+	virtual bool OnUserCTCPReply(const CNick& Nick, CString& sMessage) {
 		PutModule("[" + Nick.GetNick() + "] userctcpreply [" + sMessage + "]");
 		sMessage = "\037" + sMessage + "\037";
 
 		return false;
 	}
 
-	virtual bool OnCTCPReply(const CNick& Nick, string& sMessage) {
+	virtual bool OnCTCPReply(const CNick& Nick, CString& sMessage) {
 		PutModule("[" + Nick.GetNick() + "] ctcpreply [" + sMessage + "]");
 
 		return false;
 	}
 
-	virtual bool OnUserCTCP(const string& sTarget, string& sMessage) {
+	virtual bool OnUserCTCP(const CString& sTarget, CString& sMessage) {
 		PutModule("[" + sTarget + "] userctcp [" + sMessage + "]");
 
 		return false;
 	}
 
-	virtual bool OnPrivCTCP(const CNick& Nick, string& sMessage) {
+	virtual bool OnPrivCTCP(const CNick& Nick, CString& sMessage) {
 		PutModule("[" + Nick.GetNick() + "] privctcp [" + sMessage + "]");
 		sMessage = "\002" + sMessage + "\002";
 
 		return false;
 	}
 
-	virtual bool OnChanCTCP(const CNick& Nick, const CChan& Channel, string& sMessage) {
+	virtual bool OnChanCTCP(const CNick& Nick, const CChan& Channel, CString& sMessage) {
 		PutModule("[" + Nick.GetNick() + "] chanctcp [" + sMessage + "] to [" + Channel.GetName() + "]");
 		sMessage = "\00311,5 " + sMessage + " \003";
 
 		return false;
 	}
 
-	virtual bool OnUserNotice(const string& sTarget, string& sMessage) {
+	virtual bool OnUserNotice(const CString& sTarget, CString& sMessage) {
 		PutModule("[" + sTarget + "] usernotice [" + sMessage + "]");
 		sMessage = "\037" + sMessage + "\037";
 
 		return false;
 	}
 
-	virtual bool OnPrivNotice(const CNick& Nick, string& sMessage) {
+	virtual bool OnPrivNotice(const CNick& Nick, CString& sMessage) {
 		PutModule("[" + Nick.GetNick() + "] privnotice [" + sMessage + "]");
 		sMessage = "\002" + sMessage + "\002";
 
 		return false;
 	}
 
-	virtual bool OnChanNotice(const CNick& Nick, const CChan& Channel, string& sMessage) {
+	virtual bool OnChanNotice(const CNick& Nick, const CChan& Channel, CString& sMessage) {
 		PutModule("[" + Nick.GetNick() + "] channotice [" + sMessage + "] to [" + Channel.GetName() + "]");
 		sMessage = "\00311,5 " + sMessage + " \003";
 
 		return false;
 	}
 
-	virtual bool OnUserMsg(const string& sTarget, string& sMessage) {
+	virtual bool OnUserMsg(const CString& sTarget, CString& sMessage) {
 		PutModule("[" + sTarget + "] usermsg [" + sMessage + "]");
 		sMessage = "\0034" + sMessage + "\003";
 
 		return false;
 	}
 
-	virtual bool OnPrivMsg(const CNick& Nick, string& sMessage) {
+	virtual bool OnPrivMsg(const CNick& Nick, CString& sMessage) {
 		PutModule("[" + Nick.GetNick() + "] privmsg [" + sMessage + "]");
 		sMessage = "\002" + sMessage + "\002";
 
 		return false;
 	}
 
-	virtual bool OnChanMsg(const CNick& Nick, const CChan& Channel, string& sMessage) {
+	virtual bool OnChanMsg(const CNick& Nick, const CChan& Channel, CString& sMessage) {
 		if (sMessage == "!ping") {
 			PutIRC("PRIVMSG " + Channel.GetName() + " :PONG?");
 		}
@@ -178,13 +178,13 @@ public:
 		return false;
 	}
 
-	virtual void OnModCommand(const string& sCommand) {
+	virtual void OnModCommand(const CString& sCommand) {
 		if (strcasecmp(sCommand.c_str(), "TIMERS") == 0) {
 			ListTimers();
 		}
 	}
 
-	virtual bool OnStatusCommand(const string& sCommand) {
+	virtual bool OnStatusCommand(const CString& sCommand) {
 		if (strcasecmp(sCommand.c_str(), "SAMPLE") == 0) {
 			PutModule("Hi, I'm your friendly sample module.");
 			return true;

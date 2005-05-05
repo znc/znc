@@ -23,7 +23,7 @@ CZNC::~CZNC() {
 	DeleteUsers();
 }
 
-string CZNC::GetTag(bool bIncludeVersion) {
+CString CZNC::GetTag(bool bIncludeVersion) {
 	if (!bIncludeVersion) {
 		return "ZNC - by prozac@gmail.com";
 	}
@@ -36,7 +36,7 @@ string CZNC::GetTag(bool bIncludeVersion) {
 }
 
 bool CZNC::OnBoot() {
-	for (map<string,CUser*>::iterator it = m_msUsers.begin(); it != m_msUsers.end(); it++) {
+	for (map<CString,CUser*>::iterator it = m_msUsers.begin(); it != m_msUsers.end(); it++) {
 		if (!it->second->OnBoot()) {
 			return false;
 		}
@@ -60,7 +60,7 @@ int CZNC::Loop() {
 			m_itUserIter = m_msUsers.begin();
 		}
 
-		string sSockName = "IRC::" + m_itUserIter->first;
+		CString sSockName = "IRC::" + m_itUserIter->first;
 		CUser* pUser = m_itUserIter->second;
 
 		m_itUserIter++;
@@ -157,7 +157,7 @@ bool CZNC::WritePidFile(int iPid) {
 }
 
 void CZNC::DeleteUsers() {
-	for (map<string,CUser*>::iterator a = m_msUsers.begin(); a != m_msUsers.end(); a++) {
+	for (map<CString,CUser*>::iterator a = m_msUsers.begin(); a != m_msUsers.end(); a++) {
 		delete a->second;
 	}
 
@@ -165,13 +165,13 @@ void CZNC::DeleteUsers() {
 	m_itUserIter = m_msUsers.end();
 }
 
-CUser* CZNC::GetUser(const string& sUser) {
+CUser* CZNC::GetUser(const CString& sUser) {
 	// Todo: make this case insensitive
-	map<string,CUser*>::iterator it = m_msUsers.find(sUser);
+	map<CString,CUser*>::iterator it = m_msUsers.find(sUser);
 	return (it == m_msUsers.end()) ? NULL : it->second;
 }
 
-Csock* CZNC::FindSockByName(const string& sSockName) {
+Csock* CZNC::FindSockByName(const CString& sSockName) {
 	return m_Manager.FindSockByName(sSockName);
 }
 
@@ -193,8 +193,8 @@ bool CZNC::Listen() {
 	return m_Manager.ListenAll(m_uListenPort, "_LISTENER", bSSL, SOMAXCONN, pUserSock);
 }
 
-bool CZNC::IsHostAllowed(const string& sHostMask) {
-	for (map<string,CUser*>::iterator a = m_msUsers.begin(); a != m_msUsers.end(); a++) {
+bool CZNC::IsHostAllowed(const CString& sHostMask) {
+	for (map<CString,CUser*>::iterator a = m_msUsers.begin(); a != m_msUsers.end(); a++) {
 		if (a->second->IsHostAllowed(sHostMask)) {
 			return true;
 		}
@@ -203,13 +203,13 @@ bool CZNC::IsHostAllowed(const string& sHostMask) {
 	return false;
 }
 
-void CZNC::InitDirs(const string& sArgvPath) {
+void CZNC::InitDirs(const CString& sArgvPath) {
 	char buf[PATH_MAX];
 	getcwd(buf, PATH_MAX);
 
 	// If the bin was not ran from the current directory, we need to add that dir onto our cwd
-	string::size_type uPos = sArgvPath.rfind('/');
-	m_sCurPath = (uPos == string::npos) ? string(buf) : CUtils::ChangeDir(buf, sArgvPath.substr(0, uPos), "");
+	CString::size_type uPos = sArgvPath.rfind('/');
+	m_sCurPath = (uPos == CString::npos) ? CString(buf) : CUtils::ChangeDir(buf, sArgvPath.substr(0, uPos), "");
 
 	// Try to set the user's home dir, default to binpath on failure
 	struct passwd* pUserInfo = getpwuid(getuid());
@@ -231,8 +231,8 @@ void CZNC::InitDirs(const string& sArgvPath) {
 }
 
 
-string CZNC::GetConfigPath(const string& sConfigFile) {
-	string sRetPath;
+CString CZNC::GetConfigPath(const CString& sConfigFile) {
+	CString sRetPath;
 
 	if (sConfigFile.empty()) {
 		sRetPath = GetZNCPath() + "/znc.conf";
@@ -249,9 +249,9 @@ string CZNC::GetConfigPath(const string& sConfigFile) {
 	return sRetPath;
 }
 
-bool CZNC::WriteNewConfig(const string& sConfig) {
-	string sAnswer, sUser;
-	vector<string> vsLines;
+bool CZNC::WriteNewConfig(const CString& sConfig) {
+	CString sAnswer, sUser;
+	vector<CString> vsLines;
 	bool bAnswer = false;
 
 	CUtils::PrintMessage("");
@@ -265,7 +265,7 @@ bool CZNC::WriteNewConfig(const string& sConfig) {
 	bAnswer = CUtils::GetBoolInput("Would you like ZNC to listen using SSL?", false);
 #endif
 
-	vsLines.push_back("ListenPort = " + string((bAnswer) ? "+" : "") + CUtils::ToString(uPort));
+	vsLines.push_back("ListenPort = " + CString((bAnswer) ? "+" : "") + CUtils::ToString(uPort));
 	// !ListenPort
 
 	// User
@@ -275,7 +275,7 @@ bool CZNC::WriteNewConfig(const string& sConfig) {
 
 	do {
 		vsLines.push_back("");
-		string sNick;
+		CString sNick;
 		do {
 			CUtils::GetInput("Username", sUser, "", "AlphaNumeric");
 		} while (!CUser::IsValidUserName(sUser));
@@ -320,13 +320,13 @@ bool CZNC::WriteNewConfig(const string& sConfig) {
 			if (CUtils::GetBoolInput("Do you want to automatically load any modules at all?")) {
 				for (set<CModInfo>::iterator it = ssMods.begin(); it != ssMods.end(); it++) {
 					const CModInfo& Info = *it;
-					string sName = Info.GetName();
+					CString sName = Info.GetName();
 
 					if (strcasecmp(CUtils::Right(sName, 3).c_str(), ".so") == 0) {
 						CUtils::RightChomp(sName, 3);
 					}
 
-					if (CUtils::GetBoolInput("Load " + string((Info.IsSystem()) ? "system" : "local") + " module <\033[1m" + sName + "\033[22m>?", false)) {
+					if (CUtils::GetBoolInput("Load " + CString((Info.IsSystem()) ? "system" : "local") + " module <\033[1m" + sName + "\033[22m>?", false)) {
 						vsLines.push_back("\tLoadModule = " + sName);
 					}
 				}
@@ -339,7 +339,7 @@ bool CZNC::WriteNewConfig(const string& sConfig) {
 		CUtils::PrintMessage("");
 
 		do {
-			string sHost, sPass;
+			CString sHost, sPass;
 			bool bSSL = false;
 			unsigned int uPort = 0;
 
@@ -359,8 +359,8 @@ bool CZNC::WriteNewConfig(const string& sConfig) {
 		CUtils::PrintMessage("-- Channels --");
 		CUtils::PrintMessage("");
 
-		string sArg = "a";
-		string sPost = " for ZNC to automatically join?";
+		CString sArg = "a";
+		CString sPost = " for ZNC to automatically join?";
 		bool bDefault = true;
 
 		while (CUtils::GetBoolInput("Would you like to add " + sArg + " channel" + sPost, bDefault)) {
@@ -378,7 +378,7 @@ bool CZNC::WriteNewConfig(const string& sConfig) {
 	} while (CUtils::GetBoolInput("Would you like to setup another user?", false));
 	// !User
 
-	string sConfigFile = GetConfigPath(sConfig);
+	CString sConfigFile = GetConfigPath(sConfig);
 	CUtils::PrintAction("Writing config [" + sConfigFile + "]");
 	CFile File(sConfigFile);
 
@@ -406,9 +406,9 @@ bool CZNC::WriteNewConfig(const string& sConfig) {
 	return true;
 }
 
-bool CZNC::ParseConfig(const string& sConfig) {
-	string sStatusPrefix;
-	string sConfigFile = GetConfigPath(sConfig);
+bool CZNC::ParseConfig(const CString& sConfig) {
+	CString sStatusPrefix;
+	CString sConfigFile = GetConfigPath(sConfig);
 
 	CUtils::PrintAction("Opening Config [" + sConfigFile + "]");
 
@@ -441,7 +441,7 @@ bool CZNC::ParseConfig(const string& sConfig) {
 
 	CUtils::PrintStatus(true);
 
-	string sLine;
+	CString sLine;
 	bool bCommented = false;	// support for /**/ style comments
 	bool bAutoCycle = true;
 	CUser* pUser = NULL;	// Used to keep track of which user block we are in
@@ -477,14 +477,14 @@ bool CZNC::ParseConfig(const string& sConfig) {
 			CUtils::RightChomp(sLine);
 			CUtils::Trim(sLine);
 
-			string sTag = sLine.substr(0, sLine.find_first_of(" \t\r\n"));
-			string sValue = (sTag.size() < sLine.size()) ? sLine.substr(sTag.size() +1) : "";
+			CString sTag = sLine.substr(0, sLine.find_first_of(" \t\r\n"));
+			CString sValue = (sTag.size() < sLine.size()) ? sLine.substr(sTag.size() +1) : "";
 
 			CUtils::Trim(sTag);
 			CUtils::Trim(sValue);
 
 			if (CUtils::Left(sLine, 1) == "/") {
-				string sTag = sLine.substr(1);
+				CString sTag = sLine.substr(1);
 
 				if (pUser) {
 					if (pChan) {
@@ -494,7 +494,7 @@ bool CZNC::ParseConfig(const string& sConfig) {
 							continue;
 						}
 					} else if (strcasecmp(sTag.c_str(), "User") == 0) {
-						string sErr;
+						CString sErr;
 
 						if (!pUser->IsValid(sErr)) {
 							CUtils::PrintError("Invalid user [" + pUser->GetUserName() + "] " + sErr);
@@ -552,8 +552,8 @@ bool CZNC::ParseConfig(const string& sConfig) {
 		}
 
 		// If we have a regular line, figure out where it goes
-		string sName = CUtils::Token(sLine, 0, false, '=');
-		string sValue = CUtils::Token(sLine, 1, true, '=');
+		CString sName = CUtils::Token(sLine, 0, false, '=');
+		CString sValue = CUtils::Token(sLine, 1, true, '=');
 		CUtils::Trim(sName);
 		CUtils::Trim(sValue);
 
@@ -649,11 +649,11 @@ bool CZNC::ParseConfig(const string& sConfig) {
 						pUser->AddChan(sValue);
 						continue;
 					} else if (strcasecmp(sName.c_str(), "LoadModule") == 0) {
-						string sModName = CUtils::Token(sValue, 0);
+						CString sModName = CUtils::Token(sValue, 0);
 						CUtils::PrintAction("Loading Module [" + sModName + "]");
 #ifdef _MODULES
-						string sModRet;
-						string sArgs = CUtils::Token(sValue, 1, true);
+						CString sModRet;
+						CString sArgs = CUtils::Token(sValue, 1, true);
 
 						try {
 							bool bModRet = pUser->GetModules().LoadModule(sModName, sArgs, pUser, sModRet);
@@ -671,14 +671,14 @@ bool CZNC::ParseConfig(const string& sConfig) {
 			} else {
 				if (strcasecmp(sName.c_str(), "ListenPort") == 0) {
 					m_bSSL = false;
-					string sPort = sValue;
+					CString sPort = sValue;
 					if (CUtils::Left(sPort, 1) == "+") {
 						CUtils::LeftChomp(sPort);
 						m_bSSL = true;
 					}
 
 					m_uListenPort = strtol(sPort.c_str(), NULL, 10);
-					CUtils::PrintAction("Binding to port [" + string((m_bSSL) ? "+" : "") + CUtils::ToString(m_uListenPort) + "]");
+					CUtils::PrintAction("Binding to port [" + CString((m_bSSL) ? "+" : "") + CUtils::ToString(m_uListenPort) + "]");
 
 #ifndef HAVE_LIBSSL
 					if (m_bSSL) {
@@ -686,7 +686,7 @@ bool CZNC::ParseConfig(const string& sConfig) {
 						return false;
 					}
 #else
-					string sPemFile = GetPemLocation();
+					CString sPemFile = GetPemLocation();
 
 					if ((m_bSSL) && (!CFile::Exists(sPemFile))) {
 						CUtils::PrintStatus(false, "Unable to locate pem file: [" + sPemFile + "]");
@@ -714,7 +714,7 @@ bool CZNC::ParseConfig(const string& sConfig) {
 							return false;
 						}
 
-						CUtils::PrintAction("Binding to port [" + string((m_bSSL) ? "+" : "") + CUtils::ToString(m_uListenPort) + "]");
+						CUtils::PrintAction("Binding to port [" + CString((m_bSSL) ? "+" : "") + CUtils::ToString(m_uListenPort) + "]");
 					}
 #endif
 					if (!m_uListenPort) {

@@ -16,7 +16,7 @@ class CShellMod;
 
 class CExecSock : public Csock {
 public:
-	CExecSock(CShellMod* pShellMod, const string& sExec) : Csock() {
+	CExecSock(CShellMod* pShellMod, const CString& sExec) : Csock() {
 		EnableReadLine();
 		m_pParent = pShellMod;
 		int iReadFD, iWriteFD;
@@ -31,13 +31,13 @@ public:
 	}
 
 	// These next two function's bodies are at the bottom of the file since they reference CShellMod
-	virtual void ReadLine(const string& sData);
+	virtual void ReadLine(const CString& sData);
 	virtual void Disconnected();
 
 	CShellMod*	m_pParent;
 	int			m_iPid;
 
-	int popen2(int & iReadFD, int & iWriteFD, const string & sCommand) {
+	int popen2(int & iReadFD, int & iWriteFD, const CString & sCommand) {
 		int rpipes[2] = { -1, -1 };
 		int wpipes[2] = { -1, -1 };
 		iReadFD = -1;
@@ -101,13 +101,13 @@ public:
 		}
 	}
 
-	virtual string GetDescription() {
+	virtual CString GetDescription() {
 		return "Gives shell access.";
 	}
 
-	virtual void OnModCommand(const string& sCommand) {
+	virtual void OnModCommand(const CString& sCommand) {
 		if ((strcasecmp(sCommand.c_str(), "cd") == 0) || (strncasecmp(sCommand.c_str(), "cd ", 3) == 0)) {
-			string sPath = CUtils::ChangeDir(m_sPath, ((sCommand.length() == 2) ? m_pUser->GetHomePath() : sCommand.substr(3)), m_pUser->GetHomePath());
+			CString sPath = CUtils::ChangeDir(m_sPath, ((sCommand.length() == 2) ? CString(m_pUser->GetHomePath()) : CString(sCommand.substr(3))), m_pUser->GetHomePath());
 			CFile Dir(sPath);
 
 			if (Dir.IsDir()) {
@@ -120,8 +120,8 @@ public:
 
 			PutShell("znc$");
 		} else if (strcasecmp(CUtils::Token(sCommand, 0).c_str(), "SEND") == 0) {
-			string sToNick = CUtils::Token(sCommand, 1);
-			string sFile = CUtils::Token(sCommand, 2);
+			CString sToNick = CUtils::Token(sCommand, 1);
+			CString sFile = CUtils::Token(sCommand, 2);
 
 			if ((sToNick.empty()) || (sFile.empty())) {
 				PutShell("usage: Send <nick> <file>");
@@ -137,7 +137,7 @@ public:
 				}
 			}
 		} else if (strcasecmp(CUtils::Token(sCommand, 0).c_str(), "GET") == 0) {
-			string sFile = CUtils::Token(sCommand, 1);
+			CString sFile = CUtils::Token(sCommand, 1);
 
 			if (sFile.empty()) {
 				PutShell("usage: Get <file>");
@@ -157,7 +157,7 @@ public:
 		}
 	}
 
-	virtual bool OnStatusCommand(const string& sCommand) {
+	virtual bool OnStatusCommand(const CString& sCommand) {
 		if (strcasecmp(sCommand.c_str(), "SHELL") == 0) {
 			PutShell("-- ZNC Shell Service --");
 			return true;
@@ -166,9 +166,9 @@ public:
 		return false;
 	}
 
-	virtual bool OnDCCUserSend(const CNick& RemoteNick, unsigned long uLongIP, unsigned short uPort, const string& sFile, unsigned long uFileSize) {
-		if (strcasecmp(RemoteNick.GetNick().c_str(), string(GetModNick()).c_str()) == 0) {
-			string sLocalFile = CUtils::ChangeDir(m_sPath, sFile, m_pUser->GetHomePath());
+	virtual bool OnDCCUserSend(const CNick& RemoteNick, unsigned long uLongIP, unsigned short uPort, const CString& sFile, unsigned long uFileSize) {
+		if (strcasecmp(RemoteNick.GetNick().c_str(), CString(GetModNick()).c_str()) == 0) {
+			CString sLocalFile = CUtils::ChangeDir(m_sPath, sFile, m_pUser->GetHomePath());
 
 			m_pUser->GetFile(m_pUser->GetCurNick(), CUtils::GetIP(uLongIP), uPort, sLocalFile, uFileSize, GetModName());
 
@@ -178,11 +178,11 @@ public:
 		return false;
 	}
 
-	void PutShell(const string& sLine) {
-		string sPath = m_sPath;
+	void PutShell(const CString& sLine) {
+		CString sPath = m_sPath;
 
-		string::size_type a = sPath.find(' ');
-		while (a != string::npos) {
+		CString::size_type a = sPath.find(' ');
+		while (a != CString::npos) {
 			sPath.replace(a, 1, "_");
 			a = sPath.find(' ');
 		}
@@ -190,22 +190,22 @@ public:
 		PutModule(sLine, m_pUser->GetCurNick(), sPath);
 	}
 
-	void RunCommand(const string& sCommand) {
+	void RunCommand(const CString& sCommand) {
 		m_pManager->AddSock((Csock*) new CExecSock(this, "cd " + m_sPath + " && " + sCommand), "SHELL");
 	}
 private:
-	string	m_sPath;
+	CString	m_sPath;
 };
 
-void CExecSock::ReadLine(const string& sData) {
-	string sLine = sData;
+void CExecSock::ReadLine(const CString& sData) {
+	CString sLine = sData;
 
 	while ((sLine.length()) && (sLine[sLine.length() -1] == '\r') || (sLine[sLine.length() -1] == '\n')) {
 		sLine = sLine.substr(0, sLine.length() -1);
 	}
 
-	string::size_type a = sLine.find('\t');
-	while (a != string::npos) {
+	CString::size_type a = sLine.find('\t');
+	while (a != CString::npos) {
 		sLine.replace(a, 1, "    ");
 		a = sLine.find('\t');
 	}

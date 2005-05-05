@@ -3,7 +3,7 @@
 #include "User.h"
 #include "Utils.h"
 
-CChan::CChan(const string& sName, CUser* pUser) {
+CChan::CChan(const CString& sName, CUser* pUser) {
 	m_sName = CUtils::Token(sName, 0);
 	m_sKey = CUtils::Token(sName, 1);
 
@@ -56,10 +56,10 @@ void CChan::JoinUser() {
 		m_pUser->PutUser(":" + m_pUser->GetIRCServer() + " 333 " + m_pUser->GetIRCNick().GetNick() + " " + GetName() + " " + GetTopicOwner() + " " + CUtils::ToString(GetTopicDate()));
 	}
 
-	string sPre = ":" + m_pUser->GetIRCServer() + " 353 " + m_pUser->GetIRCNick().GetNick() + " = " + GetName() + " :";
-	string sLine = sPre;
+	CString sPre = ":" + m_pUser->GetIRCServer() + " 353 " + m_pUser->GetIRCNick().GetNick() + " = " + GetName() + " :";
+	CString sLine = sPre;
 
-	for (map<string,CNick*>::iterator a = m_msNicks.begin(); a != m_msNicks.end(); a++) {
+	for (map<CString,CNick*>::iterator a = m_msNicks.begin(); a != m_msNicks.end(); a++) {
 		if (a->second->IsOp()) {
 			sLine += "@";
 		} else if (a->second->IsVoice()) {
@@ -84,7 +84,7 @@ void CChan::JoinUser() {
 
 void CChan::SendBuffer() {
 	if (m_pUser->IsUserAttached()) {
-		const vector<string>& vsBuffer = GetBuffer();
+		const vector<CString>& vsBuffer = GetBuffer();
 
 		if (vsBuffer.size()) {
 			m_pUser->PutUser(":***!znc@znc.com PRIVMSG " + GetName() + " :Buffer Playback...");
@@ -107,8 +107,8 @@ void CChan::DetachUser() {
 	m_bDetached = true;
 }
 
-string CChan::GetModeString() const {
-	string sRet;
+CString CChan::GetModeCString() const {
+	CString sRet;
 
 	if (m_uModes & Secret) { sRet += "s"; }
 	if (m_uModes & Private) { sRet += "p"; }
@@ -122,7 +122,7 @@ string CChan::GetModeString() const {
 	return (sRet.empty()) ? sRet : ("+" + sRet);
 }
 
-void CChan::SetModes(const string& sModes) {
+void CChan::SetModes(const CString& sModes) {
 	m_uModes = 0;
 	m_uLimit = 0;
 	m_sKey = "";
@@ -151,7 +151,7 @@ bool CChan::Who() {
 	return true;
 }
 
-void CChan::OnWho(const string& sNick, const string& sIdent, const string& sHost) {
+void CChan::OnWho(const CString& sNick, const CString& sIdent, const CString& sHost) {
 	CNick* pNick = FindNick(sNick);
 
 	if (pNick) {
@@ -160,9 +160,9 @@ void CChan::OnWho(const string& sNick, const string& sIdent, const string& sHost
 	}
 }
 
-void CChan::ModeChange(const string& sModes, const string& sOpNick) {
-	string sModeArg = CUtils::Token(sModes, 0);
-	string sArgs = CUtils::Token(sModes, 1, true);
+void CChan::ModeChange(const CString& sModes, const CString& sOpNick) {
+	CString sModeArg = CUtils::Token(sModes, 0);
+	CString sArgs = CUtils::Token(sModes, 1, true);
 	bool bAdd = true;
 
 #ifdef _MODULES
@@ -193,27 +193,27 @@ void CChan::ModeChange(const string& sModes, const string& sOpNick) {
 	}
 }
 
-string CChan::GetModeArg(string& sArgs) const {
-	string sRet = sArgs.substr(0, sArgs.find(' '));
+CString CChan::GetModeArg(CString& sArgs) const {
+	CString sRet = sArgs.substr(0, sArgs.find(' '));
 	sArgs = (sRet.size() < sArgs.size()) ? sArgs.substr(sRet.size() +1) : "";
 	return sRet;
 }
 
 void CChan::ClearNicks() {
-	for (map<string,CNick*>::iterator a = m_msNicks.begin(); a != m_msNicks.end(); a++) {
+	for (map<CString,CNick*>::iterator a = m_msNicks.begin(); a != m_msNicks.end(); a++) {
 		delete a->second;
 	}
 
 	m_msNicks.clear();
 }
 
-int CChan::AddNicks(const string& sNicks) {
+int CChan::AddNicks(const CString& sNicks) {
 	if (IsOn()) {
 		return 0;
 	}
 
 	int iRet = 0;
-	string sCurNick;
+	CString sCurNick;
 
 	for (unsigned int a = 0; a < sNicks.size(); a++) {
 		switch (sNicks[a]) {
@@ -240,7 +240,7 @@ int CChan::AddNicks(const string& sNicks) {
 	return iRet;
 }
 
-bool CChan::AddNick(const string& sNick) {
+bool CChan::AddNick(const CString& sNick) {
 	const char* p = sNick.c_str();
 	bool bIsOp = false;
 	bool bIsVoice = false;
@@ -284,8 +284,8 @@ bool CChan::AddNick(const string& sNick) {
 	return true;
 }
 
-bool CChan::RemNick(const string& sNick) {
-	map<string,CNick*>::iterator it = m_msNicks.find(sNick);
+bool CChan::RemNick(const CString& sNick) {
+	map<CString,CNick*>::iterator it = m_msNicks.find(sNick);
 	if (it == m_msNicks.end()) {
 		return false;
 	}
@@ -311,8 +311,8 @@ bool CChan::RemNick(const string& sNick) {
 	return true;
 }
 
-bool CChan::ChangeNick(const string& sOldNick, const string& sNewNick) {
-	map<string,CNick*>::iterator it = m_msNicks.find(sOldNick);
+bool CChan::ChangeNick(const CString& sOldNick, const CString& sNewNick) {
+	map<CString,CNick*>::iterator it = m_msNicks.find(sOldNick);
 
 	if (it == m_msNicks.end()) {
 		return false;
@@ -328,7 +328,7 @@ bool CChan::ChangeNick(const string& sOldNick, const string& sNewNick) {
 	return true;
 }
 
-void CChan::OnOp(const string& sOpNick, const string& sNick, bool bOpped) {
+void CChan::OnOp(const CString& sOpNick, const CString& sNick, bool bOpped) {
 	CNick* pNick = FindNick(sNick);
 
 	if (pNick) {
@@ -359,7 +359,7 @@ void CChan::OnOp(const string& sOpNick, const string& sNick, bool bOpped) {
 	}
 }
 
-void CChan::OnVoice(const string& sOpNick, const string& sNick, bool bVoiced) {
+void CChan::OnVoice(const CString& sOpNick, const CString& sNick, bool bVoiced) {
 	CNick* pNick = FindNick(sNick);
 
 	if (pNick) {
@@ -391,12 +391,12 @@ void CChan::OnVoice(const string& sOpNick, const string& sNick, bool bVoiced) {
 	}
 }
 
-CNick* CChan::FindNick(const string& sNick) const {
-	map<string,CNick*>::const_iterator it = m_msNicks.find(sNick);
+CNick* CChan::FindNick(const CString& sNick) const {
+	map<CString,CNick*>::const_iterator it = m_msNicks.find(sNick);
 	return (it != m_msNicks.end()) ? it->second : NULL;
 }
 
-int CChan::AddBuffer(const string& sLine) {
+int CChan::AddBuffer(const CString& sLine) {
 	// Todo: revisit the buffering
 	if (!m_uBufferCount) {
 		return 0;

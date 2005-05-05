@@ -121,21 +121,21 @@ unsigned long CUtils::GetLongIP(const string& sIP) {
 	return (unsigned long) ((atoi(ip[0]) << 24) + (atoi(ip[1]) << 16) + (atoi(ip[2]) << 8) + atoi(ip[3]));
 }
 
-string CUtils::ChangeDir(const string& sPath, const string& sAdd, const string& sHomeDir) {
+CString CUtils::ChangeDir(const CString& sPath, const CString& sAdd, const CString& sHomeDir) {
 	if (sAdd == "~") {
 		return sHomeDir;
 	}
 
-	string sAddDir = sAdd;
+	CString sAddDir = sAdd;
 
 	if (CUtils::Left(sAddDir, 2) == "~/") {
 		CUtils::LeftChomp(sAddDir);
 		sAddDir = sHomeDir + sAddDir;
 	}
 
-	string sRet = ((sAddDir.size()) && (sAddDir[0] == '/')) ? "" : sPath;
+	CString sRet = ((sAddDir.size()) && (sAddDir[0] == '/')) ? "" : sPath;
 	sAddDir += "/";
-	string sCurDir;
+	CString sCurDir;
 
 	if (CUtils::Right(sRet, 1) == "/") {
 		CUtils::RightChomp(sRet);

@@ -26,8 +26,11 @@
  * better solution then plain text.
  * 
  * $Log$
+ * Revision 1.19  2005/05/05 18:11:04  prozacx
+ * Changed all references to std::string over to CString
+ *
  * Revision 1.18  2005/04/24 08:05:41  prozacx
- * Fixed literal strings of 'savebuff' to now use GetModName() and removed redundant prefix from filenames
+ * Fixed literal CStrings of 'savebuff' to now use GetModName() and removed redundant prefix from filenames
  *
  * Revision 1.17  2005/04/23 18:24:38  imaginos
  * only work on chans where keepbuffer is true
@@ -75,7 +78,7 @@
  * Changed path to DataPath
  *
  * Revision 1.2  2005/04/04 06:35:19  imaginos
- * fixed int32's that test against npos to string::size_type
+ * fixed int32's that test against npos to CString::size_type
  *
  * Revision 1.1  2005/03/30 19:36:20  imaginos
  * rename files
@@ -97,7 +100,7 @@ class CSaveBuff;
 class CSaveBuffJob : public CTimer 
 {
 public:
-	CSaveBuffJob( CModule* pModule, unsigned int uInterval, unsigned int uCycles, const string& sLabel, const string& sDescription ) 
+	CSaveBuffJob( CModule* pModule, unsigned int uInterval, unsigned int uCycles, const CString& sLabel, const CString& sDescription ) 
 		: CTimer( pModule, uInterval, uCycles, sLabel, sDescription) {}
 
 	virtual ~CSaveBuffJob() {}
@@ -123,7 +126,7 @@ public:
 		}
 	}
 
-	virtual bool OnLoad(const string& sArgs)
+	virtual bool OnLoad(const CString& sArgs)
 	{
 		if (!sArgs.empty())
 		{
@@ -164,13 +167,13 @@ public:
 
 	bool BootStrap( CChan *pChan )
 	{
-		string sFile;
+		CString sFile;
 		if ( DecryptChannel( pChan->GetName(), sFile ) )
 		{
 			if ( !pChan->GetBuffer().empty() )
 				return( true ); // reloaded a module probably in this case, so just verify we can decrypt the file
 
-			string sLine;
+			CString sLine;
 			u_int iPos = 0;
 			while( ReadLine( sFile, sLine, iPos ) )
 			{
@@ -197,7 +200,7 @@ public:
 				if ( !vChans[a]->KeepBuffer() )
 					continue;
 
-				const vector<string> & vBuffer = vChans[a]->GetBuffer();
+				const vector<CString> & vBuffer = vChans[a]->GetBuffer();
 
 				if ( vBuffer.empty() )
 				{
@@ -207,14 +210,14 @@ public:
 					continue;
 				}
 
-				string sFile = CRYPT_VERIFICATION_TOKEN;
+				CString sFile = CRYPT_VERIFICATION_TOKEN;
 			
 				for( u_int b = 0; b < vBuffer.size(); b++ )
 						sFile += vBuffer[b] + "\n";
 
 				CBlowfish c( m_sPassword, BF_ENCRYPT );
 				sFile = c.Crypt( sFile );
-				string sPath = GetPath( vChans[a]->GetName() );
+				CString sPath = GetPath( vChans[a]->GetName() );
 				if ( !sPath.empty() )
 				{
 					WriteFile( sPath, sFile );
@@ -224,21 +227,21 @@ public:
 		}
 	}
 
-	virtual string GetDescription() 
+	virtual CString GetDescription() 
 	{
 		return ( "Stores channel buffers to disk, encrypted." );
 	}
 	
-	virtual void OnModCommand( const string& sCommand )
+	virtual void OnModCommand( const CString& sCommand )
 	{
-		string::size_type iPos = sCommand.find( " " );
-		string sCom, sArgs;
-		if ( iPos == string::npos )
+		CString::size_type iPos = sCommand.find( " " );
+		CString sCom, sArgs;
+		if ( iPos == CString::npos )
 			sCom = sCommand;
 		else
 		{
 			sCom = sCommand.substr( 0, iPos );
-			sArgs = sCommand.substr( iPos + 1, string::npos );
+			sArgs = sCommand.substr( iPos + 1, CString::npos );
 		}
 
 		if ( strcasecmp( sCom.c_str(), "setpass" ) == 0 )
@@ -248,10 +251,10 @@ public:
 		
 		} else if ( strcasecmp( sCom.c_str(), "dumpbuff" ) == 0 )
 		{
-			string sFile;
+			CString sFile;
 			if ( DecryptChannel( sArgs, sFile ) )
 			{
-				string sLine;
+				CString sLine;
 				u_int iPos = 0;
 				while( ReadLine( sFile, sLine, iPos ) )
 				{
@@ -262,11 +265,11 @@ public:
 			PutModule( "//!-- EOF " + sArgs );
 		} else if ( strcasecmp( sCom.c_str(), "replay" ) == 0 )
 		{
-			string sFile;
+			CString sFile;
 			PutUser( ":***!znc@znc.com PRIVMSG " + sArgs + " :Buffer Playback..." );
 			if ( DecryptChannel( sArgs, sFile ) )
 			{
-				string sLine;
+				CString sLine;
 				u_int iPos = 0;
 				while( ReadLine( sFile, sLine, iPos ) )
 				{
@@ -285,29 +288,29 @@ public:
 			PutModule( "Unknown command [" + sCommand + "]" );
 	}
 
-	string GetPath( const string & sChannel )
+	CString GetPath( const CString & sChannel )
 	{
-		string sBuffer = m_pUser->GetUserName() + Lower( sChannel );
-		string sRet = m_pUser->GetDataPath() + "/" + GetModName();
+		CString sBuffer = m_pUser->GetUserName() + Lower( sChannel );
+		CString sRet = m_pUser->GetDataPath() + "/" + GetModName();
 		CUtils::MakeDir(sRet);
 		sRet += "/" + CBlowfish::MD5( sBuffer, true );
 		return( sRet );
 	}
 
-	string SpoofChanMsg( const string & sChannel, const string & sMesg )
+	CString SpoofChanMsg( const CString & sChannel, const CString & sMesg )
 	{
-		string sReturn = ":*" + GetModName() + "!znc@znc.com PRIVMSG " + sChannel + " :" + CUtils::ToString( time( NULL ) ) + " " + sMesg;
+		CString sReturn = ":*" + GetModName() + "!znc@znc.com PRIVMSG " + sChannel + " :" + CUtils::ToString( time( NULL ) ) + " " + sMesg;
 		return( sReturn );
 	}
 
-	virtual void OnRawMode(const CNick& cOpNick, const CChan& cChannel, const string& sModes, const string& sArgs)
+	virtual void OnRawMode(const CNick& cOpNick, const CChan& cChannel, const CString& sModes, const CString& sArgs)
 	{
 		if ( !cChannel.KeepBuffer() )
 			return;
 		
 		((CChan &)cChannel).AddBuffer( SpoofChanMsg( cChannel.GetName(), cOpNick.GetNickMask() + " MODE " + sModes + " " + sArgs ) );
 	}
-	virtual void OnQuit(const CNick& cNick, const string& sMessage, const vector<CChan*>& vChans)
+	virtual void OnQuit(const CNick& cNick, const CString& sMessage, const vector<CChan*>& vChans)
 	{ 
 		for( u_int a = 0; a < vChans.size(); a++ )
 		{
@@ -317,7 +320,7 @@ public:
 		}
 	}
 
-	virtual void OnNick(const CNick& cNick, const string& sNewNick, const vector<CChan*>& vChans)
+	virtual void OnNick(const CNick& cNick, const CString& sNewNick, const vector<CChan*>& vChans)
 	{
 		for( u_int a = 0; a < vChans.size(); a++ )
 		{
@@ -326,7 +329,7 @@ public:
 			vChans[a]->AddBuffer( SpoofChanMsg( vChans[a]->GetName(), cNick.GetNickMask() + " NICK " + sNewNick ) ); 
 		}
 	}
-	virtual void OnKick(const CNick& cNick, const string& sOpNick, const CChan& cChannel, const string& sMessage)
+	virtual void OnKick(const CNick& cNick, const CString& sOpNick, const CChan& cChannel, const CString& sMessage)
 	{
 		if ( !cChannel.KeepBuffer() )
 			return;
@@ -347,11 +350,11 @@ public:
 
 private:
 	bool	m_bBootError;
-	string	m_sPassword;
-	bool DecryptChannel( const string & sChan, string & sBuffer )
+	CString	m_sPassword;
+	bool DecryptChannel( const CString & sChan, CString & sBuffer )
 	{
-		string sChannel = GetPath( sChan );
-		string sFile;
+		CString sChannel = GetPath( sChan );
+		CString sFile;
 		sBuffer = "";
 	
 		if ( ( sChannel.empty() ) || ( !ReadFile( sChannel, sFile ) ) )

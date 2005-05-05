@@ -15,11 +15,14 @@
  * Author: imaginos <imaginos@imaginos.net>
  *
  * $Log$
+ * Revision 1.4  2005/05/05 18:11:04  prozacx
+ * Changed all references to std::string over to CString
+ *
  * Revision 1.3  2005/05/02 22:34:52  prozacx
  * Get CFile from FileUtils.h now
  *
  * Revision 1.2  2005/04/04 06:35:19  imaginos
- * fixed int32's that test against npos to string::size_type
+ * fixed int32's that test against npos to CString::size_type
  *
  * Revision 1.1  2005/03/30 18:46:35  imaginos
  * moving to standard makefile system, and cpp only extension
@@ -32,16 +35,16 @@
 
 struct EmailST
 {
-	string	sFrom;
-	string	sSubject;
-	string	sUidl;
+	CString	sFrom;
+	CString	sSubject;
+	CString	sUidl;
 	u_int	iSize;
 };
 
 class CEmailJob : public CTimer 
 {
 public:
-	CEmailJob( CModule* pModule, unsigned int uInterval, unsigned int uCycles, const string& sLabel, const string& sDescription ) 
+	CEmailJob( CModule* pModule, unsigned int uInterval, unsigned int uCycles, const CString& sLabel, const CString& sDescription ) 
 		: CTimer( pModule, uInterval, uCycles, sLabel, sDescription) {}
 
 	virtual ~CEmailJob() {}
@@ -65,7 +68,7 @@ public:
 			m_pManager->DelSockByAddr( vSocks[a] );
 	}
 
-	virtual bool OnLoad(const string & sArgs) {
+	virtual bool OnLoad(const CString & sArgs) {
 		m_sMailPath = sArgs;
 
 		StartParser();
@@ -96,12 +99,12 @@ public:
 		}
 	}
 
-	virtual string GetDescription() 
+	virtual CString GetDescription() 
 	{
 		return ( "Monitors Email activity on local disk /var/mail/user" );
 	}
 	
-	virtual void OnModCommand( const string& sCommand );
+	virtual void OnModCommand( const CString& sCommand );
 	void StartParser();
 
 	void ParseEmails( const vector<EmailST> & vEmails )
@@ -117,7 +120,7 @@ public:
 			PutModule( s.str() );
 		} else
 		{
-			set<string> ssUidls;
+			set<CString> ssUidls;
 
 			CTable Table;
 			Table.AddColumn("From");
@@ -141,7 +144,7 @@ public:
 		
 			if (Table.size()) {
 				unsigned int uTableIdx = 0;
-				string sLine;
+				CString sLine;
 				while ( Table.GetLine( uTableIdx++, sLine ) ) {
 					PutModule( sLine );
 				}
@@ -155,16 +158,16 @@ public:
 
 	
 private:
-	string			m_sMailPath;
+	CString			m_sMailPath;
 	u_int			m_iLastCheck;
-	set<string>		m_ssUidls;
+	set<CString>		m_ssUidls;
 	bool			m_bInitialized;
 };
 
 class CEmailFolder : public Csock
 {
 public:
-	CEmailFolder( CEmail *pModule, const string & sMailbox ) : Csock()
+	CEmailFolder( CEmail *pModule, const CString & sMailbox ) : Csock()
 	{
 		m_pModule = pModule;
 		m_sMailbox = sMailbox;
@@ -197,7 +200,7 @@ public:
 	{
 		EmailST tmp;
 		tmp.sUidl = (char *)CMD5( m_sMailBuffer.substr( 0, 255 ) );
-		string sLine;
+		CString sLine;
 		u_int iPos = 0;
 		while( ::ReadLine( m_sMailBuffer, sLine, iPos ) )
 		{
@@ -206,9 +209,9 @@ public:
 				break;	// out of the headers
 
 			if ( strncasecmp( sLine.c_str(), "From: ", 6 ) == 0 )
-				tmp.sFrom = sLine.substr( 6, string::npos );
+				tmp.sFrom = sLine.substr( 6, CString::npos );
 			else if ( strncasecmp( sLine.c_str(), "Subject: ", 9 ) == 0 )
-				tmp.sSubject = sLine.substr( 9, string::npos );
+				tmp.sSubject = sLine.substr( 9, CString::npos );
 
 			if ( ( !tmp.sFrom.empty() ) && ( !tmp.sSubject.empty() ) )
 				break;
@@ -218,21 +221,21 @@ public:
 	}
 private:
 	CEmail				*m_pModule;
-	string				m_sMailbox;
-	string				m_sMailBuffer;
+	CString				m_sMailbox;
+	CString				m_sMailBuffer;
 	vector<EmailST>		m_vEmails;	
 };
 
-void CEmail::OnModCommand( const string& sCommand )
+void CEmail::OnModCommand( const CString& sCommand )
 {
-	string::size_type iPos = sCommand.find( " " );
-	string sCom, sArgs;
-	if ( iPos == string::npos )
+	CString::size_type iPos = sCommand.find( " " );
+	CString sCom, sArgs;
+	if ( iPos == CString::npos )
 		sCom = sCommand;
 	else
 	{
 		sCom = sCommand.substr( 0, iPos );
-		sArgs = sCommand.substr( iPos + 1, string::npos );
+		sArgs = sCommand.substr( iPos + 1, CString::npos );
 	}
 	
 	if ( sCom == "timers" )
@@ -244,7 +247,7 @@ void CEmail::OnModCommand( const string& sCommand )
 
 void CEmail::StartParser()
 {
-	string sParserName = "EMAIL::" + m_pUser->GetUserName();
+	CString sParserName = "EMAIL::" + m_pUser->GetUserName();
 
 	if ( m_pManager->FindSockByName( sParserName ) )
 		return;	// one at a time sucker

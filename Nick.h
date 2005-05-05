@@ -2,8 +2,7 @@
 #define _NICK_H
 
 #include <vector>
-#include <string>
-using std::string;
+#include "String.h"
 using std::vector;
 
 // Forward Decl
@@ -15,17 +14,17 @@ class CNick
 {
 public:
 	CNick();
-	CNick(const string& sNick);
+	CNick(const CString& sNick);
 	virtual ~CNick();
 
-	void Parse(const string& sNickMask);
-	string GetHostMask() const;
+	void Parse(const CString& sNickMask);
+	CString GetHostMask() const;
 	unsigned int GetCommonChans(vector<CChan*>& vChans, CUser* pUser) const;
 
 	// Setters
-	void SetNick(const string& s);
-	void SetIdent(const string& s);
-	void SetHost(const string& s);
+	void SetNick(const CString& s);
+	void SetIdent(const CString& s);
+	void SetHost(const CString& s);
 	void SetOp(bool b);
 	void SetVoice(bool b);
 	// !Setters
@@ -33,16 +32,16 @@ public:
 	// Getters
 	bool IsOp() const;
 	bool IsVoice() const;
-	const string& GetNick() const;
-	const string& GetIdent() const;
-	const string& GetHost() const;
-	string GetNickMask() const;
+	const CString& GetNick() const;
+	const CString& GetIdent() const;
+	const CString& GetHost() const;
+	CString GetNickMask() const;
 	// !Getters
 private:
 protected:
-	string		m_sNick;
-	string		m_sIdent;
-	string		m_sHost;
+	CString		m_sNick;
+	CString		m_sIdent;
+	CString		m_sHost;
 
 	bool		m_bIsOp;
 	bool		m_bIsVoice;

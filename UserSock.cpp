@@ -7,8 +7,8 @@
 #include "DCCSock.h"
 #include "Server.h"
 
-void CUserSock::ReadLine(const string& sData) {
-	string sLine = sData;
+void CUserSock::ReadLine(const CString& sData) {
+	CString sLine = sData;
 
 	while ((CUtils::Right(sLine, 1) == "\r") || (CUtils::Right(sLine, 1) == "\n")) {
 		CUtils::RightChomp(sLine);
@@ -24,14 +24,14 @@ void CUserSock::ReadLine(const string& sData) {
 	}
 #endif
 
-	string sCommand = CUtils::Token(sLine, 0);
+	CString sCommand = CUtils::Token(sLine, 0);
 
 	if (strcasecmp(sCommand.c_str(), "ZNC") == 0) {
 		PutStatus("Hello.  How may I help you?");
 		return;
 	} else if (strcasecmp(sCommand.c_str(), "DETACH") == 0) {
 		if (m_pUser) {
-			string sChan = CUtils::Token(sLine, 1);
+			CString sChan = CUtils::Token(sLine, 1);
 
 			if (sChan.empty()) {
 				PutStatusNotice("Usage: /detach <#chan>");
@@ -55,7 +55,7 @@ void CUserSock::ReadLine(const string& sData) {
 			m_bGotPass = true;
 			m_sPass = CUtils::Token(sLine, 1);
 
-			if (m_sPass.find(":") != string::npos) {
+			if (m_sPass.find(":") != CString::npos) {
 				m_sUser = CUtils::Token(m_sPass, 0, false, ':');
 				m_sPass = CUtils::Token(m_sPass, 1, true, ':');
 			}
@@ -67,7 +67,7 @@ void CUserSock::ReadLine(const string& sData) {
 
 		return;		// Don't forward this msg.  ZNC has already registered us.
 	} else if (strcasecmp(sCommand.c_str(), "NICK") == 0) {
-		string sNick = CUtils::Token(sLine, 1);
+		CString sNick = CUtils::Token(sLine, 1);
 		if (CUtils::Left(sNick, 1) == ":") {
 			CUtils::LeftChomp(sNick);
 		}
@@ -98,7 +98,7 @@ void CUserSock::ReadLine(const string& sData) {
 
 		return;		// Don't forward this msg.  ZNC has already registered us.
 	} else if (strcasecmp(sCommand.c_str(), "JOIN") == 0) {
-		string sChan = CUtils::Token(sLine, 1);
+		CString sChan = CUtils::Token(sLine, 1);
 		if (CUtils::Left(sChan, 1) == ":") {
 			CUtils::LeftChomp(sChan);
 		}
@@ -119,21 +119,21 @@ void CUserSock::ReadLine(const string& sData) {
 		Close();	// Treat a client quit as a detach
 		return;		// Don't forward this msg.  We don't want the client getting us disconnected.
 	} else if (strcasecmp(sCommand.c_str(), "NOTICE") == 0) {
-		string sTarget = CUtils::Token(sLine, 1);
-		string sMsg = CUtils::Token(sLine, 2, true);
+		CString sTarget = CUtils::Token(sLine, 1);
+		CString sMsg = CUtils::Token(sLine, 2, true);
 
 		if (CUtils::Left(sMsg, 1) == ":") {
 			CUtils::LeftChomp(sMsg);
 		}
 
-		if ((!m_pUser) || (strcasecmp(sTarget.c_str(), string(m_pUser->GetStatusPrefix() + "status").c_str())) == 0) {
+		if ((!m_pUser) || (strcasecmp(sTarget.c_str(), CString(m_pUser->GetStatusPrefix() + "status").c_str())) == 0) {
 			return;
 		}
 
 		if (strncasecmp(sTarget.c_str(), m_pUser->GetStatusPrefix().c_str(), m_pUser->GetStatusPrefix().length()) == 0) {
 #ifdef _MODULES
 			if (m_pUser) {
-				string sModule = sTarget;
+				CString sModule = sTarget;
 				CUtils::LeftChomp(sModule, m_pUser->GetStatusPrefix().length());
 
 				CModule* pModule = m_pUser->GetModules().FindModule(sModule);
@@ -159,7 +159,7 @@ void CUserSock::ReadLine(const string& sData) {
 
 #ifdef _MODULES
 		if (CUtils::wildcmp("\001*\001", sMsg.c_str())) {
-			string sCTCP = sMsg;
+			CString sCTCP = sMsg;
 			CUtils::LeftChomp(sCTCP);
 			CUtils::RightChomp(sCTCP);
 
@@ -178,25 +178,25 @@ void CUserSock::ReadLine(const string& sData) {
 		PutIRC("NOTICE " + sTarget + " :" + sMsg);
 		return;
 	} else if (strcasecmp(sCommand.c_str(), "PRIVMSG") == 0) {
-		string sTarget = CUtils::Token(sLine, 1);
-		string sMsg = CUtils::Token(sLine, 2, true);
+		CString sTarget = CUtils::Token(sLine, 1);
+		CString sMsg = CUtils::Token(sLine, 2, true);
 
 		if (CUtils::Left(sMsg, 1) == ":") {
 			CUtils::LeftChomp(sMsg);
 		}
 
 		if (CUtils::wildcmp("\001*\001", sMsg.c_str())) {
-			string sCTCP = sMsg;
+			CString sCTCP = sMsg;
 			CUtils::LeftChomp(sCTCP);
 			CUtils::RightChomp(sCTCP);
 
 			if (strncasecmp(sCTCP.c_str(), "DCC ", 4) == 0) {
-				string sType = CUtils::Token(sCTCP, 1);
-				string sFile = CUtils::Token(sCTCP, 2);
+				CString sType = CUtils::Token(sCTCP, 1);
+				CString sFile = CUtils::Token(sCTCP, 2);
 				unsigned long uLongIP = strtoul(CUtils::Token(sCTCP, 3).c_str(), NULL, 10);
 				unsigned short uPort = strtoul(CUtils::Token(sCTCP, 4).c_str(), NULL, 10);
 				unsigned long uFileSize = strtoul(CUtils::Token(sCTCP, 5).c_str(), NULL, 10);
-				string sIP = (m_pIRCSock) ? m_pIRCSock->GetLocalIP() : GetLocalIP();
+				CString sIP = (m_pIRCSock) ? m_pIRCSock->GetLocalIP() : GetLocalIP();
 
 				if (!m_pUser->UseClientIP()) {
 					uLongIP = CUtils::GetLongIP(GetRemoteIP());
@@ -214,12 +214,12 @@ void CUserSock::ReadLine(const string& sData) {
 					// DCC SEND readme.txt 403120438 5550 1104
 
 					if (strncasecmp(sTarget.c_str(), m_pUser->GetStatusPrefix().c_str(), m_pUser->GetStatusPrefix().length()) == 0) {
-						if ((!m_pUser) || (strcasecmp(sTarget.c_str(), string(m_pUser->GetStatusPrefix() + "status").c_str()) == 0)) {
+						if ((!m_pUser) || (strcasecmp(sTarget.c_str(), CString(m_pUser->GetStatusPrefix() + "status").c_str()) == 0)) {
 							if (!m_pUser) {
 								return;
 							}
 
-							string sPath = m_pUser->GetDLPath();
+							CString sPath = m_pUser->GetDLPath();
 							if (!CFile::Exists(sPath)) {
 								PutStatus("Could not create [" + sPath + "] directory.");
 								return;
@@ -228,7 +228,7 @@ void CUserSock::ReadLine(const string& sData) {
 								return;
 							}
 
-							string sLocalFile = sPath + "/" + sFile;
+							CString sLocalFile = sPath + "/" + sFile;
 
 							if (m_pUser) {
 								m_pUser->GetFile(GetNick(), CUtils::GetIP(uLongIP), uPort, sLocalFile, uFileSize);
@@ -287,7 +287,7 @@ void CUserSock::ReadLine(const string& sData) {
 
 			if (strncasecmp(sTarget.c_str(), m_pUser->GetStatusPrefix().c_str(), m_pUser->GetStatusPrefix().length()) == 0) {
 #ifdef _MODULES
-				string sModule = sTarget;
+				CString sModule = sTarget;
 				CUtils::LeftChomp(sModule, m_pUser->GetStatusPrefix().length());
 
 				CModule* pModule = m_pUser->GetModules().FindModule(sModule);
@@ -310,7 +310,7 @@ void CUserSock::ReadLine(const string& sData) {
 			return;
 		}
 
-		if ((m_pUser) && (strcasecmp(sTarget.c_str(), string(m_pUser->GetStatusPrefix() + "status").c_str()) == 0)) {
+		if ((m_pUser) && (strcasecmp(sTarget.c_str(), CString(m_pUser->GetStatusPrefix() + "status").c_str()) == 0)) {
 #ifdef _MODULES
 			if ((m_pUser) && (m_pUser->GetModules().OnStatusCommand(sMsg))) {
 				return;
@@ -323,7 +323,7 @@ void CUserSock::ReadLine(const string& sData) {
 		if (strncasecmp(sTarget.c_str(), m_pUser->GetStatusPrefix().c_str(), m_pUser->GetStatusPrefix().length()) == 0) {
 #ifdef _MODULES
 			if (m_pUser) {
-				string sModule = sTarget;
+				CString sModule = sTarget;
 				CUtils::LeftChomp(sModule, m_pUser->GetStatusPrefix().length());
 
 				CModule* pModule = m_pUser->GetModules().FindModule(sModule);
@@ -355,7 +355,7 @@ void CUserSock::ReadLine(const string& sData) {
 	PutIRC(sLine);
 }
 
-void CUserSock::SetNick(const string& s) {
+void CUserSock::SetNick(const CString& s) {
    m_sNick = s;
 
 	if (m_pUser) {
@@ -374,7 +374,7 @@ bool CUserSock::DecKeepNickCounter() {
 	return true;
 }
 
-void CUserSock::UserCommand(const string& sLine) {
+void CUserSock::UserCommand(const CString& sLine) {
 	if (!m_pUser) {
 		return;
 	}
@@ -383,12 +383,12 @@ void CUserSock::UserCommand(const string& sLine) {
 		return;
 	}
 
-	string sCommand = CUtils::Token(sLine, 0);
+	CString sCommand = CUtils::Token(sLine, 0);
 
 	if (strcasecmp(sCommand.c_str(), "HELP") == 0) {
 		HelpUser();
 	} else if (strcasecmp(sCommand.c_str(), "LISTNICKS") == 0) {
-		string sChan = CUtils::Token(sLine, 1);
+		CString sChan = CUtils::Token(sLine, 1);
 
 		if (sChan.empty()) {
 			PutStatus("Usage: ListNicks <#chan>");
@@ -407,7 +407,7 @@ void CUserSock::UserCommand(const string& sLine) {
 			return;
 		}
 
-		const map<string,CNick*>& msNicks = pChan->GetNicks();
+		const map<CString,CNick*>& msNicks = pChan->GetNicks();
 
 		if (!msNicks.size()) {
 			PutStatus("No nicks on [" + sChan + "]");
@@ -421,7 +421,7 @@ void CUserSock::UserCommand(const string& sLine) {
 		Table.AddColumn("Ident");
 		Table.AddColumn("Host");
 
-		for (map<string,CNick*>::const_iterator a = msNicks.begin(); a != msNicks.end(); a++) {
+		for (map<CString,CNick*>::const_iterator a = msNicks.begin(); a != msNicks.end(); a++) {
 			Table.AddRow();
 			if (a->second->IsOp()) { Table.SetCell("@", "@"); }
 			if (a->second->IsVoice()) { Table.SetCell("+", "+"); }
@@ -431,14 +431,14 @@ void CUserSock::UserCommand(const string& sLine) {
 		}
 
 		unsigned int uTableIdx = 0;
-		string sLine;
+		CString sLine;
 
 		while (Table.GetLine(uTableIdx++, sLine)) {
 			PutStatus(sLine);
 		}
 	} else if (strcasecmp(sCommand.c_str(), "DETACH") == 0) {
 		if (m_pUser) {
-			string sChan = CUtils::Token(sLine, 1);
+			CString sChan = CUtils::Token(sLine, 1);
 
 			if (sChan.empty()) {
 				PutStatus("Usage: Detach <#chan>");
@@ -457,7 +457,7 @@ void CUserSock::UserCommand(const string& sLine) {
 	} else if (strcasecmp(sCommand.c_str(), "VERSION") == 0) {
 		PutStatus(CZNC::GetTag());
 	} else if (strcasecmp(sCommand.c_str(), "SHUTDOWN") == 0) {
-		string sQuitMsg = CUtils::Token(sLine, 1, true);
+		CString sQuitMsg = CUtils::Token(sLine, 1, true);
 
 		if (!sQuitMsg.empty()) {
 			m_pUser->SetQuitMsg(sQuitMsg);
@@ -488,13 +488,13 @@ void CUserSock::UserCommand(const string& sLine) {
 			for (unsigned int a = 0; a < vChans.size(); a++) {
 				CChan* pChan = vChans[a];
 				Table.AddRow();
-				Table.SetCell("Name", string((pChan->IsOp()) ? "@" : ((pChan->IsVoice()) ? "+" : "")) + pChan->GetName());
+				Table.SetCell("Name", CString((pChan->IsOp()) ? "@" : ((pChan->IsVoice()) ? "+" : "")) + pChan->GetName());
 				Table.SetCell("Status", ((vChans[a]->IsOn()) ? ((vChans[a]->IsDetached()) ? "Detached" : "Joined") : "Trying"));
-				Table.SetCell("Buf", string((pChan->KeepBuffer()) ? "*" : "") + CUtils::ToString(pChan->GetBufferCount()));
+				Table.SetCell("Buf", CString((pChan->KeepBuffer()) ? "*" : "") + CUtils::ToString(pChan->GetBufferCount()));
 
-				string sModes = pChan->GetModeString();
+				CString sModes = pChan->GetModeCString();
 				unsigned int uLimit = pChan->GetLimit();
-				const string& sKey = pChan->GetKey();
+				const CString& sKey = pChan->GetKey();
 
 				if (uLimit) { sModes += " " + CUtils::ToString(uLimit); }
 				if (!sKey.empty()) { sModes += " " + sKey; }
@@ -507,7 +507,7 @@ void CUserSock::UserCommand(const string& sLine) {
 
 			if (Table.size()) {
 				unsigned int uTableIdx = 0;
-				string sLine;
+				CString sLine;
 
 				while (Table.GetLine(uTableIdx++, sLine)) {
 					PutStatus(sLine);
@@ -515,7 +515,7 @@ void CUserSock::UserCommand(const string& sLine) {
 			}
 		}
 	} else if (strcasecmp(sCommand.c_str(), "ADDSERVER") == 0) {
-		string sServer = CUtils::Token(sLine, 1);
+		CString sServer = CUtils::Token(sLine, 1);
 
 		if (sServer.empty()) {
 			PutStatus("Usage: AddServer <host> [[+]port] [pass]");
@@ -533,7 +533,7 @@ void CUserSock::UserCommand(const string& sLine) {
 			PutStatus("Unable to add that server");
 		}
 	} else if (strcasecmp(sCommand.c_str(), "REMSERVER") == 0 || strcasecmp(sCommand.c_str(), "DELSERVER") == 0) {
-		string sServer = CUtils::Token(sLine, 1);
+		CString sServer = CUtils::Token(sLine, 1);
 
 		if (sServer.empty()) {
 			PutStatus("Usage: RemServer <host>");
@@ -572,7 +572,7 @@ void CUserSock::UserCommand(const string& sLine) {
 
 			if (Table.size()) {
 				unsigned int uTableIdx = 0;
-				string sLine;
+				CString sLine;
 
 				while (Table.GetLine(uTableIdx++, sLine)) {
 					PutStatus(sLine);
@@ -597,7 +597,7 @@ void CUserSock::UserCommand(const string& sLine) {
 
 			if (Table.size()) {
 				unsigned int uTableIdx = 0;
-				string sLine;
+				CString sLine;
 
 				while (Table.GetLine(uTableIdx++, sLine)) {
 					PutStatus(sLine);
@@ -605,8 +605,8 @@ void CUserSock::UserCommand(const string& sLine) {
 			}
 		}
 	} else if (strcasecmp(sCommand.c_str(), "SEND") == 0) {
-		string sToNick = CUtils::Token(sLine, 1);
-		string sFile = CUtils::Token(sLine, 2);
+		CString sToNick = CUtils::Token(sLine, 1);
+		CString sFile = CUtils::Token(sLine, 2);
 
 		if ((sToNick.empty()) || (sFile.empty())) {
 			PutStatus("Usage: Send <nick> <file>");
@@ -617,7 +617,7 @@ void CUserSock::UserCommand(const string& sLine) {
 			m_pUser->SendFile(sToNick, sFile);
 		}
 	} else if (strcasecmp(sCommand.c_str(), "GET") == 0) {
-		string sFile = CUtils::Token(sLine, 1);
+		CString sFile = CUtils::Token(sLine, 1);
 
 		if (sFile.empty()) {
 			PutStatus("Usage: Get <file>");
@@ -639,7 +639,7 @@ void CUserSock::UserCommand(const string& sLine) {
 		Table.AddColumn("File");
 
 		for (unsigned int a = 0; a < Manager.size(); a++) {
-			const string& sSockName = Manager[a]->GetSockName();
+			const CString& sSockName = Manager[a]->GetSockName();
 
 			if (strncasecmp(sSockName.c_str(), "DCC::", 5) == 0) {
 				if (strncasecmp(sSockName.c_str() +5, "XFER::REMOTE::", 14) == 0) {
@@ -682,7 +682,7 @@ void CUserSock::UserCommand(const string& sLine) {
 				} else if (strncasecmp(sSockName.c_str() +5, "XFER::LOCAL", 11) == 0) {
 					CDCCBounce* pSock = (CDCCBounce*) Manager[a];
 
-					string sState = "Waiting";
+					CString sState = "Waiting";
 					if ((pSock->IsConnected()) || (pSock->IsPeerConnected())) {
 						sState = "Halfway";
 						if ((pSock->IsPeerConnected()) && (pSock->IsPeerConnected())) {
@@ -699,7 +699,7 @@ void CUserSock::UserCommand(const string& sLine) {
 				} else if (strncasecmp(sSockName.c_str() +5, "CHAT::LOCAL", 11) == 0) {
 					CDCCBounce* pSock = (CDCCBounce*) Manager[a];
 
-					string sState = "Waiting";
+					CString sState = "Waiting";
 					if ((pSock->IsConnected()) || (pSock->IsPeerConnected())) {
 						sState = "Halfway";
 						if ((pSock->IsPeerConnected()) && (pSock->IsPeerConnected())) {
@@ -718,7 +718,7 @@ void CUserSock::UserCommand(const string& sLine) {
 
 		if (Table.size()) {
 			unsigned int uTableIdx = 0;
-			string sLine;
+			CString sLine;
 
 			while (Table.GetLine(uTableIdx++, sLine)) {
 				PutStatus(sLine);
@@ -746,7 +746,7 @@ void CUserSock::UserCommand(const string& sLine) {
 				Table.SetCell("Description", CUtils::Ellipsize(Modules[b]->GetDescription(), 128));
 			}
 
-			unsigned int uTableIdx = 0; string sLine;
+			unsigned int uTableIdx = 0; CString sLine;
 			while (Table.GetLine(uTableIdx++, sLine)) {
 				PutStatus(sLine);
 			}
@@ -756,8 +756,8 @@ void CUserSock::UserCommand(const string& sLine) {
 #endif
 		return;
 	} else if ((strcasecmp(sCommand.c_str(), "LOADMOD") == 0) || (strcasecmp(sCommand.c_str(), "LOADMODULE") == 0)) {
-		string sMod = CUtils::Token(sLine, 1);
-		string sArgs = CUtils::Token(sLine, 2, true);
+		CString sMod = CUtils::Token(sLine, 1);
+		CString sArgs = CUtils::Token(sLine, 2, true);
 
 		if (m_pUser->DenyLoadMod()) {
 			PutStatus("Unable to load [" + sMod + "] Access Denied.");
@@ -769,7 +769,7 @@ void CUserSock::UserCommand(const string& sLine) {
 			return;
 		}
 
-		string sModRet;
+		CString sModRet;
 		m_pUser->GetModules().LoadModule(sMod, sArgs, m_pUser, sModRet);
 		PutStatus(sModRet);
 #else
@@ -777,7 +777,7 @@ void CUserSock::UserCommand(const string& sLine) {
 #endif
 		return;
 	} else if ((strcasecmp(sCommand.c_str(), "UNLOADMOD") == 0) || (strcasecmp(sCommand.c_str(), "UNLOADMODULE") == 0)) {
-		string sMod = CUtils::Token(sLine, 1);
+		CString sMod = CUtils::Token(sLine, 1);
 
 		if (m_pUser->DenyLoadMod()) {
 			PutStatus("Unable to unload [" + sMod + "] Access Denied.");
@@ -789,7 +789,7 @@ void CUserSock::UserCommand(const string& sLine) {
 			return;
 		}
 
-		string sModRet;
+		CString sModRet;
 		m_pUser->GetModules().UnloadModule(sMod, sModRet);
 		PutStatus(sModRet);
 #else
@@ -797,8 +797,8 @@ void CUserSock::UserCommand(const string& sLine) {
 #endif
 		return;
 	} else if ((strcasecmp(sCommand.c_str(), "RELOADMOD") == 0) || (strcasecmp(sCommand.c_str(), "RELOADMODULE") == 0)) {
-		string sMod = CUtils::Token(sLine, 1);
-		string sArgs = CUtils::Token(sLine, 2, true);
+		CString sMod = CUtils::Token(sLine, 1);
+		CString sArgs = CUtils::Token(sLine, 2, true);
 
 		if (m_pUser->DenyLoadMod()) {
 			PutStatus("Unable to reload [" + sMod + "] Access Denied.");
@@ -810,7 +810,7 @@ void CUserSock::UserCommand(const string& sLine) {
 			return;
 		}
 
-		string sModRet;
+		CString sModRet;
 		m_pUser->GetModules().ReloadModule(sMod, sArgs, m_pUser, sModRet);
 		PutStatus(sModRet);
 #else
@@ -818,7 +818,7 @@ void CUserSock::UserCommand(const string& sLine) {
 #endif
 		return;
 	} else if (strcasecmp(sCommand.c_str(), "SETBUFFER") == 0) {
-		string sChan = CUtils::Token(sLine, 1);
+		CString sChan = CUtils::Token(sLine, 1);
 
 		if (sChan.empty()) {
 			PutStatus("Usage: SetBuffer <#chan> [linecount]");
@@ -878,7 +878,7 @@ void CUserSock::HelpUser() {
 
 	if (Table.size()) {
 		unsigned int uTableIdx = 0;
-		string sLine;
+		CString sLine;
 
 		while (Table.GetLine(uTableIdx++, sLine)) {
 			PutStatus(sLine);
@@ -886,7 +886,7 @@ void CUserSock::HelpUser() {
 	}
 }
 
-bool CUserSock::ConnectionFrom(const string& sHost, int iPort) {
+bool CUserSock::ConnectionFrom(const CString& sHost, int iPort) {
 	DEBUG_ONLY(cout << GetSockName() << " == ConnectionFrom(" << sHost << ", " << iPort << ")" << endl);
 	return m_pZNC->IsHostAllowed(sHost);
 }
@@ -969,33 +969,33 @@ void CUserSock::IRCDisconnected() {
 	m_pIRCSock = NULL;
 }
 
-Csock* CUserSock::GetSockObj(const string& sHost, int iPort) {
+Csock* CUserSock::GetSockObj(const CString& sHost, int iPort) {
 	CUserSock* pSock = new CUserSock(sHost, iPort);
 	pSock->SetZNC(m_pZNC);
 
 	return pSock;
 }
 
-void CUserSock::PutIRC(const string& sLine) {
+void CUserSock::PutIRC(const CString& sLine) {
 	if (m_pIRCSock) {
 		m_pIRCSock->PutServ(sLine);
 	}
 }
 
-void CUserSock::PutServ(const string& sLine) {
+void CUserSock::PutServ(const CString& sLine) {
 	DEBUG_ONLY(cout << GetSockName() << " -> [" << sLine << "]" << endl);
 	Write(sLine + "\r\n");
 }
 
-void CUserSock::PutStatusNotice(const string& sLine) {
+void CUserSock::PutStatusNotice(const CString& sLine) {
 	PutModNotice("status", sLine);
 }
 
-void CUserSock::PutStatus(const string& sLine) {
+void CUserSock::PutStatus(const CString& sLine) {
 	PutModule("status", sLine);
 }
 
-void CUserSock::PutModNotice(const string& sModule, const string& sLine) {
+void CUserSock::PutModNotice(const CString& sModule, const CString& sLine) {
 	if (!m_pUser) {
 		return;
 	}
@@ -1004,7 +1004,7 @@ void CUserSock::PutModNotice(const string& sModule, const string& sLine) {
 	Write(":" + m_pUser->GetStatusPrefix() + ((sModule.empty()) ? "status" : sModule) + "!znc@znc.com NOTICE " + GetNick() + " :" + sLine + "\r\n");
 }
 
-void CUserSock::PutModule(const string& sModule, const string& sLine) {
+void CUserSock::PutModule(const CString& sModule, const CString& sLine) {
 	if (!m_pUser) {
 		return;
 	}
@@ -1013,8 +1013,8 @@ void CUserSock::PutModule(const string& sModule, const string& sLine) {
 	Write(":" + m_pUser->GetStatusPrefix() + ((sModule.empty()) ? "status" : sModule) + "!znc@znc.com PRIVMSG " + GetNick() + " :" + sLine + "\r\n");
 }
 
-string CUserSock::GetNick() const {
-	string sRet;
+CString CUserSock::GetNick() const {
+	CString sRet;
 
 	if ((m_bAuthed) && (m_pIRCSock)) {
 		sRet = m_pIRCSock->GetNick();
@@ -1023,7 +1023,7 @@ string CUserSock::GetNick() const {
 	return (sRet.empty()) ? m_sNick : sRet;
 }
 
-string CUserSock::GetNickMask() const {
+CString CUserSock::GetNickMask() const {
 	if (m_pIRCSock) {
 		return m_pIRCSock->GetNickMask();
 	}

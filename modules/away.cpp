@@ -20,6 +20,9 @@
  *
  * 
  * $Log$
+ * Revision 1.9  2005/05/05 18:11:03  prozacx
+ * Changed all references to std::string over to CString
+ *
  * Revision 1.8  2005/04/18 22:32:24  imaginos
  * move password reset into BootStrap
  *
@@ -52,7 +55,7 @@ class CAway;
 class CAwayJob : public CTimer 
 {
 public:
-	CAwayJob( CModule* pModule, unsigned int uInterval, unsigned int uCycles, const string& sLabel, const string& sDescription ) 
+	CAwayJob( CModule* pModule, unsigned int uInterval, unsigned int uCycles, const CString& sLabel, const CString& sDescription ) 
 		: CTimer( pModule, uInterval, uCycles, sLabel, sDescription) {}
 
 	virtual ~CAwayJob() {}
@@ -77,7 +80,7 @@ public:
 			SaveBufferToDisk();
 	}
 
-	virtual bool OnLoad(const string& sArgs)
+	virtual bool OnLoad(const CString& sArgs)
 	{
 		if (!sArgs.empty())
 		{
@@ -118,10 +121,10 @@ public:
 
 	bool BootStrap()
 	{
-		string sFile;
+		CString sFile;
 		if ( DecryptMessages( sFile ) )
 		{
-			string sLine;
+			CString sLine;
 			u_int iPos = 0;
 			while( ReadLine( sFile, sLine, iPos ) )
 			{
@@ -142,14 +145,14 @@ public:
 	{
 		if ( !m_sPassword.empty() )
 		{
-			string sFile = CRYPT_VERIFICATION_TOKEN;
+			CString sFile = CRYPT_VERIFICATION_TOKEN;
 			
 			for( u_int b = 0; b < m_vMessages.size(); b++ )
 				sFile += m_vMessages[b] + "\n";
 
 			CBlowfish c( m_sPassword, BF_ENCRYPT );
 			sFile = c.Crypt( sFile );
-			string sPath = GetPath();
+			CString sPath = GetPath();
 			if ( !sPath.empty() )
 			{
 				WriteFile( sPath, sFile );
@@ -167,14 +170,14 @@ public:
 		Away();
 	}
 
-	virtual string GetDescription() 
+	virtual CString GetDescription() 
 	{
 		return ( "Stores messages while away, also auto away" );
 	}
 	
-	virtual void OnModCommand( const string& sCommand )
+	virtual void OnModCommand( const CString& sCommand )
 	{
-		string sCmdName = CUtils::Token(sCommand, 0);
+		CString sCmdName = CUtils::Token(sCommand, 0);
 		if ( sCmdName == "away" )
 		{
 			Away();
@@ -193,7 +196,7 @@ public:
 		} 
 		else if ( sCmdName == "delete" )
 		{
-			string sWhich = CUtils::Token(sCommand, 1);
+			CString sWhich = CUtils::Token(sCommand, 1);
 			if ( sWhich == "all" )
 			{
 				PutModNotice( "Deleted " + CUtils::ToString( m_vMessages.size() ) + " Messages.", "away" );
@@ -239,12 +242,12 @@ public:
 		}
 		else if ( sCmdName == "show" )
 		{
-			map< string, vector< string> > msvOutput;
+			map< CString, vector< CString> > msvOutput;
 			for( u_int a = 0; a < m_vMessages.size(); a++ )
 			{
-				string sTime = CUtils::Token( m_vMessages[a], 0, false, ':' );
-				string sWhom = CUtils::Token( m_vMessages[a], 1, false, ':' );
-				string sMessage = CUtils::Token( m_vMessages[a], 2, true, ':' );
+				CString sTime = CUtils::Token( m_vMessages[a], 0, false, ':' );
+				CString sWhom = CUtils::Token( m_vMessages[a], 1, false, ':' );
+				CString sMessage = CUtils::Token( m_vMessages[a], 2, true, ':' );
 				
 				if ( ( sTime.empty() ) || ( sWhom.empty() ) || ( sMessage.empty() ) )
 				{
@@ -264,13 +267,13 @@ public:
 					m_vMessages.erase( m_vMessages.begin() + a-- );
 					continue;
 				}
-				string sTmp = "    " + CUtils::ToString( a ) + ") [";
+				CString sTmp = "    " + CUtils::ToString( a ) + ") [";
 				sTmp.append( szFormat, iCount );
 				sTmp += "] ";
 				sTmp += sMessage;
 				msvOutput[sWhom].push_back( sTmp );
 			}
-			for( map< string, vector< string> >::iterator it = msvOutput.begin(); it != msvOutput.end(); it++ )
+			for( map< CString, vector< CString> >::iterator it = msvOutput.begin(); it != msvOutput.end(); it++ )
 			{
 				PutModule( it->first, "away" );
 				for( u_int a = 0; a < it->second.size(); a++ )
@@ -284,16 +287,16 @@ public:
 		}
 	}
 
-	string GetPath()
+	CString GetPath()
 	{
-		string sBuffer = m_pUser->GetUserName();
-		string sRet = m_pUser->GetDataPath() + "/away";
+		CString sBuffer = m_pUser->GetUserName();
+		CString sRet = m_pUser->GetDataPath() + "/away";
 		CUtils::MakeDir(sRet);
 		sRet += "/.znc-away-" + CBlowfish::MD5( sBuffer, true );
 		return( sRet );
 	}
 
-	virtual void Away( bool bForce = false, const string & sReason = "" )
+	virtual void Away( bool bForce = false, const CString & sReason = "" )
 	{
 		if ( ( !m_bIsAway ) || ( bForce ) )
 		{
@@ -304,7 +307,7 @@ public:
 
 			time_t iTime = time( NULL );
 			char *pTime = ctime( &iTime );
-			string sTime;
+			CString sTime;
 			if ( pTime )
 			{
 				sTime = pTime;
@@ -337,14 +340,14 @@ public:
 		m_sReason = "";
 	}
 
-	virtual bool OnPrivMsg(const CNick& Nick, string& sMessage)
+	virtual bool OnPrivMsg(const CNick& Nick, CString& sMessage)
 	{
 		if ( m_bIsAway )
 			AddMessage( time( NULL ), Nick, sMessage );
 		return( false );	
 	}
 	
-	virtual bool OnUserNotice(const string& sTarget, string& sMessage)
+	virtual bool OnUserNotice(const CString& sTarget, CString& sMessage)
 	{
 		Ping();
 		if( m_bIsAway )
@@ -352,7 +355,7 @@ public:
 		
 		return( false );	
 	}
-	virtual bool OnUserMsg(const string& sTarget, string& sMessage)
+	virtual bool OnUserMsg(const CString& sTarget, CString& sMessage)
 	{
 		Ping();
 		if( m_bIsAway )
@@ -367,12 +370,12 @@ public:
 	bool IsAway() { return( m_bIsAway ); }
 
 private:
-	string	m_sPassword;
+	CString	m_sPassword;
 	bool	m_bBootError;
-	bool DecryptMessages( string & sBuffer )
+	bool DecryptMessages( CString & sBuffer )
 	{
-		string sMessages = GetPath();
-		string sFile;
+		CString sMessages = GetPath();
+		CString sFile;
 		sBuffer = "";
 	
 		if ( ( sMessages.empty() ) || ( !ReadFile( sMessages, sFile ) ) )
@@ -397,20 +400,20 @@ private:
 		return( true );
 	}
 
-	void AddMessage( time_t iTime, const CNick & Nick, string & sMessage )
+	void AddMessage( time_t iTime, const CNick & Nick, CString & sMessage )
 	{
 		AddMessage( CUtils::ToString( iTime ) + ":" + Nick.GetNickMask() + ":" + sMessage );
 	}
 
-	void AddMessage( const string & sText )
+	void AddMessage( const CString & sText )
 	{
 		m_vMessages.push_back( sText );
 	}
 
 	time_t			m_iLastSentData;
 	bool			m_bIsAway;
-	vector<string>	m_vMessages;
-	string			m_sReason;
+	vector<CString>	m_vMessages;
+	CString			m_sReason;
 };
 
 

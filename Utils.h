@@ -7,6 +7,7 @@
 #include <sys/file.h>
 #include <stdio.h>
 
+#include "String.h"
 #include <string>
 #include <vector>
 #include <map>
@@ -29,7 +30,7 @@ public:
 
 	static string GetIP(unsigned long addr);
 	static unsigned long GetLongIP(const string& sIP);
-	static string ChangeDir(const string& sPath, const string& sAdd, const string& sHomeDir);
+	static CString ChangeDir(const CString& sPath, const CString& sAdd, const CString& sHomeDir);
 	static int MakeDir(const string& sPath, mode_t iMode = 0700);
 	static void PrintError(const string& sMessage);
 	static void PrintMessage(const string& sMessage, bool bStrong = false);

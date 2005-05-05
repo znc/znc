@@ -1,21 +1,20 @@
 #ifndef _BUFFER_H
 #define _BUFFER_H
 
-#include <string>
+#include "String.h"
 #include <vector>
 using std::vector;
-using std::string;
 
 class CBufLine {
 public:
-	CBufLine(const string& sPre, const string& sPost);
+	CBufLine(const CString& sPre, const CString& sPost);
 	virtual ~CBufLine();
-	void GetLine(const string& sTarget, string& sRet);
+	void GetLine(const CString& sTarget, CString& sRet);
 
 private:
 protected:
-	string	m_sPre;
-	string	m_sPost;
+	CString	m_sPre;
+	CString	m_sPost;
 };
 
 class CBuffer : private vector<CBufLine> {
@@ -23,9 +22,9 @@ public:
 	CBuffer(unsigned int uLineCount = 100);
 	virtual ~CBuffer();
 
-	int AddLine(const string& sPre, const string& sPost);
-	bool GetNextLine(const string& sTarget, string& sRet);
-	bool GetLine(const string& sTarget, string& sRet, unsigned int uIdx);
+	int AddLine(const CString& sPre, const CString& sPost);
+	bool GetNextLine(const CString& sTarget, CString& sRet);
+	bool GetLine(const CString& sTarget, CString& sRet, unsigned int uIdx);
 	bool IsEmpty() { return empty(); }
 	void Clear() { clear(); }
 

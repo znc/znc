@@ -9,7 +9,7 @@
 #include "md5.h"
 #include "Timers.h"
 
-CUser::CUser(const string& sUserName, CZNC* pZNC) {
+CUser::CUser(const CString& sUserName, CZNC* pZNC) {
 	m_sUserName = sUserName;
 	m_sNick = sUserName;
 	m_sIdent = sUserName;
@@ -47,7 +47,7 @@ bool CUser::OnBoot() {
 	return true;
 }
 
-bool CUser::AddAllowedHost(const string& sHostMask) {
+bool CUser::AddAllowedHost(const CString& sHostMask) {
 	if (m_ssAllowedHosts.find(sHostMask) != m_ssAllowedHosts.end()) {
 		return false;
 	}
@@ -56,12 +56,12 @@ bool CUser::AddAllowedHost(const string& sHostMask) {
 	return true;
 }
 
-bool CUser::IsHostAllowed(const string& sHostMask) {
+bool CUser::IsHostAllowed(const CString& sHostMask) {
 	if (m_ssAllowedHosts.empty()) {
 		return true;
 	}
 
-	for (set<string>::iterator a = m_ssAllowedHosts.begin(); a != m_ssAllowedHosts.end(); a++) {
+	for (set<CString>::iterator a = m_ssAllowedHosts.begin(); a != m_ssAllowedHosts.end(); a++) {
 		if (CUtils::wildcmp(*a, sHostMask)) {
 			return true;
 		}
@@ -70,7 +70,7 @@ bool CUser::IsHostAllowed(const string& sHostMask) {
 	return false;
 }
 
-bool CUser::IsValidUserName(const string& sUserName) {
+bool CUser::IsValidUserName(const CString& sUserName) {
 	const char* p = sUserName.c_str();
 
 	if (sUserName.empty()) {
@@ -86,7 +86,7 @@ bool CUser::IsValidUserName(const string& sUserName) {
 	return true;
 }
 
-bool CUser::IsValid(string& sErrMsg) {
+bool CUser::IsValid(CString& sErrMsg) {
 	sErrMsg.clear();
 
 	if (m_sPass.empty()) {
@@ -123,7 +123,7 @@ bool CUser::AddChan(CChan* pChan) {
 	return true;
 }
 
-bool CUser::AddChan(const string& sName) {
+bool CUser::AddChan(const CString& sName) {
 	if (sName.empty()) {
 		return false;
 	}
@@ -139,7 +139,7 @@ bool CUser::AddChan(const string& sName) {
 	return true;
 }
 
-bool CUser::DelChan(const string& sName) {
+bool CUser::DelChan(const CString& sName) {
 	for (vector<CChan*>::iterator a = m_vChans.begin(); a != m_vChans.end(); a++) {
 		if (strcasecmp(sName.c_str(), (*a)->GetName().c_str()) == 0) {
 			m_vChans.erase(a);
@@ -150,7 +150,7 @@ bool CUser::DelChan(const string& sName) {
 	return false;
 }
 
-CChan* CUser::FindChan(const string& sName) {
+CChan* CUser::FindChan(const CString& sName) {
 	for (unsigned int a = 0; a < m_vChans.size(); a++) {
 		CChan* pChan = m_vChans[a];
 		if (strcasecmp(sName.c_str(), pChan->GetName().c_str()) == 0) {
@@ -161,7 +161,7 @@ CChan* CUser::FindChan(const string& sName) {
 	return NULL;
 }
 
-CServer* CUser::FindServer(const string& sName) {
+CServer* CUser::FindServer(const CString& sName) {
 	for (unsigned int a = 0; a < m_vServers.size(); a++) {
 		CServer* pServer = m_vServers[a];
 		if (strcasecmp(sName.c_str(), pServer->GetName().c_str()) == 0) {
@@ -172,7 +172,7 @@ CServer* CUser::FindServer(const string& sName) {
 	return NULL;
 }
 
-bool CUser::DelServer(const string& sName) {
+bool CUser::DelServer(const CString& sName) {
 	if (sName.empty()) {
 		return false;
 	}
@@ -187,17 +187,17 @@ bool CUser::DelServer(const string& sName) {
 	return false;
 }
 
-bool CUser::AddServer(const string& sName) {
+bool CUser::AddServer(const CString& sName) {
 	if (sName.empty()) {
 		return false;
 	}
 
 	bool bSSL = false;
-	string sLine = sName;
+	CString sLine = sName;
 	CUtils::Trim(sLine);
 
-	string sHost = CUtils::Token(sLine, 0);
-	string sPort = CUtils::Token(sLine, 1);
+	CString sHost = CUtils::Token(sLine, 0);
+	CString sPort = CUtils::Token(sLine, 1);
 
 	if (CUtils::Left(sPort, 1) == "+") {
 		bSSL = true;
@@ -205,12 +205,12 @@ bool CUser::AddServer(const string& sName) {
 	}
 
 	unsigned short uPort = strtoul(sPort.c_str(), NULL, 10);
-	string sPass = CUtils::Token(sLine, 2, true);
+	CString sPass = CUtils::Token(sLine, 2, true);
 
 	return AddServer(sHost, uPort, sPass, bSSL);
 }
 
-bool CUser::AddServer(const string& sName, unsigned short uPort, const string& sPass, bool bSSL) {
+bool CUser::AddServer(const CString& sName, unsigned short uPort, const CString& sPass, bool bSSL) {
 #ifndef HAVE_LIBSSL
 	if (bSSL) {
 		return false;
@@ -242,7 +242,7 @@ CServer* CUser::GetNextServer() {
 	return m_vServers[m_uServerIdx++];	// Todo: cycle through these
 }
 
-bool CUser::CheckPass(const string& sPass) {
+bool CUser::CheckPass(const CString& sPass) {
 	if (!m_bPassHashed) {
 		return (sPass == m_sPass);
 	}
@@ -261,7 +261,7 @@ CZNC* CUser::GetZNC() {
 CUserSock* CUser::GetUserSock() {
 	// Todo: optimize this by saving a pointer to the sock
 	TSocketManager<Csock>& Manager = m_pZNC->GetManager();
-	string sSockName = "USR::" + m_sUserName;
+	CString sSockName = "USR::" + m_sUserName;
 
 	for (unsigned int a = 0; a < Manager.size(); a++) {
 		Csock* pSock = Manager[a];
@@ -290,7 +290,7 @@ CIRCSock* CUser::GetIRCSock() {
 	return (CIRCSock*) m_pZNC->GetManager().FindSockByName("IRC::" + m_sUserName);
 }
 
-string CUser::GetLocalIP() {
+CString CUser::GetLocalIP() {
 	CIRCSock* pIRCSock = GetIRCSock();
 
 	if (pIRCSock) {
@@ -306,7 +306,7 @@ string CUser::GetLocalIP() {
 	return "";
 }
 
-bool CUser::PutIRC(const string& sLine) {
+bool CUser::PutIRC(const CString& sLine) {
 	CIRCSock* pIRCSock = GetIRCSock();
 
 	if (!pIRCSock) {
@@ -317,7 +317,7 @@ bool CUser::PutIRC(const string& sLine) {
 	return true;
 }
 
-bool CUser::PutUser(const string& sLine) {
+bool CUser::PutUser(const CString& sLine) {
 	CUserSock* pUserSock = GetUserSock();
 
 	if (!pUserSock) {
@@ -328,7 +328,7 @@ bool CUser::PutUser(const string& sLine) {
 	return true;
 }
 
-bool CUser::PutStatus(const string& sLine) {
+bool CUser::PutStatus(const CString& sLine) {
 	CUserSock* pUserSock = GetUserSock();
 
 	if (!pUserSock) {
@@ -339,7 +339,7 @@ bool CUser::PutStatus(const string& sLine) {
 	return true;
 }
 
-bool CUser::PutModule(const string& sModule, const string& sLine) {
+bool CUser::PutModule(const CString& sModule, const CString& sLine) {
 	CUserSock* pUserSock = GetUserSock();
 
 	if (!pUserSock) {
@@ -350,7 +350,7 @@ bool CUser::PutModule(const string& sModule, const string& sLine) {
 	return true;
 }
 
-bool CUser::ResumeFile(const string& sRemoteNick, unsigned short uPort, unsigned long uFileSize) {
+bool CUser::ResumeFile(const CString& sRemoteNick, unsigned short uPort, unsigned long uFileSize) {
 	TSocketManager<Csock>& Manager = m_pZNC->GetManager();
 
 	for (unsigned int a = 0; a < Manager.size(); a++) {
@@ -371,8 +371,8 @@ bool CUser::ResumeFile(const string& sRemoteNick, unsigned short uPort, unsigned
 	return false;
 }
 
-bool CUser::SendFile(const string& sRemoteNick, const string& sFileName, const string& sModuleName) {
-	string sFullPath = CUtils::ChangeDir(GetDLPath(), sFileName, GetHomePath());
+bool CUser::SendFile(const CString& sRemoteNick, const CString& sFileName, const CString& sModuleName) {
+	CString sFullPath = CUtils::ChangeDir(GetDLPath(), sFileName, GetHomePath());
 	CDCCSock* pSock = new CDCCSock(this, sRemoteNick, sFullPath, sModuleName);
 
 	CFile* pFile = pSock->OpenFile(false);
@@ -396,7 +396,7 @@ bool CUser::SendFile(const string& sRemoteNick, const string& sFileName, const s
 	return true;
 }
 
-bool CUser::GetFile(const string& sRemoteNick, const string& sRemoteIP, unsigned short uRemotePort, const string& sFileName, unsigned long uFileSize, const string& sModuleName) {
+bool CUser::GetFile(const CString& sRemoteNick, const CString& sRemoteIP, unsigned short uRemotePort, const CString& sFileName, unsigned long uFileSize, const CString& sModuleName) {
 	if (CFile::Exists(sFileName)) {
 		PutModule(sModuleName, "DCC <- [" + sRemoteNick + "][" + sFileName + "] - File already exists.");
 		return false;
@@ -418,7 +418,7 @@ bool CUser::GetFile(const string& sRemoteNick, const string& sRemoteIP, unsigned
 	return true;
 }
 
-string CUser::GetCurNick() {
+CString CUser::GetCurNick() {
 	CIRCSock* pIRCSock = GetIRCSock();
 
 	if (pIRCSock) {
@@ -435,25 +435,25 @@ string CUser::GetCurNick() {
 }
 
 // Setters
-void CUser::SetNick(const string& s) { m_sNick = s; }
-void CUser::SetAltNick(const string& s) { m_sAltNick = s; }
-void CUser::SetIdent(const string& s) { m_sIdent = s; }
-void CUser::SetRealName(const string& s) { m_sRealName = s; }
-void CUser::SetVHost(const string& s) { m_sVHost = s; }
-void CUser::SetPass(const string& s, bool bHashed) { m_sPass = s; m_bPassHashed = bHashed; }
+void CUser::SetNick(const CString& s) { m_sNick = s; }
+void CUser::SetAltNick(const CString& s) { m_sAltNick = s; }
+void CUser::SetIdent(const CString& s) { m_sIdent = s; }
+void CUser::SetRealName(const CString& s) { m_sRealName = s; }
+void CUser::SetVHost(const CString& s) { m_sVHost = s; }
+void CUser::SetPass(const CString& s, bool bHashed) { m_sPass = s; m_bPassHashed = bHashed; }
 void CUser::SetUseClientIP(bool b) { m_bUseClientIP = b; }
 void CUser::SetKeepNick(bool b) { m_bKeepNick = b; }
 void CUser::SetDenyLoadMod(bool b) { m_bDenyLoadMod = b; }
-void CUser::SetDefaultChanModes(const string& s) { m_sDefaultChanModes = s; }
+void CUser::SetDefaultChanModes(const CString& s) { m_sDefaultChanModes = s; }
 void CUser::SetIRCNick(const CNick& n) { m_IRCNick = n; }
-void CUser::SetIRCServer(const string& s) { m_sIRCServer = s; }
-void CUser::SetQuitMsg(const string& s) { m_sQuitMsg = s; }
-void CUser::SetVersionReply(const string& s) { m_sVersionReply = s; }
+void CUser::SetIRCServer(const CString& s) { m_sIRCServer = s; }
+void CUser::SetQuitMsg(const CString& s) { m_sQuitMsg = s; }
+void CUser::SetVersionReply(const CString& s) { m_sVersionReply = s; }
 void CUser::SetBufferCount(unsigned int u) { m_uBufferCount = u; }
 void CUser::SetKeepBuffer(bool b) { m_bKeepBuffer = b; }
 
-bool CUser::SetStatusPrefix(const string& s) {
-	if ((!s.empty()) && (s.length() < 6) && (s.find(' ') == string::npos)) {
+bool CUser::SetStatusPrefix(const CString& s) {
+	if ((!s.empty()) && (s.length() < 6) && (s.find(' ') == CString::npos)) {
 		m_sStatusPrefix = s;
 		return true;
 	}
@@ -463,32 +463,32 @@ bool CUser::SetStatusPrefix(const string& s) {
 // !Setters
 
 // Getters
-const string& CUser::GetUserName() const { return m_sUserName; }
-const string& CUser::GetNick() const { return m_sNick; }
-const string& CUser::GetAltNick() const { return m_sAltNick; }
-const string& CUser::GetIdent() const { return m_sIdent; }
-const string& CUser::GetRealName() const { return m_sRealName; }
-const string& CUser::GetVHost() const { return m_sVHost; }
-const string& CUser::GetPass() const { return m_sPass; }
+const CString& CUser::GetUserName() const { return m_sUserName; }
+const CString& CUser::GetNick() const { return m_sNick; }
+const CString& CUser::GetAltNick() const { return m_sAltNick; }
+const CString& CUser::GetIdent() const { return m_sIdent; }
+const CString& CUser::GetRealName() const { return m_sRealName; }
+const CString& CUser::GetVHost() const { return m_sVHost; }
+const CString& CUser::GetPass() const { return m_sPass; }
 
-const string& CUser::GetCurPath() const { return m_pZNC->GetCurPath(); }
-const string& CUser::GetDLPath() const { return m_pZNC->GetDLPath(); }
-const string& CUser::GetModPath() const { return m_pZNC->GetModPath(); }
-const string& CUser::GetHomePath() const { return m_pZNC->GetHomePath(); }
-const string& CUser::GetDataPath() const { return m_pZNC->GetDataPath(); }
-string CUser::GetPemLocation() const { return m_pZNC->GetPemLocation(); }
+const CString& CUser::GetCurPath() const { return m_pZNC->GetCurPath(); }
+const CString& CUser::GetDLPath() const { return m_pZNC->GetDLPath(); }
+const CString& CUser::GetModPath() const { return m_pZNC->GetModPath(); }
+const CString& CUser::GetHomePath() const { return m_pZNC->GetHomePath(); }
+const CString& CUser::GetDataPath() const { return m_pZNC->GetDataPath(); }
+CString CUser::GetPemLocation() const { return m_pZNC->GetPemLocation(); }
 
 bool CUser::UseClientIP() const { return m_bUseClientIP; }
 bool CUser::KeepNick() const { return m_bKeepNick; }
 bool CUser::DenyLoadMod() const { return m_bDenyLoadMod; }
-const string& CUser::GetStatusPrefix() const { return m_sStatusPrefix; }
-const string& CUser::GetDefaultChanModes() const { return m_sDefaultChanModes; }
+const CString& CUser::GetStatusPrefix() const { return m_sStatusPrefix; }
+const CString& CUser::GetDefaultChanModes() const { return m_sDefaultChanModes; }
 const vector<CChan*>& CUser::GetChans() const { return m_vChans; }
 const vector<CServer*>& CUser::GetServers() const { return m_vServers; }
 const CNick& CUser::GetIRCNick() const { return m_IRCNick; }
-const string& CUser::GetIRCServer() const { return m_sIRCServer; }
-string CUser::GetQuitMsg() const { return (!m_sQuitMsg.empty()) ? m_sQuitMsg : "ZNC by prozac - http://znc.sourceforge.net"; }
-string CUser::GetVersionReply() const { return (!m_sVersionReply.empty()) ? m_sVersionReply : "ZNC by prozac - http://znc.sourceforge.net"; }
+const CString& CUser::GetIRCServer() const { return m_sIRCServer; }
+CString CUser::GetQuitMsg() const { return (!m_sQuitMsg.empty()) ? m_sQuitMsg : "ZNC by prozac - http://znc.sourceforge.net"; }
+CString CUser::GetVersionReply() const { return (!m_sVersionReply.empty()) ? m_sVersionReply : "ZNC by prozac - http://znc.sourceforge.net"; }
 unsigned int CUser::GetBufferCount() const { return m_uBufferCount; }
 bool CUser::KeepBuffer() const { return m_bKeepBuffer; }
 // !Getters

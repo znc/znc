@@ -18,7 +18,7 @@ static struct option g_LongOpts[] = {
 };
 
 void GenerateHelp(const char *appname) {
-	CUtils::PrintMessage("USAGE: " + string(appname) + " [options] [config]");
+	CUtils::PrintMessage("USAGE: " + CString(appname) + " [options] [config]");
 	CUtils::PrintMessage("Options are:");
 	CUtils::PrintMessage("\t--help");
 	CUtils::PrintMessage("\t--version       Output version information and exit");
@@ -46,7 +46,7 @@ void die(int sig) {
 }
 
 int main(int argc, char** argv) {
-	string sConfig;
+	CString sConfig;
 
 #ifdef HAVE_LIBSSL
 	// initialize ssl, allow client to have compression enabled if desired
@@ -63,7 +63,7 @@ int main(int argc, char** argv) {
 		switch (iArg) {
 			case 1: { // long options
 				if (iOptIndex >= 0) {
-					string sOption = Lower(g_LongOpts[iOptIndex].name);
+					CString sOption = Lower(g_LongOpts[iOptIndex].name);
 					if (sOption == "version") {
 						cout << CZNC::GetTag() << endl;
 						return 0;
@@ -103,7 +103,7 @@ int main(int argc, char** argv) {
 	if (bMakePem) {
 		CZNC* pZNC = CZNC::New();
 		pZNC->InitDirs("");
-		string sPemFile = pZNC->GetPemLocation();
+		CString sPemFile = pZNC->GetPemLocation();
 
 		CUtils::PrintAction("Writing Pem file [" + sPemFile + "]");
 
@@ -131,7 +131,7 @@ int main(int argc, char** argv) {
 	}
 #endif /* HAVE_LIBSSL */
 	if (bMakePass) {
-		string sHash = CUtils::GetHashPass();
+		CString sHash = CUtils::GetHashPass();
 		CUtils::PrintMessage("Use this in the <User> section of your config:");
 		CUtils::PrintMessage("Pass = " + sHash + " -");
 

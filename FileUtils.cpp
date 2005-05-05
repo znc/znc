@@ -1,6 +1,6 @@
 #include "FileUtils.h"
 
-CFile::CFile(const string& sLongName) {
+CFile::CFile(const CString& sLongName) {
 	m_sLongName = sLongName;
 	m_iFD = -1;
 
@@ -11,8 +11,8 @@ CFile::CFile(const string& sLongName) {
 		CUtils::LeftChomp(m_sShortName);
 	}
 
-	string::size_type uPos = m_sShortName.rfind('/');
-	if (uPos != string::npos) {
+	CString::size_type uPos = m_sShortName.rfind('/');
+	if (uPos != CString::npos) {
 		m_sShortName = m_sShortName.substr(uPos +1);
 	}
 }
@@ -23,13 +23,13 @@ CFile::~CFile() {
 	}
 }
 
-bool CFile::IsReg(const string& sLongName, bool bUseLstat) { return CFile::FType(sLongName, FT_REGULAR, bUseLstat); }
-bool CFile::IsDir(const string& sLongName, bool bUseLstat) { return CFile::FType(sLongName, FT_DIRECTORY, bUseLstat); }
-bool CFile::IsChr(const string& sLongName, bool bUseLstat)  { return CFile::FType(sLongName, FT_CHARACTER, bUseLstat); }
-bool CFile::IsBlk(const string& sLongName, bool bUseLstat)  { return CFile::FType(sLongName, FT_BLOCK, bUseLstat); }
-bool CFile::IsFifo(const string& sLongName, bool bUseLstat)  { return CFile::FType(sLongName, FT_FIFO, bUseLstat); }
-bool CFile::IsLnk(const string& sLongName, bool bUseLstat)  { return CFile::FType(sLongName, FT_LINK, bUseLstat); }
-bool CFile::IsSock(const string& sLongName, bool bUseLstat)  { return CFile::FType(sLongName, FT_SOCK, bUseLstat); }
+bool CFile::IsReg(const CString& sLongName, bool bUseLstat) { return CFile::FType(sLongName, FT_REGULAR, bUseLstat); }
+bool CFile::IsDir(const CString& sLongName, bool bUseLstat) { return CFile::FType(sLongName, FT_DIRECTORY, bUseLstat); }
+bool CFile::IsChr(const CString& sLongName, bool bUseLstat)  { return CFile::FType(sLongName, FT_CHARACTER, bUseLstat); }
+bool CFile::IsBlk(const CString& sLongName, bool bUseLstat)  { return CFile::FType(sLongName, FT_BLOCK, bUseLstat); }
+bool CFile::IsFifo(const CString& sLongName, bool bUseLstat)  { return CFile::FType(sLongName, FT_FIFO, bUseLstat); }
+bool CFile::IsLnk(const CString& sLongName, bool bUseLstat)  { return CFile::FType(sLongName, FT_LINK, bUseLstat); }
+bool CFile::IsSock(const CString& sLongName, bool bUseLstat)  { return CFile::FType(sLongName, FT_SOCK, bUseLstat); }
 
 bool CFile::IsReg(bool bUseLstat) { return CFile::IsReg(m_sLongName, bUseLstat); }
 bool CFile::IsDir(bool bUseLstat) { return CFile::IsDir(m_sLongName, bUseLstat); }
@@ -42,7 +42,7 @@ bool CFile::IsSock(bool bUseLstat)  { return CFile::IsSock(m_sLongName, bUseLsta
 bool CFile::access(int mode) { return (::access(m_sLongName.c_str(), mode) == 0); }
 
 // for gettin file types, using fstat instead
-bool CFile::FType(const string sFileName, EFileTypes eType, bool bUseLstat) {
+bool CFile::FType(const CString sFileName, EFileTypes eType, bool bUseLstat) {
 	struct stat st;
 
 	if (!bUseLstat) {
@@ -86,12 +86,12 @@ unsigned int CFile::GetMTime() const { return CFile::GetMTime(m_sLongName); }
 unsigned int CFile::GetCTime() const { return CFile::GetCTime(m_sLongName); }
 int CFile::GetUID() const { return CFile::GetUID(m_sLongName); }
 int CFile::GetGID() const { return CFile::GetGID(m_sLongName); }
-bool CFile::Exists(const string& sFile) {
+bool CFile::Exists(const CString& sFile) {
 	struct stat st;
 	return (stat(sFile.c_str(), &st) == 0);
 }
 
-unsigned long long CFile::GetSize(const string& sFile) {
+unsigned long long CFile::GetSize(const CString& sFile) {
 	struct stat st;
 	if(stat(sFile.c_str(), &st) != 0) {
 		return 0;
@@ -100,31 +100,31 @@ unsigned long long CFile::GetSize(const string& sFile) {
 	return (S_ISREG(st.st_mode)) ? st.st_size : 0;
 }
 
-unsigned int CFile::GetATime(const string& sFile) {
+unsigned int CFile::GetATime(const CString& sFile) {
 	struct stat st;
 	return (stat(sFile.c_str(), &st) != 0) ? 0 : st.st_atime;
 }
 
-unsigned int CFile::GetMTime(const string& sFile) {
+unsigned int CFile::GetMTime(const CString& sFile) {
 	struct stat st;
 	return (stat(sFile.c_str(), &st) != 0) ? 0 : st.st_mtime;
 }
 
-unsigned int CFile::GetCTime(const string& sFile) {
+unsigned int CFile::GetCTime(const CString& sFile) {
 	struct stat st;
 	return (stat(sFile.c_str(), &st) != 0) ? 0 : st.st_ctime;
 }
 
-int CFile::GetUID(const string& sFile) {
+int CFile::GetUID(const CString& sFile) {
 	struct stat st;
 	return (stat(sFile.c_str(), &st) != 0) ? -1 : (int) st.st_uid;
 }
 
-int CFile::GetGID(const string& sFile) {
+int CFile::GetGID(const CString& sFile) {
 	struct stat st;
 	return (stat(sFile.c_str(), &st) != 0) ? -1 : (int) st.st_gid;
 }
-int CFile::GetInfo(const string& sFile, struct stat& st) {
+int CFile::GetInfo(const CString& sFile, struct stat& st) {
 	return stat(sFile.c_str(), &st);
 }
 
@@ -132,11 +132,11 @@ int CFile::GetInfo(const string& sFile, struct stat& st) {
 // Functions to manipulate the file on the filesystem
 //
 int CFile::Delete() { return CFile::Delete(m_sLongName); }
-int CFile::Move(const string& sNewFileName, bool bOverwrite) {
+int CFile::Move(const CString& sNewFileName, bool bOverwrite) {
 	return CFile::Move(m_sLongName, sNewFileName, bOverwrite);
 }
 
-bool CFile::Delete(const string& sFileName) {
+bool CFile::Delete(const CString& sFileName) {
 	if(!CFile::Exists(sFileName)) {
 		return false;
 	}
@@ -144,12 +144,12 @@ bool CFile::Delete(const string& sFileName) {
 	return (unlink(sFileName.c_str()) == 0) ? true : false;
 }
 
-bool CFile::Move(const string& sOldFileName, const string& sNewFileName, bool bOverwrite) {
+bool CFile::Move(const CString& sOldFileName, const CString& sNewFileName, bool bOverwrite) {
 	if((!bOverwrite) && (CFile::Exists(sNewFileName))) {
 		return false;
 	}
 
-	//string sNewLongName = (sNewFileName[0] == '/') ? sNewFileName : m_sPath + "/" + sNewFileName;
+	//CString sNewLongName = (sNewFileName[0] == '/') ? sNewFileName : m_sPath + "/" + sNewFileName;
 	return (rename(sOldFileName.c_str(), sNewFileName.c_str()) == 0) ? true : false;
 }
 
@@ -157,7 +157,7 @@ bool CFile::Chmod(mode_t mode) {
 	return CFile::Chmod(m_sLongName, mode);
 }
 
-bool CFile::Chmod(const string& sFile, mode_t mode) {
+bool CFile::Chmod(const CString& sFile, mode_t mode) {
 	return (chmod(sFile.c_str(), mode) == 0);
 }
 
@@ -182,7 +182,7 @@ int CFile::Read(char *pszBuffer, int iBytes) {
 	return read(m_iFD, pszBuffer, iBytes);
 }
 
-bool CFile::ReadLine(string & sData) {
+bool CFile::ReadLine(CString & sData) {
 	char buff[64];
 	sData.clear();
 	if (m_iFD == -1) {
@@ -192,8 +192,8 @@ bool CFile::ReadLine(string & sData) {
 	bool bEOF = false;
 
 	while(true) {
-		string::size_type iFind = m_sBuffer.find("\n");
-		if (iFind != string::npos) {
+		CString::size_type iFind = m_sBuffer.find("\n");
+		if (iFind != CString::npos) {
 			sData = m_sBuffer.substr(0, (iFind + 1));
 			m_sBuffer.erase(0, (iFind + 1));
 			break;
@@ -221,8 +221,8 @@ bool CFile::ReadLine(string & sData) {
 		}
 	}
 
-	string::size_type iFind = m_sBuffer.find("\n");
-	if (iFind != string::npos) {
+	CString::size_type iFind = m_sBuffer.find("\n");
+	if (iFind != CString::npos) {
 		return true;
 	}
 
@@ -237,11 +237,11 @@ int CFile::Write(const char *pszBuffer, u_int iBytes) {
 	return write(m_iFD, pszBuffer, iBytes);
 }
 
-int CFile::Write(const string & sData) {
+int CFile::Write(const CString & sData) {
 	return Write(sData.data(), sData.size());
 }
 void CFile::Close() { close(m_iFD); m_iFD = -1; }
 
-string CFile::GetLongName() const { return m_sLongName; }
-string CFile::GetShortName() const { return m_sShortName; }
+CString CFile::GetLongName() const { return m_sLongName; }
+CString CFile::GetShortName() const { return m_sShortName; }
 void CFile::SetFD(int iFD) { m_iFD = iFD; }

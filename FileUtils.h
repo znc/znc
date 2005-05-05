@@ -10,16 +10,15 @@
 
 #include "Utils.h"
 
-#include <string>
+#include "String.h"
 #include <vector>
 #include <map>
-using std::string;
 using std::vector;
 using std::map;
 
 class CFile {
 public:
-	CFile(const string& sLongName);
+	CFile(const CString& sLongName);
 	virtual ~CFile();
 
 	enum EFileTypes {
@@ -32,13 +31,13 @@ public:
 		FT_SOCK
 	};
 
-	static bool IsReg(const string& sLongName, bool bUseLstat = false);
-	static bool IsDir(const string& sLongName, bool bUseLstat = false);
-	static bool IsChr(const string& sLongName, bool bUseLstat = false);
-	static bool IsBlk(const string& sLongName, bool bUseLstat = false);
-	static bool IsFifo(const string& sLongName, bool bUseLstat = false);
-	static bool IsLnk(const string& sLongName, bool bUseLstat = true);
-	static bool IsSock(const string& sLongName, bool bUseLstat = false);
+	static bool IsReg(const CString& sLongName, bool bUseLstat = false);
+	static bool IsDir(const CString& sLongName, bool bUseLstat = false);
+	static bool IsChr(const CString& sLongName, bool bUseLstat = false);
+	static bool IsBlk(const CString& sLongName, bool bUseLstat = false);
+	static bool IsFifo(const CString& sLongName, bool bUseLstat = false);
+	static bool IsLnk(const CString& sLongName, bool bUseLstat = true);
+	static bool IsSock(const CString& sLongName, bool bUseLstat = false);
 
 	bool IsReg(bool bUseLstat = false);
 	bool IsDir(bool bUseLstat = false);
@@ -51,7 +50,7 @@ public:
 	bool access(int mode);
 
 	// for gettin file types, using fstat instead
-	static bool FType(const string sFileName, EFileTypes eType, bool bUseLstat = false);
+	static bool FType(const CString sFileName, EFileTypes eType, bool bUseLstat = false);
 
 	enum EFileAttr {
 		FA_Name,
@@ -72,51 +71,51 @@ public:
 	unsigned int GetCTime() const;
 	int GetUID() const;
 	int GetGID() const;
-	static bool Exists(const string& sFile);
+	static bool Exists(const CString& sFile);
 
-	static unsigned long long GetSize(const string& sFile);
-	static unsigned int GetATime(const string& sFile);
-	static unsigned int GetMTime(const string& sFile);
-	static unsigned int GetCTime(const string& sFile);
-	static int GetUID(const string& sFile);
-	static int GetGID(const string& sFile);
-	static int GetInfo(const string& sFile, struct stat& st);
+	static unsigned long long GetSize(const CString& sFile);
+	static unsigned int GetATime(const CString& sFile);
+	static unsigned int GetMTime(const CString& sFile);
+	static unsigned int GetCTime(const CString& sFile);
+	static int GetUID(const CString& sFile);
+	static int GetGID(const CString& sFile);
+	static int GetInfo(const CString& sFile, struct stat& st);
 
 	//
 	// Functions to manipulate the file on the filesystem
 	//
 	int Delete();
-	int Move(const string& sNewFileName, bool bOverwrite = false);
+	int Move(const CString& sNewFileName, bool bOverwrite = false);
 
-	static bool Delete(const string& sFileName);
-	static bool Move(const string& sOldFileName, const string& sNewFileName, bool bOverwrite = false);
+	static bool Delete(const CString& sFileName);
+	static bool Move(const CString& sOldFileName, const CString& sNewFileName, bool bOverwrite = false);
 	bool Chmod(mode_t mode);
-	static bool Chmod(const string& sFile, mode_t mode);
+	static bool Chmod(const CString& sFile, mode_t mode);
 	bool Seek(unsigned long uPos);
 	bool Open(int iFlags, mode_t iMode = 0644);
 	int Read(char *pszBuffer, int iBytes);
-	bool ReadLine(string & sData);
+	bool ReadLine(CString & sData);
 	int Write(const char *pszBuffer, u_int iBytes);
-	int Write(const string & sData);
+	int Write(const CString & sData);
 	void Close();
 
-	string GetLongName() const;
-	string GetShortName() const;
+	CString GetLongName() const;
+	CString GetShortName() const;
 	void SetFD(int iFD);
 
 private:
-	string	m_sBuffer;
+	CString	m_sBuffer;
 	int		m_iFD;
 
 protected:
-	string	m_sLongName;	//!< Absolute filename (m_sPath + "/" + m_sShortName)
-	string	m_sShortName;	//!< Filename alone, without path
+	CString	m_sLongName;	//!< Absolute filename (m_sPath + "/" + m_sShortName)
+	CString	m_sShortName;	//!< Filename alone, without path
 };
 
 class CDir : public vector<CFile*> {
 public:
 
-	CDir(const string& sDir) {
+	CDir(const CString& sDir) {
 		m_bDesc = false;
 		m_eSortAttr = CFile::FA_Name;
 		Fill(sDir);
@@ -139,7 +138,7 @@ public:
 		clear();
 	}
 
-	int Fill(const string& sDir) {
+	int Fill(const CString& sDir) {
 		return FillByWildcard(sDir, "*");
 	}
 
@@ -149,14 +148,14 @@ public:
 		sort(begin(), end(), TPtrCmp<CFile>);
 	}*/
 
-	static bool Exists(const string& sDir) {
+	static bool Exists(const CString& sDir) {
 		CFile cFile(sDir);
 		return (cFile.Exists()) && (cFile.IsDir());
 	}
 
-/*	static bool Create(const string& sDir, mode_t mode = 0755) {
-		VCstring vSubDirs = sDir.split("[/\\\\]+");
-		Cstring sCurDir;
+/*	static bool Create(const CString& sDir, mode_t mode = 0755) {
+		VCCString vSubDirs = sDir.split("[/\\\\]+");
+		CCString sCurDir;
 
 		for (unsigned int a = 0; a < vSubDirs.size(); a++) {
 			sCurDir += vSubDirs[a] + "/";
@@ -168,7 +167,7 @@ public:
 		return true;
 	}
 
-	int FillByRegex(const Cstring& sDir, const Cstring& sRegex, const Cstring& sFlags = "") {
+	int FillByRegex(const CCString& sDir, const CCString& sRegex, const CCString& sFlags = "") {
 		CleanUp();
 		DIR* dir = opendir((sDir.empty()) ? "." : sDir.c_str());
 
@@ -182,7 +181,7 @@ public:
 			if ((strcmp(de->d_name, ".") == 0) || (strcmp(de->d_name, "..") == 0)) {
 				continue;
 			}
-			if ((!sRegex.empty()) && (!Cstring::search(de->d_name, sRegex, sFlags))) {
+			if ((!sRegex.empty()) && (!CCString::search(de->d_name, sRegex, sFlags))) {
 				continue;
 			}
 
@@ -194,7 +193,7 @@ public:
 		return size();
 	}*/
 
-	int FillByWildcard(const string& sDir, const string& sWildcard) {
+	int FillByWildcard(const CString& sDir, const CString& sWildcard) {
 		CleanUp();
 		DIR* dir = opendir((sDir.empty()) ? "." : sDir.c_str());
 
@@ -220,7 +219,7 @@ public:
 		return size();
 	}
 
-	static unsigned int Chmod(mode_t mode, const string& sWildcard, const string& sDir = ".") {
+	static unsigned int Chmod(mode_t mode, const CString& sWildcard, const CString& sDir = ".") {
 		CDir cDir;
 		cDir.FillByWildcard(sDir, sWildcard);
 		return cDir.Chmod(mode);
@@ -237,7 +236,7 @@ public:
 		return uRet;
 	}
 
-	static unsigned int Delete(mode_t mode, const string& sWildcard, const string& sDir = ".") {
+	static unsigned int Delete(mode_t mode, const CString& sWildcard, const CString& sDir = ".") {
 		CDir cDir;
 		cDir.FillByWildcard(sDir, sWildcard);
 		return cDir.Delete();
@@ -257,7 +256,7 @@ public:
 	CFile::EFileAttr GetSortAttr() { return m_eSortAttr; }
 	bool IsDescending() { return m_bDesc; }
 
-/*	static bool MkDir(const string & sPath, mode_t iMode, bool bBuildParents = false, bool bApplyModToParents = false) {
+/*	static bool MkDir(const CString & sPath, mode_t iMode, bool bBuildParents = false, bool bApplyModToParents = false) {
 		if (sPath.empty()) {
 			WARN("empty path!");
 			return false;
@@ -274,7 +273,7 @@ public:
 		}
 
 
-		VCstring vPath = sPath.TrimRight_n("/").split("/+");
+		VCCString vPath = sPath.TrimRight_n("/").split("/+");
 
 		if (vPath.empty()) {
 			return false;
@@ -283,7 +282,7 @@ public:
 		if (sPath[0] == '/');
 			vPath[0] = "/" + vPath[0];
 
-		Cstring sCurDir = GetCWD();
+		CCString sCurDir = GetCWD();
 
 		mode_t uMask = 0000;
 		if (bApplyModToParents) {
@@ -319,8 +318,8 @@ public:
 		return (iRet == 0);
 	}*/
 
-	static string GetCWD() {
-		string sRet;
+	static CString GetCWD() {
+		CString sRet;
 		char * pszCurDir = getcwd(NULL, 0);
 		if (pszCurDir) {
 			sRet = pszCurDir;

@@ -9,16 +9,16 @@ public:
 	MODCONSTRUCTOR(CRawMod) {}
 	virtual ~CRawMod() {}
 
-	virtual string GetDescription() {
+	virtual CString GetDescription() {
 		return "View all of the raw traffic.";
 	}
 
-	virtual bool OnRaw(string& sLine) {
+	virtual bool OnRaw(CString& sLine) {
 		PutModule("IRC -> [" + sLine + "]");
 		return false;
 	}
 
-	virtual bool OnUserRaw(string& sLine) {
+	virtual bool OnUserRaw(CString& sLine) {
 		PutModule("YOU -> [" + sLine + "]");
 		return false;
 	}

@@ -1,13 +1,13 @@
 #include "Buffer.h"
 
-CBufLine::CBufLine(const string& sPre, const string& sPost) {
+CBufLine::CBufLine(const CString& sPre, const CString& sPost) {
 	m_sPre = sPre;
 	m_sPost = sPost;
 }
 
 CBufLine::~CBufLine() {}
 
-void CBufLine::GetLine(const string& sTarget, string& sRet) {
+void CBufLine::GetLine(const CString& sTarget, CString& sRet) {
 	sRet = m_sPre + sTarget + m_sPost;
 }
 
@@ -17,7 +17,7 @@ CBuffer::CBuffer(unsigned int uLineCount) {
 
 CBuffer::~CBuffer() {}
 
-int CBuffer::AddLine(const string& sPre, const string& sPost) {
+int CBuffer::AddLine(const CString& sPre, const CString& sPost) {
 	if (!m_uLineCount) {
 		return 0;
 	}
@@ -30,7 +30,7 @@ int CBuffer::AddLine(const string& sPre, const string& sPost) {
 	return size();
 }
 
-bool CBuffer::GetLine(const string& sTarget, string& sRet, unsigned int uIdx) {
+bool CBuffer::GetLine(const CString& sTarget, CString& sRet, unsigned int uIdx) {
 	if (uIdx >= size()) {
 		return false;
 	}
@@ -39,7 +39,7 @@ bool CBuffer::GetLine(const string& sTarget, string& sRet, unsigned int uIdx) {
 	return true;
 }
 
-bool CBuffer::GetNextLine(const string& sTarget, string& sRet) {
+bool CBuffer::GetNextLine(const CString& sTarget, CString& sRet) {
 	sRet = "";
 
 	if (!size()) {

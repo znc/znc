@@ -8,7 +8,7 @@
 
 class CDCCSock : public Csock {
 public:
-	CDCCSock(CUser* pUser, const string& sRemoteNick, const string& sLocalFile, const string& sModuleName, unsigned long uFileSize = 0, CFile* pFile = NULL) : Csock() {
+	CDCCSock(CUser* pUser, const CString& sRemoteNick, const CString& sLocalFile, const CString& sModuleName, unsigned long uFileSize = 0, CFile* pFile = NULL) : Csock() {
 		m_sRemoteNick = sRemoteNick;
 		m_uFileSize = uFileSize;
 		m_uRemotePort = 0;
@@ -21,7 +21,7 @@ public:
 		m_bNoDelFile = false;
 	}
 
-	CDCCSock(CUser* pUser, const string& sRemoteNick, const string& sRemoteIP, unsigned short uRemotePort, const string& sLocalFile, unsigned long uFileSize, const string& sModuleName) : Csock() {
+	CDCCSock(CUser* pUser, const CString& sRemoteNick, const CString& sRemoteIP, unsigned short uRemotePort, const CString& sLocalFile, unsigned long uFileSize, const CString& sModuleName) : Csock() {
 		m_sRemoteNick = sRemoteNick;
 		m_sRemoteIP = sRemoteIP;
 		m_uRemotePort = uRemotePort;
@@ -35,7 +35,7 @@ public:
 		m_bNoDelFile = false;
 	}
 
-/*	CDCCSock(CUser* pUser, const string& sHostname, int iport, int itimeout = 60) : Csock(sHostname, iport, itimeout) {
+/*	CDCCSock(CUser* pUser, const CString& sHostname, int iport, int itimeout = 60) : Csock(sHostname, iport, itimeout) {
 		m_uRemotePort = 0;
 		m_uBytesSoFar = 0;
 		m_uFileSize = 0;
@@ -58,7 +58,7 @@ public:
 	virtual void Connected();
 	virtual void Disconnected();
 	void SendPacket();
-	Csock* GetSockObj(const string& sHost, int iPort);
+	Csock* GetSockObj(const CString& sHost, int iPort);
 	CFile* OpenFile(bool bWrite = true);
 	bool Seek(unsigned int uPos) {
 		if (m_pFile) {
@@ -72,30 +72,30 @@ public:
 	}
 
 	// Setters
-	void SetRemoteIP(const string& s) { m_sRemoteIP = s; }
-	void SetRemoteNick(const string& s) { m_sRemoteNick = s; }
-	void SetFileName(const string& s) { m_sFileName = s; }
+	void SetRemoteIP(const CString& s) { m_sRemoteIP = s; }
+	void SetRemoteNick(const CString& s) { m_sRemoteNick = s; }
+	void SetFileName(const CString& s) { m_sFileName = s; }
 	void SetFileOffset(unsigned long u) { m_uBytesSoFar = u; }
 	// !Setters
 
 	// Getters
 	unsigned short GetUserPort() const { return m_uRemotePort; }
-	const string& GetRemoteNick() const { return m_sRemoteNick; }
-	const string& GetFileName() const { return m_sFileName; }
-	const string& GetLocalFile() const { return m_sLocalFile; }
-	const string& GetModuleName() const { return m_sModuleName; }
+	const CString& GetRemoteNick() const { return m_sRemoteNick; }
+	const CString& GetFileName() const { return m_sFileName; }
+	const CString& GetLocalFile() const { return m_sLocalFile; }
+	const CString& GetModuleName() const { return m_sModuleName; }
 	CFile* GetFile() { return m_pFile; }
 	double GetProgress() const { return ((m_uFileSize) && (m_uBytesSoFar)) ? (double) (((double) m_uBytesSoFar / (double) m_uFileSize) *100.0) : 0; }
-	//const string& GetRemoteIP() const { return m_sRemoteIP; }
+	//const CString& GetRemoteIP() const { return m_sRemoteIP; }
 	// !Getters
 private:
 protected:
-	string					m_sRemoteNick;
-	string					m_sRemoteIP;
-	string					m_sFileName;
-	string					m_sLocalFile;
-	string					m_sSendBuf;
-	string					m_sModuleName;
+	CString					m_sRemoteNick;
+	CString					m_sRemoteIP;
+	CString					m_sFileName;
+	CString					m_sLocalFile;
+	CString					m_sSendBuf;
+	CString					m_sModuleName;
 	unsigned short			m_uRemotePort;
 	unsigned long			m_uFileSize;
 	unsigned long			m_uBytesSoFar;

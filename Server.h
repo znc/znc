@@ -1,23 +1,23 @@
 #ifndef _SERVER_H
 #define _SERVER_H
 
-#include <string.h>
+#include "String.h"
 
 class CServer {
 public:
-	CServer(const string& sName, unsigned short uPort = 6667, const string& sPass = "", bool bSSL = false);
+	CServer(const CString& sName, unsigned short uPort = 6667, const CString& sPass = "", bool bSSL = false);
 	virtual ~CServer();
 
-	const string& GetName() const;
+	const CString& GetName() const;
 	unsigned short GetPort() const;
-	const string& GetPass() const;
+	const CString& GetPass() const;
 	bool IsSSL() const;
-	static bool IsValidHostName(const string& sHostName);
+	static bool IsValidHostName(const CString& sHostName);
 private:
 protected:
-	string			m_sName;
+	CString			m_sName;
 	unsigned short	m_uPort;
-	string			m_sPass;
+	CString			m_sPass;
 	bool			m_bSSL;
 };
 
