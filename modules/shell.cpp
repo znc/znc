@@ -1,7 +1,4 @@
-#ifndef _NO_CSOCKET_NS
-#define _NO_CSOCKET_NS
-#endif
-
+#include "main.h"
 #include "Csocket.h"
 #include "User.h"
 #include "Nick.h"
