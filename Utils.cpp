@@ -7,6 +7,7 @@
 #include <fcntl.h>
 #include <stdio.h>
 #include <sstream>
+#include <errno.h>
 #ifdef HAVE_LIBSSL
 #include <openssl/ssl.h>
 #endif /* HAVE_LIBSSL */
