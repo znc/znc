@@ -121,7 +121,7 @@ public:
 	void SetDisabled(bool b = true) { m_bDisabled = b; }
 	void SetSources(const CString& sSources) {
 		unsigned int uIdx = 1;
-		CString sSrc = CUtils::Token(sSources, 0);
+		CString sSrc = sSources.Token(0);
 
 		m_vsSources.clear();
 
@@ -134,7 +134,7 @@ public:
 				m_vsSources.push_back(CWatchSource(sSrc, false));
 			}
 
-			sSrc = CUtils::Token(sSources, uIdx++);
+			sSrc = sSources.Token(uIdx++);
 		}
 	}
 	// !Setters
@@ -179,7 +179,7 @@ public:
 
 	virtual bool OnUserRaw(CString& sLine) {
 		if (strncasecmp(sLine.c_str(), "WATCH ", 6) == 0) {
-			Watch(CUtils::Token(sLine, 1), CUtils::Token(sLine, 2), CUtils::Token(sLine, 3, true), true);
+			Watch(sLine.Token(1), sLine.Token(2), sLine.Token(3, true), true);
 			return true;
 		}
 
@@ -242,9 +242,9 @@ public:
 	}
 
 	virtual void OnModCommand(const CString& sCommand) {
-		CString sCmdName = CUtils::Token(sCommand, 0);
+		CString sCmdName = sCommand.Token(0);
 		if (strcasecmp(sCmdName.c_str(), "ADD") == 0 || strcasecmp(sCmdName.c_str(), "WATCH") == 0) {
-			Watch(CUtils::Token(sCommand, 1), CUtils::Token(sCommand, 2), CUtils::Token(sCommand, 3, true));
+			Watch(sCommand.Token(1), sCommand.Token(2), sCommand.Token(3, true));
 		} else if (strcasecmp(sCmdName.c_str(), "HELP") == 0) {
 			Help();
 		} else if (strcasecmp(sCmdName.c_str(), "LIST") == 0) {
@@ -252,7 +252,7 @@ public:
 		} else if (strcasecmp(sCmdName.c_str(), "DUMP") == 0) {
 			Dump();
 		} else if (strcasecmp(sCmdName.c_str(), "ENABLE") == 0) {
-			CString sTok = CUtils::Token(sCommand, 1);
+			CString sTok = sCommand.Token(1);
 
 			if (sTok == "*") {
 				SetDisabled(~0, false);
@@ -260,7 +260,7 @@ public:
 				SetDisabled(atoi(sTok.c_str()), false);
 			}
 		} else if (strcasecmp(sCmdName.c_str(), "DISABLE") == 0) {
-			CString sTok = CUtils::Token(sCommand, 1);
+			CString sTok = sCommand.Token(1);
 
 			if (sTok == "*") {
 				SetDisabled(~0, true);
@@ -268,12 +268,12 @@ public:
 				SetDisabled(atoi(sTok.c_str()), true);
 			}
 		} else if (strcasecmp(sCmdName.c_str(), "SETSOURCES") == 0) {
-			SetSources(atoi(CUtils::Token(sCommand, 1).c_str()), CUtils::Token(sCommand, 2, true));
+			SetSources(atoi(sCommand.Token(1).c_str()), sCommand.Token(2, true));
 		} else if (strcasecmp(sCmdName.c_str(), "CLEAR") == 0) {
 			m_lsWatchers.clear();
 			PutModule("All entries cleared.");
 		} else if (strcasecmp(sCmdName.c_str(), "BUFFER") == 0) {
-			CString sCount = CUtils::Token(sCommand, 1);
+			CString sCount = sCommand.Token(1);
 
 			if (sCount.size()) {
 				m_Buffer.SetLineCount(atoi(sCount.c_str()));
@@ -281,9 +281,9 @@ public:
 
 			PutModule("Buffer count is set to [" + CUtils::ToString(m_Buffer.GetLineCount()) + "]");
 		} else if (strcasecmp(sCmdName.c_str(), "DEL") == 0) {
-			Remove(atoi(CUtils::Token(sCommand, 1).c_str()));
+			Remove(atoi(sCommand.Token(1).c_str()));
 		} else {
-			PutModule("Unknown command: [" + CUtils::Token(sCommand, 0) + "]");
+			PutModule("Unknown command: [" + sCommand.Token(0) + "]");
 		}
 	}
 

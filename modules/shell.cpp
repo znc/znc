@@ -116,9 +116,9 @@ public:
 			}
 
 			PutShell("znc$");
-		} else if (strcasecmp(CUtils::Token(sCommand, 0).c_str(), "SEND") == 0) {
-			CString sToNick = CUtils::Token(sCommand, 1);
-			CString sFile = CUtils::Token(sCommand, 2);
+		} else if (strcasecmp(sCommand.Token(0).c_str(), "SEND") == 0) {
+			CString sToNick = sCommand.Token(1);
+			CString sFile = sCommand.Token(2);
 
 			if ((sToNick.empty()) || (sFile.empty())) {
 				PutShell("usage: Send <nick> <file>");
@@ -133,8 +133,8 @@ public:
 					m_pUser->SendFile(sToNick, sFile, GetModName());
 				}
 			}
-		} else if (strcasecmp(CUtils::Token(sCommand, 0).c_str(), "GET") == 0) {
-			CString sFile = CUtils::Token(sCommand, 1);
+		} else if (strcasecmp(sCommand.Token(0).c_str(), "GET") == 0) {
+			CString sFile = sCommand.Token(1);
 
 			if (sFile.empty()) {
 				PutShell("usage: Get <file>");

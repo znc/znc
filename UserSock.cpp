@@ -24,14 +24,14 @@ void CUserSock::ReadLine(const CString& sData) {
 	}
 #endif
 
-	CString sCommand = CUtils::Token(sLine, 0);
+	CString sCommand = sLine.Token(0);
 
 	if (strcasecmp(sCommand.c_str(), "ZNC") == 0) {
 		PutStatus("Hello.  How may I help you?");
 		return;
 	} else if (strcasecmp(sCommand.c_str(), "DETACH") == 0) {
 		if (m_pUser) {
-			CString sChan = CUtils::Token(sLine, 1);
+			CString sChan = sLine.Token(1);
 
 			if (sChan.empty()) {
 				PutStatusNotice("Usage: /detach <#chan>");
@@ -53,11 +53,11 @@ void CUserSock::ReadLine(const CString& sData) {
 	} else if (strcasecmp(sCommand.c_str(), "PASS") == 0) {
 		if (!m_bAuthed) {
 			m_bGotPass = true;
-			m_sPass = CUtils::Token(sLine, 1);
+			m_sPass = sLine.Token(1);
 
 			if (m_sPass.find(":") != CString::npos) {
-				m_sUser = CUtils::Token(m_sPass, 0, false, ':');
-				m_sPass = CUtils::Token(m_sPass, 1, true, ':');
+				m_sUser = m_sPass.Token(0, false, ':');
+				m_sPass = m_sPass.Token(1, true, ':');
 			}
 
 			if ((m_bGotNick) && (m_bGotUser)) {
@@ -67,7 +67,7 @@ void CUserSock::ReadLine(const CString& sData) {
 
 		return;		// Don't forward this msg.  ZNC has already registered us.
 	} else if (strcasecmp(sCommand.c_str(), "NICK") == 0) {
-		CString sNick = CUtils::Token(sLine, 1);
+		CString sNick = sLine.Token(1);
 		if (CUtils::Left(sNick, 1) == ":") {
 			CUtils::LeftChomp(sNick);
 		}
@@ -87,7 +87,7 @@ void CUserSock::ReadLine(const CString& sData) {
 		}
 	} else if (strcasecmp(sCommand.c_str(), "USER") == 0) {
 		if ((!m_bAuthed) && (m_sUser.empty())) {
-			m_sUser = CUtils::Token(sLine, 1);
+			m_sUser = sLine.Token(1);
 		}
 
 		m_bGotUser = true;
@@ -98,7 +98,7 @@ void CUserSock::ReadLine(const CString& sData) {
 
 		return;		// Don't forward this msg.  ZNC has already registered us.
 	} else if (strcasecmp(sCommand.c_str(), "JOIN") == 0) {
-		CString sChan = CUtils::Token(sLine, 1);
+		CString sChan = sLine.Token(1);
 		if (CUtils::Left(sChan, 1) == ":") {
 			CUtils::LeftChomp(sChan);
 		}
@@ -119,8 +119,8 @@ void CUserSock::ReadLine(const CString& sData) {
 		Close();	// Treat a client quit as a detach
 		return;		// Don't forward this msg.  We don't want the client getting us disconnected.
 	} else if (strcasecmp(sCommand.c_str(), "NOTICE") == 0) {
-		CString sTarget = CUtils::Token(sLine, 1);
-		CString sMsg = CUtils::Token(sLine, 2, true);
+		CString sTarget = sLine.Token(1);
+		CString sMsg = sLine.Token(2, true);
 
 		if (CUtils::Left(sMsg, 1) == ":") {
 			CUtils::LeftChomp(sMsg);
@@ -148,7 +148,7 @@ void CUserSock::ReadLine(const CString& sData) {
 		}
 
 		if (CUtils::wildcmp("DCC * (*)", sMsg.c_str())) {
-			sMsg = "DCC " + CUtils::Token(sLine, 3) + " (" + ((m_pIRCSock) ? m_pIRCSock->GetLocalIP() : GetLocalIP()) + ")";
+			sMsg = "DCC " + sLine.Token(3) + " (" + ((m_pIRCSock) ? m_pIRCSock->GetLocalIP() : GetLocalIP()) + ")";
 		}
 
 		CChan* pChan = m_pUser->FindChan(sTarget);
@@ -178,8 +178,8 @@ void CUserSock::ReadLine(const CString& sData) {
 		PutIRC("NOTICE " + sTarget + " :" + sMsg);
 		return;
 	} else if (strcasecmp(sCommand.c_str(), "PRIVMSG") == 0) {
-		CString sTarget = CUtils::Token(sLine, 1);
-		CString sMsg = CUtils::Token(sLine, 2, true);
+		CString sTarget = sLine.Token(1);
+		CString sMsg = sLine.Token(2, true);
 
 		if (CUtils::Left(sMsg, 1) == ":") {
 			CUtils::LeftChomp(sMsg);
@@ -191,11 +191,11 @@ void CUserSock::ReadLine(const CString& sData) {
 			CUtils::RightChomp(sCTCP);
 
 			if (strncasecmp(sCTCP.c_str(), "DCC ", 4) == 0) {
-				CString sType = CUtils::Token(sCTCP, 1);
-				CString sFile = CUtils::Token(sCTCP, 2);
-				unsigned long uLongIP = strtoul(CUtils::Token(sCTCP, 3).c_str(), NULL, 10);
-				unsigned short uPort = strtoul(CUtils::Token(sCTCP, 4).c_str(), NULL, 10);
-				unsigned long uFileSize = strtoul(CUtils::Token(sCTCP, 5).c_str(), NULL, 10);
+				CString sType = sCTCP.Token(1);
+				CString sFile = sCTCP.Token(2);
+				unsigned long uLongIP = strtoul(sCTCP.Token(3).c_str(), NULL, 10);
+				unsigned short uPort = strtoul(sCTCP.Token(4).c_str(), NULL, 10);
+				unsigned long uFileSize = strtoul(sCTCP.Token(5).c_str(), NULL, 10);
 				CString sIP = (m_pIRCSock) ? m_pIRCSock->GetLocalIP() : GetLocalIP();
 
 				if (!m_pUser->UseClientIP()) {
@@ -248,8 +248,8 @@ void CUserSock::ReadLine(const CString& sData) {
 					}
 				} else if (strcasecmp(sType.c_str(), "RESUME") == 0) {
 					// PRIVMSG user :DCC RESUME "znc.o" 58810 151552
-					unsigned short uResumePort = atoi(CUtils::Token(sCTCP, 3).c_str());
-					unsigned long uResumeSize = strtoul(CUtils::Token(sCTCP, 4).c_str(), NULL, 10);
+					unsigned short uResumePort = atoi(sCTCP.Token(3).c_str());
+					unsigned long uResumeSize = strtoul(sCTCP.Token(4).c_str(), NULL, 10);
 
 					// Need to lookup the connection by port, filter the port, and forward to the user
 					if (strncasecmp(sTarget.c_str(), m_pUser->GetStatusPrefix().c_str(), m_pUser->GetStatusPrefix().length()) == 0) {
@@ -261,7 +261,7 @@ void CUserSock::ReadLine(const CString& sData) {
 					} else {
 						CDCCBounce* pSock = (CDCCBounce*) m_pZNC->GetManager().FindSockByLocalPort(uResumePort);
 						if ((pSock) && (strncasecmp(pSock->GetSockName().c_str(), "DCC::", 5) == 0)) {
-							PutIRC("PRIVMSG " + sTarget + " :\001DCC " + sType + " " + sFile + " " + CUtils::ToString(pSock->GetUserPort()) + " " + CUtils::Token(sCTCP, 4) + "\001");
+							PutIRC("PRIVMSG " + sTarget + " :\001DCC " + sType + " " + sFile + " " + CUtils::ToString(pSock->GetUserPort()) + " " + sCTCP.Token(4) + "\001");
 						}
 					}
 				} else if (strcasecmp(sType.c_str(), "ACCEPT") == 0) {
@@ -274,8 +274,8 @@ void CUserSock::ReadLine(const CString& sData) {
 							CDCCBounce* pSock = (CDCCBounce*) Manager[a];
 
 							if ((pSock) && (strncasecmp(pSock->GetSockName().c_str(), "DCC::", 5) == 0)) {
-								if (pSock->GetUserPort() == atoi(CUtils::Token(sCTCP, 3).c_str())) {
-									PutIRC("PRIVMSG " + sTarget + " :\001DCC " + sType + " " + sFile + " " + CUtils::ToString(pSock->GetLocalPort()) + " " + CUtils::Token(sCTCP, 4) + "\001");
+								if (pSock->GetUserPort() == atoi(sCTCP.Token(3).c_str())) {
+									PutIRC("PRIVMSG " + sTarget + " :\001DCC " + sType + " " + sFile + " " + CUtils::ToString(pSock->GetLocalPort()) + " " + sCTCP.Token(4) + "\001");
 								}
 							}
 						}
@@ -383,12 +383,12 @@ void CUserSock::UserCommand(const CString& sLine) {
 		return;
 	}
 
-	CString sCommand = CUtils::Token(sLine, 0);
+	CString sCommand = sLine.Token(0);
 
 	if (strcasecmp(sCommand.c_str(), "HELP") == 0) {
 		HelpUser();
 	} else if (strcasecmp(sCommand.c_str(), "LISTNICKS") == 0) {
-		CString sChan = CUtils::Token(sLine, 1);
+		CString sChan = sLine.Token(1);
 
 		if (sChan.empty()) {
 			PutStatus("Usage: ListNicks <#chan>");
@@ -438,7 +438,7 @@ void CUserSock::UserCommand(const CString& sLine) {
 		}
 	} else if (strcasecmp(sCommand.c_str(), "DETACH") == 0) {
 		if (m_pUser) {
-			CString sChan = CUtils::Token(sLine, 1);
+			CString sChan = sLine.Token(1);
 
 			if (sChan.empty()) {
 				PutStatus("Usage: Detach <#chan>");
@@ -457,7 +457,7 @@ void CUserSock::UserCommand(const CString& sLine) {
 	} else if (strcasecmp(sCommand.c_str(), "VERSION") == 0) {
 		PutStatus(CZNC::GetTag());
 	} else if (strcasecmp(sCommand.c_str(), "SHUTDOWN") == 0) {
-		CString sQuitMsg = CUtils::Token(sLine, 1, true);
+		CString sQuitMsg = sLine.Token(1, true);
 
 		if (!sQuitMsg.empty()) {
 			m_pUser->SetQuitMsg(sQuitMsg);
@@ -515,25 +515,25 @@ void CUserSock::UserCommand(const CString& sLine) {
 			}
 		}
 	} else if (strcasecmp(sCommand.c_str(), "ADDSERVER") == 0) {
-		CString sServer = CUtils::Token(sLine, 1);
+		CString sServer = sLine.Token(1);
 
 		if (sServer.empty()) {
 			PutStatus("Usage: AddServer <host> [[+]port] [pass]");
 			return;
 		}
 
-		if (m_pUser->FindServer(CUtils::Token(sLine, 1))) {
+		if (m_pUser->FindServer(sLine.Token(1))) {
 			PutStatus("That server already exists");
 			return;
 		}
 
-		if (m_pUser && m_pUser->AddServer(CUtils::Token(sLine, 1, true))) {
+		if (m_pUser && m_pUser->AddServer(sLine.Token(1, true))) {
 			PutStatus("Server added");
 		} else {
 			PutStatus("Unable to add that server");
 		}
 	} else if (strcasecmp(sCommand.c_str(), "REMSERVER") == 0 || strcasecmp(sCommand.c_str(), "DELSERVER") == 0) {
-		CString sServer = CUtils::Token(sLine, 1);
+		CString sServer = sLine.Token(1);
 
 		if (sServer.empty()) {
 			PutStatus("Usage: RemServer <host>");
@@ -605,8 +605,8 @@ void CUserSock::UserCommand(const CString& sLine) {
 			}
 		}
 	} else if (strcasecmp(sCommand.c_str(), "SEND") == 0) {
-		CString sToNick = CUtils::Token(sLine, 1);
-		CString sFile = CUtils::Token(sLine, 2);
+		CString sToNick = sLine.Token(1);
+		CString sFile = sLine.Token(2);
 
 		if ((sToNick.empty()) || (sFile.empty())) {
 			PutStatus("Usage: Send <nick> <file>");
@@ -617,7 +617,7 @@ void CUserSock::UserCommand(const CString& sLine) {
 			m_pUser->SendFile(sToNick, sFile);
 		}
 	} else if (strcasecmp(sCommand.c_str(), "GET") == 0) {
-		CString sFile = CUtils::Token(sLine, 1);
+		CString sFile = sLine.Token(1);
 
 		if (sFile.empty()) {
 			PutStatus("Usage: Get <file>");
@@ -756,8 +756,8 @@ void CUserSock::UserCommand(const CString& sLine) {
 #endif
 		return;
 	} else if ((strcasecmp(sCommand.c_str(), "LOADMOD") == 0) || (strcasecmp(sCommand.c_str(), "LOADMODULE") == 0)) {
-		CString sMod = CUtils::Token(sLine, 1);
-		CString sArgs = CUtils::Token(sLine, 2, true);
+		CString sMod = sLine.Token(1);
+		CString sArgs = sLine.Token(2, true);
 
 		if (m_pUser->DenyLoadMod()) {
 			PutStatus("Unable to load [" + sMod + "] Access Denied.");
@@ -777,7 +777,7 @@ void CUserSock::UserCommand(const CString& sLine) {
 #endif
 		return;
 	} else if ((strcasecmp(sCommand.c_str(), "UNLOADMOD") == 0) || (strcasecmp(sCommand.c_str(), "UNLOADMODULE") == 0)) {
-		CString sMod = CUtils::Token(sLine, 1);
+		CString sMod = sLine.Token(1);
 
 		if (m_pUser->DenyLoadMod()) {
 			PutStatus("Unable to unload [" + sMod + "] Access Denied.");
@@ -797,8 +797,8 @@ void CUserSock::UserCommand(const CString& sLine) {
 #endif
 		return;
 	} else if ((strcasecmp(sCommand.c_str(), "RELOADMOD") == 0) || (strcasecmp(sCommand.c_str(), "RELOADMODULE") == 0)) {
-		CString sMod = CUtils::Token(sLine, 1);
-		CString sArgs = CUtils::Token(sLine, 2, true);
+		CString sMod = sLine.Token(1);
+		CString sArgs = sLine.Token(2, true);
 
 		if (m_pUser->DenyLoadMod()) {
 			PutStatus("Unable to reload [" + sMod + "] Access Denied.");
@@ -818,7 +818,7 @@ void CUserSock::UserCommand(const CString& sLine) {
 #endif
 		return;
 	} else if (strcasecmp(sCommand.c_str(), "SETBUFFER") == 0) {
-		CString sChan = CUtils::Token(sLine, 1);
+		CString sChan = sLine.Token(1);
 
 		if (sChan.empty()) {
 			PutStatus("Usage: SetBuffer <#chan> [linecount]");
@@ -837,7 +837,7 @@ void CUserSock::UserCommand(const CString& sLine) {
 			return;
 		}
 
-		unsigned int uLineCount = strtoul(CUtils::Token(sLine, 2).c_str(), NULL, 10);
+		unsigned int uLineCount = strtoul(sLine.Token(2).c_str(), NULL, 10);
 
 		if (uLineCount > 500) {
 			PutStatus("Max linecount is 500.");

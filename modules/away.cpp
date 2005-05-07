@@ -20,6 +20,9 @@
  *
  * 
  * $Log$
+ * Revision 1.10  2005/05/07 09:18:49  prozacx
+ * Moved CUtils::Token() into CString class
+ *
  * Revision 1.9  2005/05/05 18:11:03  prozacx
  * Changed all references to std::string over to CString
  *
@@ -177,7 +180,7 @@ public:
 	
 	virtual void OnModCommand( const CString& sCommand )
 	{
-		CString sCmdName = CUtils::Token(sCommand, 0);
+		CString sCmdName = sCommand.Token(0);
 		if ( sCmdName == "away" )
 		{
 			Away();
@@ -196,7 +199,7 @@ public:
 		} 
 		else if ( sCmdName == "delete" )
 		{
-			CString sWhich = CUtils::Token(sCommand, 1);
+			CString sWhich = sCommand.Token(1);
 			if ( sWhich == "all" )
 			{
 				PutModNotice( "Deleted " + CUtils::ToString( m_vMessages.size() ) + " Messages.", "away" );
@@ -237,7 +240,7 @@ public:
 		}
 		else if ( sCmdName == "pass" )
 		{
-			m_sPassword = CUtils::Token( sCommand, 1 );
+			m_sPassword = sCommand.Token( 1 );
 			PutModNotice( "Password Updated to [" + m_sPassword + "]" );
 		}
 		else if ( sCmdName == "show" )
@@ -245,9 +248,9 @@ public:
 			map< CString, vector< CString> > msvOutput;
 			for( u_int a = 0; a < m_vMessages.size(); a++ )
 			{
-				CString sTime = CUtils::Token( m_vMessages[a], 0, false, ':' );
-				CString sWhom = CUtils::Token( m_vMessages[a], 1, false, ':' );
-				CString sMessage = CUtils::Token( m_vMessages[a], 2, true, ':' );
+				CString sTime = m_vMessages[a].Token( 0, false, ':' );
+				CString sWhom = m_vMessages[a].Token( 1, false, ':' );
+				CString sMessage = m_vMessages[a].Token( 2, true, ':' );
 				
 				if ( ( sTime.empty() ) || ( sWhom.empty() ) || ( sMessage.empty() ) )
 				{

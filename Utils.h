@@ -61,7 +61,6 @@ public:
 	static string& Trim(string& s);
 	static string& LeftChomp(string& s, unsigned int uLen = 1);
 	static string& RightChomp(string& s, unsigned int uLen = 1);
-	static string Token(const string& s, unsigned int uPos, bool bRest = false, char cSep = ' ');
 	static string Ellipsize(const string& s, unsigned int uLen);
 	static bool wildcmp(const string& sWild, const string& sString);
 

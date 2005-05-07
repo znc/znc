@@ -196,8 +196,8 @@ bool CUser::AddServer(const CString& sName) {
 	CString sLine = sName;
 	CUtils::Trim(sLine);
 
-	CString sHost = CUtils::Token(sLine, 0);
-	CString sPort = CUtils::Token(sLine, 1);
+	CString sHost = sLine.Token(0);
+	CString sPort = sLine.Token(1);
 
 	if (CUtils::Left(sPort, 1) == "+") {
 		bSSL = true;
@@ -205,7 +205,7 @@ bool CUser::AddServer(const CString& sName) {
 	}
 
 	unsigned short uPort = strtoul(sPort.c_str(), NULL, 10);
-	CString sPass = CUtils::Token(sLine, 2, true);
+	CString sPass = sLine.Token(2, true);
 
 	return AddServer(sHost, uPort, sPass, bSSL);
 }

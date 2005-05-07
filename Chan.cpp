@@ -4,8 +4,8 @@
 #include "Utils.h"
 
 CChan::CChan(const CString& sName, CUser* pUser) {
-	m_sName = CUtils::Token(sName, 0);
-	m_sKey = CUtils::Token(sName, 1);
+	m_sName = sName.Token(0);
+	m_sKey = sName.Token(1);
 
 	if (CUtils::Left(m_sName, 1) != "#" && CUtils::Left(m_sName, 1) != "&") {
 		m_sName = "#" + m_sName;
@@ -161,8 +161,8 @@ void CChan::OnWho(const CString& sNick, const CString& sIdent, const CString& sH
 }
 
 void CChan::ModeChange(const CString& sModes, const CString& sOpNick) {
-	CString sModeArg = CUtils::Token(sModes, 0);
-	CString sArgs = CUtils::Token(sModes, 1, true);
+	CString sModeArg = sModes.Token(0);
+	CString sArgs = sModes.Token(1, true);
 	bool bAdd = true;
 
 #ifdef _MODULES

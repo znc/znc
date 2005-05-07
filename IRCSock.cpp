@@ -60,13 +60,13 @@ void CIRCSock::ReadLine(const CString& sData) {
 	if (strncasecmp(sLine.c_str(), "PING ", 5) == 0) {
 		PutServ("PONG " + sLine.substr(5));
 	} else if (CUtils::wildcmp(":* * *", sLine.c_str())) { //"^:(\\S+) (\\d\\d\\d) (.*?) (.*)$", vCap)) {
-		CString sCmd = CUtils::Token(sLine, 1);
+		CString sCmd = sLine.Token(1);
 
 		if ((sCmd.length() == 3) && (isdigit(sCmd[0])) && (isdigit(sCmd[1])) && (isdigit(sCmd[2]))) {
-			CString sServer = CUtils::Token(sLine, 0); CUtils::LeftChomp(sServer);
+			CString sServer = sLine.Token(0); CUtils::LeftChomp(sServer);
 			unsigned int uRaw = strtoul(sCmd.c_str(), NULL, 10);
-			CString sNick = CUtils::Token(sLine, 2);
-			CString sRest = CUtils::Token(sLine, 3, true);
+			CString sNick = sLine.Token(2);
+			CString sRest = sLine.Token(3, true);
 
 			switch (uRaw) {
 				case 1:	{// :irc.server.com 001 nick :Welcome to the Internet Relay Network nick
@@ -137,7 +137,7 @@ void CIRCSock::ReadLine(const CString& sData) {
 
 					break;
 				case 433: {
-					CString sBadNick = CUtils::Token(sRest, 0);
+					CString sBadNick = sRest.Token(0);
 					CString sConfNick = m_pUser->GetNick();
 
 					if (sNick == "*") {
@@ -188,7 +188,7 @@ void CIRCSock::ReadLine(const CString& sData) {
 				}
 				case 315: {
 					// :irc.server.com 315 yournick #chan :End of /WHO list.
-					CChan* pChan = m_pUser->FindChan(CUtils::Token(sLine, 3));
+					CChan* pChan = m_pUser->FindChan(sLine.Token(3));
 
 					if (pChan) {
 						pChan->SetWhoDone();
@@ -198,7 +198,7 @@ void CIRCSock::ReadLine(const CString& sData) {
 				}
 				case 331: {
 					// :irc.server.com 331 yournick #chan :No topic is set.
-					CChan* pChan = m_pUser->FindChan(CUtils::Token(sLine, 3));
+					CChan* pChan = m_pUser->FindChan(sLine.Token(3));
 
 					if (pChan) {
 						pChan->SetTopic("");
@@ -208,10 +208,10 @@ void CIRCSock::ReadLine(const CString& sData) {
 				}
 				case 332: {
 					// :irc.server.com 332 yournick #chan :This is a topic
-					CChan* pChan = m_pUser->FindChan(CUtils::Token(sLine, 3));
+					CChan* pChan = m_pUser->FindChan(sLine.Token(3));
 
 					if (pChan) {
-						CString sTopic = CUtils::Token(sLine, 4, true);
+						CString sTopic = sLine.Token(4, true);
 						CUtils::LeftChomp(sTopic);
 						pChan->SetTopic(sTopic);
 					}
@@ -220,11 +220,11 @@ void CIRCSock::ReadLine(const CString& sData) {
 				}
 				case 333: {
 					// :irc.server.com 333 yournick #chan setternick 1112320796
-					CChan* pChan = m_pUser->FindChan(CUtils::Token(sLine, 3));
+					CChan* pChan = m_pUser->FindChan(sLine.Token(3));
 
 					if (pChan) {
-						CString sNick = CUtils::Token(sLine, 4);
-						unsigned long ulDate = strtoul(CUtils::Token(sLine, 5).c_str(), NULL, 10);
+						CString sNick = sLine.Token(4);
+						unsigned long ulDate = strtoul(sLine.Token(5).c_str(), NULL, 10);
 
 						pChan->SetTopicOwner(sNick);
 						pChan->SetTopicDate(ulDate);
@@ -234,10 +234,10 @@ void CIRCSock::ReadLine(const CString& sData) {
 				}
 				case 352: {
 					// :irc.yourserver.com 352 yournick #chan ident theirhost.com irc.theirserver.com theirnick H :0 Real Name
-					CString sServer = CUtils::Token(sLine, 0);
-					CString sNick = CUtils::Token(sLine, 7);
-					CString sIdent = CUtils::Token(sLine, 4);
-					CString sHost = CUtils::Token(sLine, 5);
+					CString sServer = sLine.Token(0);
+					CString sNick = sLine.Token(7);
+					CString sIdent = sLine.Token(4);
+					CString sHost = sLine.Token(5);
 
 					CUtils::LeftChomp(sServer);
 
@@ -259,19 +259,19 @@ void CIRCSock::ReadLine(const CString& sData) {
 				}
 				case 324: {	// MODE
 					CUtils::Trim(sRest);
-					CChan* pChan = m_pUser->FindChan(CUtils::Token(sRest, 0));
+					CChan* pChan = m_pUser->FindChan(sRest.Token(0));
 
 					if (pChan) {
-						pChan->SetModes(CUtils::Token(sRest, 1, true));
+						pChan->SetModes(sRest.Token(1, true));
 					}
 				}
 					break;
 				case 353: {	// NAMES
 					CUtils::Trim(sRest);
 					// Todo: allow for non @+= server msgs
-					CChan* pChan = m_pUser->FindChan(CUtils::Token(sRest, 1));
+					CChan* pChan = m_pUser->FindChan(sRest.Token(1));
 					if (pChan) {
-						CString sNicks = CUtils::Token(sRest, 2, true);
+						CString sNicks = sRest.Token(2, true);
 						if (CUtils::Left(sNicks, 1) == ":") {
 							CUtils::LeftChomp(sNicks);
 						}
@@ -284,7 +284,7 @@ void CIRCSock::ReadLine(const CString& sData) {
 					PutUser(sLine);	// First send them the raw
 
 					// :irc.server.com 366 nick #chan :End of /NAMES list.
-					CChan* pChan = m_pUser->FindChan(CUtils::Token(sRest, 0));
+					CChan* pChan = m_pUser->FindChan(sRest.Token(0));
 
 					if (pChan) {
 						if (IsUserAttached()) {
@@ -328,12 +328,12 @@ void CIRCSock::ReadLine(const CString& sData) {
 				}
 			}
 		} else { //if (CUtils::wildcmp(":*!*@* * *", sLine.c_str())) {
-			CString sNickMask = CUtils::Token(sLine, 0);
+			CString sNickMask = sLine.Token(0);
 			CUtils::LeftChomp(sNickMask);
 
-			CString sNick = CUtils::Token(sNickMask, 0, false, '!');
-			CString sCmd = CUtils::Token(sLine, 1);
-			CString sRest = CUtils::Token(sLine, 2, true);
+			CString sNick = sNickMask.Token(0, false, '!');
+			CString sCmd = sLine.Token(1);
+			CString sRest = sLine.Token(2, true);
 
 			if (strcasecmp(sCmd.c_str(), "NICK") == 0) {
 				CString sNewNick = sRest;
@@ -412,7 +412,7 @@ void CIRCSock::ReadLine(const CString& sData) {
 					return;
 				}
 			} else if (strcasecmp(sCmd.c_str(), "JOIN") == 0) {
-				CString sChan = CUtils::Token(sRest, 0);
+				CString sChan = sRest.Token(0);
 				if (CUtils::Left(sChan, 1) == ":") {
 					CUtils::LeftChomp(sChan);
 				}
@@ -432,7 +432,7 @@ void CIRCSock::ReadLine(const CString& sData) {
 					}
 				}
 			} else if (strcasecmp(sCmd.c_str(), "PART") == 0) {
-				CString sChan = CUtils::Token(sRest, 0);
+				CString sChan = sRest.Token(0);
 				if (CUtils::Left(sChan, 1) == ":") {
 					CUtils::LeftChomp(sChan);
 				}
@@ -453,8 +453,8 @@ void CIRCSock::ReadLine(const CString& sData) {
 					return;
 				}
 			} else if (strcasecmp(sCmd.c_str(), "MODE") == 0) {
-				CString sChan = CUtils::Token(sRest, 0);
-				CString sModes = CUtils::Token(sRest, 1, true);
+				CString sChan = sRest.Token(0);
+				CString sModes = sRest.Token(1, true);
 
 				CChan* pChan = m_pUser->FindChan(sChan);
 				if (pChan) {
@@ -466,9 +466,9 @@ void CIRCSock::ReadLine(const CString& sData) {
 				}
 			} else if (strcasecmp(sCmd.c_str(), "KICK") == 0) {
 				// :opnick!ident@host.com KICK #chan nick :msg
-				CString sChan = CUtils::Token(sRest, 0);
-				CString sKickedNick = CUtils::Token(sRest, 1);
-				CString sMsg = CUtils::Token(sRest, 2, true);
+				CString sChan = sRest.Token(0);
+				CString sKickedNick = sRest.Token(1);
+				CString sMsg = sRest.Token(2, true);
 				CUtils::LeftChomp(sMsg);
 
 				CChan* pChan = m_pUser->FindChan(sChan);
@@ -499,8 +499,8 @@ void CIRCSock::ReadLine(const CString& sData) {
 
 				CNick Nick(sNickMask);
 
-				CString sTarget = CUtils::Token(sRest, 0);
-				CString sMsg = CUtils::Token(sRest, 1, true);
+				CString sTarget = sRest.Token(0);
+				CString sMsg = sRest.Token(1, true);
 				CUtils::LeftChomp(sMsg);
 
 				if (CUtils::wildcmp("\001*\001", sMsg.c_str())) {
@@ -531,11 +531,11 @@ void CIRCSock::ReadLine(const CString& sData) {
 				return;
 			} else if (strcasecmp(sCmd.c_str(), "TOPIC") == 0) {
 				// :nick!ident@host.com TOPIC #chan :This is a topic
-				CChan* pChan = m_pUser->FindChan(CUtils::Token(sLine, 2));
+				CChan* pChan = m_pUser->FindChan(sLine.Token(2));
 
 				if (pChan) {
 					CNick Nick(sNickMask);
-					CString sTopic = CUtils::Token(sLine, 3, true);
+					CString sTopic = sLine.Token(3, true);
 					CUtils::LeftChomp(sTopic);
 					pChan->SetTopicOwner(Nick.GetNick());
 					pChan->SetTopicDate((unsigned long) time(NULL));	// @todo use local time
@@ -545,8 +545,8 @@ void CIRCSock::ReadLine(const CString& sData) {
 				// :nick!ident@host.com PRIVMSG #chan :Message
 
 				CNick Nick(sNickMask);
-				CString sTarget = CUtils::Token(sRest, 0);
-				CString sMsg = CUtils::Token(sRest, 1, true);
+				CString sTarget = sRest.Token(0);
+				CString sMsg = sRest.Token(1, true);
 
 				if (CUtils::Left(sMsg, 1) == ":") {
 					CUtils::LeftChomp(sMsg);
@@ -621,11 +621,11 @@ bool CIRCSock::OnPrivCTCP(const CString& sNickMask, CString& sMessage) {
 		}
 	} else if (strncasecmp(sMessage.c_str(), "DCC ", 4) == 0) {
 		// DCC CHAT chat 2453612361 44592
-		CString sType = CUtils::Token(sMessage, 1);
-		CString sFile = CUtils::Token(sMessage, 2);
-		unsigned long uLongIP = strtoul(CUtils::Token(sMessage, 3).c_str(), NULL, 10);
-		unsigned short uPort = strtoul(CUtils::Token(sMessage, 4).c_str(), NULL, 10);
-		unsigned long uFileSize = strtoul(CUtils::Token(sMessage, 5).c_str(), NULL, 10);
+		CString sType = sMessage.Token(1);
+		CString sFile = sMessage.Token(2);
+		unsigned long uLongIP = strtoul(sMessage.Token(3).c_str(), NULL, 10);
+		unsigned short uPort = strtoul(sMessage.Token(4).c_str(), NULL, 10);
+		unsigned long uFileSize = strtoul(sMessage.Token(5).c_str(), NULL, 10);
 
 		if (strcasecmp(sType.c_str(), "CHAT") == 0) {
 			if (m_pUserSock) {
@@ -646,10 +646,10 @@ bool CIRCSock::OnPrivCTCP(const CString& sNickMask, CString& sMessage) {
 			}
 		} else if (strcasecmp(sType.c_str(), "RESUME") == 0) {
 			// Need to lookup the connection by port, filter the port, and forward to the user
-			CDCCBounce* pSock = (CDCCBounce*) m_pZNC->GetManager().FindSockByLocalPort(atoi(CUtils::Token(sMessage, 3).c_str()));
+			CDCCBounce* pSock = (CDCCBounce*) m_pZNC->GetManager().FindSockByLocalPort(atoi(sMessage.Token(3).c_str()));
 
 			if ((pSock) && (strncasecmp(pSock->GetSockName().c_str(), "DCC::", 5) == 0)) {
-				PutUser(":" + sNickMask + " PRIVMSG " + GetNick() + " :\001DCC " + sType + " " + sFile + " " + CUtils::ToString(pSock->GetUserPort()) + " " + CUtils::Token(sMessage, 4) + "\001");
+				PutUser(":" + sNickMask + " PRIVMSG " + GetNick() + " :\001DCC " + sType + " " + sFile + " " + CUtils::ToString(pSock->GetUserPort()) + " " + sMessage.Token(4) + "\001");
 			}
 		} else if (strcasecmp(sType.c_str(), "ACCEPT") == 0) {
 			// Need to lookup the connection by port, filter the port, and forward to the user
@@ -659,8 +659,8 @@ bool CIRCSock::OnPrivCTCP(const CString& sNickMask, CString& sMessage) {
 				CDCCBounce* pSock = (CDCCBounce*) Manager[a];
 
 				if ((pSock) && (strncasecmp(pSock->GetSockName().c_str(), "DCC::", 5) == 0)) {
-					if (pSock->GetUserPort() == atoi(CUtils::Token(sMessage, 3).c_str())) {
-						PutUser(":" + sNickMask + " PRIVMSG " + GetNick() + " :\001DCC " + sType + " " + sFile + " " + CUtils::ToString(pSock->GetLocalPort()) + " " + CUtils::Token(sMessage, 4) + "\001");
+					if (pSock->GetUserPort() == atoi(sMessage.Token(3).c_str())) {
+						PutUser(":" + sNickMask + " PRIVMSG " + GetNick() + " :\001DCC " + sType + " " + sFile + " " + CUtils::ToString(pSock->GetLocalPort()) + " " + sMessage.Token(4) + "\001");
 					}
 				}
 			}

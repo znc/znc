@@ -430,29 +430,6 @@ string& CUtils::RightChomp(string& s, unsigned int uLen) {
 	return s;
 }
 
-string CUtils::Token(const string& s, unsigned int uPos, bool bRest, char cSep) {
-	string sRet;
-	const char* p = s.c_str();
-
-	while (*p) {
-		if (uPos) {
-			if (*p == cSep) {
-				uPos--;
-			}
-		} else {
-			if ((*p == cSep) && (!bRest)) {
-				return sRet;
-			}
-
-			sRet += *p;
-		}
-
-		p++;
-	}
-
-	return sRet;
-}
-
 string CUtils::Ellipsize(const string& s, unsigned int uLen) {
 	if (uLen >= s.size()) {
 		return s;

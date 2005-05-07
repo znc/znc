@@ -16,6 +16,9 @@
  * Author: imaginos <imaginos@imaginos.net>
  * 
  * $Log$
+ * Revision 1.10  2005/05/07 09:18:56  prozacx
+ * Moved CUtils::Token() into CString class
+ *
  * Revision 1.9  2005/05/05 18:11:04  prozacx
  * Changed all references to std::string over to CString
  *
@@ -419,8 +422,8 @@ public:
 		if ( strncasecmp( sMessage.c_str(), "DCC SCHAT ", 10 ) == 0 )
 		{
 			// chat ip port
-			unsigned long iIP = strtoul( CUtils::Token( sMessage, 3 ).c_str(), NULL, 10 );
-			unsigned short iPort = strtoul( CUtils::Token( sMessage, 4 ).c_str(), NULL, 10 );
+			unsigned long iIP = strtoul( sMessage.Token( 3 ).c_str(), NULL, 10 );
+			unsigned short iPort = strtoul( sMessage.Token( 4 ).c_str(), NULL, 10 );
 
 			if ( ( iIP > 0 ) && ( iPort > 0 ) )
 			{

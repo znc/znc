@@ -552,8 +552,8 @@ bool CZNC::ParseConfig(const CString& sConfig) {
 		}
 
 		// If we have a regular line, figure out where it goes
-		CString sName = CUtils::Token(sLine, 0, false, '=');
-		CString sValue = CUtils::Token(sLine, 1, true, '=');
+		CString sName = sLine.Token(0, false, '=');
+		CString sValue = sLine.Token(1, true, '=');
 		CUtils::Trim(sName);
 		CUtils::Trim(sValue);
 
@@ -649,11 +649,11 @@ bool CZNC::ParseConfig(const CString& sConfig) {
 						pUser->AddChan(sValue);
 						continue;
 					} else if (strcasecmp(sName.c_str(), "LoadModule") == 0) {
-						CString sModName = CUtils::Token(sValue, 0);
+						CString sModName = sValue.Token(0);
 						CUtils::PrintAction("Loading Module [" + sModName + "]");
 #ifdef _MODULES
 						CString sModRet;
-						CString sArgs = CUtils::Token(sValue, 1, true);
+						CString sArgs = sValue.Token(1, true);
 
 						try {
 							bool bModRet = pUser->GetModules().LoadModule(sModName, sArgs, pUser, sModRet);
