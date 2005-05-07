@@ -35,7 +35,7 @@ CString& CString::MakeLower() {
 	return *this;
 }
 
-CString CString::Token(unsigned int uPos, bool bRest, char cSep) {
+CString CString::Token(unsigned int uPos, bool bRest, char cSep) const {
 	string sRet;
 	const char* p = c_str();
 
@@ -58,7 +58,7 @@ CString CString::Token(unsigned int uPos, bool bRest, char cSep) {
 	return sRet;
 }
 
-CString CString::Ellipsize(unsigned int uLen) {
+CString CString::Ellipsize(unsigned int uLen) const {
 	if (uLen >= size()) {
 		return *this;
 	}

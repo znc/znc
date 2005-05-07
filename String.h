@@ -22,8 +22,8 @@ public:
 	CString& MakeUpper();
 	CString& MakeLower();
 
-	CString Token(unsigned int uPos, bool bRest = false, char cSep = ' ');
-	CString Ellipsize(unsigned int uLen);
+	CString Token(unsigned int uPos, bool bRest = false, char cSep = ' ') const;
+	CString Ellipsize(unsigned int uLen) const;
 	CString Left(unsigned int uCount) const;
 	CString Right(unsigned int uCount) const;
 
