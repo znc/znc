@@ -63,7 +63,7 @@ void CUtils::GenerateCert(FILE *pOut, bool bEncPrivKey) {
 		pHostName = "unknown.com";
 	}
 
-	string sEmailAddr = pLogName;
+	CString sEmailAddr = pLogName;
 	sEmailAddr += "@";
 	sEmailAddr += pHostName;
 
@@ -88,7 +88,7 @@ void CUtils::GenerateCert(FILE *pOut, bool bEncPrivKey) {
 };
 #endif /* HAVE_LIBSSL */
 
-string CUtils::GetIP(unsigned long addr) {
+CString CUtils::GetIP(unsigned long addr) {
 	char szBuf[16];
 	memset((char*) szBuf, 0, 16);
 
@@ -104,7 +104,7 @@ string CUtils::GetIP(unsigned long addr) {
 	return szBuf;
 }
 
-unsigned long CUtils::GetLongIP(const string& sIP) {
+unsigned long CUtils::GetLongIP(const CString& sIP) {
 	register int i;
 	char *addr = (char *) malloc(sIP.length() +1);
 	char ip[4][4], n;
@@ -129,8 +129,8 @@ CString CUtils::ChangeDir(const CString& sPath, const CString& sAdd, const CStri
 
 	CString sAddDir = sAdd;
 
-	if (CUtils::Left(sAddDir, 2) == "~/") {
-		CUtils::LeftChomp(sAddDir);
+	if (sAddDir.Left(2) == "~/") {
+		sAddDir.LeftChomp();
 		sAddDir = sHomeDir + sAddDir;
 	}
 
@@ -138,8 +138,8 @@ CString CUtils::ChangeDir(const CString& sPath, const CString& sAdd, const CStri
 	sAddDir += "/";
 	CString sCurDir;
 
-	if (CUtils::Right(sRet, 1) == "/") {
-		CUtils::RightChomp(sRet);
+	if (sRet.Right(1) == "/") {
+		sRet.RightChomp();
 	}
 
 	for (unsigned int a = 0; a < sAddDir.size(); a++) {
@@ -162,11 +162,11 @@ CString CUtils::ChangeDir(const CString& sPath, const CString& sAdd, const CStri
 	return (sRet.empty()) ? "/" : sRet;
 }
 
-int CUtils::MakeDir(const string& sPath, mode_t iMode) {
-	string sDir = sPath;
-	string::size_type iFind = sDir.find("/");
+int CUtils::MakeDir(const CString& sPath, mode_t iMode) {
+	CString sDir = sPath;
+	CString::size_type iFind = sDir.find("/");
 
-	if (iFind == string::npos) {
+	if (iFind == CString::npos) {
 		return mkdir(sDir.c_str(), iMode);
 	}
 	iFind++;
@@ -179,8 +179,8 @@ int CUtils::MakeDir(const string& sPath, mode_t iMode) {
 		return mkdir(sDir.c_str(), iMode);
 	}
 
-	string sWorkDir = sDir.substr(0, iFind);  // include the trailing slash
-	string sNewDir = sDir.erase(0, iFind);
+	CString sWorkDir = sDir.substr(0, iFind);  // include the trailing slash
+	CString sNewDir = sDir.erase(0, iFind);
 
 	struct stat st;
 
@@ -220,7 +220,7 @@ int CUtils::MakeDir(const string& sPath, mode_t iMode) {
 	return -1;
 }
 
-string CUtils::GetHashPass() {
+CString CUtils::GetHashPass() {
 	while (true) {
 		char* pass = CUtils::GetPass("Enter Password");
 		char* pass1 = (char*) malloc(strlen(pass) +1);
@@ -234,7 +234,7 @@ string CUtils::GetHashPass() {
 		} else if (!iLen) {
 			CUtils::PrintError("You can not use an empty password");
 		} else {
-			string sRet((const char*) CMD5(pass1, iLen));
+			CString sRet((const char*) CMD5(pass1, iLen));
 			memset((char*) pass1, 0, iLen);	// null out our pass so it doesn't sit in memory
 			memset((char*) pass2, 0, strlen(pass2));	// null out our pass so it doesn't sit in memory
 			free(pass1);
@@ -250,17 +250,17 @@ string CUtils::GetHashPass() {
 	return "";
 }
 
-char* CUtils::GetPass(const string& sPrompt) {
+char* CUtils::GetPass(const CString& sPrompt) {
 	PrintPrompt(sPrompt);
 	return getpass("");
 }
 
-bool CUtils::GetBoolInput(const string& sPrompt, bool bDefault) {
+bool CUtils::GetBoolInput(const CString& sPrompt, bool bDefault) {
 	return CUtils::GetBoolInput(sPrompt, &bDefault);
 }
 
-bool CUtils::GetBoolInput(const string& sPrompt, bool *pbDefault) {
-	string sRet, sDefault;
+bool CUtils::GetBoolInput(const CString& sPrompt, bool *pbDefault) {
+	CString sRet, sDefault;
 
 	if (pbDefault) {
 		sDefault = (*pbDefault) ? "yes" : "no";
@@ -277,13 +277,13 @@ bool CUtils::GetBoolInput(const string& sPrompt, bool *pbDefault) {
 	return GetBoolInput(sPrompt, pbDefault);
 }
 
-bool CUtils::GetNumInput(const string& sPrompt, unsigned int& uRet, unsigned int uMin, unsigned int uMax, unsigned int uDefault) {
+bool CUtils::GetNumInput(const CString& sPrompt, unsigned int& uRet, unsigned int uMin, unsigned int uMax, unsigned int uDefault) {
 	if (uMin > uMax) {
 		return false;
 	}
 
-	string sDefault = (uDefault != (unsigned int) ~0) ? CUtils::ToString(uDefault) : "";
-	string sNum, sHint;
+	CString sDefault = (uDefault != (unsigned int) ~0) ? CUtils::ToString(uDefault) : "";
+	CString sNum, sHint;
 
 	if (uMax != (unsigned int) ~0) {
 		sHint = CUtils::ToString(uMin) + " to " + CUtils::ToString(uMax);
@@ -309,8 +309,8 @@ bool CUtils::GetNumInput(const string& sPrompt, unsigned int& uRet, unsigned int
 	return true;
 }
 
-bool CUtils::GetInput(const string& sPrompt, string& sRet, const string& sDefault, const string& sHint) {
-	string sExtra;
+bool CUtils::GetInput(const CString& sPrompt, CString& sRet, const CString& sDefault, const CString& sHint) {
+	CString sExtra;
 	sExtra += (!sHint.empty()) ? (" (" + sHint + ")") : "";
 	sExtra += (!sDefault.empty()) ? (" [" + sDefault + "]") : "";
 
@@ -320,8 +320,8 @@ bool CUtils::GetInput(const string& sPrompt, string& sRet, const string& sDefaul
 	fgets(szBuf, 1024, stdin);
 	sRet = szBuf;
 
-	if (CUtils::Right(sRet, 1) == "\n") {
-		CUtils::RightChomp(sRet);
+	if (sRet.Right(1) == "\n") {
+		sRet.RightChomp();
 	}
 
 	if (sRet.empty()) {
@@ -331,15 +331,15 @@ bool CUtils::GetInput(const string& sPrompt, string& sRet, const string& sDefaul
 	return !sRet.empty();
 }
 
-void CUtils::PrintError(const string& sMessage) {
+void CUtils::PrintError(const CString& sMessage) {
 	fprintf(stdout, "\033[1m\033[34m[\033[31m ** \033[34m]\033[39m\033[22m %s\n", sMessage.c_str());
 }
 
-void CUtils::PrintPrompt(const string& sMessage) {
+void CUtils::PrintPrompt(const CString& sMessage) {
 	fprintf(stdout, "\033[1m\033[34m[\033[33m ?? \033[34m]\033[39m\033[22m %s: ", sMessage.c_str());
 }
 
-void CUtils::PrintMessage(const string& sMessage, bool bStrong) {
+void CUtils::PrintMessage(const CString& sMessage, bool bStrong) {
 	fprintf(stdout, "\033[1m\033[34m[\033[33m ** \033[34m]\033[39m\033[22m %s%s%s\n",
 		((bStrong) ? "\033[1m" : ""),
 		sMessage.c_str(),
@@ -347,12 +347,12 @@ void CUtils::PrintMessage(const string& sMessage, bool bStrong) {
 	);
 }
 
-void CUtils::PrintAction(const string& sMessage) {
+void CUtils::PrintAction(const CString& sMessage) {
 	fprintf(stdout, "\033[1m\033[34m[\033[32m    \033[34m]\033[39m\033[22m %s... ", sMessage.c_str());
 	fflush(stdout);
 }
 
-void CUtils::PrintStatus(bool bSuccess, const string& sMessage) {
+void CUtils::PrintStatus(bool bSuccess, const CString& sMessage) {
 	if (!sMessage.empty()) {
 		if (bSuccess) {
 			fprintf(stdout, "%s", sMessage.c_str());
@@ -370,94 +370,68 @@ void CUtils::PrintStatus(bool bSuccess, const string& sMessage) {
 	}
 }
 
-string CUtils::ToString(short i) { stringstream s; s << i; return s.str(); }
-string CUtils::ToString(unsigned short i) { stringstream s; s << i; return s.str(); }
-string CUtils::ToString(int i) { stringstream s; s << i; return s.str(); }
-string CUtils::ToString(unsigned int i) { stringstream s; s << i; return s.str(); }
-string CUtils::ToString(long i) { stringstream s; s << i; return s.str(); }
-string CUtils::ToString(unsigned long i) { stringstream s; s << i; return s.str(); }
-string CUtils::ToString(unsigned long long i) { stringstream s; s << i; return s.str(); }
-string CUtils::ToString(double i) { stringstream s; s << i; return s.str(); }
-string CUtils::ToString(float i) { stringstream s; s << i; return s.str(); }
+CString CUtils::ToString(short i) { stringstream s; s << i; return s.str(); }
+CString CUtils::ToString(unsigned short i) { stringstream s; s << i; return s.str(); }
+CString CUtils::ToString(int i) { stringstream s; s << i; return s.str(); }
+CString CUtils::ToString(unsigned int i) { stringstream s; s << i; return s.str(); }
+CString CUtils::ToString(long i) { stringstream s; s << i; return s.str(); }
+CString CUtils::ToString(unsigned long i) { stringstream s; s << i; return s.str(); }
+CString CUtils::ToString(unsigned long long i) { stringstream s; s << i; return s.str(); }
+CString CUtils::ToString(double i) { stringstream s; s << i; return s.str(); }
+CString CUtils::ToString(float i) { stringstream s; s << i; return s.str(); }
 
-string CUtils::ToPercent(double d) {
+CString CUtils::ToPercent(double d) {
 	char szRet[32];
 	snprintf(szRet, 32, "%.02f%%", d);
 	return szRet;
 }
 
-string CUtils::ToKBytes(double d) {
+CString CUtils::ToKBytes(double d) {
 	char szRet[32];
 	snprintf(szRet, 32, "%.0f K/s", d);
 	return szRet;
 }
 
-string CUtils::Left(const string& s, unsigned int u) {
-	u = (u > s.length()) ? s.length() : u;
-	return s.substr(0, u);
-}
-
-string CUtils::Right(const string& s, unsigned int u) {
-	u = (u > s.length()) ? s.length() : u;
-	return s.substr(s.length() - u, u);
-}
-
-string& CUtils::Trim(string& s) {
-	while ((Right(s, 1) == " ") || (Right(s, 1) == "\t") || (Right(s, 1) == "\r") || (Right(s, 1) == "\n")) {
-		RightChomp(s);
+CString& CUtils::Trim(CString& s) {
+	while ((s.Right(1) == " ") || (s.Right(1) == "\t") || (s.Right(1) == "\r") || (s.Right(1) == "\n")) {
+		s.RightChomp();
 	}
 
-	while ((Left(s, 1) == " ") || (Left(s, 1) == "\t") || (Left(s, 1) == "\r") || (Left(s, 1) == "\n")) {
-		LeftChomp(s);
+	while ((s.Left(1) == " ") || (s.Left(1) == "\t") || (s.Left(1) == "\r") || (s.Left(1) == "\n")) {
+		s.LeftChomp();
 	}
 
 	return s;
 }
 
-string& CUtils::LeftChomp(string& s, unsigned int uLen) {
-	while ((uLen--) && (s.length())) {
-		s.erase(0, 1);
-	}
-
-	return s;
-}
-
-string& CUtils::RightChomp(string& s, unsigned int uLen) {
-	while ((uLen--) && (s.length())) {
-		s.erase(s.length() -1);
-	}
-
-	return s;
-}
-
-bool CUtils::wildcmp(const string& sWild, const string& sString) {
+bool CUtils::wildcmp(const CString& sWild, const CString& sString) {
 	// Written by Jack Handy - jakkhandy@hotmail.com
-	const char *wild = sWild.c_str(), *string = sString.c_str();
+	const char *wild = sWild.c_str(), *CString = sString.c_str();
 	const char *cp = NULL, *mp = NULL;
 
-	while ((*string) && (*wild != '*')) {
-		if ((*wild != *string) && (*wild != '?')) {
+	while ((*CString) && (*wild != '*')) {
+		if ((*wild != *CString) && (*wild != '?')) {
 			return false;
 		}
 
 		wild++;
-		string++;
+		CString++;
 	}
 
-	while (*string) {
+	while (*CString) {
 		if (*wild == '*') {
 			if (!*++wild) {
 				return true;
 			}
 
 			mp = wild;
-			cp = string+1;
-		} else if ((*wild == *string) || (*wild == '?')) {
+			cp = CString+1;
+		} else if ((*wild == *CString) || (*wild == '?')) {
 			wild++;
-			string++;
+			CString++;
 		} else {
 			wild = mp;
-			string = cp++;
+			CString = cp++;
 		}
 	}
 
@@ -477,7 +451,7 @@ CTable::~CTable() {
 	clear();
 }
 
-bool CTable::AddColumn(const string& sName) {
+bool CTable::AddColumn(const CString& sName) {
 	for (unsigned int a = 0; a < m_vsHeaders.size(); a++) {
 		if (strcasecmp(m_vsHeaders[a].c_str(), sName.c_str()) == 0) {
 			return false;
@@ -489,11 +463,11 @@ bool CTable::AddColumn(const string& sName) {
 }
 
 unsigned int CTable::AddRow() {
-	push_back(new map<string, string>);
+	push_back(new map<CString, CString>);
 	return size() -1;
 }
 
-bool CTable::SetCell(const string& sColumn, const string& sValue, unsigned int uRowIdx) {
+bool CTable::SetCell(const CString& sColumn, const CString& sValue, unsigned int uRowIdx) {
 	if (uRowIdx == (unsigned int) ~0) {
 		if (!size()) {
 			return false;
@@ -506,7 +480,7 @@ bool CTable::SetCell(const string& sColumn, const string& sValue, unsigned int u
 	return true;
 }
 
-bool CTable::GetLine(unsigned int uIdx, string& sLine) {
+bool CTable::GetLine(unsigned int uIdx, CString& sLine) {
 	stringstream ssRet;
 
 	if (!size()) {
@@ -542,7 +516,7 @@ bool CTable::GetLine(unsigned int uIdx, string& sLine) {
 		uIdx -= 3;
 
 		if (uIdx < size()) {
-			map<string, string>* pRow = (*this)[uIdx];
+			map<CString, CString>* pRow = (*this)[uIdx];
 			ssRet.fill(' ');
 			ssRet << "| ";
 
@@ -569,7 +543,7 @@ bool CTable::Output(std::ostream oOut) {
 	oOut << endl << ssSep.str() << endl;
 
 	for (unsigned int b = 0; b < size(); b++) {
-		map<string, string>* pRow = (*this)[b];
+		map<CString, CString>* pRow = (*this)[b];
 
 		oOut << " | ";
 
@@ -592,16 +566,16 @@ unsigned int CTable::GetColumnWidth(unsigned int uIdx) {
 		return 0;
 	}
 
-	const string& sColName = m_vsHeaders[uIdx];
+	const CString& sColName = m_vsHeaders[uIdx];
 	unsigned int uRet = sColName.size();
-	map<string, unsigned int>::iterator it = m_msuWidths.find(sColName);
+	map<CString, unsigned int>::iterator it = m_msuWidths.find(sColName);
 
 	if (it != m_msuWidths.end()) {
 		return it->second;
 	}
 
 	for (unsigned int a = 0; a < size(); a++) {
-		map<string, string>* pRow = (*this)[a];
+		map<CString, CString>* pRow = (*this)[a];
 		uRet = uRet >? (*pRow)[m_vsHeaders[uIdx]].size();
 	}
 
@@ -610,7 +584,7 @@ unsigned int CTable::GetColumnWidth(unsigned int uIdx) {
 
 
 #ifdef HAVE_LIBSSL
-CBlowfish::CBlowfish(const string & sPassword, int iEncrypt, const string & sIvec) {
+CBlowfish::CBlowfish(const CString & sPassword, int iEncrypt, const CString & sIvec) {
 	m_iEncrypt = iEncrypt;
 	m_ivec = (unsigned char *)calloc(sizeof(unsigned char), 8);
 	m_num = 0;
@@ -633,9 +607,9 @@ unsigned char *CBlowfish::MD5(const unsigned char *input, u_int ilen) {
 	return output;
 }
 
-//! returns an md5 of the string (not hex encoded)
-string CBlowfish::MD5(const string & sInput, bool bHexEncode) {
-	string sRet;
+//! returns an md5 of the CString (not hex encoded)
+CString CBlowfish::MD5(const CString & sInput, bool bHexEncode) {
+	CString sRet;
 	unsigned char *data = MD5((const unsigned char *)sInput.data(), sInput.length());
 
 	if (!bHexEncode) {
@@ -663,9 +637,9 @@ unsigned char * CBlowfish::Crypt(unsigned char *input, u_int ibytes) {
 	return buff;
 }
 
-string CBlowfish::Crypt(const string & sData) {
+CString CBlowfish::Crypt(const CString & sData) {
 	unsigned char *buff = Crypt((unsigned char *)sData.data(), sData.length());
-	string sOutput;
+	CString sOutput;
 	sOutput.append((const char *)buff, sData.length());
 	free(buff);
 	return sOutput;

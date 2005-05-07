@@ -237,9 +237,9 @@ CString CZNC::GetConfigPath(const CString& sConfigFile) {
 	if (sConfigFile.empty()) {
 		sRetPath = GetZNCPath() + "/znc.conf";
 	} else {
-		if (CUtils::Left(sConfigFile, 2) == "./" || CUtils::Left(sConfigFile, 3) == "../") {
+		if (sConfigFile.Left(2) == "./" || sConfigFile.Left(3) == "../") {
 			sRetPath = GetCurPath() + "/" + sConfigFile;
-		} else if (CUtils::Left(sConfigFile, 1) != "/") {
+		} else if (sConfigFile.Left(1) != "/") {
 			sRetPath = GetZNCPath() + "/" + sConfigFile;
 		} else {
 			sRetPath = sConfigFile;
@@ -322,8 +322,8 @@ bool CZNC::WriteNewConfig(const CString& sConfig) {
 					const CModInfo& Info = *it;
 					CString sName = Info.GetName();
 
-					if (strcasecmp(CUtils::Right(sName, 3).c_str(), ".so") == 0) {
-						CUtils::RightChomp(sName, 3);
+					if (strcasecmp(sName.Right(3).c_str(), ".so") == 0) {
+						sName.RightChomp(3);
 					}
 
 					if (CUtils::GetBoolInput("Load " + CString((Info.IsSystem()) ? "system" : "local") + " module <\033[1m" + sName + "\033[22m>?", false)) {
@@ -448,16 +448,16 @@ bool CZNC::ParseConfig(const CString& sConfig) {
 	CChan* pChan = NULL;	// Used to keep track of which chan block we are in
 
 	while (File.ReadLine(sLine)) {
-		while ((CUtils::Right(sLine, 1) == "\r") || (CUtils::Right(sLine, 1) == "\n")) {
+		while ((sLine.Right(1) == "\r") || (sLine.Right(1) == "\n")) {
 			CUtils::Trim(sLine);
 		}
 
-		if ((sLine.empty()) || (sLine[0] == '#') || (CUtils::Left(sLine, 2) == "//")) {
+		if ((sLine.empty()) || (sLine[0] == '#') || (sLine.Left(2) == "//")) {
 			continue;
 		}
 
-		if (CUtils::Left(sLine, 2) == "/*") {
-			if (CUtils::Right(sLine, 2) != "*/") {
+		if (sLine.Left(2) == "/*") {
+			if (sLine.Right(2) != "*/") {
 				bCommented = true;
 			}
 
@@ -465,17 +465,17 @@ bool CZNC::ParseConfig(const CString& sConfig) {
 		}
 
 		if (bCommented) {
-			if (CUtils::Right(sLine, 2) == "*/") {
+			if (sLine.Right(2) == "*/") {
 				bCommented = false;
 			}
 
 			continue;
 		}
 
-		if ((CUtils::Left(sLine, 1) == "<") && (CUtils::Right(sLine, 1) == ">")) {
-			CUtils::LeftChomp(sLine);
-			CUtils::RightChomp(sLine);
-			CUtils::Trim(sLine);
+		if ((sLine.Left(1) == "<") && (sLine.Right(1) == ">")) {
+			sLine.LeftChomp();
+			sLine.RightChomp();
+			sLine.Trim();
 
 			CString sTag = sLine.substr(0, sLine.find_first_of(" \t\r\n"));
 			CString sValue = (sTag.size() < sLine.size()) ? sLine.substr(sTag.size() +1) : "";
@@ -483,7 +483,7 @@ bool CZNC::ParseConfig(const CString& sConfig) {
 			CUtils::Trim(sTag);
 			CUtils::Trim(sValue);
 
-			if (CUtils::Left(sLine, 1) == "/") {
+			if (sLine.Left(1) == "/") {
 				CString sTag = sLine.substr(1);
 
 				if (pUser) {
@@ -599,9 +599,9 @@ bool CZNC::ParseConfig(const CString& sConfig) {
 						pUser->SetAltNick(sValue);
 						continue;
 					} else if (strcasecmp(sName.c_str(), "Pass") == 0) {
-						if (CUtils::Right(sValue, 1) == "-") {
-							CUtils::RightChomp(sValue);
-							CUtils::Trim(sValue);
+						if (sValue.Right(1) == "-") {
+							sValue.RightChomp();
+							sValue.Trim();
 							pUser->SetPass(sValue, true);
 						} else {
 							pUser->SetPass(sValue, false);
@@ -672,8 +672,8 @@ bool CZNC::ParseConfig(const CString& sConfig) {
 				if (strcasecmp(sName.c_str(), "ListenPort") == 0) {
 					m_bSSL = false;
 					CString sPort = sValue;
-					if (CUtils::Left(sPort, 1) == "+") {
-						CUtils::LeftChomp(sPort);
+					if (sPort.Left(1) == "+") {
+						sPort.LeftChomp();
 						m_bSSL = true;
 					}
 

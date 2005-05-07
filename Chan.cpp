@@ -7,7 +7,7 @@ CChan::CChan(const CString& sName, CUser* pUser) {
 	m_sName = sName.Token(0);
 	m_sKey = sName.Token(1);
 
-	if (CUtils::Left(m_sName, 1) != "#" && CUtils::Left(m_sName, 1) != "&") {
+	if (m_sName.Left(1) != "#" && m_sName.Left(1) != "&") {
 		m_sName = "#" + m_sName;
 	}
 

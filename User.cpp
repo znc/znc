@@ -199,9 +199,9 @@ bool CUser::AddServer(const CString& sName) {
 	CString sHost = sLine.Token(0);
 	CString sPort = sLine.Token(1);
 
-	if (CUtils::Left(sPort, 1) == "+") {
+	if (sPort.Left(1) == "+") {
 		bSSL = true;
-		CUtils::LeftChomp(sPort);
+		sPort.LeftChomp();
 	}
 
 	unsigned short uPort = strtoul(sPort.c_str(), NULL, 10);

@@ -3,8 +3,8 @@
 void CDCCBounce::ReadLine(const CString& sData) {
 	CString sLine = sData;
 
-	while ((CUtils::Right(sLine, 1) == "\r") || (CUtils::Right(sLine, 1) == "\n")) {
-		CUtils::RightChomp(sLine);
+	while ((sLine.Right(1) == "\r") || (sLine.Right(1) == "\n")) {
+		sLine.RightChomp();
 	}
 
 	DEBUG_ONLY(cout << GetSockName() << " <- [" << sLine << "]" << endl);

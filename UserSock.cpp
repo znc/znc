@@ -10,8 +10,8 @@
 void CUserSock::ReadLine(const CString& sData) {
 	CString sLine = sData;
 
-	while ((CUtils::Right(sLine, 1) == "\r") || (CUtils::Right(sLine, 1) == "\n")) {
-		CUtils::RightChomp(sLine);
+	while ((sLine.Right(1) == "\r") || (sLine.Right(1) == "\n")) {
+		sLine.RightChomp();
 	}
 
 	DEBUG_ONLY(cout << GetSockName() << " <- [" << sLine << "]" << endl);
@@ -68,8 +68,8 @@ void CUserSock::ReadLine(const CString& sData) {
 		return;		// Don't forward this msg.  ZNC has already registered us.
 	} else if (strcasecmp(sCommand.c_str(), "NICK") == 0) {
 		CString sNick = sLine.Token(1);
-		if (CUtils::Left(sNick, 1) == ":") {
-			CUtils::LeftChomp(sNick);
+		if (sNick.Left(1) == ":") {
+			sNick.LeftChomp();
 		}
 
 		if (!m_bAuthed) {
@@ -99,8 +99,8 @@ void CUserSock::ReadLine(const CString& sData) {
 		return;		// Don't forward this msg.  ZNC has already registered us.
 	} else if (strcasecmp(sCommand.c_str(), "JOIN") == 0) {
 		CString sChan = sLine.Token(1);
-		if (CUtils::Left(sChan, 1) == ":") {
-			CUtils::LeftChomp(sChan);
+		if (sChan.Left(1) == ":") {
+			sChan.LeftChomp();
 		}
 
 		if (m_pUser) {
@@ -122,8 +122,8 @@ void CUserSock::ReadLine(const CString& sData) {
 		CString sTarget = sLine.Token(1);
 		CString sMsg = sLine.Token(2, true);
 
-		if (CUtils::Left(sMsg, 1) == ":") {
-			CUtils::LeftChomp(sMsg);
+		if (sMsg.Left(1) == ":") {
+			sMsg.LeftChomp();
 		}
 
 		if ((!m_pUser) || (strcasecmp(sTarget.c_str(), CString(m_pUser->GetStatusPrefix() + "status").c_str())) == 0) {
@@ -134,7 +134,7 @@ void CUserSock::ReadLine(const CString& sData) {
 #ifdef _MODULES
 			if (m_pUser) {
 				CString sModule = sTarget;
-				CUtils::LeftChomp(sModule, m_pUser->GetStatusPrefix().length());
+				sModule.LeftChomp(m_pUser->GetStatusPrefix().length());
 
 				CModule* pModule = m_pUser->GetModules().FindModule(sModule);
 				if (pModule) {
@@ -160,8 +160,8 @@ void CUserSock::ReadLine(const CString& sData) {
 #ifdef _MODULES
 		if (CUtils::wildcmp("\001*\001", sMsg.c_str())) {
 			CString sCTCP = sMsg;
-			CUtils::LeftChomp(sCTCP);
-			CUtils::RightChomp(sCTCP);
+			sCTCP.LeftChomp();
+			sCTCP.RightChomp();
 
 			if ((m_pUser) && (m_pUser->GetModules().OnUserCTCPReply(sTarget, sCTCP))) {
 				return;
@@ -181,14 +181,14 @@ void CUserSock::ReadLine(const CString& sData) {
 		CString sTarget = sLine.Token(1);
 		CString sMsg = sLine.Token(2, true);
 
-		if (CUtils::Left(sMsg, 1) == ":") {
-			CUtils::LeftChomp(sMsg);
+		if (sMsg.Left(1) == ":") {
+			sMsg.LeftChomp();
 		}
 
 		if (CUtils::wildcmp("\001*\001", sMsg.c_str())) {
 			CString sCTCP = sMsg;
-			CUtils::LeftChomp(sCTCP);
-			CUtils::RightChomp(sCTCP);
+			sCTCP.LeftChomp();
+			sCTCP.RightChomp();
 
 			if (strncasecmp(sCTCP.c_str(), "DCC ", 4) == 0) {
 				CString sType = sCTCP.Token(1);
@@ -288,7 +288,7 @@ void CUserSock::ReadLine(const CString& sData) {
 			if (strncasecmp(sTarget.c_str(), m_pUser->GetStatusPrefix().c_str(), m_pUser->GetStatusPrefix().length()) == 0) {
 #ifdef _MODULES
 				CString sModule = sTarget;
-				CUtils::LeftChomp(sModule, m_pUser->GetStatusPrefix().length());
+				sModule.LeftChomp(m_pUser->GetStatusPrefix().length());
 
 				CModule* pModule = m_pUser->GetModules().FindModule(sModule);
 				if (pModule) {
@@ -324,7 +324,7 @@ void CUserSock::ReadLine(const CString& sData) {
 #ifdef _MODULES
 			if (m_pUser) {
 				CString sModule = sTarget;
-				CUtils::LeftChomp(sModule, m_pUser->GetStatusPrefix().length());
+				sModule.LeftChomp(m_pUser->GetStatusPrefix().length());
 
 				CModule* pModule = m_pUser->GetModules().FindModule(sModule);
 				if (pModule) {

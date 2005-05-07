@@ -8,10 +8,8 @@
 #include <stdio.h>
 
 #include "String.h"
-#include <string>
 #include <vector>
 #include <map>
-using std::string;
 using std::vector;
 using std::map;
 
@@ -28,40 +26,36 @@ public:
 	CUtils();
 	virtual ~CUtils();
 
-	static string GetIP(unsigned long addr);
-	static unsigned long GetLongIP(const string& sIP);
+	static CString GetIP(unsigned long addr);
+	static unsigned long GetLongIP(const CString& sIP);
 	static CString ChangeDir(const CString& sPath, const CString& sAdd, const CString& sHomeDir);
-	static int MakeDir(const string& sPath, mode_t iMode = 0700);
-	static void PrintError(const string& sMessage);
-	static void PrintMessage(const string& sMessage, bool bStrong = false);
-	static void PrintPrompt(const string& sMessage);
-	static void PrintAction(const string& sMessage);
-	static void PrintStatus(bool bSuccess, const string& sMessage = "");
-	static string GetHashPass();
-	static char* GetPass(const string& sPrompt);
-	static bool GetInput(const string& sPrompt, string& sRet, const string& sDefault = "", const string& sHint = "");
-	static bool GetBoolInput(const string& sPrompt, bool bDefault);
-	static bool GetBoolInput(const string& sPrompt, bool *pbDefault = NULL);
-	static bool GetNumInput(const string& sPrompt, unsigned int& uRet, unsigned int uMin = 0, unsigned int uMax = ~0, unsigned int uDefault = ~0);
+	static int MakeDir(const CString& sPath, mode_t iMode = 0700);
+	static void PrintError(const CString& sMessage);
+	static void PrintMessage(const CString& sMessage, bool bStrong = false);
+	static void PrintPrompt(const CString& sMessage);
+	static void PrintAction(const CString& sMessage);
+	static void PrintStatus(bool bSuccess, const CString& sMessage = "");
+	static CString GetHashPass();
+	static char* GetPass(const CString& sPrompt);
+	static bool GetInput(const CString& sPrompt, CString& sRet, const CString& sDefault = "", const CString& sHint = "");
+	static bool GetBoolInput(const CString& sPrompt, bool bDefault);
+	static bool GetBoolInput(const CString& sPrompt, bool *pbDefault = NULL);
+	static bool GetNumInput(const CString& sPrompt, unsigned int& uRet, unsigned int uMin = 0, unsigned int uMax = ~0, unsigned int uDefault = ~0);
 
-	static string ToString(short i);
-	static string ToString(unsigned short i);
-	static string ToString(int i);
-	static string ToString(unsigned int i);
-	static string ToString(long i);
-	static string ToString(unsigned long i);
-	static string ToString(unsigned long long i);
-	static string ToString(double i);
-	static string ToString(float i);
-	static string ToPercent(double d);
-	static string ToKBytes(double d);
+	static CString ToString(short i);
+	static CString ToString(unsigned short i);
+	static CString ToString(int i);
+	static CString ToString(unsigned int i);
+	static CString ToString(long i);
+	static CString ToString(unsigned long i);
+	static CString ToString(unsigned long long i);
+	static CString ToString(double i);
+	static CString ToString(float i);
+	static CString ToPercent(double d);
+	static CString ToKBytes(double d);
 
-	static string Left(const string& s, unsigned int u);
-	static string Right(const string& s, unsigned int u);
-	static string& Trim(string& s);
-	static string& LeftChomp(string& s, unsigned int uLen = 1);
-	static string& RightChomp(string& s, unsigned int uLen = 1);
-	static bool wildcmp(const string& sWild, const string& sString);
+	static CString& Trim(CString& s);
+	static bool wildcmp(const CString& sWild, const CString& sString);
 
 	static unsigned long long GetMillTime() {
 		struct timeval tv;
@@ -87,7 +81,7 @@ public:
 		m_pid = 0;
 	}
 
-	CLockFile(const string& sFile) {
+	CLockFile(const CString& sFile) {
 		Open(sFile);
 	}
 
@@ -103,7 +97,7 @@ public:
 		}
 	}
 
-	void Open(const string& sFile) {
+	void Open(const CString& sFile) {
 		m_fd = open(sFile.c_str(), O_RDONLY);
 		m_bCreated = false;
 
@@ -118,7 +112,7 @@ public:
 	}
 
 	//! timeout in milliseconds
-	bool TryExLock(const string& sLockFile, unsigned long long iTimeout = 0) {
+	bool TryExLock(const CString& sLockFile, unsigned long long iTimeout = 0) {
 		Open(sLockFile);
 		return TryExLock(iTimeout);
 	}
@@ -187,7 +181,7 @@ private:
 	int			m_fd;
 	int			m_pid;
 	bool		m_bCreated;
-	string		m_sFileName;
+	CString		m_sFileName;
 };
 
 class CException {
@@ -209,21 +203,21 @@ protected:
 };
 
 
-class CTable : public vector<map<string, string>* > {
+class CTable : public vector<map<CString, CString>* > {
 public:
 	CTable();
 	virtual ~CTable();
 
-	bool AddColumn(const string& sName);
+	bool AddColumn(const CString& sName);
 	unsigned int AddRow();
-	bool SetCell(const string& sColumn, const string& sValue, unsigned int uRowIdx = ~0);
-	bool GetLine(unsigned int uIdx, string& sLine);
+	bool SetCell(const CString& sColumn, const CString& sValue, unsigned int uRowIdx = ~0);
+	bool GetLine(unsigned int uIdx, CString& sLine);
 
 	unsigned int GetColumnWidth(unsigned int uIdx);
 private:
 protected:
-	vector<string>				m_vsHeaders;
-	map<string, unsigned int>	m_msuWidths;	// Used to cache the width of a column
+	vector<CString>				m_vsHeaders;
+	map<CString, unsigned int>	m_msuWidths;	// Used to cache the width of a column
 };
 
 
@@ -238,21 +232,21 @@ public:
 	 * @iEncrypt encrypt method (BF_DECRYPT or BF_ENCRYPT)
 	 * @sIvec what to set the ivector to start with, default sets it all 0's
 	 */
-	CBlowfish(const string & sPassword, int iEncrypt, const string & sIvec = "");
+	CBlowfish(const CString & sPassword, int iEncrypt, const CString & sIvec = "");
 	~CBlowfish();
 
 	//! output must be freed
 	static unsigned char *MD5(const unsigned char *input, u_int ilen);
 
-	//! returns an md5 of the string (not hex encoded)
-	static string MD5(const string & sInput, bool bHexEncode = false);
+	//! returns an md5 of the CString (not hex encoded)
+	static CString MD5(const CString & sInput, bool bHexEncode = false);
 
 	//! output must be the same size as input
 	void Crypt(unsigned char *input, unsigned char *output, u_int ibytes);
 
 	//! must free result
 	unsigned char * Crypt(unsigned char *input, u_int ibytes);
-	string Crypt(const string & sData);
+	CString Crypt(const CString & sData);
 
 private:
 	unsigned char		*m_ivec;
@@ -263,7 +257,7 @@ private:
 #endif /* HAVE_LIBSSL */
 
 #define RF_BUFF 4096
-inline bool ReadFile(const string & sFilename, string & sLine) {
+inline bool ReadFile(const CString & sFilename, CString & sLine) {
 	char inbuff[RF_BUFF];
 	int bytes;
 	// clear ourselves out
@@ -287,7 +281,7 @@ inline bool ReadFile(const string & sFilename, string & sLine) {
 	return true;
 }
 
-inline bool WriteFile(const string & sFilename, const string & sData) {
+inline bool WriteFile(const CString & sFilename, const CString & sData) {
 	FILE *f = fopen(sFilename.c_str(), "w");
 	if (!f) {
 		return false;
@@ -304,7 +298,7 @@ inline bool WriteFile(const string & sFilename, const string & sData) {
 	return true;
 }
 
-inline bool ReadLine(const string & sData, string & sLine, u_int & iPos) {
+inline bool ReadLine(const CString & sData, CString & sLine, u_int & iPos) {
 	sLine.clear();
 
 	if (iPos >= sData.length()) {
@@ -313,9 +307,9 @@ inline bool ReadLine(const string & sData, string & sLine, u_int & iPos) {
 
 	u_int iFind = sData.find("\n", iPos);
 
-	if (iFind == string::npos) {
+	if (iFind == CString::npos) {
 		sLine = sData.substr(iPos, (sData.length() - iPos));
-		iPos = string::npos;
+		iPos = CString::npos;
 		return true;
 	}
 
@@ -325,8 +319,8 @@ inline bool ReadLine(const string & sData, string & sLine, u_int & iPos) {
 	return true;
 }
 
-inline string Lower(const string & sLine) {
-	string sRet;
+inline CString Lower(const CString & sLine) {
+	CString sRet;
 	for(u_int a = 0; a < sLine.length(); a++) {
 		sRet += tolower(sLine[a]);
 	}
@@ -334,8 +328,8 @@ inline string Lower(const string & sLine) {
 	return sRet;
 }
 
-inline string Upper(const string & sLine) {
-	string sRet;
+inline CString Upper(const CString & sLine) {
+	CString sRet;
 	for(u_int a = 0; a < sLine.length(); a++) {
 		sRet += toupper(sLine[a]);
 	}

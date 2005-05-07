@@ -7,8 +7,8 @@ CFile::CFile(const CString& sLongName) {
 	m_sShortName = sLongName;
 
 	// @todo shouldn't this be Right() and RightChomp() ?!
-	while (CUtils::Left(m_sShortName, 1) == "/") {
-		CUtils::LeftChomp(m_sShortName);
+	while (m_sShortName.Left(1) == "/") {
+		m_sShortName.LeftChomp();
 	}
 
 	CString::size_type uPos = m_sShortName.rfind('/');
