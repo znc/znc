@@ -743,7 +743,7 @@ void CUserSock::UserCommand(const CString& sLine) {
 			for (unsigned int b = 0; b < Modules.size(); b++) {
 				Table.AddRow();
 				Table.SetCell("Name", Modules[b]->GetModName());
-				Table.SetCell("Description", CUtils::Ellipsize(Modules[b]->GetDescription(), 128));
+				Table.SetCell("Description", Modules[b]->GetDescription().Ellipsize(128));
 			}
 
 			unsigned int uTableIdx = 0; CString sLine;

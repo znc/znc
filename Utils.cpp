@@ -430,26 +430,6 @@ string& CUtils::RightChomp(string& s, unsigned int uLen) {
 	return s;
 }
 
-string CUtils::Ellipsize(const string& s, unsigned int uLen) {
-	if (uLen >= s.size()) {
-		return s;
-	}
-
-	string sRet;
-
-	if (uLen < 4) {
-		for (unsigned int a = 0; a < uLen; a++) {
-			sRet += ".";
-		}
-
-		return sRet;
-	}
-
-	sRet = s.substr(0, uLen -3) + "...";
-
-	return sRet;
-}
-
 bool CUtils::wildcmp(const string& sWild, const string& sString) {
 	// Written by Jack Handy - jakkhandy@hotmail.com
 	const char *wild = sWild.c_str(), *string = sString.c_str();

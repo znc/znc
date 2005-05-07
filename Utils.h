@@ -61,7 +61,6 @@ public:
 	static string& Trim(string& s);
 	static string& LeftChomp(string& s, unsigned int uLen = 1);
 	static string& RightChomp(string& s, unsigned int uLen = 1);
-	static string Ellipsize(const string& s, unsigned int uLen);
 	static bool wildcmp(const string& sWild, const string& sString);
 
 	static unsigned long long GetMillTime() {

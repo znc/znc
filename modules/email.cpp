@@ -15,6 +15,9 @@
  * Author: imaginos <imaginos@imaginos.net>
  *
  * $Log$
+ * Revision 1.5  2005/05/07 09:43:26  prozacx
+ * Moved CUtils::Ellipsize() into CString class
+ *
  * Revision 1.4  2005/05/05 18:11:04  prozacx
  * Changed all references to std::string over to CString
  *
@@ -133,9 +136,9 @@ public:
 				{
 					//PutModule( "------------------- New Email -------------------" );
 					Table.AddRow();
-					Table.SetCell( "From", CUtils::Ellipsize( vEmails[a].sFrom, 32 ) );
+					Table.SetCell( "From", vEmails[a].sFrom.Ellipsize( 32 ) );
 					Table.SetCell( "Size", CUtils::ToString( vEmails[a].iSize ) );
-					Table.SetCell( "Subject", CUtils::Ellipsize( vEmails[a].sSubject, 64 ) );
+					Table.SetCell( "Subject", vEmails[a].sSubject.Ellipsize( 64 ) );
 				}
 				ssUidls.insert( vEmails[a].sUidl );
 			}
