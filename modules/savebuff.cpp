@@ -26,6 +26,9 @@
  * better solution then plain text.
  * 
  * $Log$
+ * Revision 1.21  2005/05/08 06:42:02  prozacx
+ * Moved CUtils::ToString() into CString class
+ *
  * Revision 1.20  2005/05/08 04:30:14  prozacx
  * Moved CUtils::Trim() into CString class
  *
@@ -302,7 +305,7 @@ public:
 
 	CString SpoofChanMsg( const CString & sChannel, const CString & sMesg )
 	{
-		CString sReturn = ":*" + GetModName() + "!znc@znc.com PRIVMSG " + sChannel + " :" + CUtils::ToString( time( NULL ) ) + " " + sMesg;
+		CString sReturn = ":*" + GetModName() + "!znc@znc.com PRIVMSG " + sChannel + " :" + CString::ToString( time( NULL ) ) + " " + sMesg;
 		return( sReturn );
 	}
 

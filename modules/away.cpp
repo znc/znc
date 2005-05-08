@@ -20,6 +20,9 @@
  *
  * 
  * $Log$
+ * Revision 1.12  2005/05/08 06:42:01  prozacx
+ * Moved CUtils::ToString() into CString class
+ *
  * Revision 1.11  2005/05/08 04:30:13  prozacx
  * Moved CUtils::Trim() into CString class
  *
@@ -205,7 +208,7 @@ public:
 			CString sWhich = sCommand.Token(1);
 			if ( sWhich == "all" )
 			{
-				PutModNotice( "Deleted " + CUtils::ToString( m_vMessages.size() ) + " Messages.", "away" );
+				PutModNotice( "Deleted " + CString::ToString( m_vMessages.size() ) + " Messages.", "away" );
 				for( u_int a = 0; a < m_vMessages.size(); a++ )
 					m_vMessages.erase( m_vMessages.begin() + a-- );
 
@@ -273,7 +276,7 @@ public:
 					m_vMessages.erase( m_vMessages.begin() + a-- );
 					continue;
 				}
-				CString sTmp = "    " + CUtils::ToString( a ) + ") [";
+				CString sTmp = "    " + CString::ToString( a ) + ") [";
 				sTmp.append( szFormat, iCount );
 				sTmp += "] ";
 				sTmp += sMessage;
@@ -335,12 +338,12 @@ public:
 			if ( bUsePrivMessage )
 			{
 				PutModule( "Welcome Back!", "away" );
-				PutModule( "You have " + CUtils::ToString( m_vMessages.size() ) + " messages!", "away" );
+				PutModule( "You have " + CString::ToString( m_vMessages.size() ) + " messages!", "away" );
 			}
 			else
 			{
 				PutModNotice( "Welcome Back!", "away" );
-				PutModNotice( "You have " + CUtils::ToString( m_vMessages.size() ) + " messages!", "away" );
+				PutModNotice( "You have " + CString::ToString( m_vMessages.size() ) + " messages!", "away" );
 			}
 		}
 		m_sReason = "";
@@ -408,7 +411,7 @@ private:
 
 	void AddMessage( time_t iTime, const CNick & Nick, CString & sMessage )
 	{
-		AddMessage( CUtils::ToString( iTime ) + ":" + Nick.GetNickMask() + ":" + sMessage );
+		AddMessage( CString::ToString( iTime ) + ":" + Nick.GetNickMask() + ":" + sMessage );
 	}
 
 	void AddMessage( const CString & sText )

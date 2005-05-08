@@ -16,6 +16,9 @@
  * Author: imaginos <imaginos@imaginos.net>
  * 
  * $Log$
+ * Revision 1.12  2005/05/08 06:42:02  prozacx
+ * Moved CUtils::ToString() into CString class
+ *
  * Revision 1.11  2005/05/08 04:30:14  prozacx
  * Moved CUtils::Trim() into CString class
  *
@@ -311,7 +314,7 @@ public:
 				{
 					Table.SetCell( "Status", "Established" );	
 					Table.SetCell( "Host", pSock->GetRemoteIP() );
-					Table.SetCell( "Port", CUtils::ToString( pSock->GetRemotePort() ) );
+					Table.SetCell( "Port", CString::ToString( pSock->GetRemotePort() ) );
 					SSL_SESSION *pSession = pSock->GetSSLSession();
 					if ( ( pSession ) && ( pSession->cipher ) && ( pSession->cipher->name ) )
 						Table.SetCell( "Cipher", pSession->cipher->name );
@@ -319,7 +322,7 @@ public:
 				} else
 				{
 					Table.SetCell( "Status", "Waiting" );
-					Table.SetCell( "Port", CUtils::ToString( pSock->GetLocalPort() ) );
+					Table.SetCell( "Port", CString::ToString( pSock->GetLocalPort() ) );
 				}
 			}
 			if ( Table.size() ) 
@@ -381,8 +384,8 @@ public:
 						Table.SetCell( "Type", "Outbound" );	
 					else
 						Table.SetCell( "Type", "Inbound" );	
-					Table.SetCell( "LocalIP:Port", pSock->GetLocalIP() + ":" + CUtils::ToString( pSock->GetLocalPort() ) );
-					Table.SetCell( "RemoteIP:Port", pSock->GetRemoteIP() + ":" + CUtils::ToString( pSock->GetRemotePort() ) );
+					Table.SetCell( "LocalIP:Port", pSock->GetLocalIP() + ":" + CString::ToString( pSock->GetLocalPort() ) );
+					Table.SetCell( "RemoteIP:Port", pSock->GetRemoteIP() + ":" + CString::ToString( pSock->GetRemotePort() ) );
 					SSL_SESSION *pSession = pSock->GetSSLSession();
 					if ( ( pSession ) && ( pSession->cipher ) && ( pSession->cipher->name ) )
 						Table.SetCell( "Cipher", pSession->cipher->name );
@@ -392,7 +395,7 @@ public:
 				} else
 				{
 					Table.SetCell( "Type", "Listener" );
-					Table.SetCell( "LocalIP:Port", pSock->GetLocalIP() + ":" + CUtils::ToString( pSock->GetLocalPort() ) );
+					Table.SetCell( "LocalIP:Port", pSock->GetLocalIP() + ":" + CString::ToString( pSock->GetLocalPort() ) );
 					Table.SetCell( "RemoteIP:Port", "0.0.0.0:0" );
 				}
 			}

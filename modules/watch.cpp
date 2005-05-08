@@ -279,7 +279,7 @@ public:
 				m_Buffer.SetLineCount(atoi(sCount.c_str()));
 			}
 
-			PutModule("Buffer count is set to [" + CUtils::ToString(m_Buffer.GetLineCount()) + "]");
+			PutModule("Buffer count is set to [" + CString::ToString(m_Buffer.GetLineCount()) + "]");
 		} else if (strcasecmp(sCmdName.c_str(), "DEL") == 0) {
 			Remove(atoi(sCommand.Token(1).c_str()));
 		} else {
@@ -322,7 +322,7 @@ private:
 		for (unsigned int a = 0; a < uIdx; a++, it++);
 
 		(*it).SetDisabled(bDisabled);
-		PutModule("Id " + CUtils::ToString(uIdx +1) + ((bDisabled) ? " Disabled" : " Enabled"));
+		PutModule("Id " + CString::ToString(uIdx +1) + ((bDisabled) ? " Disabled" : " Enabled"));
 	}
 
 	void List() {
@@ -340,7 +340,7 @@ private:
 			CWatchEntry& WatchEntry = *it;
 
 			Table.AddRow();
-			Table.SetCell("Id", CUtils::ToString(uIdx));
+			Table.SetCell("Id", CString::ToString(uIdx));
 			Table.SetCell("HostMask", WatchEntry.GetHostMask());
 			Table.SetCell("Target", WatchEntry.GetTarget());
 			Table.SetCell("Pattern", WatchEntry.GetPattern());
@@ -377,11 +377,11 @@ private:
 			PutModule("/msg " + GetModNick() + " ADD " + WatchEntry.GetHostMask() + " " + WatchEntry.GetTarget() + " " + WatchEntry.GetPattern());
 
 			if (WatchEntry.GetSourcesStr().size()) {
-				PutModule("/msg " + GetModNick() + " SETSOURCES " + CUtils::ToString(uIdx) + " " + WatchEntry.GetSourcesStr());
+				PutModule("/msg " + GetModNick() + " SETSOURCES " + CString::ToString(uIdx) + " " + WatchEntry.GetSourcesStr());
 			}
 
 			if (WatchEntry.IsDisabled()) {
-				PutModule("/msg " + GetModNick() + " DISABLE " + CUtils::ToString(uIdx));
+				PutModule("/msg " + GetModNick() + " DISABLE " + CString::ToString(uIdx));
 			}
 		}
 
@@ -399,7 +399,7 @@ private:
 		for (unsigned int a = 0; a < uIdx; a++, it++);
 
 		(*it).SetSources(sSources);
-		PutModule("Sources set for Id " + CUtils::ToString(uIdx +1) + ".");
+		PutModule("Sources set for Id " + CString::ToString(uIdx +1) + ".");
 	}
 
 	void Remove(unsigned int uIdx) {
@@ -413,7 +413,7 @@ private:
 		for (unsigned int a = 0; a < uIdx; a++, it++);
 
 		m_lsWatchers.erase(it);
-		PutModule("Id " + CUtils::ToString(uIdx +1) + " Removed.");
+		PutModule("Id " + CString::ToString(uIdx +1) + " Removed.");
 	}
 
 	void Help() {

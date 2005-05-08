@@ -15,6 +15,9 @@
  * Author: imaginos <imaginos@imaginos.net>
  *
  * $Log$
+ * Revision 1.7  2005/05/08 06:42:02  prozacx
+ * Moved CUtils::ToString() into CString class
+ *
  * Revision 1.6  2005/05/08 04:30:14  prozacx
  * Moved CUtils::Trim() into CString class
  *
@@ -140,7 +143,7 @@ public:
 					//PutModule( "------------------- New Email -------------------" );
 					Table.AddRow();
 					Table.SetCell( "From", vEmails[a].sFrom.Ellipsize( 32 ) );
-					Table.SetCell( "Size", CUtils::ToString( vEmails[a].iSize ) );
+					Table.SetCell( "Size", CString::ToString( vEmails[a].iSize ) );
 					Table.SetCell( "Subject", vEmails[a].sSubject.Ellipsize( 64 ) );
 				}
 				ssUidls.insert( vEmails[a].sUidl );
