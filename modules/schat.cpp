@@ -16,6 +16,9 @@
  * Author: imaginos <imaginos@imaginos.net>
  * 
  * $Log$
+ * Revision 1.11  2005/05/08 04:30:14  prozacx
+ * Moved CUtils::Trim() into CString class
+ *
  * Revision 1.10  2005/05/07 09:18:56  prozacx
  * Moved CUtils::Token() into CString class
  *
@@ -300,7 +303,7 @@ public:
 				if ( pTime )
 				{
 					CString sTime = pTime;
-					CUtils::Trim( sTime );
+					sTime.Trim();
 					Table.SetCell( "Created", sTime );
 				}
 				
@@ -368,7 +371,7 @@ public:
 				if ( pTime )
 				{
 					CString sTime = pTime;
-					CUtils::Trim( sTime );
+					sTime.Trim();
 					Table.SetCell( "Created", sTime );
 				}
 				

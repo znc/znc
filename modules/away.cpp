@@ -20,6 +20,9 @@
  *
  * 
  * $Log$
+ * Revision 1.11  2005/05/08 04:30:13  prozacx
+ * Moved CUtils::Trim() into CString class
+ *
  * Revision 1.10  2005/05/07 09:18:49  prozacx
  * Moved CUtils::Token() into CString class
  *
@@ -131,7 +134,7 @@ public:
 			u_int iPos = 0;
 			while( ReadLine( sFile, sLine, iPos ) )
 			{
-				CUtils::Trim( sLine );
+				sLine.Trim();
 				AddMessage( sLine );
 			}
 		} else
@@ -314,7 +317,7 @@ public:
 			if ( pTime )
 			{
 				sTime = pTime;
-				CUtils::Trim( sTime );
+				sTime.Trim();
 			}
 			if ( m_sReason.empty() )
 				m_sReason = "away :Auto Away at " + sTime;

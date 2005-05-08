@@ -449,7 +449,7 @@ bool CZNC::ParseConfig(const CString& sConfig) {
 
 	while (File.ReadLine(sLine)) {
 		while ((sLine.Right(1) == "\r") || (sLine.Right(1) == "\n")) {
-			CUtils::Trim(sLine);
+			sLine.Trim();
 		}
 
 		if ((sLine.empty()) || (sLine[0] == '#') || (sLine.Left(2) == "//")) {
@@ -480,8 +480,8 @@ bool CZNC::ParseConfig(const CString& sConfig) {
 			CString sTag = sLine.substr(0, sLine.find_first_of(" \t\r\n"));
 			CString sValue = (sTag.size() < sLine.size()) ? sLine.substr(sTag.size() +1) : "";
 
-			CUtils::Trim(sTag);
-			CUtils::Trim(sValue);
+			sTag.Trim();
+			sValue.Trim();
 
 			if (sLine.Left(1) == "/") {
 				CString sTag = sLine.substr(1);
@@ -554,8 +554,8 @@ bool CZNC::ParseConfig(const CString& sConfig) {
 		// If we have a regular line, figure out where it goes
 		CString sName = sLine.Token(0, false, '=');
 		CString sValue = sLine.Token(1, true, '=');
-		CUtils::Trim(sName);
-		CUtils::Trim(sValue);
+		sName.Trim();
+		sValue.Trim();
 
 		if ((!sName.empty()) && (!sValue.empty())) {
 			if (pUser) {

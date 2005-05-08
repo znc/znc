@@ -26,6 +26,9 @@
  * better solution then plain text.
  * 
  * $Log$
+ * Revision 1.20  2005/05/08 04:30:14  prozacx
+ * Moved CUtils::Trim() into CString class
+ *
  * Revision 1.19  2005/05/05 18:11:04  prozacx
  * Changed all references to std::string over to CString
  *
@@ -177,7 +180,7 @@ public:
 			u_int iPos = 0;
 			while( ReadLine( sFile, sLine, iPos ) )
 			{
-				CUtils::Trim( sLine );
+				sLine.Trim();
 				pChan->AddBuffer( sLine );
 			}
 		} else
@@ -258,7 +261,7 @@ public:
 				u_int iPos = 0;
 				while( ReadLine( sFile, sLine, iPos ) )
 				{
-					CUtils::Trim( sLine );
+					sLine.Trim();
 					PutModule( "[" + sLine + "]" );
 				}
 			}
@@ -273,7 +276,7 @@ public:
 				u_int iPos = 0;
 				while( ReadLine( sFile, sLine, iPos ) )
 				{
-					CUtils::Trim( sLine );
+					sLine.Trim();
 					PutUser( sLine );
 				}
 			}

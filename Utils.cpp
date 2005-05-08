@@ -392,18 +392,6 @@ CString CUtils::ToKBytes(double d) {
 	return szRet;
 }
 
-CString& CUtils::Trim(CString& s) {
-	while ((s.Right(1) == " ") || (s.Right(1) == "\t") || (s.Right(1) == "\r") || (s.Right(1) == "\n")) {
-		s.RightChomp();
-	}
-
-	while ((s.Left(1) == " ") || (s.Left(1) == "\t") || (s.Left(1) == "\r") || (s.Left(1) == "\n")) {
-		s.LeftChomp();
-	}
-
-	return s;
-}
-
 bool CUtils::wildcmp(const CString& sWild, const CString& sString) {
 	// Written by Jack Handy - jakkhandy@hotmail.com
 	const char *wild = sWild.c_str(), *CString = sString.c_str();

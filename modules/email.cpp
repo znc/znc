@@ -15,6 +15,9 @@
  * Author: imaginos <imaginos@imaginos.net>
  *
  * $Log$
+ * Revision 1.6  2005/05/08 04:30:14  prozacx
+ * Moved CUtils::Trim() into CString class
+ *
  * Revision 1.5  2005/05/07 09:43:26  prozacx
  * Moved CUtils::Ellipsize() into CString class
  *
@@ -207,7 +210,7 @@ public:
 		u_int iPos = 0;
 		while( ::ReadLine( m_sMailBuffer, sLine, iPos ) )
 		{
-			CUtils::Trim( sLine );
+			sLine.Trim();
 			if ( sLine.empty() )
 				break;	// out of the headers
 

@@ -258,7 +258,7 @@ void CIRCSock::ReadLine(const CString& sData) {
 					break;
 				}
 				case 324: {	// MODE
-					CUtils::Trim(sRest);
+					sRest.Trim();
 					CChan* pChan = m_pUser->FindChan(sRest.Token(0));
 
 					if (pChan) {
@@ -267,7 +267,7 @@ void CIRCSock::ReadLine(const CString& sData) {
 				}
 					break;
 				case 353: {	// NAMES
-					CUtils::Trim(sRest);
+					sRest.Trim();
 					// Todo: allow for non @+= server msgs
 					CChan* pChan = m_pUser->FindChan(sRest.Token(1));
 					if (pChan) {

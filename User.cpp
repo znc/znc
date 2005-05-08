@@ -194,7 +194,7 @@ bool CUser::AddServer(const CString& sName) {
 
 	bool bSSL = false;
 	CString sLine = sName;
-	CUtils::Trim(sLine);
+	sLine.Trim();
 
 	CString sHost = sLine.Token(0);
 	CString sPort = sLine.Token(1);

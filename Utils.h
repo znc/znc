@@ -54,7 +54,6 @@ public:
 	static CString ToPercent(double d);
 	static CString ToKBytes(double d);
 
-	static CString& Trim(CString& s);
 	static bool wildcmp(const CString& sWild, const CString& sString);
 
 	static unsigned long long GetMillTime() {
