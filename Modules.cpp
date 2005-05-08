@@ -57,7 +57,7 @@ bool CModule::RemTimer(const CString& sLabel) {
 	for (unsigned int a = 0; a < m_vTimers.size(); a++) {
 		CTimer* pTimer = m_vTimers[a];
 
-		if (strcasecmp(pTimer->GetName().c_str(), sLabel.c_str()) == 0) {
+		if (pTimer->GetName().CaseCmp(sLabel) == 0) {
 			m_vTimers.erase(m_vTimers.begin() +a);
 			m_pManager->DelCronByAddr(pTimer);
 			return true;
@@ -81,7 +81,7 @@ bool CModule::UnlinkTimer(CTimer* pTimer) {
 CTimer* CModule::FindTimer(const CString& sLabel) {
 	for (unsigned int a = 0; a < m_vTimers.size(); a++) {
 		CTimer* pTimer = m_vTimers[a];
-		if (strcasecmp(pTimer->GetName().c_str(), sLabel.c_str()) == 0) {
+		if (pTimer->GetName().CaseCmp(sLabel) == 0) {
 			return pTimer;
 		}
 	}
@@ -470,7 +470,7 @@ void CModules::OnModCTCP(const CString& sMessage) {
 
 CModule* CModules::FindModule(const CString& sModule) {
 	for (unsigned int a = 0; a < size(); a++) {
-		if (strcasecmp(sModule.c_str(), (*this)[a]->GetModName().c_str()) == 0) {
+		if (sModule.CaseCmp((*this)[a]->GetModName()) == 0) {
 			return (*this)[a];
 		}
 	}

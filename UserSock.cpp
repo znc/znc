@@ -26,10 +26,10 @@ void CUserSock::ReadLine(const CString& sData) {
 
 	CString sCommand = sLine.Token(0);
 
-	if (strcasecmp(sCommand.c_str(), "ZNC") == 0) {
+	if (sCommand.CaseCmp("ZNC") == 0) {
 		PutStatus("Hello.  How may I help you?");
 		return;
-	} else if (strcasecmp(sCommand.c_str(), "DETACH") == 0) {
+	} else if (sCommand.CaseCmp("DETACH") == 0) {
 		if (m_pUser) {
 			CString sChan = sLine.Token(1);
 
@@ -48,9 +48,9 @@ void CUserSock::ReadLine(const CString& sData) {
 			PutStatusNotice("Detached from [" + sChan + "]");
 			return;
 		}
-	} else if (strcasecmp(sCommand.c_str(), "PONG") == 0) {
+	} else if (sCommand.CaseCmp("PONG") == 0) {
 		return;	// Block pong replies, we already responded to the pings
-	} else if (strcasecmp(sCommand.c_str(), "PASS") == 0) {
+	} else if (sCommand.CaseCmp("PASS") == 0) {
 		if (!m_bAuthed) {
 			m_bGotPass = true;
 			m_sPass = sLine.Token(1);
@@ -66,7 +66,7 @@ void CUserSock::ReadLine(const CString& sData) {
 		}
 
 		return;		// Don't forward this msg.  ZNC has already registered us.
-	} else if (strcasecmp(sCommand.c_str(), "NICK") == 0) {
+	} else if (sCommand.CaseCmp("NICK") == 0) {
 		CString sNick = sLine.Token(1);
 		if (sNick.Left(1) == ":") {
 			sNick.LeftChomp();
@@ -82,10 +82,10 @@ void CUserSock::ReadLine(const CString& sData) {
 			return;		// Don't forward this msg.  ZNC will handle nick changes until auth is complete
 		}
 
-		if ((m_pUser) && (strcasecmp(sNick.c_str(), m_pUser->GetNick().c_str()) == 0)) {
+		if ((m_pUser) && (sNick.CaseCmp(m_pUser->GetNick()) == 0)) {
 			m_uKeepNickCounter++;
 		}
-	} else if (strcasecmp(sCommand.c_str(), "USER") == 0) {
+	} else if (sCommand.CaseCmp("USER") == 0) {
 		if ((!m_bAuthed) && (m_sUser.empty())) {
 			m_sUser = sLine.Token(1);
 		}
@@ -97,7 +97,7 @@ void CUserSock::ReadLine(const CString& sData) {
 		}
 
 		return;		// Don't forward this msg.  ZNC has already registered us.
-	} else if (strcasecmp(sCommand.c_str(), "JOIN") == 0) {
+	} else if (sCommand.CaseCmp("JOIN") == 0) {
 		CString sChan = sLine.Token(1);
 		if (sChan.Left(1) == ":") {
 			sChan.LeftChomp();
@@ -111,14 +111,14 @@ void CUserSock::ReadLine(const CString& sData) {
 				return;
 			}
 		}
-	} else if (strcasecmp(sCommand.c_str(), "QUIT") == 0) {
+	} else if (sCommand.CaseCmp("QUIT") == 0) {
 		if (m_pIRCSock) {
 			m_pIRCSock->UserDisconnected();
 		}
 
 		Close();	// Treat a client quit as a detach
 		return;		// Don't forward this msg.  We don't want the client getting us disconnected.
-	} else if (strcasecmp(sCommand.c_str(), "NOTICE") == 0) {
+	} else if (sCommand.CaseCmp("NOTICE") == 0) {
 		CString sTarget = sLine.Token(1);
 		CString sMsg = sLine.Token(2, true);
 
@@ -126,7 +126,7 @@ void CUserSock::ReadLine(const CString& sData) {
 			sMsg.LeftChomp();
 		}
 
-		if ((!m_pUser) || (strcasecmp(sTarget.c_str(), CString(m_pUser->GetStatusPrefix() + "status").c_str())) == 0) {
+		if ((!m_pUser) || (sTarget.CaseCmp(CString(m_pUser->GetStatusPrefix() + "status"))) == 0) {
 			return;
 		}
 
@@ -177,7 +177,7 @@ void CUserSock::ReadLine(const CString& sData) {
 
 		PutIRC("NOTICE " + sTarget + " :" + sMsg);
 		return;
-	} else if (strcasecmp(sCommand.c_str(), "PRIVMSG") == 0) {
+	} else if (sCommand.CaseCmp("PRIVMSG") == 0) {
 		CString sTarget = sLine.Token(1);
 		CString sMsg = sLine.Token(2, true);
 
@@ -202,7 +202,7 @@ void CUserSock::ReadLine(const CString& sData) {
 					uLongIP = CUtils::GetLongIP(GetRemoteIP());
 				}
 
-				if (strcasecmp(sType.c_str(), "CHAT") == 0) {
+				if (sType.CaseCmp("CHAT") == 0) {
 					if (strncasecmp(sTarget.c_str(), m_pUser->GetStatusPrefix().c_str(), m_pUser->GetStatusPrefix().length()) == 0) {
 					} else {
 						unsigned short uBNCPort = CDCCBounce::DCCRequest(sTarget, uLongIP, uPort, "", true, m_pUser, (m_pIRCSock) ? m_pIRCSock->GetLocalIP() : GetLocalIP(), "");
@@ -210,11 +210,11 @@ void CUserSock::ReadLine(const CString& sData) {
 							PutIRC("PRIVMSG " + sTarget + " :\001DCC CHAT chat " + CString::ToString(CUtils::GetLongIP(sIP)) + " " + CString::ToString(uBNCPort) + "\001");
 						}
 					}
-				} else if (strcasecmp(sType.c_str(), "SEND") == 0) {
+				} else if (sType.CaseCmp("SEND") == 0) {
 					// DCC SEND readme.txt 403120438 5550 1104
 
 					if (strncasecmp(sTarget.c_str(), m_pUser->GetStatusPrefix().c_str(), m_pUser->GetStatusPrefix().length()) == 0) {
-						if ((!m_pUser) || (strcasecmp(sTarget.c_str(), CString(m_pUser->GetStatusPrefix() + "status").c_str()) == 0)) {
+						if ((!m_pUser) || (sTarget.CaseCmp(CString(m_pUser->GetStatusPrefix() + "status")) == 0)) {
 							if (!m_pUser) {
 								return;
 							}
@@ -246,7 +246,7 @@ void CUserSock::ReadLine(const CString& sData) {
 							PutIRC("PRIVMSG " + sTarget + " :\001DCC SEND " + sFile + " " + CString::ToString(CUtils::GetLongIP(sIP)) + " " + CString::ToString(uBNCPort) + " " + CString::ToString(uFileSize) + "\001");
 						}
 					}
-				} else if (strcasecmp(sType.c_str(), "RESUME") == 0) {
+				} else if (sType.CaseCmp("RESUME") == 0) {
 					// PRIVMSG user :DCC RESUME "znc.o" 58810 151552
 					unsigned short uResumePort = atoi(sCTCP.Token(3).c_str());
 					unsigned long uResumeSize = strtoul(sCTCP.Token(4).c_str(), NULL, 10);
@@ -264,7 +264,7 @@ void CUserSock::ReadLine(const CString& sData) {
 							PutIRC("PRIVMSG " + sTarget + " :\001DCC " + sType + " " + sFile + " " + CString::ToString(pSock->GetUserPort()) + " " + sCTCP.Token(4) + "\001");
 						}
 					}
-				} else if (strcasecmp(sType.c_str(), "ACCEPT") == 0) {
+				} else if (sType.CaseCmp("ACCEPT") == 0) {
 					if (strncasecmp(sTarget.c_str(), m_pUser->GetStatusPrefix().c_str(), m_pUser->GetStatusPrefix().length()) == 0) {
 					} else {
 						// Need to lookup the connection by port, filter the port, and forward to the user
@@ -310,7 +310,7 @@ void CUserSock::ReadLine(const CString& sData) {
 			return;
 		}
 
-		if ((m_pUser) && (strcasecmp(sTarget.c_str(), CString(m_pUser->GetStatusPrefix() + "status").c_str()) == 0)) {
+		if ((m_pUser) && (sTarget.CaseCmp(CString(m_pUser->GetStatusPrefix() + "status")) == 0)) {
 #ifdef _MODULES
 			if ((m_pUser) && (m_pUser->GetModules().OnStatusCommand(sMsg))) {
 				return;
@@ -359,7 +359,7 @@ void CUserSock::SetNick(const CString& s) {
    m_sNick = s;
 
 	if (m_pUser) {
-		if (strcasecmp(m_sNick.c_str(), m_pUser->GetNick().c_str()) == 0) {
+		if (m_sNick.CaseCmp(m_pUser->GetNick()) == 0) {
 			m_uKeepNickCounter = 0;
 		}
 	}
@@ -385,9 +385,9 @@ void CUserSock::UserCommand(const CString& sLine) {
 
 	CString sCommand = sLine.Token(0);
 
-	if (strcasecmp(sCommand.c_str(), "HELP") == 0) {
+	if (sCommand.CaseCmp("HELP") == 0) {
 		HelpUser();
-	} else if (strcasecmp(sCommand.c_str(), "LISTNICKS") == 0) {
+	} else if (sCommand.CaseCmp("LISTNICKS") == 0) {
 		CString sChan = sLine.Token(1);
 
 		if (sChan.empty()) {
@@ -436,7 +436,7 @@ void CUserSock::UserCommand(const CString& sLine) {
 		while (Table.GetLine(uTableIdx++, sLine)) {
 			PutStatus(sLine);
 		}
-	} else if (strcasecmp(sCommand.c_str(), "DETACH") == 0) {
+	} else if (sCommand.CaseCmp("DETACH") == 0) {
 		if (m_pUser) {
 			CString sChan = sLine.Token(1);
 
@@ -454,9 +454,9 @@ void CUserSock::UserCommand(const CString& sLine) {
 			PutStatus("Detaching you from [" + sChan + "]");
 			pChan->DetachUser();
 		}
-	} else if (strcasecmp(sCommand.c_str(), "VERSION") == 0) {
+	} else if (sCommand.CaseCmp("VERSION") == 0) {
 		PutStatus(CZNC::GetTag());
-	} else if (strcasecmp(sCommand.c_str(), "SHUTDOWN") == 0) {
+	} else if (sCommand.CaseCmp("SHUTDOWN") == 0) {
 		CString sQuitMsg = sLine.Token(1, true);
 
 		if (!sQuitMsg.empty()) {
@@ -464,7 +464,7 @@ void CUserSock::UserCommand(const CString& sLine) {
 		}
 
 		throw CException(CException::EX_Shutdown);
-	} else if (strcasecmp(sCommand.c_str(), "JUMP") == 0) {
+	} else if (sCommand.CaseCmp("JUMP") == 0) {
 		if (m_pUser) {
 			if (m_pIRCSock) {
 				m_pIRCSock->Close();
@@ -472,7 +472,7 @@ void CUserSock::UserCommand(const CString& sLine) {
 				return;
 			}
 		}
-	} else if (strcasecmp(sCommand.c_str(), "LISTCHANS") == 0) {
+	} else if (sCommand.CaseCmp("LISTCHANS") == 0) {
 		if (m_pUser) {
 			const vector<CChan*>& vChans = m_pUser->GetChans();
 
@@ -514,7 +514,7 @@ void CUserSock::UserCommand(const CString& sLine) {
 				}
 			}
 		}
-	} else if (strcasecmp(sCommand.c_str(), "ADDSERVER") == 0) {
+	} else if (sCommand.CaseCmp("ADDSERVER") == 0) {
 		CString sServer = sLine.Token(1);
 
 		if (sServer.empty()) {
@@ -532,7 +532,7 @@ void CUserSock::UserCommand(const CString& sLine) {
 		} else {
 			PutStatus("Unable to add that server");
 		}
-	} else if (strcasecmp(sCommand.c_str(), "REMSERVER") == 0 || strcasecmp(sCommand.c_str(), "DELSERVER") == 0) {
+	} else if (sCommand.CaseCmp("REMSERVER") == 0 || sCommand.CaseCmp("DELSERVER") == 0) {
 		CString sServer = sLine.Token(1);
 
 		if (sServer.empty()) {
@@ -552,7 +552,7 @@ void CUserSock::UserCommand(const CString& sLine) {
 		} else {
 			PutStatus("No such server");
 		}
-	} else if (strcasecmp(sCommand.c_str(), "LISTSERVERS") == 0) {
+	} else if (sCommand.CaseCmp("LISTSERVERS") == 0) {
 		if (m_pUser) {
 			const vector<CServer*>& vServers = m_pUser->GetServers();
 			CTable Table;
@@ -579,7 +579,7 @@ void CUserSock::UserCommand(const CString& sLine) {
 				}
 			}
 		}
-	} else if (strcasecmp(sCommand.c_str(), "TOPICS") == 0) {
+	} else if (sCommand.CaseCmp("TOPICS") == 0) {
 		if (m_pUser) {
 			const vector<CChan*>& vChans = m_pUser->GetChans();
 			CTable Table;
@@ -604,7 +604,7 @@ void CUserSock::UserCommand(const CString& sLine) {
 				}
 			}
 		}
-	} else if (strcasecmp(sCommand.c_str(), "SEND") == 0) {
+	} else if (sCommand.CaseCmp("SEND") == 0) {
 		CString sToNick = sLine.Token(1);
 		CString sFile = sLine.Token(2);
 
@@ -616,7 +616,7 @@ void CUserSock::UserCommand(const CString& sLine) {
 		if (m_pUser) {
 			m_pUser->SendFile(sToNick, sFile);
 		}
-	} else if (strcasecmp(sCommand.c_str(), "GET") == 0) {
+	} else if (sCommand.CaseCmp("GET") == 0) {
 		CString sFile = sLine.Token(1);
 
 		if (sFile.empty()) {
@@ -627,7 +627,7 @@ void CUserSock::UserCommand(const CString& sLine) {
 		if (m_pUser) {
 			m_pUser->SendFile(GetNick(), sFile);
 		}
-	} else if (strcasecmp(sCommand.c_str(), "LISTDCCS") == 0) {
+	} else if (sCommand.CaseCmp("LISTDCCS") == 0) {
 		TSocketManager<Csock>& Manager = m_pZNC->GetManager();
 
 		CTable Table;
@@ -726,7 +726,7 @@ void CUserSock::UserCommand(const CString& sLine) {
 		} else {
 			PutStatus("You have no active DCCs.");
 		}
-	} else if ((strcasecmp(sCommand.c_str(), "LISTMODS") == 0) || (strcasecmp(sCommand.c_str(), "LISTMODULES") == 0)) {
+	} else if ((sCommand.CaseCmp("LISTMODS") == 0) || (sCommand.CaseCmp("LISTMODULES") == 0)) {
 #ifdef _MODULES
 		if (m_pUser) {
 			CModules& Modules = m_pUser->GetModules();
@@ -755,7 +755,7 @@ void CUserSock::UserCommand(const CString& sLine) {
 		PutStatus("Modules are not enabled.");
 #endif
 		return;
-	} else if ((strcasecmp(sCommand.c_str(), "LOADMOD") == 0) || (strcasecmp(sCommand.c_str(), "LOADMODULE") == 0)) {
+	} else if ((sCommand.CaseCmp("LOADMOD") == 0) || (sCommand.CaseCmp("LOADMODULE") == 0)) {
 		CString sMod = sLine.Token(1);
 		CString sArgs = sLine.Token(2, true);
 
@@ -776,7 +776,7 @@ void CUserSock::UserCommand(const CString& sLine) {
 		PutStatus("Unable to load [" + sMod + "] Modules are not enabled.");
 #endif
 		return;
-	} else if ((strcasecmp(sCommand.c_str(), "UNLOADMOD") == 0) || (strcasecmp(sCommand.c_str(), "UNLOADMODULE") == 0)) {
+	} else if ((sCommand.CaseCmp("UNLOADMOD") == 0) || (sCommand.CaseCmp("UNLOADMODULE") == 0)) {
 		CString sMod = sLine.Token(1);
 
 		if (m_pUser->DenyLoadMod()) {
@@ -796,7 +796,7 @@ void CUserSock::UserCommand(const CString& sLine) {
 		PutStatus("Unable to unload [" + sMod + "] Modules are not enabled.");
 #endif
 		return;
-	} else if ((strcasecmp(sCommand.c_str(), "RELOADMOD") == 0) || (strcasecmp(sCommand.c_str(), "RELOADMODULE") == 0)) {
+	} else if ((sCommand.CaseCmp("RELOADMOD") == 0) || (sCommand.CaseCmp("RELOADMODULE") == 0)) {
 		CString sMod = sLine.Token(1);
 		CString sArgs = sLine.Token(2, true);
 
@@ -817,7 +817,7 @@ void CUserSock::UserCommand(const CString& sLine) {
 		PutStatus("Unable to unload [" + sMod + "] Modules are not enabled.");
 #endif
 		return;
-	} else if (strcasecmp(sCommand.c_str(), "SETBUFFER") == 0) {
+	} else if (sCommand.CaseCmp("SETBUFFER") == 0) {
 		CString sChan = sLine.Token(1);
 
 		if (sChan.empty()) {

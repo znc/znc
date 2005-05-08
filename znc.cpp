@@ -322,7 +322,7 @@ bool CZNC::WriteNewConfig(const CString& sConfig) {
 					const CModInfo& Info = *it;
 					CString sName = Info.GetName();
 
-					if (strcasecmp(sName.Right(3).c_str(), ".so") == 0) {
+					if (sName.Right(3).CaseCmp(".so") == 0) {
 						sName.RightChomp(3);
 					}
 
@@ -488,12 +488,12 @@ bool CZNC::ParseConfig(const CString& sConfig) {
 
 				if (pUser) {
 					if (pChan) {
-						if (strcasecmp(sTag.c_str(), "Chan") == 0) {
+						if (sTag.CaseCmp("Chan") == 0) {
 							pUser->AddChan(pChan);
 							pChan = NULL;
 							continue;
 						}
-					} else if (strcasecmp(sTag.c_str(), "User") == 0) {
+					} else if (sTag.CaseCmp("User") == 0) {
 						CString sErr;
 
 						if (!pUser->IsValid(sErr)) {
@@ -507,7 +507,7 @@ bool CZNC::ParseConfig(const CString& sConfig) {
 						continue;
 					}
 				}
-			} else if (strcasecmp(sTag.c_str(), "User") == 0) {
+			} else if (sTag.CaseCmp("User") == 0) {
 				if (pUser) {
 					CUtils::PrintError("You may not nest <User> tags inside of other <User> tags.");
 					return false;
@@ -534,7 +534,7 @@ bool CZNC::ParseConfig(const CString& sConfig) {
 				}
 
 				continue;
-			} else if (strcasecmp(sTag.c_str(), "Chan") == 0) {
+			} else if (sTag.CaseCmp("Chan") == 0) {
 				if (!pUser) {
 					CUtils::PrintError("<Chan> tags must be nested inside of a <User> tag.");
 					return false;
@@ -560,45 +560,45 @@ bool CZNC::ParseConfig(const CString& sConfig) {
 		if ((!sName.empty()) && (!sValue.empty())) {
 			if (pUser) {
 				if (pChan) {
-					if (strcasecmp(sName.c_str(), "Buffer") == 0) {
+					if (sName.CaseCmp("Buffer") == 0) {
 						pChan->SetBufferCount(strtoul(sValue.c_str(), NULL, 10));
 						continue;
-					} else if (strcasecmp(sName.c_str(), "KeepBuffer") == 0) {
-						pChan->SetKeepBuffer((strcasecmp(sValue.c_str(), "true") == 0));
+					} else if (sName.CaseCmp("KeepBuffer") == 0) {
+						pChan->SetKeepBuffer((sValue.CaseCmp("true") == 0));
 						continue;
-					} else if (strcasecmp(sName.c_str(), "Detached") == 0) {
-						pChan->SetDetached((strcasecmp(sValue.c_str(), "true") == 0));
+					} else if (sName.CaseCmp("Detached") == 0) {
+						pChan->SetDetached((sValue.CaseCmp("true") == 0));
 						continue;
-					} else if (strcasecmp(sName.c_str(), "AutoCycle") == 0) {
-						pChan->SetAutoCycle((strcasecmp(sValue.c_str(), "true") == 0));
+					} else if (sName.CaseCmp("AutoCycle") == 0) {
+						pChan->SetAutoCycle((sValue.CaseCmp("true") == 0));
 						continue;
-					} else if (strcasecmp(sName.c_str(), "Key") == 0) {
+					} else if (sName.CaseCmp("Key") == 0) {
 						pChan->SetKey(sValue);
 						continue;
-					} else if (strcasecmp(sName.c_str(), "Modes") == 0) {
+					} else if (sName.CaseCmp("Modes") == 0) {
 						pChan->SetDefaultModes(sValue);
 						continue;
 					}
 				} else {
-					if (strcasecmp(sName.c_str(), "Buffer") == 0) {
+					if (sName.CaseCmp("Buffer") == 0) {
 						pUser->SetBufferCount(strtoul(sValue.c_str(), NULL, 10));
 						continue;
-					} else if (strcasecmp(sName.c_str(), "KeepBuffer") == 0) {
-						pUser->SetKeepBuffer((strcasecmp(sValue.c_str(), "true") == 0));
+					} else if (sName.CaseCmp("KeepBuffer") == 0) {
+						pUser->SetKeepBuffer((sValue.CaseCmp("true") == 0));
 						continue;
-					} else if (strcasecmp(sName.c_str(), "Nick") == 0) {
+					} else if (sName.CaseCmp("Nick") == 0) {
 						pUser->SetNick(sValue);
 						continue;
-					} else if (strcasecmp(sName.c_str(), "VersionReply") == 0) {
+					} else if (sName.CaseCmp("VersionReply") == 0) {
 						pUser->SetVersionReply(sValue);
 						continue;
-					} else if (strcasecmp(sName.c_str(), "QuitMsg") == 0) {
+					} else if (sName.CaseCmp("QuitMsg") == 0) {
 						pUser->SetQuitMsg(sValue);
 						continue;
-					} else if (strcasecmp(sName.c_str(), "AltNick") == 0) {
+					} else if (sName.CaseCmp("AltNick") == 0) {
 						pUser->SetAltNick(sValue);
 						continue;
-					} else if (strcasecmp(sName.c_str(), "Pass") == 0) {
+					} else if (sName.CaseCmp("Pass") == 0) {
 						if (sValue.Right(1) == "-") {
 							sValue.RightChomp();
 							sValue.Trim();
@@ -608,47 +608,47 @@ bool CZNC::ParseConfig(const CString& sConfig) {
 						}
 
 						continue;
-					} else if (strcasecmp(sName.c_str(), "AutoCycle") == 0) {
-						bAutoCycle = (strcasecmp(sValue.c_str(), "true") == 0);
+					} else if (sName.CaseCmp("AutoCycle") == 0) {
+						bAutoCycle = (sValue.CaseCmp("true") == 0);
 						continue;
-					} else if (strcasecmp(sName.c_str(), "Ident") == 0) {
+					} else if (sName.CaseCmp("Ident") == 0) {
 						pUser->SetIdent(sValue);
 						continue;
-					} else if (strcasecmp(sName.c_str(), "DenyLoadMod") == 0) {
-						pUser->SetDenyLoadMod((strcasecmp(sValue.c_str(), "TRUE") == 0));
+					} else if (sName.CaseCmp("DenyLoadMod") == 0) {
+						pUser->SetDenyLoadMod((sValue.CaseCmp("TRUE") == 0));
 						continue;
-					} else if (strcasecmp(sName.c_str(), "StatusPrefix") == 0) {
+					} else if (sName.CaseCmp("StatusPrefix") == 0) {
 						if (!pUser->SetStatusPrefix(sValue)) {
 							CUtils::PrintError("Invalid StatusPrefix [" + sValue + "] Must be 1-5 chars, no spaces.");
 							return false;
 						}
 						continue;
-					} else if (strcasecmp(sName.c_str(), "DCCLookupMethod") == 0) {
-						pUser->SetUseClientIP((strcasecmp(sValue.c_str(), "Client") == 0));
+					} else if (sName.CaseCmp("DCCLookupMethod") == 0) {
+						pUser->SetUseClientIP((sValue.CaseCmp("Client") == 0));
 						continue;
-					} else if (strcasecmp(sName.c_str(), "RealName") == 0) {
+					} else if (sName.CaseCmp("RealName") == 0) {
 						pUser->SetRealName(sValue);
 						continue;
-					} else if (strcasecmp(sName.c_str(), "KeepNick") == 0) {
-						pUser->SetKeepNick((strcasecmp(sValue.c_str(), "true") == 0));
+					} else if (sName.CaseCmp("KeepNick") == 0) {
+						pUser->SetKeepNick((sValue.CaseCmp("true") == 0));
 						continue;
-					} else if (strcasecmp(sName.c_str(), "ChanModes") == 0) {
+					} else if (sName.CaseCmp("ChanModes") == 0) {
 						pUser->SetDefaultChanModes(sValue);
 						continue;
-					} else if (strcasecmp(sName.c_str(), "VHost") == 0) {
+					} else if (sName.CaseCmp("VHost") == 0) {
 						pUser->SetVHost(sValue);
 						continue;
-					} else if (strcasecmp(sName.c_str(), "Allow") == 0) {
+					} else if (sName.CaseCmp("Allow") == 0) {
 						pUser->AddAllowedHost(sValue);
 						continue;
-					} else if (strcasecmp(sName.c_str(), "Server") == 0) {
+					} else if (sName.CaseCmp("Server") == 0) {
 						CUtils::PrintAction("Adding Server [" + sValue + "]");
 						CUtils::PrintStatus(pUser->AddServer(sValue));
 						continue;
-					} else if (strcasecmp(sName.c_str(), "Chan") == 0) {
+					} else if (sName.CaseCmp("Chan") == 0) {
 						pUser->AddChan(sValue);
 						continue;
-					} else if (strcasecmp(sName.c_str(), "LoadModule") == 0) {
+					} else if (sName.CaseCmp("LoadModule") == 0) {
 						CString sModName = sValue.Token(0);
 						CUtils::PrintAction("Loading Module [" + sModName + "]");
 #ifdef _MODULES
@@ -669,7 +669,7 @@ bool CZNC::ParseConfig(const CString& sConfig) {
 					}
 				}
 			} else {
-				if (strcasecmp(sName.c_str(), "ListenPort") == 0) {
+				if (sName.CaseCmp("ListenPort") == 0) {
 					m_bSSL = false;
 					CString sPort = sValue;
 					if (sPort.Left(1) == "+") {
@@ -730,10 +730,10 @@ bool CZNC::ParseConfig(const CString& sConfig) {
 					CUtils::PrintStatus(true);
 
 					continue;
-				} else if (strcasecmp(sName.c_str(), "ISpoofFile") == 0) {
+				} else if (sName.CaseCmp("ISpoofFile") == 0) {
 					m_sISpoofFile = sValue;
 					continue;
-				} else if (strcasecmp(sName.c_str(), "PidFile") == 0) {
+				} else if (sName.CaseCmp("PidFile") == 0) {
 					if (!sValue.empty() && sValue[0] != '/') {
 						m_sPidFile = GetZNCPath() + "/" + sValue;
 					} else {
@@ -741,7 +741,7 @@ bool CZNC::ParseConfig(const CString& sConfig) {
 					}
 
 					continue;
-				} else if (strcasecmp(sName.c_str(), "StatusPrefix") == 0) {
+				} else if (sName.CaseCmp("StatusPrefix") == 0) {
 					sStatusPrefix = sValue;
 					continue;
 				}

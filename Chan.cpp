@@ -267,14 +267,14 @@ bool CChan::AddNick(const CString& sNick) {
 		IncOpCount();
 		pNick->SetOp(true);
 
-		if (strcasecmp(pNick->GetNick().c_str(), m_pUser->GetCurNick().c_str()) == 0) {
+		if (pNick->GetNick().CaseCmp(m_pUser->GetCurNick()) == 0) {
 			SetOpped(true);
 		}
 	} else if ((bIsVoice) && (!pNick->IsVoice())) {
 		IncVoiceCount();
 		pNick->SetVoice(true);
 
-		if (strcasecmp(pNick->GetNick().c_str(), m_pUser->GetCurNick().c_str()) == 0) {
+		if (pNick->GetNick().CaseCmp(m_pUser->GetCurNick()) == 0) {
 			SetVoiced(true);
 		}
 	}
@@ -302,7 +302,7 @@ bool CChan::RemNick(const CString& sNick) {
 	m_msNicks.erase(it);
 	CNick* pNick = m_msNicks.begin()->second;
 
-	if ((m_msNicks.size() == 1) && (!pNick->IsOp()) && (strcasecmp(pNick->GetNick().c_str(), m_pUser->GetCurNick().c_str()) == 0)) {
+	if ((m_msNicks.size() == 1) && (!pNick->IsOp()) && (pNick->GetNick().CaseCmp(m_pUser->GetCurNick()) == 0)) {
 		if (AutoCycle()) {
 			Cycle();
 		}
@@ -345,7 +345,7 @@ void CChan::OnOp(const CString& sOpNick, const CString& sNick, bool bOpped) {
 		}
 #endif
 
-		if (strcasecmp(sNick.c_str(), m_pUser->GetCurNick().c_str()) == 0) {
+		if (sNick.CaseCmp(m_pUser->GetCurNick()) == 0) {
 			SetOpped(bOpped);
 		}
 
@@ -377,7 +377,7 @@ void CChan::OnVoice(const CString& sOpNick, const CString& sNick, bool bVoiced) 
 		}
 #endif
 
-		if (strcasecmp(sNick.c_str(), m_pUser->GetCurNick().c_str()) == 0) {
+		if (sNick.CaseCmp(m_pUser->GetCurNick()) == 0) {
 			SetVoiced(bVoiced);
 		}
 

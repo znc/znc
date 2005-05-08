@@ -113,7 +113,7 @@ bool CUser::AddChan(CChan* pChan) {
 	}
 
 	for (unsigned int a = 0; a < m_vChans.size(); a++) {
-		if (strcasecmp(m_vChans[a]->GetName().c_str(), pChan->GetName().c_str()) == 0) {
+		if (m_vChans[a]->GetName().CaseCmp(pChan->GetName()) == 0) {
 			delete pChan;
 			return false;
 		}
@@ -129,7 +129,7 @@ bool CUser::AddChan(const CString& sName) {
 	}
 
 	for (unsigned int a = 0; a < m_vChans.size(); a++) {
-		if (strcasecmp(sName.c_str(), m_vChans[a]->GetName().c_str()) == 0) {
+		if (sName.CaseCmp(m_vChans[a]->GetName()) == 0) {
 			return false;
 		}
 	}
@@ -141,7 +141,7 @@ bool CUser::AddChan(const CString& sName) {
 
 bool CUser::DelChan(const CString& sName) {
 	for (vector<CChan*>::iterator a = m_vChans.begin(); a != m_vChans.end(); a++) {
-		if (strcasecmp(sName.c_str(), (*a)->GetName().c_str()) == 0) {
+		if (sName.CaseCmp((*a)->GetName()) == 0) {
 			m_vChans.erase(a);
 			return true;
 		}
@@ -153,7 +153,7 @@ bool CUser::DelChan(const CString& sName) {
 CChan* CUser::FindChan(const CString& sName) {
 	for (unsigned int a = 0; a < m_vChans.size(); a++) {
 		CChan* pChan = m_vChans[a];
-		if (strcasecmp(sName.c_str(), pChan->GetName().c_str()) == 0) {
+		if (sName.CaseCmp(pChan->GetName()) == 0) {
 			return pChan;
 		}
 	}
@@ -164,7 +164,7 @@ CChan* CUser::FindChan(const CString& sName) {
 CServer* CUser::FindServer(const CString& sName) {
 	for (unsigned int a = 0; a < m_vServers.size(); a++) {
 		CServer* pServer = m_vServers[a];
-		if (strcasecmp(sName.c_str(), pServer->GetName().c_str()) == 0) {
+		if (sName.CaseCmp(pServer->GetName()) == 0) {
 			return pServer;
 		}
 	}
@@ -178,7 +178,7 @@ bool CUser::DelServer(const CString& sName) {
 	}
 
 	for (vector<CServer*>::iterator it = m_vServers.begin(); it != m_vServers.end(); it++) {
-		if (strcasecmp((*it)->GetName().c_str(), sName.c_str()) == 0) {
+		if ((*it)->GetName().CaseCmp(sName) == 0) {
 			m_vServers.erase(it);
 			return true;
 		}
@@ -247,7 +247,7 @@ bool CUser::CheckPass(const CString& sPass) {
 		return (sPass == m_sPass);
 	}
 
-	return (strcasecmp(m_sPass.c_str(), CMD5(sPass)) == 0);
+	return (m_sPass.CaseCmp((char*) CMD5(sPass)) == 0);
 }
 
 TSocketManager<Csock>* CUser::GetManager() {
@@ -265,7 +265,7 @@ CUserSock* CUser::GetUserSock() {
 
 	for (unsigned int a = 0; a < Manager.size(); a++) {
 		Csock* pSock = Manager[a];
-		if (strcasecmp(pSock->GetSockName().c_str(), sSockName.c_str()) == 0) {
+		if (pSock->GetSockName().CaseCmp(sSockName) == 0) {
 			if (!pSock->isClosed()) {
 				return (CUserSock*) pSock;
 			}
@@ -384,7 +384,7 @@ bool CUser::SendFile(const CString& sRemoteNick, const CString& sFileName, const
 
 	int iPort = GetManager()->ListenAllRand("DCC::LISTEN::" + sRemoteNick, false, SOMAXCONN, pSock, 120);
 
-	if (strcasecmp(GetNick().c_str(), sRemoteNick.c_str()) == 0) {
+	if (GetNick().CaseCmp(sRemoteNick) == 0) {
 		PutUser(":" + GetStatusPrefix() + "status!znc@znc.com PRIVMSG " + sRemoteNick + " :\001DCC SEND " + pFile->GetShortName() + " " + CString::ToString(CUtils::GetLongIP(GetLocalIP())) + " "
 			   	+ CString::ToString(iPort) + " " + CString::ToString(pFile->GetSize()) + "\001");
 	} else {

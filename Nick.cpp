@@ -46,7 +46,7 @@ unsigned int CNick::GetCommonChans(vector<CChan*>& vRetChans, CUser* pUser) cons
 		const map<CString,CNick*>& msNicks = pChan->GetNicks();
 
 		for (map<CString,CNick*>::const_iterator it = msNicks.begin(); it != msNicks.end(); it++) {
-			if (strcasecmp(it->first.c_str(), m_sNick.c_str()) == 0) {
+			if (it->first.CaseCmp(m_sNick) == 0) {
 				vRetChans.push_back(pChan);
 				continue;
 			}
