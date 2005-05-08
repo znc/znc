@@ -65,7 +65,6 @@ int main(int argc, char** argv) {
 				if (iOptIndex >= 0) {
 					CString sOption = Lower(g_LongOpts[iOptIndex].name);
 					if (sOption == "version") {
-						cout << "---[" << CString("   test  ").RightTrim() << "]" <<  endl;
 						cout << CZNC::GetTag() << endl;
 						return 0;
 					} else if (sOption == "makepass") {
