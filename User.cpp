@@ -62,7 +62,7 @@ bool CUser::IsHostAllowed(const CString& sHostMask) {
 	}
 
 	for (set<CString>::iterator a = m_ssAllowedHosts.begin(); a != m_ssAllowedHosts.end(); a++) {
-		if (CUtils::wildcmp(*a, sHostMask)) {
+		if (sHostMask.WildCmp(*a)) {
 			return true;
 		}
 	}

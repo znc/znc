@@ -147,7 +147,7 @@ void CUserSock::ReadLine(const CString& sData) {
 			return;
 		}
 
-		if (CUtils::wildcmp("DCC * (*)", sMsg.c_str())) {
+		if (sMsg.WildCmp("DCC * (*)")) {
 			sMsg = "DCC " + sLine.Token(3) + " (" + ((m_pIRCSock) ? m_pIRCSock->GetLocalIP() : GetLocalIP()) + ")";
 		}
 
@@ -158,7 +158,7 @@ void CUserSock::ReadLine(const CString& sData) {
 		}
 
 #ifdef _MODULES
-		if (CUtils::wildcmp("\001*\001", sMsg.c_str())) {
+		if (sMsg.WildCmp("\001*\001")) {
 			CString sCTCP = sMsg;
 			sCTCP.LeftChomp();
 			sCTCP.RightChomp();
@@ -185,7 +185,7 @@ void CUserSock::ReadLine(const CString& sData) {
 			sMsg.LeftChomp();
 		}
 
-		if (CUtils::wildcmp("\001*\001", sMsg.c_str())) {
+		if (sMsg.WildCmp("\001*\001")) {
 			CString sCTCP = sMsg;
 			sCTCP.LeftChomp();
 			sCTCP.RightChomp();

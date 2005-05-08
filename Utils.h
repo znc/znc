@@ -42,8 +42,6 @@ public:
 	static bool GetBoolInput(const CString& sPrompt, bool *pbDefault = NULL);
 	static bool GetNumInput(const CString& sPrompt, unsigned int& uRet, unsigned int uMin = 0, unsigned int uMax = ~0, unsigned int uDefault = ~0);
 
-	static bool wildcmp(const CString& sWild, const CString& sString);
-
 	static unsigned long long GetMillTime() {
 		struct timeval tv;
 		unsigned long long iTime = 0;

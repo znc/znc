@@ -207,7 +207,7 @@ public:
 			if ((strcmp(de->d_name, ".") == 0) || (strcmp(de->d_name, "..") == 0)) {
 				continue;
 			}
-			if ((!sWildcard.empty()) && (!CUtils::wildcmp(sWildcard.c_str(), de->d_name))) {
+			if ((!sWildcard.empty()) && (!CString(de->d_name).WildCmp(sWildcard))) {
 				continue;
 			}
 

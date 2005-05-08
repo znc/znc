@@ -59,7 +59,7 @@ void CIRCSock::ReadLine(const CString& sData) {
 
 	if (strncasecmp(sLine.c_str(), "PING ", 5) == 0) {
 		PutServ("PONG " + sLine.substr(5));
-	} else if (CUtils::wildcmp(":* * *", sLine.c_str())) { //"^:(\\S+) (\\d\\d\\d) (.*?) (.*)$", vCap)) {
+	} else if (sLine.WildCmp(":* * *")) { //"^:(\\S+) (\\d\\d\\d) (.*?) (.*)$", vCap)) {
 		CString sCmd = sLine.Token(1);
 
 		if ((sCmd.length() == 3) && (isdigit(sCmd[0])) && (isdigit(sCmd[1])) && (isdigit(sCmd[2]))) {
@@ -503,7 +503,7 @@ void CIRCSock::ReadLine(const CString& sData) {
 				CString sMsg = sRest.Token(1, true);
 				sMsg.LeftChomp();
 
-				if (CUtils::wildcmp("\001*\001", sMsg.c_str())) {
+				if (sMsg.WildCmp("\001*\001")) {
 					sMsg.LeftChomp();
 					sMsg.RightChomp();
 
@@ -552,7 +552,7 @@ void CIRCSock::ReadLine(const CString& sData) {
 					sMsg.LeftChomp();
 				}
 
-				if (CUtils::wildcmp("\001*\001", sMsg.c_str())) {
+				if (sMsg.WildCmp("\001*\001")) {
 					sMsg.LeftChomp();
 					sMsg.RightChomp();
 
