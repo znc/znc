@@ -53,7 +53,7 @@ void CChan::JoinUser() {
 
 	if (!GetTopic().empty()) {
 		m_pUser->PutUser(":" + m_pUser->GetIRCServer() + " 332 " + m_pUser->GetIRCNick().GetNick() + " " + GetName() + " :" + GetTopic());
-		m_pUser->PutUser(":" + m_pUser->GetIRCServer() + " 333 " + m_pUser->GetIRCNick().GetNick() + " " + GetName() + " " + GetTopicOwner() + " " + CUtils::ToString(GetTopicDate()));
+		m_pUser->PutUser(":" + m_pUser->GetIRCServer() + " 333 " + m_pUser->GetIRCNick().GetNick() + " " + GetName() + " " + GetTopicOwner() + " " + CString::ToString(GetTopicDate()));
 	}
 
 	CString sPre = ":" + m_pUser->GetIRCServer() + " 353 " + m_pUser->GetIRCNick().GetNick() + " = " + GetName() + " :";

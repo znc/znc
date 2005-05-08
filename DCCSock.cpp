@@ -45,7 +45,7 @@ void CDCCSock::Timeout() {
 
 void CDCCSock::SockError(int iErrno) {
 	DEBUG_ONLY(cout << GetSockName() << " == SockError(" << iErrno << ")" << endl);
-	m_pUser->PutModule(m_sModuleName, ((m_bSend) ? "DCC -> [" : "DCC <- [") + m_sRemoteNick + "][" + m_sFileName + "] - Socket Error [" + CUtils::ToString(iErrno) + "]");
+	m_pUser->PutModule(m_sModuleName, ((m_bSend) ? "DCC -> [" : "DCC <- [") + m_sRemoteNick + "][" + m_sFileName + "] - Socket Error [" + CString::ToString(iErrno) + "]");
 }
 
 void CDCCSock::Connected() {
@@ -65,9 +65,9 @@ void CDCCSock::Disconnected() {
 		m_pUser->PutModule(m_sModuleName, ((m_bSend) ? "DCC -> [" : "DCC <- [") + m_sRemoteNick + "][" + m_sFileName + "] - TooMuchData!");
 	} else if (m_uBytesSoFar == m_uFileSize) {
 		if (m_bSend) {
-			m_pUser->PutModule(m_sModuleName, ((m_bSend) ? "DCC -> [" : "DCC <- [") + m_sRemoteNick + "][" + m_sFileName + "] - Completed! - Sent [" + m_sLocalFile + "] at [" + CUtils::ToKBytes(GetAvgWrite() / 1000.0) + "]");
+			m_pUser->PutModule(m_sModuleName, ((m_bSend) ? "DCC -> [" : "DCC <- [") + m_sRemoteNick + "][" + m_sFileName + "] - Completed! - Sent [" + m_sLocalFile + "] at [" + CString::ToKBytes(GetAvgWrite() / 1000.0) + "]");
 		} else {
-			m_pUser->PutModule(m_sModuleName, ((m_bSend) ? "DCC -> [" : "DCC <- [") + m_sRemoteNick + "][" + m_sFileName + "] - Completed! - Saved to [" + m_sLocalFile + "] at [" + CUtils::ToKBytes(GetAvgRead() / 1000.0) + "]");
+			m_pUser->PutModule(m_sModuleName, ((m_bSend) ? "DCC -> [" : "DCC <- [") + m_sRemoteNick + "][" + m_sFileName + "] - Completed! - Saved to [" + m_sLocalFile + "] at [" + CString::ToKBytes(GetAvgRead() / 1000.0) + "]");
 		}
 	} else {
 		m_pUser->PutModule(m_sModuleName, ((m_bSend) ? "DCC -> [" : "DCC <- [") + m_sRemoteNick + "][" + m_sFileName + "] - Incomplete!");

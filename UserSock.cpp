@@ -207,7 +207,7 @@ void CUserSock::ReadLine(const CString& sData) {
 					} else {
 						unsigned short uBNCPort = CDCCBounce::DCCRequest(sTarget, uLongIP, uPort, "", true, m_pUser, (m_pIRCSock) ? m_pIRCSock->GetLocalIP() : GetLocalIP(), "");
 						if (uBNCPort) {
-							PutIRC("PRIVMSG " + sTarget + " :\001DCC CHAT chat " + CUtils::ToString(CUtils::GetLongIP(sIP)) + " " + CUtils::ToString(uBNCPort) + "\001");
+							PutIRC("PRIVMSG " + sTarget + " :\001DCC CHAT chat " + CString::ToString(CUtils::GetLongIP(sIP)) + " " + CString::ToString(uBNCPort) + "\001");
 						}
 					}
 				} else if (strcasecmp(sType.c_str(), "SEND") == 0) {
@@ -243,7 +243,7 @@ void CUserSock::ReadLine(const CString& sData) {
 					} else {
 						unsigned short uBNCPort = CDCCBounce::DCCRequest(sTarget, uLongIP, uPort, sFile, false, m_pUser, (m_pIRCSock) ? m_pIRCSock->GetLocalIP() : GetLocalIP(), "");
 						if (uBNCPort) {
-							PutIRC("PRIVMSG " + sTarget + " :\001DCC SEND " + sFile + " " + CUtils::ToString(CUtils::GetLongIP(sIP)) + " " + CUtils::ToString(uBNCPort) + " " + CUtils::ToString(uFileSize) + "\001");
+							PutIRC("PRIVMSG " + sTarget + " :\001DCC SEND " + sFile + " " + CString::ToString(CUtils::GetLongIP(sIP)) + " " + CString::ToString(uBNCPort) + " " + CString::ToString(uFileSize) + "\001");
 						}
 					}
 				} else if (strcasecmp(sType.c_str(), "RESUME") == 0) {
@@ -254,14 +254,14 @@ void CUserSock::ReadLine(const CString& sData) {
 					// Need to lookup the connection by port, filter the port, and forward to the user
 					if (strncasecmp(sTarget.c_str(), m_pUser->GetStatusPrefix().c_str(), m_pUser->GetStatusPrefix().length()) == 0) {
 						if ((m_pUser) && (m_pUser->ResumeFile(sTarget, uResumePort, uResumeSize))) {
-							PutServ(":" + sTarget + "!znc@znc.com PRIVMSG " + GetNick() + " :\001DCC ACCEPT " + sFile + " " + CUtils::ToString(uResumePort) + " " + CUtils::ToString(uResumeSize) + "\001");
+							PutServ(":" + sTarget + "!znc@znc.com PRIVMSG " + GetNick() + " :\001DCC ACCEPT " + sFile + " " + CString::ToString(uResumePort) + " " + CString::ToString(uResumeSize) + "\001");
 						} else {
 							PutStatus("DCC -> [" + GetNick() + "][" + sFile + "] Unable to find send to initiate resume.");
 						}
 					} else {
 						CDCCBounce* pSock = (CDCCBounce*) m_pZNC->GetManager().FindSockByLocalPort(uResumePort);
 						if ((pSock) && (strncasecmp(pSock->GetSockName().c_str(), "DCC::", 5) == 0)) {
-							PutIRC("PRIVMSG " + sTarget + " :\001DCC " + sType + " " + sFile + " " + CUtils::ToString(pSock->GetUserPort()) + " " + sCTCP.Token(4) + "\001");
+							PutIRC("PRIVMSG " + sTarget + " :\001DCC " + sType + " " + sFile + " " + CString::ToString(pSock->GetUserPort()) + " " + sCTCP.Token(4) + "\001");
 						}
 					}
 				} else if (strcasecmp(sType.c_str(), "ACCEPT") == 0) {
@@ -275,7 +275,7 @@ void CUserSock::ReadLine(const CString& sData) {
 
 							if ((pSock) && (strncasecmp(pSock->GetSockName().c_str(), "DCC::", 5) == 0)) {
 								if (pSock->GetUserPort() == atoi(sCTCP.Token(3).c_str())) {
-									PutIRC("PRIVMSG " + sTarget + " :\001DCC " + sType + " " + sFile + " " + CUtils::ToString(pSock->GetLocalPort()) + " " + sCTCP.Token(4) + "\001");
+									PutIRC("PRIVMSG " + sTarget + " :\001DCC " + sType + " " + sFile + " " + CString::ToString(pSock->GetLocalPort()) + " " + sCTCP.Token(4) + "\001");
 								}
 							}
 						}
@@ -490,19 +490,19 @@ void CUserSock::UserCommand(const CString& sLine) {
 				Table.AddRow();
 				Table.SetCell("Name", CString((pChan->IsOp()) ? "@" : ((pChan->IsVoice()) ? "+" : "")) + pChan->GetName());
 				Table.SetCell("Status", ((vChans[a]->IsOn()) ? ((vChans[a]->IsDetached()) ? "Detached" : "Joined") : "Trying"));
-				Table.SetCell("Buf", CString((pChan->KeepBuffer()) ? "*" : "") + CUtils::ToString(pChan->GetBufferCount()));
+				Table.SetCell("Buf", CString((pChan->KeepBuffer()) ? "*" : "") + CString::ToString(pChan->GetBufferCount()));
 
 				CString sModes = pChan->GetModeCString();
 				unsigned int uLimit = pChan->GetLimit();
 				const CString& sKey = pChan->GetKey();
 
-				if (uLimit) { sModes += " " + CUtils::ToString(uLimit); }
+				if (uLimit) { sModes += " " + CString::ToString(uLimit); }
 				if (!sKey.empty()) { sModes += " " + sKey; }
 
 				Table.SetCell("Modes", sModes);
-				Table.SetCell("Users", CUtils::ToString(pChan->GetNickCount()));
-				Table.SetCell("+o", CUtils::ToString(pChan->GetOpCount()));
-				Table.SetCell("+v", CUtils::ToString(pChan->GetVoiceCount()));
+				Table.SetCell("Users", CString::ToString(pChan->GetNickCount()));
+				Table.SetCell("+o", CString::ToString(pChan->GetOpCount()));
+				Table.SetCell("+v", CString::ToString(pChan->GetVoiceCount()));
 			}
 
 			if (Table.size()) {
@@ -565,7 +565,7 @@ void CUserSock::UserCommand(const CString& sLine) {
 				CServer* pServer = vServers[a];
 				Table.AddRow();
 				Table.SetCell("Host", pServer->GetName());
-				Table.SetCell("Port", CUtils::ToString(pServer->GetPort()));
+				Table.SetCell("Port", CString::ToString(pServer->GetPort()));
 				Table.SetCell("SSL", (pServer->IsSSL()) ? "SSL" : "");
 				Table.SetCell("Pass", pServer->GetPass());
 			}
@@ -655,8 +655,8 @@ void CUserSock::UserCommand(const CString& sLine) {
 
 					Table.AddRow();
 					Table.SetCell("Type", "Sending");
-					Table.SetCell("State", CUtils::ToPercent(pSock->GetProgress()));
-					Table.SetCell("Speed", CUtils::ToKBytes(pSock->GetAvgWrite() / 1000.0));
+					Table.SetCell("State", CString::ToPercent(pSock->GetProgress()));
+					Table.SetCell("Speed", CString::ToKBytes(pSock->GetAvgWrite() / 1000.0));
 					Table.SetCell("Nick", pSock->GetRemoteNick());
 					Table.SetCell("IP", pSock->GetRemoteIP());
 					Table.SetCell("File", pSock->GetFileName());
@@ -665,8 +665,8 @@ void CUserSock::UserCommand(const CString& sLine) {
 
 					Table.AddRow();
 					Table.SetCell("Type", "Getting");
-					Table.SetCell("State", CUtils::ToPercent(pSock->GetProgress()));
-					Table.SetCell("Speed", CUtils::ToKBytes(pSock->GetAvgRead() / 1000.0));
+					Table.SetCell("State", CString::ToPercent(pSock->GetProgress()));
+					Table.SetCell("Speed", CString::ToKBytes(pSock->GetAvgRead() / 1000.0));
 					Table.SetCell("Nick", pSock->GetRemoteNick());
 					Table.SetCell("IP", pSock->GetRemoteIP());
 					Table.SetCell("File", pSock->GetFileName());
@@ -846,7 +846,7 @@ void CUserSock::UserCommand(const CString& sLine) {
 
 		pChan->SetBufferCount(uLineCount);
 
-		PutStatus("BufferCount for [" + sChan + "] set to [" + CUtils::ToString(pChan->GetBufferCount()) + "]");
+		PutStatus("BufferCount for [" + sChan + "] set to [" + CString::ToString(pChan->GetBufferCount()) + "]");
 	} else {
 		PutStatus("I'm too stupid to help you with [" + sCommand + "]");
 	}

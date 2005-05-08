@@ -97,7 +97,7 @@ int CZNC::Loop() {
 			CUserSock* pUserSock = pUser->GetUserSock();
 
 			if (pUserSock) {
-				pUserSock->PutStatus("Attempting to connect to [" + pServer->GetName() + ":" + CUtils::ToString(pServer->GetPort()) + "] ...");
+				pUserSock->PutStatus("Attempting to connect to [" + pServer->GetName() + ":" + CString::ToString(pServer->GetPort()) + "] ...");
 			}
 
 			pIRCSock = new CIRCSock(this, pUser);
@@ -144,7 +144,7 @@ bool CZNC::WritePidFile(int iPid) {
 		CUtils::PrintAction("Writing pid file [" + m_sPidFile + "]");
 
 		if (File.Open(O_WRONLY | O_TRUNC | O_CREAT)) {
-			File.Write(CUtils::ToString(iPid) + "\n");
+			File.Write(CString::ToString(iPid) + "\n");
 			File.Close();
 			CUtils::PrintStatus(true);
 			return true;
@@ -265,7 +265,7 @@ bool CZNC::WriteNewConfig(const CString& sConfig) {
 	bAnswer = CUtils::GetBoolInput("Would you like ZNC to listen using SSL?", false);
 #endif
 
-	vsLines.push_back("ListenPort = " + CString((bAnswer) ? "+" : "") + CUtils::ToString(uPort));
+	vsLines.push_back("ListenPort = " + CString((bAnswer) ? "+" : "") + CString::ToString(uPort));
 	// !ListenPort
 
 	// User
@@ -296,7 +296,7 @@ bool CZNC::WriteNewConfig(const CString& sConfig) {
 
 		unsigned int uBufferCount = 0;
 
-		CUtils::GetNumInput("Number of lines to buffer per channel", uBufferCount, 0, ~0, 50);	if (uBufferCount) { vsLines.push_back("\tBuffer     = " + CUtils::ToString(uBufferCount)); }
+		CUtils::GetNumInput("Number of lines to buffer per channel", uBufferCount, 0, ~0, 50);	if (uBufferCount) { vsLines.push_back("\tBuffer     = " + CString::ToString(uBufferCount)); }
 		if (CUtils::GetBoolInput("Would you like your buffer to be sticky?", true)) {
 			vsLines.push_back("\tKeepBuffer = true");
 		} else {
@@ -351,7 +351,7 @@ bool CZNC::WriteNewConfig(const CString& sConfig) {
 			bSSL = CUtils::GetBoolInput("Does this server use SSL? (probably no)", false);
 #endif
 
-			vsLines.push_back("\tServer     = " + sHost + ((bSSL) ? " +" : " ") + CUtils::ToString(uPort) + " " + sPass);
+			vsLines.push_back("\tServer     = " + sHost + ((bSSL) ? " +" : " ") + CString::ToString(uPort) + " " + sPass);
 		} while (CUtils::GetBoolInput("Would you like to add another server?", false));
 
 		vsLines.push_back("");
@@ -400,7 +400,7 @@ bool CZNC::WriteNewConfig(const CString& sConfig) {
 	CUtils::PrintMessage("as the irc server password like so.. user:pass.", true);
 	CUtils::PrintMessage("");
 	CUtils::PrintMessage("Try something like this in your IRC client...", true);
-	CUtils::PrintMessage("/server <znc_server_ip> " + CUtils::ToString(uPort) + " " + sUser + ":<pass>", true);
+	CUtils::PrintMessage("/server <znc_server_ip> " + CString::ToString(uPort) + " " + sUser + ":<pass>", true);
 	CUtils::PrintMessage("");
 
 	return true;
@@ -678,7 +678,7 @@ bool CZNC::ParseConfig(const CString& sConfig) {
 					}
 
 					m_uListenPort = strtol(sPort.c_str(), NULL, 10);
-					CUtils::PrintAction("Binding to port [" + CString((m_bSSL) ? "+" : "") + CUtils::ToString(m_uListenPort) + "]");
+					CUtils::PrintAction("Binding to port [" + CString((m_bSSL) ? "+" : "") + CString::ToString(m_uListenPort) + "]");
 
 #ifndef HAVE_LIBSSL
 					if (m_bSSL) {
@@ -714,7 +714,7 @@ bool CZNC::ParseConfig(const CString& sConfig) {
 							return false;
 						}
 
-						CUtils::PrintAction("Binding to port [" + CString((m_bSSL) ? "+" : "") + CUtils::ToString(m_uListenPort) + "]");
+						CUtils::PrintAction("Binding to port [" + CString((m_bSSL) ? "+" : "") + CString::ToString(m_uListenPort) + "]");
 					}
 #endif
 					if (!m_uListenPort) {

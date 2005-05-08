@@ -107,8 +107,8 @@ void CModule::ListTimers() {
 
 		Table.AddRow();
 		Table.SetCell("Name", pTimer->GetName());
-		Table.SetCell("Secs", CUtils::ToString(pTimer->GetInterval()));
-		Table.SetCell("Cycles", ((uCycles) ? CUtils::ToString(uCycles) : "INF"));
+		Table.SetCell("Secs", CString::ToString(pTimer->GetInterval()));
+		Table.SetCell("Cycles", ((uCycles) ? CString::ToString(uCycles) : "INF"));
 		Table.SetCell("Description", pTimer->GetDescription());
 	}
 

@@ -42,18 +42,6 @@ public:
 	static bool GetBoolInput(const CString& sPrompt, bool *pbDefault = NULL);
 	static bool GetNumInput(const CString& sPrompt, unsigned int& uRet, unsigned int uMin = 0, unsigned int uMax = ~0, unsigned int uDefault = ~0);
 
-	static CString ToString(short i);
-	static CString ToString(unsigned short i);
-	static CString ToString(int i);
-	static CString ToString(unsigned int i);
-	static CString ToString(long i);
-	static CString ToString(unsigned long i);
-	static CString ToString(unsigned long long i);
-	static CString ToString(double i);
-	static CString ToString(float i);
-	static CString ToPercent(double d);
-	static CString ToKBytes(double d);
-
 	static bool wildcmp(const CString& sWild, const CString& sString);
 
 	static unsigned long long GetMillTime() {

@@ -359,7 +359,7 @@ bool CUser::ResumeFile(const CString& sRemoteNick, unsigned short uPort, unsigne
 
 			if (pSock->GetLocalPort() == uPort) {
 				if (pSock->Seek(uFileSize)) {
-					PutModule(pSock->GetModuleName(), "DCC -> [" + pSock->GetRemoteNick() + "][" + pSock->GetFileName() + "] - Attempting to resume from file position [" + CUtils::ToString(uFileSize) + "]");
+					PutModule(pSock->GetModuleName(), "DCC -> [" + pSock->GetRemoteNick() + "][" + pSock->GetFileName() + "] - Attempting to resume from file position [" + CString::ToString(uFileSize) + "]");
 					return true;
 				} else {
 					return false;
@@ -385,11 +385,11 @@ bool CUser::SendFile(const CString& sRemoteNick, const CString& sFileName, const
 	int iPort = GetManager()->ListenAllRand("DCC::LISTEN::" + sRemoteNick, false, SOMAXCONN, pSock, 120);
 
 	if (strcasecmp(GetNick().c_str(), sRemoteNick.c_str()) == 0) {
-		PutUser(":" + GetStatusPrefix() + "status!znc@znc.com PRIVMSG " + sRemoteNick + " :\001DCC SEND " + pFile->GetShortName() + " " + CUtils::ToString(CUtils::GetLongIP(GetLocalIP())) + " "
-			   	+ CUtils::ToString(iPort) + " " + CUtils::ToString(pFile->GetSize()) + "\001");
+		PutUser(":" + GetStatusPrefix() + "status!znc@znc.com PRIVMSG " + sRemoteNick + " :\001DCC SEND " + pFile->GetShortName() + " " + CString::ToString(CUtils::GetLongIP(GetLocalIP())) + " "
+			   	+ CString::ToString(iPort) + " " + CString::ToString(pFile->GetSize()) + "\001");
 	} else {
-		PutIRC("PRIVMSG " + sRemoteNick + " :\001DCC SEND " + pFile->GetShortName() + " " + CUtils::ToString(CUtils::GetLongIP(GetLocalIP())) + " "
-			    + CUtils::ToString(iPort) + " " + CUtils::ToString(pFile->GetSize()) + "\001");
+		PutIRC("PRIVMSG " + sRemoteNick + " :\001DCC SEND " + pFile->GetShortName() + " " + CString::ToString(CUtils::GetLongIP(GetLocalIP())) + " "
+			    + CString::ToString(iPort) + " " + CString::ToString(pFile->GetSize()) + "\001");
 	}
 
 	PutModule(sModuleName, "DCC -> [" + sRemoteNick + "][" + pFile->GetShortName() + "] - Attempting Send.");

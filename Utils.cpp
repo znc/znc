@@ -282,13 +282,13 @@ bool CUtils::GetNumInput(const CString& sPrompt, unsigned int& uRet, unsigned in
 		return false;
 	}
 
-	CString sDefault = (uDefault != (unsigned int) ~0) ? CUtils::ToString(uDefault) : "";
+	CString sDefault = (uDefault != (unsigned int) ~0) ? CString::ToString(uDefault) : "";
 	CString sNum, sHint;
 
 	if (uMax != (unsigned int) ~0) {
-		sHint = CUtils::ToString(uMin) + " to " + CUtils::ToString(uMax);
+		sHint = CString::ToString(uMin) + " to " + CString::ToString(uMax);
 	} else if (uMin > 0) {
-		sHint = CUtils::ToString(uMin) + " and up";
+		sHint = CString::ToString(uMin) + " and up";
 	}
 
 	while (true) {
@@ -368,28 +368,6 @@ void CUtils::PrintStatus(bool bSuccess, const CString& sMessage) {
 	} else {
 		fprintf(stdout, "\033[1m\033[34m[\033[31m !! \033[34m]\033[39m\033[22m\n");
 	}
-}
-
-CString CUtils::ToString(short i) { stringstream s; s << i; return s.str(); }
-CString CUtils::ToString(unsigned short i) { stringstream s; s << i; return s.str(); }
-CString CUtils::ToString(int i) { stringstream s; s << i; return s.str(); }
-CString CUtils::ToString(unsigned int i) { stringstream s; s << i; return s.str(); }
-CString CUtils::ToString(long i) { stringstream s; s << i; return s.str(); }
-CString CUtils::ToString(unsigned long i) { stringstream s; s << i; return s.str(); }
-CString CUtils::ToString(unsigned long long i) { stringstream s; s << i; return s.str(); }
-CString CUtils::ToString(double i) { stringstream s; s << i; return s.str(); }
-CString CUtils::ToString(float i) { stringstream s; s << i; return s.str(); }
-
-CString CUtils::ToPercent(double d) {
-	char szRet[32];
-	snprintf(szRet, 32, "%.02f%%", d);
-	return szRet;
-}
-
-CString CUtils::ToKBytes(double d) {
-	char szRet[32];
-	snprintf(szRet, 32, "%.0f K/s", d);
-	return szRet;
 }
 
 bool CUtils::wildcmp(const CString& sWild, const CString& sString) {
