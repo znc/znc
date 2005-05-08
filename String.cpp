@@ -35,6 +35,28 @@ CString& CString::MakeLower() {
 	return *this;
 }
 
+CString CString::AsUpper() const {
+	CString sRet = *this;
+
+	for (unsigned int a = 0; a < length(); a++) {
+		char& c = sRet[a];
+		c = toupper(c);
+	}
+
+	return sRet;
+}
+
+CString CString::AsLower() const {
+	CString sRet = *this;
+
+	for (unsigned int a = 0; a < length(); a++) {
+		char& c = sRet[a];
+		c = tolower(c);
+	}
+
+	return sRet;
+}
+
 CString CString::Token(unsigned int uPos, bool bRest, char cSep) const {
 	string sRet;
 	const char* p = c_str();

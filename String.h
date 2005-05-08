@@ -21,6 +21,8 @@ public:
 
 	CString& MakeUpper();
 	CString& MakeLower();
+	CString AsUpper() const;
+	CString AsLower() const;
 
 	CString Token(unsigned int uPos, bool bRest = false, char cSep = ' ') const;
 	CString Ellipsize(unsigned int uLen) const;
