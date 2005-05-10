@@ -308,6 +308,7 @@ bool CZNC::WriteNewConfig(const CString& sConfig) {
 			vsLines.push_back("\tChanModes  = " + sAnswer);
 		}
 
+#ifdef _MODULES
 		set<CModInfo> ssMods;
 		CModules::GetAvailableMods(ssMods, this);
 
@@ -332,6 +333,7 @@ bool CZNC::WriteNewConfig(const CString& sConfig) {
 				}
 			}
 		}
+#endif
 
 		vsLines.push_back("");
 		CUtils::PrintMessage("");

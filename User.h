@@ -1,6 +1,7 @@
 #ifndef _USER_H
 #define _USER_H
 
+#include "main.h"
 #ifdef _MODULES
 #include "Modules.h"
 #endif

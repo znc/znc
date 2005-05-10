@@ -6,7 +6,6 @@
 #include <vector>
 using std::vector;
 
-#define VERSION 0.034
 #define MODULEDEFS(CLASS) extern "C" { CModule* Load(void* p, CUser* pUser, const CString& sModName); void Unload(CModule* pMod); double GetVersion(); } double GetVersion() { return VERSION; } CModule* Load(void* p, CUser* pUser, const CString& sModName) { return new CLASS(p, pUser, sModName); } void Unload(CModule* pMod) { if (pMod) { delete pMod; } }
 #define MODCONSTRUCTOR(CLASS) CLASS(void *pDLL, CUser* pUser, const CString& sModName) : CModule(pDLL, pUser, sModName)
 

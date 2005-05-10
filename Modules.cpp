@@ -6,6 +6,10 @@
 #include "Nick.h"
 #include "Chan.h"
 
+#ifndef _MODDIR_
+#define _MODDIR_ "/usr/share/znc"
+#endif
+
 /////////////////// Timer ///////////////////
 CTimer::CTimer(CModule* pModule, unsigned int uInterval, unsigned int uCycles, const CString& sLabel, const CString& sDescription) : CCron() {
 	SetName(sLabel);
