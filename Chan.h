@@ -29,7 +29,7 @@ public:
 	void Reset();
 	void Joined();
 	void Cycle() const;
-	void JoinUser();
+	void JoinUser(bool bForce = false);
 	void DetachUser();
 	void SendBuffer();
 

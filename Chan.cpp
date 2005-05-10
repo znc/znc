@@ -42,8 +42,8 @@ void CChan::Cycle() const {
 	m_pUser->PutIRC("PART " + GetName() + "\r\nJOIN " + GetName() + " " + GetKey());
 }
 
-void CChan::JoinUser() {
-	if (!IsOn()) {
+void CChan::JoinUser(bool bForce) {
+	if (!bForce && (!IsOn() || !IsDetached())) {
 		IncClientRequests();
 		m_pUser->PutIRC("JOIN " + GetName());
 		return;
@@ -244,18 +244,30 @@ bool CChan::AddNick(const CString& sNick) {
 	const char* p = sNick.c_str();
 	bool bIsOp = false;
 	bool bIsVoice = false;
+	bool bNoMode = false;
 
 	switch (*p) {
 		case '\0':
 			return false;
 		case '@':
 			bIsOp = true;
+			break;
 		case '+':
-			if (!*++p) {
-				return false;
-			}
+			bIsVoice = true;
+			break;
+		case '%':
+			break;
+		case '*':
+			break;
+		case '!':
+			break;
+		default:
+			bNoMode = true;
+			break;
+	}
 
-			bIsVoice = !bIsOp;
+	if (!bNoMode && !*++p) {
+		return false;
 	}
 
 	CNick* pNick = FindNick(p);
