@@ -40,6 +40,11 @@ AC_ARG_ENABLE( debug, [  --enable-debug  enable debuging], appendCXX -Wall -ggdb
 AC_ARG_ENABLE( modules, [  --disable-modules  disable modules], MODULES="no", MODULES="yes")
 AC_ARG_ENABLE( openssl, [  --disable-openssl  disable openssl], NOSSL=1,)
 
+AC_CHECK_FUNCS( stat lstat chmod open, , echo "Missing Required libc feature" && exit 1)
+if test "$MODULES" = "yes"; then
+	AC_CHECK_FUNC( dlopen,NOCHECK_DL=1,)
+fi
+
 if test -z "$NOSSL"; then
 	if test -n "$OPENSSL"; then
 		appendLib -L${OPENSSL}/lib
@@ -59,21 +64,27 @@ if test -z "$prefix" || test $prefix = "NONE"; then
 fi
 
 if test "$MODULES" = "yes"; then
-	if test -n "$ISSUN"; then
-		AC_CHECK_LIB( dl, dlopen, appendCXX -D_MODULES,, )
-		MODFLAGS="$CXXFLAGS"
-	else
-		AC_CHECK_LIB( dl, dlopen, appendCXX -D_MODULES -rdynamic,, )
-		MODFLAGS=`echo $CXXFLAGS | sed 's/-rdynamic//g'`
+	if test -z "$NOCHECK_DL"; then
+		AC_CHECK_LIB( dl, dlopen, appendCXX -D_MODULES,MODULES="no",)
 	fi
-	MODFLAGS="$MODFLAGS -I`pwd`"
-	MODTARGET="modules"
-	appendLib -ldl
-	if test -n "$ISSUN"; then
-		MODFLAGS="$MODFLAGS -mimpure-text"
-	fi
+	if test "$MODULES" = "yes"; then
+		if test -n "$ISSUN"; then
+			MODFLAGS="$CXXFLAGS"
+		else
+			MODFLAGS="$CXXFLAGS"
+			appendCXX -rdynamic
+		fi
+		MODFLAGS="$MODFLAGS -I`pwd`"
+		MODTARGET="modules"
+		if test -z "$NOCHECK_DL"; then
+			appendLib -ldl
+		fi
+		if test -n "$ISSUN"; then
+			MODFLAGS="$MODFLAGS -mimpure-text"
+		fi
 
-	appendCXX "-D_MODDIR_=\\\"${prefix}/share/znc\\\""
+		appendCXX "-D_MODDIR_=\\\"${prefix}/share/znc\\\""
+	fi
 fi
 
 VERSION=`grep '#define VERSION' Modules.h | awk '{print $3}'`
