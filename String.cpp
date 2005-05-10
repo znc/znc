@@ -179,7 +179,7 @@ bool CString::Trim(const CString& s) {
 bool CString::LeftTrim(const CString& s) {
 	bool bRet = false;
 
-	while (s.find(Left(1)) != CString::npos) {
+	while (length() && s.find(Left(1)) != CString::npos) {
 		LeftChomp();
 		bRet = true;
 	}
@@ -190,7 +190,7 @@ bool CString::LeftTrim(const CString& s) {
 bool CString::RightTrim(const CString& s) {
 	bool bRet = false;
 
-	while (s.find(Right(1)) != CString::npos) {
+	while (length() && s.find(Right(1)) != CString::npos) {
 		RightChomp();
 		bRet = true;
 	}
