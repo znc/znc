@@ -10,7 +10,41 @@ int CString::StrCmp(const CString& s) const {
 }
 
 bool CString::WildCmp(const CString& sWild, const CString& sString) {
-	return true; // @todo
+	// Written by Jack Handy - jakkhandy@hotmail.com
+	const char *wild = sWild.c_str(), *CString = sString.c_str();
+	const char *cp = NULL, *mp = NULL;
+
+	while ((*CString) && (*wild != '*')) {
+		if ((*wild != *CString) && (*wild != '?')) {
+			return false;
+		}
+
+		wild++;
+		CString++;
+	}
+
+	while (*CString) {
+		if (*wild == '*') {
+			if (!*++wild) {
+				return true;
+			}
+
+			mp = wild;
+			cp = CString+1;
+		} else if ((*wild == *CString) || (*wild == '?')) {
+			wild++;
+			CString++;
+		} else {
+			wild = mp;
+			CString = cp++;
+		}
+	}
+
+	while (*wild == '*') {
+		wild++;
+	}
+
+	return (*wild == 0);
 }
 
 bool CString::WildCmp(const CString& sWild) const {
