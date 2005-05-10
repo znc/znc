@@ -159,7 +159,9 @@ int main(int argc, char** argv) {
 		return 1;
 	}
 
-#ifndef _DEBUG
+#ifdef _DEBUG
+	CUtils::PrintMessage("Staying open for debugging");
+#else	
 	CUtils::PrintAction("Forking into the background");
 
 	int iPid = fork();
@@ -182,7 +184,6 @@ int main(int argc, char** argv) {
 	close(0); open("/dev/null", O_RDONLY);
 	close(1); open("/dev/null", O_WRONLY);
 	close(2); open("/dev/null", O_WRONLY);
-
 #endif
 
 	struct sigaction sa;
