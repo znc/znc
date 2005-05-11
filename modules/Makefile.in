@@ -3,6 +3,11 @@ CXX=g++
 CXXFLAGS=@CXXFLAGS@
 INCLUDES=@INCLUDES@ -I..
 LIBS=@LIBS@
+PERL=@PERL@
+ifneq "$(PERL)" ""
+PERLCC=`$(PERL) -MExtUtils::Embed -e ccopts`
+PERLLD=`$(PERL) -MExtUtils::Embed -e ccopts -e ldopts`
+endif
 VPATH=.:..
 
 ifeq "@NOSSL@" "1" 
@@ -20,7 +25,7 @@ endif
 all: $(OBJS) $(TARGETS)
 
 depend::
-	g++ -M $(CXXFLAGS) $(SRCS) $(INCLUDES) `perl -MExtUtils::Embed -e ccopts` >.depend
+	g++ -M $(CXXFLAGS) $(SRCS) $(INCLUDES) $(PERLCC) >.depend
 
 install: all create_install_dir $(INSTALL_TARGS)
 	@echo -n ""
@@ -42,9 +47,17 @@ clean:
 %.o: %.cpp
 	$(CXX) $(CXXFLAGS) $(INCLUDES) -c -o $@ $<
 
-########### modperl special TODO this is just so i don't forget, need to make configureable yet
+ifneq "$(PERL)" ""
 modperl.so: modperl.o
-	$(CXX) $(CXXFLAGS) -shared -o $@ $< $(INCLUDES) $(LIBS) `perl -MExtUtils::Embed -e ccopts -e ldopts` 
+	$(CXX) $(CXXFLAGS) -shared -o $@ $< $(INCLUDES) $(LIBS) $(PERLLD)
 
 modperl.o: modperl.cpp
-	$(CXX) $(CXXFLAGS) $(INCLUDES) -c -o $@ modperl.cpp `perl -MExtUtils::Embed -e ccopts`
+	$(CXX) $(CXXFLAGS) $(INCLUDES) -c -o $@ modperl.cpp $(PERLCC)
+else
+modperl.so:
+	@echo -n ""
+modperl.o:
+	@echo -n ""
+install_modperl.so:
+	@echo -n ""
+endif

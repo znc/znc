@@ -121,19 +121,12 @@ XS(XS_AddZNCHook)
 	{
 		if ( g_ModPerl )
 			g_ModPerl->AddZNCHook( (char *)SvPV(ST(0),PL_na) );
-		
+
 		PUTBACK;
 		return;
 	}
 }
 
-
-EXTERN_C void
-xs_init(pTHX)
-{
-	char *file = __FILE__;
-	newXS( "AddZNCHook", XS_AddZNCHook, file );
-}
 
 
 /////////// supporting functions from within module
@@ -141,13 +134,15 @@ bool CModPerl::OnLoad( const CString & sArgs )
 {
 	const char *pArgv[] = 
 	{
-		"ZNCPerl",
+		sArgs.c_str(),
 		sArgs.c_str(),
 		NULL
 	};
 
-	perl_parse( m_pPerl, xs_init, 2, (char **)pArgv, (char **)NULL );
+	perl_parse( m_pPerl, NULL, 2, (char **)pArgv, (char **)NULL );
 	PL_exit_flags |= PERL_EXIT_DESTRUCT_END;
+
+	newXS( "AddZNCHook", XS_AddZNCHook, (char *)__FILE__ );
 
 	ModPerlInit();
 	return( true );

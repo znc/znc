@@ -39,6 +39,7 @@ AC_ARG_WITH( openssl, [  --with-openssl=/path/to/openssl], OPENSSL=$withval,)
 AC_ARG_ENABLE( debug, [  --enable-debug  enable debuging], appendCXX -Wall -ggdb -D_DEBUG, appendCXX -Wall -s -O2 -fomit-frame-pointer )
 AC_ARG_ENABLE( modules, [  --disable-modules  disable modules], MODULES="no", MODULES="yes")
 AC_ARG_ENABLE( openssl, [  --disable-openssl  disable openssl], NOSSL=1,)
+AC_ARG_ENABLE( perl, [  --disable-perl  disable perl], NOPERL=1,)
 
 AC_CHECK_FUNCS( stat lstat chmod open, , echo "Missing Required libc feature" && exit 1)
 if test "$MODULES" = "yes"; then
@@ -56,6 +57,25 @@ if test -z "$NOSSL"; then
 
 	if test -z "$NOSSL"; then
 		appendCXX -DHAVE_LIBSSL
+	fi
+fi
+
+if test -z "$NOPERL"; then
+	echo -n "checking for perl... "
+	PERL=`which perl`
+	if test -n "$PERL"; then
+		echo "$PERL"
+		echo -n "checking embeded perl installation... "
+		PTEST=`$PERL -MExtUtils::Embed -e ccopts 2>&5`
+		if test -z "$PTEST"; then
+			echo "failed"
+			NOPERL=1
+		else
+			echo "ok"
+		fi
+	else
+		echo "no"
+		NOPERL=1
 	fi
 fi
 
@@ -99,6 +119,7 @@ AC_SUBST([MODULES])
 AC_SUBST([MODTARGET])
 AC_SUBST([VERSION])
 AC_SUBST([NOSSL])
+AC_SUBST([PERL])
 AC_CONFIG_FILES([Makefile])
 AC_CONFIG_FILES([znc-config])
 if test "$MODULES" = "yes"; then
