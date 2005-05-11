@@ -1,3 +1,4 @@
+#ifdef HAVE_PERL
 #include "main.h"
 #include "User.h"
 #include "Nick.h"
@@ -147,4 +148,6 @@ bool CModPerl::OnLoad( const CString & sArgs )
 	ModPerlInit();
 	return( true );
 }
+
+#endif /* HAVE_PERL */
 

@@ -5,7 +5,7 @@ INCLUDES=@INCLUDES@ -I..
 LIBS=@LIBS@
 PERL=@PERL@
 ifneq "$(PERL)" ""
-PERLCC=`$(PERL) -MExtUtils::Embed -e ccopts`
+PERLCC=-DHAVE_PERL `$(PERL) -MExtUtils::Embed -e ccopts`
 PERLLD=`$(PERL) -MExtUtils::Embed -e ccopts -e ldopts`
 endif
 VPATH=.:..
