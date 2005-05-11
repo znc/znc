@@ -32,6 +32,9 @@ void CChan::Reset() {
 	m_uModes = 0;
 	m_uLimit = 0;
 	m_uClientRequests = 0;
+	m_sTopic = "";
+	m_sTopicOwner = "";
+	m_ulTopicDate = 0;
 	ClearNicks();
 }
 
