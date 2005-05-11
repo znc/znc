@@ -40,6 +40,7 @@ public:
 	void PutServ(const CString& sLine);
 	void PutUser(const CString& sLine);
 	void PutStatus(const CString& sLine);
+	void CIRCSock::ParseISupport(const CString& sLine);
 
 	// Setters
 	void SetPass(const CString& s) { m_sPass = s; }
@@ -58,6 +59,7 @@ protected:
 	bool					m_bISpoofReleased;
 	bool					m_bAuthed;
 	bool					m_bKeepNick;
+	CString					m_sNickPrefixes;
 	CZNC*					m_pZNC;
 	CUser*					m_pUser;
 	CNick					m_Nick;

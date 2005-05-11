@@ -17,6 +17,7 @@ CIRCSock::CIRCSock(CZNC* pZNC, CUser* pUser) : Csock() {
 	m_MotdBuffer.SetLineCount(200);		// This should be more than enough motd lines
 	m_Nick.SetIdent(pUser->GetIdent());
 	m_Nick.SetHost(pUser->GetVHost());
+	m_sNickPrefixes = "+@";
 }
 
 CIRCSock::~CIRCSock() {
@@ -103,10 +104,11 @@ void CIRCSock::ReadLine(const CString& sData) {
 
 					break;
 				}
+				case 5:
+					ParseISupport(sRest);
 				case 2:
 				case 3:
 				case 4:
-				case 5:
 				case 250:	// highest connection count
 				case 251:	// user count
 				case 252:	// oper count
@@ -765,6 +767,7 @@ void CIRCSock::UserConnected(CUserSock* pUserSock) {
 
 	// Send the cached MOTD
 	if (m_MotdBuffer.IsEmpty()) {
+		PutServ("MOTD");
 	} else {
 		unsigned int uIdx = 0;
 		CString sLine;
@@ -860,3 +863,6 @@ void CIRCSock::ConnectionRefused() {
 	m_pUser->PutStatus("Connection Refused.  Reconnecting...");
 }
 
+void CIRCSock::ParseISupport(const CString& sLine) {
+	DEBUG_ONLY(cout << "------[" << sLine << "]" << endl);
+}
