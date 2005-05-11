@@ -20,7 +20,7 @@ endif
 all: $(OBJS) $(TARGETS)
 
 depend::
-	g++ -M $(CXXFLAGS) $(SRCS) $(INCLUDES) >.depend
+	g++ -M $(CXXFLAGS) $(SRCS) $(INCLUDES) `perl -MExtUtils::Embed -e ccopts` >.depend
 
 install: all create_install_dir $(INSTALL_TARGS)
 	@echo -n ""
@@ -41,3 +41,10 @@ clean:
 
 %.o: %.cpp
 	$(CXX) $(CXXFLAGS) $(INCLUDES) -c -o $@ $<
+
+########### modperl special TODO this is just so i don't forget, need to make configureable yet
+modperl.so: modperl.o
+	$(CXX) $(CXXFLAGS) -shared -o $@ $< $(INCLUDES) $(LIBS) `perl -MExtUtils::Embed -e ccopts -e ldopts` 
+
+modperl.o: modperl.cpp
+	$(CXX) $(CXXFLAGS) $(INCLUDES) -c -o $@ modperl.cpp `perl -MExtUtils::Embed -e ccopts`
