@@ -864,5 +864,21 @@ void CIRCSock::ConnectionRefused() {
 }
 
 void CIRCSock::ParseISupport(const CString& sLine) {
-	DEBUG_ONLY(cout << "------[" << sLine << "]" << endl);
+	unsigned int i = 0;
+	CString sArg = sLine.Token(i++);
+
+	while (!sArg.empty()) {
+		CString sName = sArg.Token(0, false, '=');
+		CString sValue = sArg.Token(1, true, '=');
+
+		if (sName.CaseCmp("PREFIX") == 0) {
+			CString sPrefixes = sValue.Token(1, false, ')');
+
+			if (!sPrefixes.empty()) {
+				m_sNickPrefixes = sPrefixes;
+			}
+		}
+
+		sArg = sLine.Token(i++);
+	}
 }
