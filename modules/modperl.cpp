@@ -41,8 +41,8 @@ public:
 		g_ModPerl = this;
 		m_pPerl = perl_alloc();
 		perl_construct( m_pPerl );
-		AddZNCHook( "Init" );
-		AddZNCHook( "Shutdown" );
+		AddHook( "Init" );
+		AddHook( "Shutdown" );
 	}
 
 	virtual ~CModPerl() 
@@ -169,8 +169,8 @@ public:
 		return( CallBack( "OnChanNotice", NICK( Nick ), CHAN( Channel ), sMessage.c_str(), NULL ) );
 	}
 
-	void AddZNCHook( const CString & sHookName ) { m_mssHookNames.insert( sHookName ); }
-	void DelZNCHook( const CString & sHookName )
+	void AddHook( const CString & sHookName ) { m_mssHookNames.insert( sHookName ); }
+	void DelHook( const CString & sHookName )
 	{
 		set< CString >::iterator it = m_mssHookNames.find( sHookName );
 		if ( it != m_mssHookNames.end() )
@@ -203,24 +203,41 @@ MODULEDEFS( CModPerl )
 
 //////////////////////////////// PERL GUTS //////////////////////////////
 
-XS(XS_AddZNCHook)
+XS(XS_AddHook)
 {
 	dXSARGS;
 	if ( items != 1 )
-		Perl_croak( aTHX_ "Usage: AddZNCHook( sFuncName )" );
+		Perl_croak( aTHX_ "Usage: AddHook( sFuncName )" );
 
 	SP -= items;
 	ax = (SP - PL_stack_base) + 1 ;
 	{
 		if ( g_ModPerl )
-			g_ModPerl->AddZNCHook( (char *)SvPV(ST(0),PL_na) );
+			g_ModPerl->AddHook( (char *)SvPV(ST(0),PL_na) );
 
 		PUTBACK;
 		return;
 	}
 }
 
-XS(XS_AddZNCTimer)
+XS(XS_DelHook)
+{
+	dXSARGS;
+	if ( items != 1 )
+		Perl_croak( aTHX_ "Usage: DelHook( sFuncName )" );
+
+	SP -= items;
+	ax = (SP - PL_stack_base) + 1 ;
+	{
+		if ( g_ModPerl )
+			g_ModPerl->DelHook( (char *)SvPV(ST(0),PL_na) );
+
+		PUTBACK;
+		return;
+	}
+}
+
+XS(XS_AddTimer)
 {
 	dXSARGS;
 	if ( items != 4 )
@@ -237,7 +254,7 @@ XS(XS_AddZNCTimer)
 			CString sDesc = (char *)SvPV(ST(3),PL_na);
 
 			CModPerlTimer *pTimer = new CModPerlTimer( g_ModPerl, iInterval, iCycles, sLabel, sDesc ); 
-			g_ModPerl->AddZNCHook( sLabel );
+			g_ModPerl->AddHook( sLabel );
 			g_ModPerl->AddTimer( pTimer );
 		}
 		PUTBACK;
@@ -245,7 +262,7 @@ XS(XS_AddZNCTimer)
 	}
 }
 
-XS(XS_KillZNCTimer)
+XS(XS_UnlinkTimer)
 {
 	dXSARGS;
 	if ( items != 1 )
@@ -260,13 +277,116 @@ XS(XS_KillZNCTimer)
 
 			CTimer *pTimer = g_ModPerl->FindTimer( sLabel );
 			if ( pTimer )
+			{
 				g_ModPerl->UnlinkTimer( pTimer );
+				g_ModPerl->DelHook( sLabel );
+			}
 		}
 		PUTBACK;
 		return;
 	}
 }
 
+XS(XS_PutIRC)
+{
+	dXSARGS;
+	if ( items != 1 )
+		Perl_croak( aTHX_ "Usage: PutIRC( sLine )" );
+
+	SP -= items;
+	ax = (SP - PL_stack_base) + 1 ;
+	{
+		if ( g_ModPerl )
+		{
+			CString sLine = (char *)SvPV(ST(0),PL_na);
+			g_ModPerl->PutIRC( sLine );
+		}
+		PUTBACK;
+		return;
+	}
+}
+
+	
+XS(XS_PutUser)
+{
+	dXSARGS;
+	if ( items != 1 )
+		Perl_croak( aTHX_ "Usage: PutUser( sLine )" );
+
+	SP -= items;
+	ax = (SP - PL_stack_base) + 1 ;
+	{
+		if ( g_ModPerl )
+		{
+			CString sLine = (char *)SvPV(ST(0),PL_na);
+			g_ModPerl->PutUser( sLine );
+		}
+		PUTBACK;
+		return;
+	}
+}
+
+	
+XS(XS_PutStatus)
+{
+	dXSARGS;
+	if ( items != 1 )
+		Perl_croak( aTHX_ "Usage: PutStatus( sLine )" );
+
+	SP -= items;
+	ax = (SP - PL_stack_base) + 1 ;
+	{
+		if ( g_ModPerl )
+		{
+			CString sLine = (char *)SvPV(ST(0),PL_na);
+			g_ModPerl->PutStatus( sLine );
+		}
+		PUTBACK;
+		return;
+	}
+}
+
+XS(XS_PutModule)
+{
+	dXSARGS;
+	if ( items != 3 )
+		Perl_croak( aTHX_ "Usage: PutModule( sLine, sIdent, sHost )" );
+
+	SP -= items;
+	ax = (SP - PL_stack_base) + 1 ;
+	{
+		if ( g_ModPerl )
+		{
+			CString sLine = (char *)SvPV(ST(0),PL_na);
+			CString sIdent = (char *)SvPV(ST(1),PL_na);
+			CString sHost = (char *)SvPV(ST(2),PL_na);
+			g_ModPerl->PutModule( sLine, sIdent, sHost );
+		}
+		PUTBACK;
+		return;
+	}
+}
+
+XS(XS_PutModNotice)
+{
+	dXSARGS;
+	if ( items != 3 )
+		Perl_croak( aTHX_ "Usage: PutModNotice( sLine, sIdent, sHost )" );
+
+	SP -= items;
+	ax = (SP - PL_stack_base) + 1 ;
+	{
+		if ( g_ModPerl )
+		{
+			CString sLine = (char *)SvPV(ST(0),PL_na);
+			CString sIdent = (char *)SvPV(ST(1),PL_na);
+			CString sHost = (char *)SvPV(ST(2),PL_na);
+			g_ModPerl->PutModNotice( sLine, sIdent, sHost );
+		}
+		PUTBACK;
+		return;
+	}
+}
 
 /////////// supporting functions from within module
 
@@ -355,9 +475,15 @@ bool CModPerl::OnLoad( const CString & sArgs )
 	perl_parse( m_pPerl, NULL, 2, (char **)pArgv, (char **)NULL );
 	PL_exit_flags |= PERL_EXIT_DESTRUCT_END;
 
-	newXS( "AddZNCHook", XS_AddZNCHook, (char *)__FILE__ );
-	newXS( "AddZNCTimer", XS_AddZNCTimer, (char *)__FILE__ );
-	newXS( "KillZNCTimer", XS_KillZNCTimer, (char *)__FILE__ );
+	newXS( "AddHook", XS_AddHook, (char *)__FILE__ );
+	newXS( "DelHook", XS_DelHook, (char *)__FILE__ );
+	newXS( "AddTimer", XS_AddTimer, (char *)__FILE__ );
+	newXS( "UnlinkTimer", XS_UnlinkTimer, (char *)__FILE__ );
+	newXS( "PutIRC", XS_PutIRC, (char *)__FILE__ );
+	newXS( "PutUser", XS_PutUser, (char *)__FILE__ );
+	newXS( "PutStatus", XS_PutStatus, (char *)__FILE__ );
+	newXS( "PutModule", XS_PutModule, (char *)__FILE__ );
+	newXS( "PutModNotice", XS_PutModNotice, (char *)__FILE__ );
 
 	ModPerlInit();
 	return( true );
