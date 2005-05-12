@@ -155,6 +155,7 @@ CString CString::ToString(int i) { stringstream s; s << i; return s.str(); }
 CString CString::ToString(unsigned int i) { stringstream s; s << i; return s.str(); }
 CString CString::ToString(long i) { stringstream s; s << i; return s.str(); }
 CString CString::ToString(unsigned long i) { stringstream s; s << i; return s.str(); }
+CString CString::ToString(long long i) { stringstream s; s << i; return s.str(); }
 CString CString::ToString(unsigned long long i) { stringstream s; s << i; return s.str(); }
 CString CString::ToString(double i) { stringstream s; s << i; return s.str(); }
 CString CString::ToString(float i) { stringstream s; s << i; return s.str(); }
@@ -170,6 +171,11 @@ CString CString::ToKBytes(double d) {
 	snprintf(szRet, 32, "%.0f K/s", d);
 	return szRet;
 }
+
+unsigned long long CString::ToULongLong() const { return( strtoull( c_str(), NULL, 10 ) ); }
+long long CString::ToLongLong() const { return( strtoll( c_str(), NULL, 10 ) ); }
+double CString::ToDouble() const { return( strtod( c_str(), NULL ) ); }
+
 
 bool CString::Trim(const CString& s) {
 	bool bLeft = LeftTrim(s);
