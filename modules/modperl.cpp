@@ -20,17 +20,8 @@ public:
 		: CTimer(pModule, uInterval, uCycles, sLabel, sDescription) {}
 	virtual ~CModPerlTimer() {}
 
-	void SetFuncName( const string & sFuncName )
-	{
-		m_sFuncName = sFuncName;
-	}
-	const string & GetFuncName() { return( m_sFuncName ); }
-
-	virtual void RunJob();
-
 protected:
-
-	string	m_sFuncName;
+	virtual void RunJob();
 
 };
 
@@ -118,23 +109,21 @@ XS(XS_AddZNCHook)
 XS(XS_AddZNCTimer)
 {
 	dXSARGS;
-	if ( items != 5 )
-		Perl_croak( aTHX_ "Usage: XS_AddZNCTimer( sFuncName, iInterval, iCycles, sLabel, sDesc )" );
+	if ( items != 4 )
+		Perl_croak( aTHX_ "Usage: AddZNCTimer( sFuncName, iInterval, iCycles, sDesc )" );
 
 	SP -= items;
 	ax = (SP - PL_stack_base) + 1 ;
 	{
 		if ( g_ModPerl )
 		{
-			string sFuncName = (char *)SvPV(ST(0),PL_na);
+			string sLabel = (char *)SvPV(ST(0),PL_na);
 			u_int iInterval = (u_int)SvIV(ST(1));
 			u_int iCycles = (u_int)SvIV(ST(2));
-			string sLabel = (char *)SvPV(ST(3),PL_na);
-			string sDesc = (char *)SvPV(ST(4),PL_na);
+			string sDesc = (char *)SvPV(ST(3),PL_na);
 
 			CModPerlTimer *pTimer = new CModPerlTimer( g_ModPerl, iInterval, iCycles, sLabel, sDesc ); 
-			pTimer->SetFuncName( sFuncName );
-			g_ModPerl->AddZNCHook( sFuncName );
+			g_ModPerl->AddZNCHook( sLabel );
 			g_ModPerl->AddTimer( pTimer );
 		}
 		PUTBACK;
@@ -146,7 +135,7 @@ XS(XS_KillZNCTimer)
 {
 	dXSARGS;
 	if ( items != 1 )
-		Perl_croak( aTHX_ "Usage: XS_AddZNCTimer( sLabel )" );
+		Perl_croak( aTHX_ "Usage: KillZNCTimer( sLabel )" );
 
 	SP -= items;
 	ax = (SP - PL_stack_base) + 1 ;
@@ -157,12 +146,7 @@ XS(XS_KillZNCTimer)
 
 			CTimer *pTimer = g_ModPerl->FindTimer( sLabel );
 			if ( pTimer )
-			{
-				string sFuncName = ((CModPerlTimer *)pTimer)->GetFuncName();
 				g_ModPerl->UnlinkTimer( pTimer );
-				if ( !g_ModPerl->FindTimer( sLabel ) )
-					g_ModPerl->DelZNCHook( sFuncName );
-			}
 		}
 		PUTBACK;
 		return;
@@ -232,7 +216,7 @@ int CModPerl::CallBack( const char *pszHookName, ... )
 
 void CModPerlTimer::RunJob() 
 {
-	((CModPerl *)m_pModule)->CallBack( m_sFuncName.c_str(), NULL );
+	((CModPerl *)m_pModule)->CallBack( GetName().c_str(), NULL );
 }
 
 #endif /* HAVE_PERL */
