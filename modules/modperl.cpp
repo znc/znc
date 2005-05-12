@@ -10,13 +10,45 @@
 #include <perl.h>
 #include <XSUB.h>
 
-#define NICK( a ) a.GetNickMask().c_str()
-#define CHAN( a ) a.GetName().c_str()
-#define NUM( a ) CString::ToString( a ).c_str()
-#define BOOL( a ) ( a ? "1" : "0" )
-#define CBNONE( a ) CallBack( a, NULL )
-#define CBSINGLE( a, b ) CallBack( a, b, NULL )
-#define CBDOUBLE( a, b, c ) CallBack( a, b, c, NULL )
+#define NICK( a ) a.GetNickMask()
+#define CHAN( a ) a.GetName()
+
+class PString : public CString 
+{
+public:
+	enum EType
+	{
+		STRING,
+		INT,
+		UINT,
+		NUM,
+		BOOL
+	};
+	
+	PString() : CString() { m_eType = STRING; }
+	PString( const char* c ) : CString(c) { m_eType = STRING; }
+	PString( const CString& s ) : CString(s) { m_eType = STRING; }
+	PString( int i ) : CString( PString::ToString( i ) ) { m_eType = INT; }
+	PString( u_int i ) : CString( PString::ToString( i ) ) { m_eType = UINT; }
+	PString( long i ) : CString( PString::ToString( i ) ) { m_eType = INT; }
+	PString( u_long i ) : CString( PString::ToString( i ) ) { m_eType = UINT; }
+	PString( long long i ) : CString( PString::ToString( (long long)i ) ) { m_eType = INT; }
+	PString( unsigned long long i ) : CString( PString::ToString( i ) ) { m_eType = UINT; }
+	PString( double i ) : CString( PString::ToString( i ) ) { m_eType = NUM; }
+	PString( bool b ) : CString( ( b ? "0" : "1" ) ) { m_eType = BOOL; }
+
+	virtual ~PString() {}
+
+	
+	EType GetType() const { return( m_eType ); }
+	void SetType( EType e ) { m_eType = e; }
+	
+private:
+	
+	EType	m_eType;
+};
+
+typedef vector< PString > VPString;
 
 class CModPerl;
 static CModPerl *g_ModPerl = NULL;
@@ -49,7 +81,7 @@ public:
 	{
 		if ( m_pPerl )
 		{
-			CallBack( "Shutdown", NULL );
+			CBNone( "Shutdown" );
 			perl_destruct( m_pPerl );
 			perl_free( m_pPerl );
 		}
@@ -57,136 +89,172 @@ public:
 	}
 
 	virtual bool OnLoad( const CString & sArgs );
-	virtual bool OnBoot() { return( !CBNONE( "OnBoot" ) ); }
-	virtual void OnUserAttached() {  CBNONE( "OnUserAttached" ); }
-	virtual void OnUserDetached() {  CBNONE( "OnUserDetached" ); }
-	virtual void OnIRCDisconnected() {  CBNONE( "OnIRCDisconnected" ); }
-	virtual void OnIRCConnected() {  CBNONE( "OnIRCConnected" ); }
+	virtual bool OnBoot() { return( !CBNone( "OnBoot" ) ); }
+	virtual void OnUserAttached() {  CBNone( "OnUserAttached" ); }
+	virtual void OnUserDetached() {  CBNone( "OnUserDetached" ); }
+	virtual void OnIRCDisconnected() {  CBNone( "OnIRCDisconnected" ); }
+	virtual void OnIRCConnected() {  CBNone( "OnIRCConnected" ); }
 
 	virtual bool OnDCCUserSend(const CNick& RemoteNick, unsigned long uLongIP, unsigned short uPort, 
-		const CString& sFile, unsigned long uFileSize)
-	{
-		return( CallBack( "OnDCCUserSend", NICK( RemoteNick ), NUM( uLongIP ), NUM( uPort ), sFile.c_str(), NUM( uFileSize ), NULL ) );
-	}
+		const CString& sFile, unsigned long uFileSize);
 
 	virtual void OnOp(const CNick& OpNick, const CNick& Nick, const CChan& Channel, bool bNoChange)
 	{
-		CallBack( "OnOp", NICK( OpNick ), NICK( Nick ), CHAN( Channel ), BOOL( bNoChange ), NULL );
+		CBFour( "OnOp", NICK( OpNick ), NICK( Nick ), CHAN( Channel ), bNoChange );
 	}
 	virtual void OnDeop(const CNick& OpNick, const CNick& Nick, const CChan& Channel, bool bNoChange)
 	{
-		CallBack( "OnDeop", NICK( OpNick ), NICK( Nick ), CHAN( Channel ), BOOL( bNoChange ), NULL );
+		CBFour( "OnDeop", NICK( OpNick ), NICK( Nick ), CHAN( Channel ), bNoChange );
 	}
 	virtual void OnVoice(const CNick& OpNick, const CNick& Nick, const CChan& Channel, bool bNoChange)
 	{
-		CallBack( "OnVoice", NICK( OpNick ), NICK( Nick ), CHAN( Channel ), BOOL( bNoChange ), NULL );
+		CBFour( "OnVoice", NICK( OpNick ), NICK( Nick ), CHAN( Channel ), bNoChange );
 	}
 	virtual void OnDevoice(const CNick& OpNick, const CNick& Nick, const CChan& Channel, bool bNoChange)
 	{
-		CallBack( "OnDevoice", NICK( OpNick ), NICK( Nick ), CHAN( Channel ), BOOL( bNoChange ), NULL );
+		CBFour( "OnDevoice", NICK( OpNick ), NICK( Nick ), CHAN( Channel ), bNoChange );
 	}
 	virtual void OnRawMode(const CNick& Nick, const CChan& Channel, const CString& sModes, const CString& sArgs)
 	{
-		CallBack( "OnRawMode", NICK( Nick ), CHAN( Channel ), sModes.c_str(), sArgs.c_str(), NULL );
+		CBFour( "OnRawMode", NICK( Nick ), CHAN( Channel ), sModes, sArgs  );
 	}
-	virtual bool OnUserRaw(CString& sLine) { return( CBSINGLE( "OnUserRaw", sLine.c_str() ) ); }
-	virtual bool OnRaw(CString& sLine) { return( CBSINGLE( "OnRaw", sLine.c_str() ) ); }
-	virtual bool OnStatusCommand(const CString& sCommand) { return( CBSINGLE( "OnStatusCommand", sCommand.c_str() ) ); }
-	virtual void OnModCommand(const CString& sCommand) { CBSINGLE( "OnModCommand", sCommand.c_str() ); }
-	virtual void OnModNotice(const CString& sMessage) { CBSINGLE( "OnModNotice", sMessage.c_str() ); }
-	virtual void OnModCTCP(const CString& sMessage) { CBSINGLE( "OnModCTCP", sMessage.c_str() ); }
+	virtual bool OnUserRaw(CString& sLine) { return( CBSingle( "OnUserRaw", sLine ) ); }
+	virtual bool OnRaw(CString& sLine) { return( CBSingle( "OnRaw", sLine ) ); }
+	virtual bool OnStatusCommand(const CString& sCommand) { return( CBSingle( "OnStatusCommand", sCommand ) ); }
+	virtual void OnModCommand(const CString& sCommand) { CBSingle( "OnModCommand", sCommand ); }
+	virtual void OnModNotice(const CString& sMessage) { CBSingle( "OnModNotice", sMessage ); }
+	virtual void OnModCTCP(const CString& sMessage) { CBSingle( "OnModCTCP", sMessage ); }
 
 	virtual void OnQuit(const CNick& Nick, const CString& sMessage, const vector<CChan*>& vChans)
 	{
-		vector< CString > vsArgs;
+		VPString vsArgs;
 		vsArgs.push_back( Nick.GetNickMask() );
 		vsArgs.push_back( sMessage );
 		for( vector<CChan*>::size_type a = 0; a < vChans.size(); a++ )
 			vsArgs.push_back( vChans[a]->GetName() );
 
-		CallBackVec( "OnQuit", vsArgs );
+		CallBack( "OnQuit", vsArgs );
 	}
 
 	virtual void OnNick(const CNick& Nick, const CString& sNewNick, const vector<CChan*>& vChans)
 	{
-		vector< CString > vsArgs;
+		VPString vsArgs;
 		vsArgs.push_back( Nick.GetNickMask() );
 		vsArgs.push_back( sNewNick );
 		for( vector<CChan*>::size_type a = 0; a < vChans.size(); a++ )
 			vsArgs.push_back( vChans[a]->GetName() );
 
-		CallBackVec( "OnNick", vsArgs );
+		CallBack( "OnNick", vsArgs );
 	}
 
 	virtual void OnKick(const CNick& Nick, const CString& sOpNick, const CChan& Channel, const CString& sMessage)
 	{
-		CallBack( "OnKick", NICK( Nick ), sOpNick.c_str(), CHAN( Channel ), sMessage.c_str(), NULL );
+		CBFour( "OnKick", NICK( Nick ), sOpNick, CHAN( Channel ), sMessage );
 	}
 
-	virtual void OnJoin(const CNick& Nick, const CChan& Channel) { CBDOUBLE( "OnJoin", NICK( Nick ), CHAN( Channel ) ); }
-	virtual void OnPart(const CNick& Nick, const CChan& Channel) { CBDOUBLE( "OnPart", NICK( Nick ), CHAN( Channel ) ); }
+	virtual void OnJoin(const CNick& Nick, const CChan& Channel) { CBDouble( "OnJoin", NICK( Nick ), CHAN( Channel ) ); }
+	virtual void OnPart(const CNick& Nick, const CChan& Channel) { CBDouble( "OnPart", NICK( Nick ), CHAN( Channel ) ); }
 
 	virtual bool OnUserCTCPReply(const CNick& Nick, CString& sMessage) 
 	{ 
-		return CBDOUBLE( "OnUserCTCPReply", NICK( Nick ), sMessage.c_str() ); 
+		return CBDouble( "OnUserCTCPReply", NICK( Nick ), sMessage ); 
 	}
 	virtual bool OnCTCPReply(const CNick& Nick, CString& sMessage)
 	{
-		return CBDOUBLE( "OnCTCPReply", NICK( Nick ), sMessage.c_str() ); 
+		return CBDouble( "OnCTCPReply", NICK( Nick ), sMessage ); 
 	}
 	virtual bool OnUserCTCP(const CString& sTarget, CString& sMessage)
 	{
-		return CBDOUBLE( "OnUserCTCP", sTarget.c_str(), sMessage.c_str() ); 
+		return CBDouble( "OnUserCTCP", sTarget, sMessage ); 
 	}
 	virtual bool OnPrivCTCP(const CNick& Nick, CString& sMessage)
 	{
-		return CBDOUBLE( "OnPrivCTCP", NICK( Nick ), sMessage.c_str() ); 
+		return CBDouble( "OnPrivCTCP", NICK( Nick ), sMessage ); 
 	}
 	virtual bool OnChanCTCP(const CNick& Nick, const CChan& Channel, CString& sMessage)
 	{
-		return CallBack( NICK( Nick ), CHAN( Channel ), sMessage.c_str(), NULL );
+		return CBTriple( "OnChanCTCP", NICK( Nick ), CHAN( Channel ), sMessage );
 	}
 	virtual bool OnUserMsg(const CString& sTarget, CString& sMessage)
 	{
-		return CBDOUBLE( "OnUserMsg", sTarget.c_str(), sMessage.c_str() );
+		return CBDouble( "OnUserMsg", sTarget, sMessage );
 	}
 	virtual bool OnPrivMsg(const CNick& Nick, CString& sMessage)
 	{
-		return CBDOUBLE( "OnPrivMsg", NICK( Nick ), sMessage.c_str() );
+		return CBDouble( "OnPrivMsg", NICK( Nick ), sMessage );
 	}
 
 	virtual bool OnChanMsg( const CNick& Nick, const CChan & Channel, CString & sMessage )
 	{
-		return( CallBack( "OnChanMsg", NICK( Nick ), CHAN( Channel ), sMessage.c_str(), NULL ) );
+		return( CBTriple( "OnChanMsg", NICK( Nick ), CHAN( Channel ), sMessage ) );
 	}
 	virtual bool OnUserNotice(const CString& sTarget, CString& sMessage)
 	{
-		return CBDOUBLE( "OnUserNotice", sTarget.c_str(), sMessage.c_str() );
+		return CBDouble( "OnUserNotice", sTarget, sMessage );
 	}
 	virtual bool OnPrivNotice(const CNick& Nick, CString& sMessage)
 	{
-		return CBDOUBLE( "OnPrivNotice", NICK( Nick ), sMessage.c_str() );
+		return CBDouble( "OnPrivNotice", NICK( Nick ), sMessage );
 	}
 	virtual bool OnChanNotice(const CNick& Nick, const CChan& Channel, CString& sMessage)
 	{
-		return( CallBack( "OnChanNotice", NICK( Nick ), CHAN( Channel ), sMessage.c_str(), NULL ) );
+		return( CBTriple( "OnChanNotice", NICK( Nick ), CHAN( Channel ), sMessage ) );
 	}
 
-	void AddHook( const CString & sHookName ) { m_mssHookNames.insert( sHookName ); }
-	void DelHook( const CString & sHookName )
+	void AddHook( const PString & sHookName ) { m_mssHookNames.insert( sHookName ); }
+	void DelHook( const PString & sHookName )
 	{
-		set< CString >::iterator it = m_mssHookNames.find( sHookName );
+		set< PString >::iterator it = m_mssHookNames.find( sHookName );
 		if ( it != m_mssHookNames.end() )
 			m_mssHookNames.erase( it );
 	}
 
-	int CallBack( const char *pszHookName, ... );
-	int CallBackVec( const CString & sHookName, const vector< CString > & vsArgs );
+	int CallBack( const PString & sHookName, const VPString & vsArgs );
+	int CBNone( const PString & sHookName )
+	{
+		VPString vsArgs;
+		return( CallBack( sHookName, vsArgs ) );
+	}
+
+	template <class A>
+	inline int CBSingle( const PString & sHookName, const A & a )
+	{
+		VPString vsArgs;
+		vsArgs.push_back( a );
+		return( CallBack( sHookName, vsArgs ) );
+	}
+	template <class A, class B>
+	inline int CBDouble( const PString & sHookName, const A & a, const B & b )
+	{
+		VPString vsArgs;
+		vsArgs.push_back( a );
+		vsArgs.push_back( b );
+		return( CallBack( sHookName, vsArgs ) );
+	}
+	template <class A, class B, class C>
+	inline int CBTriple( const PString & sHookName, const A & a, const B & b, const C & c )
+	{
+		VPString vsArgs;
+		vsArgs.push_back( a );
+		vsArgs.push_back( b );
+		vsArgs.push_back( c );
+		return( CallBack( sHookName, vsArgs ) );
+	}
+	template <class A, class B, class C, class D>
+	inline int CBFour( const PString & sHookName, const A & a, const B & b, const C & c, const D & d )
+	{
+		VPString vsArgs;
+		vsArgs.push_back( a );
+		vsArgs.push_back( b );
+		vsArgs.push_back( c );
+		vsArgs.push_back( d );
+		return( CallBack( sHookName, vsArgs ) );
+	}
 
 private:
 
 	PerlInterpreter	*m_pPerl;
-	set< CString >	m_mssHookNames;
+	set< PString >	m_mssHookNames;
 
 };
 
@@ -209,7 +277,6 @@ XS(XS_AddHook)
 			g_ModPerl->AddHook( (char *)SvPV(ST(0),PL_na) );
 
 		PUTBACK;
-		return;
 	}
 }
 
@@ -226,7 +293,6 @@ XS(XS_DelHook)
 			g_ModPerl->DelHook( (char *)SvPV(ST(0),PL_na) );
 
 		PUTBACK;
-		return;
 	}
 }
 
@@ -251,7 +317,6 @@ XS(XS_AddTimer)
 			g_ModPerl->AddTimer( pTimer );
 		}
 		PUTBACK;
-		return;
 	}
 }
 
@@ -276,7 +341,6 @@ XS(XS_UnlinkTimer)
 			}
 		}
 		PUTBACK;
-		return;
 	}
 }
 
@@ -295,7 +359,6 @@ XS(XS_PutIRC)
 			g_ModPerl->PutIRC( sLine );
 		}
 		PUTBACK;
-		return;
 	}
 }
 
@@ -315,7 +378,6 @@ XS(XS_PutUser)
 			g_ModPerl->PutUser( sLine );
 		}
 		PUTBACK;
-		return;
 	}
 }
 
@@ -335,7 +397,6 @@ XS(XS_PutStatus)
 			g_ModPerl->PutStatus( sLine );
 		}
 		PUTBACK;
-		return;
 	}
 }
 
@@ -356,7 +417,6 @@ XS(XS_PutModule)
 			g_ModPerl->PutModule( sLine, sIdent, sHost );
 		}
 		PUTBACK;
-		return;
 	}
 }
 
@@ -377,65 +437,14 @@ XS(XS_PutModNotice)
 			g_ModPerl->PutModNotice( sLine, sIdent, sHost );
 		}
 		PUTBACK;
-		return;
 	}
 }
 
 /////////// supporting functions from within module
 
-int CModPerl::CallBack( const char *pszHookName, ... )
+int CModPerl::CallBack( const PString & sHookName, const VPString & vsArgs )
 {
-	set< CString >::iterator it = m_mssHookNames.find( pszHookName );
-
-	if ( it == m_mssHookNames.end() )
-		return( 0 );
-	
-	va_list ap;
-	va_start( ap, pszHookName );
-
-	char *pTmp;
-
-	dSP;
-	ENTER;
-	SAVETMPS;
-
-	PUSHMARK( SP );
-	while( ( pTmp = va_arg( ap, char * ) ) )
-	{
-		XPUSHs( sv_2mortal( newSVpv( pTmp, strlen( pTmp ) ) ) );
-	}
-	PUTBACK;
-
-	int iCount = call_pv( it->c_str(), G_EVAL|G_SCALAR|G_KEEPERR );
-
-	SPAGAIN;
-	int iRet = 0;
-	if ( SvTRUE( ERRSV ) ) 
-	{ 
-		CString sError = SvPV( ERRSV, PL_na);
-		PutModule( "Perl Error [" + *it + "] [" + sError + "]" );
-		cerr << "Perl Error [" << *it << "] [" << sError << "]" << endl;
-		POPs; 
-
-		// TODO schedule this module for unloading
-		
-	} else
-	{
-		if ( iCount == 1 )
-			iRet = POPi;	
-	}
-
-	PUTBACK;
-	FREETMPS;
-	LEAVE;
-
-	va_end( ap );
-	return( iRet );
-}
-
-int CModPerl::CallBackVec( const CString & sHookName, const vector< CString > & vsArgs )
-{
-	set< CString >::iterator it = m_mssHookNames.find( sHookName );
+	set< PString >::iterator it = m_mssHookNames.find( sHookName );
 
 	if ( it == m_mssHookNames.end() )
 		return( 0 );
@@ -445,13 +454,29 @@ int CModPerl::CallBackVec( const CString & sHookName, const vector< CString > & 
 	SAVETMPS;
 
 	PUSHMARK( SP );
-	for( vector< CString >::size_type a = 0; a < vsArgs.size(); a++ )
+	for( VPString::size_type a = 0; a < vsArgs.size(); a++ )
 	{
-		XPUSHs( sv_2mortal( newSVpv( vsArgs[a].c_str(), vsArgs[a].length() ) ) );
+		switch( vsArgs[a].GetType() )
+		{
+			case PString::NUM:
+				XPUSHs( sv_2mortal( newSVnv( vsArgs[a].ToDouble() ) ) );
+				break;
+			case PString::INT:
+				XPUSHs( sv_2mortal( newSViv( vsArgs[a].ToLongLong() ) ) );
+				break;
+			case PString::UINT:
+			case PString::BOOL:
+				XPUSHs( sv_2mortal( newSVuv( vsArgs[a].ToULongLong() ) ) );
+				break;
+			case PString::STRING:
+			default:
+				XPUSHs( sv_2mortal( newSVpv( vsArgs[a].c_str(), vsArgs[a].length() ) ) );
+				break;
+		}
 	}
 	PUTBACK;
 
-	int iCount = call_pv( it->c_str(), G_EVAL|G_SCALAR|G_KEEPERR );
+	int iCount = call_pv( sHookName.c_str(), G_EVAL|G_SCALAR|G_KEEPERR );
 
 	SPAGAIN;
 	int iRet = 0;
@@ -516,13 +541,24 @@ bool CModPerl::OnLoad( const CString & sArgs )
 	newXS( "PutModule", XS_PutModule, (char *)file );
 	newXS( "PutModNotice", XS_PutModNotice, (char *)file );
 
-	return( CallBack( "OnLoad", NULL ) );
+	return( CBNone( "OnLoad" ) );
 }
 
+bool CModPerl::OnDCCUserSend(const CNick& RemoteNick, unsigned long uLongIP, unsigned short uPort, 
+		const CString& sFile, unsigned long uFileSize)
+{
+	VPString vsArgs;
+	vsArgs.push_back( NICK( RemoteNick ) );
+	vsArgs.push_back( uLongIP );
+	vsArgs.push_back( uPort );
+	vsArgs.push_back( sFile );
+	
+	return( CallBack( "OnDCCUserSend", vsArgs ) );
+}
 /////////////// CModPerlTimer //////////////
 void CModPerlTimer::RunJob() 
 {
-	((CModPerl *)m_pModule)->CallBack( GetName().c_str(), NULL );
+	((CModPerl *)m_pModule)->CBNone( GetName() );
 }
 
 #endif /* HAVE_PERL */
