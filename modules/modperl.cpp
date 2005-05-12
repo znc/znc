@@ -54,7 +54,7 @@ public:
 	}
 
 	virtual bool OnLoad( const CString & sArgs );
-	virtual bool OnBoot() { return( CBNONE( "OnLoad" ) ); }
+	virtual bool OnBoot() { return( !CBNONE( "OnLoad" ) ); }
 	virtual void OnUserAttached() {  CBNONE( "OnUserAttached" ); }
 	virtual void OnUserDetached() {  CBNONE( "OnUserDetached" ); }
 	virtual void OnIRCDisconnected() {  CBNONE( "OnIRCDisconnected" ); }
@@ -395,7 +395,7 @@ int CModPerl::CallBack( const char *pszHookName, ... )
 	set< CString >::iterator it = m_mssHookNames.find( pszHookName );
 
 	if ( it == m_mssHookNames.end() )
-		return( 1 );
+		return( 0 );
 	
 	va_list ap;
 	va_start( ap, pszHookName );
@@ -416,7 +416,7 @@ int CModPerl::CallBack( const char *pszHookName, ... )
 	int iCount = call_pv( it->c_str(), G_SCALAR );
 
 	SPAGAIN;
-	int iRet = 1;
+	int iRet = 0;
 
 	if ( iCount == 1 )
 		iRet = POPi;	
@@ -434,7 +434,7 @@ int CModPerl::CallBackVec( const CString & sHookName, const vector< CString > & 
 	set< CString >::iterator it = m_mssHookNames.find( sHookName );
 
 	if ( it == m_mssHookNames.end() )
-		return( 1 );
+		return( 0 );
 	
 	dSP;
 	ENTER;
@@ -450,7 +450,7 @@ int CModPerl::CallBackVec( const CString & sHookName, const vector< CString > & 
 	int iCount = call_pv( it->c_str(), G_SCALAR );
 
 	SPAGAIN;
-	int iRet = 1;
+	int iRet = 0;
 
 	if ( iCount == 1 )
 		iRet = POPi;	
