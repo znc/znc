@@ -41,20 +41,23 @@ public:
 		g_ModPerl = this;
 		m_pPerl = perl_alloc();
 		perl_construct( m_pPerl );
-		AddHook( "Init" );
+		AddHook( "OnLoad" );
 		AddHook( "Shutdown" );
 	}
 
 	virtual ~CModPerl() 
 	{
-		ModPerlDestroy();
-		perl_destruct( m_pPerl );
-		perl_free( m_pPerl );
+		if ( m_pPerl )
+		{
+			CallBack( "Shutdown", NULL );
+			perl_destruct( m_pPerl );
+			perl_free( m_pPerl );
+		}
 		g_ModPerl = NULL;
 	}
 
 	virtual bool OnLoad( const CString & sArgs );
-	virtual bool OnBoot() { return( !CBNONE( "OnLoad" ) ); }
+	virtual bool OnBoot() { return( !CBNONE( "OnBoot" ) ); }
 	virtual void OnUserAttached() {  CBNONE( "OnUserAttached" ); }
 	virtual void OnUserDetached() {  CBNONE( "OnUserDetached" ); }
 	virtual void OnIRCDisconnected() {  CBNONE( "OnIRCDisconnected" ); }
@@ -184,16 +187,6 @@ private:
 
 	PerlInterpreter	*m_pPerl;
 	set< CString >	m_mssHookNames;
-
-	void ModPerlInit() 
-	{
-		CallBack( "Init", NULL );
-	}
-
-	void ModPerlDestroy() 
-	{
-		CallBack( "Shutdown", NULL );
-	}
 
 };
 
@@ -413,13 +406,24 @@ int CModPerl::CallBack( const char *pszHookName, ... )
 	}
 	PUTBACK;
 
-	int iCount = call_pv( it->c_str(), G_SCALAR );
+	int iCount = call_pv( it->c_str(), G_EVAL|G_SCALAR|G_KEEPERR );
 
 	SPAGAIN;
 	int iRet = 0;
+	if ( SvTRUE( ERRSV ) ) 
+	{ 
+		CString sError = SvPV( ERRSV, PL_na);
+		PutModule( "Perl Error [" + *it + "] [" + sError + "]" );
+		cerr << "Perl Error [" << *it << "] [" << sError << "]" << endl;
+		POPs; 
 
-	if ( iCount == 1 )
-		iRet = POPi;	
+		// TODO schedule this module for unloading
+		
+	} else
+	{
+		if ( iCount == 1 )
+			iRet = POPi;	
+	}
 
 	PUTBACK;
 	FREETMPS;
@@ -447,13 +451,25 @@ int CModPerl::CallBackVec( const CString & sHookName, const vector< CString > & 
 	}
 	PUTBACK;
 
-	int iCount = call_pv( it->c_str(), G_SCALAR );
+	int iCount = call_pv( it->c_str(), G_EVAL|G_SCALAR|G_KEEPERR );
 
 	SPAGAIN;
 	int iRet = 0;
 
-	if ( iCount == 1 )
-		iRet = POPi;	
+	if ( SvTRUE( ERRSV ) ) 
+	{ 
+		CString sError = SvPV( ERRSV, PL_na);
+		PutModule( "Perl Error [" + *it + "] [" + sError + "]" );
+		cerr << "Perl Error [" << *it << "] [" << sError << "]" << endl;
+		POPs; 
+
+		// TODO schedule this module for unloading
+
+	} else
+	{
+		if ( iCount == 1 )
+			iRet = POPi;	
+	}
 
 	PUTBACK;
 	FREETMPS;
@@ -463,32 +479,44 @@ int CModPerl::CallBackVec( const CString & sHookName, const vector< CString > & 
 }
 
 ////////////////////// Events ///////////////////
+
+// special case this, required for perl modules that are dynamic
+EXTERN_C void boot_DynaLoader (pTHX_ CV* cv);
+
 bool CModPerl::OnLoad( const CString & sArgs ) 
 {
 	const char *pArgv[] = 
 	{
-		sArgs.c_str(),
+		"",
 		sArgs.c_str(),
 		NULL
 	};
 
-	perl_parse( m_pPerl, NULL, 2, (char **)pArgv, (char **)NULL );
+	if ( perl_parse( m_pPerl, NULL, 2, (char **)pArgv, (char **)NULL ) != 0 )
+	{
+		perl_free( m_pPerl );
+		m_pPerl = NULL;
+		return( false );
+	}
+
 #ifdef PERL_EXIT_DESTRUCT_END
 	PL_exit_flags |= PERL_EXIT_DESTRUCT_END;
 #endif /* PERL_EXIT_DESTRUCT_END */
 
-	newXS( "AddHook", XS_AddHook, (char *)__FILE__ );
-	newXS( "DelHook", XS_DelHook, (char *)__FILE__ );
-	newXS( "AddTimer", XS_AddTimer, (char *)__FILE__ );
-	newXS( "UnlinkTimer", XS_UnlinkTimer, (char *)__FILE__ );
-	newXS( "PutIRC", XS_PutIRC, (char *)__FILE__ );
-	newXS( "PutUser", XS_PutUser, (char *)__FILE__ );
-	newXS( "PutStatus", XS_PutStatus, (char *)__FILE__ );
-	newXS( "PutModule", XS_PutModule, (char *)__FILE__ );
-	newXS( "PutModNotice", XS_PutModNotice, (char *)__FILE__ );
+	char *file = __FILE__;
 
-	ModPerlInit();
-	return( true );
+	newXS( "DynaLoader::boot_DynaLoader", boot_DynaLoader, (char *)file );
+	newXS( "AddHook", XS_AddHook, (char *)file );
+	newXS( "DelHook", XS_DelHook, (char *)file );
+	newXS( "AddTimer", XS_AddTimer, (char *)file );
+	newXS( "UnlinkTimer", XS_UnlinkTimer, (char *)file );
+	newXS( "PutIRC", XS_PutIRC, (char *)file );
+	newXS( "PutUser", XS_PutUser, (char *)file );
+	newXS( "PutStatus", XS_PutStatus, (char *)file );
+	newXS( "PutModule", XS_PutModule, (char *)file );
+	newXS( "PutModNotice", XS_PutModNotice, (char *)file );
+
+	return( CallBack( "OnLoad", NULL ) );
 }
 
 /////////////// CModPerlTimer //////////////
