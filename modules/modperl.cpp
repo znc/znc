@@ -473,7 +473,9 @@ bool CModPerl::OnLoad( const CString & sArgs )
 	};
 
 	perl_parse( m_pPerl, NULL, 2, (char **)pArgv, (char **)NULL );
+#ifdef PERL_EXIT_DESTRUCT_END
 	PL_exit_flags |= PERL_EXIT_DESTRUCT_END;
+#endif /* PERL_EXIT_DESTRUCT_END */
 
 	newXS( "AddHook", XS_AddHook, (char *)__FILE__ );
 	newXS( "DelHook", XS_DelHook, (char *)__FILE__ );
