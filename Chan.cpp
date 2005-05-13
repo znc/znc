@@ -2,6 +2,7 @@
 #include "znc.h"
 #include "User.h"
 #include "Utils.h"
+#include "IRCSock.h"
 
 CChan::CChan(const CString& sName, CUser* pUser) {
 	m_sName = sName.Token(0);
@@ -12,6 +13,7 @@ CChan::CChan(const CString& sName, CUser* pUser) {
 	}
 
 	m_pUser = pUser;
+	m_Nick.SetUser(pUser);
 	m_bAutoCycle = true;
 	m_bDetached = false;
 	m_uBufferCount = m_pUser->GetBufferCount();
@@ -25,11 +27,8 @@ CChan::~CChan() {
 void CChan::Reset() {
 	m_bWhoDone = false;
 	m_bIsOn = false;
-	m_bIsOp = false;
-	m_bIsVoice = false;
-	m_uOpCount = 0;
-	m_uVoiceCount =	0;
-	m_uModes = 0;
+	m_suUserPerms.clear();
+	m_musModes.clear();
 	m_uLimit = 0;
 	m_uClientRequests = 0;
 	m_sTopic = "";
@@ -63,10 +62,9 @@ void CChan::JoinUser(bool bForce) {
 	CString sLine = sPre;
 
 	for (map<CString,CNick*>::iterator a = m_msNicks.begin(); a != m_msNicks.end(); a++) {
-		if (a->second->IsOp()) {
-			sLine += "@";
-		} else if (a->second->IsVoice()) {
-			sLine += "+";
+		char c = a->second->GetPermChar();
+		if (c != '\0') {
+			sLine += c;
 		}
 
 		sLine += a->first;
@@ -110,23 +108,21 @@ void CChan::DetachUser() {
 	m_bDetached = true;
 }
 
-CString CChan::GetModeCString() const {
-	CString sRet;
+CString CChan::GetModeString() const {
+	CString sModes, sArgs;
 
-	if (m_uModes & Secret) { sRet += "s"; }
-	if (m_uModes & Private) { sRet += "p"; }
-	if (m_uModes & OpTopic) { sRet += "t"; }
-	if (m_uModes & InviteOnly) { sRet += "i"; }
-	if (m_uModes & NoMessages) { sRet += "n"; }
-	if (m_uModes & Moderated) { sRet += "m"; }
-	if (m_uLimit) { sRet += "l"; }
-	if (m_uModes & Key) { sRet += "k"; }
+	for (map<unsigned char, CString>::const_iterator it = m_musModes.begin(); it != m_musModes.end(); it++) {
+		sModes += it->first;
+		if (it->second.size()) {
+			sArgs += " " + it->second;
+		}
+	}
 
-	return (sRet.empty()) ? sRet : ("+" + sRet);
+	return (sModes.empty()) ? sModes : ("+" + sModes + sArgs);
 }
 
 void CChan::SetModes(const CString& sModes) {
-	m_uModes = 0;
+	m_musModes.clear();
 	m_uLimit = 0;
 	m_sKey = "";
 	ModeChange(sModes);
@@ -176,24 +172,94 @@ void CChan::ModeChange(const CString& sModes, const CString& sOpNick) {
 #endif
 
 	for (unsigned int a = 0; a < sModeArg.size(); a++) {
-		switch (sModeArg[a]) {
-			case '+': bAdd = true; break;
-			case '-': bAdd = false; break;
-			case 's': if (bAdd) { m_uModes |= Secret; } else { m_uModes &= ~Secret; } break;
-			case 'p': if (bAdd) { m_uModes |= Private; } else { m_uModes &= ~Private; }  break;
-			case 'm': if (bAdd) { m_uModes |= Moderated; } else { m_uModes &= ~Moderated; }  break;
-			case 'i': if (bAdd) { m_uModes |= InviteOnly; } else { m_uModes &= ~InviteOnly; }  break;
-			case 'n': if (bAdd) { m_uModes |= NoMessages; } else { m_uModes &= ~NoMessages; }  break;
-			case 't': if (bAdd) { m_uModes |= OpTopic; } else { m_uModes &= ~OpTopic; }  break;
-			case 'l': if (bAdd) { m_uLimit = strtoul(GetModeArg(sArgs).c_str(), NULL, 10); } else { m_uLimit = 0; }  break;
-			case 'k': if (bAdd) { m_uModes |= Key; SetKey(GetModeArg(sArgs)); } else { m_uModes &= ~Key; GetModeArg(sArgs); }  break;
-			case 'o': OnOp(sOpNick, GetModeArg(sArgs), bAdd); break;
-			case 'v': OnVoice(sOpNick, GetModeArg(sArgs), bAdd); break;
-			case 'b': // Don't do anything with bans yet
-			case 'e': // Don't do anything with excepts yet
-			default: GetModeArg(sArgs); // Pop off an arg, assume new modes will have an argument
+		const unsigned char& uMode = sModeArg[a];
+		CString sArg;
+
+		if (uMode == '+') {
+			bAdd = true;
+		} else if (uMode == '-') {
+			bAdd = false;
+		} else if (m_pUser->GetIRCSock()->IsPermMode(uMode)) {
+			sArg = GetModeArg(sArgs);
+			CNick* pNick = FindNick(sArg);
+			if (pNick) {
+				unsigned char uPerm = m_pUser->GetIRCSock()->GetPermFromMode(uMode);
+
+				if (uPerm) {
+					if (bAdd) {
+						if (pNick->AddPerm(uPerm)) {
+							IncPermCount(uPerm);
+						}
+
+						if (pNick->GetNick().CaseCmp(m_pUser->GetCurNick()) == 0) {
+							AddPerm(uPerm);
+						}
+					} else {
+						if (pNick->RemPerm(uPerm)) {
+							DecPermCount(uPerm);
+						}
+
+						if (pNick->GetNick().CaseCmp(m_pUser->GetCurNick()) == 0) {
+							RemPerm(uPerm);
+						}
+					}
+				}
+			}
+		} else {
+			switch (m_pUser->GetIRCSock()->GetModeType(uMode)) {
+				case CIRCSock::ListArg:
+					sArg = GetModeArg(sArgs);
+					break;
+				case CIRCSock::HasArg:
+					sArg = GetModeArg(sArgs);
+					break;
+				case CIRCSock::NoArg:
+					break;
+				case CIRCSock::ArgWhenSet:
+					if (bAdd) {
+						sArg = GetModeArg(sArgs);
+					}
+
+					break;
+			}
+
+			(bAdd) ? AddMode(uMode, sArg) : RemMode(uMode, sArg);
 		}
 	}
+}
+
+CString CChan::GetModeArg(unsigned char uMode) const {
+	if (uMode) {
+		map<unsigned char, CString>::const_iterator it = m_musModes.find(uMode);
+
+		if (it != m_musModes.end()) {
+			return it->second;
+		}
+	}
+
+	return "";
+}
+
+bool CChan::HasMode(unsigned char uMode) const {
+	return (uMode && m_musModes.find(uMode) != m_musModes.end());
+}
+
+bool CChan::AddMode(unsigned char uMode, const CString& sArg) {
+	if (HasMode(uMode)) {
+		return false;
+	}
+
+	m_musModes[uMode] = sArg;
+	return true;
+}
+
+bool CChan::RemMode(unsigned char uMode, const CString& sArg) {
+	if (!HasMode(uMode)) {
+		return false;
+	}
+
+	m_musModes.erase(uMode);
+	return true;
 }
 
 CString CChan::GetModeArg(CString& sArgs) const {
@@ -245,58 +311,60 @@ int CChan::AddNicks(const CString& sNicks) {
 
 bool CChan::AddNick(const CString& sNick) {
 	const char* p = sNick.c_str();
-	bool bIsOp = false;
-	bool bIsVoice = false;
-	bool bNoMode = false;
+	char cPrefix = '\0';
 
-	switch (*p) {
-		case '\0':
+	if (m_pUser->GetIRCSock()->IsPermChar(*p)) {
+		cPrefix = *p;
+
+		if (!*++p) {
 			return false;
-		case '@':
-			bIsOp = true;
-			break;
-		case '+':
-			bIsVoice = true;
-			break;
-		case '%':
-			break;
-		case '*':
-			break;
-		case '!':
-			break;
-		default:
-			bNoMode = true;
-			break;
-	}
-
-	if (!bNoMode && !*++p) {
-		return false;
+		}
 	}
 
 	CNick* pNick = FindNick(p);
 	if (!pNick) {
 		pNick = new CNick(p);
+		pNick->SetUser(m_pUser);
 	}
 
-	if ((bIsOp) && (!pNick->IsOp())) {
-		IncOpCount();
-		pNick->SetOp(true);
+	if (pNick->AddPerm(cPrefix)) {
+		IncPermCount(cPrefix);
+	}
 
-		if (pNick->GetNick().CaseCmp(m_pUser->GetCurNick()) == 0) {
-			SetOpped(true);
-		}
-	} else if ((bIsVoice) && (!pNick->IsVoice())) {
-		IncVoiceCount();
-		pNick->SetVoice(true);
-
-		if (pNick->GetNick().CaseCmp(m_pUser->GetCurNick()) == 0) {
-			SetVoiced(true);
-		}
+	if (pNick->GetNick().CaseCmp(m_pUser->GetCurNick()) == 0) {
+		AddPerm(cPrefix);
 	}
 
 	m_msNicks[pNick->GetNick()] = pNick;
 
 	return true;
+}
+
+unsigned int CChan::GetPermCount(unsigned char uPerm) {
+	map<unsigned char, unsigned int>::iterator it = m_muuPermCount.find(uPerm);
+	return (it == m_muuPermCount.end()) ? 0 : it->second;
+}
+
+void CChan::DecPermCount(unsigned char uPerm) {
+	map<unsigned char, unsigned int>::iterator it = m_muuPermCount.find(uPerm);
+
+	if (it == m_muuPermCount.end()) {
+		m_muuPermCount[uPerm] = 0;
+	} else {
+		if (it->second) {
+			m_muuPermCount[uPerm]--;
+		}
+	}
+}
+
+void CChan::IncPermCount(unsigned char uPerm) {
+	map<unsigned char, unsigned int>::iterator it = m_muuPermCount.find(uPerm);
+
+	if (it == m_muuPermCount.end()) {
+		m_muuPermCount[uPerm] = 1;
+	} else {
+		m_muuPermCount[uPerm]++;
+	}
 }
 
 bool CChan::RemNick(const CString& sNick) {
@@ -305,19 +373,17 @@ bool CChan::RemNick(const CString& sNick) {
 		return false;
 	}
 
-	if (it->second->IsOp()) {
-		DecOpCount();
-	}
+	const set<unsigned char>& suPerms = it->second->GetChanPerms();
 
-	if (it->second->IsVoice()) {
-		DecVoiceCount();
+	for (set<unsigned char>::iterator it = suPerms.begin(); it != suPerms.end(); it++) {
+		DecPermCount(*it);
 	}
 
 	delete it->second;
 	m_msNicks.erase(it);
 	CNick* pNick = m_msNicks.begin()->second;
 
-	if ((m_msNicks.size() == 1) && (!pNick->IsOp()) && (pNick->GetNick().CaseCmp(m_pUser->GetCurNick()) == 0)) {
+	if ((m_msNicks.size() == 1) && (!pNick->HasPerm(Op)) && (pNick->GetNick().CaseCmp(m_pUser->GetCurNick()) == 0)) {
 		if (AutoCycle()) {
 			Cycle();
 		}
@@ -336,7 +402,7 @@ bool CChan::ChangeNick(const CString& sOldNick, const CString& sNewNick) {
 	// Rename this nick
 	it->second->SetNick(sNewNick);
 
-	// Insert a new element into the map then erase the old one, do this to change the key
+	// Insert a new element into the map then erase the old one, do this to change the key to the new nick
 	m_msNicks[sNewNick] = it->second;
 	m_msNicks.erase(it);
 
@@ -347,7 +413,7 @@ void CChan::OnOp(const CString& sOpNick, const CString& sNick, bool bOpped) {
 	CNick* pNick = FindNick(sNick);
 
 	if (pNick) {
-		bool bNoChange = (pNick->IsOp() == bOpped);
+		bool bNoChange = (pNick->HasPerm(Op) == bOpped);
 #ifdef _MODULES
 		CNick* pOpNick = FindNick(sOpNick);
 
@@ -361,7 +427,7 @@ void CChan::OnOp(const CString& sOpNick, const CString& sNick, bool bOpped) {
 #endif
 
 		if (sNick.CaseCmp(m_pUser->GetCurNick()) == 0) {
-			SetOpped(bOpped);
+			(bOpped) ? AddPerm(Op) : RemPerm(Op);
 		}
 
 		if (bNoChange) {
@@ -369,8 +435,11 @@ void CChan::OnOp(const CString& sOpNick, const CString& sNick, bool bOpped) {
 			return;
 		}
 
-		pNick->SetOp(bOpped);
-		(bOpped) ? IncOpCount() : DecOpCount();
+		bool bChange = (bOpped) ? pNick->AddPerm(Op) : pNick->RemPerm(Op);
+
+		if (bChange) {
+			(bOpped) ? IncPermCount(Op) : DecPermCount(Op);
+		}
 	}
 }
 
@@ -378,7 +447,7 @@ void CChan::OnVoice(const CString& sOpNick, const CString& sNick, bool bVoiced) 
 	CNick* pNick = FindNick(sNick);
 
 	if (pNick) {
-		bool bNoChange = (pNick->IsVoice() == bVoiced);
+		bool bNoChange = (pNick->HasPerm(Voice) == bVoiced);
 
 #ifdef _MODULES
 		CNick* pOpNick = FindNick(sOpNick);
@@ -393,7 +462,7 @@ void CChan::OnVoice(const CString& sOpNick, const CString& sNick, bool bVoiced) 
 #endif
 
 		if (sNick.CaseCmp(m_pUser->GetCurNick()) == 0) {
-			SetVoiced(bVoiced);
+			(bVoiced) ? AddPerm(Voice) : RemPerm(Voice);
 		}
 
 		if (bNoChange) {
@@ -401,8 +470,11 @@ void CChan::OnVoice(const CString& sOpNick, const CString& sNick, bool bVoiced) 
 			return;
 		}
 
-		pNick->SetVoice(bVoiced);
-		(bVoiced) ? IncVoiceCount() : DecVoiceCount();
+		bool bChange = (bVoiced) ? pNick->AddPerm(Voice) : pNick->RemPerm(Voice);
+
+		if (bChange) {
+			(bVoiced) ? IncPermCount(Voice) : DecPermCount(Voice);
+		}
 	}
 }
 

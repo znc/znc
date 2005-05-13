@@ -2,10 +2,13 @@
 #define _CHAN_H
 
 #include "Nick.h"
+#include "String.h"
 #include <vector>
 #include <map>
+#include <set>
 using std::vector;
 using std::map;
+using std::set;
 
 // Forward Declarations
 class CUser;
@@ -14,14 +17,27 @@ class CUser;
 class CChan {
 public:
 	typedef enum {
-		Private		= 1 << 0,
-		Secret		= 1 << 1,
-		NoMessages	= 1 << 2,
-		Moderated	= 1 << 3,
-		OpTopic		= 1 << 4,
-		InviteOnly	= 1 << 5,
-		Key			= 1 << 6
-	} EMode;
+		Voice	= '+',
+		HalfOp 	= '%',
+		Op		= '@',
+		Admin	= '!',
+		Owner	= '*'
+	} EUserPerms;
+
+	typedef enum {
+		M_Private		= 'p',
+		M_Secret		= 's',
+		M_Moderated		= 'm',
+		M_InviteOnly	= 'i',
+		M_NoMessages	= 'n',
+		M_OpTopic		= 't',
+		M_Limit			= 'l',
+		M_Key			= 'k',
+		M_Op			= 'o',
+		M_Voice			= 'v',
+		M_Ban			= 'b',
+		M_Except		= 'e',
+	} EModes;
 
 	CChan(const CString& sName, CUser* pUser);
 	virtual ~CChan();
@@ -42,9 +58,11 @@ public:
 	// Modes
 	void SetModes(const CString& s);
 	void ModeChange(const CString& sModes, const CString& sNick = "");
+	bool AddMode(unsigned char uMode, const CString& sArg);
+	bool RemMode(unsigned char uMode, const CString& sArg);
 	void OnOp(const CString& sOpNick, const CString& sNick, bool bOpped);
 	void OnVoice(const CString& sOpNick, const CString& sNick, bool bVoiced);
-	CString GetModeCString() const;
+	CString GetModeString() const;
 	CString GetModeArg(CString& sArgs) const;
 	// !Modes
 
@@ -62,19 +80,22 @@ public:
 	void ClearBuffer();
 	// !Buffer
 
+	// m_Nick wrappers
+	CString GetPermStr() const { return m_Nick.GetPermStr(); }
+	bool HasPerm(unsigned char uPerm) const { return m_Nick.HasPerm(uPerm); }
+	bool AddPerm(unsigned char uPerm) { return m_Nick.AddPerm(uPerm); }
+	bool RemPerm(unsigned char uPerm) { return m_Nick.RemPerm(uPerm); }
+	// !wrappers
+
 	// Setters
+	void IncPermCount(unsigned char uPerm);
+	void DecPermCount(unsigned char uPerm);
 	void SetIsOn(bool b) { m_bIsOn = b; if (!b) { Reset(); } else { Joined(); } }
-	void SetOpped(bool b) { m_bIsOp = b; }
-	void SetVoiced(bool b) { m_bIsVoice = b; }
 	void SetKey(const CString& s) { m_sKey = s; }
 	void SetTopic(const CString& s) { m_sTopic = s; }
 	void SetTopicOwner(const CString& s) { m_sTopicOwner = s; }
 	void SetTopicDate(unsigned long u) { m_ulTopicDate = u; }
 	void SetDefaultModes(const CString& s) { m_sDefaultModes = s; }
-	void IncOpCount() { m_uOpCount++; }
-	void DecOpCount() { m_uOpCount -= (m_uOpCount > 0); }
-	void IncVoiceCount() { m_uVoiceCount++; }
-	void DecVoiceCount() { m_uVoiceCount -= (m_uVoiceCount > 0); }
 	void SetBufferCount(unsigned int u) { m_uBufferCount = u; }
 	void SetKeepBuffer(bool b) { m_bKeepBuffer = b; }
 	void SetAutoCycle(bool b) { m_bAutoCycle = b; }
@@ -83,11 +104,12 @@ public:
 	// !Setters
 
 	// Getters
+	bool HasMode(unsigned char uMode) const;
+	CString GetModeArg(unsigned char uMode) const;
+	unsigned int GetPermCount(unsigned char uPerm);
 	const bool IsOn() const { return m_bIsOn; }
-	const bool IsOp() const { return m_bIsOp; }
-	const bool IsVoice() const { return m_bIsVoice; }
 	const CString& GetName() const { return m_sName; }
-	unsigned int GetModes() const { return m_uModes; }
+	const map<unsigned char, CString>& GetModes() const { return m_musModes; }
 	const CString& GetKey() const { return m_sKey; }
 	unsigned int GetLimit() const { return m_uLimit; }
 	const CString& GetTopic() const { return m_sTopic; }
@@ -98,10 +120,7 @@ public:
 	const vector<CString>& GetBuffer() const { return m_vsBuffer; }
 	const map<CString,CNick*>& GetNicks() const { return m_msNicks; }
 	unsigned int GetNickCount() const { return m_msNicks.size(); }
-	unsigned int GetOpCount() const { return m_uOpCount; }
-	unsigned int GetVoiceCount() const { return m_uVoiceCount; }
 	unsigned int GetBufferCount() const { return m_uBufferCount; }
-	bool HasMode(EMode eMode) const { return (m_uModes & eMode); }
 	bool KeepBuffer() const { return m_bKeepBuffer; }
 	bool AutoCycle() const { return m_bAutoCycle; }
 	bool IsDetached() const { return m_bDetached; }
@@ -110,8 +129,6 @@ private:
 protected:
 	bool				m_bDetached;
 	bool				m_bIsOn;
-	bool				m_bIsOp;
-	bool				m_bIsVoice;
 	bool				m_bWhoDone;
 	bool				m_bKeepBuffer;
 	bool				m_bAutoCycle;
@@ -121,16 +138,18 @@ protected:
 	CString				m_sTopicOwner;
 	unsigned long		m_ulTopicDate;
 	CUser*				m_pUser;
+	CNick				m_Nick;
 	unsigned int		m_uLimit;
-	unsigned int		m_uModes;
 	CString				m_sDefaultModes;
 	vector<CString>		m_vsBans;
 	map<CString,CNick*>	m_msNicks;	// Todo: make this caseless (irc style)
+	set<unsigned int>	m_suUserPerms;
 	unsigned int		m_uBufferCount;
-	unsigned int		m_uOpCount;
-	unsigned int		m_uVoiceCount;
 	unsigned int		m_uClientRequests;	// Used to tell how many times a client tried to join this chan
 	vector<CString>		m_vsBuffer;
+
+	map<unsigned char, CString>			m_musModes;
+	map<unsigned char, unsigned int>	m_muuPermCount;
 };
 
 #endif // !_CHAN_H

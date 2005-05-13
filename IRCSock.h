@@ -16,6 +16,13 @@ public:
 	CIRCSock(CZNC* pZNC, CUser* pUser);
 	virtual ~CIRCSock();
 
+	typedef enum {
+		ListArg		= 0,	// These values must line up with their position in the CHANMODE argument to raw 005
+		HasArg		= 1,
+		ArgWhenSet	= 2,
+		NoArg		= 3
+	} EChanModeArgs;
+
 	// Message Handlers
 	bool OnCTCPReply(const CString& sNickMask, CString& sMessage);
 	bool OnPrivCTCP(const CString& sNickMask, CString& sMessage);
@@ -47,29 +54,37 @@ public:
 	// !Setters
 
 	// Getters
-	CString GetNickMask() const {
-		return m_Nick.GetNickMask();
-	}
+
+	EChanModeArgs GetModeType(unsigned char uMode) const;
+	unsigned char GetPermFromMode(unsigned char uMode) const;
+	const map<unsigned char, EChanModeArgs>& GetChanModes() const { return m_mueChanModes; }
+	bool IsPermChar(const char c) const { return (c != '\0' && GetPerms().find(c) != CString::npos); }
+	bool IsPermMode(const char c) const { return (c != '\0' && GetPermModes().find(c) != CString::npos); }
+	const CString& GetPerms() const { return m_sPerms; }
+	const CString& GetPermModes() const { return m_sPermModes; }
+	CString GetNickMask() const { return m_Nick.GetNickMask(); }
 	const CString& GetNick() const { return m_Nick.GetNick(); }
 	const CString& GetPass() const { return m_sPass; }
 	// !Getters
 private:
 	void SetNick(const CString& sNick);
 protected:
-	bool					m_bISpoofReleased;
-	bool					m_bAuthed;
-	bool					m_bKeepNick;
-	CString					m_sNickPrefixes;
-	CZNC*					m_pZNC;
-	CUser*					m_pUser;
-	CNick					m_Nick;
-	CString					m_sPass;
-	CBuffer					m_RawBuffer;
-	CBuffer					m_MotdBuffer;
-	CUserSock*				m_pUserSock;
+	bool						m_bISpoofReleased;
+	bool						m_bAuthed;
+	bool						m_bKeepNick;
+	CString						m_sPerms;
+	CString						m_sPermModes;
+	map<unsigned char, EChanModeArgs>	m_mueChanModes;
+	CZNC*						m_pZNC;
+	CUser*						m_pUser;
+	CNick						m_Nick;
+	CString						m_sPass;
+	CBuffer						m_RawBuffer;
+	CBuffer						m_MotdBuffer;
+	CUserSock*					m_pUserSock;
 	map<CString, CChan*>		m_msChans;
-	unsigned int			m_uQueryBufferCount;
-	CBuffer					m_QueryBuffer;
+	unsigned int				m_uQueryBufferCount;
+	CBuffer						m_QueryBuffer;
 };
 
 #endif // !_IRCSOCK_H

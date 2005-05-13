@@ -408,6 +408,7 @@ void CUserSock::UserCommand(const CString& sLine) {
 		}
 
 		const map<CString,CNick*>& msNicks = pChan->GetNicks();
+		const CString& sPerms = m_pUser->GetIRCSock()->GetPerms();
 
 		if (!msNicks.size()) {
 			PutStatus("No nicks on [" + sChan + "]");
@@ -415,16 +416,28 @@ void CUserSock::UserCommand(const CString& sLine) {
 		}
 
 		CTable Table;
-		Table.AddColumn("@");
-		Table.AddColumn("+");
+
+		for (unsigned int p = 0; p < sPerms.size(); p++) {
+			CString sPerm;
+			sPerm += sPerms[p];
+			Table.AddColumn(sPerm);
+		}
+
 		Table.AddColumn("Nick");
 		Table.AddColumn("Ident");
 		Table.AddColumn("Host");
 
 		for (map<CString,CNick*>::const_iterator a = msNicks.begin(); a != msNicks.end(); a++) {
 			Table.AddRow();
-			if (a->second->IsOp()) { Table.SetCell("@", "@"); }
-			if (a->second->IsVoice()) { Table.SetCell("+", "+"); }
+
+			for (unsigned int b = 0; b < sPerms.size(); b++) {
+				if (a->second->HasPerm(sPerms[b])) {
+					CString sPerm;
+				   	sPerm += sPerms[b];
+					Table.SetCell(sPerm, sPerm);
+				}
+			}
+
 			Table.SetCell("Nick", a->second->GetNick());
 			Table.SetCell("Ident", a->second->GetIdent());
 			Table.SetCell("Host", a->second->GetHost());
@@ -475,6 +488,7 @@ void CUserSock::UserCommand(const CString& sLine) {
 	} else if (sCommand.CaseCmp("LISTCHANS") == 0) {
 		if (m_pUser) {
 			const vector<CChan*>& vChans = m_pUser->GetChans();
+			const CString& sPerms = m_pUser->GetIRCSock()->GetPerms();
 
 			CTable Table;
 			Table.AddColumn("Name");
@@ -482,17 +496,21 @@ void CUserSock::UserCommand(const CString& sLine) {
 			Table.AddColumn("Buf");
 			Table.AddColumn("Modes");
 			Table.AddColumn("Users");
-			Table.AddColumn("+o");
-			Table.AddColumn("+v");
+
+			for (unsigned int p = 0; p < sPerms.size(); p++) {
+				CString sPerm;
+				sPerm += sPerms[p];
+				Table.AddColumn(sPerm);
+			}
 
 			for (unsigned int a = 0; a < vChans.size(); a++) {
 				CChan* pChan = vChans[a];
 				Table.AddRow();
-				Table.SetCell("Name", CString((pChan->IsOp()) ? "@" : ((pChan->IsVoice()) ? "+" : "")) + pChan->GetName());
+				Table.SetCell("Name", pChan->GetPermStr() + pChan->GetName());
 				Table.SetCell("Status", ((vChans[a]->IsOn()) ? ((vChans[a]->IsDetached()) ? "Detached" : "Joined") : "Trying"));
 				Table.SetCell("Buf", CString((pChan->KeepBuffer()) ? "*" : "") + CString::ToString(pChan->GetBufferCount()));
 
-				CString sModes = pChan->GetModeCString();
+				CString sModes = pChan->GetModeString();
 				unsigned int uLimit = pChan->GetLimit();
 				const CString& sKey = pChan->GetKey();
 
@@ -501,8 +519,12 @@ void CUserSock::UserCommand(const CString& sLine) {
 
 				Table.SetCell("Modes", sModes);
 				Table.SetCell("Users", CString::ToString(pChan->GetNickCount()));
-				Table.SetCell("+o", CString::ToString(pChan->GetOpCount()));
-				Table.SetCell("+v", CString::ToString(pChan->GetVoiceCount()));
+
+				for (unsigned int b = 0; b < sPerms.size(); b++) {
+					CString sPerm;
+					sPerm += sPerms[b];
+					Table.SetCell(sPerm, CString::ToString(pChan->GetPermCount(sPerms[b])));
+				}
 			}
 
 			if (Table.size()) {

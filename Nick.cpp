@@ -1,19 +1,22 @@
-#include "Nick.h"
 #include "Chan.h"
+#include "Nick.h"
 #include "User.h"
+#include "IRCSock.h"
 
 CNick::CNick() {
-	m_bIsOp = false;
-	m_bIsVoice = false;
+	Reset();
 }
 
 CNick::CNick(const CString& sNick) {
+	Reset();
 	Parse(sNick);
-	m_bIsOp = false;
-	m_bIsVoice = false;
 }
 
 CNick::~CNick() {}
+
+void CNick::Reset() {
+	m_cPerm = '\0';
+}
 
 void CNick::Parse(const CString& sNickMask) {
 	if (sNickMask.empty()) {
@@ -56,14 +59,62 @@ unsigned int CNick::GetCommonChans(vector<CChan*>& vRetChans, CUser* pUser) cons
 	return vRetChans.size();
 }
 
+void CNick::SetUser(CUser* pUser) { m_pUser = pUser; }
+void CNick::SetPermChar(char c) { m_cPerm = c; }
 void CNick::SetNick(const CString& s) { m_sNick = s; }
 void CNick::SetIdent(const CString& s) { m_sIdent = s; }
 void CNick::SetHost(const CString& s) { m_sHost = s; }
-void CNick::SetOp(bool b) { m_bIsOp = b; }
-void CNick::SetVoice(bool b) { m_bIsVoice = b; }
 
-bool CNick::IsOp() const { return m_bIsOp; }
-bool CNick::IsVoice() const { return m_bIsVoice; }
+bool CNick::HasPerm(unsigned char uPerm) const {
+	return (uPerm && m_suChanPerms.find(uPerm) != m_suChanPerms.end());
+}
+
+bool CNick::AddPerm(unsigned char uPerm) {
+	if (!uPerm || HasPerm(uPerm)) {
+		return false;
+	}
+
+	m_suChanPerms.insert(uPerm);
+	UpdatePermChar();
+
+	return true;
+}
+
+bool CNick::RemPerm(unsigned char uPerm) {
+	if (!HasPerm(uPerm)) {
+		return false;
+	}
+
+	m_suChanPerms.erase(uPerm);
+	UpdatePermChar();
+
+	return true;
+}
+
+void CNick::UpdatePermChar() {
+	const CString& sChanPerms = (!m_pUser) ? "@+" : m_pUser->GetIRCSock()->GetPerms();
+	m_cPerm = 0;
+
+	for (unsigned int a = 0; a < sChanPerms.size(); a++) {
+		const unsigned char& c = sChanPerms[a];
+		if (HasPerm(c)) {
+			m_cPerm = c;
+			break;
+		}
+	}
+}
+
+const set<unsigned char>& CNick::GetChanPerms() const { return m_suChanPerms; }
+const unsigned char CNick::GetPermChar() const { return m_cPerm; }
+CString CNick::GetPermStr() const {
+	CString sRet;
+
+   	if (m_cPerm) {
+   		sRet += m_cPerm;
+   	}
+
+	return sRet;
+}
 const CString& CNick::GetNick() const { return m_sNick; }
 const CString& CNick::GetIdent() const { return m_sIdent; }
 const CString& CNick::GetHost() const { return m_sHost; }

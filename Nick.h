@@ -1,9 +1,11 @@
 #ifndef _NICK_H
 #define _NICK_H
 
-#include <vector>
 #include "String.h"
+#include <vector>
+#include <set>
 using std::vector;
+using std::set;
 
 // Forward Decl
 class CUser;
@@ -17,21 +19,27 @@ public:
 	CNick(const CString& sNick);
 	virtual ~CNick();
 
+	void Reset();
 	void Parse(const CString& sNickMask);
 	CString GetHostMask() const;
 	unsigned int GetCommonChans(vector<CChan*>& vChans, CUser* pUser) const;
 
 	// Setters
+	void SetUser(CUser* pUser);
+	void UpdatePermChar();
+	void SetPermChar(char c);
 	void SetNick(const CString& s);
 	void SetIdent(const CString& s);
 	void SetHost(const CString& s);
-	void SetOp(bool b);
-	void SetVoice(bool b);
+	bool AddPerm(unsigned char uPerm);
+	bool RemPerm(unsigned char uPerm);
 	// !Setters
 
 	// Getters
-	bool IsOp() const;
-	bool IsVoice() const;
+	const set<unsigned char>& GetChanPerms() const;
+	CString GetPermStr() const;
+	const unsigned char GetPermChar() const;
+	bool HasPerm(unsigned char uPerm) const;
 	const CString& GetNick() const;
 	const CString& GetIdent() const;
 	const CString& GetHost() const;
@@ -39,13 +47,12 @@ public:
 	// !Getters
 private:
 protected:
-	CString		m_sNick;
-	CString		m_sIdent;
-	CString		m_sHost;
-
-	bool		m_bIsOp;
-	bool		m_bIsVoice;
+	set<unsigned char>	m_suChanPerms;
+	unsigned char		m_cPerm;
+	CUser*				m_pUser;
+	CString				m_sNick;
+	CString				m_sIdent;
+	CString				m_sHost;
 };
 
 #endif // !_NICK_H
-

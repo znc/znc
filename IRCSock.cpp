@@ -17,7 +17,17 @@ CIRCSock::CIRCSock(CZNC* pZNC, CUser* pUser) : Csock() {
 	m_MotdBuffer.SetLineCount(200);		// This should be more than enough motd lines
 	m_Nick.SetIdent(pUser->GetIdent());
 	m_Nick.SetHost(pUser->GetVHost());
-	m_sNickPrefixes = "+@";
+	m_sPerms = "@+";
+	m_sPermModes = "ov";
+	m_mueChanModes['p'] = NoArg;
+	m_mueChanModes['s'] = NoArg;
+	m_mueChanModes['t'] = NoArg;
+	m_mueChanModes['i'] = NoArg;
+	m_mueChanModes['n'] = NoArg;
+	m_mueChanModes['b'] = HasArg;
+	m_mueChanModes['e'] = HasArg;
+	m_mueChanModes['k'] = HasArg;
+	m_mueChanModes['l'] = ArgWhenSet;
 }
 
 CIRCSock::~CIRCSock() {
@@ -873,12 +883,50 @@ void CIRCSock::ParseISupport(const CString& sLine) {
 
 		if (sName.CaseCmp("PREFIX") == 0) {
 			CString sPrefixes = sValue.Token(1, false, ')');
+			CString sPermModes = sValue.Token(0, false, ')');
+			sPermModes.LeftTrim("(");
 
-			if (!sPrefixes.empty()) {
-				m_sNickPrefixes = sPrefixes;
+			if (!sPrefixes.empty() && sPermModes.size() == sPrefixes.size()) {
+				m_sPerms = sPrefixes;
+				m_sPermModes = sPermModes;
+			}
+		} else if (sName.CaseCmp("CHANMODES") == 0) {
+			if (!sValue.empty()) {
+				m_mueChanModes.clear();
+
+				for (unsigned int a = 0; a < 4; a++) {
+					CString sModes = sValue.Token(a, false, ',');
+
+					for (unsigned int b = 0; b < sModes.size(); b++) {
+						m_mueChanModes[sModes[b]] = (EChanModeArgs) a;
+					}
+				}
 			}
 		}
 
 		sArg = sLine.Token(i++);
 	}
 }
+
+unsigned char CIRCSock::GetPermFromMode(unsigned char uMode) const {
+	if (m_sPermModes.size() == m_sPerms.size()) {
+		for (unsigned int a = 0; a < m_sPermModes.size(); a++) {
+			if (m_sPermModes[a] == uMode) {
+				return m_sPerms[a];
+			}
+		}
+	}
+
+	return 0;
+}
+
+CIRCSock::EChanModeArgs CIRCSock::GetModeType(unsigned char uMode) const {
+	map<unsigned char, EChanModeArgs>::const_iterator it = m_mueChanModes.find(uMode);
+
+	if (it == m_mueChanModes.end()) {
+		return NoArg;
+	}
+
+	return it->second;
+}
+
