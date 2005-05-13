@@ -128,9 +128,9 @@ public:
 	virtual bool OnStatusCommand(const CString& sCommand) { return( CBSingle( "OnStatusCommand", sCommand ) ); }
 	virtual void OnModCommand(const CString& sCommand) 
 	{ 
-		if ( sCommand.Token( 1 ) == "eval" )
+		if ( sCommand.Token( 0 ) == "eval" )
 		{
-			Eval( sCommand.Token( 2, true ) );
+			Eval( sCommand.Token( 1, true ) );
 			return;
 		}
 		CBSingle( "OnModCommand", sCommand ); 
@@ -264,7 +264,6 @@ public:
 		return( CallBack( sHookName, vsArgs ) );
 	}
 
-	// TODO add to OnCommand
 	void Eval( const CString & sScript );
 
 private:
@@ -479,6 +478,7 @@ XS(XS_exit)
 
 void CModPerl::Eval( const CString & sScript )
 {
+	// TODO need to figure out how to print out the errors
 	STRLEN n_a;
 	SV *val = eval_pv( sScript.c_str(), FALSE );
 	CString sReturn = SvPV( val, n_a );
@@ -587,7 +587,6 @@ bool CModPerl::OnLoad( const CString & sArgs )
 	PL_exit_flags |= PERL_EXIT_DESTRUCT_END;
 #endif /* PERL_EXIT_DESTRUCT_END */
 
-	Eval( "print STDERR 'HEY\n'" );
 	char *file = __FILE__;
 
 	newXS( "DynaLoader::boot_DynaLoader", boot_DynaLoader, (char *)file );
@@ -600,8 +599,6 @@ bool CModPerl::OnLoad( const CString & sArgs )
 	newXS( "PutStatus", XS_PutStatus, (char *)file );
 	newXS( "PutModule", XS_PutModule, (char *)file );
 	newXS( "PutModNotice", XS_PutModNotice, (char *)file );
-	// keep people from shooting themselves in the foot
-	newXS( "exit", XS_exit, (char *)file );
 
 	if ( !sArgs.empty() )
 		return( CBNone( "OnLoad" ) );
