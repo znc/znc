@@ -4,6 +4,7 @@
 #include "Nick.h"
 #include "Modules.h"
 #include "Chan.h"
+#include "FileUtils.h"
 
 // perl stuff
 #include <EXTERN.h>
@@ -73,8 +74,6 @@ public:
 		g_ModPerl = this;
 		m_pPerl = perl_alloc();
 		perl_construct( m_pPerl );
-		AddHook( "OnLoad" );
-		AddHook( "Shutdown" );
 	}
 
 	virtual ~CModPerl() 
@@ -82,10 +81,16 @@ public:
 		if ( m_pPerl )
 		{
 			CBNone( "Shutdown" );
-			perl_destruct( m_pPerl );
-			perl_free( m_pPerl );
+			PerlInterpShutdown();
 		}
 		g_ModPerl = NULL;
+	}
+
+	void PerlInterpShutdown()
+	{
+		perl_destruct( m_pPerl );
+		perl_free( m_pPerl );
+		m_pPerl = NULL;
 	}
 
 	virtual bool OnLoad( const CString & sArgs );
@@ -121,7 +126,15 @@ public:
 	virtual bool OnUserRaw(CString& sLine) { return( CBSingle( "OnUserRaw", sLine ) ); }
 	virtual bool OnRaw(CString& sLine) { return( CBSingle( "OnRaw", sLine ) ); }
 	virtual bool OnStatusCommand(const CString& sCommand) { return( CBSingle( "OnStatusCommand", sCommand ) ); }
-	virtual void OnModCommand(const CString& sCommand) { CBSingle( "OnModCommand", sCommand ); }
+	virtual void OnModCommand(const CString& sCommand) 
+	{ 
+		if ( sCommand.Token( 1 ) == "eval" )
+		{
+			Eval( sCommand.Token( 2, true ) );
+			return;
+		}
+		CBSingle( "OnModCommand", sCommand ); 
+	}
 	virtual void OnModNotice(const CString& sMessage) { CBSingle( "OnModNotice", sMessage ); }
 	virtual void OnModCTCP(const CString& sMessage) { CBSingle( "OnModCTCP", sMessage ); }
 
@@ -250,6 +263,9 @@ public:
 		vsArgs.push_back( d );
 		return( CallBack( sHookName, vsArgs ) );
 	}
+
+	// TODO add to OnCommand
+	void Eval( const CString & sScript );
 
 private:
 
@@ -440,10 +456,43 @@ XS(XS_PutModNotice)
 	}
 }
 
+XS(XS_exit)
+{
+	dXSARGS;
+	if ( items != 1 )
+		Perl_croak( aTHX_ "Usage: exit( status )" );
+
+	SP -= items;
+	ax = (SP - PL_stack_base) + 1 ;
+	{
+		if ( g_ModPerl )
+		{
+			CString sStatus = (char *)SvPV(ST(0),PL_na);
+			g_ModPerl->PutModule( "Shutting down module, status " + sStatus );
+			g_ModPerl->PerlInterpShutdown();
+		}
+		PUTBACK;
+	}
+}
+
 /////////// supporting functions from within module
+
+void CModPerl::Eval( const CString & sScript )
+{
+	STRLEN n_a;
+	SV *val = eval_pv( sScript.c_str(), FALSE );
+	CString sReturn = SvPV( val, n_a );
+	if ( !sReturn.empty() )
+	{
+		PutModule( sReturn );
+	}
+}
 
 int CModPerl::CallBack( const PString & sHookName, const VPString & vsArgs )
 {
+	if ( !m_pPerl )
+		return( 0 );
+
 	set< PString >::iterator it = m_mssHookNames.find( sHookName );
 
 	if ( it == m_mssHookNames.end() )
@@ -488,8 +537,6 @@ int CModPerl::CallBack( const PString & sHookName, const VPString & vsArgs )
 		cerr << "Perl Error [" << *it << "] [" << sError << "]" << endl;
 		POPs; 
 
-		// TODO schedule this module for unloading
-
 	} else
 	{
 		if ( iCount == 1 )
@@ -510,10 +557,16 @@ EXTERN_C void boot_DynaLoader (pTHX_ CV* cv);
 
 bool CModPerl::OnLoad( const CString & sArgs ) 
 {
+	if ( ( !sArgs.empty() ) && ( !CFile::Exists( sArgs ) ) )
+	{
+		cerr << "No Such Module [" << sArgs << "]" << endl;
+		PutModule( "No Such Module [" + sArgs + "]" );
+	}
+
 	const char *pArgv[] = 
 	{
 		"",
-		sArgs.c_str(),
+		( sArgs.empty() ? "/dev/null" : sArgs.c_str() ),
 		NULL
 	};
 
@@ -524,10 +577,17 @@ bool CModPerl::OnLoad( const CString & sArgs )
 		return( false );
 	}
 
+	if ( !sArgs.empty() )
+	{
+		AddHook( "OnLoad" );
+		AddHook( "Shutdown" );
+	}
+
 #ifdef PERL_EXIT_DESTRUCT_END
 	PL_exit_flags |= PERL_EXIT_DESTRUCT_END;
 #endif /* PERL_EXIT_DESTRUCT_END */
 
+	Eval( "print STDERR 'HEY\n'" );
 	char *file = __FILE__;
 
 	newXS( "DynaLoader::boot_DynaLoader", boot_DynaLoader, (char *)file );
@@ -540,8 +600,13 @@ bool CModPerl::OnLoad( const CString & sArgs )
 	newXS( "PutStatus", XS_PutStatus, (char *)file );
 	newXS( "PutModule", XS_PutModule, (char *)file );
 	newXS( "PutModNotice", XS_PutModNotice, (char *)file );
+	// keep people from shooting themselves in the foot
+	newXS( "exit", XS_exit, (char *)file );
 
-	return( CBNone( "OnLoad" ) );
+	if ( !sArgs.empty() )
+		return( CBNone( "OnLoad" ) );
+
+	return( true );
 }
 
 bool CModPerl::OnDCCUserSend(const CNick& RemoteNick, unsigned long uLongIP, unsigned short uPort, 
