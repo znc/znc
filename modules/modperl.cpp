@@ -17,6 +17,7 @@
 
 const char g_pszMainScript[] = 
 {
+	"use strict;"
 	"sub ZNCLoadScript {"
 	"my $arg = shift;"
 	"require $arg;"
@@ -52,7 +53,7 @@ public:
 	PString( long long i ) : CString( PString::ToString( (long long)i ) ) { m_eType = INT; }
 	PString( unsigned long long i ) : CString( PString::ToString( i ) ) { m_eType = UINT; }
 	PString( double i ) : CString( PString::ToString( i ) ) { m_eType = NUM; }
-	PString( bool b ) : CString( ( b ? "0" : "1" ) ) { m_eType = BOOL; }
+	PString( bool b ) : CString( ( b ? "1" : "0" ) ) { m_eType = BOOL; }
 
 	virtual ~PString() {}
 
@@ -93,8 +94,6 @@ private:
 };
 
 
-#define CSTR( a ) a.c_str(), a.length()
-
 class CPerlHash : public map< CString, PString >
 {
 public:
@@ -106,7 +105,7 @@ public:
 		for( CPerlHash::iterator it = this->begin(); it != this->end(); it++ )
 		{
 			SV *pSV = it->second.GetSV( false );
-			hv_store( pHash, CSTR( it->first ), pSV, 0);
+			hv_store( pHash, it->first.c_str(), it->first.length(), pSV, 0);
 		}
 
 		return( pHash );
@@ -578,6 +577,22 @@ XS(XS_ZNC_GetNicks)
 		PUTBACK;
 	}
 }
+XS(XS_ZNC_GetNick)
+{
+	dXSARGS;
+
+	SP -= items;
+	ax = (SP - PL_stack_base) + 1 ;
+	{
+		if ( g_ModPerl )
+		{
+			CUser * pUser = g_ModPerl->GetUser();
+			PString sMe = pUser->GetNick();
+			XPUSHs( sMe.GetSV() );
+		}
+		PUTBACK;
+	}
+}
 /////////// supporting functions from within module
 
 bool CModPerl::LoadScript( const CString & sScript )
@@ -677,7 +692,7 @@ bool CModPerl::OnLoad( const CString & sArgs )
 {
 	m_pPerl = perl_alloc();
 	perl_construct( m_pPerl );
-	const char *pArgv[] = { "", "-e" "0" };
+	const char *pArgv[] = { "", "-e", "0", "-T", "-w" };
 
 	if ( perl_parse( m_pPerl, NULL, 2, (char **)pArgv, (char **)NULL ) != 0 )
 	{
@@ -703,6 +718,7 @@ bool CModPerl::OnLoad( const CString & sArgs )
 	newXS( "ZNC::PutModule", XS_ZNC_PutModule, (char *)file );
 	newXS( "ZNC::PutModNotice", XS_ZNC_PutModNotice, (char *)file );
 	newXS( "ZNC::GetNicks", XS_ZNC_GetNicks, (char *)file );
+	newXS( "ZNC::GetNick", XS_ZNC_GetNick, (char *)file );
 
 	// this sets up the eval CB that we call from here on out. this way we can grab the error produced
 	SetupZNCScript();
