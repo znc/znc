@@ -17,17 +17,18 @@ CIRCSock::CIRCSock(CZNC* pZNC, CUser* pUser) : Csock() {
 	m_MotdBuffer.SetLineCount(200);		// This should be more than enough motd lines
 	m_Nick.SetIdent(pUser->GetIdent());
 	m_Nick.SetHost(pUser->GetVHost());
-	m_sPerms = "@+";
-	m_sPermModes = "ov";
+	m_sPerms = "*!@%+";
+	m_sPermModes = "qaohv";
+	m_mueChanModes['b'] = ListArg;
+	m_mueChanModes['e'] = ListArg;
+	m_mueChanModes['I'] = ListArg;
+	m_mueChanModes['k'] = HasArg;
+	m_mueChanModes['l'] = ArgWhenSet;
 	m_mueChanModes['p'] = NoArg;
 	m_mueChanModes['s'] = NoArg;
 	m_mueChanModes['t'] = NoArg;
 	m_mueChanModes['i'] = NoArg;
 	m_mueChanModes['n'] = NoArg;
-	m_mueChanModes['b'] = HasArg;
-	m_mueChanModes['e'] = HasArg;
-	m_mueChanModes['k'] = HasArg;
-	m_mueChanModes['l'] = ArgWhenSet;
 }
 
 CIRCSock::~CIRCSock() {
