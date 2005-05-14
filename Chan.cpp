@@ -184,6 +184,7 @@ void CChan::ModeChange(const CString& sModes, const CString& sOpNick) {
 			CNick* pNick = FindNick(sArg);
 			if (pNick) {
 				unsigned char uPerm = m_pUser->GetIRCSock()->GetPermFromMode(uMode);
+				bool bNoChange = (pNick->HasPerm(uPerm) == bAdd);
 
 				if (uPerm) {
 					if (bAdd) {
@@ -204,7 +205,6 @@ void CChan::ModeChange(const CString& sModes, const CString& sOpNick) {
 						}
 					}
 #ifdef _MODULES
-					bool bNoChange = (pNick->HasPerm(uPerm) == bAdd);
 
 					if (uMode && pOpNick) {
 						m_pUser->GetModules().OnChanPermission(*pOpNick, *pNick, *this, uMode, bAdd, bNoChange);
@@ -428,40 +428,6 @@ bool CChan::ChangeNick(const CString& sOldNick, const CString& sNewNick) {
 	m_msNicks.erase(it);
 
 	return true;
-}
-
-void CChan::OnOp(const CString& sOpNick, const CString& sNick, bool bOpped) {
-	CNick* pNick = FindNick(sNick);
-
-	if (pNick) {
-		bool bNoChange = (pNick->HasPerm(Op) == bOpped);
-#ifdef _MODULES
-		CNick* pOpNick = FindNick(sOpNick);
-
-		if (pOpNick) {
-			if (bOpped) {
-				m_pUser->GetModules().OnOp(*pOpNick, *pNick, *this, bNoChange);
-			} else {
-				m_pUser->GetModules().OnDeop(*pOpNick, *pNick, *this, bNoChange);
-			}
-		}
-#endif
-
-		if (sNick.CaseCmp(m_pUser->GetCurNick()) == 0) {
-			(bOpped) ? AddPerm(Op) : RemPerm(Op);
-		}
-
-		if (bNoChange) {
-			// If no change, return
-			return;
-		}
-
-		bool bChange = (bOpped) ? pNick->AddPerm(Op) : pNick->RemPerm(Op);
-
-		if (bChange) {
-			(bOpped) ? IncPermCount(Op) : DecPermCount(Op);
-		}
-	}
 }
 
 CNick* CChan::FindNick(const CString& sNick) const {
