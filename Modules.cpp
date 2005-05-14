@@ -140,6 +140,7 @@ void CModule::OnIRCConnected() {}
 
 bool CModule::OnDCCUserSend(const CNick& RemoteNick, unsigned long uLongIP, unsigned short uPort, const CString& sFile, unsigned long uFileSize) { return false; }
 
+void CModule::OnChanPermission(const CNick& OpNick, const CNick& Nick, const CChan& Channel, unsigned char uMode, bool bAdded, bool bNoChange) {}
 void CModule::OnOp(const CNick& OpNick, const CNick& Nick, const CChan& Channel, bool bNoChange) {}
 void CModule::OnDeop(const CNick& OpNick, const CNick& Nick, const CChan& Channel, bool bNoChange) {}
 void CModule::OnVoice(const CNick& OpNick, const CNick& Nick, const CChan& Channel, bool bNoChange) {}
@@ -252,6 +253,12 @@ bool CModules::OnDCCUserSend(const CNick& RemoteNick, unsigned long uLongIP, uns
 	}
 
 	return false;
+}
+
+void CModules::OnChanPermission(const CNick& OpNick, const CNick& Nick, const CChan& Channel, unsigned char uMode, bool bAdded, bool bNoChange) {
+	for (unsigned int a = 0; a < size(); a++) {
+		(*this)[a]->OnChanPermission(OpNick, Nick, Channel, uMode, bAdded, bNoChange);
+	}
 }
 
 void CModules::OnOp(const CNick& OpNick, const CNick& Nick, const CChan& Channel, bool bNoChange) {

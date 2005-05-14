@@ -82,6 +82,7 @@ public:
 
 	virtual bool OnDCCUserSend(const CNick& RemoteNick, unsigned long uLongIP, unsigned short uPort, const CString& sFile, unsigned long uFileSize);
 
+	virtual void OnChanPermission(const CNick& OpNick, const CNick& Nick, const CChan& Channel, unsigned char uMode, bool bAdded, bool bNoChange);
 	virtual void OnOp(const CNick& OpNick, const CNick& Nick, const CChan& Channel, bool bNoChange);
 	virtual void OnDeop(const CNick& OpNick, const CNick& Nick, const CChan& Channel, bool bNoChange);
 	virtual void OnVoice(const CNick& OpNick, const CNick& Nick, const CChan& Channel, bool bNoChange);
@@ -158,6 +159,7 @@ public:
 
 	virtual bool OnDCCUserSend(const CNick& RemoteNick, unsigned long uLongIP, unsigned short uPort, const CString& sFile, unsigned long uFileSize);
 
+	virtual void OnChanPermission(const CNick& OpNick, const CNick& Nick, const CChan& Channel, unsigned char uMode, bool bAdded, bool bNoChange);
 	virtual void OnOp(const CNick& OpNick, const CNick& Nick, const CChan& Channel, bool bNoChange);
 	virtual void OnDeop(const CNick& OpNick, const CNick& Nick, const CChan& Channel, bool bNoChange);
 	virtual void OnVoice(const CNick& OpNick, const CNick& Nick, const CChan& Channel, bool bNoChange);
