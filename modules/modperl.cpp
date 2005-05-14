@@ -13,13 +13,22 @@
 
 #define NICK( a ) a.GetNickMask()
 #define CHAN( a ) a.GetName()
-#define ZNCEvalCB "ZNCEval"
+#define ZNCEvalCB "ZNC::Eval"
 
-const char *g_pszMainScript = "use strict;"
-	"sub ZNCEval { "
+const char g_pszMainScript[] = 
+{
+	"sub ZNCLoadScript {"
+	"my $arg = shift;"
+	"require $arg;"
+	"} "
+	"package ZNC;"
+	"use strict;"
+	"sub Eval { "
 	"my $arg = shift; "
 	"eval $arg; "
-   	"}";
+   	"}"
+	"1;"
+};
 
 class PString : public CString 
 {
@@ -102,7 +111,18 @@ public:
 	void SetupZNCScript()
 	{
 		eval_pv( g_pszMainScript, FALSE );
-		MapHook( "Register", "Register" );
+	}
+
+	void DumpError( const CString & sError )
+	{
+		CString sTmp = sError;
+		for( CString::size_type a = 0; a < sTmp.size(); a++ )
+		{
+			if ( isspace( sTmp[a] ) )
+				sTmp[a] = ' ';
+		}
+		cerr << "ERROR: " << sTmp << endl;
+		PutModule( sTmp );
 	}
 
 	virtual bool OnLoad( const CString & sArgs );
@@ -275,7 +295,8 @@ public:
 		return( CallBack( sHookName, vsArgs ) );
 	}
 
-	bool Eval( const CString & sScript );
+	bool Eval( const CString & sScript, const CString & sFuncName = ZNCEvalCB );
+	bool LoadScript( const CString & sScript );
 
 private:
 
@@ -290,7 +311,7 @@ MODULEDEFS( CModPerl )
 
 //////////////////////////////// PERL GUTS //////////////////////////////
 
-XS(XS_MapHook)
+XS(XS_ZNC_MapHook)
 {
 	dXSARGS;
 	if ( items != 2 )
@@ -306,7 +327,7 @@ XS(XS_MapHook)
 	}
 }
 
-XS(XS_DelHook)
+XS(XS_ZNC_DelHook)
 {
 	dXSARGS;
 	if ( items != 1 )
@@ -322,7 +343,7 @@ XS(XS_DelHook)
 	}
 }
 
-XS(XS_AddTimer)
+XS(XS_ZNC_AddTimer)
 {
 	dXSARGS;
 	if ( items != 4 )
@@ -347,7 +368,7 @@ XS(XS_AddTimer)
 	}
 }
 
-XS(XS_UnlinkTimer)
+XS(XS_ZNC_UnlinkTimer)
 {
 	dXSARGS;
 	if ( items != 1 )
@@ -371,7 +392,7 @@ XS(XS_UnlinkTimer)
 	}
 }
 
-XS(XS_PutIRC)
+XS(XS_ZNC_PutIRC)
 {
 	dXSARGS;
 	if ( items != 1 )
@@ -390,7 +411,7 @@ XS(XS_PutIRC)
 }
 
 	
-XS(XS_PutUser)
+XS(XS_ZNC_PutUser)
 {
 	dXSARGS;
 	if ( items != 1 )
@@ -409,7 +430,7 @@ XS(XS_PutUser)
 }
 
 	
-XS(XS_PutStatus)
+XS(XS_ZNC_PutStatus)
 {
 	dXSARGS;
 	if ( items != 1 )
@@ -427,7 +448,7 @@ XS(XS_PutStatus)
 	}
 }
 
-XS(XS_PutModule)
+XS(XS_ZNC_PutModule)
 {
 	dXSARGS;
 	if ( items != 3 )
@@ -447,7 +468,7 @@ XS(XS_PutModule)
 	}
 }
 
-XS(XS_PutModNotice)
+XS(XS_ZNC_PutModNotice)
 {
 	dXSARGS;
 	if ( items != 3 )
@@ -467,28 +488,26 @@ XS(XS_PutModNotice)
 	}
 }
 
-XS(XS_exit)
-{
-	dXSARGS;
-	if ( items != 1 )
-		Perl_croak( aTHX_ "Usage: exit( status )" );
-
-	SP -= items;
-	ax = (SP - PL_stack_base) + 1 ;
-	{
-		if ( g_ModPerl )
-		{
-			CString sStatus = (char *)SvPV(ST(0),PL_na);
-			g_ModPerl->PutModule( "Shutting down module, status " + sStatus );
-			g_ModPerl->PerlInterpShutdown();
-		}
-		PUTBACK;
-	}
-}
-
 /////////// supporting functions from within module
 
-bool CModPerl::Eval( const CString & sScript )
+bool CModPerl::LoadScript( const CString & sScript )
+{
+	const char *args[] = { sScript.c_str(), NULL };
+
+	call_argv( "ZNCLoadScript", G_EVAL|G_SCALAR|G_DISCARD, (char **)args );
+
+	bool bReturn = true;
+
+	if ( SvTRUE( ERRSV ) ) 
+	{ 
+		DumpError( SvPV( ERRSV, PL_na) );
+		bReturn = false;
+	}
+
+	return( bReturn );
+}
+
+bool CModPerl::Eval( const CString & sScript, const CString & sFuncName )
 {
 	dSP;
 	ENTER;
@@ -498,24 +517,22 @@ bool CModPerl::Eval( const CString & sScript )
 	XPUSHs( sv_2mortal( newSVpv( sScript.c_str(), sScript.length() ) ) );
 	PUTBACK;
 
-	SV *val = sv_2mortal( newSVpv( ZNCEvalCB, strlen( ZNCEvalCB ) ) );
-
 	SPAGAIN;
 
-	call_sv( val, G_EVAL|G_VOID );
+	call_pv( sFuncName.c_str(), G_EVAL|G_VOID|G_DISCARD );
+
+	bool bReturn = true;
 
 	if ( SvTRUE( ERRSV ) ) 
 	{ 
-		CString sError = SvPV( ERRSV, PL_na);
-		PutModule( "Perl Error [" + sError + "]" );
-		cerr << "Perl Error [" << sError << "]" << endl;
-		POPs; 
+		DumpError( SvPV( ERRSV, PL_na) );
+		bReturn = false;
 	}
 	PUTBACK;
 	FREETMPS;
 	LEAVE;
 
-	return( true );
+	return( bReturn );
 }
 
 int CModPerl::CallBack( const PString & sHookName, const VPString & vsArgs )
@@ -563,9 +580,7 @@ int CModPerl::CallBack( const PString & sHookName, const VPString & vsArgs )
 	if ( SvTRUE( ERRSV ) ) 
 	{ 
 		CString sError = SvPV( ERRSV, PL_na);
-		PutModule( "Perl Error [" + it->second + "] [" + sError + "]" );
-		cerr << "Perl Error [" << it->second << "] [" << sError << "]" << endl;
-		POPs; 
+		DumpError( it->second + ": " + sError );
 
 	} else
 	{
@@ -605,27 +620,26 @@ bool CModPerl::OnLoad( const CString & sArgs )
 	char *file = __FILE__;
 
 	newXS( "DynaLoader::boot_DynaLoader", boot_DynaLoader, (char *)file );
-	newXS( "MapHook", XS_MapHook, (char *)file );
-	newXS( "DelHook", XS_DelHook, (char *)file );
-	newXS( "AddTimer", XS_AddTimer, (char *)file );
-	newXS( "UnlinkTimer", XS_UnlinkTimer, (char *)file );
-	newXS( "PutIRC", XS_PutIRC, (char *)file );
-	newXS( "PutUser", XS_PutUser, (char *)file );
-	newXS( "PutStatus", XS_PutStatus, (char *)file );
-	newXS( "PutModule", XS_PutModule, (char *)file );
-	newXS( "PutModNotice", XS_PutModNotice, (char *)file );
+	newXS( "ZNC::MapHook", XS_ZNC_MapHook, (char *)file );
+	newXS( "ZNC::DelHook", XS_ZNC_DelHook, (char *)file );
+	newXS( "ZNC::AddTimer", XS_ZNC_AddTimer, (char *)file );
+	newXS( "ZNC::UnlinkTimer", XS_ZNC_UnlinkTimer, (char *)file );
+	newXS( "ZNC::PutIRC", XS_ZNC_PutIRC, (char *)file );
+	newXS( "ZNC::PutUser", XS_ZNC_PutUser, (char *)file );
+	newXS( "ZNC::PutStatus", XS_ZNC_PutStatus, (char *)file );
+	newXS( "ZNC::PutModule", XS_ZNC_PutModule, (char *)file );
+	newXS( "ZNC::PutModNotice", XS_ZNC_PutModNotice, (char *)file );
 
 	// this sets up the eval CB that we call from here on out. this way we can grab the error produced
 	SetupZNCScript();
 
 	if ( !sArgs.empty() )
 	{
-		if ( !Eval( "require \"" + sArgs + "\"" ) )
+		if ( !LoadScript( sArgs ) )
 		{
 			PerlInterpShutdown();
 			return( false );
 		}
-		CBNone( "Register" );
 		return( CBNone( "OnLoad" ) );
 	}
 
