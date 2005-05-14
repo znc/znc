@@ -15,6 +15,12 @@
 #define CHAN( a ) a.GetName()
 #define ZNCEvalCB "ZNCEval"
 
+const char *g_pszMainScript = "use strict;"
+	"sub ZNCEval { "
+	"my $arg = shift; "
+	"eval $arg; "
+   	"}";
+
 class PString : public CString 
 {
 public:
@@ -91,6 +97,12 @@ public:
 		perl_destruct( m_pPerl );
 		perl_free( m_pPerl );
 		m_pPerl = NULL;
+	}
+
+	void SetupZNCScript()
+	{
+		eval_pv( g_pszMainScript, FALSE );
+		MapHook( "Register", "Register" );
 	}
 
 	virtual bool OnLoad( const CString & sArgs );
@@ -210,10 +222,13 @@ public:
 		return( CBTriple( "OnChanNotice", NICK( Nick ), CHAN( Channel ), sMessage ) );
 	}
 
-	void AddHook( const PString & sHookName ) { m_mssHookNames.insert( sHookName ); }
-	void DelHook( const PString & sHookName )
+	void MapHook( const CString & sHookName, const CString & sCallBack ) 
+	{ 
+		m_mssHookNames[sHookName] = sCallBack;  
+	}
+	void DelHook( const CString & sHookName )
 	{
-		set< PString >::iterator it = m_mssHookNames.find( sHookName );
+		map< CString, CString >::iterator it = m_mssHookNames.find( sHookName );
 		if ( it != m_mssHookNames.end() )
 			m_mssHookNames.erase( it );
 	}
@@ -265,7 +280,7 @@ public:
 private:
 
 	PerlInterpreter	*m_pPerl;
-	set< PString >	m_mssHookNames;
+	map< CString, CString >	m_mssHookNames;
 
 };
 
@@ -275,17 +290,17 @@ MODULEDEFS( CModPerl )
 
 //////////////////////////////// PERL GUTS //////////////////////////////
 
-XS(XS_AddHook)
+XS(XS_MapHook)
 {
 	dXSARGS;
-	if ( items != 1 )
-		Perl_croak( aTHX_ "Usage: AddHook( sFuncName )" );
+	if ( items != 2 )
+		Perl_croak( aTHX_ "Usage: MapHook( sHookName, sFuncName )" );
 
 	SP -= items;
 	ax = (SP - PL_stack_base) + 1 ;
 	{
 		if ( g_ModPerl )
-			g_ModPerl->AddHook( (char *)SvPV(ST(0),PL_na) );
+			g_ModPerl->MapHook( (char *)SvPV(ST(0),PL_na), (char *)SvPV(ST(1),PL_na) );
 
 		PUTBACK;
 	}
@@ -311,20 +326,21 @@ XS(XS_AddTimer)
 {
 	dXSARGS;
 	if ( items != 4 )
-		Perl_croak( aTHX_ "Usage: AddZNCTimer( sFuncName, iInterval, iCycles, sDesc )" );
+		Perl_croak( aTHX_ "Usage: AddTimer( sHookName, sFuncName, iInterval, iCycles, sDesc )" );
 
 	SP -= items;
 	ax = (SP - PL_stack_base) + 1 ;
 	{
 		if ( g_ModPerl )
 		{
-			CString sLabel = (char *)SvPV(ST(0),PL_na);
-			u_int iInterval = (u_int)SvIV(ST(1));
-			u_int iCycles = (u_int)SvIV(ST(2));
-			CString sDesc = (char *)SvPV(ST(3),PL_na);
+			CString sHookName = (char *)SvPV(ST(0),PL_na);
+			CString sFuncName = (char *)SvPV(ST(1),PL_na);
+			u_int iInterval = (u_int)SvIV(ST(2));
+			u_int iCycles = (u_int)SvIV(ST(3));
+			CString sDesc = (char *)SvPV(ST(4),PL_na);
 
-			CModPerlTimer *pTimer = new CModPerlTimer( g_ModPerl, iInterval, iCycles, sLabel, sDesc ); 
-			g_ModPerl->AddHook( sLabel );
+			CModPerlTimer *pTimer = new CModPerlTimer( g_ModPerl, iInterval, iCycles, sHookName, sDesc ); 
+			g_ModPerl->MapHook( sHookName, sFuncName );
 			g_ModPerl->AddTimer( pTimer );
 		}
 		PUTBACK;
@@ -335,7 +351,7 @@ XS(XS_UnlinkTimer)
 {
 	dXSARGS;
 	if ( items != 1 )
-		Perl_croak( aTHX_ "Usage: KillZNCTimer( sLabel )" );
+		Perl_croak( aTHX_ "Usage: UnlinkTimer( sLabel )" );
 
 	SP -= items;
 	ax = (SP - PL_stack_base) + 1 ;
@@ -507,7 +523,7 @@ int CModPerl::CallBack( const PString & sHookName, const VPString & vsArgs )
 	if ( !m_pPerl )
 		return( 0 );
 
-	set< PString >::iterator it = m_mssHookNames.find( sHookName );
+	map< CString, CString >::iterator it = m_mssHookNames.find( sHookName );
 
 	if ( it == m_mssHookNames.end() )
 		return( 0 );
@@ -539,7 +555,7 @@ int CModPerl::CallBack( const PString & sHookName, const VPString & vsArgs )
 	}
 	PUTBACK;
 
-	int iCount = call_pv( sHookName.c_str(), G_EVAL|G_SCALAR );
+	int iCount = call_pv( it->second.c_str(), G_EVAL|G_SCALAR );
 
 	SPAGAIN;
 	int iRet = 0;
@@ -547,8 +563,8 @@ int CModPerl::CallBack( const PString & sHookName, const VPString & vsArgs )
 	if ( SvTRUE( ERRSV ) ) 
 	{ 
 		CString sError = SvPV( ERRSV, PL_na);
-		PutModule( "Perl Error [" + *it + "] [" + sError + "]" );
-		cerr << "Perl Error [" << *it << "] [" << sError << "]" << endl;
+		PutModule( "Perl Error [" + it->second + "] [" + sError + "]" );
+		cerr << "Perl Error [" << it->second << "] [" << sError << "]" << endl;
 		POPs; 
 
 	} else
@@ -589,7 +605,7 @@ bool CModPerl::OnLoad( const CString & sArgs )
 	char *file = __FILE__;
 
 	newXS( "DynaLoader::boot_DynaLoader", boot_DynaLoader, (char *)file );
-	newXS( "AddHook", XS_AddHook, (char *)file );
+	newXS( "MapHook", XS_MapHook, (char *)file );
 	newXS( "DelHook", XS_DelHook, (char *)file );
 	newXS( "AddTimer", XS_AddTimer, (char *)file );
 	newXS( "UnlinkTimer", XS_UnlinkTimer, (char *)file );
@@ -600,10 +616,7 @@ bool CModPerl::OnLoad( const CString & sArgs )
 	newXS( "PutModNotice", XS_PutModNotice, (char *)file );
 
 	// this sets up the eval CB that we call from here on out. this way we can grab the error produced
-	CString sTMP = "sub ";
-   	sTMP += ZNCEvalCB;
-	sTMP += " { my $arg = shift; eval $arg; }";
-	eval_pv( sTMP.c_str(), FALSE );
+	SetupZNCScript();
 
 	if ( !sArgs.empty() )
 	{
@@ -612,8 +625,7 @@ bool CModPerl::OnLoad( const CString & sArgs )
 			PerlInterpShutdown();
 			return( false );
 		}
-		AddHook( "OnLoad" );
-		AddHook( "Shutdown" );
+		CBNone( "Register" );
 		return( CBNone( "OnLoad" ) );
 	}
 
