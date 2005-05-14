@@ -65,6 +65,43 @@ private:
 	EType	m_eType;
 };
 
+
+#define CSTR( a ) a.c_str(), a.length()
+
+class CPerlHash : public map< CString, PString >
+{
+public:
+	
+	HV *GetHash()
+	{
+		HV *pHash = newHV();
+		for( CPerlHash::iterator it = this->begin(); it != this->end(); it++ )
+		{
+			SV *pSV = NULL;
+			switch( it->second.GetType() )
+			{
+				case PString::NUM:
+					pSV = newSVnv( it->second.ToDouble() );
+					break;
+				case PString::INT:
+					pSV = newSViv( it->second.ToLongLong() );
+					break;
+				case PString::UINT:
+				case PString::BOOL:
+					pSV = newSVuv( it->second.ToULongLong() );
+					break;
+				case PString::STRING:
+				default:
+					pSV = newSVpv( CSTR( it->second ) );
+					break;
+			}
+			hv_store( pHash, CSTR( it->first ), pSV, 0);
+		}
+
+		return( pHash );
+	}
+};
+
 typedef vector< PString > VPString;
 
 class CModPerl;
@@ -496,8 +533,6 @@ XS(XS_ZNC_PutModNotice)
 	}
 }
 
-#define STR( a ) a, strlen( a )
-#define CSTR( a ) a.c_str(), a.length()
 
 XS(XS_ZNC_GetNicks)
 {
@@ -520,17 +555,13 @@ XS(XS_ZNC_GetNicks)
 
 			for( map< CString,CNick* >::const_iterator it = mscNicks.begin(); it != mscNicks.end(); it++ )
 			{
-				HV *Hash = newHV();
 				CNick & cNick = *(it->second);
-				hv_store( Hash, STR( "Nick" ), newSVpv( CSTR( cNick.GetNick() ) ), 0);
-				hv_store( Hash, STR( "Ident" ), newSVpv( CSTR( cNick.GetIdent() ) ), 0);
-				hv_store( Hash, STR( "Host" ), newSVpv( CSTR( cNick.GetHost() ) ), 0);
-				if ( cNick.IsOp() )
-					hv_store( Hash, STR( "IsOp" ), newSVpv( STR( "1" ) ), 0);
-				if( cNick.IsVoice() )
-					hv_store( Hash, STR( "IsVoice" ), newSVpv( STR( "1" ) ), 0);
-
-				XPUSHs( sv_2mortal( newRV( (SV *)Hash ) ) );
+				CPerlHash cHash;
+				cHash["Nick"] = cNick.GetNick();
+				cHash["Ident"] = cNick.GetIdent();
+				cHash["Host"] = cNick.GetHost();
+				cHash["Perms"] = cNick.GetPermStr();
+				XPUSHs( sv_2mortal( newRV( (SV *)cHash.GetHash() ) ) );
 			}
 		}
 		PUTBACK;
