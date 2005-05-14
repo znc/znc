@@ -364,7 +364,7 @@ XS(XS_ZNC_MapHook)
 {
 	dXSARGS;
 	if ( items != 2 )
-		Perl_croak( aTHX_ "Usage: MapHook( sHookName, sFuncName )" );
+		Perl_croak( aTHX_ "Usage: ZNC::MapHook( sHookName, sFuncName )" );
 
 	SP -= items;
 	ax = (SP - PL_stack_base) + 1 ;
@@ -380,7 +380,7 @@ XS(XS_ZNC_DelHook)
 {
 	dXSARGS;
 	if ( items != 1 )
-		Perl_croak( aTHX_ "Usage: DelHook( sFuncName )" );
+		Perl_croak( aTHX_ "Usage: ZNC::DelHook( sFuncName )" );
 
 	SP -= items;
 	ax = (SP - PL_stack_base) + 1 ;
@@ -396,21 +396,20 @@ XS(XS_ZNC_AddTimer)
 {
 	dXSARGS;
 	if ( items != 4 )
-		Perl_croak( aTHX_ "Usage: AddTimer( sHookName, sFuncName, iInterval, iCycles, sDesc )" );
+		Perl_croak( aTHX_ "Usage: ZNC::AddTimer( sFuncName, iInterval, iCycles, sDesc )" );
 
 	SP -= items;
 	ax = (SP - PL_stack_base) + 1 ;
 	{
 		if ( g_ModPerl )
 		{
-			CString sHookName = (char *)SvPV(ST(0),PL_na);
-			CString sFuncName = (char *)SvPV(ST(1),PL_na);
-			u_int iInterval = (u_int)SvIV(ST(2));
-			u_int iCycles = (u_int)SvIV(ST(3));
-			CString sDesc = (char *)SvPV(ST(4),PL_na);
+			CString sFuncName = (char *)SvPV(ST(0),PL_na);
+			u_int iInterval = (u_int)SvIV(ST(1));
+			u_int iCycles = (u_int)SvIV(ST(2));
+			CString sDesc = (char *)SvPV(ST(3),PL_na);
 
-			CModPerlTimer *pTimer = new CModPerlTimer( g_ModPerl, iInterval, iCycles, sHookName, sDesc ); 
-			g_ModPerl->MapHook( sHookName, sFuncName );
+			CModPerlTimer *pTimer = new CModPerlTimer( g_ModPerl, iInterval, iCycles, sFuncName, sDesc ); 
+			g_ModPerl->MapHook( sFuncName, sFuncName );
 			g_ModPerl->AddTimer( pTimer );
 		}
 		PUTBACK;
@@ -421,7 +420,7 @@ XS(XS_ZNC_UnlinkTimer)
 {
 	dXSARGS;
 	if ( items != 1 )
-		Perl_croak( aTHX_ "Usage: UnlinkTimer( sLabel )" );
+		Perl_croak( aTHX_ "Usage: ZNC::UnlinkTimer( sLabel )" );
 
 	SP -= items;
 	ax = (SP - PL_stack_base) + 1 ;
@@ -445,7 +444,7 @@ XS(XS_ZNC_PutIRC)
 {
 	dXSARGS;
 	if ( items != 1 )
-		Perl_croak( aTHX_ "Usage: PutIRC( sLine )" );
+		Perl_croak( aTHX_ "Usage: ZNC::PutIRC( sLine )" );
 
 	SP -= items;
 	ax = (SP - PL_stack_base) + 1 ;
@@ -464,7 +463,7 @@ XS(XS_ZNC_PutUser)
 {
 	dXSARGS;
 	if ( items != 1 )
-		Perl_croak( aTHX_ "Usage: PutUser( sLine )" );
+		Perl_croak( aTHX_ "Usage: ZNC::PutUser( sLine )" );
 
 	SP -= items;
 	ax = (SP - PL_stack_base) + 1 ;
@@ -483,7 +482,7 @@ XS(XS_ZNC_PutStatus)
 {
 	dXSARGS;
 	if ( items != 1 )
-		Perl_croak( aTHX_ "Usage: PutStatus( sLine )" );
+		Perl_croak( aTHX_ "Usage: ZNC::PutStatus( sLine )" );
 
 	SP -= items;
 	ax = (SP - PL_stack_base) + 1 ;
@@ -524,7 +523,7 @@ XS(XS_ZNC_PutModNotice)
 {
 	dXSARGS;
 	if ( items < 1 )
-		Perl_croak( aTHX_ "Usage: PutModNotice( sLine, sIdent, sHost )" );
+		Perl_croak( aTHX_ "Usage: ZNC::PutModNotice( sLine, sIdent, sHost )" );
 
 	SP -= items;
 	ax = (SP - PL_stack_base) + 1 ;
@@ -548,7 +547,7 @@ XS(XS_ZNC_GetNicks)
 {
 	dXSARGS;
 	if ( items != 1 )
-		Perl_croak( aTHX_ "Usage: GetNicks( sChan )" );
+		Perl_croak( aTHX_ "Usage: ZNC::GetNicks( sChan )" );
 
 	SP -= items;
 	ax = (SP - PL_stack_base) + 1 ;
