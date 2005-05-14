@@ -160,14 +160,14 @@ void CChan::OnWho(const CString& sNick, const CString& sIdent, const CString& sH
 }
 
 void CChan::ModeChange(const CString& sModes, const CString& sOpNick) {
+	CNick* pOpNick = FindNick(sOpNick);
 	CString sModeArg = sModes.Token(0);
 	CString sArgs = sModes.Token(1, true);
 	bool bAdd = true;
 
 #ifdef _MODULES
-	CNick* pNick = FindNick(sOpNick);
-	if (pNick) {
-		m_pUser->GetModules().OnRawMode(*pNick, *this, sModeArg, sArgs);
+	if (pOpNick) {
+		m_pUser->GetModules().OnRawMode(*pOpNick, *this, sModeArg, sArgs);
 	}
 #endif
 
@@ -203,6 +203,27 @@ void CChan::ModeChange(const CString& sModes, const CString& sOpNick) {
 							RemPerm(uPerm);
 						}
 					}
+#ifdef _MODULES
+					bool bNoChange = (pNick->HasPerm(uPerm) == bAdd);
+
+					if (uMode && pOpNick) {
+						m_pUser->GetModules().OnChanPermission(*pOpNick, *pNick, *this, uMode, bAdd, bNoChange);
+
+						if (uMode == CChan::M_Op) {
+							if (bAdd) {
+								m_pUser->GetModules().OnOp(*pOpNick, *pNick, *this, bNoChange);
+							} else {
+								m_pUser->GetModules().OnDeop(*pOpNick, *pNick, *this, bNoChange);
+							}
+						} else if (uMode == CChan::M_Voice) {
+							if (bAdd) {
+								m_pUser->GetModules().OnVoice(*pOpNick, *pNick, *this, bNoChange);
+							} else {
+								m_pUser->GetModules().OnDevoice(*pOpNick, *pNick, *this, bNoChange);
+							}
+						}
+					}
+#endif
 				}
 			}
 		} else {
@@ -439,41 +460,6 @@ void CChan::OnOp(const CString& sOpNick, const CString& sNick, bool bOpped) {
 
 		if (bChange) {
 			(bOpped) ? IncPermCount(Op) : DecPermCount(Op);
-		}
-	}
-}
-
-void CChan::OnVoice(const CString& sOpNick, const CString& sNick, bool bVoiced) {
-	CNick* pNick = FindNick(sNick);
-
-	if (pNick) {
-		bool bNoChange = (pNick->HasPerm(Voice) == bVoiced);
-
-#ifdef _MODULES
-		CNick* pOpNick = FindNick(sOpNick);
-
-		if (pOpNick) {
-			if (bVoiced) {
-				m_pUser->GetModules().OnVoice(*pOpNick, *pNick, *this, bNoChange);
-			} else {
-				m_pUser->GetModules().OnDevoice(*pOpNick, *pNick, *this, bNoChange);
-			}
-		}
-#endif
-
-		if (sNick.CaseCmp(m_pUser->GetCurNick()) == 0) {
-			(bVoiced) ? AddPerm(Voice) : RemPerm(Voice);
-		}
-
-		if (bNoChange) {
-			// If no change, return
-			return;
-		}
-
-		bool bChange = (bVoiced) ? pNick->AddPerm(Voice) : pNick->RemPerm(Voice);
-
-		if (bChange) {
-			(bVoiced) ? IncPermCount(Voice) : DecPermCount(Voice);
 		}
 	}
 }
