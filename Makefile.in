@@ -28,7 +28,7 @@ clean:
 	(cd modules; $(MAKE) clean)
 
 distclean: clean
-	rm -rf Makefile config.log config.status znc/Makefile
+	rm -rf Makefile config.log config.status znc-config .depend modules/.depend modules/Makefile
 
 -include .depend
 
