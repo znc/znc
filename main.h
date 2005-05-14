@@ -2,7 +2,7 @@
 #define _MAIN_H
 
 
-#define VERSION 0.034
+#define VERSION 0.035
 
 #ifndef CS_STRING
 #define CS_STRING CString
