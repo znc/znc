@@ -451,17 +451,20 @@ XS(XS_ZNC_PutStatus)
 XS(XS_ZNC_PutModule)
 {
 	dXSARGS;
-	if ( items != 3 )
-		Perl_croak( aTHX_ "Usage: PutModule( sLine, sIdent, sHost )" );
+	if ( items < 1 )
+		Perl_croak( aTHX_ "Usage: ZNC::PutModule( sLine, sIdent, sHost )" );
 
 	SP -= items;
 	ax = (SP - PL_stack_base) + 1 ;
 	{
 		if ( g_ModPerl )
 		{
-			CString sLine = (char *)SvPV(ST(0),PL_na);
-			CString sIdent = (char *)SvPV(ST(1),PL_na);
-			CString sHost = (char *)SvPV(ST(2),PL_na);
+			CString sLine, sIdent, sHost;
+			sLine = (char *)SvPV(ST(0),PL_na);
+			if ( items >= 2 )
+				sIdent = (char *)SvPV(ST(1),PL_na);
+			if ( items >= 3 )
+				sHost = (char *)SvPV(ST(2),PL_na);
 			g_ModPerl->PutModule( sLine, sIdent, sHost );
 		}
 		PUTBACK;
@@ -471,7 +474,7 @@ XS(XS_ZNC_PutModule)
 XS(XS_ZNC_PutModNotice)
 {
 	dXSARGS;
-	if ( items != 3 )
+	if ( items < 1 )
 		Perl_croak( aTHX_ "Usage: PutModNotice( sLine, sIdent, sHost )" );
 
 	SP -= items;
@@ -479,9 +482,12 @@ XS(XS_ZNC_PutModNotice)
 	{
 		if ( g_ModPerl )
 		{
-			CString sLine = (char *)SvPV(ST(0),PL_na);
-			CString sIdent = (char *)SvPV(ST(1),PL_na);
-			CString sHost = (char *)SvPV(ST(2),PL_na);
+			CString sLine, sIdent, sHost;
+			sLine = (char *)SvPV(ST(0),PL_na);
+			if ( items >= 2 )
+				sIdent = (char *)SvPV(ST(1),PL_na);
+			if ( items >= 3 )
+				sHost = (char *)SvPV(ST(2),PL_na);
 			g_ModPerl->PutModNotice( sLine, sIdent, sHost );
 		}
 		PUTBACK;
