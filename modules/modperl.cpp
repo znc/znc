@@ -13,6 +13,7 @@
 
 #define NICK( a ) a.GetNickMask()
 #define CHAN( a ) a.GetName()
+#define ZNCEvalCB "ZNCEval"
 
 class PString : public CString 
 {
@@ -72,8 +73,7 @@ public:
 	MODCONSTRUCTOR( CModPerl ) 
 	{
 		g_ModPerl = this;
-		m_pPerl = perl_alloc();
-		perl_construct( m_pPerl );
+		m_pPerl = NULL;
 	}
 
 	virtual ~CModPerl() 
@@ -128,12 +128,8 @@ public:
 	virtual bool OnStatusCommand(const CString& sCommand) { return( CBSingle( "OnStatusCommand", sCommand ) ); }
 	virtual void OnModCommand(const CString& sCommand) 
 	{ 
-		if ( sCommand.Token( 0 ) == "eval" )
-		{
-			Eval( sCommand.Token( 1, true ) );
-			return;
-		}
-		CBSingle( "OnModCommand", sCommand ); 
+		if ( CBSingle( "OnModCommand", sCommand ) == 0 )
+			Eval( sCommand );
 	}
 	virtual void OnModNotice(const CString& sMessage) { CBSingle( "OnModNotice", sMessage ); }
 	virtual void OnModCTCP(const CString& sMessage) { CBSingle( "OnModCTCP", sMessage ); }
@@ -264,7 +260,7 @@ public:
 		return( CallBack( sHookName, vsArgs ) );
 	}
 
-	void Eval( const CString & sScript );
+	bool Eval( const CString & sScript );
 
 private:
 
@@ -476,16 +472,34 @@ XS(XS_exit)
 
 /////////// supporting functions from within module
 
-void CModPerl::Eval( const CString & sScript )
+bool CModPerl::Eval( const CString & sScript )
 {
-	// TODO need to figure out how to print out the errors
-	STRLEN n_a;
-	SV *val = eval_pv( sScript.c_str(), FALSE );
-	CString sReturn = SvPV( val, n_a );
-	if ( !sReturn.empty() )
-	{
-		PutModule( sReturn );
+	dSP;
+	ENTER;
+	SAVETMPS;
+
+	PUSHMARK( SP );
+	XPUSHs( sv_2mortal( newSVpv( sScript.c_str(), sScript.length() ) ) );
+	PUTBACK;
+
+	SV *val = sv_2mortal( newSVpv( ZNCEvalCB, strlen( ZNCEvalCB ) ) );
+
+	SPAGAIN;
+
+	call_sv( val, G_EVAL|G_VOID );
+
+	if ( SvTRUE( ERRSV ) ) 
+	{ 
+		CString sError = SvPV( ERRSV, PL_na);
+		PutModule( "Perl Error [" + sError + "]" );
+		cerr << "Perl Error [" << sError << "]" << endl;
+		POPs; 
 	}
+	PUTBACK;
+	FREETMPS;
+	LEAVE;
+
+	return( true );
 }
 
 int CModPerl::CallBack( const PString & sHookName, const VPString & vsArgs )
@@ -525,7 +539,7 @@ int CModPerl::CallBack( const PString & sHookName, const VPString & vsArgs )
 	}
 	PUTBACK;
 
-	int iCount = call_pv( sHookName.c_str(), G_EVAL|G_SCALAR|G_KEEPERR );
+	int iCount = call_pv( sHookName.c_str(), G_EVAL|G_SCALAR );
 
 	SPAGAIN;
 	int iRet = 0;
@@ -557,30 +571,15 @@ EXTERN_C void boot_DynaLoader (pTHX_ CV* cv);
 
 bool CModPerl::OnLoad( const CString & sArgs ) 
 {
-	if ( ( !sArgs.empty() ) && ( !CFile::Exists( sArgs ) ) )
-	{
-		cerr << "No Such Module [" << sArgs << "]" << endl;
-		PutModule( "No Such Module [" + sArgs + "]" );
-	}
-
-	const char *pArgv[] = 
-	{
-		"",
-		( sArgs.empty() ? "/dev/null" : sArgs.c_str() ),
-		NULL
-	};
+	m_pPerl = perl_alloc();
+	perl_construct( m_pPerl );
+	const char *pArgv[] = { "", "-e" "0" };
 
 	if ( perl_parse( m_pPerl, NULL, 2, (char **)pArgv, (char **)NULL ) != 0 )
 	{
 		perl_free( m_pPerl );
 		m_pPerl = NULL;
 		return( false );
-	}
-
-	if ( !sArgs.empty() )
-	{
-		AddHook( "OnLoad" );
-		AddHook( "Shutdown" );
 	}
 
 #ifdef PERL_EXIT_DESTRUCT_END
@@ -600,8 +599,23 @@ bool CModPerl::OnLoad( const CString & sArgs )
 	newXS( "PutModule", XS_PutModule, (char *)file );
 	newXS( "PutModNotice", XS_PutModNotice, (char *)file );
 
+	// this sets up the eval CB that we call from here on out. this way we can grab the error produced
+	CString sTMP = "sub ";
+   	sTMP += ZNCEvalCB;
+	sTMP += " { my $arg = shift; eval $arg; }";
+	eval_pv( sTMP.c_str(), FALSE );
+
 	if ( !sArgs.empty() )
+	{
+		if ( !Eval( "require \"" + sArgs + "\"" ) )
+		{
+			PerlInterpShutdown();
+			return( false );
+		}
+		AddHook( "OnLoad" );
+		AddHook( "Shutdown" );
 		return( CBNone( "OnLoad" ) );
+	}
 
 	return( true );
 }
