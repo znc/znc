@@ -125,6 +125,8 @@ public:
 		PutModule( sTmp );
 	}
 
+	CUser * GetUser() { return( m_pUser ); }
+
 	virtual bool OnLoad( const CString & sArgs );
 	virtual bool OnBoot() { return( !CBNone( "OnBoot" ) ); }
 	virtual void OnUserAttached() {  CBNone( "OnUserAttached" ); }
@@ -494,6 +496,46 @@ XS(XS_ZNC_PutModNotice)
 	}
 }
 
+#define STR( a ) a, strlen( a )
+#define CSTR( a ) a.c_str(), a.length()
+
+XS(XS_ZNC_GetNicks)
+{
+	dXSARGS;
+	if ( items != 1 )
+		Perl_croak( aTHX_ "Usage: GetNicks( sChan )" );
+
+	SP -= items;
+	ax = (SP - PL_stack_base) + 1 ;
+	{
+		if ( g_ModPerl )
+		{
+			CString sChan = (char *)SvPV(ST(0),PL_na);
+			CUser * pUser = g_ModPerl->GetUser();
+			CChan * pChan = pUser->FindChan( sChan );
+			if ( !pChan )
+				XSRETURN( 0 );
+			
+			const map< CString,CNick* > & mscNicks = pChan->GetNicks();
+
+			for( map< CString,CNick* >::const_iterator it = mscNicks.begin(); it != mscNicks.end(); it++ )
+			{
+				HV *Hash = newHV();
+				CNick & cNick = *(it->second);
+				hv_store( Hash, STR( "Nick" ), newSVpv( CSTR( cNick.GetNick() ) ), 0);
+				hv_store( Hash, STR( "Ident" ), newSVpv( CSTR( cNick.GetIdent() ) ), 0);
+				hv_store( Hash, STR( "Host" ), newSVpv( CSTR( cNick.GetHost() ) ), 0);
+				if ( cNick.IsOp() )
+					hv_store( Hash, STR( "IsOp" ), newSVpv( STR( "1" ) ), 0);
+				if( cNick.IsVoice() )
+					hv_store( Hash, STR( "IsVoice" ), newSVpv( STR( "1" ) ), 0);
+
+				XPUSHs( sv_2mortal( newRV( (SV *)Hash ) ) );
+			}
+		}
+		PUTBACK;
+	}
+}
 /////////// supporting functions from within module
 
 bool CModPerl::LoadScript( const CString & sScript )
@@ -635,6 +677,7 @@ bool CModPerl::OnLoad( const CString & sArgs )
 	newXS( "ZNC::PutStatus", XS_ZNC_PutStatus, (char *)file );
 	newXS( "ZNC::PutModule", XS_ZNC_PutModule, (char *)file );
 	newXS( "ZNC::PutModNotice", XS_ZNC_PutModNotice, (char *)file );
+	newXS( "ZNC::GetNicks", XS_ZNC_GetNicks, (char *)file );
 
 	// this sets up the eval CB that we call from here on out. this way we can grab the error produced
 	SetupZNCScript();
