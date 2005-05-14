@@ -519,7 +519,7 @@ bool CModPerl::Eval( const CString & sScript, const CString & sFuncName )
 
 	SPAGAIN;
 
-	call_pv( sFuncName.c_str(), G_EVAL|G_VOID|G_DISCARD );
+	call_pv( sFuncName.c_str(), G_EVAL|G_KEEPERR|G_VOID|G_DISCARD );
 
 	bool bReturn = true;
 
