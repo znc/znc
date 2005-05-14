@@ -60,6 +60,33 @@ public:
 	EType GetType() const { return( m_eType ); }
 	void SetType( EType e ) { m_eType = e; }
 	
+	SV * GetSV( bool bMakeMortal = true ) const
+	{
+		SV *pSV = NULL;
+		switch( GetType() )
+		{
+			case NUM:
+				pSV = newSVnv( ToDouble() );
+				break;
+			case INT:
+				pSV = newSViv( ToLongLong() );
+				break;
+			case UINT:
+			case BOOL:
+				pSV = newSVuv( ToULongLong() );
+				break;
+			case STRING:
+			default:
+				pSV = newSVpv( c_str(), length() );
+				break;
+		}
+
+		if ( bMakeMortal )
+			pSV = sv_2mortal( pSV );
+
+		return( pSV );
+	}
+
 private:
 	
 	EType	m_eType;
@@ -75,26 +102,10 @@ public:
 	HV *GetHash()
 	{
 		HV *pHash = newHV();
+		sv_2mortal( (SV *) pHash );
 		for( CPerlHash::iterator it = this->begin(); it != this->end(); it++ )
 		{
-			SV *pSV = NULL;
-			switch( it->second.GetType() )
-			{
-				case PString::NUM:
-					pSV = newSVnv( it->second.ToDouble() );
-					break;
-				case PString::INT:
-					pSV = newSViv( it->second.ToLongLong() );
-					break;
-				case PString::UINT:
-				case PString::BOOL:
-					pSV = newSVuv( it->second.ToULongLong() );
-					break;
-				case PString::STRING:
-				default:
-					pSV = newSVpv( CSTR( it->second ) );
-					break;
-			}
+			SV *pSV = it->second.GetSV( false );
 			hv_store( pHash, CSTR( it->first ), pSV, 0);
 		}
 
@@ -561,7 +572,7 @@ XS(XS_ZNC_GetNicks)
 				cHash["Ident"] = cNick.GetIdent();
 				cHash["Host"] = cNick.GetHost();
 				cHash["Perms"] = cNick.GetPermStr();
-				XPUSHs( sv_2mortal( newRV( (SV *)cHash.GetHash() ) ) );
+				XPUSHs( newRV_noinc( (SV*)cHash.GetHash() ) );
 			}
 		}
 		PUTBACK;
@@ -630,25 +641,8 @@ int CModPerl::CallBack( const PString & sHookName, const VPString & vsArgs )
 
 	PUSHMARK( SP );
 	for( VPString::size_type a = 0; a < vsArgs.size(); a++ )
-	{
-		switch( vsArgs[a].GetType() )
-		{
-			case PString::NUM:
-				XPUSHs( sv_2mortal( newSVnv( vsArgs[a].ToDouble() ) ) );
-				break;
-			case PString::INT:
-				XPUSHs( sv_2mortal( newSViv( vsArgs[a].ToLongLong() ) ) );
-				break;
-			case PString::UINT:
-			case PString::BOOL:
-				XPUSHs( sv_2mortal( newSVuv( vsArgs[a].ToULongLong() ) ) );
-				break;
-			case PString::STRING:
-			default:
-				XPUSHs( sv_2mortal( newSVpv( vsArgs[a].c_str(), vsArgs[a].length() ) ) );
-				break;
-		}
-	}
+		XPUSHs( vsArgs[a].GetSV() );
+
 	PUTBACK;
 
 	int iCount = call_pv( it->second.c_str(), G_EVAL|G_SCALAR );
