@@ -149,6 +149,8 @@ CString CString::Format(const CString& sFormatStr, ...) {
 	return "";
 }
 
+CString CString::ToString(char c) { stringstream s; s << c; return s.str(); }
+CString CString::ToString(unsigned char c) { stringstream s; s << c; return s.str(); }
 CString CString::ToString(short i) { stringstream s; s << i; return s.str(); }
 CString CString::ToString(unsigned short i) { stringstream s; s << i; return s.str(); }
 CString CString::ToString(int i) { stringstream s; s << i; return s.str(); }

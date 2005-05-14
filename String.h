@@ -31,6 +31,8 @@ public:
 
 	static CString Format(const CString& sFormatStr, ...);
 
+	static CString ToString(char c);
+	static CString ToString(unsigned char c);
 	static CString ToString(short i);
 	static CString ToString(unsigned short i);
 	static CString ToString(int i);
