@@ -50,20 +50,24 @@ public:
 		PutModule("You got disconnected BoyOh.");
 	}
 
+	virtual void OnChanPermission(const CNick& OpNick, const CNick& Nick, const CChan& Channel, unsigned char uMode, bool bAdded, bool bNoChange) {
+		PutModule(((bNoChange) ? "[0] [" : "[1] [") + OpNick.GetNick() + "] set mode [" + Channel.GetName() + ((bAdded) ? "] +" : "] -") + CString::ToString(uMode) + " " + Nick.GetNick());
+	}
+
 	virtual void OnOp(const CNick& OpNick, const CNick& Nick, const CChan& Channel, bool bNoChange) {
-		PutModule(((bNoChange) ? "[0] " : "[1] [") + OpNick.GetNick() + "] opped [" + Nick.GetNick() + "] on [" + Channel.GetName() + "]");
+		PutModule(((bNoChange) ? "[0] [" : "[1] [") + OpNick.GetNick() + "] opped [" + Nick.GetNick() + "] on [" + Channel.GetName() + "]");
 	}
 
 	virtual void OnDeop(const CNick& OpNick, const CNick& Nick, const CChan& Channel, bool bNoChange) {
-		PutModule(((bNoChange) ? "[0] " : "[1] [") + OpNick.GetNick() + "] deopped [" + Nick.GetNick() + "] on [" + Channel.GetName() + "]");
+		PutModule(((bNoChange) ? "[0] [" : "[1] [") + OpNick.GetNick() + "] deopped [" + Nick.GetNick() + "] on [" + Channel.GetName() + "]");
 	}
 
 	virtual void OnVoice(const CNick& OpNick, const CNick& Nick, const CChan& Channel, bool bNoChange) {
-		PutModule(((bNoChange) ? "[0] " : "[1] [") + OpNick.GetNick() + "] voiced [" + Nick.GetNick() + "] on [" + Channel.GetName() + "]");
+		PutModule(((bNoChange) ? "[0] [" : "[1] [") + OpNick.GetNick() + "] voiced [" + Nick.GetNick() + "] on [" + Channel.GetName() + "]");
 	}
 
 	virtual void OnDevoice(const CNick& OpNick, const CNick& Nick, const CChan& Channel, bool bNoChange) {
-		PutModule(((bNoChange) ? "[0] " : "[1] [") + OpNick.GetNick() + "] devoiced [" + Nick.GetNick() + "] on [" + Channel.GetName() + "]");
+		PutModule(((bNoChange) ? "[0] [" : "[1] [") + OpNick.GetNick() + "] devoiced [" + Nick.GetNick() + "] on [" + Channel.GetName() + "]");
 	}
 
 	virtual void OnRawMode(const CNick& OpNick, const CChan& Channel, const CString& sModes, const CString& sArgs) {
