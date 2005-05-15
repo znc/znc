@@ -73,7 +73,10 @@ bool CModule::SetNV( const CString & sName, const CString & sValue, bool bWriteT
 
 CString CModule::GetNV( const CString & sName )
 {
-	return( m_mssRegistry[sName] );
+	MCString::iterator it = m_mssRegistry.find( sName );
+	if ( it != m_mssRegistry.end() )
+		return( it->second );
+	return( "" );
 }
 
 bool CModule::DelNV( const CString & sName, bool bWriteToDisk )

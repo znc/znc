@@ -166,6 +166,10 @@ public:
 	bool SetNV( const CString & sName, const CString & sValue, bool bWriteToDisk = true );
 	CString GetNV( const CString & sName );
 	bool DelNV( const CString & sName, bool bWriteToDisk = true );
+	MCString::iterator FindNV( const CString & sName ) { return( m_mssRegistry.find( sName ) ); }
+	MCString::iterator EndNV() { return( m_mssRegistry.end() ); }
+	MCString::iterator BeginNV() { return( m_mssRegistry.begin() ); }
+	void DelNV( MCString::iterator it ) { m_mssRegistry.erase( it ); }
 
 protected:
 	vector<CTimer*>			m_vTimers;
@@ -173,6 +177,7 @@ protected:
 	TSocketManager<Csock>*	m_pManager;
 	CUser*					m_pUser;
 	CString					m_sModName;
+private:
 	MCString				m_mssRegistry; //!< way to save name/value pairs. Note there is no encryption involved in this
 };
 
