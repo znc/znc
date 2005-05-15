@@ -257,6 +257,7 @@ int MCString::WriteToDisk( const CString & sPath, mode_t iMode )
 
 int MCString::ReadFromDisk( const CString & sPath, mode_t iMode )
 {
+	clear();
 	CFile cFile( sPath );
 	if ( !cFile.Open( O_RDONLY|O_CREAT, iMode ) )
 		return( MCS_EOPEN );

@@ -38,12 +38,54 @@ CModule::CModule(void* pDLL, CUser* pUser, const CString& sModName) {
 	m_pManager = pUser->GetManager();
 	m_pUser = pUser;
 	m_sModName = sModName;
+	LoadRegistry();
 }
 
 CModule::~CModule() {
 	while (m_vTimers.size()) {
 		RemTimer(m_vTimers[0]->GetName());
 	}
+	SaveRegistry();
+}
+
+bool CModule::LoadRegistry()
+{
+	CString sRegistryDir = m_pUser->GetDataPath() + "/" + m_sModName;
+	CUtils::MakeDir( sRegistryDir );
+	return( ( m_mssRegistry.ReadFromDisk( sRegistryDir + "/" + m_pUser->GetUserName() + "-registry.txt", 0600 ) == MCString::MCS_SUCCESS ) );
+}
+
+bool CModule::SaveRegistry()
+{
+	CString sRegistryDir = m_pUser->GetDataPath() + "/" + m_sModName;
+	CUtils::MakeDir( sRegistryDir );
+	return( ( m_mssRegistry.WriteToDisk( sRegistryDir + "/" + m_pUser->GetUserName() + "-registry.txt", 0600 ) == MCString::MCS_SUCCESS ) );
+}
+
+bool CModule::SetNV( const CString & sName, const CString & sValue, bool bWriteToDisk )
+{
+	m_mssRegistry[sName] = sValue;
+	if ( bWriteToDisk )
+		return( SaveRegistry() );
+
+	return( true );
+}
+
+CString CModule::GetNV( const CString & sName )
+{
+	return( m_mssRegistry[sName] );
+}
+
+bool CModule::DelNV( const CString & sName, bool bWriteToDisk )
+{
+	MCString::iterator it = m_mssRegistry.find( sName );
+	if ( it != m_mssRegistry.end() )
+		m_mssRegistry.erase( it );
+
+	if ( bWriteToDisk )
+		return( SaveRegistry() );
+
+	return( true );
 }
 
 bool CModule::AddTimer(CTimer* pTimer) {
@@ -55,6 +97,14 @@ bool CModule::AddTimer(CTimer* pTimer) {
 	m_pManager->AddCron(pTimer);
 	m_vTimers.push_back(pTimer);
 	return true;
+}
+
+bool CModule::AddTimer(FPTimer_t pFBCallback, const CString& sLabel, u_int uInterval, 
+		u_int uCycles, const CString& sDescription )
+{
+	CFPTimer *pTimer = new CFPTimer( this, uInterval, uCycles, sLabel, sDescription );
+	pTimer->SetFPCallback( pFBCallback );
+	return( AddTimer( pTimer ) );
 }
 
 bool CModule::RemTimer(const CString& sLabel) {

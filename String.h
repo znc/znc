@@ -65,7 +65,7 @@ protected:
 class MCString : public std::map< CString, CString > {
 public:
 	MCString() : std::map< CString, CString >() {}
-	virtual ~MCString() {}
+	virtual ~MCString() { clear(); }
 
 	enum
 	{

@@ -16,6 +16,7 @@ class CNick;
 class CChan;
 class Csock;
 class CModule;
+class CFPTimer;
 template<class T> class TSocketManager;
 // !Forward Declarations
 
@@ -39,6 +40,30 @@ protected:
 	CModule*	m_pModule;
 	CString		m_sDescription;
 };
+
+typedef void (*FPTimer_t)(CModule *, CFPTimer *);
+
+class CFPTimer : public CTimer {
+public:
+	CFPTimer(CModule* pModule, unsigned int uInterval, unsigned int uCycles, const CString& sLabel, const CString& sDescription)
+		: CTimer( pModule, uInterval, uCycles, sLabel, sDescription ) { 
+		m_pFBCallback = NULL; 
+	}
+
+	virtual ~CFPTimer() {}
+
+	void SetFPCallback( FPTimer_t p ) { m_pFBCallback = p; }
+
+protected:
+	virtual void RunJob() {
+		if ( m_pFBCallback ) 
+			m_pFBCallback( m_pModule, this );
+	}
+	
+private:
+	FPTimer_t	m_pFBCallback;
+};
+	
 
 class CModInfo {
 public:
@@ -129,11 +154,18 @@ public:
 
 	// Timer stuff
 	bool AddTimer(CTimer* pTimer);
+	bool AddTimer(FPTimer_t pFBCallback, const CString& sLabel, u_int uInterval, u_int uCycles = 0, const CString& sDescription = "");
 	bool RemTimer(const CString& sLabel);
 	bool UnlinkTimer(CTimer* pTimer);
 	CTimer* FindTimer(const CString& sLabel);
 	virtual void ListTimers();
 	// !Timer stuff
+	
+	bool LoadRegistry();
+	bool SaveRegistry();
+	bool SetNV( const CString & sName, const CString & sValue, bool bWriteToDisk = true );
+	CString GetNV( const CString & sName );
+	bool DelNV( const CString & sName, bool bWriteToDisk = true );
 
 protected:
 	vector<CTimer*>			m_vTimers;
@@ -141,6 +173,7 @@ protected:
 	TSocketManager<Csock>*	m_pManager;
 	CUser*					m_pUser;
 	CString					m_sModName;
+	MCString				m_mssRegistry; //!< way to save name/value pairs. Note there is no encryption involved in this
 };
 
 class CModules : public vector<CModule*> {
