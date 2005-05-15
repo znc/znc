@@ -576,9 +576,13 @@ XS(XS_ZNC_GetNicks)
 		PUTBACK;
 	}
 }
-XS(XS_ZNC_GetNick)
+
+XS(XS_ZNC_GetString)
 {
 	dXSARGS;
+	
+	if ( items != 1 )
+		Perl_croak( aTHX_ "Usage: ZNC::GetString( sName )" );
 
 	SP -= items;
 	ax = (SP - PL_stack_base) + 1 ;
@@ -586,12 +590,33 @@ XS(XS_ZNC_GetNick)
 		if ( g_ModPerl )
 		{
 			CUser * pUser = g_ModPerl->GetUser();
-			PString sMe = pUser->GetNick();
-			XPUSHs( sMe.GetSV() );
+			PString sReturn;
+			CString sName = (char *)SvPV(ST(0),PL_na);
+
+			if( sName == "UserName" ) sReturn = pUser->GetUserName();
+			else if ( sName == "Nick" ) sReturn = pUser->GetNick();
+			else if ( sName == "AltNick" ) sReturn = pUser->GetAltNick();
+			else if ( sName == "Ident" ) sReturn = pUser->GetIdent();
+			else if ( sName == "RealName" ) sReturn = pUser->GetRealName();
+			else if ( sName == "VHost" ) sReturn = pUser->GetVHost();
+			else if ( sName == "Pass" ) sReturn = pUser->GetPass();
+			else if ( sName == "CurPath" ) sReturn = pUser->GetCurPath();
+			else if ( sName == "DLPath" ) sReturn = pUser->GetDLPath();
+			else if ( sName == "ModPath" ) sReturn = pUser->GetModPath();
+			else if ( sName == "HomePath" ) sReturn = pUser->GetHomePath();
+			else if ( sName == "DataPath" ) sReturn = pUser->GetDataPath();
+			else if ( sName == "StatusPrefix" ) sReturn = pUser->GetStatusPrefix();
+			else if ( sName == "DefaultChanModes" ) sReturn = pUser->GetDefaultChanModes();
+			else if ( sName == "IRCServer" ) sReturn = pUser->GetIRCServer();
+			else
+				XSRETURN( 0 );
+
+			XPUSHs( sReturn.GetSV() );
 		}
 		PUTBACK;
 	}
 }
+
 /////////// supporting functions from within module
 
 bool CModPerl::LoadScript( const CString & sScript )
@@ -717,7 +742,7 @@ bool CModPerl::OnLoad( const CString & sArgs )
 	newXS( "ZNC::PutModule", XS_ZNC_PutModule, (char *)file );
 	newXS( "ZNC::PutModNotice", XS_ZNC_PutModNotice, (char *)file );
 	newXS( "ZNC::GetNicks", XS_ZNC_GetNicks, (char *)file );
-	newXS( "ZNC::GetNick", XS_ZNC_GetNick, (char *)file );
+	newXS( "ZNC::GetString", XS_ZNC_GetString, (char *)file );
 
 	// this sets up the eval CB that we call from here on out. this way we can grab the error produced
 	SetupZNCScript();
