@@ -26,6 +26,9 @@
  * better solution then plain text.
  * 
  * $Log$
+ * Revision 1.22  2005/05/15 04:40:58  imaginos
+ * onjoin, when its me and the buffer is empty, reload any older buffer for fun
+ *
  * Revision 1.21  2005/05/08 06:42:02  prozacx
  * Moved CUtils::ToString() into CString class
  *
@@ -271,20 +274,8 @@ public:
 			PutModule( "//!-- EOF " + sArgs );
 		} else if ( strcasecmp( sCom.c_str(), "replay" ) == 0 )
 		{
-			CString sFile;
-			PutUser( ":***!znc@znc.com PRIVMSG " + sArgs + " :Buffer Playback..." );
-			if ( DecryptChannel( sArgs, sFile ) )
-			{
-				CString sLine;
-				u_int iPos = 0;
-				while( ReadLine( sFile, sLine, iPos ) )
-				{
-					sLine.Trim();
-					PutUser( sLine );
-				}
-			}
+			Replay( sArgs );
 			PutModule( "Replayed " + sArgs );
-			PutUser( ":***!znc@znc.com PRIVMSG " + sArgs + " :Playback Complete." );
 
 		} else if ( strcasecmp( sCom.c_str(), "save" ) == 0 )
 		{
@@ -292,6 +283,23 @@ public:
 			PutModule( "Done." );
 		} else
 			PutModule( "Unknown command [" + sCommand + "]" );
+	}
+
+	void Replay( const CString & sChan )
+	{
+		CString sFile;
+		PutUser( ":***!znc@znc.com PRIVMSG " + sChan + " :Buffer Playback..." );
+		if ( DecryptChannel( sChan, sFile ) )
+		{
+			CString sLine;
+			u_int iPos = 0;
+			while( ReadLine( sFile, sLine, iPos ) )
+			{
+				sLine.Trim();
+				PutUser( sLine );
+			}
+		}
+		PutUser( ":***!znc@znc.com PRIVMSG " + sChan + " :Playback Complete." );
 	}
 
 	CString GetPath( const CString & sChannel )
@@ -343,6 +351,12 @@ public:
 	}
 	virtual void OnJoin(const CNick& cNick, const CChan& cChannel)
 	{
+		if ( ( cNick.GetNick().CaseCmp( m_pUser->GetNick() ) == 0 ) && ( cChannel.GetBuffer().empty() ) )
+		{
+			BootStrap( (CChan *)&cChannel );
+			if ( !cChannel.GetBuffer().empty() )
+				Replay( cChannel.GetName() );
+		}
 		if ( !cChannel.KeepBuffer() )
 			return;
 		((CChan &)cChannel).AddBuffer( SpoofChanMsg( cChannel.GetName(), cNick.GetNickMask() + " JOIN" ) );
