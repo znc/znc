@@ -3,6 +3,7 @@
 
 #include <string>
 #include <sstream>
+#include <map>
 
 using std::string;
 using std::stringstream;
@@ -61,5 +62,29 @@ private:
 protected:
 };
 
+class MCString : public std::map< CString, CString > {
+public:
+	MCString() : std::map< CString, CString >() {}
+	virtual ~MCString() {}
+
+	enum
+	{
+		MCS_SUCCESS 	= 0,
+		MCS_EOPEN 		= 1,
+		MCS_EWRITE 		= 2,
+		MCS_EWRITEFIL 	= 3,
+		MCS_EREADFIL	= 4
+	};
+
+	int WriteToDisk( const CString & sPath, mode_t iMode = 0644 );
+	int ReadFromDisk( const CString & sPath, mode_t iMode = 0644 );
+
+	virtual bool WriteFilter( CString & sKey, CString & sValue ) { return( true ); }
+	virtual bool ReadFilter( CString & sKey, CString & sValue ) { return( true ); }
+
+	//! make them parse safe, right now using hex encoding on anything !isalnum
+	virtual CString & Encode( CString & sValue );
+	virtual CString & Decode( CString & sValue );
+};
 
 #endif // !X_STRING_H
