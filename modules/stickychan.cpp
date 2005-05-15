@@ -60,6 +60,7 @@ public:
 					pChan->SetKey( it->second );
 				m_pUser->AddChan( pChan );
 				PutModule( "Joining [" + it->first + "]" );
+				PutIRC( "JOIN " + it->first + ( it->second.empty() ? "" : it->second ) );
 			}
 		}
 	}
