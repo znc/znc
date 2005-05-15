@@ -181,7 +181,7 @@ public:
 
 		PutModule(sMessage);
 
-		return HALTCORE;
+		return CONTINUE;
 	}
 
 	virtual void OnModCommand(const CString& sCommand) {
