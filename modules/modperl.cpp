@@ -175,13 +175,13 @@ public:
 	CUser * GetUser() { return( m_pUser ); }
 
 	virtual bool OnLoad( const CString & sArgs );
-	virtual bool OnBoot() { return( !CBNone( "OnBoot" ) ); }
+	virtual bool OnBoot() { return( CBNone( "OnBoot" ) == CModPerl::CONTINUE ); }
 	virtual void OnUserAttached() {  CBNone( "OnUserAttached" ); }
 	virtual void OnUserDetached() {  CBNone( "OnUserDetached" ); }
 	virtual void OnIRCDisconnected() {  CBNone( "OnIRCDisconnected" ); }
 	virtual void OnIRCConnected() {  CBNone( "OnIRCConnected" ); }
 
-	virtual bool OnDCCUserSend(const CNick& RemoteNick, unsigned long uLongIP, unsigned short uPort, 
+	virtual EModRet OnDCCUserSend(const CNick& RemoteNick, unsigned long uLongIP, unsigned short uPort, 
 		const CString& sFile, unsigned long uFileSize);
 
 	virtual void OnOp(const CNick& OpNick, const CNick& Nick, const CChan& Channel, bool bNoChange)
@@ -204,9 +204,9 @@ public:
 	{
 		CBFour( "OnRawMode", NICK( Nick ), CHAN( Channel ), sModes, sArgs  );
 	}
-	virtual bool OnUserRaw(CString& sLine) { return( CBSingle( "OnUserRaw", sLine ) ); }
-	virtual bool OnRaw(CString& sLine) { return( CBSingle( "OnRaw", sLine ) ); }
-	virtual bool OnStatusCommand(const CString& sCommand) { return( CBSingle( "OnStatusCommand", sCommand ) ); }
+	virtual EModRet OnUserRaw(CString& sLine) { return( CBSingle( "OnUserRaw", sLine ) ); }
+	virtual EModRet OnRaw(CString& sLine) { return( CBSingle( "OnRaw", sLine ) ); }
+	virtual EModRet OnStatusCommand(const CString& sCommand) { return( CBSingle( "OnStatusCommand", sCommand ) ); }
 	virtual void OnModCommand(const CString& sCommand) 
 	{ 
 		if ( CBSingle( "OnModCommand", sCommand ) == 0 )
@@ -245,48 +245,48 @@ public:
 	virtual void OnJoin(const CNick& Nick, const CChan& Channel) { CBDouble( "OnJoin", NICK( Nick ), CHAN( Channel ) ); }
 	virtual void OnPart(const CNick& Nick, const CChan& Channel) { CBDouble( "OnPart", NICK( Nick ), CHAN( Channel ) ); }
 
-	virtual bool OnUserCTCPReply(const CNick& Nick, CString& sMessage) 
+	virtual EModRet OnUserCTCPReply(const CNick& Nick, CString& sMessage) 
 	{ 
 		return CBDouble( "OnUserCTCPReply", NICK( Nick ), sMessage ); 
 	}
-	virtual bool OnCTCPReply(const CNick& Nick, CString& sMessage)
+	virtual EModRet OnCTCPReply(const CNick& Nick, CString& sMessage)
 	{
 		return CBDouble( "OnCTCPReply", NICK( Nick ), sMessage ); 
 	}
-	virtual bool OnUserCTCP(const CString& sTarget, CString& sMessage)
+	virtual EModRet OnUserCTCP(const CString& sTarget, CString& sMessage)
 	{
 		return CBDouble( "OnUserCTCP", sTarget, sMessage ); 
 	}
-	virtual bool OnPrivCTCP(const CNick& Nick, CString& sMessage)
+	virtual EModRet OnPrivCTCP(const CNick& Nick, CString& sMessage)
 	{
 		return CBDouble( "OnPrivCTCP", NICK( Nick ), sMessage ); 
 	}
-	virtual bool OnChanCTCP(const CNick& Nick, const CChan& Channel, CString& sMessage)
+	virtual EModRet OnChanCTCP(const CNick& Nick, const CChan& Channel, CString& sMessage)
 	{
 		return CBTriple( "OnChanCTCP", NICK( Nick ), CHAN( Channel ), sMessage );
 	}
-	virtual bool OnUserMsg(const CString& sTarget, CString& sMessage)
+	virtual EModRet OnUserMsg(const CString& sTarget, CString& sMessage)
 	{
 		return CBDouble( "OnUserMsg", sTarget, sMessage );
 	}
-	virtual bool OnPrivMsg(const CNick& Nick, CString& sMessage)
+	virtual EModRet OnPrivMsg(const CNick& Nick, CString& sMessage)
 	{
 		return CBDouble( "OnPrivMsg", NICK( Nick ), sMessage );
 	}
 
-	virtual bool OnChanMsg( const CNick& Nick, const CChan & Channel, CString & sMessage )
+	virtual EModRet OnChanMsg( const CNick& Nick, const CChan & Channel, CString & sMessage )
 	{
 		return( CBTriple( "OnChanMsg", NICK( Nick ), CHAN( Channel ), sMessage ) );
 	}
-	virtual bool OnUserNotice(const CString& sTarget, CString& sMessage)
+	virtual EModRet OnUserNotice(const CString& sTarget, CString& sMessage)
 	{
 		return CBDouble( "OnUserNotice", sTarget, sMessage );
 	}
-	virtual bool OnPrivNotice(const CNick& Nick, CString& sMessage)
+	virtual EModRet OnPrivNotice(const CNick& Nick, CString& sMessage)
 	{
 		return CBDouble( "OnPrivNotice", NICK( Nick ), sMessage );
 	}
-	virtual bool OnChanNotice(const CNick& Nick, const CChan& Channel, CString& sMessage)
+	virtual EModRet OnChanNotice(const CNick& Nick, const CChan& Channel, CString& sMessage)
 	{
 		return( CBTriple( "OnChanNotice", NICK( Nick ), CHAN( Channel ), sMessage ) );
 	}
@@ -302,22 +302,22 @@ public:
 			m_mssHookNames.erase( it );
 	}
 
-	int CallBack( const PString & sHookName, const VPString & vsArgs );
-	int CBNone( const PString & sHookName )
+	EModRet CallBack( const PString & sHookName, const VPString & vsArgs );
+	EModRet CBNone( const PString & sHookName )
 	{
 		VPString vsArgs;
 		return( CallBack( sHookName, vsArgs ) );
 	}
 
 	template <class A>
-	inline int CBSingle( const PString & sHookName, const A & a )
+	inline EModRet CBSingle( const PString & sHookName, const A & a )
 	{
 		VPString vsArgs;
 		vsArgs.push_back( a );
 		return( CallBack( sHookName, vsArgs ) );
 	}
 	template <class A, class B>
-	inline int CBDouble( const PString & sHookName, const A & a, const B & b )
+	inline EModRet CBDouble( const PString & sHookName, const A & a, const B & b )
 	{
 		VPString vsArgs;
 		vsArgs.push_back( a );
@@ -325,7 +325,7 @@ public:
 		return( CallBack( sHookName, vsArgs ) );
 	}
 	template <class A, class B, class C>
-	inline int CBTriple( const PString & sHookName, const A & a, const B & b, const C & c )
+	inline EModRet CBTriple( const PString & sHookName, const A & a, const B & b, const C & c )
 	{
 		VPString vsArgs;
 		vsArgs.push_back( a );
@@ -334,7 +334,7 @@ public:
 		return( CallBack( sHookName, vsArgs ) );
 	}
 	template <class A, class B, class C, class D>
-	inline int CBFour( const PString & sHookName, const A & a, const B & b, const C & c, const D & d )
+	inline EModRet CBFour( const PString & sHookName, const A & a, const B & b, const C & c, const D & d )
 	{
 		VPString vsArgs;
 		vsArgs.push_back( a );
@@ -664,15 +664,15 @@ bool CModPerl::Eval( const CString & sScript, const CString & sFuncName )
 	return( bReturn );
 }
 
-int CModPerl::CallBack( const PString & sHookName, const VPString & vsArgs )
+CModPerl::EModRet CModPerl::CallBack( const PString & sHookName, const VPString & vsArgs )
 {
 	if ( !m_pPerl )
-		return( 0 );
+		return( CONTINUE );
 
 	map< CString, CString >::iterator it = m_mssHookNames.find( sHookName );
 
 	if ( it == m_mssHookNames.end() )
-		return( 0 );
+		return( CONTINUE );
 	
 	dSP;
 	ENTER;
@@ -687,7 +687,7 @@ int CModPerl::CallBack( const PString & sHookName, const VPString & vsArgs )
 	int iCount = call_pv( it->second.c_str(), G_EVAL|G_SCALAR );
 
 	SPAGAIN;
-	int iRet = 0;
+	int iRet = CONTINUE;
 
 	if ( SvTRUE( ERRSV ) ) 
 	{ 
@@ -697,14 +697,14 @@ int CModPerl::CallBack( const PString & sHookName, const VPString & vsArgs )
 	} else
 	{
 		if ( iCount == 1 )
-			iRet = POPi;	
+			iRet = POPi;
 	}
 
 	PUTBACK;
 	FREETMPS;
 	LEAVE;
 
-	return( iRet );
+	return( (CModPerl::EModRet)iRet );
 }
 
 ////////////////////// Events ///////////////////
@@ -743,9 +743,14 @@ bool CModPerl::OnLoad( const CString & sArgs )
 	newXS( "ZNC::PutModNotice", XS_ZNC_PutModNotice, (char *)file );
 	newXS( "ZNC::GetNicks", XS_ZNC_GetNicks, (char *)file );
 	newXS( "ZNC::GetString", XS_ZNC_GetString, (char *)file );
-
+	
 	// this sets up the eval CB that we call from here on out. this way we can grab the error produced
 	SetupZNCScript();
+
+	Eval( "use constant CONTINUE => " + PString( CONTINUE ) + ";" );
+	Eval( "use constant HALT => " + PString( HALT ) + ";" );
+	Eval( "use constant HALTMODS => " + PString( HALTMODS ) + ";" );
+	Eval( "use constant HALTCORE => " + PString( HALTCORE ) + ";" );
 
 	if ( !sArgs.empty() )
 	{
@@ -754,13 +759,14 @@ bool CModPerl::OnLoad( const CString & sArgs )
 			PerlInterpShutdown();
 			return( false );
 		}
-		return( CBNone( "OnLoad" ) );
+		if ( CBNone( "OnLoad" ) != CModPerl::CONTINUE )
+			return( false );
 	}
 
 	return( true );
 }
 
-bool CModPerl::OnDCCUserSend(const CNick& RemoteNick, unsigned long uLongIP, unsigned short uPort, 
+CModPerl::EModRet CModPerl::OnDCCUserSend(const CNick& RemoteNick, unsigned long uLongIP, unsigned short uPort, 
 		const CString& sFile, unsigned long uFileSize)
 {
 	VPString vsArgs;
