@@ -26,6 +26,9 @@
  * better solution then plain text.
  * 
  * $Log$
+ * Revision 1.23  2005/05/15 04:46:48  imaginos
+ * when i part, save to file before the chan gets haxed. same with quit
+ *
  * Revision 1.22  2005/05/15 04:40:58  imaginos
  * onjoin, when its me and the buffer is empty, reload any older buffer for fun
  *
@@ -332,6 +335,8 @@ public:
 				continue;
 			vChans[a]->AddBuffer( SpoofChanMsg( vChans[a]->GetName(), cNick.GetNickMask() + " QUIT " + sMessage ) ); 
 		}
+		if ( cNick.GetNick().CaseCmp( m_pUser->GetNick() ) == 0 )
+			SaveBufferToDisk(); // need to force a save here to see this!
 	}
 
 	virtual void OnNick(const CNick& cNick, const CString& sNewNick, const vector<CChan*>& vChans)
@@ -366,6 +371,8 @@ public:
 		if ( !cChannel.KeepBuffer() )
 			return;
 		((CChan &)cChannel).AddBuffer( SpoofChanMsg( cChannel.GetName(), cNick.GetNickMask() + " PART" ) );
+		if ( cNick.GetNick().CaseCmp( m_pUser->GetNick() ) == 0 )
+			SaveBufferToDisk(); // need to force a save here to see this!
 	}
 
 private:
