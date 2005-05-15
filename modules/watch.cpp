@@ -177,13 +177,13 @@ public:
 		m_Buffer.Clear();
 	}
 
-	virtual bool OnUserRaw(CString& sLine) {
+	virtual EModRet OnUserRaw(CString& sLine) {
 		if (strncasecmp(sLine.c_str(), "WATCH ", 6) == 0) {
 			Watch(sLine.Token(1), sLine.Token(2), sLine.Token(3, true), true);
-			return true;
+			return HALT;
 		}
 
-		return false;
+		return CONTINUE;
 	}
 
 	virtual void OnKick(const CNick& OpNick, const CString& sKickedNick, const CChan& Channel, const CString& sMessage) {
@@ -206,39 +206,39 @@ public:
 		Process(OldNick, "* " + OldNick.GetNick() + " is now known as " + sNewNick, "");
 	}
 
-	virtual bool OnCTCPReply(const CNick& Nick, CString& sMessage) {
+	virtual EModRet OnCTCPReply(const CNick& Nick, CString& sMessage) {
 		Process(Nick, "* CTCP: " + Nick.GetNick() + " reply [" + sMessage + "]", "priv");
-		return false;
+		return CONTINUE;
 	}
 
-	virtual bool OnPrivCTCP(const CNick& Nick, CString& sMessage) {
+	virtual EModRet OnPrivCTCP(const CNick& Nick, CString& sMessage) {
 		Process(Nick, "* CTCP: " + Nick.GetNick() + " [" + sMessage + "]", "priv");
-		return false;
+		return CONTINUE;
 	}
 
-	virtual bool OnChanCTCP(const CNick& Nick, const CChan& Channel, CString& sMessage) {
+	virtual EModRet OnChanCTCP(const CNick& Nick, const CChan& Channel, CString& sMessage) {
 		Process(Nick, "* CTCP: " + Nick.GetNick() + " [" + sMessage + "] to [" + Channel.GetName() + "]", Channel.GetName());
-		return false;
+		return CONTINUE;
 	}
 
-	virtual bool OnPrivNotice(const CNick& Nick, CString& sMessage) {
+	virtual EModRet OnPrivNotice(const CNick& Nick, CString& sMessage) {
 		Process(Nick, "-" + Nick.GetNick() + "- " + sMessage, "priv");
-		return false;
+		return CONTINUE;
 	}
 
-	virtual bool OnChanNotice(const CNick& Nick, const CChan& Channel, CString& sMessage) {
+	virtual EModRet OnChanNotice(const CNick& Nick, const CChan& Channel, CString& sMessage) {
 		Process(Nick, "-" + Nick.GetNick() + ":" + Channel.GetName() + "- " + sMessage, Channel.GetName());
-		return false;
+		return CONTINUE;
 	}
 
-	virtual bool OnPrivMsg(const CNick& Nick, CString& sMessage) {
+	virtual EModRet OnPrivMsg(const CNick& Nick, CString& sMessage) {
 		Process(Nick, "<" + Nick.GetNick() + "> " + sMessage, "priv");
-		return false;
+		return CONTINUE;
 	}
 
-	virtual bool OnChanMsg(const CNick& Nick, const CChan& Channel, CString& sMessage) {
+	virtual EModRet OnChanMsg(const CNick& Nick, const CChan& Channel, CString& sMessage) {
 		Process(Nick, "<" + Nick.GetNick() + ":" + Channel.GetName() + "> " + sMessage, Channel.GetName());
-		return false;
+		return CONTINUE;
 	}
 
 	virtual void OnModCommand(const CString& sCommand) {

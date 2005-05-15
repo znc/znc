@@ -13,14 +13,14 @@ public:
 		return "View all of the raw traffic.";
 	}
 
-	virtual bool OnRaw(CString& sLine) {
+	virtual EModRet OnRaw(CString& sLine) {
 		PutModule("IRC -> [" + sLine + "]");
-		return false;
+		return CONTINUE;
 	}
 
-	virtual bool OnUserRaw(CString& sLine) {
+	virtual EModRet OnUserRaw(CString& sLine) {
 		PutModule("YOU -> [" + sLine + "]");
-		return false;
+		return CONTINUE;
 	}
 };
 

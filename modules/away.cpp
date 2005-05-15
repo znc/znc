@@ -20,6 +20,9 @@
  *
  * 
  * $Log$
+ * Revision 1.13  2005/05/15 08:27:27  prozacx
+ * Changed return value from bool to EModRet on most hooks
+ *
  * Revision 1.12  2005/05/08 06:42:01  prozacx
  * Moved CUtils::ToString() into CString class
  *
@@ -349,28 +352,28 @@ public:
 		m_sReason = "";
 	}
 
-	virtual bool OnPrivMsg(const CNick& Nick, CString& sMessage)
+	virtual EModRet OnPrivMsg(const CNick& Nick, CString& sMessage)
 	{
 		if ( m_bIsAway )
 			AddMessage( time( NULL ), Nick, sMessage );
-		return( false );	
+		return( CONTINUE );	
 	}
 	
-	virtual bool OnUserNotice(const CString& sTarget, CString& sMessage)
+	virtual EModRet OnUserNotice(const CString& sTarget, CString& sMessage)
 	{
 		Ping();
 		if( m_bIsAway )
 			Back();
 		
-		return( false );	
+		return( CONTINUE );	
 	}
-	virtual bool OnUserMsg(const CString& sTarget, CString& sMessage)
+	virtual EModRet OnUserMsg(const CString& sTarget, CString& sMessage)
 	{
 		Ping();
 		if( m_bIsAway )
 			Back();
 		
-		return( false );	
+		return( CONTINUE );	
 	}
 
 	time_t GetTimeStamp() const { return( m_iLastSentData ); }

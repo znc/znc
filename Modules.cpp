@@ -10,6 +10,38 @@
 #define _MODDIR_ "/usr/share/znc"
 #endif
 
+#define MODUNLOADCHK(func)								\
+	for (unsigned int a = 0; a < size(); a++) {			\
+		try {											\
+			(*this)[a]->func;							\
+		} catch (CModule::EModException e) {			\
+			if (e == CModule::UNLOAD) {					\
+				UnloadModule((*this)[a]->GetModName());	\
+			}											\
+		}												\
+	}													\
+
+#define MODHALTCHK(func)								\
+	bool bHaltCore = false;								\
+	for (unsigned int a = 0; a < size(); a++) {			\
+		try {											\
+			CModule::EModRet e = (*this)[a]->func;		\
+			if (e == CModule::HALTMODS) {				\
+				break;									\
+			} else if (e == CModule::HALTCORE) {		\
+				bHaltCore = true;						\
+			} else if (e == CModule::HALT) {			\
+				bHaltCore = true;						\
+				break;									\
+			}											\
+		} catch (CModule::EModException e) {			\
+			if (e == CModule::UNLOAD) {					\
+				UnloadModule((*this)[a]->GetModName());	\
+			}											\
+		}												\
+	}													\
+	return bHaltCore;
+
 /////////////////// Timer ///////////////////
 CTimer::CTimer(CModule* pModule, unsigned int uInterval, unsigned int uCycles, const CString& sLabel, const CString& sDescription) : CCron() {
 	SetName(sLabel);
@@ -45,50 +77,57 @@ CModule::~CModule() {
 	while (m_vTimers.size()) {
 		RemTimer(m_vTimers[0]->GetName());
 	}
+
 	SaveRegistry();
 }
 
-bool CModule::LoadRegistry()
-{
+void CModule::Unload() { throw UNLOAD; }
+
+bool CModule::LoadRegistry() {
 	CString sRegistryDir = m_pUser->GetDataPath() + "/" + m_sModName;
-	CUtils::MakeDir( sRegistryDir );
-	return( ( m_mssRegistry.ReadFromDisk( sRegistryDir + "/" + m_pUser->GetUserName() + "-registry.txt", 0600 ) == MCString::MCS_SUCCESS ) );
+	CUtils::MakeDir(sRegistryDir);
+
+	return (m_mssRegistry.ReadFromDisk(sRegistryDir + "/" + m_pUser->GetUserName() + "-registry.txt", 0600) == MCString::MCS_SUCCESS);
 }
 
-bool CModule::SaveRegistry()
-{
+bool CModule::SaveRegistry() {
 	CString sRegistryDir = m_pUser->GetDataPath() + "/" + m_sModName;
-	CUtils::MakeDir( sRegistryDir );
-	return( ( m_mssRegistry.WriteToDisk( sRegistryDir + "/" + m_pUser->GetUserName() + "-registry.txt", 0600 ) == MCString::MCS_SUCCESS ) );
+	CUtils::MakeDir(sRegistryDir);
+
+	return (m_mssRegistry.WriteToDisk(sRegistryDir + "/" + m_pUser->GetUserName() + "-registry.txt", 0600) == MCString::MCS_SUCCESS);
 }
 
-bool CModule::SetNV( const CString & sName, const CString & sValue, bool bWriteToDisk )
-{
+bool CModule::SetNV(const CString & sName, const CString & sValue, bool bWriteToDisk) {
 	m_mssRegistry[sName] = sValue;
-	if ( bWriteToDisk )
-		return( SaveRegistry() );
+	if (bWriteToDisk) {
+		return SaveRegistry();
+	}
 
-	return( true );
+	return true;
 }
 
-CString CModule::GetNV( const CString & sName )
-{
-	MCString::iterator it = m_mssRegistry.find( sName );
-	if ( it != m_mssRegistry.end() )
-		return( it->second );
-	return( "" );
+CString CModule::GetNV(const CString & sName) {
+	MCString::iterator it = m_mssRegistry.find(sName);
+
+	if (it != m_mssRegistry.end()) {
+		return it->second;
+	}
+
+	return "";
 }
 
-bool CModule::DelNV( const CString & sName, bool bWriteToDisk )
-{
+bool CModule::DelNV(const CString & sName, bool bWriteToDisk) {
 	MCString::iterator it = m_mssRegistry.find( sName );
-	if ( it != m_mssRegistry.end() )
-		m_mssRegistry.erase( it );
 
-	if ( bWriteToDisk )
-		return( SaveRegistry() );
+	if (it != m_mssRegistry.end()) {
+		m_mssRegistry.erase(it);
+	}
 
-	return( true );
+	if (bWriteToDisk) {
+		return SaveRegistry();
+	}
+
+	return true;
 }
 
 bool CModule::AddTimer(CTimer* pTimer) {
@@ -102,12 +141,11 @@ bool CModule::AddTimer(CTimer* pTimer) {
 	return true;
 }
 
-bool CModule::AddTimer(FPTimer_t pFBCallback, const CString& sLabel, u_int uInterval, 
-		u_int uCycles, const CString& sDescription )
-{
-	CFPTimer *pTimer = new CFPTimer( this, uInterval, uCycles, sLabel, sDescription );
-	pTimer->SetFPCallback( pFBCallback );
-	return( AddTimer( pTimer ) );
+bool CModule::AddTimer(FPTimer_t pFBCallback, const CString& sLabel, u_int uInterval, u_int uCycles, const CString& sDescription) {
+	CFPTimer *pTimer = new CFPTimer(this, uInterval, uCycles, sLabel, sDescription);
+	pTimer->SetFPCallback(pFBCallback);
+
+	return AddTimer(pTimer);
 }
 
 bool CModule::RemTimer(const CString& sLabel) {
@@ -191,7 +229,7 @@ void CModule::OnUserDetached() {}
 void CModule::OnIRCDisconnected() {}
 void CModule::OnIRCConnected() {}
 
-bool CModule::OnDCCUserSend(const CNick& RemoteNick, unsigned long uLongIP, unsigned short uPort, const CString& sFile, unsigned long uFileSize) { return false; }
+CModule::EModRet CModule::OnDCCUserSend(const CNick& RemoteNick, unsigned long uLongIP, unsigned short uPort, const CString& sFile, unsigned long uFileSize) { return CONTINUE; }
 
 void CModule::OnChanPermission(const CNick& OpNick, const CNick& Nick, const CChan& Channel, unsigned char uMode, bool bAdded, bool bNoChange) {}
 void CModule::OnOp(const CNick& OpNick, const CNick& Nick, const CChan& Channel, bool bNoChange) {}
@@ -200,10 +238,10 @@ void CModule::OnVoice(const CNick& OpNick, const CNick& Nick, const CChan& Chann
 void CModule::OnDevoice(const CNick& OpNick, const CNick& Nick, const CChan& Channel, bool bNoChange) {}
 void CModule::OnRawMode(const CNick& OpNick, const CChan& Channel, const CString& sModes, const CString& sArgs) {}
 
-bool CModule::OnUserRaw(CString& sLine) { return false; }
-bool CModule::OnRaw(CString& sLine) { return false; }
+CModule::EModRet CModule::OnUserRaw(CString& sLine) { return CONTINUE; }
+CModule::EModRet CModule::OnRaw(CString& sLine) { return CONTINUE; }
 
-bool CModule::OnStatusCommand(const CString& sCommand) { return false; }
+CModule::EModRet CModule::OnStatusCommand(const CString& sCommand) { return CONTINUE; }
 void CModule::OnModCommand(const CString& sCommand) {}
 void CModule::OnModNotice(const CString& sMessage) {}
 void CModule::OnModCTCP(const CString& sMessage) {}
@@ -214,17 +252,17 @@ void CModule::OnKick(const CNick& Nick, const CString& sKickedNick, const CChan&
 void CModule::OnJoin(const CNick& Nick, const CChan& Channel) {}
 void CModule::OnPart(const CNick& Nick, const CChan& Channel) {}
 
-bool CModule::OnUserCTCPReply(const CNick& Nick, CString& sMessage) { return false; }
-bool CModule::OnCTCPReply(const CNick& Nick, CString& sMessage) { return false; }
-bool CModule::OnUserCTCP(const CString& sTarget, CString& sMessage) { return false; }
-bool CModule::OnPrivCTCP(const CNick& Nick, CString& sMessage) { return false; }
-bool CModule::OnChanCTCP(const CNick& Nick, const CChan& Channel, CString& sMessage) { return false; }
-bool CModule::OnUserMsg(const CString& sTarget, CString& sMessage) { return false; }
-bool CModule::OnPrivMsg(const CNick& Nick, CString& sMessage) { return false; }
-bool CModule::OnChanMsg(const CNick& Nick, const CChan& Channel, CString& sMessage) { return false; }
-bool CModule::OnUserNotice(const CString& sTarget, CString& sMessage) { return false; }
-bool CModule::OnPrivNotice(const CNick& Nick, CString& sMessage) { return false; }
-bool CModule::OnChanNotice(const CNick& Nick, const CChan& Channel, CString& sMessage) { return false; }
+CModule::EModRet CModule::OnUserCTCPReply(const CNick& Nick, CString& sMessage) { return CONTINUE; }
+CModule::EModRet CModule::OnCTCPReply(const CNick& Nick, CString& sMessage) { return CONTINUE; }
+CModule::EModRet CModule::OnUserCTCP(const CString& sTarget, CString& sMessage) { return CONTINUE; }
+CModule::EModRet CModule::OnPrivCTCP(const CNick& Nick, CString& sMessage) { return CONTINUE; }
+CModule::EModRet CModule::OnChanCTCP(const CNick& Nick, const CChan& Channel, CString& sMessage) { return CONTINUE; }
+CModule::EModRet CModule::OnUserMsg(const CString& sTarget, CString& sMessage) { return CONTINUE; }
+CModule::EModRet CModule::OnPrivMsg(const CNick& Nick, CString& sMessage) { return CONTINUE; }
+CModule::EModRet CModule::OnChanMsg(const CNick& Nick, const CChan& Channel, CString& sMessage) { return CONTINUE; }
+CModule::EModRet CModule::OnUserNotice(const CString& sTarget, CString& sMessage) { return CONTINUE; }
+CModule::EModRet CModule::OnPrivNotice(const CNick& Nick, CString& sMessage) { return CONTINUE; }
+CModule::EModRet CModule::OnChanNotice(const CNick& Nick, const CChan& Channel, CString& sMessage) { return CONTINUE; }
 
 void* CModule::GetDLL() { return m_pDLL; }
 bool CModule::PutIRC(const CString& sLine) {
@@ -254,12 +292,6 @@ void CModules::UnloadAll() {
 	}
 }
 
-void CModules::OnIRCConnected() {
-	for (unsigned int a = 0; a < size(); a++) {
-		(*this)[a]->OnIRCConnected();
-	}
-}
-
 bool CModules::OnLoad(const CString& sArgs) {
 	for (unsigned int a = 0; a < size(); a++) {
 		if (!(*this)[a]->OnLoad(sArgs)) {
@@ -280,256 +312,136 @@ bool CModules::OnBoot() {
 	return true;
 }
 
+void CModules::OnIRCConnected() {
+	MODUNLOADCHK(OnIRCConnected());
+}
+
 void CModules::OnUserAttached() {
-	for (unsigned int a = 0; a < size(); a++) {
-		(*this)[a]->OnUserAttached();
-	}
+	MODUNLOADCHK(OnUserAttached());
 }
 
 void CModules::OnUserDetached() {
-	for (unsigned int a = 0; a < size(); a++) {
-		(*this)[a]->OnUserDetached();
-	}
+	MODUNLOADCHK(OnUserDetached());
 }
 
 void CModules::OnIRCDisconnected() {
-	for (unsigned int a = 0; a < size(); a++) {
-		(*this)[a]->OnIRCDisconnected();
-	}
+	MODUNLOADCHK(OnIRCDisconnected());
 }
 
 bool CModules::OnDCCUserSend(const CNick& RemoteNick, unsigned long uLongIP, unsigned short uPort, const CString& sFile, unsigned long uFileSize) {
-	for (unsigned int a = 0; a < size(); a++) {
-		if ((*this)[a]->OnDCCUserSend(RemoteNick, uLongIP, uPort, sFile, uFileSize)) {
-			return true;
-		}
-	}
-
-	return false;
+	MODHALTCHK(OnDCCUserSend(RemoteNick, uLongIP, uPort, sFile, uFileSize));
 }
 
 void CModules::OnChanPermission(const CNick& OpNick, const CNick& Nick, const CChan& Channel, unsigned char uMode, bool bAdded, bool bNoChange) {
-	for (unsigned int a = 0; a < size(); a++) {
-		(*this)[a]->OnChanPermission(OpNick, Nick, Channel, uMode, bAdded, bNoChange);
-	}
+	MODUNLOADCHK(OnChanPermission(OpNick, Nick, Channel, uMode, bAdded, bNoChange));
 }
 
 void CModules::OnOp(const CNick& OpNick, const CNick& Nick, const CChan& Channel, bool bNoChange) {
-	for (unsigned int a = 0; a < size(); a++) {
-		(*this)[a]->OnOp(OpNick, Nick, Channel, bNoChange);
-	}
+	MODUNLOADCHK(OnOp(OpNick, Nick, Channel, bNoChange));
 }
 
 void CModules::OnDeop(const CNick& OpNick, const CNick& Nick, const CChan& Channel, bool bNoChange) {
-	for (unsigned int a = 0; a < size(); a++) {
-		(*this)[a]->OnDeop(OpNick, Nick, Channel, bNoChange);
-	}
+	MODUNLOADCHK(OnDeop(OpNick, Nick, Channel, bNoChange));
 }
 
 void CModules::OnVoice(const CNick& OpNick, const CNick& Nick, const CChan& Channel, bool bNoChange) {
-	for (unsigned int a = 0; a < size(); a++) {
-		(*this)[a]->OnVoice(OpNick, Nick, Channel, bNoChange);
-	}
+	MODUNLOADCHK(OnVoice(OpNick, Nick, Channel, bNoChange));
 }
 
 void CModules::OnDevoice(const CNick& OpNick, const CNick& Nick, const CChan& Channel, bool bNoChange) {
-	for (unsigned int a = 0; a < size(); a++) {
-		(*this)[a]->OnDevoice(OpNick, Nick, Channel, bNoChange);
-	}
+	MODUNLOADCHK(OnDevoice(OpNick, Nick, Channel, bNoChange));
 }
 
 void CModules::OnRawMode(const CNick& OpNick, const CChan& Channel, const CString& sModes, const CString& sArgs) {
-	for (unsigned int a = 0; a < size(); a++) {
-		(*this)[a]->OnRawMode(OpNick, Channel, sModes, sArgs);
-	}
+	MODUNLOADCHK(OnRawMode(OpNick, Channel, sModes, sArgs));
 }
 
 bool CModules::OnRaw(CString& sLine) {
-	for (unsigned int a = 0; a < size(); a++) {
-		if ((*this)[a]->OnRaw(sLine)) {
-			return true;
-		}
-	}
-
-	return false;
+	MODHALTCHK(OnRaw(sLine));
 }
 
 bool CModules::OnUserRaw(CString& sLine) {
-	for (unsigned int a = 0; a < size(); a++) {
-		if ((*this)[a]->OnUserRaw(sLine)) {
-			return true;
-		}
-	}
-
-	return false;
+	MODHALTCHK(OnUserRaw(sLine));
 }
 
 void CModules::OnQuit(const CNick& Nick, const CString& sMessage, const vector<CChan*>& vChans) {
-	for (unsigned int a = 0; a < size(); a++) {
-		(*this)[a]->OnQuit(Nick, sMessage, vChans);
-	}
+	MODUNLOADCHK(OnQuit(Nick, sMessage, vChans));
 }
 
 void CModules::OnNick(const CNick& Nick, const CString& sNewNick, const vector<CChan*>& vChans) {
-	for (unsigned int a = 0; a < size(); a++) {
-		(*this)[a]->OnNick(Nick, sNewNick, vChans);
-	}
+	MODUNLOADCHK(OnNick(Nick, sNewNick, vChans));
 }
 
 void CModules::OnKick(const CNick& Nick, const CString& sKickedNick, const CChan& Channel, const CString& sMessage) {
-	for (unsigned int a = 0; a < size(); a++) {
-		(*this)[a]->OnKick(Nick, sKickedNick, Channel, sMessage);
-	}
+	MODUNLOADCHK(OnKick(Nick, sKickedNick, Channel, sMessage));
 }
 
 void CModules::OnJoin(const CNick& Nick, const CChan& Channel) {
-	for (unsigned int a = 0; a < size(); a++) {
-		(*this)[a]->OnJoin(Nick, Channel);
-	}
+	MODUNLOADCHK(OnJoin(Nick, Channel));
 }
 
 void CModules::OnPart(const CNick& Nick, const CChan& Channel) {
-	for (unsigned int a = 0; a < size(); a++) {
-		(*this)[a]->OnPart(Nick, Channel);
-	}
+	MODUNLOADCHK(OnPart(Nick, Channel));
 }
 
 bool CModules::OnUserCTCP(const CString& sTarget, CString& sMessage) {
-	for (unsigned int a = 0; a < size(); a++) {
-		if ((*this)[a]->OnUserCTCP(sTarget, sMessage)) {
-			return true;
-		}
-	}
-
-	return false;
+	MODHALTCHK(OnUserCTCP(sTarget, sMessage));
 }
 
 bool CModules::OnUserCTCPReply(const CNick& Nick, CString& sMessage) {
-	for (unsigned int a = 0; a < size(); a++) {
-		if ((*this)[a]->OnUserCTCPReply(Nick, sMessage)) {
-			return true;
-		}
-	}
-
-	return false;
+	MODHALTCHK(OnUserCTCPReply(Nick, sMessage));
 }
 
 bool CModules::OnCTCPReply(const CNick& Nick, CString& sMessage) {
-	for (unsigned int a = 0; a < size(); a++) {
-		if ((*this)[a]->OnCTCPReply(Nick, sMessage)) {
-			return true;
-		}
-	}
-
-	return false;
+	MODHALTCHK(OnCTCPReply(Nick, sMessage));
 }
 
 bool CModules::OnPrivCTCP(const CNick& Nick, CString& sMessage) {
-	for (unsigned int a = 0; a < size(); a++) {
-		if ((*this)[a]->OnPrivCTCP(Nick, sMessage)) {
-			return true;
-		}
-	}
-
-	return false;
+	MODHALTCHK(OnPrivCTCP(Nick, sMessage));
 }
 
 bool CModules::OnChanCTCP(const CNick& Nick, const CChan& Channel, CString& sMessage) {
-	for (unsigned int a = 0; a < size(); a++) {
-		if ((*this)[a]->OnChanCTCP(Nick, Channel, sMessage)) {
-			return true;
-		}
-	}
-
-	return false;
+	MODHALTCHK(OnChanCTCP(Nick, Channel, sMessage));
 }
 
 bool CModules::OnUserMsg(const CString& sTarget, CString& sMessage) {
-	for (unsigned int a = 0; a < size(); a++) {
-		if ((*this)[a]->OnUserMsg(sTarget, sMessage)) {
-			return true;
-		}
-	}
-
-	return false;
+	MODHALTCHK(OnUserMsg(sTarget, sMessage));
 }
 
 bool CModules::OnPrivMsg(const CNick& Nick, CString& sMessage) {
-	for (unsigned int a = 0; a < size(); a++) {
-		if ((*this)[a]->OnPrivMsg(Nick, sMessage)) {
-			return true;
-		}
-	}
-
-	return false;
+	MODHALTCHK(OnPrivMsg(Nick, sMessage));
 }
 
 bool CModules::OnChanMsg(const CNick& Nick, const CChan& Channel, CString& sMessage) {
-	for (unsigned int a = 0; a < size(); a++) {
-		if ((*this)[a]->OnChanMsg(Nick, Channel, sMessage)) {
-			return true;
-		}
-	}
-
-	return false;
+	MODHALTCHK(OnChanMsg(Nick, Channel, sMessage));
 }
 
 bool CModules::OnUserNotice(const CString& sTarget, CString& sMessage) {
-	for (unsigned int a = 0; a < size(); a++) {
-		if ((*this)[a]->OnUserNotice(sTarget, sMessage)) {
-			return true;
-		}
-	}
-
-	return false;
+	MODHALTCHK(OnUserNotice(sTarget, sMessage));
 }
 
 bool CModules::OnPrivNotice(const CNick& Nick, CString& sMessage) {
-	for (unsigned int a = 0; a < size(); a++) {
-		if ((*this)[a]->OnPrivNotice(Nick, sMessage)) {
-			return true;
-		}
-	}
-
-	return false;
+	MODHALTCHK(OnPrivNotice(Nick, sMessage));
 }
 
 bool CModules::OnChanNotice(const CNick& Nick, const CChan& Channel, CString& sMessage) {
-	for (unsigned int a = 0; a < size(); a++) {
-		if ((*this)[a]->OnChanNotice(Nick, Channel, sMessage)) {
-			return true;
-		}
-	}
-
-	return false;
+	MODHALTCHK(OnChanNotice(Nick, Channel, sMessage));
 }
 
 bool CModules::OnStatusCommand(const CString& sCommand) {
-	for (unsigned int a = 0; a < size(); a++) {
-		if ((*this)[a]->OnStatusCommand(sCommand)) {
-			return true;
-		}
-	}
-
-	return false;
+	MODHALTCHK(OnStatusCommand(sCommand));
 }
 
 void CModules::OnModCommand(const CString& sCommand) {
-	for (unsigned int a = 0; a < size(); a++) {
-		(*this)[a]->OnModCommand(sCommand);
-	}
+	MODUNLOADCHK(OnModCommand(sCommand));
 }
 
 void CModules::OnModNotice(const CString& sMessage) {
-	for (unsigned int a = 0; a < size(); a++) {
-		(*this)[a]->OnModNotice(sMessage);
-	}
+	MODUNLOADCHK(OnModNotice(sMessage));
 }
 
 void CModules::OnModCTCP(const CString& sMessage) {
-	for (unsigned int a = 0; a < size(); a++) {
-		(*this)[a]->OnModCTCP(sMessage);
-	}
+	MODUNLOADCHK(OnModCTCP(sMessage));
 }
 
 CModule* CModules::FindModule(const CString& sModule) {
@@ -572,13 +484,11 @@ bool CModules::LoadModule(const CString& sModule, const CString& sArgs, CUser* p
 		DEBUG_ONLY(cout << "[" << sModPath << "] Not found..." << endl);
 		sModPath = pUser->GetModPath() + "/" + sModule + ".so";
 
-		if (!CFile::Exists(sModPath))
-		{
+		if (!CFile::Exists(sModPath)) {
 			DEBUG_ONLY(cout << "[" << sModPath << "] Not found..." << endl);
 			sModPath = _MODDIR_ + CString("/") + sModule + ".so";
 
-			if (!CFile::Exists(sModPath))
-			{
+			if (!CFile::Exists(sModPath)) {
 				DEBUG_ONLY(cout << "[" << sModPath << "] Not found... giving up!" << endl);
 				sRetMsg = "Unable to find module [" + sModule + "]";
 				return false;
@@ -630,6 +540,11 @@ bool CModules::LoadModule(const CString& sModule, const CString& sArgs, CUser* p
 	sRetMsg = "Loaded module [" + sModule + "] [" + sModPath + "]";
 	return true;
 #endif // !_MODULES
+}
+
+bool CModules::UnloadModule(const CString& sModule) {
+	CString s;
+	return UnloadModule(sModule, s);
 }
 
 bool CModules::UnloadModule(const CString& sModule, CString& sRetMsg) {

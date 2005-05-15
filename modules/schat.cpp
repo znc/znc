@@ -16,6 +16,9 @@
  * Author: imaginos <imaginos@imaginos.net>
  * 
  * $Log$
+ * Revision 1.13  2005/05/15 08:27:27  prozacx
+ * Changed return value from bool to EModRet on most hooks
+ *
  * Revision 1.12  2005/05/08 06:42:02  prozacx
  * Moved CUtils::ToString() into CString class
  *
@@ -213,22 +216,22 @@ public:
 		return ( "Secure cross platform (:P) chat system" );
 	}
 
-	virtual bool OnUserRaw( CString & sLine )
+	virtual EModRet OnUserRaw( CString & sLine )
 	{
 		if ( strncasecmp( sLine.c_str(), "schat ", 6 ) == 0 )
 		{
 			OnModCommand( "chat " + sLine.substr( 6, CString::npos ) );
-			return( true );
+			return( HALT );
 
 		} else if ( strcasecmp( sLine.c_str(), "schat" ) == 0 )
 		{
 			PutModule( "SChat User Area ..." );
 			OnModCommand( "help" );
-			return( true );
+			return( HALT );
 		
 		}
 		
-		return( false );
+		return( CONTINUE );
 	}	
 	virtual void OnModCommand( const CString& sCommand ) 
 	{
@@ -423,7 +426,7 @@ public:
 			PutModule( "Unknown command [" + sCom + "] [" + sArgs + "]" );
 	}
 
-	virtual bool OnPrivCTCP( const CNick& Nick, CString& sMessage )
+	virtual EModRet OnPrivCTCP( const CNick& Nick, CString& sMessage )
 	{
 		if ( strncasecmp( sMessage.c_str(), "DCC SCHAT ", 10 ) == 0 )
 		{
@@ -441,11 +444,11 @@ public:
 				CRemMarkerJob *p = new CRemMarkerJob( this, 60, 1, "Remove (s)" + Nick.GetNick(), "Removes this nicks entry for waiting DCC." );
 				p->SetNick( "(s)" + Nick.GetNick() );
 				AddTimer( p );
-				return( true );
+				return( HALT );
 			}
 		}
 		
-		return( false );
+		return( CONTINUE );
 	}
 
 	void AcceptSDCC( const CString & sNick, u_long iIP, u_short iPort )
@@ -457,7 +460,7 @@ public:
 		m_pManager->Connect( CUtils::GetIP( iIP ), iPort, sSockName, 60, true, m_pUser->GetLocalIP(), p );
 		RemTimer( "Remove " + sNick ); // delete any associated timer to this nick
 	}
-	virtual bool OnUserMsg( const CString& sTarget, CString& sMessage )
+	virtual EModRet OnUserMsg( const CString& sTarget, CString& sMessage )
 	{
 		if ( strncmp( sTarget.c_str(), "(s)", 3 ) == 0 )
 		{
@@ -474,15 +477,15 @@ public:
 						AcceptSDCC( sTarget, it->second.first, it->second.second );
 
 					m_siiWaitingChats.erase( it );
-					return( true );
+					return( HALT );
 				}
 				PutModule( "No such SCHAT to [" + sTarget + "]" );
 			} else
 				p->Write( sMessage + "\n" );
 
-			return( true );
+			return( HALT );
 		}
-		return( false );
+		return( CONTINUE );
 	}
 
 	virtual void RemoveMarker( const CString & sNick )

@@ -154,25 +154,25 @@ public:
 		}
 	}
 
-	virtual bool OnStatusCommand(const CString& sCommand) {
+	virtual EModRet OnStatusCommand(const CString& sCommand) {
 		if (strcasecmp(sCommand.c_str(), "SHELL") == 0) {
 			PutShell("-- ZNC Shell Service --");
-			return true;
+			return HALT;
 		}
 
-		return false;
+		return CONTINUE;
 	}
 
-	virtual bool OnDCCUserSend(const CNick& RemoteNick, unsigned long uLongIP, unsigned short uPort, const CString& sFile, unsigned long uFileSize) {
+	virtual EModRet OnDCCUserSend(const CNick& RemoteNick, unsigned long uLongIP, unsigned short uPort, const CString& sFile, unsigned long uFileSize) {
 		if (strcasecmp(RemoteNick.GetNick().c_str(), CString(GetModNick()).c_str()) == 0) {
 			CString sLocalFile = CUtils::ChangeDir(m_sPath, sFile, m_pUser->GetHomePath());
 
 			m_pUser->GetFile(m_pUser->GetCurNick(), CUtils::GetIP(uLongIP), uPort, sLocalFile, uFileSize, GetModName());
 
-			return true;
+			return HALT;
 		}
 
-		return false;
+		return CONTINUE;
 	}
 
 	void PutShell(const CString& sLine) {

@@ -96,6 +96,18 @@ public:
 	CModule(void* pDLL, CUser* pUser, const CString& sModName);
 	virtual ~CModule();
 
+	typedef enum {
+		CONTINUE	= 1,
+		HALT		= 2,
+		HALTMODS	= 3,
+		HALTCORE	= 4
+	} EModRet;
+
+	typedef enum {
+		UNLOAD
+	} EModException;
+
+	void Unload();
 	virtual CString GetDescription();
 
 	virtual bool OnLoad(const CString& sArgs);
@@ -105,7 +117,7 @@ public:
 	virtual void OnIRCDisconnected();
 	virtual void OnIRCConnected();
 
-	virtual bool OnDCCUserSend(const CNick& RemoteNick, unsigned long uLongIP, unsigned short uPort, const CString& sFile, unsigned long uFileSize);
+	virtual EModRet OnDCCUserSend(const CNick& RemoteNick, unsigned long uLongIP, unsigned short uPort, const CString& sFile, unsigned long uFileSize);
 
 	virtual void OnChanPermission(const CNick& OpNick, const CNick& Nick, const CChan& Channel, unsigned char uMode, bool bAdded, bool bNoChange);
 	virtual void OnOp(const CNick& OpNick, const CNick& Nick, const CChan& Channel, bool bNoChange);
@@ -114,10 +126,10 @@ public:
 	virtual void OnDevoice(const CNick& OpNick, const CNick& Nick, const CChan& Channel, bool bNoChange);
 	virtual void OnRawMode(const CNick& OpNick, const CChan& Channel, const CString& sModes, const CString& sArgs);
 
-	virtual bool OnUserRaw(CString& sLine);
-	virtual bool OnRaw(CString& sLine);
+	virtual EModRet OnUserRaw(CString& sLine);
+	virtual EModRet OnRaw(CString& sLine);
 
-	virtual bool OnStatusCommand(const CString& sCommand);
+	virtual EModRet OnStatusCommand(const CString& sCommand);
 	virtual void OnModCommand(const CString& sCommand);
 	virtual void OnModNotice(const CString& sMessage);
 	virtual void OnModCTCP(const CString& sMessage);
@@ -128,17 +140,17 @@ public:
 	virtual void OnJoin(const CNick& Nick, const CChan& Channel);
 	virtual void OnPart(const CNick& Nick, const CChan& Channel);
 
-	virtual bool OnUserCTCPReply(const CNick& Nick, CString& sMessage);
-	virtual bool OnCTCPReply(const CNick& Nick, CString& sMessage);
-	virtual bool OnUserCTCP(const CString& sTarget, CString& sMessage);
-	virtual bool OnPrivCTCP(const CNick& Nick, CString& sMessage);
-	virtual bool OnChanCTCP(const CNick& Nick, const CChan& Channel, CString& sMessage);
-	virtual bool OnUserMsg(const CString& sTarget, CString& sMessage);
-	virtual bool OnPrivMsg(const CNick& Nick, CString& sMessage);
-	virtual bool OnChanMsg(const CNick& Nick, const CChan& Channel, CString& sMessage);
-	virtual bool OnUserNotice(const CString& sTarget, CString& sMessage);
-	virtual bool OnPrivNotice(const CNick& Nick, CString& sMessage);
-	virtual bool OnChanNotice(const CNick& Nick, const CChan& Channel, CString& sMessage);
+	virtual EModRet OnUserCTCPReply(const CNick& Nick, CString& sMessage);
+	virtual EModRet OnCTCPReply(const CNick& Nick, CString& sMessage);
+	virtual EModRet OnUserCTCP(const CString& sTarget, CString& sMessage);
+	virtual EModRet OnPrivCTCP(const CNick& Nick, CString& sMessage);
+	virtual EModRet OnChanCTCP(const CNick& Nick, const CChan& Channel, CString& sMessage);
+	virtual EModRet OnUserMsg(const CString& sTarget, CString& sMessage);
+	virtual EModRet OnPrivMsg(const CNick& Nick, CString& sMessage);
+	virtual EModRet OnChanMsg(const CNick& Nick, const CChan& Channel, CString& sMessage);
+	virtual EModRet OnUserNotice(const CString& sTarget, CString& sMessage);
+	virtual EModRet OnPrivNotice(const CNick& Nick, CString& sMessage);
+	virtual EModRet OnChanNotice(const CNick& Nick, const CChan& Channel, CString& sMessage);
 
 	void * GetDLL();
 	static double GetVersion() { return VERSION; }
@@ -188,8 +200,8 @@ public:
 
 	void UnloadAll();
 
-	virtual bool OnLoad(const CString& sArgs);
-	virtual bool OnBoot();
+	virtual bool OnLoad(const CString& sArgs);	// Return false to abort
+	virtual bool OnBoot();						// Return false to abort
 	virtual void OnUserAttached();
 	virtual void OnUserDetached();
 	virtual void OnIRCDisconnected();
@@ -232,6 +244,7 @@ public:
 
 	CModule* FindModule(const CString& sModule);
 	bool LoadModule(const CString& sModule, const CString& sArgs, CUser* pUser, CString& sRetMsg);
+	bool UnloadModule(const CString& sModule);
 	bool UnloadModule(const CString& sModule, CString& sRetMsg);
 	bool ReloadModule(const CString& sModule, const CString& sArgs, CUser* pUser, CString& sRetMsg);
 
