@@ -548,15 +548,16 @@ bool CModules::UnloadModule(const CString& sModule) {
 }
 
 bool CModules::UnloadModule(const CString& sModule, CString& sRetMsg) {
+	CString sMod = sModule;	// Make a copy incase the reference passed in is from CModule::GetModName()
 #ifndef _MODULES
-	sRetMsg = "Unable to unload module [" + sModule + "] module support was not enabled.";
+	sRetMsg = "Unable to unload module [" + sMod + "] module support was not enabled.";
 	return false;
 #else
-	CModule* pModule = FindModule(sModule);
+	CModule* pModule = FindModule(sMod);
 	sRetMsg = "";
 
 	if (!pModule) {
-		sRetMsg = "Module [" + sModule + "] not loaded.";
+		sRetMsg = "Module [" + sMod + "] not loaded.";
 		return false;
 	}
 
@@ -577,31 +578,32 @@ bool CModules::UnloadModule(const CString& sModule, CString& sRetMsg) {
 			}
 
 			dlclose(p);
-			sRetMsg = "Module [" + sModule + "] unloaded";
+			sRetMsg = "Module [" + sMod + "] unloaded";
 
 			return true;
 		} else {
-			sRetMsg = "Unable to unload module [" + sModule + "] could not find Unload()";
+			sRetMsg = "Unable to unload module [" + sMod + "] could not find Unload()";
 			return false;
 		}
 	}
 
-	sRetMsg = "Unable to unload module [" + sModule + "]";
+	sRetMsg = "Unable to unload module [" + sMod + "]";
 	return false;
 #endif // !_MODULES
 }
 
 bool CModules::ReloadModule(const CString& sModule, const CString& sArgs, CUser* pUser, CString& sRetMsg) {
+	CString sMod = sModule;	// Make a copy incase the reference passed in is from CModule::GetModName()
 	sRetMsg = "";
-	if (!UnloadModule(sModule, sRetMsg)) {
+	if (!UnloadModule(sMod, sRetMsg)) {
 		return false;
 	}
 
-	if (!LoadModule(sModule, sArgs, pUser, sRetMsg)) {
+	if (!LoadModule(sMod, sArgs, pUser, sRetMsg)) {
 		return false;
 	}
 
-	sRetMsg = "Reloaded module [" + sModule + "]";
+	sRetMsg = "Reloaded module [" + sMod + "]";
 	return true;
 }
 
