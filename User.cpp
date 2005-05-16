@@ -474,15 +474,18 @@ const CString& CUser::GetVHost() const { return m_sVHost; }
 const CString& CUser::GetPass() const { return m_sPass; }
 
 CString CUser::FindModPath(const CString& sModule) const {
-	CString sModPath = GetCurPath() + "/modules/" + sModule + ".so";
+	CString sModPath = GetCurPath() + "/modules/" + sModule;
+	sModPath += (sModule.find(".") == CString::npos) ? ".so" : "";
 
 	if (!CFile::Exists(sModPath)) {
 		DEBUG_ONLY(cout << "[" << sModPath << "] Not found..." << endl);
-		sModPath = GetModPath() + "/" + sModule + ".so";
+		sModPath = GetModPath() + "/" + sModule;
+		sModPath += (sModule.find(".") == CString::npos) ? ".so" : "";
 
 		if (!CFile::Exists(sModPath)) {
 			DEBUG_ONLY(cout << "[" << sModPath << "] Not found..." << endl);
-			sModPath = _MODDIR_ + CString("/") + sModule + ".so";
+			sModPath = _MODDIR_ + CString("/") + sModule;
+			sModPath += (sModule.find(".") == CString::npos) ? ".so" : "";
 
 			if (!CFile::Exists(sModPath)) {
 				DEBUG_ONLY(cout << "[" << sModPath << "] Not found... giving up!" << endl);
