@@ -23,6 +23,7 @@ public:
 	void Parse(const CString& sNickMask);
 	CString GetHostMask() const;
 	unsigned int GetCommonChans(vector<CChan*>& vChans, CUser* pUser) const;
+	static CString Concat(const CString& sNick, const CString& sSuffix, unsigned int uMaxNickLen = 9);
 
 	// Setters
 	void SetUser(CUser* pUser);

@@ -18,6 +18,14 @@ void CNick::Reset() {
 	m_cPerm = '\0';
 }
 
+CString CNick::Concat(const CString& sNick, const CString& sSuffix, unsigned int uMaxNickLen) {
+	if (sSuffix.length() >= uMaxNickLen) {
+		return sSuffix.Left(uMaxNickLen);
+	}
+
+	return sNick.Left(uMaxNickLen - sSuffix.length()) + sSuffix;
+}
+
 void CNick::Parse(const CString& sNickMask) {
 	if (sNickMask.empty()) {
 		return;
