@@ -52,7 +52,7 @@ public:
 
 	CAwayNickTimer(CUser* pUser) : CCron() {
 		m_pUser = pUser;
-		Start(10);
+		Start(30);
 	}
 	virtual ~CAwayNickTimer() {}
 
