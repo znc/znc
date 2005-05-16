@@ -46,24 +46,25 @@ typedef void (*FPTimer_t)(CModule *, CFPTimer *);
 class CFPTimer : public CTimer {
 public:
 	CFPTimer(CModule* pModule, unsigned int uInterval, unsigned int uCycles, const CString& sLabel, const CString& sDescription)
-		: CTimer( pModule, uInterval, uCycles, sLabel, sDescription ) { 
-		m_pFBCallback = NULL; 
+		: CTimer(pModule, uInterval, uCycles, sLabel, sDescription) {
+		m_pFBCallback = NULL;
 	}
 
 	virtual ~CFPTimer() {}
 
-	void SetFPCallback( FPTimer_t p ) { m_pFBCallback = p; }
+	void SetFPCallback(FPTimer_t p) { m_pFBCallback = p; }
 
 protected:
 	virtual void RunJob() {
-		if ( m_pFBCallback ) 
-			m_pFBCallback( m_pModule, this );
+		if (m_pFBCallback) {
+			m_pFBCallback(m_pModule, this);
+		}
 	}
-	
+
 private:
 	FPTimer_t	m_pFBCallback;
 };
-	
+
 
 class CModInfo {
 public:
@@ -172,16 +173,16 @@ public:
 	CTimer* FindTimer(const CString& sLabel);
 	virtual void ListTimers();
 	// !Timer stuff
-	
+
 	bool LoadRegistry();
 	bool SaveRegistry();
-	bool SetNV( const CString & sName, const CString & sValue, bool bWriteToDisk = true );
-	CString GetNV( const CString & sName );
-	bool DelNV( const CString & sName, bool bWriteToDisk = true );
-	MCString::iterator FindNV( const CString & sName ) { return( m_mssRegistry.find( sName ) ); }
-	MCString::iterator EndNV() { return( m_mssRegistry.end() ); }
-	MCString::iterator BeginNV() { return( m_mssRegistry.begin() ); }
-	void DelNV( MCString::iterator it ) { m_mssRegistry.erase( it ); }
+	bool SetNV(const CString & sName, const CString & sValue, bool bWriteToDisk = true);
+	CString GetNV(const CString & sName);
+	bool DelNV(const CString & sName, bool bWriteToDisk = true);
+	MCString::iterator FindNV(const CString & sName) { return m_mssRegistry.find(sName); }
+	MCString::iterator EndNV() { return m_mssRegistry.end(); }
+	MCString::iterator BeginNV() { return m_mssRegistry.begin(); }
+	void DelNV(MCString::iterator it) { m_mssRegistry.erase(it); }
 
 protected:
 	vector<CTimer*>			m_vTimers;
