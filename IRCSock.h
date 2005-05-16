@@ -54,7 +54,7 @@ public:
 	// !Setters
 
 	// Getters
-
+	unsigned int GetMaxNickLen() const { return m_uMaxNickLen; }
 	EChanModeArgs GetModeType(unsigned char uMode) const;
 	unsigned char GetPermFromMode(unsigned char uMode) const;
 	const map<unsigned char, EChanModeArgs>& GetChanModes() const { return m_mueChanModes; }
@@ -83,6 +83,7 @@ protected:
 	CBuffer						m_MotdBuffer;
 	CUserSock*					m_pUserSock;
 	map<CString, CChan*>		m_msChans;
+	unsigned int				m_uMaxNickLen;
 	unsigned int				m_uQueryBufferCount;
 	CBuffer						m_QueryBuffer;
 };
