@@ -47,3 +47,32 @@ protected:
 	CUser*	m_pUser;
 };
 
+class CAwayNickTimer : public CCron {
+public:
+
+	CAwayNickTimer(CUser* pUser) : CCron() {
+		m_pUser = pUser;
+		Start(10);
+	}
+	virtual ~CAwayNickTimer() {}
+
+private:
+protected:
+	virtual void RunJob() {
+		if (!m_pUser->IsUserAttached()) {
+			CIRCSock* pSock = m_pUser->GetIRCSock();
+			if (pSock) {
+				const CString& sSuffix = m_pUser->GetAwaySuffix();
+
+				if (!sSuffix.empty()) {
+					CString sNewNick = CNick::Concat(m_pUser->GetNick(), sSuffix, pSock->GetMaxNickLen());
+					pSock->PutServ("NICK " + sNewNick);
+				}
+			}
+		}
+
+		m_pUser->GetZNC()->GetManager().DelCronByAddr(this);
+	}
+
+	CUser* m_pUser;
+};

@@ -437,6 +437,7 @@ CString CUser::GetCurNick() {
 // Setters
 void CUser::SetNick(const CString& s) { m_sNick = s; }
 void CUser::SetAltNick(const CString& s) { m_sAltNick = s; }
+void CUser::SetAwaySuffix(const CString& s) { m_sAwaySuffix = s; }
 void CUser::SetIdent(const CString& s) { m_sIdent = s; }
 void CUser::SetRealName(const CString& s) { m_sRealName = s; }
 void CUser::SetVHost(const CString& s) { m_sVHost = s; }
@@ -466,6 +467,7 @@ bool CUser::SetStatusPrefix(const CString& s) {
 const CString& CUser::GetUserName() const { return m_sUserName; }
 const CString& CUser::GetNick() const { return m_sNick; }
 const CString& CUser::GetAltNick() const { return m_sAltNick; }
+const CString& CUser::GetAwaySuffix() const { return m_sAwaySuffix; }
 const CString& CUser::GetIdent() const { return m_sIdent; }
 const CString& CUser::GetRealName() const { return m_sRealName; }
 const CString& CUser::GetVHost() const { return m_sVHost; }
@@ -479,7 +481,7 @@ const CString& CUser::GetDataPath() const { return m_pZNC->GetDataPath(); }
 CString CUser::GetPemLocation() const { return m_pZNC->GetPemLocation(); }
 
 bool CUser::UseClientIP() const { return m_bUseClientIP; }
-bool CUser::KeepNick() const { return m_bKeepNick; }
+bool CUser::GetKeepNick() const { return m_bKeepNick; }
 bool CUser::DenyLoadMod() const { return m_bDenyLoadMod; }
 const CString& CUser::GetStatusPrefix() const { return m_sStatusPrefix; }
 const CString& CUser::GetDefaultChanModes() const { return m_sDefaultChanModes; }

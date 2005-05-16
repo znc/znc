@@ -2,6 +2,7 @@
 #include "IRCSock.h"
 #include "DCCBounce.h"
 #include "UserSock.h"
+#include "Timers.h"
 #include <time.h>
 
 CIRCSock::CIRCSock(CZNC* pZNC, CUser* pUser) : Csock() {
@@ -86,6 +87,7 @@ void CIRCSock::ReadLine(const CString& sData) {
 				case 1:	{// :irc.server.com 001 nick :Welcome to the Internet Relay Network nick
 					SetTimeout(900);	// Now that we are connected, let nature take its course
 					PutServ("WHO " + sNick);
+					m_pZNC->GetManager().AddCron(new CAwayNickTimer(m_pUser));
 #ifdef _MODULES
 					m_pUser->GetModules().OnIRCConnected();
 #endif
@@ -156,7 +158,7 @@ void CIRCSock::ReadLine(const CString& sData) {
 					CString sBadNick = sRest.Token(0);
 					CString sConfNick = m_pUser->GetNick().Left(uMax);
 
-					if (sNick == "*") {
+					if (sNick == "*" || sNick.CaseCmp(CNick::Concat(sConfNick, m_pUser->GetAwaySuffix(), GetMaxNickLen())) == 0) {
 						CString sAltNick = m_pUser->GetAltNick();
 
 						if (sBadNick.CaseCmp(sConfNick) == 0) {
@@ -194,7 +196,7 @@ void CIRCSock::ReadLine(const CString& sData) {
 						return;
 					} else {
 						// :irc.server.net 433 mynick badnick :Nickname is already in use.
-						if ((m_bKeepNick) && (m_pUser->KeepNick())) {
+						if ((m_bKeepNick) && (m_pUser->GetKeepNick())) {
 							if (sBadNick.CaseCmp(sConfNick) == 0) {
 								if ((!m_pUserSock) || (!m_pUserSock->DecKeepNickCounter())) {
 									return;
@@ -378,10 +380,6 @@ void CIRCSock::ReadLine(const CString& sData) {
 
 				if (sNick.CaseCmp(GetNick()) == 0) {
 					SetNick(sNewNick);
-					if (sNick.CaseCmp(m_pUser->GetNick()) == 0) {
-						// If the user changes his nick away from the config nick, we shut off keepnick for this session
-						m_bKeepNick = false;
-					}
 				} else if (sNick.CaseCmp(m_pUser->GetNick()) == 0) {
 					KeepNick();
 				}
@@ -609,8 +607,9 @@ void CIRCSock::ReadLine(const CString& sData) {
 
 void CIRCSock::KeepNick() {
 	const CString& sConfNick = m_pUser->GetNick();
+	CString sAwayNick = CNick::Concat(sConfNick, m_pUser->GetAwaySuffix(), GetMaxNickLen());
 
-	if ((m_bAuthed) && (m_bKeepNick) && (m_pUser->KeepNick()) && (GetNick().CaseCmp(sConfNick) != 0)) {
+	if ((m_bAuthed) && (m_bKeepNick) && (m_pUser->GetKeepNick()) && (GetNick().CaseCmp(sConfNick) != 0) && (GetNick().CaseCmp(sAwayNick) != 0)) {
 		PutServ("NICK " + sConfNick);
 	}
 }
@@ -769,6 +768,11 @@ void CIRCSock::UserConnected(CUserSock* pUserSock) {
 	}
 
 	m_pUserSock = pUserSock;
+	CString sConfNick = m_pUser->GetNick();
+
+	if (GetNick().CaseCmp(CNick::Concat(sConfNick, m_pUser->GetAwaySuffix(), GetMaxNickLen())) == 0) {
+		PutServ("NICK " + sConfNick);
+	}
 
 	if (m_RawBuffer.IsEmpty()) {
 		PutUser(":irc.znc.com 001 " + m_pUserSock->GetNick() + " :- Welcome to ZNC -");
@@ -807,6 +811,10 @@ void CIRCSock::UserConnected(CUserSock* pUserSock) {
 }
 
 void CIRCSock::UserDisconnected() {
+	if (m_pUserSock) {
+		m_pZNC->GetManager().AddCron(new CAwayNickTimer(m_pUser));
+	}
+
 	m_pUserSock = NULL;
 }
 

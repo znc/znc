@@ -63,6 +63,7 @@ public:
 	// Setters
 	void SetNick(const CString& s);
 	void SetAltNick(const CString& s);
+	void SetAwaySuffix(const CString& s);
 	void SetIdent(const CString& s);
 	void SetRealName(const CString& s);
 	void SetVHost(const CString& s);
@@ -88,6 +89,7 @@ public:
 	const CString& GetUserName() const;
 	const CString& GetNick() const;
 	const CString& GetAltNick() const;
+	const CString& GetAwaySuffix() const;
 	const CString& GetIdent() const;
 	const CString& GetRealName() const;
 	const CString& GetVHost() const;
@@ -101,7 +103,7 @@ public:
 	CString GetPemLocation() const;
 
 	bool UseClientIP() const;
-	bool KeepNick() const;
+	bool GetKeepNick() const;
 	bool DenyLoadMod() const;
 	const CString& GetStatusPrefix() const;
 	const CString& GetDefaultChanModes() const;
@@ -121,6 +123,7 @@ protected:
 	CString			m_sUserName;
 	CString			m_sNick;
 	CString			m_sAltNick;
+	CString			m_sAwaySuffix;
 	CString			m_sIdent;
 	CString			m_sRealName;
 	CString			m_sVHost;

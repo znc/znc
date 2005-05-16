@@ -84,6 +84,19 @@ void CUserSock::ReadLine(const CString& sData) {
 
 		if ((m_pUser) && (sNick.CaseCmp(m_pUser->GetNick()) == 0)) {
 			m_uKeepNickCounter++;
+			// If the user is changing his nick to the conifg nick, set keepnick to the config value
+			if (m_pUser->GetKeepNick() && !m_pIRCSock->GetKeepNick()) {
+				m_pIRCSock->SetKeepNick(true);
+				PutStatusNotice("Reset KeepNick back to true");
+			}
+		}
+
+		if (m_pUser && GetNick().CaseCmp(m_pUser->GetNick()) == 0) {
+			// If the user changes his nick away from the config nick, we shut off keepnick for this session
+			if (m_pUser->GetKeepNick()) {
+				m_pIRCSock->SetKeepNick(false);
+				PutStatusNotice("Set KeepNick to false");
+			}
 		}
 	} else if (sCommand.CaseCmp("USER") == 0) {
 		if ((!m_bAuthed) && (m_sUser.empty())) {

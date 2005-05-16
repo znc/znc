@@ -51,9 +51,11 @@ public:
 
 	// Setters
 	void SetPass(const CString& s) { m_sPass = s; }
+	void SetKeepNick(bool b) { m_bKeepNick = b; }
 	// !Setters
 
 	// Getters
+	bool GetKeepNick() const { return m_bKeepNick; }
 	unsigned int GetMaxNickLen() const { return m_uMaxNickLen; }
 	EChanModeArgs GetModeType(unsigned char uMode) const;
 	unsigned char GetPermFromMode(unsigned char uMode) const;

@@ -600,6 +600,9 @@ bool CZNC::ParseConfig(const CString& sConfig) {
 					} else if (sName.CaseCmp("AltNick") == 0) {
 						pUser->SetAltNick(sValue);
 						continue;
+					} else if (sName.CaseCmp("AwaySuffix") == 0) {
+						pUser->SetAwaySuffix(sValue);
+						continue;
 					} else if (sName.CaseCmp("Pass") == 0) {
 						if (sValue.Right(1) == "-") {
 							sValue.RightChomp();
