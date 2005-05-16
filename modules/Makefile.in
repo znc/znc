@@ -53,6 +53,11 @@ modperl.so: modperl.o
 
 modperl.o: modperl.cpp
 	$(CXX) $(CXXFLAGS) $(INCLUDES) -c -o $@ modperl.cpp $(PERLCC)
+install_modperl.so:
+	install -m 0755 modperl.so $(DESTDIR)$(prefix)/share/znc
+	for i in *.pm; do \
+		install -m 0755 $$i $(DESTDIR)$(prefix)/share/znc; \
+	done
 else
 modperl.so:
 	@echo -n ""

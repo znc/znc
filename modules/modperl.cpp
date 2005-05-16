@@ -15,22 +15,6 @@
 #define CHAN( a ) a.GetName()
 #define ZNCEvalCB "ZNC::Eval"
 
-const char g_pszMainScript[] = 
-{
-	"use strict;"
-	"sub ZNCLoadScript {"
-	"my $arg = shift;"
-	"require $arg;"
-	"} "
-	"package ZNC;"
-	"use strict;"
-	"sub Eval { "
-	"my $arg = shift; "
-	"eval $arg; "
-   	"}"
-	"1;"
-};
-
 class PString : public CString 
 {
 public:
@@ -117,18 +101,6 @@ typedef vector< PString > VPString;
 class CModPerl;
 static CModPerl *g_ModPerl = NULL;
 
-class CModPerlTimer : public CTimer 
-{
-public:
-	CModPerlTimer( CModule* pModule, unsigned int uInterval, unsigned int uCycles, const CString& sLabel, const CString& sDescription ) 
-		: CTimer(pModule, uInterval, uCycles, sLabel, sDescription) {}
-	virtual ~CModPerlTimer() {}
-
-protected:
-	virtual void RunJob();
-
-};
-
 class CModPerl : public CModule 
 {
 public:
@@ -157,7 +129,20 @@ public:
 
 	void SetupZNCScript()
 	{
-		eval_pv( g_pszMainScript, FALSE );
+		CString sModule = m_pUser->FindModPath( "modperl.pm" );
+		if ( !sModule.empty() )
+		{
+			CString sBuffer, sScript;
+			CFile cFile( sModule );
+			if ( ( cFile.Exists() ) && ( cFile.Open( O_RDONLY ) ) )
+			{
+				while( cFile.ReadLine( sBuffer ) )
+					sScript += sBuffer;	
+				cFile.Close();
+
+				eval_pv( sScript.c_str(), FALSE );
+			}
+		}
 	}
 
 	void DumpError( const CString & sError )
@@ -175,7 +160,7 @@ public:
 	CUser * GetUser() { return( m_pUser ); }
 
 	virtual bool OnLoad( const CString & sArgs );
-	virtual bool OnBoot() { return( CBNone( "OnBoot" ) == CModPerl::CONTINUE ); }
+	virtual bool OnBoot() { return( ( CBNone( "OnBoot" ) == CONTINUE ) ); }
 	virtual void OnUserAttached() {  CBNone( "OnUserAttached" ); }
 	virtual void OnUserDetached() {  CBNone( "OnUserDetached" ); }
 	virtual void OnIRCDisconnected() {  CBNone( "OnIRCDisconnected" ); }
@@ -206,7 +191,7 @@ public:
 	}
 	virtual EModRet OnUserRaw(CString& sLine) { return( CBSingle( "OnUserRaw", sLine ) ); }
 	virtual EModRet OnRaw(CString& sLine) { return( CBSingle( "OnRaw", sLine ) ); }
-	virtual EModRet OnStatusCommand(const CString& sCommand) { return( CBSingle( "OnStatusCommand", sCommand ) ); }
+
 	virtual void OnModCommand(const CString& sCommand) 
 	{ 
 		if ( CBSingle( "OnModCommand", sCommand ) == 0 )
@@ -291,18 +276,7 @@ public:
 		return( CBTriple( "OnChanNotice", NICK( Nick ), CHAN( Channel ), sMessage ) );
 	}
 
-	void MapHook( const CString & sHookName, const CString & sCallBack ) 
-	{ 
-		m_mssHookNames[sHookName] = sCallBack;  
-	}
-	void DelHook( const CString & sHookName )
-	{
-		map< CString, CString >::iterator it = m_mssHookNames.find( sHookName );
-		if ( it != m_mssHookNames.end() )
-			m_mssHookNames.erase( it );
-	}
-
-	EModRet CallBack( const PString & sHookName, const VPString & vsArgs );
+	EModRet CallBack( const PString & sHookName, const VPString & vsArgs, bool bLocal = false );
 	EModRet CBNone( const PString & sHookName )
 	{
 		VPString vsArgs;
@@ -345,12 +319,20 @@ public:
 	}
 
 	bool Eval( const CString & sScript, const CString & sFuncName = ZNCEvalCB );
-	bool LoadScript( const CString & sScript );
+
+	virtual EModRet OnStatusCommand( const CString& sCommand )
+	{
+		/* 
+		 * TODO if sCommand == loadmod or unloadmod on a .pm, then call the appropriate perl guts
+		 * if sCommand = reloadmod on a .pm, send a warning to reloadmod modperl
+		 */
+
+		return( CONTINUE );
+	}
 
 private:
 
 	PerlInterpreter	*m_pPerl;
-	map< CString, CString >	m_mssHookNames;
 
 };
 
@@ -360,91 +342,11 @@ MODULEDEFS( CModPerl )
 
 //////////////////////////////// PERL GUTS //////////////////////////////
 
-XS(XS_ZNC_MapHook)
-{
-	dXSARGS;
-	if ( items != 2 )
-		Perl_croak( aTHX_ "Usage: ZNC::MapHook( sHookName, sFuncName )" );
-
-	SP -= items;
-	ax = (SP - PL_stack_base) + 1 ;
-	{
-		if ( g_ModPerl )
-			g_ModPerl->MapHook( (char *)SvPV(ST(0),PL_na), (char *)SvPV(ST(1),PL_na) );
-
-		PUTBACK;
-	}
-}
-
-XS(XS_ZNC_DelHook)
-{
-	dXSARGS;
-	if ( items != 1 )
-		Perl_croak( aTHX_ "Usage: ZNC::DelHook( sFuncName )" );
-
-	SP -= items;
-	ax = (SP - PL_stack_base) + 1 ;
-	{
-		if ( g_ModPerl )
-			g_ModPerl->DelHook( (char *)SvPV(ST(0),PL_na) );
-
-		PUTBACK;
-	}
-}
-
-XS(XS_ZNC_AddTimer)
-{
-	dXSARGS;
-	if ( items != 4 )
-		Perl_croak( aTHX_ "Usage: ZNC::AddTimer( sFuncName, iInterval, iCycles, sDesc )" );
-
-	SP -= items;
-	ax = (SP - PL_stack_base) + 1 ;
-	{
-		if ( g_ModPerl )
-		{
-			CString sFuncName = (char *)SvPV(ST(0),PL_na);
-			u_int iInterval = (u_int)SvIV(ST(1));
-			u_int iCycles = (u_int)SvIV(ST(2));
-			CString sDesc = (char *)SvPV(ST(3),PL_na);
-
-			CModPerlTimer *pTimer = new CModPerlTimer( g_ModPerl, iInterval, iCycles, sFuncName, sDesc ); 
-			g_ModPerl->MapHook( sFuncName, sFuncName );
-			g_ModPerl->AddTimer( pTimer );
-		}
-		PUTBACK;
-	}
-}
-
-XS(XS_ZNC_UnlinkTimer)
-{
-	dXSARGS;
-	if ( items != 1 )
-		Perl_croak( aTHX_ "Usage: ZNC::UnlinkTimer( sLabel )" );
-
-	SP -= items;
-	ax = (SP - PL_stack_base) + 1 ;
-	{
-		if ( g_ModPerl )
-		{
-			CString sLabel = (char *)SvPV(ST(0),PL_na);
-
-			CTimer *pTimer = g_ModPerl->FindTimer( sLabel );
-			if ( pTimer )
-			{
-				g_ModPerl->UnlinkTimer( pTimer );
-				g_ModPerl->DelHook( sLabel );
-			}
-		}
-		PUTBACK;
-	}
-}
-
 XS(XS_ZNC_PutIRC)
 {
 	dXSARGS;
 	if ( items != 1 )
-		Perl_croak( aTHX_ "Usage: ZNC::PutIRC( sLine )" );
+		Perl_croak( aTHX_ "Usage: PutIRC( sLine )" );
 
 	SP -= items;
 	ax = (SP - PL_stack_base) + 1 ;
@@ -463,7 +365,7 @@ XS(XS_ZNC_PutUser)
 {
 	dXSARGS;
 	if ( items != 1 )
-		Perl_croak( aTHX_ "Usage: ZNC::PutUser( sLine )" );
+		Perl_croak( aTHX_ "Usage: PutUser( sLine )" );
 
 	SP -= items;
 	ax = (SP - PL_stack_base) + 1 ;
@@ -482,7 +384,7 @@ XS(XS_ZNC_PutStatus)
 {
 	dXSARGS;
 	if ( items != 1 )
-		Perl_croak( aTHX_ "Usage: ZNC::PutStatus( sLine )" );
+		Perl_croak( aTHX_ "Usage: PutStatus( sLine )" );
 
 	SP -= items;
 	ax = (SP - PL_stack_base) + 1 ;
@@ -500,7 +402,7 @@ XS(XS_ZNC_PutModule)
 {
 	dXSARGS;
 	if ( items < 1 )
-		Perl_croak( aTHX_ "Usage: ZNC::PutModule( sLine, sIdent, sHost )" );
+		Perl_croak( aTHX_ "Usage: PutModule( sLine, sIdent, sHost )" );
 
 	SP -= items;
 	ax = (SP - PL_stack_base) + 1 ;
@@ -523,7 +425,7 @@ XS(XS_ZNC_PutModNotice)
 {
 	dXSARGS;
 	if ( items < 1 )
-		Perl_croak( aTHX_ "Usage: ZNC::PutModNotice( sLine, sIdent, sHost )" );
+		Perl_croak( aTHX_ "Usage: PutModNotice( sLine, sIdent, sHost )" );
 
 	SP -= items;
 	ax = (SP - PL_stack_base) + 1 ;
@@ -547,7 +449,7 @@ XS(XS_ZNC_GetNicks)
 {
 	dXSARGS;
 	if ( items != 1 )
-		Perl_croak( aTHX_ "Usage: ZNC::GetNicks( sChan )" );
+		Perl_croak( aTHX_ "Usage: GetNicks( sChan )" );
 
 	SP -= items;
 	ax = (SP - PL_stack_base) + 1 ;
@@ -582,7 +484,7 @@ XS(XS_ZNC_GetString)
 	dXSARGS;
 	
 	if ( items != 1 )
-		Perl_croak( aTHX_ "Usage: ZNC::GetString( sName )" );
+		Perl_croak( aTHX_ "Usage: GetString( sName )" );
 
 	SP -= items;
 	ax = (SP - PL_stack_base) + 1 ;
@@ -619,23 +521,6 @@ XS(XS_ZNC_GetString)
 
 /////////// supporting functions from within module
 
-bool CModPerl::LoadScript( const CString & sScript )
-{
-	const char *args[] = { sScript.c_str(), NULL };
-
-	call_argv( "ZNCLoadScript", G_EVAL|G_SCALAR|G_DISCARD, (char **)args );
-
-	bool bReturn = true;
-
-	if ( SvTRUE( ERRSV ) ) 
-	{ 
-		DumpError( SvPV( ERRSV, PL_na) );
-		bReturn = false;
-	}
-
-	return( bReturn );
-}
-
 bool CModPerl::Eval( const CString & sScript, const CString & sFuncName )
 {
 	dSP;
@@ -664,14 +549,9 @@ bool CModPerl::Eval( const CString & sScript, const CString & sFuncName )
 	return( bReturn );
 }
 
-CModPerl::EModRet CModPerl::CallBack( const PString & sHookName, const VPString & vsArgs )
+CModPerl::EModRet CModPerl::CallBack( const PString & sHookName, const VPString & vsArgs, bool bLocal )
 {
 	if ( !m_pPerl )
-		return( CONTINUE );
-
-	map< CString, CString >::iterator it = m_mssHookNames.find( sHookName );
-
-	if ( it == m_mssHookNames.end() )
 		return( CONTINUE );
 	
 	dSP;
@@ -679,12 +559,16 @@ CModPerl::EModRet CModPerl::CallBack( const PString & sHookName, const VPString 
 	SAVETMPS;
 
 	PUSHMARK( SP );
+
+	if ( !bLocal )
+		XPUSHs( sHookName.GetSV() );
+
 	for( VPString::size_type a = 0; a < vsArgs.size(); a++ )
 		XPUSHs( vsArgs[a].GetSV() );
 
 	PUTBACK;
 
-	int iCount = call_pv( it->second.c_str(), G_EVAL|G_SCALAR );
+	int iCount = call_pv( ( !bLocal ? "ZNC::CallFunc" : sHookName.c_str() ), G_EVAL|G_SCALAR );
 
 	SPAGAIN;
 	int iRet = CONTINUE;
@@ -692,7 +576,7 @@ CModPerl::EModRet CModPerl::CallBack( const PString & sHookName, const VPString 
 	if ( SvTRUE( ERRSV ) ) 
 	{ 
 		CString sError = SvPV( ERRSV, PL_na);
-		DumpError( it->second + ": " + sError );
+		DumpError( sHookName + ": " + sError );
 
 	} else
 	{
@@ -732,10 +616,6 @@ bool CModPerl::OnLoad( const CString & sArgs )
 	char *file = __FILE__;
 
 	newXS( "DynaLoader::boot_DynaLoader", boot_DynaLoader, (char *)file );
-	newXS( "ZNC::MapHook", XS_ZNC_MapHook, (char *)file );
-	newXS( "ZNC::DelHook", XS_ZNC_DelHook, (char *)file );
-	newXS( "ZNC::AddTimer", XS_ZNC_AddTimer, (char *)file );
-	newXS( "ZNC::UnlinkTimer", XS_ZNC_UnlinkTimer, (char *)file );
 	newXS( "ZNC::PutIRC", XS_ZNC_PutIRC, (char *)file );
 	newXS( "ZNC::PutUser", XS_ZNC_PutUser, (char *)file );
 	newXS( "ZNC::PutStatus", XS_ZNC_PutStatus, (char *)file );
@@ -752,21 +632,10 @@ bool CModPerl::OnLoad( const CString & sArgs )
 	if ( !pZNCSpace )
 		return( false );
 
-	newCONSTSUB ( pZNCSpace, "CONTINUE", newSViv (CONTINUE) );
-	newCONSTSUB ( pZNCSpace, "HALT", newSViv (HALT) );
-	newCONSTSUB ( pZNCSpace, "HALTMODS", newSViv (HALTMODS) );
-	newCONSTSUB ( pZNCSpace, "HALTCORE", newSViv (HALTCORE) );
-
-	if ( !sArgs.empty() )
-	{
-		if ( !LoadScript( sArgs ) )
-		{
-			PerlInterpShutdown();
-			return( false );
-		}
-		if ( CBNone( "OnLoad" ) != CModPerl::CONTINUE )
-			return( false );
-	}
+	newCONSTSUB( pZNCSpace, "CONTINUE", newSViv( CONTINUE ) );
+	newCONSTSUB( pZNCSpace, "HALT", newSViv( HALT ) );
+	newCONSTSUB( pZNCSpace, "HALTMODS", newSViv( HALTMODS ) );
+	newCONSTSUB( pZNCSpace, "HALTCORE", newSViv( HALTCORE ) );
 
 	return( true );
 }
@@ -781,11 +650,6 @@ CModPerl::EModRet CModPerl::OnDCCUserSend(const CNick& RemoteNick, unsigned long
 	vsArgs.push_back( sFile );
 	
 	return( CallBack( "OnDCCUserSend", vsArgs ) );
-}
-/////////////// CModPerlTimer //////////////
-void CModPerlTimer::RunJob() 
-{
-	((CModPerl *)m_pModule)->CBNone( GetName() );
 }
 
 #endif /* HAVE_PERL */

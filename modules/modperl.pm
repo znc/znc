@@ -1,8 +1,6 @@
 package ZNC;
 use strict;
 
-use lib qw( /home/work/znc );
-
 my %Modules;
 
 sub Eval
@@ -44,7 +42,7 @@ sub CallFunc
 
 sub LoadMod
 {
-	my ( $Username, $Module ) = @_;
+	my ( $Username, $Module, $ModPath ) = @_;
 
 	if ( $Modules{"$Username|$Module"} )
 	{
@@ -52,7 +50,7 @@ sub LoadMod
 		return( HALTMODS() );
 	}
 	
-	require "${Module}.pm";
+	require $ModPath;
 
 	my $obj = new $Module();
 	if ( !$obj )
@@ -79,7 +77,7 @@ sub UnLoadMod
 	}
 
 	undef $Modules{"$Username|$Module"};
-	ZNC::PutModule( "UnLoaded $Module, note in order to refresh code you must reload all modules." );
+	ZNC::PutModule( "UnLoaded $Module" );
 }
 
 1;
