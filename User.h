@@ -95,6 +95,7 @@ public:
 	const CString& GetVHost() const;
 	const CString& GetPass() const;
 
+	CString FindModPath(const CString& sModule) const;
 	const CString& GetCurPath() const;
 	const CString& GetDLPath() const;
 	const CString& GetModPath() const;

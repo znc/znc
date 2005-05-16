@@ -473,6 +473,27 @@ const CString& CUser::GetRealName() const { return m_sRealName; }
 const CString& CUser::GetVHost() const { return m_sVHost; }
 const CString& CUser::GetPass() const { return m_sPass; }
 
+CString CUser::FindModPath(const CString& sModule) const {
+	CString sModPath = GetCurPath() + "/modules/" + sModule + ".so";
+
+	if (!CFile::Exists(sModPath)) {
+		DEBUG_ONLY(cout << "[" << sModPath << "] Not found..." << endl);
+		sModPath = GetModPath() + "/" + sModule + ".so";
+
+		if (!CFile::Exists(sModPath)) {
+			DEBUG_ONLY(cout << "[" << sModPath << "] Not found..." << endl);
+			sModPath = _MODDIR_ + CString("/") + sModule + ".so";
+
+			if (!CFile::Exists(sModPath)) {
+				DEBUG_ONLY(cout << "[" << sModPath << "] Not found... giving up!" << endl);
+				return "";
+			}
+		}
+	}
+
+	return sModPath;
+}
+
 const CString& CUser::GetCurPath() const { return m_pZNC->GetCurPath(); }
 const CString& CUser::GetDLPath() const { return m_pZNC->GetDLPath(); }
 const CString& CUser::GetModPath() const { return m_pZNC->GetModPath(); }
