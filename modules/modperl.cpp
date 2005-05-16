@@ -747,10 +747,15 @@ bool CModPerl::OnLoad( const CString & sArgs )
 	// this sets up the eval CB that we call from here on out. this way we can grab the error produced
 	SetupZNCScript();
 
-	Eval( "use constant CONTINUE => " + PString( CONTINUE ) + ";" );
-	Eval( "use constant HALT => " + PString( HALT ) + ";" );
-	Eval( "use constant HALTMODS => " + PString( HALTMODS ) + ";" );
-	Eval( "use constant HALTCORE => " + PString( HALTCORE ) + ";" );
+	HV *pZNCSpace = get_hv ( "ZNC::", TRUE);
+
+	if ( !pZNCSpace )
+		return( false );
+
+	newCONSTSUB ( pZNCSpace, "CONTINUE", newSViv (CONTINUE) );
+	newCONSTSUB ( pZNCSpace, "HALT", newSViv (HALT) );
+	newCONSTSUB ( pZNCSpace, "HALTMODS", newSViv (HALTMODS) );
+	newCONSTSUB ( pZNCSpace, "HALTCORE", newSViv (HALTCORE) );
 
 	if ( !sArgs.empty() )
 	{
