@@ -47,7 +47,8 @@ public:
 	static CString ToPercent(double d);
 	static CString ToKBytes(double d);
 
-
+	int ToInt() const;
+	unsigned int ToUInt() const;
 	unsigned long long ToULongLong() const;
 	long long ToLongLong() const;
 	double ToDouble() const;
