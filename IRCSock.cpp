@@ -17,6 +17,8 @@ CIRCSock::CIRCSock(CZNC* pZNC, CUser* pUser) : Csock() {
 	m_MotdBuffer.SetLineCount(200);		// This should be more than enough motd lines
 	m_Nick.SetIdent(pUser->GetIdent());
 	m_Nick.SetHost(pUser->GetVHost());
+
+	m_uMaxNickLen = 9;
 	m_sPerms = "*!@%+";
 	m_sPermModes = "qaohv";
 	m_mueChanModes['b'] = ListArg;
@@ -150,8 +152,9 @@ void CIRCSock::ReadLine(const CString& sData) {
 
 					break;
 				case 433: {
+					unsigned int uMax = GetMaxNickLen();
 					CString sBadNick = sRest.Token(0);
-					CString sConfNick = m_pUser->GetNick();
+					CString sConfNick = m_pUser->GetNick().Left(uMax);
 
 					if (sNick == "*") {
 						CString sAltNick = m_pUser->GetAltNick();
@@ -160,14 +163,16 @@ void CIRCSock::ReadLine(const CString& sData) {
 							if ((!sAltNick.empty()) && (sConfNick.CaseCmp(sAltNick) != 0)) {
 								PutServ("NICK " + sAltNick);
 							} else {
-								PutServ("NICK " + sConfNick.Left(8) + "-");
+								PutServ("NICK " + sConfNick.Left(uMax -1) + "-");
 							}
 						} else if (sBadNick.CaseCmp(sAltNick) == 0) {
-							PutServ("NICK " + sConfNick.Left(8) + "-");
-						} else if (sBadNick.CaseCmp(CString(sConfNick.Left(8) + "-")) == 0) {
-							PutServ("NICK " + sConfNick.Left(8) + "|");
-						} else if (sBadNick.CaseCmp(CString(sConfNick.Left(8) + "|")) == 0) {
-							PutServ("NICK " + sConfNick.Left(8) + "^");
+							PutServ("NICK " + sConfNick.Left(uMax -1) + "-");
+						} else if (sBadNick.CaseCmp(CString(sConfNick.Left(uMax -1) + "-")) == 0) {
+							PutServ("NICK " + sConfNick.Left(uMax -1) + "|");
+						} else if (sBadNick.CaseCmp(CString(sConfNick.Left(uMax -1) + "|")) == 0) {
+							PutServ("NICK " + sConfNick.Left(uMax -1) + "^");
+						} else if (sBadNick.CaseCmp(CString(sConfNick.Left(uMax -1) + "^")) == 0) {
+							PutServ("NICK " + sConfNick.Left(uMax -1) + "a");
 						} else {
 							char cLetter = 0;
 							if (sBadNick.empty()) {
@@ -182,7 +187,7 @@ void CIRCSock::ReadLine(const CString& sData) {
 								return;
 							}
 
-							CString sSend = "NICK " + sConfNick.Left(8) + cLetter++;
+							CString sSend = "NICK " + sConfNick.Left(uMax -1) + ++cLetter;
 							PutServ(sSend);
 						}
 
@@ -890,6 +895,12 @@ void CIRCSock::ParseISupport(const CString& sLine) {
 			if (!sPrefixes.empty() && sPermModes.size() == sPrefixes.size()) {
 				m_sPerms = sPrefixes;
 				m_sPermModes = sPermModes;
+			}
+		} else if (sName.CaseCmp("CHANMODES") == 0) {
+			unsigned int uMax = sValue.ToUInt();
+
+			if (uMax) {
+				m_uMaxNickLen = uMax;
 			}
 		} else if (sName.CaseCmp("CHANMODES") == 0) {
 			if (!sValue.empty()) {
