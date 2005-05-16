@@ -1,3 +1,8 @@
+#
+# TODO need to add timer support
+# TODO need to add socket support
+#
+
 package ZNC;
 use strict;
 
@@ -56,21 +61,55 @@ sub LoadMod
 		return( HALTMODS() );
 	}
 
-# TODO need to do module caching to protect name spaces!!!!
-
 	my $DPath = GetString( "DataPath" );
-	my $FileName = $DPath . "/" . $Username . $Module . ".pm";
+	my $FileName = $DPath . "/." . $Username . $Module . ".pm";
 	
-	
+	if ( !open( INMOD, $ModPath ) )
+	{
+		ZNC::PutModule( "Unable to open module $ModPath!" );
+		return( HALTMODS() );
+	}
+	if ( !open( OUTMOD, ">$FileName" ) )
+	{
+		ZNC::PutModule( "Unable to write to Module cache $FileName!" );
+		close( INMOD );
+		return( HALTMODS() );
+	}
+
 	if ( $Modules{"$Username|$Module"} )
 	{
 		ZNC::PutModule( "$Module Already Loaded" );
 		return( HALTMODS() );
 	}
 	
-	require $ModPath;
+	my $pkgcount = 0;
+	while( <INMOD> )
+	{
+		if ( $_ =~ /^\s*package\s*.+;/ )
+		{
+			if ( $pkgcount > 0 )
+			{
+				ZNC::PutModule( "Only 1 package declaration per file!" );
+				close( INMOD );
+				close( OUTMOD );
+				return( HALDMODS() );
+			}
+			print OUTMOD "package $Username$Module;\n";
+			$pkgcount++;
+		}
+		else
+		{
+			print OUTMOD $_;
+		}
+	}
+	close( INMOD );
+	close( OUTMOD );
 
-	my $obj = new $Module();
+	require $FileName;
+
+	my $NewMod = $Username . $Module;
+
+	my $obj = new $NewMod();
 	if ( !$obj )
 	{
 		ZNC::PutModule( "$Module Failed to load" );
@@ -79,6 +118,7 @@ sub LoadMod
 	
 	$obj->{ZNC_Username} = $Username;
 	$obj->{ZNC_Name} = $Module;
+	$obj->{ZNC_ModPath} = $FileName;
 	
 	$Modules{"$Username|$Module"} = $obj;	
 	ZNC::PutModule( "Loaded $Module" );
