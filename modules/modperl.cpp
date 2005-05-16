@@ -153,7 +153,6 @@ public:
 			if ( isspace( sTmp[a] ) )
 				sTmp[a] = ' ';
 		}
-		cerr << "ERROR: " << sTmp << endl;
 		PutModule( sTmp );
 	}
 
@@ -320,17 +319,30 @@ public:
 
 	bool Eval( const CString & sScript, const CString & sFuncName = ZNCEvalCB );
 
-	virtual EModRet OnStatusCommand( const CString& sCommand )
+	virtual EModRet OnStatusCommand( const CString& sLine )
 	{
-		/* 
-		 * TODO if sCommand == loadmod or unloadmod on a .pm, then call the appropriate perl guts
-		 * if sCommand = reloadmod on a .pm, send a warning to reloadmod modperl
-		 */
+		CString sCommand = sLine.Token( 0 );
 
+		if ( ( sCommand == "loadmod" ) || ( sCommand == "unloadmod" ) || ( sCommand == "reloadmod" ) )
+		{
+			CString sModule = sLine.Token( 1 );
+			if ( sModule.find( ".pm" ) != CString::npos )
+			{
+				if ( sCommand == "loadmod" )
+					LoadPerlMod( sModule );
+				else if ( sCommand == "unloadmod" )
+					UnLoadPerlMod( sModule );
+				else
+					PutModule( "Perl modules can not be reloaded one at a time, you have to reload the interpreter to pick up code changes (reloadmod modperl)" );
+				return( HALT );
+			}
+		}
 		return( CONTINUE );
 	}
 
 private:
+	void LoadPerlMod( const CString & sModule );
+	void UnLoadPerlMod( const CString & sModule );
 
 	PerlInterpreter	*m_pPerl;
 
@@ -637,8 +649,35 @@ bool CModPerl::OnLoad( const CString & sArgs )
 	newCONSTSUB( pZNCSpace, "HALTMODS", newSViv( HALTMODS ) );
 	newCONSTSUB( pZNCSpace, "HALTCORE", newSViv( HALTCORE ) );
 
+	for( u_int a = 0; a < 255; a++ )
+	{
+		CString sModule = sArgs.Token( a );
+		if ( sModule.empty() )
+			break;
+
+		LoadPerlMod( sModule );
+	}
+
 	return( true );
 }
+
+void CModPerl::LoadPerlMod( const CString & sModule )
+{
+	CString sModPath = m_pUser->FindModPath( sModule );
+	if ( sModPath.empty() )
+		PutModule( "No such module " + sModule );
+	else
+	{
+		PutModule( "Using " + sModPath );
+		Eval( "ZNC::LoadMod( '" + m_pUser->GetUserName() + "', '" + sModPath + "');" );
+	}
+}
+
+void CModPerl::UnLoadPerlMod( const CString & sModule )
+{
+	Eval( "ZNC::UnLoadMod( '" + m_pUser->GetUserName() + "', '" + sModule + "');" );
+}
+
 
 CModPerl::EModRet CModPerl::OnDCCUserSend(const CNick& RemoteNick, unsigned long uLongIP, unsigned short uPort, 
 		const CString& sFile, unsigned long uFileSize)

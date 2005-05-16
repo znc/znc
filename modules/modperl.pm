@@ -42,8 +42,26 @@ sub CallFunc
 
 sub LoadMod
 {
-	my ( $Username, $Module, $ModPath ) = @_;
+	my ( $Username, $ModPath ) = @_;
 
+	my $Module;
+	if ( $ModPath =~ /\/([^\/.]+)\.pm/ )
+	{
+		$Module = $1;
+	}
+
+	if ( !$Module )
+	{
+		ZNC::PutModule( "Invalid Module requested!" );
+		return( HALTMODS() );
+	}
+
+# TODO need to do module caching to protect name spaces!!!!
+
+	my $DPath = GetString( "DataPath" );
+	my $FileName = $DPath . "/" . $Username . $Module . ".pm";
+	
+	
 	if ( $Modules{"$Username|$Module"} )
 	{
 		ZNC::PutModule( "$Module Already Loaded" );
@@ -69,6 +87,14 @@ sub LoadMod
 sub UnLoadMod
 {
 	my ( $Username, $Module ) = @_;
+
+	$Module =~ s/(.+?)\.pm/$1/;
+
+	if ( !$Module )
+	{
+		ZNC::PutModule( "Invalid Module requested!" );
+		return( HALTMODS() );
+	}
 
 	if ( !$Modules{"$Username|$Module"} )
 	{
