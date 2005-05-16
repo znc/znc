@@ -6,10 +6,6 @@
 #include "Nick.h"
 #include "Chan.h"
 
-#ifndef _MODDIR_
-#define _MODDIR_ "/usr/share/znc"
-#endif
-
 #define MODUNLOADCHK(func)								\
 	for (unsigned int a = 0; a < size(); a++) {			\
 		try {											\
@@ -478,22 +474,11 @@ bool CModules::LoadModule(const CString& sModule, const CString& sArgs, CUser* p
 		return false;
 	}
 
-	CString sModPath = pUser->GetCurPath() + "/modules/" + sModule + ".so";
+	CString sModPath = pUser->FindModPath(sModule);
 
-	if (!CFile::Exists(sModPath)) {
-		DEBUG_ONLY(cout << "[" << sModPath << "] Not found..." << endl);
-		sModPath = pUser->GetModPath() + "/" + sModule + ".so";
-
-		if (!CFile::Exists(sModPath)) {
-			DEBUG_ONLY(cout << "[" << sModPath << "] Not found..." << endl);
-			sModPath = _MODDIR_ + CString("/") + sModule + ".so";
-
-			if (!CFile::Exists(sModPath)) {
-				DEBUG_ONLY(cout << "[" << sModPath << "] Not found... giving up!" << endl);
-				sRetMsg = "Unable to find module [" + sModule + "]";
-				return false;
-			}
-		}
+	if (sModPath.empty()) {
+		sRetMsg = "Unable to find module [" + sModule + "]";
+		return false;
 	}
 
 	void* p = dlopen((sModPath).c_str(), RTLD_LAZY);
