@@ -101,6 +101,29 @@ typedef vector< PString > VPString;
 class CModPerl;
 static CModPerl *g_ModPerl = NULL;
 
+class CPerlTimer : public CTimer 
+{
+public:
+	CPerlTimer( CModule* pModule, unsigned int uInterval, unsigned int uCycles, const CString& sLabel, const CString& sDescription ) 
+		: CTimer( pModule, uInterval, uCycles, sLabel, sDescription) {}
+
+	virtual ~CPerlTimer() {}
+
+	// TODO possibly need to check that the userspace is correct when this goes global
+	
+
+	void SetFuncName( const CString & sFuncName ) { m_sFuncName = sFuncName; }
+	void SetUserName( const CString & sUserName ) { m_sUserName = sUserName; }
+	void SetModuleName( const CString & sModuleName ) { m_sModuleName = sModuleName; }
+
+protected:
+	virtual void RunJob();
+
+	CString		m_sFuncName;
+	CString		m_sUserName;
+	CString		m_sModuleName;
+};
+
 class CModPerl : public CModule 
 {
 public:
@@ -275,7 +298,15 @@ public:
 		return( CBTriple( "OnChanNotice", NICK( Nick ), CHAN( Channel ), sMessage ) );
 	}
 
-	EModRet CallBack( const PString & sHookName, const VPString & vsArgs, bool bLocal = false );
+	enum ECBTYPES
+	{
+		CB_LOCAL = 1,
+		CB_ONHOOK = 2,
+		CB_TIMER = 3
+	};
+
+	EModRet CallBack( const PString & sHookName, const VPString & vsArgs, ECBTYPES eCBType = CB_ONHOOK );
+
 	EModRet CBNone( const PString & sHookName )
 	{
 		VPString vsArgs;
@@ -353,6 +384,34 @@ MODULEDEFS( CModPerl )
 
 
 //////////////////////////////// PERL GUTS //////////////////////////////
+
+XS(XS_ZNC_COREAddTimer)
+{
+	dXSARGS;
+	if ( items != 5 )
+		Perl_croak( aTHX_ "Usage: COREAddTimer( modname, funcname, description, interval, cycles )" );
+
+	SP -= items;
+	ax = (SP - PL_stack_base) + 1 ;
+	{
+		if ( g_ModPerl )
+		{
+			CString sModName = (char *)SvPV(ST(0),PL_na);
+			CString sFuncName = (char *)SvPV(ST(1),PL_na);
+			CString sDesc = (char *)SvPV(ST(2),PL_na);
+			u_int iInterval = (u_int)SvUV(ST(3));
+			u_int iCycles = (u_int)SvUV(ST(4));
+			CString sUserName = g_ModPerl->GetUser()->GetUserName();
+			CString sLabel = sUserName + sModName + sFuncName;
+			CPerlTimer *pTimer = new CPerlTimer( g_ModPerl, iInterval, iCycles, sLabel, sDesc );
+			pTimer->SetFuncName( sFuncName );
+			pTimer->SetUserName( sUserName );
+			pTimer->SetModuleName( sModName );
+			g_ModPerl->AddTimer( pTimer );
+		}
+		PUTBACK;
+	}
+}
 
 XS(XS_ZNC_PutIRC)
 {
@@ -561,7 +620,7 @@ bool CModPerl::Eval( const CString & sScript, const CString & sFuncName )
 	return( bReturn );
 }
 
-CModPerl::EModRet CModPerl::CallBack( const PString & sHookName, const VPString & vsArgs, bool bLocal )
+CModPerl::EModRet CModPerl::CallBack( const PString & sHookName, const VPString & vsArgs, ECBTYPES eCBType )
 {
 	if ( !m_pPerl )
 		return( CONTINUE );
@@ -572,15 +631,26 @@ CModPerl::EModRet CModPerl::CallBack( const PString & sHookName, const VPString 
 
 	PUSHMARK( SP );
 
-	if ( !bLocal )
+	CString sFuncToCall;
+	if ( eCBType == CB_LOCAL )
+		sFuncToCall = sHookName;
+	else
+	{
+		PString sUsername = m_pUser->GetUserName();
+		XPUSHs( sUsername.GetSV() );
 		XPUSHs( sHookName.GetSV() );
+		if ( eCBType == CB_ONHOOK )
+			sFuncToCall = "ZNC::CallFunc";
+		else
+			sFuncToCall = "ZNC::CallTimer";
+	}
 
 	for( VPString::size_type a = 0; a < vsArgs.size(); a++ )
 		XPUSHs( vsArgs[a].GetSV() );
 
 	PUTBACK;
 
-	int iCount = call_pv( ( !bLocal ? "ZNC::CallFunc" : sHookName.c_str() ), G_EVAL|G_SCALAR );
+	int iCount = call_pv( sFuncToCall.c_str(), G_EVAL|G_SCALAR );
 
 	SPAGAIN;
 	int iRet = CONTINUE;
@@ -590,6 +660,8 @@ CModPerl::EModRet CModPerl::CallBack( const PString & sHookName, const VPString 
 		CString sError = SvPV( ERRSV, PL_na);
 		DumpError( sHookName + ": " + sError );
 
+		if ( eCBType == CB_TIMER )
+			iRet = HALT;
 	} else
 	{
 		if ( iCount == 1 )
@@ -635,6 +707,7 @@ bool CModPerl::OnLoad( const CString & sArgs )
 	newXS( "ZNC::PutModNotice", XS_ZNC_PutModNotice, (char *)file );
 	newXS( "ZNC::GetNicks", XS_ZNC_GetNicks, (char *)file );
 	newXS( "ZNC::GetString", XS_ZNC_GetString, (char *)file );
+	newXS( "ZNC::COREAddTimer", XS_ZNC_COREAddTimer, (char *)file );
 	
 	// this sets up the eval CB that we call from here on out. this way we can grab the error produced
 	SetupZNCScript();
@@ -691,4 +764,11 @@ CModPerl::EModRet CModPerl::OnDCCUserSend(const CNick& RemoteNick, unsigned long
 	return( CallBack( "OnDCCUserSend", vsArgs ) );
 }
 
+void CPerlTimer::RunJob()
+{
+	VPString vArgs;
+	vArgs.push_back( m_sModuleName );
+	if ( ((CModPerl *)m_pModule)->CallBack( m_sFuncName, vArgs, CModPerl::CB_TIMER ) != CModPerl::CONTINUE )
+		Stop();
+}
 #endif /* HAVE_PERL */

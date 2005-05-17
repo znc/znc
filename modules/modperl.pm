@@ -1,12 +1,11 @@
 #
-# TODO need to add timer support
 # TODO need to add socket support
 #
 
 package ZNC;
 use strict;
 
-my %Modules;
+my @MODS = ();
 
 sub Eval
 {
@@ -16,14 +15,16 @@ sub Eval
 
 sub CallFunc
 {
-	my ( $Func, @args ) = @_;
+	my ( $Username, $Func, @args ) = @_;
 	my $FinalRet = CONTINUE();
 
-	foreach( keys( %Modules ) )
+	foreach( @MODS )
 	{
-		if ( $Modules{$_}->{$Func} )
+		next if ( $_->{ZNC_Username} ne $Username );
+
+		if ( $_->can( $Func ) )
 		{
-			my $Ret = $Modules{$_}->$Func( @args );
+			my $Ret = $_->$Func( @args );
 
 			if ( $Ret == HALT() )
 			{
@@ -76,10 +77,13 @@ sub LoadMod
 		return( HALTMODS() );
 	}
 
-	if ( $Modules{"$Username|$Module"} )
+	foreach( @MODS )
 	{
-		ZNC::PutModule( "$Module Already Loaded" );
-		return( HALTMODS() );
+		if ( ( $_->{ZNC_Username} eq $Username ) && ( $_->{ZNC_Name} eq $Module ) )
+		{
+			ZNC::PutModule( "$Module Already Loaded" );
+			return( HALTMODS() );
+		}
 	}
 	
 	my $pkgcount = 0;
@@ -120,7 +124,7 @@ sub LoadMod
 	$obj->{ZNC_Name} = $Module;
 	$obj->{ZNC_ModPath} = $FileName;
 	
-	$Modules{"$Username|$Module"} = $obj;	
+	push( @MODS, $obj );
 	ZNC::PutModule( "Loaded $Module" );
 }
 
@@ -136,14 +140,33 @@ sub UnLoadMod
 		return( HALTMODS() );
 	}
 
-	if ( !$Modules{"$Username|$Module"} )
+	for( my $i = 0; $i < @MODS; $i++ )
 	{
-		ZNC::PutModule( "$Module Isn't Loaded" );
-		return( HALTMODS() );
+		if ( ( $MODS[$i]->{ZNC_Username} eq $Username ) && ( $MODS[$i]->{ZNC_Name} eq $Module ) )
+		{
+			undef $MODS[$i];
+			splice( @MODS, $i );
+			ZNC::PutModule( "UnLoaded $Module" );
+			return( CONTINUE() );
+		}
 	}
+	ZNC::PutModule( "$Module Isn't Loaded" );
 
-	undef $Modules{"$Username|$Module"};
-	ZNC::PutModule( "UnLoaded $Module" );
+}
+
+# the timer is inserted, it just calls this guy and expects it to be here
+sub CallTimer
+{
+	my ( $Username, $Func, $ModName ) = @_;
+
+	for( my $i = 0; $i < @MODS; $i++ )
+	{
+		if ( ( $MODS[$i]->{ZNC_Username} eq $Username ) && ( $MODS[$i]->{ZNC_Name} eq $ModName ) )
+		{
+			return( $MODS[$i]->$Func() );
+		}
+	}
+	return( HALTMODS() );
 }
 
 1;
