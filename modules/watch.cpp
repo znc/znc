@@ -164,7 +164,7 @@ public:
 		return "Copy activity from a specific user into a separate window.";
 	}
 
-	virtual void OnRawMode(const CNick& OpNick, const CChan& Channel, const CString& sModes, const CString& sArgs) {
+	virtual void OnRawMode(const CNick& OpNick, CChan& Channel, const CString& sModes, const CString& sArgs) {
 		Process(OpNick, "* " + OpNick.GetNick() + " sets mode: " + sModes + " " + sArgs + " on " + Channel.GetName(), Channel.GetName());
 	}
 
@@ -186,7 +186,7 @@ public:
 		return CONTINUE;
 	}
 
-	virtual void OnKick(const CNick& OpNick, const CString& sKickedNick, const CChan& Channel, const CString& sMessage) {
+	virtual void OnKick(const CNick& OpNick, const CString& sKickedNick, CChan& Channel, const CString& sMessage) {
 		Process(OpNick, "* " + OpNick.GetNick() + " kicked " + sKickedNick + " from " + Channel.GetName() + " because [" + sMessage + "]", Channel.GetName());
 	}
 
@@ -194,11 +194,11 @@ public:
 		Process(Nick, "* Quits: " + Nick.GetNick() + " (" + Nick.GetIdent() + "@" + Nick.GetHost() + ") (" + sMessage + ")", "");
 	}
 
-	virtual void OnJoin(const CNick& Nick, const CChan& Channel) {
+	virtual void OnJoin(const CNick& Nick, CChan& Channel) {
 		Process(Nick, "* " + Nick.GetNick() + " (" + Nick.GetIdent() + "@" + Nick.GetHost() + ") joins " + Channel.GetName(), Channel.GetName());
 	}
 
-	virtual void OnPart(const CNick& Nick, const CChan& Channel) {
+	virtual void OnPart(const CNick& Nick, CChan& Channel) {
 		Process(Nick, "* " + Nick.GetNick() + " (" + Nick.GetIdent() + "@" + Nick.GetHost() + ") parts " + Channel.GetName(), Channel.GetName());
 	}
 
@@ -216,7 +216,7 @@ public:
 		return CONTINUE;
 	}
 
-	virtual EModRet OnChanCTCP(const CNick& Nick, const CChan& Channel, CString& sMessage) {
+	virtual EModRet OnChanCTCP(const CNick& Nick, CChan& Channel, CString& sMessage) {
 		Process(Nick, "* CTCP: " + Nick.GetNick() + " [" + sMessage + "] to [" + Channel.GetName() + "]", Channel.GetName());
 		return CONTINUE;
 	}
@@ -226,7 +226,7 @@ public:
 		return CONTINUE;
 	}
 
-	virtual EModRet OnChanNotice(const CNick& Nick, const CChan& Channel, CString& sMessage) {
+	virtual EModRet OnChanNotice(const CNick& Nick, CChan& Channel, CString& sMessage) {
 		Process(Nick, "-" + Nick.GetNick() + ":" + Channel.GetName() + "- " + sMessage, Channel.GetName());
 		return CONTINUE;
 	}
@@ -236,7 +236,7 @@ public:
 		return CONTINUE;
 	}
 
-	virtual EModRet OnChanMsg(const CNick& Nick, const CChan& Channel, CString& sMessage) {
+	virtual EModRet OnChanMsg(const CNick& Nick, CChan& Channel, CString& sMessage) {
 		Process(Nick, "<" + Nick.GetNick() + ":" + Channel.GetName() + "> " + sMessage, Channel.GetName());
 		return CONTINUE;
 	}

@@ -50,27 +50,27 @@ public:
 		PutModule("You got disconnected BoyOh.");
 	}
 
-	virtual void OnChanPermission(const CNick& OpNick, const CNick& Nick, const CChan& Channel, unsigned char uMode, bool bAdded, bool bNoChange) {
+	virtual void OnChanPermission(const CNick& OpNick, const CNick& Nick, CChan& Channel, unsigned char uMode, bool bAdded, bool bNoChange) {
 		PutModule(((bNoChange) ? "[0] [" : "[1] [") + OpNick.GetNick() + "] set mode [" + Channel.GetName() + ((bAdded) ? "] +" : "] -") + CString::ToString(uMode) + " " + Nick.GetNick());
 	}
 
-	virtual void OnOp(const CNick& OpNick, const CNick& Nick, const CChan& Channel, bool bNoChange) {
+	virtual void OnOp(const CNick& OpNick, const CNick& Nick, CChan& Channel, bool bNoChange) {
 		PutModule(((bNoChange) ? "[0] [" : "[1] [") + OpNick.GetNick() + "] opped [" + Nick.GetNick() + "] on [" + Channel.GetName() + "]");
 	}
 
-	virtual void OnDeop(const CNick& OpNick, const CNick& Nick, const CChan& Channel, bool bNoChange) {
+	virtual void OnDeop(const CNick& OpNick, const CNick& Nick, CChan& Channel, bool bNoChange) {
 		PutModule(((bNoChange) ? "[0] [" : "[1] [") + OpNick.GetNick() + "] deopped [" + Nick.GetNick() + "] on [" + Channel.GetName() + "]");
 	}
 
-	virtual void OnVoice(const CNick& OpNick, const CNick& Nick, const CChan& Channel, bool bNoChange) {
+	virtual void OnVoice(const CNick& OpNick, const CNick& Nick, CChan& Channel, bool bNoChange) {
 		PutModule(((bNoChange) ? "[0] [" : "[1] [") + OpNick.GetNick() + "] voiced [" + Nick.GetNick() + "] on [" + Channel.GetName() + "]");
 	}
 
-	virtual void OnDevoice(const CNick& OpNick, const CNick& Nick, const CChan& Channel, bool bNoChange) {
+	virtual void OnDevoice(const CNick& OpNick, const CNick& Nick, CChan& Channel, bool bNoChange) {
 		PutModule(((bNoChange) ? "[0] [" : "[1] [") + OpNick.GetNick() + "] devoiced [" + Nick.GetNick() + "] on [" + Channel.GetName() + "]");
 	}
 
-	virtual void OnRawMode(const CNick& OpNick, const CChan& Channel, const CString& sModes, const CString& sArgs) {
+	virtual void OnRawMode(const CNick& OpNick, CChan& Channel, const CString& sModes, const CString& sArgs) {
 		PutModule("* " + OpNick.GetNick() + " sets mode: " + sModes + " " + sArgs + " (" + Channel.GetName() + ")");
 	}
 
@@ -84,7 +84,7 @@ public:
 		return CONTINUE;
 	}
 
-	virtual void OnKick(const CNick& OpNick, const CString& sKickedNick, const CChan& Channel, const CString& sMessage) {
+	virtual void OnKick(const CNick& OpNick, const CString& sKickedNick, CChan& Channel, const CString& sMessage) {
 		PutModule("[" + OpNick.GetNick() + "] kicked [" + sKickedNick + "] from [" + Channel.GetName() + "] with the msg [" + sMessage + "]");
 	}
 
@@ -92,11 +92,11 @@ public:
 		PutModule("* Quits: " + Nick.GetNick() + " (" + Nick.GetIdent() + "!" + Nick.GetHost() + ") (" + sMessage + ")");
 	}
 
-	virtual void OnJoin(const CNick& Nick, const CChan& Channel) {
+	virtual void OnJoin(const CNick& Nick, CChan& Channel) {
 		PutModule("* Joins: " + Nick.GetNick() + " (" + Nick.GetIdent() + "!" + Nick.GetHost() + ")");
 	}
 
-	virtual void OnPart(const CNick& Nick, const CChan& Channel) {
+	virtual void OnPart(const CNick& Nick, CChan& Channel) {
 		PutModule("* Parts: " + Nick.GetNick() + " (" + Nick.GetIdent() + "!" + Nick.GetHost() + ")");
 	}
 
@@ -130,7 +130,7 @@ public:
 		return CONTINUE;
 	}
 
-	virtual EModRet OnChanCTCP(const CNick& Nick, const CChan& Channel, CString& sMessage) {
+	virtual EModRet OnChanCTCP(const CNick& Nick, CChan& Channel, CString& sMessage) {
 		PutModule("[" + Nick.GetNick() + "] chanctcp [" + sMessage + "] to [" + Channel.GetName() + "]");
 		sMessage = "\00311,5 " + sMessage + " \003";
 
@@ -151,7 +151,7 @@ public:
 		return CONTINUE;
 	}
 
-	virtual EModRet OnChanNotice(const CNick& Nick, const CChan& Channel, CString& sMessage) {
+	virtual EModRet OnChanNotice(const CNick& Nick, CChan& Channel, CString& sMessage) {
 		PutModule("[" + Nick.GetNick() + "] channotice [" + sMessage + "] to [" + Channel.GetName() + "]");
 		sMessage = "\00311,5 " + sMessage + " \003";
 
@@ -172,7 +172,7 @@ public:
 		return CONTINUE;
 	}
 
-	virtual EModRet OnChanMsg(const CNick& Nick, const CChan& Channel, CString& sMessage) {
+	virtual EModRet OnChanMsg(const CNick& Nick, CChan& Channel, CString& sMessage) {
 		if (sMessage == "!ping") {
 			PutIRC("PRIVMSG " + Channel.GetName() + " :PONG?");
 		}

@@ -26,6 +26,9 @@
  * better solution then plain text.
  * 
  * $Log$
+ * Revision 1.24  2005/05/17 17:18:35  prozacx
+ * Changed CChan reference to non-const in all hooks
+ *
  * Revision 1.23  2005/05/15 04:46:48  imaginos
  * when i part, save to file before the chan gets haxed. same with quit
  *
@@ -320,7 +323,7 @@ public:
 		return( sReturn );
 	}
 
-	virtual void OnRawMode(const CNick& cOpNick, const CChan& cChannel, const CString& sModes, const CString& sArgs)
+	virtual void OnRawMode(const CNick& cOpNick, CChan& cChannel, const CString& sModes, const CString& sArgs)
 	{
 		if ( !cChannel.KeepBuffer() )
 			return;
@@ -348,13 +351,13 @@ public:
 			vChans[a]->AddBuffer( SpoofChanMsg( vChans[a]->GetName(), cNick.GetNickMask() + " NICK " + sNewNick ) ); 
 		}
 	}
-	virtual void OnKick(const CNick& cNick, const CString& sOpNick, const CChan& cChannel, const CString& sMessage)
+	virtual void OnKick(const CNick& cNick, const CString& sOpNick, CChan& cChannel, const CString& sMessage)
 	{
 		if ( !cChannel.KeepBuffer() )
 			return;
 		((CChan &)cChannel).AddBuffer( SpoofChanMsg( cChannel.GetName(), sOpNick + " KICK " + cNick.GetNickMask() + " " + sMessage ) );
 	}
-	virtual void OnJoin(const CNick& cNick, const CChan& cChannel)
+	virtual void OnJoin(const CNick& cNick, CChan& cChannel)
 	{
 		if ( ( cNick.GetNick().CaseCmp( m_pUser->GetNick() ) == 0 ) && ( cChannel.GetBuffer().empty() ) )
 		{
@@ -366,7 +369,7 @@ public:
 			return;
 		((CChan &)cChannel).AddBuffer( SpoofChanMsg( cChannel.GetName(), cNick.GetNickMask() + " JOIN" ) );
 	}
-	virtual void OnPart(const CNick& cNick, const CChan& cChannel)
+	virtual void OnPart(const CNick& cNick, CChan& cChannel)
 	{
 		if ( !cChannel.KeepBuffer() )
 			return;

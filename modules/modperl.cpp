@@ -193,23 +193,23 @@ public:
 	virtual EModRet OnDCCUserSend(const CNick& RemoteNick, unsigned long uLongIP, unsigned short uPort, 
 		const CString& sFile, unsigned long uFileSize);
 
-	virtual void OnOp(const CNick& OpNick, const CNick& Nick, const CChan& Channel, bool bNoChange)
+	virtual void OnOp(const CNick& OpNick, const CNick& Nick, CChan& Channel, bool bNoChange)
 	{
 		CBFour( "OnOp", NICK( OpNick ), NICK( Nick ), CHAN( Channel ), bNoChange );
 	}
-	virtual void OnDeop(const CNick& OpNick, const CNick& Nick, const CChan& Channel, bool bNoChange)
+	virtual void OnDeop(const CNick& OpNick, const CNick& Nick, CChan& Channel, bool bNoChange)
 	{
 		CBFour( "OnDeop", NICK( OpNick ), NICK( Nick ), CHAN( Channel ), bNoChange );
 	}
-	virtual void OnVoice(const CNick& OpNick, const CNick& Nick, const CChan& Channel, bool bNoChange)
+	virtual void OnVoice(const CNick& OpNick, const CNick& Nick, CChan& Channel, bool bNoChange)
 	{
 		CBFour( "OnVoice", NICK( OpNick ), NICK( Nick ), CHAN( Channel ), bNoChange );
 	}
-	virtual void OnDevoice(const CNick& OpNick, const CNick& Nick, const CChan& Channel, bool bNoChange)
+	virtual void OnDevoice(const CNick& OpNick, const CNick& Nick, CChan& Channel, bool bNoChange)
 	{
 		CBFour( "OnDevoice", NICK( OpNick ), NICK( Nick ), CHAN( Channel ), bNoChange );
 	}
-	virtual void OnRawMode(const CNick& Nick, const CChan& Channel, const CString& sModes, const CString& sArgs)
+	virtual void OnRawMode(const CNick& Nick, CChan& Channel, const CString& sModes, const CString& sArgs)
 	{
 		CBFour( "OnRawMode", NICK( Nick ), CHAN( Channel ), sModes, sArgs  );
 	}
@@ -246,13 +246,13 @@ public:
 		CallBack( "OnNick", vsArgs );
 	}
 
-	virtual void OnKick(const CNick& Nick, const CString& sOpNick, const CChan& Channel, const CString& sMessage)
+	virtual void OnKick(const CNick& Nick, const CString& sOpNick, CChan& Channel, const CString& sMessage)
 	{
 		CBFour( "OnKick", NICK( Nick ), sOpNick, CHAN( Channel ), sMessage );
 	}
 
-	virtual void OnJoin(const CNick& Nick, const CChan& Channel) { CBDouble( "OnJoin", NICK( Nick ), CHAN( Channel ) ); }
-	virtual void OnPart(const CNick& Nick, const CChan& Channel) { CBDouble( "OnPart", NICK( Nick ), CHAN( Channel ) ); }
+	virtual void OnJoin(const CNick& Nick, CChan& Channel) { CBDouble( "OnJoin", NICK( Nick ), CHAN( Channel ) ); }
+	virtual void OnPart(const CNick& Nick, CChan& Channel) { CBDouble( "OnPart", NICK( Nick ), CHAN( Channel ) ); }
 
 	virtual EModRet OnUserCTCPReply(const CNick& Nick, CString& sMessage) 
 	{ 
@@ -270,7 +270,7 @@ public:
 	{
 		return CBDouble( "OnPrivCTCP", NICK( Nick ), sMessage ); 
 	}
-	virtual EModRet OnChanCTCP(const CNick& Nick, const CChan& Channel, CString& sMessage)
+	virtual EModRet OnChanCTCP(const CNick& Nick, CChan& Channel, CString& sMessage)
 	{
 		return CBTriple( "OnChanCTCP", NICK( Nick ), CHAN( Channel ), sMessage );
 	}
@@ -283,7 +283,7 @@ public:
 		return CBDouble( "OnPrivMsg", NICK( Nick ), sMessage );
 	}
 
-	virtual EModRet OnChanMsg( const CNick& Nick, const CChan & Channel, CString & sMessage )
+	virtual EModRet OnChanMsg( const CNick& Nick, CChan & Channel, CString & sMessage )
 	{
 		return( CBTriple( "OnChanMsg", NICK( Nick ), CHAN( Channel ), sMessage ) );
 	}
@@ -295,7 +295,7 @@ public:
 	{
 		return CBDouble( "OnPrivNotice", NICK( Nick ), sMessage );
 	}
-	virtual EModRet OnChanNotice(const CNick& Nick, const CChan& Channel, CString& sMessage)
+	virtual EModRet OnChanNotice(const CNick& Nick, CChan& Channel, CString& sMessage)
 	{
 		return( CBTriple( "OnChanNotice", NICK( Nick ), CHAN( Channel ), sMessage ) );
 	}

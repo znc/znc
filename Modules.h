@@ -120,12 +120,12 @@ public:
 
 	virtual EModRet OnDCCUserSend(const CNick& RemoteNick, unsigned long uLongIP, unsigned short uPort, const CString& sFile, unsigned long uFileSize);
 
-	virtual void OnChanPermission(const CNick& OpNick, const CNick& Nick, const CChan& Channel, unsigned char uMode, bool bAdded, bool bNoChange);
-	virtual void OnOp(const CNick& OpNick, const CNick& Nick, const CChan& Channel, bool bNoChange);
-	virtual void OnDeop(const CNick& OpNick, const CNick& Nick, const CChan& Channel, bool bNoChange);
-	virtual void OnVoice(const CNick& OpNick, const CNick& Nick, const CChan& Channel, bool bNoChange);
-	virtual void OnDevoice(const CNick& OpNick, const CNick& Nick, const CChan& Channel, bool bNoChange);
-	virtual void OnRawMode(const CNick& OpNick, const CChan& Channel, const CString& sModes, const CString& sArgs);
+	virtual void OnChanPermission(const CNick& OpNick, const CNick& Nick, CChan& Channel, unsigned char uMode, bool bAdded, bool bNoChange);
+	virtual void OnOp(const CNick& OpNick, const CNick& Nick, CChan& Channel, bool bNoChange);
+	virtual void OnDeop(const CNick& OpNick, const CNick& Nick, CChan& Channel, bool bNoChange);
+	virtual void OnVoice(const CNick& OpNick, const CNick& Nick, CChan& Channel, bool bNoChange);
+	virtual void OnDevoice(const CNick& OpNick, const CNick& Nick, CChan& Channel, bool bNoChange);
+	virtual void OnRawMode(const CNick& OpNick, CChan& Channel, const CString& sModes, const CString& sArgs);
 
 	virtual EModRet OnUserRaw(CString& sLine);
 	virtual EModRet OnRaw(CString& sLine);
@@ -137,21 +137,21 @@ public:
 
 	virtual void OnQuit(const CNick& Nick, const CString& sMessage, const vector<CChan*>& vChans);
 	virtual void OnNick(const CNick& Nick, const CString& sNewNick, const vector<CChan*>& vChans);
-	virtual void OnKick(const CNick& Nick, const CString& sOpNick, const CChan& Channel, const CString& sMessage);
-	virtual void OnJoin(const CNick& Nick, const CChan& Channel);
-	virtual void OnPart(const CNick& Nick, const CChan& Channel);
+	virtual void OnKick(const CNick& Nick, const CString& sOpNick, CChan& Channel, const CString& sMessage);
+	virtual void OnJoin(const CNick& Nick, CChan& Channel);
+	virtual void OnPart(const CNick& Nick, CChan& Channel);
 
 	virtual EModRet OnUserCTCPReply(const CNick& Nick, CString& sMessage);
 	virtual EModRet OnCTCPReply(const CNick& Nick, CString& sMessage);
 	virtual EModRet OnUserCTCP(const CString& sTarget, CString& sMessage);
 	virtual EModRet OnPrivCTCP(const CNick& Nick, CString& sMessage);
-	virtual EModRet OnChanCTCP(const CNick& Nick, const CChan& Channel, CString& sMessage);
+	virtual EModRet OnChanCTCP(const CNick& Nick, CChan& Channel, CString& sMessage);
 	virtual EModRet OnUserMsg(const CString& sTarget, CString& sMessage);
 	virtual EModRet OnPrivMsg(const CNick& Nick, CString& sMessage);
-	virtual EModRet OnChanMsg(const CNick& Nick, const CChan& Channel, CString& sMessage);
+	virtual EModRet OnChanMsg(const CNick& Nick, CChan& Channel, CString& sMessage);
 	virtual EModRet OnUserNotice(const CString& sTarget, CString& sMessage);
 	virtual EModRet OnPrivNotice(const CNick& Nick, CString& sMessage);
-	virtual EModRet OnChanNotice(const CNick& Nick, const CChan& Channel, CString& sMessage);
+	virtual EModRet OnChanNotice(const CNick& Nick, CChan& Channel, CString& sMessage);
 
 	void * GetDLL();
 	static double GetVersion() { return VERSION; }
@@ -210,12 +210,12 @@ public:
 
 	virtual bool OnDCCUserSend(const CNick& RemoteNick, unsigned long uLongIP, unsigned short uPort, const CString& sFile, unsigned long uFileSize);
 
-	virtual void OnChanPermission(const CNick& OpNick, const CNick& Nick, const CChan& Channel, unsigned char uMode, bool bAdded, bool bNoChange);
-	virtual void OnOp(const CNick& OpNick, const CNick& Nick, const CChan& Channel, bool bNoChange);
-	virtual void OnDeop(const CNick& OpNick, const CNick& Nick, const CChan& Channel, bool bNoChange);
-	virtual void OnVoice(const CNick& OpNick, const CNick& Nick, const CChan& Channel, bool bNoChange);
-	virtual void OnDevoice(const CNick& OpNick, const CNick& Nick, const CChan& Channel, bool bNoChange);
-	virtual void OnRawMode(const CNick& OpNick, const CChan& Channel, const CString& sModes, const CString& sArgs);
+	virtual void OnChanPermission(const CNick& OpNick, const CNick& Nick, CChan& Channel, unsigned char uMode, bool bAdded, bool bNoChange);
+	virtual void OnOp(const CNick& OpNick, const CNick& Nick, CChan& Channel, bool bNoChange);
+	virtual void OnDeop(const CNick& OpNick, const CNick& Nick, CChan& Channel, bool bNoChange);
+	virtual void OnVoice(const CNick& OpNick, const CNick& Nick, CChan& Channel, bool bNoChange);
+	virtual void OnDevoice(const CNick& OpNick, const CNick& Nick, CChan& Channel, bool bNoChange);
+	virtual void OnRawMode(const CNick& OpNick, CChan& Channel, const CString& sModes, const CString& sArgs);
 
 	virtual bool OnUserRaw(CString& sLine);
 	virtual bool OnRaw(CString& sLine);
@@ -227,21 +227,21 @@ public:
 
 	virtual void OnQuit(const CNick& Nick, const CString& sMessage, const vector<CChan*>& vChans);
 	virtual void OnNick(const CNick& Nick, const CString& sNewNick, const vector<CChan*>& vChans);
-	virtual void OnKick(const CNick& Nick, const CString& sOpNick, const CChan& Channel, const CString& sMessage);
-	virtual void OnJoin(const CNick& Nick, const CChan& Channel);
-	virtual void OnPart(const CNick& Nick, const CChan& Channel);
+	virtual void OnKick(const CNick& Nick, const CString& sOpNick, CChan& Channel, const CString& sMessage);
+	virtual void OnJoin(const CNick& Nick, CChan& Channel);
+	virtual void OnPart(const CNick& Nick, CChan& Channel);
 
 	virtual bool OnUserCTCPReply(const CNick& Nick, CString& sMessage);
 	virtual bool OnCTCPReply(const CNick& Nick, CString& sMessage);
 	virtual bool OnUserCTCP(const CString& sTarget, CString& sMessage);
 	virtual bool OnPrivCTCP(const CNick& Nick, CString& sMessage);
-	virtual bool OnChanCTCP(const CNick& Nick, const CChan& Channel, CString& sMessage);
+	virtual bool OnChanCTCP(const CNick& Nick, CChan& Channel, CString& sMessage);
 	virtual bool OnUserMsg(const CString& sTarget, CString& sMessage);
 	virtual bool OnPrivMsg(const CNick& Nick, CString& sMessage);
-	virtual bool OnChanMsg(const CNick& Nick, const CChan& Channel, CString& sMessage);
+	virtual bool OnChanMsg(const CNick& Nick, CChan& Channel, CString& sMessage);
 	virtual bool OnUserNotice(const CString& sTarget, CString& sMessage);
 	virtual bool OnPrivNotice(const CNick& Nick, CString& sMessage);
-	virtual bool OnChanNotice(const CNick& Nick, const CChan& Channel, CString& sMessage);
+	virtual bool OnChanNotice(const CNick& Nick, CChan& Channel, CString& sMessage);
 
 	CModule* FindModule(const CString& sModule);
 	bool LoadModule(const CString& sModule, const CString& sArgs, CUser* pUser, CString& sRetMsg);
