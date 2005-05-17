@@ -16,6 +16,7 @@
 CZNC::CZNC() {
 	m_uListenPort = 0;
 	m_bISpoofLocked = false;
+	m_sISpoofFormat = "global { reply \"%\" }";
 }
 
 CZNC::~CZNC() {
@@ -86,7 +87,8 @@ int CZNC::Loop() {
 				}
 
 				if (File.Open(O_WRONLY | O_TRUNC | O_CREAT)) {
-					File.Write(pUser->GetIdent() + "\r\n");
+					CString sData = m_sISpoofFormat.Token(0, false, '%') + pUser->GetIdent() + m_sISpoofFormat.Token(1, true, '%');
+					File.Write(sData + "\n");
 					File.Close();
 				}
 
@@ -734,6 +736,9 @@ bool CZNC::ParseConfig(const CString& sConfig) {
 
 					CUtils::PrintStatus(true);
 
+					continue;
+				} else if (sName.CaseCmp("ISpoofFormat") == 0) {
+					m_sISpoofFormat = sValue;
 					continue;
 				} else if (sName.CaseCmp("ISpoofFile") == 0) {
 					m_sISpoofFile = sValue;

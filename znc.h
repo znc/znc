@@ -69,6 +69,7 @@ protected:
 
 	CString					m_sISpoofFile;
 	CString					m_sOrigISpoof;
+	CString					m_sISpoofFormat;
 	CString					m_sPidFile;
 	CLockFile				m_LockFile;
 	bool					m_bISpoofLocked;
