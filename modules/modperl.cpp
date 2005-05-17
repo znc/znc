@@ -13,7 +13,9 @@
 
 #define NICK( a ) a.GetNickMask()
 #define CHAN( a ) a.GetName()
-#define ZNCEvalCB "ZNC::Eval"
+#define ZNCEvalCB "ZNC::COREEval"
+#define ZNCCallFuncCB "ZNC::CORECallFunc"
+#define ZNCCallTimerCB "ZNC::CORECallTimer"
 
 class PString : public CString 
 {
@@ -371,10 +373,10 @@ public:
 		return( CONTINUE );
 	}
 
-private:
 	void LoadPerlMod( const CString & sModule );
 	void UnLoadPerlMod( const CString & sModule );
 
+private:
 	PerlInterpreter	*m_pPerl;
 
 };
@@ -431,7 +433,42 @@ XS(XS_ZNC_PutIRC)
 	}
 }
 
+XS(XS_ZNC_LoadMod)
+{
+	dXSARGS;
+	if ( items != 1 )
+		Perl_croak( aTHX_ "Usage: LoadMod( module )" );
+
+	SP -= items;
+	ax = (SP - PL_stack_base) + 1 ;
+	{
+		if ( g_ModPerl )
+		{
+			CString sModule = (char *)SvPV(ST(0),PL_na);
+			g_ModPerl->LoadPerlMod( sModule );
+		}
+		PUTBACK;
+	}
+}
 	
+XS(XS_ZNC_UnLoadMod)
+{
+	dXSARGS;
+	if ( items != 1 )
+		Perl_croak( aTHX_ "Usage: UnLoadMod( module )" );
+
+	SP -= items;
+	ax = (SP - PL_stack_base) + 1 ;
+	{
+		if ( g_ModPerl )
+		{
+			CString sModule = (char *)SvPV(ST(0),PL_na);
+			g_ModPerl->UnLoadPerlMod( sModule );
+		}
+		PUTBACK;
+	}
+}
+
 XS(XS_ZNC_PutUser)
 {
 	dXSARGS;
@@ -640,9 +677,9 @@ CModPerl::EModRet CModPerl::CallBack( const PString & sHookName, const VPString 
 		XPUSHs( sUsername.GetSV() );
 		XPUSHs( sHookName.GetSV() );
 		if ( eCBType == CB_ONHOOK )
-			sFuncToCall = "ZNC::CallFunc";
+			sFuncToCall = ZNCCallFuncCB;
 		else
-			sFuncToCall = "ZNC::CallTimer";
+			sFuncToCall = ZNCCallTimerCB;
 	}
 
 	for( VPString::size_type a = 0; a < vsArgs.size(); a++ )
@@ -708,6 +745,8 @@ bool CModPerl::OnLoad( const CString & sArgs )
 	newXS( "ZNC::GetNicks", XS_ZNC_GetNicks, (char *)file );
 	newXS( "ZNC::GetString", XS_ZNC_GetString, (char *)file );
 	newXS( "ZNC::COREAddTimer", XS_ZNC_COREAddTimer, (char *)file );
+	newXS( "ZNC::LoadMod", XS_ZNC_LoadMod, (char *)file );
+	newXS( "ZNC::UnLoadMod", XS_ZNC_UnLoadMod, (char *)file );
 	
 	// this sets up the eval CB that we call from here on out. this way we can grab the error produced
 	SetupZNCScript();
@@ -742,13 +781,13 @@ void CModPerl::LoadPerlMod( const CString & sModule )
 	else
 	{
 		PutModule( "Using " + sModPath );
-		Eval( "ZNC::LoadMod( '" + m_pUser->GetUserName() + "', '" + sModPath + "');" );
+		Eval( "ZNC::CORELoadMod( '" + m_pUser->GetUserName() + "', '" + sModPath + "');" );
 	}
 }
 
 void CModPerl::UnLoadPerlMod( const CString & sModule )
 {
-	Eval( "ZNC::UnLoadMod( '" + m_pUser->GetUserName() + "', '" + sModule + "');" );
+	Eval( "ZNC::COREUnLoadMod( '" + m_pUser->GetUserName() + "', '" + sModule + "');" );
 }
 
 

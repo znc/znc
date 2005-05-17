@@ -7,13 +7,13 @@ use strict;
 
 my @MODS = ();
 
-sub Eval
+sub COREEval
 {
 	my $arg = shift;
 	eval $arg;
 }
 
-sub CallFunc
+sub CORECallFunc
 {
 	my ( $Username, $Func, @args ) = @_;
 	my $FinalRet = CONTINUE();
@@ -46,7 +46,7 @@ sub CallFunc
 	return( $FinalRet );
 }
 
-sub LoadMod
+sub CORELoadMod
 {
 	my ( $Username, $ModPath ) = @_;
 
@@ -128,7 +128,7 @@ sub LoadMod
 	ZNC::PutModule( "Loaded $Module" );
 }
 
-sub UnLoadMod
+sub COREUnLoadMod
 {
 	my ( $Username, $Module ) = @_;
 
@@ -155,7 +155,7 @@ sub UnLoadMod
 }
 
 # the timer is inserted, it just calls this guy and expects it to be here
-sub CallTimer
+sub CORECallTimer
 {
 	my ( $Username, $Func, $ModName ) = @_;
 
