@@ -415,19 +415,49 @@ XS(XS_ZNC_COREAddTimer)
 	}
 }
 
-XS(XS_ZNC_PutIRC)
+XS(XS_ZNC_CORERemTimer)
 {
 	dXSARGS;
-	if ( items != 1 )
-		Perl_croak( aTHX_ "Usage: PutIRC( sLine )" );
+	if ( items != 2 )
+		Perl_croak( aTHX_ "Usage: CORERemTimer( modname, funcname )" );
+	SP -= items;
+	ax = (SP - PL_stack_base) + 1 ;
+	{
+		if ( g_ModPerl )
+		{
+			CString sModName = (char *)SvPV(ST(0),PL_na);
+			CString sFuncName = (char *)SvPV(ST(1),PL_na);
+			CString sUserName = g_ModPerl->GetUser()->GetUserName();
+			CString sLabel = sUserName + sModName + sFuncName;
+			CTimer *pTimer = g_ModPerl->FindTimer( sLabel );
+			if ( pTimer )
+				pTimer->Stop();
+			else
+				g_ModPerl->PutModule( "Unable to find Timer!" );
+		}
+		PUTBACK;
+	}
+}
+XS(XS_ZNC_COREPuts)
+{
+	dXSARGS;
+	if ( items != 2 )
+		Perl_croak( aTHX_ "Usage: COREPuts( sWHich, sLine )" );
 
 	SP -= items;
 	ax = (SP - PL_stack_base) + 1 ;
 	{
 		if ( g_ModPerl )
 		{
-			CString sLine = (char *)SvPV(ST(0),PL_na);
-			g_ModPerl->PutIRC( sLine );
+			CString sWhich = (char *)SvPV(ST(0),PL_na);
+			CString sLine = (char *)SvPV(ST(1),PL_na);
+
+			if ( sWhich == "IRC" )
+				g_ModPerl->PutIRC( sLine );
+			else if ( sWhich == "Status" )
+				g_ModPerl->PutStatus( sLine );
+			else if ( sWhich == "User" )
+				g_ModPerl->PutUser( sLine );
 		}
 		PUTBACK;
 	}
@@ -469,89 +499,29 @@ XS(XS_ZNC_UnLoadMod)
 	}
 }
 
-XS(XS_ZNC_PutUser)
+XS(XS_ZNC_COREPutModule)
 {
 	dXSARGS;
-	if ( items != 1 )
-		Perl_croak( aTHX_ "Usage: PutUser( sLine )" );
+	if ( items != 4 )
+		Perl_croak( aTHX_ "Usage: COREPutModule( sWhich sLine, sIdent, sHost )" );
 
 	SP -= items;
 	ax = (SP - PL_stack_base) + 1 ;
 	{
 		if ( g_ModPerl )
 		{
-			CString sLine = (char *)SvPV(ST(0),PL_na);
-			g_ModPerl->PutUser( sLine );
+			CString sWhich = (char *)SvPV(ST(0),PL_na);
+			CString sLine = (char *)SvPV(ST(1),PL_na);
+			CString sIdent = (char *)SvPV(ST(2),PL_na);
+			CString sHost = (char *)SvPV(ST(3),PL_na);
+			if ( sWhich == "Module" )
+				g_ModPerl->PutModule( sLine, sIdent, sHost );
+			else
+				g_ModPerl->PutModNotice( sLine, sIdent, sHost );
 		}
 		PUTBACK;
 	}
 }
-
-	
-XS(XS_ZNC_PutStatus)
-{
-	dXSARGS;
-	if ( items != 1 )
-		Perl_croak( aTHX_ "Usage: PutStatus( sLine )" );
-
-	SP -= items;
-	ax = (SP - PL_stack_base) + 1 ;
-	{
-		if ( g_ModPerl )
-		{
-			CString sLine = (char *)SvPV(ST(0),PL_na);
-			g_ModPerl->PutStatus( sLine );
-		}
-		PUTBACK;
-	}
-}
-
-XS(XS_ZNC_PutModule)
-{
-	dXSARGS;
-	if ( items < 1 )
-		Perl_croak( aTHX_ "Usage: PutModule( sLine, sIdent, sHost )" );
-
-	SP -= items;
-	ax = (SP - PL_stack_base) + 1 ;
-	{
-		if ( g_ModPerl )
-		{
-			CString sLine, sIdent, sHost;
-			sLine = (char *)SvPV(ST(0),PL_na);
-			if ( items >= 2 )
-				sIdent = (char *)SvPV(ST(1),PL_na);
-			if ( items >= 3 )
-				sHost = (char *)SvPV(ST(2),PL_na);
-			g_ModPerl->PutModule( sLine, sIdent, sHost );
-		}
-		PUTBACK;
-	}
-}
-
-XS(XS_ZNC_PutModNotice)
-{
-	dXSARGS;
-	if ( items < 1 )
-		Perl_croak( aTHX_ "Usage: PutModNotice( sLine, sIdent, sHost )" );
-
-	SP -= items;
-	ax = (SP - PL_stack_base) + 1 ;
-	{
-		if ( g_ModPerl )
-		{
-			CString sLine, sIdent, sHost;
-			sLine = (char *)SvPV(ST(0),PL_na);
-			if ( items >= 2 )
-				sIdent = (char *)SvPV(ST(1),PL_na);
-			if ( items >= 3 )
-				sHost = (char *)SvPV(ST(2),PL_na);
-			g_ModPerl->PutModNotice( sLine, sIdent, sHost );
-		}
-		PUTBACK;
-	}
-}
-
 
 XS(XS_ZNC_GetNicks)
 {
@@ -736,15 +706,16 @@ bool CModPerl::OnLoad( const CString & sArgs )
 
 	char *file = __FILE__;
 
+	/* system functions */
 	newXS( "DynaLoader::boot_DynaLoader", boot_DynaLoader, (char *)file );
-	newXS( "ZNC::PutIRC", XS_ZNC_PutIRC, (char *)file );
-	newXS( "ZNC::PutUser", XS_ZNC_PutUser, (char *)file );
-	newXS( "ZNC::PutStatus", XS_ZNC_PutStatus, (char *)file );
-	newXS( "ZNC::PutModule", XS_ZNC_PutModule, (char *)file );
-	newXS( "ZNC::PutModNotice", XS_ZNC_PutModNotice, (char *)file );
+	newXS( "ZNC::COREPutModule", XS_ZNC_COREPutModule, (char *)file );
+	newXS( "ZNC::COREAddTimer", XS_ZNC_COREAddTimer, (char *)file );
+	newXS( "ZNC::CORERemTimer", XS_ZNC_CORERemTimer, (char *)file );
+	newXS( "ZNC::COREPuts", XS_ZNC_COREPuts, (char *)file );
+
+	/* user functions */
 	newXS( "ZNC::GetNicks", XS_ZNC_GetNicks, (char *)file );
 	newXS( "ZNC::GetString", XS_ZNC_GetString, (char *)file );
-	newXS( "ZNC::COREAddTimer", XS_ZNC_COREAddTimer, (char *)file );
 	newXS( "ZNC::LoadMod", XS_ZNC_LoadMod, (char *)file );
 	newXS( "ZNC::UnLoadMod", XS_ZNC_UnLoadMod, (char *)file );
 	

@@ -1,6 +1,20 @@
 #
 # TODO need to add socket support
+# OnConnect( $sockhandle )
+# OnError( $sockhandle, $errno )
+# OnConnectionRefused( $sockhandle )
+# OnTimeout( $sockhandle )
+# OnDisconnect( $sockhandle )
+# OnData( $sockhandle, $bytes, $length )
+# OnReadLine( $sockhandle, $bytes, $length )
+# ZNC::WriteSock( $sockhandle, $bytes, $length )
+# my $sockhandle = ZNC::ConnectSock( $host, $port, $timeout, $enablereadline )
+# my $sockhandle = ZNC::ConnectSockSSL( $host, $port, $timeout, $enablereadline )
 #
+# $sockhandle = 'Csock::GetSockName()'
+#
+# store the sockhandle in their class, before every action call 'TestSock', if its true then call the event
+# otherwise close the socket
 
 package ZNC;
 use strict;
@@ -169,6 +183,77 @@ sub CORECallTimer
 	return( HALTMODS() );
 }
 
+######################
+# Ease Of use USER functions
+sub AddTimer
+{
+	my ( $mod, $funcname, $description, $interval, $cycles ) = @_;
+
+	COREAddTimer( $mod->{ZNC_Name}, $funcname, $description, $interval, $cycles );
+}
+
+sub RemTimer
+{
+	my ( $mod, $funcname ) = @_;
+	CORERemTimer( $mod->{ZNC_Name}, $funcname );
+}
+
+sub PutModule
+{
+	my ( $line, $ident, $host ) = @_;
+
+	if ( !$ident )
+	{
+		$ident = "znc";
+	}
+	if ( !$host )
+	{
+		$host = "znc.com";
+	}
+
+	COREPutModule( "Module", $line, $ident, $host );
+}
+
+sub PutModNotice
+{
+	my ( $line, $ident, $host ) = @_;
+
+	if ( !$ident )
+	{
+		$ident = "znc";
+	}
+	if ( !$host )
+	{
+		$host = "znc.com";
+	}
+
+	COREPutModule( "ModNotice", $line, $ident, $host );
+}
+
+sub PutIRC
+{
+	my ( $line ) = @_;
+	COREPuts( "IRC", $line );
+}
+
+sub PutStatus
+{
+	my ( $line ) = @_;
+	COREPuts( "Status", $line );
+}
+
+sub PutUser
+{
+	my ( $line ) = @_;
+	COREPuts( "User", $line );
+}
+
+sub PutTarget
+{
+	my ( $target, $line ) = @_;
+	PutIRC( "PRIVMSG $target :$line" );
+}
+	
 1;
 
 
