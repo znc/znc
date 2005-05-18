@@ -392,14 +392,14 @@ sub Connect
 {
 	my ( $me, $host, $port, $timeout, $bEnableReadline, $bUseSSL ) = @_;
 	$me->{fd} = ZNC::Connect( $me->{modobj}, $host, $port, $timeout, $bEnableReadline, $bUseSSL );
-	return( $me->{fd} );
+	return( ( $me->{fd} >= 0 ) );
 }
 
 sub ConnectSSL
 {
 	my ( $me, $host, $port, $timeout, $bEnableReadline ) = @_;
 	$me->{fd} = ZNC::ConnectSSL( $me->{modobj}, $host, $port, $timeout, $bEnableReadline );
-	return( $me->{fd} );
+	return( ( $me->{fd} >= 0 ) );
 }
 
 sub Write
@@ -418,14 +418,17 @@ sub Listen
 {
 	my ( $me, $port, $bindhost, $bEnableReadline, $bUseSSL ) = @_;
 	$me->{fd} = ZNC::Listen( $me->{modobj}, $port, $bindhost, $bEnableReadline, $bUseSSL );
-	return( $me->{fd} );
+	return( ( $me->{fd} >= 0 ) );
 }
 	
+sub ListenSSL
+{
+	my ( $me, $port, $bindhost, $bEnableReadline ) = @_;
+	$me->{fd} = ZNC::ListenSSL( $me->{modobj}, $port, $bindhost, $bEnableReadline );
+	return( ( $me->{fd} >= 0 ) );
+}
+
 1;
-
-
-
-
 
 
 
