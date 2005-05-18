@@ -98,6 +98,11 @@ sub CORELoadMod
 	close( INMOD );
 	close( OUTMOD );
 
+	if ( $INC{$FileName} )
+	{ # force a delete on this guy
+		delete $INC{$FileName};
+	}
+
 	require $FileName;
 
 	my $NewMod = $Username . $Module;
@@ -118,7 +123,7 @@ sub CORELoadMod
 	ZNC::PutModule( "Loaded $Module" );
 }
 
-sub COREUnLoadMod
+sub COREUnloadMod
 {
 	my ( $Username, $Module ) = @_;
 
@@ -136,7 +141,7 @@ sub COREUnLoadMod
 		{
 			undef $MODS[$i];
 			splice( @MODS, $i, 1 );
-			ZNC::PutModule( "UnLoaded $Module" );
+			ZNC::PutModule( "Unloaded $Module" );
 			return( CONTINUE() );
 		}
 	}

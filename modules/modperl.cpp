@@ -441,9 +441,12 @@ public:
 				if ( sCommand == "loadmod" )
 					LoadPerlMod( sModule );
 				else if ( sCommand == "unloadmod" )
-					UnLoadPerlMod( sModule );
+					UnloadPerlMod( sModule );
 				else
-					PutModule( "Perl modules can not be reloaded one at a time, you have to reload the interpreter to pick up code changes (reloadmod modperl)" );
+				{
+					UnloadPerlMod( sModule );
+					LoadPerlMod( sModule );
+				}
 				return( HALT );
 			}
 		}
@@ -451,7 +454,7 @@ public:
 	}
 
 	void LoadPerlMod( const CString & sModule );
-	void UnLoadPerlMod( const CString & sModule );
+	void UnloadPerlMod( const CString & sModule );
 
 private:
 	PerlInterpreter	*m_pPerl;
@@ -558,11 +561,11 @@ XS(XS_ZNC_LoadMod)
 	}
 }
 	
-XS(XS_ZNC_UnLoadMod)
+XS(XS_ZNC_UnloadMod)
 {
 	dXSARGS;
 	if ( items != 1 )
-		Perl_croak( aTHX_ "Usage: UnLoadMod( module )" );
+		Perl_croak( aTHX_ "Usage: UnloadMod( module )" );
 
 	SP -= items;
 	ax = (SP - PL_stack_base) + 1 ;
@@ -570,7 +573,7 @@ XS(XS_ZNC_UnLoadMod)
 		if ( g_ModPerl )
 		{
 			CString sModule = (char *)SvPV(ST(0),PL_na);
-			g_ModPerl->UnLoadPerlMod( sModule );
+			g_ModPerl->UnloadPerlMod( sModule );
 		}
 		PUTBACK;
 	}
@@ -792,7 +795,7 @@ XS(XS_ZNC_COREListen)
 					pSock->SetPemLocation( g_ModPerl->GetUser()->GetPemLocation() );
 				else
 				{
-					PutModule( "PEM File does not exist! (looking for " + g_ModPerl->GetUser()->GetPemLocation() + ")" );
+					g_ModPerl->PutModule( "PEM File does not exist! (looking for " + g_ModPerl->GetUser()->GetPemLocation() + ")" );
 					bContinue = false;
 				}
 			}
@@ -938,7 +941,7 @@ bool CModPerl::OnLoad( const CString & sArgs )
 	newXS( "ZNC::GetNicks", XS_ZNC_GetNicks, (char *)file );
 	newXS( "ZNC::GetString", XS_ZNC_GetString, (char *)file );
 	newXS( "ZNC::LoadMod", XS_ZNC_LoadMod, (char *)file );
-	newXS( "ZNC::UnLoadMod", XS_ZNC_UnLoadMod, (char *)file );
+	newXS( "ZNC::UnloadMod", XS_ZNC_UnloadMod, (char *)file );
 	newXS( "ZNC::WriteSock", XS_ZNC_WriteSock, (char *)file );
 	newXS( "ZNC::CloseSock", XS_ZNC_CloseSock, (char *)file );
 	
@@ -989,10 +992,10 @@ void CModPerl::DestroyAllSocks()
 		}
 	}
 }
-void CModPerl::UnLoadPerlMod( const CString & sModule )
+void CModPerl::UnloadPerlMod( const CString & sModule )
 {
 	DestroyAllSocks();
-	Eval( "ZNC::COREUnLoadMod( '" + m_pUser->GetUserName() + "', '" + sModule + "');" );
+	Eval( "ZNC::COREUnloadMod( '" + m_pUser->GetUserName() + "', '" + sModule + "');" );
 }
 
 
