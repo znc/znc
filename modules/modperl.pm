@@ -139,8 +139,13 @@ sub COREUnloadMod
 	{
 		if ( ( $MODS[$i]->{ZNC_Username} eq $Username ) && ( $MODS[$i]->{ZNC_Name} eq $Module ) )
 		{
+			my $filename = $MODS[$i]->{ZNC_ModPath};
 			undef $MODS[$i];
 			splice( @MODS, $i, 1 );
+			if ( $INC{$filename} )
+			{ # remove the $INC instantiation
+				delete $INC{$filename};
+			}
 			ZNC::PutModule( "Unloaded $Module" );
 			return( CONTINUE() );
 		}
