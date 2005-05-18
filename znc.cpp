@@ -20,6 +20,12 @@ CZNC::CZNC() {
 }
 
 CZNC::~CZNC() {
+#ifdef _MODULES
+	for (map<CString,CUser*>::iterator a = m_msUsers.begin(); a != m_msUsers.end(); a++) {
+		a->second->GetModules().UnloadAll();
+	}
+#endif
+
 	m_Manager.Cleanup();
 	DeleteUsers();
 }
