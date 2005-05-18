@@ -15,6 +15,10 @@
 #define _NO_CSOCKET_NS
 #endif
 
+#ifdef _DEBUG
+#define __DEBUG__
+#endif
+
 #include <iostream>
 using std::cout;
 using std::cerr;
