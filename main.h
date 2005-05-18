@@ -15,6 +15,11 @@
 #define _NO_CSOCKET_NS
 #endif
 
+#include <iostream>
+using std::cout;
+using std::cerr;
+using std::endl;
+
 #include "String.h"
 #include "Csocket.h"
 #include "Utils.h"

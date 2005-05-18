@@ -5,6 +5,7 @@
 #include "Modules.h"
 #include "Chan.h"
 #include "FileUtils.h"
+#include "Csocket.h"
 
 // perl stuff
 #include <EXTERN.h>
@@ -102,6 +103,44 @@ typedef vector< PString > VPString;
 
 class CModPerl;
 static CModPerl *g_ModPerl = NULL;
+
+class CPerlSock : public Csock
+{
+public:
+	CPerlSock() : Csock()
+	{
+		m_pModule = NULL;
+	}
+	CPerlSock( const CS_STRING & sHost, int iPort, int iTimeout = 60 )
+		: Csock( sHost, iPort, iTimeout ) 
+	{
+		m_pModule = NULL;
+	}
+
+	virtual Csock *GetSockObj( const CS_STRING & sHostname, int iPort )
+	{
+		CPerlSock *p = new CPerlSock( sHostname, iPort );
+		p->SetModule( m_pModule );
+		return( p );
+	}
+
+	void SetModule( CModPerl *pModule ) { m_pModule = pModule; }
+
+//
+// # OnConnect( $sockhandle, $parentsockhandle )
+// # OnConnectionFrom( $sockhandle, $remotehost, $remoteport )
+// # OnError( $sockhandle, $errno )
+// # OnConnectionRefused( $sockhandle )
+// # OnTimeout( $sockhandle )
+// # OnDisconnect( $sockhandle )
+// # OnData( $sockhandle, $bytes, $length )
+// # OnReadLine( $sockhandle, $bytes, $length )
+
+private:
+	CModPerl	*m_pModule;
+	CString		m_sModuleName;
+	CString		m_sUsername;	// NEED these so we can send the signal to the right guy
+};
 
 class CPerlTimer : public CTimer 
 {

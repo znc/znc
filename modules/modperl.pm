@@ -1,6 +1,13 @@
 #
 # TODO need to add socket support
-# OnConnect( $sockhandle )
+# OnConnect( $sockhandle, $parentsockhandle )
+# in the event this is comming in from a listener, the $sockhandle will be different from the others, so need to
+# register it in the socket class like the others
+# socket will register as $self = { "$sockhandle" => 1 }
+#
+# For Listeners
+# OnConnectionFrom( $sockhandle, $remotehost, $remoteport )
+#
 # OnError( $sockhandle, $errno )
 # OnConnectionRefused( $sockhandle )
 # OnTimeout( $sockhandle )
@@ -10,8 +17,8 @@
 # ZNC::WriteSock( $sockhandle, $bytes, $length )
 # my $sockhandle = ZNC::ConnectSock( $host, $port, $timeout, $enablereadline )
 # my $sockhandle = ZNC::ConnectSockSSL( $host, $port, $timeout, $enablereadline )
-#
-# $sockhandle = 'Csock::GetSockName()'
+# my $sockhandle = ZNC::ListenSock( $port, $bindhostname, $enablereadline )
+# my $sockhandle = ZNC::ListenSockSSL( $port, $bindhostname, $enablereadline )
 #
 # store the sockhandle in their class, before every action call 'TestSock', if its true then call the event
 # otherwise close the socket

@@ -271,6 +271,7 @@ bool CModule::PutStatus(const CString& sLine) {
 	return (m_pUser) ? m_pUser->PutStatus(sLine) : false;
 }
 bool CModule::PutModule(const CString& sLine, const CString& sIdent, const CString& sHost) {
+	cerr << "PutModule [" << sLine << "]" << endl;
 	return (m_pUser) ? m_pUser->PutUser(":" + GetModNick() + "!" + sIdent + "@" + sHost + " PRIVMSG " + m_pUser->GetCurNick() + " :" + sLine) : false;
 }
 bool CModule::PutModNotice(const CString& sLine, const CString& sIdent, const CString& sHost) {

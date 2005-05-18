@@ -11,11 +11,16 @@
 #include <pwd.h>
 #include <sstream>
 
+using std::pair;
+
 /*
  * Secure chat system
  * Author: imaginos <imaginos@imaginos.net>
  * 
  * $Log$
+ * Revision 1.14  2005/05/18 03:22:52  imaginos
+ * bring Csocket up to date, includes new needed function GetSockByFD()
+ *
  * Revision 1.13  2005/05/15 08:27:27  prozacx
  * Changed return value from bool to EModRet on most hooks
  *
