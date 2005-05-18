@@ -111,14 +111,12 @@ class CPerlSock : public Csock
 public:
 	CPerlSock() : Csock()
 	{
-		m_pModule = NULL;
 		m_iParentFD = -1;
 		SetSockName( ZNCSOCK );
 	}
 	CPerlSock( const CS_STRING & sHost, int iPort, int iTimeout = 60 )
 		: Csock( sHost, iPort, iTimeout ) 
 	{
-		m_pModule = NULL;
 		m_iParentFD = -1;
 		SetSockName( ZNCSOCK );
 	}
@@ -130,7 +128,6 @@ public:
 	virtual Csock *GetSockObj( const CS_STRING & sHostname, int iPort )
 	{
 		CPerlSock *p = new CPerlSock( sHostname, iPort );
-		p->SetModule( m_pModule );
 		p->SetParentFD( GetRSock() );
 		p->SetUsername( m_sUsername );
 		p->SetModuleName( m_sModuleName );
@@ -138,7 +135,6 @@ public:
 		return( p );
 	}
 
-	void SetModule( CModPerl *pModule ) { m_pModule = pModule; }
 	void SetParentFD( int iFD ) { m_iParentFD = iFD; }
 	void SetUsername( const CString & sUsername ) { m_sUsername = sUsername; }
 	void SetModuleName( const CString & sModuleName ) { m_sModuleName = sModuleName; }
@@ -165,7 +161,6 @@ public:
 
 
 private:
-	CModPerl	*m_pModule;
 	CString		m_sModuleName;
 	CString		m_sUsername;	// NEED these so we can send the signal to the right guy
 	int			m_iParentFD;
@@ -195,7 +190,6 @@ public:
 	virtual ~CPerlTimer() {}
 
 	// TODO possibly need to check that the userspace is correct when this goes global
-	
 
 	void SetFuncName( const CString & sFuncName ) { m_sFuncName = sFuncName; }
 	void SetUserName( const CString & sUserName ) { m_sUserName = sUserName; }
@@ -716,11 +710,11 @@ XS(XS_ZNC_WriteSock)
 	}
 }
 
-XS(XS_ZNC_COREConnectSock)
+XS(XS_ZNC_COREConnect)
 {
 	dXSARGS;
-	if ( items != 5 )
-		Perl_croak( aTHX_ "Usage: ZNC::COREConnectSock( $host, $port, $timeout, $bEnableReadline, $bUseSSL )" );
+	if ( items != 6 )
+		Perl_croak( aTHX_ "Usage: ZNC::COREConnect( $modname, $host, $port, $timeout, $bEnableReadline, $bUseSSL )" );
 
 	SP -= items;
 	ax = (SP - PL_stack_base) + 1 ;
@@ -728,13 +722,16 @@ XS(XS_ZNC_COREConnectSock)
 		if ( g_ModPerl )
 		{
 			PString sReturn = -1;
-			PString sHostname = (char *)SvPV(ST(0),PL_na);
-			int iPort = SvIV(ST(1));
-			u_int iTimeout = SvUV(ST(2));
-			u_int iEnableReadline = SvUV(ST(3));
-			u_int iUseSSL = SvUV(ST(4));
+			PString sModuleName = (char *)SvPV(ST(0),PL_na);
+			PString sHostname = (char *)SvPV(ST(1),PL_na);
+			int iPort = SvIV(ST(2));
+			u_int iTimeout = SvUV(ST(3));
+			u_int iEnableReadline = SvUV(ST(4));
+			u_int iUseSSL = SvUV(ST(5));
 			CPerlSock *pSock = new CPerlSock( sHostname, iPort, iTimeout );
 			pSock->SetSockName( ZNCSOCK );
+			pSock->SetUsername( g_ModPerl->GetUser()->GetUserName() );
+			pSock->SetModuleName( sModuleName );
 			if ( iEnableReadline )
 				pSock->EnableReadLine();
 
@@ -747,11 +744,11 @@ XS(XS_ZNC_COREConnectSock)
 	}
 }
 
-XS(XS_ZNC_COREListenSock)
+XS(XS_ZNC_COREListen)
 {
 	dXSARGS;
-	if ( items != 4 )
-		Perl_croak( aTHX_ "Usage: ZNC::COREListenSock( $port, $bindhost, $bEnableReadline, $bUseSSL )" );
+	if ( items != 5 )
+		Perl_croak( aTHX_ "Usage: ZNC::COREListen( $modname, $port, $bindhost, $bEnableReadline, $bUseSSL )" );
 
 	SP -= items;
 	ax = (SP - PL_stack_base) + 1 ;
@@ -759,13 +756,16 @@ XS(XS_ZNC_COREListenSock)
 		if ( g_ModPerl )
 		{
 			PString sReturn = -1;
-			int iPort = SvIV(ST(0));
-			PString sHostname = (char *)SvPV(ST(1),PL_na);
-			u_int iEnableReadline = SvUV(ST(2));
-			u_int iUseSSL = SvUV(ST(3));
+			PString sModuleName = (char *)SvPV(ST(0),PL_na);
+			int iPort = SvIV(ST(1));
+			PString sHostname = (char *)SvPV(ST(2),PL_na);
+			u_int iEnableReadline = SvUV(ST(3));
+			u_int iUseSSL = SvUV(ST(4));
 
 			CPerlSock *pSock = new CPerlSock();
 			pSock->SetSockName( ZNCSOCK );
+			pSock->SetUsername( g_ModPerl->GetUser()->GetUserName() );
+			pSock->SetModuleName( sModuleName );
 
 			if ( iEnableReadline )
 				pSock->EnableReadLine();
@@ -839,7 +839,6 @@ CModPerl::EModRet CModPerl::CallBack( const PString & sHookName, const VPString 
 		else
 			sFuncToCall = ZNCCallSockCB;
 	}
-
 	for( VPString::size_type a = 0; a < vsArgs.size(); a++ )
 		XPUSHs( vsArgs[a].GetSV() );
 
@@ -900,8 +899,8 @@ bool CModPerl::OnLoad( const CString & sArgs )
 	newXS( "ZNC::COREAddTimer", XS_ZNC_COREAddTimer, (char *)file );
 	newXS( "ZNC::CORERemTimer", XS_ZNC_CORERemTimer, (char *)file );
 	newXS( "ZNC::COREPuts", XS_ZNC_COREPuts, (char *)file );
-	newXS( "ZNC::COREConnectSock", XS_ZNC_COREConnectSock, (char *)file );
-	newXS( "ZNC::COREListentSock", XS_ZNC_COREListenSock, (char *)file );
+	newXS( "ZNC::COREConnect", XS_ZNC_COREConnect, (char *)file );
+	newXS( "ZNC::COREListent", XS_ZNC_COREListen, (char *)file );
 
 	/* user functions */
 	newXS( "ZNC::GetNicks", XS_ZNC_GetNicks, (char *)file );
@@ -986,7 +985,8 @@ void CPerlTimer::RunJob()
 #define SOCKCB( a ) if ( CallBack( a ) != CModPerl::CONTINUE ) { Close(); }
 int CPerlSock::CallBack( const PString & sFuncName )
 {
-	return( m_pModule->CallBack( sFuncName, m_vArgs, CModPerl::CB_SOCK, m_sUsername ) );
+	// TODO need to lookup by our username and set the correct user into g_ModPerl
+	return( g_ModPerl->CallBack( sFuncName, m_vArgs, CModPerl::CB_SOCK, m_sUsername ) );
 }
 
 // # OnConnect( $sockhandle, $parentsockhandle )

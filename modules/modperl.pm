@@ -177,7 +177,7 @@ sub CORECallTimer
 
 sub CORECallSock
 {
-	my ( $Username, $Func, $ModName ) = @_;
+	my ( $Username, $Func, $ModName, @args ) = @_;
 
 	for( my $i = 0; $i < @MODS; $i++ )
 	{
@@ -185,7 +185,7 @@ sub CORECallSock
 		{
 			if ( $MODS[$i]->can( $Func ) )
 			{
-				my $ret = $MODS[$i]->$Func();
+				my $ret = $MODS[$i]->$Func( @args );
 				if ( $Func eq "OnConnectionFrom" )
 				{ # special case this for now, requires a return value
 					return( $ret );
@@ -270,10 +270,10 @@ sub PutTarget
 	
 
 
-sub ConnectSock
+sub Connect
 {
-	my ( $host, $port, $timeout, $bEnableReadline, $bUseSSL ) = @_;
-	if ( ( !$host ) || ( $port ) )
+	my ( $obj, $host, $port, $timeout, $bEnableReadline, $bUseSSL ) = @_;
+	if ( ( !$host ) || ( !$port ) )
 	{
 		return( -1 );
 	}
@@ -293,19 +293,19 @@ sub ConnectSock
 		$bUseSSL = 0;
 	}
 
-	return( COREConnectSock( $host, $port, $bEnableReadline, $bUseSSL ) );
+	return( COREConnect( $obj->{ZNC_Name}, $host, $port, $timeout, $bEnableReadline, $bUseSSL ) );
 }
 
-sub ConnectSockSSL
+sub ConnectSSL
 {
-	my ( $host, $port, $timeout, $bEnableReadline, $bUseSSL ) = @_;
+	my ( $obj, $host, $port, $timeout, $bEnableReadline, $bUseSSL ) = @_;
 
-	return( ConnectSock( $host, $port, $timeout, $bEnableReadline, $bUseSSL, 1 ) );
+	return( Connect( $obj, $host, $port, $timeout, $bEnableReadline, $bUseSSL, 1 ) );
 }
 
-sub ListenSock
+sub Listen
 {
-	my ( $port, $bindhost, $bEnableReadline, $bUseSSL ) = @_;
+	my ( $obj, $port, $bindhost, $bEnableReadline, $bUseSSL ) = @_;
 
 	if ( !$port )
 	{
@@ -327,13 +327,13 @@ sub ListenSock
 		$bUseSSL = 0;
 	}
 
-	return( COREListenSock( $port, $bindhost, $bEnableReadline, $bUseSSL ) );
+	return( COREListen( $obj->{ZNC_Name}, $port, $bindhost, $bEnableReadline, $bUseSSL ) );
 }
 
-sub ListenSockSSL
+sub ListenSSL
 {
-	my ( $port, $bindhost, $bEnableReadline ) = @_;
-	return( ListenSock( $port, $bindhost, $bEnableReadline, 1 ) );
+	my ( $obj, $port, $bindhost, $bEnableReadline ) = @_;
+	return( Listen( $obj, $port, $bindhost, $bEnableReadline, 1 ) );
 }
 
 1;
