@@ -685,7 +685,7 @@ XS(XS_ZNC_GetString)
 XS(XS_ZNC_WriteSock)
 {
 	dXSARGS;
-	if ( items <= 1 )
+	if ( items != 3 )
 		Perl_croak( aTHX_ "Usage: ZNC::WriteSock( sockhandle, bytes, len )" );
 
 	SP -= items;
@@ -705,6 +705,27 @@ XS(XS_ZNC_WriteSock)
 					sReturn = pSock->Write( sData.data(), sData.length() );
 			}
 			XPUSHs( sReturn.GetSV() );
+		}
+		PUTBACK;
+	}
+}
+
+XS(XS_ZNC_CloseSock)
+{
+	dXSARGS;
+	if ( items != 1 )
+		Perl_croak( aTHX_ "Usage: ZNC::CloseSock( sockhandle )" );
+
+	SP -= items;
+	ax = (SP - PL_stack_base) + 1 ;
+	{
+		if ( g_ModPerl )
+		{
+			PString sReturn = false;
+			int iSockFD = SvIV(ST(0));
+			CPerlSock *pSock = (CPerlSock *)MANAGER->FindSockByFD( iSockFD );
+			if ( ( pSock ) && ( pSock->GetSockName() == ZNCSOCK ) )
+				pSock->Close();
 		}
 		PUTBACK;
 	}
@@ -908,6 +929,7 @@ bool CModPerl::OnLoad( const CString & sArgs )
 	newXS( "ZNC::LoadMod", XS_ZNC_LoadMod, (char *)file );
 	newXS( "ZNC::UnLoadMod", XS_ZNC_UnLoadMod, (char *)file );
 	newXS( "ZNC::WriteSock", XS_ZNC_WriteSock, (char *)file );
+	newXS( "ZNC::CloseSock", XS_ZNC_CloseSock, (char *)file );
 	
 	// this sets up the eval CB that we call from here on out. this way we can grab the error produced
 	SetupZNCScript();

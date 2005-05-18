@@ -1,8 +1,4 @@
-# my $sockhandle = ZNC::ListenSock( $port, $bindhostname, $enablereadline )
-# my $sockhandle = ZNC::ListenSockSSL( $port, $bindhostname, $enablereadline )
-#
-# store the sockhandle in their class, before every action call 'TestSock', if its true then call the event
-# otherwise close the socket
+# TODO need Close()
 
 package ZNC;
 use strict;
@@ -15,10 +11,6 @@ sub COREEval
 	eval $arg;
 }
 
-sub COREShutdown()
-{
-
-}
 sub CORECallFunc
 {
 	my ( $Username, $Func, @args ) = @_;
@@ -129,6 +121,7 @@ sub CORELoadMod
 	$obj->{ZNC_Username} = $Username;
 	$obj->{ZNC_Name} = $Module;
 	$obj->{ZNC_ModPath} = $FileName;
+	@{$obj->{socks}} = ();
 	
 	push( @MODS, $obj );
 	ZNC::PutModule( "Loaded $Module" );
@@ -177,21 +170,49 @@ sub CORECallTimer
 
 sub CORECallSock
 {
-	my ( $Username, $Func, $ModName, @args ) = @_;
+	my ( $Username, $Func, $ModName, $fd, @args ) = @_;
 
 	for( my $i = 0; $i < @MODS; $i++ )
 	{
 		if ( ( $MODS[$i]->{ZNC_Username} eq $Username ) && ( $MODS[$i]->{ZNC_Name} eq $ModName ) )
 		{
-			if ( $MODS[$i]->can( $Func ) )
+			my @socks = @{$MODS[$i]->{socks}};
+
+			######### Sock methods are in the module directly
+			if ( @socks == 0 )
+			{ # ok, try simple manner, overloads in this here class
+				if ( $MODS[$i]->can( $Func ) )
+				{
+					my $ret = $MODS[$i]->$Func( $fd, @args );
+					if ( $Func eq "OnConnectionFrom" )
+					{ # special case this for now, requires a return value
+						return( $ret );
+					}
+				}
+				return( CONTINUE() );
+			}
+
+			########## they sent us a socket to look at, we'll use it
+			for( my $a = 0; $a < @socks; $a++ )
 			{
-				my $ret = $MODS[$i]->$Func( @args );
-				if ( $Func eq "OnConnectionFrom" )
-				{ # special case this for now, requires a return value
-					return( $ret );
+				if ( $socks[$a]->{fd} == $fd )
+				{
+					if ( $socks[$a]->can( $Func ) )
+					{
+						my $ret = $socks[$a]->$Func( @args );
+						if ( $Func eq "OnConnectionFrom" )
+						{ # special case this for now, requires a return value
+							return( $ret );
+						}
+						elsif ( $Func eq "OnSockDestroy" )
+						{
+							splice( @{$MODS[$i]->{socks}}, $a );
+						}
+					}
+					return( CONTINUE() );
 				}
 			}
-			return( CONTINUE() );
+			last; #no point in checking further
 		}
 	}
 	return( HALTMODS() );
@@ -268,8 +289,6 @@ sub PutTarget
 	PutIRC( "PRIVMSG $target :$line" );
 }
 	
-
-
 sub Connect
 {
 	my ( $obj, $host, $port, $timeout, $bEnableReadline, $bUseSSL ) = @_;
@@ -339,8 +358,54 @@ sub ListenSSL
 1;
 
 
+######################
+## use this if you really want to have fun. be sure you don't leave a reference to the 
+## handle laying around! ZNC will deal with that inside your module, so its properly closed
+package ZNCSocket;
 
+sub new
+{
+	my ( $classname, $modobj ) = @_;
 
+	my $self =
+	{
+		modobj	=> $modobj,
+		fd		=> -1
+	};
+
+	bless( $self, $classname );
+
+	push( @{$modobj->{socks}}, $self );
+	return( $self );
+}
+
+sub Connect
+{
+	my ( $me, $host, $port, $timeout, $bEnableReadline, $bUseSSL ) = @_;
+	$me->{fd} = ZNC::Connect( $me->{modobj}, $host, $port, $timeout, $bEnableReadline, $bUseSSL );
+	return( $me->{fd} );
+}
+
+sub ConnectSSL
+{
+	my ( $me, $host, $port, $timeout, $bEnableReadline ) = @_;
+	$me->{fd} = ZNC::ConnectSSL( $me->{modobj}, $host, $port, $timeout, $bEnableReadline );
+	return( $me->{fd} );
+}
+
+sub Write
+{
+	my ( $me, $data ) = @_;
+	return( ZNC::WriteSock( $me->{fd}, $data, length( $data ) ) );
+}
+
+sub Close
+{
+	my ( $me ) = @_;
+	ZNC::CloseSock( $me->{fd} );
+}
+
+1;
 
 
 
