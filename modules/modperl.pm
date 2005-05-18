@@ -1,22 +1,3 @@
-#
-# TODO need to add socket support
-# OnConnect( $sockhandle, $parentsockhandle )
-# in the event this is comming in from a listener, the $sockhandle will be different from the others, so need to
-# register it in the socket class like the others
-# socket will register as $self = { "$sockhandle" => 1 }
-#
-# For Listeners
-# OnConnectionFrom( $sockhandle, $remotehost, $remoteport )
-#
-# OnError( $sockhandle, $errno )
-# OnConnectionRefused( $sockhandle )
-# OnTimeout( $sockhandle )
-# OnDisconnect( $sockhandle )
-# OnData( $sockhandle, $bytes, $length )
-# OnReadLine( $sockhandle, $bytes, $length )
-# ZNC::WriteSock( $sockhandle, $bytes, $length )
-# my $sockhandle = ZNC::ConnectSock( $host, $port, $timeout, $enablereadline )
-# my $sockhandle = ZNC::ConnectSockSSL( $host, $port, $timeout, $enablereadline )
 # my $sockhandle = ZNC::ListenSock( $port, $bindhostname, $enablereadline )
 # my $sockhandle = ZNC::ListenSockSSL( $port, $bindhostname, $enablereadline )
 #
@@ -34,6 +15,10 @@ sub COREEval
 	eval $arg;
 }
 
+sub COREShutdown()
+{
+
+}
 sub CORECallFunc
 {
 	my ( $Username, $Func, @args ) = @_;
@@ -190,6 +175,28 @@ sub CORECallTimer
 	return( HALTMODS() );
 }
 
+sub CORECallSock
+{
+	my ( $Username, $Func, $ModName ) = @_;
+
+	for( my $i = 0; $i < @MODS; $i++ )
+	{
+		if ( ( $MODS[$i]->{ZNC_Username} eq $Username ) && ( $MODS[$i]->{ZNC_Name} eq $ModName ) )
+		{
+			if ( $MODS[$i]->can( $Func ) )
+			{
+				my $ret = $MODS[$i]->$Func();
+				if ( $Func eq "OnConnectionFrom" )
+				{ # special case this for now, requires a return value
+					return( $ret );
+				}
+			}
+			return( CONTINUE() );
+		}
+	}
+	return( HALTMODS() );
+}
+
 ######################
 # Ease Of use USER functions
 sub AddTimer
@@ -261,7 +268,79 @@ sub PutTarget
 	PutIRC( "PRIVMSG $target :$line" );
 }
 	
+
+
+sub ConnectSock
+{
+	my ( $host, $port, $timeout, $bEnableReadline, $bUseSSL ) = @_;
+	if ( ( !$host ) || ( $port ) )
+	{
+		return( -1 );
+	}
+
+	if ( !$timeout )
+	{
+		$timeout = 60;
+	}
+
+	if ( !$bEnableReadline )
+	{
+		$bEnableReadline = 0;
+	}
+
+	if ( !$bUseSSL )
+	{
+		$bUseSSL = 0;
+	}
+
+	return( COREConnectSock( $host, $port, $bEnableReadline, $bUseSSL ) );
+}
+
+sub ConnectSockSSL
+{
+	my ( $host, $port, $timeout, $bEnableReadline, $bUseSSL ) = @_;
+
+	return( ConnectSock( $host, $port, $timeout, $bEnableReadline, $bUseSSL, 1 ) );
+}
+
+sub ListenSock
+{
+	my ( $port, $bindhost, $bEnableReadline, $bUseSSL ) = @_;
+
+	if ( !$port )
+	{
+		return( -1 );
+	}
+
+	if ( !$bindhost )
+	{
+		$bindhost = "";
+	}
+
+	if ( !$bEnableReadline )
+	{
+		$bEnableReadline = 0;
+	}
+	
+	if ( !$bUseSSL )
+	{
+		$bUseSSL = 0;
+	}
+
+	return( COREListenSock( $port, $bindhost, $bEnableReadline, $bUseSSL ) );
+}
+
+sub ListenSockSSL
+{
+	my ( $port, $bindhost, $bEnableReadline ) = @_;
+	return( ListenSock( $port, $bindhost, $bEnableReadline, 1 ) );
+}
+
 1;
+
+
+
+
 
 
 

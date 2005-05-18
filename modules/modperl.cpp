@@ -17,6 +17,8 @@
 #define ZNCEvalCB "ZNC::COREEval"
 #define ZNCCallFuncCB "ZNC::CORECallFunc"
 #define ZNCCallTimerCB "ZNC::CORECallTimer"
+#define ZNCCallSockCB "ZNC::CORECallSock"
+#define ZNCSOCK ":::ZncSock:::"
 
 class PString : public CString 
 {
@@ -65,7 +67,7 @@ public:
 				break;
 			case STRING:
 			default:
-				pSV = newSVpv( c_str(), length() );
+				pSV = newSVpv( data(), length() );
 				break;
 		}
 
@@ -110,36 +112,78 @@ public:
 	CPerlSock() : Csock()
 	{
 		m_pModule = NULL;
+		m_iParentFD = -1;
+		SetSockName( ZNCSOCK );
 	}
 	CPerlSock( const CS_STRING & sHost, int iPort, int iTimeout = 60 )
 		: Csock( sHost, iPort, iTimeout ) 
 	{
 		m_pModule = NULL;
+		m_iParentFD = -1;
+		SetSockName( ZNCSOCK );
 	}
+
+
+// # OnSockDestroy( $sockhandle )
+	virtual ~CPerlSock();
 
 	virtual Csock *GetSockObj( const CS_STRING & sHostname, int iPort )
 	{
 		CPerlSock *p = new CPerlSock( sHostname, iPort );
 		p->SetModule( m_pModule );
+		p->SetParentFD( GetRSock() );
+		p->SetUsername( m_sUsername );
+		p->SetModuleName( m_sModuleName );
+		p->SetSockName( ZNCSOCK );
 		return( p );
 	}
 
 	void SetModule( CModPerl *pModule ) { m_pModule = pModule; }
+	void SetParentFD( int iFD ) { m_iParentFD = iFD; }
+	void SetUsername( const CString & sUsername ) { m_sUsername = sUsername; }
+	void SetModuleName( const CString & sModuleName ) { m_sModuleName = sModuleName; }
 
-//
+	const CString &  GetUsername() { return( m_sUsername ); }
+	const CString &  GetModuleName() { return( m_sModuleName ); }
+
 // # OnConnect( $sockhandle, $parentsockhandle )
+	virtual void Connected();
 // # OnConnectionFrom( $sockhandle, $remotehost, $remoteport )
+	virtual bool ConnectionFrom( const CS_STRING & sHost, int iPort );
 // # OnError( $sockhandle, $errno )
+	virtual void SockError( int iErrno );
 // # OnConnectionRefused( $sockhandle )
+	virtual void ConnectionRefused();
 // # OnTimeout( $sockhandle )
+	virtual void Timeout();
 // # OnDisconnect( $sockhandle )
+	virtual void Disconnected();
 // # OnData( $sockhandle, $bytes, $length )
-// # OnReadLine( $sockhandle, $bytes, $length )
+	virtual void ReadData( const char *data, int len );
+// # OnReadLine( $sockhandle, $line )
+	virtual void ReadLine( const CS_STRING & sLine );
+
 
 private:
 	CModPerl	*m_pModule;
 	CString		m_sModuleName;
 	CString		m_sUsername;	// NEED these so we can send the signal to the right guy
+	int			m_iParentFD;
+	VPString	m_vArgs;
+
+	void SetupArgs()
+	{
+		m_vArgs.clear();
+		m_vArgs.push_back( m_sModuleName );
+		m_vArgs.push_back( GetRSock() );
+	}
+
+	void AddArg( const PString & sArg )
+	{
+		m_vArgs.push_back( sArg );
+	}
+
+	int CallBack( const PString & sFuncName );
 };
 
 class CPerlTimer : public CTimer 
@@ -176,6 +220,7 @@ public:
 
 	virtual ~CModPerl() 
 	{
+		DestroyAllSocks();
 		if ( m_pPerl )
 		{
 			CBNone( "Shutdown" );
@@ -219,6 +264,9 @@ public:
 		}
 		PutModule( sTmp );
 	}
+
+	TSocketManager<Csock> * GetSockManager() { return( m_pManager ); }
+	void DestroyAllSocks();
 
 	CUser * GetUser() { return( m_pUser ); }
 
@@ -341,12 +389,14 @@ public:
 
 	enum ECBTYPES
 	{
-		CB_LOCAL = 1,
-		CB_ONHOOK = 2,
-		CB_TIMER = 3
+		CB_LOCAL 	= 1,
+		CB_ONHOOK 	= 2,
+		CB_TIMER 	= 3,
+		CB_SOCK		= 4
 	};
 
-	EModRet CallBack( const PString & sHookName, const VPString & vsArgs, ECBTYPES eCBType = CB_ONHOOK );
+	EModRet CallBack( const PString & sHookName, const VPString & vsArgs, 
+			ECBTYPES eCBType = CB_ONHOOK, const PString & sUsername = "" );
 
 	EModRet CBNone( const PString & sHookName )
 	{
@@ -636,6 +686,100 @@ XS(XS_ZNC_GetString)
 	}
 }
 
+////////////// Perl SOCKET guts /////////////
+#define MANAGER g_ModPerl->GetSockManager()
+XS(XS_ZNC_WriteSock)
+{
+	dXSARGS;
+	if ( items <= 1 )
+		Perl_croak( aTHX_ "Usage: ZNC::WriteSock( sockhandle, bytes, len )" );
+
+	SP -= items;
+	ax = (SP - PL_stack_base) + 1 ;
+	{
+		if ( g_ModPerl )
+		{
+			PString sReturn = false;
+			int iSockFD = SvIV(ST(0));
+			u_int iLen = SvUV(ST(2));
+			if ( iLen > 0 )
+			{
+				PString sData;
+				sData.append( SvPV( ST(1), iLen ), iLen );
+				CPerlSock *pSock = (CPerlSock *)MANAGER->FindSockByFD( iSockFD );
+				if ( ( pSock ) && ( pSock->GetSockName() == ZNCSOCK ) )
+					sReturn = pSock->Write( sData.data(), sData.length() );
+			}
+			XPUSHs( sReturn.GetSV() );
+		}
+		PUTBACK;
+	}
+}
+
+XS(XS_ZNC_COREConnectSock)
+{
+	dXSARGS;
+	if ( items != 5 )
+		Perl_croak( aTHX_ "Usage: ZNC::COREConnectSock( $host, $port, $timeout, $bEnableReadline, $bUseSSL )" );
+
+	SP -= items;
+	ax = (SP - PL_stack_base) + 1 ;
+	{
+		if ( g_ModPerl )
+		{
+			PString sReturn = -1;
+			PString sHostname = (char *)SvPV(ST(0),PL_na);
+			int iPort = SvIV(ST(1));
+			u_int iTimeout = SvUV(ST(2));
+			u_int iEnableReadline = SvUV(ST(3));
+			u_int iUseSSL = SvUV(ST(4));
+			CPerlSock *pSock = new CPerlSock( sHostname, iPort, iTimeout );
+			pSock->SetSockName( ZNCSOCK );
+			if ( iEnableReadline )
+				pSock->EnableReadLine();
+
+			if ( MANAGER->Connect( sHostname, iPort, ZNCSOCK, iTimeout, ( iUseSSL != 0 ), "", pSock ) )
+				sReturn = pSock->GetRSock();
+
+			XPUSHs( sReturn.GetSV() );
+		}
+		PUTBACK;
+	}
+}
+
+XS(XS_ZNC_COREListenSock)
+{
+	dXSARGS;
+	if ( items != 4 )
+		Perl_croak( aTHX_ "Usage: ZNC::COREListenSock( $port, $bindhost, $bEnableReadline, $bUseSSL )" );
+
+	SP -= items;
+	ax = (SP - PL_stack_base) + 1 ;
+	{
+		if ( g_ModPerl )
+		{
+			PString sReturn = -1;
+			int iPort = SvIV(ST(0));
+			PString sHostname = (char *)SvPV(ST(1),PL_na);
+			u_int iEnableReadline = SvUV(ST(2));
+			u_int iUseSSL = SvUV(ST(3));
+
+			CPerlSock *pSock = new CPerlSock();
+			pSock->SetSockName( ZNCSOCK );
+
+			if ( iEnableReadline )
+				pSock->EnableReadLine();
+
+			if ( MANAGER->ListenHost( iPort, ZNCSOCK, sHostname, ( iUseSSL != 0 ), SOMAXCONN, pSock ) )
+				sReturn = pSock->GetRSock();
+
+			XPUSHs( sReturn.GetSV() );
+		
+		}
+		PUTBACK;
+	}
+}
+
 /////////// supporting functions from within module
 
 bool CModPerl::Eval( const CString & sScript, const CString & sFuncName )
@@ -666,7 +810,8 @@ bool CModPerl::Eval( const CString & sScript, const CString & sFuncName )
 	return( bReturn );
 }
 
-CModPerl::EModRet CModPerl::CallBack( const PString & sHookName, const VPString & vsArgs, ECBTYPES eCBType )
+CModPerl::EModRet CModPerl::CallBack( const PString & sHookName, const VPString & vsArgs, 
+		ECBTYPES eCBType, const PString & sUsername )
 {
 	if ( !m_pPerl )
 		return( CONTINUE );
@@ -682,13 +827,17 @@ CModPerl::EModRet CModPerl::CallBack( const PString & sHookName, const VPString 
 		sFuncToCall = sHookName;
 	else
 	{
-		PString sUsername = m_pUser->GetUserName();
-		XPUSHs( sUsername.GetSV() );
+		if ( sUsername.empty() )
+			XPUSHs( PString( m_pUser->GetUserName() ).GetSV() );
+		else
+			XPUSHs( sUsername.GetSV() );
 		XPUSHs( sHookName.GetSV() );
 		if ( eCBType == CB_ONHOOK )
 			sFuncToCall = ZNCCallFuncCB;
-		else
+		else if ( eCBType == CB_TIMER )
 			sFuncToCall = ZNCCallTimerCB;
+		else
+			sFuncToCall = ZNCCallSockCB;
 	}
 
 	for( VPString::size_type a = 0; a < vsArgs.size(); a++ )
@@ -751,12 +900,15 @@ bool CModPerl::OnLoad( const CString & sArgs )
 	newXS( "ZNC::COREAddTimer", XS_ZNC_COREAddTimer, (char *)file );
 	newXS( "ZNC::CORERemTimer", XS_ZNC_CORERemTimer, (char *)file );
 	newXS( "ZNC::COREPuts", XS_ZNC_COREPuts, (char *)file );
+	newXS( "ZNC::COREConnectSock", XS_ZNC_COREConnectSock, (char *)file );
+	newXS( "ZNC::COREListentSock", XS_ZNC_COREListenSock, (char *)file );
 
 	/* user functions */
 	newXS( "ZNC::GetNicks", XS_ZNC_GetNicks, (char *)file );
 	newXS( "ZNC::GetString", XS_ZNC_GetString, (char *)file );
 	newXS( "ZNC::LoadMod", XS_ZNC_LoadMod, (char *)file );
 	newXS( "ZNC::UnLoadMod", XS_ZNC_UnLoadMod, (char *)file );
+	newXS( "ZNC::WriteSock", XS_ZNC_WriteSock, (char *)file );
 	
 	// this sets up the eval CB that we call from here on out. this way we can grab the error produced
 	SetupZNCScript();
@@ -795,8 +947,17 @@ void CModPerl::LoadPerlMod( const CString & sModule )
 	}
 }
 
+void CModPerl::DestroyAllSocks()
+{
+	for( u_int a = 0; a < m_pManager->size(); a++ )
+	{
+		if ( (*m_pManager)[a]->GetSockName() == ZNCSOCK )
+			m_pManager->DelSock( a-- );
+	}
+}
 void CModPerl::UnLoadPerlMod( const CString & sModule )
 {
+	DestroyAllSocks();
 	Eval( "ZNC::COREUnLoadMod( '" + m_pUser->GetUserName() + "', '" + sModule + "');" );
 }
 
@@ -820,4 +981,99 @@ void CPerlTimer::RunJob()
 	if ( ((CModPerl *)m_pModule)->CallBack( m_sFuncName, vArgs, CModPerl::CB_TIMER ) != CModPerl::CONTINUE )
 		Stop();
 }
+
+/////////////////////////// CPerlSock stuff ////////////////////
+#define SOCKCB( a ) if ( CallBack( a ) != CModPerl::CONTINUE ) { Close(); }
+int CPerlSock::CallBack( const PString & sFuncName )
+{
+	return( m_pModule->CallBack( sFuncName, m_vArgs, CModPerl::CB_SOCK, m_sUsername ) );
+}
+
+// # OnConnect( $sockhandle, $parentsockhandle )
+void CPerlSock::Connected()
+{
+	SetupArgs();
+	if ( m_iParentFD >= 0 )
+		AddArg( m_iParentFD );
+
+	SOCKCB( "OnConnect" )
+}
+
+// # OnConnectionFrom( $sockhandle, $remotehost, $remoteport )
+bool CPerlSock::ConnectionFrom( const CS_STRING & sHost, int iPort )
+{
+	SetupArgs();
+	AddArg( sHost );
+	AddArg( iPort );
+
+	// special case here
+	if ( CallBack( "OnConnectionFrom" ) != CModPerl::CONTINUE )
+		return( false );
+
+	return( true );
+}
+
+
+// # OnError( $sockhandle, $errno )
+void CPerlSock::SockError( int iErrno )
+{
+	SetupArgs();
+	AddArg( iErrno );
+	SOCKCB( "OnError" )
+}
+
+// # OnConnectionRefused( $sockhandle )
+void CPerlSock::ConnectionRefused()
+{
+	SetupArgs();
+	SOCKCB( "OnConnectionRefused" )
+}
+
+// # OnTimeout( $sockhandle )
+void CPerlSock::Timeout()
+{
+	SetupArgs();
+	SOCKCB( "OnTimeout" )
+}
+
+// # OnDisconnect( $sockhandle )
+void CPerlSock::Disconnected()
+{
+	SetupArgs();
+	SOCKCB( "OnDisconnect" );
+}
+// # OnData( $sockhandle, $bytes, $length )
+void CPerlSock::ReadData( const char *data, int len )
+{
+	SetupArgs();
+	PString sData;
+	sData.append( data, len );
+	AddArg( sData );
+	AddArg( len );
+	SOCKCB( "OnData" )
+}
+// # OnReadLine( $sockhandle, $line )
+void CPerlSock::ReadLine( const CS_STRING & sLine )
+{
+	SetupArgs();
+	AddArg( sLine );
+	SOCKCB( "OnReadLine" );
+}
+
+// # OnSockDestroy( $sockhandle )
+CPerlSock::~CPerlSock()
+{
+	SetupArgs();
+	CallBack( "OnSockDestroy" );
+}
+
+
 #endif /* HAVE_PERL */
+
+
+
+
+
+
+
+
