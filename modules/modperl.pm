@@ -84,20 +84,11 @@ sub CORELoadMod
 		}
 	}
 	
-	my $pkgcount = 0;
 	while( <INMOD> )
 	{
-		if ( $_ =~ /^\s*package\s*.+;/ )
+		if ( $_ =~ /^\s*package\s*$Module\s*;/ )
 		{
-			if ( $pkgcount > 0 )
-			{
-				ZNC::PutModule( "Only 1 package declaration per file!" );
-				close( INMOD );
-				close( OUTMOD );
-				return( HALDMODS() );
-			}
 			print OUTMOD "package $Username$Module;\n";
-			$pkgcount++;
 		}
 		else
 		{
