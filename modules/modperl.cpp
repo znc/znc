@@ -785,8 +785,25 @@ XS(XS_ZNC_COREListen)
 			if ( iEnableReadline )
 				pSock->EnableReadLine();
 
-			if ( MANAGER->ListenHost( iPort, ZNCSOCK, sHostname, ( iUseSSL != 0 ), SOMAXCONN, pSock ) )
-				sReturn = pSock->GetRSock();
+			bool bContinue = true;
+			if ( iUseSSL != 0 )
+			{
+				if ( CFile::Exists( g_ModPerl->GetUser()->GetPemLocation() ) )
+					pSock->SetPemLocation( g_ModPerl->GetUser()->GetPemLocation() );
+				else
+				{
+					PutModule( "PEM File does not exist! (looking for " + g_ModPerl->GetUser()->GetPemLocation() + ")" );
+					bContinue = false;
+				}
+			}
+
+			if ( bContinue )
+			{
+				if ( MANAGER->ListenHost( iPort, ZNCSOCK, sHostname, ( iUseSSL != 0 ), SOMAXCONN, pSock ) )
+					sReturn = pSock->GetRSock();
+			}
+			else
+				sReturn = -1;
 
 			XPUSHs( sReturn.GetSV() );
 		
