@@ -144,7 +144,7 @@ sub COREUnLoadMod
 		if ( ( $MODS[$i]->{ZNC_Username} eq $Username ) && ( $MODS[$i]->{ZNC_Name} eq $Module ) )
 		{
 			undef $MODS[$i];
-			splice( @MODS, $i );
+			splice( @MODS, $i, 1 );
 			ZNC::PutModule( "UnLoaded $Module" );
 			return( CONTINUE() );
 		}
@@ -176,10 +176,8 @@ sub CORECallSock
 	{
 		if ( ( $MODS[$i]->{ZNC_Username} eq $Username ) && ( $MODS[$i]->{ZNC_Name} eq $ModName ) )
 		{
-			my @socks = @{$MODS[$i]->{socks}};
-
 			######### Sock methods are in the module directly
-			if ( @socks == 0 )
+			if ( @{$MODS[$i]->{socks}} == 0 )
 			{ # ok, try simple manner, overloads in this here class
 				if ( $MODS[$i]->can( $Func ) )
 				{
@@ -193,20 +191,22 @@ sub CORECallSock
 			}
 
 			########## they sent us a socket to look at, we'll use it
-			for( my $a = 0; $a < @socks; $a++ )
+			for( my $a = 0; $a < @{$MODS[$i]->{socks}}; $a++ )
 			{
-				if ( $socks[$a]->{fd} == $fd )
+				my $obj = ${$MODS[$i]->{socks}}[$a];
+
+				if ( $obj->{fd} == $fd )
 				{
-					if ( $socks[$a]->can( $Func ) )
+					if ( $obj->can( $Func ) )
 					{
-						my $ret = $socks[$a]->$Func( @args );
+						my $ret = $obj->$Func( @args );
 						if ( $Func eq "OnConnectionFrom" )
 						{ # special case this for now, requires a return value
 							return( $ret );
 						}
 						elsif ( $Func eq "OnSockDestroy" )
 						{
-							splice( @{$MODS[$i]->{socks}}, $a );
+							splice( @{$MODS[$i]->{socks}}, $a, 1 );
 						}
 					}
 					return( CONTINUE() );
