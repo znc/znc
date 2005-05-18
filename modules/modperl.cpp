@@ -20,6 +20,7 @@
 #define ZNCCallSockCB "ZNC::CORECallSock"
 #define ZNCSOCK ":::ZncSock:::"
 
+// TODO use PutStatus instead of PutModule
 class PString : public CString 
 {
 public:
@@ -125,15 +126,7 @@ public:
 // # OnSockDestroy( $sockhandle )
 	virtual ~CPerlSock();
 
-	virtual Csock *GetSockObj( const CS_STRING & sHostname, int iPort )
-	{
-		CPerlSock *p = new CPerlSock( sHostname, iPort );
-		p->SetParentFD( GetRSock() );
-		p->SetUsername( m_sUsername );
-		p->SetModuleName( m_sModuleName );
-		p->SetSockName( ZNCSOCK );
-		return( p );
-	}
+	virtual Csock *GetSockObj( const CS_STRING & sHostname, int iPort );
 
 	void SetParentFD( int iFD ) { m_iParentFD = iFD; }
 	void SetUsername( const CString & sUsername ) { m_sUsername = sUsername; }
@@ -442,6 +435,7 @@ public:
 		if ( ( sCommand == "loadmod" ) || ( sCommand == "unloadmod" ) || ( sCommand == "reloadmod" ) )
 		{
 			CString sModule = sLine.Token( 1 );
+			// TODO make this sexy, use wldcmp or Right( 3 )
 			if ( sModule.find( ".pm" ) != CString::npos )
 			{
 				if ( sCommand == "loadmod" )
@@ -921,7 +915,7 @@ bool CModPerl::OnLoad( const CString & sArgs )
 	newXS( "ZNC::CORERemTimer", XS_ZNC_CORERemTimer, (char *)file );
 	newXS( "ZNC::COREPuts", XS_ZNC_COREPuts, (char *)file );
 	newXS( "ZNC::COREConnect", XS_ZNC_COREConnect, (char *)file );
-	newXS( "ZNC::COREListent", XS_ZNC_COREListen, (char *)file );
+	newXS( "ZNC::COREListen", XS_ZNC_COREListen, (char *)file );
 
 	/* user functions */
 	newXS( "ZNC::GetNicks", XS_ZNC_GetNicks, (char *)file );
@@ -973,7 +967,9 @@ void CModPerl::DestroyAllSocks()
 	for( u_int a = 0; a < m_pManager->size(); a++ )
 	{
 		if ( (*m_pManager)[a]->GetSockName() == ZNCSOCK )
+		{
 			m_pManager->DelSock( a-- );
+		}
 	}
 }
 void CModPerl::UnLoadPerlMod( const CString & sModule )
@@ -1014,8 +1010,16 @@ int CPerlSock::CallBack( const PString & sFuncName )
 // # OnConnect( $sockhandle, $parentsockhandle )
 void CPerlSock::Connected()
 {
+	if ( GetType() == INBOUND )
+	{
+		m_vArgs.clear();
+		m_vArgs.push_back( m_sModuleName );
+		m_vArgs.push_back( m_iParentFD );
+		m_vArgs.push_back( GetRSock() );
+		SOCKCB( "OnNewSock" );
+	}
 	SetupArgs();
-	if ( m_iParentFD >= 0 )
+	if ( GetType() == INBOUND )
 		AddArg( m_iParentFD );
 
 	SOCKCB( "OnConnect" )
@@ -1089,6 +1093,15 @@ CPerlSock::~CPerlSock()
 	CallBack( "OnSockDestroy" );
 }
 
+Csock *CPerlSock::GetSockObj( const CS_STRING & sHostname, int iPort )
+{
+	CPerlSock *p = new CPerlSock( sHostname, iPort );
+	p->SetParentFD( GetRSock() );
+	p->SetUsername( m_sUsername );
+	p->SetModuleName( m_sModuleName );
+	p->SetSockName( ZNCSOCK );
+	return( p );
+}
 
 #endif /* HAVE_PERL */
 

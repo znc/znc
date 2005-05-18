@@ -365,18 +365,27 @@ package ZNCSocket;
 
 sub new
 {
-	my ( $classname, $modobj ) = @_;
+	my ( $classname, $modobj, $fd ) = @_;
+
+	if ( !defined( $fd ) )
+	{
+		$fd = -1;
+	}
 
 	my $self =
 	{
 		modobj	=> $modobj,
-		fd		=> -1
+		fd		=> $fd
 	};
 
 	bless( $self, $classname );
-
-	push( @{$modobj->{socks}}, $self );
 	return( $self );
+}
+
+sub AddSock
+{
+	my ( $me ) = @_;
+	push( @{$me->{modobj}->{socks}}, $me );
 }
 
 sub Connect
@@ -405,6 +414,13 @@ sub Close
 	ZNC::CloseSock( $me->{fd} );
 }
 
+sub Listen
+{
+	my ( $me, $port, $bindhost, $bEnableReadline, $bUseSSL ) = @_;
+	$me->{fd} = ZNC::Listen( $me->{modobj}, $port, $bindhost, $bEnableReadline, $bUseSSL );
+	return( $me->{fd} );
+}
+	
 1;
 
 
