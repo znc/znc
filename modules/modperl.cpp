@@ -1120,6 +1120,9 @@ Csock *CPerlSock::GetSockObj( const CS_STRING & sHostname, int iPort )
 	p->SetUsername( m_sUsername );
 	p->SetModuleName( m_sModuleName );
 	p->SetSockName( ZNCSOCK );
+	if ( HasReadLine() )
+		p->EnableReadLine();
+
 	return( p );
 }
 
