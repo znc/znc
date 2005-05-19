@@ -634,6 +634,8 @@ public:
 	//! set the value of m_bEnableReadLine to true, we don't want to store a buffer for ReadLine, unless we want it
 	void EnableReadLine();
 	void DisableReadLine();
+	//! returns the value of m_bEnableReadLine, if ReadLine is enabled
+	bool HasReadLine() const { return( m_bEnableReadLine ); }
 
 	/**
 	 * Override these functions for an easy interface when using the Socket Manager
