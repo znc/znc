@@ -1,6 +1,7 @@
 #ifndef _CHAN_H
 #define _CHAN_H
 
+#include "main.h"
 #include "Nick.h"
 #include "String.h"
 #include <vector>
@@ -45,7 +46,7 @@ public:
 	void Reset();
 	void Joined();
 	void Cycle() const;
-	void JoinUser(bool bForce = false);
+	void JoinUser(bool bForce = false, const CString& sKey = "");
 	void DetachUser();
 	void SendBuffer();
 
@@ -110,7 +111,7 @@ public:
 	const bool IsOn() const { return m_bIsOn; }
 	const CString& GetName() const { return m_sName; }
 	const map<unsigned char, CString>& GetModes() const { return m_musModes; }
-	const CString& GetKey() const { return m_sKey; }
+	const CString& GetKey() const { return (!m_sCurKey.empty()) ? m_sCurKey : m_sKey; }
 	unsigned int GetLimit() const { return m_uLimit; }
 	const CString& GetTopic() const { return m_sTopic; }
 	const CString& GetTopicOwner() const { return m_sTopicOwner; }
@@ -134,6 +135,7 @@ protected:
 	bool				m_bAutoCycle;
 	CString				m_sName;
 	CString				m_sKey;
+	CString				m_sCurKey;
 	CString				m_sTopic;
 	CString				m_sTopicOwner;
 	unsigned long		m_ulTopicDate;

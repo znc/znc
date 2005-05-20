@@ -44,10 +44,11 @@ void CChan::Cycle() const {
 	m_pUser->PutIRC("PART " + GetName() + "\r\nJOIN " + GetName() + " " + GetKey());
 }
 
-void CChan::JoinUser(bool bForce) {
+void CChan::JoinUser(bool bForce, const CString& sKey) {
 	if (!bForce && (!IsOn() || !IsDetached())) {
 		IncClientRequests();
-		m_pUser->PutIRC("JOIN " + GetName());
+
+		m_pUser->PutIRC("JOIN " + GetName() + " " + ((sKey.empty()) ? GetKey() : sKey));
 		return;
 	}
 
@@ -124,7 +125,7 @@ CString CChan::GetModeString() const {
 void CChan::SetModes(const CString& sModes) {
 	m_musModes.clear();
 	m_uLimit = 0;
-	m_sKey = "";
+	m_sCurKey = "";
 	ModeChange(sModes);
 }
 
@@ -242,6 +243,10 @@ void CChan::ModeChange(const CString& sModes, const CString& sOpNick) {
 					}
 
 					break;
+			}
+
+			if (uMode == M_Key) {
+				m_sCurKey = (bAdd) ? sArg : "";
 			}
 
 			(bAdd) ? AddMode(uMode, sArg) : RemMode(uMode, sArg);

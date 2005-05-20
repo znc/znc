@@ -112,6 +112,8 @@ void CUserSock::ReadLine(const CString& sData) {
 		return;		// Don't forward this msg.  ZNC has already registered us.
 	} else if (sCommand.CaseCmp("JOIN") == 0) {
 		CString sChan = sLine.Token(1);
+		CString sKey = sLine.Token(2);
+
 		if (sChan.Left(1) == ":") {
 			sChan.LeftChomp();
 		}
@@ -120,7 +122,7 @@ void CUserSock::ReadLine(const CString& sData) {
 			CChan* pChan = m_pUser->FindChan(sChan);
 
 			if (pChan) {
-				pChan->JoinUser();
+				pChan->JoinUser(false, sKey);
 				return;
 			}
 		}
@@ -524,11 +526,11 @@ void CUserSock::UserCommand(const CString& sLine) {
 				Table.SetCell("Buf", CString((pChan->KeepBuffer()) ? "*" : "") + CString::ToString(pChan->GetBufferCount()));
 
 				CString sModes = pChan->GetModeString();
-				unsigned int uLimit = pChan->GetLimit();
+				/*unsigned int uLimit = pChan->GetLimit();
 				const CString& sKey = pChan->GetKey();
 
 				if (uLimit) { sModes += " " + CString::ToString(uLimit); }
-				if (!sKey.empty()) { sModes += " " + sKey; }
+				if (!sKey.empty()) { sModes += " " + sKey; }*/
 
 				Table.SetCell("Modes", sModes);
 				Table.SetCell("Users", CString::ToString(pChan->GetNickCount()));
