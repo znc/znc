@@ -209,7 +209,14 @@ public:
 		DestroyAllSocks();
 		if ( m_pPerl )
 		{
-			CBNone( "Shutdown" );
+			const map<CString,CUser*> & msUsers = m_pZNC->GetUserMap();
+			
+			for( map<CString,CUser*>::const_iterator it = msUsers.begin(); it != msUsers.end(); it++ )
+			{ // need to set it on all of these
+				m_pUser = it->second;
+				CBNone( "Shutdown" );
+				m_pUser = NULL;
+			}
 			PerlInterpShutdown();
 		}
 		g_ModPerl = NULL;
@@ -252,7 +259,7 @@ public:
 	}
 
 	TSocketManager<Csock> * GetSockManager() { return( m_pManager ); }
-	void DestroyAllSocks();
+	void DestroyAllSocks( const CString & sModuleName = "" );
 
 	CUser * GetUser( const CString & sUsername = "", bool bSetUserContext = false  ) 
 	{ 
@@ -265,6 +272,7 @@ public:
 
 		return( pUser );
 	}
+	void UnSetUser() { m_pUser = NULL; }
 
 	virtual bool OnLoad( const CString & sArgs );
 	virtual void OnUserAttached() {  CBNone( "OnUserAttached" ); }
@@ -484,7 +492,7 @@ XS(XS_ZNC_COREAddTimer)
 	SP -= items;
 	ax = (SP - PL_stack_base) + 1 ;
 	{
-		if ( g_ModPerl )
+		if ( ( g_ModPerl ) && ( g_ModPerl->GetUser() ) )
 		{
 			CString sModName = (char *)SvPV(ST(0),PL_na);
 			CString sFuncName = (char *)SvPV(ST(1),PL_na);
@@ -511,7 +519,7 @@ XS(XS_ZNC_CORERemTimer)
 	SP -= items;
 	ax = (SP - PL_stack_base) + 1 ;
 	{
-		if ( g_ModPerl )
+		if ( ( g_ModPerl ) && ( g_ModPerl->GetUser() ) )
 		{
 			CString sModName = (char *)SvPV(ST(0),PL_na);
 			CString sFuncName = (char *)SvPV(ST(1),PL_na);
@@ -535,7 +543,7 @@ XS(XS_ZNC_COREPuts)
 	SP -= items;
 	ax = (SP - PL_stack_base) + 1 ;
 	{
-		if ( g_ModPerl )
+		if ( ( g_ModPerl ) && ( g_ModPerl->GetUser() ) )
 		{
 			CString sWhich = (char *)SvPV(ST(0),PL_na);
 			CString sLine = (char *)SvPV(ST(1),PL_na);
@@ -620,7 +628,7 @@ XS(XS_ZNC_GetNicks)
 	SP -= items;
 	ax = (SP - PL_stack_base) + 1 ;
 	{
-		if ( g_ModPerl )
+		if ( ( g_ModPerl ) && ( g_ModPerl->GetUser() ) )
 		{
 			CString sChan = (char *)SvPV(ST(0),PL_na);
 			CUser * pUser = g_ModPerl->GetUser();
@@ -655,7 +663,7 @@ XS(XS_ZNC_GetString)
 	SP -= items;
 	ax = (SP - PL_stack_base) + 1 ;
 	{
-		if ( g_ModPerl )
+		if ( ( g_ModPerl ) && ( g_ModPerl->GetUser() ) )
 		{
 			CUser * pUser = g_ModPerl->GetUser();
 			PString sReturn;
@@ -745,7 +753,7 @@ XS(XS_ZNC_COREConnect)
 	SP -= items;
 	ax = (SP - PL_stack_base) + 1 ;
 	{
-		if ( g_ModPerl )
+		if ( ( g_ModPerl ) && ( g_ModPerl->GetUser() ) )
 		{
 			PString sReturn = -1;
 			PString sModuleName = (char *)SvPV(ST(0),PL_na);
@@ -779,7 +787,7 @@ XS(XS_ZNC_COREListen)
 	SP -= items;
 	ax = (SP - PL_stack_base) + 1 ;
 	{
-		if ( g_ModPerl )
+		if ( ( g_ModPerl ) && ( g_ModPerl->GetUser() ) )
 		{
 			PString sReturn = -1;
 			PString sModuleName = (char *)SvPV(ST(0),PL_na);
@@ -871,7 +879,12 @@ CModPerl::EModRet CModPerl::CallBack( const PString & sHookName, const VPString 
 	else
 	{
 		if ( sUsername.empty() )
+		{
+			if ( !m_pUser )
+				return( CONTINUE );
+
 			XPUSHs( PString( m_pUser->GetUserName() ).GetSV() );
+		}
 		else
 			XPUSHs( sUsername.GetSV() );
 		XPUSHs( sHookName.GetSV() );
@@ -983,6 +996,12 @@ bool CModPerl::OnLoad( const CString & sArgs )
 
 void CModPerl::LoadPerlMod( const CString & sModule )
 {
+	if ( !m_pUser )
+	{
+		cerr << "LoadPerlMod: No User is set!!!" << endl;
+		return;
+	}
+
 	CString sModPath = m_pZNC->FindModPath( sModule );
 	if ( sModPath.empty() )
 		PutModule( "No such module " + sModule );
@@ -993,19 +1012,25 @@ void CModPerl::LoadPerlMod( const CString & sModule )
 	}
 }
 
-void CModPerl::DestroyAllSocks()
+void CModPerl::DestroyAllSocks( const CString & sModuleName )
 {
 	for( u_int a = 0; a < m_pManager->size(); a++ )
 	{
 		if ( (*m_pManager)[a]->GetSockName() == ZNCSOCK )
 		{
-			m_pManager->DelSock( a-- );
+			if ( ( sModuleName.empty() ) || ( sModuleName == ((CPerlSock *)(*m_pManager)[a])->GetModuleName() ) )
+				m_pManager->DelSock( a-- );
 		}
 	}
 }
 void CModPerl::UnloadPerlMod( const CString & sModule )
 {
-	DestroyAllSocks();
+	DestroyAllSocks( sModule );
+	if ( !m_pUser )
+	{
+		cerr << "UnloadPerlMod: No User is set!!!" << endl;
+		return;
+	}
 	Eval( "ZNC::COREUnloadMod( '" + m_pUser->GetUserName() + "', '" + sModule + "');" );
 }
 
@@ -1034,6 +1059,8 @@ void CPerlTimer::RunJob()
 	vArgs.push_back( m_sModuleName );
 	if ( ((CModPerl *)m_pModule)->CallBack( m_sFuncName, vArgs, CModPerl::CB_TIMER ) != CModPerl::CONTINUE )
 		Stop();
+
+	((CModPerl *)m_pModule)->UnSetUser();
 }
 
 /////////////////////////// CPerlSock stuff ////////////////////
@@ -1045,7 +1072,9 @@ int CPerlSock::CallBack( const PString & sFuncName )
 		Close();
 		return( CModPerl::HALT );
 	}
-	return( g_ModPerl->CallBack( sFuncName, m_vArgs, CModPerl::CB_SOCK, m_sUsername ) );
+	int i = g_ModPerl->CallBack( sFuncName, m_vArgs, CModPerl::CB_SOCK, m_sUsername );
+	g_ModPerl->UnSetUser();
+	return( i );
 }
 
 // # OnConnect( $sockhandle, $parentsockhandle )
