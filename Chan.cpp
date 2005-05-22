@@ -168,7 +168,7 @@ void CChan::ModeChange(const CString& sModes, const CString& sOpNick) {
 
 #ifdef _MODULES
 	if (pOpNick) {
-		m_pUser->GetModules().OnRawMode(*pOpNick, *this, sModeArg, sArgs);
+		VOIDMODULECALL(OnRawMode(*pOpNick, *this, sModeArg, sArgs));
 	}
 #endif
 
@@ -208,19 +208,19 @@ void CChan::ModeChange(const CString& sModes, const CString& sOpNick) {
 #ifdef _MODULES
 
 					if (uMode && pOpNick) {
-						m_pUser->GetModules().OnChanPermission(*pOpNick, *pNick, *this, uMode, bAdd, bNoChange);
+						VOIDMODULECALL(OnChanPermission(*pOpNick, *pNick, *this, uMode, bAdd, bNoChange));
 
 						if (uMode == CChan::M_Op) {
 							if (bAdd) {
-								m_pUser->GetModules().OnOp(*pOpNick, *pNick, *this, bNoChange);
+								VOIDMODULECALL(OnOp(*pOpNick, *pNick, *this, bNoChange));
 							} else {
-								m_pUser->GetModules().OnDeop(*pOpNick, *pNick, *this, bNoChange);
+								VOIDMODULECALL(OnDeop(*pOpNick, *pNick, *this, bNoChange));
 							}
 						} else if (uMode == CChan::M_Voice) {
 							if (bAdd) {
-								m_pUser->GetModules().OnVoice(*pOpNick, *pNick, *this, bNoChange);
+								VOIDMODULECALL(OnVoice(*pOpNick, *pNick, *this, bNoChange));
 							} else {
-								m_pUser->GetModules().OnDevoice(*pOpNick, *pNick, *this, bNoChange);
+								VOIDMODULECALL(OnDevoice(*pOpNick, *pNick, *this, bNoChange));
 							}
 						}
 					}

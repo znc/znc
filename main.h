@@ -5,6 +5,47 @@
 #define _MODDIR_ "/usr/share/znc"
 #endif
 
+#ifdef _MODULES
+#define VOIDMODULECALL(func)										\
+	if (m_pUser) {													\
+		CGlobalModules& GMods = m_pUser->GetZNC()->GetModules();	\
+		GMods.SetUser(m_pUser);										\
+		GMods.func;													\
+		m_pUser->GetModules().func;									\
+		GMods.SetUser(NULL);										\
+	}
+#else
+#define VOIDMODULECALL(func)
+#endif
+
+#ifdef _MODULES
+#define MODULECALLRET(func)											\
+	if (m_pUser) {													\
+		CGlobalModules& GMods = m_pUser->GetZNC()->GetModules();	\
+		GMods.SetUser(m_pUser);										\
+		if (GMods.func || m_pUser->GetModules().func) {				\
+			return;													\
+		}															\
+		GMods.SetUser(NULL);										\
+	}
+#else
+#define MODULECALL(func)
+#endif
+
+#ifdef _MODULES
+#define MODULECALL(func)											\
+	if (m_pUser) {													\
+		CGlobalModules& GMods = m_pUser->GetZNC()->GetModules();	\
+		GMods.SetUser(m_pUser);										\
+		if (GMods.func || m_pUser->GetModules().func) {				\
+			return true;											\
+		}															\
+		GMods.SetUser(NULL);										\
+	}
+#else
+#define MODULECALL(func)
+#endif
+
 #define VERSION 0.036
 
 #ifndef CS_STRING

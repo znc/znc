@@ -14,6 +14,7 @@
 #endif
 
 CZNC::CZNC() {
+	m_pModules = new CGlobalModules(this);
 	m_uListenPort = 0;
 	m_bISpoofLocked = false;
 	m_sISpoofFormat = "global { reply \"%\" }";
@@ -21,6 +22,8 @@ CZNC::CZNC() {
 
 CZNC::~CZNC() {
 #ifdef _MODULES
+	delete m_pModules;
+
 	for (map<CString,CUser*>::iterator a = m_msUsers.begin(); a != m_msUsers.end(); a++) {
 		a->second->GetModules().UnloadAll();
 	}
@@ -43,6 +46,10 @@ CString CZNC::GetTag(bool bIncludeVersion) {
 }
 
 bool CZNC::OnBoot() {
+	if (!GetModules().OnBoot()) {
+		return false;
+	}
+
 	for (map<CString,CUser*>::iterator it = m_msUsers.begin(); it != m_msUsers.end(); it++) {
 		if (!it->second->OnBoot()) {
 			return false;
@@ -534,6 +541,7 @@ bool CZNC::ParseConfig(const CString& sConfig) {
 				}
 
 				pUser = new CUser(sValue, this);
+				CUtils::PrintMessage("Loading user [" + sValue + "]");
 				bAutoCycle = true;
 
 				if (!sStatusPrefix.empty()) {
@@ -671,6 +679,9 @@ bool CZNC::ParseConfig(const CString& sConfig) {
 						try {
 							bool bModRet = pUser->GetModules().LoadModule(sModName, sArgs, pUser, sModRet);
 							CUtils::PrintStatus(bModRet, (bModRet) ? "" : sModRet);
+							if (!bModRet) {
+								return false;
+							}
 						} catch (CException e) {
 							CUtils::PrintStatus(false, sModRet);
 							return false;
@@ -743,6 +754,27 @@ bool CZNC::ParseConfig(const CString& sConfig) {
 					CUtils::PrintStatus(true);
 
 					continue;
+				} else if (sName.CaseCmp("LoadModule") == 0) {
+					CString sModName = sValue.Token(0);
+					CUtils::PrintAction("Loading Global Module [" + sModName + "]");
+#ifdef _MODULES
+					CString sModRet;
+					CString sArgs = sValue.Token(1, true);
+
+					try {
+						bool bModRet = GetModules().LoadModule(sModName, sArgs, NULL, sModRet);
+						CUtils::PrintStatus(bModRet, (bModRet) ? "" : sModRet);
+						if (!bModRet) {
+							return false;
+						}
+					} catch (CException e) {
+						CUtils::PrintStatus(false, sModRet);
+						return false;
+					}
+#else
+					CUtils::PrintStatus(false, "Modules are not enabled.");
+#endif
+					continue;
 				} else if (sName.CaseCmp("ISpoofFormat") == 0) {
 					m_sISpoofFormat = sValue;
 					continue;
@@ -780,4 +812,28 @@ bool CZNC::ParseConfig(const CString& sConfig) {
 	}
 
 	return true;
+}
+
+CString CZNC::FindModPath(const CString& sModule) const {
+	CString sModPath = GetCurPath() + "/modules/" + sModule;
+	sModPath += (sModule.find(".") == CString::npos) ? ".so" : "";
+
+	if (!CFile::Exists(sModPath)) {
+		DEBUG_ONLY(cout << "[" << sModPath << "] Not found..." << endl);
+		sModPath = GetModPath() + "/" + sModule;
+		sModPath += (sModule.find(".") == CString::npos) ? ".so" : "";
+
+		if (!CFile::Exists(sModPath)) {
+			DEBUG_ONLY(cout << "[" << sModPath << "] Not found..." << endl);
+			sModPath = _MODDIR_ + CString("/") + sModule;
+			sModPath += (sModule.find(".") == CString::npos) ? ".so" : "";
+
+			if (!CFile::Exists(sModPath)) {
+				DEBUG_ONLY(cout << "[" << sModPath << "] Not found... giving up!" << endl);
+				return "";
+			}
+		}
+	}
+
+	return sModPath;
 }

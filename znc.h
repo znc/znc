@@ -3,6 +3,7 @@
 
 #include "main.h"
 #include "FileUtils.h"
+#include "Modules.h"
 #include <map>
 using std::map;
 
@@ -28,9 +29,11 @@ public:
 	CString GetConfigPath(const CString& sConfigFile);
 	bool WriteNewConfig(const CString& sConfig);
 	static CString GetTag(bool bIncludeVersion = true);
+	CString FindModPath(const CString& sModule) const;
 
 	// Getters
 	TSocketManager<Csock>& GetManager() { return m_Manager; }
+	CGlobalModules& GetModules() { return *m_pModules; }
 	unsigned int GetListenPort() const { return m_uListenPort; }
 	const CString& GetCurPath() const { if (!CFile::Exists(m_sCurPath)) { CUtils::MakeDir(m_sCurPath); } return m_sCurPath; }
 	const CString& GetDLPath() const { if (!CFile::Exists(m_sDLPath)) { CUtils::MakeDir(m_sDLPath); } return m_sDLPath; }
@@ -75,6 +78,7 @@ protected:
 	bool					m_bISpoofLocked;
 	bool					m_bSSL;
 	map<CString,CUser*>::iterator	m_itUserIter;	// This needs to be reset to m_msUsers.begin() if anything is added or removed to the map
+	CGlobalModules*			m_pModules;
 };
 
 #endif // !_ZNC_H

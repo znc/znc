@@ -16,6 +16,9 @@ CUser::CUser(const CString& sUserName, CZNC* pZNC) {
 	m_sRealName = sUserName;
 	m_uServerIdx = 0;
 	m_pZNC = pZNC;
+#ifdef _MODULES
+	m_pModules = new CModules(pZNC);
+#endif
 	m_bPassHashed = false;
 	m_bUseClientIP = false;
 	m_bKeepNick = false;
@@ -29,7 +32,7 @@ CUser::CUser(const CString& sUserName, CZNC* pZNC) {
 
 CUser::~CUser() {
 #ifdef _MODULES
-	m_Modules.UnloadAll();
+	delete m_pModules;
 #endif
 	for (unsigned int a = 0; a < m_vServers.size(); a++) {
 		delete m_vServers[a];
@@ -42,7 +45,7 @@ CUser::~CUser() {
 
 bool CUser::OnBoot() {
 #ifdef _MODULES
-	return m_Modules.OnBoot();
+	return GetModules().OnBoot();
 #endif
 	return true;
 }

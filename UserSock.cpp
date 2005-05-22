@@ -16,13 +16,9 @@ void CUserSock::ReadLine(const CString& sData) {
 
 	DEBUG_ONLY(cout << GetSockName() << " <- [" << sLine << "]" << endl);
 
-#ifdef _MODULES
 	if (m_bAuthed) {
-		if ((m_pUser) && (m_pUser->GetModules().OnUserRaw(sLine))) {
-			return;
-		}
+		MODULECALLRET(OnUserRaw(sLine));
 	}
-#endif
 
 	CString sCommand = sLine.Token(0);
 
@@ -151,8 +147,11 @@ void CUserSock::ReadLine(const CString& sData) {
 				CString sModule = sTarget;
 				sModule.LeftChomp(m_pUser->GetStatusPrefix().length());
 
-				CModule* pModule = m_pUser->GetModules().FindModule(sModule);
+				CModule* pModule = m_pUser->GetZNC()->GetModules().FindModule(sModule);
+
 				if (pModule) {
+					pModule->OnModNotice(sMsg);
+				} else if ((pModule = m_pUser->GetModules().FindModule(sModule))) {
 					pModule->OnModNotice(sMsg);
 				} else {
 					PutStatus("No such module [" + sModule + "]");
@@ -178,15 +177,11 @@ void CUserSock::ReadLine(const CString& sData) {
 			sCTCP.LeftChomp();
 			sCTCP.RightChomp();
 
-			if ((m_pUser) && (m_pUser->GetModules().OnUserCTCPReply(sTarget, sCTCP))) {
-				return;
-			}
+			MODULECALLRET(OnUserCTCPReply(sTarget, sCTCP));
 
 			sMsg = "\001" + sCTCP + "\001";
 		} else {
-			if ((m_pUser) && (m_pUser->GetModules().OnUserNotice(sTarget, sMsg))) {
-				return;
-			}
+			MODULECALLRET(OnUserNotice(sTarget, sMsg));
 		}
 #endif
 
@@ -249,11 +244,7 @@ void CUserSock::ReadLine(const CString& sData) {
 								m_pUser->GetFile(GetNick(), CUtils::GetIP(uLongIP), uPort, sLocalFile, uFileSize);
 							}
 						} else {
-#ifdef _MODULES
-							if ((m_pUser) && (m_pUser->GetModules().OnDCCUserSend(sTarget, uLongIP, uPort, sFile, uFileSize))) {
-								return;
-							}
-#endif
+							MODULECALLRET(OnDCCUserSend(sTarget, uLongIP, uPort, sFile, uFileSize));
 						}
 					} else {
 						unsigned short uBNCPort = CDCCBounce::DCCRequest(sTarget, uLongIP, uPort, sFile, false, m_pUser, (m_pIRCSock) ? m_pIRCSock->GetLocalIP() : GetLocalIP(), "");
@@ -315,22 +306,13 @@ void CUserSock::ReadLine(const CString& sData) {
 				return;
 			}
 
-#ifdef _MODULES
-			if ((m_pUser) && (m_pUser->GetModules().OnUserCTCP(sTarget, sCTCP))) {
-				return;
-			}
-#endif
-
+			MODULECALLRET(OnUserCTCP(sTarget, sCTCP));
 			PutIRC("PRIVMSG " + sTarget + " :\001" + sCTCP + "\001");
 			return;
 		}
 
 		if ((m_pUser) && (sTarget.CaseCmp(CString(m_pUser->GetStatusPrefix() + "status")) == 0)) {
-#ifdef _MODULES
-			if ((m_pUser) && (m_pUser->GetModules().OnStatusCommand(sMsg))) {
-				return;
-			}
-#endif
+			MODULECALLRET(OnStatusCommand(sMsg));
 			UserCommand(sMsg);
 			return;
 		}
@@ -358,11 +340,7 @@ void CUserSock::ReadLine(const CString& sData) {
 			pChan->AddBuffer(":" + GetNickMask() + " PRIVMSG " + sTarget + " :" + sMsg);
 		}
 
-#ifdef _MODULES
-		if ((m_pUser) && (m_pUser->GetModules().OnUserMsg(sTarget, sMsg))) {
-			return;
-		}
-#endif
+		MODULECALLRET(OnUserMsg(sTarget, sMsg));
 		PutIRC("PRIVMSG " + sTarget + " :" + sMsg);
 		return;
 	}
@@ -524,15 +502,7 @@ void CUserSock::UserCommand(const CString& sLine) {
 				Table.SetCell("Name", pChan->GetPermStr() + pChan->GetName());
 				Table.SetCell("Status", ((vChans[a]->IsOn()) ? ((vChans[a]->IsDetached()) ? "Detached" : "Joined") : "Trying"));
 				Table.SetCell("Buf", CString((pChan->KeepBuffer()) ? "*" : "") + CString::ToString(pChan->GetBufferCount()));
-
-				CString sModes = pChan->GetModeString();
-				/*unsigned int uLimit = pChan->GetLimit();
-				const CString& sKey = pChan->GetKey();
-
-				if (uLimit) { sModes += " " + CString::ToString(uLimit); }
-				if (!sKey.empty()) { sModes += " " + sKey; }*/
-
-				Table.SetCell("Modes", sModes);
+				Table.SetCell("Modes", pChan->GetModeString());
 				Table.SetCell("Users", CString::ToString(pChan->GetNickCount()));
 
 				for (unsigned int b = 0; b < sPerms.size(); b++) {
@@ -964,9 +934,7 @@ void CUserSock::AuthUser() {
 			pIRCSock->UserConnected(this);
 		}
 
-#ifdef _MODULES
-		m_pUser->GetModules().OnUserAttached();
-#endif
+		VOIDMODULECALL(OnUserAttached());
 	}
 }
 
@@ -985,11 +953,7 @@ void CUserSock::Disconnected() {
 		m_pIRCSock = NULL;
 	}
 
-#ifdef _MODULES
-	if (m_pUser) {
-		m_pUser->GetModules().OnUserDetached();
-	}
-#endif
+	VOIDMODULECALL(OnUserDetached());
 }
 
 void CUserSock::IRCConnected(CIRCSock* pIRCSock) {

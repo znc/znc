@@ -41,7 +41,7 @@ public:
 
 #ifdef _MODULES
 	// Modules
-	CModules& GetModules() { return m_Modules; }
+	CModules& GetModules() { return *m_pModules; }
 	// !Modules
 #endif
 
@@ -149,7 +149,7 @@ protected:
 	unsigned int		m_uBufferCount;
 
 #ifdef _MODULES
-	CModules		m_Modules;
+	CModules*		m_pModules;
 #endif
 };
 

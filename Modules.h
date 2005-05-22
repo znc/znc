@@ -8,8 +8,33 @@
 using std::vector;
 using std::set;
 
-#define MODULEDEFS(CLASS) extern "C" { CModule* Load(void* p, CUser* pUser, const CString& sModName); void Unload(CModule* pMod); double GetVersion(); } double GetVersion() { return VERSION; } CModule* Load(void* p, CUser* pUser, const CString& sModName) { return new CLASS(p, pUser, sModName); } void Unload(CModule* pMod) { if (pMod) { delete pMod; } }
-#define MODCONSTRUCTOR(CLASS) CLASS(void *pDLL, CUser* pUser, const CString& sModName) : CModule(pDLL, pUser, sModName)
+// User Module Macros
+#define MODCONSTRUCTOR(CLASS) \
+	CLASS(void *pDLL, CUser* pUser, const CString& sModName) : CModule(pDLL, pUser, sModName)
+#define MODULEDEFS(CLASS) \
+	extern "C" { \
+		bool IsGlobal() { return false; } \
+		CModule* Load(void* p, CUser* pUser, const CString& sModName); \
+		void Unload(CModule* pMod); double GetVersion(); } \
+		double GetVersion() { return VERSION; } \
+		CModule* Load(void* p, CUser* pUser, const CString& sModName) { return new CLASS(p, pUser, sModName); } \
+		void Unload(CModule* pMod) { if (pMod) { delete pMod; } \
+	}
+// !User Module Macros
+
+// Global Module Macros
+#define GLOBALMODCONSTRUCTOR(CLASS) \
+	CLASS(void *pDLL, CZNC* pZNC, const CString& sModName) : CGlobalModule(pDLL, pZNC, sModName)
+#define GLOBALMODULEDEFS(CLASS) \
+	extern "C" { \
+		bool IsGlobal() { return true; } \
+		CGlobalModule* Load(void* p, CZNC* pZNC, const CString& sModName); \
+		void Unload(CGlobalModule* pMod); double GetVersion(); } \
+		double GetVersion() { return VERSION; } \
+		CGlobalModule* Load(void* p, CZNC* pZNC, const CString& sModName) { return new CLASS(p, pZNC, sModName); } \
+		void Unload(CGlobalModule* pMod) { if (pMod) { delete pMod; } \
+	}
+// !Global Module Macros
 
 // Forward Declarations
 class CZNC;
@@ -97,6 +122,7 @@ protected:
 class CModule {
 public:
 	CModule(void* pDLL, CUser* pUser, const CString& sModName);
+	CModule(void* pDLL, CZNC* pZNC, const CString& sModName);
 	virtual ~CModule();
 
 	typedef enum {
@@ -110,6 +136,7 @@ public:
 		UNLOAD
 	} EModException;
 
+	void SetUser(CUser* pUser);
 	void Unload();
 	virtual CString GetDescription();
 
@@ -191,6 +218,7 @@ protected:
 	void*					m_pDLL;
 	TSocketManager<Csock>*	m_pManager;
 	CUser*					m_pUser;
+	CZNC*					m_pZNC;
 	CString					m_sModName;
 private:
 	MCString				m_mssRegistry; //!< way to save name/value pairs. Note there is no encryption involved in this
@@ -198,8 +226,10 @@ private:
 
 class CModules : public vector<CModule*> {
 public:
-	CModules();
+	CModules(CZNC* pZNC);
 	virtual ~CModules();
+
+	void SetUser(CUser* pUser) { m_pUser = pUser; }
 
 	void UnloadAll();
 
@@ -250,8 +280,29 @@ public:
 	bool UnloadModule(const CString& sModule);
 	bool UnloadModule(const CString& sModule, CString& sRetMsg);
 	bool ReloadModule(const CString& sModule, const CString& sArgs, CUser* pUser, CString& sRetMsg);
+	CString FindModPath(const CString& sModule, CUser* pUser = NULL);
 
 	static void GetAvailableMods(set<CModInfo>& ssMods, CZNC* pZNC);
+
+private:
+	CZNC*	m_pZNC;
+	CUser*	m_pUser;
+};
+
+class CGlobalModule : public CModule {
+public:
+	CGlobalModule(void* pDLL, CZNC* pZNC, const CString& sModName) : CModule(pDLL, pZNC, sModName) {}
+	virtual ~CGlobalModule() {}
+
+private:
+};
+
+class CGlobalModules : public CModules {
+public:
+	CGlobalModules(CZNC* pZNC) : CModules(pZNC) {}
+	virtual ~CGlobalModules() {}
+
+private:
 };
 
 #endif // !_MODULES_H
