@@ -677,21 +677,26 @@ CString CModules::FindModPath(const CString& sModule, CUser* pUser) {
 	return (m_pZNC) ? m_pZNC->FindModPath(sModule) : "";
 }
 
-void CModules::GetAvailableMods(set<CModInfo>& ssMods, CZNC* pZNC) {
+void CModules::GetAvailableMods(set<CModInfo>& ssMods, CZNC* pZNC, bool bGlobal) {
 	ssMods.clear();
 
 	unsigned int a = 0;
 	CDir Dir;
 
 	Dir.FillByWildcard(pZNC->GetModPath(), "*.so");
+
 	for (a = 0; a < Dir.size(); a++) {
 		CFile& File = *Dir[a];
-		ssMods.insert(CModInfo(File.GetShortName(), File.GetLongName(), false));
+		if ((File.GetShortName().Left(2).CaseCmp("g_") == 0) == bGlobal) {
+			ssMods.insert(CModInfo(File.GetShortName(), File.GetLongName(), false, bGlobal));
+		}
 	}
 
 	Dir.FillByWildcard(_MODDIR_, "*.so");
 	for (a = 0; a < Dir.size(); a++) {
 		CFile& File = *Dir[a];
-		ssMods.insert(CModInfo(File.GetShortName(), File.GetLongName(), true));
+		if ((File.GetShortName().Left(2).CaseCmp("g_") == 0) == bGlobal) {
+			ssMods.insert(CModInfo(File.GetShortName(), File.GetLongName(), true, bGlobal));
+		}
 	}
 }

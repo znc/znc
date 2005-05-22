@@ -96,8 +96,9 @@ private:
 class CModInfo {
 public:
 
-	CModInfo(const CString& sName, const CString& sPath, bool bSystem) {
+	CModInfo(const CString& sName, const CString& sPath, bool bSystem, bool bGlobal) {
 		m_bSystem = bSystem;
+		m_bGlobal = bGlobal;
 		m_sName = sName;
 		m_sPath = sPath;
 	}
@@ -111,10 +112,12 @@ public:
 	const CString& GetName() const { return m_sName; }
 	const CString& GetPath() const { return m_sPath; }
 	bool IsSystem() const { return m_bSystem; }
+	bool IsGlobal() const { return m_bGlobal; }
 	// !Getters
 private:
 protected:
 	bool	m_bSystem;
+	bool	m_bGlobal;
 	CString	m_sName;
 	CString	m_sPath;
 };
@@ -282,7 +285,7 @@ public:
 	bool ReloadModule(const CString& sModule, const CString& sArgs, CUser* pUser, CString& sRetMsg);
 	CString FindModPath(const CString& sModule, CUser* pUser = NULL);
 
-	static void GetAvailableMods(set<CModInfo>& ssMods, CZNC* pZNC);
+	static void GetAvailableMods(set<CModInfo>& ssMods, CZNC* pZNC, bool bGlobal = false);
 
 private:
 	CZNC*	m_pZNC;

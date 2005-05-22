@@ -283,6 +283,32 @@ bool CZNC::WriteNewConfig(const CString& sConfig) {
 	vsLines.push_back("ListenPort = " + CString((bAnswer) ? "+" : "") + CString::ToString(uPort));
 	// !ListenPort
 
+#ifdef _MODULES
+	set<CModInfo> ssGlobalMods;
+	CModules::GetAvailableMods(ssGlobalMods, this, true);
+
+	if (ssGlobalMods.size()) {
+		CUtils::PrintMessage("");
+		CUtils::PrintMessage("-- Global Modules --");
+		CUtils::PrintMessage("");
+
+		if (CUtils::GetBoolInput("Do you want to load any global modules?")) {
+			for (set<CModInfo>::iterator it = ssGlobalMods.begin(); it != ssGlobalMods.end(); it++) {
+				const CModInfo& Info = *it;
+				CString sName = Info.GetName();
+
+				if (sName.Right(3).CaseCmp(".so") == 0) {
+					sName.RightChomp(3);
+				}
+
+				if (CUtils::GetBoolInput("Load global module <\033[1m" + sName + "\033[22m>?", false)) {
+					vsLines.push_back("LoadModule = " + sName);
+				}
+			}
+		}
+	}
+#endif
+
 	// User
 	CUtils::PrintMessage("");
 	CUtils::PrintMessage("Now we need to setup a user...");
@@ -324,17 +350,17 @@ bool CZNC::WriteNewConfig(const CString& sConfig) {
 		}
 
 #ifdef _MODULES
-		set<CModInfo> ssMods;
-		CModules::GetAvailableMods(ssMods, this);
+		set<CModInfo> ssUserMods;
+		CModules::GetAvailableMods(ssUserMods, this);
 
-		if (ssMods.size()) {
+		if (ssUserMods.size()) {
 			vsLines.push_back("");
 			CUtils::PrintMessage("");
-			CUtils::PrintMessage("-- Modules --");
+			CUtils::PrintMessage("-- User Modules --");
 			CUtils::PrintMessage("");
 
-			if (CUtils::GetBoolInput("Do you want to automatically load any modules at all?")) {
-				for (set<CModInfo>::iterator it = ssMods.begin(); it != ssMods.end(); it++) {
+			if (CUtils::GetBoolInput("Do you want to automatically load any user modules for this user?")) {
+				for (set<CModInfo>::iterator it = ssUserMods.begin(); it != ssUserMods.end(); it++) {
 					const CModInfo& Info = *it;
 					CString sName = Info.GetName();
 
