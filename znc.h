@@ -57,6 +57,8 @@ public:
 		return pZNC;
 	}
 
+	const map<CString,CUser*> & GetUserMap() const { return( m_msUsers ); }
+
 private:
 protected:
 	unsigned short			m_uListenPort;
