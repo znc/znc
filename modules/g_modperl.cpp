@@ -6,6 +6,7 @@
 #include "Chan.h"
 #include "FileUtils.h"
 #include "Csocket.h"
+#include "znc.h"
 
 // perl stuff
 #include <EXTERN.h>
@@ -182,8 +183,6 @@ public:
 
 	virtual ~CPerlTimer() {}
 
-	// TODO possibly need to check that the userspace is correct when this goes global
-
 	void SetFuncName( const CString & sFuncName ) { m_sFuncName = sFuncName; }
 	void SetUserName( const CString & sUserName ) { m_sUserName = sUserName; }
 	void SetModuleName( const CString & sModuleName ) { m_sModuleName = sModuleName; }
@@ -196,10 +195,10 @@ protected:
 	CString		m_sModuleName;
 };
 
-class CModPerl : public CModule 
+class CModPerl : public CGlobalModule 
 {
 public:
-	MODCONSTRUCTOR( CModPerl ) 
+	GLOBALMODCONSTRUCTOR( CModPerl ) 
 	{
 		g_ModPerl = this;
 		m_pPerl = NULL;
@@ -225,7 +224,7 @@ public:
 
 	void SetupZNCScript()
 	{
-		CString sModule = m_pUser->FindModPath( "modperl.pm" );
+		CString sModule = m_pZNC->FindModPath( "modperl.pm" );
 		if ( !sModule.empty() )
 		{
 			CString sBuffer, sScript;
@@ -255,10 +254,19 @@ public:
 	TSocketManager<Csock> * GetSockManager() { return( m_pManager ); }
 	void DestroyAllSocks();
 
-	CUser * GetUser() { return( m_pUser ); }
+	CUser * GetUser( const CString & sUsername = "", bool bSetUserContext = false  ) 
+	{ 
+		if ( sUsername.empty() )
+			return( m_pUser ); 
+
+		CUser *pUser = m_pZNC->GetUser( sUsername );
+		if ( bSetUserContext )
+			m_pUser = pUser;
+
+		return( pUser );
+	}
 
 	virtual bool OnLoad( const CString & sArgs );
-	virtual bool OnBoot() { return( ( CBNone( "OnBoot" ) == CONTINUE ) ); }
 	virtual void OnUserAttached() {  CBNone( "OnUserAttached" ); }
 	virtual void OnUserDetached() {  CBNone( "OnUserDetached" ); }
 	virtual void OnIRCDisconnected() {  CBNone( "OnIRCDisconnected" ); }
@@ -461,7 +469,7 @@ private:
 
 };
 
-MODULEDEFS( CModPerl )
+GLOBALMODULEDEFS( CModPerl )
 
 
 
@@ -958,6 +966,8 @@ bool CModPerl::OnLoad( const CString & sArgs )
 	newCONSTSUB( pZNCSpace, "HALTMODS", newSViv( HALTMODS ) );
 	newCONSTSUB( pZNCSpace, "HALTCORE", newSViv( HALTCORE ) );
 
+	/*
+	 * this goes away
 	for( u_int a = 0; a < 255; a++ )
 	{
 		CString sModule = sArgs.Token( a );
@@ -966,13 +976,14 @@ bool CModPerl::OnLoad( const CString & sArgs )
 
 		LoadPerlMod( sModule );
 	}
+	*/
 
 	return( true );
 }
 
 void CModPerl::LoadPerlMod( const CString & sModule )
 {
-	CString sModPath = m_pUser->FindModPath( sModule );
+	CString sModPath = m_pZNC->FindModPath( sModule );
 	if ( sModPath.empty() )
 		PutModule( "No such module " + sModule );
 	else
@@ -1013,6 +1024,12 @@ CModPerl::EModRet CModPerl::OnDCCUserSend(const CNick& RemoteNick, unsigned long
 
 void CPerlTimer::RunJob()
 {
+	if ( !((CModPerl *)m_pModule)->GetUser( m_sUserName, true ) )
+	{
+		Stop();
+		return;
+	}
+			
 	VPString vArgs;
 	vArgs.push_back( m_sModuleName );
 	if ( ((CModPerl *)m_pModule)->CallBack( m_sFuncName, vArgs, CModPerl::CB_TIMER ) != CModPerl::CONTINUE )
@@ -1023,7 +1040,11 @@ void CPerlTimer::RunJob()
 #define SOCKCB( a ) if ( CallBack( a ) != CModPerl::CONTINUE ) { Close(); }
 int CPerlSock::CallBack( const PString & sFuncName )
 {
-	// TODO need to lookup by our username and set the correct user into g_ModPerl
+	if ( !g_ModPerl->GetUser( m_sUsername, true ) )
+	{
+		Close();
+		return( CModPerl::HALT );
+	}
 	return( g_ModPerl->CallBack( sFuncName, m_vArgs, CModPerl::CB_SOCK, m_sUsername ) );
 }
 

@@ -48,21 +48,21 @@ clean:
 	$(CXX) $(CXXFLAGS) $(INCLUDES) -c -o $@ $<
 
 ifneq "$(PERL)" ""
-modperl.so: modperl.o
+g_modperl.so: g_modperl.o
 	$(CXX) $(CXXFLAGS) -shared -o $@ $< $(INCLUDES) $(LIBS) $(PERLLD)
 
-modperl.o: modperl.cpp
-	$(CXX) $(CXXFLAGS) $(INCLUDES) -c -o $@ modperl.cpp $(PERLCC)
-install_modperl.so:
-	install -m 0755 modperl.so $(DESTDIR)$(prefix)/share/znc
+g_modperl.o: g_modperl.cpp
+	$(CXX) $(CXXFLAGS) $(INCLUDES) -c -o $@ g_modperl.cpp $(PERLCC)
+install_g_modperl.so:
+	install -m 0755 g_modperl.so $(DESTDIR)$(prefix)/share/znc
 	for i in *.pm; do \
 		install -m 0755 $$i $(DESTDIR)$(prefix)/share/znc; \
 	done
 else
-modperl.so:
+g_modperl.so:
 	@echo -n ""
-modperl.o:
+g_modperl.o:
 	@echo -n ""
-install_modperl.so:
+install_g_modperl.so:
 	@echo -n ""
 endif
