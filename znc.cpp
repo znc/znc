@@ -823,8 +823,10 @@ bool CZNC::ParseConfig(const CString& sConfig) {
 			}
 		}
 
-		CUtils::PrintError("Unhandled line in config: [" + sLine + "]");
-		return false;
+		if (!GetModules().OnConfigLine(sName, sValue, pUser, pChan)) {
+			CUtils::PrintError("Unhandled line in config: [" + sLine + "]");
+			return false;
+		}
 	}
 
 	if (pChan) {

@@ -24,6 +24,34 @@
 		}												\
 	}													\
 
+#define GLOBALMODHALTCHK(func)							\
+	bool bHaltCore = false;								\
+	for (unsigned int a = 0; a < size(); a++) {			\
+		try {											\
+			CGlobalModule* pMod = (CGlobalModule*) (*this)[a];			\
+			CModule::EModRet e = CModule::CONTINUE;		\
+			if (m_pUser) {								\
+				pMod->SetUser(m_pUser);					\
+				e = pMod->func;							\
+				pMod->SetUser(NULL);					\
+			} else {									\
+				e = pMod->func;							\
+			}											\
+			if (e == CModule::HALTMODS) {				\
+				break;									\
+			} else if (e == CModule::HALTCORE) {		\
+				bHaltCore = true;						\
+			} else if (e == CModule::HALT) {			\
+				bHaltCore = true;						\
+				break;									\
+			}											\
+		} catch (CModule::EModException e) {			\
+			if (e == CModule::UNLOAD) {					\
+				UnloadModule((*this)[a]->GetModName());	\
+			}											\
+		}												\
+	}													\
+	return bHaltCore;
 #define MODHALTCHK(func)								\
 	bool bHaltCore = false;								\
 	for (unsigned int a = 0; a < size(); a++) {			\
@@ -305,6 +333,12 @@ bool CModule::PutModNotice(const CString& sLine, const CString& sIdent, const CS
 	return (m_pUser) ? m_pUser->PutUser(":" + GetModNick() + "!" + sIdent + "@" + sHost + " NOTICE " + m_pUser->GetCurNick() + " :" + sLine) : false;
 }
 
+
+///////////////////
+// CGlobalModule //
+///////////////////
+CModule::EModRet CGlobalModule::OnConfigLine(const CString& sName, const CString& sValue, CUser* pUser, CChan* pChan) { return CONTINUE; }
+
 CModules::CModules(CZNC* pZNC) {
 	m_pZNC = pZNC;
 	m_pUser = NULL;
@@ -470,6 +504,13 @@ void CModules::OnModNotice(const CString& sMessage) {
 
 void CModules::OnModCTCP(const CString& sMessage) {
 	MODUNLOADCHK(OnModCTCP(sMessage));
+}
+
+////////////////////
+// CGlobalModules //
+////////////////////
+bool CGlobalModules::OnConfigLine(const CString& sName, const CString& sValue, CUser* pUser, CChan* pChan) {
+	GLOBALMODHALTCHK(OnConfigLine(sName, sValue, pUser, pChan));
 }
 
 CModule* CModules::FindModule(const CString& sModule) {

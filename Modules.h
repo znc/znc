@@ -287,7 +287,7 @@ public:
 
 	static void GetAvailableMods(set<CModInfo>& ssMods, CZNC* pZNC, bool bGlobal = false);
 
-private:
+protected:
 	CZNC*	m_pZNC;
 	CUser*	m_pUser;
 };
@@ -297,6 +297,7 @@ public:
 	CGlobalModule(void* pDLL, CZNC* pZNC, const CString& sModName) : CModule(pDLL, pZNC, sModName) {}
 	virtual ~CGlobalModule() {}
 
+	virtual EModRet OnConfigLine(const CString& sName, const CString& sValue, CUser* pUser, CChan* pChan);
 private:
 };
 
@@ -305,6 +306,7 @@ public:
 	CGlobalModules(CZNC* pZNC) : CModules(pZNC) {}
 	virtual ~CGlobalModules() {}
 
+	virtual bool OnConfigLine(const CString& sName, const CString& sValue, CUser* pUser, CChan* pChan);
 private:
 };
 
