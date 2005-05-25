@@ -21,7 +21,6 @@
 #define ZNCCallSockCB "ZNC::CORECallSock"
 #define ZNCSOCK ":::ZncSock:::"
 
-// TODO use PutStatus instead of PutModule
 class PString : public CString 
 {
 public:
@@ -247,6 +246,19 @@ public:
 		}
 	}
 
+	virtual EModRet OnConfigLine(const CString& sName, const CString& sValue, CUser* pUser, CChan* pChan)
+	{
+		if ( ( sName.CaseCmp( "loadmodule" ) == 0 ) && ( sValue.Right( 3 ) == ".pm" ) && ( pUser ) )
+		{
+			m_pUser = pUser;
+			LoadPerlMod( sValue );
+			m_pUser = NULL;
+			return( HALT );
+		}
+		return( CONTINUE );
+	}
+
+
 	void DumpError( const CString & sError )
 	{
 		CString sTmp = sError;
@@ -451,8 +463,7 @@ public:
 		if ( ( sCommand == "loadmod" ) || ( sCommand == "unloadmod" ) || ( sCommand == "reloadmod" ) )
 		{
 			CString sModule = sLine.Token( 1 );
-			// TODO make this sexy, use wldcmp or Right( 3 )
-			if ( sModule.find( ".pm" ) != CString::npos )
+			if ( sModule.Right( 3 ) == ".pm" )
 			{
 				if ( sCommand == "loadmod" )
 					LoadPerlMod( sModule );
@@ -1004,10 +1015,10 @@ void CModPerl::LoadPerlMod( const CString & sModule )
 
 	CString sModPath = m_pZNC->FindModPath( sModule );
 	if ( sModPath.empty() )
-		PutModule( "No such module " + sModule );
+		PutStatus( "No such module " + sModule );
 	else
 	{
-		PutModule( "Using " + sModPath );
+		PutStatus( "Using " + sModPath );
 		Eval( "ZNC::CORELoadMod( '" + m_pUser->GetUserName() + "', '" + sModPath + "');" );
 	}
 }
