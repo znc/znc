@@ -213,7 +213,7 @@ public:
 			for( map<CString,CUser*>::const_iterator it = msUsers.begin(); it != msUsers.end(); it++ )
 			{ // need to set it on all of these
 				m_pUser = it->second;
-				CBNone( "Shutdown" );
+				CBNone( "OnShutdown" );
 				m_pUser = NULL;
 			}
 			PerlInterpShutdown();
@@ -268,6 +268,7 @@ public:
 				sTmp[a] = ' ';
 		}
 		PutModule( sTmp );
+		DEBUG_ONLY( cerr << sTmp << endl );
 	}
 
 	TSocketManager<Csock> * GetSockManager() { return( m_pManager ); }
@@ -989,18 +990,6 @@ bool CModPerl::OnLoad( const CString & sArgs )
 	newCONSTSUB( pZNCSpace, "HALT", newSViv( HALT ) );
 	newCONSTSUB( pZNCSpace, "HALTMODS", newSViv( HALTMODS ) );
 	newCONSTSUB( pZNCSpace, "HALTCORE", newSViv( HALTCORE ) );
-
-	/*
-	 * this goes away
-	for( u_int a = 0; a < 255; a++ )
-	{
-		CString sModule = sArgs.Token( a );
-		if ( sModule.empty() )
-			break;
-
-		LoadPerlMod( sModule );
-	}
-	*/
 
 	return( true );
 }
