@@ -174,14 +174,13 @@ void CChan::ModeChange(const CString& sModes, const CString& sOpNick) {
 
 	for (unsigned int a = 0; a < sModeArg.size(); a++) {
 		const unsigned char& uMode = sModeArg[a];
-		CString sArg;
 
 		if (uMode == '+') {
 			bAdd = true;
 		} else if (uMode == '-') {
 			bAdd = false;
 		} else if (m_pUser->GetIRCSock()->IsPermMode(uMode)) {
-			sArg = GetModeArg(sArgs);
+			CString sArg = GetModeArg(sArgs);
 			CNick* pNick = FindNick(sArg);
 			if (pNick) {
 				unsigned char uPerm = m_pUser->GetIRCSock()->GetPermFromMode(uMode);
@@ -228,8 +227,12 @@ void CChan::ModeChange(const CString& sModes, const CString& sOpNick) {
 				}
 			}
 		} else {
+			bool bList = false;
+			CString sArg;
+
 			switch (m_pUser->GetIRCSock()->GetModeType(uMode)) {
 				case CIRCSock::ListArg:
+					bList = true;
 					sArg = GetModeArg(sArgs);
 					break;
 				case CIRCSock::HasArg:
@@ -249,7 +252,9 @@ void CChan::ModeChange(const CString& sModes, const CString& sOpNick) {
 				m_sCurKey = (bAdd) ? sArg : "";
 			}
 
-			(bAdd) ? AddMode(uMode, sArg) : RemMode(uMode, sArg);
+			if (!bList) {
+				(bAdd) ? AddMode(uMode, sArg) : RemMode(uMode, sArg);
+			}
 		}
 	}
 }
