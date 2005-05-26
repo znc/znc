@@ -20,6 +20,9 @@
  *
  * 
  * $Log$
+ * Revision 1.14  2005/05/26 20:42:13  prozacx
+ * Moved GetDescription() into second argument of MODULEDEFS()
+ *
  * Revision 1.13  2005/05/15 08:27:27  prozacx
  * Changed return value from bool to EModRet on most hooks
  *
@@ -182,11 +185,6 @@ public:
 		Away();
 	}
 
-	virtual CString GetDescription() 
-	{
-		return ( "Stores messages while away, also auto away" );
-	}
-	
 	virtual void OnModCommand( const CString& sCommand )
 	{
 		CString sCmdName = sCommand.Token(0);
@@ -443,5 +441,5 @@ void CAwayJob::RunJob()
 	}
 }
 
-MODULEDEFS(CAway)
+MODULEDEFS(CAway, "Stores messages while away, also auto away")
 

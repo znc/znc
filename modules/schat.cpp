@@ -18,6 +18,9 @@ using std::pair;
  * Author: imaginos <imaginos@imaginos.net>
  * 
  * $Log$
+ * Revision 1.15  2005/05/26 20:42:13  prozacx
+ * Moved GetDescription() into second argument of MODULEDEFS()
+ *
  * Revision 1.14  2005/05/18 03:22:52  imaginos
  * bring Csocket up to date, includes new needed function GetSockByFD()
  *
@@ -214,11 +217,6 @@ public:
 			if ( strncmp( (*m_pManager)[a]->GetSockName().c_str(), sName.c_str(), sName.length() ) == 0 )
 				m_pManager->DelSock( a-- );
 		}
-	}
-	
-	virtual CString GetDescription() 
-	{
-		return ( "Secure cross platform (:P) chat system" );
 	}
 
 	virtual EModRet OnUserRaw( CString & sLine )
@@ -569,5 +567,5 @@ void CRemMarkerJob::RunJob()
 
 	// store buffer
 }
-MODULEDEFS(CSChat)
+MODULEDEFS(CSChat, "Secure cross platform (:P) chat system")
 

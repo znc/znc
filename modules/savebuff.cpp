@@ -26,6 +26,9 @@
  * better solution then plain text.
  * 
  * $Log$
+ * Revision 1.25  2005/05/26 20:42:13  prozacx
+ * Moved GetDescription() into second argument of MODULEDEFS()
+ *
  * Revision 1.24  2005/05/17 17:18:35  prozacx
  * Changed CChan reference to non-const in all hooks
  *
@@ -242,11 +245,6 @@ public:
 		}
 	}
 
-	virtual CString GetDescription() 
-	{
-		return ( "Stores channel buffers to disk, encrypted." );
-	}
-	
 	virtual void OnModCommand( const CString& sCommand )
 	{
 		CString::size_type iPos = sCommand.find( " " );
@@ -414,5 +412,5 @@ void CSaveBuffJob::RunJob()
 	p->SaveBufferToDisk();
 }
 
-MODULEDEFS(CSaveBuff)
+MODULEDEFS(CSaveBuff, "Stores channel buffers to disk, encrypted")
 

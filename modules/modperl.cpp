@@ -489,7 +489,7 @@ private:
 
 };
 
-GLOBALMODULEDEFS( CModPerl )
+GLOBALMODULEDEFS( CModPerl, "Loads perl scripts as ZNC modules" )
 
 
 

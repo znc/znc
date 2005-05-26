@@ -9,10 +9,6 @@ public:
 	MODCONSTRUCTOR(CRawMod) {}
 	virtual ~CRawMod() {}
 
-	virtual CString GetDescription() {
-		return "View all of the raw traffic.";
-	}
-
 	virtual EModRet OnRaw(CString& sLine) {
 		PutModule("IRC -> [" + sLine + "]");
 		return CONTINUE;
@@ -24,5 +20,5 @@ public:
 	}
 };
 
-MODULEDEFS(CRawMod)
+MODULEDEFS(CRawMod, "View all of the raw traffic")
 

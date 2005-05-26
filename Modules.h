@@ -11,8 +11,9 @@ using std::set;
 // User Module Macros
 #define MODCONSTRUCTOR(CLASS) \
 	CLASS(void *pDLL, CUser* pUser, const CString& sModName) : CModule(pDLL, pUser, sModName)
-#define MODULEDEFS(CLASS) \
+#define MODULEDEFS(CLASS, DESCRIPTION) \
 	extern "C" { \
+		CString GetDescription() { return DESCRIPTION; } \
 		bool IsGlobal() { return false; } \
 		CModule* Load(void* p, CUser* pUser, const CString& sModName); \
 		void Unload(CModule* pMod); double GetVersion(); } \
@@ -25,8 +26,9 @@ using std::set;
 // Global Module Macros
 #define GLOBALMODCONSTRUCTOR(CLASS) \
 	CLASS(void *pDLL, CZNC* pZNC, const CString& sModName) : CGlobalModule(pDLL, pZNC, sModName)
-#define GLOBALMODULEDEFS(CLASS) \
+#define GLOBALMODULEDEFS(CLASS, DESCRIPTION) \
 	extern "C" { \
+		CString GetDescription() { return DESCRIPTION; } \
 		bool IsGlobal() { return true; } \
 		CGlobalModule* Load(void* p, CZNC* pZNC, const CString& sModName); \
 		void Unload(CGlobalModule* pMod); double GetVersion(); } \
@@ -36,6 +38,7 @@ using std::set;
 	}
 // !Global Module Macros
 
+		//const char* GetDescription() { static char sz[] = DESCRIPTION; return sz; } 
 // Forward Declarations
 class CZNC;
 class CUser;
@@ -111,6 +114,7 @@ public:
 	// Getters
 	const CString& GetName() const { return m_sName; }
 	const CString& GetPath() const { return m_sPath; }
+	const CString& GetDescription() const { return m_sDescription; }
 	bool IsSystem() const { return m_bSystem; }
 	bool IsGlobal() const { return m_bGlobal; }
 	// !Getters
@@ -118,6 +122,7 @@ public:
 	// Setters
 	void SetName(const CString& s) { m_sName = s; }
 	void SetPath(const CString& s) { m_sPath = s; }
+	void SetDescription(const CString& s) { m_sDescription = s; }
 	void SetSystem(bool b) { m_bSystem = b; }
 	void SetGlobal(bool b) { m_bGlobal = b; }
 	// !Setters
@@ -127,6 +132,7 @@ protected:
 	bool	m_bGlobal;
 	CString	m_sName;
 	CString	m_sPath;
+	CString	m_sDescription;
 };
 
 class CModule {
@@ -148,7 +154,6 @@ public:
 
 	void SetUser(CUser* pUser);
 	void Unload();
-	virtual CString GetDescription();
 
 	virtual bool OnLoad(const CString& sArgs);
 	virtual bool OnBoot();
@@ -223,7 +228,16 @@ public:
 	MCString::iterator BeginNV() { return m_mssRegistry.begin(); }
 	void DelNV(MCString::iterator it) { m_mssRegistry.erase(it); }
 
+	// Setters
+	void SetDescription(const CString& s) { m_sDescription = s; }
+	// !Setters
+
+	// Getters
+	const CString& GetDescription() const { return m_sDescription; }
+	// !Getters
+
 protected:
+	CString					m_sDescription;
 	vector<CTimer*>			m_vTimers;
 	void*					m_pDLL;
 	TSocketManager<Csock>*	m_pManager;

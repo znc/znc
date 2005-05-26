@@ -280,8 +280,6 @@ void CModule::ListTimers() {
 const CString& CModule::GetModName() { return m_sModName; }
 CString CModule::GetModNick() { return ((m_pUser) ? m_pUser->GetStatusPrefix() : "*") + m_sModName; }
 
-CString CModule::GetDescription() { return "Unknown"; }
-
 bool CModule::OnLoad(const CString& sArgs) { return true; }
 bool CModule::OnBoot() { return true; }
 void CModule::OnUserAttached() {}
@@ -595,6 +593,15 @@ bool CModules::LoadModule(const CString& sModule, const CString& sArgs, CUser* p
 		return false;
 	}
 
+	typedef CString (*sFP)();
+	sFP GetDesc = (sFP) dlsym(p, "GetDescription");
+
+	if (!GetDesc) {
+		dlclose(p);
+		sRetMsg = "Could not find GetDescription() in module [" + sModule + "]";
+		return false;
+	}
+
 	bool bIsGlobal = IsGlobal();
 	if ((pUser == NULL) != bIsGlobal) {
 		dlclose(p);
@@ -630,6 +637,7 @@ bool CModules::LoadModule(const CString& sModule, const CString& sArgs, CUser* p
 		pModule = Load(p, m_pZNC, sModule);
 	}
 
+	pModule->SetDescription(GetDesc());
 	push_back(pModule);
 
 	if (!pModule->OnLoad(sArgs)) {
@@ -759,15 +767,16 @@ bool CModules::GetModInfo(CModInfo& ModInfo, const CString& sModule) {
 		return false;
 	}
 
-	typedef CModule* (*fp)(void*, CZNC*, const CString&);
-	fp Load = (fp) dlsym(p, "Load");
+	typedef CString (*sFP)();
+	sFP GetDescription = (sFP) dlsym(p, "GetDescription");
 
-	if (!Load) {
+	if (!GetDescription) {
 		dlclose(p);
 		return false;
 	}
 
 	ModInfo.SetGlobal(IsGlobal());
+	ModInfo.SetDescription(GetDescription());
 	ModInfo.SetName(sModule);
 	ModInfo.SetPath(sModPath);
 	dlclose(p);

@@ -160,10 +160,6 @@ public:
 	virtual ~CWatcherMod() {
 	}
 
-	virtual CString GetDescription() {
-		return "Copy activity from a specific user into a separate window.";
-	}
-
 	virtual void OnRawMode(const CNick& OpNick, CChan& Channel, const CString& sModes, const CString& sArgs) {
 		Process(OpNick, "* " + OpNick.GetNick() + " sets mode: " + sModes + " " + sArgs + " on " + Channel.GetName(), Channel.GetName());
 	}
@@ -506,4 +502,4 @@ private:
 	CBuffer				m_Buffer;
 };
 
-MODULEDEFS(CWatcherMod)
+MODULEDEFS(CWatcherMod, "Copy activity from a specific user into a separate window")

@@ -15,6 +15,9 @@
  * Author: imaginos <imaginos@imaginos.net>
  *
  * $Log$
+ * Revision 1.8  2005/05/26 20:42:13  prozacx
+ * Moved GetDescription() into second argument of MODULEDEFS()
+ *
  * Revision 1.7  2005/05/08 06:42:02  prozacx
  * Moved CUtils::ToString() into CString class
  *
@@ -108,11 +111,6 @@ public:
 		}
 	}
 
-	virtual CString GetDescription() 
-	{
-		return ( "Monitors Email activity on local disk /var/mail/user" );
-	}
-	
 	virtual void OnModCommand( const CString& sCommand );
 	void StartParser();
 
@@ -287,5 +285,5 @@ void CEmailJob::RunJob()
 	CEmail *p = (CEmail *)m_pModule;
 	p->StartParser();
 }
-MODULEDEFS(CEmail)
+MODULEDEFS(CEmail, "Monitors Email activity on local disk /var/mail/user")
 

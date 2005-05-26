@@ -98,10 +98,6 @@ public:
 		}
 	}
 
-	virtual CString GetDescription() {
-		return "Gives shell access.";
-	}
-
 	virtual void OnModCommand(const CString& sCommand) {
 		if ((strcasecmp(sCommand.c_str(), "cd") == 0) || (strncasecmp(sCommand.c_str(), "cd ", 3) == 0)) {
 			CString sPath = CUtils::ChangeDir(m_sPath, ((sCommand.length() == 2) ? CString(m_pUser->GetHomePath()) : CString(sCommand.substr(3))), m_pUser->GetHomePath());
@@ -214,5 +210,5 @@ void CExecSock::Disconnected() {
 	m_pParent->PutShell("znc$");
 }
 
-MODULEDEFS(CShellMod)
+MODULEDEFS(CShellMod, "Gives shell access")
 

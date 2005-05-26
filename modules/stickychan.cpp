@@ -20,11 +20,6 @@ public:
 
 	virtual bool OnLoad(const CString& sArgs);
 
-	virtual CString GetDescription() 
-	{
-		return ( "configless sticky chans, keeps you there very stickily even" );
-	}
-	
 	virtual void OnModCommand( const CString& sCommand )
 	{
 		CString sCmdName = sCommand.Token(0);
@@ -80,4 +75,4 @@ bool CStickyChan::OnLoad(const CString& sArgs)
 	return( true );
 }
 
-MODULEDEFS(CStickyChan)
+MODULEDEFS(CStickyChan, "configless sticky chans, keeps you there very stickily even")

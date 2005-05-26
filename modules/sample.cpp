@@ -38,10 +38,6 @@ public:
 		return true;
 	}
 
-	virtual CString GetDescription() {
-		return "To be used as a sample for writing modules.";
-	}
-
 	virtual void OnIRCConnected() {
 		PutModule("You got connected BoyOh.");
 	}
@@ -200,5 +196,5 @@ public:
 	}
 };
 
-MODULEDEFS(CSampleMod)
+MODULEDEFS(CSampleMod, "To be used as a sample for writing modules")
 
