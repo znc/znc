@@ -37,7 +37,7 @@ CIRCSock::CIRCSock(CZNC* pZNC, CUser* pUser) : Csock() {
 CIRCSock::~CIRCSock() {
 	const vector<CChan*>& vChans = m_pUser->GetChans();
 	for (unsigned int a = 0; a < vChans.size(); a++) {
-		vChans[a]->SetIsOn(false);
+		vChans[a]->Reset();
 	}
 
 	if (m_pUserSock) {
