@@ -333,10 +333,12 @@ bool CUtils::GetInput(const CString& sPrompt, CString& sRet, const CString& sDef
 
 void CUtils::PrintError(const CString& sMessage) {
 	fprintf(stdout, "\033[1m\033[34m[\033[31m ** \033[34m]\033[39m\033[22m %s\n", sMessage.c_str());
+	fflush(stdout);
 }
 
 void CUtils::PrintPrompt(const CString& sMessage) {
 	fprintf(stdout, "\033[1m\033[34m[\033[33m ?? \033[34m]\033[39m\033[22m %s: ", sMessage.c_str());
+	fflush(stdout);
 }
 
 void CUtils::PrintMessage(const CString& sMessage, bool bStrong) {
@@ -345,6 +347,8 @@ void CUtils::PrintMessage(const CString& sMessage, bool bStrong) {
 		sMessage.c_str(),
 		((bStrong) ? "\033[22m" : "")
 	);
+
+	fflush(stdout);
 }
 
 void CUtils::PrintAction(const CString& sMessage) {
@@ -368,6 +372,8 @@ void CUtils::PrintStatus(bool bSuccess, const CString& sMessage) {
 	} else {
 		fprintf(stdout, "\033[1m\033[34m[\033[31m !! \033[34m]\033[39m\033[22m\n");
 	}
+
+	fflush(stdout);
 }
 
 CTable::CTable() {}
