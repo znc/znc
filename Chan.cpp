@@ -29,6 +29,7 @@ void CChan::Reset() {
 	m_bIsOn = false;
 	m_suUserPerms.clear();
 	m_musModes.clear();
+	m_muuPermCount.clear();
 	m_uLimit = 0;
 	m_uClientRequests = 0;
 	m_sTopic = "";
