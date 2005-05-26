@@ -294,7 +294,26 @@ bool CZNC::WriteNewConfig(const CString& sConfig) {
 		CUtils::PrintMessage("");
 
 		if (CUtils::GetBoolInput("Do you want to load any global modules?")) {
-			for (set<CModInfo>::iterator it = ssGlobalMods.begin(); it != ssGlobalMods.end(); it++) {
+			CTable Table;
+			Table.AddColumn("Name");
+			Table.AddColumn("Description");
+			set<CModInfo>::iterator it;
+
+			for (it = ssGlobalMods.begin(); it != ssGlobalMods.end(); it++) {
+				const CModInfo& Info = *it;
+				Table.AddRow();
+				Table.SetCell("Name", Info.GetName());
+				Table.SetCell("Description", Info.GetDescription().Ellipsize(128));
+			}
+
+			unsigned int uTableIdx = 0; CString sLine;
+			while (Table.GetLine(uTableIdx++, sLine)) {
+				CUtils::PrintMessage(sLine);
+			}
+
+			CUtils::PrintMessage("");
+
+			for (it = ssGlobalMods.begin(); it != ssGlobalMods.end(); it++) {
 				const CModInfo& Info = *it;
 				CString sName = Info.GetName();
 
@@ -361,7 +380,26 @@ bool CZNC::WriteNewConfig(const CString& sConfig) {
 			CUtils::PrintMessage("");
 
 			if (CUtils::GetBoolInput("Do you want to automatically load any user modules for this user?")) {
-				for (set<CModInfo>::iterator it = ssUserMods.begin(); it != ssUserMods.end(); it++) {
+				CTable Table;
+				Table.AddColumn("Name");
+				Table.AddColumn("Description");
+				set<CModInfo>::iterator it;
+
+				for (it = ssUserMods.begin(); it != ssUserMods.end(); it++) {
+					const CModInfo& Info = *it;
+					Table.AddRow();
+					Table.SetCell("Name", Info.GetName());
+					Table.SetCell("Description", Info.GetDescription().Ellipsize(128));
+				}
+
+				unsigned int uTableIdx = 0; CString sLine;
+				while (Table.GetLine(uTableIdx++, sLine)) {
+					CUtils::PrintMessage(sLine);
+				}
+
+				CUtils::PrintMessage("");
+
+				for (it = ssUserMods.begin(); it != ssUserMods.end(); it++) {
 					const CModInfo& Info = *it;
 					CString sName = Info.GetName();
 
