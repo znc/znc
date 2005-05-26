@@ -746,11 +746,37 @@ XS(XS_ZNC_CloseSock)
 	{
 		if ( g_ModPerl )
 		{
-			PString sReturn = false;
 			int iSockFD = SvIV(ST(0));
 			CPerlSock *pSock = (CPerlSock *)MANAGER->FindSockByFD( iSockFD );
 			if ( ( pSock ) && ( pSock->GetSockName() == ZNCSOCK ) )
 				pSock->Close();
+		}
+		PUTBACK;
+	}
+}
+
+XS(XS_ZNC_SetSockValue)
+{
+	dXSARGS;
+	if ( items < 3 )
+		Perl_croak( aTHX_ "Usage: ZNC::SetSockValue( sockhandle, what, value )" );
+
+	SP -= items;
+	ax = (SP - PL_stack_base) + 1 ;
+	{
+		if ( g_ModPerl )
+		{
+			int iSockFD = SvIV(ST(0));
+			PString sWhat = (char *)SvPV(ST(1),PL_na);
+			CPerlSock *pSock = (CPerlSock *)MANAGER->FindSockByFD( iSockFD );
+			if ( ( pSock ) && ( pSock->GetSockName() == ZNCSOCK ) )
+			{
+				if ( sWhat == "timeout" )
+				{
+					u_int iTimeout = SvUV(ST(2));
+					pSock->SetTimeout( iTimeout );
+				}
+			}
 		}
 		PUTBACK;
 	}
@@ -977,6 +1003,7 @@ bool CModPerl::OnLoad( const CString & sArgs )
 	newXS( "ZNC::UnloadMod", XS_ZNC_UnloadMod, (char *)file );
 	newXS( "ZNC::WriteSock", XS_ZNC_WriteSock, (char *)file );
 	newXS( "ZNC::CloseSock", XS_ZNC_CloseSock, (char *)file );
+	newXS( "ZNC::SetSockValue", XS_ZNC_SetSockValue, (char *)file );
 	
 	// this sets up the eval CB that we call from here on out. this way we can grab the error produced
 	SetupZNCScript();

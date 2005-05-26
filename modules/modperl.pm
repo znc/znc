@@ -53,7 +53,6 @@ sub CORELoadMod
 	{
 		$Module = $1;
 	}
-
 	if ( !$Module )
 	{
 		ZNC::PutModule( "Invalid Module requested!" );
@@ -106,7 +105,6 @@ sub CORELoadMod
 	require $FileName;
 
 	my $NewMod = $Username . $Module;
-
 	my $obj = new $NewMod();
 	if ( !$obj )
 	{
@@ -413,6 +411,12 @@ sub Close
 {
 	my ( $me ) = @_;
 	ZNC::CloseSock( $me->{fd} );
+}
+
+sub SetTimeout
+{
+	my ( $me, $timeout ) = @_;
+	ZNC::SetSockValue( $me->{fd}, "timeout", $timeout );
 }
 
 sub Listen
