@@ -25,6 +25,8 @@ public:
 	CString AsUpper() const;
 	CString AsLower() const;
 
+	static unsigned int Replace(CString& sStr, const CString& sReplace, const CString& sWith);
+	unsigned int Replace(const CString& sReplace, const CString& sWith);
 	CString Token(unsigned int uPos, bool bRest = false, char cSep = ' ') const;
 	CString Ellipsize(unsigned int uLen) const;
 	CString Left(unsigned int uCount) const;

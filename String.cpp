@@ -92,6 +92,23 @@ CString CString::AsLower() const {
 	return sRet;
 }
 
+unsigned int CString::Replace(const CString& sReplace, const CString& sWith) {
+	return CString::Replace(*this, sReplace, sWith);
+}
+
+unsigned int CString::Replace(CString& sStr, const CString& sReplace, const CString& sWith) {
+	unsigned int uRet = 0;
+	size_type uPos = sStr.find(sReplace);
+
+	while (uPos != npos) {
+		sStr.replace(uPos, sReplace.length(), sWith);
+		uPos = sStr.find(sReplace);
+		uRet++;
+	}
+
+	return uRet;
+}
+
 CString CString::Token(unsigned int uPos, bool bRest, char cSep) const {
 	string sRet;
 	const char* p = c_str();
