@@ -106,8 +106,8 @@ const CString& CTimer::GetDescription() const { return m_sDescription; }
 
 CModule::CModule(void* pDLL, CUser* pUser, const CString& sModName) {
 	m_pDLL = pDLL;
-	m_pZNC = pUser->GetZNC();
-	m_pManager = pUser->GetManager();
+	m_pZNC = (pUser) ? pUser->GetZNC() : NULL;
+	m_pManager = (pUser) ? pUser->GetManager() : NULL;
 	m_pUser = pUser;
 	m_sModName = sModName;
 	LoadRegistry();
@@ -116,7 +116,7 @@ CModule::CModule(void* pDLL, CUser* pUser, const CString& sModName) {
 CModule::CModule(void* pDLL, CZNC* pZNC, const CString& sModName) {
 	m_pDLL = pDLL;
 	m_pZNC = pZNC;
-	m_pManager = &pZNC->GetManager();
+	m_pManager = (pZNC) ? &pZNC->GetManager() : NULL;
 	m_pUser = NULL;
 	m_sModName = sModName;
 	LoadRegistry();
@@ -134,6 +134,10 @@ void CModule::SetUser(CUser* pUser) { m_pUser = pUser; }
 void CModule::Unload() { throw UNLOAD; }
 
 bool CModule::LoadRegistry() {
+	if (!m_pZNC) {
+		return false;
+	}
+
 	CString sRegistryDir = m_pZNC->GetDataPath() + "/" + m_sModName;
 	CUtils::MakeDir(sRegistryDir);
 	CString sPrefix = (m_pUser) ? m_pUser->GetUserName() : ".global";
@@ -142,6 +146,10 @@ bool CModule::LoadRegistry() {
 }
 
 bool CModule::SaveRegistry() {
+	if (!m_pZNC) {
+		return false;
+	}
+
 	CString sRegistryDir = m_pZNC->GetDataPath() + "/" + m_sModName;
 	CUtils::MakeDir(sRegistryDir);
 	CString sPrefix = (m_pUser) ? m_pUser->GetUserName() : ".global";
@@ -530,12 +538,6 @@ bool CModules::LoadModule(const CString& sModule, const CString& sArgs, CUser* p
 #else
 	sRetMsg = "";
 
-	/* Assume global for now
-	if (!pUser) {
-		sRetMsg = "Unable to load module [" + sModule + "] Internal Error 1.";
-		return false;
-	}*/
-
 	for (unsigned int a = 0; a < sModule.length(); a++) {
 		if (((sModule[a] < '0') || (sModule[a] > '9')) && ((sModule[a] < 'a') || (sModule[a] > 'z')) && ((sModule[a] < 'A') || (sModule[a] > 'Z')) && (sModule[a] != '_')) {
 			sRetMsg = "Unable to load module [" + sModule + "] module names can only be letters, numbers, or underscores.";
@@ -577,7 +579,7 @@ bool CModules::LoadModule(const CString& sModule, const CString& sArgs, CUser* p
 		return false;
 	}
 
-	if (CModule::GetVersion() != Version()) {
+	if (CModule::GetCoreVersion() != Version()) {
 		dlclose(p);
 		sRetMsg = "Version mismatch, recompile this module.";
 		throw CException(CException::EX_BadModVersion);
@@ -718,26 +720,109 @@ CString CModules::FindModPath(const CString& sModule, CUser* pUser) {
 	return (m_pZNC) ? m_pZNC->FindModPath(sModule) : "";
 }
 
+bool CModules::GetModInfo(CModInfo& ModInfo, const CString& sModule) {
+	for (unsigned int a = 0; a < sModule.length(); a++) {
+		const char& c = sModule[a];
+
+		if ((c < '0' || c > '9') && (c < 'a' || c > 'z') && (c < 'A' || c > 'Z') && c != '_') {
+			return false;
+		}
+	}
+
+	CString sModPath = FindModPath(sModule, NULL);
+
+	if (sModPath.empty()) {
+		return false;
+	}
+
+	unsigned int uDLFlags = RTLD_LAZY | RTLD_GLOBAL;
+
+	void* p = dlopen((sModPath).c_str(), uDLFlags);
+
+	if (!p) {
+		return false;
+	}
+
+	typedef double (*dFP)();
+	dFP Version = (dFP) dlsym(p, "GetVersion");
+
+	if (!Version) {
+		dlclose(p);
+		return false;
+	}
+
+	typedef bool (*bFP)();
+	bFP IsGlobal = (bFP) dlsym(p, "IsGlobal");
+
+	if (!IsGlobal) {
+		dlclose(p);
+		return false;
+	}
+
+	typedef CModule* (*fp)(void*, CZNC*, const CString&);
+	fp Load = (fp) dlsym(p, "Load");
+
+	if (!Load) {
+		dlclose(p);
+		return false;
+	}
+
+	ModInfo.SetGlobal(IsGlobal());
+	ModInfo.SetName(sModule);
+	ModInfo.SetPath(sModPath);
+	dlclose(p);
+
+	return true;
+}
+
 void CModules::GetAvailableMods(set<CModInfo>& ssMods, CZNC* pZNC, bool bGlobal) {
 	ssMods.clear();
 
 	unsigned int a = 0;
 	CDir Dir;
 
-	Dir.FillByWildcard(pZNC->GetModPath(), "*.so");
-
+	Dir.FillByWildcard(pZNC->GetCurPath() + "/modules", "*.so");
 	for (a = 0; a < Dir.size(); a++) {
 		CFile& File = *Dir[a];
-		if ((File.GetShortName().Left(2).CaseCmp("g_") == 0) == bGlobal) {
-			ssMods.insert(CModInfo(File.GetShortName(), File.GetLongName(), false, bGlobal));
+		CString sName = File.GetShortName();
+		CModInfo ModInfo;
+		sName.RightChomp(3);
+
+		if (GetModInfo(ModInfo, sName)) {
+			if (ModInfo.IsGlobal() == bGlobal) {
+				ModInfo.SetSystem(false);
+				ssMods.insert(ModInfo);
+			}
+		}
+	}
+
+	Dir.FillByWildcard(pZNC->GetModPath(), "*.so");
+	for (a = 0; a < Dir.size(); a++) {
+		CFile& File = *Dir[a];
+		CString sName = File.GetShortName();
+		CModInfo ModInfo;
+		sName.RightChomp(3);
+
+		if (GetModInfo(ModInfo, sName)) {
+			if (ModInfo.IsGlobal() == bGlobal) {
+				ModInfo.SetSystem(false);
+				ssMods.insert(ModInfo);
+			}
 		}
 	}
 
 	Dir.FillByWildcard(_MODDIR_, "*.so");
 	for (a = 0; a < Dir.size(); a++) {
 		CFile& File = *Dir[a];
-		if ((File.GetShortName().Left(2).CaseCmp("g_") == 0) == bGlobal) {
-			ssMods.insert(CModInfo(File.GetShortName(), File.GetLongName(), true, bGlobal));
+		CString sName = File.GetShortName();
+		CModInfo ModInfo;
+		sName.RightChomp(3);
+
+		if (GetModInfo(ModInfo, sName)) {
+			if (ModInfo.IsGlobal() == bGlobal) {
+				ModInfo.SetSystem(true);
+				ssMods.insert(ModInfo);
+			}
 		}
 	}
 }

@@ -95,7 +95,7 @@ private:
 
 class CModInfo {
 public:
-
+	CModInfo() {}
 	CModInfo(const CString& sName, const CString& sPath, bool bSystem, bool bGlobal) {
 		m_bSystem = bSystem;
 		m_bGlobal = bGlobal;
@@ -114,6 +114,13 @@ public:
 	bool IsSystem() const { return m_bSystem; }
 	bool IsGlobal() const { return m_bGlobal; }
 	// !Getters
+
+	// Setters
+	void SetName(const CString& s) { m_sName = s; }
+	void SetPath(const CString& s) { m_sPath = s; }
+	void SetSystem(bool b) { m_bSystem = b; }
+	void SetGlobal(bool b) { m_bGlobal = b; }
+	// !Setters
 private:
 protected:
 	bool	m_bSystem;
@@ -186,7 +193,7 @@ public:
 	virtual EModRet OnChanNotice(const CNick& Nick, CChan& Channel, CString& sMessage);
 
 	void * GetDLL();
-	static double GetVersion() { return VERSION; }
+	static double GetCoreVersion() { return VERSION; }
 
 	virtual bool PutIRC(const CString& sLine);
 	virtual bool PutUser(const CString& sLine);
@@ -285,7 +292,8 @@ public:
 	bool ReloadModule(const CString& sModule, const CString& sArgs, CUser* pUser, CString& sRetMsg);
 	CString FindModPath(const CString& sModule, CUser* pUser = NULL);
 
-	static void GetAvailableMods(set<CModInfo>& ssMods, CZNC* pZNC, bool bGlobal = false);
+	bool GetModInfo(CModInfo& ModInfo, const CString& sModule);
+	void GetAvailableMods(set<CModInfo>& ssMods, CZNC* pZNC, bool bGlobal = false);
 
 protected:
 	CZNC*	m_pZNC;

@@ -286,7 +286,7 @@ bool CZNC::WriteNewConfig(const CString& sConfig) {
 
 #ifdef _MODULES
 	set<CModInfo> ssGlobalMods;
-	CModules::GetAvailableMods(ssGlobalMods, this, true);
+	GetModules().GetAvailableMods(ssGlobalMods, this, true);
 
 	if (ssGlobalMods.size()) {
 		CUtils::PrintMessage("");
@@ -352,7 +352,7 @@ bool CZNC::WriteNewConfig(const CString& sConfig) {
 
 #ifdef _MODULES
 		set<CModInfo> ssUserMods;
-		CModules::GetAvailableMods(ssUserMods, this);
+		GetModules().GetAvailableMods(ssUserMods, this);
 
 		if (ssUserMods.size()) {
 			vsLines.push_back("");
@@ -364,10 +364,6 @@ bool CZNC::WriteNewConfig(const CString& sConfig) {
 				for (set<CModInfo>::iterator it = ssUserMods.begin(); it != ssUserMods.end(); it++) {
 					const CModInfo& Info = *it;
 					CString sName = Info.GetName();
-
-					if (sName.Right(3).CaseCmp(".so") == 0) {
-						sName.RightChomp(3);
-					}
 
 					if (CUtils::GetBoolInput("Load " + CString((Info.IsSystem()) ? "system" : "local") + " module <\033[1m" + sName + "\033[22m>?", false)) {
 						vsLines.push_back("\tLoadModule = " + sName);
