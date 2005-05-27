@@ -13,7 +13,7 @@ protected:
 	virtual void RunJob() {
 		CIRCSock* pSock = m_pUser->GetIRCSock();
 		if (pSock) {
-			if (m_uTrys++ >= 20) {
+			if (m_uTrys++ >= 40) {
 				pSock->SetOrigNickPending(false);
 				m_uTrys = 0;
 			}
