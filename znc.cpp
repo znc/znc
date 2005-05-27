@@ -83,6 +83,10 @@ int CZNC::Loop() {
 		CIRCSock* pIRCSock = (CIRCSock*) m_Manager.FindSockByName(sSockName);
 
 		if (!pIRCSock) {
+			if (pUser->ConnectPaused() && pUser->IsLastServer()) {
+				continue;
+			}
+
 			CServer* pServer = pUser->GetNextServer();
 
 			if (!pServer) {
