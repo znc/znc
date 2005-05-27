@@ -386,7 +386,7 @@ void CIRCSock::ReadLine(const CString& sData) {
 				if (sNick.CaseCmp(GetNick()) == 0) {
 					SetNick(sNewNick);
 				} else if (sNick.CaseCmp(m_pUser->GetNick()) == 0) {
-					KeepNick();
+					KeepNick(true);
 				}
 
 				VOIDMODULECALL(OnNick(sNickMask, sNewNick, vFoundChans));
@@ -421,7 +421,7 @@ void CIRCSock::ReadLine(const CString& sData) {
 				}
 
 				if (Nick.GetNick().CaseCmp(m_pUser->GetNick()) == 0) {
-					KeepNick();
+					KeepNick(true);
 				}
 
 				VOIDMODULECALL(OnQuit(Nick, sMessage, vFoundChans));
@@ -602,11 +602,11 @@ void CIRCSock::ReadLine(const CString& sData) {
 	PutUser(sLine);
 }
 
-void CIRCSock::KeepNick() {
+void CIRCSock::KeepNick(bool bForce) {
 	const CString& sConfNick = m_pUser->GetNick();
 	CString sAwayNick = CNick::Concat(sConfNick, m_pUser->GetAwaySuffix(), GetMaxNickLen());
 
-	if (m_bAuthed && m_bKeepNick && !IsOrigNickPending() && m_pUser->GetKeepNick() && GetNick().CaseCmp(sConfNick) != 0 && GetNick().CaseCmp(sAwayNick) != 0) {
+	if (m_bAuthed && m_bKeepNick && (!IsOrigNickPending() || bForce) && m_pUser->GetKeepNick() && GetNick().CaseCmp(sConfNick) != 0 && GetNick().CaseCmp(sAwayNick) != 0) {
 		PutServ("NICK " + sConfNick);
 		SetOrigNickPending(true);
 	}

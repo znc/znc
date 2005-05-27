@@ -40,7 +40,7 @@ public:
 	virtual void SockError(int iErrno);
 	virtual void Timeout();
 
-	void KeepNick();
+	void KeepNick(bool bForce = false);
 	bool IsUserAttached() { return (m_pUserSock != NULL); }
 	void UserConnected(CUserSock* pUserSock);
 	void UserDisconnected();
