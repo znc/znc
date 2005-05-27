@@ -10,6 +10,7 @@
 #include "Timers.h"
 
 CUser::CUser(const CString& sUserName, CZNC* pZNC) {
+	m_uConnectTime = 0;
 	m_sUserName = sUserName;
 	m_sNick = sUserName;
 	m_sIdent = sUserName;
@@ -231,6 +232,10 @@ bool CUser::AddServer(const CString& sName, unsigned short uPort, const CString&
 	m_vServers.push_back(pServer);
 
 	return true;
+}
+
+bool CUser::IsLastServer() {
+	return (m_uServerIdx >= m_vServers.size());
 }
 
 CServer* CUser::GetNextServer() {
@@ -498,6 +503,20 @@ CString CUser::FindModPath(const CString& sModule) const {
 	}
 
 	return sModPath;
+}
+
+bool CUser::ConnectPaused() {
+	if (!m_uConnectTime) {
+		m_uConnectTime = time(NULL);
+		return false;
+	}
+
+	if (time(NULL) - m_uConnectTime >= 5) {
+		m_uConnectTime = time(NULL);
+		return false;
+	}
+
+	return true;
 }
 
 const CString& CUser::GetCurPath() const { return m_pZNC->GetCurPath(); }

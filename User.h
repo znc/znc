@@ -38,6 +38,8 @@ public:
 	bool IsHostAllowed(const CString& sHostMask);
 	bool IsValid(CString& sErrMsg);
 	static bool IsValidUserName(const CString& sUserName);
+	bool IsLastServer();
+	bool ConnectPaused();
 
 #ifdef _MODULES
 	// Modules
@@ -121,6 +123,7 @@ private:
 protected:
 	CZNC*			m_pZNC;
 
+	time_t			m_uConnectTime;
 	CString			m_sUserName;
 	CString			m_sNick;
 	CString			m_sAltNick;
