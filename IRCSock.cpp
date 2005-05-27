@@ -13,6 +13,7 @@ CIRCSock::CIRCSock(CZNC* pZNC, CUser* pUser) : Csock() {
 	m_bISpoofReleased = false;
 	m_bKeepNick = true;
 	m_bAuthed = false;
+	m_bOrigNickPending = false;
 	EnableReadLine();
 	m_RawBuffer.SetLineCount(100);		// This should be more than enough raws, especially since we are buffering the MOTD separately
 	m_MotdBuffer.SetLineCount(200);		// This should be more than enough motd lines
@@ -202,6 +203,7 @@ void CIRCSock::ReadLine(const CString& sData) {
 						if ((m_bKeepNick) && (m_pUser->GetKeepNick())) {
 							if (sBadNick.CaseCmp(sConfNick) == 0) {
 								if ((!m_pUserSock) || (!m_pUserSock->DecKeepNickCounter())) {
+									SetOrigNickPending(false);
 									return;
 								}
 							}
@@ -604,8 +606,9 @@ void CIRCSock::KeepNick() {
 	const CString& sConfNick = m_pUser->GetNick();
 	CString sAwayNick = CNick::Concat(sConfNick, m_pUser->GetAwaySuffix(), GetMaxNickLen());
 
-	if ((m_bAuthed) && (m_bKeepNick) && (m_pUser->GetKeepNick()) && (GetNick().CaseCmp(sConfNick) != 0) && (GetNick().CaseCmp(sAwayNick) != 0)) {
+	if (m_bAuthed && m_bKeepNick && !IsOrigNickPending() && m_pUser->GetKeepNick() && GetNick().CaseCmp(sConfNick) != 0 && GetNick().CaseCmp(sAwayNick) != 0) {
 		PutServ("NICK " + sConfNick);
+		SetOrigNickPending(true);
 	}
 }
 

@@ -52,6 +52,7 @@ public:
 	// Setters
 	void SetPass(const CString& s) { m_sPass = s; }
 	void SetKeepNick(bool b) { m_bKeepNick = b; }
+	void SetOrigNickPending(bool b) { m_bOrigNickPending = b; }
 	// !Setters
 
 	// Getters
@@ -67,6 +68,7 @@ public:
 	CString GetNickMask() const { return m_Nick.GetNickMask(); }
 	const CString& GetNick() const { return m_Nick.GetNick(); }
 	const CString& GetPass() const { return m_sPass; }
+	bool IsOrigNickPending() const { return m_bOrigNickPending; }
 	// !Getters
 private:
 	void SetNick(const CString& sNick);
@@ -74,6 +76,7 @@ protected:
 	bool						m_bISpoofReleased;
 	bool						m_bAuthed;
 	bool						m_bKeepNick;
+	bool						m_bOrigNickPending;
 	CString						m_sPerms;
 	CString						m_sPermModes;
 	map<unsigned char, EChanModeArgs>	m_mueChanModes;

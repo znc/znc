@@ -13,11 +13,17 @@ protected:
 	virtual void RunJob() {
 		CIRCSock* pSock = m_pUser->GetIRCSock();
 		if (pSock) {
+			if (m_uTrys++ >= 20) {
+				pSock->SetOrigNickPending(false);
+				m_uTrys = 0;
+			}
+
 			pSock->KeepNick();
 		}
 	}
 
-	CUser*	m_pUser;
+	CUser*			m_pUser;
+	unsigned int	m_uTrys;
 };
 
 class CJoinTimer : public CCron {
