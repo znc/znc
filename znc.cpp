@@ -464,7 +464,7 @@ bool CZNC::WriteNewConfig(const CString& sConfig) {
 	CUtils::PrintAction("Writing config [" + sConfigFile + "]");
 	CFile File(sConfigFile);
 
-	if (!File.Open(O_WRONLY | O_CREAT)) {
+	if (!File.Open(O_WRONLY | O_CREAT, 0600)) {
 		CUtils::PrintStatus(false, "Unable to open file");
 		return false;
 	}
