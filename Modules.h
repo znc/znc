@@ -95,6 +95,29 @@ private:
 	FPTimer_t	m_pFBCallback;
 };
 
+class CSocket : public Csock {
+public:
+	CSocket(CModule* pModule, const CString& sLabel);
+	CSocket(CModule* pModule, const CString& sLabel, const CString& sHostname, unsigned short uPort, int iTimeout = 60);
+	virtual ~CSocket();
+
+	bool Connect(const CString& sHostname, unsigned short uPort, bool bSSL = false, unsigned int uTimeout = 60);
+	bool Listen(unsigned short uPort, bool bSSL = false, unsigned int uTimeout = 0);
+
+	// Setters
+	void SetModule(CModule* p);
+	void SetLabel(const CString& s);
+	// !Setters
+
+	// Getters
+	CModule* GetModule() const;
+	const CString& GetLabel() const;
+	// !Getters
+private:
+protected:
+	CModule*	m_pModule;
+	CString		m_sLabel;
+};
 
 class CModInfo {
 public:
@@ -218,6 +241,15 @@ public:
 	virtual void ListTimers();
 	// !Timer stuff
 
+	// Socket stuff
+	bool AddSocket(CSocket* pSocket);
+	bool RemSocket(CSocket* pSocket);
+	bool RemSocket(const CString& sLabel);
+	bool UnlinkSocket(CSocket* pSocket);
+	CSocket* FindSocket(const CString& sLabel);
+	virtual void ListSockets();
+	// !Socket stuff
+
 	bool LoadRegistry();
 	bool SaveRegistry();
 	bool SetNV(const CString & sName, const CString & sValue, bool bWriteToDisk = true);
@@ -234,11 +266,14 @@ public:
 
 	// Getters
 	const CString& GetDescription() const { return m_sDescription; }
+	CUser* GetUser() { return m_pUser; }
+	TSocketManager<Csock>* GetManager() { return m_pManager; }
 	// !Getters
 
 protected:
 	CString					m_sDescription;
 	vector<CTimer*>			m_vTimers;
+	vector<CSocket*>		m_vSockets;
 	void*					m_pDLL;
 	TSocketManager<Csock>*	m_pManager;
 	CUser*					m_pUser;

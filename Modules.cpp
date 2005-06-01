@@ -104,6 +104,42 @@ CModule* CTimer::GetModule() const { return m_pModule; }
 const CString& CTimer::GetDescription() const { return m_sDescription; }
 /////////////////// !Timer ///////////////////
 
+/////////////////// Socket ///////////////////
+CSocket::CSocket(CModule* pModule, const CString& sLabel) : Csock() {
+	m_pModule = pModule;
+	m_sLabel = sLabel;
+	m_pModule->AddSocket(this);
+	EnableReadLine();
+}
+
+CSocket::CSocket(CModule* pModule, const CString& sLabel, const CString& sHostname, unsigned short uPort, int iTimeout) : Csock(sHostname, uPort, iTimeout) {
+	m_pModule = pModule;
+	m_sLabel = sLabel;
+	m_pModule->AddSocket(this);
+	EnableReadLine();
+}
+
+CSocket::~CSocket() {
+	m_pModule->UnlinkSocket(this);
+}
+
+bool CSocket::Connect(const CString& sHostname, unsigned short uPort, bool bSSL, unsigned int uTimeout) {
+	CString sSockName = "MOD::C::" + m_pModule->GetModName() + "::" + m_pModule->GetUser()->GetUserName();
+	return m_pModule->GetManager()->Connect(sHostname, uPort, sSockName, uTimeout, false, m_pModule->GetUser()->GetVHost(), (Csock*) this);
+}
+
+bool CSocket::Listen(unsigned short uPort, bool bSSL, unsigned int uTimeout) {
+	CString sSockName = "MOD::L::" + m_pModule->GetModName() + "::" + m_pModule->GetUser()->GetUserName();
+	return m_pModule->GetManager()->ListenAll(uPort, sSockName, bSSL, SOMAXCONN, (Csock*) this);
+}
+
+void CSocket::SetModule(CModule* p) { m_pModule = p; }
+void CSocket::SetLabel(const CString& s) { m_sLabel = s; }
+
+CModule* CSocket::GetModule() const { return m_pModule; }
+const CString& CSocket::GetLabel() const { return m_sLabel; }
+/////////////////// !Socket ///////////////////
+
 CModule::CModule(void* pDLL, CUser* pUser, const CString& sModName) {
 	m_pDLL = pDLL;
 	m_pZNC = (pUser) ? pUser->GetZNC() : NULL;
@@ -125,6 +161,10 @@ CModule::CModule(void* pDLL, CZNC* pZNC, const CString& sModName) {
 CModule::~CModule() {
 	while (m_vTimers.size()) {
 		RemTimer(m_vTimers[0]->GetName());
+	}
+
+	while (m_vSockets.size()) {
+		RemSocket(m_vSockets[0]->GetLabel());
 	}
 
 	SaveRegistry();
@@ -265,6 +305,93 @@ void CModule::ListTimers() {
 		Table.SetCell("Secs", CString::ToString(pTimer->GetInterval()));
 		Table.SetCell("Cycles", ((uCycles) ? CString::ToString(uCycles) : "INF"));
 		Table.SetCell("Description", pTimer->GetDescription());
+	}
+
+	if (Table.size()) {
+		unsigned int uTableIdx = 0;
+		CString sLine;
+
+		while (Table.GetLine(uTableIdx++, sLine)) {
+			PutModule(sLine);
+		}
+	}
+}
+
+bool CModule::AddSocket(CSocket* pSocket) {
+	if (!pSocket) {
+		return false;
+	}
+
+	m_vSockets.push_back(pSocket);
+	return true;
+}
+
+bool CModule::RemSocket(CSocket* pSocket) {
+	for (unsigned int a = 0; a < m_vSockets.size(); a++) {
+		if (m_vSockets[a] == pSocket) {
+			m_vSockets.erase(m_vSockets.begin() +a);
+			m_pManager->DelSockByAddr(pSocket);
+			return true;
+		}
+	}
+
+	return false;
+}
+
+bool CModule::RemSocket(const CString& sLabel) {
+	for (unsigned int a = 0; a < m_vSockets.size(); a++) {
+		CSocket* pSocket = m_vSockets[a];
+
+		if (pSocket->GetLabel().CaseCmp(sLabel) == 0) {
+			m_vSockets.erase(m_vSockets.begin() +a);
+			m_pManager->DelSockByAddr(pSocket);
+			return true;
+		}
+	}
+
+	return false;
+}
+
+bool CModule::UnlinkSocket(CSocket* pSocket) {
+	for (unsigned int a = 0; a < m_vSockets.size(); a++) {
+		if (pSocket == m_vSockets[a]) {
+			m_vSockets.erase(m_vSockets.begin() +a);
+			return true;
+		}
+	}
+
+	return false;
+}
+
+CSocket* CModule::FindSocket(const CString& sLabel) {
+	for (unsigned int a = 0; a < m_vSockets.size(); a++) {
+		CSocket* pSocket = m_vSockets[a];
+		if (pSocket->GetLabel().CaseCmp(sLabel) == 0) {
+			return pSocket;
+		}
+	}
+
+	return NULL;
+}
+
+void CModule::ListSockets() {
+	if (!m_vSockets.size()) {
+		PutModule("You have no open sockets.");
+		return;
+	}
+
+	CTable Table;
+	Table.AddColumn("Name");
+	Table.AddColumn("State");
+	Table.AddColumn("RemoteIP");
+
+	for (unsigned int a = 0; a < m_vSockets.size(); a++) {
+		CSocket* pSocket = (CSocket*) m_vSockets[a];
+
+		Table.AddRow();
+		Table.SetCell("Name", pSocket->GetLabel());
+		Table.SetCell("State", (pSocket->IsConnected() ? "Connected" : ""));
+		Table.SetCell("RemoteIP", pSocket->GetRemoteIP());
 	}
 
 	if (Table.size()) {
