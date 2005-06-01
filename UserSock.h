@@ -15,7 +15,7 @@ public:
 	CUserSock() : Csock() {
 		Init();
 	}
-	CUserSock(const CString& sHostname, unsigned short uPort, int itimeout = 60) : Csock(sHostname, uPort, itimeout) {
+	CUserSock(const CString& sHostname, unsigned short uPort, int iTimeout = 60) : Csock(sHostname, uPort, iTimeout) {
 		Init();
 	}
 	virtual ~CUserSock() {}

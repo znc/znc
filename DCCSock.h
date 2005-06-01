@@ -35,7 +35,7 @@ public:
 		m_bNoDelFile = false;
 	}
 
-/*	CDCCSock(CUser* pUser, const CString& sHostname, unsigned short uPort, int itimeout = 60) : Csock(sHostname, uPort, itimeout) {
+/*	CDCCSock(CUser* pUser, const CString& sHostname, unsigned short uPort, int iTimeout = 60) : Csock(sHostname, uPort, iTimeout) {
 		m_uRemotePort = 0;
 		m_uBytesSoFar = 0;
 		m_uFileSize = 0;

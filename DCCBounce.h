@@ -25,7 +25,7 @@ public:
 		}
 	}
 
-	CDCCBounce(const CString& sHostname, unsigned short uPort, CUser* pUser, const CString& sRemoteNick, const CString& sRemoteIP, const CString& sFileName, int itimeout = 60, bool bIsChat = false) : Csock(sHostname, uPort, itimeout) {
+	CDCCBounce(const CString& sHostname, unsigned short uPort, CUser* pUser, const CString& sRemoteNick, const CString& sRemoteIP, const CString& sFileName, int iTimeout = 60, bool bIsChat = false) : Csock(sHostname, uPort, iTimeout) {
 		m_uRemotePort = 0;
 		m_bIsChat = bIsChat;
 		m_pManager = pUser->GetManager();
