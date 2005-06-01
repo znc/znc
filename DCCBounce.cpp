@@ -81,7 +81,7 @@ void CDCCBounce::Shutdown() {
 	Close();
 }
 
-Csock* CDCCBounce::GetSockObj(const CString& sHost, int iPort) {
+Csock* CDCCBounce::GetSockObj(const CString& sHost, unsigned short uPort) {
 	Close();
 
 	if (!m_pManager) {
@@ -92,8 +92,8 @@ Csock* CDCCBounce::GetSockObj(const CString& sHost, int iPort) {
 		m_sRemoteIP = sHost;
 	}
 
-	CDCCBounce* pSock = new CDCCBounce(sHost, iPort, m_pUser, m_sRemoteNick, m_sRemoteIP, m_sFileName, m_bIsChat);
-	CDCCBounce* pRemoteSock = new CDCCBounce(sHost, iPort, m_pUser, m_sRemoteNick, m_sRemoteIP, m_sFileName, m_bIsChat);
+	CDCCBounce* pSock = new CDCCBounce(sHost, uPort, m_pUser, m_sRemoteNick, m_sRemoteIP, m_sFileName, m_bIsChat);
+	CDCCBounce* pRemoteSock = new CDCCBounce(sHost, uPort, m_pUser, m_sRemoteNick, m_sRemoteIP, m_sFileName, m_bIsChat);
 	pSock->SetPeer(pRemoteSock);
 	pRemoteSock->SetPeer(pSock);
 	pRemoteSock->SetRemote(true);

@@ -390,14 +390,14 @@ bool CUser::SendFile(const CString& sRemoteNick, const CString& sFileName, const
 		return false;
 	}
 
-	int iPort = GetManager()->ListenAllRand("DCC::LISTEN::" + sRemoteNick, false, SOMAXCONN, pSock, 120);
+	unsigned short uPort = GetManager()->ListenAllRand("DCC::LISTEN::" + sRemoteNick, false, SOMAXCONN, pSock, 120);
 
 	if (GetNick().CaseCmp(sRemoteNick) == 0) {
 		PutUser(":" + GetStatusPrefix() + "status!znc@znc.com PRIVMSG " + sRemoteNick + " :\001DCC SEND " + pFile->GetShortName() + " " + CString::ToString(CUtils::GetLongIP(GetLocalIP())) + " "
-			   	+ CString::ToString(iPort) + " " + CString::ToString(pFile->GetSize()) + "\001");
+			   	+ CString::ToString(uPort) + " " + CString::ToString(pFile->GetSize()) + "\001");
 	} else {
 		PutIRC("PRIVMSG " + sRemoteNick + " :\001DCC SEND " + pFile->GetShortName() + " " + CString::ToString(CUtils::GetLongIP(GetLocalIP())) + " "
-			    + CString::ToString(iPort) + " " + CString::ToString(pFile->GetSize()) + "\001");
+			    + CString::ToString(uPort) + " " + CString::ToString(pFile->GetSize()) + "\001");
 	}
 
 	PutModule(sModuleName, "DCC -> [" + sRemoteNick + "][" + pFile->GetShortName() + "] - Attempting Send.");

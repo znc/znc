@@ -34,7 +34,7 @@ public:
 	// Getters
 	TSocketManager<Csock>& GetManager() { return m_Manager; }
 	CGlobalModules& GetModules() { return *m_pModules; }
-	unsigned int GetListenPort() const { return m_uListenPort; }
+	unsigned short GetListenPort() const { return m_uListenPort; }
 	const CString& GetCurPath() const { if (!CFile::Exists(m_sCurPath)) { CUtils::MakeDir(m_sCurPath); } return m_sCurPath; }
 	const CString& GetDLPath() const { if (!CFile::Exists(m_sDLPath)) { CUtils::MakeDir(m_sDLPath); } return m_sDLPath; }
 	const CString& GetModPath() const { if (!CFile::Exists(m_sModPath)) { CUtils::MakeDir(m_sModPath); } return m_sModPath; }

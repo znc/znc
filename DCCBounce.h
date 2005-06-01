@@ -25,7 +25,7 @@ public:
 		}
 	}
 
-	CDCCBounce(const CString& sHostname, int iport, CUser* pUser, const CString& sRemoteNick, const CString& sRemoteIP, const CString& sFileName, int itimeout = 60, bool bIsChat = false) : Csock(sHostname, iport, itimeout) {
+	CDCCBounce(const CString& sHostname, unsigned short uPort, CUser* pUser, const CString& sRemoteNick, const CString& sRemoteIP, const CString& sFileName, int itimeout = 60, bool bIsChat = false) : Csock(sHostname, uPort, itimeout) {
 		m_uRemotePort = 0;
 		m_bIsChat = bIsChat;
 		m_pManager = pUser->GetManager();
@@ -57,7 +57,7 @@ public:
 	virtual void Connected();
 	virtual void Disconnected();
 	void Shutdown();
-	Csock* GetSockObj(const CString& sHost, int iPort);
+	Csock* GetSockObj(const CString& sHost, unsigned short uPort);
 	void PutServ(const CString& sLine);
 	void PutPeer(const CString& sLine);
 	bool IsPeerConnected() { return (m_pPeer) ? m_pPeer->IsConnected() : false; }

@@ -83,7 +83,7 @@
 #include <set>
 #include <map>
 
-#include "main.h"
+#include "main.h" // require this as a general rule, most projects have a defines.h or the like
 
 #ifndef CS_STRING
 #	ifdef _HAS_CSTRING_
@@ -111,6 +111,89 @@
 namespace Csocket
 {
 #endif /* _NO_CSOCKET_NS */
+
+int GetHostByName( const CS_STRING & sHostName, struct in_addr *paddr, u_int iNumRetries = 20 );
+
+#if defined( _REENTRANT ) && defined( _USE_THREADED_DNS )
+#define ___DO_THREADS
+#include <pthread.h>
+
+#ifndef PTHREAD_MUTEX_FAST_NP 
+#define PTHREAD_MUTEX_FAST_NP PTHREAD_MUTEX_NORMAL
+#endif /* PTHREAD_MUTEX_FAST_NP */
+
+class CSMutex
+{
+public:
+	CSMutex ();
+	virtual ~CSMutex();
+	int lock() { return( pthread_mutex_lock( &m_mutex ) ); }
+	int unlock() { return( pthread_mutex_unlock( &m_mutex ) ); }
+	int trylock() { return( pthread_mutex_trylock( &m_mutex ) ); }
+private:
+	pthread_mutex_t			m_mutex;
+	pthread_mutexattr_t		m_mattrib;
+	
+};
+
+class CSThread
+{
+public:
+	CSThread() { m_eStatus = WAITING; }
+	virtual ~CSThread() {}
+	
+	enum EStatus
+	{
+		WAITING = 1,
+		RUNNING = 2,
+		FINISHED = 3
+	};
+
+	bool start();
+	void wait();
+	virtual void run() = 0;
+	static void *start_thread( void *args );
+	EStatus Status() { return( m_eStatus ); }
+	void SetStatus( EStatus e ) { m_eStatus = e; }
+	int lock() { return( m_mutex.lock() ); }
+	int unlock() { return( m_mutex.unlock() ); }
+	int cancel() { return( pthread_cancel( m_ppth ) ); }
+
+private:
+	pthread_t	m_ppth;
+	EStatus m_eStatus;
+	CSMutex  m_mutex;
+};
+
+class CDNSResolver : public CSThread
+{
+public:
+	CDNSResolver() : CSThread() { m_bSuccess = false; }
+	virtual ~CDNSResolver() {}
+	//! returns imediatly, from here out check if IsCompleted() returns true before looking at ANY of the data
+	void Lookup( const CS_STRING & sHostname );
+
+	virtual void run();
+
+	//! returns the underlying in_addr structure containing the resolved hostname
+	const struct in_addr * GetAddr() const { return( &m_inAddr ); }
+	//! true if dns entry was successfuly found
+	bool Suceeded() const { return( m_bSuccess ); }
+
+	//! true if task is finished, this function is thread safe
+	bool IsCompleted();
+
+	//! note!! inet_ntoa uses an internally static buffer, its not thread safe
+	static CS_STRING CreateIP( const struct in_addr *pAddr );
+
+private:
+	bool		m_bSuccess;
+	CS_STRING	m_sHostname;
+	struct in_addr	m_inAddr;
+};
+
+
+#endif /* ___DO_THREADS */
 
 const u_int CS_BLOCKSIZE = 4096;
 template <class T> inline void CS_Delete( T * & p ) { if( p ) { delete p; p = NULL; } }
@@ -184,7 +267,7 @@ inline void TFD_CLR( u_int iSock, fd_set *set )
 
 void __Perror( const CS_STRING & s );
 unsigned long long millitime();
-bool GetHostByName( const CS_STRING & sHostName, struct in_addr *paddr );
+
 
 /**
 * @class CCron
@@ -264,10 +347,10 @@ public:
 	* @param iport the port you are connectint to
 	* @param itimeout how long to wait before ditching the connection, default is 60 seconds
 	*/
-	Csock( const CS_STRING & sHostname, int iport, int itimeout = 60 );
+	Csock( const CS_STRING & sHostname, u_short iport, int itimeout = 60 );
 
 	// override this for accept sockets
-	virtual Csock *GetSockObj( const CS_STRING & sHostname, int iPort );
+	virtual Csock *GetSockObj( const CS_STRING & sHostname, u_short iPort );
 
 	virtual ~Csock();
 
@@ -302,6 +385,16 @@ public:
 		SSL3				= 3
 	};
 
+	enum ECONState
+	{
+		CST_START		= 0,
+		CST_DNS			= CST_START,
+		CST_VHOSTDNS	= 1,
+		CST_BINDVHOST	= 2,
+		CST_CONNECT		= 3,
+		CST_OK			= 4
+	};
+
 	Csock & operator<<( const CS_STRING & s );
 	Csock & operator<<( std::ostream & ( *io )( std::ostream & ) );
 	Csock & operator<<( int i );
@@ -318,7 +411,7 @@ public:
 	* @param sBindHost the ip you want to bind to locally
 	* @return true on success
 	*/
-	virtual bool Connect( const CS_STRING & sBindHost = "" );
+	virtual bool Connect( const CS_STRING & sBindHost = "", bool bSkipSetup = false );
 
 	/**
 	* WriteSelect on this socket
@@ -338,10 +431,10 @@ public:
 	* @param iPort the port to listen on
 	* @param iMaxConns the maximum amount of connections to allow
 	*/
-	virtual bool Listen( int iPort, int iMaxConns = SOMAXCONN, const CS_STRING & sBindHost = "", u_int iTimeout = 0 );
+	virtual bool Listen( u_short iPort, int iMaxConns = SOMAXCONN, const CS_STRING & sBindHost = "", u_int iTimeout = 0 );
 
 	//! Accept an inbound connection, this is used internally
-	virtual int Accept( CS_STRING & sHost, int & iRPort );
+	virtual int Accept( CS_STRING & sHost, u_short & iRPort );
 
 	//! Accept an inbound SSL connection, this is used internally and called after Accept
 	virtual bool AcceptSSL();
@@ -490,14 +583,14 @@ public:
 	double GetAvgWrite( unsigned long long iSample = 1000 );
 
 	//! Returns the remote port
-	int GetRemotePort();
+	u_short GetRemotePort();
 
 	//! Returns the local port
-	int GetLocalPort();
+	u_short GetLocalPort();
 
 	//! Returns the port
-	int GetPort();
-	void SetPort( int iPort );
+	u_short GetPort();
+	void SetPort( u_short iPort );
 
 	//! just mark us as closed, the parent can pick it up
 	void Close();
@@ -664,7 +757,7 @@ public:
 	* return false and the connection will fail
 	* default returns true
 	*/
-	virtual bool ConnectionFrom( const CS_STRING & sHost, int iPort ) { return( true ); }
+	virtual bool ConnectionFrom( const CS_STRING & sHost, u_short iPort ) { return( true ); }
 
 	/**
 	 * Override these functions for an easy interface when using the Socket Manager
@@ -683,10 +776,50 @@ public:
 	//! return the data imediatly ready for read
 	virtual int GetPending();
 
+	//////////////////////////
+	// Connection State Stuff
+	//! returns the current connection state
+	ECONState GetConState() const { return( m_eConState ); }
+	//! sets the connection state to eState
+	void SetConState( ECONState eState ) { m_eConState = eState; }
+
+	//! grabs fd's for the sockets
+	bool CreateSocksFD()
+	{
+		m_iReadSock = m_iWriteSock = SOCKET();
+		if ( m_iReadSock == -1 )
+			return( false );
+
+		m_address.sin_family = PF_INET;
+		m_address.sin_port = htons( m_iport );
+
+		return( true );
+	}
+
+	const CS_STRING & GetBindHost() const { return( m_sBindHost ); }
+	void SetBindHost( const CS_STRING & sBindHost ) { m_sBindHost = sBindHost; }
+		
+	enum EDNSLType
+	{
+		DNS_VHOST,
+		DNS_DEST
+	};
+	
+	/**
+	 * DNSLookup nonblocking dns lookup (when -pthread is set to compile
+	 * 
+	 * @return 0 for success, EAGAIN to check back again (same arguments as before, ETIMEDOUT on failure
+	 */
+	int DNSLookup( EDNSLType eDNSLType );
+
+	//! this is only used on outbound connections, listeners bind in a different spot
+	bool SetupVHost();
+	
 	//////////////////////////////////////////////////
 
 private:
-	int			m_iReadSock, m_iWriteSock, m_itimeout, m_iport, m_iConnType, m_iTcount, m_iMethod, m_iRemotePort, m_iLocalPort;
+	u_short		m_iport, m_iRemotePort, m_iLocalPort;
+	int			m_iReadSock, m_iWriteSock, m_itimeout, m_iConnType, m_iTcount, m_iMethod;
 	bool		m_bssl, m_bIsConnected, m_bClosed, m_bBLOCK, m_bFullsslAccept;
 	bool		m_bsslEstablished, m_bEnableReadLine, m_bRequireClientCert, m_bPauseRead;
 	CS_STRING	m_shostname, m_sbuffer, m_sSockName, m_sPemFile, m_sCipherType, m_sParentName;
@@ -695,7 +828,7 @@ private:
 	unsigned long long	m_iMaxMilliSeconds, m_iLastSendTime, m_iBytesRead, m_iBytesWritten, m_iStartTime;
 	unsigned int		m_iMaxBytes, m_iLastSend, m_iMaxStoredBufferLength, m_iTimeoutType;
 
-	struct sockaddr_in 	m_address;
+	struct sockaddr_in 	m_address, m_bindhost;
 
 #ifdef HAVE_LIBSSL
 	SSL 				*m_ssl;
@@ -711,7 +844,18 @@ private:
 
 	//! Create the socket
 	virtual int SOCKET( bool bListen = false );
-	virtual void Init( const CS_STRING & sHostname, int iport, int itimeout = 60 );
+	virtual void Init( const CS_STRING & sHostname, u_short iport, int itimeout = 60 );
+
+
+	// Connection State Info
+	ECONState		m_eConState;
+	CS_STRING		m_sBindHost;
+	u_int			m_iCurBindCount, m_iDNSTryCount;
+
+#ifdef ___DO_THREADS
+	CDNSResolver	m_cResolver;
+#endif /* ___DO_THREADS */
+
 };
 
 /**
@@ -789,7 +933,7 @@ public:
 	* \param sBindHost the host to bind too
 	* \return true on success
 	*/
-	virtual bool Connect( const CS_STRING & sHostname, int iPort , const CS_STRING & sSockName, int iTimeout = 60, bool isSSL = false, const CS_STRING & sBindHost = "", T *pcSock = NULL )
+	virtual bool Connect( const CS_STRING & sHostname, u_short iPort , const CS_STRING & sSockName, int iTimeout = 60, bool isSSL = false, const CS_STRING & sBindHost = "", T *pcSock = NULL )
 	{
 		// create the new object
 		if ( !pcSock )
@@ -804,43 +948,34 @@ public:
 		// make it NON-Blocking IO
 		pcSock->BlockIO( false );
 
-		if ( !pcSock->Connect( sBindHost ) )
-		{
-			if ( GetSockError() == ECONNREFUSED )
-				pcSock->ConnectionRefused();
-
-			CS_Delete( pcSock );
-			return( false );
-		}
-
 #ifdef HAVE_LIBSSL
-		if ( isSSL )
-		{
-			if ( !pcSock->ConnectSSL() )
-			{
-				if ( GetSockError() == ECONNREFUSED )
-					pcSock->ConnectionRefused();
-
-				CS_Delete( pcSock );
-				return( false );
-			}
-		}
+		pcSock->SetSSL( isSSL );
 #endif /* HAVE_LIBSSL */
 
+		if ( !pcSock->CreateSocksFD() )
+			return( false );
+
+		pcSock->SetType( T::OUTBOUND );
+
+		pcSock->SetConState( T::CST_START );
 		AddSock( pcSock, sSockName );
 		return( true );
 	}
 
 	/**
-	* Create a listening socket
+	* @brief Create a listening socket
 	*
-	* \param iPort the port to listen on
-	* \param sSockName the name of the socket
-	* \param isSSL if the sockets created require an ssl layer
-	* \param iMaxConns the maximum amount of connections to accept
-	* \return true on success
+	* Given the design of this function, when binding to a hostname, its best to use an
+	* since dns lookups are blocking, but since your binding to a local ip, it should never be
+	* problem anyhow.
+	*
+	* @param iPort the port to listen on
+	* @param sSockName the name of the socket
+	* @param isSSL if the sockets created require an ssl layer
+	* @param iMaxConns the maximum amount of connections to accept
+	* @return pointer to sock, NULL if not successfull
 	*/
-	virtual T * ListenHost( int iPort, const CS_STRING & sSockName, const CS_STRING & sBindHost, int isSSL = false, int iMaxConns = SOMAXCONN, T *pcSock = NULL, u_int iTimeout = 0 )
+	virtual T * ListenHost( u_short iPort, const CS_STRING & sSockName, const CS_STRING & sBindHost, int isSSL = false, int iMaxConns = SOMAXCONN, T *pcSock = NULL, u_int iTimeout = 0 )
 	{
 		if ( !pcSock )
 			pcSock = new T();
@@ -858,7 +993,7 @@ public:
 		return( NULL );
 	}
 
-	virtual bool ListenAll( int iPort, const CS_STRING & sSockName, int isSSL = false, int iMaxConns = SOMAXCONN, T *pcSock = NULL, u_int iTimeout = 0 )
+	virtual bool ListenAll( u_short iPort, const CS_STRING & sSockName, int isSSL = false, int iMaxConns = SOMAXCONN, T *pcSock = NULL, u_int iTimeout = 0 )
 	{
 		return( ListenHost( iPort, sSockName, "", isSSL, iMaxConns, pcSock, iTimeout ) );
 	}
@@ -1000,6 +1135,74 @@ public:
 				break;
 		}
 
+		for( u_int a = 0; a < this->size(); a++ )
+		{
+			T *pcSock = (*this)[a];
+
+			if ( ( pcSock->GetType() != T::OUTBOUND ) || ( pcSock->GetConState() == T::CST_OK ) )
+				continue;
+
+			if ( pcSock->GetConState() == T::CST_DNS )
+			{
+				if ( pcSock->DNSLookup( T::DNS_DEST ) == ETIMEDOUT )
+				{
+					pcSock->SockError( EDOM );
+					DelSock( a-- );
+					continue;
+				}
+			}
+
+			if ( pcSock->GetConState() == T::CST_VHOSTDNS )
+			{
+				if ( pcSock->DNSLookup( T::DNS_VHOST ) == ETIMEDOUT )
+				{
+					pcSock->SockError( EADDRNOTAVAIL );
+					DelSock( a-- );
+					continue;
+				}
+			}
+
+			if ( pcSock->GetConState() == T::CST_BINDVHOST )
+			{
+				if ( !pcSock->SetupVHost() )
+				{
+					pcSock->SockError( errno );
+					DelSock( a-- );
+					continue;
+				}
+			}
+
+			if ( pcSock->GetConState() == T::CST_CONNECT )
+			{
+		
+				if ( !pcSock->Connect( pcSock->GetBindHost(), true ) )
+				{
+					if ( GetSockError() == ECONNREFUSED )
+						pcSock->ConnectionRefused();
+					else
+						pcSock->SockError( ECONNABORTED );
+
+					DelSock( a-- );
+					continue;
+				}
+
+#ifdef HAVE_LIBSSL
+				if ( pcSock->GetSSL() )
+				{
+					if ( !pcSock->ConnectSSL() )
+					{
+						if ( GetSockError() == ECONNREFUSED )
+							pcSock->ConnectionRefused();
+						else
+							pcSock->SockError( ECONNABORTED );
+
+						DelSock( a-- );
+						continue;
+					}
+				}
+#endif /* HAVE_LIBSSL */
+			}
+		}
 		unsigned long long iMilliNow = millitime();
 		if ( ( iMilliNow - m_iCallTimeouts ) > 1000 )
 		{
@@ -1007,6 +1210,9 @@ public:
 			// call timeout on all the sockets that recieved no data
 			for( unsigned int i = 0; i < this->size(); i++ )
 			{
+				if ( (*this)[i]->GetConState() != T::CST_OK )
+					continue;
+
 				if ( (*this)[i]->CheckTimeout() )
 					DelSock( i-- );
 			}
@@ -1026,7 +1232,7 @@ public:
 	}
 
 	//! returns a pointer to the FIRST sock found by port or NULL on no match
-	virtual T * FindSockByRemotePort( int iPort )
+	virtual T * FindSockByRemotePort( u_short iPort )
 	{
 		for( unsigned int i = 0; i < this->size(); i++ )
 		{
@@ -1038,7 +1244,7 @@ public:
 	}
 
 	//! returns a pointer to the FIRST sock found by port or NULL on no match
-	virtual T * FindSockByLocalPort( int iPort )
+	virtual T * FindSockByLocalPort( u_short iPort )
 	{
 		for( unsigned int i = 0; i < this->size(); i++ )
 			if ( (*this)[i]->GetLocalPort() == iPort )
@@ -1217,8 +1423,10 @@ private:
 
 		for( unsigned int i = 0; i < this->size(); i++ )
 		{
-
 			T *pcSock = (*this)[i];
+
+			if ( pcSock->GetConState() != T::CST_OK )
+				continue;
 
 			int & iRSock = pcSock->GetRSock();
 			int & iWSock = pcSock->GetWSock();
@@ -1277,6 +1485,9 @@ private:
 		{
 			T *pcSock = (*this)[i];
 
+			if ( pcSock->GetConState() != T::CST_OK )
+				continue;
+
 			if ( ( pcSock->GetSSL() ) && ( pcSock->GetType() != Csock::LISTENER ) )
 			{
 				if ( ( pcSock->GetPending() > 0 ) && ( !pcSock->IsReadPaused() ) )
@@ -1330,6 +1541,10 @@ private:
 		for( unsigned int i = 0; i < this->size(); i++ )
 		{
 			T *pcSock = (*this)[i];
+
+			if ( pcSock->GetConState() != T::CST_OK )
+				continue;
+
 			int & iRSock = pcSock->GetRSock();
 			int & iWSock = pcSock->GetWSock();
 			EMessages iErrno = SUCCESS;
@@ -1372,7 +1587,7 @@ private:
 				else // someone is coming in!
 				{
 					CS_STRING sHost;
-					int port;
+					u_short port;
 					int inSock = pcSock->Accept( sHost, port );
 
 					if ( inSock != -1 )
@@ -1452,6 +1667,14 @@ private:
 		}
 	}
 
+	////////
+	// Connection State Functions
+	
+
+
+
+	///////////
+	// members
 	EMessages				m_errno;
 	std::vector<CCron *>			m_vcCrons;
 	unsigned long long		m_iCallTimeouts;

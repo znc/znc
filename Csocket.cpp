@@ -40,7 +40,121 @@ namespace Csocket
 {
 #endif /* _NO_CSOCKET_NS */
 
+#ifdef ___DO_THREADS
+CSMutex::CSMutex() 
+{
+	pthread_mutexattr_init( &m_mattrib );
+	if ( pthread_mutexattr_settype( &m_mattrib, PTHREAD_MUTEX_FAST_NP ) != 0 )
+		throw CS_STRING( "ERROR: pthread_mutexattr_settype failed!" );
+		
+	if ( pthread_mutex_init( &m_mutex, &m_mattrib ) != 0 )
+		throw CS_STRING( "ERROR: pthread_mutex_init failed!" );
+}
 
+CSMutex::~CSMutex() 
+{
+	pthread_mutexattr_destroy( &m_mattrib );
+	pthread_mutex_destroy( &m_mutex );
+}
+
+bool CSThread::start()
+{
+	// mark the job as running
+	lock();
+	m_eStatus = RUNNING;
+	unlock();
+
+	pthread_attr_t attr;
+	if ( pthread_attr_init( &attr ) != 0 )
+	{
+		WARN( "pthread_attr_init failed" );
+		lock();
+		m_eStatus = FINISHED;
+		unlock();
+		return( false );
+	}
+
+	if ( pthread_attr_setdetachstate( &attr, PTHREAD_CREATE_DETACHED ) != 0 )
+	{
+		WARN( "pthread_attr_setdetachstate failed" );
+		lock();
+		m_eStatus = FINISHED;
+		unlock();
+		return( false );
+	}
+
+	int iRet = pthread_create( &m_ppth, &attr, start_thread, this );
+	if ( iRet != 0 )
+	{
+		WARN( "pthread_create failed " );
+		lock();
+		m_eStatus = FINISHED;
+		unlock();
+		return( false );
+	}
+
+	return( true );
+}		
+
+void CSThread::wait()
+{
+	while( true )
+	{
+		lock();
+		EStatus e = Status();
+		unlock();
+		if ( e == FINISHED )
+			break;
+		usleep( 100 );
+	}
+}
+
+void *CSThread::start_thread( void *args )
+{
+	CSThread *curThread = (CSThread *)args;
+	curThread->run();
+	curThread->lock();
+	curThread->SetStatus( CSThread::FINISHED );
+	curThread->unlock();
+	pthread_exit( NULL );   
+}
+
+void CDNSResolver::Lookup( const CS_STRING & sHostname )
+{
+	m_bSuccess = false;
+	m_sHostname = sHostname;
+	memset( (struct in_addr *)&m_inAddr, '\0', sizeof( m_inAddr ) );
+	start();
+}
+
+void CDNSResolver::run()
+{
+	if ( GetHostByName( m_sHostname, &m_inAddr ) != 0 )
+		m_bSuccess = false;
+	else
+	{
+		m_bSuccess = true;
+	}
+}
+
+bool CDNSResolver::IsCompleted()
+{
+	lock();
+	EStatus e = Status();
+	unlock();
+	if ( e == FINISHED )
+		return( true );
+	return( false );
+}
+
+CS_STRING CDNSResolver::CreateIP( const struct in_addr *pAddr ) 
+{ 
+	struct in_addr inAddr;
+	memcpy( (struct in_addr *)&inAddr, pAddr, sizeof( inAddr ) );
+	return( inet_ntoa( inAddr ) ); 
+}
+
+#endif /* ___DO_THREADS */
 #ifdef HAVE_LIBSSL
 bool InitSSL( ECompType eCompressionType )
 {
@@ -128,47 +242,43 @@ unsigned long long millitime()
 	return( iTime );
 }
 
-bool GetHostByName( const CS_STRING & sHostName, struct in_addr *paddr )
+int GetHostByName( const CS_STRING & sHostName, struct in_addr *paddr, u_int iNumRetries )
 {
-	bool bRet = false;
+	int iReturn = HOST_NOT_FOUND;
 	struct hostent *hent = NULL;
 #ifdef __linux__
 	char hbuff[2048];
 	struct hostent hentbuff;
 
 	int err;
-	for( u_int a = 0; a < 20; a++ )
+	for( u_int a = 0; a < iNumRetries; a++ )
 	{
 		memset( (char *)hbuff, '\0', 2048 );
-		int iRet = gethostbyname_r( sHostName.c_str(), &hentbuff, hbuff, 2048, &hent, &err );
+		iReturn = gethostbyname_r( sHostName.c_str(), &hentbuff, hbuff, 2048, &hent, &err );
 
-		if ( iRet == 0 )
-		{
-			bRet = true;
+		if ( iReturn == 0 )
 			break;
-		}
 
-		if ( iRet != TRY_AGAIN )
+		if ( iReturn != TRY_AGAIN )
 			break;
 
 		PERROR( "gethostbyname_r" );
 	}
-
-	if ( !hent )
-		bRet = false;
+	if ( ( !hent ) && ( iReturn == 0 ) )
+		iReturn = HOST_NOT_FOUND;
 #else
 	hent = gethostbyname( sHostName.c_str() );
 	PERROR( "gethostbyname" );
 
 	if ( hent )
-		bRet = true;
+		iReturn = 0;
 
 #endif /* __linux__ */
 
-	if ( bRet )
-		memcpy( &paddr->s_addr, hent->h_addr_list[0], 4 );
+	if ( iReturn == 0 )
+		memcpy( &paddr->s_addr, hent->h_addr_list[0], sizeof( paddr->s_addr ) );
 
-	return( bRet );
+	return( iReturn );
 }
 
 #ifndef _NO_CSOCKET_NS // some people may not want to use a namespace
@@ -255,13 +365,13 @@ Csock::Csock( int itimeout )
 	Init( "", 0, itimeout );
 }
 
-Csock::Csock( const CS_STRING & sHostname, int iport, int itimeout )
+Csock::Csock( const CS_STRING & sHostname, u_short iport, int itimeout )
 {
 	Init( sHostname, iport, itimeout );
 }
 
 // override this for accept sockets
-Csock *Csock::GetSockObj( const CS_STRING & sHostname, int iPort )
+Csock *Csock::GetSockObj( const CS_STRING & sHostname, u_short iPort )
 {
 	return( NULL );
 }
@@ -274,6 +384,14 @@ Csock *Csock::GetSockObj( const CS_STRING & sHostname, int iPort )
 
 Csock::~Csock()
 {
+#ifdef ___DO_THREADS
+	m_cResolver.lock();
+	CDNSResolver::EStatus eStatus = m_cResolver.Status();
+	m_cResolver.unlock();
+	if ( eStatus == CDNSResolver::RUNNING )
+		m_cResolver.cancel();
+#endif /* __DO_THREADS_ */
+
 	if ( m_iReadSock != m_iWriteSock )
 	{
 		CS_CLOSE( m_iReadSock );
@@ -356,51 +474,47 @@ Csock & Csock::operator<<( double i )
 	return( *this );
 }
 
-bool Csock::Connect( const CS_STRING & sBindHost )
+bool Csock::Connect( const CS_STRING & sBindHost, bool bSkipSetup )
 {
-	// create the socket
-	m_iReadSock = m_iWriteSock = SOCKET();
-
-	if ( m_iReadSock == -1 )
-		return( false );
-
-	m_address.sin_family = PF_INET;
-	m_address.sin_port = htons( m_iport );
-
-	if ( !GetHostByName( m_shostname, &(m_address.sin_addr) ) )
-		return( false );
-
-	// bind to a hostname if requested
-	if ( !sBindHost.empty() )
+	if ( !bSkipSetup )
 	{
-		struct sockaddr_in vh;
-
-		vh.sin_family = PF_INET;
-		vh.sin_port = htons( 0 );
-
-		if ( !GetHostByName( sBindHost, &(vh.sin_addr) ) )
+		if ( !CreateSocksFD() )
 			return( false );
 
-		// try to bind 3 times, otherwise exit failure
-		bool bBound = false;
-		for( int a = 0; a < 3; a++ )
+		int iDNSRet = ETIMEDOUT;
+		while( true )
 		{
-			if ( bind( m_iReadSock, (struct sockaddr *) &vh, sizeof( vh ) ) == 0 )
-			{
-				bBound = true;
-				break;
-			}
-#ifdef _WIN32
-			Sleep( 5000 );
-#else
-			usleep( 5000 );	// quick pause, common lets BIND!)(!*!
-#endif /* _WIN32 */
+			iDNSRet = DNSLookup( DNS_VHOST );
+			if ( iDNSRet == EAGAIN )
+				continue;
+
+			break;
 		}
-
-		if ( !bBound )
-		{
-			CS_DEBUG( "Failure to bind to " << sBindHost );
+		if ( iDNSRet != 0 )
 			return( false );
+
+		// bind to a hostname if requested
+		m_sBindHost = sBindHost;
+		if ( !sBindHost.empty() )
+		{
+			// try to bind 3 times, otherwise exit failure
+			bool bBound = false;
+			for( int a = 0; a < 3 && !bBound; a++ )
+			{
+				if ( SetupVHost() )
+					bBound = true;
+#ifdef _WIN32
+				Sleep( 5000 );
+#else
+				usleep( 5000 );	// quick pause, common lets BIND!)(!*!
+#endif /* _WIN32 */
+			}
+
+			if ( !bBound )
+			{
+				CS_DEBUG( "Failure to bind to " << sBindHost );
+				return( false );
+			}
 		}
 	}
 
@@ -440,6 +554,9 @@ bool Csock::Connect( const CS_STRING & sBindHost )
 		fcntl( m_iReadSock, F_SETFL, fdflags );
 #endif /* _WIN32 */
 	}
+
+	if ( m_eConState != CST_OK )
+		m_eConState = CST_OK;
 
 	return( true );
 }
@@ -504,7 +621,7 @@ int Csock::ReadSelect()
 	return( SEL_OK );
 }
 
-bool Csock::Listen( int iPort, int iMaxConns, const CS_STRING & sBindHost, u_int iTimeout )
+bool Csock::Listen( u_short iPort, int iMaxConns, const CS_STRING & sBindHost, u_int iTimeout )
 {
 	m_iReadSock = m_iWriteSock = SOCKET( true );
 	m_iConnType = LISTENER;
@@ -513,17 +630,18 @@ bool Csock::Listen( int iPort, int iMaxConns, const CS_STRING & sBindHost, u_int
 	if ( m_iReadSock == -1 )
 		return( false );
 
+	m_sBindHost = sBindHost;
+
 	m_address.sin_family = PF_INET;
 	if ( sBindHost.empty() )
 		m_address.sin_addr.s_addr = htonl( INADDR_ANY );
 	else
 	{
-		if ( !GetHostByName( sBindHost, &(m_address.sin_addr) ) )
+		if ( GetHostByName( sBindHost, &(m_address.sin_addr) ) != 0 )
 			return( false );
 	}
 	m_address.sin_port = htons( iPort );
 	memset( &(m_address.sin_zero), '\0', sizeof( m_address.sin_zero ) );
-// TODO	bzero(&(m_address.sin_zero), 8);
 
 	if ( bind( m_iReadSock, (struct sockaddr *) &m_address, sizeof( m_address ) ) == -1 )
 		return( false );
@@ -546,7 +664,7 @@ bool Csock::Listen( int iPort, int iMaxConns, const CS_STRING & sBindHost, u_int
 	return( true );
 }
 
-int Csock::Accept( CS_STRING & sHost, int & iRPort )
+int Csock::Accept( CS_STRING & sHost, u_short & iRPort )
 {
 	struct sockaddr_in client;
 	socklen_t clen = sizeof(struct sockaddr);
@@ -844,6 +962,9 @@ bool Csock::Write( const char *data, int len )
 	m_sSend.append( data, len );
 
 	if ( m_sSend.empty() )
+		return( true );
+
+	if ( m_eConState != CST_OK )
 		return( true );
 
 	if ( m_bBLOCK )
@@ -1198,7 +1319,7 @@ double Csock::GetAvgWrite( unsigned long long iSample )
 	return( ( (double)m_iBytesWritten / ( (double)iDifference / (double)iSample ) ) );
 }
 
-int Csock::GetRemotePort()
+u_short Csock::GetRemotePort()
 {
 	if ( m_iRemotePort > 0 )
 		return( m_iRemotePort );
@@ -1216,7 +1337,7 @@ int Csock::GetRemotePort()
 	return( m_iRemotePort );
 }
 
-int Csock::GetLocalPort()
+u_short Csock::GetLocalPort()
 {
 	if ( m_iLocalPort > 0 )
 		return( m_iLocalPort );
@@ -1234,8 +1355,8 @@ int Csock::GetLocalPort()
 	return( m_iLocalPort );
 }
 
-int Csock::GetPort() { return( m_iport ); }
-void Csock::SetPort( int iPort ) { m_iport = iPort; }
+u_short Csock::GetPort() { return( m_iport ); }
+void Csock::SetPort( u_short iPort ) { m_iport = iPort; }
 void Csock::Close() { m_bClosed = true; }
 bool Csock::isClosed() { return( m_bClosed ); }
 void Csock::BlockIO( bool bBLOCK ) { m_bBLOCK = bBLOCK; }
@@ -1516,6 +1637,102 @@ int Csock::GetPending()
 #endif /* HAVE_LIBSSL */
 }
 
+int Csock::DNSLookup( EDNSLType eDNSLType )
+{
+	if ( eDNSLType == DNS_VHOST )
+	{
+		if ( m_sBindHost.empty() )
+		{
+			if ( m_eConState != CST_OK )
+				m_eConState = CST_BINDVHOST;
+			return( 0 );
+		}
+
+		m_bindhost.sin_family = PF_INET;
+		m_bindhost.sin_port = htons( 0 );
+	}
+
+#ifdef ___DO_THREADS
+	if ( m_iDNSTryCount == 0 )
+	{
+		m_cResolver.Lookup( ( eDNSLType == DNS_VHOST ) ? m_sBindHost : m_shostname );
+		m_iDNSTryCount++;
+	}
+   
+	if ( m_cResolver.IsCompleted() )
+	{
+		m_iDNSTryCount = 0;
+		if ( m_cResolver.Suceeded() )
+		{
+			if ( eDNSLType == DNS_VHOST )
+				memcpy( &(m_bindhost.sin_addr), m_cResolver.GetAddr(), sizeof( m_bindhost.sin_addr ) );
+			else
+				memcpy( &(m_address.sin_addr), m_cResolver.GetAddr(), sizeof( m_address.sin_addr ) );
+
+			if ( m_eConState != CST_OK )
+				m_eConState = ( ( eDNSLType == DNS_VHOST ) ? CST_BINDVHOST : CST_VHOSTDNS );
+
+			return( 0 );
+		}
+
+		return( ETIMEDOUT );
+	}
+	return( EAGAIN );
+	
+#else
+	int iRet;
+	if ( eDNSLType == DNS_VHOST )
+		iRet = GetHostByName( m_sBindHost, &(m_bindhost.sin_addr), 1 );
+	else
+		iRet = GetHostByName( m_shostname, &(m_address.sin_addr), 1 );
+
+	if ( iRet == 0 )
+	{
+		if ( m_eConState != CST_OK )
+			m_eConState = ( ( eDNSLType == DNS_VHOST ) ? CST_BINDVHOST : CST_VHOSTDNS );
+		m_iDNSTryCount = 0;
+		return( 0 );
+	}
+	else if ( iRet == TRY_AGAIN )
+	{
+		m_iDNSTryCount++;
+		if ( m_iDNSTryCount > 20 )
+		{
+			m_iDNSTryCount = 0;
+			return( ETIMEDOUT );
+		}
+		return( EAGAIN );
+	}
+	m_iDNSTryCount = 0;
+	return( ETIMEDOUT );
+#endif /* ___DO_THREADS */
+}
+
+bool Csock::SetupVHost()
+{
+	if ( m_sBindHost.empty() )
+	{
+		if ( m_eConState != CST_OK )
+			m_eConState = CST_CONNECT;
+
+		return( true );
+	}
+	if ( bind( m_iReadSock, (struct sockaddr *) &m_bindhost, sizeof( m_bindhost ) ) == 0 )
+	{
+		if ( m_eConState != CST_OK )
+			m_eConState = CST_CONNECT;
+		return( true );
+	}
+	m_iCurBindCount++;
+	if ( m_iCurBindCount > 3 )
+	{
+		CS_DEBUG( "Failure to bind to " << m_sBindHost );
+		return( false );
+	}
+
+	return( true );
+}
+
 #ifdef HAVE_LIBSSL
 void Csock::FREE_SSL()
 {
@@ -1555,7 +1772,7 @@ int Csock::SOCKET( bool bListen )
 	return( iRet );
 }
 
-void Csock::Init( const CS_STRING & sHostname, int iport, int itimeout )
+void Csock::Init( const CS_STRING & sHostname, u_short iport, int itimeout )
 {
 #ifdef HAVE_LIBSSL
 	m_ssl = NULL;
@@ -1591,5 +1808,8 @@ void Csock::Init( const CS_STRING & sHostname, int iport, int itimeout )
 	m_iStartTime = millitime();
 	m_bPauseRead = false;
 	m_iTimeoutType = TMO_ALL;
+	m_eConState = CST_OK;	// default should be ok
+	m_iDNSTryCount = 0;
+	m_iCurBindCount = 0;
 }
 

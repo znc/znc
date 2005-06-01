@@ -893,8 +893,8 @@ void CUserSock::HelpUser() {
 	}
 }
 
-bool CUserSock::ConnectionFrom(const CString& sHost, int iPort) {
-	DEBUG_ONLY(cout << GetSockName() << " == ConnectionFrom(" << sHost << ", " << iPort << ")" << endl);
+bool CUserSock::ConnectionFrom(const CString& sHost, unsigned short uPort) {
+	DEBUG_ONLY(cout << GetSockName() << " == ConnectionFrom(" << sHost << ", " << uPort << ")" << endl);
 	return m_pZNC->IsHostAllowed(sHost);
 }
 
@@ -970,8 +970,8 @@ void CUserSock::IRCDisconnected() {
 	m_pIRCSock = NULL;
 }
 
-Csock* CUserSock::GetSockObj(const CString& sHost, int iPort) {
-	CUserSock* pSock = new CUserSock(sHost, iPort);
+Csock* CUserSock::GetSockObj(const CString& sHost, unsigned short uPort) {
+	CUserSock* pSock = new CUserSock(sHost, uPort);
 	pSock->SetZNC(m_pZNC);
 
 	return pSock;

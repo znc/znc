@@ -15,7 +15,7 @@ public:
 	CUserSock() : Csock() {
 		Init();
 	}
-	CUserSock(const CString& sHostname, int iport, int itimeout = 60) : Csock(sHostname, iport, itimeout) {
+	CUserSock(const CString& sHostname, unsigned short uPort, int itimeout = 60) : Csock(sHostname, uPort, itimeout) {
 		Init();
 	}
 	virtual ~CUserSock() {}
@@ -55,8 +55,8 @@ public:
 	virtual void Connected();
 	virtual void Disconnected();
 	virtual void ConnectionRefused();
-	virtual bool ConnectionFrom(const CString& sHost, int iPort);
-	virtual Csock* GetSockObj(const CString& sHost, int iPort);
+	virtual bool ConnectionFrom(const CString& sHost, unsigned short uPort);
+	virtual Csock* GetSockObj(const CString& sHost, unsigned short uPort);
 
 	void SetZNC(CZNC* pZNC) { m_pZNC = pZNC; }
 	void SetNick(const CString& s);

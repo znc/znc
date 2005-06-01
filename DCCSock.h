@@ -35,7 +35,7 @@ public:
 		m_bNoDelFile = false;
 	}
 
-/*	CDCCSock(CUser* pUser, const CString& sHostname, int iport, int itimeout = 60) : Csock(sHostname, iport, itimeout) {
+/*	CDCCSock(CUser* pUser, const CString& sHostname, unsigned short uPort, int itimeout = 60) : Csock(sHostname, uPort, itimeout) {
 		m_uRemotePort = 0;
 		m_uBytesSoFar = 0;
 		m_uFileSize = 0;
@@ -58,7 +58,7 @@ public:
 	virtual void Connected();
 	virtual void Disconnected();
 	void SendPacket();
-	Csock* GetSockObj(const CString& sHost, int iPort);
+	Csock* GetSockObj(const CString& sHost, unsigned short uPort);
 	CFile* OpenFile(bool bWrite = true);
 	bool Seek(unsigned int uPos) {
 		if (m_pFile) {
