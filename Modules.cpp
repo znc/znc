@@ -125,7 +125,7 @@ CSocket::~CSocket() {
 
 bool CSocket::Connect(const CString& sHostname, unsigned short uPort, bool bSSL, unsigned int uTimeout) {
 	CString sSockName = "MOD::C::" + m_pModule->GetModName() + "::" + m_pModule->GetUser()->GetUserName();
-	return m_pModule->GetManager()->Connect(sHostname, uPort, sSockName, uTimeout, false, m_pModule->GetUser()->GetVHost(), (Csock*) this);
+	return m_pModule->GetManager()->Connect(sHostname, uPort, sSockName, uTimeout, bSSL, m_pModule->GetUser()->GetVHost(), (Csock*) this);
 }
 
 bool CSocket::Listen(unsigned short uPort, bool bSSL, unsigned int uTimeout) {
@@ -383,15 +383,27 @@ void CModule::ListSockets() {
 	CTable Table;
 	Table.AddColumn("Name");
 	Table.AddColumn("State");
+	Table.AddColumn("LocalPort");
+	Table.AddColumn("SSL");
 	Table.AddColumn("RemoteIP");
+	Table.AddColumn("RemotePort");
 
 	for (unsigned int a = 0; a < m_vSockets.size(); a++) {
 		CSocket* pSocket = (CSocket*) m_vSockets[a];
 
 		Table.AddRow();
 		Table.SetCell("Name", pSocket->GetLabel());
-		Table.SetCell("State", (pSocket->IsConnected() ? "Connected" : ""));
+
+		if (pSocket->GetType() == CSocket::LISTENER) {
+			Table.SetCell("State", "Listening");
+		} else {
+			Table.SetCell("State", (pSocket->IsConnected() ? "Connected" : ""));
+		}
+
+		Table.SetCell("LocalPort", CString::ToString(pSocket->GetLocalPort()));
+		Table.SetCell("SSL", (pSocket->GetSSL() ? "yes" : "no"));
 		Table.SetCell("RemoteIP", pSocket->GetRemoteIP());
+		Table.SetCell("RemotePort", (pSocket->GetRemotePort()) ? CString::ToString(pSocket->GetRemotePort()) : CString(""));
 	}
 
 	if (Table.size()) {
