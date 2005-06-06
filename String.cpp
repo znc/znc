@@ -192,6 +192,8 @@ CString CString::ToKBytes(double d) {
 	return szRet;
 }
 
+short CString::ToShort() const { return strtoul(this->c_str(), (char**) NULL, 10); }
+unsigned short CString::ToUShort() const { return strtoul(this->c_str(), (char**) NULL, 10); }
 unsigned int CString::ToUInt() const { return strtoul(this->c_str(), (char**) NULL, 10); }
 int CString::ToInt() const { return strtoul(this->c_str(), (char**) NULL, 10); }
 unsigned long long CString::ToULongLong() const { return strtoull( c_str(), NULL, 10); }
