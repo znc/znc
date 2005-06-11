@@ -196,7 +196,7 @@ short CString::ToShort() const { return strtoul(this->c_str(), (char**) NULL, 10
 unsigned short CString::ToUShort() const { return strtoul(this->c_str(), (char**) NULL, 10); }
 unsigned int CString::ToUInt() const { return strtoul(this->c_str(), (char**) NULL, 10); }
 int CString::ToInt() const { return strtoul(this->c_str(), (char**) NULL, 10); }
-unsigned long long CString::ToULongLong() const { return strtoull( c_str(), NULL, 10); }
+unsigned long long CString::ToULongLong() const { return strtoull(c_str(), NULL, 10); }
 long long CString::ToLongLong() const { return strtoll(c_str(), NULL, 10); }
 double CString::ToDouble() const { return strtod(c_str(), NULL); }
 
@@ -251,70 +251,68 @@ bool CString::RightChomp(unsigned int uLen) {
 }
 
 //////////////// MCString ////////////////
-int MCString::WriteToDisk( const CString & sPath, mode_t iMode )
-{
-	CFile cFile( sPath );
-	if ( !cFile.Open( O_WRONLY|O_CREAT|O_TRUNC, iMode ) )
-		return( MCS_EOPEN );
+int MCString::WriteToDisk(const CString& sPath, mode_t iMode) {
+	CFile cFile(sPath);
+	if (!cFile.Open(O_WRONLY|O_CREAT|O_TRUNC, iMode)) {
+		return MCS_EOPEN;
+	}
 
-	for( MCString::iterator it = this->begin(); it != this->end(); it++ )
-	{
+	for (MCString::iterator it = this->begin(); it != this->end(); it++) {
 		CString sKey = it->first;
 		CString sValue = it->second;
-		if ( !WriteFilter( sKey, sValue ) )
-			return( MCS_EWRITEFIL );
+		if (!WriteFilter(sKey, sValue)) {
+			return MCS_EWRITEFIL;
+		}
 
-		if ( sKey.empty() )
+		if (sKey.empty()) {
 			continue;
+		}
 
-		if ( cFile.Write( Encode( sKey ) + " " +  Encode( sValue ) + "\n" ) <= 0 )
-			return( MCS_EWRITE );
+		if (cFile.Write(Encode(sKey) + " " +  Encode(sValue) + "\n") <= 0) {
+			return MCS_EWRITE;
+		}
 	}
 
 	cFile.Close();
 
-	return( MCS_SUCCESS );
+	return MCS_SUCCESS;
 }
 
-int MCString::ReadFromDisk( const CString & sPath, mode_t iMode )
-{
+int MCString::ReadFromDisk(const CString& sPath, mode_t iMode) {
 	clear();
-	CFile cFile( sPath );
-	if ( !cFile.Open( O_RDONLY|O_CREAT, iMode ) )
-		return( MCS_EOPEN );
+	CFile cFile(sPath);
+	if (!cFile.Open(O_RDONLY|O_CREAT, iMode)) {
+		return MCS_EOPEN;
+	}
 
 	CString sBuffer;
 
-	while( cFile.ReadLine( sBuffer ) )
-	{
+	while (cFile.ReadLine(sBuffer)) {
 		sBuffer.Trim();
-		CString sKey = sBuffer.Token( 0 );
-		CString sValue = sBuffer.Token( 1 );
-		Decode( sKey );
-		Decode( sValue );
-		
-		if ( !ReadFilter( sKey, sValue ) )
-			return( MCS_EREADFIL );
+		CString sKey = sBuffer.Token(0);
+		CString sValue = sBuffer.Token(1);
+		Decode(sKey);
+		Decode(sValue);
+
+		if (!ReadFilter(sKey, sValue))
+			return MCS_EREADFIL;
 
 		(*this)[sKey] = sValue;
 	}
 	cFile.Close();
-	
-	return( MCS_SUCCESS );
+
+	return MCS_SUCCESS;
 }
 
 
 static const char hexdigits[] = "0123456789abcdef";
 
-CString & MCString::Encode( CString & sValue )
-{
+CString& MCString::Encode(CString& sValue) {
 	CString sTmp;
-	for( CString::iterator it = sValue.begin(); it != sValue.end(); it++ )
-	{
-		if ( isalnum( *it ) )	
+	for (CString::iterator it = sValue.begin(); it != sValue.end(); it++) {
+		if (isalnum(*it)) {
 			sTmp += *it;
-		else
-		{
+		} else {
 			sTmp += "%";
 			sTmp += hexdigits[*it >> 4];
 			sTmp += hexdigits[*it & 0xf];
@@ -322,35 +320,30 @@ CString & MCString::Encode( CString & sValue )
 		}
 	}
 	sValue = sTmp;
-	return( sValue );
+	return sValue;
 }
 
-CString & MCString::Decode( CString & sValue )
-{
+CString& MCString::Decode(CString& sValue) {
 	const char *pTmp = sValue.c_str();
 	char *endptr;
 	CString sTmp;
-	while( *pTmp )
-	{
-		if ( *pTmp != '%' )
+
+	while(*pTmp) {
+		if (*pTmp != '%') {
 			sTmp += *pTmp++;
-		else
-		{
-			char ch = (char )strtol( ((const char *)pTmp + 1), &endptr, 16 );
-			if ( *endptr == ';' )
-			{
+		} else {
+			char ch = (char )strtol(((const char *)pTmp + 1), &endptr, 16);
+			if (*endptr == ';') {
 				sTmp += ch;
 				pTmp = ++endptr;
-			}
-			else
-			{
+			} else {
 				sTmp += *pTmp++;
 			}
 		}
 	}
 
 	sValue = sTmp;
-	return( sValue );
+	return sValue;
 }
 
 

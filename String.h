@@ -67,9 +67,9 @@ private:
 protected:
 };
 
-class MCString : public std::map< CString, CString > {
+class MCString : public std::map<CString, CString> {
 public:
-	MCString() : std::map< CString, CString >() {}
+	MCString() : std::map<CString, CString>() {}
 	virtual ~MCString() { clear(); }
 
 	enum
@@ -81,15 +81,15 @@ public:
 		MCS_EREADFIL	= 4
 	};
 
-	int WriteToDisk( const CString & sPath, mode_t iMode = 0644 );
-	int ReadFromDisk( const CString & sPath, mode_t iMode = 0644 );
+	int WriteToDisk(const CString& sPath, mode_t iMode = 0644);
+	int ReadFromDisk(const CString& sPath, mode_t iMode = 0644);
 
-	virtual bool WriteFilter( CString & sKey, CString & sValue ) { return( true ); }
-	virtual bool ReadFilter( CString & sKey, CString & sValue ) { return( true ); }
+	virtual bool WriteFilter(CString& sKey, CString& sValue) { return true; }
+	virtual bool ReadFilter(CString& sKey, CString& sValue) { return true; }
 
 	//! make them parse safe, right now using hex encoding on anything !isalnum
-	virtual CString & Encode( CString & sValue );
-	virtual CString & Decode( CString & sValue );
+	virtual CString& Encode(CString& sValue);
+	virtual CString& Decode(CString& sValue);
 };
 
 #endif // !X_STRING_H
