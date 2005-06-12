@@ -20,6 +20,9 @@
  *
  * 
  * $Log$
+ * Revision 1.15  2005/06/12 09:04:39  prozacx
+ * Changed to new GetSavePath()
+ *
  * Revision 1.14  2005/05/26 20:42:13  prozacx
  * Moved GetDescription() into second argument of MODULEDEFS()
  *
@@ -300,8 +303,7 @@ public:
 	CString GetPath()
 	{
 		CString sBuffer = m_pUser->GetUserName();
-		CString sRet = m_pUser->GetDataPath() + "/away";
-		CUtils::MakeDir(sRet);
+		CString sRet = GetSavePath();
 		sRet += "/.znc-away-" + CBlowfish::MD5( sBuffer, true );
 		return( sRet );
 	}

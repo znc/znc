@@ -26,6 +26,9 @@
  * better solution then plain text.
  * 
  * $Log$
+ * Revision 1.26  2005/06/12 09:04:39  prozacx
+ * Changed to new GetSavePath()
+ *
  * Revision 1.25  2005/05/26 20:42:13  prozacx
  * Moved GetDescription() into second argument of MODULEDEFS()
  *
@@ -309,8 +312,7 @@ public:
 	CString GetPath( const CString & sChannel )
 	{
 		CString sBuffer = m_pUser->GetUserName() + Lower( sChannel );
-		CString sRet = m_pUser->GetDataPath() + "/" + GetModName();
-		CUtils::MakeDir(sRet);
+		CString sRet = GetSavePath();
 		sRet += "/" + CBlowfish::MD5( sBuffer, true );
 		return( sRet );
 	}
