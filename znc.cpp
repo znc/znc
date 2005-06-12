@@ -245,22 +245,22 @@ void CZNC::InitDirs(const CString& sArgvPath) {
 	m_sZNCPath = m_sHomePath + "/.znc";
 
 	// Other dirs that we use
-	m_sDLPath = m_sZNCPath + "/downloads";
+	m_sConfPath = m_sZNCPath + "/configs";
 	m_sModPath = m_sZNCPath + "/modules";
-	m_sDataPath = m_sZNCPath + "/data";
+	m_sUserPath = m_sZNCPath + "/users";
 }
 
 
-CString CZNC::GetConfigPath(const CString& sConfigFile) {
+CString CZNC::ExpandConfigPath(const CString& sConfigFile) {
 	CString sRetPath;
 
 	if (sConfigFile.empty()) {
-		sRetPath = GetZNCPath() + "/znc.conf";
+		sRetPath = GetConfPath() + "/znc.conf";
 	} else {
 		if (sConfigFile.Left(2) == "./" || sConfigFile.Left(3) == "../") {
 			sRetPath = GetCurPath() + "/" + sConfigFile;
 		} else if (sConfigFile.Left(1) != "/") {
-			sRetPath = GetZNCPath() + "/" + sConfigFile;
+			sRetPath = GetConfPath() + "/" + sConfigFile;
 		} else {
 			sRetPath = sConfigFile;
 		}
@@ -460,7 +460,7 @@ bool CZNC::WriteNewConfig(const CString& sConfig) {
 	} while (CUtils::GetBoolInput("Would you like to setup another user?", false));
 	// !User
 
-	CString sConfigFile = GetConfigPath(sConfig);
+	CString sConfigFile = ExpandConfigPath(sConfig);
 	CUtils::PrintAction("Writing config [" + sConfigFile + "]");
 	CFile File(sConfigFile);
 
@@ -490,7 +490,7 @@ bool CZNC::WriteNewConfig(const CString& sConfig) {
 
 bool CZNC::ParseConfig(const CString& sConfig) {
 	CString sStatusPrefix;
-	CString sConfigFile = GetConfigPath(sConfig);
+	CString sConfigFile = ExpandConfigPath(sConfig);
 
 	CUtils::PrintAction("Opening Config [" + sConfigFile + "]");
 

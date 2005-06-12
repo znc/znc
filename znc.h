@@ -26,7 +26,7 @@ public:
 	bool IsHostAllowed(const CString& sHostMask);
 	void InitDirs(const CString& sArgvPath);
 	bool OnBoot();
-	CString GetConfigPath(const CString& sConfigFile);
+	CString ExpandConfigPath(const CString& sConfigFile);
 	bool WriteNewConfig(const CString& sConfig);
 	static CString GetTag(bool bIncludeVersion = true);
 	CString FindModPath(const CString& sModule) const;
@@ -36,11 +36,11 @@ public:
 	CGlobalModules& GetModules() { return *m_pModules; }
 	unsigned short GetListenPort() const { return m_uListenPort; }
 	const CString& GetCurPath() const { if (!CFile::Exists(m_sCurPath)) { CUtils::MakeDir(m_sCurPath); } return m_sCurPath; }
-	const CString& GetDLPath() const { if (!CFile::Exists(m_sDLPath)) { CUtils::MakeDir(m_sDLPath); } return m_sDLPath; }
 	const CString& GetModPath() const { if (!CFile::Exists(m_sModPath)) { CUtils::MakeDir(m_sModPath); } return m_sModPath; }
 	const CString& GetHomePath() const { if (!CFile::Exists(m_sHomePath)) { CUtils::MakeDir(m_sHomePath); } return m_sHomePath; }
 	const CString& GetZNCPath() const { if (!CFile::Exists(m_sZNCPath)) { CUtils::MakeDir(m_sZNCPath); } return m_sZNCPath; }
-	const CString& GetDataPath() const { if (!CFile::Exists(m_sDataPath)) { CUtils::MakeDir(m_sDataPath); } return m_sDataPath; }
+	const CString& GetConfPath() const { if (!CFile::Exists(m_sConfPath)) { CUtils::MakeDir(m_sConfPath); } return m_sConfPath; }
+	const CString& GetUserPath() const { if (!CFile::Exists(m_sUserPath)) { CUtils::MakeDir(m_sUserPath); } return m_sUserPath; }
 	CString GetPemLocation() const { return GetZNCPath() + "/znc.pem"; }
 
 	bool IsSSL() const {
@@ -66,11 +66,11 @@ protected:
 	TSocketManager<Csock>	m_Manager;
 
 	CString					m_sCurPath;
-	CString					m_sDLPath;
 	CString					m_sModPath;
 	CString					m_sHomePath;
 	CString					m_sZNCPath;
-	CString					m_sDataPath;
+	CString					m_sConfPath;
+	CString					m_sUserPath;
 
 	CString					m_sISpoofFile;
 	CString					m_sOrigISpoof;

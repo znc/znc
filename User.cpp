@@ -29,6 +29,8 @@ CUser::CUser(const CString& sUserName, CZNC* pZNC) {
 	m_bKeepBuffer = false;
 	m_pZNC->GetManager().AddCron(new CKeepNickTimer(this));
 	m_pZNC->GetManager().AddCron(new CJoinTimer(this));
+	m_sUserPath = m_pZNC->GetUserPath() + "/" + sUserName;
+	m_sDLPath = GetUserPath() + "/downloads";
 }
 
 CUser::~CUser() {
@@ -520,10 +522,8 @@ bool CUser::ConnectPaused() {
 }
 
 const CString& CUser::GetCurPath() const { return m_pZNC->GetCurPath(); }
-const CString& CUser::GetDLPath() const { return m_pZNC->GetDLPath(); }
 const CString& CUser::GetModPath() const { return m_pZNC->GetModPath(); }
 const CString& CUser::GetHomePath() const { return m_pZNC->GetHomePath(); }
-const CString& CUser::GetDataPath() const { return m_pZNC->GetDataPath(); }
 CString CUser::GetPemLocation() const { return m_pZNC->GetPemLocation(); }
 
 bool CUser::UseClientIP() const { return m_bUseClientIP; }

@@ -9,6 +9,7 @@
 #include <vector>
 #include <set>
 #include "Nick.h"
+#include "FileUtils.h"
 
 using std::vector;
 using std::set;
@@ -99,10 +100,10 @@ public:
 
 	CString FindModPath(const CString& sModule) const;
 	const CString& GetCurPath() const;
-	const CString& GetDLPath() const;
 	const CString& GetModPath() const;
 	const CString& GetHomePath() const;
-	const CString& GetDataPath() const;
+	const CString& GetUserPath() const { if (!CFile::Exists(m_sUserPath)) { CUtils::MakeDir(m_sUserPath); } return m_sUserPath; }
+	const CString& GetDLPath() const { if (!CFile::Exists(m_sDLPath)) { CUtils::MakeDir(m_sDLPath); } return m_sDLPath; }
 	CString GetPemLocation() const;
 
 	bool UseClientIP() const;
@@ -138,6 +139,11 @@ protected:
 	CString			m_sIRCServer;
 	CString			m_sQuitMsg;
 	CString			m_sVersionReply;
+
+	// Paths
+	CString			m_sUserPath;
+	CString			m_sDLPath;
+	// !Paths
 
 	bool				m_bPassHashed;
 	bool				m_bUseClientIP;
