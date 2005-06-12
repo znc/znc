@@ -692,7 +692,7 @@ XS(XS_ZNC_GetString)
 			else if ( sName == "DLPath" ) sReturn = pUser->GetDLPath();
 			else if ( sName == "ModPath" ) sReturn = pUser->GetModPath();
 			else if ( sName == "HomePath" ) sReturn = pUser->GetHomePath();
-			else if ( sName == "DataPath" ) sReturn = pUser->GetDataPath();
+			//else if ( sName == "DataPath" ) sReturn = pUser->GetDataPath();
 			else if ( sName == "StatusPrefix" ) sReturn = pUser->GetStatusPrefix();
 			else if ( sName == "DefaultChanModes" ) sReturn = pUser->GetDefaultChanModes();
 			else if ( sName == "IRCServer" ) sReturn = pUser->GetIRCServer();
