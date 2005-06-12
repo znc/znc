@@ -146,7 +146,11 @@ CModule::CModule(void* pDLL, CUser* pUser, const CString& sModName) {
 	m_pManager = (pUser) ? pUser->GetManager() : NULL;
 	m_pUser = pUser;
 	m_sModName = sModName;
-	LoadRegistry();
+
+	if (m_pUser) {
+		m_sSavePath = m_pUser->GetUserPath() + "/moddata/" + m_sModName;
+		LoadRegistry();
+	}
 }
 
 CModule::CModule(void* pDLL, CZNC* pZNC, const CString& sModName) {
@@ -155,7 +159,11 @@ CModule::CModule(void* pDLL, CZNC* pZNC, const CString& sModName) {
 	m_pManager = (pZNC) ? &pZNC->GetManager() : NULL;
 	m_pUser = NULL;
 	m_sModName = sModName;
-	LoadRegistry();
+
+	if (m_pZNC) {
+		m_sSavePath = m_pZNC->GetZNCPath() + "/moddata/" + m_sModName;
+		LoadRegistry();
+	}
 }
 
 CModule::~CModule() {
@@ -178,11 +186,8 @@ bool CModule::LoadRegistry() {
 		return false;
 	}
 
-	CString sRegistryDir = m_pZNC->GetDataPath() + "/" + m_sModName;
-	CUtils::MakeDir(sRegistryDir);
-	CString sPrefix = (m_pUser) ? m_pUser->GetUserName() : ".global";
-
-	return (m_mssRegistry.ReadFromDisk(sRegistryDir + "/" + sPrefix + "-registry.txt", 0600) == MCString::MCS_SUCCESS);
+	//CString sPrefix = (m_pUser) ? m_pUser->GetUserName() : ".global";
+	return (m_mssRegistry.ReadFromDisk(GetSavePath() + "/.registry", 0600) == MCString::MCS_SUCCESS);
 }
 
 bool CModule::SaveRegistry() {
@@ -190,11 +195,8 @@ bool CModule::SaveRegistry() {
 		return false;
 	}
 
-	CString sRegistryDir = m_pZNC->GetDataPath() + "/" + m_sModName;
-	CUtils::MakeDir(sRegistryDir);
-	CString sPrefix = (m_pUser) ? m_pUser->GetUserName() : ".global";
-
-	return (m_mssRegistry.WriteToDisk(sRegistryDir + "/" + sPrefix + "-registry.txt", 0600) == MCString::MCS_SUCCESS);
+	//CString sPrefix = (m_pUser) ? m_pUser->GetUserName() : ".global";
+	return (m_mssRegistry.WriteToDisk(GetSavePath() + "/.registry", 0600) == MCString::MCS_SUCCESS);
 }
 
 bool CModule::SetNV(const CString & sName, const CString & sValue, bool bWriteToDisk) {

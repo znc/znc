@@ -2,6 +2,7 @@
 #define _MODULES_H
 
 #include "main.h"
+#include "FileUtils.h"
 #include <dlfcn.h>
 #include <vector>
 #include <set>
@@ -260,6 +261,8 @@ public:
 	MCString::iterator BeginNV() { return m_mssRegistry.begin(); }
 	void DelNV(MCString::iterator it) { m_mssRegistry.erase(it); }
 
+	const CString& GetSavePath() const { if (!CFile::Exists(m_sSavePath)) { CUtils::MakeDir(m_sSavePath); } return m_sSavePath; }
+
 	// Setters
 	void SetDescription(const CString& s) { m_sDescription = s; }
 	// !Setters
@@ -279,6 +282,7 @@ protected:
 	CUser*					m_pUser;
 	CZNC*					m_pZNC;
 	CString					m_sModName;
+	CString					m_sSavePath;
 private:
 	MCString				m_mssRegistry; //!< way to save name/value pairs. Note there is no encryption involved in this
 };
