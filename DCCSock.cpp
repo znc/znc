@@ -15,7 +15,7 @@ void CDCCSock::ReadData(const char* data, int len) {
 			memcpy(&iRemoteSoFar, m_sSendBuf.data(), 4);
 			iRemoteSoFar = ntohl(iRemoteSoFar);
 
-			if (iRemoteSoFar >= m_uBytesSoFar) {
+			if ((iRemoteSoFar + 65536) >= m_uBytesSoFar) {
 				SendPacket();
 			}
 
