@@ -133,6 +133,25 @@ bool CSocket::Listen(unsigned short uPort, bool bSSL, unsigned int uTimeout) {
 	return m_pModule->GetManager()->ListenAll(uPort, sSockName, bSSL, SOMAXCONN, (Csock*) this);
 }
 
+bool CSocket::PutIRC(const CString& sLine) {
+	return (m_pModule) ? m_pModule->PutIRC(sLine) : false;
+}
+
+bool CSocket::PutUser(const CString& sLine) {
+	return (m_pModule) ? m_pModule->PutUser(sLine) : false;
+}
+
+bool CSocket::PutStatus(const CString& sLine) {
+	return (m_pModule) ? m_pModule->PutStatus(sLine) : false;
+}
+
+bool CSocket::PutModule(const CString& sLine, const CString& sIdent, const CString& sHost) {
+	return (m_pModule) ? m_pModule->PutModule(sLine, sIdent, sHost) : false;
+}
+bool CSocket::PutModNotice(const CString& sLine, const CString& sIdent, const CString& sHost) {
+	return (m_pModule) ? m_pModule->PutModNotice(sLine, sIdent, sHost) : false;
+}
+
 void CSocket::SetModule(CModule* p) { m_pModule = p; }
 void CSocket::SetLabel(const CString& s) { m_sLabel = s; }
 
