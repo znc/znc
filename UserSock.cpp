@@ -200,7 +200,7 @@ void CUserSock::ReadLine(const CString& sData) {
 			sCTCP.LeftChomp();
 			sCTCP.RightChomp();
 
-			if (strncasecmp(sCTCP.c_str(), "DCC ", 4) == 0) {
+			if (strncasecmp(sCTCP.c_str(), "DCC ", 4) == 0 && m_pUser && m_pUser->BounceDCCs()) {
 				CString sType = sCTCP.Token(1);
 				CString sFile = sCTCP.Token(2);
 				unsigned long uLongIP = strtoul(sCTCP.Token(3).c_str(), NULL, 10);

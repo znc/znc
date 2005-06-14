@@ -626,7 +626,7 @@ bool CIRCSock::OnPrivCTCP(const CString& sNickMask, CString& sMessage) {
 			CString sVersionReply = m_pUser->GetVersionReply();
 			PutServ("NOTICE " + CNick(sNickMask).GetNick() + " :\001VERSION " + sVersionReply + "\001");
 		}
-	} else if (strncasecmp(sMessage.c_str(), "DCC ", 4) == 0) {
+	} else if (strncasecmp(sMessage.c_str(), "DCC ", 4) == 0 && m_pUser && m_pUser->BounceDCCs()) {
 		// DCC CHAT chat 2453612361 44592
 		CString sType = sMessage.Token(1);
 		CString sFile = sMessage.Token(2);

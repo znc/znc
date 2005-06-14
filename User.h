@@ -71,6 +71,7 @@ public:
 	void SetRealName(const CString& s);
 	void SetVHost(const CString& s);
 	void SetPass(const CString& s, bool bHashed);
+	void SetBounceDCCs(bool b);
 	void SetUseClientIP(bool b);
 	void SetKeepNick(bool b);
 	void SetDenyLoadMod(bool b);
@@ -109,6 +110,7 @@ public:
 	bool UseClientIP() const;
 	bool GetKeepNick() const;
 	bool DenyLoadMod() const;
+	bool BounceDCCs() const;
 	const CString& GetStatusPrefix() const;
 	const CString& GetDefaultChanModes() const;
 	const vector<CChan*>& GetChans() const;
@@ -145,6 +147,7 @@ protected:
 	CString			m_sDLPath;
 	// !Paths
 
+	bool				m_bBounceDCCs;
 	bool				m_bPassHashed;
 	bool				m_bUseClientIP;
 	bool				m_bKeepNick;

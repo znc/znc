@@ -20,6 +20,7 @@ CUser::CUser(const CString& sUserName, CZNC* pZNC) {
 #ifdef _MODULES
 	m_pModules = new CModules(pZNC);
 #endif
+	m_bBounceDCCs = true;
 	m_bPassHashed = false;
 	m_bUseClientIP = false;
 	m_bKeepNick = false;
@@ -452,6 +453,7 @@ void CUser::SetIdent(const CString& s) { m_sIdent = s; }
 void CUser::SetRealName(const CString& s) { m_sRealName = s; }
 void CUser::SetVHost(const CString& s) { m_sVHost = s; }
 void CUser::SetPass(const CString& s, bool bHashed) { m_sPass = s; m_bPassHashed = bHashed; }
+void CUser::SetBounceDCCs(bool b) { m_bBounceDCCs = b; }
 void CUser::SetUseClientIP(bool b) { m_bUseClientIP = b; }
 void CUser::SetKeepNick(bool b) { m_bKeepNick = b; }
 void CUser::SetDenyLoadMod(bool b) { m_bDenyLoadMod = b; }
@@ -529,6 +531,7 @@ CString CUser::GetPemLocation() const { return m_pZNC->GetPemLocation(); }
 bool CUser::UseClientIP() const { return m_bUseClientIP; }
 bool CUser::GetKeepNick() const { return m_bKeepNick; }
 bool CUser::DenyLoadMod() const { return m_bDenyLoadMod; }
+bool CUser::BounceDCCs() const { return m_bBounceDCCs; }
 const CString& CUser::GetStatusPrefix() const { return m_sStatusPrefix; }
 const CString& CUser::GetDefaultChanModes() const { return m_sDefaultChanModes; }
 const vector<CChan*>& CUser::GetChans() const { return m_vChans; }

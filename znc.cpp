@@ -698,6 +698,9 @@ bool CZNC::ParseConfig(const CString& sConfig) {
 						}
 
 						continue;
+					} else if (sName.CaseCmp("BounceDCCs") == 0) {
+						pUser->SetBounceDCCs(sValue.CaseCmp("true") == 0);
+						continue;
 					} else if (sName.CaseCmp("AutoCycle") == 0) {
 						bAutoCycle = (sValue.CaseCmp("true") == 0);
 						continue;
