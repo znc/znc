@@ -1,0 +1,41 @@
+Requires the global module g_modperl.so
+
+- oopish perl modules (man perlobj, also see Example.pm)
+- Has all the same callbacks as c++ code, with the same arguments
+- special destructor should be used instead of perl DESTROY
+	- OnShutdown, reason for this is during that destructor the user object
+	  inside g_modperl is available for use
+
+
+
+- Builting Sockets -
+- includes builtin sock support (see ExampleWithSocks.pm)
+- can be used two methods
+	- method one is directly in your module itself, the sock fd is passed
+	  around for your reference. The sock fd is ALWAYS the first argument
+	- method two is to instantiate in a new perl class (as used in
+	  ExampleWithSocks.pm)
+
+- methods receiving callbacks are:
+	- OnSockDestroy() -- when this sock is being destroyed
+	- OnConnect( iParentFD ) -- called on the inbound/outbound socket, if this 
+	  is created from a listening socket, iParentFD will be > -1
+	- OnConnectionFrom( sRemoteHost, iRemotePort ) -- called on the listening 
+	  socket when an inbound connection is coming in. If you return anything but
+	  ZNC::CONTINUE, the connection will be denied.
+	- OnError( iErrorNum ) -- called when an error occurs. errno.h contains valid 
+	  error codes
+	- OnConnectionRefused() -- called when an outbound connection is refused
+	- OnTimeout() -- called when a connection times out
+	- OnDisconnect() -- called when a connection is closed
+	- ReadData( data, len ) -- called when data comes in, len contains the length
+	  of the data being sent in
+	- ReadLine( line ) -- called when a line (ended by \n) comes down. You must
+	  enable readline when the socket is creatd (via connect or listen)
+	
+	NOTE: all of the socket stuff is a basic wrapper around Csocket, and full
+	documentation can be found at http://csocket.net/docs/annotated.html
+	
+
+
+
