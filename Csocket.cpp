@@ -476,6 +476,8 @@ Csock & Csock::operator<<( double i )
 
 bool Csock::Connect( const CS_STRING & sBindHost, bool bSkipSetup )
 {
+	// bind to a hostname if requested
+	m_sBindHost = sBindHost;
 	if ( !bSkipSetup )
 	{
 		if ( !CreateSocksFD() )
@@ -493,8 +495,6 @@ bool Csock::Connect( const CS_STRING & sBindHost, bool bSkipSetup )
 		if ( iDNSRet != 0 )
 			return( false );
 
-		// bind to a hostname if requested
-		m_sBindHost = sBindHost;
 		if ( !sBindHost.empty() )
 		{
 			// try to bind 3 times, otherwise exit failure
@@ -1714,7 +1714,6 @@ bool Csock::SetupVHost()
 	{
 		if ( m_eConState != CST_OK )
 			m_eConState = CST_CONNECT;
-
 		return( true );
 	}
 	if ( bind( m_iReadSock, (struct sockaddr *) &m_bindhost, sizeof( m_bindhost ) ) == 0 )

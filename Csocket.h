@@ -948,6 +948,9 @@ public:
 		// make it NON-Blocking IO
 		pcSock->BlockIO( false );
 
+		// bind the vhost
+		pcSock->SetBindHost( sBindHost );
+
 #ifdef HAVE_LIBSSL
 		pcSock->SetSSL( isSSL );
 #endif /* HAVE_LIBSSL */
