@@ -60,34 +60,16 @@ if test -z "$NOSSL"; then
 	fi
 fi
 
-if test -z "$NOPERL"; then
-	echo -n "checking for perl... "
-	PERL=`which perl`
-	if test -n "$PERL"; then
-		echo "$PERL"
-		echo -n "checking embeded perl installation... "
-		PTEST=`$PERL -MExtUtils::Embed -e ccopts 2>&5`
-		if test -z "$PTEST"; then
-			echo "failed"
-			NOPERL=1
-		else
-			echo "ok"
-		fi
-	else
-		echo "no"
-		NOPERL=1
-	fi
-fi
-
 if test -z "$prefix" || test $prefix = "NONE"; then
 	prefix="/usr/local"
 fi
 
 if test "$MODULES" = "yes"; then
 	if test -z "$NOCHECK_DL"; then
-		AC_CHECK_LIB( dl, dlopen, appendCXX -D_MODULES,MODULES="no",)
+		AC_CHECK_LIB( dl, dlopen,,MODULES="no",)
 	fi
 	if test "$MODULES" = "yes"; then
+		appendCXX -D_MODULES
 		if test -n "$ISSUN"; then
 			MODFLAGS="$CXXFLAGS"
 		else
@@ -104,6 +86,18 @@ if test "$MODULES" = "yes"; then
 		fi
 
 		appendCXX "-D_MODDIR_=\\\"${prefix}/share/znc\\\""
+
+		if test -z "$NOPERL"; then
+			echo -n "checking for perl... "
+			PERL=`which perl`
+			if test -n "$PERL"; then
+				echo "$PERL"
+				AC_CHECK_LIB( perl, perl_alloc,unset NOPERL, unset PERL,[`$PERL -MExtUtils::Embed -e ccopts -e ldopts`])
+			else
+				echo "no"
+				unset PERL
+			fi
+		fi
 	fi
 fi
 
