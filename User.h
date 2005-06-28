@@ -80,7 +80,7 @@ public:
 	void SetIRCNick(const CNick& n);
 	void SetIRCServer(const CString& s);
 	void SetQuitMsg(const CString& s);
-	void SetVersionReply(const CString& s);
+	void AddCTCPReply(const CString& sCTCP, const CString& sReply);
 	void SetBufferCount(unsigned int u);
 	void SetKeepBuffer(bool b);
 	// !Setters
@@ -118,7 +118,7 @@ public:
 	const CNick& GetIRCNick() const;
 	const CString& GetIRCServer() const;
 	CString GetQuitMsg() const;
-	CString GetVersionReply() const;
+	const MCString& GetCTCPReplies() const;
 	unsigned int GetBufferCount() const;
 	bool KeepBuffer() const;
 	// !Getters
@@ -140,7 +140,7 @@ protected:
 	CNick			m_IRCNick;
 	CString			m_sIRCServer;
 	CString			m_sQuitMsg;
-	CString			m_sVersionReply;
+	MCString		m_mssCTCPReplies;
 
 	// Paths
 	CString			m_sUserPath;

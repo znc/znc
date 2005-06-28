@@ -676,8 +676,8 @@ bool CZNC::ParseConfig(const CString& sConfig) {
 					} else if (sName.CaseCmp("Nick") == 0) {
 						pUser->SetNick(sValue);
 						continue;
-					} else if (sName.CaseCmp("VersionReply") == 0) {
-						pUser->SetVersionReply(sValue);
+					} else if (sName.CaseCmp("CTCPReply") == 0) {
+						pUser->AddCTCPReply(sValue.Token(0), sValue.Token(1, true));
 						continue;
 					} else if (sName.CaseCmp("QuitMsg") == 0) {
 						pUser->SetQuitMsg(sValue);

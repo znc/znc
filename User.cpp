@@ -461,7 +461,7 @@ void CUser::SetDefaultChanModes(const CString& s) { m_sDefaultChanModes = s; }
 void CUser::SetIRCNick(const CNick& n) { m_IRCNick = n; }
 void CUser::SetIRCServer(const CString& s) { m_sIRCServer = s; }
 void CUser::SetQuitMsg(const CString& s) { m_sQuitMsg = s; }
-void CUser::SetVersionReply(const CString& s) { m_sVersionReply = s; }
+void CUser::AddCTCPReply(const CString& sCTCP, const CString& sReply) { m_mssCTCPReplies[sCTCP.AsUpper()] = sReply; }
 void CUser::SetBufferCount(unsigned int u) { m_uBufferCount = u; }
 void CUser::SetKeepBuffer(bool b) { m_bKeepBuffer = b; }
 
@@ -539,7 +539,7 @@ const vector<CServer*>& CUser::GetServers() const { return m_vServers; }
 const CNick& CUser::GetIRCNick() const { return m_IRCNick; }
 const CString& CUser::GetIRCServer() const { return m_sIRCServer; }
 CString CUser::GetQuitMsg() const { return (!m_sQuitMsg.empty()) ? m_sQuitMsg : "ZNC by prozac - http://znc.sourceforge.net"; }
-CString CUser::GetVersionReply() const { return (!m_sVersionReply.empty()) ? m_sVersionReply : "ZNC by prozac - http://znc.sourceforge.net"; }
+const MCString& CUser::GetCTCPReplies() const { return m_mssCTCPReplies; }
 unsigned int CUser::GetBufferCount() const { return m_uBufferCount; }
 bool CUser::KeepBuffer() const { return m_bKeepBuffer; }
 // !Getters

@@ -621,12 +621,7 @@ bool CIRCSock::OnCTCPReply(const CString& sNickMask, CString& sMessage) {
 bool CIRCSock::OnPrivCTCP(const CString& sNickMask, CString& sMessage) {
 	MODULECALL(OnPrivCTCP(sNickMask, sMessage));
 
-	if (sMessage.CaseCmp("VERSION") == 0) {
-		if (!IsUserAttached()) {
-			CString sVersionReply = m_pUser->GetVersionReply();
-			PutServ("NOTICE " + CNick(sNickMask).GetNick() + " :\001VERSION " + sVersionReply + "\001");
-		}
-	} else if (strncasecmp(sMessage.c_str(), "DCC ", 4) == 0 && m_pUser && m_pUser->BounceDCCs()) {
+	if (strncasecmp(sMessage.c_str(), "DCC ", 4) == 0 && m_pUser && m_pUser->BounceDCCs()) {
 		// DCC CHAT chat 2453612361 44592
 		CString sType = sMessage.Token(1);
 		CString sFile = sMessage.Token(2);
@@ -674,6 +669,25 @@ bool CIRCSock::OnPrivCTCP(const CString& sNickMask, CString& sMessage) {
 		}
 
 		return true;
+	} else {
+		if (!IsUserAttached()) {
+			const MCString& mssCTCPReplies = m_pUser->GetCTCPReplies();
+			MCString::const_iterator it = mssCTCPReplies.find(sMessage.AsUpper());
+			CString sQuery = sMessage.Token(0).AsUpper();
+			CString sReply;
+
+			if (it != mssCTCPReplies.end()) {
+				sReply = it->second;
+			}
+
+			if (sReply.empty() && sQuery == "VERSION") {
+				sReply = "ZNC by prozac - http://znc.sourceforge.net";
+			}
+
+			if (!sReply.empty()) {
+				PutServ("NOTICE " + CNick(sNickMask).GetNick() + " :\001" + sQuery + " " + sReply + "\001");
+			}
+		}
 	}
 
 	return false;
