@@ -843,6 +843,8 @@ XS(XS_ZNC_COREListen)
 				pSock->EnableReadLine();
 
 			bool bContinue = true;
+
+#ifdef HAVE_LIBSSL
 			if ( iUseSSL != 0 )
 			{
 				if ( CFile::Exists( g_ModPerl->GetUser()->GetPemLocation() ) )
@@ -853,6 +855,7 @@ XS(XS_ZNC_COREListen)
 					bContinue = false;
 				}
 			}
+#endif /* HAVE_LIBSSL */
 
 			if ( bContinue )
 			{
