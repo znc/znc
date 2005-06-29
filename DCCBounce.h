@@ -56,8 +56,8 @@ public:
 	virtual void SockError(int iErrno);
 	virtual void Connected();
 	virtual void Disconnected();
+	virtual Csock* GetSockObj(const CString& sHost, unsigned short uPort);
 	void Shutdown();
-	Csock* GetSockObj(const CString& sHost, unsigned short uPort);
 	void PutServ(const CString& sLine);
 	void PutPeer(const CString& sLine);
 	bool IsPeerConnected() { return (m_pPeer) ? m_pPeer->IsConnected() : false; }

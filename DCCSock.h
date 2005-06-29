@@ -58,7 +58,7 @@ public:
 	virtual void Connected();
 	virtual void Disconnected();
 	void SendPacket();
-	Csock* GetSockObj(const CString& sHost, unsigned short uPort);
+	virtual Csock* GetSockObj(const CString& sHost, unsigned short uPort);
 	CFile* OpenFile(bool bWrite = true);
 	bool Seek(unsigned int uPos) {
 		if (m_pFile) {
