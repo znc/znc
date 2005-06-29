@@ -4,8 +4,10 @@
 #include <string>
 #include <sstream>
 #include <map>
+#include <vector>
 
 using std::string;
+using std::vector;
 using std::stringstream;
 
 class CString : public string {
@@ -66,6 +68,8 @@ public:
 private:
 protected:
 };
+
+typedef vector<CString> VCString;
 
 class MCString : public std::map<CString, CString> {
 public:
