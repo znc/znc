@@ -6,12 +6,21 @@
 #include <map>
 #include <vector>
 
+using std::map;
 using std::string;
 using std::vector;
 using std::stringstream;
 
+class CString;
+typedef vector<CString> VCString;
+
 class CString : public string {
 public:
+	typedef enum {
+		EAscii,
+		EURL,
+	} EEscape;
+
 	CString() : string() {}
 	CString(const char* c) : string(c) {}
 	CString(const string& s) : string(s) {}
@@ -27,12 +36,18 @@ public:
 	CString AsUpper() const;
 	CString AsLower() const;
 
+	CString Escape_n(EEscape eFrom, EEscape eTo);
+	CString Escape_n(EEscape eTo);
+	CString& Escape(EEscape eFrom, EEscape eTo);
+	CString& Escape(EEscape eTo);
 	static unsigned int Replace(CString& sStr, const CString& sReplace, const CString& sWith);
 	unsigned int Replace(const CString& sReplace, const CString& sWith);
-	CString Token(unsigned int uPos, bool bRest = false, char cSep = ' ') const;
+	CString Token(unsigned int uPos, bool bRest = false, const CString& sSep = " ") const;
 	CString Ellipsize(unsigned int uLen) const;
 	CString Left(unsigned int uCount) const;
 	CString Right(unsigned int uCount) const;
+	VCString Split(const CString& sDelim, bool bKeepEmpty = true);
+	unsigned int Split(const CString& sDelim, VCString& vsRet, bool bKeepEmpty = true);
 
 	static CString Format(const CString& sFormatStr, ...);
 
@@ -69,11 +84,9 @@ private:
 protected:
 };
 
-typedef vector<CString> VCString;
-
-class MCString : public std::map<CString, CString> {
+class MCString : public map<CString, CString> {
 public:
-	MCString() : std::map<CString, CString>() {}
+	MCString() : map<CString, CString>() {}
 	virtual ~MCString() { clear(); }
 
 	enum
