@@ -52,8 +52,8 @@ void CUserSock::ReadLine(const CString& sData) {
 			m_sPass = sLine.Token(1);
 
 			if (m_sPass.find(":") != CString::npos) {
-				m_sUser = m_sPass.Token(0, false, ':');
-				m_sPass = m_sPass.Token(1, true, ':');
+				m_sUser = m_sPass.Token(0, false, ":");
+				m_sPass = m_sPass.Token(1, true, ":");
 			}
 
 			if ((m_bGotNick) && (m_bGotUser)) {

@@ -105,7 +105,7 @@ int CZNC::Loop() {
 				}
 
 				if (File.Open(O_WRONLY | O_TRUNC | O_CREAT)) {
-					CString sData = m_sISpoofFormat.Token(0, false, '%') + pUser->GetIdent() + m_sISpoofFormat.Token(1, true, '%');
+					CString sData = m_sISpoofFormat.Token(0, false, "%") + pUser->GetIdent() + m_sISpoofFormat.Token(1, true, "%");
 					File.Write(sData + "\n");
 					File.Close();
 				}
@@ -635,8 +635,8 @@ bool CZNC::ParseConfig(const CString& sConfig) {
 		}
 
 		// If we have a regular line, figure out where it goes
-		CString sName = sLine.Token(0, false, '=');
-		CString sValue = sLine.Token(1, true, '=');
+		CString sName = sLine.Token(0, false, "=");
+		CString sValue = sLine.Token(1, true, "=");
 		sName.Trim();
 		sValue.Trim();
 

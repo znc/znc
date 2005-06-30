@@ -20,6 +20,9 @@
  *
  * 
  * $Log$
+ * Revision 1.16  2005/06/30 21:51:06  prozacx
+ * Changed CString::Token() to split on a string rather than char
+ *
  * Revision 1.15  2005/06/12 09:04:39  prozacx
  * Changed to new GetSavePath()
  *
@@ -258,9 +261,9 @@ public:
 			map< CString, vector< CString> > msvOutput;
 			for( u_int a = 0; a < m_vMessages.size(); a++ )
 			{
-				CString sTime = m_vMessages[a].Token( 0, false, ':' );
-				CString sWhom = m_vMessages[a].Token( 1, false, ':' );
-				CString sMessage = m_vMessages[a].Token( 2, true, ':' );
+				CString sTime = m_vMessages[a].Token( 0, false, ":" );
+				CString sWhom = m_vMessages[a].Token( 1, false, ":" );
+				CString sMessage = m_vMessages[a].Token( 2, true, ":" );
 				
 				if ( ( sTime.empty() ) || ( sWhom.empty() ) || ( sMessage.empty() ) )
 				{

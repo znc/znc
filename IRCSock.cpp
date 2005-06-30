@@ -356,7 +356,7 @@ void CIRCSock::ReadLine(const CString& sData) {
 			CString sNickMask = sLine.Token(0);
 			sNickMask.LeftChomp();
 
-			CString sNick = sNickMask.Token(0, false, '!');
+			CString sNick = sNickMask.Token(0, false, "!");
 			CString sCmd = sLine.Token(1);
 			CString sRest = sLine.Token(2, true);
 
@@ -881,12 +881,12 @@ void CIRCSock::ParseISupport(const CString& sLine) {
 	CString sArg = sLine.Token(i++);
 
 	while (!sArg.empty()) {
-		CString sName = sArg.Token(0, false, '=');
-		CString sValue = sArg.Token(1, true, '=');
+		CString sName = sArg.Token(0, false, "=");
+		CString sValue = sArg.Token(1, true, "=");
 
 		if (sName.CaseCmp("PREFIX") == 0) {
-			CString sPrefixes = sValue.Token(1, false, ')');
-			CString sPermModes = sValue.Token(0, false, ')');
+			CString sPrefixes = sValue.Token(1, false, ")");
+			CString sPermModes = sValue.Token(0, false, ")");
 			sPermModes.LeftTrim("(");
 
 			if (!sPrefixes.empty() && sPermModes.size() == sPrefixes.size()) {
@@ -904,7 +904,7 @@ void CIRCSock::ParseISupport(const CString& sLine) {
 				m_mueChanModes.clear();
 
 				for (unsigned int a = 0; a < 4; a++) {
-					CString sModes = sValue.Token(a, false, ',');
+					CString sModes = sValue.Token(a, false, ",");
 
 					for (unsigned int b = 0; b < sModes.size(); b++) {
 						m_mueChanModes[sModes[b]] = (EChanModeArgs) a;
