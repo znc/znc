@@ -33,6 +33,7 @@ public:
 		FT_SOCK
 	};
 
+	void SetFileName(const CString& sLongName);
 	static bool IsReg(const CString& sLongName, bool bUseLstat = false);
 	static bool IsDir(const CString& sLongName, bool bUseLstat = false);
 	static bool IsChr(const CString& sLongName, bool bUseLstat = false);

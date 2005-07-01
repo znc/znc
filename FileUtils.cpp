@@ -1,25 +1,25 @@
 #include "FileUtils.h"
 
 CFile::CFile(const CString& sLongName) {
-	m_sLongName = sLongName;
-	m_iFD = -1;
-
-	m_sShortName = sLongName;
-
-	// @todo shouldn't this be Right() and RightChomp() ?!
-	while (m_sShortName.Left(1) == "/") {
-		m_sShortName.LeftChomp();
-	}
-
-	CString::size_type uPos = m_sShortName.rfind('/');
-	if (uPos != CString::npos) {
-		m_sShortName = m_sShortName.substr(uPos +1);
-	}
+	SetFileName(sLongName);
 }
 
 CFile::~CFile() {
 	if (m_iFD != -1) {
 		Close();
+	}
+}
+
+void CFile::SetFileName(const CString& sLongName) {
+	m_sLongName = sLongName;
+	m_iFD = -1;
+
+	m_sShortName = sLongName;
+	m_sShortName.RightTrim("/");
+
+	CString::size_type uPos = m_sShortName.rfind('/');
+	if (uPos != CString::npos) {
+		m_sShortName = m_sShortName.substr(uPos +1);
 	}
 }
 
