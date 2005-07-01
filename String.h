@@ -14,11 +14,32 @@ using std::stringstream;
 class CString;
 typedef vector<CString> VCString;
 
+static const unsigned char XX = 0xff;
+static const unsigned char base64_table[256] = {
+	XX,XX,XX,XX, XX,XX,XX,XX, XX,XX,XX,XX, XX,XX,XX,XX,
+	XX,XX,XX,XX, XX,XX,XX,XX, XX,XX,XX,XX, XX,XX,XX,XX,
+	XX,XX,XX,XX, XX,XX,XX,XX, XX,XX,XX,62, XX,XX,XX,63,
+	52,53,54,55, 56,57,58,59, 60,61,XX,XX, XX,XX,XX,XX,
+	XX, 0, 1, 2,  3, 4, 5, 6,  7, 8, 9,10, 11,12,13,14,
+	15,16,17,18, 19,20,21,22, 23,24,25,XX, XX,XX,XX,XX,
+	XX,26,27,28, 29,30,31,32, 33,34,35,36, 37,38,39,40,
+	41,42,43,44, 45,46,47,48, 49,50,51,XX, XX,XX,XX,XX,
+	XX,XX,XX,XX, XX,XX,XX,XX, XX,XX,XX,XX, XX,XX,XX,XX,
+	XX,XX,XX,XX, XX,XX,XX,XX, XX,XX,XX,XX, XX,XX,XX,XX,
+	XX,XX,XX,XX, XX,XX,XX,XX, XX,XX,XX,XX, XX,XX,XX,XX,
+	XX,XX,XX,XX, XX,XX,XX,XX, XX,XX,XX,XX, XX,XX,XX,XX,
+	XX,XX,XX,XX, XX,XX,XX,XX, XX,XX,XX,XX, XX,XX,XX,XX,
+	XX,XX,XX,XX, XX,XX,XX,XX, XX,XX,XX,XX, XX,XX,XX,XX,
+	XX,XX,XX,XX, XX,XX,XX,XX, XX,XX,XX,XX, XX,XX,XX,XX,
+	XX,XX,XX,XX, XX,XX,XX,XX, XX,XX,XX,XX, XX,XX,XX,XX,
+};
+
 class CString : public string {
 public:
 	typedef enum {
 		EAscii,
 		EURL,
+		EHTML,
 	} EEscape;
 
 	CString() : string() {}
@@ -36,20 +57,23 @@ public:
 	CString AsUpper() const;
 	CString AsLower() const;
 
-	CString Escape_n(EEscape eFrom, EEscape eTo);
-	CString Escape_n(EEscape eTo);
+	CString Escape_n(EEscape eFrom, EEscape eTo) const;
+	CString Escape_n(EEscape eTo) const;
 	CString& Escape(EEscape eFrom, EEscape eTo);
 	CString& Escape(EEscape eTo);
+
 	static unsigned int Replace(CString& sStr, const CString& sReplace, const CString& sWith);
 	unsigned int Replace(const CString& sReplace, const CString& sWith);
-	CString Token(unsigned int uPos, bool bRest = false, const CString& sSep = " ") const;
 	CString Ellipsize(unsigned int uLen) const;
 	CString Left(unsigned int uCount) const;
 	CString Right(unsigned int uCount) const;
-	VCString Split(const CString& sDelim, bool bKeepEmpty = true);
-	unsigned int Split(const CString& sDelim, VCString& vsRet, bool bAllowEmpty = true);
+
+	CString Token(unsigned int uPos, bool bRest = false, const CString& sSep = " ") const;
+	VCString Split(const CString& sDelim, bool bKeepEmpty = true) const;
+	unsigned int Split(const CString& sDelim, VCString& vsRet, bool bAllowEmpty = true) const;
 
 	static CString Format(const CString& sFormatStr, ...);
+	unsigned long Base64Decode(CString& sRet) const;
 
 	static CString ToString(char c);
 	static CString ToString(unsigned char c);

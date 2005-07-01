@@ -92,7 +92,7 @@ CString CString::AsLower() const {
 	return sRet;
 }
 
-CString CString::Escape_n(EEscape eFrom, EEscape eTo) {
+CString CString::Escape_n(EEscape eFrom, EEscape eTo) const {
 	CString sRet;
 	const char szHex[] = "0123456789ABCDEF";
 	const unsigned char *pStart = (const unsigned char*) data();
@@ -103,6 +103,7 @@ CString CString::Escape_n(EEscape eFrom, EEscape eTo) {
 
 	for (unsigned int a = 0; a < iLength; a++, p = pStart + a) {
 		switch (eFrom) {
+			case EHTML:
 			case EAscii:
 				ch = *p;
 				break;
@@ -133,6 +134,7 @@ CString CString::Escape_n(EEscape eFrom, EEscape eTo) {
 		}
 
 		switch (eTo) {
+			case EHTML:
 			case EAscii:
 				sRet += ch;
 				break;
@@ -155,8 +157,8 @@ CString CString::Escape_n(EEscape eFrom, EEscape eTo) {
 	return sRet;
 }
 
-CString CString::Escape_n(EEscape eTo) {
-	return Escape(EAscii, eTo);
+CString CString::Escape_n(EEscape eTo) const {
+	return Escape_n(EAscii, eTo);
 }
 
 CString& CString::Escape(EEscape eFrom, EEscape eTo) {
@@ -246,13 +248,13 @@ CString CString::Right(unsigned int uCount) const {
 	return substr(length() - uCount, uCount);
 }
 
-VCString CString::Split(const CString& sDelim, bool bAllowEmpty) {
+VCString CString::Split(const CString& sDelim, bool bAllowEmpty) const {
 	VCString vsRet;
 	Split(sDelim, vsRet, bAllowEmpty);
 	return vsRet;
 }
 
-unsigned int CString::Split(const CString& sDelim, VCString& vsRet, bool bAllowEmpty) {
+unsigned int CString::Split(const CString& sDelim, VCString& vsRet, bool bAllowEmpty) const {
 	vsRet.empty();
 	CString sTmp = *this;
 
@@ -277,6 +279,43 @@ unsigned int CString::Split(const CString& sDelim, VCString& vsRet, bool bAllowE
 CString CString::Format(const CString& sFormatStr, ...) {
 	return "";
 }
+
+unsigned long CString::Base64Decode(CString& sRet) const {
+	const char* in = c_str();
+	char c, c1, *p;
+	unsigned long i;
+	unsigned long uLen = size();
+	char* out = (char*) malloc(size() +1);
+ 
+	for (i = 0, p = out; i < uLen; i++) {
+		c = (char)base64_table[(unsigned char)in[i++]];
+		c1 = (char)base64_table[(unsigned char)in[i++]];
+		*p++ = (c << 2) | ((c1 >> 4) & 0x3);
+ 
+		if (i < uLen) {
+			if (in[i] == '=') {
+				break;
+			}
+			c = (char)base64_table[(unsigned char)in[i]];
+			*p++ = ((c1 << 4) & 0xf0) | ((c >> 2) & 0xf);
+		}
+ 
+		if (++i < uLen) {
+			if (in[i] == '=') {
+				break;
+			}
+			*p++ = ((c << 6) & 0xc0) | (char)base64_table[(unsigned char)in[i]];
+		}
+	}
+ 
+	*p = '\0';
+	unsigned long uRet = p - out;
+	sRet = out;
+	free(out);
+
+	return uRet;
+}
+
 
 CString CString::ToString(char c) { stringstream s; s << c; return s.str(); }
 CString CString::ToString(unsigned char c) { stringstream s; s << c; return s.str(); }
