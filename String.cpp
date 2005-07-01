@@ -246,13 +246,13 @@ CString CString::Right(unsigned int uCount) const {
 	return substr(length() - uCount, uCount);
 }
 
-VCString CString::Split(const CString& sDelim, bool bKeepEmpty) {
+VCString CString::Split(const CString& sDelim, bool bAllowEmpty) {
 	VCString vsRet;
-	Split(sDelim, vsRet, bKeepEmpty);
+	Split(sDelim, vsRet, bAllowEmpty);
 	return vsRet;
 }
 
-unsigned int CString::Split(const CString& sDelim, VCString& vsRet, bool bKeepEmpty) {
+unsigned int CString::Split(const CString& sDelim, VCString& vsRet, bool bAllowEmpty) {
 	vsRet.empty();
 	CString sTmp = *this;
 
@@ -260,11 +260,11 @@ unsigned int CString::Split(const CString& sDelim, VCString& vsRet, bool bKeepEm
 		CString sTok = sTmp.Token(0, false, sDelim);
 		CString sRest = sTmp.Token(1, true, sDelim);
 
-		if (bKeepEmpty || !sTok.empty()) {
+		if (bAllowEmpty || !sTok.empty()) {
 			vsRet.push_back(sTok);
 		}
 
-		if (bKeepEmpty && sRest.empty() && sTok.size() < sTmp.size()) {
+		if (bAllowEmpty && sRest.empty() && sTok.size() < sTmp.size()) {
 			vsRet.push_back("");
 		}
 
@@ -307,6 +307,7 @@ short CString::ToShort() const { return strtoul(this->c_str(), (char**) NULL, 10
 unsigned short CString::ToUShort() const { return strtoul(this->c_str(), (char**) NULL, 10); }
 unsigned int CString::ToUInt() const { return strtoul(this->c_str(), (char**) NULL, 10); }
 int CString::ToInt() const { return strtoul(this->c_str(), (char**) NULL, 10); }
+unsigned long CString::ToULong() const { return strtoul(c_str(), NULL, 10); }
 unsigned long long CString::ToULongLong() const { return strtoull(c_str(), NULL, 10); }
 long long CString::ToLongLong() const { return strtoll(c_str(), NULL, 10); }
 double CString::ToDouble() const { return strtod(c_str(), NULL); }

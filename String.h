@@ -47,7 +47,7 @@ public:
 	CString Left(unsigned int uCount) const;
 	CString Right(unsigned int uCount) const;
 	VCString Split(const CString& sDelim, bool bKeepEmpty = true);
-	unsigned int Split(const CString& sDelim, VCString& vsRet, bool bKeepEmpty = true);
+	unsigned int Split(const CString& sDelim, VCString& vsRet, bool bAllowEmpty = true);
 
 	static CString Format(const CString& sFormatStr, ...);
 
@@ -70,6 +70,7 @@ public:
 	unsigned short ToUShort() const;
 	int ToInt() const;
 	unsigned int ToUInt() const;
+	unsigned long ToULong() const;
 	unsigned long long ToULongLong() const;
 	long long ToLongLong() const;
 	double ToDouble() const;
