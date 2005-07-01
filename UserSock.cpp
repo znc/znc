@@ -22,31 +22,7 @@ void CUserSock::ReadLine(const CString& sData) {
 
 	CString sCommand = sLine.Token(0);
 
-	if (sCommand.CaseCmp("ZNC") == 0) {
-		PutStatus("Hello.  How may I help you?");
-		return;
-	} else if (sCommand.CaseCmp("DETACH") == 0) {
-		if (m_pUser) {
-			CString sChan = sLine.Token(1);
-
-			if (sChan.empty()) {
-				PutStatusNotice("Usage: /detach <#chan>");
-				return;
-			}
-
-			CChan* pChan = m_pUser->FindChan(sChan);
-			if (!pChan) {
-				PutStatusNotice("You are not on [" + sChan + "]");
-				return;
-			}
-
-			pChan->DetachUser();
-			PutStatusNotice("Detached from [" + sChan + "]");
-			return;
-		}
-	} else if (sCommand.CaseCmp("PONG") == 0) {
-		return;	// Block pong replies, we already responded to the pings
-	} else if (sCommand.CaseCmp("PASS") == 0) {
+	if (sCommand.CaseCmp("PASS") == 0) {
 		if (!m_bAuthed) {
 			m_bGotPass = true;
 			m_sPass = sLine.Token(1);
@@ -106,6 +82,35 @@ void CUserSock::ReadLine(const CString& sData) {
 		}
 
 		return;		// Don't forward this msg.  ZNC has already registered us.
+	} else if (!m_pUser) {
+		Close();
+		return;
+	}
+
+	if (sCommand.CaseCmp("ZNC") == 0) {
+		PutStatus("Hello.  How may I help you?");
+		return;
+	} else if (sCommand.CaseCmp("DETACH") == 0) {
+		if (m_pUser) {
+			CString sChan = sLine.Token(1);
+
+			if (sChan.empty()) {
+				PutStatusNotice("Usage: /detach <#chan>");
+				return;
+			}
+
+			CChan* pChan = m_pUser->FindChan(sChan);
+			if (!pChan) {
+				PutStatusNotice("You are not on [" + sChan + "]");
+				return;
+			}
+
+			pChan->DetachUser();
+			PutStatusNotice("Detached from [" + sChan + "]");
+			return;
+		}
+	} else if (sCommand.CaseCmp("PONG") == 0) {
+		return;	// Block pong replies, we already responded to the pings
 	} else if (sCommand.CaseCmp("JOIN") == 0) {
 		CString sChan = sLine.Token(1);
 		CString sKey = sLine.Token(2);
