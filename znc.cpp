@@ -270,9 +270,18 @@ CString CZNC::ExpandConfigPath(const CString& sConfigFile) {
 }
 
 bool CZNC::WriteNewConfig(const CString& sConfig) {
+	CString sConfigFile = ExpandConfigPath((sConfig.empty()) ? "znc.conf" : sConfig);
 	CString sAnswer, sUser;
 	vector<CString> vsLines;
 	bool bAnswer = false;
+
+	if (CFile::Exists(sConfigFile)) {
+		if (!CUtils::GetBoolInput("This config already exists.  Would you like to overwrite it?", false)) {
+			return false;
+		}
+	}
+
+	CUtils::PrintMessage("Writing new config [" + sConfigFile + "]");
 
 	CUtils::PrintMessage("");
 	CUtils::PrintMessage("First lets start with some global settings...");
@@ -460,21 +469,51 @@ bool CZNC::WriteNewConfig(const CString& sConfig) {
 	} while (CUtils::GetBoolInput("Would you like to setup another user?", false));
 	// !User
 
-	CString sConfigFile = ExpandConfigPath(sConfig);
 	CUtils::PrintAction("Writing config [" + sConfigFile + "]");
 	CFile File(sConfigFile);
 
-	if (!File.Open(O_WRONLY | O_CREAT, 0600)) {
+	bool bFileOpen = false;
+
+	if (File.Open(O_WRONLY | O_CREAT, 0600)) {
+		bFileOpen = true;
+	} else {
 		CUtils::PrintStatus(false, "Unable to open file");
-		return false;
+		CUtils::GetInput("Alternate location", sConfigFile, "/tmp/" + sConfig);
+
+		if (!CFile::Exists(sConfigFile) || CUtils::GetBoolInput("Would you like to overwrite the existing alt file", false)) {
+			CUtils::PrintAction("Writing to alt location [" + sConfigFile + "]");
+			File.SetFileName(sConfigFile);
+
+			if (File.Open(O_WRONLY | O_CREAT, 0600)) {
+				bFileOpen = true;
+			} else {
+				CUtils::PrintStatus(false, "Unable to open alt file");
+			}
+		}
+	}
+
+	if (!bFileOpen) {
+		CUtils::PrintMessage("");
+		CUtils::PrintMessage("Printing new config to stdout since we were unable to open a file");
+		CUtils::PrintMessage("");
+		cout << endl << "----------------------------------------------------------------------------" << endl << endl;
 	}
 
 	for (unsigned int a = 0; a < vsLines.size(); a++) {
-		File.Write(vsLines[a] + "\n");
+		if (bFileOpen) {
+			File.Write(vsLines[a] + "\n");
+		} else {
+			cout << vsLines[a] << endl;
+		}
 	}
 
-	File.Close();
-	CUtils::PrintStatus(true);
+	if (bFileOpen) {
+		File.Close();
+
+		CUtils::PrintStatus(true);
+	} else {
+		cout << endl << "----------------------------------------------------------------------------" << endl << endl;
+	}
 
 	CUtils::PrintMessage("");
 	CUtils::PrintMessage("To connect to this znc you need to connect to it as your irc server", true);
@@ -496,12 +535,8 @@ bool CZNC::ParseConfig(const CString& sConfig) {
 
 	if (!CFile::Exists(sConfigFile)) {
 		CUtils::PrintStatus(false, "No such file");
-		if (!CUtils::GetBoolInput("Would you like to create this config now?", true)) {
-			return false;
-		}
-
-		WriteNewConfig(sConfigFile);
-		CUtils::PrintAction("Opening Config [" + sConfigFile + "]");
+		CUtils::PrintMessage("Restart znc with the --makeconf option if you wish to create this config.");
+		return false;
 	}
 
 	if (!CFile::IsReg(sConfigFile)) {

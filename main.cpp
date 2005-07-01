@@ -9,6 +9,7 @@
 static struct option g_LongOpts[] = {
 	{ "help",				0,	NULL,	0 },
 	{ "version",			0,	NULL,	0 },
+	{ "makeconf",			0,	NULL,	0 },
 	{ "makepass",			0,	NULL,	0 },
 #ifdef HAVE_LIBSSL
 	{ "makepem",			0,	NULL,	0 },
@@ -20,12 +21,13 @@ static struct option g_LongOpts[] = {
 void GenerateHelp(const char *appname) {
 	CUtils::PrintMessage("USAGE: " + CString(appname) + " [options] [config]");
 	CUtils::PrintMessage("Options are:");
-	CUtils::PrintMessage("\t--help");
-	CUtils::PrintMessage("\t--version       Output version information and exit");
-	CUtils::PrintMessage("\t--makepass      Generates a password for use in config");
+	CUtils::PrintMessage("\t--help)");
+	CUtils::PrintMessage("\t--version      Output version information and exit");
+	CUtils::PrintMessage("\t--makeconf     Interactively create a new config");
+	CUtils::PrintMessage("\t--makepass     Generates a password for use in config");
 #ifdef HAVE_LIBSSL
-	CUtils::PrintMessage("\t--makepem       Generates a pemfile for use with SSL");
-	CUtils::PrintMessage("\t--encrypt-pem   Encrypts the pemfile");
+	CUtils::PrintMessage("\t--makepem      Generates a pemfile for use with SSL");
+	CUtils::PrintMessage("\t--encrypt-pem  Encrypts the pemfile");
 #endif /* HAVE_LIBSSL */
 }
 
@@ -54,12 +56,13 @@ int main(int argc, char** argv) {
 #endif /* HAVE_LIBSSL */
 
 	int iArg, iOptIndex = -1;
+	bool bMakeConf = false;
+	bool bMakePass = false;
 #ifdef HAVE_LIBSSL
 	bool bMakePem = false;
 	bool bEncPem = false;
 #endif /* HAVE_LIBSSL */
-	bool bMakePass = false;
-	while ((iArg = getopt_long(argc, argv, "h", g_LongOpts, &iOptIndex) != -1)) {
+	while ((iArg = getopt_long(argc, argv, "c|h", g_LongOpts, &iOptIndex) != -1)) {
 		switch (iArg) {
 			case 1: { // long options
 				if (iOptIndex >= 0) {
@@ -67,6 +70,8 @@ int main(int argc, char** argv) {
 					if (sOption == "version") {
 						cout << CZNC::GetTag() << endl;
 						return 0;
+					} else if (sOption == "makeconf") {
+						bMakeConf = true;
 					} else if (sOption == "makepass") {
 						bMakePass = true;
 #ifdef HAVE_LIBSSL
@@ -97,6 +102,13 @@ int main(int argc, char** argv) {
 
 	if (optind < argc) {
 		sConfig = argv[optind];
+	}
+
+	if (bMakeConf) {
+		CZNC* pZNC = CZNC::New();
+		pZNC->InitDirs("");
+		pZNC->WriteNewConfig(sConfig);
+		return 0;
 	}
 
 #ifdef HAVE_LIBSSL
