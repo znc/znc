@@ -1,6 +1,7 @@
 #include <string.h>
 #include "String.h"
 #include "FileUtils.h"
+#include "md5.h"
 
 int CString::CaseCmp(const CString& s) const {
 	return strcasecmp(c_str(), s.c_str());
@@ -316,6 +317,9 @@ unsigned long CString::Base64Decode(CString& sRet) const {
 	return uRet;
 }
 
+CString CString::MD5() const {
+	return (const char*) CMD5(*this);
+}
 
 CString CString::ToString(char c) { stringstream s; s << c; return s.str(); }
 CString CString::ToString(unsigned char c) { stringstream s; s << c; return s.str(); }
@@ -353,11 +357,11 @@ double CString::ToDouble() const { return strtod(c_str(), NULL); }
 
 
 bool CString::Trim(const CString& s) {
-	bool bLeft = LeftTrim(s);
-	return (RightTrim(s) || bLeft);
+	bool bLeft = TrimLeft(s);
+	return (TrimRight(s) || bLeft);
 }
 
-bool CString::LeftTrim(const CString& s) {
+bool CString::TrimLeft(const CString& s) {
 	bool bRet = false;
 
 	while (length() && s.find(Left(1)) != CString::npos) {
@@ -368,7 +372,7 @@ bool CString::LeftTrim(const CString& s) {
 	return bRet;
 }
 
-bool CString::RightTrim(const CString& s) {
+bool CString::TrimRight(const CString& s) {
 	bool bRet = false;
 
 	while (length() && s.find(Right(1)) != CString::npos) {
@@ -377,6 +381,24 @@ bool CString::RightTrim(const CString& s) {
 	}
 
 	return bRet;
+}
+
+CString CString::Trim_n(const CString& s) const {
+	CString sRet = *this;
+	sRet.Trim(s);
+	return sRet;
+}
+
+CString CString::TrimLeft_n(const CString& s) const {
+	CString sRet = *this;
+	sRet.TrimLeft(s);
+	return sRet;
+}
+
+CString CString::TrimRight_n(const CString& s) const {
+	CString sRet = *this;
+	sRet.TrimRight(s);
+	return sRet;
 }
 
 bool CString::LeftChomp(unsigned int uLen) {

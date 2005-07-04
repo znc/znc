@@ -74,6 +74,7 @@ public:
 
 	static CString Format(const CString& sFormatStr, ...);
 	unsigned long Base64Decode(CString& sRet) const;
+	CString MD5() const;
 
 	static CString ToString(char c);
 	static CString ToString(unsigned char c);
@@ -100,8 +101,12 @@ public:
 	double ToDouble() const;
 
 	bool Trim(const CString& s = " \t\r\n");
-	bool LeftTrim(const CString& s = " \t\r\n");
-	bool RightTrim(const CString& s = " \t\r\n");
+	bool TrimLeft(const CString& s = " \t\r\n");
+	bool TrimRight(const CString& s = " \t\r\n");
+	CString Trim_n(const CString& s = " \t\r\n") const;
+	CString TrimLeft_n(const CString& s = " \t\r\n") const;
+	CString TrimRight_n(const CString& s = " \t\r\n") const;
+
 	bool LeftChomp(unsigned int uLen = 1);
 	bool RightChomp(unsigned int uLen = 1);
 
