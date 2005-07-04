@@ -19,6 +19,8 @@ class CChan;
 class CServer;
 class CIRCSock;
 class CUserSock;
+class CKeepNickTimer;
+class CJoinTimer;
 
 class CUser {
 public:
@@ -153,6 +155,9 @@ protected:
 	bool				m_bKeepNick;
 	bool				m_bDenyLoadMod;
 	bool				m_bKeepBuffer;
+
+	CKeepNickTimer*		m_pKeepNickTimer;
+	CJoinTimer*			m_pJoinTimer;
 
 	vector<CServer*>	m_vServers;
 	vector<CChan*>		m_vChans;

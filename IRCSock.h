@@ -9,6 +9,7 @@
 // Forward Declarations
 class CZNC;
 class CUserSock;
+class CAwayNickTimer;
 // !Forward Declarations
 
 class CIRCSock : public Csock {
@@ -90,6 +91,7 @@ protected:
 	map<CString, CChan*>		m_msChans;
 	unsigned int				m_uMaxNickLen;
 	unsigned int				m_uQueryBufferCount;
+	CAwayNickTimer*				m_pAwayNickTimer;
 	CBuffer						m_QueryBuffer;
 };
 

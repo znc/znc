@@ -9,6 +9,7 @@ CIRCSock::CIRCSock(CZNC* pZNC, CUser* pUser) : Csock() {
 	m_pZNC = pZNC;
 	m_pUser = pUser;
 	m_pUserSock = NULL;
+	m_pAwayNickTimer = NULL;
 	m_uQueryBufferCount = 50;
 	m_bISpoofReleased = false;
 	m_bKeepNick = true;
@@ -56,6 +57,8 @@ CIRCSock::~CIRCSock() {
 
 	PutServ("QUIT :" + m_pUser->GetQuitMsg());
 	m_msChans.clear();
+
+	m_pZNC->GetManager().DelCronByAddr(m_pAwayNickTimer);
 }
 
 void CIRCSock::ReadLine(const CString& sData) {
@@ -91,7 +94,10 @@ void CIRCSock::ReadLine(const CString& sData) {
 				case 1:	{// :irc.server.com 001 nick :Welcome to the Internet Relay Network nick
 					SetTimeout(900);	// Now that we are connected, let nature take its course
 					PutServ("WHO " + sNick);
-					m_pZNC->GetManager().AddCron(new CAwayNickTimer(m_pUser));
+					if (!m_pAwayNickTimer) {
+						m_pAwayNickTimer = new CAwayNickTimer(m_pUser);
+						m_pZNC->GetManager().AddCron(m_pAwayNickTimer);
+					}
 
 					VOIDMODULECALL(OnIRCConnected());
 
@@ -803,8 +809,9 @@ void CIRCSock::UserConnected(CUserSock* pUserSock) {
 }
 
 void CIRCSock::UserDisconnected() {
-	if (m_pUserSock) {
-		m_pZNC->GetManager().AddCron(new CAwayNickTimer(m_pUser));
+	if (m_pUserSock && !m_pAwayNickTimer) {
+		m_pAwayNickTimer = new CAwayNickTimer(m_pUser);
+		m_pZNC->GetManager().AddCron(m_pAwayNickTimer);
 	}
 
 	m_pUserSock = NULL;
@@ -887,7 +894,7 @@ void CIRCSock::ParseISupport(const CString& sLine) {
 		if (sName.CaseCmp("PREFIX") == 0) {
 			CString sPrefixes = sValue.Token(1, false, ")");
 			CString sPermModes = sValue.Token(0, false, ")");
-			sPermModes.LeftTrim("(");
+			sPermModes.TrimLeft("(");
 
 			if (!sPrefixes.empty() && sPermModes.size() == sPrefixes.size()) {
 				m_sPerms = sPrefixes;

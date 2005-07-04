@@ -28,8 +28,10 @@ CUser::CUser(const CString& sUserName, CZNC* pZNC) {
 	m_sStatusPrefix = "*";
 	m_uBufferCount = 50;
 	m_bKeepBuffer = false;
-	m_pZNC->GetManager().AddCron(new CKeepNickTimer(this));
-	m_pZNC->GetManager().AddCron(new CJoinTimer(this));
+	m_pKeepNickTimer = new CKeepNickTimer(this);
+	m_pJoinTimer = new CJoinTimer(this);
+	m_pZNC->GetManager().AddCron(m_pKeepNickTimer);
+	m_pZNC->GetManager().AddCron(m_pJoinTimer);
 	m_sUserPath = m_pZNC->GetUserPath() + "/" + sUserName;
 	m_sDLPath = GetUserPath() + "/downloads";
 }
@@ -45,6 +47,9 @@ CUser::~CUser() {
 	for (unsigned int b = 0; b < m_vChans.size(); b++) {
 		delete m_vChans[b];
 	}
+
+	m_pZNC->GetManager().DelCronByAddr(m_pKeepNickTimer);
+	m_pZNC->GetManager().DelCronByAddr(m_pJoinTimer);
 }
 
 bool CUser::OnBoot() {
