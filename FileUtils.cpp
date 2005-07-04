@@ -15,7 +15,7 @@ void CFile::SetFileName(const CString& sLongName) {
 	m_iFD = -1;
 
 	m_sShortName = sLongName;
-	m_sShortName.RightTrim("/");
+	m_sShortName.TrimRight("/");
 
 	CString::size_type uPos = m_sShortName.rfind('/');
 	if (uPos != CString::npos) {
