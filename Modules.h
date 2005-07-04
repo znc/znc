@@ -274,6 +274,7 @@ public:
 
 	// Getters
 	const CString& GetDescription() const { return m_sDescription; }
+	CZNC* GetZNC() { return m_pZNC; }
 	CUser* GetUser() { return m_pUser; }
 	TSocketManager<Csock>* GetManager() { return m_pManager; }
 	// !Getters
