@@ -57,12 +57,16 @@ public:
 		return pZNC;
 	}
 
+	CUser* FindUser(const CString& sUsername);
+	bool DeleteUser(const CString& sUsername);
+	bool AddUser(CUser* pUser);
 	const map<CString,CUser*> & GetUserMap() const { return( m_msUsers ); }
 
 private:
 protected:
 	unsigned short			m_uListenPort;
 	map<CString,CUser*>		m_msUsers;
+	set<CUser*>				m_ssDelUsers;
 	TSocketManager<Csock>	m_Manager;
 
 	CString					m_sCurPath;

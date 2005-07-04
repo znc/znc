@@ -65,6 +65,30 @@ int CZNC::Loop() {
 	m_itUserIter = m_msUsers.begin();
 
 	while (true) {
+		// Check for users that need to be deleted
+		if (m_ssDelUsers.size()) {
+			for (set<CUser*>::iterator it = m_ssDelUsers.begin(); it != m_ssDelUsers.end(); it++) {
+				CUser* pUser = *it;
+				m_msUsers.erase(pUser->GetUserName());
+				CUserSock* pUserSock = pUser->GetUserSock();
+
+				if (pUserSock) {
+					m_Manager.DelSockByAddr(pUserSock);
+				}
+
+				CIRCSock* pIRCSock = pUser->GetIRCSock();
+
+				if (pIRCSock) {
+					m_Manager.DelSockByAddr(pIRCSock);
+				}
+
+				delete pUser;
+			}
+
+			m_ssDelUsers.clear();
+			m_itUserIter = m_msUsers.begin();
+		}
+
 		m_Manager.Loop();
 
 		if (m_bISpoofLocked) {
@@ -73,6 +97,11 @@ int CZNC::Loop() {
 
 		if (m_itUserIter == m_msUsers.end()) {
 			m_itUserIter = m_msUsers.begin();
+		}
+
+		if (m_msUsers.empty()) {
+			usleep(10000);
+			continue;
 		}
 
 		CString sSockName = "IRC::" + m_itUserIter->first;
@@ -618,7 +647,7 @@ bool CZNC::ParseConfig(const CString& sConfig) {
 							return false;
 						}
 
-						m_msUsers[pUser->GetUserName()] = pUser;
+						AddUser(pUser);
 
 						pUser = NULL;
 						continue;
@@ -943,4 +972,37 @@ CString CZNC::FindModPath(const CString& sModule) const {
 	}
 
 	return sModPath;
+}
+
+CUser* CZNC::FindUser(const CString& sUsername) {
+	map<CString,CUser*>::iterator it = m_msUsers.find(sUsername);
+
+	if (it != m_msUsers.end()) {
+		return it->second;
+	}
+
+	return NULL;
+}
+
+bool CZNC::DeleteUser(const CString& sUsername) {
+	CUser* pUser = FindUser(sUsername);
+
+	if (!pUser) {
+		return false;
+	}
+
+	m_ssDelUsers.insert(pUser);
+	return true;
+}
+
+bool CZNC::AddUser(CUser* pUser) {
+	CString sErr;
+
+	if (pUser->IsValid(sErr)) {
+		m_msUsers[pUser->GetUserName()] = pUser;
+		return true;
+	}
+
+	DEBUG_ONLY(cout << "Invalid user [" << pUser->GetUserName() << "] - [" << sErr << "]" << endl);
+	return false;
 }
