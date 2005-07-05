@@ -28,6 +28,7 @@ CUser::CUser(const CString& sUserName, CZNC* pZNC) {
 	m_sStatusPrefix = "*";
 	m_uBufferCount = 50;
 	m_bKeepBuffer = false;
+	m_bAutoCycle = true;
 	m_pKeepNickTimer = new CKeepNickTimer(this);
 	m_pJoinTimer = new CJoinTimer(this);
 	m_pZNC->GetManager().AddCron(m_pKeepNickTimer);
@@ -258,6 +259,16 @@ CServer* CUser::GetNextServer() {
 	return m_vServers[m_uServerIdx++];	// Todo: cycle through these
 }
 
+CServer* CUser::GetCurrentServer() {
+	unsigned int uIdx = (m_uServerIdx) ? m_uServerIdx -1 : 0;
+
+	if (uIdx >= m_vServers.size()) {
+		return NULL;
+	}
+
+	return m_vServers[uIdx];
+}
+
 bool CUser::CheckPass(const CString& sPass) {
 	if (!m_bPassHashed) {
 		return (sPass == m_sPass);
@@ -469,6 +480,7 @@ void CUser::SetQuitMsg(const CString& s) { m_sQuitMsg = s; }
 void CUser::AddCTCPReply(const CString& sCTCP, const CString& sReply) { m_mssCTCPReplies[sCTCP.AsUpper()] = sReply; }
 void CUser::SetBufferCount(unsigned int u) { m_uBufferCount = u; }
 void CUser::SetKeepBuffer(bool b) { m_bKeepBuffer = b; }
+void CUser::SetAutoCycle(bool b) { m_bAutoCycle = b; }
 
 bool CUser::SetStatusPrefix(const CString& s) {
 	if ((!s.empty()) && (s.length() < 6) && (s.find(' ') == CString::npos)) {
@@ -547,4 +559,5 @@ CString CUser::GetQuitMsg() const { return (!m_sQuitMsg.empty()) ? m_sQuitMsg : 
 const MCString& CUser::GetCTCPReplies() const { return m_mssCTCPReplies; }
 unsigned int CUser::GetBufferCount() const { return m_uBufferCount; }
 bool CUser::KeepBuffer() const { return m_bKeepBuffer; }
+bool CUser::AutoCycle() const { return m_bAutoCycle; }
 // !Getters

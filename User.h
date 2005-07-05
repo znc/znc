@@ -36,6 +36,7 @@ public:
 	bool AddServer(const CString& sName);
 	bool AddServer(const CString& sName, unsigned short uPort, const CString& sPass = "", bool bSSL = false);
 	CServer* GetNextServer();
+	CServer* GetCurrentServer();
 	bool CheckPass(const CString& sPass);
 	bool AddAllowedHost(const CString& sHostMask);
 	bool IsHostAllowed(const CString& sHostMask);
@@ -85,6 +86,7 @@ public:
 	void AddCTCPReply(const CString& sCTCP, const CString& sReply);
 	void SetBufferCount(unsigned int u);
 	void SetKeepBuffer(bool b);
+	void SetAutoCycle(bool b);
 	// !Setters
 
 	// Getters
@@ -123,6 +125,7 @@ public:
 	const MCString& GetCTCPReplies() const;
 	unsigned int GetBufferCount() const;
 	bool KeepBuffer() const;
+	bool AutoCycle() const;
 	// !Getters
 private:
 protected:
@@ -155,6 +158,7 @@ protected:
 	bool				m_bKeepNick;
 	bool				m_bDenyLoadMod;
 	bool				m_bKeepBuffer;
+	bool				m_bAutoCycle;
 
 	CKeepNickTimer*		m_pKeepNickTimer;
 	CJoinTimer*			m_pJoinTimer;
