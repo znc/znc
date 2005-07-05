@@ -589,7 +589,6 @@ bool CZNC::ParseConfig(const CString& sConfig) {
 
 	CString sLine;
 	bool bCommented = false;	// support for /**/ style comments
-	bool bAutoCycle = true;
 	CUser* pUser = NULL;	// Used to keep track of which user block we are in
 	CChan* pChan = NULL;	// Used to keep track of which chan block we are in
 
@@ -671,7 +670,6 @@ bool CZNC::ParseConfig(const CString& sConfig) {
 
 				pUser = new CUser(sValue, this);
 				CUtils::PrintMessage("Loading user [" + sValue + "]");
-				bAutoCycle = true;
 
 				if (!sStatusPrefix.empty()) {
 					if (!pUser->SetStatusPrefix(sStatusPrefix)) {
@@ -693,7 +691,6 @@ bool CZNC::ParseConfig(const CString& sConfig) {
 				}
 
 				pChan = new CChan(sValue, pUser);
-				pChan->SetAutoCycle(bAutoCycle);
 				continue;
 			}
 		}
@@ -737,6 +734,9 @@ bool CZNC::ParseConfig(const CString& sConfig) {
 					} else if (sName.CaseCmp("KeepBuffer") == 0) {
 						pUser->SetKeepBuffer((sValue.CaseCmp("true") == 0));
 						continue;
+					} else if (sName.CaseCmp("AutoCycle") == 0) {
+						pUser->SetAutoCycle((sValue.CaseCmp("true") == 0));
+						continue;
 					} else if (sName.CaseCmp("Nick") == 0) {
 						pUser->SetNick(sValue);
 						continue;
@@ -764,9 +764,6 @@ bool CZNC::ParseConfig(const CString& sConfig) {
 						continue;
 					} else if (sName.CaseCmp("BounceDCCs") == 0) {
 						pUser->SetBounceDCCs(sValue.CaseCmp("true") == 0);
-						continue;
-					} else if (sName.CaseCmp("AutoCycle") == 0) {
-						bAutoCycle = (sValue.CaseCmp("true") == 0);
 						continue;
 					} else if (sName.CaseCmp("Ident") == 0) {
 						pUser->SetIdent(sValue);

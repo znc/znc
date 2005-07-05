@@ -14,7 +14,7 @@ CChan::CChan(const CString& sName, CUser* pUser) {
 
 	m_pUser = pUser;
 	m_Nick.SetUser(pUser);
-	m_bAutoCycle = true;
+	m_bAutoCycle = m_pUser->AutoCycle();
 	m_bDetached = false;
 	m_uBufferCount = m_pUser->GetBufferCount();
 	m_bKeepBuffer = m_pUser->KeepBuffer();
