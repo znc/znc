@@ -256,7 +256,7 @@ VCString CString::Split(const CString& sDelim, bool bAllowEmpty) const {
 }
 
 unsigned int CString::Split(const CString& sDelim, VCString& vsRet, bool bAllowEmpty) const {
-	vsRet.empty();
+	vsRet.clear();
 	CString sTmp = *this;
 
 	while (sTmp.size()) {
@@ -346,6 +346,7 @@ CString CString::ToKBytes(double d) {
 	return szRet;
 }
 
+bool CString::ToBool() const { return (!Trim_n().Trim_n("0").empty() && CaseCmp("false") != 0); }
 short CString::ToShort() const { return strtoul(this->c_str(), (char**) NULL, 10); }
 unsigned short CString::ToUShort() const { return strtoul(this->c_str(), (char**) NULL, 10); }
 unsigned int CString::ToUInt() const { return strtoul(this->c_str(), (char**) NULL, 10); }
