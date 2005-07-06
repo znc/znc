@@ -676,23 +676,22 @@ bool CIRCSock::OnPrivCTCP(const CString& sNickMask, CString& sMessage) {
 
 		return true;
 	} else {
-		if (!IsUserAttached()) {
-			const MCString& mssCTCPReplies = m_pUser->GetCTCPReplies();
-			MCString::const_iterator it = mssCTCPReplies.find(sMessage.AsUpper());
-			CString sQuery = sMessage.Token(0).AsUpper();
-			CString sReply;
+		const MCString& mssCTCPReplies = m_pUser->GetCTCPReplies();
+		MCString::const_iterator it = mssCTCPReplies.find(sMessage.AsUpper());
+		CString sQuery = sMessage.Token(0).AsUpper();
+		CString sReply;
 
-			if (it != mssCTCPReplies.end()) {
-				sReply = it->second;
-			}
+		if (it != mssCTCPReplies.end()) {
+			sReply = it->second;
+		}
 
-			if (sReply.empty() && sQuery == "VERSION") {
-				sReply = "ZNC by prozac - http://znc.sourceforge.net";
-			}
+		if (sReply.empty() && sQuery == "VERSION" && !IsUserAttached()) {
+			sReply = "ZNC by prozac - http://znc.sourceforge.net";
+		}
 
-			if (!sReply.empty()) {
-				PutServ("NOTICE " + CNick(sNickMask).GetNick() + " :\001" + sQuery + " " + sReply + "\001");
-			}
+		if (!sReply.empty()) {
+			PutServ("NOTICE " + CNick(sNickMask).GetNick() + " :\001" + sQuery + " " + sReply + "\001");
+			return true;
 		}
 	}
 
