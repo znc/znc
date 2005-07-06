@@ -83,7 +83,7 @@ public:
 	void SetIRCNick(const CNick& n);
 	void SetIRCServer(const CString& s);
 	void SetQuitMsg(const CString& s);
-	void AddCTCPReply(const CString& sCTCP, const CString& sReply);
+	bool AddCTCPReply(const CString& sCTCP, const CString& sReply);
 	void SetBufferCount(unsigned int u);
 	void SetKeepBuffer(bool b);
 	void SetAutoCycle(bool b);
@@ -102,6 +102,7 @@ public:
 	const CString& GetRealName() const;
 	const CString& GetVHost() const;
 	const CString& GetPass() const;
+	const set<CString>& GetAllowedHosts() const;
 
 	CString FindModPath(const CString& sModule) const;
 	const CString& GetCurPath() const;
