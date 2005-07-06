@@ -227,27 +227,60 @@ bool CAdminSock::OnPageRequest(const CString& sURI, CString& sPageRet) {
 
 bool CAdminSock::UserPage(CString& sPageRet, CUser* pUser) {
 	if (!GetParam("submitted").ToUInt()) {
-		sPageRet = Header("Add User");
+		sPageRet = Header((pUser) ? "Edit User" : "Add User");
+
+		CString sAllowedHosts, sServers, sChans, sCTCPReplies;
+
+		if (pUser) {
+			const set<CString>& ssAllowedHosts = pUser->GetAllowedHosts();
+			for (set<CString>::const_iterator it = ssAllowedHosts.begin(); it != ssAllowedHosts.end(); it++) {
+				sAllowedHosts += *it + "\r\n";
+			}
+
+			const vector<CServer*>& vServers = pUser->GetServers();
+			for (unsigned int a = 0; a < vServers.size(); a++) {
+				sServers += vServers[a]->GetName() + "\r\n";
+			}
+
+			const vector<CChan*>& vChans = pUser->GetChans();
+			for (unsigned int b = 0; b < vChans.size(); b++) {
+				sChans += vChans[b]->GetName() + "\r\n";
+			}
+			const MCString& msCTCPReplies = pUser->GetCTCPReplies();
+			for (MCString::const_iterator it2 = msCTCPReplies.begin(); it2 != msCTCPReplies.end(); it2++) {
+				sCTCPReplies += it2->first + " " + it2->second + "\r\n";
+			}
+		}
 
 		sPageRet += "<form action='/" + CString((pUser) ? "edituser" : "adduser") + "' method='POST'>\r\n"
 			"<input type='hidden' name='submitted' value='1'>\r\n"
 			"<fieldset style='border: 1px solid #000; padding: 10px;'><legend style='font-size: 16px; font-weight: bold'>Authentication</legend>\r\n"
-			"<div style='float: left; margin-right: 20px;'><small><b>Username:</b></small><br><input type='text' name='username' size='32' maxlength='12'><br>\r\n"
+			"<div style='float: left; margin-right: 20px;'><small><b>Username:</b></small><br>\r\n"
+				"<input type='text' name='username' value='" + CString((pUser) ? pUser->GetUserName() : "").Escape_n(CString::EHTML) + "' size='32' maxlength='12'><br>\r\n"
 			"<small><b>Password:</b></small><br><input type='password' name='password' size='32' maxlength='16'><br>\r\n"
 			"<small><b>Confirm Password:</b></small><br><input type='password' name='password2' size='32' maxlength='16'></div>\r\n"
-			"<div><small><b>Allowed IPs:</b></small><br><textarea name='allowedips' cols='40' rows='5'></textarea></div>\r\n"
+			"<div><small><b>Allowed IPs:</b></small><br><textarea name='allowedips' cols='40' rows='5'>" + sAllowedHosts.Escape_n(CString::EHTML) + "</textarea></div>\r\n"
 			"</fieldset><br>\r\n"
 
 			"<fieldset style='border: 1px solid #000; padding: 10px;'><legend style='font-size: 16px; font-weight: bold'>IRC Information</legend>\r\n"
-			"<div style='float: left; margin-right: 10px;'><small><b>Nick:</b></small><br><input type='text' name='nick' size='32' maxlength='128'></div>\r\n"
-			"<div style='float: left; margin-right: 10px;'><small><b>AltNick:</b></small><br><input type='text' name='altnick' size='32' maxlength='128'></div>\r\n"
-			"<div style='float: left; margin-right: 10px;'><small><b>AwaySuffix:</b></small><br><input type='text' name='awaysuffix' size='32' maxlength='128'></div>\r\n"
-			"<div><small><b>StatusPrefix:</b></small><br><input type='text' name='statusprefix' value='" + CString((pUser) ? "" : "*") + "' size='14' maxlength='5'></div><br>\r\n"
-			"<div style='float: left; margin-right: 10px;'><small><b>Ident:</b></small><br><input type='text' name='ident' size='32' maxlength='128'></div>\r\n"
-			"<div><small><b>RealName:</b></small><br><input type='text' name='realname' size='90' maxlength='256'></div><br>\r\n"
-			"<small><b>VHost:</b></small><br><input type='text' name='vhost' size='128' maxlength='256'><br><br>\r\n"
-			"<small><b>QuitMsg:</b></small><br><input type='text' name='quitmsg' size='128' maxlength='256'><br><br>\r\n"
-			"<div><small><b>Servers:</b></small><br><textarea name='servers' cols='40' rows='5'></textarea></div>\r\n"
+			"<div style='float: left; margin-right: 10px;'><small><b>Nick:</b></small><br>\r\n"
+				"<input type='text' name='nick' value='" + CString((pUser) ? pUser->GetNick().Escape_n(CString::EHTML) : "") + "' size='32' maxlength='128'></div>\r\n"
+			"<div style='float: left; margin-right: 10px;'><small><b>AltNick:</b></small><br>\r\n"
+				"<input type='text' name='altnick' value='" + CString((pUser) ? pUser->GetAltNick().Escape_n(CString::EHTML) : "") + "' size='32' maxlength='128'></div>\r\n"
+			"<div style='float: left; margin-right: 10px;'><small><b>AwaySuffix:</b></small><br>\r\n"
+				"<input type='text' name='awaysuffix' value='" + CString((pUser) ? pUser->GetAwaySuffix().Escape_n(CString::EHTML) : "") + "' size='32' maxlength='128'></div>\r\n"
+			"<div><small><b>StatusPrefix:</b></small><br>\r\n"
+				"<input type='text' name='statusprefix' value='" + CString((pUser) ? pUser->GetStatusPrefix().Escape_n(CString::EHTML) : "*") + "' size='14' maxlength='5'></div><br>\r\n"
+			"<div style='float: left; margin-right: 10px;'><small><b>Ident:</b></small><br>\r\n"
+				"<input type='text' name='ident' value='" + CString((pUser) ? pUser->GetIdent().Escape_n(CString::EHTML) : "") + "' size='32' maxlength='128'></div>\r\n"
+			"<div><small><b>RealName:</b></small><br>\r\n"
+				"<input type='text' name='realname' value='" + CString((pUser) ? pUser->GetRealName().Escape_n(CString::EHTML) : "") + "' size='90' maxlength='256'></div><br>\r\n"
+			"<small><b>VHost:</b></small><br>\r\n"
+				"<input type='text' name='vhost' value='" + CString((pUser) ? pUser->GetVHost().Escape_n(CString::EHTML) : "") + "' size='128' maxlength='256'><br><br>\r\n"
+			"<small><b>QuitMsg:</b></small><br>\r\n"
+				"<input type='text' name='quitmsg' value='" + CString((pUser) ? pUser->GetQuitMsg().Escape_n(CString::EHTML) : "") + "' size='128' maxlength='256'><br><br>\r\n"
+			"<div><small><b>Servers:</b></small><br>\r\n"
+				"<textarea name='servers' cols='40' rows='5'>" + sServers.Escape_n(CString::EHTML) + "</textarea></div>\r\n"
 			"</fieldset><br>\r\n"
 
 			"<fieldset style='border: 1px solid #000; padding: 10px;'><legend style='font-size: 16px; font-weight: bold'>Modules</legend>\r\n";
@@ -257,26 +290,31 @@ bool CAdminSock::UserPage(CString& sPageRet, CUser* pUser) {
 
 		for (set<CModInfo>::iterator it = ssUserMods.begin(); it != ssUserMods.end(); it++) {
 			const CModInfo& Info = *it;
-			sPageRet += "<label><input type='checkbox' name='loadmod' value='" + Info.GetName().Escape_n(CString::EHTML) + "'> " + Info.GetName().Escape_n(CString::EHTML) + "</label>"
-				" (" + Info.GetDescription().Escape_n(CString::EHTML) + ")<br>";
+			sPageRet += "<label><input type='checkbox' name='loadmod' value='" + Info.GetName().Escape_n(CString::EHTML) + "'"
+				+ CString((pUser && pUser->GetModules().FindModule(Info.GetName())) ? " CHECKED" : "") + "> " + Info.GetName().Escape_n(CString::EHTML) + "</label>"
+				" <small>(" + Info.GetDescription().Escape_n(CString::EHTML) + ")</small><br>";
 		}
 
 		sPageRet += "</fieldset><br>\r\n"
 			"<fieldset style='border: 1px solid #000; padding: 10px;'><legend style='font-size: 16px; font-weight: bold'>Channels</legend>\r\n"
-			"<small><b>Default Modes:</b></small><br><input type='text' name='chanmodes' size='32' maxlength='32'><br><br>\r\n"
-			"<div><small><b>Channels:</b></small><br><textarea name='channels' cols='40' rows='5'></textarea></div>\r\n"
+			"<small><b>Default Modes:</b></small><br>\r\n"
+				"<input type='text' name='chanmodes' value='" + CString((pUser) ? pUser->GetDefaultChanModes().Escape_n(CString::EHTML) : "") + "' size='32' maxlength='32'><br><br>\r\n"
+			"<div><small><b>Channels:</b></small><br>\r\n"
+				"<textarea name='channels' cols='40' rows='5'>" + sChans.Escape_n(CString::EHTML) + "</textarea></div>\r\n"
 			"</fieldset><br>\r\n"
 
 			"<fieldset style='border: 1px solid #000; padding: 10px;'><legend style='font-size: 16px; font-weight: bold'>ZNC Behavior</legend>\r\n"
-			"<small><b>Playback Buffer Size:</b></small><br><input type='text' name='bufsize' size='32' maxlength='9'><br><br>\r\n"
+			"<small><b>Playback Buffer Size:</b></small><br>\r\n"
+				"<input type='text' name='bufsize' value='" + CString((pUser) ? CString::ToString(pUser->GetBufferCount()) : "") + "' size='32' maxlength='9'><br><br>\r\n"
 			"<small><b>Options:</b></small><br>\r\n"
-				"<label><input type='checkbox' name='keepbuffer' value='1'" + CString((pUser) ? "" : " CHECKED") + ">Keep Buffer</label>&nbsp;&nbsp;\r\n"
-				"<label><input type='checkbox' name='autocycle' value='1'" + CString((pUser) ? "" : " CHECKED") + ">Auto Cycle</label>&nbsp;&nbsp;\r\n"
-				"<label><input type='checkbox' name='keepnick' value='1'" + CString((pUser) ? "" : " CHECKED") + ">Keep Nick</label>&nbsp;&nbsp;\r\n"
-				"<label><input type='checkbox' name='useclientip' value='1'>Use Client IP</label>&nbsp;&nbsp;\r\n"
-				"<label><input type='checkbox' name='denyloadmod' value='1'>Deny LoadMod</label>&nbsp;&nbsp;\r\n"
+				"<label><input type='checkbox' name='keepbuffer' value='1'" + CString((!pUser || pUser->KeepBuffer()) ? " CHECKED" : "") + ">Keep Buffer</label>&nbsp;&nbsp;\r\n"
+				"<label><input type='checkbox' name='autocycle' value='1'" + CString((!pUser || pUser->AutoCycle()) ? " CHECKED" : "") + ">Auto Cycle</label>&nbsp;&nbsp;\r\n"
+				"<label><input type='checkbox' name='keepnick' value='1'" + CString((!pUser || pUser->GetKeepNick()) ? " CHECKED" : "") + ">Keep Nick</label>&nbsp;&nbsp;\r\n"
+				"<label><input type='checkbox' name='bouncedccs' value='1'" + CString((!pUser || pUser->BounceDCCs()) ? " CHECKED" : "") + ">Bounce DCCs</label>&nbsp;&nbsp;\r\n"
+				"<label><input type='checkbox' name='useclientip' value='1'" + CString((pUser && pUser->UseClientIP()) ? " CHECKED" : "") + ">Use Client IP</label>&nbsp;&nbsp;\r\n"
+				"<label><input type='checkbox' name='denyloadmod' value='1'" + CString((pUser && pUser->DenyLoadMod()) ? " CHECKED" : "") + ">Deny LoadMod</label>&nbsp;&nbsp;\r\n"
 				"<br><br>"
-			"<small><b>CTCP Replies:</b></small><br><textarea name='ctcpreplies' cols='40' rows='5'></textarea>\r\n"
+			"<small><b>CTCP Replies:</b></small><br><textarea name='ctcpreplies' cols='40' rows='5'>" + sCTCPReplies.Escape_n(CString::EHTML) + "</textarea>\r\n"
 			"</fieldset><br>\r\n"
 
 			"<input type='submit' value='Submit'>\r\n"
@@ -326,24 +364,27 @@ bool CAdminSock::AddNewUser(CString& sPageRet) {
 	unsigned int a = 0;
 
 	for (a = 0; a < vsArgs.size(); a++) {
-		pNewUser->AddServer(vsArgs[a].TrimRight_n("\r"));
+		pNewUser->AddServer(vsArgs[a].Trim_n());
 	}
 
 	GetParam("allowedips").Split("\n", vsArgs);
 	for (a = 0; a < vsArgs.size(); a++) {
-		pNewUser->AddAllowedHost(vsArgs[a]);
+		pNewUser->AddAllowedHost(vsArgs[a].Trim_n());
 	}
 
 	GetParam("ctcpreplies").Split("\n", vsArgs);
 	for (a = 0; a < vsArgs.size(); a++) {
-		const CString& sReply = vsArgs[a];
-		pNewUser->AddCTCPReply(sReply.Token(0), sReply.Token(1, true));
+		CString sReply = vsArgs[a].TrimRight_n("\r");
+		pNewUser->AddCTCPReply(sReply.Token(0).Trim_n(), sReply.Token(1, true).Trim_n());
 	}
 
 	GetParamValues("loadmod", vsArgs);
 	for (a = 0; a < vsArgs.size(); a++) {
 		CString sModRet;
-		pNewUser->GetModules().LoadModule(vsArgs[a], "", pNewUser, sModRet);
+		CString sArg = vsArgs[a].TrimRight_n("\r");
+		if (!sArg.empty()) {
+			pNewUser->GetModules().LoadModule(sArg, "", pNewUser, sModRet);
+		}
 	}
 
 	sArg = GetParam("nick"); if (!sArg.empty()) { pNewUser->SetNick(sArg); }
