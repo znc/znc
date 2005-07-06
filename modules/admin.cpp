@@ -16,13 +16,12 @@ public:
 	CAdminSock(CAdminMod* pModule, const CString& sHostname, unsigned short uPort, int iTimeout = 60);
 	virtual ~CAdminSock();
 
-	bool OnPageRequest(const CString& sURI, CString& sPageRet);
-
+	virtual bool OnPageRequest(const CString& sURI, CString& sPageRet);
 	virtual bool OnLogin(const CString& sUser, const CString& sPass);
 
 	CString Header(const CString& sTitle) {
 		return "<html>\r\n<head><title>" + sTitle + "</title></head>\r\n"
-			"<body bgcolor='#CCCCCC' text='#000000' link='#000000' alink='#000000' vlink='#000000'>\r\n"
+			"<body bgcolor='#FFFFFF' text='#000000' link='#000000' alink='#000000' vlink='#000000'>\r\n"
 			"<center><h2>" + sTitle + "</h2></center><hr>\r\n";
 	}
 
@@ -254,7 +253,7 @@ bool CAdminSock::UserPage(CString& sPageRet, CUser* pUser) {
 
 		sPageRet += "<form action='/" + CString((pUser) ? "edituser" : "adduser") + "' method='POST'>\r\n"
 			"<input type='hidden' name='submitted' value='1'>\r\n"
-			"<fieldset style='border: 1px solid #000; padding: 10px;'><legend style='font-size: 16px; font-weight: bold'>Authentication</legend>\r\n"
+			"<div style='white-space: nowrap; margin-top: -8px; margin-right: 8px; margin-left: 8px; padding: 1px 5px 1px 5px; float: left; border: 1px solid #000; font-size: 16px; font-weight: bold; background: #ffc;'>Authentication</div><div style='padding: 25px 5px 5px 15px; border: 2px solid #000; background: #9c9;'><div style='clear: both;'>\r\n"
 			"<div style='float: left; margin-right: 20px;'><small><b>Username:</b></small><br>\r\n";
 
 		if (pUser) {
@@ -267,9 +266,9 @@ bool CAdminSock::UserPage(CString& sPageRet, CUser* pUser) {
 		sPageRet += "<small><b>Password:</b></small><br><input type='password' name='password' size='32' maxlength='16'><br>\r\n"
 			"<small><b>Confirm Password:</b></small><br><input type='password' name='password2' size='32' maxlength='16'></div>\r\n"
 			"<div><small><b>Allowed IPs:</b></small><br><textarea name='allowedips' cols='40' rows='5'>" + sAllowedHosts.Escape_n(CString::EHTML) + "</textarea></div>\r\n"
-			"</fieldset><br>\r\n"
+			"<br></div></div><br><br>\r\n"
 
-			"<fieldset style='border: 1px solid #000; padding: 10px;'><legend style='font-size: 16px; font-weight: bold'>IRC Information</legend>\r\n"
+			"<div style='white-space: nowrap; margin-top: -8px; margin-right: 8px; margin-left: 8px; padding: 1px 5px 1px 5px; float: left; border: 1px solid #000; font-size: 16px; font-weight: bold; background: #ffc;'>IRC Information</div><div style='padding: 25px 5px 5px 15px; border: 2px solid #000; background: #9c9;'><div style='clear: both;'>\r\n"
 			"<div style='float: left; margin-right: 10px;'><small><b>Nick:</b></small><br>\r\n"
 				"<input type='text' name='nick' value='" + CString((pUser) ? pUser->GetNick().Escape_n(CString::EHTML) : "") + "' size='32' maxlength='128'></div>\r\n"
 			"<div style='float: left; margin-right: 10px;'><small><b>AltNick:</b></small><br>\r\n"
@@ -288,9 +287,9 @@ bool CAdminSock::UserPage(CString& sPageRet, CUser* pUser) {
 				"<input type='text' name='quitmsg' value='" + CString((pUser) ? pUser->GetQuitMsg().Escape_n(CString::EHTML) : "") + "' size='128' maxlength='256'><br><br>\r\n"
 			"<div><small><b>Servers:</b></small><br>\r\n"
 				"<textarea name='servers' cols='40' rows='5'>" + sServers.Escape_n(CString::EHTML) + "</textarea></div>\r\n"
-			"</fieldset><br>\r\n"
+			"<br></div></div><br><br>\r\n"
 
-			"<fieldset style='border: 1px solid #000; padding: 10px;'><legend style='font-size: 16px; font-weight: bold'>Modules</legend>\r\n";
+			"<div style='white-space: nowrap; margin-top: -8px; margin-right: 8px; margin-left: 8px; padding: 1px 5px 1px 5px; float: left; border: 1px solid #000; font-size: 16px; font-weight: bold; background: #ffc;'>Modules</div><div style='padding: 25px 5px 5px 15px; border: 2px solid #000; background: #9c9;'><div style='clear: both;'>\r\n";
 
 		set<CModInfo> ssUserMods;
 		m_pModule->GetZNC()->GetModules().GetAvailableMods(ssUserMods, m_pModule->GetZNC());
@@ -302,15 +301,15 @@ bool CAdminSock::UserPage(CString& sPageRet, CUser* pUser) {
 				" <small>(" + Info.GetDescription().Escape_n(CString::EHTML) + ")</small><br>";
 		}
 
-		sPageRet += "</fieldset><br>\r\n"
-			"<fieldset style='border: 1px solid #000; padding: 10px;'><legend style='font-size: 16px; font-weight: bold'>Channels</legend>\r\n"
+		sPageRet += "<br></div></div><br><br>\r\n"
+			"<div style='white-space: nowrap; margin-top: -8px; margin-right: 8px; margin-left: 8px; padding: 1px 5px 1px 5px; float: left; border: 1px solid #000; font-size: 16px; font-weight: bold; background: #ffc;'>Channels</div><div style='padding: 25px 5px 5px 15px; border: 2px solid #000; background: #9c9;'><div style='clear: both;'>\r\n"
 			"<small><b>Default Modes:</b></small><br>\r\n"
 				"<input type='text' name='chanmodes' value='" + CString((pUser) ? pUser->GetDefaultChanModes().Escape_n(CString::EHTML) : "") + "' size='32' maxlength='32'><br><br>\r\n"
 			"<div><small><b>Channels:</b></small><br>\r\n"
 				"<textarea name='channels' cols='40' rows='5'>" + sChans.Escape_n(CString::EHTML) + "</textarea></div>\r\n"
-			"</fieldset><br>\r\n"
+			"<br></div></div><br><br>\r\n"
 
-			"<fieldset style='border: 1px solid #000; padding: 10px;'><legend style='font-size: 16px; font-weight: bold'>ZNC Behavior</legend>\r\n"
+			"<div style='white-space: nowrap; margin-top: -8px; margin-right: 8px; margin-left: 8px; padding: 1px 5px 1px 5px; float: left; border: 1px solid #000; font-size: 16px; font-weight: bold; background: #ffc;'>ZNC Behavior</div><div style='padding: 25px 5px 5px 15px; border: 2px solid #000; background: #9c9;'><div style='clear: both;'>\r\n"
 			"<small><b>Playback Buffer Size:</b></small><br>\r\n"
 				"<input type='text' name='bufsize' value='" + CString((pUser) ? CString::ToString(pUser->GetBufferCount()) : "") + "' size='32' maxlength='9'><br><br>\r\n"
 			"<small><b>Options:</b></small><br>\r\n"
@@ -321,8 +320,9 @@ bool CAdminSock::UserPage(CString& sPageRet, CUser* pUser) {
 				"<label><input type='checkbox' name='useclientip' value='1'" + CString((pUser && pUser->UseClientIP()) ? " CHECKED" : "") + ">Use Client IP</label>&nbsp;&nbsp;\r\n"
 				"<label><input type='checkbox' name='denyloadmod' value='1'" + CString((pUser && pUser->DenyLoadMod()) ? " CHECKED" : "") + ">Deny LoadMod</label>&nbsp;&nbsp;\r\n"
 				"<br><br>"
-			"<small><b>CTCP Replies:</b></small><br><textarea name='ctcpreplies' cols='40' rows='5'>" + sCTCPReplies.Escape_n(CString::EHTML) + "</textarea>\r\n"
-			"</fieldset><br>\r\n"
+			"<div><small><b>CTCP Replies:</b></small><br>"
+				"<textarea name='ctcpreplies' cols='40' rows='5'>" + sCTCPReplies.Escape_n(CString::EHTML) + "</textarea></div>\r\n"
+			"<br></div></div><br><br>\r\n"
 
 			"<input type='submit' value='Submit'>\r\n"
 			"</form>\r\n";
@@ -331,19 +331,19 @@ bool CAdminSock::UserPage(CString& sPageRet, CUser* pUser) {
 		return true;
 	}
 
-	// Add User Submission
 	if (!pUser) {
+		// Add User Submission
 		if (AddNewUser(sPageRet)) {
 			return true;
 		}
-
-		Redirect("/listusers");
-		return false;
+	} else {
+		// Edit User Submission
+		GetErrorPage(sPageRet, "Sorry... the editing of users has not been implemented yet.");
+		return true;
 	}
 
-	// Edit User Submission
-	GetErrorPage(sPageRet, "Sorry... the editing of users has not been implemented yet.");
-	return true;
+	Redirect("/listusers");
+	return false;
 }
 
 bool CAdminSock::AddNewUser(CString& sPageRet) {
