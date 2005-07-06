@@ -60,8 +60,9 @@ bool CUser::OnBoot() {
 	return true;
 }
 
+const set<CString>& CUser::GetAllowedHosts() const { return m_ssAllowedHosts; }
 bool CUser::AddAllowedHost(const CString& sHostMask) {
-	if (m_ssAllowedHosts.find(sHostMask) != m_ssAllowedHosts.end()) {
+	if (sHostMask.empty() || m_ssAllowedHosts.find(sHostMask) != m_ssAllowedHosts.end()) {
 		return false;
 	}
 
@@ -477,7 +478,14 @@ void CUser::SetDefaultChanModes(const CString& s) { m_sDefaultChanModes = s; }
 void CUser::SetIRCNick(const CNick& n) { m_IRCNick = n; }
 void CUser::SetIRCServer(const CString& s) { m_sIRCServer = s; }
 void CUser::SetQuitMsg(const CString& s) { m_sQuitMsg = s; }
-void CUser::AddCTCPReply(const CString& sCTCP, const CString& sReply) { m_mssCTCPReplies[sCTCP.AsUpper()] = sReply; }
+bool CUser::AddCTCPReply(const CString& sCTCP, const CString& sReply) {
+	if (sCTCP.empty() || sReply.empty()) {
+		return false;
+	}
+
+	m_mssCTCPReplies[sCTCP.AsUpper()] = sReply;
+	return true;
+}
 void CUser::SetBufferCount(unsigned int u) { m_uBufferCount = u; }
 void CUser::SetKeepBuffer(bool b) { m_bKeepBuffer = b; }
 void CUser::SetAutoCycle(bool b) { m_bAutoCycle = b; }
