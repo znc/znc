@@ -255,9 +255,16 @@ bool CAdminSock::UserPage(CString& sPageRet, CUser* pUser) {
 		sPageRet += "<form action='/" + CString((pUser) ? "edituser" : "adduser") + "' method='POST'>\r\n"
 			"<input type='hidden' name='submitted' value='1'>\r\n"
 			"<fieldset style='border: 1px solid #000; padding: 10px;'><legend style='font-size: 16px; font-weight: bold'>Authentication</legend>\r\n"
-			"<div style='float: left; margin-right: 20px;'><small><b>Username:</b></small><br>\r\n"
-				"<input type='text' name='username' value='" + CString((pUser) ? pUser->GetUserName() : "").Escape_n(CString::EHTML) + "' size='32' maxlength='12'><br>\r\n"
-			"<small><b>Password:</b></small><br><input type='password' name='password' size='32' maxlength='16'><br>\r\n"
+			"<div style='float: left; margin-right: 20px;'><small><b>Username:</b></small><br>\r\n";
+
+		if (pUser) {
+			sPageRet += "<input type='hidden' name='user' value='" + pUser->GetUserName().Escape_n(CString::EHTML) + "'>\r\n"
+				"<input type='text' name='disuser' value='" + pUser->GetUserName().Escape_n(CString::EHTML) + "' size='32' maxlength='12' DISABLED><br>\r\n";
+		} else {
+			sPageRet += "<input type='text' name='user' value='' size='32' maxlength='12'><br>\r\n";
+		}
+
+		sPageRet += "<small><b>Password:</b></small><br><input type='password' name='password' size='32' maxlength='16'><br>\r\n"
 			"<small><b>Confirm Password:</b></small><br><input type='password' name='password2' size='32' maxlength='16'></div>\r\n"
 			"<div><small><b>Allowed IPs:</b></small><br><textarea name='allowedips' cols='40' rows='5'>" + sAllowedHosts.Escape_n(CString::EHTML) + "</textarea></div>\r\n"
 			"</fieldset><br>\r\n"
@@ -324,18 +331,23 @@ bool CAdminSock::UserPage(CString& sPageRet, CUser* pUser) {
 		return true;
 	}
 
+	// Add User Submission
 	if (!pUser) {
 		if (AddNewUser(sPageRet)) {
 			return true;
 		}
+
+		Redirect("/listusers");
+		return false;
 	}
 
-	Redirect("/listusers");
-	return false;
+	// Edit User Submission
+	GetErrorPage(sPageRet, "Sorry... the editing of users has not been implemented yet.");
+	return true;
 }
 
 bool CAdminSock::AddNewUser(CString& sPageRet) {
-	CString sUsername = GetParam("username");
+	CString sUsername = GetParam("user");
 	if (sUsername.empty()) {
 		GetErrorPage(sPageRet, "Invalid Submission [Username is required]");
 		return true;
