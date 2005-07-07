@@ -141,11 +141,13 @@ void CAdminSock::ListUsersPage(CString& sPageRet) {
 		sPageRet += "There are no users defined.  Click <a href=\"/adduser\">here</a> if you would like to add one.\r\n";
 	} else {
 		sPageRet += "<table border='1' cellspacing='0' cellpadding='4'>\r\n"
-			"\t<thead><tr><td>Action</td><td>Username</td><td>Current Server</td></tr></thead>\r\n";
+			"\t<thead><tr bgcolor='#FFFF99'><td>Action</td><td>Username</td><td>Current Server</td></tr></thead>\r\n";
 
-		for (map<CString,CUser*>::const_iterator it = msUsers.begin(); it != msUsers.end(); it++) {
+		unsigned int a = 0;
+	
+		for (map<CString,CUser*>::const_iterator it = msUsers.begin(); it != msUsers.end(); it++, a++) {
 			CServer* pServer = it->second->GetCurrentServer();
-			sPageRet += "\t<tr>\r\n\t\t<td>[<a href=\"/edituser?user=" + it->second->GetUserName().Escape_n(CString::EURL) + "\">Edit</a>] [<a href=\"/deluser?user=" + it->second->GetUserName().Escape_n(CString::EURL) + "\">Delete</a>]</td>\r\n"
+			sPageRet += "\t<tr bgcolor='" + CString((a %2) ? "#FFFFCC" : "#CCCC99") + "'>\r\n\t\t<td>[<a href=\"/edituser?user=" + it->second->GetUserName().Escape_n(CString::EURL) + "\">Edit</a>] [<a href=\"/deluser?user=" + it->second->GetUserName().Escape_n(CString::EURL) + "\">Delete</a>]</td>\r\n"
 				"\t\t<td>" + it->second->GetUserName().Escape_n(CString::EHTML) + "</td>\r\n"
 				"\t\t<td>" + CString((pServer) ? pServer->GetName().Escape_n(CString::EHTML) : "-N/A-") + "</td>\r\n"
 				"\t</tr>";
@@ -254,7 +256,7 @@ bool CAdminSock::UserPage(CString& sPageRet, CUser* pUser) {
 
 		sPageRet += "<form action='/" + CString((pUser) ? "edituser" : "adduser") + "' method='POST'>\r\n"
 			"<input type='hidden' name='submitted' value='1'>\r\n"
-			"<div style='white-space: nowrap; margin-top: -8px; margin-right: 8px; margin-left: 8px; padding: 1px 5px 1px 5px; float: left; border: 1px solid #000; font-size: 16px; font-weight: bold; background: #cc6;'>Authentication</div><div style='padding: 25px 5px 5px 15px; border: 2px solid #000; background: #cc9;'><div style='clear: both;'>\r\n"
+			"<div style='white-space: nowrap; margin-top: -8px; margin-right: 8px; margin-left: 8px; padding: 1px 5px 1px 5px; float: left; border: 1px solid #000; font-size: 16px; font-weight: bold; background: #ff9;'>Authentication</div><div style='padding: 25px 5px 5px 15px; border: 2px solid #000; background: #cc9;'><div style='clear: both;'>\r\n"
 			"<div style='float: left; margin-right: 20px;'><small><b>Username:</b></small><br>\r\n";
 
 		if (pUser) {
@@ -269,7 +271,7 @@ bool CAdminSock::UserPage(CString& sPageRet, CUser* pUser) {
 			"<div><small><b>Allowed IPs:</b></small><br><textarea name='allowedips' cols='40' rows='5'>" + sAllowedHosts.Escape_n(CString::EHTML) + "</textarea></div>\r\n"
 			"<br></div></div><br><br>\r\n"
 
-			"<div style='white-space: nowrap; margin-top: -8px; margin-right: 8px; margin-left: 8px; padding: 1px 5px 1px 5px; float: left; border: 1px solid #000; font-size: 16px; font-weight: bold; background: #cc6;'>IRC Information</div><div style='padding: 25px 5px 5px 15px; border: 2px solid #000; background: #cc9;'><div style='clear: both;'>\r\n"
+			"<div style='white-space: nowrap; margin-top: -8px; margin-right: 8px; margin-left: 8px; padding: 1px 5px 1px 5px; float: left; border: 1px solid #000; font-size: 16px; font-weight: bold; background: #ff9;'>IRC Information</div><div style='padding: 25px 5px 5px 15px; border: 2px solid #000; background: #cc9;'><div style='clear: both;'>\r\n"
 			"<div style='float: left; margin-right: 10px;'><small><b>Nick:</b></small><br>\r\n"
 				"<input type='text' name='nick' value='" + CString((pUser) ? pUser->GetNick().Escape_n(CString::EHTML) : "") + "' size='32' maxlength='128'></div>\r\n"
 			"<div style='float: left; margin-right: 10px;'><small><b>AltNick:</b></small><br>\r\n"
@@ -290,7 +292,7 @@ bool CAdminSock::UserPage(CString& sPageRet, CUser* pUser) {
 				"<textarea name='servers' cols='40' rows='5'>" + sServers.Escape_n(CString::EHTML) + "</textarea></div>\r\n"
 			"<br></div></div><br><br>\r\n"
 
-			"<div style='white-space: nowrap; margin-top: -8px; margin-right: 8px; margin-left: 8px; padding: 1px 5px 1px 5px; float: left; border: 1px solid #000; font-size: 16px; font-weight: bold; background: #cc6;'>Modules</div><div style='padding: 25px 5px 5px 15px; border: 2px solid #000; background: #cc9;'><div style='clear: both;'>\r\n";
+			"<div style='white-space: nowrap; margin-top: -8px; margin-right: 8px; margin-left: 8px; padding: 1px 5px 1px 5px; float: left; border: 1px solid #000; font-size: 16px; font-weight: bold; background: #ff9;'>Modules</div><div style='padding: 25px 5px 5px 15px; border: 2px solid #000; background: #cc9;'><div style='clear: both;'>\r\n";
 
 		set<CModInfo> ssUserMods;
 		m_pModule->GetZNC()->GetModules().GetAvailableMods(ssUserMods, m_pModule->GetZNC());
@@ -303,14 +305,14 @@ bool CAdminSock::UserPage(CString& sPageRet, CUser* pUser) {
 		}
 
 		sPageRet += "<br></div></div><br><br>\r\n"
-			"<div style='white-space: nowrap; margin-top: -8px; margin-right: 8px; margin-left: 8px; padding: 1px 5px 1px 5px; float: left; border: 1px solid #000; font-size: 16px; font-weight: bold; background: #cc6;'>Channels</div><div style='padding: 25px 5px 5px 15px; border: 2px solid #000; background: #cc9;'><div style='clear: both;'>\r\n"
+			"<div style='white-space: nowrap; margin-top: -8px; margin-right: 8px; margin-left: 8px; padding: 1px 5px 1px 5px; float: left; border: 1px solid #000; font-size: 16px; font-weight: bold; background: #ff9;'>Channels</div><div style='padding: 25px 5px 5px 15px; border: 2px solid #000; background: #cc9;'><div style='clear: both;'>\r\n"
 			"<small><b>Default Modes:</b></small><br>\r\n"
 				"<input type='text' name='chanmodes' value='" + CString((pUser) ? pUser->GetDefaultChanModes().Escape_n(CString::EHTML) : "") + "' size='32' maxlength='32'><br><br>\r\n"
 			"<div><small><b>Channels:</b></small><br>\r\n"
 				"<textarea name='channels' cols='40' rows='5'>" + sChans.Escape_n(CString::EHTML) + "</textarea></div>\r\n"
 			"<br></div></div><br><br>\r\n"
 
-			"<div style='white-space: nowrap; margin-top: -8px; margin-right: 8px; margin-left: 8px; padding: 1px 5px 1px 5px; float: left; border: 1px solid #000; font-size: 16px; font-weight: bold; background: #cc6;'>ZNC Behavior</div><div style='padding: 25px 5px 5px 15px; border: 2px solid #000; background: #cc9;'><div style='clear: both;'>\r\n"
+			"<div style='white-space: nowrap; margin-top: -8px; margin-right: 8px; margin-left: 8px; padding: 1px 5px 1px 5px; float: left; border: 1px solid #000; font-size: 16px; font-weight: bold; background: #ff9;'>ZNC Behavior</div><div style='padding: 25px 5px 5px 15px; border: 2px solid #000; background: #cc9;'><div style='clear: both;'>\r\n"
 			"<small><b>Playback Buffer Size:</b></small><br>\r\n"
 				"<input type='text' name='bufsize' value='" + CString((pUser) ? CString::ToString(pUser->GetBufferCount()) : "") + "' size='32' maxlength='9'><br><br>\r\n"
 			"<small><b>Options:</b></small><br>\r\n"
