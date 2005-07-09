@@ -40,7 +40,7 @@ public:
 	bool CheckPass(const CString& sPass);
 	bool AddAllowedHost(const CString& sHostMask);
 	bool IsHostAllowed(const CString& sHostMask);
-	bool IsValid(CString& sErrMsg);
+	bool IsValid(CString& sErrMsg, bool bSkipPass = false) const;
 	static bool IsValidUserName(const CString& sUserName);
 	bool IsLastServer();
 	bool ConnectPaused();
@@ -65,8 +65,10 @@ public:
 	bool GetFile(const CString& sRemoteNick, const CString& sRemoteIP, unsigned short uRemotePort, const CString& sFileName, unsigned long uFileSize, const CString& sModuleName = "");
 	bool ResumeFile(const CString& sRemoteNick, unsigned short uPort, unsigned long uFileSize);
 	CString GetCurNick();
+	bool Clone(const CUser& User, CString& sErrorRet);
 
 	// Setters
+	void SetUserName(const CString& s);
 	void SetNick(const CString& s);
 	void SetAltNick(const CString& s);
 	void SetAwaySuffix(const CString& s);
@@ -102,6 +104,7 @@ public:
 	const CString& GetRealName() const;
 	const CString& GetVHost() const;
 	const CString& GetPass() const;
+	bool IsPassHashed() const;
 	const set<CString>& GetAllowedHosts() const;
 
 	CString FindModPath(const CString& sModule) const;

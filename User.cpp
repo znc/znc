@@ -60,6 +60,49 @@ bool CUser::OnBoot() {
 	return true;
 }
 
+bool CUser::Clone(const CUser& User, CString& sErrorRet) {
+	sErrorRet.clear();
+
+	if (!User.IsValid(sErrorRet, true)) {
+		return false;
+	}
+
+	if (GetUserName() != User.GetUserName()) {
+		if (m_pZNC->FindUser(User.GetUserName())) {
+			sErrorRet = "New username already exists";
+			return false;
+		}
+
+		SetUserName(User.GetUserName());
+	}
+
+	if (!User.GetPass().empty()) {
+		SetPass(User.GetPass(), User.IsPassHashed());
+	}
+
+	SetNick(User.GetNick());
+	SetAltNick(User.GetAltNick());
+	SetIdent(User.GetIdent());
+	SetRealName(User.GetRealName());
+	SetAwaySuffix(User.GetAwaySuffix());
+	SetStatusPrefix(User.GetStatusPrefix());
+	SetVHost(User.GetVHost());
+	SetQuitMsg(User.GetQuitMsg());
+	SetDefaultChanModes(User.GetDefaultChanModes());
+	SetBufferCount(User.GetBufferCount());
+
+	// Flags
+	SetKeepBuffer(User.KeepBuffer());
+	SetAutoCycle(User.AutoCycle());
+	SetKeepNick(User.GetKeepNick());
+	SetBounceDCCs(User.BounceDCCs());
+	SetUseClientIP(User.UseClientIP());
+	SetDenyLoadMod(User.DenyLoadMod());
+	// !Flags
+
+	return true;
+}
+
 const set<CString>& CUser::GetAllowedHosts() const { return m_ssAllowedHosts; }
 bool CUser::AddAllowedHost(const CString& sHostMask) {
 	if (sHostMask.empty() || m_ssAllowedHosts.find(sHostMask) != m_ssAllowedHosts.end()) {
@@ -100,16 +143,21 @@ bool CUser::IsValidUserName(const CString& sUserName) {
 	return true;
 }
 
-bool CUser::IsValid(CString& sErrMsg) {
+bool CUser::IsValid(CString& sErrMsg, bool bSkipPass) const {
 	sErrMsg.clear();
 
-	if (m_sPass.empty()) {
+	if (!bSkipPass && m_sPass.empty()) {
 		sErrMsg = "Pass is empty";
 		return false;
 	}
 
 	if (m_sUserName.empty()) {
-		sErrMsg = "User is empty";
+		sErrMsg = "Username is empty";
+		return false;
+	}
+
+	if (!CUser::IsValidUserName(m_sUserName)) {
+		sErrMsg = "Username is invalid";
 		return false;
 	}
 
@@ -463,6 +511,7 @@ CString CUser::GetCurNick() {
 }
 
 // Setters
+void CUser::SetUserName(const CString& s) { m_sUserName = s; }
 void CUser::SetNick(const CString& s) { m_sNick = s; }
 void CUser::SetAltNick(const CString& s) { m_sAltNick = s; }
 void CUser::SetAwaySuffix(const CString& s) { m_sAwaySuffix = s; }
@@ -492,7 +541,7 @@ void CUser::SetAutoCycle(bool b) { m_bAutoCycle = b; }
 
 bool CUser::SetStatusPrefix(const CString& s) {
 	if ((!s.empty()) && (s.length() < 6) && (s.find(' ') == CString::npos)) {
-		m_sStatusPrefix = s;
+		m_sStatusPrefix = (s.empty()) ? "*" : s;
 		return true;
 	}
 
@@ -502,13 +551,14 @@ bool CUser::SetStatusPrefix(const CString& s) {
 
 // Getters
 const CString& CUser::GetUserName() const { return m_sUserName; }
-const CString& CUser::GetNick() const { return m_sNick; }
-const CString& CUser::GetAltNick() const { return m_sAltNick; }
+const CString& CUser::GetNick() const { return m_sNick.empty() ? m_sUserName : m_sNick; }
+const CString& CUser::GetAltNick() const { return m_sAltNick.empty() ? m_sUserName : m_sAltNick; }
 const CString& CUser::GetAwaySuffix() const { return m_sAwaySuffix; }
-const CString& CUser::GetIdent() const { return m_sIdent; }
-const CString& CUser::GetRealName() const { return m_sRealName; }
+const CString& CUser::GetIdent() const { return m_sIdent.empty() ? m_sUserName : m_sIdent; }
+const CString& CUser::GetRealName() const { return m_sRealName.empty() ? m_sUserName : m_sRealName; }
 const CString& CUser::GetVHost() const { return m_sVHost; }
 const CString& CUser::GetPass() const { return m_sPass; }
+bool CUser::IsPassHashed() const { return m_bPassHashed; }
 
 CString CUser::FindModPath(const CString& sModule) const {
 	CString sModPath = GetCurPath() + "/modules/" + sModule;
