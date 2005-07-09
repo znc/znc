@@ -45,7 +45,7 @@ public:
 
 	void ListUsersPage(CString& sPageRet);
 	bool UserPage(CString& sPageRet, CUser* pUser = NULL);
-	bool AddNewUser(CString& sPageRet);
+	CUser* GetNewUser(CString& sPageRet);
 
 	void ListPage(CString& sPageRet) {
 		VCString vsParams;
@@ -141,7 +141,7 @@ void CAdminSock::ListUsersPage(CString& sPageRet) {
 		sPageRet += "There are no users defined.  Click <a href=\"/adduser\">here</a> if you would like to add one.\r\n";
 	} else {
 		sPageRet += "<table border='1' cellspacing='0' cellpadding='4'>\r\n"
-			"\t<thead><tr bgcolor='#FFFF99'><td>Action</td><td>Username</td><td>Current Server</td></tr></thead>\r\n";
+			"\t<thead><tr bgcolor='#FFFF99'><td><b>Action</b></td><td><b>Username</b></td><td><b>Current Server</b></td></tr></thead>\r\n";
 
 		unsigned int a = 0;
 	
@@ -229,7 +229,7 @@ bool CAdminSock::OnPageRequest(const CString& sURI, CString& sPageRet) {
 
 bool CAdminSock::UserPage(CString& sPageRet, CUser* pUser) {
 	if (!GetParam("submitted").ToUInt()) {
-		sPageRet = Header((pUser) ? "Edit User" : "Add User");
+		sPageRet = Header((pUser) ? CString("Edit User [" + pUser->GetUserName().Escape_n(CString::EHTML) + "]") : CString("Add User"));
 
 		CString sAllowedHosts, sServers, sChans, sCTCPReplies;
 
@@ -254,14 +254,15 @@ bool CAdminSock::UserPage(CString& sPageRet, CUser* pUser) {
 			}
 		}
 
-		sPageRet += "<form action='/" + CString((pUser) ? "edituser" : "adduser") + "' method='POST'>\r\n"
-			"<input type='hidden' name='submitted' value='1'>\r\n"
+		sPageRet += "<form action='/" + CString((pUser) ? "edituser" : "adduser") + "' method='POST'>\r\n";
+
+		sPageRet += "<input type='hidden' name='submitted' value='1'>\r\n"
 			"<div style='white-space: nowrap; margin-top: -8px; margin-right: 8px; margin-left: 8px; padding: 1px 5px 1px 5px; float: left; border: 1px solid #000; font-size: 16px; font-weight: bold; background: #ff9;'>Authentication</div><div style='padding: 25px 5px 5px 15px; border: 2px solid #000; background: #cc9;'><div style='clear: both;'>\r\n"
 			"<div style='float: left; margin-right: 20px;'><small><b>Username:</b></small><br>\r\n";
 
 		if (pUser) {
 			sPageRet += "<input type='hidden' name='user' value='" + pUser->GetUserName().Escape_n(CString::EHTML) + "'>\r\n"
-				"<input type='text' name='disuser' value='" + pUser->GetUserName().Escape_n(CString::EHTML) + "' size='32' maxlength='12' DISABLED><br>\r\n";
+				"<input type='text' name='newuser' value='" + pUser->GetUserName().Escape_n(CString::EHTML) + "' size='32' maxlength='12' DISABLED><br>\r\n";
 		} else {
 			sPageRet += "<input type='text' name='user' value='' size='32' maxlength='12'><br>\r\n";
 		}
@@ -334,38 +335,60 @@ bool CAdminSock::UserPage(CString& sPageRet, CUser* pUser) {
 		return true;
 	}
 
+	CString sUsername = GetParam("user");
+	if (!pUser && m_pModule->GetZNC()->FindUser(sUsername)) {
+		GetErrorPage(sPageRet, "Invalid Submission [User " + sUsername.Escape_n(CString::EHTML) + " already exists]");
+		return true;
+	}
+
+	CUser* pNewUser = GetNewUser(sPageRet);
+	if (!pNewUser) {
+		return true;
+	}
+
+	CString sErr;
+
 	if (!pUser) {
 		// Add User Submission
-		if (AddNewUser(sPageRet)) {
+		if (!pNewUser->IsValid(sErr)) {
+			delete pNewUser;
+			GetErrorPage(sPageRet, "Invalid submission [" + sErr.Escape_n(CString::EHTML) + "]");
 			return true;
 		}
+
+		m_pModule->GetZNC()->AddUser(pNewUser);
 	} else {
 		// Edit User Submission
-		GetErrorPage(sPageRet, "Sorry... the editing of users has not been implemented yet.");
-		return true;
+		if (!pUser->Clone(*pNewUser, sErr)) {
+			delete pNewUser;
+			GetErrorPage(sPageRet, "Invalid Submission [" + sErr.Escape_n(CString::EHTML) + "]");
+			return true;
+		}
+
+		delete pNewUser;
 	}
 
 	Redirect("/listusers");
 	return false;
 }
 
-bool CAdminSock::AddNewUser(CString& sPageRet) {
-	CString sUsername = GetParam("user");
+CUser* CAdminSock::GetNewUser(CString& sPageRet) {
+	CString sUsername = GetParam("newuser");
+
 	if (sUsername.empty()) {
-		GetErrorPage(sPageRet, "Invalid Submission [Username is required]");
-		return true;
+		sUsername = GetParam("user");
 	}
 
-	if (m_pModule->GetZNC()->FindUser(sUsername)) {
-		GetErrorPage(sPageRet, "Invalid Submission [User " + sUsername.Escape_n(CString::EHTML) + " already exists]");
-		return true;
+	if (sUsername.empty()) {
+		GetErrorPage(sPageRet, "Invalid Submission [Username is required]");
+		return NULL;
 	}
 
 	CString sArg = GetParam("password");
 
 	if (sArg != GetParam("password2")) {
 		GetErrorPage(sPageRet, "Invalid Submission [Passwords do not match]");
-		return true;
+		return NULL;
 	}
 
 	CUser* pNewUser = new CUser(sUsername, m_pModule->GetZNC());
@@ -426,16 +449,7 @@ bool CAdminSock::AddNewUser(CString& sPageRet) {
 		pNewUser->AddChan(vsArgs[a].TrimRight_n("\r"));
 	}
 
-	CString sErr;
-	if (!pNewUser->IsValid(sErr)) {
-		delete pNewUser;
-		GetErrorPage(sPageRet, "Invalid submission [" + sErr.Escape_n(CString::EHTML) + "]");
-		return true;
-	}
-
-	m_pModule->GetZNC()->AddUser(pNewUser);
-
-	return false;
+	return pNewUser;
 }
 
 GLOBALMODULEDEFS(CAdminMod, "Add, Edit, Remove users on the fly")
