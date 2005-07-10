@@ -23,11 +23,16 @@ CHTTPSock::~CHTTPSock() {}
 
 void CHTTPSock::ReadData(const char* data, int len) {
 	if (m_bGotHeader && m_bPost) {
-		const CString& sBuf = GetInternalBuffer();
-		if (sBuf.size() >= m_uPostLen) {
-			ParseParams(sBuf);
-			GetPage();
-		}
+		m_sPostData.append(data, len);
+		CheckPost();
+	}
+}
+
+void CHTTPSock::CheckPost() {
+	if (m_sPostData.size() >= m_uPostLen) {
+		ParseParams(m_sPostData.Left(m_uPostLen));
+		GetPage();
+		m_sPostData.clear();
 	}
 }
 
@@ -59,8 +64,12 @@ void CHTTPSock::ReadLine(const CString& sData) {
 		m_uPostLen = sLine.Token(1).ToULong();
 	} else if (sLine.empty()) {
 		m_bGotHeader = true;
+		DisableReadLine();
 
-		if (!m_bPost) {
+		if (m_bPost) {
+			m_sPostData = GetInternalBuffer();
+			CheckPost();
+		} else {
 			GetPage();
 		}
 	}

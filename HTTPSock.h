@@ -27,6 +27,7 @@ public:
 	virtual bool OnLogin(const CString& sUser, const CString& sPass);
 	// !Hooks
 
+	void CheckPost();
 	bool SentHeader() const;
 	bool PrintHeader(unsigned long uContentLength, const CString& sContentType = "text/html", unsigned int uStatusId = 200, const CString& sStatusMsg = "OK");
 	void AddHeader(const CString& sName, const CString& sValue);
@@ -56,6 +57,7 @@ protected:
 	bool					m_bLoggedIn;
 	bool					m_bPost;
 	unsigned long			m_uPostLen;
+	CString					m_sPostData;
 	CString					m_sURI;
 	CString					m_sUser;
 	CString					m_sPass;
