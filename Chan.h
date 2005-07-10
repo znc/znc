@@ -40,7 +40,7 @@ public:
 		M_Except		= 'e',
 	} EModes;
 
-	CChan(const CString& sName, CUser* pUser);
+	CChan(const CString& sName, CUser* pUser, bool bInConfig);
 	virtual ~CChan();
 
 	void Reset();
@@ -102,6 +102,7 @@ public:
 	void SetAutoCycle(bool b) { m_bAutoCycle = b; }
 	void SetWhoDone(bool b = true) { m_bWhoDone = b; }
 	void SetDetached(bool b = true) { m_bDetached = b; }
+	void SetInConfig(bool b) { m_bInConfig = b; }
 	// !Setters
 
 	// Getters
@@ -125,6 +126,7 @@ public:
 	bool KeepBuffer() const { return m_bKeepBuffer; }
 	bool AutoCycle() const { return m_bAutoCycle; }
 	bool IsDetached() const { return m_bDetached; }
+	bool InConfig() const { return m_bInConfig; }
 	// !Getters
 private:
 protected:
@@ -133,6 +135,7 @@ protected:
 	bool				m_bWhoDone;
 	bool				m_bKeepBuffer;
 	bool				m_bAutoCycle;
+	bool				m_bInConfig;
 	CString				m_sName;
 	CString				m_sKey;
 	CString				m_sCurKey;

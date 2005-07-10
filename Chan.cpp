@@ -4,7 +4,7 @@
 #include "Utils.h"
 #include "IRCSock.h"
 
-CChan::CChan(const CString& sName, CUser* pUser) {
+CChan::CChan(const CString& sName, CUser* pUser, bool bInConfig) {
 	m_sName = sName.Token(0);
 	m_sKey = sName.Token(1);
 
@@ -12,6 +12,7 @@ CChan::CChan(const CString& sName, CUser* pUser) {
 		m_sName = "#" + m_sName;
 	}
 
+	m_bInConfig = bInConfig;
 	m_pUser = pUser;
 	m_Nick.SetUser(pUser);
 	m_bAutoCycle = m_pUser->AutoCycle();
