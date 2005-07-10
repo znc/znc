@@ -690,7 +690,7 @@ bool CZNC::ParseConfig(const CString& sConfig) {
 					return false;
 				}
 
-				pChan = new CChan(sValue, pUser);
+				pChan = new CChan(sValue, pUser, true);
 				continue;
 			}
 		}
@@ -800,7 +800,7 @@ bool CZNC::ParseConfig(const CString& sConfig) {
 						CUtils::PrintStatus(pUser->AddServer(sValue));
 						continue;
 					} else if (sName.CaseCmp("Chan") == 0) {
-						pUser->AddChan(sValue);
+						pUser->AddChan(sValue, true);
 						continue;
 					} else if (sName.CaseCmp("LoadModule") == 0) {
 						CString sModName = sValue.Token(0);

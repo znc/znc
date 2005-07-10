@@ -442,7 +442,7 @@ void CIRCSock::ReadLine(const CString& sData) {
 				}
 
 				if (sNick.CaseCmp(GetNick()) == 0) {
-					m_pUser->AddChan(sChan);
+					m_pUser->AddChan(sChan, false);
 				}
 
 				CChan* pChan = m_pUser->FindChan(sChan);

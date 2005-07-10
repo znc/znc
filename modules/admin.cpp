@@ -246,7 +246,11 @@ bool CAdminSock::UserPage(CString& sPageRet, CUser* pUser) {
 
 			const vector<CChan*>& vChans = pUser->GetChans();
 			for (unsigned int b = 0; b < vChans.size(); b++) {
-				sChans += vChans[b]->GetName() + "\r\n";
+				CChan* pChan = vChans[b];
+
+				if (pChan->InConfig()) {
+					sChans += vChans[b]->GetName() + "\r\n";
+				}
 			}
 			const MCString& msCTCPReplies = pUser->GetCTCPReplies();
 			for (MCString::const_iterator it2 = msCTCPReplies.begin(); it2 != msCTCPReplies.end(); it2++) {
@@ -446,7 +450,7 @@ CUser* CAdminSock::GetNewUser(CString& sPageRet) {
 	GetParam("channels").Split("\n", vsArgs);
 
 	for (a = 0; a < vsArgs.size(); a++) {
-		pNewUser->AddChan(vsArgs[a].TrimRight_n("\r"));
+		pNewUser->AddChan(vsArgs[a].TrimRight_n("\r"), true);
 	}
 
 	return pNewUser;

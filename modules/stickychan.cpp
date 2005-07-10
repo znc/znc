@@ -50,7 +50,7 @@ public:
 		{
 			if ( !m_pUser->FindChan( it->first ) )
 			{
-				CChan *pChan = new CChan( it->first, m_pUser );
+				CChan *pChan = new CChan( it->first, m_pUser, true );
 				if ( !it->second.empty() )
 					pChan->SetKey( it->second );
 				m_pUser->AddChan( pChan );
