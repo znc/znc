@@ -491,6 +491,7 @@ void CUserSock::UserCommand(const CString& sLine) {
 			CTable Table;
 			Table.AddColumn("Name");
 			Table.AddColumn("Status");
+			Table.AddColumn("Conf");
 			Table.AddColumn("Buf");
 			Table.AddColumn("Modes");
 			Table.AddColumn("Users");
@@ -506,6 +507,7 @@ void CUserSock::UserCommand(const CString& sLine) {
 				Table.AddRow();
 				Table.SetCell("Name", pChan->GetPermStr() + pChan->GetName());
 				Table.SetCell("Status", ((vChans[a]->IsOn()) ? ((vChans[a]->IsDetached()) ? "Detached" : "Joined") : "Trying"));
+				Table.SetCell("Conf", CString((pChan->InConfig()) ? "yes" : ""));
 				Table.SetCell("Buf", CString((pChan->KeepBuffer()) ? "*" : "") + CString::ToString(pChan->GetBufferCount()));
 				Table.SetCell("Modes", pChan->GetModeString());
 				Table.SetCell("Users", CString::ToString(pChan->GetNickCount()));
