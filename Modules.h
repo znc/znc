@@ -235,8 +235,8 @@ public:
 	virtual bool PutModule(const CString& sLine, const CString& sIdent = "znc", const CString& sHost = "znc.com");
 	virtual bool PutModNotice(const CString& sLine, const CString& sIdent = "znc", const CString& sHost = "znc.com");
 
-	const CString& GetModName();
-	CString GetModNick();
+	const CString& GetModName() const;
+	CString GetModNick() const;
 
 	// Timer stuff
 	bool AddTimer(CTimer* pTimer);
@@ -344,7 +344,7 @@ public:
 	virtual bool OnPrivNotice(const CNick& Nick, CString& sMessage);
 	virtual bool OnChanNotice(const CNick& Nick, CChan& Channel, CString& sMessage);
 
-	CModule* FindModule(const CString& sModule);
+	CModule* FindModule(const CString& sModule) const;
 	bool LoadModule(const CString& sModule, const CString& sArgs, CUser* pUser, CString& sRetMsg);
 	bool UnloadModule(const CString& sModule);
 	bool UnloadModule(const CString& sModule, CString& sRetMsg);

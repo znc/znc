@@ -437,8 +437,8 @@ void CModule::ListSockets() {
 	}
 }
 
-const CString& CModule::GetModName() { return m_sModName; }
-CString CModule::GetModNick() { return ((m_pUser) ? m_pUser->GetStatusPrefix() : "*") + m_sModName; }
+const CString& CModule::GetModName() const { return m_sModName; }
+CString CModule::GetModNick() const { return ((m_pUser) ? m_pUser->GetStatusPrefix() : "*") + m_sModName; }
 
 bool CModule::OnLoad(const CString& sArgs) { return true; }
 bool CModule::OnBoot() { return true; }
@@ -679,7 +679,7 @@ bool CGlobalModules::OnConfigLine(const CString& sName, const CString& sValue, C
 	GLOBALMODHALTCHK(OnConfigLine(sName, sValue, pUser, pChan));
 }
 
-CModule* CModules::FindModule(const CString& sModule) {
+CModule* CModules::FindModule(const CString& sModule) const {
 	for (unsigned int a = 0; a < size(); a++) {
 		if (sModule.CaseCmp((*this)[a]->GetModName()) == 0) {
 			return (*this)[a];
