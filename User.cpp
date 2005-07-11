@@ -91,6 +91,53 @@ bool CUser::Clone(const CUser& User, CString& sErrorRet) {
 	SetDefaultChanModes(User.GetDefaultChanModes());
 	SetBufferCount(User.GetBufferCount());
 
+	// Allowed Hosts
+	m_ssAllowedHosts.clear();
+	const set<CString>& ssHosts = User.GetAllowedHosts();
+	for (set<CString>::const_iterator it = ssHosts.begin(); it != ssHosts.end(); it++) {
+		AddAllowedHost(*it);
+	}
+
+	// @todo disconnect the user if his ip doesn't match still
+
+	// !Allowed Hosts
+
+	// Servers
+	
+	// !Servers
+
+	// Chans
+	const vector<CChan*>& vChans = User.GetChans();
+	for (unsigned int a = 0; a < vChans.size(); a++) {
+		CChan* pNewChan = vChans[a];
+		CChan* pChan = FindChan(pNewChan->GetName());
+
+		if (pChan) {
+			pChan->SetInConfig(pNewChan->InConfig());
+		} else {
+			AddChan(pNewChan->GetName(), pNewChan->InConfig());
+		}
+	}
+
+	for (unsigned int b = 0; b < m_vChans.size(); b++) {
+		CChan* pChan = m_vChans[b];
+
+		if (!User.FindChan(pChan->GetName())) {
+			pChan->SetInConfig(false);
+		}
+	}
+
+	JoinChans();
+	// !Chans
+
+	// CTCP Replies
+	m_mssCTCPReplies.clear();
+	const MCString& msReplies = User.GetCTCPReplies();
+	for (MCString::const_iterator it = msReplies.begin(); it != msReplies.end(); it++) {
+		AddCTCPReply(it->first, it->second);
+	}
+	// !CTCP Replies
+
 	// Flags
 	SetKeepBuffer(User.KeepBuffer());
 	SetAutoCycle(User.AutoCycle());
@@ -185,18 +232,12 @@ bool CUser::AddChan(CChan* pChan) {
 	return true;
 }
 
-bool CUser::AddChan(const CString& sName) {
-	if (sName.empty()) {
+bool CUser::AddChan(const CString& sName, bool bInConfig) {
+	if (sName.empty() || FindChan(sName)) {
 		return false;
 	}
 
-	for (unsigned int a = 0; a < m_vChans.size(); a++) {
-		if (sName.CaseCmp(m_vChans[a]->GetName()) == 0) {
-			return false;
-		}
-	}
-
-	CChan* pChan = new CChan(sName, this);
+	CChan* pChan = new CChan(sName, this, bInConfig);
 	m_vChans.push_back(pChan);
 	return true;
 }
@@ -212,7 +253,7 @@ bool CUser::DelChan(const CString& sName) {
 	return false;
 }
 
-CChan* CUser::FindChan(const CString& sName) {
+CChan* CUser::FindChan(const CString& sName) const {
 	for (unsigned int a = 0; a < m_vChans.size(); a++) {
 		CChan* pChan = m_vChans[a];
 		if (sName.CaseCmp(pChan->GetName()) == 0) {
@@ -221,6 +262,15 @@ CChan* CUser::FindChan(const CString& sName) {
 	}
 
 	return NULL;
+}
+
+void CUser::JoinChans() {
+	for (unsigned int a = 0; a < m_vChans.size(); a++) {
+		CChan* pChan = m_vChans[a];
+		if (!pChan->IsOn()) {
+			PutIRC("JOIN " + pChan->GetName() + " " + pChan->GetKey());
+		}
+	}
 }
 
 CServer* CUser::FindServer(const CString& sName) {

@@ -27,10 +27,11 @@ public:
 	CUser(const CString& sUserName, CZNC* pZNC);
 	virtual ~CUser();
 
-	CChan* FindChan(const CString& sName);
+	CChan* FindChan(const CString& sName) const;
 	bool AddChan(CChan* pChan);
-	bool AddChan(const CString& sName);
+	bool AddChan(const CString& sName, bool bInConfig);
 	bool DelChan(const CString& sName);
+	void JoinChans();
 	CServer* FindServer(const CString& sName);
 	bool DelServer(const CString& sName);
 	bool AddServer(const CString& sName);
