@@ -61,6 +61,7 @@ bool CUser::OnBoot() {
 }
 
 bool CUser::Clone(const CUser& User, CString& sErrorRet) {
+	unsigned int a = 0;
 	sErrorRet.clear();
 
 	if (!User.IsValid(sErrorRet, true)) {
@@ -98,17 +99,84 @@ bool CUser::Clone(const CUser& User, CString& sErrorRet) {
 		AddAllowedHost(*it);
 	}
 
-	// @todo disconnect the user if his ip doesn't match still
+	CUserSock* pSock = GetUserSock();
+	if (pSock) {
+		if (!IsHostAllowed(pSock->GetRemoteIP())) {
+			pSock->PutStatusNotice("You are being disconnected because your IP is no longer allowed to connect to this user");
+			pSock->Close();
+		}
+	}
 
 	// !Allowed Hosts
 
+#ifdef _MODULES
+	// Modules
+	set<CString> ssUnloadMods;
+	CModules& vCurMods = GetModules();
+	const CModules& vNewMods = User.GetModules();
+
+	for (a = 0; a < vNewMods.size(); a++) {
+		CModule* pNewMod = vNewMods[a];
+		CModule* pCurMod = vCurMods.FindModule(pNewMod->GetModName());
+
+		if (!pCurMod) {
+			CString sModRet;
+			vCurMods.LoadModule(pNewMod->GetModName(), "", this, sModRet);
+		}
+	}
+
+	for (a = 0; a < vCurMods.size(); a++) {
+		CModule* pCurMod = vCurMods[a];
+		CModule* pNewMod = vNewMods.FindModule(pCurMod->GetModName());
+
+		if (!pNewMod) {
+			ssUnloadMods.insert(pCurMod->GetModName());
+		}
+	}
+
+	for (set<CString>::iterator it = ssUnloadMods.begin(); it != ssUnloadMods.end(); it++) {
+		vCurMods.UnloadModule(*it);
+	}
+	// !Modules
+#endif // !_MODULES
+
 	// Servers
-	
+	const vector<CServer*>& vServers = User.GetServers();
+	CString sServer;
+	CServer* pCurServ = GetCurrentServer();
+
+	if (pCurServ) {
+		sServer = pCurServ->GetName();
+	}
+
+	m_vServers.clear();
+
+	for (a = 0; a < vServers.size(); a++) {
+		CServer* pServer = vServers[a];
+		AddServer(pServer->GetName(), pServer->GetPort(), pServer->GetPass(), pServer->IsSSL());
+	}
+
+	for (a = 0; a < m_vServers.size(); a++) {
+		if (sServer.CaseCmp(m_vServers[a]->GetName()) == 0) {
+			m_uServerIdx = a +1;
+			break;
+		}
+
+		if (a == m_vServers.size() -1) {
+			m_uServerIdx = m_vServers.size();
+			CIRCSock* pSock = GetIRCSock();
+
+			if (pSock) {
+				PutStatus("Jumping servers because this server is no longer in the list");
+				pSock->Close();
+			}
+		}
+	}
 	// !Servers
 
 	// Chans
 	const vector<CChan*>& vChans = User.GetChans();
-	for (unsigned int a = 0; a < vChans.size(); a++) {
+	for (a = 0; a < vChans.size(); a++) {
 		CChan* pNewChan = vChans[a];
 		CChan* pChan = FindChan(pNewChan->GetName());
 
@@ -119,8 +187,8 @@ bool CUser::Clone(const CUser& User, CString& sErrorRet) {
 		}
 	}
 
-	for (unsigned int b = 0; b < m_vChans.size(); b++) {
-		CChan* pChan = m_vChans[b];
+	for (a = 0; a < m_vChans.size(); a++) {
+		CChan* pChan = m_vChans[a];
 
 		if (!User.FindChan(pChan->GetName())) {
 			pChan->SetInConfig(false);
