@@ -127,6 +127,17 @@ void CUserSock::ReadLine(const CString& sData) {
 				return;
 			}
 		}
+	} else if (sCommand.CaseCmp("PART") == 0) {
+		if (m_pUser) {
+			CString sChan = sLine.Token(1);
+			CChan* pChan = m_pUser->FindChan(sChan);
+
+			if (pChan && !pChan->IsOn()) {
+				PutStatusNotice("Removing channel [" + sChan + "]");
+				m_pUser->DelChan(sChan);
+				return;
+			}
+		}
 	} else if (sCommand.CaseCmp("QUIT") == 0) {
 		if (m_pIRCSock) {
 			m_pIRCSock->UserDisconnected();
@@ -487,6 +498,11 @@ void CUserSock::UserCommand(const CString& sLine) {
 		if (m_pUser) {
 			const vector<CChan*>& vChans = m_pUser->GetChans();
 			const CString& sPerms = m_pUser->GetIRCSock()->GetPerms();
+
+			if (!vChans.size()) {
+				PutStatus("You have no channels defined");
+				return;
+			}
 
 			CTable Table;
 			Table.AddColumn("Name");
