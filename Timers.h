@@ -40,13 +40,7 @@ protected:
 		CIRCSock* pSock = m_pUser->GetIRCSock();
 
 		if (pSock) {
-			const vector<CChan*>& vChans = m_pUser->GetChans();
-
-			for (unsigned int a = 0; a < vChans.size(); a++) {
-				if (!vChans[a]->IsOn()) {
-					pSock->PutServ("JOIN " + vChans[a]->GetName() + " " + vChans[a]->GetKey());
-				}
-			}
+			m_pUser->JoinChans();
 		}
 	}
 
