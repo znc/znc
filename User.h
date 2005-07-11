@@ -49,6 +49,7 @@ public:
 #ifdef _MODULES
 	// Modules
 	CModules& GetModules() { return *m_pModules; }
+	const CModules& GetModules() const { return *m_pModules; }
 	// !Modules
 #endif
 
