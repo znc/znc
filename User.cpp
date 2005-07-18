@@ -349,42 +349,50 @@ bool CUser::WriteConfig(CFile& File) {
 	File.Write("\r\n");
 
 	// Allow Hosts
-	for (set<CString>::iterator it = m_ssAllowedHosts.begin(); it != m_ssAllowedHosts.end(); it++) {
-		PrintLine(File, "Allow", *it);
-	}
+	if (!m_ssAllowedHosts.empty()) {
+		for (set<CString>::iterator it = m_ssAllowedHosts.begin(); it != m_ssAllowedHosts.end(); it++) {
+			PrintLine(File, "Allow", *it);
+		}
 
-	File.Write("\r\n");
+		File.Write("\r\n");
+	}
 
 	// CTCP Replies
-	for (MCString::iterator itb = m_mssCTCPReplies.begin(); itb != m_mssCTCPReplies.end(); itb++) {
-		PrintLine(File, "CTCPReply", itb->first.AsUpper() + " " + itb->second);
+	if (!m_mssCTCPReplies.empty()) {
+		for (MCString::iterator itb = m_mssCTCPReplies.begin(); itb != m_mssCTCPReplies.end(); itb++) {
+			PrintLine(File, "CTCPReply", itb->first.AsUpper() + " " + itb->second);
+		}
+
+		File.Write("\r\n");
 	}
-	File.Write("\r\n");
 
 #ifdef _MODULES
 	// Modules
 	CModules& Mods = GetModules();
 
-	for (unsigned int a = 0; a < Mods.size(); a++) {
-		CString sArgs = Mods[a]->GetArgs();
+	if (!Mods.empty()) {
+		for (unsigned int a = 0; a < Mods.size(); a++) {
+			CString sArgs = Mods[a]->GetArgs();
 
-		if (!sArgs.empty()) {
-			sArgs = " " + sArgs;
+			if (!sArgs.empty()) {
+				sArgs = " " + sArgs;
+			}
+
+			PrintLine(File, "LoadModule", Mods[a]->GetModName() + sArgs);
 		}
 
-		PrintLine(File, "LoadModule", Mods[a]->GetModName() + sArgs);
+		File.Write("\r\n");
 	}
-	File.Write("\r\n");
 #endif
 
 	// Servers
 	for (unsigned int b = 0; b < m_vServers.size(); b++) {
 		PrintLine(File, "Server", m_vServers[b]->GetString());
 	}
-	File.Write("\r\n");
 
 	// Chans
 	for (unsigned int c = 0; c < m_vChans.size(); c++) {
+		File.Write("\r\n");
 		if (!m_vChans[c]->WriteConfig(File)) {
 			return false;
 		}
