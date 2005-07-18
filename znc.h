@@ -3,9 +3,13 @@
 
 #include "main.h"
 #include "FileUtils.h"
+#ifdef _MODULES
 #include "Modules.h"
+#endif
+#include <set>
 #include <map>
 using std::map;
+using std::set;
 
 class CUser;
 class CUserSock;
@@ -28,18 +32,22 @@ public:
 	bool OnBoot();
 	CString ExpandConfigPath(const CString& sConfigFile);
 	bool WriteNewConfig(const CString& sConfig);
+	bool WriteConfig();
 	static CString GetTag(bool bIncludeVersion = true);
 	CString FindModPath(const CString& sModule) const;
 
 	// Getters
 	TSocketManager<Csock>& GetManager() { return m_Manager; }
+#ifdef _MODULES
 	CGlobalModules& GetModules() { return *m_pModules; }
+#endif
 	unsigned short GetListenPort() const { return m_uListenPort; }
 	const CString& GetCurPath() const { if (!CFile::Exists(m_sCurPath)) { CUtils::MakeDir(m_sCurPath); } return m_sCurPath; }
 	const CString& GetModPath() const { if (!CFile::Exists(m_sModPath)) { CUtils::MakeDir(m_sModPath); } return m_sModPath; }
 	const CString& GetHomePath() const { if (!CFile::Exists(m_sHomePath)) { CUtils::MakeDir(m_sHomePath); } return m_sHomePath; }
 	const CString& GetZNCPath() const { if (!CFile::Exists(m_sZNCPath)) { CUtils::MakeDir(m_sZNCPath); } return m_sZNCPath; }
 	const CString& GetConfPath() const { if (!CFile::Exists(m_sConfPath)) { CUtils::MakeDir(m_sConfPath); } return m_sConfPath; }
+	const CString& GetConfBackupPath() const { if (!CFile::Exists(m_sConfBackupPath)) { CUtils::MakeDir(m_sConfBackupPath); } return m_sConfBackupPath; }
 	const CString& GetUserPath() const { if (!CFile::Exists(m_sUserPath)) { CUtils::MakeDir(m_sUserPath); } return m_sUserPath; }
 	CString GetPemLocation() const { return GetZNCPath() + "/znc.pem"; }
 
@@ -74,8 +82,11 @@ protected:
 	CString					m_sHomePath;
 	CString					m_sZNCPath;
 	CString					m_sConfPath;
+	CString					m_sConfBackupPath;
 	CString					m_sUserPath;
 
+	CString					m_sConfigFile;
+	CString					m_sStatusPrefix;
 	CString					m_sISpoofFile;
 	CString					m_sOrigISpoof;
 	CString					m_sISpoofFormat;
@@ -84,7 +95,9 @@ protected:
 	bool					m_bISpoofLocked;
 	bool					m_bSSL;
 	map<CString,CUser*>::iterator	m_itUserIter;	// This needs to be reset to m_msUsers.begin() if anything is added or removed to the map
+#ifdef _MODULES
 	CGlobalModules*			m_pModules;
+#endif
 };
 
 #endif // !_ZNC_H

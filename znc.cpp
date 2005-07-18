@@ -14,7 +14,9 @@
 #endif
 
 CZNC::CZNC() {
+#ifdef _MODULES
 	m_pModules = new CGlobalModules(this);
+#endif
 	m_uListenPort = 0;
 	m_bISpoofLocked = false;
 	m_sISpoofFormat = "global { reply \"%\" }";
@@ -47,9 +49,11 @@ CString CZNC::GetTag(bool bIncludeVersion) {
 }
 
 bool CZNC::OnBoot() {
+#ifdef _MODULES
 	if (!GetModules().OnBoot()) {
 		return false;
 	}
+#endif
 
 	for (map<CString,CUser*>::iterator it = m_msUsers.begin(); it != m_msUsers.end(); it++) {
 		if (!it->second->OnBoot()) {
@@ -275,6 +279,7 @@ void CZNC::InitDirs(const CString& sArgvPath) {
 
 	// Other dirs that we use
 	m_sConfPath = m_sZNCPath + "/configs";
+	m_sConfBackupPath = m_sConfPath + "/backups";
 	m_sModPath = m_sZNCPath + "/modules";
 	m_sUserPath = m_sZNCPath + "/users";
 }
@@ -296,6 +301,60 @@ CString CZNC::ExpandConfigPath(const CString& sConfigFile) {
 	}
 
 	return sRetPath;
+}
+
+bool CZNC::WriteConfig() {
+	CFile File(m_sConfigFile);
+
+	if (!File.Move(GetConfBackupPath() + "/" + File.GetShortName() + "-" + CString::ToString(time(NULL)))) {
+		return false;
+	}
+
+	if (m_sConfigFile.empty() || !File.Open(O_WRONLY | O_CREAT | O_TRUNC, 0600)) {
+		return false;
+	}
+
+	File.Write("ListenPort   = " + CString::ToString(m_uListenPort) + "\r\n");
+	if (!m_sISpoofFile.empty()) {
+		File.Write("ISpoofFile   = " + m_sISpoofFile + "\r\n");
+		if (!m_sISpoofFormat.empty()) { File.Write("ISpoofFormat = " + m_sISpoofFormat + "\r\n"); }
+	}
+
+	if (!m_sPidFile.empty()) { File.Write("PidFile      = " + m_sPidFile + "\r\n"); }
+	if (!m_sStatusPrefix.empty()) { File.Write("StatusPrefix = " + m_sStatusPrefix + "\r\n"); }
+
+#ifdef _MODULES
+	CGlobalModules& Mods = GetModules();
+
+	for (unsigned int a = 0; a < Mods.size(); a++) {
+		CString sArgs = Mods[a]->GetArgs();
+
+		if (!sArgs.empty()) {
+			sArgs = " " + sArgs;
+		}
+
+		File.Write("LoadModule   = " + Mods[a]->GetModName() + sArgs + "\r\n");
+	}
+#endif
+
+	File.Write("\r\n");
+
+	for (map<CString,CUser*>::iterator it = m_msUsers.begin(); it != m_msUsers.end(); it++) {
+		CString sErr;
+
+		if (!it->second->IsValid(sErr)) {
+			DEBUG_ONLY(cerr << "** Error writing config for user [" << it->first << "] [" << sErr << "]" << endl);
+			continue;
+		}
+
+		if (!it->second->WriteConfig(File)) {
+			DEBUG_ONLY(cerr << "** Error writing config for user [" << it->first << "]" << endl);
+		}
+	}
+
+	File.Close();
+
+	return true;
 }
 
 bool CZNC::WriteNewConfig(const CString& sConfig) {
@@ -557,28 +616,27 @@ bool CZNC::WriteNewConfig(const CString& sConfig) {
 }
 
 bool CZNC::ParseConfig(const CString& sConfig) {
-	CString sStatusPrefix;
-	CString sConfigFile = ExpandConfigPath(sConfig);
+	m_sConfigFile = ExpandConfigPath(sConfig);
 
-	CUtils::PrintAction("Opening Config [" + sConfigFile + "]");
+	CUtils::PrintAction("Opening Config [" + m_sConfigFile + "]");
 
-	if (!CFile::Exists(sConfigFile)) {
+	if (!CFile::Exists(m_sConfigFile)) {
 		CUtils::PrintStatus(false, "No such file");
 		CUtils::PrintMessage("Restart znc with the --makeconf option if you wish to create this config.");
 		return false;
 	}
 
-	if (!CFile::IsReg(sConfigFile)) {
+	if (!CFile::IsReg(m_sConfigFile)) {
 		CUtils::PrintStatus(false, "Not a file");
 		return false;
 	}
 
-	if (!m_LockFile.TryExLock(sConfigFile, 50)) {
+	if (!m_LockFile.TryExLock(m_sConfigFile, 50)) {
 		CUtils::PrintStatus(false, "ZNC is already running on this config.");
 		return false;
 	}
 
-	CFile File(sConfigFile);
+	CFile File(m_sConfigFile);
 
 	if (!File.Open(O_RDONLY)) {
 		CUtils::PrintStatus(false);
@@ -671,9 +729,9 @@ bool CZNC::ParseConfig(const CString& sConfig) {
 				pUser = new CUser(sValue, this);
 				CUtils::PrintMessage("Loading user [" + sValue + "]");
 
-				if (!sStatusPrefix.empty()) {
-					if (!pUser->SetStatusPrefix(sStatusPrefix)) {
-						CUtils::PrintError("Invalid StatusPrefix [" + sStatusPrefix + "] Must be 1-5 chars, no spaces.");
+				if (!m_sStatusPrefix.empty()) {
+					if (!pUser->SetStatusPrefix(m_sStatusPrefix)) {
+						CUtils::PrintError("Invalid StatusPrefix [" + m_sStatusPrefix + "] Must be 1-5 chars, no spaces.");
 						return false;
 					}
 				}
@@ -701,9 +759,11 @@ bool CZNC::ParseConfig(const CString& sConfig) {
 		sName.Trim();
 		sValue.Trim();
 
+#ifdef _MODULES
 		if (GetModules().OnConfigLine(sName, sValue, pUser, pChan)) {
 			continue;
 		}
+#endif
 
 		if ((!sName.empty()) && (!sValue.empty())) {
 			if (pUser) {
@@ -923,7 +983,7 @@ bool CZNC::ParseConfig(const CString& sConfig) {
 
 					continue;
 				} else if (sName.CaseCmp("StatusPrefix") == 0) {
-					sStatusPrefix = sValue;
+					m_sStatusPrefix = sValue;
 					continue;
 				}
 			}
