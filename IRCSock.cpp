@@ -169,7 +169,7 @@ void CIRCSock::ReadLine(const CString& sData) {
 					CString sConfNick = m_pUser->GetNick().Left(uMax);
 
 					if (sNick == "*" || sNick.CaseCmp(CNick::Concat(sConfNick, m_pUser->GetAwaySuffix(), GetMaxNickLen())) == 0) {
-						CString sAltNick = m_pUser->GetAltNick();
+						CString sAltNick = m_pUser->GetAltNick().Left(uMax);
 
 						if (sBadNick.CaseCmp(sConfNick) == 0) {
 							if ((!sAltNick.empty()) && (sConfNick.CaseCmp(sAltNick) != 0)) {
