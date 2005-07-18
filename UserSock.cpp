@@ -16,9 +16,11 @@ void CUserSock::ReadLine(const CString& sData) {
 
 	DEBUG_ONLY(cout << GetSockName() << " <- [" << sLine << "]" << endl);
 
+#ifdef _MODULES
 	if (m_bAuthed) {
 		MODULECALLRET(OnUserRaw(sLine));
 	}
+#endif
 
 	CString sCommand = sLine.Token(0);
 
@@ -259,8 +261,10 @@ void CUserSock::ReadLine(const CString& sData) {
 							if (m_pUser) {
 								m_pUser->GetFile(GetNick(), CUtils::GetIP(uLongIP), uPort, sLocalFile, uFileSize);
 							}
+#ifdef _MODULES
 						} else {
 							MODULECALLRET(OnDCCUserSend(sTarget, uLongIP, uPort, sFile, uFileSize));
+#endif
 						}
 					} else {
 						unsigned short uBNCPort = CDCCBounce::DCCRequest(sTarget, uLongIP, uPort, sFile, false, m_pUser, (m_pIRCSock) ? m_pIRCSock->GetLocalIP() : GetLocalIP(), "");
@@ -322,13 +326,17 @@ void CUserSock::ReadLine(const CString& sData) {
 				return;
 			}
 
+#ifdef _MODULES
 			MODULECALLRET(OnUserCTCP(sTarget, sCTCP));
+#endif
 			PutIRC("PRIVMSG " + sTarget + " :\001" + sCTCP + "\001");
 			return;
 		}
 
 		if ((m_pUser) && (sTarget.CaseCmp(CString(m_pUser->GetStatusPrefix() + "status")) == 0)) {
+#ifdef _MODULES
 			MODULECALLRET(OnStatusCommand(sMsg));
+#endif
 			UserCommand(sMsg);
 			return;
 		}
@@ -356,7 +364,9 @@ void CUserSock::ReadLine(const CString& sData) {
 			pChan->AddBuffer(":" + GetNickMask() + " PRIVMSG " + sTarget + " :" + sMsg);
 		}
 
+#ifdef _MODULES
 		MODULECALLRET(OnUserMsg(sTarget, sMsg));
+#endif
 		PutIRC("PRIVMSG " + sTarget + " :" + sMsg);
 		return;
 	}
