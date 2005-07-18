@@ -4,6 +4,7 @@
 #include "main.h"
 #include "Nick.h"
 #include "String.h"
+#include "FileUtils.h"
 #include <vector>
 #include <map>
 #include <set>
@@ -44,6 +45,7 @@ public:
 	virtual ~CChan();
 
 	void Reset();
+	bool WriteConfig(CFile& File);
 	void Joined();
 	void Cycle() const;
 	void JoinUser(bool bForce = false, const CString& sKey = "");

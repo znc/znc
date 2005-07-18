@@ -39,6 +39,20 @@ void CChan::Reset() {
 	ClearNicks();
 }
 
+bool CChan::WriteConfig(CFile& File) {
+	File.Write("\t<Chan " + GetName() + ">\r\n");
+
+	File.Write("\t\tBuffer     = " + CString::ToString(GetBufferCount()) + "\r\n");
+	File.Write("\t\tKeepBuffer = " + CString((KeepBuffer()) ? "true" : "false") + "\r\n");
+	File.Write("\t\tDetached   = " + CString((IsDetached()) ? "true" : "false") + "\r\n");
+	File.Write("\t\tAutoCycle  = " + CString((AutoCycle()) ? "true" : "false") + "\r\n");
+	if (!GetKey().empty()) { File.Write("\t\tKey        = " + GetKey() + "\r\n"); }
+	if (!GetDefaultModes().empty()) { File.Write("\t\tModes      = " + GetDefaultModes() + "\r\n"); }
+
+	File.Write("\t</Chan>\r\n");
+	return true;
+}
+
 void CChan::Joined() {
 }
 

@@ -27,6 +27,8 @@ public:
 	CUser(const CString& sUserName, CZNC* pZNC);
 	virtual ~CUser();
 
+	bool PrintLine(CFile& File, const CString& sName, const CString& sValue);
+	bool WriteConfig(CFile& File);
 	CChan* FindChan(const CString& sName) const;
 	bool AddChan(CChan* pChan);
 	bool AddChan(const CString& sName, bool bInConfig);

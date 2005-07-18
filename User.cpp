@@ -321,6 +321,78 @@ bool CUser::DelChan(const CString& sName) {
 	return false;
 }
 
+bool CUser::PrintLine(CFile& File, const CString& sName, const CString& sValue) {
+	if (sName.empty() || sValue.empty()) {
+		return false;
+	}
+
+	return File.Write("\t" + sName + " = " + sValue + "\r\n");
+}
+
+bool CUser::WriteConfig(CFile& File) {
+ 	File.Write("<User " + GetUserName() + ">\r\n");
+
+	PrintLine(File, "Pass", GetPass() + ((IsPassHashed()) ? " -" : ""));
+	PrintLine(File, "Nick", GetNick());
+	PrintLine(File, "AltNick", GetAltNick());
+	PrintLine(File, "Ident", GetIdent());
+	PrintLine(File, "RealName", GetRealName());
+	PrintLine(File, "AwaySuffix", GetAwaySuffix());
+	PrintLine(File, "StatusPrefix", GetStatusPrefix());
+	PrintLine(File, "KeepNick", CString((GetKeepNick()) ? "true" : "false"));
+	PrintLine(File, "Buffer", CString::ToString(GetBufferCount()));
+	PrintLine(File, "KeepBuffer", CString((KeepBuffer()) ? "true" : "false"));
+	PrintLine(File, "ChanModes", GetDefaultChanModes());
+	PrintLine(File, "BounceDCCs", CString((BounceDCCs()) ? "true" : "false"));
+	PrintLine(File, "AutoCycle", CString((AutoCycle()) ? "true" : "false"));
+	PrintLine(File, "DCCLookupMethod", CString((UseClientIP()) ? "client" : "default"));
+	File.Write("\r\n");
+
+	// Allow Hosts
+	for (set<CString>::iterator it = m_ssAllowedHosts.begin(); it != m_ssAllowedHosts.end(); it++) {
+		PrintLine(File, "Allow", *it);
+	}
+
+	File.Write("\r\n");
+
+	// CTCP Replies
+	for (MCString::iterator itb = m_mssCTCPReplies.begin(); itb != m_mssCTCPReplies.end(); itb++) {
+		PrintLine(File, "CTCPReply", itb->first.AsUpper() + " " + itb->second);
+	}
+	File.Write("\r\n");
+
+	// Modules
+	CModules& Mods = GetModules();
+
+	for (unsigned int a = 0; a < Mods.size(); a++) {
+		CString sArgs = Mods[a]->GetArgs();
+
+		if (!sArgs.empty()) {
+			sArgs = " " + sArgs;
+		}
+
+		PrintLine(File, "LoadModule", Mods[a]->GetModName() + sArgs);
+	}
+	File.Write("\r\n");
+
+	// Servers
+	for (unsigned int b = 0; b < m_vServers.size(); b++) {
+		PrintLine(File, "Server", m_vServers[b]->GetString());
+	}
+	File.Write("\r\n");
+
+	// Chans
+	for (unsigned int c = 0; c < m_vChans.size(); c++) {
+		if (!m_vChans[c]->WriteConfig(File)) {
+			return false;
+		}
+	}
+
+	File.Write("</User>\r\n");
+
+	return true;
+}
+
 CChan* CUser::FindChan(const CString& sName) const {
 	for (unsigned int a = 0; a < m_vChans.size(); a++) {
 		CChan* pChan = m_vChans[a];
