@@ -176,7 +176,7 @@ bool CFile::Copy(const CString& sOldFileName, const CString& sNewFileName, bool 
 	char szBuf[8192];
 	unsigned int len = 0;
 
-	while ((len = OldFile.Read(szBuf, 100))) {
+	while ((len = OldFile.Read(szBuf, 8192))) {
 		NewFile.Write(szBuf, len);
 	}
 
