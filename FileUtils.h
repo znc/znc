@@ -89,9 +89,11 @@ public:
 	//
 	int Delete();
 	int Move(const CString& sNewFileName, bool bOverwrite = false);
+	int Copy(const CString& sNewFileName, bool bOverwrite = false);
 
 	static bool Delete(const CString& sFileName);
 	static bool Move(const CString& sOldFileName, const CString& sNewFileName, bool bOverwrite = false);
+	static bool Copy(const CString& sOldFileName, const CString& sNewFileName, bool bOverwrite = false);
 	bool Chmod(mode_t mode);
 	static bool Chmod(const CString& sFile, mode_t mode);
 	bool Seek(unsigned long uPos);

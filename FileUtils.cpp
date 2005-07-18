@@ -136,6 +136,10 @@ int CFile::Move(const CString& sNewFileName, bool bOverwrite) {
 	return CFile::Move(m_sLongName, sNewFileName, bOverwrite);
 }
 
+int CFile::Copy(const CString& sNewFileName, bool bOverwrite) {
+	return CFile::Copy(m_sLongName, sNewFileName, bOverwrite);
+}
+
 bool CFile::Delete(const CString& sFileName) {
 	if(!CFile::Exists(sFileName)) {
 		return false;
@@ -151,6 +155,35 @@ bool CFile::Move(const CString& sOldFileName, const CString& sNewFileName, bool 
 
 	//CString sNewLongName = (sNewFileName[0] == '/') ? sNewFileName : m_sPath + "/" + sNewFileName;
 	return (rename(sOldFileName.c_str(), sNewFileName.c_str()) == 0) ? true : false;
+}
+
+bool CFile::Copy(const CString& sOldFileName, const CString& sNewFileName, bool bOverwrite) {
+	if((!bOverwrite) && (CFile::Exists(sNewFileName))) {
+		return false;
+	}
+
+	CFile OldFile(sOldFileName);
+	CFile NewFile(sNewFileName);
+
+	if (!OldFile.Open(O_RDONLY)) {
+		return false;
+	}
+
+	if (!NewFile.Open(O_WRONLY | O_CREAT | O_TRUNC)) {
+		return false;
+	}
+
+	char szBuf[8192];
+	unsigned int len = 0;
+
+	while ((len = OldFile.Read(szBuf, 100))) {
+		NewFile.Write(szBuf, len);
+	}
+
+	OldFile.Close();
+	NewFile.Close();
+
+	return true;
 }
 
 bool CFile::Chmod(mode_t mode) {
