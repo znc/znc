@@ -244,6 +244,11 @@ bool CAdminSock::OnPageRequest(const CString& sURI, CString& sPageRet) {
 		ListUsersPage(sPageRet);
 	} else if (sURI == "/deluser") {
 		if (m_pModule->GetZNC()->DeleteUser(GetParam("user"))) {
+			if (!m_pModule->GetZNC()->WriteConfig()) {
+				GetErrorPage(sPageRet, "User deleted, but config was not written");
+				return true;
+			}
+
 			DEBUG_ONLY(cout << "- 302 Redirect" << endl);
 			Redirect("/listusers");
 			return false;
