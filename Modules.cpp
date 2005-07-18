@@ -520,16 +520,6 @@ void CModules::UnloadAll() {
 	}
 }
 
-bool CModules::OnLoad(const CString& sArgs) {
-	for (unsigned int a = 0; a < size(); a++) {
-		if (!(*this)[a]->OnLoad(sArgs)) {
-			return false;
-		}
-	}
-
-	return true;
-}
-
 bool CModules::OnBoot() {
 	for (unsigned int a = 0; a < size(); a++) {
 		if (!(*this)[a]->OnBoot()) {
@@ -806,6 +796,7 @@ bool CModules::LoadModule(const CString& sModule, const CString& sArgs, CUser* p
 		return false;
 	}
 
+	pModule->SetArgs(sArgs);
 	sRetMsg = "Loaded module [" + sModule + "] [" + sModPath + "]";
 	return true;
 #endif // !_MODULES

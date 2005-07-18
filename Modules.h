@@ -270,10 +270,12 @@ public:
 
 	// Setters
 	void SetDescription(const CString& s) { m_sDescription = s; }
+	void SetArgs(const CString& s) { m_sArgs = s; }
 	// !Setters
 
 	// Getters
 	const CString& GetDescription() const { return m_sDescription; }
+	const CString& GetArgs() const { return m_sArgs; }
 	CZNC* GetZNC() { return m_pZNC; }
 	CUser* GetUser() { return m_pUser; }
 	TSocketManager<Csock>* GetManager() { return m_pManager; }
@@ -289,6 +291,7 @@ protected:
 	CZNC*					m_pZNC;
 	CString					m_sModName;
 	CString					m_sSavePath;
+	CString					m_sArgs;
 private:
 	MCString				m_mssRegistry; //!< way to save name/value pairs. Note there is no encryption involved in this
 };
@@ -302,7 +305,6 @@ public:
 
 	void UnloadAll();
 
-	virtual bool OnLoad(const CString& sArgs);	// Return false to abort
 	virtual bool OnBoot();						// Return false to abort
 	virtual void OnUserAttached();
 	virtual void OnUserDetached();
