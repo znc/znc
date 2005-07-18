@@ -361,6 +361,7 @@ bool CUser::WriteConfig(CFile& File) {
 	}
 	File.Write("\r\n");
 
+#ifdef _MODULES
 	// Modules
 	CModules& Mods = GetModules();
 
@@ -374,6 +375,7 @@ bool CUser::WriteConfig(CFile& File) {
 		PrintLine(File, "LoadModule", Mods[a]->GetModName() + sArgs);
 	}
 	File.Write("\r\n");
+#endif
 
 	// Servers
 	for (unsigned int b = 0; b < m_vServers.size(); b++) {
