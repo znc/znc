@@ -12,6 +12,7 @@ public:
 	unsigned short GetPort() const;
 	const CString& GetPass() const;
 	bool IsSSL() const;
+	CString GetString() const;
 	static bool IsValidHostName(const CString& sHostName);
 private:
 protected:

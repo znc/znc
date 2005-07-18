@@ -31,3 +31,6 @@ unsigned short CServer::GetPort() const { return m_uPort; }
 const CString& CServer::GetPass() const { return m_sPass; }
 bool CServer::IsSSL() const { return m_bSSL; }
 
+CString CServer::GetString() const {
+	return m_sName + " " + CString(m_bSSL ? "+" : "") + CString::ToString(m_uPort) + CString(m_sPass.empty() ? CString("") : " " + m_sPass);
+}
