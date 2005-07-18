@@ -91,6 +91,7 @@ int CZNC::Loop() {
 
 			m_ssDelUsers.clear();
 			m_itUserIter = m_msUsers.begin();
+			WriteConfig();
 		}
 
 		m_Manager.Loop();
@@ -337,8 +338,6 @@ bool CZNC::WriteConfig() {
 	}
 #endif
 
-	File.Write("\r\n");
-
 	for (map<CString,CUser*>::iterator it = m_msUsers.begin(); it != m_msUsers.end(); it++) {
 		CString sErr;
 
@@ -346,6 +345,8 @@ bool CZNC::WriteConfig() {
 			DEBUG_ONLY(cerr << "** Error writing config for user [" << it->first << "] [" << sErr << "]" << endl);
 			continue;
 		}
+
+		File.Write("\r\n");
 
 		if (!it->second->WriteConfig(File)) {
 			DEBUG_ONLY(cerr << "** Error writing config for user [" << it->first << "]" << endl);
