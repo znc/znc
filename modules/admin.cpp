@@ -76,6 +76,7 @@ public:
 private:
 protected:
 	CAdminMod*	m_pModule;
+	CUser*		m_pUser;
 };
 
 class CAdminMod : public CGlobalModule {
@@ -95,7 +96,15 @@ public:
 	}
 
 	virtual bool OnLoad(const CString& sArgs) {
-		m_uPort = sArgs.Token(0).ToUInt();
+		bool bSSL = false;
+		CString sPort = sArgs.Token(0);
+
+		if (sPort.Left(1) == "+") {
+			sPort.TrimLeft("+");
+			bSSL = true;
+		}
+
+		m_uPort = sPort.ToUInt();
 		m_sUser = sArgs.Token(1);
 		m_sPass = sArgs.Token(2);
 
@@ -104,8 +113,12 @@ public:
 		}
 
 		CAdminSock* pListenSock = new CAdminSock(this);
-		//pListenSock->SetPemLocation(m_pZNC->GetPemLocation());
-		return m_pManager->ListenAll(m_uPort, "Admin::Listener", false, SOMAXCONN, pListenSock);
+
+		if (bSSL) {
+			pListenSock->SetPemLocation(m_pZNC->GetPemLocation());
+		}
+
+		return m_pManager->ListenAll(m_uPort, "Admin::Listener", bSSL, SOMAXCONN, pListenSock);
 	}
 
 	void AddSock(CAdminSock* pSock) {
@@ -127,6 +140,13 @@ private:
 
 bool CAdminSock::OnLogin(const CString& sUser, const CString& sPass) {
 	if (GetUser() == m_pModule->GetUser() && GetPass() == m_pModule->GetPass()) {
+		return true;
+	}
+
+	CUser* pUser = m_pModule->GetZNC()->FindUser(GetUser());
+
+	if (pUser && pUser->CheckPass(GetPass())) {
+		m_pUser = pUser;
 		return true;
 	}
 
@@ -170,10 +190,12 @@ Csock* CAdminSock::GetSockObj(const CString& sHost, unsigned short uPort) {
 
 CAdminSock::CAdminSock(CAdminMod* pModule) : CHTTPSock() {
 	m_pModule = pModule;
+	m_pUser = NULL;
 	m_pModule->AddSock(this);
 }
 CAdminSock::CAdminSock(CAdminMod* pModule, const CString& sHostname, unsigned short uPort, int iTimeout) : CHTTPSock(sHostname, uPort, iTimeout) {
 	m_pModule = pModule;
+	m_pUser = NULL;
 	m_pModule->AddSock(this);
 }
 CAdminSock::~CAdminSock() {
@@ -188,14 +210,23 @@ bool CAdminSock::OnPageRequest(const CString& sURI, CString& sPageRet) {
 	}
 
 	if (sURI == "/") {
+		if (m_pUser) {
+			Redirect("/edituser");
+			return false;
+		}
+
 		PrintMainPage(sPageRet);
 	} else if (sURI == "/adduser") {
+		if (m_pUser) {
+			return false;
+		}
+
 		if (!UserPage(sPageRet)) {
 			DEBUG_ONLY(cout << "- 302 Redirect" << endl);
 			return false;
 		}
 	} else if (sURI == "/edituser") {
-		CUser* pUser = m_pModule->GetZNC()->FindUser(GetParam("user"));
+		CUser* pUser = (m_pUser) ? m_pUser : m_pModule->GetZNC()->FindUser(GetParam("user"));
 
 		if (pUser) {
 			if (!UserPage(sPageRet, pUser)) {
@@ -206,6 +237,10 @@ bool CAdminSock::OnPageRequest(const CString& sURI, CString& sPageRet) {
 			GetErrorPage(sPageRet, "No such username");
 		}
 	} else if (sURI == "/listusers") {
+		if (m_pUser) {
+			return false;
+		}
+
 		ListUsersPage(sPageRet);
 	} else if (sURI == "/deluser") {
 		if (m_pModule->GetZNC()->DeleteUser(GetParam("user"))) {
@@ -215,8 +250,8 @@ bool CAdminSock::OnPageRequest(const CString& sURI, CString& sPageRet) {
 		} else {
 			GetErrorPage(sPageRet, "No such username");
 		}
-	} else if (sURI == "/list") {
-		ListPage(sPageRet);
+	//} else if (sURI == "/list") {
+	//	ListPage(sPageRet);
 	} else {
 		DEBUG_ONLY(cout << "- 404 Not Found!" << endl);
 		return false;
@@ -361,6 +396,10 @@ bool CAdminSock::UserPage(CString& sPageRet, CUser* pUser) {
 		}
 
 		m_pModule->GetZNC()->AddUser(pNewUser);
+		if (!m_pModule->GetZNC()->WriteConfig()) {
+			GetErrorPage(sPageRet, "User edited, but config was not written");
+			return true;
+		}
 	} else {
 		// Edit User Submission
 		if (!pUser->Clone(*pNewUser, sErr)) {
@@ -370,9 +409,18 @@ bool CAdminSock::UserPage(CString& sPageRet, CUser* pUser) {
 		}
 
 		delete pNewUser;
+		if (!m_pModule->GetZNC()->WriteConfig()) {
+			GetErrorPage(sPageRet, "User edited, but config was not written");
+			return true;
+		}
 	}
 
-	Redirect("/listusers");
+	if (m_pUser) {
+		Redirect("/edituser");
+	} else {
+		Redirect("/listusers");
+	}
+
 	return false;
 }
 
