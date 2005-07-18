@@ -19,21 +19,12 @@ public:
 	virtual bool OnPageRequest(const CString& sURI, CString& sPageRet);
 	virtual bool OnLogin(const CString& sUser, const CString& sPass);
 
-	CString Header(const CString& sTitle) {
-		return "<!DOCTYPE HTML PUBLIC \"-//IETF//DTD HTML 2.0//EN\">\r\n"
-			"<html>\r\n<head><title>" + sTitle + "</title></head>\r\n"
-			"<body bgcolor='#FFFFFF' text='#000000' link='#000000' alink='#000000' vlink='#000000'>\r\n"
-			"<center><h2>" + sTitle + "</h2></center><hr><br>\r\n";
-	}
-
-	CString Footer() {
-		return "</body>\r\n</html>\r\n";
-	}
+	CString Header(const CString& sTitle);
+	CString Footer();
 
 	void PrintMainPage(CString& sPageRet) {
 		sPageRet = Header("Main Page");
-		sPageRet += "<a href='/adduser'>Add a user</a><br>\r\n"
-			"<a href='/listusers'>List all users</a><br>\r\n";
+		sPageRet += "Welcome to the ZNC admin module.\r\n";
 		sPageRet += Footer();
 	}
 
@@ -44,6 +35,7 @@ public:
 	}
 
 	void ListUsersPage(CString& sPageRet);
+	bool SettingsPage(CString& sPageRet);
 	bool UserPage(CString& sPageRet, CUser* pUser = NULL);
 	CUser* GetNewUser(CString& sPageRet);
 
@@ -138,6 +130,31 @@ private:
 	set<CAdminSock*>	m_sSocks;
 };
 
+CString CAdminSock::Header(const CString& sTitle) {
+	CString sRet = "<!DOCTYPE HTML PUBLIC \"-//IETF//DTD HTML 2.0//EN\">\r\n"
+		"<html>\r\n<head><title>ZNC - " + sTitle + "</title></head>\r\n"
+		"<body bgcolor='#FFFFFF' text='#000000' link='#000000' alink='#000000' vlink='#000000'>\r\n"
+		"<table border='0' cellpadding='10' cellspacing='0' height='100%' width='100%'>\r\n"
+		"<tr><td style='border-bottom: 2px solid #000;' colspan='2' align='center' valign='top'><h2>" + sTitle + "</h2></td></tr>\r\n"
+		"<tr><td style='white-space: nowrap; border-right: 1px solid #000;' valign='top'>\r\n";
+
+	if (!m_pUser) {
+		sRet += "[<a href='/'>Home</a>]<br>\r\n"
+			"[<a href='/settings'>ZNC Settings</a>]<br>\r\n"
+			"[<a href='/adduser'>Add User</a>]<br>\r\n"
+			"[<a href='/listusers'>List Users</a>]<br>\r\n";
+	}
+
+	sRet += "</td><td height='100%' width='100%' valign='top'>\r\n";
+
+	return sRet;
+}
+
+CString CAdminSock::Footer() {
+	return "</td></tr><tr><td colspan='2' align='right' valign='bottom'>" + m_pModule->GetZNC()->GetTag() + "</td></tr>\r\n"
+		"</table></body>\r\n</html>\r\n";
+}
+
 bool CAdminSock::OnLogin(const CString& sUser, const CString& sPass) {
 	if (GetUser() == m_pModule->GetUser() && GetPass() == m_pModule->GetPass()) {
 		return true;
@@ -160,16 +177,16 @@ void CAdminSock::ListUsersPage(CString& sPageRet) {
 	if (!msUsers.size()) {
 		sPageRet += "There are no users defined.  Click <a href=\"/adduser\">here</a> if you would like to add one.\r\n";
 	} else {
-		sPageRet += "<table border='1' cellspacing='0' cellpadding='4'>\r\n"
-			"\t<thead><tr bgcolor='#FFFF99'><td><b>Action</b></td><td><b>Username</b></td><td><b>Current Server</b></td></tr></thead>\r\n";
+		sPageRet += "<table style='border: 1px solid #000;' cellspacing='0' cellpadding='4'>\r\n"
+			"\t<thead><tr bgcolor='#FFFF99'><td style='border: 1px solid #000;'><b>Action</b></td><td style='border: 1px solid #000;'><b>Username</b></td><td style='border: 1px solid #000;'><b>Current Server</b></td></tr></thead>\r\n";
 
 		unsigned int a = 0;
 	
 		for (map<CString,CUser*>::const_iterator it = msUsers.begin(); it != msUsers.end(); it++, a++) {
 			CServer* pServer = it->second->GetCurrentServer();
-			sPageRet += "\t<tr bgcolor='" + CString((a %2) ? "#FFFFCC" : "#CCCC99") + "'>\r\n\t\t<td>[<a href=\"/edituser?user=" + it->second->GetUserName().Escape_n(CString::EURL) + "\">Edit</a>] [<a href=\"/deluser?user=" + it->second->GetUserName().Escape_n(CString::EURL) + "\">Delete</a>]</td>\r\n"
-				"\t\t<td>" + it->second->GetUserName().Escape_n(CString::EHTML) + "</td>\r\n"
-				"\t\t<td>" + CString((pServer) ? pServer->GetName().Escape_n(CString::EHTML) : "-N/A-") + "</td>\r\n"
+			sPageRet += "\t<tr bgcolor='" + CString((a %2) ? "#FFFFCC" : "#CCCC99") + "'>\r\n\t\t<td style='border: 1px solid #000;'>[<a href=\"/edituser?user=" + it->second->GetUserName().Escape_n(CString::EURL) + "\">Edit</a>] [<a href=\"/deluser?user=" + it->second->GetUserName().Escape_n(CString::EURL) + "\">Delete</a>]</td>\r\n"
+				"\t\t<td style='border: 1px solid #000;'>" + it->second->GetUserName().Escape_n(CString::EHTML) + "</td>\r\n"
+				"\t\t<td style='border: 1px solid #000;'>" + CString((pServer) ? pServer->GetName().Escape_n(CString::EHTML) : "-N/A-") + "</td>\r\n"
 				"\t</tr>";
 		}
 
@@ -216,6 +233,15 @@ bool CAdminSock::OnPageRequest(const CString& sURI, CString& sPageRet) {
 		}
 
 		PrintMainPage(sPageRet);
+	} else if (sURI == "/settings") {
+		if (m_pUser) {
+			return false;
+		}
+
+		if (!SettingsPage(sPageRet)) {
+			DEBUG_ONLY(cout << "- 302 Redirect" << endl);
+			return false;
+		}
 	} else if (sURI == "/adduser") {
 		if (m_pUser) {
 			return false;
@@ -266,6 +292,18 @@ bool CAdminSock::OnPageRequest(const CString& sURI, CString& sPageRet) {
 	return true;
 }
 
+bool CAdminSock::SettingsPage(CString& sPageRet) {
+	if (!GetParam("submitted").ToUInt()) {
+		sPageRet = Header("Error");
+		sPageRet += "The global settings page has not been implemented yet.";
+		sPageRet += Footer();
+		return true;
+	}
+
+	Redirect("/");
+	return false;
+}
+
 bool CAdminSock::UserPage(CString& sPageRet, CUser* pUser) {
 	if (!GetParam("submitted").ToUInt()) {
 		sPageRet = Header((pUser) ? CString("Edit User [" + pUser->GetUserName().Escape_n(CString::EHTML) + "]") : CString("Add User"));
@@ -297,7 +335,7 @@ bool CAdminSock::UserPage(CString& sPageRet, CUser* pUser) {
 			}
 		}
 
-		sPageRet += "<form action='/" + CString((pUser) ? "edituser" : "adduser") + "' method='POST'>\r\n";
+		sPageRet += "<br><form action='/" + CString((pUser) ? "edituser" : "adduser") + "' method='POST'>\r\n";
 
 		sPageRet += "<input type='hidden' name='submitted' value='1'>\r\n"
 			"<div style='white-space: nowrap; margin-top: -8px; margin-right: 8px; margin-left: 8px; padding: 1px 5px 1px 5px; float: left; border: 1px solid #000; font-size: 16px; font-weight: bold; background: #ff9;'>Authentication</div><div style='padding: 25px 5px 5px 15px; border: 2px solid #000; background: #cc9;'><div style='clear: both;'>\r\n"
