@@ -307,7 +307,7 @@ CString CZNC::ExpandConfigPath(const CString& sConfigFile) {
 bool CZNC::WriteConfig() {
 	CFile File(m_sConfigFile);
 
-	if (!File.Move(GetConfBackupPath() + "/" + File.GetShortName() + "-" + CString::ToString(time(NULL)))) {
+	if (!File.Copy(GetConfBackupPath() + "/" + File.GetShortName() + "-" + CString::ToString(time(NULL)))) {
 		return false;
 	}
 
