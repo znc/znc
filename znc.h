@@ -35,6 +35,13 @@ public:
 	bool WriteConfig();
 	static CString GetTag(bool bIncludeVersion = true);
 	CString FindModPath(const CString& sModule) const;
+	bool AddVHost(const CString& sHost);
+	bool RemVHost(const CString& sHost);
+
+	// Setters
+	void SetISpoofFile(const CString& s) { m_sISpoofFile = s; }
+	void SetISpoofFormat(const CString& s) { m_sISpoofFormat = s; }
+	// !Setters
 
 	// Getters
 	TSocketManager<Csock>& GetManager() { return m_Manager; }
@@ -50,6 +57,9 @@ public:
 	const CString& GetConfBackupPath() const { if (!CFile::Exists(m_sConfBackupPath)) { CUtils::MakeDir(m_sConfBackupPath); } return m_sConfBackupPath; }
 	const CString& GetUserPath() const { if (!CFile::Exists(m_sUserPath)) { CUtils::MakeDir(m_sUserPath); } return m_sUserPath; }
 	CString GetPemLocation() const { return GetZNCPath() + "/znc.pem"; }
+	const CString& GetISpoofFile() const { return m_sISpoofFile; }
+	const CString& GetISpoofFormat() const { return m_sISpoofFormat; }
+	const VCString& GetVHosts() const { return m_vsVHosts; }
 
 	bool IsSSL() const {
 #ifdef HAVE_LIBSSL
@@ -91,6 +101,7 @@ protected:
 	CString					m_sOrigISpoof;
 	CString					m_sISpoofFormat;
 	CString					m_sPidFile;
+	VCString				m_vsVHosts;
 	CLockFile				m_LockFile;
 	bool					m_bISpoofLocked;
 	bool					m_bSSL;

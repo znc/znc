@@ -324,6 +324,10 @@ bool CZNC::WriteConfig() {
 	if (!m_sPidFile.empty()) { File.Write("PidFile      = " + m_sPidFile + "\r\n"); }
 	if (!m_sStatusPrefix.empty()) { File.Write("StatusPrefix = " + m_sStatusPrefix + "\r\n"); }
 
+	for (unsigned int v = 0; v < m_vsVHosts.size(); v++) {
+		File.Write("VHost        = " + m_vsVHosts[v] + "\r\n");
+	}
+
 #ifdef _MODULES
 	CGlobalModules& Mods = GetModules();
 
@@ -975,6 +979,9 @@ bool CZNC::ParseConfig(const CString& sConfig) {
 				} else if (sName.CaseCmp("ISpoofFile") == 0) {
 					m_sISpoofFile = sValue;
 					continue;
+				} else if (sName.CaseCmp("VHost") == 0) {
+					AddVHost(sValue);
+					continue;
 				} else if (sName.CaseCmp("PidFile") == 0) {
 					if (!sValue.empty() && sValue[0] != '/') {
 						m_sPidFile = GetZNCPath() + "/" + sValue;
@@ -1005,6 +1012,22 @@ bool CZNC::ParseConfig(const CString& sConfig) {
 		return false;
 	}
 
+	return true;
+}
+
+bool CZNC::AddVHost(const CString& sHost) {
+	for (unsigned int a = 0; a < m_vsVHosts.size(); a++) {
+		if (m_vsVHosts[a].CaseCmp(sHost) == 0) {
+			return false;
+		}
+	}
+
+	m_vsVHosts.push_back(sHost);
+	return true;
+}
+
+bool CZNC::RemVHost(const CString& sHost) {
+	// @todo
 	return true;
 }
 
