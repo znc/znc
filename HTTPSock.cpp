@@ -4,8 +4,9 @@
 CHTTPSock::CHTTPSock() : Csock() {
 	m_bSentHeader = false;
 	m_bGotHeader = false;
-	m_bPost = false;
 	m_bLoggedIn = false;
+	m_bPost = false;
+	m_bDone = true;
 	m_uPostLen = 0;
 	EnableReadLine();
 }
@@ -15,6 +16,7 @@ CHTTPSock::CHTTPSock(const CString& sHostname, unsigned short uPort, int iTimeou
 	m_bGotHeader = false;
 	m_bLoggedIn = false;
 	m_bPost = false;
+	m_bDone = true;
 	m_uPostLen = 0;
 	EnableReadLine();
 }
@@ -22,7 +24,7 @@ CHTTPSock::CHTTPSock(const CString& sHostname, unsigned short uPort, int iTimeou
 CHTTPSock::~CHTTPSock() {}
 
 void CHTTPSock::ReadData(const char* data, int len) {
-	if (m_bGotHeader && m_bPost) {
+	if (!m_bDone && m_bGotHeader && m_bPost) {
 		m_sPostData.append(data, len);
 		CheckPost();
 	}
@@ -33,6 +35,8 @@ void CHTTPSock::CheckPost() {
 		ParseParams(m_sPostData.Left(m_uPostLen));
 		GetPage();
 		m_sPostData.clear();
+		m_bDone = true;
+		Close();
 	}
 }
 
@@ -115,6 +119,10 @@ const CString& CHTTPSock::GetUser() const {
 
 const CString& CHTTPSock::GetPass() const {
 	return m_sPass;
+}
+
+const CString& CHTTPSock::GetParamString() const {
+	return m_sPostData;
 }
 
 CString CHTTPSock::GetParam(const CString& sName) const {

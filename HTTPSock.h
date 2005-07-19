@@ -47,6 +47,7 @@ public:
 	CString GetParam(const CString& sName) const;
 	const CString& GetUser() const;
 	const CString& GetPass() const;
+	const CString& GetParamString() const;
 	unsigned int GetParamValues(const CString& sName, VCString& vsRet) const;
 	const map<CString, VCString>& GetParams() const;
 	// !Getters
@@ -56,6 +57,7 @@ protected:
 	bool					m_bGotHeader;
 	bool					m_bLoggedIn;
 	bool					m_bPost;
+	bool					m_bDone;
 	unsigned long			m_uPostLen;
 	CString					m_sPostData;
 	CString					m_sURI;
