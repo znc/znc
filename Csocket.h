@@ -1114,8 +1114,8 @@ public:
 								if ( T::TMO_READ & pcSock->GetTimeoutType() )
 									pcSock->ResetTimer();	// reset the timeout timer
 
+								pcSock->ReadData( buff, bytes );	// Call ReadData() before PushBuff() so that it is called before the ReadLine() event - LD  07/18/05
 								pcSock->PushBuff( buff, bytes );
-								pcSock->ReadData( buff, bytes );
 								break;
 							}
 						}
