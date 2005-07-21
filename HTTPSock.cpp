@@ -6,7 +6,7 @@ CHTTPSock::CHTTPSock() : Csock() {
 	m_bGotHeader = false;
 	m_bLoggedIn = false;
 	m_bPost = false;
-	m_bDone = true;
+	m_bDone = false;
 	m_uPostLen = 0;
 	EnableReadLine();
 }
@@ -16,7 +16,7 @@ CHTTPSock::CHTTPSock(const CString& sHostname, unsigned short uPort, int iTimeou
 	m_bGotHeader = false;
 	m_bLoggedIn = false;
 	m_bPost = false;
-	m_bDone = true;
+	m_bDone = false;
 	m_uPostLen = 0;
 	EnableReadLine();
 }
@@ -24,6 +24,9 @@ CHTTPSock::CHTTPSock(const CString& sHostname, unsigned short uPort, int iTimeou
 CHTTPSock::~CHTTPSock() {}
 
 void CHTTPSock::ReadData(const char* data, int len) {
+	string s;
+	s.append(data, len);
+
 	if (!m_bDone && m_bGotHeader && m_bPost) {
 		m_sPostData.append(data, len);
 		CheckPost();
