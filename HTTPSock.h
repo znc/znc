@@ -49,6 +49,7 @@ public:
 	const CString& GetPass() const;
 	const CString& GetParamString() const;
 	unsigned int GetParamValues(const CString& sName, VCString& vsRet) const;
+	unsigned int GetParamValues(const CString& sName, set<CString>& ssRet) const;
 	const map<CString, VCString>& GetParams() const;
 	// !Getters
 private:
