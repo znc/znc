@@ -337,6 +337,7 @@ bool CUser::WriteConfig(CFile& File) {
 	PrintLine(File, "AltNick", GetAltNick());
 	PrintLine(File, "Ident", GetIdent());
 	PrintLine(File, "RealName", GetRealName());
+	PrintLine(File, "VHost", GetVHost());
 	PrintLine(File, "AwaySuffix", GetAwaySuffix());
 	PrintLine(File, "StatusPrefix", GetStatusPrefix());
 	PrintLine(File, "KeepNick", CString((GetKeepNick()) ? "true" : "false"));
