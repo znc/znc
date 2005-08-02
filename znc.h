@@ -35,12 +35,14 @@ public:
 	bool WriteConfig();
 	static CString GetTag(bool bIncludeVersion = true);
 	CString FindModPath(const CString& sModule) const;
+	void ClearVHosts();
 	bool AddVHost(const CString& sHost);
 	bool RemVHost(const CString& sHost);
 
 	// Setters
+	void SetStatusPrefix(const CString& s) { m_sStatusPrefix = (s.empty()) ? "*" : s; }
 	void SetISpoofFile(const CString& s) { m_sISpoofFile = s; }
-	void SetISpoofFormat(const CString& s) { m_sISpoofFormat = s; }
+	void SetISpoofFormat(const CString& s) { m_sISpoofFormat = (s.empty()) ? "global { reply \"%\" }" : s; }
 	// !Setters
 
 	// Getters
@@ -49,6 +51,7 @@ public:
 	CGlobalModules& GetModules() { return *m_pModules; }
 #endif
 	unsigned short GetListenPort() const { return m_uListenPort; }
+	const CString& GetStatusPrefix() const { return m_sStatusPrefix; }
 	const CString& GetCurPath() const { if (!CFile::Exists(m_sCurPath)) { CUtils::MakeDir(m_sCurPath); } return m_sCurPath; }
 	const CString& GetModPath() const { if (!CFile::Exists(m_sModPath)) { CUtils::MakeDir(m_sModPath); } return m_sModPath; }
 	const CString& GetHomePath() const { if (!CFile::Exists(m_sHomePath)) { CUtils::MakeDir(m_sHomePath); } return m_sHomePath; }

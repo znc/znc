@@ -19,7 +19,7 @@ CZNC::CZNC() {
 #endif
 	m_uListenPort = 0;
 	m_bISpoofLocked = false;
-	m_sISpoofFormat = "global { reply \"%\" }";
+	SetISpoofFormat(""); // Set ISpoofFormat to default
 }
 
 CZNC::~CZNC() {
@@ -1015,7 +1015,15 @@ bool CZNC::ParseConfig(const CString& sConfig) {
 	return true;
 }
 
+void CZNC::ClearVHosts() {
+	m_vsVHosts.clear();
+}
+
 bool CZNC::AddVHost(const CString& sHost) {
+	if (sHost.empty()) {
+		return false;
+	}
+
 	for (unsigned int a = 0; a < m_vsVHosts.size(); a++) {
 		if (m_vsVHosts[a].CaseCmp(sHost) == 0) {
 			return false;
