@@ -48,6 +48,8 @@ public:
 		if (msvsParams.empty()) {
 			sPageRet += "You passed in no params.\r\n";
 		} else {
+			sPageRet += "foo [" + GetParamString().Escape_n(CString::EHTML) + "]<br><br>";
+
 			for (map<CString, VCString>::const_iterator it = msvsParams.begin(); it != msvsParams.end(); it++) {
 				sPageRet += "<h2>" + it->first + "</h2>\r\n<ul>\r\n";
 				const VCString vsParams = it->second;
@@ -138,15 +140,15 @@ private:
 
 CString CAdminSock::Header(const CString& sTitle) {
 	CString sRet = "<!DOCTYPE HTML PUBLIC \"-//IETF//DTD HTML 2.0//EN\">\r\n"
-		"<html>\r\n<head><title>ZNC - " + sTitle + "</title></head>\r\n"
+		"<html>\r\n<head><title>ZNC - " + sTitle.Escape_n(CString::EHTML) + "</title></head>\r\n"
 		"<body bgcolor='#FFFFFF' text='#000000' link='#000000' alink='#000000' vlink='#000000'>\r\n"
 		"<table border='0' cellpadding='10' cellspacing='0' height='100%' width='100%'>\r\n"
-		"<tr><td style='border-bottom: 2px solid #000;' colspan='2' align='center' valign='top'><h2>" + sTitle + "</h2></td></tr>\r\n"
+		"<tr><td style='border-bottom: 2px solid #000;' colspan='2' align='center' valign='top'><h2>" + sTitle.Escape_n(CString::EHTML) + "</h2></td></tr>\r\n"
 		"<tr><td style='white-space: nowrap; border-right: 1px solid #000;' valign='top'>\r\n";
 
 	if (!m_pUser) {
 		sRet += "[<a href='/'>Home</a>]<br>\r\n"
-			"[<a href='/settings'>ZNC Settings</a>]<br>\r\n"
+			"[<a href='/settings'>Settings</a>]<br>\r\n"
 			"[<a href='/adduser'>Add User</a>]<br>\r\n"
 			"[<a href='/listusers'>List Users</a>]<br>\r\n";
 	}
@@ -300,9 +302,101 @@ bool CAdminSock::OnPageRequest(const CString& sURI, CString& sPageRet) {
 
 bool CAdminSock::SettingsPage(CString& sPageRet) {
 	if (!GetParam("submitted").ToUInt()) {
-		sPageRet = Header("Error");
-		sPageRet += "The global settings page has not been implemented yet.";
+		sPageRet = Header("Settings");
+
+		CString sVHosts;
+
+		const VCString& vsVHosts = m_pModule->GetZNC()->GetVHosts();
+		for (unsigned int a = 0; a < vsVHosts.size(); a++) {
+			sVHosts += vsVHosts[a] + "\r\n";
+		}
+
+		sPageRet += "<br><form action='/settings' method='POST'>\r\n"
+			"<input type='hidden' name='submitted' value='1'>\r\n"
+			"<div style='white-space: nowrap; margin-top: -8px; margin-right: 8px; margin-left: 8px; padding: 1px 5px 1px 5px; float: left; border: 1px solid #000; font-size: 16px; font-weight: bold; background: #ff9;'>Global Settings</div><div style='padding: 25px 5px 5px 15px; border: 2px solid #000; background: #cc9;'><div style='clear: both;'>\r\n"
+
+			"<div><small><b>Status Prefix:</b></small><br>\r\n"
+				"<input type='text' name='statusprefix' value='" + m_pModule->GetZNC()->GetStatusPrefix().Escape_n(CString::EHTML) + "' size='32' maxlength='128'></div><br>\r\n"
+
+			"<div style='float: left; margin-right: 10px;'><small><b>ISpoofFile:</b></small><br>\r\n"
+				"<input type='text' name='ispooffile' value='" + m_pModule->GetZNC()->GetISpoofFile().Escape_n(CString::EHTML) + "' size='32' maxlength='128'></div>\r\n"
+			"<div><small><b>ISpoofFormat:</b></small><br>\r\n"
+				"<input type='text' name='ispoofformat' value='" + m_pModule->GetZNC()->GetISpoofFormat().Escape_n(CString::EHTML) + "' size='32' maxlength='128'></div>\r\n"
+
+			"<br><div><small><b>VHosts:</b></small><br>\r\n"
+				"<textarea name='vhosts' cols='40' rows='5'>" + sVHosts.Escape_n(CString::EHTML) + "</textarea></div>\r\n"
+
+			"<br></div></div><br><br>\r\n"
+
+			"<div style='white-space: nowrap; margin-top: -8px; margin-right: 8px; margin-left: 8px; padding: 1px 5px 1px 5px; float: left; border: 1px solid #000; font-size: 16px; font-weight: bold; background: #ff9;'>Global Modules</div><div style='padding: 25px 5px 5px 15px; border: 2px solid #000; background: #cc9;'><div style='clear: both;'>\r\n";
+
+		set<CModInfo> ssGlobalMods;
+		m_pModule->GetZNC()->GetModules().GetAvailableMods(ssGlobalMods, m_pModule->GetZNC(), true);
+
+		for (set<CModInfo>::iterator it = ssGlobalMods.begin(); it != ssGlobalMods.end(); it++) {
+			const CModInfo& Info = *it;
+			sPageRet += "<label><input type='checkbox' name='loadmod' value='" + Info.GetName().Escape_n(CString::EHTML) + "'"
+				+ CString((m_pModule->GetZNC()->GetModules().FindModule(Info.GetName())) ? " CHECKED" : "") + CString((Info.GetName() == m_pModule->GetModName()) ? " DISABLED" : "") + "> " + Info.GetName().Escape_n(CString::EHTML) + "</label>"
+				" <small>(" + Info.GetDescription().Escape_n(CString::EHTML) + ")</small><br>";
+		}
+
+ 
+		sPageRet += "<br></div></div><br><br>\r\n"
+
+			"<input type='submit' value='Submit'>\r\n"
+			"</form>\r\n";
+
 		sPageRet += Footer();
+		return true;
+	}
+
+	CString sArg;
+	sArg = GetParam("statusprefix"); m_pModule->GetZNC()->SetStatusPrefix(sArg);
+	sArg = GetParam("ispooffile"); m_pModule->GetZNC()->SetISpoofFile(sArg);
+	sArg = GetParam("ispoofformat"); m_pModule->GetZNC()->SetISpoofFormat(sArg);
+	//sArg = GetParam(""); if (!sArg.empty()) { m_pModule->GetZNC()->Set(sArg); }
+
+	VCString vsArgs = GetParam("vhosts").Split("\n");
+	m_pModule->GetZNC()->ClearVHosts();
+
+	unsigned int a = 0;
+	for (a = 0; a < vsArgs.size(); a++) {
+		m_pModule->GetZNC()->AddVHost(vsArgs[a].Trim_n());
+	}
+
+	set<CString> ssArgs;
+	GetParamValues("loadmod", ssArgs);
+
+	for (set<CString>::iterator it = ssArgs.begin(); it != ssArgs.end(); it++) {
+		CString sModRet;
+		sArg = (*it).TrimRight_n("\r");
+
+		if (!sArg.empty()) {
+			try {
+				if (!m_pModule->GetZNC()->GetModules().FindModule(sArg)) {
+					m_pModule->GetZNC()->GetModules().LoadModule(sArg, "", NULL, sModRet);
+				}
+			} catch(...) {}
+		}
+	}
+
+	const CModules& vCurMods = m_pModule->GetZNC()->GetModules();
+	set<CString> ssUnloadMods;
+
+	for (a = 0; a < vCurMods.size(); a++) {
+		CModule* pCurMod = vCurMods[a];
+
+		if (ssArgs.find(pCurMod->GetModName()) == ssArgs.end() && pCurMod->GetModName() != m_pModule->GetModName()) {
+			ssUnloadMods.insert(pCurMod->GetModName());
+		}
+	}
+
+	for (set<CString>::iterator it2 = ssUnloadMods.begin(); it2 != ssUnloadMods.end(); it2++) {
+		m_pModule->GetZNC()->GetModules().UnloadModule(*it2);
+	}
+
+	if (!m_pModule->GetZNC()->WriteConfig()) {
+		GetErrorPage(sPageRet, "Settings changed, but config was not written");
 		return true;
 	}
 
@@ -312,7 +406,7 @@ bool CAdminSock::SettingsPage(CString& sPageRet) {
 
 bool CAdminSock::UserPage(CString& sPageRet, CUser* pUser) {
 	if (!GetParam("submitted").ToUInt()) {
-		sPageRet = Header((pUser) ? CString("Edit User [" + pUser->GetUserName().Escape_n(CString::EHTML) + "]") : CString("Add User"));
+		sPageRet = Header((pUser) ? CString("Edit User [" + pUser->GetUserName() + "]") : CString("Add User"));
 
 		CString sAllowedHosts, sServers, sChans, sCTCPReplies;
 
@@ -324,7 +418,7 @@ bool CAdminSock::UserPage(CString& sPageRet, CUser* pUser) {
 
 			const vector<CServer*>& vServers = pUser->GetServers();
 			for (unsigned int a = 0; a < vServers.size(); a++) {
-				sServers += vServers[a]->GetName() + "\r\n";
+				sServers += vServers[a]->GetString() + "\r\n";
 			}
 
 			const vector<CChan*>& vChans = pUser->GetChans();
@@ -371,10 +465,22 @@ bool CAdminSock::UserPage(CString& sPageRet, CUser* pUser) {
 			"<div style='float: left; margin-right: 10px;'><small><b>Ident:</b></small><br>\r\n"
 				"<input type='text' name='ident' value='" + CString((pUser) ? pUser->GetIdent().Escape_n(CString::EHTML) : "") + "' size='32' maxlength='128'></div>\r\n"
 			"<div><small><b>RealName:</b></small><br>\r\n"
-				"<input type='text' name='realname' value='" + CString((pUser) ? pUser->GetRealName().Escape_n(CString::EHTML) : "") + "' size='90' maxlength='256'></div><br>\r\n"
-			"<small><b>VHost:</b></small><br>\r\n"
-				"<input type='text' name='vhost' value='" + CString((pUser) ? pUser->GetVHost().Escape_n(CString::EHTML) : "") + "' size='128' maxlength='256'><br><br>\r\n"
-			"<small><b>QuitMsg:</b></small><br>\r\n"
+				"<input type='text' name='realname' value='" + CString((pUser) ? pUser->GetRealName().Escape_n(CString::EHTML) : "") + "' size='90' maxlength='256'></div><br>\r\n";
+
+		const VCString& vsVHosts = m_pModule->GetZNC()->GetVHosts();
+
+		if (vsVHosts.size()) {
+			sPageRet += "<small><b>VHost:</b></small><br>\r\n"
+				"<select name='vhost'>\r\n<option value=''>- None -</option>\r\n";
+
+			for (unsigned int a = 0; a < vsVHosts.size(); a++) {
+				sPageRet += "<option value='" + vsVHosts[a].Escape_n(CString::EHTML) + "'" + CString((pUser && pUser->GetVHost() == vsVHosts[a]) ? " SELECTED" : "") + ">" + vsVHosts[a].Escape_n(CString::EHTML) + "</option>\r\n";
+			}
+
+			sPageRet += "</select><br><br>\r\n";
+		}
+
+		sPageRet += "<small><b>QuitMsg:</b></small><br>\r\n"
 				"<input type='text' name='quitmsg' value='" + CString((pUser) ? pUser->GetQuitMsg().Escape_n(CString::EHTML) : "") + "' size='128' maxlength='256'><br><br>\r\n"
 			"<div><small><b>Servers:</b></small><br>\r\n"
 				"<textarea name='servers' cols='40' rows='5'>" + sServers.Escape_n(CString::EHTML) + "</textarea></div>\r\n"
@@ -424,7 +530,7 @@ bool CAdminSock::UserPage(CString& sPageRet, CUser* pUser) {
 
 	CString sUsername = GetParam("user");
 	if (!pUser && m_pModule->GetZNC()->FindUser(sUsername)) {
-		GetErrorPage(sPageRet, "Invalid Submission [User " + sUsername.Escape_n(CString::EHTML) + " already exists]");
+		GetErrorPage(sPageRet, "Invalid Submission [User " + sUsername + " already exists]");
 		return true;
 	}
 
@@ -439,20 +545,20 @@ bool CAdminSock::UserPage(CString& sPageRet, CUser* pUser) {
 		// Add User Submission
 		if (!pNewUser->IsValid(sErr)) {
 			delete pNewUser;
-			GetErrorPage(sPageRet, "Invalid submission [" + sErr.Escape_n(CString::EHTML) + "]");
+			GetErrorPage(sPageRet, "Invalid submission [" + sErr + "]");
 			return true;
 		}
 
 		m_pModule->GetZNC()->AddUser(pNewUser);
 		if (!m_pModule->GetZNC()->WriteConfig()) {
-			GetErrorPage(sPageRet, "User edited, but config was not written");
+			GetErrorPage(sPageRet, "User added, but config was not written");
 			return true;
 		}
 	} else {
 		// Edit User Submission
 		if (!pUser->Clone(*pNewUser, sErr)) {
 			delete pNewUser;
-			GetErrorPage(sPageRet, "Invalid Submission [" + sErr.Escape_n(CString::EHTML) + "]");
+			GetErrorPage(sPageRet, "Invalid Submission [" + sErr + "]");
 			return true;
 		}
 
@@ -521,7 +627,9 @@ CUser* CAdminSock::GetNewUser(CString& sPageRet) {
 		CString sModRet;
 		CString sArg = vsArgs[a].TrimRight_n("\r");
 		if (!sArg.empty()) {
-			pNewUser->GetModules().LoadModule(sArg, "", pNewUser, sModRet);
+			try {
+				pNewUser->GetModules().LoadModule(sArg, "", pNewUser, sModRet);
+			} catch (...) {}
 		}
 	}
 
