@@ -11,10 +11,10 @@ endif
 VPATH=.:..
 
 ifeq "@NOSSL@" "1" 
-TARGETS=$(foreach file, $(wildcard *.cpp), $(if $(shell grep HAVE_LIBSSL $(file)),, $(addsuffix .so, $(basename $(file)))))
-INSTALL_TARGS=$(foreach file, $(wildcard *.cpp), $(if $(shell grep HAVE_LIBSSL $(file)),, install_$(addsuffix .so, $(basename $(file)))))
-OBJS=$(foreach file, $(wildcard *.cpp), $(if $(shell grep HAVE_LIBSSL $(file)),, $(addsuffix .o, $(basename $(file)))))
-SRCS=$(wildcard ../*.cpp) $(foreach file, $(wildcard *.cpp), $(if $(shell grep HAVE_LIBSSL $(file)),,$(file)))
+TARGETS=$(foreach file, $(wildcard *.cpp), $(if $(shell grep REQUIRESSL $(file)),, $(addsuffix .so, $(basename $(file)))))
+INSTALL_TARGS=$(foreach file, $(wildcard *.cpp), $(if $(shell grep REQUIRESSL $(file)),, install_$(addsuffix .so, $(basename $(file)))))
+OBJS=$(foreach file, $(wildcard *.cpp), $(if $(shell grep REQUIRESSL $(file)),, $(addsuffix .o, $(basename $(file)))))
+SRCS=$(wildcard ../*.cpp) $(foreach file, $(wildcard *.cpp), $(if $(shell grep REQUIRESSL $(file)),,$(file)))
 else
 TARGETS=$(addsuffix .so, $(basename $(wildcard *.cpp)))
 INSTALL_TARGS=$(foreach file, $(addsuffix .so, $(basename $(wildcard *.cpp))), install_$(file))
