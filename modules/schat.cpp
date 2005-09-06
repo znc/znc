@@ -1,3 +1,5 @@
+#define REQUIRESSL
+
 #include "main.h"
 #include "User.h"
 #include "Nick.h"
@@ -18,6 +20,9 @@ using std::pair;
  * Author: imaginos <imaginos@imaginos.net>
  * 
  * $Log$
+ * Revision 1.16  2005/09/06 22:43:02  prozacx
+ * Added REQUIRESSL
+ *
  * Revision 1.15  2005/05/26 20:42:13  prozacx
  * Moved GetDescription() into second argument of MODULEDEFS()
  *
@@ -74,10 +79,6 @@ using std::pair;
  *
  *
  */     
-
-#ifndef HAVE_LIBSSL
-#error This plugin only works with OpenSSL
-#endif /* HAVE_LIBSSL */
 
 class CSChat;
 

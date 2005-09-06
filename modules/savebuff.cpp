@@ -1,3 +1,5 @@
+#define REQUIRESSL
+
 #include "main.h"
 #include "znc.h"
 #include "User.h"
@@ -12,10 +14,6 @@
  * store OnJoin, OnQuit, OnPart, etc send down as messages
  */
 
-#ifndef HAVE_LIBSSL
-#error This plugin only works with OpenSSL
-#endif /* HAVE_LIBSSL */
-
 #define CRYPT_VERIFICATION_TOKEN "::__:SAVEBUFF:__::"
 
 /*
@@ -26,6 +24,9 @@
  * better solution then plain text.
  * 
  * $Log$
+ * Revision 1.27  2005/09/06 22:43:02  prozacx
+ * Added REQUIRESSL
+ *
  * Revision 1.26  2005/06/12 09:04:39  prozacx
  * Changed to new GetSavePath()
  *

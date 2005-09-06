@@ -1,3 +1,5 @@
+#define REQUIRESSL
+
 #include "main.h"
 #include "User.h"
 #include "Nick.h"
@@ -8,10 +10,6 @@
 #include <map>
 #include <vector>
 
-#ifndef HAVE_LIBSSL
-#error This plugin only works with OpenSSL
-#endif /* HAVE_LIBSSL */
-
 #define CRYPT_VERIFICATION_TOKEN "::__:AWAY:__::"
 
 /*
@@ -20,6 +18,9 @@
  *
  * 
  * $Log$
+ * Revision 1.17  2005/09/06 22:43:02  prozacx
+ * Added REQUIRESSL
+ *
  * Revision 1.16  2005/06/30 21:51:06  prozacx
  * Changed CString::Token() to split on a string rather than char
  *
