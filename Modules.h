@@ -11,11 +11,13 @@ using std::set;
 
 // User Module Macros
 #ifdef REQUIRESSL
+#ifndef HAVE_LIBSSL
 #error -
 #error -
 #error This module only works when znc is compiled with OpenSSL support
 #error -
 #error -
+#endif
 #endif
 
 #define MODCONSTRUCTOR(CLASS) \
