@@ -10,6 +10,14 @@ using std::vector;
 using std::set;
 
 // User Module Macros
+#ifdef REQUIRESSL
+#error -
+#error -
+#error This module only works when znc is compiled with OpenSSL support
+#error -
+#error -
+#endif
+
 #define MODCONSTRUCTOR(CLASS) \
 	CLASS(void *pDLL, CUser* pUser, const CString& sModName) : CModule(pDLL, pUser, sModName)
 #define MODULEDEFS(CLASS, DESCRIPTION) \
