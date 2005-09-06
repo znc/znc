@@ -34,6 +34,8 @@ static const unsigned char base64_table[256] = {
 	XX,XX,XX,XX, XX,XX,XX,XX, XX,XX,XX,XX, XX,XX,XX,XX,
 };
 
+extern const char* g_szHTMLescapes[256];
+
 class CString : public string {
 public:
 	typedef enum {
@@ -47,6 +49,7 @@ public:
 	CString(const string& s) : string(s) {}
 	virtual ~CString() {}
 
+	inline unsigned char* strnchr(const unsigned char* src, unsigned char c, unsigned int iMaxBytes, unsigned char* pFill = NULL, unsigned int* piCount = NULL) const;
 	int CaseCmp(const CString& s) const;
 	int StrCmp(const CString& s) const;
 	static bool WildCmp(const CString& sWild, const CString& sString);
