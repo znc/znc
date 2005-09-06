@@ -92,8 +92,12 @@ public:
 		CString sPort = sArgs.Token(0);
 
 		if (sPort.Left(1) == "+") {
+#ifdef HAVE_LIBSSL
 			sPort.TrimLeft("+");
 			bSSL = true;
+#else
+			return false;
+#endif
 		}
 
 		m_uPort = sPort.ToUInt();
@@ -106,9 +110,11 @@ public:
 
 		CAdminSock* pListenSock = new CAdminSock(this);
 
+#ifdef HAVE_LIBSSL
 		if (bSSL) {
 			pListenSock->SetPemLocation(m_pZNC->GetPemLocation());
 		}
+#endif
 
 		return m_pManager->ListenAll(m_uPort, "Admin::Listener", bSSL, SOMAXCONN, pListenSock);
 	}
