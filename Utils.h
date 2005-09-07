@@ -290,7 +290,7 @@ inline bool ReadLine(const CString & sData, CString & sLine, u_int & iPos) {
 		return false;
 	}
 
-	u_int iFind = sData.find("\n", iPos);
+	CString::size_type iFind = sData.find("\n", iPos);
 
 	if (iFind == CString::npos) {
 		sLine = sData.substr(iPos, (sData.length() - iPos));
