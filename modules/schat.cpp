@@ -9,7 +9,7 @@
 #include "String.h"
 #include "FileUtils.h"
 #include "Csocket.h"
-#include "md5.h"
+#include "MD5.h"
 #include <pwd.h>
 #include <sstream>
 
@@ -20,6 +20,9 @@ using std::pair;
  * Author: imaginos <imaginos@imaginos.net>
  * 
  * $Log$
+ * Revision 1.17  2005/09/07 05:14:28  prozacx
+ * Renamed md5.cpp/h to MD5.cpp/h
+ *
  * Revision 1.16  2005/09/06 22:43:02  prozacx
  * Added REQUIRESSL
  *

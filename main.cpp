@@ -4,7 +4,7 @@
 #include <signal.h>
 #include "znc.h"
 #include "Modules.h"
-#include "md5.h"
+#include "MD5.h"
 
 static struct option g_LongOpts[] = {
 	{ "help",				0,	NULL,	0 },

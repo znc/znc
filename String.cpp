@@ -1,7 +1,7 @@
 #include <string.h>
 #include "String.h"
 #include "FileUtils.h"
-#include "md5.h"
+#include "MD5.h"
 
 const char* g_szHTMLescapes[256] = {
 	"&#0;", 0, 0, 0, 0, 0, 0, 0, 0, 0,               // 0-9

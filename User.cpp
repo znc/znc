@@ -6,7 +6,7 @@
 #include "UserSock.h"
 #include "DCCBounce.h"
 #include "DCCSock.h"
-#include "md5.h"
+#include "MD5.h"
 #include "Timers.h"
 
 CUser::CUser(const CString& sUserName, CZNC* pZNC) {

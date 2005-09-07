@@ -1,10 +1,10 @@
 /* C implementation by Christophe Devine, C++ "class-ified" by [T3] */
 
-#include <string>
-using std::string;
-
 #ifndef _MD5_H
 #define _MD5_H
+
+#include <string>
+using std::string;
 
 #ifndef uint8
 #define uint8  unsigned char

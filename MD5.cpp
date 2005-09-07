@@ -21,7 +21,7 @@
 #include <stdio.h>
 #include <string.h>
 
-#include "md5.h"
+#include "MD5.h"
 
 CMD5::CMD5()
 {

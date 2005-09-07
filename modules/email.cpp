@@ -5,7 +5,7 @@
 #include "Chan.h"
 #include "Utils.h"
 #include "FileUtils.h"
-#include "md5.h"
+#include "MD5.h"
 #include <pwd.h>
 #include <sstream>
 
@@ -15,6 +15,9 @@
  * Author: imaginos <imaginos@imaginos.net>
  *
  * $Log$
+ * Revision 1.9  2005/09/07 05:14:28  prozacx
+ * Renamed md5.cpp/h to MD5.cpp/h
+ *
  * Revision 1.8  2005/05/26 20:42:13  prozacx
  * Moved GetDescription() into second argument of MODULEDEFS()
  *

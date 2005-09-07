@@ -1,5 +1,5 @@
 #include "Utils.h"
-#include "md5.h"
+#include "MD5.h"
 #include <sys/stat.h>
 #include <unistd.h>
 #include <sys/types.h>
