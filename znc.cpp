@@ -41,9 +41,9 @@ CString CZNC::GetTag(bool bIncludeVersion) {
 		return "ZNC - by prozac@rottenboy.com";
 	}
 
-	char szBuf[32];
-	memset(szBuf, 0, 32);
-	snprintf(szBuf, 32, "ZNC %1.3f - by prozac@rottenboy.com", VERSION);
+	char szBuf[128];
+	memset(szBuf, 0, 128);
+	snprintf(szBuf, 127, "ZNC %1.3f - by prozac@rottenboy.com", VERSION);
 
 	return szBuf;
 }
