@@ -720,7 +720,7 @@ XS(XS_ZNC_WriteSock)
 		{
 			PString sReturn = false;
 			int iSockFD = SvIV(ST(0));
-			u_int iLen = SvUV(ST(2));
+			STRLEN iLen = SvUV(ST(2));
 			if ( iLen > 0 )
 			{
 				PString sData;
@@ -877,7 +877,6 @@ XS(XS_ZNC_COREListen)
 bool CModPerl::Eval( const CString & sScript, const CString & sFuncName )
 {
 	dSP;
-	ENTER;
 	SAVETMPS;
 
 	PUSHMARK( SP );
@@ -897,7 +896,6 @@ bool CModPerl::Eval( const CString & sScript, const CString & sFuncName )
 	}
 	PUTBACK;
 	FREETMPS;
-	LEAVE;
 
 	return( bReturn );
 }
@@ -909,7 +907,6 @@ CModPerl::EModRet CModPerl::CallBack( const PString & sHookName, const VPString 
 		return( CONTINUE );
 	
 	dSP;
-	ENTER;
 	SAVETMPS;
 
 	PUSHMARK( SP );
@@ -961,7 +958,6 @@ CModPerl::EModRet CModPerl::CallBack( const PString & sHookName, const VPString 
 
 	PUTBACK;
 	FREETMPS;
-	LEAVE;
 
 	return( (CModPerl::EModRet)iRet );
 }
