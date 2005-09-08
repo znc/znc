@@ -35,6 +35,10 @@ elif `echo $host_os | grep -i 'sol' >/dev/null 2>/dev/null`; then
 	ISSUN=1
 fi
 
+if test "$host_cpu" = "x86_64"; then
+	appendCXX -fPIC
+fi
+
 AC_ARG_WITH( openssl, [  --with-openssl=/path/to/openssl], OPENSSL=$withval,)
 AC_ARG_ENABLE( debug, [  --enable-debug  enable debuging], appendCXX -Wall -ggdb -D_DEBUG, appendCXX -Wall -s -O2 -fomit-frame-pointer )
 AC_ARG_ENABLE( modules, [  --disable-modules  disable modules], MODULES="no", MODULES="yes")
