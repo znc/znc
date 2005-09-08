@@ -315,7 +315,7 @@ bool CZNC::WriteConfig() {
 		return false;
 	}
 
-	File.Write("ListenPort   = " + CString::ToString(m_uListenPort) + "\r\n");
+	File.Write("ListenPort   = " + CString((m_bSSL) ? "+" : "") + CString::ToString(m_uListenPort) + "\r\n");
 	if (!m_sISpoofFile.empty()) {
 		File.Write("ISpoofFile   = " + m_sISpoofFile + "\r\n");
 		if (!m_sISpoofFormat.empty()) { File.Write("ISpoofFormat = " + m_sISpoofFormat + "\r\n"); }
