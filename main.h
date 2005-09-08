@@ -1,7 +1,7 @@
 #ifndef _MAIN_H
 #define _MAIN_H
 
-#define VERSION 0.040
+#define VERSION 0.041
 
 #ifndef _MODDIR_
 #define _MODDIR_ "/usr/share/znc"
