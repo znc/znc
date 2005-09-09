@@ -7,14 +7,14 @@
 #include "HTTPSock.h"
 #include "Server.h"
 
-class CAdminMod;
+class CWebAdminMod;
 
-class CAdminSock : public CHTTPSock {
+class CWebAdminSock : public CHTTPSock {
 public:
 
-	CAdminSock(CAdminMod* pModule);
-	CAdminSock(CAdminMod* pModule, const CString& sHostname, unsigned short uPort, int iTimeout = 60);
-	virtual ~CAdminSock();
+	CWebAdminSock(CWebAdminMod* pModule);
+	CWebAdminSock(CWebAdminMod* pModule, const CString& sHostname, unsigned short uPort, int iTimeout = 60);
+	virtual ~CWebAdminSock();
 
 	virtual bool OnPageRequest(const CString& sURI, CString& sPageRet);
 	virtual bool OnLogin(const CString& sUser, const CString& sPass);
@@ -24,7 +24,7 @@ public:
 
 	void PrintMainPage(CString& sPageRet) {
 		sPageRet = Header("Main Page");
-		sPageRet += "Welcome to the ZNC admin module.\r\n";
+		sPageRet += "Welcome to the ZNC webadmin module.\r\n";
 		sPageRet += Footer();
 	}
 
@@ -69,18 +69,18 @@ public:
 
 private:
 protected:
-	CAdminMod*	m_pModule;
+	CWebAdminMod*	m_pModule;
 	CUser*		m_pUser;
 };
 
-class CAdminMod : public CGlobalModule {
+class CWebAdminMod : public CGlobalModule {
 public:
-	CAdminMod(void *pDLL, CZNC* pZNC, const CString& sModName) : CGlobalModule(pDLL, pZNC, sModName) {
+	CWebAdminMod(void *pDLL, CZNC* pZNC, const CString& sModName) : CGlobalModule(pDLL, pZNC, sModName) {
 		m_uPort = 8080;
 	}
 
-	virtual ~CAdminMod() {
-		for (set<CAdminSock*>::iterator it = m_sSocks.begin(); it != m_sSocks.end(); it++) {
+	virtual ~CWebAdminMod() {
+		for (set<CWebAdminSock*>::iterator it = m_sSocks.begin(); it != m_sSocks.end(); it++) {
 			m_pManager->DelSockByAddr(*it);
 		}
 	}
@@ -110,7 +110,7 @@ public:
 			return false;
 		}
 
-		CAdminSock* pListenSock = new CAdminSock(this);
+		CWebAdminSock* pListenSock = new CWebAdminSock(this);
 
 #ifdef HAVE_LIBSSL
 		if (bSSL) {
@@ -118,14 +118,14 @@ public:
 		}
 #endif
 
-		return m_pManager->ListenAll(m_uPort, "Admin::Listener", bSSL, SOMAXCONN, pListenSock);
+		return m_pManager->ListenAll(m_uPort, "WebAdmin::Listener", bSSL, SOMAXCONN, pListenSock);
 	}
 
-	void AddSock(CAdminSock* pSock) {
+	void AddSock(CWebAdminSock* pSock) {
 		m_sSocks.insert(pSock);
 	}
 
-	void SockDestroyed(CAdminSock* pSock) {
+	void SockDestroyed(CWebAdminSock* pSock) {
 		m_sSocks.erase(pSock);
 	}
 
@@ -135,10 +135,10 @@ private:
 	unsigned int		m_uPort;
 	CString				m_sUser;
 	CString				m_sPass;
-	set<CAdminSock*>	m_sSocks;
+	set<CWebAdminSock*>	m_sSocks;
 };
 
-CString CAdminSock::Header(const CString& sTitle) {
+CString CWebAdminSock::Header(const CString& sTitle) {
 	CString sRet = "<!DOCTYPE HTML PUBLIC \"-//IETF//DTD HTML 2.0//EN\">\r\n"
 		"<html>\r\n<head><title>ZNC - " + sTitle.Escape_n(CString::EHTML) + "</title></head>\r\n"
 		"<body bgcolor='#FFFFFF' text='#000000' link='#000000' alink='#000000' vlink='#000000'>\r\n"
@@ -158,12 +158,12 @@ CString CAdminSock::Header(const CString& sTitle) {
 	return sRet;
 }
 
-CString CAdminSock::Footer() {
+CString CWebAdminSock::Footer() {
 	return "</td></tr><tr><td colspan='2' align='right' valign='bottom'>" + m_pModule->GetZNC()->GetTag() + "</td></tr>\r\n"
 		"</table></body>\r\n</html>\r\n";
 }
 
-bool CAdminSock::OnLogin(const CString& sUser, const CString& sPass) {
+bool CWebAdminSock::OnLogin(const CString& sUser, const CString& sPass) {
 	if (GetUser() == m_pModule->GetUser() && GetPass() == m_pModule->GetPass()) {
 		return true;
 	}
@@ -178,7 +178,7 @@ bool CAdminSock::OnLogin(const CString& sUser, const CString& sPass) {
 	return false;
 }
 
-void CAdminSock::ListUsersPage(CString& sPageRet) {
+void CWebAdminSock::ListUsersPage(CString& sPageRet) {
 	const map<CString,CUser*>& msUsers = m_pModule->GetZNC()->GetUserMap();
 	sPageRet = Header("List Users");
 
@@ -204,30 +204,30 @@ void CAdminSock::ListUsersPage(CString& sPageRet) {
 	sPageRet += Footer();
 }
 
-Csock* CAdminSock::GetSockObj(const CString& sHost, unsigned short uPort) {
-	CAdminSock* pSock = new CAdminSock(m_pModule, sHost, uPort);
-	pSock->SetSockName("Admin::Client");
+Csock* CWebAdminSock::GetSockObj(const CString& sHost, unsigned short uPort) {
+	CWebAdminSock* pSock = new CWebAdminSock(m_pModule, sHost, uPort);
+	pSock->SetSockName("WebAdmin::Client");
 	pSock->SetTimeout(120);
 	m_pModule->AddSock(pSock);
 
 	return pSock;
 }
 
-CAdminSock::CAdminSock(CAdminMod* pModule) : CHTTPSock() {
+CWebAdminSock::CWebAdminSock(CWebAdminMod* pModule) : CHTTPSock() {
 	m_pModule = pModule;
 	m_pUser = NULL;
 	m_pModule->AddSock(this);
 }
-CAdminSock::CAdminSock(CAdminMod* pModule, const CString& sHostname, unsigned short uPort, int iTimeout) : CHTTPSock(sHostname, uPort, iTimeout) {
+CWebAdminSock::CWebAdminSock(CWebAdminMod* pModule, const CString& sHostname, unsigned short uPort, int iTimeout) : CHTTPSock(sHostname, uPort, iTimeout) {
 	m_pModule = pModule;
 	m_pUser = NULL;
 	m_pModule->AddSock(this);
 }
-CAdminSock::~CAdminSock() {
+CWebAdminSock::~CWebAdminSock() {
 	m_pModule->SockDestroyed(this);
 }
 
-bool CAdminSock::OnPageRequest(const CString& sURI, CString& sPageRet) {
+bool CWebAdminSock::OnPageRequest(const CString& sURI, CString& sPageRet) {
 	DEBUG_ONLY(cout << "Request for [" << sURI << "] ");
 	if (!ForceLogin()) {
 		DEBUG_ONLY(cout << "- User not logged in!" << endl);
@@ -300,7 +300,7 @@ bool CAdminSock::OnPageRequest(const CString& sURI, CString& sPageRet) {
 	return true;
 }
 
-bool CAdminSock::SettingsPage(CString& sPageRet) {
+bool CWebAdminSock::SettingsPage(CString& sPageRet) {
 	if (!GetParam("submitted").ToUInt()) {
 		sPageRet = Header("Settings");
 
@@ -404,7 +404,7 @@ bool CAdminSock::SettingsPage(CString& sPageRet) {
 	return false;
 }
 
-bool CAdminSock::UserPage(CString& sPageRet, CUser* pUser) {
+bool CWebAdminSock::UserPage(CString& sPageRet, CUser* pUser) {
 	if (!GetParam("submitted").ToUInt()) {
 		sPageRet = Header((pUser) ? CString("Edit User [" + pUser->GetUserName() + "]") : CString("Add User"));
 
@@ -578,7 +578,7 @@ bool CAdminSock::UserPage(CString& sPageRet, CUser* pUser) {
 	return false;
 }
 
-CUser* CAdminSock::GetNewUser(CString& sPageRet) {
+CUser* CWebAdminSock::GetNewUser(CString& sPageRet) {
 	CString sUsername = GetParam("newuser");
 
 	if (sUsername.empty()) {
@@ -660,4 +660,4 @@ CUser* CAdminSock::GetNewUser(CString& sPageRet) {
 	return pNewUser;
 }
 
-GLOBALMODULEDEFS(CAdminMod, "Add, Edit, Remove users on the fly")
+GLOBALMODULEDEFS(CWebAdminMod, "Dynamic configuration of users/settings through a web browser")
