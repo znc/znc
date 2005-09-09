@@ -368,12 +368,12 @@ bool CZNC::WriteNewConfig(const CString& sConfig) {
 	vector<CString> vsLines;
 	bool bAnswer = false;
 
-	if (!m_LockFile.TryExLock(m_sConfigFile, 50)) {
-		CUtils::PrintError("ZNC is currently running on this config.");
-		return false;
-	}
-
 	if (CFile::Exists(sConfigFile)) {
+		if (!m_LockFile.TryExLock(sConfigFile, 50)) {
+			CUtils::PrintError("ZNC is currently running on this config.");
+			return false;
+		}
+
 		if (!CUtils::GetBoolInput("This config already exists.  Would you like to overwrite it?", false)) {
 			return false;
 		}
