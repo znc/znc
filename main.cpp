@@ -47,7 +47,7 @@ void die(int sig) {
 	exit(sig);
 }
 
-int main(int argc, char** argv) {
+int main(int argc, char** argv, char** envp) {
 	CString sConfig;
 
 #ifdef HAVE_LIBSSL
@@ -102,14 +102,25 @@ int main(int argc, char** argv) {
 
 	if (optind < argc) {
 		sConfig = argv[optind];
-	}
 
-	if (bMakeConf) {
-		CZNC* pZNC = CZNC::New();
-		pZNC->InitDirs("");
-		if (!pZNC->WriteNewConfig(sConfig)) {
+		if (bMakeConf) {
+			CZNC* pZNC = CZNC::New();
+			pZNC->InitDirs("");
+			if (pZNC->WriteNewConfig(sConfig)) {
+				if (argc > 2) {
+					char* args[3];
+					args[0] = argv[0];
+					args[1] = argv[optind];
+					args[2] = NULL;
+					execve(*argv, args, envp);
+				}
+			}
+
 			return 0;
 		}
+	} else if (bMakeConf) {
+		GenerateHelp(argv[0]);
+		return 1;
 	}
 
 #ifdef HAVE_LIBSSL
