@@ -107,8 +107,9 @@ int main(int argc, char** argv) {
 	if (bMakeConf) {
 		CZNC* pZNC = CZNC::New();
 		pZNC->InitDirs("");
-		pZNC->WriteNewConfig(sConfig);
-		return 0;
+		if (!pZNC->WriteNewConfig(sConfig)) {
+			return 0;
+		}
 	}
 
 #ifdef HAVE_LIBSSL
