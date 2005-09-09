@@ -10,7 +10,7 @@ SRC_URI="mirror://sourceforge/${PN}/${P}.tar.gz"
 
 LICENSE="GPL-2"
 SLOT="0"
-KEYWORDS="x86 ~amd64 ~sparc"
+KEYWORDS="x86 amd64 ~sparc"
 IUSE="ssl nomodules debug"
 RESTRICT="nostrip"
 
