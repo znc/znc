@@ -375,6 +375,7 @@ bool CZNC::WriteNewConfig(const CString& sConfig) {
 		}
 
 		if (!CUtils::GetBoolInput("This config already exists.  Would you like to overwrite it?", false)) {
+			m_LockFile.UnLock();
 			return false;
 		}
 	}
@@ -622,6 +623,7 @@ bool CZNC::WriteNewConfig(const CString& sConfig) {
 	CUtils::PrintMessage("/server <znc_server_ip> " + CString::ToString(uPort) + " " + sUser + ":<pass>", true);
 	CUtils::PrintMessage("");
 
+	m_LockFile.UnLock();
 	return CUtils::GetBoolInput("Launch znc now?", true);
 }
 
