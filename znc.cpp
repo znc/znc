@@ -573,7 +573,7 @@ bool CZNC::WriteNewConfig(const CString& sConfig) {
 
 	bool bFileOpen = false;
 
-	if (File.Open(O_WRONLY | O_CREAT, 0600)) {
+	if (File.Open(O_WRONLY | O_CREAT | O_TRUNC, 0600)) {
 		bFileOpen = true;
 	} else {
 		CUtils::PrintStatus(false, "Unable to open file");
@@ -583,7 +583,7 @@ bool CZNC::WriteNewConfig(const CString& sConfig) {
 			CUtils::PrintAction("Writing to alt location [" + sConfigFile + "]");
 			File.SetFileName(sConfigFile);
 
-			if (File.Open(O_WRONLY | O_CREAT, 0600)) {
+			if (File.Open(O_WRONLY | O_CREAT | O_TRUNC, 0600)) {
 				bFileOpen = true;
 			} else {
 				CUtils::PrintStatus(false, "Unable to open alt file");
