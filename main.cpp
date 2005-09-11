@@ -112,7 +112,10 @@ int main(int argc, char** argv, char** envp) {
 					args[0] = argv[0];
 					args[1] = argv[optind];
 					args[2] = NULL;
-					execve(*argv, args, envp);
+					if (execve(*argv, args, envp) == -1) {
+						CUtils::PrintError("Unable to lauch znc [" + CString(strerror(errno)) + "]");
+						return 1;
+					}
 				}
 			}
 
