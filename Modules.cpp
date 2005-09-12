@@ -859,7 +859,11 @@ bool CModules::ReloadModule(const CString& sModule, const CString& sArgs, CUser*
 		return false;
 	}
 
-	if (!LoadModule(sMod, sArgs, pUser, sRetMsg)) {
+	try {
+		if (!LoadModule(sMod, sArgs, pUser, sRetMsg)) {
+			return false;
+		}
+	} catch(...) {
 		return false;
 	}
 

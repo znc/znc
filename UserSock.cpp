@@ -810,7 +810,14 @@ void CUserSock::UserCommand(const CString& sLine) {
 		}
 
 		CString sModRet;
-		m_pUser->GetModules().LoadModule(sMod, sArgs, m_pUser, sModRet);
+
+		try {
+			m_pUser->GetModules().LoadModule(sMod, sArgs, m_pUser, sModRet);
+		} catch (CException e) {
+			PutStatus("Unable to load module [" + sMod + "] [" + sModRet + "]");
+			return;
+		}
+
 		PutStatus(sModRet);
 #else
 		PutStatus("Unable to load [" + sMod + "] Modules are not enabled.");

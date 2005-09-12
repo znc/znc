@@ -121,7 +121,9 @@ bool CUser::Clone(const CUser& User, CString& sErrorRet) {
 
 		if (!pCurMod) {
 			CString sModRet;
-			vCurMods.LoadModule(pNewMod->GetModName(), "", this, sModRet);
+			try {
+				vCurMods.LoadModule(pNewMod->GetModName(), "", this, sModRet);
+			} catch (...) {}
 		}
 	}
 
