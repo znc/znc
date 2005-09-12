@@ -342,12 +342,13 @@ bool CUser::WriteConfig(CFile& File) {
 	PrintLine(File, "VHost", GetVHost());
 	PrintLine(File, "AwaySuffix", GetAwaySuffix());
 	PrintLine(File, "StatusPrefix", GetStatusPrefix());
-	PrintLine(File, "KeepNick", CString((GetKeepNick()) ? "true" : "false"));
-	PrintLine(File, "Buffer", CString::ToString(GetBufferCount()));
-	PrintLine(File, "KeepBuffer", CString((KeepBuffer()) ? "true" : "false"));
 	PrintLine(File, "ChanModes", GetDefaultChanModes());
+	PrintLine(File, "Buffer", CString::ToString(GetBufferCount()));
+	PrintLine(File, "KeepNick", CString((GetKeepNick()) ? "true" : "false"));
+	PrintLine(File, "KeepBuffer", CString((KeepBuffer()) ? "true" : "false"));
 	PrintLine(File, "BounceDCCs", CString((BounceDCCs()) ? "true" : "false"));
 	PrintLine(File, "AutoCycle", CString((AutoCycle()) ? "true" : "false"));
+	PrintLine(File, "DenyLoadMod", CString((DenyLoadMod()) ? "true" : "false"));
 	PrintLine(File, "DCCLookupMethod", CString((UseClientIP()) ? "client" : "default"));
 	File.Write("\r\n");
 
