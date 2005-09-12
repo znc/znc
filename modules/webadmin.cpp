@@ -11,7 +11,6 @@ class CWebAdminMod;
 
 class CWebAdminSock : public CHTTPSock {
 public:
-
 	CWebAdminSock(CWebAdminMod* pModule);
 	CWebAdminSock(CWebAdminMod* pModule, const CString& sHostname, unsigned short uPort, int iTimeout = 60);
 	virtual ~CWebAdminSock();
@@ -37,7 +36,7 @@ public:
 	void ListUsersPage(CString& sPageRet);
 	bool SettingsPage(CString& sPageRet);
 	bool UserPage(CString& sPageRet, CUser* pUser = NULL);
-	CUser* GetNewUser(CString& sPageRet);
+	CUser* GetNewUser(CString& sPageRet, CUser* pUser);
 
 	void ListPage(CString& sPageRet) {
 		VCString vsParams;
@@ -66,11 +65,13 @@ public:
 	}
 
 	virtual Csock* GetSockObj(const CString& sHost, unsigned short uPort);
+	bool IsAdmin() const { return m_bAdmin; }
 
 private:
 protected:
 	CWebAdminMod*	m_pModule;
-	CUser*		m_pUser;
+	CUser*			m_pUser;
+	bool			m_bAdmin;
 };
 
 class CWebAdminMod : public CGlobalModule {
@@ -165,6 +166,7 @@ CString CWebAdminSock::Footer() {
 
 bool CWebAdminSock::OnLogin(const CString& sUser, const CString& sPass) {
 	if (GetUser() == m_pModule->GetUser() && GetPass() == m_pModule->GetPass()) {
+		m_bAdmin = true;
 		return true;
 	}
 
@@ -216,11 +218,13 @@ Csock* CWebAdminSock::GetSockObj(const CString& sHost, unsigned short uPort) {
 CWebAdminSock::CWebAdminSock(CWebAdminMod* pModule) : CHTTPSock() {
 	m_pModule = pModule;
 	m_pUser = NULL;
+	m_bAdmin = false;
 	m_pModule->AddSock(this);
 }
 CWebAdminSock::CWebAdminSock(CWebAdminMod* pModule, const CString& sHostname, unsigned short uPort, int iTimeout) : CHTTPSock(sHostname, uPort, iTimeout) {
 	m_pModule = pModule;
 	m_pUser = NULL;
+	m_bAdmin = false;
 	m_pModule->AddSock(this);
 }
 CWebAdminSock::~CWebAdminSock() {
@@ -494,7 +498,7 @@ bool CWebAdminSock::UserPage(CString& sPageRet, CUser* pUser) {
 		for (set<CModInfo>::iterator it = ssUserMods.begin(); it != ssUserMods.end(); it++) {
 			const CModInfo& Info = *it;
 			sPageRet += "<label><input type='checkbox' name='loadmod' value='" + Info.GetName().Escape_n(CString::EHTML) + "'"
-				+ CString((pUser && pUser->GetModules().FindModule(Info.GetName())) ? " CHECKED" : "") + "> " + Info.GetName().Escape_n(CString::EHTML) + "</label>"
+				+ CString((pUser && pUser->GetModules().FindModule(Info.GetName())) ? " CHECKED" : "") + CString((!IsAdmin() && pUser && pUser->DenyLoadMod()) ? " DISABLED" : "") + "> " + Info.GetName().Escape_n(CString::EHTML) + "</label>"
 				" <small>(" + Info.GetDescription().Escape_n(CString::EHTML) + ")</small><br>";
 		}
 
@@ -514,9 +518,13 @@ bool CWebAdminSock::UserPage(CString& sPageRet, CUser* pUser) {
 				"<label><input type='checkbox' name='autocycle' value='1'" + CString((!pUser || pUser->AutoCycle()) ? " CHECKED" : "") + ">Auto Cycle</label>&nbsp;&nbsp;\r\n"
 				"<label><input type='checkbox' name='keepnick' value='1'" + CString((!pUser || pUser->GetKeepNick()) ? " CHECKED" : "") + ">Keep Nick</label>&nbsp;&nbsp;\r\n"
 				"<label><input type='checkbox' name='bouncedccs' value='1'" + CString((!pUser || pUser->BounceDCCs()) ? " CHECKED" : "") + ">Bounce DCCs</label>&nbsp;&nbsp;\r\n"
-				"<label><input type='checkbox' name='useclientip' value='1'" + CString((pUser && pUser->UseClientIP()) ? " CHECKED" : "") + ">Use Client IP</label>&nbsp;&nbsp;\r\n"
-				"<label><input type='checkbox' name='denyloadmod' value='1'" + CString((pUser && pUser->DenyLoadMod()) ? " CHECKED" : "") + ">Deny LoadMod</label>&nbsp;&nbsp;\r\n"
-				"<br><br>"
+				"<label><input type='checkbox' name='useclientip' value='1'" + CString((pUser && pUser->UseClientIP()) ? " CHECKED" : "") + ">Use Client IP</label>&nbsp;&nbsp;\r\n";
+
+		if (IsAdmin()) {
+			sPageRet += "<label><input type='checkbox' name='denyloadmod' value='1'" + CString((pUser && pUser->DenyLoadMod()) ? " CHECKED" : "") + ">Deny LoadMod</label>&nbsp;&nbsp;\r\n";
+		}
+
+		sPageRet += "<br><br>"
 			"<div><small><b>CTCP Replies:</b></small><br>"
 				"<textarea name='ctcpreplies' cols='40' rows='5'>" + sCTCPReplies.Escape_n(CString::EHTML) + "</textarea></div>\r\n"
 			"<br></div></div><br><br>\r\n"
@@ -534,7 +542,7 @@ bool CWebAdminSock::UserPage(CString& sPageRet, CUser* pUser) {
 		return true;
 	}
 
-	CUser* pNewUser = GetNewUser(sPageRet);
+	CUser* pNewUser = GetNewUser(sPageRet, pUser);
 	if (!pNewUser) {
 		return true;
 	}
@@ -578,7 +586,7 @@ bool CWebAdminSock::UserPage(CString& sPageRet, CUser* pUser) {
 	return false;
 }
 
-CUser* CWebAdminSock::GetNewUser(CString& sPageRet) {
+CUser* CWebAdminSock::GetNewUser(CString& sPageRet, CUser* pUser) {
 	CString sUsername = GetParam("newuser");
 
 	if (sUsername.empty()) {
@@ -622,14 +630,35 @@ CUser* CWebAdminSock::GetNewUser(CString& sPageRet) {
 		pNewUser->AddCTCPReply(sReply.Token(0).Trim_n(), sReply.Token(1, true).Trim_n());
 	}
 
-	GetParamValues("loadmod", vsArgs);
-	for (a = 0; a < vsArgs.size(); a++) {
-		CString sModRet;
-		CString sArg = vsArgs[a].TrimRight_n("\r");
-		if (!sArg.empty()) {
+	if (IsAdmin() || (pUser && !pUser->DenyLoadMod())) {
+		GetParamValues("loadmod", vsArgs);
+		for (a = 0; a < vsArgs.size(); a++) {
+			CString sModRet;
+			CString sArg = vsArgs[a].TrimRight_n("\r");
+			if (!sArg.empty()) {
+				try {
+					if (!pNewUser->GetModules().LoadModule(sArg, "", pNewUser, sModRet)) {
+						DEBUG_ONLY(cerr << "Unable to load module [" << sArg << "] [" << sModRet << "]" << endl);
+					}
+				} catch (...) {
+					DEBUG_ONLY(cerr << "Unable to load module [" << sArg << "]" << endl);
+				}
+			}
+		}
+	} else if (pUser) {
+		CModules& Modules = pUser->GetModules();
+
+		for (a = 0; a < Modules.size(); a++) {
+			CString sModName = Modules[a]->GetModName();
+			CString sModRet;
+
 			try {
-				pNewUser->GetModules().LoadModule(sArg, "", pNewUser, sModRet);
-			} catch (...) {}
+				if (!pNewUser->GetModules().LoadModule(sModName, "", pNewUser, sModRet)) {
+					DEBUG_ONLY(cerr << "Unable to load module [" << sModName << "] [" << sModRet << "]" << endl);
+				}
+			} catch (...) {
+				DEBUG_ONLY(cerr << "Unable to load module [" << sModName << "]" << endl);
+			}
 		}
 	}
 
@@ -649,7 +678,12 @@ CUser* CWebAdminSock::GetNewUser(CString& sPageRet) {
 	pNewUser->SetAutoCycle(GetParam("autocycle").ToBool());
 	pNewUser->SetKeepNick(GetParam("keepnick").ToBool());
 	pNewUser->SetUseClientIP(GetParam("useclientip").ToBool());
-	pNewUser->SetDenyLoadMod(GetParam("denyloadmod").ToBool());
+
+	if (IsAdmin()) {
+		pNewUser->SetDenyLoadMod(GetParam("denyloadmod").ToBool());
+	} else if (pUser) {
+		pNewUser->SetDenyLoadMod(pUser->DenyLoadMod());
+	}
 
 	GetParam("channels").Split("\n", vsArgs);
 
