@@ -32,6 +32,7 @@ install: all create_install_dir $(INSTALL_TARGS)
 
 create_install_dir:
 	mkdir -p $(DESTDIR)$(prefix)/share/znc
+	rm -rf $(DESTDIR)$(prefix)/share/znc/*.so
 
 install_%:
 	install -m 0755 $(subst install_,,$@) $(DESTDIR)$(prefix)/share/znc
