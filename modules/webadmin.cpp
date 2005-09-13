@@ -532,9 +532,21 @@ bool CWebAdminSock::UserPage(CString& sPageRet, CUser* pUser) {
 
 		for (set<CModInfo>::iterator it = ssUserMods.begin(); it != ssUserMods.end(); it++) {
 			const CModInfo& Info = *it;
-			sPageRet += "<tr style='background: " + CString((uIdx++ %2) ? "#ffc" : "#cc9") + "'><td style='border: 1px solid #000;'><label><input type='checkbox' name='loadmod' value='" + Info.GetName().Escape_n(CString::EHTML) + "'" + CString((pUser && pUser->GetModules().FindModule(Info.GetName())) ? " CHECKED" : "") + CString((!IsAdmin() && pUser && pUser->DenyLoadMod()) ? " DISABLED" : "") + "> " + Info.GetName().Escape_n(CString::EHTML) + "</label></td>"
-				"<td style='border: 1px solid #000;'><input type='text' name='modargs_" + Info.GetName().Escape_n(CString::EHTML) + "' value='" + GetModArgs(Info.GetName()) + "'></td>"
-				"<td style='border: 1px solid #000;'>" + Info.GetDescription().Escape_n(CString::EHTML) + "</td></tr>";
+			sPageRet += "<tr style='background: " + CString((uIdx++ %2) ? "#ffc" : "#cc9") + "'><td style='border: 1px solid #000;'><label><input type='checkbox' name='loadmod' value='" + Info.GetName().Escape_n(CString::EHTML) + "'" + CString((pUser && pUser->GetModules().FindModule(Info.GetName())) ? " CHECKED" : "") + CString((!IsAdmin() && pUser && pUser->DenyLoadMod()) ? " DISABLED" : "") + "> " + Info.GetName().Escape_n(CString::EHTML) + "</label></td>";
+
+			if (!IsAdmin() && pUser && pUser->DenyLoadMod()) {
+				CString sArgs = GetModArgs(Info.GetName()).Escape_n(CString::EHTML);
+
+				if (sArgs.empty()) {
+					sArgs = "&nbsp;";
+				}
+
+				sPageRet += "<td style='border: 1px solid #000;'>" + sArgs + "</td>";
+			} else {
+				sPageRet += "<td style='border: 1px solid #000;'><input type='text' name='modargs_" + Info.GetName().Escape_n(CString::EHTML) + "' value='" + GetModArgs(Info.GetName()).Escape_n(CString::EHTML) + "'></td>";
+			}
+
+				sPageRet += "<td style='border: 1px solid #000;'>" + Info.GetDescription().Escape_n(CString::EHTML) + "</td></tr>";
 		}
 
 		sPageRet += "</table><br></div></div><br><br>\r\n"
