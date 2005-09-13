@@ -64,6 +64,24 @@ public:
 		sPageRet += Footer();
 	}
 
+	CString GetModArgs(const CString& sModName, bool bGlobal = false) {
+		if (!bGlobal && !m_pUser) {
+			return "";
+		}
+
+		CModules& Modules = (bGlobal) ? CZNC::New()->GetModules() : m_pUser->GetModules();
+
+		for (unsigned int a = 0; a < Modules.size(); a++) {
+			CModule* pModule = Modules[a];
+
+			if (pModule->GetModName() == sModName) {
+				return pModule->GetArgs();
+			}
+		}
+
+		return "";
+	}
+
 	virtual Csock* GetSockObj(const CString& sHost, unsigned short uPort);
 	bool IsAdmin() const { return m_bAdmin; }
 
@@ -147,7 +165,7 @@ CString CWebAdminSock::Header(const CString& sTitle) {
 		"<tr><td style='border-bottom: 2px solid #000;' colspan='2' align='center' valign='top'><h2>" + sTitle.Escape_n(CString::EHTML) + "</h2></td></tr>\r\n"
 		"<tr><td style='white-space: nowrap; border-right: 1px solid #000;' valign='top'>\r\n";
 
-	if (!m_pUser) {
+	if (IsAdmin()) {
 		sRet += "[<a href='/'>Home</a>]<br>\r\n"
 			"[<a href='/settings'>Settings</a>]<br>\r\n"
 			"[<a href='/adduser'>Add User</a>]<br>\r\n"
@@ -239,14 +257,14 @@ bool CWebAdminSock::OnPageRequest(const CString& sURI, CString& sPageRet) {
 	}
 
 	if (sURI == "/") {
-		if (m_pUser) {
+		if (!IsAdmin()) {
 			Redirect("/edituser");
 			return false;
 		}
 
 		PrintMainPage(sPageRet);
 	} else if (sURI == "/settings") {
-		if (m_pUser) {
+		if (!IsAdmin()) {
 			return false;
 		}
 
@@ -255,7 +273,7 @@ bool CWebAdminSock::OnPageRequest(const CString& sURI, CString& sPageRet) {
 			return false;
 		}
 	} else if (sURI == "/adduser") {
-		if (m_pUser) {
+		if (!IsAdmin()) {
 			return false;
 		}
 
@@ -264,10 +282,12 @@ bool CWebAdminSock::OnPageRequest(const CString& sURI, CString& sPageRet) {
 			return false;
 		}
 	} else if (sURI == "/edituser") {
-		CUser* pUser = (m_pUser) ? m_pUser : m_pModule->GetZNC()->FindUser(GetParam("user"));
+		if (!m_pUser) {
+			m_pUser = m_pModule->GetZNC()->FindUser(GetParam("user"));
+		}
 
-		if (pUser) {
-			if (!UserPage(sPageRet, pUser)) {
+		if (m_pUser) {
+			if (!UserPage(sPageRet, m_pUser)) {
 				DEBUG_ONLY(cout << "- 302 Redirect" << endl);
 				return false;
 			}
@@ -275,13 +295,13 @@ bool CWebAdminSock::OnPageRequest(const CString& sURI, CString& sPageRet) {
 			GetErrorPage(sPageRet, "No such username");
 		}
 	} else if (sURI == "/listusers") {
-		if (m_pUser) {
+		if (!IsAdmin()) {
 			return false;
 		}
 
 		ListUsersPage(sPageRet);
 	} else if (sURI == "/deluser") {
-		if (m_pUser) {
+		if (!IsAdmin()) {
 			return false;
 		}
 
@@ -332,21 +352,24 @@ bool CWebAdminSock::SettingsPage(CString& sPageRet) {
 
 			"<br></div></div><br><br>\r\n"
 
-			"<div style='white-space: nowrap; margin-top: -8px; margin-right: 8px; margin-left: 8px; padding: 1px 5px 1px 5px; float: left; border: 1px solid #000; font-size: 16px; font-weight: bold; background: #ff9;'>Global Modules</div><div style='padding: 25px 5px 5px 15px; border: 2px solid #000; background: #cc9;'><div style='clear: both;'>\r\n";
+			"<div style='white-space: nowrap; margin-top: -8px; margin-right: 8px; margin-left: 8px; padding: 1px 5px 1px 5px; float: left; border: 1px solid #000; font-size: 16px; font-weight: bold; background: #ff9;'>Global Modules</div><div style='padding: 25px 5px 5px 15px; border: 2px solid #000; background: #cc9;'><div style='clear: both;'>\r\n"
+			"<table cellspacing='0' cellpadding='3' style='border: 1px solid #000;'>\r\n"
+			"<tr style='font-weight: bold; background: #ff9;'><td style='border: 1px solid #000;'>Name</td><td style='border: 1px solid #000;'>Arguments</td><td style='border: 1px solid #000;'>Description</td></tr>\r\n";
 
 		set<CModInfo> ssGlobalMods;
 		m_pModule->GetZNC()->GetModules().GetAvailableMods(ssGlobalMods, m_pModule->GetZNC(), true);
 
+		unsigned int uIdx = 0;
+
 		for (set<CModInfo>::iterator it = ssGlobalMods.begin(); it != ssGlobalMods.end(); it++) {
 			const CModInfo& Info = *it;
-			sPageRet += "<label><input type='checkbox' name='loadmod' value='" + Info.GetName().Escape_n(CString::EHTML) + "'"
-				+ CString((m_pModule->GetZNC()->GetModules().FindModule(Info.GetName())) ? " CHECKED" : "") + CString((Info.GetName() == m_pModule->GetModName()) ? " DISABLED" : "") + "> " + Info.GetName().Escape_n(CString::EHTML) + "</label>"
-				" <small>(" + Info.GetDescription().Escape_n(CString::EHTML) + ")</small><br>";
+			sPageRet += "<tr style='background: " + CString((uIdx++ %2) ? "#ffc" : "#cc9") + "'><td style='border: 1px solid #000;'><label><input type='checkbox' name='loadmod' value='" + Info.GetName().Escape_n(CString::EHTML) + "'" + CString((m_pModule->GetZNC()->GetModules().FindModule(Info.GetName())) ? " CHECKED" : "") + CString((Info.GetName() == m_pModule->GetModName()) ? " DISABLED" : "") + "> " + Info.GetName().Escape_n(CString::EHTML) + "</label></td>"
+				"<td style='border: 1px solid #000;'><input type='text' name='modargs_" + Info.GetName().Escape_n(CString::EHTML) + "' value='" + GetModArgs(Info.GetName(), true) + "'" + CString((Info.GetName() == m_pModule->GetModName()) ? " DISABLED" : "") + "></td>"
+				"<td style='border: 1px solid #000;'>" + Info.GetDescription().Escape_n(CString::EHTML) + "</td></tr>";
 		}
 
- 
-		sPageRet += "<br></div></div><br><br>\r\n"
-
+		sPageRet += "</table><br></div></div><br><br>\r\n"
+			"<br></div></div><br><br>\r\n"
 			"<input type='submit' value='Submit'>\r\n"
 			"</form>\r\n";
 
@@ -373,14 +396,22 @@ bool CWebAdminSock::SettingsPage(CString& sPageRet) {
 
 	for (set<CString>::iterator it = ssArgs.begin(); it != ssArgs.end(); it++) {
 		CString sModRet;
-		sArg = (*it).TrimRight_n("\r");
+		CString sModName = (*it).TrimRight_n("\r");
 
-		if (!sArg.empty()) {
+		if (!sModName.empty()) {
+			CString sArgs = GetParam("modargs_" + sModName);
+
 			try {
-				if (!m_pModule->GetZNC()->GetModules().FindModule(sArg)) {
-					m_pModule->GetZNC()->GetModules().LoadModule(sArg, "", NULL, sModRet);
+				if (!m_pModule->GetZNC()->GetModules().FindModule(sModName)) {
+					if (!m_pModule->GetZNC()->GetModules().LoadModule(sModName, sArgs, NULL, sModRet)) {
+						DEBUG_ONLY(cerr << "Unable to load module [" << sModName << "] [" << sModRet << "]" << endl);
+					}
+				} else {
+					DEBUG_ONLY(cerr << "Unable to load module [" << sModName << "] because it is already loaded" << endl);
 				}
-			} catch(...) {}
+			} catch(...) {
+				DEBUG_ONLY(cerr << "Unable to load module [" << sModName << "] [" << sArgs << "]" << endl);
+			}
 		}
 	}
 
@@ -490,19 +521,23 @@ bool CWebAdminSock::UserPage(CString& sPageRet, CUser* pUser) {
 				"<textarea name='servers' cols='40' rows='5'>" + sServers.Escape_n(CString::EHTML) + "</textarea></div>\r\n"
 			"<br></div></div><br><br>\r\n"
 
-			"<div style='white-space: nowrap; margin-top: -8px; margin-right: 8px; margin-left: 8px; padding: 1px 5px 1px 5px; float: left; border: 1px solid #000; font-size: 16px; font-weight: bold; background: #ff9;'>Modules</div><div style='padding: 25px 5px 5px 15px; border: 2px solid #000; background: #cc9;'><div style='clear: both;'>\r\n";
+			"<div style='white-space: nowrap; margin-top: -8px; margin-right: 8px; margin-left: 8px; padding: 1px 5px 1px 5px; float: left; border: 1px solid #000; font-size: 16px; font-weight: bold; background: #ff9;'>Modules</div><div style='padding: 25px 5px 5px 15px; border: 2px solid #000; background: #cc9;'><div style='clear: both;'>\r\n"
+			"<table cellspacing='0' cellpadding='3' style='border: 1px solid #000;'>\r\n"
+			"<tr style='font-weight: bold; background: #ff9;'><td style='border: 1px solid #000;'>Name</td><td style='border: 1px solid #000;'>Arguments</td><td style='border: 1px solid #000;'>Description</td></tr>\r\n";
 
 		set<CModInfo> ssUserMods;
 		m_pModule->GetZNC()->GetModules().GetAvailableMods(ssUserMods, m_pModule->GetZNC());
 
+		unsigned int uIdx = 0;
+
 		for (set<CModInfo>::iterator it = ssUserMods.begin(); it != ssUserMods.end(); it++) {
 			const CModInfo& Info = *it;
-			sPageRet += "<label><input type='checkbox' name='loadmod' value='" + Info.GetName().Escape_n(CString::EHTML) + "'"
-				+ CString((pUser && pUser->GetModules().FindModule(Info.GetName())) ? " CHECKED" : "") + CString((!IsAdmin() && pUser && pUser->DenyLoadMod()) ? " DISABLED" : "") + "> " + Info.GetName().Escape_n(CString::EHTML) + "</label>"
-				" <small>(" + Info.GetDescription().Escape_n(CString::EHTML) + ")</small><br>";
+			sPageRet += "<tr style='background: " + CString((uIdx++ %2) ? "#ffc" : "#cc9") + "'><td style='border: 1px solid #000;'><label><input type='checkbox' name='loadmod' value='" + Info.GetName().Escape_n(CString::EHTML) + "'" + CString((pUser && pUser->GetModules().FindModule(Info.GetName())) ? " CHECKED" : "") + CString((!IsAdmin() && pUser && pUser->DenyLoadMod()) ? " DISABLED" : "") + "> " + Info.GetName().Escape_n(CString::EHTML) + "</label></td>"
+				"<td style='border: 1px solid #000;'><input type='text' name='modargs_" + Info.GetName().Escape_n(CString::EHTML) + "' value='" + GetModArgs(Info.GetName()) + "'></td>"
+				"<td style='border: 1px solid #000;'>" + Info.GetDescription().Escape_n(CString::EHTML) + "</td></tr>";
 		}
 
-		sPageRet += "<br></div></div><br><br>\r\n"
+		sPageRet += "</table><br></div></div><br><br>\r\n"
 			"<div style='white-space: nowrap; margin-top: -8px; margin-right: 8px; margin-left: 8px; padding: 1px 5px 1px 5px; float: left; border: 1px solid #000; font-size: 16px; font-weight: bold; background: #ff9;'>Channels</div><div style='padding: 25px 5px 5px 15px; border: 2px solid #000; background: #cc9;'><div style='clear: both;'>\r\n"
 			"<small><b>Default Modes:</b></small><br>\r\n"
 				"<input type='text' name='chanmodes' value='" + CString((pUser) ? pUser->GetDefaultChanModes().Escape_n(CString::EHTML) : "") + "' size='32' maxlength='32'><br><br>\r\n"
@@ -577,7 +612,7 @@ bool CWebAdminSock::UserPage(CString& sPageRet, CUser* pUser) {
 		}
 	}
 
-	if (m_pUser) {
+	if (!IsAdmin()) {
 		Redirect("/edituser");
 	} else {
 		Redirect("/listusers");
@@ -632,16 +667,20 @@ CUser* CWebAdminSock::GetNewUser(CString& sPageRet, CUser* pUser) {
 
 	if (IsAdmin() || (pUser && !pUser->DenyLoadMod())) {
 		GetParamValues("loadmod", vsArgs);
+
 		for (a = 0; a < vsArgs.size(); a++) {
 			CString sModRet;
-			CString sArg = vsArgs[a].TrimRight_n("\r");
-			if (!sArg.empty()) {
+			CString sModName = vsArgs[a].TrimRight_n("\r");
+
+			if (!sModName.empty()) {
+				CString sArgs = GetParam("modargs_" + sModName);
+
 				try {
-					if (!pNewUser->GetModules().LoadModule(sArg, "", pNewUser, sModRet)) {
-						DEBUG_ONLY(cerr << "Unable to load module [" << sArg << "] [" << sModRet << "]" << endl);
+					if (!pNewUser->GetModules().LoadModule(sModName, sArgs, pNewUser, sModRet)) {
+						DEBUG_ONLY(cerr << "Unable to load module [" << sModName << "] [" << sModRet << "]" << endl);
 					}
 				} catch (...) {
-					DEBUG_ONLY(cerr << "Unable to load module [" << sArg << "]" << endl);
+					DEBUG_ONLY(cerr << "Unable to load module [" << sModName << "] [" << sArgs << "]" << endl);
 				}
 			}
 		}
@@ -650,10 +689,11 @@ CUser* CWebAdminSock::GetNewUser(CString& sPageRet, CUser* pUser) {
 
 		for (a = 0; a < Modules.size(); a++) {
 			CString sModName = Modules[a]->GetModName();
+			CString sArgs = Modules[a]->GetArgs();
 			CString sModRet;
 
 			try {
-				if (!pNewUser->GetModules().LoadModule(sModName, "", pNewUser, sModRet)) {
+				if (!pNewUser->GetModules().LoadModule(sModName, sArgs, pNewUser, sModRet)) {
 					DEBUG_ONLY(cerr << "Unable to load module [" << sModName << "] [" << sModRet << "]" << endl);
 				}
 			} catch (...) {
