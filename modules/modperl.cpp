@@ -1024,7 +1024,7 @@ void CModPerl::LoadPerlMod( const CString & sModule )
 {
 	if ( !m_pUser )
 	{
-		cerr << "LoadPerlMod: No User is set!!!" << endl;
+		DEBUG_ONLY( cerr << "LoadPerlMod: No User is set!!!" << endl );
 		return;
 	}
 
@@ -1054,7 +1054,7 @@ void CModPerl::UnloadPerlMod( const CString & sModule )
 	DestroyAllSocks( sModule );
 	if ( !m_pUser )
 	{
-		cerr << "UnloadPerlMod: No User is set!!!" << endl;
+		DEBUG_ONLY( cerr << "UnloadPerlMod: No User is set!!!" << endl );
 		return;
 	}
 	Eval( "ZNC::COREUnloadMod( '" + m_pUser->GetUserName() + "', '" + sModule + "');" );
