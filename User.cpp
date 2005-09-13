@@ -116,13 +116,17 @@ bool CUser::Clone(const CUser& User, CString& sErrorRet) {
 	const CModules& vNewMods = User.GetModules();
 
 	for (a = 0; a < vNewMods.size(); a++) {
+		CString sModRet;
 		CModule* pNewMod = vNewMods[a];
 		CModule* pCurMod = vCurMods.FindModule(pNewMod->GetModName());
 
 		if (!pCurMod) {
-			CString sModRet;
 			try {
-				vCurMods.LoadModule(pNewMod->GetModName(), "", this, sModRet);
+				vCurMods.LoadModule(pNewMod->GetModName(), pNewMod->GetArgs(), this, sModRet);
+			} catch (...) {}
+		} else if (pNewMod->GetArgs() != pCurMod->GetArgs()) {
+			try {
+				vCurMods.ReloadModule(pNewMod->GetModName(), pNewMod->GetArgs(), this, sModRet);
 			} catch (...) {}
 		}
 	}
