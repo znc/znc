@@ -1357,8 +1357,10 @@ u_short Csock::GetLocalPort()
 
 u_short Csock::GetPort() { return( m_iport ); }
 void Csock::SetPort( u_short iPort ) { m_iport = iPort; }
-void Csock::Close() { m_bClosed = true; }
-bool Csock::isClosed() { return( m_bClosed ); }
+void Csock::Close( ECloseType eCloseType )
+{  
+	m_eCloseType = eCloseType;
+}
 void Csock::BlockIO( bool bBLOCK ) { m_bBLOCK = bBLOCK; }
 
 void Csock::NonBlockingIO()
@@ -1786,7 +1788,7 @@ void Csock::Init( const CS_STRING & sHostname, u_short iport, int itimeout )
 	m_shostname = sHostname;
 	m_iTcount = 0;
 	m_sbuffer.clear();
-	m_bClosed = false;
+	m_eCloseType = CLT_DONT;
 	m_bBLOCK = true;
 	m_iMethod = SSL23;
 	m_sCipherType = "ALL";

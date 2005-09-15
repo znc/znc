@@ -395,6 +395,13 @@ public:
 		CST_OK			= 4
 	};
 
+	enum ECloseType
+	{
+		CLT_DONT			= 0, //! don't close DER
+		CLT_NOW				= 1, //! close immediatly
+		CLT_AFTERWRITE		= 2  //! close after finishing writing the buffer
+	};
+
 	Csock & operator<<( const CS_STRING & s );
 	Csock & operator<<( std::ostream & ( *io )( std::ostream & ) );
 	Csock & operator<<( int i );
@@ -593,9 +600,10 @@ public:
 	void SetPort( u_short iPort );
 
 	//! just mark us as closed, the parent can pick it up
-	void Close();
-	//! returns true if the socket is closed
-	bool isClosed();
+	void Close( ECloseType eCloseType = CLT_NOW );
+	//! returns int of type to close @see ECloseType
+	ECloseType GetCloseType() { return( m_eCloseType ); }
+	bool IsClosed() { return( GetCloseType() != CLT_DONT ); }
 
 	//! Set rather to NON Blocking IO on this socket, default is true
 	void BlockIO( bool bBLOCK );
@@ -820,10 +828,11 @@ public:
 private:
 	u_short		m_iport, m_iRemotePort, m_iLocalPort;
 	int			m_iReadSock, m_iWriteSock, m_itimeout, m_iConnType, m_iTcount, m_iMethod;
-	bool		m_bssl, m_bIsConnected, m_bClosed, m_bBLOCK, m_bFullsslAccept;
+	bool		m_bssl, m_bIsConnected, m_bBLOCK, m_bFullsslAccept;
 	bool		m_bsslEstablished, m_bEnableReadLine, m_bRequireClientCert, m_bPauseRead;
 	CS_STRING	m_shostname, m_sbuffer, m_sSockName, m_sPemFile, m_sCipherType, m_sParentName;
 	CS_STRING	m_sSend, m_sSSLBuffer, m_sPemPass, m_sLocalIP, m_sRemoteIP;
+	ECloseType	m_eCloseType;
 
 	unsigned long long	m_iMaxMilliSeconds, m_iLastSendTime, m_iBytesRead, m_iBytesWritten, m_iStartTime;
 	unsigned int		m_iMaxBytes, m_iLastSend, m_iMaxStoredBufferLength, m_iTimeoutType;
@@ -1417,7 +1426,7 @@ private:
 		// before we go any further, Process work needing to be done on the job
 		for( unsigned int i = 0; i < this->size(); i++ )
 		{
-			if ( (*this)[i]->isClosed() )
+			if ( ( (*this)[i]->GetCloseType() == T::CLT_NOW ) || ( ( (*this)[i]->GetCloseType() == T::CLT_AFTERWRITE ) && ( (*this)[i]->GetWriteBuffer().empty() ) ) )
 				DelSock( i-- ); // close any socks that have requested it
 			else
 				(*this)[i]->Cron(); // call the Cron handler here
