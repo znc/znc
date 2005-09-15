@@ -1040,6 +1040,75 @@ public:
 	*/
 	virtual void Loop ()
 	{
+		for( u_int a = 0; a < this->size(); a++ )
+		{
+			T *pcSock = (*this)[a];
+
+			if ( ( pcSock->GetType() != T::OUTBOUND ) || ( pcSock->GetConState() == T::CST_OK ) )
+				continue;
+
+			if ( pcSock->GetConState() == T::CST_DNS )
+			{
+				if ( pcSock->DNSLookup( T::DNS_DEST ) == ETIMEDOUT )
+				{
+					pcSock->SockError( EDOM );
+					DelSock( a-- );
+					continue;
+				}
+			}
+
+			if ( pcSock->GetConState() == T::CST_VHOSTDNS )
+			{
+				if ( pcSock->DNSLookup( T::DNS_VHOST ) == ETIMEDOUT )
+				{
+					pcSock->SockError( EADDRNOTAVAIL );
+					DelSock( a-- );
+					continue;
+				}
+			}
+
+			if ( pcSock->GetConState() == T::CST_BINDVHOST )
+			{
+				if ( !pcSock->SetupVHost() )
+				{
+					pcSock->SockError( errno );
+					DelSock( a-- );
+					continue;
+				}
+			}
+
+			if ( pcSock->GetConState() == T::CST_CONNECT )
+			{
+		
+				if ( !pcSock->Connect( pcSock->GetBindHost(), true ) )
+				{
+					if ( GetSockError() == ECONNREFUSED )
+						pcSock->ConnectionRefused();
+					else
+						pcSock->SockError( ECONNABORTED );
+
+					DelSock( a-- );
+					continue;
+				}
+
+#ifdef HAVE_LIBSSL
+				if ( pcSock->GetSSL() )
+				{
+					if ( !pcSock->ConnectSSL() )
+					{
+						if ( GetSockError() == ECONNREFUSED )
+							pcSock->ConnectionRefused();
+						else
+							pcSock->SockError( ECONNABORTED );
+
+						DelSock( a-- );
+						continue;
+					}
+				}
+#endif /* HAVE_LIBSSL */
+			}
+		}
+
 		std::map<T *, EMessages> mpeSocks;
 		Select( mpeSocks );
 		std::set<T *> spReadySocks;
@@ -1138,74 +1207,6 @@ public:
 				break;
 		}
 
-		for( u_int a = 0; a < this->size(); a++ )
-		{
-			T *pcSock = (*this)[a];
-
-			if ( ( pcSock->GetType() != T::OUTBOUND ) || ( pcSock->GetConState() == T::CST_OK ) )
-				continue;
-
-			if ( pcSock->GetConState() == T::CST_DNS )
-			{
-				if ( pcSock->DNSLookup( T::DNS_DEST ) == ETIMEDOUT )
-				{
-					pcSock->SockError( EDOM );
-					DelSock( a-- );
-					continue;
-				}
-			}
-
-			if ( pcSock->GetConState() == T::CST_VHOSTDNS )
-			{
-				if ( pcSock->DNSLookup( T::DNS_VHOST ) == ETIMEDOUT )
-				{
-					pcSock->SockError( EADDRNOTAVAIL );
-					DelSock( a-- );
-					continue;
-				}
-			}
-
-			if ( pcSock->GetConState() == T::CST_BINDVHOST )
-			{
-				if ( !pcSock->SetupVHost() )
-				{
-					pcSock->SockError( errno );
-					DelSock( a-- );
-					continue;
-				}
-			}
-
-			if ( pcSock->GetConState() == T::CST_CONNECT )
-			{
-		
-				if ( !pcSock->Connect( pcSock->GetBindHost(), true ) )
-				{
-					if ( GetSockError() == ECONNREFUSED )
-						pcSock->ConnectionRefused();
-					else
-						pcSock->SockError( ECONNABORTED );
-
-					DelSock( a-- );
-					continue;
-				}
-
-#ifdef HAVE_LIBSSL
-				if ( pcSock->GetSSL() )
-				{
-					if ( !pcSock->ConnectSSL() )
-					{
-						if ( GetSockError() == ECONNREFUSED )
-							pcSock->ConnectionRefused();
-						else
-							pcSock->SockError( ECONNABORTED );
-
-						DelSock( a-- );
-						continue;
-					}
-				}
-#endif /* HAVE_LIBSSL */
-			}
-		}
 		unsigned long long iMilliNow = millitime();
 		if ( ( iMilliNow - m_iCallTimeouts ) > 1000 )
 		{
@@ -1406,7 +1407,7 @@ private:
 		tv.tv_sec = 0;
 		tv.tv_usec = m_iSelectWait;
 
-		u_int iQuickReset = 1000;
+		u_int iQuickReset = 100;
 		if ( m_iSelectWait == 0 )
 			iQuickReset = 0;
 
@@ -1423,6 +1424,7 @@ private:
 		}
 
 		bool bHasWriteable = false;
+		bool bHasAvailSocks = false;
 
 		for( unsigned int i = 0; i < this->size(); i++ )
 		{
@@ -1430,6 +1432,8 @@ private:
 
 			if ( pcSock->GetConState() != T::CST_OK )
 				continue;
+
+			bHasAvailSocks = true;
 
 			int & iRSock = pcSock->GetRSock();
 			int & iWSock = pcSock->GetWSock();
@@ -1501,8 +1505,11 @@ private:
 		// old fashion select, go fer it
 		int iSel;
 
-		if ( !mpeSocks.empty() )
-			tv.tv_usec = iQuickReset;	// this won't be a timeout, 1 ms pause to see if anything else is ready (IE if there is SSL data pending, don't wait too long)
+		if ( !mpeSocks.empty() ) // .1 ms pause to see if anything else is ready (IE if there is SSL data pending, don't wait too long)
+			tv.tv_usec = iQuickReset;
+		else if ( ( !this->empty() ) && ( !bHasAvailSocks ) )
+			tv.tv_usec = iQuickReset;
+
 
 		if ( bHasWriteable )
 			iSel = select(FD_SETSIZE, &rfds, &wfds, NULL, &tv);
