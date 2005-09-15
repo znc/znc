@@ -275,6 +275,24 @@ void CChan::ModeChange(const CString& sModes, const CString& sOpNick) {
 	}
 }
 
+CString CChan::GetOptions() const {
+	CString sRet;
+
+	if (IsDetached()) {
+		sRet += (sRet.empty()) ? "Detached" : ", Detached";
+	}
+
+	if (AutoCycle()) {
+		sRet += (sRet.empty()) ? "AutoCycle" : ", AutoCycle";
+	}
+
+	if (KeepBuffer()) {
+		sRet += (sRet.empty()) ? "KeepBuffer" : ", KeepBuffer";
+	}
+
+	return sRet;
+}
+
 CString CChan::GetModeArg(unsigned char uMode) const {
 	if (uMode) {
 		map<unsigned char, CString>::const_iterator it = m_musModes.find(uMode);

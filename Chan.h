@@ -109,6 +109,7 @@ public:
 
 	// Getters
 	bool HasMode(unsigned char uMode) const;
+	CString GetOptions() const;
 	CString GetModeArg(unsigned char uMode) const;
 	unsigned int GetPermCount(unsigned char uPerm);
 	const bool IsOn() const { return m_bIsOn; }
