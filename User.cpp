@@ -550,7 +550,7 @@ CUserSock* CUser::GetUserSock() {
 	for (unsigned int a = 0; a < Manager.size(); a++) {
 		Csock* pSock = Manager[a];
 		if (pSock->GetSockName().CaseCmp(sSockName) == 0) {
-			if (!pSock->isClosed()) {
+			if (!pSock->IsClosed()) {
 				return (CUserSock*) pSock;
 			}
 		}
