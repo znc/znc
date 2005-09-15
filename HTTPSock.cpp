@@ -39,7 +39,7 @@ void CHTTPSock::CheckPost() {
 		GetPage();
 		m_sPostData.clear();
 		m_bDone = true;
-		Close();
+		Close(Csock::CLT_AFTERWRITE);
 	}
 }
 
@@ -92,7 +92,7 @@ void CHTTPSock::GetPage() {
 
 	if (PrintHeader(sPage.length())) {
 		Write(sPage);
-		Close();
+		Close(Csock::CLT_AFTERWRITE);
 	}
 }
 
@@ -195,7 +195,7 @@ bool CHTTPSock::ForceLogin() {
 	AddHeader("WWW-Authenticate", "Basic realm=\"" + CZNC::GetTag() + "\"");
 	PrintHeader(sPage.length(), "text/html", 401, "Unauthorized");
 	Write(sPage);
-	Close();
+	Close(Csock::CLT_AFTERWRITE);
 
 	return false;
 }
@@ -212,7 +212,7 @@ bool CHTTPSock::PrintNotFound() {
 	CString sPage = GetErrorPage(404, "Not Found", "The requested URL was not found on this server.");
 	PrintHeader(sPage.length(), "text/html", 404, "Not Found");
 	Write(sPage);
-	Close();
+	Close(Csock::CLT_AFTERWRITE);
 
 	return true;
 }
@@ -257,7 +257,7 @@ bool CHTTPSock::Redirect(const CString& sURL) {
 	AddHeader("Location", sURL);
 	PrintHeader(sPage.length(), "text/html", 302, "Found");
 	Write(sPage);
-	Close();
+	Close(Csock::CLT_AFTERWRITE);
 
 	return true;
 }
