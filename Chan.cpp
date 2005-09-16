@@ -40,6 +40,10 @@ void CChan::Reset() {
 }
 
 bool CChan::WriteConfig(CFile& File) {
+	if (!InConfig()) {
+		return false;
+	}
+
 	File.Write("\t<Chan " + GetName() + ">\r\n");
 
 	File.Write("\t\tBuffer     = " + CString::ToString(GetBufferCount()) + "\r\n");

@@ -400,9 +400,12 @@ bool CUser::WriteConfig(CFile& File) {
 
 	// Chans
 	for (unsigned int c = 0; c < m_vChans.size(); c++) {
-		File.Write("\r\n");
-		if (!m_vChans[c]->WriteConfig(File)) {
-			return false;
+		CChan* pChan = m_vChans[c];
+		if (pChan->InConfig()) {
+			File.Write("\r\n");
+			if (!pChan->WriteConfig(File)) {
+				return false;
+			}
 		}
 	}
 
