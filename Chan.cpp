@@ -125,8 +125,17 @@ void CChan::SendBuffer() {
 }
 
 void CChan::DetachUser() {
-	m_pUser->PutUser(":" + m_pUser->GetIRCNick().GetNickMask() + " PART " + GetName());
-	m_bDetached = true;
+	if (!m_bDetached) {
+		m_pUser->PutUser(":" + m_pUser->GetIRCNick().GetNickMask() + " PART " + GetName());
+		m_bDetached = true;
+	}
+}
+
+void CChan::AttachUser() {
+	if (m_bDetached) {
+		m_pUser->PutUser(":" + m_pUser->GetIRCNick().GetNickMask() + " JOIN " + GetName());
+		m_bDetached = false;
+	}
 }
 
 CString CChan::GetModeString() const {

@@ -50,6 +50,7 @@ public:
 	void Cycle() const;
 	void JoinUser(bool bForce = false, const CString& sKey = "");
 	void DetachUser();
+	void AttachUser();
 	void SendBuffer();
 
 	void IncClientRequests();
