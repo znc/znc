@@ -708,49 +708,54 @@ bool CWebAdminSock::UserPage(CString& sPageRet, CUser* pUser) {
 				sPageRet += "<td style='border: 1px solid #000;'>" + Info.GetDescription().Escape_n(CString::EHTML) + "</td></tr>";
 		}
 
-		CString sURL = "/addchan?user=" + pUser->GetUserName().Escape_n(CString::EURL);
-
 		sPageRet += "</table><br></div></div><br><br>\r\n"
 			"<div style='white-space: nowrap; margin-top: -8px; margin-right: 8px; margin-left: 8px; padding: 1px 5px 1px 5px; float: left; border: 1px solid #000; font-size: 16px; font-weight: bold; background: #ff9;'>Channels</div><div style='padding: 25px 5px 5px 15px; border: 2px solid #000; background: #cc9;'><div style='clear: both;'>\r\n"
 			"<small><b>Default Modes:</b></small><br>\r\n"
-				"<input type='text' name='chanmodes' value='" + CString((pUser) ? pUser->GetDefaultChanModes().Escape_n(CString::EHTML) : "") + "' size='32' maxlength='32'><br><br>\r\n"
-			"<table cellspacing='0' cellpadding='3' style='border: 1px solid #000;'>\r\n"
-				"<tr style='font-weight: bold; background: #ff9;'>\r\n"
-					"<td style='border: 1px solid #000;'>[<a href='" + sURL.Escape_n(CString::EHTML) + "'>Add</a>]&nbsp;</td>\r\n";
+				"<input type='text' name='chanmodes' value='" + CString((pUser) ? pUser->GetDefaultChanModes().Escape_n(CString::EHTML) : "") + "' size='32' maxlength='32'><br><br>\r\n";
 
-		const vector<CChan*>& Channels = pUser->GetChans();
+		if (pUser) {
+			CString sURL = "/addchan?user=" + pUser->GetUserName().Escape_n(CString::EURL);
 
-		if (!Channels.size()) {
-			sPageRet += "<td style='border: 1px solid #000;'>&nbsp;&nbsp;&lt;- Add a channel (opens in same page)&nbsp;&nbsp;</td>\r\n";
-		} else {
-			sPageRet += "<td style='border: 1px solid #000;'>Save</td>\r\n"
-					"<td style='border: 1px solid #000;'>Name</td>\r\n"
-					"<td style='border: 1px solid #000;'>CurModes</td>\r\n"
-					"<td style='border: 1px solid #000;'>DefModes</td>\r\n"
-					"<td style='border: 1px solid #000;'>BufferCount</td>\r\n"
-					"<td style='border: 1px solid #000;'>Options</td>\r\n";
+			sPageRet += "<table cellspacing='0' cellpadding='3' style='border: 1px solid #000;'>\r\n"
+					"<tr style='font-weight: bold; background: #ff9;'>\r\n"
+						"<td style='border: 1px solid #000;'>[<a href='" + sURL.Escape_n(CString::EHTML) + "'>Add</a>]&nbsp;</td>\r\n";
+
+			const vector<CChan*>& Channels = pUser->GetChans();
+
+			if (!Channels.size()) {
+				sPageRet += "<td style='border: 1px solid #000;'>&nbsp;&nbsp;&lt;- Add a channel (opens in same page)&nbsp;&nbsp;</td>\r\n";
+			} else {
+				sPageRet += "<td style='border: 1px solid #000;'>Save</td>\r\n"
+						"<td style='border: 1px solid #000;'>Name</td>\r\n"
+						"<td style='border: 1px solid #000;'>CurModes</td>\r\n"
+						"<td style='border: 1px solid #000;'>DefModes</td>\r\n"
+						"<td style='border: 1px solid #000;'>BufferCount</td>\r\n"
+						"<td style='border: 1px solid #000;'>Options</td>\r\n";
+			}
+
+			sPageRet += "</tr>\r\n";
+
+			for (unsigned int a = 0; a < Channels.size(); a++) {
+				CChan* pChan = Channels[a];
+				CString sURL = "user=" + pUser->GetUserName().Escape_n(CString::EURL) + "&chan=" + pChan->GetName().Escape_n(CString::EURL);
+
+				sPageRet += "<tr style='background: " + CString((a %2) ? "#ffc" : "#cc9") + ";'>"
+					"<td style='border: 1px solid #000;'>"
+					"<input type='hidden' name='channel' value='" + pChan->GetName().Escape_n(CString::EHTML) + "'>\r\n"
+					"[<a href='/editchan?" + sURL.Escape_n(CString::EHTML) + "'>Edit</a>]&nbsp;[<a href='/delchan?" + sURL.Escape_n(CString::EHTML) + "'>Del</a>]&nbsp;</td>\r\n"
+					"<td style='border: 1px solid #000;'><input type='checkbox' name='save_" + pChan->GetName().Escape_n(CString::EHTML) + "'" + CString((pChan->InConfig()) ? " CHECKED" : "") + ">&nbsp;</td>\r\n"
+					"<td style='border: 1px solid #000;'>" + CString(pChan->GetPermStr() + pChan->GetName()).Escape_n(CString::EHTML) + "&nbsp;</td>\r\n"
+					"<td style='border: 1px solid #000;'>" + pChan->GetModeString().Escape_n(CString::EHTML) + "&nbsp;</td>\r\n"
+					"<td style='border: 1px solid #000;'>" + pChan->GetDefaultModes().Escape_n(CString::EHTML) + "&nbsp;</td>\r\n"
+					"<td style='border: 1px solid #000;'>" + CString::ToString(pChan->GetBufferCount()) + "&nbsp;</td>\r\n"
+					"<td style='border: 1px solid #000;'>" + pChan->GetOptions().Escape_n(CString::EHTML) + "&nbsp;</td>\r\n"
+					"</tr>\r\n";
+			}
+
+			sPageRet += "</table>";
 		}
 
-		sPageRet += "</tr>\r\n";
-
-		for (unsigned int a = 0; a < Channels.size(); a++) {
-			CChan* pChan = Channels[a];
-			CString sURL = "user=" + pUser->GetUserName().Escape_n(CString::EURL) + "&chan=" + pChan->GetName().Escape_n(CString::EURL);
-
-			sPageRet += "<tr style='background: " + CString((a %2) ? "#ffc" : "#cc9") + ";'>"
-				"<td style='border: 1px solid #000;'>"
-				"<input type='hidden' name='channel' value='" + pChan->GetName().Escape_n(CString::EHTML) + "'>\r\n"
-				"[<a href='/editchan?" + sURL.Escape_n(CString::EHTML) + "'>Edit</a>]&nbsp;[<a href='/delchan?" + sURL.Escape_n(CString::EHTML) + "'>Del</a>]&nbsp;</td>\r\n"
-				"<td style='border: 1px solid #000;'><input type='checkbox' name='save_" + pChan->GetName().Escape_n(CString::EHTML) + "'" + CString((pChan->InConfig()) ? " CHECKED" : "") + ">&nbsp;</td>\r\n"
-				"<td style='border: 1px solid #000;'>" + CString(pChan->GetPermStr() + pChan->GetName()).Escape_n(CString::EHTML) + "&nbsp;</td>\r\n"
-				"<td style='border: 1px solid #000;'>" + pChan->GetModeString().Escape_n(CString::EHTML) + "&nbsp;</td>\r\n"
-				"<td style='border: 1px solid #000;'>" + pChan->GetDefaultModes().Escape_n(CString::EHTML) + "&nbsp;</td>\r\n"
-				"<td style='border: 1px solid #000;'>" + CString::ToString(pChan->GetBufferCount()) + "&nbsp;</td>\r\n"
-				"<td style='border: 1px solid #000;'>" + pChan->GetOptions().Escape_n(CString::EHTML) + "&nbsp;</td>\r\n"
-				"</tr>\r\n";
-		}
-
-		sPageRet += "</table><br></div></div><br><br>\r\n"
+		sPageRet += "<br></div></div><br><br>\r\n"
 			"<div style='white-space: nowrap; margin-top: -8px; margin-right: 8px; margin-left: 8px; padding: 1px 5px 1px 5px; float: left; border: 1px solid #000; font-size: 16px; font-weight: bold; background: #ff9;'>ZNC Behavior</div><div style='padding: 25px 5px 5px 15px; border: 2px solid #000; background: #cc9;'><div style='clear: both;'>\r\n"
 			"<small><b>Playback Buffer Size:</b></small><br>\r\n"
 				"<input type='text' name='bufsize' value='" + CString((pUser) ? CString::ToString(pUser->GetBufferCount()) : "") + "' size='32' maxlength='9'><br><br>\r\n"
