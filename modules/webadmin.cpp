@@ -594,7 +594,7 @@ bool CWebAdminSock::DelChan(CString& sPageRet) {
 	m_pUser->PutIRC("PART " + sChan);
 
 	if (!m_pModule->GetZNC()->WriteConfig()) {
-		GetErrorPage(sPageRet, "User added, but config was not written");
+		GetErrorPage(sPageRet, "Channel deleted, but config was not written");
 		return true;
 	}
 
