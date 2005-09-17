@@ -593,8 +593,12 @@ bool CWebAdminSock::DelChan(CString& sPageRet) {
 	m_pUser->DelChan(sChan);
 	m_pUser->PutIRC("PART " + sChan);
 
-	Redirect("/edituser?user=" + m_pUser->GetUserName().Escape_n(CString::EURL));
+	if (!m_pModule->GetZNC()->WriteConfig()) {
+		GetErrorPage(sPageRet, "User added, but config was not written");
+		return true;
+	}
 
+	Redirect("/edituser?user=" + m_pUser->GetUserName().Escape_n(CString::EURL));
 	return false;
 }
 
