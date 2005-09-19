@@ -154,7 +154,7 @@ int CZNC::Loop() {
 				pUserSock->PutStatus("Attempting to connect to [" + pServer->GetName() + ":" + CString::ToString(pServer->GetPort()) + "] ...");
 			}
 
-			pIRCSock = new CIRCSock(this, pUser);
+			pIRCSock = new CIRCSock(pUser);
 			pIRCSock->SetPass(pServer->GetPass());
 
 			bool bSSL = false;

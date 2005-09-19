@@ -14,7 +14,7 @@ class CAwayNickTimer;
 
 class CIRCSock : public Csock {
 public:
-	CIRCSock(CZNC* pZNC, CUser* pUser);
+	CIRCSock(CUser* pUser);
 	virtual ~CIRCSock();
 
 	typedef enum {
@@ -81,7 +81,6 @@ protected:
 	CString						m_sPerms;
 	CString						m_sPermModes;
 	map<unsigned char, EChanModeArgs>	m_mueChanModes;
-	CZNC*						m_pZNC;
 	CUser*						m_pUser;
 	CNick						m_Nick;
 	CString						m_sPass;

@@ -5,8 +5,7 @@
 #include "Timers.h"
 #include <time.h>
 
-CIRCSock::CIRCSock(CZNC* pZNC, CUser* pUser) : Csock() {
-	m_pZNC = pZNC;
+CIRCSock::CIRCSock(CUser* pUser) : Csock() {
 	m_pUser = pUser;
 	m_pUserSock = NULL;
 	m_pAwayNickTimer = NULL;
@@ -52,13 +51,13 @@ CIRCSock::~CIRCSock() {
 	}
 
 	if (!m_bISpoofReleased) {
-		m_pZNC->ReleaseISpoof();
+		CZNC::Get().ReleaseISpoof();
 	}
 
 	PutServ("QUIT :" + m_pUser->GetQuitMsg());
 	m_msChans.clear();
 
-	m_pZNC->GetManager().DelCronByAddr(m_pAwayNickTimer);
+	CZNC::Get().GetManager().DelCronByAddr(m_pAwayNickTimer);
 }
 
 void CIRCSock::ReadLine(const CString& sData) {
@@ -71,7 +70,7 @@ void CIRCSock::ReadLine(const CString& sData) {
 	DEBUG_ONLY(cout << GetSockName() << " <- [" << sLine << "]" << endl);
 
 #ifdef _MODULES
-	CGlobalModules& GMods = m_pZNC->GetModules();
+	CGlobalModules& GMods = CZNC::Get().GetModules();
 	GMods.SetUser(m_pUser);
 	if (GMods.OnRaw(sLine) || m_pUser->GetModules().OnRaw(sLine)) {
 		return;
@@ -96,7 +95,7 @@ void CIRCSock::ReadLine(const CString& sData) {
 					PutServ("WHO " + sNick);
 					if (!m_pAwayNickTimer) {
 						m_pAwayNickTimer = new CAwayNickTimer(m_pUser);
-						m_pZNC->GetManager().AddCron(m_pAwayNickTimer);
+						CZNC::Get().GetManager().AddCron(m_pAwayNickTimer);
 					}
 
 					VOIDMODULECALL(OnIRCConnected());
@@ -124,7 +123,7 @@ void CIRCSock::ReadLine(const CString& sData) {
 						PutServ("JOIN " + vChans[a]->GetName() + " " + vChans[a]->GetKey());
 					}
 
-					m_pZNC->ReleaseISpoof();
+					CZNC::Get().ReleaseISpoof();
 					m_bISpoofReleased = true;
 
 					break;
@@ -654,14 +653,14 @@ bool CIRCSock::OnPrivCTCP(const CString& sNickMask, CString& sMessage) {
 			}
 		} else if (sType.CaseCmp("RESUME") == 0) {
 			// Need to lookup the connection by port, filter the port, and forward to the user
-			CDCCBounce* pSock = (CDCCBounce*) m_pZNC->GetManager().FindSockByLocalPort(atoi(sMessage.Token(3).c_str()));
+			CDCCBounce* pSock = (CDCCBounce*) CZNC::Get().GetManager().FindSockByLocalPort(atoi(sMessage.Token(3).c_str()));
 
 			if ((pSock) && (strncasecmp(pSock->GetSockName().c_str(), "DCC::", 5) == 0)) {
 				PutUser(":" + sNickMask + " PRIVMSG " + GetNick() + " :\001DCC " + sType + " " + sFile + " " + CString::ToString(pSock->GetUserPort()) + " " + sMessage.Token(4) + "\001");
 			}
 		} else if (sType.CaseCmp("ACCEPT") == 0) {
 			// Need to lookup the connection by port, filter the port, and forward to the user
-			TSocketManager<Csock>& Manager = m_pZNC->GetManager();
+			TSocketManager<Csock>& Manager = CZNC::Get().GetManager();
 
 			for (unsigned int a = 0; a < Manager.size(); a++) {
 				CDCCBounce* pSock = (CDCCBounce*) Manager[a];
@@ -810,7 +809,7 @@ void CIRCSock::UserConnected(CUserSock* pUserSock) {
 void CIRCSock::UserDisconnected() {
 	if (m_pUserSock && !m_pAwayNickTimer) {
 		m_pAwayNickTimer = new CAwayNickTimer(m_pUser);
-		m_pZNC->GetManager().AddCron(m_pAwayNickTimer);
+		CZNC::Get().GetManager().AddCron(m_pAwayNickTimer);
 	}
 
 	m_pUserSock = NULL;
@@ -845,7 +844,7 @@ void CIRCSock::SetNick(const CString& sNick) {
 void CIRCSock::Connected() {
 	DEBUG_ONLY(cout << GetSockName() << " == Connected()" << endl);
 
-	CUserSock* pUserSock = (CUserSock*) m_pZNC->FindSockByName("USR::" + m_pUser->GetUserName());
+	CUserSock* pUserSock = (CUserSock*) CZNC::Get().FindSockByName("USR::" + m_pUser->GetUserName());
 
 	if (pUserSock) {
 		m_pUserSock = pUserSock;
