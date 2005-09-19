@@ -412,7 +412,7 @@ bool CWebAdminSock::SettingsPage(CString& sPageRet) {
 
 		for (set<CModInfo>::iterator it = ssGlobalMods.begin(); it != ssGlobalMods.end(); it++) {
 			const CModInfo& Info = *it;
-			sPageRet += "<tr style='background: " + CString((uIdx++ %2) ? "#ffc" : "#cc9") + "'><td style='border: 1px solid #000;'><label><input type='checkbox' name='loadmod' value='" + Info.GetName().Escape_n(CString::EHTML) + "'" + CString((CZNC::Get().GetModules().FindModule(Info.GetName())) ? " CHECKED" : "") + CString((Info.GetName() == m_pModule->GetModName()) ? " DISABLED" : "") + "> " + Info.GetName().Escape_n(CString::EHTML) + "</label></td>"
+			sPageRet += "<tr style='background: " + CString((uIdx++ %2) ? "#ffc" : "#cc9") + "'><td style='border: 1px solid #000;'><input type='checkbox' name='loadmod' id='lm_" + Info.GetName().Escape_n(CString::EHTML) + "' value='" + Info.GetName().Escape_n(CString::EHTML) + "'" + CString((CZNC::Get().GetModules().FindModule(Info.GetName())) ? " CHECKED" : "") + CString((Info.GetName() == m_pModule->GetModName()) ? " DISABLED" : "") + "><label for='lm_" + Info.GetName().Escape_n(CString::EHTML) + "'> " + Info.GetName().Escape_n(CString::EHTML) + "</label></td>"
 				"<td style='border: 1px solid #000;'><input type='text' name='modargs_" + Info.GetName().Escape_n(CString::EHTML) + "' value='" + GetModArgs(Info.GetName(), true) + "'" + CString((Info.GetName() == m_pModule->GetModName()) ? " DISABLED" : "") + "></td>"
 				"<td style='border: 1px solid #000;'>" + Info.GetDescription().Escape_n(CString::EHTML) + "</td></tr>";
 		}
@@ -522,12 +522,12 @@ bool CWebAdminSock::ChanPage(CString& sPageRet, CChan* pChan) {
 
 					"<tr>\r\n"
 						"<td><small><b>Save:</b></small><br>\r\n"
-						"<label><input type='checkbox' name='save' value='true'" + CString((!pChan || pChan->InConfig()) ? " CHECKED" : "") + "> Save to config</label></td>\r\n"
+						"<input type='checkbox' name='save' id='save' value='true'" + CString((!pChan || pChan->InConfig()) ? " CHECKED" : "") + "><label for='save'> Save to config</label></td>\r\n"
 
 						"<td colspan='2'><small><b>Options:</b></small><br>\r\n"
-						"<label><input type='checkbox' name='autocycle' value='true'" + CString((!pChan || pChan->AutoCycle()) ? " CHECKED" : "") + "> AutoCycle</label>\r\n"
-						"<label><input type='checkbox' name='keepbuffer' value='true'" + CString((!pChan || pChan->KeepBuffer()) ? " CHECKED" : "") + "> KeepBuffer</label>\r\n"
-						"<label><input type='checkbox' name='detached' value='true'" + CString((pChan && pChan->IsDetached()) ? " CHECKED" : "") + "> Detached</label>\r\n"
+						"<input type='checkbox' name='autocycle' id='autocycle' value='true'" + CString((!pChan || pChan->AutoCycle()) ? " CHECKED" : "") + "><label for='autocycle'> AutoCycle</label>\r\n"
+						"<input type='checkbox' name='keepbuffer' id='keepbuffer' value='true'" + CString((!pChan || pChan->KeepBuffer()) ? " CHECKED" : "") + "><label for='keepbuffer'> KeepBuffer</label>\r\n"
+						"<input type='checkbox' name='detached' id='detached' value='true'" + CString((pChan && pChan->IsDetached()) ? " CHECKED" : "") + "><label for='detached'> Detached</label>\r\n"
 						"</td>\r\n"
 					"</tr>\r\n"
 				"</table>\r\n"
@@ -695,7 +695,7 @@ bool CWebAdminSock::UserPage(CString& sPageRet, CUser* pUser) {
 
 		for (set<CModInfo>::iterator it = ssUserMods.begin(); it != ssUserMods.end(); it++) {
 			const CModInfo& Info = *it;
-			sPageRet += "<tr style='background: " + CString((uIdx++ %2) ? "#ffc" : "#cc9") + ";'><td style='border: 1px solid #000;'><label><input type='checkbox' name='loadmod' value='" + Info.GetName().Escape_n(CString::EHTML) + "'" + CString((pUser && pUser->GetModules().FindModule(Info.GetName())) ? " CHECKED" : "") + CString((!IsAdmin() && pUser && pUser->DenyLoadMod()) ? " DISABLED" : "") + "> " + Info.GetName().Escape_n(CString::EHTML) + "</label></td>";
+			sPageRet += "<tr style='background: " + CString((uIdx++ %2) ? "#ffc" : "#cc9") + ";'><td style='border: 1px solid #000;'><input type='checkbox' name='loadmod' id='lm_" + Info.GetName().Escape_n(CString::EHTML) + "' value='" + Info.GetName().Escape_n(CString::EHTML) + "'" + CString((pUser && pUser->GetModules().FindModule(Info.GetName())) ? " CHECKED" : "") + CString((!IsAdmin() && pUser && pUser->DenyLoadMod()) ? " DISABLED" : "") + "><label for='lm_" + Info.GetName().Escape_n(CString::EHTML) + "'> " + Info.GetName().Escape_n(CString::EHTML) + "</label></td>";
 
 			if (!IsAdmin() && pUser && pUser->DenyLoadMod()) {
 				CString sArgs = GetModArgs(Info.GetName()).Escape_n(CString::EHTML);
@@ -764,14 +764,14 @@ bool CWebAdminSock::UserPage(CString& sPageRet, CUser* pUser) {
 			"<small><b>Playback Buffer Size:</b></small><br>\r\n"
 				"<input type='text' name='bufsize' value='" + CString((pUser) ? CString::ToString(pUser->GetBufferCount()) : "") + "' size='32' maxlength='9'><br><br>\r\n"
 			"<small><b>Options:</b></small><br>\r\n"
-				"<span style='white-space: nowrap;'><label><input type='checkbox' name='keepbuffer' value='1'" + CString((!pUser || pUser->KeepBuffer()) ? " CHECKED" : "") + ">Keep Buffer</label></span>&nbsp;&nbsp;\r\n"
-				"<span style='white-space: nowrap;'><label><input type='checkbox' name='autocycle' value='1'" + CString((!pUser || pUser->AutoCycle()) ? " CHECKED" : "") + ">Auto Cycle</label></span>&nbsp;&nbsp;\r\n"
-				"<span style='white-space: nowrap;'><label><input type='checkbox' name='keepnick' value='1'" + CString((!pUser || pUser->GetKeepNick()) ? " CHECKED" : "") + ">Keep Nick</label></span>&nbsp;&nbsp;\r\n"
-				"<span style='white-space: nowrap;'><label><input type='checkbox' name='bouncedccs' value='1'" + CString((!pUser || pUser->BounceDCCs()) ? " CHECKED" : "") + ">Bounce DCCs</label></span>&nbsp;&nbsp;\r\n"
-				"<span style='white-space: nowrap;'><label><input type='checkbox' name='useclientip' value='1'" + CString((pUser && pUser->UseClientIP()) ? " CHECKED" : "") + ">Use Client IP</label></span>&nbsp;&nbsp;\r\n";
+				"<span style='white-space: nowrap;'><input type='checkbox' name='keepbuffer' id='keepbuffer' value='1'" + CString((!pUser || pUser->KeepBuffer()) ? " CHECKED" : "") + "><label for='keepbuffer'>Keep Buffer</label></span>&nbsp;&nbsp;\r\n"
+				"<span style='white-space: nowrap;'><input type='checkbox' name='autocycle' id='autocycle' value='1'" + CString((!pUser || pUser->AutoCycle()) ? " CHECKED" : "") + "><label for='autocycle'>Auto Cycle</label></span>&nbsp;&nbsp;\r\n"
+				"<span style='white-space: nowrap;'><input type='checkbox' name='keepnick' id='keepnick' value='1'" + CString((!pUser || pUser->GetKeepNick()) ? " CHECKED" : "") + "><label for='keepnick'>Keep Nick</label></span>&nbsp;&nbsp;\r\n"
+				"<span style='white-space: nowrap;'><input type='checkbox' name='bouncedccs' id='bouncedccs' value='1'" + CString((!pUser || pUser->BounceDCCs()) ? " CHECKED" : "") + "><label for='bouncedccs'>Bounce DCCs</label></span>&nbsp;&nbsp;\r\n"
+				"<span style='white-space: nowrap;'><input type='checkbox' name='useclientip' id='useclientip' value='1'" + CString((pUser && pUser->UseClientIP()) ? " CHECKED" : "") + "><label for='useclientip'>Use Client IP</label></span>&nbsp;&nbsp;\r\n";
 
 		if (IsAdmin()) {
-			sPageRet += "<span style='white-space: nowrap;'><label><input type='checkbox' name='denyloadmod' value='1'" + CString((pUser && pUser->DenyLoadMod()) ? " CHECKED" : "") + ">Deny LoadMod</label></span>&nbsp;&nbsp;\r\n";
+			sPageRet += "<span style='white-space: nowrap;'><input type='checkbox' name='denyloadmod' id='denyloadmod' value='1'" + CString((pUser && pUser->DenyLoadMod()) ? " CHECKED" : "") + "><label for='denyloadmod'>Deny LoadMod</label></span>&nbsp;&nbsp;\r\n";
 		}
 
 		sPageRet += "<br><br>"
