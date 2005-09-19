@@ -235,7 +235,6 @@ bool CZNC::Listen() {
 	}
 
 	CUserSock* pUserSock = new CUserSock;
-	pUserSock->SetZNC(this);
 
 	bool bSSL = false;
 #ifdef HAVE_LIBSSL
