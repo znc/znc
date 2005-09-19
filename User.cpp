@@ -9,16 +9,15 @@
 #include "MD5.h"
 #include "Timers.h"
 
-CUser::CUser(const CString& sUserName, CZNC* pZNC) {
+CUser::CUser(const CString& sUserName) {
 	m_uConnectTime = 0;
 	m_sUserName = sUserName;
 	m_sNick = sUserName;
 	m_sIdent = sUserName;
 	m_sRealName = sUserName;
 	m_uServerIdx = 0;
-	m_pZNC = pZNC;
 #ifdef _MODULES
-	m_pModules = new CModules(pZNC);
+	m_pModules = new CModules;
 #endif
 	m_bBounceDCCs = true;
 	m_bPassHashed = false;
@@ -31,9 +30,9 @@ CUser::CUser(const CString& sUserName, CZNC* pZNC) {
 	m_bAutoCycle = true;
 	m_pKeepNickTimer = new CKeepNickTimer(this);
 	m_pJoinTimer = new CJoinTimer(this);
-	m_pZNC->GetManager().AddCron(m_pKeepNickTimer);
-	m_pZNC->GetManager().AddCron(m_pJoinTimer);
-	m_sUserPath = m_pZNC->GetUserPath() + "/" + sUserName;
+	CZNC::Get().GetManager().AddCron(m_pKeepNickTimer);
+	CZNC::Get().GetManager().AddCron(m_pJoinTimer);
+	m_sUserPath = CZNC::Get().GetUserPath() + "/" + sUserName;
 	m_sDLPath = GetUserPath() + "/downloads";
 }
 
@@ -49,8 +48,8 @@ CUser::~CUser() {
 		delete m_vChans[b];
 	}
 
-	m_pZNC->GetManager().DelCronByAddr(m_pKeepNickTimer);
-	m_pZNC->GetManager().DelCronByAddr(m_pJoinTimer);
+	CZNC::Get().GetManager().DelCronByAddr(m_pKeepNickTimer);
+	CZNC::Get().GetManager().DelCronByAddr(m_pJoinTimer);
 }
 
 bool CUser::OnBoot() {
@@ -69,7 +68,7 @@ bool CUser::Clone(const CUser& User, CString& sErrorRet) {
 	}
 
 	if (GetUserName() != User.GetUserName()) {
-		if (m_pZNC->FindUser(User.GetUserName())) {
+		if (CZNC::Get().FindUser(User.GetUserName())) {
 			sErrorRet = "New username already exists";
 			return false;
 		}
@@ -537,17 +536,9 @@ bool CUser::CheckPass(const CString& sPass) {
 	return (m_sPass.CaseCmp((char*) CMD5(sPass)) == 0);
 }
 
-TSocketManager<Csock>* CUser::GetManager() {
-	return &m_pZNC->GetManager();
-}
-
-CZNC* CUser::GetZNC() {
-	return m_pZNC;
-}
-
 CUserSock* CUser::GetUserSock() {
 	// Todo: optimize this by saving a pointer to the sock
-	TSocketManager<Csock>& Manager = m_pZNC->GetManager();
+	TSocketManager<Csock>& Manager = CZNC::Get().GetManager();
 	CString sSockName = "USR::" + m_sUserName;
 
 	for (unsigned int a = 0; a < Manager.size(); a++) {
@@ -559,7 +550,7 @@ CUserSock* CUser::GetUserSock() {
 		}
 	}
 
-	return (CUserSock*) m_pZNC->GetManager().FindSockByName(sSockName);
+	return (CUserSock*) CZNC::Get().GetManager().FindSockByName(sSockName);
 }
 
 bool CUser::IsUserAttached() {
@@ -574,7 +565,7 @@ bool CUser::IsUserAttached() {
 
 CIRCSock* CUser::GetIRCSock() {
 	// Todo: optimize this by saving a pointer to the sock
-	return (CIRCSock*) m_pZNC->GetManager().FindSockByName("IRC::" + m_sUserName);
+	return (CIRCSock*) CZNC::Get().GetManager().FindSockByName("IRC::" + m_sUserName);
 }
 
 CString CUser::GetLocalIP() {
@@ -638,7 +629,7 @@ bool CUser::PutModule(const CString& sModule, const CString& sLine) {
 }
 
 bool CUser::ResumeFile(const CString& sRemoteNick, unsigned short uPort, unsigned long uFileSize) {
-	TSocketManager<Csock>& Manager = m_pZNC->GetManager();
+	TSocketManager<Csock>& Manager = CZNC::Get().GetManager();
 
 	for (unsigned int a = 0; a < Manager.size(); a++) {
 		if (strncasecmp(Manager[a]->GetSockName().c_str(), "DCC::LISTEN::", 13) == 0) {
@@ -659,7 +650,7 @@ bool CUser::ResumeFile(const CString& sRemoteNick, unsigned short uPort, unsigne
 }
 
 bool CUser::SendFile(const CString& sRemoteNick, const CString& sFileName, const CString& sModuleName) {
-	CString sFullPath = CUtils::ChangeDir(GetDLPath(), sFileName, GetHomePath());
+	CString sFullPath = CUtils::ChangeDir(GetDLPath(), sFileName, CZNC::Get().GetHomePath());
 	CDCCSock* pSock = new CDCCSock(this, sRemoteNick, sFullPath, sModuleName);
 
 	CFile* pFile = pSock->OpenFile(false);
@@ -669,7 +660,7 @@ bool CUser::SendFile(const CString& sRemoteNick, const CString& sFileName, const
 		return false;
 	}
 
-	unsigned short uPort = GetManager()->ListenAllRand("DCC::LISTEN::" + sRemoteNick, false, SOMAXCONN, pSock, 120);
+	unsigned short uPort = CZNC::Get().GetManager().ListenAllRand("DCC::LISTEN::" + sRemoteNick, false, SOMAXCONN, pSock, 120);
 
 	if (GetNick().CaseCmp(sRemoteNick) == 0) {
 		PutUser(":" + GetStatusPrefix() + "status!znc@znc.com PRIVMSG " + sRemoteNick + " :\001DCC SEND " + pFile->GetShortName() + " " + CString::ToString(CUtils::GetLongIP(GetLocalIP())) + " "
@@ -696,7 +687,7 @@ bool CUser::GetFile(const CString& sRemoteNick, const CString& sRemoteIP, unsign
 		return false;
 	}
 
-	if (!GetManager()->Connect(sRemoteIP, uRemotePort, "DCC::GET::" + sRemoteNick, 60, false, GetLocalIP(), pSock)) {
+	if (!CZNC::Get().GetManager().Connect(sRemoteIP, uRemotePort, "DCC::GET::" + sRemoteNick, 60, false, GetLocalIP(), pSock)) {
 		PutModule(sModuleName, "DCC <- [" + sRemoteNick + "][" + sFileName + "] - Unable to connect.");
 		return false;
 	}
@@ -772,12 +763,12 @@ const CString& CUser::GetPass() const { return m_sPass; }
 bool CUser::IsPassHashed() const { return m_bPassHashed; }
 
 CString CUser::FindModPath(const CString& sModule) const {
-	CString sModPath = GetCurPath() + "/modules/" + sModule;
+	CString sModPath = CZNC::Get().GetCurPath() + "/modules/" + sModule;
 	sModPath += (sModule.find(".") == CString::npos) ? ".so" : "";
 
 	if (!CFile::Exists(sModPath)) {
 		DEBUG_ONLY(cout << "[" << sModPath << "] Not found..." << endl);
-		sModPath = GetModPath() + "/" + sModule;
+		sModPath = CZNC::Get().GetModPath() + "/" + sModule;
 		sModPath += (sModule.find(".") == CString::npos) ? ".so" : "";
 
 		if (!CFile::Exists(sModPath)) {
@@ -808,11 +799,6 @@ bool CUser::ConnectPaused() {
 
 	return true;
 }
-
-const CString& CUser::GetCurPath() const { return m_pZNC->GetCurPath(); }
-const CString& CUser::GetModPath() const { return m_pZNC->GetModPath(); }
-const CString& CUser::GetHomePath() const { return m_pZNC->GetHomePath(); }
-CString CUser::GetPemLocation() const { return m_pZNC->GetPemLocation(); }
 
 bool CUser::UseClientIP() const { return m_bUseClientIP; }
 bool CUser::GetKeepNick() const { return m_bKeepNick; }

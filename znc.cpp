@@ -15,7 +15,7 @@
 
 CZNC::CZNC() {
 #ifdef _MODULES
-	m_pModules = new CGlobalModules(this);
+	m_pModules = new CGlobalModules();
 #endif
 	m_uListenPort = 0;
 	m_bISpoofLocked = false;
@@ -397,7 +397,7 @@ bool CZNC::WriteNewConfig(const CString& sConfig) {
 
 #ifdef _MODULES
 	set<CModInfo> ssGlobalMods;
-	GetModules().GetAvailableMods(ssGlobalMods, this, true);
+	GetModules().GetAvailableMods(ssGlobalMods, true);
 
 	if (ssGlobalMods.size()) {
 		CUtils::PrintMessage("");
@@ -482,7 +482,7 @@ bool CZNC::WriteNewConfig(const CString& sConfig) {
 
 #ifdef _MODULES
 		set<CModInfo> ssUserMods;
-		GetModules().GetAvailableMods(ssUserMods, this);
+		GetModules().GetAvailableMods(ssUserMods);
 
 		if (ssUserMods.size()) {
 			vsLines.push_back("");
@@ -737,7 +737,7 @@ bool CZNC::ParseConfig(const CString& sConfig) {
 					return false;
 				}
 
-				pUser = new CUser(sValue, this);
+				pUser = new CUser(sValue);
 				CUtils::PrintMessage("Loading user [" + sValue + "]");
 
 				if (!m_sStatusPrefix.empty()) {

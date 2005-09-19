@@ -96,7 +96,7 @@ protected:
 
 class CWebAdminMod : public CGlobalModule {
 public:
-	CWebAdminMod(void *pDLL, CZNC* pZNC, const CString& sModName) : CGlobalModule(pDLL, pZNC, sModName) {
+	CWebAdminMod(void *pDLL, const CString& sModName) : CGlobalModule(pDLL, sModName) {
 		m_uPort = 8080;
 	}
 
@@ -135,7 +135,7 @@ public:
 
 #ifdef HAVE_LIBSSL
 		if (bSSL) {
-			pListenSock->SetPemLocation(m_pZNC->GetPemLocation());
+			pListenSock->SetPemLocation(CZNC::Get().GetPemLocation());
 		}
 #endif
 
@@ -180,7 +180,7 @@ CString CWebAdminSock::Header(const CString& sTitle) {
 }
 
 CString CWebAdminSock::Footer() {
-	return "</td></tr><tr><td colspan='2' align='right' valign='bottom'>" + m_pModule->GetZNC()->GetTag() + "</td></tr>\r\n"
+	return "</td></tr><tr><td colspan='2' align='right' valign='bottom'>" + CZNC::Get().GetTag() + "</td></tr>\r\n"
 		"</table></body>\r\n</html>\r\n";
 }
 
@@ -190,7 +190,7 @@ bool CWebAdminSock::OnLogin(const CString& sUser, const CString& sPass) {
 		return true;
 	}
 
-	CUser* pUser = m_pModule->GetZNC()->FindUser(GetUser());
+	CUser* pUser = CZNC::Get().FindUser(GetUser());
 
 	if (pUser && pUser->CheckPass(GetPass())) {
 		m_pUser = pUser;
@@ -201,7 +201,7 @@ bool CWebAdminSock::OnLogin(const CString& sUser, const CString& sPass) {
 }
 
 void CWebAdminSock::ListUsersPage(CString& sPageRet) {
-	const map<CString,CUser*>& msUsers = m_pModule->GetZNC()->GetUserMap();
+	const map<CString,CUser*>& msUsers = CZNC::Get().GetUserMap();
 	sPageRet = Header("List Users");
 
 	if (!msUsers.size()) {
@@ -285,7 +285,7 @@ bool CWebAdminSock::OnPageRequest(const CString& sURI, CString& sPageRet) {
 		}
 	} else if (sURI == "/edituser") {
 		if (!m_pUser) {
-			m_pUser = m_pModule->GetZNC()->FindUser(GetParam("user"));
+			m_pUser = CZNC::Get().FindUser(GetParam("user"));
 		}
 
 		if (m_pUser) {
@@ -298,7 +298,7 @@ bool CWebAdminSock::OnPageRequest(const CString& sURI, CString& sPageRet) {
 		}
 	} else if (sURI == "/editchan") {
 		if (!m_pUser) {
-			m_pUser = m_pModule->GetZNC()->FindUser(GetParam("user"));
+			m_pUser = CZNC::Get().FindUser(GetParam("user"));
 		}
 
 		if (!m_pUser) {
@@ -319,7 +319,7 @@ bool CWebAdminSock::OnPageRequest(const CString& sURI, CString& sPageRet) {
 		}
 	} else if (sURI == "/addchan") {
 		if (!m_pUser) {
-			m_pUser = m_pModule->GetZNC()->FindUser(GetParam("user"));
+			m_pUser = CZNC::Get().FindUser(GetParam("user"));
 		}
 
 		if (m_pUser) {
@@ -332,7 +332,7 @@ bool CWebAdminSock::OnPageRequest(const CString& sURI, CString& sPageRet) {
 		}
 	} else if (sURI == "/delchan") {
 		if (!m_pUser) {
-			m_pUser = m_pModule->GetZNC()->FindUser(GetParam("user"));
+			m_pUser = CZNC::Get().FindUser(GetParam("user"));
 		}
 
 		if (m_pUser) {
@@ -354,7 +354,7 @@ bool CWebAdminSock::OnPageRequest(const CString& sURI, CString& sPageRet) {
 			return false;
 		}
 
-		if (m_pModule->GetZNC()->DeleteUser(GetParam("user"))) {
+		if (CZNC::Get().DeleteUser(GetParam("user"))) {
 			DEBUG_ONLY(cout << "- 302 Redirect" << endl);
 			Redirect("/listusers");
 			return false;
@@ -379,7 +379,7 @@ bool CWebAdminSock::SettingsPage(CString& sPageRet) {
 
 		CString sVHosts;
 
-		const VCString& vsVHosts = m_pModule->GetZNC()->GetVHosts();
+		const VCString& vsVHosts = CZNC::Get().GetVHosts();
 		for (unsigned int a = 0; a < vsVHosts.size(); a++) {
 			sVHosts += vsVHosts[a] + "\r\n";
 		}
@@ -389,12 +389,12 @@ bool CWebAdminSock::SettingsPage(CString& sPageRet) {
 			"<div style='white-space: nowrap; margin-top: -8px; margin-right: 8px; margin-left: 8px; padding: 1px 5px 1px 5px; float: left; border: 1px solid #000; font-size: 16px; font-weight: bold; background: #ff9;'>Global Settings</div><div style='padding: 25px 5px 5px 15px; border: 2px solid #000; background: #cc9;'><div style='clear: both;'>\r\n"
 
 			"<div><small><b>Status Prefix:</b></small><br>\r\n"
-				"<input type='text' name='statusprefix' value='" + m_pModule->GetZNC()->GetStatusPrefix().Escape_n(CString::EHTML) + "' size='32' maxlength='128'></div><br>\r\n"
+				"<input type='text' name='statusprefix' value='" + CZNC::Get().GetStatusPrefix().Escape_n(CString::EHTML) + "' size='32' maxlength='128'></div><br>\r\n"
 
 			"<div style='float: left; margin-right: 10px;'><small><b>ISpoofFile:</b></small><br>\r\n"
-				"<input type='text' name='ispooffile' value='" + m_pModule->GetZNC()->GetISpoofFile().Escape_n(CString::EHTML) + "' size='32' maxlength='128'></div>\r\n"
+				"<input type='text' name='ispooffile' value='" + CZNC::Get().GetISpoofFile().Escape_n(CString::EHTML) + "' size='32' maxlength='128'></div>\r\n"
 			"<div><small><b>ISpoofFormat:</b></small><br>\r\n"
-				"<input type='text' name='ispoofformat' value='" + m_pModule->GetZNC()->GetISpoofFormat().Escape_n(CString::EHTML) + "' size='32' maxlength='128'></div>\r\n"
+				"<input type='text' name='ispoofformat' value='" + CZNC::Get().GetISpoofFormat().Escape_n(CString::EHTML) + "' size='32' maxlength='128'></div>\r\n"
 
 			"<br><div><small><b>VHosts:</b></small><br>\r\n"
 				"<textarea name='vhosts' cols='40' rows='5'>" + sVHosts.Escape_n(CString::EHTML) + "</textarea></div>\r\n"
@@ -406,13 +406,13 @@ bool CWebAdminSock::SettingsPage(CString& sPageRet) {
 			"<tr style='font-weight: bold; background: #ff9;'><td style='border: 1px solid #000;'>Name</td><td style='border: 1px solid #000;'>Arguments</td><td style='border: 1px solid #000;'>Description</td></tr>\r\n";
 
 		set<CModInfo> ssGlobalMods;
-		m_pModule->GetZNC()->GetModules().GetAvailableMods(ssGlobalMods, m_pModule->GetZNC(), true);
+		CZNC::Get().GetModules().GetAvailableMods(ssGlobalMods, true);
 
 		unsigned int uIdx = 0;
 
 		for (set<CModInfo>::iterator it = ssGlobalMods.begin(); it != ssGlobalMods.end(); it++) {
 			const CModInfo& Info = *it;
-			sPageRet += "<tr style='background: " + CString((uIdx++ %2) ? "#ffc" : "#cc9") + "'><td style='border: 1px solid #000;'><label><input type='checkbox' name='loadmod' value='" + Info.GetName().Escape_n(CString::EHTML) + "'" + CString((m_pModule->GetZNC()->GetModules().FindModule(Info.GetName())) ? " CHECKED" : "") + CString((Info.GetName() == m_pModule->GetModName()) ? " DISABLED" : "") + "> " + Info.GetName().Escape_n(CString::EHTML) + "</label></td>"
+			sPageRet += "<tr style='background: " + CString((uIdx++ %2) ? "#ffc" : "#cc9") + "'><td style='border: 1px solid #000;'><label><input type='checkbox' name='loadmod' value='" + Info.GetName().Escape_n(CString::EHTML) + "'" + CString((CZNC::Get().GetModules().FindModule(Info.GetName())) ? " CHECKED" : "") + CString((Info.GetName() == m_pModule->GetModName()) ? " DISABLED" : "") + "> " + Info.GetName().Escape_n(CString::EHTML) + "</label></td>"
 				"<td style='border: 1px solid #000;'><input type='text' name='modargs_" + Info.GetName().Escape_n(CString::EHTML) + "' value='" + GetModArgs(Info.GetName(), true) + "'" + CString((Info.GetName() == m_pModule->GetModName()) ? " DISABLED" : "") + "></td>"
 				"<td style='border: 1px solid #000;'>" + Info.GetDescription().Escape_n(CString::EHTML) + "</td></tr>";
 		}
@@ -427,17 +427,17 @@ bool CWebAdminSock::SettingsPage(CString& sPageRet) {
 	}
 
 	CString sArg;
-	sArg = GetParam("statusprefix"); m_pModule->GetZNC()->SetStatusPrefix(sArg);
-	sArg = GetParam("ispooffile"); m_pModule->GetZNC()->SetISpoofFile(sArg);
-	sArg = GetParam("ispoofformat"); m_pModule->GetZNC()->SetISpoofFormat(sArg);
-	//sArg = GetParam(""); if (!sArg.empty()) { m_pModule->GetZNC()->Set(sArg); }
+	sArg = GetParam("statusprefix"); CZNC::Get().SetStatusPrefix(sArg);
+	sArg = GetParam("ispooffile"); CZNC::Get().SetISpoofFile(sArg);
+	sArg = GetParam("ispoofformat"); CZNC::Get().SetISpoofFormat(sArg);
+	//sArg = GetParam(""); if (!sArg.empty()) { CZNC::Get().Set(sArg); }
 
 	VCString vsArgs = GetParam("vhosts").Split("\n");
-	m_pModule->GetZNC()->ClearVHosts();
+	CZNC::Get().ClearVHosts();
 
 	unsigned int a = 0;
 	for (a = 0; a < vsArgs.size(); a++) {
-		m_pModule->GetZNC()->AddVHost(vsArgs[a].Trim_n());
+		CZNC::Get().AddVHost(vsArgs[a].Trim_n());
 	}
 
 	set<CString> ssArgs;
@@ -451,8 +451,8 @@ bool CWebAdminSock::SettingsPage(CString& sPageRet) {
 			CString sArgs = GetParam("modargs_" + sModName);
 
 			try {
-				if (!m_pModule->GetZNC()->GetModules().FindModule(sModName)) {
-					if (!m_pModule->GetZNC()->GetModules().LoadModule(sModName, sArgs, NULL, sModRet)) {
+				if (!CZNC::Get().GetModules().FindModule(sModName)) {
+					if (!CZNC::Get().GetModules().LoadModule(sModName, sArgs, NULL, sModRet)) {
 						DEBUG_ONLY(cerr << "Unable to load module [" << sModName << "] [" << sModRet << "]" << endl);
 					}
 				} else {
@@ -464,7 +464,7 @@ bool CWebAdminSock::SettingsPage(CString& sPageRet) {
 		}
 	}
 
-	const CModules& vCurMods = m_pModule->GetZNC()->GetModules();
+	const CModules& vCurMods = CZNC::Get().GetModules();
 	set<CString> ssUnloadMods;
 
 	for (a = 0; a < vCurMods.size(); a++) {
@@ -476,10 +476,10 @@ bool CWebAdminSock::SettingsPage(CString& sPageRet) {
 	}
 
 	for (set<CString>::iterator it2 = ssUnloadMods.begin(); it2 != ssUnloadMods.end(); it2++) {
-		m_pModule->GetZNC()->GetModules().UnloadModule(*it2);
+		CZNC::Get().GetModules().UnloadModule(*it2);
 	}
 
-	if (!m_pModule->GetZNC()->WriteConfig()) {
+	if (!CZNC::Get().WriteConfig()) {
 		GetErrorPage(sPageRet, "Settings changed, but config was not written");
 		return true;
 	}
@@ -568,7 +568,7 @@ bool CWebAdminSock::ChanPage(CString& sPageRet, CChan* pChan) {
 		}
 	}
 
-	if (!m_pModule->GetZNC()->WriteConfig()) {
+	if (!CZNC::Get().WriteConfig()) {
 		GetErrorPage(sPageRet, "Channel added/modified, but config was not written");
 		return true;
 	}
@@ -593,7 +593,7 @@ bool CWebAdminSock::DelChan(CString& sPageRet) {
 	m_pUser->DelChan(sChan);
 	m_pUser->PutIRC("PART " + sChan);
 
-	if (!m_pModule->GetZNC()->WriteConfig()) {
+	if (!CZNC::Get().WriteConfig()) {
 		GetErrorPage(sPageRet, "Channel deleted, but config was not written");
 		return true;
 	}
@@ -665,7 +665,7 @@ bool CWebAdminSock::UserPage(CString& sPageRet, CUser* pUser) {
 			"<div><small><b>RealName:</b></small><br>\r\n"
 				"<input type='text' name='realname' value='" + CString((pUser) ? pUser->GetRealName().Escape_n(CString::EHTML) : "") + "' size='68' maxlength='256'></div><br>\r\n";
 
-		const VCString& vsVHosts = m_pModule->GetZNC()->GetVHosts();
+		const VCString& vsVHosts = CZNC::Get().GetVHosts();
 
 		if (vsVHosts.size()) {
 			sPageRet += "<small><b>VHost:</b></small><br>\r\n"
@@ -689,7 +689,7 @@ bool CWebAdminSock::UserPage(CString& sPageRet, CUser* pUser) {
 			"<tr style='font-weight: bold; background: #ff9;'><td style='border: 1px solid #000;'>Name</td><td style='border: 1px solid #000;'>Arguments</td><td style='border: 1px solid #000;'>Description</td></tr>\r\n";
 
 		set<CModInfo> ssUserMods;
-		m_pModule->GetZNC()->GetModules().GetAvailableMods(ssUserMods, m_pModule->GetZNC());
+		CZNC::Get().GetModules().GetAvailableMods(ssUserMods);
 
 		unsigned int uIdx = 0;
 
@@ -787,7 +787,7 @@ bool CWebAdminSock::UserPage(CString& sPageRet, CUser* pUser) {
 	}
 
 	CString sUsername = GetParam("user");
-	if (!pUser && m_pModule->GetZNC()->FindUser(sUsername)) {
+	if (!pUser && CZNC::Get().FindUser(sUsername)) {
 		GetErrorPage(sPageRet, "Invalid Submission [User " + sUsername + " already exists]");
 		return true;
 	}
@@ -807,8 +807,8 @@ bool CWebAdminSock::UserPage(CString& sPageRet, CUser* pUser) {
 			return true;
 		}
 
-		m_pModule->GetZNC()->AddUser(pNewUser);
-		if (!m_pModule->GetZNC()->WriteConfig()) {
+		CZNC::Get().AddUser(pNewUser);
+		if (!CZNC::Get().WriteConfig()) {
 			GetErrorPage(sPageRet, "User added, but config was not written");
 			return true;
 		}
@@ -821,7 +821,7 @@ bool CWebAdminSock::UserPage(CString& sPageRet, CUser* pUser) {
 		}
 
 		delete pNewUser;
-		if (!m_pModule->GetZNC()->WriteConfig()) {
+		if (!CZNC::Get().WriteConfig()) {
 			GetErrorPage(sPageRet, "User edited, but config was not written");
 			return true;
 		}
@@ -855,7 +855,7 @@ CUser* CWebAdminSock::GetNewUser(CString& sPageRet, CUser* pUser) {
 		return NULL;
 	}
 
-	CUser* pNewUser = new CUser(sUsername, m_pModule->GetZNC());
+	CUser* pNewUser = new CUser(sUsername);
 
 	if (!sArg.empty()) {
 		pNewUser->SetPass(sArg.MD5(), true);

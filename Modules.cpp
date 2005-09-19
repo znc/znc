@@ -161,8 +161,7 @@ const CString& CSocket::GetLabel() const { return m_sLabel; }
 
 CModule::CModule(void* pDLL, CUser* pUser, const CString& sModName) {
 	m_pDLL = pDLL;
-	m_pZNC = (pUser) ? pUser->GetZNC() : NULL;
-	m_pManager = (pUser) ? pUser->GetManager() : NULL;
+	m_pManager = &(CZNC::Get().GetManager());;
 	m_pUser = pUser;
 	m_sModName = sModName;
 
@@ -172,17 +171,14 @@ CModule::CModule(void* pDLL, CUser* pUser, const CString& sModName) {
 	}
 }
 
-CModule::CModule(void* pDLL, CZNC* pZNC, const CString& sModName) {
+CModule::CModule(void* pDLL, const CString& sModName) {
 	m_pDLL = pDLL;
-	m_pZNC = pZNC;
-	m_pManager = (pZNC) ? &pZNC->GetManager() : NULL;
+	m_pManager = &(CZNC::Get().GetManager());
 	m_pUser = NULL;
 	m_sModName = sModName;
 
-	if (m_pZNC) {
-		m_sSavePath = m_pZNC->GetZNCPath() + "/moddata/" + m_sModName;
-		LoadRegistry();
-	}
+	m_sSavePath = CZNC::Get().GetZNCPath() + "/moddata/" + m_sModName;
+	LoadRegistry();
 }
 
 CModule::~CModule() {
@@ -201,19 +197,11 @@ void CModule::SetUser(CUser* pUser) { m_pUser = pUser; }
 void CModule::Unload() { throw UNLOAD; }
 
 bool CModule::LoadRegistry() {
-	if (!m_pZNC) {
-		return false;
-	}
-
 	//CString sPrefix = (m_pUser) ? m_pUser->GetUserName() : ".global";
 	return (m_mssRegistry.ReadFromDisk(GetSavePath() + "/.registry", 0600) == MCString::MCS_SUCCESS);
 }
 
 bool CModule::SaveRegistry() {
-	if (!m_pZNC) {
-		return false;
-	}
-
 	//CString sPrefix = (m_pUser) ? m_pUser->GetUserName() : ".global";
 	return (m_mssRegistry.WriteToDisk(GetSavePath() + "/.registry", 0600) == MCString::MCS_SUCCESS);
 }
@@ -505,8 +493,7 @@ bool CModule::PutModNotice(const CString& sLine, const CString& sIdent, const CS
 ///////////////////
 CModule::EModRet CGlobalModule::OnConfigLine(const CString& sName, const CString& sValue, CUser* pUser, CChan* pChan) { return CONTINUE; }
 
-CModules::CModules(CZNC* pZNC) {
-	m_pZNC = pZNC;
+CModules::CModules() {
 	m_pUser = NULL;
 }
 
@@ -775,7 +762,7 @@ bool CModules::LoadModule(const CString& sModule, const CString& sArgs, CUser* p
 
 		pModule = Load(p, pUser, sModule);
 	} else {
-		typedef CModule* (*fp)(void*, CZNC* pZNC, const CString& sModName);
+		typedef CModule* (*fp)(void*, const CString& sModName);
 		fp Load = (fp) dlsym(p, "Load");
 
 		if (!Load) {
@@ -784,7 +771,7 @@ bool CModules::LoadModule(const CString& sModule, const CString& sArgs, CUser* p
 			return false;
 		}
 
-		pModule = Load(p, m_pZNC, sModule);
+		pModule = Load(p, sModule);
 	}
 
 	pModule->SetDescription(GetDesc());
@@ -876,11 +863,7 @@ CString CModules::FindModPath(const CString& sModule, CUser* pUser) {
 		return pUser->FindModPath(sModule);
 	}
 
-	if (!m_pZNC) {
-		DEBUG_ONLY(cerr << "CModules::FindModPath() m_pZNC is NULL!" << endl);
-	}
-
-	return (m_pZNC) ? m_pZNC->FindModPath(sModule) : "";
+	return CZNC::Get().FindModPath(sModule);
 }
 
 bool CModules::GetModInfo(CModInfo& ModInfo, const CString& sModule) {
@@ -939,13 +922,13 @@ bool CModules::GetModInfo(CModInfo& ModInfo, const CString& sModule) {
 	return true;
 }
 
-void CModules::GetAvailableMods(set<CModInfo>& ssMods, CZNC* pZNC, bool bGlobal) {
+void CModules::GetAvailableMods(set<CModInfo>& ssMods, bool bGlobal) {
 	ssMods.clear();
 
 	unsigned int a = 0;
 	CDir Dir;
 
-	Dir.FillByWildcard(pZNC->GetCurPath() + "/modules", "*.so");
+	Dir.FillByWildcard(CZNC::Get().GetCurPath() + "/modules", "*.so");
 	for (a = 0; a < Dir.size(); a++) {
 		CFile& File = *Dir[a];
 		CString sName = File.GetShortName();
@@ -960,7 +943,7 @@ void CModules::GetAvailableMods(set<CModInfo>& ssMods, CZNC* pZNC, bool bGlobal)
 		}
 	}
 
-	Dir.FillByWildcard(pZNC->GetModPath(), "*.so");
+	Dir.FillByWildcard(CZNC::Get().GetModPath(), "*.so");
 	for (a = 0; a < Dir.size(); a++) {
 		CFile& File = *Dir[a];
 		CString sName = File.GetShortName();

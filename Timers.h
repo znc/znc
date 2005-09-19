@@ -71,7 +71,7 @@ protected:
 			}
 		}
 
-		m_pUser->GetZNC()->GetManager().DelCronByAddr(this);
+		CZNC::Get().GetManager().DelCronByAddr(this);
 	}
 
 	CUser* m_pUser;

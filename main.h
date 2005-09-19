@@ -10,7 +10,7 @@
 #ifdef _MODULES
 #define VOIDMODULECALL(func)										\
 	if (m_pUser) {													\
-		CGlobalModules& GMods = m_pUser->GetZNC()->GetModules();	\
+		CGlobalModules& GMods = CZNC::Get().GetModules();			\
 		GMods.SetUser(m_pUser);										\
 		GMods.func;													\
 		m_pUser->GetModules().func;									\
@@ -23,7 +23,7 @@
 #ifdef _MODULES
 #define MODULECALLRET(func)											\
 	if (m_pUser) {													\
-		CGlobalModules& GMods = m_pUser->GetZNC()->GetModules();	\
+		CGlobalModules& GMods = CZNC::Get().GetModules();			\
 		GMods.SetUser(m_pUser);										\
 		if (GMods.func || m_pUser->GetModules().func) {				\
 			return;													\
@@ -37,7 +37,7 @@
 #ifdef _MODULES
 #define MODULECALL(func)											\
 	if (m_pUser) {													\
-		CGlobalModules& GMods = m_pUser->GetZNC()->GetModules();	\
+		CGlobalModules& GMods = CZNC::Get().GetModules();			\
 		GMods.SetUser(m_pUser);										\
 		if (GMods.func || m_pUser->GetModules().func) {				\
 			return true;											\

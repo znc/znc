@@ -208,7 +208,7 @@ public:
 		DestroyAllSocks();
 		if ( m_pPerl )
 		{
-			const map<CString,CUser*> & msUsers = m_pZNC->GetUserMap();
+			const map<CString,CUser*> & msUsers = CZNC::Get().GetUserMap();
 			
 			for( map<CString,CUser*>::const_iterator it = msUsers.begin(); it != msUsers.end(); it++ )
 			{ // need to set it on all of these
@@ -230,7 +230,7 @@ public:
 
 	void SetupZNCScript()
 	{
-		CString sModule = m_pZNC->FindModPath( "modperl.pm" );
+		CString sModule = CZNC::Get().FindModPath( "modperl.pm" );
 		if ( !sModule.empty() )
 		{
 			CString sBuffer, sScript;
@@ -279,7 +279,7 @@ public:
 		if ( sUsername.empty() )
 			return( m_pUser ); 
 
-		CUser *pUser = m_pZNC->GetUser( sUsername );
+		CUser *pUser = CZNC::Get().GetUser( sUsername );
 		if ( bSetUserContext )
 			m_pUser = pUser;
 
@@ -688,10 +688,10 @@ XS(XS_ZNC_GetString)
 			else if ( sName == "RealName" ) sReturn = pUser->GetRealName();
 			else if ( sName == "VHost" ) sReturn = pUser->GetVHost();
 			else if ( sName == "Pass" ) sReturn = pUser->GetPass();
-			else if ( sName == "CurPath" ) sReturn = pUser->GetCurPath();
+			else if ( sName == "CurPath" ) sReturn = CZNC::Get().GetCurPath();
 			else if ( sName == "DLPath" ) sReturn = pUser->GetDLPath();
-			else if ( sName == "ModPath" ) sReturn = pUser->GetModPath();
-			else if ( sName == "HomePath" ) sReturn = pUser->GetHomePath();
+			else if ( sName == "ModPath" ) sReturn = CZNC::Get().GetModPath();
+			else if ( sName == "HomePath" ) sReturn = CZNC::Get().GetHomePath();
 			//else if ( sName == "DataPath" ) sReturn = pUser->GetDataPath();
 			else if ( sName == "StatusPrefix" ) sReturn = pUser->GetStatusPrefix();
 			else if ( sName == "DefaultChanModes" ) sReturn = pUser->GetDefaultChanModes();
@@ -1028,7 +1028,7 @@ void CModPerl::LoadPerlMod( const CString & sModule )
 		return;
 	}
 
-	CString sModPath = m_pZNC->FindModPath( sModule );
+	CString sModPath = CZNC::Get().FindModPath( sModule );
 	if ( sModPath.empty() )
 		PutStatus( "No such module " + sModule );
 	else

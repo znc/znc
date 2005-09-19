@@ -4,6 +4,7 @@
 #include "main.h"
 #include "Utils.h"
 #include "User.h"
+#include "znc.h"
 
 class CDCCBounce : public Csock {
 public:
@@ -14,7 +15,7 @@ public:
 		m_sFileName = sFileName;
 		m_sRemoteNick = sRemoteNick;
 		m_pUser = pUser;
-		m_pManager = pUser->GetManager();
+		m_pManager = &(CZNC::Get().GetManager());
 		m_bIsChat = bIsChat;
 		m_sLocalIP = sLocalIP;
 		m_pPeer = NULL;
@@ -28,7 +29,7 @@ public:
 	CDCCBounce(const CString& sHostname, unsigned short uPort, CUser* pUser, const CString& sRemoteNick, const CString& sRemoteIP, const CString& sFileName, int iTimeout = 60, bool bIsChat = false) : Csock(sHostname, uPort, iTimeout) {
 		m_uRemotePort = 0;
 		m_bIsChat = bIsChat;
-		m_pManager = pUser->GetManager();
+		m_pManager = &(CZNC::Get().GetManager());
 		m_pUser = pUser;
 		m_pPeer = NULL;
 		m_sRemoteNick = sRemoteNick;

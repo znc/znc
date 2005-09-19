@@ -165,7 +165,7 @@ void CUserSock::ReadLine(const CString& sData) {
 				CString sModule = sTarget;
 				sModule.LeftChomp(m_pUser->GetStatusPrefix().length());
 
-				CModule* pModule = m_pUser->GetZNC()->GetModules().FindModule(sModule);
+				CModule* pModule = CZNC::Get().GetModules().FindModule(sModule);
 
 				if (pModule) {
 					pModule->OnModNotice(sMsg);

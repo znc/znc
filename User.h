@@ -24,7 +24,7 @@ class CJoinTimer;
 
 class CUser {
 public:
-	CUser(const CString& sUserName, CZNC* pZNC);
+	CUser(const CString& sUserName);
 	virtual ~CUser();
 
 	bool PrintLine(CFile& File, const CString& sName, const CString& sValue);
@@ -98,8 +98,6 @@ public:
 	// Getters
 	CUserSock* GetUserSock();
 	CIRCSock* GetIRCSock();
-	TSocketManager<Csock>* GetManager();
-	CZNC* GetZNC();
 	const CString& GetUserName() const;
 	const CString& GetNick() const;
 	const CString& GetAltNick() const;
@@ -112,9 +110,6 @@ public:
 	const set<CString>& GetAllowedHosts() const;
 
 	CString FindModPath(const CString& sModule) const;
-	const CString& GetCurPath() const;
-	const CString& GetModPath() const;
-	const CString& GetHomePath() const;
 	const CString& GetUserPath() const { if (!CFile::Exists(m_sUserPath)) { CUtils::MakeDir(m_sUserPath); } return m_sUserPath; }
 	const CString& GetDLPath() const { if (!CFile::Exists(m_sDLPath)) { CUtils::MakeDir(m_sDLPath); } return m_sDLPath; }
 	CString GetPemLocation() const;
@@ -137,8 +132,6 @@ public:
 	// !Getters
 private:
 protected:
-	CZNC*			m_pZNC;
-
 	time_t			m_uConnectTime;
 	CString			m_sUserName;
 	CString			m_sNick;

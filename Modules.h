@@ -36,15 +36,15 @@ using std::set;
 
 // Global Module Macros
 #define GLOBALMODCONSTRUCTOR(CLASS) \
-	CLASS(void *pDLL, CZNC* pZNC, const CString& sModName) : CGlobalModule(pDLL, pZNC, sModName)
+	CLASS(void *pDLL, const CString& sModName) : CGlobalModule(pDLL, sModName)
 #define GLOBALMODULEDEFS(CLASS, DESCRIPTION) \
 	extern "C" { \
 		CString GetDescription() { return DESCRIPTION; } \
 		bool IsGlobal() { return true; } \
-		CGlobalModule* Load(void* p, CZNC* pZNC, const CString& sModName); \
+		CGlobalModule* Load(void* p, const CString& sModName); \
 		void Unload(CGlobalModule* pMod); double GetVersion(); } \
 		double GetVersion() { return VERSION; } \
-		CGlobalModule* Load(void* p, CZNC* pZNC, const CString& sModName) { return new CLASS(p, pZNC, sModName); } \
+		CGlobalModule* Load(void* p, const CString& sModName) { return new CLASS(p, sModName); } \
 		void Unload(CGlobalModule* pMod) { if (pMod) { delete pMod; } \
 	}
 // !Global Module Macros
@@ -177,7 +177,7 @@ protected:
 class CModule {
 public:
 	CModule(void* pDLL, CUser* pUser, const CString& sModName);
-	CModule(void* pDLL, CZNC* pZNC, const CString& sModName);
+	CModule(void* pDLL, const CString& sModName);
 	virtual ~CModule();
 
 	typedef enum {
@@ -286,7 +286,6 @@ public:
 	// Getters
 	const CString& GetDescription() const { return m_sDescription; }
 	const CString& GetArgs() const { return m_sArgs; }
-	CZNC* GetZNC() { return m_pZNC; }
 	CUser* GetUser() { return m_pUser; }
 	TSocketManager<Csock>* GetManager() { return m_pManager; }
 	// !Getters
@@ -298,7 +297,6 @@ protected:
 	void*					m_pDLL;
 	TSocketManager<Csock>*	m_pManager;
 	CUser*					m_pUser;
-	CZNC*					m_pZNC;
 	CString					m_sModName;
 	CString					m_sSavePath;
 	CString					m_sArgs;
@@ -308,7 +306,7 @@ private:
 
 class CModules : public vector<CModule*> {
 public:
-	CModules(CZNC* pZNC);
+	CModules();
 	virtual ~CModules();
 
 	void SetUser(CUser* pUser) { m_pUser = pUser; }
@@ -364,16 +362,15 @@ public:
 	CString FindModPath(const CString& sModule, CUser* pUser = NULL);
 
 	bool GetModInfo(CModInfo& ModInfo, const CString& sModule);
-	void GetAvailableMods(set<CModInfo>& ssMods, CZNC* pZNC, bool bGlobal = false);
+	void GetAvailableMods(set<CModInfo>& ssMods, bool bGlobal = false);
 
 protected:
-	CZNC*	m_pZNC;
 	CUser*	m_pUser;
 };
 
 class CGlobalModule : public CModule {
 public:
-	CGlobalModule(void* pDLL, CZNC* pZNC, const CString& sModName) : CModule(pDLL, pZNC, sModName) {}
+	CGlobalModule(void* pDLL, const CString& sModName) : CModule(pDLL, sModName) {}
 	virtual ~CGlobalModule() {}
 
 	virtual EModRet OnConfigLine(const CString& sName, const CString& sValue, CUser* pUser, CChan* pChan);
@@ -382,7 +379,7 @@ private:
 
 class CGlobalModules : public CModules {
 public:
-	CGlobalModules(CZNC* pZNC) : CModules(pZNC) {}
+	CGlobalModules() : CModules() {}
 	virtual ~CGlobalModules() {}
 
 	virtual bool OnConfigLine(const CString& sName, const CString& sValue, CUser* pUser, CChan* pChan);
