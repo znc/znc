@@ -285,7 +285,7 @@ void CUserSock::ReadLine(const CString& sData) {
 							PutStatus("DCC -> [" + GetNick() + "][" + sFile + "] Unable to find send to initiate resume.");
 						}
 					} else {
-						CDCCBounce* pSock = (CDCCBounce*) m_pZNC->GetManager().FindSockByLocalPort(uResumePort);
+						CDCCBounce* pSock = (CDCCBounce*) CZNC::Get().GetManager().FindSockByLocalPort(uResumePort);
 						if ((pSock) && (strncasecmp(pSock->GetSockName().c_str(), "DCC::", 5) == 0)) {
 							PutIRC("PRIVMSG " + sTarget + " :\001DCC " + sType + " " + sFile + " " + CString::ToString(pSock->GetUserPort()) + " " + sCTCP.Token(4) + "\001");
 						}
@@ -294,7 +294,7 @@ void CUserSock::ReadLine(const CString& sData) {
 					if (strncasecmp(sTarget.c_str(), m_pUser->GetStatusPrefix().c_str(), m_pUser->GetStatusPrefix().length()) == 0) {
 					} else {
 						// Need to lookup the connection by port, filter the port, and forward to the user
-						TSocketManager<Csock>& Manager = m_pZNC->GetManager();
+						TSocketManager<Csock>& Manager = CZNC::Get().GetManager();
 
 						for (unsigned int a = 0; a < Manager.size(); a++) {
 							CDCCBounce* pSock = (CDCCBounce*) Manager[a];
@@ -668,7 +668,7 @@ void CUserSock::UserCommand(const CString& sLine) {
 			m_pUser->SendFile(GetNick(), sFile);
 		}
 	} else if (sCommand.CaseCmp("LISTDCCS") == 0) {
-		TSocketManager<Csock>& Manager = m_pZNC->GetManager();
+		TSocketManager<Csock>& Manager = CZNC::Get().GetManager();
 
 		CTable Table;
 		Table.AddColumn("Type");
@@ -935,17 +935,11 @@ void CUserSock::HelpUser() {
 
 bool CUserSock::ConnectionFrom(const CString& sHost, unsigned short uPort) {
 	DEBUG_ONLY(cout << GetSockName() << " == ConnectionFrom(" << sHost << ", " << uPort << ")" << endl);
-	return m_pZNC->IsHostAllowed(sHost);
+	return CZNC::Get().IsHostAllowed(sHost);
 }
 
 void CUserSock::AuthUser() {
-	if (!m_pZNC) {
-		DEBUG_ONLY(cout << "znc not set!" << endl);
-		Close();
-		return;
-	}
-
-	CUser* pUser = m_pZNC->GetUser(m_sUser);
+	CUser* pUser = CZNC::Get().GetUser(m_sUser);
 
 	if ((!pUser) || (!pUser->CheckPass(m_sPass))) {
 		if (pUser) {
@@ -967,7 +961,7 @@ void CUserSock::AuthUser() {
 		m_bAuthed = true;
 		SetSockName("USR::" + pUser->GetUserName());
 
-		CIRCSock* pIRCSock = (CIRCSock*) m_pZNC->FindSockByName("IRC::" + pUser->GetUserName());
+		CIRCSock* pIRCSock = (CIRCSock*) CZNC::Get().FindSockByName("IRC::" + pUser->GetUserName());
 
 		if (pIRCSock) {
 			m_pIRCSock = pIRCSock;
@@ -1012,8 +1006,6 @@ void CUserSock::IRCDisconnected() {
 
 Csock* CUserSock::GetSockObj(const CString& sHost, unsigned short uPort) {
 	CUserSock* pSock = new CUserSock(sHost, uPort);
-	pSock->SetZNC(m_pZNC);
-
 	return pSock;
 }
 

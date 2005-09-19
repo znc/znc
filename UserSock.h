@@ -21,7 +21,6 @@ public:
 	virtual ~CUserSock() {}
 
 	void Init() {
-		m_pZNC = NULL;
 		m_pUser = NULL;
 		m_pIRCSock = NULL;
 		m_bAuthed = false;
@@ -58,7 +57,6 @@ public:
 	virtual bool ConnectionFrom(const CString& sHost, unsigned short uPort);
 	virtual Csock* GetSockObj(const CString& sHost, unsigned short uPort);
 
-	void SetZNC(CZNC* pZNC) { m_pZNC = pZNC; }
 	void SetNick(const CString& s);
 private:
 protected:
@@ -66,7 +64,6 @@ protected:
 	bool		m_bGotPass;
 	bool		m_bGotNick;
 	bool		m_bGotUser;
-	CZNC*		m_pZNC;
 	CUser*		m_pUser;
 	CString		m_sNick;
 	CString		m_sPass;
