@@ -71,7 +71,7 @@ public:
 			return "";
 		}
 
-		CModules& Modules = (bGlobal) ? CZNC::New()->GetModules() : m_pUser->GetModules();
+		CModules& Modules = (bGlobal) ? CZNC::Get().GetModules() : m_pUser->GetModules();
 
 		for (unsigned int a = 0; a < Modules.size(); a++) {
 			CModule* pModule = Modules[a];

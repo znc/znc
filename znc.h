@@ -73,9 +73,9 @@ public:
 	// !Getters
 
 	// Static allocator
-	static CZNC* New() {
-		static CZNC* pZNC = new CZNC;
-		return pZNC;
+	static CZNC& Get() {
+		static CZNC ZNC;
+		return ZNC;
 	}
 
 	CUser* FindUser(const CString& sUsername);
