@@ -109,7 +109,6 @@ public:
 	bool IsPassHashed() const;
 	const set<CString>& GetAllowedHosts() const;
 
-	CString FindModPath(const CString& sModule) const;
 	const CString& GetUserPath() const { if (!CFile::Exists(m_sUserPath)) { CUtils::MakeDir(m_sUserPath); } return m_sUserPath; }
 	const CString& GetDLPath() const { if (!CFile::Exists(m_sDLPath)) { CUtils::MakeDir(m_sDLPath); } return m_sDLPath; }
 	CString GetPemLocation() const;

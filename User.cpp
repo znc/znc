@@ -762,30 +762,6 @@ const CString& CUser::GetVHost() const { return m_sVHost; }
 const CString& CUser::GetPass() const { return m_sPass; }
 bool CUser::IsPassHashed() const { return m_bPassHashed; }
 
-CString CUser::FindModPath(const CString& sModule) const {
-	CString sModPath = CZNC::Get().GetCurPath() + "/modules/" + sModule;
-	sModPath += (sModule.find(".") == CString::npos) ? ".so" : "";
-
-	if (!CFile::Exists(sModPath)) {
-		DEBUG_ONLY(cout << "[" << sModPath << "] Not found..." << endl);
-		sModPath = CZNC::Get().GetModPath() + "/" + sModule;
-		sModPath += (sModule.find(".") == CString::npos) ? ".so" : "";
-
-		if (!CFile::Exists(sModPath)) {
-			DEBUG_ONLY(cout << "[" << sModPath << "] Not found..." << endl);
-			sModPath = _MODDIR_ + CString("/") + sModule;
-			sModPath += (sModule.find(".") == CString::npos) ? ".so" : "";
-
-			if (!CFile::Exists(sModPath)) {
-				DEBUG_ONLY(cout << "[" << sModPath << "] Not found... giving up!" << endl);
-				return "";
-			}
-		}
-	}
-
-	return sModPath;
-}
-
 bool CUser::ConnectPaused() {
 	if (!m_uConnectTime) {
 		m_uConnectTime = time(NULL);
