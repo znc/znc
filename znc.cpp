@@ -1050,17 +1050,17 @@ CString CZNC::FindModPath(const CString& sModule) const {
 	sModPath += (sModule.find(".") == CString::npos) ? ".so" : "";
 
 	if (!CFile::Exists(sModPath)) {
-		DEBUG_ONLY(cout << "[" << sModPath << "] Not found..." << endl);
+		//DEBUG_ONLY(cout << "[" << sModPath << "] Not found..." << endl);
 		sModPath = GetModPath() + "/" + sModule;
 		sModPath += (sModule.find(".") == CString::npos) ? ".so" : "";
 
 		if (!CFile::Exists(sModPath)) {
-			DEBUG_ONLY(cout << "[" << sModPath << "] Not found..." << endl);
+			//DEBUG_ONLY(cout << "[" << sModPath << "] Not found..." << endl);
 			sModPath = _MODDIR_ + CString("/") + sModule;
 			sModPath += (sModule.find(".") == CString::npos) ? ".so" : "";
 
 			if (!CFile::Exists(sModPath)) {
-				DEBUG_ONLY(cout << "[" << sModPath << "] Not found... giving up!" << endl);
+				//DEBUG_ONLY(cout << "[" << sModPath << "] Not found... giving up!" << endl);
 				return "";
 			}
 		}
