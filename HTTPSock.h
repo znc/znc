@@ -29,8 +29,9 @@ public:
 
 	void CheckPost();
 	bool SentHeader() const;
-	bool PrintHeader(unsigned long uContentLength, const CString& sContentType = "text/html", unsigned int uStatusId = 200, const CString& sStatusMsg = "OK");
+	bool PrintHeader(unsigned long uContentLength, const CString& sContentType = "", unsigned int uStatusId = 200, const CString& sStatusMsg = "OK");
 	void AddHeader(const CString& sName, const CString& sValue);
+	void SetContentType(const CString& sContentType);
 
 	bool PrintNotFound();
 	bool Redirect(const CString& sURL);
@@ -48,6 +49,7 @@ public:
 	const CString& GetUser() const;
 	const CString& GetPass() const;
 	const CString& GetParamString() const;
+	const CString& GetContentType() const;
 	unsigned int GetParamValues(const CString& sName, VCString& vsRet) const;
 	unsigned int GetParamValues(const CString& sName, set<CString>& ssRet) const;
 	const map<CString, VCString>& GetParams() const;
@@ -64,6 +66,7 @@ protected:
 	CString					m_sURI;
 	CString					m_sUser;
 	CString					m_sPass;
+	CString					m_sContentType;
 	map<CString, VCString>	m_msvsParams;
 	MCString				m_msHeaders;
 };

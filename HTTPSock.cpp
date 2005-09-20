@@ -85,12 +85,15 @@ void CHTTPSock::ReadLine(const CString& sData) {
 void CHTTPSock::GetPage() {
 	CString sPage;
 
+	DEBUG_ONLY(cout << "Page Request [" << m_sURI << "] ");
+
 	if (!OnPageRequest(m_sURI, sPage)) {
 		PrintNotFound();
 		return;
 	}
 
 	if (PrintHeader(sPage.length())) {
+		DEBUG_ONLY(cout << "- 200 (OK)" << endl);
 		Write(sPage);
 		Close(Csock::CLT_AFTERWRITE);
 	}
@@ -122,6 +125,10 @@ const CString& CHTTPSock::GetUser() const {
 
 const CString& CHTTPSock::GetPass() const {
 	return m_sPass;
+}
+
+const CString& CHTTPSock::GetContentType() const {
+	return m_sContentType;
 }
 
 const CString& CHTTPSock::GetParamString() const {
@@ -209,6 +216,7 @@ bool CHTTPSock::PrintNotFound() {
 		return false;
 	}
 
+	DEBUG_ONLY(cout << "- 404 (Not Found)" << endl);
 	CString sPage = GetErrorPage(404, "Not Found", "The requested URL was not found on this server.");
 	PrintHeader(sPage.length(), "text/html", 404, "Not Found");
 	Write(sPage);
@@ -226,12 +234,20 @@ bool CHTTPSock::PrintHeader(unsigned long uContentLength, const CString& sConten
 		return false;
 	}
 
+	if (!sContentType.empty()) {
+		m_sContentType = sContentType;
+	}
+
+	if (m_sContentType.empty()) {
+		m_sContentType = "text/html";
+	}
+
 	Write("HTTP/1.0 " + CString::ToString(uStatusId) + " " + sStatusMsg + "\r\n");
 	//Write("Date: Tue, 28 Jun 2005 20:45:36 GMT\r\n");
 	Write("Server: ZNC " + CZNC::GetTag() + "\r\n");
 	Write("Content-Length: " + CString::ToString(uContentLength) + "\r\n");
 	Write("Connection: Close\r\n");
-	Write("Content-Type: " + sContentType + "\r\n");
+	Write("Content-Type: " + m_sContentType + "\r\n");
 
 	for (MCString::iterator it = m_msHeaders.begin(); it != m_msHeaders.end(); it++) {
 		Write(it->first + ": " + it->second + "\r\n");
@@ -243,6 +259,10 @@ bool CHTTPSock::PrintHeader(unsigned long uContentLength, const CString& sConten
 	return true;
 }
 
+void CHTTPSock::SetContentType(const CString& sContentType) {
+	m_sContentType = sContentType;
+}
+
 void CHTTPSock::AddHeader(const CString& sName, const CString& sValue) {
 	m_msHeaders[sName] = sValue;
 }
@@ -252,7 +272,7 @@ bool CHTTPSock::Redirect(const CString& sURL) {
 		return false;
 	}
 
-	DEBUG_ONLY(cout << "Redirect to [" << sURL << "]" << endl);
+	DEBUG_ONLY(cout << "- Redirect to [" << sURL << "]" << endl);
 	CString sPage = GetErrorPage(302, "Found", "The document has moved <a href=\"" + sURL.Escape_n(CString::EHTML) + "\">here</a>.");
 	AddHeader("Location", sURL);
 	PrintHeader(sPage.length(), "text/html", 302, "Found");
