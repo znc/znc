@@ -1,6 +1,7 @@
 #define REQUIRESSL
 
 #include "main.h"
+#include "znc.h"
 #include "User.h"
 #include "Nick.h"
 #include "Modules.h"
@@ -20,6 +21,9 @@ using std::pair;
  * Author: imaginos <imaginos@imaginos.net>
  * 
  * $Log$
+ * Revision 1.19  2005/09/20 04:37:28  prozacx
+ * Added include for znc.h
+ *
  * Revision 1.18  2005/09/20 04:31:19  prozacx
  * Changed from CUser::GetPemLocation() to CZNC::GetPemLocation()
  *
