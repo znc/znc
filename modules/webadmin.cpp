@@ -252,9 +252,7 @@ CWebAdminSock::~CWebAdminSock() {
 }
 
 bool CWebAdminSock::OnPageRequest(const CString& sURI, CString& sPageRet) {
-	DEBUG_ONLY(cout << "Request for [" << sURI << "] ");
 	if (!ForceLogin()) {
-		DEBUG_ONLY(cout << "- User not logged in!" << endl);
 		return false;
 	}
 
@@ -271,7 +269,6 @@ bool CWebAdminSock::OnPageRequest(const CString& sURI, CString& sPageRet) {
 		}
 
 		if (!SettingsPage(sPageRet)) {
-			DEBUG_ONLY(cout << "- 302 Redirect" << endl);
 			return false;
 		}
 	} else if (sURI == "/adduser") {
@@ -280,7 +277,6 @@ bool CWebAdminSock::OnPageRequest(const CString& sURI, CString& sPageRet) {
 		}
 
 		if (!UserPage(sPageRet)) {
-			DEBUG_ONLY(cout << "- 302 Redirect" << endl);
 			return false;
 		}
 	} else if (sURI == "/edituser") {
@@ -290,7 +286,6 @@ bool CWebAdminSock::OnPageRequest(const CString& sURI, CString& sPageRet) {
 
 		if (m_pUser) {
 			if (!UserPage(sPageRet, m_pUser)) {
-				DEBUG_ONLY(cout << "- 302 Redirect" << endl);
 				return false;
 			}
 		} else {
@@ -314,7 +309,6 @@ bool CWebAdminSock::OnPageRequest(const CString& sURI, CString& sPageRet) {
 		}
 
 		if (!ChanPage(sPageRet, pChan)) {
-			DEBUG_ONLY(cout << "- 302 Redirect" << endl);
 			return false;
 		}
 	} else if (sURI == "/addchan") {
@@ -324,7 +318,6 @@ bool CWebAdminSock::OnPageRequest(const CString& sURI, CString& sPageRet) {
 
 		if (m_pUser) {
 			if (!ChanPage(sPageRet)) {
-				DEBUG_ONLY(cout << "- 302 Redirect" << endl);
 				return false;
 			}
 		} else {
@@ -337,12 +330,36 @@ bool CWebAdminSock::OnPageRequest(const CString& sURI, CString& sPageRet) {
 
 		if (m_pUser) {
 			if (!DelChan(sPageRet)) {
-				DEBUG_ONLY(cout << "- 302 Redirect" << endl);
 				return false;
 			}
 		} else {
 			GetErrorPage(sPageRet, "No such username");
 		}
+	} else if (sURI == "/favicon.ico") {
+		CString sIcon = "AAABAAIAICAQAAAAAADoAgAAJgAAABAQEAAAAAAAKAEAAA4DAAAoAAAAIAAAAEAAAAABAAQA"
+			"AAAAAIACAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAgAAAgAAAAICAAIAAAACAAIAAgIAAAMDA"
+			"wACAgIAAAAD/AAD/AAAA//8A/wAAAP8A/wD//wAA////AAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+			"AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAADMzMzMzMzMzMzMzAAAAAAMAAAAAAAAAA"
+			"AAAADAAAAAwAAAAAAAAAAAAAAADAAAAMAAAAAAAAAAAAAAAAwAAADAAAAAAAAAAAAAAAAMAA"
+			"AADAAAAAAAAAAAAAAAwAAAAADAAAAAzMzMzMzMzAAAAAAADAAAAAwAAAAAAAAAAAAAAADAAA"
+			"AAwAAAAAAAAAAAAAAADAAAAAwAAAAAAAAAAAAAAADAAAAAwAAAAAAAAAAAAAAADAAAAAwAAA"
+			"AAAAAAAAAAAADAAAAAwAAAAAAAAAAAAAAADAAAAAwAAAAAAAAAAAAAAADAAAAAwAAAAAAAAA"
+			"AAAAAADAAAAAwAAAAAAAAAAAAAAADAAAAAwAAAAAAAAAAAAAAADAAAAAwAAAAAAAAAAAAAAA"
+			"DAAAAAwAAAAAAAzMzMzMzMzAAAAAwAAAAADAAAAAAAAAAAAAAAwAAAAMAAAAAAAAAAAAAAAA"
+			"wAAADAAAAAAAAAAAAAAAAMAAAAwAAAAAAAAAAAAAAADAAAAAwAAAAAAAAAAAAAAMAAAAAAzM"
+			"zMzMzMzMzMzMwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+			"AAAAAAAA////////////////+AAAH/AAAA/gAAAH4AAAB+AAAAfwAAAP+AAAH/wB///+AP//"
+			"/wB///+AP///wB///+AP///wB///+AP///wB///+AP///wB///+AP/gAAB/wAAAP4AAAB+AA"
+			"AAfgAAAH8AAAD/gAAB////////////////8oAAAAEAAAACAAAAABAAQAAAAAAMAAAAAAAAAA"
+			"AAAAAAAAAAAAAAAAAAAAAAAAgAAAgAAAAICAAIAAAACAAIAAgIAAAMDAwACAgIAAAAD/AAD/"
+			"AAAA//8A/wAAAP8A/wD//wAA////AAAAAAAAAAAADMzMzMzMzMAMAAAAAAAAwAwAAAAAAADA"
+			"DAAAAAAAAMAAwAAAzMzMwAAMAAAMAAAAAADAAADAAAAAAAwAAAwAAAAAAMAAAMAADMzMzAAA"
+			"DAAMAAAAAAAAwAwAAAAAAADADAAAAAAAAMAMzMzMzMzMwAAAAAAAAAAA//8AAIABAACAAQAA"
+			"gAEAAIABAADAAQAA4D8AAPAfAAD4DwAA/AcAAIADAACAAQAAgAEAAIABAACAAQAA//8AAA==";
+
+		SetContentType("image/x-icon");
+		sIcon.Base64Decode(sPageRet);
+		return true;
 	} else if (sURI == "/listusers") {
 		if (!IsAdmin()) {
 			return false;
@@ -355,7 +372,6 @@ bool CWebAdminSock::OnPageRequest(const CString& sURI, CString& sPageRet) {
 		}
 
 		if (CZNC::Get().DeleteUser(GetParam("user"))) {
-			DEBUG_ONLY(cout << "- 302 Redirect" << endl);
 			Redirect("/listusers");
 			return false;
 		} else {
@@ -364,11 +380,8 @@ bool CWebAdminSock::OnPageRequest(const CString& sURI, CString& sPageRet) {
 	//} else if (sURI == "/list") {
 	//	ListPage(sPageRet);
 	} else {
-		DEBUG_ONLY(cout << "- 404 Not Found!" << endl);
 		return false;
 	}
-
-	DEBUG_ONLY(cout << "- 200 OK!" << endl);
 
 	return true;
 }
