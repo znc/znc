@@ -847,11 +847,11 @@ XS(XS_ZNC_COREListen)
 #ifdef HAVE_LIBSSL
 			if ( iUseSSL != 0 )
 			{
-				if ( CFile::Exists( g_ModPerl->GetUser()->GetPemLocation() ) )
-					pSock->SetPemLocation( g_ModPerl->GetUser()->GetPemLocation() );
+				if ( CFile::Exists( CZNC::Get().GetPemLocation() ) )
+					pSock->SetPemLocation( CZNC::Get().GetPemLocation() );
 				else
 				{
-					g_ModPerl->PutModule( "PEM File does not exist! (looking for " + g_ModPerl->GetUser()->GetPemLocation() + ")" );
+					g_ModPerl->PutModule( "PEM File does not exist! (looking for " + CZNC::Get().GetPemLocation() + ")" );
 					bContinue = false;
 				}
 			}

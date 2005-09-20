@@ -20,6 +20,9 @@ using std::pair;
  * Author: imaginos <imaginos@imaginos.net>
  * 
  * $Log$
+ * Revision 1.18  2005/09/20 04:31:19  prozacx
+ * Changed from CUser::GetPemLocation() to CZNC::GetPemLocation()
+ *
  * Revision 1.17  2005/09/07 05:14:28  prozacx
  * Renamed md5.cpp/h to MD5.cpp/h
  *
@@ -188,7 +191,7 @@ public:
 
 		if ( m_sPemFile.empty() )
 		{
-			m_sPemFile = m_pUser->GetPemLocation();
+			m_sPemFile = CZNC::Get().GetPemLocation();
 		}
 
 		if (!CFile::Exists(m_sPemFile)) {
