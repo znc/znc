@@ -359,7 +359,7 @@ public:
 	bool UnloadModule(const CString& sModule);
 	bool UnloadModule(const CString& sModule, CString& sRetMsg);
 	bool ReloadModule(const CString& sModule, const CString& sArgs, CUser* pUser, CString& sRetMsg);
-	CString FindModPath(const CString& sModule, CUser* pUser = NULL);
+	CString FindModPath(const CString& sModule);
 
 	bool GetModInfo(CModInfo& ModInfo, const CString& sModule);
 	void GetAvailableMods(set<CModInfo>& ssMods, bool bGlobal = false);

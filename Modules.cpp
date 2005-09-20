@@ -685,7 +685,7 @@ bool CModules::LoadModule(const CString& sModule, const CString& sArgs, CUser* p
 		return false;
 	}
 
-	CString sModPath = FindModPath(sModule, pUser);
+	CString sModPath = FindModPath(sModule);
 
 	if (sModPath.empty()) {
 		sRetMsg = "Unable to find module [" + sModule + "]";
@@ -858,11 +858,7 @@ bool CModules::ReloadModule(const CString& sModule, const CString& sArgs, CUser*
 	return true;
 }
 
-CString CModules::FindModPath(const CString& sModule, CUser* pUser) {
-	if (pUser) {
-		return pUser->FindModPath(sModule);
-	}
-
+CString CModules::FindModPath(const CString& sModule) {
 	return CZNC::Get().FindModPath(sModule);
 }
 
@@ -875,7 +871,7 @@ bool CModules::GetModInfo(CModInfo& ModInfo, const CString& sModule) {
 		}
 	}
 
-	CString sModPath = FindModPath(sModule, NULL);
+	CString sModPath = FindModPath(sModule);
 
 	if (sModPath.empty()) {
 		return false;
