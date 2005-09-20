@@ -2,6 +2,7 @@
 #include "String.h"
 #include "FileUtils.h"
 #include "MD5.h"
+#include "main.h"
 
 const char* g_szHTMLescapes[256] = {
 	"&#0;", 0, 0, 0, 0, 0, 0, 0, 0, 0,               // 0-9
@@ -502,7 +503,8 @@ unsigned long CString::Base64Decode(CString& sRet) const {
  
 	*p = '\0';
 	unsigned long uRet = p - out;
-	sRet = out;
+	sRet.clear();
+	sRet.append(out, uRet);
 	free(out);
 
 	return uRet;
