@@ -904,7 +904,7 @@ CUser* CWebAdminSock::GetNewUser(CString& sPageRet, CUser* pUser) {
 				CString sArgs = GetParam("modargs_" + sModName);
 
 				try {
-					if (!pNewUser->GetModules().LoadModule(sModName, sArgs, pNewUser, sModRet)) {
+					if (!pNewUser->GetModules().LoadModule(sModName, sArgs, pNewUser, sModRet, (pUser != NULL))) {
 						DEBUG_ONLY(cerr << "Unable to load module [" << sModName << "] [" << sModRet << "]" << endl);
 					}
 				} catch (...) {
@@ -921,7 +921,7 @@ CUser* CWebAdminSock::GetNewUser(CString& sPageRet, CUser* pUser) {
 			CString sModRet;
 
 			try {
-				if (!pNewUser->GetModules().LoadModule(sModName, sArgs, pNewUser, sModRet)) {
+				if (!pNewUser->GetModules().LoadModule(sModName, sArgs, pNewUser, sModRet, (pUser != NULL))) {
 					DEBUG_ONLY(cerr << "Unable to load module [" << sModName << "] [" << sModRet << "]" << endl);
 				}
 			} catch (...) {
