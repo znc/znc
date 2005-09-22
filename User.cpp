@@ -343,6 +343,7 @@ bool CUser::WriteConfig(CFile& File) {
 	PrintLine(File, "Ident", GetIdent());
 	PrintLine(File, "RealName", GetRealName());
 	PrintLine(File, "VHost", GetVHost());
+	PrintLine(File, "QuitMsg", GetQuitMsg());
 	PrintLine(File, "AwaySuffix", GetAwaySuffix());
 	PrintLine(File, "StatusPrefix", GetStatusPrefix());
 	PrintLine(File, "ChanModes", GetDefaultChanModes());
