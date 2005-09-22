@@ -279,11 +279,13 @@ public:
 	const CString& GetSavePath() const { if (!CFile::Exists(m_sSavePath)) { CUtils::MakeDir(m_sSavePath); } return m_sSavePath; }
 
 	// Setters
+	void SetFake(bool b) { m_bFake = b; }
 	void SetDescription(const CString& s) { m_sDescription = s; }
 	void SetArgs(const CString& s) { m_sArgs = s; }
 	// !Setters
 
 	// Getters
+	bool IsFake() const { return m_bFake; }
 	const CString& GetDescription() const { return m_sDescription; }
 	const CString& GetArgs() const { return m_sArgs; }
 	CUser* GetUser() { return m_pUser; }
@@ -291,6 +293,7 @@ public:
 	// !Getters
 
 protected:
+	bool					m_bFake;
 	CString					m_sDescription;
 	vector<CTimer*>			m_vTimers;
 	vector<CSocket*>		m_vSockets;
@@ -355,7 +358,7 @@ public:
 	virtual bool OnChanNotice(const CNick& Nick, CChan& Channel, CString& sMessage);
 
 	CModule* FindModule(const CString& sModule) const;
-	bool LoadModule(const CString& sModule, const CString& sArgs, CUser* pUser, CString& sRetMsg);
+	bool LoadModule(const CString& sModule, const CString& sArgs, CUser* pUser, CString& sRetMsg, bool bFake = false);
 	bool UnloadModule(const CString& sModule);
 	bool UnloadModule(const CString& sModule, CString& sRetMsg);
 	bool ReloadModule(const CString& sModule, const CString& sArgs, CUser* pUser, CString& sRetMsg);

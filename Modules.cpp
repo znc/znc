@@ -160,6 +160,7 @@ const CString& CSocket::GetLabel() const { return m_sLabel; }
 /////////////////// !Socket ///////////////////
 
 CModule::CModule(void* pDLL, CUser* pUser, const CString& sModName) {
+	m_bFake = false;
 	m_pDLL = pDLL;
 	m_pManager = &(CZNC::Get().GetManager());;
 	m_pUser = pUser;
@@ -172,6 +173,7 @@ CModule::CModule(void* pDLL, CUser* pUser, const CString& sModName) {
 }
 
 CModule::CModule(void* pDLL, const CString& sModName) {
+	m_bFake = false;
 	m_pDLL = pDLL;
 	m_pManager = &(CZNC::Get().GetManager());
 	m_pUser = NULL;
@@ -497,7 +499,9 @@ CModules::CModules() {
 	m_pUser = NULL;
 }
 
-CModules::~CModules() {}
+CModules::~CModules() {
+	UnloadAll();
+}
 
 void CModules::UnloadAll() {
 	while (size()) {
@@ -666,7 +670,7 @@ CModule* CModules::FindModule(const CString& sModule) const {
 	return NULL;
 }
 
-bool CModules::LoadModule(const CString& sModule, const CString& sArgs, CUser* pUser, CString& sRetMsg) {
+bool CModules::LoadModule(const CString& sModule, const CString& sArgs, CUser* pUser, CString& sRetMsg, bool bFake) {
 #ifndef _MODULES
 	sRetMsg = "Unable to load module [" + sModule + "] module support was not enabled.";
 	return false;
@@ -690,6 +694,16 @@ bool CModules::LoadModule(const CString& sModule, const CString& sArgs, CUser* p
 	if (sModPath.empty()) {
 		sRetMsg = "Unable to find module [" + sModule + "]";
 		return false;
+	}
+
+	if (bFake) {
+		CModule* pModule = new CModule(NULL, sModule);
+		pModule->SetArgs(sArgs);
+		pModule->SetDescription("<<Fake Module>>");
+		pModule->SetFake(true);
+		push_back(pModule);
+		sRetMsg = "Loaded fake module [" + sModule + "] [" + sModPath + "]";
+		return true;
 	}
 
 	unsigned int uDLFlags = RTLD_LAZY;
@@ -805,6 +819,19 @@ bool CModules::UnloadModule(const CString& sModule, CString& sRetMsg) {
 
 	if (!pModule) {
 		sRetMsg = "Module [" + sMod + "] not loaded.";
+		return false;
+	}
+
+	if (pModule->IsFake()) {
+		for (iterator it = begin(); it != end(); it++) {
+			if (*it == pModule) {
+				erase(it);
+				sRetMsg = "Fake module [" + sMod + "] unloaded";
+				return true;
+			}
+		}
+
+		sRetMsg = "Fake module [" + sMod + "] not loaded.";
 		return false;
 	}
 
