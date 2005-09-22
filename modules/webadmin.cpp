@@ -304,7 +304,6 @@ bool CWebAdminSock::OnPageRequest(const CString& sURI, CString& sPageRet) {
 		CChan* pChan = m_pUser->FindChan(GetParam("chan"));
 		if (!pChan) {
 			GetErrorPage(sPageRet, "No such channel");
-			cerr << "==== [" << GetParam("chan") << "] == [" << (int) pChan << "]" << endl;
 			return true;
 		}
 
@@ -553,11 +552,16 @@ bool CWebAdminSock::ChanPage(CString& sPageRet, CChan* pChan) {
 		return true;
 	}
 
-	CString sChanName = GetParam("name");
+	CString sChanName = GetParam("name").Trim_n();
 
 	if (!pChan) {
 		if (sChanName.empty()) {
 			GetErrorPage(sPageRet, "Channel name is a required argument");
+			return true;
+		}
+
+		if (m_pUser->FindChan(sChanName.Token(0))) {
+			GetErrorPage(sPageRet, "Channel [" + sChanName.Token(0) + "] already exists");
 			return true;
 		}
 
