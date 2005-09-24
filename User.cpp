@@ -24,6 +24,7 @@ CUser::CUser(const CString& sUserName) {
 	m_bUseClientIP = false;
 	m_bKeepNick = false;
 	m_bDenyLoadMod = false;
+	m_bAdmin= false;
 	m_sStatusPrefix = "*";
 	m_uBufferCount = 50;
 	m_bKeepBuffer = false;
@@ -218,6 +219,7 @@ bool CUser::Clone(const CUser& User, CString& sErrorRet) {
 	SetBounceDCCs(User.BounceDCCs());
 	SetUseClientIP(User.UseClientIP());
 	SetDenyLoadMod(User.DenyLoadMod());
+	SetAdmin(User.IsAdmin());
 	// !Flags
 
 	return true;
@@ -353,6 +355,7 @@ bool CUser::WriteConfig(CFile& File) {
 	PrintLine(File, "BounceDCCs", CString((BounceDCCs()) ? "true" : "false"));
 	PrintLine(File, "AutoCycle", CString((AutoCycle()) ? "true" : "false"));
 	PrintLine(File, "DenyLoadMod", CString((DenyLoadMod()) ? "true" : "false"));
+	PrintLine(File, "Admin", CString((IsAdmin()) ? "true" : "false"));
 	PrintLine(File, "DCCLookupMethod", CString((UseClientIP()) ? "client" : "default"));
 	File.Write("\r\n");
 
@@ -618,6 +621,17 @@ bool CUser::PutStatus(const CString& sLine) {
 	return true;
 }
 
+bool CUser::PutStatusNotice(const CString& sLine) {
+	CUserSock* pUserSock = GetUserSock();
+
+	if (!pUserSock) {
+		return false;
+	}
+
+	pUserSock->PutStatusNotice(sLine);
+	return true;
+}
+
 bool CUser::PutModule(const CString& sModule, const CString& sLine) {
 	CUserSock* pUserSock = GetUserSock();
 
@@ -726,6 +740,7 @@ void CUser::SetBounceDCCs(bool b) { m_bBounceDCCs = b; }
 void CUser::SetUseClientIP(bool b) { m_bUseClientIP = b; }
 void CUser::SetKeepNick(bool b) { m_bKeepNick = b; }
 void CUser::SetDenyLoadMod(bool b) { m_bDenyLoadMod = b; }
+void CUser::SetAdmin(bool b) { m_bAdmin = b; }
 void CUser::SetDefaultChanModes(const CString& s) { m_sDefaultChanModes = s; }
 void CUser::SetIRCNick(const CNick& n) { m_IRCNick = n; }
 void CUser::SetIRCServer(const CString& s) { m_sIRCServer = s; }
@@ -780,6 +795,7 @@ bool CUser::ConnectPaused() {
 bool CUser::UseClientIP() const { return m_bUseClientIP; }
 bool CUser::GetKeepNick() const { return m_bKeepNick; }
 bool CUser::DenyLoadMod() const { return m_bDenyLoadMod; }
+bool CUser::IsAdmin() const { return m_bAdmin; }
 bool CUser::BounceDCCs() const { return m_bBounceDCCs; }
 const CString& CUser::GetStatusPrefix() const { return m_sStatusPrefix; }
 const CString& CUser::GetDefaultChanModes() const { return m_sDefaultChanModes; }

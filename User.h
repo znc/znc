@@ -61,6 +61,7 @@ public:
 	bool PutIRC(const CString& sLine);
 	bool PutUser(const CString& sLine);
 	bool PutStatus(const CString& sLine);
+	bool PutStatusNotice(const CString& sLine);
 	bool PutModule(const CString& sModule, const CString& sLine);
 
 	CString GetLocalIP();
@@ -84,6 +85,7 @@ public:
 	void SetUseClientIP(bool b);
 	void SetKeepNick(bool b);
 	void SetDenyLoadMod(bool b);
+	void SetAdmin(bool b);
 	bool SetStatusPrefix(const CString& s);
 	void SetDefaultChanModes(const CString& s);
 	void SetIRCNick(const CNick& n);
@@ -115,6 +117,7 @@ public:
 	bool UseClientIP() const;
 	bool GetKeepNick() const;
 	bool DenyLoadMod() const;
+	bool IsAdmin() const;
 	bool BounceDCCs() const;
 	const CString& GetStatusPrefix() const;
 	const CString& GetDefaultChanModes() const;
@@ -156,6 +159,7 @@ protected:
 	bool				m_bUseClientIP;
 	bool				m_bKeepNick;
 	bool				m_bDenyLoadMod;
+	bool				m_bAdmin;
 	bool				m_bKeepBuffer;
 	bool				m_bAutoCycle;
 

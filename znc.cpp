@@ -445,6 +445,8 @@ bool CZNC::WriteNewConfig(const CString& sConfig) {
 	CUtils::PrintMessage("Now we need to setup a user...");
 	CUtils::PrintMessage("");
 
+	bool bFirstUser = true;
+
 	do {
 		vsLines.push_back("");
 		CString sNick;
@@ -454,6 +456,13 @@ bool CZNC::WriteNewConfig(const CString& sConfig) {
 
 		vsLines.push_back("<User " + sUser + ">");
 		sAnswer = CUtils::GetHashPass();					vsLines.push_back("\tPass       = " + sAnswer + " -");
+
+		if (CUtils::GetBoolInput("Would you like this user to be an admin?", bFirstUser)) {
+			vsLines.push_back("\tAdmin   = true");
+		} else {
+			vsLines.push_back("\tAdmin   = false");
+		}
+
 		CUtils::GetInput("Nick", sNick, sUser);			vsLines.push_back("\tNick       = " + sNick);
 		CUtils::GetInput("Alt Nick", sAnswer, sNick + "_");	if (!sAnswer.empty()) { vsLines.push_back("\tAltNick    = " + sAnswer); }
 		CUtils::GetInput("Ident", sAnswer, sNick);			vsLines.push_back("\tIdent      = " + sAnswer);
@@ -564,6 +573,7 @@ bool CZNC::WriteNewConfig(const CString& sConfig) {
 		vsLines.push_back("</User>");
 
 		CUtils::PrintMessage("");
+		bFirstUser = false;
 	} while (CUtils::GetBoolInput("Would you like to setup another user?", false));
 	// !User
 
@@ -842,6 +852,9 @@ bool CZNC::ParseConfig(const CString& sConfig) {
 					} else if (sName.CaseCmp("DenyLoadMod") == 0) {
 						pUser->SetDenyLoadMod((sValue.CaseCmp("TRUE") == 0));
 						continue;
+					} else if (sName.CaseCmp("Admin") == 0) {
+						pUser->SetAdmin((sValue.CaseCmp("TRUE") == 0));
+						continue;
 					} else if (sName.CaseCmp("StatusPrefix") == 0) {
 						if (!pUser->SetStatusPrefix(sValue)) {
 							CUtils::PrintError("Invalid StatusPrefix [" + sValue + "] Must be 1-5 chars, no spaces.");
@@ -1043,6 +1056,17 @@ bool CZNC::AddVHost(const CString& sHost) {
 bool CZNC::RemVHost(const CString& sHost) {
 	// @todo
 	return true;
+}
+
+void CZNC::Broadcast(const CString& sMessage, CUser* pUser) {
+	for (map<CString,CUser*>::iterator a = m_msUsers.begin(); a != m_msUsers.end(); a++) {
+		if (a->second != pUser) {
+			CUser* m_pUser = a->second;	// This is a semi-hack because MODULECALLCONT below expects the user to be stored in m_pUser
+			CString sMsg = sMessage;
+			MODULECALLCONT(OnBroadcast(sMsg));
+			a->second->PutStatusNotice("*** " + sMsg);
+		}
+	}
 }
 
 CString CZNC::FindModPath(const CString& sModule) const {

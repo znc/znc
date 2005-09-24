@@ -38,6 +38,7 @@ public:
 	void ClearVHosts();
 	bool AddVHost(const CString& sHost);
 	bool RemVHost(const CString& sHost);
+	void Broadcast(const CString& sMessage, CUser* pUser = NULL);
 
 	// Setters
 	void SetStatusPrefix(const CString& s) { m_sStatusPrefix = (s.empty()) ? "*" : s; }

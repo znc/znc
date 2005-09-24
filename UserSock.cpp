@@ -488,12 +488,11 @@ void CUserSock::UserCommand(const CString& sLine) {
 		}
 	} else if (sCommand.CaseCmp("VERSION") == 0) {
 		PutStatus(CZNC::GetTag());
-	} else if (sCommand.CaseCmp("SHUTDOWN") == 0) {
-		CString sQuitMsg = sLine.Token(1, true);
-
-		if (!sQuitMsg.empty()) {
-			m_pUser->SetQuitMsg(sQuitMsg);
-		}
+	} else if (m_pUser->IsAdmin() && sCommand.CaseCmp("BROADCAST") == 0) {
+		CZNC::Get().Broadcast(sLine.Token(1, true));
+	} else if (m_pUser->IsAdmin() && sCommand.CaseCmp("SHUTDOWN") == 0) {
+		CZNC::Get().Broadcast(sLine.Token(1, true));
+		usleep(100000);	// Sleep for 10ms to attempt to allow the previous Broadcast() to go through to all users
 
 		throw CException(CException::EX_Shutdown);
 	} else if (sCommand.CaseCmp("JUMP") == 0) {
@@ -895,7 +894,7 @@ void CUserSock::UserCommand(const CString& sLine) {
 
 		PutStatus("BufferCount for [" + sChan + "] set to [" + CString::ToString(pChan->GetBufferCount()) + "]");
 	} else {
-		PutStatus("I'm too stupid to help you with [" + sCommand + "]");
+		PutStatus("Unknown command [" + sCommand + "] try 'Help'");
 	}
 }
 
@@ -915,13 +914,22 @@ void CUserSock::HelpUser() {
 	Table.AddRow(); Table.SetCell("Command", "RemServer");	Table.SetCell("Arguments", "<host>");				Table.SetCell("Description", "Remove a server from the list");
 	Table.AddRow(); Table.SetCell("Command", "Topics");		Table.SetCell("Arguments", "");						Table.SetCell("Description", "Show topics in all channels");
 	Table.AddRow(); Table.SetCell("Command", "SetBuffer");	Table.SetCell("Arguments", "<#chan> [linecount]");	Table.SetCell("Description", "Set the buffer count for a channel");
-	Table.AddRow(); Table.SetCell("Command", "Shutdown");	Table.SetCell("Arguments", "[message]");			Table.SetCell("Description", "Shutdown znc completely");
 	Table.AddRow(); Table.SetCell("Command", "Jump");		Table.SetCell("Arguments", "");						Table.SetCell("Description", "Jump to the next server in the list");
 	Table.AddRow(); Table.SetCell("Command", "Send");		Table.SetCell("Arguments", "<nick> <file>");		Table.SetCell("Description", "Send a shell file to a nick on IRC");
 	Table.AddRow(); Table.SetCell("Command", "Get");		Table.SetCell("Arguments", "<file>");				Table.SetCell("Description", "Send a shell file to yourself");
-	Table.AddRow(); Table.SetCell("Command", "LoadMod");	Table.SetCell("Arguments", "<module>");				Table.SetCell("Description", "Load a module");
-	Table.AddRow(); Table.SetCell("Command", "UnloadMod");	Table.SetCell("Arguments", "<module>");				Table.SetCell("Description", "Unload a module");
-	Table.AddRow(); Table.SetCell("Command", "ReloadMod");	Table.SetCell("Arguments", "<module>");				Table.SetCell("Description", "Reload a module");
+
+	if (m_pUser) {
+		if (!m_pUser->DenyLoadMod()) {
+			Table.AddRow(); Table.SetCell("Command", "LoadMod");	Table.SetCell("Arguments", "<module>");				Table.SetCell("Description", "Load a module");
+			Table.AddRow(); Table.SetCell("Command", "UnloadMod");	Table.SetCell("Arguments", "<module>");				Table.SetCell("Description", "Unload a module");
+			Table.AddRow(); Table.SetCell("Command", "ReloadMod");	Table.SetCell("Arguments", "<module>");				Table.SetCell("Description", "Reload a module");
+		}
+
+		if (m_pUser->IsAdmin()) {
+			Table.AddRow(); Table.SetCell("Command", "Broadcast");	Table.SetCell("Arguments", "[message]");			Table.SetCell("Description", "Broadcast a message to all users");
+			Table.AddRow(); Table.SetCell("Command", "Shutdown");	Table.SetCell("Arguments", "[message]");			Table.SetCell("Description", "Shutdown znc completely");
+		}
+	}
 
 	if (Table.size()) {
 		unsigned int uTableIdx = 0;
