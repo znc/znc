@@ -135,6 +135,10 @@ const CString& CHTTPSock::GetParamString() const {
 	return m_sPostData;
 }
 
+bool CHTTPSock::HasParam(const CString& sName) const {
+	return (m_msvsParams.find(sName) != m_msvsParams.end());
+}
+
 CString CHTTPSock::GetParam(const CString& sName) const {
 	CString sRet;
 

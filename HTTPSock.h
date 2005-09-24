@@ -45,6 +45,7 @@ public:
 	// !Setters
 
 	// Getters
+	bool HasParam(const CString& sName) const;
 	CString GetParam(const CString& sName) const;
 	const CString& GetUser() const;
 	const CString& GetPass() const;
