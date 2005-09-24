@@ -46,6 +46,12 @@ public:
 		PutModule("You got disconnected BoyOh.");
 	}
 
+	virtual EModRet OnBroadcast(CString& sMessage) {
+		PutModule("------ [" + sMessage + "]");
+		sMessage = "======== [" + sMessage + "] ========";
+		return CONTINUE;
+	}
+
 	virtual void OnChanPermission(const CNick& OpNick, const CNick& Nick, CChan& Channel, unsigned char uMode, bool bAdded, bool bNoChange) {
 		PutModule(((bNoChange) ? "[0] [" : "[1] [") + OpNick.GetNick() + "] set mode [" + Channel.GetName() + ((bAdded) ? "] +" : "] -") + CString::ToString(uMode) + " " + Nick.GetNick());
 	}

@@ -200,6 +200,7 @@ public:
 	virtual void OnUserDetached();
 	virtual void OnIRCDisconnected();
 	virtual void OnIRCConnected();
+	virtual EModRet OnBroadcast(CString& sMessage);
 
 	virtual EModRet OnDCCUserSend(const CNick& RemoteNick, unsigned long uLongIP, unsigned short uPort, const CString& sFile, unsigned long uFileSize);
 
@@ -321,6 +322,7 @@ public:
 	virtual void OnUserDetached();
 	virtual void OnIRCDisconnected();
 	virtual void OnIRCConnected();
+	virtual bool OnBroadcast(CString& sMessage);
 
 	virtual bool OnDCCUserSend(const CNick& RemoteNick, unsigned long uLongIP, unsigned short uPort, const CString& sFile, unsigned long uFileSize);
 

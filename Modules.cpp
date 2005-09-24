@@ -436,6 +436,7 @@ void CModule::OnUserAttached() {}
 void CModule::OnUserDetached() {}
 void CModule::OnIRCDisconnected() {}
 void CModule::OnIRCConnected() {}
+CModule::EModRet CModule::OnBroadcast(CString& sMessage) { return CONTINUE; }
 
 CModule::EModRet CModule::OnDCCUserSend(const CNick& RemoteNick, unsigned long uLongIP, unsigned short uPort, const CString& sFile, unsigned long uFileSize) { return CONTINUE; }
 
@@ -523,6 +524,10 @@ bool CModules::OnBoot() {
 
 void CModules::OnIRCConnected() {
 	MODUNLOADCHK(OnIRCConnected());
+}
+
+bool CModules::OnBroadcast(CString& sMessage) {
+	MODHALTCHK(OnBroadcast(sMessage));
 }
 
 void CModules::OnUserAttached() {
