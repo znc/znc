@@ -26,12 +26,28 @@
 		CGlobalModules& GMods = CZNC::Get().GetModules();			\
 		GMods.SetUser(m_pUser);										\
 		if (GMods.func || m_pUser->GetModules().func) {				\
+			GMods.SetUser(NULL);									\
 			return;													\
 		}															\
 		GMods.SetUser(NULL);										\
 	}
 #else
-#define MODULECALL(func)
+#define MODULECALLRET(func)
+#endif
+
+#ifdef _MODULES
+#define MODULECALLCONT(func)										\
+	if (m_pUser) {													\
+		CGlobalModules& GMods = CZNC::Get().GetModules();			\
+		GMods.SetUser(m_pUser);										\
+		if (GMods.func || m_pUser->GetModules().func) {				\
+			GMods.SetUser(NULL);									\
+			continue;												\
+		}															\
+		GMods.SetUser(NULL);										\
+	}
+#else
+#define MODULECALLCONT(func)
 #endif
 
 #ifdef _MODULES
@@ -40,6 +56,7 @@
 		CGlobalModules& GMods = CZNC::Get().GetModules();			\
 		GMods.SetUser(m_pUser);										\
 		if (GMods.func || m_pUser->GetModules().func) {				\
+			GMods.SetUser(NULL);									\
 			return true;											\
 		}															\
 		GMods.SetUser(NULL);										\
