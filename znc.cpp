@@ -458,9 +458,9 @@ bool CZNC::WriteNewConfig(const CString& sConfig) {
 		sAnswer = CUtils::GetHashPass();					vsLines.push_back("\tPass       = " + sAnswer + " -");
 
 		if (CUtils::GetBoolInput("Would you like this user to be an admin?", bFirstUser)) {
-			vsLines.push_back("\tAdmin   = true");
+			vsLines.push_back("\tAdmin      = true");
 		} else {
-			vsLines.push_back("\tAdmin   = false");
+			vsLines.push_back("\tAdmin      = false");
 		}
 
 		CUtils::GetInput("Nick", sNick, sUser);			vsLines.push_back("\tNick       = " + sNick);
