@@ -85,7 +85,7 @@ public:
 	}
 
 	virtual Csock* GetSockObj(const CString& sHost, unsigned short uPort);
-	bool IsAdmin() const { return m_bAdmin; }
+	bool IsAdmin(bool bAllowUserAdmin = true) const { return m_bAdmin; }
 
 private:
 protected:
@@ -193,7 +193,12 @@ bool CWebAdminSock::OnLogin(const CString& sUser, const CString& sPass) {
 	CUser* pUser = CZNC::Get().FindUser(GetUser());
 
 	if (pUser && pUser->CheckPass(GetPass())) {
-		m_pUser = pUser;
+		if (pUser->IsAdmin()) {
+			m_bAdmin = true;
+		} else {
+			m_pUser = pUser;
+		}
+
 		return true;
 	}
 
@@ -807,6 +812,10 @@ bool CWebAdminSock::UserPage(CString& sPageRet, CUser* pUser) {
 			sPageRet += "<span style='white-space: nowrap;'><input type='checkbox' name='denyloadmod' id='denyloadmod' value='1'" + CString((pUser && pUser->DenyLoadMod()) ? " CHECKED" : "") + "><label for='denyloadmod'>Deny LoadMod</label></span>&nbsp;&nbsp;\r\n";
 		}
 
+		if (IsAdmin()) {
+			sPageRet += "<span style='white-space: nowrap;'><input type='checkbox' name='isadmin' id='isadmin' value='1'" + CString((pUser && pUser->IsAdmin()) ? " CHECKED" : "") + CString((pUser && pUser == CZNC::Get().FindUser(GetUser())) ? " DISABLED" : "") + "><label for='isadmin'>Admin</label></span>&nbsp;&nbsp;\r\n";
+		}
+
 		sPageRet += "<br><br>"
 			"<div><small><b>CTCP Replies:</b></small><br>"
 				"<textarea name='ctcpreplies' cols='40' rows='5'>" + sCTCPReplies.Escape_n(CString::EHTML) + "</textarea></div>\r\n"
@@ -971,6 +980,12 @@ CUser* CWebAdminSock::GetNewUser(CString& sPageRet, CUser* pUser) {
 		pNewUser->SetDenyLoadMod(GetParam("denyloadmod").ToBool());
 	} else if (pUser) {
 		pNewUser->SetDenyLoadMod(pUser->DenyLoadMod());
+	}
+
+	if (pUser && pUser != CZNC::Get().FindUser(GetUser())) {
+		pNewUser->SetAdmin(GetParam("isadmin").ToBool());
+	} else {
+		pNewUser->SetAdmin(pUser->IsAdmin());
 	}
 
 	GetParamValues("channel", vsArgs);
