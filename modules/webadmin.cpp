@@ -164,7 +164,13 @@ CString CWebAdminSock::Header(const CString& sTitle) {
 		"<html>\r\n<head><title>ZNC - " + sTitle.Escape_n(CString::EHTML) + "</title></head>\r\n"
 		"<body bgcolor='#FFFFFF' text='#000000' link='#000000' alink='#000000' vlink='#000000'>\r\n"
 		"<table border='0' cellpadding='10' cellspacing='0' height='100%' width='100%'>\r\n"
-		"<tr><td style='border-bottom: 2px solid #000;' colspan='2' align='center' valign='top'><h2>" + sTitle.Escape_n(CString::EHTML) + "</h2></td></tr>\r\n"
+		"<tr><td style='border-bottom: 2px solid #000;' colspan='2' valign='top'>"
+			"<table border='0' cellpadding='0' cellspacing='0' width='100%'><tr>"
+			"<td width='200'>&nbsp;</td>"
+			"<td align='center'><h2 style='white-space: nowrap;'>" + sTitle.Escape_n(CString::EHTML) + "</h2></td>"
+			"<td align='right' width='200'><b>" + GetUser().Escape_n(CString::EHTML) + "@" + GetRemoteIP().Escape_n(CString::EHTML) + "</b></td>"
+			"</tr></table>"
+		"</td></tr>\r\n"
 		"<tr><td style='white-space: nowrap; border-right: 1px solid #000;' valign='top'>\r\n";
 
 	if (IsAdmin()) {
@@ -180,7 +186,7 @@ CString CWebAdminSock::Header(const CString& sTitle) {
 }
 
 CString CWebAdminSock::Footer() {
-	return "</td></tr><tr><td colspan='2' align='right' valign='bottom'>" + CZNC::Get().GetTag() + "</td></tr>\r\n"
+	return "</td></tr><tr><td colspan='2' align='right' valign='bottom'>" + CZNC::Get().GetTag().Escape_n(CString::EHTML) + "</td></tr>\r\n"
 		"</table></body>\r\n</html>\r\n";
 }
 
@@ -192,14 +198,18 @@ bool CWebAdminSock::OnLogin(const CString& sUser, const CString& sPass) {
 
 	CUser* pUser = CZNC::Get().FindUser(GetUser());
 
-	if (pUser && pUser->CheckPass(GetPass())) {
-		if (pUser->IsAdmin()) {
-			m_bAdmin = true;
-		} else {
-			m_pUser = pUser;
-		}
+	if (pUser) {
+		CString sHost = GetRemoteIP();
 
-		return true;
+		if (pUser->IsHostAllowed(sHost) && pUser->CheckPass(GetPass())) {
+			if (pUser->IsAdmin()) {
+				m_bAdmin = true;
+			} else {
+				m_pUser = pUser;
+			}
+
+			return true;
+		}
 	}
 
 	return false;
@@ -684,10 +694,19 @@ bool CWebAdminSock::UserPage(CString& sPageRet, CUser* pUser) {
 			sPageRet += "<input type='text' name='user' value='' size='32' maxlength='12'><br>\r\n";
 		}
 
+		CString sIP = GetRemoteIP();
+
+		sIP = sIP.Token(0, false, ".") + "." + sIP.Token(1, false, ".") + "." + sIP.Token(2, false, ".") + ".*";
+
 		sPageRet += "<small><b>Password:</b></small><br><input type='password' name='password' size='32' maxlength='16'><br>\r\n"
-			"<small><b>Confirm Password:</b></small><br><input type='password' name='password2' size='32' maxlength='16'></div>\r\n"
-			"<div><small><b>Allowed IPs:</b></small><br><textarea name='allowedips' cols='40' rows='5'>" + sAllowedHosts.Escape_n(CString::EHTML) + "</textarea></div>\r\n"
-			"<br></div></div><br><br>\r\n"
+			"<small><b>Confirm Password:</b></small><br><input type='password' name='password2' size='32' maxlength='16'><br><br></div>\r\n"
+			"<div><small><b>Allowed IPs:</b></small><br><textarea name='allowedips' cols='40' rows='5'>" + sAllowedHosts.Escape_n(CString::EHTML) + "</textarea><br>\r\n";
+
+		if (pUser && pUser == CZNC::Get().FindUser(GetUser())) {
+			sPageRet += "<span style='white-space: nowrap;'><input type='checkbox' name='ownip' id='ownip' value='" + sIP.Escape_n(CString::EHTML) + "' CHECKED><label for='ownip'> " + sIP.Escape_n(CString::EHTML) + " (your current ip)</label></span>&nbsp;&nbsp;\r\n";
+		}
+
+		sPageRet += "</div><br></div></div><br><br>\r\n"
 
 			"<div style='white-space: nowrap; margin-top: -8px; margin-right: 8px; margin-left: 8px; padding: 1px 5px 1px 5px; float: left; border: 1px solid #000; font-size: 16px; font-weight: bold; background: #ff9;'>IRC Information</div><div style='padding: 25px 5px 5px 15px; border: 2px solid #000; background: #cc9;'><div style='clear: both;'>\r\n"
 			"<div style='float: left; margin-right: 10px;'><small><b>Nick:</b></small><br>\r\n"
@@ -914,6 +933,10 @@ CUser* CWebAdminSock::GetNewUser(CString& sPageRet, CUser* pUser) {
 	GetParam("allowedips").Split("\n", vsArgs);
 	for (a = 0; a < vsArgs.size(); a++) {
 		pNewUser->AddAllowedHost(vsArgs[a].Trim_n());
+	}
+
+	if (HasParam("ownip")) {
+		pNewUser->AddAllowedHost(GetParam("ownip"));
 	}
 
 	GetParam("ctcpreplies").Split("\n", vsArgs);
