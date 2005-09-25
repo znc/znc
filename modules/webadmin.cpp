@@ -931,8 +931,12 @@ CUser* CWebAdminSock::GetNewUser(CString& sPageRet, CUser* pUser) {
 	}
 
 	GetParam("allowedips").Split("\n", vsArgs);
-	for (a = 0; a < vsArgs.size(); a++) {
-		pNewUser->AddAllowedHost(vsArgs[a].Trim_n());
+	if (vsArgs.size()) {
+		for (a = 0; a < vsArgs.size(); a++) {
+			pNewUser->AddAllowedHost(vsArgs[a].Trim_n());
+		}
+	} else {
+		pNewUser->AddAllowedHost("*");
 	}
 
 	if (HasParam("ownip")) {
