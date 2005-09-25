@@ -473,6 +473,91 @@ CString CString::Format(const CString& sFormatStr, ...) {
 	return "";
 }
 
+bool CString::Base64Encode(CString& sRet, unsigned int uWrap) const {
+	static char b64table[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
+	sRet.clear();
+	size_t len = size();
+	const char* input = c_str();
+	char *output, *p;
+	size_t        i = 0, mod = len % 3, toalloc;
+	toalloc = (len / 3) * 4 + (3 - mod) % 3 + 1 + 8;
+
+	if (uWrap) {
+		toalloc += len / 57;
+		if (len % 57) {
+			toalloc++;
+		}
+	}
+
+	if (toalloc < len) {
+		return 0;
+	}
+
+	//p = output = (unsigned char *)malloc(toalloc);
+	p = output = new char [toalloc];
+
+	if (!p) {
+		return false;
+	}
+
+	while (i < len - mod) {
+		*p++ = b64table[input[i++] >> 2];
+		*p++ = b64table[((input[i - 1] << 4) | (input[i] >> 4)) & 0x3f];
+		*p++ = b64table[((input[i] << 2) | (input[i + 1] >> 6)) & 0x3f];
+		*p++ = b64table[input[i + 1] & 0x3f];
+		i += 2;
+
+		if (uWrap && !(i % 57)) {
+			*p++ = '\n';
+		}
+	}
+
+	if (!mod) {
+		if (uWrap && i % 57) {
+			*p++ = '\n';
+		}
+
+		*p = 0;
+
+		sRet = output;
+		delete[] output;
+		return true;
+	} else {
+		*p++ = b64table[input[i++] >> 2];
+		*p++ = b64table[((input[i - 1] << 4) | (input[i] >> 4)) & 0x3f];
+		if (mod == 1) {
+			*p++ = '=';
+			*p++ = '=';
+
+			if (uWrap) {
+				*p++ = '\n';
+			}
+
+			*p = 0;
+
+			sRet = output;
+			delete[] output;
+			return true;
+		} else {
+			*p++ = b64table[(input[i] << 2) & 0x3f];
+			*p++ = '=';
+
+			if (uWrap) {
+				*p++ = '\n';
+			}
+
+			*p = 0;
+			sRet = output;
+			delete[] output;
+			return true;
+		}
+	}
+
+	sRet = output;
+	free(output);
+	return true;
+}
+
 unsigned long CString::Base64Decode(CString& sRet) const {
 	const char* in = c_str();
 	char c, c1, *p;
@@ -592,6 +677,18 @@ CString CString::TrimLeft_n(const CString& s) const {
 CString CString::TrimRight_n(const CString& s) const {
 	CString sRet = *this;
 	sRet.TrimRight(s);
+	return sRet;
+}
+
+CString CString::LeftChomp_n(unsigned int uLen) {
+	CString sRet = *this;
+	sRet.LeftChomp(uLen);
+	return sRet;
+}
+
+CString CString::RightChomp_n(unsigned int uLen) {
+	CString sRet = *this;
+	sRet.RightChomp(uLen);
 	return sRet;
 }
 

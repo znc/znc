@@ -77,6 +77,7 @@ public:
 
 	static CString Format(const CString& sFormatStr, ...);
 	unsigned long Base64Decode(CString& sRet) const;
+	bool Base64Encode(CString& sRet, unsigned int uWrap = 0) const;
 	CString MD5() const;
 
 	static CString ToString(char c);
@@ -113,6 +114,8 @@ public:
 
 	bool LeftChomp(unsigned int uLen = 1);
 	bool RightChomp(unsigned int uLen = 1);
+	CString LeftChomp_n(unsigned int uLen = 1);
+	CString RightChomp_n(unsigned int uLen = 1);
 
 private:
 protected:
