@@ -473,6 +473,16 @@ CString CString::Format(const CString& sFormatStr, ...) {
 	return "";
 }
 
+bool CString::Base64Encode(unsigned int uWrap) {
+	CString sCopy(*this);
+	return sCopy.Base64Encode(*this, uWrap);
+}
+
+unsigned long CString::Base64Decode() {
+	CString sCopy(*this);
+	return sCopy.Base64Decode(*this);
+}
+
 CString CString::Base64Encode_n(unsigned int uWrap) const {
 	CString sRet;
 	Base64Encode(sRet, uWrap);
@@ -609,6 +619,51 @@ unsigned long CString::Base64Decode(CString& sRet) const {
 
 CString CString::MD5() const {
 	return (const char*) CMD5(*this);
+}
+
+CString CString::Encrypt_n(const CString& sPass, const CString& sIvec) {
+	CString sRet;
+	sRet.Encrypt(sPass, sIvec);
+	return sRet;
+}
+
+CString CString::Decrypt_n(const CString& sPass, const CString& sIvec) {
+	CString sRet;
+	sRet.Decrypt(sPass, sIvec);
+	return sRet;
+}
+
+void CString::Encrypt(const CString& sPass, const CString& sIvec) {
+	Crypt(sPass, true, sIvec);
+}
+
+void CString::Decrypt(const CString& sPass, const CString& sIvec) {
+	Crypt(sPass, false, sIvec);
+}
+
+void CString::Crypt(const CString& sPass, bool bEncrypt, const CString& sIvec) {
+	unsigned char szIvec[8] = {0,0,0,0,0,0,0,0};
+	BF_KEY bKey;
+
+	if (sIvec.length() >= 8) {
+		memcpy(szIvec, sIvec.data(), 8);
+	}
+
+	BF_set_key(&bKey, sPass.length(), (unsigned char*) sPass.data());
+	unsigned int uPad = (length() % 8);
+
+	if (uPad) {
+		uPad = 8 - uPad;
+		append(uPad, '\0');
+	}
+
+	size_t uLen = length();
+	unsigned char* szBuff = (unsigned char*) malloc(uLen);
+	BF_cbc_encrypt((const unsigned char*) data(), szBuff, uLen, &bKey, szIvec, ((bEncrypt) ? BF_ENCRYPT : BF_DECRYPT));
+
+	clear();
+	append((const char*) szBuff, uLen);
+	free(szBuff);
 }
 
 CString CString::ToString(char c) { stringstream s; s << c; return s.str(); }
