@@ -76,6 +76,8 @@ public:
 	unsigned int Split(const CString& sDelim, VCString& vsRet, bool bAllowEmpty = true) const;
 
 	static CString Format(const CString& sFormatStr, ...);
+	CString Base64Decode_n() const;
+	CString Base64Encode_n(unsigned int uWrap = 0) const;
 	unsigned long Base64Decode(CString& sRet) const;
 	bool Base64Encode(CString& sRet, unsigned int uWrap = 0) const;
 	CString MD5() const;

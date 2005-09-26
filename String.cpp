@@ -473,12 +473,24 @@ CString CString::Format(const CString& sFormatStr, ...) {
 	return "";
 }
 
+CString CString::Base64Encode_n(unsigned int uWrap) const {
+	CString sRet;
+	Base64Encode(sRet, uWrap);
+	return sRet;
+}
+
+CString CString::Base64Decode_n() const {
+	CString sRet;
+	Base64Decode(sRet);
+	return sRet;
+}
+
 bool CString::Base64Encode(CString& sRet, unsigned int uWrap) const {
 	static char b64table[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
 	sRet.clear();
 	size_t len = size();
-	const char* input = c_str();
-	char *output, *p;
+	const unsigned char* input = (const unsigned char*) c_str();
+	unsigned char *output, *p;
 	size_t        i = 0, mod = len % 3, toalloc;
 	toalloc = (len / 3) * 4 + (3 - mod) % 3 + 1 + 8;
 
@@ -494,7 +506,7 @@ bool CString::Base64Encode(CString& sRet, unsigned int uWrap) const {
 	}
 
 	//p = output = (unsigned char *)malloc(toalloc);
-	p = output = new char [toalloc];
+	p = output = new unsigned char [toalloc];
 
 	if (!p) {
 		return false;
@@ -519,7 +531,7 @@ bool CString::Base64Encode(CString& sRet, unsigned int uWrap) const {
 
 		*p = 0;
 
-		sRet = output;
+		sRet = (char*) output;
 		delete[] output;
 		return true;
 	} else {
@@ -535,7 +547,7 @@ bool CString::Base64Encode(CString& sRet, unsigned int uWrap) const {
 
 			*p = 0;
 
-			sRet = output;
+			sRet = (char*) output;
 			delete[] output;
 			return true;
 		} else {
@@ -547,14 +559,14 @@ bool CString::Base64Encode(CString& sRet, unsigned int uWrap) const {
 			}
 
 			*p = 0;
-			sRet = output;
+			sRet = (char*) output;
 			delete[] output;
 			return true;
 		}
 	}
 
-	sRet = output;
-	free(output);
+	sRet = (char*) output;
+	delete[] output;
 	return true;
 }
 
