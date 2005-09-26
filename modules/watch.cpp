@@ -202,7 +202,7 @@ public:
 		Process(OldNick, "* " + OldNick.GetNick() + " is now known as " + sNewNick, "");
 	}
 
-	virtual EModRet OnCTCPReply(const CNick& Nick, CString& sMessage) {
+	virtual EModRet OnCTCPReply(CNick& Nick, CString& sMessage) {
 		Process(Nick, "* CTCP: " + Nick.GetNick() + " reply [" + sMessage + "]", "priv");
 		return CONTINUE;
 	}

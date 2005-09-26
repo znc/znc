@@ -21,6 +21,9 @@ using std::pair;
  * Author: imaginos <imaginos@imaginos.net>
  * 
  * $Log$
+ * Revision 1.21  2005/09/26 23:09:05  prozacx
+ * Removed const from args in a bunch of hooks
+ *
  * Revision 1.20  2005/09/26 08:23:30  prozacx
  * Removed const from CNick in priv/chan hooks
  *
@@ -477,7 +480,7 @@ public:
 		m_pManager->Connect( CUtils::GetIP( iIP ), iPort, sSockName, 60, true, m_pUser->GetLocalIP(), p );
 		RemTimer( "Remove " + sNick ); // delete any associated timer to this nick
 	}
-	virtual EModRet OnUserMsg( const CString& sTarget, CString& sMessage )
+	virtual EModRet OnUserMsg( CString& sTarget, CString& sMessage )
 	{
 		if ( strncmp( sTarget.c_str(), "(s)", 3 ) == 0 )
 		{

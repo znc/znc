@@ -522,7 +522,7 @@ void CIRCSock::ReadLine(const CString& sData) {
 					sMsg.RightChomp();
 
 					if (sTarget.CaseCmp(GetNick()) == 0) {
-						if (OnCTCPReply(Nick.GetNickMask(), sMsg)) {
+						if (OnCTCPReply(Nick, sMsg)) {
 							return;
 						}
 					}
@@ -610,8 +610,8 @@ void CIRCSock::KeepNick(bool bForce) {
 	}
 }
 
-bool CIRCSock::OnCTCPReply(const CString& sNickMask, CString& sMessage) {
-	MODULECALL(OnCTCPReply(sNickMask, sMessage));
+bool CIRCSock::OnCTCPReply(CNick& Nick, CString& sMessage) {
+	MODULECALL(OnCTCPReply(Nick, sMessage));
 
 	return false;
 }

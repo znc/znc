@@ -18,6 +18,9 @@
  *
  * 
  * $Log$
+ * Revision 1.19  2005/09/26 23:09:05  prozacx
+ * Removed const from args in a bunch of hooks
+ *
  * Revision 1.18  2005/09/26 08:23:30  prozacx
  * Removed const from CNick in priv/chan hooks
  *
@@ -374,7 +377,7 @@ public:
 		
 		return( CONTINUE );	
 	}
-	virtual EModRet OnUserMsg(const CString& sTarget, CString& sMessage)
+	virtual EModRet OnUserMsg(CString& sTarget, CString& sMessage)
 	{
 		Ping();
 		if( m_bIsAway )

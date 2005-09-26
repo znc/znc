@@ -225,15 +225,15 @@ public:
 	virtual void OnJoin(const CNick& Nick, CChan& Channel);
 	virtual void OnPart(const CNick& Nick, CChan& Channel);
 
-	virtual EModRet OnUserCTCPReply(const CNick& Nick, CString& sMessage);
-	virtual EModRet OnCTCPReply(const CNick& Nick, CString& sMessage);
-	virtual EModRet OnUserCTCP(const CString& sTarget, CString& sMessage);
+	virtual EModRet OnUserCTCPReply(CString& sTarget, CString& sMessage);
+	virtual EModRet OnCTCPReply(CNick& Nick, CString& sMessage);
+	virtual EModRet OnUserCTCP(CString& sTarget, CString& sMessage);
 	virtual EModRet OnPrivCTCP(CNick& Nick, CString& sMessage);
 	virtual EModRet OnChanCTCP(CNick& Nick, CChan& Channel, CString& sMessage);
-	virtual EModRet OnUserMsg(const CString& sTarget, CString& sMessage);
+	virtual EModRet OnUserMsg(CString& sTarget, CString& sMessage);
 	virtual EModRet OnPrivMsg(CNick& Nick, CString& sMessage);
 	virtual EModRet OnChanMsg(CNick& Nick, CChan& Channel, CString& sMessage);
-	virtual EModRet OnUserNotice(const CString& sTarget, CString& sMessage);
+	virtual EModRet OnUserNotice(CString& sTarget, CString& sMessage);
 	virtual EModRet OnPrivNotice(CNick& Nick, CString& sMessage);
 	virtual EModRet OnChanNotice(CNick& Nick, CChan& Channel, CString& sMessage);
 
@@ -347,15 +347,15 @@ public:
 	virtual void OnJoin(const CNick& Nick, CChan& Channel);
 	virtual void OnPart(const CNick& Nick, CChan& Channel);
 
-	virtual bool OnUserCTCPReply(const CNick& Nick, CString& sMessage);
-	virtual bool OnCTCPReply(const CNick& Nick, CString& sMessage);
-	virtual bool OnUserCTCP(const CString& sTarget, CString& sMessage);
+	virtual bool OnUserCTCPReply(CString& sTarget, CString& sMessage);
+	virtual bool OnCTCPReply(CNick& Nick, CString& sMessage);
+	virtual bool OnUserCTCP(CString& sTarget, CString& sMessage);
 	virtual bool OnPrivCTCP(CNick& Nick, CString& sMessage);
 	virtual bool OnChanCTCP(CNick& Nick, CChan& Channel, CString& sMessage);
-	virtual bool OnUserMsg(const CString& sTarget, CString& sMessage);
+	virtual bool OnUserMsg(CString& sTarget, CString& sMessage);
 	virtual bool OnPrivMsg(CNick& Nick, CString& sMessage);
 	virtual bool OnChanMsg(CNick& Nick, CChan& Channel, CString& sMessage);
-	virtual bool OnUserNotice(const CString& sTarget, CString& sMessage);
+	virtual bool OnUserNotice(CString& sTarget, CString& sMessage);
 	virtual bool OnPrivNotice(CNick& Nick, CString& sMessage);
 	virtual bool OnChanNotice(CNick& Nick, CChan& Channel, CString& sMessage);
 

@@ -185,10 +185,6 @@ void CUserSock::ReadLine(const CString& sData) {
 
 		CChan* pChan = m_pUser->FindChan(sTarget);
 
-		if ((pChan) && (pChan->KeepBuffer())) {
-			pChan->AddBuffer(":" + GetNickMask() + " NOTICE " + sTarget + " :" + sMsg);
-		}
-
 #ifdef _MODULES
 		if (sMsg.WildCmp("\001*\001")) {
 			CString sCTCP = sMsg;
@@ -202,6 +198,10 @@ void CUserSock::ReadLine(const CString& sData) {
 			MODULECALLRET(OnUserNotice(sTarget, sMsg));
 		}
 #endif
+
+		if ((pChan) && (pChan->KeepBuffer())) {
+			pChan->AddBuffer(":" + GetNickMask() + " NOTICE " + sTarget + " :" + sMsg);
+		}
 
 		PutIRC("NOTICE " + sTarget + " :" + sMsg);
 		return;
@@ -360,13 +360,13 @@ void CUserSock::ReadLine(const CString& sData) {
 
 		CChan* pChan = m_pUser->FindChan(sTarget);
 
+#ifdef _MODULES
+		MODULECALLRET(OnUserMsg(sTarget, sMsg));
+#endif
 		if ((pChan) && (pChan->KeepBuffer())) {
 			pChan->AddBuffer(":" + GetNickMask() + " PRIVMSG " + sTarget + " :" + sMsg);
 		}
 
-#ifdef _MODULES
-		MODULECALLRET(OnUserMsg(sTarget, sMsg));
-#endif
 		PutIRC("PRIVMSG " + sTarget + " :" + sMsg);
 		return;
 	}

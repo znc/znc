@@ -25,7 +25,7 @@ public:
 	} EChanModeArgs;
 
 	// Message Handlers
-	bool OnCTCPReply(const CString& sNickMask, CString& sMessage);
+	bool OnCTCPReply(CNick& Nick, CString& sMessage);
 	bool OnPrivCTCP(CNick& Nick, CString& sMessage);
 	bool OnChanCTCP(CNick& Nick, const CString& sChan, CString& sMessage);
 	bool OnPrivMsg(CNick& Nick, CString& sMessage);

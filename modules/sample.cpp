@@ -106,20 +106,20 @@ public:
 		PutModule("* " + OldNick.GetNick() + " is now known as " + sNewNick);
 	}
 
-	virtual EModRet OnUserCTCPReply(const CNick& Nick, CString& sMessage) {
-		PutModule("[" + Nick.GetNick() + "] userctcpreply [" + sMessage + "]");
+	virtual EModRet OnUserCTCPReply(CString& sTarget, CString& sMessage) {
+		PutModule("[" + sTarget + "] userctcpreply [" + sMessage + "]");
 		sMessage = "\037" + sMessage + "\037";
 
 		return CONTINUE;
 	}
 
-	virtual EModRet OnCTCPReply(const CNick& Nick, CString& sMessage) {
+	virtual EModRet OnCTCPReply(CNick& Nick, CString& sMessage) {
 		PutModule("[" + Nick.GetNick() + "] ctcpreply [" + sMessage + "]");
 
 		return CONTINUE;
 	}
 
-	virtual EModRet OnUserCTCP(const CString& sTarget, CString& sMessage) {
+	virtual EModRet OnUserCTCP(CString& sTarget, CString& sMessage) {
 		PutModule("[" + sTarget + "] userctcp [" + sMessage + "]");
 
 		return CONTINUE;
@@ -160,7 +160,7 @@ public:
 		return CONTINUE;
 	}
 
-	virtual EModRet OnUserMsg(const CString& sTarget, CString& sMessage) {
+	virtual EModRet OnUserMsg(CString& sTarget, CString& sMessage) {
 		PutModule("[" + sTarget + "] usermsg [" + sMessage + "]");
 		sMessage = "\0034" + sMessage + "\003";
 

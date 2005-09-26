@@ -357,11 +357,11 @@ public:
 	virtual void OnJoin(const CNick& Nick, CChan& Channel) { CBDouble( "OnJoin", NICK( Nick ), CHAN( Channel ) ); }
 	virtual void OnPart(const CNick& Nick, CChan& Channel) { CBDouble( "OnPart", NICK( Nick ), CHAN( Channel ) ); }
 
-	virtual EModRet OnUserCTCPReply(const CNick& Nick, CString& sMessage) 
+	virtual EModRet OnUserCTCPReply(CString& sTarget, CString& sMessage) 
 	{ 
-		return CBDouble( "OnUserCTCPReply", NICK( Nick ), sMessage ); 
+		return CBDouble( "OnUserCTCPReply", sTarget, sMessage ); 
 	}
-	virtual EModRet OnCTCPReply(const CNick& Nick, CString& sMessage)
+	virtual EModRet OnCTCPReply(CNick& Nick, CString& sMessage)
 	{
 		return CBDouble( "OnCTCPReply", NICK( Nick ), sMessage ); 
 	}
@@ -377,7 +377,7 @@ public:
 	{
 		return CBTriple( "OnChanCTCP", NICK( Nick ), CHAN( Channel ), sMessage );
 	}
-	virtual EModRet OnUserMsg(const CString& sTarget, CString& sMessage)
+	virtual EModRet OnUserMsg(CString& sTarget, CString& sMessage)
 	{
 		return CBDouble( "OnUserMsg", sTarget, sMessage );
 	}
