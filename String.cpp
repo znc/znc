@@ -621,6 +621,7 @@ CString CString::MD5() const {
 	return (const char*) CMD5(*this);
 }
 
+#ifdef HAVE_LIBSSL
 CString CString::Encrypt_n(const CString& sPass, const CString& sIvec) {
 	CString sRet;
 	sRet.Encrypt(sPass, sIvec);
@@ -665,6 +666,7 @@ void CString::Crypt(const CString& sPass, bool bEncrypt, const CString& sIvec) {
 	append((const char*) szBuff, uLen);
 	free(szBuff);
 }
+#endif	// HAVE_LIBSSL
 
 CString CString::ToString(char c) { stringstream s; s << c; return s.str(); }
 CString CString::ToString(unsigned char c) { stringstream s; s << c; return s.str(); }

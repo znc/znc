@@ -84,11 +84,13 @@ public:
 	bool Base64Encode(unsigned int uWrap = 0);
 	CString Base64Encode_n(unsigned int uWrap = 0) const;
 
+#ifdef HAVE_LIBSSL
 	CString Encrypt_n(const CString& sPass, const CString& sIvec = "");
 	CString Decrypt_n(const CString& sPass, const CString& sIvec = "");
 	void Encrypt(const CString& sPass, const CString& sIvec = "");
 	void Decrypt(const CString& sPass, const CString& sIvec = "");
 	void Crypt(const CString& sPass, bool bEncrypt, const CString& sIvec = "");
+#endif
 
 	static CString ToString(char c);
 	static CString ToString(unsigned char c);
