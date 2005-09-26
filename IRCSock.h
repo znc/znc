@@ -26,12 +26,12 @@ public:
 
 	// Message Handlers
 	bool OnCTCPReply(const CString& sNickMask, CString& sMessage);
-	bool OnPrivCTCP(const CString& sNickMask, CString& sMessage);
-	bool OnChanCTCP(const CString& sNickMask, const CString& sChan, CString& sMessage);
-	bool OnPrivMsg(const CString& sNickMask, CString& sMessage);
-	bool OnChanMsg(const CString& sNickMask, const CString& sChan, CString& sMessage);
-	bool OnPrivNotice(const CString& sNickMask, CString& sMessage);
-	bool OnChanNotice(const CString& sNickMask, const CString& sChan, CString& sMessage);
+	bool OnPrivCTCP(CNick& Nick, CString& sMessage);
+	bool OnChanCTCP(CNick& Nick, const CString& sChan, CString& sMessage);
+	bool OnPrivMsg(CNick& Nick, CString& sMessage);
+	bool OnChanMsg(CNick& Nick, const CString& sChan, CString& sMessage);
+	bool OnPrivNotice(CNick& Nick, CString& sMessage);
+	bool OnChanNotice(CNick& Nick, const CString& sChan, CString& sMessage);
 	// !Message Handlers
 
 	virtual void ReadLine(const CString& sData);

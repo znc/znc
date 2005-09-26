@@ -369,11 +369,11 @@ public:
 	{
 		return CBDouble( "OnUserCTCP", sTarget, sMessage ); 
 	}
-	virtual EModRet OnPrivCTCP(const CNick& Nick, CString& sMessage)
+	virtual EModRet OnPrivCTCP(CNick& Nick, CString& sMessage)
 	{
 		return CBDouble( "OnPrivCTCP", NICK( Nick ), sMessage ); 
 	}
-	virtual EModRet OnChanCTCP(const CNick& Nick, CChan& Channel, CString& sMessage)
+	virtual EModRet OnChanCTCP(CNick& Nick, CChan& Channel, CString& sMessage)
 	{
 		return CBTriple( "OnChanCTCP", NICK( Nick ), CHAN( Channel ), sMessage );
 	}
@@ -381,12 +381,12 @@ public:
 	{
 		return CBDouble( "OnUserMsg", sTarget, sMessage );
 	}
-	virtual EModRet OnPrivMsg(const CNick& Nick, CString& sMessage)
+	virtual EModRet OnPrivMsg(CNick& Nick, CString& sMessage)
 	{
 		return CBDouble( "OnPrivMsg", NICK( Nick ), sMessage );
 	}
 
-	virtual EModRet OnChanMsg( const CNick& Nick, CChan & Channel, CString & sMessage )
+	virtual EModRet OnChanMsg( CNick& Nick, CChan & Channel, CString & sMessage )
 	{
 		return( CBTriple( "OnChanMsg", NICK( Nick ), CHAN( Channel ), sMessage ) );
 	}
@@ -394,11 +394,11 @@ public:
 	{
 		return CBDouble( "OnUserNotice", sTarget, sMessage );
 	}
-	virtual EModRet OnPrivNotice(const CNick& Nick, CString& sMessage)
+	virtual EModRet OnPrivNotice(CNick& Nick, CString& sMessage)
 	{
 		return CBDouble( "OnPrivNotice", NICK( Nick ), sMessage );
 	}
-	virtual EModRet OnChanNotice(const CNick& Nick, CChan& Channel, CString& sMessage)
+	virtual EModRet OnChanNotice(CNick& Nick, CChan& Channel, CString& sMessage)
 	{
 		return( CBTriple( "OnChanNotice", NICK( Nick ), CHAN( Channel ), sMessage ) );
 	}

@@ -18,6 +18,9 @@
  *
  * 
  * $Log$
+ * Revision 1.18  2005/09/26 08:23:30  prozacx
+ * Removed const from CNick in priv/chan hooks
+ *
  * Revision 1.17  2005/09/06 22:43:02  prozacx
  * Added REQUIRESSL
  *
@@ -356,7 +359,7 @@ public:
 		m_sReason = "";
 	}
 
-	virtual EModRet OnPrivMsg(const CNick& Nick, CString& sMessage)
+	virtual EModRet OnPrivMsg(CNick& Nick, CString& sMessage)
 	{
 		if ( m_bIsAway )
 			AddMessage( time( NULL ), Nick, sMessage );

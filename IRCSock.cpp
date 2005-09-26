@@ -358,10 +358,7 @@ void CIRCSock::ReadLine(const CString& sData) {
 				}
 			}
 		} else { //if (CUtils::wildcmp(":*!*@* * *", sLine.c_str())) {
-			CString sNickMask = sLine.Token(0);
-			sNickMask.LeftChomp();
-
-			CString sNick = sNickMask.Token(0, false, "!");
+			CNick Nick(sLine.Token(0).LeftChomp_n());
 			CString sCmd = sLine.Token(1);
 			CString sRest = sLine.Token(2, true);
 
@@ -379,7 +376,7 @@ void CIRCSock::ReadLine(const CString& sData) {
 				for (unsigned int a = 0; a < vChans.size(); a++) {
 					CChan* pChan = vChans[a];
 
-					if (pChan->ChangeNick(sNick, sNewNick)) {
+					if (pChan->ChangeNick(Nick.GetNick(), sNewNick)) {
 						vFoundChans.push_back(pChan);
 
 						if (!pChan->IsDetached()) {
@@ -388,13 +385,14 @@ void CIRCSock::ReadLine(const CString& sData) {
 					}
 				}
 
-				if (sNick.CaseCmp(GetNick()) == 0) {
+				// Todo: use nick compare function here
+				if (Nick.GetNick().CaseCmp(GetNick()) == 0) {
 					SetNick(sNewNick);
-				} else if (sNick.CaseCmp(m_pUser->GetNick()) == 0) {
+				} else if (Nick.GetNick().CaseCmp(m_pUser->GetNick()) == 0) {
 					KeepNick(true);
 				}
 
-				VOIDMODULECALL(OnNick(sNickMask, sNewNick, vFoundChans));
+				VOIDMODULECALL(OnNick(Nick, sNewNick, vFoundChans));
 
 				if (!bIsVisible) {
 					return;
@@ -408,7 +406,6 @@ void CIRCSock::ReadLine(const CString& sData) {
 				}
 
 				// :nick!ident@host.com QUIT :message
-				CNick Nick(sNickMask);
 
 				vector<CChan*> vFoundChans;
 				const vector<CChan*>& vChans = m_pUser->GetChans();
@@ -416,7 +413,7 @@ void CIRCSock::ReadLine(const CString& sData) {
 				for (unsigned int a = 0; a < vChans.size(); a++) {
 					CChan* pChan = vChans[a];
 
-					if (pChan->RemNick(sNick)) {
+					if (pChan->RemNick(Nick.GetNick())) {
 						vFoundChans.push_back(pChan);
 
 						if (!pChan->IsDetached()) {
@@ -440,14 +437,15 @@ void CIRCSock::ReadLine(const CString& sData) {
 					sChan.LeftChomp();
 				}
 
-				if (sNick.CaseCmp(GetNick()) == 0) {
+				// Todo: use nick compare function
+				if (Nick.GetNick().CaseCmp(GetNick()) == 0) {
 					m_pUser->AddChan(sChan, false);
 				}
 
 				CChan* pChan = m_pUser->FindChan(sChan);
 				if (pChan) {
-					pChan->AddNick(sNickMask);
-					VOIDMODULECALL(OnJoin(sNickMask, *pChan));
+					pChan->AddNick(Nick.GetNickMask());
+					VOIDMODULECALL(OnJoin(Nick.GetNickMask(), *pChan));
 
 					if (pChan->IsDetached()) {
 						return;
@@ -461,11 +459,12 @@ void CIRCSock::ReadLine(const CString& sData) {
 
 				CChan* pChan = m_pUser->FindChan(sChan);
 				if (pChan) {
-					pChan->RemNick(sNick);
-					VOIDMODULECALL(OnPart(sNickMask, *pChan));
+					pChan->RemNick(Nick.GetNick());
+					VOIDMODULECALL(OnPart(Nick.GetNickMask(), *pChan));
 				}
 
-				if (sNick.CaseCmp(GetNick()) == 0) {
+				// Todo: use nick compare function
+				if (Nick.GetNick().CaseCmp(GetNick()) == 0) {
 					m_pUser->DelChan(sChan);
 				}
 
@@ -478,7 +477,7 @@ void CIRCSock::ReadLine(const CString& sData) {
 
 				CChan* pChan = m_pUser->FindChan(sChan);
 				if (pChan) {
-					pChan->ModeChange(sModes, sNick);
+					pChan->ModeChange(sModes, Nick.GetNick());
 
 					if (pChan->IsDetached()) {
 						return;
@@ -495,7 +494,7 @@ void CIRCSock::ReadLine(const CString& sData) {
 
 				if (pChan) {
 					pChan->RemNick(sKickedNick);
-					VOIDMODULECALL(OnKick(sNickMask, sKickedNick, *pChan, sMsg));
+					VOIDMODULECALL(OnKick(Nick.GetNickMask(), sKickedNick, *pChan, sMsg));
 				}
 
 				if (GetNick().CaseCmp(sKickedNick) == 0) {
@@ -514,9 +513,6 @@ void CIRCSock::ReadLine(const CString& sData) {
 				}
 			} else if (sCmd.CaseCmp("NOTICE") == 0) {
 				// :nick!ident@host.com NOTICE #chan :Message
-
-				CNick Nick(sNickMask);
-
 				CString sTarget = sRest.Token(0);
 				CString sMsg = sRest.Token(1, true);
 				sMsg.LeftChomp();
@@ -526,33 +522,32 @@ void CIRCSock::ReadLine(const CString& sData) {
 					sMsg.RightChomp();
 
 					if (sTarget.CaseCmp(GetNick()) == 0) {
-						if (OnCTCPReply(sNickMask, sMsg)) {
+						if (OnCTCPReply(Nick.GetNickMask(), sMsg)) {
 							return;
 						}
 					}
 
-					PutUser(":" + sNickMask + " NOTICE " + sTarget + " :\001" + sMsg + "\001");
+					PutUser(":" + Nick.GetNickMask() + " NOTICE " + sTarget + " :\001" + sMsg + "\001");
 					return;
 				} else {
 					if (sTarget.CaseCmp(GetNick()) == 0) {
-						if (OnPrivNotice(sNickMask, sMsg)) {
+						if (OnPrivNotice(Nick, sMsg)) {
 							return;
 						}
 					} else {
-						if (OnChanNotice(sNickMask, sTarget, sMsg)) {
+						if (OnChanNotice(Nick, sTarget, sMsg)) {
 							return;
 						}
 					}
 				}
 
-				PutUser(":" + sNickMask + " NOTICE " + sTarget + " :" + sMsg);
+				PutUser(":" + Nick.GetNickMask() + " NOTICE " + sTarget + " :" + sMsg);
 				return;
 			} else if (sCmd.CaseCmp("TOPIC") == 0) {
 				// :nick!ident@host.com TOPIC #chan :This is a topic
 				CChan* pChan = m_pUser->FindChan(sLine.Token(2));
 
 				if (pChan) {
-					CNick Nick(sNickMask);
 					CString sTopic = sLine.Token(3, true);
 					sTopic.LeftChomp();
 					pChan->SetTopicOwner(Nick.GetNick());
@@ -561,8 +556,6 @@ void CIRCSock::ReadLine(const CString& sData) {
 				}
 			} else if (sCmd.CaseCmp("PRIVMSG") == 0) {
 				// :nick!ident@host.com PRIVMSG #chan :Message
-
-				CNick Nick(sNickMask);
 				CString sTarget = sRest.Token(0);
 				CString sMsg = sRest.Token(1, true);
 
@@ -575,29 +568,29 @@ void CIRCSock::ReadLine(const CString& sData) {
 					sMsg.RightChomp();
 
 					if (sTarget.CaseCmp(GetNick()) == 0) {
-						if (OnPrivCTCP(sNickMask, sMsg)) {
+						if (OnPrivCTCP(Nick, sMsg)) {
 							return;
 						}
 					} else {
-						if (OnChanCTCP(sNickMask, sTarget, sMsg)) {
+						if (OnChanCTCP(Nick, sTarget, sMsg)) {
 							return;
 						}
 					}
 
-					PutUser(":" + sNickMask + " PRIVMSG " + sTarget + " :\001" + sMsg + "\001");
+					PutUser(":" + Nick.GetNickMask() + " PRIVMSG " + sTarget + " :\001" + sMsg + "\001");
 					return;
 				} else {
 					if (sTarget.CaseCmp(GetNick()) == 0) {
-						if (OnPrivMsg(sNickMask, sMsg)) {
+						if (OnPrivMsg(Nick, sMsg)) {
 							return;
 						}
 					} else {
-						if (OnChanMsg(sNickMask, sTarget, sMsg)) {
+						if (OnChanMsg(Nick, sTarget, sMsg)) {
 							return;
 						}
 					}
 
-					PutUser(":" + sNickMask + " PRIVMSG " + sTarget + " :" + sMsg);
+					PutUser(":" + Nick.GetNickMask() + " PRIVMSG " + sTarget + " :" + sMsg);
 					return;
 				}
 			}
@@ -623,8 +616,8 @@ bool CIRCSock::OnCTCPReply(const CString& sNickMask, CString& sMessage) {
 	return false;
 }
 
-bool CIRCSock::OnPrivCTCP(const CString& sNickMask, CString& sMessage) {
-	MODULECALL(OnPrivCTCP(sNickMask, sMessage));
+bool CIRCSock::OnPrivCTCP(CNick& Nick, CString& sMessage) {
+	MODULECALL(OnPrivCTCP(Nick, sMessage));
 
 	if (strncasecmp(sMessage.c_str(), "DCC ", 4) == 0 && m_pUser && m_pUser->BounceDCCs()) {
 		// DCC CHAT chat 2453612361 44592
@@ -636,27 +629,25 @@ bool CIRCSock::OnPrivCTCP(const CString& sNickMask, CString& sMessage) {
 
 		if (sType.CaseCmp("CHAT") == 0) {
 			if (m_pUserSock) {
-				CNick FromNick(sNickMask);
+				CNick FromNick(Nick.GetNickMask());
 				unsigned short uBNCPort = CDCCBounce::DCCRequest(FromNick.GetNick(), uLongIP, uPort, "", true, m_pUser, GetLocalIP(), CUtils::GetIP(uLongIP));
 
 				if (uBNCPort) {
-					PutUser(":" + sNickMask + " PRIVMSG " + GetNick() + " :\001DCC CHAT chat " + CString::ToString(CUtils::GetLongIP(GetLocalIP())) + " " + CString::ToString(uBNCPort) + "\001");
+					PutUser(":" + Nick.GetNickMask() + " PRIVMSG " + GetNick() + " :\001DCC CHAT chat " + CString::ToString(CUtils::GetLongIP(GetLocalIP())) + " " + CString::ToString(uBNCPort) + "\001");
 				}
 			}
 		} else if (sType.CaseCmp("SEND") == 0) {
 			// DCC SEND readme.txt 403120438 5550 1104
-			CNick FromNick(sNickMask);
-
-			unsigned short uBNCPort = CDCCBounce::DCCRequest(FromNick.GetNick(), uLongIP, uPort, sFile, false, m_pUser, GetLocalIP(), CUtils::GetIP(uLongIP));
+			unsigned short uBNCPort = CDCCBounce::DCCRequest(Nick.GetNick(), uLongIP, uPort, sFile, false, m_pUser, GetLocalIP(), CUtils::GetIP(uLongIP));
 			if (uBNCPort) {
-				PutUser(":" + sNickMask + " PRIVMSG " + GetNick() + " :\001DCC SEND " + sFile + " " + CString::ToString(CUtils::GetLongIP(GetLocalIP())) + " " + CString::ToString(uBNCPort) + " " + CString::ToString(uFileSize) + "\001");
+				PutUser(":" + Nick.GetNickMask() + " PRIVMSG " + GetNick() + " :\001DCC SEND " + sFile + " " + CString::ToString(CUtils::GetLongIP(GetLocalIP())) + " " + CString::ToString(uBNCPort) + " " + CString::ToString(uFileSize) + "\001");
 			}
 		} else if (sType.CaseCmp("RESUME") == 0) {
 			// Need to lookup the connection by port, filter the port, and forward to the user
 			CDCCBounce* pSock = (CDCCBounce*) CZNC::Get().GetManager().FindSockByLocalPort(atoi(sMessage.Token(3).c_str()));
 
 			if ((pSock) && (strncasecmp(pSock->GetSockName().c_str(), "DCC::", 5) == 0)) {
-				PutUser(":" + sNickMask + " PRIVMSG " + GetNick() + " :\001DCC " + sType + " " + sFile + " " + CString::ToString(pSock->GetUserPort()) + " " + sMessage.Token(4) + "\001");
+				PutUser(":" + Nick.GetNickMask() + " PRIVMSG " + GetNick() + " :\001DCC " + sType + " " + sFile + " " + CString::ToString(pSock->GetUserPort()) + " " + sMessage.Token(4) + "\001");
 			}
 		} else if (sType.CaseCmp("ACCEPT") == 0) {
 			// Need to lookup the connection by port, filter the port, and forward to the user
@@ -667,7 +658,7 @@ bool CIRCSock::OnPrivCTCP(const CString& sNickMask, CString& sMessage) {
 
 				if ((pSock) && (strncasecmp(pSock->GetSockName().c_str(), "DCC::", 5) == 0)) {
 					if (pSock->GetUserPort() == atoi(sMessage.Token(3).c_str())) {
-						PutUser(":" + sNickMask + " PRIVMSG " + GetNick() + " :\001DCC " + sType + " " + sFile + " " + CString::ToString(pSock->GetLocalPort()) + " " + sMessage.Token(4) + "\001");
+						PutUser(":" + Nick.GetNickMask() + " PRIVMSG " + GetNick() + " :\001DCC " + sType + " " + sFile + " " + CString::ToString(pSock->GetLocalPort()) + " " + sMessage.Token(4) + "\001");
 					}
 				}
 			}
@@ -689,7 +680,7 @@ bool CIRCSock::OnPrivCTCP(const CString& sNickMask, CString& sMessage) {
 		}
 
 		if (!sReply.empty()) {
-			PutServ("NOTICE " + CNick(sNickMask).GetNick() + " :\001" + sQuery + " " + sReply + "\001");
+			PutServ("NOTICE " + Nick.GetNick() + " :\001" + sQuery + " " + sReply + "\001");
 			return true;
 		}
 	}
@@ -697,32 +688,32 @@ bool CIRCSock::OnPrivCTCP(const CString& sNickMask, CString& sMessage) {
 	return false;
 }
 
-bool CIRCSock::OnPrivNotice(const CString& sNickMask, CString& sMessage) {
-	MODULECALL(OnPrivNotice(sNickMask, sMessage));
+bool CIRCSock::OnPrivNotice(CNick& Nick, CString& sMessage) {
+	MODULECALL(OnPrivNotice(Nick, sMessage));
 
 	if (!m_pUserSock) {
 		// If the user is detached, add to the buffer
-		m_QueryBuffer.AddLine(":" + sNickMask + " NOTICE ", " :" + sMessage);
+		m_QueryBuffer.AddLine(":" + Nick.GetNickMask() + " NOTICE ", " :" + sMessage);
 	}
 
 	return false;
 }
 
-bool CIRCSock::OnPrivMsg(const CString& sNickMask, CString& sMessage) {
-	MODULECALL(OnPrivMsg(sNickMask, sMessage));
+bool CIRCSock::OnPrivMsg(CNick& Nick, CString& sMessage) {
+	MODULECALL(OnPrivMsg(Nick, sMessage));
 
 	if (!m_pUserSock) {
 		// If the user is detached, add to the buffer
-		m_QueryBuffer.AddLine(":" + sNickMask + " PRIVMSG ", " :" + sMessage);
+		m_QueryBuffer.AddLine(":" + Nick.GetNickMask() + " PRIVMSG ", " :" + sMessage);
 	}
 
 	return false;
 }
 
-bool CIRCSock::OnChanCTCP(const CString& sNickMask, const CString& sChan, CString& sMessage) {
+bool CIRCSock::OnChanCTCP(CNick& Nick, const CString& sChan, CString& sMessage) {
 	CChan* pChan = m_pUser->FindChan(sChan);
 	if (pChan) {
-		MODULECALL(OnChanCTCP(sNickMask, *pChan, sMessage));
+		MODULECALL(OnChanCTCP(Nick, *pChan, sMessage));
 
 		if (pChan->IsDetached()) {
 			return true;
@@ -732,26 +723,26 @@ bool CIRCSock::OnChanCTCP(const CString& sNickMask, const CString& sChan, CStrin
 	return false;
 }
 
-bool CIRCSock::OnChanNotice(const CString& sNickMask, const CString& sChan, CString& sMessage) {
+bool CIRCSock::OnChanNotice(CNick& Nick, const CString& sChan, CString& sMessage) {
 	CChan* pChan = m_pUser->FindChan(sChan);
 	if (pChan) {
-		MODULECALL(OnChanNotice(sNickMask, *pChan, sMessage));
+		MODULECALL(OnChanNotice(Nick, *pChan, sMessage));
 
 		if ((pChan->KeepBuffer()) || (!m_pUserSock)) {
-			pChan->AddBuffer(":" + sNickMask + " NOTICE " + sChan + " :" + sMessage);
+			pChan->AddBuffer(":" + Nick.GetNickMask() + " NOTICE " + sChan + " :" + sMessage);
 		}
 	}
 
 	return ((pChan) && (pChan->IsDetached()));
 }
 
-bool CIRCSock::OnChanMsg(const CString& sNickMask, const CString& sChan, CString& sMessage) {
+bool CIRCSock::OnChanMsg(CNick& Nick, const CString& sChan, CString& sMessage) {
 	CChan* pChan = m_pUser->FindChan(sChan);
 	if (pChan) {
-		MODULECALL(OnChanMsg(sNickMask, *pChan, sMessage));
+		MODULECALL(OnChanMsg(Nick, *pChan, sMessage));
 
 		if ((pChan->KeepBuffer()) || (!m_pUserSock)) {
-			pChan->AddBuffer(":" + sNickMask + " PRIVMSG " + sChan + " :" + sMessage);
+			pChan->AddBuffer(":" + Nick.GetNickMask() + " PRIVMSG " + sChan + " :" + sMessage);
 		}
 	}
 

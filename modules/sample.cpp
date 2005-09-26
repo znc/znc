@@ -125,14 +125,14 @@ public:
 		return CONTINUE;
 	}
 
-	virtual EModRet OnPrivCTCP(const CNick& Nick, CString& sMessage) {
+	virtual EModRet OnPrivCTCP(CNick& Nick, CString& sMessage) {
 		PutModule("[" + Nick.GetNick() + "] privctcp [" + sMessage + "]");
 		sMessage = "\002" + sMessage + "\002";
 
 		return CONTINUE;
 	}
 
-	virtual EModRet OnChanCTCP(const CNick& Nick, CChan& Channel, CString& sMessage) {
+	virtual EModRet OnChanCTCP(CNick& Nick, CChan& Channel, CString& sMessage) {
 		PutModule("[" + Nick.GetNick() + "] chanctcp [" + sMessage + "] to [" + Channel.GetName() + "]");
 		sMessage = "\00311,5 " + sMessage + " \003";
 
@@ -146,14 +146,14 @@ public:
 		return CONTINUE;
 	}
 
-	virtual EModRet OnPrivNotice(const CNick& Nick, CString& sMessage) {
+	virtual EModRet OnPrivNotice(CNick& Nick, CString& sMessage) {
 		PutModule("[" + Nick.GetNick() + "] privnotice [" + sMessage + "]");
 		sMessage = "\002" + sMessage + "\002";
 
 		return CONTINUE;
 	}
 
-	virtual EModRet OnChanNotice(const CNick& Nick, CChan& Channel, CString& sMessage) {
+	virtual EModRet OnChanNotice(CNick& Nick, CChan& Channel, CString& sMessage) {
 		PutModule("[" + Nick.GetNick() + "] channotice [" + sMessage + "] to [" + Channel.GetName() + "]");
 		sMessage = "\00311,5 " + sMessage + " \003";
 
@@ -167,14 +167,14 @@ public:
 		return CONTINUE;
 	}
 
-	virtual EModRet OnPrivMsg(const CNick& Nick, CString& sMessage) {
+	virtual EModRet OnPrivMsg(CNick& Nick, CString& sMessage) {
 		PutModule("[" + Nick.GetNick() + "] privmsg [" + sMessage + "]");
 		sMessage = "\002" + sMessage + "\002";
 
 		return CONTINUE;
 	}
 
-	virtual EModRet OnChanMsg(const CNick& Nick, CChan& Channel, CString& sMessage) {
+	virtual EModRet OnChanMsg(CNick& Nick, CChan& Channel, CString& sMessage) {
 		if (sMessage == "!ping") {
 			PutIRC("PRIVMSG " + Channel.GetName() + " :PONG?");
 		}

@@ -21,6 +21,9 @@ using std::pair;
  * Author: imaginos <imaginos@imaginos.net>
  * 
  * $Log$
+ * Revision 1.20  2005/09/26 08:23:30  prozacx
+ * Removed const from CNick in priv/chan hooks
+ *
  * Revision 1.19  2005/09/20 04:37:28  prozacx
  * Added include for znc.h
  *
@@ -440,7 +443,7 @@ public:
 			PutModule( "Unknown command [" + sCom + "] [" + sArgs + "]" );
 	}
 
-	virtual EModRet OnPrivCTCP( const CNick& Nick, CString& sMessage )
+	virtual EModRet OnPrivCTCP( CNick& Nick, CString& sMessage )
 	{
 		if ( strncasecmp( sMessage.c_str(), "DCC SCHAT ", 10 ) == 0 )
 		{

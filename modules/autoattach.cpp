@@ -34,12 +34,12 @@ public:
 		}
 	}
 
-	virtual EModRet OnChanNotice(const CNick& Nick, CChan& Channel, CString& sMessage) {
+	virtual EModRet OnChanNotice(CNick& Nick, CChan& Channel, CString& sMessage) {
 		TryAttach(Channel);
 		return CONTINUE;
 	}
 
-	virtual EModRet OnChanMsg(const CNick& Nick, CChan& Channel, CString& sMessage) {
+	virtual EModRet OnChanMsg(CNick& Nick, CChan& Channel, CString& sMessage) {
 		TryAttach(Channel);
 		return CONTINUE;
 	}

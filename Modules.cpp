@@ -464,14 +464,14 @@ void CModule::OnPart(const CNick& Nick, CChan& Channel) {}
 CModule::EModRet CModule::OnUserCTCPReply(const CNick& Nick, CString& sMessage) { return CONTINUE; }
 CModule::EModRet CModule::OnCTCPReply(const CNick& Nick, CString& sMessage) { return CONTINUE; }
 CModule::EModRet CModule::OnUserCTCP(const CString& sTarget, CString& sMessage) { return CONTINUE; }
-CModule::EModRet CModule::OnPrivCTCP(const CNick& Nick, CString& sMessage) { return CONTINUE; }
-CModule::EModRet CModule::OnChanCTCP(const CNick& Nick, CChan& Channel, CString& sMessage) { return CONTINUE; }
+CModule::EModRet CModule::OnPrivCTCP(CNick& Nick, CString& sMessage) { return CONTINUE; }
+CModule::EModRet CModule::OnChanCTCP(CNick& Nick, CChan& Channel, CString& sMessage) { return CONTINUE; }
 CModule::EModRet CModule::OnUserMsg(const CString& sTarget, CString& sMessage) { return CONTINUE; }
-CModule::EModRet CModule::OnPrivMsg(const CNick& Nick, CString& sMessage) { return CONTINUE; }
-CModule::EModRet CModule::OnChanMsg(const CNick& Nick, CChan& Channel, CString& sMessage) { return CONTINUE; }
+CModule::EModRet CModule::OnPrivMsg(CNick& Nick, CString& sMessage) { return CONTINUE; }
+CModule::EModRet CModule::OnChanMsg(CNick& Nick, CChan& Channel, CString& sMessage) { return CONTINUE; }
 CModule::EModRet CModule::OnUserNotice(const CString& sTarget, CString& sMessage) { return CONTINUE; }
-CModule::EModRet CModule::OnPrivNotice(const CNick& Nick, CString& sMessage) { return CONTINUE; }
-CModule::EModRet CModule::OnChanNotice(const CNick& Nick, CChan& Channel, CString& sMessage) { return CONTINUE; }
+CModule::EModRet CModule::OnPrivNotice(CNick& Nick, CString& sMessage) { return CONTINUE; }
+CModule::EModRet CModule::OnChanNotice(CNick& Nick, CChan& Channel, CString& sMessage) { return CONTINUE; }
 
 void* CModule::GetDLL() { return m_pDLL; }
 bool CModule::PutIRC(const CString& sLine) {
@@ -610,11 +610,11 @@ bool CModules::OnCTCPReply(const CNick& Nick, CString& sMessage) {
 	MODHALTCHK(OnCTCPReply(Nick, sMessage));
 }
 
-bool CModules::OnPrivCTCP(const CNick& Nick, CString& sMessage) {
+bool CModules::OnPrivCTCP(CNick& Nick, CString& sMessage) {
 	MODHALTCHK(OnPrivCTCP(Nick, sMessage));
 }
 
-bool CModules::OnChanCTCP(const CNick& Nick, CChan& Channel, CString& sMessage) {
+bool CModules::OnChanCTCP(CNick& Nick, CChan& Channel, CString& sMessage) {
 	MODHALTCHK(OnChanCTCP(Nick, Channel, sMessage));
 }
 
@@ -622,11 +622,11 @@ bool CModules::OnUserMsg(const CString& sTarget, CString& sMessage) {
 	MODHALTCHK(OnUserMsg(sTarget, sMessage));
 }
 
-bool CModules::OnPrivMsg(const CNick& Nick, CString& sMessage) {
+bool CModules::OnPrivMsg(CNick& Nick, CString& sMessage) {
 	MODHALTCHK(OnPrivMsg(Nick, sMessage));
 }
 
-bool CModules::OnChanMsg(const CNick& Nick, CChan& Channel, CString& sMessage) {
+bool CModules::OnChanMsg(CNick& Nick, CChan& Channel, CString& sMessage) {
 	MODHALTCHK(OnChanMsg(Nick, Channel, sMessage));
 }
 
@@ -634,11 +634,11 @@ bool CModules::OnUserNotice(const CString& sTarget, CString& sMessage) {
 	MODHALTCHK(OnUserNotice(sTarget, sMessage));
 }
 
-bool CModules::OnPrivNotice(const CNick& Nick, CString& sMessage) {
+bool CModules::OnPrivNotice(CNick& Nick, CString& sMessage) {
 	MODHALTCHK(OnPrivNotice(Nick, sMessage));
 }
 
-bool CModules::OnChanNotice(const CNick& Nick, CChan& Channel, CString& sMessage) {
+bool CModules::OnChanNotice(CNick& Nick, CChan& Channel, CString& sMessage) {
 	MODHALTCHK(OnChanNotice(Nick, Channel, sMessage));
 }
 

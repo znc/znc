@@ -207,32 +207,32 @@ public:
 		return CONTINUE;
 	}
 
-	virtual EModRet OnPrivCTCP(const CNick& Nick, CString& sMessage) {
+	virtual EModRet OnPrivCTCP(CNick& Nick, CString& sMessage) {
 		Process(Nick, "* CTCP: " + Nick.GetNick() + " [" + sMessage + "]", "priv");
 		return CONTINUE;
 	}
 
-	virtual EModRet OnChanCTCP(const CNick& Nick, CChan& Channel, CString& sMessage) {
+	virtual EModRet OnChanCTCP(CNick& Nick, CChan& Channel, CString& sMessage) {
 		Process(Nick, "* CTCP: " + Nick.GetNick() + " [" + sMessage + "] to [" + Channel.GetName() + "]", Channel.GetName());
 		return CONTINUE;
 	}
 
-	virtual EModRet OnPrivNotice(const CNick& Nick, CString& sMessage) {
+	virtual EModRet OnPrivNotice(CNick& Nick, CString& sMessage) {
 		Process(Nick, "-" + Nick.GetNick() + "- " + sMessage, "priv");
 		return CONTINUE;
 	}
 
-	virtual EModRet OnChanNotice(const CNick& Nick, CChan& Channel, CString& sMessage) {
+	virtual EModRet OnChanNotice(CNick& Nick, CChan& Channel, CString& sMessage) {
 		Process(Nick, "-" + Nick.GetNick() + ":" + Channel.GetName() + "- " + sMessage, Channel.GetName());
 		return CONTINUE;
 	}
 
-	virtual EModRet OnPrivMsg(const CNick& Nick, CString& sMessage) {
+	virtual EModRet OnPrivMsg(CNick& Nick, CString& sMessage) {
 		Process(Nick, "<" + Nick.GetNick() + "> " + sMessage, "priv");
 		return CONTINUE;
 	}
 
-	virtual EModRet OnChanMsg(const CNick& Nick, CChan& Channel, CString& sMessage) {
+	virtual EModRet OnChanMsg(CNick& Nick, CChan& Channel, CString& sMessage) {
 		Process(Nick, "<" + Nick.GetNick() + ":" + Channel.GetName() + "> " + sMessage, Channel.GetName());
 		return CONTINUE;
 	}

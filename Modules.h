@@ -228,14 +228,14 @@ public:
 	virtual EModRet OnUserCTCPReply(const CNick& Nick, CString& sMessage);
 	virtual EModRet OnCTCPReply(const CNick& Nick, CString& sMessage);
 	virtual EModRet OnUserCTCP(const CString& sTarget, CString& sMessage);
-	virtual EModRet OnPrivCTCP(const CNick& Nick, CString& sMessage);
-	virtual EModRet OnChanCTCP(const CNick& Nick, CChan& Channel, CString& sMessage);
+	virtual EModRet OnPrivCTCP(CNick& Nick, CString& sMessage);
+	virtual EModRet OnChanCTCP(CNick& Nick, CChan& Channel, CString& sMessage);
 	virtual EModRet OnUserMsg(const CString& sTarget, CString& sMessage);
-	virtual EModRet OnPrivMsg(const CNick& Nick, CString& sMessage);
-	virtual EModRet OnChanMsg(const CNick& Nick, CChan& Channel, CString& sMessage);
+	virtual EModRet OnPrivMsg(CNick& Nick, CString& sMessage);
+	virtual EModRet OnChanMsg(CNick& Nick, CChan& Channel, CString& sMessage);
 	virtual EModRet OnUserNotice(const CString& sTarget, CString& sMessage);
-	virtual EModRet OnPrivNotice(const CNick& Nick, CString& sMessage);
-	virtual EModRet OnChanNotice(const CNick& Nick, CChan& Channel, CString& sMessage);
+	virtual EModRet OnPrivNotice(CNick& Nick, CString& sMessage);
+	virtual EModRet OnChanNotice(CNick& Nick, CChan& Channel, CString& sMessage);
 
 	void * GetDLL();
 	static double GetCoreVersion() { return VERSION; }
@@ -350,14 +350,14 @@ public:
 	virtual bool OnUserCTCPReply(const CNick& Nick, CString& sMessage);
 	virtual bool OnCTCPReply(const CNick& Nick, CString& sMessage);
 	virtual bool OnUserCTCP(const CString& sTarget, CString& sMessage);
-	virtual bool OnPrivCTCP(const CNick& Nick, CString& sMessage);
-	virtual bool OnChanCTCP(const CNick& Nick, CChan& Channel, CString& sMessage);
+	virtual bool OnPrivCTCP(CNick& Nick, CString& sMessage);
+	virtual bool OnChanCTCP(CNick& Nick, CChan& Channel, CString& sMessage);
 	virtual bool OnUserMsg(const CString& sTarget, CString& sMessage);
-	virtual bool OnPrivMsg(const CNick& Nick, CString& sMessage);
-	virtual bool OnChanMsg(const CNick& Nick, CChan& Channel, CString& sMessage);
+	virtual bool OnPrivMsg(CNick& Nick, CString& sMessage);
+	virtual bool OnChanMsg(CNick& Nick, CChan& Channel, CString& sMessage);
 	virtual bool OnUserNotice(const CString& sTarget, CString& sMessage);
-	virtual bool OnPrivNotice(const CNick& Nick, CString& sMessage);
-	virtual bool OnChanNotice(const CNick& Nick, CChan& Channel, CString& sMessage);
+	virtual bool OnPrivNotice(CNick& Nick, CString& sMessage);
+	virtual bool OnChanNotice(CNick& Nick, CChan& Channel, CString& sMessage);
 
 	CModule* FindModule(const CString& sModule) const;
 	bool LoadModule(const CString& sModule, const CString& sArgs, CUser* pUser, CString& sRetMsg, bool bFake = false);
