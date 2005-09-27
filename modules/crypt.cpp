@@ -40,10 +40,18 @@ public:
 		MCString::iterator it = FindNV(sTarget.AsLower());
 
 		if (it != EndNV()) {
+			CChan* pChan = m_pUser->FindChan(sTarget);
+			if ((pChan) && (pChan->KeepBuffer())) {
+				pChan->AddBuffer(":\244" + m_pUser->GetIRCNick().GetNickMask() + " PRIVMSG " + sTarget + " :" + sMessage);
+			}
+
 			sMessage = MakeIvec() + sMessage;
 			sMessage.Encrypt(it->second);
 			sMessage.Base64Encode();
 			sMessage = "+OK *" + sMessage;
+
+			PutIRC("PRIVMSG " + sTarget + " :" + sMessage);
+			return HALTCORE;
 		}
 
 		return CONTINUE;
