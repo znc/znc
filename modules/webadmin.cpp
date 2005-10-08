@@ -1011,7 +1011,7 @@ CUser* CWebAdminSock::GetNewUser(CString& sPageRet, CUser* pUser) {
 
 	if (pUser && pUser != CZNC::Get().FindUser(GetUser())) {
 		pNewUser->SetAdmin(GetParam("isadmin").ToBool());
-	} else {
+	} else if (pUser) {
 		pNewUser->SetAdmin(pUser->IsAdmin());
 	}
 
