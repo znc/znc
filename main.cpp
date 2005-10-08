@@ -43,6 +43,7 @@ void die(int sig) {
 	}
 #endif /* _DEBUG */
 
+	delete &CZNC::Get();
 	exit(sig);
 }
 
@@ -127,14 +128,15 @@ int main(int argc, char** argv, char** envp) {
 
 #ifdef HAVE_LIBSSL
 	if (bMakePem) {
-		CZNC& ZNC = CZNC::Get();
-		ZNC.InitDirs("");
-		CString sPemFile = ZNC.GetPemLocation();
+		CZNC* pZNC = &CZNC::Get();
+		pZNC->InitDirs("");
+		CString sPemFile = pZNC->GetPemLocation();
 
 		CUtils::PrintAction("Writing Pem file [" + sPemFile + "]");
 
 		if (CFile::Exists(sPemFile)) {
 			CUtils::PrintStatus(false, "File already exists");
+			delete pZNC;
 			return 1;
 		}
 
@@ -142,6 +144,7 @@ int main(int argc, char** argv, char** envp) {
 
 		if (!f) {
 			CUtils::PrintStatus(false, "Unable to open");
+			delete pZNC;
 			return 1 ;
 		}
 
@@ -150,6 +153,7 @@ int main(int argc, char** argv, char** envp) {
 
 		CUtils::PrintStatus(true);
 
+		delete pZNC;
 		return 0;
 	}
 #endif /* HAVE_LIBSSL */
@@ -161,21 +165,24 @@ int main(int argc, char** argv, char** envp) {
 		return 0;
 	}
 
-	CZNC& ZNC = CZNC::Get();
-	ZNC.InitDirs(((argc) ? argv[0] : ""));
+	CZNC* pZNC = &CZNC::Get();
+	pZNC->InitDirs(((argc) ? argv[0] : ""));
 
-	if (!ZNC.ParseConfig(sConfig)) {
+	if (!pZNC->ParseConfig(sConfig)) {
 		CUtils::PrintError("Unrecoverable config error.");
+		delete pZNC;
 		return 1;
 	}
 
-	if (!ZNC.GetListenPort()) {
+	if (!pZNC->GetListenPort()) {
 		CUtils::PrintError("You must supply a ListenPort in your config.");
+		delete pZNC;
 		return 1;
 	}
 
-	if (!ZNC.OnBoot()) {
+	if (!pZNC->OnBoot()) {
 		CUtils::PrintError("Exiting due to module boot errors.");
+		delete pZNC;
 		return 1;
 	}
 
@@ -188,13 +195,14 @@ int main(int argc, char** argv, char** envp) {
 
 	if (iPid == -1) {
 		CUtils::PrintStatus(false, strerror(errno));
+		delete pZNC;
 		exit(1);
 	}
 
 	if (iPid > 0) {
 		CUtils::PrintStatus(true, "[pid: " + CString::ToString(iPid) + "]");
 
-		ZNC.WritePidFile(iPid);
+		pZNC->WritePidFile(iPid);
 		CUtils::PrintMessage(CZNC::GetTag(false));
 		exit(0);
 	}
@@ -223,7 +231,7 @@ int main(int argc, char** argv, char** envp) {
 	int iRet = 0;
 
 	try {
-		iRet = ZNC.Loop();
+		iRet = pZNC->Loop();
 	} catch (CException e) {
 		// EX_Shutdown is thrown to exit
 		switch (e.GetType()) {
@@ -233,6 +241,8 @@ int main(int argc, char** argv, char** envp) {
 				iRet = 1;
 		}
 	}
+
+	delete pZNC;
 
 	return iRet;
 }
