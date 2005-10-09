@@ -126,7 +126,13 @@ CString CNick::GetPermStr() const {
 const CString& CNick::GetNick() const { return m_sNick; }
 const CString& CNick::GetIdent() const { return m_sIdent; }
 const CString& CNick::GetHost() const { return m_sHost; }
-CString CNick::GetNickMask() const { return m_sNick + "!" + m_sIdent + "@" + m_sHost; }
+CString CNick::GetNickMask() const {
+	if (m_sNick.find('.') != CString::npos) {
+		return m_sNick;
+	}
+
+	return (m_sNick + "!" + m_sIdent + "@" + m_sHost);
+}
 
 CString CNick::GetHostMask() const {
 	CString sRet = m_sNick;
