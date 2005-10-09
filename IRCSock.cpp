@@ -60,7 +60,7 @@ void CIRCSock::ReadLine(const CString& sData) {
 		sLine.RightChomp();
 	}
 
-	DEBUG_ONLY(cout << GetSockName() << " <- [" << sLine << "]" << endl);
+	DEBUG_ONLY(cout << "(" << m_pUser->GetUserName() << ") IRC -> ZNC [" << sLine << "]" << endl);
 
 #ifdef _MODULES
 	CGlobalModules& GMods = CZNC::Get().GetModules();
@@ -84,6 +84,7 @@ void CIRCSock::ReadLine(const CString& sData) {
 
 			switch (uRaw) {
 				case 1:	{// :irc.server.com 001 nick :Welcome to the Internet Relay Network nick
+					m_pUser->SetIRCServer(sServer);
 					SetTimeout(900);	// Now that we are connected, let nature take its course
 					PutServ("WHO " + sNick);
 					if (!m_pAwayNickTimer) {
@@ -544,7 +545,12 @@ void CIRCSock::ReadLine(const CString& sData) {
 					}
 				}
 
-				m_pUser->PutUser(":" + Nick.GetNickMask() + " NOTICE " + sTarget + " :" + sMsg);
+				if (Nick.GetNick().CaseCmp(m_pUser->GetIRCServer()) == 0) {
+					m_pUser->PutUser(":" + Nick.GetNick() + " NOTICE " + sTarget + " :" + sMsg);
+				} else {
+					m_pUser->PutUser(":" + Nick.GetNickMask() + " NOTICE " + sTarget + " :" + sMsg);
+				}
+
 				return;
 			} else if (sCmd.CaseCmp("TOPIC") == 0) {
 				// :nick!ident@host.com TOPIC #chan :This is a topic
@@ -753,7 +759,7 @@ bool CIRCSock::OnChanMsg(CNick& Nick, const CString& sChan, CString& sMessage) {
 }
 
 void CIRCSock::PutServ(const CString& sLine) {
-	DEBUG_ONLY(cout << GetSockName() << " -> [" << sLine << "]" << endl);
+	DEBUG_ONLY(cout << "(" << m_pUser->GetUserName() << ") ZNC -> IRC [" << sLine << "]" << endl);
 	Write(sLine + "\r\n");
 }
 
