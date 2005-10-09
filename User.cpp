@@ -90,10 +90,13 @@ void CUser::IRCDisconnected() {
 void CUser::UserConnected(CUserSock* pUserSock) {
 	m_vUserSocks.push_back(pUserSock);
 	CString sConfNick = GetNick();
+	CIRCSock* pIRCSock = GetIRCSock();
 
-	/*if (ircsock.Nick().CaseCmp(CNick::Concat(sConfNick, GetAwaySuffix(), GetMaxNickLen())) == 0) {
-		PutIRC("NICK " + sConfNick);
-	} nigs */
+	if (pIRCSock) {
+		if (pIRCSock->GetNick().CaseCmp(CNick::Concat(sConfNick, GetAwaySuffix(), pIRCSock->GetMaxNickLen())) == 0) {
+			PutIRC("NICK " + sConfNick);
+		}
+	}
 
 	if (m_RawBuffer.IsEmpty()) {
 		pUserSock->PutServ(":irc.znc.com 001 " + pUserSock->GetNick() + " :- Welcome to ZNC -");
@@ -101,7 +104,7 @@ void CUser::UserConnected(CUserSock* pUserSock) {
 		unsigned int uIdx = 0;
 		CString sLine;
 
-		while (m_RawBuffer.GetLine(GetNick(), sLine, uIdx++)) {
+		while (m_RawBuffer.GetLine(GetIRCNick().GetNick(), sLine, uIdx++)) {
 			pUserSock->PutServ(sLine);
 		}
 	}
@@ -113,7 +116,7 @@ void CUser::UserConnected(CUserSock* pUserSock) {
 		unsigned int uIdx = 0;
 		CString sLine;
 
-		while (m_MotdBuffer.GetLine(GetNick(), sLine, uIdx++)) {
+		while (m_MotdBuffer.GetLine(GetIRCNick().GetNick(), sLine, uIdx++)) {
 			pUserSock->PutServ(sLine);
 		}
 	}
@@ -126,7 +129,7 @@ void CUser::UserConnected(CUserSock* pUserSock) {
 	}
 
 	CString sBufLine;
-	while (m_QueryBuffer.GetNextLine(GetNick(), sBufLine)) {
+	while (m_QueryBuffer.GetNextLine(GetIRCNick().GetNick(), sBufLine)) {
 		pUserSock->PutServ(sBufLine);
 	}
 }
