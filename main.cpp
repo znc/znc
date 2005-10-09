@@ -121,12 +121,12 @@ int main(int argc, char** argv, char** envp) {
 				args[1] = NULL;
 				args[2] = NULL;
 			} else {
-				CUtils::PrintError("Unable to lauch znc [Try manually restarting]");
+				CUtils::PrintError("Unable to launch znc [Try manually restarting]");
 				return 1;
 			}
 
 			if (execve(*argv, args, envp) == -1) {
-				CUtils::PrintError("Unable to lauch znc [" + CString(strerror(errno)) + "]");
+				CUtils::PrintError("Unable to launch znc [" + CString(strerror(errno)) + "]");
 				return 1;
 			}
 		}
