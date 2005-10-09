@@ -68,7 +68,7 @@ bool CUser::OnBoot() {
 }
 
 void CUser::IRCConnected(CIRCSock* pIRCSock) {
-	TSocketManager<Csock>& Manager = CZNC::Get().GetManager();
+	/*TSocketManager<Csock>& Manager = CZNC::Get().GetManager();
 
 	for (unsigned int a = 0; a < Manager.size(); a++) {
 		CUserSock* pUserSock = (CUserSock*) Manager[a];
@@ -78,7 +78,7 @@ void CUser::IRCConnected(CIRCSock* pIRCSock) {
 			m_vUserSocks.push_back(pUserSock);
 			pUserSock->IRCConnected(pIRCSock);
 		}
-	}
+	}*/
 }
 
 void CUser::IRCDisconnected() {
