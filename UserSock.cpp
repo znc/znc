@@ -14,7 +14,7 @@ void CUserSock::ReadLine(const CString& sData) {
 		sLine.RightChomp();
 	}
 
-	DEBUG_ONLY(cout << GetSockName() << " <- [" << sLine << "]" << endl);
+	DEBUG_ONLY(cout << "(" << ((m_pUser) ? m_pUser->GetUserName() : CString("")) << ") CLI -> ZNC [" << sLine << "]" << endl);
 
 #ifdef _MODULES
 	if (m_bAuthed) {
@@ -1048,7 +1048,7 @@ void CUserSock::PutIRC(const CString& sLine) {
 }
 
 void CUserSock::PutServ(const CString& sLine) {
-	DEBUG_ONLY(cout << GetSockName() << " -> [" << sLine << "]" << endl);
+	DEBUG_ONLY(cout << "(" << ((m_pUser) ? m_pUser->GetUserName() : CString("")) << ") ZNC -> CLI [" << sLine << "]" << endl);
 	Write(sLine + "\r\n");
 }
 
@@ -1065,7 +1065,7 @@ void CUserSock::PutModNotice(const CString& sModule, const CString& sLine) {
 		return;
 	}
 
-	DEBUG_ONLY(cout << GetSockName() << " -> [:" + m_pUser->GetStatusPrefix() + ((sModule.empty()) ? "status" : sModule) + "!znc@znc.com NOTICE " << GetNick() << " :" << sLine << "]" << endl);
+	DEBUG_ONLY(cout << "(" << m_pUser->GetUserName() << ") ZNC -> CLI [:" + m_pUser->GetStatusPrefix() + ((sModule.empty()) ? "status" : sModule) + "!znc@znc.com NOTICE " << GetNick() << " :" << sLine << "]" << endl);
 	Write(":" + m_pUser->GetStatusPrefix() + ((sModule.empty()) ? "status" : sModule) + "!znc@znc.com NOTICE " + GetNick() + " :" + sLine + "\r\n");
 }
 
@@ -1074,7 +1074,7 @@ void CUserSock::PutModule(const CString& sModule, const CString& sLine) {
 		return;
 	}
 
-	DEBUG_ONLY(cout << GetSockName() << " -> [:" + m_pUser->GetStatusPrefix() + ((sModule.empty()) ? "status" : sModule) + "!znc@znc.com PRIVMSG " << GetNick() << " :" << sLine << "]" << endl);
+	DEBUG_ONLY(cout << "(" << m_pUser->GetUserName() << ") ZNC -> CLI [:" + m_pUser->GetStatusPrefix() + ((sModule.empty()) ? "status" : sModule) + "!znc@znc.com PRIVMSG " << GetNick() << " :" << sLine << "]" << endl);
 	Write(":" + m_pUser->GetStatusPrefix() + ((sModule.empty()) ? "status" : sModule) + "!znc@znc.com PRIVMSG " + GetNick() + " :" + sLine + "\r\n");
 }
 
