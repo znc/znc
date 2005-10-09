@@ -64,7 +64,7 @@ void CChan::Cycle() const {
 	m_pUser->PutIRC("PART " + GetName() + "\r\nJOIN " + GetName() + " " + GetKey());
 }
 
-void CChan::JoinUser(bool bForce, const CString& sKey) {
+void CChan::JoinUser(bool bForce, const CString& sKey, CUserSock* pUserSock) {
 	if (!bForce && (!IsOn() || !IsDetached())) {
 		IncClientRequests();
 
@@ -72,11 +72,11 @@ void CChan::JoinUser(bool bForce, const CString& sKey) {
 		return;
 	}
 
-	m_pUser->PutUser(":" + m_pUser->GetIRCNick().GetNickMask() + " JOIN :" + GetName());
+	m_pUser->PutUser(":" + m_pUser->GetIRCNick().GetNickMask() + " JOIN :" + GetName(), pUserSock);
 
 	if (!GetTopic().empty()) {
-		m_pUser->PutUser(":" + m_pUser->GetIRCServer() + " 332 " + m_pUser->GetIRCNick().GetNick() + " " + GetName() + " :" + GetTopic());
-		m_pUser->PutUser(":" + m_pUser->GetIRCServer() + " 333 " + m_pUser->GetIRCNick().GetNick() + " " + GetName() + " " + GetTopicOwner() + " " + CString::ToString(GetTopicDate()));
+		m_pUser->PutUser(":" + m_pUser->GetIRCServer() + " 332 " + m_pUser->GetIRCNick().GetNick() + " " + GetName() + " :" + GetTopic(), pUserSock);
+		m_pUser->PutUser(":" + m_pUser->GetIRCServer() + " 333 " + m_pUser->GetIRCNick().GetNick() + " " + GetName() + " " + GetTopicOwner() + " " + CString::ToString(GetTopicDate()), pUserSock);
 	}
 
 	CString sPre = ":" + m_pUser->GetIRCServer() + " 353 " + m_pUser->GetIRCNick().GetNick() + " = " + GetName() + " :";
@@ -91,35 +91,32 @@ void CChan::JoinUser(bool bForce, const CString& sKey) {
 		sLine += a->first;
 
 		if (sLine.size() >= 490 || a == (--m_msNicks.end())) {
-			m_pUser->PutUser(sLine);
+			m_pUser->PutUser(sLine, pUserSock);
 			sLine = sPre;
 		} else {
 			sLine += " ";
 		}
 	}
 
-	m_pUser->PutUser(":" + m_pUser->GetIRCServer() + " 366 " + m_pUser->GetIRCNick().GetNick() + " " + GetName() + " :End of /NAMES list.");
-	SendBuffer();
-
+	m_pUser->PutUser(":" + m_pUser->GetIRCServer() + " 366 " + m_pUser->GetIRCNick().GetNick() + " " + GetName() + " :End of /NAMES list.", pUserSock);
 	m_bDetached = false;
-}
 
-void CChan::SendBuffer() {
+	// Send Buffer
 	if (m_pUser->IsUserAttached()) {
 		const vector<CString>& vsBuffer = GetBuffer();
 
 		if (vsBuffer.size()) {
-			m_pUser->PutUser(":***!znc@znc.com PRIVMSG " + GetName() + " :Buffer Playback...");
+			m_pUser->PutUser(":***!znc@znc.com PRIVMSG " + GetName() + " :Buffer Playback...", pUserSock);
 
 			for (unsigned int a = 0; a < vsBuffer.size(); a++) {
-				m_pUser->PutUser(vsBuffer[a]);
+				m_pUser->PutUser(vsBuffer[a], pUserSock);
 			}
 
 			if (!KeepBuffer()) {
 				ClearBuffer();
 			}
 
-			m_pUser->PutUser(":***!znc@znc.com PRIVMSG " + GetName() + " :Playback Complete.");
+			m_pUser->PutUser(":***!znc@znc.com PRIVMSG " + GetName() + " :Playback Complete.", pUserSock);
 		}
 	}
 }

@@ -14,9 +14,10 @@ class CShellMod;
 
 class CExecSock : public Csock {
 public:
-	CExecSock(CShellMod* pShellMod, const CString& sExec) : Csock() {
+	CExecSock(CShellMod* pShellMod, CUserSock* pUserSock, const CString& sExec) : Csock() {
 		EnableReadLine();
 		m_pParent = pShellMod;
+		m_pUserSock = pUserSock;
 		int iReadFD, iWriteFD;
 		m_iPid = popen2(iReadFD, iWriteFD, sExec);
 		ConnectFD(iReadFD, iWriteFD, "0.0.0.0:0");
@@ -83,6 +84,8 @@ public:
 		}
 		return;
 	}
+private:
+	CUserSock*	m_pUserSock;
 };
 
 class CShellMod : public CModule {
@@ -185,7 +188,7 @@ public:
 	}
 
 	void RunCommand(const CString& sCommand) {
-		m_pManager->AddSock((Csock*) new CExecSock(this, "cd " + m_sPath + " && " + sCommand), "SHELL");
+		m_pManager->AddSock((Csock*) new CExecSock(this, m_pUserSock, "cd " + m_sPath + " && " + sCommand), "SHELL");
 	}
 private:
 	CString	m_sPath;
@@ -204,11 +207,15 @@ void CExecSock::ReadLine(const CString& sData) {
 		a = sLine.find('\t');
 	}
 
+	m_pParent->SetUserSock(m_pUserSock);
 	m_pParent->PutShell(sLine);
+	m_pParent->SetUserSock(NULL);
 }
 
 void CExecSock::Disconnected() {
+	m_pParent->SetUserSock(m_pUserSock);
 	m_pParent->PutShell("znc$");
+	m_pParent->SetUserSock(NULL);
 }
 
 MODULEDEFS(CShellMod, "Gives shell access")

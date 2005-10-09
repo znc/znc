@@ -8,7 +8,6 @@
 
 // Forward Declarations
 class CZNC;
-class CUserSock;
 class CAwayNickTimer;
 // !Forward Declarations
 
@@ -42,12 +41,7 @@ public:
 	virtual void Timeout();
 
 	void KeepNick(bool bForce = false);
-	bool IsUserAttached() { return (m_pUserSock != NULL); }
-	void UserConnected(CUserSock* pUserSock);
-	void UserDisconnected();
 	void PutServ(const CString& sLine);
-	void PutUser(const CString& sLine);
-	void PutStatus(const CString& sLine);
 	void CIRCSock::ParseISupport(const CString& sLine);
 
 	// Setters
@@ -84,14 +78,9 @@ protected:
 	CUser*						m_pUser;
 	CNick						m_Nick;
 	CString						m_sPass;
-	CBuffer						m_RawBuffer;
-	CBuffer						m_MotdBuffer;
-	CUserSock*					m_pUserSock;
 	map<CString, CChan*>		m_msChans;
 	unsigned int				m_uMaxNickLen;
-	unsigned int				m_uQueryBufferCount;
 	CAwayNickTimer*				m_pAwayNickTimer;
-	CBuffer						m_QueryBuffer;
 };
 
 #endif // !_IRCSOCK_H

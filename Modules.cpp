@@ -164,6 +164,7 @@ CModule::CModule(void* pDLL, CUser* pUser, const CString& sModName) {
 	m_pDLL = pDLL;
 	m_pManager = &(CZNC::Get().GetManager());;
 	m_pUser = pUser;
+	m_pUserSock = NULL;
 	m_sModName = sModName;
 
 	if (m_pUser) {
@@ -177,6 +178,7 @@ CModule::CModule(void* pDLL, const CString& sModName) {
 	m_pDLL = pDLL;
 	m_pManager = &(CZNC::Get().GetManager());
 	m_pUser = NULL;
+	m_pUserSock = NULL;
 	m_sModName = sModName;
 
 	m_sSavePath = CZNC::Get().GetZNCPath() + "/moddata/" + m_sModName;
@@ -196,6 +198,7 @@ CModule::~CModule() {
 }
 
 void CModule::SetUser(CUser* pUser) { m_pUser = pUser; }
+void CModule::SetUserSock(CUserSock* pUserSock) { m_pUserSock = pUserSock; }
 void CModule::Unload() { throw UNLOAD; }
 
 bool CModule::LoadRegistry() {
@@ -478,16 +481,16 @@ bool CModule::PutIRC(const CString& sLine) {
 	return (m_pUser) ? m_pUser->PutIRC(sLine) : false;
 }
 bool CModule::PutUser(const CString& sLine) {
-	return (m_pUser) ? m_pUser->PutUser(sLine) : false;
+	return (m_pUser) ? m_pUser->PutUser(sLine, m_pUserSock) : false;
 }
 bool CModule::PutStatus(const CString& sLine) {
-	return (m_pUser) ? m_pUser->PutStatus(sLine) : false;
+	return (m_pUser) ? m_pUser->PutStatus(sLine, m_pUserSock) : false;
 }
 bool CModule::PutModule(const CString& sLine, const CString& sIdent, const CString& sHost) {
-	return (m_pUser) ? m_pUser->PutUser(":" + GetModNick() + "!" + sIdent + "@" + sHost + " PRIVMSG " + m_pUser->GetCurNick() + " :" + sLine) : false;
+	return (m_pUser) ? m_pUser->PutUser(":" + GetModNick() + "!" + sIdent + "@" + sHost + " PRIVMSG " + m_pUser->GetCurNick() + " :" + sLine, m_pUserSock) : false;
 }
 bool CModule::PutModNotice(const CString& sLine, const CString& sIdent, const CString& sHost) {
-	return (m_pUser) ? m_pUser->PutUser(":" + GetModNick() + "!" + sIdent + "@" + sHost + " NOTICE " + m_pUser->GetCurNick() + " :" + sLine) : false;
+	return (m_pUser) ? m_pUser->PutUser(":" + GetModNick() + "!" + sIdent + "@" + sHost + " NOTICE " + m_pUser->GetCurNick() + " :" + sLine, m_pUserSock) : false;
 }
 
 

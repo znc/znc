@@ -142,7 +142,7 @@ void CUserSock::ReadLine(const CString& sData) {
 		}
 	} else if (sCommand.CaseCmp("QUIT") == 0) {
 		if (m_pIRCSock) {
-			m_pIRCSock->UserDisconnected();
+			m_pUser->UserDisconnected(this);
 		}
 
 		Close();	// Treat a client quit as a detach
@@ -168,9 +168,13 @@ void CUserSock::ReadLine(const CString& sData) {
 				CModule* pModule = CZNC::Get().GetModules().FindModule(sModule);
 
 				if (pModule) {
+					pModule->SetUserSock(this);
 					pModule->OnModNotice(sMsg);
+					pModule->SetUserSock(NULL);
 				} else if ((pModule = m_pUser->GetModules().FindModule(sModule))) {
+					pModule->SetUserSock(this);
 					pModule->OnModNotice(sMsg);
+					pModule->SetUserSock(NULL);
 				} else {
 					PutStatus("No such module [" + sModule + "]");
 				}
@@ -318,7 +322,9 @@ void CUserSock::ReadLine(const CString& sData) {
 
 				CModule* pModule = m_pUser->GetModules().FindModule(sModule);
 				if (pModule) {
+					pModule->SetUserSock(this);
 					pModule->OnModCTCP(sCTCP);
+					pModule->SetUserSock(NULL);
 				} else {
 					PutStatus("No such module [" + sModule + "]");
 				}
@@ -349,7 +355,9 @@ void CUserSock::ReadLine(const CString& sData) {
 
 				CModule* pModule = m_pUser->GetModules().FindModule(sModule);
 				if (pModule) {
+					pModule->SetUserSock(this);
 					pModule->OnModCommand(sMsg);
+					pModule->SetUserSock(NULL);
 				} else {
 					PutStatus("No such module [" + sModule + "]");
 				}
@@ -369,6 +377,21 @@ void CUserSock::ReadLine(const CString& sData) {
 		}
 
 		PutIRC("PRIVMSG " + sTarget + " :" + sMsg);
+
+		// Relay to the rest of the clients that may be connected to this user
+
+		if (m_pUser && m_pUser->IsChan(sTarget)) {
+			vector<CUserSock*>& vUserSocks = m_pUser->GetUserSocks();
+
+			for (unsigned int a = 0; a < vUserSocks.size(); a++) {
+				CUserSock* pUserSock = vUserSocks[a];
+
+				if (pUserSock != this) {
+					pUserSock->PutServ(":" + GetNickMask() + " PRIVMSG " + sTarget + " :" + sMsg);
+				}
+			}
+		}
+
 		return;
 	}
 
@@ -974,7 +997,7 @@ void CUserSock::AuthUser() {
 
 		if (pIRCSock) {
 			m_pIRCSock = pIRCSock;
-			pIRCSock->UserConnected(this);
+			m_pUser->UserConnected(this);
 		}
 
 		VOIDMODULECALL(OnUserAttached());
@@ -992,7 +1015,7 @@ void CUserSock::ConnectionRefused() {
 
 void CUserSock::Disconnected() {
 	if (m_pIRCSock) {
-		m_pIRCSock->UserDisconnected();
+		m_pUser->UserDisconnected(this);
 		m_pIRCSock = NULL;
 	}
 

@@ -19,6 +19,8 @@ CUser::CUser(const CString& sUserName) {
 #ifdef _MODULES
 	m_pModules = new CModules;
 #endif
+	m_RawBuffer.SetLineCount(100);		// This should be more than enough raws, especially since we are buffering the MOTD separately
+	m_MotdBuffer.SetLineCount(200);		// This should be more than enough motd lines
 	m_bBounceDCCs = true;
 	m_bPassHashed = false;
 	m_bUseClientIP = false;
@@ -26,6 +28,7 @@ CUser::CUser(const CString& sUserName) {
 	m_bDenyLoadMod = false;
 	m_bAdmin= false;
 	m_sStatusPrefix = "*";
+	m_sChanPrefixes = "#&";
 	m_uBufferCount = 50;
 	m_bKeepBuffer = false;
 	m_bAutoCycle = true;
@@ -49,6 +52,10 @@ CUser::~CUser() {
 		delete m_vChans[b];
 	}
 
+	for (unsigned int c = 0; c < m_vUserSocks.size(); c++) {
+		CZNC::Get().GetManager().DelSockByAddr(m_vUserSocks[c]);
+	}
+
 	CZNC::Get().GetManager().DelCronByAddr(m_pKeepNickTimer);
 	CZNC::Get().GetManager().DelCronByAddr(m_pJoinTimer);
 }
@@ -58,6 +65,84 @@ bool CUser::OnBoot() {
 	return GetModules().OnBoot();
 #endif
 	return true;
+}
+
+void CUser::IRCConnected(CIRCSock* pIRCSock) {
+	TSocketManager<Csock>& Manager = CZNC::Get().GetManager();
+
+	for (unsigned int a = 0; a < Manager.size(); a++) {
+		CUserSock* pUserSock = (CUserSock*) Manager[a];
+		const CString& sSockName = pUserSock->GetSockName();
+
+		if (sSockName == ("USR::" + GetUserName())) {
+			m_vUserSocks.push_back(pUserSock);
+			pUserSock->IRCConnected(pIRCSock);
+		}
+	}
+}
+
+void CUser::IRCDisconnected() {
+	for (unsigned int a = 0; a < m_vUserSocks.size(); a++) {
+		m_vUserSocks[a]->IRCDisconnected();
+	}
+}
+
+void CUser::UserConnected(CUserSock* pUserSock) {
+	m_vUserSocks.push_back(pUserSock);
+	CString sConfNick = GetNick();
+
+	/*if (ircsock.Nick().CaseCmp(CNick::Concat(sConfNick, GetAwaySuffix(), GetMaxNickLen())) == 0) {
+		PutIRC("NICK " + sConfNick);
+	} nigs */
+
+	if (m_RawBuffer.IsEmpty()) {
+		pUserSock->PutServ(":irc.znc.com 001 " + pUserSock->GetNick() + " :- Welcome to ZNC -");
+	} else {
+		unsigned int uIdx = 0;
+		CString sLine;
+
+		while (m_RawBuffer.GetLine(GetNick(), sLine, uIdx++)) {
+			pUserSock->PutServ(sLine);
+		}
+	}
+
+	// Send the cached MOTD
+	if (m_MotdBuffer.IsEmpty()) {
+		PutIRC("MOTD");
+	} else {
+		unsigned int uIdx = 0;
+		CString sLine;
+
+		while (m_MotdBuffer.GetLine(GetNick(), sLine, uIdx++)) {
+			pUserSock->PutServ(sLine);
+		}
+	}
+
+	const vector<CChan*>& vChans = GetChans();
+	for (unsigned int a = 0; a < vChans.size(); a++) {
+		if ((vChans[a]->IsOn()) && (!vChans[a]->IsDetached())) {
+			vChans[a]->JoinUser(true, "", pUserSock);
+		}
+	}
+
+	CString sBufLine;
+	while (m_QueryBuffer.GetNextLine(GetNick(), sBufLine)) {
+		pUserSock->PutServ(sBufLine);
+	}
+}
+
+void CUser::UserDisconnected(CUserSock* pUserSock) {
+	/*if (!m_pAwayNickTimer) {
+		m_pAwayNickTimer = new CAwayNickTimer(this);
+		CZNC::Get().GetManager().AddCron(m_pAwayNickTimer);
+	}*/
+
+	for (unsigned int a = 0; a < m_vUserSocks.size(); a++) {
+		if (m_vUserSocks[a] == pUserSock) {
+			m_vUserSocks.erase(m_vUserSocks.begin() + a);
+			break;
+		}
+	}
 }
 
 bool CUser::Clone(const CUser& User, CString& sErrorRet) {
@@ -99,8 +184,9 @@ bool CUser::Clone(const CUser& User, CString& sErrorRet) {
 		AddAllowedHost(*it);
 	}
 
-	CUserSock* pSock = GetUserSock();
-	if (pSock) {
+	for (unsigned int a = 0; a < m_vUserSocks.size(); a++) {
+		CUserSock* pSock = m_vUserSocks[a];
+
 		if (!IsHostAllowed(pSock->GetRemoteIP())) {
 			pSock->PutStatusNotice("You are being disconnected because your IP is no longer allowed to connect to this user");
 			pSock->Close();
@@ -540,7 +626,7 @@ bool CUser::CheckPass(const CString& sPass) {
 	return (m_sPass.CaseCmp((char*) CMD5(sPass)) == 0);
 }
 
-CUserSock* CUser::GetUserSock() {
+/*CUserSock* CUser::GetUserSock() {
 	// Todo: optimize this by saving a pointer to the sock
 	TSocketManager<Csock>& Manager = CZNC::Get().GetManager();
 	CString sSockName = "USR::" + m_sUserName;
@@ -555,17 +641,7 @@ CUserSock* CUser::GetUserSock() {
 	}
 
 	return (CUserSock*) CZNC::Get().GetManager().FindSockByName(sSockName);
-}
-
-bool CUser::IsUserAttached() {
-	CUserSock* pUserSock = GetUserSock();
-
-	if (!pUserSock) {
-		return false;
-	}
-
-	return pUserSock->IsAttached();
-}
+}*/
 
 CIRCSock* CUser::GetIRCSock() {
 	// Todo: optimize this by saving a pointer to the sock
@@ -579,10 +655,8 @@ CString CUser::GetLocalIP() {
 		return pIRCSock->GetLocalIP();
 	}
 
-	CUserSock* pUserSock = GetUserSock();
-
-	if (pUserSock) {
-		return pUserSock->GetLocalIP();
+	if (m_vUserSocks.size()) {
+		return m_vUserSocks[0]->GetLocalIP();
 	}
 
 	return "";
@@ -599,48 +673,60 @@ bool CUser::PutIRC(const CString& sLine) {
 	return true;
 }
 
-bool CUser::PutUser(const CString& sLine) {
-	CUserSock* pUserSock = GetUserSock();
+bool CUser::PutUser(const CString& sLine, CUserSock* pUserSock) {
+	for (unsigned int a = 0; a < m_vUserSocks.size(); a++) {
+		if (!pUserSock || pUserSock == m_vUserSocks[a]) {
+			m_vUserSocks[a]->PutServ(sLine);
 
-	if (!pUserSock) {
-		return false;
+			if (pUserSock) {
+				return true;
+			}
+		}
 	}
 
-	pUserSock->PutServ(sLine);
-	return true;
+	return (pUserSock == NULL);
 }
 
-bool CUser::PutStatus(const CString& sLine) {
-	CUserSock* pUserSock = GetUserSock();
+bool CUser::PutStatus(const CString& sLine, CUserSock* pUserSock) {
+	for (unsigned int a = 0; a < m_vUserSocks.size(); a++) {
+		if (!pUserSock || pUserSock == m_vUserSocks[a]) {
+			m_vUserSocks[a]->PutStatus(sLine);
 
-	if (!pUserSock) {
-		return false;
+			if (pUserSock) {
+				return true;
+			}
+		}
 	}
 
-	pUserSock->PutStatus(sLine);
-	return true;
+	return (pUserSock == NULL);
 }
 
-bool CUser::PutStatusNotice(const CString& sLine) {
-	CUserSock* pUserSock = GetUserSock();
+bool CUser::PutStatusNotice(const CString& sLine, CUserSock* pUserSock) {
+	for (unsigned int a = 0; a < m_vUserSocks.size(); a++) {
+		if (!pUserSock || pUserSock == m_vUserSocks[a]) {
+			m_vUserSocks[a]->PutStatusNotice(sLine);
 
-	if (!pUserSock) {
-		return false;
+			if (pUserSock) {
+				return true;
+			}
+		}
 	}
 
-	pUserSock->PutStatusNotice(sLine);
-	return true;
+	return (pUserSock == NULL);
 }
 
-bool CUser::PutModule(const CString& sModule, const CString& sLine) {
-	CUserSock* pUserSock = GetUserSock();
+bool CUser::PutModule(const CString& sModule, const CString& sLine, CUserSock* pUserSock) {
+	for (unsigned int a = 0; a < m_vUserSocks.size(); a++) {
+		if (!pUserSock || pUserSock == m_vUserSocks[a]) {
+			m_vUserSocks[a]->PutModule(sModule, sLine);
 
-	if (!pUserSock) {
-		return false;
+			if (pUserSock) {
+				return true;
+			}
+		}
 	}
 
-	pUserSock->PutModule(sModule, sLine);
-	return true;
+	return (pUserSock == NULL);
 }
 
 bool CUser::ResumeFile(const CString& sRemoteNick, unsigned short uPort, unsigned long uFileSize) {
@@ -718,10 +804,8 @@ CString CUser::GetCurNick() {
 		return pIRCSock->GetNick();
 	}
 
-	CUserSock* pUserSock = GetUserSock();
-
-	if (pUserSock) {
-		return pUserSock->GetNick();
+	if (m_vUserSocks.size()) {
+		return m_vUserSocks[0]->GetNick();
 	}
 
 	return "";
@@ -742,9 +826,20 @@ void CUser::SetKeepNick(bool b) { m_bKeepNick = b; }
 void CUser::SetDenyLoadMod(bool b) { m_bDenyLoadMod = b; }
 void CUser::SetAdmin(bool b) { m_bAdmin = b; }
 void CUser::SetDefaultChanModes(const CString& s) { m_sDefaultChanModes = s; }
-void CUser::SetIRCNick(const CNick& n) { m_IRCNick = n; }
 void CUser::SetIRCServer(const CString& s) { m_sIRCServer = s; }
 void CUser::SetQuitMsg(const CString& s) { m_sQuitMsg = s; }
+void CUser::SetBufferCount(unsigned int u) { m_uBufferCount = u; }
+void CUser::SetKeepBuffer(bool b) { m_bKeepBuffer = b; }
+void CUser::SetAutoCycle(bool b) { m_bAutoCycle = b; }
+
+void CUser::SetIRCNick(const CNick& n) {
+	m_IRCNick = n;
+
+	for (unsigned int a = 0; a < m_vUserSocks.size(); a++) {
+		m_vUserSocks[a]->SetNick(n.GetNick());
+	}
+}
+
 bool CUser::AddCTCPReply(const CString& sCTCP, const CString& sReply) {
 	if (sCTCP.empty() || sReply.empty()) {
 		return false;
@@ -753,9 +848,6 @@ bool CUser::AddCTCPReply(const CString& sCTCP, const CString& sReply) {
 	m_mssCTCPReplies[sCTCP.AsUpper()] = sReply;
 	return true;
 }
-void CUser::SetBufferCount(unsigned int u) { m_uBufferCount = u; }
-void CUser::SetKeepBuffer(bool b) { m_bKeepBuffer = b; }
-void CUser::SetAutoCycle(bool b) { m_bAutoCycle = b; }
 
 bool CUser::SetStatusPrefix(const CString& s) {
 	if ((!s.empty()) && (s.length() < 6) && (s.find(' ') == CString::npos)) {

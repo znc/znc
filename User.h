@@ -10,6 +10,7 @@
 #include <set>
 #include "Nick.h"
 #include "FileUtils.h"
+#include "Buffer.h"
 
 using std::vector;
 using std::set;
@@ -55,16 +56,29 @@ public:
 	// !Modules
 #endif
 
+	// Buffers
+	void AddRawBuffer(const CString& sPre, const CString& sPost) { m_RawBuffer.AddLine(sPre, sPost); }
+	void AddMotdBuffer(const CString& sPre, const CString& sPost) { m_MotdBuffer.AddLine(sPre, sPost); }
+	void AddQueryBuffer(const CString& sPre, const CString& sPost) { m_QueryBuffer.AddLine(sPre, sPost); }
+	void ClearRawBuffer() { m_RawBuffer.Clear(); }
+	void ClearMotdBuffer() { m_MotdBuffer.Clear(); }
+	void ClearQueryBuffer() { m_QueryBuffer.Clear(); }
+	// !Buffers
 	bool OnBoot();
-	bool IsUserAttached();
 
 	bool PutIRC(const CString& sLine);
-	bool PutUser(const CString& sLine);
-	bool PutStatus(const CString& sLine);
-	bool PutStatusNotice(const CString& sLine);
-	bool PutModule(const CString& sModule, const CString& sLine);
+	bool PutUser(const CString& sLine, CUserSock* pUserSock = NULL);
+	bool PutStatus(const CString& sLine, CUserSock* pUserSock = NULL);
+	bool PutStatusNotice(const CString& sLine, CUserSock* pUserSock = NULL);
+	bool PutModule(const CString& sModule, const CString& sLine, CUserSock* pUserSock = NULL);
+
+	bool IsUserAttached() { return (m_vUserSocks.size() > 0); }
+	void UserConnected(CUserSock* pUserSock);
+	void UserDisconnected(CUserSock* pUserSock);
 
 	CString GetLocalIP();
+	void IRCConnected(CIRCSock* pIRCSock);
+	void IRCDisconnected();
 
 	bool SendFile(const CString& sRemoteNick, const CString& sFileName, const CString& sModuleName = "");
 	bool GetFile(const CString& sRemoteNick, const CString& sRemoteIP, unsigned short uRemotePort, const CString& sFileName, unsigned long uFileSize, const CString& sModuleName = "");
@@ -95,10 +109,11 @@ public:
 	void SetBufferCount(unsigned int u);
 	void SetKeepBuffer(bool b);
 	void SetAutoCycle(bool b);
+	void SetChanPrefixes(const CString& s) { m_sChanPrefixes = (s.empty()) ? "#&" : s; }
 	// !Setters
 
 	// Getters
-	CUserSock* GetUserSock();
+	vector<CUserSock*>& GetUserSocks() { return m_vUserSocks; }
 	CIRCSock* GetIRCSock();
 	const CString& GetUserName() const;
 	const CString& GetNick() const;
@@ -110,6 +125,9 @@ public:
 	const CString& GetPass() const;
 	bool IsPassHashed() const;
 	const set<CString>& GetAllowedHosts() const;
+
+	const CString& GetChanPrefixes() const { return m_sChanPrefixes; }
+	bool IsChan(const CString& sChan) const { return (sChan.size() && GetChanPrefixes().find(sChan[0]) != CString::npos); }
 
 	const CString& GetUserPath() const { if (!CFile::Exists(m_sUserPath)) { CUtils::MakeDir(m_sUserPath); } return m_sUserPath; }
 	const CString& GetDLPath() const { if (!CFile::Exists(m_sDLPath)) { CUtils::MakeDir(m_sDLPath); } return m_sDLPath; }
@@ -144,6 +162,7 @@ protected:
 	CString			m_sPass;
 	CString			m_sStatusPrefix;
 	CString			m_sDefaultChanModes;
+	CString			m_sChanPrefixes;
 	CNick			m_IRCNick;
 	CString			m_sIRCServer;
 	CString			m_sQuitMsg;
@@ -153,6 +172,10 @@ protected:
 	CString			m_sUserPath;
 	CString			m_sDLPath;
 	// !Paths
+
+	CBuffer						m_RawBuffer;
+	CBuffer						m_MotdBuffer;
+	CBuffer						m_QueryBuffer;
 
 	bool				m_bBounceDCCs;
 	bool				m_bPassHashed;
@@ -168,6 +191,7 @@ protected:
 
 	vector<CServer*>	m_vServers;
 	vector<CChan*>		m_vChans;
+	vector<CUserSock*>	m_vUserSocks;
 	set<CString>		m_ssAllowedHosts;
 	unsigned int		m_uServerIdx;
 	unsigned int		m_uBufferCount;

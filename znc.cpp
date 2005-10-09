@@ -74,11 +74,6 @@ int CZNC::Loop() {
 			for (set<CUser*>::iterator it = m_ssDelUsers.begin(); it != m_ssDelUsers.end(); it++) {
 				CUser* pUser = *it;
 				m_msUsers.erase(pUser->GetUserName());
-				CUserSock* pUserSock = pUser->GetUserSock();
-
-				if (pUserSock) {
-					m_Manager.DelSockByAddr(pUserSock);
-				}
 
 				CIRCSock* pIRCSock = pUser->GetIRCSock();
 
@@ -148,11 +143,7 @@ int CZNC::Loop() {
 			}
 
 			DEBUG_ONLY( cout << "User [" << pUser->GetUserName() << "] is connecting to [" << pServer->GetName() << ":" << pServer->GetPort() << "] ..." << endl);
-			CUserSock* pUserSock = pUser->GetUserSock();
-
-			if (pUserSock) {
-				pUserSock->PutStatus("Attempting to connect to [" + pServer->GetName() + ":" + CString::ToString(pServer->GetPort()) + "] ...");
-			}
+			pUser->PutStatus("Attempting to connect to [" + pServer->GetName() + ":" + CString::ToString(pServer->GetPort()) + "] ...");
 
 			pIRCSock = new CIRCSock(pUser);
 			pIRCSock->SetPass(pServer->GetPass());
@@ -166,10 +157,7 @@ int CZNC::Loop() {
 #endif
 			if (!m_Manager.Connect(pServer->GetName(), pServer->GetPort(), sSockName, 20, bSSL, pUser->GetVHost(), pIRCSock)) {
 				ReleaseISpoof();
-
-				if (pUserSock) {
-					pUserSock->PutStatus("Unable to connect. (Bad host?)");
-				}
+				pUser->PutStatus("Unable to connect. (Bad host?)");
 			}
 		}
 	}

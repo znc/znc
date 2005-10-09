@@ -7,16 +7,12 @@
 
 CIRCSock::CIRCSock(CUser* pUser) : Csock() {
 	m_pUser = pUser;
-	m_pUserSock = NULL;
 	m_pAwayNickTimer = NULL;
-	m_uQueryBufferCount = 50;
 	m_bISpoofReleased = false;
 	m_bKeepNick = true;
 	m_bAuthed = false;
 	m_bOrigNickPending = false;
 	EnableReadLine();
-	m_RawBuffer.SetLineCount(100);		// This should be more than enough raws, especially since we are buffering the MOTD separately
-	m_MotdBuffer.SetLineCount(200);		// This should be more than enough motd lines
 	m_Nick.SetIdent(pUser->GetIdent());
 	m_Nick.SetHost(pUser->GetVHost());
 
@@ -41,10 +37,7 @@ CIRCSock::~CIRCSock() {
 		vChans[a]->Reset();
 	}
 
-	if (m_pUserSock) {
-		m_pUserSock->IRCDisconnected();
-		m_pUserSock = NULL;
-	}
+	m_pUser->IRCDisconnected();
 
 	for (map<CString, CChan*>::iterator a = m_msChans.begin(); a != m_msChans.end(); a++) {
 		delete a->second;
@@ -103,18 +96,22 @@ void CIRCSock::ReadLine(const CString& sData) {
 					m_bAuthed = true;
 					m_pUser->PutStatus("Connected!");
 
-					if (m_pUserSock) {
-						CString sClientNick = m_pUserSock->GetNick();
+					vector<CUserSock*>& vUserSocks = m_pUser->GetUserSocks();
+
+					for (unsigned int a = 0; a < vUserSocks.size(); a++) {
+						CUserSock* pUserSock = vUserSocks[a];
+						CString sClientNick = pUserSock->GetNick();
+
 						if (sClientNick.CaseCmp(sNick) != 0) {
 							// If they connected with a nick that doesn't match the one we got on irc, then we need to update them
-							PutUser(":" + sClientNick + "!" + m_Nick.GetIdent() + "@" + m_Nick.GetHost() + " NICK :" + sNick);
+							pUserSock->PutServ(":" + sClientNick + "!" + m_Nick.GetIdent() + "@" + m_Nick.GetHost() + " NICK :" + sNick);
 						}
 					}
 
 					SetNick(sNick);
 
-					m_RawBuffer.Clear();
-					m_RawBuffer.AddLine(":" + sServer + " " + sCmd + " ", " " + sRest);
+					m_pUser->ClearRawBuffer();
+					m_pUser->AddRawBuffer(":" + sServer + " " + sCmd + " ", " " + sRest);
 
 					// Now that we are connected, we need to join our chans
 					const vector<CChan*>& vChans = m_pUser->GetChans();
@@ -140,18 +137,18 @@ void CIRCSock::ReadLine(const CString& sData) {
 				case 255:	// client count
 				case 265:	// local users
 				case 266:	// global users
-					m_RawBuffer.AddLine(":" + sServer + " " + sCmd + " ", " " + sRest);
+					m_pUser->AddRawBuffer(":" + sServer + " " + sCmd + " ", " " + sRest);
 					break;
 				case 375:	// begin motd
-					m_MotdBuffer.Clear();
+					m_pUser->ClearMotdBuffer();
 				case 372:	// motd
 				case 376:	// end motd
-					m_MotdBuffer.AddLine(":" + sServer + " " + sCmd + " ", " " + sRest);
+					m_pUser->AddMotdBuffer(":" + sServer + " " + sCmd + " ", " " + sRest);
 					break;
 				case 471: // :irc.server.net 471 nick #chan :Cannot join channel (+l)
 				case 473: // :irc.server.net 473 nick #chan :Cannot join channel (+i)
 				case 475: // :irc.server.net 475 nick #chan :Cannot join channel (+k)
-					if (m_pUserSock) {
+					if (m_pUser->IsUserAttached()) {
 						CChan* pChan = m_pUser->FindChan(sRest.substr(0, sRest.find(' ')));
 
 						if ((pChan) && (!pChan->IsOn())) {
@@ -207,9 +204,15 @@ void CIRCSock::ReadLine(const CString& sData) {
 						// :irc.server.net 433 mynick badnick :Nickname is already in use.
 						if ((m_bKeepNick) && (m_pUser->GetKeepNick())) {
 							if (sBadNick.CaseCmp(sConfNick) == 0) {
-								if ((!m_pUserSock) || (!m_pUserSock->DecKeepNickCounter())) {
-									SetOrigNickPending(false);
-									return;
+								vector<CUserSock*>& vUserSocks = m_pUser->GetUserSocks();
+
+								for (unsigned int a = 0; a < vUserSocks.size(); a++) {
+									CUserSock* pUserSock = vUserSocks[a];
+
+									if (!pUserSock || !pUserSock->DecKeepNickCounter()) {
+										SetOrigNickPending(false);
+										return;
+									}
 								}
 							}
 						}
@@ -311,27 +314,27 @@ void CIRCSock::ReadLine(const CString& sData) {
 				}
 					break;
 				case 366: {	// end of names list
-					PutUser(sLine);	// First send them the raw
+					m_pUser->PutUser(sLine);	// First send them the raw
 
 					// :irc.server.com 366 nick #chan :End of /NAMES list.
 					CChan* pChan = m_pUser->FindChan(sRest.Token(0));
 
 					if (pChan) {
-						if (IsUserAttached()) {
+						if (m_pUser->IsUserAttached()) {
 							const vector<CString>& vsBuffer = pChan->GetBuffer();
 
 							if (vsBuffer.size()) {
-								PutUser(":***!znc@znc.com PRIVMSG " + pChan->GetName() + " :Buffer Playback...");
+								m_pUser->PutUser(":***!znc@znc.com PRIVMSG " + pChan->GetName() + " :Buffer Playback...");
 
 								for (unsigned int a = 0; a < vsBuffer.size(); a++) {
-									PutUser(vsBuffer[a]);
+									m_pUser->PutUser(vsBuffer[a]);
 								}
 
 								if (!pChan->KeepBuffer()) {
 									pChan->ClearBuffer();
 								}
 
-								PutUser(":***!znc@znc.com PRIVMSG " + pChan->GetName() + " :Playback Complete.");
+								m_pUser->PutUser(":***!znc@znc.com PRIVMSG " + pChan->GetName() + " :Playback Complete.");
 							}
 						}
 
@@ -527,7 +530,7 @@ void CIRCSock::ReadLine(const CString& sData) {
 						}
 					}
 
-					PutUser(":" + Nick.GetNickMask() + " NOTICE " + sTarget + " :\001" + sMsg + "\001");
+					m_pUser->PutUser(":" + Nick.GetNickMask() + " NOTICE " + sTarget + " :\001" + sMsg + "\001");
 					return;
 				} else {
 					if (sTarget.CaseCmp(GetNick()) == 0) {
@@ -541,7 +544,7 @@ void CIRCSock::ReadLine(const CString& sData) {
 					}
 				}
 
-				PutUser(":" + Nick.GetNickMask() + " NOTICE " + sTarget + " :" + sMsg);
+				m_pUser->PutUser(":" + Nick.GetNickMask() + " NOTICE " + sTarget + " :" + sMsg);
 				return;
 			} else if (sCmd.CaseCmp("TOPIC") == 0) {
 				// :nick!ident@host.com TOPIC #chan :This is a topic
@@ -551,7 +554,7 @@ void CIRCSock::ReadLine(const CString& sData) {
 					CString sTopic = sLine.Token(3, true);
 					sTopic.LeftChomp();
 					pChan->SetTopicOwner(Nick.GetNick());
-					pChan->SetTopicDate((unsigned long) time(NULL));	// @todo use local time
+					pChan->SetTopicDate((unsigned long) time(NULL));
 					pChan->SetTopic(sTopic);
 				}
 			} else if (sCmd.CaseCmp("PRIVMSG") == 0) {
@@ -577,7 +580,7 @@ void CIRCSock::ReadLine(const CString& sData) {
 						}
 					}
 
-					PutUser(":" + Nick.GetNickMask() + " PRIVMSG " + sTarget + " :\001" + sMsg + "\001");
+					m_pUser->PutUser(":" + Nick.GetNickMask() + " PRIVMSG " + sTarget + " :\001" + sMsg + "\001");
 					return;
 				} else {
 					if (sTarget.CaseCmp(GetNick()) == 0) {
@@ -590,14 +593,14 @@ void CIRCSock::ReadLine(const CString& sData) {
 						}
 					}
 
-					PutUser(":" + Nick.GetNickMask() + " PRIVMSG " + sTarget + " :" + sMsg);
+					m_pUser->PutUser(":" + Nick.GetNickMask() + " PRIVMSG " + sTarget + " :" + sMsg);
 					return;
 				}
 			}
 		}
 	}
 
-	PutUser(sLine);
+	m_pUser->PutUser(sLine);
 }
 
 void CIRCSock::KeepNick(bool bForce) {
@@ -628,26 +631,26 @@ bool CIRCSock::OnPrivCTCP(CNick& Nick, CString& sMessage) {
 		unsigned long uFileSize = strtoul(sMessage.Token(5).c_str(), NULL, 10);
 
 		if (sType.CaseCmp("CHAT") == 0) {
-			if (m_pUserSock) {
+			if (m_pUser->IsUserAttached()) {
 				CNick FromNick(Nick.GetNickMask());
 				unsigned short uBNCPort = CDCCBounce::DCCRequest(FromNick.GetNick(), uLongIP, uPort, "", true, m_pUser, GetLocalIP(), CUtils::GetIP(uLongIP));
 
 				if (uBNCPort) {
-					PutUser(":" + Nick.GetNickMask() + " PRIVMSG " + GetNick() + " :\001DCC CHAT chat " + CString::ToString(CUtils::GetLongIP(GetLocalIP())) + " " + CString::ToString(uBNCPort) + "\001");
+					m_pUser->PutUser(":" + Nick.GetNickMask() + " PRIVMSG " + GetNick() + " :\001DCC CHAT chat " + CString::ToString(CUtils::GetLongIP(GetLocalIP())) + " " + CString::ToString(uBNCPort) + "\001");
 				}
 			}
 		} else if (sType.CaseCmp("SEND") == 0) {
 			// DCC SEND readme.txt 403120438 5550 1104
 			unsigned short uBNCPort = CDCCBounce::DCCRequest(Nick.GetNick(), uLongIP, uPort, sFile, false, m_pUser, GetLocalIP(), CUtils::GetIP(uLongIP));
 			if (uBNCPort) {
-				PutUser(":" + Nick.GetNickMask() + " PRIVMSG " + GetNick() + " :\001DCC SEND " + sFile + " " + CString::ToString(CUtils::GetLongIP(GetLocalIP())) + " " + CString::ToString(uBNCPort) + " " + CString::ToString(uFileSize) + "\001");
+				m_pUser->PutUser(":" + Nick.GetNickMask() + " PRIVMSG " + GetNick() + " :\001DCC SEND " + sFile + " " + CString::ToString(CUtils::GetLongIP(GetLocalIP())) + " " + CString::ToString(uBNCPort) + " " + CString::ToString(uFileSize) + "\001");
 			}
 		} else if (sType.CaseCmp("RESUME") == 0) {
 			// Need to lookup the connection by port, filter the port, and forward to the user
 			CDCCBounce* pSock = (CDCCBounce*) CZNC::Get().GetManager().FindSockByLocalPort(atoi(sMessage.Token(3).c_str()));
 
 			if ((pSock) && (strncasecmp(pSock->GetSockName().c_str(), "DCC::", 5) == 0)) {
-				PutUser(":" + Nick.GetNickMask() + " PRIVMSG " + GetNick() + " :\001DCC " + sType + " " + sFile + " " + CString::ToString(pSock->GetUserPort()) + " " + sMessage.Token(4) + "\001");
+				m_pUser->PutUser(":" + Nick.GetNickMask() + " PRIVMSG " + GetNick() + " :\001DCC " + sType + " " + sFile + " " + CString::ToString(pSock->GetUserPort()) + " " + sMessage.Token(4) + "\001");
 			}
 		} else if (sType.CaseCmp("ACCEPT") == 0) {
 			// Need to lookup the connection by port, filter the port, and forward to the user
@@ -658,7 +661,7 @@ bool CIRCSock::OnPrivCTCP(CNick& Nick, CString& sMessage) {
 
 				if ((pSock) && (strncasecmp(pSock->GetSockName().c_str(), "DCC::", 5) == 0)) {
 					if (pSock->GetUserPort() == atoi(sMessage.Token(3).c_str())) {
-						PutUser(":" + Nick.GetNickMask() + " PRIVMSG " + GetNick() + " :\001DCC " + sType + " " + sFile + " " + CString::ToString(pSock->GetLocalPort()) + " " + sMessage.Token(4) + "\001");
+						m_pUser->PutUser(":" + Nick.GetNickMask() + " PRIVMSG " + GetNick() + " :\001DCC " + sType + " " + sFile + " " + CString::ToString(pSock->GetLocalPort()) + " " + sMessage.Token(4) + "\001");
 					}
 				}
 			}
@@ -675,7 +678,7 @@ bool CIRCSock::OnPrivCTCP(CNick& Nick, CString& sMessage) {
 			sReply = it->second;
 		}
 
-		if (sReply.empty() && sQuery == "VERSION" && !IsUserAttached()) {
+		if (sReply.empty() && sQuery == "VERSION" && !m_pUser->IsUserAttached()) {
 			sReply = "ZNC by prozac - http://znc.sourceforge.net";
 		}
 
@@ -691,9 +694,9 @@ bool CIRCSock::OnPrivCTCP(CNick& Nick, CString& sMessage) {
 bool CIRCSock::OnPrivNotice(CNick& Nick, CString& sMessage) {
 	MODULECALL(OnPrivNotice(Nick, sMessage));
 
-	if (!m_pUserSock) {
+	if (!m_pUser->IsUserAttached()) {
 		// If the user is detached, add to the buffer
-		m_QueryBuffer.AddLine(":" + Nick.GetNickMask() + " NOTICE ", " :" + sMessage);
+		m_pUser->AddQueryBuffer(":" + Nick.GetNickMask() + " NOTICE ", " :" + sMessage);
 	}
 
 	return false;
@@ -702,9 +705,9 @@ bool CIRCSock::OnPrivNotice(CNick& Nick, CString& sMessage) {
 bool CIRCSock::OnPrivMsg(CNick& Nick, CString& sMessage) {
 	MODULECALL(OnPrivMsg(Nick, sMessage));
 
-	if (!m_pUserSock) {
+	if (!m_pUser->IsUserAttached()) {
 		// If the user is detached, add to the buffer
-		m_QueryBuffer.AddLine(":" + Nick.GetNickMask() + " PRIVMSG ", " :" + sMessage);
+		m_pUser->AddQueryBuffer(":" + Nick.GetNickMask() + " PRIVMSG ", " :" + sMessage);
 	}
 
 	return false;
@@ -728,7 +731,7 @@ bool CIRCSock::OnChanNotice(CNick& Nick, const CString& sChan, CString& sMessage
 	if (pChan) {
 		MODULECALL(OnChanNotice(Nick, *pChan, sMessage));
 
-		if ((pChan->KeepBuffer()) || (!m_pUserSock)) {
+		if ((pChan->KeepBuffer()) || (!m_pUser->IsUserAttached())) {
 			pChan->AddBuffer(":" + Nick.GetNickMask() + " NOTICE " + sChan + " :" + sMessage);
 		}
 	}
@@ -741,7 +744,7 @@ bool CIRCSock::OnChanMsg(CNick& Nick, const CString& sChan, CString& sMessage) {
 	if (pChan) {
 		MODULECALL(OnChanMsg(Nick, *pChan, sMessage));
 
-		if ((pChan->KeepBuffer()) || (!m_pUserSock)) {
+		if (pChan->KeepBuffer() || !m_pUser->IsUserAttached()) {
 			pChan->AddBuffer(":" + Nick.GetNickMask() + " PRIVMSG " + sChan + " :" + sMessage);
 		}
 	}
@@ -749,98 +752,19 @@ bool CIRCSock::OnChanMsg(CNick& Nick, const CString& sChan, CString& sMessage) {
 	return ((pChan) && (pChan->IsDetached()));
 }
 
-void CIRCSock::UserConnected(CUserSock* pUserSock) {
-	if (m_pUserSock) {
-		m_pUserSock->BouncedOff();
-	}
-
-	m_pUserSock = pUserSock;
-	CString sConfNick = m_pUser->GetNick();
-
-	if (GetNick().CaseCmp(CNick::Concat(sConfNick, m_pUser->GetAwaySuffix(), GetMaxNickLen())) == 0) {
-		PutServ("NICK " + sConfNick);
-	}
-
-	if (m_RawBuffer.IsEmpty()) {
-		PutUser(":irc.znc.com 001 " + m_pUserSock->GetNick() + " :- Welcome to ZNC -");
-	} else {
-		unsigned int uIdx = 0;
-		CString sLine;
-
-		while (m_RawBuffer.GetLine(GetNick(), sLine, uIdx++)) {
-			PutUser(sLine);
-		}
-	}
-
-	// Send the cached MOTD
-	if (m_MotdBuffer.IsEmpty()) {
-		PutServ("MOTD");
-	} else {
-		unsigned int uIdx = 0;
-		CString sLine;
-
-		while (m_MotdBuffer.GetLine(GetNick(), sLine, uIdx++)) {
-			PutUser(sLine);
-		}
-	}
-
-	const vector<CChan*>& vChans = m_pUser->GetChans();
-	for (unsigned int a = 0; a < vChans.size(); a++) {
-		if ((vChans[a]->IsOn()) && (!vChans[a]->IsDetached())) {
-			vChans[a]->JoinUser(true);
-		}
-	}
-
-	CString sBufLine;
-	while (m_QueryBuffer.GetNextLine(GetNick(), sBufLine)) {
-		PutUser(sBufLine);
-	}
-}
-
-void CIRCSock::UserDisconnected() {
-	if (m_pUserSock && !m_pAwayNickTimer) {
-		m_pAwayNickTimer = new CAwayNickTimer(m_pUser);
-		CZNC::Get().GetManager().AddCron(m_pAwayNickTimer);
-	}
-
-	m_pUserSock = NULL;
-}
-
 void CIRCSock::PutServ(const CString& sLine) {
 	DEBUG_ONLY(cout << GetSockName() << " -> [" << sLine << "]" << endl);
 	Write(sLine + "\r\n");
 }
 
-void CIRCSock::PutUser(const CString& sLine) {
-	if (m_pUserSock) {
-		m_pUserSock->PutServ(sLine);
-	}
-}
-
-void CIRCSock::PutStatus(const CString& sLine) {
-	if (m_pUserSock) {
-		m_pUserSock->PutStatus(sLine);
-	}
-}
-
 void CIRCSock::SetNick(const CString& sNick) {
 	m_Nick.SetNick(sNick);
 	m_pUser->SetIRCNick(m_Nick);
-
-	if (m_pUserSock) {
-		m_pUserSock->SetNick(sNick);
-	}
 }
 
 void CIRCSock::Connected() {
 	DEBUG_ONLY(cout << GetSockName() << " == Connected()" << endl);
-
-	CUserSock* pUserSock = (CUserSock*) CZNC::Get().FindSockByName("USR::" + m_pUser->GetUserName());
-
-	if (pUserSock) {
-		m_pUserSock = pUserSock;
-		pUserSock->IRCConnected(this);
-	}
+	m_pUser->IRCConnected(this);
 
 	if (!m_sPass.empty()) {
 		PutServ("PASS " + m_sPass);
@@ -889,7 +813,9 @@ void CIRCSock::ParseISupport(const CString& sLine) {
 				m_sPerms = sPrefixes;
 				m_sPermModes = sPermModes;
 			}
-		} else if (sName.CaseCmp("CHANMODES") == 0) {
+		} else if (sName.CaseCmp("CHANTYPES") == 0) {
+			m_pUser->SetChanPrefixes(sValue);
+		} else if (sName.CaseCmp("NICKLEN") == 0) {
 			unsigned int uMax = sValue.ToUInt();
 
 			if (uMax) {
