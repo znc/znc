@@ -102,28 +102,36 @@ int main(int argc, char** argv, char** envp) {
 
 	if (optind < argc) {
 		sConfig = argv[optind];
+	} else {
+		sConfig = "znc.conf";
+	}
 
-		if (bMakeConf) {
-			CZNC& ZNC = CZNC::Get();
-			ZNC.InitDirs("");
-			if (ZNC.WriteNewConfig(sConfig)) {
-				if (argc > 2) {
-					char* args[3];
-					args[0] = argv[0];
-					args[1] = argv[optind];
-					args[2] = NULL;
-					if (execve(*argv, args, envp) == -1) {
-						CUtils::PrintError("Unable to lauch znc [" + CString(strerror(errno)) + "]");
-						return 1;
-					}
-				}
+	if (bMakeConf) {
+		CZNC& ZNC = CZNC::Get();
+		ZNC.InitDirs("");
+		if (ZNC.WriteNewConfig(sConfig)) {
+			char* args[3];
+
+			if (argc > 2) {
+				args[0] = argv[0];
+				args[1] = argv[optind];
+				args[2] = NULL;
+			} else if (argc > 1) {
+				args[0] = argv[0];
+				args[1] = NULL;
+				args[2] = NULL;
+			} else {
+				CUtils::PrintError("Unable to lauch znc [Try manually restarting]");
+				return 1;
 			}
 
-			return 0;
+			if (execve(*argv, args, envp) == -1) {
+				CUtils::PrintError("Unable to lauch znc [" + CString(strerror(errno)) + "]");
+				return 1;
+			}
 		}
-	} else if (bMakeConf) {
-		GenerateHelp(argv[0]);
-		return 1;
+
+		return 0;
 	}
 
 #ifdef HAVE_LIBSSL
