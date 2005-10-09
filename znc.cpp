@@ -831,6 +831,9 @@ bool CZNC::ParseConfig(const CString& sConfig) {
 						}
 
 						continue;
+					} else if (sName.CaseCmp("MultiClients") == 0) {
+						pUser->SetMultiClients(sValue.CaseCmp("true") == 0);
+						continue;
 					} else if (sName.CaseCmp("BounceDCCs") == 0) {
 						pUser->SetBounceDCCs(sValue.CaseCmp("true") == 0);
 						continue;

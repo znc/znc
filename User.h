@@ -90,6 +90,7 @@ public:
 	void StartAwayNickTimer();
 	void DelAwayNickTimer();
 	void DelBackNickTimer();
+	void BounceAllClients();
 
 	// Setters
 	void SetUserName(const CString& s);
@@ -101,6 +102,7 @@ public:
 	void SetVHost(const CString& s);
 	void SetPass(const CString& s, bool bHashed);
 	void SetBounceDCCs(bool b);
+	void SetMultiClients(bool b);
 	void SetUseClientIP(bool b);
 	void SetKeepNick(bool b);
 	void SetDenyLoadMod(bool b);
@@ -142,6 +144,7 @@ public:
 	bool DenyLoadMod() const;
 	bool IsAdmin() const;
 	bool BounceDCCs() const;
+	bool MultiClients() const;
 	const CString& GetStatusPrefix() const;
 	const CString& GetDefaultChanModes() const;
 	const vector<CChan*>& GetChans() const;
@@ -182,6 +185,7 @@ protected:
 	CBuffer						m_MotdBuffer;
 	CBuffer						m_QueryBuffer;
 
+	bool				m_bMultiClients;
 	bool				m_bBounceDCCs;
 	bool				m_bPassHashed;
 	bool				m_bUseClientIP;

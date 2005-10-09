@@ -824,6 +824,7 @@ bool CWebAdminSock::UserPage(CString& sPageRet, CUser* pUser) {
 				"<span style='white-space: nowrap;'><input type='checkbox' name='keepbuffer' id='keepbuffer' value='1'" + CString((!pUser || pUser->KeepBuffer()) ? " CHECKED" : "") + "><label for='keepbuffer'>Keep Buffer</label></span>&nbsp;&nbsp;\r\n"
 				"<span style='white-space: nowrap;'><input type='checkbox' name='autocycle' id='autocycle' value='1'" + CString((!pUser || pUser->AutoCycle()) ? " CHECKED" : "") + "><label for='autocycle'>Auto Cycle</label></span>&nbsp;&nbsp;\r\n"
 				"<span style='white-space: nowrap;'><input type='checkbox' name='keepnick' id='keepnick' value='1'" + CString((!pUser || pUser->GetKeepNick()) ? " CHECKED" : "") + "><label for='keepnick'>Keep Nick</label></span>&nbsp;&nbsp;\r\n"
+				"<span style='white-space: nowrap;'><input type='checkbox' name='multiclients' id='multiclients' value='1'" + CString((!pUser || pUser->MultiClients()) ? " CHECKED" : "") + "><label for='multiclients'>Multi Clients</label></span>&nbsp;&nbsp;\r\n"
 				"<span style='white-space: nowrap;'><input type='checkbox' name='bouncedccs' id='bouncedccs' value='1'" + CString((!pUser || pUser->BounceDCCs()) ? " CHECKED" : "") + "><label for='bouncedccs'>Bounce DCCs</label></span>&nbsp;&nbsp;\r\n"
 				"<span style='white-space: nowrap;'><input type='checkbox' name='useclientip' id='useclientip' value='1'" + CString((pUser && pUser->UseClientIP()) ? " CHECKED" : "") + "><label for='useclientip'>Use Client IP</label></span>&nbsp;&nbsp;\r\n";
 
@@ -998,6 +999,7 @@ CUser* CWebAdminSock::GetNewUser(CString& sPageRet, CUser* pUser) {
 
 	pNewUser->SetBufferCount(GetParam("bufsize").ToUInt());
 	pNewUser->SetKeepBuffer(GetParam("keepbuffer").ToBool());
+	pNewUser->SetMultiClients(GetParam("multiclients").ToBool());
 	pNewUser->SetBounceDCCs(GetParam("bouncedccs").ToBool());
 	pNewUser->SetAutoCycle(GetParam("autocycle").ToBool());
 	pNewUser->SetKeepNick(GetParam("keepnick").ToBool());

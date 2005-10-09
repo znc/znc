@@ -21,6 +21,7 @@ CUser::CUser(const CString& sUserName) {
 #endif
 	m_RawBuffer.SetLineCount(100);		// This should be more than enough raws, especially since we are buffering the MOTD separately
 	m_MotdBuffer.SetLineCount(200);		// This should be more than enough motd lines
+	m_bMultiClients = true;
 	m_bBounceDCCs = true;
 	m_bPassHashed = false;
 	m_bUseClientIP = false;
@@ -72,17 +73,6 @@ bool CUser::OnBoot() {
 }
 
 void CUser::IRCConnected(CIRCSock* pIRCSock) {
-	/*TSocketManager<Csock>& Manager = CZNC::Get().GetManager();
-
-	for (unsigned int a = 0; a < Manager.size(); a++) {
-		CUserSock* pUserSock = (CUserSock*) Manager[a];
-		const CString& sSockName = pUserSock->GetSockName();
-
-		if (sSockName == ("USR::" + GetUserName())) {
-			m_vUserSocks.push_back(pUserSock);
-			pUserSock->IRCConnected(pIRCSock);
-		}
-	}*/
 }
 
 void CUser::IRCDisconnected() {
@@ -91,7 +81,19 @@ void CUser::IRCDisconnected() {
 	}
 }
 
+void CUser::BounceAllClients() {
+	for (unsigned int a = 0; a < m_vUserSocks.size(); a++) {
+		m_vUserSocks[a]->BouncedOff();
+	}
+
+	m_vUserSocks.clear();
+}
+
 void CUser::UserConnected(CUserSock* pUserSock) {
+	if (!MultiClients()) {
+		BounceAllClients();
+	}
+
 	m_vUserSocks.push_back(pUserSock);
 	CIRCSock* pIRCSock = GetIRCSock();
 
@@ -324,6 +326,7 @@ bool CUser::Clone(const CUser& User, CString& sErrorRet) {
 	SetKeepBuffer(User.KeepBuffer());
 	SetAutoCycle(User.AutoCycle());
 	SetKeepNick(User.GetKeepNick());
+	SetMultiClients(User.MultiClients());
 	SetBounceDCCs(User.BounceDCCs());
 	SetUseClientIP(User.UseClientIP());
 	SetDenyLoadMod(User.DenyLoadMod());
@@ -460,6 +463,7 @@ bool CUser::WriteConfig(CFile& File) {
 	PrintLine(File, "Buffer", CString::ToString(GetBufferCount()));
 	PrintLine(File, "KeepNick", CString((GetKeepNick()) ? "true" : "false"));
 	PrintLine(File, "KeepBuffer", CString((KeepBuffer()) ? "true" : "false"));
+	PrintLine(File, "MultiClients", CString((MultiClients()) ? "true" : "false"));
 	PrintLine(File, "BounceDCCs", CString((BounceDCCs()) ? "true" : "false"));
 	PrintLine(File, "AutoCycle", CString((AutoCycle()) ? "true" : "false"));
 	PrintLine(File, "DenyLoadMod", CString((DenyLoadMod()) ? "true" : "false"));
@@ -842,6 +846,7 @@ void CUser::SetIdent(const CString& s) { m_sIdent = s; }
 void CUser::SetRealName(const CString& s) { m_sRealName = s; }
 void CUser::SetVHost(const CString& s) { m_sVHost = s; }
 void CUser::SetPass(const CString& s, bool bHashed) { m_sPass = s; m_bPassHashed = bHashed; }
+void CUser::SetMultiClients(bool b) { m_bMultiClients = b; }
 void CUser::SetBounceDCCs(bool b) { m_bBounceDCCs = b; }
 void CUser::SetUseClientIP(bool b) { m_bUseClientIP = b; }
 void CUser::SetKeepNick(bool b) { m_bKeepNick = b; }
@@ -910,6 +915,7 @@ bool CUser::UseClientIP() const { return m_bUseClientIP; }
 bool CUser::GetKeepNick() const { return m_bKeepNick; }
 bool CUser::DenyLoadMod() const { return m_bDenyLoadMod; }
 bool CUser::IsAdmin() const { return m_bAdmin; }
+bool CUser::MultiClients() const { return m_bMultiClients; }
 bool CUser::BounceDCCs() const { return m_bBounceDCCs; }
 const CString& CUser::GetStatusPrefix() const { return m_sStatusPrefix; }
 const CString& CUser::GetDefaultChanModes() const { return m_sDefaultChanModes; }
