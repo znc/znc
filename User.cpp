@@ -32,6 +32,8 @@ CUser::CUser(const CString& sUserName) {
 	m_uBufferCount = 50;
 	m_bKeepBuffer = false;
 	m_bAutoCycle = true;
+	m_pBackNickTimer = NULL;
+	m_pAwayNickTimer = NULL;
 	m_pKeepNickTimer = new CKeepNickTimer(this);
 	m_pJoinTimer = new CJoinTimer(this);
 	CZNC::Get().GetManager().AddCron(m_pKeepNickTimer);
@@ -56,6 +58,8 @@ CUser::~CUser() {
 		CZNC::Get().GetManager().DelSockByAddr(m_vUserSocks[c]);
 	}
 
+	CZNC::Get().GetManager().DelCronByAddr(m_pBackNickTimer);
+	CZNC::Get().GetManager().DelCronByAddr(m_pAwayNickTimer);
 	CZNC::Get().GetManager().DelCronByAddr(m_pKeepNickTimer);
 	CZNC::Get().GetManager().DelCronByAddr(m_pJoinTimer);
 }
@@ -89,12 +93,13 @@ void CUser::IRCDisconnected() {
 
 void CUser::UserConnected(CUserSock* pUserSock) {
 	m_vUserSocks.push_back(pUserSock);
-	CString sConfNick = GetNick();
 	CIRCSock* pIRCSock = GetIRCSock();
 
+	CString sConfNick = GetNick();
 	if (pIRCSock) {
 		if (pIRCSock->GetNick().CaseCmp(CNick::Concat(sConfNick, GetAwaySuffix(), pIRCSock->GetMaxNickLen())) == 0) {
-			PutIRC("NICK " + sConfNick);
+			m_pBackNickTimer = new CBackNickTimer(this);
+			CZNC::Get().GetManager().AddCron(m_pBackNickTimer);
 		}
 	}
 
@@ -134,17 +139,31 @@ void CUser::UserConnected(CUserSock* pUserSock) {
 	}
 }
 
-void CUser::UserDisconnected(CUserSock* pUserSock) {
-	/*if (!m_pAwayNickTimer) {
+void CUser::StartAwayNickTimer() {
+	if (!m_pAwayNickTimer) {
 		m_pAwayNickTimer = new CAwayNickTimer(this);
 		CZNC::Get().GetManager().AddCron(m_pAwayNickTimer);
-	}*/
+	}
+}
 
+void CUser::DelAwayNickTimer() {
+	m_pAwayNickTimer = NULL;
+}
+
+void CUser::DelBackNickTimer() {
+	m_pBackNickTimer = NULL;
+}
+
+void CUser::UserDisconnected(CUserSock* pUserSock) {
 	for (unsigned int a = 0; a < m_vUserSocks.size(); a++) {
 		if (m_vUserSocks[a] == pUserSock) {
 			m_vUserSocks.erase(m_vUserSocks.begin() + a);
 			break;
 		}
+	}
+
+	if (!IsUserAttached()) {
+		StartAwayNickTimer();
 	}
 }
 

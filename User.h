@@ -20,6 +20,8 @@ class CChan;
 class CServer;
 class CIRCSock;
 class CUserSock;
+class CBackNickTimer;
+class CAwayNickTimer;
 class CKeepNickTimer;
 class CJoinTimer;
 
@@ -85,6 +87,9 @@ public:
 	bool ResumeFile(const CString& sRemoteNick, unsigned short uPort, unsigned long uFileSize);
 	CString GetCurNick();
 	bool Clone(const CUser& User, CString& sErrorRet);
+	void StartAwayNickTimer();
+	void DelAwayNickTimer();
+	void DelBackNickTimer();
 
 	// Setters
 	void SetUserName(const CString& s);
@@ -186,6 +191,8 @@ protected:
 	bool				m_bKeepBuffer;
 	bool				m_bAutoCycle;
 
+	CBackNickTimer*		m_pBackNickTimer;
+	CAwayNickTimer*		m_pAwayNickTimer;
 	CKeepNickTimer*		m_pKeepNickTimer;
 	CJoinTimer*			m_pJoinTimer;
 

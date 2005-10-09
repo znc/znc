@@ -2,12 +2,10 @@
 #include "IRCSock.h"
 #include "DCCBounce.h"
 #include "UserSock.h"
-#include "Timers.h"
 #include <time.h>
 
 CIRCSock::CIRCSock(CUser* pUser) : Csock() {
 	m_pUser = pUser;
-	m_pAwayNickTimer = NULL;
 	m_bISpoofReleased = false;
 	m_bKeepNick = true;
 	m_bAuthed = false;
@@ -49,8 +47,6 @@ CIRCSock::~CIRCSock() {
 
 	PutServ("QUIT :" + m_pUser->GetQuitMsg());
 	m_msChans.clear();
-
-	CZNC::Get().GetManager().DelCronByAddr(m_pAwayNickTimer);
 }
 
 void CIRCSock::ReadLine(const CString& sData) {
@@ -87,10 +83,8 @@ void CIRCSock::ReadLine(const CString& sData) {
 					m_pUser->SetIRCServer(sServer);
 					SetTimeout(900);	// Now that we are connected, let nature take its course
 					PutServ("WHO " + sNick);
-					if (!m_pAwayNickTimer) {
-						m_pAwayNickTimer = new CAwayNickTimer(m_pUser);
-						CZNC::Get().GetManager().AddCron(m_pAwayNickTimer);
-					}
+
+					m_pUser->StartAwayNickTimer();
 
 					VOIDMODULECALL(OnIRCConnected());
 

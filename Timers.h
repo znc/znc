@@ -47,6 +47,36 @@ protected:
 	CUser*	m_pUser;
 };
 
+class CBackNickTimer : public CCron {
+public:
+	CBackNickTimer(CUser* pUser) : CCron() {
+		m_pUser = pUser;
+		Start(3);
+	}
+	virtual ~CBackNickTimer() {}
+
+private:
+protected:
+	virtual void RunJob() {
+		if (m_pUser->IsUserAttached()) {
+			CIRCSock* pSock = m_pUser->GetIRCSock();
+
+			if (pSock) {
+				CString sConfNick = m_pUser->GetNick();
+
+				if (pSock->GetNick().CaseCmp(CNick::Concat(sConfNick, m_pUser->GetAwaySuffix(), pSock->GetMaxNickLen())) == 0) {
+					pSock->PutServ("NICK " + sConfNick);
+				}
+			}
+		}
+
+		CZNC::Get().GetManager().DelCronByAddr(this);
+		m_pUser->DelBackNickTimer();
+	}
+
+	CUser* m_pUser;
+};
+
 class CAwayNickTimer : public CCron {
 public:
 
@@ -61,17 +91,19 @@ protected:
 	virtual void RunJob() {
 		if (!m_pUser->IsUserAttached()) {
 			CIRCSock* pSock = m_pUser->GetIRCSock();
+
 			if (pSock) {
 				const CString& sSuffix = m_pUser->GetAwaySuffix();
 
 				if (!sSuffix.empty()) {
-					CString sNewNick = CNick::Concat(m_pUser->GetNick(), sSuffix, pSock->GetMaxNickLen());
-					pSock->PutServ("NICK " + sNewNick);
+					CString sAwayNick = CNick::Concat(m_pUser->GetNick(), sSuffix, pSock->GetMaxNickLen());
+					pSock->PutServ("NICK " + sAwayNick);
 				}
 			}
 		}
 
 		CZNC::Get().GetManager().DelCronByAddr(this);
+		m_pUser->DelAwayNickTimer();
 	}
 
 	CUser* m_pUser;
