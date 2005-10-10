@@ -198,6 +198,37 @@ bool CZNC::WritePidFile(int iPid) {
 	return false;
 }
 
+bool CZNC::WritePemFile() {
+	CString sPemFile = GetPemLocation();
+	const char* pHostName = getenv("HOSTNAME");
+	CString sHost;
+
+	if (pHostName) {
+		sHost = pHostName;
+	}
+
+	if (CFile::Exists(sPemFile)) {
+		CUtils::PrintError("Pem file [" + sPemFile + "] already exists");
+		return false;
+	}
+
+	while (!CUtils::GetInput("hostname of your shell", sHost, sHost, "including the '.com' portion"));
+
+	CUtils::PrintAction("Writing Pem file [" + sPemFile + "]");
+	FILE *f = fopen(sPemFile.c_str(), "w");
+
+	if (!f) {
+		CUtils::PrintStatus(false, "Unable to open");
+		return false;
+	}
+
+	CUtils::GenerateCert(f, false, sHost);
+	fclose(f);
+
+	CUtils::PrintStatus(true);
+	return true;
+}
+
 void CZNC::DeleteUsers() {
 	for (map<CString,CUser*>::iterator a = m_msUsers.begin(); a != m_msUsers.end(); a++) {
 		delete a->second;
@@ -924,24 +955,7 @@ bool CZNC::ParseConfig(const CString& sConfig) {
 						CUtils::PrintStatus(false, "Unable to locate pem file: [" + sPemFile + "]");
 
 						if (CUtils::GetBoolInput("Would you like to create a new pem file?", true)) {
-							CUtils::PrintAction("Writing Pem file [" + sPemFile + "]");
-
-							if (CFile::Exists(sPemFile)) {
-								CUtils::PrintStatus(false, "File already exists");
-								return false;
-							}
-
-							FILE *f = fopen(sPemFile.c_str(), "w");
-
-							if (!f) {
-								CUtils::PrintStatus(false, "Unable to open");
-								return false;
-							}
-
-							CUtils::GenerateCert(f, false);
-							fclose(f);
-
-							CUtils::PrintStatus(true);
+							WritePemFile();
 						} else {
 							return false;
 						}

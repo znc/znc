@@ -138,28 +138,7 @@ int main(int argc, char** argv, char** envp) {
 	if (bMakePem) {
 		CZNC* pZNC = &CZNC::Get();
 		pZNC->InitDirs("");
-		CString sPemFile = pZNC->GetPemLocation();
-
-		CUtils::PrintAction("Writing Pem file [" + sPemFile + "]");
-
-		if (CFile::Exists(sPemFile)) {
-			CUtils::PrintStatus(false, "File already exists");
-			delete pZNC;
-			return 1;
-		}
-
-		FILE *f = fopen(sPemFile.c_str(), "w");
-
-		if (!f) {
-			CUtils::PrintStatus(false, "Unable to open");
-			delete pZNC;
-			return 1 ;
-		}
-
-		CUtils::GenerateCert(f, bEncPem);
-		fclose(f);
-
-		CUtils::PrintStatus(true);
+		pZNC->WritePemFile();
 
 		delete pZNC;
 		return 0;

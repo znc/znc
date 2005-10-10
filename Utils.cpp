@@ -41,7 +41,7 @@ char *strcasestr(const char *big, const char *little) {
 #endif /* __sun */
 
 #ifdef HAVE_LIBSSL
-void CUtils::GenerateCert(FILE *pOut, bool bEncPrivKey) {
+void CUtils::GenerateCert(FILE *pOut, bool bEncPrivKey, const CString& sHost) {
 	EVP_PKEY *pKey = NULL;
 	X509 *pCert = NULL;
 	X509_NAME *pName = NULL;
@@ -72,8 +72,16 @@ void CUtils::GenerateCert(FILE *pOut, bool bEncPrivKey) {
 		
 		pName = X509_get_subject_name( pCert );
 
-		char *pLogName = getenv("LOGNAME");
-		char *pHostName = getenv("HOSTNAME");
+		const char *pLogName = getenv("LOGNAME");
+		const char *pHostName = NULL;
+
+		if (!sHost.empty()) {
+			pHostName = sHost.c_str();
+		}
+
+		if (!pHostName) {
+			pHostName = getenv("HOSTNAME");
+		}
 
 		if (!pLogName) {
 			pLogName = "Unknown";
