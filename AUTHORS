@@ -8,3 +8,21 @@ Jim Hull <imaginos@imaginos.net> - Developer
 	Csocket.h
 	Modules - away, email, savebuff, schat
 	AutoConf
+
+
+
+derblubber - BetaTester
+	Found numerous bugs
+	Suggested many features
+
+Kuja <Kuja@foex-gaming.com> - BetaTester, Documentation
+	Found numerous bugs
+	Contributes to znc wiki
+
+toby <ich@toby.in> - BetaTester, ShellProvider
+	Found numerous bugs
+	Suggested many features
+	Provided shell for testing
+
+Zack3000 - BetaTester, ShellProvider
+	Provided shell for testing
