@@ -199,6 +199,10 @@ bool CZNC::WritePidFile(int iPid) {
 }
 
 bool CZNC::WritePemFile() {
+#ifndef HAVE_LIBSSL
+	CUtils::PrintError("ZNC was not compiled with ssl support.");
+	return false; 
+#else
 	CString sPemFile = GetPemLocation();
 	const char* pHostName = getenv("HOSTNAME");
 	CString sHost;
@@ -227,6 +231,7 @@ bool CZNC::WritePemFile() {
 
 	CUtils::PrintStatus(true);
 	return true;
+#endif
 }
 
 void CZNC::DeleteUsers() {
