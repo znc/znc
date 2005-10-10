@@ -124,13 +124,6 @@ public:
 		}
 
 		m_uPort = sPort.ToUInt();
-		m_sUser = sArgs.Token(1);
-		m_sPass = sArgs.Token(2);
-
-		if (m_sPass.empty()) {
-			return false;
-		}
-
 		CWebAdminSock* pListenSock = new CWebAdminSock(this);
 
 #ifdef HAVE_LIBSSL
@@ -150,12 +143,8 @@ public:
 		m_sSocks.erase(pSock);
 	}
 
-	const CString& GetUser() const { return m_sUser; }
-	const CString& GetPass() const { return m_sPass; }
 private:
 	unsigned int		m_uPort;
-	CString				m_sUser;
-	CString				m_sPass;
 	set<CWebAdminSock*>	m_sSocks;
 };
 
@@ -191,11 +180,6 @@ CString CWebAdminSock::Footer() {
 }
 
 bool CWebAdminSock::OnLogin(const CString& sUser, const CString& sPass) {
-	if (GetUser() == m_pModule->GetUser() && GetPass() == m_pModule->GetPass()) {
-		m_bAdmin = true;
-		return true;
-	}
-
 	CUser* pUser = CZNC::Get().FindUser(GetUser());
 
 	if (pUser) {
