@@ -515,7 +515,13 @@ void CUserSock::UserCommand(const CString& sLine) {
 	} else if (m_pUser->IsAdmin() && sCommand.CaseCmp("BROADCAST") == 0) {
 		CZNC::Get().Broadcast(sLine.Token(1, true));
 	} else if (m_pUser->IsAdmin() && sCommand.CaseCmp("SHUTDOWN") == 0) {
-		CZNC::Get().Broadcast(sLine.Token(1, true));
+		CString sMessage = sLine.Token(1, true);
+
+		if (sMessage.empty()) {
+			sMessage = "ZNC is being shutdown NOW!!";
+		}
+
+		CZNC::Get().Broadcast(sMessage);
 		usleep(100000);	// Sleep for 10ms to attempt to allow the previous Broadcast() to go through to all users
 
 		throw CException(CException::EX_Shutdown);
