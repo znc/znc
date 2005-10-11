@@ -353,13 +353,23 @@ void CUserSock::ReadLine(const CString& sData) {
 				CString sModule = sTarget;
 				sModule.LeftChomp(m_pUser->GetStatusPrefix().length());
 
-				CModule* pModule = m_pUser->GetModules().FindModule(sModule);
+				CModule* pModule = CZNC::Get().GetModules().FindModule(sModule);
+
 				if (pModule) {
 					pModule->SetUserSock(this);
+					pModule->SetUser(m_pUser);
 					pModule->OnModCommand(sMsg);
 					pModule->SetUserSock(NULL);
+					pModule->SetUser(NULL);
 				} else {
-					PutStatus("No such module [" + sModule + "]");
+					pModule = m_pUser->GetModules().FindModule(sModule);
+					if (pModule) {
+						pModule->SetUserSock(this);
+						pModule->OnModCommand(sMsg);
+						pModule->SetUserSock(NULL);
+					} else {
+						PutStatus("No such module [" + sModule + "]");
+					}
 				}
 			}
 #endif
