@@ -699,9 +699,9 @@ bool CUser::PutIRC(const CString& sLine) {
 	return true;
 }
 
-bool CUser::PutUser(const CString& sLine, CUserSock* pUserSock) {
+bool CUser::PutUser(const CString& sLine, CUserSock* pUserSock, CUserSock* pSkipClient) {
 	for (unsigned int a = 0; a < m_vUserSocks.size(); a++) {
-		if (!pUserSock || pUserSock == m_vUserSocks[a]) {
+		if ((!pUserSock || pUserSock == m_vUserSocks[a]) && pSkipClient != m_vUserSocks[a]) {
 			m_vUserSocks[a]->PutServ(sLine);
 
 			if (pUserSock) {
@@ -713,9 +713,9 @@ bool CUser::PutUser(const CString& sLine, CUserSock* pUserSock) {
 	return (pUserSock == NULL);
 }
 
-bool CUser::PutStatus(const CString& sLine, CUserSock* pUserSock) {
+bool CUser::PutStatus(const CString& sLine, CUserSock* pUserSock, CUserSock* pSkipClient) {
 	for (unsigned int a = 0; a < m_vUserSocks.size(); a++) {
-		if (!pUserSock || pUserSock == m_vUserSocks[a]) {
+		if ((!pUserSock || pUserSock == m_vUserSocks[a]) && pSkipClient != m_vUserSocks[a]) {
 			m_vUserSocks[a]->PutStatus(sLine);
 
 			if (pUserSock) {
@@ -727,9 +727,9 @@ bool CUser::PutStatus(const CString& sLine, CUserSock* pUserSock) {
 	return (pUserSock == NULL);
 }
 
-bool CUser::PutStatusNotice(const CString& sLine, CUserSock* pUserSock) {
+bool CUser::PutStatusNotice(const CString& sLine, CUserSock* pUserSock, CUserSock* pSkipClient) {
 	for (unsigned int a = 0; a < m_vUserSocks.size(); a++) {
-		if (!pUserSock || pUserSock == m_vUserSocks[a]) {
+		if ((!pUserSock || pUserSock == m_vUserSocks[a]) && pSkipClient != m_vUserSocks[a]) {
 			m_vUserSocks[a]->PutStatusNotice(sLine);
 
 			if (pUserSock) {
@@ -741,9 +741,9 @@ bool CUser::PutStatusNotice(const CString& sLine, CUserSock* pUserSock) {
 	return (pUserSock == NULL);
 }
 
-bool CUser::PutModule(const CString& sModule, const CString& sLine, CUserSock* pUserSock) {
+bool CUser::PutModule(const CString& sModule, const CString& sLine, CUserSock* pUserSock, CUserSock* pSkipClient) {
 	for (unsigned int a = 0; a < m_vUserSocks.size(); a++) {
-		if (!pUserSock || pUserSock == m_vUserSocks[a]) {
+		if ((!pUserSock || pUserSock == m_vUserSocks[a]) && pSkipClient != m_vUserSocks[a]) {
 			m_vUserSocks[a]->PutModule(sModule, sLine);
 
 			if (pUserSock) {

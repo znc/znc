@@ -69,10 +69,10 @@ public:
 	bool OnBoot();
 
 	bool PutIRC(const CString& sLine);
-	bool PutUser(const CString& sLine, CUserSock* pUserSock = NULL);
-	bool PutStatus(const CString& sLine, CUserSock* pUserSock = NULL);
-	bool PutStatusNotice(const CString& sLine, CUserSock* pUserSock = NULL);
-	bool PutModule(const CString& sModule, const CString& sLine, CUserSock* pUserSock = NULL);
+	bool PutUser(const CString& sLine, CUserSock* pUserSock = NULL, CUserSock* pSkipClient = NULL);
+	bool PutStatus(const CString& sLine, CUserSock* pUserSock = NULL, CUserSock* pSkipClient = NULL);
+	bool PutStatusNotice(const CString& sLine, CUserSock* pUserSock = NULL, CUserSock* pSkipClient = NULL);
+	bool PutModule(const CString& sModule, const CString& sLine, CUserSock* pUserSock = NULL, CUserSock* pSkipClient = NULL);
 
 	bool IsUserAttached() { return (m_vUserSocks.size() > 0); }
 	void UserConnected(CUserSock* pUserSock);
