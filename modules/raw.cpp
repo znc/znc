@@ -14,6 +14,10 @@ public:
 		return CONTINUE;
 	}
 
+	virtual void OnModCommand(const CString& sCommand) {
+		m_pUser->PutUser(sCommand);
+	}
+
 	virtual EModRet OnUserRaw(CString& sLine) {
 		PutModule("YOU -> [" + sLine + "]");
 		return CONTINUE;
