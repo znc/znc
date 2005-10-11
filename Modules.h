@@ -318,6 +318,7 @@ public:
 	virtual ~CModules();
 
 	void SetUser(CUser* pUser) { m_pUser = pUser; }
+	void SetUserSock(CUserSock* pUserSock);
 
 	void UnloadAll();
 
@@ -374,7 +375,7 @@ public:
 	void GetAvailableMods(set<CModInfo>& ssMods, bool bGlobal = false);
 
 protected:
-	CUser*	m_pUser;
+	CUser*		m_pUser;
 };
 
 class CGlobalModule : public CModule {

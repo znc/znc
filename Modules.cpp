@@ -515,6 +515,12 @@ void CModules::UnloadAll() {
 	}
 }
 
+void CModules::SetUserSock(CUserSock* pUserSock) {
+	for (unsigned int a = 0; a < size(); a++) {
+		(*this)[a]->SetUserSock(pUserSock);
+	}
+}
+
 bool CModules::OnBoot() {
 	for (unsigned int a = 0; a < size(); a++) {
 		if (!(*this)[a]->OnBoot()) {

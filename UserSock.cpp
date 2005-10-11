@@ -18,7 +18,9 @@ void CUserSock::ReadLine(const CString& sData) {
 
 #ifdef _MODULES
 	if (m_bAuthed) {
+		CZNC::Get().GetModules().SetUserSock(this);
 		MODULECALLRET(OnUserRaw(sLine));
+		CZNC::Get().GetModules().SetUserSock(NULL);
 	}
 #endif
 
@@ -193,11 +195,15 @@ void CUserSock::ReadLine(const CString& sData) {
 			sCTCP.LeftChomp();
 			sCTCP.RightChomp();
 
+			CZNC::Get().GetModules().SetUserSock(this);
 			MODULECALLRET(OnUserCTCPReply(sTarget, sCTCP));
+			CZNC::Get().GetModules().SetUserSock(NULL);
 
 			sMsg = "\001" + sCTCP + "\001";
 		} else {
+			CZNC::Get().GetModules().SetUserSock(this);
 			MODULECALLRET(OnUserNotice(sTarget, sMsg));
+			CZNC::Get().GetModules().SetUserSock(NULL);
 		}
 #endif
 
@@ -267,7 +273,9 @@ void CUserSock::ReadLine(const CString& sData) {
 							}
 #ifdef _MODULES
 						} else {
+							CZNC::Get().GetModules().SetUserSock(this);
 							MODULECALLRET(OnDCCUserSend(sTarget, uLongIP, uPort, sFile, uFileSize));
+							CZNC::Get().GetModules().SetUserSock(NULL);
 #endif
 						}
 					} else {
@@ -333,7 +341,9 @@ void CUserSock::ReadLine(const CString& sData) {
 			}
 
 #ifdef _MODULES
+			CZNC::Get().GetModules().SetUserSock(this);
 			MODULECALLRET(OnUserCTCP(sTarget, sCTCP));
+			CZNC::Get().GetModules().SetUserSock(NULL);
 #endif
 			PutIRC("PRIVMSG " + sTarget + " :\001" + sCTCP + "\001");
 			return;
@@ -341,7 +351,9 @@ void CUserSock::ReadLine(const CString& sData) {
 
 		if ((m_pUser) && (sTarget.CaseCmp(CString(m_pUser->GetStatusPrefix() + "status")) == 0)) {
 #ifdef _MODULES
+			CZNC::Get().GetModules().SetUserSock(this);
 			MODULECALLRET(OnStatusCommand(sMsg));
+			CZNC::Get().GetModules().SetUserSock(NULL);
 #endif
 			UserCommand(sMsg);
 			return;
@@ -377,7 +389,9 @@ void CUserSock::ReadLine(const CString& sData) {
 		}
 
 #ifdef _MODULES
+		CZNC::Get().GetModules().SetUserSock(this);
 		MODULECALLRET(OnUserMsg(sTarget, sMsg));
+		CZNC::Get().GetModules().SetUserSock(NULL);
 #endif
 
 		CChan* pChan = m_pUser->FindChan(sTarget);
@@ -1016,7 +1030,9 @@ void CUserSock::AuthUser() {
 			m_pUser->UserConnected(this);
 		}
 
+		CZNC::Get().GetModules().SetUserSock(this);
 		VOIDMODULECALL(OnUserAttached());
+		CZNC::Get().GetModules().SetUserSock(NULL);
 	}
 }
 
@@ -1035,7 +1051,9 @@ void CUserSock::Disconnected() {
 		m_pIRCSock = NULL;
 	}
 
+	CZNC::Get().GetModules().SetUserSock(this);
 	VOIDMODULECALL(OnUserDetached());
+	CZNC::Get().GetModules().SetUserSock(NULL);
 }
 
 void CUserSock::IRCConnected(CIRCSock* pIRCSock) {
