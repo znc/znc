@@ -86,7 +86,9 @@ void CUserSock::ReadLine(const CString& sData) {
 		}
 
 		return;		// Don't forward this msg.  ZNC has already registered us.
-	} else if (!m_pUser) {
+	}
+
+	if (!m_pUser) {
 		Close();
 		return;
 	}
@@ -116,24 +118,59 @@ void CUserSock::ReadLine(const CString& sData) {
 	} else if (sCommand.CaseCmp("PONG") == 0) {
 		return;	// Block pong replies, we already responded to the pings
 	} else if (sCommand.CaseCmp("JOIN") == 0) {
-		CString sChan = sLine.Token(1);
+		CString sChans = sLine.Token(1);
 		CString sKey = sLine.Token(2);
 
-		if (sChan.Left(1) == ":") {
-			sChan.LeftChomp();
+		if (sChans.Left(1) == ":") {
+			sChans.LeftChomp();
 		}
 
 		if (m_pUser) {
-			CChan* pChan = m_pUser->FindChan(sChan);
+			VCString vChans;
+			sChans.Split(",", vChans, false);
+			sChans.clear();
 
-			if (pChan) {
-				pChan->JoinUser(false, sKey);
+			for (unsigned int a = 0; a < vChans.size(); a++) {
+				CString sChannel = vChans[a];
+				CZNC::Get().GetModules().SetUserSock(this);
+				MODULECALLCONT(OnUserJoin(sChannel, sKey));
+				CZNC::Get().GetModules().SetUserSock(NULL);
+
+				CChan* pChan = m_pUser->FindChan(sChannel);
+
+				if (pChan) {
+					pChan->JoinUser(false, sKey);
+					continue;
+				}
+
+				if (!sChannel.empty()) {
+					sChans += (sChans.empty()) ? sChannel : CString("," + sChannel);
+				}
+			}
+
+			if (sChans.empty()) {
 				return;
+			}
+
+			sLine = "JOIN " + sChans;
+
+			if (!sKey.empty()) {
+				sLine += " " + sKey;
 			}
 		}
 	} else if (sCommand.CaseCmp("PART") == 0) {
+		CString sChan = sLine.Token(1);
+		CString sMessage = sLine.Token(2, true);
+
+		if (sMessage.Left(1) == ":") {
+			sMessage.LeftChomp();
+		}
+
+		CZNC::Get().GetModules().SetUserSock(this);
+		MODULECALLRET(OnUserPart(sChan, sMessage));
+		CZNC::Get().GetModules().SetUserSock(NULL);
+
 		if (m_pUser) {
-			CString sChan = sLine.Token(1);
 			CChan* pChan = m_pUser->FindChan(sChan);
 
 			if (pChan && !pChan->IsOn()) {
@@ -141,6 +178,12 @@ void CUserSock::ReadLine(const CString& sData) {
 				m_pUser->DelChan(sChan);
 				return;
 			}
+		}
+
+		sLine = "PART " + sChan;
+
+		if (!sMessage.empty()) {
+			sLine += " :" + sMessage;
 		}
 	} else if (sCommand.CaseCmp("QUIT") == 0) {
 		if (m_pIRCSock) {

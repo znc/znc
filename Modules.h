@@ -198,8 +198,6 @@ public:
 
 	virtual bool OnLoad(const CString& sArgs);
 	virtual bool OnBoot();
-	virtual void OnUserAttached();
-	virtual void OnUserDetached();
 	virtual void OnIRCDisconnected();
 	virtual void OnIRCConnected();
 	virtual EModRet OnBroadcast(CString& sMessage);
@@ -213,7 +211,6 @@ public:
 	virtual void OnDevoice(const CNick& OpNick, const CNick& Nick, CChan& Channel, bool bNoChange);
 	virtual void OnRawMode(const CNick& OpNick, CChan& Channel, const CString& sModes, const CString& sArgs);
 
-	virtual EModRet OnUserRaw(CString& sLine);
 	virtual EModRet OnRaw(CString& sLine);
 
 	virtual EModRet OnStatusCommand(const CString& sCommand);
@@ -227,15 +224,21 @@ public:
 	virtual void OnJoin(const CNick& Nick, CChan& Channel);
 	virtual void OnPart(const CNick& Nick, CChan& Channel);
 
+	virtual void OnUserAttached();
+	virtual void OnUserDetached();
+	virtual EModRet OnUserRaw(CString& sLine);
 	virtual EModRet OnUserCTCPReply(CString& sTarget, CString& sMessage);
-	virtual EModRet OnCTCPReply(CNick& Nick, CString& sMessage);
 	virtual EModRet OnUserCTCP(CString& sTarget, CString& sMessage);
+	virtual EModRet OnUserMsg(CString& sTarget, CString& sMessage);
+	virtual EModRet OnUserNotice(CString& sTarget, CString& sMessage);
+	virtual EModRet OnUserJoin(CString& sChannel, CString& sKey);
+	virtual EModRet OnUserPart(CString& sChannel, CString& sMessage);
+
+	virtual EModRet OnCTCPReply(CNick& Nick, CString& sMessage);
 	virtual EModRet OnPrivCTCP(CNick& Nick, CString& sMessage);
 	virtual EModRet OnChanCTCP(CNick& Nick, CChan& Channel, CString& sMessage);
-	virtual EModRet OnUserMsg(CString& sTarget, CString& sMessage);
 	virtual EModRet OnPrivMsg(CNick& Nick, CString& sMessage);
 	virtual EModRet OnChanMsg(CNick& Nick, CChan& Channel, CString& sMessage);
-	virtual EModRet OnUserNotice(CString& sTarget, CString& sMessage);
 	virtual EModRet OnPrivNotice(CNick& Nick, CString& sMessage);
 	virtual EModRet OnChanNotice(CNick& Nick, CChan& Channel, CString& sMessage);
 
@@ -323,8 +326,6 @@ public:
 	void UnloadAll();
 
 	virtual bool OnBoot();						// Return false to abort
-	virtual void OnUserAttached();
-	virtual void OnUserDetached();
 	virtual void OnIRCDisconnected();
 	virtual void OnIRCConnected();
 	virtual bool OnBroadcast(CString& sMessage);
@@ -338,7 +339,6 @@ public:
 	virtual void OnDevoice(const CNick& OpNick, const CNick& Nick, CChan& Channel, bool bNoChange);
 	virtual void OnRawMode(const CNick& OpNick, CChan& Channel, const CString& sModes, const CString& sArgs);
 
-	virtual bool OnUserRaw(CString& sLine);
 	virtual bool OnRaw(CString& sLine);
 
 	virtual bool OnStatusCommand(const CString& sCommand);
@@ -352,15 +352,21 @@ public:
 	virtual void OnJoin(const CNick& Nick, CChan& Channel);
 	virtual void OnPart(const CNick& Nick, CChan& Channel);
 
+	virtual void OnUserAttached();
+	virtual void OnUserDetached();
+	virtual bool OnUserRaw(CString& sLine);
 	virtual bool OnUserCTCPReply(CString& sTarget, CString& sMessage);
-	virtual bool OnCTCPReply(CNick& Nick, CString& sMessage);
 	virtual bool OnUserCTCP(CString& sTarget, CString& sMessage);
+	virtual bool OnUserMsg(CString& sTarget, CString& sMessage);
+	virtual bool OnUserNotice(CString& sTarget, CString& sMessage);
+	virtual bool OnUserJoin(CString& sChannel, CString& sKey);
+	virtual bool OnUserPart(CString& sChannel, CString& sMessage);
+
+	virtual bool OnCTCPReply(CNick& Nick, CString& sMessage);
 	virtual bool OnPrivCTCP(CNick& Nick, CString& sMessage);
 	virtual bool OnChanCTCP(CNick& Nick, CChan& Channel, CString& sMessage);
-	virtual bool OnUserMsg(CString& sTarget, CString& sMessage);
 	virtual bool OnPrivMsg(CNick& Nick, CString& sMessage);
 	virtual bool OnChanMsg(CNick& Nick, CChan& Channel, CString& sMessage);
-	virtual bool OnUserNotice(CString& sTarget, CString& sMessage);
 	virtual bool OnPrivNotice(CNick& Nick, CString& sMessage);
 	virtual bool OnChanNotice(CNick& Nick, CChan& Channel, CString& sMessage);
 
