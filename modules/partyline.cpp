@@ -18,6 +18,17 @@ public:
 	}
 
 	virtual bool OnLoad(const CString& sArgs) {
+		const map<CString, CUser*>& msUsers = CZNC::Get().GetUserMap();
+
+		for (map<CString, CUser*>::const_iterator it = msUsers.begin(); it != msUsers.end(); it++) {
+			CUser* pUser = it->second;
+			if (pUser->GetIRCSock()) {
+				if (pUser->GetChanPrefixes().find("~") == CString::npos) {
+					pUser->PutUser(":" + pUser->GetIRCServer() + " 005 " + pUser->GetIRCNick().GetNick() + " CHANTYPES=" + pUser->GetChanPrefixes() + "~ :are supported by this server.");
+				}
+			}
+		}
+
 		return true;
 	}
 
@@ -72,6 +83,11 @@ public:
 			return CONTINUE;
 		}
 
+		if (sChannel.Left(2) != "~#") {
+			m_pUserSock->PutServ(":" + m_pUser->GetIRCServer() + " 403 " + m_pUser->GetIRCNick().GetNick() + " " + sChannel + " :No such channel");
+			return HALT;
+		}
+
 		set<CString>& ssNicks = m_msChans[sChannel.AsLower()];
 		const CString& sNick = m_pUser->GetUserName();
 
@@ -99,6 +115,12 @@ public:
 			return CONTINUE;
 		}
 
+		if (sChannel.Left(2) != "~#") {
+			m_pUserSock->PutServ(":" + m_pUser->GetIRCServer() + " 403 " + m_pUser->GetIRCNick().GetNick() + " " + sChannel + " :Channels look like ~#znc");
+			return HALT;
+		}
+
+		sChannel = sChannel.Left(32);
 		set<CString>& ssNicks = m_msChans[sChannel.AsLower()];
 		const CString& sNick = m_pUser->GetUserName();
 
@@ -141,6 +163,11 @@ public:
 		}
 
 		if (cPrefix == '~') {
+			if (m_msChans.find(sTarget.AsLower()) == m_msChans.end()) {
+				m_pUserSock->PutServ(":" + m_pUser->GetIRCServer() + " 403 " + m_pUser->GetIRCNick().GetNick() + " " + sTarget + " :No such channel");
+				return HALT;
+			}
+
 			PutChan(sTarget, ":?" + m_pUser->GetUserName() + "!" + m_pUser->GetIdent() + "@" + sHost + " PRIVMSG " + sTarget + " :" + sMessage, true, false);
 		} else {
 			CString sNick = sTarget.LeftChomp_n(1);
@@ -154,6 +181,36 @@ public:
 		}
 
 		return HALT;
+	}
+
+	virtual void OnModCommand(const CString& sLine) {
+		CString sCommand = sLine.Token(0);
+
+		if (sCommand.CaseCmp("LIST") == 0) {
+			if (!m_msChans.size()) {
+				PutModule("There are no open channels.");
+				return;
+			}
+
+			CTable Table;
+
+			Table.AddColumn("Channel");
+			Table.AddColumn("Users");
+
+			for (map<CString, set<CString> >::const_iterator a = m_msChans.begin(); a != m_msChans.end(); a++) {
+				Table.AddRow();
+
+				Table.SetCell("Channel", a->first);
+				Table.SetCell("Users", CString::ToString(a->second.size()));
+			}
+
+			unsigned int uTableIdx = 0;
+			CString sLine;
+
+			while (Table.GetLine(uTableIdx++, sLine)) {
+				PutModule(sLine);
+			}
+		}
 	}
 
 	bool PutChan(const CString& sChan, const CString& sLine, bool bIncludeCurUser = true, bool bIncludeClient = true) {
