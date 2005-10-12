@@ -88,6 +88,7 @@ public:
 	CString GetCurNick();
 	bool Clone(const CUser& User, CString& sErrorRet);
 	void StartAwayNickTimer();
+	void StartBackNickTimer();
 	void DelAwayNickTimer();
 	void DelBackNickTimer();
 	void BounceAllClients();

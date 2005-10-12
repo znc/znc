@@ -95,15 +95,7 @@ void CUser::UserConnected(CUserSock* pUserSock) {
 	}
 
 	m_vUserSocks.push_back(pUserSock);
-	CIRCSock* pIRCSock = GetIRCSock();
-
-	CString sConfNick = GetNick();
-	if (pIRCSock) {
-		if (pIRCSock->GetNick().CaseCmp(CNick::Concat(sConfNick, GetAwaySuffix(), pIRCSock->GetMaxNickLen())) == 0) {
-			m_pBackNickTimer = new CBackNickTimer(this);
-			CZNC::Get().GetManager().AddCron(m_pBackNickTimer);
-		}
-	}
+	StartBackNickTimer();
 
 	if (m_RawBuffer.IsEmpty()) {
 		pUserSock->PutServ(":irc.znc.com 001 " + pUserSock->GetNick() + " :- Welcome to ZNC -");
@@ -145,6 +137,19 @@ void CUser::StartAwayNickTimer() {
 	if (!m_pAwayNickTimer) {
 		m_pAwayNickTimer = new CAwayNickTimer(this);
 		CZNC::Get().GetManager().AddCron(m_pAwayNickTimer);
+	}
+}
+
+void CUser::StartBackNickTimer() {
+	CIRCSock* pIRCSock = GetIRCSock();
+
+	if (pIRCSock) {
+		CString sConfNick = GetNick();
+
+		if (pIRCSock->GetNick().CaseCmp(CNick::Concat(sConfNick, GetAwaySuffix(), pIRCSock->GetMaxNickLen())) == 0) {
+			m_pBackNickTimer = new CBackNickTimer(this);
+			CZNC::Get().GetManager().AddCron(m_pBackNickTimer);
+		}
 	}
 }
 
@@ -332,6 +337,14 @@ bool CUser::Clone(const CUser& User, CString& sErrorRet) {
 	SetDenyLoadMod(User.DenyLoadMod());
 	SetAdmin(User.IsAdmin());
 	// !Flags
+
+	if (!IsUserAttached()) {
+		if (GetAwaySuffix().empty()) {
+			StartBackNickTimer();
+		} else {
+			StartAwayNickTimer();
+		}
+	}
 
 	return true;
 }
