@@ -49,6 +49,7 @@ public:
 	void PutModNotice(const CString& sModule, const CString& sLine);
 
 	virtual void ReadLine(const CString& sData);
+	bool SendMotd();
 	void HelpUser();
 	void AuthUser();
 	virtual void Connected();

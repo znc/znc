@@ -579,6 +579,33 @@ void CUserSock::UserCommand(const CString& sLine) {
 		}
 	} else if (sCommand.CaseCmp("VERSION") == 0) {
 		PutStatus(CZNC::GetTag());
+	} else if (sCommand.CaseCmp("MOTD") == 0) {
+		if (!SendMotd()) {
+			PutStatus("There is no MOTD set.");
+		}
+	} else if (m_pUser->IsAdmin() && sCommand.CaseCmp("SaveConfig") == 0) {
+		CZNC::Get().WriteConfig();
+	} else if (m_pUser->IsAdmin() && sCommand.CaseCmp("SetMOTD") == 0) {
+		CString sMessage = sLine.Token(1, true);
+
+		if (sMessage.empty()) {
+			PutStatus("Usage: SetMOTD <Message>");
+		} else {
+			CZNC::Get().SetMotd(sMessage);
+			PutStatus("MOTD set to [" + sMessage + "]");
+		}
+	} else if (m_pUser->IsAdmin() && sCommand.CaseCmp("AddMOTD") == 0) {
+		CString sMessage = sLine.Token(1, true);
+
+		if (sMessage.empty()) {
+			PutStatus("Usage: AddMOTD <Message>");
+		} else {
+			CZNC::Get().AddMotd(sMessage);
+			PutStatus("Added [" + sMessage + "] to MOTD");
+		}
+	} else if (m_pUser->IsAdmin() && sCommand.CaseCmp("ClearMOTD") == 0) {
+		CZNC::Get().ClearMotd();
+		PutStatus("Cleared MOTD");
 	} else if (m_pUser->IsAdmin() && sCommand.CaseCmp("BROADCAST") == 0) {
 		CZNC::Get().Broadcast(sLine.Token(1, true));
 	} else if (m_pUser->IsAdmin() && sCommand.CaseCmp("SHUTDOWN") == 0) {
@@ -995,6 +1022,20 @@ void CUserSock::UserCommand(const CString& sLine) {
 	}
 }
 
+bool CUserSock::SendMotd() {
+	const VCString& vsMotd = CZNC::Get().GetMotd();
+
+	if (!vsMotd.size()) {
+		return false;
+	}
+
+	for (unsigned int a = 0; a < vsMotd.size(); a++) {
+		PutStatusNotice(vsMotd[a]);
+	}
+
+	return true;
+}
+
 void CUserSock::HelpUser() {
 	CTable Table;
 	Table.AddColumn("Command");
@@ -1017,14 +1058,18 @@ void CUserSock::HelpUser() {
 
 	if (m_pUser) {
 		if (!m_pUser->DenyLoadMod()) {
-			Table.AddRow(); Table.SetCell("Command", "LoadMod");	Table.SetCell("Arguments", "<module>");				Table.SetCell("Description", "Load a module");
-			Table.AddRow(); Table.SetCell("Command", "UnloadMod");	Table.SetCell("Arguments", "<module>");				Table.SetCell("Description", "Unload a module");
-			Table.AddRow(); Table.SetCell("Command", "ReloadMod");	Table.SetCell("Arguments", "<module>");				Table.SetCell("Description", "Reload a module");
+			Table.AddRow(); Table.SetCell("Command", "LoadMod");	Table.SetCell("Arguments", "<module>");		Table.SetCell("Description", "Load a module");
+			Table.AddRow(); Table.SetCell("Command", "UnloadMod");	Table.SetCell("Arguments", "<module>");		Table.SetCell("Description", "Unload a module");
+			Table.AddRow(); Table.SetCell("Command", "ReloadMod");	Table.SetCell("Arguments", "<module>");		Table.SetCell("Description", "Reload a module");
 		}
 
 		if (m_pUser->IsAdmin()) {
-			Table.AddRow(); Table.SetCell("Command", "Broadcast");	Table.SetCell("Arguments", "[message]");			Table.SetCell("Description", "Broadcast a message to all users");
-			Table.AddRow(); Table.SetCell("Command", "Shutdown");	Table.SetCell("Arguments", "[message]");			Table.SetCell("Description", "Shutdown znc completely");
+			Table.AddRow(); Table.SetCell("Command", "SaveConfig");	Table.SetCell("Arguments", "");				Table.SetCell("Description", "Save the current settings to disk");
+			Table.AddRow(); Table.SetCell("Command", "SetMOTD");	Table.SetCell("Arguments", "<Message>");	Table.SetCell("Description", "Set the message of the day");
+			Table.AddRow(); Table.SetCell("Command", "AddMOTD");	Table.SetCell("Arguments", "<Message>");	Table.SetCell("Description", "Append <Message> to MOTD");
+			Table.AddRow(); Table.SetCell("Command", "ClearMOTD");	Table.SetCell("Arguments", "");				Table.SetCell("Description", "Clear the MOTD");
+			Table.AddRow(); Table.SetCell("Command", "Broadcast");	Table.SetCell("Arguments", "[message]");	Table.SetCell("Description", "Broadcast a message to all users");
+			Table.AddRow(); Table.SetCell("Command", "Shutdown");	Table.SetCell("Arguments", "[message]");	Table.SetCell("Description", "Shutdown znc completely");
 		}
 	}
 
@@ -1072,6 +1117,8 @@ void CUserSock::AuthUser() {
 			m_pIRCSock = pIRCSock;
 			m_pUser->UserConnected(this);
 		}
+
+		SendMotd();
 
 		CZNC::Get().GetModules().SetUserSock(this);
 		VOIDMODULECALL(OnUserAttached());

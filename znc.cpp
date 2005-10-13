@@ -347,6 +347,10 @@ bool CZNC::WriteConfig() {
 	if (!m_sPidFile.empty()) { File.Write("PidFile      = " + m_sPidFile + "\r\n"); }
 	if (!m_sStatusPrefix.empty()) { File.Write("StatusPrefix = " + m_sStatusPrefix + "\r\n"); }
 
+	for (unsigned int m = 0; m < m_vsMotd.size(); m++) {
+		File.Write("Motd         = " + m_vsMotd[m] + "\r\n");
+	}
+
 	for (unsigned int v = 0; v < m_vsVHosts.size(); v++) {
 		File.Write("VHost        = " + m_vsVHosts[v] + "\r\n");
 	}
@@ -492,6 +496,7 @@ bool CZNC::WriteNewConfig(const CString& sConfig) {
 		CUtils::GetInput("Ident", sAnswer, sNick);			vsLines.push_back("\tIdent      = " + sAnswer);
 		CUtils::GetInput("Real Name", sAnswer, "Got ZNC?");	vsLines.push_back("\tRealName   = " + sAnswer);
 		CUtils::GetInput("VHost", sAnswer, "", "optional");	if (!sAnswer.empty()) { vsLines.push_back("\tVHost      = " + sAnswer); }
+		// todo: Possibly add motd
 
 		if (CUtils::GetBoolInput("Would you like ZNC to keep trying for your primary nick?", true)) {
 			vsLines.push_back("\tKeepNick   = true");
@@ -1007,6 +1012,9 @@ bool CZNC::ParseConfig(const CString& sConfig) {
 					continue;
 				} else if (sName.CaseCmp("ISpoofFile") == 0) {
 					m_sISpoofFile = sValue;
+					continue;
+				} else if (sName.CaseCmp("MOTD") == 0) {
+					AddMotd(sValue);
 					continue;
 				} else if (sName.CaseCmp("VHost") == 0) {
 					AddVHost(sValue);

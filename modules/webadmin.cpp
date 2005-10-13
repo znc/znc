@@ -402,11 +402,16 @@ bool CWebAdminSock::SettingsPage(CString& sPageRet) {
 	if (!GetParam("submitted").ToUInt()) {
 		sPageRet = Header("Settings");
 
-		CString sVHosts;
+		CString sVHosts, sMotd;
 
 		const VCString& vsVHosts = CZNC::Get().GetVHosts();
 		for (unsigned int a = 0; a < vsVHosts.size(); a++) {
 			sVHosts += vsVHosts[a] + "\r\n";
+		}
+
+		const VCString& vsMotd = CZNC::Get().GetMotd();
+		for (unsigned int b = 0; b < vsMotd.size(); b++) {
+			sMotd += vsMotd[b] + "\r\n";
 		}
 
 		sPageRet += "<br><form action='/settings' method='POST'>\r\n"
@@ -420,6 +425,9 @@ bool CWebAdminSock::SettingsPage(CString& sPageRet) {
 				"<input type='text' name='ispooffile' value='" + CZNC::Get().GetISpoofFile().Escape_n(CString::EHTML) + "' size='32' maxlength='128'></div>\r\n"
 			"<div><small><b>ISpoofFormat:</b></small><br>\r\n"
 				"<input type='text' name='ispoofformat' value='" + CZNC::Get().GetISpoofFormat().Escape_n(CString::EHTML) + "' size='32' maxlength='128'></div>\r\n"
+
+			"<br><div><small><b>MOTD:</b></small><br>\r\n"
+				"<textarea name='motd' cols='80' rows='5'>" + sMotd.Escape_n(CString::EHTML) + "</textarea></div>\r\n"
 
 			"<br><div><small><b>VHosts:</b></small><br>\r\n"
 				"<textarea name='vhosts' cols='40' rows='5'>" + sVHosts.Escape_n(CString::EHTML) + "</textarea></div>\r\n"
@@ -443,7 +451,6 @@ bool CWebAdminSock::SettingsPage(CString& sPageRet) {
 		}
 
 		sPageRet += "</table><br></div></div><br><br>\r\n"
-			"<br></div></div><br><br>\r\n"
 			"<input type='submit' value='Submit'>\r\n"
 			"</form>\r\n";
 
@@ -457,10 +464,17 @@ bool CWebAdminSock::SettingsPage(CString& sPageRet) {
 	sArg = GetParam("ispoofformat"); CZNC::Get().SetISpoofFormat(sArg);
 	//sArg = GetParam(""); if (!sArg.empty()) { CZNC::Get().Set(sArg); }
 
-	VCString vsArgs = GetParam("vhosts").Split("\n");
-	CZNC::Get().ClearVHosts();
+	VCString vsArgs = GetParam("motd").Split("\n");
+	CZNC::Get().ClearMotd();
 
 	unsigned int a = 0;
+	for (a = 0; a < vsArgs.size(); a++) {
+		CZNC::Get().AddMotd(vsArgs[a].TrimRight_n());
+	}
+
+	vsArgs = GetParam("vhosts").Split("\n");
+	CZNC::Get().ClearVHosts();
+
 	for (a = 0; a < vsArgs.size(); a++) {
 		CZNC::Get().AddVHost(vsArgs[a].Trim_n());
 	}

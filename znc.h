@@ -85,6 +85,13 @@ public:
 	bool AddUser(CUser* pUser);
 	const map<CString,CUser*> & GetUserMap() const { return( m_msUsers ); }
 
+	// Message of the Day
+	void SetMotd(const CString& sMessage) { ClearMotd(); AddMotd(sMessage); }
+	void AddMotd(const CString& sMessage) { if (!sMessage.empty()) { m_vsMotd.push_back(sMessage); } }
+	void ClearMotd() { m_vsMotd.clear(); }
+	const VCString& GetMotd() const { return m_vsMotd; }
+	// !MOTD
+
 private:
 protected:
 	unsigned short			m_uListenPort;
@@ -107,6 +114,7 @@ protected:
 	CString					m_sISpoofFormat;
 	CString					m_sPidFile;
 	VCString				m_vsVHosts;
+	VCString				m_vsMotd;
 	CLockFile				m_LockFile;
 	bool					m_bISpoofLocked;
 	bool					m_bSSL;
