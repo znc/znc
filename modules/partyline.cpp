@@ -186,7 +186,22 @@ public:
 	virtual void OnModCommand(const CString& sLine) {
 		CString sCommand = sLine.Token(0);
 
-		if (sCommand.CaseCmp("LIST") == 0) {
+		if (sCommand.CaseCmp("HELP") == 0) {
+			CTable Table;
+			Table.AddColumn("Command");
+			Table.AddColumn("Arguments");
+			Table.AddColumn("Description");
+
+			Table.AddRow(); Table.SetCell("Command", "Help"); Table.SetCell("Arguments", ""); Table.SetCell("Description", "List all partyline commands");
+			Table.AddRow(); Table.SetCell("Command", "List"); Table.SetCell("Arguments", ""); Table.SetCell("Description", "List all open channels");
+
+			unsigned int uTableIdx = 0;
+			CString sLine;
+
+			while (Table.GetLine(uTableIdx++, sLine)) {
+				PutModule(sLine);
+			}
+		} else if (sCommand.CaseCmp("LIST") == 0) {
 			if (!m_msChans.size()) {
 				PutModule("There are no open channels.");
 				return;
@@ -210,6 +225,8 @@ public:
 			while (Table.GetLine(uTableIdx++, sLine)) {
 				PutModule(sLine);
 			}
+		} else {
+			PutModule("Unkown command, try 'HELP'");
 		}
 	}
 
