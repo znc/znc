@@ -21,6 +21,7 @@ CUser::CUser(const CString& sUserName) {
 #endif
 	m_RawBuffer.SetLineCount(100);		// This should be more than enough raws, especially since we are buffering the MOTD separately
 	m_MotdBuffer.SetLineCount(200);		// This should be more than enough motd lines
+	m_bIRCConnected = false;
 	m_bMultiClients = true;
 	m_bBounceDCCs = true;
 	m_bPassHashed = false;
@@ -73,9 +74,14 @@ bool CUser::OnBoot() {
 }
 
 void CUser::IRCConnected(CIRCSock* pIRCSock) {
+	for (unsigned int a = 0; a < m_vUserSocks.size(); a++) {
+		m_vUserSocks[a]->IRCConnected(pIRCSock);
+	}
 }
 
 void CUser::IRCDisconnected() {
+	m_bIRCConnected = false;
+
 	for (unsigned int a = 0; a < m_vUserSocks.size(); a++) {
 		m_vUserSocks[a]->IRCDisconnected();
 	}
@@ -866,7 +872,7 @@ void CUser::SetKeepNick(bool b) { m_bKeepNick = b; }
 void CUser::SetDenyLoadMod(bool b) { m_bDenyLoadMod = b; }
 void CUser::SetAdmin(bool b) { m_bAdmin = b; }
 void CUser::SetDefaultChanModes(const CString& s) { m_sDefaultChanModes = s; }
-void CUser::SetIRCServer(const CString& s) { m_sIRCServer = s; }
+void CUser::SetIRCServer(const CString& s) { m_sIRCServer = s; m_bIRCConnected = true; }
 void CUser::SetQuitMsg(const CString& s) { m_sQuitMsg = s; }
 void CUser::SetBufferCount(unsigned int u) { m_uBufferCount = u; }
 void CUser::SetKeepBuffer(bool b) { m_bKeepBuffer = b; }

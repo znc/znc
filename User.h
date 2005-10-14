@@ -79,6 +79,7 @@ public:
 	void UserDisconnected(CUserSock* pUserSock);
 
 	CString GetLocalIP();
+	bool IsIRCConnected() { return (GetIRCSock() != NULL); }
 	void IRCConnected(CIRCSock* pIRCSock);
 	void IRCDisconnected();
 
@@ -185,7 +186,7 @@ protected:
 	CBuffer						m_RawBuffer;
 	CBuffer						m_MotdBuffer;
 	CBuffer						m_QueryBuffer;
-
+	bool				m_bIRCConnected;
 	bool				m_bMultiClients;
 	bool				m_bBounceDCCs;
 	bool				m_bPassHashed;
