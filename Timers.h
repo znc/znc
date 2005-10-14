@@ -4,6 +4,7 @@ class CKeepNickTimer : public CCron {
 public:
 	CKeepNickTimer(CUser* pUser) : CCron() {
 		m_pUser = pUser;
+		m_uTrys = 0;
 		Start(5);
 	}
 	virtual ~CKeepNickTimer() {}
@@ -12,6 +13,7 @@ private:
 protected:
 	virtual void RunJob() {
 		CIRCSock* pSock = m_pUser->GetIRCSock();
+
 		if (pSock) {
 			if (m_uTrys++ >= 40) {
 				pSock->SetOrigNickPending(false);
@@ -37,9 +39,7 @@ public:
 private:
 protected:
 	virtual void RunJob() {
-		CIRCSock* pSock = m_pUser->GetIRCSock();
-
-		if (pSock) {
+		if (m_pUser->IsIRCConnected()) {
 			m_pUser->JoinChans();
 		}
 	}
@@ -58,7 +58,7 @@ public:
 private:
 protected:
 	virtual void RunJob() {
-		if (m_pUser->IsUserAttached()) {
+		if (m_pUser->IsUserAttached() && m_pUser->IsIRCConnected()) {
 			CIRCSock* pSock = m_pUser->GetIRCSock();
 
 			if (pSock) {
@@ -89,7 +89,7 @@ public:
 private:
 protected:
 	virtual void RunJob() {
-		if (!m_pUser->IsUserAttached()) {
+		if (!m_pUser->IsUserAttached() && m_pUser->IsIRCConnected()) {
 			CIRCSock* pSock = m_pUser->GetIRCSock();
 
 			if (pSock) {
