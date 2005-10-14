@@ -1191,12 +1191,8 @@ void CUserSock::AuthUser() {
 		m_bAuthed = true;
 		SetSockName("USR::" + pUser->GetUserName());
 
-		CIRCSock* pIRCSock = (CIRCSock*) CZNC::Get().FindSockByName("IRC::" + pUser->GetUserName());
-
-		if (pIRCSock) {
-			m_pIRCSock = pIRCSock;
-			m_pUser->UserConnected(this);
-		}
+		m_pIRCSock = (CIRCSock*) CZNC::Get().FindSockByName("IRC::" + pUser->GetUserName());
+		m_pUser->UserConnected(this);
 
 		SendMotd();
 
