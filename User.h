@@ -79,7 +79,7 @@ public:
 	void UserDisconnected(CUserSock* pUserSock);
 
 	CString GetLocalIP();
-	bool IsIRCConnected() { return (GetIRCSock() != NULL); }
+	bool IsIRCConnected() { return m_bIRCConnected; }
 	void IRCConnected(CIRCSock* pIRCSock);
 	void IRCDisconnected();
 
