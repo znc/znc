@@ -585,6 +585,79 @@ void CUserSock::UserCommand(const CString& sLine) {
 		}
 	} else if (m_pUser->IsAdmin() && sCommand.CaseCmp("SaveConfig") == 0) {
 		CZNC::Get().WriteConfig();
+	} else if (sCommand.CaseCmp("LISTCLIENTS") == 0) {
+		if (m_pUser) {
+			CUser* pUser = m_pUser;
+			CString sNick = sLine.Token(1);
+
+			if (!sNick.empty()) {
+				if (!m_pUser->IsAdmin()) {
+					PutStatus("Usage: ListClients");
+					return;
+				}
+
+				pUser = CZNC::Get().FindUser(sNick);
+
+				if (!pUser) {
+					PutStatus("No such user [" + sNick + "]");
+					return;
+				}
+			}
+
+			vector<CUserSock*>& vClients = pUser->GetUserSocks();
+
+			if (vClients.empty()) {
+				PutStatus("No clients are connected");
+				return;
+			}
+
+			CTable Table;
+			Table.AddColumn("Host");
+
+			for (unsigned int a = 0; a < vClients.size(); a++) {
+				Table.AddRow();
+				Table.SetCell("Host", vClients[a]->GetRemoteIP());
+			}
+
+			if (Table.size()) {
+				unsigned int uTableIdx = 0;
+				CString sLine;
+
+				while (Table.GetLine(uTableIdx++, sLine)) {
+					PutStatus(sLine);
+				}
+			}
+		}
+	} else if (m_pUser->IsAdmin() && sCommand.CaseCmp("LISTUSERS") == 0) {
+		const map<CString, CUser*>& msUsers = CZNC::Get().GetUserMap();
+		CTable Table;
+		Table.AddColumn("Username");
+		Table.AddColumn("Clients");
+		Table.AddColumn("OnIRC");
+		Table.AddColumn("IRC Server");
+		Table.AddColumn("IRC User");
+
+		for (map<CString, CUser*>::const_iterator it = msUsers.begin(); it != msUsers.end(); it++) {
+			Table.AddRow();
+			Table.SetCell("Username", it->first);
+			Table.SetCell("Clients", CString::ToString(it->second->GetUserSocks().size()));
+			if (!it->second->IsIRCConnected()) {
+				Table.SetCell("OnIRC", "No");
+			} else {
+				Table.SetCell("OnIRC", "Yes");
+				Table.SetCell("IRC Server", it->second->GetIRCServer());
+				Table.SetCell("IRC User", it->second->GetIRCNick().GetNickMask());
+			}
+		}
+
+		if (Table.size()) {
+			unsigned int uTableIdx = 0;
+			CString sLine;
+
+			while (Table.GetLine(uTableIdx++, sLine)) {
+				PutStatus(sLine);
+			}
+		}
 	} else if (m_pUser->IsAdmin() && sCommand.CaseCmp("SetMOTD") == 0) {
 		CString sMessage = sLine.Token(1, true);
 
@@ -1047,7 +1120,12 @@ void CUserSock::HelpUser() {
 	Table.AddRow(); Table.SetCell("Command", "ListMods");	Table.SetCell("Arguments", "");						Table.SetCell("Description", "List all loaded modules");
 	Table.AddRow(); Table.SetCell("Command", "ListChans");	Table.SetCell("Arguments", "");						Table.SetCell("Description", "List all channels");
 	Table.AddRow(); Table.SetCell("Command", "ListNicks");	Table.SetCell("Arguments", "<#chan>");				Table.SetCell("Description", "List all nicks on a channel");
-	Table.AddRow(); Table.SetCell("Command", "ListServers");	Table.SetCell("Arguments", "");					Table.SetCell("Description", "List all servers");
+
+	if (!m_pUser->IsAdmin()) { // If they are an admin we will add this command below with an argument
+		Table.AddRow(); Table.SetCell("Command", "ListClients");Table.SetCell("Arguments", "");						Table.SetCell("Description", "List all clients connected to your znc user");
+	}
+
+	Table.AddRow(); Table.SetCell("Command", "ListServers");Table.SetCell("Arguments", "");						Table.SetCell("Description", "List all servers");
 	Table.AddRow(); Table.SetCell("Command", "AddServer");	Table.SetCell("Arguments", "<host> [[+]port] [pass]");	Table.SetCell("Description", "Add a server to the list");
 	Table.AddRow(); Table.SetCell("Command", "RemServer");	Table.SetCell("Arguments", "<host>");				Table.SetCell("Description", "Remove a server from the list");
 	Table.AddRow(); Table.SetCell("Command", "Topics");		Table.SetCell("Arguments", "");						Table.SetCell("Description", "Show topics in all channels");
@@ -1065,6 +1143,8 @@ void CUserSock::HelpUser() {
 
 		if (m_pUser->IsAdmin()) {
 			Table.AddRow(); Table.SetCell("Command", "SaveConfig");	Table.SetCell("Arguments", "");				Table.SetCell("Description", "Save the current settings to disk");
+			Table.AddRow(); Table.SetCell("Command", "ListUsers");	Table.SetCell("Arguments", "");				Table.SetCell("Description", "List all users/clients connected to znc");
+			Table.AddRow(); Table.SetCell("Command", "ListClients");Table.SetCell("Arguments", "[User]");		Table.SetCell("Description", "List all clients connected to your znc user");
 			Table.AddRow(); Table.SetCell("Command", "SetMOTD");	Table.SetCell("Arguments", "<Message>");	Table.SetCell("Description", "Set the message of the day");
 			Table.AddRow(); Table.SetCell("Command", "AddMOTD");	Table.SetCell("Arguments", "<Message>");	Table.SetCell("Description", "Append <Message> to MOTD");
 			Table.AddRow(); Table.SetCell("Command", "ClearMOTD");	Table.SetCell("Arguments", "");				Table.SetCell("Description", "Clear the MOTD");
