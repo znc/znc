@@ -100,6 +100,7 @@ void CUser::UserConnected(CUserSock* pUserSock) {
 		BounceAllClients();
 	}
 
+	PutStatus("Another client authenticated as your user, use the 'ListClients' command to see all clients");
 	m_vUserSocks.push_back(pUserSock);
 	StartBackNickTimer();
 
