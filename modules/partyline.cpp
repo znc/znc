@@ -61,11 +61,21 @@ public:
 			if (ssNicks.find(m_pUser->GetUserName()) != ssNicks.end()) {
 				m_pUserSock->PutServ(":" + m_pUser->GetIRCNick().GetNickMask() + " JOIN " + it->first);
 				SendNickList(ssNicks, it->first);
+				PutChan(ssNicks, ":*" + GetModName() + "!znc@rottenboy.com MODE " + it->first + " +" + CString(m_pUser->IsAdmin() ? "o" : "v") + " ?" + m_pUser->GetUserName(), true);
 			}
 		}
 	}
 
 	virtual void OnUserDetached() {
+		if (!m_pUser->IsUserAttached()) {
+			for (map<CString, set<CString> >::iterator it = m_msChans.begin(); it != m_msChans.end(); it++) {
+				set<CString>& ssNicks = it->second;
+
+				if (ssNicks.find(m_pUser->GetUserName()) != ssNicks.end()) {
+					PutChan(ssNicks, ":*" + GetModName() + "!znc@rottenboy.com MODE " + it->first + " -ov ?" + m_pUser->GetUserName() + " ?" + m_pUser->GetUserName(), true);
+				}
+			}
+		}
 	}
 
 	virtual EModRet OnUserRaw(CString& sLine) {
@@ -138,7 +148,7 @@ public:
 			SendNickList(ssNicks, sChannel);
 
 			if (m_pUser->IsAdmin()) {
-				PutChan(ssNicks, ":*status!znc@rottenboy.com MODE " + sChannel + " +o ?" + sNick, false);
+				PutChan(ssNicks, ":*" + GetModName() + "!znc@rottenboy.com MODE " + sChannel + " +o ?" + sNick, false);
 			}
 		}
 
@@ -260,10 +270,10 @@ public:
 	void SendNickList(set<CString>& ssNicks, const CString& sChan) {
 		CString sNickList;
 		for (set<CString>::iterator it = ssNicks.begin(); it != ssNicks.end(); it++) {
-			CUser* pChan = CZNC::Get().FindUser(*it);
+			CUser* pUser = CZNC::Get().FindUser(*it);
 
-			if (pChan && pChan->IsAdmin()) {
-				sNickList += "@";
+			if (pUser && pUser->IsUserAttached()) {
+				sNickList += (pUser->IsAdmin()) ? "@" : "+";
 			}
 
 			sNickList += "?" + (*it) + " ";
