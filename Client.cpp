@@ -1,5 +1,5 @@
 #include "main.h"
-#include "UserSock.h"
+#include "Client.h"
 #include "User.h"
 #include "znc.h"
 #include "IRCSock.h"
@@ -7,7 +7,7 @@
 #include "DCCSock.h"
 #include "Server.h"
 
-void CUserSock::ReadLine(const CString& sData) {
+void CClient::ReadLine(const CString& sData) {
 	CString sLine = sData;
 
 	while ((sLine.Right(1) == "\r") || (sLine.Right(1) == "\n")) {
@@ -18,9 +18,9 @@ void CUserSock::ReadLine(const CString& sData) {
 
 #ifdef _MODULES
 	if (m_bAuthed) {
-		CZNC::Get().GetModules().SetUserSock(this);
+		CZNC::Get().GetModules().SetClient(this);
 		MODULECALLRET(OnUserRaw(sLine));
-		CZNC::Get().GetModules().SetUserSock(NULL);
+		CZNC::Get().GetModules().SetClient(NULL);
 	}
 #endif
 
@@ -132,9 +132,9 @@ void CUserSock::ReadLine(const CString& sData) {
 
 			for (unsigned int a = 0; a < vChans.size(); a++) {
 				CString sChannel = vChans[a];
-				CZNC::Get().GetModules().SetUserSock(this);
+				CZNC::Get().GetModules().SetClient(this);
 				MODULECALLCONT(OnUserJoin(sChannel, sKey));
-				CZNC::Get().GetModules().SetUserSock(NULL);
+				CZNC::Get().GetModules().SetClient(NULL);
 
 				CChan* pChan = m_pUser->FindChan(sChannel);
 
@@ -166,9 +166,9 @@ void CUserSock::ReadLine(const CString& sData) {
 			sMessage.LeftChomp();
 		}
 
-		CZNC::Get().GetModules().SetUserSock(this);
+		CZNC::Get().GetModules().SetClient(this);
 		MODULECALLRET(OnUserPart(sChan, sMessage));
-		CZNC::Get().GetModules().SetUserSock(NULL);
+		CZNC::Get().GetModules().SetClient(NULL);
 
 		if (m_pUser) {
 			CChan* pChan = m_pUser->FindChan(sChan);
@@ -213,13 +213,13 @@ void CUserSock::ReadLine(const CString& sData) {
 				CModule* pModule = CZNC::Get().GetModules().FindModule(sModule);
 
 				if (pModule) {
-					pModule->SetUserSock(this);
+					pModule->SetClient(this);
 					pModule->OnModNotice(sMsg);
-					pModule->SetUserSock(NULL);
+					pModule->SetClient(NULL);
 				} else if ((pModule = m_pUser->GetModules().FindModule(sModule))) {
-					pModule->SetUserSock(this);
+					pModule->SetClient(this);
 					pModule->OnModNotice(sMsg);
-					pModule->SetUserSock(NULL);
+					pModule->SetClient(NULL);
 				} else {
 					PutStatus("No such module [" + sModule + "]");
 				}
@@ -238,15 +238,15 @@ void CUserSock::ReadLine(const CString& sData) {
 			sCTCP.LeftChomp();
 			sCTCP.RightChomp();
 
-			CZNC::Get().GetModules().SetUserSock(this);
+			CZNC::Get().GetModules().SetClient(this);
 			MODULECALLRET(OnUserCTCPReply(sTarget, sCTCP));
-			CZNC::Get().GetModules().SetUserSock(NULL);
+			CZNC::Get().GetModules().SetClient(NULL);
 
 			sMsg = "\001" + sCTCP + "\001";
 		} else {
-			CZNC::Get().GetModules().SetUserSock(this);
+			CZNC::Get().GetModules().SetClient(this);
 			MODULECALLRET(OnUserNotice(sTarget, sMsg));
-			CZNC::Get().GetModules().SetUserSock(NULL);
+			CZNC::Get().GetModules().SetClient(NULL);
 		}
 #endif
 
@@ -316,9 +316,9 @@ void CUserSock::ReadLine(const CString& sData) {
 							}
 #ifdef _MODULES
 						} else {
-							CZNC::Get().GetModules().SetUserSock(this);
+							CZNC::Get().GetModules().SetClient(this);
 							MODULECALLRET(OnDCCUserSend(sTarget, uLongIP, uPort, sFile, uFileSize));
-							CZNC::Get().GetModules().SetUserSock(NULL);
+							CZNC::Get().GetModules().SetClient(NULL);
 #endif
 						}
 					} else {
@@ -335,7 +335,7 @@ void CUserSock::ReadLine(const CString& sData) {
 					// Need to lookup the connection by port, filter the port, and forward to the user
 					if (strncasecmp(sTarget.c_str(), m_pUser->GetStatusPrefix().c_str(), m_pUser->GetStatusPrefix().length()) == 0) {
 						if ((m_pUser) && (m_pUser->ResumeFile(sTarget, uResumePort, uResumeSize))) {
-							PutServ(":" + sTarget + "!znc@znc.com PRIVMSG " + GetNick() + " :\001DCC ACCEPT " + sFile + " " + CString::ToString(uResumePort) + " " + CString::ToString(uResumeSize) + "\001");
+							PutClient(":" + sTarget + "!znc@znc.com PRIVMSG " + GetNick() + " :\001DCC ACCEPT " + sFile + " " + CString::ToString(uResumePort) + " " + CString::ToString(uResumeSize) + "\001");
 						} else {
 							PutStatus("DCC -> [" + GetNick() + "][" + sFile + "] Unable to find send to initiate resume.");
 						}
@@ -373,9 +373,9 @@ void CUserSock::ReadLine(const CString& sData) {
 
 				CModule* pModule = m_pUser->GetModules().FindModule(sModule);
 				if (pModule) {
-					pModule->SetUserSock(this);
+					pModule->SetClient(this);
 					pModule->OnModCTCP(sCTCP);
-					pModule->SetUserSock(NULL);
+					pModule->SetClient(NULL);
 				} else {
 					PutStatus("No such module [" + sModule + "]");
 				}
@@ -384,9 +384,9 @@ void CUserSock::ReadLine(const CString& sData) {
 			}
 
 #ifdef _MODULES
-			CZNC::Get().GetModules().SetUserSock(this);
+			CZNC::Get().GetModules().SetClient(this);
 			MODULECALLRET(OnUserCTCP(sTarget, sCTCP));
-			CZNC::Get().GetModules().SetUserSock(NULL);
+			CZNC::Get().GetModules().SetClient(NULL);
 #endif
 			PutIRC("PRIVMSG " + sTarget + " :\001" + sCTCP + "\001");
 			return;
@@ -394,9 +394,9 @@ void CUserSock::ReadLine(const CString& sData) {
 
 		if ((m_pUser) && (sTarget.CaseCmp(CString(m_pUser->GetStatusPrefix() + "status")) == 0)) {
 #ifdef _MODULES
-			CZNC::Get().GetModules().SetUserSock(this);
+			CZNC::Get().GetModules().SetClient(this);
 			MODULECALLRET(OnStatusCommand(sMsg));
-			CZNC::Get().GetModules().SetUserSock(NULL);
+			CZNC::Get().GetModules().SetClient(NULL);
 #endif
 			UserCommand(sMsg);
 			return;
@@ -411,17 +411,17 @@ void CUserSock::ReadLine(const CString& sData) {
 				CModule* pModule = CZNC::Get().GetModules().FindModule(sModule);
 
 				if (pModule) {
-					pModule->SetUserSock(this);
+					pModule->SetClient(this);
 					pModule->SetUser(m_pUser);
 					pModule->OnModCommand(sMsg);
-					pModule->SetUserSock(NULL);
+					pModule->SetClient(NULL);
 					pModule->SetUser(NULL);
 				} else {
 					pModule = m_pUser->GetModules().FindModule(sModule);
 					if (pModule) {
-						pModule->SetUserSock(this);
+						pModule->SetClient(this);
 						pModule->OnModCommand(sMsg);
-						pModule->SetUserSock(NULL);
+						pModule->SetClient(NULL);
 					} else {
 						PutStatus("No such module [" + sModule + "]");
 					}
@@ -432,9 +432,9 @@ void CUserSock::ReadLine(const CString& sData) {
 		}
 
 #ifdef _MODULES
-		CZNC::Get().GetModules().SetUserSock(this);
+		CZNC::Get().GetModules().SetClient(this);
 		MODULECALLRET(OnUserMsg(sTarget, sMsg));
-		CZNC::Get().GetModules().SetUserSock(NULL);
+		CZNC::Get().GetModules().SetClient(NULL);
 #endif
 
 		CChan* pChan = m_pUser->FindChan(sTarget);
@@ -448,13 +448,13 @@ void CUserSock::ReadLine(const CString& sData) {
 		// Relay to the rest of the clients that may be connected to this user
 
 		if (m_pUser && m_pUser->IsChan(sTarget)) {
-			vector<CUserSock*>& vUserSocks = m_pUser->GetUserSocks();
+			vector<CClient*>& vClients = m_pUser->GetClients();
 
-			for (unsigned int a = 0; a < vUserSocks.size(); a++) {
-				CUserSock* pUserSock = vUserSocks[a];
+			for (unsigned int a = 0; a < vClients.size(); a++) {
+				CClient* pClient = vClients[a];
 
-				if (pUserSock != this) {
-					pUserSock->PutServ(":" + GetNickMask() + " PRIVMSG " + sTarget + " :" + sMsg);
+				if (pClient != this) {
+					pClient->PutClient(":" + GetNickMask() + " PRIVMSG " + sTarget + " :" + sMsg);
 				}
 			}
 		}
@@ -465,7 +465,7 @@ void CUserSock::ReadLine(const CString& sData) {
 	PutIRC(sLine);
 }
 
-void CUserSock::SetNick(const CString& s) {
+void CClient::SetNick(const CString& s) {
    m_sNick = s;
 
 	if (m_pUser) {
@@ -475,7 +475,7 @@ void CUserSock::SetNick(const CString& s) {
 	}
 }
 
-bool CUserSock::DecKeepNickCounter() {
+bool CClient::DecKeepNickCounter() {
 	if (!m_uKeepNickCounter) {
 		return false;
 	}
@@ -484,7 +484,7 @@ bool CUserSock::DecKeepNickCounter() {
 	return true;
 }
 
-void CUserSock::UserCommand(const CString& sLine) {
+void CClient::UserCommand(const CString& sLine) {
 	if (!m_pUser) {
 		return;
 	}
@@ -604,7 +604,7 @@ void CUserSock::UserCommand(const CString& sLine) {
 				}
 			}
 
-			vector<CUserSock*>& vClients = pUser->GetUserSocks();
+			vector<CClient*>& vClients = pUser->GetClients();
 
 			if (vClients.empty()) {
 				PutStatus("No clients are connected");
@@ -640,7 +640,7 @@ void CUserSock::UserCommand(const CString& sLine) {
 		for (map<CString, CUser*>::const_iterator it = msUsers.begin(); it != msUsers.end(); it++) {
 			Table.AddRow();
 			Table.SetCell("Username", it->first);
-			Table.SetCell("Clients", CString::ToString(it->second->GetUserSocks().size()));
+			Table.SetCell("Clients", CString::ToString(it->second->GetClients().size()));
 			if (!it->second->IsIRCConnected()) {
 				Table.SetCell("OnIRC", "No");
 			} else {
@@ -1095,7 +1095,7 @@ void CUserSock::UserCommand(const CString& sLine) {
 	}
 }
 
-bool CUserSock::SendMotd() {
+bool CClient::SendMotd() {
 	const VCString& vsMotd = CZNC::Get().GetMotd();
 
 	if (!vsMotd.size()) {
@@ -1109,7 +1109,7 @@ bool CUserSock::SendMotd() {
 	return true;
 }
 
-void CUserSock::HelpUser() {
+void CClient::HelpUser() {
 	CTable Table;
 	Table.AddColumn("Command");
 	Table.AddColumn("Arguments");
@@ -1163,12 +1163,12 @@ void CUserSock::HelpUser() {
 	}
 }
 
-bool CUserSock::ConnectionFrom(const CString& sHost, unsigned short uPort) {
+bool CClient::ConnectionFrom(const CString& sHost, unsigned short uPort) {
 	DEBUG_ONLY(cout << GetSockName() << " == ConnectionFrom(" << sHost << ", " << uPort << ")" << endl);
 	return CZNC::Get().IsHostAllowed(sHost);
 }
 
-void CUserSock::AuthUser() {
+void CClient::AuthUser() {
 	CUser* pUser = CZNC::Get().GetUser(m_sUser);
 
 	if ((!pUser) || (!pUser->CheckPass(m_sPass))) {
@@ -1177,7 +1177,7 @@ void CUserSock::AuthUser() {
 		}
 
 		PutStatus("Bad username and/or password.");
-		PutServ(":irc.znc.com 464 " + GetNick() + " :Password Incorrect");
+		PutClient(":irc.znc.com 464 " + GetNick() + " :Password Incorrect");
 		Close();
 	} else {
 		m_sPass = "";
@@ -1196,71 +1196,71 @@ void CUserSock::AuthUser() {
 
 		SendMotd();
 
-		CZNC::Get().GetModules().SetUserSock(this);
+		CZNC::Get().GetModules().SetClient(this);
 		VOIDMODULECALL(OnUserAttached());
-		CZNC::Get().GetModules().SetUserSock(NULL);
+		CZNC::Get().GetModules().SetClient(NULL);
 	}
 }
 
-void CUserSock::Connected() {
+void CClient::Connected() {
 	DEBUG_ONLY(cout << GetSockName() << " == Connected();" << endl);
 	SetTimeout(900);	// Now that we are connected, let nature take its course
 }
 
-void CUserSock::ConnectionRefused() {
+void CClient::ConnectionRefused() {
 	DEBUG_ONLY(cout << GetSockName() << " == ConnectionRefused()" << endl);
 }
 
-void CUserSock::Disconnected() {
+void CClient::Disconnected() {
 	if (m_pIRCSock) {
 		m_pUser->UserDisconnected(this);
 		m_pIRCSock = NULL;
 	}
 
-	CZNC::Get().GetModules().SetUserSock(this);
+	CZNC::Get().GetModules().SetClient(this);
 	VOIDMODULECALL(OnUserDetached());
-	CZNC::Get().GetModules().SetUserSock(NULL);
+	CZNC::Get().GetModules().SetClient(NULL);
 }
 
-void CUserSock::IRCConnected(CIRCSock* pIRCSock) {
+void CClient::IRCConnected(CIRCSock* pIRCSock) {
 	m_pIRCSock = pIRCSock;
 }
 
-void CUserSock::BouncedOff() {
+void CClient::BouncedOff() {
 	PutStatusNotice("You are being disconnected because another user just authenticated as you.");
 	m_pIRCSock = NULL;
 	Close();
 }
 
-void CUserSock::IRCDisconnected() {
+void CClient::IRCDisconnected() {
 	m_pIRCSock = NULL;
 }
 
-Csock* CUserSock::GetSockObj(const CString& sHost, unsigned short uPort) {
-	CUserSock* pSock = new CUserSock(sHost, uPort);
+Csock* CClient::GetSockObj(const CString& sHost, unsigned short uPort) {
+	CClient* pSock = new CClient(sHost, uPort);
 	return pSock;
 }
 
-void CUserSock::PutIRC(const CString& sLine) {
+void CClient::PutIRC(const CString& sLine) {
 	if (m_pIRCSock) {
-		m_pIRCSock->PutServ(sLine);
+		m_pIRCSock->PutIRC(sLine);
 	}
 }
 
-void CUserSock::PutServ(const CString& sLine) {
+void CClient::PutClient(const CString& sLine) {
 	DEBUG_ONLY(cout << "(" << ((m_pUser) ? m_pUser->GetUserName() : CString("")) << ") ZNC -> CLI [" << sLine << "]" << endl);
 	Write(sLine + "\r\n");
 }
 
-void CUserSock::PutStatusNotice(const CString& sLine) {
+void CClient::PutStatusNotice(const CString& sLine) {
 	PutModNotice("status", sLine);
 }
 
-void CUserSock::PutStatus(const CString& sLine) {
+void CClient::PutStatus(const CString& sLine) {
 	PutModule("status", sLine);
 }
 
-void CUserSock::PutModNotice(const CString& sModule, const CString& sLine) {
+void CClient::PutModNotice(const CString& sModule, const CString& sLine) {
 	if (!m_pUser) {
 		return;
 	}
@@ -1269,7 +1269,7 @@ void CUserSock::PutModNotice(const CString& sModule, const CString& sLine) {
 	Write(":" + m_pUser->GetStatusPrefix() + ((sModule.empty()) ? "status" : sModule) + "!znc@znc.com NOTICE " + GetNick() + " :" + sLine + "\r\n");
 }
 
-void CUserSock::PutModule(const CString& sModule, const CString& sLine) {
+void CClient::PutModule(const CString& sModule, const CString& sLine) {
 	if (!m_pUser) {
 		return;
 	}
@@ -1278,7 +1278,7 @@ void CUserSock::PutModule(const CString& sModule, const CString& sLine) {
 	Write(":" + m_pUser->GetStatusPrefix() + ((sModule.empty()) ? "status" : sModule) + "!znc@znc.com PRIVMSG " + GetNick() + " :" + sLine + "\r\n");
 }
 
-CString CUserSock::GetNick() const {
+CString CClient::GetNick() const {
 	CString sRet;
 
 	if ((m_bAuthed) && (m_pIRCSock)) {
@@ -1288,7 +1288,7 @@ CString CUserSock::GetNick() const {
 	return (sRet.empty()) ? m_sNick : sRet;
 }
 
-CString CUserSock::GetNickMask() const {
+CString CClient::GetNickMask() const {
 	if (m_pIRCSock) {
 		return m_pIRCSock->GetNickMask();
 	}

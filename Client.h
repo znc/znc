@@ -1,5 +1,5 @@
-#ifndef _USERSOCK_H
-#define _USERSOCK_H
+#ifndef _CLIENT_H
+#define _CLIENT_H
 
 #include "main.h"
 
@@ -10,15 +10,15 @@ class CIRCSock;
 // !Forward Declarations
 
 
-class CUserSock : public Csock {
+class CClient : public Csock {
 public:
-	CUserSock() : Csock() {
+	CClient() : Csock() {
 		Init();
 	}
-	CUserSock(const CString& sHostname, unsigned short uPort, int iTimeout = 60) : Csock(sHostname, uPort, iTimeout) {
+	CClient(const CString& sHostname, unsigned short uPort, int iTimeout = 60) : Csock(sHostname, uPort, iTimeout) {
 		Init();
 	}
-	virtual ~CUserSock() {}
+	virtual ~CClient() {}
 
 	void Init() {
 		m_pUser = NULL;
@@ -42,7 +42,7 @@ public:
 	bool IsAttached() const { return m_bAuthed; }
 
 	void PutIRC(const CString& sLine);
-	void PutServ(const CString& sLine);
+	void PutClient(const CString& sLine);
 	void PutStatus(const CString& sLine);
 	void PutStatusNotice(const CString& sLine);
 	void PutModule(const CString& sModule, const CString& sLine);
@@ -73,4 +73,4 @@ protected:
 	unsigned int	m_uKeepNickCounter;
 };
 
-#endif // !_USERSOCK_H
+#endif // !_CLIENT_H
