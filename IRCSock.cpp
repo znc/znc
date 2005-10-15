@@ -99,7 +99,7 @@ void CIRCSock::ReadLine(const CString& sData) {
 
 						if (sClientNick.CaseCmp(sNick) != 0) {
 							// If they connected with a nick that doesn't match the one we got on irc, then we need to update them
-							pClient->PutServ(":" + sClientNick + "!" + m_Nick.GetIdent() + "@" + m_Nick.GetHost() + " NICK :" + sNick);
+							pClient->PutClient(":" + sClientNick + "!" + m_Nick.GetIdent() + "@" + m_Nick.GetHost() + " NICK :" + sNick);
 						}
 					}
 

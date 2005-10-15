@@ -105,13 +105,13 @@ void CUser::UserConnected(CClient* pClient) {
 	StartBackNickTimer();
 
 	if (m_RawBuffer.IsEmpty()) {
-		pClient->PutServ(":irc.znc.com 001 " + pClient->GetNick() + " :- Welcome to ZNC -");
+		pClient->PutClient(":irc.znc.com 001 " + pClient->GetNick() + " :- Welcome to ZNC -");
 	} else {
 		unsigned int uIdx = 0;
 		CString sLine;
 
 		while (m_RawBuffer.GetLine(GetIRCNick().GetNick(), sLine, uIdx++)) {
-			pClient->PutServ(sLine);
+			pClient->PutClient(sLine);
 		}
 	}
 
@@ -123,7 +123,7 @@ void CUser::UserConnected(CClient* pClient) {
 		CString sLine;
 
 		while (m_MotdBuffer.GetLine(GetIRCNick().GetNick(), sLine, uIdx++)) {
-			pClient->PutServ(sLine);
+			pClient->PutClient(sLine);
 		}
 	}
 
@@ -136,7 +136,7 @@ void CUser::UserConnected(CClient* pClient) {
 
 	CString sBufLine;
 	while (m_QueryBuffer.GetNextLine(GetIRCNick().GetNick(), sBufLine)) {
-		pClient->PutServ(sBufLine);
+		pClient->PutClient(sBufLine);
 	}
 }
 
@@ -722,7 +722,7 @@ bool CUser::PutIRC(const CString& sLine) {
 bool CUser::PutUser(const CString& sLine, CClient* pClient, CClient* pSkipClient) {
 	for (unsigned int a = 0; a < m_vClients.size(); a++) {
 		if ((!pClient || pClient == m_vClients[a]) && pSkipClient != m_vClients[a]) {
-			m_vClients[a]->PutServ(sLine);
+			m_vClients[a]->PutClient(sLine);
 
 			if (pClient) {
 				return true;
