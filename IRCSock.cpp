@@ -1,7 +1,7 @@
 #include "znc.h"
 #include "IRCSock.h"
 #include "DCCBounce.h"
-#include "UserSock.h"
+#include "Client.h"
 #include <time.h>
 
 CIRCSock::CIRCSock(CUser* pUser) : Csock() {
@@ -91,15 +91,15 @@ void CIRCSock::ReadLine(const CString& sData) {
 					m_bAuthed = true;
 					m_pUser->PutStatus("Connected!");
 
-					vector<CUserSock*>& vUserSocks = m_pUser->GetUserSocks();
+					vector<CClient*>& vClients = m_pUser->GetClients();
 
-					for (unsigned int a = 0; a < vUserSocks.size(); a++) {
-						CUserSock* pUserSock = vUserSocks[a];
-						CString sClientNick = pUserSock->GetNick();
+					for (unsigned int a = 0; a < vClients.size(); a++) {
+						CClient* pClient = vClients[a];
+						CString sClientNick = pClient->GetNick();
 
 						if (sClientNick.CaseCmp(sNick) != 0) {
 							// If they connected with a nick that doesn't match the one we got on irc, then we need to update them
-							pUserSock->PutServ(":" + sClientNick + "!" + m_Nick.GetIdent() + "@" + m_Nick.GetHost() + " NICK :" + sNick);
+							pClient->PutServ(":" + sClientNick + "!" + m_Nick.GetIdent() + "@" + m_Nick.GetHost() + " NICK :" + sNick);
 						}
 					}
 
@@ -199,12 +199,12 @@ void CIRCSock::ReadLine(const CString& sData) {
 						// :irc.server.net 433 mynick badnick :Nickname is already in use.
 						if ((m_bKeepNick) && (m_pUser->GetKeepNick())) {
 							if (sBadNick.CaseCmp(sConfNick) == 0) {
-								vector<CUserSock*>& vUserSocks = m_pUser->GetUserSocks();
+								vector<CClient*>& vClients = m_pUser->GetClients();
 
-								for (unsigned int a = 0; a < vUserSocks.size(); a++) {
-									CUserSock* pUserSock = vUserSocks[a];
+								for (unsigned int a = 0; a < vClients.size(); a++) {
+									CClient* pClient = vClients[a];
 
-									if (!pUserSock || !pUserSock->DecKeepNickCounter()) {
+									if (!pClient || !pClient->DecKeepNickCounter()) {
 										SetOrigNickPending(false);
 										return;
 									}

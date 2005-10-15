@@ -1,7 +1,7 @@
 #include "znc.h"
 #include "User.h"
 #include "Server.h"
-#include "UserSock.h"
+#include "Client.h"
 #include "IRCSock.h"
 #include "Utils.h"
 
@@ -258,16 +258,16 @@ bool CZNC::Listen() {
 		return false;
 	}
 
-	CUserSock* pUserSock = new CUserSock;
+	CClient* pClient = new CClient;
 
 	bool bSSL = false;
 #ifdef HAVE_LIBSSL
 	if (IsSSL()) {
 		bSSL = true;
-		pUserSock->SetPemLocation(GetPemLocation());
+		pClient->SetPemLocation(GetPemLocation());
 	}
 #endif
-	return m_Manager.ListenAll(m_uListenPort, "_LISTENER", bSSL, SOMAXCONN, pUserSock);
+	return m_Manager.ListenAll(m_uListenPort, "_LISTENER", bSSL, SOMAXCONN, pClient);
 }
 
 bool CZNC::IsHostAllowed(const CString& sHostMask) {

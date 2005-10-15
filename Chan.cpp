@@ -64,7 +64,7 @@ void CChan::Cycle() const {
 	m_pUser->PutIRC("PART " + GetName() + "\r\nJOIN " + GetName() + " " + GetKey());
 }
 
-void CChan::JoinUser(bool bForce, const CString& sKey, CUserSock* pUserSock) {
+void CChan::JoinUser(bool bForce, const CString& sKey, CClient* pClient) {
 	if (!bForce && (!IsOn() || !IsDetached())) {
 		IncClientRequests();
 
@@ -72,11 +72,11 @@ void CChan::JoinUser(bool bForce, const CString& sKey, CUserSock* pUserSock) {
 		return;
 	}
 
-	m_pUser->PutUser(":" + m_pUser->GetIRCNick().GetNickMask() + " JOIN :" + GetName(), pUserSock);
+	m_pUser->PutUser(":" + m_pUser->GetIRCNick().GetNickMask() + " JOIN :" + GetName(), pClient);
 
 	if (!GetTopic().empty()) {
-		m_pUser->PutUser(":" + m_pUser->GetIRCServer() + " 332 " + m_pUser->GetIRCNick().GetNick() + " " + GetName() + " :" + GetTopic(), pUserSock);
-		m_pUser->PutUser(":" + m_pUser->GetIRCServer() + " 333 " + m_pUser->GetIRCNick().GetNick() + " " + GetName() + " " + GetTopicOwner() + " " + CString::ToString(GetTopicDate()), pUserSock);
+		m_pUser->PutUser(":" + m_pUser->GetIRCServer() + " 332 " + m_pUser->GetIRCNick().GetNick() + " " + GetName() + " :" + GetTopic(), pClient);
+		m_pUser->PutUser(":" + m_pUser->GetIRCServer() + " 333 " + m_pUser->GetIRCNick().GetNick() + " " + GetName() + " " + GetTopicOwner() + " " + CString::ToString(GetTopicDate()), pClient);
 	}
 
 	CString sPre = ":" + m_pUser->GetIRCServer() + " 353 " + m_pUser->GetIRCNick().GetNick() + " = " + GetName() + " :";
@@ -91,14 +91,14 @@ void CChan::JoinUser(bool bForce, const CString& sKey, CUserSock* pUserSock) {
 		sLine += a->first;
 
 		if (sLine.size() >= 490 || a == (--m_msNicks.end())) {
-			m_pUser->PutUser(sLine, pUserSock);
+			m_pUser->PutUser(sLine, pClient);
 			sLine = sPre;
 		} else {
 			sLine += " ";
 		}
 	}
 
-	m_pUser->PutUser(":" + m_pUser->GetIRCServer() + " 366 " + m_pUser->GetIRCNick().GetNick() + " " + GetName() + " :End of /NAMES list.", pUserSock);
+	m_pUser->PutUser(":" + m_pUser->GetIRCServer() + " 366 " + m_pUser->GetIRCNick().GetNick() + " " + GetName() + " :End of /NAMES list.", pClient);
 	m_bDetached = false;
 
 	// Send Buffer
@@ -106,17 +106,17 @@ void CChan::JoinUser(bool bForce, const CString& sKey, CUserSock* pUserSock) {
 		const vector<CString>& vsBuffer = GetBuffer();
 
 		if (vsBuffer.size()) {
-			m_pUser->PutUser(":***!znc@znc.com PRIVMSG " + GetName() + " :Buffer Playback...", pUserSock);
+			m_pUser->PutUser(":***!znc@znc.com PRIVMSG " + GetName() + " :Buffer Playback...", pClient);
 
 			for (unsigned int a = 0; a < vsBuffer.size(); a++) {
-				m_pUser->PutUser(vsBuffer[a], pUserSock);
+				m_pUser->PutUser(vsBuffer[a], pClient);
 			}
 
 			if (!KeepBuffer()) {
 				ClearBuffer();
 			}
 
-			m_pUser->PutUser(":***!znc@znc.com PRIVMSG " + GetName() + " :Playback Complete.", pUserSock);
+			m_pUser->PutUser(":***!znc@znc.com PRIVMSG " + GetName() + " :Playback Complete.", pClient);
 		}
 	}
 }

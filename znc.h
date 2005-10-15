@@ -12,7 +12,7 @@ using std::map;
 using std::set;
 
 class CUser;
-class CUserSock;
+class CClient;
 
 class CZNC {
 public:

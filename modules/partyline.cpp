@@ -52,14 +52,14 @@ public:
 
 	virtual void OnUserAttached() {
 		if (m_spInjectedPrefixes.find(m_pUser) == m_spInjectedPrefixes.end()) {
-			m_pUserSock->PutServ(":" + m_pUser->GetIRCServer() + " 005 " + m_pUser->GetIRCNick().GetNick() + " CHANTYPES=" + m_pUser->GetChanPrefixes() + "~ :are supported by this server.");
+			m_pClient->PutServ(":" + m_pUser->GetIRCServer() + " 005 " + m_pUser->GetIRCNick().GetNick() + " CHANTYPES=" + m_pUser->GetChanPrefixes() + "~ :are supported by this server.");
 		}
 
 		for (map<CString, set<CString> >::iterator it = m_msChans.begin(); it != m_msChans.end(); it++) {
 			set<CString>& ssNicks = it->second;
 
 			if (ssNicks.find(m_pUser->GetUserName()) != ssNicks.end()) {
-				m_pUserSock->PutServ(":" + m_pUser->GetIRCNick().GetNickMask() + " JOIN " + it->first);
+				m_pClient->PutServ(":" + m_pUser->GetIRCNick().GetNickMask() + " JOIN " + it->first);
 				SendNickList(ssNicks, it->first);
 				PutChan(ssNicks, ":*" + GetModName() + "!znc@rottenboy.com MODE " + it->first + " +" + CString(m_pUser->IsAdmin() ? "o" : "v") + " ?" + m_pUser->GetUserName(), true);
 			}
@@ -94,7 +94,7 @@ public:
 		}
 
 		if (sChannel.Left(2) != "~#") {
-			m_pUserSock->PutServ(":" + m_pUser->GetIRCServer() + " 403 " + m_pUser->GetIRCNick().GetNick() + " " + sChannel + " :No such channel");
+			m_pClient->PutServ(":" + m_pUser->GetIRCServer() + " 403 " + m_pUser->GetIRCNick().GetNick() + " " + sChannel + " :No such channel");
 			return HALT;
 		}
 
@@ -126,7 +126,7 @@ public:
 		}
 
 		if (sChannel.Left(2) != "~#") {
-			m_pUserSock->PutServ(":" + m_pUser->GetIRCServer() + " 403 " + m_pUser->GetIRCNick().GetNick() + " " + sChannel + " :Channels look like ~#znc");
+			m_pClient->PutServ(":" + m_pUser->GetIRCServer() + " 403 " + m_pUser->GetIRCNick().GetNick() + " " + sChannel + " :Channels look like ~#znc");
 			return HALT;
 		}
 
@@ -174,7 +174,7 @@ public:
 
 		if (cPrefix == '~') {
 			if (m_msChans.find(sTarget.AsLower()) == m_msChans.end()) {
-				m_pUserSock->PutServ(":" + m_pUser->GetIRCServer() + " 403 " + m_pUser->GetIRCNick().GetNick() + " " + sTarget + " :No such channel");
+				m_pClient->PutServ(":" + m_pUser->GetIRCServer() + " 403 " + m_pUser->GetIRCNick().GetNick() + " " + sTarget + " :No such channel");
 				return HALT;
 			}
 
@@ -186,7 +186,7 @@ public:
 			if (pUser) {
 				pUser->PutUser(":?" + m_pUser->GetUserName() + "!" + m_pUser->GetIdent() + "@" + sHost + " PRIVMSG " + pUser->GetIRCNick().GetNick() + " :" + sMessage);
 			} else {
-				m_pUserSock->PutServ(":" + m_pUser->GetIRCServer() + " 403 " + m_pUser->GetIRCNick().GetNick() + " " + sTarget + " :No such znc user: " + sNick + "");
+				m_pClient->PutServ(":" + m_pUser->GetIRCServer() + " 403 " + m_pUser->GetIRCNick().GetNick() + " " + sTarget + " :No such znc user: " + sNick + "");
 			}
 		}
 
@@ -258,7 +258,7 @@ public:
 			if (ssNicks.find(it->first) != ssNicks.end()) {
 				if (it->second == m_pUser) {
 					if (bIncludeCurUser) {
-						it->second->PutUser(sLine, NULL, (bIncludeClient ? NULL : m_pUserSock));
+						it->second->PutUser(sLine, NULL, (bIncludeClient ? NULL : m_pClient));
 					}
 				} else {
 					it->second->PutUser(sLine);

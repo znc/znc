@@ -3,7 +3,7 @@
 
 #include "main.h"
 #include "FileUtils.h"
-#include "UserSock.h"
+#include "Client.h"
 #include <dlfcn.h>
 #include <vector>
 #include <set>
@@ -193,7 +193,7 @@ public:
 	} EModException;
 
 	void SetUser(CUser* pUser);
-	void SetUserSock(CUserSock* pUserSock);
+	void SetClient(CClient* pClient);
 	void Unload();
 
 	virtual bool OnLoad(const CString& sArgs);
@@ -295,7 +295,7 @@ public:
 	const CString& GetDescription() const { return m_sDescription; }
 	const CString& GetArgs() const { return m_sArgs; }
 	CUser* GetUser() { return m_pUser; }
-	CUserSock* GetUserSock() { return m_pUserSock; }
+	CClient* GetClient() { return m_pClient; }
 	TSocketManager<Csock>* GetManager() { return m_pManager; }
 	// !Getters
 
@@ -307,7 +307,7 @@ protected:
 	void*					m_pDLL;
 	TSocketManager<Csock>*	m_pManager;
 	CUser*					m_pUser;
-	CUserSock*				m_pUserSock;
+	CClient*				m_pClient;
 	CString					m_sModName;
 	CString					m_sSavePath;
 	CString					m_sArgs;
@@ -321,7 +321,7 @@ public:
 	virtual ~CModules();
 
 	void SetUser(CUser* pUser) { m_pUser = pUser; }
-	void SetUserSock(CUserSock* pUserSock);
+	void SetClient(CClient* pClient);
 
 	void UnloadAll();
 

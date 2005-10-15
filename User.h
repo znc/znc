@@ -19,7 +19,7 @@ class CZNC;
 class CChan;
 class CServer;
 class CIRCSock;
-class CUserSock;
+class CClient;
 class CBackNickTimer;
 class CAwayNickTimer;
 class CKeepNickTimer;
@@ -69,14 +69,14 @@ public:
 	bool OnBoot();
 
 	bool PutIRC(const CString& sLine);
-	bool PutUser(const CString& sLine, CUserSock* pUserSock = NULL, CUserSock* pSkipClient = NULL);
-	bool PutStatus(const CString& sLine, CUserSock* pUserSock = NULL, CUserSock* pSkipClient = NULL);
-	bool PutStatusNotice(const CString& sLine, CUserSock* pUserSock = NULL, CUserSock* pSkipClient = NULL);
-	bool PutModule(const CString& sModule, const CString& sLine, CUserSock* pUserSock = NULL, CUserSock* pSkipClient = NULL);
+	bool PutUser(const CString& sLine, CClient* pClient = NULL, CClient* pSkipClient = NULL);
+	bool PutStatus(const CString& sLine, CClient* pClient = NULL, CClient* pSkipClient = NULL);
+	bool PutStatusNotice(const CString& sLine, CClient* pClient = NULL, CClient* pSkipClient = NULL);
+	bool PutModule(const CString& sModule, const CString& sLine, CClient* pClient = NULL, CClient* pSkipClient = NULL);
 
-	bool IsUserAttached() { return (m_vUserSocks.size() > 0); }
-	void UserConnected(CUserSock* pUserSock);
-	void UserDisconnected(CUserSock* pUserSock);
+	bool IsUserAttached() { return (m_vClients.size() > 0); }
+	void UserConnected(CClient* pClient);
+	void UserDisconnected(CClient* pClient);
 
 	CString GetLocalIP();
 	bool IsIRCConnected() { return m_bIRCConnected; }
@@ -122,7 +122,7 @@ public:
 	// !Setters
 
 	// Getters
-	vector<CUserSock*>& GetUserSocks() { return m_vUserSocks; }
+	vector<CClient*>& GetClients() { return m_vClients; }
 	CIRCSock* GetIRCSock();
 	const CString& GetUserName() const;
 	const CString& GetNick() const;
@@ -204,7 +204,7 @@ protected:
 
 	vector<CServer*>	m_vServers;
 	vector<CChan*>		m_vChans;
-	vector<CUserSock*>	m_vUserSocks;
+	vector<CClient*>	m_vClients;
 	set<CString>		m_ssAllowedHosts;
 	unsigned int		m_uServerIdx;
 	unsigned int		m_uBufferCount;

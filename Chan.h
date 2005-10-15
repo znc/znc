@@ -5,7 +5,7 @@
 #include "Nick.h"
 #include "String.h"
 #include "FileUtils.h"
-#include "UserSock.h"
+#include "Client.h"
 #include <vector>
 #include <map>
 #include <set>
@@ -49,7 +49,7 @@ public:
 	bool WriteConfig(CFile& File);
 	void Joined();
 	void Cycle() const;
-	void JoinUser(bool bForce = false, const CString& sKey = "", CUserSock* pUserSock = NULL);
+	void JoinUser(bool bForce = false, const CString& sKey = "", CClient* pClient = NULL);
 	void DetachUser();
 	void AttachUser();
 
