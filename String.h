@@ -13,6 +13,7 @@ using std::stringstream;
 
 class CString;
 typedef vector<CString> VCString;
+typedef map<CString, VCString> MVCString;
 
 static const unsigned char XX = 0xff;
 static const unsigned char base64_table[256] = {
