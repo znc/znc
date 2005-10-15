@@ -59,13 +59,13 @@ private:
 protected:
 	virtual void RunJob() {
 		if (m_pUser->IsUserAttached() && m_pUser->IsIRCConnected()) {
-			CIRCSock* pSock = m_pUser->GetIRCSock();
+			CIRCSock* pIRCSock = m_pUser->GetIRCSock();
 
-			if (pSock) {
+			if (pIRCSock) {
 				CString sConfNick = m_pUser->GetNick();
 
-				if (pSock->GetNick().CaseCmp(CNick::Concat(sConfNick, m_pUser->GetAwaySuffix(), pSock->GetMaxNickLen())) == 0) {
-					pSock->PutServ("NICK " + sConfNick);
+				if (pIRCSock->GetNick().CaseCmp(CNick::Concat(sConfNick, m_pUser->GetAwaySuffix(), pIRCSock->GetMaxNickLen())) == 0) {
+					pIRCSock->PutIRC("NICK " + sConfNick);
 				}
 			}
 		}
@@ -90,14 +90,14 @@ private:
 protected:
 	virtual void RunJob() {
 		if (!m_pUser->IsUserAttached() && m_pUser->IsIRCConnected()) {
-			CIRCSock* pSock = m_pUser->GetIRCSock();
+			CIRCSock* pIRCSock = m_pUser->GetIRCSock();
 
-			if (pSock) {
+			if (pIRCSock) {
 				const CString& sSuffix = m_pUser->GetAwaySuffix();
 
 				if (!sSuffix.empty()) {
-					CString sAwayNick = CNick::Concat(m_pUser->GetNick(), sSuffix, pSock->GetMaxNickLen());
-					pSock->PutServ("NICK " + sAwayNick);
+					CString sAwayNick = CNick::Concat(m_pUser->GetNick(), sSuffix, pIRCSock->GetMaxNickLen());
+					pIRCSock->PutIRC("NICK " + sAwayNick);
 				}
 			}
 		}

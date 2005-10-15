@@ -45,7 +45,7 @@ CIRCSock::~CIRCSock() {
 		CZNC::Get().ReleaseISpoof();
 	}
 
-	PutServ("QUIT :" + m_pUser->GetQuitMsg());
+	PutIRC("QUIT :" + m_pUser->GetQuitMsg());
 	m_msChans.clear();
 }
 
@@ -68,7 +68,7 @@ void CIRCSock::ReadLine(const CString& sData) {
 #endif
 
 	if (strncasecmp(sLine.c_str(), "PING ", 5) == 0) {
-		PutServ("PONG " + sLine.substr(5));
+		PutIRC("PONG " + sLine.substr(5));
 	} else if (sLine.WildCmp(":* * *")) { //"^:(\\S+) (\\d\\d\\d) (.*?) (.*)$", vCap)) {
 		CString sCmd = sLine.Token(1);
 
@@ -82,7 +82,7 @@ void CIRCSock::ReadLine(const CString& sData) {
 				case 1:	{// :irc.server.com 001 nick :Welcome to the Internet Relay Network nick
 					m_pUser->SetIRCServer(sServer);
 					SetTimeout(900);	// Now that we are connected, let nature take its course
-					PutServ("WHO " + sNick);
+					PutIRC("WHO " + sNick);
 
 					m_pUser->StartAwayNickTimer();
 
@@ -112,7 +112,7 @@ void CIRCSock::ReadLine(const CString& sData) {
 					const vector<CChan*>& vChans = m_pUser->GetChans();
 
 					for (unsigned int a = 0; a < vChans.size(); a++) {
-						PutServ("JOIN " + vChans[a]->GetName() + " " + vChans[a]->GetKey());
+						PutIRC("JOIN " + vChans[a]->GetName() + " " + vChans[a]->GetKey());
 					}
 
 					CZNC::Get().ReleaseISpoof();
@@ -164,18 +164,18 @@ void CIRCSock::ReadLine(const CString& sData) {
 
 						if (sBadNick.CaseCmp(sConfNick) == 0) {
 							if ((!sAltNick.empty()) && (sConfNick.CaseCmp(sAltNick) != 0)) {
-								PutServ("NICK " + sAltNick);
+								PutIRC("NICK " + sAltNick);
 							} else {
-								PutServ("NICK " + sConfNick.Left(uMax -1) + "-");
+								PutIRC("NICK " + sConfNick.Left(uMax -1) + "-");
 							}
 						} else if (sBadNick.CaseCmp(sAltNick) == 0) {
-							PutServ("NICK " + sConfNick.Left(uMax -1) + "-");
+							PutIRC("NICK " + sConfNick.Left(uMax -1) + "-");
 						} else if (sBadNick.CaseCmp(CString(sConfNick.Left(uMax -1) + "-")) == 0) {
-							PutServ("NICK " + sConfNick.Left(uMax -1) + "|");
+							PutIRC("NICK " + sConfNick.Left(uMax -1) + "|");
 						} else if (sBadNick.CaseCmp(CString(sConfNick.Left(uMax -1) + "|")) == 0) {
-							PutServ("NICK " + sConfNick.Left(uMax -1) + "^");
+							PutIRC("NICK " + sConfNick.Left(uMax -1) + "^");
 						} else if (sBadNick.CaseCmp(CString(sConfNick.Left(uMax -1) + "^")) == 0) {
-							PutServ("NICK " + sConfNick.Left(uMax -1) + "a");
+							PutIRC("NICK " + sConfNick.Left(uMax -1) + "a");
 						} else {
 							char cLetter = 0;
 							if (sBadNick.empty()) {
@@ -191,7 +191,7 @@ void CIRCSock::ReadLine(const CString& sData) {
 							}
 
 							CString sSend = "NICK " + sConfNick.Left(uMax -1) + ++cLetter;
-							PutServ(sSend);
+							PutIRC(sSend);
 						}
 
 						return;
@@ -335,7 +335,7 @@ void CIRCSock::ReadLine(const CString& sData) {
 
 						if (!pChan->IsOn()) {
 							pChan->SetIsOn(true);
-							PutServ("MODE " + pChan->GetName());
+							PutIRC("MODE " + pChan->GetName());
 
 							// If we are the only one in the chan, set our default modes
 							if (pChan->GetNickCount() == 1) {
@@ -346,7 +346,7 @@ void CIRCSock::ReadLine(const CString& sData) {
 								}
 
 								if (!sModes.empty()) {
-									PutServ("MODE " + pChan->GetName() + " " + sModes);
+									PutIRC("MODE " + pChan->GetName() + " " + sModes);
 								}
 							}
 						}
@@ -503,7 +503,7 @@ void CIRCSock::ReadLine(const CString& sData) {
 						pChan->SetIsOn(false);
 					}
 
-					PutServ("JOIN " + sChan + " " + sKey);
+					PutIRC("JOIN " + sChan + " " + sKey);
 				}
 
 				if ((pChan) && (pChan->IsDetached())) {
@@ -608,7 +608,7 @@ void CIRCSock::KeepNick(bool bForce) {
 	CString sAwayNick = CNick::Concat(sConfNick, m_pUser->GetAwaySuffix(), GetMaxNickLen());
 
 	if (m_bAuthed && m_bKeepNick && (!IsOrigNickPending() || bForce) && m_pUser->GetKeepNick() && GetNick().CaseCmp(sConfNick) != 0 && GetNick().CaseCmp(sAwayNick) != 0) {
-		PutServ("NICK " + sConfNick);
+		PutIRC("NICK " + sConfNick);
 		SetOrigNickPending(true);
 	}
 }
@@ -683,7 +683,7 @@ bool CIRCSock::OnPrivCTCP(CNick& Nick, CString& sMessage) {
 		}
 
 		if (!sReply.empty()) {
-			PutServ("NOTICE " + Nick.GetNick() + " :\001" + sQuery + " " + sReply + "\001");
+			PutIRC("NOTICE " + Nick.GetNick() + " :\001" + sQuery + " " + sReply + "\001");
 			return true;
 		}
 	}
@@ -752,7 +752,7 @@ bool CIRCSock::OnChanMsg(CNick& Nick, const CString& sChan, CString& sMessage) {
 	return ((pChan) && (pChan->IsDetached()));
 }
 
-void CIRCSock::PutServ(const CString& sLine) {
+void CIRCSock::PutIRC(const CString& sLine) {
 	DEBUG_ONLY(cout << "(" << m_pUser->GetUserName() << ") ZNC -> IRC [" << sLine << "]" << endl);
 	Write(sLine + "\r\n");
 }
@@ -767,11 +767,11 @@ void CIRCSock::Connected() {
 	m_pUser->IRCConnected(this);
 
 	if (!m_sPass.empty()) {
-		PutServ("PASS " + m_sPass);
+		PutIRC("PASS " + m_sPass);
 	}
 
-	PutServ("NICK " + m_pUser->GetNick());
-	PutServ("USER " + m_pUser->GetIdent() + " \"" + m_pUser->GetIdent() + "\" \"" + m_pUser->GetIdent() + "\" :" + m_pUser->GetRealName());
+	PutIRC("NICK " + m_pUser->GetNick());
+	PutIRC("USER " + m_pUser->GetIdent() + " \"" + m_pUser->GetIdent() + "\" \"" + m_pUser->GetIdent() + "\" :" + m_pUser->GetRealName());
 }
 
 void CIRCSock::Disconnected() {

@@ -715,7 +715,7 @@ bool CUser::PutIRC(const CString& sLine) {
 		return false;
 	}
 
-	pIRCSock->PutServ(sLine);
+	pIRCSock->PutIRC(sLine);
 	return true;
 }
 

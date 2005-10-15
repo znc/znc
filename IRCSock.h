@@ -40,7 +40,7 @@ public:
 	virtual void Timeout();
 
 	void KeepNick(bool bForce = false);
-	void PutServ(const CString& sLine);
+	void PutIRC(const CString& sLine);
 	void CIRCSock::ParseISupport(const CString& sLine);
 
 	// Setters
