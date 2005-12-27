@@ -1931,7 +1931,8 @@ function appendCXX {
 }
 if `echo $host_os | grep -i 'freebsd' >/dev/null 2>/dev/null`; then
 	appendInc -I/usr/local/include
-	appendLib -L/usr/local/lib -lcompat
+	appendLib -L/usr/local/lib -lcompat -lgnugetopt
+	appendCXX -D__GNU_LIBRARY__
 elif `echo $host_os | grep -i 'sol' >/dev/null 2>/dev/null`; then
 	appendLib -lsocket -lnsl
 	ISSUN=1
