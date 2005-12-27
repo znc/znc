@@ -964,6 +964,7 @@ bool CZNC::ParseConfig(const CString& sConfig) {
 						m_sListenHost = sValue.Token(0, false, ":");
 						sPort = sValue.Token(1, true, ":");
 					} else {
+						m_sListenHost = "";
 						sPort = sValue;
 					}
 
