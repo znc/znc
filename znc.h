@@ -52,6 +52,7 @@ public:
 	CGlobalModules& GetModules() { return *m_pModules; }
 #endif
 	unsigned short GetListenPort() const { return m_uListenPort; }
+	const CString& GetListenHost() const { return m_sListenHost; }
 	const CString& GetStatusPrefix() const { return m_sStatusPrefix; }
 	const CString& GetCurPath() const { if (!CFile::Exists(m_sCurPath)) { CUtils::MakeDir(m_sCurPath); } return m_sCurPath; }
 	const CString& GetModPath() const { if (!CFile::Exists(m_sModPath)) { CUtils::MakeDir(m_sModPath); } return m_sModPath; }
@@ -95,6 +96,7 @@ public:
 private:
 protected:
 	unsigned short			m_uListenPort;
+	CString					m_sListenHost;
 	map<CString,CUser*>		m_msUsers;
 	set<CUser*>				m_ssDelUsers;
 	TSocketManager<Csock>	m_Manager;

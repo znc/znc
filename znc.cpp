@@ -267,7 +267,8 @@ bool CZNC::Listen() {
 		pClient->SetPemLocation(GetPemLocation());
 	}
 #endif
-	return m_Manager.ListenAll(m_uListenPort, "_LISTENER", bSSL, SOMAXCONN, pClient);
+
+	return m_Manager.ListenHost(m_uListenPort, "_LISTENER", m_sListenHost, bSSL, SOMAXCONN, pClient);
 }
 
 bool CZNC::IsHostAllowed(const CString& sHostMask) {
@@ -338,7 +339,13 @@ bool CZNC::WriteConfig() {
 		return false;
 	}
 
-	File.Write("ListenPort   = " + CString((m_bSSL) ? "+" : "") + CString::ToString(m_uListenPort) + "\r\n");
+	CString sHostPortion;
+	if (!m_sListenHost.empty()) {
+		sHostPortion = m_sListenHost + ":";
+	}
+
+	File.Write("Listen       = " + sHostPortion + CString((m_bSSL) ? "+" : "") + CString::ToString(m_uListenPort) + "\r\n");
+
 	if (!m_sISpoofFile.empty()) {
 		File.Write("ISpoofFile   = " + m_sISpoofFile + "\r\n");
 		if (!m_sISpoofFormat.empty()) { File.Write("ISpoofFormat = " + m_sISpoofFormat + "\r\n"); }
@@ -413,15 +420,22 @@ bool CZNC::WriteNewConfig(const CString& sConfig) {
 	CUtils::PrintMessage("First lets start with some global settings...");
 	CUtils::PrintMessage("");
 
-	// ListenPort
+	// Listen
 	unsigned int uPort = 0;
 	while(!CUtils::GetNumInput("What port would you like ZNC to listen on?", uPort, 1, 65535));
 #ifdef HAVE_LIBSSL
 	bAnswer = CUtils::GetBoolInput("Would you like ZNC to listen using SSL?", false);
 #endif
 
-	vsLines.push_back("ListenPort = " + CString((bAnswer) ? "+" : "") + CString::ToString(uPort));
-	// !ListenPort
+	CString sListenHost;
+	CUtils::GetInput("Listen Host", sListenHost, "", "Blank for all ips");
+
+	if (!sListenHost.empty()) {
+		sListenHost += ":";
+	}
+
+	vsLines.push_back("Listen     = " + sListenHost + CString((bAnswer) ? "+" : "") + CString::ToString(uPort));
+	// !Listen
 
 #ifdef _MODULES
 	set<CModInfo> ssGlobalMods;
@@ -942,16 +956,30 @@ bool CZNC::ParseConfig(const CString& sConfig) {
 					}
 				}
 			} else {
-				if (sName.CaseCmp("ListenPort") == 0) {
+				if (sName.CaseCmp("Listen") == 0 || sName.CaseCmp("ListenPort") == 0) {
 					m_bSSL = false;
-					CString sPort = sValue;
+					CString sPort;
+
+					if (sValue.find(":") != CString::npos) {
+						m_sListenHost = sValue.Token(0, false, ":");
+						sPort = sValue.Token(1, true, ":");
+					} else {
+						sPort = sValue;
+					}
+
 					if (sPort.Left(1) == "+") {
 						sPort.LeftChomp();
 						m_bSSL = true;
 					}
 
+					CString sHostComment;
+
+					if (!m_sListenHost.empty()) {
+						sHostComment = " on host [" + m_sListenHost + "]";
+					}
+
 					m_uListenPort = strtol(sPort.c_str(), NULL, 10);
-					CUtils::PrintAction("Binding to port [" + CString((m_bSSL) ? "+" : "") + CString::ToString(m_uListenPort) + "]");
+					CUtils::PrintAction("Binding to port [" + CString((m_bSSL) ? "+" : "") + CString::ToString(m_uListenPort) + "]" + sHostComment);
 
 #ifndef HAVE_LIBSSL
 					if (m_bSSL) {

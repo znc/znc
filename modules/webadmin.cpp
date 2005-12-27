@@ -123,7 +123,10 @@ public:
 #endif
 		}
 
-		m_uPort = sPort.ToUInt();
+		if (!sPort.empty()) {
+			m_uPort = sPort.ToUInt();
+		}
+
 		CWebAdminSock* pListenSock = new CWebAdminSock(this);
 
 #ifdef HAVE_LIBSSL
@@ -132,7 +135,7 @@ public:
 		}
 #endif
 
-		return m_pManager->ListenAll(m_uPort, "WebAdmin::Listener", bSSL, SOMAXCONN, pListenSock);
+		return m_pManager->ListenHost(m_uPort, "WebAdmin::Listener", CZNC::Get().GetListenHost(), bSSL, SOMAXCONN, pListenSock);
 	}
 
 	void AddSock(CWebAdminSock* pSock) {
