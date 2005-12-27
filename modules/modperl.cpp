@@ -692,7 +692,7 @@ XS(XS_ZNC_GetString)
 			else if ( sName == "DLPath" ) sReturn = pUser->GetDLPath();
 			else if ( sName == "ModPath" ) sReturn = CZNC::Get().GetModPath();
 			else if ( sName == "HomePath" ) sReturn = CZNC::Get().GetHomePath();
-			//else if ( sName == "DataPath" ) sReturn = pUser->GetDataPath();
+			else if ( sName == "SavePath" ) sReturn = g_ModPerl->GetSavePath();
 			else if ( sName == "StatusPrefix" ) sReturn = pUser->GetStatusPrefix();
 			else if ( sName == "DefaultChanModes" ) sReturn = pUser->GetDefaultChanModes();
 			else if ( sName == "IRCServer" ) sReturn = pUser->GetIRCServer();

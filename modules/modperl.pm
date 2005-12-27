@@ -59,7 +59,7 @@ sub CORELoadMod
 		return( HALTMODS() );
 	}
 
-	my $DPath = GetString( "DataPath" );
+	my $DPath = GetString( "SavePath" );
 	my $FileName = $DPath . "/." . $Username . $Module . ".pm";
 	
 	if ( !open( INMOD, $ModPath ) )
