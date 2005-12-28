@@ -1,5 +1,5 @@
 prefix=@prefix@
-CXX=g++
+CXX=@CXX@
 CXXFLAGS=@CXXFLAGS@
 INCLUDES=@INCLUDES@ -I..
 LIBS=@LIBS@
