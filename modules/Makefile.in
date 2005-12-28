@@ -25,7 +25,7 @@ endif
 all: $(OBJS) $(TARGETS)
 
 depend::
-	g++ -M $(CXXFLAGS) $(SRCS) $(INCLUDES) $(PERLCC) >.depend
+	$(CXX) -MM $(CXXFLAGS) $(SRCS) $(INCLUDES) $(PERLCC) >.depend
 
 install: all create_install_dir $(INSTALL_TARGS)
 	@echo -n ""
