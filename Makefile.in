@@ -10,7 +10,7 @@ SRCS=String.cpp Csocket.cpp main.cpp znc.cpp User.cpp IRCSock.cpp Client.cpp DCC
 all: znc @MODTARGET@
 
 depend::
-	g++ -MM $(CXXFLAGS) $(SRCS) $(INCLUDES) >.depend
+	$(CXX) -MM $(CXXFLAGS) $(SRCS) $(INCLUDES) >.depend
 	(cd modules; $(MAKE) depend)
 
 znc: $(OBJS)
