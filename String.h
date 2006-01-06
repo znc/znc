@@ -68,6 +68,7 @@ public:
 
 	static unsigned int Replace(CString& sStr, const CString& sReplace, const CString& sWith);
 	unsigned int Replace(const CString& sReplace, const CString& sWith);
+	CString Replace_n(const CString& sReplace, const CString& sWith) const;
 	CString Ellipsize(unsigned int uLen) const;
 	CString Left(unsigned int uCount) const;
 	CString Right(unsigned int uCount) const;
