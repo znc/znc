@@ -366,13 +366,19 @@ unsigned int CString::Replace(const CString& sReplace, const CString& sWith) {
 	return CString::Replace(*this, sReplace, sWith);
 }
 
+CString CString::Replace_n(const CString& sReplace, const CString& sWith) const {
+	CString sRet(*this);
+	sRet.Replace(sReplace, sWith);
+	return sRet;
+}
+
 unsigned int CString::Replace(CString& sStr, const CString& sReplace, const CString& sWith) {
 	unsigned int uRet = 0;
 	size_type uPos = sStr.find(sReplace);
 
 	while (uPos != npos) {
 		sStr.replace(uPos, sReplace.length(), sWith);
-		uPos = sStr.find(sReplace);
+		uPos = sStr.find(sReplace, uPos + sReplace.length() +1);
 		uRet++;
 	}
 
