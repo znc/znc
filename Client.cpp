@@ -860,6 +860,11 @@ void CClient::UserCommand(const CString& sLine) {
 			return;
 		}
 
+		if (sFile.find("..") != CString::npos) {
+			PutStatus("Illegal path.");
+			return;
+		}
+
 		if (m_pUser) {
 			m_pUser->SendFile(GetNick(), sFile);
 		}
