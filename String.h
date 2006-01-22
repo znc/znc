@@ -4,15 +4,18 @@
 #include <string>
 #include <sstream>
 #include <map>
+#include <set>
 #include <vector>
 
 using std::map;
 using std::string;
+using std::set;
 using std::vector;
 using std::stringstream;
 
 class CString;
 typedef vector<CString> VCString;
+typedef set<CString> SCString;
 typedef map<CString, VCString> MVCString;
 
 static const unsigned char XX = 0xff;
@@ -73,10 +76,14 @@ public:
 	CString Left(unsigned int uCount) const;
 	CString Right(unsigned int uCount) const;
 
+	static CString RandomString(unsigned int uLength);
+
 	CString Token(unsigned int uPos, bool bRest = false, const CString& sSep = " ") const;
+	bool Token(CString& sRet, unsigned int uPos, bool bRest = false, const CString& sSep = " ") const;
 	VCString Split(const CString& sDelim, bool bKeepEmpty = true) const;
 	unsigned int Split(const CString& sDelim, VCString& vsRet, bool bAllowEmpty = true) const;
 	static CString Format(const CString& sFormatStr, ...);
+	void Split(SCString& ssRet, const CString& sDelim = " ");
 
 	CString MD5() const;
 	unsigned long Base64Decode(CString& sRet) const;

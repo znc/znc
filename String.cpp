@@ -386,9 +386,16 @@ unsigned int CString::Replace(CString& sStr, const CString& sReplace, const CStr
 }
 
 CString CString::Token(unsigned int uPos, bool bRest, const CString& sSep) const {
-	string sRet;
+	CString sRet;
+	Token(sRet, uPos, bRest, sSep);
+	return sRet;
+}
+
+bool CString::Token(CString& sRet, unsigned int uPos, bool bRest, const CString& sSep) const {
 	const char* p = c_str();
 	unsigned int uSepLen = sSep.length();
+
+	sRet.clear();
 
 	if (uSepLen) {
 		uSepLen--;
@@ -403,7 +410,7 @@ CString CString::Token(unsigned int uPos, bool bRest, const CString& sSep) const
 		} else {
 			if (strncmp(p, sSep.c_str(), sSep.length()) == 0) {
 				if (!bRest) {
-					return sRet;
+					return true;
 				}
 			}
 
@@ -413,7 +420,7 @@ CString CString::Token(unsigned int uPos, bool bRest, const CString& sSep) const
 		p++;
 	}
 
-	return sRet;
+	return !sRet.empty();
 }
 
 CString CString::Ellipsize(unsigned int uLen) const {
@@ -447,6 +454,17 @@ CString CString::Right(unsigned int uCount) const {
 	return substr(length() - uCount, uCount);
 }
 
+void CString::Split(SCString& ssRet, const CString& sDelim) {
+	ssRet.clear();
+
+	unsigned int a = 0;
+	CString sTok;
+
+	while (Token(sTok, a++, false, sDelim)) {
+		ssRet.insert(sTok);
+	}
+}
+
 VCString CString::Split(const CString& sDelim, bool bAllowEmpty) const {
 	VCString vsRet;
 	Split(sDelim, vsRet, bAllowEmpty);
@@ -473,6 +491,16 @@ unsigned int CString::Split(const CString& sDelim, VCString& vsRet, bool bAllowE
 	}
 
 	return vsRet.size();
+}
+
+CString CString::RandomString(unsigned int uLength) {
+	CString sRet;
+
+	for (unsigned int a = 0; a < uLength; a++) {
+		sRet += (char) (rand() % 26) + 65;
+	}
+
+	return sRet;
 }
 
 CString CString::Format(const CString& sFormatStr, ...) {
