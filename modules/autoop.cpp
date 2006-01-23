@@ -125,11 +125,6 @@ public:
 	MODCONSTRUCTOR(CAutoOpMod) {}
 
 	virtual bool OnLoad(const CString& sArgs) {
-		if (sArgs.empty() || sArgs.find(" ") != CString::npos) {
-			return false;
-		}
-
-		m_sKey = sArgs;
 		AddTimer(new CAutoOpTimer(this));
 
 		// Load the users
@@ -378,9 +373,10 @@ public:
 		// Validate before responding - don't blindly trust everyone
 		bool bValid = false;
 		bool bMatchedHost = false;
+		CAutoOpUser* pUser = NULL;
 
 		for (map<CString, CAutoOpUser*>::iterator it = m_msUsers.begin(); it != m_msUsers.end(); it++) {
-			CAutoOpUser* pUser = it->second;
+			pUser = it->second;
 
 			// First verify that the guy who challenged us matches a user's host
 			if (pUser->HostMatches(Nick.GetHostMask())) {
@@ -417,7 +413,7 @@ public:
 			return false;
 		}
 
-		CString sResponse = m_sKey + "::" + sChallenge;
+		CString sResponse = pUser->GetUserKey() + "::" + sChallenge;
 		PutIRC("NOTICE " + Nick.GetNick() + " :!ZNCAO RESPONSE " + sResponse.MD5());
 		return false;
 	}
@@ -489,7 +485,6 @@ public:
 	}
 private:
 	map<CString, CAutoOpUser*>		m_msUsers;
-	CString							m_sKey;
 	MCString						m_msQueue;
 };
 
