@@ -167,7 +167,7 @@ public:
 		if (Channel.HasPerm(CChan::Op)) {																			// If we have ops in this chan
 			for (map<CString, CAutoOpUser*>::iterator it = m_msUsers.begin(); it != m_msUsers.end(); it++) {
 				if (it->second->HostMatches(Nick.GetHostMask()) && it->second->ChannelMatches(Channel.GetName())) {	// and the nick who joined is a valid user
-					m_msQueue[Nick.GetNick().AsLower()] = "";																	// then insert this nick into the queue
+					m_msQueue[Nick.GetNick().AsLower()] = "";														// then insert this nick into the queue
 				}
 			}
 		}
@@ -436,6 +436,7 @@ public:
 					return true;
 				} else {
 					PutModule("WARNING! [" + Nick.GetNick() + "] sent a bad response.  Please verify that you have their correct password.");
+					return false;
 				}
 			}
 		}
