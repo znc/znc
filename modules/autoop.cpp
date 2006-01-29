@@ -164,10 +164,16 @@ public:
 	}
 
 	virtual void OnJoin(const CNick& Nick, CChan& Channel) {
-		if (Channel.HasPerm(CChan::Op)) {																			// If we have ops in this chan
+		if (Channel.HasPerm(CChan::Op)) {																						// If we have ops in this chan
 			for (map<CString, CAutoOpUser*>::iterator it = m_msUsers.begin(); it != m_msUsers.end(); it++) {
-				if (it->second->HostMatches(Nick.GetHostMask()) && it->second->ChannelMatches(Channel.GetName())) {	// and the nick who joined is a valid user
-					m_msQueue[Nick.GetNick().AsLower()] = "";														// then insert this nick into the queue
+				if (it->second->HostMatches(Nick.GetHostMask()) && it->second->ChannelMatches(Channel.GetName())) {				// and the nick who joined is a valid user
+					if (it->second->GetUserKey().CaseCmp("__NOKEY__") == 0) {
+						PutIRC("MODE " + Channel.GetName() + " +o " + Nick.GetNick());
+					} else {
+						m_msQueue[Nick.GetNick().AsLower()] = "";		// then insert this nick into the queue
+					}
+
+					break;
 				}
 			}
 		}
@@ -243,12 +249,14 @@ public:
 
 			Table.AddColumn("User");
 			Table.AddColumn("Hostmask");
+			Table.AddColumn("Key");
 			Table.AddColumn("Channels");
 
 			for (map<CString, CAutoOpUser*>::iterator it = m_msUsers.begin(); it != m_msUsers.end(); it++) {
 				Table.AddRow();
 				Table.SetCell("User", it->second->GetUsername());
 				Table.SetCell("Hostmask", it->second->GetHostmask());
+				Table.SetCell("Key", it->second->GetUserKey());
 				Table.SetCell("Channels", it->second->GetChannels());
 			}
 
@@ -405,9 +413,9 @@ public:
 
 		if (!bValid) {
 			if (bMatchedHost) {
-				PutModule("[" + Nick.GetNick() + "] sent us a challenge but they are not opped in any defined channels.");
+				PutModule("[" + Nick.GetHostMask() + "] sent us a challenge but they are not opped in any defined channels.");
 			} else {
-				PutModule("[" + Nick.GetNick() + "] sent us a challenge but they do not match a defined user.");
+				PutModule("[" + Nick.GetHostMask() + "] sent us a challenge but they do not match a defined user.");
 			}
 
 			return false;
@@ -422,7 +430,7 @@ public:
 		MCString::iterator itQueue = m_msQueue.find(Nick.GetNick().AsLower());
 
 		if (itQueue == m_msQueue.end()) {
-			PutModule("[" + Nick.GetNick() + "] sent an unchallenged response.  This could be due to lag.");
+			PutModule("[" + Nick.GetHostMask() + "] sent an unchallenged response.  This could be due to lag.");
 			return false;
 		}
 
@@ -435,13 +443,13 @@ public:
 					OpUser(Nick, *it->second);
 					return true;
 				} else {
-					PutModule("WARNING! [" + Nick.GetNick() + "] sent a bad response.  Please verify that you have their correct password.");
+					PutModule("WARNING! [" + Nick.GetHostMask() + "] sent a bad response.  Please verify that you have their correct password.");
 					return false;
 				}
 			}
 		}
 
-		PutModule("WARNING! [" + Nick.GetNick() + "] sent a response but did not match any defined users.");
+		PutModule("WARNING! [" + Nick.GetHostMask() + "] sent a response but did not match any defined users.");
 		return false;
 	}
 
