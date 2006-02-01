@@ -383,11 +383,20 @@ void CClient::ReadLine(const CString& sData) {
 				return;
 			}
 
+			CChan* pChan = m_pUser->FindChan(sTarget);
+
+			if (sCTCP.Token(0).CaseCmp("ACTION") == 0) {
+				if (pChan && pChan->KeepBuffer()) {
+					pChan->AddBuffer(":" + GetNickMask() + " PRIVMSG " + sTarget + " :\001" + sCTCP + "\001");
+				}
 #ifdef _MODULES
-			CZNC::Get().GetModules().SetClient(this);
-			MODULECALLRET(OnUserCTCP(sTarget, sCTCP));
-			CZNC::Get().GetModules().SetClient(NULL);
+			} else {
+				CZNC::Get().GetModules().SetClient(this);
+				MODULECALLRET(OnUserCTCP(sTarget, sCTCP));
+				CZNC::Get().GetModules().SetClient(NULL);
 #endif
+			}
+
 			PutIRC("PRIVMSG " + sTarget + " :\001" + sCTCP + "\001");
 			return;
 		}

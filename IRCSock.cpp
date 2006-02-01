@@ -716,14 +716,15 @@ bool CIRCSock::OnPrivMsg(CNick& Nick, CString& sMessage) {
 bool CIRCSock::OnChanCTCP(CNick& Nick, const CString& sChan, CString& sMessage) {
 	CChan* pChan = m_pUser->FindChan(sChan);
 	if (pChan) {
-		MODULECALL(OnChanCTCP(Nick, *pChan, sMessage));
-
-		if (pChan->IsDetached()) {
-			return true;
+		// Record a /me
+		if (sMessage.Token(0).CaseCmp("ACTION") == 0 && (pChan->KeepBuffer() || !m_pUser->IsUserAttached())) {
+			pChan->AddBuffer(":" + Nick.GetNickMask() + " PRIVMSG " + sChan + " :\001" + sMessage + "\001");
+		} else {
+			MODULECALL(OnChanCTCP(Nick, *pChan, sMessage));
 		}
 	}
 
-	return false;
+	return (pChan && pChan->IsDetached());
 }
 
 bool CIRCSock::OnChanNotice(CNick& Nick, const CString& sChan, CString& sMessage) {
