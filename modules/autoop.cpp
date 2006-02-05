@@ -143,6 +143,11 @@ public:
 	}
 
 	virtual ~CAutoOpMod() {
+		for (map<CString, CAutoOpUser*>::iterator it = m_msUsers.begin(); it != m_msUsers.end(); it++) {
+			delete it->second;
+		}
+
+		m_msUsers.clear();
 	}
 
 	virtual void OnChanPermission(const CNick& OpNick, const CNick& Nick, CChan& Channel, unsigned char uMode, bool bAdded, bool bNoChange) {
