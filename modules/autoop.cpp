@@ -108,7 +108,7 @@ public:
 		m_sUsername = sLine.Token(0, false, "\t");
 		m_sHostmask = sLine.Token(1, false, "\t");
 		m_sUserKey = sLine.Token(2, false, "\t");
-		sLine.Token(3, false, "\t").Split(m_ssChans);
+		sLine.Token(3, false, "\t").Split(" ", m_ssChans);
 
 		return !m_sUserKey.empty();
 	}

@@ -239,6 +239,20 @@ CString CString::AsLower() const {
 	return sRet;
 }
 
+CString::EEscape CString::ToEscape(const CString& sEsc) {
+	if (sEsc.CaseCmp("ASCII") == 0) {
+		return EASCII;
+	} else if (sEsc.CaseCmp("HTML") == 0) {
+		return EHTML;
+	} else if (sEsc.CaseCmp("URL") == 0) {
+		return EURL;
+	} else if (sEsc.CaseCmp("SQL") == 0) {
+		return ESQL;
+	}
+
+	return EASCII;
+}
+
 CString CString::Escape_n(EEscape eFrom, EEscape eTo) const {
 	CString sRet;
 	const char szHex[] = "0123456789ABCDEF";
@@ -290,7 +304,7 @@ CString CString::Escape_n(EEscape eFrom, EEscape eTo) const {
 					ch = *p;
 				}
 				break;
-			case EAscii:
+			case EASCII:
 				ch = *p;
 				break;
 			case EURL:
@@ -317,6 +331,29 @@ CString CString::Escape_n(EEscape eFrom, EEscape eTo) const {
 				}
 
 				break;
+			case ESQL:
+				if (*p != '\\' || iLength < (a +1)) {
+					ch = *p;
+				} else {
+					a++;
+					p++;
+
+					if (*p == 'n') {
+						ch = '\n';
+					} else if (*p == 'r') {
+						ch = '\r';
+					} else if (*p == '0') {
+						ch = '\0';
+					} else if (*p == 't') {
+						ch = '\t';
+					} else if (*p == 'b') {
+						ch = '\b';
+					} else {
+						ch = *p;
+					}
+				}
+
+				break;
 		}
 
 		switch (eTo) {
@@ -328,7 +365,7 @@ CString CString::Escape_n(EEscape eFrom, EEscape eTo) const {
 				}
 
 				break;
-			case EAscii:
+			case EASCII:
 				sRet += ch;
 				break;
 			case EURL:
@@ -343,6 +380,18 @@ CString CString::Escape_n(EEscape eFrom, EEscape eTo) const {
 				}
 
 				break;
+			case ESQL:
+				if (ch == '\0') { sRet += '\\'; sRet += '0';
+				} else if (ch == '\n') { sRet += '\\'; sRet += 'n';
+				} else if (ch == '\t') { sRet += '\\'; sRet += 't';
+				} else if (ch == '\r') { sRet += '\\'; sRet += 'r';
+				} else if (ch == '\b') { sRet += '\\'; sRet += 'b';
+				} else if (ch == '\"') { sRet += '\\'; sRet += '\"';
+				} else if (ch == '\'') { sRet += '\\'; sRet += '\'';
+				} else if (ch == '\\') { sRet += '\\'; sRet += '\\';
+				} else { sRet += ch; }
+
+				break;
 		}
 	}
 
@@ -351,7 +400,7 @@ CString CString::Escape_n(EEscape eFrom, EEscape eTo) const {
 }
 
 CString CString::Escape_n(EEscape eTo) const {
-	return Escape_n(EAscii, eTo);
+	return Escape_n(EASCII, eTo);
 }
 
 CString& CString::Escape(EEscape eFrom, EEscape eTo) {
@@ -362,40 +411,60 @@ CString& CString::Escape(EEscape eTo) {
 	return (*this = Escape_n(eTo));
 }
 
-unsigned int CString::Replace(const CString& sReplace, const CString& sWith) {
-	return CString::Replace(*this, sReplace, sWith);
-}
-
-CString CString::Replace_n(const CString& sReplace, const CString& sWith) const {
-	CString sRet(*this);
-	sRet.Replace(sReplace, sWith);
+CString CString::Replace_n(const CString& sReplace, const CString& sWith, const CString& sLeft, const CString& sRight, bool bRemoveDelims) const {
+	CString sRet = *this;
+	CString::Replace(sRet, sReplace, sWith, sLeft, sRight, bRemoveDelims);
 	return sRet;
 }
 
-unsigned int CString::Replace(CString& sStr, const CString& sReplace, const CString& sWith) {
-	unsigned int uRet = 0;
-	size_type uPos = sStr.find(sReplace);
+unsigned int CString::Replace(const CString& sReplace, const CString& sWith, const CString& sLeft, const CString& sRight, bool bRemoveDelims) {
+	return CString::Replace(*this, sReplace, sWith, sLeft, sRight, bRemoveDelims);
+}
 
-	while (uPos != npos) {
-		sStr.replace(uPos, sReplace.length(), sWith);
-		uPos = sStr.find(sReplace, uPos + sReplace.length() +1);
-		uRet++;
+unsigned int CString::Replace(CString& sStr, const CString& sReplace, const CString& sWith, const CString& sLeft, const CString& sRight, bool bRemoveDelims) {
+	unsigned int uRet = 0;
+	CString sCopy = sStr;
+	sStr.clear();
+
+	unsigned int uReplaceWidth = sReplace.length();
+	unsigned int uLeftWidth = sLeft.length();
+	unsigned int uRightWidth = sRight.length();
+	const char* p = sCopy.c_str();
+	bool bInside = false;
+
+	while (*p) {
+		if (!bInside && uLeftWidth && strncmp(p, sLeft.c_str(), uLeftWidth) == 0) {
+			if (!bRemoveDelims) {
+				sStr += sLeft;
+			}
+
+			p += uLeftWidth -1;
+			bInside = true;
+		} else if (bInside && uRightWidth && strncmp(p, sRight.c_str(), uRightWidth) == 0) {
+			if (!bRemoveDelims) {
+				sStr += sRight;
+			}
+
+			p += uRightWidth -1;
+			bInside = false;
+		} else if (!bInside && strncmp(p, sReplace.c_str(), uReplaceWidth) == 0) {
+			sStr += sWith;
+			p += uReplaceWidth -1;
+			uRet++;
+		} else {
+			sStr.append(p, 1);
+		}
+
+		p++;
 	}
 
 	return uRet;
 }
 
 CString CString::Token(unsigned int uPos, bool bRest, const CString& sSep) const {
-	CString sRet;
-	Token(sRet, uPos, bRest, sSep);
-	return sRet;
-}
-
-bool CString::Token(CString& sRet, unsigned int uPos, bool bRest, const CString& sSep) const {
+	string sRet;
 	const char* p = c_str();
 	unsigned int uSepLen = sSep.length();
-
-	sRet.clear();
 
 	if (uSepLen) {
 		uSepLen--;
@@ -410,7 +479,7 @@ bool CString::Token(CString& sRet, unsigned int uPos, bool bRest, const CString&
 		} else {
 			if (strncmp(p, sSep.c_str(), sSep.length()) == 0) {
 				if (!bRest) {
-					return true;
+					return sRet;
 				}
 			}
 
@@ -420,7 +489,7 @@ bool CString::Token(CString& sRet, unsigned int uPos, bool bRest, const CString&
 		p++;
 	}
 
-	return !sRet.empty();
+	return sRet;
 }
 
 CString CString::Ellipsize(unsigned int uLen) const {
@@ -454,25 +523,75 @@ CString CString::Right(unsigned int uCount) const {
 	return substr(length() - uCount, uCount);
 }
 
-void CString::Split(SCString& ssRet, const CString& sDelim) {
-	ssRet.clear();
+unsigned int CString::URLSplit(MCString& msRet) const {
+	msRet.clear();
 
-	unsigned int a = 0;
-	CString sTok;
+	VCString vsPairs;
+	Split("&", vsPairs);
 
-	while (Token(sTok, a++, false, sDelim)) {
-		ssRet.insert(sTok);
+	for (size_t a = 0; a < vsPairs.size(); a++) {
+		const CString& sPair = vsPairs[a];
+
+		msRet[sPair.Token(0, false, "=").Escape(CString::EURL, CString::EASCII)] = sPair.Token(1, true, "=").Escape(CString::EURL, CString::EASCII);
 	}
+
+	return msRet.size();
 }
 
-VCString CString::Split(const CString& sDelim, bool bAllowEmpty) const {
-	VCString vsRet;
-	Split(sDelim, vsRet, bAllowEmpty);
-	return vsRet;
-}
-
-unsigned int CString::Split(const CString& sDelim, VCString& vsRet, bool bAllowEmpty) const {
+unsigned int CString::Split(const CString& sDelim, VCString& vsRet, bool bAllowEmpty, const CString& sLeft, const CString& sRight) const {
 	vsRet.clear();
+
+	if (empty()) {
+		return 0;
+	}
+
+	CString sTmp;
+	bool bInside = false;
+	unsigned int uDelimLen = sDelim.length();
+	unsigned int uLeftLen = sLeft.length();
+	unsigned int uRightLen = sRight.length();
+	const char* p = c_str();
+
+	while (*p) {
+		if (uLeftLen && uRightLen && !bInside && strncasecmp(p, sLeft.c_str(), uLeftLen) == 0) {
+			p += uLeftLen;
+			bInside = true;
+			continue;
+		}
+
+		if (uLeftLen && uRightLen && bInside && strncasecmp(p, sRight.c_str(), uRightLen) == 0) {
+			p += uRightLen;
+			bInside = false;
+			continue;
+		}
+
+		if (uDelimLen && !bInside && strncasecmp(p, sDelim.c_str(), uDelimLen) == 0) {
+			vsRet.push_back(sTmp);
+			sTmp.clear();
+			p += uDelimLen;
+
+			if (!bAllowEmpty) {
+				while (strncasecmp(p, sDelim.c_str(), uDelimLen) == 0) {
+					p += uDelimLen;
+				}
+			}
+
+			bInside = false;
+			continue;
+		} else {
+			sTmp += *p;
+		}
+
+		p++;
+	}
+
+	if (!sTmp.empty()) {
+		vsRet.push_back(sTmp);
+	}
+
+	return vsRet.size();
+
+	/*vsRet.clear();
 	CString sTmp = *this;
 
 	while (sTmp.size()) {
@@ -490,7 +609,25 @@ unsigned int CString::Split(const CString& sDelim, VCString& vsRet, bool bAllowE
 		sTmp = sRest;
 	}
 
-	return vsRet.size();
+	return vsRet.size();*/
+}
+
+unsigned int CString::Split(const CString& sDelim, SCString& ssRet, bool bAllowEmpty, const CString& sLeft, const CString& sRight) const {
+	VCString vsTokens;
+
+	Split(sDelim, vsTokens, bAllowEmpty, sLeft, sRight);
+
+	ssRet.clear();
+
+	for (size_t a = 0; a < vsTokens.size(); a++) {
+		ssRet.insert(vsTokens[a]);
+	}
+
+	return ssRet.size();
+}
+
+CString CString::Format(const CString& sFormatStr, ...) {
+	return "";
 }
 
 CString CString::RandomString(unsigned int uLength) {
@@ -501,10 +638,6 @@ CString CString::RandomString(unsigned int uLength) {
 	}
 
 	return sRet;
-}
-
-CString CString::Format(const CString& sFormatStr, ...) {
-	return "";
 }
 
 bool CString::Base64Encode(unsigned int uWrap) {
@@ -620,12 +753,12 @@ unsigned long CString::Base64Decode(CString& sRet) const {
 	unsigned long i;
 	unsigned long uLen = size();
 	char* out = (char*) malloc(size() +1);
- 
+
 	for (i = 0, p = out; i < uLen; i++) {
 		c = (char)base64_table[(unsigned char)in[i++]];
 		c1 = (char)base64_table[(unsigned char)in[i++]];
 		*p++ = (c << 2) | ((c1 >> 4) & 0x3);
- 
+
 		if (i < uLen) {
 			if (in[i] == '=') {
 				break;
@@ -633,7 +766,7 @@ unsigned long CString::Base64Decode(CString& sRet) const {
 			c = (char)base64_table[(unsigned char)in[i]];
 			*p++ = ((c1 << 4) & 0xf0) | ((c >> 2) & 0xf);
 		}
- 
+
 		if (++i < uLen) {
 			if (in[i] == '=') {
 				break;
@@ -641,7 +774,7 @@ unsigned long CString::Base64Decode(CString& sRet) const {
 			*p++ = ((c << 6) & 0xc0) | (char)base64_table[(unsigned char)in[i]];
 		}
 	}
- 
+
 	*p = '\0';
 	unsigned long uRet = p - out;
 	sRet.clear();
@@ -727,7 +860,7 @@ CString CString::ToKBytes(double d) {
 	return szRet;
 }
 
-bool CString::ToBool() const { return (!Trim_n().Trim_n("0").empty() && CaseCmp("false") != 0); }
+bool CString::ToBool() const { return (!Trim_n().Trim_n("0").empty() && Trim_n().CaseCmp("false") != 0); }
 short CString::ToShort() const { return strtoul(this->c_str(), (char**) NULL, 10); }
 unsigned short CString::ToUShort() const { return strtoul(this->c_str(), (char**) NULL, 10); }
 unsigned int CString::ToUInt() const { return strtoul(this->c_str(), (char**) NULL, 10); }
@@ -783,13 +916,13 @@ CString CString::TrimRight_n(const CString& s) const {
 	return sRet;
 }
 
-CString CString::LeftChomp_n(unsigned int uLen) {
+CString CString::LeftChomp_n(unsigned int uLen) const {
 	CString sRet = *this;
 	sRet.LeftChomp(uLen);
 	return sRet;
 }
 
-CString CString::RightChomp_n(unsigned int uLen) {
+CString CString::RightChomp_n(unsigned int uLen) const {
 	CString sRet = *this;
 	sRet.RightChomp(uLen);
 	return sRet;

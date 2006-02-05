@@ -10,8 +10,6 @@
 #include <dirent.h>
 #include <stdio.h>
 
-#include "Utils.h"
-
 #include "String.h"
 #include <vector>
 #include <map>
@@ -20,8 +18,16 @@ using std::map;
 
 class CFile {
 public:
+	CFile();
 	CFile(const CString& sLongName);
 	virtual ~CFile();
+
+	enum EOptions {
+		F_Read		= O_RDONLY,
+		F_Write		= O_WRONLY,
+		F_Create	= O_CREAT,
+		F_Truncate	= O_TRUNC
+	};
 
 	enum EFileTypes {
 		FT_REGULAR,
@@ -97,15 +103,19 @@ public:
 	bool Chmod(mode_t mode);
 	static bool Chmod(const CString& sFile, mode_t mode);
 	bool Seek(unsigned long uPos);
+	bool Open(const CString& sFileName, int iFlags, mode_t iMode = 0644);
 	bool Open(int iFlags, mode_t iMode = 0644);
 	int Read(char *pszBuffer, int iBytes);
 	bool ReadLine(CString & sData);
 	int Write(const char *pszBuffer, u_int iBytes);
 	int Write(const CString & sData);
 	void Close();
+	void ClearBuffer();
 
+	bool IsOpen() const;
 	CString GetLongName() const;
 	CString GetShortName() const;
+	CString GetDir() const;
 	void SetFD(int iFD);
 
 private:

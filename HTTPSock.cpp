@@ -112,8 +112,8 @@ void CHTTPSock::ParseParams(const CString& sParams) {
 
 	for (unsigned int a = 0; a < vsPairs.size(); a++) {
 		const CString& sPair = vsPairs[a];
-		CString sName = sPair.Token(0, false, "=").Escape_n(CString::EURL, CString::EAscii);
-		CString sValue = sPair.Token(1, true, "=").Escape_n(CString::EURL, CString::EAscii);
+		CString sName = sPair.Token(0, false, "=").Escape_n(CString::EURL, CString::EASCII);
+		CString sValue = sPair.Token(1, true, "=").Escape_n(CString::EURL, CString::EASCII);
 
 		m_msvsParams[sName].push_back(sValue);
 	}

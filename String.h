@@ -1,22 +1,38 @@
 #ifndef X_STRING_H
 #define X_STRING_H
 
+#ifdef USE_PCRE
+#include <pcre.h>
+#endif
+
+#include <set>
+#include <map>
 #include <string>
 #include <sstream>
-#include <map>
-#include <set>
 #include <vector>
 
-using std::map;
-using std::string;
 using std::set;
+using std::map;
+using std::multimap;
+using std::string;
+using std::pair;
 using std::vector;
 using std::stringstream;
 
+
+#define _SQL(s) CString("'" + CString(s).Escape_n(CString::ESQL) + "'")
+#define _URL(s) CString("'" + CString(s).Escape_n(CString::EURL) + "'")
+#define _HTML(s) CString("'" + CString(s).Escape_n(CString::EHTML) + "'")
+
+
 class CString;
-typedef vector<CString> VCString;
-typedef set<CString> SCString;
-typedef map<CString, VCString> MVCString;
+class MCString;
+
+typedef set<CString>				SCString;
+typedef vector<CString>				VCString;
+typedef map<CString, VCString>		MVCString;
+typedef vector<MCString>			VMCString;
+typedef multimap<CString, CString>	MMCString;
 
 static const unsigned char XX = 0xff;
 static const unsigned char base64_table[256] = {
@@ -43,9 +59,10 @@ extern const char* g_szHTMLescapes[256];
 class CString : public string {
 public:
 	typedef enum {
-		EAscii,
+		EASCII,
 		EURL,
 		EHTML,
+		ESQL,
 	} EEscape;
 
 	CString() : string() {}
@@ -64,26 +81,26 @@ public:
 	CString AsUpper() const;
 	CString AsLower() const;
 
+	static EEscape ToEscape(const CString& sEsc);
 	CString Escape_n(EEscape eFrom, EEscape eTo) const;
 	CString Escape_n(EEscape eTo) const;
 	CString& Escape(EEscape eFrom, EEscape eTo);
 	CString& Escape(EEscape eTo);
 
-	static unsigned int Replace(CString& sStr, const CString& sReplace, const CString& sWith);
-	unsigned int Replace(const CString& sReplace, const CString& sWith);
-	CString Replace_n(const CString& sReplace, const CString& sWith) const;
+	static unsigned int Replace(CString& sStr, const CString& sReplace, const CString& sWith, const CString& sLeft = "", const CString& sRight = "", bool bRemoveDelims = false);
+	CString Replace_n(const CString& sReplace, const CString& sWith, const CString& sLeft = "", const CString& sRight = "", bool bRemoveDelims = false) const;
+	unsigned int Replace(const CString& sReplace, const CString& sWith, const CString& sLeft = "", const CString& sRight = "", bool bRemoveDelims = false);
 	CString Ellipsize(unsigned int uLen) const;
 	CString Left(unsigned int uCount) const;
 	CString Right(unsigned int uCount) const;
 
-	static CString RandomString(unsigned int uLength);
-
 	CString Token(unsigned int uPos, bool bRest = false, const CString& sSep = " ") const;
-	bool Token(CString& sRet, unsigned int uPos, bool bRest = false, const CString& sSep = " ") const;
-	VCString Split(const CString& sDelim, bool bKeepEmpty = true) const;
-	unsigned int Split(const CString& sDelim, VCString& vsRet, bool bAllowEmpty = true) const;
+	unsigned int URLSplit(MCString& msRet) const;
+	unsigned int Split(const CString& sDelim, VCString& vsRet, bool bAllowEmpty = true, const CString& sLeft = "", const CString& sRight = "") const;
+	unsigned int Split(const CString& sDelim, SCString& ssRet, bool bAllowEmpty = true, const CString& sLeft = "", const CString& sRight = "") const;
 	static CString Format(const CString& sFormatStr, ...);
-	void Split(SCString& ssRet, const CString& sDelim = " ");
+
+	static CString RandomString(unsigned int uLength);
 
 	CString MD5() const;
 	unsigned long Base64Decode(CString& sRet) const;
@@ -135,8 +152,8 @@ public:
 
 	bool LeftChomp(unsigned int uLen = 1);
 	bool RightChomp(unsigned int uLen = 1);
-	CString LeftChomp_n(unsigned int uLen = 1);
-	CString RightChomp_n(unsigned int uLen = 1);
+	CString LeftChomp_n(unsigned int uLen = 1) const;
+	CString RightChomp_n(unsigned int uLen = 1) const;
 
 private:
 protected:

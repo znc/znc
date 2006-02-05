@@ -1,4 +1,12 @@
 #include "FileUtils.h"
+#include <iostream>
+
+using std::cout;
+using std::cerr;
+using std::endl;
+
+CFile::CFile() {
+}
 
 CFile::CFile(const CString& sLongName) {
 	SetFileName(sLongName);
@@ -195,7 +203,17 @@ bool CFile::Chmod(const CString& sFile, mode_t mode) {
 }
 
 bool CFile::Seek(unsigned long uPos) {
-	return (m_iFD == -1) ? false : ((unsigned int) lseek(m_iFD, uPos, SEEK_SET) == uPos);
+	if (m_iFD != -1 && (unsigned int) lseek(m_iFD, uPos, SEEK_SET) == uPos) {
+		ClearBuffer();
+		return true;
+	}
+
+	return false;
+}
+
+bool CFile::Open(const CString& sFileName, int iFlags, mode_t iMode) {
+	SetFileName(sFileName);
+	return Open(iFlags, iMode);
 }
 
 bool CFile::Open(int iFlags, mode_t iMode) {
@@ -215,9 +233,10 @@ int CFile::Read(char *pszBuffer, int iBytes) {
 	return read(m_iFD, pszBuffer, iBytes);
 }
 
-bool CFile::ReadLine(CString & sData) {
+bool CFile::ReadLine(CString& sData) {
 	char buff[64];
 	sData.clear();
+
 	if (m_iFD == -1) {
 		return false;
 	}
@@ -234,6 +253,7 @@ bool CFile::ReadLine(CString & sData) {
 
 		memset((char *)buff, '\0', 64);
 		int iBytes = read(m_iFD, buff, 64);
+
 		switch(iBytes) {
 			case -1: {
 				bEOF = true;
@@ -274,7 +294,19 @@ int CFile::Write(const CString & sData) {
 	return Write(sData.data(), sData.size());
 }
 void CFile::Close() { close(m_iFD); m_iFD = -1; }
+void CFile::ClearBuffer() { m_sBuffer.clear(); }
 
+bool CFile::IsOpen() const { return (m_iFD != -1); }
 CString CFile::GetLongName() const { return m_sLongName; }
 CString CFile::GetShortName() const { return m_sShortName; }
+CString CFile::GetDir() const {
+	CString sDir(m_sLongName);
+
+	while (!sDir.empty() && sDir.Right(1) != "/" && sDir.Right(1) != "\\") {
+		sDir.RightChomp();
+	}
+
+	return sDir;
+}
+
 void CFile::SetFD(int iFD) { m_iFD = iFD; }
