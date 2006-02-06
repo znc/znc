@@ -71,9 +71,11 @@ public:
 	}
 
 	virtual ~CWebAdminMod() {
-		for (set<CWebAdminSock*>::iterator it = m_sSocks.begin(); it != m_sSocks.end(); it++) {
-			m_pManager->DelSockByAddr(*it);
-		}
+		while (m_spSocks.size()) {							// Loop through the sockets that we have created
+			m_pManager->DelSockByAddr(*m_spSocks.begin());	// Delete each one which will call SockDestroyed() and erase it from the set
+		}													// This way we don't want to erase it ourselves, that's why we're using the funky while loop
+
+		m_spSocks.clear();
 	}
 
 	virtual bool OnBoot() {
@@ -98,7 +100,6 @@ public:
 		}
 
 		CWebAdminSock* pListenSock = new CWebAdminSock(this);
-
 #ifdef HAVE_LIBSSL
 		if (bSSL) {
 			pListenSock->SetPemLocation(CZNC::Get().GetPemLocation());
@@ -109,27 +110,29 @@ public:
 	}
 
 	void AddSock(CWebAdminSock* pSock) {
-		m_sSocks.insert(pSock);
+		m_spSocks.insert(pSock);
 	}
 
 	void SockDestroyed(CWebAdminSock* pSock) {
-		m_sSocks.erase(pSock);
+		m_spSocks.erase(pSock);
 	}
 
 private:
 	unsigned int		m_uPort;
-	set<CWebAdminSock*>	m_sSocks;
+	set<CWebAdminSock*>	m_spSocks;
 };
 
 void CWebAdminSock::PrintPage(CString& sPageRet, const CString& sTmplName) {
 	sPageRet.clear();
-	CString sModPath = CZNC::Get().FindModPath(m_pModule->GetModName());
+	CString sModPath = CZNC::Get().FindModPath(m_pModule->GetModName());	// @todo store the path to the module at load time and store it in a member var which can be used here
 
 	while (!sModPath.empty() && sModPath.Right(1) != "/") {
 		sModPath.RightChomp();
 	}
 
-	if (!m_Template.SetFile(sModPath + "/webadmin/" + sTmplName)) {
+	// @todo possibly standardize the location of meta files such as these skins
+	// @todo give an option for changing the current skin from 'default'
+	if (!m_Template.SetFile(sModPath + "/" + m_pModule->GetModName() + "/skins/default/" + sTmplName)) {
 		return;
 	}
 
@@ -194,12 +197,14 @@ CWebAdminSock::CWebAdminSock(CWebAdminMod* pModule) : CHTTPSock() {
 	m_bAdmin = false;
 	m_pModule->AddSock(this);
 }
+
 CWebAdminSock::CWebAdminSock(CWebAdminMod* pModule, const CString& sHostname, unsigned short uPort, int iTimeout) : CHTTPSock(sHostname, uPort, iTimeout) {
 	m_pModule = pModule;
 	m_pUser = NULL;
 	m_bAdmin = false;
 	m_pModule->AddSock(this);
 }
+
 CWebAdminSock::~CWebAdminSock() {
 	m_pModule->SockDestroyed(this);
 }
