@@ -1172,3 +1172,9 @@ bool CZNC::AddUser(CUser* pUser) {
 	DEBUG_ONLY(cout << "Invalid user [" << pUser->GetUserName() << "] - [" << sErr << "]" << endl);
 	return false;
 }
+
+CZNC& CZNC::Get() {
+	static CZNC* pZNC = new CZNC;
+	return *pZNC;
+}
+
