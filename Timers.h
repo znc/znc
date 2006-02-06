@@ -70,8 +70,8 @@ protected:
 			}
 		}
 
-		CZNC::Get().GetManager().DelCronByAddr(this);
 		m_pUser->DelBackNickTimer();
+		CZNC::Get().GetManager().DelCronByAddr(this);
 	}
 
 	CUser* m_pUser;
@@ -102,8 +102,8 @@ protected:
 			}
 		}
 
-		CZNC::Get().GetManager().DelCronByAddr(this);
 		m_pUser->DelAwayNickTimer();
+		CZNC::Get().GetManager().DelCronByAddr(this);
 	}
 
 	CUser* m_pUser;
