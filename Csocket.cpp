@@ -1191,7 +1191,7 @@ CS_STRING Csock::GetRemoteIP()
 
 	int iSock = GetSock();
 
-	if ( iSock <= 0 )
+	if ( iSock < 0 )
 	{
 		std::cerr << "What the hell is wrong with my fd!?" << endl;
 		return( "" );
