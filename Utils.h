@@ -62,7 +62,7 @@ class CLockFile {
 public:
 	CLockFile() {
 		m_bCreated = false;
-		m_fd = 0;
+		m_fd = -1;
 		m_pid = 0;
 	}
 
@@ -75,6 +75,7 @@ public:
 			if (m_fd > -1) {
 				UnLock();
 				close(m_fd);
+
 				if (m_bCreated) {
 					unlink(m_sFileName.c_str());
 				}

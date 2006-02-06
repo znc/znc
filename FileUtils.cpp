@@ -6,9 +6,12 @@ using std::cerr;
 using std::endl;
 
 CFile::CFile() {
+	m_iFD = -1;
 }
 
 CFile::CFile(const CString& sLongName) {
+	m_iFD = -1;
+
 	SetFileName(sLongName);
 }
 
@@ -293,7 +296,11 @@ int CFile::Write(const char *pszBuffer, u_int iBytes) {
 int CFile::Write(const CString & sData) {
 	return Write(sData.data(), sData.size());
 }
-void CFile::Close() { close(m_iFD); m_iFD = -1; }
+void CFile::Close() {
+	if (m_iFD >= 0) {
+		close(m_iFD); m_iFD = -1;
+	}
+}
 void CFile::ClearBuffer() { m_sBuffer.clear(); }
 
 bool CFile::IsOpen() const { return (m_iFD != -1); }
