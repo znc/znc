@@ -311,7 +311,7 @@ bool CHTTPSock::PrintHeader(unsigned long uContentLength, const CString& sConten
 		return false;
 	}
 
-	DEBUG_ONLY(cout << "- " << uStatusId << " (" << sStatusMsg << ")" << endl);
+	DEBUG_ONLY(cout << "- " << uStatusId << " (" << sStatusMsg << ") [" << sContentType << "]" << endl);
 	if (!sContentType.empty()) {
 		m_sContentType = sContentType;
 	}
