@@ -41,7 +41,7 @@ public:
 	void ParseParams(const CString& sParams);
 	void ParseURI();
 	void GetPage();
-	bool PrintFile(const CString& sFileName, CString sContentType);
+	bool PrintFile(const CString& sFileName, CString sContentType = "");
 
 	// Setters
 	void SetDocRoot(const CString& s);
