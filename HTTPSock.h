@@ -37,16 +37,20 @@ public:
 	bool Redirect(const CString& sURL);
 	bool ForceLogin();
 	CString GetErrorPage(unsigned int uStatusId, const CString& sStatusMsg, const CString& sMessage);
+	bool PrintErrorPage(unsigned int uStatusId, const CString& sStatusMsg, const CString& sMessage);
 	void ParseParams(const CString& sParams);
 	void ParseURI();
 	void GetPage();
+	bool PrintFile(const CString& sFileName, const CString& sContentType);
 
 	// Setters
+	void SetDocRoot(const CString& s);
 	// !Setters
 
 	// Getters
 	bool HasParam(const CString& sName) const;
 	CString GetParam(const CString& sName) const;
+	const CString& GetDocRoot() const;
 	const CString& GetUser() const;
 	const CString& GetPass() const;
 	const CString& GetParamString() const;
@@ -68,6 +72,7 @@ protected:
 	CString					m_sUser;
 	CString					m_sPass;
 	CString					m_sContentType;
+	CString					m_sDocRoot;
 	map<CString, VCString>	m_msvsParams;
 	MCString				m_msHeaders;
 };

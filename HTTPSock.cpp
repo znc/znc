@@ -93,10 +93,44 @@ void CHTTPSock::GetPage() {
 	}
 
 	if (PrintHeader(sPage.length())) {
-		DEBUG_ONLY(cout << "- 200 (OK)" << endl);
 		Write(sPage);
 		Close(Csock::CLT_AFTERWRITE);
 	}
+}
+
+bool CHTTPSock::PrintFile(const CString& sFileName, const CString& sContentType) {
+	CString sFilePath = sFileName;
+
+	if (!m_sDocRoot.empty()) {
+		sFilePath = CUtils::ChangeDir(m_sDocRoot, sFileName, m_sDocRoot);
+
+		if (sFilePath.Left(m_sDocRoot.size()) != m_sDocRoot) {
+			PrintErrorPage(403, "Forbidden", "You don't have permission to access to this document on this server.");
+			DEBUG_ONLY(cout << "THIS FILE:     [" << sFilePath << "] does not live in ..." << endl);
+			DEBUG_ONLY(cout << "DOCUMENT ROOT: [" << m_sDocRoot << "]" << endl);
+			return false;
+		}
+	}
+
+	CFile File(sFileName);
+
+	if (!File.Open(CFile::F_Read)) {
+		PrintNotFound();
+		return false;
+	}
+
+	PrintHeader(File.GetSize(), "text/css");
+
+	char szBuf[4096];
+	int iLen = 0;
+
+	while((iLen = File.Read(szBuf, 4096)) > 0) {
+		Write(szBuf, iLen);
+	}
+
+	Close(Csock::CLT_AFTERWRITE);
+
+	return true;
 }
 
 void CHTTPSock::ParseURI() {
@@ -117,6 +151,15 @@ void CHTTPSock::ParseParams(const CString& sParams) {
 
 		m_msvsParams[sName].push_back(sValue);
 	}
+}
+
+void CHTTPSock::SetDocRoot(const CString& s) {
+	m_sDocRoot = s;
+	m_sDocRoot.Replace("//", "/");
+}
+
+const CString& CHTTPSock::GetDocRoot() const {
+	return m_sDocRoot;
 }
 
 const CString& CHTTPSock::GetUser() const {
@@ -184,6 +227,23 @@ bool CHTTPSock::OnPageRequest(const CString& sURI, CString& sPageRet) {
 	return false;
 }
 
+bool CHTTPSock::PrintNotFound() {
+	return PrintErrorPage(404, "Not Found", "The requested URL was not found on this server.");
+}
+
+bool CHTTPSock::PrintErrorPage(unsigned int uStatusId, const CString& sStatusMsg, const CString& sMessage) {
+	if (SentHeader()) {
+		return false;
+	}
+
+	CString sPage = GetErrorPage(uStatusId, sStatusMsg, sMessage);
+	PrintHeader(sPage.length(), "text/html", uStatusId, sStatusMsg);
+	Write(sPage);
+	Close(Csock::CLT_AFTERWRITE);
+
+	return true;
+}
+
 CString CHTTPSock::GetErrorPage(unsigned int uStatusId, const CString& sStatusMsg, const CString& sMessage) {
 	return "<!DOCTYPE HTML PUBLIC \"-//IETF//DTD HTML 2.0//EN\">\r\n"
 		"<html><head>\r\n<title>" + CString::ToString(uStatusId) + " " + sStatusMsg.Escape_n(CString::EHTML) + "</title>\r\n"
@@ -215,29 +275,17 @@ bool CHTTPSock::OnLogin(const CString& sUser, const CString& sPass) {
 	return false;
 }
 
-bool CHTTPSock::PrintNotFound() {
-	if (SentHeader()) {
-		return false;
-	}
-
-	DEBUG_ONLY(cout << "- 404 (Not Found)" << endl);
-	CString sPage = GetErrorPage(404, "Not Found", "The requested URL was not found on this server.");
-	PrintHeader(sPage.length(), "text/html", 404, "Not Found");
-	Write(sPage);
-	Close(Csock::CLT_AFTERWRITE);
-
-	return true;
-}
-
 bool CHTTPSock::SentHeader() const {
 	return m_bSentHeader;
 }
 
 bool CHTTPSock::PrintHeader(unsigned long uContentLength, const CString& sContentType, unsigned int uStatusId, const CString& sStatusMsg) {
 	if (SentHeader()) {
+		DEBUG_ONLY(cout << "- Header already sent!" << endl);
 		return false;
 	}
 
+	DEBUG_ONLY(cout << "- " << uStatusId << " (" << sStatusMsg << ")" << endl);
 	if (!sContentType.empty()) {
 		m_sContentType = sContentType;
 	}
