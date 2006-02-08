@@ -311,7 +311,6 @@ bool CHTTPSock::PrintHeader(unsigned long uContentLength, const CString& sConten
 		return false;
 	}
 
-	DEBUG_ONLY(cout << "- " << uStatusId << " (" << sStatusMsg << ") [" << sContentType << "]" << endl);
 	if (!sContentType.empty()) {
 		m_sContentType = sContentType;
 	}
@@ -319,6 +318,8 @@ bool CHTTPSock::PrintHeader(unsigned long uContentLength, const CString& sConten
 	if (m_sContentType.empty()) {
 		m_sContentType = "text/html";
 	}
+
+	DEBUG_ONLY(cout << "- " << uStatusId << " (" << sStatusMsg << ") [" << m_sContentType << "]" << endl);
 
 	Write("HTTP/1.0 " + CString::ToString(uStatusId) + " " + sStatusMsg + "\r\n");
 	//Write("Date: Tue, 28 Jun 2005 20:45:36 GMT\r\n");
