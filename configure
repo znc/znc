@@ -1949,17 +1949,17 @@ if test "${with_openssl+set}" = set; then
   withval="$with_openssl"
   OPENSSL=$withval
 fi;
-# Check whether --enable-ipv6 or --disable-ipv6 was given.
-if test "${enable_ipv6+set}" = set; then
-  enableval="$enable_ipv6"
-  appendCXX -DHAVE_IPV6
-fi;
 # Check whether --enable-debug or --disable-debug was given.
 if test "${enable_debug+set}" = set; then
   enableval="$enable_debug"
   appendCXX -Wall -ggdb -D_DEBUG
 else
   appendCXX -Wall -s -O2 -fomit-frame-pointer
+fi;
+# Check whether --enable-ipv6 or --disable-ipv6 was given.
+if test "${enable_ipv6+set}" = set; then
+  enableval="$enable_ipv6"
+  appendCXX -DHAVE_IPV6
 fi;
 # Check whether --enable-modules or --disable-modules was given.
 if test "${enable_modules+set}" = set; then
