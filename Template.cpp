@@ -54,10 +54,12 @@ CTemplate::~CTemplate() {
 
 bool CTemplate::SetFile(const CString& sFileName) {
 	if (sFileName.empty()) {
+		DEBUG_ONLY(cerr << "CTemplate::SetFile() - Filename is empty" << endl);
 		return false;
 	}
 
 	if (!CFile::Exists(sFileName)) {
+		DEBUG_ONLY(cerr << "CTemplate::SetFile() - [" << sFileName << "] does not exist" << endl);
 		return false;
 	}
 
