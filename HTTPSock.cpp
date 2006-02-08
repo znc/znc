@@ -98,28 +98,54 @@ void CHTTPSock::GetPage() {
 	}
 }
 
-bool CHTTPSock::PrintFile(const CString& sFileName, const CString& sContentType) {
+bool CHTTPSock::PrintFile(const CString& sFileName, CString sContentType) {
 	CString sFilePath = sFileName;
 
 	if (!m_sDocRoot.empty()) {
-		sFilePath = CUtils::ChangeDir(m_sDocRoot, sFileName, m_sDocRoot);
+		while (sFilePath.Left(1) == "/") {
+			sFilePath.LeftChomp(1);
+		}
+
+		sFilePath = CUtils::ChangeDir(m_sDocRoot, sFilePath, m_sDocRoot);
 
 		if (sFilePath.Left(m_sDocRoot.size()) != m_sDocRoot) {
-			PrintErrorPage(403, "Forbidden", "You don't have permission to access to this document on this server.");
+			PrintErrorPage(403, "Forbidden", "You don't have permission to access that file on this server.");
 			DEBUG_ONLY(cout << "THIS FILE:     [" << sFilePath << "] does not live in ..." << endl);
 			DEBUG_ONLY(cout << "DOCUMENT ROOT: [" << m_sDocRoot << "]" << endl);
 			return false;
 		}
 	}
 
-	CFile File(sFileName);
+	CFile File(sFilePath);
 
 	if (!File.Open(CFile::F_Read)) {
 		PrintNotFound();
 		return false;
 	}
 
-	PrintHeader(File.GetSize(), "text/css");
+	if (sContentType.empty()) {
+		if (sFileName.Right(5).CaseCmp(".html") == 0 || sFileName.Right(4).CaseCmp(".htm") == 0) {
+			sContentType = "text/html";
+		} else if (sFileName.Right(4).CaseCmp(".css") == 0) {
+			sContentType = "text/css";
+		} else if (sFileName.Right(3).CaseCmp(".js") == 0) {
+			sContentType = "application/x-javascript";
+		} else if (sFileName.Right(4).CaseCmp(".jpg") == 0) {
+			sContentType = "image/jpeg";
+		} else if (sFileName.Right(4).CaseCmp(".gif") == 0) {
+			sContentType = "image/gif";
+		} else if (sFileName.Right(4).CaseCmp(".ico") == 0) {
+			sContentType = "image/x-icon";
+		} else if (sFileName.Right(4).CaseCmp(".png") == 0) {
+			sContentType = "image/png";
+		} else if (sFileName.Right(4).CaseCmp(".bmp") == 0) {
+			sContentType = "image/bmp";
+		} else {
+			sContentType = "text/plain";
+		}
+	}
+
+	PrintHeader(File.GetSize(), sContentType);
 
 	char szBuf[4096];
 	int iLen = 0;
@@ -154,7 +180,7 @@ void CHTTPSock::ParseParams(const CString& sParams) {
 }
 
 void CHTTPSock::SetDocRoot(const CString& s) {
-	m_sDocRoot = s;
+	m_sDocRoot = s + "/";
 	m_sDocRoot.Replace("//", "/");
 }
 
