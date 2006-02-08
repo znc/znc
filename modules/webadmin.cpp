@@ -69,6 +69,7 @@ class CWebAdminMod : public CGlobalModule {
 public:
 	CWebAdminMod(void *pDLL, const CString& sModName) : CGlobalModule(pDLL, sModName) {
 		m_uPort = 8080;
+		m_sSkinName = GetNV("SkinName");
 	}
 
 	virtual ~CWebAdminMod() {
@@ -118,8 +119,16 @@ public:
 		m_spSocks.erase(pSock);
 	}
 
+	void SetSkinName(const CString& s) {
+		m_sSkinName = s;
+		SetNV("SkinName", m_sSkinName);
+	}
+
+	CString GetSkinName() const { return (m_sSkinName.empty()) ? CString("default") : m_sSkinName; }
+
 private:
 	unsigned int		m_uPort;
+	CString				m_sSkinName;
 	set<CWebAdminSock*>	m_spSocks;
 };
  
@@ -128,6 +137,12 @@ CString CWebAdminSock::GetSkinDir() {
 
 	while (!sModPath.empty() && sModPath.Right(1) != "/") {
 		sModPath.RightChomp();
+	}
+
+	CString sSkinDir = sModPath + "/" + m_pModule->GetModName() + "/skins/" + m_pModule->GetSkinName() + "/";
+
+	if (CDir::Exists(sSkinDir)) {
+		return sSkinDir;
 	}
 
 	return sModPath + "/" + m_pModule->GetModName() + "/skins/default/";
@@ -367,6 +382,27 @@ bool CWebAdminSock::SettingsPage(CString& sPageRet) {
 			l["Line"] = vsMotd[b];
 		}
 
+		CString sDir(GetSkinDir() + "/..");
+
+		if (CDir::Exists(sDir)) {
+			CDir Dir(sDir);
+
+			m_Template.AddRow("SkinLoop")["Name"] = "default";
+
+			for (unsigned int c = 0; c < Dir.size(); c++) {
+				const CFile& SubDir = *Dir[c];
+
+				if (SubDir.IsDir() && SubDir.GetShortName() != "CVS" && SubDir.GetShortName() != "default") {
+					CTemplate& l = m_Template.AddRow("SkinLoop");
+					l["Name"] = SubDir.GetShortName();
+
+					if (SubDir.GetShortName() == m_pModule->GetSkinName()) {
+						l["Checked"] = "true";
+					}
+				}
+			}
+		}
+
 		set<CModInfo> ssGlobalMods;
 		CZNC::Get().GetModules().GetAvailableMods(ssGlobalMods, true);
 
@@ -412,6 +448,8 @@ bool CWebAdminSock::SettingsPage(CString& sPageRet) {
 	for (a = 0; a < vsArgs.size(); a++) {
 		CZNC::Get().AddVHost(vsArgs[a].Trim_n());
 	}
+
+	m_pModule->SetSkinName(GetParam("skin"));
 
 	set<CString> ssArgs;
 	GetParamValues("loadmod", ssArgs);

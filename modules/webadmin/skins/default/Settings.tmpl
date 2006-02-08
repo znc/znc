@@ -25,15 +25,27 @@
 				<div style="clear: both;"></div>
 
 				<div class="subsection">
+					<div class="inputlabel">Skin:</div>
+					<div>
+						<select name="skin">
+							<? LOOP SkinLoop ?>
+							<option value="<? VAR Name ESC=HTML ?>"<? IF Checked ?> SELECTED<? ENDIF ?>><? VAR Name ESC=HTML ?></option>
+							<? ENDLOOP ?>
+						</select>
+					</div>
+				</div>
+				<div style="clear: both;"></div>
+
+				<div class="subsection">
 					<div class="inputlabel">MOTD:</div>
-					<div><textarea name="motd" cols="80" rows="5"><? LOOP MOTDLoop ?><? VAR Line ESC=HTML ?>
+					<div><textarea name="motd" cols="70" rows="5"><? LOOP MOTDLoop ?><? VAR Line ESC=HTML ?>
 <? ENDLOOP ?>
 </textarea></div>
 				</div>
 
 				<div class="subsection">
 					<div class="inputlabel">VHosts:</div>
-					<div><textarea name="vhosts" cols="80" rows="8"><? LOOP VHostLoop ?><? VAR VHost ESC=HTML ?>
+					<div><textarea name="vhosts" cols="70" rows="8"><? LOOP VHostLoop ?><? VAR VHost ESC=HTML ?>
 <? ENDLOOP ?>
 </textarea></div>
 				</div>
