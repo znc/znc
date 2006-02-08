@@ -1,0 +1,72 @@
+<? INC Header.tmpl ?>
+
+<form action="/settings" method="post">
+	<input type="hidden" name="submitted" value="1" />
+
+	<div class="section">
+		<div class="sectiontitle">Settings</div>
+		<div class="sectionbg">
+			<div class="sectionbody">
+				<div class="subsection">
+					<div class="inputlabel">Status Prefix:</div>
+					<div><input type="text" name="statusprefix" value="<? VAR StatusPrefix ESC=HTML ?>" size="32" maxlength="128" /></div>
+				</div>
+				<div style="clear: both;"></div>
+
+				<div class="subsection">
+					<div class="inputlabel">ISpoofFile:</div>
+					<div><input type="text" name="ispooffile" value="<? VAR ISpoofFile ESC=HTML ?>" size="32" maxlength="128" /></div>
+				</div>
+
+				<div class="subsection">
+					<div class="inputlabel">ISpoofFormat:</div>
+					<div><input type="text" name="ispoofformat" value="<? VAR ISpoofFormat ESC=HTML ?>" size="32" maxlength="128" /></div>
+				</div>
+				<div style="clear: both;"></div>
+
+				<div class="subsection">
+					<div class="inputlabel">MOTD:</div>
+					<div><textarea name="motd" cols="80" rows="5"><? LOOP MOTDLoop ?><? VAR Line ESC=HTML ?>
+<? ENDLOOP ?>
+</textarea></div>
+				</div>
+
+				<div class="subsection">
+					<div class="inputlabel">VHosts:</div>
+					<div><textarea name="vhosts" cols="80" rows="8"><? LOOP VHostLoop ?><? VAR VHost ESC=HTML ?>
+<? ENDLOOP ?>
+</textarea></div>
+				</div>
+				<div style="clear: both;"></div>
+			</div>
+		</div>
+	</div>
+
+	<div class="section">
+		<div class="sectiontitle">Global Modules</div>
+		<div class="sectionbg">
+			<div class="sectionbody">
+				<table>
+					<thead>
+					<tr>
+						<td>Name</td>
+						<td>Arguments</td>
+						<td>Description</td>
+					</tr>
+					</thead>
+					<? LOOP ModuleLoop ?>
+					<tr class="background: <? IF __EVEN__ ?>evenrow<? ELSE ?>oddrow<? ENDIF ?>">
+						<td><input type="checkbox" name="loadmod" id="lm_<? VAR Name ESC=HTML ?>" value="<? VAR Name ESC=HTML ?>"<? IF Checked ?> CHECKED<? ENDIF ?><? IF Disabled ?> DISABLED<? ENDIF ?> /><label for="lm_<? VAR Name ESC=HTML ?>"> <? VAR Name ESC=HTML ?></label></td>
+						<td><input type="text" name="modargs_<? VAR Name ESC=HTML ?>" value="<? VAR Args ESC=HTML ?>" /></td>
+						<td><? VAR Description ?></td>
+					</tr>
+					<? ENDLOOP ?>
+				</table>
+			</div>
+		</div>
+	</div>
+
+<input type="submit" value="Submit" />
+</form>
+
+<? INC Footer.tmpl ?>
