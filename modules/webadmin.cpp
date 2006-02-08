@@ -19,6 +19,7 @@ public:
 	virtual bool OnPageRequest(const CString& sURI, CString& sPageRet);
 	virtual bool OnLogin(const CString& sUser, const CString& sPass);
 
+	CString GetSkinDir();
 	void PrintPage(CString& sPageRet, const CString& sTmplName);
 
 	void GetErrorPage(CString& sPageRet, const CString& sError) {
@@ -121,18 +122,22 @@ private:
 	unsigned int		m_uPort;
 	set<CWebAdminSock*>	m_spSocks;
 };
-
-void CWebAdminSock::PrintPage(CString& sPageRet, const CString& sTmplName) {
-	sPageRet.clear();
+ 
+CString CWebAdminSock::GetSkinDir() {
 	CString sModPath = CZNC::Get().FindModPath(m_pModule->GetModName());	// @todo store the path to the module at load time and store it in a member var which can be used here
 
 	while (!sModPath.empty() && sModPath.Right(1) != "/") {
 		sModPath.RightChomp();
 	}
 
+	return sModPath + "/" + m_pModule->GetModName() + "/skins/default/";
+}
+
+void CWebAdminSock::PrintPage(CString& sPageRet, const CString& sTmplName) {
+	sPageRet.clear();
 	// @todo possibly standardize the location of meta files such as these skins
 	// @todo give an option for changing the current skin from 'default'
-	if (!m_Template.SetFile(sModPath + "/" + m_pModule->GetModName() + "/skins/default/" + sTmplName)) {
+	if (!m_Template.SetFile(GetSkinDir() + sTmplName)) {
 		return;
 	}
 
@@ -172,7 +177,7 @@ void CWebAdminSock::ListUsersPage(CString& sPageRet) {
 		CServer* pServer = it->second->GetCurrentServer();
 		CTemplate& l = m_Template.AddRow("UserLoop");
 
-		l["User"] = it->second->GetUserName();
+		l["Username"] = it->second->GetUserName();
 
 		if (pServer) {
 			l["Server"] = pServer->GetName();
@@ -196,6 +201,7 @@ CWebAdminSock::CWebAdminSock(CWebAdminMod* pModule) : CHTTPSock() {
 	m_pUser = NULL;
 	m_bAdmin = false;
 	m_pModule->AddSock(this);
+	SetDocRoot(GetSkinDir());
 }
 
 CWebAdminSock::CWebAdminSock(CWebAdminMod* pModule, const CString& sHostname, unsigned short uPort, int iTimeout) : CHTTPSock(sHostname, uPort, iTimeout) {
@@ -203,6 +209,7 @@ CWebAdminSock::CWebAdminSock(CWebAdminMod* pModule, const CString& sHostname, un
 	m_pUser = NULL;
 	m_bAdmin = false;
 	m_pModule->AddSock(this);
+	SetDocRoot(GetSkinDir());
 }
 
 CWebAdminSock::~CWebAdminSock() {
@@ -210,12 +217,13 @@ CWebAdminSock::~CWebAdminSock() {
 }
 
 bool CWebAdminSock::OnPageRequest(const CString& sURI, CString& sPageRet) {
-	if (!ForceLogin()) {
+	/*if (!ForceLogin()) {
 		return false;
-	}
+	}*/
 
-	m_Template["User"] = GetUser();
-	m_Template["UserIP"] = GetRemoteIP();
+	m_Template["SessionUser"] = GetUser();
+	m_Template["SessionIP"] = GetRemoteIP();
+	m_Template["Tag"] = CZNC::GetTag();
 
 	if (IsAdmin()) {
 		m_Template["IsAdmin"] = "true";
@@ -229,6 +237,9 @@ bool CWebAdminSock::OnPageRequest(const CString& sURI, CString& sPageRet) {
 
 		m_Template["Title"] = "Main Page";
 		PrintPage(sPageRet, "Main.tmpl");
+	} else if (sURI.Left(5).CaseCmp("/css/") == 0) {
+		PrintFile(GetSkinDir() + sURI, "text/css");
+		return false;
 	} else if (sURI == "/settings") {
 		if (!IsAdmin()) {
 			return false;
@@ -480,9 +491,12 @@ bool CWebAdminSock::SettingsPage(CString& sPageRet) {
 bool CWebAdminSock::ChanPage(CString& sPageRet, CChan* pChan) {
 	if (!m_pUser) {
 		GetErrorPage(sPageRet, "That user doesn't exist");
+		return true;
 	}
 
 	if (!GetParam("submitted").ToUInt()) {
+		m_Template["User"] = m_pUser->GetUserName();
+
 		if (pChan) {
 			m_Template["Edit"] = "true";
 			m_Template["Title"] = "Edit Channel" + CString(" [" + pChan->GetName() + "]");
@@ -663,7 +677,7 @@ bool CWebAdminSock::UserPage(CString& sPageRet, CUser* pUser) {
 			}
 		} else {
 			m_Template["Title"] = "Add User";
-			m_Template["AwaySuffix"] = "*";
+			m_Template["StatusPrefix"] = "*";
 		}
 
 		set<CModInfo> ssUserMods;
