@@ -217,9 +217,9 @@ CWebAdminSock::~CWebAdminSock() {
 }
 
 bool CWebAdminSock::OnPageRequest(const CString& sURI, CString& sPageRet) {
-	/*if (!ForceLogin()) {
+	if (!ForceLogin()) {
 		return false;
-	}*/
+	}
 
 	m_Template["SessionUser"] = GetUser();
 	m_Template["SessionIP"] = GetRemoteIP();
@@ -238,7 +238,16 @@ bool CWebAdminSock::OnPageRequest(const CString& sURI, CString& sPageRet) {
 		m_Template["Title"] = "Main Page";
 		PrintPage(sPageRet, "Main.tmpl");
 	} else if (sURI.Left(5).CaseCmp("/css/") == 0) {
-		PrintFile(GetSkinDir() + sURI, "text/css");
+		SetDocRoot(GetSkinDir() + "/css");
+		PrintFile(sURI.substr(5), "text/css");
+		return false;
+	} else if (sURI.Left(5).CaseCmp("/img/") == 0) {
+		SetDocRoot(GetSkinDir() + "/img");
+		PrintFile(sURI.substr(5));
+		return false;
+	} else if (sURI.Left(4).CaseCmp("/js/") == 0) {
+		SetDocRoot(GetSkinDir() + "/js");
+		PrintFile(sURI.substr(4), "application/x-javascript");
 		return false;
 	} else if (sURI == "/settings") {
 		if (!IsAdmin()) {
@@ -312,44 +321,8 @@ bool CWebAdminSock::OnPageRequest(const CString& sURI, CString& sPageRet) {
 			GetErrorPage(sPageRet, "No such username");
 		}
 	} else if (sURI == "/favicon.ico") {
-		CString sIcon = "AAABAAIAICAAAAAAAACoCAAAJgAAABAQAAAAAAAAaAUAAM4IAAAoAAAAIAAAAEAAAAABAAgAAAAAAAAEAAAAAAAAAAAAAAABAAAAAQAAAAAAAAAAgAAAgAAAAICAAIAAAACAAIAAgIAAAMDA"
-			"wADA3MAA8MqmAAQEBAAICAgADAwMABEREQAWFhYAHBwcACIiIgApKSkAVVVVAE1NTQBCQkIAOTk5AIB8/wBQUP8AkwDWAP/szADG1u8A1ufnAJCprQAAADMAAABmAAAAmQAAAMwAADMAAAAz"
-			"MwAAM2YAADOZAAAzzAAAM/8AAGYAAABmMwAAZmYAAGaZAABmzAAAZv8AAJkAAACZMwAAmWYAAJmZAACZzAAAmf8AAMwAAADMMwAAzGYAAMyZAADMzAAAzP8AAP9mAAD/mQAA/8wAMwAAADMA"
-			"MwAzAGYAMwCZADMAzAAzAP8AMzMAADMzMwAzM2YAMzOZADMzzAAzM/8AM2YAADNmMwAzZmYAM2aZADNmzAAzZv8AM5kAADOZMwAzmWYAM5mZADOZzAAzmf8AM8wAADPMMwAzzGYAM8yZADPM"
-			"zAAzzP8AM/8zADP/ZgAz/5kAM//MADP//wBmAAAAZgAzAGYAZgBmAJkAZgDMAGYA/wBmMwAAZjMzAGYzZgBmM5kAZjPMAGYz/wBmZgAAZmYzAGZmZgBmZpkAZmbMAGaZAABmmTMAZplmAGaZ"
-			"mQBmmcwAZpn/AGbMAABmzDMAZsyZAGbMzABmzP8AZv8AAGb/MwBm/5kAZv/MAMwA/wD/AMwAmZkAAJkzmQCZAJkAmQDMAJkAAACZMzMAmQBmAJkzzACZAP8AmWYAAJlmMwCZM2YAmWaZAJlm"
-			"zACZM/8AmZkzAJmZZgCZmZkAmZnMAJmZ/wCZzAAAmcwzAGbMZgCZzJkAmczMAJnM/wCZ/wAAmf8zAJnMZgCZ/5kAmf/MAJn//wDMAAAAmQAzAMwAZgDMAJkAzADMAJkzAADMMzMAzDNmAMwz"
-			"mQDMM8wAzDP/AMxmAADMZjMAmWZmAMxmmQDMZswAmWb/AMyZAADMmTMAzJlmAMyZmQDMmcwAzJn/AMzMAADMzDMAzMxmAMzMmQDMzMwAzMz/AMz/AADM/zMAmf9mAMz/mQDM/8wAzP//AMwA"
-			"MwD/AGYA/wCZAMwzAAD/MzMA/zNmAP8zmQD/M8wA/zP/AP9mAAD/ZjMAzGZmAP9mmQD/ZswAzGb/AP+ZAAD/mTMA/5lmAP+ZmQD/mcwA/5n/AP/MAAD/zDMA/8xmAP/MmQD/zMwA/8z/AP//"
-			"MwDM/2YA//+ZAP//zABmZv8AZv9mAGb//wD/ZmYA/2b/AP//ZgAhAKUAX19fAHd3dwCGhoYAlpaWAMvLywCysrIA19fXAN3d3QDj4+MA6urqAPHx8QD4+PgA8Pv/AKSgoACAgIAAAAD/AAD/"
-			"AAAA//8A/wAAAP8A/wD//wAA////AP///////////////////////////////////////////////////////////////////////////////////////////wAAAAAAAAAAAAAAAAAAAAAA"
-			"AAAAAAD///////////8AeXl5eXl5eXl5eXl5eXl5eXl5eXl5eQD/////////AHkKCgoKCgoKCgoKCgoKCgoKCgoKCgoKeQD//////wB5CgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKeQD/////"
-			"AHkKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgp5AP////8AeQoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCnkA//////8AeQoKCgoKCgoKCgoKCgoKCgoKCgoKCgp5AP////////8AeQoKCgoKCgp5"
-			"eXl5eXl5eXl5eXl5eQD///////////8AeQoKCgoKCgp5AAAAAAAAAAAAAAAA//////////////8AeQoKCgoKCgp5AP////////////////////////////8AeQoKCgoKCgp5AP//////////"
-			"//////////////////8AeQoKCgoKCgp5AP////////////////////////////8AeQoKCgoKCgp5AP////////////////////////////8AeQoKCgoKCgp5AP//////////////////////"
-			"//////8AeQoKCgoKCgp5AP////////////////////////////8AeQoKCgoKCgp5AP////////////////////////////8AeQoKCgoKCgp5AP////////////////////////////8AeQoK"
-			"CgoKCgp5AP////////////////////////////8AeQoKCgoKCgp5AP//////////////AAAAAAAAAAAAAAAAeQoKCgoKCgp5AP///////////wB5eXl5eXl5eXl5eXl5eQoKCgoKCgp5AP//"
-			"//////8AeQoKCgoKCgoKCgoKCgoKCgoKCgoKCgp5AP//////AHkKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgp5AP////8AeQoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCnkA/////wB5CgoKCgoK"
-			"CgoKCgoKCgoKCgoKCgoKCgoKeQD//////wB5CgoKCgoKCgoKCgoKCgoKCgoKCgoKCnkA/////////wB5eXl5eXl5eXl5eXl5eXl5eXl5eXl5AP///////////wAAAAAAAAAAAAAAAAAAAAAA"
-			"AAAAAAD///////////////////////////////////////////////////////////////////////////////////////////8AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
-			"AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACgAAAAQAAAAIAAAAAEA"
-			"CAAAAAAAAAEAAAAAAAAAAAAAAAEAAAABAAAAAAAAAACAAACAAAAAgIAAgAAAAIAAgACAgAAAwMDAAMDcwADwyqYABAQEAAgICAAMDAwAERERABYWFgAcHBwAIiIiACkpKQBVVVUATU1NAEJC"
-			"QgA5OTkAgHz/AFBQ/wCTANYA/+zMAMbW7wDW5+cAkKmtAAAAMwAAAGYAAACZAAAAzAAAMwAAADMzAAAzZgAAM5kAADPMAAAz/wAAZgAAAGYzAABmZgAAZpkAAGbMAABm/wAAmQAAAJkzAACZ"
-			"ZgAAmZkAAJnMAACZ/wAAzAAAAMwzAADMZgAAzJkAAMzMAADM/wAA/2YAAP+ZAAD/zAAzAAAAMwAzADMAZgAzAJkAMwDMADMA/wAzMwAAMzMzADMzZgAzM5kAMzPMADMz/wAzZgAAM2YzADNm"
-			"ZgAzZpkAM2bMADNm/wAzmQAAM5kzADOZZgAzmZkAM5nMADOZ/wAzzAAAM8wzADPMZgAzzJkAM8zMADPM/wAz/zMAM/9mADP/mQAz/8wAM///AGYAAABmADMAZgBmAGYAmQBmAMwAZgD/AGYz"
-			"AABmMzMAZjNmAGYzmQBmM8wAZjP/AGZmAABmZjMAZmZmAGZmmQBmZswAZpkAAGaZMwBmmWYAZpmZAGaZzABmmf8AZswAAGbMMwBmzJkAZszMAGbM/wBm/wAAZv8zAGb/mQBm/8wAzAD/AP8A"
-			"zACZmQAAmTOZAJkAmQCZAMwAmQAAAJkzMwCZAGYAmTPMAJkA/wCZZgAAmWYzAJkzZgCZZpkAmWbMAJkz/wCZmTMAmZlmAJmZmQCZmcwAmZn/AJnMAACZzDMAZsxmAJnMmQCZzMwAmcz/AJn/"
-			"AACZ/zMAmcxmAJn/mQCZ/8wAmf//AMwAAACZADMAzABmAMwAmQDMAMwAmTMAAMwzMwDMM2YAzDOZAMwzzADMM/8AzGYAAMxmMwCZZmYAzGaZAMxmzACZZv8AzJkAAMyZMwDMmWYAzJmZAMyZ"
-			"zADMmf8AzMwAAMzMMwDMzGYAzMyZAMzMzADMzP8AzP8AAMz/MwCZ/2YAzP+ZAMz/zADM//8AzAAzAP8AZgD/AJkAzDMAAP8zMwD/M2YA/zOZAP8zzAD/M/8A/2YAAP9mMwDMZmYA/2aZAP9m"
-			"zADMZv8A/5kAAP+ZMwD/mWYA/5mZAP+ZzAD/mf8A/8wAAP/MMwD/zGYA/8yZAP/MzAD/zP8A//8zAMz/ZgD//5kA///MAGZm/wBm/2YAZv//AP9mZgD/Zv8A//9mACEApQBfX18Ad3d3AIaG"
-			"hgCWlpYAy8vLALKysgDX19cA3d3dAOPj4wDq6uoA8fHxAPj4+ADw+/8ApKCgAICAgAAAAP8AAP8AAAD//wD/AAAA/wD/AP//AAD///8ADw8PDw8PDw8PDw8PDw8PDw95eXl5eXl5eXl5eXl5"
-			"eQ8PeQoKCgoKCgoKCgoKCnkPD3kKCgoKCgoKCgoKCgp5Dw95CgoKCgoKCgoKCgoKeQ8AD3kKCgoKCnl5eXl5eXkPAAAPeQoKCgoKeQ8PDw8PDwAAAA95CgoKCgp5DwAAAAAAAAAAD3kKCgoK"
-			"CnkPAAAAAAAADw8PeQoKCgoKeQ8AAA95eXl5eXl5CgoKCgp5DwAPeQoKCgoKCgoKCgoKCnkPD3kKCgoKCgoKCgoKCgp5Dw95CgoKCgoKCgoKCgoKeQ8PeXl5eXl5eXl5eXl5eXkPDw8PDw8P"
-			"Dw8PDw8PDw8PDwAAAAAAAAAAAAAAAAAAAAAAAAAAgAAAAMAAAADgDwAA8AcAAAADAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=";
-
-		SetContentType("image/x-icon");
-		sIcon.Base64Decode(sPageRet);
-		return true;
+		PrintFile("/img/favicon.ico", "image/x-icon");
+		return false;
 	} else if (sURI == "/listusers") {
 		if (!IsAdmin()) {
 			return false;
