@@ -27,12 +27,19 @@ all: $(OBJS) $(TARGETS)
 depend::
 	$(CXX) -MM $(CXXFLAGS) $(SRCS) $(INCLUDES) $(PERLCC) >.depend
 
-install: all create_install_dir $(INSTALL_TARGS)
+install: all create_install_dir install_metadirs $(INSTALL_TARGS)
 	@echo -n ""
 
 create_install_dir:
 	mkdir -p $(DESTDIR)$(prefix)/share/znc
 	rm -rf $(DESTDIR)$(prefix)/share/znc/*.so
+
+install_metadirs:
+	for a in *; do \
+		if [ -d $$a ] && [ -f $${a}.so ]; then \
+			cp -Ra $$a $(DESTDIR)$(prefix)/share/znc; \
+		fi \
+	done
 
 install_%:
 	install -m 0755 $(subst install_,,$@) $(DESTDIR)$(prefix)/share/znc
