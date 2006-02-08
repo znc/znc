@@ -48,13 +48,13 @@ public:
 	static bool IsLnk(const CString& sLongName, bool bUseLstat = true);
 	static bool IsSock(const CString& sLongName, bool bUseLstat = false);
 
-	bool IsReg(bool bUseLstat = false);
-	bool IsDir(bool bUseLstat = false);
-	bool IsChr(bool bUseLstat = false);
-	bool IsBlk(bool bUseLstat = false);
-	bool IsFifo(bool bUseLstat = false);
-	bool IsLnk(bool bUseLstat = true);
-	bool IsSock(bool bUseLstat = false);
+	bool IsReg(bool bUseLstat = false) const;
+	bool IsDir(bool bUseLstat = false) const;
+	bool IsChr(bool bUseLstat = false) const;
+	bool IsBlk(bool bUseLstat = false) const;
+	bool IsFifo(bool bUseLstat = false) const;
+	bool IsLnk(bool bUseLstat = true) const;
+	bool IsSock(bool bUseLstat = false) const;
 
 	bool access(int mode);
 

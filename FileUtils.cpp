@@ -42,13 +42,13 @@ bool CFile::IsFifo(const CString& sLongName, bool bUseLstat)  { return CFile::FT
 bool CFile::IsLnk(const CString& sLongName, bool bUseLstat)  { return CFile::FType(sLongName, FT_LINK, bUseLstat); }
 bool CFile::IsSock(const CString& sLongName, bool bUseLstat)  { return CFile::FType(sLongName, FT_SOCK, bUseLstat); }
 
-bool CFile::IsReg(bool bUseLstat) { return CFile::IsReg(m_sLongName, bUseLstat); }
-bool CFile::IsDir(bool bUseLstat) { return CFile::IsDir(m_sLongName, bUseLstat); }
-bool CFile::IsChr(bool bUseLstat)  { return CFile::IsChr(m_sLongName, bUseLstat); }
-bool CFile::IsBlk(bool bUseLstat)  { return CFile::IsBlk(m_sLongName, bUseLstat); }
-bool CFile::IsFifo(bool bUseLstat)  { return CFile::IsFifo(m_sLongName, bUseLstat); }
-bool CFile::IsLnk(bool bUseLstat)  { return CFile::IsLnk(m_sLongName, bUseLstat); }
-bool CFile::IsSock(bool bUseLstat)  { return CFile::IsSock(m_sLongName, bUseLstat); }
+bool CFile::IsReg(bool bUseLstat) const { return CFile::IsReg(m_sLongName, bUseLstat); }
+bool CFile::IsDir(bool bUseLstat) const { return CFile::IsDir(m_sLongName, bUseLstat); }
+bool CFile::IsChr(bool bUseLstat) const { return CFile::IsChr(m_sLongName, bUseLstat); }
+bool CFile::IsBlk(bool bUseLstat) const { return CFile::IsBlk(m_sLongName, bUseLstat); }
+bool CFile::IsFifo(bool bUseLstat) const { return CFile::IsFifo(m_sLongName, bUseLstat); }
+bool CFile::IsLnk(bool bUseLstat) const { return CFile::IsLnk(m_sLongName, bUseLstat); }
+bool CFile::IsSock(bool bUseLstat) const { return CFile::IsSock(m_sLongName, bUseLstat); }
 
 bool CFile::access(int mode) { return (::access(m_sLongName.c_str(), mode) == 0); }
 
