@@ -8,6 +8,18 @@
 		<div class="sectionbg">
 			<div class="sectionbody">
 				<div class="subsection">
+					<div class="inputlabel">Skin:</div>
+					<div>
+						<select name="skin">
+							<? LOOP SkinLoop ?>
+							<option value="<? VAR Name ESC=HTML ?>"<? IF Checked ?> SELECTED<? ENDIF ?>><? VAR Name ESC=HTML ?></option>
+							<? ENDLOOP ?>
+						</select>
+					</div>
+				</div>
+				<div style="clear: both;"></div>
+
+				<div class="subsection">
 					<div class="inputlabel">Status Prefix:</div>
 					<div><input type="text" name="statusprefix" value="<? VAR StatusPrefix ESC=HTML ?>" size="32" maxlength="128" /></div>
 				</div>
@@ -21,18 +33,6 @@
 				<div class="subsection">
 					<div class="inputlabel">ISpoofFormat:</div>
 					<div><input type="text" name="ispoofformat" value="<? VAR ISpoofFormat ESC=HTML ?>" size="32" maxlength="128" /></div>
-				</div>
-				<div style="clear: both;"></div>
-
-				<div class="subsection">
-					<div class="inputlabel">Skin:</div>
-					<div>
-						<select name="skin">
-							<? LOOP SkinLoop ?>
-							<option value="<? VAR Name ESC=HTML ?>"<? IF Checked ?> SELECTED<? ENDIF ?>><? VAR Name ESC=HTML ?></option>
-							<? ENDLOOP ?>
-						</select>
-					</div>
 				</div>
 				<div style="clear: both;"></div>
 
