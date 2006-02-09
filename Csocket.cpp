@@ -1849,7 +1849,7 @@ int Csock::DNSLookup( EDNSLType eDNSLType )
 	return( EAGAIN );
 	
 #else
-	int iRet;
+	int iRet = ETIMEDOUT;
 	if ( eDNSLType == DNS_VHOST )
 	{
 		if( !GetIPv6() )

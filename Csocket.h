@@ -154,7 +154,18 @@ public:
 		m_saddr.sin_port = htons( iPort );
 	}
 
-	void SetIPv6( bool b ) { m_bIsIPv6 = b; }
+	void SetIPv6( bool b ) 
+	{ 
+#ifndef HAVE_IPV6
+		if( b )
+		{
+			CS_DEBUG( "-DHAVE_IPV6 must be set during compile time to enable this feature" );
+			m_bIsIPv6 = false;
+			return;
+		}
+#endif /* HAVE_IPV6 */
+		m_bIsIPv6 = b; 
+	}
 	bool GetIPv6() const { return( m_bIsIPv6 ); }
 
 
