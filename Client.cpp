@@ -132,9 +132,11 @@ void CClient::ReadLine(const CString& sData) {
 
 			for (unsigned int a = 0; a < vChans.size(); a++) {
 				CString sChannel = vChans[a];
+#ifdef _MODULES
 				CZNC::Get().GetModules().SetClient(this);
 				MODULECALLCONT(OnUserJoin(sChannel, sKey));
 				CZNC::Get().GetModules().SetClient(NULL);
+#endif
 
 				CChan* pChan = m_pUser->FindChan(sChannel);
 
@@ -166,9 +168,11 @@ void CClient::ReadLine(const CString& sData) {
 			sMessage.LeftChomp();
 		}
 
+#ifdef _MODULES
 		CZNC::Get().GetModules().SetClient(this);
 		MODULECALLRET(OnUserPart(sChan, sMessage));
 		CZNC::Get().GetModules().SetClient(NULL);
+#endif
 
 		if (m_pUser) {
 			CChan* pChan = m_pUser->FindChan(sChan);
@@ -1210,9 +1214,11 @@ void CClient::AuthUser() {
 
 		SendMotd();
 
+#ifdef _MODULES
 		CZNC::Get().GetModules().SetClient(this);
 		VOIDMODULECALL(OnUserAttached());
 		CZNC::Get().GetModules().SetClient(NULL);
+#endif
 	}
 }
 
@@ -1231,9 +1237,11 @@ void CClient::Disconnected() {
 		m_pIRCSock = NULL;
 	}
 
+#ifdef _MODULES
 	CZNC::Get().GetModules().SetClient(this);
 	VOIDMODULECALL(OnUserDetached());
 	CZNC::Get().GetModules().SetClient(NULL);
+#endif
 }
 
 void CClient::IRCConnected(CIRCSock* pIRCSock) {

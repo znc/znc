@@ -187,12 +187,13 @@ void CChan::OnWho(const CString& sNick, const CString& sIdent, const CString& sH
 }
 
 void CChan::ModeChange(const CString& sModes, const CString& sOpNick) {
-	CNick* pOpNick = FindNick(sOpNick);
 	CString sModeArg = sModes.Token(0);
 	CString sArgs = sModes.Token(1, true);
 	bool bAdd = true;
 
 #ifdef _MODULES
+	CNick* pOpNick = FindNick(sOpNick);
+
 	if (pOpNick) {
 		VOIDMODULECALL(OnRawMode(*pOpNick, *this, sModeArg, sArgs));
 	}
@@ -210,7 +211,6 @@ void CChan::ModeChange(const CString& sModes, const CString& sOpNick) {
 			CNick* pNick = FindNick(sArg);
 			if (pNick) {
 				unsigned char uPerm = m_pUser->GetIRCSock()->GetPermFromMode(uMode);
-				bool bNoChange = (pNick->HasPerm(uPerm) == bAdd);
 
 				if (uPerm) {
 					if (bAdd) {
@@ -231,6 +231,7 @@ void CChan::ModeChange(const CString& sModes, const CString& sOpNick) {
 						}
 					}
 #ifdef _MODULES
+					bool bNoChange = (pNick->HasPerm(uPerm) == bAdd);
 
 					if (uMode && pOpNick) {
 						VOIDMODULECALL(OnChanPermission(*pOpNick, *pNick, *this, uMode, bAdd, bNoChange));
