@@ -1108,9 +1108,11 @@ bool CZNC::RemVHost(const CString& sHost) {
 void CZNC::Broadcast(const CString& sMessage, CUser* pUser) {
 	for (map<CString,CUser*>::iterator a = m_msUsers.begin(); a != m_msUsers.end(); a++) {
 		if (a->second != pUser) {
-			CUser* m_pUser = a->second;	// This is a semi-hack because MODULECALLCONT below expects the user to be stored in m_pUser
 			CString sMsg = sMessage;
+#ifdef _MODULES
+			CUser* m_pUser = a->second;	// This is a semi-hack because MODULECALLCONT below expects the user to be stored in m_pUser
 			MODULECALLCONT(OnBroadcast(sMsg));
+#endif
 			a->second->PutStatusNotice("*** " + sMsg);
 		}
 	}

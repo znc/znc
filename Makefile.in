@@ -11,7 +11,7 @@ all: znc @MODTARGET@
 
 depend::
 	$(CXX) -MM $(CXXFLAGS) $(SRCS) $(INCLUDES) >.depend
-	(cd modules; $(MAKE) depend)
+	@if test -n "@MODTARGET@"; then (cd modules; $(MAKE) depend); fi
 
 znc: $(OBJS)
 	$(CXX) $(CXXFLAGS) $(INCLUDES) -o $@ $(LIBS) $(OBJS)
@@ -21,11 +21,11 @@ znc-static: $(OBJS)
 	strip $@
 
 modules::
-	(cd modules; $(MAKE) all)
+	@if test -n "@MODTARGET@"; then (cd modules; $(MAKE) all); else echo "Modules are not enabled"; fi
 
 clean:
 	rm -rf znc znc-static *.o core core.*
-	(cd modules; $(MAKE) clean)
+	@if test -n "@MODTARGET@"; then (cd modules; $(MAKE) clean); fi
 
 distclean: clean
 	rm -rf Makefile config.log config.status znc-config .depend modules/.depend modules/Makefile
