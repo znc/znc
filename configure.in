@@ -29,7 +29,7 @@ function appendCXX {
 }
 if `echo $host_os | grep -i 'freebsd' >/dev/null 2>/dev/null`; then
 	appendInc -I/usr/local/include
-	appendLib -L/usr/local/lib -lcompat -lgnugetopt
+	appendLib -L/usr/local/lib -lcompat
 	appendCXX -D__GNU_LIBRARY__
 elif `echo $host_os | grep -i 'sol' >/dev/null 2>/dev/null`; then
 	appendLib -lsocket -lnsl
@@ -46,7 +46,9 @@ AC_ARG_ENABLE( ipv6, [  --enable-ipv6  enable ipv6 support], appendCXX -DHAVE_IP
 AC_ARG_ENABLE( modules, [  --disable-modules  disable modules], MODULES="no", MODULES="yes")
 AC_ARG_ENABLE( openssl, [  --disable-openssl  disable openssl], NOSSL=1,)
 AC_ARG_ENABLE( perl, [  --disable-perl  disable perl], NOPERL=1,)
+AC_ARG_ENABLE( ipv6, [  --enable-ipv6  enable ipv6 support], appendCXX -DHAVE_IPV6,)
 
+AC_CHECK_LIB( gnugetopt, getopt_long,)
 AC_CHECK_FUNCS( stat lstat chmod open, , echo "Missing Required libc feature" && exit 1)
 if test "$MODULES" = "yes"; then
 	AC_CHECK_FUNC( dlopen,NOCHECK_DL=1,)
