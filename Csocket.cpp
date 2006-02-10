@@ -56,8 +56,7 @@ int GetHostByName6( const CS_STRING & sHostName, in6_addr * paddr, u_int iNumRet
 	for( u_int a = 0; a < iNumRetries; a++ )
 	{
 		memset( (char *)hbuff, '\0', 2048 );
-		iReturn = gethostbyname_r( sHostName.c_str(), &hentbuff, hbuff, 2048, &hent, &err );
-
+		iReturn = gethostbyname2_r( sHostName.c_str(), AF_INET6, &hentbuff, hbuff, 2048, &hent, &err );
 		if ( iReturn == 0 )
 			break;
 
@@ -69,7 +68,7 @@ int GetHostByName6( const CS_STRING & sHostName, in6_addr * paddr, u_int iNumRet
 	if ( ( !hent ) && ( iReturn == 0 ) )
 		iReturn = HOST_NOT_FOUND;
 #else
-	hent = gethostbyname( sHostName.c_str() );
+	hent = gethostbyname2( sHostName.c_str(), AF_INET6 );
 	PERROR( "gethostbyname" );
 
 	if ( hent )
