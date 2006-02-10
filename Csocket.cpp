@@ -694,20 +694,17 @@ bool Csock::Listen( u_short iPort, int iMaxConns, const CS_STRING & sBindHost, u
 	m_address.SinFamily();
 	if ( !sBindHost.empty() )
 	{
-#ifdef HAVE_IPV6
-		if( GetIPv6() )
-		{
-			if ( GetHostByName6( sBindHost, m_address.GetAddr6() ) != 0 )
-				return( false );
-		}
-		else
+		if( !GetIPv6() )
 		{
 			if ( GetHostByName( sBindHost, m_address.GetAddr() ) != 0 )
 				return( false );
 		}
-#else
-		if ( GetHostByName( sBindHost, m_address.GetAddr() ) != 0 )
-			return( false );
+#ifdef HAVE_IPV6
+		else
+		{
+			if ( GetHostByName6( sBindHost, m_address.GetAddr6() ) != 0 )
+				return( false );
+		}
 #endif /* HAVE_IPV6 */
 	}
 	m_address.SinPort( iPort );
@@ -1856,9 +1853,7 @@ int Csock::DNSLookup( EDNSLType eDNSLType )
 			iRet = GetHostByName( m_sBindHost, m_bindhost.GetAddr(), 1 );
 #ifdef HAVE_IPV6
 		else
-		{
 			iRet = GetHostByName6( m_sBindHost, m_bindhost.GetAddr6(), 1 );
-		}
 #endif /* HAVE_IPV6 */
 	}
 	else
@@ -1903,7 +1898,15 @@ bool Csock::SetupVHost()
 			m_eConState = CST_CONNECT;
 		return( true );
 	}
-	if ( bind( m_iReadSock, (struct sockaddr *) &m_bindhost, sizeof( m_bindhost ) ) == 0 )
+	int iRet = -1;
+	if( !GetIPv6() )
+		iRet = bind( m_iReadSock, (struct sockaddr *) m_bindhost.GetSockAddr(), m_bindhost.GetSockAddrLen() );
+#ifdef HAVE_IPV6
+	else
+		iRet = bind( m_iReadSock, (struct sockaddr *) m_bindhost.GetSockAddr6(), m_bindhost.GetSockAddrLen6() );
+#endif /* HAVE_IPV6 */
+
+	if ( iRet == 0 )
 	{
 		if ( m_eConState != CST_OK )
 			m_eConState = CST_CONNECT;
