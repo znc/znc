@@ -143,9 +143,13 @@ private:
 CString CWebAdminSock::GetSkinDir() {
 	CString sModPath = CZNC::Get().FindModPath(m_pModule->GetModName());	// @todo store the path to the module at load time and store it in a member var which can be used here
 
+	// Remove the file.so portion from the path
 	while (!sModPath.empty() && sModPath.Right(1) != "/") {
 		sModPath.RightChomp();
 	}
+
+	// Remove the last /
+	sModPath.RightChomp();
 
 	CString sSkinDir = sModPath + "/" + m_pModule->GetModName() + "/skins/" + m_pModule->GetSkinName() + "/";
 
@@ -161,6 +165,15 @@ void CWebAdminSock::PrintPage(CString& sPageRet, const CString& sTmplName) {
 	// @todo possibly standardize the location of meta files such as these skins
 	// @todo give an option for changing the current skin from 'default'
 	if (!m_Template.SetFile(GetSkinDir() + sTmplName)) {
+		CString sTmpl;
+
+		if (IsAdmin()) {
+			sTmpl = GetSkinDir();
+		}
+
+		sTmpl += sTmplName;
+
+		sPageRet = CHTTPSock::GetErrorPage(404, "Not Found", "The template for this page [" + sTmpl + "] was not found.");
 		return;
 	}
 
