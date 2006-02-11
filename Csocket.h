@@ -95,7 +95,7 @@
 
 #ifndef CS_DEBUG
 #ifdef __DEBUG__
-#	define CS_DEBUG( f ) std::cerr << __FILE__ << ":" << __LINE__ << " " << f << endl
+#	define CS_DEBUG( f ) std::cerr << __FILE__ << ":" << __LINE__ << " " << f << std::endl
 #else
 #	define CS_DEBUG(f)	(void)0
 #endif /* __DEBUG__ */
@@ -125,7 +125,7 @@ public:
 		m_bIsIPv6 = false; 
 		memset( (struct sockaddr_in *)&m_saddr, '\0', sizeof( m_saddr ) );
 #ifdef HAVE_IPV6
-		memset( (struct sockaddr_in6 *)&m_saddr, '\0', sizeof( m_saddr6 ) );
+		memset( (struct sockaddr_in6 *)&m_saddr6, '\0', sizeof( m_saddr6 ) );
 #endif /* HAVE_IPV6 */
 	}
 	virtual ~CSSockAddr() {}

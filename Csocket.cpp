@@ -69,10 +69,13 @@ int GetHostByName6( const CS_STRING & sHostName, in6_addr * paddr, u_int iNumRet
 		iReturn = HOST_NOT_FOUND;
 #else
 	hent = gethostbyname2( sHostName.c_str(), AF_INET6 );
-	PERROR( "gethostbyname" );
 
 	if ( hent )
 		iReturn = 0;
+	else
+	{
+		PERROR( "gethostbyname2" );
+	}
 
 #endif /* __linux__ */
 
@@ -110,10 +113,13 @@ int GetHostByName( const CS_STRING & sHostName, in_addr * paddr, u_int iNumRetri
 		iReturn = HOST_NOT_FOUND;
 #else
 	hent = gethostbyname( sHostName.c_str() );
-	PERROR( "gethostbyname" );
 
 	if ( hent )
 		iReturn = 0;
+	else
+	{
+		PERROR( "gethostbyname" );
+	}
 
 #endif /* __linux__ */
 
@@ -1862,7 +1868,7 @@ int Csock::DNSLookup( EDNSLType eDNSLType )
 #ifdef HAVE_IPV6
 		else
 		{
-			iRet = GetHostByName6( m_shostname, m_bindhost.GetAddr6(), 1 );
+			iRet = GetHostByName6( m_shostname, m_address.GetAddr6(), 1 );
 		}
 #endif /* HAVE_IPV6 */
 	}
