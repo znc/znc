@@ -86,7 +86,14 @@ public:
 
 	virtual bool OnLoad(const CString& sArgs) {
 		bool bSSL = false;
-		CString sPort = sArgs.Token(0);
+		CString sPort;
+
+		if (sArgs.find(" ") != CString::npos) {
+			m_sListenHost = sArgs.Token(0);
+			sPort = sArgs.Token(1);
+		} else {
+			sPort = sArgs.Token(0);
+		}
 
 		if (sPort.Left(1) == "+") {
 #ifdef HAVE_LIBSSL
@@ -108,7 +115,7 @@ public:
 		}
 #endif
 
-		return m_pManager->ListenHost(m_uPort, "WebAdmin::Listener", CZNC::Get().GetListenHost(), bSSL, SOMAXCONN, pListenSock);
+		return m_pManager->ListenHost(m_uPort, "WebAdmin::Listener", m_sListenHost, bSSL, SOMAXCONN, pListenSock);
 	}
 
 	void AddSock(CWebAdminSock* pSock) {
@@ -130,6 +137,7 @@ private:
 	unsigned int		m_uPort;
 	CString				m_sSkinName;
 	set<CWebAdminSock*>	m_spSocks;
+	CString				m_sListenHost;
 };
  
 CString CWebAdminSock::GetSkinDir() {
