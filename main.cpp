@@ -161,8 +161,8 @@ int main(int argc, char** argv, char** envp) {
 		return 1;
 	}
 
-	if (!pZNC->GetListenPort()) {
-		CUtils::PrintError("You must supply a ListenPort in your config.");
+	if (!pZNC->GetListeners().size()) {
+		CUtils::PrintError("You must supply at least one Listen port in your config.");
 		delete pZNC;
 		return 1;
 	}

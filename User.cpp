@@ -597,7 +597,7 @@ bool CUser::DelServer(const CString& sName) {
 	return false;
 }
 
-bool CUser::AddServer(const CString& sName) {
+bool CUser::AddServer(const CString& sName, bool bIPV6) {
 	if (sName.empty()) {
 		return false;
 	}
@@ -617,15 +617,22 @@ bool CUser::AddServer(const CString& sName) {
 	unsigned short uPort = strtoul(sPort.c_str(), NULL, 10);
 	CString sPass = sLine.Token(2, true);
 
-	return AddServer(sHost, uPort, sPass, bSSL);
+	return AddServer(sHost, uPort, sPass, bSSL, bIPV6);
 }
 
-bool CUser::AddServer(const CString& sName, unsigned short uPort, const CString& sPass, bool bSSL) {
+bool CUser::AddServer(const CString& sName, unsigned short uPort, const CString& sPass, bool bSSL, bool bIPV6) {
 #ifndef HAVE_LIBSSL
 	if (bSSL) {
 		return false;
 	}
 #endif
+
+#ifndef HAVE_IPV6
+	if (bIPV6) {
+		return false;
+	}
+#endif
+
 	if (sName.empty()) {
 		return false;
 	}
@@ -634,7 +641,7 @@ bool CUser::AddServer(const CString& sName, unsigned short uPort, const CString&
 		uPort = 6667;
 	}
 
-	CServer* pServer = new CServer(sName, uPort, sPass, bSSL);
+	CServer* pServer = new CServer(sName, uPort, sPass, bSSL, bIPV6);
 	m_vServers.push_back(pServer);
 
 	return true;

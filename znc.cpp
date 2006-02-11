@@ -17,7 +17,6 @@ CZNC::CZNC() {
 #ifdef _MODULES
 	m_pModules = new CGlobalModules();
 #endif
-	m_uListenPort = 0;
 	m_bISpoofLocked = false;
 	SetISpoofFormat(""); // Set ISpoofFormat to default
 }
@@ -31,6 +30,10 @@ CZNC::~CZNC() {
 		a->second->GetModules().UnloadAll();
 	}
 #endif
+
+	for (size_t b = 0; b < m_vpListeners.size(); b++) {
+		delete m_vpListeners[b];
+	}
 
 	m_Manager.Cleanup();
 	DeleteUsers();
@@ -142,20 +145,26 @@ int CZNC::Loop() {
 				m_bISpoofLocked = true;
 			}
 
-			DEBUG_ONLY( cout << "User [" << pUser->GetUserName() << "] is connecting to [" << pServer->GetName() << ":" << pServer->GetPort() << "] ..." << endl);
+			DEBUG_ONLY(cout << "User [" << pUser->GetUserName() << "] is connecting to [" << pServer->GetName() << ":" << pServer->GetPort() << "] ..." << endl);
 			pUser->PutStatus("Attempting to connect to [" + pServer->GetName() + ":" + CString::ToString(pServer->GetPort()) + "] ...");
 
 			pIRCSock = new CIRCSock(pUser);
 			pIRCSock->SetPass(pServer->GetPass());
 
 			bool bSSL = false;
+			bool bIPV6 = false;
 #ifdef HAVE_LIBSSL
 			if (pServer->IsSSL()) {
 				bSSL = true;
 				pIRCSock->SetPemLocation(GetPemLocation());
 			}
 #endif
-			if (!m_Manager.Connect(pServer->GetName(), pServer->GetPort(), sSockName, 20, bSSL, pUser->GetVHost(), pIRCSock)) {
+#ifdef HAVE_IPV6
+			if (pServer->IsIPV6()) {
+				bIPV6 = true;
+			}
+#endif
+			if (!m_Manager.Connect(pServer->GetName(), pServer->GetPort(), sSockName, 20, bSSL, pUser->GetVHost(), pIRCSock, bIPV6)) {
 				ReleaseISpoof();
 				pUser->PutStatus("Unable to connect. (Bad host?)");
 			}
@@ -253,24 +262,6 @@ Csock* CZNC::FindSockByName(const CString& sSockName) {
 	return m_Manager.FindSockByName(sSockName);
 }
 
-bool CZNC::Listen() {
-	if (!m_uListenPort) {
-		return false;
-	}
-
-	CClient* pClient = new CClient;
-
-	bool bSSL = false;
-#ifdef HAVE_LIBSSL
-	if (IsSSL()) {
-		bSSL = true;
-		pClient->SetPemLocation(GetPemLocation());
-	}
-#endif
-
-	return m_Manager.ListenHost(m_uListenPort, "_LISTENER", m_sListenHost, bSSL, SOMAXCONN, pClient);
-}
-
 bool CZNC::IsHostAllowed(const CString& sHostMask) {
 	for (map<CString,CUser*>::iterator a = m_msUsers.begin(); a != m_msUsers.end(); a++) {
 		if (a->second->IsHostAllowed(sHostMask)) {
@@ -339,12 +330,18 @@ bool CZNC::WriteConfig() {
 		return false;
 	}
 
-	CString sHostPortion;
-	if (!m_sListenHost.empty()) {
-		sHostPortion = m_sListenHost + ":";
-	}
+	for (size_t l = 0; l < m_vpListeners.size(); l++) {
+		CListener* pListener = m_vpListeners[l];
+		CString sHostPortion = pListener->GetBindHost();
 
-	File.Write("Listen       = " + sHostPortion + CString((m_bSSL) ? "+" : "") + CString::ToString(m_uListenPort) + "\r\n");
+		if (!sHostPortion.empty()) {
+			sHostPortion += " ";
+		}
+
+		CString s6 = (pListener->IsIPV6()) ? "6" : " ";
+
+		File.Write("Listen" + s6 + "      = " + sHostPortion + CString((pListener->IsSSL()) ? "+" : "") + CString::ToString(pListener->GetPort()) + "\r\n");
+	}
 
 	if (!m_sISpoofFile.empty()) {
 		File.Write("ISpoofFile   = " + m_sISpoofFile + "\r\n");
@@ -400,7 +397,6 @@ bool CZNC::WriteNewConfig(const CString& sConfig) {
 	CString sConfigFile = ExpandConfigPath((sConfig.empty()) ? "znc.conf" : sConfig);
 	CString sAnswer, sUser;
 	vector<CString> vsLines;
-	bool bAnswer = false;
 
 	if (CFile::Exists(sConfigFile)) {
 		if (!m_LockFile.TryExLock(sConfigFile, 50)) {
@@ -423,18 +419,29 @@ bool CZNC::WriteNewConfig(const CString& sConfig) {
 	// Listen
 	unsigned int uPort = 0;
 	while(!CUtils::GetNumInput("What port would you like ZNC to listen on?", uPort, 1, 65535));
+
+	CString sSSL;
 #ifdef HAVE_LIBSSL
-	bAnswer = CUtils::GetBoolInput("Would you like ZNC to listen using SSL?", false);
+	if (CUtils::GetBoolInput("Would you like ZNC to listen using SSL?", false)) {
+		sSSL = "+";
+	}
+#endif
+
+	CString s6 = " ";
+#ifdef HAVE_IPV6
+	if (CUtils::GetBoolInput("Would you like ZNC to listen using ipv6?", false)) {
+		s6 = "6";
+	}
 #endif
 
 	CString sListenHost;
 	CUtils::GetInput("Listen Host", sListenHost, "", "Blank for all ips");
 
 	if (!sListenHost.empty()) {
-		sListenHost += ":";
+		sListenHost += " ";
 	}
 
-	vsLines.push_back("Listen     = " + sListenHost + CString((bAnswer) ? "+" : "") + CString::ToString(uPort));
+	vsLines.push_back("Listen" + s6 + "    = " + sListenHost + sSSL + CString::ToString(uPort));
 	// !Listen
 
 #ifdef _MODULES
@@ -925,6 +932,14 @@ bool CZNC::ParseConfig(const CString& sConfig) {
 					} else if (sName.CaseCmp("Allow") == 0) {
 						pUser->AddAllowedHost(sValue);
 						continue;
+					} else if (sName.CaseCmp("Server6") == 0) {
+						CUtils::PrintAction("Adding ipv6 Server [" + sValue + "]");
+#ifdef HAVE_IPV6
+						CUtils::PrintStatus(pUser->AddServer(sValue, true));
+#else
+						CUtils::PrintStatus(false, "ZNC was not compiled with ipv6 support");
+#endif
+						continue;
 					} else if (sName.CaseCmp("Server") == 0) {
 						CUtils::PrintAction("Adding Server [" + sValue + "]");
 						CUtils::PrintStatus(pUser->AddServer(sValue));
@@ -956,41 +971,60 @@ bool CZNC::ParseConfig(const CString& sConfig) {
 					}
 				}
 			} else {
-				if (sName.CaseCmp("Listen") == 0 || sName.CaseCmp("ListenPort") == 0) {
-					m_bSSL = false;
+				if (sName.CaseCmp("Listen") == 0 || sName.CaseCmp("ListenPort") == 0 || sName.CaseCmp("Listen6") == 0) {
+					bool bSSL = false;
+					bool bIPV6 = (sName.CaseCmp("Listen6") == 0);
 					CString sPort;
 
-					if (sValue.find(":") != CString::npos) {
-						m_sListenHost = sValue.Token(0, false, ":");
-						sPort = sValue.Token(1, true, ":");
+					CString sBindHost;
+
+					if (!bIPV6) {
+						sValue.Replace(":", " ");
+					}
+
+					if (sValue.find(" ") != CString::npos) {
+						sBindHost = sValue.Token(0, false, " ");
+						sPort = sValue.Token(1, true, " ");
 					} else {
-						m_sListenHost = "";
 						sPort = sValue;
 					}
 
 					if (sPort.Left(1) == "+") {
 						sPort.LeftChomp();
-						m_bSSL = true;
+						bSSL = true;
 					}
 
 					CString sHostComment;
 
-					if (!m_sListenHost.empty()) {
-						sHostComment = " on host [" + m_sListenHost + "]";
+					if (!sBindHost.empty()) {
+						sHostComment = " on host [" + sBindHost + "]";
 					}
 
-					m_uListenPort = strtol(sPort.c_str(), NULL, 10);
-					CUtils::PrintAction("Binding to port [" + CString((m_bSSL) ? "+" : "") + CString::ToString(m_uListenPort) + "]" + sHostComment);
+					CString sIPV6Comment;
+
+					if (bIPV6) {
+						sIPV6Comment = " using ipv6";
+					}
+
+					unsigned short uPort = strtol(sPort.c_str(), NULL, 10);
+					CUtils::PrintAction("Binding to port [" + CString((bSSL) ? "+" : "") + CString::ToString(uPort) + "]" + sHostComment + sIPV6Comment);
+
+#ifndef HAVE_IPV6
+					if (bIPV6) {
+						CUtils::PrintStatus(false, "IPV6 is not enabled");
+						return false;
+					}
+#endif
 
 #ifndef HAVE_LIBSSL
-					if (m_bSSL) {
+					if (bSSL) {
 						CUtils::PrintStatus(false, "SSL is not enabled");
 						return false;
 					}
 #else
 					CString sPemFile = GetPemLocation();
 
-					if ((m_bSSL) && (!CFile::Exists(sPemFile))) {
+					if (bSSL && !CFile::Exists(sPemFile)) {
 						CUtils::PrintStatus(false, "Unable to locate pem file: [" + sPemFile + "]");
 
 						if (CUtils::GetBoolInput("Would you like to create a new pem file?", true)) {
@@ -999,19 +1033,23 @@ bool CZNC::ParseConfig(const CString& sConfig) {
 							return false;
 						}
 
-						CUtils::PrintAction("Binding to port [" + CString((m_bSSL) ? "+" : "") + CString::ToString(m_uListenPort) + "]");
+						CUtils::PrintAction("Binding to port [+" + CString::ToString(uPort) + "]" + sHostComment + sIPV6Comment);
 					}
 #endif
-					if (!m_uListenPort) {
+					if (!uPort) {
 						CUtils::PrintStatus(false, "Invalid port");
 						return false;
 					}
 
-					if (!Listen()) {
+					CListener* pListener = new CListener(uPort, sBindHost, bSSL, bIPV6);
+
+					if (!pListener->Listen()) {
 						CUtils::PrintStatus(false, "Unable to bind");
+						delete pListener;
 						return false;
 					}
 
+					m_vpListeners.push_back(pListener);
 					CUtils::PrintStatus(true);
 
 					continue;

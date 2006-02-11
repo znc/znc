@@ -13,6 +13,7 @@ using std::set;
 
 class CUser;
 class CClient;
+class CListener;
 
 class CZNC {
 public:
@@ -25,7 +26,6 @@ public:
 	bool WritePidFile(int iPid);
 	CUser* GetUser(const CString& sUser);
 	Csock* FindSockByName(const CString& sSockName);
-	bool Listen();
 	bool ParseConfig(const CString& sConfig);
 	bool IsHostAllowed(const CString& sHostMask);
 	void InitDirs(const CString& sArgvPath);
@@ -51,8 +51,6 @@ public:
 #ifdef _MODULES
 	CGlobalModules& GetModules() { return *m_pModules; }
 #endif
-	unsigned short GetListenPort() const { return m_uListenPort; }
-	const CString& GetListenHost() const { return m_sListenHost; }
 	const CString& GetStatusPrefix() const { return m_sStatusPrefix; }
 	const CString& GetCurPath() const { if (!CFile::Exists(m_sCurPath)) { CUtils::MakeDir(m_sCurPath); } return m_sCurPath; }
 	const CString& GetModPath() const { if (!CFile::Exists(m_sModPath)) { CUtils::MakeDir(m_sModPath); } return m_sModPath; }
@@ -66,13 +64,7 @@ public:
 	const CString& GetISpoofFile() const { return m_sISpoofFile; }
 	const CString& GetISpoofFormat() const { return m_sISpoofFormat; }
 	const VCString& GetVHosts() const { return m_vsVHosts; }
-
-	bool IsSSL() const {
-#ifdef HAVE_LIBSSL
-		return m_bSSL;
-#endif
-		return false;
-	}
+	const vector<CListener*>& GetListeners() const { return m_vpListeners; }
 	// !Getters
 
 	// Static allocator
@@ -91,8 +83,7 @@ public:
 
 private:
 protected:
-	unsigned short			m_uListenPort;
-	CString					m_sListenHost;
+	vector<CListener*>		m_vpListeners;
 	map<CString,CUser*>		m_msUsers;
 	set<CUser*>				m_ssDelUsers;
 	TSocketManager<Csock>	m_Manager;
@@ -115,11 +106,60 @@ protected:
 	VCString				m_vsMotd;
 	CLockFile				m_LockFile;
 	bool					m_bISpoofLocked;
-	bool					m_bSSL;
 	map<CString,CUser*>::iterator	m_itUserIter;	// This needs to be reset to m_msUsers.begin() if anything is added or removed to the map
 #ifdef _MODULES
 	CGlobalModules*			m_pModules;
 #endif
+};
+
+class CListener {
+public:
+	CListener(unsigned short uPort, const CString& sBindHost, bool bSSL, bool bIPV6) {
+		m_uPort = uPort;
+		m_sBindHost = sBindHost;
+		m_bSSL = bSSL;
+		m_bIPV6 = bIPV6;
+	}
+
+	virtual ~CListener() {}
+
+	// Setters
+	void SetSSL(bool b) { m_bSSL = b; }
+	void SetIPV6(bool b) { m_bIPV6 = b; }
+	void SetPort(unsigned short u) { m_uPort = u; }
+	void SetBindHost(const CString& s) { m_sBindHost = s; }
+	// !Setters
+
+	// Getters
+	bool IsSSL() const { return m_bSSL; }
+	bool IsIPV6() const { return m_bIPV6; }
+	unsigned short GetPort() const { return m_uPort; }
+	const CString& GetBindHost() const { return m_sBindHost; }
+	// !Getters
+
+	bool Listen() const {
+		if (!m_uPort) {
+			return false;
+		}
+
+		CClient* pClient = new CClient;
+
+		bool bSSL = false;
+#ifdef HAVE_LIBSSL
+		if (IsSSL()) {
+			bSSL = true;
+			pClient->SetPemLocation(CZNC::Get().GetPemLocation());
+		}
+#endif
+
+		return CZNC::Get().GetManager().ListenHost(m_uPort, "_LISTENER", m_sBindHost, bSSL, SOMAXCONN, pClient, m_bIPV6);
+	}
+private:
+protected:
+	bool			m_bSSL;
+	bool			m_bIPV6;
+	unsigned short	m_uPort;
+	CString			m_sBindHost;
 };
 
 #endif // !_ZNC_H
