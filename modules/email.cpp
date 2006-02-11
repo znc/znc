@@ -15,6 +15,9 @@
  * Author: imaginos <imaginos@imaginos.net>
  *
  * $Log$
+ * Revision 1.10  2006/02/11 11:55:55  imaginos
+ * fixed wrong type being used on 64bit
+ *
  * Revision 1.9  2005/09/07 05:14:28  prozacx
  * Renamed md5.cpp/h to MD5.cpp/h
  *
@@ -211,7 +214,7 @@ public:
 		EmailST tmp;
 		tmp.sUidl = (char *)CMD5( m_sMailBuffer.substr( 0, 255 ) );
 		CString sLine;
-		u_int iPos = 0;
+		CString::size_type iPos = 0;
 		while( ::ReadLine( m_sMailBuffer, sLine, iPos ) )
 		{
 			sLine.Trim();

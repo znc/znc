@@ -284,7 +284,7 @@ inline bool WriteFile(const CString & sFilename, const CString & sData) {
 	return true;
 }
 
-inline bool ReadLine(const CString & sData, CString & sLine, u_int & iPos) {
+inline bool ReadLine(const CString & sData, CString & sLine, CString::size_type & iPos) {
 	sLine.clear();
 
 	if (iPos >= sData.length()) {

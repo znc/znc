@@ -18,6 +18,9 @@
  *
  * 
  * $Log$
+ * Revision 1.20  2006/02/11 11:55:55  imaginos
+ * fixed wrong type being used on 64bit
+ *
  * Revision 1.19  2005/09/26 23:09:05  prozacx
  * Removed const from args in a bunch of hooks
  *
@@ -153,7 +156,7 @@ public:
 		if ( DecryptMessages( sFile ) )
 		{
 			CString sLine;
-			u_int iPos = 0;
+			CString::size_type iPos = 0;
 			while( ReadLine( sFile, sLine, iPos ) )
 			{
 				sLine.Trim();

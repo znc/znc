@@ -24,6 +24,9 @@
  * better solution then plain text.
  * 
  * $Log$
+ * Revision 1.28  2006/02/11 11:55:55  imaginos
+ * fixed wrong type being used on 64bit
+ *
  * Revision 1.27  2005/09/06 22:43:02  prozacx
  * Added REQUIRESSL
  *
@@ -196,7 +199,7 @@ public:
 				return( true ); // reloaded a module probably in this case, so just verify we can decrypt the file
 
 			CString sLine;
-			u_int iPos = 0;
+			CString::size_type iPos = 0;
 			while( ReadLine( sFile, sLine, iPos ) )
 			{
 				sLine.Trim();
@@ -272,7 +275,7 @@ public:
 			if ( DecryptChannel( sArgs, sFile ) )
 			{
 				CString sLine;
-				u_int iPos = 0;
+				CString::size_type iPos = 0;
 				while( ReadLine( sFile, sLine, iPos ) )
 				{
 					sLine.Trim();
@@ -300,7 +303,7 @@ public:
 		if ( DecryptChannel( sChan, sFile ) )
 		{
 			CString sLine;
-			u_int iPos = 0;
+			CString::size_type iPos = 0;
 			while( ReadLine( sFile, sLine, iPos ) )
 			{
 				sLine.Trim();
