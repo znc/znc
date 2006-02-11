@@ -164,21 +164,24 @@ void CWebAdminSock::PrintPage(CString& sPageRet, const CString& sTmplName) {
 	sPageRet.clear();
 	// @todo possibly standardize the location of meta files such as these skins
 	// @todo give an option for changing the current skin from 'default'
+	CString sTmpl;
+
+	if (IsAdmin()) {
+		sTmpl = GetSkinDir();
+	}
+
+	sTmpl += sTmplName;
+
 	if (!m_Template.SetFile(GetSkinDir() + sTmplName)) {
-		CString sTmpl;
-
-		if (IsAdmin()) {
-			sTmpl = GetSkinDir();
-		}
-
-		sTmpl += sTmplName;
-
 		sPageRet = CHTTPSock::GetErrorPage(404, "Not Found", "The template for this page [" + sTmpl + "] was not found.");
 		return;
 	}
 
 	stringstream oStr;
-	m_Template.Print(oStr);
+	if (!m_Template.Print(oStr)) {
+		sPageRet = CHTTPSock::GetErrorPage(403, "Forbidden", "The template for this page [" + sTmpl + "] can not be opened.");
+		return;
+	}
 
 	sPageRet = oStr.str();
 }
