@@ -15,6 +15,15 @@ class CUser;
 class CClient;
 class CListener;
 
+class CSockManager : public TSocketManager<Csock> {
+public:
+	CSockManager() : TSocketManager<Csock>() {}
+	virtual ~CSockManager() {}
+
+private:
+protected:
+};
+
 class CZNC {
 public:
 	CZNC();
@@ -47,7 +56,7 @@ public:
 	// !Setters
 
 	// Getters
-	TSocketManager<Csock>& GetManager() { return m_Manager; }
+	CSockManager& GetManager() { return m_Manager; }
 #ifdef _MODULES
 	CGlobalModules& GetModules() { return *m_pModules; }
 #endif
@@ -86,7 +95,7 @@ protected:
 	vector<CListener*>		m_vpListeners;
 	map<CString,CUser*>		m_msUsers;
 	set<CUser*>				m_ssDelUsers;
-	TSocketManager<Csock>	m_Manager;
+	CSockManager			m_Manager;
 
 	CString					m_sCurPath;
 	CString					m_sModPath;

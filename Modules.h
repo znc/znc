@@ -59,7 +59,7 @@ class CChan;
 class Csock;
 class CModule;
 class CFPTimer;
-template<class T> class TSocketManager;
+class CSockManager;
 // !Forward Declarations
 
 class CTimer : public CCron {
@@ -296,7 +296,7 @@ public:
 	const CString& GetArgs() const { return m_sArgs; }
 	CUser* GetUser() { return m_pUser; }
 	CClient* GetClient() { return m_pClient; }
-	TSocketManager<Csock>* GetManager() { return m_pManager; }
+	CSockManager* GetManager() { return m_pManager; }
 	// !Getters
 
 protected:
@@ -305,7 +305,7 @@ protected:
 	vector<CTimer*>			m_vTimers;
 	vector<CSocket*>		m_vSockets;
 	void*					m_pDLL;
-	TSocketManager<Csock>*	m_pManager;
+	CSockManager*			m_pManager;
 	CUser*					m_pUser;
 	CClient*				m_pClient;
 	CString					m_sModName;

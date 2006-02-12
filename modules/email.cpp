@@ -1,3 +1,4 @@
+#include "znc.h"
 #include "main.h"
 #include "User.h"
 #include "Nick.h"
@@ -15,6 +16,9 @@
  * Author: imaginos <imaginos@imaginos.net>
  *
  * $Log$
+ * Revision 1.11  2006/02/12 21:00:59  prozacx
+ * Wrapped TSocketManager into CSockManager
+ *
  * Revision 1.10  2006/02/11 11:55:55  imaginos
  * fixed wrong type being used on 64bit
  *

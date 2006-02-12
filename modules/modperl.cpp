@@ -271,7 +271,7 @@ public:
 		DEBUG_ONLY( cerr << sTmp << endl );
 	}
 
-	TSocketManager<Csock> * GetSockManager() { return( m_pManager ); }
+	CSockManager * GetSockManager() { return( m_pManager ); }
 	void DestroyAllSocks( const CString & sModuleName = "" );
 
 	CUser * GetUser( const CString & sUsername = "", bool bSetUserContext = false  ) 

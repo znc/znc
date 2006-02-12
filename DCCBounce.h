@@ -15,7 +15,6 @@ public:
 		m_sFileName = sFileName;
 		m_sRemoteNick = sRemoteNick;
 		m_pUser = pUser;
-		m_pManager = &(CZNC::Get().GetManager());
 		m_bIsChat = bIsChat;
 		m_sLocalIP = sLocalIP;
 		m_pPeer = NULL;
@@ -29,7 +28,6 @@ public:
 	CDCCBounce(const CString& sHostname, unsigned short uPort, CUser* pUser, const CString& sRemoteNick, const CString& sRemoteIP, const CString& sFileName, int iTimeout = 60, bool bIsChat = false) : Csock(sHostname, uPort, iTimeout) {
 		m_uRemotePort = 0;
 		m_bIsChat = bIsChat;
-		m_pManager = &(CZNC::Get().GetManager());
 		m_pUser = pUser;
 		m_pPeer = NULL;
 		m_sRemoteNick = sRemoteNick;
@@ -67,7 +65,6 @@ public:
 	void SetPeer(CDCCBounce* p) { m_pPeer = p; }
 	void SetRemoteIP(const CString& s) { m_sRemoteIP = s; }
 	void SetRemoteNick(const CString& s) { m_sRemoteNick = s; }
-	void SetManager(TSocketManager<Csock>* p) { m_pManager = p; }
 	void SetRemote(bool b) { m_bIsRemote = b; }
 	// !Setters
 
@@ -77,7 +74,6 @@ public:
 	const CString& GetRemoteNick() const { return m_sRemoteNick; }
 	const CString& GetFileName() const { return m_sFileName; }
 	CDCCBounce* GetPeer() const { return m_pPeer; }
-	TSocketManager<Csock>* GetManager() const { return m_pManager; }
 	bool IsRemote() { return m_bIsRemote; }
 	// !Getters
 private:
@@ -89,7 +85,6 @@ protected:
 	CString					m_sFileName;
 	CUser*					m_pUser;
 	CDCCBounce*				m_pPeer;
-	TSocketManager<Csock>*	m_pManager;
 	unsigned short			m_uRemotePort;
 	bool					m_bIsChat;
 	bool					m_bIsRemote;

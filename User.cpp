@@ -697,7 +697,7 @@ bool CUser::CheckPass(const CString& sPass) {
 
 /*CClient* CUser::GetClient() {
 	// Todo: optimize this by saving a pointer to the sock
-	TSocketManager<Csock>& Manager = CZNC::Get().GetManager();
+	CSockManager& Manager = CZNC::Get().GetManager();
 	CString sSockName = "USR::" + m_sUserName;
 
 	for (unsigned int a = 0; a < Manager.size(); a++) {
@@ -799,7 +799,7 @@ bool CUser::PutModule(const CString& sModule, const CString& sLine, CClient* pCl
 }
 
 bool CUser::ResumeFile(const CString& sRemoteNick, unsigned short uPort, unsigned long uFileSize) {
-	TSocketManager<Csock>& Manager = CZNC::Get().GetManager();
+	CSockManager& Manager = CZNC::Get().GetManager();
 
 	for (unsigned int a = 0; a < Manager.size(); a++) {
 		if (strncasecmp(Manager[a]->GetSockName().c_str(), "DCC::LISTEN::", 13) == 0) {

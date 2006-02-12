@@ -654,7 +654,7 @@ bool CIRCSock::OnPrivCTCP(CNick& Nick, CString& sMessage) {
 			}
 		} else if (sType.CaseCmp("ACCEPT") == 0) {
 			// Need to lookup the connection by port, filter the port, and forward to the user
-			TSocketManager<Csock>& Manager = CZNC::Get().GetManager();
+			CSockManager& Manager = CZNC::Get().GetManager();
 
 			for (unsigned int a = 0; a < Manager.size(); a++) {
 				CDCCBounce* pSock = (CDCCBounce*) Manager[a];

@@ -353,7 +353,7 @@ void CClient::ReadLine(const CString& sData) {
 					if (strncasecmp(sTarget.c_str(), m_pUser->GetStatusPrefix().c_str(), m_pUser->GetStatusPrefix().length()) == 0) {
 					} else {
 						// Need to lookup the connection by port, filter the port, and forward to the user
-						TSocketManager<Csock>& Manager = CZNC::Get().GetManager();
+						CSockManager& Manager = CZNC::Get().GetManager();
 
 						for (unsigned int a = 0; a < Manager.size(); a++) {
 							CDCCBounce* pSock = (CDCCBounce*) Manager[a];
@@ -882,7 +882,7 @@ void CClient::UserCommand(const CString& sLine) {
 			m_pUser->SendFile(GetNick(), sFile);
 		}
 	} else if (sCommand.CaseCmp("LISTDCCS") == 0) {
-		TSocketManager<Csock>& Manager = CZNC::Get().GetManager();
+		CSockManager& Manager = CZNC::Get().GetManager();
 
 		CTable Table;
 		Table.AddColumn("Type");

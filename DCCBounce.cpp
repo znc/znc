@@ -84,10 +84,6 @@ void CDCCBounce::Shutdown() {
 Csock* CDCCBounce::GetSockObj(const CString& sHost, unsigned short uPort) {
 	Close();
 
-	if (!m_pManager) {
-		return NULL;
-	}
-
 	if (m_sRemoteIP.empty()) {
 		m_sRemoteIP = sHost;
 	}
@@ -99,7 +95,7 @@ Csock* CDCCBounce::GetSockObj(const CString& sHost, unsigned short uPort) {
 	pRemoteSock->SetRemote(true);
 	pSock->SetRemote(false);
 
-	if (!m_pManager->Connect(m_sConnectIP, m_uRemotePort, "DCC::" + CString((m_bIsChat) ? "Chat" : "XFER") + "::Remote::" + m_sRemoteNick, 60, false, m_sLocalIP, pRemoteSock)) {
+	if (!CZNC::Get().GetManager().Connect(m_sConnectIP, m_uRemotePort, "DCC::" + CString((m_bIsChat) ? "Chat" : "XFER") + "::Remote::" + m_sRemoteNick, 60, false, m_sLocalIP, pRemoteSock)) {
 		pRemoteSock->Close();
 	}
 
