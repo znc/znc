@@ -84,6 +84,10 @@ int CZNC::Loop() {
 					m_Manager.DelSockByAddr(pIRCSock);
 				}
 
+				pUser->DelClients();
+#ifdef _MODULES
+				pUser->DelModules();
+#endif
 				delete pUser;
 			}
 
@@ -249,7 +253,7 @@ void CZNC::DeleteUsers() {
 	}
 
 	m_msUsers.clear();
-	m_itUserIter = m_msUsers.end();
+	m_itUserIter = m_msUsers.begin();
 }
 
 CUser* CZNC::GetUser(const CString& sUser) {

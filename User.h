@@ -51,6 +51,11 @@ public:
 	bool IsLastServer();
 	bool ConnectPaused();
 
+	void DelClients();
+#ifdef _MODULES
+	void DelModules();
+#endif
+
 #ifdef _MODULES
 	// Modules
 	CModules& GetModules() { return *m_pModules; }

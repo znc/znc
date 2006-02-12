@@ -45,9 +45,6 @@ CUser::CUser(const CString& sUserName) {
 }
 
 CUser::~CUser() {
-#ifdef _MODULES
-	delete m_pModules;
-#endif
 	for (unsigned int a = 0; a < m_vServers.size(); a++) {
 		delete m_vServers[a];
 	}
@@ -56,14 +53,31 @@ CUser::~CUser() {
 		delete m_vChans[b];
 	}
 
-	for (unsigned int c = 0; c < m_vClients.size(); c++) {
-		CZNC::Get().GetManager().DelSockByAddr(m_vClients[c]);
-	}
+	DelClients();
+	DelModules();
 
 	CZNC::Get().GetManager().DelCronByAddr(m_pBackNickTimer);
 	CZNC::Get().GetManager().DelCronByAddr(m_pAwayNickTimer);
 	CZNC::Get().GetManager().DelCronByAddr(m_pKeepNickTimer);
 	CZNC::Get().GetManager().DelCronByAddr(m_pJoinTimer);
+}
+
+#ifdef _MODULES
+void CUser::DelModules() {
+	if (m_pModules) {
+		delete m_pModules;
+		m_pModules = NULL;
+	}
+}
+#endif
+
+void CUser::DelClients() {
+	for (unsigned int c = 0; c < m_vClients.size(); c++) {
+		CClient* pClient = m_vClients[c];
+		CZNC::Get().GetManager().DelSockByAddr(pClient);
+	}
+
+	m_vClients.clear();
 }
 
 bool CUser::OnBoot() {
