@@ -173,13 +173,13 @@ void CWebAdminSock::PrintPage(CString& sPageRet, const CString& sTmplName) {
 	sTmpl += sTmplName;
 
 	if (!m_Template.SetFile(GetSkinDir() + sTmplName)) {
-		sPageRet = CHTTPSock::GetErrorPage(404, "Not Found", "The template for this page [" + sTmpl + "] was not found.");
+		sPageRet = CHTTPSock::GetErrorPage(404, "Not Found", "The template for this page [" + sTmpl + "] (or a template that it includes) was not found.");
 		return;
 	}
 
 	stringstream oStr;
 	if (!m_Template.Print(oStr)) {
-		sPageRet = CHTTPSock::GetErrorPage(403, "Forbidden", "The template for this page [" + sTmpl + "] can not be opened.");
+		sPageRet = CHTTPSock::GetErrorPage(403, "Forbidden", "The template for this page [" + sTmpl + "] (or a template that it includes) can not be opened.");
 		return;
 	}
 
@@ -406,6 +406,27 @@ bool CWebAdminSock::SettingsPage(CString& sPageRet) {
 			l["Line"] = vsMotd[b];
 		}
 
+		const vector<CListener*>& vpListeners = CZNC::Get().GetListeners();
+		for (unsigned int c = 0; c < vpListeners.size(); c++) {
+			CListener* pListener = vpListeners[c];
+			CTemplate& l = m_Template.AddRow("ListenLoop");
+
+			l["Port"] = CString::ToString(pListener->GetPort());
+			l["BindHost"] = pListener->GetBindHost();
+
+#ifdef HAVE_LIBSSL
+			if (pListener->IsSSL()) {
+				l["IsSSL"] = "true";
+			}
+#endif
+
+#ifdef HAVE_IPV6
+			if (pListener->IsIPV6()) {
+				l["IsIPV6"] = "true";
+			}
+#endif
+		}
+
 		CString sDir(GetSkinDir() + "/..");
 
 		if (CDir::Exists(sDir)) {
@@ -413,8 +434,8 @@ bool CWebAdminSock::SettingsPage(CString& sPageRet) {
 
 			m_Template.AddRow("SkinLoop")["Name"] = "default";
 
-			for (unsigned int c = 0; c < Dir.size(); c++) {
-				const CFile& SubDir = *Dir[c];
+			for (unsigned int d = 0; d < Dir.size(); d++) {
+				const CFile& SubDir = *Dir[d];
 
 				if (SubDir.IsDir() && SubDir.GetShortName() != "CVS" && SubDir.GetShortName() != "default") {
 					CTemplate& l = m_Template.AddRow("SkinLoop");
