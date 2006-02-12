@@ -166,7 +166,9 @@ bool CTemplate::Print(const CString& sFileName, ostream& oOut) {
 
 						if (!uSkip) {
 							if (sAction.CaseCmp("INC") == 0) {
-								Print(File.GetDir() + sArgs, oOut);
+								if (!Print(File.GetDir() + sArgs, oOut)) {
+									return false;
+								}
 							} else if (sAction.CaseCmp("ADDROW") == 0) {
 								CString sLoopName = sArgs.Token(0);
 								MCString msRow;
