@@ -1122,7 +1122,7 @@ void CPerlSock::Connected()
 }
 
 // # OnConnectionFrom( $sockhandle, $remotehost, $remoteport )
-bool CPerlSock::ConnectionFrom( const CS_STRING & sHost, int iPort )
+bool CPerlSock::ConnectionFrom( const CS_STRING & sHost, u_short iPort )
 {
 	SetupArgs();
 	AddArg( sHost );
@@ -1189,7 +1189,7 @@ CPerlSock::~CPerlSock()
 	CallBack( "OnSockDestroy" );
 }
 
-Csock *CPerlSock::GetSockObj( const CS_STRING & sHostname, int iPort )
+Csock *CPerlSock::GetSockObj( const CS_STRING & sHostname, u_short iPort )
 {
 	CPerlSock *p = new CPerlSock( sHostname, iPort );
 	p->SetParentFD( GetRSock() );
