@@ -936,14 +936,6 @@ bool CZNC::ParseConfig(const CString& sConfig) {
 					} else if (sName.CaseCmp("Allow") == 0) {
 						pUser->AddAllowedHost(sValue);
 						continue;
-					} else if (sName.CaseCmp("Server6") == 0) {
-						CUtils::PrintAction("Adding ipv6 Server [" + sValue + "]");
-#ifdef HAVE_IPV6
-						CUtils::PrintStatus(pUser->AddServer(sValue, true));
-#else
-						CUtils::PrintStatus(false, "ZNC was not compiled with ipv6 support");
-#endif
-						continue;
 					} else if (sName.CaseCmp("Server") == 0) {
 						CUtils::PrintAction("Adding Server [" + sValue + "]");
 						CUtils::PrintStatus(pUser->AddServer(sValue));
