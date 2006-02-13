@@ -156,19 +156,14 @@ int CZNC::Loop() {
 			pIRCSock->SetPass(pServer->GetPass());
 
 			bool bSSL = false;
-			bool bIPV6 = false;
 #ifdef HAVE_LIBSSL
 			if (pServer->IsSSL()) {
 				bSSL = true;
 				pIRCSock->SetPemLocation(GetPemLocation());
 			}
 #endif
-#ifdef HAVE_IPV6
-			if (pServer->IsIPV6()) {
-				bIPV6 = true;
-			}
-#endif
-			if (!m_Manager.Connect(pServer->GetName(), pServer->GetPort(), sSockName, 20, bSSL, pUser->GetVHost(), pIRCSock, bIPV6)) {
+
+			if (!m_Manager.Connect(pServer->GetName(), pServer->GetPort(), sSockName, 20, bSSL, pUser->GetVHost(), pIRCSock)) {
 				ReleaseISpoof();
 				pUser->PutStatus("Unable to connect. (Bad host?)");
 			}

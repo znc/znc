@@ -55,12 +55,11 @@ public:
 		return( ListenRand( sSockName, "", isSSL, iMaxConns, pcSock, iTimeout, bIsIPv6 ) );
 	}
 
-	virtual bool Connect(const CString& sHostname, u_short iPort , const CString& sSockName, int iTimeout = 60, bool isSSL = false, const CString& sBindHost = "", Csock *pcSock = NULL, bool bIsIPv6 = false) {
+	virtual bool Connect(const CString& sHostname, u_short iPort , const CString& sSockName, int iTimeout = 60, bool isSSL = false, const CString& sBindHost = "", Csock *pcSock = NULL) {
 		CSConnection C(sHostname, iPort, iTimeout);
 
 		C.SetSockName(sSockName);
 		C.SetIsSSL(isSSL);
-		C.SetIsIPv6(bIsIPv6);
 		C.SetBindHost(sBindHost);
 
 		return TSocketManager<Csock>::Connect(C, pcSock);
