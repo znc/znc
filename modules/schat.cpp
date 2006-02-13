@@ -21,6 +21,9 @@ using std::pair;
  * Author: imaginos <imaginos@imaginos.net>
  * 
  * $Log$
+ * Revision 1.22  2006/02/13 06:01:57  imaginos
+ * use u_short
+ *
  * Revision 1.21  2005/09/26 23:09:05  prozacx
  * Removed const from args in a bunch of hooks
  *
@@ -127,14 +130,14 @@ public:
 		m_pModule = NULL;	
 		EnableReadLine();
 	}
-	CSChatSock( const CS_STRING & sHost, int iPort, int iTimeout = 60 )
+	CSChatSock( const CS_STRING & sHost, u_short iPort, int iTimeout = 60 )
 		: Csock( sHost, iPort, iTimeout ) 
 	{
 		m_pModule = NULL;
 		EnableReadLine();
 	}
 
-	virtual Csock *GetSockObj( const CS_STRING & sHostname, int iPort )
+	virtual Csock *GetSockObj( const CS_STRING & sHostname, u_short iPort )
 	{
 		CSChatSock *p = new CSChatSock( sHostname, iPort );
 		p->SetModule( m_pModule );
@@ -143,7 +146,7 @@ public:
 		return( p );
 	}
 
-	virtual bool ConnectionFrom( const CS_STRING & sHost, int iPort ) 
+	virtual bool ConnectionFrom( const CS_STRING & sHost, u_short iPort ) 
 	{
 		Close();	// close the listener after the first connection	
 		return( true ); 

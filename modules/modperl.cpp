@@ -115,7 +115,7 @@ public:
 		m_iParentFD = -1;
 		SetSockName( ZNCSOCK );
 	}
-	CPerlSock( const CS_STRING & sHost, int iPort, int iTimeout = 60 )
+	CPerlSock( const CS_STRING & sHost, u_short iPort, int iTimeout = 60 )
 		: Csock( sHost, iPort, iTimeout ) 
 	{
 		m_iParentFD = -1;
@@ -126,7 +126,7 @@ public:
 // # OnSockDestroy( $sockhandle )
 	virtual ~CPerlSock();
 
-	virtual Csock *GetSockObj( const CS_STRING & sHostname, int iPort );
+	virtual Csock *GetSockObj( const CS_STRING & sHostname, u_short iPort );
 
 	void SetParentFD( int iFD ) { m_iParentFD = iFD; }
 	void SetUsername( const CString & sUsername ) { m_sUsername = sUsername; }
@@ -138,7 +138,7 @@ public:
 // # OnConnect( $sockhandle, $parentsockhandle )
 	virtual void Connected();
 // # OnConnectionFrom( $sockhandle, $remotehost, $remoteport )
-	virtual bool ConnectionFrom( const CS_STRING & sHost, int iPort );
+	virtual bool ConnectionFrom( const CS_STRING & sHost, u_short iPort );
 // # OnError( $sockhandle, $errno )
 	virtual void SockError( int iErrno );
 // # OnConnectionRefused( $sockhandle )
