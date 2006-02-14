@@ -190,7 +190,7 @@ void CClient::ReadLine(const CString& sData) {
 			sLine += " :" + sMessage;
 		}
 	} else if (sCommand.CaseCmp("QUIT") == 0) {
-		if (m_pIRCSock) {
+		if (m_pUser) {
 			m_pUser->UserDisconnected(this);
 		}
 
@@ -1232,10 +1232,11 @@ void CClient::ConnectionRefused() {
 }
 
 void CClient::Disconnected() {
-	if (m_pIRCSock) {
+	if (m_pUser) {
 		m_pUser->UserDisconnected(this);
-		m_pIRCSock = NULL;
 	}
+
+	m_pIRCSock = NULL;
 
 #ifdef _MODULES
 	CZNC::Get().GetModules().SetClient(this);

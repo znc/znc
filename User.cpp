@@ -601,9 +601,32 @@ bool CUser::DelServer(const CString& sName) {
 		return false;
 	}
 
-	for (vector<CServer*>::iterator it = m_vServers.begin(); it != m_vServers.end(); it++) {
-		if ((*it)->GetName().CaseCmp(sName) == 0) {
+	unsigned int a = 0;
+
+	for (vector<CServer*>::iterator it = m_vServers.begin(); it != m_vServers.end(); it++, a++) {
+		CServer* pServer = *it;
+
+		if (pServer->GetName().CaseCmp(sName) == 0) {
+			CServer* pCurServer = GetCurrentServer();
 			m_vServers.erase(it);
+
+			if (pServer == pCurServer) {
+				CIRCSock* pIRCSock = GetIRCSock();
+
+				if (m_uServerIdx) {
+					m_uServerIdx--;
+				}
+
+				if (pIRCSock) {
+					pIRCSock->Close();
+					PutUser("Your current server was removed, jumping...");
+				}
+			} else if (m_uServerIdx >= m_vServers.size()) {
+				m_uServerIdx = 0;
+			}
+
+			delete pServer;
+
 			return true;
 		}
 	}
