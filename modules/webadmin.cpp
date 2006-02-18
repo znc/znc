@@ -23,6 +23,7 @@ public:
 	void PrintPage(CString& sPageRet, const CString& sTmplName);
 
 	void GetErrorPage(CString& sPageRet, const CString& sError) {
+		m_Template["Action"] = "error";
 		m_Template["Title"] = "Error";
 		m_Template["Error"] = sError;
 
@@ -132,12 +133,34 @@ public:
 	}
 
 	CString GetSkinName() const { return (m_sSkinName.empty()) ? CString("default") : m_sSkinName; }
+	unsigned int GetSwitchCounter(const CString& sToken) {
+		map<CString, unsigned int>::iterator it = m_suSwitchCounters.find(sToken);
+
+		if (it == m_suSwitchCounters.end()) {
+			m_suSwitchCounters[sToken] = 1;
+			return 1;
+		}
+
+		return it->second;
+	}
+
+	unsigned int IncSwitchCounter(const CString& sToken) {
+		map<CString, unsigned int>::iterator it = m_suSwitchCounters.find(sToken);
+
+		if (it == m_suSwitchCounters.end()) {
+			m_suSwitchCounters[sToken] = 2;
+			return 2;
+		}
+
+		return ++it->second;
+	}
 
 private:
-	unsigned int		m_uPort;
-	CString				m_sSkinName;
-	set<CWebAdminSock*>	m_spSocks;
-	CString				m_sListenHost;
+	unsigned int				m_uPort;
+	CString						m_sSkinName;
+	set<CWebAdminSock*>			m_spSocks;
+	CString						m_sListenHost;
+	map<CString, unsigned int>	m_suSwitchCounters;
 };
  
 CString CWebAdminSock::GetSkinDir() {
@@ -209,6 +232,7 @@ bool CWebAdminSock::OnLogin(const CString& sUser, const CString& sPass) {
 void CWebAdminSock::ListUsersPage(CString& sPageRet) {
 	const map<CString,CUser*>& msUsers = CZNC::Get().GetUserMap();
 	m_Template["Title"] = "List Users";
+	m_Template["Action"] = "listusers";
 
 	unsigned int a = 0;
 
@@ -275,6 +299,7 @@ bool CWebAdminSock::OnPageRequest(const CString& sURI, CString& sPageRet) {
 		}
 
 		m_Template["Title"] = "Main Page";
+		m_Template["Action"] = "home";
 		PrintPage(sPageRet, "Main.tmpl");
 	} else if (sURI.Left(5).CaseCmp("/css/") == 0) {
 		SetDocRoot(GetSkinDir() + "/css");
@@ -288,6 +313,10 @@ bool CWebAdminSock::OnPageRequest(const CString& sURI, CString& sPageRet) {
 		SetDocRoot(GetSkinDir() + "/js");
 		PrintFile(sURI.substr(4), "application/x-javascript");
 		return false;
+	} else if (sURI == "/home") {
+		m_Template["Title"] = "Main Page";
+		m_Template["Action"] = "home";
+		PrintPage(sPageRet, "Main.tmpl");
 	} else if (sURI == "/settings") {
 		if (!IsAdmin()) {
 			return false;
@@ -296,6 +325,24 @@ bool CWebAdminSock::OnPageRequest(const CString& sURI, CString& sPageRet) {
 		if (!SettingsPage(sPageRet)) {
 			return false;
 		}
+	} else if (sURI == "/switchuser") {
+		unsigned int uCurCnt = GetParam("cnt").ToUInt();
+		unsigned int uCounter = m_pModule->GetSwitchCounter(GetRemoteIP());
+
+		if (!uCurCnt) {
+			Redirect("/switchuser?cnt=" + CString::ToString(uCounter));
+			return false;
+		}
+
+		if (uCurCnt >= uCounter) {
+			m_bLoggedIn = false;
+			m_pModule->IncSwitchCounter(GetRemoteIP());
+			ForceLogin();
+		} else {
+			Redirect("/home");
+		}
+
+		return false;
 	} else if (sURI == "/adduser") {
 		if (!IsAdmin()) {
 			return false;
@@ -389,6 +436,7 @@ bool CWebAdminSock::OnPageRequest(const CString& sURI, CString& sPageRet) {
 bool CWebAdminSock::SettingsPage(CString& sPageRet) {
 	if (!GetParam("submitted").ToUInt()) {
 		CString sVHosts, sMotd;
+		m_Template["Action"] = "settings";
 		m_Template["Title"] = "Settings";
 		m_Template["StatusPrefix"] = CZNC::Get().GetStatusPrefix();
 		m_Template["ISpoofFile"] = CZNC::Get().GetISpoofFile();
@@ -540,7 +588,7 @@ bool CWebAdminSock::SettingsPage(CString& sPageRet) {
 		return true;
 	}
 
-	Redirect("/");
+	Redirect("/settings");
 	return false;
 }
 
@@ -554,6 +602,7 @@ bool CWebAdminSock::ChanPage(CString& sPageRet, CChan* pChan) {
 		m_Template["User"] = m_pUser->GetUserName();
 
 		if (pChan) {
+			m_Template["Action"] = "editchan";
 			m_Template["Edit"] = "true";
 			m_Template["Title"] = "Edit Channel" + CString(" [" + pChan->GetName() + "]");
 			m_Template["ChanName"] = pChan->GetName();
@@ -564,6 +613,7 @@ bool CWebAdminSock::ChanPage(CString& sPageRet, CChan* pChan) {
 				m_Template["InConfig"] = "true";
 			}
 		} else {
+			m_Template["Action"] = "addchan";
 			m_Template["Title"] = "Add Channel" + CString(" for User [" + m_pUser->GetUserName() + "]");
 			m_Template["BufferCount"] = "50";
 			m_Template["DefModes"] = "+stn";
@@ -663,6 +713,7 @@ bool CWebAdminSock::UserPage(CString& sPageRet, CUser* pUser) {
 		CString sAllowedHosts, sServers, sChans, sCTCPReplies;
 
 		if (pUser) {
+			m_Template["Action"] = "edituser";
 			m_Template["Title"] = "Edit User [" + pUser->GetUserName() + "]";
 			m_Template["Edit"] = "true";
 			m_Template["Username"] = pUser->GetUserName();
@@ -732,6 +783,7 @@ bool CWebAdminSock::UserPage(CString& sPageRet, CUser* pUser) {
 				}
 			}
 		} else {
+			m_Template["Action"] = "adduser";
 			m_Template["Title"] = "Add User";
 			m_Template["StatusPrefix"] = "*";
 		}
