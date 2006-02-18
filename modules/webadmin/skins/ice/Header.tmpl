@@ -1,0 +1,31 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html>
+<head>
+	<title>ZNC - <?VAR Title ESC=HTML?></title>
+	<link rel="stylesheet" type="text/css" href="/css/main.css" />
+</head>
+
+<body>
+	<div id="wrapper">
+			<div id="banner">
+				<h2><?VAR Title ESC=HTML?></h2>
+				<div id="ident"><?VAR SessionUser ESC=HTML?>@<?VAR SessionIP ESC=HTML?></div>
+			</div>
+
+			<div id="gnav">
+				<div id="nav">
+					<ul id="menu">
+						<li class="link<? IF Action == "home" ?> on<? ENDIF ?>"><a href="/home">Home</a></li>
+			<? IF IsAdmin ?>
+						<li class="link<? IF Action == "settings" ?> on<? ENDIF ?>"><a href="/settings">Settings</a></li>
+						<li class="link<? IF Action == "adduser" ?> on<? ENDIF ?>"><a href="/adduser">Add User</a></li>
+						<li class="link<? IF Action == "listusers" || Action == "edituser" ?> on<? ENDIF ?>"><a href="/listusers">Edit Users</a></li>
+			<? ELSE ?>
+						<li class="link<? IF Action == "edituser" ?> on<? ENDIF ?>"><a href="/edituser">My Settings</a></li>
+			<? ENDIF ?>
+						<li class="link<? IF Action == "switchuser" ?> on<? ENDIF ?>"><a href="/switchuser">Switch User</a></li>
+					</ul>
+				</div>
+			</div>
+
+			<div id="main">
