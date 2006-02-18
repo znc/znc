@@ -12,16 +12,19 @@
 		<div id="tag"><?VAR Tag ESC=HTML ?></div>
 	</div>
 
-	<? IF IsAdmin ?>
 	<div id="sidebar">
 		<ul class="nav">
-			<li><a href="/">Home</a></li>
+			<li><a href="/home">Home</a></li>
+		<? IF IsAdmin ?>
 			<li><a href="/settings">Settings</a></li>
 			<li><a href="/adduser">Add User</a></li>
-			<li><a href="/listusers">List Users</a></li>
+			<li><a href="/listusers">Edit Users</a></li>
+		<? ELSE ?>
+			<li><a href="/edituser">My Settings</a></li>
+		<? ENDIF ?>
+			<li><a href="/switchuser">Switch User</a></li>
 		</ul>
 	</div>
-	<? ENDIF ?>
 
 	<div id="main">
 
