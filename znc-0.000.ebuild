@@ -11,7 +11,7 @@ SRC_URI="mirror://sourceforge/${PN}/${P}.tar.gz"
 LICENSE="GPL-2"
 SLOT="0"
 KEYWORDS="x86 amd64 ~sparc"
-IUSE="ssl nomodules debug"
+IUSE="ssl ipv6 nomodules debug"
 RESTRICT="nostrip"
 
 RDEPEND="virtual/libc"
@@ -27,6 +27,7 @@ src_compile() {
 	local MY_CONFARGS=""
 
 	use ssl || MY_CONFARGS="${MY_CONFARGS} --disable-openssl"
+	use ipv6 && MY_CONFARGS="${MY_CONFARGS} --enable-ipv6"
 	use nomodules && MY_CONFARGS="${MY_CONFARGS} --disable-modules"
 	use debug && MY_CONFARGS="${MY_CONFARGS} --enable-debug"
 
