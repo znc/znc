@@ -16,15 +16,15 @@
 			<div id="gnav">
 				<div id="nav">
 					<ul id="menu">
-						<li class="link<? IF Action == "home" ?> on<? ENDIF ?>"><a href="/home">Home</a></li>
+						<li<? IF Action == "home" ?> class="on"<? ENDIF ?>><a href="/home">Home</a></li>
 			<? IF IsAdmin ?>
-						<li class="link<? IF Action == "settings" ?> on<? ENDIF ?>"><a href="/settings">Settings</a></li>
-						<li class="link<? IF Action == "adduser" ?> on<? ENDIF ?>"><a href="/adduser">Add User</a></li>
-						<li class="link<? IF Action == "listusers" || Action == "edituser" ?> on<? ENDIF ?>"><a href="/listusers">Edit Users</a></li>
+						<li<? IF Action == "settings" ?> class="on"<? ENDIF ?>><a href="/settings">Settings</a></li>
+						<li<? IF Action == "adduser" ?> class="on"<? ENDIF ?>><a href="/adduser">Add User</a></li>
+						<li<? IF Action == "listusers" || Action == "edituser" ?> class="on"<? ENDIF ?>><a href="/listusers">Edit Users</a></li>
 			<? ELSE ?>
-						<li class="link<? IF Action == "edituser" ?> on<? ENDIF ?>"><a href="/edituser">My Settings</a></li>
+						<li<? IF Action == "edituser" ?> class="on"<? ENDIF ?>><a href="/edituser">My Settings</a></li>
 			<? ENDIF ?>
-						<li class="link<? IF Action == "switchuser" ?> on<? ENDIF ?>"><a href="/switchuser">Switch User</a></li>
+						<li<? IF Action == "switchuser" ?> class="on"<? ENDIF ?>><a href="/switchuser">Switch User</a></li>
 					</ul>
 				</div>
 			</div>

@@ -172,7 +172,7 @@ table thead {
 	margin-left: 10px;
 }
 
-#gnav .link {
+#gnav li {
 	height: 30px;
 	line-height: 30px;
 	border-right: 1px solid #000;
