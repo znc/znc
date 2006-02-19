@@ -8,6 +8,9 @@ a:visited { color: #000; }
 a:hover { color: #000; }
 a, a:active { color: #000; }
 
+.nowrap { white-space: nowrap; }
+.clear { clear: both; }
+
 table a, table a:visited, table a:hover, table a:active { color: #000; }
 
 table {

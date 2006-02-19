@@ -7,18 +7,24 @@
 					<tr>
 						<td>Action</td>
 						<td>Username</td>
+						<td>Clients</td>
 						<td>Current Server</td>
+						<td>IRC Nick</td>
 					</tr>
 					</thead>
 
 			<?LOOP UserLoop?>
 					<tr class="<?IF __EVEN__?>evenrow<?ELSE?>oddrow<?ENDIF?>">
 						<td>
-							[<a href="/edituser?user=<?VAR Username ESC=URL?>">Edit</a>]
-							[<a href="/deluser?user=<?VAR Username ESC=URL?>">Delete</a>]
+							<span class="nowrap">
+								[<a href="/edituser?user=<?VAR Username ESC=URL?>">Edit</a>]
+								[<a href="/deluser?user=<?VAR Username ESC=URL?>">Delete</a>]
+							</span>
 						</td>
 						<td><? VAR Username ESC=HTML ?></td>
+						<td><? VAR Clients ESC=HTML ?></td>
 						<td><? VAR Server ESC=HTML DEFAULT="-N/A-" ?></td>
+						<td><? VAR IRCNick ESC=HTML ?></td>
 					</tr>
 			<?ENDLOOP?>
 				</table>

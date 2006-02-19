@@ -1,10 +1,10 @@
 <? INC Header.tmpl ?>
 
 <form action="<? IF Edit ?>/editchan<? ELSE ?>/addchan<? ENDIF ?>" method="post">
-	<input type="hidden" name="submitted" value="1" />
-	<input type="hidden" name="user" value="<? VAR User ESC=HTML ?>" />
-
 	<div class="section">
+		<input type="hidden" name="submitted" value="1" />
+		<input type="hidden" name="user" value="<? VAR User ESC=HTML ?>" />
+
 		<div class="sectiontitle">Channel Info</div>
 		<div class="sectionbg">
 			<div class="sectionbody">
@@ -32,13 +32,13 @@
 
 				<div class="subsection">
 					<div class="inputlabel">Save:</div>
-					<div><input type="checkbox" name="save" id="save" value="true"<? IF InConfig ?> CHECKED<? ENDIF ?> /><label for="save"> Save to config</label></div>
+					<div><input type="checkbox" name="save" id="save" value="true"<? IF InConfig ?> checked="checked"<? ENDIF ?> /><label for="save"> Save to config</label></div>
 				</div>
 
 				<div class="subsection">
 					<div class="inputlabel">Options:</div>
 					<? LOOP OptionLoop ?>
-					<input type="checkbox" name="<? VAR Name ESC=HTML ?>" id="opt_<? VAR Name ESC=HTML ?>" value="true"<? IF Checked ?> CHECKED<? ENDIF ?><? IF Disabled ?> DISABLED<? ENDIF ?> /><label for="opt_<? VAR Name ESC=HTML ?>"> <? VAR DisplayName ESC=HTML ?></label>
+					<input type="checkbox" name="<? VAR Name ESC=HTML ?>" id="opt_<? VAR Name ESC=HTML ?>" value="true"<? IF Checked ?> checked="checked"<? ENDIF ?><? IF Disabled ?> disabled="disabled"<? ENDIF ?> /><label for="opt_<? VAR Name ESC=HTML ?>"> <? VAR DisplayName ESC=HTML ?></label>
 					<? ENDLOOP ?>
 				</div>
 
@@ -47,7 +47,9 @@
 		</div>
 	</div>
 
-	<input type="submit" value="<? IF Edit ?>Save<? ELSE ?>Add Channel<? ENDIF ?>" />
+	<div>
+		<input type="submit" value="<? IF Edit ?>Save<? ELSE ?>Add Channel<? ENDIF ?>" />
+	</div>
 </form>
 
 

@@ -20,6 +20,9 @@ a:hover {
 	text-decoration: underline;
 }
 
+.nowrap { white-space: nowrap; }
+.clear { clear: both; }
+
 table a, table a:visited, table a:hover, table a:active { color: #000; }
 
 table {

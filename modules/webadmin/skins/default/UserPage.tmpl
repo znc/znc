@@ -1,9 +1,9 @@
 <? INC Header.tmpl ?>
 
 <form action="<? IF Edit ?>/edituser<? ELSE ?>/adduser<? ENDIF ?>" method="post">
-	<input type="hidden" name="submitted" value="1" />
-
 	<div class="section">
+		<input type="hidden" name="submitted" value="1" />
+
 		<div class="sectiontitle">Authentication</div>
 		<div class="sectionbg">
 			<div class="sectionbody">
@@ -12,7 +12,7 @@
 					<div>
 						<? IF Edit ?>
 						<input type="hidden" name="user" value="<? VAR Username ESC=HTML ?>" />
-						<input type="text" name="newuser" value="<? VAR Username ESC=HTML ?>" size="32" maxlength="12" DISABLED />
+						<input type="text" name="newuser" value="<? VAR Username ESC=HTML ?>" size="32" maxlength="12" disabled="disabled" />
 						<? ELSE ?>
 						<input type="text" name="user" value="<? VAR Username ESC=HTML ?>" size="32" maxlength="12" />
 						<? ENDIF ?>
@@ -30,7 +30,7 @@
 </textarea>
 					<? IF OwnIP ?>
 						<div class="subsection">
-							<span style="white-space: nowrap;"><input type="checkbox" name="ownip" id="ownip" value="<? VAR OwnIP ESC=HTML ?>" CHECKED /><label for="ownip"> <? VAR OwnIP ESC=HTML ?> (your current ip)</label></span>&nbsp;&nbsp;
+							<span style="white-space: nowrap;"><input type="checkbox" name="ownip" id="ownip" value="<? VAR OwnIP ESC=HTML ?>" checked="checked" /><label for="ownip"> <? VAR OwnIP ESC=HTML ?> (your current ip)</label></span>&nbsp;&nbsp;
 						</div>
 					<? ENDIF ?>
 				</div>
@@ -75,7 +75,7 @@
 					<div class="inputlabel">VHost:</div>
 					<select name="vhost">
 						<option value="">- Default -</option>
-						<? LOOP VHostLoop ?><option value="<? VAR VHost ESC=HTML ?>"<? IF Checked ?> SELECTED<? ENDIF ?>><? VAR VHost ESC=HTML ?></option><? ENDLOOP ?>
+						<? LOOP VHostLoop ?><option value="<? VAR VHost ESC=HTML ?>"<? IF Checked ?> selected="selected"<? ENDIF ?>><? VAR VHost ESC=HTML ?></option><? ENDLOOP ?>
 					</select>
 			<? ENDIF ?>
 				</div>
@@ -114,7 +114,7 @@
 				<? LOOP ModuleLoop ?>
 					<tr class="<? IF __EVEN__ ?>evenrow<? ELSE ?>oddrow<? ENDIF ?>">
 						<td>
-							<input type="checkbox" name="loadmod" id="lm_<? VAR Name ESC=HTML ?>" value="<? VAR Name ESC=HTML ?>"<? IF Checked ?> CHECKED<? ENDIF ?><? IF Disabled ?> DISABLED<? ENDIF ?> /><label for="lm_<? VAR Name ESC=HTML ?>"> <? VAR Name ESC=HTML ?></label>
+							<input type="checkbox" name="loadmod" id="lm_<? VAR Name ESC=HTML ?>" value="<? VAR Name ESC=HTML ?>"<? IF Checked ?> checked="checked"<? ENDIF ?><? IF Disabled ?> disabled="disabled"<? ENDIF ?> /><label for="lm_<? VAR Name ESC=HTML ?>"> <? VAR Name ESC=HTML ?></label>
 						</td>
 						<td>
 							<? IF Disabled ?><? VAR Args ESC=HTML ?><? ELSE ?><input type="text" name="modargs_<? VAR Name ESC=HTML ?>" value="<? VAR Args ESC=HTML ?>" /><? ENDIF ?>
@@ -162,7 +162,7 @@
 							<input type="hidden" name="channel" value="<? VAR Name ESC=HTML ?>" />
 							[<a href="/editchan?user=<? VAR Username ESC=URL ?>&amp;name=<? VAR Name ESC=URL ?>">Edit</a>] [<a href="/delchan?user=<? VAR Username ESC=URL ?>&amp;name=<? VAR Name ESC=URL ?>">Del</a>]
 						</td>
-						<td><input type="checkbox" name="save_<? VAR Name ESC=HTML ?>"<? IF InConfig ?> CHECKED<? ENDIF ?> /></td>
+						<td><input type="checkbox" name="save_<? VAR Name ESC=HTML ?>"<? IF InConfig ?> checked="checked"<? ENDIF ?> /></td>
 						<td><? VAR Name ESC=HTML ?></td>
 						<td><? VAR CurModes ESC=HTML ?></td>
 						<td><? VAR DefModes ESC=HTML ?></td>
@@ -189,7 +189,7 @@
 				<div style="margin-bottom: 10px;">
 					<div class="inputlabel">Options:</div>
 					<? LOOP OptionLoop ?>
-					<span style="white-space: nowrap;"><input type="checkbox" name="<? VAR Name ESC=HTML?>" id="opt_<? VAR Name ESC=HTML ?>" value="1"<? IF Checked ?> CHECKED<? ENDIF ?><? IF Disabled ?> DISABLED<? ENDIF ?> /><label for="opt_<? VAR Name ESC=HTML ?>"><? VAR DisplayName ESC=HTML ?></label></span>&nbsp;&nbsp;
+					<span style="white-space: nowrap;"><input type="checkbox" name="<? VAR Name ESC=HTML?>" id="opt_<? VAR Name ESC=HTML ?>" value="1"<? IF Checked ?> checked="checked"<? ENDIF ?><? IF Disabled ?> disabled="disabled"<? ENDIF ?> /><label for="opt_<? VAR Name ESC=HTML ?>"><? VAR DisplayName ESC=HTML ?></label></span>&nbsp;&nbsp;
 					<? ENDLOOP ?>
 				</div>
 
@@ -204,7 +204,9 @@
 		</div>
 	</div>
 
-	<input type="submit" value="Submit" />
+	<div>
+		<input type="submit" value="Submit" />
+	</div>
 </form>
 
 <? INC Footer.tmpl ?>

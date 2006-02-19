@@ -1,9 +1,9 @@
 <? INC Header.tmpl ?>
 
 <form action="/settings" method="post">
-	<input type="hidden" name="submitted" value="1" />
-
 	<div class="section">
+		<input type="hidden" name="submitted" value="1" />
+
 		<div class="sectiontitle">Listen Port(s)</div>
 		<div class="sectionbg">
 			<div class="sectionbody">
@@ -38,7 +38,7 @@
 					<div>
 						<select name="skin">
 							<? LOOP SkinLoop ?>
-							<option value="<? VAR Name ESC=HTML ?>"<? IF Checked ?> SELECTED<? ENDIF ?>><? VAR Name ESC=HTML ?></option>
+							<option value="<? VAR Name ESC=HTML ?>"<? IF Checked ?> selected="selected"<? ENDIF ?>><? VAR Name ESC=HTML ?></option>
 							<? ENDLOOP ?>
 						</select>
 					</div>
@@ -94,7 +94,7 @@
 					</thead>
 					<? LOOP ModuleLoop ?>
 					<tr class="<? IF __EVEN__ ?>evenrow<? ELSE ?>oddrow<? ENDIF ?>">
-						<td><span style="white-space: nowrap;"><input type="checkbox" name="loadmod" id="lm_<? VAR Name ESC=HTML ?>" value="<? VAR Name ESC=HTML ?>"<? IF Checked ?> CHECKED<? ENDIF ?><? IF Disabled ?> DISABLED<? ENDIF ?> /><label for="lm_<? VAR Name ESC=HTML ?>"> <? VAR Name ESC=HTML ?></label></span></td>
+						<td><span style="white-space: nowrap;"><input type="checkbox" name="loadmod" id="lm_<? VAR Name ESC=HTML ?>" value="<? VAR Name ESC=HTML ?>"<? IF Checked ?> checked="checked"<? ENDIF ?><? IF Disabled ?> disabled="disabled"<? ENDIF ?> /><label for="lm_<? VAR Name ESC=HTML ?>"> <? VAR Name ESC=HTML ?></label></span></td>
 						<td><input type="text" name="modargs_<? VAR Name ESC=HTML ?>" value="<? VAR Args ESC=HTML ?>" /></td>
 						<td><? VAR Description ESC=HTML ?></td>
 					</tr>
@@ -104,7 +104,9 @@
 		</div>
 	</div>
 
-<input type="submit" value="Submit" />
+	<div>
+		<input type="submit" value="Submit" />
+	</div>
 </form>
 
 <? INC Footer.tmpl ?>
