@@ -239,8 +239,11 @@ void CWebAdminSock::ListUsersPage(CString& sPageRet) {
 	for (map<CString,CUser*>::const_iterator it = msUsers.begin(); it != msUsers.end(); it++, a++) {
 		CServer* pServer = it->second->GetCurrentServer();
 		CTemplate& l = m_Template.AddRow("UserLoop");
+		CUser& User = *it->second;
 
-		l["Username"] = it->second->GetUserName();
+		l["Username"] = User.GetUserName();
+		l["Clients"] = CString::ToString(User.GetClients().size());
+		l["IRCNick"] = User.GetIRCNick().GetNick();
 
 		if (pServer) {
 			l["Server"] = pServer->GetName();
