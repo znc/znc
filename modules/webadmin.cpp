@@ -373,7 +373,7 @@ bool CWebAdminSock::OnPageRequest(const CString& sURI, CString& sPageRet) {
 			return true;
 		}
 
-		CChan* pChan = m_pUser->FindChan(GetParam("chan"));
+		CChan* pChan = m_pUser->FindChan(GetParam("name"));
 		if (!pChan) {
 			GetErrorPage(sPageRet, "No such channel");
 			return true;
