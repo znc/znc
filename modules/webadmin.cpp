@@ -687,7 +687,7 @@ bool CWebAdminSock::ChanPage(CString& sPageRet, CChan* pChan) {
 }
 
 bool CWebAdminSock::DelChan(CString& sPageRet) {
-	CString sChan = GetParam("chan");
+	CString sChan = GetParam("name");
 
 	if (!m_pUser) {
 		GetErrorPage(sPageRet, "That user doesn't exist");
