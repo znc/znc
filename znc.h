@@ -25,9 +25,14 @@ public:
 
 		L.SetSockName(sSockName);
 		L.SetIsSSL(isSSL);
-		L.SetIsIPv6(bIsIPv6);
 		L.SetTimeout(iTimeout);
 		L.SetMaxConns(iMaxConns);
+
+#ifdef HAVE_IPV6
+		if (bIsIPv6) {
+			L.SetAFRequire(CSSockAddr::RAF_INET6);
+		}
+#endif
 
 		return Listen(L, pcSock);
 	}
@@ -42,9 +47,14 @@ public:
 
 		L.SetSockName(sSockName);
 		L.SetIsSSL(isSSL);
-		L.SetIsIPv6(bIsIPv6);
 		L.SetTimeout(iTimeout);
 		L.SetMaxConns(iMaxConns);
+
+#ifdef HAVE_IPV6
+		if (bIsIPv6) {
+			L.SetAFRequire(CSSockAddr::RAF_INET6);
+		}
+#endif
 
 		Listen(L, pcSock, &uPort);
 

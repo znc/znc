@@ -122,9 +122,19 @@ public:
 #ifdef HAVE_IPV6
 		memset( (struct sockaddr_in6 *)&m_saddr6, '\0', sizeof( m_saddr6 ) );
 #endif /* HAVE_IPV6 */
+		m_iAFRequire = RAF_ANY;
 	}
 	virtual ~CSSockAddr() {}
 
+
+	enum EAFRequire
+	{
+		RAF_ANY		= PF_UNSPEC,
+		RAF_INET	= AF_INET,
+#ifdef HAVE_IPV6
+		RAF_INET6	= AF_INET6
+#endif /* HAVE_IPV6 */
+	};
 
 	void SinFamily()
 	{
@@ -165,7 +175,6 @@ public:
 	bool GetIPv6() const { return( m_bIsIPv6 ); }
 
 
-
 	socklen_t GetSockAddrLen() { return( sizeof( m_saddr ) ); }
 	sockaddr_in * GetSockAddr() { return( &m_saddr ); }
 	in_addr * GetAddr() { return( &(m_saddr.sin_addr) ); }
@@ -175,13 +184,16 @@ public:
 	in6_addr * GetAddr6() { return( &(m_saddr6.sin6_addr) ); }
 #endif /* HAVE_IPV6 */
 
+	void SetAFRequire( EAFRequire iWhich ) { m_iAFRequire = iWhich; }
+	EAFRequire GetAFRequire() const { return( m_iAFRequire ); }
+
 private:
 	bool			m_bIsIPv6;
 	sockaddr_in		m_saddr;
 #ifdef HAVE_IPV6
 	sockaddr_in6	m_saddr6;
 #endif /* HAVE_IPV6 */
-
+	EAFRequire		m_iAFRequire;
 };
 
 class Csock;
@@ -905,6 +917,12 @@ public:
 		m_bindhost.SetIPv6( b );
 	}
 
+	void SetAFRequire( CSSockAddr::EAFRequire iAFRequire )
+	{
+		m_address.SetAFRequire( iAFRequire );
+		m_bindhost.SetAFRequire( iAFRequire );
+	}
+
 private:
 	u_short		m_iport, m_iRemotePort, m_iLocalPort;
 	int			m_iReadSock, m_iWriteSock, m_itimeout, m_iConnType, m_iTcount, m_iMethod;
@@ -966,10 +984,10 @@ public:
 		m_iPort = iPort;
 		m_iTimeout = iTimeout;
 		m_bIsSSL = false;
-		m_bIsIPv6 = false;
 #ifdef HAVE_LIBSSL
 		m_sCipher = "HIGH";
 #endif /* HAVE_LIBSSL */
+		m_iAFrequire = CSSockAddr::RAF_ANY;
 	}
 	virtual ~CSConnection() {}
 
@@ -979,7 +997,8 @@ public:
 	u_short GetPort() const { return( m_iPort ); }
 	int GetTimeout() const { return( m_iTimeout ); }
 	bool GetIsSSL() const { return( m_bIsSSL ); }
-	bool GetIsIPv6() const { return( m_bIsIPv6 ); }
+	CSSockAddr::EAFRequire GetAFRequire() const { return( m_iAFrequire ); }
+
 #ifdef HAVE_LIBSSL
 	const CS_STRING & GetCipher() const { return( m_sCipher ); }
 	const CS_STRING & GetPemLocation() const { return( m_sPemLocation ); }
@@ -998,10 +1017,11 @@ public:
 	void SetTimeout( int i ) { m_iTimeout = i; }
 	//! set to true to enable SSL
 	void SetIsSSL( bool b ) { m_bIsSSL = b; }
-	//! set to true to enable ipv6
-	void SetIsIPv6( bool b ) { m_bIsIPv6 = b; }
-	//! set the cipher strength to use, default is HIGH
+	//! sets the AF family type required
+	void SetAFRequire( CSSockAddr::EAFRequire iAFRequire ) { m_iAFrequire = iAFRequire; }
+
 #ifdef HAVE_LIBSSL
+	//! set the cipher strength to use, default is HIGH
 	void SetCipher( const CS_STRING & s ) { m_sCipher = s; }
 	//! set the location of the pemfile
 	void SetPemLocation( const CS_STRING & s ) { m_sPemLocation = s; }
@@ -1013,7 +1033,8 @@ protected:
 	CS_STRING	m_sHostname, m_sSockName, m_sBindHost;
 	u_short		m_iPort;
 	int			m_iTimeout;
-	bool		m_bIsSSL, m_bIsIPv6;
+	bool		m_bIsSSL;
+	CSSockAddr::EAFRequire	m_iAFrequire;
 #ifdef HAVE_LIBSSL
 	CS_STRING	m_sPemLocation, m_sPemPass, m_sCipher;
 #endif /* HAVE_LIBSSL */
@@ -1046,9 +1067,9 @@ public:
 		m_iPort = iPort;
 		m_sBindHost = sBindHost;
 		m_bIsSSL = false;
-		m_bIsIPv6 = false;
 		m_iMaxConns = SOMAXCONN;
 		m_iTimeout = 0;
+		m_iAFrequire = CSSockAddr::RAF_ANY;
 #ifdef HAVE_LIBSSL
 		m_sCipher = "HIGH";
 		m_bRequiresClientCert = false;
@@ -1060,9 +1081,9 @@ public:
 	const CS_STRING & GetSockName() const { return( m_sSockName ); }
 	const CS_STRING & GetBindHost() const { return( m_sBindHost ); }
 	bool GetIsSSL() const { return( m_bIsSSL ); }
-	bool GetIsIPv6() const { return( m_bIsIPv6 ); }
 	int GetMaxConns() const { return( m_iMaxConns ); }
 	u_int GetTimeout() const { return( m_iTimeout ); }
+	CSSockAddr::EAFRequire GetAFRequire() const { return( m_iAFrequire ); }
 #ifdef HAVE_LIBSSL
 	const CS_STRING & GetCipher() const { return( m_sCipher ); }
 	const CS_STRING & GetPemLocation() const { return( m_sPemLocation ); }
@@ -1078,12 +1099,12 @@ public:
 	void SetBindHost( const CS_STRING & sBindHost ) { m_sBindHost = sBindHost; }
 	//! set to true to enable SSL
 	void SetIsSSL( bool b ) { m_bIsSSL = b; }
-	//! set to true to enable ipv6
-	void SetIsIPv6( bool b ) { m_bIsIPv6 = b; }
 	//! set max connections as called by accept()
 	void SetMaxConns( int i ) { m_iMaxConns = i; }
 	//! sets the listen timeout. The listener class will close after timeout has been reached if not 0
 	void SetTimeout( u_int i ) { m_iTimeout = i; }
+	//! sets the AF family type required
+	void SetAFRequire( CSSockAddr::EAFRequire iAFRequire ) { m_iAFrequire = iAFRequire; }
 
 #ifdef HAVE_LIBSSL
 	//! set the cipher strength to use, default is HIGH
@@ -1098,9 +1119,10 @@ public:
 private:
 	u_short		m_iPort;
 	CS_STRING	m_sSockName, m_sBindHost;
-	bool		m_bIsSSL, m_bIsIPv6;
+	bool		m_bIsSSL;
 	int			m_iMaxConns;
 	u_int		m_iTimeout;
+	CSSockAddr::EAFRequire	m_iAFrequire;
 
 #ifdef HAVE_LIBSSL
 	CS_STRING	m_sPemLocation, m_sPemPass, m_sCipher;
@@ -1161,10 +1183,8 @@ public:
 
 	void clear()
 	{
-		for( unsigned int i = 0; i < this->size(); i++ )
-			CS_Delete( (*this)[i] );
-
-		std::vector<T *>::clear();
+		while ( this->size() )
+			DelSock( 0 );
 	}
 
 	virtual void Cleanup()
@@ -1207,7 +1227,9 @@ public:
 			pcSock->SetPort( cCon.GetPort() );
 			pcSock->SetTimeout( cCon.GetTimeout() );
 		}
-		pcSock->SetIPv6( cCon.GetIsIPv6() );
+
+		if( cCon.GetAFRequire() != CSSockAddr::RAF_ANY )
+			pcSock->SetAFRequire( cCon.GetAFRequire() );
 
 		// make it NON-Blocking IO
 		pcSock->BlockIO( false );
@@ -1242,7 +1264,14 @@ public:
 			pcSock = new T();
 
 		pcSock->BlockIO( false );
-		pcSock->SetIPv6( cListen.GetIsIPv6() );
+		if( cListen.GetAFRequire() != CSSockAddr::RAF_ANY )
+		{
+			pcSock->SetAFRequire( cListen.GetAFRequire() );
+#ifdef HAVE_IPV6
+			if( cListen.GetAFRequire() == CSSockAddr::RAF_INET6 )
+				pcSock->SetIPv6( true );
+#endif /* HAVE_IPV6 */
+		}
 #ifdef HAVE_LIBSSL
 		pcSock->SetSSL( cListen.GetIsSSL() );
 		if( ( cListen.GetIsSSL() ) && ( !cListen.GetPemLocation().empty() ) )
@@ -1632,11 +1661,43 @@ public:
 			CS_DEBUG( "Invalid Sock Position Requested! [" << iPos << "]" );
 			return;
 		}
-		if ( (*this)[iPos]->IsConnected() )
-			(*this)[iPos]->Disconnected(); // only call disconnected event if connected event was called (IE IsConnected was set)
 
-		CS_Delete( (*this)[iPos] );
+		Csock * pSock = (*this)[iPos];
+
+		if ( pSock->IsConnected() )
+			pSock->Disconnected(); // only call disconnected event if connected event was called (IE IsConnected was set)
+
+		m_iBytesRead += pSock->GetBytesRead();
+		m_iBytesWritten += pSock->GetBytesWritten();
+
+		CS_Delete( pSock );
 		this->erase( this->begin() + iPos );
+	}
+
+	//! Get the bytes read from all sockets current and past
+	unsigned long long GetBytesRead() const
+	{
+		// Start with the total bytes read from destroyed sockets
+		unsigned long long iRet = m_iBytesRead;
+
+		// Add in the outstanding bytes read from active sockets
+		for( u_int a = 0; a < this->size(); a++ )
+			iRet += (*this)[a]->GetBytesRead();
+
+		return( iRet );
+	}
+
+	//! Get the bytes written to all sockets current and past
+	unsigned long long GetBytesWritten() const
+	{
+		// Start with the total bytes written to destroyed sockets
+		unsigned long long iRet = m_iBytesWritten;
+
+		// Add in the outstanding bytes written to active sockets
+		for( u_int a = 0; a < this->size(); a++ )
+			iRet += (*this)[a]->GetBytesWritten();
+
+		return( iRet );
 	}
 
 private:
@@ -1937,6 +1998,8 @@ private:
 	EMessages				m_errno;
 	std::vector<CCron *>	m_vcCrons;
 	unsigned long long		m_iCallTimeouts;
+	unsigned long long		m_iBytesRead;
+	unsigned long long		m_iBytesWritten;
 	u_int					m_iSelectWait;
 };
 
