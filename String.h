@@ -65,6 +65,19 @@ public:
 		ESQL,
 	} EEscape;
 
+	explicit CString(char c);
+	explicit CString(unsigned char c);
+	explicit CString(short i);
+	explicit CString(unsigned short i);
+	explicit CString(int i);
+	explicit CString(unsigned int i);
+	explicit CString(long i);
+	explicit CString(unsigned long i);
+	explicit CString(long long i);
+	explicit CString(unsigned long long i);
+	explicit CString(double i);
+	explicit CString(float i);
+
 	CString() : string() {}
 	CString(const char* c) : string(c) {}
 	CString(const string& s) : string(s) {}
@@ -118,18 +131,6 @@ public:
 	void Crypt(const CString& sPass, bool bEncrypt, const CString& sIvec = "");
 #endif
 
-	static CString ToString(char c);
-	static CString ToString(unsigned char c);
-	static CString ToString(short i);
-	static CString ToString(unsigned short i);
-	static CString ToString(int i);
-	static CString ToString(unsigned int i);
-	static CString ToString(long i);
-	static CString ToString(unsigned long i);
-	static CString ToString(long long i);
-	static CString ToString(unsigned long long i);
-	static CString ToString(double i);
-	static CString ToString(float i);
 	static CString ToPercent(double d);
 	static CString ToKBytes(double d);
 

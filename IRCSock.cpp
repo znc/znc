@@ -636,21 +636,21 @@ bool CIRCSock::OnPrivCTCP(CNick& Nick, CString& sMessage) {
 				unsigned short uBNCPort = CDCCBounce::DCCRequest(FromNick.GetNick(), uLongIP, uPort, "", true, m_pUser, GetLocalIP(), CUtils::GetIP(uLongIP));
 
 				if (uBNCPort) {
-					m_pUser->PutUser(":" + Nick.GetNickMask() + " PRIVMSG " + GetNick() + " :\001DCC CHAT chat " + CString::ToString(CUtils::GetLongIP(GetLocalIP())) + " " + CString::ToString(uBNCPort) + "\001");
+					m_pUser->PutUser(":" + Nick.GetNickMask() + " PRIVMSG " + GetNick() + " :\001DCC CHAT chat " + CString(CUtils::GetLongIP(GetLocalIP())) + " " + CString(uBNCPort) + "\001");
 				}
 			}
 		} else if (sType.CaseCmp("SEND") == 0) {
 			// DCC SEND readme.txt 403120438 5550 1104
 			unsigned short uBNCPort = CDCCBounce::DCCRequest(Nick.GetNick(), uLongIP, uPort, sFile, false, m_pUser, GetLocalIP(), CUtils::GetIP(uLongIP));
 			if (uBNCPort) {
-				m_pUser->PutUser(":" + Nick.GetNickMask() + " PRIVMSG " + GetNick() + " :\001DCC SEND " + sFile + " " + CString::ToString(CUtils::GetLongIP(GetLocalIP())) + " " + CString::ToString(uBNCPort) + " " + CString::ToString(uFileSize) + "\001");
+				m_pUser->PutUser(":" + Nick.GetNickMask() + " PRIVMSG " + GetNick() + " :\001DCC SEND " + sFile + " " + CString(CUtils::GetLongIP(GetLocalIP())) + " " + CString(uBNCPort) + " " + CString(uFileSize) + "\001");
 			}
 		} else if (sType.CaseCmp("RESUME") == 0) {
 			// Need to lookup the connection by port, filter the port, and forward to the user
 			CDCCBounce* pSock = (CDCCBounce*) CZNC::Get().GetManager().FindSockByLocalPort(atoi(sMessage.Token(3).c_str()));
 
 			if ((pSock) && (strncasecmp(pSock->GetSockName().c_str(), "DCC::", 5) == 0)) {
-				m_pUser->PutUser(":" + Nick.GetNickMask() + " PRIVMSG " + GetNick() + " :\001DCC " + sType + " " + sFile + " " + CString::ToString(pSock->GetUserPort()) + " " + sMessage.Token(4) + "\001");
+				m_pUser->PutUser(":" + Nick.GetNickMask() + " PRIVMSG " + GetNick() + " :\001DCC " + sType + " " + sFile + " " + CString(pSock->GetUserPort()) + " " + sMessage.Token(4) + "\001");
 			}
 		} else if (sType.CaseCmp("ACCEPT") == 0) {
 			// Need to lookup the connection by port, filter the port, and forward to the user
@@ -661,7 +661,7 @@ bool CIRCSock::OnPrivCTCP(CNick& Nick, CString& sMessage) {
 
 				if ((pSock) && (strncasecmp(pSock->GetSockName().c_str(), "DCC::", 5) == 0)) {
 					if (pSock->GetUserPort() == atoi(sMessage.Token(3).c_str())) {
-						m_pUser->PutUser(":" + Nick.GetNickMask() + " PRIVMSG " + GetNick() + " :\001DCC " + sType + " " + sFile + " " + CString::ToString(pSock->GetLocalPort()) + " " + sMessage.Token(4) + "\001");
+						m_pUser->PutUser(":" + Nick.GetNickMask() + " PRIVMSG " + GetNick() + " :\001DCC " + sType + " " + sFile + " " + CString(pSock->GetLocalPort()) + " " + sMessage.Token(4) + "\001");
 					}
 				}
 			}

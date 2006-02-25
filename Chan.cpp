@@ -46,7 +46,7 @@ bool CChan::WriteConfig(CFile& File) {
 
 	File.Write("\t<Chan " + GetName() + ">\r\n");
 
-	File.Write("\t\tBuffer     = " + CString::ToString(GetBufferCount()) + "\r\n");
+	File.Write("\t\tBuffer     = " + CString(GetBufferCount()) + "\r\n");
 	File.Write("\t\tKeepBuffer = " + CString((KeepBuffer()) ? "true" : "false") + "\r\n");
 	File.Write("\t\tDetached   = " + CString((IsDetached()) ? "true" : "false") + "\r\n");
 	File.Write("\t\tAutoCycle  = " + CString((AutoCycle()) ? "true" : "false") + "\r\n");
@@ -76,7 +76,7 @@ void CChan::JoinUser(bool bForce, const CString& sKey, CClient* pClient) {
 
 	if (!GetTopic().empty()) {
 		m_pUser->PutUser(":" + m_pUser->GetIRCServer() + " 332 " + m_pUser->GetIRCNick().GetNick() + " " + GetName() + " :" + GetTopic(), pClient);
-		m_pUser->PutUser(":" + m_pUser->GetIRCServer() + " 333 " + m_pUser->GetIRCNick().GetNick() + " " + GetName() + " " + GetTopicOwner() + " " + CString::ToString(GetTopicDate()), pClient);
+		m_pUser->PutUser(":" + m_pUser->GetIRCServer() + " 333 " + m_pUser->GetIRCNick().GetNick() + " " + GetName() + " " + GetTopicOwner() + " " + CString(GetTopicDate()), pClient);
 	}
 
 	CString sPre = ":" + m_pUser->GetIRCServer() + " 353 " + m_pUser->GetIRCNick().GetNick() + " = " + GetName() + " :";

@@ -150,7 +150,7 @@ int CZNC::Loop() {
 			}
 
 			DEBUG_ONLY(cout << "User [" << pUser->GetUserName() << "] is connecting to [" << pServer->GetName() << ":" << pServer->GetPort() << "] ..." << endl);
-			pUser->PutStatus("Attempting to connect to [" + pServer->GetName() + ":" + CString::ToString(pServer->GetPort()) + "] ...");
+			pUser->PutStatus("Attempting to connect to [" + pServer->GetName() + ":" + CString(pServer->GetPort()) + "] ...");
 
 			pIRCSock = new CIRCSock(pUser);
 			pIRCSock->SetPass(pServer->GetPass());
@@ -194,7 +194,7 @@ bool CZNC::WritePidFile(int iPid) {
 		CUtils::PrintAction("Writing pid file [" + m_sPidFile + "]");
 
 		if (File.Open(O_WRONLY | O_TRUNC | O_CREAT)) {
-			File.Write(CString::ToString(iPid) + "\n");
+			File.Write(CString(iPid) + "\n");
 			File.Close();
 			CUtils::PrintStatus(true);
 			return true;
@@ -321,7 +321,7 @@ CString CZNC::ExpandConfigPath(const CString& sConfigFile) {
 bool CZNC::WriteConfig() {
 	CFile File(m_sConfigFile);
 
-	if (!File.Copy(GetConfBackupPath() + "/" + File.GetShortName() + "-" + CString::ToString(time(NULL)))) {
+	if (!File.Copy(GetConfBackupPath() + "/" + File.GetShortName() + "-" + CString(time(NULL)))) {
 		return false;
 	}
 
@@ -339,7 +339,7 @@ bool CZNC::WriteConfig() {
 
 		CString s6 = (pListener->IsIPV6()) ? "6" : " ";
 
-		File.Write("Listen" + s6 + "      = " + sHostPortion + CString((pListener->IsSSL()) ? "+" : "") + CString::ToString(pListener->GetPort()) + "\r\n");
+		File.Write("Listen" + s6 + "      = " + sHostPortion + CString((pListener->IsSSL()) ? "+" : "") + CString(pListener->GetPort()) + "\r\n");
 	}
 
 	if (!m_sISpoofFile.empty()) {
@@ -440,7 +440,7 @@ bool CZNC::WriteNewConfig(const CString& sConfig) {
 		sListenHost += " ";
 	}
 
-	vsLines.push_back("Listen" + s6 + "    = " + sListenHost + sSSL + CString::ToString(uPort));
+	vsLines.push_back("Listen" + s6 + "    = " + sListenHost + sSSL + CString(uPort));
 	// !Listen
 
 #ifdef _MODULES
@@ -526,7 +526,7 @@ bool CZNC::WriteNewConfig(const CString& sConfig) {
 
 		unsigned int uBufferCount = 0;
 
-		CUtils::GetNumInput("Number of lines to buffer per channel", uBufferCount, 0, ~0, 50);	if (uBufferCount) { vsLines.push_back("\tBuffer     = " + CString::ToString(uBufferCount)); }
+		CUtils::GetNumInput("Number of lines to buffer per channel", uBufferCount, 0, ~0, 50);	if (uBufferCount) { vsLines.push_back("\tBuffer     = " + CString(uBufferCount)); }
 		if (CUtils::GetBoolInput("Would you like your buffer to be sticky?", true)) {
 			vsLines.push_back("\tKeepBuffer = true");
 		} else {
@@ -598,7 +598,7 @@ bool CZNC::WriteNewConfig(const CString& sConfig) {
 			bSSL = CUtils::GetBoolInput("Does this server use SSL? (probably no)", false);
 #endif
 
-			vsLines.push_back("\tServer     = " + sHost + ((bSSL) ? " +" : " ") + CString::ToString(uPort) + " " + sPass);
+			vsLines.push_back("\tServer     = " + sHost + ((bSSL) ? " +" : " ") + CString(uPort) + " " + sPass);
 		} while (CUtils::GetBoolInput("Would you like to add another server?", false));
 
 		vsLines.push_back("");
@@ -678,7 +678,7 @@ bool CZNC::WriteNewConfig(const CString& sConfig) {
 	CUtils::PrintMessage("as the irc server password like so.. user:pass.", true);
 	CUtils::PrintMessage("");
 	CUtils::PrintMessage("Try something like this in your IRC client...", true);
-	CUtils::PrintMessage("/server <znc_server_ip> " + CString::ToString(uPort) + " " + sUser + ":<pass>", true);
+	CUtils::PrintMessage("/server <znc_server_ip> " + CString(uPort) + " " + sUser + ":<pass>", true);
 	CUtils::PrintMessage("");
 
 	m_LockFile.UnLock();
@@ -998,7 +998,7 @@ bool CZNC::ParseConfig(const CString& sConfig) {
 					}
 
 					unsigned short uPort = strtol(sPort.c_str(), NULL, 10);
-					CUtils::PrintAction("Binding to port [" + CString((bSSL) ? "+" : "") + CString::ToString(uPort) + "]" + sHostComment + sIPV6Comment);
+					CUtils::PrintAction("Binding to port [" + CString((bSSL) ? "+" : "") + CString(uPort) + "]" + sHostComment + sIPV6Comment);
 
 #ifndef HAVE_IPV6
 					if (bIPV6) {
@@ -1024,7 +1024,7 @@ bool CZNC::ParseConfig(const CString& sConfig) {
 							return false;
 						}
 
-						CUtils::PrintAction("Binding to port [+" + CString::ToString(uPort) + "]" + sHostComment + sIPV6Comment);
+						CUtils::PrintAction("Binding to port [+" + CString(uPort) + "]" + sHostComment + sIPV6Comment);
 					}
 #endif
 					if (!uPort) {

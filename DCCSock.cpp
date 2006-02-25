@@ -45,7 +45,7 @@ void CDCCSock::Timeout() {
 
 void CDCCSock::SockError(int iErrno) {
 	DEBUG_ONLY(cout << GetSockName() << " == SockError(" << iErrno << ")" << endl);
-	m_pUser->PutModule(m_sModuleName, ((m_bSend) ? "DCC -> [" : "DCC <- [") + m_sRemoteNick + "][" + m_sFileName + "] - Socket Error [" + CString::ToString(iErrno) + "]");
+	m_pUser->PutModule(m_sModuleName, ((m_bSend) ? "DCC -> [" : "DCC <- [") + m_sRemoteNick + "][" + m_sFileName + "] - Socket Error [" + CString(iErrno) + "]");
 }
 
 void CDCCSock::Connected() {

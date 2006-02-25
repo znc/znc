@@ -18,6 +18,9 @@
  *
  * 
  * $Log$
+ * Revision 1.21  2006/02/25 09:43:35  prozacx
+ * Migrated away from CString::ToString() in favor of explicit constructors
+ *
  * Revision 1.20  2006/02/11 11:55:55  imaginos
  * fixed wrong type being used on 64bit
  *
@@ -225,7 +228,7 @@ public:
 			CString sWhich = sCommand.Token(1);
 			if ( sWhich == "all" )
 			{
-				PutModNotice( "Deleted " + CString::ToString( m_vMessages.size() ) + " Messages.", "away" );
+				PutModNotice( "Deleted " + CString( m_vMessages.size() ) + " Messages.", "away" );
 				for( u_int a = 0; a < m_vMessages.size(); a++ )
 					m_vMessages.erase( m_vMessages.begin() + a-- );
 
@@ -293,7 +296,7 @@ public:
 					m_vMessages.erase( m_vMessages.begin() + a-- );
 					continue;
 				}
-				CString sTmp = "    " + CString::ToString( a ) + ") [";
+				CString sTmp = "    " + CString( a ) + ") [";
 				sTmp.append( szFormat, iCount );
 				sTmp += "] ";
 				sTmp += sMessage;
@@ -354,12 +357,12 @@ public:
 			if ( bUsePrivMessage )
 			{
 				PutModule( "Welcome Back!", "away" );
-				PutModule( "You have " + CString::ToString( m_vMessages.size() ) + " messages!", "away" );
+				PutModule( "You have " + CString( m_vMessages.size() ) + " messages!", "away" );
 			}
 			else
 			{
 				PutModNotice( "Welcome Back!", "away" );
-				PutModNotice( "You have " + CString::ToString( m_vMessages.size() ) + " messages!", "away" );
+				PutModNotice( "You have " + CString( m_vMessages.size() ) + " messages!", "away" );
 			}
 		}
 		m_sReason = "";
@@ -427,7 +430,7 @@ private:
 
 	void AddMessage( time_t iTime, const CNick & Nick, CString & sMessage )
 	{
-		AddMessage( CString::ToString( iTime ) + ":" + Nick.GetNickMask() + ":" + sMessage );
+		AddMessage( CString( iTime ) + ":" + Nick.GetNickMask() + ":" + sMessage );
 	}
 
 	void AddMessage( const CString & sText )

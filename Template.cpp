@@ -19,9 +19,9 @@ CString CTemplateLoopContext::GetValue(const CString& sName) {
 	}
 
 	if (sName.CaseCmp("__ID__") == 0) {
-		return CString::ToString(GetRowIndex() +1);
+		return CString(GetRowIndex() +1);
 	} else if (sName.CaseCmp("__COUNT__") == 0) {
-		return CString::ToString(GetRowCount());
+		return CString(GetRowCount());
 	} else if (sName.CaseCmp("__ODD__") == 0) {
 		return ((GetRowIndex() %2) ? "" : "1");
 	} else if (sName.CaseCmp("__EVEN__") == 0) {

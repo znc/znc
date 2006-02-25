@@ -316,8 +316,8 @@ void CModule::ListTimers() {
 
 		Table.AddRow();
 		Table.SetCell("Name", pTimer->GetName());
-		Table.SetCell("Secs", CString::ToString(pTimer->GetInterval()));
-		Table.SetCell("Cycles", ((uCycles) ? CString::ToString(uCycles) : "INF"));
+		Table.SetCell("Secs", CString(pTimer->GetInterval()));
+		Table.SetCell("Cycles", ((uCycles) ? CString(uCycles) : "INF"));
 		Table.SetCell("Description", pTimer->GetDescription());
 	}
 
@@ -414,10 +414,10 @@ void CModule::ListSockets() {
 			Table.SetCell("State", (pSocket->IsConnected() ? "Connected" : ""));
 		}
 
-		Table.SetCell("LocalPort", CString::ToString(pSocket->GetLocalPort()));
+		Table.SetCell("LocalPort", CString(pSocket->GetLocalPort()));
 		Table.SetCell("SSL", (pSocket->GetSSL() ? "yes" : "no"));
 		Table.SetCell("RemoteIP", pSocket->GetRemoteIP());
-		Table.SetCell("RemotePort", (pSocket->GetRemotePort()) ? CString::ToString(pSocket->GetRemotePort()) : CString(""));
+		Table.SetCell("RemotePort", (pSocket->GetRemotePort()) ? CString(pSocket->GetRemotePort()) : CString(""));
 	}
 
 	if (Table.size()) {

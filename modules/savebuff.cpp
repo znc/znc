@@ -24,6 +24,9 @@
  * better solution then plain text.
  * 
  * $Log$
+ * Revision 1.29  2006/02/25 09:43:35  prozacx
+ * Migrated away from CString::ToString() in favor of explicit constructors
+ *
  * Revision 1.28  2006/02/11 11:55:55  imaginos
  * fixed wrong type being used on 64bit
  *
@@ -323,7 +326,7 @@ public:
 
 	CString SpoofChanMsg( const CString & sChannel, const CString & sMesg )
 	{
-		CString sReturn = ":*" + GetModName() + "!znc@znc.com PRIVMSG " + sChannel + " :" + CString::ToString( time( NULL ) ) + " " + sMesg;
+		CString sReturn = ":*" + GetModName() + "!znc@znc.com PRIVMSG " + sChannel + " :" + CString( time( NULL ) ) + " " + sMesg;
 		return( sReturn );
 	}
 

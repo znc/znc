@@ -16,6 +16,9 @@
  * Author: imaginos <imaginos@imaginos.net>
  *
  * $Log$
+ * Revision 1.12  2006/02/25 09:43:35  prozacx
+ * Migrated away from CString::ToString() in favor of explicit constructors
+ *
  * Revision 1.11  2006/02/12 21:00:59  prozacx
  * Wrapped TSocketManager into CSockManager
  *
@@ -151,7 +154,7 @@ public:
 					//PutModule( "------------------- New Email -------------------" );
 					Table.AddRow();
 					Table.SetCell( "From", vEmails[a].sFrom.Ellipsize( 32 ) );
-					Table.SetCell( "Size", CString::ToString( vEmails[a].iSize ) );
+					Table.SetCell( "Size", CString( vEmails[a].iSize ) );
 					Table.SetCell( "Subject", vEmails[a].sSubject.Ellipsize( 64 ) );
 				}
 				ssUidls.insert( vEmails[a].sUidl );

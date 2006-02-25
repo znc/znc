@@ -272,10 +272,10 @@ bool CHTTPSock::PrintErrorPage(unsigned int uStatusId, const CString& sStatusMsg
 
 CString CHTTPSock::GetErrorPage(unsigned int uStatusId, const CString& sStatusMsg, const CString& sMessage) {
 	return "<!DOCTYPE HTML PUBLIC \"-//IETF//DTD HTML 2.0//EN\">\r\n"
-		"<html><head>\r\n<title>" + CString::ToString(uStatusId) + " " + sStatusMsg.Escape_n(CString::EHTML) + "</title>\r\n"
+		"<html><head>\r\n<title>" + CString(uStatusId) + " " + sStatusMsg.Escape_n(CString::EHTML) + "</title>\r\n"
 		"</head><body>\r\n<h1>" + sStatusMsg.Escape_n(CString::EHTML) + "</h1>\r\n"
 		"<p>" + sMessage.Escape_n(CString::EHTML) + "</p>\r\n"
-		"<hr>\r\n<address>" + CZNC::GetTag().Escape_n(CString::EHTML) + " at " + GetLocalIP().Escape_n(CString::EHTML) + " Port " + CString::ToString(GetLocalPort()) + "</address>\r\n"
+		"<hr>\r\n<address>" + CZNC::GetTag().Escape_n(CString::EHTML) + " at " + GetLocalIP().Escape_n(CString::EHTML) + " Port " + CString(GetLocalPort()) + "</address>\r\n"
 		"</body></html>\r\n";
 }
 
@@ -321,10 +321,10 @@ bool CHTTPSock::PrintHeader(unsigned long uContentLength, const CString& sConten
 
 	DEBUG_ONLY(cout << "- " << uStatusId << " (" << sStatusMsg << ") [" << m_sContentType << "]" << endl);
 
-	Write("HTTP/1.0 " + CString::ToString(uStatusId) + " " + sStatusMsg + "\r\n");
+	Write("HTTP/1.0 " + CString(uStatusId) + " " + sStatusMsg + "\r\n");
 	//Write("Date: Tue, 28 Jun 2005 20:45:36 GMT\r\n");
 	Write("Server: ZNC " + CZNC::GetTag() + "\r\n");
-	Write("Content-Length: " + CString::ToString(uContentLength) + "\r\n");
+	Write("Content-Length: " + CString(uContentLength) + "\r\n");
 	Write("Connection: Close\r\n");
 	Write("Content-Type: " + m_sContentType + "\r\n");
 

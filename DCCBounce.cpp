@@ -25,14 +25,14 @@ void CDCCBounce::Timeout() {
 	if (IsRemote()) {
 		CString sHost = Csock::GetHostName();
 		if (!sHost.empty()) {
-			sHost = " to [" + sHost + ":" + CString::ToString(Csock::GetPort()) + "]";
+			sHost = " to [" + sHost + ":" + CString(Csock::GetPort()) + "]";
 		} else {
 			sHost = ".";
 		}
 
 		m_pUser->PutStatus("DCC " + sType + " Bounce (" + m_sRemoteNick + "): Timeout while connecting" + sHost);
 	} else {
-		m_pUser->PutStatus("DCC " + sType + " Bounce (" + m_sRemoteNick + "): Timeout waiting for incoming connection [" + Csock::GetLocalIP() + ":" + CString::ToString(Csock::GetLocalPort()) + "]");
+		m_pUser->PutStatus("DCC " + sType + " Bounce (" + m_sRemoteNick + "): Timeout waiting for incoming connection [" + Csock::GetLocalIP() + ":" + CString(Csock::GetLocalPort()) + "]");
 	}
 }
 
@@ -42,7 +42,7 @@ void CDCCBounce::ConnectionRefused() {
 	CString sType = (m_bIsChat) ? "Chat" : "Xfer";
 	CString sHost = Csock::GetHostName();
 	if (!sHost.empty()) {
-		sHost = " to [" + sHost + ":" + CString::ToString(Csock::GetPort()) + "]";
+		sHost = " to [" + sHost + ":" + CString(Csock::GetPort()) + "]";
 	} else {
 		sHost = ".";
 	}
@@ -57,12 +57,12 @@ void CDCCBounce::SockError(int iErrno) {
 	if (IsRemote()) {
 		CString sHost = Csock::GetHostName();
 		if (!sHost.empty()) {
-			sHost = "[" + sHost + ":" + CString::ToString(Csock::GetPort()) + "]";
+			sHost = "[" + sHost + ":" + CString(Csock::GetPort()) + "]";
 		}
 
 		m_pUser->PutStatus("DCC " + sType + " Bounce (" + m_sRemoteNick + "): Socket error [" + CString(strerror(iErrno)) + "]" + sHost);
 	} else {
-		m_pUser->PutStatus("DCC " + sType + " Bounce (" + m_sRemoteNick + "): Socket error [" + CString(strerror(iErrno)) + "] [" + Csock::GetLocalIP() + ":" + CString::ToString(Csock::GetLocalPort()) + "]");
+		m_pUser->PutStatus("DCC " + sType + " Bounce (" + m_sRemoteNick + "): Socket error [" + CString(strerror(iErrno)) + "] [" + Csock::GetLocalIP() + ":" + CString(Csock::GetLocalPort()) + "]");
 	}
 }
 

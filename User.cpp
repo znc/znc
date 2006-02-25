@@ -496,7 +496,7 @@ bool CUser::WriteConfig(CFile& File) {
 	PrintLine(File, "AwaySuffix", GetAwaySuffix());
 	PrintLine(File, "StatusPrefix", GetStatusPrefix());
 	PrintLine(File, "ChanModes", GetDefaultChanModes());
-	PrintLine(File, "Buffer", CString::ToString(GetBufferCount()));
+	PrintLine(File, "Buffer", CString(GetBufferCount()));
 	PrintLine(File, "KeepNick", CString((GetKeepNick()) ? "true" : "false"));
 	PrintLine(File, "KeepBuffer", CString((KeepBuffer()) ? "true" : "false"));
 	PrintLine(File, "MultiClients", CString((MultiClients()) ? "true" : "false"));
@@ -830,7 +830,7 @@ bool CUser::ResumeFile(const CString& sRemoteNick, unsigned short uPort, unsigne
 
 			if (pSock->GetLocalPort() == uPort) {
 				if (pSock->Seek(uFileSize)) {
-					PutModule(pSock->GetModuleName(), "DCC -> [" + pSock->GetRemoteNick() + "][" + pSock->GetFileName() + "] - Attempting to resume from file position [" + CString::ToString(uFileSize) + "]");
+					PutModule(pSock->GetModuleName(), "DCC -> [" + pSock->GetRemoteNick() + "][" + pSock->GetFileName() + "] - Attempting to resume from file position [" + CString(uFileSize) + "]");
 					return true;
 				} else {
 					return false;
@@ -856,11 +856,11 @@ bool CUser::SendFile(const CString& sRemoteNick, const CString& sFileName, const
 	unsigned short uPort = CZNC::Get().GetManager().ListenAllRand("DCC::LISTEN::" + sRemoteNick, false, SOMAXCONN, pSock, 120);
 
 	if (GetNick().CaseCmp(sRemoteNick) == 0) {
-		PutUser(":" + GetStatusPrefix() + "status!znc@znc.com PRIVMSG " + sRemoteNick + " :\001DCC SEND " + pFile->GetShortName() + " " + CString::ToString(CUtils::GetLongIP(GetLocalIP())) + " "
-			   	+ CString::ToString(uPort) + " " + CString::ToString(pFile->GetSize()) + "\001");
+		PutUser(":" + GetStatusPrefix() + "status!znc@znc.com PRIVMSG " + sRemoteNick + " :\001DCC SEND " + pFile->GetShortName() + " " + CString(CUtils::GetLongIP(GetLocalIP())) + " "
+			   	+ CString(uPort) + " " + CString(pFile->GetSize()) + "\001");
 	} else {
-		PutIRC("PRIVMSG " + sRemoteNick + " :\001DCC SEND " + pFile->GetShortName() + " " + CString::ToString(CUtils::GetLongIP(GetLocalIP())) + " "
-			    + CString::ToString(uPort) + " " + CString::ToString(pFile->GetSize()) + "\001");
+		PutIRC("PRIVMSG " + sRemoteNick + " :\001DCC SEND " + pFile->GetShortName() + " " + CString(CUtils::GetLongIP(GetLocalIP())) + " "
+			    + CString(uPort) + " " + CString(pFile->GetSize()) + "\001");
 	}
 
 	PutModule(sModuleName, "DCC -> [" + sRemoteNick + "][" + pFile->GetShortName() + "] - Attempting Send.");

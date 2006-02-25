@@ -119,6 +119,19 @@ const char* g_szHTMLescapes[256] = {
 	"&yuml;",   // 255
 };
 
+CString::CString(char c) { stringstream s; s << c; *this = s.str(); }
+CString::CString(unsigned char c) { stringstream s; s << c; *this = s.str(); }
+CString::CString(short i) { stringstream s; s << i; *this = s.str(); }
+CString::CString(unsigned short i) { stringstream s; s << i; *this = s.str(); }
+CString::CString(int i) { stringstream s; s << i; *this = s.str(); }
+CString::CString(unsigned int i) { stringstream s; s << i; *this = s.str(); }
+CString::CString(long i) { stringstream s; s << i; *this = s.str(); }
+CString::CString(unsigned long i) { stringstream s; s << i; *this = s.str(); }
+CString::CString(long long i) { stringstream s; s << i; *this = s.str(); }
+CString::CString(unsigned long long i) { stringstream s; s << i; *this = s.str(); }
+CString::CString(double i) { stringstream s; s << i; *this = s.str(); }
+CString::CString(float i) { stringstream s; s << i; *this = s.str(); }
+
 inline unsigned char* CString::strnchr(const unsigned char* src, unsigned char c, unsigned int iMaxBytes, unsigned char* pFill, unsigned int* piCount) const {
     for (unsigned int a = 0; a < iMaxBytes && *src; a++, src++) {
 		if (pFill) {
@@ -834,19 +847,6 @@ void CString::Crypt(const CString& sPass, bool bEncrypt, const CString& sIvec) {
 	free(szBuff);
 }
 #endif	// HAVE_LIBSSL
-
-CString CString::ToString(char c) { stringstream s; s << c; return s.str(); }
-CString CString::ToString(unsigned char c) { stringstream s; s << c; return s.str(); }
-CString CString::ToString(short i) { stringstream s; s << i; return s.str(); }
-CString CString::ToString(unsigned short i) { stringstream s; s << i; return s.str(); }
-CString CString::ToString(int i) { stringstream s; s << i; return s.str(); }
-CString CString::ToString(unsigned int i) { stringstream s; s << i; return s.str(); }
-CString CString::ToString(long i) { stringstream s; s << i; return s.str(); }
-CString CString::ToString(unsigned long i) { stringstream s; s << i; return s.str(); }
-CString CString::ToString(long long i) { stringstream s; s << i; return s.str(); }
-CString CString::ToString(unsigned long long i) { stringstream s; s << i; return s.str(); }
-CString CString::ToString(double i) { stringstream s; s << i; return s.str(); }
-CString CString::ToString(float i) { stringstream s; s << i; return s.str(); }
 
 CString CString::ToPercent(double d) {
 	char szRet[32];

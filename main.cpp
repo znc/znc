@@ -37,7 +37,7 @@ void die(int sig) {
 	signal(SIGPIPE, SIG_DFL);
 
 #ifdef _DEBUG
-	CUtils::PrintMessage("Exiting on SIG [" + CString::ToString(sig) + "]");
+	CUtils::PrintMessage("Exiting on SIG [" + CString(sig) + "]");
 	if ((sig == SIGABRT) || (sig == SIGSEGV)) {
 		abort();
 	}
@@ -187,7 +187,7 @@ int main(int argc, char** argv, char** envp) {
 	}
 
 	if (iPid > 0) {
-		CUtils::PrintStatus(true, "[pid: " + CString::ToString(iPid) + "]");
+		CUtils::PrintStatus(true, "[pid: " + CString(iPid) + "]");
 
 		pZNC->WritePidFile(iPid);
 		CUtils::PrintMessage(CZNC::GetTag(false));

@@ -312,13 +312,13 @@ bool CUtils::GetNumInput(const CString& sPrompt, unsigned int& uRet, unsigned in
 		return false;
 	}
 
-	CString sDefault = (uDefault != (unsigned int) ~0) ? CString::ToString(uDefault) : "";
+	CString sDefault = (uDefault != (unsigned int) ~0) ? CString(uDefault) : "";
 	CString sNum, sHint;
 
 	if (uMax != (unsigned int) ~0) {
-		sHint = CString::ToString(uMin) + " to " + CString::ToString(uMax);
+		sHint = CString(uMin) + " to " + CString(uMax);
 	} else if (uMin > 0) {
-		sHint = CString::ToString(uMin) + " and up";
+		sHint = CString(uMin) + " and up";
 	}
 
 	while (true) {

@@ -226,7 +226,7 @@ public:
 				Table.AddRow();
 
 				Table.SetCell("Channel", a->first);
-				Table.SetCell("Users", CString::ToString(a->second.size()));
+				Table.SetCell("Users", CString(a->second.size()));
 			}
 
 			unsigned int uTableIdx = 0;

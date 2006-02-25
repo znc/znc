@@ -242,7 +242,7 @@ void CWebAdminSock::ListUsersPage(CString& sPageRet) {
 		CUser& User = *it->second;
 
 		l["Username"] = User.GetUserName();
-		l["Clients"] = CString::ToString(User.GetClients().size());
+		l["Clients"] = CString(User.GetClients().size());
 		l["IRCNick"] = User.GetIRCNick().GetNick();
 
 		if (pServer) {
@@ -333,7 +333,7 @@ bool CWebAdminSock::OnPageRequest(const CString& sURI, CString& sPageRet) {
 		unsigned int uCounter = m_pModule->GetSwitchCounter(GetRemoteIP());
 
 		if (!uCurCnt) {
-			Redirect("/switchuser?cnt=" + CString::ToString(uCounter));
+			Redirect("/switchuser?cnt=" + CString(uCounter));
 			return false;
 		}
 
@@ -462,7 +462,7 @@ bool CWebAdminSock::SettingsPage(CString& sPageRet) {
 			CListener* pListener = vpListeners[c];
 			CTemplate& l = m_Template.AddRow("ListenLoop");
 
-			l["Port"] = CString::ToString(pListener->GetPort());
+			l["Port"] = CString(pListener->GetPort());
 			l["BindHost"] = pListener->GetBindHost();
 
 #ifdef HAVE_LIBSSL
@@ -609,7 +609,7 @@ bool CWebAdminSock::ChanPage(CString& sPageRet, CChan* pChan) {
 			m_Template["Edit"] = "true";
 			m_Template["Title"] = "Edit Channel" + CString(" [" + pChan->GetName() + "]");
 			m_Template["ChanName"] = pChan->GetName();
-			m_Template["BufferCount"] = CString::ToString(pChan->GetBufferCount());
+			m_Template["BufferCount"] = CString(pChan->GetBufferCount());
 			m_Template["DefModes"] = pChan->GetDefaultModes();
 
 			if (pChan->InConfig()) {
@@ -728,7 +728,7 @@ bool CWebAdminSock::UserPage(CString& sPageRet, CUser* pUser) {
 			m_Template["RealName"] = pUser->GetRealName();
 			m_Template["QuitMsg"] = pUser->GetQuitMsg();
 			m_Template["DefaultChanModes"] = pUser->GetDefaultChanModes();
-			m_Template["BufferCount"] = CString::ToString(pUser->GetBufferCount());
+			m_Template["BufferCount"] = CString(pUser->GetBufferCount());
 
 			const set<CString>& ssAllowedHosts = pUser->GetAllowedHosts();
 			for (set<CString>::const_iterator it = ssAllowedHosts.begin(); it != ssAllowedHosts.end(); it++) {
@@ -778,7 +778,7 @@ bool CWebAdminSock::UserPage(CString& sPageRet, CUser* pUser) {
 				l["Perms"] = pChan->GetPermStr();
 				l["CurModes"] = pChan->GetModeString();
 				l["DefModes"] = pChan->GetDefaultModes();
-				l["BufferCount"] = CString::ToString(pChan->GetBufferCount());
+				l["BufferCount"] = CString(pChan->GetBufferCount());
 				l["Options"] = pChan->GetOptions();
 
 				if (pChan->InConfig()) {
