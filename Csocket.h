@@ -864,6 +864,9 @@ public:
 	 */
 	virtual void ReadPaused() {}
 
+	//! return the duration since last write
+	int GetLastWriteDuration() { return m_iTcount; }
+
 	//! return the data imediatly ready for read
 	virtual int GetPending();
 

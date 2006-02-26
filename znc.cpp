@@ -24,7 +24,6 @@ CZNC::CZNC() {
 CZNC::~CZNC() {
 #ifdef _MODULES
 	m_pModules->UnloadAll();
-	delete m_pModules;
 
 	for (map<CString,CUser*>::iterator a = m_msUsers.begin(); a != m_msUsers.end(); a++) {
 		a->second->GetModules().UnloadAll();
@@ -37,6 +36,7 @@ CZNC::~CZNC() {
 
 	m_Manager.Cleanup();
 	DeleteUsers();
+	delete m_pModules;
 }
 
 CString CZNC::GetTag(bool bIncludeVersion) {

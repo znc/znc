@@ -38,8 +38,10 @@ CUser::CUser(const CString& sUserName) {
 	m_pAwayNickTimer = NULL;
 	m_pKeepNickTimer = new CKeepNickTimer(this);
 	m_pJoinTimer = new CJoinTimer(this);
+	m_pMiscTimer = new CMiscTimer(this);
 	CZNC::Get().GetManager().AddCron(m_pKeepNickTimer);
 	CZNC::Get().GetManager().AddCron(m_pJoinTimer);
+	CZNC::Get().GetManager().AddCron(m_pMiscTimer);
 	m_sUserPath = CZNC::Get().GetUserPath() + "/" + sUserName;
 	m_sDLPath = GetUserPath() + "/downloads";
 }
@@ -60,6 +62,7 @@ CUser::~CUser() {
 	CZNC::Get().GetManager().DelCronByAddr(m_pAwayNickTimer);
 	CZNC::Get().GetManager().DelCronByAddr(m_pKeepNickTimer);
 	CZNC::Get().GetManager().DelCronByAddr(m_pJoinTimer);
+	CZNC::Get().GetManager().DelCronByAddr(m_pMiscTimer);
 }
 
 #ifdef _MODULES

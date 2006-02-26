@@ -28,6 +28,31 @@ protected:
 	unsigned int	m_uTrys;
 };
 
+class CMiscTimer : public CCron {
+public:
+	CMiscTimer(CUser* pUser) : CCron() {
+		m_pUser = pUser;
+		Start(30);
+	}
+	virtual ~CMiscTimer() {}
+
+private:
+protected:
+	virtual void RunJob() {
+		vector<CClient*>& vClients = m_pUser->GetClients();
+
+		for (size_t a = 0; a < vClients.size(); a++) {
+			CClient* pClient = vClients[a];
+
+			if (pClient->GetLastWriteDuration() >= 470) {
+				pClient->PutClient("PING :ZNC");
+			}
+		}
+	}
+
+	CUser*	m_pUser;
+};
+
 class CJoinTimer : public CCron {
 public:
 	CJoinTimer(CUser* pUser) : CCron() {

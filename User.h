@@ -24,6 +24,7 @@ class CBackNickTimer;
 class CAwayNickTimer;
 class CKeepNickTimer;
 class CJoinTimer;
+class CMiscTimer;
 
 class CUser {
 public:
@@ -206,6 +207,7 @@ protected:
 	CAwayNickTimer*		m_pAwayNickTimer;
 	CKeepNickTimer*		m_pKeepNickTimer;
 	CJoinTimer*			m_pJoinTimer;
+	CMiscTimer*			m_pMiscTimer;
 
 	vector<CServer*>	m_vServers;
 	vector<CChan*>		m_vChans;
