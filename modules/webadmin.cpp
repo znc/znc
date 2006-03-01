@@ -62,6 +62,7 @@ private:
 protected:
 	CWebAdminMod*	m_pModule;
 	CUser*			m_pUser;
+	CUser*			m_pSessionUser;
 	bool			m_bAdmin;
 	CTemplate		m_Template;
 };
@@ -222,6 +223,8 @@ bool CWebAdminSock::OnLogin(const CString& sUser, const CString& sPass) {
 				m_pUser = pUser;
 			}
 
+			m_pSessionUser = pUser;
+
 			return true;
 		}
 	}
@@ -245,6 +248,10 @@ void CWebAdminSock::ListUsersPage(CString& sPageRet) {
 		l["Clients"] = CString(User.GetClients().size());
 		l["IRCNick"] = User.GetIRCNick().GetNick();
 
+		if (&User == m_pSessionUser) {
+			l["IsSelf"] = "true";
+		}
+
 		if (pServer) {
 			l["Server"] = pServer->GetName();
 		}
@@ -265,6 +272,7 @@ Csock* CWebAdminSock::GetSockObj(const CString& sHost, unsigned short uPort) {
 CWebAdminSock::CWebAdminSock(CWebAdminMod* pModule) : CHTTPSock() {
 	m_pModule = pModule;
 	m_pUser = NULL;
+	m_pSessionUser = NULL;
 	m_bAdmin = false;
 	m_pModule->AddSock(this);
 	SetDocRoot(GetSkinDir());
@@ -273,6 +281,7 @@ CWebAdminSock::CWebAdminSock(CWebAdminMod* pModule) : CHTTPSock() {
 CWebAdminSock::CWebAdminSock(CWebAdminMod* pModule, const CString& sHostname, unsigned short uPort, int iTimeout) : CHTTPSock(sHostname, uPort, iTimeout) {
 	m_pModule = pModule;
 	m_pUser = NULL;
+	m_pSessionUser = NULL;
 	m_bAdmin = false;
 	m_pModule->AddSock(this);
 	SetDocRoot(GetSkinDir());
@@ -423,7 +432,12 @@ bool CWebAdminSock::OnPageRequest(const CString& sURI, CString& sPageRet) {
 			return false;
 		}
 
-		if (CZNC::Get().DeleteUser(GetParam("user"))) {
+		CString sUser = GetParam("user");
+		CUser* pUser = CZNC::Get().FindUser(sUser);
+
+		if (pUser && pUser == m_pSessionUser) {
+			GetErrorPage(sPageRet, "You are not allowed to delete yourself");
+		} else if (CZNC::Get().DeleteUser(sUser)) {
 			Redirect("/listusers");
 			return false;
 		} else {
