@@ -11,6 +11,7 @@ if test -z "$1"; then
 	echo "	--includes   [$INCLUDES]"
 	echo "	--libs       [$LIBS]"
 	echo "	--version    [$VERSION]"
+	echo "	--prefix     [@prefix@]"
 	exit 1
 fi
 
@@ -23,6 +24,8 @@ case $1 in
 		echo $LIBS;;
 	--version)
 		echo $VERSION;;
+	--prefix)
+		echo "@prefix@";;
 esac
 
 exit 0
