@@ -9,6 +9,7 @@
 #include <sys/stat.h>
 #include <dirent.h>
 #include <stdio.h>
+#include <signal.h>
 
 #include "main.h"
 #include <vector>
@@ -365,6 +366,11 @@ public:
 		m_iPid = popen2(iReadFD, iWriteFD, sExec);
 		ConnectFD(iReadFD, iWriteFD, "0.0.0.0:0");
 		return( m_iPid );
+	}
+	void Kill( int iSignal )
+	{
+		kill( m_iPid, iSignal );
+		Close();
 	}
 	virtual ~CExecSock() {
 		close2(m_iPid, GetRSock(), GetWSock());
