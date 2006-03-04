@@ -12,78 +12,19 @@
 // Forward Declaration
 class CShellMod;
 
-class CExecSock : public Csock {
+class CShellSock : public CExecSock {
 public:
-	CExecSock(CShellMod* pShellMod, CClient* pClient, const CString& sExec) : Csock() {
+	CShellSock(CShellMod* pShellMod, CClient* pClient, const CString& sExec) : CExecSock( sExec ) {
 		EnableReadLine();
 		m_pParent = pShellMod;
 		m_pClient = pClient;
-		int iReadFD, iWriteFD;
-		m_iPid = popen2(iReadFD, iWriteFD, sExec);
-		ConnectFD(iReadFD, iWriteFD, "0.0.0.0:0");
 	}
-
-	virtual ~CExecSock() {
-		close2(m_iPid, GetRSock(), GetWSock());
-		SetRSock( -1 );
-		SetWSock( -1 );
-	}
-
 	// These next two function's bodies are at the bottom of the file since they reference CShellMod
 	virtual void ReadLine(const CString& sData);
 	virtual void Disconnected();
 
 	CShellMod*	m_pParent;
-	int			m_iPid;
 
-	int popen2(int & iReadFD, int & iWriteFD, const CString & sCommand) {
-		int rpipes[2] = { -1, -1 };
-		int wpipes[2] = { -1, -1 };
-		iReadFD = -1;
-		iWriteFD = -1;
-
-		pipe(rpipes);
-		pipe(wpipes);
-		
-		int iPid = fork();
-
-		if (iPid == -1) {
-			return -1;
-		}
-
-		if (iPid == 0) {
-			close(wpipes[1]);
-			close(rpipes[0]);
-			dup2(wpipes[0], 0);
-			dup2(rpipes[1], 1);
-			dup2(rpipes[1], 2);
-			close(wpipes[0]);
-			close(rpipes[1]);
-			system( sCommand.c_str() );
-			exit(0);
-		}
-
-		close(wpipes[0]);
-		close(rpipes[1]);
-
-		iWriteFD = wpipes[1];
-		iReadFD = rpipes[0];
-
-		return iPid;
-	}
-
-	void close2(int iPid, int iReadFD, int iWriteFD) {
-		close( iReadFD );
-		close( iWriteFD );
-		u_int iNow = time( NULL );
-		while( waitpid( iPid, NULL, WNOHANG ) == 0 )
-		{
-			if ( ( time( NULL ) - iNow ) > 5 )
-				break;	// giveup
-			usleep( 100 );
-		}
-		return;
-	}
 private:
 	CClient*	m_pClient;
 };
@@ -188,13 +129,13 @@ public:
 	}
 
 	void RunCommand(const CString& sCommand) {
-		m_pManager->AddSock((Csock*) new CExecSock(this, m_pClient, "cd " + m_sPath + " && " + sCommand), "SHELL");
+		m_pManager->AddSock((Csock*) new CShellSock(this, m_pClient, "cd " + m_sPath + " && " + sCommand), "SHELL");
 	}
 private:
 	CString	m_sPath;
 };
 
-void CExecSock::ReadLine(const CString& sData) {
+void CShellSock::ReadLine(const CString& sData) {
 	CString sLine = sData;
 
 	while ((sLine.length()) && (sLine[sLine.length() -1] == '\r') || (sLine[sLine.length() -1] == '\n')) {
@@ -212,7 +153,7 @@ void CExecSock::ReadLine(const CString& sData) {
 	m_pParent->SetClient(NULL);
 }
 
-void CExecSock::Disconnected() {
+void CShellSock::Disconnected() {
 	m_pParent->SetClient(m_pClient);
 	m_pParent->PutShell("znc$");
 	m_pParent->SetClient(NULL);

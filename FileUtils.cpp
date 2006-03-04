@@ -1,5 +1,6 @@
 #include "FileUtils.h"
 #include <iostream>
+#include <sys/wait.h>
 
 using std::cout;
 using std::cerr;
@@ -317,3 +318,52 @@ CString CFile::GetDir() const {
 }
 
 void CFile::SetFD(int iFD) { m_iFD = iFD; }
+
+int CExecSock::popen2(int & iReadFD, int & iWriteFD, const CString & sCommand) {
+	int rpipes[2] = { -1, -1 };
+	int wpipes[2] = { -1, -1 };
+	iReadFD = -1;
+	iWriteFD = -1;
+
+	pipe(rpipes);
+	pipe(wpipes);
+	
+	int iPid = fork();
+
+	if (iPid == -1) {
+		return -1;
+	}
+
+	if (iPid == 0) {
+		close(wpipes[1]);
+		close(rpipes[0]);
+		dup2(wpipes[0], 0);
+		dup2(rpipes[1], 1);
+		dup2(rpipes[1], 2);
+		close(wpipes[0]);
+		close(rpipes[1]);
+		system( sCommand.c_str() );
+		exit(0);
+	}
+
+	close(wpipes[0]);
+	close(rpipes[1]);
+
+	iWriteFD = wpipes[1];
+	iReadFD = rpipes[0];
+
+	return iPid;
+}
+
+void CExecSock::close2(int iPid, int iReadFD, int iWriteFD) {
+	close( iReadFD );
+	close( iWriteFD );
+	u_int iNow = time( NULL );
+	while( waitpid( iPid, NULL, WNOHANG ) == 0 )
+	{
+		if ( ( time( NULL ) - iNow ) > 5 )
+			break;	// giveup
+		usleep( 100 );
+	}
+	return;
+}

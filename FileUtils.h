@@ -10,7 +10,7 @@
 #include <dirent.h>
 #include <stdio.h>
 
-#include "String.h"
+#include "main.h"
 #include <vector>
 #include <map>
 using std::vector;
@@ -350,4 +350,32 @@ protected:
 	bool				m_bDesc;
 };
 
+class CExecSock : public Csock {
+public:
+	CExecSock() : Csock() {
+		m_iPid = -1;
+	}
+
+	CExecSock(const CString& sExec) : Csock() {
+		Execute( sExec );
+	}
+
+	int Execute( const CString & sExec ) {
+		int iReadFD, iWriteFD;
+		m_iPid = popen2(iReadFD, iWriteFD, sExec);
+		ConnectFD(iReadFD, iWriteFD, "0.0.0.0:0");
+		return( m_iPid );
+	}
+	virtual ~CExecSock() {
+		close2(m_iPid, GetRSock(), GetWSock());
+		SetRSock( -1 );
+		SetWSock( -1 );
+	}
+
+	int popen2(int & iReadFD, int & iWriteFD, const CString & sCommand);
+	void close2(int iPid, int iReadFD, int iWriteFD);
+
+private:
+	int			m_iPid;
+};
 #endif // !_FILEUTILS_H
