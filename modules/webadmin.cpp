@@ -770,18 +770,6 @@ bool CWebAdminSock::UserPage(CString& sPageRet, CUser* pUser) {
 				}
 			}
 
-			const VCString& vsVHosts = CZNC::Get().GetVHosts();
-			for (unsigned int b = 0; b < vsVHosts.size(); b++) {
-				const CString& sVHost = vsVHosts[b];
-				CTemplate& l = m_Template.AddRow("VHostLoop");
-
-				l["VHost"] = sVHost;
-
-				if (pUser && pUser->GetVHost() == sVHost) {
-					l["Checked"] = "true";
-				}
-			}
-
 			const vector<CChan*>& Channels = pUser->GetChans();
 			for (unsigned int c = 0; c < Channels.size(); c++) {
 				CChan* pChan = Channels[c];
@@ -803,6 +791,18 @@ bool CWebAdminSock::UserPage(CString& sPageRet, CUser* pUser) {
 			m_Template["Action"] = "adduser";
 			m_Template["Title"] = "Add User";
 			m_Template["StatusPrefix"] = "*";
+		}
+
+		const VCString& vsVHosts = CZNC::Get().GetVHosts();
+		for (unsigned int b = 0; b < vsVHosts.size(); b++) {
+			const CString& sVHost = vsVHosts[b];
+			CTemplate& l = m_Template.AddRow("VHostLoop");
+
+			l["VHost"] = sVHost;
+
+			if (pUser && pUser->GetVHost() == sVHost) {
+				l["Checked"] = "true";
+			}
 		}
 
 		set<CModInfo> ssUserMods;
