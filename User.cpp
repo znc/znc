@@ -405,7 +405,7 @@ bool CUser::IsValidUserName(const CString& sUserName) {
 	}
 
 	while (*p) {
-		if (*p != '-' && *p != '_' && !isalnum(*p)) {
+		if (*p != '@' && *p != '.' && *p != '-' && *p != '_' && !isalnum(*p)) {
 			return false;
 		}
 
