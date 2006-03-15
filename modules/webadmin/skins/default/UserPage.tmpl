@@ -12,9 +12,9 @@
 					<div>
 						<? IF Edit ?>
 						<input type="hidden" name="user" value="<? VAR Username ESC=HTML ?>" />
-						<input type="text" name="newuser" value="<? VAR Username ESC=HTML ?>" size="32" maxlength="12" disabled="disabled" />
+						<input type="text" name="newuser" value="<? VAR Username ESC=HTML ?>" size="32" maxlength="128" disabled="disabled" />
 						<? ELSE ?>
-						<input type="text" name="user" value="<? VAR Username ESC=HTML ?>" size="32" maxlength="12" />
+						<input type="text" name="user" value="<? VAR Username ESC=HTML ?>" size="32" maxlength="128" />
 						<? ENDIF ?>
 					</div>
 

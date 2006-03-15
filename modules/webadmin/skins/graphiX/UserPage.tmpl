@@ -16,9 +16,9 @@
 					<td class="mainright">
 						<? IF Edit ?>
 						<input type="hidden" name="user" style="width: 100%;" value="<? VAR Username ESC=HTML ?>">
-						<input type="text" name="newuser" style="width: 100%;" value="<? VAR Username ESC=HTML ?>" size="32" maxlength="12" disabled="disabled">
+						<input type="text" name="newuser" style="width: 100%;" value="<? VAR Username ESC=HTML ?>" size="32" maxlength="128" disabled="disabled">
 						<? ELSE ?>
-						<input type="text" name="user" style="width: 100%;" value="<? VAR Username ESC=HTML ?>" size="32" maxlength="12">
+						<input type="text" name="user" style="width: 100%;" value="<? VAR Username ESC=HTML ?>" size="32" maxlength="128">
 						<? ENDIF ?>
 					</td>
 				</tr>
