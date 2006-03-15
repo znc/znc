@@ -630,7 +630,7 @@ public:
 	* pushes data up on the buffer, if a line is ready
 	* it calls the ReadLine event
 	*/
-	virtual void PushBuff( const char *data, int len );
+	virtual void PushBuff( const char *data, int len, bool bStartAtZero = false );
 
 	//! This gives access to the internal buffer, if your
 	//! not going to use GetLine(), then you may want to clear this out
@@ -864,8 +864,9 @@ public:
 	 */
 	virtual void ReadPaused() {}
 
-	//! return the duration since last write
-	int GetLastWriteDuration() { return m_iTcount; }
+
+	//! return how long it has been (in seconds) since the last write
+	int GetTimeSinceLastWrite() { return m_iTcount; }
 
 	//! return the data imediatly ready for read
 	virtual int GetPending();

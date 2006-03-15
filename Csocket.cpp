@@ -1285,6 +1285,7 @@ void Csock::UnPauseRead()
 {
 	m_bPauseRead = false;
 	ResetTimer();
+	PushBuff( "", 0, true );
 }
 
 void Csock::SetTimeout( int iTimeout, u_int iTimeoutType )
@@ -1316,17 +1317,17 @@ bool Csock::CheckTimeout()
 	return( false );
 }
 
-void Csock::PushBuff( const char *data, int len )
+void Csock::PushBuff( const char *data, int len, bool bStartAtZero )
 {
 	if ( !m_bEnableReadLine )
 		return;	// If the ReadLine event is disabled, just ditch here
 
-	u_int iStartPos = ( m_sbuffer.empty() ? 0 : m_sbuffer.length() - 1 );
+	u_int iStartPos = ( m_sbuffer.empty() || bStartAtZero ? 0 : m_sbuffer.length() - 1 );
 
 	if ( data )
 		m_sbuffer.append( data, len );
 
-	while( true )
+	while( !m_bPauseRead )
 	{
 		CS_STRING::size_type iFind = m_sbuffer.find( "\n", iStartPos );
 
