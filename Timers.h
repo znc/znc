@@ -44,7 +44,7 @@ protected:
 		for (size_t a = 0; a < vClients.size(); a++) {
 			CClient* pClient = vClients[a];
 
-			if (pClient->GetLastWriteDuration() >= 470) {
+			if (pClient->GetTimeSinceLastWrite() >= 470) {
 				pClient->PutClient("PING :ZNC");
 			}
 		}
