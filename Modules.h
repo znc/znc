@@ -390,6 +390,7 @@ public:
 	virtual ~CGlobalModule() {}
 
 	virtual EModRet OnConfigLine(const CString& sName, const CString& sValue, CUser* pUser, CChan* pChan);
+	virtual EModRet OnLoginAttempt(CSmartPtr<CAuthBase> Auth);
 private:
 };
 
@@ -399,6 +400,7 @@ public:
 	virtual ~CGlobalModules() {}
 
 	virtual bool OnConfigLine(const CString& sName, const CString& sValue, CUser* pUser, CChan* pChan);
+	virtual bool OnLoginAttempt(CSmartPtr<CAuthBase> Auth);
 private:
 };
 

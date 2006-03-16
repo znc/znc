@@ -124,12 +124,26 @@ CSocket::~CSocket() {
 }
 
 bool CSocket::Connect(const CString& sHostname, unsigned short uPort, bool bSSL, unsigned int uTimeout) {
-	CString sSockName = "MOD::C::" + m_pModule->GetModName() + "::" + m_pModule->GetUser()->GetUserName();
-	return m_pModule->GetManager()->Connect(sHostname, uPort, sSockName, uTimeout, bSSL, m_pModule->GetUser()->GetVHost(), (Csock*) this);
+	CUser* pUser = m_pModule->GetUser();
+	CString sSockName = "MOD::C::" + m_pModule->GetModName();
+	CString sVHost;
+
+	if (pUser) {
+		sSockName += "::" + pUser->GetUserName();
+		sVHost = m_pModule->GetUser()->GetVHost();
+	}
+
+	return m_pModule->GetManager()->Connect(sHostname, uPort, sSockName, uTimeout, bSSL, sVHost, (Csock*) this);
 }
 
 bool CSocket::Listen(unsigned short uPort, bool bSSL, unsigned int uTimeout) {
-	CString sSockName = "MOD::L::" + m_pModule->GetModName() + "::" + m_pModule->GetUser()->GetUserName();
+	CUser* pUser = m_pModule->GetUser();
+	CString sSockName = "MOD::L::" + m_pModule->GetModName();
+
+	if (pUser) {
+		sSockName += "::" + pUser->GetUserName();
+	}
+
 	return m_pModule->GetManager()->ListenAll(uPort, sSockName, bSSL, SOMAXCONN, (Csock*) this);
 }
 
@@ -191,7 +205,7 @@ CModule::~CModule() {
 	}
 
 	while (m_vSockets.size()) {
-		RemSocket(m_vSockets[0]->GetLabel());
+		RemSocket(m_vSockets[0]);
 	}
 
 	SaveRegistry();
@@ -501,6 +515,8 @@ bool CModule::PutModNotice(const CString& sLine, const CString& sIdent, const CS
 // CGlobalModule //
 ///////////////////
 CModule::EModRet CGlobalModule::OnConfigLine(const CString& sName, const CString& sValue, CUser* pUser, CChan* pChan) { return CONTINUE; }
+CModule::EModRet CGlobalModule::OnLoginAttempt(CSmartPtr<CAuthBase> Auth) { return CONTINUE; }
+
 
 CModules::CModules() {
 	m_pUser = NULL;
@@ -578,6 +594,10 @@ void CModules::OnModCTCP(const CString& sMessage) { MODUNLOADCHK(OnModCTCP(sMess
 ////////////////////
 bool CGlobalModules::OnConfigLine(const CString& sName, const CString& sValue, CUser* pUser, CChan* pChan) {
 	GLOBALMODHALTCHK(OnConfigLine(sName, sValue, pUser, pChan));
+}
+
+bool CGlobalModules::OnLoginAttempt(CSmartPtr<CAuthBase> Auth) {
+	GLOBALMODHALTCHK(OnLoginAttempt(Auth));
 }
 
 CModule* CModules::FindModule(const CString& sModule) const {
