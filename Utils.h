@@ -6,6 +6,7 @@
 #include <sys/time.h>
 #include <sys/file.h>
 #include <stdio.h>
+#include <assert.h>
 
 #include "String.h"
 #include <vector>
@@ -322,6 +323,173 @@ inline CString Upper(const CString & sLine) {
 
 	return sRet;
 }
+
+/**
+ * @class CNoCopy
+ * @author prozac <prozac@rottenboy.com>
+ * @brief This class is intended to be derived from to prevent copying of your derived class, the implementations of the copy constructor and equals operator were intentionally made private and omitted
+ */
+class CNoCopy {
+protected:
+	CNoCopy() {}	// Allow construction
+	~CNoCopy() {}	// and destruction of derived objects
+private:
+	CNoCopy(const CNoCopy&);				// Disallow copying
+	CNoCopy& operator =(const CNoCopy&);	// and assignment
+};
+
+/**
+ * @class CSafePtr
+ * @author prozac <prozac@rottenboy.com>
+ * @brief This class is intended to be created on the stack and hold a pointer which will be deleted upon destruction.  It is useful for functions where you need an allocated pointer and have many return paths.  It prevents copying to get around the exclusive ownership situation which makes std::auto_ptr invalidate the first pointer on copy.  This is intended to be used in simplistic situations such as local variables.
+ */
+template<typename T>
+class CSafePtr : private CNoCopy {
+public:
+	CSafePtr() { m_pType = new T; }
+	CSafePtr(T* p) { m_pType = p; }
+	~CSafePtr() { delete m_pType; }
+
+	T& operator *() const { assert(m_pType); return *m_pType; }
+	T* operator ->() const { assert(m_pType); return m_pType; }
+private:
+	operator T() const;
+	T*	m_pType;
+};
+
+/**
+ * @class CSmartPtr
+ * @author prozac <prozac@rottenboy.com>
+ * @brief This is a standard reference counting pointer.  Be careful not to have two of these point to the same raw pointer or one will be deleted while the other still thinks it is valid.
+ */
+template<typename T>
+class CSmartPtr {
+public:
+	/**
+	 * @brief Standard constructor, points to nothing
+	 */
+	CSmartPtr() {
+		m_pType = NULL;
+		m_puCount = NULL;
+	}
+
+	/**
+	 * @brief Attach to an existing raw pointer, be CAREFUL not to have more than one CSmartPtr attach to the same raw pointer or bad things will happen
+	 * @param pRawPtr The raw pointer to attach to
+	 */
+	CSmartPtr(T* pRawPtr) {
+		m_pType = NULL;
+		m_puCount = NULL;
+
+		Attach(pRawPtr);
+	}
+
+	/**
+	 * @brief Copy constructor, will copy the raw pointer and counter locations and increment the reference counter
+	 * @param CopyFrom A reference of another CSmartPtr to copy from
+	 */
+	CSmartPtr(const CSmartPtr<T>& CopyFrom) {
+		m_pType = NULL;
+		m_puCount = NULL;
+
+		*this = CopyFrom;
+	}
+
+	/**
+	 * @brief Destructor will Release() the raw pointer and delete it if this was the last reference
+	 */
+	~CSmartPtr() {
+		Release();
+	}
+
+	// Overloaded operators
+	T& operator *() const { assert(m_pType); return *m_pType; }
+	T* operator ->() const { assert(m_pType); return m_pType; }
+	bool operator ==(T* rhs) { return (m_pType == p); }
+	bool operator ==(const CSmartPtr<T>& rhs) { return (m_pType == *rhs); }
+
+	/**
+	 * @brief Attach() to a raw pointer
+	 * @param pRawPtr The raw pointer to keep track of, ***WARNING*** Do _NOT_ allow more than one CSmartPtr keep track of the same raw pointer
+	 * @return Reference to self
+	 */
+	CSmartPtr<T>& operator =(T* p) { Attach(p); return *this; }
+
+	/**
+	 * @brief Copies an existing CSmartPtr adding another reference to the counter
+	 * @param CopyFrom A reference to another CSmartPtr to be copied
+	 * @return Reference to self
+	 */
+	CSmartPtr<T>& operator =(const CSmartPtr<T>& CopyFrom) {
+		if (&CopyFrom != this) {				// Check for assignment to self
+			Release();							// Release the current pointer
+			m_pType = &(*CopyFrom);				// Make our pointers reference the same raw pointer and counter
+			m_puCount = CopyFrom.GetCount();
+
+			if (m_pType) {						// If we now point to something valid, increment the counter
+				assert(m_puCount);
+				(*m_puCount)++;
+			}
+		}
+
+		return *this;
+	}
+	// !Overloaded operators
+
+	/**
+	 * @brief Check to see if the underlying raw pointer is null
+	 * @return Whether or not underlying raw pointer is null
+	 */
+	bool IsNull() const {
+		return (m_pType == NULL);
+	}
+
+	/**
+	 * @brief Attach to a given raw pointer, it will Release() the current raw pointer and assign the new one
+	 * @param pRawPtr The raw pointer to keep track of, ***WARNING*** Do _NOT_ allow more than one CSmartPtr keep track of the same raw pointer
+	 * @return Reference to self
+	 */
+	CSmartPtr<T>& Attach(T* pRawPtr) {
+		assert(pRawPtr);
+
+		if (pRawPtr != m_pType) {					// Check for assignment to self
+			Release();								// Release the current pointer
+			m_pType = pRawPtr;						// Point to the passed raw pointer
+
+			if (m_pType) {							// If the passed pointer was valid
+				m_puCount = new unsigned int(1);	// Create a new counter starting at 1 (us)
+			}
+		}
+
+		return *this;
+	}
+
+	/**
+	 * @brief Releases the underlying raw pointer and cleans up if we were the last reference to said pointer
+	 */
+	void Release() {
+		if (m_pType) {				// Only release if there is something to be released
+			assert(m_puCount);
+			(*m_puCount)--;			// Decrement our counter
+
+			if (!*m_puCount) {		// If we were the last reference to this pointer, then clean up
+				delete m_puCount;
+				delete m_pType;
+			}
+
+			m_pType = NULL;			// Get rid of our references
+			m_puCount = NULL;
+		}
+	}
+
+	// Getters
+	T* GetPtr() const { return m_pType; }
+	unsigned int* GetCount() const { return m_puCount; }
+	// !Getters
+private:
+	T*				m_pType;	//!< Raw pointer to the class being referenced
+	unsigned int*	m_puCount;	//!< Counter of how many CSmartPtr's are referencing the same raw pointer
+};
 
 #endif // !_UTILS_H
 
