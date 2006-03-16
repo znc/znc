@@ -7,18 +7,70 @@
 class CZNC;
 class CUser;
 class CIRCSock;
+class CClient;
 // !Forward Declarations
 
+
+class CAuthBase {
+public:
+	CAuthBase() {}
+	CAuthBase(const CString& sUsername, const CString& sPassword) {
+		SetLoginInfo(sUsername, sPassword);
+	}
+
+	virtual ~CAuthBase() {}
+
+	virtual void SetLoginInfo(const CString& sUsername, const CString& sPassword) {
+		m_sUsername = sUsername;
+		m_sPassword = sPassword;
+	}
+
+	virtual void AcceptLogin(CUser& User) = 0;
+	virtual void RefuseLogin(const CString& sReason) = 0;
+
+	virtual const CString& GetUsername() const { return m_sUsername; }
+	virtual const CString& GetPassword() const { return m_sPassword; }
+
+	static void AuthUser(CSmartPtr<CAuthBase> AuthClass);
+
+private:
+	CString		m_sUsername;
+	CString		m_sPassword;
+};
+
+
+class CClientAuth : public CAuthBase {
+public:
+	CClientAuth(CClient* pClient, const CString& sUsername, const CString& sPassword) : CAuthBase(sUsername, sPassword) {
+		m_pClient = pClient;
+	}
+
+	virtual ~CClientAuth() {}
+
+	void SetClient(CClient* pClient) { m_pClient = pClient; }
+	void AcceptLogin(CUser& User);
+	void RefuseLogin(const CString& sReason);
+private:
+protected:
+	CClient*	m_pClient;
+};
 
 class CClient : public Csock {
 public:
 	CClient() : Csock() {
 		Init();
 	}
+
 	CClient(const CString& sHostname, unsigned short uPort, int iTimeout = 60) : Csock(sHostname, uPort, iTimeout) {
 		Init();
 	}
-	virtual ~CClient() {}
+
+	virtual ~CClient() {
+		if (!m_spAuth.IsNull()) {
+			CClientAuth* pAuth = (CClientAuth*) &(*m_spAuth);
+			pAuth->SetClient(NULL);
+		}
+	}
 
 	void Init() {
 		m_pUser = NULL;
@@ -30,6 +82,9 @@ public:
 		m_uKeepNickCounter = 0;
 		EnableReadLine();
 	}
+
+	void AcceptLogin(CUser& User);
+	void RefuseLogin(const CString& sReason);
 
 	CString GetNick() const;
 	CString GetNickMask() const;
@@ -71,6 +126,7 @@ protected:
 	CString		m_sUser;
 	CIRCSock*	m_pIRCSock;
 	unsigned int	m_uKeepNickCounter;
+	CSmartPtr<CAuthBase>	m_spAuth;
 };
 
 #endif // !_CLIENT_H

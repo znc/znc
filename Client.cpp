@@ -1,7 +1,7 @@
 #include "main.h"
 #include "Client.h"
-#include "User.h"
 #include "znc.h"
+#include "User.h"
 #include "IRCSock.h"
 #include "DCCBounce.h"
 #include "DCCSock.h"
@@ -597,7 +597,11 @@ void CClient::UserCommand(const CString& sLine) {
 			PutStatus("There is no MOTD set.");
 		}
 	} else if (m_pUser->IsAdmin() && sCommand.CaseCmp("SaveConfig") == 0) {
-		CZNC::Get().WriteConfig();
+		if (CZNC::Get().WriteConfig()) {
+			PutStatus("Wrote config to [" + CZNC::Get().GetConfigFile() + "]");
+		} else {
+			PutStatus("Error while trying to write config.");
+		}
 	} else if (sCommand.CaseCmp("LISTCLIENTS") == 0) {
 		if (m_pUser) {
 			CUser* pUser = m_pUser;
@@ -1187,39 +1191,91 @@ bool CClient::ConnectionFrom(const CString& sHost, unsigned short uPort) {
 }
 
 void CClient::AuthUser() {
+	/*
+#ifdef _MODULES
+	if (CZNC::Get().GetModules().OnLoginAttempt(m_sUser, m_sPass, *this)) {
+		return;
+	}
+#endif
+
 	CUser* pUser = CZNC::Get().GetUser(m_sUser);
 
-	if ((!pUser) || (!pUser->CheckPass(m_sPass))) {
-		if (pUser) {
-			pUser->PutStatus("Another user attempted to login as you, with a bad password.");
-		}
-
-		PutStatus("Bad username and/or password.");
-		PutClient(":irc.znc.com 464 " + GetNick() + " :Password Incorrect");
-		Close();
+	if (pUser && pUser->CheckPass(m_sPass)) {
+		AcceptLogin(*pUser);
 	} else {
-		m_sPass = "";
-		m_pUser = pUser;
-
-		if (!m_pUser->IsHostAllowed(GetRemoteIP())) {
-			Close();
-			return;
+		if (pUser) {
+			pUser->PutStatus("Another client attempted to login as you, with a bad password.");
 		}
 
-		m_bAuthed = true;
-		SetSockName("USR::" + pUser->GetUserName());
+		RefuseLogin();
+	}
+	*/
 
-		m_pIRCSock = (CIRCSock*) CZNC::Get().FindSockByName("IRC::" + pUser->GetUserName());
-		m_pUser->UserConnected(this);
+	m_spAuth = new CClientAuth(this, m_sUser, m_sPass);
 
-		SendMotd();
+	CClientAuth::AuthUser(m_spAuth);
+}
+
+void CAuthBase::AuthUser(CSmartPtr<CAuthBase> AuthClass) {
+#ifdef _MODULES
+	if (CZNC::Get().GetModules().OnLoginAttempt(AuthClass)) {
+		return;
+	}
+#endif
+
+	CUser* pUser = CZNC::Get().GetUser(AuthClass->GetUsername());
+
+	if (pUser && pUser->CheckPass(AuthClass->GetPassword())) {
+		AuthClass->AcceptLogin(*pUser);
+	} else {
+		if (pUser) {
+			pUser->PutStatus("Another client attempted to login as you, with a bad password.");
+		}
+
+		AuthClass->RefuseLogin("Invalid Password");
+	}
+}
+
+void CClientAuth::RefuseLogin(const CString& sReason) {
+	if (m_pClient) {
+		m_pClient->RefuseLogin(sReason);
+	}
+}
+
+void CClient::RefuseLogin(const CString& sReason) {
+	PutStatus("Bad username and/or password.");
+	PutClient(":irc.znc.com 464 " + GetNick() + " :" + sReason);
+	Close();
+}
+
+void CClientAuth::AcceptLogin(CUser& User) {
+	if (m_pClient) {
+		m_pClient->AcceptLogin(User);
+	}
+}
+
+void CClient::AcceptLogin(CUser& User) {
+	m_sPass = "";
+	m_pUser = &User;
+
+	if (!m_pUser->IsHostAllowed(GetRemoteIP())) {
+		Close();
+		return;
+	}
+
+	m_bAuthed = true;
+	SetSockName("USR::" + m_pUser->GetUserName());
+
+	m_pIRCSock = (CIRCSock*) CZNC::Get().FindSockByName("IRC::" + m_pUser->GetUserName());
+	m_pUser->UserConnected(this);
+
+	SendMotd();
 
 #ifdef _MODULES
-		CZNC::Get().GetModules().SetClient(this);
-		VOIDMODULECALL(OnUserAttached());
-		CZNC::Get().GetModules().SetClient(NULL);
+	CZNC::Get().GetModules().SetClient(this);
+	VOIDMODULECALL(OnUserAttached());
+	CZNC::Get().GetModules().SetClient(NULL);
 #endif
-	}
 }
 
 void CClient::Connected() {
