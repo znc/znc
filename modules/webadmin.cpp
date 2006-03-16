@@ -241,7 +241,12 @@ bool CWebAdminSock::OnLogin(const CString& sUser, const CString& sPass) {
 	m_spAuth = new CWebAdminAuth(this, sUser, sPass);
 
 	if (CZNC::Get().GetModules().OnLoginAttempt(m_spAuth)) {
+		if (IsLoggedIn()) {
+			return true;
+		}
+
 		PauseRead();
+
 		return false;
 	}
 
