@@ -5,10 +5,31 @@
 #include "Chan.h"
 #include "znc.h"
 #include "HTTPSock.h"
+#include "Client.h"
 #include "Server.h"
 #include "Template.h"
 
 class CWebAdminMod;
+class CWebAdminSock;
+
+
+class CWebAdminAuth : public CAuthBase {
+public:
+	CWebAdminAuth(CWebAdminSock* pWebAdminSock, const CString& sUsername, const CString& sPassword)
+		: CAuthBase(sUsername, sPassword) {
+			m_pWebAdminSock = pWebAdminSock;
+	}
+
+	virtual ~CWebAdminAuth() {}
+
+	void SetWebAdminSock(CWebAdminSock* pWebAdminSock) { m_pWebAdminSock = pWebAdminSock; }
+	void AcceptLogin(CUser& User);
+	void RefuseLogin(const CString& sReason);
+private:
+protected:
+	CWebAdminSock*	m_pWebAdminSock;
+};
+
 
 class CWebAdminSock : public CHTTPSock {
 public:
@@ -55,16 +76,22 @@ public:
 		return "";
 	}
 
+	// Setters
+	void SetSessionUser(CUser* p) { m_pSessionUser = p; m_bAdmin = p->IsAdmin(); }
+	void SetAdmin(bool b) { m_bAdmin = b; }
+	// !Setters
+
 	virtual Csock* GetSockObj(const CString& sHost, unsigned short uPort);
 	bool IsAdmin(bool bAllowUserAdmin = true) const { return m_bAdmin; }
 
 private:
 protected:
-	CWebAdminMod*	m_pModule;
-	CUser*			m_pUser;
-	CUser*			m_pSessionUser;
-	bool			m_bAdmin;
-	CTemplate		m_Template;
+	CWebAdminMod*			m_pModule;
+	CUser*					m_pUser;
+	CUser*					m_pSessionUser;
+	bool					m_bAdmin;
+	CTemplate				m_Template;
+	CSmartPtr<CAuthBase>	m_spAuth;
 };
 
 class CWebAdminMod : public CGlobalModule {
@@ -211,6 +238,13 @@ void CWebAdminSock::PrintPage(CString& sPageRet, const CString& sTmplName) {
 }
 
 bool CWebAdminSock::OnLogin(const CString& sUser, const CString& sPass) {
+	m_spAuth = new CWebAdminAuth(this, sUser, sPass);
+
+	if (CZNC::Get().GetModules().OnLoginAttempt(m_spAuth)) {
+		PauseRead();
+		return false;
+	}
+
 	CUser* pUser = CZNC::Get().FindUser(GetUser());
 
 	if (pUser) {
@@ -289,6 +323,11 @@ CWebAdminSock::CWebAdminSock(CWebAdminMod* pModule, const CString& sHostname, un
 
 CWebAdminSock::~CWebAdminSock() {
 	m_pModule->SockDestroyed(this);
+
+	if (!m_spAuth.IsNull()) {
+		CWebAdminAuth* pAuth = (CWebAdminAuth*) &(*m_spAuth);
+		pAuth->SetWebAdminSock(NULL);
+	}
 }
 
 bool CWebAdminSock::OnPageRequest(const CString& sURI, CString& sPageRet) {
@@ -1048,6 +1087,20 @@ CUser* CWebAdminSock::GetNewUser(CString& sPageRet, CUser* pUser) {
 	}
 
 	return pNewUser;
+}
+
+void CWebAdminAuth::AcceptLogin(CUser& User) {
+	if (m_pWebAdminSock) {
+		m_pWebAdminSock->SetSessionUser(&User);
+		m_pWebAdminSock->SetLoggedIn(true);
+		m_pWebAdminSock->UnPauseRead();
+	}
+}
+
+void CWebAdminAuth::RefuseLogin(const CString& sReason) {
+	if (m_pWebAdminSock) {
+		m_pWebAdminSock->UnPauseRead();
+	}
 }
 
 GLOBALMODULEDEFS(CWebAdminMod, "Dynamic configuration of users/settings through a web browser")
