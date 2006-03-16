@@ -51,6 +51,7 @@ public:
 	// Getters
 	bool HasParam(const CString& sName) const;
 	CString GetParam(const CString& sName) const;
+	bool IsLoggedIn() const { return m_bLoggedIn; }
 	const CString& GetDocRoot() const;
 	const CString& GetUser() const;
 	const CString& GetPass() const;
