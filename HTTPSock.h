@@ -45,6 +45,7 @@ public:
 
 	// Setters
 	void SetDocRoot(const CString& s);
+	void SetLoggedIn(bool b) { m_bLoggedIn = b; }
 	// !Setters
 
 	// Getters
