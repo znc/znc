@@ -119,18 +119,18 @@ const char* g_szHTMLescapes[256] = {
 	"&yuml;",   // 255
 };
 
-CString::CString(char c) { stringstream s; s << c; *this = s.str(); }
-CString::CString(unsigned char c) { stringstream s; s << c; *this = s.str(); }
-CString::CString(short i) { stringstream s; s << i; *this = s.str(); }
-CString::CString(unsigned short i) { stringstream s; s << i; *this = s.str(); }
-CString::CString(int i) { stringstream s; s << i; *this = s.str(); }
-CString::CString(unsigned int i) { stringstream s; s << i; *this = s.str(); }
-CString::CString(long i) { stringstream s; s << i; *this = s.str(); }
-CString::CString(unsigned long i) { stringstream s; s << i; *this = s.str(); }
-CString::CString(long long i) { stringstream s; s << i; *this = s.str(); }
-CString::CString(unsigned long long i) { stringstream s; s << i; *this = s.str(); }
-CString::CString(double i) { stringstream s; s << i; *this = s.str(); }
-CString::CString(float i) { stringstream s; s << i; *this = s.str(); }
+CString::CString(char c) : string() { stringstream s; s << c; *this = s.str(); }
+CString::CString(unsigned char c) : string() { stringstream s; s << c; *this = s.str(); }
+CString::CString(short i) : string() { stringstream s; s << i; *this = s.str(); }
+CString::CString(unsigned short i) : string() { stringstream s; s << i; *this = s.str(); }
+CString::CString(int i) : string() { stringstream s; s << i; *this = s.str(); }
+CString::CString(unsigned int i) : string() { stringstream s; s << i; *this = s.str(); }
+CString::CString(long i) : string() { stringstream s; s << i; *this = s.str(); }
+CString::CString(unsigned long i) : string() { stringstream s; s << i; *this = s.str(); }
+CString::CString(long long i) : string() { stringstream s; s << i; *this = s.str(); }
+CString::CString(unsigned long long i) : string() { stringstream s; s << i; *this = s.str(); }
+CString::CString(double i) : string() { stringstream s; s << i; *this = s.str(); }
+CString::CString(float i) : string() { stringstream s; s << i; *this = s.str(); }
 
 inline unsigned char* CString::strnchr(const unsigned char* src, unsigned char c, unsigned int iMaxBytes, unsigned char* pFill, unsigned int* piCount) const {
     for (unsigned int a = 0; a < iMaxBytes && *src; a++, src++) {
