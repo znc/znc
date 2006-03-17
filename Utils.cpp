@@ -540,7 +540,11 @@ unsigned int CTable::GetColumnWidth(unsigned int uIdx) {
 
 	for (unsigned int a = 0; a < size(); a++) {
 		map<CString, CString>* pRow = (*this)[a];
-		uRet = uRet >? (*pRow)[m_vsHeaders[uIdx]].size();
+		unsigned int uTmp = (*pRow)[m_vsHeaders[uIdx]].size();
+
+		if (uTmp > uRet) {
+			uRet = uTmp;
+		}
 	}
 
 	return uRet;

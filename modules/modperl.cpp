@@ -724,7 +724,8 @@ XS(XS_ZNC_WriteSock)
 			if ( iLen > 0 )
 			{
 				PString sData;
-				sData.append( SvPV( ST(1), iLen ), iLen );
+				STRLEN iLen2 = iLen;
+				sData.append( SvPV( ST(1), iLen ), iLen2 );
 				CPerlSock *pSock = (CPerlSock *)MANAGER->FindSockByFD( iSockFD );
 				if ( ( pSock ) && ( pSock->GetSockName() == ZNCSOCK ) )
 					sReturn = pSock->Write( sData.data(), sData.length() );
