@@ -325,6 +325,85 @@ inline CString Upper(const CString & sLine) {
 }
 
 /**
+ * @class TCacheMap
+ * @author prozac <prozac@rottenboy.com>
+ * @brief Insert an object with a time-to-live and check later if it still exists
+ */
+template<typename T>
+class TCacheMap {
+public:
+	TCacheMap(unsigned int uTTL = 5000) {
+		m_uTTL = uTTL;
+	}
+
+	virtual ~TCacheMap() {}
+
+	/**
+	 * @brief This function adds an item to the cache using the default time-to-live value
+	 * @param Item the item to add to the cache
+	 */
+	void AddItem(const T& Item) {
+		AddItem(Item, m_uTTL);
+	}
+
+	/**
+	 * @brief This function adds an item to the cache using a custom time-to-live value
+	 * @param Item the item to add to the cache
+	 * @param uTTL the time-to-live for this specific item
+	 */
+	void AddItem(const T& Item, unsigned int uTTL) {
+		if (!uTTL) {			// If time-to-live is zero we don't want to waste our time adding it
+			RemItem(Item);		// Remove the item incase it already exists
+			return;
+		}
+
+		m_mItems[Item] = CUtils::GetMillTime() + uTTL;
+		Cleanup();
+	}
+
+	/**
+	 * @brief Performs a Cleanup() and then checks to see if your item exists
+	 * @param Item The item to check for
+	 * @return true if item exists
+	 */
+	bool HasItem(const T& Item) {
+		Cleanup();
+		return (m_mItems.find(Item) != m_mItems.end());
+	}
+
+	/**
+	 * @brief Removes a specific item from the cache
+	 * @param Item The item to be removed
+	 * @return true if item existed and was removed, false if it never existed
+	 */
+	bool RemItem(const T& Item) {
+		return m_mItems.erase(Item);
+	}
+
+	/**
+	 * @brief Cycles through the queue removing all of the stale entries
+	 */
+	void Cleanup() {
+		typename map<T, unsigned long long>::iterator it = m_mItems.begin();
+
+		while (it != m_mItems.end()) {
+			if (CUtils::GetMillTime() > (it->second)) {
+				m_mItems.erase(it++);
+			} else {
+				++it;
+			}
+		}
+	}
+
+	// Setters
+	void SetTTL(unsigned int u) { m_uTTL = u; }
+	// !Setters
+private:
+	map<T, unsigned long long>	m_mItems;	//!< Map of cached items.  The value portion of the map is for the expire time
+	unsigned int	m_uTTL;					//!< Default time-to-live duration
+};
+
+/**
  * @class CNoCopy
  * @author prozac <prozac@rottenboy.com>
  * @brief This class is intended to be derived from to prevent copying of your derived class, the implementations of the copy constructor and equals operator were intentionally made private and omitted
