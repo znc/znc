@@ -76,6 +76,12 @@ int CZNC::Loop() {
 		if (m_ssDelUsers.size()) {
 			for (set<CUser*>::iterator it = m_ssDelUsers.begin(); it != m_ssDelUsers.end(); it++) {
 				CUser* pUser = *it;
+
+#ifdef _MODULES
+				if (GetModules().OnDeleteUser(*pUser)) {
+					continue;
+				}
+#endif
 				m_msUsers.erase(pUser->GetUserName());
 
 				CIRCSock* pIRCSock = pUser->GetIRCSock();

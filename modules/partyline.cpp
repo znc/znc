@@ -32,6 +32,28 @@ public:
 		return true;
 	}
 
+	virtual EModRet OnDeleteUser(CUser& User) {
+		const CString& sNick = User.GetUserName();
+		CString sHost = User.GetVHost();
+
+		CUser* pTmp = m_pUser;
+		m_pUser = &User;
+
+		for (map<CString, set<CString> >::iterator it = m_msChans.begin(); it != m_msChans.end(); it++) {	// Loop through each chan
+			const CString& sChannel = it->first;
+			set<CString>& ssNicks = it->second;
+
+			if (ssNicks.find(User.GetUserName()) != ssNicks.end()) {										// If the user is on this chan
+				User.PutUser(":*" + GetModName() + "!znc@rottenboy.com KICK " + sChannel + " " + sNick + " :User Deleted");
+				PutChan(ssNicks, ":*" + GetModName() + "!znc@rottenboy.com KICK " + sChannel + " ?" + sNick + " :User Deleted", false);
+			}
+		}
+
+		m_pUser = pTmp;
+
+		return CONTINUE;
+	}
+
 	virtual EModRet OnRaw(CString& sLine) {
 		if (sLine.Token(1) == "005") {
 			CString::size_type uPos = sLine.AsUpper().find("CHANTYPES=");
@@ -98,7 +120,7 @@ public:
 			return HALT;
 		}
 
-		set<CString>& ssNicks = m_msChans[sChannel.AsLower()];
+		set<CString>& ssNicks = m_msChans[sChannel.AsLower()];	// @todo do a lookup first
 		const CString& sNick = m_pUser->GetUserName();
 
 		if (ssNicks.find(sNick) != ssNicks.end()) {
