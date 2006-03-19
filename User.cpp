@@ -34,6 +34,7 @@ CUser::CUser(const CString& sUserName) {
 	m_uBufferCount = 50;
 	m_bKeepBuffer = false;
 	m_bAutoCycle = true;
+	m_bBeingDeleted = false;
 	m_pBackNickTimer = NULL;
 	m_pAwayNickTimer = NULL;
 	m_pKeepNickTimer = new CKeepNickTimer(this);

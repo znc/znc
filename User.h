@@ -125,6 +125,7 @@ public:
 	void SetKeepBuffer(bool b);
 	void SetAutoCycle(bool b);
 	void SetChanPrefixes(const CString& s) { m_sChanPrefixes = (s.empty()) ? "#&" : s; }
+	void SetBeingDeleted(bool b) { m_bBeingDeleted = b; }
 	// !Setters
 
 	// Getters
@@ -164,6 +165,7 @@ public:
 	unsigned int GetBufferCount() const;
 	bool KeepBuffer() const;
 	bool AutoCycle() const;
+	bool IsBeingDeleted() const { return m_bBeingDeleted; }
 	// !Getters
 private:
 protected:
@@ -202,6 +204,7 @@ protected:
 	bool				m_bAdmin;
 	bool				m_bKeepBuffer;
 	bool				m_bAutoCycle;
+	bool				m_bBeingDeleted;
 
 	CBackNickTimer*		m_pBackNickTimer;
 	CAwayNickTimer*		m_pAwayNickTimer;

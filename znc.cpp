@@ -34,6 +34,10 @@ CZNC::~CZNC() {
 		delete m_vpListeners[b];
 	}
 
+	for (map<CString,CUser*>::iterator a = m_msUsers.begin(); a != m_msUsers.end(); a++) {
+		a->second->SetBeingDeleted(true);
+	}
+
 	m_Manager.Cleanup();
 	DeleteUsers();
 	delete m_pModules;
@@ -76,9 +80,11 @@ int CZNC::Loop() {
 		if (m_ssDelUsers.size()) {
 			for (set<CUser*>::iterator it = m_ssDelUsers.begin(); it != m_ssDelUsers.end(); it++) {
 				CUser* pUser = *it;
+				pUser->SetBeingDeleted(true);
 
 #ifdef _MODULES
 				if (GetModules().OnDeleteUser(*pUser)) {
+					pUser->SetBeingDeleted(false);
 					continue;
 				}
 #endif
@@ -250,6 +256,7 @@ bool CZNC::WritePemFile() {
 
 void CZNC::DeleteUsers() {
 	for (map<CString,CUser*>::iterator a = m_msUsers.begin(); a != m_msUsers.end(); a++) {
+		a->second->SetBeingDeleted(true);
 		delete a->second;
 	}
 

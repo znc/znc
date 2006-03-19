@@ -779,22 +779,30 @@ void CIRCSock::Disconnected() {
 	VOIDMODULECALL(OnIRCDisconnected());
 
 	DEBUG_ONLY(cout << GetSockName() << " == Disconnected()" << endl);
-	m_pUser->PutStatus("Disconnected from IRC.  Reconnecting...");
+	if (!m_pUser->IsBeingDeleted()) {
+		m_pUser->PutStatus("Disconnected from IRC.  Reconnecting...");
+	}
 }
 
 void CIRCSock::SockError(int iErrno) {
 	DEBUG_ONLY(cout << GetSockName() << " == SockError(" << iErrno << ")" << endl);
-	m_pUser->PutStatus("Disconnected from IRC.  Reconnecting...");
+	if (!m_pUser->IsBeingDeleted()) {
+		m_pUser->PutStatus("Disconnected from IRC.  Reconnecting...");
+	}
 }
 
 void CIRCSock::Timeout() {
 	DEBUG_ONLY(cout << GetSockName() << " == Timeout()" << endl);
-	m_pUser->PutStatus("IRC connection timed out.  Reconnecting...");
+	if (!m_pUser->IsBeingDeleted()) {
+		m_pUser->PutStatus("IRC connection timed out.  Reconnecting...");
+	}
 }
 
 void CIRCSock::ConnectionRefused() {
 	DEBUG_ONLY(cout << GetSockName() << " == ConnectionRefused()" << endl);
-	m_pUser->PutStatus("Connection Refused.  Reconnecting...");
+	if (!m_pUser->IsBeingDeleted()) {
+		m_pUser->PutStatus("Connection Refused.  Reconnecting...");
+	}
 }
 
 void CIRCSock::ParseISupport(const CString& sLine) {

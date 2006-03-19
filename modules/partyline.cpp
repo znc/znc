@@ -89,7 +89,7 @@ public:
 	}
 
 	virtual void OnUserDetached() {
-		if (!m_pUser->IsUserAttached()) {
+		if (!m_pUser->IsUserAttached() && !m_pUser->IsBeingDeleted()) {
 			for (map<CString, set<CString> >::iterator it = m_msChans.begin(); it != m_msChans.end(); it++) {
 				set<CString>& ssNicks = it->second;
 
