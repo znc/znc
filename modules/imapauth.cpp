@@ -42,6 +42,7 @@ class CIMAPAuthMod : public CGlobalModule {
 public:
 	GLOBALMODCONSTRUCTOR(CIMAPAuthMod) {
 		m_Cache.SetTTL(60000);
+		m_sServer = "localhost";
 		m_uPort = 143;
 		m_bSSL = false;
 	}
@@ -53,12 +54,11 @@ public:
 	}
 
 	virtual bool OnLoad(const CString& sArgs) {
-		m_sServer = sArgs.Token(0);
-
-		if (m_sServer.empty()) {
-			return false;
+		if (sArgs.Trim_n().empty()) {
+			return true;	// use defaults
 		}
 
+		m_sServer = sArgs.Token(0);
 		CString sPort = sArgs.Token(1);
 
 		if (sPort.Left(1) == "+") {
