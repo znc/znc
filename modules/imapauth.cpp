@@ -60,6 +60,7 @@ public:
 
 		m_sServer = sArgs.Token(0);
 		CString sPort = sArgs.Token(1);
+		m_sUserFormat = sArgs.Token(2);
 
 		if (sPort.Left(1) == "+") {
 			m_bSSL = true;
@@ -77,6 +78,11 @@ public:
 
 	virtual EModRet OnLoginAttempt(CSmartPtr<CAuthBase> Auth) {
 		CUser* pUser = CZNC::Get().FindUser(Auth->GetUsername());
+
+		if (!pUser) {	// @todo Will want to do some sort of && !m_bAllowCreate in the future
+			Auth->RefuseLogin("Invalid User - Halting IMAP Lookup");
+			return HALT;
+		}
 
 		if (pUser && m_Cache.HasItem(CString(Auth->GetUsername() + ":" + Auth->GetPassword()).MD5())) {
 			DEBUG_ONLY(cerr << "+++ Found in cache" << endl);
@@ -97,11 +103,16 @@ public:
 	void CacheLogin(const CString& sLogin) {
 		m_Cache.AddItem(sLogin);
 	}
+
+	// Getters
+	const CString& GetUserFormat() const { return m_sUserFormat; }
+	// !Getters
 private:
 	// Settings
 	CString				m_sServer;
 	unsigned short		m_uPort;
 	bool				m_bSSL;
+	CString				m_sUserFormat;
 	// !Settings
 
 	TCacheMap<CString>	m_Cache;
@@ -109,9 +120,20 @@ private:
 
 void CIMAPSock::ReadLine(const CString& sLine) {
 	if (!m_bSentLogin) {
+		CString sUsername = m_spAuth->GetUsername();
 		m_bSentLogin = true;
 
-		Write("AUTH LOGIN " + m_spAuth->GetUsername() + " " + m_spAuth->GetPassword() + "\r\n");
+		const CString& sFormat = m_pIMAPMod->GetUserFormat();
+
+		if (!sFormat.empty()) {
+			if (sFormat.find('%') != CString::npos) {
+				sUsername = sFormat.Replace_n("%", sUsername);
+			} else {
+				sUsername += sFormat;
+			}
+		}
+
+		Write("AUTH LOGIN " + sUsername + " " + m_spAuth->GetPassword() + "\r\n");
 	} else {
 		CUser* pUser = CZNC::Get().FindUser(m_spAuth->GetUsername());
 
