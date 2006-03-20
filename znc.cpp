@@ -524,7 +524,7 @@ bool CZNC::WriteNewConfig(const CString& sConfig) {
 			vsLines.push_back("\tAdmin      = false");
 		}
 
-		CUtils::GetInput("Nick", sNick, sUser);			vsLines.push_back("\tNick       = " + sNick);
+		CUtils::GetInput("Nick", sNick, CUser::MakeCleanUserName(sUser));			vsLines.push_back("\tNick       = " + sNick);
 		CUtils::GetInput("Alt Nick", sAnswer, sNick + "_");	if (!sAnswer.empty()) { vsLines.push_back("\tAltNick    = " + sAnswer); }
 		CUtils::GetInput("Ident", sAnswer, sNick);			vsLines.push_back("\tIdent      = " + sAnswer);
 		CUtils::GetInput("Real Name", sAnswer, "Got ZNC?");	vsLines.push_back("\tRealName   = " + sAnswer);

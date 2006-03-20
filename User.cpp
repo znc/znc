@@ -11,9 +11,9 @@
 
 CUser::CUser(const CString& sUserName) {
 	m_uConnectTime = 0;
-	m_sUserName = sUserName;
-	m_sNick = sUserName;
-	m_sIdent = sUserName;
+	SetUserName(sUserName);
+	m_sNick = m_sCleanUserName;
+	m_sIdent = m_sCleanUserName;
 	m_sRealName = sUserName;
 	m_uServerIdx = 0;
 #ifdef _MODULES
@@ -220,9 +220,9 @@ bool CUser::Clone(const CUser& User, CString& sErrorRet) {
 		SetPass(User.GetPass(), User.IsPassHashed());
 	}
 
-	SetNick(User.GetNick());
-	SetAltNick(User.GetAltNick());
-	SetIdent(User.GetIdent());
+	SetNick(User.GetNick(false));
+	SetAltNick(User.GetAltNick(false));
+	SetIdent(User.GetIdent(false));
 	SetRealName(User.GetRealName());
 	SetAwaySuffix(User.GetAwaySuffix());
 	SetStatusPrefix(User.GetStatusPrefix());
@@ -402,6 +402,10 @@ bool CUser::IsValidUserName(const CString& sUserName) {
 	const char* p = sUserName.c_str();
 
 	if (sUserName.empty()) {
+		return false;
+	}
+
+	if ((*p < 'a' || *p > 'z') && (*p < 'A' || *p > 'Z')) {
 		return false;
 	}
 
@@ -907,8 +911,16 @@ CString CUser::GetCurNick() {
 	return "";
 }
 
+CString CUser::MakeCleanUserName(const CString& sUserName) {
+	return sUserName.Token(0, false, "@").Replace_n(".", "");
+}
+
 // Setters
-void CUser::SetUserName(const CString& s) { m_sUserName = s; }
+void CUser::SetUserName(const CString& s) {
+	m_sCleanUserName = CUser::MakeCleanUserName(s);
+	m_sUserName = s;
+}
+
 void CUser::SetNick(const CString& s) { m_sNick = s; }
 void CUser::SetAltNick(const CString& s) { m_sAltNick = s; }
 void CUser::SetAwaySuffix(const CString& s) { m_sAwaySuffix = s; }
@@ -958,11 +970,12 @@ bool CUser::SetStatusPrefix(const CString& s) {
 
 // Getters
 const CString& CUser::GetUserName() const { return m_sUserName; }
-const CString& CUser::GetNick() const { return m_sNick.empty() ? m_sUserName : m_sNick; }
-const CString& CUser::GetAltNick() const { return m_sAltNick.empty() ? m_sUserName : m_sAltNick; }
-const CString& CUser::GetAwaySuffix() const { return m_sAwaySuffix; }
-const CString& CUser::GetIdent() const { return m_sIdent.empty() ? m_sUserName : m_sIdent; }
+const CString& CUser::GetCleanUserName() const { return m_sCleanUserName; }
+const CString& CUser::GetNick(bool bAllowDefault) const { return (bAllowDefault && m_sNick.empty()) ? GetCleanUserName() : m_sNick; }
+const CString& CUser::GetAltNick(bool bAllowDefault) const { return (bAllowDefault && m_sAltNick.empty()) ? GetCleanUserName() : m_sAltNick; }
+const CString& CUser::GetIdent(bool bAllowDefault) const { return (bAllowDefault && m_sIdent.empty()) ? GetCleanUserName() : m_sIdent; }
 const CString& CUser::GetRealName() const { return m_sRealName.empty() ? m_sUserName : m_sRealName; }
+const CString& CUser::GetAwaySuffix() const { return m_sAwaySuffix; }
 const CString& CUser::GetVHost() const { return m_sVHost; }
 const CString& CUser::GetPass() const { return m_sPass; }
 bool CUser::IsPassHashed() const { return m_bPassHashed; }

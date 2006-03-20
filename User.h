@@ -49,6 +49,7 @@ public:
 	bool IsHostAllowed(const CString& sHostMask);
 	bool IsValid(CString& sErrMsg, bool bSkipPass = false) const;
 	static bool IsValidUserName(const CString& sUserName);
+	static CString MakeCleanUserName(const CString& sUserName);
 	bool IsLastServer();
 	bool ConnectPaused();
 
@@ -104,9 +105,9 @@ public:
 	void SetUserName(const CString& s);
 	void SetNick(const CString& s);
 	void SetAltNick(const CString& s);
-	void SetAwaySuffix(const CString& s);
 	void SetIdent(const CString& s);
 	void SetRealName(const CString& s);
+	void SetAwaySuffix(const CString& s);
 	void SetVHost(const CString& s);
 	void SetPass(const CString& s, bool bHashed);
 	void SetBounceDCCs(bool b);
@@ -132,11 +133,12 @@ public:
 	vector<CClient*>& GetClients() { return m_vClients; }
 	CIRCSock* GetIRCSock();
 	const CString& GetUserName() const;
-	const CString& GetNick() const;
-	const CString& GetAltNick() const;
-	const CString& GetAwaySuffix() const;
-	const CString& GetIdent() const;
+	const CString& GetCleanUserName() const;
+	const CString& GetNick(bool bAllowDefault = true) const;
+	const CString& GetAltNick(bool bAllowDefault = true) const;
+	const CString& GetIdent(bool bAllowDefault = true) const;
 	const CString& GetRealName() const;
+	const CString& GetAwaySuffix() const;
 	const CString& GetVHost() const;
 	const CString& GetPass() const;
 	bool IsPassHashed() const;
@@ -171,6 +173,7 @@ private:
 protected:
 	time_t			m_uConnectTime;
 	CString			m_sUserName;
+	CString			m_sCleanUserName;
 	CString			m_sNick;
 	CString			m_sAltNick;
 	CString			m_sAwaySuffix;
