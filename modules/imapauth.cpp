@@ -97,7 +97,6 @@ public:
 	}
 
 	virtual void OnModCommand(const CString& sLine) {
-		ListSockets();
 	}
 
 	void CacheLogin(const CString& sLogin) {
