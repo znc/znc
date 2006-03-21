@@ -29,6 +29,14 @@ public:
 			}
 		}
 
+		CString sChan;
+		unsigned int a = 0;
+		while (!(sChan = sArgs.Token(a++)).empty()) {
+			if (sChan.Left(2) == "~#") {
+				m_ssDefaultChans.insert(sChan);
+			}
+		}
+
 		return true;
 	}
 
@@ -75,6 +83,11 @@ public:
 	virtual void OnUserAttached() {
 		if (m_spInjectedPrefixes.find(m_pUser) == m_spInjectedPrefixes.end()) {
 			m_pClient->PutClient(":" + m_pUser->GetIRCServer() + " 005 " + m_pUser->GetIRCNick().GetNick() + " CHANTYPES=" + m_pUser->GetChanPrefixes() + "~ :are supported by this server.");
+		}
+
+		// Make sure this user is in the default channels
+		for (set<CString>::iterator a = m_ssDefaultChans.begin(); a != m_ssDefaultChans.end(); a++) {
+			m_msChans[*a].insert(m_pUser->GetUserName());
 		}
 
 		for (map<CString, set<CString> >::iterator it = m_msChans.begin(); it != m_msChans.end(); it++) {
@@ -316,6 +329,7 @@ public:
 private:
 	map<CString, set<CString> >	m_msChans;
 	set<CUser*>					m_spInjectedPrefixes;
+	set<CString>				m_ssDefaultChans;
 };
 
 GLOBALMODULEDEFS(CPartylineMod, "Internal channels and queries for users connected to znc");
