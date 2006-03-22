@@ -18,7 +18,27 @@ public:
 	{
 	}
 
-	virtual bool OnLoad(const CString& sArgs);
+	virtual bool OnLoad( const CString& sArgs );
+
+	virtual EModRet OnUserPart( CString& sChannel, CString& sMessage )
+	{
+		for ( MCString::iterator it = BeginNV(); it != EndNV(); it++ )
+		{
+			if ( sChannel.CaseCmp( it->first ) == 0 )
+			{
+				CChan* pChan = m_pUser->FindChan( sChannel );
+
+				if ( pChan )
+				{
+					pChan->JoinUser( true, "", m_pClient );
+				}
+
+				return HALT;
+			}
+		}
+
+		return CONTINUE;
+	}
 
 	virtual void OnModCommand( const CString& sCommand )
 	{
