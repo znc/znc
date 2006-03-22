@@ -31,9 +31,8 @@ public:
 				if ( pChan )
 				{
 					pChan->JoinUser( true, "", m_pClient );
+					return HALT;
 				}
-
-				return HALT;
 			}
 		}
 
