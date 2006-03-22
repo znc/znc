@@ -1152,8 +1152,7 @@ void CZNC::Broadcast(const CString& sMessage, CUser* pUser) {
 		if (a->second != pUser) {
 			CString sMsg = sMessage;
 #ifdef _MODULES
-			CUser* m_pUser = a->second;	// This is a semi-hack because MODULECALLCONT below expects the user to be stored in m_pUser
-			MODULECALLCONT(OnBroadcast(sMsg));
+			MODULECALL(OnBroadcast(sMsg), a->second, NULL, continue);
 #endif
 			a->second->PutStatusNotice("*** " + sMsg);
 		}

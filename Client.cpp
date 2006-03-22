@@ -18,9 +18,7 @@ void CClient::ReadLine(const CString& sData) {
 
 #ifdef _MODULES
 	if (m_bAuthed) {
-		CZNC::Get().GetModules().SetClient(this);
-		MODULECALLRET(OnUserRaw(sLine));
-		CZNC::Get().GetModules().SetClient(NULL);
+		MODULECALL(OnUserRaw(sLine), m_pUser, this, return);
 	}
 #endif
 
@@ -133,9 +131,7 @@ void CClient::ReadLine(const CString& sData) {
 			for (unsigned int a = 0; a < vChans.size(); a++) {
 				CString sChannel = vChans[a];
 #ifdef _MODULES
-				CZNC::Get().GetModules().SetClient(this);
-				MODULECALLCONT(OnUserJoin(sChannel, sKey));
-				CZNC::Get().GetModules().SetClient(NULL);
+				MODULECALL(OnUserJoin(sChannel, sKey), m_pUser, this, continue);
 #endif
 
 				CChan* pChan = m_pUser->FindChan(sChannel);
@@ -169,9 +165,7 @@ void CClient::ReadLine(const CString& sData) {
 		}
 
 #ifdef _MODULES
-		CZNC::Get().GetModules().SetClient(this);
-		MODULECALLRET(OnUserPart(sChan, sMessage));
-		CZNC::Get().GetModules().SetClient(NULL);
+		MODULECALL(OnUserPart(sChan, sMessage), m_pUser, this, return);
 #endif
 
 		if (m_pUser) {
@@ -242,15 +236,11 @@ void CClient::ReadLine(const CString& sData) {
 			sCTCP.LeftChomp();
 			sCTCP.RightChomp();
 
-			CZNC::Get().GetModules().SetClient(this);
-			MODULECALLRET(OnUserCTCPReply(sTarget, sCTCP));
-			CZNC::Get().GetModules().SetClient(NULL);
+			MODULECALL(OnUserCTCPReply(sTarget, sCTCP), m_pUser, this, return);
 
 			sMsg = "\001" + sCTCP + "\001";
 		} else {
-			CZNC::Get().GetModules().SetClient(this);
-			MODULECALLRET(OnUserNotice(sTarget, sMsg));
-			CZNC::Get().GetModules().SetClient(NULL);
+			MODULECALL(OnUserNotice(sTarget, sMsg), m_pUser, this, return);
 		}
 #endif
 
@@ -320,9 +310,7 @@ void CClient::ReadLine(const CString& sData) {
 							}
 #ifdef _MODULES
 						} else {
-							CZNC::Get().GetModules().SetClient(this);
-							MODULECALLRET(OnDCCUserSend(sTarget, uLongIP, uPort, sFile, uFileSize));
-							CZNC::Get().GetModules().SetClient(NULL);
+							MODULECALL(OnDCCUserSend(sTarget, uLongIP, uPort, sFile, uFileSize), m_pUser, this, return);
 #endif
 						}
 					} else {
@@ -395,9 +383,7 @@ void CClient::ReadLine(const CString& sData) {
 				}
 #ifdef _MODULES
 			} else {
-				CZNC::Get().GetModules().SetClient(this);
-				MODULECALLRET(OnUserCTCP(sTarget, sCTCP));
-				CZNC::Get().GetModules().SetClient(NULL);
+				MODULECALL(OnUserCTCP(sTarget, sCTCP), m_pUser, this, return);
 #endif
 			}
 
@@ -407,9 +393,7 @@ void CClient::ReadLine(const CString& sData) {
 
 		if ((m_pUser) && (sTarget.CaseCmp(CString(m_pUser->GetStatusPrefix() + "status")) == 0)) {
 #ifdef _MODULES
-			CZNC::Get().GetModules().SetClient(this);
-			MODULECALLRET(OnStatusCommand(sMsg));
-			CZNC::Get().GetModules().SetClient(NULL);
+			MODULECALL(OnStatusCommand(sMsg), m_pUser, this, return);
 #endif
 			UserCommand(sMsg);
 			return;
@@ -445,9 +429,7 @@ void CClient::ReadLine(const CString& sData) {
 		}
 
 #ifdef _MODULES
-		CZNC::Get().GetModules().SetClient(this);
-		MODULECALLRET(OnUserMsg(sTarget, sMsg));
-		CZNC::Get().GetModules().SetClient(NULL);
+		MODULECALL(OnUserMsg(sTarget, sMsg), m_pUser, this, return);
 #endif
 
 		CChan* pChan = m_pUser->FindChan(sTarget);
@@ -1272,9 +1254,7 @@ void CClient::AcceptLogin(CUser& User) {
 	SendMotd();
 
 #ifdef _MODULES
-	CZNC::Get().GetModules().SetClient(this);
-	VOIDMODULECALL(OnUserAttached());
-	CZNC::Get().GetModules().SetClient(NULL);
+	MODULECALL(OnUserAttached(), m_pUser, this, );
 #endif
 }
 
@@ -1295,9 +1275,7 @@ void CClient::Disconnected() {
 	m_pIRCSock = NULL;
 
 #ifdef _MODULES
-	CZNC::Get().GetModules().SetClient(this);
-	VOIDMODULECALL(OnUserDetached());
-	CZNC::Get().GetModules().SetClient(NULL);
+	MODULECALL(OnUserDetached(), m_pUser, this, );
 #endif
 }
 

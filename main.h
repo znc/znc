@@ -8,62 +8,24 @@
 #endif
 
 #ifdef _MODULES
-#define VOIDMODULECALL(func)										\
-	if (m_pUser) {													\
-		CGlobalModules& GMods = CZNC::Get().GetModules();			\
-		GMods.SetUser(m_pUser);										\
-		GMods.func;													\
-		m_pUser->GetModules().func;									\
-		GMods.SetUser(NULL);										\
+#define MODULECALL(macFUNC, macUSER, macCLIENT, macEXITER)	\
+	if (macUSER) {											\
+		CGlobalModules& GMods = CZNC::Get().GetModules();	\
+		CModules& UMods = macUSER->GetModules();			\
+		GMods.SetUser(macUSER); GMods.SetClient(macCLIENT);	\
+		UMods.SetClient(macCLIENT);							\
+		if (GMods.macFUNC || UMods.macFUNC) {				\
+			GMods.SetUser(NULL); GMods.SetClient(NULL);		\
+			UMods.SetClient(NULL);							\
+			macEXITER;										\
+		}													\
+		GMods.SetUser(NULL); GMods.SetClient(NULL);			\
+		UMods.SetClient(NULL);								\
 	}
 #else
-#define VOIDMODULECALL(func)
+#define MODULECALL(macFUNC, macUSER, macCLIENT, macEXITER)
 #endif
 
-#ifdef _MODULES
-#define MODULECALLRET(func)											\
-	if (m_pUser) {													\
-		CGlobalModules& GMods = CZNC::Get().GetModules();			\
-		GMods.SetUser(m_pUser);										\
-		if (GMods.func || m_pUser->GetModules().func) {				\
-			GMods.SetUser(NULL);									\
-			return;													\
-		}															\
-		GMods.SetUser(NULL);										\
-	}
-#else
-#define MODULECALLRET(func)
-#endif
-
-#ifdef _MODULES
-#define MODULECALLCONT(func)										\
-	if (m_pUser) {													\
-		CGlobalModules& GMods = CZNC::Get().GetModules();			\
-		GMods.SetUser(m_pUser);										\
-		if (GMods.func || m_pUser->GetModules().func) {				\
-			GMods.SetUser(NULL);									\
-			continue;												\
-		}															\
-		GMods.SetUser(NULL);										\
-	}
-#else
-#define MODULECALLCONT(func)
-#endif
-
-#ifdef _MODULES
-#define MODULECALL(func)											\
-	if (m_pUser) {													\
-		CGlobalModules& GMods = CZNC::Get().GetModules();			\
-		GMods.SetUser(m_pUser);										\
-		if (GMods.func || m_pUser->GetModules().func) {				\
-			GMods.SetUser(NULL);									\
-			return true;											\
-		}															\
-		GMods.SetUser(NULL);										\
-	}
-#else
-#define MODULECALL(func)
-#endif
 
 #ifndef CS_STRING
 #define CS_STRING CString
