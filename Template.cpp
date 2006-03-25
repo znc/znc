@@ -15,6 +15,7 @@ CString CTemplateLoopContext::GetValue(const CString& sName) {
 	CTemplate* pTemplate = GetCurRow();
 
 	if (!pTemplate) {
+		DEBUG_ONLY(cerr << "Loop [" << GetName() << "] has no row index [" << GetCurRow() << "]" << endl);
 		return "";
 	}
 
