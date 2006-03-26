@@ -2,7 +2,6 @@
 #include "String.h"
 #include "FileUtils.h"
 #include "MD5.h"
-#include "main.h"
 
 const char* g_szHTMLescapes[256] = {
 	"&#0;", 0, 0, 0, 0, 0, 0, 0, 0, 0,               // 0-9
@@ -273,17 +272,17 @@ CString CString::Escape_n(EEscape eFrom, EEscape eTo) const {
 	const unsigned char *p = (const unsigned char*) data();
 	unsigned int iLength = length();
 	sRet.reserve(iLength *3);
-	unsigned char ch = 0;
 	unsigned int iMaxLen = (eFrom == EHTML) ? 20 : 0;
 	unsigned char pTmp[iMaxLen +1];
 	unsigned int iCounted = 0;
 
 	for (unsigned int a = 0; a < iLength; a++, p = pStart + a) {
+		unsigned char ch = 0;
+
 		switch (eFrom) {
 			case EHTML:
 				if ((*p == '&') && (strnchr((unsigned char*) p, ';', iMaxLen, pTmp, &iCounted))) {
-					if ((iCounted >= 3) && (pTmp[1] == '#')) {
-						// do XML and HTML &#97; &#x3c
+					if ((iCounted >= 3) && (pTmp[1] == '#')) {	// do XML and HTML &#97; &#x3c
 						int base = 10;
 
 						if ((pTmp[2] & 0xDF) == 'X') {
@@ -293,8 +292,7 @@ CString CString::Escape_n(EEscape eFrom, EEscape eTo) const {
 						char* endptr = NULL;
 						unsigned int b = strtol((const char*) (pTmp +2 + (base == 16)), &endptr, base);
 
-						if ( ( *endptr == ';' ) && ( b <= 255 ) )
-						{ // incase they do something like &#7777777777;
+						if ((*endptr == ';') && (b <= 255)) { // incase they do something like &#7777777777;
 							ch = b;
 							a += iCounted;
 							break;
@@ -302,7 +300,7 @@ CString CString::Escape_n(EEscape eFrom, EEscape eTo) const {
 					}
 
 					for (unsigned int c = 0; c < 256; c++) {
-						if (strcmp(g_szHTMLescapes[c], (const char*) &pTmp) == 0) {
+						if (g_szHTMLescapes[c] && strcmp(g_szHTMLescapes[c], (const char*) &pTmp) == 0) {
 							ch = c;
 							break;
 						}
