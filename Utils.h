@@ -502,6 +502,11 @@ public:
 	CSmartPtr<T>& operator =(const CSmartPtr<T>& CopyFrom) {
 		if (&CopyFrom != this) {				// Check for assignment to self
 			Release();							// Release the current pointer
+
+			if (CopyFrom.IsNull()) {			// If the source raw pointer is null
+				return *this;					// Then just bail out
+			}
+
 			m_pType = &(*CopyFrom);				// Make our pointers reference the same raw pointer and counter
 			m_puCount = CopyFrom.GetCount();
 
