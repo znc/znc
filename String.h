@@ -21,8 +21,8 @@ using std::stringstream;
 
 
 #define _SQL(s) CString("'" + CString(s).Escape_n(CString::ESQL) + "'")
-#define _URL(s) CString(CString(s).Escape_n(CString::EURL))
-#define _HTML(s) CString(CString(s).Escape_n(CString::EHTML))
+#define _URL(s) CString("'" + CString(s).Escape_n(CString::EURL) + "'")
+#define _HTML(s) CString("'" + CString(s).Escape_n(CString::EHTML) + "'")
 
 
 class CString;
