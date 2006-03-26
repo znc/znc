@@ -1,7 +1,17 @@
 #include "Template.h"
-#include "Utils.h"
 
 using std::cerr;
+
+void CTemplateOptions::Parse(const CString& sLine) {
+	CString sName = sLine.Token(0, false, "=").Trim_n().AsUpper();
+	CString sValue = sLine.Token(1, true, "=").Trim_n();
+
+	if (sName == "ESC") {
+		m_eEscapeTo = CString::ToEscape(sValue);
+	} else if (sName == "ESCFROM") {
+		m_eEscapeFrom = CString::ToEscape(sValue);
+	}
+}
 
 CTemplate* CTemplateLoopContext::GetRow(unsigned int uIndex) {
 	if (uIndex < m_pvRows->size()) {
@@ -69,7 +79,7 @@ bool CTemplate::SetFile(const CString& sFileName) {
 }
 
 CTemplate& CTemplate::AddRow(const CString& sName) {
-	CTemplate* pTmpl = new CTemplate;
+	CTemplate* pTmpl = new CTemplate(m_spOptions);
 	m_mvLoops[sName].push_back(pTmpl);
 
 	return *pTmpl;
@@ -170,6 +180,8 @@ bool CTemplate::Print(const CString& sFileName, ostream& oOut) {
 								if (!Print(File.GetDir() + sArgs, oOut)) {
 									return false;
 								}
+							} else if (sAction.CaseCmp("SETOPTION") == 0) {
+								m_spOptions->Parse(sArgs);
 							} else if (sAction.CaseCmp("ADDROW") == 0) {
 								CString sLoopName = sArgs.Token(0);
 								MCString msRow;
@@ -434,17 +446,25 @@ CString CTemplate::GetValue(const CString& sArgs) {
 	while (sRest.Replace("= ", "=", "\"", "\""));
 
 	VCString vArgs;
+	MCString msArgs;
 	sRest.Split(" ", vArgs, false, "\"", "\"");
 
 	for (unsigned int a = 0; a < vArgs.size(); a++) {
 		const CString& sArg = vArgs[a];
 
-		if (sArg.Left(4).CaseCmp("ESC=") == 0) {
-			sRet.Escape(CString::ToEscape(sArg.LeftChomp_n(4)));
-		} else if (sRet.empty() && sArg.Left(8).CaseCmp("DEFAULT=") == 0) {
-			sRet = sArg.LeftChomp_n(8);
-		}
+		msArgs[sArg.Token(0, false, "=").AsUpper()] = sArg.Token(1, true, "=");
+	}
 
+	if (sRet.empty()) {
+		sRet = msArgs["DEFAULT"];
+	}
+
+	MCString::iterator it = msArgs.find("ESC");
+
+	if (it != msArgs.end()) {
+		sRet.Escape(CString::ToEscape(it->second));
+	} else {
+		sRet.Escape(m_spOptions->GetEscapeFrom(), m_spOptions->GetEscapeTo());
 	}
 
 	return sRet;

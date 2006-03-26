@@ -2,6 +2,7 @@
 #define _TEMPLATE_H
 
 #include "FileUtils.h"
+#include "Utils.h"
 #include <iostream>
 
 using std::ostream;
@@ -9,6 +10,27 @@ using std::cout;
 using std::endl;
 
 class CTemplate;
+
+class CTemplateOptions {
+public:
+	CTemplateOptions() {
+		m_eEscapeFrom = CString::EASCII;
+		m_eEscapeTo = CString::EASCII;
+	}
+
+	virtual ~CTemplateOptions() {}
+
+	void Parse(const CString& sLine);
+
+	// Getters
+	CString::EEscape GetEscapeFrom() const { return m_eEscapeFrom; }
+	CString::EEscape GetEscapeTo() const { return m_eEscapeTo; }
+	// !Getters
+private:
+	CString::EEscape	m_eEscapeFrom;
+	CString::EEscape	m_eEscapeTo;
+};
+
 
 class CTemplateLoopContext {
 public:
@@ -49,10 +71,12 @@ protected:
 	vector<CTemplate*>*	m_pvRows;			//! This holds pointers to the templates associated with this loop
 };
 
+
 class CTemplate : public MCString {
 public:
-	CTemplate() {}
-	CTemplate(const CString& sFileName) : m_sFileName(sFileName) {}
+	CTemplate() : MCString(), m_spOptions(new CTemplateOptions) {}
+	CTemplate(const CString& sFileName) : MCString(), m_sFileName(sFileName), m_spOptions(new CTemplateOptions) {}
+	CTemplate(const CSmartPtr<CTemplateOptions>& Options) : MCString(), m_spOptions(Options) {}
 	virtual ~CTemplate();
 
 	bool SetFile(const CString& sFileName);
@@ -75,10 +99,10 @@ public:
 	// !Getters
 private:
 protected:
-	CString		m_sFileName;
-	CFile		m_File;
+	CString								m_sFileName;
 	map<CString, vector<CTemplate*> >	m_mvLoops;
 	vector<CTemplateLoopContext*>		m_vLoopContexts;
+	CSmartPtr<CTemplateOptions>			m_spOptions;
 };
 
 #endif // !_TEMPLATE_H
