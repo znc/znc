@@ -18,6 +18,9 @@
  *
  * 
  * $Log$
+ * Revision 1.22  2006/03/28 16:48:23  imaginos
+ * added a quiet flag
+ *
  * Revision 1.21  2006/02/25 09:43:35  prozacx
  * Migrated away from CString::ToString() in favor of explicit constructors
  *
@@ -210,11 +213,12 @@ public:
 		if ( sCmdName == "away" )
 		{
 			Away();
-			PutModNotice( "You have been marked as away", "away" );
+			if( sCommand.Token( 1 ) != "-quiet" ) 
+				PutModNotice( "You have been marked as away", "away" );
 		}	
 		else if ( sCmdName == "back" )
 		{
-			if ( m_vMessages.empty() )
+			if ( ( m_vMessages.empty() ) && ( sCommand.Token( 1 ) != "-quiet" ) )
 				PutModNotice( "Welcome Back!", "away" );
 			Back();
 		}
@@ -312,7 +316,7 @@ public:
 					
 		} else
 		{
-			PutModule( "Commands: away, back, delete <num|all>, ping, show, save", "away" );
+			PutModule( "Commands: away [-quiet], back [-quiet], delete <num|all>, ping, show, save", "away" );
 		}
 	}
 
