@@ -24,6 +24,24 @@
 		}												\
 	}													\
 
+#define GLOBALMODCALL(func)								\
+	for (unsigned int a = 0; a < size(); a++) {			\
+		try {											\
+			CGlobalModule* pMod = (CGlobalModule*) (*this)[a];			\
+			if (m_pUser) {								\
+				pMod->SetUser(m_pUser);					\
+				pMod->func;								\
+				pMod->SetUser(NULL);					\
+			} else {									\
+				pMod->func;								\
+			}											\
+		} catch (CModule::EModException e) {			\
+			if (e == CModule::UNLOAD) {					\
+				UnloadModule((*this)[a]->GetModName());	\
+			}											\
+		}												\
+	}													\
+
 #define GLOBALMODHALTCHK(func)							\
 	bool bHaltCore = false;								\
 	for (unsigned int a = 0; a < size(); a++) {			\
@@ -517,6 +535,7 @@ bool CModule::PutModNotice(const CString& sLine, const CString& sIdent, const CS
 CModule::EModRet CGlobalModule::OnConfigLine(const CString& sName, const CString& sValue, CUser* pUser, CChan* pChan) { return CONTINUE; }
 CModule::EModRet CGlobalModule::OnDeleteUser(CUser& User) { return CONTINUE; }
 CModule::EModRet CGlobalModule::OnLoginAttempt(CSmartPtr<CAuthBase> Auth) { return CONTINUE; }
+void CGlobalModule::OnFailedLogin(const CString& sUsername, const CString& sRemoteIP) {}
 
 
 CModules::CModules() {
@@ -603,6 +622,10 @@ bool CGlobalModules::OnDeleteUser(CUser& User) {
 
 bool CGlobalModules::OnLoginAttempt(CSmartPtr<CAuthBase> Auth) {
 	GLOBALMODHALTCHK(OnLoginAttempt(Auth));
+}
+
+void CGlobalModules::OnFailedLogin(const CString& sUsername, const CString& sRemoteIP) {
+	GLOBALMODCALL(OnFailedLogin(sUsername, sRemoteIP));
 }
 
 CModule* CModules::FindModule(const CString& sModule) const {

@@ -392,6 +392,7 @@ public:
 	virtual EModRet OnConfigLine(const CString& sName, const CString& sValue, CUser* pUser, CChan* pChan);
 	virtual EModRet OnDeleteUser(CUser& User);
 	virtual EModRet OnLoginAttempt(CSmartPtr<CAuthBase> Auth);
+	virtual void OnFailedLogin(const CString& sUsername, const CString& sRemoteIP);
 private:
 };
 
@@ -403,6 +404,7 @@ public:
 	virtual bool OnConfigLine(const CString& sName, const CString& sValue, CUser* pUser, CChan* pChan);
 	virtual bool OnDeleteUser(CUser& User);
 	virtual bool OnLoginAttempt(CSmartPtr<CAuthBase> Auth);
+	virtual void OnFailedLogin(const CString& sUsername, const CString& sRemoteIP);
 private:
 };
 
