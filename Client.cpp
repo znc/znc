@@ -1223,7 +1223,7 @@ void CClientAuth::RefuseLogin(const CString& sReason) {
 		m_pClient->RefuseLogin(sReason);
 	}
 #ifdef _MODULES
-	CZNC::Get().GetModules().OnFailedLogin(GetUsername(), m_pClient->GetRemoteIP());
+	CZNC::Get().GetModules().OnFailedLogin(GetUsername(), ((m_pClient) ? m_pClient->GetRemoteIP() : CString("")));
 #endif
 }
 
