@@ -1222,6 +1222,9 @@ void CClientAuth::RefuseLogin(const CString& sReason) {
 	if (m_pClient) {
 		m_pClient->RefuseLogin(sReason);
 	}
+#ifdef _MODULES
+	CZNC::Get().GetModules().OnFailedLogin(GetUsername(), m_pClient->GetRemoteIP());
+#endif
 }
 
 void CClient::RefuseLogin(const CString& sReason) {
