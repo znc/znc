@@ -1064,6 +1064,15 @@ void CClient::UserCommand(const CString& sLine) {
 		PutStatus("Unable to unload [" + sMod + "] Modules are not enabled.");
 #endif
 		return;
+	} else if (sCommand.CaseCmp("SETVHOST") == 0) {
+		CString sVHost = sLine.Token(1);
+
+		if (sVHost.empty()) {
+			PutStatus("Usage: SetVHost <VHost>");
+		}
+
+		m_pUser->SetVHost(sVHost);
+		PutStatus("Set VHost to [" + m_pUser->GetVHost() + "]");
 	} else if (sCommand.CaseCmp("SETBUFFER") == 0) {
 		CString sChan = sLine.Token(1);
 
@@ -1126,7 +1135,7 @@ void CClient::HelpUser() {
 	Table.AddRow(); Table.SetCell("Command", "ListNicks");	Table.SetCell("Arguments", "<#chan>");				Table.SetCell("Description", "List all nicks on a channel");
 
 	if (!m_pUser->IsAdmin()) { // If they are an admin we will add this command below with an argument
-		Table.AddRow(); Table.SetCell("Command", "ListClients");Table.SetCell("Arguments", "");						Table.SetCell("Description", "List all clients connected to your znc user");
+		Table.AddRow(); Table.SetCell("Command", "ListClients");Table.SetCell("Arguments", "");					Table.SetCell("Description", "List all clients connected to your znc user");
 	}
 
 	Table.AddRow(); Table.SetCell("Command", "ListServers");Table.SetCell("Arguments", "");						Table.SetCell("Description", "List all servers");
@@ -1134,6 +1143,7 @@ void CClient::HelpUser() {
 	Table.AddRow(); Table.SetCell("Command", "RemServer");	Table.SetCell("Arguments", "<host>");				Table.SetCell("Description", "Remove a server from the list");
 	Table.AddRow(); Table.SetCell("Command", "Topics");		Table.SetCell("Arguments", "");						Table.SetCell("Description", "Show topics in all channels");
 	Table.AddRow(); Table.SetCell("Command", "SetBuffer");	Table.SetCell("Arguments", "<#chan> [linecount]");	Table.SetCell("Description", "Set the buffer count for a channel");
+	Table.AddRow(); Table.SetCell("Command", "SetVHost");	Table.SetCell("Arguments", "<vhost (ip preferred)>");Table.SetCell("Description", "Set the VHost for this connection");
 	Table.AddRow(); Table.SetCell("Command", "Jump");		Table.SetCell("Arguments", "");						Table.SetCell("Description", "Jump to the next server in the list");
 	Table.AddRow(); Table.SetCell("Command", "Send");		Table.SetCell("Arguments", "<nick> <file>");		Table.SetCell("Description", "Send a shell file to a nick on IRC");
 	Table.AddRow(); Table.SetCell("Command", "Get");		Table.SetCell("Arguments", "<file>");				Table.SetCell("Description", "Send a shell file to yourself");
