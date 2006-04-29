@@ -135,7 +135,7 @@ public:
 	static CZNC& Get();
 	CUser* FindUser(const CString& sUsername);
 	bool DeleteUser(const CString& sUsername);
-	bool AddUser(CUser* pUser);
+	bool AddUser(CUser* pUser, CString& sErrorRet);
 	const map<CString,CUser*> & GetUserMap() const { return( m_msUsers ); }
 
 	// Message of the Day

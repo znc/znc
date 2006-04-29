@@ -782,12 +782,12 @@ bool CZNC::ParseConfig(const CString& sConfig) {
 					} else if (sTag.CaseCmp("User") == 0) {
 						CString sErr;
 
-						if (!pUser->IsValid(sErr)) {
+						if (!AddUser(pUser, sErr)) {
 							CUtils::PrintError("Invalid user [" + pUser->GetUserName() + "] " + sErr);
+							pUser->SetBeingDeleted(true);
+							delete pUser;
 							return false;
 						}
-
-						AddUser(pUser);
 
 						pUser = NULL;
 						continue;
@@ -1204,15 +1204,13 @@ bool CZNC::DeleteUser(const CString& sUsername) {
 	return true;
 }
 
-bool CZNC::AddUser(CUser* pUser) {
-	CString sErr;
-
-	if (pUser->IsValid(sErr)) {
+bool CZNC::AddUser(CUser* pUser, CString& sErrorRet) {
+	if (pUser->IsValid(sErrorRet)) {
 		m_msUsers[pUser->GetUserName()] = pUser;
 		return true;
 	}
 
-	DEBUG_ONLY(cout << "Invalid user [" << pUser->GetUserName() << "] - [" << sErr << "]" << endl);
+	DEBUG_ONLY(cout << "Invalid user [" << pUser->GetUserName() << "] - [" << sErrorRet << "]" << endl);
 	return false;
 }
 
