@@ -931,13 +931,12 @@ bool CWebAdminSock::UserPage(CString& sPageRet, CUser* pUser) {
 
 	if (!pUser) {
 		// Add User Submission
-		if (!pNewUser->IsValid(sErr)) {
+		if (!CZNC::Get().AddUser(pNewUser, sErr)) {
 			delete pNewUser;
 			GetErrorPage(sPageRet, "Invalid submission [" + sErr + "]");
 			return true;
 		}
 
-		CZNC::Get().AddUser(pNewUser);
 		if (!CZNC::Get().WriteConfig()) {
 			GetErrorPage(sPageRet, "User added, but config was not written");
 			return true;
