@@ -44,7 +44,7 @@ AC_ARG_WITH( openssl, [  --with-openssl=/path/to/openssl], OPENSSL=$withval,)
 AC_ARG_ENABLE( debug, [  --enable-debug  enable debuging], appendCXX -Wall -ggdb -D_DEBUG, appendCXX -Wall -s -O2 -fomit-frame-pointer )
 AC_ARG_ENABLE( ipv6, [  --enable-ipv6  enable ipv6 support], appendCXX -DHAVE_IPV6,)
 AC_ARG_ENABLE( modules, [  --disable-modules  disable modules], MODULES="no", MODULES="yes")
-AC_ARG_ENABLE( openssl, [  --disable-openssl  disable openssl], , NOSSL=1)
+AC_ARG_ENABLE( openssl, [  --disable-openssl  disable openssl], NOSSL=1,)
 AC_ARG_ENABLE( perl, [  --disable-perl  disable perl], NOPERL=1,)
 
 AC_CHECK_LIB( gnugetopt, getopt_long,)
@@ -52,7 +52,6 @@ AC_CHECK_FUNCS( stat lstat chmod open, , echo "Missing Required libc feature" &&
 if test "$MODULES" = "yes"; then
 	AC_CHECK_FUNC( dlopen,NOCHECK_DL=1,)
 fi
-
 if test -z "$NOSSL"; then
 	if test -n "$OPENSSL"; then
 		appendLib -L${OPENSSL}/lib

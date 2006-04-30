@@ -1971,8 +1971,6 @@ fi;
 # Check whether --enable-openssl or --disable-openssl was given.
 if test "${enable_openssl+set}" = set; then
   enableval="$enable_openssl"
-
-else
   NOSSL=1
 fi;
 # Check whether --enable-perl or --disable-perl was given.
@@ -2988,7 +2986,6 @@ if test $ac_cv_func_dlopen = yes; then
 fi
 
 fi
-
 if test -z "$NOSSL"; then
 	if test -n "$OPENSSL"; then
 		appendLib -L${OPENSSL}/lib
