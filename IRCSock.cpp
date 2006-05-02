@@ -64,6 +64,15 @@ void CIRCSock::ReadLine(const CString& sData) {
 
 	if (strncasecmp(sLine.c_str(), "PING ", 5) == 0) {
 		PutIRC("PONG " + sLine.substr(5));
+	} else if (strncasecmp(sLine.c_str(), "ERROR ", 6) == 0) {
+		//ERROR :Closing Link: nick[24.24.24.24] (Excess Flood)
+		CString sError(sLine.substr(7));
+
+		if (sError.Left(1) == ":") {
+			sError.LeftChomp();
+		}
+
+		m_pUser->PutStatus("Error from Server [" + sError + "]");
 	} else if (sLine.WildCmp(":* * *")) { //"^:(\\S+) (\\d\\d\\d) (.*?) (.*)$", vCap)) {
 		CString sCmd = sLine.Token(1);
 
@@ -399,6 +408,10 @@ void CIRCSock::ReadLine(const CString& sData) {
 				}
 
 				// :nick!ident@host.com QUIT :message
+
+				if (Nick.GetNick().CaseCmp(GetNick()) == 0) {
+					m_pUser->PutStatus("You quit [" + sMessage + "]");
+				}
 
 				vector<CChan*> vFoundChans;
 				const vector<CChan*>& vChans = m_pUser->GetChans();
