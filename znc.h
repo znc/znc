@@ -124,7 +124,7 @@ public:
 	const CString& GetUserPath() const { if (!CFile::Exists(m_sUserPath)) { CUtils::MakeDir(m_sUserPath); } return m_sUserPath; }
 	CString GetPemLocation() const { return GetZNCPath() + "/znc.pem"; }
 	const CString& GetConfigFile() const { return m_sConfigFile; }
-	bool WritePemFile();
+	bool WritePemFile( bool bEncPem = false );
 	const CString& GetISpoofFile() const { return m_sISpoofFile; }
 	const CString& GetISpoofFormat() const { return m_sISpoofFormat; }
 	const VCString& GetVHosts() const { return m_vsVHosts; }

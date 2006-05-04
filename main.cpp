@@ -27,7 +27,7 @@ void GenerateHelp(const char *appname) {
 	CUtils::PrintMessage("\t--makepass     Generates a password for use in config");
 #ifdef HAVE_LIBSSL
 	CUtils::PrintMessage("\t--makepem      Generates a pemfile for use with SSL");
-	CUtils::PrintMessage("\t--encrypt-pem  Encrypts the pemfile");
+	CUtils::PrintMessage("\t--encrypt-pem  when used along with --makepem, encrypts the private key in the pemfile");
 #endif /* HAVE_LIBSSL */
 }
 
@@ -138,11 +138,16 @@ int main(int argc, char** argv, char** envp) {
 	if (bMakePem) {
 		CZNC* pZNC = &CZNC::Get();
 		pZNC->InitDirs("");
-		pZNC->WritePemFile();
+		pZNC->WritePemFile( bEncPem );
 
 		delete pZNC;
 		return 0;
 	}
+	if( bEncPem && !bMakePem ) {
+		CUtils::PrintError("--encrypt-pem should be used along with --makepem.");
+		return 1;
+	}
+
 #endif /* HAVE_LIBSSL */
 	if (bMakePass) {
 		CString sHash = CUtils::GetHashPass();
