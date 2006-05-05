@@ -848,6 +848,11 @@ void CClient::UserCommand(const CString& sLine) {
 			return;
 		}
 
+		if ((!m_pUser->IsAdmin() && sFile.Left(1) == "~") || sFile.Left(1) == "/" || sFile.find("..") != CString::npos) {
+			PutStatus("Illegal path.");
+			return;
+		}
+
 		if (m_pUser) {
 			m_pUser->SendFile(sToNick, sFile);
 		}
@@ -859,7 +864,7 @@ void CClient::UserCommand(const CString& sLine) {
 			return;
 		}
 
-		if (sFile.find("..") != CString::npos) {
+		if ((!m_pUser->IsAdmin() && sFile.Left(1) == "~") || sFile.Left(1) == "/" || sFile.find("..") != CString::npos) {
 			PutStatus("Illegal path.");
 			return;
 		}
