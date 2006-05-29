@@ -88,6 +88,7 @@ void CIRCSock::ReadLine(const CString& sData) {
 					SetTimeout(900);	// Now that we are connected, let nature take its course
 					PutIRC("WHO " + sNick);
 
+					SetNick(sNick);
 					m_pUser->StartAwayNickTimer();
 
 					MODULECALL(OnIRCConnected(), m_pUser, NULL, );
@@ -106,8 +107,6 @@ void CIRCSock::ReadLine(const CString& sData) {
 							pClient->PutClient(":" + sClientNick + "!" + m_Nick.GetIdent() + "@" + m_Nick.GetHost() + " NICK :" + sNick);
 						}
 					}
-
-					SetNick(sNick);
 
 					m_pUser->ClearRawBuffer();
 					m_pUser->AddRawBuffer(":" + sServer + " " + sCmd + " ", " " + sRest);
