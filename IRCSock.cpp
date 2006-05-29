@@ -318,24 +318,6 @@ void CIRCSock::ReadLine(const CString& sData) {
 					CChan* pChan = m_pUser->FindChan(sRest.Token(0));
 
 					if (pChan) {
-						if (m_pUser->IsUserAttached()) {
-							const vector<CString>& vsBuffer = pChan->GetBuffer();
-
-							if (vsBuffer.size()) {
-								m_pUser->PutUser(":***!znc@znc.com PRIVMSG " + pChan->GetName() + " :Buffer Playback...");
-
-								for (unsigned int a = 0; a < vsBuffer.size(); a++) {
-									m_pUser->PutUser(vsBuffer[a]);
-								}
-
-								if (!pChan->KeepBuffer()) {
-									pChan->ClearBuffer();
-								}
-
-								m_pUser->PutUser(":***!znc@znc.com PRIVMSG " + pChan->GetName() + " :Playback Complete.");
-							}
-						}
-
 						if (!pChan->IsOn()) {
 							pChan->SetIsOn(true);
 							PutIRC("MODE " + pChan->GetName());
