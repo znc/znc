@@ -58,6 +58,10 @@ if test -z "$NOSSL"; then
 		appendInc -I${OPENSSL}/include
 	fi
 
+	if test -z "$NOCHECK_DL"; then
+		AC_CHECK_LIB( dl, dlopen,,MODULES="no",)
+		NOCHECK_DL=1
+	fi
 	AC_CHECK_LIB( crypto, BIO_new,,NOSSL=1, )
 	AC_CHECK_LIB( ssl, SSL_shutdown,,NOSSL=1, )
 
