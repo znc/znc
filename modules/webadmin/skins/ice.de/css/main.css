@@ -1,0 +1,180 @@
+body {
+	background: url(/img/pagebg.gif) top repeat-x #0C1833 fixed;
+	color: #fff;
+	margin: 0px auto;
+}
+
+#wrapper {
+	margin: 0px auto;
+	padding: 0px;
+	width: 700px;
+	background-color: #4C688A;
+}
+
+h2 {
+	margin: 0px 0px 10px 0px;
+	padding: 0px;
+}
+
+a:hover {
+	text-decoration: underline;
+}
+
+.nowrap { white-space: nowrap; }
+.clear { clear: both; }
+
+table a, table a:visited, table a:hover, table a:active { color: #000; }
+
+table {
+	color: #000;
+	border-collapse: collapse;
+	border: 2px solid #000;
+	padding: 0px;
+	margin: 10px;
+}
+
+table td {
+	border: 1px solid #000;
+	padding: 4px;
+	margin: 0px;
+}
+
+table thead {
+	border-bottom: 2px solid #000;
+	background: url(/img/linkbg.jpg) 0px -30px repeat-x #369;
+	color: #fff;
+	font-weight: bold;
+}
+
+.oddrow {
+	background-color: #ddd;
+}
+
+.evenrow {
+	background-color: #bbb;
+}
+
+#main {
+	width: 680px;
+	clear: both;
+	padding: 10px;
+}
+
+#banner {
+	text-align: center;
+	padding: 0px 10px;
+}
+
+#tag {
+	font-size: 14px;
+	color: #f90;
+	font-weight: bold;
+	text-align: right;
+}
+
+#ident {
+	font-weight: bold;
+	text-align: right;
+}
+
+.inputlabel {
+	font-size: small;
+	font-weight: bold;
+	color: #000;
+}
+
+.section {
+	padding-bottom: 20px;
+	width: 680px;
+}
+
+.subsection {
+	float: left;
+	margin: 5px 10px;
+}
+
+.sectiontitle {
+	float: left;
+	white-space: nowrap;
+	background: url(/img/linkbg.jpg) 0px 0px repeat-x #336;
+	color: #eee;
+	font-size: 14px;
+	font-weight: bold;
+	border: 1px solid #000;
+	padding: 0px 5px 0px 5px;
+	margin: 0px 15px -10px 8px;
+}
+
+.sectionbg {
+	clear: both;
+	background-color: #ccc;
+	color: #000;
+	border: 2px solid #000;
+	padding: 0px;
+}
+
+.sectionbody {
+	margin-top: 15px;
+	margin-bottom: 10px;
+}
+
+#gnav {
+	width: 700px;
+	border-top: 1px solid #000;
+	border-bottom: 1px solid #000;
+	float: left;
+	background: url(/img/linkbg.jpg) repeat-x;
+	margin-bottom: 10px;
+}
+
+#gnav #menu {
+	width: 690px;
+	float: left;
+}
+
+#gnav ul {
+	margin: 0px;
+	padding: 0px;
+}
+
+#gnav li {
+	display: block;
+}
+
+#gnav a {
+	font-size: 11px;
+	font-weight: bold;
+	height: 30px;
+	float: left;
+	display: block;
+	color: #fff;
+	padding: 0px 10px;
+	text-decoration: none;
+	background: url(/img/linkbg.jpg) 0px 0px repeat-x;
+}
+
+#gnav a:hover {
+	background-position: 0px -30px;
+	text-decoration: none;
+}
+
+#gnav .on a {
+	background-position: 0px -30px;
+}
+
+#gnav #nav {
+	float: left;
+	border-left: 1px solid #000;
+	display: inline;
+}
+
+#nav {
+	margin-left: 10px;
+}
+
+#gnav li {
+	height: 30px;
+	line-height: 30px;
+	border-right: 1px solid #000;
+	float: left;
+}
