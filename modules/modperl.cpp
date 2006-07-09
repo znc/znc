@@ -985,25 +985,23 @@ bool CModPerl::OnLoad( const CString & sArgs )
 	PL_exit_flags |= PERL_EXIT_DESTRUCT_END;
 #endif /* PERL_EXIT_DESTRUCT_END */
 
-	char *file = __FILE__;
-
 	/* system functions */
-	newXS( "DynaLoader::boot_DynaLoader", boot_DynaLoader, (char *)file );
-	newXS( "ZNC::COREPutModule", XS_ZNC_COREPutModule, (char *)file );
-	newXS( "ZNC::COREAddTimer", XS_ZNC_COREAddTimer, (char *)file );
-	newXS( "ZNC::CORERemTimer", XS_ZNC_CORERemTimer, (char *)file );
-	newXS( "ZNC::COREPuts", XS_ZNC_COREPuts, (char *)file );
-	newXS( "ZNC::COREConnect", XS_ZNC_COREConnect, (char *)file );
-	newXS( "ZNC::COREListen", XS_ZNC_COREListen, (char *)file );
+	newXS( "DynaLoader::boot_DynaLoader", boot_DynaLoader, "modperl" );
+	newXS( "ZNC::COREPutModule", XS_ZNC_COREPutModule, "modperl" );
+	newXS( "ZNC::COREAddTimer", XS_ZNC_COREAddTimer, "modperl" );
+	newXS( "ZNC::CORERemTimer", XS_ZNC_CORERemTimer, "modperl" );
+	newXS( "ZNC::COREPuts", XS_ZNC_COREPuts, "modperl" );
+	newXS( "ZNC::COREConnect", XS_ZNC_COREConnect, "modperl" );
+	newXS( "ZNC::COREListen", XS_ZNC_COREListen, "modperl" );
 
 	/* user functions */
-	newXS( "ZNC::GetNicks", XS_ZNC_GetNicks, (char *)file );
-	newXS( "ZNC::GetString", XS_ZNC_GetString, (char *)file );
-	newXS( "ZNC::LoadMod", XS_ZNC_LoadMod, (char *)file );
-	newXS( "ZNC::UnloadMod", XS_ZNC_UnloadMod, (char *)file );
-	newXS( "ZNC::WriteSock", XS_ZNC_WriteSock, (char *)file );
-	newXS( "ZNC::CloseSock", XS_ZNC_CloseSock, (char *)file );
-	newXS( "ZNC::SetSockValue", XS_ZNC_SetSockValue, (char *)file );
+	newXS( "ZNC::GetNicks", XS_ZNC_GetNicks, "modperl" );
+	newXS( "ZNC::GetString", XS_ZNC_GetString, "modperl" );
+	newXS( "ZNC::LoadMod", XS_ZNC_LoadMod, "modperl" );
+	newXS( "ZNC::UnloadMod", XS_ZNC_UnloadMod, "modperl" );
+	newXS( "ZNC::WriteSock", XS_ZNC_WriteSock, "modperl" );
+	newXS( "ZNC::CloseSock", XS_ZNC_CloseSock, "modperl" );
+	newXS( "ZNC::SetSockValue", XS_ZNC_SetSockValue, "modperl" );
 	
 	// this sets up the eval CB that we call from here on out. this way we can grab the error produced
 	SetupZNCScript();
