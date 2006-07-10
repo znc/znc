@@ -342,7 +342,7 @@ int CExecSock::popen2(int & iReadFD, int & iWriteFD, const CString & sCommand) {
 		dup2(rpipes[1], 2);
 		close(wpipes[0]);
 		close(rpipes[1]);
-		char *pArgv[] =
+		char * const pArgv[] =
 		{
 			"sh",
 			"-c",
