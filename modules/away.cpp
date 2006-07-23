@@ -18,6 +18,9 @@
  *
  * 
  * $Log$
+ * Revision 1.23  2006/07/23 04:01:44  imaginos
+ * add back functionality to give an away reason
+ *
  * Revision 1.22  2006/03/28 16:48:23  imaginos
  * added a quiet flag
  *
@@ -212,9 +215,15 @@ public:
 		CString sCmdName = sCommand.Token(0);
 		if ( sCmdName == "away" )
 		{
-			Away();
+			CString sReason;
 			if( sCommand.Token( 1 ) != "-quiet" ) 
+			{
+				sReason = sCommand.Token( 1, true );
 				PutModNotice( "You have been marked as away", "away" );
+			}
+			else
+				sReason = sCommand.Token( 2, true );
+			Away( true, sReason );
 		}	
 		else if ( sCmdName == "back" )
 		{
