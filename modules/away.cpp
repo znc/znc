@@ -18,6 +18,9 @@
  *
  * 
  * $Log$
+ * Revision 1.24  2006/07/23 04:02:53  imaginos
+ * leave default behavior of not forcing
+ *
  * Revision 1.23  2006/07/23 04:01:44  imaginos
  * add back functionality to give an away reason
  *
@@ -223,7 +226,7 @@ public:
 			}
 			else
 				sReason = sCommand.Token( 2, true );
-			Away( true, sReason );
+			Away( false, sReason );
 		}	
 		else if ( sCmdName == "back" )
 		{
