@@ -82,6 +82,7 @@ public:
 	// Buffer
 	int AddBuffer(const CString& sLine);
 	void ClearBuffer();
+	void SendBuffer(CClient* pClient);
 	// !Buffer
 
 	// m_Nick wrappers

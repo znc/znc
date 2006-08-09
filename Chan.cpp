@@ -102,23 +102,7 @@ void CChan::JoinUser(bool bForce, const CString& sKey, CClient* pClient) {
 	m_bDetached = false;
 
 	// Send Buffer
-	if (m_pUser->IsUserAttached()) {
-		const vector<CString>& vsBuffer = GetBuffer();
-
-		if (vsBuffer.size()) {
-			m_pUser->PutUser(":***!znc@znc.com PRIVMSG " + GetName() + " :Buffer Playback...", pClient);
-
-			for (unsigned int a = 0; a < vsBuffer.size(); a++) {
-				m_pUser->PutUser(vsBuffer[a], pClient);
-			}
-
-			if (!KeepBuffer()) {
-				ClearBuffer();
-			}
-
-			m_pUser->PutUser(":***!znc@znc.com PRIVMSG " + GetName() + " :Playback Complete.", pClient);
-		}
-	}
+	SendBuffer(pClient);
 }
 
 void CChan::DetachUser() {
@@ -506,4 +490,24 @@ int CChan::AddBuffer(const CString& sLine) {
 
 void CChan::ClearBuffer() {
 	m_vsBuffer.clear();
+}
+
+void CChan::SendBuffer(CClient* pClient) {
+	if (m_pUser && m_pUser->IsUserAttached()) {
+		const vector<CString>& vsBuffer = GetBuffer();
+
+		if (vsBuffer.size()) {
+			m_pUser->PutUser(":***!znc@znc.com PRIVMSG " + GetName() + " :Buffer Playback...", pClient);
+
+			for (unsigned int a = 0; a < vsBuffer.size(); a++) {
+				m_pUser->PutUser(vsBuffer[a], pClient);
+			}
+
+			if (!KeepBuffer()) {
+				ClearBuffer();
+			}
+
+			m_pUser->PutUser(":***!znc@znc.com PRIVMSG " + GetName() + " :Playback Complete.", pClient);
+		}
+	}
 }

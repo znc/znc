@@ -1078,6 +1078,54 @@ void CClient::UserCommand(const CString& sLine) {
 
 		m_pUser->SetVHost(sVHost);
 		PutStatus("Set VHost to [" + m_pUser->GetVHost() + "]");
+	} else if (sCommand.CaseCmp("PLAYBUFFER") == 0) {
+		CString sChan = sLine.Token(1);
+
+		if (sChan.empty()) {
+			PutStatus("Usage: PlayBuffer <#chan>");
+			return;
+		}
+
+		CChan* pChan = m_pUser->FindChan(sChan);
+
+		if (!pChan) {
+			PutStatus("You are not on [" + sChan + "]");
+			return;
+		}
+
+		if (!pChan->IsOn()) {
+			PutStatus("You are not on [" + sChan + "] [trying]");
+			return;
+		}
+
+		if (pChan->GetBuffer().empty()) {
+			PutStatus("The buffer for [" + sChan + "] is empty");
+			return;
+		}
+
+		pChan->SendBuffer(this);
+	} else if (sCommand.CaseCmp("CLEARBUFFER") == 0) {
+		CString sChan = sLine.Token(1);
+
+		if (sChan.empty()) {
+			PutStatus("Usage: ClearBuffer <#chan>");
+			return;
+		}
+
+		CChan* pChan = m_pUser->FindChan(sChan);
+
+		if (!pChan) {
+			PutStatus("You are not on [" + sChan + "]");
+			return;
+		}
+
+		if (!pChan->IsOn()) {
+			PutStatus("You are not on [" + sChan + "] [trying]");
+			return;
+		}
+
+		pChan->ClearBuffer();
+		PutStatus("The buffer for [" + sChan + "] has been cleared");
 	} else if (sCommand.CaseCmp("SETBUFFER") == 0) {
 		CString sChan = sLine.Token(1);
 
@@ -1147,6 +1195,8 @@ void CClient::HelpUser() {
 	Table.AddRow(); Table.SetCell("Command", "AddServer");	Table.SetCell("Arguments", "<host> [[+]port] [pass]");	Table.SetCell("Description", "Add a server to the list");
 	Table.AddRow(); Table.SetCell("Command", "RemServer");	Table.SetCell("Arguments", "<host>");				Table.SetCell("Description", "Remove a server from the list");
 	Table.AddRow(); Table.SetCell("Command", "Topics");		Table.SetCell("Arguments", "");						Table.SetCell("Description", "Show topics in all channels");
+	Table.AddRow(); Table.SetCell("Command", "PlayBuffer");	Table.SetCell("Arguments", "<#chan>");				Table.SetCell("Description", "Play back the buffer for a given channel");
+	Table.AddRow(); Table.SetCell("Command", "ClearBuffer");Table.SetCell("Arguments", "<#chan>");				Table.SetCell("Description", "Clear the buffer for a given channel");
 	Table.AddRow(); Table.SetCell("Command", "SetBuffer");	Table.SetCell("Arguments", "<#chan> [linecount]");	Table.SetCell("Description", "Set the buffer count for a channel");
 	Table.AddRow(); Table.SetCell("Command", "SetVHost");	Table.SetCell("Arguments", "<vhost (ip preferred)>");Table.SetCell("Description", "Set the VHost for this connection");
 	Table.AddRow(); Table.SetCell("Command", "Jump");		Table.SetCell("Arguments", "");						Table.SetCell("Description", "Jump to the next server in the list");
