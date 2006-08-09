@@ -45,12 +45,12 @@ public:
 				pChan->AddBuffer(":\244" + m_pUser->GetIRCNick().GetNickMask() + " PRIVMSG " + sTarget + " :" + sMessage);
 			}
 
-			sMessage = MakeIvec() + sMessage;
-			sMessage.Encrypt(it->second);
-			sMessage.Base64Encode();
-			sMessage = "+OK *" + sMessage;
+			CString sMsg = MakeIvec() + sMessage;
+			sMsg.Encrypt(it->second);
+			sMsg.Base64Encode();
+			sMsg = "+OK *" + sMsg;
 
-			PutIRC("PRIVMSG " + sTarget + " :" + sMessage);
+			PutIRC("PRIVMSG " + sTarget + " :" + sMsg);
 			return HALTCORE;
 		}
 
