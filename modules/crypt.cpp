@@ -37,6 +37,12 @@ public:
 
 	virtual EModRet OnUserMsg(CString& sTarget, CString& sMessage) {
 		sTarget.TrimLeft("\244");
+
+		if (sMessage.Left(2) == "``") {
+			sMessage.LeftChomp(2);
+			return CONTINUE;
+		}
+
 		MCString::iterator it = FindNV(sTarget.AsLower());
 
 		if (it != EndNV()) {
