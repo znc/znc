@@ -8,7 +8,7 @@ VERSION="@VERSION@"
 if test -z "$1"; then
 	echo "USAGE: $0 <--cflags|--include|--libs|--version>"
 	echo "	--cflags     [$CXXFLAGS]"
-	echo "	--includes   [$INCLUDES]"
+	echo "	--include    [$INCLUDES]"
 	echo "	--libs       [$LIBS]"
 	echo "	--version    [$VERSION]"
 	echo "	--prefix     [@prefix@]"
