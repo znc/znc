@@ -7,13 +7,13 @@
 CChan::CChan(const CString& sName, CUser* pUser, bool bInConfig) {
 	m_sName = sName.Token(0);
 	m_sKey = sName.Token(1);
+	m_pUser = pUser;
 
-	if (m_sName.Left(1) != "#" && m_sName.Left(1) != "&") {
+	if (!m_pUser->IsChan(m_sName)) {
 		m_sName = "#" + m_sName;
 	}
 
 	m_bInConfig = bInConfig;
-	m_pUser = pUser;
 	m_Nick.SetUser(pUser);
 	m_bAutoCycle = m_pUser->AutoCycle();
 	m_bDetached = false;
