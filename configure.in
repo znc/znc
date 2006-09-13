@@ -74,6 +74,7 @@ if test -z "$prefix" || test $prefix = "NONE"; then
 	prefix="/usr/local"
 fi
 
+AC_ARG_WITH( module-prefix, [  --with-module-prefix=/path/to/moduledir], MODDIR=$withval, MODDIR="${prefix}/libexec")
 if test "$MODULES" = "yes"; then
 	if test -z "$NOCHECK_DL"; then
 		AC_CHECK_LIB( dl, dlopen,,MODULES="no",)
@@ -95,7 +96,7 @@ if test "$MODULES" = "yes"; then
 			MODFLAGS="$MODFLAGS -mimpure-text"
 		fi
 
-		appendCXX "-D_MODDIR_=\\\"${prefix}/share/znc\\\""
+		appendCXX "-D_MODDIR_=\\\"${MODDIR}/znc\\\""
 
 		if test -z "$NOPERL"; then
 			echo -n "checking for perl... "
@@ -124,6 +125,7 @@ AC_SUBST([MODTARGET])
 AC_SUBST([VERSION])
 AC_SUBST([NOSSL])
 AC_SUBST([PERL])
+AC_SUBST([MODDIR])
 AC_CONFIG_FILES([Makefile])
 AC_CONFIG_FILES([znc-config])
 if test "$MODULES" = "yes"; then

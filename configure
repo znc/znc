@@ -271,7 +271,7 @@ PACKAGE_VERSION=
 PACKAGE_STRING=
 PACKAGE_BUGREPORT=
 
-ac_subst_vars='SHELL PATH_SEPARATOR PACKAGE_NAME PACKAGE_TARNAME PACKAGE_VERSION PACKAGE_STRING PACKAGE_BUGREPORT exec_prefix prefix program_transform_name bindir sbindir libexecdir datadir sysconfdir sharedstatedir localstatedir libdir includedir oldincludedir infodir mandir build_alias host_alias target_alias DEFS ECHO_C ECHO_N ECHO_T LIBS CXX CXXFLAGS LDFLAGS CPPFLAGS ac_ct_CXX EXEEXT OBJEXT build build_cpu build_vendor build_os host host_cpu host_vendor host_os CC CFLAGS ac_ct_CC MODFLAGS INCLUDES MODULES MODTARGET VERSION NOSSL PERL LIBOBJS LTLIBOBJS'
+ac_subst_vars='SHELL PATH_SEPARATOR PACKAGE_NAME PACKAGE_TARNAME PACKAGE_VERSION PACKAGE_STRING PACKAGE_BUGREPORT exec_prefix prefix program_transform_name bindir sbindir libexecdir datadir sysconfdir sharedstatedir localstatedir libdir includedir oldincludedir infodir mandir build_alias host_alias target_alias DEFS ECHO_C ECHO_N ECHO_T LIBS CXX CXXFLAGS LDFLAGS CPPFLAGS ac_ct_CXX EXEEXT OBJEXT build build_cpu build_vendor build_os host host_cpu host_vendor host_os CC CFLAGS ac_ct_CC MODFLAGS INCLUDES MODULES MODTARGET VERSION NOSSL PERL MODDIR LIBOBJS LTLIBOBJS'
 ac_subst_files=''
 
 # Initialize some variables set by options.
@@ -681,13 +681,13 @@ echo X"$0" |
   	  /^X\(\/\).*/{ s//\1/; q; }
   	  s/.*/./; q'`
   srcdir=$ac_confdir
-  if test ! -r $srcdir/$ac_unique_file; then
+  if test ! -r "$srcdir/$ac_unique_file"; then
     srcdir=..
   fi
 else
   ac_srcdir_defaulted=no
 fi
-if test ! -r $srcdir/$ac_unique_file; then
+if test ! -r "$srcdir/$ac_unique_file"; then
   if test "$ac_srcdir_defaulted" = yes; then
     { echo "$as_me: error: cannot find sources ($ac_unique_file) in $ac_confdir or .." >&2
    { (exit 1); exit 1; }; }
@@ -696,7 +696,7 @@ if test ! -r $srcdir/$ac_unique_file; then
    { (exit 1); exit 1; }; }
   fi
 fi
-(cd $srcdir && test -r ./$ac_unique_file) 2>/dev/null ||
+(cd $srcdir && test -r "./$ac_unique_file") 2>/dev/null ||
   { echo "$as_me: error: sources are in $srcdir, but \`cd $srcdir' does not work" >&2
    { (exit 1); exit 1; }; }
 srcdir=`echo "$srcdir" | sed 's%\([^\\/]\)[\\/]*$%\1%'`
@@ -820,6 +820,7 @@ Optional Packages:
   --with-PACKAGE[=ARG]    use PACKAGE [ARG=yes]
   --without-PACKAGE       do not use PACKAGE (same as --with-PACKAGE=no)
   --with-openssl=/path/to/openssl
+  --with-module-prefix=/path/to/moduledir
 
 Some influential environment variables:
   CXX         C++ compiler command
@@ -3233,6 +3234,14 @@ if test -z "$prefix" || test $prefix = "NONE"; then
 	prefix="/usr/local"
 fi
 
+
+# Check whether --with-module-prefix or --without-module-prefix was given.
+if test "${with_module_prefix+set}" = set; then
+  withval="$with_module_prefix"
+  MODDIR=$withval
+else
+  MODDIR="${prefix}/libexec"
+fi;
 if test "$MODULES" = "yes"; then
 	if test -z "$NOCHECK_DL"; then
 
@@ -3329,7 +3338,7 @@ fi
 			MODFLAGS="$MODFLAGS -mimpure-text"
 		fi
 
-		appendCXX "-D_MODDIR_=\\\"${prefix}/share/znc\\\""
+		appendCXX "-D_MODDIR_=\\\"${MODDIR}/znc\\\""
 
 		if test -z "$NOPERL"; then
 			echo -n "checking for perl... "
@@ -3417,6 +3426,7 @@ fi
 VERSION=`grep '#define VERSION' main.h | awk '{print $3}'`
 #
 # Auto detect modules
+
 
 
 
@@ -4096,6 +4106,7 @@ s,@MODTARGET@,$MODTARGET,;t t
 s,@VERSION@,$VERSION,;t t
 s,@NOSSL@,$NOSSL,;t t
 s,@PERL@,$PERL,;t t
+s,@MODDIR@,$MODDIR,;t t
 s,@LIBOBJS@,$LIBOBJS,;t t
 s,@LTLIBOBJS@,$LTLIBOBJS,;t t
 CEOF

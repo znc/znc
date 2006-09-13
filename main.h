@@ -4,7 +4,7 @@
 #define VERSION 0.046
 
 #ifndef _MODDIR_
-#define _MODDIR_ "/usr/share/znc"
+#define _MODDIR_ "/usr/libexec/znc"
 #endif
 
 #ifdef _MODULES

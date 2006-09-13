@@ -9,6 +9,7 @@ PERLCC=-DHAVE_PERL `$(PERL) -MExtUtils::Embed -e perl_inc`
 PERLLD=`$(PERL) -MExtUtils::Embed -e perl_inc -e ldopts`
 endif
 VPATH=.:..
+MODDIR=@MODDIR@
 
 ifeq "@NOSSL@" "1" 
 TARGETS=$(foreach file, $(wildcard *.cpp), $(if $(shell grep REQUIRESSL $(file)),, $(addsuffix .so, $(basename $(file)))))
@@ -31,18 +32,18 @@ install: all create_install_dir install_metadirs $(INSTALL_TARGS)
 	@echo -n ""
 
 create_install_dir:
-	mkdir -p $(DESTDIR)$(prefix)/share/znc
-	rm -rf $(DESTDIR)$(prefix)/share/znc/*.so
+	mkdir -p $(DESTDIR)$(MODDIR)/znc
+	rm -rf $(DESTDIR)$(MODDIR)/znc/*.so
 
 install_metadirs:
 	for a in *; do \
 		if [ -d $$a ] && [ -f $${a}.so ]; then \
-			cp -Rp $$a $(DESTDIR)$(prefix)/share/znc; \
+			cp -Rp $$a $(DESTDIR)$(MODDIR)/znc; \
 		fi \
 	done
 
 install_%:
-	install -m 0755 $(subst install_,,$@) $(DESTDIR)$(prefix)/share/znc
+	install -m 0755 $(subst install_,,$@) $(DESTDIR)$(MODDIR)/znc
 
 clean:
 	rm -rf *.so *.o core core.*
@@ -62,9 +63,9 @@ modperl.so: modperl.o
 modperl.o: modperl.cpp
 	$(CXX) $(CXXFLAGS) $(INCLUDES) -c -o $@ modperl.cpp $(PERLCC)
 install_modperl.so:
-	install -m 0755 modperl.so $(DESTDIR)$(prefix)/share/znc
+	install -m 0755 modperl.so $(DESTDIR)$(MODDIR)/znc
 	for i in *.pm; do \
-		install -m 0755 $$i $(DESTDIR)$(prefix)/share/znc; \
+		install -m 0755 $$i $(DESTDIR)$(MODDIR)/znc; \
 	done
 else
 modperl.so:
