@@ -1,4 +1,4 @@
-#/bin/sh
+#!/bin/sh
 
 if test -z "$1"; then
 	echo -e "\033[1m\033[34m[\033[33m ** \033[34m]\033[39m\033[22m USAGE: $0 <file.cpp> [file.cpp ...]"
