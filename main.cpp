@@ -53,8 +53,7 @@ int main(int argc, char** argv, char** envp) {
 	CString sConfig;
 
 #ifdef HAVE_LIBSSL
-	// initialize ssl, allow client to have compression enabled if desired
-	InitSSL(CT_ZLIB);
+	InitSSL();
 #endif /* HAVE_LIBSSL */
 
 	int iArg, iOptIndex = -1;
