@@ -1,3 +1,4 @@
+//! @author prozac@rottenboy.com
 // 
 // The encryption here was designed to be compatible with mircryption's CBC mode.
 // 

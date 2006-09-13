@@ -353,6 +353,7 @@ protected:
 	bool				m_bDesc;
 };
 
+//! @author imaginos@imaginos.net
 class CExecSock : public Csock {
 public:
 	CExecSock() : Csock() {
