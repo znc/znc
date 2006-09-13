@@ -1,3 +1,5 @@
+//! @author prozac@rottenboy.com
+
 #include "FileUtils.h"
 #include <iostream>
 #include <sys/wait.h>

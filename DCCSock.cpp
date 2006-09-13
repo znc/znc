@@ -1,3 +1,5 @@
+//! @author prozac@rottenboy.com
+
 #include "DCCSock.h"
 
 void CDCCSock::ReadData(const char* data, int len) {

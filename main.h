@@ -1,3 +1,5 @@
+//! @author prozac@rottenboy.com
+
 #ifndef _MAIN_H
 #define _MAIN_H
 

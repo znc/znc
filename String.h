@@ -1,3 +1,5 @@
+//! @author prozac@rottenboy.com
+
 #ifndef X_STRING_H
 #define X_STRING_H
 

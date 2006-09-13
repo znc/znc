@@ -1,3 +1,5 @@
+//! @author prozac@rottenboy.com
+
 #ifndef _SERVER_H
 #define _SERVER_H
 

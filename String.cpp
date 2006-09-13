@@ -1,3 +1,5 @@
+//! @author prozac@rottenboy.com
+
 #include <string.h>
 #include "String.h"
 #include "FileUtils.h"

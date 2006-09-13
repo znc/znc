@@ -1,3 +1,5 @@
+//! @author prozac@rottenboy.com
+
 #include "Chan.h"
 #include "Nick.h"
 #include "User.h"

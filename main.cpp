@@ -1,3 +1,5 @@
+//! @author prozac@rottenboy.com
+
 #include <unistd.h>
 #include <getopt.h>
 #include <stdlib.h>

@@ -1,3 +1,5 @@
+//! @author prozac@rottenboy.com
+
 #include "Utils.h"
 #include "MD5.h"
 #include <sys/stat.h>

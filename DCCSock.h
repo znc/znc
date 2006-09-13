@@ -1,3 +1,5 @@
+//! @author prozac@rottenboy.com
+
 #ifndef _DCCSOCK_H
 #define _DCCSOCK_H
 

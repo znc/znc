@@ -1,3 +1,5 @@
+//! @author prozac@rottenboy.com
+
 #include "main.h"
 #include "Server.h"
 

@@ -1,3 +1,5 @@
+//! @author prozac@rottenboy.com
+
 #ifndef _DCCBOUNCE_H
 #define _DCCBOUNCE_H
 

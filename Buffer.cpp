@@ -1,3 +1,5 @@
+//! @author prozac@rottenboy.com
+
 #include "Buffer.h"
 
 CBufLine::CBufLine(const CString& sPre, const CString& sPost) {

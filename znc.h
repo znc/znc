@@ -1,3 +1,5 @@
+//! @author prozac@rottenboy.com
+
 #ifndef _ZNC_H
 #define _ZNC_H
 

@@ -1,3 +1,8 @@
+//! @author prozac@rottenboy.com
+
+#ifndef _TIMERS_H
+#define _TIMERS_H
+
 #include "main.h"
 
 class CKeepNickTimer : public CCron {
@@ -138,3 +143,5 @@ protected:
 
 	CUser* m_pUser;
 };
+
+#endif // !_TIMERS_H

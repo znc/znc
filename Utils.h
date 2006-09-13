@@ -1,3 +1,5 @@
+//! @author prozac@rottenboy.com
+
 #ifndef _UTILS_H
 #define _UTILS_H
 

@@ -1,3 +1,5 @@
+//! @author prozac@rottenboy.com
+
 #include "znc.h"
 #include "IRCSock.h"
 #include "DCCBounce.h"

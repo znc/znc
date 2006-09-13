@@ -1,3 +1,5 @@
+//! @author prozac@rottenboy.com
+
 #ifndef _HTTPSOCK_H
 #define _HTTPSOCK_H
 

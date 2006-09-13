@@ -1,3 +1,5 @@
+//! @author prozac@rottenboy.com
+
 #ifndef _BUFFER_H
 #define _BUFFER_H
 

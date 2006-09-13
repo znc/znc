@@ -1,3 +1,5 @@
+//! @author prozac@rottenboy.com
+
 #include "znc.h"
 #include "User.h"
 #include "Server.h"

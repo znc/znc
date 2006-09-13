@@ -1,3 +1,5 @@
+//! @author prozac@rottenboy.com
+
 #ifndef _IRCSOCK_H
 #define _IRCSOCK_H
 

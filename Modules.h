@@ -1,3 +1,5 @@
+//! @author prozac@rottenboy.com
+
 #ifndef _MODULES_H
 #define _MODULES_H
 

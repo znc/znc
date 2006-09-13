@@ -1,3 +1,5 @@
+//! @author prozac@rottenboy.com
+
 #include "DCCBounce.h"
 
 void CDCCBounce::ReadLine(const CString& sData) {

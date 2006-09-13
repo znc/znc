@@ -1,3 +1,5 @@
+//! @author prozac@rottenboy.com
+
 #include "HTTPSock.h"
 #include "znc.h"
 

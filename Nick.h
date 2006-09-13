@@ -1,3 +1,5 @@
+//! @author prozac@rottenboy.com
+
 #ifndef _NICK_H
 #define _NICK_H
 

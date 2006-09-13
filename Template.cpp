@@ -1,3 +1,5 @@
+//! @author prozac@rottenboy.com
+
 #include "Template.h"
 
 using std::cerr;

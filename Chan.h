@@ -1,3 +1,5 @@
+//! @author prozac@rottenboy.com
+
 #ifndef _CHAN_H
 #define _CHAN_H
 
