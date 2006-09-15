@@ -139,6 +139,7 @@ void CIRCSock::ReadLine(const CString& sData) {
 				case 266:	// global users
 					m_pUser->AddRawBuffer(":" + sServer + " " + sCmd + " ", " " + sRest);
 					break;
+				case 422:	// MOTD File is missing
 				case 375:	// begin motd
 					m_pUser->ClearMotdBuffer();
 				case 372:	// motd
