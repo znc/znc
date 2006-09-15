@@ -734,8 +734,11 @@ bool CZNC::ParseConfig(const CString& sConfig) {
 	bool bCommented = false;	// support for /**/ style comments
 	CUser* pUser = NULL;	// Used to keep track of which user block we are in
 	CChan* pChan = NULL;	// Used to keep track of which chan block we are in
+	unsigned int uLineNum = 0;
 
 	while (File.ReadLine(sLine)) {
+		uLineNum++;
+
 		while ((sLine.Right(1) == "\r") || (sLine.Right(1) == "\n")) {
 			sLine.Trim();
 		}
@@ -1107,7 +1110,7 @@ bool CZNC::ParseConfig(const CString& sConfig) {
 			}
 		}
 
-		CUtils::PrintError("Unhandled line in config: [" + sLine + "]");
+		CUtils::PrintError("Unhandled line " + CString(uLineNum) + " in config: [" + sLine + "]");
 		return false;
 	}
 
