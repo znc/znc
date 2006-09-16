@@ -42,7 +42,10 @@ CZNC::~CZNC() {
 
 	m_Manager.Cleanup();
 	DeleteUsers();
+
+#ifdef _MODULES
 	delete m_pModules;
+#endif
 }
 
 CString CZNC::GetTag(bool bIncludeVersion) {

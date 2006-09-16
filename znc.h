@@ -5,6 +5,7 @@
 
 #include "main.h"
 #include "FileUtils.h"
+#include "Client.h"
 #ifdef _MODULES
 #include "Modules.h"
 #endif

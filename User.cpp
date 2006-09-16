@@ -59,7 +59,10 @@ CUser::~CUser() {
 	}
 
 	DelClients();
+
+#ifdef _MODULES
 	DelModules();
+#endif
 
 	CZNC::Get().GetManager().DelCronByAddr(m_pBackNickTimer);
 	CZNC::Get().GetManager().DelCronByAddr(m_pAwayNickTimer);
