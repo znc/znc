@@ -96,7 +96,15 @@ public:
 			set<CString>& ssNicks = it->second;
 
 			if (ssNicks.find(m_pUser->GetUserName()) != ssNicks.end()) {
+				MCString::iterator itb = m_msTopics.find(it->first.AsLower());
+
 				m_pClient->PutClient(":" + m_pUser->GetIRCNick().GetNickMask() + " JOIN " + it->first);
+
+				if (itb != m_msTopics.end()) {
+					m_pClient->PutClient(":" + m_pUser->GetIRCNick().GetNickMask() + " JOIN " + it->first);
+					m_pClient->PutClient(":" + m_pUser->GetIRCServer() + " 332 " + m_pUser->GetIRCNick().GetNickMask() + " " + it->first + " :" + itb->second);
+				}
+
 				SendNickList(ssNicks, it->first);
 				PutChan(ssNicks, ":*" + GetModName() + "!znc@rottenboy.com MODE " + it->first + " +" + CString(m_pUser->IsAdmin() ? "o" : "v") + " ?" + m_pUser->GetUserName(), true);
 			}
@@ -119,6 +127,38 @@ public:
 		if (sLine.Left(5).CaseCmp("WHO ~") == 0) {
 			return HALT;
 		} else if (sLine.Left(6).CaseCmp("MODE ~") == 0) {
+			return HALT;
+		} else if (sLine.Left(8).CaseCmp("TOPIC ~#") == 0) {
+			CString sChannel = sLine.Token(1);
+			CString sTopic = sLine.Token(2, true);
+
+			if (sTopic.Left(1) == ":") {
+				sTopic.LeftChomp();
+			}
+
+			set<CString>& ssNicks = m_msChans[sChannel.AsLower()];	// @todo do a lookup first
+			const CString& sNick = m_pUser->GetUserName();
+
+			if (ssNicks.find(sNick) != ssNicks.end()) {
+				if (!sTopic.empty()) {
+					if (m_pUser->IsAdmin()) {
+						PutChan(ssNicks, ":" + m_pUser->GetIRCNick().GetNickMask() + " TOPIC " + sChannel + " :" + sTopic);
+						m_msTopics[sChannel.AsLower()] = sTopic;
+					} else {
+							m_pUser->PutUser(":irc.znc.com 482 " +  m_pUser->GetIRCNick().GetNick() + " " + sChannel + " :You're not channel operator");
+					}
+				} else {
+					sTopic = m_msTopics[sChannel.AsLower()];
+
+					if (sTopic.empty()) {
+						m_pUser->PutUser(":irc.znc.com 331 " + m_pUser->GetIRCNick().GetNick() + " " + sChannel + " :No topic is set.");
+					} else {
+						m_pUser->PutUser(":irc.znc.com 332 " + m_pUser->GetIRCNick().GetNick() + " " + sChannel + " :" + sTopic);
+					}
+				}
+			} else {
+			    m_pUser->PutUser(":irc.znc.com 442 " + m_pUser->GetIRCNick().GetNick() + " " + sChannel + " :You're not on that channel");
+			}
 			return HALT;
 		}
 
@@ -151,6 +191,7 @@ public:
 
 			if (ssNicks.empty()) {
 				m_msChans.erase(sChannel.AsLower());
+				m_msTopics.erase(sChannel.AsLower());
 			}
 		}
 
@@ -181,6 +222,13 @@ public:
 			}
 
 			m_pUser->PutUser(":" + m_pUser->GetIRCNick().GetNickMask() + " JOIN " + sChannel);
+
+			MCString::iterator it = m_msTopics.find(sChannel.AsLower());
+
+			if (it != m_msTopics.end()) {
+				m_pUser->PutUser(":" + m_pUser->GetIRCServer() + " 332 " + m_pUser->GetIRCNick().GetNickMask() + " " + sChannel + " :" + it->second);
+			}
+
 			PutChan(ssNicks, ":?" + sNick + "!" + m_pUser->GetIdent() + "@" + sHost + " JOIN " + sChannel, false);
 			SendNickList(ssNicks, sChannel);
 
@@ -330,8 +378,9 @@ public:
 
 private:
 	map<CString, set<CString> >	m_msChans;
-	set<CUser*>					m_spInjectedPrefixes;
-	set<CString>				m_ssDefaultChans;
+	set<CUser*>		m_spInjectedPrefixes;
+	set<CString>	m_ssDefaultChans;
+	MCString		m_msTopics;
 };
 
 GLOBALMODULEDEFS(CPartylineMod, "Internal channels and queries for users connected to znc");
