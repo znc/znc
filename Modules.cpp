@@ -1,5 +1,7 @@
 //! @author prozac@rottenboy.com
 
+#ifdef _MODULES
+
 #include "main.h"
 #include "Modules.h"
 #include "znc.h"
@@ -963,3 +965,5 @@ void CModules::GetAvailableMods(set<CModInfo>& ssMods, bool bGlobal) {
 		}
 	}
 }
+
+#endif // _MODULES
