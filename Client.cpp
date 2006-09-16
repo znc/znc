@@ -252,6 +252,19 @@ void CClient::ReadLine(const CString& sData) {
 			pChan->AddBuffer(":" + GetNickMask() + " NOTICE " + sTarget + " :" + sMsg);
 		}
 
+		// Relay to the rest of the clients that may be connected to this user
+		if (m_pUser && m_pUser->IsChan(sTarget)) {
+			vector<CClient*>& vClients = m_pUser->GetClients();
+
+			for (unsigned int a = 0; a < vClients.size(); a++) {
+				CClient* pClient = vClients[a];
+
+				if (pClient != this) {
+					pClient->PutClient(":" + GetNickMask() + " NOTICE " + sTarget + " :" + sMsg);
+				}
+			}
+		}
+
 		PutIRC("NOTICE " + sTarget + " :" + sMsg);
 		return;
 	} else if (sCommand.CaseCmp("PRIVMSG") == 0) {
@@ -382,6 +395,19 @@ void CClient::ReadLine(const CString& sData) {
 			if (sCTCP.Token(0).CaseCmp("ACTION") == 0) {
 				if (pChan && pChan->KeepBuffer()) {
 					pChan->AddBuffer(":" + GetNickMask() + " PRIVMSG " + sTarget + " :\001" + sCTCP + "\001");
+				}
+
+				// Relay to the rest of the clients that may be connected to this user
+				if (m_pUser && m_pUser->IsChan(sTarget)) {
+					vector<CClient*>& vClients = m_pUser->GetClients();
+
+					for (unsigned int a = 0; a < vClients.size(); a++) {
+						CClient* pClient = vClients[a];
+
+						if (pClient != this) {
+							pClient->PutClient(":" + GetNickMask() + " PRIVMSG " + sTarget + " :\001" + sCTCP + "\001");
+						}
+					}
 				}
 #ifdef _MODULES
 			} else {
