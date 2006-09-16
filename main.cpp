@@ -9,13 +9,13 @@
 #include "MD5.h"
 
 static struct option g_LongOpts[] = {
-	{ "help",				0,	NULL,	0 },
-	{ "version",			0,	NULL,	0 },
-	{ "makeconf",			0,	NULL,	0 },
-	{ "makepass",			0,	NULL,	0 },
+	{ "help",			0,	NULL,	'h' },
+	{ "version",			0,	NULL,	'v' },
+	{ "makeconf",			0,	NULL,	'c' },
+	{ "makepass",			0,	NULL,	's' },
 #ifdef HAVE_LIBSSL
-	{ "makepem",			0,	NULL,	0 },
-	{ "encrypt-pem",		0,	NULL, 	0 },
+	{ "makepem",			0,	NULL,	'p' },
+	{ "encrypt-pem",		0,	NULL, 	'e' },
 #endif /* HAVE_LIBSSL */
 	{ NULL }
 };
@@ -23,13 +23,13 @@ static struct option g_LongOpts[] = {
 void GenerateHelp(const char *appname) {
 	CUtils::PrintMessage("USAGE: " + CString(appname) + " [options] [config]");
 	CUtils::PrintMessage("Options are:");
-	CUtils::PrintMessage("\t--help)");
-	CUtils::PrintMessage("\t--version      Output version information and exit");
-	CUtils::PrintMessage("\t--makeconf     Interactively create a new config");
-	CUtils::PrintMessage("\t--makepass     Generates a password for use in config");
+	CUtils::PrintMessage("\t-h, --help         List available command line options (this page)");
+	CUtils::PrintMessage("\t-v, --version      Output version information and exit");
+	CUtils::PrintMessage("\t-c, --makeconf     Interactively create a new config");
+	CUtils::PrintMessage("\t-s, --makepass     Generates a password for use in config");
 #ifdef HAVE_LIBSSL
-	CUtils::PrintMessage("\t--makepem      Generates a pemfile for use with SSL");
-	CUtils::PrintMessage("\t--encrypt-pem  when used along with --makepem, encrypts the private key in the pemfile");
+	CUtils::PrintMessage("\t-p, --makepem      Generates a pemfile for use with SSL");
+	CUtils::PrintMessage("\t-e, --encrypt-pem  when used along with --makepem, encrypts the private key in the pemfile");
 #endif /* HAVE_LIBSSL */
 }
 
@@ -62,43 +62,38 @@ int main(int argc, char** argv, char** envp) {
 #ifdef HAVE_LIBSSL
 	bool bMakePem = false;
 	bool bEncPem = false;
+
+	while ((iArg = getopt_long(argc, argv, "hvcspe", g_LongOpts, &iOptIndex)) != -1) {
+#else	
+
+	while ((iArg = getopt_long(argc, argv, "hvcs", g_LongOpts, &iOptIndex)) != -1) {
 #endif /* HAVE_LIBSSL */
-	while ((iArg = getopt_long(argc, argv, "c|h", g_LongOpts, &iOptIndex) != -1)) {
-		switch (iArg) {
-			case 1: { // long options
-				if (iOptIndex >= 0) {
-					CString sOption = Lower(g_LongOpts[iOptIndex].name);
-					if (sOption == "version") {
-						cout << CZNC::GetTag() << endl;
-						return 0;
-					} else if (sOption == "makeconf") {
-						bMakeConf = true;
-					} else if (sOption == "makepass") {
-						bMakePass = true;
+	    switch (iArg) {
+		case 'h':
+			    GenerateHelp(argv[0]);
+			    return 0;
+		case 'v':
+			    cout << CZNC::GetTag() << endl;
+			    return 0;
+		case 'c':
+			    bMakeConf = true;
+			    break;
+		case 's':
+			    bMakePass = true;
+			    break;
 #ifdef HAVE_LIBSSL
-					} else if (sOption == "makepem") {
-						bMakePem = true;
-					} else if (sOption == "encrypt-pem") {
-						bEncPem = true;
+		case 'p':
+			    bMakePem = true;
+			    break;
+		case 'e':
+			    bEncPem = true;
+			    break;
 #endif /* HAVE_LIBSSL */
-					} else if (sOption == "help") {
-						GenerateHelp(argv[0]);
-						return 0;
-					}
-				} else {
-					GenerateHelp(argv[0]);
-					return 1;
-				}
-				break;
-			}
-			case 'h':
-				GenerateHelp(argv[0]);
-				return 0;
-			default: {
-				GenerateHelp(argv[0]);
-				return 1;
-			}
-		}
+		case '?':
+		default:
+			    GenerateHelp(argv[0]);
+			    return 1;
+	    }
 	}
 
 	if (optind < argc) {
