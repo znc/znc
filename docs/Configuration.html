@@ -22,7 +22,7 @@
 <li> <strong>Misc</strong> - Other files are also stored in the ~/.znc directory such as the SSL cert (znc.pem) and PidFile (znc.pid).
 <li> <strong>Local Modules</strong> - Stored in ~/.znc/modules.  ZNC will look in the local module dir first when trying to load a module.
 <li> <strong>Global Modules</strong> - Stored in /usr/share/znc/modules by default.
-<li> <strong>Binaries</strong> - znc, znc-config, and zncchk are all stored in /usr/bin by default.  You can change this when you configure by using <em>./configure --prefix=/whatever/path/you/want</em>
+<li> <strong>Binaries</strong> - znc and znc-config are stored in /usr/bin by default.  You can change this when you configure by using <em>./configure --prefix=/whatever/path/you/want</em>
 </ul>
 <h2>
  Config File - (~/.znc/znc.conf)
@@ -30,7 +30,7 @@
 <ul>
 <li> <strong>ListenPort</strong> - The port that ZNC will listen on.  If the port is prepended with a '+' then ZNC listens using ssl.
 <li> <strong>ISpoofFile</strong> - ZNC will write the ident of the user trying to connect to this file.  Very useful if your shell supports oidentd.
-<li> <strong>PidFile</strong> - The pid file that is needed if you want to crontab the zncchk shell script.
+<li> <strong>PidFile</strong> - The pid file that is created when znc starts.
 <li> <strong>StatusPrefix</strong> - The prefix for the status and module queries.
 <li> <strong>User</strong> - The user definition, you can have more than one..
 <ul>
