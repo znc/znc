@@ -121,6 +121,7 @@ int main(int argc, char** argv, char** envp) {
 				return 1;
 			}
 
+			chdir(ZNC.GetCurPath().c_str());
 			if (execve(*argv, args, envp) == -1) {
 				CUtils::PrintError("Unable to launch znc [" + CString(strerror(errno)) + "]");
 				return 1;
