@@ -975,6 +975,28 @@ void CClient::UserCommand(const CString& sLine) {
 		}
 	} else if ((sCommand.CaseCmp("LISTMODS") == 0) || (sCommand.CaseCmp("LISTMODULES") == 0)) {
 #ifdef _MODULES
+		if (m_pUser->IsAdmin()) {
+		    CModules& GModules = CZNC::Get().GetModules();
+		    if (!GModules.size()) {
+			PutStatus("No global modules loaded.");
+		    } else {
+			CTable GTable;
+			GTable.AddColumn("Name");
+			GTable.AddColumn("Description");
+
+			for (unsigned int b = 0; b < GModules.size(); b++) {
+			    GTable.AddRow();
+			    GTable.SetCell("Name", GModules[b]->GetModName());
+			    GTable.SetCell("Description", GModules[b]->GetDescription().Ellipsize(128));
+			}
+
+			unsigned int uTableIdx = 0; CString sLine;
+			while (GTable.GetLine(uTableIdx++, sLine)) {
+			    PutStatus(sLine);
+			}
+		    }
+		}
+
 		if (m_pUser) {
 			CModules& Modules = m_pUser->GetModules();
 
