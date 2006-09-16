@@ -782,6 +782,8 @@ void CIRCSock::Disconnected() {
 	if (!m_pUser->IsBeingDeleted()) {
 		m_pUser->PutStatus("Disconnected from IRC.  Reconnecting...");
 	}
+
+	ResetChans();
 }
 
 void CIRCSock::SockError(int iErrno) {
@@ -789,6 +791,8 @@ void CIRCSock::SockError(int iErrno) {
 	if (!m_pUser->IsBeingDeleted()) {
 		m_pUser->PutStatus("Disconnected from IRC.  Reconnecting...");
 	}
+
+	ResetChans();
 }
 
 void CIRCSock::Timeout() {
@@ -796,6 +800,8 @@ void CIRCSock::Timeout() {
 	if (!m_pUser->IsBeingDeleted()) {
 		m_pUser->PutStatus("IRC connection timed out.  Reconnecting...");
 	}
+
+	ResetChans();
 }
 
 void CIRCSock::ConnectionRefused() {
@@ -868,5 +874,11 @@ CIRCSock::EChanModeArgs CIRCSock::GetModeType(unsigned char uMode) const {
 	}
 
 	return it->second;
+}
+
+void CIRCSock::ResetChans() {
+	for (map<CString, CChan*>::iterator a = m_msChans.begin(); a != m_msChans.end(); a++) {
+		a->second->Reset();
+	}
 }
 

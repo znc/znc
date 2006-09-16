@@ -44,6 +44,7 @@ public:
 	void KeepNick(bool bForce = false);
 	void PutIRC(const CString& sLine);
 	void ParseISupport(const CString& sLine);
+	void ResetChans();
 
 	// Setters
 	void SetPass(const CString& s) { m_sPass = s; }
