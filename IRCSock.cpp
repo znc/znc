@@ -680,7 +680,9 @@ bool CIRCSock::OnPrivCTCP(CNick& Nick, CString& sMessage) {
 			} else if (sQuery == "PING") {
 				sReply = sMessage.Token(1, true);
 			}
-		} else if (!sReply.empty()) {
+		}
+
+		if (!sReply.empty()) {
 			PutIRC("NOTICE " + Nick.GetNick() + " :\001" + sQuery + " " + sReply + "\001");
 			return true;
 		}
