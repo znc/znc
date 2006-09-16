@@ -343,6 +343,7 @@ bool CUtils::GetNumInput(const CString& sPrompt, unsigned int& uRet, unsigned in
 
 bool CUtils::GetInput(const CString& sPrompt, CString& sRet, const CString& sDefault, const CString& sHint) {
 	CString sExtra;
+	CString sInput;
 	sExtra += (!sHint.empty()) ? (" (" + sHint + ")") : "";
 	sExtra += (!sDefault.empty()) ? (" [" + sDefault + "]") : "";
 
@@ -350,14 +351,16 @@ bool CUtils::GetInput(const CString& sPrompt, CString& sRet, const CString& sDef
 	char szBuf[1024];
 	memset(szBuf, 0, 1024);
 	fgets(szBuf, 1024, stdin);
-	sRet = szBuf;
+	sInput = szBuf;
 
-	if (sRet.Right(1) == "\n") {
-		sRet.RightChomp();
+	if (sInput.Right(1) == "\n") {
+		sInput.RightChomp();
 	}
 
-	if (sRet.empty()) {
+	if (sInput.empty()) {
 		sRet = sDefault;
+	} else {
+		sRet = sInput;
 	}
 
 	return !sRet.empty();
