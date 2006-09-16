@@ -101,7 +101,6 @@ public:
 				m_pClient->PutClient(":" + m_pUser->GetIRCNick().GetNickMask() + " JOIN " + it->first);
 
 				if (itb != m_msTopics.end()) {
-					m_pClient->PutClient(":" + m_pUser->GetIRCNick().GetNickMask() + " JOIN " + it->first);
 					m_pClient->PutClient(":" + m_pUser->GetIRCServer() + " 332 " + m_pUser->GetIRCNick().GetNickMask() + " " + it->first + " :" + itb->second);
 				}
 
@@ -145,7 +144,7 @@ public:
 						PutChan(ssNicks, ":" + m_pUser->GetIRCNick().GetNickMask() + " TOPIC " + sChannel + " :" + sTopic);
 						m_msTopics[sChannel.AsLower()] = sTopic;
 					} else {
-							m_pUser->PutUser(":irc.znc.com 482 " +  m_pUser->GetIRCNick().GetNick() + " " + sChannel + " :You're not channel operator");
+						m_pUser->PutUser(":irc.znc.com 482 " +  m_pUser->GetIRCNick().GetNick() + " " + sChannel + " :You're not channel operator");
 					}
 				} else {
 					sTopic = m_msTopics[sChannel.AsLower()];
