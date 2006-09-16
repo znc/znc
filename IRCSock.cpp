@@ -666,15 +666,21 @@ bool CIRCSock::OnPrivCTCP(CNick& Nick, CString& sMessage) {
 		CString sQuery = sMessage.Token(0).AsUpper();
 		CString sReply;
 
+		if (it == mssCTCPReplies.end()) {
+			it = mssCTCPReplies.find(sQuery);
+		}
+
 		if (it != mssCTCPReplies.end()) {
 			sReply = it->second;
 		}
 
-		if (sReply.empty() && sQuery == "VERSION" && !m_pUser->IsUserAttached()) {
-			sReply = "ZNC by prozac - http://znc.sourceforge.net";
-		}
-
-		if (!sReply.empty()) {
+		if (sReply.empty() && !m_pUser->IsUserAttached()) {
+			if (sQuery == "VERSION") {
+				sReply = "ZNC by prozac - http://znc.sourceforge.net";
+			} else if (sQuery == "PING") {
+				sReply = sMessage.Token(1, true);
+			}
+		} else if (!sReply.empty()) {
 			PutIRC("NOTICE " + Nick.GetNick() + " :\001" + sQuery + " " + sReply + "\001");
 			return true;
 		}
