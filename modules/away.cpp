@@ -18,6 +18,9 @@
  *
  * 
  * $Log$
+ * Revision 1.25  2006/09/16 18:11:35  prozacx
+ * Patched using configureable_away_timer.patch by psycho
+ *
  * Revision 1.24  2006/07/23 04:02:53  imaginos
  * leave default behavior of not forcing
  *
@@ -115,6 +118,7 @@ public:
 		Ping();	
 		m_bIsAway = false;
 		m_bBootError = false;
+		SetAwayTime( 300 );
 		AddTimer( new CAwayJob( this, 60, 0, "AwayJob", "Checks for idle and saves messages every 1 minute" ) );
 	}
 	virtual ~CAway() 
@@ -125,9 +129,19 @@ public:
 
 	virtual bool OnLoad(const CString& sArgs)
 	{
-		if (!sArgs.empty())
+		CString sMyArgs = sArgs;
+		if (sMyArgs.Token(0) == "-notimer")
 		{
-			m_sPassword = CBlowfish::MD5( sArgs );
+			SetAwayTime(0);
+			sMyArgs = sMyArgs.Token(1, true);
+		} else if (sMyArgs.Token(0) == "-timer")
+		{
+			SetAwayTime(sMyArgs.Token(1).ToInt());
+			sMyArgs = sMyArgs.Token(2, true);
+		}
+		if (!sMyArgs.empty())
+ 		{
+			m_sPassword = CBlowfish::MD5( sMyArgs );
 		}
 
 		return true;
@@ -326,9 +340,31 @@ public:
 			}
 			PutModule( "#--- End Messages", "away" );
 					
-		} else
+		} else if ( sCmdName == "enabletimer")
 		{
-			PutModule( "Commands: away [-quiet], back [-quiet], delete <num|all>, ping, show, save", "away" );
+			SetAwayTime(300);
+			PutModule( "Timer set to 300 seconds" );
+		} else if ( sCmdName == "disabletimer")
+		{
+			SetAwayTime(0);
+			PutModule( "Timer disabled" );
+		} else if ( sCmdName == "settimer")
+		{
+			int iSetting = sCommand.Token(1).ToInt();
+			
+			SetAwayTime(iSetting);
+			
+			if(iSetting == 0)
+				PutModule( "Timer disabled" );
+			else
+				PutModule( "Timer set to " + CString(iSetting) + " seconds" );
+
+		} else if ( sCmdName == "timer")
+		{
+			PutModule( "Current timer setting: " + CString(GetAwayTime()) + " seconds" );
+ 		} else
+ 		{
+			PutModule( "Commands: away [-quiet], back [-quiet], delete <num|all>, ping, show, save, enabletimer, disabletimer, settimer <secs>, timer", "away" );
 		}
 	}
 
@@ -410,6 +446,8 @@ public:
 
 	time_t GetTimeStamp() const { return( m_iLastSentData ); }
 	void Ping() { m_iLastSentData = time( NULL ); }
+	time_t GetAwayTime() { return m_iAutoAway; }
+	void SetAwayTime(time_t u) { m_iAutoAway = u; }
 
 	bool IsAway() { return( m_bIsAway ); }
 
@@ -456,6 +494,7 @@ private:
 
 	time_t			m_iLastSentData;
 	bool			m_bIsAway;
+	time_t		m_iAutoAway;
 	vector<CString>	m_vMessages;
 	CString			m_sReason;
 };
@@ -470,7 +509,7 @@ void CAwayJob::RunJob()
 	{
 		time_t iNow = time( NULL );
 
-		if ( ( iNow - p->GetTimeStamp() ) > 300 )
+		if ( ( iNow - p->GetTimeStamp() ) > p->GetAwayTime() && p->GetAwayTime() != 0)
 			p->Away();
 	}
 }
