@@ -977,24 +977,26 @@ void CClient::UserCommand(const CString& sLine) {
 #ifdef _MODULES
 		if (m_pUser->IsAdmin()) {
 		    CModules& GModules = CZNC::Get().GetModules();
+
 		    if (!GModules.size()) {
-			PutStatus("No global modules loaded.");
-		    } else {
-			CTable GTable;
-			GTable.AddColumn("Name");
-			GTable.AddColumn("Description");
+				PutStatus("No global modules loaded.");
+			} else {
+				CTable GTable;
+				GTable.AddColumn("Name");
+				GTable.AddColumn("Description");
 
-			for (unsigned int b = 0; b < GModules.size(); b++) {
-			    GTable.AddRow();
-			    GTable.SetCell("Name", GModules[b]->GetModName());
-			    GTable.SetCell("Description", GModules[b]->GetDescription().Ellipsize(128));
-			}
+				for (unsigned int b = 0; b < GModules.size(); b++) {
+					GTable.AddRow();
+					GTable.SetCell("Name", GModules[b]->GetModName());
+					GTable.SetCell("Description", GModules[b]->GetDescription().Ellipsize(128));
+				}
 
-			unsigned int uTableIdx = 0; CString sLine;
-			while (GTable.GetLine(uTableIdx++, sLine)) {
-			    PutStatus(sLine);
+				unsigned int uTableIdx = 0; CString sLine;
+
+				while (GTable.GetLine(uTableIdx++, sLine)) {
+					PutStatus(sLine);
+				}
 			}
-		    }
 		}
 
 		if (m_pUser) {
@@ -1025,8 +1027,24 @@ void CClient::UserCommand(const CString& sLine) {
 #endif
 		return;
 	} else if ((sCommand.CaseCmp("LOADMOD") == 0) || (sCommand.CaseCmp("LOADMODULE") == 0)) {
-		CString sMod = sLine.Token(1);
-		CString sArgs = sLine.Token(2, true);
+		CString sMod;
+		CString sArgs;
+		bool bGlobal = false;
+
+		if (sLine.Token(1).CaseCmp("-global") == 0) {
+		    sMod = sLine.Token(2);
+
+		    if (!m_pUser->IsAdmin()) {
+				PutStatus("Unable to load global module [" + sMod + "] Access Denied.");
+				return;
+		    }
+
+		    sArgs = sLine.Token(3, true);
+		    bGlobal = true;
+		} else {
+		    sMod = sLine.Token(1);
+		    sArgs = sLine.Token(2, true);
+		}
 
 		if (m_pUser->DenyLoadMod()) {
 			PutStatus("Unable to load [" + sMod + "] Access Denied.");
@@ -1034,14 +1052,18 @@ void CClient::UserCommand(const CString& sLine) {
 		}
 #ifdef _MODULES
 		if (sMod.empty()) {
-			PutStatus("Usage: LoadMod <module> [args]");
+			PutStatus("Usage: LoadMod [-global] <module> [args]");
 			return;
 		}
 
 		CString sModRet;
 
 		try {
-			m_pUser->GetModules().LoadModule(sMod, sArgs, m_pUser, sModRet);
+			if (bGlobal) {
+			    CZNC::Get().GetModules().LoadModule(sMod, sArgs, NULL, sModRet);
+			} else {
+			    m_pUser->GetModules().LoadModule(sMod, sArgs, m_pUser, sModRet);
+			}
 		} catch (CException e) {
 			PutStatus("Unable to load module [" + sMod + "] [" + sModRet + "]");
 			return;
@@ -1053,7 +1075,20 @@ void CClient::UserCommand(const CString& sLine) {
 #endif
 		return;
 	} else if ((sCommand.CaseCmp("UNLOADMOD") == 0) || (sCommand.CaseCmp("UNLOADMODULE") == 0)) {
-		CString sMod = sLine.Token(1);
+		CString sMod;
+		bool bGlobal = false;
+
+		if (sLine.Token(1).CaseCmp("-global") == 0) {
+		    sMod = sLine.Token(2);
+
+		    if (!m_pUser->IsAdmin()) {
+				PutStatus("Unable to unload global module [" + sMod + "] Access Denied.");
+				return;
+		    }
+
+		    bGlobal = true;
+		} else
+		    sMod = sLine.Token(1);
 
 		if (m_pUser->DenyLoadMod()) {
 			PutStatus("Unable to unload [" + sMod + "] Access Denied.");
@@ -1061,20 +1096,42 @@ void CClient::UserCommand(const CString& sLine) {
 		}
 #ifdef _MODULES
 		if (sMod.empty()) {
-			PutStatus("Usage: UnloadMod <module>");
+			PutStatus("Usage: UnloadMod [-global] <module>");
 			return;
 		}
 
 		CString sModRet;
-		m_pUser->GetModules().UnloadModule(sMod, sModRet);
+
+		if (bGlobal) {
+		    CZNC::Get().GetModules().UnloadModule(sMod, sModRet);
+		} else {
+		    m_pUser->GetModules().UnloadModule(sMod, sModRet);
+		}
+
 		PutStatus(sModRet);
 #else
 		PutStatus("Unable to unload [" + sMod + "] Modules are not enabled.");
 #endif
 		return;
 	} else if ((sCommand.CaseCmp("RELOADMOD") == 0) || (sCommand.CaseCmp("RELOADMODULE") == 0)) {
-		CString sMod = sLine.Token(1);
-		CString sArgs = sLine.Token(2, true);
+		CString sMod;
+		CString sArgs;
+		bool bGlobal = false;
+
+		if (sLine.Token(1).CaseCmp("-global") == 0) {
+		    sMod = sLine.Token(2);
+
+		    if (!m_pUser->IsAdmin()) {
+				PutStatus("Unable to reload global module [" + sMod + "] Access Denied.");
+				return;
+		    }
+
+		    sArgs = sLine.Token(3, true);
+		    bGlobal = true;
+		} else {
+		    sMod = sLine.Token(1);
+		    sArgs = sLine.Token(2, true);
+		}
 
 		if (m_pUser->DenyLoadMod()) {
 			PutStatus("Unable to reload [" + sMod + "] Access Denied.");
@@ -1082,12 +1139,18 @@ void CClient::UserCommand(const CString& sLine) {
 		}
 #ifdef _MODULES
 		if (sMod.empty()) {
-			PutStatus("Usage: ReloadMod <module> [args]");
+			PutStatus("Usage: ReloadMod [-global] <module> [args]");
 			return;
 		}
 
 		CString sModRet;
-		m_pUser->GetModules().ReloadModule(sMod, sArgs, m_pUser, sModRet);
+
+		if (bGlobal) {
+		    CZNC::Get().GetModules().ReloadModule(sMod, sArgs, NULL, sModRet);
+		} else {
+		    m_pUser->GetModules().ReloadModule(sMod, sArgs, m_pUser, sModRet);
+		}
+
 		PutStatus(sModRet);
 #else
 		PutStatus("Unable to unload [" + sMod + "] Modules are not enabled.");
