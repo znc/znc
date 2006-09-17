@@ -782,7 +782,6 @@ bool CWebAdminSock::UserPage(CString& sPageRet, CUser* pUser) {
 			m_Template["Username"] = pUser->GetUserName();
 			m_Template["Nick"] = pUser->GetNick();
 			m_Template["AltNick"] = pUser->GetAltNick();
-			m_Template["AwaySuffix"] = pUser->GetAwaySuffix();
 			m_Template["StatusPrefix"] = pUser->GetStatusPrefix();
 			m_Template["Ident"] = pUser->GetIdent();
 			m_Template["RealName"] = pUser->GetRealName();
@@ -1058,7 +1057,6 @@ CUser* CWebAdminSock::GetNewUser(CString& sPageRet, CUser* pUser) {
 
 	sArg = GetParam("nick"); if (!sArg.empty()) { pNewUser->SetNick(sArg); }
 	sArg = GetParam("altnick"); if (!sArg.empty()) { pNewUser->SetAltNick(sArg); }
-	sArg = GetParam("awaysuffix"); if (!sArg.empty()) { pNewUser->SetAwaySuffix(sArg); }
 	sArg = GetParam("statusprefix"); if (!sArg.empty()) { pNewUser->SetStatusPrefix(sArg); }
 	sArg = GetParam("ident"); if (!sArg.empty()) { pNewUser->SetIdent(sArg); }
 	sArg = GetParam("realname"); if (!sArg.empty()) { pNewUser->SetRealName(sArg); }

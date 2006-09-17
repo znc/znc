@@ -91,7 +91,6 @@ void CIRCSock::ReadLine(const CString& sData) {
 					PutIRC("WHO " + sNick);
 
 					SetNick(sNick);
-					m_pUser->StartAwayNickTimer();
 
 					MODULECALL(OnIRCConnected(), m_pUser, NULL, );
 
@@ -165,7 +164,7 @@ void CIRCSock::ReadLine(const CString& sData) {
 					CString sBadNick = sRest.Token(0);
 					CString sConfNick = m_pUser->GetNick().Left(uMax);
 
-					if (sNick == "*" || sNick.CaseCmp(CNick::Concat(sConfNick, m_pUser->GetAwaySuffix(), GetMaxNickLen())) == 0) {
+					if (sNick == "*") {
 						CString sAltNick = m_pUser->GetAltNick().Left(uMax);
 
 						if (sBadNick.CaseCmp(sConfNick) == 0) {
@@ -597,9 +596,8 @@ void CIRCSock::ReadLine(const CString& sData) {
 
 void CIRCSock::KeepNick(bool bForce) {
 	const CString& sConfNick = m_pUser->GetNick();
-	CString sAwayNick = CNick::Concat(sConfNick, m_pUser->GetAwaySuffix(), GetMaxNickLen());
 
-	if (m_bAuthed && m_bKeepNick && (!IsOrigNickPending() || bForce) && m_pUser->GetKeepNick() && GetNick().CaseCmp(sConfNick) != 0 && GetNick().CaseCmp(sAwayNick) != 0) {
+	if (m_bAuthed && m_bKeepNick && (!IsOrigNickPending() || bForce) && m_pUser->GetKeepNick() && GetNick().CaseCmp(sConfNick) != 0) {
 		PutIRC("NICK " + sConfNick);
 		SetOrigNickPending(true);
 	}

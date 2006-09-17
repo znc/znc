@@ -901,7 +901,7 @@ bool CZNC::ParseConfig(const CString& sConfig) {
 						pUser->SetAltNick(sValue);
 						continue;
 					} else if (sName.CaseCmp("AwaySuffix") == 0) {
-						pUser->SetAwaySuffix(sValue);
+						CUtils::PrintMessage("WARNING: AwaySuffix has been depricated, instead try -> LoadModule = awaynick %nick%_" + sValue);
 						continue;
 					} else if (sName.CaseCmp("Pass") == 0) {
 						if (sValue.Right(1) == "-") {

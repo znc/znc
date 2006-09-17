@@ -37,8 +37,6 @@ CUser::CUser(const CString& sUserName) {
 	m_bKeepBuffer = false;
 	m_bAutoCycle = true;
 	m_bBeingDeleted = false;
-	m_pBackNickTimer = NULL;
-	m_pAwayNickTimer = NULL;
 	m_pKeepNickTimer = new CKeepNickTimer(this);
 	m_pJoinTimer = new CJoinTimer(this);
 	m_pMiscTimer = new CMiscTimer(this);
@@ -64,8 +62,6 @@ CUser::~CUser() {
 	DelModules();
 #endif
 
-	CZNC::Get().GetManager().DelCronByAddr(m_pBackNickTimer);
-	CZNC::Get().GetManager().DelCronByAddr(m_pAwayNickTimer);
 	CZNC::Get().GetManager().DelCronByAddr(m_pKeepNickTimer);
 	CZNC::Get().GetManager().DelCronByAddr(m_pJoinTimer);
 	CZNC::Get().GetManager().DelCronByAddr(m_pMiscTimer);
@@ -110,6 +106,23 @@ void CUser::IRCDisconnected() {
 	}
 }
 
+CString CUser::ExpandString(const CString& sStr) const {
+	CString sRet;
+	return ExpandString(sStr, sRet);
+}
+
+CString& CUser::ExpandString(const CString& sStr, CString& sRet) const {
+	sRet = sStr;
+	sRet.Replace("%user%", GetUserName());
+	sRet.Replace("%nick%", GetUserName());
+	sRet.Replace("%altnick%", GetAltNick());
+	sRet.Replace("%ident%", GetIdent());
+	sRet.Replace("%realname%", GetRealName());
+	sRet.Replace("%vhost%", GetVHost());
+
+	return sRet;
+}
+
 void CUser::BounceAllClients() {
 	for (unsigned int a = 0; a < m_vClients.size(); a++) {
 		m_vClients[a]->BouncedOff();
@@ -125,7 +138,6 @@ void CUser::UserConnected(CClient* pClient) {
 
 	PutStatus("Another client authenticated as your user, use the 'ListClients' command to see all clients");
 	m_vClients.push_back(pClient);
-	StartBackNickTimer();
 
 	if (m_RawBuffer.IsEmpty()) {
 		pClient->PutClient(":irc.znc.com 001 " + pClient->GetNick() + " :- Welcome to ZNC -");
@@ -163,44 +175,12 @@ void CUser::UserConnected(CClient* pClient) {
 	}
 }
 
-void CUser::StartAwayNickTimer() {
-	if (!m_pAwayNickTimer) {
-		m_pAwayNickTimer = new CAwayNickTimer(this);
-		CZNC::Get().GetManager().AddCron(m_pAwayNickTimer);
-	}
-}
-
-void CUser::StartBackNickTimer() {
-	CIRCSock* pIRCSock = GetIRCSock();
-
-	if (pIRCSock) {
-		CString sConfNick = GetNick();
-
-		if (pIRCSock->GetNick().CaseCmp(CNick::Concat(sConfNick, GetAwaySuffix(), pIRCSock->GetMaxNickLen())) == 0) {
-			m_pBackNickTimer = new CBackNickTimer(this);
-			CZNC::Get().GetManager().AddCron(m_pBackNickTimer);
-		}
-	}
-}
-
-void CUser::DelAwayNickTimer() {
-	m_pAwayNickTimer = NULL;
-}
-
-void CUser::DelBackNickTimer() {
-	m_pBackNickTimer = NULL;
-}
-
 void CUser::UserDisconnected(CClient* pClient) {
 	for (unsigned int a = 0; a < m_vClients.size(); a++) {
 		if (m_vClients[a] == pClient) {
 			m_vClients.erase(m_vClients.begin() + a);
 			break;
 		}
-	}
-
-	if (!IsUserAttached()) {
-		StartAwayNickTimer();
 	}
 }
 
@@ -229,7 +209,6 @@ bool CUser::Clone(const CUser& User, CString& sErrorRet) {
 	SetAltNick(User.GetAltNick(false));
 	SetIdent(User.GetIdent(false));
 	SetRealName(User.GetRealName());
-	SetAwaySuffix(User.GetAwaySuffix());
 	SetStatusPrefix(User.GetStatusPrefix());
 	SetVHost(User.GetVHost());
 	SetQuitMsg(User.GetQuitMsg());
@@ -368,14 +347,6 @@ bool CUser::Clone(const CUser& User, CString& sErrorRet) {
 	SetAdmin(User.IsAdmin());
 	// !Flags
 
-	if (!IsUserAttached()) {
-		if (GetAwaySuffix().empty()) {
-			StartBackNickTimer();
-		} else {
-			StartAwayNickTimer();
-		}
-	}
-
 	return true;
 }
 
@@ -506,7 +477,6 @@ bool CUser::WriteConfig(CFile& File) {
 	PrintLine(File, "RealName", GetRealName());
 	PrintLine(File, "VHost", GetVHost());
 	PrintLine(File, "QuitMsg", GetQuitMsg());
-	PrintLine(File, "AwaySuffix", GetAwaySuffix());
 	PrintLine(File, "StatusPrefix", GetStatusPrefix());
 	PrintLine(File, "ChanModes", GetDefaultChanModes());
 	PrintLine(File, "Buffer", CString(GetBufferCount()));
@@ -928,7 +898,6 @@ void CUser::SetUserName(const CString& s) {
 
 void CUser::SetNick(const CString& s) { m_sNick = s; }
 void CUser::SetAltNick(const CString& s) { m_sAltNick = s; }
-void CUser::SetAwaySuffix(const CString& s) { m_sAwaySuffix = s; }
 void CUser::SetIdent(const CString& s) { m_sIdent = s; }
 void CUser::SetRealName(const CString& s) { m_sRealName = s; }
 void CUser::SetVHost(const CString& s) { m_sVHost = s; }
@@ -980,7 +949,6 @@ const CString& CUser::GetNick(bool bAllowDefault) const { return (bAllowDefault 
 const CString& CUser::GetAltNick(bool bAllowDefault) const { return (bAllowDefault && m_sAltNick.empty()) ? GetCleanUserName() : m_sAltNick; }
 const CString& CUser::GetIdent(bool bAllowDefault) const { return (bAllowDefault && m_sIdent.empty()) ? GetCleanUserName() : m_sIdent; }
 const CString& CUser::GetRealName() const { return m_sRealName.empty() ? m_sUserName : m_sRealName; }
-const CString& CUser::GetAwaySuffix() const { return m_sAwaySuffix; }
 const CString& CUser::GetVHost() const { return m_sVHost; }
 const CString& CUser::GetPass() const { return m_sPass; }
 bool CUser::IsPassHashed() const { return m_bPassHashed; }

@@ -22,8 +22,6 @@ class CChan;
 class CServer;
 class CIRCSock;
 class CClient;
-class CBackNickTimer;
-class CAwayNickTimer;
 class CKeepNickTimer;
 class CJoinTimer;
 class CMiscTimer;
@@ -92,15 +90,14 @@ public:
 	void IRCConnected(CIRCSock* pIRCSock);
 	void IRCDisconnected();
 
+	CString ExpandString(const CString& sStr) const;
+	CString& ExpandString(const CString& sStr, CString& sRet) const;
+
 	bool SendFile(const CString& sRemoteNick, const CString& sFileName, const CString& sModuleName = "");
 	bool GetFile(const CString& sRemoteNick, const CString& sRemoteIP, unsigned short uRemotePort, const CString& sFileName, unsigned long uFileSize, const CString& sModuleName = "");
 	bool ResumeFile(const CString& sRemoteNick, unsigned short uPort, unsigned long uFileSize);
 	CString GetCurNick();
 	bool Clone(const CUser& User, CString& sErrorRet);
-	void StartAwayNickTimer();
-	void StartBackNickTimer();
-	void DelAwayNickTimer();
-	void DelBackNickTimer();
 	void BounceAllClients();
 
 	// Setters
@@ -109,7 +106,6 @@ public:
 	void SetAltNick(const CString& s);
 	void SetIdent(const CString& s);
 	void SetRealName(const CString& s);
-	void SetAwaySuffix(const CString& s);
 	void SetVHost(const CString& s);
 	void SetPass(const CString& s, bool bHashed);
 	void SetBounceDCCs(bool b);
@@ -140,7 +136,6 @@ public:
 	const CString& GetAltNick(bool bAllowDefault = true) const;
 	const CString& GetIdent(bool bAllowDefault = true) const;
 	const CString& GetRealName() const;
-	const CString& GetAwaySuffix() const;
 	const CString& GetVHost() const;
 	const CString& GetPass() const;
 	bool IsPassHashed() const;
@@ -178,7 +173,6 @@ protected:
 	CString			m_sCleanUserName;
 	CString			m_sNick;
 	CString			m_sAltNick;
-	CString			m_sAwaySuffix;
 	CString			m_sIdent;
 	CString			m_sRealName;
 	CString			m_sVHost;
@@ -196,9 +190,9 @@ protected:
 	CString			m_sDLPath;
 	// !Paths
 
-	CBuffer						m_RawBuffer;
-	CBuffer						m_MotdBuffer;
-	CBuffer						m_QueryBuffer;
+	CBuffer				m_RawBuffer;
+	CBuffer				m_MotdBuffer;
+	CBuffer				m_QueryBuffer;
 	bool				m_bIRCConnected;
 	bool				m_bMultiClients;
 	bool				m_bBounceDCCs;
@@ -211,8 +205,6 @@ protected:
 	bool				m_bAutoCycle;
 	bool				m_bBeingDeleted;
 
-	CBackNickTimer*		m_pBackNickTimer;
-	CAwayNickTimer*		m_pAwayNickTimer;
 	CKeepNickTimer*		m_pKeepNickTimer;
 	CJoinTimer*			m_pJoinTimer;
 	CMiscTimer*			m_pMiscTimer;
