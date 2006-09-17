@@ -1940,9 +1940,7 @@ elif `echo $host_os | grep -i 'sol' >/dev/null 2>/dev/null`; then
 	ISSUN=1
 fi
 
-if test "$host_cpu" = "x86_64"; then
-	appendCXX -fPIC
-fi
+appendCXX -fPIC
 
 
 # Check whether --with-openssl or --without-openssl was given.
