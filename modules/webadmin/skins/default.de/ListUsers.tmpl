@@ -18,7 +18,7 @@
 						<td>
 							<span class="nowrap">
 								[<a href="/edituser?user=<?VAR Username ESC=URL?>">Bearbeiten</a>]
-								[<a href="/deluser?user=<?VAR Username ESC=URL?>">L&ouml;schen</a>]
+								<? IF !IsSelf ?>[<a href="/deluser?user=<?VAR Username ESC=URL?>" onClick="return confirm('Möchten Sie wirklich diesen Benutzer entfernen?');">L&ouml;schen</a>]<? ENDIF ?>
 							</span>
 						</td>
 						<td><? VAR Username ESC=HTML ?></td>
