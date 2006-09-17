@@ -141,16 +141,16 @@
 				<table>
 					<thead>
 					<tr>
-						<td>[<a href="/addchan?user=<? VAR Username ESC=URL ?>">Hinzufügen</a>]</td>
+						<td>[<a href="/addchan?user=<? VAR Username ESC=URL ?>">Hinzuf&uml;gen</a>]</td>
 				<? IF ChannelLoop ?>
 						<td>Speichern</td>
 						<td>Name</td>
 						<td>Jetzige Modi</td>
 						<td>Vorgabe Modi</td>
-						<td>Buffergröße</td>
+						<td>Buffergr&ouml;&szlig;e</td>
 						<td>Optionen</td>
 				<? ELSE ?>
-						<td>&nbsp;&nbsp;&lt;- Channel hinzufügen (Öffnet sich in der selben Seite)&nbsp;&nbsp;</td>
+						<td>&nbsp;&nbsp;&lt;- Channel hinzuf&uuml;gen (&Ouml;ffnet sich in der selben Seite)&nbsp;&nbsp;</td>
 				<? ENDIF ?>
 					</tr>
 					</thead>
@@ -159,7 +159,7 @@
 					<tr class="<? IF __EVEN__ ?>evenrow<? ELSE ?>oddrow<? ENDIF ?>">
 						<td>
 							<input type="hidden" name="channel" value="<? VAR Name ESC=HTML ?>" />
-							[<a href="/editchan?user=<? VAR Username ESC=URL ?>&amp;name=<? VAR Name ESC=URL ?>">Bearbeiten</a>] [<a href="/delchan?user=<? VAR Username ESC=URL ?>&amp;name=<? VAR Name ESC=URL ?>">Löschen</a>]
+							[<a href="/editchan?user=<? VAR Username ESC=URL ?>&amp;name=<? VAR Name ESC=URL ?>">Bearbeiten</a>] [<a href="/delchan?user=<? VAR Username ESC=URL ?>&amp;name=<? VAR Name ESC=URL ?>">L&ouml;schen</a>]
 						</td>
 						<td><input type="checkbox" name="save_<? VAR Name ESC=HTML ?>"<? IF InConfig ?> checked="checked"<? ENDIF ?> /></td>
 						<td><? VAR Name ESC=HTML ?></td>
@@ -180,7 +180,7 @@
 		<div class="sectionbg">
 			<div class="sectionbody">
 				<div class="subsection">
-					<div class="inputlabel">Größe des Wiedergabebuffers:</div>
+					<div class="inputlabel">Gr&ouml;&szlig;e des Wiedergabebuffers:</div>
 					<div><input type="text" name="bufsize" value="<? VAR BufferCount ESC=HTML ?>" size="32" maxlength="9" /></div>
 				</div>
 				<div style="clear: both;"></div>

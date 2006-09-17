@@ -212,16 +212,16 @@
 						<? IF Edit ?>
 							<table width="98%" cellpadding="0" cellspacing="0" style="border: 1px solid #000000;" align="center">
 							<tr>
-								<td width="100" class="main2title" style="border-bottom: 1px solid #000000; border-right: 1px solid #000000;">[<a href="/addchan?user=<? VAR Username ESC=URL ?>">Hinzufügen</a>]</td>
+								<td width="100" class="main2title" style="border-bottom: 1px solid #000000; border-right: 1px solid #000000;">[<a href="/addchan?user=<? VAR Username ESC=URL ?>">Hinzuf&uuml;gen</a>]</td>
 								<? IF ChannelLoop ?>
 									<td class="main2title" style="border-bottom: 1px solid #000000; border-right: 1px solid #000000;">Speichern</td>
 									<td class="main2title" style="border-bottom: 1px solid #000000; border-right: 1px solid #000000;">Name</td>
 									<td class="main2title" style="border-bottom: 1px solid #000000; border-right: 1px solid #000000;">Jetzige Modi</td>
 									<td class="main2title" style="border-bottom: 1px solid #000000; border-right: 1px solid #000000;">Vorgabe Modi</td>
-									<td class="main2title" style="border-bottom: 1px solid #000000; border-right: 1px solid #000000;">Buffergröße</td>
+									<td class="main2title" style="border-bottom: 1px solid #000000; border-right: 1px solid #000000;">Buffergr&ouml;&szlig;e</td>
 									<td class="main2title" style="border-bottom: 1px solid #000000;">Options</td>
 								<? ELSE ?>
-									<td class="main2title" style="border-bottom: 1px solid #000000;">- Channel hinfzuügen (Öffnet sich auf der selben Seite)</td>
+									<td class="main2title" style="border-bottom: 1px solid #000000;">- Channel hinfzu&uuml;gen (&Ouml;ffnet sich auf der selben Seite)</td>
 								<? ENDIF ?>
 							</tr>
 
@@ -229,7 +229,7 @@
 								<tr class="<? IF __EVEN__ ?>evenrow<? ELSE ?>oddrow<? ENDIF ?>">
 									<td>
 										<input type="hidden" name="channel" value="<? VAR Name ESC=HTML ?>" />
-										[<a href="/editchan?user=<? VAR Username ESC=URL ?>&amp;name=<? VAR Name ESC=URL ?>">Bearbeiten</a>] [<a href="/delchan?user=<? VAR Username ESC=URL ?>&amp;name=<? VAR Name ESC=URL ?>">Löschen</a>]
+										[<a href="/editchan?user=<? VAR Username ESC=URL ?>&amp;name=<? VAR Name ESC=URL ?>">Bearbeiten</a>] [<a href="/delchan?user=<? VAR Username ESC=URL ?>&amp;name=<? VAR Name ESC=URL ?>">L&ouml;schen</a>]
 									</td>
 									<td><input type="checkbox" name="save_<? VAR Name ESC=HTML ?>"<? IF InConfig ?> checked="checked"<? ENDIF ?> /></td>
 									<td><? VAR Name ESC=HTML ?></td>
@@ -253,7 +253,7 @@
 
 				<tr>
 					<td class="mainleft">
-						Größe des Wiedergabebuffers:
+						Gr&ouml;&szlig;e des Wiedergabebuffers:
 					</td>
 
 					<td class="mainright">
@@ -288,7 +288,7 @@
 			</table>
 
 
-		<br><br><input type="submit" value="<? IF Edit ?>Benutzer speichern<? ELSE ?>Benutzer hinzufügen<? ENDIF ?>">
+		<br><br><input type="submit" value="<? IF Edit ?>Benutzer speichern<? ELSE ?>Benutzer hinzuf&uuml;gen<? ENDIF ?>">
 </form>
 
 <? INC Footer.tmpl ?>

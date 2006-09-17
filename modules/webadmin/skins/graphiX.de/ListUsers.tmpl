@@ -2,7 +2,7 @@
 
 		<?IF !UserLoop?>
 			Es wurden keine Benutzer gefunden.<br>
-			Klicke <a href="/adduser">hier</a>, um einen neuen Benutzer hinzuzufügen.
+			Klicke <a href="/adduser">hier</a>, um einen neuen Benutzer hinzuzuf&uuml;gen.
 		<?ELSE?>
 
 			<table width="98%" cellpadding="0" cellspacing="0" style="border: 1px solid #000000;" align="center">
@@ -19,7 +19,7 @@
 						<td>
 							<span class="nowrap">
 								[<a href="/edituser?user=<?VAR Username ESC=URL?>">Bearbeiten</a>]
-								<? IF !IsSelf ?>[<a href="/deluser?user=<?VAR Username ESC=URL?>">Löschen</a>]<? ENDIF ?>
+								<? IF !IsSelf ?>[<a href="/deluser?user=<?VAR Username ESC=URL?>">L&ouml;schen</a>]<? ENDIF ?>
 							</span>
 						</td>
 						<td><b><? VAR Username ESC=HTML ?></b></td>
