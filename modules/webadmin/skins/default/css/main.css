@@ -33,6 +33,22 @@ table thead {
 	font-weight: bold;
 }
 
+input.full, textarea.full {
+	width: 620px;
+}
+
+input.half, textarea.half {
+	width: 300px;
+}
+
+input.third, textarea.third {
+	width: 150px;
+}
+
+textarea {
+	height: 90px;
+}
+
 #banner {
 	border-bottom: 2px solid #000;
 	text-align: center;

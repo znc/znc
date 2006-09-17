@@ -54,6 +54,22 @@ table thead {
 	background-color: #bbb;
 }
 
+input.full, textarea.full {
+	width: 580px;
+}
+
+input.half, textarea.half {
+	width: 280px;
+}
+
+input.third, textarea.third {
+	width: 130px;
+}
+
+textarea {
+	height: 90px;
+}
+
 #main {
 	width: 680px;
 	clear: both;
