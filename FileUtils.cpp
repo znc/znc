@@ -239,7 +239,7 @@ int CFile::Read(char *pszBuffer, int iBytes) {
 	return read(m_iFD, pszBuffer, iBytes);
 }
 
-bool CFile::ReadLine(CString& sData) {
+bool CFile::ReadLine(CString& sData, const CString & sDelimiter) {
 	char buff[64];
 	sData.clear();
 
@@ -250,7 +250,7 @@ bool CFile::ReadLine(CString& sData) {
 	bool bEOF = false;
 
 	while(true) {
-		CString::size_type iFind = m_sBuffer.find("\n");
+		CString::size_type iFind = m_sBuffer.find(sDelimiter);
 		if (iFind != CString::npos) {
 			sData = m_sBuffer.substr(0, (iFind + 1));
 			m_sBuffer.erase(0, (iFind + 1));
@@ -280,9 +280,15 @@ bool CFile::ReadLine(CString& sData) {
 		}
 	}
 
-	CString::size_type iFind = m_sBuffer.find("\n");
+	CString::size_type iFind = m_sBuffer.find(sDelimiter);
 	if (iFind != CString::npos) {
 		return true;
+	}
+
+	if( bEOF ) {
+		sData = m_sBuffer;
+		m_sBuffer.clear();
+		break;
 	}
 
 	return !bEOF;

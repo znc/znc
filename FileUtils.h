@@ -109,7 +109,7 @@ public:
 	bool Open(const CString& sFileName, int iFlags, mode_t iMode = 0644);
 	bool Open(int iFlags, mode_t iMode = 0644);
 	int Read(char *pszBuffer, int iBytes);
-	bool ReadLine(CString & sData);
+	bool ReadLine(CString & sData, const CString & sDelimiter = "\n");
 	int Write(const char *pszBuffer, u_int iBytes);
 	int Write(const CString & sData);
 	void Close();
