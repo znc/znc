@@ -285,10 +285,10 @@ bool CFile::ReadLine(CString& sData, const CString & sDelimiter) {
 		return true;
 	}
 
-	if( bEOF ) {
+	if( bEOF && m_sBuffer.size() ) {
 		sData = m_sBuffer;
 		m_sBuffer.clear();
-		break;
+		return true;
 	}
 
 	return !bEOF;
