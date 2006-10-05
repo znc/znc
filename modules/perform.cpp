@@ -50,14 +50,14 @@ public:
 		} else if(sCmdName == "del")
 		{
 			u_int iNum = atoi( sCommand.Token(1, true).c_str() );
-			if ( iNum >= m_vPerform.size() )
+			if ( iNum > m_vPerform.size() || iNum <= 0 )
 			{
 				PutModule( "Illegal # Requested");
 				return;
 			}
 			else
 			{
-				m_vPerform.erase( m_vPerform.begin() + iNum );
+				m_vPerform.erase( m_vPerform.begin() + iNum - 1 );
 				PutModule( "Command Erased.");
 			}
 			Save();
