@@ -9,6 +9,15 @@ Jim Hull <imaginos@imaginos.net> - Developer
 	Modules - away, email, savebuff, schat
 	AutoConf
 
+crox - Developer
+	Continually implements many features, bug-fixes and patches
+	Examples: load/unload/reload global modules
+	Modules - fish
+
+psychon <tobespammed@web.de> - Developer
+	Continually implements many features, bug-fixes and patches
+	Examples: NAMESX and UHNAMES support
+	Modules - perform
 
 
 derblubber - BetaTester
