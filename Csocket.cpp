@@ -1,6 +1,6 @@
-/**
+/** @file
 *
-*    Copyright (c) 1999-2005 Jim Hull <imaginos@imaginos.net>
+*    Copyright (c) 1999-2006 Jim Hull <imaginos@imaginos.net>
 *    All rights reserved
 *
 * Redistribution and use in source and binary forms, with or without modification,
@@ -11,7 +11,7 @@
 * of conditions and the following disclaimer in the documentation and/or other materials
 *  provided with the distribution.
 * Redistributions in any form must be accompanied by information on how to obtain
-* complete source code for the DB software and any accompanying software that uses the DB software.
+* complete source code for this software and any accompanying software that uses this software.
 * The source code must either be included in the distribution or be available for no more than
 * the cost of distribution plus a nominal fee, and must be freely redistributable
 * under reasonable conditions. For an executable file, complete source code means the source
@@ -20,7 +20,7 @@
 *
 * THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING,
 * BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE,
-* OR NON-INFRINGEMENT, ARE DISCLAIMED. IN NO EVENT SHALL SLEEPYCAT SOFTWARE BE LIABLE FOR ANY DIRECT,
+* OR NON-INFRINGEMENT, ARE DISCLAIMED. IN NO EVENT SHALL THE AUTHORS OF THIS SOFTWARE BE LIABLE FOR ANY DIRECT,
 * INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
 * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
 * HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR
@@ -303,7 +303,6 @@ CCron::CCron()
 	m_bPause = false;
 }
 
-//! This is used by the Job Manager, and not you directly
 void CCron::run()
 {
 	if ( m_bPause )
@@ -320,10 +319,6 @@ void CCron::run()
 	}
 }
 
-/**
- * @TimeSequence	how often to run in seconds
- * @iMaxCycles		how many times to run, 0 makes it run forever
- */
 void CCron::StartMaxCycles( int TimeSequence, u_int iMaxCycles )
 {
 	m_iTimeSequence = TimeSequence;
@@ -331,7 +326,6 @@ void CCron::StartMaxCycles( int TimeSequence, u_int iMaxCycles )
 	m_iMaxCycles = iMaxCycles;
 }
 
-//! starts and runs infinity amount of times
 void CCron::Start( int TimeSequence )
 {
 	m_iTimeSequence = TimeSequence;
@@ -339,19 +333,16 @@ void CCron::Start( int TimeSequence )
 	m_iMaxCycles = 0;
 }
 
-//! call this to turn off your cron, it will be removed
 void CCron::Stop()
 {
 	m_bActive = false;
 }
 
-//! pauses excution of your code in RunJob
 void CCron::Pause()
 {
 	m_bPause = true;
 }
 
-//! removes the pause on RunJon
 void CCron::UnPause()
 {
 	m_bPause = false;
@@ -361,7 +352,6 @@ int CCron::GetInterval() const { return( m_iTimeSequence ); }
 u_int CCron::GetMaxCycles() const { return( m_iMaxCycles ); }
 u_int CCron::GetCyclesLeft() const { return( ( m_iMaxCycles > m_iCycles ? ( m_iMaxCycles - m_iCycles ) : 0 ) ); }
 
-//! returns true if cron is active
 bool CCron::isValid() { return( m_bActive ); }
 const CS_STRING & CCron::GetName() const { return( m_sName ); }
 void CCron::SetName( const CS_STRING & sName ) { m_sName = sName; }
@@ -369,11 +359,17 @@ void CCron::RunJob() { CS_DEBUG( "This should be overriden" ); }
 
 Csock::Csock( int itimeout )
 {
+#ifdef HAVE_LIBSSL
+	m_pCerVerifyCB = NULL;
+#endif /* HAVE_LIBSSL */
 	Init( "", 0, itimeout );
 }
 
 Csock::Csock( const CS_STRING & sHostname, u_short iport, int itimeout )
 {
+#ifdef HAVE_LIBSSL
+	m_pCerVerifyCB = NULL;
+#endif /* HAVE_LIBSSL */
 	Init( sHostname, iport, itimeout );
 }
 
@@ -764,7 +760,6 @@ bool Csock::AcceptSSL()
 	return( false );
 }
 
-//! This sets up the SSL Client, this is used internally
 bool Csock::SSLClientSetup()
 {
 #ifdef HAVE_LIBSSL
@@ -834,8 +829,9 @@ bool Csock::SSLClientSetup()
 
 	SSL_set_rfd( m_ssl, m_iReadSock );
 	SSL_set_wfd( m_ssl, m_iWriteSock );
-	SSL_set_verify( m_ssl, SSL_VERIFY_PEER, CertVerifyCB );
+	SSL_set_verify( m_ssl, SSL_VERIFY_PEER, ( m_pCerVerifyCB ? m_pCerVerifyCB : CertVerifyCB ) );
 
+	SSLFinishSetup( m_ssl );
 	return( true );
 #else
 	return( false );
@@ -928,10 +924,10 @@ bool Csock::SSLServerSetup()
 	SSL_set_rfd( m_ssl, m_iReadSock );
 	SSL_set_wfd( m_ssl, m_iWriteSock );
 	SSL_set_accept_state( m_ssl );
-
 	if ( m_bRequireClientCert )
-		SSL_set_verify( m_ssl, SSL_VERIFY_FAIL_IF_NO_PEER_CERT|SSL_VERIFY_PEER, CertVerifyCB );
+		SSL_set_verify( m_ssl, SSL_VERIFY_FAIL_IF_NO_PEER_CERT|SSL_VERIFY_PEER, ( m_pCerVerifyCB ? m_pCerVerifyCB : CertVerifyCB ) );
 
+	SSLFinishSetup( m_ssl );
 	return( true );
 #else
 	return( false );
@@ -990,6 +986,18 @@ bool Csock::ConnectSSL( const CS_STRING & sBindhost )
 #else
 	return( false );
 #endif /* HAVE_LIBSSL */
+}
+
+bool Csock::AllowWrite( unsigned long long iNOW ) const
+{
+	if ( ( m_iMaxBytes > 0 ) && ( m_iMaxMilliSeconds > 0 ) )
+	{
+		if( m_iLastSend <  m_iMaxBytes )
+			return( true ); // allow sending if our out buffer was less than what we can send
+		if ( ( iNOW - m_iLastSendTime ) < m_iMaxMilliSeconds )
+			return( false );
+	}
+	return( true );
 }
 
 bool Csock::Write( const char *data, int len )
@@ -1196,7 +1204,8 @@ int Csock::Read( char *data, int len )
 #endif /* HAVE_LIBSSL */
 	}
 
-	m_iBytesRead += (unsigned long long)bytes;
+	if( bytes > 0 ) // becareful not to add negative bytes :P
+		m_iBytesRead += (unsigned long long)bytes;
 
 	return( bytes );
 }
@@ -1302,7 +1311,6 @@ void Csock::SetTimeoutType( u_int iTimeoutType ) { m_iTimeoutType = iTimeoutType
 int Csock::GetTimeout() const { return m_itimeout; }
 u_int Csock::GetTimeoutType() const { return( m_iTimeoutType ); }
 
-//! returns true if the socket has timed out
 bool Csock::CheckTimeout()
 {
 	if ( IsReadPaused() )
@@ -1479,7 +1487,6 @@ void Csock::NonBlockingIO()
 	BlockIO( false );
 }
 
-//! if this connection type is ssl or not
 bool Csock::GetSSL() { return( m_bssl ); }
 void Csock::SetSSL( bool b ) { m_bssl = b; }
 
@@ -1507,7 +1514,6 @@ int Csock::CertVerifyCB( int preverify_ok, X509_STORE_CTX *x509_ctx )
 	return( 1 );
 }
 
-//! Set the SSL method type
 void Csock::SetSSLMethod( int iMethod ) { m_iMethod = iMethod; }
 int Csock::GetSSLMethod() { return( m_iMethod ); }
 void Csock::SetSSLObject( SSL *ssl ) { m_ssl = ssl; }
@@ -1664,13 +1670,11 @@ void Csock::Cron()
 	}
 }
 
-//! insert a newly created cron
 void Csock::AddCron( CCron * pcCron )
 {
 	m_vcCrons.push_back( pcCron );
 }
 
-//! delete cron(s) by name
 void Csock::DelCron( const CS_STRING & sName, bool bDeleteAll, bool bCaseSensitive )
 {
 	for( u_int a = 0; a < m_vcCrons.size(); a++ )
@@ -1685,7 +1689,6 @@ void Csock::DelCron( const CS_STRING & sName, bool bDeleteAll, bool bCaseSensiti
 	}
 }
 
-//! delete cron by idx
 void Csock::DelCron( u_int iPos )
 {
 	if ( iPos < m_vcCrons.size() )
@@ -1695,7 +1698,7 @@ void Csock::DelCron( u_int iPos )
 		m_vcCrons.erase( m_vcCrons.begin() + iPos );
 	}
 }
-//! delete cron by address
+
 void Csock::DelCronByAddr( CCron *pcCron )
 {
 	for( u_int a = 0; a < m_vcCrons.size(); a++ )
@@ -1891,10 +1894,15 @@ void Csock::FREE_CTX()
 
 #endif /* HAVE_LIBSSL */
 
-//! Create the socket
 int Csock::SOCKET( bool bListen )
 {
+#ifdef HAVE_IPV6
 	int iRet = socket( ( GetIPv6() ? PF_INET6 : PF_INET ), SOCK_STREAM, IPPROTO_TCP );
+#else
+	// missing wrapper around ipv6 for systems missing ipv6, Uli Schlachter <psycho@foex-gaming.com>
+	int iRet = socket( PF_INET, SOCK_STREAM, IPPROTO_TCP );
+#endif /* HAVE_IPV6 */
+
 
 	if ( ( iRet > -1 ) && ( bListen ) )
 	{

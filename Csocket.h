@@ -1,6 +1,6 @@
 /**
 *
-*    Copyright (c) 1999-2005 Jim Hull <imaginos@imaginos.net>
+*    Copyright (c) 1999-2007 Jim Hull <imaginos@imaginos.net>
 *    All rights reserved
 *
 * Redistribution and use in source and binary forms, with or without modification,
@@ -11,7 +11,7 @@
 * of conditions and the following disclaimer in the documentation and/or other materials
 *  provided with the distribution.
 * Redistributions in any form must be accompanied by information on how to obtain
-* complete source code for the DB software and any accompanying software that uses the DB software.
+* complete source code for this software and any accompanying software that uses this software.
 * The source code must either be included in the distribution or be available for no more than
 * the cost of distribution plus a nominal fee, and must be freely redistributable
 * under reasonable conditions. For an executable file, complete source code means the source
@@ -20,7 +20,7 @@
 *
 * THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING,
 * BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE,
-* OR NON-INFRINGEMENT, ARE DISCLAIMED. IN NO EVENT SHALL SLEEPYCAT SOFTWARE BE LIABLE FOR ANY DIRECT,
+* OR NON-INFRINGEMENT, ARE DISCLAIMED. IN NO EVENT SHALL THE AUTHORS OF THIS SOFTWARE BE LIABLE FOR ANY DIRECT,
 * INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
 * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
 * HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR
@@ -130,10 +130,10 @@ public:
 	enum EAFRequire
 	{
 		RAF_ANY		= PF_UNSPEC,
-		RAF_INET	= AF_INET,
 #ifdef HAVE_IPV6
-		RAF_INET6	= AF_INET6
+		RAF_INET6	= AF_INET6,
 #endif /* HAVE_IPV6 */
+		RAF_INET	= AF_INET
 	};
 
 	void SinFamily()
@@ -297,7 +297,7 @@ bool InitSSL( ECompType eCompressionType = CT_NONE );
 void SSLErrors( const char *filename, u_int iLineNum );
 #endif /* HAVE_LIBSSL */
 
-// TODO need to make this sock specific via getsockopt
+//! @todo need to make this sock specific via getsockopt
 inline int GetSockError()
 {
 #ifdef _WIN32
@@ -323,7 +323,7 @@ inline void ShutdownWin32()
 }
 #endif /* _WIN32 */
 
-// wrappers for FD_SET and such to work in templates
+//! wrappers for FD_SET and such to work in templates.
 inline void TFD_ZERO( fd_set *set )
 {
 	FD_ZERO( set );
@@ -369,8 +369,8 @@ public:
 	void run();
 
 	/**
-	 * @TimeSequence	how often to run in seconds
-	 * @iMaxCycles		how many times to run, 0 makes it run forever
+	 * @param TimeSequence	how often to run in seconds
+	 * @param iMaxCycles		how many times to run, 0 makes it run forever
 	 */
 	void StartMaxCycles( int TimeSequence, u_int iMaxCycles );
 
@@ -409,6 +409,8 @@ private:
 	CS_STRING	m_sName;
 };
 
+typedef int (*FPCertVerifyCB)( int, X509_STORE_CTX * );
+
 /**
 * @class Csock
 * @brief Basic Socket Class
@@ -432,7 +434,7 @@ public:
 	*/
 	Csock( const CS_STRING & sHostname, u_short iport, int itimeout = 60 );
 
-	// override this for accept sockets
+	//! override this for accept sockets
 	virtual Csock *GetSockObj( const CS_STRING & sHostname, u_short iPort );
 
 	virtual ~Csock();
@@ -499,6 +501,7 @@ public:
 	* Create the connection
 	*
 	* @param sBindHost the ip you want to bind to locally
+	* @param bSkipSetup if true, setting up the vhost etc is skipped
 	* @return true on success
 	*/
 	virtual bool Connect( const CS_STRING & sBindHost = "", bool bSkipSetup = false );
@@ -520,6 +523,8 @@ public:
 	*
 	* @param iPort the port to listen on
 	* @param iMaxConns the maximum amount of connections to allow
+	* @param sBindHost the vhost on which to listen
+	* @param iTimeout i dont know what this does :(
 	*/
 	virtual bool Listen( u_short iPort, int iMaxConns = SOMAXCONN, const CS_STRING & sBindHost = "", u_int iTimeout = 0 );
 
@@ -633,10 +638,10 @@ public:
 	virtual void PushBuff( const char *data, int len, bool bStartAtZero = false );
 
 	//! This gives access to the internal buffer, if your
-	//! not going to use GetLine(), then you may want to clear this out
-	//! (if its binary data and not many '\n'
+	//! not going to use ReadLine(), then you may want to clear this out
+	//! (if its binary data and not many '\\n')
 	CS_STRING & GetInternalBuffer();
-	//! sets the max buffered threshold when enablereadline() is enabled
+	//! sets the max buffered threshold when EnableReadLine() is enabled
 	void SetMaxBufferThreshold( u_int iThreshold );
 	u_int GetMaxBufferThreshold();
 
@@ -719,6 +724,8 @@ public:
 	void SetCTXObject( SSL_CTX *sslCtx );
 	void SetFullSSLAccept();
 	SSL_SESSION * GetSSLSession();
+
+	void SetCertVerifyCB( FPCertVerifyCB pFP ) { m_pCerVerifyCB = pFP; }
 #endif /* HAVE_LIBSSL */
 
 	//! Get the send buffer
@@ -740,9 +747,7 @@ public:
 #ifdef HAVE_LIBSSL
 	X509 *getX509();
 
-	//!
 	//! Returns The Peers Public Key
-	//!
 	CS_STRING GetPeerPubKey();
 	bool RequiresClientCert();
 	void SetRequiresClientCert( bool bRequiresCert );
@@ -753,10 +758,10 @@ public:
 	virtual void SetParentSockName( const CS_STRING & sParentName );
 	const CS_STRING & GetParentSockName();
 
-	/*
+	/**
 	* sets the rate at which we can send data
-	* \param iBytes the amount of bytes we can write
-	* \param iMilliseconds the amount of time we have to rate to iBytes
+	* @param iBytes the amount of bytes we can write
+	* @param iMilliseconds the amount of time we have to rate to iBytes
 	*/
 	virtual void SetRate( u_int iBytes, unsigned long long iMilliseconds );
 
@@ -826,7 +831,7 @@ public:
 	 * Don't bother using these callbacks if you are using this class directly (without Socket Manager)
 	 * as the Socket Manager calls most of these callbacks
 	 * This WARNING event is called when your buffer for readline exceeds the warning threshold
-	 * and triggers this event. Either Override it and do nothing, or @SetMaxBufferThreshold( int )
+	 * and triggers this event. Either Override it and do nothing, or SetMaxBufferThreshold()
 	 * This event will only get called if m_bEnableReadLine is enabled
 	 */
 	virtual void ReachedMaxBuffer();
@@ -860,9 +865,17 @@ public:
 	 */
 	virtual void ConnectionRefused() {}
 	/**
-	 * This gets called every iteration of Select() if the socket is ReadPaused
+	 * This gets called every iteration of TSocketManager::Select() if the socket is ReadPaused
 	 */
 	virtual void ReadPaused() {}
+
+#ifdef HAVE_LIBSSL
+	/**
+	 * Gets called immediatly after the m_ssl member is setup and initialized, useful if you need to assign anything
+	 * to this ssl session via SSL_set_ex_data
+	 */
+	virtual void SSLFinishSetup( SSL *pSSL ) {}
+#endif /* HAVE_LIBSSL */
 
 
 	//! return how long it has been (in seconds) since the last write
@@ -904,9 +917,8 @@ public:
 	};
 	
 	/**
-	 * DNSLookup nonblocking dns lookup (when -pthread is set to compile
-	 * 
-	 * @return 0 for success, EAGAIN to check back again (same arguments as before, ETIMEDOUT on failure
+	 * nonblocking dns lookup (when -pthread is set to compile)
+	 * @return 0 for success, EAGAIN to check back again (same arguments as before), ETIMEDOUT on failure
 	 */
 	int DNSLookup( EDNSLType eDNSLType );
 
@@ -927,6 +939,9 @@ public:
 		m_bindhost.SetAFRequire( iAFRequire );
 	}
 
+	//! returns true if this socket can write its data, primarily used with rate shaping
+	bool AllowWrite( unsigned long long iNOW ) const;
+
 private:
 	u_short		m_iport, m_iRemotePort, m_iLocalPort;
 	int			m_iReadSock, m_iWriteSock, m_itimeout, m_iConnType, m_iTcount, m_iMethod;
@@ -946,6 +961,8 @@ private:
 	SSL 				*m_ssl;
 	SSL_CTX				*m_ssl_ctx;
 	SSL_METHOD			*m_ssl_method;
+
+	FPCertVerifyCB		m_pCerVerifyCB;
 
 	virtual void FREE_SSL();
 	virtual void FREE_CTX();
@@ -1202,7 +1219,7 @@ public:
 
 	enum EMessages
 	{
-		SUCCESS			= 0,	//! Select returned more then 1 fd ready for action
+		SUCCESS			= 0,	//! Select returned at least 1 fd ready for action
 		SELECT_ERROR	= -1,	//! An Error Happened, Probably dead socket. That socket is returned if available
 		SELECT_TIMEOUT	= -2,	//! Select Timeout
 		SELECT_TRYAGAIN	= -3	//! Select calls for you to try again
@@ -1211,14 +1228,9 @@ public:
 	/**
 	* Create a connection
 	*
-	* \param sHostname the destination
-	* \param iPort the destination port
-	* \param sSockName the Socket Name ( should be unique )
-	* \param iTimeout the amount of time to try to connect
-	* \param isSSL does the connection require a SSL layer
-	* \param sBindHost the host to bind too
-	* \param bIsIPv6 set to true to connect to an ipv6 host, requires HAVE_IPV6 at compile time to work
-	* \return true on success
+	* @param cCon the connection which should be established
+	* @param pcSock the socket used for the connectiong, can be NULL
+	* @return true on success
 	*/
 	bool Connect( const CSConnection & cCon, T * pcSock = NULL )
 	{
@@ -1315,10 +1327,10 @@ public:
 		return( false );
 	}
 
-	/*
-	* Best place to call this class for running, all the call backs are called
+	/**
+	* Best place to call this class for running, all the call backs are called.
 	* You should through this in your main while loop (long as its not blocking)
-	* all the events are called as needed
+	* all the events are called as needed.
 	*/
 	virtual void Loop ()
 	{
@@ -1506,8 +1518,8 @@ public:
 		Cron();
 	}
 
-	/*
-	* Make this method virtual, so you can override it when a socket is added
+	/**
+	* Make this method virtual, so you can override it when a socket is added.
 	* Assuming you might want to do some extra stuff
 	*/
 	virtual void AddSock( T *pcSock, const CS_STRING & sSockName )
@@ -1633,7 +1645,7 @@ public:
 	//! Get the Select Timeout in MICROSECONDS ( 1000 == 1 millisecond )
 	u_int GetSelectTimeout() { return( m_iSelectWait ); }
 	//! Set the Select Timeout in MICROSECODS ( 1000 == 1 millisecond )
-	//! Setting this to 0 will cause no timeout to happen, select will return instantly
+	//! Setting this to 0 will cause no timeout to happen, Select() will return instantly
 	void  SetSelectTimeout( u_int iTimeout ) { m_iSelectWait = iTimeout; }
 
 	std::vector<CCron *> & GetCrons() { return( m_vcCrons ); }
@@ -1738,6 +1750,7 @@ private:
 
 		bool bHasWriteable = false;
 		bool bHasAvailSocks = false;
+		unsigned long long iNOW = millitime();
 
 		for( unsigned int i = 0; i < this->size(); i++ )
 		{
@@ -1791,8 +1804,11 @@ private:
 					if ( !bIsReadPaused )
 						TFD_SET( iRSock, &rfds );
 
-					TFD_SET( iWSock, &wfds );
-					bHasWriteable = true;
+					if( pcSock->AllowWrite( iNOW ) )
+					{
+						TFD_SET( iWSock, &wfds );
+						bHasWriteable = true;
+					}
 				}
 
 			} else
