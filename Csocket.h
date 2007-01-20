@@ -366,7 +366,7 @@ public:
 	virtual ~CCron() {}
 
 	//! This is used by the Job Manager, and not you directly
-	void run();
+	void run( time_t iNow );
 
 	/**
 	 * @param TimeSequence	how often to run in seconds
@@ -1994,6 +1994,7 @@ private:
 	//! these crons get ran and checked in Loop()
 	virtual void Cron()
 	{
+		time_t iNow = time( NULL );
 		for( unsigned int a = 0; a < m_vcCrons.size(); a++ )
 		{
 			CCron *pcCron = m_vcCrons[a];
@@ -2003,7 +2004,7 @@ private:
 				CS_Delete( pcCron );
 				m_vcCrons.erase( m_vcCrons.begin() + a-- );
 			} else
-				pcCron->run();
+				pcCron->run( iNow );
 		}
 	}
 

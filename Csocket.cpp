@@ -303,19 +303,19 @@ CCron::CCron()
 	m_bPause = false;
 }
 
-void CCron::run()
+void CCron::run( time_t iNow )
 {
 	if ( m_bPause )
 		return;
 
-	if ( ( m_bActive ) && ( time( NULL ) >= m_iTime ) )
+	if ( ( m_bActive ) && ( iNow >= m_iTime ) )
 	{
 		RunJob();
 
 		if ( ( m_iMaxCycles > 0 ) && ( ++m_iCycles >= m_iMaxCycles  ) )
 			m_bActive = false;
 		else
-			m_iTime = time( NULL ) + m_iTimeSequence;
+			m_iTime = iNow + m_iTimeSequence;
 	}
 }
 
@@ -1657,6 +1657,7 @@ unsigned long long Csock::GetRateTime() { return( m_iMaxMilliSeconds ); }
 
 void Csock::Cron()
 {
+	time_t iNow = time( NULL );
 	for( vector<CCron *>::size_type a = 0; a < m_vcCrons.size(); a++ )
 	{
 		CCron *pcCron = m_vcCrons[a];
@@ -1666,7 +1667,7 @@ void Csock::Cron()
 			CS_Delete( pcCron );
 			m_vcCrons.erase( m_vcCrons.begin() + a-- );
 		} else
-			pcCron->run();
+			pcCron->run( iNow );
 	}
 }
 
