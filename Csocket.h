@@ -409,7 +409,9 @@ private:
 	CS_STRING	m_sName;
 };
 
+#ifdef HAVE_LIBSSL
 typedef int (*FPCertVerifyCB)( int, X509_STORE_CTX * );
+#endif /* HAVE_LIBSSL */
 
 /**
 * @class Csock
