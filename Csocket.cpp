@@ -1,6 +1,6 @@
 /** @file
 *
-*    Copyright (c) 1999-2006 Jim Hull <imaginos@imaginos.net>
+*    Copyright (c) 1999-2007 Jim Hull <imaginos@imaginos.net>
 *    All rights reserved
 *
 * Redistribution and use in source and binary forms, with or without modification,
@@ -303,10 +303,13 @@ CCron::CCron()
 	m_bPause = false;
 }
 
-void CCron::run( time_t iNow )
+void CCron::run( time_t & iNow )
 {
 	if ( m_bPause )
 		return;
+
+	if( iNow == 0 )
+		iNow = time( NULL );
 
 	if ( ( m_bActive ) && ( iNow >= m_iTime ) )
 	{
@@ -988,10 +991,13 @@ bool Csock::ConnectSSL( const CS_STRING & sBindhost )
 #endif /* HAVE_LIBSSL */
 }
 
-bool Csock::AllowWrite( unsigned long long iNOW ) const
+bool Csock::AllowWrite( unsigned long long & iNOW ) const
 {
 	if ( ( m_iMaxBytes > 0 ) && ( m_iMaxMilliSeconds > 0 ) )
 	{
+		if( iNOW == 0 )
+			iNOW = millitime();
+
 		if( m_iLastSend <  m_iMaxBytes )
 			return( true ); // allow sending if our out buffer was less than what we can send
 		if ( ( iNOW - m_iLastSendTime ) < m_iMaxMilliSeconds )
@@ -1657,7 +1663,8 @@ unsigned long long Csock::GetRateTime() { return( m_iMaxMilliSeconds ); }
 
 void Csock::Cron()
 {
-	time_t iNow = time( NULL );
+	time_t iNow = 0;
+
 	for( vector<CCron *>::size_type a = 0; a < m_vcCrons.size(); a++ )
 	{
 		CCron *pcCron = m_vcCrons[a];

@@ -366,7 +366,7 @@ public:
 	virtual ~CCron() {}
 
 	//! This is used by the Job Manager, and not you directly
-	void run( time_t iNow );
+	void run( time_t & iNow );
 
 	/**
 	 * @param TimeSequence	how often to run in seconds
@@ -939,8 +939,8 @@ public:
 		m_bindhost.SetAFRequire( iAFRequire );
 	}
 
-	//! returns true if this socket can write its data, primarily used with rate shaping
-	bool AllowWrite( unsigned long long iNOW ) const;
+	//! returns true if this socket can write its data, primarily used with rate shaping, initialize iNOW to 0 and it sets it on the first call
+	bool AllowWrite( unsigned long long & iNOW ) const;
 
 private:
 	u_short		m_iport, m_iRemotePort, m_iLocalPort;
@@ -1750,7 +1750,7 @@ private:
 
 		bool bHasWriteable = false;
 		bool bHasAvailSocks = false;
-		unsigned long long iNOW = millitime();
+		unsigned long long iNOW = 0;
 
 		for( unsigned int i = 0; i < this->size(); i++ )
 		{
@@ -1994,7 +1994,7 @@ private:
 	//! these crons get ran and checked in Loop()
 	virtual void Cron()
 	{
-		time_t iNow = time( NULL );
+		time_t iNow = 0;
 		for( unsigned int a = 0; a < m_vcCrons.size(); a++ )
 		{
 			CCron *pcCron = m_vcCrons[a];
