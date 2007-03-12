@@ -23,6 +23,7 @@ class CFile {
 public:
 	CFile();
 	CFile(const CString& sLongName);
+	CFile(int iFD, const CString& sLongName);
 	virtual ~CFile();
 
 	enum EOptions {
@@ -106,6 +107,7 @@ public:
 	bool Chmod(mode_t mode);
 	static bool Chmod(const CString& sFile, mode_t mode);
 	bool Seek(unsigned long uPos);
+	bool Truncate();
 	bool Open(const CString& sFileName, int iFlags, mode_t iMode = 0644);
 	bool Open(int iFlags, mode_t iMode = 0644);
 	int Read(char *pszBuffer, int iBytes);
@@ -128,6 +130,7 @@ private:
 protected:
 	CString	m_sLongName;	//!< Absolute filename (m_sPath + "/" + m_sShortName)
 	CString	m_sShortName;	//!< Filename alone, without path
+	bool	m_bClose;
 };
 
 class CDir : public vector<CFile*> {

@@ -66,6 +66,8 @@ public:
 	const CString& GetNick() const { return m_Nick.GetNick(); }
 	const CString& GetPass() const { return m_sPass; }
 	bool IsOrigNickPending() const { return m_bOrigNickPending; }
+	bool HasNamesx() const { return m_bNamesx; }
+	bool HasUHNames() const { return m_bUHNames; }
 	// !Getters
 private:
 	void SetNick(const CString& sNick);
@@ -74,6 +76,8 @@ protected:
 	bool						m_bAuthed;
 	bool						m_bKeepNick;
 	bool						m_bOrigNickPending;
+	bool						m_bNamesx;
+	bool						m_bUHNames;
 	CString						m_sPerms;
 	CString						m_sPermModes;
 	map<unsigned char, EChanModeArgs>	m_mueChanModes;

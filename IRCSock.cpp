@@ -12,6 +12,8 @@ CIRCSock::CIRCSock(CUser* pUser) : Csock() {
 	m_bKeepNick = true;
 	m_bAuthed = false;
 	m_bOrigNickPending = false;
+	m_bNamesx = false;
+	m_bUHNames = false;
 	EnableReadLine();
 	m_Nick.SetIdent(pUser->GetIdent());
 	m_Nick.SetHost(pUser->GetVHost());
@@ -299,20 +301,65 @@ void CIRCSock::ReadLine(const CString& sData) {
 					}
 				}
 					break;
+				case 329: {
+					sRest.Trim();
+					CChan* pChan = m_pUser->FindChan(sRest.Token(0));
+
+					if (pChan) {
+						unsigned long ulDate = strtoul(sLine.Token(4).c_str(), NULL, 10);
+						pChan->SetCreationDate(ulDate);
+					}
+				}
+					break;
 				case 353: {	// NAMES
 					sRest.Trim();
 					// Todo: allow for non @+= server msgs
 					CChan* pChan = m_pUser->FindChan(sRest.Token(1));
-					if (pChan) {
-						CString sNicks = sRest.Token(2, true);
-						if (sNicks.Left(1) == ":") {
-							sNicks.LeftChomp();
-						}
+					if (!pChan) // Todo: should this still be forwarded to clients?
+						return;
 
-						pChan->AddNicks(sNicks);
+					CString sNicks = sRest.Token(2, true);
+					if (sNicks.Left(1) == ":") {
+						sNicks.LeftChomp();
 					}
+
+					pChan->AddNicks(sNicks);
+
+					CString sTmp;
+					vector<CClient*>& vClients = m_pUser->GetClients();
+					for (unsigned int a = 0; a < vClients.size(); a++) {
+						if((!m_bNamesx || vClients[a]->HasNamesx()) &&
+							(!m_bUHNames || vClients[a]->HasUHNames())) {
+							m_pUser->PutUser(sLine, vClients[a]);
+						} else {
+							sTmp = sLine.Token(0) + " ";
+							sTmp += sLine.Token(1) + " ";
+							sTmp += sLine.Token(2) + " ";
+							sTmp += sLine.Token(3) + " ";
+							sTmp += sLine.Token(4) + " :";
+							while(!sNicks.empty()) {
+								CString sNick = sNicks.Token(0);
+								sNicks = sNicks.Token(1, true);
+								if(m_bNamesx && !vClients[a]->HasNamesx()
+									&& IsPermChar(sNick[0])) {
+									while(sNick.length() > 2
+										&& IsPermChar(sNick[1])) {
+										sNick = sNick[0] + sNick.substr(2);
+									}
+								}
+
+								if(m_bUHNames && !vClients[a]->HasUHNames()) {
+									sNick = sNick.Token(0, false, "!");
+								}
+
+								sTmp += sNick + " ";
+							}
+							sTmp.RightChomp();
+							m_pUser->PutUser(sTmp, vClients[a]);
+						}
+					}
+					return;
 				}
-					break;
 				case 366: {	// end of names list
 					m_pUser->PutUser(sLine);	// First send them the raw
 
@@ -612,7 +659,7 @@ bool CIRCSock::OnCTCPReply(CNick& Nick, CString& sMessage) {
 bool CIRCSock::OnPrivCTCP(CNick& Nick, CString& sMessage) {
 	MODULECALL(OnPrivCTCP(Nick, sMessage), m_pUser, NULL, return true);
 
-	if (strncasecmp(sMessage.c_str(), "DCC ", 4) == 0 && m_pUser && m_pUser->BounceDCCs()) {
+	if (strncasecmp(sMessage.c_str(), "DCC ", 4) == 0 && m_pUser && m_pUser->BounceDCCs() && m_pUser->IsUserAttached()) {
 		// DCC CHAT chat 2453612361 44592
 		CString sType = sMessage.Token(1);
 		CString sFile = sMessage.Token(2);
@@ -621,13 +668,10 @@ bool CIRCSock::OnPrivCTCP(CNick& Nick, CString& sMessage) {
 		unsigned long uFileSize = strtoul(sMessage.Token(5).c_str(), NULL, 10);
 
 		if (sType.CaseCmp("CHAT") == 0) {
-			if (m_pUser->IsUserAttached()) {
-				CNick FromNick(Nick.GetNickMask());
-				unsigned short uBNCPort = CDCCBounce::DCCRequest(FromNick.GetNick(), uLongIP, uPort, "", true, m_pUser, GetLocalIP(), CUtils::GetIP(uLongIP));
-
-				if (uBNCPort) {
-					m_pUser->PutUser(":" + Nick.GetNickMask() + " PRIVMSG " + GetNick() + " :\001DCC CHAT chat " + CString(CUtils::GetLongIP(GetLocalIP())) + " " + CString(uBNCPort) + "\001");
-				}
+			CNick FromNick(Nick.GetNickMask());
+			unsigned short uBNCPort = CDCCBounce::DCCRequest(FromNick.GetNick(), uLongIP, uPort, "", true, m_pUser, GetLocalIP(), CUtils::GetIP(uLongIP));
+			if (uBNCPort) {
+				m_pUser->PutUser(":" + Nick.GetNickMask() + " PRIVMSG " + GetNick() + " :\001DCC CHAT chat " + CString(CUtils::GetLongIP(GetLocalIP())) + " " + CString(uBNCPort) + "\001");
 			}
 		} else if (sType.CaseCmp("SEND") == 0) {
 			// DCC SEND readme.txt 403120438 5550 1104
@@ -780,6 +824,8 @@ void CIRCSock::Disconnected() {
 	if (!m_pUser->IsBeingDeleted()) {
 		m_pUser->PutStatus("Disconnected from IRC.  Reconnecting...");
 	}
+	m_pUser->ClearRawBuffer();
+	m_pUser->ClearMotdBuffer();
 
 	ResetChans();
 }
@@ -789,6 +835,8 @@ void CIRCSock::SockError(int iErrno) {
 	if (!m_pUser->IsBeingDeleted()) {
 		m_pUser->PutStatus("Disconnected from IRC.  Reconnecting...");
 	}
+	m_pUser->ClearRawBuffer();
+	m_pUser->ClearMotdBuffer();
 
 	ResetChans();
 }
@@ -798,6 +846,8 @@ void CIRCSock::Timeout() {
 	if (!m_pUser->IsBeingDeleted()) {
 		m_pUser->PutStatus("IRC connection timed out.  Reconnecting...");
 	}
+	m_pUser->ClearRawBuffer();
+	m_pUser->ClearMotdBuffer();
 
 	ResetChans();
 }
@@ -807,6 +857,8 @@ void CIRCSock::ConnectionRefused() {
 	if (!m_pUser->IsBeingDeleted()) {
 		m_pUser->PutStatus("Connection Refused.  Reconnecting...");
 	}
+	m_pUser->ClearRawBuffer();
+	m_pUser->ClearMotdBuffer();
 }
 
 void CIRCSock::ParseISupport(const CString& sLine) {
@@ -846,6 +898,12 @@ void CIRCSock::ParseISupport(const CString& sLine) {
 					}
 				}
 			}
+		} else if (sName.CaseCmp("NAMESX") == 0) {
+			m_bNamesx = true;
+			PutIRC("PROTOCTL NAMESX");
+		} else if (sName.CaseCmp("UHNAMES") == 0) {
+			m_bUHNames = true;
+			PutIRC("PROTOCTL UHNAMES");
 		}
 
 		sArg = sLine.Token(i++);

@@ -121,7 +121,7 @@ void CDCCBounce::PutPeer(const CString& sLine) {
 
 unsigned short CDCCBounce::DCCRequest(const CString& sNick, unsigned long uLongIP, unsigned short uPort, const CString& sFileName, bool bIsChat, CUser* pUser, const CString& sLocalIP, const CString& sRemoteIP) {
 	CDCCBounce* pDCCBounce = new CDCCBounce(pUser, uLongIP, uPort, sFileName, sNick, sRemoteIP, sLocalIP, bIsChat);
-	unsigned short uListenPort = CZNC::Get().GetManager().ListenAllRand("DCC::" + CString((bIsChat) ? "Chat" : "Xfer") + "::Local::" + sNick, false, SOMAXCONN, pDCCBounce, 120);
+	unsigned short uListenPort = CZNC::Get().GetManager().ListenRand("DCC::" + CString((bIsChat) ? "Chat" : "Xfer") + "::Local::" + sNick, sLocalIP, false, SOMAXCONN, pDCCBounce, 120);
 
 	return uListenPort;
 }

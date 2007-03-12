@@ -88,8 +88,9 @@ void CUser::DelClients() {
 bool CUser::OnBoot() {
 #ifdef _MODULES
 	return GetModules().OnBoot();
-#endif
+#else
 	return true;
+#endif
 }
 
 void CUser::IRCConnected(CIRCSock* pIRCSock) {
@@ -114,7 +115,8 @@ CString CUser::ExpandString(const CString& sStr) const {
 CString& CUser::ExpandString(const CString& sStr, CString& sRet) const {
 	sRet = sStr;
 	sRet.Replace("%user%", GetUserName());
-	sRet.Replace("%nick%", GetUserName());
+	sRet.Replace("%defnick%", GetNick());
+	sRet.Replace("%nick%", GetCurNick());
 	sRet.Replace("%altnick%", GetAltNick());
 	sRet.Replace("%ident%", GetIdent());
 	sRet.Replace("%realname%", GetRealName());
@@ -411,11 +413,6 @@ bool CUser::IsValid(CString& sErrMsg, bool bSkipPass) const {
 
 	if (!CUser::IsValidUserName(m_sUserName)) {
 		sErrMsg = "Username is invalid";
-		return false;
-	}
-
-	if (m_vServers.empty()) {
-		sErrMsg = "No servers defined";
 		return false;
 	}
 
@@ -723,6 +720,11 @@ CIRCSock* CUser::GetIRCSock() {
 	return (CIRCSock*) CZNC::Get().GetManager().FindSockByName("IRC::" + m_sUserName);
 }
 
+const CIRCSock* CUser::GetIRCSock() const {
+	// Todo: same as above
+	return (CIRCSock*) CZNC::Get().GetManager().FindSockByName("IRC::" + m_sUserName);
+}
+
 CString CUser::GetLocalIP() {
 	CIRCSock* pIRCSock = GetIRCSock();
 
@@ -872,8 +874,8 @@ bool CUser::GetFile(const CString& sRemoteNick, const CString& sRemoteIP, unsign
 	return true;
 }
 
-CString CUser::GetCurNick() {
-	CIRCSock* pIRCSock = GetIRCSock();
+CString CUser::GetCurNick() const {
+	const CIRCSock* pIRCSock = GetIRCSock();
 
 	if (pIRCSock) {
 		return pIRCSock->GetNick();

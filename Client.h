@@ -81,6 +81,8 @@ public:
 		m_bGotPass = false;
 		m_bGotNick = false;
 		m_bGotUser = false;
+		m_bNamesx = false;
+		m_bUHNames = false;
 		m_uKeepNickCounter = 0;
 		EnableReadLine();
 	}
@@ -90,6 +92,8 @@ public:
 
 	CString GetNick() const;
 	CString GetNickMask() const;
+	bool HasNamesx() const { return m_bNamesx; }
+	bool HasUHNames() const { return m_bUHNames; }
 
 	bool DecKeepNickCounter();
 	void UserCommand(const CString& sCommand);
@@ -122,6 +126,8 @@ protected:
 	bool		m_bGotPass;
 	bool		m_bGotNick;
 	bool		m_bGotUser;
+	bool		m_bNamesx;
+	bool		m_bUHNames;
 	CUser*		m_pUser;
 	CString		m_sNick;
 	CString		m_sPass;

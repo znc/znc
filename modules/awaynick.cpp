@@ -117,6 +117,19 @@ public:
 
 				PutModule(sMsg);
 			}
+		} else if (sCommand.Token(0).CaseCmp("SHOW") == 0) {
+			if (m_pUser) {
+				CString sExpanded = GetAwayNick();
+				CString sMsg = "AwayNick is set to [" + m_sFormat + "]";
+
+				if (m_sFormat != sExpanded) {
+					sMsg += " (" + sExpanded + ")";
+				}
+
+				PutModule(sMsg);
+			}
+		} else if(sCommand.Token(0).CaseCmp("HELP") == 0) {
+			PutModule("Commands are: show, timers, set [awaynick]");
 		}
 	}
 
@@ -125,7 +138,7 @@ public:
 		CIRCSock* pIRCSock = m_pUser->GetIRCSock();
 
 		if (pIRCSock) {
-			pIRCSock->GetMaxNickLen();
+			uLen = pIRCSock->GetMaxNickLen();
 		}
 
 		return m_pUser->ExpandString(m_sFormat).Left(uLen);

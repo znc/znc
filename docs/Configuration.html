@@ -18,17 +18,18 @@
  File Locations
 </h2>
 <ul>
-<li> <strong>Config</strong> - ZNC gets its configuration by reading the file ~/.znc/znc.conf
+<li> <strong>Config</strong> - ZNC gets its configuration by reading the file ~/.znc/znc.conf. See znc --help and znc --makeconf.
 <li> <strong>Misc</strong> - Other files are also stored in the ~/.znc directory such as the SSL cert (znc.pem) and PidFile (znc.pid).
 <li> <strong>Local Modules</strong> - Stored in ~/.znc/modules.  ZNC will look in the local module dir first when trying to load a module.
 <li> <strong>Global Modules</strong> - Stored in /usr/share/znc/modules by default.
-<li> <strong>Binaries</strong> - znc and znc-config are stored in /usr/bin by default.  You can change this when you configure by using <em>./configure --prefix=/whatever/path/you/want</em>
+<li> <strong>Binaries</strong> - znc, znc-config and znc-buildmod are stored in /usr/bin by default.  You can change this when you configure by using <em>./configure --prefix=/whatever/path/you/want</em>
 </ul>
 <h2>
  Config File - (~/.znc/znc.conf)
 </h2>
 <ul>
-<li> <strong>ListenPort</strong> - The port that ZNC will listen on.  If the port is prepended with a '+' then ZNC listens using ssl.
+<li> <strong>Listen</strong> - The port that ZNC will listen on.  If the port is prepended with a '+' then ZNC listens using ssl. If you want to listen on a specific ip, use the address as first argument and the port as second.
+<li> <strong>Listen6</strong> - The same as Listen, but uses IPv6 instead of IPv4.
 <li> <strong>ISpoofFile</strong> - ZNC will write the ident of the user trying to connect to this file.  Very useful if your shell supports oidentd.
 <li> <strong>PidFile</strong> - The pid file that is created when znc starts.
 <li> <strong>StatusPrefix</strong> - The prefix for the status and module queries.

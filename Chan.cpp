@@ -38,6 +38,7 @@ void CChan::Reset() {
 	m_sTopic = "";
 	m_sTopicOwner = "";
 	m_ulTopicDate = 0;
+	m_ulCreationDate = 0;
 	ClearNicks();
 }
 
@@ -81,16 +82,27 @@ void CChan::JoinUser(bool bForce, const CString& sKey, CClient* pClient) {
 		m_pUser->PutUser(":" + m_pUser->GetIRCServer() + " 333 " + m_pUser->GetIRCNick().GetNick() + " " + GetName() + " " + GetTopicOwner() + " " + CString(GetTopicDate()), pClient);
 	}
 
-	CString sPre = ":" + m_pUser->GetIRCServer() + " 353 " + m_pUser->GetIRCNick().GetNick() + " = " + GetName() + " :";
+	CString sPre = ":" + m_pUser->GetIRCServer() + " 353 " + m_pUser->GetIRCNick().GetNick() + " " + GetModeForNames() + " " + GetName() + " :";
 	CString sLine = sPre;
+	CString sPerm, sNick;
 
 	for (map<CString,CNick*>::iterator a = m_msNicks.begin(); a != m_msNicks.end(); a++) {
-		char c = a->second->GetPermChar();
-		if (c != '\0') {
-			sLine += c;
+		if(pClient->HasNamesx()) {
+			sPerm = a->second->GetPermStr();
+		} else {
+			char c = a->second->GetPermChar();
+			sPerm = "";
+			if (c != '\0') {
+				sPerm += c;
+			}
+		}
+		if(pClient->HasUHNames() && !a->second->GetIdent().empty() && a->second->GetHost().empty()) {
+			sNick = a->first + "!" + a->second->GetIdent() + "@" + a->second->GetHost();
+		} else {
+			sNick = a->first;
 		}
 
-		sLine += a->first;
+		sLine += sPerm + sNick;
 
 		if (sLine.size() >= 490 || a == (--m_msNicks.end())) {
 			m_pUser->PutUser(sLine, pClient);
@@ -134,6 +146,20 @@ CString CChan::GetModeString() const {
 	return (sModes.empty()) ? sModes : ("+" + sModes + sArgs);
 }
 
+CString CChan::GetModeForNames() const {
+	CString sMode;
+	
+	for (map<unsigned char, CString>::const_iterator it = m_musModes.begin(); it != m_musModes.end(); it++) {
+		if (it->first == 's') {
+		    sMode = "@";
+		} else if ((it->first == 'p') && sMode.empty()){
+		    sMode = "*";
+		}
+	}
+
+	return (sMode.empty() ? "=" : sMode);
+}
+	
 void CChan::SetModes(const CString& sModes) {
 	m_musModes.clear();
 	m_uLimit = 0;
@@ -373,28 +399,42 @@ int CChan::AddNicks(const CString& sNicks) {
 
 bool CChan::AddNick(const CString& sNick) {
 	const char* p = sNick.c_str();
-	char cPrefix = '\0';
+	CString sPrefix, sTmp, sIdent, sHost;
 
-	if (m_pUser->GetIRCSock()->IsPermChar(*p)) {
-		cPrefix = *p;
+	while (m_pUser->GetIRCSock()->IsPermChar(*p)) {
+		sPrefix += *p;
 
 		if (!*++p) {
 			return false;
 		}
 	}
 
-	CNick* pNick = FindNick(p);
+	sTmp = p;
+	sIdent = sTmp.Token(1, true, "!").Token(0, true, "@");
+	sHost = sTmp.Token(1, true, "@");
+	sTmp = sTmp.Token(0, false, "!");
+
+	CNick* pNick = FindNick(sTmp);
 	if (!pNick) {
-		pNick = new CNick(p);
+		pNick = new CNick(sTmp);
 		pNick->SetUser(m_pUser);
 	}
 
-	if (pNick->AddPerm(cPrefix)) {
-		IncPermCount(cPrefix);
+	if(!sIdent.empty())
+		pNick->SetIdent(sIdent);
+	if(!sHost.empty())
+		pNick->SetHost(sHost);
+
+	for(CString::size_type i = 0; i < sPrefix.length(); i++) {
+		if (pNick->AddPerm(sPrefix[i])) {
+			IncPermCount(sPrefix[i]);
+		}
 	}
 
 	if (pNick->GetNick().CaseCmp(m_pUser->GetCurNick()) == 0) {
-		AddPerm(cPrefix);
+		for(CString::size_type i = 0; i < sPrefix.length(); i++) {
+			AddPerm(sPrefix[i]);
+		}
 	}
 
 	m_msNicks[pNick->GetNick()] = pNick;

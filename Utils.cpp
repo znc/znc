@@ -117,7 +117,7 @@ void CUtils::GenerateCert(FILE *pOut, bool bEncPrivKey, const CString& sHost) {
 		X509_free( pCert );
 		EVP_PKEY_free( pKey );
 	}
-};
+}
 #endif /* HAVE_LIBSSL */
 
 CString CUtils::GetIP(unsigned long addr) {

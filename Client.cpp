@@ -115,6 +115,13 @@ void CClient::ReadLine(const CString& sData) {
 			PutStatusNotice("Detached from [" + sChan + "]");
 			return;
 		}
+	} else if (sCommand.CaseCmp("PING") == 0) {
+		CString sTarget = sLine.Token(1);
+		
+		if (sTarget.CaseCmp("irc.znc.com") == 0) {
+		    PutClient("PONG " + sLine.substr(5));
+		    return;
+		}
 	} else if (sCommand.CaseCmp("PONG") == 0) {
 		return;	// Block pong replies, we already responded to the pings
 	} else if (sCommand.CaseCmp("JOIN") == 0) {
@@ -185,6 +192,21 @@ void CClient::ReadLine(const CString& sData) {
 		if (!sMessage.empty()) {
 			sLine += " :" + sMessage;
 		}
+	} else if (sCommand.CaseCmp("MODE") == 0) {
+		CString sTarget = sLine.Token(1);
+		CString sModes = sLine.Token(2, true);
+
+		if (m_pUser && m_pUser->IsChan(sTarget)) {
+		    CChan *pChan = m_pUser->FindChan(sTarget);
+
+		    if (pChan && sModes.empty()) {
+			PutClient(":" + m_pUser->GetIRCServer() + " 324 " + GetNick() + " " + sTarget + " " + pChan->GetModeString());
+			if (pChan->GetCreationDate() > 0) {
+			    PutClient(":" + m_pUser->GetIRCServer() + " 329 " + GetNick() + " " + sTarget + " " + CString(pChan->GetCreationDate()));
+			}
+			return;
+		    }
+		}
 	} else if (sCommand.CaseCmp("QUIT") == 0) {
 		if (m_pUser) {
 			m_pUser->UserDisconnected(this);
@@ -192,6 +214,17 @@ void CClient::ReadLine(const CString& sData) {
 
 		Close();	// Treat a client quit as a detach
 		return;		// Don't forward this msg.  We don't want the client getting us disconnected.
+	} else if (sCommand.CaseCmp("PROTOCTL") == 0) {
+		unsigned int i = 1;
+		while(!sLine.Token(i).empty()) {
+			if(sLine.Token(i).CaseCmp("NAMESX") == 0) {
+				m_bNamesx = true;
+			} else if(sLine.Token(i).CaseCmp("UHNAMES") == 0) {
+				m_bUHNames = true;
+			}
+			i++;
+		}
+		return;	// If the server understands it, we already enabled namesx / uhnames
 	} else if (sCommand.CaseCmp("NOTICE") == 0) {
 		CString sTarget = sLine.Token(1);
 		CString sMsg = sLine.Token(2, true);
@@ -805,8 +838,8 @@ void CClient::UserCommand(const CString& sLine) {
 
 		const vector<CServer*>& vServers = m_pUser->GetServers();
 
-		if (vServers.size() <= 1) {
-			PutStatus("You must have at least one server at all times.");
+		if (vServers.size() <= 0) {
+			PutStatus("You don't have any servers added.");
 			return;
 		}
 
@@ -817,6 +850,7 @@ void CClient::UserCommand(const CString& sLine) {
 		}
 	} else if (sCommand.CaseCmp("LISTSERVERS") == 0) {
 		if (m_pUser) {
+		    if (m_pUser->HasServers()) {
 			const vector<CServer*>& vServers = m_pUser->GetServers();
 			CTable Table;
 			Table.AddColumn("Host");
@@ -841,6 +875,9 @@ void CClient::UserCommand(const CString& sLine) {
 					PutStatus(sLine);
 				}
 			}
+		    } else {
+			PutStatus("You don't have any servers added.");
+		    }
 		}
 	} else if (sCommand.CaseCmp("TOPICS") == 0) {
 		if (m_pUser) {
@@ -870,13 +907,17 @@ void CClient::UserCommand(const CString& sLine) {
 	} else if (sCommand.CaseCmp("SEND") == 0) {
 		CString sToNick = sLine.Token(1);
 		CString sFile = sLine.Token(2);
+		CString sAllowedPath = m_pUser->GetDLPath();
+		CString sAbsolutePath;
 
 		if ((sToNick.empty()) || (sFile.empty())) {
 			PutStatus("Usage: Send <nick> <file>");
 			return;
 		}
 
-		if ((!m_pUser->IsAdmin() && sFile.Left(1) == "~") || sFile.Left(1) == "/" || sFile.find("..") != CString::npos) {
+		sAbsolutePath = CUtils::ChangeDir(m_pUser->GetDLPath(), sFile, CZNC::Get().GetHomePath());
+
+		if (sAbsolutePath.Left(sAllowedPath.length()) != sAllowedPath) {
 			PutStatus("Illegal path.");
 			return;
 		}
@@ -886,13 +927,17 @@ void CClient::UserCommand(const CString& sLine) {
 		}
 	} else if (sCommand.CaseCmp("GET") == 0) {
 		CString sFile = sLine.Token(1);
+		CString sAllowedPath = m_pUser->GetDLPath();
+		CString sAbsolutePath;
 
 		if (sFile.empty()) {
 			PutStatus("Usage: Get <file>");
 			return;
 		}
 
-		if ((!m_pUser->IsAdmin() && sFile.Left(1) == "~") || sFile.Left(1) == "/" || sFile.find("..") != CString::npos) {
+		sAbsolutePath = CUtils::ChangeDir(m_pUser->GetDLPath(), sFile, CZNC::Get().GetHomePath());
+
+		if (sAbsolutePath.Left(sAllowedPath.length()) != sAllowedPath) {
 			PutStatus("Illegal path.");
 			return;
 		}

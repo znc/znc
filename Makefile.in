@@ -1,5 +1,6 @@
 CXX=@CXX@
 CXXFLAGS=@CXXFLAGS@
+LDFLAGS=@LDFLAGS@
 INCLUDES=@INCLUDES@
 LIBS=@LIBS@
 prefix=@prefix@
@@ -14,10 +15,10 @@ depend::
 	@if test -n "@MODTARGET@"; then (cd modules; $(MAKE) depend); fi
 
 znc: $(OBJS)
-	$(CXX) $(CXXFLAGS) $(INCLUDES) -o $@ $(LIBS) $(OBJS)
+	$(CXX) $(CXXFLAGS) $(LDFLAGS) -o $@ $(INCLUDES) $(OBJS) $(LIBS)
 
 znc-static: $(OBJS)
-	$(CXX) $(CXXFLAGS) -static -o $@ $(INCLUDES) $(OBJS) $(LIBS)
+	$(CXX) $(CXXFLAGS) $(LDFLAGS) -static -o $@ $(INCLUDES) $(OBJS) $(LIBS)
 	strip $@
 
 modules::

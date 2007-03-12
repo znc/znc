@@ -41,7 +41,7 @@ public:
 		M_Op			= 'o',
 		M_Voice			= 'v',
 		M_Ban			= 'b',
-		M_Except		= 'e',
+		M_Except		= 'e'
 	} EModes;
 
 	CChan(const CString& sName, CUser* pUser, bool bInConfig);
@@ -70,6 +70,7 @@ public:
 	void OnVoice(const CString& sOpNick, const CString& sNick, bool bVoiced);
 	CString GetModeString() const;
 	CString GetModeArg(CString& sArgs) const;
+	CString GetModeForNames() const;
 	// !Modes
 
 	// Nicks
@@ -109,6 +110,7 @@ public:
 	void SetWhoDone(bool b = true) { m_bWhoDone = b; }
 	void SetDetached(bool b = true) { m_bDetached = b; }
 	void SetInConfig(bool b) { m_bInConfig = b; }
+	void SetCreationDate(unsigned long u) { m_ulCreationDate = u; }
 	// !Setters
 
 	// Getters
@@ -134,6 +136,7 @@ public:
 	bool AutoCycle() const { return m_bAutoCycle; }
 	bool IsDetached() const { return m_bDetached; }
 	bool InConfig() const { return m_bInConfig; }
+	unsigned long GetCreationDate() const { return m_ulCreationDate; }
 	// !Getters
 private:
 protected:
@@ -149,6 +152,7 @@ protected:
 	CString				m_sTopic;
 	CString				m_sTopicOwner;
 	unsigned long		m_ulTopicDate;
+	unsigned long		m_ulCreationDate;
 	CUser*				m_pUser;
 	CNick				m_Nick;
 	unsigned int		m_uLimit;

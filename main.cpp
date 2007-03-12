@@ -9,15 +9,16 @@
 #include "MD5.h"
 
 static struct option g_LongOpts[] = {
-	{ "help",			0,	NULL,	'h' },
-	{ "version",			0,	NULL,	'v' },
-	{ "makeconf",			0,	NULL,	'c' },
-	{ "makepass",			0,	NULL,	's' },
+	{ "help",			no_argument,	0,	'h' },
+	{ "version",			no_argument,	0,	'v' },
+	{ "makeconf",			no_argument,	0,	'c' },
+	{ "makepass",			no_argument,	0,	's' },
 #ifdef HAVE_LIBSSL
-	{ "makepem",			0,	NULL,	'p' },
-	{ "encrypt-pem",		0,	NULL, 	'e' },
+	{ "makepem",			no_argument,	0,	'p' },
+	{ "encrypt-pem",		no_argument,	0, 	'e' },
 #endif /* HAVE_LIBSSL */
-	{ NULL }
+	{ "datadir",                    required_argument,	0,   'd' },
+	{ 0, 0, 0, 0 }
 };
 
 void GenerateHelp(const char *appname) {
@@ -31,6 +32,7 @@ void GenerateHelp(const char *appname) {
 	CUtils::PrintMessage("\t-p, --makepem      Generates a pemfile for use with SSL");
 	CUtils::PrintMessage("\t-e, --encrypt-pem  when used along with --makepem, encrypts the private key in the pemfile");
 #endif /* HAVE_LIBSSL */
+	CUtils::PrintMessage("\t-d, --datadir      Set a different znc repository");
 }
 
 void die(int sig) {
@@ -51,6 +53,7 @@ void die(int sig) {
 
 int main(int argc, char** argv, char** envp) {
 	CString sConfig;
+	CString sDataDir = "";
 
 #ifdef HAVE_LIBSSL
 	InitSSL();
@@ -63,10 +66,10 @@ int main(int argc, char** argv, char** envp) {
 	bool bMakePem = false;
 	bool bEncPem = false;
 
-	while ((iArg = getopt_long(argc, argv, "hvcspe", g_LongOpts, &iOptIndex)) != -1) {
+	while ((iArg = getopt_long(argc, argv, "hvcsped:", g_LongOpts, &iOptIndex)) != -1) {
 #else	
 
-	while ((iArg = getopt_long(argc, argv, "hvcs", g_LongOpts, &iOptIndex)) != -1) {
+	while ((iArg = getopt_long(argc, argv, "hvcsd:", g_LongOpts, &iOptIndex)) != -1) {
 #endif /* HAVE_LIBSSL */
 	    switch (iArg) {
 		case 'h':
@@ -89,6 +92,9 @@ int main(int argc, char** argv, char** envp) {
 			    bEncPem = true;
 			    break;
 #endif /* HAVE_LIBSSL */
+		case 'd':
+			    sDataDir = CString(optarg);
+			    break;
 		case '?':
 		default:
 			    GenerateHelp(argv[0]);
@@ -104,7 +110,7 @@ int main(int argc, char** argv, char** envp) {
 
 	if (bMakeConf) {
 		CZNC& ZNC = CZNC::Get();
-		ZNC.InitDirs("");
+		ZNC.InitDirs("", sDataDir);
 		if (ZNC.WriteNewConfig(sConfig)) {
 			char* args[3];
 
@@ -134,7 +140,7 @@ int main(int argc, char** argv, char** envp) {
 #ifdef HAVE_LIBSSL
 	if (bMakePem) {
 		CZNC* pZNC = &CZNC::Get();
-		pZNC->InitDirs("");
+		pZNC->InitDirs("", sDataDir);
 		pZNC->WritePemFile( bEncPem );
 
 		delete pZNC;
@@ -155,7 +161,7 @@ int main(int argc, char** argv, char** envp) {
 	}
 
 	CZNC* pZNC = &CZNC::Get();
-	pZNC->InitDirs(((argc) ? argv[0] : ""));
+	pZNC->InitDirs(((argc) ? argv[0] : ""), sDataDir);
 
 	if (!pZNC->ParseConfig(sConfig)) {
 		CUtils::PrintError("Unrecoverable config error.");

@@ -96,7 +96,7 @@ public:
 	bool SendFile(const CString& sRemoteNick, const CString& sFileName, const CString& sModuleName = "");
 	bool GetFile(const CString& sRemoteNick, const CString& sRemoteIP, unsigned short uRemotePort, const CString& sFileName, unsigned long uFileSize, const CString& sModuleName = "");
 	bool ResumeFile(const CString& sRemoteNick, unsigned short uPort, unsigned long uFileSize);
-	CString GetCurNick();
+	CString GetCurNick() const;
 	bool Clone(const CUser& User, CString& sErrorRet);
 	void BounceAllClients();
 
@@ -130,6 +130,7 @@ public:
 	// Getters
 	vector<CClient*>& GetClients() { return m_vClients; }
 	CIRCSock* GetIRCSock();
+	const CIRCSock* GetIRCSock() const;
 	const CString& GetUserName() const;
 	const CString& GetCleanUserName() const;
 	const CString& GetNick(bool bAllowDefault = true) const;
@@ -165,6 +166,7 @@ public:
 	bool KeepBuffer() const;
 	bool AutoCycle() const;
 	bool IsBeingDeleted() const { return m_bBeingDeleted; }
+	bool HasServers() const { return m_vServers.size() > 0; }
 	// !Getters
 private:
 protected:

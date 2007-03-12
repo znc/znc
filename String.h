@@ -64,7 +64,7 @@ public:
 		EASCII,
 		EURL,
 		EHTML,
-		ESQL,
+		ESQL
 	} EEscape;
 
 	explicit CString(char c);

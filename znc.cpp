@@ -19,11 +19,14 @@ CZNC::CZNC() {
 #ifdef _MODULES
 	m_pModules = new CGlobalModules();
 #endif
-	m_bISpoofLocked = false;
+	m_pISpoofLockFile = NULL;
 	SetISpoofFormat(""); // Set ISpoofFormat to default
 }
 
 CZNC::~CZNC() {
+	if(m_pISpoofLockFile)
+		ReleaseISpoof();
+
 #ifdef _MODULES
 	m_pModules->UnloadAll();
 
@@ -115,7 +118,7 @@ int CZNC::Loop() {
 
 		m_Manager.Loop();
 
-		if (m_bISpoofLocked) {
+		if (m_pISpoofLockFile != NULL) {
 			continue;
 		}
 
@@ -135,7 +138,7 @@ int CZNC::Loop() {
 
 		CIRCSock* pIRCSock = (CIRCSock*) m_Manager.FindSockByName(sSockName);
 
-		if (!pIRCSock) {
+		if (!pIRCSock && pUser->HasServers()) {
 			if (pUser->ConnectPaused() && pUser->IsLastServer()) {
 				continue;
 			}
@@ -146,24 +149,10 @@ int CZNC::Loop() {
 				continue;
 			}
 
-			if (!m_sISpoofFile.empty()) {
-				CFile File(m_sISpoofFile);
-
-				if (File.Open(O_RDONLY)) {
-					char buf[1024];
-					memset((char*) buf, 0, 1024);
-					File.Read(buf, 1023);
-					File.Close();
-					m_sOrigISpoof = buf;
-				}
-
-				if (File.Open(O_WRONLY | O_TRUNC | O_CREAT)) {
-					CString sData = m_sISpoofFormat.Token(0, false, "%") + pUser->GetIdent() + m_sISpoofFormat.Token(1, true, "%");
-					File.Write(sData + "\n");
-					File.Close();
-				}
-
-				m_bISpoofLocked = true;
+			if(!WriteISpoof(pUser)) {
+				DEBUG_ONLY(cout << "ISpoof could not be written" << endl);
+				pUser->PutStatus("ISpoof could not be written, retrying...");
+				continue;
 			}
 
 			DEBUG_ONLY(cout << "User [" << pUser->GetUserName() << "] is connecting to [" << pServer->GetName() << ":" << pServer->GetPort() << "] ..." << endl);
@@ -190,19 +179,53 @@ int CZNC::Loop() {
 	return 0;
 }
 
-void CZNC::ReleaseISpoof() {
-	if (!m_sISpoofFile.empty()) {
-		CFile File(m_sISpoofFile);
+bool CZNC::WriteISpoof(CUser* pUser) {
+	if(m_pISpoofLockFile != NULL)
+		return false;
 
-		if (File.Open(O_WRONLY | O_TRUNC | O_CREAT)) {
+	if (!m_sISpoofFile.empty()) {
+		m_pISpoofLockFile = new CLockFile;
+		if(!m_pISpoofLockFile->TryExLock(m_sISpoofFile, 50, true)) {
+			delete m_pISpoofLockFile;
+			m_pISpoofLockFile = NULL;
+			return false;
+		}
+
+		CFile File(m_pISpoofLockFile->GetFD(), m_pISpoofLockFile->GetFileName());
+
+		char buf[1024];
+		memset((char*) buf, 0, 1024);
+		File.Read(buf, 1023);
+		m_sOrigISpoof = buf;
+
+		if (!File.Seek(0) || !File.Truncate()) {
+			delete m_pISpoofLockFile;
+			m_pISpoofLockFile = NULL;
+			return false;
+		}
+
+		CString sData = m_sISpoofFormat.Token(0, false, "%") + pUser->GetIdent() + m_sISpoofFormat.Token(1, true, "%");
+		File.Write(sData + "\n");
+	}
+	return true;
+}
+
+void CZNC::ReleaseISpoof() {
+	if(m_pISpoofLockFile == NULL)
+		return;
+
+	if (!m_sISpoofFile.empty()) {
+		CFile File(m_pISpoofLockFile->GetFD(), m_pISpoofLockFile->GetFileName());
+
+		if (File.Seek(0) && File.Truncate()) {
 			File.Write(m_sOrigISpoof);
-			File.Close();
 		}
 
 		m_sOrigISpoof = "";
 	}
 
-	m_bISpoofLocked = false;
+	delete m_pISpoofLockFile;
+	m_pISpoofLockFile = NULL;
 }
 
 bool CZNC::WritePidFile(int iPid) {
@@ -289,7 +312,7 @@ bool CZNC::IsHostAllowed(const CString& sHostMask) {
 	return false;
 }
 
-void CZNC::InitDirs(const CString& sArgvPath) {
+void CZNC::InitDirs(const CString& sArgvPath, const CString& sDataDir) {
 	char buf[PATH_MAX];
 	getcwd(buf, PATH_MAX);
 
@@ -308,7 +331,11 @@ void CZNC::InitDirs(const CString& sArgvPath) {
 		m_sHomePath = m_sCurPath;
 	}
 
-	m_sZNCPath = m_sHomePath + "/.znc";
+	if (sDataDir.empty()) {
+	    m_sZNCPath = m_sHomePath + "/.znc";
+	} else {
+	    m_sZNCPath = sDataDir;
+	}
 
 	// Other dirs that we use
 	m_sConfPath = m_sZNCPath + "/configs";
@@ -1090,6 +1117,10 @@ bool CZNC::ParseConfig(const CString& sConfig) {
 					m_sISpoofFormat = sValue;
 					continue;
 				} else if (sName.CaseCmp("ISpoofFile") == 0) {
+					if(sValue.Left(2) == "~/") {
+						sValue.LeftChomp(2);
+						sValue = GetHomePath() + "/" + sValue;
+					}
 					m_sISpoofFile = sValue;
 					continue;
 				} else if (sName.CaseCmp("MOTD") == 0) {

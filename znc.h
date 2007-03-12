@@ -88,13 +88,14 @@ public:
 
 	void DeleteUsers();
 	int Loop();
+	bool WriteISpoof(CUser* pUser);
 	void ReleaseISpoof();
 	bool WritePidFile(int iPid);
 	CUser* GetUser(const CString& sUser);
 	Csock* FindSockByName(const CString& sSockName);
 	bool ParseConfig(const CString& sConfig);
 	bool IsHostAllowed(const CString& sHostMask);
-	void InitDirs(const CString& sArgvPath);
+	void InitDirs(const CString& sArgvPath, const CString& sDataDir);
 	bool OnBoot();
 	CString ExpandConfigPath(const CString& sConfigFile);
 	bool WriteNewConfig(const CString& sConfig);
@@ -172,7 +173,7 @@ protected:
 	VCString				m_vsVHosts;
 	VCString				m_vsMotd;
 	CLockFile				m_LockFile;
-	bool					m_bISpoofLocked;
+	CLockFile*				m_pISpoofLockFile;
 	map<CString,CUser*>::iterator	m_itUserIter;	// This needs to be reset to m_msUsers.begin() if anything is added or removed to the map
 #ifdef _MODULES
 	CGlobalModules*			m_pModules;
@@ -219,7 +220,7 @@ public:
 		}
 #endif
 
-		return CZNC::Get().GetManager().ListenHost(m_uPort, "_LISTENER", m_sBindHost, bSSL, SOMAXCONN, pClient, m_bIPV6);
+		return CZNC::Get().GetManager().ListenHost(m_uPort, "_LISTENER", m_sBindHost, bSSL, SOMAXCONN, pClient, 0, m_bIPV6);
 	}
 private:
 protected:

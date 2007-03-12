@@ -86,8 +86,8 @@ public:
 		}
 	}
 
-	void Open(const CString& sFile) {
-		m_fd = open(sFile.c_str(), O_RDONLY);
+	void Open(const CString& sFile, bool bRw = false) {
+		m_fd = open(sFile.c_str(), bRw ? O_RDWR : O_RDONLY);
 		m_bCreated = false;
 
 		if (m_fd == -1) {
@@ -101,8 +101,8 @@ public:
 	}
 
 	//! timeout in milliseconds
-	bool TryExLock(const CString& sLockFile, unsigned long long iTimeout = 0) {
-		Open(sLockFile);
+	bool TryExLock(const CString& sLockFile, unsigned long long iTimeout = 0, bool bRw = false) {
+		Open(sLockFile, bRw);
 		return TryExLock(iTimeout);
 	}
 
@@ -154,6 +154,9 @@ public:
 	bool LockSh() { return Lock(LOCK_SH); }
 	bool UnLock() { return Lock(LOCK_UN); }
 
+	CString GetFileName() { return m_sFileName; }
+	int GetFD() { return m_fd; }
+
 private:
 	bool Lock(int iOperation) {
 		if (m_fd == -1) {
@@ -177,7 +180,7 @@ class CException {
 public:
 	typedef enum {
 		EX_Shutdown,
-		EX_BadModVersion,
+		EX_BadModVersion
 	} EType;
 
 	CException(EType e) {

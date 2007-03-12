@@ -33,7 +33,7 @@
 <li> <em>g++ `znc-config --cflags` `znc-config --include` `znc-config --libs` -shared -o example.so example.cpp</em>
 </ul>
 </ul>
-<li> Place the .so file into your ~/.znc/modules directory !!!WARNING!!! if you overwrite a .so file while znc has it loaded it can and probably will crash znc, <em>/msg *status unloadmod foo</em> first!
+<li> Place the .so file into your ~/.znc/modules directory. You can load it with <em>/msg *status loadmod foo</em>. If you overwrite a .so file while znc has it loaded it can crash znc, <em>/msg *status unloadmod foo</em> first!
 </ul>
 <h2>
  Code

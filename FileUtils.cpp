@@ -10,23 +10,31 @@ using std::endl;
 
 CFile::CFile() {
 	m_iFD = -1;
+	m_bClose = false;
 }
 
 CFile::CFile(const CString& sLongName) {
 	m_iFD = -1;
+	m_bClose = false;
+
+	SetFileName(sLongName);
+}
+
+CFile::CFile(int iFD, const CString& sLongName) {
+	m_iFD = iFD;
+	m_bClose = false;
 
 	SetFileName(sLongName);
 }
 
 CFile::~CFile() {
-	if (m_iFD != -1) {
+	if (m_bClose && m_iFD != -1) {
 		Close();
 	}
 }
 
 void CFile::SetFileName(const CString& sLongName) {
 	m_sLongName = sLongName;
-	m_iFD = -1;
 
 	m_sShortName = sLongName;
 	m_sShortName.TrimRight("/");
@@ -217,6 +225,15 @@ bool CFile::Seek(unsigned long uPos) {
 	return false;
 }
 
+bool CFile::Truncate() {
+	if (m_iFD != -1 && ftruncate(m_iFD, 0) == 0) {
+		ClearBuffer();
+		return true;
+	}
+
+	return false;
+}
+
 bool CFile::Open(const CString& sFileName, int iFlags, mode_t iMode) {
 	SetFileName(sFileName);
 	return Open(iFlags, iMode);
@@ -228,7 +245,11 @@ bool CFile::Open(int iFlags, mode_t iMode) {
 	}
 
 	m_iFD = open(m_sLongName.c_str(), iFlags, iMode);
-	return  (m_iFD > -1);
+	if (m_iFD < 0)
+		return false;
+
+	m_bClose = true;
+	return true;
 }
 
 int CFile::Read(char *pszBuffer, int iBytes) {
@@ -306,8 +327,10 @@ int CFile::Write(const CString & sData) {
 	return Write(sData.data(), sData.size());
 }
 void CFile::Close() {
-	if (m_iFD >= 0) {
-		close(m_iFD); m_iFD = -1;
+	if (m_iFD >= 0 && m_bClose) {
+		close(m_iFD);
+		m_iFD = -1;
+		m_bClose = false;
 	}
 }
 void CFile::ClearBuffer() { m_sBuffer.clear(); }

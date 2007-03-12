@@ -115,9 +115,26 @@ public:
 		return true;
 	}
 
-	virtual bool OnLoad(const CString& sArgs) {
+	virtual bool OnLoad(const CString& sArgStr) {
 		bool bSSL = false;
+		bool bIPv6 = false;
+		CString sArgs(sArgStr);
+		CString sOpt;
 		CString sPort;
+
+		if (sArgs.Left(1) == "-") {
+			sOpt = sArgs.Token(0);
+			sArgs = sArgs.Token(1, true);
+
+			if (sOpt.CaseCmp("-IPV6") == 0) {
+				bIPv6 = true;
+			} else if (sOpt.CaseCmp("-IPV4") == 0) {
+				bIPv6 = false;
+			} else {
+				CUtils::PrintMessage("Unknown option [" + sOpt + "] valid options are -ipv4 or -ipv6", true);
+				return false;
+			}
+		}
 
 		if (sArgs.find(" ") != CString::npos) {
 			m_sListenHost = sArgs.Token(0);
@@ -146,7 +163,7 @@ public:
 		}
 #endif
 
-		return m_pManager->ListenHost(m_uPort, "WebAdmin::Listener", m_sListenHost, bSSL, SOMAXCONN, pListenSock);
+		return m_pManager->ListenHost(m_uPort, "WebAdmin::Listener", m_sListenHost, bSSL, SOMAXCONN, pListenSock, 0, bIPv6);
 	}
 
 	void AddSock(CWebAdminSock* pSock) {

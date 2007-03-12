@@ -35,12 +35,13 @@ public:
 			if(sPerf.Left(1) == "/")
 				sPerf.LeftChomp();
 
-			if(sPerf.Token(0).AsUpper() == "MSG") {
+			if(sPerf.Token(0).CaseCmp("MSG") == 0) {
 				sPerf = "PRIVMSG " + sPerf.Token(1, true);
 			}
 
-			if(sPerf.Token(0).AsUpper() == "PRIVMSG" ||
-				sPerf.Token(0).AsUpper() == "NOTICE") {
+			if((sPerf.Token(0).CaseCmp("PRIVMSG") == 0 ||
+				sPerf.Token(0).CaseCmp("NOTICE") == 0) &&
+				sPerf.Token(2).Left(1) != ":") {
 				sPerf = sPerf.Token(0) + " " + sPerf.Token(1)
 					+ " :" + sPerf.Token(2, true);
 			}
@@ -64,9 +65,14 @@ public:
 		} else if(sCmdName == "list")
 		{
 			int i = 1;
+			CString sExpanded;
 			for(VCString::iterator it = m_vPerform.begin(); it != m_vPerform.end(); it++, i++)
 			{
-				PutModule(CString( i ) + ": " + *it);
+				sExpanded = GetUser()->ExpandString( *it );
+				if(sExpanded != *it)
+					PutModule(CString( i ) + ": " + *it + " (" + sExpanded + ")");
+				else
+					PutModule(CString( i ) + ": " + *it);
 			}
 			PutModule(" -- End of List");
 		} else if(sCmdName == "save")
@@ -86,7 +92,7 @@ public:
 		for( VCString::iterator it = m_vPerform.begin();
 			it != m_vPerform.end();  it++)
 		{
-			PutIRC(*it);
+			PutIRC( GetUser()->ExpandString( *it ) );
 		}
 	}
 

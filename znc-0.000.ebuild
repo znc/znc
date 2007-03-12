@@ -1,4 +1,4 @@
-# Copyright 1999-2005 Gentoo Foundation
+# Copyright 1999-2007 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
 # $Header$
 
@@ -10,34 +10,29 @@ SRC_URI="mirror://sourceforge/${PN}/${P}.tar.gz"
 
 LICENSE="GPL-2"
 SLOT="0"
-KEYWORDS="x86 amd64 ~sparc"
-IUSE="ssl ipv6 nomodules debug"
-RESTRICT="nostrip"
+KEYWORDS="~amd64 ~sparc ~x86 ~x86-fbsd"
+IUSE="ssl ipv6 modules debug perl sasl"
 
-RDEPEND="virtual/libc"
-DEPEND="virtual/libc
-		>=sys-devel/gcc-3.2.3-r4
-		ssl? ( >=dev-libs/openssl-0.9.7d )"
-
-src_unpack() {
-	unpack ${A} || die "unpack failed"
-}
+DEPEND="ssl? ( >=dev-libs/openssl-0.9.7d )
+	perl? ( dev-lang/perl )
+	sasl? ( dev-libs/cyrus-sasl )"
+RDEPEND="${DEPEND}"
 
 src_compile() {
-	local MY_CONFARGS=""
-
-	use ssl || MY_CONFARGS="${MY_CONFARGS} --disable-openssl"
-	use ipv6 && MY_CONFARGS="${MY_CONFARGS} --enable-ipv6"
-	use nomodules && MY_CONFARGS="${MY_CONFARGS} --disable-modules"
-	use debug && MY_CONFARGS="${MY_CONFARGS} --enable-debug"
-
-	econf ${MY_CONFARGS} || die "econf failed"
-	emake CFLAGS="${CFLAGS}" || die "emake failed"
+	econf \
+		$(use_enable ssl openssl) \
+		$(use_enable ipv6) \
+		$(use_enable modules) \
+		$(use_enable debug) \
+		$(use_enable perl) \
+		$(use_enable sasl) \
+		|| die "econf failed"
+	emake || die "emake failed"
 }
 
 src_install() {
-	make install DESTDIR=${D}
-	dodoc docs/*.html || die "dodoc failed"
+	make install DESTDIR="${D}" || die "make install failed."
+	dohtml docs/*.html || die "dohtml failed"
 	dodoc AUTHORS znc.conf || die "dodoc failed"
 }
 
