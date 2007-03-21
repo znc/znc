@@ -574,7 +574,8 @@ void CClient::UserCommand(const CString& sLine) {
 		}
 
 		const map<CString,CNick*>& msNicks = pChan->GetNicks();
-		const CString& sPerms = m_pUser->GetIRCSock()->GetPerms();
+		CIRCSock* pIRCSock = (!m_pUser) ? NULL : m_pUser->GetIRCSock();
+		const CString& sPerms = (pIRCSock) ? pIRCSock->GetPerms() : "";
 
 		if (!msNicks.size()) {
 			PutStatus("No nicks on [" + sChan + "]");
@@ -763,7 +764,8 @@ void CClient::UserCommand(const CString& sLine) {
 	} else if (sCommand.CaseCmp("LISTCHANS") == 0) {
 		if (m_pUser) {
 			const vector<CChan*>& vChans = m_pUser->GetChans();
-			const CString& sPerms = m_pUser->GetIRCSock()->GetPerms();
+			CIRCSock* pIRCSock = (!m_pUser) ? NULL : m_pUser->GetIRCSock();
+			const CString& sPerms = (pIRCSock) ? pIRCSock->GetPerms() : "";
 
 			if (!vChans.size()) {
 				PutStatus("You have no channels defined");

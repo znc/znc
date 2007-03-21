@@ -86,30 +86,42 @@ void CChan::JoinUser(bool bForce, const CString& sKey, CClient* pClient) {
 	CString sLine = sPre;
 	CString sPerm, sNick;
 
-	for (map<CString,CNick*>::iterator a = m_msNicks.begin(); a != m_msNicks.end(); a++) {
-		if(pClient->HasNamesx()) {
-			sPerm = a->second->GetPermStr();
-		} else {
-			char c = a->second->GetPermChar();
-			sPerm = "";
-			if (c != '\0') {
-				sPerm += c;
+	vector<CClient*>& vpClients = m_pUser->GetClients();
+	for (vector<CClient*>::iterator it = vpClients.begin(); it != vpClients.end(); it++) {
+		CClient* pThisClient;
+		if (!pClient)
+			pThisClient = *it;
+		else
+			pThisClient = pClient;
+
+		for (map<CString,CNick*>::iterator a = m_msNicks.begin(); a != m_msNicks.end(); a++) {
+			if(pThisClient->HasNamesx()) {
+				sPerm = a->second->GetPermStr();
+			} else {
+				char c = a->second->GetPermChar();
+				sPerm = "";
+				if (c != '\0') {
+					sPerm += c;
+				}
+			}
+			if(pThisClient->HasUHNames() && !a->second->GetIdent().empty() && a->second->GetHost().empty()) {
+				sNick = a->first + "!" + a->second->GetIdent() + "@" + a->second->GetHost();
+			} else {
+				sNick = a->first;
+			}
+
+			sLine += sPerm + sNick;
+
+			if (sLine.size() >= 490 || a == (--m_msNicks.end())) {
+				m_pUser->PutUser(sLine, pThisClient);
+				sLine = sPre;
+			} else {
+				sLine += " ";
 			}
 		}
-		if(pClient->HasUHNames() && !a->second->GetIdent().empty() && a->second->GetHost().empty()) {
-			sNick = a->first + "!" + a->second->GetIdent() + "@" + a->second->GetHost();
-		} else {
-			sNick = a->first;
-		}
 
-		sLine += sPerm + sNick;
-
-		if (sLine.size() >= 490 || a == (--m_msNicks.end())) {
-			m_pUser->PutUser(sLine, pClient);
-			sLine = sPre;
-		} else {
-			sLine += " ";
-		}
+		if (pClient) // We only want to do this for one client
+			break;
 	}
 
 	m_pUser->PutUser(":" + m_pUser->GetIRCServer() + " 366 " + m_pUser->GetIRCNick().GetNick() + " " + GetName() + " :End of /NAMES list.", pClient);

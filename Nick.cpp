@@ -102,7 +102,8 @@ bool CNick::RemPerm(unsigned char uPerm) {
 }
 
 void CNick::UpdatePermChar() {
-	const CString& sChanPerms = (!m_pUser) ? "@+" : m_pUser->GetIRCSock()->GetPerms();
+	CIRCSock* pIRCSock = (!m_pUser) ? NULL : m_pUser->GetIRCSock();
+	const CString& sChanPerms = (!pIRCSock) ? "@+" : pIRCSock->GetPerms();
 	m_cPerm = 0;
 
 	for (unsigned int a = 0; a < sChanPerms.size(); a++) {
