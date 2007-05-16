@@ -3,7 +3,7 @@
 #ifndef _MAIN_H
 #define _MAIN_H
 
-#define VERSION 0.046
+#define VERSION 0.048
 
 #ifndef _MODDIR_
 #define _MODDIR_ "/usr/libexec/znc"
