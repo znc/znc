@@ -395,6 +395,8 @@ bool CZNC::WriteConfig() {
 		File.Write("Listen" + s6 + "      = " + sHostPortion + CString((pListener->IsSSL()) ? "+" : "") + CString(pListener->GetPort()) + "\r\n");
 	}
 
+	File.Write("ConnectDelay = " + CString(m_uiConnectDelay) + "\r\n");
+
 	if (!m_sISpoofFile.empty()) {
 		File.Write("ISpoofFile   = " + m_sISpoofFile + "\r\n");
 		if (!m_sISpoofFormat.empty()) { File.Write("ISpoofFormat = " + m_sISpoofFormat + "\r\n"); }
@@ -1000,16 +1002,27 @@ bool CZNC::ParseConfig(const CString& sConfig) {
 					} else if (sName.CaseCmp("AppendTimestamp") == 0) {
 						pUser->SetTimestampAppend(sValue.ToBool());
 						continue;
+					} else if (sName.CaseCmp("PrependTimestamp") == 0) {
+						pUser->SetTimestampPrepend(sValue.ToBool());
+						continue;
 					} else if (sName.CaseCmp("Timestamp") == 0) {
 						if(sValue.Trim_n().CaseCmp("true") != 0) {
 							if(sValue.Trim_n().CaseCmp("append") == 0) {
 								pUser->SetTimestampAppend(true);
+								pUser->SetTimestampPrepend(false);
+  							} else if(sValue.Trim_n().CaseCmp("prepend") == 0) {
+  								pUser->SetTimestampAppend(false);
+								pUser->SetTimestampPrepend(true);
 							} else if(sValue.Trim_n().CaseCmp("false") == 0) {
-								pUser->SetTimestampFormat("");
+								pUser->SetTimestampAppend(false);
+								pUser->SetTimestampPrepend(false);
 							} else {
 								pUser->SetTimestampFormat(sValue);
 							}
 						}
+						continue;
+					} else if (sName.CaseCmp("TimezoneOffset") == 0) {
+						pUser->SetTimezoneOffset(sValue.ToDouble()); // there is no ToFloat()
 						continue;
 					} else if (sName.CaseCmp("LoadModule") == 0) {
 						CString sModName = sValue.Token(0);

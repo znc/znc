@@ -133,6 +133,8 @@ public:
 	void SetBeingDeleted(bool b) { m_bBeingDeleted = b; }
 	void SetTimestampFormat(const CString& s) { m_sTimestampFormat = s; }
 	void SetTimestampAppend(bool b) { m_bAppendTimestamp = b; }
+	void SetTimestampPrepend(bool b) { m_bPrependTimestamp = b; }
+	void SetTimezoneOffset(float b) { m_fTimezoneOffset = b; }
 	// !Setters
 
 	// Getters
@@ -151,6 +153,7 @@ public:
 	const set<CString>& GetAllowedHosts() const;
 	const CString& GetTimestampFormat() const;
 	bool GetTimestampAppend() const;
+	bool GetTimestampPrepend() const;
 
 	const CString& GetChanPrefixes() const { return m_sChanPrefixes; }
 	bool IsChan(const CString& sChan) const { return (sChan.size() && GetChanPrefixes().find(sChan[0]) != CString::npos); }
@@ -177,6 +180,7 @@ public:
 	bool AutoCycle() const;
 	bool IsBeingDeleted() const { return m_bBeingDeleted; }
 	bool HasServers() const { return m_vServers.size() > 0; }
+	float GetTimezoneOffset() const { return m_fTimezoneOffset; }
 	// !Getters
 private:
 protected:
@@ -197,6 +201,7 @@ protected:
 	CString			m_sQuitMsg;
 	MCString		m_mssCTCPReplies;
 	CString			m_sTimestampFormat;
+	float			m_fTimezoneOffset;
 
 	// Paths
 	CString			m_sUserPath;
@@ -218,6 +223,7 @@ protected:
 	bool				m_bAutoCycle;
 	bool				m_bBeingDeleted;
 	bool				m_bAppendTimestamp;
+	bool				m_bPrependTimestamp;
 
 	CKeepNickTimer*		m_pKeepNickTimer;
 	CJoinTimer*			m_pJoinTimer;

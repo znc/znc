@@ -920,20 +920,25 @@ bool CWebAdminSock::UserPage(CString& sPageRet, CUser* pUser) {
 
 		CTemplate& o7 = m_Template.AddRow("OptionLoop");
 		o7["Name"] = "appendtimestamp";
-		o7["DisplayName"] = "Append Timestamp";
+		o7["DisplayName"] = "Append Timestamps";
 		if (pUser && pUser->GetTimestampAppend()) { o7["Checked"] = "true"; }
 
-		if (IsAdmin()) {
-			CTemplate& o8 = m_Template.AddRow("OptionLoop");
-			o8["Name"] = "denyloadmod";
-			o8["DisplayName"] = "Deny LoadMod";
-			if (pUser && pUser->DenyLoadMod()) { o8["Checked"] = "true"; }
+		CTemplate& o8 = m_Template.AddRow("OptionLoop");
+		o8["Name"] = "prependtimestamp";
+		o8["DisplayName"] = "Prepend Timestamps";
+		if (pUser && pUser->GetTimestampPrepend()) { o8["Checked"] = "true"; }
 
+		if (IsAdmin()) {
 			CTemplate& o9 = m_Template.AddRow("OptionLoop");
-			o9["Name"] = "isadmin";
-			o9["DisplayName"] = "Admin";
-			if (pUser && pUser->IsAdmin()) { o9["Checked"] = "true"; }
-			if (pUser && pUser == CZNC::Get().FindUser(GetUser())) { o9["Disabled"] = "true"; }
+			o9["Name"] = "denyloadmod";
+			o9["DisplayName"] = "Deny LoadMod";
+			if (pUser && pUser->DenyLoadMod()) { o9["Checked"] = "true"; }
+
+			CTemplate& o10 = m_Template.AddRow("OptionLoop");
+			o10["Name"] = "isadmin";
+			o10["DisplayName"] = "Admin";
+			if (pUser && pUser->IsAdmin()) { o10["Checked"] = "true"; }
+			if (pUser && pUser == CZNC::Get().FindUser(GetUser())) { o10["Disabled"] = "true"; }
 		}
 
 		PrintPage(sPageRet, "UserPage.tmpl");
@@ -1096,6 +1101,7 @@ CUser* CWebAdminSock::GetNewUser(CString& sPageRet, CUser* pUser) {
 	pNewUser->SetKeepNick(GetParam("keepnick").ToBool());
 	pNewUser->SetUseClientIP(GetParam("useclientip").ToBool());
 	pNewUser->SetTimestampAppend(GetParam("appendtimestamp").ToBool());
+	pNewUser->SetTimestampPrepend(GetParam("prependtimestamp").ToBool());
 
 	if (IsAdmin()) {
 		pNewUser->SetDenyLoadMod(GetParam("denyloadmod").ToBool());

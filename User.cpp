@@ -12,6 +12,7 @@
 #include "Timers.h"
 
 CUser::CUser(const CString& sUserName) {
+	m_fTimezoneOffset = 0;
 	m_uConnectTime = 0;
 	SetUserName(sUserName);
 	m_sNick = m_sCleanUserName;
@@ -39,6 +40,7 @@ CUser::CUser(const CString& sUserName) {
 	m_bBeingDeleted = false;
 	m_sTimestampFormat = "[%H:%M:%S]";
 	m_bAppendTimestamp = false;
+	m_bPrependTimestamp = true;
 	m_pKeepNickTimer = new CKeepNickTimer(this);
 	m_pJoinTimer = new CJoinTimer(this);
 	m_pMiscTimer = new CMiscTimer(this);
@@ -136,18 +138,22 @@ CString& CUser::AddTimestamp(const CString& sStr, CString& sRet) const {
 	char szTimestamp[1024];
 	time_t tm;
 
-	if(GetTimestampFormat().empty()) {
+	if(GetTimestampFormat().empty() || (!m_bAppendTimestamp && !m_bPrependTimestamp)) {
 		sRet = sStr;
 	} else {
 		time(&tm);
+		tm += (time_t)(m_fTimezoneOffset * 60 * 60); // offset is in hours
 		strftime(szTimestamp, sizeof(szTimestamp) / sizeof(char), GetTimestampFormat().c_str(), localtime(&tm));
-		if(m_bAppendTimestamp) {
-			sRet = sStr + " ";
-			sRet += szTimestamp;
-		} else {
+
+		sRet = sStr;
+		if (m_bPrependTimestamp) {
 			sRet = szTimestamp;
 			sRet += " " + sStr;
 		}
+		if (m_bAppendTimestamp) {
+			sRet += " ";
+			sRet += szTimestamp;
+		} 
 	}
 	return sRet;
 }
@@ -387,6 +393,7 @@ bool CUser::Clone(const CUser& User, CString& sErrorRet) {
 	SetDenyLoadMod(User.DenyLoadMod());
 	SetAdmin(User.IsAdmin());
 	SetTimestampAppend(User.GetTimestampAppend());
+	SetTimestampPrepend(User.GetTimestampPrepend());
 	SetTimestampFormat(User.GetTimestampFormat());
 	// !Flags
 
@@ -419,6 +426,7 @@ bool CUser::IsHostAllowed(const CString& sHostMask) {
 
 const CString& CUser::GetTimestampFormat() const { return m_sTimestampFormat; }
 bool CUser::GetTimestampAppend() const { return m_bAppendTimestamp; }
+bool CUser::GetTimestampPrepend() const { return m_bPrependTimestamp; }
 
 bool CUser::IsValidUserName(const CString& sUserName) {
 	const char* p = sUserName.c_str();
@@ -530,7 +538,9 @@ bool CUser::WriteConfig(CFile& File) {
 	PrintLine(File, "Admin", CString((IsAdmin()) ? "true" : "false"));
 	PrintLine(File, "DCCLookupMethod", CString((UseClientIP()) ? "client" : "default"));
 	PrintLine(File, "TimestampFormat", GetTimestampFormat());
-	PrintLine(File, "AppendTimestamp", CString((GetTimestampAppend()) ? "yes" : "no"));
+	PrintLine(File, "AppendTimestamp", CString((GetTimestampAppend()) ? "true" : "false"));
+	PrintLine(File, "PrependTimestamp", CString((GetTimestampPrepend()) ? "true" : "false"));
+	PrintLine(File, "TimezoneOffset", CString(m_fTimezoneOffset));
 	File.Write("\r\n");
 
 	// Allow Hosts
