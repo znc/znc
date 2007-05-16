@@ -282,7 +282,7 @@ void CClient::ReadLine(const CString& sData) {
 		CChan* pChan = m_pUser->FindChan(sTarget);
 
 		if ((pChan) && (pChan->KeepBuffer())) {
-			pChan->AddBuffer(":" + GetNickMask() + " NOTICE " + sTarget + " :" + sMsg);
+			pChan->AddBuffer(":" + GetNickMask() + " NOTICE " + sTarget + " :" + m_pUser->AddTimestamp(sMsg));
 		}
 
 		// Relay to the rest of the clients that may be connected to this user
@@ -426,8 +426,11 @@ void CClient::ReadLine(const CString& sData) {
 			CChan* pChan = m_pUser->FindChan(sTarget);
 
 			if (sCTCP.Token(0).CaseCmp("ACTION") == 0) {
+				CString sMessage = sCTCP.Token(1, true);
+				MODULECALL(OnUserAction(sTarget, sMessage), m_pUser, this, return);
+
 				if (pChan && pChan->KeepBuffer()) {
-					pChan->AddBuffer(":" + GetNickMask() + " PRIVMSG " + sTarget + " :\001" + sCTCP + "\001");
+					pChan->AddBuffer(":" + GetNickMask() + " PRIVMSG " + sTarget + " :\001ACTION " + m_pUser->AddTimestamp(sMessage) + "\001");
 				}
 
 				// Relay to the rest of the clients that may be connected to this user
@@ -442,10 +445,8 @@ void CClient::ReadLine(const CString& sData) {
 						}
 					}
 				}
-#ifdef _MODULES
 			} else {
 				MODULECALL(OnUserCTCP(sTarget, sCTCP), m_pUser, this, return);
-#endif
 			}
 
 			PutIRC("PRIVMSG " + sTarget + " :\001" + sCTCP + "\001");
@@ -496,7 +497,7 @@ void CClient::ReadLine(const CString& sData) {
 		CChan* pChan = m_pUser->FindChan(sTarget);
 
 		if ((pChan) && (pChan->KeepBuffer())) {
-			pChan->AddBuffer(":" + GetNickMask() + " PRIVMSG " + sTarget + " :" + sMsg);
+			pChan->AddBuffer(":" + GetNickMask() + " PRIVMSG " + sTarget + " :" + m_pUser->AddTimestamp(sMsg));
 		}
 
 		PutIRC("PRIVMSG " + sTarget + " :" + sMsg);

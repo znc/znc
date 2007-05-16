@@ -233,6 +233,7 @@ public:
 	virtual EModRet OnUserRaw(CString& sLine);
 	virtual EModRet OnUserCTCPReply(CString& sTarget, CString& sMessage);
 	virtual EModRet OnUserCTCP(CString& sTarget, CString& sMessage);
+	virtual EModRet OnUserAction(CString& sTarget, CString& sMessage);
 	virtual EModRet OnUserMsg(CString& sTarget, CString& sMessage);
 	virtual EModRet OnUserNotice(CString& sTarget, CString& sMessage);
 	virtual EModRet OnUserJoin(CString& sChannel, CString& sKey);
@@ -241,6 +242,8 @@ public:
 	virtual EModRet OnCTCPReply(CNick& Nick, CString& sMessage);
 	virtual EModRet OnPrivCTCP(CNick& Nick, CString& sMessage);
 	virtual EModRet OnChanCTCP(CNick& Nick, CChan& Channel, CString& sMessage);
+	virtual EModRet OnPrivAction(CNick& Nick, CString& sMessage);
+	virtual EModRet OnChanAction(CNick& Nick, CChan& Channel, CString& sMessage);
 	virtual EModRet OnPrivMsg(CNick& Nick, CString& sMessage);
 	virtual EModRet OnChanMsg(CNick& Nick, CChan& Channel, CString& sMessage);
 	virtual EModRet OnPrivNotice(CNick& Nick, CString& sMessage);
@@ -361,6 +364,7 @@ public:
 	virtual bool OnUserRaw(CString& sLine);
 	virtual bool OnUserCTCPReply(CString& sTarget, CString& sMessage);
 	virtual bool OnUserCTCP(CString& sTarget, CString& sMessage);
+	virtual bool OnUserAction(CString& sTarget, CString& sMessage);
 	virtual bool OnUserMsg(CString& sTarget, CString& sMessage);
 	virtual bool OnUserNotice(CString& sTarget, CString& sMessage);
 	virtual bool OnUserJoin(CString& sChannel, CString& sKey);
@@ -369,6 +373,8 @@ public:
 	virtual bool OnCTCPReply(CNick& Nick, CString& sMessage);
 	virtual bool OnPrivCTCP(CNick& Nick, CString& sMessage);
 	virtual bool OnChanCTCP(CNick& Nick, CChan& Channel, CString& sMessage);
+	virtual bool OnPrivAction(CNick& Nick, CString& sMessage);
+	virtual bool OnChanAction(CNick& Nick, CChan& Channel, CString& sMessage);
 	virtual bool OnPrivMsg(CNick& Nick, CString& sMessage);
 	virtual bool OnChanMsg(CNick& Nick, CChan& Channel, CString& sMessage);
 	virtual bool OnPrivNotice(CNick& Nick, CString& sMessage);
@@ -394,6 +400,7 @@ public:
 	virtual ~CGlobalModule() {}
 
 	virtual EModRet OnConfigLine(const CString& sName, const CString& sValue, CUser* pUser, CChan* pChan);
+	virtual void OnFinishedConfig();
 	virtual EModRet OnDeleteUser(CUser& User);
 	virtual EModRet OnLoginAttempt(CSmartPtr<CAuthBase> Auth);
 	virtual void OnFailedLogin(const CString& sUsername, const CString& sRemoteIP);
@@ -406,6 +413,7 @@ public:
 	virtual ~CGlobalModules() {}
 
 	virtual bool OnConfigLine(const CString& sName, const CString& sValue, CUser* pUser, CChan* pChan);
+	virtual void OnFinishedConfig();
 	virtual bool OnDeleteUser(CUser& User);
 	virtual bool OnLoginAttempt(CSmartPtr<CAuthBase> Auth);
 	virtual void OnFailedLogin(const CString& sUsername, const CString& sRemoteIP);

@@ -20,6 +20,7 @@ CZNC::CZNC() {
 	m_pModules = new CGlobalModules();
 #endif
 	m_pISpoofLockFile = NULL;
+	m_uiConnectDelay = 30;
 	SetISpoofFormat(""); // Set ISpoofFormat to default
 }
 
@@ -53,12 +54,12 @@ CZNC::~CZNC() {
 
 CString CZNC::GetTag(bool bIncludeVersion) {
 	if (!bIncludeVersion) {
-		return "ZNC - by prozac@rottenboy.com";
+		return "ZNC by prozac - http://znc.sourceforge.net";
 	}
 
 	char szBuf[128];
 	memset(szBuf, 0, 128);
-	snprintf(szBuf, 127, "ZNC %1.3f - by prozac@rottenboy.com", VERSION);
+	snprintf(szBuf, 127, "ZNC %1.3f by prozac -  http://znc.sourceforge.net", VERSION);
 
 	return szBuf;
 }
@@ -82,6 +83,7 @@ bool CZNC::OnBoot() {
 int CZNC::Loop() {
 	m_Manager.SetSelectTimeout(10000);
 	m_itUserIter = m_msUsers.begin();
+	time_t tNextConnect = 0;
 
 	while (true) {
 		// Check for users that need to be deleted
@@ -131,6 +133,10 @@ int CZNC::Loop() {
 			continue;
 		}
 
+		if (tNextConnect > time(NULL)) {
+			continue;
+		}
+
 		CString sSockName = "IRC::" + m_itUserIter->first;
 		CUser* pUser = m_itUserIter->second;
 
@@ -148,6 +154,8 @@ int CZNC::Loop() {
 			if (!pServer) {
 				continue;
 			}
+
+			tNextConnect = time(NULL) + m_uiConnectDelay;
 
 			if(!WriteISpoof(pUser)) {
 				DEBUG_ONLY(cout << "ISpoof could not be written" << endl);
@@ -986,6 +994,23 @@ bool CZNC::ParseConfig(const CString& sConfig) {
 					} else if (sName.CaseCmp("Chan") == 0) {
 						pUser->AddChan(sValue, true);
 						continue;
+					} else if (sName.CaseCmp("TimestampFormat") == 0) {
+						pUser->SetTimestampFormat(sValue);
+						continue;
+					} else if (sName.CaseCmp("AppendTimestamp") == 0) {
+						pUser->SetTimestampAppend(sValue.ToBool());
+						continue;
+					} else if (sName.CaseCmp("Timestamp") == 0) {
+						if(sValue.Trim_n().CaseCmp("true") != 0) {
+							if(sValue.Trim_n().CaseCmp("append") == 0) {
+								pUser->SetTimestampAppend(true);
+							} else if(sValue.Trim_n().CaseCmp("false") == 0) {
+								pUser->SetTimestampFormat("");
+							} else {
+								pUser->SetTimestampFormat(sValue);
+							}
+						}
+						continue;
 					} else if (sName.CaseCmp("LoadModule") == 0) {
 						CString sModName = sValue.Token(0);
 						CUtils::PrintAction("Loading Module [" + sModName + "]");
@@ -1140,6 +1165,9 @@ bool CZNC::ParseConfig(const CString& sConfig) {
 				} else if (sName.CaseCmp("StatusPrefix") == 0) {
 					m_sStatusPrefix = sValue;
 					continue;
+				} else if (sName.CaseCmp("ConnectDelay") == 0) {
+					m_uiConnectDelay = sValue.ToUInt();
+					continue;
 				}
 			}
 		}
@@ -1158,6 +1186,8 @@ bool CZNC::ParseConfig(const CString& sConfig) {
 		CUtils::PrintError("You must define at least one user in your config.");
 		return false;
 	}
+
+	GetModules().OnFinishedConfig();
 
 	return true;
 }

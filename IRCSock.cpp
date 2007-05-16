@@ -114,13 +114,6 @@ void CIRCSock::ReadLine(const CString& sData) {
 					m_pUser->ClearRawBuffer();
 					m_pUser->AddRawBuffer(":" + sServer + " " + sCmd + " ", " " + sRest);
 
-					// Now that we are connected, we need to join our chans
-					const vector<CChan*>& vChans = m_pUser->GetChans();
-
-					for (unsigned int a = 0; a < vChans.size(); a++) {
-						PutIRC("JOIN " + vChans[a]->GetName() + " " + vChans[a]->GetKey());
-					}
-
 					CZNC::Get().ReleaseISpoof();
 					m_bISpoofReleased = true;
 
@@ -128,6 +121,8 @@ void CIRCSock::ReadLine(const CString& sData) {
 				}
 				case 5:
 					ParseISupport(sRest);
+					m_pUser->AddRawBuffer(":" + sServer + " " + sCmd + " ", " " + sRest);
+					break;
 				case 2:
 				case 3:
 				case 4:
@@ -138,10 +133,10 @@ void CIRCSock::ReadLine(const CString& sData) {
 				case 255:	// client count
 				case 265:	// local users
 				case 266:	// global users
-					m_pUser->AddRawBuffer(":" + sServer + " " + sCmd + " ", " " + sRest);
+					m_pUser->UpdateRawBuffer(":" + sServer + " " + sCmd + " ", " " + sRest);
 					break;
 				case 422:	// MOTD File is missing
-				case 375:	// begin motd
+				case 375: 	// begin motd
 					m_pUser->ClearMotdBuffer();
 				case 372:	// motd
 				case 376:	// end motd
@@ -508,15 +503,41 @@ void CIRCSock::ReadLine(const CString& sData) {
 					return;
 				}
 			} else if (sCmd.CaseCmp("MODE") == 0) {
-				CString sChan = sRest.Token(0);
+				CString sTarget = sRest.Token(0);
 				CString sModes = sRest.Token(1, true);
+				if(sModes.Left(1) == ":")
+					sModes = sModes.substr(1);
 
-				CChan* pChan = m_pUser->FindChan(sChan);
+				CChan* pChan = m_pUser->FindChan(sTarget);
 				if (pChan) {
 					pChan->ModeChange(sModes, Nick.GetNick());
 
 					if (pChan->IsDetached()) {
 						return;
+					}
+				} else if (sTarget == m_Nick.GetNick()) {
+					CString sModeArg = sModes.Token(0);
+//					CString sArgs = sModes.Token(1, true); Usermode changes got no params
+					bool bAdd = true;
+/* no module call defined (yet?)
+#ifdef _MODULES
+					MODULECALL(OnRawUserMode(*pOpNick, *this, sModeArg, sArgs), m_pUser, NULL, );
+#endif
+*/
+					for (unsigned int a = 0; a < sModeArg.size(); a++) {
+						const unsigned char& uMode = sModeArg[a];
+
+						if (uMode == '+') {
+							bAdd = true;
+						} else if (uMode == '-') {
+							bAdd = false;
+						} else {
+							if(bAdd) {
+								m_scUserModes.insert(uMode);
+							} else {
+								m_scUserModes.erase(uMode);
+							}
+						}
 					}
 				}
 			} else if (sCmd.CaseCmp("KICK") == 0) {
@@ -637,7 +658,12 @@ void CIRCSock::ReadLine(const CString& sData) {
 			} else if (sCmd.CaseCmp("WALLOPS") == 0) {
 				// :blub!dummy@rox-8DBEFE92 WALLOPS :this is a test
 				CString sMsg = sRest.Token(0, true);
-				m_pUser->AddQueryBuffer(":" + Nick.GetNickMask() + " WALLOPS ", sMsg, false);
+
+				if(sMsg.Left(1) == ":") {
+					sMsg.LeftChomp();
+				}
+
+				m_pUser->AddQueryBuffer(":" + Nick.GetNickMask() + " WALLOPS ", ":" + m_pUser->AddTimestamp(sMsg), false);
 			}
 		}
 	}
@@ -661,7 +687,12 @@ bool CIRCSock::OnCTCPReply(CNick& Nick, CString& sMessage) {
 }
 
 bool CIRCSock::OnPrivCTCP(CNick& Nick, CString& sMessage) {
-	MODULECALL(OnPrivCTCP(Nick, sMessage), m_pUser, NULL, return true);
+	if (sMessage.Token(0).CaseCmp("ACTION") == 0) {
+		sMessage = sMessage.Token(1, true);
+		MODULECALL(OnPrivAction(Nick, sMessage), m_pUser, NULL, return true);
+	} else {
+		MODULECALL(OnPrivCTCP(Nick, sMessage), m_pUser, NULL, return true);
+	}
 
 	if (strncasecmp(sMessage.c_str(), "DCC ", 4) == 0 && m_pUser && m_pUser->BounceDCCs() && m_pUser->IsUserAttached()) {
 		// DCC CHAT chat 2453612361 44592
@@ -722,7 +753,7 @@ bool CIRCSock::OnPrivCTCP(CNick& Nick, CString& sMessage) {
 
 		if (sReply.empty() && !m_pUser->IsUserAttached()) {
 			if (sQuery == "VERSION") {
-				sReply = "ZNC by prozac - http://znc.sourceforge.net";
+				sReply = CZNC::GetTag();
 			} else if (sQuery == "PING") {
 				sReply = sMessage.Token(1, true);
 			}
@@ -742,7 +773,7 @@ bool CIRCSock::OnPrivNotice(CNick& Nick, CString& sMessage) {
 
 	if (!m_pUser->IsUserAttached()) {
 		// If the user is detached, add to the buffer
-		m_pUser->AddQueryBuffer(":" + Nick.GetNickMask() + " NOTICE ", " :" + sMessage);
+		m_pUser->AddQueryBuffer(":" + Nick.GetNickMask() + " NOTICE ", " :" + m_pUser->AddTimestamp(sMessage));
 	}
 
 	return false;
@@ -753,7 +784,7 @@ bool CIRCSock::OnPrivMsg(CNick& Nick, CString& sMessage) {
 
 	if (!m_pUser->IsUserAttached()) {
 		// If the user is detached, add to the buffer
-		m_pUser->AddQueryBuffer(":" + Nick.GetNickMask() + " PRIVMSG ", " :" + sMessage);
+		m_pUser->AddQueryBuffer(":" + Nick.GetNickMask() + " PRIVMSG ", " :" + m_pUser->AddTimestamp(sMessage));
 	}
 
 	return false;
@@ -763,8 +794,11 @@ bool CIRCSock::OnChanCTCP(CNick& Nick, const CString& sChan, CString& sMessage) 
 	CChan* pChan = m_pUser->FindChan(sChan);
 	if (pChan) {
 		// Record a /me
-		if (sMessage.Token(0).CaseCmp("ACTION") == 0 && (pChan->KeepBuffer() || !m_pUser->IsUserAttached())) {
-			pChan->AddBuffer(":" + Nick.GetNickMask() + " PRIVMSG " + sChan + " :\001" + sMessage + "\001");
+		if (sMessage.Token(0).CaseCmp("ACTION") == 0) {
+			if(pChan->KeepBuffer() || !m_pUser->IsUserAttached()) {
+				pChan->AddBuffer(":" + Nick.GetNickMask() + " PRIVMSG " + sChan + " :\001ACTION " + m_pUser->AddTimestamp(sMessage.Token(1, true)) + "\001");
+			}
+			MODULECALL(OnChanAction(Nick, *pChan, sMessage), m_pUser, NULL, return true);
 		} else {
 			MODULECALL(OnChanCTCP(Nick, *pChan, sMessage), m_pUser, NULL, return true);
 		}
@@ -779,7 +813,7 @@ bool CIRCSock::OnChanNotice(CNick& Nick, const CString& sChan, CString& sMessage
 		MODULECALL(OnChanNotice(Nick, *pChan, sMessage), m_pUser, NULL, return true);
 
 		if ((pChan->KeepBuffer()) || (!m_pUser->IsUserAttached())) {
-			pChan->AddBuffer(":" + Nick.GetNickMask() + " NOTICE " + sChan + " :" + sMessage);
+			pChan->AddBuffer(":" + Nick.GetNickMask() + " NOTICE " + sChan + " :" + m_pUser->AddTimestamp(sMessage));
 		}
 	}
 
@@ -792,7 +826,7 @@ bool CIRCSock::OnChanMsg(CNick& Nick, const CString& sChan, CString& sMessage) {
 		MODULECALL(OnChanMsg(Nick, *pChan, sMessage), m_pUser, NULL, return true);
 
 		if (pChan->KeepBuffer() || !m_pUser->IsUserAttached()) {
-			pChan->AddBuffer(":" + Nick.GetNickMask() + " PRIVMSG " + sChan + " :" + sMessage);
+			pChan->AddBuffer(":" + Nick.GetNickMask() + " PRIVMSG " + sChan + " :" + m_pUser->AddTimestamp(sMessage));
 		}
 	}
 
@@ -832,6 +866,7 @@ void CIRCSock::Disconnected() {
 	m_pUser->ClearMotdBuffer();
 
 	ResetChans();
+	m_scUserModes.clear();
 }
 
 void CIRCSock::SockError(int iErrno) {
@@ -843,6 +878,7 @@ void CIRCSock::SockError(int iErrno) {
 	m_pUser->ClearMotdBuffer();
 
 	ResetChans();
+	m_scUserModes.clear();
 }
 
 void CIRCSock::Timeout() {
@@ -854,6 +890,7 @@ void CIRCSock::Timeout() {
 	m_pUser->ClearMotdBuffer();
 
 	ResetChans();
+	m_scUserModes.empty();
 }
 
 void CIRCSock::ConnectionRefused() {

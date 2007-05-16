@@ -175,6 +175,7 @@ protected:
 	CLockFile				m_LockFile;
 	CLockFile*				m_pISpoofLockFile;
 	map<CString,CUser*>::iterator	m_itUserIter;	// This needs to be reset to m_msUsers.begin() if anything is added or removed to the map
+	uint					m_uiConnectDelay;
 #ifdef _MODULES
 	CGlobalModules*			m_pModules;
 #endif

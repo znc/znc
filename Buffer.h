@@ -13,6 +13,14 @@ public:
 	virtual ~CBufLine();
 	void GetLine(const CString& sTarget, CString& sRet);
 
+	const CString& GetPre() const { return m_sPre; }
+	const CString& GetPost() const { return m_sPost; }
+	bool GetIncNick() const { return m_bIncNick; }
+
+	void SetPre(const CString& s) { m_sPre = s; }
+	void SetPost(const CString& s) { m_sPost = s; }
+	void SetIncNick(bool b) { m_bIncNick = b; }
+
 private:
 protected:
 	CString	m_sPre;
@@ -26,6 +34,8 @@ public:
 	virtual ~CBuffer();
 
 	int AddLine(const CString& sPre, const CString& sPost, bool bIncNick = true);
+	/// Same as AddLine, but if there is already a line with sPre it is replaced.
+	int UpdateLine(const CString& sPre, const CString& sPost, bool bIncNick = true);
 	bool GetNextLine(const CString& sTarget, CString& sRet);
 	bool GetLine(const CString& sTarget, CString& sRet, unsigned int uIdx);
 	bool IsEmpty() { return empty(); }

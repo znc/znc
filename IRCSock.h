@@ -68,6 +68,7 @@ public:
 	bool IsOrigNickPending() const { return m_bOrigNickPending; }
 	bool HasNamesx() const { return m_bNamesx; }
 	bool HasUHNames() const { return m_bUHNames; }
+	const set<unsigned char>& GetUserModes() const { return m_scUserModes; }
 	// !Getters
 private:
 	void SetNick(const CString& sNick);
@@ -80,6 +81,7 @@ protected:
 	bool						m_bUHNames;
 	CString						m_sPerms;
 	CString						m_sPermModes;
+	set<unsigned char>			m_scUserModes;
 	map<unsigned char, EChanModeArgs>	m_mueChanModes;
 	CUser*						m_pUser;
 	CNick						m_Nick;

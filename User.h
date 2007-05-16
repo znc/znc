@@ -69,6 +69,9 @@ public:
 	void AddRawBuffer(const CString& sPre, const CString& sPost, bool bIncNick = true) { m_RawBuffer.AddLine(sPre, sPost, bIncNick); }
 	void AddMotdBuffer(const CString& sPre, const CString& sPost, bool bIncNick = true) { m_MotdBuffer.AddLine(sPre, sPost, bIncNick); }
 	void AddQueryBuffer(const CString& sPre, const CString& sPost, bool bIncNick = true) { m_QueryBuffer.AddLine(sPre, sPost, bIncNick); }
+	void UpdateRawBuffer(const CString& sPre, const CString& sPost, bool bIncNick = true) { m_RawBuffer.UpdateLine(sPre, sPost, bIncNick); }
+	void UpdateMotdBuffer(const CString& sPre, const CString& sPost, bool bIncNick = true) { m_MotdBuffer.UpdateLine(sPre, sPost, bIncNick); }
+	void UpdateQueryBuffer(const CString& sPre, const CString& sPost, bool bIncNick = true) { m_QueryBuffer.UpdateLine(sPre, sPost, bIncNick); }
 	void ClearRawBuffer() { m_RawBuffer.Clear(); }
 	void ClearMotdBuffer() { m_MotdBuffer.Clear(); }
 	void ClearQueryBuffer() { m_QueryBuffer.Clear(); }
@@ -92,6 +95,9 @@ public:
 
 	CString ExpandString(const CString& sStr) const;
 	CString& ExpandString(const CString& sStr, CString& sRet) const;
+
+	CString AddTimestamp(const CString& sStr) const;
+	CString& AddTimestamp(const CString& sStr, CString& sRet) const;
 
 	bool SendFile(const CString& sRemoteNick, const CString& sFileName, const CString& sModuleName = "");
 	bool GetFile(const CString& sRemoteNick, const CString& sRemoteIP, unsigned short uRemotePort, const CString& sFileName, unsigned long uFileSize, const CString& sModuleName = "");
@@ -125,6 +131,8 @@ public:
 	void SetAutoCycle(bool b);
 	void SetChanPrefixes(const CString& s) { m_sChanPrefixes = (s.empty()) ? "#&" : s; }
 	void SetBeingDeleted(bool b) { m_bBeingDeleted = b; }
+	void SetTimestampFormat(const CString& s) { m_sTimestampFormat = s; }
+	void SetTimestampAppend(bool b) { m_bAppendTimestamp = b; }
 	// !Setters
 
 	// Getters
@@ -141,6 +149,8 @@ public:
 	const CString& GetPass() const;
 	bool IsPassHashed() const;
 	const set<CString>& GetAllowedHosts() const;
+	const CString& GetTimestampFormat() const;
+	bool GetTimestampAppend() const;
 
 	const CString& GetChanPrefixes() const { return m_sChanPrefixes; }
 	bool IsChan(const CString& sChan) const { return (sChan.size() && GetChanPrefixes().find(sChan[0]) != CString::npos); }
@@ -186,6 +196,7 @@ protected:
 	CString			m_sIRCServer;
 	CString			m_sQuitMsg;
 	MCString		m_mssCTCPReplies;
+	CString			m_sTimestampFormat;
 
 	// Paths
 	CString			m_sUserPath;
@@ -206,6 +217,7 @@ protected:
 	bool				m_bKeepBuffer;
 	bool				m_bAutoCycle;
 	bool				m_bBeingDeleted;
+	bool				m_bAppendTimestamp;
 
 	CKeepNickTimer*		m_pKeepNickTimer;
 	CJoinTimer*			m_pJoinTimer;

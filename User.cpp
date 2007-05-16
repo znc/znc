@@ -37,6 +37,8 @@ CUser::CUser(const CString& sUserName) {
 	m_bKeepBuffer = false;
 	m_bAutoCycle = true;
 	m_bBeingDeleted = false;
+	m_sTimestampFormat = "[%H:%M:%S]";
+	m_bAppendTimestamp = false;
 	m_pKeepNickTimer = new CKeepNickTimer(this);
 	m_pJoinTimer = new CJoinTimer(this);
 	m_pMiscTimer = new CMiscTimer(this);
@@ -125,6 +127,31 @@ CString& CUser::ExpandString(const CString& sStr, CString& sRet) const {
 	return sRet;
 }
 
+CString CUser::AddTimestamp(const CString& sStr) const {
+	CString sRet;
+	return AddTimestamp(sStr, sRet);
+}
+
+CString& CUser::AddTimestamp(const CString& sStr, CString& sRet) const {
+	char szTimestamp[1024];
+	time_t tm;
+
+	if(GetTimestampFormat().empty()) {
+		sRet = sStr;
+	} else {
+		time(&tm);
+		strftime(szTimestamp, sizeof(szTimestamp) / sizeof(char), GetTimestampFormat().c_str(), localtime(&tm));
+		if(m_bAppendTimestamp) {
+			sRet = sStr + " ";
+			sRet += szTimestamp;
+		} else {
+			sRet = szTimestamp;
+			sRet += " " + sStr;
+		}
+	}
+	return sRet;
+}
+
 void CUser::BounceAllClients() {
 	for (unsigned int a = 0; a < m_vClients.size(); a++) {
 		m_vClients[a]->BouncedOff();
@@ -161,6 +188,18 @@ void CUser::UserConnected(CClient* pClient) {
 
 		while (m_MotdBuffer.GetLine(GetIRCNick().GetNick(), sLine, uIdx++)) {
 			pClient->PutClient(sLine);
+		}
+	}
+
+	if(GetIRCSock() != NULL) {
+		CString sUserMode("");
+		const set<unsigned char>& scUserModes = GetIRCSock()->GetUserModes();
+		for (set<unsigned char>::iterator it = scUserModes.begin();
+				it != scUserModes.end(); it++) {
+			sUserMode += *it;
+		}
+		if(!sUserMode.empty()) {
+			pClient->PutClient(":" + GetIRCNick().GetNick() + " MODE " + GetIRCNick().GetNick() + " :+" + sUserMode);
 		}
 	}
 
@@ -347,6 +386,8 @@ bool CUser::Clone(const CUser& User, CString& sErrorRet) {
 	SetUseClientIP(User.UseClientIP());
 	SetDenyLoadMod(User.DenyLoadMod());
 	SetAdmin(User.IsAdmin());
+	SetTimestampAppend(User.GetTimestampAppend());
+	SetTimestampFormat(User.GetTimestampFormat());
 	// !Flags
 
 	return true;
@@ -375,6 +416,9 @@ bool CUser::IsHostAllowed(const CString& sHostMask) {
 
 	return false;
 }
+
+const CString& CUser::GetTimestampFormat() const { return m_sTimestampFormat; }
+bool CUser::GetTimestampAppend() const { return m_bAppendTimestamp; }
 
 bool CUser::IsValidUserName(const CString& sUserName) {
 	const char* p = sUserName.c_str();
@@ -485,6 +529,8 @@ bool CUser::WriteConfig(CFile& File) {
 	PrintLine(File, "DenyLoadMod", CString((DenyLoadMod()) ? "true" : "false"));
 	PrintLine(File, "Admin", CString((IsAdmin()) ? "true" : "false"));
 	PrintLine(File, "DCCLookupMethod", CString((UseClientIP()) ? "client" : "default"));
+	PrintLine(File, "TimestampFormat", GetTimestampFormat());
+	PrintLine(File, "AppendTimestamp", CString((GetTimestampAppend()) ? "yes" : "no"));
 	File.Write("\r\n");
 
 	// Allow Hosts
@@ -981,7 +1027,7 @@ const vector<CChan*>& CUser::GetChans() const { return m_vChans; }
 const vector<CServer*>& CUser::GetServers() const { return m_vServers; }
 const CNick& CUser::GetIRCNick() const { return m_IRCNick; }
 const CString& CUser::GetIRCServer() const { return m_sIRCServer; }
-CString CUser::GetQuitMsg() const { return (!m_sQuitMsg.empty()) ? m_sQuitMsg : "ZNC by prozac - http://znc.sourceforge.net"; }
+CString CUser::GetQuitMsg() const { return (!m_sQuitMsg.empty()) ? m_sQuitMsg : CZNC::GetTag(false); }
 const MCString& CUser::GetCTCPReplies() const { return m_mssCTCPReplies; }
 unsigned int CUser::GetBufferCount() const { return m_uBufferCount; }
 bool CUser::KeepBuffer() const { return m_bKeepBuffer; }

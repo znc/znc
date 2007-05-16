@@ -805,6 +805,7 @@ bool CWebAdminSock::UserPage(CString& sPageRet, CUser* pUser) {
 			m_Template["QuitMsg"] = pUser->GetQuitMsg();
 			m_Template["DefaultChanModes"] = pUser->GetDefaultChanModes();
 			m_Template["BufferCount"] = CString(pUser->GetBufferCount());
+			m_Template["TimestampFormat"] = pUser->GetTimestampFormat();
 
 			const set<CString>& ssAllowedHosts = pUser->GetAllowedHosts();
 			for (set<CString>::const_iterator it = ssAllowedHosts.begin(); it != ssAllowedHosts.end(); it++) {
@@ -917,17 +918,22 @@ bool CWebAdminSock::UserPage(CString& sPageRet, CUser* pUser) {
 		o6["DisplayName"] = "Use Client IP";
 		if (pUser && pUser->UseClientIP()) { o6["Checked"] = "true"; }
 
-		if (IsAdmin()) {
-			CTemplate& o7 = m_Template.AddRow("OptionLoop");
-			o7["Name"] = "denyloadmod";
-			o7["DisplayName"] = "Deny LoadMod";
-			if (pUser && pUser->DenyLoadMod()) { o7["Checked"] = "true"; }
+		CTemplate& o7 = m_Template.AddRow("OptionLoop");
+		o7["Name"] = "appendtimestamp";
+		o7["DisplayName"] = "Append Timestamp";
+		if (pUser && pUser->GetTimestampAppend()) { o7["Checked"] = "true"; }
 
+		if (IsAdmin()) {
 			CTemplate& o8 = m_Template.AddRow("OptionLoop");
-			o8["Name"] = "isadmin";
-			o8["DisplayName"] = "Admin";
-			if (pUser && pUser->IsAdmin()) { o8["Checked"] = "true"; }
-			if (pUser && pUser == CZNC::Get().FindUser(GetUser())) { o8["Disabled"] = "true"; }
+			o8["Name"] = "denyloadmod";
+			o8["DisplayName"] = "Deny LoadMod";
+			if (pUser && pUser->DenyLoadMod()) { o8["Checked"] = "true"; }
+
+			CTemplate& o9 = m_Template.AddRow("OptionLoop");
+			o9["Name"] = "isadmin";
+			o9["DisplayName"] = "Admin";
+			if (pUser && pUser->IsAdmin()) { o9["Checked"] = "true"; }
+			if (pUser && pUser == CZNC::Get().FindUser(GetUser())) { o9["Disabled"] = "true"; }
 		}
 
 		PrintPage(sPageRet, "UserPage.tmpl");
@@ -1080,6 +1086,7 @@ CUser* CWebAdminSock::GetNewUser(CString& sPageRet, CUser* pUser) {
 	sArg = GetParam("vhost"); if (!sArg.empty()) { pNewUser->SetVHost(sArg); }
 	sArg = GetParam("quitmsg"); if (!sArg.empty()) { pNewUser->SetQuitMsg(sArg); }
 	sArg = GetParam("chanmodes"); if (!sArg.empty()) { pNewUser->SetDefaultChanModes(sArg); }
+	sArg = GetParam("timestampformat"); if (!sArg.empty()) { pNewUser->SetTimestampFormat(sArg); }
 
 	pNewUser->SetBufferCount(GetParam("bufsize").ToUInt());
 	pNewUser->SetKeepBuffer(GetParam("keepbuffer").ToBool());
@@ -1088,6 +1095,7 @@ CUser* CWebAdminSock::GetNewUser(CString& sPageRet, CUser* pUser) {
 	pNewUser->SetAutoCycle(GetParam("autocycle").ToBool());
 	pNewUser->SetKeepNick(GetParam("keepnick").ToBool());
 	pNewUser->SetUseClientIP(GetParam("useclientip").ToBool());
+	pNewUser->SetTimestampAppend(GetParam("appendtimestamp").ToBool());
 
 	if (IsAdmin()) {
 		pNewUser->SetDenyLoadMod(GetParam("denyloadmod").ToBool());
