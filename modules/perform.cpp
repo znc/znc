@@ -19,7 +19,7 @@ public:
 	{
 	}
 
-	virtual bool OnLoad(const CString& sArgs)
+	virtual bool OnLoad(const CString& sArgs, CString& sErrorMsg)
 	{
 		GetNV("Perform").Split("\n", m_vPerform, false);
 		

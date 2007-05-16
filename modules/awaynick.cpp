@@ -45,7 +45,7 @@ class CAwayNickMod : public CModule {
 public:
 	MODCONSTRUCTOR(CAwayNickMod) {}
 
-	virtual bool OnLoad(const CString& sArgs) {
+	virtual bool OnLoad(const CString& sArgs, CString& sErrorMsg) {
 		m_sFormat = sArgs;
 
 		if (m_sFormat.empty()) {

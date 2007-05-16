@@ -154,7 +154,7 @@ public:
 		}
 	}
 
-	virtual bool OnLoad(const CString& sArgs)
+	virtual bool OnLoad(const CString& sArgs, CString& sErrorMsg)
 	{
 		if (!sArgs.empty())
 		{

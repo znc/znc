@@ -469,7 +469,7 @@ void CModule::ListSockets() {
 const CString& CModule::GetModName() const { return m_sModName; }
 CString CModule::GetModNick() const { return ((m_pUser) ? m_pUser->GetStatusPrefix() : "*") + m_sModName; }
 
-bool CModule::OnLoad(const CString& sArgs) { return true; }
+bool CModule::OnLoad(const CString& sArgs, CString& sErrorMsg) { sErrorMsg = ""; return true; }
 bool CModule::OnBoot() { return true; }
 void CModule::OnIRCDisconnected() {}
 void CModule::OnIRCConnected() {}
@@ -771,9 +771,12 @@ bool CModules::LoadModule(const CString& sModule, const CString& sArgs, CUser* p
 	pModule->SetDescription(GetDesc());
 	push_back(pModule);
 
-	if (!pModule->OnLoad(sArgs)) {
-		UnloadModule(sModule, sRetMsg);
-		sRetMsg = "Module [" + sModule + "] aborted.";
+	if (!pModule->OnLoad(sArgs, sRetMsg)) {
+		UnloadModule(sModule, sModPath);
+		if (!sRetMsg.empty())
+			sRetMsg = "Module [" + sModule + "] aborted: " + sRetMsg;
+		else
+			sRetMsg = "Module [" + sModule + "] aborted.";
 		return false;
 	}
 

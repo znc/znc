@@ -13,10 +13,6 @@ public:
 		m_bWriteConf = false;
 	}
 
-	virtual bool OnLoad(const CString& sArgs) {
-		return true;
-	}
-
 	virtual ~CChanSaverMod() {
 	}
 

@@ -18,7 +18,7 @@ public:
 	{
 	}
 
-	virtual bool OnLoad( const CString& sArgs );
+	virtual bool OnLoad( const CString& sArgs, CString& sErrorMsg );
 
 	virtual EModRet OnUserPart( CString& sChannel, CString& sMessage )
 	{
@@ -88,7 +88,7 @@ static void RunTimer( CModule * pModule, CFPTimer *pTimer )
 	((CStickyChan *)pModule)->RunJob();
 }
 
-bool CStickyChan::OnLoad(const CString& sArgs)
+bool CStickyChan::OnLoad(const CString& sArgs, CString& sErrorMsg)
 {
 	AddTimer( RunTimer, "StickyChanTimer", 15 );
 	return( true );

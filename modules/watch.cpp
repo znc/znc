@@ -155,10 +155,6 @@ public:
 		m_Buffer.SetLineCount(500);
 	}
 
-	virtual bool OnLoad(const CString& sArgs) {
-		return true;
-	}
-
 	virtual ~CWatcherMod() {
 	}
 

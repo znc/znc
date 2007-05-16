@@ -115,7 +115,7 @@ public:
 		return true;
 	}
 
-	virtual bool OnLoad(const CString& sArgStr) {
+	virtual bool OnLoad(const CString& sArgStr, CString& sErrorMsg) {
 		bool bSSL = false;
 		bool bIPv6 = false;
 		CString sArgs(sArgStr);
@@ -165,8 +165,7 @@ public:
 
 		bool b = m_pManager->ListenHost(m_uPort, "WebAdmin::Listener", m_sListenHost, bSSL, SOMAXCONN, pListenSock, 0, bIPv6);
 		if (!b) {
-			printf("\n"); // dont mix it up with the 'loading module' message
-			CUtils::PrintMessage("Error: " + CString(strerror(errno)), true);
+			sErrorMsg = "Could not bind to port " + CString(m_uPort) + ": " + CString(strerror(errno));
 		}
 		return b;
 	}

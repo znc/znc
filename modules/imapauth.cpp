@@ -55,7 +55,7 @@ public:
 		return true;
 	}
 
-	virtual bool OnLoad(const CString& sArgs) {
+	virtual bool OnLoad(const CString& sArgs, CString& sErrorMsg) {
 		if (sArgs.Trim_n().empty()) {
 			return true;	// use defaults
 		}
@@ -152,4 +152,4 @@ void CIMAPSock::ReadLine(const CString& sLine) {
 	}
 }
 
-GLOBALMODULEDEFS(CIMAPAuthMod, "Allow users to authenticate via imap");
+GLOBALMODULEDEFS(CIMAPAuthMod, "Allow users to authenticate via imap")

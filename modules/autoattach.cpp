@@ -13,7 +13,7 @@ public:
 	virtual ~CChanAttach() {
 	}
 
-	virtual bool OnLoad(const CString& sArgs) {
+	virtual bool OnLoad(const CString& sArgs, CString& sErrorMsg) {
 		unsigned int a = 0;
 		CString sChan = sArgs.Token(a++);
 

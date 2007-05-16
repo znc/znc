@@ -201,7 +201,7 @@ public:
 	MODCONSTRUCTOR(CSChat) {}
 	virtual ~CSChat() { CleanSocks(); }
 
-	virtual bool OnLoad( const CString & sArgs )
+	virtual bool OnLoad( const CString & sArgs, CString & sErrorMsg )
 	{
 		m_sPemFile = sArgs;
 
@@ -211,7 +211,7 @@ public:
 		}
 
 		if (!CFile::Exists(m_sPemFile)) {
-			PutModule("Unable to load pem file [" + m_sPemFile + "]");
+			sErrorMsg = "Unable to load pem file [" + m_sPemFile + "]";
 			return false;
 		}
 

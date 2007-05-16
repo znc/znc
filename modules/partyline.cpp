@@ -51,7 +51,7 @@ public:
 		return true;
 	}
 
-	virtual bool OnLoad(const CString& sArgs) {
+	virtual bool OnLoad(const CString& sArgs, CString& sErrorMsg) {
 		const map<CString, CUser*>& msUsers = CZNC::Get().GetUserMap();
 
 		for (map<CString, CUser*>::const_iterator it = msUsers.begin(); it != msUsers.end(); it++) {
@@ -587,4 +587,4 @@ private:
 	set<CString>	m_ssDefaultChans;
 };
 
-GLOBALMODULEDEFS(CPartylineMod, "Internal channels and queries for users connected to znc");
+GLOBALMODULEDEFS(CPartylineMod, "Internal channels and queries for users connected to znc")

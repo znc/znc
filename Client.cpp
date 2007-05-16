@@ -83,6 +83,8 @@ void CClient::ReadLine(const CString& sData) {
 
 		if ((m_bGotPass) && (m_bGotNick)) {
 			AuthUser();
+		} else if (!m_bGotPass) {
+			PutClient(":irc.znc.com NOTICE AUTH :*** You need to send your password. Try /quote PASS <username>:<password>");
 		}
 
 		return;		// Don't forward this msg.  ZNC has already registered us.
@@ -428,6 +430,7 @@ void CClient::ReadLine(const CString& sData) {
 			if (sCTCP.Token(0).CaseCmp("ACTION") == 0) {
 				CString sMessage = sCTCP.Token(1, true);
 				MODULECALL(OnUserAction(sTarget, sMessage), m_pUser, this, return);
+				sCTCP = "ACTION " + sMessage;
 
 				if (pChan && pChan->KeepBuffer()) {
 					pChan->AddBuffer(":" + GetNickMask() + " PRIVMSG " + sTarget + " :\001ACTION " + m_pUser->AddTimestamp(sMessage) + "\001");
