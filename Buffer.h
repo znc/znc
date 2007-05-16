@@ -9,7 +9,7 @@ using std::vector;
 
 class CBufLine {
 public:
-	CBufLine(const CString& sPre, const CString& sPost);
+	CBufLine(const CString& sPre, const CString& sPost, bool bIncNick);
 	virtual ~CBufLine();
 	void GetLine(const CString& sTarget, CString& sRet);
 
@@ -17,6 +17,7 @@ private:
 protected:
 	CString	m_sPre;
 	CString	m_sPost;
+	bool	m_bIncNick;
 };
 
 class CBuffer : private vector<CBufLine> {
@@ -24,7 +25,7 @@ public:
 	CBuffer(unsigned int uLineCount = 100);
 	virtual ~CBuffer();
 
-	int AddLine(const CString& sPre, const CString& sPost);
+	int AddLine(const CString& sPre, const CString& sPost, bool bIncNick = true);
 	bool GetNextLine(const CString& sTarget, CString& sRet);
 	bool GetLine(const CString& sTarget, CString& sRet, unsigned int uIdx);
 	bool IsEmpty() { return empty(); }

@@ -2,15 +2,19 @@
 
 #include "Buffer.h"
 
-CBufLine::CBufLine(const CString& sPre, const CString& sPost) {
+CBufLine::CBufLine(const CString& sPre, const CString& sPost, bool bIncNick=true) {
 	m_sPre = sPre;
 	m_sPost = sPost;
+	m_bIncNick = bIncNick;
 }
 
 CBufLine::~CBufLine() {}
 
 void CBufLine::GetLine(const CString& sTarget, CString& sRet) {
-	sRet = m_sPre + sTarget + m_sPost;
+	if(m_bIncNick)
+		sRet = m_sPre + sTarget + m_sPost;
+	else
+		sRet = m_sPre + m_sPost;
 }
 
 CBuffer::CBuffer(unsigned int uLineCount) {
@@ -19,7 +23,7 @@ CBuffer::CBuffer(unsigned int uLineCount) {
 
 CBuffer::~CBuffer() {}
 
-int CBuffer::AddLine(const CString& sPre, const CString& sPost) {
+int CBuffer::AddLine(const CString& sPre, const CString& sPost, bool bIncNick) {
 	if (!m_uLineCount) {
 		return 0;
 	}
@@ -28,7 +32,7 @@ int CBuffer::AddLine(const CString& sPre, const CString& sPost) {
 		erase(begin());
 	}
 
-	push_back(CBufLine(sPre, sPost));
+	push_back(CBufLine(sPre, sPost, bIncNick));
 	return size();
 }
 

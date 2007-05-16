@@ -634,6 +634,10 @@ void CIRCSock::ReadLine(const CString& sData) {
 					m_pUser->PutUser(":" + Nick.GetNickMask() + " PRIVMSG " + sTarget + " :" + sMsg);
 					return;
 				}
+			} else if (sCmd.CaseCmp("WALLOPS") == 0) {
+				// :blub!dummy@rox-8DBEFE92 WALLOPS :this is a test
+				CString sMsg = sRest.Token(0, true);
+				m_pUser->AddQueryBuffer(":" + Nick.GetNickMask() + " WALLOPS ", sMsg, false);
 			}
 		}
 	}

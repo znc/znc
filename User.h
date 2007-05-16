@@ -66,9 +66,9 @@ public:
 #endif
 
 	// Buffers
-	void AddRawBuffer(const CString& sPre, const CString& sPost) { m_RawBuffer.AddLine(sPre, sPost); }
-	void AddMotdBuffer(const CString& sPre, const CString& sPost) { m_MotdBuffer.AddLine(sPre, sPost); }
-	void AddQueryBuffer(const CString& sPre, const CString& sPost) { m_QueryBuffer.AddLine(sPre, sPost); }
+	void AddRawBuffer(const CString& sPre, const CString& sPost, bool bIncNick = true) { m_RawBuffer.AddLine(sPre, sPost, bIncNick); }
+	void AddMotdBuffer(const CString& sPre, const CString& sPost, bool bIncNick = true) { m_MotdBuffer.AddLine(sPre, sPost, bIncNick); }
+	void AddQueryBuffer(const CString& sPre, const CString& sPost, bool bIncNick = true) { m_QueryBuffer.AddLine(sPre, sPost, bIncNick); }
 	void ClearRawBuffer() { m_RawBuffer.Clear(); }
 	void ClearMotdBuffer() { m_MotdBuffer.Clear(); }
 	void ClearQueryBuffer() { m_QueryBuffer.Clear(); }
