@@ -131,7 +131,7 @@ public:
 			} else if (sOpt.CaseCmp("-IPV4") == 0) {
 				bIPv6 = false;
 			} else {
-				CUtils::PrintMessage("Unknown option [" + sOpt + "] valid options are -ipv4 or -ipv6", true);
+				sErrorMsg = "Unknown option [" + sOpt + "] valid options are -ipv4 or -ipv6";
 				return false;
 			}
 		}
