@@ -484,6 +484,8 @@ private:
 
 	void AddMessage( time_t iTime, const CNick & Nick, CString & sMessage )
 	{
+		if (m_pUser && Nick.GetNick() == m_pUser->GetIRCNick().GetNick())
+			return; // ignore messages from self
 		AddMessage( CString( iTime ) + ":" + Nick.GetNickMask() + ":" + sMessage );
 	}
 

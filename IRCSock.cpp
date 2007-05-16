@@ -687,12 +687,12 @@ bool CIRCSock::OnCTCPReply(CNick& Nick, CString& sMessage) {
 }
 
 bool CIRCSock::OnPrivCTCP(CNick& Nick, CString& sMessage) {
-	if (sMessage.Token(0).CaseCmp("ACTION") == 0) {
-		sMessage = sMessage.Token(1, true);
+	if (sMessage.Left(7).CaseCmp("ACTION ") == 0) {
+		sMessage = sMessage.substr(7);
 		MODULECALL(OnPrivAction(Nick, sMessage), m_pUser, NULL, return true);
-	} else {
-		MODULECALL(OnPrivCTCP(Nick, sMessage), m_pUser, NULL, return true);
+		sMessage = "ACTION " + sMessage;
 	}
+	MODULECALL(OnPrivCTCP(Nick, sMessage), m_pUser, NULL, return true);
 
 	if (strncasecmp(sMessage.c_str(), "DCC ", 4) == 0 && m_pUser && m_pUser->BounceDCCs() && m_pUser->IsUserAttached()) {
 		// DCC CHAT chat 2453612361 44592
@@ -794,14 +794,15 @@ bool CIRCSock::OnChanCTCP(CNick& Nick, const CString& sChan, CString& sMessage) 
 	CChan* pChan = m_pUser->FindChan(sChan);
 	if (pChan) {
 		// Record a /me
-		if (sMessage.Token(0).CaseCmp("ACTION") == 0) {
+		if (sMessage.Left(7).CaseCmp("ACTION ") == 0) {
+			sMessage = sMessage.substr(7);
 			if(pChan->KeepBuffer() || !m_pUser->IsUserAttached()) {
-				pChan->AddBuffer(":" + Nick.GetNickMask() + " PRIVMSG " + sChan + " :\001ACTION " + m_pUser->AddTimestamp(sMessage.Token(1, true)) + "\001");
+				pChan->AddBuffer(":" + Nick.GetNickMask() + " PRIVMSG " + sChan + " :\001ACTION " + m_pUser->AddTimestamp(sMessage) + "\001");
 			}
 			MODULECALL(OnChanAction(Nick, *pChan, sMessage), m_pUser, NULL, return true);
-		} else {
-			MODULECALL(OnChanCTCP(Nick, *pChan, sMessage), m_pUser, NULL, return true);
+			sMessage = "ACTION " + sMessage;
 		}
+		MODULECALL(OnChanCTCP(Nick, *pChan, sMessage), m_pUser, NULL, return true);
 	}
 
 	return (pChan && pChan->IsDetached());

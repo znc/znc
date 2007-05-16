@@ -163,7 +163,12 @@ public:
 		}
 #endif
 
-		return m_pManager->ListenHost(m_uPort, "WebAdmin::Listener", m_sListenHost, bSSL, SOMAXCONN, pListenSock, 0, bIPv6);
+		bool b = m_pManager->ListenHost(m_uPort, "WebAdmin::Listener", m_sListenHost, bSSL, SOMAXCONN, pListenSock, 0, bIPv6);
+		if (!b) {
+			printf("\n"); // dont mix it up with the 'loading module' message
+			CUtils::PrintMessage("Error: " + CString(strerror(errno)), true);
+		}
+		return b;
 	}
 
 	void AddSock(CWebAdminSock* pSock) {

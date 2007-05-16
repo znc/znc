@@ -59,7 +59,7 @@ CString CZNC::GetTag(bool bIncludeVersion) {
 
 	char szBuf[128];
 	memset(szBuf, 0, 128);
-	snprintf(szBuf, 127, "ZNC %1.3f by prozac -  http://znc.sourceforge.net", VERSION);
+	snprintf(szBuf, 127, "ZNC %1.3f by prozac - http://znc.sourceforge.net", VERSION);
 
 	return szBuf;
 }
@@ -81,7 +81,7 @@ bool CZNC::OnBoot() {
 }
 
 int CZNC::Loop() {
-	m_Manager.SetSelectTimeout(10000);
+	m_Manager.SetSelectTimeout(500000);
 	m_itUserIter = m_msUsers.begin();
 	time_t tNextConnect = 0;
 
