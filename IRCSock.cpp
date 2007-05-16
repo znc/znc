@@ -92,10 +92,6 @@ void CIRCSock::ReadLine(const CString& sData) {
 					SetTimeout(900);	// Now that we are connected, let nature take its course
 					PutIRC("WHO " + sNick);
 
-					SetNick(sNick);
-
-					MODULECALL(OnIRCConnected(), m_pUser, NULL, );
-
 					m_bAuthed = true;
 					m_pUser->PutStatus("Connected!");
 
@@ -103,13 +99,17 @@ void CIRCSock::ReadLine(const CString& sData) {
 
 					for (unsigned int a = 0; a < vClients.size(); a++) {
 						CClient* pClient = vClients[a];
-						CString sClientNick = pClient->GetNick();
+						CString sClientNick = pClient->GetNick(false);
 
 						if (sClientNick.CaseCmp(sNick) != 0) {
 							// If they connected with a nick that doesn't match the one we got on irc, then we need to update them
 							pClient->PutClient(":" + sClientNick + "!" + m_Nick.GetIdent() + "@" + m_Nick.GetHost() + " NICK :" + sNick);
 						}
 					}
+
+					SetNick(sNick);
+
+					MODULECALL(OnIRCConnected(), m_pUser, NULL, );
 
 					m_pUser->ClearRawBuffer();
 					m_pUser->AddRawBuffer(":" + sServer + " " + sCmd + " ", " " + sRest);

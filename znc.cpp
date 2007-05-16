@@ -1187,7 +1187,9 @@ bool CZNC::ParseConfig(const CString& sConfig) {
 		return false;
 	}
 
+#ifdef _MODULES
 	GetModules().OnFinishedConfig();
+#endif
 
 	return true;
 }

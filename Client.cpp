@@ -1564,10 +1564,10 @@ void CClient::PutModule(const CString& sModule, const CString& sLine) {
 	Write(":" + m_pUser->GetStatusPrefix() + ((sModule.empty()) ? "status" : sModule) + "!znc@znc.com PRIVMSG " + GetNick() + " :" + sLine + "\r\n");
 }
 
-CString CClient::GetNick() const {
+CString CClient::GetNick(bool bAllowIRCNick) const {
 	CString sRet;
 
-	if ((m_bAuthed) && (m_pIRCSock)) {
+	if ((bAllowIRCNick) && (m_bAuthed) && (m_pIRCSock)) {
 		sRet = m_pIRCSock->GetNick();
 	}
 

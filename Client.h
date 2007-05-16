@@ -90,7 +90,7 @@ public:
 	void AcceptLogin(CUser& User);
 	void RefuseLogin(const CString& sReason);
 
-	CString GetNick() const;
+	CString GetNick(bool bAllowIRCNick = true) const;
 	CString GetNickMask() const;
 	bool HasNamesx() const { return m_bNamesx; }
 	bool HasUHNames() const { return m_bUHNames; }

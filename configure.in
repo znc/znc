@@ -148,7 +148,7 @@ if test "$MODULES" = "yes"; then
 	fi
 fi
 
-VERSION=`grep '#define VERSION' main.h | awk '{print $3}'`
+VERSION=`grep '#define VERSION' main.h | awk '{print $3}' | head -n 1`
 #
 # Auto detect modules
 
