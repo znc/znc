@@ -1310,19 +1310,19 @@ CZNC& CZNC::Get() {
 void CZNC::UpdateTrafficStats() {
 	CSockManager* p = &m_Manager;
 	for (unsigned int a = 0; a < p->size(); a++) {
-	    if ((*p)[a]->GetSockName().Left(5) == "IRC::") {
-		CIRCSock *i = (CIRCSock *)(*p)[a];
-		i->GetUser()->AddBytesRead((*p)[a]->GetBytesRead());
-		(*p)[a]->ResetBytesRead();
-		i->GetUser()->AddBytesWritten((*p)[a]->GetBytesWritten());
-		(*p)[a]->ResetBytesWritten();
-	    } else if ((*p)[a]->GetSockName().Left(5) == "USR::") {
-		CClient *c = (CClient *)(*p)[a];
-		c->GetUser()->AddBytesRead((*p)[a]->GetBytesRead());
-		(*p)[a]->ResetBytesRead();
-		c->GetUser()->AddBytesWritten((*p)[a]->GetBytesWritten());
-		(*p)[a]->ResetBytesWritten();
-	    }
+		if ((*p)[a]->GetSockName().Left(5) == "IRC::") {
+			CIRCSock *i = (CIRCSock *)(*p)[a];
+			i->GetUser()->AddBytesRead((*p)[a]->GetBytesRead());
+			(*p)[a]->ResetBytesRead();
+			i->GetUser()->AddBytesWritten((*p)[a]->GetBytesWritten());
+			(*p)[a]->ResetBytesWritten();
+		} else if ((*p)[a]->GetSockName().Left(5) == "USR::") {
+			CClient *c = (CClient *)(*p)[a];
+			c->GetUser()->AddBytesRead((*p)[a]->GetBytesRead());
+			(*p)[a]->ResetBytesRead();
+			c->GetUser()->AddBytesWritten((*p)[a]->GetBytesWritten());
+			(*p)[a]->ResetBytesWritten();
+		}
 	}
 }
 

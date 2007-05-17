@@ -2403,9 +2403,11 @@ IFS=$ac_save_IFS
 case $host_os in *\ *) host_os=`echo "$host_os" | sed 's/ /-/g'`;; esac
 
 
+
 CXXFLAGS="-D_GNU_SOURCE"
 INCLUDES=""
 LIBS=""
+
 function appendLib {
 	if test "$LIBS" != ""; then
 		LIBS="$LIBS $*"
@@ -2438,16 +2440,27 @@ function appendLD {
 	fi
 }
 
-if `echo $host_os | grep -i 'freebsd' >/dev/null 2>/dev/null`; then
+case "${host_os}" in
+    freebsd*)
 	appendInc -I/usr/local/include
 	appendLib -L/usr/local/lib -lcompat
 	appendCXX -D__GNU_LIBRARY__
-elif `echo $host_os | grep -i 'sol' >/dev/null 2>/dev/null`; then
+	;;
+    solaris*)
 	appendLib -lsocket -lnsl
 	ISSUN=1
-fi
+	;;
+    cygwin)
+	ISCYGWIN=1
+	;;
+esac
 
-appendCXX -fPIC
+# cygwin
+# warning: -fPIC ignored for target (all code is position independent)
+
+if test -z "$ISCYGWIN" ; then
+	appendCXX -fPIC
+fi
 
 
 # Check whether --with-openssl was given.
