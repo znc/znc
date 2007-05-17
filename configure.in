@@ -1,3 +1,4 @@
+dnl Keep the version number in sync with main.h!
 AC_INIT([znc], [0.048])
 AC_PROG_CXX
 AC_CANONICAL_HOST
