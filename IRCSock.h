@@ -66,6 +66,7 @@ public:
 	const CString& GetNick() const { return m_Nick.GetNick(); }
 	const CString& GetPass() const { return m_sPass; }
 	bool IsOrigNickPending() const { return m_bOrigNickPending; }
+	CUser* GetUser() const { return m_pUser; }
 	bool HasNamesx() const { return m_bNamesx; }
 	bool HasUHNames() const { return m_bUHNames; }
 	const set<unsigned char>& GetUserModes() const { return m_scUserModes; }

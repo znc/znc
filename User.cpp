@@ -19,6 +19,8 @@ CUser::CUser(const CString& sUserName) {
 	m_sIdent = m_sCleanUserName;
 	m_sRealName = sUserName;
 	m_uServerIdx = 0;
+	m_uBytesRead = 0;
+	m_uBytesWritten = 0;
 #ifdef _MODULES
 	m_pModules = new CModules;
 #endif
@@ -615,7 +617,7 @@ CChan* CUser::FindChan(const CString& sName) const {
 void CUser::JoinChans() {
 	for (unsigned int a = 0; a < m_vChans.size(); a++) {
 		CChan* pChan = m_vChans[a];
-		if (!pChan->IsOn()) {
+		if (!pChan->IsOn() && !pChan->IsDisabled()) {
 			PutIRC("JOIN " + pChan->GetName() + " " + pChan->GetKey());
 		}
 	}

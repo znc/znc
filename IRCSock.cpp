@@ -51,6 +51,8 @@ CIRCSock::~CIRCSock() {
 
 	PutIRC("QUIT :" + m_pUser->GetQuitMsg());
 	m_msChans.clear();
+	GetUser()->AddBytesRead(GetBytesRead());
+	GetUser()->AddBytesWritten(GetBytesWritten());
 }
 
 void CIRCSock::ReadLine(const CString& sData) {
@@ -156,6 +158,12 @@ void CIRCSock::ReadLine(const CString& sData) {
 					}
 
 					break;
+				case 437:
+					// :irc.server.net 437 * badnick :Nick/channel is temporarily unavailable
+					// :irc.server.net 437 mynick badnick :Nick/channel is temporarily unavailable
+					// :irc.server.net 437 mynick badnick :Cannot change nickname while banned on channel
+					if (m_pUser->IsChan(sRest.Token(0)) || sNick != "*")
+						break;
 				case 433: {
 					unsigned int uMax = GetMaxNickLen();
 					CString sBadNick = sRest.Token(0);
@@ -873,7 +881,7 @@ void CIRCSock::Disconnected() {
 void CIRCSock::SockError(int iErrno) {
 	DEBUG_ONLY(cout << GetSockName() << " == SockError(" << iErrno << ")" << endl);
 	if (!m_pUser->IsBeingDeleted()) {
-		m_pUser->PutStatus("Disconnected from IRC.  Reconnecting...");
+		m_pUser->PutStatus("Disconnected from IRC (" + CString(strerror(iErrno)) + ").  Reconnecting...");
 	}
 	m_pUser->ClearRawBuffer();
 	m_pUser->ClearMotdBuffer();

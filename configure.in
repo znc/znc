@@ -2,9 +2,11 @@ dnl Keep the version number in sync with main.h!
 AC_INIT([znc], [0.048])
 AC_PROG_CXX
 AC_CANONICAL_HOST
+
 CXXFLAGS="-D_GNU_SOURCE"
 INCLUDES=""
 LIBS=""
+
 function appendLib {
 	if test "$LIBS" != ""; then
 		LIBS="$LIBS $*"
@@ -37,16 +39,27 @@ function appendLD {
 	fi
 }
 
-if `echo $host_os | grep -i 'freebsd' >/dev/null 2>/dev/null`; then
+case "${host_os}" in
+    freebsd*)
 	appendInc -I/usr/local/include
 	appendLib -L/usr/local/lib -lcompat
 	appendCXX -D__GNU_LIBRARY__
-elif `echo $host_os | grep -i 'sol' >/dev/null 2>/dev/null`; then
+	;;
+    solaris*)
 	appendLib -lsocket -lnsl
 	ISSUN=1
-fi
+	;;
+    cygwin)
+	ISCYGWIN=1
+	;;
+esac
 
-appendCXX -fPIC
+# cygwin
+# warning: -fPIC ignored for target (all code is position independent)
+
+if test -z "$ISCYGWIN" ; then
+	appendCXX -fPIC
+fi
 
 AC_ARG_WITH( [openssl],
 	AC_HELP_STRING([--with-openssl=/path/to/openssl], []),

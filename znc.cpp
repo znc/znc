@@ -22,6 +22,8 @@ CZNC::CZNC() {
 	m_pISpoofLockFile = NULL;
 	m_uiConnectDelay = 30;
 	SetISpoofFormat(""); // Set ISpoofFormat to default
+	m_uBytesRead = 0;
+	m_uBytesWritten = 0;
 }
 
 CZNC::~CZNC() {
@@ -110,6 +112,8 @@ int CZNC::Loop() {
 #ifdef _MODULES
 				pUser->DelModules();
 #endif
+				AddBytesRead(pUser->BytesRead());
+				AddBytesWritten(pUser->BytesWritten());
 				delete pUser;
 			}
 
@@ -1301,5 +1305,24 @@ bool CZNC::AddUser(CUser* pUser, CString& sErrorRet) {
 CZNC& CZNC::Get() {
 	static CZNC* pZNC = new CZNC;
 	return *pZNC;
+}
+
+void CZNC::UpdateTrafficStats() {
+	CSockManager* p = &m_Manager;
+	for (unsigned int a = 0; a < p->size(); a++) {
+	    if ((*p)[a]->GetSockName().Left(5) == "IRC::") {
+		CIRCSock *i = (CIRCSock *)(*p)[a];
+		i->GetUser()->AddBytesRead((*p)[a]->GetBytesRead());
+		(*p)[a]->ResetBytesRead();
+		i->GetUser()->AddBytesWritten((*p)[a]->GetBytesWritten());
+		(*p)[a]->ResetBytesWritten();
+	    } else if ((*p)[a]->GetSockName().Left(5) == "USR::") {
+		CClient *c = (CClient *)(*p)[a];
+		c->GetUser()->AddBytesRead((*p)[a]->GetBytesRead());
+		(*p)[a]->ResetBytesRead();
+		c->GetUser()->AddBytesWritten((*p)[a]->GetBytesWritten());
+		(*p)[a]->ResetBytesWritten();
+	    }
+	}
 }
 

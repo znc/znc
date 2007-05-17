@@ -106,6 +106,9 @@ public:
 	bool Clone(const CUser& User, CString& sErrorRet);
 	void BounceAllClients();
 
+	void AddBytesRead(unsigned long long u) { m_uBytesRead += u; }
+	void AddBytesWritten(unsigned long long u) { m_uBytesWritten += u; }
+
 	// Setters
 	void SetUserName(const CString& s);
 	void SetNick(const CString& s);
@@ -181,6 +184,8 @@ public:
 	bool IsBeingDeleted() const { return m_bBeingDeleted; }
 	bool HasServers() const { return m_vServers.size() > 0; }
 	float GetTimezoneOffset() const { return m_fTimezoneOffset; }
+	unsigned long long BytesRead() const { return m_uBytesRead; }
+	unsigned long long BytesWritten() const { return m_uBytesWritten; }
 	// !Getters
 private:
 protected:
@@ -235,6 +240,8 @@ protected:
 	set<CString>		m_ssAllowedHosts;
 	unsigned int		m_uServerIdx;
 	unsigned int		m_uBufferCount;
+	unsigned long long      m_uBytesRead;
+	unsigned long long      m_uBytesWritten;
 
 #ifdef _MODULES
 	CModules*		m_pModules;

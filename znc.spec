@@ -1,22 +1,22 @@
 Name: znc
-Version: 0.046
+Version: 0.048
 Release: 1
 Packager: imaginos@imaginos.net
-Summary: znc
+Summary: znc - an advanced IRC bouncer
 License: GPL
-Group: none
+Group: Applications/Communications
 URL: http://sourceforge.net/projects/znc/
 BuildRequires: gcc >= 3.2
 BuildRequires: openssl >= 0.9.7d
-BuildRoot: /tmp/znc-TMP/
+BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root
 Prefix: /usr
-Source: znc-%{version}.tar.gz
+Source: %{name}-%{version}.tar.gz
 
 %description
 ZNC is an IRC bounce with many advanced features like detaching, multiple users, per channel playback buffer, SSL, transparent DCC bouncing, and c++ module support to name a few.
 
 %prep
-%setup -n znc-%{version}
+%setup -n %{name}-%{version}
 
 %build
 ./configure --prefix=%{prefix}
@@ -30,5 +30,7 @@ make install DESTDIR=$RPM_BUILD_ROOT
 
 
 %files
+%doc AUTHORS
+%doc docs/*.html docs/*.txt docs/*.pm
 %{prefix}
 

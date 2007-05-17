@@ -67,12 +67,7 @@ public:
 		Init();
 	}
 
-	virtual ~CClient() {
-		if (!m_spAuth.IsNull()) {
-			CClientAuth* pAuth = (CClientAuth*) &(*m_spAuth);
-			pAuth->SetClient(NULL);
-		}
-	}
+	virtual ~CClient();
 
 	void Init() {
 		m_pUser = NULL;
@@ -120,6 +115,7 @@ public:
 	virtual Csock* GetSockObj(const CString& sHost, unsigned short uPort);
 
 	void SetNick(const CString& s);
+	CUser* GetUser() const { return m_pUser; }
 private:
 protected:
 	bool		m_bAuthed;

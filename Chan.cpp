@@ -21,8 +21,10 @@ CChan::CChan(const CString& sName, CUser* pUser, bool bInConfig) {
 	m_bDetached = false;
 	m_uBufferCount = m_pUser->GetBufferCount();
 	m_bKeepBuffer = m_pUser->KeepBuffer();
+	m_bDisabled = false;
 	Reset();
 }
+
 CChan::~CChan() {
 	ClearNicks();
 }
@@ -155,7 +157,7 @@ CString CChan::GetModeString() const {
 		}
 	}
 
-	return (sModes.empty()) ? sModes : ("+" + sModes + sArgs);
+	return sModes.empty() ? sModes : CString("+" + sModes + sArgs);
 }
 
 CString CChan::GetModeForNames() const {

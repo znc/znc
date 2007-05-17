@@ -111,6 +111,8 @@ public:
 	void SetDetached(bool b = true) { m_bDetached = b; }
 	void SetInConfig(bool b) { m_bInConfig = b; }
 	void SetCreationDate(unsigned long u) { m_ulCreationDate = u; }
+	void Disable() { m_bDisabled = true; }
+	void Enable() { m_bDisabled = false; }
 	// !Setters
 
 	// Getters
@@ -137,6 +139,7 @@ public:
 	bool IsDetached() const { return m_bDetached; }
 	bool InConfig() const { return m_bInConfig; }
 	unsigned long GetCreationDate() const { return m_ulCreationDate; }
+	bool IsDisabled() const { return m_bDisabled; }
 	// !Getters
 private:
 protected:
@@ -146,6 +149,7 @@ protected:
 	bool				m_bKeepBuffer;
 	bool				m_bAutoCycle;
 	bool				m_bInConfig;
+	bool				m_bDisabled;
 	CString				m_sName;
 	CString				m_sKey;
 	CString				m_sCurKey;

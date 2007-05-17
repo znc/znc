@@ -36,5 +36,5 @@ bool CServer::IsSSL() const { return m_bSSL; }
 bool CServer::IsIPV6() const { return m_bIPV6; }
 
 CString CServer::GetString() const {
-	return m_sName + " " + CString(m_bSSL ? "+" : "") + CString(m_uPort) + CString(m_sPass.empty() ? CString("") : " " + m_sPass);
+	return m_sName + " " + CString(m_bSSL ? "+" : "") + CString(m_uPort) + CString(m_sPass.empty() ? "" : " " + m_sPass);
 }

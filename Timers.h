@@ -10,6 +10,7 @@ public:
 	CKeepNickTimer(CUser* pUser) : CCron() {
 		m_pUser = pUser;
 		m_uTrys = 0;
+		SetName("CKeepNickTimer::" + m_pUser->GetUserName());
 		Start(5);
 	}
 	virtual ~CKeepNickTimer() {}
@@ -37,6 +38,7 @@ class CMiscTimer : public CCron {
 public:
 	CMiscTimer(CUser* pUser) : CCron() {
 		m_pUser = pUser;
+		SetName("CMiscTimer::" + m_pUser->GetUserName());
 		Start(30);
 	}
 	virtual ~CMiscTimer() {}
@@ -67,6 +69,7 @@ class CJoinTimer : public CCron {
 public:
 	CJoinTimer(CUser* pUser) : CCron() {
 		m_pUser = pUser;
+		SetName("CJoinTimer::" + m_pUser->GetUserName());
 		Start(20);
 	}
 	virtual ~CJoinTimer() {}

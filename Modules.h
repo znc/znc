@@ -25,6 +25,11 @@ using std::set;
 #endif
 #endif
 
+#ifndef RTLD_LOCAL
+# define RTLD_LOCAL 0
+# warning "your crap box doesnt define RTLD_LOCAL !?"
+#endif
+
 #define MODCONSTRUCTOR(CLASS) \
 	CLASS(void *pDLL, CUser* pUser, const CString& sModName) : CModule(pDLL, pUser, sModName)
 #define MODULEDEFS(CLASS, DESCRIPTION) \

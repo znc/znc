@@ -106,6 +106,11 @@ public:
 	bool AddVHost(const CString& sHost);
 	bool RemVHost(const CString& sHost);
 	void Broadcast(const CString& sMessage, CUser* pUser = NULL);
+	void AddBytesRead(unsigned long long u) { m_uBytesRead += u; }
+	void AddBytesWritten(unsigned long long u) { m_uBytesWritten += u; }
+	unsigned long long BytesRead() const { return m_uBytesRead; }
+	unsigned long long BytesWritten() const { return m_uBytesWritten; }
+	void UpdateTrafficStats();
 
 	// Setters
 	void SetStatusPrefix(const CString& s) { m_sStatusPrefix = (s.empty()) ? "*" : s; }
@@ -179,6 +184,8 @@ protected:
 #ifdef _MODULES
 	CGlobalModules*			m_pModules;
 #endif
+	unsigned long long		m_uBytesRead;
+	unsigned long long		m_uBytesWritten;
 };
 
 class CListener {

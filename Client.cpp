@@ -9,6 +9,17 @@
 #include "DCCSock.h"
 #include "Server.h"
 
+CClient::~CClient() {
+	if (!m_spAuth.IsNull()) {
+		CClientAuth* pAuth = (CClientAuth*) &(*m_spAuth);
+		pAuth->SetClient(NULL);
+	}
+	if (m_pUser != NULL) {
+		m_pUser->AddBytesRead(GetBytesRead());
+		m_pUser->AddBytesWritten(GetBytesWritten());
+	}
+}
+
 void CClient::ReadLine(const CString& sData) {
 	CString sLine = sData;
 
@@ -765,6 +776,21 @@ void CClient::UserCommand(const CString& sLine) {
 				return;
 			}
 		}
+	} else if (sCommand.CaseCmp("ENABLECHAN") == 0) {
+		CString sChan = sLine.Token(1, true);
+
+		if (sChan.empty()) {
+			PutStatus("Usage: EnableChan <channel>");
+		} else {
+			CChan* pChan = m_pUser->FindChan(sChan);
+			if (!pChan) {
+				PutStatus("Channel [" + sChan + "] not found.");
+				return;
+			}
+			
+			pChan->Enable();
+			PutStatus("Channel [" + sChan + "] enabled.");
+		}
 	} else if (sCommand.CaseCmp("LISTCHANS") == 0) {
 		if (m_pUser) {
 			const vector<CChan*>& vChans = m_pUser->GetChans();
@@ -794,7 +820,7 @@ void CClient::UserCommand(const CString& sLine) {
 				CChan* pChan = vChans[a];
 				Table.AddRow();
 				Table.SetCell("Name", pChan->GetPermStr() + pChan->GetName());
-				Table.SetCell("Status", ((vChans[a]->IsOn()) ? ((vChans[a]->IsDetached()) ? "Detached" : "Joined") : "Trying"));
+				Table.SetCell("Status", ((vChans[a]->IsOn()) ? ((vChans[a]->IsDetached()) ? "Detached" : "Joined") : ((vChans[a]->IsDisabled()) ? "Disabled" : "Trying")));
 				Table.SetCell("Conf", CString((pChan->InConfig()) ? "yes" : ""));
 				Table.SetCell("Buf", CString((pChan->KeepBuffer()) ? "*" : "") + CString(pChan->GetBufferCount()));
 				Table.SetCell("Modes", pChan->GetModeString());
@@ -1320,6 +1346,50 @@ void CClient::UserCommand(const CString& sLine) {
 		pChan->SetBufferCount(uLineCount);
 
 		PutStatus("BufferCount for [" + sChan + "] set to [" + CString(pChan->GetBufferCount()) + "]");
+        } else if (m_pUser->IsAdmin() && sCommand.CaseCmp("TRAFFIC") == 0) {
+                CZNC::Get().UpdateTrafficStats();
+                const map<CString, CUser*>& msUsers = CZNC::Get().GetUserMap();
+                CTable Table;
+                Table.AddColumn("Username");
+                Table.AddColumn("In");
+                Table.AddColumn("Out");
+                Table.AddColumn("Total");
+                unsigned long long users_total_in = 0;
+                unsigned long long users_total_out = 0;
+                for (map<CString, CUser*>::const_iterator it = msUsers.begin(); it != msUsers.end(); it++) {
+                    Table.AddRow();
+                    Table.SetCell("Username", it->first);
+                    Table.SetCell("In", CString(it->second->BytesRead()));
+                    Table.SetCell("Out", CString(it->second->BytesWritten()));
+                    Table.SetCell("Total", CString(it->second->BytesRead() + it->second->BytesWritten()));
+                    users_total_in += it->second->BytesRead();
+                    users_total_out += it->second->BytesWritten();
+                }
+                Table.AddRow();
+                Table.SetCell("Username", "<Users>");
+                Table.SetCell("In", CString(users_total_in));
+                Table.SetCell("Out", CString(users_total_out));
+                Table.SetCell("Total", CString(users_total_in + users_total_out));
+
+                Table.AddRow();
+                Table.SetCell("Username", "<ZNC>");
+                Table.SetCell("In", CString(CZNC::Get().BytesRead()));
+                Table.SetCell("Out", CString(CZNC::Get().BytesWritten()));
+                Table.SetCell("Total", CString(CZNC::Get().BytesRead() + CZNC::Get().BytesWritten()));
+
+                Table.AddRow();
+                Table.SetCell("Username", "<Total>");
+                Table.SetCell("In", CString(users_total_in + CZNC::Get().BytesRead()));
+                Table.SetCell("Out", CString(users_total_out + CZNC::Get().BytesWritten()));
+                Table.SetCell("Total", CString(users_total_in + CZNC::Get().BytesRead() + users_total_out + CZNC::Get().BytesWritten()));
+
+                if (Table.size()) {
+                    unsigned int uTableIdx = 0;
+                    CString sLine;
+                    while (Table.GetLine(uTableIdx++, sLine)) {
+                        PutStatus(sLine);
+                    }
+                }
 	} else {
 		PutStatus("Unknown command [" + sCommand + "] try 'Help'");
 	}
