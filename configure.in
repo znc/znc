@@ -94,7 +94,7 @@ if test "$IPV6" != "no"; then
 fi
 
 AC_CHECK_LIB( gnugetopt, getopt_long,)
-AC_CHECK_FUNCS( stat lstat chmod open, , echo "Missing Required libc feature" && exit 1)
+AC_CHECK_FUNCS( stat lstat chmod open, , AC_ERROR([Missing Required libc feature]))
 if test "$MODULES" = "yes"; then
 	AC_CHECK_FUNC( dlopen,NOCHECK_DL=1,)
 fi
@@ -104,12 +104,8 @@ if test -z "$NOSSL"; then
 		appendInc -I${OPENSSL}/include
 	fi
 
-	if test -z "$NOCHECK_DL"; then
-		AC_CHECK_LIB( dl, dlopen,,MODULES="no",)
-		NOCHECK_DL=1
-	fi
-	AC_CHECK_LIB( crypto, BIO_new,,NOSSL=1, )
-	AC_CHECK_LIB( ssl, SSL_shutdown,,NOSSL=1, )
+	AC_CHECK_LIB( crypto, BIO_new,,AC_ERROR([Could not find libcrypto. Try --disable-openssl]), )
+	AC_CHECK_LIB( ssl, SSL_shutdown,,AC_ERROR([Could not find libssl. Try --disable-openssl]), )
 
 	if test -z "$NOSSL"; then
 		appendCXX -DHAVE_LIBSSL
@@ -127,7 +123,8 @@ AC_ARG_WITH( [module-prefix],
 
 if test "$MODULES" = "yes"; then
 	if test -z "$NOCHECK_DL"; then
-		AC_CHECK_LIB( dl, dlopen,,MODULES="no",)
+		AC_CHECK_LIB( dl, dlopen,, AC_ERROR([Could not find dlopen. Try --disable-modules]))
+		NOCHECK_DL=1
 	fi
 	if test "$MODULES" = "yes"; then
 		appendCXX -D_MODULES
@@ -153,10 +150,13 @@ if test "$MODULES" = "yes"; then
 			PERL=`which perl`
 			if test -n "$PERL"; then
 				echo "$PERL"
-				AC_CHECK_LIB( perl, perl_alloc,unset NOPERL, unset PERL,[`$PERL -MExtUtils::Embed -e ccopts -e ldopts`])
+				AC_CHECK_LIB(perl, perl_alloc,unset NOPERL,
+					      AC_ERROR([Could not find liberl. Try --disable-perl]),
+					      [`$PERL -MExtUtils::Embed -e ccopts -e ldopts`])
 			else
 				echo "no"
 				unset PERL
+				AC_ERROR([Could not find perl binary. Try --disable-perl])
 			fi
 		fi
 	fi
@@ -183,3 +183,21 @@ if test "$MODULES" = "yes"; then
 	AC_CONFIG_FILES([modules/Makefile])
 fi
 AC_OUTPUT
+
+echo
+echo znc $VERSION configured
+echo
+echo "debug:   $DEBUG"
+echo "ipv6:    $IPV6"
+if test x"$NOSSL" = "x1" ; then
+	echo "openssl: no"
+else
+	echo "openssl: yes"
+fi
+echo modules: $MODULES
+if test x"$PERL" = "x" ; then
+	echo "perl:    no"
+else
+	echo "perl:    yes"
+fi
+
