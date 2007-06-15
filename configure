@@ -3804,7 +3804,7 @@ echo "$as_me: error: Could not find perl binary. Try --disable-perl" >&2;}
 	fi
 fi
 
-VERSION=`grep '#define VERSION' main.h | awk '{print $3}' | head -n 1`
+VERSION=0.048
 #
 # Auto detect modules
 

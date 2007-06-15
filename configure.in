@@ -162,7 +162,7 @@ if test "$MODULES" = "yes"; then
 	fi
 fi
 
-VERSION=`grep '#define VERSION' main.h | awk '{print $3}' | head -n 1`
+VERSION=AC_PACKAGE_VERSION
 #
 # Auto detect modules
 
