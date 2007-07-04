@@ -42,6 +42,7 @@ void CChan::Reset() {
 	m_ulTopicDate = 0;
 	m_ulCreationDate = 0;
 	ClearNicks();
+	ResetJoinTries();
 }
 
 bool CChan::WriteConfig(CFile& File) {

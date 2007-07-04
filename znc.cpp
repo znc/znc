@@ -1028,6 +1028,9 @@ bool CZNC::ParseConfig(const CString& sConfig) {
 					} else if (sName.CaseCmp("TimezoneOffset") == 0) {
 						pUser->SetTimezoneOffset(sValue.ToDouble()); // there is no ToFloat()
 						continue;
+					} else if (sName.CaseCmp("JoinTries") == 0) {
+						pUser->SetJoinTries(sValue.ToUInt());
+						continue;
 					} else if (sName.CaseCmp("LoadModule") == 0) {
 						CString sModName = sValue.Token(0);
 						CUtils::PrintAction("Loading Module [" + sModName + "]");

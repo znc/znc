@@ -113,6 +113,8 @@ public:
 	void SetCreationDate(unsigned long u) { m_ulCreationDate = u; }
 	void Disable() { m_bDisabled = true; }
 	void Enable() { m_bDisabled = false; }
+	void IncJoinTries() { m_uJoinTries++; }
+	void ResetJoinTries() { m_uJoinTries = 0; }
 	// !Setters
 
 	// Getters
@@ -140,6 +142,7 @@ public:
 	bool InConfig() const { return m_bInConfig; }
 	unsigned long GetCreationDate() const { return m_ulCreationDate; }
 	bool IsDisabled() const { return m_bDisabled; }
+	unsigned int GetJoinTries() { return m_uJoinTries; }
 	// !Getters
 private:
 protected:
@@ -160,6 +163,7 @@ protected:
 	CUser*				m_pUser;
 	CNick				m_Nick;
 	unsigned int		m_uLimit;
+	unsigned int		m_uJoinTries;
 	CString				m_sDefaultModes;
 	vector<CString>		m_vsBans;
 	map<CString,CNick*>	m_msNicks;	// Todo: make this caseless (irc style)

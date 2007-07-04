@@ -138,6 +138,7 @@ public:
 	void SetTimestampAppend(bool b) { m_bAppendTimestamp = b; }
 	void SetTimestampPrepend(bool b) { m_bPrependTimestamp = b; }
 	void SetTimezoneOffset(float b) { m_fTimezoneOffset = b; }
+	void SetJoinTries(unsigned int i) { m_uMaxJoinTries = i; }
 	// !Setters
 
 	// Getters
@@ -186,6 +187,7 @@ public:
 	float GetTimezoneOffset() const { return m_fTimezoneOffset; }
 	unsigned long long BytesRead() const { return m_uBytesRead; }
 	unsigned long long BytesWritten() const { return m_uBytesWritten; }
+	unsigned int JoinTries() const { return m_uMaxJoinTries; }
 	// !Getters
 private:
 protected:
@@ -242,6 +244,7 @@ protected:
 	unsigned int		m_uBufferCount;
 	unsigned long long      m_uBytesRead;
 	unsigned long long      m_uBytesWritten;
+	unsigned int		m_uMaxJoinTries;
 
 #ifdef _MODULES
 	CModules*		m_pModules;

@@ -37,6 +37,7 @@ CUser::CUser(const CString& sUserName) {
 	m_sStatusPrefix = "*";
 	m_sChanPrefixes = "#&";
 	m_uBufferCount = 50;
+	m_uMaxJoinTries = 0;
 	m_bKeepBuffer = false;
 	m_bAutoCycle = true;
 	m_bBeingDeleted = false;
@@ -543,6 +544,7 @@ bool CUser::WriteConfig(CFile& File) {
 	PrintLine(File, "AppendTimestamp", CString((GetTimestampAppend()) ? "true" : "false"));
 	PrintLine(File, "PrependTimestamp", CString((GetTimestampPrepend()) ? "true" : "false"));
 	PrintLine(File, "TimezoneOffset", CString(m_fTimezoneOffset));
+	PrintLine(File, "JoinTries", CString(m_uMaxJoinTries));
 	File.Write("\r\n");
 
 	// Allow Hosts
@@ -618,7 +620,13 @@ void CUser::JoinChans() {
 	for (unsigned int a = 0; a < m_vChans.size(); a++) {
 		CChan* pChan = m_vChans[a];
 		if (!pChan->IsOn() && !pChan->IsDisabled()) {
-			PutIRC("JOIN " + pChan->GetName() + " " + pChan->GetKey());
+			if (JoinTries() != 0 && pChan->GetJoinTries() >= JoinTries()) {
+				PutStatus("The channel " + pChan->GetName() + " could not be joined, disabling it.");
+				pChan->Disable();
+			} else {
+				pChan->IncJoinTries();
+				PutIRC("JOIN " + pChan->GetName() + " " + pChan->GetKey());
+			}
 		}
 	}
 }
@@ -657,7 +665,7 @@ bool CUser::DelServer(const CString& sName) {
 
 				if (pIRCSock) {
 					pIRCSock->Close();
-					PutUser("Your current server was removed, jumping...");
+					PutStatus("Your current server was removed, jumping...");
 				}
 			} else if (m_uServerIdx >= m_vServers.size()) {
 				m_uServerIdx = 0;

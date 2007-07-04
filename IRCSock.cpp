@@ -476,12 +476,20 @@ void CIRCSock::ReadLine(const CString& sData) {
 					sChan.LeftChomp();
 				}
 
+				CChan* pChan;
+
 				// Todo: use nick compare function
 				if (Nick.GetNick().CaseCmp(GetNick()) == 0) {
 					m_pUser->AddChan(sChan, false);
+					pChan = m_pUser->FindChan(sChan);
+					if (pChan) {
+						pChan->ResetJoinTries();
+						pChan->Enable();
+					}
+				} else {
+					pChan = m_pUser->FindChan(sChan);
 				}
 
-				CChan* pChan = m_pUser->FindChan(sChan);
 				if (pChan) {
 					pChan->AddNick(Nick.GetNickMask());
 					MODULECALL(OnJoin(Nick.GetNickMask(), *pChan), m_pUser, NULL, );
