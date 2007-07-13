@@ -107,7 +107,7 @@ void CChan::JoinUser(bool bForce, const CString& sKey, CClient* pClient) {
 					sPerm += c;
 				}
 			}
-			if(pThisClient->HasUHNames() && !a->second->GetIdent().empty() && a->second->GetHost().empty()) {
+			if(pThisClient->HasUHNames() && !a->second->GetIdent().empty() && !a->second->GetHost().empty()) {
 				sNick = a->first + "!" + a->second->GetIdent() + "@" + a->second->GetHost();
 			} else {
 				sNick = a->first;
@@ -425,7 +425,7 @@ bool CChan::AddNick(const CString& sNick) {
 	}
 
 	sTmp = p;
-	sIdent = sTmp.Token(1, true, "!").Token(0, true, "@");
+	sIdent = sTmp.Token(1, true, "!").Token(0, false, "@");
 	sHost = sTmp.Token(1, true, "@");
 	sTmp = sTmp.Token(0, false, "!");
 
