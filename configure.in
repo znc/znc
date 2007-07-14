@@ -7,7 +7,7 @@ CXXFLAGS="-D_GNU_SOURCE"
 INCLUDES=""
 LIBS=""
 
-function appendLib {
+appendLib () {
 	if test "$LIBS" != ""; then
 		LIBS="$LIBS $*"
 	else
@@ -15,7 +15,7 @@ function appendLib {
 	fi
 }
 
-function appendInc {
+appendInc () {
 	if test "$INCLUDES" != ""; then
 		INCLUDES="$INCLUDES $*"
 	else
@@ -23,7 +23,7 @@ function appendInc {
 	fi
 }
 
-function appendCXX {
+appendCXX () {
 	if test "$CXXFLAGS" != ""; then
 		CXXFLAGS="$CXXFLAGS $*"
 	else
@@ -31,7 +31,7 @@ function appendCXX {
 	fi
 }
 
-function appendLD {
+appendLD () {
 	if test "$LDFLAGS" != ""; then
 		LDFLAGS="$LDFLAGS $*"
 	else
