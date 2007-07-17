@@ -57,10 +57,11 @@ public:
 
 	void HandleMessage(CNick& Nick, const CString& sMessage)
 	{
-		if (!m_sPass.empty() 
+		if (!m_sPass.empty()
 				&& Nick.GetNick().CaseCmp("NickServ") == 0
 				&& sMessage.find("msg") != CString::npos
-				&& sMessage.find("IDENTIFY") != CString::npos) {
+				&& sMessage.find("IDENTIFY") != CString::npos
+				&& !sMessage.find("help")) {
 			PutIRC("PRIVMSG NickServ :IDENTIFY " + m_sPass);
 		}
 	}
