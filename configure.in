@@ -40,17 +40,17 @@ appendLD () {
 }
 
 case "${host_os}" in
-    freebsd*)
-	appendInc -I/usr/local/include
-	appendLib -L/usr/local/lib -lcompat
-	appendCXX -D__GNU_LIBRARY__
+	freebsd*)
+		appendInc -I/usr/local/include
+		appendLib -L/usr/local/lib -lcompat
+		appendCXX -D__GNU_LIBRARY__
 	;;
-    solaris*)
-	appendLib -lsocket -lnsl
-	ISSUN=1
+	solaris*)
+		appendLib -lsocket -lnsl
+		ISSUN=1
 	;;
-    cygwin)
-	ISCYGWIN=1
+	cygwin)
+		ISCYGWIN=1
 	;;
 esac
 
@@ -91,6 +91,10 @@ fi
 
 if test "$IPV6" != "no"; then
 	appendCXX -DHAVE_IPV6
+fi
+
+if test "x$GXX" = "xyes"; then
+	appendCXX -Woverloaded-virtual
 fi
 
 AC_CHECK_LIB( gnugetopt, getopt_long,)
@@ -151,8 +155,8 @@ if test "$MODULES" = "yes"; then
 			if test -n "$PERL"; then
 				echo "$PERL"
 				AC_CHECK_LIB(perl, perl_alloc,unset NOPERL,
-					      AC_ERROR([Could not find liberl. Try --disable-perl]),
-					      [`$PERL -MExtUtils::Embed -e ccopts -e ldopts`])
+					AC_ERROR([Could not find liberl. Try --disable-perl]),
+					[`$PERL -MExtUtils::Embed -e ccopts -e ldopts`])
 			else
 				echo "no"
 				unset PERL

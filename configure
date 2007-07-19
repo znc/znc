@@ -2441,17 +2441,17 @@ appendLD () {
 }
 
 case "${host_os}" in
-    freebsd*)
-	appendInc -I/usr/local/include
-	appendLib -L/usr/local/lib -lcompat
-	appendCXX -D__GNU_LIBRARY__
+	freebsd*)
+		appendInc -I/usr/local/include
+		appendLib -L/usr/local/lib -lcompat
+		appendCXX -D__GNU_LIBRARY__
 	;;
-    solaris*)
-	appendLib -lsocket -lnsl
-	ISSUN=1
+	solaris*)
+		appendLib -lsocket -lnsl
+		ISSUN=1
 	;;
-    cygwin)
-	ISCYGWIN=1
+	cygwin)
+		ISCYGWIN=1
 	;;
 esac
 
@@ -2504,6 +2504,10 @@ if test "$DEBUG" != "no"; then
 	appendCXX -Wall -ggdb -D_DEBUG
 else
 	appendCXX -Wall -s -O2 -fomit-frame-pointer
+fi
+
+if test "x$GXX" = "xyes"; then
+	appendCXX -Woverloaded-virtual
 fi
 
 if test "$IPV6" != "no"; then
