@@ -365,7 +365,7 @@ public:
 	{
 		return CBDouble( "OnCTCPReply", NICK( Nick ), sMessage ); 
 	}
-	virtual EModRet OnUserCTCP(const CString& sTarget, CString& sMessage)
+	virtual EModRet OnUserCTCP(CString& sTarget, CString& sMessage)
 	{
 		return CBDouble( "OnUserCTCP", sTarget, sMessage ); 
 	}
@@ -390,7 +390,7 @@ public:
 	{
 		return( CBTriple( "OnChanMsg", NICK( Nick ), CHAN( Channel ), sMessage ) );
 	}
-	virtual EModRet OnUserNotice(const CString& sTarget, CString& sMessage)
+	virtual EModRet OnUserNotice(CString& sTarget, CString& sMessage)
 	{
 		return CBDouble( "OnUserNotice", sTarget, sMessage );
 	}

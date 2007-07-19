@@ -60,16 +60,16 @@ protected:
 class CClient : public Csock {
 public:
 	CClient() : Csock() {
-		Init();
+		InitClient();
 	}
 
 	CClient(const CString& sHostname, unsigned short uPort, int iTimeout = 60) : Csock(sHostname, uPort, iTimeout) {
-		Init();
+		InitClient();
 	}
 
 	virtual ~CClient();
 
-	void Init() {
+	void InitClient() {
 		m_pUser = NULL;
 		m_pIRCSock = NULL;
 		m_bAuthed = false;

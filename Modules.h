@@ -122,6 +122,9 @@ public:
 	CSocket(CModule* pModule, const CString& sLabel, const CString& sHostname, unsigned short uPort, int iTimeout = 60);
 	virtual ~CSocket();
 
+	using Csock::Connect;
+	using Csock::Listen;
+
 	bool Connect(const CString& sHostname, unsigned short uPort, bool bSSL = false, unsigned int uTimeout = 60);
 	bool Listen(unsigned short uPort, bool bSSL = false, unsigned int uTimeout = 0);
 	virtual bool PutIRC(const CString& sLine);

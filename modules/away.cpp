@@ -427,7 +427,7 @@ public:
 		return( CONTINUE );	
 	}
 	
-	virtual EModRet OnUserNotice(const CString& sTarget, CString& sMessage)
+	virtual EModRet OnUserNotice(CString& sTarget, CString& sMessage)
 	{
 		Ping();
 		if( m_bIsAway )

@@ -141,7 +141,7 @@ public:
 		return CONTINUE;
 	}
 
-	virtual EModRet OnUserNotice(const CString& sTarget, CString& sMessage) {
+	virtual EModRet OnUserNotice(CString& sTarget, CString& sMessage) {
 		PutModule("[" + sTarget + "] usernotice [" + sMessage + "]");
 		sMessage = "\037" + sMessage + "\037";
 
