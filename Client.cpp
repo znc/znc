@@ -69,6 +69,11 @@ void CClient::ReadLine(const CString& sData) {
 			return;		// Don't forward this msg.  ZNC will handle nick changes until auth is complete
 		}
 
+		if (!m_pIRCSock) {
+			// No need to check against IRC nick or to forward it
+			return;
+		}
+
 		if ((m_pUser) && (sNick.CaseCmp(m_pUser->GetNick()) == 0)) {
 			m_uKeepNickCounter++;
 			// If the user is changing his nick to the conifg nick, set keepnick to the config value
