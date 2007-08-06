@@ -105,6 +105,23 @@ public:
 		return;
 	}
 
+	void SaveFixedChans(CUser* pUser) {
+		CString sChans;
+		const CString &sUser = pUser->GetUserName();
+
+		for(set<CPartylineChannel*>::iterator it = m_ssChannels.begin();
+				it != m_ssChannels.end(); it++) {
+			if ((*it)->IsFixedChan(sUser)) {
+				sChans += "," + (*it)->GetName();
+			}
+		}
+
+		if (!sChans.empty())
+			SetNV(sUser, sChans.substr(1)); // Strip away the first ,
+		else
+			DelNV(sUser);
+	}
+
 	virtual EModRet OnDeleteUser(CUser& User) {
 		const CString& sNick = User.GetUserName();
 		CString sHost = User.GetVHost();
@@ -433,10 +450,7 @@ public:
 			JoinUser(pUser, pChan);
 			pChan->AddFixedNick(sUser);
 
-			// Save the fixed channel
-			// every channel has a , at its start, so its easier
-			// to remove one.
-			SetNV(sUser, GetNV(sUser) + "," + sChan);
+			SaveFixedChans(pUser);
 
 			PutModule("Fixed " + sUser + " to channel " + sChan);
 		} else if (sCommand.CaseCmp("DELFIXCHAN") == 0) {
@@ -461,9 +475,7 @@ public:
 
 			PartUser(pUser, pChan, true);
 
-			CString sFixed = GetNV(sUser);
-			sFixed.Replace("," + sChan, "");
-			SetNV(sUser, sChan);
+			SaveFixedChans(pUser);
 
 			PutModule("Removed " + sUser + " from " + sChan);
 		} else if (sCommand.CaseCmp("LISTFIXCHANS") == 0) {
