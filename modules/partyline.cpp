@@ -449,7 +449,12 @@ public:
 			CUser* pUser = CZNC::Get().FindUser(sUser);
 			CPartylineChannel* pChan = FindChannel(sChan);
 
-			if(!pChan || pChan->IsFixedChan(sUser)) {
+			if(pUser == NULL) {
+				PutModule("Unknown User '" + sUser + "'");
+				return;
+			}
+
+			if(!pChan || !pChan->IsFixedChan(sUser)) {
 				PutModule(sUser + " is not in " + sChan + " or isnt fixed to it");
 				return;
 			}
