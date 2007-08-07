@@ -396,6 +396,9 @@ public:
 	const CS_STRING & GetName() const;
 	void SetName( const CS_STRING & sName );
 
+	//! returns the timestamp of the next estimated run time. Note that it may not run at this EXACT time, but it will run at least at this time or after
+	time_t GetNextRun() const { return( m_iTime ); }
+
 public:
 
 	//! this is the method you should override
@@ -441,6 +444,16 @@ public:
 
 	virtual ~Csock();
 
+	/**
+	 * @brief in the event you pass this class to Copy(), you MUST call this function or
+	 * on the original Csock other wise bad side effects will happen (double deletes, weird sock closures, etc)
+	 * if you call this function and have not handled the internal pointers, other bad things can happend (memory leaks, fd leaks, etc)
+	 * the whole point of this function is to allow this class to go away without shutting down 
+	 */
+	virtual void Dereference();
+	//! use this to copy a sock from one to the other, override it if you have special needs in the event of a copy
+	virtual void Copy( const Csock & cCopy );
+	
 	enum ETConn
 	{
 		OUTBOUND			= 0,		//!< outbound connection
@@ -945,6 +958,10 @@ public:
 	bool AllowWrite( unsigned long long & iNOW ) const;
 
 private:
+	//! making private for safety
+	Csock( const Csock & cCopy ) {}
+
+	// NOTE! if you add any new members, be sure to add them to Copy()
 	u_short		m_iport, m_iRemotePort, m_iLocalPort;
 	int			m_iReadSock, m_iWriteSock, m_itimeout, m_iConnType, m_iTcount, m_iMethod;
 	bool		m_bssl, m_bIsConnected, m_bBLOCK, m_bFullsslAccept;
@@ -966,16 +983,16 @@ private:
 
 	FPCertVerifyCB		m_pCerVerifyCB;
 
-	virtual void FREE_SSL();
-	virtual void FREE_CTX();
+	void FREE_SSL();
+	void FREE_CTX();
 
 #endif /* HAVE_LIBSSL */
 
 	std::vector<CCron *>		m_vcCrons;
 
 	//! Create the socket
-	virtual int SOCKET( bool bListen = false );
-	virtual void Init( const CS_STRING & sHostname, u_short iport, int itimeout = 60 );
+	int SOCKET( bool bListen = false );
+	void Init( const CS_STRING & sHostname, u_short iport, int itimeout = 60 );
 
 
 	// Connection State Info
@@ -984,7 +1001,7 @@ private:
 	u_int			m_iCurBindCount, m_iDNSTryCount;
 
 #ifdef ___DO_THREADS
-	CDNSResolver	m_cResolver;
+	CDNSResolver	m_pResolver;
 #endif /* ___DO_THREADS */
 
 };
@@ -1680,7 +1697,7 @@ public:
 			return;
 		}
 
-		Csock * pSock = (*this)[iPos];
+		T * pSock = (*this)[iPos];
 
 		if ( pSock->IsConnected() )
 			pSock->Disconnected(); // only call disconnected event if connected event was called (IE IsConnected was set)
@@ -1690,6 +1707,44 @@ public:
 
 		CS_Delete( pSock );
 		this->erase( this->begin() + iPos );
+	}
+
+	/**
+	 * @brief swaps out a sock with a copy of the original sock
+	 * @param pNewSock the new sock to change out with. (this should be constructed by you with the default ctor)
+	 * @param iOrginalSockIdx the position in this sockmanager of the original sock
+	 * @return true on success
+	 */
+	virtual bool SwapSockByIdx( Csock *pNewSock, u_long iOrginalSockIdx )
+	{
+		if( iOrginalSockIdx >= this->size() )
+		{
+			CS_DEBUG( "Invalid Sock Position Requested! [" << iOrginalSockIdx << "]" );
+			return( false );
+		}
+
+		Csock *pSock = (*this)[iOrginalSockIdx];
+		pNewSock->Copy( *pSock );
+		pSock->Dereference();
+		CS_Delete( pSock );
+		(*this)[iOrginalSockIdx] = (T *)pNewSock;
+		return( true );
+	}
+	
+	/**
+	 * @brief swaps out a sock with a copy of the original sock
+	 * @param pNewSock the new sock to change out with. (this should be constructed by you with the default ctor)
+	 * @param pOrigSock the address of the original socket
+	 * @return true on success
+	 */
+	virtual bool SwapSockByAddr( Csock *pNewSock, Csock *pOrigSock )
+	{
+		for( u_long a = 0; a < this->size(); a++ )
+		{
+			if( (*this)[a] == pOrigSock )
+				return( SwapSockByIdx( pNewSock, a ) );
+		}
+		return( false );
 	}
 
 	//! Get the bytes read from all sockets current and past

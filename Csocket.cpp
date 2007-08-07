@@ -365,6 +365,9 @@ Csock::Csock( int itimeout )
 #ifdef HAVE_LIBSSL
 	m_pCerVerifyCB = NULL;
 #endif /* HAVE_LIBSSL */
+#ifdef ___DO_THREADS
+	m_pResolver = NULL;
+#endif /* ___DO_THREADS */
 	Init( "", 0, itimeout );
 }
 
@@ -373,6 +376,9 @@ Csock::Csock( const CS_STRING & sHostname, u_short iport, int itimeout )
 #ifdef HAVE_LIBSSL
 	m_pCerVerifyCB = NULL;
 #endif /* HAVE_LIBSSL */
+#ifdef ___DO_THREADS
+	m_pResolver = NULL;
+#endif /* ___DO_THREADS */
 	Init( sHostname, iport, itimeout );
 }
 
@@ -391,18 +397,24 @@ Csock *Csock::GetSockObj( const CS_STRING & sHostname, u_short iPort )
 Csock::~Csock()
 {
 #ifdef ___DO_THREADS
-	m_cResolver.lock();
-	CDNSResolver::EStatus eStatus = m_cResolver.Status();
-	m_cResolver.unlock();
-	if ( eStatus == CDNSResolver::RUNNING )
-		m_cResolver.cancel();
+	if( m_pResolver )
+	{
+		m_pResolver->lock();
+		CDNSResolver::EStatus eStatus = m_pResolver->Status();
+		m_pResolver->unlock();
+		if ( eStatus == CDNSResolver::RUNNING )
+			m_pResolver->cancel();
+		Zzap( m_pResolver );
+	}
 #endif /* __DO_THREADS_ */
 
 	if ( m_iReadSock != m_iWriteSock )
 	{
-		CS_CLOSE( m_iReadSock );
-		CS_CLOSE( m_iWriteSock );
-	} else
+		if( m_iReadSock >= 0 )
+			CS_CLOSE( m_iReadSock );
+		if( m_iWriteSock >= 0 )
+			CS_CLOSE( m_iWriteSock );
+	} else if( m_iReadSock >= 0 )
 		CS_CLOSE( m_iReadSock );
 
 	m_iReadSock = -1;
@@ -416,6 +428,99 @@ Csock::~Csock()
 	// delete any left over crons
 	for( vector<CCron *>::size_type i = 0; i < m_vcCrons.size(); i++ )
 		CS_Delete( m_vcCrons[i] );
+}
+
+void Csock::Dereference()
+{
+#ifdef ___DO_THREADS
+	m_pResolver = NULL;
+#endif /* __DO_THREADS_ */
+	m_iWriteSock = m_iReadSock = -1;
+
+#ifdef HAVE_LIBSSL
+	m_ssl = NULL;
+	m_ssl_ctx = NULL;
+#endif /* HAVE_LIBSSL */
+
+	m_vcCrons.clear();
+}
+
+void Csock::Copy( const Csock & cCopy )
+{
+	m_iport 		= cCopy.m_iport;
+   	m_iRemotePort	= cCopy.m_iRemotePort;
+	m_iLocalPort	= cCopy.m_iLocalPort;
+	m_iReadSock		= cCopy.m_iReadSock;
+	m_iWriteSock	= cCopy.m_iWriteSock;
+   	m_itimeout		= cCopy.m_iWriteSock;
+   	m_iConnType		= cCopy.m_iTcount;
+	m_iMethod		= cCopy.m_iMethod;
+	m_bssl			= cCopy.m_bssl;
+	m_bIsConnected	= cCopy.m_bIsConnected;
+	m_bBLOCK		= cCopy.m_bBLOCK;
+	m_bFullsslAccept	= cCopy.m_bFullsslAccept;
+	m_bsslEstablished	= cCopy.m_bsslEstablished;
+   	m_bEnableReadLine	= cCopy.m_bEnableReadLine;
+   	m_bRequireClientCert = cCopy.m_bRequireClientCert;
+   	m_bPauseRead		= cCopy.m_bPauseRead;
+	m_shostname		= cCopy.m_shostname;
+   	m_sbuffer		= cCopy.m_sbuffer;
+   	m_sSockName		= cCopy.m_sSockName;
+   	m_sPemFile		= cCopy.m_sPemFile;
+   	m_sCipherType	= cCopy.m_sCipherType;
+   	m_sParentName	= cCopy.m_sParentName;
+	m_sSend			= cCopy.m_sSend;
+   	m_sSSLBuffer	= cCopy.m_sSSLBuffer;
+   	m_sPemPass		= cCopy.m_sPemPass;
+   	m_sLocalIP		= cCopy.m_sLocalIP;
+   	m_sRemoteIP		= cCopy.m_sRemoteIP;
+	m_eCloseType	= cCopy.m_eCloseType;
+
+	m_iMaxMilliSeconds	= cCopy.m_iMaxMilliSeconds;
+   	m_iLastSendTime		= cCopy.m_iLastSendTime;
+   	m_iBytesRead		= cCopy.m_iBytesRead;
+   	m_iBytesWritten		= cCopy.m_iBytesWritten;
+   	m_iStartTime		= cCopy.m_iStartTime;
+	m_iMaxBytes			= cCopy.m_iMaxBytes;
+   	m_iLastSend			= cCopy.m_iLastSend;
+   	m_iMaxStoredBufferLength	= cCopy.m_iMaxStoredBufferLength;
+   	m_iTimeoutType		= cCopy.m_iTimeoutType;
+
+	m_address			= cCopy.m_address;
+   	m_bindhost			= cCopy.m_bindhost;
+	m_bIsIPv6			= cCopy.m_bIsIPv6;
+
+#ifdef HAVE_LIBSSL
+	FREE_SSL();
+	FREE_CTX(); // be sure to remove anything that was already here
+	m_ssl				= cCopy.m_ssl;
+	m_ssl_ctx			= cCopy.m_ssl_ctx;
+	m_ssl_method		= cCopy.m_ssl_method;
+
+	m_pCerVerifyCB		= cCopy.m_pCerVerifyCB;
+
+#endif /* HAVE_LIBSSL */
+
+	if( m_vcCrons.size() )
+	{
+		for( u_long a = 0; a < m_vcCrons.size(); a++ )
+		{
+			CS_Delete( m_vcCrons[a] );
+		}
+		m_vcCrons.clear();
+	}
+	m_vcCrons			= cCopy.m_vcCrons;
+
+	m_eConState			= cCopy.m_eConState;
+	m_sBindHost			= cCopy.m_sBindHost;
+	m_iCurBindCount		= cCopy.m_iCurBindCount;
+   	m_iDNSTryCount		= cCopy.m_iDNSTryCount;
+
+#ifdef ___DO_THREADS
+	if( m_pResolver )
+		CS_Delete( m_pResolver );
+	m_pResolver			= cCopy.m_pResolver;
+#endif /* ___DO_THREADS */
 }
 
 Csock & Csock::operator<<( const CS_STRING & s )
@@ -1758,44 +1863,47 @@ int Csock::DNSLookup( EDNSLType eDNSLType )
 	}
 
 #ifdef ___DO_THREADS
+	if( !m_pResolver )
+		m_pResolver = new CDNSResolver;
+
 	if ( m_iDNSTryCount == 0 )
 	{
-		m_cResolver.Lookup( ( eDNSLType == DNS_VHOST ) ? m_sBindHost : m_shostname );
+		m_pResolverLookup( ( eDNSLType == DNS_VHOST ) ? m_sBindHost : m_shostname );
 		m_iDNSTryCount++;
 	}
    
-	if ( m_cResolver.IsCompleted() )
+	if ( m_pResolverIsCompleted() )
 	{
 		m_iDNSTryCount = 0;
-		if ( m_cResolver.Suceeded() )
+		if ( m_pResolverSuceeded() )
 		{
 			if ( eDNSLType == DNS_VHOST )
 			{
-				if( !m_cResolver.GetSockAddr()->GetIPv6() )
+				if( !m_pResolverGetSockAddr()->GetIPv6() )
 				{
 					SetIPv6( false );
-					memcpy( m_bindhost.GetAddr(), m_cResolver.GetSockAddr()->GetAddr(), sizeof( *(m_bindhost.GetAddr()) ) );
+					memcpy( m_bindhost.GetAddr(), m_pResolverGetSockAddr()->GetAddr(), sizeof( *(m_bindhost.GetAddr()) ) );
 				}
 #ifdef HAVE_IPV6
 				else
 				{
 					SetIPv6( true );
-					memcpy( m_bindhost.GetAddr6(), m_cResolver.GetSockAddr()->GetAddr6(), sizeof( *(m_bindhost.GetAddr6()) ) );
+					memcpy( m_bindhost.GetAddr6(), m_pResolverGetSockAddr()->GetAddr6(), sizeof( *(m_bindhost.GetAddr6()) ) );
 				}
 #endif /* HAVE_IPV6 */
 			}
 			else
 			{
-				if( m_cResolver.GetSockAddr()->GetIPv6() )
+				if( m_pResolverGetSockAddr()->GetIPv6() )
 				{
 					SetIPv6( false );
-					memcpy( m_address.GetAddr(), m_cResolver.GetSockAddr()->GetAddr(), sizeof( *(m_address.GetAddr()) ) );
+					memcpy( m_address.GetAddr(), m_pResolverGetSockAddr()->GetAddr(), sizeof( *(m_address.GetAddr()) ) );
 				}
 #ifdef HAVE_IPV6
 				else
 				{
 					SetIPv6( true );
-					memcpy( m_address.GetAddr6(), m_cResolver.GetSockAddr()->GetAddr6(), sizeof( *(m_address.GetAddr6()) ) );
+					memcpy( m_address.GetAddr6(), m_pResolverGetSockAddr()->GetAddr6(), sizeof( *(m_address.GetAddr6()) ) );
 				}
 #endif /* HAVE_IPV6 */
 			}
