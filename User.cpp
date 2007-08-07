@@ -904,7 +904,7 @@ bool CUser::SendFile(const CString& sRemoteNick, const CString& sFileName, const
 		return false;
 	}
 
-	unsigned short uPort = CZNC::Get().GetManager().ListenAllRand("DCC::LISTEN::" + sRemoteNick, false, SOMAXCONN, pSock, 120);
+	unsigned short uPort = CZNC::Get().GetManager().ListenRand("DCC::LISTEN::" + sRemoteNick, GetLocalIP(), false, SOMAXCONN, pSock, 120);
 
 	if (GetNick().CaseCmp(sRemoteNick) == 0) {
 		PutUser(":" + GetStatusPrefix() + "status!znc@znc.com PRIVMSG " + sRemoteNick + " :\001DCC SEND " + pFile->GetShortName() + " " + CString(CUtils::GetLongIP(GetLocalIP())) + " "
