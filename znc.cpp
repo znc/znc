@@ -177,7 +177,6 @@ int CZNC::Loop() {
 #ifdef HAVE_LIBSSL
 			if (pServer->IsSSL()) {
 				bSSL = true;
-				pIRCSock->SetPemLocation(GetPemLocation());
 			}
 #endif
 
