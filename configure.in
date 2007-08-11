@@ -1,5 +1,5 @@
 dnl Keep the version number in sync with main.h!
-AC_INIT([znc], [0.048])
+AC_INIT([znc], [0.050])
 AC_PROG_CXX
 AC_CANONICAL_HOST
 
@@ -155,7 +155,7 @@ if test "$MODULES" = "yes"; then
 			if test -n "$PERL"; then
 				echo "$PERL"
 				AC_CHECK_LIB(perl, perl_alloc,unset NOPERL,
-					AC_ERROR([Could not find liberl. Try --disable-perl]),
+					AC_ERROR([Could not find libperl. Try --disable-perl]),
 					[`$PERL -MExtUtils::Embed -e ccopts -e ldopts`])
 			else
 				echo "no"

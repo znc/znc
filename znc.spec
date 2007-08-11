@@ -1,5 +1,5 @@
 Name: znc
-Version: 0.048
+Version: 0.050
 Release: 1
 Packager: imaginos@imaginos.net
 Summary: znc - an advanced IRC bouncer
