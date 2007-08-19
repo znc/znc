@@ -718,43 +718,23 @@ bool CString::Base64Encode(CString& sRet, unsigned int uWrap) const {
 		if (uWrap && i % 57) {
 			*p++ = '\n';
 		}
-
-		*p = 0;
-
-		sRet = (char*) output;
-		delete[] output;
-		return true;
 	} else {
 		*p++ = b64table[input[i++] >> 2];
 		*p++ = b64table[((input[i - 1] << 4) | (input[i] >> 4)) & 0x3f];
 		if (mod == 1) {
 			*p++ = '=';
-			*p++ = '=';
-
-			if (uWrap) {
-				*p++ = '\n';
-			}
-
-			*p = 0;
-
-			sRet = (char*) output;
-			delete[] output;
-			return true;
 		} else {
 			*p++ = b64table[(input[i] << 2) & 0x3f];
-			*p++ = '=';
+		}
 
-			if (uWrap) {
-				*p++ = '\n';
-			}
+		*p++ = '=';
 
-			*p = 0;
-			sRet = (char*) output;
-			delete[] output;
-			return true;
+		if (uWrap) {
+			*p++ = '\n';
 		}
 	}
 
+	*p = 0;
 	sRet = (char*) output;
 	delete[] output;
 	return true;
