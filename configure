@@ -633,6 +633,7 @@ CFLAGS
 ac_ct_CC
 MODFLAGS
 INCLUDES
+DEPEND
 MODULES
 MODTARGET
 VERSION
@@ -2407,6 +2408,7 @@ case $host_os in *\ *) host_os=`echo "$host_os" | sed 's/ /-/g'`;; esac
 CXXFLAGS="-D_GNU_SOURCE"
 INCLUDES=""
 LIBS=""
+DEPEND=""
 
 appendLib () {
 	if test "$LIBS" != ""; then
@@ -2503,7 +2505,7 @@ fi
 if test "$DEBUG" != "no"; then
 	appendCXX -Wall -ggdb -D_DEBUG
 else
-	appendCXX -Wall -s -O2 -fomit-frame-pointer
+	appendCXX -Wall -O2 -fomit-frame-pointer
 fi
 
 if test "$IPV6" != "no"; then
@@ -2512,6 +2514,8 @@ fi
 
 if test "x$GXX" = "xyes"; then
 	appendCXX -Woverloaded-virtual
+	# enable g++ dependency tracking
+	DEPEND=".depend"
 fi
 
 ac_ext=c
@@ -3823,6 +3827,7 @@ VERSION=0.051
 
 
 
+
 ac_config_files="$ac_config_files Makefile"
 
 ac_config_files="$ac_config_files znc-config"
@@ -4518,6 +4523,7 @@ CFLAGS!$CFLAGS$ac_delim
 ac_ct_CC!$ac_ct_CC$ac_delim
 MODFLAGS!$MODFLAGS$ac_delim
 INCLUDES!$INCLUDES$ac_delim
+DEPEND!$DEPEND$ac_delim
 MODULES!$MODULES$ac_delim
 MODTARGET!$MODTARGET$ac_delim
 VERSION!$VERSION$ac_delim
@@ -4528,7 +4534,7 @@ LIBOBJS!$LIBOBJS$ac_delim
 LTLIBOBJS!$LTLIBOBJS$ac_delim
 _ACEOF
 
-  if test `sed -n "s/.*$ac_delim\$/X/p" conf$$subs.sed | grep -c X` = 65; then
+  if test `sed -n "s/.*$ac_delim\$/X/p" conf$$subs.sed | grep -c X` = 66; then
     break
   elif $ac_last_try; then
     { { echo "$as_me:$LINENO: error: could not make $CONFIG_STATUS" >&5

@@ -1,40 +1,54 @@
-CXX=@CXX@
-CXXFLAGS=@CXXFLAGS@
-LDFLAGS=@LDFLAGS@
-INCLUDES=@INCLUDES@
-LIBS=@LIBS@
-prefix=@prefix@
+CXX      = @CXX@
+CXXFLAGS = @CXXFLAGS@
+LDFLAGS  = @LDFLAGS@
+INCLUDES = @INCLUDES@
+LIBS     = @LIBS@
+prefix   = @prefix@
 
-OBJS=String.o Csocket.o main.o znc.o User.o IRCSock.o Client.o DCCBounce.o DCCSock.o Chan.o Nick.o Server.o Modules.o MD5.o Buffer.o Utils.o FileUtils.o HTTPSock.o Template.o
-SRCS=String.cpp Csocket.cpp main.cpp znc.cpp User.cpp IRCSock.cpp Client.cpp DCCBounce.cpp DCCSock.cpp Chan.cpp Nick.cpp Server.cpp Modules.cpp MD5.cpp Buffer.cpp Utils.cpp FileUtils.cpp HTTPSock.cpp Template.cpp
+SRCS = String.cpp Csocket.cpp main.cpp znc.cpp User.cpp IRCSock.cpp Client.cpp DCCBounce.cpp \
+	DCCSock.cpp Chan.cpp Nick.cpp Server.cpp Modules.cpp MD5.cpp Buffer.cpp Utils.cpp \
+	FileUtils.cpp HTTPSock.cpp Template.cpp
+OBJS = $(patsubst %cpp,%o,$(SRCS))
+CLEAN = znc znc-static *.o core core.*
+DISTCLEAN = Makefile config.log config.status znc-config .depend \
+	modules/.depend modules/Makefile
 
-all: znc @MODTARGET@
+.PHONY: all modules clean distclean install depend
 
-depend::
+all: @DEPEND@ znc @MODTARGET@
+
+.depend:
 	$(CXX) -MM $(CXXFLAGS) $(SRCS) $(INCLUDES) >.depend
-	@if test -n "@MODTARGET@"; then (cd modules; $(MAKE) depend); fi
+	@if test -n "@MODTARGET@"; then \
+		$(MAKE) -C modules .depend; \
+	fi
+
+depend: .depend
 
 znc: $(OBJS)
-	$(CXX) $(CXXFLAGS) $(LDFLAGS) -o $@ $(INCLUDES) $(OBJS) $(LIBS)
+	$(CXX) $(LDFLAGS) -o $@ $(OBJS) $(LIBS)
 
 znc-static: $(OBJS)
-	$(CXX) $(CXXFLAGS) $(LDFLAGS) -static -o $@ $(INCLUDES) $(OBJS) $(LIBS)
-	strip $@
+	$(CXX) $(LDFLAGS) -static -o $@ $(OBJS) $(LIBS)
 
-modules::
-	@if test -n "@MODTARGET@"; then (cd modules; $(MAKE) all); else echo "Modules are not enabled"; fi
+modules:
+	@if test -n "@MODTARGET@"; then \
+		$(MAKE) -C modules; \
+	else \
+		echo "Modules are not enabled"; \
+	fi
 
 clean:
-	rm -rf znc znc-static *.o core core.*
-	@if test -n "@MODTARGET@"; then (cd modules; $(MAKE) clean); fi
+	rm -rf $(CLEAN)
+	@if test -n "@MODTARGET@"; then \
+		$(MAKE) -C modules clean; \
+	fi
 
 distclean: clean
-	rm -rf Makefile config.log config.status znc-config .depend modules/.depend modules/Makefile
+	rm -rf $(DISTCLEAN)
 
--include .depend
-
-%.o: %.cpp
-	$(CXX) $(CXXFLAGS) $(INCLUDES) -c -o $*.o $*.cpp
+.cpp.o:
+	$(CXX) $(CXXFLAGS) $(INCLUDES) -c -o $@ $<
 
 install: znc @MODTARGET@
 	mkdir -p $(DESTDIR)$(prefix)/bin
@@ -43,4 +57,8 @@ install: znc @MODTARGET@
 	install -m 0755 znc-config $(DESTDIR)$(prefix)/bin
 	install -m 0755 znc-buildmod $(DESTDIR)$(prefix)/bin
 	install -m 0644 *.h $(DESTDIR)$(prefix)/include/znc
-	if test -n "@MODTARGET@"; then (cd modules; $(MAKE) install DESTDIR=$(DESTDIR)); fi
+	@if test -n "@MODTARGET@"; \
+		then $(MAKE) -C modules install DESTDIR=$(DESTDIR)); \
+	fi
+
+-include .depend

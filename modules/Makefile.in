@@ -1,32 +1,42 @@
-prefix=@prefix@
-CXX=@CXX@
-CXXFLAGS=@CXXFLAGS@
-INCLUDES=@INCLUDES@ -I..
-LIBS=@LIBS@
-PERL=@PERL@
+CXX      = @CXX@
+CXXFLAGS = @CXXFLAGS@
+LDFLAGS  = @LDFLAGS@
+INCLUDES = @INCLUDES@ -I..
+LIBS     = @LIBS@
+PERL     = @PERL@
+MODDIR   = @MODDIR@
+prefix   = @prefix@
+
 ifneq "$(PERL)" ""
-PERLCC=-DHAVE_PERL `$(PERL) -MExtUtils::Embed -e perl_inc`
-PERLLD=`$(PERL) -MExtUtils::Embed -e perl_inc -e ldopts`
+PERLCC   = -DHAVE_PERL `$(PERL) -MExtUtils::Embed -e perl_inc`
+PERLLD   = `$(PERL) -MExtUtils::Embed -e perl_inc -e ldopts`
 endif
-VPATH=.:..
-MODDIR=@MODDIR@
 
 ifeq "@NOSSL@" "1" 
-TARGETS=$(foreach file, $(wildcard *.cpp), $(if $(shell grep REQUIRESSL $(file)),, $(addsuffix .so, $(basename $(file)))))
-INSTALL_TARGS=$(foreach file, $(wildcard *.cpp), $(if $(shell grep REQUIRESSL $(file)),, install_$(addsuffix .so, $(basename $(file)))))
-OBJS=$(foreach file, $(wildcard *.cpp), $(if $(shell grep REQUIRESSL $(file)),, $(addsuffix .o, $(basename $(file)))))
-SRCS=$(wildcard ../*.cpp) $(foreach file, $(wildcard *.cpp), $(if $(shell grep REQUIRESSL $(file)),,$(file)))
+FILES    = $(foreach file, $(wildcard *.cpp), \
+	$(if $(shell grep REQUIRESSL $(file)), \
+		, \
+		$(basename $(file)) \
+	))
 else
-TARGETS=$(addsuffix .so, $(basename $(wildcard *.cpp)))
-INSTALL_TARGS=$(foreach file, $(addsuffix .so, $(basename $(wildcard *.cpp))), install_$(file))
-OBJS=$(addsuffix .o, $(basename $(wildcard *.cpp)))
-SRCS=$(wildcard *.cpp) $(wildcard ../*.cpp)
+FILES    = $(basename $(wildcard *.cpp))
 endif
+
+SRCS     = $(wildcard ../*.cpp) $(addsuffix .cpp, $(FILES))
+OBJS     = $(addsuffix .o, $(FILES))
+TARGETS  = $(addsuffix .so, $(FILES))
+INSTALL_TARGS = $(foreach file, $(TARGETS), install_$(file))
+
+CLEAN    = *.so *.o
+
+.PHONY: all clean install depend $(INSTALL_TARGS)
 
 all: $(OBJS) $(TARGETS)
 
-depend::
+.depend:
 	$(CXX) -MM $(CXXFLAGS) $(SRCS) $(INCLUDES) $(PERLCC) >.depend
+
+depend: .depend
 
 install: all create_install_dir install_metadirs $(INSTALL_TARGS)
 	@echo -n ""
@@ -42,26 +52,25 @@ install_metadirs:
 		fi \
 	done
 
-install_%:
+install_%: %.so
 	install -m 0755 $(subst install_,,$@) $(DESTDIR)$(MODDIR)/znc
 
 clean:
-	rm -rf *.so *.o core core.*
-
--include .depend
+	rm -rf $(CLEAN)
 
 %.so: %.o
-	$(CXX) $(CXXFLAGS) -shared -o $@ $< $(INCLUDES) $(LIBS)
+	$(CXX) $(LDFLAGS) -shared -o $@ $<
 
-%.o: %.cpp
+.cpp.o:
 	$(CXX) $(CXXFLAGS) $(INCLUDES) -c -o $@ $<
 
 ifneq "$(PERL)" ""
 modperl.so: modperl.o
-	$(CXX) $(CXXFLAGS) -shared -o $@ $< $(INCLUDES) $(LIBS) $(PERLLD)
+	$(CXX) $(LDFLAGS) -shared -o $@ $< $(PERLLD)
 
 modperl.o: modperl.cpp
-	$(CXX) $(CXXFLAGS) $(INCLUDES) -c -o $@ modperl.cpp $(PERLCC)
+	$(CXX) $(CXXFLAGS) $(INCLUDES) -c -o $@ $< $(PERLCC)
+
 install_modperl.so:
 	install -m 0755 modperl.so $(DESTDIR)$(MODDIR)/znc
 	for i in *.pm; do \
@@ -75,3 +84,5 @@ modperl.o:
 install_modperl.so:
 	@echo -n ""
 endif
+
+-include .depend
