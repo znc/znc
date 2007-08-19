@@ -1013,8 +1013,8 @@ bool CZNC::ParseConfig(const CString& sConfig) {
 							if(sValue.Trim_n().CaseCmp("append") == 0) {
 								pUser->SetTimestampAppend(true);
 								pUser->SetTimestampPrepend(false);
-  							} else if(sValue.Trim_n().CaseCmp("prepend") == 0) {
-  								pUser->SetTimestampAppend(false);
+							} else if(sValue.Trim_n().CaseCmp("prepend") == 0) {
+								pUser->SetTimestampAppend(false);
 								pUser->SetTimestampPrepend(true);
 							} else if(sValue.Trim_n().CaseCmp("false") == 0) {
 								pUser->SetTimestampAppend(false);
