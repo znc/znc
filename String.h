@@ -7,6 +7,8 @@
 #include <pcre.h>
 #endif
 
+#include <sys/types.h>
+
 #include <set>
 #include <map>
 #include <string>
