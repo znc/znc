@@ -25,7 +25,6 @@ endif
 SRCS     = $(wildcard ../*.cpp) $(addsuffix .cpp, $(FILES))
 OBJS     = $(addsuffix .o, $(FILES))
 TARGETS  = $(addsuffix .so, $(FILES))
-INSTALL_TARGS = $(foreach file, $(TARGETS), install_$(file))
 
 CLEAN    = *.so *.o
 
@@ -38,8 +37,8 @@ all: $(OBJS) $(TARGETS)
 
 depend: .depend
 
-install: all create_install_dir install_metadirs $(INSTALL_TARGS)
-	@echo -n ""
+install: all create_install_dir install_metadirs
+	install -m 0755 $(TARGETS) $(DESTDIR)$(MODDIR)/znc
 
 create_install_dir:
 	mkdir -p $(DESTDIR)$(MODDIR)/znc
@@ -51,9 +50,6 @@ install_metadirs:
 			cp -Rp $$a $(DESTDIR)$(MODDIR)/znc; \
 		fi \
 	done
-
-install_%: %.so
-	install -m 0755 $(subst install_,,$@) $(DESTDIR)$(MODDIR)/znc
 
 clean:
 	rm -rf $(CLEAN)
