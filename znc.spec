@@ -13,7 +13,7 @@ Prefix: /usr
 Source: %{name}-%{version}.tar.gz
 
 %description
-ZNC is an IRC bounce with many advanced features like detaching, multiple users, per channel playback buffer, SSL, transparent DCC bouncing, and c++ module support to name a few.
+ZNC is an IRC bouncer with many advanced features like detaching, multiple users, per channel playback buffer, SSL, transparent DCC bouncing, and c++ module support to name a few.
 
 %prep
 %setup -n %{name}-%{version}
