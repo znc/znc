@@ -32,7 +32,7 @@ void GenerateHelp(const char *appname) {
 	CUtils::PrintMessage("\t-p, --makepem      Generates a pemfile for use with SSL");
 	CUtils::PrintMessage("\t-e, --encrypt-pem  when used along with --makepem, encrypts the private key in the pemfile");
 #endif /* HAVE_LIBSSL */
-	CUtils::PrintMessage("\t-d, --datadir      Set a different znc repository");
+	CUtils::PrintMessage("\t-d, --datadir      Set a different znc repository (default is ~/.znc)");
 }
 
 void die(int sig) {
