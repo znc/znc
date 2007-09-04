@@ -32,6 +32,11 @@
 */
 
 #include "Csocket.h"
+#ifdef __NetBSD__
+#include <sys/param.h>
+#endif /* __NetBSD__ */
+
+#define CS_SRANDBUFFER 128
 
 using namespace std;
 
@@ -40,8 +45,77 @@ namespace Csocket
 {
 #endif /* _NO_CSOCKET_NS */
 
+static int g_iCsockSSLIdx = 0; //!< this get setup once in InitSSL
+int GetCsockClassIdx()
+{
+	return( g_iCsockSSLIdx );
+}
+
+Csock *GetCsockFromCTX( X509_STORE_CTX *pCTX )
+{
+	Csock *pSock = NULL;
+	SSL *pSSL = (SSL *)X509_STORE_CTX_get_ex_data( pCTX, SSL_get_ex_data_X509_STORE_CTX_idx() );
+	if( pSSL )
+		pSock = (Csock *)SSL_get_ex_data( pSSL, GetCsockClassIdx() );
+	return( pSock );
+}
+
+#ifndef HAVE_IPV6
+
+// this issue here is getaddrinfo has a significant behavior difference when dealing with round robin dns on an
+// ipv4 network. This is not desirable IMHO. so when this is compiled without ipv6 support backwards compatibility
+// is maintained.
+
+static int __GetHostByName( const CS_STRING & sHostName, struct in_addr *paddr, u_int iNumRetries )
+{
+	int iReturn = HOST_NOT_FOUND;
+	struct hostent *hent = NULL;
+#ifdef __linux__
+	char hbuff[2048];
+	struct hostent hentbuff;
+
+	int err;
+	for( u_int a = 0; a < iNumRetries; a++ )
+	{
+		memset( (char *)hbuff, '\0', 2048 );
+		iReturn = gethostbyname_r( sHostName.c_str(), &hentbuff, hbuff, 2048, &hent, &err );
+
+		if ( iReturn == 0 )
+			break;
+
+		if ( iReturn != TRY_AGAIN )
+			break;
+
+		PERROR( "gethostbyname_r" );
+	}
+	if ( ( !hent ) && ( iReturn == 0 ) )
+		iReturn = HOST_NOT_FOUND;
+#else
+	hent = gethostbyname( sHostName.c_str() );
+	PERROR( "gethostbyname" );
+
+	if ( hent )
+		iReturn = 0;
+
+#endif /* __linux__ */
+
+	if ( iReturn == 0 )
+		memcpy( &paddr->s_addr, hent->h_addr_list[0], sizeof( paddr->s_addr ) );
+
+	return( iReturn );
+}
+#endif /* !HAVE_IPV6 */
+
 int GetAddrInfo( const CS_STRING & sHostname, Csock *pSock, CSSockAddr & csSockAddr )
 {
+#ifndef HAVE_IPV6
+	if( pSock )
+		pSock->SetIPv6( false );
+	csSockAddr.SetIPv6( false );
+	if( __GetHostByName( sHostname, csSockAddr.GetAddr(), 3 ) == 0 )
+		return( 0 );
+	
+#else /* HAVE_IPV6 */
 	struct addrinfo *res = NULL;
 	struct addrinfo hints;
 	memset( (struct addrinfo *)&hints, '\0', sizeof( hints ) );
@@ -54,7 +128,10 @@ int GetAddrInfo( const CS_STRING & sHostname, Csock *pSock, CSSockAddr & csSockA
 		return( EAGAIN );
 	else if( ( iRet == 0 ) && ( res ) )
 	{
-		bool bFoundEntry = false;
+		struct addrinfo *pUseAddr = NULL;
+#ifdef __RANDOMIZE_SOURCE_ADDRESSES
+		std::vector< struct addrinfo *> vHostCanidates;
+#endif /* __RANDOMIZE_SOURCE_ADDRESSES */
 		for( struct addrinfo *pRes = res; pRes; pRes = pRes->ai_next )
 		{
 #ifdef __sun
@@ -69,31 +146,67 @@ int GetAddrInfo( const CS_STRING & sHostname, Csock *pSock, CSSockAddr & csSockA
 
 			if( pRes->ai_family == AF_INET )
 			{
-				if( pSock )
-					pSock->SetIPv6( false );
-				csSockAddr.SetIPv6( false );
-				struct sockaddr_in *pTmp = (struct sockaddr_in *)pRes->ai_addr;
-				memcpy( csSockAddr.GetAddr(), &(pTmp->sin_addr), sizeof( *(csSockAddr.GetAddr()) ) );
+#ifdef __RANDOMIZE_SOURCE_ADDRESSES
+				vHostCanidates.push_back( pRes );
+#else
+				pUseAddr = pRes;
+#endif /* __RANDOMIZE_SOURCE_ADDRESSES */
 			}
-#ifdef HAVE_IPV6
 			else if( pRes->ai_family == AF_INET6 )
 			{
-				if( pSock )
-					pSock->SetIPv6( true );
-				csSockAddr.SetIPv6( true );
-				struct sockaddr_in6 *pTmp = (struct sockaddr_in6 *)pRes->ai_addr;
-				memcpy( csSockAddr.GetAddr6(), &(pTmp->sin6_addr), sizeof( *(csSockAddr.GetAddr6()) ) );
+#ifdef __RANDOMIZE_SOURCE_ADDRESSES
+				vHostCanidates.push_back( pRes );
+#else
+				pUseAddr = pRes;
+#endif /* __RANDOMIZE_SOURCE_ADDRESSES */
 			}
-#endif /* HAVE_IPV6 */
+		}
+#ifdef __RANDOMIZE_SOURCE_ADDRESSES
+		if( vHostCanidates.size() > 1 )
+		{
+			// this is basically where getaddrinfo() sorts the list of results. basically to help out what round robin dns does,
+			// pick a random canidate to make this work
+			struct random_data cRandData;
+			char chState[CS_SRANDBUFFER];
+			int32_t iNumber = 0; 
+			if( initstate_r( (u_int)millitime(), chState, CS_SRANDBUFFER, &cRandData ) == 0 && random_r( &cRandData, &iNumber ) == 0 )
+			{
+		   		iNumber %= (int)vHostCanidates.size();
+		   		pUseAddr = vHostCanidates[iNumber];
+			}
 			else
-				continue;
-			bFoundEntry = true;
-			break;
+			{
+				CS_DEBUG( "initstate_r/random_r failed" );
+				pUseAddr = vHostCanidates[0];
+			}
+		}
+		else if( vHostCanidates.size() )
+		{
+			pUseAddr = vHostCanidates[0];
+		}
+#endif /* __RANDOMIZE_SOURCE_ADDRESSES */
+
+		if( pUseAddr && pUseAddr->ai_family == AF_INET )
+		{
+			if( pSock )
+				pSock->SetIPv6( false );
+			csSockAddr.SetIPv6( false );
+			struct sockaddr_in *pTmp = (struct sockaddr_in *)pUseAddr->ai_addr;
+			memcpy( csSockAddr.GetAddr(), &(pTmp->sin_addr), sizeof( *(csSockAddr.GetAddr()) ) );
+		}
+		else if( pUseAddr )
+		{
+			if( pSock )
+				pSock->SetIPv6( true );
+			csSockAddr.SetIPv6( true );
+			struct sockaddr_in6 *pTmp = (struct sockaddr_in6 *)pUseAddr->ai_addr;
+			memcpy( csSockAddr.GetAddr6(), &(pTmp->sin6_addr), sizeof( *(csSockAddr.GetAddr6()) ) );
 		}
 		freeaddrinfo( res );
-		if( bFoundEntry )
+		if( pUseAddr ) // the data pointed to here is invalid now, but the pointer itself is a good test
 			return( 0 );
 	}
+#endif /* ! HAVE_IPV6 */
 	return( ETIMEDOUT );
 }
 
@@ -239,6 +352,9 @@ bool InitSSL( ECompType eCompressionType )
 			SSL_COMP_add_compression_method( CT_RLE, cm );
 	}
 
+	// setting this up once in the begining
+	g_iCsockSSLIdx = SSL_get_ex_new_index( 0, (void *)"CsockGlobalIndex", NULL, NULL, NULL);
+
 	return( true );
 }
 
@@ -259,7 +375,7 @@ void SSLErrors( const char *filename, u_int iLineNum )
 
 void __Perror( const CS_STRING & s )
 {
-#if defined(__sun) || defined(_WIN32)
+#if defined(__sun) || defined(_WIN32) || __NetBSD_Version__ < 4000000000
 	CS_DEBUG( s << ": " << strerror( GetSockError() ) );
 #else
 	char buff[512];
@@ -447,13 +563,15 @@ void Csock::Dereference()
 
 void Csock::Copy( const Csock & cCopy )
 {
+	m_iTcount		= cCopy.m_iTcount;
+	m_iLastCheckTimeoutTime	=	cCopy.m_iLastCheckTimeoutTime;
 	m_iport 		= cCopy.m_iport;
    	m_iRemotePort	= cCopy.m_iRemotePort;
 	m_iLocalPort	= cCopy.m_iLocalPort;
 	m_iReadSock		= cCopy.m_iReadSock;
 	m_iWriteSock	= cCopy.m_iWriteSock;
    	m_itimeout		= cCopy.m_iWriteSock;
-   	m_iConnType		= cCopy.m_iTcount;
+   	m_iConnType		= cCopy.m_iConnType;
 	m_iMethod		= cCopy.m_iMethod;
 	m_bssl			= cCopy.m_bssl;
 	m_bIsConnected	= cCopy.m_bIsConnected;
@@ -894,7 +1012,14 @@ bool Csock::SSLClientSetup()
 				return( false );
 			}
 			break;
-
+		case TLS1:
+			m_ssl_method = TLSv1_client_method();
+			if ( !m_ssl_method )
+			{
+				CS_DEBUG( "WARNING: MakeConnection .... TLSv1_client_method failed!" );
+				return( false );
+			}
+			break;
 		case SSL23:
 		default:
 			m_ssl_method = SSLv23_client_method();
@@ -938,6 +1063,7 @@ bool Csock::SSLClientSetup()
 	SSL_set_rfd( m_ssl, m_iReadSock );
 	SSL_set_wfd( m_ssl, m_iWriteSock );
 	SSL_set_verify( m_ssl, SSL_VERIFY_PEER, ( m_pCerVerifyCB ? m_pCerVerifyCB : CertVerifyCB ) );
+	SSL_set_ex_data( m_ssl, GetCsockClassIdx(), this );
 
 	SSLFinishSetup( m_ssl );
 	return( true );
@@ -970,6 +1096,15 @@ bool Csock::SSLServerSetup()
 			if ( !m_ssl_method )
 			{
 				CS_DEBUG( "WARNING: MakeConnection .... SSLv3_server_method failed!" );
+				return( false );
+			}
+			break;
+
+		case TLS1:
+			m_ssl_method = TLSv1_server_method();
+			if ( !m_ssl_method )
+			{
+				CS_DEBUG( "WARNING: MakeConnection .... TLSv1_server_method failed!" );
 				return( false );
 			}
 			break;
@@ -1033,7 +1168,10 @@ bool Csock::SSLServerSetup()
 	SSL_set_wfd( m_ssl, m_iWriteSock );
 	SSL_set_accept_state( m_ssl );
 	if ( m_bRequireClientCert )
+	{
 		SSL_set_verify( m_ssl, SSL_VERIFY_FAIL_IF_NO_PEER_CERT|SSL_VERIFY_PEER, ( m_pCerVerifyCB ? m_pCerVerifyCB : CertVerifyCB ) );
+		SSL_set_ex_data( m_ssl, GetCsockClassIdx(), this );
+	}
 
 	SSLFinishSetup( m_ssl );
 	return( true );
@@ -1401,7 +1539,7 @@ int & Csock::GetWSock() { return( m_iWriteSock ); }
 void Csock::SetWSock( int iSock ) { m_iWriteSock = iSock; }
 void Csock::SetSock( int iSock ) { m_iWriteSock = iSock; m_iReadSock = iSock; }
 int & Csock::GetSock() { return( m_iReadSock ); }
-void Csock::ResetTimer() { m_iTcount = 0; }
+void Csock::ResetTimer() { m_iLastCheckTimeoutTime = 0; m_iTcount = 0; }
 void Csock::PauseRead() { m_bPauseRead = true; }
 bool Csock::IsReadPaused() { return( m_bPauseRead ); }
 
@@ -1422,20 +1560,41 @@ void Csock::SetTimeoutType( u_int iTimeoutType ) { m_iTimeoutType = iTimeoutType
 int Csock::GetTimeout() const { return m_itimeout; }
 u_int Csock::GetTimeoutType() const { return( m_iTimeoutType ); }
 
-bool Csock::CheckTimeout()
+bool Csock::CheckTimeout( time_t iNow )
 {
+	if( m_iLastCheckTimeoutTime == 0 )
+	{
+		m_iLastCheckTimeoutTime = iNow;
+		return( false );
+	}
+
 	if ( IsReadPaused() )
 		return( false );
 
+	time_t iDiff = 0;
+	if( iNow > m_iLastCheckTimeoutTime )
+		iDiff = iNow - m_iLastCheckTimeoutTime;
+	else
+		m_iLastCheckTimeoutTime = iNow; // this is weird, but its possible if someone changes a clock and it went back in time, this essentially has to reset the last check
+
 	if ( m_itimeout > 0 )
 	{
-		if ( m_iTcount >= m_itimeout )
+		// this is basically to help stop a clock adjust on the box by a big bump
+		time_t iRealTimeout = m_itimeout;
+		if( iRealTimeout <= 1 )
+			m_iTcount++;
+		else if( m_iTcount == 0 )
+			iRealTimeout /= 2;
+		if( iDiff >= iRealTimeout )
 		{
-			Timeout();
-			return( true );
+			if( m_iTcount == 0 )
+				m_iLastCheckTimeoutTime = iNow - iRealTimeout;
+			if( m_iTcount++ >= 1 )
+			{
+				Timeout();
+				return( true );
+			}
 		}
-
-		m_iTcount++;
 	}
 	return( false );
 }
@@ -1621,6 +1780,13 @@ int Csock::PemPassCB( char *buf, int size, int rwflag, void *pcSocket )
 
 int Csock::CertVerifyCB( int preverify_ok, X509_STORE_CTX *x509_ctx )
 {
+	/*
+	 * A small quick example on how to get ahold of the Csock in the data portion of x509_ctx
+	Csock *pSock = GetCsockFromCTX( x509_ctx );
+	assert( pSock );
+	cerr << pSock->GetRemoteIP() << endl;
+	 */
+
 	/* return 1 always for now, probably want to add some code for cert verification */
 	return( 1 );
 }
@@ -1798,6 +1964,8 @@ void Csock::DelCron( const CS_STRING & sName, bool bDeleteAll, bool bCaseSensiti
 			m_vcCrons[a]->Stop();
 			CS_Delete( m_vcCrons[a] );
 			m_vcCrons.erase( m_vcCrons.begin() + a-- );
+			if( !bDeleteAll )
+				break;
 		}
 	}
 }
@@ -2039,6 +2207,7 @@ void Csock::Init( const CS_STRING & sHostname, u_short iport, int itimeout )
 	m_ssl = NULL;
 	m_ssl_ctx = NULL;
 #endif /* HAVE_LIBSSL */
+	m_iTcount = 0;
 	m_iReadSock = -1;
 	m_iWriteSock = -1;
 	m_itimeout = itimeout;
@@ -2046,7 +2215,6 @@ void Csock::Init( const CS_STRING & sHostname, u_short iport, int itimeout )
 	m_bIsConnected = false;
 	m_iport = iport;
 	m_shostname = sHostname;
-	m_iTcount = 0;
 	m_sbuffer.clear();
 	m_eCloseType = CLT_DONT;
 	m_bBLOCK = true;
@@ -2073,5 +2241,6 @@ void Csock::Init( const CS_STRING & sHostname, u_short iport, int itimeout )
 	m_iDNSTryCount = 0;
 	m_iCurBindCount = 0;
 	m_bIsIPv6 = false;
+	m_iLastCheckTimeoutTime = 0;
 }
 

@@ -199,6 +199,13 @@ private:
 class Csock;
 int GetAddrInfo( const CS_STRING & sHostname, Csock *pSock, CSSockAddr & csSockAddr );
 
+//! used to retrieve the context position of the socket to its associated ssl connection. Setup once in InitSSL() via SSL_get_ex_new_index
+int GetCsockClassIdx();
+
+//! returns the sock object associated to the particular context. returns NULL on failure or if not available
+Csock *GetCsockFromCTX( X509_STORE_CTX *pCTX );
+
+
 #if defined( _REENTRANT ) && defined( _USE_THREADED_DNS )
 #define ___DO_THREADS
 #include <pthread.h>
@@ -482,7 +489,8 @@ public:
 	{
 		SSL23				= 0,
 		SSL2				= 2,
-		SSL3				= 3
+		SSL3				= 3,
+		TLS1				= 4
 	};
 
 	enum ECONState
@@ -644,7 +652,7 @@ public:
 	u_int GetTimeoutType() const;
 
 	//! returns true if the socket has timed out
-	virtual bool CheckTimeout();
+	virtual bool CheckTimeout( time_t iNow );
 
 	/**
 	* pushes data up on the buffer, if a line is ready
@@ -787,7 +795,12 @@ public:
 
 	//! insert a newly created cron
 	virtual void AddCron( CCron * pcCron );
-	//! delete cron(s) by name
+	/**
+	 * @brief deletes a cron by name
+	 * @param sName the name of the cron
+	 * @param bDeleteAll delete all crons that match sName
+	 * @param bCaseSensitive use strcmp or strcasecmp
+	 */
 	virtual void DelCron( const CS_STRING & sName, bool bDeleteAll = true, bool bCaseSensitive = true );
 	//! delete cron by idx
 	virtual void DelCron( u_int iPos );
@@ -893,8 +906,14 @@ public:
 #endif /* HAVE_LIBSSL */
 
 
-	//! return how long it has been (in seconds) since the last write
-	int GetTimeSinceLastWrite() { return m_iTcount; }
+	//! return how long it has been (in seconds) since the last read or successful write
+	int GetTimeSinceLastDataTransaction( time_t iNow = 0 ) 
+	{ 
+		if( m_iLastCheckTimeoutTime == 0 )
+			return( 0 );
+		return( ( iNow > 0 ? iNow : time( NULL ) ) - m_iLastCheckTimeoutTime ); 
+	}
+	time_t GetLastCheckTimeout() { return( m_iLastCheckTimeoutTime ); }
 
 	//! return the data imediatly ready for read
 	virtual int GetPending();
@@ -957,13 +976,16 @@ public:
 	//! returns true if this socket can write its data, primarily used with rate shaping, initialize iNOW to 0 and it sets it on the first call
 	bool AllowWrite( unsigned long long & iNOW ) const;
 
+	//! returns a const reference to the crons associated to this socket
+	const std::vector<CCron *> & GetCrons() const { return( m_vcCrons ); }
+
 private:
 	//! making private for safety
 	Csock( const Csock & cCopy ) {}
 
 	// NOTE! if you add any new members, be sure to add them to Copy()
 	u_short		m_iport, m_iRemotePort, m_iLocalPort;
-	int			m_iReadSock, m_iWriteSock, m_itimeout, m_iConnType, m_iTcount, m_iMethod;
+	int			m_iReadSock, m_iWriteSock, m_itimeout, m_iConnType, m_iMethod, m_iTcount;
 	bool		m_bssl, m_bIsConnected, m_bBLOCK, m_bFullsslAccept;
 	bool		m_bsslEstablished, m_bEnableReadLine, m_bRequireClientCert, m_bPauseRead;
 	CS_STRING	m_shostname, m_sbuffer, m_sSockName, m_sPemFile, m_sCipherType, m_sParentName;
@@ -975,6 +997,7 @@ private:
 
 	CSSockAddr 		m_address, m_bindhost;
 	bool			m_bIsIPv6;
+	time_t			m_iLastCheckTimeoutTime;
 
 #ifdef HAVE_LIBSSL
 	SSL 				*m_ssl;
@@ -1117,7 +1140,7 @@ public:
 	}
 	virtual ~CSListener() {}
 
-	const u_short GetPort() const { return( m_iPort ); }
+	u_short GetPort() const { return( m_iPort ); }
 	const CS_STRING & GetSockName() const { return( m_sSockName ); }
 	const CS_STRING & GetBindHost() const { return( m_sBindHost ); }
 	bool GetIsSSL() const { return( m_bIsSSL ); }
@@ -1346,12 +1369,13 @@ public:
 		return( false );
 	}
 
+
 	/**
 	* Best place to call this class for running, all the call backs are called.
 	* You should through this in your main while loop (long as its not blocking)
 	* all the events are called as needed.
 	*/
-	virtual void Loop ()
+	virtual void Loop()
 	{
 		for( u_int a = 0; a < this->size(); a++ )
 		{
@@ -1423,7 +1447,6 @@ public:
 
 		std::map<T *, EMessages> mpeSocks;
 		Select( mpeSocks );
-		std::set<T *> spReadySocks;
 
 		switch( m_errno )
 		{
@@ -1520,7 +1543,7 @@ public:
 		}
 
 		unsigned long long iMilliNow = millitime();
-		if ( ( iMilliNow - m_iCallTimeouts ) > 1000 )
+		if ( ( iMilliNow - m_iCallTimeouts ) >= 1000 )
 		{
 			m_iCallTimeouts = iMilliNow;
 			// call timeout on all the sockets that recieved no data
@@ -1529,12 +1552,43 @@ public:
 				if ( (*this)[i]->GetConState() != T::CST_OK )
 					continue;
 
-				if ( (*this)[i]->CheckTimeout() )
+				if ( (*this)[i]->CheckTimeout( iMilliNow / 1000 ) )
 					DelSock( i-- );
 			}
 		}
 		// run any Manager Crons we may have
 		Cron();
+	}
+
+	/**
+	 * @brief this is similar to loop, except that it dynamically adjusts the select time based on jobs and timeouts in sockets
+	 *
+	 *	- This type of behavior only works well in a scenario where there is low traffic. If you use this then its because you
+	 *	- are trying to spare yourself some of those idle loops where nothing is done. If you try to use this code where you have lots of
+	 *	- connections and/or lots of traffic you might end up causing more CPU usage than just a plain Loop() with a static sleep of 500ms
+	 *	- its a trade off at some point, and you'll probably find out that the vast majority of the time and in most cases Loop() works fine
+	 *	- by itself. I've tried to mitigate that as much as possible by not having it change the select if the previous call to select
+	 *	- was not a timeout. Anyways .... Caveat Emptor.
+	 *	- Sample useage is cFoo.DynamicSelectLoop( 500000, 5000000 ); which basically says min of 500ms and max of 5s
+	 * 
+	 * @param iLowerBounds the lower bounds to use in MICROSECONDS
+	 * @param iUpperBounds the upper bounds to use in MICROSECONDS
+	 * @param iMaxResolution the maximum time to calculate overall in seconds
+	 */
+	void DynamicSelectLoop( u_long iLowerBounds, u_long iUpperBounds, time_t iMaxResolution = 3600 )
+	{
+		SetSelectTimeout( iLowerBounds );	
+		if( m_errno == SELECT_TIMEOUT )
+		{ // only do this if the previous call to select was a timeout
+			time_t iNow = time( NULL );
+			u_long iSelectTimeout = GetDynamicSleepTime( iNow, iMaxResolution );
+			iSelectTimeout *= 1000000;
+			iSelectTimeout = std::max( iLowerBounds, iSelectTimeout );
+			iSelectTimeout = std::min( iSelectTimeout, iUpperBounds );
+			if( iLowerBounds != iSelectTimeout )
+				SetSelectTimeout( iSelectTimeout );
+		}
+		Loop();
 	}
 
 	/**
@@ -1621,7 +1675,12 @@ public:
 		m_vcCrons.push_back( pcCron );
 	}
 
-	//! delete cron(s) by name
+	/**
+	 * @brief deletes a cron by name
+	 * @param sName the name of the cron
+	 * @param bDeleteAll delete all crons that match sName
+	 * @param bCaseSensitive use strcmp or strcasecmp
+	 */
 	virtual void DelCron( const CS_STRING & sName, bool bDeleteAll = true, bool bCaseSensitive = true )
 	{
 		for( u_int a = 0; a < m_vcCrons.size(); a++ )
@@ -1632,6 +1691,8 @@ public:
 				m_vcCrons[a]->Stop();
 				CS_Delete( m_vcCrons[a] );
 				m_vcCrons.erase( m_vcCrons.begin() + a-- );
+				if( !bDeleteAll )
+					break;
 			}
 		}
 	}
@@ -1662,10 +1723,10 @@ public:
 	}
 
 	//! Get the Select Timeout in MICROSECONDS ( 1000 == 1 millisecond )
-	u_int GetSelectTimeout() { return( m_iSelectWait ); }
+	u_long GetSelectTimeout() { return( m_iSelectWait ); }
 	//! Set the Select Timeout in MICROSECODS ( 1000 == 1 millisecond )
 	//! Setting this to 0 will cause no timeout to happen, Select() will return instantly
-	void  SetSelectTimeout( u_int iTimeout ) { m_iSelectWait = iTimeout; }
+	void  SetSelectTimeout( u_long iTimeout ) { m_iSelectWait = iTimeout; }
 
 	std::vector<CCron *> & GetCrons() { return( m_vcCrons ); }
 
@@ -1901,7 +1962,6 @@ private:
 			iSel = select(FD_SETSIZE, &rfds, &wfds, NULL, &tv);
 		else
 			iSel = select(FD_SETSIZE, &rfds, NULL, NULL, &tv);
-
 		if ( iSel == 0 )
 		{
 			if ( mpeSocks.empty() )
@@ -2038,6 +2098,38 @@ private:
 		}
 	}
 
+	time_t GetDynamicSleepTime( time_t iNow, time_t iMaxResolution = 3600 ) const
+	{
+		time_t iNextRunTime = iNow + iMaxResolution;
+		time_t iMinTimeout = iMaxResolution;
+		for( u_long a = 0; a < this->size() && iMinTimeout; a++ )
+		{
+			if( (*this)[a]->GetConState() != T::CST_OK )
+				iMinTimeout = 0; // this is in a nebulous state, need to let it proceed like normal
+
+			time_t iTimeoutInSeconds = (*this)[a]->GetTimeout();
+			if( iTimeoutInSeconds > 0 )
+			{
+				time_t iLastTimeData = (*this)[a]->GetLastCheckTimeout();
+				time_t iDiff = iNow - iLastTimeData;
+				if( iDiff > iTimeoutInSeconds )
+					iTimeoutInSeconds = 0;
+				else
+					iTimeoutInSeconds -= iDiff;
+			}
+			iMinTimeout = std::min( iMinTimeout, iTimeoutInSeconds );
+
+			const std::vector<CCron *> & vCrons = (*this)[a]->GetCrons();
+			for( u_long b = 0; b < vCrons.size(); b++ )
+				iNextRunTime = std::min( iNextRunTime, vCrons[b]->GetNextRun() );
+		}
+		for( u_long a = 0; a < m_vcCrons.size(); a++ )
+			iNextRunTime = std::min( iNextRunTime, m_vcCrons[a]->GetNextRun() );
+
+		if( iNextRunTime < iNow )
+			return( 0 ); // smallest unit possible
+		return( std::min( iNextRunTime - iNow, iMinTimeout ) );
+	}
 
 	//! internal use only
 	virtual void SelectSock( std::map<T *, EMessages> & mpeSocks, EMessages eErrno, T * pcSock )
@@ -2078,7 +2170,7 @@ private:
 	unsigned long long		m_iCallTimeouts;
 	unsigned long long		m_iBytesRead;
 	unsigned long long		m_iBytesWritten;
-	u_int					m_iSelectWait;
+	u_long					m_iSelectWait;
 };
 
 //! basic socket class
