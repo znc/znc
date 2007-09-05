@@ -49,14 +49,14 @@ protected:
 		vector<CClient*>& vClients = m_pUser->GetClients();
 		CIRCSock* pIRCSock = m_pUser->GetIRCSock();
 
-		if (pIRCSock && pIRCSock->GetTimeSinceLastWrite() >= 270) {
+		if (pIRCSock && pIRCSock->GetTimeSinceLastDataTransaction() >= 270) {
 			pIRCSock->PutIRC("PING :ZNC");
 		}
 
 		for (size_t a = 0; a < vClients.size(); a++) {
 			CClient* pClient = vClients[a];
 
-			if (pClient->GetTimeSinceLastWrite() >= 470) {
+			if (pClient->GetTimeSinceLastDataTransaction() >= 470) {
 				pClient->PutClient("PING :ZNC");
 			}
 		}
