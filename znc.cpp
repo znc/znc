@@ -241,8 +241,16 @@ void CZNC::ReleaseISpoof() {
 
 bool CZNC::WritePidFile(int iPid) {
 	if (!m_sPidFile.empty()) {
-		CFile File(m_sPidFile);
-		CUtils::PrintAction("Writing pid file [" + m_sPidFile + "]");
+		CString sFile;
+
+		// absolute path or relative to the data dir?
+		if (m_sPidFile[0] != '/')
+			sFile = GetZNCPath() + "/" + m_sPidFile;
+		else
+			sFile = m_sPidFile;
+
+		CFile File(sFile);
+		CUtils::PrintAction("Writing pid file [" + sFile + "]");
 
 		if (File.Open(O_WRONLY | O_TRUNC | O_CREAT)) {
 			File.Write(CString(iPid) + "\n");
@@ -1174,12 +1182,7 @@ bool CZNC::ParseConfig(const CString& sConfig) {
 					AddVHost(sValue);
 					continue;
 				} else if (sName.CaseCmp("PidFile") == 0) {
-					if (!sValue.empty() && sValue[0] != '/') {
-						m_sPidFile = GetZNCPath() + "/" + sValue;
-					} else {
-						m_sPidFile = sValue;
-					}
-
+					m_sPidFile = sValue;
 					continue;
 				} else if (sName.CaseCmp("StatusPrefix") == 0) {
 					m_sStatusPrefix = sValue;
