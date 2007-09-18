@@ -50,9 +50,9 @@ void CClient::ReadLine(const CString& sData) {
 			if ((m_bGotNick) && (m_bGotUser)) {
 				AuthUser();
 			}
-		}
 
-		return;		// Don't forward this msg.  ZNC has already registered us.
+			return;		// Don't forward this msg.  ZNC has already registered us.
+		}
 	} else if (sCommand.CaseCmp("NICK") == 0) {
 		CString sNick = sLine.Token(1);
 		if (sNick.Left(1) == ":") {
@@ -91,19 +91,23 @@ void CClient::ReadLine(const CString& sData) {
 			}
 		}
 	} else if (sCommand.CaseCmp("USER") == 0) {
-		if ((!m_bAuthed) && (m_sUser.empty())) {
-			m_sUser = sLine.Token(1);
+		if (!m_bAuthed) {
+			if (m_sUser.empty()) {
+				m_sUser = sLine.Token(1);
+			}
+
+			m_bGotUser = true;
+
+			if ((m_bGotPass) && (m_bGotNick)) {
+				AuthUser();
+			} else if (!m_bGotPass) {
+				PutClient(":irc.znc.com NOTICE AUTH :*** " +
+					"You need to send your password. " +
+					"Try /quote PASS <username>:<password>");
+			}
+
+			return;		// Don't forward this msg.  ZNC has already registered us.
 		}
-
-		m_bGotUser = true;
-
-		if ((m_bGotPass) && (m_bGotNick)) {
-			AuthUser();
-		} else if (!m_bGotPass) {
-			PutClient(":irc.znc.com NOTICE AUTH :*** You need to send your password. Try /quote PASS <username>:<password>");
-		}
-
-		return;		// Don't forward this msg.  ZNC has already registered us.
 	}
 
 	if (!m_pUser) {
