@@ -101,8 +101,8 @@ void CClient::ReadLine(const CString& sData) {
 			if ((m_bGotPass) && (m_bGotNick)) {
 				AuthUser();
 			} else if (!m_bGotPass) {
-				PutClient(":irc.znc.com NOTICE AUTH :*** " +
-					"You need to send your password. " +
+				PutClient(":irc.znc.com NOTICE AUTH :*** "
+					"You need to send your password. "
 					"Try /quote PASS <username>:<password>");
 			}
 
