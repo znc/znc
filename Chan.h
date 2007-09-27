@@ -128,7 +128,7 @@ public:
 	CString GetOptions() const;
 	CString GetModeArg(unsigned char uMode) const;
 	unsigned int GetPermCount(unsigned char uPerm);
-	const bool IsOn() const { return m_bIsOn; }
+	bool IsOn() const { return m_bIsOn; }
 	const CString& GetName() const { return m_sName; }
 	const map<unsigned char, CString>& GetModes() const { return m_musModes; }
 	const CString& GetKey() const { return (!m_sCurKey.empty()) ? m_sCurKey : m_sKey; }

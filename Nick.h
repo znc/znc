@@ -47,7 +47,7 @@ public:
 	// Getters
 	const set<unsigned char>& GetChanPerms() const;
 	CString GetPermStr() const;
-	const unsigned char GetPermChar() const;
+	unsigned char GetPermChar() const;
 	bool HasPerm(unsigned char uPerm) const;
 	const CString& GetNick() const;
 	const CString& GetIdent() const;

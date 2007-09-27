@@ -63,7 +63,7 @@ public:
 	const CString& GetName() const { return m_sName; }
 	unsigned long GetFilePosition() const { return m_uFilePosition; }
 	unsigned int GetRowIndex() const { return m_uRowIndex; }
-	const unsigned int GetRowCount() { return m_pvRows->size(); }
+	unsigned int GetRowCount() { return m_pvRows->size(); }
 	vector<CTemplate*>* GetRows() { return m_pvRows; }
 	CTemplate* GetNextRow() { return GetRow(IncRowIndex()); }
 	CTemplate* GetCurRow() { return GetRow(m_uRowIndex); }

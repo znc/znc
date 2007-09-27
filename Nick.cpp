@@ -122,7 +122,7 @@ void CNick::UpdatePermChar() {
 }
 
 const set<unsigned char>& CNick::GetChanPerms() const { return m_suChanPerms; }
-const unsigned char CNick::GetPermChar() const { return m_cPerm; }
+unsigned char CNick::GetPermChar() const { return m_cPerm; }
 CString CNick::GetPermStr() const {
 	CIRCSock* pIRCSock = (!m_pUser) ? NULL : m_pUser->GetIRCSock();
 	const CString& sChanPerms = (!pIRCSock) ? "@+" : pIRCSock->GetPerms();
