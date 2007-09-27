@@ -146,7 +146,7 @@ private:
 void CShellSock::ReadLine(const CString& sData) {
 	CString sLine = sData;
 
-	while ((sLine.length()) && (sLine[sLine.length() -1] == '\r') || (sLine[sLine.length() -1] == '\n')) {
+	while (sLine.length() && (sLine[sLine.length() -1] == '\r' || sLine[sLine.length() -1] == '\n')) {
 		sLine = sLine.substr(0, sLine.length() -1);
 	}
 
