@@ -159,7 +159,7 @@ public:
 		}
 
 		if (!sPort.empty()) {
-			m_uPort = sPort.ToUInt();
+			m_uPort = sPort.ToUShort();
 		}
 
 		CWebAdminSock* pListenSock = new CWebAdminSock(this);
@@ -213,7 +213,7 @@ public:
 	}
 
 private:
-	unsigned int				m_uPort;
+	unsigned short				m_uPort;
 	CString						m_sSkinName;
 	set<CWebAdminSock*>			m_spSocks;
 	CString						m_sListenHost;

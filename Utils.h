@@ -438,7 +438,7 @@ class CSafePtr : private CNoCopy {
 public:
 	CSafePtr() { m_pType = new T; }
 	CSafePtr(T* p) { m_pType = p; }
-	~CSafePtr() { delete m_pType; }
+	virtual ~CSafePtr() { delete m_pType; }
 
 	T& operator *() const { assert(m_pType); return *m_pType; }
 	T* operator ->() const { assert(m_pType); return m_pType; }
