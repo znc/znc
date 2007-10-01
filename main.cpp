@@ -61,6 +61,8 @@ int main(int argc, char** argv, char** envp) {
 	CString sConfig;
 	CString sDataDir = "";
 
+	srand(time(NULL));
+
 #ifdef HAVE_LIBSSL
 	InitSSL();
 #endif /* HAVE_LIBSSL */
