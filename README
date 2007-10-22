@@ -1,0 +1,117 @@
+ZNC - An advanced IRC bouncer
+=============================
+
+Table of contents:
+- Minimal Requirements
+- Optional Requirements
+- Installing ZNC
+- Setting up znc.conf
+- Using ZNC
+- File Locations
+- ZNC's config file
+- Writing own modules
+- Further infos
+
+Minimal Requirements
+--------------------
+
+Core:
+ - GNU make (try gmake if make fails)
+ - GCC 3 or later
+
+Optional Requirements
+---------------------
+
+SSL support:
+ - openssl 0.9.7d or later (try installing openssl-dev or openssl-devel)
+modperl:
+ - This needs perl and the bundled libperl
+saslauth:
+ - This module needs cyrus-sasl2
+
+Installing ZNC
+--------------
+
+Installation is done with the ./configure ; make ; make install commands.
+
+You can use
+  ./configure --help
+if you want to get a list of options, though the defaults should be suiting
+most needs. After you compiled it with make (or gmake if make doesnt work) you
+can install it with
+ make install
+though you don't need to as ZNC supports in-place execution.
+
+Setting up znc.conf
+-------------------
+
+For setting up a configuration file in ~/.znc you can simply do 
+ znc --makeconf
+or
+ ./znc --makeconf
+for in-place execution.
+
+If you are using SSL you should do
+ znc --makepem
+
+Using ZNC
+---------
+
+Once you have started ZNC you can connect with your favorite IRC-client to ZNC.
+You should use username:password as the server password (e.g. /pass user:pass).
+
+Once you are connected you can do /msg *status help for some commands.
+Every module you have loaded (/msg *status listmods) additionally gets
+ /msg *modulename help
+
+File Locations
+--------------
+
+In its data dir (~/.znc is default) ZNC saves most of its data. The only
+exception are modules, which are saved in <prefix>/libexec and the znc binary
+itself. More modules (e.g. if you install some later) can be saved in
+<data dir>/modules (-> ~/.znc/modules).
+
+In the datadir are only two files:
+ znc.pid - The pid of the currently running ZNC instance.
+ znc.pem - This is the server certificate ZNC uses for listening and is created
+           with znc --makepem.
+
+These directories are also in there:
+ configs - Contains znc.conf (ZNC's config file) and backups of older configs.
+ modules - ZNC also looks in here for a module.
+ moddata - Global modules save their settings here.
+           (e.g. webadmin saves the current skin name in here)
+ users - This is per-user data and mainly contains just a moddata directory.
+
+ZNC's config file
+-----------------
+
+This file shouldn't be too hard too understand. An explanation of all the
+items can be found here: http://en.znc.in/wiki/index.php/Configuration
+
+Currently it is NOT possible to rehash the config file so you better use
+webadmin or the admin module to change settings on-the-fly.
+
+Writing own modules
+-------------------
+
+You can write your own modules in either C++ or perl.
+
+C++ modules are compiled by either saving them in the modules source dir and
+running make or with the znc-buildmod shell script.
+
+For additional info look in the wiki:
+http://en.znc.in/wiki/index.php/WritingModules
+http://en.znc.in/wiki/index.php/ModuleHooks
+
+Perl modules are loaded through the global module modperl.
+See http://en.znc.in/wiki/index.php/Modperl
+
+Further infos
+-------------
+
+Please visit http://znc.sf.net or #znc on EFNet if you still have questions.
+
+You can get the latest development version with subversion:
+ svn checkout https://znc.svn.sourceforge.net/svnroot/znc/trunk znc
