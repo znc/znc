@@ -576,15 +576,11 @@ void CIRCSock::ReadLine(const CString& sData) {
 					MODULECALL(OnKick(Nick.GetNickMask(), sKickedNick, *pChan, sMsg), m_pUser, NULL, );
 				}
 
-				if (GetNick().CaseCmp(sKickedNick) == 0) {
-					CString sKey;
+				if (GetNick().CaseCmp(sKickedNick) == 0 && pChan) {
+					pChan->SetIsOn(false);
 
-					if (pChan) {
-						sKey = pChan->GetKey();
-						pChan->SetIsOn(false);
-					}
-
-					PutIRC("JOIN " + sChan + " " + sKey);
+					// Don't try to rejoin!
+					pChan->Disable();
 				}
 
 				if ((pChan) && (pChan->IsDetached())) {
