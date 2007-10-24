@@ -2405,7 +2405,7 @@ case $host_os in *\ *) host_os=`echo "$host_os" | sed 's/ /-/g'`;; esac
 
 
 
-CXXFLAGS="-D_GNU_SOURCE"
+CXXFLAGS="$CXXFLAGS -D_GNU_SOURCE"
 INCLUDES=""
 LIBS=""
 DEPEND=""
