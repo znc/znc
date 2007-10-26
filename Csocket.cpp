@@ -28,7 +28,7 @@
 * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 *
 *
-* $Revision$
+* $Revision: 1.58 $
 */
 
 #include "Csocket.h"
