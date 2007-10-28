@@ -295,7 +295,7 @@ public:
 	}
 	void UnSetUser() { m_pUser = NULL; }
 
-	virtual bool OnLoad( const CString & sArgs, CString & sErrorMsg );
+	virtual bool OnLoad( const CString & sArgs, CString & sMessage );
 	virtual void OnUserAttached() {  CBNone( "OnUserAttached" ); }
 	virtual void OnUserDetached() {  CBNone( "OnUserDetached" ); }
 	virtual void OnIRCDisconnected() {  CBNone( "OnIRCDisconnected" ); }
@@ -976,7 +976,7 @@ CModPerl::EModRet CModPerl::CallBack( const PString & sHookName, const VPString 
 // special case this, required for perl modules that are dynamic
 EXTERN_C void boot_DynaLoader (pTHX_ CV* cv);
 
-bool CModPerl::OnLoad( const CString & sArgs, CString & sErrorMsg ) 
+bool CModPerl::OnLoad( const CString & sArgs, CString & sMessage ) 
 {
 	m_pPerl = perl_alloc();
 	perl_construct( m_pPerl );

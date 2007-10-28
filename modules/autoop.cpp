@@ -132,7 +132,7 @@ class CAutoOpMod : public CModule {
 public:
 	MODCONSTRUCTOR(CAutoOpMod) {}
 
-	virtual bool OnLoad(const CString& sArgs, CString& sErrorMsg) {
+	virtual bool OnLoad(const CString& sArgs, CString& sMessage) {
 		AddTimer(new CAutoOpTimer(this));
 
 		// Load the users

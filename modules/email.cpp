@@ -101,7 +101,7 @@ public:
 			m_pManager->DelSockByAddr( vSocks[a] );
 	}
 
-	virtual bool OnLoad(const CString & sArgs, CString& sErrorMsg) {
+	virtual bool OnLoad(const CString & sArgs, CString& sMessage) {
 		m_sMailPath = sArgs;
 
 		StartParser();

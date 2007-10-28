@@ -29,7 +29,7 @@ class CSampleMod : public CModule {
 public:
 	MODCONSTRUCTOR(CSampleMod) {}
 
-	virtual bool OnLoad(const CString& sArgs, CString& sErrorMsg) {
+	virtual bool OnLoad(const CString& sArgs, CString& sMessage) {
 		PutModule("I'm being loaded with the arguments: [" + sArgs + "]");
 		//AddTimer(new CSampleTimer(this, 300, 0, "Sample", "Sample timer for sample things."));
 		//AddTimer(new CSampleTimer(this, 5, 20, "Another", "Another sample timer."));

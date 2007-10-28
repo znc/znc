@@ -27,7 +27,7 @@ public:
 	{
 	}
 
-	virtual bool OnLoad(const CString& sArgs, CString& sErrorMsg)
+	virtual bool OnLoad(const CString& sArgs, CString& sMessage)
 	{
 		if (sArgs.empty())
 			m_sPass = GetNV("Password");

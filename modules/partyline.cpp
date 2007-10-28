@@ -57,7 +57,7 @@ public:
 		return true;
 	}
 
-	virtual bool OnLoad(const CString& sArgs, CString& sErrorMsg) {
+	virtual bool OnLoad(const CString& sArgs, CString& sMessage) {
 		const map<CString, CUser*>& msUsers = CZNC::Get().GetUserMap();
 
 		for (map<CString, CUser*>::const_iterator it = msUsers.begin(); it != msUsers.end(); it++) {

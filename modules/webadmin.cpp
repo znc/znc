@@ -121,7 +121,7 @@ public:
 		return true;
 	}
 
-	virtual bool OnLoad(const CString& sArgStr, CString& sErrorMsg) {
+	virtual bool OnLoad(const CString& sArgStr, CString& sMessage) {
 		bool bSSL = false;
 		bool bIPv6 = false;
 		CString sArgs(sArgStr);
@@ -137,7 +137,7 @@ public:
 			} else if (sOpt.CaseCmp("-IPV4") == 0) {
 				bIPv6 = false;
 			} else {
-				sErrorMsg = "Unknown option [" + sOpt + "] valid options are -ipv4 or -ipv6";
+				sMessage = "Unknown option [" + sOpt + "] valid options are -ipv4 or -ipv6";
 				return false;
 			}
 		}
@@ -171,7 +171,7 @@ public:
 
 		bool b = m_pManager->ListenHost(m_uPort, "WebAdmin::Listener", m_sListenHost, bSSL, SOMAXCONN, pListenSock, 0, bIPv6);
 		if (!b) {
-			sErrorMsg = "Could not bind to port " + CString(m_uPort) + ": " + CString(strerror(errno));
+			sMessage = "Could not bind to port " + CString(m_uPort) + ": " + CString(strerror(errno));
 		}
 		return b;
 	}

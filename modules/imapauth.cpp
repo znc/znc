@@ -61,7 +61,7 @@ public:
 		return true;
 	}
 
-	virtual bool OnLoad(const CString& sArgs, CString& sErrorMsg) {
+	virtual bool OnLoad(const CString& sArgs, CString& sMessage) {
 		if (sArgs.Trim_n().empty()) {
 			return true;	// use defaults
 		}

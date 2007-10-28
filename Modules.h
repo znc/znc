@@ -214,7 +214,7 @@ public:
 	void SetClient(CClient* pClient);
 	void Unload();
 
-	virtual bool OnLoad(const CString& sArgsi, CString& sErrorMsg);
+	virtual bool OnLoad(const CString& sArgsi, CString& sMessage);
 	virtual bool OnBoot();
 	virtual void OnIRCDisconnected();
 	virtual void OnIRCConnected();

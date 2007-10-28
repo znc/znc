@@ -475,7 +475,7 @@ void CModule::ListSockets() {
 const CString& CModule::GetModName() const { return m_sModName; }
 CString CModule::GetModNick() const { return ((m_pUser) ? m_pUser->GetStatusPrefix() : "*") + m_sModName; }
 
-bool CModule::OnLoad(const CString& sArgs, CString& sErrorMsg) { sErrorMsg = ""; return true; }
+bool CModule::OnLoad(const CString& sArgs, CString& sMessage) { sMessage = ""; return true; }
 bool CModule::OnBoot() { return true; }
 void CModule::OnIRCDisconnected() {}
 void CModule::OnIRCConnected() {}
@@ -787,7 +787,12 @@ bool CModules::LoadModule(const CString& sModule, const CString& sArgs, CUser* p
 	}
 
 	pModule->SetArgs(sArgs);
-	sRetMsg = "Loaded module [" + sModule + "] [" + sModPath + "]";
+
+	if (!sRetMsg.empty()) {
+		sRetMsg = "Loaded module [" + sModule + "] [" + sRetMsg + "] [" + sModPath + "]";
+	} else {
+		sRetMsg = "Loaded module [" + sModule + "] [" + sModPath + "]";
+	}
 	return true;
 #endif // !_MODULES
 }

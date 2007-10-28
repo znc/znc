@@ -1053,7 +1053,11 @@ bool CZNC::ParseConfig(const CString& sConfig) {
 
 						try {
 							bool bModRet = pUser->GetModules().LoadModule(sModName, sArgs, pUser, sModRet);
-							CUtils::PrintStatus(bModRet, (bModRet) ? "" : sModRet);
+
+							if (bModRet)
+								sModRet = sModRet.Token(1, true, sModName + "] ");
+
+							CUtils::PrintStatus(bModRet, sModRet);
 							if (!bModRet) {
 								return false;
 							}
@@ -1159,7 +1163,11 @@ bool CZNC::ParseConfig(const CString& sConfig) {
 
 					try {
 						bool bModRet = GetModules().LoadModule(sModName, sArgs, NULL, sModRet);
-						CUtils::PrintStatus(bModRet, (bModRet) ? "" : sModRet);
+
+						if (bModRet)
+							sModRet = sModRet.Token(1, true, sModName + "] ");
+
+						CUtils::PrintStatus(bModRet, sModRet);
 						if (!bModRet) {
 							return false;
 						}

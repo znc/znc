@@ -135,7 +135,7 @@ public:
 			SaveBufferToDisk();
 	}
 
-	virtual bool OnLoad(const CString& sArgs, CString& sErrorMsg)
+	virtual bool OnLoad(const CString& sArgs, CString& sMessage)
 	{
 		CString sMyArgs = sArgs;
 		if (sMyArgs.Token(0) == "-notimer")
