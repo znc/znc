@@ -509,6 +509,7 @@ bool CUser::AddChan(const CString& sName, bool bInConfig) {
 bool CUser::DelChan(const CString& sName) {
 	for (vector<CChan*>::iterator a = m_vChans.begin(); a != m_vChans.end(); a++) {
 		if (sName.CaseCmp((*a)->GetName()) == 0) {
+			delete *a;
 			m_vChans.erase(a);
 			return true;
 		}

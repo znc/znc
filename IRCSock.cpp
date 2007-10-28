@@ -511,9 +511,13 @@ void CIRCSock::ReadLine(const CString& sData) {
 				}
 
 				CChan* pChan = m_pUser->FindChan(sChan);
+				bool bDetached = false;
 				if (pChan) {
 					pChan->RemNick(Nick.GetNick());
 					MODULECALL(OnPart(Nick.GetNickMask(), *pChan), m_pUser, NULL, );
+
+					if (pChan->IsDetached())
+						bDetached = true;
 				}
 
 				// Todo: use nick compare function
@@ -521,7 +525,13 @@ void CIRCSock::ReadLine(const CString& sData) {
 					m_pUser->DelChan(sChan);
 				}
 
-				if ((pChan) && (pChan->IsDetached())) {
+				/*
+				 * We use this boolean because
+				 * m_pUser->DelChan() will delete this channel
+				 * and thus we would dereference an
+				 * already-freed pointer!
+				 */
+				if (bDetached) {
 					return;
 				}
 			} else if (sCmd.CaseCmp("MODE") == 0) {
