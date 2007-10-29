@@ -334,39 +334,46 @@ void CIRCSock::ReadLine(const CString& sData) {
 
 					pChan->AddNicks(sNicks);
 
-					CString sTmp;
+					// Get everything except the actual user list
+					CString sTmp = sLine.Token(0, false, " :") + " :";
 					vector<CClient*>& vClients = m_pUser->GetClients();
+					CString sNick;
+
 					for (unsigned int a = 0; a < vClients.size(); a++) {
-						if((!m_bNamesx || vClients[a]->HasNamesx()) &&
-							(!m_bUHNames || vClients[a]->HasUHNames())) {
+						if ((!m_bNamesx || vClients[a]->HasNamesx())
+								&& (!m_bUHNames || vClients[a]->HasUHNames())) {
 							m_pUser->PutUser(sLine, vClients[a]);
 						} else {
-							sTmp = sLine.Token(0) + " ";
-							sTmp += sLine.Token(1) + " ";
-							sTmp += sLine.Token(2) + " ";
-							sTmp += sLine.Token(3) + " ";
-							sTmp += sLine.Token(4) + " :";
-							while(!sNicks.empty()) {
-								CString sNick = sNicks.Token(0);
-								sNicks = sNicks.Token(1, true);
-								if(m_bNamesx && !vClients[a]->HasNamesx()
+							unsigned int i = 0;
+							// This loop runs once more than there are nicks,
+							// the last run sets sNick to "" and causes the break.
+							do {
+								sNick = sNicks.Token(i);
+								if (m_bNamesx && !vClients[a]->HasNamesx()
 									&& IsPermChar(sNick[0])) {
-									while(sNick.length() > 2
-										&& IsPermChar(sNick[1])) {
+									// Server has, client hasnt NAMESX,
+									// so we just use the first perm char
+									while (sNick.length() > 2
+											&& IsPermChar(sNick[1])) {
 										sNick = sNick[0] + sNick.substr(2);
 									}
 								}
 
-								if(m_bUHNames && !vClients[a]->HasUHNames()) {
+								// Server has, client hasnt UHNAMES,
+								// so we strip away ident and host.
+								if (m_bUHNames && !vClients[a]->HasUHNames()) {
 									sNick = sNick.Token(0, false, "!");
 								}
 
 								sTmp += sNick + " ";
-							}
-							sTmp.RightChomp();
+								i++;
+							} while (!sNick.empty());
+							// Strip away the spaces we inserted at the end
+							sTmp.Trim(" ");
 							m_pUser->PutUser(sTmp, vClients[a]);
 						}
 					}
+					// We forwarded it in the for loop above already
 					return;
 				}
 				case 366: {	// end of names list
