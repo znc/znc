@@ -28,7 +28,7 @@
 * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 *
 *
-* $Revision: 1.174 $
+* $Revision: 1.175 $
 */
 
 // note to compile with win32 need to link to winsock2, using gcc its -lws2_32
@@ -223,8 +223,10 @@ int GetAddrInfo( const CS_STRING & sHostname, Csock *pSock, CSSockAddr & csSockA
 //! used to retrieve the context position of the socket to its associated ssl connection. Setup once in InitSSL() via SSL_get_ex_new_index
 int GetCsockClassIdx();
 
+#ifdef HAVE_LIBSSL
 //! returns the sock object associated to the particular context. returns NULL on failure or if not available
 Csock *GetCsockFromCTX( X509_STORE_CTX *pCTX );
+#endif /* HAVE_LIBSSL */
 
 
 #if defined( _REENTRANT ) && defined( _USE_THREADED_DNS )

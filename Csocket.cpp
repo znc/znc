@@ -28,7 +28,7 @@
 * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 *
 *
-* $Revision: 1.58 $
+* $Revision: 1.59 $
 */
 
 #include "Csocket.h"
@@ -51,6 +51,7 @@ int GetCsockClassIdx()
 	return( g_iCsockSSLIdx );
 }
 
+#ifdef HAVE_LIBSSL
 Csock *GetCsockFromCTX( X509_STORE_CTX *pCTX )
 {
 	Csock *pSock = NULL;
@@ -59,6 +60,8 @@ Csock *GetCsockFromCTX( X509_STORE_CTX *pCTX )
 		pSock = (Csock *)SSL_get_ex_data( pSSL, GetCsockClassIdx() );
 	return( pSock );
 }
+#endif /* HAVE_LIBSSL */
+
 
 #ifndef HAVE_IPV6
 
@@ -1575,11 +1578,17 @@ bool Csock::CheckTimeout( time_t iNow )
 	if( iNow > m_iLastCheckTimeoutTime )
 		iDiff = iNow - m_iLastCheckTimeoutTime;
 	else
-		m_iLastCheckTimeoutTime = iNow; // this is weird, but its possible if someone changes a clock and it went back in time, this essentially has to reset the last check
+	{
+		// this is weird, but its possible if someone changes a clock and it went back in time, this essentially has to reset the last check
+		// the worst case scenario is the timeout is about to it and the clock changes, it would then cause
+		// this to pass over the last half the time
+		m_iLastCheckTimeoutTime = iNow; 
+	}
 
 	if ( m_itimeout > 0 )
 	{
-		// this is basically to help stop a clock adjust on the box by a big bump
+		// this is basically to help stop a clock adjust ahead, stuff could reset immediatly on a clock jump
+		// otherwise
 		time_t iRealTimeout = m_itimeout;
 		if( iRealTimeout <= 1 )
 			m_iTcount++;
