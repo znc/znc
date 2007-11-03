@@ -28,7 +28,7 @@
 * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 *
 *
-* $Revision: 1.175 $
+* $Revision: 1.176 $
 */
 
 // note to compile with win32 need to link to winsock2, using gcc its -lws2_32
@@ -2132,8 +2132,9 @@ private:
 					iTimeoutInSeconds = 0;
 				else
 					iTimeoutInSeconds -= iDiff;
+			
+				iMinTimeout = std::min( iMinTimeout, iTimeoutInSeconds );
 			}
-			iMinTimeout = std::min( iMinTimeout, iTimeoutInSeconds );
 
 			const std::vector<CCron *> & vCrons = (*this)[a]->GetCrons();
 			for( u_long b = 0; b < vCrons.size(); b++ )
