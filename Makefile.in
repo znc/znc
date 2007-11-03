@@ -1,16 +1,16 @@
-CXX      = @CXX@
-CXXFLAGS = @CXXFLAGS@
-LDFLAGS  = @LDFLAGS@
-INCLUDES = @INCLUDES@
-LIBS     = @LIBS@
-prefix   = @prefix@
+CXX      := @CXX@
+CXXFLAGS := @CXXFLAGS@
+LDFLAGS  := @LDFLAGS@
+INCLUDES := @INCLUDES@
+LIBS     := @LIBS@
+prefix   := @prefix@
 
-SRCS = String.cpp Csocket.cpp main.cpp znc.cpp User.cpp IRCSock.cpp Client.cpp DCCBounce.cpp \
+SRCS := String.cpp Csocket.cpp main.cpp znc.cpp User.cpp IRCSock.cpp Client.cpp DCCBounce.cpp \
 	DCCSock.cpp Chan.cpp Nick.cpp Server.cpp Modules.cpp MD5.cpp Buffer.cpp Utils.cpp \
 	FileUtils.cpp HTTPSock.cpp Template.cpp
-OBJS = $(patsubst %cpp,%o,$(SRCS))
-CLEAN = znc znc-static *.o core core.*
-DISTCLEAN = Makefile config.log config.status znc-config .depend \
+OBJS := $(patsubst %cpp,%o,$(SRCS))
+CLEAN := znc znc-static *.o core core.*
+DISTCLEAN := Makefile config.log config.status znc-config .depend \
 	modules/.depend modules/Makefile
 
 .PHONY: all modules clean distclean install depend

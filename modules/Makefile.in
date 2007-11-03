@@ -1,35 +1,36 @@
-CXX      = @CXX@
-CXXFLAGS = @CXXFLAGS@
-LDFLAGS  = @LDFLAGS@
-INCLUDES = @INCLUDES@ -I..
-LIBS     = @LIBS@
-PERL     = @PERL@
-MODDIR   = @MODDIR@
-prefix   = @prefix@
-
-ifneq "$(PERL)" ""
-PERLCC   = -DHAVE_PERL `$(PERL) -MExtUtils::Embed -e perl_inc`
-PERLLD   = `$(PERL) -MExtUtils::Embed -e perl_inc -e ldopts`
-PERLHOOK = modperl_install
-else
-PERLHOOK =
-endif
+CXX      := @CXX@
+CXXFLAGS := @CXXFLAGS@
+LDFLAGS  := @LDFLAGS@
+INCLUDES := @INCLUDES@ -I..
+LIBS     := @LIBS@
+PERL     := @PERL@
+MODDIR   := @MODDIR@
+prefix   := @prefix@
 
 ifeq "@NOSSL@" "1" 
-FILES    = $(foreach file, $(wildcard *.cpp), \
+FILES    := $(foreach file, $(wildcard *.cpp), \
 	$(if $(shell grep REQUIRESSL $(file)), \
 		, \
 		$(basename $(file)) \
 	))
 else
-FILES    = $(basename $(wildcard *.cpp))
+FILES    := $(basename $(wildcard *.cpp))
 endif
 
-SRCS     = $(wildcard ../*.cpp) $(addsuffix .cpp, $(FILES))
-OBJS     = $(addsuffix .o, $(FILES))
-TARGETS  = $(addsuffix .so, $(FILES))
+ifneq "$(PERL)" ""
+PERLCC   := -DHAVE_PERL `$(PERL) -MExtUtils::Embed -e perl_inc`
+PERLLD   := `$(PERL) -MExtUtils::Embed -e perl_inc -e ldopts`
+PERLHOOK := modperl_install
+else
+PERLHOOK :=
+FILES    := $(shell echo $(FILES) | sed -e "s/modperl//")
+endif
 
-CLEAN    = *.so *.o
+SRCS     := $(wildcard ../*.cpp) $(addsuffix .cpp, $(FILES))
+OBJS     := $(addsuffix .o, $(FILES))
+TARGETS  := $(addsuffix .so, $(FILES))
+
+CLEAN    := *.so *.o
 
 .PHONY: all clean install depend modperl_install
 
