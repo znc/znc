@@ -118,6 +118,9 @@ void CUser::IRCDisconnected() {
 	for (unsigned int a = 0; a < m_vClients.size(); a++) {
 		m_vClients[a]->IRCDisconnected();
 	}
+
+	// Get the reconnect going
+	CZNC::Get().EnableConnectUser();
 }
 
 CString CUser::ExpandString(const CString& sStr) const {

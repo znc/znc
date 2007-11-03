@@ -87,6 +87,8 @@ private:
 protected:
 };
 
+class CConnectUserTimer;
+
 class CZNC {
 public:
 	CZNC();
@@ -160,6 +162,14 @@ public:
 	const VCString& GetMotd() const { return m_vsMotd; }
 	// !MOTD
 
+	// Create a CIRCSocket. Return false if user cant connect
+	bool ConnectUser(CUser *pUser);
+	// This creates a CConnectUserTimer if we haven't got one yet
+	void EnableConnectUser();
+	void DisableConnectUser();
+	// This needs to be called if anything was added / removed to m_msUsers
+	void RestartConnectUser();
+
 private:
 protected:
 	vector<CListener*>		m_vpListeners;
@@ -185,13 +195,13 @@ protected:
 	VCString				m_vsMotd;
 	CLockFile				m_LockFile;
 	CLockFile*				m_pISpoofLockFile;
-	map<CString,CUser*>::iterator	m_itUserIter;	// This needs to be reset to m_msUsers.begin() if anything is added or removed to the map
 	uint					m_uiConnectDelay;
 #ifdef _MODULES
 	CGlobalModules*			m_pModules;
 #endif
 	unsigned long long		m_uBytesRead;
 	unsigned long long		m_uBytesWritten;
+	CConnectUserTimer		*m_pConnectUserTimer;
 };
 
 class CListener {

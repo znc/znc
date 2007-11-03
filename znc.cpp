@@ -30,6 +30,7 @@ CZNC::CZNC() {
 	SetISpoofFormat(""); // Set ISpoofFormat to default
 	m_uBytesRead = 0;
 	m_uBytesWritten = 0;
+	m_pConnectUserTimer = NULL;
 }
 
 CZNC::~CZNC() {
@@ -52,6 +53,7 @@ CZNC::~CZNC() {
 		a->second->SetBeingDeleted(true);
 	}
 
+	// This deletes m_pConnectUserTimer
 	m_Manager.Cleanup();
 	DeleteUsers();
 
@@ -88,10 +90,55 @@ bool CZNC::OnBoot() {
 	return true;
 }
 
+bool CZNC::ConnectUser(CUser *pUser) {
+	CString sSockName = "IRC::" + pUser->GetUserName();
+	CIRCSock* pIRCSock = (CIRCSock*) m_Manager.FindSockByName(sSockName);
+
+	if (m_pISpoofLockFile != NULL) {
+		return false;
+	}
+
+
+	if (pIRCSock || !pUser->HasServers())
+		return false;
+
+	if (pUser->ConnectPaused())
+		return false;
+
+	CServer* pServer = pUser->GetNextServer();
+
+	if (!pServer)
+		return false;
+
+	if (!WriteISpoof(pUser)) {
+		DEBUG_ONLY(cout << "ISpoof could not be written" << endl);
+		pUser->PutStatus("ISpoof could not be written, retrying...");
+		return true;
+	}
+
+	DEBUG_ONLY(cout << "User [" << pUser->GetUserName() << "] is connecting to [" << pServer->GetName() << ":" << pServer->GetPort() << "] ..." << endl);
+	pUser->PutStatus("Attempting to connect to [" + pServer->GetName() + ":" + CString(pServer->GetPort()) + "] ...");
+
+	pIRCSock = new CIRCSock(pUser);
+	pIRCSock->SetPass(pServer->GetPass());
+
+	bool bSSL = false;
+#ifdef HAVE_LIBSSL
+	if (pServer->IsSSL()) {
+		bSSL = true;
+	}
+#endif
+
+	if (!m_Manager.Connect(pServer->GetName(), pServer->GetPort(), sSockName, 20, bSSL, pUser->GetVHost(), pIRCSock)) {
+		ReleaseISpoof();
+		pUser->PutStatus("Unable to connect. (Bad host?)");
+	}
+
+	return true;
+}
+
 int CZNC::Loop() {
-	m_Manager.SetSelectTimeout(500000);
-	m_itUserIter = m_msUsers.begin();
-	time_t tNextConnect = 0;
+	EnableConnectUser();
 
 	while (true) {
 		// Check for users that need to be deleted
@@ -124,73 +171,13 @@ int CZNC::Loop() {
 			}
 
 			m_ssDelUsers.clear();
-			m_itUserIter = m_msUsers.begin();
+			RestartConnectUser();
 			WriteConfig();
 		}
 
-		m_Manager.Loop();
-
-		if (m_pISpoofLockFile != NULL) {
-			continue;
-		}
-
-		if (m_itUserIter == m_msUsers.end()) {
-			m_itUserIter = m_msUsers.begin();
-		}
-
-		if (m_msUsers.empty()) {
-			usleep(10000);
-			continue;
-		}
-
-		if (tNextConnect > time(NULL)) {
-			continue;
-		}
-
-		CString sSockName = "IRC::" + m_itUserIter->first;
-		CUser* pUser = m_itUserIter->second;
-
-		m_itUserIter++;
-
-		CIRCSock* pIRCSock = (CIRCSock*) m_Manager.FindSockByName(sSockName);
-
-		if (!pIRCSock && pUser->HasServers()) {
-			if (pUser->ConnectPaused() && pUser->IsLastServer()) {
-				continue;
-			}
-
-			CServer* pServer = pUser->GetNextServer();
-
-			if (!pServer) {
-				continue;
-			}
-
-			tNextConnect = time(NULL) + m_uiConnectDelay;
-
-			if(!WriteISpoof(pUser)) {
-				DEBUG_ONLY(cout << "ISpoof could not be written" << endl);
-				pUser->PutStatus("ISpoof could not be written, retrying...");
-				continue;
-			}
-
-			DEBUG_ONLY(cout << "User [" << pUser->GetUserName() << "] is connecting to [" << pServer->GetName() << ":" << pServer->GetPort() << "] ..." << endl);
-			pUser->PutStatus("Attempting to connect to [" + pServer->GetName() + ":" + CString(pServer->GetPort()) + "] ...");
-
-			pIRCSock = new CIRCSock(pUser);
-			pIRCSock->SetPass(pServer->GetPass());
-
-			bool bSSL = false;
-#ifdef HAVE_LIBSSL
-			if (pServer->IsSSL()) {
-				bSSL = true;
-			}
-#endif
-
-			if (!m_Manager.Connect(pServer->GetName(), pServer->GetPort(), sSockName, 20, bSSL, pUser->GetVHost(), pIRCSock)) {
-				ReleaseISpoof();
-				pUser->PutStatus("Unable to connect. (Bad host?)");
-			}
-		}
+		// Csocket wants micro seconds
+		// between 5 to 600 secs
+		m_Manager.DynamicSelectLoop(5 * 1000 * 1000, 600 * 1000 * 1000);
 	}
 
 	return 0;
@@ -314,7 +301,7 @@ void CZNC::DeleteUsers() {
 	}
 
 	m_msUsers.clear();
-	m_itUserIter = m_msUsers.begin();
+	RestartConnectUser();
 }
 
 CUser* CZNC::GetUser(const CString& sUser) {
@@ -1345,3 +1332,75 @@ void CZNC::UpdateTrafficStats() {
 	}
 }
 
+class CConnectUserTimer : public CCron {
+public:
+	CConnectUserTimer(int iSecs) : CCron() {
+		SetName("Connect users");
+		Start(iSecs);
+		m_itUserIter = CZNC::Get().GetUserMap().begin();
+	}
+	virtual ~CConnectUserTimer() {}
+
+protected:
+	virtual void RunJob() {
+		CUser *pStartedUser;
+		map<CString,CUser*>::const_iterator end;
+		bool bUserWithoutIRC = false;
+
+		pStartedUser = m_itUserIter->second;
+		end = CZNC::Get().GetUserMap().end();
+
+		// Try to connect each user, if this doesnt work, abort
+		do {
+			if (m_itUserIter == end) {
+				m_itUserIter = CZNC::Get().GetUserMap().begin();
+			}
+
+			CUser* pUser = m_itUserIter->second;
+
+			m_itUserIter++;
+
+			if (pUser->GetIRCSock() == NULL)
+				bUserWithoutIRC = true;
+
+			if (CZNC::Get().ConnectUser(pUser))
+				return;
+		} while (pStartedUser != m_itUserIter->second);
+
+		if (bUserWithoutIRC == false)
+			CZNC::Get().DisableConnectUser();
+	}
+
+private:
+	map<CString,CUser*>::const_iterator	m_itUserIter;
+};
+
+void CZNC::EnableConnectUser() {
+	if (m_pConnectUserTimer != NULL)
+		return;
+
+	m_pConnectUserTimer = new CConnectUserTimer(m_uiConnectDelay);
+	GetManager().AddCron(m_pConnectUserTimer);
+}
+
+void CZNC::DisableConnectUser() {
+	if (m_pConnectUserTimer == NULL)
+		return;
+
+	// This will kill the cron
+	m_pConnectUserTimer->Stop();
+	m_pConnectUserTimer = NULL;
+}
+
+void CZNC::RestartConnectUser() {
+	DisableConnectUser();
+
+	map<CString, CUser*>::iterator end = m_msUsers.end();
+	for (map<CString,CUser*>::iterator it = m_msUsers.begin(); it != end; it++) {
+		// If there is a user without irc socket we need the timer
+		if (it->second->GetIRCSock() == NULL) {
+			EnableConnectUser();
+			return;
+		}
+	}
+}
