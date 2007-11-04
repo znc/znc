@@ -42,16 +42,16 @@ all: $(OBJS) $(TARGETS)
 depend: .depend
 
 install: all create_install_dir install_metadirs $(PERLHOOK)
-	install -m 0755 $(TARGETS) $(DESTDIR)$(MODDIR)/znc
+	install -m 0755 $(TARGETS) $(DESTDIR)$(MODDIR)
 
 create_install_dir:
-	mkdir -p $(DESTDIR)$(MODDIR)/znc
-	rm -rf $(DESTDIR)$(MODDIR)/znc/*.so
+	mkdir -p $(DESTDIR)$(MODDIR)
+	rm -rf $(DESTDIR)$(MODDIR)/*.so
 
 install_metadirs: create_install_dir
 	for a in *; do \
 		if [ -d $$a ] && [ -f $${a}.so ]; then \
-			cp -Rp $$a $(DESTDIR)$(MODDIR)/znc; \
+			cp -Rp $$a $(DESTDIR)$(MODDIR); \
 		fi \
 	done
 
@@ -73,7 +73,7 @@ modperl.o: modperl.cpp
 
 modperl_install: create_install_dir
 	for i in *.pm; do \
-		install -m 0755 $$i $(DESTDIR)$(MODDIR)/znc; \
+		install -m 0755 $$i $(DESTDIR)$(MODDIR); \
 	done
 else
 modperl.so:

@@ -3626,7 +3626,7 @@ fi
 if test "${with_module_prefix+set}" = set; then
   withval=$with_module_prefix; MODDIR=$withval
 else
-  MODDIR="${prefix}/libexec"
+  MODDIR="${prefix}/libexec/znc"
 fi
 
 
@@ -3726,7 +3726,7 @@ fi
 			MODFLAGS="$MODFLAGS -mimpure-text"
 		fi
 
-		appendCXX "-D_MODDIR_=\\\"${MODDIR}/znc\\\""
+		appendCXX "-D_MODDIR_=\\\"${MODDIR}\\\""
 
 		if test -z "$NOPERL"; then
 			echo -n "checking for perl... "

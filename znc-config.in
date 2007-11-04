@@ -3,13 +3,15 @@
 CXXFLAGS="@CXXFLAGS@"
 INCLUDES="-I@prefix@/include/znc @INCLUDES@"
 LIBS="@LIBS@"
+MODDIR="@MODDIR@"
 VERSION="@VERSION@"
 
 if test -z "$1"; then
-	echo "USAGE: $0 <--cflags|--include|--libs|--version>"
+	echo "USAGE: $0 <--cflags|--include|--libs|--moddir|--version|--prefix>"
 	echo "	--cflags     [$CXXFLAGS]"
 	echo "	--include    [$INCLUDES]"
 	echo "	--libs       [$LIBS]"
+	echo "	--moddir     [$MODDIR]"
 	echo "	--version    [$VERSION]"
 	echo "	--prefix     [@prefix@]"
 	exit 1
@@ -22,6 +24,8 @@ case $1 in
 		echo $INCLUDES;;
 	--libs)
 		echo $LIBS;;
+	--moddir)
+		echo $MODDIR;;
 	--version)
 		echo $VERSION;;
 	--prefix)

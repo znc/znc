@@ -127,7 +127,7 @@ fi
 AC_ARG_WITH( [module-prefix],
 	AC_HELP_STRING([--with-module-prefix=/path/to/moduledir], []),
 	[MODDIR=$withval],
-	[MODDIR="${prefix}/libexec"] )
+	[MODDIR="${prefix}/libexec/znc"] )
 
 if test "$MODULES" = "yes"; then
 	if test -z "$NOCHECK_DL"; then
@@ -151,7 +151,7 @@ if test "$MODULES" = "yes"; then
 			MODFLAGS="$MODFLAGS -mimpure-text"
 		fi
 
-		appendCXX "-D_MODDIR_=\\\"${MODDIR}/znc\\\""
+		appendCXX "-D_MODDIR_=\\\"${MODDIR}\\\""
 
 		if test -z "$NOPERL"; then
 			echo -n "checking for perl... "
