@@ -28,7 +28,7 @@
 * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 *
 *
-* $Revision: 1.176 $
+* $Revision: 1.177 $
 */
 
 // note to compile with win32 need to link to winsock2, using gcc its -lws2_32
@@ -1863,9 +1863,8 @@ private:
 		struct timeval tv;
 		fd_set rfds, wfds;
 
-		tv.tv_sec = 0;
-		tv.tv_usec = m_iSelectWait;
-
+		tv.tv_sec = m_iSelectWait / 1000000;
+		tv.tv_usec = m_iSelectWait % 1000000;
 		u_int iQuickReset = 100;
 		if ( m_iSelectWait == 0 )
 			iQuickReset = 0;
@@ -1914,6 +1913,7 @@ private:
 				if ( ( pcSock->GetSSL() ) && ( pcSock->GetType() == T::INBOUND ) && ( !pcSock->FullSSLAccept() ) )
 				{
 					tv.tv_usec = iQuickReset;	// just make sure this returns quick incase we still need pending
+					tv.tv_sec = 0;
 					// try accept on this socket again
 					if ( !pcSock->AcceptSSL() )
 						pcSock->Close();
@@ -1969,9 +1969,15 @@ private:
 		int iSel;
 
 		if ( !mpeSocks.empty() ) // .1 ms pause to see if anything else is ready (IE if there is SSL data pending, don't wait too long)
+		{
 			tv.tv_usec = iQuickReset;
+			tv.tv_sec = 0;
+		}
 		else if ( ( !this->empty() ) && ( !bHasAvailSocks ) )
+		{
 			tv.tv_usec = iQuickReset;
+			tv.tv_sec = 0;
+		}
 
 
 		if ( bHasWriteable )
