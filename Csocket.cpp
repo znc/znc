@@ -28,7 +28,7 @@
 * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 *
 *
-* $Revision: 1.59 $
+* $Revision: 1.60 $
 */
 
 #include "Csocket.h"
@@ -87,18 +87,32 @@ static int __GetHostByName( const CS_STRING & sHostName, struct in_addr *paddr, 
 			break;
 
 		if ( iReturn != TRY_AGAIN )
+		{
+			CS_DEBUG( "gethostyname_r: " << hstrerror( h_errno ) );
 			break;
+		}
 
-		PERROR( "gethostbyname_r" );
 	}
 	if ( ( !hent ) && ( iReturn == 0 ) )
 		iReturn = HOST_NOT_FOUND;
 #else
-	hent = gethostbyname( sHostName.c_str() );
-	PERROR( "gethostbyname" );
+	for( u_int a = 0; a < iNumRetries; a++ )
+	{
+		iReturn = HOST_NOT_FOUND;
+		hent = gethostbyname( sHostName.c_str() );
 
-	if ( hent )
-		iReturn = 0;
+		if ( hent )
+		{
+			iReturn = 0;
+			break;
+		}
+
+		if( h_errno != TRY_AGAIN )
+		{
+			CS_DEBUG( "gethostyname: " << hstrerror( h_errno ) );
+			break;
+		}
+	}
 
 #endif /* __linux__ */
 
