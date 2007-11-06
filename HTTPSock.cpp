@@ -331,7 +331,7 @@ bool CHTTPSock::PrintHeader(unsigned long uContentLength, const CString& sConten
 
 	Write("HTTP/1.0 " + CString(uStatusId) + " " + sStatusMsg + "\r\n");
 	//Write("Date: Tue, 28 Jun 2005 20:45:36 GMT\r\n");
-	Write("Server: ZNC " + CZNC::GetTag() + "\r\n");
+	Write("Server: " + CZNC::GetTag() + "\r\n");
 	Write("Content-Length: " + CString(uContentLength) + "\r\n");
 	Write("Connection: Close\r\n");
 	Write("Content-Type: " + m_sContentType + "\r\n");
