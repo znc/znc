@@ -28,7 +28,7 @@
 * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 *
 *
-* $Revision: 1.177 $
+* $Revision: 1.178 $
 */
 
 // note to compile with win32 need to link to winsock2, using gcc its -lws2_32
@@ -102,7 +102,7 @@
 #endif /* CS_DEBUG */
 
 #ifdef __DEBUG__
-#	define PERROR( f ) __Perror( f )
+#	define PERROR( f ) __Perror( f, __FILE__, __LINE__ )
 #else
 #	define PERROR( f )	(void)0
 #endif /* __DEBUG__ */
@@ -377,7 +377,7 @@ inline void TFD_CLR( u_int iSock, fd_set *set )
 	FD_CLR( iSock, set );
 }
 
-void __Perror( const CS_STRING & s );
+void __Perror( const CS_STRING & s, const char *pszFile, unsigned int iLineNo );
 unsigned long long millitime();
 
 

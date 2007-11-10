@@ -28,7 +28,7 @@
 * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 *
 *
-* $Revision: 1.60 $
+* $Revision: 1.61 $
 */
 
 #include "Csocket.h"
@@ -390,17 +390,17 @@ void SSLErrors( const char *filename, u_int iLineNum )
 }
 #endif /* HAVE_LIBSSL */
 
-void __Perror( const CS_STRING & s )
+void __Perror( const CS_STRING & s, const char *pszFile, unsigned int iLineNo )
 {
 #if defined(__sun) || defined(_WIN32) || __NetBSD_Version__ < 4000000000
-	CS_DEBUG( s << ": " << strerror( GetSockError() ) );
+	std::cerr << s << "(" << pszFile << ":" << iLineNo << "): " << strerror( GetSockError() ) << endl;
 #else
 	char buff[512];
 	memset( (char *)buff, '\0', 512 );
 	if ( strerror_r( GetSockError(), buff, 511 ) == 0 )
-		CS_DEBUG( s << ": " << buff );
+		std::cerr << s << "(" << pszFile << ":" << iLineNo << "): " << buff << endl;
 	else
-		CS_DEBUG( s << ": Unknown Error Occured" );
+		std::cerr << s << "(" << pszFile << ":" << iLineNo << "): Unknown Error Occured " << endl;
 #endif /* __sun */
 }
 
