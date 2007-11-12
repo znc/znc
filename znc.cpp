@@ -1041,6 +1041,8 @@ bool CZNC::ParseConfig(const CString& sConfig) {
 						try {
 							bool bModRet = pUser->GetModules().LoadModule(sModName, sArgs, pUser, sModRet);
 
+							// If the module was loaded, sModRet contains
+							// "Loaded Module [name] ..." and we strip away this beginning.
 							if (bModRet)
 								sModRet = sModRet.Token(1, true, sModName + "] ");
 
@@ -1151,6 +1153,8 @@ bool CZNC::ParseConfig(const CString& sConfig) {
 					try {
 						bool bModRet = GetModules().LoadModule(sModName, sArgs, NULL, sModRet);
 
+						// If the module was loaded, sModRet contains
+						// "Loaded Module [name] ..." and we strip away this beginning.
 						if (bModRet)
 							sModRet = sModRet.Token(1, true, sModName + "] ");
 
