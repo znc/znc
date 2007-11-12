@@ -54,9 +54,14 @@ public:
 			else
 				delay = sDelay.ToUInt();
 		} else {
-			delay = sArgs.ToInt();
-			if (delay < 0)
-				delay = 0;
+			int i = sArgs.ToInt();
+			if ((i == 0 && sArgs == "0") || i > 0)
+				delay = i;
+			else {
+				sErrorMsg = "Illegal argument, "
+					"must be a positive number or 0";
+				return false;
+			}
 		}
 
 		return true;
