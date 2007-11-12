@@ -83,15 +83,9 @@ public:
 					PutModule(CString( i ) + ": " + *it);
 			}
 			PutModule(" -- End of List");
-		} else if(sCmdName == "save")
-		{
-			if(Save())
-				PutModule("Saved!");
-			else
-				PutModule("Error");
 		}else
 		{
-			PutModule( "Commands: add <command>, del <nr>, list, save");
+			PutModule( "Commands: add <command>, del <nr>, list");
 		}
 	}
 
