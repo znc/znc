@@ -63,10 +63,22 @@ public:
 				DelNV( it );
 
 			PutModule( "UnStuck " + sChannel );
-		}	
+		}
+		else if ( ( sCmdName == "list" ) && ( sChannel.empty() ) )
+		{
+			int i = 1;
+			for( MCString::iterator it = BeginNV(); it != EndNV(); it++, i++ )
+			{
+				if (it->second.empty())
+					PutModule(CString( i ) + ": " + it->first);
+				else
+					PutModule(CString( i ) + ": " + it->first + " (" + it->second + ")");
+			}
+			PutModule(" -- End of List");
+		}
 		else
 		{
-			PutModule( "USAGE: [un]stick #channel [key]" );
+			PutModule( "USAGE: [un]stick #channel [key], list" );
 		}
 	}
 
