@@ -2503,10 +2503,12 @@ if test "${enable_perl+set}" = set; then
 fi
 
 
+appendCXX -Wall -Wextra -Wno-unused
+
 if test "$DEBUG" != "no"; then
-	appendCXX -Wall -ggdb -D_DEBUG
+	appendCXX -ggdb -D_DEBUG
 else
-	appendCXX -Wall -O2 -fomit-frame-pointer
+	appendCXX -O2 -fomit-frame-pointer
 fi
 
 if test "$IPV6" != "no"; then
