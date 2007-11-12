@@ -1002,7 +1002,7 @@ void CUser::SetIRCNick(const CNick& n) {
 }
 
 bool CUser::AddCTCPReply(const CString& sCTCP, const CString& sReply) {
-	if (sCTCP.empty() || sReply.empty()) {
+	if (sCTCP.empty()) {
 		return false;
 	}
 

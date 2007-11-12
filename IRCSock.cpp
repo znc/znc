@@ -776,6 +776,7 @@ bool CIRCSock::OnPrivCTCP(CNick& Nick, CString& sMessage) {
 		const MCString& mssCTCPReplies = m_pUser->GetCTCPReplies();
 		MCString::const_iterator it = mssCTCPReplies.find(sMessage.AsUpper());
 		CString sQuery = sMessage.Token(0).AsUpper();
+		bool bHaveReply = false;
 		CString sReply;
 
 		if (it == mssCTCPReplies.end()) {
@@ -784,9 +785,10 @@ bool CIRCSock::OnPrivCTCP(CNick& Nick, CString& sMessage) {
 
 		if (it != mssCTCPReplies.end()) {
 			sReply = it->second;
+			bHaveReply = true;
 		}
 
-		if (sReply.empty() && !m_pUser->IsUserAttached()) {
+		if (!bHaveReply && !m_pUser->IsUserAttached()) {
 			if (sQuery == "VERSION") {
 				sReply = CZNC::GetTag();
 			} else if (sQuery == "PING") {
