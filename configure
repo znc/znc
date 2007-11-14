@@ -2503,7 +2503,7 @@ if test "${enable_perl+set}" = set; then
 fi
 
 
-appendCXX -Wall -Wextra -Wno-unused
+appendCXX -Wall -W -Wno-unused
 
 if test "$DEBUG" != "no"; then
 	appendCXX -ggdb -D_DEBUG
