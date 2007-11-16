@@ -51,6 +51,7 @@ public:
 	void PutIRC(const CString& sLine);
 	void ParseISupport(const CString& sLine);
 	void ResetChans();
+	void Quit();
 
 	// Setters
 	void SetPass(const CString& s) { m_sPass = s; }

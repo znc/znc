@@ -55,10 +55,15 @@ CIRCSock::~CIRCSock() {
 		CZNC::Get().ReleaseISpoof();
 	}
 
-	PutIRC("QUIT :" + m_pUser->GetQuitMsg());
+	Quit();
 	m_msChans.clear();
 	GetUser()->AddBytesRead(GetBytesRead());
 	GetUser()->AddBytesWritten(GetBytesWritten());
+}
+
+void CIRCSock::Quit() {
+	PutIRC("QUIT :" + m_pUser->GetQuitMsg());
+	Close(CLT_AFTERWRITE);
 }
 
 void CIRCSock::ReadLine(const CString& sData) {
@@ -195,14 +200,14 @@ void CIRCSock::ReadLine(const CString& sData) {
 						} else {
 							char cLetter = 0;
 							if (sBadNick.empty()) {
-								Close();
+								Quit();
 								return;
 							}
 
 							cLetter = sBadNick.Right(1)[0];
 
 							if (cLetter == 'z') {
-								Close();
+								Quit();
 								return;
 							}
 
@@ -897,8 +902,8 @@ void CIRCSock::Disconnected() {
 	MODULECALL(OnIRCDisconnected(), m_pUser, NULL, );
 
 	DEBUG_ONLY(cout << GetSockName() << " == Disconnected()" << endl);
-	if (!m_pUser->IsBeingDeleted()) {
-		m_pUser->PutStatus("Disconnected from IRC.  Reconnecting...");
+	if (!m_pUser->IsBeingDeleted() && m_pUser->GetIRCConnectEnabled()) {
+		m_pUser->PutStatus("Disconnected from IRC. Reconnecting...");
 	}
 	m_pUser->ClearRawBuffer();
 	m_pUser->ClearMotdBuffer();

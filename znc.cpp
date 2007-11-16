@@ -1347,15 +1347,15 @@ public:
 
 protected:
 	virtual void RunJob() {
-		CUser *pStartedUser;
+		unsigned int uiUserCount;
 		map<CString,CUser*>::const_iterator end;
-		bool bUserWithoutIRC = false;
+		bool bUsersLeft = false;
 
-		pStartedUser = m_itUserIter->second;
+		uiUserCount = CZNC::Get().GetUserMap().size();
 		end = CZNC::Get().GetUserMap().end();
 
 		// Try to connect each user, if this doesnt work, abort
-		do {
+		for (unsigned int i = 0; i < uiUserCount; i++) {
 			if (m_itUserIter == end) {
 				m_itUserIter = CZNC::Get().GetUserMap().begin();
 			}
@@ -1364,14 +1364,16 @@ protected:
 
 			m_itUserIter++;
 
-			if (pUser->GetIRCSock() == NULL)
-				bUserWithoutIRC = true;
+			// Is this user disconnected and does he want to connect?
+			if (pUser->GetIRCSock() == NULL && pUser->GetIRCConnectEnabled())
+				bUsersLeft = true;
 
 			if (CZNC::Get().ConnectUser(pUser))
+				// Wait until next time timer fires
 				return;
-		} while (pStartedUser != m_itUserIter->second);
+		}
 
-		if (bUserWithoutIRC == false)
+		if (bUsersLeft == false)
 			CZNC::Get().DisableConnectUser();
 	}
 

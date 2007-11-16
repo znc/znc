@@ -50,6 +50,7 @@ CUser::CUser(const CString& sUserName) {
 	m_sTimestampFormat = "[%H:%M:%S]";
 	m_bAppendTimestamp = false;
 	m_bPrependTimestamp = true;
+	m_bIRCConnectEnabled = true;
 	m_pKeepNickTimer = new CKeepNickTimer(this);
 	m_pJoinTimer = new CJoinTimer(this);
 	m_pMiscTimer = new CMiscTimer(this);
@@ -232,6 +233,11 @@ void CUser::UserConnected(CClient* pClient) {
 	while (m_QueryBuffer.GetNextLine(GetIRCNick().GetNick(), sBufLine)) {
 		pClient->PutClient(sBufLine);
 	}
+
+	// Tell them why they won't connect
+	if (!GetIRCConnectEnabled())
+		PutStatus("You are currently disconnected from IRC. "
+				"Use 'connect' to reconnect.");
 }
 
 void CUser::UserDisconnected(CClient* pClient) {
@@ -357,7 +363,7 @@ bool CUser::Clone(const CUser& User, CString& sErrorRet) {
 
 			if (pSock) {
 				PutStatus("Jumping servers because this server is no longer in the list");
-				pSock->Close();
+				pSock->Quit();
 			}
 		}
 	}
@@ -674,7 +680,7 @@ bool CUser::DelServer(const CString& sName) {
 				}
 
 				if (pIRCSock) {
-					pIRCSock->Close();
+					pIRCSock->Quit();
 					PutStatus("Your current server was removed, jumping...");
 				}
 			} else if (m_uServerIdx >= m_vServers.size()) {
@@ -736,6 +742,8 @@ bool CUser::AddServer(const CString& sName, unsigned short uPort, const CString&
 
 	CServer* pServer = new CServer(sName, uPort, sPass, bSSL, bIPV6);
 	m_vServers.push_back(pServer);
+
+	CheckIRCConnect();
 
 	return true;
 }
@@ -993,6 +1001,13 @@ void CUser::SetBufferCount(unsigned int u) { m_uBufferCount = u; }
 void CUser::SetKeepBuffer(bool b) { m_bKeepBuffer = b; }
 void CUser::SetAutoCycle(bool b) { m_bAutoCycle = b; }
 
+void CUser::CheckIRCConnect()
+{
+	// Do we want to connect?
+	if (m_bIRCConnectEnabled && GetIRCSock() == NULL)
+		CZNC::Get().EnableConnectUser();
+}
+
 void CUser::SetIRCNick(const CNick& n) {
 	m_IRCNick = n;
 
@@ -1034,12 +1049,12 @@ bool CUser::IsPassHashed() const { return m_bPassHashed; }
 bool CUser::ConnectPaused() {
 	if (!m_uConnectTime) {
 		m_uConnectTime = time(NULL);
-		return false;
+		return !m_bIRCConnectEnabled;
 	}
 
 	if (time(NULL) - m_uConnectTime >= 5) {
 		m_uConnectTime = time(NULL);
-		return false;
+		return !m_bIRCConnectEnabled;
 	}
 
 	return true;

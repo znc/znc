@@ -783,13 +783,27 @@ void CClient::UserCommand(const CString& sLine) {
 		usleep(100000);	// Sleep for 10ms to attempt to allow the previous Broadcast() to go through to all users
 
 		throw CException(CException::EX_Shutdown);
-	} else if (sCommand.CaseCmp("JUMP") == 0) {
+	} else if (sCommand.CaseCmp("JUMP") == 0 ||
+			sCommand.CaseCmp("CONNECT") == 0) {
 		if (m_pUser) {
 			if (m_pIRCSock) {
-				m_pIRCSock->Close();
+				m_pIRCSock->Quit();
 				PutStatus("Jumping to the next server in the list...");
-				return;
+			} else {
+				PutStatus("Connecting...");
 			}
+
+			m_pUser->SetIRCConnectEnabled(true);
+			m_pUser->CheckIRCConnect();
+			return;
+		}
+	} else if (sCommand.CaseCmp("DISCONNECT") == 0) {
+		if (m_pUser) {
+			if (m_pIRCSock)
+				m_pIRCSock->Quit();
+			m_pUser->SetIRCConnectEnabled(false);
+			PutStatus("Disconnected from IRC. Use 'connect' to reconnect.");
+			return;
 		}
 	} else if (sCommand.CaseCmp("ENABLECHAN") == 0) {
 		CString sChan = sLine.Token(1, true);
@@ -1449,6 +1463,8 @@ void CClient::HelpUser() {
 	Table.AddRow(); Table.SetCell("Command", "SetBuffer");	Table.SetCell("Arguments", "<#chan> [linecount]");	Table.SetCell("Description", "Set the buffer count for a channel");
 	Table.AddRow(); Table.SetCell("Command", "SetVHost");	Table.SetCell("Arguments", "<vhost (ip preferred)>");Table.SetCell("Description", "Set the VHost for this connection");
 	Table.AddRow(); Table.SetCell("Command", "Jump");		Table.SetCell("Arguments", "");						Table.SetCell("Description", "Jump to the next server in the list");
+	Table.AddRow(); Table.SetCell("Command", "Disconnect");		Table.SetCell("Arguments", "");						Table.SetCell("Description", "Disconnect from IRC");
+	Table.AddRow(); Table.SetCell("Command", "Connect");		Table.SetCell("Arguments", "");						Table.SetCell("Description", "Reconnect to IRC");
 	Table.AddRow(); Table.SetCell("Command", "Send");		Table.SetCell("Arguments", "<nick> <file>");		Table.SetCell("Description", "Send a shell file to a nick on IRC");
 	Table.AddRow(); Table.SetCell("Command", "Get");		Table.SetCell("Arguments", "<file>");				Table.SetCell("Description", "Send a shell file to yourself");
 

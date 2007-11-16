@@ -98,6 +98,7 @@ public:
 	bool IsIRCConnected() { return m_bIRCConnected; }
 	void IRCConnected(CIRCSock* pIRCSock);
 	void IRCDisconnected();
+	void CheckIRCConnect();
 
 	CString ExpandString(const CString& sStr) const;
 	CString& ExpandString(const CString& sStr, CString& sRet) const;
@@ -145,6 +146,7 @@ public:
 	void SetTimestampPrepend(bool b) { m_bPrependTimestamp = b; }
 	void SetTimezoneOffset(float b) { m_fTimezoneOffset = b; }
 	void SetJoinTries(unsigned int i) { m_uMaxJoinTries = i; }
+	void SetIRCConnectEnabled(bool b) { m_bIRCConnectEnabled = b; }
 	// !Setters
 
 	// Getters
@@ -164,6 +166,7 @@ public:
 	const CString& GetTimestampFormat() const;
 	bool GetTimestampAppend() const;
 	bool GetTimestampPrepend() const;
+	bool GetIRCConnectEnabled() const { return m_bIRCConnectEnabled; }
 
 	const CString& GetChanPrefixes() const { return m_sChanPrefixes; }
 	bool IsChan(const CString& sChan) const { return (sChan.size() && GetChanPrefixes().find(sChan[0]) != CString::npos); }
@@ -237,6 +240,7 @@ protected:
 	bool				m_bBeingDeleted;
 	bool				m_bAppendTimestamp;
 	bool				m_bPrependTimestamp;
+	bool				m_bIRCConnectEnabled;
 
 	CKeepNickTimer*		m_pKeepNickTimer;
 	CJoinTimer*			m_pJoinTimer;
