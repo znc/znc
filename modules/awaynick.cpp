@@ -52,11 +52,16 @@ public:
 	MODCONSTRUCTOR(CAwayNickMod) {}
 
 	virtual bool OnLoad(const CString& sArgs, CString& sMessage) {
-		m_sFormat = sArgs;
+		if (!sArgs.empty())
+			m_sFormat = sArgs;
+		else
+			m_sFormat = GetNV("nick");
 
 		if (m_sFormat.empty()) {
 			m_sFormat = "zz_%nick%";
 		}
+
+		SetNV("nick", m_sFormat);
 
 		return true;
 	}
@@ -111,6 +116,7 @@ public:
 
 			if (!sFormat.empty()) {
 				m_sFormat = sFormat;
+				SetNV("nick", m_sFormat);
 			}
 
 			if (m_pUser) {
