@@ -117,6 +117,7 @@ void CClient::ReadLine(const CString& sData) {
 	}
 
 	if (!m_pUser) {
+		PutClient("ERROR :You need to send your password first!");
 		Close();
 		return;
 	}
@@ -1574,6 +1575,8 @@ void CClient::AcceptLogin(CUser& User) {
 	m_pUser = &User;
 
 	if (!m_pUser->IsHostAllowed(GetRemoteIP())) {
+		PutClient(":irc.znc.com 463 " + GetNick() + " :Your host ("
+				+ GetRemoteIP() + ") is not allowed");
 		Close();
 		return;
 	}
