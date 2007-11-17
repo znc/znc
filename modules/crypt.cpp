@@ -34,15 +34,7 @@
 class CCryptMod : public CModule {
 public:
 	MODCONSTRUCTOR(CCryptMod) {}
-	virtual ~CCryptMod() {
-		time_t t;
-		time(&t);
-		srand((long) t);
-	}
-
-	virtual EModRet OnRaw(CString& sLine) {
-		return CONTINUE;
-	}
+	virtual ~CCryptMod() {}
 
 	virtual EModRet OnUserMsg(CString& sTarget, CString& sMessage) {
 		sTarget.TrimLeft("\244");
