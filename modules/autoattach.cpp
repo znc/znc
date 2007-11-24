@@ -63,6 +63,13 @@ public:
 			} else {
 				PutModule("Usage: Add [!]<#chan>");
 			}
+		} else if (sCommand.CaseCmp("DEL") == 0) {
+			CString sChan = sLine.Token(1);
+
+			if (Del(sChan))
+				PutModule("Remove " + sChan + " from list");
+			else
+				PutModule("Usage: Del [!]<#chan>");
 		} else if (sCommand.CaseCmp("LIST") == 0) {
 			CTable Table;
 			Table.AddColumn("Chan");
@@ -97,6 +104,10 @@ public:
 			Table.SetCell("Description", "Add an entry, use !#chan to negate and * for wildcards");
 
 			Table.AddRow();
+			Table.SetCell("Command", "Del");
+			Table.SetCell("Description", "Remove an entry, needs to be an exact match");
+
+			Table.AddRow();
 			Table.SetCell("Command", "List");
 			Table.SetCell("Description", "List all entries");
 
@@ -122,6 +133,42 @@ public:
 			m_vsNegChans.push_back(sChan.substr(1));
 		} else {
 			m_vsChans.push_back(sChan);
+		}
+
+		return true;
+	}
+
+	bool Del(const CString& sChan) {
+		vector<CString>::iterator it, end;
+
+		if (sChan.empty() || sChan == "!")
+			return false;
+
+		if (sChan.Left(1) == "!") {
+			CString sTmp = sChan.substr(1);
+			it = m_vsNegChans.begin();
+			end = m_vsNegChans.end();
+
+			for (; it != end; ++it)
+				if (*it == sTmp)
+					break;
+
+			if (it == end)
+				return false;
+
+			m_vsNegChans.erase(it);
+		} else {
+			it = m_vsChans.begin();
+			end = m_vsChans.end();
+
+			for (; it != end; ++it)
+				if (*it == sChan)
+					break;
+
+			if (it == end)
+				return false;
+
+			m_vsChans.erase(it);
 		}
 
 		return true;
