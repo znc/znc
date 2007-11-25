@@ -639,6 +639,7 @@ MODTARGET
 VERSION
 NOSSL
 PERL
+SASL
 MODDIR
 LIBOBJS
 LTLIBOBJS'
@@ -1233,6 +1234,7 @@ Optional Features:
   --disable-modules       disable modules
   --disable-openssl       disable openssl
   --disable-perl          disable perl
+  --enable-sasl           enable sasl
 
 Optional Packages:
   --with-PACKAGE[=ARG]    use PACKAGE [ARG=yes]
@@ -2500,6 +2502,11 @@ fi
 # Check whether --enable-perl was given.
 if test "${enable_perl+set}" = set; then
   enableval=$enable_perl; if test "$enableval" = "no" ; then NOPERL=1; fi
+fi
+
+# Check whether --enable-sasl was given.
+if test "${enable_sasl+set}" = set; then
+  enableval=$enable_sasl; if test "$enableval" = "yes" ; then SASL=1; fi
 fi
 
 
@@ -3812,12 +3819,91 @@ echo "$as_me: error: Could not find perl binary. Try --disable-perl" >&2;}
    { (exit 1); exit 1; }; }
 			fi
 		fi
+
+		if test -n "$SASL"; then
+
+{ echo "$as_me:$LINENO: checking for sasl_server_init in -lsasl2" >&5
+echo $ECHO_N "checking for sasl_server_init in -lsasl2... $ECHO_C" >&6; }
+if test "${ac_cv_lib_sasl2_sasl_server_init+set}" = set; then
+  echo $ECHO_N "(cached) $ECHO_C" >&6
+else
+  ac_check_lib_save_LIBS=$LIBS
+LIBS="-lsasl2  $LIBS"
+cat >conftest.$ac_ext <<_ACEOF
+/* confdefs.h.  */
+_ACEOF
+cat confdefs.h >>conftest.$ac_ext
+cat >>conftest.$ac_ext <<_ACEOF
+/* end confdefs.h.  */
+
+/* Override any GCC internal prototype to avoid an error.
+   Use char because int might match the return type of a GCC
+   builtin and then its argument prototype would still apply.  */
+#ifdef __cplusplus
+extern "C"
+#endif
+char sasl_server_init ();
+int
+main ()
+{
+return sasl_server_init ();
+  ;
+  return 0;
+}
+_ACEOF
+rm -f conftest.$ac_objext conftest$ac_exeext
+if { (ac_try="$ac_link"
+case "(($ac_try" in
+  *\"* | *\`* | *\\*) ac_try_echo=\$ac_try;;
+  *) ac_try_echo=$ac_try;;
+esac
+eval "echo \"\$as_me:$LINENO: $ac_try_echo\"") >&5
+  (eval "$ac_link") 2>conftest.er1
+  ac_status=$?
+  grep -v '^ *+' conftest.er1 >conftest.err
+  rm -f conftest.er1
+  cat conftest.err >&5
+  echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); } && {
+	 test -z "$ac_c_werror_flag" ||
+	 test ! -s conftest.err
+       } && test -s conftest$ac_exeext &&
+       $as_test_x conftest$ac_exeext; then
+  ac_cv_lib_sasl2_sasl_server_init=yes
+else
+  echo "$as_me: failed program was:" >&5
+sed 's/^/| /' conftest.$ac_ext >&5
+
+	ac_cv_lib_sasl2_sasl_server_init=no
+fi
+
+rm -f core conftest.err conftest.$ac_objext conftest_ipa8_conftest.oo \
+      conftest$ac_exeext conftest.$ac_ext
+LIBS=$ac_check_lib_save_LIBS
+fi
+{ echo "$as_me:$LINENO: result: $ac_cv_lib_sasl2_sasl_server_init" >&5
+echo "${ECHO_T}$ac_cv_lib_sasl2_sasl_server_init" >&6; }
+if test $ac_cv_lib_sasl2_sasl_server_init = yes; then
+  cat >>confdefs.h <<_ACEOF
+#define HAVE_LIBSASL2 1
+_ACEOF
+
+  LIBS="-lsasl2 $LIBS"
+
+else
+  { { echo "$as_me:$LINENO: error: Could not find libsasl2." >&5
+echo "$as_me: error: Could not find libsasl2." >&2;}
+   { (exit 1); exit 1; }; }
+fi
+
+		fi
 	fi
 fi
 
 VERSION=0.051
 #
 # Auto detect modules
+
 
 
 
@@ -4532,12 +4618,13 @@ MODTARGET!$MODTARGET$ac_delim
 VERSION!$VERSION$ac_delim
 NOSSL!$NOSSL$ac_delim
 PERL!$PERL$ac_delim
+SASL!$SASL$ac_delim
 MODDIR!$MODDIR$ac_delim
 LIBOBJS!$LIBOBJS$ac_delim
 LTLIBOBJS!$LTLIBOBJS$ac_delim
 _ACEOF
 
-  if test `sed -n "s/.*$ac_delim\$/X/p" conf$$subs.sed | grep -c X` = 66; then
+  if test `sed -n "s/.*$ac_delim\$/X/p" conf$$subs.sed | grep -c X` = 67; then
     break
   elif $ac_last_try; then
     { { echo "$as_me:$LINENO: error: could not make $CONFIG_STATUS" >&5
@@ -4880,5 +4967,10 @@ if test x"$PERL" = "x" ; then
 	echo "perl:    no"
 else
 	echo "perl:    yes"
+fi
+if test x"$SASL" = "x" ; then
+	echo "sasl:    no"
+else
+	echo "sasl:    yes"
 fi
 
