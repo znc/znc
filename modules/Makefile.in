@@ -26,6 +26,10 @@ PERLHOOK :=
 FILES    := $(shell echo $(FILES) | sed -e "s/modperl//")
 endif
 
+ifeq "@SASL@" ""
+FILES    := $(shell echo $(FILES) | sed -e "s/saslauth//")
+endif
+
 SRCS     := $(wildcard ../*.cpp) $(addsuffix .cpp, $(FILES))
 OBJS     := $(addsuffix .o, $(FILES))
 TARGETS  := $(addsuffix .so, $(FILES))
@@ -81,6 +85,19 @@ modperl.so:
 modperl.o:
 	@echo -n ""
 modperl_install:
+	@echo -n ""
+endif
+
+ifeq "@SASL@" "1"
+saslauth.so: saslauth.o
+	$(CXX) $(LDFLAGS) -shared -o $@ $< -lsasl2
+
+saslauth.o: saslauth.cpp
+	$(CXX) $(CXXFLAGS) $(INCLUDES) -c -o $@ $<
+else
+saslauth.so:
+	@echo -n ""
+saslauth.o:
 	@echo -n ""
 endif
 
