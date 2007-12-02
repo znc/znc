@@ -4,6 +4,9 @@
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License version 2 as published
  * by the Free Software Foundation.
+ *
+ * Quiet Away and message logger
+ * Author: imaginos <imaginos@imaginos.net>
  */
 
 #define REQUIRESSL
@@ -19,90 +22,6 @@
 #include <vector>
 
 #define CRYPT_VERIFICATION_TOKEN "::__:AWAY:__::"
-
-/*
- * Quiet Away and message logger
- * Author: imaginos <imaginos@imaginos.net>
- *
- * 
- * $Log$
- * Revision 1.25  2006/09/16 18:11:35  prozacx
- * Patched using configureable_away_timer.patch by psycho
- *
- * Revision 1.24  2006/07/23 04:02:53  imaginos
- * leave default behavior of not forcing
- *
- * Revision 1.23  2006/07/23 04:01:44  imaginos
- * add back functionality to give an away reason
- *
- * Revision 1.22  2006/03/28 16:48:23  imaginos
- * added a quiet flag
- *
- * Revision 1.21  2006/02/25 09:43:35  prozacx
- * Migrated away from CString::ToString() in favor of explicit constructors
- *
- * Revision 1.20  2006/02/11 11:55:55  imaginos
- * fixed wrong type being used on 64bit
- *
- * Revision 1.19  2005/09/26 23:09:05  prozacx
- * Removed const from args in a bunch of hooks
- *
- * Revision 1.18  2005/09/26 08:23:30  prozacx
- * Removed const from CNick in priv/chan hooks
- *
- * Revision 1.17  2005/09/06 22:43:02  prozacx
- * Added REQUIRESSL
- *
- * Revision 1.16  2005/06/30 21:51:06  prozacx
- * Changed CString::Token() to split on a string rather than char
- *
- * Revision 1.15  2005/06/12 09:04:39  prozacx
- * Changed to new GetSavePath()
- *
- * Revision 1.14  2005/05/26 20:42:13  prozacx
- * Moved GetDescription() into second argument of MODULEDEFS()
- *
- * Revision 1.13  2005/05/15 08:27:27  prozacx
- * Changed return value from bool to EModRet on most hooks
- *
- * Revision 1.12  2005/05/08 06:42:01  prozacx
- * Moved CUtils::ToString() into CString class
- *
- * Revision 1.11  2005/05/08 04:30:13  prozacx
- * Moved CUtils::Trim() into CString class
- *
- * Revision 1.10  2005/05/07 09:18:49  prozacx
- * Moved CUtils::Token() into CString class
- *
- * Revision 1.9  2005/05/05 18:11:03  prozacx
- * Changed all references to std::string over to CString
- *
- * Revision 1.8  2005/04/18 22:32:24  imaginos
- * move password reset into BootStrap
- *
- * Revision 1.7  2005/04/18 05:41:43  prozacx
- * Added OnLoad() and print modname in error msg
- *
- * Revision 1.6  2005/04/18 04:44:40  imaginos
- * fixed bug where attempting to set a bad pass trashes existing buffer
- *
- * Revision 1.5  2005/04/18 00:18:46  prozacx
- * Upgraded output msgs and changed path of file
- *
- * Revision 1.4  2005/04/02 22:22:24  imaginos
- * ability to change pass
- *
- * Revision 1.3  2005/04/01 08:55:41  imaginos
- * keep things in synch
- *
- * Revision 1.2  2005/04/01 08:49:46  imaginos
- * woops actually delete the message
- *
- * Revision 1.1  2005/04/01 08:30:47  imaginos
- * simple away script
- *
- *
- */
 
 class CAway;
 

@@ -4,6 +4,12 @@
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License version 2 as published
  * by the Free Software Foundation.
+ *
+ * Buffer Saving thing, incase your shit goes out while your out
+ * Author: imaginos <imaginos@imaginos.net>
+ *
+ * Its only as secure as your shell, the encryption only offers a slightly 
+ * better solution then plain text.
  */
 
 #define REQUIRESSL
@@ -23,113 +29,6 @@
  */
 
 #define CRYPT_VERIFICATION_TOKEN "::__:SAVEBUFF:__::"
-
-/*
- * Buffer Saving thing, incase your shit goes out while your out
- * Author: imaginos <imaginos@imaginos.net>
- *
- * Its only as secure as your shell, the encryption only offers a slightly 
- * better solution then plain text.
- * 
- * $Log$
- * Revision 1.29  2006/02/25 09:43:35  prozacx
- * Migrated away from CString::ToString() in favor of explicit constructors
- *
- * Revision 1.28  2006/02/11 11:55:55  imaginos
- * fixed wrong type being used on 64bit
- *
- * Revision 1.27  2005/09/06 22:43:02  prozacx
- * Added REQUIRESSL
- *
- * Revision 1.26  2005/06/12 09:04:39  prozacx
- * Changed to new GetSavePath()
- *
- * Revision 1.25  2005/05/26 20:42:13  prozacx
- * Moved GetDescription() into second argument of MODULEDEFS()
- *
- * Revision 1.24  2005/05/17 17:18:35  prozacx
- * Changed CChan reference to non-const in all hooks
- *
- * Revision 1.23  2005/05/15 04:46:48  imaginos
- * when i part, save to file before the chan gets haxed. same with quit
- *
- * Revision 1.22  2005/05/15 04:40:58  imaginos
- * onjoin, when its me and the buffer is empty, reload any older buffer for fun
- *
- * Revision 1.21  2005/05/08 06:42:02  prozacx
- * Moved CUtils::ToString() into CString class
- *
- * Revision 1.20  2005/05/08 04:30:14  prozacx
- * Moved CUtils::Trim() into CString class
- *
- * Revision 1.19  2005/05/05 18:11:04  prozacx
- * Changed all references to std::string over to CString
- *
- * Revision 1.18  2005/04/24 08:05:41  prozacx
- * Fixed literal CStrings of 'savebuff' to now use GetModName() and removed redundant prefix from filenames
- *
- * Revision 1.17  2005/04/23 18:24:38  imaginos
- * only work on chans where keepbuffer is true
- *
- * Revision 1.16  2005/04/23 08:10:34  prozacx
- * Changed vChans to a reference in OnNick and OnQuit (oops)
- *
- * Revision 1.15  2005/04/23 07:24:58  prozacx
- * Changed OnNick() and OnQuit() to take a vector<CChan*> of common channels
- *
- * Revision 1.14  2005/04/23 06:44:19  prozacx
- * Changed buffer playback messages to mirror engine behavior
- *
- * Revision 1.13  2005/04/22 03:35:48  imaginos
- * start logging certain events
- *
- * Revision 1.12  2005/04/19 20:54:38  imaginos
- * cut&paste madness
- *
- * Revision 1.11  2005/04/19 20:50:24  imaginos
- * only fill the buffer if its empty
- *
- * Revision 1.10  2005/04/18 22:56:42  prozacx
- * Call OnBoot() in OnLoad() again since closing stdout bug is now fixed
- *
- * Revision 1.9  2005/04/18 22:32:24  imaginos
- * move password reset into BootStrap
- *
- * Revision 1.8  2005/04/18 17:26:23  imaginos
- * ditch warning message
- *
- * Revision 1.7  2005/04/18 05:39:19  prozacx
- * Don't call OnBoot() in OnLoad() and print modname in error msg
- *
- * Revision 1.6  2005/04/18 04:44:40  imaginos
- * fixed bug where attempting to set a bad pass trashes existing buffer
- *
- * Revision 1.5  2005/04/17 23:58:26  prozacx
- * Added OnLoad() for setting pass from config
- *
- * Revision 1.4  2005/04/17 23:46:06  prozacx
- * Upgraded output print msgs to new schema
- *
- * Revision 1.3  2005/04/12 07:33:45  prozacx
- * Changed path to DataPath
- *
- * Revision 1.2  2005/04/04 06:35:19  imaginos
- * fixed int32's that test against npos to CString::size_type
- *
- * Revision 1.1  2005/03/30 19:36:20  imaginos
- * rename files
- *
- * Revision 1.3  2005/01/28 04:37:47  imaginos
- * force requirements on main class to so savebuff can be sure to save all data needed. added todo list
- *
- * Revision 1.2  2004/11/07 02:53:32  imaginos
- * added replay to savebuff so one can 'replay' a channel
- *
- * Revision 1.1.1.1  2004/08/24 00:08:52  prozacx
- *
- *
- *
- */
 
 class CSaveBuff;
 

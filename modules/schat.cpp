@@ -4,6 +4,9 @@
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License version 2 as published
  * by the Free Software Foundation.
+ *
+ * Secure chat system
+ * Author: imaginos <imaginos@imaginos.net>
  */
 
 #define REQUIRESSL
@@ -23,92 +26,6 @@
 #include <sstream>
 
 using std::pair;
-
-/*
- * Secure chat system
- * Author: imaginos <imaginos@imaginos.net>
- * 
- * $Log$
- * Revision 1.23  2006/02/25 09:43:35  prozacx
- * Migrated away from CString::ToString() in favor of explicit constructors
- *
- * Revision 1.22  2006/02/13 06:01:57  imaginos
- * use u_short
- *
- * Revision 1.21  2005/09/26 23:09:05  prozacx
- * Removed const from args in a bunch of hooks
- *
- * Revision 1.20  2005/09/26 08:23:30  prozacx
- * Removed const from CNick in priv/chan hooks
- *
- * Revision 1.19  2005/09/20 04:37:28  prozacx
- * Added include for znc.h
- *
- * Revision 1.18  2005/09/20 04:31:19  prozacx
- * Changed from CUser::GetPemLocation() to CZNC::GetPemLocation()
- *
- * Revision 1.17  2005/09/07 05:14:28  prozacx
- * Renamed md5.cpp/h to MD5.cpp/h
- *
- * Revision 1.16  2005/09/06 22:43:02  prozacx
- * Added REQUIRESSL
- *
- * Revision 1.15  2005/05/26 20:42:13  prozacx
- * Moved GetDescription() into second argument of MODULEDEFS()
- *
- * Revision 1.14  2005/05/18 03:22:52  imaginos
- * bring Csocket up to date, includes new needed function GetSockByFD()
- *
- * Revision 1.13  2005/05/15 08:27:27  prozacx
- * Changed return value from bool to EModRet on most hooks
- *
- * Revision 1.12  2005/05/08 06:42:02  prozacx
- * Moved CUtils::ToString() into CString class
- *
- * Revision 1.11  2005/05/08 04:30:14  prozacx
- * Moved CUtils::Trim() into CString class
- *
- * Revision 1.10  2005/05/07 09:18:56  prozacx
- * Moved CUtils::Token() into CString class
- *
- * Revision 1.9  2005/05/05 18:11:04  prozacx
- * Changed all references to std::string over to CString
- *
- * Revision 1.8  2005/05/02 22:34:52  prozacx
- * Get CFile from FileUtils.h now
- *
- * Revision 1.7  2005/04/04 06:35:19  imaginos
- * fixed int32's that test against npos to CString::size_type
- *
- * Revision 1.6  2005/04/03 23:03:06  imaginos
- * show this requires ssl
- *
- * Revision 1.5  2005/04/03 08:19:42  prozacx
- * Use GetPemLocation() for the pemfile path
- *
- * Revision 1.4  2005/04/03 07:48:31  prozacx
- * Renamed BinPath to CurPath
- *
- * Revision 1.3  2005/03/31 20:59:43  imaginos
- * typo on column
- *
- * Revision 1.2  2005/03/31 20:39:10  imaginos
- * add ability to show all socks (debugging)
- *
- * Revision 1.1  2005/03/30 19:36:24  imaginos
- * rename files
- *
- * Revision 1.3  2004/09/01 21:13:35  imaginos
- * no longer using CreatedChild
- *
- * Revision 1.2  2004/08/25 23:14:35  imaginos
- * just remove trailing \r\n
- *
- * Revision 1.1.1.1  2004/08/24 00:08:52  prozacx
- *
- *
- *
- */     
 
 class CSChat;
 

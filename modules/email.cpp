@@ -4,6 +4,9 @@
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License version 2 as published
  * by the Free Software Foundation.
+ *
+ * Email Monitor / Retrieval
+ * Author: imaginos <imaginos@imaginos.net>
  */
 
 #include "znc.h"
@@ -17,54 +20,6 @@
 #include "MD5.h"
 #include <pwd.h>
 #include <sstream>
-
-
-/*
- * Email Monitor / Retrieval
- * Author: imaginos <imaginos@imaginos.net>
- *
- * $Log$
- * Revision 1.12  2006/02/25 09:43:35  prozacx
- * Migrated away from CString::ToString() in favor of explicit constructors
- *
- * Revision 1.11  2006/02/12 21:00:59  prozacx
- * Wrapped TSocketManager into CSockManager
- *
- * Revision 1.10  2006/02/11 11:55:55  imaginos
- * fixed wrong type being used on 64bit
- *
- * Revision 1.9  2005/09/07 05:14:28  prozacx
- * Renamed md5.cpp/h to MD5.cpp/h
- *
- * Revision 1.8  2005/05/26 20:42:13  prozacx
- * Moved GetDescription() into second argument of MODULEDEFS()
- *
- * Revision 1.7  2005/05/08 06:42:02  prozacx
- * Moved CUtils::ToString() into CString class
- *
- * Revision 1.6  2005/05/08 04:30:14  prozacx
- * Moved CUtils::Trim() into CString class
- *
- * Revision 1.5  2005/05/07 09:43:26  prozacx
- * Moved CUtils::Ellipsize() into CString class
- *
- * Revision 1.4  2005/05/05 18:11:04  prozacx
- * Changed all references to std::string over to CString
- *
- * Revision 1.3  2005/05/02 22:34:52  prozacx
- * Get CFile from FileUtils.h now
- *
- * Revision 1.2  2005/04/04 06:35:19  imaginos
- * fixed int32's that test against npos to CString::size_type
- *
- * Revision 1.1  2005/03/30 18:46:35  imaginos
- * moving to standard makefile system, and cpp only extension
- *
- * Revision 1.1.1.1  2004/08/24 00:08:52  prozacx
- *
- *
- *
- */
 
 struct EmailST
 {
