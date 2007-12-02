@@ -1369,7 +1369,7 @@ void CClient::UserCommand(const CString& sLine) {
 		for (it = vChans.begin(); it != vChans.end(); it++) {
 			(*it)->ClearBuffer();
 		}
-		PutStatus("All buffers have been cleared");
+		PutStatus("All channel buffers have been cleared");
 	} else if (sCommand.CaseCmp("SETBUFFER") == 0) {
 		CString sChan = sLine.Token(1);
 
