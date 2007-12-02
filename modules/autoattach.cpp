@@ -31,6 +31,12 @@ public:
 			sChan = sArgs.Token(a++);
 		}
 
+		// Load out saved settings, ignore errors
+		MCString::iterator it;
+		for (it = BeginNV(); it != EndNV(); it++) {
+			Add(it->first);
+		}
+
 		return true;
 	}
 
@@ -135,6 +141,8 @@ public:
 			m_vsChans.push_back(sChan);
 		}
 
+		SetNV(sChan, "");
+
 		return true;
 	}
 
@@ -170,6 +178,8 @@ public:
 
 			m_vsChans.erase(it);
 		}
+
+		DelNV(sChan);
 
 		return true;
 	}
