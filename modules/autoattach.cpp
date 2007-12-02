@@ -31,7 +31,7 @@ public:
 			sChan = sArgs.Token(a++);
 		}
 
-		// Load out saved settings, ignore errors
+		// Load our saved settings, ignore errors
 		MCString::iterator it;
 		for (it = BeginNV(); it != EndNV(); it++) {
 			Add(it->first);
