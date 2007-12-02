@@ -180,8 +180,8 @@ int CZNC::Loop() {
 		}
 
 		// Csocket wants micro seconds
-		// between 5 to 600 secs
-		m_Manager.DynamicSelectLoop(5 * 1000 * 1000, 600 * 1000 * 1000);
+		// 500 msec to 600 sec
+		m_Manager.DynamicSelectLoop(500 * 1000, 600 * 1000 * 1000);
 	}
 
 	return 0;
