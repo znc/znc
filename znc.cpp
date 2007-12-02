@@ -142,9 +142,13 @@ int CZNC::Loop() {
 
 	while (true) {
 		// Check for users that need to be deleted
-		if (m_ssDelUsers.size()) {
-			for (set<CUser*>::iterator it = m_ssDelUsers.begin(); it != m_ssDelUsers.end(); it++) {
-				CUser* pUser = *it;
+		map<CString, CUser*>::iterator it;
+		map<CString, CUser*>::iterator end;
+
+		if (m_msDelUsers.size()) {
+			end = m_msDelUsers.end();
+			for (it = m_msDelUsers.begin(); it != end; it++) {
+				CUser* pUser = it->second;
 				pUser->SetBeingDeleted(true);
 
 #ifdef _MODULES
@@ -170,7 +174,7 @@ int CZNC::Loop() {
 				delete pUser;
 			}
 
-			m_ssDelUsers.clear();
+			m_msDelUsers.clear();
 			RestartConnectUser();
 			WriteConfig();
 		}
@@ -1298,7 +1302,7 @@ bool CZNC::DeleteUser(const CString& sUsername) {
 		return false;
 	}
 
-	m_ssDelUsers.insert(pUser);
+	m_msDelUsers[pUser->GetUserName()] = pUser;
 	return true;
 }
 

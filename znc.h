@@ -174,7 +174,7 @@ private:
 protected:
 	vector<CListener*>		m_vpListeners;
 	map<CString,CUser*>		m_msUsers;
-	set<CUser*>				m_ssDelUsers;
+	map<CString,CUser*>		m_msDelUsers;
 	CSockManager			m_Manager;
 
 	CString					m_sCurPath;
