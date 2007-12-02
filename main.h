@@ -10,7 +10,7 @@
 #define _MAIN_H
 
 // Keep the number in sync with configure.in (and also with configure)
-#define VERSION 0.051
+#define VERSION 0.052
 
 #ifndef _MODDIR_
 #define _MODDIR_ "/usr/libexec/znc"
