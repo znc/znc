@@ -88,8 +88,6 @@ AC_ARG_ENABLE( [sasl],
 	AC_HELP_STRING([--enable-sasl], [enable sasl]),
 	[if test "$enableval" = "yes" ; then SASL=1; fi],)
 
-appendCXX -Wall -W -Wno-unused
-
 if test "$DEBUG" != "no"; then
 	appendCXX -ggdb -D_DEBUG
 else
@@ -101,7 +99,7 @@ if test "$IPV6" != "no"; then
 fi
 
 if test "x$GXX" = "xyes"; then
-	appendCXX -Woverloaded-virtual
+	appendCXX -Wall -W -Wno-unused -Woverloaded-virtual
 	# enable g++ dependency tracking
 	DEPEND=".depend"
 fi
