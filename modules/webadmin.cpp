@@ -705,20 +705,20 @@ bool CWebAdminSock::ChanPage(CString& sPageRet, CChan* pChan) {
 		} else {
 			m_Template["Action"] = "addchan";
 			m_Template["Title"] = "Add Channel" + CString(" for User [" + m_pUser->GetUserName() + "]");
-			m_Template["BufferCount"] = "50";
-			m_Template["DefModes"] = "+stn";
+			m_Template["BufferCount"] = CString(m_pUser->GetBufferCount());
+			m_Template["DefModes"] = CString(m_pUser->GetDefaultChanModes());
 			m_Template["InConfig"] = "true";
 		}
 
 		CTemplate& o1 = m_Template.AddRow("OptionLoop");
 		o1["Name"] = "autocycle";
 		o1["DisplayName"] = "Auto Cycle";
-		if (!pChan || pChan->AutoCycle()) { o1["Checked"] = "true"; }
+		if ((pChan && pChan->AutoCycle()) || (!pChan && m_pUser->AutoCycle())) { o1["Checked"] = "true"; }
 
 		CTemplate& o2 = m_Template.AddRow("OptionLoop");
 		o2["Name"] = "keepbuffer";
 		o2["DisplayName"] = "Keep Buffer";
-		if (!pChan || pChan->KeepBuffer()) { o2["Checked"] = "true"; }
+		if ((pChan && pChan->KeepBuffer()) || (!pChan && m_pUser->KeepBuffer())) { o2["Checked"] = "true"; }
 
 		CTemplate& o3 = m_Template.AddRow("OptionLoop");
 		o3["Name"] = "detached";
