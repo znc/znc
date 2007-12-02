@@ -436,10 +436,16 @@ void CClient::ReadLine(const CString& sData) {
 			}
 
 			if (strncasecmp(sTarget.c_str(), m_pUser->GetStatusPrefix().c_str(), m_pUser->GetStatusPrefix().length()) == 0) {
-#ifdef _MODULES
 				CString sModule = sTarget;
 				sModule.LeftChomp(m_pUser->GetStatusPrefix().length());
 
+				if (sModule == "status") {
+					StatusCTCP(sCTCP);
+
+					return;
+				}
+
+#ifdef _MODULES
 				CModule* pModule = m_pUser->GetModules().FindModule(sModule);
 				if (pModule) {
 					pModule->SetClient(this);
@@ -569,6 +575,16 @@ bool CClient::DecKeepNickCounter() {
 
 	m_uKeepNickCounter--;
 	return true;
+}
+
+void CClient::StatusCTCP(const CString& sLine) {
+	CString sCommand = sLine.Token(0);
+
+	if (sCommand.CaseCmp("PING") == 0) {
+		PutStatusNotice("\001PING " + sLine.Token(1, true) + "\001");
+	} else if (sCommand.CaseCmp("VERSION") == 0) {
+		PutStatusNotice("\001VERSION " + CZNC::GetTag() + "\001");
+	}
 }
 
 void CClient::UserCommand(const CString& sLine) {

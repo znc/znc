@@ -98,6 +98,7 @@ public:
 
 	bool DecKeepNickCounter();
 	void UserCommand(const CString& sCommand);
+	void StatusCTCP(const CString& sCommand);
 	void IRCConnected(CIRCSock* pIRCSock);
 	void IRCDisconnected();
 	void BouncedOff();
