@@ -1362,6 +1362,14 @@ void CClient::UserCommand(const CString& sLine) {
 
 		pChan->ClearBuffer();
 		PutStatus("The buffer for [" + sChan + "] has been cleared");
+	} else if (sCommand.CaseCmp("CLEARALLCHANNELBUFFERS") == 0) {
+		vector<CChan*>::const_iterator it;
+		const vector<CChan*>& vChans = m_pUser->GetChans();
+
+		for (it = vChans.begin(); it != vChans.end(); it++) {
+			(*it)->ClearBuffer();
+		}
+		PutStatus("All buffers have been cleared");
 	} else if (sCommand.CaseCmp("SETBUFFER") == 0) {
 		CString sChan = sLine.Token(1);
 
@@ -1477,6 +1485,7 @@ void CClient::HelpUser() {
 	Table.AddRow(); Table.SetCell("Command", "Topics");		Table.SetCell("Arguments", "");						Table.SetCell("Description", "Show topics in all channels");
 	Table.AddRow(); Table.SetCell("Command", "PlayBuffer");	Table.SetCell("Arguments", "<#chan>");				Table.SetCell("Description", "Play back the buffer for a given channel");
 	Table.AddRow(); Table.SetCell("Command", "ClearBuffer");Table.SetCell("Arguments", "<#chan>");				Table.SetCell("Description", "Clear the buffer for a given channel");
+	Table.AddRow(); Table.SetCell("Command", "ClearAllChannelBuffers");Table.SetCell("Arguments", "");				Table.SetCell("Description", "Clear the channel buffers");
 	Table.AddRow(); Table.SetCell("Command", "SetBuffer");	Table.SetCell("Arguments", "<#chan> [linecount]");	Table.SetCell("Description", "Set the buffer count for a channel");
 	Table.AddRow(); Table.SetCell("Command", "SetVHost");	Table.SetCell("Arguments", "<vhost (ip preferred)>");Table.SetCell("Description", "Set the VHost for this connection");
 	Table.AddRow(); Table.SetCell("Command", "Jump");		Table.SetCell("Arguments", "");						Table.SetCell("Description", "Jump to the next server in the list");
