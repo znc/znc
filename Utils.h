@@ -70,29 +70,34 @@ protected:
 class CLockFile {
 public:
 	CLockFile() {
-		m_bCreated = false;
-		m_fd = -1;
-		m_pid = 0;
+		Init();
 	}
 
 	CLockFile(const CString& sFile) {
+		Init();
 		Open(sFile);
 	}
 
 	virtual ~CLockFile() {
-		if (getpid() == m_pid) {
-			if (m_fd > -1) {
-				UnLock();
-				close(m_fd);
+		Close();
+	}
 
-				if (m_bCreated) {
-					unlink(m_sFileName.c_str());
-				}
+	void Close() {
+		if (getpid() == m_pid && m_fd > -1) {
+			UnLock();
+			close(m_fd);
+
+			if (m_bCreated) {
+				unlink(m_sFileName.c_str());
 			}
+
+			Init();
 		}
 	}
 
 	void Open(const CString& sFile, bool bRw = false) {
+		Close();
+
 		m_fd = open(sFile.c_str(), bRw ? O_RDWR : O_RDONLY);
 		m_bCreated = false;
 
@@ -174,6 +179,12 @@ private:
 		}
 
 		return true;
+	}
+
+	void Init() {
+		m_bCreated = false;
+		m_fd = -1;
+		m_pid = 0;
 	}
 
 	int			m_fd;
