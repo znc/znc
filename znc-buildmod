@@ -1,32 +1,84 @@
 #!/bin/sh
 
+# These vars hold some color escape sequences.
+# Inspired by /sbin/functions.sh from gentoo
+
+BOLD=$'\e[1;m'
+UNBOLD=$'\e[22;m'
+
+RED=$'\e[31;01m'
+GREEN=$'\e[32;01m'
+YELLOW=$'\e[33;01m'
+BLUE=$'\e[34;01m'
+NORMAL=$'\e[39;m'
+
+RESTART=$'\r'
+
+# These are used when we display our messages
+
+ERROR="${BOLD}${BLUE}[${RED} !! ${BLUE}]${NORMAL}${UNBOLD}"
+WARNING="${BOLD}${BLUE}[${YELLOW} ** ${BLUE}]${NORMAL}${UNBOLD}"
+OK="${BOLD}${BLUE}[${GREEN} ok ${BLUE}]${NORMAL}${UNBOLD}"
+
+PROGRESS="${BOLD}${BLUE}[    ]${NORMAL}${UNBOLD}"
+
+# Check if we got everything we need
+
+SED=sed
+ZNC_CONFIG=znc-config
+
+if test "x$CXX" = "x" ; then
+	CXX=g++
+fi
+
+check_binary()
+{
+	which $1 > /dev/null 2>&1
+	if test $? = 1 ; then
+		echo "${ERROR} Could not find $1. $2"
+		exit 1
+	fi
+}
+
+check_binary ${SED}
+check_binary ${ZNC_CONFIG} "Please (re)install ZNC."
+check_binary ${CXX} "What happened to your compiler?"
+
 if test -z "$1"; then
-	echo -e "\033[1m\033[34m[\033[33m ** \033[34m]\033[39m\033[22m USAGE: $0 <file.cpp> [file.cpp ...]"
+	echo "${WARNING} USAGE: $0 <file.cpp> [file.cpp ... ]"
 	exit 1
 fi
 
-CXXFLAGS=`znc-config --cflags`
-INCLUDES=`znc-config --include`
-LIBS=`znc-config --libs`
+CXXFLAGS=`${ZNC_CONFIG} --cflags`
+INCLUDES=`${ZNC_CONFIG} --include`
+LIBS=`${ZNC_CONFIG} --libs`
 
-if test ! -d ${INCLUDES:2}; then
-	echo -e "\033[1m\033[34m[\033[31m ** \033[34m]\033[39m\033[22m Unable to find znc include dir [${INCLUDES:2}], please (re)install znc."
+# Get the first word and strip away the first two chars (which is -I)
+INC_PATH=`echo ${INCLUDES} | ${SED} 's: .*::' | ${SED} 's:^..::'`
+
+if test ! -d ${INC_PATH}; then
+	echo "${ERROR} Unable to find znc include dir [${INC_PATH}]. Please (re)install ZNC."
 	exit 1
 fi
 
-for FILE in "$@"
+while test ! -z "$1"
 do
+	FILE=$1
+	shift
+
 	MOD="${FILE%.cpp}"
 	MOD="${MOD%.cc}"
 
-	echo -en "\033[1m\033[34m[    ]\033[39m\033[22m Building ${MOD}.so... "
+	echo -n "${PROGRESS} Building ${MOD}.so... "
 
 	if test ! -f ${FILE}; then
-		echo -en "\033[1m\033[34m[\033[31m File not found \033[34m]\033[39m\033[22m"
-		echo -e "\r\033[1m\033[34m[\033[31m !! \033[34m]\033[39m\033[22m"
+		echo "File not found${RESTART}${ERROR}"
 	else
-		(g++ ${CXXFLAGS} ${INCLUDES} ${LIBS} -shared -o ${MOD}.so ${FILE} && echo -e "\r\033[1m\033[34m[\033[32m ok \033[34m]\033[39m\033[22m") \
-			|| (echo -e "\033[1m\033[34m[\033[31m ** \033[34m]\033[39m\033[22m Error while building ${MOD}.so")
+		if ${CXX} ${CXXFLAGS} ${INCLUDES} ${LIBS} -shared -o ${MOD}.so ${FILE} ; then
+			echo "${RESTART}${OK}"
+		else
+			echo "${ERROR} Error while building ${MOD}.so"
+		fi
 	fi
 done
 
