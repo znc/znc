@@ -2408,7 +2408,7 @@ case $host_os in *\ *) host_os=`echo "$host_os" | sed 's/ /-/g'`;; esac
 
 
 
-CXXFLAGS="$SAVED_CXXFLAGS -D_GNU_SOURCE"
+CXXFLAGS="$SAVED_CXXFLAGS -D_GNU_SOURCE -D_FORTIFY_SOURCE=2"
 INCLUDES=""
 LIBS=""
 DEPEND=""
@@ -2510,8 +2510,6 @@ if test "${enable_sasl+set}" = set; then
 fi
 
 
-appendCXX -Wall -W -Wno-unused
-
 if test "$DEBUG" != "no"; then
 	appendCXX -ggdb -D_DEBUG
 else
@@ -2523,7 +2521,7 @@ if test "$IPV6" != "no"; then
 fi
 
 if test "x$GXX" = "xyes"; then
-	appendCXX -Woverloaded-virtual
+	appendCXX -Wall -W -Wno-unused -Woverloaded-virtual
 	# enable g++ dependency tracking
 	DEPEND=".depend"
 fi
