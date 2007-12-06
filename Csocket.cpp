@@ -28,7 +28,7 @@
 * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 *
 *
-* $Revision: 1.61 $
+* $Revision: 1.62 $
 */
 
 #include "Csocket.h"
@@ -1412,7 +1412,6 @@ bool Csock::Write( const CS_STRING & sData )
 int Csock::Read( char *data, int len )
 {
 	int bytes = 0;
-	memset( (char *)data, '\0', len );
 
 	if ( ( IsReadPaused() ) && ( SslIsEstablished() ) )
 		return( READ_EAGAIN ); // allow the handshake to complete first
