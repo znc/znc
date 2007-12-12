@@ -37,30 +37,39 @@ using std::set;
 #endif
 
 #define MODCONSTRUCTOR(CLASS) \
-	CLASS(void *pDLL, CUser* pUser, const CString& sModName) : CModule(pDLL, pUser, sModName)
+	CLASS(void *pDLL, CUser* pUser, const CString& sModName, \
+			const CString& sModPath) \
+			: CModule(pDLL, pUser, sModName, sModPath)
 #define MODULEDEFS(CLASS, DESCRIPTION) \
 	extern "C" { \
 		CString GetDescription() { return DESCRIPTION; } \
 		bool IsGlobal() { return false; } \
-		CModule* Load(void* p, CUser* pUser, const CString& sModName); \
+		CModule* Load(void* p, CUser* pUser, const CString& sModName, \
+				const CString& sModPath); \
 		void Unload(CModule* pMod); double GetVersion(); } \
 		double GetVersion() { return VERSION; } \
-		CModule* Load(void* p, CUser* pUser, const CString& sModName) { return new CLASS(p, pUser, sModName); } \
+		CModule* Load(void* p, CUser* pUser, const CString& sModName, \
+				const CString& sModPath) \
+		{ return new CLASS(p, pUser, sModName, sModPath); } \
 		void Unload(CModule* pMod) { if (pMod) { delete pMod; } \
 	}
 // !User Module Macros
 
 // Global Module Macros
 #define GLOBALMODCONSTRUCTOR(CLASS) \
-	CLASS(void *pDLL, const CString& sModName) : CGlobalModule(pDLL, sModName)
+	CLASS(void *pDLL, const CString& sModName, const CString& sModPath) \
+			: CGlobalModule(pDLL, sModName, sModPath)
 #define GLOBALMODULEDEFS(CLASS, DESCRIPTION) \
 	extern "C" { \
 		CString GetDescription() { return DESCRIPTION; } \
 		bool IsGlobal() { return true; } \
-		CGlobalModule* Load(void* p, const CString& sModName); \
+		CGlobalModule* Load(void* p, const CString& sModName, \
+				const CString& sModPath); \
 		void Unload(CGlobalModule* pMod); double GetVersion(); } \
 		double GetVersion() { return VERSION; } \
-		CGlobalModule* Load(void* p, const CString& sModName) { return new CLASS(p, sModName); } \
+		CGlobalModule* Load(void* p, const CString& sModName, \
+				const CString& sModPath) \
+		{ return new CLASS(p, sModName, sModPath); } \
 		void Unload(CGlobalModule* pMod) { if (pMod) { delete pMod; } \
 	}
 // !Global Module Macros
@@ -195,8 +204,9 @@ protected:
 
 class CModule {
 public:
-	CModule(void* pDLL, CUser* pUser, const CString& sModName);
-	CModule(void* pDLL, const CString& sModName);
+	CModule(void* pDLL, CUser* pUser, const CString& sModName,
+			const CString& sDataDir);
+	CModule(void* pDLL, const CString& sModName, const CString& sDataDir);
 	virtual ~CModule();
 
 	typedef enum {
@@ -272,7 +282,9 @@ public:
 	virtual bool PutModule(const CString& sLine, const CString& sIdent = "znc", const CString& sHost = "znc.com");
 	virtual bool PutModNotice(const CString& sLine, const CString& sIdent = "znc", const CString& sHost = "znc.com");
 
-	const CString& GetModName() const;
+	const CString& GetModName() const { return m_sModName; }
+	// This is where constant module data (e.g. webadmin skins) are saved
+	const CString& GetModDataDir() const { return m_sDataDir; }
 	CString GetModNick() const;
 
 	// Timer stuff
@@ -321,19 +333,20 @@ public:
 	// !Getters
 
 protected:
-	bool					m_bFake;
-	CString					m_sDescription;
-	vector<CTimer*>			m_vTimers;
-	vector<CSocket*>		m_vSockets;
-	void*					m_pDLL;
-	CSockManager*			m_pManager;
-	CUser*					m_pUser;
-	CClient*				m_pClient;
-	CString					m_sModName;
-	CString					m_sSavePath;
-	CString					m_sArgs;
+	bool			m_bFake;
+	CString			m_sDescription;
+	vector<CTimer*>		m_vTimers;
+	vector<CSocket*>	m_vSockets;
+	void*			m_pDLL;
+	CSockManager*		m_pManager;
+	CUser*			m_pUser;
+	CClient*		m_pClient;
+	CString			m_sModName;
+	CString			m_sDataDir;
+	CString			m_sSavePath;
+	CString			m_sArgs;
 private:
-	MCString				m_mssRegistry; //!< way to save name/value pairs. Note there is no encryption involved in this
+	MCString		m_mssRegistry; //!< way to save name/value pairs. Note there is no encryption involved in this
 };
 
 class CModules : public vector<CModule*> {
@@ -399,7 +412,6 @@ public:
 	bool UnloadModule(const CString& sModule);
 	bool UnloadModule(const CString& sModule, CString& sRetMsg);
 	bool ReloadModule(const CString& sModule, const CString& sArgs, CUser* pUser, CString& sRetMsg);
-	CString FindModPath(const CString& sModule);
 
 	bool GetModInfo(CModInfo& ModInfo, const CString& sModule);
 	void GetAvailableMods(set<CModInfo>& ssMods, bool bGlobal = false);
@@ -410,7 +422,8 @@ protected:
 
 class CGlobalModule : public CModule {
 public:
-	CGlobalModule(void* pDLL, const CString& sModName) : CModule(pDLL, sModName) {}
+	CGlobalModule(void* pDLL, const CString& sModName,
+			const CString &sDataDir) : CModule(pDLL, sModName, sDataDir) {}
 	virtual ~CGlobalModule() {}
 
 	virtual EModRet OnConfigLine(const CString& sName, const CString& sValue, CUser* pUser, CChan* pChan);

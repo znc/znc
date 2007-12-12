@@ -13,7 +13,11 @@
 #define VERSION 0.053
 
 #ifndef _MODDIR_
-#define _MODDIR_ "/usr/libexec/znc"
+#define _MODDIR_ "/usr/lib/znc"
+#endif
+
+#ifndef _DATADIR_
+#define _DATADIR_ "/usr/share/znc"
 #endif
 
 #ifdef _MODULES

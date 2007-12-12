@@ -238,8 +238,9 @@ public:
 
 	void SetupZNCScript()
 	{
-		CString sModule = CZNC::Get().FindModPath( "modperl.pm" );
-		if ( !sModule.empty() )
+		CString sModule, sTmp;
+
+		if ( CZNC::Get().FindModPath( "modperl.pm", sModule, sTmp) )
 		{
 			CString sBuffer, sScript;
 			CFile cFile( sModule );
@@ -1035,8 +1036,9 @@ void CModPerl::LoadPerlMod( const CString & sModule )
 		return;
 	}
 
-	CString sModPath = CZNC::Get().FindModPath( sModule );
-	if ( sModPath.empty() )
+	CString sModPath, sTmp;
+
+	if ( !CZNC::Get().FindModPath(sModule, sModPath, sTmp))
 		PutStatus( "No such module " + sModule );
 	else
 	{

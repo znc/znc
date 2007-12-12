@@ -1261,28 +1261,33 @@ void CZNC::Broadcast(const CString& sMessage, CUser* pUser) {
 	}
 }
 
-CString CZNC::FindModPath(const CString& sModule) const {
-	CString sModPath = GetCurPath() + "/modules/" + sModule;
-	sModPath += (sModule.find(".") == CString::npos) ? ".so" : "";
+bool CZNC::FindModPath(const CString& sModule, CString& sModPath,
+		CString& sDataPath) const {
+	CString sMod = sModule;
+	CString sDir = sMod;
+	if (sModule.find(".") == CString::npos)
+		sMod += ".so";
+
+	sDataPath = GetCurPath() + "/modules/";
+	sModPath = sDataPath + sMod;
 
 	if (!CFile::Exists(sModPath)) {
-		//DEBUG_ONLY(cout << "[" << sModPath << "] Not found..." << endl);
-		sModPath = GetModPath() + "/" + sModule;
-		sModPath += (sModule.find(".") == CString::npos) ? ".so" : "";
+		sDataPath = GetModPath() + "/";
+		sModPath = sDataPath + sMod;
 
 		if (!CFile::Exists(sModPath)) {
-			//DEBUG_ONLY(cout << "[" << sModPath << "] Not found..." << endl);
-			sModPath = _MODDIR_ + CString("/") + sModule;
-			sModPath += (sModule.find(".") == CString::npos) ? ".so" : "";
+			sDataPath = _DATADIR_ + CString("/");
+			sModPath = _MODDIR_ + CString("/") + sMod;
 
 			if (!CFile::Exists(sModPath)) {
-				//DEBUG_ONLY(cout << "[" << sModPath << "] Not found... giving up!" << endl);
-				return "";
+				return false;
 			}
 		}
 	}
 
-	return sModPath;
+	sDataPath += sDir;
+
+	return true;
 }
 
 CUser* CZNC::FindUser(const CString& sUsername) {

@@ -109,7 +109,10 @@ public:
 	bool WriteNewConfig(const CString& sConfig);
 	bool WriteConfig();
 	static CString GetTag(bool bIncludeVersion = true);
-	CString FindModPath(const CString& sModule) const;
+	// This returns the path to the .so and to the data dir
+	// which is where static data (webadmin skins) are saved
+	bool FindModPath(const CString& sModule, CString& sModPath,
+			CString& sDataPath) const;
 	void ClearVHosts();
 	bool AddVHost(const CString& sHost);
 	bool RemVHost(const CString& sHost);

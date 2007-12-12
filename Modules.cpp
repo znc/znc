@@ -201,13 +201,14 @@ CModule* CSocket::GetModule() const { return m_pModule; }
 const CString& CSocket::GetLabel() const { return m_sLabel; }
 /////////////////// !Socket ///////////////////
 
-CModule::CModule(void* pDLL, CUser* pUser, const CString& sModName) {
+CModule::CModule(void* pDLL, CUser* pUser, const CString& sModName, const CString& sDataDir) {
 	m_bFake = false;
 	m_pDLL = pDLL;
 	m_pManager = &(CZNC::Get().GetManager());;
 	m_pUser = pUser;
 	m_pClient = NULL;
 	m_sModName = sModName;
+	m_sDataDir = sDataDir;
 
 	if (m_pUser) {
 		m_sSavePath = m_pUser->GetUserPath() + "/moddata/" + m_sModName;
@@ -215,13 +216,14 @@ CModule::CModule(void* pDLL, CUser* pUser, const CString& sModName) {
 	}
 }
 
-CModule::CModule(void* pDLL, const CString& sModName) {
+CModule::CModule(void* pDLL, const CString& sModName, const CString& sDataDir) {
 	m_bFake = false;
 	m_pDLL = pDLL;
 	m_pManager = &(CZNC::Get().GetManager());
 	m_pUser = NULL;
 	m_pClient = NULL;
 	m_sModName = sModName;
+	m_sDataDir = sDataDir;
 
 	m_sSavePath = CZNC::Get().GetZNCPath() + "/moddata/" + m_sModName;
 	LoadRegistry();
@@ -472,7 +474,6 @@ void CModule::ListSockets() {
 	}
 }
 
-const CString& CModule::GetModName() const { return m_sModName; }
 CString CModule::GetModNick() const { return ((m_pUser) ? m_pUser->GetStatusPrefix() : "*") + m_sModName; }
 
 bool CModule::OnLoad(const CString& sArgs, CString& sMessage) { sMessage = ""; return true; }
@@ -678,15 +679,15 @@ bool CModules::LoadModule(const CString& sModule, const CString& sArgs, CUser* p
 		return false;
 	}
 
-	CString sModPath = FindModPath(sModule);
+	CString sModPath, sDataPath;
 
-	if (sModPath.empty()) {
+	if (!CZNC::Get().FindModPath(sModule, sModPath, sDataPath)) {
 		sRetMsg = "Unable to find module [" + sModule + "]";
 		return false;
 	}
 
 	if (bFake) {
-		CModule* pModule = new CModule(NULL, sModule);
+		CModule* pModule = new CModule(NULL, sModule, sDataPath);
 		pModule->SetArgs(sArgs);
 		pModule->SetDescription("<<Fake Module>>");
 		pModule->SetFake(true);
@@ -751,7 +752,8 @@ bool CModules::LoadModule(const CString& sModule, const CString& sArgs, CUser* p
 	CModule* pModule = NULL;
 
 	if (pUser) {
-		typedef CModule* (*fp)(void*, CUser* pUser, const CString& sModName);
+		typedef CModule* (*fp)(void*, CUser* pUser,
+				const CString& sModName, const CString& sDataPath);
 		fp Load = (fp) dlsym(p, "Load");
 
 		if (!Load) {
@@ -760,9 +762,10 @@ bool CModules::LoadModule(const CString& sModule, const CString& sArgs, CUser* p
 			return false;
 		}
 
-		pModule = Load(p, pUser, sModule);
+		pModule = Load(p, pUser, sModule, sDataPath);
 	} else {
-		typedef CModule* (*fp)(void*, const CString& sModName);
+		typedef CModule* (*fp)(void*, const CString& sModName,
+				const CString& sDataPath);
 		fp Load = (fp) dlsym(p, "Load");
 
 		if (!Load) {
@@ -771,7 +774,7 @@ bool CModules::LoadModule(const CString& sModule, const CString& sArgs, CUser* p
 			return false;
 		}
 
-		pModule = Load(p, sModule);
+		pModule = Load(p, sModule, sDataPath);
 	}
 
 	pModule->SetDescription(GetDesc());
@@ -879,10 +882,6 @@ bool CModules::ReloadModule(const CString& sModule, const CString& sArgs, CUser*
 	return true;
 }
 
-CString CModules::FindModPath(const CString& sModule) {
-	return CZNC::Get().FindModPath(sModule);
-}
-
 bool CModules::GetModInfo(CModInfo& ModInfo, const CString& sModule) {
 	for (unsigned int a = 0; a < sModule.length(); a++) {
 		const char& c = sModule[a];
@@ -892,9 +891,9 @@ bool CModules::GetModInfo(CModInfo& ModInfo, const CString& sModule) {
 		}
 	}
 
-	CString sModPath = FindModPath(sModule);
-
-	if (sModPath.empty()) {
+	CString sModPath, sTmp;
+	
+	if (!CZNC::Get().FindModPath(sModule, sModPath, sTmp)) {
 		return false;
 	}
 

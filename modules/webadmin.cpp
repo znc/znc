@@ -221,23 +221,14 @@ private:
 };
  
 CString CWebAdminSock::GetSkinDir() {
-	CString sModPath = CZNC::Get().FindModPath(m_pModule->GetModName());	// @todo store the path to the module at load time and store it in a member var which can be used here
-
-	// Remove the file.so portion from the path
-	while (!sModPath.empty() && sModPath.Right(1) != "/") {
-		sModPath.RightChomp();
-	}
-
-	// Remove the last /
-	sModPath.RightChomp();
-
-	CString sSkinDir = sModPath + "/" + m_pModule->GetModName() + "/skins/" + m_pModule->GetSkinName() + "/";
+	CString sSkinDir = m_pModule->GetModDataDir() + "/skins/"
+		+ m_pModule->GetSkinName() + "/";
 
 	if (CDir::Exists(sSkinDir)) {
 		return sSkinDir;
 	}
 
-	return sModPath + "/" + m_pModule->GetModName() + "/skins/default/";
+	return m_pModule->GetModDataDir() + "/skins/default/";
 }
 
 void CWebAdminSock::PrintPage(CString& sPageRet, const CString& sTmplName) {

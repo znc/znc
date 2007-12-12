@@ -641,6 +641,7 @@ NOSSL
 PERL
 SASL
 MODDIR
+DATADIR
 LIBOBJS
 LTLIBOBJS'
 ac_subst_files=''
@@ -1242,6 +1243,8 @@ Optional Packages:
   --with-openssl=/path/to/openssl
 
   --with-module-prefix=/path/to/moduledir
+
+  --with-module-data-prefix=/path/to/moduledir
 
 
 Some influential environment variables:
@@ -3633,8 +3636,18 @@ fi
 if test "${with_module_prefix+set}" = set; then
   withval=$with_module_prefix; MODDIR=$withval
 else
-  MODDIR="${prefix}/libexec/znc"
+  MODDIR="${libdir}/znc"
 fi
+
+
+
+# Check whether --with-module-data-prefix was given.
+if test "${with_module_data_prefix+set}" = set; then
+  withval=$with_module_data_prefix; DATADIR=$withval
+else
+  DATADIR="${datadir}/znc"
+fi
+
 
 
 if test "$MODULES" = "yes"; then
@@ -3734,6 +3747,7 @@ fi
 		fi
 
 		appendCXX "-D_MODDIR_=\\\"${MODDIR}\\\""
+		appendCXX "-D_DATADIR_=\\\"${DATADIR}\\\""
 
 		if test -z "$NOPERL"; then
 			echo -n "checking for perl... "
@@ -3901,6 +3915,7 @@ fi
 VERSION=0.053
 #
 # Auto detect modules
+
 
 
 
@@ -4618,11 +4633,12 @@ NOSSL!$NOSSL$ac_delim
 PERL!$PERL$ac_delim
 SASL!$SASL$ac_delim
 MODDIR!$MODDIR$ac_delim
+DATADIR!$DATADIR$ac_delim
 LIBOBJS!$LIBOBJS$ac_delim
 LTLIBOBJS!$LTLIBOBJS$ac_delim
 _ACEOF
 
-  if test `sed -n "s/.*$ac_delim\$/X/p" conf$$subs.sed | grep -c X` = 67; then
+  if test `sed -n "s/.*$ac_delim\$/X/p" conf$$subs.sed | grep -c X` = 68; then
     break
   elif $ac_last_try; then
     { { echo "$as_me:$LINENO: error: could not make $CONFIG_STATUS" >&5
