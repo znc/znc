@@ -1,3 +1,12 @@
+prefix      := @prefix@
+exec_prefix := @exec_prefix@
+datarootdir := @datarootdir@
+bindir      := @bindir@
+datadir     := @datadir@
+sysconfdir  := @sysconfdir@
+libdir      := @libdir@
+sbindir     := @sbindir@
+localstatedir := @localstatedir@
 CXX      := @CXX@
 CXXFLAGS := @CXXFLAGS@
 LDFLAGS  := @LDFLAGS@
@@ -5,7 +14,7 @@ INCLUDES := @INCLUDES@ -I..
 LIBS     := @LIBS@
 PERL     := @PERL@
 MODDIR   := @MODDIR@
-prefix   := @prefix@
+DATADIR  := @DATADIR@
 
 ifeq "@NOSSL@" "1" 
 FILES    := $(foreach file, $(wildcard *.cpp), \
@@ -50,12 +59,13 @@ install: all create_install_dir install_metadirs $(PERLHOOK)
 
 create_install_dir:
 	mkdir -p $(DESTDIR)$(MODDIR)
+	mkdir -p $(DESTDIR)$(DATADIR)
 	rm -rf $(DESTDIR)$(MODDIR)/*.so
 
 install_metadirs: create_install_dir
 	for a in *; do \
 		if [ -d $$a ] && [ -f $${a}.so ]; then \
-			cp -Rp $$a $(DESTDIR)$(MODDIR); \
+			cp -Rp $$a $(DESTDIR)$(DATADIR); \
 		fi \
 	done
 

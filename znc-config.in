@@ -1,5 +1,10 @@
 #!/bin/sh
 
+prefix="@prefix@"
+exec_prefix="@exec_prefix@"
+datadir="@datadir@"
+datarootdir="@datarootdir@"
+
 CXXFLAGS="@CXXFLAGS@"
 INCLUDES="-I@prefix@/include/znc @INCLUDES@"
 LIBS="@LIBS@"
