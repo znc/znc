@@ -104,7 +104,7 @@ protected:
 
 class CWebAdminMod : public CGlobalModule {
 public:
-	CWebAdminMod(void *pDLL, const CString& sModName) : CGlobalModule(pDLL, sModName) {
+	GLOBALMODCONSTRUCTOR(CWebAdminMod) {
 		m_uPort = 8080;
 		m_sSkinName = GetNV("SkinName");
 	}
