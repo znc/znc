@@ -395,12 +395,35 @@ public:
 			Table.AddColumn("Arguments");
 			Table.AddColumn("Description");
 
-			Table.AddRow(); Table.SetCell("Command", "Help"); Table.SetCell("Arguments", ""); Table.SetCell("Description", "List all partyline commands");
-			Table.AddRow(); Table.SetCell("Command", "List"); Table.SetCell("Arguments", ""); Table.SetCell("Description", "List all open channels");
-			Table.AddRow(); Table.SetCell("Command", "AddFixChan"); Table.SetCell("Arguments", "<user> <channel>"); Table.SetCell("Description", "Force a user into a channel which he cant part");
-			Table.AddRow(); Table.SetCell("Command", "DelFixChan"); Table.SetCell("Arguments", "<user> <channel>"); Table.SetCell("Description", "Remove a user from such a channel");
-			Table.AddRow(); Table.SetCell("Command", "ListFixChans"); Table.SetCell("Arguments", "<user>"); Table.SetCell("Description", "Show which channels a user can not part");
-			Table.AddRow(); Table.SetCell("Command", "ListFixUsers"); Table.SetCell("Arguments", "<channel>"); Table.SetCell("Description", "Show which users can not part this channel");
+			Table.AddRow();
+			Table.SetCell("Command", "Help");
+			Table.SetCell("Arguments", "");
+			Table.SetCell("Description", "List all partyline commands");
+
+			Table.AddRow();
+			Table.SetCell("Command", "List");
+			Table.SetCell("Arguments", "");
+			Table.SetCell("Description", "List all open channels");
+
+			Table.AddRow();
+			Table.SetCell("Command", "AddFixChan");
+			Table.SetCell("Arguments", "<user> <channel>");
+			Table.SetCell("Description", "Force a user into a channel which he cant part");
+
+			Table.AddRow();
+			Table.SetCell("Command", "DelFixChan");
+			Table.SetCell("Arguments", "<user> <channel>");
+			Table.SetCell("Description", "Remove a user from such a channel");
+
+			Table.AddRow();
+			Table.SetCell("Command", "ListFixChans");
+			Table.SetCell("Arguments", "<user>");
+			Table.SetCell("Description", "Show which channels a user can not part");
+
+			Table.AddRow();
+			Table.SetCell("Command", "ListFixUsers");
+			Table.SetCell("Arguments", "<channel>");
+			Table.SetCell("Description", "Show which users can not part this channel");
 
 			unsigned int uTableIdx = 0;
 			CString sLine;

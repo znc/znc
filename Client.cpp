@@ -1469,47 +1469,166 @@ void CClient::HelpUser() {
 	Table.AddColumn("Arguments");
 	Table.AddColumn("Description");
 
-	Table.AddRow(); Table.SetCell("Command", "Version");	Table.SetCell("Arguments", "");						Table.SetCell("Description", "Prints which version of znc this is");
-	Table.AddRow(); Table.SetCell("Command", "ListDCCs");	Table.SetCell("Arguments", "");						Table.SetCell("Description", "List all active DCCs");
-	Table.AddRow(); Table.SetCell("Command", "ListMods");	Table.SetCell("Arguments", "");						Table.SetCell("Description", "List all loaded modules");
-	Table.AddRow(); Table.SetCell("Command", "ListChans");	Table.SetCell("Arguments", "");						Table.SetCell("Description", "List all channels");
-	Table.AddRow(); Table.SetCell("Command", "ListNicks");	Table.SetCell("Arguments", "<#chan>");				Table.SetCell("Description", "List all nicks on a channel");
+	Table.AddRow();
+	Table.SetCell("Command", "Version");
+	Table.SetCell("Arguments", "");
+	Table.SetCell("Description", "Prints which version of znc this is");
+
+	Table.AddRow();
+	Table.SetCell("Command", "ListDCCs");
+	Table.SetCell("Arguments", "");
+	Table.SetCell("Description", "List all active DCCs");
+
+	Table.AddRow();
+	Table.SetCell("Command", "ListMods");
+	Table.SetCell("Arguments", "");
+	Table.SetCell("Description", "List all loaded modules");
+
+	Table.AddRow();
+	Table.SetCell("Command", "ListChans");
+	Table.SetCell("Arguments", "");
+	Table.SetCell("Description", "List all channels");
+
+	Table.AddRow();
+	Table.SetCell("Command", "ListNicks");
+	Table.SetCell("Arguments", "<#chan>");
+	Table.SetCell("Description", "List all nicks on a channel");
 
 	if (!m_pUser->IsAdmin()) { // If they are an admin we will add this command below with an argument
-		Table.AddRow(); Table.SetCell("Command", "ListClients");Table.SetCell("Arguments", "");					Table.SetCell("Description", "List all clients connected to your znc user");
+		Table.AddRow();
+		Table.SetCell("Command", "ListClients");
+		Table.SetCell("Arguments", "");
+		Table.SetCell("Description", "List all clients connected to your znc user");
 	}
 
-	Table.AddRow(); Table.SetCell("Command", "ListServers");Table.SetCell("Arguments", "");						Table.SetCell("Description", "List all servers");
-	Table.AddRow(); Table.SetCell("Command", "AddServer");	Table.SetCell("Arguments", "<host> [[+]port] [pass]");	Table.SetCell("Description", "Add a server to the list");
-	Table.AddRow(); Table.SetCell("Command", "RemServer");	Table.SetCell("Arguments", "<host>");				Table.SetCell("Description", "Remove a server from the list");
-	Table.AddRow(); Table.SetCell("Command", "Topics");		Table.SetCell("Arguments", "");						Table.SetCell("Description", "Show topics in all channels");
-	Table.AddRow(); Table.SetCell("Command", "PlayBuffer");	Table.SetCell("Arguments", "<#chan>");				Table.SetCell("Description", "Play back the buffer for a given channel");
-	Table.AddRow(); Table.SetCell("Command", "ClearBuffer");Table.SetCell("Arguments", "<#chan>");				Table.SetCell("Description", "Clear the buffer for a given channel");
-	Table.AddRow(); Table.SetCell("Command", "ClearAllChannelBuffers");Table.SetCell("Arguments", "");				Table.SetCell("Description", "Clear the channel buffers");
-	Table.AddRow(); Table.SetCell("Command", "SetBuffer");	Table.SetCell("Arguments", "<#chan> [linecount]");	Table.SetCell("Description", "Set the buffer count for a channel");
-	Table.AddRow(); Table.SetCell("Command", "SetVHost");	Table.SetCell("Arguments", "<vhost (ip preferred)>");Table.SetCell("Description", "Set the VHost for this connection");
-	Table.AddRow(); Table.SetCell("Command", "Jump");		Table.SetCell("Arguments", "");						Table.SetCell("Description", "Jump to the next server in the list");
-	Table.AddRow(); Table.SetCell("Command", "Disconnect");		Table.SetCell("Arguments", "");						Table.SetCell("Description", "Disconnect from IRC");
-	Table.AddRow(); Table.SetCell("Command", "Connect");		Table.SetCell("Arguments", "");						Table.SetCell("Description", "Reconnect to IRC");
-	Table.AddRow(); Table.SetCell("Command", "Send");		Table.SetCell("Arguments", "<nick> <file>");		Table.SetCell("Description", "Send a shell file to a nick on IRC");
-	Table.AddRow(); Table.SetCell("Command", "Get");		Table.SetCell("Arguments", "<file>");				Table.SetCell("Description", "Send a shell file to yourself");
+	Table.AddRow();
+	Table.SetCell("Command", "ListServers");
+	Table.SetCell("Arguments", "");
+	Table.SetCell("Description", "List all servers");
+
+	Table.AddRow();
+	Table.SetCell("Command", "AddServer");
+	Table.SetCell("Arguments", "<host> [[+]port] [pass]");
+	Table.SetCell("Description", "Add a server to the list");
+
+	Table.AddRow();
+	Table.SetCell("Command", "RemServer");
+	Table.SetCell("Arguments", "<host>");
+	Table.SetCell("Description", "Remove a server from the list");
+
+	Table.AddRow();
+	Table.SetCell("Command", "Topics");
+	Table.SetCell("Arguments", "");
+	Table.SetCell("Description", "Show topics in all channels");
+
+	Table.AddRow();
+	Table.SetCell("Command", "PlayBuffer");
+	Table.SetCell("Arguments", "<#chan>");
+	Table.SetCell("Description", "Play back the buffer for a given channel");
+
+	Table.AddRow();
+	Table.SetCell("Command", "ClearBuffer");
+	Table.SetCell("Arguments", "<#chan>");
+	Table.SetCell("Description", "Clear the buffer for a given channel");
+
+	Table.AddRow();
+	Table.SetCell("Command", "ClearAllChannelBuffers");
+	Table.SetCell("Arguments", "");
+	Table.SetCell("Description", "Clear the channel buffers");
+
+	Table.AddRow();
+	Table.SetCell("Command", "SetBuffer");
+	Table.SetCell("Arguments", "<#chan> [linecount]");
+	Table.SetCell("Description", "Set the buffer count for a channel");
+
+	Table.AddRow();
+	Table.SetCell("Command", "SetVHost");
+	Table.SetCell("Arguments", "<vhost (ip preferred)>");
+	Table.SetCell("Description", "Set the VHost for this connection");
+
+	Table.AddRow();
+	Table.SetCell("Command", "Jump");
+	Table.SetCell("Arguments", "");
+	Table.SetCell("Description", "Jump to the next server in the list");
+
+	Table.AddRow();
+	Table.SetCell("Command", "Disconnect");
+	Table.SetCell("Arguments", "");
+	Table.SetCell("Description", "Disconnect from IRC");
+
+	Table.AddRow();
+	Table.SetCell("Command", "Connect");
+	Table.SetCell("Arguments", "");
+	Table.SetCell("Description", "Reconnect to IRC");
+
+	Table.AddRow();
+	Table.SetCell("Command", "Send");
+	Table.SetCell("Arguments", "<nick> <file>");
+	Table.SetCell("Description", "Send a shell file to a nick on IRC");
+
+	Table.AddRow();
+	Table.SetCell("Command", "Get");
+	Table.SetCell("Arguments", "<file>");
+	Table.SetCell("Description", "Send a shell file to yourself");
 
 	if (m_pUser) {
 		if (!m_pUser->DenyLoadMod()) {
-			Table.AddRow(); Table.SetCell("Command", "LoadMod");	Table.SetCell("Arguments", "<module>");		Table.SetCell("Description", "Load a module");
-			Table.AddRow(); Table.SetCell("Command", "UnloadMod");	Table.SetCell("Arguments", "<module>");		Table.SetCell("Description", "Unload a module");
-			Table.AddRow(); Table.SetCell("Command", "ReloadMod");	Table.SetCell("Arguments", "<module>");		Table.SetCell("Description", "Reload a module");
+			Table.AddRow();
+			Table.SetCell("Command", "LoadMod");
+			Table.SetCell("Arguments", "<module>");
+			Table.SetCell("Description", "Load a module");
+
+			Table.AddRow();
+			Table.SetCell("Command", "UnloadMod");
+			Table.SetCell("Arguments", "<module>");
+			Table.SetCell("Description", "Unload a module");
+
+			Table.AddRow();
+			Table.SetCell("Command", "ReloadMod");
+			Table.SetCell("Arguments", "<module>");
+			Table.SetCell("Description", "Reload a module");
 		}
 
 		if (m_pUser->IsAdmin()) {
-			Table.AddRow(); Table.SetCell("Command", "SaveConfig");	Table.SetCell("Arguments", "");				Table.SetCell("Description", "Save the current settings to disk");
-			Table.AddRow(); Table.SetCell("Command", "ListUsers");	Table.SetCell("Arguments", "");				Table.SetCell("Description", "List all users/clients connected to znc");
-			Table.AddRow(); Table.SetCell("Command", "ListClients");Table.SetCell("Arguments", "[User]");		Table.SetCell("Description", "List all clients connected to your znc user");
-			Table.AddRow(); Table.SetCell("Command", "SetMOTD");	Table.SetCell("Arguments", "<Message>");	Table.SetCell("Description", "Set the message of the day");
-			Table.AddRow(); Table.SetCell("Command", "AddMOTD");	Table.SetCell("Arguments", "<Message>");	Table.SetCell("Description", "Append <Message> to MOTD");
-			Table.AddRow(); Table.SetCell("Command", "ClearMOTD");	Table.SetCell("Arguments", "");				Table.SetCell("Description", "Clear the MOTD");
-			Table.AddRow(); Table.SetCell("Command", "Broadcast");	Table.SetCell("Arguments", "[message]");	Table.SetCell("Description", "Broadcast a message to all users");
-			Table.AddRow(); Table.SetCell("Command", "Shutdown");	Table.SetCell("Arguments", "[message]");	Table.SetCell("Description", "Shutdown znc completely");
+			Table.AddRow();
+			Table.SetCell("Command", "SaveConfig");
+			Table.SetCell("Arguments", "");
+			Table.SetCell("Description", "Save the current settings to disk");
+
+			Table.AddRow();
+			Table.SetCell("Command", "ListUsers");
+			Table.SetCell("Arguments", "");
+			Table.SetCell("Description", "List all users/clients connected to znc");
+
+			Table.AddRow();
+			Table.SetCell("Command", "ListClients");
+			Table.SetCell("Arguments", "[User]");
+			Table.SetCell("Description", "List all clients connected to your znc user");
+
+			Table.AddRow();
+			Table.SetCell("Command", "SetMOTD");
+			Table.SetCell("Arguments", "<Message>");
+			Table.SetCell("Description", "Set the message of the day");
+
+			Table.AddRow();
+			Table.SetCell("Command", "AddMOTD");
+			Table.SetCell("Arguments", "<Message>");
+			Table.SetCell("Description", "Append <Message> to MOTD");
+
+			Table.AddRow();
+			Table.SetCell("Command", "ClearMOTD");
+			Table.SetCell("Arguments", "");
+			Table.SetCell("Description", "Clear the MOTD");
+
+			Table.AddRow();
+			Table.SetCell("Command", "Broadcast");
+			Table.SetCell("Arguments", "[message]");
+			Table.SetCell("Description", "Broadcast a message to all users");
+
+			Table.AddRow();
+			Table.SetCell("Command", "Shutdown");
+			Table.SetCell("Arguments", "[message]");
+			Table.SetCell("Description", "Shutdown znc completely");
 		}
 	}
 
