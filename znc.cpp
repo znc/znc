@@ -280,7 +280,7 @@ bool CZNC::WritePemFile( bool bEncPem ) {
 		return false;
 	}
 
-	while (!CUtils::GetInput("hostname of your shell", sHost, sHost, "including the '.com' portion"));
+	while (!CUtils::GetInput("hostname of your shell", sHost, sHost, "including the '.com' portion")) ;
 
 	CUtils::PrintAction("Writing Pem file [" + sPemFile + "]");
 	FILE *f = fopen(sPemFile.c_str(), "w");
@@ -330,7 +330,10 @@ bool CZNC::IsHostAllowed(const CString& sHostMask) {
 
 void CZNC::InitDirs(const CString& sArgvPath, const CString& sDataDir) {
 	char buf[PATH_MAX];
-	getcwd(buf, PATH_MAX);
+	if (getcwd(buf, PATH_MAX) == NULL) {
+		CUtils::PrintError("getcwd() failed, can't read my current dir");
+		exit(-1);
+	}
 
 	// If the bin was not ran from the current directory, we need to add that dir onto our cwd
 	CString::size_type uPos = sArgvPath.rfind('/');
@@ -480,7 +483,7 @@ bool CZNC::WriteNewConfig(const CString& sConfig) {
 
 	// Listen
 	unsigned int uPort = 0;
-	while(!CUtils::GetNumInput("What port would you like ZNC to listen on?", uPort, 1, 65535));
+	while(!CUtils::GetNumInput("What port would you like ZNC to listen on?", uPort, 1, 65535)) ;
 
 	CString sSSL;
 #ifdef HAVE_LIBSSL
@@ -653,8 +656,8 @@ bool CZNC::WriteNewConfig(const CString& sConfig) {
 			bool bSSL = false;
 			unsigned int uPort = 0;
 
-			while(!CUtils::GetInput("IRC server", sHost, "", "host only") || !CServer::IsValidHostName(sHost));
-			while(!CUtils::GetNumInput("[" + sHost + "] Port", uPort, 1, 65535, 6667));
+			while(!CUtils::GetInput("IRC server", sHost, "", "host only") || !CServer::IsValidHostName(sHost)) ;
+			while(!CUtils::GetNumInput("[" + sHost + "] Port", uPort, 1, 65535, 6667)) ;
 			CUtils::GetInput("[" + sHost + "] Password (probably empty)", sPass);
 
 #ifdef HAVE_LIBSSL
@@ -674,7 +677,7 @@ bool CZNC::WriteNewConfig(const CString& sConfig) {
 		bool bDefault = true;
 
 		while (CUtils::GetBoolInput("Would you like to add " + sArg + " channel" + sPost, bDefault)) {
-			while (!CUtils::GetInput("Channel name", sAnswer));
+			while (!CUtils::GetInput("Channel name", sAnswer)) ;
 			vsLines.push_back("\t<Chan " + sAnswer + ">");
 			vsLines.push_back("\t</Chan>");
 			sArg = "another";

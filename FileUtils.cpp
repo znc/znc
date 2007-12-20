@@ -362,12 +362,22 @@ int CExecSock::popen2(int & iReadFD, int & iWriteFD, const CString & sCommand) {
 	iReadFD = -1;
 	iWriteFD = -1;
 
-	pipe(rpipes);
-	pipe(wpipes);
+	if (pipe(rpipes) < 0)
+		return -1;
+
+	if (pipe(wpipes) < 0) {
+		close(rpipes[0]);
+		close(rpipes[1]);
+		return -1;
+	}
 	
 	int iPid = fork();
 
 	if (iPid == -1) {
+		close(rpipes[0]);
+		close(rpipes[1]);
+		close(wpipes[0]);
+		close(wpipes[1]);
 		return -1;
 	}
 
@@ -379,14 +389,14 @@ int CExecSock::popen2(int & iReadFD, int & iWriteFD, const CString & sCommand) {
 		dup2(rpipes[1], 2);
 		close(wpipes[0]);
 		close(rpipes[1]);
-		char * const pArgv[] =
+		const char * pArgv[] =
 		{
 			"sh",
 			"-c",
-			(char *)sCommand.c_str(),
+			sCommand.c_str(),
 			NULL
 		};
-		execvp( "sh", pArgv );
+		execvp("sh", (char * const *) pArgv);
 		exit(0);
 	}
 

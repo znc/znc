@@ -120,7 +120,7 @@ int main(int argc, char** argv, char** envp) {
 		CZNC& ZNC = CZNC::Get();
 		ZNC.InitDirs("", sDataDir);
 		if (ZNC.WriteNewConfig(sConfig)) {
-			char* args[5];
+			char const* args[5];
 
 			if (argc > 2) {
 				args[0] = argv[0];
@@ -147,8 +147,8 @@ int main(int argc, char** argv, char** envp) {
 				return 1;
 			}
 
-			chdir(ZNC.GetCurPath().c_str());
-			if (execve(*argv, args, envp) == -1) {
+			if ((chdir(ZNC.GetCurPath().c_str()) == -1)
+					|| (execve(*argv, (char *const*)args, envp) == -1)) {
 				CUtils::PrintError("Unable to launch znc [" + CString(strerror(errno)) + "]");
 				return 1;
 			}

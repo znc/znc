@@ -319,7 +319,8 @@ private:
 		}
 
 		list<CWatchEntry>::iterator it = m_lsWatchers.begin();
-		for (unsigned int a = 0; a < uIdx; a++, it++);
+		for (unsigned int a = 0; a < uIdx; a++)
+			it++;
 
 		(*it).SetDisabled(bDisabled);
 		PutModule("Id " + CString(uIdx +1) + ((bDisabled) ? " Disabled" : " Enabled"));
@@ -396,7 +397,8 @@ private:
 		}
 
 		list<CWatchEntry>::iterator it = m_lsWatchers.begin();
-		for (unsigned int a = 0; a < uIdx; a++, it++);
+		for (unsigned int a = 0; a < uIdx; a++)
+			it++;
 
 		(*it).SetSources(sSources);
 		PutModule("Sources set for Id " + CString(uIdx +1) + ".");
@@ -410,7 +412,8 @@ private:
 		}
 
 		list<CWatchEntry>::iterator it = m_lsWatchers.begin();
-		for (unsigned int a = 0; a < uIdx; a++, it++);
+		for (unsigned int a = 0; a < uIdx; a++)
+			it++;
 
 		m_lsWatchers.erase(it);
 		PutModule("Id " + CString(uIdx +1) + " Removed.");

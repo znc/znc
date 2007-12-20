@@ -450,8 +450,8 @@ CString CTemplate::GetValue(const CString& sArgs) {
 		sRet = (it != end()) ? it->second : "";
 	}
 
-	while (sRest.Replace(" =", "=", "\"", "\""));
-	while (sRest.Replace("= ", "=", "\"", "\""));
+	while (sRest.Replace(" =", "=", "\"", "\"")) ;
+	while (sRest.Replace("= ", "=", "\"", "\"")) ;
 
 	VCString vArgs;
 	MCString msArgs;
