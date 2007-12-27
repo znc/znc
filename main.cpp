@@ -57,7 +57,7 @@ void die(int sig) {
 	exit(sig);
 }
 
-int main(int argc, char** argv, char** envp) {
+int main(int argc, char** argv) {
 	CString sConfig;
 	CString sDataDir = "";
 
@@ -148,7 +148,7 @@ int main(int argc, char** argv, char** envp) {
 			}
 
 			if ((chdir(ZNC.GetCurPath().c_str()) == -1)
-					|| (execve(*argv, (char *const*)args, envp) == -1)) {
+					|| (execv(*argv, (char *const*)args) == -1)) {
 				CUtils::PrintError("Unable to launch znc [" + CString(strerror(errno)) + "]");
 				return 1;
 			}
