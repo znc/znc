@@ -31,23 +31,23 @@ PERLCC   := -DHAVE_PERL `$(PERL) -MExtUtils::Embed -e perl_inc`
 PERLLD   := `$(PERL) -MExtUtils::Embed -e perl_inc -e ldopts`
 PERLHOOK := modperl_install
 else
-PERLHOOK :=
 FILES    := $(shell echo $(FILES) | sed -e "s/modperl//")
 endif
+modperlFLAGS := $(PERLLD) $(PERLCC)
 
 ifeq "@SASL@" ""
 FILES    := $(shell echo $(FILES) | sed -e "s/saslauth//")
 endif
+saslauthFLAGS := -lsasl2
 
 SRCS     := $(wildcard ../*.cpp) $(addsuffix .cpp, $(FILES))
-OBJS     := $(addsuffix .o, $(FILES))
 TARGETS  := $(addsuffix .so, $(FILES))
 
-CLEAN    := *.so *.o
+CLEAN    := *.so
 
 .PHONY: all clean install depend modperl_install
 
-all: $(OBJS) $(TARGETS)
+all: $(TARGETS)
 
 .depend:
 	$(CXX) -MM $(CXXFLAGS) $(SRCS) $(INCLUDES) $(PERLCC) >.depend
@@ -72,43 +72,12 @@ install_metadirs: create_install_dir
 clean:
 	rm -rf $(CLEAN)
 
-%.so: %.o
-	$(CXX) $(LDFLAGS) -shared -o $@ $<
-
-.cpp.o:
-	$(CXX) $(CXXFLAGS) $(INCLUDES) -c -o $@ $<
-
-ifneq "$(PERL)" ""
-modperl.so: modperl.o
-	$(CXX) $(LDFLAGS) -shared -o $@ $< $(PERLLD)
-
-modperl.o: modperl.cpp
-	$(CXX) $(CXXFLAGS) $(INCLUDES) -c -o $@ $< $(PERLCC)
+%.so: %.cpp
+	$(CXX) $(CXXFLAGS) $(INCLUDES) $(LDFLAGS) $($(basename $<)FLAGS) -shared -o $@ $<
 
 modperl_install: create_install_dir
 	for i in *.pm; do \
 		install -m 0755 $$i $(DESTDIR)$(MODDIR); \
 	done
-else
-modperl.so:
-	@echo -n ""
-modperl.o:
-	@echo -n ""
-modperl_install:
-	@echo -n ""
-endif
-
-ifeq "@SASL@" "1"
-saslauth.so: saslauth.o
-	$(CXX) $(LDFLAGS) -shared -o $@ $< -lsasl2
-
-saslauth.o: saslauth.cpp
-	$(CXX) $(CXXFLAGS) $(INCLUDES) -c -o $@ $<
-else
-saslauth.so:
-	@echo -n ""
-saslauth.o:
-	@echo -n ""
-endif
 
 -include .depend
