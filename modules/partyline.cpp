@@ -54,6 +54,9 @@ public:
 	}
 
 	virtual bool OnBoot() {
+		// The config is now read completely, so all Users are set up
+		Load();
+
 		return true;
 	}
 
@@ -83,10 +86,6 @@ public:
 		return true;
 	}
 	
-	void OnFinishedConfig() {
-		Load();
-	}
-
 	void Load() {		
 		VCString vsChannels;
 		for (MCString::iterator it = BeginNV(); it != EndNV(); it++) {

@@ -547,7 +547,6 @@ bool CModule::PutModNotice(const CString& sLine, const CString& sIdent, const CS
 // CGlobalModule //
 ///////////////////
 CModule::EModRet CGlobalModule::OnConfigLine(const CString& sName, const CString& sValue, CUser* pUser, CChan* pChan) { return CONTINUE; }
-void CGlobalModule::OnFinishedConfig() {}
 CModule::EModRet CGlobalModule::OnDeleteUser(CUser& User) { return CONTINUE; }
 CModule::EModRet CGlobalModule::OnLoginAttempt(CSmartPtr<CAuthBase> Auth) { return CONTINUE; }
 void CGlobalModule::OnFailedLogin(const CString& sUsername, const CString& sRemoteIP) {}
@@ -632,10 +631,6 @@ bool CModules::OnModCTCP(const CString& sMessage) { MODUNLOADCHK(OnModCTCP(sMess
 ////////////////////
 bool CGlobalModules::OnConfigLine(const CString& sName, const CString& sValue, CUser* pUser, CChan* pChan) {
 	GLOBALMODHALTCHK(OnConfigLine(sName, sValue, pUser, pChan));
-}
-
-void CGlobalModules::OnFinishedConfig() {
-	GLOBALMODCALL(OnFinishedConfig());
 }
 
 bool CGlobalModules::OnDeleteUser(CUser& User) {
