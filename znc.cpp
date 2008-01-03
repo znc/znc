@@ -53,6 +53,7 @@ CZNC::~CZNC() {
 		a->second->SetBeingDeleted(true);
 	}
 
+	m_pConnectUserTimer = NULL;
 	// This deletes m_pConnectUserTimer
 	m_Manager.Cleanup();
 	DeleteUsers();
@@ -305,7 +306,7 @@ void CZNC::DeleteUsers() {
 	}
 
 	m_msUsers.clear();
-	RestartConnectUser();
+	DisableConnectUser();
 }
 
 CUser* CZNC::GetUser(const CString& sUser) {
