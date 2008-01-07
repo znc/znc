@@ -6,10 +6,13 @@
  * by the Free Software Foundation.
  */
 
-#include <string.h>
 #include "String.h"
 #include "FileUtils.h"
 #include "MD5.h"
+#include "Utils.h"
+#include <sstream>
+
+using std::stringstream;
 
 const char* g_szHTMLescapes[256] = {
 	"&#0;", 0, 0, 0, 0, 0, 0, 0, 0, 0,               // 0-9

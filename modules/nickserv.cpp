@@ -6,15 +6,7 @@
  * by the Free Software Foundation.
  */
 
-#include "main.h"
 #include "User.h"
-#include "Nick.h"
-#include "Modules.h"
-#include "Chan.h"
-#include "Utils.h"
-#include <pwd.h>
-#include <map>
-#include <vector>
 
 class CNickServ : public CModule
 {

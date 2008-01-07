@@ -6,15 +6,8 @@
  * by the Free Software Foundation.
  */
 
-#include "main.h"
-#include "User.h"
-#include "Nick.h"
 #include "Modules.h"
-#include "Chan.h"
 #include "znc.h"
-#include "HTTPSock.h"
-#include "Server.h"
-#include <map>
 
 using std::map;
 

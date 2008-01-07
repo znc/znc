@@ -7,12 +7,9 @@
  */
 
 #include "FileUtils.h"
-#include <iostream>
+#include <sys/stat.h>
+#include <sys/types.h>
 #include <sys/wait.h>
-
-using std::cout;
-using std::cerr;
-using std::endl;
 
 CFile::CFile() {
 	m_iFD = -1;

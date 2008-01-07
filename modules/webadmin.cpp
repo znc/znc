@@ -6,20 +6,18 @@
  * by the Free Software Foundation.
  */
 
-#include "main.h"
-#include "User.h"
-#include "Nick.h"
-#include "Modules.h"
 #include "Chan.h"
-#include "znc.h"
 #include "HTTPSock.h"
-#include "Client.h"
 #include "Server.h"
 #include "Template.h"
+#include "User.h"
+#include "znc.h"
+#include <sstream>
+
+using std::stringstream;
 
 class CWebAdminMod;
 class CWebAdminSock;
-
 
 class CWebAdminAuth : public CAuthBase {
 public:

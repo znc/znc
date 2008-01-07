@@ -11,21 +11,12 @@
 
 #define REQUIRESSL
 
-#include "main.h"
-#include "znc.h"
 #include "User.h"
-#include "Nick.h"
-#include "Modules.h"
-#include "Chan.h"
-#include "Utils.h"
-#include "String.h"
-#include "FileUtils.h"
-#include "Csocket.h"
-#include "MD5.h"
-#include <pwd.h>
+#include "znc.h"
 #include <sstream>
 
 using std::pair;
+using std::stringstream;
 
 class CSChat;
 

@@ -9,28 +9,26 @@
 #ifndef _USER_H
 #define _USER_H
 
-#include "main.h"
+#include "Buffer.h"
+#include "FileUtils.h"
 #ifdef _MODULES
 #include "Modules.h"
 #endif
-
-#include <vector>
-#include <set>
 #include "Nick.h"
-#include "FileUtils.h"
-#include "Buffer.h"
+#include "Utils.h"
+#include <set>
+#include <vector>
 
-using std::vector;
 using std::set;
+using std::vector;
 
-class CZNC;
 class CChan;
-class CServer;
-class CIRCSock;
 class CClient;
-class CKeepNickTimer;
+class CIRCSock;
 class CJoinTimer;
+class CKeepNickTimer;
 class CMiscTimer;
+class CServer;
 
 class CUser {
 public:
@@ -62,9 +60,7 @@ public:
 	void DelClients();
 #ifdef _MODULES
 	void DelModules();
-#endif
 
-#ifdef _MODULES
 	// Modules
 	CModules& GetModules() { return *m_pModules; }
 	const CModules& GetModules() const { return *m_pModules; }

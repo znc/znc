@@ -6,14 +6,13 @@
  * by the Free Software Foundation.
  */
 
-#include "main.h"
 #include "Client.h"
-#include "znc.h"
-#include "User.h"
-#include "IRCSock.h"
+#include "Chan.h"
 #include "DCCBounce.h"
 #include "DCCSock.h"
+#include "IRCSock.h"
 #include "Server.h"
+#include "User.h"
 
 CClient::~CClient() {
 	if (!m_spAuth.IsNull()) {

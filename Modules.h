@@ -11,14 +11,19 @@
 #ifndef _MODULES_H
 #define _MODULES_H
 
-#include "main.h"
 #include "FileUtils.h"
-#include "Client.h"
-#include <dlfcn.h>
-#include <vector>
+#include "Utils.h"
 #include <set>
+#include <vector>
+
 using std::vector;
 using std::set;
+
+// Forward Declarations
+class CAuthBase;
+class CChan;
+class CClient;
+// !Forward Declarations
 
 // User Module Macros
 #ifdef REQUIRESSL
@@ -29,11 +34,6 @@ using std::set;
 #error -
 #error -
 #endif
-#endif
-
-#ifndef RTLD_LOCAL
-# define RTLD_LOCAL 0
-# warning "your crap box doesnt define RTLD_LOCAL !?"
 #endif
 
 #define MODCONSTRUCTOR(CLASS) \

@@ -7,6 +7,7 @@
  */
 
 #include "DCCSock.h"
+#include "User.h"
 
 void CDCCSock::ReadData(const char* data, int len) {
 	if (!m_pFile) {

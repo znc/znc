@@ -9,20 +9,20 @@
 #ifndef _CHAN_H
 #define _CHAN_H
 
-#include "main.h"
+#include "FileUtils.h"
 #include "Nick.h"
 #include "String.h"
-#include "FileUtils.h"
-#include "Client.h"
-#include <vector>
 #include <map>
 #include <set>
+#include <vector>
+
 using std::vector;
 using std::map;
 using std::set;
 
 // Forward Declarations
 class CUser;
+class CClient;
 // !Forward Declarations
 
 class CChan {

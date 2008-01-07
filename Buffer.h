@@ -11,6 +11,7 @@
 
 #include "String.h"
 #include <vector>
+
 using std::vector;
 
 class CBufLine {

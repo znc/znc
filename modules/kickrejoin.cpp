@@ -12,8 +12,7 @@
  * Usage: LoadModule = rejoin [delay]
  *
  */
-#include <main.h>
-#include <Modules.h>
+
 #include <Chan.h>
 #include <User.h>
 

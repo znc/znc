@@ -10,10 +10,9 @@
  * @brief SASL authentication module for znc.
  */
 
-#include <sasl/sasl.h>
-
 #include "Modules.h"
 #include "znc.h"
+#include <sasl/sasl.h>
 
 class CSASLAuthMod : public CGlobalModule {
 public:

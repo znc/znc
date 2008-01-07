@@ -22,12 +22,8 @@
 //       It is strongly suggested that you enable SSL between znc and your client otherwise the encryption stops at znc and gets sent to your client in plain text.
 // 
 
-#include "main.h"
-#include "User.h"
-#include "Nick.h"
-#include "Modules.h"
 #include "Chan.h"
-#include "String.h"
+#include "User.h"
 
 #define REQUIRESSL	1
 

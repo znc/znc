@@ -9,18 +9,15 @@
 #ifndef _UTILS_H
 #define _UTILS_H
 
-#include <unistd.h>
-#include <ctype.h>
-#include <sys/time.h>
-#include <sys/file.h>
-#include <stdio.h>
-#include <assert.h>
-
 #include "String.h"
-#include <vector>
+#include <assert.h>
 #include <map>
-using std::vector;
+#include <sys/file.h>
+#include <sys/time.h>
+#include <vector>
+
 using std::map;
+using std::vector;
 
 #ifdef _DEBUG
 #define DEBUG_ONLY(f)   f

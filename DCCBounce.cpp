@@ -7,6 +7,7 @@
  */
 
 #include "DCCBounce.h"
+#include "User.h"
 
 void CDCCBounce::ReadLine(const CString& sData) {
 	CString sLine = sData;

@@ -7,12 +7,8 @@
  */
 
 // @todo handle raw 433 (nick in use)
-#include "main.h"
-#include "User.h"
-#include "Nick.h"
-#include "Modules.h"
-#include "Chan.h"
 #include "IRCSock.h"
+#include "User.h"
 
 class CAwayNickMod;
 

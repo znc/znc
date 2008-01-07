@@ -6,16 +6,13 @@
  * by the Free Software Foundation.
  */
 
-#include "main.h"
-#include "znc.h"
 #include "User.h"
-#include "Server.h"
-#include "IRCSock.h"
-#include "Client.h"
-#include "DCCBounce.h"
+#include "Chan.h"
 #include "DCCSock.h"
-#include "MD5.h"
+#include "IRCSock.h"
+#include "Server.h"
 #include "Timers.h"
+#include "znc.h"
 
 CUser::CUser(const CString& sUserName) {
 	m_fTimezoneOffset = 0;
@@ -779,7 +776,7 @@ bool CUser::CheckPass(const CString& sPass) {
 		return (sPass == m_sPass);
 	}
 
-	return (m_sPass.CaseCmp((char*) CMD5(sPass)) == 0);
+	return (m_sPass.CaseCmp(sPass.MD5()) == 0);
 }
 
 /*CClient* CUser::GetClient() {

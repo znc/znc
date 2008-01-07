@@ -7,13 +7,8 @@
  */
 
 #ifdef HAVE_PERL
-#include "main.h"
-#include "User.h"
-#include "Nick.h"
-#include "Modules.h"
 #include "Chan.h"
-#include "FileUtils.h"
-#include "Csocket.h"
+#include "User.h"
 #include "znc.h"
 
 // perl stuff

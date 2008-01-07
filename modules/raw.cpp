@@ -6,11 +6,7 @@
  * by the Free Software Foundation.
  */
 
-#include "main.h"
 #include "User.h"
-#include "Nick.h"
-#include "Modules.h"
-#include "Chan.h"
 
 class CRawMod : public CModule {
 public:

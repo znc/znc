@@ -8,13 +8,15 @@
 
 #ifdef _MODULES
 
-#include "main.h"
 #include "Modules.h"
-#include "znc.h"
-#include "Utils.h"
 #include "User.h"
-#include "Nick.h"
-#include "Chan.h"
+#include "znc.h"
+#include <dlfcn.h>
+
+#ifndef RTLD_LOCAL
+# define RTLD_LOCAL 0
+# warning "your crap box doesnt define RTLD_LOCAL !?"
+#endif
 
 #define MODUNLOADCHK(func)								\
 	for (unsigned int a = 0; a < size(); a++) {			\

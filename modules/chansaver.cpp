@@ -6,12 +6,9 @@
  * by the Free Software Foundation.
  */
 
-#include "main.h"
-#include "znc.h"
-#include "User.h"
-#include "Nick.h"
-#include "Modules.h"
 #include "Chan.h"
+#include "User.h"
+#include "znc.h"
 
 class CChanSaverMod : public CModule {
 public:

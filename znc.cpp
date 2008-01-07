@@ -7,19 +7,11 @@
  */
 
 #include "znc.h"
-#include "User.h"
-#include "Server.h"
-#include "Client.h"
+#include "Chan.h"
 #include "IRCSock.h"
-#include "Utils.h"
-
+#include "Server.h"
+#include "User.h"
 #include <pwd.h>
-#include <signal.h>
-#include <sys/types.h>
-
-#ifdef _MODULES
-#include "Modules.h"
-#endif
 
 CZNC::CZNC() {
 #ifdef _MODULES

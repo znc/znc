@@ -6,11 +6,11 @@
  * by the Free Software Foundation.
  */
 
-#include "znc.h"
 #include "IRCSock.h"
-#include "DCCBounce.h"
+#include "Chan.h"
 #include "Client.h"
-#include <time.h>
+#include "DCCBounce.h"
+#include "User.h"
 
 CIRCSock::CIRCSock(CUser* pUser) : Csock() {
 	m_pUser = pUser;

@@ -6,15 +6,10 @@
  * by the Free Software Foundation.
  */
 
-#include "main.h"
-#include "User.h"
-#include "Nick.h"
-#include "Modules.h"
 #include "Chan.h"
-#include "Buffer.h"
-#include "Utils.h"
-
+#include "User.h"
 #include <list>
+
 using std::list;
 
 class CWatchSource {

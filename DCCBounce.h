@@ -9,9 +9,6 @@
 #ifndef _DCCBOUNCE_H
 #define _DCCBOUNCE_H
 
-#include "main.h"
-#include "Utils.h"
-#include "User.h"
 #include "znc.h"
 
 class CDCCBounce : public Csock {

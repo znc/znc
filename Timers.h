@@ -9,7 +9,10 @@
 #ifndef _TIMERS_H
 #define _TIMERS_H
 
-#include "main.h"
+#include "Client.h"
+#include "Csocket.h"
+#include "FileUtils.h"
+#include "User.h"
 
 class CKeepNickTimer : public CCron {
 public:

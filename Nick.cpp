@@ -6,10 +6,10 @@
  * by the Free Software Foundation.
  */
 
-#include "Chan.h"
 #include "Nick.h"
-#include "User.h"
+#include "Chan.h"
 #include "IRCSock.h"
+#include "User.h"
 
 CNick::CNick() {
 	Reset();

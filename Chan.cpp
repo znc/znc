@@ -7,10 +7,9 @@
  */
 
 #include "Chan.h"
-#include "znc.h"
-#include "User.h"
-#include "Utils.h"
 #include "IRCSock.h"
+#include "User.h"
+#include "znc.h"
 
 CChan::CChan(const CString& sName, CUser* pUser, bool bInConfig) {
 	m_sName = sName.Token(0);

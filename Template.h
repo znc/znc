@@ -9,13 +9,12 @@
 #ifndef _TEMPLATE_H
 #define _TEMPLATE_H
 
-#include "FileUtils.h"
 #include "Utils.h"
 #include <iostream>
 
-using std::ostream;
 using std::cout;
 using std::endl;
+using std::ostream;
 
 class CTemplate;
 

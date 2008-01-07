@@ -11,15 +11,8 @@
 
 #define REQUIRESSL
 
-#include "main.h"
 #include "User.h"
-#include "Nick.h"
-#include "Modules.h"
-#include "Chan.h"
-#include "Utils.h"
-#include <pwd.h>
-#include <map>
-#include <vector>
+#include <sys/stat.h>
 
 #define CRYPT_VERIFICATION_TOKEN "::__:AWAY:__::"
 

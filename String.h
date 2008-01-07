@@ -9,40 +9,25 @@
 #ifndef X_STRING_H
 #define X_STRING_H
 
-#ifdef USE_PCRE
-#include <pcre.h>
-#endif
-
-#include <sys/types.h>
-
-#include <set>
 #include <map>
+#include <set>
 #include <string>
-#include <sstream>
 #include <vector>
 
-using std::set;
 using std::map;
-using std::multimap;
+using std::set;
 using std::string;
-using std::pair;
 using std::vector;
-using std::stringstream;
-
 
 #define _SQL(s) CString("'" + CString(s).Escape_n(CString::ESQL) + "'")
 #define _URL(s) CString("'" + CString(s).Escape_n(CString::EURL) + "'")
 #define _HTML(s) CString("'" + CString(s).Escape_n(CString::EHTML) + "'")
-
 
 class CString;
 class MCString;
 
 typedef set<CString>				SCString;
 typedef vector<CString>				VCString;
-typedef map<CString, VCString>		MVCString;
-typedef vector<MCString>			VMCString;
-typedef multimap<CString, CString>	MMCString;
 
 static const unsigned char XX = 0xff;
 static const unsigned char base64_table[256] = {

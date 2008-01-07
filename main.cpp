@@ -6,13 +6,8 @@
  * by the Free Software Foundation.
  */
 
-#include <unistd.h>
-#include <getopt.h>
-#include <stdlib.h>
-#include <signal.h>
 #include "znc.h"
-#include "Modules.h"
-#include "MD5.h"
+#include <getopt.h>
 
 static struct option g_LongOpts[] = {
 	{ "help",			no_argument,	0,	'h' },

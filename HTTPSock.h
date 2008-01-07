@@ -10,9 +10,6 @@
 #define _HTTPSOCK_H
 
 #include "main.h"
-#include "Utils.h"
-#include "FileUtils.h"
-#include "User.h"
 
 class CHTTPSock : public Csock {
 public:

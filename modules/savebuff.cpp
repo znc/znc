@@ -14,14 +14,9 @@
 
 #define REQUIRESSL
 
-#include "main.h"
-#include "znc.h"
-#include "User.h"
-#include "Nick.h"
-#include "Modules.h"
 #include "Chan.h"
-#include "Utils.h"
-#include <pwd.h>
+#include "User.h"
+#include <sys/stat.h>
 
 /* TODO list
  * store timestamp to be displayed

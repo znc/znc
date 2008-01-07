@@ -9,13 +9,12 @@
 #ifndef _IRCSOCK_H
 #define _IRCSOCK_H
 
-#include "main.h"
-#include "User.h"
-#include "Chan.h"
-#include "Buffer.h"
+#include "Csocket.h"
+#include "Nick.h"
 
 // Forward Declarations
-class CZNC;
+class CChan;
+class CUser;
 // !Forward Declarations
 
 class CIRCSock : public Csock {

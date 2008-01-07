@@ -9,20 +9,13 @@
 #ifndef _FILEUTILS_H
 #define _FILEUTILS_H
 
-#include <unistd.h>
-#include <ctype.h>
-#include <sys/time.h>
-#include <sys/file.h>
-#include <sys/types.h>
-#include <sys/stat.h>
+#include "Csocket.h"
+#include "String.h"
 #include <dirent.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <signal.h>
-
-#include "main.h"
-#include <vector>
 #include <map>
+#include <signal.h>
+#include <vector>
+
 using std::vector;
 using std::map;
 

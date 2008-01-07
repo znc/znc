@@ -9,10 +9,11 @@
 #ifndef _DCCSOCK_H
 #define _DCCSOCK_H
 
-#include "main.h"
-#include "Utils.h"
 #include "FileUtils.h"
-#include "User.h"
+
+// Forward Declarations
+class CUser;
+// !Forward Declarations
 
 class CDCCSock : public Csock {
 public:

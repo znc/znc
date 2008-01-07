@@ -9,6 +9,7 @@
 #ifndef _CLIENT_H
 #define _CLIENT_H
 
+#include "Utils.h"
 #include "main.h"
 
 // Forward Declarations
@@ -17,7 +18,6 @@ class CUser;
 class CIRCSock;
 class CClient;
 // !Forward Declarations
-
 
 class CAuthBase {
 public:

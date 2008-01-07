@@ -6,7 +6,6 @@
  * by the Free Software Foundation.
  */
 
-#include "main.h"
 #include "Server.h"
 
 CServer::CServer(const CString& sName, unsigned short uPort, const CString& sPass, bool bSSL, bool bIPV6) {

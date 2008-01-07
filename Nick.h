@@ -10,8 +10,9 @@
 #define _NICK_H
 
 #include "String.h"
-#include <vector>
 #include <set>
+#include <vector>
+
 using std::vector;
 using std::set;
 

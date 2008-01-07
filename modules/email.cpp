@@ -9,17 +9,12 @@
  * Author: imaginos <imaginos@imaginos.net>
  */
 
-#include "znc.h"
-#include "main.h"
-#include "User.h"
-#include "Nick.h"
-#include "Modules.h"
-#include "Chan.h"
-#include "Utils.h"
-#include "FileUtils.h"
 #include "MD5.h"
-#include <pwd.h>
+#include "User.h"
+#include "znc.h"
 #include <sstream>
+
+using std::stringstream;
 
 struct EmailST
 {

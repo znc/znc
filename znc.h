@@ -9,19 +9,17 @@
 #ifndef _ZNC_H
 #define _ZNC_H
 
-#include "main.h"
-#include "FileUtils.h"
 #include "Client.h"
+#include "Csocket.h"
+#include "FileUtils.h"
 #ifdef _MODULES
 #include "Modules.h"
 #endif
-#include <set>
 #include <map>
+
 using std::map;
-using std::set;
 
 class CUser;
-class CClient;
 class CListener;
 
 class CSockManager : public TSocketManager<Csock> {

@@ -7,8 +7,7 @@
  */
 
 #include "Template.h"
-
-using std::cerr;
+#include "FileUtils.h"
 
 void CTemplateOptions::Parse(const CString& sLine) {
 	CString sName = sLine.Token(0, false, "=").Trim_n().AsUpper();

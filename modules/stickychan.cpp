@@ -6,16 +6,8 @@
  * by the Free Software Foundation.
  */
 
-#include "main.h"
-#include "User.h"
-#include "Nick.h"
-#include "Modules.h"
 #include "Chan.h"
-#include "Utils.h"
-#include "FileUtils.h"
-#include <pwd.h>
-#include <map>
-#include <vector>
+#include "User.h"
 
 class CStickyChan : public CModule 
 {
