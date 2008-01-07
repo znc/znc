@@ -1,9 +1,13 @@
 /**
+ * Copyright (C) 2004-2008  See the AUTHORS file for details.
+ *
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License version 2 as published
+ * by the Free Software Foundation.
+ *
  * @class CSASLAuthMod
  * @author Heiko Hund <heiko@ist.eigentlich.net>
  * @brief SASL authentication module for znc.
- *
- * Licensed under the GPLv2.
  */
 
 #include <sasl/sasl.h>

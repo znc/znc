@@ -19,6 +19,8 @@ psychon <tobespammed@web.de> - Developer
 	Examples: NAMESX and UHNAMES support
 	Modules - perform
 
+Heiko Hund <heiko@ist.eigentlich.net> - ModuleWriter
+	Wrote the saslauth module
 
 derblubber - BetaTester
 	Found numerous bugs
