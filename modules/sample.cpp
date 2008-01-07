@@ -167,7 +167,7 @@ public:
 
 	virtual EModRet OnUserMsg(CString& sTarget, CString& sMessage) {
 		PutModule("[" + sTarget + "] usermsg [" + sMessage + "]");
-		sMessage = "\0034" + sMessage + "\003";
+		sMessage = "Sample: \0034" + sMessage + "\003";
 
 		return CONTINUE;
 	}
