@@ -96,14 +96,6 @@ void CUser::DelClients() {
 	m_vClients.clear();
 }
 
-bool CUser::OnBoot() {
-#ifdef _MODULES
-	return GetModules().OnBoot();
-#else
-	return true;
-#endif
-}
-
 void CUser::IRCConnected(CIRCSock* pIRCSock) {
 	for (unsigned int a = 0; a < m_vClients.size(); a++) {
 		m_vClients[a]->IRCConnected(pIRCSock);

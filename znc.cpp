@@ -72,13 +72,13 @@ bool CZNC::OnBoot() {
 	if (!GetModules().OnBoot()) {
 		return false;
 	}
-#endif
 
 	for (map<CString,CUser*>::iterator it = m_msUsers.begin(); it != m_msUsers.end(); it++) {
-		if (!it->second->OnBoot()) {
+		if (!it->second->GetModules().OnBoot()) {
 			return false;
 		}
 	}
+#endif
 
 	return true;
 }

@@ -78,7 +78,6 @@ public:
 	void ClearMotdBuffer() { m_MotdBuffer.Clear(); }
 	void ClearQueryBuffer() { m_QueryBuffer.Clear(); }
 	// !Buffers
-	bool OnBoot();
 
 	bool PutIRC(const CString& sLine);
 	bool PutUser(const CString& sLine, CClient* pClient = NULL, CClient* pSkipClient = NULL);
