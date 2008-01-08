@@ -186,7 +186,7 @@ bool CZNC::WriteISpoof(CUser* pUser) {
 
 	if (!m_sISpoofFile.empty()) {
 		m_pISpoofLockFile = new CLockFile;
-		if(!m_pISpoofLockFile->TryExLock(m_sISpoofFile, 50, true)) {
+		if(!m_pISpoofLockFile->TryExLock(m_sISpoofFile, true)) {
 			delete m_pISpoofLockFile;
 			m_pISpoofLockFile = NULL;
 			return false;
@@ -457,7 +457,7 @@ bool CZNC::WriteNewConfig(const CString& sConfig) {
 	vector<CString> vsLines;
 
 	if (CFile::Exists(sConfigFile)) {
-		if (!m_LockFile.TryExLock(sConfigFile, 50)) {
+		if (!m_LockFile.TryExLock(sConfigFile)) {
 			CUtils::PrintError("ZNC is currently running on this config.");
 			return false;
 		}
@@ -760,7 +760,7 @@ bool CZNC::ParseConfig(const CString& sConfig) {
 		return false;
 	}
 
-	if (!m_LockFile.TryExLock(m_sConfigFile, 50)) {
+	if (!m_LockFile.TryExLock(m_sConfigFile)) {
 		CUtils::PrintStatus(false, "ZNC is already running on this config.");
 		return false;
 	}

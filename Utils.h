@@ -14,6 +14,7 @@
 #include <map>
 #include <sys/file.h>
 #include <sys/time.h>
+#include <unistd.h>
 #include <vector>
 
 using std::map;
@@ -109,53 +110,17 @@ public:
 	}
 
 	//! timeout in milliseconds
-	bool TryExLock(const CString& sLockFile, unsigned long long iTimeout = 0, bool bRw = false) {
+	bool TryExLock(const CString& sLockFile, bool bRw = false) {
 		Open(sLockFile, bRw);
-		return TryExLock(iTimeout);
+		return TryExLock();
 	}
 
-	bool TryExLock(unsigned long long iTimeout = 0) {
-		if (iTimeout == 0) {
-			return Lock(LOCK_EX|LOCK_NB);
-		}
-
-		unsigned long long iNow = CUtils::GetMillTime();
-
-		while(true) {
-			if (Lock(LOCK_EX|LOCK_NB)) {
-				return true;
-			}
-
-			if ((CUtils::GetMillTime() - iNow) > iTimeout) {
-				break;
-			}
-
-			usleep(100);
-		}
-
-		return(false);
+	bool TryExLock() {
+		return Lock(LOCK_EX|LOCK_NB);
 	}
 
-	bool TryShLock(unsigned long long iTimeout = 0) {
-		if (iTimeout == 0) {
-			return(Lock(LOCK_SH|LOCK_NB));
-		}
-
-		unsigned long long iNow = CUtils::GetMillTime();
-
-		while(true) {
-			if (Lock(LOCK_SH|LOCK_NB)) {
-				return true;
-			}
-
-			if ((CUtils::GetMillTime() - iNow) > iTimeout) {
-				break;
-			}
-
-			usleep(100);
-		}
-
-		return false;
+	bool TryShLock() {
+		return(Lock(LOCK_SH|LOCK_NB));
 	}
 
 	bool LockEx() { return Lock(LOCK_EX); }
