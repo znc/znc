@@ -3,16 +3,16 @@
 # These vars hold some color escape sequences.
 # Inspired by /sbin/functions.sh from gentoo
 
-BOLD=$'\e[1;m'
-UNBOLD=$'\e[22;m'
+BOLD='\033[1;m'
+UNBOLD='\033[22;m'
 
-RED=$'\e[31;01m'
-GREEN=$'\e[32;01m'
-YELLOW=$'\e[33;01m'
-BLUE=$'\e[34;01m'
-NORMAL=$'\e[39;m'
+RED='\033[31;01m'
+GREEN='\033[32;01m'
+YELLOW='\033[33;01m'
+BLUE='\033[34;01m'
+NORMAL='\033[39;m'
 
-RESTART=$'\r'
+RESTART='\r'
 
 # These are used when we display our messages
 
@@ -35,7 +35,7 @@ check_binary()
 {
 	which $1 > /dev/null 2>&1
 	if test $? = 1 ; then
-		echo "${ERROR} Could not find $1. $2"
+		echo -e "${ERROR} Could not find $1. $2"
 		exit 1
 	fi
 }
@@ -45,7 +45,7 @@ check_binary ${ZNC_CONFIG} "Please (re)install ZNC."
 check_binary ${CXX} "What happened to your compiler?"
 
 if test -z "$1"; then
-	echo "${WARNING} USAGE: $0 <file.cpp> [file.cpp ... ]"
+	echo -e "${WARNING} USAGE: $0 <file.cpp> [file.cpp ... ]"
 	exit 1
 fi
 
@@ -57,7 +57,7 @@ LIBS=`${ZNC_CONFIG} --libs`
 INC_PATH=`echo ${INCLUDES} | ${SED} 's: .*::' | ${SED} 's:^..::'`
 
 if test ! -d ${INC_PATH}; then
-	echo "${ERROR} Unable to find znc include dir [${INC_PATH}]. Please (re)install ZNC."
+	echo -e "${ERROR} Unable to find znc include dir [${INC_PATH}]. Please (re)install ZNC."
 	exit 1
 fi
 
@@ -69,15 +69,14 @@ do
 	MOD="${FILE%.cpp}"
 	MOD="${MOD%.cc}"
 
-	echo -n "${PROGRESS} Building ${MOD}.so... "
-
 	if test ! -f ${FILE}; then
-		echo "File not found${RESTART}${ERROR}"
+		echo -e "${ERROR} Building ${MOD}.so... File not found"
 	else
+		echo -ne "${PROGRESS} Building ${MOD}.so... "
 		if ${CXX} ${CXXFLAGS} ${INCLUDES} ${LIBS} -shared -o ${MOD}.so ${FILE} ; then
-			echo "${RESTART}${OK}"
+			echo -e "${RESTART}${OK}"
 		else
-			echo "${ERROR} Error while building ${MOD}.so"
+			echo -e "${ERROR} Error while building ${MOD}.so"
 		fi
 	fi
 done
