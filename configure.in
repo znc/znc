@@ -7,7 +7,6 @@ AC_CANONICAL_HOST
 CXXFLAGS="$SAVED_CXXFLAGS -D_GNU_SOURCE -D_FORTIFY_SOURCE=2"
 INCLUDES=""
 LIBS=""
-DEPEND=""
 
 appendLib () {
 	if test "$LIBS" != ""; then
@@ -100,8 +99,6 @@ fi
 
 if test "x$GXX" = "xyes"; then
 	appendCXX -Wall -W -Wno-unused -Woverloaded-virtual
-	# enable g++ dependency tracking
-	DEPEND=".depend"
 fi
 
 AC_CHECK_LIB( gnugetopt, getopt_long,)
@@ -193,7 +190,6 @@ AC_SUBST([CXXFLAGS])
 AC_SUBST([MODFLAGS])
 AC_SUBST([LDFLAGS])
 AC_SUBST([INCLUDES])
-AC_SUBST([DEPEND])
 AC_SUBST([LIBS])
 AC_SUBST([MODULES])
 AC_SUBST([MODTARGET])

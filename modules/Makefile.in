@@ -15,7 +15,6 @@ LIBS     := @LIBS@
 PERL     := @PERL@
 MODDIR   := @MODDIR@
 DATADIR  := @DATADIR@
-DEPEND   := yes
 
 ifeq "@NOSSL@" "1" 
 FILES    := $(foreach file, $(wildcard *.cpp), \
@@ -46,12 +45,21 @@ TARGETS  := $(addsuffix .so, $(FILES))
 
 CLEAN    := *.so
 
+DEPEND   := $(wildcard .depend)
+ifeq ($(DEPEND), )
+DEPEND   := no
+else
+DEPEND   := yes
+endif
+
 .PHONY: all clean install modperl_install
 
 all: $(TARGETS)
 
 .depend:
 	@mkdir -p .depend
+
+depend: .depend
 
 install: all create_install_dir install_metadirs $(PERLHOOK)
 	install -m 0755 $(TARGETS) $(DESTDIR)$(MODDIR)
@@ -72,7 +80,7 @@ clean:
 	rm -rf $(CLEAN)
 
 ifeq ($(DEPEND), yes)
-%.so: %.cpp .depend
+%.so: %.cpp
 	$(CXX) $(CXXFLAGS) $(INCLUDES) $(LDFLAGS) $($(basename $<)FLAGS) -shared -o $@ $< -MMD -MF .depend/$<.dep
 else
 %.so: %.cpp

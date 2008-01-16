@@ -13,7 +13,6 @@ LDFLAGS  := @LDFLAGS@
 INCLUDES := @INCLUDES@
 LIBS     := @LIBS@
 prefix   := @prefix@
-DEPEND   := yes
 
 SRCS := String.cpp Csocket.cpp main.cpp znc.cpp User.cpp IRCSock.cpp Client.cpp DCCBounce.cpp \
 	DCCSock.cpp Chan.cpp Nick.cpp Server.cpp Modules.cpp MD5.cpp Buffer.cpp Utils.cpp \
@@ -23,12 +22,24 @@ CLEAN := znc znc-static *.o core core.*
 DISTCLEAN := Makefile config.log config.status znc-config .depend \
 	modules/.depend modules/Makefile
 
+DEPEND   := $(wildcard .depend)
+ifeq ($(DEPEND), )
+DEPEND   := no
+else
+DEPEND   := yes
+endif
+
 .PHONY: all modules clean distclean install
 
-all: @DEPEND@ znc @MODTARGET@
+all: znc @MODTARGET@
 
 .depend:
 	@mkdir -p .depend
+	@if test -n "@MODTARGET@"; then \
+		$(MAKE) -C modules .depend ; \
+	fi
+
+depend: .depend
 
 znc: $(OBJS)
 	$(CXX) $(LDFLAGS) -o $@ $(OBJS) $(LIBS)
@@ -53,7 +64,7 @@ distclean: clean
 	rm -rf $(DISTCLEAN)
 
 ifeq ($(DEPEND), yes)
-.cpp.o: .depend
+.cpp.o:
 	$(CXX) $(CXXFLAGS) $(INCLUDES) -c -o $@ $< -MMD -MF .depend/$<.dep
 else
 .cpp.o:
