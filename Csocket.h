@@ -28,7 +28,7 @@
 * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 *
 *
-* $Revision: 1.178 $
+* $Revision: 1.179 $
 */
 
 // note to compile with win32 need to link to winsock2, using gcc its -lws2_32
@@ -1444,7 +1444,7 @@ public:
 					if ( GetSockError() == ECONNREFUSED )
 						pcSock->ConnectionRefused();
 					else
-						pcSock->SockError( ECONNABORTED );
+						pcSock->SockError( GetSockError() );
 
 					DelSock( a-- );
 					continue;
@@ -1458,7 +1458,7 @@ public:
 						if ( GetSockError() == ECONNREFUSED )
 							pcSock->ConnectionRefused();
 						else
-							pcSock->SockError( ECONNABORTED );
+							pcSock->SockError( GetSockError() == 0 ? ECONNABORTED : GetSockError() );
 
 						DelSock( a-- );
 						continue;

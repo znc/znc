@@ -28,7 +28,7 @@
 * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 *
 *
-* $Revision: 1.62 $
+* $Revision: 1.63 $
 */
 
 #include "Csocket.h"
@@ -2116,6 +2116,16 @@ int Csock::DNSLookup( EDNSLType eDNSLType )
 	if ( eDNSLType == DNS_VHOST )
 	{
 		iRet = GetAddrInfo( m_sBindHost, this, m_bindhost );
+#ifdef HAVE_IPV6
+		if( m_bindhost.GetIPv6() )
+		{
+			SetAFRequire( CSSockAddr::RAF_INET6 );
+		}
+		else
+		{
+			SetAFRequire( CSSockAddr::RAF_INET );
+		}
+#endif /* HAVE_IPV6 */
 	}
 	else
 	{
