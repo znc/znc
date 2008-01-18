@@ -13,8 +13,8 @@
  *
  */
 
-#include <Chan.h>
-#include <User.h>
+#include "Chan.h"
+#include "User.h"
 
 class CRejoinJob: public CTimer {
 public:
