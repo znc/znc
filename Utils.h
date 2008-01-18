@@ -37,6 +37,8 @@ public:
 	static unsigned long GetLongIP(const CString& sIP);
 	static CString ChangeDir(const CString& sPath, const CString& sAdd, const CString& sHomeDir);
 	static int MakeDir(const CString& sPath, mode_t iMode = 0700);
+	static void SetStdoutIsTTY(bool b) { stdoutIsTTY = b; }
+
 	static void PrintError(const CString& sMessage);
 	static void PrintMessage(const CString& sMessage, bool bStrong = false);
 	static void PrintPrompt(const CString& sMessage);
@@ -63,6 +65,7 @@ public:
 
 private:
 protected:
+	static bool stdoutIsTTY;
 };
 
 class CLockFile {

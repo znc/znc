@@ -12,6 +12,7 @@
 static struct option g_LongOpts[] = {
 	{ "help",			no_argument,	0,	'h' },
 	{ "version",			no_argument,	0,	'v' },
+	{ "no-color",			no_argument,	0,	'n' },
 	{ "makeconf",			no_argument,	0,	'c' },
 	{ "makepass",			no_argument,	0,	's' },
 #ifdef HAVE_LIBSSL
@@ -27,6 +28,7 @@ void GenerateHelp(const char *appname) {
 	CUtils::PrintMessage("Options are:");
 	CUtils::PrintMessage("\t-h, --help         List available command line options (this page)");
 	CUtils::PrintMessage("\t-v, --version      Output version information and exit");
+	CUtils::PrintMessage("\t-n, --no-color     Don't use escape sequences in the output");
 	CUtils::PrintMessage("\t-c, --makeconf     Interactively create a new config");
 	CUtils::PrintMessage("\t-s, --makepass     Generates a password for use in config");
 #ifdef HAVE_LIBSSL
@@ -57,6 +59,7 @@ int main(int argc, char** argv) {
 	CString sDataDir = "";
 
 	srand(time(NULL));
+	CUtils::SetStdoutIsTTY(isatty(1));
 
 #ifdef HAVE_LIBSSL
 	InitSSL();
@@ -69,10 +72,10 @@ int main(int argc, char** argv) {
 	bool bMakePem = false;
 	bool bEncPem = false;
 
-	while ((iArg = getopt_long(argc, argv, "hvcsped:", g_LongOpts, &iOptIndex)) != -1) {
+	while ((iArg = getopt_long(argc, argv, "hvncsped:", g_LongOpts, &iOptIndex)) != -1) {
 #else	
 
-	while ((iArg = getopt_long(argc, argv, "hvcsd:", g_LongOpts, &iOptIndex)) != -1) {
+	while ((iArg = getopt_long(argc, argv, "hvncsd:", g_LongOpts, &iOptIndex)) != -1) {
 #endif /* HAVE_LIBSSL */
 	    switch (iArg) {
 		case 'h':
@@ -81,6 +84,9 @@ int main(int argc, char** argv) {
 		case 'v':
 			    cout << CZNC::GetTag() << endl;
 			    return 0;
+		case 'n':
+			    CUtils::SetStdoutIsTTY(false);
+			    break;
 		case 'c':
 			    bMakeConf = true;
 			    break;
