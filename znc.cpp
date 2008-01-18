@@ -562,7 +562,8 @@ bool CZNC::WriteNewConfig(const CString& sConfig) {
 		} while (!CUser::IsValidUserName(sUser));
 
 		vsLines.push_back("<User " + sUser + ">");
-		sAnswer = CUtils::GetHashPass();					vsLines.push_back("\tPass       = " + sAnswer + " -");
+		sAnswer = CUtils::GetHashPass();
+		vsLines.push_back("\tPass       = " + sAnswer + " -");
 
 		if (CUtils::GetBoolInput("Would you like this user to be an admin?", bFirstUser)) {
 			vsLines.push_back("\tAdmin      = true");
@@ -570,14 +571,23 @@ bool CZNC::WriteNewConfig(const CString& sConfig) {
 			vsLines.push_back("\tAdmin      = false");
 		}
 
-		CUtils::GetInput("Nick", sNick, CUser::MakeCleanUserName(sUser));			vsLines.push_back("\tNick       = " + sNick);
-		CUtils::GetInput("Alt Nick", sAnswer, sNick + "_");	if (!sAnswer.empty()) { vsLines.push_back("\tAltNick    = " + sAnswer); }
-		CUtils::GetInput("Ident", sAnswer, sNick);			vsLines.push_back("\tIdent      = " + sAnswer);
-		CUtils::GetInput("Real Name", sAnswer, "Got ZNC?");	vsLines.push_back("\tRealName   = " + sAnswer);
-		CUtils::GetInput("VHost", sAnswer, "", "optional");	if (!sAnswer.empty()) { vsLines.push_back("\tVHost      = " + sAnswer); }
+		CUtils::GetInput("Nick", sNick, CUser::MakeCleanUserName(sUser));
+		vsLines.push_back("\tNick       = " + sNick);
+		CUtils::GetInput("Alt Nick", sAnswer, sNick + "_");
+		if (!sAnswer.empty()) {
+			vsLines.push_back("\tAltNick    = " + sAnswer);
+		}
+		CUtils::GetInput("Ident", sAnswer, sNick);
+		vsLines.push_back("\tIdent      = " + sAnswer);
+		CUtils::GetInput("Real Name", sAnswer, "Got ZNC?");
+		vsLines.push_back("\tRealName   = " + sAnswer);
+		CUtils::GetInput("VHost", sAnswer, "", "optional");
+		if (!sAnswer.empty()) {
+			vsLines.push_back("\tVHost      = " + sAnswer);
+		}
 		// todo: Possibly add motd
 
-		if (CUtils::GetBoolInput("Would you like ZNC to keep trying for your primary nick?", true)) {
+		if (CUtils::GetBoolInput("Would you like ZNC to keep trying for your primary nick?", false)) {
 			vsLines.push_back("\tKeepNick   = true");
 		} else {
 			vsLines.push_back("\tKeepNick   = false");
@@ -585,8 +595,11 @@ bool CZNC::WriteNewConfig(const CString& sConfig) {
 
 		unsigned int uBufferCount = 0;
 
-		CUtils::GetNumInput("Number of lines to buffer per channel", uBufferCount, 0, ~0, 50);	if (uBufferCount) { vsLines.push_back("\tBuffer     = " + CString(uBufferCount)); }
-		if (CUtils::GetBoolInput("Would you like your buffer to be sticky?", true)) {
+		CUtils::GetNumInput("Number of lines to buffer per channel", uBufferCount, 0, ~0, 50);
+		if (uBufferCount) {
+			vsLines.push_back("\tBuffer     = " + CString(uBufferCount));
+		}
+		if (CUtils::GetBoolInput("Would you like your buffer to be sticky?", false)) {
 			vsLines.push_back("\tKeepBuffer = true");
 		} else {
 			vsLines.push_back("\tKeepBuffer = false");
