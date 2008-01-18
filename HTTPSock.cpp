@@ -6,6 +6,8 @@
  * by the Free Software Foundation.
  */
 
+#ifdef _MODULES
+
 #include "HTTPSock.h"
 #include "znc.h"
 
@@ -389,3 +391,5 @@ Csock* CHTTPSock::GetSockObj(const CString& sHost, unsigned short uPort) {
 
 	return pSock;
 }
+
+#endif // _MODULES

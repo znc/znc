@@ -6,6 +6,8 @@
  * by the Free Software Foundation.
  */
 
+#ifdef _MODULES
+
 #ifndef _HTTPSOCK_H
 #define _HTTPSOCK_H
 
@@ -86,3 +88,4 @@ protected:
 
 #endif // !_HTTPSOCK_H
 
+#endif // _MODULES

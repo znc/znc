@@ -6,6 +6,8 @@
  * by the Free Software Foundation.
  */
 
+#ifdef _MODULES
+
 #include "Template.h"
 #include "FileUtils.h"
 
@@ -476,3 +478,5 @@ CString CTemplate::GetValue(const CString& sArgs) {
 
 	return sRet;
 }
+
+#endif // _MODULES
