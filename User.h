@@ -125,6 +125,7 @@ public:
 	void SetKeepNick(bool b);
 	void SetDenyLoadMod(bool b);
 	void SetAdmin(bool b);
+	void SetDenySetVHost(bool b);
 	bool SetStatusPrefix(const CString& s);
 	void SetDefaultChanModes(const CString& s);
 	void SetIRCNick(const CNick& n);
@@ -173,6 +174,7 @@ public:
 	bool GetKeepNick() const;
 	bool DenyLoadMod() const;
 	bool IsAdmin() const;
+	bool DenySetVHost() const;
 	bool BounceDCCs() const;
 	bool MultiClients() const;
 	const CString& GetStatusPrefix() const;
@@ -230,6 +232,7 @@ protected:
 	bool				m_bKeepNick;
 	bool				m_bDenyLoadMod;
 	bool				m_bAdmin;
+	bool				m_bDenySetVHost;
 	bool				m_bKeepBuffer;
 	bool				m_bAutoCycle;
 	bool				m_bBeingDeleted;

@@ -982,6 +982,9 @@ bool CZNC::ParseConfig(const CString& sConfig) {
 					} else if (sName.CaseCmp("Admin") == 0) {
 						pUser->SetAdmin((sValue.CaseCmp("TRUE") == 0));
 						continue;
+					} else if (sName.CaseCmp("DenySetVHost") == 0) {
+						pUser->SetDenySetVHost((sValue.CaseCmp("TRUE") == 0));
+						continue;
 					} else if (sName.CaseCmp("StatusPrefix") == 0) {
 						if (!pUser->SetStatusPrefix(sValue)) {
 							CUtils::PrintError("Invalid StatusPrefix [" + sValue + "] Must be 1-5 chars, no spaces.");

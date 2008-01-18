@@ -1304,7 +1304,7 @@ void CClient::UserCommand(const CString& sLine) {
 		PutStatus("Unable to unload [" + sMod + "] Modules are not enabled.");
 #endif
 		return;
-	} else if (sCommand.CaseCmp("SETVHOST") == 0) {
+	} else if (sCommand.CaseCmp("SETVHOST") == 0 && (m_pUser->IsAdmin() || !m_pUser->DenySetVHost())) {
 		CString sVHost = sLine.Token(1);
 
 		if (sVHost.empty()) {
@@ -1540,10 +1540,12 @@ void CClient::HelpUser() {
 	Table.SetCell("Arguments", "<#chan> [linecount]");
 	Table.SetCell("Description", "Set the buffer count for a channel");
 
-	Table.AddRow();
-	Table.SetCell("Command", "SetVHost");
-	Table.SetCell("Arguments", "<vhost (ip preferred)>");
-	Table.SetCell("Description", "Set the VHost for this connection");
+	if (m_pUser->IsAdmin() || !m_pUser->DenySetVHost()) {
+		Table.AddRow();
+		Table.SetCell("Command", "SetVHost");
+		Table.SetCell("Arguments", "<vhost (ip preferred)>");
+		Table.SetCell("Description", "Set the VHost for this connection");
+	}
 
 	Table.AddRow();
 	Table.SetCell("Command", "Jump");

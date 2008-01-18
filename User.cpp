@@ -37,6 +37,7 @@ CUser::CUser(const CString& sUserName) {
 	m_bKeepNick = false;
 	m_bDenyLoadMod = false;
 	m_bAdmin= false;
+	m_bDenySetVHost= false;
 	m_sStatusPrefix = "*";
 	m_sChanPrefixes = "#&";
 	m_uBufferCount = 50;
@@ -399,6 +400,7 @@ bool CUser::Clone(const CUser& User, CString& sErrorRet) {
 	SetUseClientIP(User.UseClientIP());
 	SetDenyLoadMod(User.DenyLoadMod());
 	SetAdmin(User.IsAdmin());
+	SetDenySetVHost(User.DenySetVHost());
 	SetTimestampAppend(User.GetTimestampAppend());
 	SetTimestampPrepend(User.GetTimestampPrepend());
 	SetTimestampFormat(User.GetTimestampFormat());
@@ -544,6 +546,7 @@ bool CUser::WriteConfig(CFile& File) {
 	PrintLine(File, "AutoCycle", CString((AutoCycle()) ? "true" : "false"));
 	PrintLine(File, "DenyLoadMod", CString((DenyLoadMod()) ? "true" : "false"));
 	PrintLine(File, "Admin", CString((IsAdmin()) ? "true" : "false"));
+	PrintLine(File, "DenySetVHost", CString((DenySetVHost()) ? "true" : "false"));
 	PrintLine(File, "DCCLookupMethod", CString((UseClientIP()) ? "client" : "default"));
 	PrintLine(File, "TimestampFormat", GetTimestampFormat());
 	PrintLine(File, "AppendTimestamp", CString((GetTimestampAppend()) ? "true" : "false"));
@@ -983,6 +986,7 @@ void CUser::SetUseClientIP(bool b) { m_bUseClientIP = b; }
 void CUser::SetKeepNick(bool b) { m_bKeepNick = b; }
 void CUser::SetDenyLoadMod(bool b) { m_bDenyLoadMod = b; }
 void CUser::SetAdmin(bool b) { m_bAdmin = b; }
+void CUser::SetDenySetVHost(bool b) { m_bDenySetVHost = b; }
 void CUser::SetDefaultChanModes(const CString& s) { m_sDefaultChanModes = s; }
 void CUser::SetIRCServer(const CString& s) { m_sIRCServer = s; m_bIRCConnected = true; }
 void CUser::SetQuitMsg(const CString& s) { m_sQuitMsg = s; }
@@ -1053,6 +1057,7 @@ bool CUser::UseClientIP() const { return m_bUseClientIP; }
 bool CUser::GetKeepNick() const { return m_bKeepNick; }
 bool CUser::DenyLoadMod() const { return m_bDenyLoadMod; }
 bool CUser::IsAdmin() const { return m_bAdmin; }
+bool CUser::DenySetVHost() const { return m_bDenySetVHost; }
 bool CUser::MultiClients() const { return m_bMultiClients; }
 bool CUser::BounceDCCs() const { return m_bBounceDCCs; }
 const CString& CUser::GetStatusPrefix() const { return m_sStatusPrefix; }

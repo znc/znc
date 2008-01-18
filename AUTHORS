@@ -40,3 +40,6 @@ Zack3000 - BetaTester, ShellProvider
 
 d4n13L <daniel@danielschmitz.de> - WebDesigner
 	Contributed graphiX webadmin skin
+
+Veit "Cru" Wahlich <cru@ircnet.de> - Patches
+	Implementation of "Deny SetVHost" capabilities in znc and webadmin

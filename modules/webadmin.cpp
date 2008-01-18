@@ -855,15 +855,18 @@ bool CWebAdminSock::UserPage(CString& sPageRet, CUser* pUser) {
 			m_Template["StatusPrefix"] = "*";
 		}
 
+		// To change VHosts be admin or don't have DenySetVHost
 		const VCString& vsVHosts = CZNC::Get().GetVHosts();
-		for (unsigned int b = 0; b < vsVHosts.size(); b++) {
-			const CString& sVHost = vsVHosts[b];
-			CTemplate& l = m_Template.AddRow("VHostLoop");
+		if (IsAdmin() || !m_pSessionUser->DenySetVHost()) {
+			for (unsigned int b = 0; b < vsVHosts.size(); b++) {
+				const CString& sVHost = vsVHosts[b];
+				CTemplate& l = m_Template.AddRow("VHostLoop");
 
-			l["VHost"] = sVHost;
+				l["VHost"] = sVHost;
 
-			if (pUser && pUser->GetVHost() == sVHost) {
-				l["Checked"] = "true";
+				if (pUser && pUser->GetVHost() == sVHost) {
+					l["Checked"] = "true";
+				}
 			}
 		}
 
@@ -938,6 +941,11 @@ bool CWebAdminSock::UserPage(CString& sPageRet, CUser* pUser) {
 			o10["DisplayName"] = "Admin";
 			if (pUser && pUser->IsAdmin()) { o10["Checked"] = "true"; }
 			if (pUser && pUser == CZNC::Get().FindUser(GetUser())) { o10["Disabled"] = "true"; }
+
+			CTemplate& o11 = m_Template.AddRow("OptionLoop");
+			o11["Name"] = "denysetvhost";
+			o11["DisplayName"] = "Deny SetVHost";
+			if (pUser && pUser->DenySetVHost()) { o11["Checked"] = "true"; }
 		}
 
 		PrintPage(sPageRet, "UserPage.tmpl");
@@ -1087,10 +1095,18 @@ CUser* CWebAdminSock::GetNewUser(CString& sPageRet, CUser* pUser) {
 	sArg = GetParam("statusprefix"); if (!sArg.empty()) { pNewUser->SetStatusPrefix(sArg); }
 	sArg = GetParam("ident"); if (!sArg.empty()) { pNewUser->SetIdent(sArg); }
 	sArg = GetParam("realname"); if (!sArg.empty()) { pNewUser->SetRealName(sArg); }
-	sArg = GetParam("vhost"); if (!sArg.empty()) { pNewUser->SetVHost(sArg); }
 	sArg = GetParam("quitmsg"); if (!sArg.empty()) { pNewUser->SetQuitMsg(sArg); }
 	sArg = GetParam("chanmodes"); if (!sArg.empty()) { pNewUser->SetDefaultChanModes(sArg); }
 	sArg = GetParam("timestampformat"); if (!sArg.empty()) { pNewUser->SetTimestampFormat(sArg); }
+
+	sArg = GetParam("vhost");
+	// To change VHosts be admin or don't have DenySetVHost
+	if (IsAdmin() || !m_pSessionUser->DenySetVHost()) {
+		if (!sArg.empty())
+			pNewUser->SetVHost(sArg);
+	} else if (pUser){
+		pNewUser->SetVHost(pUser->GetVHost());
+	}
 
 	pNewUser->SetBufferCount(GetParam("bufsize").ToUInt());
 	pNewUser->SetKeepBuffer(GetParam("keepbuffer").ToBool());
@@ -1104,8 +1120,10 @@ CUser* CWebAdminSock::GetNewUser(CString& sPageRet, CUser* pUser) {
 
 	if (IsAdmin()) {
 		pNewUser->SetDenyLoadMod(GetParam("denyloadmod").ToBool());
+		pNewUser->SetDenySetVHost(GetParam("denysetvhost").ToBool());
 	} else if (pUser) {
 		pNewUser->SetDenyLoadMod(pUser->DenyLoadMod());
+		pNewUser->SetDenySetVHost(pUser->DenySetVHost());
 	}
 
 	if (pUser && pUser != CZNC::Get().FindUser(GetUser())) {
