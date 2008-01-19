@@ -19,6 +19,8 @@
 
 using std::stringstream;
 
+bool CUtils::stdoutIsTTY;
+
 CUtils::CUtils() {}
 CUtils::~CUtils() {}
 
