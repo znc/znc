@@ -212,9 +212,13 @@ public:
 		m_sBindHost = sBindHost;
 		m_bSSL = bSSL;
 		m_bIPV6 = bIPV6;
+		m_pClient = NULL;
 	}
 
-	virtual ~CListener() {}
+	virtual ~CListener() {
+		if (m_pClient)
+			CZNC::Get().GetManager().DelSockByAddr(m_pClient);
+	}
 
 	// Setters
 	void SetSSL(bool b) { m_bSSL = b; }
@@ -230,22 +234,22 @@ public:
 	const CString& GetBindHost() const { return m_sBindHost; }
 	// !Getters
 
-	bool Listen() const {
-		if (!m_uPort) {
+	bool Listen() {
+		if (!m_uPort || m_pClient) {
 			return false;
 		}
 
-		CClient* pClient = new CClient;
+		m_pClient = new CClient;
 
 		bool bSSL = false;
 #ifdef HAVE_LIBSSL
 		if (IsSSL()) {
 			bSSL = true;
-			pClient->SetPemLocation(CZNC::Get().GetPemLocation());
+			m_pClient->SetPemLocation(CZNC::Get().GetPemLocation());
 		}
 #endif
 
-		return CZNC::Get().GetManager().ListenHost(m_uPort, "_LISTENER", m_sBindHost, bSSL, SOMAXCONN, pClient, 0, m_bIPV6);
+		return CZNC::Get().GetManager().ListenHost(m_uPort, "_LISTENER", m_sBindHost, bSSL, SOMAXCONN, m_pClient, 0, m_bIPV6);
 	}
 private:
 protected:
@@ -253,6 +257,7 @@ protected:
 	bool			m_bIPV6;
 	unsigned short	m_uPort;
 	CString			m_sBindHost;
+	CClient*		m_pClient;
 };
 
 #endif // !_ZNC_H
