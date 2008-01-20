@@ -130,45 +130,55 @@ bool CZNC::ConnectUser(CUser *pUser) {
 	return true;
 }
 
+bool CZNC::HandleUserDeletion()
+{
+	map<CString, CUser*>::iterator it;
+	map<CString, CUser*>::iterator end;
+
+	if (m_msDelUsers.size() == 0)
+		return false;
+
+	end = m_msDelUsers.end();
+	for (it = m_msDelUsers.begin(); it != end; it++) {
+		CUser* pUser = it->second;
+		pUser->SetBeingDeleted(true);
+
+#ifdef _MODULES
+		if (GetModules().OnDeleteUser(*pUser)) {
+			pUser->SetBeingDeleted(false);
+			continue;
+		}
+#endif
+		m_msUsers.erase(pUser->GetUserName());
+
+		CIRCSock* pIRCSock = pUser->GetIRCSock();
+
+		if (pIRCSock) {
+			m_Manager.DelSockByAddr(pIRCSock);
+		}
+
+		pUser->DelClients();
+#ifdef _MODULES
+		pUser->DelModules();
+#endif
+		AddBytesRead(pUser->BytesRead());
+		AddBytesWritten(pUser->BytesWritten());
+		delete pUser;
+	}
+
+	m_msDelUsers.clear();
+	RestartConnectUser();
+
+	return true;
+}
+
 int CZNC::Loop() {
 	EnableConnectUser();
 
 	while (true) {
 		// Check for users that need to be deleted
-		map<CString, CUser*>::iterator it;
-		map<CString, CUser*>::iterator end;
-
-		if (m_msDelUsers.size()) {
-			end = m_msDelUsers.end();
-			for (it = m_msDelUsers.begin(); it != end; it++) {
-				CUser* pUser = it->second;
-				pUser->SetBeingDeleted(true);
-
-#ifdef _MODULES
-				if (GetModules().OnDeleteUser(*pUser)) {
-					pUser->SetBeingDeleted(false);
-					continue;
-				}
-#endif
-				m_msUsers.erase(pUser->GetUserName());
-
-				CIRCSock* pIRCSock = pUser->GetIRCSock();
-
-				if (pIRCSock) {
-					m_Manager.DelSockByAddr(pIRCSock);
-				}
-
-				pUser->DelClients();
-#ifdef _MODULES
-				pUser->DelModules();
-#endif
-				AddBytesRead(pUser->BytesRead());
-				AddBytesWritten(pUser->BytesWritten());
-				delete pUser;
-			}
-
-			m_msDelUsers.clear();
-			RestartConnectUser();
+		if (HandleUserDeletion()) {
+			// Also remove those user(s) from the config file
 			WriteConfig();
 		}
 

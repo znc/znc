@@ -172,6 +172,8 @@ public:
 	void RestartConnectUser();
 
 private:
+	// Returns true if something was done
+	bool HandleUserDeletion();
 protected:
 	vector<CListener*>		m_vpListeners;
 	map<CString,CUser*>		m_msUsers;
