@@ -122,7 +122,7 @@ bool CZNC::ConnectUser(CUser *pUser) {
 	}
 #endif
 
-	if (!m_Manager.Connect(pServer->GetName(), pServer->GetPort(), sSockName, 20, bSSL, pUser->GetVHost(), pIRCSock)) {
+	if (!m_Manager.Connect(pServer->GetName(), pServer->GetPort(), sSockName, 120, bSSL, pUser->GetVHost(), pIRCSock)) {
 		ReleaseISpoof();
 		pUser->PutStatus("Unable to connect. (Bad host?)");
 	}
