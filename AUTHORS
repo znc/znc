@@ -26,9 +26,9 @@ derblubber - BetaTester
 	Found numerous bugs
 	Suggested many features
 
-Kuja <Kuja@foex-gaming.com> - BetaTester, Documentation
+Kuja <Kuja@znc.in> - BetaTester, Documentation
 	Found numerous bugs
-	Contributes and hosts the znc wiki
+	Hosts and contributes to the ZNC wiki
 
 toby <ich@toby.in> - BetaTester, ShellProvider
 	Found numerous bugs
@@ -43,3 +43,6 @@ d4n13L <daniel@danielschmitz.de> - WebDesigner
 
 Veit "Cru" Wahlich <cru@ircnet.de> - Patches
 	Implementation of "Deny SetVHost" capabilities in znc and webadmin
+
+SilverLeo - Several patches
+	Cleaned up the znc.conf resulting from WriteConfig
