@@ -23,7 +23,7 @@ static struct option g_LongOpts[] = {
 	{ 0, 0, 0, 0 }
 };
 
-void GenerateHelp(const char *appname) {
+static void GenerateHelp(const char *appname) {
 	CUtils::PrintMessage("USAGE: " + CString(appname) + " [options] [config]");
 	CUtils::PrintMessage("Options are:");
 	CUtils::PrintMessage("\t-h, --help         List available command line options (this page)");
@@ -38,7 +38,7 @@ void GenerateHelp(const char *appname) {
 	CUtils::PrintMessage("\t-d, --datadir      Set a different znc repository (default is ~/.znc)");
 }
 
-void die(int sig) {
+static void die(int sig) {
 	signal(SIGSEGV, SIG_DFL);
 	signal(SIGABRT, SIG_DFL);
 	signal(SIGPIPE, SIG_DFL);
