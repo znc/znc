@@ -536,7 +536,8 @@ bool CUser::WriteConfig(CFile& File) {
 	PrintLine(File, "RealName", GetRealName());
 	PrintLine(File, "VHost", GetVHost());
 	PrintLine(File, "QuitMsg", GetQuitMsg());
-	PrintLine(File, "StatusPrefix", GetStatusPrefix());
+	if (CZNC::Get().GetStatusPrefix() != GetStatusPrefix())
+		PrintLine(File, "StatusPrefix", GetStatusPrefix());
 	PrintLine(File, "ChanModes", GetDefaultChanModes());
 	PrintLine(File, "Buffer", CString(GetBufferCount()));
 	PrintLine(File, "KeepNick", CString((GetKeepNick()) ? "true" : "false"));
