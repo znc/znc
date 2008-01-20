@@ -857,6 +857,7 @@ bool CWebAdminSock::UserPage(CString& sPageRet, CUser* pUser) {
 
 		// To change VHosts be admin or don't have DenySetVHost
 		const VCString& vsVHosts = CZNC::Get().GetVHosts();
+		bool bFoundVHost = false;
 		if (IsAdmin() || !m_pSessionUser->DenySetVHost()) {
 			for (unsigned int b = 0; b < vsVHosts.size(); b++) {
 				const CString& sVHost = vsVHosts[b];
@@ -866,7 +867,16 @@ bool CWebAdminSock::UserPage(CString& sPageRet, CUser* pUser) {
 
 				if (pUser && pUser->GetVHost() == sVHost) {
 					l["Checked"] = "true";
+					bFoundVHost = true;
 				}
+			}
+
+			// If our current vhost is not in the global list...
+			if (!bFoundVHost && !pUser->GetVHost().empty()) {
+				CTemplate& l = m_Template.AddRow("VHostLoop");
+
+				l["VHost"] = pUser->GetVHost();
+				l["Checked"] = "true";
 			}
 		}
 
