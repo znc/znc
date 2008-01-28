@@ -872,7 +872,7 @@ bool CWebAdminSock::UserPage(CString& sPageRet, CUser* pUser) {
 			}
 
 			// If our current vhost is not in the global list...
-			if (!bFoundVHost && !pUser->GetVHost().empty()) {
+			if (pUser && !bFoundVHost && !pUser->GetVHost().empty()) {
 				CTemplate& l = m_Template.AddRow("VHostLoop");
 
 				l["VHost"] = pUser->GetVHost();
