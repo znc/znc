@@ -1309,10 +1309,14 @@ void CClient::UserCommand(const CString& sLine) {
 
 		if (sVHost.empty()) {
 			PutStatus("Usage: SetVHost <VHost>");
+			return;
 		}
 
 		m_pUser->SetVHost(sVHost);
 		PutStatus("Set VHost to [" + m_pUser->GetVHost() + "]");
+	} else if (sCommand.CaseCmp("CLEARVHOST") == 0 && (m_pUser->IsAdmin() || !m_pUser->DenySetVHost())) {
+		m_pUser->SetVHost("");
+		PutStatus("VHost Cleared");
 	} else if (sCommand.CaseCmp("PLAYBUFFER") == 0) {
 		CString sChan = sLine.Token(1);
 
@@ -1545,6 +1549,11 @@ void CClient::HelpUser() {
 		Table.SetCell("Command", "SetVHost");
 		Table.SetCell("Arguments", "<vhost (ip preferred)>");
 		Table.SetCell("Description", "Set the VHost for this connection");
+
+		Table.AddRow();
+		Table.SetCell("Command", "ClearVHost");
+		Table.SetCell("Arguments", "");
+		Table.SetCell("Description", "Clear the VHost for this connection");
 	}
 
 	Table.AddRow();
