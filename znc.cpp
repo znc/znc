@@ -919,12 +919,6 @@ bool CZNC::ParseConfig(const CString& sConfig) {
 		sName.Trim();
 		sValue.Trim();
 
-#ifdef _MODULES
-		if (GetModules().OnConfigLine(sName, sValue, pUser, pChan)) {
-			continue;
-		}
-#endif
-
 		if ((!sName.empty()) && (!sValue.empty())) {
 			if (pUser) {
 				if (pChan) {
