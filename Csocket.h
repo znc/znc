@@ -28,7 +28,7 @@
 * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 *
 *
-* $Revision: 1.179 $
+* $Revision: 1.181 $
 */
 
 // note to compile with win32 need to link to winsock2, using gcc its -lws2_32
@@ -111,6 +111,7 @@
 namespace Csocket
 {
 #endif /* _NO_CSOCKET_NS */
+
 
 /**
  * @class CSCharBuffer
