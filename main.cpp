@@ -190,12 +190,6 @@ int main(int argc, char** argv) {
 		return 1;
 	}
 
-	if (!pZNC->GetListeners().size()) {
-		CUtils::PrintError("You must supply at least one Listen port in your config.");
-		delete pZNC;
-		return 1;
-	}
-
 	if (!pZNC->OnBoot()) {
 		CUtils::PrintError("Exiting due to module boot errors.");
 		delete pZNC;

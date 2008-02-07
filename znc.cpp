@@ -1235,8 +1235,13 @@ bool CZNC::ParseConfig(const CString& sConfig) {
 
 	File.Close();
 
-	if (!m_msUsers.size()) {
+	if (m_msUsers.size() == 0) {
 		CUtils::PrintError("You must define at least one user in your config.");
+		return false;
+	}
+
+	if (m_vpListeners.size() == 0) {
+		CUtils::PrintError("You must supply at least one listen port in your config.");
 		return false;
 	}
 
