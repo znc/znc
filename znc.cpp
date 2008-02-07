@@ -173,8 +173,6 @@ bool CZNC::HandleUserDeletion()
 }
 
 int CZNC::Loop() {
-	EnableConnectUser();
-
 	while (true) {
 		// Check for users that need to be deleted
 		if (HandleUserDeletion()) {
@@ -1244,6 +1242,9 @@ bool CZNC::ParseConfig(const CString& sConfig) {
 		CUtils::PrintError("You must supply at least one listen port in your config.");
 		return false;
 	}
+
+	// Make sure that users that want to connect do so
+	RestartConnectUser();
 
 	return true;
 }
