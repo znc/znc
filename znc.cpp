@@ -845,7 +845,14 @@ bool CZNC::ParseConfig(const CString& sConfig) {
 				if (pUser) {
 					if (pChan) {
 						if (sTag.CaseCmp("Chan") == 0) {
-							pUser->AddChan(pChan);
+							// Save the channel name, because AddChan
+							// deletes the CChannel*, if adding fails
+							sTag = pChan->GetName(); /* FIXME */
+							if (!pUser->AddChan(pChan)) {
+								CUtils::PrintError("Channel [" + sTag + "] defined more than once");
+								return false;
+							}
+							sTag.clear();
 							pChan = NULL;
 							continue;
 						}
