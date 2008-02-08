@@ -97,7 +97,7 @@ public:
 	//
 	// Functions to manipulate the file on the filesystem
 	//
-	int Delete();
+	bool Delete();
 	int Move(const CString& sNewFileName, bool bOverwrite = false);
 	int Copy(const CString& sNewFileName, bool bOverwrite = false);
 

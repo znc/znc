@@ -156,7 +156,7 @@ int CFile::GetInfo(const CString& sFile, struct stat& st) {
 //
 // Functions to manipulate the file on the filesystem
 //
-int CFile::Delete() { return CFile::Delete(m_sLongName); }
+bool CFile::Delete() { return CFile::Delete(m_sLongName); }
 int CFile::Move(const CString& sNewFileName, bool bOverwrite) {
 	return CFile::Move(m_sLongName, sNewFileName, bOverwrite);
 }
