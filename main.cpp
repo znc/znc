@@ -197,7 +197,10 @@ int main(int argc, char** argv) {
 	}
 
 #ifdef _DEBUG
-	CUtils::PrintMessage("Staying open for debugging");
+	int iPid = getpid();
+	CUtils::PrintMessage("Staying open for debugging [pid: " + CString(iPid) + "]");
+
+	pZNC->WritePidFile(iPid);
 #else	
 	CUtils::PrintAction("Forking into the background");
 
