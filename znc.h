@@ -97,6 +97,7 @@ public:
 	bool WriteISpoof(CUser* pUser);
 	void ReleaseISpoof();
 	bool WritePidFile(int iPid);
+	bool DeletePidFile();
 	CUser* GetUser(const CString& sUser);
 	Csock* FindSockByName(const CString& sSockName);
 	bool ParseConfig(const CString& sConfig);

@@ -53,6 +53,8 @@ CZNC::~CZNC() {
 #ifdef _MODULES
 	delete m_pModules;
 #endif
+
+	DeletePidFile();
 }
 
 CString CZNC::GetTag(bool bIncludeVersion) {
@@ -260,6 +262,26 @@ bool CZNC::WritePidFile(int iPid) {
 		CUtils::PrintStatus(false);
 	}
 
+	return false;
+}
+
+bool CZNC::DeletePidFile() {
+	if (!m_sPidFile.empty()) {
+		CString sFile;
+		// absolute path or relative to the data dir?
+		if (m_sPidFile[0] != '/')
+			sFile = GetZNCPath() + "/" + m_sPidFile;
+		else
+			sFile = m_sPidFile;
+
+		CFile File(sFile);
+		CUtils::PrintAction("Deleting pid file [" + sFile + "]");
+		if (File.Delete()) {
+			CUtils::PrintStatus(true);
+			return true;
+		}
+		CUtils::PrintStatus(false);
+	}
 	return false;
 }
 
