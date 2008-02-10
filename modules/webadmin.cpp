@@ -962,6 +962,8 @@ bool CWebAdminSock::UserPage(CString& sPageRet, CUser* pUser) {
 		return true;
 	}
 
+	/* If pUser is NULL, we are adding a user, else we are editing this one */
+
 	CString sUsername = GetParam("user");
 	if (!pUser && CZNC::Get().FindUser(sUsername)) {
 		GetErrorPage(sPageRet, "Invalid Submission [User " + sUsername + " already exists]");
@@ -1023,14 +1025,19 @@ CUser* CWebAdminSock::GetNewUser(CString& sPageRet, CUser* pUser) {
 		return NULL;
 	}
 
+	if (pUser) {
+		/* If we are editing a user we must not change the user name */
+		sUsername = pUser->GetUserName();
+	}
+
+	CUser* pNewUser = new CUser(sUsername);
+
 	CString sArg = GetParam("password");
 
 	if (sArg != GetParam("password2")) {
 		GetErrorPage(sPageRet, "Invalid Submission [Passwords do not match]");
 		return NULL;
 	}
-
-	CUser* pNewUser = new CUser(sUsername);
 
 	if (!sArg.empty()) {
 		pNewUser->SetPass(sArg.MD5(), true);
