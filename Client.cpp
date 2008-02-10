@@ -810,6 +810,11 @@ void CClient::UserCommand(const CString& sLine) {
 	} else if (sCommand.CaseCmp("JUMP") == 0 ||
 			sCommand.CaseCmp("CONNECT") == 0) {
 		if (m_pUser) {
+			if (!m_pUser->HasServers()) {
+				PutStatus("You don't have any servers added.");
+				return;
+			}
+
 			if (m_pIRCSock) {
 				m_pIRCSock->Quit();
 				PutStatus("Jumping to the next server in the list...");
