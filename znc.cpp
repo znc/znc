@@ -1275,8 +1275,9 @@ bool CZNC::DoRehash(CString& sError)
 						sError = "Unable to locate pem file: [" + sPemFile + "]";
 						CUtils::PrintStatus(false, sError);
 
-#warning what if we closed stdin already?
-						if (CUtils::GetBoolInput("Would you like to create a new pem file?", true)) {
+						// If stdin is e.g. /dev/null and we call GetBoolInput(),
+						// we are stuck in an endless loop!
+						if (isatty(0) && CUtils::GetBoolInput("Would you like to create a new pem file?", true)) {
 							sError.clear();
 							WritePemFile();
 						} else {
