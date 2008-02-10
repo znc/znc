@@ -100,13 +100,14 @@ public:
 	bool DeletePidFile();
 	CUser* GetUser(const CString& sUser);
 	Csock* FindSockByName(const CString& sSockName);
-	bool ParseConfig(const CString& sConfig);
 	bool IsHostAllowed(const CString& sHostMask);
 	void InitDirs(const CString& sArgvPath, const CString& sDataDir);
 	bool OnBoot();
 	CString ExpandConfigPath(const CString& sConfigFile);
 	bool WriteNewConfig(const CString& sConfig);
 	bool WriteConfig();
+	bool ParseConfig(const CString& sConfig);
+	bool RehashConfig(CString& sError);
 	static CString GetTag(bool bIncludeVersion = true);
 	// This returns the path to the .so and to the data dir
 	// which is where static data (webadmin skins) are saved
@@ -173,6 +174,7 @@ public:
 	void RestartConnectUser();
 
 private:
+	bool DoRehash(CString& sError);
 	// Returns true if something was done
 	bool HandleUserDeletion();
 protected:

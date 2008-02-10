@@ -787,41 +787,94 @@ bool CZNC::WriteNewConfig(const CString& sConfig) {
 	return CUtils::GetBoolInput("Launch znc now?", true);
 }
 
-bool CZNC::ParseConfig(const CString& sConfig) {
+bool CZNC::ParseConfig(const CString& sConfig)
+{
+	CString s;
+
 	m_sConfigFile = ExpandConfigPath(sConfig);
+
+	return DoRehash(s);
+}
+
+bool CZNC::RehashConfig(CString& sError)
+{
+	// This clears m_msDelUsers
+	HandleUserDeletion();
+
+	// Mark all users as going-to-be deleted
+	m_msDelUsers = m_msUsers;
+	m_msUsers.clear();
+
+	if (DoRehash(sError)) {
+		return true;
+	}
+
+	// Rehashing failed, try to recover
+	CString s;
+	while (m_msDelUsers.size()) {
+		AddUser(m_msDelUsers.begin()->second, s);
+		m_msDelUsers.erase(m_msDelUsers.begin());
+	}
+
+	return false;
+}
+
+bool CZNC::DoRehash(CString& sError)
+{
+	sError.clear();
 
 	CUtils::PrintAction("Opening Config [" + m_sConfigFile + "]");
 
 	if (!CFile::Exists(m_sConfigFile)) {
-		CUtils::PrintStatus(false, "No such file");
+		sError = "No such file";
+		CUtils::PrintStatus(false, sError);
 		CUtils::PrintMessage("Restart znc with the --makeconf option if you wish to create this config.");
 		return false;
 	}
 
 	if (!CFile::IsReg(m_sConfigFile)) {
-		CUtils::PrintStatus(false, "Not a file");
+		sError = "Not a file";
+		CUtils::PrintStatus(false, sError);
 		return false;
 	}
 
 	if (!m_LockFile.TryExLock(m_sConfigFile)) {
-		CUtils::PrintStatus(false, "ZNC is already running on this config.");
+		sError = "ZNC is already running on this config.";
+		CUtils::PrintStatus(false, sError);
 		return false;
 	}
 
 	CFile File(m_sConfigFile);
 
 	if (!File.Open(O_RDONLY)) {
+		sError = "Could not open config";
 		CUtils::PrintStatus(false);
 		return false;
 	}
 
 	CUtils::PrintStatus(true);
 
+	m_vsVHosts.clear();
+	m_vsMotd.clear();
+
+	// Delete all listeners
+	while (m_vpListeners.size()) {
+		delete m_vpListeners[0];
+		m_vpListeners.erase(m_vpListeners.begin());
+	}
+
+	// Make sure that timer doesn't have a stale iterator
+	DisableConnectUser();
+
 	CString sLine;
 	bool bCommented = false;	// support for /**/ style comments
 	CUser* pUser = NULL;	// Used to keep track of which user block we are in
+	CUser* pRealUser = NULL;	// If we rehash a user, this is the real one
 	CChan* pChan = NULL;	// Used to keep track of which chan block we are in
 	unsigned int uLineNum = 0;
+#ifdef _MODULES
+	MCString msModules;	// Modules are queued for later loading
+#endif
 
 	while (File.ReadLine(sLine)) {
 		uLineNum++;
@@ -869,51 +922,77 @@ bool CZNC::ParseConfig(const CString& sConfig) {
 						if (sTag.CaseCmp("Chan") == 0) {
 							// Save the channel name, because AddChan
 							// deletes the CChannel*, if adding fails
-							sTag = pChan->GetName(); /* FIXME */
+							sError = pChan->GetName();
 							if (!pUser->AddChan(pChan)) {
-								CUtils::PrintError("Channel [" + sTag + "] defined more than once");
+								sError = "Channel [" + sError + "] defined more than once";
+								CUtils::PrintError(sError);
 								return false;
 							}
-							sTag.clear();
+							sError.clear();
 							pChan = NULL;
 							continue;
 						}
 					} else if (sTag.CaseCmp("User") == 0) {
 						CString sErr;
 
-						if (!AddUser(pUser, sErr)) {
-							CUtils::PrintError("Invalid user [" + pUser->GetUserName() + "] " + sErr);
+						if (pRealUser) {
+							if (!pRealUser->Clone(*pUser, sErr)
+									|| !AddUser(pRealUser, sErr)) {
+								sError = "Invalid user [" + pUser->GetUserName() + "] " + sErr;
+								DEBUG_ONLY(cout << "CUser::Clone() failed in rehash" << endl);
+							}
+						} else if (!AddUser(pUser, sErr)) {
+							sError = "Invalid user [" + pUser->GetUserName() + "] " + sErr;
+						}
+
+						if (!sError.empty()) {
+							CUtils::PrintError(sError);
 							pUser->SetBeingDeleted(true);
 							delete pUser;
 							return false;
 						}
 
 						pUser = NULL;
+						pRealUser = NULL;
 						continue;
 					}
 				}
 			} else if (sTag.CaseCmp("User") == 0) {
 				if (pUser) {
-					CUtils::PrintError("You may not nest <User> tags inside of other <User> tags.");
+					sError = "You may not nest <User> tags inside of other <User> tags.";
+					CUtils::PrintError(sError);
 					return false;
 				}
 
 				if (sValue.empty()) {
-					CUtils::PrintError("You must supply a username in the <User> tag.");
+					sError = "You must supply a username in the <User> tag.";
+					CUtils::PrintError(sError);
 					return false;
 				}
 
 				if (m_msUsers.find(sValue) != m_msUsers.end()) {
-					CUtils::PrintError("User [" + sValue + "] defined more than once.");
+					sError = "User [" + sValue + "] defined more than once.";
+					CUtils::PrintError(sError);
 					return false;
 				}
 
-				pUser = new CUser(sValue);
 				CUtils::PrintMessage("Loading user [" + sValue + "]");
+
+				// Either create a CUser* or use an existing one
+				map<CString, CUser*>::iterator it = m_msDelUsers.find(sValue);
+
+				if (it != m_msDelUsers.end()) {
+					pRealUser = it->second;
+					m_msDelUsers.erase(it);
+				} else
+					pRealUser = NULL;
+
+				pUser = new CUser(sValue);
 
 				if (!m_sStatusPrefix.empty()) {
 					if (!pUser->SetStatusPrefix(m_sStatusPrefix)) {
-						CUtils::PrintError("Invalid StatusPrefix [" + m_sStatusPrefix + "] Must be 1-5 chars, no spaces.");
+						sError = "Invalid StatusPrefix [" + m_sStatusPrefix + "] Must be 1-5 chars, no spaces.";
+						CUtils::PrintError(sError);
 						return false;
 					}
 				}
@@ -921,12 +1000,14 @@ bool CZNC::ParseConfig(const CString& sConfig) {
 				continue;
 			} else if (sTag.CaseCmp("Chan") == 0) {
 				if (!pUser) {
-					CUtils::PrintError("<Chan> tags must be nested inside of a <User> tag.");
+					sError = "<Chan> tags must be nested inside of a <User> tag.";
+					CUtils::PrintError(sError);
 					return false;
 				}
 
 				if (pChan) {
-					CUtils::PrintError("You may not nest <Chan> tags inside of other <Chan> tags.");
+					sError = "You may not nest <Chan> tags inside of other <Chan> tags.";
+					CUtils::PrintError(sError);
 					return false;
 				}
 
@@ -1018,7 +1099,8 @@ bool CZNC::ParseConfig(const CString& sConfig) {
 						continue;
 					} else if (sName.CaseCmp("StatusPrefix") == 0) {
 						if (!pUser->SetStatusPrefix(sValue)) {
-							CUtils::PrintError("Invalid StatusPrefix [" + sValue + "] Must be 1-5 chars, no spaces.");
+							sError = "Invalid StatusPrefix [" + sValue + "] Must be 1-5 chars, no spaces.";
+							CUtils::PrintError(sError);
 							return false;
 						}
 						continue;
@@ -1095,14 +1177,17 @@ bool CZNC::ParseConfig(const CString& sConfig) {
 
 							CUtils::PrintStatus(bModRet, sModRet);
 							if (!bModRet) {
+								sError = sModRet;
 								return false;
 							}
 						} catch (CException e) {
+							sError = "Caught exception while loading [" + sModName + "]";
 							CUtils::PrintStatus(false, sModRet);
 							return false;
 						}
 #else
-						CUtils::PrintStatus(false, "Modules are not enabled.");
+						sError = "Modules are not enabled.";
+						CUtils::PrintStatus(false, sError);
 #endif
 						continue;
 					}
@@ -1148,23 +1233,28 @@ bool CZNC::ParseConfig(const CString& sConfig) {
 
 #ifndef HAVE_IPV6
 					if (bIPV6) {
-						CUtils::PrintStatus(false, "IPV6 is not enabled");
+						sError = "IPV6 is not enabled";
+						CUtils::PrintStatus(false, sError);
 						return false;
 					}
 #endif
 
 #ifndef HAVE_LIBSSL
 					if (bSSL) {
-						CUtils::PrintStatus(false, "SSL is not enabled");
+						sError = "SSL is not enabled";
+						CUtils::PrintStatus(false, sError);
 						return false;
 					}
 #else
 					CString sPemFile = GetPemLocation();
 
 					if (bSSL && !CFile::Exists(sPemFile)) {
-						CUtils::PrintStatus(false, "Unable to locate pem file: [" + sPemFile + "]");
+						sError = "Unable to locate pem file: [" + sPemFile + "]";
+						CUtils::PrintStatus(false, sError);
 
+#warning what if we closed stdin already?
 						if (CUtils::GetBoolInput("Would you like to create a new pem file?", true)) {
+							sError.clear();
 							WritePemFile();
 						} else {
 							return false;
@@ -1174,14 +1264,16 @@ bool CZNC::ParseConfig(const CString& sConfig) {
 					}
 #endif
 					if (!uPort) {
-						CUtils::PrintStatus(false, "Invalid port");
+						sError = "Invalid port";
+						CUtils::PrintStatus(false, sError);
 						return false;
 					}
 
 					CListener* pListener = new CListener(uPort, sBindHost, bSSL, bIPV6);
 
 					if (!pListener->Listen()) {
-						CUtils::PrintStatus(false, "Unable to bind");
+						sError = "Unable to bind";
+						CUtils::PrintStatus(false, sError);
 						delete pListener;
 						return false;
 					}
@@ -1191,30 +1283,19 @@ bool CZNC::ParseConfig(const CString& sConfig) {
 
 					continue;
 				} else if (sName.CaseCmp("LoadModule") == 0) {
-					CString sModName = sValue.Token(0);
-					CUtils::PrintAction("Loading Global Module [" + sModName + "]");
 #ifdef _MODULES
-					CString sModRet;
+					CString sModName = sValue.Token(0);
 					CString sArgs = sValue.Token(1, true);
 
-					try {
-						bool bModRet = GetModules().LoadModule(sModName, sArgs, NULL, sModRet);
-
-						// If the module was loaded, sModRet contains
-						// "Loaded Module [name] ..." and we strip away this beginning.
-						if (bModRet)
-							sModRet = sModRet.Token(1, true, sModName + "] ");
-
-						CUtils::PrintStatus(bModRet, sModRet);
-						if (!bModRet) {
-							return false;
-						}
-					} catch (CException e) {
-						CUtils::PrintStatus(false, sModRet);
+					if (msModules.find(sModName) != msModules.end()) {
+						sError = "Module [" + sModName +
+							"] already loaded";
+						CUtils::PrintError(sError);
 						return false;
 					}
+					msModules[sModName] = sArgs;
 #else
-					CUtils::PrintStatus(false, "Modules are not enabled.");
+					CUtils::PrintError("Modules are not enabled.");
 #endif
 					continue;
 				} else if (sName.CaseCmp("ISpoofFormat") == 0) {
@@ -1246,23 +1327,104 @@ bool CZNC::ParseConfig(const CString& sConfig) {
 			}
 		}
 
-		CUtils::PrintError("Unhandled line " + CString(uLineNum) + " in config: [" + sLine + "]");
+		sError = "Unhandled line " + CString(uLineNum) + " in config: [" + sLine + "]";
+		CUtils::PrintError(sError);
 		return false;
 	}
 
+#ifdef _MODULES
+	// First step: Load and reload new modules or modules with new arguments
+	for (MCString::iterator it = msModules.begin(); it != msModules.end(); it++) {
+		CString sModName = it->first;
+		CString sArgs = it->second;
+		CString sModRet;
+		CModule *pOldMod;
+
+		pOldMod = GetModules().FindModule(sModName);
+		if (!pOldMod) {
+			CUtils::PrintAction("Loading Global Module [" + sModName + "]");
+
+			try {
+				bool bModRet = GetModules().LoadModule(sModName, sArgs, NULL, sModRet);
+
+				// If the module was loaded, sModRet contains
+				// "Loaded Module [name] ..." and we strip away this beginning.
+				if (bModRet)
+					sModRet = sModRet.Token(1, true, sModName + "] ");
+
+				CUtils::PrintStatus(bModRet, sModRet);
+				if (!bModRet) {
+					sError = sModRet;
+					return false;
+				}
+			} catch (CException e) {
+				sError = "Caught an exception while loading [" + sModName + "]";
+				CUtils::PrintStatus(false, sModRet);
+				return false;
+			}
+		} else if (pOldMod->GetArgs() != sArgs) {
+			CUtils::PrintAction("Reloading Global Module [" + sModName + "]");
+
+			try {
+				bool bModRet = GetModules().ReloadModule(sModName, sArgs, NULL, sModRet);
+
+				// If the module was loaded, sModRet contains
+				// "Loaded Module [name] ..." and we strip away this beginning.
+				if (bModRet)
+					sModRet = sModRet.Token(1, true, sModName + "] ");
+
+				CUtils::PrintStatus(bModRet, sModRet);
+				if (!bModRet) {
+					sError = sModRet;
+					return false;
+				}
+			} catch (CException e) {
+				sError = "Caught an exception while reloading [" + sModName + "]";
+				CUtils::PrintStatus(false, sModRet);
+				return false;
+			}
+		} else
+			CUtils::PrintMessage("Module [" + sModName + "] already loaded.");
+	}
+
+	// Second step: Unload modules which are no longer in the config
+	set<CString> ssUnload;
+	for (size_t i = 0; i < GetModules().size(); i++) {
+		CModule *pCurMod = GetModules()[i];
+
+		if (msModules.find(pCurMod->GetModName()) == msModules.end())
+			ssUnload.insert(pCurMod->GetModName());
+	}
+
+	for (set<CString>::iterator it = ssUnload.begin(); it != ssUnload.end(); it++) {
+		if (GetModules().UnloadModule(*it))
+			CUtils::PrintMessage("Unloaded Global Module [" + *it + "]");
+		else
+			CUtils::PrintMessage("Could not unload [" + *it + "]");
+	}
+#endif
+
 	if (pChan) {
+		// TODO last <Chan> not closed
 		delete pChan;
+	}
+
+	if (pUser) {
+		// TODO last <User> not closed
+		delete pUser;
 	}
 
 	File.Close();
 
 	if (m_msUsers.size() == 0) {
-		CUtils::PrintError("You must define at least one user in your config.");
+		sError = "You must define at least one user in your config.";
+		CUtils::PrintError(sError);
 		return false;
 	}
 
 	if (m_vpListeners.size() == 0) {
-		CUtils::PrintError("You must supply at least one listen port in your config.");
+		sError = "You must supply at least one Listen port in your config.";
+		CUtils::PrintError(sError);
 		return false;
 	}
 
