@@ -686,6 +686,14 @@ void CClient::UserCommand(const CString& sLine) {
 		if (!SendMotd()) {
 			PutStatus("There is no MOTD set.");
 		}
+	} else if (m_pUser->IsAdmin() && sCommand.CaseCmp("Rehash") == 0) {
+		CString sRet;
+
+		if (CZNC::Get().RehashConfig(sRet)) {
+			PutStatus("Rehashing succeeded!");
+		} else {
+			PutStatus("Rehashing failed: " + sRet);
+		}
 	} else if (m_pUser->IsAdmin() && sCommand.CaseCmp("SaveConfig") == 0) {
 		if (CZNC::Get().WriteConfig()) {
 			PutStatus("Wrote config to [" + CZNC::Get().GetConfigFile() + "]");
@@ -1600,6 +1608,11 @@ void CClient::HelpUser() {
 		}
 
 		if (m_pUser->IsAdmin()) {
+			Table.AddRow();
+			Table.SetCell("Command", "Rehash");
+			Table.SetCell("Arguments", "");
+			Table.SetCell("Description", "Reload znc.conf from disk");
+
 			Table.AddRow();
 			Table.SetCell("Command", "SaveConfig");
 			Table.SetCell("Arguments", "");
