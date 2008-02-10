@@ -54,6 +54,10 @@ static void die(int sig) {
 	exit(sig);
 }
 
+static void rehash(int sig) {
+	CZNC::Get().SetNeedRehash(true);
+}
+
 int main(int argc, char** argv) {
 	CString sConfig;
 	CString sDataDir = "";
@@ -240,6 +244,9 @@ int main(int argc, char** argv) {
 	sigaction(SIGBUS,  &sa, (struct sigaction*) NULL);
 	sigaction(SIGSEGV, &sa, (struct sigaction*) NULL);
 	sigaction(SIGTERM, &sa, (struct sigaction*) NULL);
+
+	sa.sa_handler = rehash;
+	sigaction(SIGHUP,  &sa, (struct sigaction*) NULL);
 
 	int iRet = 0;
 

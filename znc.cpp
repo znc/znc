@@ -23,6 +23,7 @@ CZNC::CZNC() {
 	m_uBytesRead = 0;
 	m_uBytesWritten = 0;
 	m_pConnectUserTimer = NULL;
+	m_bNeedRehash = false;
 }
 
 CZNC::~CZNC() {
@@ -176,6 +177,28 @@ bool CZNC::HandleUserDeletion()
 
 int CZNC::Loop() {
 	while (true) {
+		CString sError;
+		map<CString, CUser*>::iterator it;
+		map<CString, CUser*>::iterator end;
+
+		if (GetNeedRehash()) {
+			SetNeedRehash(false);
+
+			bool b = RehashConfig(sError);
+
+			end = m_msUsers.end();
+			for (it = m_msUsers.begin(); it != end; it++) {
+				if (it->second->IsAdmin()) {
+					if (b) {
+						it->second->PutStatus("Rehashing succeeded");
+					} else {
+						it->second->PutStatus("Rehashing failed: " + sError);
+						it->second->PutStatus("ZNC is in some possibly inconsistent state!");
+					}
+				}
+			}
+		}
+
 		// Check for users that need to be deleted
 		if (HandleUserDeletion()) {
 			// Also remove those user(s) from the config file

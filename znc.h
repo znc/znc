@@ -124,12 +124,14 @@ public:
 	void UpdateTrafficStats();
 
 	// Setters
+	void SetNeedRehash(bool b) { m_bNeedRehash = b; }
 	void SetStatusPrefix(const CString& s) { m_sStatusPrefix = (s.empty()) ? "*" : s; }
 	void SetISpoofFile(const CString& s) { m_sISpoofFile = s; }
 	void SetISpoofFormat(const CString& s) { m_sISpoofFormat = (s.empty()) ? "global { reply \"%\" }" : s; }
 	// !Setters
 
 	// Getters
+	bool GetNeedRehash() { return m_bNeedRehash; }
 	CSockManager& GetManager() { return m_Manager; }
 #ifdef _MODULES
 	CGlobalModules& GetModules() { return *m_pModules; }
@@ -177,7 +179,9 @@ private:
 	bool DoRehash(CString& sError);
 	// Returns true if something was done
 	bool HandleUserDeletion();
+
 protected:
+	bool				m_bNeedRehash;
 	vector<CListener*>		m_vpListeners;
 	map<CString,CUser*>		m_msUsers;
 	map<CString,CUser*>		m_msDelUsers;
