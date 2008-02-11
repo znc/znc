@@ -85,15 +85,18 @@ public:
 
 	void Close() {
 		if (getpid() == m_pid && m_fd > -1) {
+			// This UnLock() also unlocks for all of our childs!
 			UnLock();
 			close(m_fd);
 
 			if (m_bCreated) {
 				unlink(m_sFileName.c_str());
 			}
+		} else if (m_fd > -1)
+			// Make sure we don't leak this fd
+			close(m_fd);
 
-			Init();
-		}
+		Init();
 	}
 
 	void Open(const CString& sFile, bool bRw = false) {
