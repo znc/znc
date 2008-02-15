@@ -228,6 +228,8 @@ int main(int argc, char** argv) {
 	close(0); open("/dev/null", O_RDONLY);
 	close(1); open("/dev/null", O_WRONLY);
 	close(2); open("/dev/null", O_WRONLY);
+
+	CUtils::SetStdoutIsTTY(false);
 #endif
 
 	struct sigaction sa;
