@@ -45,7 +45,7 @@ though you don't need to as ZNC supports in-place execution.
 Setting up znc.conf
 -------------------
 
-For setting up a configuration file in ~/.znc you can simply do 
+For setting up a configuration file in ~/.znc you can simply do
  znc --makeconf
 or
  ./znc --makeconf

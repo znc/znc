@@ -77,8 +77,7 @@ int main(int argc, char** argv) {
 	bool bEncPem = false;
 
 	while ((iArg = getopt_long(argc, argv, "hvncsped:", g_LongOpts, &iOptIndex)) != -1) {
-#else	
-
+#else
 	while ((iArg = getopt_long(argc, argv, "hvncsd:", g_LongOpts, &iOptIndex)) != -1) {
 #endif /* HAVE_LIBSSL */
 	    switch (iArg) {
@@ -205,7 +204,7 @@ int main(int argc, char** argv) {
 	CUtils::PrintMessage("Staying open for debugging [pid: " + CString(iPid) + "]");
 
 	pZNC->WritePidFile(iPid);
-#else	
+#else
 	CUtils::PrintAction("Forking into the background");
 
 	int iPid = fork();

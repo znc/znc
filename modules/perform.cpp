@@ -14,7 +14,7 @@ public:
 	MODCONSTRUCTOR(CPerform)
 	{
 	}
-	
+
 	virtual ~CPerform()
 	{
 	}
@@ -22,7 +22,7 @@ public:
 	virtual bool OnLoad(const CString& sArgs, CString& sMessage)
 	{
 		GetNV("Perform").Split("\n", m_vPerform, false);
-		
+
 		return true;
 	}
 
@@ -94,13 +94,13 @@ private:
 	bool Save()
 	{
 		CString sBuffer = "";
-		
+
 		for(VCString::iterator it = m_vPerform.begin(); it != m_vPerform.end(); it++)
 		{
 			sBuffer += *it + "\n";
 		}
 		SetNV("Perform", sBuffer);
-		
+
 		return true;
 	}
 

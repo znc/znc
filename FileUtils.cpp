@@ -367,7 +367,7 @@ int CExecSock::popen2(int & iReadFD, int & iWriteFD, const CString & sCommand) {
 		close(rpipes[1]);
 		return -1;
 	}
-	
+
 	int iPid = fork();
 
 	if (iPid == -1) {

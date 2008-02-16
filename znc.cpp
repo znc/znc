@@ -311,7 +311,7 @@ bool CZNC::DeletePidFile() {
 bool CZNC::WritePemFile( bool bEncPem ) {
 #ifndef HAVE_LIBSSL
 	CUtils::PrintError("ZNC was not compiled with ssl support.");
-	return false; 
+	return false;
 #else
 	CString sPemFile = GetPemLocation();
 	const char* pHostName = getenv("HOSTNAME");

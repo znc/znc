@@ -20,10 +20,10 @@ using std::stringstream;
 
 class CSChat;
 
-class CRemMarkerJob : public CTimer 
+class CRemMarkerJob : public CTimer
 {
 public:
-	CRemMarkerJob( CModule* pModule, unsigned int uInterval, unsigned int uCycles, const CString& sLabel, const CString& sDescription ) 
+	CRemMarkerJob( CModule* pModule, unsigned int uInterval, unsigned int uCycles, const CString& sLabel, const CString& sDescription )
 		: CTimer( pModule, uInterval, uCycles, sLabel, sDescription) {}
 
 	virtual ~CRemMarkerJob() {}
@@ -44,13 +44,13 @@ public:
 	{
 		m_pModule = pMod;
 	}
-	CSChatSock( int itimeout = 60 ) : Csock( itimeout ) 
+	CSChatSock( int itimeout = 60 ) : Csock( itimeout )
 	{
-		m_pModule = NULL;	
+		m_pModule = NULL;
 		EnableReadLine();
 	}
 	CSChatSock( const CS_STRING & sHost, u_short iPort, int iTimeout = 60 )
-		: Csock( sHost, iPort, iTimeout ) 
+		: Csock( sHost, iPort, iTimeout )
 	{
 		m_pModule = NULL;
 		EnableReadLine();
@@ -65,10 +65,10 @@ public:
 		return( p );
 	}
 
-	virtual bool ConnectionFrom( const CS_STRING & sHost, u_short iPort ) 
+	virtual bool ConnectionFrom( const CS_STRING & sHost, u_short iPort )
 	{
-		Close();	// close the listener after the first connection	
-		return( true ); 
+		Close();	// close the listener after the first connection
+		return( true );
 	}
 
 	virtual void Connected();
@@ -104,14 +104,12 @@ public:
 	}
 
 private:
-	CSChat 					*m_pModule;	
+	CSChat 					*m_pModule;
 	CString					m_sChatNick;
-	vector<CS_STRING>		m_vBuffer;	
+	vector<CS_STRING>		m_vBuffer;
 };
 
-
-
-class CSChat : public CModule 
+class CSChat : public CModule
 {
 public:
 	MODCONSTRUCTOR(CSChat) {}
@@ -134,14 +132,14 @@ public:
 		return true;
 	}
 
-	virtual void OnUserAttached() 
+	virtual void OnUserAttached()
 	{
 		CString sName = "SCHAT::" + m_pUser->GetUserName();
 		for( u_int a = 0; a < m_pManager->size(); a++ )
 		{
 			if ( ( strncmp( (*m_pManager)[a]->GetSockName().c_str(), sName.c_str(), sName.length() ) != 0 ) || ( (*m_pManager)[a]->GetType() == CSChatSock::LISTENER ) )
 				continue;
-			
+
 			CSChatSock *p = (CSChatSock *)(*m_pManager)[a];
 			p->DumpBuffer();
 		}
@@ -170,12 +168,12 @@ public:
 			PutModule( "SChat User Area ..." );
 			OnModCommand( "help" );
 			return( HALT );
-		
+
 		}
-		
+
 		return( CONTINUE );
-	}	
-	virtual void OnModCommand( const CString& sCommand ) 
+	}
+	virtual void OnModCommand( const CString& sCommand )
 	{
 		CString::size_type iPos = sCommand.find( " " );
 		CString sCom, sArgs;
@@ -218,12 +216,12 @@ public:
 				return;
 			}
 
-			stringstream s;	
+			stringstream s;
 			s << "PRIVMSG " << sArgs << " :\001";
 			s << "DCC SCHAT chat ";
 			s << CUtils::GetLongIP( m_pUser->GetLocalIP() );
 			s << " " << iPort << "\001";
-		
+
 			PutIRC( s.str() );
 
 		} else if ( strcasecmp( sCom.c_str(), "list" ) == 0 )
@@ -254,10 +252,10 @@ public:
 					sTime.Trim();
 					Table.SetCell( "Created", sTime );
 				}
-				
+
 				if ( pSock->GetType() != CSChatSock::LISTENER )
 				{
-					Table.SetCell( "Status", "Established" );	
+					Table.SetCell( "Status", "Established" );
 					Table.SetCell( "Host", pSock->GetRemoteIP() );
 					Table.SetCell( "Port", CString( pSock->GetRemotePort() ) );
 					SSL_SESSION *pSession = pSock->GetSSLSession();
@@ -270,7 +268,7 @@ public:
 					Table.SetCell( "Port", CString( pSock->GetLocalPort() ) );
 				}
 			}
-			if ( Table.size() ) 
+			if ( Table.size() )
 			{
 				unsigned int uTableIdx = 0;
 				CString sLine;
@@ -298,7 +296,6 @@ public:
 				}
 				PutModule( "No Such Chat [" + sArgs + "]" );
 			}
-		
 		} else if ( strcasecmp( sCom.c_str(), "showsocks" ) == 0 )
 		{
 			CTable Table;
@@ -322,13 +319,13 @@ public:
 					sTime.Trim();
 					Table.SetCell( "Created", sTime );
 				}
-				
+
 				if ( pSock->GetType() != Csock::LISTENER )
 				{
 					if ( pSock->GetType() == Csock::OUTBOUND )
-						Table.SetCell( "Type", "Outbound" );	
+						Table.SetCell( "Type", "Outbound" );
 					else
-						Table.SetCell( "Type", "Inbound" );	
+						Table.SetCell( "Type", "Inbound" );
 					Table.SetCell( "LocalIP:Port", pSock->GetLocalIP() + ":" + CString( pSock->GetLocalPort() ) );
 					Table.SetCell( "RemoteIP:Port", pSock->GetRemoteIP() + ":" + CString( pSock->GetRemotePort() ) );
 					SSL_SESSION *pSession = pSock->GetSSLSession();
@@ -344,7 +341,7 @@ public:
 					Table.SetCell( "RemoteIP:Port", "0.0.0.0:0" );
 				}
 			}
-			if ( Table.size() ) 
+			if ( Table.size() )
 			{
 				unsigned int uTableIdx = 0;
 				CString sLine;
@@ -389,7 +386,7 @@ public:
 				return( HALT );
 			}
 		}
-		
+
 		return( CONTINUE );
 	}
 
@@ -448,7 +445,7 @@ public:
 	{
 		return( m_pUser->IsUserAttached() );
 	}
-	
+
 private:
 	map< CString,pair< u_long,u_short > >		m_siiWaitingChats;
 	CString		m_sPemFile;
@@ -464,7 +461,7 @@ void CSChatSock::ReadLine( const CS_STRING & sLine )
 		CString sText = sLine;
 		if ( sText[sText.length()-1] == '\n' )
 			sText.erase( sText.length()-1, 1 );
-		
+
 		if ( sText[sText.length()-1] == '\r' )
 			sText.erase( sText.length()-1, 1 );
 

@@ -28,12 +28,12 @@ sub CORECallFunc
 			{
 				return( $Ret );
 			}
-			
+
 			if ( $Ret == HALTMODS() )
 			{
 				return( $Ret );
 			}
-			
+
 			if ( $Ret == HALTCORE() )
 			{
 				$FinalRet = $Ret;
@@ -61,7 +61,7 @@ sub CORELoadMod
 
 	my $DPath = GetString( "SavePath" );
 	my $FileName = $DPath . "/." . $Username . $Module . ".pm";
-	
+
 	if ( !open( INMOD, $ModPath ) )
 	{
 		ZNC::PutModule( "Unable to open module $ModPath!" );
@@ -82,7 +82,7 @@ sub CORELoadMod
 			return( HALTMODS() );
 		}
 	}
-	
+
 	while( <INMOD> )
 	{
 		if ( $_ =~ /^\s*package\s*$Module\s*;/ )
@@ -111,12 +111,12 @@ sub CORELoadMod
 		ZNC::PutModule( "$Module Failed to load" );
 		return( HALTMODS() );
 	}
-	
+
 	$obj->{ZNC_Username} = $Username;
 	$obj->{ZNC_Name} = $Module;
 	$obj->{ZNC_ModPath} = $FileName;
 	@{$obj->{socks}} = ();
-	
+
 	push( @MODS, $obj );
 	ZNC::PutModule( "Loaded $Module" );
 }
@@ -287,7 +287,7 @@ sub PutTarget
 	my ( $target, $line ) = @_;
 	PutIRC( "PRIVMSG $target :$line" );
 }
-	
+
 sub Connect
 {
 	my ( $obj, $host, $port, $timeout, $bEnableReadline, $bUseSSL ) = @_;
@@ -339,7 +339,7 @@ sub Listen
 	{
 		$bEnableReadline = 0;
 	}
-	
+
 	if ( !$bUseSSL )
 	{
 		$bUseSSL = 0;
@@ -358,7 +358,7 @@ sub ListenSSL
 
 
 ######################
-## use this if you really want to have fun. be sure you don't leave a reference to the 
+## use this if you really want to have fun. be sure you don't leave a reference to the
 ## handle laying around! ZNC will deal with that inside your module, so its properly closed
 package ZNCSocket;
 
@@ -425,7 +425,7 @@ sub Listen
 	$me->{fd} = ZNC::Listen( $me->{modobj}, $port, $bindhost, $bEnableReadline, $bUseSSL );
 	return( ( $me->{fd} >= 0 ) );
 }
-	
+
 sub ListenSSL
 {
 	my ( $me, $port, $bindhost, $bEnableReadline ) = @_;

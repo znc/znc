@@ -172,7 +172,7 @@ CString CChan::GetModeString() const {
 
 CString CChan::GetModeForNames() const {
 	CString sMode;
-	
+
 	for (map<unsigned char, CString>::const_iterator it = m_musModes.begin(); it != m_musModes.end(); it++) {
 		if (it->first == 's') {
 		    sMode = "@";
@@ -183,7 +183,7 @@ CString CChan::GetModeForNames() const {
 
 	return (sMode.empty() ? "=" : sMode);
 }
-	
+
 void CChan::SetModes(const CString& sModes) {
 	m_musModes.clear();
 	m_uLimit = 0;

@@ -18,10 +18,10 @@
 
 class CAway;
 
-class CAwayJob : public CTimer 
+class CAwayJob : public CTimer
 {
 public:
-	CAwayJob( CModule* pModule, unsigned int uInterval, unsigned int uCycles, const CString& sLabel, const CString& sDescription ) 
+	CAwayJob( CModule* pModule, unsigned int uInterval, unsigned int uCycles, const CString& sLabel, const CString& sDescription )
 		: CTimer( pModule, uInterval, uCycles, sLabel, sDescription) {}
 
 	virtual ~CAwayJob() {}
@@ -30,18 +30,18 @@ protected:
 	virtual void RunJob();
 };
 
-class CAway : public CModule 
+class CAway : public CModule
 {
 public:
 	MODCONSTRUCTOR(CAway)
 	{
-		Ping();	
+		Ping();
 		m_bIsAway = false;
 		m_bBootError = false;
 		SetAwayTime( 300 );
 		AddTimer( new CAwayJob( this, 60, 0, "AwayJob", "Checks for idle and saves messages every 1 minute" ) );
 	}
-	virtual ~CAway() 
+	virtual ~CAway()
 	{
 		if ( !m_bBootError )
 			SaveBufferToDisk();
@@ -60,7 +60,7 @@ public:
 			sMyArgs = sMyArgs.Token(2, true);
 		}
 		if (!sMyArgs.empty())
- 		{
+		{
 			m_sPassword = CBlowfish::MD5( sMyArgs );
 		}
 
@@ -78,7 +78,7 @@ public:
 
 			*pTmp = 0;
 		}
-		
+
 		if ( !BootStrap() )
 		{
 			m_bBootError = true;
@@ -117,13 +117,13 @@ public:
 
 		return( true );
 	}
-	
+
 	void SaveBufferToDisk()
 	{
 		if ( !m_sPassword.empty() )
 		{
 			CString sFile = CRYPT_VERIFICATION_TOKEN;
-			
+
 			for( u_int b = 0; b < m_vMessages.size(); b++ )
 				sFile += m_vMessages[b] + "\n";
 
@@ -153,7 +153,7 @@ public:
 		if ( sCmdName == "away" )
 		{
 			CString sReason;
-			if( sCommand.Token( 1 ) != "-quiet" ) 
+			if( sCommand.Token( 1 ) != "-quiet" )
 			{
 				sReason = sCommand.Token( 1, true );
 				PutModNotice( "You have been marked as away", "away" );
@@ -161,7 +161,7 @@ public:
 			else
 				sReason = sCommand.Token( 2, true );
 			Away( false, sReason );
-		}	
+		}
 		else if ( sCmdName == "back" )
 		{
 			if ( ( m_vMessages.empty() ) && ( sCommand.Token( 1 ) != "-quiet" ) )
@@ -172,7 +172,7 @@ public:
 		{
 			for( u_int a = 0; a < m_vMessages.size(); a++ )
 				PutModule( m_vMessages[a], "away" );
-		} 
+		}
 		else if ( sCmdName == "delete" )
 		{
 			CString sWhich = sCommand.Token(1);
@@ -182,7 +182,7 @@ public:
 				for( u_int a = 0; a < m_vMessages.size(); a++ )
 					m_vMessages.erase( m_vMessages.begin() + a-- );
 
-			} 
+			}
 			else if ( sWhich.empty() )
 			{
 				PutModNotice( "USAGE: delete <num|all>", "away" );
@@ -227,7 +227,7 @@ public:
 				CString sTime = m_vMessages[a].Token( 0, false, ":" );
 				CString sWhom = m_vMessages[a].Token( 1, false, ":" );
 				CString sMessage = m_vMessages[a].Token( 2, true, ":" );
-				
+
 				if ( ( sTime.empty() ) || ( sWhom.empty() ) || ( sMessage.empty() ) )
 				{
 					// illegal format
@@ -259,7 +259,6 @@ public:
 					PutModule( it->second[a] );
 			}
 			PutModule( "#--- End Messages", "away" );
-					
 		} else if ( sCmdName == "enabletimer")
 		{
 			SetAwayTime(300);
@@ -271,9 +270,9 @@ public:
 		} else if ( sCmdName == "settimer")
 		{
 			int iSetting = sCommand.Token(1).ToInt();
-			
+
 			SetAwayTime(iSetting);
-			
+
 			if(iSetting == 0)
 				PutModule( "Timer disabled" );
 			else
@@ -282,8 +281,8 @@ public:
 		} else if ( sCmdName == "timer")
 		{
 			PutModule( "Current timer setting: " + CString(GetAwayTime()) + " seconds" );
- 		} else
- 		{
+		} else
+		{
 			PutModule( "Commands: away [-quiet], back [-quiet], delete <num|all>, ping, show, save, enabletimer, disabletimer, settimer <secs>, timer", "away" );
 		}
 	}
@@ -344,24 +343,24 @@ public:
 	{
 		if ( m_bIsAway )
 			AddMessage( time( NULL ), Nick, sMessage );
-		return( CONTINUE );	
+		return( CONTINUE );
 	}
-	
+
 	virtual EModRet OnUserNotice(CString& sTarget, CString& sMessage)
 	{
 		Ping();
 		if( m_bIsAway )
 			Back();
-		
-		return( CONTINUE );	
+
+		return( CONTINUE );
 	}
 	virtual EModRet OnUserMsg(CString& sTarget, CString& sMessage)
 	{
 		Ping();
 		if( m_bIsAway )
 			Back();
-		
-		return( CONTINUE );	
+
+		return( CONTINUE );
 	}
 
 	time_t GetTimeStamp() const { return( m_iLastSentData ); }
@@ -379,7 +378,7 @@ private:
 		CString sMessages = GetPath();
 		CString sFile;
 		sBuffer = "";
-	
+
 		if ( ( sMessages.empty() ) || ( !ReadFile( sMessages, sFile ) ) )
 		{
 			 PutModule( "Unable to find buffer" );
@@ -426,7 +425,7 @@ void CAwayJob::RunJob()
 {
 	CAway *p = (CAway *)m_pModule;
 	p->SaveBufferToDisk();
-	
+
 	if ( !p->IsAway() )
 	{
 		time_t iNow = time( NULL );

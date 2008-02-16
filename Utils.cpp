@@ -76,7 +76,7 @@ void CUtils::GenerateCert(FILE *pOut, bool bEncPrivKey, const CString& sHost) {
 		X509_gmtime_adj( X509_get_notBefore( pCert ), 0 );
 		X509_gmtime_adj( X509_get_notAfter( pCert ), (long)60*60*24*days );
 		X509_set_pubkey( pCert, pKey );
-		
+
 		pName = X509_get_subject_name( pCert );
 
 		const char *pLogName = getenv("LOGNAME");

@@ -156,7 +156,7 @@ CString& CUser::AddTimestamp(const CString& sStr, CString& sRet) const {
 		if (m_bAppendTimestamp) {
 			sRet += " ";
 			sRet += szTimestamp;
-		} 
+		}
 	}
 	return sRet;
 }
@@ -527,7 +527,7 @@ bool CUser::PrintLine(CFile& File, const CString& sName, const CString& sValue) 
 }
 
 bool CUser::WriteConfig(CFile& File) {
- 	File.Write("<User " + GetUserName() + ">\r\n");
+	File.Write("<User " + GetUserName() + ">\r\n");
 
 	PrintLine(File, "Pass", GetPass() + ((IsPassHashed()) ? " -" : ""));
 	PrintLine(File, "Nick", GetNick());
@@ -919,7 +919,7 @@ bool CUser::SendFile(const CString& sRemoteNick, const CString& sFileName, const
 
 	if (GetNick().CaseCmp(sRemoteNick) == 0) {
 		PutUser(":" + GetStatusPrefix() + "status!znc@znc.com PRIVMSG " + sRemoteNick + " :\001DCC SEND " + pFile->GetShortName() + " " + CString(CUtils::GetLongIP(GetLocalIP())) + " "
-			   	+ CString(uPort) + " " + CString(pFile->GetSize()) + "\001");
+				+ CString(uPort) + " " + CString(pFile->GetSize()) + "\001");
 	} else {
 		PutIRC("PRIVMSG " + sRemoteNick + " :\001DCC SEND " + pFile->GetShortName() + " " + CString(CUtils::GetLongIP(GetLocalIP())) + " "
 			    + CString(uPort) + " " + CString(pFile->GetSize()) + "\001");

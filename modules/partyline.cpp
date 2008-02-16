@@ -79,8 +79,8 @@ public:
 
 		return true;
 	}
-	
-	void Load() {		
+
+	void Load() {
 		VCString vsChannels;
 		for (MCString::iterator it = BeginNV(); it != EndNV(); it++) {
 			CUser* pUser = CZNC::Get().FindUser(it->first);
@@ -517,7 +517,7 @@ public:
 					PutModule((*a)->GetName());
 				}
 			}
-			PutModule("--- End of list");				
+			PutModule("--- End of list");
 		} else if (sCommand.CaseCmp("LISTFIXUSERS") == 0) {
 			if(!m_pUser->IsAdmin()) {
 				PutModule("Access denied");
@@ -526,7 +526,7 @@ public:
 			CString sChan = sLine.Token(1).Left(32);
 			CPartylineChannel* pChan = FindChannel(sChan);
 
-			if(!pChan) { 
+			if(!pChan) {
 				PutModule("Channel does not exist!");
 				return;
 			}

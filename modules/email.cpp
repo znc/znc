@@ -24,10 +24,10 @@ struct EmailST
 	u_int	iSize;
 };
 
-class CEmailJob : public CTimer 
+class CEmailJob : public CTimer
 {
 public:
-	CEmailJob( CModule* pModule, unsigned int uInterval, unsigned int uCycles, const CString& sLabel, const CString& sDescription ) 
+	CEmailJob( CModule* pModule, unsigned int uInterval, unsigned int uCycles, const CString& sLabel, const CString& sDescription )
 		: CTimer( pModule, uInterval, uCycles, sLabel, sDescription) {}
 
 	virtual ~CEmailJob() {}
@@ -36,7 +36,7 @@ protected:
 	virtual void RunJob();
 };
 
-class CEmail : public CModule 
+class CEmail : public CModule
 {
 public:
 	MODCONSTRUCTOR(CEmail)
@@ -44,9 +44,10 @@ public:
 		m_iLastCheck = 0;
 		m_bInitialized = false;
 	}
-	virtual ~CEmail() 
+
+	virtual ~CEmail()
 	{
-		vector<Csock*> vSocks = m_pManager->FindSocksByName( "EMAIL::" + m_pUser->GetUserName() );	
+		vector<Csock*> vSocks = m_pManager->FindSocksByName( "EMAIL::" + m_pUser->GetUserName() );
 		for( u_int a = 0; a < vSocks.size(); a++ )
 			m_pManager->DelSockByAddr( vSocks[a] );
 	}
@@ -119,7 +120,7 @@ public:
 			}
 
 			m_ssUidls = ssUidls;	// keep the list in synch
-		
+
 			if (Table.size()) {
 				unsigned int uTableIdx = 0;
 				CString sLine;
@@ -134,7 +135,6 @@ public:
 		}
 	}
 
-	
 private:
 	CString			m_sMailPath;
 	u_int			m_iLastCheck;
@@ -150,7 +150,7 @@ public:
 		m_pModule = pModule;
 		m_sMailbox = sMailbox;
 		EnableReadLine();
-	}	
+	}
 
 	virtual ~CEmailFolder()
 	{
@@ -160,7 +160,7 @@ public:
 		if ( !m_vEmails.empty() )
 			m_pModule->ParseEmails( m_vEmails );
 	}
-	
+
 	virtual void ReadLine( const CS_STRING & sLine )
 	{
 		if ( sLine.substr( 0, 5 ) == "From " )
@@ -201,7 +201,7 @@ private:
 	CEmail				*m_pModule;
 	CString				m_sMailbox;
 	CString				m_sMailBuffer;
-	vector<EmailST>		m_vEmails;	
+	vector<EmailST>		m_vEmails;
 };
 
 void CEmail::OnModCommand( const CString& sCommand )
@@ -215,7 +215,7 @@ void CEmail::OnModCommand( const CString& sCommand )
 		sCom = sCommand.substr( 0, iPos );
 		sArgs = sCommand.substr( iPos + 1, CString::npos );
 	}
-	
+
 	if ( sCom == "timers" )
 	{
 		ListTimers();

@@ -7,20 +7,20 @@
  */
 
 //! @author prozac@rottenboy.com
-// 
+//
 // The encryption here was designed to be compatible with mircryption's CBC mode.
-// 
+//
 // TODO:
-// 
+//
 // 1) Encrypt key storage file
 // 2) Secure key exchange using pub/priv keys and the DH algorithm
 // 3) Some way of notifying the user that the current channel is in "encryption mode" verses plain text
 // 4) Temporarily disable a target (nick/chan)
-// 
+//
 // NOTE: This module is currently NOT intended to secure you from your shell admin.
 //       The keys are currently stored in plain text, so anyone with access to your account (or root) can obtain them.
 //       It is strongly suggested that you enable SSL between znc and your client otherwise the encryption stops at znc and gets sent to your client in plain text.
-// 
+//
 
 #include "Chan.h"
 #include "User.h"

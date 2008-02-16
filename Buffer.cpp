@@ -50,7 +50,7 @@ int CBuffer::UpdateLine(const CString& sPre, const CString& sPost, bool bIncNick
 			return size();
 		}
 	}
-	
+
 	return AddLine(sPre, sPost, bIncNick);
 }
 

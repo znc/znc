@@ -85,8 +85,8 @@ public:
 
 	bool operator ==(const CWatchEntry& WatchEntry) {
 		return (strcasecmp(GetHostMask().c_str(), WatchEntry.GetHostMask().c_str()) == 0
-			   	&& strcasecmp(GetTarget().c_str(), WatchEntry.GetTarget().c_str()) == 0
-		   		&& strcasecmp(GetPattern().c_str(), WatchEntry.GetPattern().c_str()) == 0
+				&& strcasecmp(GetTarget().c_str(), WatchEntry.GetTarget().c_str()) == 0
+				&& strcasecmp(GetPattern().c_str(), WatchEntry.GetPattern().c_str()) == 0
 		);
 	}
 

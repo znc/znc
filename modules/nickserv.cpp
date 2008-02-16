@@ -14,7 +14,7 @@ public:
 	MODCONSTRUCTOR(CNickServ)
 	{
 	}
-	
+
 	virtual ~CNickServ()
 	{
 	}
@@ -25,7 +25,7 @@ public:
 			m_sPass = GetNV("Password");
 		else
 			m_sPass = sArgs;
-		
+
 		return true;
 	}
 
@@ -59,7 +59,7 @@ public:
 			PutIRC("PRIVMSG NickServ :IDENTIFY " + m_sPass);
 		}
 	}
-	
+
 	virtual EModRet OnPrivMsg(CNick& Nick, CString& sMessage)
 	{
 		HandleMessage(Nick, sMessage);

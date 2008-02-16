@@ -884,7 +884,7 @@ bool CModules::GetModInfo(CModInfo& ModInfo, const CString& sModule) {
 	}
 
 	CString sModPath, sTmp;
-	
+
 	if (!CZNC::Get().FindModPath(sModule, sModPath, sTmp)) {
 		return false;
 	}

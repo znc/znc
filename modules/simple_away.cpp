@@ -10,10 +10,10 @@
 
 class CSimpleAway;
 
-class CSimpleAwayJob : public CTimer 
+class CSimpleAwayJob : public CTimer
 {
 public:
-	CSimpleAwayJob( CModule* pModule, unsigned int uInterval, unsigned int uCycles, const CString& sLabel, const CString& sDescription ) 
+	CSimpleAwayJob( CModule* pModule, unsigned int uInterval, unsigned int uCycles, const CString& sLabel, const CString& sDescription )
 		: CTimer( pModule, uInterval, uCycles, sLabel, sDescription) {}
 
 	virtual ~CSimpleAwayJob() {}
@@ -22,7 +22,7 @@ protected:
 	virtual void RunJob();
 };
 
-class CSimpleAway : public CModule 
+class CSimpleAway : public CModule
 {
 public:
 	MODCONSTRUCTOR(CSimpleAway)
@@ -32,7 +32,7 @@ public:
 		m_bClientSetAway = false;
 	}
 
-	virtual ~CSimpleAway() 
+	virtual ~CSimpleAway()
 	{
 	}
 
@@ -83,9 +83,9 @@ public:
 			PutModule( "Timer disabled" );
 		} else if ( sCmdName == "settimer") {
 			int iSetting = sCommand.Token(1).ToInt();
-			
+
 			m_iAwayWait = iSetting;
-			
+
 			if (iSetting == 0)
 				PutModule("Timer disabled");
 			else
@@ -102,7 +102,7 @@ public:
 				PutModule("Reason set (Use %s for away time)");
 			} else
 				PutModule("Current away reason would be: " + GetAway());
- 		} else {
+		} else {
 			PutModule("Commands: disabletimer, settimer <x>, timer, reason [text]");
 		}
 	}
@@ -148,7 +148,7 @@ public:
 		if (pTime) {
 			sTime = pTime;
 			sTime.Trim();
-		
+
 			sReason.Replace("%s", sTime);
 		}
 
@@ -181,7 +181,7 @@ private:
 void CSimpleAwayJob::RunJob()
 {
 	CSimpleAway *p = (CSimpleAway *)m_pModule;
-	
+
 	p->Away();
 }
 

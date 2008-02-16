@@ -217,7 +217,7 @@ private:
 	CString						m_sListenHost;
 	map<CString, unsigned int>	m_suSwitchCounters;
 };
- 
+
 CString CWebAdminSock::GetSkinDir() {
 	CString sSkinDir = m_pModule->GetModDataDir() + "/skins/"
 		+ m_pModule->GetSkinName() + "/";

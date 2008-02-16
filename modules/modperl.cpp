@@ -24,7 +24,7 @@
 #define ZNCCallSockCB "ZNC::CORECallSock"
 #define ZNCSOCK ":::ZncSock:::"
 
-class PString : public CString 
+class PString : public CString
 {
 public:
 	enum EType
@@ -35,7 +35,7 @@ public:
 		NUM,
 		BOOL
 	};
-	
+
 	PString() : CString() { m_eType = STRING; }
 	PString( const char* c ) : CString(c) { m_eType = STRING; }
 	PString( const CString& s ) : CString(s) { m_eType = STRING; }
@@ -50,10 +50,9 @@ public:
 
 	virtual ~PString() {}
 
-	
 	EType GetType() const { return( m_eType ); }
 	void SetType( EType e ) { m_eType = e; }
-	
+
 	SV * GetSV( bool bMakeMortal = true ) const
 	{
 		SV *pSV = NULL;
@@ -82,7 +81,6 @@ public:
 	}
 
 private:
-	
 	EType	m_eType;
 };
 
@@ -90,7 +88,7 @@ private:
 class CPerlHash : public map< CString, PString >
 {
 public:
-	
+
 	HV *GetHash()
 	{
 		HV *pHash = newHV();
@@ -119,7 +117,7 @@ public:
 		SetSockName( ZNCSOCK );
 	}
 	CPerlSock( const CS_STRING & sHost, u_short iPort, int iTimeout = 60 )
-		: Csock( sHost, iPort, iTimeout ) 
+		: Csock( sHost, iPort, iTimeout )
 	{
 		m_iParentFD = -1;
 		SetSockName( ZNCSOCK );
@@ -177,10 +175,10 @@ private:
 	int CallBack( const PString & sFuncName );
 };
 
-class CPerlTimer : public CTimer 
+class CPerlTimer : public CTimer
 {
 public:
-	CPerlTimer( CModule* pModule, unsigned int uInterval, unsigned int uCycles, const CString& sLabel, const CString& sDescription ) 
+	CPerlTimer( CModule* pModule, unsigned int uInterval, unsigned int uCycles, const CString& sLabel, const CString& sDescription )
 		: CTimer( pModule, uInterval, uCycles, sLabel, sDescription) {}
 
 	virtual ~CPerlTimer() {}
@@ -197,22 +195,22 @@ protected:
 	CString		m_sModuleName;
 };
 
-class CModPerl : public CGlobalModule 
+class CModPerl : public CGlobalModule
 {
 public:
-	GLOBALMODCONSTRUCTOR( CModPerl ) 
+	GLOBALMODCONSTRUCTOR( CModPerl )
 	{
 		g_ModPerl = this;
 		m_pPerl = NULL;
 	}
 
-	virtual ~CModPerl() 
+	virtual ~CModPerl()
 	{
 		DestroyAllSocks();
 		if ( m_pPerl )
 		{
 			const map<CString,CUser*> & msUsers = CZNC::Get().GetUserMap();
-			
+
 			for( map<CString,CUser*>::const_iterator it = msUsers.begin(); it != msUsers.end(); it++ )
 			{ // need to set it on all of these
 				m_pUser = it->second;
@@ -242,7 +240,7 @@ public:
 			if ( ( cFile.Exists() ) && ( cFile.Open( O_RDONLY ) ) )
 			{
 				while( cFile.ReadLine( sBuffer ) )
-					sScript += sBuffer;	
+					sScript += sBuffer;
 				cFile.Close();
 
 				eval_pv( sScript.c_str(), FALSE );
@@ -262,7 +260,6 @@ public:
 		return( CONTINUE );
 	}
 
-
 	void DumpError( const CString & sError )
 	{
 		CString sTmp = sError;
@@ -278,10 +275,10 @@ public:
 	CSockManager * GetSockManager() { return( m_pManager ); }
 	void DestroyAllSocks( const CString & sModuleName = "" );
 
-	CUser * GetUser( const CString & sUsername = "", bool bSetUserContext = false  ) 
-	{ 
+	CUser * GetUser( const CString & sUsername = "", bool bSetUserContext = false  )
+	{
 		if ( sUsername.empty() )
-			return( m_pUser ); 
+			return( m_pUser );
 
 		CUser *pUser = CZNC::Get().GetUser( sUsername );
 		if ( bSetUserContext )
@@ -297,7 +294,7 @@ public:
 	virtual void OnIRCDisconnected() {  CBNone( "OnIRCDisconnected" ); }
 	virtual void OnIRCConnected() {  CBNone( "OnIRCConnected" ); }
 
-	virtual EModRet OnDCCUserSend(const CNick& RemoteNick, unsigned long uLongIP, unsigned short uPort, 
+	virtual EModRet OnDCCUserSend(const CNick& RemoteNick, unsigned long uLongIP, unsigned short uPort,
 		const CString& sFile, unsigned long uFileSize);
 
 	virtual void OnOp(const CNick& OpNick, const CNick& Nick, CChan& Channel, bool bNoChange)
@@ -323,8 +320,8 @@ public:
 	virtual EModRet OnUserRaw(CString& sLine) { return( CBSingle( "OnUserRaw", sLine ) ); }
 	virtual EModRet OnRaw(CString& sLine) { return( CBSingle( "OnRaw", sLine ) ); }
 
-	virtual void OnModCommand(const CString& sCommand) 
-	{ 
+	virtual void OnModCommand(const CString& sCommand)
+	{
 		if ( CBSingle( "OnModCommand", sCommand ) == 0 )
 			Eval( sCommand );
 	}
@@ -361,21 +358,21 @@ public:
 	virtual void OnJoin(const CNick& Nick, CChan& Channel) { CBDouble( "OnJoin", NICK( Nick ), CHAN( Channel ) ); }
 	virtual void OnPart(const CNick& Nick, CChan& Channel) { CBDouble( "OnPart", NICK( Nick ), CHAN( Channel ) ); }
 
-	virtual EModRet OnUserCTCPReply(CString& sTarget, CString& sMessage) 
-	{ 
-		return CBDouble( "OnUserCTCPReply", sTarget, sMessage ); 
+	virtual EModRet OnUserCTCPReply(CString& sTarget, CString& sMessage)
+	{
+		return CBDouble( "OnUserCTCPReply", sTarget, sMessage );
 	}
 	virtual EModRet OnCTCPReply(CNick& Nick, CString& sMessage)
 	{
-		return CBDouble( "OnCTCPReply", NICK( Nick ), sMessage ); 
+		return CBDouble( "OnCTCPReply", NICK( Nick ), sMessage );
 	}
 	virtual EModRet OnUserCTCP(CString& sTarget, CString& sMessage)
 	{
-		return CBDouble( "OnUserCTCP", sTarget, sMessage ); 
+		return CBDouble( "OnUserCTCP", sTarget, sMessage );
 	}
 	virtual EModRet OnPrivCTCP(CNick& Nick, CString& sMessage)
 	{
-		return CBDouble( "OnPrivCTCP", NICK( Nick ), sMessage ); 
+		return CBDouble( "OnPrivCTCP", NICK( Nick ), sMessage );
 	}
 	virtual EModRet OnChanCTCP(CNick& Nick, CChan& Channel, CString& sMessage)
 	{
@@ -415,7 +412,7 @@ public:
 		CB_SOCK		= 4
 	};
 
-	EModRet CallBack( const PString & sHookName, const VPString & vsArgs, 
+	EModRet CallBack( const PString & sHookName, const VPString & vsArgs,
 			ECBTYPES eCBType = CB_ONHOOK, const PString & sUsername = "" );
 
 	EModRet CBNone( const PString & sHookName )
@@ -592,7 +589,7 @@ XS(XS_ZNC_LoadMod)
 		PUTBACK;
 	}
 }
-	
+
 XS(XS_ZNC_UnloadMod)
 {
 	dXSARGS;
@@ -651,7 +648,7 @@ XS(XS_ZNC_GetNicks)
 			CChan * pChan = pUser->FindChan( sChan );
 			if ( !pChan )
 				XSRETURN( 0 );
-			
+
 			const map< CString,CNick* > & mscNicks = pChan->GetNicks();
 
 			for( map< CString,CNick* >::const_iterator it = mscNicks.begin(); it != mscNicks.end(); it++ )
@@ -672,7 +669,7 @@ XS(XS_ZNC_GetNicks)
 XS(XS_ZNC_GetString)
 {
 	dXSARGS;
-	
+
 	if ( items != 1 )
 		Perl_croak( aTHX_ "Usage: GetString( sName )" );
 
@@ -871,7 +868,7 @@ XS(XS_ZNC_COREListen)
 				sReturn = -1;
 
 			XPUSHs( sReturn.GetSV() );
-		
+
 		}
 		PUTBACK;
 	}
@@ -894,8 +891,8 @@ bool CModPerl::Eval( const CString & sScript, const CString & sFuncName )
 
 	bool bReturn = true;
 
-	if ( SvTRUE( ERRSV ) ) 
-	{ 
+	if ( SvTRUE( ERRSV ) )
+	{
 		DumpError( SvPV( ERRSV, PL_na) );
 		bReturn = false;
 	}
@@ -905,12 +902,12 @@ bool CModPerl::Eval( const CString & sScript, const CString & sFuncName )
 	return( bReturn );
 }
 
-CModPerl::EModRet CModPerl::CallBack( const PString & sHookName, const VPString & vsArgs, 
+CModPerl::EModRet CModPerl::CallBack( const PString & sHookName, const VPString & vsArgs,
 		ECBTYPES eCBType, const PString & sUsername )
 {
 	if ( !m_pPerl )
 		return( CONTINUE );
-	
+
 	dSP;
 	SAVETMPS;
 
@@ -948,8 +945,8 @@ CModPerl::EModRet CModPerl::CallBack( const PString & sHookName, const VPString 
 	SPAGAIN;
 	int iRet = CONTINUE;
 
-	if ( SvTRUE( ERRSV ) ) 
-	{ 
+	if ( SvTRUE( ERRSV ) )
+	{
 		CString sError = SvPV( ERRSV, PL_na);
 		DumpError( sHookName + ": " + sError );
 
@@ -972,7 +969,7 @@ CModPerl::EModRet CModPerl::CallBack( const PString & sHookName, const VPString 
 // special case this, required for perl modules that are dynamic
 EXTERN_C void boot_DynaLoader (pTHX_ CV* cv);
 
-bool CModPerl::OnLoad( const CString & sArgs, CString & sMessage ) 
+bool CModPerl::OnLoad( const CString & sArgs, CString & sMessage )
 {
 	m_pPerl = perl_alloc();
 	perl_construct( m_pPerl );
@@ -1006,7 +1003,7 @@ bool CModPerl::OnLoad( const CString & sArgs, CString & sMessage )
 	newXS( "ZNC::WriteSock", XS_ZNC_WriteSock, "modperl" );
 	newXS( "ZNC::CloseSock", XS_ZNC_CloseSock, "modperl" );
 	newXS( "ZNC::SetSockValue", XS_ZNC_SetSockValue, "modperl" );
-	
+
 	// this sets up the eval CB that we call from here on out. this way we can grab the error produced
 	SetupZNCScript();
 
@@ -1065,7 +1062,7 @@ void CModPerl::UnloadPerlMod( const CString & sModule )
 }
 
 
-CModPerl::EModRet CModPerl::OnDCCUserSend(const CNick& RemoteNick, unsigned long uLongIP, unsigned short uPort, 
+CModPerl::EModRet CModPerl::OnDCCUserSend(const CNick& RemoteNick, unsigned long uLongIP, unsigned short uPort,
 		const CString& sFile, unsigned long uFileSize)
 {
 	VPString vsArgs;
@@ -1073,7 +1070,7 @@ CModPerl::EModRet CModPerl::OnDCCUserSend(const CNick& RemoteNick, unsigned long
 	vsArgs.push_back( uLongIP );
 	vsArgs.push_back( uPort );
 	vsArgs.push_back( sFile );
-	
+
 	return( CallBack( "OnDCCUserSend", vsArgs ) );
 }
 
@@ -1084,7 +1081,7 @@ void CPerlTimer::RunJob()
 		Stop();
 		return;
 	}
-			
+
 	VPString vArgs;
 	vArgs.push_back( m_sModuleName );
 	if ( ((CModPerl *)m_pModule)->CallBack( m_sFuncName, vArgs, CModPerl::CB_TIMER ) != CModPerl::CONTINUE )

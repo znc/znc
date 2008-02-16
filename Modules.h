@@ -74,7 +74,6 @@ class CClient;
 	}
 // !Global Module Macros
 
-		//const char* GetDescription() { static char sz[] = DESCRIPTION; return sz; } 
 // Forward Declarations
 class CZNC;
 class CUser;

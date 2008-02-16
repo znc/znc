@@ -8,7 +8,7 @@
  * Buffer Saving thing, incase your shit goes out while your out
  * Author: imaginos <imaginos@imaginos.net>
  *
- * Its only as secure as your shell, the encryption only offers a slightly 
+ * Its only as secure as your shell, the encryption only offers a slightly
  * better solution then plain text.
  */
 
@@ -27,10 +27,10 @@
 
 class CSaveBuff;
 
-class CSaveBuffJob : public CTimer 
+class CSaveBuffJob : public CTimer
 {
 public:
-	CSaveBuffJob( CModule* pModule, unsigned int uInterval, unsigned int uCycles, const CString& sLabel, const CString& sDescription ) 
+	CSaveBuffJob( CModule* pModule, unsigned int uInterval, unsigned int uCycles, const CString& sLabel, const CString& sDescription )
 		: CTimer( pModule, uInterval, uCycles, sLabel, sDescription) {}
 
 	virtual ~CSaveBuffJob() {}
@@ -39,7 +39,7 @@ protected:
 	virtual void RunJob();
 };
 
-class CSaveBuff : public CModule 
+class CSaveBuff : public CModule
 {
 public:
 	MODCONSTRUCTOR(CSaveBuff)
@@ -48,7 +48,7 @@ public:
 		// m_sPassword = CBlowfish::MD5( "" );
 		AddTimer( new CSaveBuffJob( this, 60, 0, "SaveBuff", "Saves the current buffer to disk every 1 minute" ) );
 	}
-	virtual ~CSaveBuff() 
+	virtual ~CSaveBuff()
 	{
 		if ( !m_bBootError )
 		{
@@ -78,7 +78,7 @@ public:
 
 			*pTmp = 0;
 		}
-		
+
 		const vector<CChan *>& vChans = m_pUser->GetChans();
 		for( u_int a = 0; a < vChans.size(); a++ )
 		{
@@ -119,7 +119,7 @@ public:
 
 		return( true );
 	}
-	
+
 	void SaveBufferToDisk()
 	{
 		if ( !m_sPassword.empty() )
@@ -136,12 +136,12 @@ public:
 				{
 					if ( !m_sPassword.empty() )
 						BootStrap( vChans[a] );
-					
+
 					continue;
 				}
 
 				CString sFile = CRYPT_VERIFICATION_TOKEN;
-			
+
 				for( u_int b = 0; b < vBuffer.size(); b++ )
 						sFile += vBuffer[b] + "\n";
 
@@ -173,7 +173,7 @@ public:
 		{
 			PutModule( "Password set to [" + sArgs + "]" );
 			m_sPassword = CBlowfish::MD5( sArgs );
-		
+
 		} else if ( strcasecmp( sCom.c_str(), "dumpbuff" ) == 0 )
 		{
 			CString sFile;
@@ -236,16 +236,16 @@ public:
 	{
 		if ( !cChannel.KeepBuffer() )
 			return;
-		
+
 		((CChan &)cChannel).AddBuffer( SpoofChanMsg( cChannel.GetName(), cOpNick.GetNickMask() + " MODE " + sModes + " " + sArgs ) );
 	}
 	virtual void OnQuit(const CNick& cNick, const CString& sMessage, const vector<CChan*>& vChans)
-	{ 
+	{
 		for( u_int a = 0; a < vChans.size(); a++ )
 		{
 			if ( !vChans[a]->KeepBuffer() )
 				continue;
-			vChans[a]->AddBuffer( SpoofChanMsg( vChans[a]->GetName(), cNick.GetNickMask() + " QUIT " + sMessage ) ); 
+			vChans[a]->AddBuffer( SpoofChanMsg( vChans[a]->GetName(), cNick.GetNickMask() + " QUIT " + sMessage ) );
 		}
 		if ( cNick.GetNick().CaseCmp( m_pUser->GetNick() ) == 0 )
 			SaveBufferToDisk(); // need to force a save here to see this!
@@ -257,7 +257,7 @@ public:
 		{
 			if ( !vChans[a]->KeepBuffer() )
 				continue;
-			vChans[a]->AddBuffer( SpoofChanMsg( vChans[a]->GetName(), cNick.GetNickMask() + " NICK " + sNewNick ) ); 
+			vChans[a]->AddBuffer( SpoofChanMsg( vChans[a]->GetName(), cNick.GetNickMask() + " NICK " + sNewNick ) );
 		}
 	}
 	virtual void OnKick(const CNick& cNick, const CString& sOpNick, CChan& cChannel, const CString& sMessage)
@@ -295,7 +295,7 @@ private:
 		CString sChannel = GetPath( sChan );
 		CString sFile;
 		sBuffer = "";
-	
+
 		if ( ( sChannel.empty() ) || ( !ReadFile( sChannel, sFile ) ) )
 			 return( true ); // gonna be successful here
 

@@ -16,7 +16,7 @@ PERL     := @PERL@
 MODDIR   := @MODDIR@
 DATADIR  := @DATADIR@
 
-ifeq "@NOSSL@" "1" 
+ifeq "@NOSSL@" "1"
 FILES    := $(foreach file, $(wildcard *.cpp), \
 	$(if $(shell grep REQUIRESSL $(file)), \
 		, \

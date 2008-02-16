@@ -128,7 +128,7 @@ CString CNick::GetPermStr() const {
 	const CString& sChanPerms = (!pIRCSock) ? "@+" : pIRCSock->GetPerms();
 	CString sRet;
 
-   	for (unsigned int a = 0; a < sChanPerms.size(); a++) {
+	for (unsigned int a = 0; a < sChanPerms.size(); a++) {
 		const unsigned char& c = sChanPerms[a];
 
 		if (HasPerm(c)) {

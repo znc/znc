@@ -9,11 +9,11 @@
 #include "Chan.h"
 #include "User.h"
 
-class CStickyChan : public CModule 
+class CStickyChan : public CModule
 {
 public:
 	MODCONSTRUCTOR(CStickyChan) {}
-	virtual ~CStickyChan() 
+	virtual ~CStickyChan()
 	{
 	}
 
