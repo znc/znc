@@ -28,7 +28,7 @@
 * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 *
 *
-* $Revision: 1.181 $
+* $Revision: 1.182 $
 */
 
 // note to compile with win32 need to link to winsock2, using gcc its -lws2_32
@@ -137,9 +137,9 @@ private:
 class CSSockAddr
 {
 public:
-	CSSockAddr() 
-	{ 
-		m_bIsIPv6 = false; 
+	CSSockAddr()
+	{
+		m_bIsIPv6 = false;
 		memset( (struct sockaddr_in *)&m_saddr, '\0', sizeof( m_saddr ) );
 #ifdef HAVE_IPV6
 		memset( (struct sockaddr_in6 *)&m_saddr6, '\0', sizeof( m_saddr6 ) );
@@ -181,8 +181,8 @@ public:
 		m_saddr.sin_port = htons( iPort );
 	}
 
-	void SetIPv6( bool b ) 
-	{ 
+	void SetIPv6( bool b )
+	{
 #ifndef HAVE_IPV6
 		if( b )
 		{
@@ -191,7 +191,7 @@ public:
 			return;
 		}
 #endif /* HAVE_IPV6 */
-		m_bIsIPv6 = b; 
+		m_bIsIPv6 = b;
 		SinFamily();
 	}
 	bool GetIPv6() const { return( m_bIsIPv6 ); }
@@ -234,7 +234,7 @@ Csock *GetCsockFromCTX( X509_STORE_CTX *pCTX );
 #define ___DO_THREADS
 #include <pthread.h>
 
-#ifndef PTHREAD_MUTEX_FAST_NP 
+#ifndef PTHREAD_MUTEX_FAST_NP
 #define PTHREAD_MUTEX_FAST_NP PTHREAD_MUTEX_NORMAL
 #endif /* PTHREAD_MUTEX_FAST_NP */
 
@@ -249,7 +249,6 @@ public:
 private:
 	pthread_mutex_t			m_mutex;
 	pthread_mutexattr_t		m_mattrib;
-	
 };
 
 class CSThread
@@ -257,7 +256,7 @@ class CSThread
 public:
 	CSThread() { m_eStatus = WAITING; }
 	virtual ~CSThread() {}
-	
+
 	enum EStatus
 	{
 		WAITING = 1,
@@ -479,12 +478,12 @@ public:
 	 * @brief in the event you pass this class to Copy(), you MUST call this function or
 	 * on the original Csock other wise bad side effects will happen (double deletes, weird sock closures, etc)
 	 * if you call this function and have not handled the internal pointers, other bad things can happend (memory leaks, fd leaks, etc)
-	 * the whole point of this function is to allow this class to go away without shutting down 
+	 * the whole point of this function is to allow this class to go away without shutting down
 	 */
 	virtual void Dereference();
 	//! use this to copy a sock from one to the other, override it if you have special needs in the event of a copy
 	virtual void Copy( const Csock & cCopy );
-	
+
 	enum ETConn
 	{
 		OUTBOUND			= 0,		//!< outbound connection
@@ -931,11 +930,11 @@ public:
 
 
 	//! return how long it has been (in seconds) since the last read or successful write
-	int GetTimeSinceLastDataTransaction( time_t iNow = 0 ) 
-	{ 
+	int GetTimeSinceLastDataTransaction( time_t iNow = 0 )
+	{
 		if( m_iLastCheckTimeoutTime == 0 )
 			return( 0 );
-		return( ( iNow > 0 ? iNow : time( NULL ) ) - m_iLastCheckTimeoutTime ); 
+		return( ( iNow > 0 ? iNow : time( NULL ) ) - m_iLastCheckTimeoutTime );
 	}
 	time_t GetLastCheckTimeout() { return( m_iLastCheckTimeoutTime ); }
 
@@ -954,7 +953,7 @@ public:
 	{
 		if( m_iReadSock != -1 )
 			return( true );
-			
+
 		m_iReadSock = m_iWriteSock = SOCKET();
 		if ( m_iReadSock == -1 )
 			return( false );
@@ -967,13 +966,13 @@ public:
 
 	const CS_STRING & GetBindHost() const { return( m_sBindHost ); }
 	void SetBindHost( const CS_STRING & sBindHost ) { m_sBindHost = sBindHost; }
-		
+
 	enum EDNSLType
 	{
 		DNS_VHOST,
 		DNS_DEST
 	};
-	
+
 	/**
 	 * nonblocking dns lookup (when -pthread is set to compile)
 	 * @return 0 for success, EAGAIN to check back again (same arguments as before), ETIMEDOUT on failure
@@ -982,11 +981,11 @@ public:
 
 	//! this is only used on outbound connections, listeners bind in a different spot
 	bool SetupVHost();
-	
+
 	bool GetIPv6() const { return( m_bIsIPv6 ); }
-	void SetIPv6( bool b ) 
-	{ 
-		m_bIsIPv6 = b; 
+	void SetIPv6( bool b )
+	{
+		m_bIsIPv6 = b;
 		m_address.SetIPv6( b );
 		m_bindhost.SetIPv6( b );
 	}
@@ -1065,7 +1064,7 @@ public:
 	 * @param iPort port to connect to
 	 * @param iTimeout connection timeout
 	 */
-	CSConnection( const CS_STRING & sHostname, u_short iPort, int iTimeout = 60 ) 
+	CSConnection( const CS_STRING & sHostname, u_short iPort, int iTimeout = 60 )
 	{
 		m_sHostname = sHostname;
 		m_iPort = iPort;
@@ -1149,7 +1148,7 @@ public:
 	 * @param iPort port to listen on. Set to 0 to listen on a random port
 	 * @param sBindHost host to bind to
 	 */
-	CSListener( u_short iPort, const CS_STRING & sBindHost = "" ) 
+	CSListener( u_short iPort, const CS_STRING & sBindHost = "" )
 	{
 		m_iPort = iPort;
 		m_sBindHost = sBindHost;
@@ -1492,7 +1491,7 @@ public:
 
 						if ( iLen <= 0 )
 							iLen = CS_BLOCKSIZE;
-						
+
 						CSCharBuffer cBuff( iLen );
 
 						int bytes = pcSock->Read( cBuff(), iLen );
@@ -1587,14 +1586,14 @@ public:
 	 *	- by itself. I've tried to mitigate that as much as possible by not having it change the select if the previous call to select
 	 *	- was not a timeout. Anyways .... Caveat Emptor.
 	 *	- Sample useage is cFoo.DynamicSelectLoop( 500000, 5000000 ); which basically says min of 500ms and max of 5s
-	 * 
+	 *
 	 * @param iLowerBounds the lower bounds to use in MICROSECONDS
 	 * @param iUpperBounds the upper bounds to use in MICROSECONDS
 	 * @param iMaxResolution the maximum time to calculate overall in seconds
 	 */
 	void DynamicSelectLoop( u_long iLowerBounds, u_long iUpperBounds, time_t iMaxResolution = 3600 )
 	{
-		SetSelectTimeout( iLowerBounds );	
+		SetSelectTimeout( iLowerBounds );
 		if( m_errno == SELECT_TIMEOUT )
 		{ // only do this if the previous call to select was a timeout
 			time_t iNow = time( NULL );
@@ -1808,7 +1807,7 @@ public:
 		(*this)[iOrginalSockIdx] = (T *)pNewSock;
 		return( true );
 	}
-	
+
 	/**
 	 * @brief swaps out a sock with a copy of the original sock
 	 * @param pNewSock the new sock to change out with. (this should be constructed by you with the default ctor)
@@ -2139,7 +2138,7 @@ private:
 					iTimeoutInSeconds = 0;
 				else
 					iTimeoutInSeconds -= iDiff;
-			
+
 				iMinTimeout = std::min( iMinTimeout, iTimeoutInSeconds );
 			}
 
@@ -2183,9 +2182,6 @@ private:
 
 	////////
 	// Connection State Functions
-	
-
-
 
 	///////////
 	// members

@@ -28,7 +28,7 @@
 * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 *
 *
-* $Revision: 1.65 $
+* $Revision: 1.66 $
 */
 
 #include "Csocket.h"
@@ -177,7 +177,7 @@ int GetAddrInfo( const CS_STRING & sHostname, Csock *pSock, CSSockAddr & csSockA
 	csSockAddr.SetIPv6( false );
 	if( __GetHostByName( sHostname, csSockAddr.GetAddr(), 3 ) == 0 )
 		return( 0 );
-	
+
 #else /* HAVE_IPV6 */
 	struct addrinfo *res = NULL;
 	struct addrinfo hints;
@@ -231,11 +231,11 @@ int GetAddrInfo( const CS_STRING & sHostname, Csock *pSock, CSSockAddr & csSockA
 			// pick a random canidate to make this work
 			struct random_data cRandData;
 			char chState[CS_SRANDBUFFER];
-			int32_t iNumber = 0; 
+			int32_t iNumber = 0;
 			if( initstate_r( (u_int)millitime(), chState, CS_SRANDBUFFER, &cRandData ) == 0 && random_r( &cRandData, &iNumber ) == 0 )
 			{
-		   		iNumber %= (int)vHostCanidates.size();
-		   		pUseAddr = vHostCanidates[iNumber];
+				iNumber %= (int)vHostCanidates.size();
+				pUseAddr = vHostCanidates[iNumber];
 			}
 			else
 			{
@@ -274,17 +274,17 @@ int GetAddrInfo( const CS_STRING & sHostname, Csock *pSock, CSSockAddr & csSockA
 }
 
 #ifdef ___DO_THREADS
-CSMutex::CSMutex() 
+CSMutex::CSMutex()
 {
 	pthread_mutexattr_init( &m_mattrib );
 	if ( pthread_mutexattr_settype( &m_mattrib, PTHREAD_MUTEX_FAST_NP ) != 0 )
 		throw CS_STRING( "ERROR: pthread_mutexattr_settype failed!" );
-		
+
 	if ( pthread_mutex_init( &m_mutex, &m_mattrib ) != 0 )
 		throw CS_STRING( "ERROR: pthread_mutex_init failed!" );
 }
 
-CSMutex::~CSMutex() 
+CSMutex::~CSMutex()
 {
 	pthread_mutexattr_destroy( &m_mattrib );
 	pthread_mutex_destroy( &m_mutex );
@@ -327,7 +327,7 @@ bool CSThread::start()
 	}
 
 	return( true );
-}		
+}
 
 void CSThread::wait()
 {
@@ -349,7 +349,7 @@ void *CSThread::start_thread( void *args )
 	curThread->lock();
 	curThread->SetStatus( CSThread::FINISHED );
 	curThread->unlock();
-	pthread_exit( NULL );   
+	pthread_exit( NULL );
 }
 
 void CDNSResolver::Lookup( const CS_STRING & sHostname )
@@ -629,46 +629,46 @@ void Csock::Copy( const Csock & cCopy )
 	m_iTcount		= cCopy.m_iTcount;
 	m_iLastCheckTimeoutTime	=	cCopy.m_iLastCheckTimeoutTime;
 	m_iport 		= cCopy.m_iport;
-   	m_iRemotePort	= cCopy.m_iRemotePort;
+	m_iRemotePort	= cCopy.m_iRemotePort;
 	m_iLocalPort	= cCopy.m_iLocalPort;
 	m_iReadSock		= cCopy.m_iReadSock;
 	m_iWriteSock	= cCopy.m_iWriteSock;
-   	m_itimeout		= cCopy.m_iWriteSock;
-   	m_iConnType		= cCopy.m_iConnType;
+	m_itimeout		= cCopy.m_iWriteSock;
+	m_iConnType		= cCopy.m_iConnType;
 	m_iMethod		= cCopy.m_iMethod;
 	m_bssl			= cCopy.m_bssl;
 	m_bIsConnected	= cCopy.m_bIsConnected;
 	m_bBLOCK		= cCopy.m_bBLOCK;
 	m_bFullsslAccept	= cCopy.m_bFullsslAccept;
 	m_bsslEstablished	= cCopy.m_bsslEstablished;
-   	m_bEnableReadLine	= cCopy.m_bEnableReadLine;
-   	m_bRequireClientCert = cCopy.m_bRequireClientCert;
-   	m_bPauseRead		= cCopy.m_bPauseRead;
+	m_bEnableReadLine	= cCopy.m_bEnableReadLine;
+	m_bRequireClientCert = cCopy.m_bRequireClientCert;
+	m_bPauseRead		= cCopy.m_bPauseRead;
 	m_shostname		= cCopy.m_shostname;
-   	m_sbuffer		= cCopy.m_sbuffer;
-   	m_sSockName		= cCopy.m_sSockName;
-   	m_sPemFile		= cCopy.m_sPemFile;
-   	m_sCipherType	= cCopy.m_sCipherType;
-   	m_sParentName	= cCopy.m_sParentName;
+	m_sbuffer		= cCopy.m_sbuffer;
+	m_sSockName		= cCopy.m_sSockName;
+	m_sPemFile		= cCopy.m_sPemFile;
+	m_sCipherType	= cCopy.m_sCipherType;
+	m_sParentName	= cCopy.m_sParentName;
 	m_sSend			= cCopy.m_sSend;
-   	m_sSSLBuffer	= cCopy.m_sSSLBuffer;
-   	m_sPemPass		= cCopy.m_sPemPass;
-   	m_sLocalIP		= cCopy.m_sLocalIP;
-   	m_sRemoteIP		= cCopy.m_sRemoteIP;
+	m_sSSLBuffer	= cCopy.m_sSSLBuffer;
+	m_sPemPass		= cCopy.m_sPemPass;
+	m_sLocalIP		= cCopy.m_sLocalIP;
+	m_sRemoteIP		= cCopy.m_sRemoteIP;
 	m_eCloseType	= cCopy.m_eCloseType;
 
 	m_iMaxMilliSeconds	= cCopy.m_iMaxMilliSeconds;
-   	m_iLastSendTime		= cCopy.m_iLastSendTime;
-   	m_iBytesRead		= cCopy.m_iBytesRead;
-   	m_iBytesWritten		= cCopy.m_iBytesWritten;
-   	m_iStartTime		= cCopy.m_iStartTime;
+	m_iLastSendTime		= cCopy.m_iLastSendTime;
+	m_iBytesRead		= cCopy.m_iBytesRead;
+	m_iBytesWritten		= cCopy.m_iBytesWritten;
+	m_iStartTime		= cCopy.m_iStartTime;
 	m_iMaxBytes			= cCopy.m_iMaxBytes;
-   	m_iLastSend			= cCopy.m_iLastSend;
-   	m_iMaxStoredBufferLength	= cCopy.m_iMaxStoredBufferLength;
-   	m_iTimeoutType		= cCopy.m_iTimeoutType;
+	m_iLastSend			= cCopy.m_iLastSend;
+	m_iMaxStoredBufferLength	= cCopy.m_iMaxStoredBufferLength;
+	m_iTimeoutType		= cCopy.m_iTimeoutType;
 
 	m_address			= cCopy.m_address;
-   	m_bindhost			= cCopy.m_bindhost;
+	m_bindhost			= cCopy.m_bindhost;
 	m_bIsIPv6			= cCopy.m_bIsIPv6;
 
 #ifdef HAVE_LIBSSL
@@ -695,7 +695,7 @@ void Csock::Copy( const Csock & cCopy )
 	m_eConState			= cCopy.m_eConState;
 	m_sBindHost			= cCopy.m_sBindHost;
 	m_iCurBindCount		= cCopy.m_iCurBindCount;
-   	m_iDNSTryCount		= cCopy.m_iDNSTryCount;
+	m_iDNSTryCount		= cCopy.m_iDNSTryCount;
 
 #ifdef ___DO_THREADS
 	if( m_pResolver )
@@ -974,7 +974,6 @@ int Csock::Accept( CS_STRING & sHost, u_short & iRPort )
 	}
 #endif /* HAVE_IPV6 */
 
-	
 	if ( iSock != -1 )
 	{
 		// Make it close-on-exec
@@ -1507,7 +1506,7 @@ CS_STRING Csock::GetLocalIP()
 		char straddr[INET6_ADDRSTRLEN];
 		struct sockaddr_in6 mLocalAddr;
 		socklen_t mLocalLen = sizeof( mLocalAddr );
-		if ( ( getsockname( iSock, (struct sockaddr *) &mLocalAddr, &mLocalLen ) == 0 ) 
+		if ( ( getsockname( iSock, (struct sockaddr *) &mLocalAddr, &mLocalLen ) == 0 )
 			&& ( inet_ntop( AF_INET6, &mLocalAddr.sin6_addr, straddr, sizeof(straddr) ) ) )
 		{
 			m_sLocalIP = straddr;
@@ -1544,7 +1543,7 @@ CS_STRING Csock::GetRemoteIP()
 		char straddr[INET6_ADDRSTRLEN];
 		struct sockaddr_in6 mRemoteAddr;
 		socklen_t mRemoteLen = sizeof( mRemoteAddr );
-		if ( ( getpeername( iSock, (struct sockaddr *) &mRemoteAddr, &mRemoteLen ) == 0 ) 
+		if ( ( getpeername( iSock, (struct sockaddr *) &mRemoteAddr, &mRemoteLen ) == 0 )
 			&& ( inet_ntop( AF_INET6, &mRemoteAddr.sin6_addr, straddr, sizeof(straddr) ) ) )
 		{
 			m_sRemoteIP = straddr;
@@ -1604,7 +1603,7 @@ bool Csock::CheckTimeout( time_t iNow )
 		// this is weird, but its possible if someone changes a clock and it went back in time, this essentially has to reset the last check
 		// the worst case scenario is the timeout is about to it and the clock changes, it would then cause
 		// this to pass over the last half the time
-		m_iLastCheckTimeoutTime = iNow; 
+		m_iLastCheckTimeoutTime = iNow;
 	}
 
 	if ( m_itimeout > 0 )
@@ -1759,7 +1758,7 @@ u_short Csock::GetLocalPort()
 u_short Csock::GetPort() { return( m_iport ); }
 void Csock::SetPort( u_short iPort ) { m_iport = iPort; }
 void Csock::Close( ECloseType eCloseType )
-{  
+{
 	m_eCloseType = eCloseType;
 }
 void Csock::BlockIO( bool bBLOCK ) { m_bBLOCK = bBLOCK; }
@@ -2058,7 +2057,7 @@ int Csock::DNSLookup( EDNSLType eDNSLType )
 		m_pResolverLookup( ( eDNSLType == DNS_VHOST ) ? m_sBindHost : m_shostname );
 		m_iDNSTryCount++;
 	}
-   
+
 	if ( m_pResolverIsCompleted() )
 	{
 		m_iDNSTryCount = 0;
@@ -2097,7 +2096,7 @@ int Csock::DNSLookup( EDNSLType eDNSLType )
 
 			if ( m_eConState != CST_OK )
 				m_eConState = ( ( eDNSLType == DNS_VHOST ) ? CST_BINDVHOST : CST_VHOSTDNS );
-	
+
 			if( !CreateSocksFD() )
 				return( ETIMEDOUT );
 
@@ -2107,7 +2106,7 @@ int Csock::DNSLookup( EDNSLType eDNSLType )
 		return( ETIMEDOUT );
 	}
 	return( EAGAIN );
-	
+
 #else
 	int iRet = ETIMEDOUT;
 	if ( eDNSLType == DNS_VHOST )
@@ -2131,7 +2130,7 @@ int Csock::DNSLookup( EDNSLType eDNSLType )
 
 	if( !CreateSocksFD() )
 		iRet = ETIMEDOUT;
-	
+
 	if ( iRet == 0 )
 	{
 		if ( m_eConState != CST_OK )
