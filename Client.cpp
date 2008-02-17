@@ -1187,6 +1187,65 @@ void CClient::UserCommand(const CString& sLine) {
 		PutStatus("Modules are not enabled.");
 #endif
 		return;
+	} else if ((sCommand.CaseCmp("LISTAVAILMODS") == 0) || (sCommand.CaseCmp("LISTAVAILABLEMODULES") == 0)) {
+#ifdef _MODULES
+		if (m_pUser->IsAdmin()) {
+			set<CModInfo> ssGlobalMods;
+			CZNC::Get().GetModules().GetAvailableMods(ssGlobalMods, true);
+
+			if (!ssGlobalMods.size()) {
+				PutStatus("No global modules available.");
+			} else {
+				CTable GTable;
+				GTable.AddColumn("Name");
+				GTable.AddColumn("Description");
+				set<CModInfo>::iterator it;
+
+				for (it = ssGlobalMods.begin(); it != ssGlobalMods.end(); it++) {
+					const CModInfo& Info = *it;
+					GTable.AddRow();
+					GTable.SetCell("Name", (CZNC::Get().GetModules().FindModule(Info.GetName()) ? "*" : " ") + Info.GetName());
+					GTable.SetCell("Description", Info.GetDescription().Ellipsize(128));
+				}
+
+				unsigned int uTableIdx = 0; CString sLine;
+
+				while (GTable.GetLine(uTableIdx++, sLine)) {
+					PutStatus(sLine);
+				}
+			}
+		}
+
+		if (m_pUser) {
+			set<CModInfo> ssUserMods;
+			CZNC::Get().GetModules().GetAvailableMods(ssUserMods);
+
+			if (!ssUserMods.size()) {
+				PutStatus("No user modules available.");
+				return;
+			}
+
+			CTable Table;
+			Table.AddColumn("Name");
+			Table.AddColumn("Description");
+			set<CModInfo>::iterator it;
+
+			for (it = ssUserMods.begin(); it != ssUserMods.end(); it++) {
+				const CModInfo& Info = *it;
+				Table.AddRow();
+				Table.SetCell("Name", (m_pUser->GetModules().FindModule(Info.GetName()) ? "*" : " ") + Info.GetName());
+				Table.SetCell("Description", Info.GetDescription().Ellipsize(128));
+			}
+
+			unsigned int uTableIdx = 0; CString sLine;
+			while (Table.GetLine(uTableIdx++, sLine)) {
+				PutStatus(sLine);
+			}
+		}
+#else
+		PutStatus("Modules are not enabled.");
+#endif
+		return;
 	} else if ((sCommand.CaseCmp("LOADMOD") == 0) || (sCommand.CaseCmp("LOADMODULE") == 0)) {
 		CString sMod;
 		CString sArgs;
@@ -1499,6 +1558,11 @@ void CClient::HelpUser() {
 	Table.SetCell("Command", "ListMods");
 	Table.SetCell("Arguments", "");
 	Table.SetCell("Description", "List all loaded modules");
+
+	Table.AddRow();
+	Table.SetCell("Command", "ListAvailMods");
+	Table.SetCell("Arguments", "");
+	Table.SetCell("Description", "List all available modules");
 
 	Table.AddRow();
 	Table.SetCell("Command", "ListChans");
