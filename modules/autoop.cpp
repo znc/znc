@@ -431,6 +431,11 @@ public:
 			return false;
 		}
 
+		if (sChallenge.length() != 32) {
+			PutModule("WARNING! [" + Nick.GetHostMask() + "] sent an invalid challenge.");
+			return false;
+		}
+
 		CString sResponse = pUser->GetUserKey() + "::" + sChallenge;
 		PutIRC("NOTICE " + Nick.GetNick() + " :!ZNCAO RESPONSE " + sResponse.MD5());
 		return false;
