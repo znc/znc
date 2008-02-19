@@ -419,10 +419,10 @@ public:
 			Table.SetCell("Description", "Show which users can not part this channel");
 
 			unsigned int uTableIdx = 0;
-			CString sLine;
+			CString sTmp;
 
-			while (Table.GetLine(uTableIdx++, sLine)) {
-				PutModule(sLine);
+			while (Table.GetLine(uTableIdx++, sTmp)) {
+				PutModule(sTmp);
 			}
 		} else if (sCommand.CaseCmp("LIST") == 0) {
 			if (!m_ssChannels.size()) {
@@ -443,10 +443,10 @@ public:
 			}
 
 			unsigned int uTableIdx = 0;
-			CString sLine;
+			CString sTmp;
 
-			while (Table.GetLine(uTableIdx++, sLine)) {
-				PutModule(sLine);
+			while (Table.GetLine(uTableIdx++, sTmp)) {
+				PutModule(sTmp);
 			}
 		} else if (sCommand.CaseCmp("ADDFIXCHAN") == 0) {
 			if(!m_pUser->IsAdmin()) {
@@ -577,10 +577,10 @@ public:
 	void SendNickList(CUser* pUser, const set<CString>& ssNicks, const CString& sChan) {
 		CString sNickList;
 		for (set<CString>::iterator it = ssNicks.begin(); it != ssNicks.end(); it++) {
-			CUser* pUser = CZNC::Get().FindUser(*it);
+			CUser* pChanUser = CZNC::Get().FindUser(*it);
 
-			if (pUser && pUser->IsUserAttached()) {
-				sNickList += (pUser->IsAdmin()) ? "@" : "+";
+			if (pChanUser && pChanUser->IsUserAttached()) {
+				sNickList += (pChanUser->IsAdmin()) ? "@" : "+";
 			}
 
 			sNickList += "?" + (*it) + " ";

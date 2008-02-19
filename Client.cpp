@@ -657,10 +657,10 @@ void CClient::UserCommand(const CString& sLine) {
 		}
 
 		unsigned int uTableIdx = 0;
-		CString sLine;
+		CString sTmp;
 
-		while (Table.GetLine(uTableIdx++, sLine)) {
-			PutStatus(sLine);
+		while (Table.GetLine(uTableIdx++, sTmp)) {
+			PutStatus(sTmp);
 		}
 	} else if (sCommand.CaseCmp("DETACH") == 0) {
 		if (m_pUser) {
@@ -736,10 +736,10 @@ void CClient::UserCommand(const CString& sLine) {
 
 			if (Table.size()) {
 				unsigned int uTableIdx = 0;
-				CString sLine;
+				CString sTmp;
 
-				while (Table.GetLine(uTableIdx++, sLine)) {
-					PutStatus(sLine);
+				while (Table.GetLine(uTableIdx++, sTmp)) {
+					PutStatus(sTmp);
 				}
 			}
 		}
@@ -767,10 +767,10 @@ void CClient::UserCommand(const CString& sLine) {
 
 		if (Table.size()) {
 			unsigned int uTableIdx = 0;
-			CString sLine;
+			CString sTmp;
 
-			while (Table.GetLine(uTableIdx++, sLine)) {
-				PutStatus(sLine);
+			while (Table.GetLine(uTableIdx++, sTmp)) {
+				PutStatus(sTmp);
 			}
 		}
 	} else if (m_pUser->IsAdmin() && sCommand.CaseCmp("SetMOTD") == 0) {
@@ -893,10 +893,10 @@ void CClient::UserCommand(const CString& sLine) {
 
 			if (Table.size()) {
 				unsigned int uTableIdx = 0;
-				CString sLine;
+				CString sTmp;
 
-				while (Table.GetLine(uTableIdx++, sLine)) {
-					PutStatus(sLine);
+				while (Table.GetLine(uTableIdx++, sTmp)) {
+					PutStatus(sTmp);
 				}
 			}
 		}
@@ -959,10 +959,10 @@ void CClient::UserCommand(const CString& sLine) {
 
 			if (Table.size()) {
 				unsigned int uTableIdx = 0;
-				CString sLine;
+				CString sTmp;
 
-				while (Table.GetLine(uTableIdx++, sLine)) {
-					PutStatus(sLine);
+				while (Table.GetLine(uTableIdx++, sTmp)) {
+					PutStatus(sTmp);
 				}
 			}
 		    } else {
@@ -987,10 +987,10 @@ void CClient::UserCommand(const CString& sLine) {
 
 			if (Table.size()) {
 				unsigned int uTableIdx = 0;
-				CString sLine;
+				CString sTmp;
 
-				while (Table.GetLine(uTableIdx++, sLine)) {
-					PutStatus(sLine);
+				while (Table.GetLine(uTableIdx++, sTmp)) {
+					PutStatus(sTmp);
 				}
 			}
 		}
@@ -1126,10 +1126,10 @@ void CClient::UserCommand(const CString& sLine) {
 
 		if (Table.size()) {
 			unsigned int uTableIdx = 0;
-			CString sLine;
+			CString sTmp;
 
-			while (Table.GetLine(uTableIdx++, sLine)) {
-				PutStatus(sLine);
+			while (Table.GetLine(uTableIdx++, sTmp)) {
+				PutStatus(sTmp);
 			}
 		} else {
 			PutStatus("You have no active DCCs.");
@@ -1152,10 +1152,11 @@ void CClient::UserCommand(const CString& sLine) {
 					GTable.SetCell("Description", GModules[b]->GetDescription().Ellipsize(128));
 				}
 
-				unsigned int uTableIdx = 0; CString sLine;
+				unsigned int uTableIdx = 0;
+				CString sTmp;
 
-				while (GTable.GetLine(uTableIdx++, sLine)) {
-					PutStatus(sLine);
+				while (GTable.GetLine(uTableIdx++, sTmp)) {
+					PutStatus(sTmp);
 				}
 			}
 		}
@@ -1178,9 +1179,10 @@ void CClient::UserCommand(const CString& sLine) {
 				Table.SetCell("Description", Modules[b]->GetDescription().Ellipsize(128));
 			}
 
-			unsigned int uTableIdx = 0; CString sLine;
-			while (Table.GetLine(uTableIdx++, sLine)) {
-				PutStatus(sLine);
+			unsigned int uTableIdx = 0;
+			CString sTmp;
+			while (Table.GetLine(uTableIdx++, sTmp)) {
+				PutStatus(sTmp);
 			}
 		}
 #else

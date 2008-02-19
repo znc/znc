@@ -272,7 +272,7 @@ void CIRCSock::ReadLine(const CString& sData) {
 					CChan* pChan = m_pUser->FindChan(sLine.Token(3));
 
 					if (pChan) {
-						CString sNick = sLine.Token(4);
+						sNick = sLine.Token(4);
 						unsigned long ulDate = strtoul(sLine.Token(5).c_str(), NULL, 10);
 
 						pChan->SetTopicOwner(sNick);
@@ -283,8 +283,8 @@ void CIRCSock::ReadLine(const CString& sData) {
 				}
 				case 352: {
 					// :irc.yourserver.com 352 yournick #chan ident theirhost.com irc.theirserver.com theirnick H :0 Real Name
-					CString sServer = sLine.Token(0);
-					CString sNick = sLine.Token(7);
+					sServer = sLine.Token(0);
+					sNick = sLine.Token(7);
 					CString sIdent = sLine.Token(4);
 					CString sHost = sLine.Token(5);
 
@@ -342,7 +342,6 @@ void CIRCSock::ReadLine(const CString& sData) {
 					// Get everything except the actual user list
 					CString sTmp = sLine.Token(0, false, " :") + " :";
 					vector<CClient*>& vClients = m_pUser->GetClients();
-					CString sNick;
 
 					for (unsigned int a = 0; a < vClients.size(); a++) {
 						if ((!m_bNamesx || vClients[a]->HasNamesx())
@@ -412,7 +411,7 @@ void CIRCSock::ReadLine(const CString& sData) {
 			}
 		} else { //if (CUtils::wildcmp(":*!*@* * *", sLine.c_str())) {
 			CNick Nick(sLine.Token(0).LeftChomp_n());
-			CString sCmd = sLine.Token(1);
+			sCmd = sLine.Token(1);
 			CString sRest = sLine.Token(2, true);
 
 			if (sCmd.CaseCmp("NICK") == 0) {

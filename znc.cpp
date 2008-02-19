@@ -713,7 +713,7 @@ bool CZNC::WriteNewConfig(const CString& sConfig) {
 		do {
 			CString sHost, sPass;
 			bool bSSL = false;
-			unsigned int uPort = 0;
+			uPort = 0;
 
 			while(!CUtils::GetInput("IRC server", sHost, "", "host only") || !CServer::IsValidHostName(sHost)) ;
 			while(!CUtils::GetNumInput("[" + sHost + "] Port", uPort, 1, 65535, 6667)) ;
@@ -938,7 +938,7 @@ bool CZNC::DoRehash(CString& sError)
 			sValue.Trim();
 
 			if (sLine.Left(1) == "/") {
-				CString sTag = sLine.substr(1);
+				sTag = sTag.substr(1);
 
 				if (pUser) {
 					if (pChan) {

@@ -494,15 +494,18 @@ void CChan::IncPermCount(unsigned char uPerm) {
 }
 
 bool CChan::RemNick(const CString& sNick) {
-	map<CString,CNick*>::iterator it = m_msNicks.find(sNick);
+	map<CString,CNick*>::iterator it;
+	set<unsigned char>::iterator it2;
+
+	it = m_msNicks.find(sNick);
 	if (it == m_msNicks.end()) {
 		return false;
 	}
 
 	const set<unsigned char>& suPerms = it->second->GetChanPerms();
 
-	for (set<unsigned char>::iterator it = suPerms.begin(); it != suPerms.end(); it++) {
-		DecPermCount(*it);
+	for (it2 = suPerms.begin(); it2 != suPerms.end(); it2++) {
+		DecPermCount(*it2);
 	}
 
 	delete it->second;

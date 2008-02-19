@@ -180,7 +180,7 @@ public:
 			if ( DecryptChannel( sArgs, sFile ) )
 			{
 				CString sLine;
-				CString::size_type iPos = 0;
+				iPos = 0;
 				while( ReadLine( sFile, sLine, iPos ) )
 				{
 					sLine.Trim();

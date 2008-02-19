@@ -277,7 +277,7 @@ bool CUser::Clone(const CUser& User, CString& sErrorRet) {
 		AddAllowedHost(*it);
 	}
 
-	for (unsigned int a = 0; a < m_vClients.size(); a++) {
+	for (a = 0; a < m_vClients.size(); a++) {
 		CClient* pSock = m_vClients[a];
 
 		if (!IsHostAllowed(pSock->GetRemoteIP())) {

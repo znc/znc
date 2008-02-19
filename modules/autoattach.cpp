@@ -89,10 +89,10 @@ public:
 
 			if (Table.size()) {
 				unsigned int uTableIdx = 0;
-				CString sLine;
+				CString sTmp;
 
-				while (Table.GetLine(uTableIdx++, sLine)) {
-					PutModule(sLine);
+				while (Table.GetLine(uTableIdx++, sTmp)) {
+					PutModule(sTmp);
 				}
 			} else {
 				PutModule("You have no entries.");
@@ -116,10 +116,10 @@ public:
 
 			if (Table.size()) {
 				unsigned int uTableIdx = 0;
-				CString sLine;
+				CString sTmp;
 
-				while (Table.GetLine(uTableIdx++, sLine)) {
-					PutModule(sLine);
+				while (Table.GetLine(uTableIdx++, sTmp)) {
+					PutModule(sTmp);
 				}
 			} else {
 				PutModule("You have no entries.");
