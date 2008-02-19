@@ -98,7 +98,7 @@ if test "$IPV6" != "no"; then
 fi
 
 if test "x$GXX" = "xyes"; then
-	appendCXX -Wall -W -Wno-unused -Woverloaded-virtual
+	appendCXX -Wall -W -Wno-unused -Woverloaded-virtual -Wshadow
 fi
 
 AC_CHECK_LIB( gnugetopt, getopt_long,)
