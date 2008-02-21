@@ -376,6 +376,8 @@ bool CZNC::IsHostAllowed(const CString& sHostMask) {
 
 void CZNC::InitDirs(const CString& sArgvPath, const CString& sDataDir) {
 	char buf[PATH_MAX];
+	char *home;
+
 	if (getcwd(buf, PATH_MAX) == NULL) {
 		CUtils::PrintError("getcwd() failed, can't read my current dir");
 		exit(-1);
@@ -386,10 +388,16 @@ void CZNC::InitDirs(const CString& sArgvPath, const CString& sDataDir) {
 	m_sCurPath = (uPos == CString::npos) ? CString(buf) : CUtils::ChangeDir(buf, sArgvPath.substr(0, uPos), "");
 
 	// Try to set the user's home dir, default to binpath on failure
-	struct passwd* pUserInfo = getpwuid(getuid());
+	home = getenv("HOME");
 
-	if (pUserInfo) {
-		m_sHomePath = pUserInfo->pw_dir;
+	if (home) {
+		m_sHomePath = home;
+	} else {
+		struct passwd* pUserInfo = getpwuid(getuid());
+
+		if (pUserInfo) {
+			m_sHomePath = pUserInfo->pw_dir;
+		}
 	}
 
 	if (m_sHomePath.empty()) {
