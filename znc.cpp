@@ -837,6 +837,14 @@ bool CZNC::RehashConfig(CString& sError)
 	m_msUsers.clear();
 
 	if (DoRehash(sError)) {
+#ifdef _MODULES
+		GetModules().OnRehashDone();
+		for (map<CString, CUser*>::iterator it = m_msUsers.begin();
+				it != m_msUsers.end(); it++) {
+			it->second->GetModules().OnRehashDone();
+		}
+#endif
+
 		return true;
 	}
 
