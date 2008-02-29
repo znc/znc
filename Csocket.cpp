@@ -28,7 +28,7 @@
 * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 *
 *
-* $Revision: 1.67 $
+* $Revision: 1.68 $
 */
 
 #include "Csocket.h"
@@ -587,6 +587,11 @@ Csock::~Csock()
 	}
 #endif /* __DO_THREADS_ */
 
+#ifdef HAVE_LIBSSL
+	FREE_SSL();
+	FREE_CTX();
+#endif /* HAVE_LIBSSL */
+
 	if ( m_iReadSock != m_iWriteSock )
 	{
 		if( m_iReadSock >= 0 )
@@ -599,11 +604,6 @@ Csock::~Csock()
 	m_iReadSock = -1;
 	m_iWriteSock = -1;
 
-#ifdef HAVE_LIBSSL
-	FREE_SSL();
-	FREE_CTX();
-
-#endif /* HAVE_LIBSSL */
 	// delete any left over crons
 	for( vector<CCron *>::size_type i = 0; i < m_vcCrons.size(); i++ )
 		CS_Delete( m_vcCrons[i] );
