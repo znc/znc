@@ -28,7 +28,7 @@
 * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 *
 *
-* $Revision: 1.66 $
+* $Revision: 1.67 $
 */
 
 #include "Csocket.h"
@@ -981,8 +981,8 @@ int Csock::Accept( CS_STRING & sHost, u_short & iRPort )
 
 		if ( !m_bBLOCK )
 		{
-			// make it none blocking
-			set_non_blocking( m_iReadSock );
+			// make it none blocking 
+			set_non_blocking( iSock );
 		}
 
 		if ( !ConnectionFrom( sHost, iRPort ) )
