@@ -81,10 +81,10 @@ clean:
 
 ifeq ($(DEPEND), yes)
 %.so: %.cpp
-	$(CXX) $(CXXFLAGS) $(INCLUDES) $(LDFLAGS) $($(basename $<)FLAGS) -shared -o $@ $< -MMD -MF .depend/$<.dep
+	$(CXX) $(CXXFLAGS) $(INCLUDES) $(LDFLAGS) -shared -o $@ $< $($(basename $<)FLAGS) -MMD -MF .depend/$<.dep
 else
 %.so: %.cpp
-	$(CXX) $(CXXFLAGS) $(INCLUDES) $(LDFLAGS) $($(basename $<)FLAGS) -shared -o $@ $<
+	$(CXX) $(CXXFLAGS) $(INCLUDES) $(LDFLAGS) -shared -o $@ $< $($(basename $<)FLAGS)
 endif
 
 modperl_install: create_install_dir
