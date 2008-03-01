@@ -1554,6 +1554,11 @@ void CClient::HelpUser() {
 	Table.SetCell("Description", "Prints which version of znc this is");
 
 	Table.AddRow();
+	Table.SetCell("Command", "MOTD");
+	Table.SetCell("Arguments", "");
+	Table.SetCell("Description", "Show the message of the day");
+
+	Table.AddRow();
 	Table.SetCell("Command", "ListDCCs");
 	Table.SetCell("Arguments", "");
 	Table.SetCell("Description", "List all active DCCs");
@@ -1599,6 +1604,16 @@ void CClient::HelpUser() {
 	Table.SetCell("Command", "RemServer");
 	Table.SetCell("Arguments", "<host>");
 	Table.SetCell("Description", "Remove a server from the list");
+
+	Table.AddRow();
+	Table.SetCell("Command", "Enablechan");
+	Table.SetCell("Arguments", "<#chan>");
+	Table.SetCell("Description", "Enable the channel");
+
+	Table.AddRow();
+	Table.SetCell("Command", "Detach");
+	Table.SetCell("Arguments", "<#chan>");
+	Table.SetCell("Description", "Detach from the channel");
 
 	Table.AddRow();
 	Table.SetCell("Command", "Topics");
@@ -1700,6 +1715,11 @@ void CClient::HelpUser() {
 			Table.SetCell("Command", "ListClients");
 			Table.SetCell("Arguments", "[User]");
 			Table.SetCell("Description", "List all clients connected to your znc user");
+
+			Table.AddRow();
+			Table.SetCell("Command", "Traffic");
+			Table.SetCell("Arguments", "");
+			Table.SetCell("Description", "Show basic traffic stats for all znc users");
 
 			Table.AddRow();
 			Table.SetCell("Command", "SetMOTD");
