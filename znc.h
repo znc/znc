@@ -142,7 +142,6 @@ public:
 	const CString& GetHomePath() const { if (!CFile::Exists(m_sHomePath)) { CUtils::MakeDir(m_sHomePath); } return m_sHomePath; }
 	const CString& GetZNCPath() const { if (!CFile::Exists(m_sZNCPath)) { CUtils::MakeDir(m_sZNCPath); } return m_sZNCPath; }
 	const CString& GetConfPath() const { if (!CFile::Exists(m_sConfPath)) { CUtils::MakeDir(m_sConfPath); } return m_sConfPath; }
-	const CString& GetConfBackupPath() const { if (!CFile::Exists(m_sConfBackupPath)) { CUtils::MakeDir(m_sConfBackupPath); } return m_sConfBackupPath; }
 	const CString& GetUserPath() const { if (!CFile::Exists(m_sUserPath)) { CUtils::MakeDir(m_sUserPath); } return m_sUserPath; }
 	CString GetPemLocation() const { return GetZNCPath() + "/znc.pem"; }
 	const CString& GetConfigFile() const { return m_sConfigFile; }
@@ -179,6 +178,8 @@ private:
 	bool DoRehash(CString& sError);
 	// Returns true if something was done
 	bool HandleUserDeletion();
+	// Backup znc.conf
+	bool BackupConfig() const;
 
 protected:
 	bool				m_bNeedRehash;
@@ -192,7 +193,6 @@ protected:
 	CString					m_sHomePath;
 	CString					m_sZNCPath;
 	CString					m_sConfPath;
-	CString					m_sConfBackupPath;
 	CString					m_sUserPath;
 
 	CString					m_sConfigFile;

@@ -412,7 +412,6 @@ void CZNC::InitDirs(const CString& sArgvPath, const CString& sDataDir) {
 
 	// Other dirs that we use
 	m_sConfPath = m_sZNCPath + "/configs";
-	m_sConfBackupPath = m_sConfPath + "/backups";
 	m_sModPath = m_sZNCPath + "/modules";
 	m_sUserPath = m_sZNCPath + "/users";
 }
@@ -436,10 +435,25 @@ CString CZNC::ExpandConfigPath(const CString& sConfigFile) {
 	return sRetPath;
 }
 
-bool CZNC::WriteConfig() {
-	CFile File(m_sConfigFile);
+bool CZNC::BackupConfig() const {
+	CString sBackup = GetConfigFile() + "-backup";
 
-	if (!File.Copy(GetConfBackupPath() + "/" + File.GetShortName() + "-" + CString(time(NULL)))) {
+	// Create a new backup overwriting an old one we might have
+	if (CFile::Copy(m_sConfigFile, sBackup, true))
+		return true;
+
+	// Don't abort if no config file exists
+	if (!CFile::Exists(m_sConfigFile))
+		// No backup because we got nothing to backup
+		return true;
+
+	return false;
+}
+
+bool CZNC::WriteConfig() {
+	CFile File(GetConfigFile());
+
+	if (!BackupConfig()) {
 		return false;
 	}
 
