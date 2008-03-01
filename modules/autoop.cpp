@@ -11,6 +11,8 @@
 
 class CAutoOpMod;
 
+#define AUTOOP_CHALLENGE_LENGTH	32
+
 class CAutoOpTimer : public CTimer {
 public:
 
@@ -431,7 +433,7 @@ public:
 			return false;
 		}
 
-		if (sChallenge.length() != 32) {
+		if (sChallenge.length() != AUTOOP_CHALLENGE_LENGTH) {
 			PutModule("WARNING! [" + Nick.GetHostMask() + "] sent an invalid challenge.");
 			return false;
 		}
@@ -487,7 +489,7 @@ public:
 
 		// Now issue challenges for the new users in the queue
 		for (MCString::iterator it = m_msQueue.begin(); it != m_msQueue.end(); it++) {
-			it->second = CString::RandomString(32);
+			it->second = CString::RandomString(AUTOOP_CHALLENGE_LENGTH);
 			PutIRC("NOTICE " + it->first + " :!ZNCAO CHALLENGE " + it->second);
 		}
 	}
