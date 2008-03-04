@@ -654,6 +654,10 @@ void CIRCSock::ReadLine(const CString& sData) {
 					pChan->SetTopicOwner(Nick.GetNick());
 					pChan->SetTopicDate((unsigned long) time(NULL));
 					pChan->SetTopic(sTopic);
+
+					if (pChan->IsDetached()) {
+						return; // Don't forward this
+					}
 				}
 			} else if (sCmd.CaseCmp("PRIVMSG") == 0) {
 				// :nick!ident@host.com PRIVMSG #chan :Message
