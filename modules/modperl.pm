@@ -83,11 +83,13 @@ sub CORELoadMod
 		}
 	}
 
+	my $bFoundPackage = 0;
 	while( <INMOD> )
 	{
 		if ( $_ =~ /^\s*package\s*$Module\s*;/ )
 		{
 			print OUTMOD "package $Username$Module;\n";
+			$bFoundPackage = 1;
 		}
 		else
 		{
@@ -96,6 +98,11 @@ sub CORELoadMod
 	}
 	close( INMOD );
 	close( OUTMOD );
+
+	if( !$bFoundPackage )
+	{
+		ZNC::PutModule( "Warning, did not find 'package $Module;' in $FileName" );
+	}
 
 	if ( $INC{$FileName} )
 	{ # force a delete on this guy
