@@ -172,7 +172,10 @@ inline unsigned char* CString::strnchr(const unsigned char* src, unsigned char c
     return NULL;
 }
 
-int CString::CaseCmp(const CString& s) const {
+int CString::CaseCmp(const CString& s, u_long uLen ) const {
+	if( uLen != CString::npos ) {
+		return strncasecmp(c_str(), s.c_str(), uLen);
+	}
 	return strcasecmp(c_str(), s.c_str());
 }
 
