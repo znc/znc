@@ -12,10 +12,11 @@
 #include "Server.h"
 #include "User.h"
 #include <pwd.h>
+#include <list>
 
 namespace
 { // private namespace for local things
-	struct CUnhandledConfigLines
+	struct CGlobalModuleConfigLine
 	{
 		CString	m_sName;
 		CString	m_sValue;
@@ -940,7 +941,7 @@ bool CZNC::DoRehash(CString& sError)
 	MCString msModules;	// Modules are queued for later loading
 #endif
 
-	vector<CUnhandledConfigLines> vUnHandledLines;
+	std::list<CGlobalModuleConfigLine> lGlobalModuleConfigLine;
 
 	while (File.ReadLine(sLine)) {
 		uLineNum++;
@@ -1392,20 +1393,24 @@ bool CZNC::DoRehash(CString& sError)
 					continue;
 				}
 			}
+
 		}
 
-		CUnhandledConfigLines cTmp;
-		cTmp.m_sName = sName;
-		cTmp.m_sValue = sValue;
-		cTmp.m_pChan = pChan;
-		cTmp.m_pUser = pUser;
-		vUnHandledLines.push_back( cTmp );
-/*
- * giving global modules a chance to work on these, if they aren't handled then a warn is print out, but not an error
-		sError = "Unhandled line " + CString(uLineNum) + " in config: [" + sLine + "]";
-		CUtils::PrintError(sError);
-		return false;
-*/
+		if( sName.CaseCmp( "GM:", 3 ) == 0 )
+		{ // GM: prefix is a pass through to config lines for global modules
+			CGlobalModuleConfigLine cTmp;
+			cTmp.m_sName = sName.substr( 3, CString::npos );
+			cTmp.m_sValue = sValue;
+			cTmp.m_pChan = pChan;
+			cTmp.m_pUser = pUser;
+			lGlobalModuleConfigLine.push_back( cTmp );
+		}
+		else
+		{
+			sError = "Unhandled line " + CString(uLineNum) + " in config: [" + sLine + "]";
+			CUtils::PrintError(sError);
+			return false;
+		}
 	}
 
 #ifdef _MODULES
@@ -1480,13 +1485,13 @@ bool CZNC::DoRehash(CString& sError)
 	}
 
 	// last step, throw unhandled config items at global config
-	for( u_long a = 0; a < vUnHandledLines.size(); a++ )
+	for( std::list<CGlobalModuleConfigLine>::iterator it = lGlobalModuleConfigLine.begin(); it != lGlobalModuleConfigLine.end(); it++ )
 	{
-		if( ( pChan && pChan == vUnHandledLines[a].m_pChan ) || ( pUser && pUser == vUnHandledLines[a].m_pUser ) )
+		if( ( pChan && pChan == it->m_pChan ) || ( pUser && pUser == it->m_pUser ) )
 			continue; // skip unclosed user or chan
-		if( !GetModules().OnConfigLine( vUnHandledLines[a].m_sName, vUnHandledLines[a].m_sValue, vUnHandledLines[a].m_pUser, vUnHandledLines[a].m_pChan ) )
+		if( !GetModules().OnConfigLine( it->m_sName, it->m_sValue, it->m_pUser, it->m_pChan ) )
 		{
-			CUtils::PrintMessage( "Unhandled config line [" + vUnHandledLines[a].m_sName + "] = [" + vUnHandledLines[a].m_sValue + "]" );
+			CUtils::PrintMessage( "unhandled global module config line [GM:" + it->m_sName + "] = [" + it->m_sValue + "]" );
 		}
 	}
 #endif
