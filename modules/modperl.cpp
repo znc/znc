@@ -1009,10 +1009,12 @@ bool CModPerl::OnLoad( const CString & sArgs, CString & sMessage )
 	// this sets up the eval CB that we call from here on out. this way we can grab the error produced
 	SetupZNCScript();
 
-	HV *pZNCSpace = get_hv ( "ZNC::", TRUE);
+	HV *pZNCSpace = get_hv( "ZNC::", TRUE);
 
 	if ( !pZNCSpace )
 		return( false );
+
+	sv_2mortal((SV*)pZNCSpace);
 
 	newCONSTSUB( pZNCSpace, "CONTINUE", newSViv( CONTINUE ) );
 	newCONSTSUB( pZNCSpace, "HALT", newSViv( HALT ) );
