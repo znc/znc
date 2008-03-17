@@ -1482,9 +1482,9 @@ bool CZNC::DoRehash(CString& sError)
 	// last step, throw unhandled config items at global config
 	for( u_long a = 0; a < vUnHandledLines.size(); a++ )
 	{
-		if( pChan == vUnHandledLines[a].m_pChan || pUser == vUnHandledLines[a].m_pUser )
+		if( ( pChan && pChan == vUnHandledLines[a].m_pChan ) || ( pUser && pUser == vUnHandledLines[a].m_pUser ) )
 			continue; // skip unclosed user or chan
-		if( GetModules().OnConfigLine( vUnHandledLines[a].m_sName, vUnHandledLines[a].m_sValue, vUnHandledLines[a].m_pUser, vUnHandledLines[a].m_pChan ) )
+		if( !GetModules().OnConfigLine( vUnHandledLines[a].m_sName, vUnHandledLines[a].m_sValue, vUnHandledLines[a].m_pUser, vUnHandledLines[a].m_pChan ) )
 		{
 			CUtils::PrintMessage( "Unhandled config line [" + vUnHandledLines[a].m_sName + "] = [" + vUnHandledLines[a].m_sValue + "]" );
 		}
