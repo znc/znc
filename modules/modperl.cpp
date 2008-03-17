@@ -250,7 +250,7 @@ public:
 
 	virtual EModRet OnConfigLine(const CString& sName, const CString& sValue, CUser* pUser, CChan* pChan)
 	{
-		if ( ( sName.CaseCmp( "loadmodule" ) == 0 ) && ( sValue.Right( 3 ) == ".pm" ) && ( pUser ) )
+		if ( ( sName.CaseCmp( "loadperlmodule" ) == 0 ) && ( sValue.Right( 3 ) == ".pm" ) && ( pUser ) )
 		{
 			m_pUser = pUser;
 			LoadPerlMod( sValue );
@@ -462,14 +462,14 @@ public:
 	{
 		CString sCommand = sLine.Token( 0 );
 
-		if ( ( sCommand == "loadmod" ) || ( sCommand == "unloadmod" ) || ( sCommand == "reloadmod" ) )
+		if( sCommand.CaseCmp( "loadperlmod", 11 ) == 0 || sCommand.CaseCmp( "unloadperlmod", 13 ) == 0 || sCommand.CaseCmp( "reloadperlmod", 13 ) == 0 )
 		{
 			CString sModule = sLine.Token( 1 );
 			if ( sModule.Right( 3 ) == ".pm" )
 			{
-				if ( sCommand == "loadmod" )
+				if ( sCommand.CaseCmp( "loadperlmod", 11 ) == 0 )
 					LoadPerlMod( sModule );
-				else if ( sCommand == "unloadmod" )
+				else if ( sCommand.CaseCmp( "unloadperlmod", 13 ) == 0 )
 					UnloadPerlMod( sModule );
 				else
 				{
