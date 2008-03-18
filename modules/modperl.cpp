@@ -4,6 +4,15 @@
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License version 2 as published
  * by the Free Software Foundation.
+ *
+ * @author imaginos@imaginos.net
+ *
+ * NOTE, the proper way to valgrind this module is to compile znc with debug, and do the following ...
+ *
+ * PERL_DESTRUCT_LEVEL=2 GLIBCPP_FORCE_NEW=1 valgrind --leak-check=full /path/to/znc
+ *
+ * GLIBCPP_FORCE_NEW is an STL env flag to turn of mem pooling, and stops false alarms within stl
+ * PERL_DESTRUCT_LEVEL is a perl env flag to force the VM to cleanup, this also stops false alarms, but within perl
  */
 
 #ifdef HAVE_PERL
