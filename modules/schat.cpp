@@ -280,7 +280,7 @@ public:
 		} else if ( strcasecmp( sCom.c_str(), "close" ) == 0 )
 		{
 			CString sName = "SCHAT::" + m_pUser->GetUserName();
-			for( u_int a= 0; a < m_pManager->size(); a++ )
+			for( u_int a = 0; a < m_pManager->size(); a++ )
 			{
 				if ( strncmp( (*m_pManager)[a]->GetSockName().c_str(), sName.c_str(), sName.length() ) != 0 )
 					continue;
@@ -294,8 +294,8 @@ public:
 					pSock->Close();
 					return;
 				}
-				PutModule( "No Such Chat [" + sArgs + "]" );
 			}
+			PutModule( "No Such Chat [" + sArgs + "]" );
 		} else if ( strcasecmp( sCom.c_str(), "showsocks" ) == 0 )
 		{
 			CTable Table;
