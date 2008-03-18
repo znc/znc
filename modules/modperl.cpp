@@ -1016,10 +1016,10 @@ bool CModPerl::OnLoad( const CString & sArgs, CString & sMessage )
 
 	sv_2mortal((SV*)pZNCSpace);
 
-	newCONSTSUB( pZNCSpace, "CONTINUE", newSViv( CONTINUE ) );
-	newCONSTSUB( pZNCSpace, "HALT", newSViv( HALT ) );
-	newCONSTSUB( pZNCSpace, "HALTMODS", newSViv( HALTMODS ) );
-	newCONSTSUB( pZNCSpace, "HALTCORE", newSViv( HALTCORE ) );
+	newCONSTSUB( pZNCSpace, "CONTINUE", PString( CONTINUE ).GetSV() );
+	newCONSTSUB( pZNCSpace, "HALT", PString( HALT ).GetSV() );
+	newCONSTSUB( pZNCSpace, "HALTMODS", PString( HALTMODS ).GetSV() );
+	newCONSTSUB( pZNCSpace, "HALTCORE", PString( HALTCORE ).GetSV() );
 
 	return( true );
 }
