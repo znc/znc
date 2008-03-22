@@ -329,8 +329,12 @@ void CIRCSock::ReadLine(const CString& sData) {
 					sRest.Trim();
 					// Todo: allow for non @+= server msgs
 					CChan* pChan = m_pUser->FindChan(sRest.Token(1));
-					if (!pChan) // Todo: should this still be forwarded to clients?
+					if (!pChan) {
+						// If we don't know that channel, a client might have
+						// sent a /names on it's own -> forward it.
+						m_pUser->PutUser(sLine);
 						return;
+					}
 
 					CString sNicks = sRest.Token(2, true);
 					if (sNicks.Left(1) == ":") {
