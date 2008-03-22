@@ -13,6 +13,7 @@
 #include <set>
 #include <string>
 #include <vector>
+#include <sys/types.h>
 
 using std::map;
 using std::set;
