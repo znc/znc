@@ -58,6 +58,7 @@ public:
 	bool ConnectPaused();
 
 	void DelClients();
+	void DelServers();
 #ifdef _MODULES
 	void DelModules();
 

@@ -60,19 +60,17 @@ CUser::CUser(const CString& sUserName) {
 }
 
 CUser::~CUser() {
-	for (unsigned int a = 0; a < m_vServers.size(); a++) {
-		delete m_vServers[a];
-	}
-
-	for (unsigned int b = 0; b < m_vChans.size(); b++) {
-		delete m_vChans[b];
-	}
-
 	DelClients();
 
 #ifdef _MODULES
 	DelModules();
 #endif
+
+	DelServers();
+
+	for (unsigned int b = 0; b < m_vChans.size(); b++) {
+		delete m_vChans[b];
+	}
 
 	CZNC::Get().GetManager().DelCronByAddr(m_pKeepNickTimer);
 	CZNC::Get().GetManager().DelCronByAddr(m_pJoinTimer);
@@ -95,6 +93,15 @@ void CUser::DelClients() {
 	}
 
 	m_vClients.clear();
+}
+
+void CUser::DelServers()
+{
+	for (unsigned int a = 0; a < m_vServers.size(); a++) {
+		delete m_vServers[a];
+	}
+
+	m_vServers.clear();
 }
 
 void CUser::IRCConnected(CIRCSock* pIRCSock) {
@@ -334,7 +341,7 @@ bool CUser::Clone(const CUser& User, CString& sErrorRet) {
 		sServer = pCurServ->GetName();
 	}
 
-	m_vServers.clear();
+	DelServers();
 
 	for (a = 0; a < vServers.size(); a++) {
 		CServer* pServer = vServers[a];
