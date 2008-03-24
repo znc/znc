@@ -1008,14 +1008,20 @@ bool CZNC::DoRehash(CString& sError)
 								sError = "Invalid user [" + pUser->GetUserName() + "] " + sErr;
 								DEBUG_ONLY(cout << "CUser::Clone() failed in rehash" << endl);
 							}
+							pUser->SetBeingDeleted(true);
+							delete pUser;
+							pUser = NULL;
 						} else if (!AddUser(pUser, sErr)) {
 							sError = "Invalid user [" + pUser->GetUserName() + "] " + sErr;
 						}
 
 						if (!sError.empty()) {
 							CUtils::PrintError(sError);
-							pUser->SetBeingDeleted(true);
-							delete pUser;
+							if (pUser) {
+								pUser->SetBeingDeleted(true);
+								delete pUser;
+								pUser = NULL;
+							}
 							return false;
 						}
 
