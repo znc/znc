@@ -28,7 +28,7 @@
 * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 *
 *
-* $Revision: 1.70 $
+* $Revision: 1.73 $
 */
 
 #include "Csocket.h"
@@ -2060,7 +2060,7 @@ int Csock::DNSLookup( EDNSLType eDNSLType )
 		if ( m_sBindHost.empty() )
 		{
 			if ( m_eConState != CST_OK )
-				m_eConState = CST_VHOSTDNS;
+				m_eConState = CST_VHOSTDNS; // skip binding, there is no vhost
 			return( 0 );
 		}
 
@@ -2115,7 +2115,7 @@ int Csock::DNSLookup( EDNSLType eDNSLType )
 			}
 
 			if ( m_eConState != CST_OK )
-				m_eConState = ( ( eDNSLType == DNS_VHOST ) ? CST_VHOSTDNS : CST_CONNECT );
+				m_eConState = ( ( eDNSLType == DNS_VHOST ) ? CST_BINDVHOST : CST_CONNECT ); // next step after vhost is to bind
 
 			if( !CreateSocksFD() )
 				return( ETIMEDOUT );
@@ -2154,7 +2154,7 @@ int Csock::DNSLookup( EDNSLType eDNSLType )
 	if ( iRet == 0 )
 	{
 		if ( m_eConState != CST_OK )
-			m_eConState = ( ( eDNSLType == DNS_VHOST ) ? CST_VHOSTDNS : CST_CONNECT );
+			m_eConState = ( ( eDNSLType == DNS_VHOST ) ? CST_BINDVHOST : CST_CONNECT );
 		m_iDNSTryCount = 0;
 		return( 0 );
 	}
@@ -2178,7 +2178,7 @@ bool Csock::SetupVHost()
 	if ( m_sBindHost.empty() )
 	{
 		if ( m_eConState != CST_OK )
-			m_eConState = CST_CONNECT;
+			m_eConState = CST_VHOSTDNS;
 		return( true );
 	}
 	int iRet = -1;
@@ -2192,7 +2192,7 @@ bool Csock::SetupVHost()
 	if ( iRet == 0 )
 	{
 		if ( m_eConState != CST_OK )
-			m_eConState = CST_CONNECT;
+			m_eConState = CST_VHOSTDNS;
 		return( true );
 	}
 	m_iCurBindCount++;
