@@ -187,6 +187,11 @@ int GetAddrInfo( const CS_STRING & sHostname, Csock *pSock, CSSockAddr & csSockA
 	hints.ai_socktype = SOCK_STREAM;
 	hints.ai_protocol = IPPROTO_TCP;
 
+#ifdef AI_ADDRCONFIG
+	    hints.ai_flags = AI_ADDRCONFIG;
+#endif /* AI_ADDRCONFIG */
+
+
 	int iRet = getaddrinfo( sHostname.c_str(), NULL, &hints, &res );
 	if( iRet == EAI_AGAIN )
 		return( EAGAIN );
@@ -207,26 +212,6 @@ int GetAddrInfo( const CS_STRING & sHostname, Csock *pSock, CSSockAddr & csSockA
 			
 			if( ( csSockAddr.GetAFRequire() != CSSockAddr::RAF_ANY ) && ( pRes->ai_family != csSockAddr.GetAFRequire() ) )
 				continue; // they requested a special type, so be certain we woop past anything unwanted
-/**
- * I still don't like this approach, so commenting for now. the caveat is that for ipv6 to work properly on a host
- * that resolves to both ipv4 & ipv6, you need to bind to an ip first.
- *
-			if( csSockAddr.GetAFRequire() == CSSockAddr::RAF_ANY )
-			{ 
-				// this is a quick check to see if we can connect to this type of outside port (ipv6 or ipv4)
-				// this doesn't do an actual connection (man connect), but its a great way to validate a possible connection canidate
-				bool bContinue = false;
-				int iTestFD = socket( pRes->ai_family, SOCK_DGRAM, pRes->ai_protocol );
-				if( iTestFD >= 0 )
-				{
-					if( connect( iTestFD, pRes->ai_addr, pRes->ai_addrlen ) != 0 )
-						bContinue = true; // skip this one, we can't use it
-				}
-				close( iTestFD );
-				if( bContinue )
-					continue;
-			}
-*/
 
 			if( pRes->ai_family == AF_INET )
 			{
