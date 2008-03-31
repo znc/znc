@@ -212,7 +212,7 @@ int GetAddrInfo( const CS_STRING & sHostname, Csock *pSock, CSSockAddr & csSockA
 				// this is a quick check to see if we can connect to this type of outside port (ipv6 or ipv4)
 				// this doesn't do an actual connection (man connect), but its a great way to validate a possible connection canidate
 				bool bContinue = false;
-				int iTestFD = socket( pRes->ai_family, SOCK_DGRAM, IPPROTO_IP );
+				int iTestFD = socket( pRes->ai_family, SOCK_DGRAM, pRes->ai_protocol );
 				if( iTestFD >= 0 )
 				{
 					if( connect( iTestFD, pRes->ai_addr, pRes->ai_addrlen ) != 0 )
