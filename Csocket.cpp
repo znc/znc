@@ -207,6 +207,10 @@ int GetAddrInfo( const CS_STRING & sHostname, Csock *pSock, CSSockAddr & csSockA
 			
 			if( ( csSockAddr.GetAFRequire() != CSSockAddr::RAF_ANY ) && ( pRes->ai_family != csSockAddr.GetAFRequire() ) )
 				continue; // they requested a special type, so be certain we woop past anything unwanted
+/**
+ * I still don't like this approach, so commenting for now. the caveat is that for ipv6 to work properly on a host
+ * that resolves to both ipv4 & ipv6, you need to bind to an ip first.
+ *
 			if( csSockAddr.GetAFRequire() == CSSockAddr::RAF_ANY )
 			{ 
 				// this is a quick check to see if we can connect to this type of outside port (ipv6 or ipv4)
@@ -222,6 +226,7 @@ int GetAddrInfo( const CS_STRING & sHostname, Csock *pSock, CSSockAddr & csSockA
 				if( bContinue )
 					continue;
 			}
+*/
 
 			if( pRes->ai_family == AF_INET )
 			{
