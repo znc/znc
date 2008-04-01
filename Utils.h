@@ -26,6 +26,15 @@ using std::vector;
 #define DEBUG_ONLY(f) ((void)0)
 #endif
 
+static inline void SetFdCloseOnExec(int fd)
+{
+	int flags = fcntl(fd, F_GETFD, 0);
+	if (flags < 0)
+		return; // Ignore errors
+	// When we execve() a new process this fd is now automatically closed.
+	fcntl(fd, F_SETFD, flags | FD_CLOEXEC);
+}
+
 static const char g_HexDigits[] = "0123456789abcdef";
 
 class CUtils {
@@ -106,10 +115,13 @@ public:
 		m_bCreated = false;
 
 		if (m_fd == -1) {
-			// i must create the file then
+			// I must create the file then
 			m_fd = open(sFile.c_str(), O_RDWR|O_CREAT, 0644);
 			m_bCreated = true;
 		}
+
+		// Thanks to broken POSIX, we shouldn't give this fd to anyone
+		SetFdCloseOnExec(m_fd);
 
 		m_pid = getpid();       // for destructor
 		m_sFileName = sFile;

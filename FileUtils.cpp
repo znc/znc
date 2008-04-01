@@ -7,6 +7,7 @@
  */
 
 #include "FileUtils.h"
+#include "Utils.h"
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <sys/wait.h>
@@ -250,6 +251,9 @@ bool CFile::Open(int iFlags, mode_t iMode) {
 	m_iFD = open(m_sLongName.c_str(), iFlags, iMode);
 	if (m_iFD < 0)
 		return false;
+
+	/* Make sure this FD isn't given to childs */
+	SetFdCloseOnExec(m_iFD);
 
 	m_bClose = true;
 	return true;
