@@ -944,6 +944,9 @@ bool CString::RightChomp(unsigned int uLen) {
 
 //////////////// MCString ////////////////
 int MCString::WriteToDisk(const CString& sPath, mode_t iMode) {
+	if (this->empty())
+		return MCS_SUCCESS;
+
 	CFile cFile(sPath);
 	if (!cFile.Open(O_WRONLY|O_CREAT|O_TRUNC, iMode)) {
 		return MCS_EOPEN;
@@ -973,7 +976,7 @@ int MCString::WriteToDisk(const CString& sPath, mode_t iMode) {
 int MCString::ReadFromDisk(const CString& sPath, mode_t iMode) {
 	clear();
 	CFile cFile(sPath);
-	if (!cFile.Open(O_RDONLY|O_CREAT, iMode)) {
+	if (!cFile.Open(O_RDONLY, iMode)) {
 		return MCS_EOPEN;
 	}
 
