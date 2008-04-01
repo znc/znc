@@ -281,6 +281,8 @@ bool CModule::DelNV(const CString & sName, bool bWriteToDisk) {
 
 	if (it != m_mssRegistry.end()) {
 		m_mssRegistry.erase(it);
+	} else {
+		return false;
 	}
 
 	if (bWriteToDisk) {
