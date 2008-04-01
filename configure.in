@@ -1,5 +1,5 @@
 dnl Keep the version number in sync with main.h!
-AC_INIT([znc], [0.053])
+AC_INIT([znc], [0.054])
 SAVED_CXXFLAGS=$CXXFLAGS
 AC_PROG_CXX
 AC_CANONICAL_HOST
