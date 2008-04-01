@@ -5,7 +5,7 @@ exec_prefix="@exec_prefix@"
 datadir="@datadir@"
 datarootdir="@datarootdir@"
 
-CXXFLAGS="@CXXFLAGS@"
+CXXFLAGS="@MODFLAGS@"
 INCLUDES="-I@prefix@/include/znc @INCLUDES@"
 LIBS="@LIBS@"
 MODDIR="@MODDIR@"

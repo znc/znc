@@ -8,7 +8,9 @@ libdir      := @libdir@
 sbindir     := @sbindir@
 localstatedir := @localstatedir@
 CXX      := @CXX@
-CXXFLAGS := @CXXFLAGS@
+# CXXFLAGS are for the main binary, so don't even think of using them here
+# CXXFLAGS := @CXXFLAGS@
+MODFLAGS := @MODFLAGS@
 LDFLAGS  := @LDFLAGS@
 INCLUDES := @INCLUDES@ -I..
 LIBS     := @LIBS@
@@ -81,10 +83,10 @@ clean:
 
 ifeq ($(DEPEND), yes)
 %.so: %.cpp
-	$(CXX) $(CXXFLAGS) $(INCLUDES) $(LDFLAGS) -shared -o $@ $< $($(basename $<)FLAGS) -MMD -MF .depend/$<.dep
+	$(CXX) $(MODFLAGS) $(INCLUDES) $(LDFLAGS) -shared -o $@ $< $($(basename $<)FLAGS) -MMD -MF .depend/$<.dep
 else
 %.so: %.cpp
-	$(CXX) $(CXXFLAGS) $(INCLUDES) $(LDFLAGS) -shared -o $@ $< $($(basename $<)FLAGS)
+	$(CXX) $(MODFLAGS) $(INCLUDES) $(LDFLAGS) -shared -o $@ $< $($(basename $<)FLAGS)
 endif
 
 modperl_install: create_install_dir

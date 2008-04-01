@@ -1,12 +1,11 @@
 dnl Keep the version number in sync with main.h!
 AC_INIT([znc], [0.055])
-SAVED_CXXFLAGS=$CXXFLAGS
+SAVED_CXXFLAGS="$CXXFLAGS"
 AC_PROG_CXX
 AC_CANONICAL_HOST
 
-CXXFLAGS="$SAVED_CXXFLAGS -D_GNU_SOURCE -D_FORTIFY_SOURCE=2"
+CXXFLAGS="$SAVED_CXXFLAGS"
 INCLUDES=""
-LIBS=""
 
 appendLib () {
 	if test "$LIBS" != ""; then
@@ -40,10 +39,13 @@ appendLD () {
 	fi
 }
 
+appendCXX "-D_GNU_SOURCE -D_FORTIFY_SOURCE=2"
+
 case "${host_os}" in
 	freebsd*)
 		appendInc -I/usr/local/include
 		appendLib -L/usr/local/lib -lcompat
+		MODFLAGS="$MODFLAGS -L/usr/local/lib"
 		appendCXX -D__GNU_LIBRARY__
 	;;
 	solaris*)
@@ -103,9 +105,7 @@ fi
 
 AC_CHECK_LIB( gnugetopt, getopt_long,)
 AC_CHECK_FUNCS( stat lstat chmod open, , AC_ERROR([Missing Required libc feature]))
-if test "$MODULES" = "yes"; then
-	AC_CHECK_FUNC( dlopen,NOCHECK_DL=1,)
-fi
+
 if test -z "$NOSSL"; then
 	if test -n "$OPENSSL"; then
 		appendLib -L${OPENSSL}/lib
@@ -136,49 +136,40 @@ AC_ARG_WITH( [module-data-prefix],
 
 
 if test "$MODULES" = "yes"; then
-	if test -z "$NOCHECK_DL"; then
-		AC_CHECK_LIB( dl, dlopen,, AC_ERROR([Could not find dlopen. Try --disable-modules]))
-		NOCHECK_DL=1
+	AC_CHECK_LIB( dl, dlopen,, AC_ERROR([Could not find dlopen. Try --disable-modules]))
+
+	appendCXX -D_MODULES
+	MODFLAGS="$MODFLAGS $CXXFLAGS"
+	if test -z "$ISSUN"; then
+		appendLD -Wl,--export-dynamic
 	fi
-	if test "$MODULES" = "yes"; then
-		appendCXX -D_MODULES
-		if test -n "$ISSUN"; then
-			MODFLAGS="$CXXFLAGS"
+	MODTARGET="modules"
+
+	# FIXME why don't we do this for sun?
+	if test -n "$ISSUN"; then
+		MODFLAGS="$MODFLAGS -mimpure-text"
+	fi
+
+	appendCXX "-D_MODDIR_=\\\"${MODDIR}\\\""
+	appendCXX "-D_DATADIR_=\\\"${DATADIR}\\\""
+
+	if test -z "$NOPERL"; then
+		echo -n "checking for perl... "
+		PERL=`which perl`
+		if test -n "$PERL"; then
+			echo "$PERL"
+			AC_CHECK_LIB(perl, perl_alloc,unset NOPERL,
+				AC_ERROR([Could not find libperl. Try --disable-perl]),
+				[`$PERL -MExtUtils::Embed -e ccopts -e ldopts`])
 		else
-			MODFLAGS="$CXXFLAGS"
-			appendLD -Wl,--export-dynamic
+			echo "no"
+			AC_ERROR([Could not find perl binary. Try --disable-perl])
 		fi
-		MODFLAGS="$MODFLAGS -I`pwd`"
-		MODTARGET="modules"
-		if test -z "$NOCHECK_DL"; then
-			appendLib -ldl
-		fi
-		if test -n "$ISSUN"; then
-			MODFLAGS="$MODFLAGS -mimpure-text"
-		fi
+	fi
 
-		appendCXX "-D_MODDIR_=\\\"${MODDIR}\\\""
-		appendCXX "-D_DATADIR_=\\\"${DATADIR}\\\""
-
-		if test -z "$NOPERL"; then
-			echo -n "checking for perl... "
-			PERL=`which perl`
-			if test -n "$PERL"; then
-				echo "$PERL"
-				AC_CHECK_LIB(perl, perl_alloc,unset NOPERL,
-					AC_ERROR([Could not find libperl. Try --disable-perl]),
-					[`$PERL -MExtUtils::Embed -e ccopts -e ldopts`])
-			else
-				echo "no"
-				unset PERL
-				AC_ERROR([Could not find perl binary. Try --disable-perl])
-			fi
-		fi
-
-		if test -n "$SASL"; then
-			AC_CHECK_LIB( sasl2, sasl_server_init,,
-				AC_ERROR([Could not find libsasl2.]))
-		fi
+	if test -n "$SASL"; then
+		AC_CHECK_LIB( sasl2, sasl_server_init,,
+			AC_ERROR([Could not find libsasl2. Try --disable-sasl.]))
 	fi
 fi
 
