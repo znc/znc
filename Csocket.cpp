@@ -28,13 +28,15 @@
 * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 *
 *
-* $Revision: 1.73 $
+* $Revision: 1.78 $
 */
 
 #include "Csocket.h"
 #ifdef __NetBSD__
 #include <sys/param.h>
 #endif /* __NetBSD__ */
+
+#include <list>
 
 #define CS_SRANDBUFFER 128
 
@@ -172,6 +174,7 @@ static int __GetHostByName( const CS_STRING & sHostName, struct in_addr *paddr, 
 int GetAddrInfo( const CS_STRING & sHostname, Csock *pSock, CSSockAddr & csSockAddr )
 {
 #ifndef HAVE_IPV6
+	// if ipv6 is not enabled, then simply use gethostbyname, nothing special outside of this is done
 	if( pSock )
 		pSock->SetIPv6( false );
 	csSockAddr.SetIPv6( false );
@@ -186,23 +189,25 @@ int GetAddrInfo( const CS_STRING & sHostname, Csock *pSock, CSSockAddr & csSockA
 
 	hints.ai_socktype = SOCK_STREAM;
 	hints.ai_protocol = IPPROTO_TCP;
-
 #ifdef AI_ADDRCONFIG
-	    hints.ai_flags = AI_ADDRCONFIG;
+	// this is suppose to eliminate host from appearing that this system can not support
+	hints.ai_flags = AI_ADDRCONFIG;
 #endif /* AI_ADDRCONFIG */
 
+	if( pSock && pSock->GetType() == Csock::LISTENER || pSock->GetConState() == Csock::CST_BINDVHOST )
+	{ // when doing a dns for bind only, set the AI_PASSIVE flag as suggested by the man page
+		hints.ai_flags |= AI_PASSIVE;
+	}
 
 	int iRet = getaddrinfo( sHostname.c_str(), NULL, &hints, &res );
 	if( iRet == EAI_AGAIN )
-		return( EAGAIN );
+		return( EAGAIN ); // need to return telling the user to try again
 	else if( ( iRet == 0 ) && ( res ) )
-	{
-		struct addrinfo *pUseAddr = NULL;
-#ifdef __RANDOMIZE_SOURCE_ADDRESSES
-		std::vector< struct addrinfo *> vHostCanidates;
-#endif /* __RANDOMIZE_SOURCE_ADDRESSES */
+	{ 
+		std::list<struct addrinfo *> lpTryAddrs;
+		bool bFound = false;
 		for( struct addrinfo *pRes = res; pRes; pRes = pRes->ai_next )
-		{
+		{ // pass through the list building out a lean list of candidates to try. AI_CONFIGADDR doesn't always seem to work
 #ifdef __sun
 			if( ( pRes->ai_socktype != SOCK_STREAM ) || ( pRes->ai_protocol != IPPROTO_TCP && pRes->ai_protocol != IPPROTO_IP ) )
 #else
@@ -212,67 +217,66 @@ int GetAddrInfo( const CS_STRING & sHostname, Csock *pSock, CSSockAddr & csSockA
 			
 			if( ( csSockAddr.GetAFRequire() != CSSockAddr::RAF_ANY ) && ( pRes->ai_family != csSockAddr.GetAFRequire() ) )
 				continue; // they requested a special type, so be certain we woop past anything unwanted
-
+			lpTryAddrs.push_back( pRes );
+		}
+		for( std::list<struct addrinfo *>::iterator it = lpTryAddrs.begin(); it != lpTryAddrs.end();  )
+		{ // cycle through these, leaving the last iterator for the outside caller to call, so if there is an error it can call the events
+			struct addrinfo * pRes = *it;
+			bool bTryConnect = false;
 			if( pRes->ai_family == AF_INET )
 			{
-#ifdef __RANDOMIZE_SOURCE_ADDRESSES
-				vHostCanidates.push_back( pRes );
-#else
-				pUseAddr = pRes;
-#endif /* __RANDOMIZE_SOURCE_ADDRESSES */
+				if( pSock )
+					pSock->SetIPv6( false );
+				csSockAddr.SetIPv6( false );
+				struct sockaddr_in *pTmp = (struct sockaddr_in *)pRes->ai_addr;
+				memcpy( csSockAddr.GetAddr(), &(pTmp->sin_addr), sizeof( *(csSockAddr.GetAddr()) ) );
+				if( pSock && pSock->GetConState() == Csock::CST_DESTDNS && pSock->GetType() == Csock::OUTBOUND )
+				{
+					bTryConnect = true;
+				}
+				else
+				{
+					bFound = true;
+					break;
+				}
 			}
 			else if( pRes->ai_family == AF_INET6 )
 			{
-#ifdef __RANDOMIZE_SOURCE_ADDRESSES
-				vHostCanidates.push_back( pRes );
-#else
-				pUseAddr = pRes;
-#endif /* __RANDOMIZE_SOURCE_ADDRESSES */
+				if( pSock )
+					pSock->SetIPv6( true );
+				csSockAddr.SetIPv6( true );
+				struct sockaddr_in6 *pTmp = (struct sockaddr_in6 *)pRes->ai_addr;
+				memcpy( csSockAddr.GetAddr6(), &(pTmp->sin6_addr), sizeof( *(csSockAddr.GetAddr6()) ) );
+				if( pSock && pSock->GetConState() == Csock::CST_DESTDNS && pSock->GetType() == Csock::OUTBOUND )
+				{
+					bTryConnect = true;
+				}
+				else
+				{
+					bFound = true;
+					break;
+				}
 			}
-		}
-#ifdef __RANDOMIZE_SOURCE_ADDRESSES
-		if( vHostCanidates.size() > 1 )
-		{
-			// this is basically where getaddrinfo() sorts the list of results. basically to help out what round robin dns does,
-			// pick a random canidate to make this work
-			struct random_data cRandData;
-			char chState[CS_SRANDBUFFER];
-			int32_t iNumber = 0;
-			if( initstate_r( (u_int)millitime(), chState, CS_SRANDBUFFER, &cRandData ) == 0 && random_r( &cRandData, &iNumber ) == 0 )
-			{
-				iNumber %= (int)vHostCanidates.size();
-				pUseAddr = vHostCanidates[iNumber];
-			}
-			else
-			{
-				CS_DEBUG( "initstate_r/random_r failed" );
-				pUseAddr = vHostCanidates[0];
-			}
-		}
-		else if( vHostCanidates.size() )
-		{
-			pUseAddr = vHostCanidates[0];
-		}
-#endif /* __RANDOMIZE_SOURCE_ADDRESSES */
 
-		if( pUseAddr && pUseAddr->ai_family == AF_INET )
-		{
-			if( pSock )
-				pSock->SetIPv6( false );
-			csSockAddr.SetIPv6( false );
-			struct sockaddr_in *pTmp = (struct sockaddr_in *)pUseAddr->ai_addr;
-			memcpy( csSockAddr.GetAddr(), &(pTmp->sin_addr), sizeof( *(csSockAddr.GetAddr()) ) );
+			it++; // increment the iterator her so we know if its the last element or not
+
+			if( bTryConnect && it != lpTryAddrs.end() )
+			{ // save the last attempt for the outer loop, the issue then becomes that the error is thrown on the last failure
+				if( pSock->CreateSocksFD() && pSock->Connect( pSock->GetBindHost(), true ) )
+				{
+					pSock->SetSkipConnect( true ); // this tells the socket that the connection state has been started
+					bFound = true;
+					break;
+				}
+			}
+			else if( bTryConnect )
+			{
+				bFound = true;
+			}
 		}
-		else if( pUseAddr )
-		{
-			if( pSock )
-				pSock->SetIPv6( true );
-			csSockAddr.SetIPv6( true );
-			struct sockaddr_in6 *pTmp = (struct sockaddr_in6 *)pUseAddr->ai_addr;
-			memcpy( csSockAddr.GetAddr6(), &(pTmp->sin6_addr), sizeof( *(csSockAddr.GetAddr6()) ) );
-		}
+
 		freeaddrinfo( res );
-		if( pUseAddr ) // the data pointed to here is invalid now, but the pointer itself is a good test
+		if( bFound ) // the data pointed to here is invalid now, but the pointer itself is a good test
 		{
 			return( 0 );
 		}
@@ -281,110 +285,6 @@ int GetAddrInfo( const CS_STRING & sHostname, Csock *pSock, CSSockAddr & csSockA
 	return( ETIMEDOUT );
 }
 
-#ifdef ___DO_THREADS
-CSMutex::CSMutex()
-{
-	pthread_mutexattr_init( &m_mattrib );
-	if ( pthread_mutexattr_settype( &m_mattrib, PTHREAD_MUTEX_FAST_NP ) != 0 )
-		throw CS_STRING( "ERROR: pthread_mutexattr_settype failed!" );
-
-	if ( pthread_mutex_init( &m_mutex, &m_mattrib ) != 0 )
-		throw CS_STRING( "ERROR: pthread_mutex_init failed!" );
-}
-
-CSMutex::~CSMutex()
-{
-	pthread_mutexattr_destroy( &m_mattrib );
-	pthread_mutex_destroy( &m_mutex );
-}
-
-bool CSThread::start()
-{
-	// mark the job as running
-	lock();
-	m_eStatus = RUNNING;
-	unlock();
-
-	pthread_attr_t attr;
-	if ( pthread_attr_init( &attr ) != 0 )
-	{
-		WARN( "pthread_attr_init failed" );
-		lock();
-		m_eStatus = FINISHED;
-		unlock();
-		return( false );
-	}
-
-	if ( pthread_attr_setdetachstate( &attr, PTHREAD_CREATE_DETACHED ) != 0 )
-	{
-		WARN( "pthread_attr_setdetachstate failed" );
-		lock();
-		m_eStatus = FINISHED;
-		unlock();
-		return( false );
-	}
-
-	int iRet = pthread_create( &m_ppth, &attr, start_thread, this );
-	if ( iRet != 0 )
-	{
-		WARN( "pthread_create failed " );
-		lock();
-		m_eStatus = FINISHED;
-		unlock();
-		return( false );
-	}
-
-	return( true );
-}
-
-void CSThread::wait()
-{
-	while( true )
-	{
-		lock();
-		EStatus e = Status();
-		unlock();
-		if ( e == FINISHED )
-			break;
-		usleep( 100 );
-	}
-}
-
-void *CSThread::start_thread( void *args )
-{
-	CSThread *curThread = (CSThread *)args;
-	curThread->run();
-	curThread->lock();
-	curThread->SetStatus( CSThread::FINISHED );
-	curThread->unlock();
-	pthread_exit( NULL );
-}
-
-void CDNSResolver::Lookup( const CS_STRING & sHostname )
-{
-	m_bSuccess = false;
-	m_sHostname = sHostname;
-	start();
-}
-
-void CDNSResolver::run()
-{
-	m_bSuccess = false;
-	if( GetAddrInfo( m_sHostname, NULL, m_cSockAddr ) == 0 )
-		m_bSuccess = true;
-}
-
-bool CDNSResolver::IsCompleted()
-{
-	lock();
-	EStatus e = Status();
-	unlock();
-	if ( e == FINISHED )
-		return( true );
-	return( false );
-}
-
-#endif /* ___DO_THREADS */
 #ifdef HAVE_LIBSSL
 bool InitSSL( ECompType eCompressionType )
 {
@@ -552,9 +452,6 @@ Csock::Csock( int itimeout )
 #ifdef HAVE_LIBSSL
 	m_pCerVerifyCB = NULL;
 #endif /* HAVE_LIBSSL */
-#ifdef ___DO_THREADS
-	m_pResolver = NULL;
-#endif /* ___DO_THREADS */
 	Init( "", 0, itimeout );
 }
 
@@ -563,9 +460,6 @@ Csock::Csock( const CS_STRING & sHostname, u_short iport, int itimeout )
 #ifdef HAVE_LIBSSL
 	m_pCerVerifyCB = NULL;
 #endif /* HAVE_LIBSSL */
-#ifdef ___DO_THREADS
-	m_pResolver = NULL;
-#endif /* ___DO_THREADS */
 	Init( sHostname, iport, itimeout );
 }
 
@@ -583,18 +477,6 @@ Csock *Csock::GetSockObj( const CS_STRING & sHostname, u_short iPort )
 
 Csock::~Csock()
 {
-#ifdef ___DO_THREADS
-	if( m_pResolver )
-	{
-		m_pResolver->lock();
-		CDNSResolver::EStatus eStatus = m_pResolver->Status();
-		m_pResolver->unlock();
-		if ( eStatus == CDNSResolver::RUNNING )
-			m_pResolver->cancel();
-		Zzap( m_pResolver );
-	}
-#endif /* __DO_THREADS_ */
-
 #ifdef HAVE_LIBSSL
 	FREE_SSL();
 	FREE_CTX();
@@ -619,9 +501,6 @@ Csock::~Csock()
 
 void Csock::Dereference()
 {
-#ifdef ___DO_THREADS
-	m_pResolver = NULL;
-#endif /* __DO_THREADS_ */
 	m_iWriteSock = m_iReadSock = -1;
 
 #ifdef HAVE_LIBSSL
@@ -677,6 +556,7 @@ void Csock::Copy( const Csock & cCopy )
 	m_address			= cCopy.m_address;
 	m_bindhost			= cCopy.m_bindhost;
 	m_bIsIPv6			= cCopy.m_bIsIPv6;
+	m_bSkipConnect		= cCopy.m_bSkipConnect;
 
 #ifdef HAVE_LIBSSL
 	m_sSSLBuffer	= cCopy.m_sSSLBuffer;
@@ -706,11 +586,6 @@ void Csock::Copy( const Csock & cCopy )
 	m_iCurBindCount		= cCopy.m_iCurBindCount;
 	m_iDNSTryCount		= cCopy.m_iDNSTryCount;
 
-#ifdef ___DO_THREADS
-	if( m_pResolver )
-		CS_Delete( m_pResolver );
-	m_pResolver			= cCopy.m_pResolver;
-#endif /* ___DO_THREADS */
 }
 
 Csock & Csock::operator<<( const CS_STRING & s )
@@ -777,6 +652,10 @@ Csock & Csock::operator<<( double i )
 
 bool Csock::Connect( const CS_STRING & sBindHost, bool bSkipSetup )
 {
+	if( m_bSkipConnect )
+	{ // this was already called, so skipping now. this is to allow easy pass through
+		return( true );
+	}
 	// bind to a hostname if requested
 	m_sBindHost = sBindHost;
 	if ( !bSkipSetup )
@@ -2050,7 +1929,7 @@ int Csock::DNSLookup( EDNSLType eDNSLType )
 		if ( m_sBindHost.empty() )
 		{
 			if ( m_eConState != CST_OK )
-				m_eConState = CST_VHOSTDNS; // skip binding, there is no vhost
+				m_eConState = CST_DESTDNS; // skip binding, there is no vhost
 			return( 0 );
 		}
 
@@ -2058,66 +1937,6 @@ int Csock::DNSLookup( EDNSLType eDNSLType )
 		m_bindhost.SinPort( 0 );
 	}
 
-#ifdef ___DO_THREADS
-	if( !m_pResolver )
-		m_pResolver = new CDNSResolver;
-
-	if ( m_iDNSTryCount == 0 )
-	{
-		m_pResolverLookup( ( eDNSLType == DNS_VHOST ) ? m_sBindHost : m_shostname );
-		m_iDNSTryCount++;
-	}
-
-	if ( m_pResolverIsCompleted() )
-	{
-		m_iDNSTryCount = 0;
-		if ( m_pResolverSuceeded() )
-		{
-			if ( eDNSLType == DNS_VHOST )
-			{
-				if( !m_pResolverGetSockAddr()->GetIPv6() )
-				{
-					SetIPv6( false );
-					memcpy( m_bindhost.GetAddr(), m_pResolverGetSockAddr()->GetAddr(), sizeof( *(m_bindhost.GetAddr()) ) );
-				}
-#ifdef HAVE_IPV6
-				else
-				{
-					SetIPv6( true );
-					memcpy( m_bindhost.GetAddr6(), m_pResolverGetSockAddr()->GetAddr6(), sizeof( *(m_bindhost.GetAddr6()) ) );
-				}
-#endif /* HAVE_IPV6 */
-			}
-			else
-			{
-				if( m_pResolverGetSockAddr()->GetIPv6() )
-				{
-					SetIPv6( false );
-					memcpy( m_address.GetAddr(), m_pResolverGetSockAddr()->GetAddr(), sizeof( *(m_address.GetAddr()) ) );
-				}
-#ifdef HAVE_IPV6
-				else
-				{
-					SetIPv6( true );
-					memcpy( m_address.GetAddr6(), m_pResolverGetSockAddr()->GetAddr6(), sizeof( *(m_address.GetAddr6()) ) );
-				}
-#endif /* HAVE_IPV6 */
-			}
-
-			if ( m_eConState != CST_OK )
-				m_eConState = ( ( eDNSLType == DNS_VHOST ) ? CST_BINDVHOST : CST_CONNECT ); // next step after vhost is to bind
-
-			if( !CreateSocksFD() )
-				return( ETIMEDOUT );
-
-			return( 0 );
-		}
-
-		return( ETIMEDOUT );
-	}
-	return( EAGAIN );
-
-#else
 	int iRet = ETIMEDOUT;
 	if ( eDNSLType == DNS_VHOST )
 	{
@@ -2160,7 +1979,6 @@ int Csock::DNSLookup( EDNSLType eDNSLType )
 	}
 	m_iDNSTryCount = 0;
 	return( ETIMEDOUT );
-#endif /* ___DO_THREADS */
 }
 
 bool Csock::SetupVHost()
@@ -2168,7 +1986,7 @@ bool Csock::SetupVHost()
 	if ( m_sBindHost.empty() )
 	{
 		if ( m_eConState != CST_OK )
-			m_eConState = CST_VHOSTDNS;
+			m_eConState = CST_DESTDNS;
 		return( true );
 	}
 	int iRet = -1;
@@ -2182,7 +2000,7 @@ bool Csock::SetupVHost()
 	if ( iRet == 0 )
 	{
 		if ( m_eConState != CST_OK )
-			m_eConState = CST_VHOSTDNS;
+			m_eConState = CST_DESTDNS;
 		return( true );
 	}
 	m_iCurBindCount++;
@@ -2280,6 +2098,7 @@ void Csock::Init( const CS_STRING & sHostname, u_short iport, int itimeout )
 	m_iDNSTryCount = 0;
 	m_iCurBindCount = 0;
 	m_bIsIPv6 = false;
+	m_bSkipConnect = false;
 	m_iLastCheckTimeoutTime = 0;
 }
 
