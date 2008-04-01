@@ -78,7 +78,6 @@ public:
 	void InitClient() {
 		m_pUser = NULL;
 		m_pIRCSock = NULL;
-		m_bAuthed = false;
 		m_bGotPass = false;
 		m_bGotNick = false;
 		m_bGotUser = false;
@@ -102,7 +101,7 @@ public:
 	void IRCConnected(CIRCSock* pIRCSock);
 	void IRCDisconnected();
 	void BouncedOff();
-	bool IsAttached() const { return m_bAuthed; }
+	bool IsAttached() const { return m_pUser != NULL; }
 
 	void PutIRC(const CString& sLine);
 	void PutClient(const CString& sLine);
@@ -125,7 +124,6 @@ public:
 	CUser* GetUser() const { return m_pUser; }
 private:
 protected:
-	bool		m_bAuthed;
 	bool		m_bGotPass;
 	bool		m_bGotNick;
 	bool		m_bGotUser;

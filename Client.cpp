@@ -35,7 +35,7 @@ void CClient::ReadLine(const CString& sData) {
 	DEBUG_ONLY(cout << "(" << ((m_pUser) ? m_pUser->GetUserName() : CString("")) << ") CLI -> ZNC [" << sLine << "]" << endl);
 
 #ifdef _MODULES
-	if (m_bAuthed) {
+	if (IsAttached()) {
 		MODULECALL(OnUserRaw(sLine), m_pUser, this, return);
 	}
 #endif
@@ -43,7 +43,7 @@ void CClient::ReadLine(const CString& sData) {
 	CString sCommand = sLine.Token(0);
 
 	if (sCommand.CaseCmp("PASS") == 0) {
-		if (!m_bAuthed) {
+		if (!IsAttached()) {
 			m_bGotPass = true;
 			m_sPass = sLine.Token(1);
 
@@ -64,7 +64,7 @@ void CClient::ReadLine(const CString& sData) {
 			sNick.LeftChomp();
 		}
 
-		if (!m_bAuthed) {
+		if (!IsAttached()) {
 			m_sNick = sNick;
 			m_bGotNick = true;
 
@@ -96,7 +96,7 @@ void CClient::ReadLine(const CString& sData) {
 			}
 		}
 	} else if (sCommand.CaseCmp("USER") == 0) {
-		if (!m_bAuthed) {
+		if (!IsAttached()) {
 			if (m_sUser.empty()) {
 				m_sUser = sLine.Token(1);
 			}
@@ -1841,7 +1841,6 @@ void CClient::AcceptLogin(CUser& User) {
 		return;
 	}
 
-	m_bAuthed = true;
 	SetSockName("USR::" + m_pUser->GetUserName());
 
 	m_pIRCSock = (CIRCSock*) CZNC::Get().FindSockByName("IRC::" + m_pUser->GetUserName());
@@ -1934,7 +1933,7 @@ void CClient::PutModule(const CString& sModule, const CString& sLine) {
 CString CClient::GetNick(bool bAllowIRCNick) const {
 	CString sRet;
 
-	if ((bAllowIRCNick) && (m_bAuthed) && (m_pIRCSock)) {
+	if ((bAllowIRCNick) && (IsAttached()) && (m_pIRCSock)) {
 		sRet = m_pIRCSock->GetNick();
 	}
 
