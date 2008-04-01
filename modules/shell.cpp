@@ -43,6 +43,18 @@ public:
 		}
 	}
 
+	virtual bool OnLoad(const CString& sArgs, CString& sMessage)
+	{
+#ifndef MOD_SHELL_ALLOW_EVERYONE
+		if (!m_pUser->IsAdmin()) {
+			sMessage = "You must be admin to use the shell module";
+			return false;
+		}
+#endif
+
+		return true;
+	}
+
 	virtual void OnModCommand(const CString& sCommand) {
 		if ((strcasecmp(sCommand.c_str(), "cd") == 0) || (strncasecmp(sCommand.c_str(), "cd ", 3) == 0)) {
 			CString sPath = CUtils::ChangeDir(m_sPath, ((sCommand.length() == 2) ? CString(CZNC::Get().GetHomePath()) : CString(sCommand.substr(3))), CZNC::Get().GetHomePath());
