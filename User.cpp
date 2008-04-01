@@ -233,7 +233,7 @@ void CUser::UserConnected(CClient* pClient) {
 
 	// Tell them why they won't connect
 	if (!GetIRCConnectEnabled())
-		PutStatus("You are currently disconnected from IRC. "
+		pClient->PutStatus("You are currently disconnected from IRC. "
 				"Use 'connect' to reconnect.");
 }
 
