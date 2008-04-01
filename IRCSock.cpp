@@ -655,6 +655,9 @@ void CIRCSock::ReadLine(const CString& sData) {
 				if (pChan) {
 					CString sTopic = sLine.Token(3, true);
 					sTopic.LeftChomp();
+
+					MODULECALL(OnTopic(Nick, *pChan, sTopic), m_pUser, NULL, return)
+
 					pChan->SetTopicOwner(Nick.GetNick());
 					pChan->SetTopicDate((unsigned long) time(NULL));
 					pChan->SetTopic(sTopic);

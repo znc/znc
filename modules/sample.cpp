@@ -165,6 +165,12 @@ public:
 		return CONTINUE;
 	}
 
+	virtual EModRet OnTopic(CNick& Nick, CChan& Channel, CString& sTopic) {
+		PutModule("* " + Nick.GetNick() + " changes topic on " + Channel.GetName() + " to '" + sTopic + "'");
+
+		return CONTINUE;
+	}
+
 	virtual EModRet OnUserMsg(CString& sTarget, CString& sMessage) {
 		PutModule("[" + sTarget + "] usermsg [" + sMessage + "]");
 		sMessage = "Sample: \0034" + sMessage + "\003";
