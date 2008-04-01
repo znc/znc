@@ -276,6 +276,7 @@ bool CUser::Clone(const CUser& User, CString& sErrorRet) {
 	SetQuitMsg(User.GetQuitMsg());
 	SetDefaultChanModes(User.GetDefaultChanModes());
 	SetBufferCount(User.GetBufferCount());
+	SetJoinTries(User.JoinTries());
 
 	// Allowed Hosts
 	m_ssAllowedHosts.clear();
@@ -411,6 +412,7 @@ bool CUser::Clone(const CUser& User, CString& sErrorRet) {
 	SetTimestampAppend(User.GetTimestampAppend());
 	SetTimestampPrepend(User.GetTimestampPrepend());
 	SetTimestampFormat(User.GetTimestampFormat());
+	SetTimezoneOffset(User.GetTimezoneOffset());
 	// !Flags
 
 	return true;
