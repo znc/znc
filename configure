@@ -3563,8 +3563,93 @@ fi
 
 
 if test "$MODULES" = "yes"; then
+	FOUND_DL=no
+	{ echo "$as_me:$LINENO: checking for dlopen" >&5
+echo $ECHO_N "checking for dlopen... $ECHO_C" >&6; }
+if test "${ac_cv_func_dlopen+set}" = set; then
+  echo $ECHO_N "(cached) $ECHO_C" >&6
+else
+  cat >conftest.$ac_ext <<_ACEOF
+/* confdefs.h.  */
+_ACEOF
+cat confdefs.h >>conftest.$ac_ext
+cat >>conftest.$ac_ext <<_ACEOF
+/* end confdefs.h.  */
+/* Define dlopen to an innocuous variant, in case <limits.h> declares dlopen.
+   For example, HP-UX 11i <limits.h> declares gettimeofday.  */
+#define dlopen innocuous_dlopen
 
-{ echo "$as_me:$LINENO: checking for dlopen in -ldl" >&5
+/* System header to define __stub macros and hopefully few prototypes,
+    which can conflict with char dlopen (); below.
+    Prefer <limits.h> to <assert.h> if __STDC__ is defined, since
+    <limits.h> exists even on freestanding compilers.  */
+
+#ifdef __STDC__
+# include <limits.h>
+#else
+# include <assert.h>
+#endif
+
+#undef dlopen
+
+/* Override any GCC internal prototype to avoid an error.
+   Use char because int might match the return type of a GCC
+   builtin and then its argument prototype would still apply.  */
+#ifdef __cplusplus
+extern "C"
+#endif
+char dlopen ();
+/* The GNU C library defines this for functions which it implements
+    to always fail with ENOSYS.  Some functions are actually named
+    something starting with __ and the normal name is an alias.  */
+#if defined __stub_dlopen || defined __stub___dlopen
+choke me
+#endif
+
+int
+main ()
+{
+return dlopen ();
+  ;
+  return 0;
+}
+_ACEOF
+rm -f conftest.$ac_objext conftest$ac_exeext
+if { (ac_try="$ac_link"
+case "(($ac_try" in
+  *\"* | *\`* | *\\*) ac_try_echo=\$ac_try;;
+  *) ac_try_echo=$ac_try;;
+esac
+eval "echo \"\$as_me:$LINENO: $ac_try_echo\"") >&5
+  (eval "$ac_link") 2>conftest.er1
+  ac_status=$?
+  grep -v '^ *+' conftest.er1 >conftest.err
+  rm -f conftest.er1
+  cat conftest.err >&5
+  echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); } && {
+	 test -z "$ac_c_werror_flag" ||
+	 test ! -s conftest.err
+       } && test -s conftest$ac_exeext &&
+       $as_test_x conftest$ac_exeext; then
+  ac_cv_func_dlopen=yes
+else
+  echo "$as_me: failed program was:" >&5
+sed 's/^/| /' conftest.$ac_ext >&5
+
+	ac_cv_func_dlopen=no
+fi
+
+rm -f core conftest.err conftest.$ac_objext conftest_ipa8_conftest.oo \
+      conftest$ac_exeext conftest.$ac_ext
+fi
+{ echo "$as_me:$LINENO: result: $ac_cv_func_dlopen" >&5
+echo "${ECHO_T}$ac_cv_func_dlopen" >&6; }
+if test $ac_cv_func_dlopen = yes; then
+  FOUND_DL=yes
+fi
+
+	{ echo "$as_me:$LINENO: checking for dlopen in -ldl" >&5
 echo $ECHO_N "checking for dlopen in -ldl... $ECHO_C" >&6; }
 if test "${ac_cv_lib_dl_dlopen+set}" = set; then
   echo $ECHO_N "(cached) $ECHO_C" >&6
@@ -3626,18 +3711,15 @@ fi
 { echo "$as_me:$LINENO: result: $ac_cv_lib_dl_dlopen" >&5
 echo "${ECHO_T}$ac_cv_lib_dl_dlopen" >&6; }
 if test $ac_cv_lib_dl_dlopen = yes; then
-  cat >>confdefs.h <<_ACEOF
-#define HAVE_LIBDL 1
-_ACEOF
-
-  LIBS="-ldl $LIBS"
-
-else
-  { { echo "$as_me:$LINENO: error: Could not find dlopen. Try --disable-modules" >&5
-echo "$as_me: error: Could not find dlopen. Try --disable-modules" >&2;}
-   { (exit 1); exit 1; }; }
+  FOUND_DL=yes
 fi
 
+
+	if test $FOUND_DL = "no" ; then
+		{ { echo "$as_me:$LINENO: error: Could not find dlopen. Try --disable-modules" >&5
+echo "$as_me: error: Could not find dlopen. Try --disable-modules" >&2;}
+   { (exit 1); exit 1; }; }
+	fi
 
 	appendCXX -D_MODULES
 	MODFLAGS="$MODFLAGS $CXXFLAGS"

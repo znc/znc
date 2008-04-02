@@ -136,7 +136,13 @@ AC_ARG_WITH( [module-data-prefix],
 
 
 if test "$MODULES" = "yes"; then
-	AC_CHECK_LIB( dl, dlopen,, AC_ERROR([Could not find dlopen. Try --disable-modules]))
+	FOUND_DL=no
+	AC_CHECK_FUNC(dlopen, FOUND_DL=yes,)
+	AC_CHECK_LIB( dl, dlopen, FOUND_DL=yes,)
+
+	if test $FOUND_DL = "no" ; then
+		AC_ERROR([Could not find dlopen. Try --disable-modules])
+	fi
 
 	appendCXX -D_MODULES
 	MODFLAGS="$MODFLAGS $CXXFLAGS"
