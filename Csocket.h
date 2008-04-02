@@ -28,7 +28,7 @@
 * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 *
 *
-* $Revision: 1.189 $
+* $Revision: 1.190 $
 */
 
 // note to compile with win32 need to link to winsock2, using gcc its -lws2_32
@@ -464,7 +464,8 @@ public:
 		CST_BINDVHOST	= 1,
 		CST_DESTDNS		= 2,
 		CST_CONNECT		= 3,
-		CST_OK			= 4
+		CST_CONNECTSSL	= 4,
+		CST_OK			= 5
 	};
 
 	enum ECloseType
@@ -1369,6 +1370,7 @@ public:
 
 			if ( pcSock->GetConState() == T::CST_DESTDNS )
 			{
+				if ( !pcSock->SetupVHost() )
 				if ( pcSock->DNSLookup( T::DNS_DEST ) == ETIMEDOUT )
 				{
 					pcSock->SockError( EADDRNOTAVAIL );
@@ -1376,7 +1378,6 @@ public:
 					continue;
 				}
 			}
-
 			if ( pcSock->GetConState() == T::CST_CONNECT )
 			{
 				if ( !pcSock->Connect( pcSock->GetBindHost(), true ) )
@@ -1389,7 +1390,10 @@ public:
 					DelSock( a-- );
 					continue;
 				}
+			}
 #ifdef HAVE_LIBSSL
+			if( pcSock->GetConState() == T::CST_CONNECTSSL )
+			{
 				if ( pcSock->GetSSL() )
 				{
 					if ( !pcSock->ConnectSSL() )
@@ -1403,8 +1407,8 @@ public:
 						continue;
 					}
 				}
-#endif /* HAVE_LIBSSL */
 			}
+#endif /* HAVE_LIBSSL */
 		}
 
 		std::map<T *, EMessages> mpeSocks;

@@ -28,7 +28,7 @@
 * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 *
 *
-* $Revision: 1.78 $
+* $Revision: 1.79 $
 */
 
 #include "Csocket.h"
@@ -654,6 +654,10 @@ bool Csock::Connect( const CS_STRING & sBindHost, bool bSkipSetup )
 {
 	if( m_bSkipConnect )
 	{ // this was already called, so skipping now. this is to allow easy pass through
+		if ( m_eConState != CST_OK )
+		{
+			m_eConState = ( GetSSL() ? CST_CONNECTSSL : CST_OK );
+		}
 		return( true );
 	}
 	// bind to a hostname if requested
@@ -725,7 +729,9 @@ bool Csock::Connect( const CS_STRING & sBindHost, bool bSkipSetup )
 	}
 
 	if ( m_eConState != CST_OK )
-		m_eConState = CST_OK;
+	{
+		m_eConState = ( GetSSL() ? CST_CONNECTSSL : CST_OK );
+	}
 
 	return( true );
 }
@@ -1114,7 +1120,6 @@ bool Csock::ConnectSSL( const CS_STRING & sBindhost )
 	if ( m_iReadSock == -1 )
 		if ( !Connect( sBindhost ) )
 			return( false );
-
 	if ( !m_ssl )
 		if ( !SSLClientSetup() )
 			return( false );
@@ -1142,6 +1147,8 @@ bool Csock::ConnectSSL( const CS_STRING & sBindhost )
 		set_blocking( m_iReadSock );
 	}
 
+	if ( m_eConState != CST_OK )
+		m_eConState = CST_OK;
 	return( bPass );
 #else
 	return( false );
