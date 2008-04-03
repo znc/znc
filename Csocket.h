@@ -1370,7 +1370,6 @@ public:
 
 			if ( pcSock->GetConState() == T::CST_DESTDNS )
 			{
-				if ( !pcSock->SetupVHost() )
 				if ( pcSock->DNSLookup( T::DNS_DEST ) == ETIMEDOUT )
 				{
 					pcSock->SockError( EADDRNOTAVAIL );
