@@ -146,9 +146,12 @@ void CClient::ReadLine(const CString& sData) {
 	} else if (sCommand.CaseCmp("PING") == 0) {
 		CString sTarget = sLine.Token(1);
 
-		if (sTarget.CaseCmp("irc.znc.com") == 0) {
-		    PutClient("PONG " + sLine.substr(5));
-		    return;
+		// If the client meant to ping us or we can be sure the server
+		// won't answer the ping (=no server connected) -> PONG back.
+		// else: It's the server's job to send a PONG.
+		if (sTarget.CaseCmp("irc.znc.com") == 0 || !m_pIRCSock) {
+			PutClient("PONG " + sLine.substr(5));
+			return;
 		}
 	} else if (sCommand.CaseCmp("PONG") == 0) {
 		return;	// Block pong replies, we already responded to the pings
