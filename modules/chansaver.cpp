@@ -13,7 +13,22 @@
 class CChanSaverMod : public CModule {
 public:
 	MODCONSTRUCTOR(CChanSaverMod) {
+		const vector<CChan*>& vChans = m_pUser->GetChans();
+		vector<CChan*>::const_iterator it = vChans.begin();
+		vector<CChan*>::const_iterator end = vChans.end();
+
 		m_bWriteConf = false;
+
+		for (; it != end; it++) {
+			CChan *pChan = *it;
+
+			// If that channel isn't yet in the config,
+			// we'll have to add it...
+			if (!pChan->InConfig()) {
+				pChan->SetInConfig(true);
+				m_bWriteConf = true;
+			}
+		}
 	}
 
 	virtual ~CChanSaverMod() {
