@@ -39,7 +39,7 @@ CUser::CUser(const CString& sUserName) {
 	m_bAdmin= false;
 	m_bDenySetVHost= false;
 	m_sStatusPrefix = "*";
-	m_sChanPrefixes = "#&";
+	m_sChanPrefixes = "";
 	m_uBufferCount = 50;
 	m_uMaxJoinTries = 0;
 	m_bKeepBuffer = false;
@@ -982,6 +982,15 @@ CString CUser::MakeCleanUserName(const CString& sUserName) {
 void CUser::SetUserName(const CString& s) {
 	m_sCleanUserName = CUser::MakeCleanUserName(s);
 	m_sUserName = s;
+}
+
+bool CUser::IsChan(const CString& sChan) const {
+	if (sChan.empty())
+		return false; // There is no way this is a chan
+	if (GetChanPrefixes().empty())
+		return true; // We can't know, so we allow everything
+	// Thanks to the above if(empty), we can do sChan[0]
+	return GetChanPrefixes().find(sChan[0]) != CString::npos;
 }
 
 void CUser::SetNick(const CString& s) { m_sNick = s; }

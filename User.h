@@ -136,7 +136,7 @@ public:
 	void SetBufferCount(unsigned int u);
 	void SetKeepBuffer(bool b);
 	void SetAutoCycle(bool b);
-	void SetChanPrefixes(const CString& s) { m_sChanPrefixes = (s.empty()) ? "#&" : s; }
+	void SetChanPrefixes(const CString& s) { m_sChanPrefixes = s; }
 	void SetBeingDeleted(bool b) { m_bBeingDeleted = b; }
 	void SetTimestampFormat(const CString& s) { m_sTimestampFormat = s; }
 	void SetTimestampAppend(bool b) { m_bAppendTimestamp = b; }
@@ -166,7 +166,7 @@ public:
 	bool GetIRCConnectEnabled() const { return m_bIRCConnectEnabled; }
 
 	const CString& GetChanPrefixes() const { return m_sChanPrefixes; }
-	bool IsChan(const CString& sChan) const { return (sChan.size() && GetChanPrefixes().find(sChan[0]) != CString::npos); }
+	bool IsChan(const CString& sChan) const;
 
 	const CString& GetUserPath() const { if (!CFile::Exists(m_sUserPath)) { CUtils::MakeDir(m_sUserPath); } return m_sUserPath; }
 	const CString& GetDLPath() const { if (!CFile::Exists(m_sDLPath)) { CUtils::MakeDir(m_sDLPath); } return m_sDLPath; }
