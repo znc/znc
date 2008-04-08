@@ -909,11 +909,12 @@ bool CZNC::DoRehash(CString& sError)
 		return false;
 	}
 
-	CFile File(m_sConfigFile);
+	CFile File(m_LockFile.GetFD(), m_sConfigFile);
 
-	if (!File.Open(O_RDONLY)) {
-		sError = "Could not open config";
-		CUtils::PrintStatus(false);
+	// This fd is re-used for rehashing, so we must seek back to the beginning!
+	if (!File.Seek(0)) {
+		sError = "Could not seek to the beginning of the config.";
+		CUtils::PrintStatus(false, sError);
 		return false;
 	}
 
