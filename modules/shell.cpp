@@ -137,7 +137,7 @@ public:
 			a = sPath.find(' ');
 		}
 
-		PutModule(sLine, m_pUser->GetCurNick(), sPath);
+		PutModule(sLine, "shell", sPath);
 	}
 
 	void RunCommand(const CString& sCommand) {
