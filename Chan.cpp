@@ -55,20 +55,20 @@ bool CChan::WriteConfig(CFile& File) {
 		return false;
 	}
 
-	File.Write("\t<Chan " + GetName() + ">\r\n");
+	File.Write("\t<Chan " + GetName() + ">\n");
 
 	if (m_pUser->GetBufferCount() != GetBufferCount())
-		File.Write("\t\tBuffer     = " + CString(GetBufferCount()) + "\r\n");
+		File.Write("\t\tBuffer     = " + CString(GetBufferCount()) + "\n");
 	if (m_pUser->KeepBuffer() != KeepBuffer())
-		File.Write("\t\tKeepBuffer = " + CString((KeepBuffer()) ? "true" : "false") + "\r\n");
+		File.Write("\t\tKeepBuffer = " + CString((KeepBuffer()) ? "true" : "false") + "\n");
 	if (IsDetached())
-		File.Write("\t\tDetached   = true\r\n");
+		File.Write("\t\tDetached   = true\n");
 	if (m_pUser->AutoCycle() != AutoCycle())
-		File.Write("\t\tAutoCycle  = " + CString((AutoCycle()) ? "true" : "false") + "\r\n");
-	if (!GetKey().empty()) { File.Write("\t\tKey        = " + GetKey() + "\r\n"); }
-	if (!GetDefaultModes().empty()) { File.Write("\t\tModes      = " + GetDefaultModes() + "\r\n"); }
+		File.Write("\t\tAutoCycle  = " + CString((AutoCycle()) ? "true" : "false") + "\n");
+	if (!GetKey().empty()) { File.Write("\t\tKey        = " + GetKey() + "\n"); }
+	if (!GetDefaultModes().empty()) { File.Write("\t\tModes      = " + GetDefaultModes() + "\n"); }
 
-	File.Write("\t</Chan>\r\n");
+	File.Write("\t</Chan>\n");
 	return true;
 }
 

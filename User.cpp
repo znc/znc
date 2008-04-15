@@ -532,11 +532,11 @@ bool CUser::PrintLine(CFile& File, const CString& sName, const CString& sValue) 
 		return false;
 	}
 
-	return File.Write("\t" + sName + " = " + sValue + "\r\n");
+	return File.Write("\t" + sName + " = " + sValue + "\n");
 }
 
 bool CUser::WriteConfig(CFile& File) {
-	File.Write("<User " + GetUserName() + ">\r\n");
+	File.Write("<User " + GetUserName() + ">\n");
 
 	PrintLine(File, "Pass", GetPass() + ((IsPassHashed()) ? " -" : ""));
 	PrintLine(File, "Nick", GetNick());
@@ -563,7 +563,7 @@ bool CUser::WriteConfig(CFile& File) {
 	PrintLine(File, "PrependTimestamp", CString((GetTimestampPrepend()) ? "true" : "false"));
 	PrintLine(File, "TimezoneOffset", CString(m_fTimezoneOffset));
 	PrintLine(File, "JoinTries", CString(m_uMaxJoinTries));
-	File.Write("\r\n");
+	File.Write("\n");
 
 	// Allow Hosts
 	if (!m_ssAllowedHosts.empty()) {
@@ -571,7 +571,7 @@ bool CUser::WriteConfig(CFile& File) {
 			PrintLine(File, "Allow", *it);
 		}
 
-		File.Write("\r\n");
+		File.Write("\n");
 	}
 
 	// CTCP Replies
@@ -580,7 +580,7 @@ bool CUser::WriteConfig(CFile& File) {
 			PrintLine(File, "CTCPReply", itb->first.AsUpper() + " " + itb->second);
 		}
 
-		File.Write("\r\n");
+		File.Write("\n");
 	}
 
 #ifdef _MODULES
@@ -598,7 +598,7 @@ bool CUser::WriteConfig(CFile& File) {
 			PrintLine(File, "LoadModule", Mods[a]->GetModName() + sArgs);
 		}
 
-		File.Write("\r\n");
+		File.Write("\n");
 	}
 #endif
 
@@ -611,14 +611,14 @@ bool CUser::WriteConfig(CFile& File) {
 	for (unsigned int c = 0; c < m_vChans.size(); c++) {
 		CChan* pChan = m_vChans[c];
 		if (pChan->InConfig()) {
-			File.Write("\r\n");
+			File.Write("\n");
 			if (!pChan->WriteConfig(File)) {
 				return false;
 			}
 		}
 	}
 
-	File.Write("</User>\r\n");
+	File.Write("</User>\n");
 
 	return true;
 }

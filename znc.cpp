@@ -483,25 +483,25 @@ bool CZNC::WriteConfig() {
 
 		CString s6 = (pListener->IsIPV6()) ? "6" : " ";
 
-		File.Write("Listen" + s6 + "      = " + sHostPortion + CString((pListener->IsSSL()) ? "+" : "") + CString(pListener->GetPort()) + "\r\n");
+		File.Write("Listen" + s6 + "      = " + sHostPortion + CString((pListener->IsSSL()) ? "+" : "") + CString(pListener->GetPort()) + "\n");
 	}
 
-	File.Write("ConnectDelay = " + CString(m_uiConnectDelay) + "\r\n");
+	File.Write("ConnectDelay = " + CString(m_uiConnectDelay) + "\n");
 
 	if (!m_sISpoofFile.empty()) {
-		File.Write("ISpoofFile   = " + m_sISpoofFile + "\r\n");
-		if (!m_sISpoofFormat.empty()) { File.Write("ISpoofFormat = " + m_sISpoofFormat + "\r\n"); }
+		File.Write("ISpoofFile   = " + m_sISpoofFile + "\n");
+		if (!m_sISpoofFormat.empty()) { File.Write("ISpoofFormat = " + m_sISpoofFormat + "\n"); }
 	}
 
-	if (!m_sPidFile.empty()) { File.Write("PidFile      = " + m_sPidFile + "\r\n"); }
-	if (!m_sStatusPrefix.empty()) { File.Write("StatusPrefix = " + m_sStatusPrefix + "\r\n"); }
+	if (!m_sPidFile.empty()) { File.Write("PidFile      = " + m_sPidFile + "\n"); }
+	if (!m_sStatusPrefix.empty()) { File.Write("StatusPrefix = " + m_sStatusPrefix + "\n"); }
 
 	for (unsigned int m = 0; m < m_vsMotd.size(); m++) {
-		File.Write("Motd         = " + m_vsMotd[m] + "\r\n");
+		File.Write("Motd         = " + m_vsMotd[m] + "\n");
 	}
 
 	for (unsigned int v = 0; v < m_vsVHosts.size(); v++) {
-		File.Write("VHost        = " + m_vsVHosts[v] + "\r\n");
+		File.Write("VHost        = " + m_vsVHosts[v] + "\n");
 	}
 
 #ifdef _MODULES
@@ -514,7 +514,7 @@ bool CZNC::WriteConfig() {
 			sArgs = " " + sArgs;
 		}
 
-		File.Write("LoadModule   = " + Mods[a]->GetModName() + sArgs + "\r\n");
+		File.Write("LoadModule   = " + Mods[a]->GetModName() + sArgs + "\n");
 	}
 #endif
 
@@ -526,7 +526,7 @@ bool CZNC::WriteConfig() {
 			continue;
 		}
 
-		File.Write("\r\n");
+		File.Write("\n");
 
 		if (!it->second->WriteConfig(File)) {
 			DEBUG_ONLY(cerr << "** Error writing config for user [" << it->first << "]" << endl);
