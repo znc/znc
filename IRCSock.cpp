@@ -923,9 +923,27 @@ void CIRCSock::Disconnected() {
 }
 
 void CIRCSock::SockError(int iErrno) {
-	DEBUG_ONLY(cout << GetSockName() << " == SockError(" << iErrno << ")" << endl);
+	CString sError;
+
+	if (iErrno == EDOM) {
+		sError = "Your VHost could not be resolved";
+	} else if (iErrno = EADDRNOTAVAIL) {
+		// Csocket uses this if it can't resolve the dest host name
+		sError = strerror(iErrno);
+		sError += " (Is your IRC server's host name valid?)";
+	} else {
+		sError = strerror(iErrno);
+	}
+
+	DEBUG_ONLY(cout << GetSockName() << " == SockError(" << iErrno << " "
+			<< sError << ")" << endl);
 	if (!m_pUser->IsBeingDeleted()) {
-		m_pUser->PutStatus("Disconnected from IRC (" + CString(strerror(iErrno)) + ").  Reconnecting...");
+		if (GetConState() != CST_OK)
+			m_pUser->PutStatus("Cannot connect to IRC (" +
+				sError + "). Retrying...");
+		else
+			m_pUser->PutStatus("Disconnected from IRC (" +
+				sError + ").  Reconnecting...");
 	}
 	m_pUser->ClearRawBuffer();
 	m_pUser->ClearMotdBuffer();
