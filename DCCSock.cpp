@@ -69,17 +69,20 @@ void CDCCSock::Connected() {
 }
 
 void CDCCSock::Disconnected() {
+	const CString sStart = ((m_bSend) ? "DCC -> [" : "DCC <- [") + m_sRemoteNick + "][" + m_sFileName + "] - ";
+
 	DEBUG_ONLY(cout << GetSockName() << " == Disconnected()" << endl);
+
 	if (m_uBytesSoFar > m_uFileSize) {
-		m_pUser->PutModule(m_sModuleName, ((m_bSend) ? "DCC -> [" : "DCC <- [") + m_sRemoteNick + "][" + m_sFileName + "] - TooMuchData!");
+		m_pUser->PutModule(m_sModuleName, sStart + "TooMuchData!");
 	} else if (m_uBytesSoFar == m_uFileSize) {
 		if (m_bSend) {
-			m_pUser->PutModule(m_sModuleName, ((m_bSend) ? "DCC -> [" : "DCC <- [") + m_sRemoteNick + "][" + m_sFileName + "] - Completed! - Sent [" + m_sLocalFile + "] at [" + CString::ToKBytes(GetAvgWrite() / 1000.0) + "]");
+			m_pUser->PutModule(m_sModuleName, sStart + "Completed! - Sent [" + m_sLocalFile + "] at [" + CString::ToKBytes(GetAvgWrite() / 1000.0) + "]");
 		} else {
-			m_pUser->PutModule(m_sModuleName, ((m_bSend) ? "DCC -> [" : "DCC <- [") + m_sRemoteNick + "][" + m_sFileName + "] - Completed! - Saved to [" + m_sLocalFile + "] at [" + CString::ToKBytes(GetAvgRead() / 1000.0) + "]");
+			m_pUser->PutModule(m_sModuleName, sStart + "Completed! - Saved to [" + m_sLocalFile + "] at [" + CString::ToKBytes(GetAvgRead() / 1000.0) + "]");
 		}
 	} else {
-		m_pUser->PutModule(m_sModuleName, ((m_bSend) ? "DCC -> [" : "DCC <- [") + m_sRemoteNick + "][" + m_sFileName + "] - Incomplete!");
+		m_pUser->PutModule(m_sModuleName, sStart + "Incomplete!");
 	}
 }
 

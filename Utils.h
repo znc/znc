@@ -422,7 +422,14 @@ private:
 /**
  * @class CSafePtr
  * @author prozac <prozac@rottenboy.com>
- * @brief This class is intended to be created on the stack and hold a pointer which will be deleted upon destruction.  It is useful for functions where you need an allocated pointer and have many return paths.  It prevents copying to get around the exclusive ownership situation which makes std::auto_ptr invalidate the first pointer on copy.  This is intended to be used in simplistic situations such as local variables.
+ * @brief Safe deletion of a pointer.
+ *
+ * This class is intended to be created on the stack and hold a pointer which
+ * will be deleted upon destruction.  It is useful for functions where you need
+ * an allocated pointer and have many return paths.  It prevents copying to get
+ * around the exclusive ownership situation which makes std::auto_ptr
+ * invalidate the first pointer on copy.  This is intended to be used in
+ * simplistic situations such as local variables.
  */
 template<typename T>
 class CSafePtr : private CNoCopy {
