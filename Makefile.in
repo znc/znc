@@ -22,17 +22,9 @@ CLEAN := znc znc-static *.o core core.*
 DISTCLEAN := Makefile config.log config.status znc-config .depend \
 	modules/.depend modules/Makefile
 
-.PHONY: all modules clean depend distclean install
+.PHONY: all modules clean distclean install
 
 all: znc @MODTARGET@
-
-.depend:
-	@mkdir -p .depend
-
-depend: .depend
-	@if test -n "@MODTARGET@"; then \
-		$(MAKE) -C modules depend ; \
-	fi
 
 znc: $(OBJS)
 	$(CXX) $(LDFLAGS) -o $@ $(OBJS) $(LIBS)
@@ -56,7 +48,8 @@ clean:
 distclean: clean
 	rm -rf $(DISTCLEAN)
 
-%.o: %.cpp .depend
+%.o: %.cpp
+	@mkdir -p .depend
 	$(CXX) $(CXXFLAGS) $(INCLUDES) -c -o $@ $< -MMD -MF .depend/$<.dep
 
 install: znc @MODTARGET@

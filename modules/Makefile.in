@@ -47,14 +47,9 @@ TARGETS  := $(addsuffix .so, $(FILES))
 
 CLEAN    := *.so
 
-.PHONY: all clean depend install modperl_install
+.PHONY: all clean install modperl_install
 
 all: $(TARGETS)
-
-.depend:
-	@mkdir -p .depend
-
-depend: .depend
 
 install: all create_install_dir install_metadirs $(PERLHOOK)
 	install -m 0755 $(TARGETS) $(DESTDIR)$(MODDIR)
@@ -74,7 +69,8 @@ install_metadirs: create_install_dir
 clean:
 	rm -rf $(CLEAN)
 
-%.so: %.cpp .depend
+%.so: %.cpp
+	@mkdir -p .depend
 	$(CXX) $(MODFLAGS) $(INCLUDES) $(LDFLAGS) -shared -o $@ $< $($(basename $<)FLAGS) -MMD -MF .depend/$<.dep
 
 modperl_install: create_install_dir
