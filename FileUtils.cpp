@@ -119,7 +119,7 @@ bool CFile::Exists(const CString& sFile) {
 
 unsigned long long CFile::GetSize(const CString& sFile) {
 	struct stat st;
-	if(stat(sFile.c_str(), &st) != 0) {
+	if (stat(sFile.c_str(), &st) != 0) {
 		return 0;
 	}
 
@@ -167,7 +167,7 @@ int CFile::Copy(const CString& sNewFileName, bool bOverwrite) {
 }
 
 bool CFile::Delete(const CString& sFileName) {
-	if(!CFile::Exists(sFileName)) {
+	if (!CFile::Exists(sFileName)) {
 		return false;
 	}
 
@@ -175,7 +175,7 @@ bool CFile::Delete(const CString& sFileName) {
 }
 
 bool CFile::Move(const CString& sOldFileName, const CString& sNewFileName, bool bOverwrite) {
-	if((!bOverwrite) && (CFile::Exists(sNewFileName))) {
+	if ((!bOverwrite) && (CFile::Exists(sNewFileName))) {
 		return false;
 	}
 
@@ -184,7 +184,7 @@ bool CFile::Move(const CString& sOldFileName, const CString& sNewFileName, bool 
 }
 
 bool CFile::Copy(const CString& sOldFileName, const CString& sNewFileName, bool bOverwrite) {
-	if((!bOverwrite) && (CFile::Exists(sNewFileName))) {
+	if ((!bOverwrite) && (CFile::Exists(sNewFileName))) {
 		return false;
 	}
 
@@ -277,7 +277,7 @@ bool CFile::ReadLine(CString& sData, const CString & sDelimiter) {
 
 	bool bEOF = false;
 
-	while(true) {
+	while (true) {
 		CString::size_type iFind = m_sBuffer.find(sDelimiter);
 		if (iFind != CString::npos) {
 			sData = m_sBuffer.substr(0, (iFind + 1));

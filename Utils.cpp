@@ -66,7 +66,7 @@ void CUtils::GenerateCert(FILE *pOut, bool bEncPrivKey, const CString& sHost) {
 
 		PEM_write_RSAPrivateKey(pOut, pRSA, (bEncPrivKey ? EVP_des_ede3_cbc() : NULL), NULL, 0, NULL, NULL);
 
-		if(!(pCert = X509_new())) {
+		if (!(pCert = X509_new())) {
 			EVP_PKEY_free(pKey);
 			return;
 		}
@@ -619,7 +619,7 @@ CString CBlowfish::MD5(const CString & sInput, bool bHexEncode) {
 	if (!bHexEncode) {
 		sRet.append((const char *)data, MD5_DIGEST_LENGTH);
 	} else {
-		for(int a = 0; a < MD5_DIGEST_LENGTH; a++) {
+		for (int a = 0; a < MD5_DIGEST_LENGTH; a++) {
 			sRet += g_HexDigits[data[a] >> 4];
 			sRet += g_HexDigits[data[a] & 0xf];
 		}

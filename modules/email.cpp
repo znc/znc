@@ -48,7 +48,7 @@ public:
 	virtual ~CEmail()
 	{
 		vector<Csock*> vSocks = m_pManager->FindSocksByName("EMAIL::" + m_pUser->GetUserName());
-		for(u_int a = 0; a < vSocks.size(); a++)
+		for (u_int a = 0; a < vSocks.size(); a++)
 			m_pManager->DelSockByAddr(vSocks[a]);
 	}
 
@@ -91,7 +91,7 @@ public:
 		if (!m_bInitialized)
 		{
 			m_bInitialized = true;
-			for(u_int a = 0; a < vEmails.size(); a++)
+			for (u_int a = 0; a < vEmails.size(); a++)
 				m_ssUidls.insert(vEmails[a].sUidl);
 
 			stringstream s;
@@ -106,7 +106,7 @@ public:
 			Table.AddColumn("Size");
 			Table.AddColumn("Subject");
 
-			for(u_int a = 0; a < vEmails.size(); a++)
+			for (u_int a = 0; a < vEmails.size(); a++)
 			{
 				if (m_ssUidls.find(vEmails[a].sUidl) == m_ssUidls.end())
 				{
@@ -180,7 +180,7 @@ public:
 		tmp.sUidl = (char *)CMD5(m_sMailBuffer.substr(0, 255));
 		CString sLine;
 		CString::size_type iPos = 0;
-		while(::ReadLine(m_sMailBuffer, sLine, iPos))
+		while (::ReadLine(m_sMailBuffer, sLine, iPos))
 		{
 			sLine.Trim();
 			if (sLine.empty())

@@ -39,7 +39,7 @@ CZNC::CZNC() {
 }
 
 CZNC::~CZNC() {
-	if(m_pISpoofLockFile)
+	if (m_pISpoofLockFile)
 		ReleaseISpoof();
 
 #ifdef _MODULES
@@ -226,12 +226,12 @@ int CZNC::Loop() {
 }
 
 bool CZNC::WriteISpoof(CUser* pUser) {
-	if(m_pISpoofLockFile != NULL)
+	if (m_pISpoofLockFile != NULL)
 		return false;
 
 	if (!m_sISpoofFile.empty()) {
 		m_pISpoofLockFile = new CLockFile;
-		if(!m_pISpoofLockFile->TryExLock(m_sISpoofFile, true)) {
+		if (!m_pISpoofLockFile->TryExLock(m_sISpoofFile, true)) {
 			delete m_pISpoofLockFile;
 			m_pISpoofLockFile = NULL;
 			return false;
@@ -257,7 +257,7 @@ bool CZNC::WriteISpoof(CUser* pUser) {
 }
 
 void CZNC::ReleaseISpoof() {
-	if(m_pISpoofLockFile == NULL)
+	if (m_pISpoofLockFile == NULL)
 		return;
 
 	if (!m_sISpoofFile.empty()) {
@@ -563,7 +563,7 @@ bool CZNC::WriteNewConfig(const CString& sConfig) {
 
 	// Listen
 	unsigned int uPort = 0;
-	while(!CUtils::GetNumInput("What port would you like ZNC to listen on?", uPort, 1, 65535)) ;
+	while (!CUtils::GetNumInput("What port would you like ZNC to listen on?", uPort, 1, 65535)) ;
 
 	CString sSSL;
 #ifdef HAVE_LIBSSL
@@ -749,8 +749,8 @@ bool CZNC::WriteNewConfig(const CString& sConfig) {
 			bool bSSL = false;
 			uPort = 0;
 
-			while(!CUtils::GetInput("IRC server", sHost, "", "host only") || !CServer::IsValidHostName(sHost)) ;
-			while(!CUtils::GetNumInput("[" + sHost + "] Port", uPort, 1, 65535, 6667)) ;
+			while (!CUtils::GetInput("IRC server", sHost, "", "host only") || !CServer::IsValidHostName(sHost)) ;
+			while (!CUtils::GetNumInput("[" + sHost + "] Port", uPort, 1, 65535, 6667)) ;
 			CUtils::GetInput("[" + sHost + "] Password (probably empty)", sPass);
 
 #ifdef HAVE_LIBSSL
@@ -1213,14 +1213,14 @@ bool CZNC::DoRehash(CString& sError)
 						pUser->SetTimestampPrepend(sValue.ToBool());
 						continue;
 					} else if (sName.CaseCmp("Timestamp") == 0) {
-						if(sValue.Trim_n().CaseCmp("true") != 0) {
-							if(sValue.Trim_n().CaseCmp("append") == 0) {
+						if (sValue.Trim_n().CaseCmp("true") != 0) {
+							if (sValue.Trim_n().CaseCmp("append") == 0) {
 								pUser->SetTimestampAppend(true);
 								pUser->SetTimestampPrepend(false);
-							} else if(sValue.Trim_n().CaseCmp("prepend") == 0) {
+							} else if (sValue.Trim_n().CaseCmp("prepend") == 0) {
 								pUser->SetTimestampAppend(false);
 								pUser->SetTimestampPrepend(true);
-							} else if(sValue.Trim_n().CaseCmp("false") == 0) {
+							} else if (sValue.Trim_n().CaseCmp("false") == 0) {
 								pUser->SetTimestampAppend(false);
 								pUser->SetTimestampPrepend(false);
 							} else {
@@ -1377,7 +1377,7 @@ bool CZNC::DoRehash(CString& sError)
 					m_sISpoofFormat = sValue;
 					continue;
 				} else if (sName.CaseCmp("ISpoofFile") == 0) {
-					if(sValue.Left(2) == "~/") {
+					if (sValue.Left(2) == "~/") {
 						sValue.LeftChomp(2);
 						sValue = GetHomePath() + "/" + sValue;
 					}

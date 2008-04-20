@@ -29,17 +29,17 @@ public:
 	virtual void OnModCommand(const CString& sCommand)
 	{
 		CString sCmdName = sCommand.Token(0).AsLower();
-		if(sCmdName == "add")
+		if (sCmdName == "add")
 		{
 			CString sPerf = sCommand.Token(1, true);
-			if(sPerf.Left(1) == "/")
+			if (sPerf.Left(1) == "/")
 				sPerf.LeftChomp();
 
-			if(sPerf.Token(0).CaseCmp("MSG") == 0) {
+			if (sPerf.Token(0).CaseCmp("MSG") == 0) {
 				sPerf = "PRIVMSG " + sPerf.Token(1, true);
 			}
 
-			if((sPerf.Token(0).CaseCmp("PRIVMSG") == 0 ||
+			if ((sPerf.Token(0).CaseCmp("PRIVMSG") == 0 ||
 				sPerf.Token(0).CaseCmp("NOTICE") == 0) &&
 				sPerf.Token(2).Left(1) != ":") {
 				sPerf = sPerf.Token(0) + " " + sPerf.Token(1)
@@ -48,7 +48,7 @@ public:
 			m_vPerform.push_back(sPerf);
 			PutModule("Added!");
 			Save();
-		} else if(sCmdName == "del")
+		} else if (sCmdName == "del")
 		{
 			u_int iNum = atoi(sCommand.Token(1, true).c_str());
 			if (iNum > m_vPerform.size() || iNum <= 0)
@@ -62,14 +62,14 @@ public:
 				PutModule("Command Erased.");
 			}
 			Save();
-		} else if(sCmdName == "list")
+		} else if (sCmdName == "list")
 		{
 			int i = 1;
 			CString sExpanded;
-			for(VCString::iterator it = m_vPerform.begin(); it != m_vPerform.end(); it++, i++)
+			for (VCString::iterator it = m_vPerform.begin(); it != m_vPerform.end(); it++, i++)
 			{
 				sExpanded = GetUser()->ExpandString(*it);
-				if(sExpanded != *it)
+				if (sExpanded != *it)
 					PutModule(CString(i) + ": " + *it + " (" + sExpanded + ")");
 				else
 					PutModule(CString(i) + ": " + *it);
@@ -83,7 +83,7 @@ public:
 
 	virtual void OnIRCConnected()
 	{
-		for(VCString::iterator it = m_vPerform.begin();
+		for (VCString::iterator it = m_vPerform.begin();
 			it != m_vPerform.end();  it++)
 		{
 			PutIRC(GetUser()->ExpandString(*it));
@@ -95,7 +95,7 @@ private:
 	{
 		CString sBuffer = "";
 
-		for(VCString::iterator it = m_vPerform.begin(); it != m_vPerform.end(); it++)
+		for (VCString::iterator it = m_vPerform.begin(); it != m_vPerform.end(); it++)
 		{
 			sBuffer += *it + "\n";
 		}

@@ -98,7 +98,7 @@ public:
 
 	virtual void DumpBuffer()
 	{
-		for(vector<CS_STRING>::reverse_iterator it = m_vBuffer.rbegin(); it != m_vBuffer.rend(); it++)
+		for (vector<CS_STRING>::reverse_iterator it = m_vBuffer.rbegin(); it != m_vBuffer.rend(); it++)
 			ReadLine(*it);
 
 		m_vBuffer.clear();
@@ -136,7 +136,7 @@ public:
 	virtual void OnUserAttached()
 	{
 		CString sName = "SCHAT::" + m_pUser->GetUserName();
-		for(u_int a = 0; a < m_pManager->size(); a++)
+		for (u_int a = 0; a < m_pManager->size(); a++)
 		{
 			if ((*m_pManager)[a]->GetSockName() != sName.c_str() ||
 					((*m_pManager)[a]->GetType() == CSChatSock::LISTENER))
@@ -150,7 +150,7 @@ public:
 	void CleanSocks()
 	{
 		CString sName = "SCHAT::" + m_pUser->GetUserName();
-		for(u_int a= 0; a < m_pManager->size(); a++)
+		for (u_int a= 0; a < m_pManager->size(); a++)
 		{
 			if ((*m_pManager)[a]->GetSockName() == sName)
 				m_pManager->DelSock(a--);
@@ -185,7 +185,7 @@ public:
 		if ((sCom.CaseCmp("chat") == 0) && (!sArgs.empty())) {
 			CString sSockName = "SCHAT::" + m_pUser->GetUserName();
 			CString sNick = "(s)" + sArgs;
-			for(u_int a= 0; a < m_pManager->size(); a++)
+			for (u_int a= 0; a < m_pManager->size(); a++)
 			{
 				if ((*m_pManager)[a]->GetSockName() != sSockName)
 					continue;
@@ -231,7 +231,7 @@ public:
 			Table.AddColumn("Port");
 			Table.AddColumn("Status");
 			Table.AddColumn("Cipher");
-			for(u_int a= 0; a < m_pManager->size(); a++)
+			for (u_int a= 0; a < m_pManager->size(); a++)
 			{
 				if ((*m_pManager)[a]->GetSockName() != sName)
 					continue;
@@ -277,7 +277,7 @@ public:
 		} else if (sCom.CaseCmp("close") == 0)
 		{
 			CString sName = "SCHAT::" + m_pUser->GetUserName();
-			for(u_int a = 0; a < m_pManager->size(); a++)
+			for (u_int a = 0; a < m_pManager->size(); a++)
 			{
 				if ((*m_pManager)[a]->GetSockName() != sName)
 					continue;
@@ -302,7 +302,7 @@ public:
 			Table.AddColumn("RemoteIP:Port");
 			Table.AddColumn("Type");
 			Table.AddColumn("Cipher");
-			for(u_int a = 0; a < m_pManager->size(); a++)
+			for (u_int a = 0; a < m_pManager->size(); a++)
 			{
 				Table.AddRow();
 				Csock *pSock = (*m_pManager)[a];

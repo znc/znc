@@ -80,7 +80,7 @@ public:
 		}
 
 		const vector<CChan *>& vChans = m_pUser->GetChans();
-		for(u_int a = 0; a < vChans.size(); a++)
+		for (u_int a = 0; a < vChans.size(); a++)
 		{
 			if (!vChans[a]->KeepBuffer())
 				continue;
@@ -105,7 +105,7 @@ public:
 
 			CString sLine;
 			CString::size_type iPos = 0;
-			while(ReadLine(sFile, sLine, iPos))
+			while (ReadLine(sFile, sLine, iPos))
 			{
 				sLine.Trim();
 				pChan->AddBuffer(sLine);
@@ -125,7 +125,7 @@ public:
 		if (!m_sPassword.empty())
 		{
 			const vector<CChan *>& vChans = m_pUser->GetChans();
-			for(u_int a = 0; a < vChans.size(); a++)
+			for (u_int a = 0; a < vChans.size(); a++)
 			{
 				if (!vChans[a]->KeepBuffer())
 					continue;
@@ -142,7 +142,7 @@ public:
 
 				CString sFile = CRYPT_VERIFICATION_TOKEN;
 
-				for(u_int b = 0; b < vBuffer.size(); b++)
+				for (u_int b = 0; b < vBuffer.size(); b++)
 						sFile += vBuffer[b] + "\n";
 
 				CBlowfish c(m_sPassword, BF_ENCRYPT);
@@ -181,7 +181,7 @@ public:
 			{
 				CString sLine;
 				iPos = 0;
-				while(ReadLine(sFile, sLine, iPos))
+				while (ReadLine(sFile, sLine, iPos))
 				{
 					sLine.Trim();
 					PutModule("[" + sLine + "]");
@@ -209,7 +209,7 @@ public:
 		{
 			CString sLine;
 			CString::size_type iPos = 0;
-			while(ReadLine(sFile, sLine, iPos))
+			while (ReadLine(sFile, sLine, iPos))
 			{
 				sLine.Trim();
 				PutUser(sLine);
@@ -241,7 +241,7 @@ public:
 	}
 	virtual void OnQuit(const CNick& cNick, const CString& sMessage, const vector<CChan*>& vChans)
 	{
-		for(u_int a = 0; a < vChans.size(); a++)
+		for (u_int a = 0; a < vChans.size(); a++)
 		{
 			if (!vChans[a]->KeepBuffer())
 				continue;
@@ -253,7 +253,7 @@ public:
 
 	virtual void OnNick(const CNick& cNick, const CString& sNewNick, const vector<CChan*>& vChans)
 	{
-		for(u_int a = 0; a < vChans.size(); a++)
+		for (u_int a = 0; a < vChans.size(); a++)
 		{
 			if (!vChans[a]->KeepBuffer())
 				continue;

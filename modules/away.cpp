@@ -90,7 +90,7 @@ public:
 
 	virtual void OnIRCConnected()
 	{
-		if(m_bIsAway)
+		if (m_bIsAway)
 			Away(true); // reset away if we are reconnected
 		else
 			Back();	// ircd seems to remember your away if you killed the client and came back
@@ -103,7 +103,7 @@ public:
 		{
 			CString sLine;
 			CString::size_type iPos = 0;
-			while(ReadLine(sFile, sLine, iPos))
+			while (ReadLine(sFile, sLine, iPos))
 			{
 				sLine.Trim();
 				AddMessage(sLine);
@@ -124,7 +124,7 @@ public:
 		{
 			CString sFile = CRYPT_VERIFICATION_TOKEN;
 
-			for(u_int b = 0; b < m_vMessages.size(); b++)
+			for (u_int b = 0; b < m_vMessages.size(); b++)
 				sFile += m_vMessages[b] + "\n";
 
 			CBlowfish c(m_sPassword, BF_ENCRYPT);
@@ -153,7 +153,7 @@ public:
 		if (sCmdName == "away")
 		{
 			CString sReason;
-			if(sCommand.Token(1) != "-quiet")
+			if (sCommand.Token(1) != "-quiet")
 			{
 				sReason = sCommand.Token(1, true);
 				PutModNotice("You have been marked as away", "away");
@@ -170,7 +170,7 @@ public:
 		}
 		else if (sCmdName == "messages")
 		{
-			for(u_int a = 0; a < m_vMessages.size(); a++)
+			for (u_int a = 0; a < m_vMessages.size(); a++)
 				PutModule(m_vMessages[a], "away");
 		}
 		else if (sCmdName == "delete")
@@ -179,7 +179,7 @@ public:
 			if (sWhich == "all")
 			{
 				PutModNotice("Deleted " + CString(m_vMessages.size()) + " Messages.", "away");
-				for(u_int a = 0; a < m_vMessages.size(); a++)
+				for (u_int a = 0; a < m_vMessages.size(); a++)
 					m_vMessages.erase(m_vMessages.begin() + a--);
 
 			}
@@ -222,7 +222,7 @@ public:
 		else if (sCmdName == "show")
 		{
 			map< CString, vector< CString> > msvOutput;
-			for(u_int a = 0; a < m_vMessages.size(); a++)
+			for (u_int a = 0; a < m_vMessages.size(); a++)
 			{
 				CString sTime = m_vMessages[a].Token(0, false, ":");
 				CString sWhom = m_vMessages[a].Token(1, false, ":");
@@ -252,10 +252,10 @@ public:
 				sTmp += sMessage;
 				msvOutput[sWhom].push_back(sTmp);
 			}
-			for(map< CString, vector< CString> >::iterator it = msvOutput.begin(); it != msvOutput.end(); it++)
+			for (map< CString, vector< CString> >::iterator it = msvOutput.begin(); it != msvOutput.end(); it++)
 			{
 				PutModule(it->first, "away");
-				for(u_int a = 0; a < it->second.size(); a++)
+				for (u_int a = 0; a < it->second.size(); a++)
 					PutModule(it->second[a]);
 			}
 			PutModule("#--- End Messages", "away");
@@ -273,7 +273,7 @@ public:
 
 			SetAwayTime(iSetting);
 
-			if(iSetting == 0)
+			if (iSetting == 0)
 				PutModule("Timer disabled");
 			else
 				PutModule("Timer set to " + CString(iSetting) + " seconds");
@@ -349,7 +349,7 @@ public:
 	virtual EModRet OnUserNotice(CString& sTarget, CString& sMessage)
 	{
 		Ping();
-		if(m_bIsAway)
+		if (m_bIsAway)
 			Back();
 
 		return(CONTINUE);
@@ -357,7 +357,7 @@ public:
 	virtual EModRet OnUserMsg(CString& sTarget, CString& sMessage)
 	{
 		Ping();
-		if(m_bIsAway)
+		if (m_bIsAway)
 			Back();
 
 		return(CONTINUE);

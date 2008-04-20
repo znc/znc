@@ -247,10 +247,10 @@ void CClient::ReadLine(const CString& sData) {
 		return;		// Don't forward this msg.  We don't want the client getting us disconnected.
 	} else if (sCommand.CaseCmp("PROTOCTL") == 0) {
 		unsigned int i = 1;
-		while(!sLine.Token(i).empty()) {
-			if(sLine.Token(i).CaseCmp("NAMESX") == 0) {
+		while (!sLine.Token(i).empty()) {
+			if (sLine.Token(i).CaseCmp("NAMESX") == 0) {
 				m_bNamesx = true;
-			} else if(sLine.Token(i).CaseCmp("UHNAMES") == 0) {
+			} else if (sLine.Token(i).CaseCmp("UHNAMES") == 0) {
 				m_bUHNames = true;
 			}
 			i++;

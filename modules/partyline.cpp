@@ -41,7 +41,7 @@ public:
 	GLOBALMODCONSTRUCTOR(CPartylineMod) {}
 
 	virtual ~CPartylineMod() {
-		while(m_ssChannels.size()) {
+		while (m_ssChannels.size()) {
 			delete *m_ssChannels.begin();
 			m_ssChannels.erase(m_ssChannels.begin());
 		}
@@ -87,13 +87,13 @@ public:
 			CPartylineChannel* pChannel;
 			it->second.Split(",", vsChannels, false);
 
-			if(!pUser) {
+			if (!pUser) {
 				// TODO: give some usefull message?
 				continue;
 			}
 
-			for(VCString::iterator i = vsChannels.begin(); i != vsChannels.end(); i++) {
-				if(i->Trim_n().empty())
+			for (VCString::iterator i = vsChannels.begin(); i != vsChannels.end(); i++) {
+				if (i->Trim_n().empty())
 					continue;
 				pChannel = GetChannel(*i);
 				JoinUser(pUser, pChannel);
@@ -108,7 +108,7 @@ public:
 		CString sChans;
 		const CString &sUser = pUser->GetUserName();
 
-		for(set<CPartylineChannel*>::iterator it = m_ssChannels.begin();
+		for (set<CPartylineChannel*>::iterator it = m_ssChannels.begin();
 				it != m_ssChannels.end(); it++) {
 			if ((*it)->IsFixedChan(sUser)) {
 				sChans += "," + (*it)->GetName();
@@ -449,7 +449,7 @@ public:
 				PutModule(sTmp);
 			}
 		} else if (sCommand.CaseCmp("ADDFIXCHAN") == 0) {
-			if(!m_pUser->IsAdmin()) {
+			if (!m_pUser->IsAdmin()) {
 				PutModule("Access denied");
 				return;
 			}
@@ -458,12 +458,12 @@ public:
 			CUser* pUser = CZNC::Get().FindUser(sUser);
 			CPartylineChannel* pChan;
 
-			if(sChan.Left(2) != "~#") {
+			if (sChan.Left(2) != "~#") {
 				PutModule("Invalid channel name");
 				return;
 			}
 
-			if(pUser == NULL) {
+			if (pUser == NULL) {
 				PutModule("Unknown User '" + sUser + "'");
 				return;
 			}
@@ -476,7 +476,7 @@ public:
 
 			PutModule("Fixed " + sUser + " to channel " + sChan);
 		} else if (sCommand.CaseCmp("DELFIXCHAN") == 0) {
-			if(!m_pUser->IsAdmin()) {
+			if (!m_pUser->IsAdmin()) {
 				PutModule("Access denied");
 				return;
 			}
@@ -485,12 +485,12 @@ public:
 			CUser* pUser = CZNC::Get().FindUser(sUser);
 			CPartylineChannel* pChan = FindChannel(sChan);
 
-			if(pUser == NULL) {
+			if (pUser == NULL) {
 				PutModule("Unknown User '" + sUser + "'");
 				return;
 			}
 
-			if(!pChan || !pChan->IsFixedChan(sUser)) {
+			if (!pChan || !pChan->IsFixedChan(sUser)) {
 				PutModule(sUser + " is not in " + sChan + " or isnt fixed to it");
 				return;
 			}
@@ -501,38 +501,38 @@ public:
 
 			PutModule("Removed " + sUser + " from " + sChan);
 		} else if (sCommand.CaseCmp("LISTFIXCHANS") == 0) {
-			if(!m_pUser->IsAdmin()) {
+			if (!m_pUser->IsAdmin()) {
 				PutModule("Access denied");
 				return;
 			}
 			CString sUser = sLine.Token(1);
 			CUser* pUser = CZNC::Get().FindUser(sUser);
-			if(!pUser) {
+			if (!pUser) {
 				PutModule("User not found!");
 				return;
 			}
 
 			for (set<CPartylineChannel*>::const_iterator a = m_ssChannels.begin(); a != m_ssChannels.end(); a++) {
-				if((*a)->IsFixedChan(sUser)) {
+				if ((*a)->IsFixedChan(sUser)) {
 					PutModule((*a)->GetName());
 				}
 			}
 			PutModule("--- End of list");
 		} else if (sCommand.CaseCmp("LISTFIXUSERS") == 0) {
-			if(!m_pUser->IsAdmin()) {
+			if (!m_pUser->IsAdmin()) {
 				PutModule("Access denied");
 				return;
 			}
 			CString sChan = sLine.Token(1).Left(32);
 			CPartylineChannel* pChan = FindChannel(sChan);
 
-			if(!pChan) {
+			if (!pChan) {
 				PutModule("Channel does not exist!");
 				return;
 			}
 			const set<CString>& sNicks = pChan->GetNicks();
-			for(set<CString>::const_iterator it = sNicks.begin(); it != sNicks.end(); it++) {
-				if(pChan->IsFixedChan(*it)) {
+			for (set<CString>::const_iterator it = sNicks.begin(); it != sNicks.end(); it++) {
+				if (pChan->IsFixedChan(*it)) {
 					PutModule(*it);
 				}
 			}
@@ -556,9 +556,9 @@ public:
 	void PutChan(const set<CString>& ssNicks, const CString& sLine, bool bIncludeCurUser = true, bool bIncludeClient = true, CUser* pUser = NULL, CClient* pClient = NULL) {
 		const map<CString, CUser*>& msUsers = CZNC::Get().GetUserMap();
 
-		if(!pUser)
+		if (!pUser)
 			pUser = m_pUser;
-		if(!pClient)
+		if (!pClient)
 			pClient = m_pClient;
 
 		for (map<CString, CUser*>::const_iterator it = msUsers.begin(); it != msUsers.end(); it++) {
@@ -601,8 +601,8 @@ public:
 	CPartylineChannel* FindChannel(const CString& sChan) {
 		CString sChannel = sChan.AsLower();
 
-		for(set<CPartylineChannel*>::iterator it = m_ssChannels.begin(); it != m_ssChannels.end(); it++) {
-			if((*it)->GetName().AsLower() == sChannel)
+		for (set<CPartylineChannel*>::iterator it = m_ssChannels.begin(); it != m_ssChannels.end(); it++) {
+			if ((*it)->GetName().AsLower() == sChannel)
 				return *it;
 		}
 
@@ -612,7 +612,7 @@ public:
 	CPartylineChannel* GetChannel(const CString& sChannel) {
 		CPartylineChannel* pChannel = FindChannel(sChannel);
 
-		if(pChannel == NULL) {
+		if (pChannel == NULL) {
 			pChannel = new CPartylineChannel(sChannel.AsLower());
 			m_ssChannels.insert(pChannel);
 		}

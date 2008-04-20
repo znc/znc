@@ -1023,7 +1023,7 @@ CString& MCString::Decode(CString& sValue) {
 	char *endptr;
 	CString sTmp;
 
-	while(*pTmp) {
+	while (*pTmp) {
 		if (*pTmp != '%') {
 			sTmp += *pTmp++;
 		} else {

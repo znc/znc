@@ -17,7 +17,7 @@ CBufLine::CBufLine(const CString& sPre, const CString& sPost, bool bIncNick=true
 CBufLine::~CBufLine() {}
 
 void CBufLine::GetLine(const CString& sTarget, CString& sRet) {
-	if(m_bIncNick)
+	if (m_bIncNick)
 		sRet = m_sPre + sTarget + m_sPost;
 	else
 		sRet = m_sPre + m_sPost;
@@ -43,8 +43,8 @@ int CBuffer::AddLine(const CString& sPre, const CString& sPost, bool bIncNick) {
 }
 
 int CBuffer::UpdateLine(const CString& sPre, const CString& sPost, bool bIncNick) {
-	for(iterator it = begin(); it != end(); it++) {
-		if(it->GetPre() == sPre) {
+	for (iterator it = begin(); it != end(); it++) {
+		if (it->GetPre() == sPre) {
 			it->SetPost(sPost);
 			it->SetIncNick(bIncNick);
 			return size();

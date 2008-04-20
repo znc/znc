@@ -258,7 +258,7 @@ inline bool ReadFile(const CString & sFilename, CString & sLine) {
 		return false;
 	}
 
-	while((bytes = fread(inbuff, sizeof(char), RF_BUFF, f)) > 0) {
+	while ((bytes = fread(inbuff, sizeof(char), RF_BUFF, f)) > 0) {
 		sLine.append(inbuff, bytes);
 	}
 
@@ -310,7 +310,7 @@ inline bool ReadLine(const CString & sData, CString & sLine, CString::size_type 
 
 inline CString Lower(const CString & sLine) {
 	CString sRet;
-	for(u_int a = 0; a < sLine.length(); a++) {
+	for (u_int a = 0; a < sLine.length(); a++) {
 		sRet += tolower(sLine[a]);
 	}
 
@@ -319,7 +319,7 @@ inline CString Lower(const CString & sLine) {
 
 inline CString Upper(const CString & sLine) {
 	CString sRet;
-	for(u_int a = 0; a < sLine.length(); a++) {
+	for (u_int a = 0; a < sLine.length(); a++) {
 		sRet += toupper(sLine[a]);
 	}
 

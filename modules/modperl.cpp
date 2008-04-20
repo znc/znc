@@ -102,7 +102,7 @@ public:
 	{
 		HV *pHash = newHV();
 		sv_2mortal((SV *) pHash);
-		for(CPerlHash::iterator it = this->begin(); it != this->end(); it++)
+		for (CPerlHash::iterator it = this->begin(); it != this->end(); it++)
 		{
 			SV *pSV = it->second.GetSV(false);
 			hv_store(pHash, it->first.c_str(), it->first.length(), pSV, 0);
@@ -220,7 +220,7 @@ public:
 		{
 			const map<CString,CUser*> & msUsers = CZNC::Get().GetUserMap();
 
-			for(map<CString,CUser*>::const_iterator it = msUsers.begin(); it != msUsers.end(); it++)
+			for (map<CString,CUser*>::const_iterator it = msUsers.begin(); it != msUsers.end(); it++)
 			{ // need to set it on all of these
 				m_pUser = it->second;
 				CBNone("OnShutdown");
@@ -248,7 +248,7 @@ public:
 			CFile cFile(sModule);
 			if ((cFile.Exists()) && (cFile.Open(O_RDONLY)))
 			{
-				while(cFile.ReadLine(sBuffer))
+				while (cFile.ReadLine(sBuffer))
 					sScript += sBuffer;
 				cFile.Close();
 
@@ -262,7 +262,7 @@ public:
 		if ((sName.CaseCmp("loadperlmodule") == 0) && (pUser))
 		{
 			m_pUser = pUser;
-			if(sValue.Right(3) == ".pm")
+			if (sValue.Right(3) == ".pm")
 				LoadPerlMod(sValue);
 			else
 				LoadPerlMod(sValue + ".pm");
@@ -275,7 +275,7 @@ public:
 	void DumpError(const CString & sError)
 	{
 		CString sTmp = sError;
-		for(CString::size_type a = 0; a < sTmp.size(); a++)
+		for (CString::size_type a = 0; a < sTmp.size(); a++)
 		{
 			if (isspace(sTmp[a]))
 				sTmp[a] = ' ';
@@ -345,7 +345,7 @@ public:
 		VPString vsArgs;
 		vsArgs.push_back(Nick.GetNickMask());
 		vsArgs.push_back(sMessage);
-		for(vector<CChan*>::size_type a = 0; a < vChans.size(); a++)
+		for (vector<CChan*>::size_type a = 0; a < vChans.size(); a++)
 			vsArgs.push_back(vChans[a]->GetName());
 
 		CallBack("OnQuit", vsArgs);
@@ -356,7 +356,7 @@ public:
 		VPString vsArgs;
 		vsArgs.push_back(Nick.GetNickMask());
 		vsArgs.push_back(sNewNick);
-		for(vector<CChan*>::size_type a = 0; a < vChans.size(); a++)
+		for (vector<CChan*>::size_type a = 0; a < vChans.size(); a++)
 			vsArgs.push_back(vChans[a]->GetName());
 
 		CallBack("OnNick", vsArgs);
@@ -474,7 +474,7 @@ public:
 	{
 		CString sCommand = sLine.Token(0);
 
-		if(sCommand.CaseCmp("loadperlmod", 11) == 0 || sCommand.CaseCmp("unloadperlmod", 13) == 0 || sCommand.CaseCmp("reloadperlmod", 13) == 0)
+		if (sCommand.CaseCmp("loadperlmod", 11) == 0 || sCommand.CaseCmp("unloadperlmod", 13) == 0 || sCommand.CaseCmp("reloadperlmod", 13) == 0)
 		{
 			CString sModule = sLine.Token(1);
 			if (sModule.Right(3) != ".pm")
@@ -662,7 +662,7 @@ XS(XS_ZNC_GetNicks)
 
 			const map< CString,CNick* > & mscNicks = pChan->GetNicks();
 
-			for(map< CString,CNick* >::const_iterator it = mscNicks.begin(); it != mscNicks.end(); it++)
+			for (map< CString,CNick* >::const_iterator it = mscNicks.begin(); it != mscNicks.end(); it++)
 			{
 				CNick & cNick = *(it->second);
 				CPerlHash cHash;
@@ -693,7 +693,7 @@ XS(XS_ZNC_GetString)
 			PString sReturn;
 			CString sName = (char *)SvPV(ST(0),PL_na);
 
-			if(sName == "UserName") sReturn = pUser->GetUserName();
+			if (sName == "UserName") sReturn = pUser->GetUserName();
 			else if (sName == "Nick") sReturn = pUser->GetNick();
 			else if (sName == "AltNick") sReturn = pUser->GetAltNick();
 			else if (sName == "Ident") sReturn = pUser->GetIdent();
@@ -946,7 +946,7 @@ CModPerl::EModRet CModPerl::CallBack(const PString & sHookName, const VPString &
 		else
 			sFuncToCall = ZNCCallSockCB;
 	}
-	for(VPString::size_type a = 0; a < vsArgs.size(); a++)
+	for (VPString::size_type a = 0; a < vsArgs.size(); a++)
 		XPUSHs(vsArgs[a].GetSV());
 
 	PUTBACK;
@@ -1054,7 +1054,7 @@ void CModPerl::LoadPerlMod(const CString & sModule)
 
 void CModPerl::DestroyAllSocks(const CString & sModuleName)
 {
-	for(u_int a = 0; a < m_pManager->size(); a++)
+	for (u_int a = 0; a < m_pManager->size(); a++)
 	{
 		if ((*m_pManager)[a]->GetSockName() == ZNCSOCK)
 		{

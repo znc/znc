@@ -160,7 +160,7 @@ bool CHTTPSock::PrintFile(const CString& sFileName, CString sContentType) {
 	char szBuf[4096];
 	int iLen = 0;
 
-	while((iLen = File.Read(szBuf, 4096)) > 0) {
+	while ((iLen = File.Read(szBuf, 4096)) > 0) {
 		Write(szBuf, iLen);
 	}
 

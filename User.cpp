@@ -148,7 +148,7 @@ CString& CUser::AddTimestamp(const CString& sStr, CString& sRet) const {
 	char szTimestamp[1024];
 	time_t tm;
 
-	if(GetTimestampFormat().empty() || (!m_bAppendTimestamp && !m_bPrependTimestamp)) {
+	if (GetTimestampFormat().empty() || (!m_bAppendTimestamp && !m_bPrependTimestamp)) {
 		sRet = sStr;
 	} else {
 		time(&tm);
@@ -207,14 +207,14 @@ void CUser::UserConnected(CClient* pClient) {
 		}
 	}
 
-	if(GetIRCSock() != NULL) {
+	if (GetIRCSock() != NULL) {
 		CString sUserMode("");
 		const set<unsigned char>& scUserModes = GetIRCSock()->GetUserModes();
 		for (set<unsigned char>::iterator it = scUserModes.begin();
 				it != scUserModes.end(); it++) {
 			sUserMode += *it;
 		}
-		if(!sUserMode.empty()) {
+		if (!sUserMode.empty()) {
 			pClient->PutClient(":" + GetIRCNick().GetNick() + " MODE " + GetIRCNick().GetNick() + " :+" + sUserMode);
 		}
 	}
@@ -989,7 +989,7 @@ bool CUser::IsChan(const CString& sChan) const {
 		return false; // There is no way this is a chan
 	if (GetChanPrefixes().empty())
 		return true; // We can't know, so we allow everything
-	// Thanks to the above if(empty), we can do sChan[0]
+	// Thanks to the above if (empty), we can do sChan[0]
 	return GetChanPrefixes().find(sChan[0]) != CString::npos;
 }
 

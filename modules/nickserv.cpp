@@ -32,16 +32,16 @@ public:
 	virtual void OnModCommand(const CString& sCommand)
 	{
 		CString sCmdName = sCommand.Token(0).AsLower();
-		if(sCmdName == "set") {
+		if (sCmdName == "set") {
 			CString sPass = sCommand.Token(1, true);
 			m_sPass = sPass;
 			PutModule("Password set");
-		} else if(sCmdName == "show") {
+		} else if (sCmdName == "show") {
 			if (m_sPass.empty())
 				PutModule("No password set");
 			else
 				PutModule("Current password: " + m_sPass);
-		} else if(sCmdName == "save") {
+		} else if (sCmdName == "save") {
 			SetNV("Password", m_sPass);
 			PutModule("Saved!");
 		} else {

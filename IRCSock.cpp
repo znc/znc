@@ -552,7 +552,7 @@ void CIRCSock::ReadLine(const CString& sData) {
 			} else if (sCmd.CaseCmp("MODE") == 0) {
 				CString sTarget = sRest.Token(0);
 				CString sModes = sRest.Token(1, true);
-				if(sModes.Left(1) == ":")
+				if (sModes.Left(1) == ":")
 					sModes = sModes.substr(1);
 
 				CChan* pChan = m_pUser->FindChan(sTarget);
@@ -579,7 +579,7 @@ void CIRCSock::ReadLine(const CString& sData) {
 						} else if (uMode == '-') {
 							bAdd = false;
 						} else {
-							if(bAdd) {
+							if (bAdd) {
 								m_scUserModes.insert(uMode);
 							} else {
 								m_scUserModes.erase(uMode);
@@ -709,7 +709,7 @@ void CIRCSock::ReadLine(const CString& sData) {
 				// :blub!dummy@rox-8DBEFE92 WALLOPS :this is a test
 				CString sMsg = sRest.Token(0, true);
 
-				if(sMsg.Left(1) == ":") {
+				if (sMsg.Left(1) == ":") {
 					sMsg.LeftChomp();
 				}
 
@@ -848,7 +848,7 @@ bool CIRCSock::OnChanCTCP(CNick& Nick, const CString& sChan, CString& sMessage) 
 		// Record a /me
 		if (sMessage.Left(7).CaseCmp("ACTION ") == 0) {
 			sMessage = sMessage.substr(7);
-			if(pChan->KeepBuffer() || !m_pUser->IsUserAttached()) {
+			if (pChan->KeepBuffer() || !m_pUser->IsUserAttached()) {
 				pChan->AddBuffer(":" + Nick.GetNickMask() + " PRIVMSG " + sChan + " :\001ACTION " + m_pUser->AddTimestamp(sMessage) + "\001");
 			}
 			MODULECALL(OnChanAction(Nick, *pChan, sMessage), m_pUser, NULL, return true);

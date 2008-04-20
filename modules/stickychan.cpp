@@ -59,7 +59,7 @@ public:
 		else if ((sCmdName == "list") && (sChannel.empty()))
 		{
 			int i = 1;
-			for(MCString::iterator it = BeginNV(); it != EndNV(); it++, i++)
+			for (MCString::iterator it = BeginNV(); it != EndNV(); it++, i++)
 			{
 				if (it->second.empty())
 					PutModule(CString(i) + ": " + it->first);
@@ -76,7 +76,7 @@ public:
 
 	virtual void RunJob()
 	{
-		for(MCString::iterator it = BeginNV(); it != EndNV(); it++)
+		for (MCString::iterator it = BeginNV(); it != EndNV(); it++)
 		{
 			if (!m_pUser->FindChan(it->first))
 			{

@@ -147,7 +147,7 @@ public:
 
 				PutModule(sMsg);
 			}
-		} else if(sCommand.Token(0).CaseCmp("HELP") == 0) {
+		} else if (sCommand.Token(0).CaseCmp("HELP") == 0) {
 			PutModule("Commands are: show, timers, set [awaynick]");
 		}
 	}

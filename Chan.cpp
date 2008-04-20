@@ -107,7 +107,7 @@ void CChan::JoinUser(bool bForce, const CString& sKey, CClient* pClient) {
 			pThisClient = pClient;
 
 		for (map<CString,CNick*>::iterator a = m_msNicks.begin(); a != m_msNicks.end(); a++) {
-			if(pThisClient->HasNamesx()) {
+			if (pThisClient->HasNamesx()) {
 				sPerm = a->second->GetPermStr();
 			} else {
 				char c = a->second->GetPermChar();
@@ -116,7 +116,7 @@ void CChan::JoinUser(bool bForce, const CString& sKey, CClient* pClient) {
 					sPerm += c;
 				}
 			}
-			if(pThisClient->HasUHNames() && !a->second->GetIdent().empty() && !a->second->GetHost().empty()) {
+			if (pThisClient->HasUHNames() && !a->second->GetIdent().empty() && !a->second->GetHost().empty()) {
 				sNick = a->first + "!" + a->second->GetIdent() + "@" + a->second->GetHost();
 			} else {
 				sNick = a->first;
@@ -444,19 +444,19 @@ bool CChan::AddNick(const CString& sNick) {
 		pNick->SetUser(m_pUser);
 	}
 
-	if(!sIdent.empty())
+	if (!sIdent.empty())
 		pNick->SetIdent(sIdent);
-	if(!sHost.empty())
+	if (!sHost.empty())
 		pNick->SetHost(sHost);
 
-	for(CString::size_type i = 0; i < sPrefix.length(); i++) {
+	for (CString::size_type i = 0; i < sPrefix.length(); i++) {
 		if (pNick->AddPerm(sPrefix[i])) {
 			IncPermCount(sPrefix[i]);
 		}
 	}
 
 	if (pNick->GetNick().CaseCmp(m_pUser->GetCurNick()) == 0) {
-		for(CString::size_type i = 0; i < sPrefix.length(); i++) {
+		for (CString::size_type i = 0; i < sPrefix.length(); i++) {
 			AddPerm(sPrefix[i]);
 		}
 	}
