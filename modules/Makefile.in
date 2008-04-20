@@ -47,14 +47,7 @@ TARGETS  := $(addsuffix .so, $(FILES))
 
 CLEAN    := *.so
 
-DEPEND   := $(wildcard .depend)
-ifeq ($(DEPEND), )
-DEPEND   := no
-else
-DEPEND   := yes
-endif
-
-.PHONY: all clean install modperl_install
+.PHONY: all clean depend install modperl_install
 
 all: $(TARGETS)
 
@@ -81,13 +74,8 @@ install_metadirs: create_install_dir
 clean:
 	rm -rf $(CLEAN)
 
-ifeq ($(DEPEND), yes)
-%.so: %.cpp
+%.so: %.cpp .depend
 	$(CXX) $(MODFLAGS) $(INCLUDES) $(LDFLAGS) -shared -o $@ $< $($(basename $<)FLAGS) -MMD -MF .depend/$<.dep
-else
-%.so: %.cpp
-	$(CXX) $(MODFLAGS) $(INCLUDES) $(LDFLAGS) -shared -o $@ $< $($(basename $<)FLAGS)
-endif
 
 modperl_install: create_install_dir
 	for i in *.pm; do \
