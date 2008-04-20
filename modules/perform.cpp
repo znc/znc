@@ -26,7 +26,7 @@ public:
 		return true;
 	}
 
-	virtual void OnModCommand( const CString& sCommand )
+	virtual void OnModCommand(const CString& sCommand)
 	{
 		CString sCmdName = sCommand.Token(0).AsLower();
 		if(sCmdName == "add")
@@ -50,16 +50,16 @@ public:
 			Save();
 		} else if(sCmdName == "del")
 		{
-			u_int iNum = atoi( sCommand.Token(1, true).c_str() );
-			if ( iNum > m_vPerform.size() || iNum <= 0 )
+			u_int iNum = atoi(sCommand.Token(1, true).c_str());
+			if (iNum > m_vPerform.size() || iNum <= 0)
 			{
-				PutModule( "Illegal # Requested");
+				PutModule("Illegal # Requested");
 				return;
 			}
 			else
 			{
-				m_vPerform.erase( m_vPerform.begin() + iNum - 1 );
-				PutModule( "Command Erased.");
+				m_vPerform.erase(m_vPerform.begin() + iNum - 1);
+				PutModule("Command Erased.");
 			}
 			Save();
 		} else if(sCmdName == "list")
@@ -68,25 +68,25 @@ public:
 			CString sExpanded;
 			for(VCString::iterator it = m_vPerform.begin(); it != m_vPerform.end(); it++, i++)
 			{
-				sExpanded = GetUser()->ExpandString( *it );
+				sExpanded = GetUser()->ExpandString(*it);
 				if(sExpanded != *it)
-					PutModule(CString( i ) + ": " + *it + " (" + sExpanded + ")");
+					PutModule(CString(i) + ": " + *it + " (" + sExpanded + ")");
 				else
-					PutModule(CString( i ) + ": " + *it);
+					PutModule(CString(i) + ": " + *it);
 			}
 			PutModule(" -- End of List");
 		}else
 		{
-			PutModule( "Commands: add <command>, del <nr>, list");
+			PutModule("Commands: add <command>, del <nr>, list");
 		}
 	}
 
 	virtual void OnIRCConnected()
 	{
-		for( VCString::iterator it = m_vPerform.begin();
+		for(VCString::iterator it = m_vPerform.begin();
 			it != m_vPerform.end();  it++)
 		{
-			PutIRC( GetUser()->ExpandString( *it ) );
+			PutIRC(GetUser()->ExpandString(*it));
 		}
 	}
 

@@ -172,8 +172,8 @@ inline unsigned char* CString::strnchr(const unsigned char* src, unsigned char c
     return NULL;
 }
 
-int CString::CaseCmp(const CString& s, u_long uLen ) const {
-	if( uLen != CString::npos ) {
+int CString::CaseCmp(const CString& s, u_long uLen) const {
+	if (uLen != CString::npos) {
 		return strncasecmp(c_str(), s.c_str(), uLen);
 	}
 	return strcasecmp(c_str(), s.c_str());
@@ -1027,7 +1027,7 @@ CString& MCString::Decode(CString& sValue) {
 		if (*pTmp != '%') {
 			sTmp += *pTmp++;
 		} else {
-			char ch = (char )strtol(((const char *)pTmp + 1), &endptr, 16);
+			char ch = (char) strtol(pTmp + 1, &endptr, 16);
 			if (*endptr == ';') {
 				sTmp += ch;
 				pTmp = ++endptr;

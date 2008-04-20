@@ -21,8 +21,8 @@ class CAway;
 class CAwayJob : public CTimer
 {
 public:
-	CAwayJob( CModule* pModule, unsigned int uInterval, unsigned int uCycles, const CString& sLabel, const CString& sDescription )
-		: CTimer( pModule, uInterval, uCycles, sLabel, sDescription) {}
+	CAwayJob(CModule* pModule, unsigned int uInterval, unsigned int uCycles, const CString& sLabel, const CString& sDescription)
+		: CTimer(pModule, uInterval, uCycles, sLabel, sDescription) {}
 
 	virtual ~CAwayJob() {}
 
@@ -38,12 +38,12 @@ public:
 		Ping();
 		m_bIsAway = false;
 		m_bBootError = false;
-		SetAwayTime( 300 );
-		AddTimer( new CAwayJob( this, 60, 0, "AwayJob", "Checks for idle and saves messages every 1 minute" ) );
+		SetAwayTime(300);
+		AddTimer(new CAwayJob(this, 60, 0, "AwayJob", "Checks for idle and saves messages every 1 minute"));
 	}
 	virtual ~CAway()
 	{
-		if ( !m_bBootError )
+		if (!m_bBootError)
 			SaveBufferToDisk();
 	}
 
@@ -61,7 +61,7 @@ public:
 		}
 		if (!sMyArgs.empty())
 		{
-			m_sPassword = CBlowfish::MD5( sMyArgs );
+			m_sPassword = CBlowfish::MD5(sMyArgs);
 		}
 
 		return true;
@@ -69,29 +69,29 @@ public:
 
 	virtual bool OnBoot()
 	{
-		if ( m_sPassword.empty() )
+		if (m_sPassword.empty())
 		{
-			char *pTmp = CUtils::GetPass( "Enter Encryption Key for away.so: " );
+			char *pTmp = CUtils::GetPass("Enter Encryption Key for away.so: ");
 
-			if ( pTmp )
-				m_sPassword = CBlowfish::MD5( pTmp );
+			if (pTmp)
+				m_sPassword = CBlowfish::MD5(pTmp);
 
 			*pTmp = 0;
 		}
 
-		if ( !BootStrap() )
+		if (!BootStrap())
 		{
 			m_bBootError = true;
-			return( false );
+			return(false);
 		}
 
-		return( true );
+		return(true);
 	}
 
 	virtual void OnIRCConnected()
 	{
-		if( m_bIsAway )
-			Away( true ); // reset away if we are reconnected
+		if(m_bIsAway)
+			Away(true); // reset away if we are reconnected
 		else
 			Back();	// ircd seems to remember your away if you killed the client and came back
 	}
@@ -99,191 +99,191 @@ public:
 	bool BootStrap()
 	{
 		CString sFile;
-		if ( DecryptMessages( sFile ) )
+		if (DecryptMessages(sFile))
 		{
 			CString sLine;
 			CString::size_type iPos = 0;
-			while( ReadLine( sFile, sLine, iPos ) )
+			while(ReadLine(sFile, sLine, iPos))
 			{
 				sLine.Trim();
-				AddMessage( sLine );
+				AddMessage(sLine);
 			}
 		} else
 		{
 			m_sPassword = "";
 			CUtils::PrintError("[" + GetModName() + ".so] Failed to Decrypt Messages");
-			return( false );
+			return(false);
 		}
 
-		return( true );
+		return(true);
 	}
 
 	void SaveBufferToDisk()
 	{
-		if ( !m_sPassword.empty() )
+		if (!m_sPassword.empty())
 		{
 			CString sFile = CRYPT_VERIFICATION_TOKEN;
 
-			for( u_int b = 0; b < m_vMessages.size(); b++ )
+			for(u_int b = 0; b < m_vMessages.size(); b++)
 				sFile += m_vMessages[b] + "\n";
 
-			CBlowfish c( m_sPassword, BF_ENCRYPT );
-			sFile = c.Crypt( sFile );
+			CBlowfish c(m_sPassword, BF_ENCRYPT);
+			sFile = c.Crypt(sFile);
 			CString sPath = GetPath();
-			if ( !sPath.empty() )
+			if (!sPath.empty())
 			{
-				WriteFile( sPath, sFile );
-				chmod( sPath.c_str(), 0600 );
+				WriteFile(sPath, sFile);
+				chmod(sPath.c_str(), 0600);
 			}
 		}
 	}
 
 	virtual void OnUserAttached()
 	{
-		Back( true );
+		Back(true);
 	}
 	virtual void OnUserDetached()
 	{
 		Away();
 	}
 
-	virtual void OnModCommand( const CString& sCommand )
+	virtual void OnModCommand(const CString& sCommand)
 	{
 		CString sCmdName = sCommand.Token(0);
-		if ( sCmdName == "away" )
+		if (sCmdName == "away")
 		{
 			CString sReason;
-			if( sCommand.Token( 1 ) != "-quiet" )
+			if(sCommand.Token(1) != "-quiet")
 			{
-				sReason = sCommand.Token( 1, true );
-				PutModNotice( "You have been marked as away", "away" );
+				sReason = sCommand.Token(1, true);
+				PutModNotice("You have been marked as away", "away");
 			}
 			else
-				sReason = sCommand.Token( 2, true );
-			Away( false, sReason );
+				sReason = sCommand.Token(2, true);
+			Away(false, sReason);
 		}
-		else if ( sCmdName == "back" )
+		else if (sCmdName == "back")
 		{
-			if ( ( m_vMessages.empty() ) && ( sCommand.Token( 1 ) != "-quiet" ) )
-				PutModNotice( "Welcome Back!", "away" );
+			if ((m_vMessages.empty()) && (sCommand.Token(1) != "-quiet"))
+				PutModNotice("Welcome Back!", "away");
 			Back();
 		}
-		else if ( sCmdName == "messages" )
+		else if (sCmdName == "messages")
 		{
-			for( u_int a = 0; a < m_vMessages.size(); a++ )
-				PutModule( m_vMessages[a], "away" );
+			for(u_int a = 0; a < m_vMessages.size(); a++)
+				PutModule(m_vMessages[a], "away");
 		}
-		else if ( sCmdName == "delete" )
+		else if (sCmdName == "delete")
 		{
 			CString sWhich = sCommand.Token(1);
-			if ( sWhich == "all" )
+			if (sWhich == "all")
 			{
-				PutModNotice( "Deleted " + CString( m_vMessages.size() ) + " Messages.", "away" );
-				for( u_int a = 0; a < m_vMessages.size(); a++ )
-					m_vMessages.erase( m_vMessages.begin() + a-- );
+				PutModNotice("Deleted " + CString(m_vMessages.size()) + " Messages.", "away");
+				for(u_int a = 0; a < m_vMessages.size(); a++)
+					m_vMessages.erase(m_vMessages.begin() + a--);
 
 			}
-			else if ( sWhich.empty() )
+			else if (sWhich.empty())
 			{
-				PutModNotice( "USAGE: delete <num|all>", "away" );
+				PutModNotice("USAGE: delete <num|all>", "away");
 				return;
 			} else
 			{
-				u_int iNum = atoi( sWhich.c_str() );
-				if ( iNum >= m_vMessages.size() )
+				u_int iNum = atoi(sWhich.c_str());
+				if (iNum >= m_vMessages.size())
 				{
-					PutModNotice( "Illegal Message # Requested", "away" );
+					PutModNotice("Illegal Message # Requested", "away");
 					return;
 				}
 				else
 				{
-					m_vMessages.erase( m_vMessages.begin() + iNum );
-					PutModNotice( "Message Erased.", "away" );
+					m_vMessages.erase(m_vMessages.begin() + iNum);
+					PutModNotice("Message Erased.", "away");
 				}
 				SaveBufferToDisk();
 			}
 		}
-		else if ( sCmdName == "save" )
+		else if (sCmdName == "save")
 		{
 			SaveBufferToDisk();
-			PutModNotice( "Messages saved to disk.", "away" );
+			PutModNotice("Messages saved to disk.", "away");
 		}
-		else if ( sCmdName == "ping" )
+		else if (sCmdName == "ping")
 		{
 			Ping();
-			if ( m_bIsAway )
+			if (m_bIsAway)
 				Back();
 		}
-		else if ( sCmdName == "pass" )
+		else if (sCmdName == "pass")
 		{
-			m_sPassword = sCommand.Token( 1 );
-			PutModNotice( "Password Updated to [" + m_sPassword + "]" );
+			m_sPassword = sCommand.Token(1);
+			PutModNotice("Password Updated to [" + m_sPassword + "]");
 		}
-		else if ( sCmdName == "show" )
+		else if (sCmdName == "show")
 		{
 			map< CString, vector< CString> > msvOutput;
-			for( u_int a = 0; a < m_vMessages.size(); a++ )
+			for(u_int a = 0; a < m_vMessages.size(); a++)
 			{
-				CString sTime = m_vMessages[a].Token( 0, false, ":" );
-				CString sWhom = m_vMessages[a].Token( 1, false, ":" );
-				CString sMessage = m_vMessages[a].Token( 2, true, ":" );
+				CString sTime = m_vMessages[a].Token(0, false, ":");
+				CString sWhom = m_vMessages[a].Token(1, false, ":");
+				CString sMessage = m_vMessages[a].Token(2, true, ":");
 
-				if ( ( sTime.empty() ) || ( sWhom.empty() ) || ( sMessage.empty() ) )
+				if ((sTime.empty()) || (sWhom.empty()) || (sMessage.empty()))
 				{
 					// illegal format
-					PutModule( "Corrupt message! [" + m_vMessages[a] + "]", "away" );
-					m_vMessages.erase( m_vMessages.begin() + a-- );
+					PutModule("Corrupt message! [" + m_vMessages[a] + "]", "away");
+					m_vMessages.erase(m_vMessages.begin() + a--);
 					continue;
 				}
-				time_t iTime = strtol( sTime.c_str(), NULL, 10 );
+				time_t iTime = strtol(sTime.c_str(), NULL, 10);
 				char szFormat[64];
 				struct tm t;
-				localtime_r( &iTime, &t );
-				size_t iCount = strftime( szFormat, 64, "%F %T", &t );
-				if ( iCount <= 0 )
+				localtime_r(&iTime, &t);
+				size_t iCount = strftime(szFormat, 64, "%F %T", &t);
+				if (iCount <= 0)
 				{
-					PutModule( "Corrupt time stamp! [" + m_vMessages[a] + "]", "away" );
-					m_vMessages.erase( m_vMessages.begin() + a-- );
+					PutModule("Corrupt time stamp! [" + m_vMessages[a] + "]", "away");
+					m_vMessages.erase(m_vMessages.begin() + a--);
 					continue;
 				}
-				CString sTmp = "    " + CString( a ) + ") [";
-				sTmp.append( szFormat, iCount );
+				CString sTmp = "    " + CString(a) + ") [";
+				sTmp.append(szFormat, iCount);
 				sTmp += "] ";
 				sTmp += sMessage;
-				msvOutput[sWhom].push_back( sTmp );
+				msvOutput[sWhom].push_back(sTmp);
 			}
-			for( map< CString, vector< CString> >::iterator it = msvOutput.begin(); it != msvOutput.end(); it++ )
+			for(map< CString, vector< CString> >::iterator it = msvOutput.begin(); it != msvOutput.end(); it++)
 			{
-				PutModule( it->first, "away" );
-				for( u_int a = 0; a < it->second.size(); a++ )
-					PutModule( it->second[a] );
+				PutModule(it->first, "away");
+				for(u_int a = 0; a < it->second.size(); a++)
+					PutModule(it->second[a]);
 			}
-			PutModule( "#--- End Messages", "away" );
-		} else if ( sCmdName == "enabletimer")
+			PutModule("#--- End Messages", "away");
+		} else if (sCmdName == "enabletimer")
 		{
 			SetAwayTime(300);
-			PutModule( "Timer set to 300 seconds" );
-		} else if ( sCmdName == "disabletimer")
+			PutModule("Timer set to 300 seconds");
+		} else if (sCmdName == "disabletimer")
 		{
 			SetAwayTime(0);
-			PutModule( "Timer disabled" );
-		} else if ( sCmdName == "settimer")
+			PutModule("Timer disabled");
+		} else if (sCmdName == "settimer")
 		{
 			int iSetting = sCommand.Token(1).ToInt();
 
 			SetAwayTime(iSetting);
 
 			if(iSetting == 0)
-				PutModule( "Timer disabled" );
+				PutModule("Timer disabled");
 			else
-				PutModule( "Timer set to " + CString(iSetting) + " seconds" );
+				PutModule("Timer set to " + CString(iSetting) + " seconds");
 
-		} else if ( sCmdName == "timer")
+		} else if (sCmdName == "timer")
 		{
-			PutModule( "Current timer setting: " + CString(GetAwayTime()) + " seconds" );
+			PutModule("Current timer setting: " + CString(GetAwayTime()) + " seconds");
 		} else
 		{
-			PutModule( "Commands: away [-quiet], back [-quiet], delete <num|all>, ping, show, save, enabletimer, disabletimer, settimer <secs>, timer", "away" );
+			PutModule("Commands: away [-quiet], back [-quiet], delete <num|all>, ping, show, save, enabletimer, disabletimer, settimer <secs>, timer", "away");
 		}
 	}
 
@@ -291,49 +291,49 @@ public:
 	{
 		CString sBuffer = m_pUser->GetUserName();
 		CString sRet = GetSavePath();
-		sRet += "/.znc-away-" + CBlowfish::MD5( sBuffer, true );
-		return( sRet );
+		sRet += "/.znc-away-" + CBlowfish::MD5(sBuffer, true);
+		return(sRet);
 	}
 
-	virtual void Away( bool bForce = false, const CString & sReason = "" )
+	virtual void Away(bool bForce = false, const CString & sReason = "")
 	{
-		if ( ( !m_bIsAway ) || ( bForce ) )
+		if ((!m_bIsAway) || (bForce))
 		{
-			if ( !bForce )
+			if (!bForce)
 				m_sReason = sReason;
-			else if ( !sReason.empty() )
+			else if (!sReason.empty())
 				m_sReason = sReason;
 
-			time_t iTime = time( NULL );
-			char *pTime = ctime( &iTime );
+			time_t iTime = time(NULL);
+			char *pTime = ctime(&iTime);
 			CString sTime;
-			if ( pTime )
+			if (pTime)
 			{
 				sTime = pTime;
 				sTime.Trim();
 			}
-			if ( m_sReason.empty() )
+			if (m_sReason.empty())
 				m_sReason = "away :Auto Away at " + sTime;
-			PutIRC( m_sReason );
+			PutIRC(m_sReason);
 			m_bIsAway = true;
 		}
 	}
 
-	virtual void Back( bool bUsePrivMessage = false )
+	virtual void Back(bool bUsePrivMessage = false)
 	{
-		PutIRC( "away" );
+		PutIRC("away");
 		m_bIsAway = false;
-		if ( !m_vMessages.empty() )
+		if (!m_vMessages.empty())
 		{
-			if ( bUsePrivMessage )
+			if (bUsePrivMessage)
 			{
-				PutModule( "Welcome Back!", "away" );
-				PutModule( "You have " + CString( m_vMessages.size() ) + " messages!", "away" );
+				PutModule("Welcome Back!", "away");
+				PutModule("You have " + CString(m_vMessages.size()) + " messages!", "away");
 			}
 			else
 			{
-				PutModNotice( "Welcome Back!", "away" );
-				PutModNotice( "You have " + CString( m_vMessages.size() ) + " messages!", "away" );
+				PutModNotice("Welcome Back!", "away");
+				PutModNotice("You have " + CString(m_vMessages.size()) + " messages!", "away");
 			}
 		}
 		m_sReason = "";
@@ -341,76 +341,76 @@ public:
 
 	virtual EModRet OnPrivMsg(CNick& Nick, CString& sMessage)
 	{
-		if ( m_bIsAway )
-			AddMessage( time( NULL ), Nick, sMessage );
-		return( CONTINUE );
+		if (m_bIsAway)
+			AddMessage(time(NULL), Nick, sMessage);
+		return(CONTINUE);
 	}
 
 	virtual EModRet OnUserNotice(CString& sTarget, CString& sMessage)
 	{
 		Ping();
-		if( m_bIsAway )
+		if(m_bIsAway)
 			Back();
 
-		return( CONTINUE );
+		return(CONTINUE);
 	}
 	virtual EModRet OnUserMsg(CString& sTarget, CString& sMessage)
 	{
 		Ping();
-		if( m_bIsAway )
+		if(m_bIsAway)
 			Back();
 
-		return( CONTINUE );
+		return(CONTINUE);
 	}
 
-	time_t GetTimeStamp() const { return( m_iLastSentData ); }
-	void Ping() { m_iLastSentData = time( NULL ); }
+	time_t GetTimeStamp() const { return(m_iLastSentData); }
+	void Ping() { m_iLastSentData = time(NULL); }
 	time_t GetAwayTime() { return m_iAutoAway; }
 	void SetAwayTime(time_t u) { m_iAutoAway = u; }
 
-	bool IsAway() { return( m_bIsAway ); }
+	bool IsAway() { return(m_bIsAway); }
 
 private:
 	CString	m_sPassword;
 	bool	m_bBootError;
-	bool DecryptMessages( CString & sBuffer )
+	bool DecryptMessages(CString & sBuffer)
 	{
 		CString sMessages = GetPath();
 		CString sFile;
 		sBuffer = "";
 
-		if ( ( sMessages.empty() ) || ( !ReadFile( sMessages, sFile ) ) )
+		if ((sMessages.empty()) || (!ReadFile(sMessages, sFile)))
 		{
-			 PutModule( "Unable to find buffer" );
-			 return( true ); // gonna be successful here
+			 PutModule("Unable to find buffer");
+			 return(true); // gonna be successful here
 		}
 
-		if ( !sFile.empty() )
+		if (!sFile.empty())
 		{
-			CBlowfish c( m_sPassword, BF_DECRYPT );
-			sBuffer = c.Crypt( sFile );
+			CBlowfish c(m_sPassword, BF_DECRYPT);
+			sBuffer = c.Crypt(sFile);
 
-			if ( sBuffer.substr( 0, strlen( CRYPT_VERIFICATION_TOKEN ) ) != CRYPT_VERIFICATION_TOKEN )
+			if (sBuffer.substr(0, strlen(CRYPT_VERIFICATION_TOKEN)) != CRYPT_VERIFICATION_TOKEN)
 			{
 				// failed to decode :(
-				PutModule( "Unable to decode Encrypted messages" );
-				return( false );
+				PutModule("Unable to decode Encrypted messages");
+				return(false);
 			}
-			sBuffer.erase( 0, strlen( CRYPT_VERIFICATION_TOKEN ) );
+			sBuffer.erase(0, strlen(CRYPT_VERIFICATION_TOKEN));
 		}
-		return( true );
+		return(true);
 	}
 
-	void AddMessage( time_t iTime, const CNick & Nick, CString & sMessage )
+	void AddMessage(time_t iTime, const CNick & Nick, CString & sMessage)
 	{
 		if (m_pUser && Nick.GetNick() == m_pUser->GetIRCNick().GetNick())
 			return; // ignore messages from self
-		AddMessage( CString( iTime ) + ":" + Nick.GetNickMask() + ":" + sMessage );
+		AddMessage(CString(iTime) + ":" + Nick.GetNickMask() + ":" + sMessage);
 	}
 
-	void AddMessage( const CString & sText )
+	void AddMessage(const CString & sText)
 	{
-		m_vMessages.push_back( sText );
+		m_vMessages.push_back(sText);
 	}
 
 	time_t			m_iLastSentData;
@@ -426,11 +426,11 @@ void CAwayJob::RunJob()
 	CAway *p = (CAway *)m_pModule;
 	p->SaveBufferToDisk();
 
-	if ( !p->IsAway() )
+	if (!p->IsAway())
 	{
-		time_t iNow = time( NULL );
+		time_t iNow = time(NULL);
 
-		if ( ( iNow - p->GetTimeStamp() ) > p->GetAwayTime() && p->GetAwayTime() != 0)
+		if ((iNow - p->GetTimeStamp()) > p->GetAwayTime() && p->GetAwayTime() != 0)
 			p->Away();
 	}
 }

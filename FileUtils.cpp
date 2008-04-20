@@ -313,7 +313,7 @@ bool CFile::ReadLine(CString& sData, const CString & sDelimiter) {
 		return true;
 	}
 
-	if( bEOF && m_sBuffer.size() ) {
+	if (bEOF && m_sBuffer.size()) {
 		sData = m_sBuffer;
 		m_sBuffer.clear();
 		return true;
@@ -411,14 +411,13 @@ int CExecSock::popen2(int & iReadFD, int & iWriteFD, const CString & sCommand) {
 }
 
 void CExecSock::close2(int iPid, int iReadFD, int iWriteFD) {
-	close( iReadFD );
-	close( iWriteFD );
-	u_int iNow = time( NULL );
-	while( waitpid( iPid, NULL, WNOHANG ) == 0 )
-	{
-		if ( ( time( NULL ) - iNow ) > 5 )
+	close(iReadFD);
+	close(iWriteFD);
+	u_int iNow = time(NULL);
+	while (waitpid(iPid, NULL, WNOHANG) == 0) {
+		if ((time(NULL) - iNow) > 5)
 			break;	// giveup
-		usleep( 100 );
+		usleep(100);
 	}
 	return;
 }

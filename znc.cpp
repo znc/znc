@@ -320,7 +320,7 @@ bool CZNC::DeletePidFile() {
 	return false;
 }
 
-bool CZNC::WritePemFile( bool bEncPem ) {
+bool CZNC::WritePemFile(bool bEncPem) {
 #ifndef HAVE_LIBSSL
 	CUtils::PrintError("ZNC was not compiled with ssl support.");
 	return false;
@@ -1403,14 +1403,14 @@ bool CZNC::DoRehash(CString& sError)
 
 		}
 
-		if( sName.CaseCmp( "GM:", 3 ) == 0 )
+		if (sName.CaseCmp("GM:", 3) == 0)
 		{ // GM: prefix is a pass through to config lines for global modules
 			CGlobalModuleConfigLine cTmp;
-			cTmp.m_sName = sName.substr( 3, CString::npos );
+			cTmp.m_sName = sName.substr(3, CString::npos);
 			cTmp.m_sValue = sValue;
 			cTmp.m_pChan = pChan;
 			cTmp.m_pUser = pUser;
-			lGlobalModuleConfigLine.push_back( cTmp );
+			lGlobalModuleConfigLine.push_back(cTmp);
 		}
 		else
 		{
@@ -1492,13 +1492,13 @@ bool CZNC::DoRehash(CString& sError)
 	}
 
 	// last step, throw unhandled config items at global config
-	for( std::list<CGlobalModuleConfigLine>::iterator it = lGlobalModuleConfigLine.begin(); it != lGlobalModuleConfigLine.end(); it++ )
+	for (std::list<CGlobalModuleConfigLine>::iterator it = lGlobalModuleConfigLine.begin(); it != lGlobalModuleConfigLine.end(); it++)
 	{
-		if( ( pChan && pChan == it->m_pChan ) || ( pUser && pUser == it->m_pUser ) )
+		if ((pChan && pChan == it->m_pChan) || (pUser && pUser == it->m_pUser))
 			continue; // skip unclosed user or chan
-		if( !GetModules().OnConfigLine( it->m_sName, it->m_sValue, it->m_pUser, it->m_pChan ) )
+		if (!GetModules().OnConfigLine(it->m_sName, it->m_sValue, it->m_pUser, it->m_pChan))
 		{
-			CUtils::PrintMessage( "unhandled global module config line [GM:" + it->m_sName + "] = [" + it->m_sValue + "]" );
+			CUtils::PrintMessage("unhandled global module config line [GM:" + it->m_sName + "] = [" + it->m_sValue + "]");
 		}
 	}
 #endif

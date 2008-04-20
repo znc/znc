@@ -69,7 +69,7 @@ public:
 	}
 
 	virtual u_short ListenAllRand(const CString& sSockName, int isSSL = false, int iMaxConns = SOMAXCONN, Csock *pcSock = NULL, u_int iTimeout = 0, bool bIsIPv6 = false) {
-		return( ListenRand( sSockName, "", isSSL, iMaxConns, pcSock, iTimeout, bIsIPv6 ) );
+		return(ListenRand(sSockName, "", isSSL, iMaxConns, pcSock, iTimeout, bIsIPv6));
 	}
 
 	virtual bool Connect(const CString& sHostname, u_short iPort , const CString& sSockName, int iTimeout = 60, bool isSSL = false, const CString& sBindHost = "", Csock *pcSock = NULL) {
@@ -145,7 +145,7 @@ public:
 	const CString& GetUserPath() const { if (!CFile::Exists(m_sUserPath)) { CUtils::MakeDir(m_sUserPath); } return m_sUserPath; }
 	CString GetPemLocation() const { return GetZNCPath() + "/znc.pem"; }
 	const CString& GetConfigFile() const { return m_sConfigFile; }
-	bool WritePemFile( bool bEncPem = false );
+	bool WritePemFile(bool bEncPem = false);
 	const CString& GetISpoofFile() const { return m_sISpoofFile; }
 	const CString& GetISpoofFormat() const { return m_sISpoofFormat; }
 	const VCString& GetVHosts() const { return m_vsVHosts; }
@@ -157,7 +157,7 @@ public:
 	CUser* FindUser(const CString& sUsername);
 	bool DeleteUser(const CString& sUsername);
 	bool AddUser(CUser* pUser, CString& sErrorRet);
-	const map<CString,CUser*> & GetUserMap() const { return( m_msUsers ); }
+	const map<CString,CUser*> & GetUserMap() const { return(m_msUsers); }
 
 	// Message of the Day
 	void SetMotd(const CString& sMessage) { ClearMotd(); AddMotd(sMessage); }

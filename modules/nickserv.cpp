@@ -29,7 +29,7 @@ public:
 		return true;
 	}
 
-	virtual void OnModCommand( const CString& sCommand )
+	virtual void OnModCommand(const CString& sCommand)
 	{
 		CString sCmdName = sCommand.Token(0).AsLower();
 		if(sCmdName == "set") {

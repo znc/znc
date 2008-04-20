@@ -165,12 +165,12 @@ int main(int argc, char** argv) {
 	if (bMakePem) {
 		CZNC* pZNC = &CZNC::Get();
 		pZNC->InitDirs("", sDataDir);
-		pZNC->WritePemFile( bEncPem );
+		pZNC->WritePemFile(bEncPem);
 
 		delete pZNC;
 		return 0;
 	}
-	if( bEncPem && !bMakePem ) {
+	if (bEncPem && !bMakePem) {
 		CUtils::PrintError("--encrypt-pem should be used along with --makepem.");
 		return 1;
 	}

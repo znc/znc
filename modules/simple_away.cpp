@@ -13,8 +13,8 @@ class CSimpleAway;
 class CSimpleAwayJob : public CTimer
 {
 public:
-	CSimpleAwayJob( CModule* pModule, unsigned int uInterval, unsigned int uCycles, const CString& sLabel, const CString& sDescription )
-		: CTimer( pModule, uInterval, uCycles, sLabel, sDescription) {}
+	CSimpleAwayJob(CModule* pModule, unsigned int uInterval, unsigned int uCycles, const CString& sLabel, const CString& sDescription)
+		: CTimer(pModule, uInterval, uCycles, sLabel, sDescription) {}
 
 	virtual ~CSimpleAwayJob() {}
 
@@ -74,14 +74,14 @@ public:
 			StartTimer();
 	}
 
-	virtual void OnModCommand( const CString& sCommand )
+	virtual void OnModCommand(const CString& sCommand)
 	{
 		CString sCmdName = sCommand.Token(0);
 
 		if (sCmdName == "disabletimer") {
 			m_iAwayWait = 0;
-			PutModule( "Timer disabled" );
-		} else if ( sCmdName == "settimer") {
+			PutModule("Timer disabled");
+		} else if (sCmdName == "settimer") {
 			int iSetting = sCommand.Token(1).ToInt();
 
 			m_iAwayWait = iSetting;
@@ -91,10 +91,10 @@ public:
 			else
 				PutModule("Timer set to "
 						+ CString(iSetting) + " seconds");
-		} else if ( sCmdName == "timer") {
+		} else if (sCmdName == "timer") {
 			PutModule("Current timer setting: "
 					+ CString(m_iAwayWait) + " seconds");
-		} else if ( sCmdName == "reason") {
+		} else if (sCmdName == "reason") {
 			CString sReason = sCommand.Token(1, true);
 
 			if (!sReason.empty()) {

@@ -364,24 +364,24 @@ public:
 	}
 
 	CExecSock(const CString& sExec) : Csock() {
-		Execute( sExec );
+		Execute(sExec);
 	}
 
-	int Execute( const CString & sExec ) {
+	int Execute(const CString & sExec) {
 		int iReadFD, iWriteFD;
 		m_iPid = popen2(iReadFD, iWriteFD, sExec);
 		ConnectFD(iReadFD, iWriteFD, "0.0.0.0:0");
-		return( m_iPid );
+		return(m_iPid);
 	}
-	void Kill( int iSignal )
+	void Kill(int iSignal)
 	{
-		kill( m_iPid, iSignal );
+		kill(m_iPid, iSignal);
 		Close();
 	}
 	virtual ~CExecSock() {
 		close2(m_iPid, GetRSock(), GetWSock());
-		SetRSock( -1 );
-		SetWSock( -1 );
+		SetRSock(-1);
+		SetWSock(-1);
 	}
 
 	int popen2(int & iReadFD, int & iWriteFD, const CString & sCommand);

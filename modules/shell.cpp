@@ -14,7 +14,7 @@ class CShellMod;
 
 class CShellSock : public CExecSock {
 public:
-	CShellSock(CShellMod* pShellMod, CClient* pClient, const CString& sExec) : CExecSock( sExec ) {
+	CShellSock(CShellMod* pShellMod, CClient* pClient, const CString& sExec) : CExecSock(sExec) {
 		EnableReadLine();
 		m_pParent = pShellMod;
 		m_pClient = pClient;

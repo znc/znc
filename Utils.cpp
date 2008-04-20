@@ -54,30 +54,30 @@ void CUtils::GenerateCert(FILE *pOut, bool bEncPrivKey, const CString& sHost) {
 	X509_NAME *pName = NULL;
 	int days = 365;
 
-	u_int iSeed = time( NULL );
-	int serial = ( rand_r( &iSeed ) % 9999 );
+	u_int iSeed = time(NULL);
+	int serial = (rand_r(&iSeed) % 9999);
 
 	RSA *pRSA = RSA_generate_key(1024, 0x10001, NULL, NULL);
-	if( ( pKey = EVP_PKEY_new() ) ) {
-		if ( !EVP_PKEY_assign_RSA( pKey, pRSA ) ) {
-		    EVP_PKEY_free( pKey );
+	if ((pKey = EVP_PKEY_new())) {
+		if (!EVP_PKEY_assign_RSA(pKey, pRSA)) {
+			EVP_PKEY_free(pKey);
 			return;
 		}
 
-		PEM_write_RSAPrivateKey( pOut, pRSA, (bEncPrivKey ? EVP_des_ede3_cbc() : NULL), NULL, 0, NULL, NULL);
+		PEM_write_RSAPrivateKey(pOut, pRSA, (bEncPrivKey ? EVP_des_ede3_cbc() : NULL), NULL, 0, NULL, NULL);
 
-		if( !( pCert = X509_new() ) ) {
-		    EVP_PKEY_free( pKey );
+		if(!(pCert = X509_new())) {
+			EVP_PKEY_free(pKey);
 			return;
 		}
 
-		X509_set_version( pCert, 2 );
-		ASN1_INTEGER_set( X509_get_serialNumber( pCert ), serial );
-		X509_gmtime_adj( X509_get_notBefore( pCert ), 0 );
-		X509_gmtime_adj( X509_get_notAfter( pCert ), (long)60*60*24*days );
-		X509_set_pubkey( pCert, pKey );
+		X509_set_version(pCert, 2);
+		ASN1_INTEGER_set(X509_get_serialNumber(pCert), serial);
+		X509_gmtime_adj(X509_get_notBefore(pCert), 0);
+		X509_gmtime_adj(X509_get_notAfter(pCert), (long)60*60*24*days);
+		X509_set_pubkey(pCert, pKey);
 
-		pName = X509_get_subject_name( pCert );
+		pName = X509_get_subject_name(pCert);
 
 		const char *pLogName = getenv("LOGNAME");
 		const char *pHostName = NULL;
@@ -102,25 +102,25 @@ void CUtils::GenerateCert(FILE *pOut, bool bEncPrivKey, const CString& sHost) {
 		sEmailAddr += "@";
 		sEmailAddr += pHostName;
 
-		X509_NAME_add_entry_by_txt( pName, "C", MBSTRING_ASC, (unsigned char *)"US", -1, -1, 0);
-		X509_NAME_add_entry_by_txt( pName, "ST", MBSTRING_ASC, (unsigned char *)"SomeState", -1, -1, 0);
-		X509_NAME_add_entry_by_txt( pName, "L", MBSTRING_ASC, (unsigned char *)"SomeCity", -1, -1, 0);
-		X509_NAME_add_entry_by_txt( pName, "O", MBSTRING_ASC, (unsigned char *)"SomeCompany", -1, -1, 0);
-		X509_NAME_add_entry_by_txt( pName, "OU", MBSTRING_ASC, (unsigned char *)pLogName, -1, -1, 0);
-		X509_NAME_add_entry_by_txt( pName, "CN", MBSTRING_ASC, (unsigned char *)pHostName, -1, -1, 0);
-		X509_NAME_add_entry_by_txt( pName, "emailAddress", MBSTRING_ASC, (unsigned char *)sEmailAddr.c_str(), -1, -1, 0);
+		X509_NAME_add_entry_by_txt(pName, "C", MBSTRING_ASC, (unsigned char *)"US", -1, -1, 0);
+		X509_NAME_add_entry_by_txt(pName, "ST", MBSTRING_ASC, (unsigned char *)"SomeState", -1, -1, 0);
+		X509_NAME_add_entry_by_txt(pName, "L", MBSTRING_ASC, (unsigned char *)"SomeCity", -1, -1, 0);
+		X509_NAME_add_entry_by_txt(pName, "O", MBSTRING_ASC, (unsigned char *)"SomeCompany", -1, -1, 0);
+		X509_NAME_add_entry_by_txt(pName, "OU", MBSTRING_ASC, (unsigned char *)pLogName, -1, -1, 0);
+		X509_NAME_add_entry_by_txt(pName, "CN", MBSTRING_ASC, (unsigned char *)pHostName, -1, -1, 0);
+		X509_NAME_add_entry_by_txt(pName, "emailAddress", MBSTRING_ASC, (unsigned char *)sEmailAddr.c_str(), -1, -1, 0);
 
-		X509_set_subject_name( pCert, pName );
+		X509_set_subject_name(pCert, pName);
 
-		if ( !X509_sign( pCert, pKey, EVP_md5() ) ) {
-		    X509_free( pCert );
-		    EVP_PKEY_free( pKey );
+		if (!X509_sign(pCert, pKey, EVP_md5())) {
+			X509_free(pCert);
+			EVP_PKEY_free(pKey);
 			return;
 		}
 
-		PEM_write_X509( pOut, pCert );
-		X509_free( pCert );
-		EVP_PKEY_free( pKey );
+		PEM_write_X509(pOut, pCert);
+		X509_free(pCert);
+		EVP_PKEY_free(pKey);
 	}
 }
 #endif /* HAVE_LIBSSL */
