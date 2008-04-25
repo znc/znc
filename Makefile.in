@@ -12,7 +12,6 @@ CXXFLAGS := @CXXFLAGS@
 LDFLAGS  := @LDFLAGS@
 INCLUDES := @INCLUDES@
 LIBS     := @LIBS@
-prefix   := @prefix@
 
 SRCS := String.cpp Csocket.cpp main.cpp znc.cpp User.cpp IRCSock.cpp Client.cpp DCCBounce.cpp \
 	DCCSock.cpp Chan.cpp Nick.cpp Server.cpp Modules.cpp MD5.cpp Buffer.cpp Utils.cpp \
@@ -53,11 +52,11 @@ distclean: clean
 	$(CXX) $(CXXFLAGS) $(INCLUDES) -c -o $@ $< -MMD -MF .depend/$<.dep
 
 install: znc @MODTARGET@
-	mkdir -p $(DESTDIR)$(prefix)/bin
+	mkdir -p $(DESTDIR)$(bindir)
 	mkdir -p $(DESTDIR)$(prefix)/include/znc
-	install -m 0755 znc $(DESTDIR)$(prefix)/bin
-	install -m 0755 znc-config $(DESTDIR)$(prefix)/bin
-	install -m 0755 znc-buildmod $(DESTDIR)$(prefix)/bin
+	install -m 0755 znc $(DESTDIR)$(bindir)
+	install -m 0755 znc-config $(DESTDIR)$(bindir)
+	install -m 0755 znc-buildmod $(DESTDIR)$(bindir)
 	install -m 0644 *.h $(DESTDIR)$(prefix)/include/znc
 	@if test -n "@MODTARGET@"; then \
 		$(MAKE) -C modules install DESTDIR=$(DESTDIR); \
