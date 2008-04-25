@@ -310,6 +310,12 @@ void CClient::ReadLine(const CString& sData) {
 		}
 #endif
 
+		if (!m_pIRCSock) {
+			PutStatus("Your message to [" + sTarget + "] got lost, "
+					"you are not connected to IRC!");
+			return;
+		}
+
 		CChan* pChan = m_pUser->FindChan(sTarget);
 
 		if ((pChan) && (pChan->KeepBuffer())) {
@@ -531,6 +537,12 @@ void CClient::ReadLine(const CString& sData) {
 #ifdef _MODULES
 		MODULECALL(OnUserMsg(sTarget, sMsg), m_pUser, this, return);
 #endif
+
+		if (!m_pIRCSock) {
+			PutStatus("Your message to [" + sTarget + "] got lost, "
+					"you are not connected to IRC!");
+			return;
+		}
 
 		CChan* pChan = m_pUser->FindChan(sTarget);
 
