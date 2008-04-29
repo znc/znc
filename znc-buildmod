@@ -77,6 +77,7 @@ do
 			echo -e "${RESTART}${OK}"
 		else
 			echo -e "${ERROR} Error while building ${MOD}.so"
+			exit 1
 		fi
 	fi
 done
