@@ -903,7 +903,13 @@ bool CZNC::DoRehash(CString& sError)
 		return false;
 	}
 
-	if (!m_LockFile.TryExLock(m_sConfigFile)) {
+	if (!m_LockFile.Open(m_sConfigFile)) {
+		sError = "Can not open config file";
+		CUtils::PrintStatus(false, sError);
+		return false;
+	}
+
+	if (!m_LockFile.TryExLock()) {
 		sError = "ZNC is already running on this config.";
 		CUtils::PrintStatus(false, sError);
 		return false;

@@ -108,7 +108,7 @@ public:
 		Init();
 	}
 
-	void Open(const CString& sFile, bool bRw = false) {
+	bool Open(const CString& sFile, bool bRw = false) {
 		Close();
 
 		m_fd = open(sFile.c_str(), bRw ? O_RDWR : O_RDONLY);
@@ -117,6 +117,11 @@ public:
 		if (m_fd == -1) {
 			// I must create the file then
 			m_fd = open(sFile.c_str(), O_RDWR|O_CREAT, 0644);
+
+			if (m_fd == -1) {
+				return false;
+			}
+
 			m_bCreated = true;
 		}
 
@@ -125,6 +130,8 @@ public:
 
 		m_pid = getpid();       // for destructor
 		m_sFileName = sFile;
+
+		return true;
 	}
 
 	//! timeout in milliseconds
