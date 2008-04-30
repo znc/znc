@@ -172,15 +172,6 @@ public:
 		m_Buffer.Clear();
 	}
 
-	virtual EModRet OnUserRaw(CString& sLine) {
-		if (strncasecmp(sLine.c_str(), "WATCH ", 6) == 0) {
-			Watch(sLine.Token(1), sLine.Token(2), sLine.Token(3, true), true);
-			return HALT;
-		}
-
-		return CONTINUE;
-	}
-
 	virtual void OnKick(const CNick& OpNick, const CString& sKickedNick, CChan& Channel, const CString& sMessage) {
 		Process(OpNick, "* " + OpNick.GetNick() + " kicked " + sKickedNick + " from " + Channel.GetName() + " because [" + sMessage + "]", Channel.GetName());
 	}
