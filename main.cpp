@@ -216,6 +216,7 @@ int main(int argc, char** argv) {
 	}
 
 	if (iPid > 0) {
+		// We are the parent. We are done and will go to bed.
 		CUtils::PrintStatus(true, "[pid: " + CString(iPid) + "]");
 
 		pZNC->WritePidFile(iPid);
@@ -229,6 +230,12 @@ int main(int argc, char** argv) {
 	close(2); open("/dev/null", O_WRONLY);
 
 	CUtils::SetStdoutIsTTY(false);
+
+	// We are the child. There is no way we can be a process group
+	// leader, thus setsid() must succeed.
+	setsid();
+	// Now we are in our own process group and session (no controlling
+	// terminal). We are independent!
 #endif
 
 	struct sigaction sa;
