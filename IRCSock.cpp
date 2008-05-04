@@ -443,6 +443,8 @@ void CIRCSock::ReadLine(const CString& sData) {
 
 				// Todo: use nick compare function here
 				if (Nick.GetNick().CaseCmp(GetNick()) == 0) {
+					// We are changing our own nick, the clients always must see this!
+					bIsVisible = true;
 					SetNick(sNewNick);
 				} else if (Nick.GetNick().CaseCmp(m_pUser->GetNick()) == 0) {
 					KeepNick(true);
