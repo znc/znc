@@ -1507,29 +1507,29 @@ void CClient::UserCommand(const CString& sLine) {
 		for (map<CString, CUser*>::const_iterator it = msUsers.begin(); it != msUsers.end(); it++) {
 			Table.AddRow();
 			Table.SetCell("Username", it->first);
-			Table.SetCell("In", CString(it->second->BytesRead()));
-			Table.SetCell("Out", CString(it->second->BytesWritten()));
-			Table.SetCell("Total", CString(it->second->BytesRead() + it->second->BytesWritten()));
+			Table.SetCell("In", CString::ToByteStr(it->second->BytesRead()));
+			Table.SetCell("Out", CString::ToByteStr(it->second->BytesWritten()));
+			Table.SetCell("Total", CString::ToByteStr(it->second->BytesRead() + it->second->BytesWritten()));
 			users_total_in += it->second->BytesRead();
 			users_total_out += it->second->BytesWritten();
 		}
 		Table.AddRow();
 		Table.SetCell("Username", "<Users>");
-		Table.SetCell("In", CString(users_total_in));
-		Table.SetCell("Out", CString(users_total_out));
-		Table.SetCell("Total", CString(users_total_in + users_total_out));
+		Table.SetCell("In", CString::ToByteStr(users_total_in));
+		Table.SetCell("Out", CString::ToByteStr(users_total_out));
+		Table.SetCell("Total", CString::ToByteStr(users_total_in + users_total_out));
 
 		Table.AddRow();
 		Table.SetCell("Username", "<ZNC>");
-		Table.SetCell("In", CString(CZNC::Get().BytesRead()));
-		Table.SetCell("Out", CString(CZNC::Get().BytesWritten()));
-		Table.SetCell("Total", CString(CZNC::Get().BytesRead() + CZNC::Get().BytesWritten()));
+		Table.SetCell("In", CString::ToByteStr(CZNC::Get().BytesRead()));
+		Table.SetCell("Out", CString::ToByteStr(CZNC::Get().BytesWritten()));
+		Table.SetCell("Total", CString::ToByteStr(CZNC::Get().BytesRead() + CZNC::Get().BytesWritten()));
 
 		Table.AddRow();
 		Table.SetCell("Username", "<Total>");
-		Table.SetCell("In", CString(users_total_in + CZNC::Get().BytesRead()));
-		Table.SetCell("Out", CString(users_total_out + CZNC::Get().BytesWritten()));
-		Table.SetCell("Total", CString(users_total_in + CZNC::Get().BytesRead() + users_total_out + CZNC::Get().BytesWritten()));
+		Table.SetCell("In", CString::ToByteStr(users_total_in + CZNC::Get().BytesRead()));
+		Table.SetCell("Out", CString::ToByteStr(users_total_out + CZNC::Get().BytesWritten()));
+		Table.SetCell("Total", CString::ToByteStr(users_total_in + CZNC::Get().BytesRead() + users_total_out + CZNC::Get().BytesWritten()));
 
 		if (Table.size()) {
 			unsigned int uTableIdx = 0;

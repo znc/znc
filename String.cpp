@@ -852,6 +852,25 @@ CString CString::ToKBytes(double d) {
 	return szRet;
 }
 
+CString CString::ToByteStr(unsigned long long d) {
+	const unsigned long long KiB = 1024;
+	const unsigned long long MiB = KiB * 1024;
+	const unsigned long long GiB = MiB * 1024;
+	const unsigned long long TiB = GiB * 1024;
+
+	if (d > TiB) {
+		return CString(d / (double) TiB) + " TiB";
+	} else if (d > GiB) {
+		return CString(d / (double) GiB) + " GiB";
+	} else if (d > MiB) {
+		return CString(d / (double) MiB) + " MiB";
+	} else if (d > KiB) {
+		return CString(d / (double) KiB) + " KiB";
+	}
+
+	return CString(d) + " B";
+}
+
 bool CString::ToBool() const { return (!Trim_n().Trim_n("0").empty() && Trim_n().CaseCmp("false") != 0); }
 short CString::ToShort() const { return strtoul(this->c_str(), (char**) NULL, 10); }
 unsigned short CString::ToUShort() const { return strtoul(this->c_str(), (char**) NULL, 10); }
