@@ -846,12 +846,6 @@ CString CString::ToPercent(double d) {
 	return szRet;
 }
 
-CString CString::ToKBytes(double d) {
-	char szRet[32];
-	snprintf(szRet, 32, "%.0f K/s", d);
-	return szRet;
-}
-
 CString CString::ToByteStr(unsigned long long d) {
 	const unsigned long long KiB = 1024;
 	const unsigned long long MiB = KiB * 1024;

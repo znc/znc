@@ -128,7 +128,6 @@ public:
 #endif
 
 	static CString ToPercent(double d);
-	static CString ToKBytes(double d);
 	static CString ToByteStr(unsigned long long d);
 
 	bool ToBool() const;

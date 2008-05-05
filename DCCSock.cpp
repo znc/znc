@@ -77,9 +77,11 @@ void CDCCSock::Disconnected() {
 		m_pUser->PutModule(m_sModuleName, sStart + "TooMuchData!");
 	} else if (m_uBytesSoFar == m_uFileSize) {
 		if (m_bSend) {
-			m_pUser->PutModule(m_sModuleName, sStart + "Completed! - Sent [" + m_sLocalFile + "] at [" + CString::ToKBytes(GetAvgWrite() / 1000.0) + "]");
+			m_pUser->PutModule(m_sModuleName, sStart + "Completed! - Sent [" + m_sLocalFile +
+					"] at [" + CString((int) (GetAvgWrite() / 1024.0)) + " KiB/s ]");
 		} else {
-			m_pUser->PutModule(m_sModuleName, sStart + "Completed! - Saved to [" + m_sLocalFile + "] at [" + CString::ToKBytes(GetAvgRead() / 1000.0) + "]");
+			m_pUser->PutModule(m_sModuleName, sStart + "Completed! - Saved to [" + m_sLocalFile +
+					"] at [" + CString((int) (GetAvgRead() / 1024.0)) + " KiB/s ]");
 		}
 	} else {
 		m_pUser->PutModule(m_sModuleName, sStart + "Incomplete!");

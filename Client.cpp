@@ -1079,7 +1079,7 @@ void CClient::UserCommand(const CString& sLine) {
 					Table.AddRow();
 					Table.SetCell("Type", "Sending");
 					Table.SetCell("State", CString::ToPercent(pSock->GetProgress()));
-					Table.SetCell("Speed", CString::ToKBytes(pSock->GetAvgWrite() / 1000.0));
+					Table.SetCell("Speed", CString((int)(pSock->GetAvgWrite() / 1024.0)) + " KiB/s");
 					Table.SetCell("Nick", pSock->GetRemoteNick());
 					Table.SetCell("IP", pSock->GetRemoteIP());
 					Table.SetCell("File", pSock->GetFileName());
@@ -1089,7 +1089,7 @@ void CClient::UserCommand(const CString& sLine) {
 					Table.AddRow();
 					Table.SetCell("Type", "Getting");
 					Table.SetCell("State", CString::ToPercent(pSock->GetProgress()));
-					Table.SetCell("Speed", CString::ToKBytes(pSock->GetAvgRead() / 1000.0));
+					Table.SetCell("Speed", CString((int)(pSock->GetAvgRead() / 1024.0)) + " KiB/s");
 					Table.SetCell("Nick", pSock->GetRemoteNick());
 					Table.SetCell("IP", pSock->GetRemoteIP());
 					Table.SetCell("File", pSock->GetFileName());
