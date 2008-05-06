@@ -168,7 +168,7 @@ void CShellSock::ReadLine(const CString& sData) {
 void CShellSock::Disconnected() {
 	// If there is some incomplete line in the buffer, read it
 	// (e.g. echo echo -n "hi" triggered this)
-	CString &sBuffer = GetInternalBuffer();
+	CString &sBuffer = GetInternalReadBuffer();
 	if (!sBuffer.empty())
 		ReadLine(sBuffer);
 

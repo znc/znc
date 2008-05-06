@@ -84,7 +84,7 @@ void CHTTPSock::ReadLine(const CString& sData) {
 		DisableReadLine();
 
 		if (m_bPost) {
-			m_sPostData = GetInternalBuffer();
+			m_sPostData = GetInternalReadBuffer();
 			CheckPost();
 		} else {
 			GetPage();

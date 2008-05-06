@@ -28,7 +28,7 @@
 * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 *
 *
-* $Revision: 1.79 $
+* $Revision: 1.80 $
 */
 
 #include "Csocket.h"
@@ -1555,7 +1555,8 @@ void Csock::PushBuff( const char *data, int len, bool bStartAtZero )
 
 }
 
-CS_STRING & Csock::GetInternalBuffer() { return( m_sbuffer ); }
+CS_STRING & Csock::GetInternalReadBuffer() { return( m_sbuffer ); }
+CS_STRING & Csock::GetInternalWriteBuffer() { return( m_sSend ); }
 void Csock::SetMaxBufferThreshold( u_int iThreshold ) { m_iMaxStoredBufferLength = iThreshold; }
 u_int Csock::GetMaxBufferThreshold() { return( m_iMaxStoredBufferLength ); }
 int Csock::GetType() { return( m_iConnType ); }

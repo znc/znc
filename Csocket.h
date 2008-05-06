@@ -28,7 +28,7 @@
 * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 *
 *
-* $Revision: 1.190 $
+* $Revision: 1.191 $
 */
 
 // note to compile with win32 need to link to winsock2, using gcc its -lws2_32
@@ -625,10 +625,15 @@ public:
 	*/
 	virtual void PushBuff( const char *data, int len, bool bStartAtZero = false );
 
-	//! This gives access to the internal buffer, if your
+	//! This gives access to the internal read buffer, if your
 	//! not going to use ReadLine(), then you may want to clear this out
 	//! (if its binary data and not many '\\n')
-	CS_STRING & GetInternalBuffer();
+	CS_STRING & GetInternalReadBuffer();
+
+	//! This gives access to the internal write buffer.
+	//! If you want to check if the send queue fills up, check here.
+	CS_STRING & GetInternalWriteBuffer();
+
 	//! sets the max buffered threshold when EnableReadLine() is enabled
 	void SetMaxBufferThreshold( u_int iThreshold );
 	u_int GetMaxBufferThreshold();
