@@ -564,7 +564,9 @@ bool CWebAdminSock::SettingsPage(CString& sPageRet) {
 			for (unsigned int d = 0; d < Dir.size(); d++) {
 				const CFile& SubDir = *Dir[d];
 
-				if (SubDir.IsDir() && SubDir.GetShortName() != "CVS" && SubDir.GetShortName() != "default") {
+				if (SubDir.IsDir() &&
+						SubDir.GetShortName() != ".svn" &&
+						SubDir.GetShortName() != "default") {
 					CTemplate& l = m_Template.AddRow("SkinLoop");
 					l["Name"] = SubDir.GetShortName();
 
