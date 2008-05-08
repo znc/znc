@@ -914,7 +914,7 @@ bool CUser::ResumeFile(const CString& sRemoteNick, unsigned short uPort, unsigne
 }
 
 bool CUser::SendFile(const CString& sRemoteNick, const CString& sFileName, const CString& sModuleName) {
-	CString sFullPath = CUtils::ChangeDir(GetDLPath(), sFileName, CZNC::Get().GetHomePath());
+	CString sFullPath = CDir::ChangeDir(GetDLPath(), sFileName, CZNC::Get().GetHomePath());
 	CDCCSock* pSock = new CDCCSock(this, sRemoteNick, sFullPath, sModuleName);
 
 	CFile* pFile = pSock->OpenFile(false);

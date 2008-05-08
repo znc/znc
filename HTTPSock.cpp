@@ -116,7 +116,7 @@ bool CHTTPSock::PrintFile(const CString& sFileName, CString sContentType) {
 			sFilePath.LeftChomp(1);
 		}
 
-		sFilePath = CUtils::ChangeDir(m_sDocRoot, sFilePath, m_sDocRoot);
+		sFilePath = CDir::ChangeDir(m_sDocRoot, sFilePath, m_sDocRoot);
 
 		if (sFilePath.Left(m_sDocRoot.size()) != m_sDocRoot) {
 			PrintErrorPage(403, "Forbidden", "You don't have permission to access that file on this server.");

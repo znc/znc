@@ -57,7 +57,7 @@ public:
 
 	virtual void OnModCommand(const CString& sCommand) {
 		if ((strcasecmp(sCommand.c_str(), "cd") == 0) || (strncasecmp(sCommand.c_str(), "cd ", 3) == 0)) {
-			CString sPath = CUtils::ChangeDir(m_sPath, ((sCommand.length() == 2) ? CString(CZNC::Get().GetHomePath()) : CString(sCommand.substr(3))), CZNC::Get().GetHomePath());
+			CString sPath = CDir::ChangeDir(m_sPath, ((sCommand.length() == 2) ? CString(CZNC::Get().GetHomePath()) : CString(sCommand.substr(3))), CZNC::Get().GetHomePath());
 			CFile Dir(sPath);
 
 			if (Dir.IsDir()) {
@@ -76,7 +76,7 @@ public:
 			if ((sToNick.empty()) || (sFile.empty())) {
 				PutShell("usage: Send <nick> <file>");
 			} else {
-				sFile = CUtils::ChangeDir(m_sPath, sFile, CZNC::Get().GetHomePath());
+				sFile = CDir::ChangeDir(m_sPath, sFile, CZNC::Get().GetHomePath());
 
 				if (!CFile::Exists(sFile)) {
 					PutShell("get: no such file [" + sFile + "]");
@@ -92,7 +92,7 @@ public:
 			if (sFile.empty()) {
 				PutShell("usage: Get <file>");
 			} else {
-				sFile = CUtils::ChangeDir(m_sPath, sFile, CZNC::Get().GetHomePath());
+				sFile = CDir::ChangeDir(m_sPath, sFile, CZNC::Get().GetHomePath());
 
 				if (!CFile::Exists(sFile)) {
 					PutShell("get: no such file [" + sFile + "]");
@@ -118,7 +118,7 @@ public:
 
 	virtual EModRet OnDCCUserSend(const CNick& RemoteNick, unsigned long uLongIP, unsigned short uPort, const CString& sFile, unsigned long uFileSize) {
 		if (strcasecmp(RemoteNick.GetNick().c_str(), CString(GetModNick()).c_str()) == 0) {
-			CString sLocalFile = CUtils::ChangeDir(m_sPath, sFile, CZNC::Get().GetHomePath());
+			CString sLocalFile = CDir::ChangeDir(m_sPath, sFile, CZNC::Get().GetHomePath());
 
 			m_pUser->GetFile(m_pUser->GetCurNick(), CUtils::GetIP(uLongIP), uPort, sLocalFile, uFileSize, GetModName());
 

@@ -137,12 +137,12 @@ public:
 	CGlobalModules& GetModules() { return *m_pModules; }
 #endif
 	const CString& GetStatusPrefix() const { return m_sStatusPrefix; }
-	const CString& GetCurPath() const { if (!CFile::Exists(m_sCurPath)) { CUtils::MakeDir(m_sCurPath); } return m_sCurPath; }
-	const CString& GetModPath() const { if (!CFile::Exists(m_sModPath)) { CUtils::MakeDir(m_sModPath); } return m_sModPath; }
-	const CString& GetHomePath() const { if (!CFile::Exists(m_sHomePath)) { CUtils::MakeDir(m_sHomePath); } return m_sHomePath; }
-	const CString& GetZNCPath() const { if (!CFile::Exists(m_sZNCPath)) { CUtils::MakeDir(m_sZNCPath); } return m_sZNCPath; }
-	const CString& GetConfPath() const { if (!CFile::Exists(m_sConfPath)) { CUtils::MakeDir(m_sConfPath); } return m_sConfPath; }
-	const CString& GetUserPath() const { if (!CFile::Exists(m_sUserPath)) { CUtils::MakeDir(m_sUserPath); } return m_sUserPath; }
+	const CString& GetCurPath() const { if (!CFile::Exists(m_sCurPath)) { CDir::MakeDir(m_sCurPath); } return m_sCurPath; }
+	const CString& GetModPath() const { if (!CFile::Exists(m_sModPath)) { CDir::MakeDir(m_sModPath); } return m_sModPath; }
+	const CString& GetHomePath() const { if (!CFile::Exists(m_sHomePath)) { CDir::MakeDir(m_sHomePath); } return m_sHomePath; }
+	const CString& GetZNCPath() const { if (!CFile::Exists(m_sZNCPath)) { CDir::MakeDir(m_sZNCPath); } return m_sZNCPath; }
+	const CString& GetConfPath() const { if (!CFile::Exists(m_sConfPath)) { CDir::MakeDir(m_sConfPath); } return m_sConfPath; }
+	const CString& GetUserPath() const { if (!CFile::Exists(m_sUserPath)) { CDir::MakeDir(m_sUserPath); } return m_sUserPath; }
 	CString GetPemLocation() const { return GetZNCPath() + "/znc.pem"; }
 	const CString& GetConfigFile() const { return m_sConfigFile; }
 	bool WritePemFile(bool bEncPem = false);

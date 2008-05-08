@@ -168,8 +168,8 @@ public:
 	const CString& GetChanPrefixes() const { return m_sChanPrefixes; }
 	bool IsChan(const CString& sChan) const;
 
-	const CString& GetUserPath() const { if (!CFile::Exists(m_sUserPath)) { CUtils::MakeDir(m_sUserPath); } return m_sUserPath; }
-	const CString& GetDLPath() const { if (!CFile::Exists(m_sDLPath)) { CUtils::MakeDir(m_sDLPath); } return m_sDLPath; }
+	const CString& GetUserPath() const { if (!CFile::Exists(m_sUserPath)) { CDir::MakeDir(m_sUserPath); } return m_sUserPath; }
+	const CString& GetDLPath() const { if (!CFile::Exists(m_sDLPath)) { CDir::MakeDir(m_sDLPath); } return m_sDLPath; }
 
 	bool UseClientIP() const;
 	bool GetKeepNick() const;

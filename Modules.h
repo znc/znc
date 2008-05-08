@@ -316,7 +316,7 @@ public:
 	MCString::iterator BeginNV() { return m_mssRegistry.begin(); }
 	void DelNV(MCString::iterator it) { m_mssRegistry.erase(it); }
 
-	const CString& GetSavePath() const { if (!CFile::Exists(m_sSavePath)) { CUtils::MakeDir(m_sSavePath); } return m_sSavePath; }
+	const CString& GetSavePath() const { if (!CFile::Exists(m_sSavePath)) { CDir::MakeDir(m_sSavePath); } return m_sSavePath; }
 
 	// Setters
 	void SetFake(bool b) { m_bFake = b; }
