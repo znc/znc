@@ -163,17 +163,6 @@ public:
 		return FillByWildcard(sDir, "*");
 	}
 
-	/*void Sort(CFile::EFileAttr eSortAttr, bool bDesc = false) {
-		m_eSortAttr = eSortAttr;
-		m_bDesc = bDesc;
-		sort(begin(), end(), TPtrCmp<CFile>);
-	}*/
-
-	static bool Exists(const CString& sDir) {
-		CFile cFile(sDir);
-		return (cFile.Exists()) && (cFile.IsDir());
-	}
-
 /*	static bool Create(const CString& sDir, mode_t mode = 0755) {
 		VCCString vSubDirs = sDir.split("[/\\\\]+");
 		CCString sCurDir;
@@ -276,68 +265,6 @@ public:
 
 	CFile::EFileAttr GetSortAttr() { return m_eSortAttr; }
 	bool IsDescending() { return m_bDesc; }
-
-/*	static bool MkDir(const CString & sPath, mode_t iMode, bool bBuildParents = false, bool bApplyModToParents = false) {
-		if (sPath.empty()) {
-			WARN("empty path!");
-			return false;
-		}
-
-		if (!bBuildParents) {	// only building target
-			mode_t uMask = umask(0000);
-			int iRet = mkdir(sPath.c_str(), iMode);
-			umask(uMask);
-
-			if (iRet != 0) {
-				return false;
-			}
-		}
-
-
-		VCCString vPath = sPath.TrimRight_n("/").split("/+");
-
-		if (vPath.empty()) {
-			return false;
-		}
-
-		if (sPath[0] == '/');
-			vPath[0] = "/" + vPath[0];
-
-		CCString sCurDir = GetCWD();
-
-		mode_t uMask = 0000;
-		if (bApplyModToParents) {
-			uMask = umask(0000);
-		}
-
-		for (unsigned int a = 0; a < (vPath.size() - 1); a++) {
-			if ((mkdir(vPath[a].c_str(), iMode) != 0) && (errno != EEXIST)) {
-				if (bApplyModToParents) {
-					umask(uMask);
-				}
-
-				return false;
-			}
-
-			if (chdir(vPath[a].c_str()) != 0) {
-				chdir(sCurDir.c_str());
-				if (bApplyModToParents) {
-					umask(uMask);
-				}
-
-				return false;
-			}
-		}
-
-		if (!bApplyModToParents) {
-			uMask = umask(0000);
-		}
-
-		int iRet = mkdir(vPath[vPath.size() - 1].c_str(), iMode);
-		umask(uMask);
-		chdir(sCurDir.c_str());
-		return (iRet == 0);
-	}*/
 
 	static CString GetCWD() {
 		CString sRet;

@@ -222,7 +222,7 @@ CString CWebAdminSock::GetSkinDir() {
 	CString sSkinDir = m_pModule->GetModDataDir() + "/skins/"
 		+ m_pModule->GetSkinName() + "/";
 
-	if (CDir::Exists(sSkinDir)) {
+	if (CFile::IsDir(sSkinDir)) {
 		return sSkinDir;
 	}
 
@@ -556,7 +556,7 @@ bool CWebAdminSock::SettingsPage(CString& sPageRet) {
 
 		CString sDir(GetSkinDir() + "/..");
 
-		if (CDir::Exists(sDir)) {
+		if (CFile::IsDir(sDir)) {
 			CDir Dir(sDir);
 
 			m_Template.AddRow("SkinLoop")["Name"] = "default";
