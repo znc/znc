@@ -397,62 +397,42 @@ CString CDir::ChangeDir(const CString& sPath, const CString& sAdd, const CString
 	return (sRet.empty()) ? "/" : sRet;
 }
 
-int CDir::MakeDir(const CString& sPath, mode_t iMode) {
-	CString sDir = sPath;
-	CString::size_type iFind = sDir.find("/");
+bool CDir::MakeDir(const CString& sPath, mode_t iMode) {
+	CString sDir;
+	VCString dirs;
+	VCString::iterator it;
 
-	if (iFind == CString::npos) {
-		return mkdir(sDir.c_str(), iMode);
-	}
-	iFind++;
+	// Just in case someone tries this...
+	if (sPath.empty())
+		return false;
 
-	while ((iFind < sDir.length()) && (sDir[iFind] == '/')) {
-		iFind++; // eat up extra /'s
-	}
+	// If this is an absolute path, we need to handle this now!
+	if (sPath.Left(1) == "/")
+		sDir = "/";
 
-	if (iFind >= sDir.length()) {
-		return mkdir(sDir.c_str(), iMode);
-	}
+	// For every single subpath, do...
+	sPath.Split("/", dirs, false);
+	for (it = dirs.begin(); it != dirs.end(); it++) {
+		// Add this to the path we already created
+		sDir += *it;
 
-	CString sWorkDir = sDir.substr(0, iFind);  // include the trailing slash
-	CString sNewDir = sDir.erase(0, iFind);
+		int i = mkdir(sDir.c_str(), iMode);
 
-	struct stat st;
+		if (i != 0) {
+			// All errors except EEXIST are fatal
+			if (errno != EEXIST)
+				return false;
 
-	if (sWorkDir.length() > 1) {
-		sWorkDir = sWorkDir.erase(sWorkDir.length() - 1, 1);  // trim off the trailing slash
-	}
-
-	if (stat(sWorkDir.c_str(), &st) == 0) {
-		int iChdir = chdir(sWorkDir.c_str());
-		if (iChdir != 0) {
-			return iChdir;   // could not change to dir
+			// If it's EEXIST we have to make sure it's a dir
+			if (!CFile::IsDir(sDir))
+				return false;
 		}
 
-		// go ahead and call the next step
-		return MakeDir(sNewDir.c_str(), iMode);
+		sDir += "/";
 	}
 
-	switch(errno) {
-		case ENOENT: {
-			// ok, file doesn't exists, lets create it and cd into it
-			int iMkdir = mkdir(sWorkDir.c_str(), iMode);
-			if (iMkdir != 0) {
-				return iMkdir; // could not create dir
-			}
-
-			int iChdir = chdir(sWorkDir.c_str());
-			if (iChdir != 0) {
-				return iChdir;       // could not change to dir
-			}
-
-			return MakeDir(sNewDir.c_str(), iMode);
-		}
-		default:
-			break;
-	}
-
-	return -1;
+	// All went well
+	return true;
 }
 
 int CExecSock::popen2(int & iReadFD, int & iWriteFD, const CString & sCommand) {

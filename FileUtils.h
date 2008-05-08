@@ -267,7 +267,7 @@ public:
 	bool IsDescending() { return m_bDesc; }
 
 	static CString ChangeDir(const CString& sPath, const CString& sAdd, const CString& sHomeDir);
-	static int MakeDir(const CString& sPath, mode_t iMode = 0700);
+	static bool MakeDir(const CString& sPath, mode_t iMode = 0700);
 
 	static CString GetCWD() {
 		CString sRet;
