@@ -577,6 +577,12 @@ unsigned int CString::Split(const CString& sDelim, VCString& vsRet, bool bAllowE
 	unsigned int uRightLen = sRight.length();
 	const char* p = c_str();
 
+	if (!bAllowEmpty) {
+		while (strncasecmp(p, sDelim.c_str(), uDelimLen) == 0) {
+			p += uDelimLen;
+		}
+	}
+
 	while (*p) {
 		if (uLeftLen && uRightLen && !bInside && strncasecmp(p, sLeft.c_str(), uLeftLen) == 0) {
 			p += uLeftLen;
