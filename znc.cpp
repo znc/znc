@@ -855,6 +855,14 @@ bool CZNC::ParseConfig(const CString& sConfig)
 
 bool CZNC::RehashConfig(CString& sError)
 {
+#ifdef _MODULES
+	GetModules().OnPreRehash();
+	for (map<CString, CUser*>::iterator itb = m_msUsers.begin();
+			itb != m_msUsers.end(); itb++) {
+		itb->second->GetModules().OnPreRehash();
+	}
+#endif
+
 	// This clears m_msDelUsers
 	HandleUserDeletion();
 
@@ -864,10 +872,10 @@ bool CZNC::RehashConfig(CString& sError)
 
 	if (DoRehash(sError)) {
 #ifdef _MODULES
-		GetModules().OnRehashDone();
+		GetModules().OnPostRehash();
 		for (map<CString, CUser*>::iterator it = m_msUsers.begin();
 				it != m_msUsers.end(); it++) {
-			it->second->GetModules().OnRehashDone();
+			it->second->GetModules().OnPostRehash();
 		}
 #endif
 

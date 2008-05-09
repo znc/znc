@@ -482,7 +482,8 @@ CString CModule::GetModNick() const { return ((m_pUser) ? m_pUser->GetStatusPref
 
 bool CModule::OnLoad(const CString& sArgs, CString& sMessage) { sMessage = ""; return true; }
 bool CModule::OnBoot() { return true; }
-void CModule::OnRehashDone() {}
+void CModule::OnPreRehash() {}
+void CModule::OnPostRehash() {}
 void CModule::OnIRCDisconnected() {}
 void CModule::OnIRCConnected() {}
 CModule::EModRet CModule::OnBroadcast(CString& sMessage) { return CONTINUE; }
@@ -590,7 +591,8 @@ bool CModules::OnBoot() {
 	return true;
 }
 
-bool CModules::OnRehashDone() { MODUNLOADCHK(OnRehashDone()); return false; }
+bool CModules::OnPreRehash() { MODUNLOADCHK(OnPreRehash()); return false; }
+bool CModules::OnPostRehash() { MODUNLOADCHK(OnPostRehash()); return false; }
 bool CModules::OnIRCConnected() { MODUNLOADCHK(OnIRCConnected()); return false; }
 bool CModules::OnBroadcast(CString& sMessage) { MODHALTCHK(OnBroadcast(sMessage)); }
 bool CModules::OnIRCDisconnected() { MODUNLOADCHK(OnIRCDisconnected()); return false; }

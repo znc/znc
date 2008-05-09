@@ -225,7 +225,8 @@ public:
 
 	virtual bool OnLoad(const CString& sArgsi, CString& sMessage);
 	virtual bool OnBoot();
-	virtual void OnRehashDone();
+	virtual void OnPreRehash();
+	virtual void OnPostRehash();
 	virtual void OnIRCDisconnected();
 	virtual void OnIRCConnected();
 	virtual EModRet OnBroadcast(CString& sMessage);
@@ -361,7 +362,8 @@ public:
 	void UnloadAll();
 
 	virtual bool OnBoot();						// Return false to abort
-	virtual bool OnRehashDone();
+	virtual bool OnPreRehash();
+	virtual bool OnPostRehash();
 	virtual bool OnIRCDisconnected();
 	virtual bool OnIRCConnected();
 	virtual bool OnBroadcast(CString& sMessage);
