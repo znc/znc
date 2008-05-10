@@ -1575,9 +1575,7 @@ void CZNC::Broadcast(const CString& sMessage, CUser* pUser) {
 	for (map<CString,CUser*>::iterator a = m_msUsers.begin(); a != m_msUsers.end(); a++) {
 		if (a->second != pUser) {
 			CString sMsg = sMessage;
-#ifdef _MODULES
 			MODULECALL(OnBroadcast(sMsg), a->second, NULL, continue);
-#endif
 			a->second->PutStatusNotice("*** " + sMsg);
 		}
 	}

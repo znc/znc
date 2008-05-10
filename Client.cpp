@@ -170,9 +170,7 @@ void CClient::ReadLine(const CString& sData) {
 
 			for (unsigned int a = 0; a < vChans.size(); a++) {
 				CString sChannel = vChans[a];
-#ifdef _MODULES
 				MODULECALL(OnUserJoin(sChannel, sKey), m_pUser, this, continue);
-#endif
 
 				CChan* pChan = m_pUser->FindChan(sChannel);
 
@@ -204,9 +202,7 @@ void CClient::ReadLine(const CString& sData) {
 			sMessage.LeftChomp();
 		}
 
-#ifdef _MODULES
 		MODULECALL(OnUserPart(sChan, sMessage), m_pUser, this, return);
-#endif
 
 		if (m_pUser) {
 			CChan* pChan = m_pUser->FindChan(sChan);
@@ -393,10 +389,8 @@ void CClient::ReadLine(const CString& sData) {
 							if (m_pUser) {
 								m_pUser->GetFile(GetNick(), CUtils::GetIP(uLongIP), uPort, sLocalFile, uFileSize);
 							}
-#ifdef _MODULES
 						} else {
 							MODULECALL(OnDCCUserSend(sTarget, uLongIP, uPort, sFile, uFileSize), m_pUser, this, return);
-#endif
 						}
 					} else {
 						unsigned short uBNCPort = CDCCBounce::DCCRequest(sTarget, uLongIP, uPort, sFile, false, m_pUser, (m_pIRCSock) ? m_pIRCSock->GetLocalIP() : GetLocalIP(), "");
@@ -498,9 +492,7 @@ void CClient::ReadLine(const CString& sData) {
 		}
 
 		if ((m_pUser) && (sTarget.CaseCmp(CString(m_pUser->GetStatusPrefix() + "status")) == 0)) {
-#ifdef _MODULES
 			MODULECALL(OnStatusCommand(sMsg), m_pUser, this, return);
-#endif
 			UserCommand(sMsg);
 			return;
 		}
@@ -534,9 +526,7 @@ void CClient::ReadLine(const CString& sData) {
 			return;
 		}
 
-#ifdef _MODULES
 		MODULECALL(OnUserMsg(sTarget, sMsg), m_pUser, this, return);
-#endif
 
 		if (!m_pIRCSock) {
 			PutStatus("Your message to [" + sTarget + "] got lost, "
@@ -1863,9 +1853,7 @@ void CClient::AcceptLogin(CUser& User) {
 
 	SendMotd();
 
-#ifdef _MODULES
 	MODULECALL(OnUserAttached(), m_pUser, this, );
-#endif
 }
 
 void CClient::Connected() {
@@ -1884,9 +1872,7 @@ void CClient::Disconnected() {
 
 	m_pIRCSock = NULL;
 
-#ifdef _MODULES
 	MODULECALL(OnUserDetached(), m_pUser, this, );
-#endif
 }
 
 void CClient::IRCConnected(CIRCSock* pIRCSock) {

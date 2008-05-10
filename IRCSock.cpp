@@ -75,9 +75,7 @@ void CIRCSock::ReadLine(const CString& sData) {
 
 	DEBUG_ONLY(cout << "(" << m_pUser->GetUserName() << ") IRC -> ZNC [" << sLine << "]" << endl);
 
-#ifdef _MODULES
 	MODULECALL(OnRaw(sLine), m_pUser, NULL, return);
-#endif
 
 	if (strncasecmp(sLine.c_str(), "PING ", 5) == 0) {
 		PutIRC("PONG " + sLine.substr(5));
@@ -569,9 +567,7 @@ void CIRCSock::ReadLine(const CString& sData) {
 //					CString sArgs = sModes.Token(1, true); Usermode changes got no params
 					bool bAdd = true;
 /* no module call defined (yet?)
-#ifdef _MODULES
 					MODULECALL(OnRawUserMode(*pOpNick, *this, sModeArg, sArgs), m_pUser, NULL, );
-#endif
 */
 					for (unsigned int a = 0; a < sModeArg.size(); a++) {
 						const unsigned char& uMode = sModeArg[a];
