@@ -2524,7 +2524,7 @@ if test "$IPV6" != "no"; then
 fi
 
 if test "x$GXX" = "xyes"; then
-	appendCXX -Wall -W -Wno-unused -Woverloaded-virtual -Wshadow
+	appendCXX -Wall -W -Wno-unused-parameter -Woverloaded-virtual -Wshadow
 fi
 
 ac_ext=c
