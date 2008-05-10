@@ -662,10 +662,16 @@ CString CString::Format(const CString& sFormatStr, ...) {
 }
 
 CString CString::RandomString(unsigned int uLength) {
+	const char chars[] = "abcdefghijklmnopqrstuvwxyz"
+		"ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+		"0123456789!?.,:;/*-+_()";
+	const size_t len = sizeof(chars) / sizeof(char);
+	size_t p;
 	CString sRet;
 
 	for (unsigned int a = 0; a < uLength; a++) {
-		sRet += (char) (rand() % 26) + 65;
+		p = (size_t) (len * (rand() / (RAND_MAX + 1.0)));
+		sRet += chars[p];
 	}
 
 	return sRet;
