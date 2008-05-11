@@ -3819,8 +3819,7 @@ echo "$as_me: error: Could not find perl binary. Try --disable-perl" >&2;}
 	fi
 
 	if test -n "$SASL"; then
-
-{ echo "$as_me:$LINENO: checking for sasl_server_init in -lsasl2" >&5
+		{ echo "$as_me:$LINENO: checking for sasl_server_init in -lsasl2" >&5
 echo $ECHO_N "checking for sasl_server_init in -lsasl2... $ECHO_C" >&6; }
 if test "${ac_cv_lib_sasl2_sasl_server_init+set}" = set; then
   echo $ECHO_N "(cached) $ECHO_C" >&6
@@ -3882,12 +3881,7 @@ fi
 { echo "$as_me:$LINENO: result: $ac_cv_lib_sasl2_sasl_server_init" >&5
 echo "${ECHO_T}$ac_cv_lib_sasl2_sasl_server_init" >&6; }
 if test $ac_cv_lib_sasl2_sasl_server_init = yes; then
-  cat >>confdefs.h <<_ACEOF
-#define HAVE_LIBSASL2 1
-_ACEOF
-
-  LIBS="-lsasl2 $LIBS"
-
+  : Dont let autoconf add -lsasl2, Makefile handles that
 else
   { { echo "$as_me:$LINENO: error: Could not find libsasl2. Try --disable-sasl." >&5
 echo "$as_me: error: Could not find libsasl2. Try --disable-sasl." >&2;}

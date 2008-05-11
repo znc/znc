@@ -174,7 +174,8 @@ if test "$MODULES" = "yes"; then
 	fi
 
 	if test -n "$SASL"; then
-		AC_CHECK_LIB( sasl2, sasl_server_init,,
+		AC_CHECK_LIB( sasl2, sasl_server_init,
+			[: Dont let autoconf add -lsasl2, Makefile handles that],
 			AC_ERROR([Could not find libsasl2. Try --disable-sasl.]))
 	fi
 fi
