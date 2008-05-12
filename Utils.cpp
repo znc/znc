@@ -142,21 +142,21 @@ CString CUtils::GetIP(unsigned long addr) {
 }
 
 unsigned long CUtils::GetLongIP(const CString& sIP) {
-	register int i;
-	char *addr = (char *) malloc(sIP.length() +1);
-	char ip[4][4], n;
+	unsigned long ret;
+	char ip[4][4];
+	int i;
 
-	strcpy(addr, sIP.c_str());
-
-	for (i=0; i<4; ip[0][i]=ip[1][i]=ip[2][i]=ip[3][i]='\0', i++);
-
-	if (sscanf(addr, "%3[0-9].%3[0-9].%3[0-9].%3[0-9]%[^\n]", ip[0], ip[1], ip[2], ip[3], &n) != 4) {
-		free(addr);
+	i = sscanf(sIP.c_str(), "%3[0-9].%3[0-9].%3[0-9].%3[0-9]",
+			ip[0], ip[1], ip[2], ip[3]);
+	if (i != 4)
 		return 0;
-	}
 
-	free(addr);
-	return (unsigned long) ((atoi(ip[0]) << 24) + (atoi(ip[1]) << 16) + (atoi(ip[2]) << 8) + atoi(ip[3]));
+	ret  = atoi(ip[0]) << 24;
+	ret += atoi(ip[1]) << 16;
+	ret += atoi(ip[2]) << 8;
+	ret += atoi(ip[3]) << 0;
+
+	return ret;
 }
 
 CString CUtils::GetHashPass() {
