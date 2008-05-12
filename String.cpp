@@ -665,7 +665,8 @@ CString CString::RandomString(unsigned int uLength) {
 	const char chars[] = "abcdefghijklmnopqrstuvwxyz"
 		"ABCDEFGHIJKLMNOPQRSTUVWXYZ"
 		"0123456789!?.,:;/*-+_()";
-	const size_t len = sizeof(chars) / sizeof(char);
+	// -1 because sizeof() includes the trailing '\0' byte
+	const size_t len = sizeof(chars) / sizeof(chars[0]) - 1;
 	size_t p;
 	CString sRet;
 
