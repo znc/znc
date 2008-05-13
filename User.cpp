@@ -15,6 +15,7 @@
 #include "znc.h"
 
 CUser::CUser(const CString& sUserName) {
+	m_pIRCSock = NULL;
 	m_fTimezoneOffset = 0;
 	m_uConnectTime = 0;
 	SetUserName(sUserName);
@@ -105,6 +106,8 @@ void CUser::DelServers()
 }
 
 void CUser::IRCConnected(CIRCSock* pIRCSock) {
+	m_pIRCSock = pIRCSock;
+
 	for (unsigned int a = 0; a < m_vClients.size(); a++) {
 		m_vClients[a]->IRCConnected(pIRCSock);
 	}
@@ -112,6 +115,8 @@ void CUser::IRCConnected(CIRCSock* pIRCSock) {
 
 void CUser::IRCDisconnected() {
 	m_bIRCConnected = false;
+
+	m_pIRCSock = NULL;
 
 	for (unsigned int a = 0; a < m_vClients.size(); a++) {
 		m_vClients[a]->IRCDisconnected();
@@ -802,13 +807,11 @@ bool CUser::CheckPass(const CString& sPass) {
 }*/
 
 CIRCSock* CUser::GetIRCSock() {
-	// Todo: optimize this by saving a pointer to the sock
-	return (CIRCSock*) CZNC::Get().GetManager().FindSockByName("IRC::" + m_sUserName);
+	return m_pIRCSock;
 }
 
 const CIRCSock* CUser::GetIRCSock() const {
-	// Todo: same as above
-	return (CIRCSock*) CZNC::Get().GetManager().FindSockByName("IRC::" + m_sUserName);
+	return m_pIRCSock;
 }
 
 CString CUser::GetLocalIP() {

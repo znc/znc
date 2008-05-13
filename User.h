@@ -240,6 +240,7 @@ protected:
 	bool				m_bAppendTimestamp;
 	bool				m_bPrependTimestamp;
 	bool				m_bIRCConnectEnabled;
+	CIRCSock*			m_pIRCSock;
 
 	CKeepNickTimer*		m_pKeepNickTimer;
 	CJoinTimer*			m_pJoinTimer;

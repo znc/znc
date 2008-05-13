@@ -100,6 +100,8 @@ bool CZNC::OnBoot() {
 
 bool CZNC::ConnectUser(CUser *pUser) {
 	CString sSockName = "IRC::" + pUser->GetUserName();
+	// Don't use pUser->GetIRCSock(), as that only returns something if the
+	// CIRCSock is already connected, not when it's still connecting!
 	CIRCSock* pIRCSock = (CIRCSock*) m_Manager.FindSockByName(sSockName);
 
 	if (m_pISpoofLockFile != NULL) {
