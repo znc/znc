@@ -199,6 +199,7 @@ AC_SUBST([MODDIR])
 AC_SUBST([DATADIR])
 AC_CONFIG_FILES([Makefile])
 AC_CONFIG_FILES([znc-config])
+AC_CONFIG_FILES([znc-buildmod])
 if test "$MODULES" = "yes"; then
 	AC_CONFIG_FILES([modules/Makefile])
 fi

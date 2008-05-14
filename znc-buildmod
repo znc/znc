@@ -22,6 +22,13 @@ OK="${BOLD}${BLUE}[${GREEN} ok ${BLUE}]${NORMAL}${UNBOLD}"
 
 PROGRESS="${BOLD}${BLUE}[    ]${NORMAL}${UNBOLD}"
 
+# Update $PATH so that we will also find the znc binary if we were compiled
+# with  ./configure --prefix=/some/path
+prefix="@prefix@"
+exec_prefix="@exec_prefix@"
+bindir="@bindir@"
+PATH="$PATH:$bindir"
+
 # Check if we got everything we need
 
 SED=sed
