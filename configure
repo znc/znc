@@ -3564,6 +3564,12 @@ fi
 
 if test "$MODULES" = "yes"; then
 	FOUND_DL=no
+
+	# Don't use any libs like -lssl -lcrypto when checking for dlopen(),
+	# because they might change the test results
+	SAVED_LIBS="$LIBS"
+	LIBS=""
+
 	{ echo "$as_me:$LINENO: checking for dlopen" >&5
 echo $ECHO_N "checking for dlopen... $ECHO_C" >&6; }
 if test "${ac_cv_func_dlopen+set}" = set; then
@@ -3711,9 +3717,11 @@ fi
 { echo "$as_me:$LINENO: result: $ac_cv_lib_dl_dlopen" >&5
 echo "${ECHO_T}$ac_cv_lib_dl_dlopen" >&6; }
 if test $ac_cv_lib_dl_dlopen = yes; then
-  FOUND_DL=yes
+  FOUND_DL=yes ; appendLib -ldl
 fi
 
+
+	appendLib "$SAVED_LIBS"
 
 	if test $FOUND_DL = "no" ; then
 		{ { echo "$as_me:$LINENO: error: Could not find dlopen. Try --disable-modules" >&5

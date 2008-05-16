@@ -137,8 +137,16 @@ AC_ARG_WITH( [module-data-prefix],
 
 if test "$MODULES" = "yes"; then
 	FOUND_DL=no
+
+	# Don't use any libs like -lssl -lcrypto when checking for dlopen(),
+	# because they might change the test results
+	SAVED_LIBS="$LIBS"
+	LIBS=""
+
 	AC_CHECK_FUNC(dlopen, FOUND_DL=yes,)
-	AC_CHECK_LIB( dl, dlopen, FOUND_DL=yes,)
+	AC_CHECK_LIB( dl, dlopen, FOUND_DL=yes ; appendLib -ldl,)
+
+	appendLib "$SAVED_LIBS"
 
 	if test $FOUND_DL = "no" ; then
 		AC_ERROR([Could not find dlopen. Try --disable-modules])
