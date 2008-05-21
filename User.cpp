@@ -387,9 +387,12 @@ bool CUser::Clone(const CUser& User, CString& sErrorRet) {
 
 	for (a = 0; a < m_vChans.size(); a++) {
 		CChan* pChan = m_vChans[a];
+		CChan* pNewChan = User.FindChan(pChan->GetName());
 
-		if (!User.FindChan(pChan->GetName())) {
+		if (!pNewChan) {
 			pChan->SetInConfig(false);
+		} else {
+			pChan->Clone(*pNewChan);
 		}
 	}
 

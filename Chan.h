@@ -55,7 +55,7 @@ public:
 
 	void Reset();
 	bool WriteConfig(CFile& File);
-	void Joined();
+	void Clone(CChan& chan);
 	void Cycle() const;
 	void JoinUser(bool bForce = false, const CString& sKey = "", CClient* pClient = NULL);
 	void DetachUser();
@@ -104,7 +104,7 @@ public:
 	// Setters
 	void IncPermCount(unsigned char uPerm);
 	void DecPermCount(unsigned char uPerm);
-	void SetIsOn(bool b) { m_bIsOn = b; if (!b) { Reset(); } else { Joined(); } }
+	void SetIsOn(bool b) { m_bIsOn = b; if (!b) { Reset(); } }
 	void SetKey(const CString& s) { m_sKey = s; }
 	void SetTopic(const CString& s) { m_sTopic = s; }
 	void SetTopicOwner(const CString& s) { m_sTopicOwner = s; }

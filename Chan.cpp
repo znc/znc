@@ -72,7 +72,27 @@ bool CChan::WriteConfig(CFile& File) {
 	return true;
 }
 
-void CChan::Joined() {
+void CChan::Clone(CChan& chan) {
+	// We assume that m_sName and m_pUser are equal
+	SetBufferCount(chan.GetBufferCount());
+	SetKeepBuffer(chan.KeepBuffer());
+	SetAutoCycle(chan.AutoCycle());
+	SetKey(chan.GetKey());
+	SetDefaultModes(chan.GetDefaultModes());
+
+	if (IsDetached() != chan.IsDetached()) {
+		// Only send something if it makes sense
+		// (= Only detach if client is on the channel
+		//    and only attach if we are on the channel)
+		if (IsOn()) {
+			if (IsDetached()) {
+				JoinUser(false, "");
+			} else {
+				DetachUser();
+			}
+		}
+		SetDetached(chan.IsDetached());
+	}
 }
 
 void CChan::Cycle() const {
