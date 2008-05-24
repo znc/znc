@@ -487,34 +487,43 @@ unsigned int CString::Replace(CString& sStr, const CString& sReplace, const CStr
 }
 
 CString CString::Token(unsigned int uPos, bool bRest, const CString& sSep) const {
-	string sRet;
-	const char* p = c_str();
-	unsigned int uSepLen = sSep.length();
+	const char *sep_str = sSep.c_str();
+	size_t sep_len = sSep.length();
+	const char *str = c_str();
+	size_t str_len = length();
+	size_t start_pos = 0;
+	size_t end_pos;
 
-	if (uSepLen) {
-		uSepLen--;
-	}
-
-	while (*p) {
-		if (uPos) {
-			if (strncmp(p, sSep.c_str(), sSep.length()) == 0) {
-				uPos--;
-				p += uSepLen;
-			}
+	// First, find the start of our token
+	while (uPos != 0 && start_pos < str_len) {
+		if (strncmp(&str[start_pos], sep_str, sep_len) == 0) {
+			start_pos += sep_len;
+			uPos--;
 		} else {
-			if (strncmp(p, sSep.c_str(), sSep.length()) == 0) {
-				if (!bRest) {
-					return sRet;
-				}
-			}
-
-			sRet += *p;
+			start_pos++;
 		}
-
-		p++;
 	}
 
-	return sRet;
+	// String is over?
+	if (start_pos >= str_len)
+		return "";
+
+	// If they want everything from here on, give it to them
+	if (bRest) {
+		return substr(start_pos);
+	}
+
+	// Now look for the end of the token they want
+	end_pos = start_pos;
+	while (end_pos < str_len) {
+		if (strncmp(&str[end_pos], sep_str, sep_len) == 0)
+			return substr(start_pos, end_pos - start_pos);
+
+		end_pos++;
+	}
+
+	// They want the last token in the string, not something in between
+	return substr(start_pos);
 }
 
 CString CString::Ellipsize(unsigned int uLen) const {
