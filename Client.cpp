@@ -1196,6 +1196,11 @@ void CClient::UserCommand(const CString& sLine) {
 		return;
 	} else if ((sCommand.CaseCmp("LISTAVAILMODS") == 0) || (sCommand.CaseCmp("LISTAVAILABLEMODULES") == 0)) {
 #ifdef _MODULES
+		if (m_pUser->DenyLoadMod()) {
+			PutStatus("Access Denied.");
+			return;
+		}
+
 		if (m_pUser->IsAdmin()) {
 			set<CModInfo> ssGlobalMods;
 			CZNC::Get().GetModules().GetAvailableMods(ssGlobalMods, true);
