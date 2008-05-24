@@ -55,6 +55,7 @@ public:
 
 	void ReadLine(const CString& sData);
 	virtual void ReadData(const char* data, int len);
+	virtual void ReadPaused();
 	virtual void Timeout();
 	virtual void ConnectionRefused();
 	virtual void SockError(int iErrno);
@@ -90,9 +91,12 @@ protected:
 	CString					m_sFileName;
 	CUser*					m_pUser;
 	CDCCBounce*				m_pPeer;
-	unsigned short			m_uRemotePort;
+	unsigned short				m_uRemotePort;
 	bool					m_bIsChat;
 	bool					m_bIsRemote;
+
+	static const unsigned int		m_uiMaxDCCBuffer;
+	static const unsigned int		m_uiMinDCCBuffer;
 };
 
 #endif // !_DCCBOUNCE_H

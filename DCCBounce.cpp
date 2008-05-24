@@ -9,6 +9,11 @@
 #include "DCCBounce.h"
 #include "User.h"
 
+// If we buffer more than this in memory, we will throttle the receiving side
+const unsigned int CDCCBounce::m_uiMaxDCCBuffer = 10 * 1024;
+// If less than this is in the buffer, the receiving side continues
+const unsigned int CDCCBounce::m_uiMinDCCBuffer = 2 * 1024;
+
 void CDCCBounce::ReadLine(const CString& sData) {
 	CString sLine = sData;
 
@@ -22,9 +27,24 @@ void CDCCBounce::ReadLine(const CString& sData) {
 }
 
 void CDCCBounce::ReadData(const char* data, int len) {
+	size_t BufLen;
+
 	if (m_pPeer) {
 		m_pPeer->Write(data, len);
+
+		BufLen = m_pPeer->GetInternalWriteBuffer().length();
+
+		if (BufLen >= m_uiMaxDCCBuffer) {
+			DEBUG_ONLY(cout << GetSockName() << " The send buffer is over the "
+					"limit (" << BufLen <<"), throttling" << endl);
+			PauseRead();
+		}
 	}
+}
+
+void CDCCBounce::ReadPaused() {
+	if (!m_pPeer || m_pPeer->GetInternalWriteBuffer().length() <= m_uiMinDCCBuffer)
+		UnPauseRead();
 }
 
 void CDCCBounce::Timeout() {
