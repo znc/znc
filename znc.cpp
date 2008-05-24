@@ -1573,12 +1573,17 @@ bool CZNC::RemVHost(const CString& sHost) {
 	return true;
 }
 
-void CZNC::Broadcast(const CString& sMessage, CUser* pUser) {
+void CZNC::Broadcast(const CString& sMessage, bool bAdminOnly,
+		CUser* pSkipUser, CClient *pSkipClient) {
 	for (map<CString,CUser*>::iterator a = m_msUsers.begin(); a != m_msUsers.end(); a++) {
-		if (a->second != pUser) {
+		if (bAdminOnly && !a->second->IsAdmin())
+			continue;
+
+		if (a->second != pSkipUser) {
 			CString sMsg = sMessage;
+
 			MODULECALL(OnBroadcast(sMsg), a->second, NULL, continue);
-			a->second->PutStatusNotice("*** " + sMsg);
+			a->second->PutStatusNotice("*** " + sMsg, NULL, pSkipClient);
 		}
 	}
 }

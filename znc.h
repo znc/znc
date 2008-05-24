@@ -116,7 +116,8 @@ public:
 	void ClearVHosts();
 	bool AddVHost(const CString& sHost);
 	bool RemVHost(const CString& sHost);
-	void Broadcast(const CString& sMessage, CUser* pUser = NULL);
+	void Broadcast(const CString& sMessage, bool bAdminOnly = false,
+			CUser* pSkipUser = NULL, CClient* pSkipClient = NULL);
 	void AddBytesRead(unsigned long long u) { m_uBytesRead += u; }
 	void AddBytesWritten(unsigned long long u) { m_uBytesWritten += u; }
 	unsigned long long BytesRead() const { return m_uBytesRead; }
