@@ -12,6 +12,7 @@
 #include "DCCSock.h"
 #include "IRCSock.h"
 #include "Server.h"
+#include "Timers.h"
 #include "User.h"
 
 CClient::~CClient() {
@@ -22,6 +23,9 @@ CClient::~CClient() {
 	if (m_pUser != NULL) {
 		m_pUser->AddBytesRead(GetBytesRead());
 		m_pUser->AddBytesWritten(GetBytesWritten());
+	}
+	if (m_pTimeout) {
+		CZNC::Get().GetManager().DelCronByAddr(m_pTimeout);
 	}
 }
 
@@ -1828,6 +1832,11 @@ void CClientAuth::RefuseLogin(const CString& sReason) {
 }
 
 void CClient::RefuseLogin(const CString& sReason) {
+	if (m_pTimeout) {
+		m_pTimeout->Stop();
+		m_pTimeout = NULL;
+	}
+
 	PutStatus("Bad username and/or password.");
 	PutClient(":irc.znc.com 464 " + GetNick() + " :" + sReason);
 	Close();
@@ -1842,6 +1851,11 @@ void CClientAuth::AcceptLogin(CUser& User) {
 void CClient::AcceptLogin(CUser& User) {
 	m_sPass = "";
 	m_pUser = &User;
+
+	if (m_pTimeout) {
+		m_pTimeout->Stop();
+		m_pTimeout = NULL;
+	}
 
 	if (!m_pUser->IsHostAllowed(GetRemoteIP())) {
 		PutClient(":irc.znc.com 463 " + GetNick() + " :Your host ("
@@ -1858,6 +1872,20 @@ void CClient::AcceptLogin(CUser& User) {
 	SendMotd();
 
 	MODULECALL(OnUserAttached(), m_pUser, this, );
+}
+
+void CClient::StartLoginTimeout() {
+	m_pTimeout = new CClientTimeout(this);
+	CZNC::Get().GetManager().AddCron(m_pTimeout);
+}
+
+void CClient::LoginTimeout() {
+	PutClient("ERROR :Closing link [Timeout]");
+	Close(Csock::CLT_AFTERWRITE);
+	if (m_pTimeout) {
+		m_pTimeout->Stop();
+		m_pTimeout = NULL;
+	}
 }
 
 void CClient::Connected() {
@@ -1895,6 +1923,7 @@ void CClient::IRCDisconnected() {
 
 Csock* CClient::GetSockObj(const CString& sHost, unsigned short uPort) {
 	CClient* pSock = new CClient(sHost, uPort);
+	pSock->StartLoginTimeout();
 	return pSock;
 }
 

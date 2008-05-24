@@ -17,6 +17,7 @@ class CZNC;
 class CUser;
 class CIRCSock;
 class CClient;
+class CClientTimeout;
 // !Forward Declarations
 
 class CAuthBase {
@@ -77,6 +78,7 @@ public:
 
 	void InitClient() {
 		m_pUser = NULL;
+		m_pTimeout = NULL;
 		m_pIRCSock = NULL;
 		m_bGotPass = false;
 		m_bGotNick = false;
@@ -89,6 +91,8 @@ public:
 
 	void AcceptLogin(CUser& User);
 	void RefuseLogin(const CString& sReason);
+	void StartLoginTimeout();
+	void LoginTimeout();
 
 	CString GetNick(bool bAllowIRCNick = true) const;
 	CString GetNickMask() const;
@@ -123,6 +127,7 @@ public:
 	void SetNick(const CString& s);
 	CUser* GetUser() const { return m_pUser; }
 private:
+
 protected:
 	bool		m_bGotPass;
 	bool		m_bGotNick;
@@ -136,6 +141,7 @@ protected:
 	CIRCSock*	m_pIRCSock;
 	unsigned int	m_uKeepNickCounter;
 	CSmartPtr<CAuthBase>	m_spAuth;
+	CClientTimeout*	m_pTimeout;
 };
 
 #endif // !_CLIENT_H
