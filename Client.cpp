@@ -116,8 +116,7 @@ void CClient::ReadLine(const CString& sData) {
 	}
 
 	if (!m_pUser) {
-		PutClient("ERROR :You need to send your password first!");
-		Close();
+		// Only NICK, USER and PASS are allowed before login
 		return;
 	}
 
