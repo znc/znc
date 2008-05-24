@@ -1,26 +1,8 @@
 #!/bin/sh
 
-# These vars hold some color escape sequences.
-# Inspired by /sbin/functions.sh from gentoo
-
-BOLD='\033[1;m'
-UNBOLD='\033[22;m'
-
-RED='\033[31;01m'
-GREEN='\033[32;01m'
-YELLOW='\033[33;01m'
-BLUE='\033[34;01m'
-NORMAL='\033[39;m'
-
-RESTART='\r'
-
-# These are used when we display our messages
-
-ERROR="${BOLD}${BLUE}[${RED} !! ${BLUE}]${NORMAL}${UNBOLD}"
-WARNING="${BOLD}${BLUE}[${YELLOW} ** ${BLUE}]${NORMAL}${UNBOLD}"
-OK="${BOLD}${BLUE}[${GREEN} ok ${BLUE}]${NORMAL}${UNBOLD}"
-
-PROGRESS="${BOLD}${BLUE}[    ]${NORMAL}${UNBOLD}"
+ERROR="[ !! ]"
+WARNING="[ ** ]"
+OK="[ ok ]"
 
 # Update $PATH so that we will also find the znc binary if we were compiled
 # with  ./configure --prefix=/some/path
@@ -42,7 +24,7 @@ check_binary()
 {
 	which $1 > /dev/null 2>&1
 	if test $? = 1 ; then
-		echo -e "${ERROR} Could not find $1. $2"
+		echo "${ERROR} Could not find $1. $2"
 		exit 1
 	fi
 }
@@ -52,7 +34,7 @@ check_binary ${ZNC_CONFIG} "Please (re)install ZNC."
 check_binary ${CXX} "What happened to your compiler?"
 
 if test -z "$1"; then
-	echo -e "${WARNING} USAGE: $0 <file.cpp> [file.cpp ... ]"
+	echo "${WARNING} USAGE: $0 <file.cpp> [file.cpp ... ]"
 	exit 1
 fi
 
@@ -64,7 +46,7 @@ LIBS=`${ZNC_CONFIG} --libs`
 INC_PATH=`echo ${INCLUDES} | ${SED} 's: .*::' | ${SED} 's:^..::'`
 
 if test ! -d ${INC_PATH}; then
-	echo -e "${ERROR} Unable to find znc include dir [${INC_PATH}]. Please (re)install ZNC."
+	echo "${ERROR} Unable to find znc include dir [${INC_PATH}]. Please (re)install ZNC."
 	exit 1
 fi
 
@@ -77,13 +59,13 @@ do
 	MOD="${MOD%.cc}"
 
 	if test ! -f ${FILE}; then
-		echo -e "${ERROR} Building ${MOD}.so... File not found"
+		echo "${ERROR} Building ${MOD}.so... File not found"
 	else
-		echo -ne "${PROGRESS} Building ${MOD}.so... "
+		printf "Building ${MOD}.so... "
 		if ${CXX} ${CXXFLAGS} ${INCLUDES} ${LIBS} -shared -o ${MOD}.so ${FILE} ; then
-			echo -e "${RESTART}${OK}"
+			echo "${OK}"
 		else
-			echo -e "${ERROR} Error while building ${MOD}.so"
+			echo "${ERROR} Error while building ${MOD}.so"
 			exit 1
 		fi
 	fi
