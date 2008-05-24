@@ -77,7 +77,7 @@ CString CZNC::GetTag(bool bIncludeVersion) {
 
 	char szBuf[128];
 	memset(szBuf, 0, 128);
-	snprintf(szBuf, 127, "ZNC %1.3f - http://znc.sourceforge.net", VERSION);
+	snprintf(szBuf, 127, "ZNC %1.3f"VERSION_EXTRA" - http://znc.sourceforge.net", VERSION);
 
 	return szBuf;
 }

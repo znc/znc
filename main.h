@@ -12,6 +12,11 @@
 // Keep the number in sync with configure.in (and also with configure)
 #define VERSION 0.057
 
+// You can add -DVERSION_EXTRA="stuff" to your CXXFLAGS!
+#ifndef VERSION_EXTRA
+#define VERSION_EXTRA ""
+#endif
+
 #ifndef _MODDIR_
 #define _MODDIR_ "/usr/lib/znc"
 #endif
