@@ -198,18 +198,11 @@ int CZNC::Loop() {
 		if (GetNeedRehash()) {
 			SetNeedRehash(false);
 
-			bool b = RehashConfig(sError);
-
-			end = m_msUsers.end();
-			for (it = m_msUsers.begin(); it != end; it++) {
-				if (it->second->IsAdmin()) {
-					if (b) {
-						it->second->PutStatus("Rehashing succeeded");
-					} else {
-						it->second->PutStatus("Rehashing failed: " + sError);
-						it->second->PutStatus("ZNC is in some possibly inconsistent state!");
-					}
-				}
+			if (RehashConfig(sError)) {
+				Broadcast("Rehashing succeeded", true);
+			} else {
+				Broadcast("Rehashing failed: " + sError, true);
+				Broadcast("ZNC is in some possibly inconsistent state!", true);
 			}
 		}
 
