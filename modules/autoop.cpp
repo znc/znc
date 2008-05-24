@@ -157,32 +157,17 @@ public:
 		m_msUsers.clear();
 	}
 
-	virtual void OnChanPermission(const CNick& OpNick, const CNick& Nick, CChan& Channel, unsigned char uMode, bool bAdded, bool bNoChange) {
-	}
-
-	virtual void OnOp(const CNick& OpNick, const CNick& Nick, CChan& Channel, bool bNoChange) {
-	}
-
-	virtual void OnDeop(const CNick& OpNick, const CNick& Nick, CChan& Channel, bool bNoChange) {
-	}
-
-	virtual void OnVoice(const CNick& OpNick, const CNick& Nick, CChan& Channel, bool bNoChange) {
-	}
-
-	virtual void OnDevoice(const CNick& OpNick, const CNick& Nick, CChan& Channel, bool bNoChange) {
-	}
-
-	virtual void OnRawMode(const CNick& OpNick, CChan& Channel, const CString& sModes, const CString& sArgs) {
-	}
-
 	virtual void OnJoin(const CNick& Nick, CChan& Channel) {
-		if (Channel.HasPerm(CChan::Op)) {																						// If we have ops in this chan
+		// If we have ops in this chan
+		if (Channel.HasPerm(CChan::Op)) {
 			for (map<CString, CAutoOpUser*>::iterator it = m_msUsers.begin(); it != m_msUsers.end(); it++) {
-				if (it->second->HostMatches(Nick.GetHostMask()) && it->second->ChannelMatches(Channel.GetName())) {				// and the nick who joined is a valid user
+				// and the nick who joined is a valid user
+				if (it->second->HostMatches(Nick.GetHostMask()) && it->second->ChannelMatches(Channel.GetName())) {
 					if (it->second->GetUserKey().CaseCmp("__NOKEY__") == 0) {
 						PutIRC("MODE " + Channel.GetName() + " +o " + Nick.GetNick());
 					} else {
-						m_msQueue[Nick.GetNick().AsLower()] = "";		// then insert this nick into the queue
+						// then insert this nick into the queue, the timer does the rest
+						m_msQueue[Nick.GetNick().AsLower()] = "";
 					}
 
 					break;
@@ -350,44 +335,6 @@ public:
 		PutModule("User [" + sUser + "] added with hostmask [" + sHost + "]");
 		return pUser;
 	}
-
-	/* This isn't being used yet
-	bool RequestOps(const CString& sChannel) {
-		CChan* pChan = m_pUser->FindChan(sChannel);
-		return (pChan) ? RequestOps(*pChan) : false;
-	}
-
-	bool RequestOps(const CChan& Channel) {
-		if (Channel.HasPerm(CChan::Op)) {
-			return false;					// If we already have ops then don't bother
-		}
-
-		const map<CString,CNick*>& msNicks = Channel.GetNicks();
-		VCString vsNicks;
-
-		for (map<CString,CNick*>::const_iterator it = msNicks.begin(); it != msNicks.end(); it++) {
-			const CNick& Nick = *it->second;
-
-			if (Nick.HasPerm(CChan::Op)) {								// Ok, this guy is an op, now lets make sure he matches one of our defined users
-				for (map<CString, CAutoOpUser*>::iterator it = m_msUsers.begin(); it != m_msUsers.end(); it++) {
-					cerr << "??? [" << Nick.GetHostMask() << "] [" << Channel.GetName() << "]" << endl;
-					if (it->second->HostMatches(Nick.GetHostMask()) && it->second->ChannelMatches(Channel.GetName())) {
-						vsNicks.push_back(Nick.GetNick());				// Add the nick into a vector so we chan choose one at random later
-						break;											// Ok, we found a match, on to the next op in the channel
-					}
-				}
-			}
-		}
-
-		if (!vsNicks.size()) {
-			return false;
-		}
-
-		// Need to make this random in the future, just ask the first one for now
-		PutIRC("NOTICE " + vsNicks[0] + " :!ZNCAO REQUEST " + Channel.GetName());
-
-		return true;
-	}*/
 
 	bool ChallengeRespond(const CNick& Nick, const CString& sChallenge) {
 		// Validate before responding - don't blindly trust everyone
