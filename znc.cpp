@@ -865,6 +865,9 @@ bool CZNC::RehashConfig(CString& sError)
 	m_msDelUsers = m_msUsers;
 	m_msUsers.clear();
 
+	// Make sure that timer doesn't have a stale iterator
+	DisableConnectUser();
+
 	if (DoRehash(sError)) {
 #ifdef _MODULES
 		GetModules().OnPostRehash();
@@ -883,6 +886,9 @@ bool CZNC::RehashConfig(CString& sError)
 		AddUser(m_msDelUsers.begin()->second, s);
 		m_msDelUsers.erase(m_msDelUsers.begin());
 	}
+
+	// Make sure that users that want to connect do so
+	RestartConnectUser();
 
 	return false;
 }
