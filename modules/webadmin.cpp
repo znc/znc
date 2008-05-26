@@ -993,7 +993,7 @@ bool CWebAdminSock::UserPage(CString& sPageRet, CUser* pUser) {
 		}
 	} else {
 		// Edit User Submission
-		if (!pUser->Clone(*pNewUser, sErr)) {
+		if (!pUser->Clone(*pNewUser, sErr, false)) {
 			delete pNewUser;
 			GetErrorPage(sPageRet, "Invalid Submission [" + sErr + "]");
 			return true;

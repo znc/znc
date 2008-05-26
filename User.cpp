@@ -251,7 +251,7 @@ void CUser::UserDisconnected(CClient* pClient) {
 	}
 }
 
-bool CUser::Clone(const CUser& User, CString& sErrorRet) {
+bool CUser::Clone(const CUser& User, CString& sErrorRet, bool bCloneChans) {
 	unsigned int a = 0;
 	sErrorRet.clear();
 
@@ -392,7 +392,8 @@ bool CUser::Clone(const CUser& User, CString& sErrorRet) {
 		if (!pNewChan) {
 			pChan->SetInConfig(false);
 		} else {
-			pChan->Clone(*pNewChan);
+			if (bCloneChans)
+				pChan->Clone(*pNewChan);
 		}
 	}
 
