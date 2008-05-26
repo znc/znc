@@ -557,8 +557,8 @@ bool CZNC::WriteNewConfig(const CString& sConfig) {
 	CUtils::PrintMessage("");
 
 	// Listen
-	unsigned int uPort = 0;
-	while (!CUtils::GetNumInput("What port would you like ZNC to listen on?", uPort, 1, 65535)) ;
+	unsigned int uListenPort = 0;
+	while (!CUtils::GetNumInput("What port would you like ZNC to listen on?", uListenPort, 1, 65535)) ;
 
 	CString sSSL;
 #ifdef HAVE_LIBSSL
@@ -581,7 +581,7 @@ bool CZNC::WriteNewConfig(const CString& sConfig) {
 		sListenHost += " ";
 	}
 
-	vsLines.push_back("Listen" + s6 + "    = " + sListenHost + sSSL + CString(uPort));
+	vsLines.push_back("Listen" + s6 + "    = " + sListenHost + sSSL + CString(uListenPort));
 	// !Listen
 
 #ifdef _MODULES
@@ -742,17 +742,17 @@ bool CZNC::WriteNewConfig(const CString& sConfig) {
 		do {
 			CString sHost, sPass;
 			bool bSSL = false;
-			uPort = 0;
+			unsigned int uServerPort = 0;
 
 			while (!CUtils::GetInput("IRC server", sHost, "", "host only") || !CServer::IsValidHostName(sHost)) ;
-			while (!CUtils::GetNumInput("[" + sHost + "] Port", uPort, 1, 65535, 6667)) ;
+			while (!CUtils::GetNumInput("[" + sHost + "] Port", uServerPort, 1, 65535, 6667)) ;
 			CUtils::GetInput("[" + sHost + "] Password (probably empty)", sPass);
 
 #ifdef HAVE_LIBSSL
 			bSSL = CUtils::GetBoolInput("Does this server use SSL? (probably no)", false);
 #endif
 
-			vsLines.push_back("\tServer     = " + sHost + ((bSSL) ? " +" : " ") + CString(uPort) + " " + sPass);
+			vsLines.push_back("\tServer     = " + sHost + ((bSSL) ? " +" : " ") + CString(uServerPort) + " " + sPass);
 		} while (CUtils::GetBoolInput("Would you like to add another server?", false));
 
 		vsLines.push_back("");
@@ -832,7 +832,7 @@ bool CZNC::WriteNewConfig(const CString& sConfig) {
 	CUtils::PrintMessage("as the irc server password like so.. user:pass.", true);
 	CUtils::PrintMessage("");
 	CUtils::PrintMessage("Try something like this in your IRC client...", true);
-	CUtils::PrintMessage("/server <znc_server_ip> " + CString(uPort) + " " + sUser + ":<pass>", true);
+	CUtils::PrintMessage("/server <znc_server_ip> " + CString(uListenPort) + " " + sUser + ":<pass>", true);
 	CUtils::PrintMessage("");
 
 	m_LockFile.UnLock();
