@@ -204,6 +204,7 @@ int main(int argc, char** argv) {
 	CUtils::PrintMessage("Staying open for debugging [pid: " + CString(iPid) + "]");
 
 	pZNC->WritePidFile(iPid);
+	CUtils::PrintMessage(CZNC::GetTag());
 #else
 	CUtils::PrintAction("Forking into the background");
 
@@ -220,7 +221,7 @@ int main(int argc, char** argv) {
 		CUtils::PrintStatus(true, "[pid: " + CString(iPid) + "]");
 
 		pZNC->WritePidFile(iPid);
-		CUtils::PrintMessage(CZNC::GetTag(false));
+		CUtils::PrintMessage(CZNC::GetTag());
 		exit(0);
 	}
 
