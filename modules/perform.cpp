@@ -32,6 +32,12 @@ public:
 		if (sCmdName == "add")
 		{
 			CString sPerf = sCommand.Token(1, true);
+
+			if (sPerf.empty()) {
+				PutModule("Usage: add <command>");
+				return;
+			}
+
 			if (sPerf.Left(1) == "/")
 				sPerf.LeftChomp();
 
