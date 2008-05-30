@@ -807,6 +807,7 @@ bool CWebAdminSock::UserPage(CString& sPageRet, CUser* pUser) {
 			m_Template["DefaultChanModes"] = pUser->GetDefaultChanModes();
 			m_Template["BufferCount"] = CString(pUser->GetBufferCount());
 			m_Template["TimestampFormat"] = pUser->GetTimestampFormat();
+			m_Template["TimezoneOffset"] = CString(pUser->GetTimezoneOffset());
 
 			const set<CString>& ssAllowedHosts = pUser->GetAllowedHosts();
 			for (set<CString>::const_iterator it = ssAllowedHosts.begin(); it != ssAllowedHosts.end(); it++) {
@@ -1136,6 +1137,7 @@ CUser* CWebAdminSock::GetNewUser(CString& sPageRet, CUser* pUser) {
 	pNewUser->SetUseClientIP(GetParam("useclientip").ToBool());
 	pNewUser->SetTimestampAppend(GetParam("appendtimestamp").ToBool());
 	pNewUser->SetTimestampPrepend(GetParam("prependtimestamp").ToBool());
+	pNewUser->SetTimezoneOffset(GetParam("timezoneoffset").ToDouble());
 
 	if (IsAdmin()) {
 		pNewUser->SetDenyLoadMod(GetParam("denyloadmod").ToBool());
