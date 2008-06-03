@@ -543,12 +543,21 @@ bool CModule::PutStatus(const CString& sLine) {
 	return (m_pUser) ? m_pUser->PutStatus(sLine, m_pClient) : false;
 }
 bool CModule::PutModule(const CString& sLine, const CString& sIdent, const CString& sHost) {
-	return (m_pUser) ? m_pUser->PutUser(":" + GetModNick() + "!" + sIdent + "@" + sHost + " PRIVMSG " + m_pUser->GetCurNick() + " :" + sLine, m_pClient) : false;
+	if (!m_pUser)
+		return false;
+	return m_pUser->PutUser(":" + GetModNick() + "!" +
+		(sIdent.empty() ? GetModName() : sIdent) + "@" + sHost +
+		" PRIVMSG " + m_pUser->GetCurNick() + " :" + sLine,
+		m_pClient);
 }
 bool CModule::PutModNotice(const CString& sLine, const CString& sIdent, const CString& sHost) {
-	return (m_pUser) ? m_pUser->PutUser(":" + GetModNick() + "!" + sIdent + "@" + sHost + " NOTICE " + m_pUser->GetCurNick() + " :" + sLine, m_pClient) : false;
+	if (!m_pUser)
+		return false;
+	return m_pUser->PutUser(":" + GetModNick() + "!" +
+		(sIdent.empty() ? GetModName() : sIdent) + "@" + sHost +
+		" NOTICE " + m_pUser->GetCurNick() + " :" + sLine,
+		m_pClient);
 }
-
 
 ///////////////////
 // CGlobalModule //

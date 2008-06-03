@@ -144,8 +144,8 @@ public:
 	virtual bool PutIRC(const CString& sLine);
 	virtual bool PutUser(const CString& sLine);
 	virtual bool PutStatus(const CString& sLine);
-	virtual bool PutModule(const CString& sLine, const CString& sIdent = "znc", const CString& sHost = "znc.com");
-	virtual bool PutModNotice(const CString& sLine, const CString& sIdent = "znc", const CString& sHost = "znc.com");
+	virtual bool PutModule(const CString& sLine, const CString& sIdent = "", const CString& sHost = "znc.com");
+	virtual bool PutModNotice(const CString& sLine, const CString& sIdent = "", const CString& sHost = "znc.com");
 
 	// Setters
 	void SetModule(CModule* p);
@@ -281,8 +281,8 @@ public:
 	virtual bool PutIRC(const CString& sLine);
 	virtual bool PutUser(const CString& sLine);
 	virtual bool PutStatus(const CString& sLine);
-	virtual bool PutModule(const CString& sLine, const CString& sIdent = "znc", const CString& sHost = "znc.com");
-	virtual bool PutModNotice(const CString& sLine, const CString& sIdent = "znc", const CString& sHost = "znc.com");
+	virtual bool PutModule(const CString& sLine, const CString& sIdent = "", const CString& sHost = "znc.com");
+	virtual bool PutModNotice(const CString& sLine, const CString& sIdent = "", const CString& sHost = "znc.com");
 
 	const CString& GetModName() const { return m_sModName; }
 	// This is where constant module data (e.g. webadmin skins) are saved
