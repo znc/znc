@@ -397,9 +397,12 @@ void CZNC::InitDirs(const CString& sArgvPath, const CString& sDataDir) {
 	// Try to set the user's home dir, default to binpath on failure
 	home = getenv("HOME");
 
+	m_sHomePath.clear();
 	if (home) {
 		m_sHomePath = home;
-	} else {
+	}
+
+	if (m_sHomePath.empty()) {
 		struct passwd* pUserInfo = getpwuid(getuid());
 
 		if (pUserInfo) {
