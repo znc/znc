@@ -786,33 +786,39 @@ bool CIRCSock::OnPrivCTCP(CNick& Nick, CString& sMessage) {
 
 		return true;
 	} else {
-		const MCString& mssCTCPReplies = m_pUser->GetCTCPReplies();
-		MCString::const_iterator it = mssCTCPReplies.find(sMessage.AsUpper());
-		CString sQuery = sMessage.Token(0).AsUpper();
-		bool bHaveReply = false;
-		CString sReply;
+		return OnGeneralCTCP(Nick, sMessage);
+	}
 
-		if (it == mssCTCPReplies.end()) {
-			it = mssCTCPReplies.find(sQuery);
-		}
+	return false;
+}
 
-		if (it != mssCTCPReplies.end()) {
-			sReply = it->second;
-			bHaveReply = true;
-		}
+bool CIRCSock::OnGeneralCTCP(CNick& Nick, CString& sMessage) {
+	const MCString& mssCTCPReplies = m_pUser->GetCTCPReplies();
+	MCString::const_iterator it = mssCTCPReplies.find(sMessage.AsUpper());
+	CString sQuery = sMessage.Token(0).AsUpper();
+	bool bHaveReply = false;
+	CString sReply;
 
-		if (!bHaveReply && !m_pUser->IsUserAttached()) {
-			if (sQuery == "VERSION") {
-				sReply = CZNC::GetTag();
-			} else if (sQuery == "PING") {
-				sReply = sMessage.Token(1, true);
-			}
-		}
+	if (it == mssCTCPReplies.end()) {
+		it = mssCTCPReplies.find(sQuery);
+	}
 
-		if (!sReply.empty()) {
-			PutIRC("NOTICE " + Nick.GetNick() + " :\001" + sQuery + " " + sReply + "\001");
-			return true;
+	if (it != mssCTCPReplies.end()) {
+		sReply = it->second;
+		bHaveReply = true;
+	}
+
+	if (!bHaveReply && !m_pUser->IsUserAttached()) {
+		if (sQuery == "VERSION") {
+			sReply = CZNC::GetTag();
+		} else if (sQuery == "PING") {
+			sReply = sMessage.Token(1, true);
 		}
+	}
+
+	if (!sReply.empty()) {
+		PutIRC("NOTICE " + Nick.GetNick() + " :\001" + sQuery + " " + sReply + "\001");
+		return true;
 	}
 
 	return false;
@@ -854,6 +860,9 @@ bool CIRCSock::OnChanCTCP(CNick& Nick, const CString& sChan, CString& sMessage) 
 		}
 		MODULECALL(OnChanCTCP(Nick, *pChan, sMessage), m_pUser, NULL, return true);
 	}
+
+	if (OnGeneralCTCP(Nick, sMessage))
+		return true;
 
 	return (pChan && pChan->IsDetached());
 }

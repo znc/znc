@@ -33,6 +33,7 @@ public:
 	bool OnCTCPReply(CNick& Nick, CString& sMessage);
 	bool OnPrivCTCP(CNick& Nick, CString& sMessage);
 	bool OnChanCTCP(CNick& Nick, const CString& sChan, CString& sMessage);
+	bool OnGeneralCTCP(CNick& Nick, CString& sMessage);
 	bool OnPrivMsg(CNick& Nick, CString& sMessage);
 	bool OnChanMsg(CNick& Nick, const CString& sChan, CString& sMessage);
 	bool OnPrivNotice(CNick& Nick, CString& sMessage);
