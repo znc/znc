@@ -39,8 +39,6 @@ static void GenerateHelp(const char *appname) {
 }
 
 static void die(int sig) {
-	signal(SIGSEGV, SIG_DFL);
-	signal(SIGABRT, SIG_DFL);
 	signal(SIGPIPE, SIG_DFL);
 
 #ifdef _DEBUG
@@ -246,6 +244,12 @@ int main(int argc, char** argv) {
 	sa.sa_handler = SIG_IGN;
 	sigaction(SIGPIPE, &sa, (struct sigaction*) NULL);
 
+	sa.sa_handler = rehash;
+	sigaction(SIGHUP,  &sa, (struct sigaction*) NULL);
+
+	// Once this signal is caught, the signal handler is reset
+	// to SIG_DFL. This avoids endless loop with signals.
+	sa.sa_flags = SA_RESETHAND;
 	sa.sa_handler = die;
 	sigaction(SIGINT,  &sa, (struct sigaction*) NULL);
 	sigaction(SIGILL,  &sa, (struct sigaction*) NULL);
@@ -253,9 +257,6 @@ int main(int argc, char** argv) {
 	sigaction(SIGBUS,  &sa, (struct sigaction*) NULL);
 	sigaction(SIGSEGV, &sa, (struct sigaction*) NULL);
 	sigaction(SIGTERM, &sa, (struct sigaction*) NULL);
-
-	sa.sa_handler = rehash;
-	sigaction(SIGHUP,  &sa, (struct sigaction*) NULL);
 
 	int iRet = 0;
 
