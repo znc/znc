@@ -17,7 +17,7 @@ SRCS := String.cpp Csocket.cpp main.cpp znc.cpp User.cpp IRCSock.cpp Client.cpp 
 	DCCSock.cpp Chan.cpp Nick.cpp Server.cpp Modules.cpp MD5.cpp Buffer.cpp Utils.cpp \
 	FileUtils.cpp HTTPSock.cpp Template.cpp
 OBJS := $(patsubst %cpp,%o,$(SRCS))
-CLEAN := znc znc-static *.o core core.*
+CLEAN := znc *.o core core.*
 DISTCLEAN := Makefile config.log config.status znc-config znc-buildmod .depend \
 	modules/.depend modules/Makefile
 
@@ -27,9 +27,6 @@ all: znc @MODTARGET@
 
 znc: $(OBJS)
 	$(CXX) $(LDFLAGS) -o $@ $(OBJS) $(LIBS)
-
-znc-static: $(OBJS)
-	$(CXX) $(LDFLAGS) -static -o $@ $(OBJS) $(LIBS)
 
 modules:
 	@if test -n "@MODTARGET@"; then \
