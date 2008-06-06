@@ -7,6 +7,7 @@
  */
 
 #include "Chan.h"
+#include "User.h"
 #include "Modules.h"
 
 class CSampleTimer : public CTimer {
@@ -167,6 +168,12 @@ public:
 
 	virtual EModRet OnTopic(CNick& Nick, CChan& Channel, CString& sTopic) {
 		PutModule("* " + Nick.GetNick() + " changes topic on " + Channel.GetName() + " to '" + sTopic + "'");
+
+		return CONTINUE;
+	}
+
+	virtual EModRet OnUserTopic(CString& sTarget, CString& sTopic) {
+		PutModule("* " + m_pUser->GetCurNick() + " changed topic on " + sTarget + " to '" + sTopic + "'");
 
 		return CONTINUE;
 	}

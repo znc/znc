@@ -263,6 +263,7 @@ public:
 	virtual EModRet OnUserNotice(CString& sTarget, CString& sMessage);
 	virtual EModRet OnUserJoin(CString& sChannel, CString& sKey);
 	virtual EModRet OnUserPart(CString& sChannel, CString& sMessage);
+	virtual EModRet OnUserTopic(CString& sChannel, CString& sTopic);
 
 	virtual EModRet OnCTCPReply(CNick& Nick, CString& sMessage);
 	virtual EModRet OnPrivCTCP(CNick& Nick, CString& sMessage);
@@ -400,6 +401,7 @@ public:
 	virtual bool OnUserNotice(CString& sTarget, CString& sMessage);
 	virtual bool OnUserJoin(CString& sChannel, CString& sKey);
 	virtual bool OnUserPart(CString& sChannel, CString& sMessage);
+	virtual bool OnUserTopic(CString& sChannel, CString& sTopic);
 
 	virtual bool OnCTCPReply(CNick& Nick, CString& sMessage);
 	virtual bool OnPrivCTCP(CNick& Nick, CString& sMessage);
