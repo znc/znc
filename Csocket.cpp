@@ -194,7 +194,7 @@ int GetAddrInfo( const CS_STRING & sHostname, Csock *pSock, CSSockAddr & csSockA
 	hints.ai_flags = AI_ADDRCONFIG;
 #endif /* AI_ADDRCONFIG */
 
-	if( pSock && pSock->GetType() == Csock::LISTENER || pSock->GetConState() == Csock::CST_BINDVHOST )
+	if( pSock && ( pSock->GetType() == Csock::LISTENER || pSock->GetConState() == Csock::CST_BINDVHOST ) )
 	{ // when doing a dns for bind only, set the AI_PASSIVE flag as suggested by the man page
 		hints.ai_flags |= AI_PASSIVE;
 	}
