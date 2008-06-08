@@ -44,8 +44,9 @@ public:
 
 		if (it != EndNV()) {
 			CChan* pChan = m_pUser->FindChan(sTarget);
-			if ((pChan) && (pChan->KeepBuffer())) {
-				pChan->AddBuffer(":\244" + m_pUser->GetIRCNick().GetNickMask() + " PRIVMSG " + sTarget + " :" + sMessage);
+			if (pChan) {
+				if (pChan->KeepBuffer())
+					pChan->AddBuffer(":\244" + m_pUser->GetIRCNick().GetNickMask() + " PRIVMSG " + sTarget + " :" + sMessage);
 				m_pUser->PutUser(":\244" + m_pUser->GetIRCNick().GetNickMask() + " PRIVMSG " + sTarget + " :" + sMessage, NULL, m_pClient);
 			}
 
