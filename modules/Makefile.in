@@ -75,7 +75,7 @@ clean:
 
 modperl_install: create_install_dir
 	for i in *.pm; do \
-		install -m 0755 $$i $(DESTDIR)$(MODDIR); \
+		install -m 0644 $$i $(DESTDIR)$(MODDIR); \
 	done
 
 -include $(wildcard .depend/*.dep)
