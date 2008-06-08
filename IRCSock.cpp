@@ -664,10 +664,7 @@ void CIRCSock::ReadLine(const CString& sData) {
 						return; // Don't forward this
 					}
 
-					if (!sTopic.empty())
-						sTopic = ":" + sTopic;
-
-					sLine = ":" + Nick.GetNickMask() + " TOPIC " + pChan->GetName() + " " + sTopic;
+					sLine = ":" + Nick.GetNickMask() + " TOPIC " + pChan->GetName() + " :" + sTopic;
 				}
 			} else if (sCmd.CaseCmp("PRIVMSG") == 0) {
 				// :nick!ident@host.com PRIVMSG #chan :Message
