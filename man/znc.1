@@ -1,0 +1,130 @@
+.TH ZNC 1 2008\-06\-01 ZNC
+.SH NAME
+znc \- An advanced IRC bouncer
+.SH SYNOPSIS
+.B znc \-\-help
+.br
+.B znc \-\-version
+.br
+.B znc \-\-makepass
+.br
+.B znc
+.RB [ \-n ]
+.RB [ \-d
+.IR datadir ]
+.br
+.B znc
+.RB [ \-n ]
+.RB [ \-d
+.IR datadir ]
+.B \-\-makeconf
+.br
+.B znc
+.RB [ \-n ]
+.RB [ \-d
+.IR datadir ]
+.B \-\-makepem
+.SH DESCRIPTION
+.B znc
+is an IRC proxy.
+It runs as a daemon and connects to IRC server, then allows you to connect
+from a workstation and work as the user that is logged in to the IRC
+server.
+After you disconnect, it maintains the connection to the server.
+It acts like any normal IRC server, so you can use any IRC client to
+connect to it.
+.SH OPTIONS
+.TP
+.BR \-h ", " \-\-help
+Output a brief help message.
+.TP
+.BR \-v ", " \-\-version
+Show the full version number.
+.TP
+.BR \-n ", " \-\-no-color
+Don't use any color escape sequences.
+.TP
+.BI \-d " DATADIR" "\fR,\fP \-\-datadir=" DATADIR
+Specify another datadir.
+This is where
+.B znc
+saves everything.
+.TP
+.BR \-c ", " \-\-makeconf
+Interactively create a new configuration.
+.TP
+.BR \-s ", " \-\-makepass
+Hash a password for use in
+.IR znc.conf .
+.B znc
+uses MD5 for hashing.
+.TP
+.BR \-p ", " \-\-makepem
+Generate
+.IR znc.pem .
+This is the server certificate
+.B znc
+uses.
+You need this for SSL.
+.TP
+.BR \-e ", " \-\-encrypt-pem
+Just ignore this :).
+.SH FILES
+.TP
+.I /usr/local/share/znc/
+Static module data like webadmin skins
+.TP
+.I /usr/local/lib/znc/
+.B znc
+installs its modules to this directory.
+.TP
+.I /usr/local/include/znc/
+These are the headers needed for compilling own modules.
+.TP
+.I ~/.znc
+This is the default datadir. The following paths assume that you use this.
+If you change this via
+.I \-\-datadir
+then the following lines are relative to that dir.
+.TP
+.I ~/.znc/znc.pem
+This is the server certificate
+.B znc
+uses for listening on SSL ports.
+You can generate this via
+.I --makepem
+and you may replace this with your own certificate, if you want to.
+.TP
+.I ~/.znc/modules/
+If you compile your own modules, you can save them here.
+.TP
+.I ~/.znc/configs/znc.conf
+This is the path to
+.IR znc.conf .
+Use
+.I \-\-makeconf
+for an easy way to generate it.
+.TP
+.I ~/.znc/configs/znc.conf-backup
+.B znc
+may rewrite
+.I znc.conf
+to save your new settings.
+In case this goes wrong, you still have this backup of
+.I znc.conf
+which is overwritten everytime
+.B znc
+saves its config.
+.TP
+.IB ~/.znc/users/ USERNAME /
+The data for every user is saved in this dir.
+.B USERNAME
+refers to the user name of that user.
+.TP
+.IB ~/.znc/users/ USERNAME /moddata/ MODULENAME /
+This is where each module can save some stuff. This is mainly used
+for remembering module settings that are not part of
+.IR znc.conf .
+.TP
+.IB ~/.znc/moddata/ MODULENAME /
+This is where global modules may save their settings.

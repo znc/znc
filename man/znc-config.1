@@ -1,0 +1,46 @@
+.TH ZNC\-CONFIG 1 2008\-06\-01 ZNC
+.SH NAME
+znc\-config \- script to get information about the installed version of ZNC
+.SH SYNOPSIS
+.B znc\-config \-\-cflags
+.br
+.B znc\-config \-\-include
+.br
+.B znc\-config \-\-libs
+.br
+.B znc\-config \-\-moddir
+.br
+.B znc\-config \-\-datadir
+.br
+.B znc\-config \-\-version
+.br
+.B znc\-config \-\-prefix
+.br
+.SH DESCRIPTION
+.BR znc\-config
+helps you compiling ZNC modules.
+This tool gives you a list of compiler and linker flags that you need to
+compile modules for the installed ZNC instance.
+.SH OPTIONS
+.TP
+.B \-\-cflags
+Displays the necessary compiler options.
+This does not include the include directories!
+.TP
+.B \-\-include
+This prints the compiler flags needed for the include directories.
+.TP
+.B \-\-libs
+Prints the linker flags needed for ZNC modules.
+.TP
+.B \-\-moddir
+Print the directory to which modules are installed.
+.TP
+.B \-\-datadir
+Print the directory to which data files for modules are installed.
+.TP
+.B \-\-version
+Displays the version number of ZNC.
+.TP
+.B \-\-prefix
+Displays the prefix under which ZNC is installed.

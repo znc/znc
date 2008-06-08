@@ -1,0 +1,23 @@
+.TH ZNC\-BUILDMOD 1 2008\-06\-01 ZNC
+.SH NAME
+znc\-buildmod \- compile ZNC modules
+.SH SYNOPSIS
+.B znc\-buildmod
+FILE...
+.SH DESCRIPTION
+.BR znc\-buildmod
+compiles a ZNC module for you.
+You just give it a list of source files and every single file is compiled
+into a module.
+.SH EXIT STATUS
+Normally, exit status is 0 if everything went fine.
+In case the compiler errors when compiling some module, the exit status is 1.
+.SH ENVIRONMENT
+.TP
+.B PATH
+.br
+.I sed
+must be in PATH.
+.I znc-config
+should be found automatically.
+If not, you must add it to PATH yourself.

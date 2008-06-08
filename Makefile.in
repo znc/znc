@@ -19,14 +19,17 @@ SRCS := String.cpp Csocket.cpp main.cpp znc.cpp User.cpp IRCSock.cpp Client.cpp 
 OBJS := $(patsubst %cpp,%o,$(SRCS))
 CLEAN := znc *.o core core.*
 DISTCLEAN := Makefile config.log config.status znc-config znc-buildmod .depend \
-	modules/.depend modules/Makefile
+	modules/.depend modules/Makefile man/Makefile
 
-.PHONY: all modules clean distclean install
+.PHONY: all man modules clean distclean install
 
-all: znc @MODTARGET@
+all: znc man @MODTARGET@
 
 znc: $(OBJS)
 	$(CXX) $(LDFLAGS) -o $@ $(OBJS) $(LIBS)
+
+man:
+	@$(MAKE) -C man
 
 modules:
 	@if test -n "@MODTARGET@"; then \
@@ -40,6 +43,7 @@ clean:
 	@if test -n "@MODTARGET@"; then \
 		$(MAKE) -C modules clean; \
 	fi
+	@$(MAKE) -C man clean
 
 distclean: clean
 	rm -rf $(DISTCLEAN)
@@ -58,5 +62,6 @@ install: znc @MODTARGET@
 	@if test -n "@MODTARGET@"; then \
 		$(MAKE) -C modules install DESTDIR=$(DESTDIR); \
 	fi
+	@$(MAKE) -C man install DESTDIR=$(DESTDIR)
 
 -include $(wildcard .depend/*.dep)
