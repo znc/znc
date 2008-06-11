@@ -934,7 +934,7 @@ void CClient::UserCommand(const CString& sLine) {
 			return;
 		}
 
-		if (m_pUser->FindServer(sLine.Token(1))) {
+		if (m_pUser->FindServer(sServer)) {
 			PutStatus("That server already exists");
 			return;
 		}
