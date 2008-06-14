@@ -684,7 +684,7 @@ bool CZNC::WriteNewConfig(const CString& sConfig) {
 		if (uBufferCount) {
 			vsLines.push_back("\tBuffer     = " + CString(uBufferCount));
 		}
-		if (CUtils::GetBoolInput("Would you like your buffer to be sticky?", false)) {
+		if (CUtils::GetBoolInput("Would you like to keep buffers after replay?", false)) {
 			vsLines.push_back("\tKeepBuffer = true");
 		} else {
 			vsLines.push_back("\tKeepBuffer = false");

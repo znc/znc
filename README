@@ -6,6 +6,7 @@ Table of contents:
 - Optional Requirements
 - Installing ZNC
 - Setting up znc.conf
+- Special config options
 - Using ZNC
 - File Locations
 - ZNC's config file
@@ -53,6 +54,24 @@ for in-place execution.
 
 If you are using SSL you should do
  znc --makepem
+
+Special config options
+----------------------
+
+When you create your ZNC configuration file via --makeconf, you are asked two
+questions which might not be easy to understand.
+
+> Number of lines to buffer per channel
+How many messages should be buffered for each channel. When you connect to ZNC
+you get a buffer replay for each channel which shows what was said last. This
+option selects the number of lines this replay should consist of. Increasing
+this can greatly increase ZNC's memory usage if you are hosting many users.
+The default value should be fine for most setups.
+
+> Would you like to keep buffers after replay?
+If this is disabled, you get the buffer playback only once and then it is
+deleted. If this is enabled, the buffer is not deleted. This may be useful if
+you regularly use more than one client to connect to ZNC.
 
 Using ZNC
 ---------
