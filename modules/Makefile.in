@@ -13,7 +13,9 @@ CXX      := @CXX@
 MODFLAGS := @MODFLAGS@
 LDFLAGS  := @LDFLAGS@
 INCLUDES := @INCLUDES@ -I..
-LIBS     := @LIBS@
+# LIBS are not and should not be used in here.
+# The znc binary links already against those.
+# LIBS     := @LIBS@
 PERL     := @PERL@
 MODDIR   := @MODDIR@
 DATADIR  := @DATADIR@
