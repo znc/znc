@@ -806,7 +806,7 @@ bool CIRCSock::OnGeneralCTCP(CNick& Nick, CString& sMessage) {
 	}
 
 	if (it != mssCTCPReplies.end()) {
-		sReply = it->second;
+		sReply = m_pUser->ExpandString(it->second);
 		bHaveReply = true;
 	}
 
