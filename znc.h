@@ -108,6 +108,7 @@ public:
 	bool WriteConfig();
 	bool ParseConfig(const CString& sConfig);
 	bool RehashConfig(CString& sError);
+	static CString GetVersion();
 	static CString GetTag(bool bIncludeVersion = true);
 	// This returns the path to the .so and to the data dir
 	// which is where static data (webadmin skins) are saved

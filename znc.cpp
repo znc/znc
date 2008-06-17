@@ -71,14 +71,25 @@ CZNC::~CZNC() {
 	DeletePidFile();
 }
 
+CString CZNC::GetVersion() {
+	char szBuf[128];
+
+	snprintf(szBuf, sizeof(szBuf), "%1.3f"VERSION_EXTRA, VERSION);
+	// If snprintf overflows (which I doubt), we want to be on the safe side
+	szBuf[sizeof(szBuf) - 1] = '\0';
+
+	return szBuf;
+}
+
 CString CZNC::GetTag(bool bIncludeVersion) {
 	if (!bIncludeVersion) {
 		return "ZNC - http://znc.sourceforge.net";
 	}
 
 	char szBuf[128];
-	memset(szBuf, 0, 128);
-	snprintf(szBuf, 127, "ZNC %1.3f"VERSION_EXTRA" - http://znc.sourceforge.net", VERSION);
+	snprintf(szBuf, sizeof(szBuf), "ZNC %1.3f"VERSION_EXTRA" - http://znc.sourceforge.net", VERSION);
+	// If snprintf overflows (which I doubt), we want to be on the safe side
+	szBuf[sizeof(szBuf) - 1] = '\0';
 
 	return szBuf;
 }
