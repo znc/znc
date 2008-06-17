@@ -1554,6 +1554,11 @@ void CClient::UserCommand(const CString& sLine) {
 				PutStatus(sTmp);
 			}
 		}
+	} else if (m_pUser->IsAdmin() && sCommand.CaseCmp("UPTIME") == 0) {
+		time_t started = CZNC::Get().TimeStarted();
+		time_t now = time(NULL);
+
+		PutStatus("Running for " + CString(now - started) + " seconds");
 	} else {
 		PutStatus("Unknown command [" + sCommand + "] try 'Help'");
 	}
@@ -1751,6 +1756,11 @@ void CClient::HelpUser() {
 			Table.SetCell("Command", "Traffic");
 			Table.SetCell("Arguments", "");
 			Table.SetCell("Description", "Show basic traffic stats for all znc users");
+
+			Table.AddRow();
+			Table.SetCell("Command", "Uptime");
+			Table.SetCell("Arguments", "");
+			Table.SetCell("Description", "Show how long ZNC is already running");
 
 			Table.AddRow();
 			Table.SetCell("Command", "SetMOTD");

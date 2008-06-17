@@ -36,6 +36,7 @@ CZNC::CZNC() {
 	m_uBytesWritten = 0;
 	m_pConnectUserTimer = NULL;
 	m_bNeedRehash = false;
+	m_TimeStarted = time(NULL);
 }
 
 CZNC::~CZNC() {

@@ -151,6 +151,7 @@ public:
 	const CString& GetISpoofFormat() const { return m_sISpoofFormat; }
 	const VCString& GetVHosts() const { return m_vsVHosts; }
 	const vector<CListener*>& GetListeners() const { return m_vpListeners; }
+	time_t TimeStarted() const { return m_TimeStarted; }
 	// !Getters
 
 	// Static allocator
@@ -183,6 +184,8 @@ private:
 	bool BackupConfig() const;
 
 protected:
+	time_t				m_TimeStarted;
+
 	bool				m_bNeedRehash;
 	vector<CListener*>		m_vpListeners;
 	map<CString,CUser*>		m_msUsers;
