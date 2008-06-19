@@ -94,6 +94,11 @@ CString CZNC::GetTag(bool bIncludeVersion) {
 	return szBuf;
 }
 
+CString CZNC::GetUptime() {
+	time_t now = time(NULL);
+	return CString(now - TimeStarted()) + " seconds";
+}
+
 bool CZNC::OnBoot() {
 #ifdef _MODULES
 	if (!GetModules().OnBoot()) {

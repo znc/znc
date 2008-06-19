@@ -110,6 +110,7 @@ public:
 	bool RehashConfig(CString& sError);
 	static CString GetVersion();
 	static CString GetTag(bool bIncludeVersion = true);
+	CString GetUptime();
 	// This returns the path to the .so and to the data dir
 	// which is where static data (webadmin skins) are saved
 	bool FindModPath(const CString& sModule, CString& sModPath,

@@ -1555,10 +1555,7 @@ void CClient::UserCommand(const CString& sLine) {
 			}
 		}
 	} else if (m_pUser->IsAdmin() && sCommand.CaseCmp("UPTIME") == 0) {
-		time_t started = CZNC::Get().TimeStarted();
-		time_t now = time(NULL);
-
-		PutStatus("Running for " + CString(now - started) + " seconds");
+		PutStatus("Running for " + CZNC::Get().GetUptime());
 	} else {
 		PutStatus("Unknown command [" + sCommand + "] try 'Help'");
 	}
