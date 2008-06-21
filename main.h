@@ -64,9 +64,9 @@ using std::endl;
 
 #ifndef PATH_MAX
 #define PATH_MAX	1024
+#warning PATH_MAX is undefined
 #endif
 
 #include "String.h"
-#include "Csocket.h"
 
 #endif // !_MAIN_H

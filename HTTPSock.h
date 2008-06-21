@@ -11,6 +11,7 @@
 #ifndef _HTTPSOCK_H
 #define _HTTPSOCK_H
 
+#include "Csocket.h"
 #include "main.h"
 
 class CHTTPSock : public Csock {

@@ -10,8 +10,7 @@
 #define _TIMERS_H
 
 #include "Client.h"
-#include "Csocket.h"
-#include "FileUtils.h"
+#include "IRCSock.h"
 #include "User.h"
 
 class CKeepNickTimer : public CCron {
