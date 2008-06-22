@@ -132,6 +132,17 @@ CString CUser::ExpandString(const CString& sStr) const {
 }
 
 CString& CUser::ExpandString(const CString& sStr, CString& sRet) const {
+	// offset is in hours, so * 60 * 60 gets us seconds
+	time_t iUserTime = time(NULL) + (time_t)(m_fTimezoneOffset * 60 * 60);
+	char *szTime = ctime(&iUserTime);
+	CString sTime;
+
+	if (szTime) {
+		sTime = szTime;
+		// ctime() adds a trailing newline
+		sTime.Trim();
+	}
+
 	sRet = sStr;
 	sRet.Replace("%user%", GetUserName());
 	sRet.Replace("%defnick%", GetNick());
@@ -140,6 +151,13 @@ CString& CUser::ExpandString(const CString& sStr, CString& sRet) const {
 	sRet.Replace("%ident%", GetIdent());
 	sRet.Replace("%realname%", GetRealName());
 	sRet.Replace("%vhost%", GetVHost());
+	sRet.Replace("%version%", CZNC::GetVersion());
+	sRet.Replace("%time%", sTime);
+	sRet.Replace("%uptime%", CZNC::Get().GetUptime());
+	// The following lines do not exist. You must be on DrUgS!
+	sRet.Replace("%znc%", "All your IRC are belong to ZNC");
+	// Chosen by fair zocchihedron dice roll by SilverLeo
+	sRet.Replace("%rand%", "42");
 
 	return sRet;
 }
