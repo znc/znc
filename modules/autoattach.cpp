@@ -61,7 +61,9 @@ public:
 		if (sCommand.CaseCmp("ADD") == 0) {
 			CString sChan = sLine.Token(1);
 
-			if (Add(sChan)) {
+			if (AlreadyAdded(sChan)) {
+				PutModule(sChan + " is already added");
+			} else if (Add(sChan)) {
 				PutModule("Added " + sChan + " to list");
 			} else {
 				PutModule("Usage: Add [!]<#chan>");
@@ -70,7 +72,7 @@ public:
 			CString sChan = sLine.Token(1);
 
 			if (Del(sChan))
-				PutModule("Remove " + sChan + " from list");
+				PutModule("Removed " + sChan + " from list");
 			else
 				PutModule("Usage: Del [!]<#chan>");
 		} else if (sCommand.CaseCmp("LIST") == 0) {
@@ -127,6 +129,25 @@ public:
 		}
 	}
 
+	bool AlreadyAdded(const CString& sInput) {
+		vector<CString>::iterator it;
+
+		if (sInput.Left(1) == "!") {
+			CString sChan = sInput.substr(1);
+			for (it = m_vsNegChans.begin(); it != m_vsNegChans.end();
+					it++) {
+				if (*it == sChan)
+					return true;
+			}
+		} else {
+			for (it = m_vsChans.begin(); it != m_vsChans.end(); it++) {
+				if (*it == sInput)
+					return true;
+			}
+		}
+		return false;
+	}
+
 	bool Add(const CString& sChan) {
 		if (sChan.empty() || sChan == "!") {
 			return false;
@@ -138,6 +159,7 @@ public:
 			m_vsChans.push_back(sChan);
 		}
 
+		// Also save it for next module load
 		SetNV(sChan, "");
 
 		return true;
