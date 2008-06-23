@@ -13,6 +13,7 @@ static struct option g_LongOpts[] = {
 	{ "help",			no_argument,	0,	'h' },
 	{ "version",			no_argument,	0,	'v' },
 	{ "no-color",			no_argument,	0,	'n' },
+	{ "allow-root",			no_argument,	0,	'r' },
 	{ "makeconf",			no_argument,	0,	'c' },
 	{ "makepass",			no_argument,	0,	's' },
 #ifdef HAVE_LIBSSL
@@ -29,6 +30,7 @@ static void GenerateHelp(const char *appname) {
 	CUtils::PrintMessage("\t-h, --help         List available command line options (this page)");
 	CUtils::PrintMessage("\t-v, --version      Output version information and exit");
 	CUtils::PrintMessage("\t-n, --no-color     Don't use escape sequences in the output");
+	CUtils::PrintMessage("\t-r, --allow-root   Don't complain if ZNC is run as root");
 	CUtils::PrintMessage("\t-c, --makeconf     Interactively create a new config");
 	CUtils::PrintMessage("\t-s, --makepass     Generates a password for use in config");
 #ifdef HAVE_LIBSSL
@@ -56,6 +58,18 @@ static void rehash(int sig) {
 	CZNC::Get().SetNeedRehash(true);
 }
 
+static bool isRoot() {
+	uid_t u_real, u_effective, u_saved;
+
+	getresuid(&u_real, &u_effective, &u_saved);
+
+	// User root? If one of these were root, we could switch the others to root, too
+	if (u_real == 0 || u_effective == 0 || u_saved == 0)
+		return true;
+
+	return false;
+}
+
 int main(int argc, char** argv) {
 	CString sConfig;
 	CString sDataDir = "";
@@ -73,10 +87,11 @@ int main(int argc, char** argv) {
 #ifdef HAVE_LIBSSL
 	bool bMakePem = false;
 	bool bEncPem = false;
+	bool bAllowRoot = false;
 
-	while ((iArg = getopt_long(argc, argv, "hvncsped:", g_LongOpts, &iOptIndex)) != -1) {
+	while ((iArg = getopt_long(argc, argv, "hvnrcsped:", g_LongOpts, &iOptIndex)) != -1) {
 #else
-	while ((iArg = getopt_long(argc, argv, "hvncsd:", g_LongOpts, &iOptIndex)) != -1) {
+	while ((iArg = getopt_long(argc, argv, "hvnrcsd:", g_LongOpts, &iOptIndex)) != -1) {
 #endif /* HAVE_LIBSSL */
 	    switch (iArg) {
 		case 'h':
@@ -87,6 +102,9 @@ int main(int argc, char** argv) {
 			    return 0;
 		case 'n':
 			    CUtils::SetStdoutIsTTY(false);
+			    break;
+		case 'r':
+			    bAllowRoot = true;
 			    break;
 		case 'c':
 			    bMakeConf = true;
@@ -195,6 +213,18 @@ int main(int argc, char** argv) {
 		CUtils::PrintError("Exiting due to module boot errors.");
 		delete pZNC;
 		return 1;
+	}
+
+	if (isRoot()) {
+		CUtils::PrintError("You are running ZNC as root! Don't do that! There are not many valid");
+		CUtils::PrintError("reasons for this and it can, in theory, cause great damage!");
+		if (!bAllowRoot) {
+			exit(1);
+		}
+		CUtils::PrintError("You have been warned.");
+		CUtils::PrintError("Hit CTRL+C now if you don't want to run ZNC as root.");
+		CUtils::PrintError("ZNC will start in 30 seconds.");
+		sleep(30);
 	}
 
 #ifdef _DEBUG
