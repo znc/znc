@@ -84,10 +84,10 @@ int main(int argc, char** argv) {
 	int iArg, iOptIndex = -1;
 	bool bMakeConf = false;
 	bool bMakePass = false;
+	bool bAllowRoot = false;
 #ifdef HAVE_LIBSSL
 	bool bMakePem = false;
 	bool bEncPem = false;
-	bool bAllowRoot = false;
 
 	while ((iArg = getopt_long(argc, argv, "hvnrcsped:", g_LongOpts, &iOptIndex)) != -1) {
 #else
