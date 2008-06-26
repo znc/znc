@@ -95,38 +95,38 @@ int main(int argc, char** argv) {
 #endif /* HAVE_LIBSSL */
 	    switch (iArg) {
 		case 'h':
-			    GenerateHelp(argv[0]);
-			    return 0;
+			GenerateHelp(argv[0]);
+			return 0;
 		case 'v':
-			    cout << CZNC::GetTag() << endl;
-			    return 0;
+			cout << CZNC::GetTag() << endl;
+			return 0;
 		case 'n':
-			    CUtils::SetStdoutIsTTY(false);
-			    break;
+			CUtils::SetStdoutIsTTY(false);
+			break;
 		case 'r':
-			    bAllowRoot = true;
-			    break;
+			bAllowRoot = true;
+			break;
 		case 'c':
-			    bMakeConf = true;
-			    break;
+			bMakeConf = true;
+			break;
 		case 's':
-			    bMakePass = true;
-			    break;
+			bMakePass = true;
+			break;
 #ifdef HAVE_LIBSSL
 		case 'p':
-			    bMakePem = true;
-			    break;
+			bMakePem = true;
+			break;
 		case 'e':
-			    bEncPem = true;
-			    break;
+			bEncPem = true;
+			break;
 #endif /* HAVE_LIBSSL */
 		case 'd':
-			    sDataDir = CString(optarg);
-			    break;
+			sDataDir = CString(optarg);
+			break;
 		case '?':
 		default:
-			    GenerateHelp(argv[0]);
-			    return 1;
+			GenerateHelp(argv[0]);
+			return 1;
 	    }
 	}
 
