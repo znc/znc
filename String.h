@@ -129,6 +129,7 @@ public:
 
 	static CString ToPercent(double d);
 	static CString ToByteStr(unsigned long long d);
+	static CString ToTimeStr(unsigned long s);
 
 	bool ToBool() const;
 	short ToShort() const;

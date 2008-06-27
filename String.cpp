@@ -887,6 +887,32 @@ CString CString::ToByteStr(unsigned long long d) {
 	return CString(d) + " B";
 }
 
+CString CString::ToTimeStr(unsigned long s) {
+	const unsigned long m = 60;
+	const unsigned long h = m * 60;
+	const unsigned long d = h * 24;
+	const unsigned long w = d * 7;
+	const unsigned long y = d * 365;
+	CString sRet;
+
+#define TIMESPAN(time, str)			\
+	if (s >= time) {		\
+		sRet += CString(s / time) + str " "; \
+		s = s % time;		\
+	}
+	TIMESPAN(y, "y");
+	TIMESPAN(w, "w");
+	TIMESPAN(d, "d");
+	TIMESPAN(h, "h");
+	TIMESPAN(m, "m");
+	TIMESPAN(1, "s");
+
+	if (sRet.empty())
+		return "0s";
+
+	return sRet.RightChomp_n();
+}
+
 bool CString::ToBool() const { return (!Trim_n().Trim_n("0").empty() && Trim_n().CaseCmp("false") != 0); }
 short CString::ToShort() const { return strtoul(this->c_str(), (char**) NULL, 10); }
 unsigned short CString::ToUShort() const { return strtoul(this->c_str(), (char**) NULL, 10); }

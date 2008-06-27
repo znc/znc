@@ -96,7 +96,7 @@ CString CZNC::GetTag(bool bIncludeVersion) {
 
 CString CZNC::GetUptime() {
 	time_t now = time(NULL);
-	return CString(now - TimeStarted()) + " seconds";
+	return CString::ToTimeStr(now - TimeStarted());
 }
 
 bool CZNC::OnBoot() {
