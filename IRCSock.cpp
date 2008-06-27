@@ -11,6 +11,7 @@
 #include "Client.h"
 #include "DCCBounce.h"
 #include "User.h"
+#include "znc.h"
 
 CIRCSock::CIRCSock(CUser* pUser) : Csock() {
 	m_pUser = pUser;

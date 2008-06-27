@@ -8,6 +8,7 @@
 
 #include "DCCBounce.h"
 #include "User.h"
+#include "znc.h"
 
 // If we buffer more than this in memory, we will throttle the receiving side
 const unsigned int CDCCBounce::m_uiMaxDCCBuffer = 10 * 1024;

@@ -14,6 +14,7 @@
 #include "Server.h"
 #include "Timers.h"
 #include "User.h"
+#include "znc.h"
 
 CClient::~CClient() {
 	if (!m_spAuth.IsNull()) {
