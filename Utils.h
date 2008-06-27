@@ -222,9 +222,9 @@ protected:
 class CBlowfish {
 public:
 	/**
-	 * @sPassword key to encrypt with
-	 * @iEncrypt encrypt method (BF_DECRYPT or BF_ENCRYPT)
-	 * @sIvec what to set the ivector to start with, default sets it all 0's
+	 * @param sPassword key to encrypt with
+	 * @param iEncrypt encrypt method (BF_DECRYPT or BF_ENCRYPT)
+	 * @param sIvec what to set the ivector to start with, default sets it all 0's
 	 */
 	CBlowfish(const CString & sPassword, int iEncrypt, const CString & sIvec = "");
 	~CBlowfish();
@@ -503,7 +503,7 @@ public:
 
 	/**
 	 * @brief Attach() to a raw pointer
-	 * @param pRawPtr The raw pointer to keep track of, ***WARNING*** Do _NOT_ allow more than one CSmartPtr keep track of the same raw pointer
+	 * @param p The raw pointer to keep track of, ***WARNING*** Do _NOT_ allow more than one CSmartPtr keep track of the same raw pointer
 	 * @return Reference to self
 	 */
 	CSmartPtr<T>& operator =(T* p) { Attach(p); return *this; }
