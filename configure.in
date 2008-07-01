@@ -39,7 +39,7 @@ appendLD () {
 	fi
 }
 
-appendCXX "-D_GNU_SOURCE -D_FORTIFY_SOURCE=2"
+appendCXX "-D_FORTIFY_SOURCE=2"
 
 case "${host_os}" in
 	freebsd*)
