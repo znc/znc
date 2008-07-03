@@ -1086,12 +1086,12 @@ bool CUser::IsPassHashed() const { return m_bPassHashed; }
 bool CUser::ConnectPaused() {
 	if (!m_uConnectTime) {
 		m_uConnectTime = time(NULL);
-		return !m_bIRCConnectEnabled;
+		return false;
 	}
 
 	if (time(NULL) - m_uConnectTime >= 5) {
 		m_uConnectTime = time(NULL);
-		return !m_bIRCConnectEnabled;
+		return false;
 	}
 
 	return true;

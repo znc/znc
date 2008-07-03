@@ -125,6 +125,8 @@ bool CZNC::ConnectUser(CUser *pUser) {
 		return false;
 	}
 
+	if (!pUser->GetIRCConnectEnabled())
+		return false;
 
 	if (pIRCSock || !pUser->HasServers())
 		return false;
