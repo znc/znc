@@ -1825,27 +1825,7 @@ void CClient::AuthUser() {
 
 	m_spAuth = new CClientAuth(this, m_sUser, m_sPass);
 
-	CClientAuth::AuthUser(m_spAuth);
-}
-
-void CAuthBase::AuthUser(CSmartPtr<CAuthBase> AuthClass) {
-#ifdef _MODULES
-	if (CZNC::Get().GetModules().OnLoginAttempt(AuthClass)) {
-		return;
-	}
-#endif
-
-	CUser* pUser = CZNC::Get().GetUser(AuthClass->GetUsername());
-
-	if (pUser && pUser->CheckPass(AuthClass->GetPassword())) {
-		AuthClass->AcceptLogin(*pUser);
-	} else {
-		if (pUser) {
-			pUser->PutStatus("Another client attempted to login as you, with a bad password.");
-		}
-
-		AuthClass->RefuseLogin("Invalid Password");
-	}
+	CZNC::Get().AuthUser(m_spAuth);
 }
 
 CClientAuth::CClientAuth(CClient* pClient, const CString& sUsername, const CString& sPassword)
@@ -1858,7 +1838,7 @@ void CClientAuth::RefuseLogin(const CString& sReason) {
 		m_pClient->RefuseLogin(sReason);
 	}
 #ifdef _MODULES
-	CZNC::Get().GetModules().OnFailedLogin(GetUsername(), ((m_pClient) ? m_pClient->GetRemoteIP() : CString("")));
+	CZNC::Get().GetModules().OnFailedLogin(GetUsername(), GetRemoteIP());
 #endif
 }
 
@@ -1886,13 +1866,6 @@ void CClient::AcceptLogin(CUser& User) {
 	if (m_pTimeout) {
 		m_pTimeout->Stop();
 		m_pTimeout = NULL;
-	}
-
-	if (!m_pUser->IsHostAllowed(GetRemoteIP())) {
-		PutClient(":irc.znc.com 463 " + GetNick() + " :Your host ("
-				+ GetRemoteIP() + ") is not allowed");
-		Close();
-		return;
 	}
 
 	SetSockName("USR::" + m_pUser->GetUserName());

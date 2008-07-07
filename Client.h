@@ -43,8 +43,6 @@ public:
 	virtual const CString& GetPassword() const { return m_sPassword; }
 	virtual const CString& GetRemoteIP() const { return m_sRemoteIP; }
 
-	static void AuthUser(CSmartPtr<CAuthBase> AuthClass);
-
 private:
 	CString		m_sUsername;
 	CString		m_sPassword;
