@@ -1848,6 +1848,11 @@ void CAuthBase::AuthUser(CSmartPtr<CAuthBase> AuthClass) {
 	}
 }
 
+CClientAuth::CClientAuth(CClient* pClient, const CString& sUsername, const CString& sPassword)
+		: CAuthBase(sUsername, sPassword, pClient->GetRemoteIP()) {
+	m_pClient = pClient;
+}
+
 void CClientAuth::RefuseLogin(const CString& sReason) {
 	if (m_pClient) {
 		m_pClient->RefuseLogin(sReason);

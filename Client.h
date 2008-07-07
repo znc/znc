@@ -23,16 +23,17 @@ class CClientTimeout;
 
 class CAuthBase {
 public:
-	CAuthBase() {}
-	CAuthBase(const CString& sUsername, const CString& sPassword) {
-		SetLoginInfo(sUsername, sPassword);
+	CAuthBase(const CString& sUsername, const CString& sPassword, const CString& sRemoteIP) {
+		SetLoginInfo(sUsername, sPassword, sRemoteIP);
 	}
 
 	virtual ~CAuthBase() {}
 
-	virtual void SetLoginInfo(const CString& sUsername, const CString& sPassword) {
+	virtual void SetLoginInfo(const CString& sUsername, const CString& sPassword,
+			const CString& sRemoteIP) {
 		m_sUsername = sUsername;
 		m_sPassword = sPassword;
+		m_sRemoteIP = sRemoteIP;
 	}
 
 	virtual void AcceptLogin(CUser& User) = 0;
@@ -40,21 +41,20 @@ public:
 
 	virtual const CString& GetUsername() const { return m_sUsername; }
 	virtual const CString& GetPassword() const { return m_sPassword; }
+	virtual const CString& GetRemoteIP() const { return m_sRemoteIP; }
 
 	static void AuthUser(CSmartPtr<CAuthBase> AuthClass);
 
 private:
 	CString		m_sUsername;
 	CString		m_sPassword;
+	CString		m_sRemoteIP;
 };
 
 
 class CClientAuth : public CAuthBase {
 public:
-	CClientAuth(CClient* pClient, const CString& sUsername, const CString& sPassword) : CAuthBase(sUsername, sPassword) {
-		m_pClient = pClient;
-	}
-
+	CClientAuth(CClient* pClient, const CString& sUsername, const CString& sPassword);
 	virtual ~CClientAuth() {}
 
 	void SetClient(CClient* pClient) { m_pClient = pClient; }

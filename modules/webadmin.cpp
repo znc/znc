@@ -21,10 +21,7 @@ class CWebAdminSock;
 
 class CWebAdminAuth : public CAuthBase {
 public:
-	CWebAdminAuth(CWebAdminSock* pWebAdminSock, const CString& sUsername, const CString& sPassword)
-		: CAuthBase(sUsername, sPassword) {
-			m_pWebAdminSock = pWebAdminSock;
-	}
+	CWebAdminAuth(CWebAdminSock* pWebAdminSock, const CString& sUsername, const CString& sPassword);
 
 	virtual ~CWebAdminAuth() {}
 
@@ -1160,6 +1157,12 @@ CUser* CWebAdminSock::GetNewUser(CString& sPageRet, CUser* pUser) {
 	}
 
 	return pNewUser;
+}
+
+CWebAdminAuth::CWebAdminAuth(CWebAdminSock* pWebAdminSock, const CString& sUsername,
+		const CString& sPassword)
+		: CAuthBase(sUsername, sPassword, pWebAdminSock->GetRemoteIP()) {
+	m_pWebAdminSock = pWebAdminSock;
 }
 
 void CWebAdminAuth::AcceptLogin(CUser& User) {
