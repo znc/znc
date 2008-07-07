@@ -264,35 +264,13 @@ void CWebAdminSock::PrintPage(CString& sPageRet, const CString& sTmplName) {
 bool CWebAdminSock::OnLogin(const CString& sUser, const CString& sPass) {
 	m_spAuth = new CWebAdminAuth(this, sUser, sPass);
 
-	if (CZNC::Get().GetModules().OnLoginAttempt(m_spAuth)) {
-		if (IsLoggedIn()) {
-			return true;
-		}
+	// Some authentication module could need some time, block this socket
+	// until then. CWebAdminAuth will UnPauseRead().
+	PauseRead();
+	CZNC::Get().AuthUser(m_spAuth);
 
-		PauseRead();
-
-		return false;
-	}
-
-	CUser* pUser = CZNC::Get().FindUser(GetUser());
-
-	if (pUser) {
-		CString sHost = GetRemoteIP();
-
-		if (pUser->IsHostAllowed(sHost) && pUser->CheckPass(GetPass())) {
-			if (pUser->IsAdmin()) {
-				m_bAdmin = true;
-			} else {
-				m_pUser = pUser;
-			}
-
-			m_pSessionUser = pUser;
-
-			return true;
-		}
-	}
-
-	return false;
+	// If CWebAdminAuth already set this, don't change it.
+	return IsLoggedIn();
 }
 
 void CWebAdminSock::ListUsersPage(CString& sPageRet) {
@@ -1184,6 +1162,7 @@ void CWebAdminAuth::AcceptLogin(CUser& User) {
 
 void CWebAdminAuth::RefuseLogin(const CString& sReason) {
 	if (m_pWebAdminSock) {
+		m_pWebAdminSock->SetLoggedIn(false);
 		m_pWebAdminSock->UnPauseRead();
 	}
 }
