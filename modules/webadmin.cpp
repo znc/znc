@@ -80,8 +80,17 @@ public:
 	}
 
 	// Setters
-	void SetSessionUser(CUser* p) { m_pSessionUser = p; m_bAdmin = p->IsAdmin(); }
-	void SetAdmin(bool b) { m_bAdmin = b; }
+	void SetSessionUser(CUser* p) {
+		m_pSessionUser = p;
+		m_bAdmin = p->IsAdmin();
+
+		// If m_pUser is not NULL, only that user can be edited.
+		if (m_bAdmin) {
+			m_pUser = NULL;
+		} else {
+			m_pUser = m_pSessionUser;
+		}
+	}
 	// !Setters
 
 	virtual Csock* GetSockObj(const CString& sHost, unsigned short uPort);
