@@ -126,6 +126,11 @@ public:
 	unsigned long long BytesWritten() const { return m_uBytesWritten; }
 	void UpdateTrafficStats();
 
+	// Authenticate a user.
+	// The result is passed back via callbacks to CAuthBase.
+	// CSmartPtr handles freeing this pointer!
+	void AuthUser(CSmartPtr<CAuthBase> AuthClass);
+
 	// Setters
 	void SetNeedRehash(bool b) { m_bNeedRehash = b; }
 	void SetStatusPrefix(const CString& s) { m_sStatusPrefix = (s.empty()) ? "*" : s; }

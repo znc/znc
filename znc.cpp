@@ -1693,6 +1693,35 @@ void CZNC::UpdateTrafficStats() {
 	}
 }
 
+void CZNC::AuthUser(CSmartPtr<CAuthBase> AuthClass) {
+#ifdef _MODULES
+	// TODO unless the auth module calls it, CUser::IsHostAllowed() is not honoured
+	if (GetModules().OnLoginAttempt(AuthClass)) {
+		return;
+	}
+#endif
+
+	CUser* pUser = GetUser(AuthClass->GetUsername());
+
+	if (!pUser || !pUser->CheckPass(AuthClass->GetPassword())) {
+		if (pUser) {
+			pUser->PutStatus("Another client attempted to login as you, with a bad password.");
+		}
+
+		AuthClass->RefuseLogin("Invalid Password");
+		return;
+	}
+
+	CString sHost = AuthClass->GetRemoteIP();
+
+	if (!pUser->IsHostAllowed(sHost)) {
+		AuthClass->RefuseLogin("Your host [" + sHost + "] is not allowed");
+		return;
+	}
+
+	AuthClass->AcceptLogin(*pUser);
+}
+
 class CConnectUserTimer : public CCron {
 public:
 	CConnectUserTimer(int iSecs) : CCron() {
