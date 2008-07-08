@@ -377,7 +377,7 @@ void CIRCSock::ReadLine(const CString& sData) {
 
 								sTmp += sNick + " ";
 								i++;
-							} while (!sNick.empty());
+							}
 							// Strip away the spaces we inserted at the end
 							sTmp.Trim(" ");
 							m_pUser->PutUser(sTmp, vClients[a]);
