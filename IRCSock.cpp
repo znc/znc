@@ -922,7 +922,8 @@ void CIRCSock::Disconnected() {
 	MODULECALL(OnIRCDisconnected(), m_pUser, NULL, );
 
 	DEBUG_ONLY(cout << GetSockName() << " == Disconnected()" << endl);
-	if (!m_pUser->IsBeingDeleted() && m_pUser->GetIRCConnectEnabled()) {
+	if (!m_pUser->IsBeingDeleted() && m_pUser->GetIRCConnectEnabled() &&
+			m_pUser->GetServers().size() != 0) {
 		m_pUser->PutStatus("Disconnected from IRC. Reconnecting...");
 	}
 	m_pUser->ClearRawBuffer();
