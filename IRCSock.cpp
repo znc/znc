@@ -352,10 +352,13 @@ void CIRCSock::ReadLine(const CString& sData) {
 							m_pUser->PutUser(sLine, vClients[a]);
 						} else {
 							unsigned int i = 0;
-							// This loop runs once more than there are nicks,
-							// the last run sets sNick to "" and causes the break.
-							do {
-								sNick = sNicks.Token(i);
+							// This loop runs once for
+							// every nick on the channel
+							for (;;) {
+								sNick = sNicks.Token(i).Trim_n(" ");
+								if (sNick.empty())
+									break;
+
 								if (m_bNamesx && !vClients[a]->HasNamesx()
 									&& IsPermChar(sNick[0])) {
 									// Server has, client hasnt NAMESX,
