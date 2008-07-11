@@ -984,9 +984,8 @@ bool CZNC::DoRehash(CString& sError)
 	while (File.ReadLine(sLine)) {
 		uLineNum++;
 
-		while ((sLine.Right(1) == "\r") || (sLine.Right(1) == "\n")) {
-			sLine.Trim();
-		}
+		// Remove all leading / trailing spaces and line endings
+		sLine.Trim();
 
 		if ((sLine.empty()) || (sLine[0] == '#') || (sLine.Left(2) == "//")) {
 			continue;
