@@ -2452,7 +2452,6 @@ case "${host_os}" in
 		appendInc -I/usr/local/include
 		appendLib -L/usr/local/lib -lcompat
 		MODFLAGS="$MODFLAGS -L/usr/local/lib"
-		appendCXX -D__GNU_LIBRARY__
 	;;
 	solaris*)
 		appendLib -lsocket -lnsl
