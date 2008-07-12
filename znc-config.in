@@ -8,7 +8,9 @@ datadir="@datadir@"
 
 CXXFLAGS="@MODFLAGS@"
 INCLUDES="-I@prefix@/include/znc @INCLUDES@"
-LIBS="@LIBS@"
+# LIBS="@LIBS@"
+# No libs needed, ZNC links against $LIBS and thus modules don't need to.
+LIBS=""
 MODDIR="@MODDIR@"
 DATADIR="@DATADIR@"
 VERSION="@VERSION@"
