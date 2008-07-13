@@ -189,6 +189,49 @@ CString CUtils::GetHashPass() {
 	return "";
 }
 
+CString CUtils::GetSaltedHashPass(CString& sSalt, unsigned int uiSaltLength) {
+	sSalt = CString::RandomString(uiSaltLength);
+	const char *pSalt = sSalt.c_str();
+
+	while (true) {
+		char* pass = CUtils::GetPass("Enter Password");
+		char* pass1 = (char *) malloc(strlen(pass) + 1);
+		// Make a copy of this since it is stored in a static buffer and will be overwritten when we fill pass2 below
+		strcpy(pass1, pass);
+		// null out our pass so it doesn't sit in memory
+		memset(pass, 0, strlen(pass));
+		char* pass2 = CUtils::GetPass("Confirm Password");
+		int iLen = strlen(pass1);
+
+		if (strcmp(pass1, pass2) != 0) {
+			CUtils::PrintError("The supplied passwords did not match");
+		} else if (!iLen) {
+			CUtils::PrintError("You can not use an empty password");
+		} else {
+			// Construct the salted pass
+			char *salted_pass = (char *) malloc(iLen + uiSaltLength + 1);
+			strcpy(salted_pass, pass1);
+			strcpy(salted_pass + iLen, pSalt);
+
+			CString sRet((const char*) CMD5(salted_pass, iLen + uiSaltLength));
+			// null out our pass so it doesn't sit in memory
+			memset(salted_pass, 0, iLen + uiSaltLength);
+			memset(pass1, 0, iLen);
+			memset(pass2, 0, strlen(pass2));
+			free(salted_pass);
+			free(pass1);
+
+			return sRet;
+		}
+
+		memset((char*) pass1, 0, iLen);	// null out our pass so it doesn't sit in memory
+		memset((char*) pass2, 0, strlen(pass2));	// null out our pass so it doesn't sit in memory
+		free(pass1);
+	}
+
+	return "";
+}
+
 char* CUtils::GetPass(const CString& sPrompt) {
 	PrintPrompt(sPrompt);
 	return getpass("");

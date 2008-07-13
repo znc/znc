@@ -666,8 +666,9 @@ bool CZNC::WriteNewConfig(const CString& sConfig) {
 		} while (!CUser::IsValidUserName(sUser));
 
 		vsLines.push_back("<User " + sUser + ">");
-		sAnswer = CUtils::GetHashPass();
-		vsLines.push_back("\tPass       = " + sAnswer + " -");
+		CString sSalt;
+		sAnswer = CUtils::GetSaltedHashPass(sSalt);
+		vsLines.push_back("\tPass       = md5#" + sAnswer + "#" + sSalt + "#");
 
 		if (CUtils::GetBoolInput("Would you like this user to be an admin?", bFirstUser)) {
 			vsLines.push_back("\tAdmin      = true");
@@ -1180,12 +1181,29 @@ bool CZNC::DoRehash(CString& sError)
 						CUtils::PrintMessage("WARNING: AwaySuffix has been depricated, instead try -> LoadModule = awaynick %nick%_" + sValue);
 						continue;
 					} else if (sName.CaseCmp("Pass") == 0) {
+						// There are different formats for this available:
+						// Pass = <plain text>
+						// Pass = <md5 hash> -
+						// Pass = plain#<plain text>
+						// Pass = md5#<md5 hash>
+						// Pass = md5#<salted md5 hash>#<salt>#
+						// The last one is the md5 hash of 'password' + 'salt'
 						if (sValue.Right(1) == "-") {
 							sValue.RightChomp();
 							sValue.Trim();
 							pUser->SetPass(sValue, true);
 						} else {
-							pUser->SetPass(sValue, false);
+							CString sMethod = sValue.Token(0, false, "#");
+							CString sPass = sValue.Token(1, true, "#");
+							if (sMethod == "md5") {
+								CString sSalt = sPass.Token(1, false, "#");
+								sPass = sPass.Token(0, false, "#");
+								pUser->SetPass(sPass, true, sSalt);
+							} else if (sMethod == "plain") {
+								pUser->SetPass(sPass, false);
+							} else {
+								pUser->SetPass(sValue, false);
+							}
 						}
 
 						continue;

@@ -119,7 +119,7 @@ public:
 	void SetIdent(const CString& s);
 	void SetRealName(const CString& s);
 	void SetVHost(const CString& s);
-	void SetPass(const CString& s, bool bHashed);
+	void SetPass(const CString& s, bool bHashed, const CString& sSalt = "");
 	void SetBounceDCCs(bool b);
 	void SetMultiClients(bool b);
 	void SetUseClientIP(bool b);
@@ -207,6 +207,7 @@ protected:
 	CString			m_sRealName;
 	CString			m_sVHost;
 	CString			m_sPass;
+	CString			m_sPassSalt;
 	CString			m_sStatusPrefix;
 	CString			m_sDefaultChanModes;
 	CString			m_sChanPrefixes;

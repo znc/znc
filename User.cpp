@@ -565,7 +565,15 @@ bool CUser::PrintLine(CFile& File, const CString& sName, const CString& sValue) 
 bool CUser::WriteConfig(CFile& File) {
 	File.Write("<User " + GetUserName() + ">\n");
 
-	PrintLine(File, "Pass", GetPass() + ((IsPassHashed()) ? " -" : ""));
+	if (IsPassHashed()) {
+		if (m_sPassSalt.empty()) {
+			PrintLine(File, "Pass", "md5#" + GetPass());
+		} else {
+			PrintLine(File, "Pass", "md5#" + GetPass() + "#" + m_sPassSalt + "#");
+		}
+	} else {
+		PrintLine(File, "Pass", "plain#" + GetPass());
+	}
 	PrintLine(File, "Nick", GetNick());
 	PrintLine(File, "AltNick", GetAltNick());
 	PrintLine(File, "Ident", GetIdent());
@@ -808,7 +816,9 @@ bool CUser::CheckPass(const CString& sPass) {
 		return (sPass == m_sPass);
 	}
 
-	return (m_sPass.CaseCmp(sPass.MD5()) == 0);
+	CString sSaltedPass = sPass + m_sPassSalt;
+
+	return (m_sPass.CaseCmp(sSaltedPass.MD5()) == 0);
 }
 
 /*CClient* CUser::GetClient() {
@@ -1023,7 +1033,11 @@ void CUser::SetAltNick(const CString& s) { m_sAltNick = s; }
 void CUser::SetIdent(const CString& s) { m_sIdent = s; }
 void CUser::SetRealName(const CString& s) { m_sRealName = s; }
 void CUser::SetVHost(const CString& s) { m_sVHost = s; }
-void CUser::SetPass(const CString& s, bool bHashed) { m_sPass = s; m_bPassHashed = bHashed; }
+void CUser::SetPass(const CString& s, bool bHashed, const CString& sSalt) {
+	m_sPass = s;
+	m_bPassHashed = bHashed;
+	m_sPassSalt = sSalt;
+}
 void CUser::SetMultiClients(bool b) { m_bMultiClients = b; }
 void CUser::SetBounceDCCs(bool b) { m_bBounceDCCs = b; }
 void CUser::SetUseClientIP(bool b) { m_bUseClientIP = b; }

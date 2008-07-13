@@ -193,9 +193,10 @@ int main(int argc, char** argv) {
 
 #endif /* HAVE_LIBSSL */
 	if (bMakePass) {
-		CString sHash = CUtils::GetHashPass();
+		CString sSalt;
+		CString sHash = CUtils::GetSaltedHashPass(sSalt);
 		CUtils::PrintMessage("Use this in the <User> section of your config:");
-		CUtils::PrintMessage("Pass = " + sHash + " -");
+		CUtils::PrintMessage("Pass = md5#" + sHash + "#" + sSalt + "#");
 
 		return 0;
 	}
