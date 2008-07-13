@@ -159,6 +159,7 @@ public:
 	const CString& GetVHost() const;
 	const CString& GetPass() const;
 	bool IsPassHashed() const;
+	const CString& GetPassSalt() const;
 	const set<CString>& GetAllowedHosts() const;
 	const CString& GetTimestampFormat() const;
 	bool GetTimestampAppend() const;

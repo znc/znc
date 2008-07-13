@@ -287,7 +287,7 @@ bool CUser::Clone(const CUser& User, CString& sErrorRet, bool bCloneChans) {
 	}
 
 	if (!User.GetPass().empty()) {
-		SetPass(User.GetPass(), User.IsPassHashed());
+		SetPass(User.GetPass(), User.IsPassHashed(), User.GetPassSalt());
 	}
 
 	SetNick(User.GetNick(false));
@@ -1096,6 +1096,7 @@ const CString& CUser::GetRealName() const { return m_sRealName.empty() ? m_sUser
 const CString& CUser::GetVHost() const { return m_sVHost; }
 const CString& CUser::GetPass() const { return m_sPass; }
 bool CUser::IsPassHashed() const { return m_bPassHashed; }
+const CString& CUser::GetPassSalt() const { return m_sPassSalt; }
 
 bool CUser::ConnectPaused() {
 	if (!m_uConnectTime) {
