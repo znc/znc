@@ -127,7 +127,7 @@ public:
 	bool HasMode(unsigned char uMode) const;
 	CString GetOptions() const;
 	CString GetModeArg(unsigned char uMode) const;
-	unsigned int GetPermCount(unsigned char uPerm);
+	unsigned int GetPermCount(unsigned char uPerm) const;
 	bool IsOn() const { return m_bIsOn; }
 	const CString& GetName() const { return m_sName; }
 	const map<unsigned char, CString>& GetModes() const { return m_musModes; }
@@ -148,7 +148,7 @@ public:
 	bool InConfig() const { return m_bInConfig; }
 	unsigned long GetCreationDate() const { return m_ulCreationDate; }
 	bool IsDisabled() const { return m_bDisabled; }
-	unsigned int GetJoinTries() { return m_uJoinTries; }
+	unsigned int GetJoinTries() const { return m_uJoinTries; }
 	// !Getters
 private:
 protected:

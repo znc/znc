@@ -18,7 +18,7 @@ class CBufLine {
 public:
 	CBufLine(const CString& sPre, const CString& sPost, bool bIncNick);
 	virtual ~CBufLine();
-	void GetLine(const CString& sTarget, CString& sRet);
+	void GetLine(const CString& sTarget, CString& sRet) const;
 
 	const CString& GetPre() const { return m_sPre; }
 	const CString& GetPost() const { return m_sPost; }
@@ -44,8 +44,8 @@ public:
 	/// Same as AddLine, but if there is already a line with sPre it is replaced.
 	int UpdateLine(const CString& sPre, const CString& sPost, bool bIncNick = true);
 	bool GetNextLine(const CString& sTarget, CString& sRet);
-	bool GetLine(const CString& sTarget, CString& sRet, unsigned int uIdx);
-	bool IsEmpty() { return empty(); }
+	bool GetLine(const CString& sTarget, CString& sRet, unsigned int uIdx) const;
+	bool IsEmpty() const { return empty(); }
 	void Clear() { clear(); }
 
 	// Setters

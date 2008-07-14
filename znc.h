@@ -100,7 +100,7 @@ public:
 	bool DeletePidFile();
 	CUser* GetUser(const CString& sUser);
 	Csock* FindSockByName(const CString& sSockName);
-	bool IsHostAllowed(const CString& sHostMask);
+	bool IsHostAllowed(const CString& sHostMask) const;
 	void InitDirs(const CString& sArgvPath, const CString& sDataDir);
 	bool OnBoot();
 	CString ExpandConfigPath(const CString& sConfigFile);
@@ -110,7 +110,7 @@ public:
 	bool RehashConfig(CString& sError);
 	static CString GetVersion();
 	static CString GetTag(bool bIncludeVersion = true);
-	CString GetUptime();
+	CString GetUptime() const;
 	// This returns the path to the .so and to the data dir
 	// which is where static data (webadmin skins) are saved
 	bool FindModPath(const CString& sModule, CString& sModPath,
@@ -139,7 +139,7 @@ public:
 	// !Setters
 
 	// Getters
-	bool GetNeedRehash() { return m_bNeedRehash; }
+	bool GetNeedRehash() const { return m_bNeedRehash; }
 	CSockManager& GetManager() { return m_Manager; }
 #ifdef _MODULES
 	CGlobalModules& GetModules() { return *m_pModules; }

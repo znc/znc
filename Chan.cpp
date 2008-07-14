@@ -486,8 +486,8 @@ bool CChan::AddNick(const CString& sNick) {
 	return true;
 }
 
-unsigned int CChan::GetPermCount(unsigned char uPerm) {
-	map<unsigned char, unsigned int>::iterator it = m_muuPermCount.find(uPerm);
+unsigned int CChan::GetPermCount(unsigned char uPerm) const {
+	map<unsigned char, unsigned int>::const_iterator it = m_muuPermCount.find(uPerm);
 	return (it == m_muuPermCount.end()) ? 0 : it->second;
 }
 

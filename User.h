@@ -42,19 +42,19 @@ public:
 	bool AddChan(const CString& sName, bool bInConfig);
 	bool DelChan(const CString& sName);
 	void JoinChans();
-	CServer* FindServer(const CString& sName);
+	CServer* FindServer(const CString& sName) const;
 	bool DelServer(const CString& sName);
 	bool AddServer(const CString& sName, bool bIPV6 = false);
 	bool AddServer(const CString& sName, unsigned short uPort, const CString& sPass = "", bool bSSL = false, bool bIPV6 = false);
 	CServer* GetNextServer();
-	CServer* GetCurrentServer();
-	bool CheckPass(const CString& sPass);
+	CServer* GetCurrentServer() const;
+	bool CheckPass(const CString& sPass) const;
 	bool AddAllowedHost(const CString& sHostMask);
-	bool IsHostAllowed(const CString& sHostMask);
+	bool IsHostAllowed(const CString& sHostMask) const;
 	bool IsValid(CString& sErrMsg, bool bSkipPass = false) const;
 	static bool IsValidUserName(const CString& sUserName);
 	static CString MakeCleanUserName(const CString& sUserName);
-	bool IsLastServer();
+	bool IsLastServer() const;
 	bool ConnectPaused();
 
 	void DelClients();
@@ -86,12 +86,12 @@ public:
 	bool PutStatusNotice(const CString& sLine, CClient* pClient = NULL, CClient* pSkipClient = NULL);
 	bool PutModule(const CString& sModule, const CString& sLine, CClient* pClient = NULL, CClient* pSkipClient = NULL);
 
-	bool IsUserAttached() { return (m_vClients.size() > 0); }
+	bool IsUserAttached() const { return (m_vClients.size() > 0); }
 	void UserConnected(CClient* pClient);
 	void UserDisconnected(CClient* pClient);
 
 	CString GetLocalIP();
-	bool IsIRCConnected() { return m_bIRCConnected; }
+	bool IsIRCConnected() const { return m_bIRCConnected; }
 	void IRCConnected(CIRCSock* pIRCSock);
 	void IRCDisconnected();
 	void CheckIRCConnect();

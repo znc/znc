@@ -455,7 +455,7 @@ bool CUser::AddAllowedHost(const CString& sHostMask) {
 	return true;
 }
 
-bool CUser::IsHostAllowed(const CString& sHostMask) {
+bool CUser::IsHostAllowed(const CString& sHostMask) const {
 	if (m_ssAllowedHosts.empty()) {
 		return true;
 	}
@@ -684,7 +684,7 @@ void CUser::JoinChans() {
 	}
 }
 
-CServer* CUser::FindServer(const CString& sName) {
+CServer* CUser::FindServer(const CString& sName) const {
 	for (unsigned int a = 0; a < m_vServers.size(); a++) {
 		CServer* pServer = m_vServers[a];
 		if (sName.CaseCmp(pServer->GetName()) == 0) {
@@ -785,7 +785,7 @@ bool CUser::AddServer(const CString& sName, unsigned short uPort, const CString&
 	return true;
 }
 
-bool CUser::IsLastServer() {
+bool CUser::IsLastServer() const {
 	return (m_uServerIdx >= m_vServers.size());
 }
 
@@ -801,7 +801,7 @@ CServer* CUser::GetNextServer() {
 	return m_vServers[m_uServerIdx++];	// Todo: cycle through these
 }
 
-CServer* CUser::GetCurrentServer() {
+CServer* CUser::GetCurrentServer() const {
 	unsigned int uIdx = (m_uServerIdx) ? m_uServerIdx -1 : 0;
 
 	if (uIdx >= m_vServers.size()) {
@@ -811,7 +811,7 @@ CServer* CUser::GetCurrentServer() {
 	return m_vServers[uIdx];
 }
 
-bool CUser::CheckPass(const CString& sPass) {
+bool CUser::CheckPass(const CString& sPass) const {
 	if (!m_bPassHashed) {
 		return (sPass == m_sPass);
 	}

@@ -94,7 +94,7 @@ CString CZNC::GetTag(bool bIncludeVersion) {
 	return szBuf;
 }
 
-CString CZNC::GetUptime() {
+CString CZNC::GetUptime() const {
 	time_t now = time(NULL);
 	return CString::ToTimeStr(now - TimeStarted());
 }
@@ -390,8 +390,8 @@ Csock* CZNC::FindSockByName(const CString& sSockName) {
 	return m_Manager.FindSockByName(sSockName);
 }
 
-bool CZNC::IsHostAllowed(const CString& sHostMask) {
-	for (map<CString,CUser*>::iterator a = m_msUsers.begin(); a != m_msUsers.end(); a++) {
+bool CZNC::IsHostAllowed(const CString& sHostMask) const {
+	for (map<CString,CUser*>::const_iterator a = m_msUsers.begin(); a != m_msUsers.end(); a++) {
 		if (a->second->IsHostAllowed(sHostMask)) {
 			return true;
 		}
