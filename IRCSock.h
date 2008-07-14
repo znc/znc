@@ -77,6 +77,8 @@ public:
 	bool HasNamesx() const { return m_bNamesx; }
 	bool HasUHNames() const { return m_bUHNames; }
 	const set<unsigned char>& GetUserModes() const { return m_scUserModes; }
+	// This is true if we are past raw 001
+	bool IsAuthed() const { return m_bAuthed; }
 	// !Getters
 private:
 	void SetNick(const CString& sNick);

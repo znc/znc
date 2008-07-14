@@ -119,6 +119,8 @@ void CUser::IRCDisconnected() {
 		m_vClients[a]->IRCDisconnected();
 	}
 
+	SetIRCServer("");
+
 	// Get the reconnect going
 	CZNC::Get().EnableConnectUser();
 }

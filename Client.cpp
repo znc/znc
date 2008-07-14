@@ -1979,9 +1979,14 @@ CString CClient::GetNick(bool bAllowIRCNick) const {
 }
 
 CString CClient::GetNickMask() const {
-	if (m_pIRCSock) {
+	if (m_pIRCSock && m_pIRCSock->IsAuthed()) {
 		return m_pIRCSock->GetNickMask();
 	}
 
-	return GetNick() + "!" + m_pUser->GetIdent() + "@" + m_pUser->GetVHost();
+	CString sHost = m_pUser->GetVHost();
+	if (sHost.empty()) {
+		sHost = "irc.znc.com";
+	}
+
+	return GetNick() + "!" + m_pUser->GetIdent() + "@" + sHost;
 }
