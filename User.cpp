@@ -838,14 +838,6 @@ bool CUser::CheckPass(const CString& sPass) const {
 	return (CClient*) CZNC::Get().GetManager().FindSockByName(sSockName);
 }*/
 
-CIRCSock* CUser::GetIRCSock() {
-	return m_pIRCSock;
-}
-
-const CIRCSock* CUser::GetIRCSock() const {
-	return m_pIRCSock;
-}
-
 CString CUser::GetLocalIP() {
 	CIRCSock* pIRCSock = GetIRCSock();
 
