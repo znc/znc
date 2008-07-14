@@ -59,12 +59,8 @@ static void rehash(int sig) {
 }
 
 static bool isRoot() {
-	uid_t u_real, u_effective, u_saved;
-
-	getresuid(&u_real, &u_effective, &u_saved);
-
 	// User root? If one of these were root, we could switch the others to root, too
-	if (u_real == 0 || u_effective == 0 || u_saved == 0)
+	if (geteuid() == 0 || getuid() == 0)
 		return true;
 
 	return false;
