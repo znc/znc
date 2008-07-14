@@ -530,11 +530,14 @@ bool CChan::RemNick(const CString& sNick) {
 
 	delete it->second;
 	m_msNicks.erase(it);
-	CNick* pNick = m_msNicks.begin()->second;
 
-	if ((m_msNicks.size() == 1) && (!pNick->HasPerm(Op)) && (pNick->GetNick().CaseCmp(m_pUser->GetCurNick()) == 0)) {
-		if (AutoCycle()) {
-			Cycle();
+	if (m_msNicks.size() == 1) {
+		CNick* pNick = m_msNicks.begin()->second;
+
+		if (!pNick->HasPerm(Op) && pNick->GetNick().CaseCmp(m_pUser->GetCurNick()) == 0) {
+			if (AutoCycle()) {
+				Cycle();
+			}
 		}
 	}
 
