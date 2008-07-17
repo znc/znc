@@ -18,6 +18,11 @@ public:
 		EnableReadLine();
 		m_pParent = pShellMod;
 		m_pClient = pClient;
+
+		// Get rid of that write fd, we aren't going to use it
+		// (And clients expecting input will fail this way).
+		close(GetWSock());
+		SetWSock(open("/dev/null", O_WRONLY));
 	}
 	// These next two function's bodies are at the bottom of the file since they reference CShellMod
 	virtual void ReadLine(const CString& sData);
