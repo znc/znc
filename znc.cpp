@@ -1295,22 +1295,16 @@ bool CZNC::DoRehash(CString& sError)
 						CString sModRet;
 						CString sArgs = sValue.Token(1, true);
 
-						try {
-							bool bModRet = pUser->GetModules().LoadModule(sModName, sArgs, pUser, sModRet);
+						bool bModRet = pUser->GetModules().LoadModule(sModName, sArgs, pUser, sModRet);
 
-							// If the module was loaded, sModRet contains
-							// "Loaded Module [name] ..." and we strip away this beginning.
-							if (bModRet)
-								sModRet = sModRet.Token(1, true, sModName + "] ");
+						// If the module was loaded, sModRet contains
+						// "Loaded Module [name] ..." and we strip away this beginning.
+						if (bModRet)
+							sModRet = sModRet.Token(1, true, sModName + "] ");
 
-							CUtils::PrintStatus(bModRet, sModRet);
-							if (!bModRet) {
-								sError = sModRet;
-								return false;
-							}
-						} catch (CException e) {
-							sError = "Caught exception while loading [" + sModName + "]";
-							CUtils::PrintStatus(false, sModRet);
+						CUtils::PrintStatus(bModRet, sModRet);
+						if (!bModRet) {
+							sError = sModRet;
 							return false;
 						}
 #else
@@ -1486,43 +1480,31 @@ bool CZNC::DoRehash(CString& sError)
 		if (!pOldMod) {
 			CUtils::PrintAction("Loading Global Module [" + sModName + "]");
 
-			try {
-				bool bModRet = GetModules().LoadModule(sModName, sArgs, NULL, sModRet);
+			bool bModRet = GetModules().LoadModule(sModName, sArgs, NULL, sModRet);
 
-				// If the module was loaded, sModRet contains
-				// "Loaded Module [name] ..." and we strip away this beginning.
-				if (bModRet)
-					sModRet = sModRet.Token(1, true, sModName + "] ");
+			// If the module was loaded, sModRet contains
+			// "Loaded Module [name] ..." and we strip away this beginning.
+			if (bModRet)
+				sModRet = sModRet.Token(1, true, sModName + "] ");
 
-				CUtils::PrintStatus(bModRet, sModRet);
-				if (!bModRet) {
-					sError = sModRet;
-					return false;
-				}
-			} catch (CException e) {
-				sError = "Caught an exception while loading [" + sModName + "]";
-				CUtils::PrintStatus(false, sModRet);
+			CUtils::PrintStatus(bModRet, sModRet);
+			if (!bModRet) {
+				sError = sModRet;
 				return false;
 			}
 		} else if (pOldMod->GetArgs() != sArgs) {
 			CUtils::PrintAction("Reloading Global Module [" + sModName + "]");
 
-			try {
-				bool bModRet = GetModules().ReloadModule(sModName, sArgs, NULL, sModRet);
+			bool bModRet = GetModules().ReloadModule(sModName, sArgs, NULL, sModRet);
 
-				// If the module was loaded, sModRet contains
-				// "Loaded Module [name] ..." and we strip away this beginning.
-				if (bModRet)
-					sModRet = sModRet.Token(1, true, sModName + "] ");
+			// If the module was loaded, sModRet contains
+			// "Loaded Module [name] ..." and we strip away this beginning.
+			if (bModRet)
+				sModRet = sModRet.Token(1, true, sModName + "] ");
 
-				CUtils::PrintStatus(bModRet, sModRet);
-				if (!bModRet) {
-					sError = sModRet;
-					return false;
-				}
-			} catch (CException e) {
-				sError = "Caught an exception while reloading [" + sModName + "]";
-				CUtils::PrintStatus(false, sModRet);
+			CUtils::PrintStatus(bModRet, sModRet);
+			if (!bModRet) {
+				sError = sModRet;
 				return false;
 			}
 		} else

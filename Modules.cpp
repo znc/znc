@@ -734,7 +734,6 @@ bool CModules::LoadModule(const CString& sModule, const CString& sArgs, CUser* p
 	if (CModule::GetCoreVersion() != Version()) {
 		dlclose(p);
 		sRetMsg = "Version mismatch, recompile this module.";
-		throw CException(CException::EX_BadModVersion);
 		return false;
 	}
 
@@ -886,11 +885,7 @@ bool CModules::ReloadModule(const CString& sModule, const CString& sArgs, CUser*
 		return false;
 	}
 
-	try {
-		if (!LoadModule(sMod, sArgs, pUser, sRetMsg)) {
-			return false;
-		}
-	} catch(...) {
+	if (!LoadModule(sMod, sArgs, pUser, sRetMsg)) {
 		return false;
 	}
 

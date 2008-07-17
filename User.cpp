@@ -330,13 +330,9 @@ bool CUser::Clone(const CUser& User, CString& sErrorRet, bool bCloneChans) {
 		CModule* pCurMod = vCurMods.FindModule(pNewMod->GetModName());
 
 		if (!pCurMod) {
-			try {
-				vCurMods.LoadModule(pNewMod->GetModName(), pNewMod->GetArgs(), this, sModRet);
-			} catch (...) {}
+			vCurMods.LoadModule(pNewMod->GetModName(), pNewMod->GetArgs(), this, sModRet);
 		} else if (pNewMod->GetArgs() != pCurMod->GetArgs()) {
-			try {
-				vCurMods.ReloadModule(pNewMod->GetModName(), pNewMod->GetArgs(), this, sModRet);
-			} catch (...) {}
+			vCurMods.ReloadModule(pNewMod->GetModName(), pNewMod->GetArgs(), this, sModRet);
 		}
 	}
 

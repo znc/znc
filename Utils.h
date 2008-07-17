@@ -182,8 +182,7 @@ private:
 class CException {
 public:
 	typedef enum {
-		EX_Shutdown,
-		EX_BadModVersion
+		EX_Shutdown
 	} EType;
 
 	CException(EType e) {

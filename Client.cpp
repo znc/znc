@@ -1313,14 +1313,14 @@ void CClient::UserCommand(const CString& sLine) {
 		}
 
 		CString sModRet;
+		bool b;
 
-		try {
-			if (bGlobal) {
-			    CZNC::Get().GetModules().LoadModule(sMod, sArgs, NULL, sModRet);
-			} else {
-			    m_pUser->GetModules().LoadModule(sMod, sArgs, m_pUser, sModRet);
-			}
-		} catch (CException e) {
+		if (bGlobal) {
+			b = CZNC::Get().GetModules().LoadModule(sMod, sArgs, NULL, sModRet);
+		} else {
+			b = m_pUser->GetModules().LoadModule(sMod, sArgs, m_pUser, sModRet);
+		}
+		if (!b) {
 			PutStatus("Unable to load module [" + sMod + "] [" + sModRet + "]");
 			return;
 		}
