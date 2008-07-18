@@ -2514,6 +2514,8 @@ fi
 
 if test "$DEBUG" != "no"; then
 	appendCXX -ggdb -D_DEBUG
+	# These enable some debug options in g++'s STL, e.g. invalid use of iterators
+	appendCXX -D_GLIBCXX_DEBUG -D_GLIBCXX_DEBUG_PEDANTIC -D_GLIBCXX_CONCEPT_CHECKS
 else
 	appendCXX -O2 -fomit-frame-pointer
 fi
