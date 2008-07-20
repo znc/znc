@@ -189,8 +189,9 @@ CString CUtils::GetHashPass() {
 	return "";
 }
 
-CString CUtils::GetSaltedHashPass(CString& sSalt, unsigned int uiSaltLength) {
-	sSalt = CString::RandomString(uiSaltLength);
+CString CUtils::GetSaltedHashPass(CString& sSalt) {
+	sSalt = GetSalt();
+	unsigned int uiSaltLength = sSalt.length();
 	const char *pSalt = sSalt.c_str();
 
 	while (true) {
@@ -230,6 +231,10 @@ CString CUtils::GetSaltedHashPass(CString& sSalt, unsigned int uiSaltLength) {
 	}
 
 	return "";
+}
+
+CString CUtils::GetSalt() {
+	return CString::RandomString(20);
 }
 
 char* CUtils::GetPass(const CString& sPrompt) {
