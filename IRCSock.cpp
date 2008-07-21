@@ -393,10 +393,7 @@ void CIRCSock::ReadLine(const CString& sData) {
 					CChan* pChan = m_pUser->FindChan(sRest.Token(0));
 
 					if (pChan) {
-						if (!pChan->IsOn()) {
-							pChan->SetIsOn(true);
-							PutIRC("MODE " + pChan->GetName());
-
+						if (pChan->IsOn()) {
 							// If we are the only one in the chan, set our default modes
 							if (pChan->GetNickCount() == 1) {
 								CString sModes = pChan->GetDefaultModes();
@@ -510,6 +507,9 @@ void CIRCSock::ReadLine(const CString& sData) {
 					if (pChan) {
 						pChan->ResetJoinTries();
 						pChan->Enable();
+						pChan->SetIsOn(true);
+						PutIRC("MODE " + pChan->GetName());
+
 					}
 				} else {
 					pChan = m_pUser->FindChan(sChan);
