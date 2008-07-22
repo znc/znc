@@ -60,9 +60,11 @@ public:
 		SetNV("nick", m_sFormat);
 
 		if (m_pUser->GetKeepNick()) {
-			sMessage = "You have KeepNick enabled. "
-				"This won't work together with awaynick.";
-			return false;
+			sMessage = "KeepNick disabled";
+			PutModule("You have KeepNick enabled. "
+				"This won't work together with awaynick.");
+			PutModule("Disabling KeepNick for you...");
+			m_pUser->SetKeepNick(false);
 		}
 
 		return true;
