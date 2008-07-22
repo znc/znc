@@ -180,8 +180,6 @@ public:
 	// This creates a CConnectUserTimer if we haven't got one yet
 	void EnableConnectUser();
 	void DisableConnectUser();
-	// This needs to be called if anything was added / removed to m_msUsers
-	void RestartConnectUser();
 
 private:
 	bool DoRehash(CString& sError);
