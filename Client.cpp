@@ -208,6 +208,10 @@ void CClient::ReadLine(const CString& sData) {
 		CString sChan = sLine.Token(1);
 		CString sMessage = sLine.Token(2, true);
 
+		if (sChan.Left(1) == ":") {
+			// I hate those broken clients, I hate them so much, I really hate them...
+			sChan.LeftChomp();
+		}
 		if (sMessage.Left(1) == ":") {
 			sMessage.LeftChomp();
 		}
