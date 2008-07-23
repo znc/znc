@@ -46,6 +46,12 @@ void CClient::ReadLine(const CString& sData) {
 #endif
 
 	CString sCommand = sLine.Token(0);
+	if (sCommand.Left(1) == ":") {
+		// Evil client! Sending a nickmask prefix on client's command
+		// is bad, bad, bad, bad, bad, bad, bad, bad, BAD, B A D!
+		sLine = sLine.Token(1, true);
+		sCommand = sLine.Token(0);
+	}
 
 	if (sCommand.CaseCmp("PASS") == 0) {
 		if (!IsAttached()) {
