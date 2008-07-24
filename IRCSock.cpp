@@ -175,45 +175,11 @@ void CIRCSock::ReadLine(const CString& sData) {
 					if (m_pUser->IsChan(sRest.Token(0)) || sNick != "*")
 						break;
 				case 433: {
-					unsigned int uMax = GetMaxNickLen();
 					CString sBadNick = sRest.Token(0);
-					CString sConfNick = m_pUser->GetNick().Left(uMax);
+					CString sConfNick = m_pUser->GetNick().Left(GetMaxNickLen());
 
 					if (sNick == "*") {
-						CString sAltNick = m_pUser->GetAltNick().Left(uMax);
-
-						if (sBadNick.CaseCmp(sConfNick) == 0) {
-							if ((!sAltNick.empty()) && (sConfNick.CaseCmp(sAltNick) != 0)) {
-								PutIRC("NICK " + sAltNick);
-							} else {
-								PutIRC("NICK " + sConfNick.Left(uMax -1) + "-");
-							}
-						} else if (sBadNick.CaseCmp(sAltNick) == 0) {
-							PutIRC("NICK " + sConfNick.Left(uMax -1) + "-");
-						} else if (sBadNick.CaseCmp(CString(sConfNick.Left(uMax -1) + "-")) == 0) {
-							PutIRC("NICK " + sConfNick.Left(uMax -1) + "|");
-						} else if (sBadNick.CaseCmp(CString(sConfNick.Left(uMax -1) + "|")) == 0) {
-							PutIRC("NICK " + sConfNick.Left(uMax -1) + "^");
-						} else if (sBadNick.CaseCmp(CString(sConfNick.Left(uMax -1) + "^")) == 0) {
-							PutIRC("NICK " + sConfNick.Left(uMax -1) + "a");
-						} else {
-							char cLetter = 0;
-							if (sBadNick.empty()) {
-								Quit();
-								return;
-							}
-
-							cLetter = sBadNick.Right(1)[0];
-
-							if (cLetter == 'z') {
-								Quit();
-								return;
-							}
-
-							CString sSend = "NICK " + sConfNick.Left(uMax -1) + ++cLetter;
-							PutIRC(sSend);
-						}
-
+						SendAltNick(sBadNick);
 						return;
 					} else {
 						// :irc.server.net 433 mynick badnick :Nickname is already in use.
@@ -1036,6 +1002,46 @@ void CIRCSock::ForwardRaw353(const CString& sLine) const {
 			sTmp.TrimRight(" ");
 			m_pUser->PutUser(sTmp, vClients[a]);
 		}
+	}
+}
+
+void CIRCSock::SendAltNick(const CString& sBadNick) {
+	const unsigned int uMax = GetMaxNickLen();
+	const CString& sConfNick = m_pUser->GetNick().Left(uMax);
+	const CString& sAltNick = m_pUser->GetAltNick().Left(uMax);
+
+	if (sBadNick.CaseCmp(sConfNick) == 0) {
+		if ((!sAltNick.empty()) && (sConfNick.CaseCmp(sAltNick) != 0)) {
+			PutIRC("NICK " + sAltNick);
+		} else {
+			PutIRC("NICK " + sConfNick.Left(uMax -1) + "-");
+		}
+	} else if (sBadNick.CaseCmp(sAltNick) == 0) {
+		PutIRC("NICK " + sConfNick.Left(uMax -1) + "-");
+	} else if (sBadNick.CaseCmp(CString(sConfNick.Left(uMax -1) + "-")) == 0) {
+		PutIRC("NICK " + sConfNick.Left(uMax -1) + "|");
+	} else if (sBadNick.CaseCmp(CString(sConfNick.Left(uMax -1) + "|")) == 0) {
+		PutIRC("NICK " + sConfNick.Left(uMax -1) + "^");
+	} else if (sBadNick.CaseCmp(CString(sConfNick.Left(uMax -1) + "^")) == 0) {
+		PutIRC("NICK " + sConfNick.Left(uMax -1) + "a");
+	} else {
+		char cLetter = 0;
+		if (sBadNick.empty()) {
+			m_pUser->PutUser("No free nick available");
+			Quit();
+			return;
+		}
+
+		cLetter = sBadNick.Right(1)[0];
+
+		if (cLetter == 'z') {
+			m_pUser->PutUser("No free nick found");
+			Quit();
+			return;
+		}
+
+		CString sSend = "NICK " + sConfNick.Left(uMax -1) + ++cLetter;
+		PutIRC(sSend);
 	}
 }
 

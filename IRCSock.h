@@ -83,6 +83,8 @@ private:
 	void SetNick(const CString& sNick);
 	void ParseISupport(const CString& sLine);
 	void ForwardRaw353(const CString& sLine) const;
+	// This is called when we connect and the nick we want is already taken
+	void SendAltNick(const CString& sBadNick);
 protected:
 	bool						m_bISpoofReleased;
 	bool						m_bAuthed;
