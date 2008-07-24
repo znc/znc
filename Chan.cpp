@@ -409,10 +409,6 @@ void CChan::ClearNicks() {
 }
 
 int CChan::AddNicks(const CString& sNicks) {
-	if (IsOn()) {
-		return 0;
-	}
-
 	int iRet = 0;
 	CString sCurNick;
 
