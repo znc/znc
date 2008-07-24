@@ -246,7 +246,7 @@ public:
 		return uRet;
 	}
 
-	static unsigned int Delete(mode_t mode, const CString& sWildcard, const CString& sDir = ".") {
+	static unsigned int Delete(const CString& sWildcard, const CString& sDir = ".") {
 		CDir cDir;
 		cDir.FillByWildcard(sDir, sWildcard);
 		return cDir.Delete();

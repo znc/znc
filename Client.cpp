@@ -437,7 +437,7 @@ void CClient::ReadLine(const CString& sData) {
 
 					// Need to lookup the connection by port, filter the port, and forward to the user
 					if (strncasecmp(sTarget.c_str(), m_pUser->GetStatusPrefix().c_str(), m_pUser->GetStatusPrefix().length()) == 0) {
-						if ((m_pUser) && (m_pUser->ResumeFile(sTarget, uResumePort, uResumeSize))) {
+						if ((m_pUser) && (m_pUser->ResumeFile(uResumePort, uResumeSize))) {
 							PutClient(":" + sTarget + "!znc@znc.com PRIVMSG " + GetNick() + " :\001DCC ACCEPT " + sFile + " " + CString(uResumePort) + " " + CString(uResumeSize) + "\001");
 						} else {
 							PutStatus("DCC -> [" + GetNick() + "][" + sFile + "] Unable to find send to initiate resume.");

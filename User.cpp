@@ -914,7 +914,7 @@ bool CUser::PutModule(const CString& sModule, const CString& sLine, CClient* pCl
 	return (pClient == NULL);
 }
 
-bool CUser::ResumeFile(const CString& sRemoteNick, unsigned short uPort, unsigned long uFileSize) {
+bool CUser::ResumeFile(unsigned short uPort, unsigned long uFileSize) {
 	CSockManager& Manager = CZNC::Get().GetManager();
 
 	for (unsigned int a = 0; a < Manager.size(); a++) {

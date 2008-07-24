@@ -104,7 +104,7 @@ public:
 
 	bool SendFile(const CString& sRemoteNick, const CString& sFileName, const CString& sModuleName = "");
 	bool GetFile(const CString& sRemoteNick, const CString& sRemoteIP, unsigned short uRemotePort, const CString& sFileName, unsigned long uFileSize, const CString& sModuleName = "");
-	bool ResumeFile(const CString& sRemoteNick, unsigned short uPort, unsigned long uFileSize);
+	bool ResumeFile(unsigned short uPort, unsigned long uFileSize);
 	CString GetCurNick() const;
 	bool Clone(const CUser& User, CString& sErrorRet, bool bCloneChans = true);
 	void BounceAllClients();

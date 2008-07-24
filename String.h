@@ -107,7 +107,6 @@ public:
 	unsigned int URLSplit(MCString& msRet) const;
 	unsigned int Split(const CString& sDelim, VCString& vsRet, bool bAllowEmpty = true, const CString& sLeft = "", const CString& sRight = "") const;
 	unsigned int Split(const CString& sDelim, SCString& ssRet, bool bAllowEmpty = true, const CString& sLeft = "", const CString& sRight = "") const;
-	static CString Format(const CString& sFormatStr, ...);
 
 	static CString RandomString(unsigned int uLength);
 

@@ -666,10 +666,6 @@ unsigned int CString::Split(const CString& sDelim, SCString& ssRet, bool bAllowE
 	return ssRet.size();
 }
 
-CString CString::Format(const CString& sFormatStr, ...) {
-	return "";
-}
-
 CString CString::RandomString(unsigned int uLength) {
 	const char chars[] = "abcdefghijklmnopqrstuvwxyz"
 		"ABCDEFGHIJKLMNOPQRSTUVWXYZ"
