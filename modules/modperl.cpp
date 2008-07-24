@@ -238,23 +238,24 @@ public:
 		m_pPerl = NULL;
 	}
 
-	void SetupZNCScript()
+	bool SetupZNCScript()
 	{
 		CString sModule, sTmp;
 
-		if (CZNC::Get().FindModPath("modperl.pm", sModule, sTmp))
-		{
-			CString sBuffer, sScript;
-			CFile cFile(sModule);
-			if ((cFile.Exists()) && (cFile.Open(O_RDONLY)))
-			{
-				while (cFile.ReadLine(sBuffer))
-					sScript += sBuffer;
-				cFile.Close();
+		if (!CZNC::Get().FindModPath("modperl.pm", sModule, sTmp))
+			return false;
 
-				eval_pv(sScript.c_str(), FALSE);
-			}
-		}
+		CString sBuffer, sScript;
+		CFile cFile(sModule);
+		if (!cFile.Exists() || !cFile.Open(O_RDONLY))
+			return false;
+
+		while (cFile.ReadLine(sBuffer))
+			sScript += sBuffer;
+		cFile.Close();
+
+		eval_pv(sScript.c_str(), FALSE);
+		return true;
 	}
 
 	virtual EModRet OnConfigLine(const CString& sName, const CString& sValue, CUser* pUser, CChan* pChan)
@@ -1016,7 +1017,10 @@ bool CModPerl::OnLoad(const CString & sArgs, CString & sMessage)
 	newXS("ZNC::SetSockValue", XS_ZNC_SetSockValue, "modperl");
 
 	// this sets up the eval CB that we call from here on out. this way we can grab the error produced
-	SetupZNCScript();
+	if (!SetupZNCScript()) {
+		sMessage = "Failed to load modperl.pm";
+		return false;
+	}
 
 	HV *pZNCSpace = get_hv("ZNC::", TRUE);
 
