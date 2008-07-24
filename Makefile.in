@@ -15,7 +15,7 @@ LIBS     := @LIBS@
 
 SRCS := String.cpp Csocket.cpp main.cpp znc.cpp User.cpp IRCSock.cpp Client.cpp DCCBounce.cpp \
 	DCCSock.cpp Chan.cpp Nick.cpp Server.cpp Modules.cpp MD5.cpp Buffer.cpp Utils.cpp \
-	FileUtils.cpp HTTPSock.cpp Template.cpp
+	FileUtils.cpp HTTPSock.cpp Template.cpp ClientCommand.cpp
 OBJS := $(patsubst %cpp,%o,$(SRCS))
 CLEAN := znc *.o core core.*
 DISTCLEAN := Makefile config.log config.status znc-config znc-buildmod .depend \
