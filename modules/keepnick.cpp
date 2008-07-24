@@ -30,8 +30,10 @@ public:
 	~CKeepNickMod() {}
 
 	bool OnLoad(const CString& sArgs, CString& sMessage) {
+		m_pTimer = NULL;
+
 		// Check if we need to start the timer
-		if (m_pUser()->IsIRCConnected())
+		if (m_pUser->IsIRCConnected())
 			OnIRCConnected();
 
 		return true;
