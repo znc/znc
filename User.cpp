@@ -34,7 +34,6 @@ CUser::CUser(const CString& sUserName) {
 	m_bBounceDCCs = true;
 	m_bPassHashed = false;
 	m_bUseClientIP = false;
-	m_bKeepNick = false;
 	m_bDenyLoadMod = false;
 	m_bAdmin= false;
 	m_bDenySetVHost= false;
@@ -49,10 +48,8 @@ CUser::CUser(const CString& sUserName) {
 	m_bAppendTimestamp = false;
 	m_bPrependTimestamp = true;
 	m_bIRCConnectEnabled = true;
-	m_pKeepNickTimer = new CKeepNickTimer(this);
 	m_pJoinTimer = new CJoinTimer(this);
 	m_pMiscTimer = new CMiscTimer(this);
-	CZNC::Get().GetManager().AddCron(m_pKeepNickTimer);
 	CZNC::Get().GetManager().AddCron(m_pJoinTimer);
 	CZNC::Get().GetManager().AddCron(m_pMiscTimer);
 	m_sUserPath = CZNC::Get().GetUserPath() + "/" + sUserName;
@@ -72,7 +69,6 @@ CUser::~CUser() {
 		delete m_vChans[b];
 	}
 
-	CZNC::Get().GetManager().DelCronByAddr(m_pKeepNickTimer);
 	CZNC::Get().GetManager().DelCronByAddr(m_pJoinTimer);
 	CZNC::Get().GetManager().DelCronByAddr(m_pMiscTimer);
 }
@@ -424,7 +420,6 @@ bool CUser::Clone(const CUser& User, CString& sErrorRet, bool bCloneChans) {
 	// Flags
 	SetKeepBuffer(User.KeepBuffer());
 	SetAutoCycle(User.AutoCycle());
-	SetKeepNick(User.GetKeepNick());
 	SetMultiClients(User.MultiClients());
 	SetBounceDCCs(User.BounceDCCs());
 	SetUseClientIP(User.UseClientIP());
@@ -579,7 +574,6 @@ bool CUser::WriteConfig(CFile& File) {
 		PrintLine(File, "StatusPrefix", GetStatusPrefix());
 	PrintLine(File, "ChanModes", GetDefaultChanModes());
 	PrintLine(File, "Buffer", CString(GetBufferCount()));
-	PrintLine(File, "KeepNick", CString((GetKeepNick()) ? "true" : "false"));
 	PrintLine(File, "KeepBuffer", CString((KeepBuffer()) ? "true" : "false"));
 	PrintLine(File, "MultiClients", CString((MultiClients()) ? "true" : "false"));
 	PrintLine(File, "BounceDCCs", CString((BounceDCCs()) ? "true" : "false"));
@@ -1028,7 +1022,6 @@ void CUser::SetPass(const CString& s, bool bHashed, const CString& sSalt) {
 void CUser::SetMultiClients(bool b) { m_bMultiClients = b; }
 void CUser::SetBounceDCCs(bool b) { m_bBounceDCCs = b; }
 void CUser::SetUseClientIP(bool b) { m_bUseClientIP = b; }
-void CUser::SetKeepNick(bool b) { m_bKeepNick = b; }
 void CUser::SetDenyLoadMod(bool b) { m_bDenyLoadMod = b; }
 void CUser::SetAdmin(bool b) { m_bAdmin = b; }
 void CUser::SetDenySetVHost(bool b) { m_bDenySetVHost = b; }
@@ -1100,7 +1093,6 @@ bool CUser::ConnectPaused() {
 }
 
 bool CUser::UseClientIP() const { return m_bUseClientIP; }
-bool CUser::GetKeepNick() const { return m_bKeepNick; }
 bool CUser::DenyLoadMod() const { return m_bDenyLoadMod; }
 bool CUser::IsAdmin() const { return m_bAdmin; }
 bool CUser::DenySetVHost() const { return m_bDenySetVHost; }

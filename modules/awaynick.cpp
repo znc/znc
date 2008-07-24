@@ -59,14 +59,6 @@ public:
 
 		SetNV("nick", m_sFormat);
 
-		if (m_pUser->GetKeepNick()) {
-			sMessage = "KeepNick disabled";
-			PutModule("You have KeepNick enabled. "
-				"This won't work together with awaynick.");
-			PutModule("Disabling KeepNick for you...");
-			m_pUser->SetKeepNick(false);
-		}
-
 		return true;
 	}
 
@@ -103,11 +95,6 @@ public:
 	}
 
 	virtual void OnUserAttached() {
-		if (m_pUser->GetKeepNick()) {
-			PutModule("WARNING: You have KeepNick enabled. "
-					"This won't work with awaynick.");
-		}
-
 		StartBackNickTimer();
 	}
 

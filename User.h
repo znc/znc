@@ -26,7 +26,6 @@ class CChan;
 class CClient;
 class CIRCSock;
 class CJoinTimer;
-class CKeepNickTimer;
 class CMiscTimer;
 class CServer;
 
@@ -123,7 +122,6 @@ public:
 	void SetBounceDCCs(bool b);
 	void SetMultiClients(bool b);
 	void SetUseClientIP(bool b);
-	void SetKeepNick(bool b);
 	void SetDenyLoadMod(bool b);
 	void SetAdmin(bool b);
 	void SetDenySetVHost(bool b);
@@ -173,7 +171,6 @@ public:
 	const CString& GetDLPath() const { if (!CFile::Exists(m_sDLPath)) { CDir::MakeDir(m_sDLPath); } return m_sDLPath; }
 
 	bool UseClientIP() const;
-	bool GetKeepNick() const;
 	bool DenyLoadMod() const;
 	bool IsAdmin() const;
 	bool DenySetVHost() const;
@@ -231,7 +228,6 @@ protected:
 	bool				m_bBounceDCCs;
 	bool				m_bPassHashed;
 	bool				m_bUseClientIP;
-	bool				m_bKeepNick;
 	bool				m_bDenyLoadMod;
 	bool				m_bAdmin;
 	bool				m_bDenySetVHost;
@@ -243,7 +239,6 @@ protected:
 	bool				m_bIRCConnectEnabled;
 	CIRCSock*			m_pIRCSock;
 
-	CKeepNickTimer*		m_pKeepNickTimer;
 	CJoinTimer*			m_pJoinTimer;
 	CMiscTimer*			m_pMiscTimer;
 

@@ -84,25 +84,8 @@ void CClient::ReadLine(const CString& sData) {
 		}
 
 		if (!m_pIRCSock) {
-			// No need to check against IRC nick or to forward it
+			// No need to forward it
 			return;
-		}
-
-		if ((m_pUser) && (sNick.CaseCmp(m_pUser->GetNick()) == 0)) {
-			m_uKeepNickCounter++;
-			// If the user is changing his nick to the conifg nick, set keepnick to the config value
-			if (m_pUser->GetKeepNick() && !m_pIRCSock->GetKeepNick()) {
-				m_pIRCSock->SetKeepNick(true);
-				PutStatusNotice("Reset KeepNick back to true");
-			}
-		}
-
-		if (m_pUser && GetNick().CaseCmp(m_pUser->GetNick()) == 0) {
-			// If the user changes his nick away from the config nick, we shut off keepnick for this session
-			if (m_pUser->GetKeepNick()) {
-				m_pIRCSock->SetKeepNick(false);
-				PutStatusNotice("Set KeepNick to false");
-			}
 		}
 	} else if (sCommand.CaseCmp("USER") == 0) {
 		if (!IsAttached()) {
@@ -593,22 +576,7 @@ void CClient::ReadLine(const CString& sData) {
 }
 
 void CClient::SetNick(const CString& s) {
-   m_sNick = s;
-
-	if (m_pUser) {
-		if (m_sNick.CaseCmp(m_pUser->GetNick()) == 0) {
-			m_uKeepNickCounter = 0;
-		}
-	}
-}
-
-bool CClient::DecKeepNickCounter() {
-	if (!m_uKeepNickCounter) {
-		return false;
-	}
-
-	m_uKeepNickCounter--;
-	return true;
+	m_sNick = s;
 }
 
 void CClient::StatusCTCP(const CString& sLine) {

@@ -893,11 +893,6 @@ bool CWebAdminSock::UserPage(CString& sPageRet, CUser* pUser) {
 		o2["DisplayName"] = "Auto Cycle";
 		if (!pUser || pUser->AutoCycle()) { o2["Checked"] = "true"; }
 
-		CTemplate& o3 = m_Template.AddRow("OptionLoop");
-		o3["Name"] = "keepnick";
-		o3["DisplayName"] = "Keep Nick";
-		if (!pUser || pUser->GetKeepNick()) { o3["Checked"] = "true"; }
-
 		CTemplate& o4 = m_Template.AddRow("OptionLoop");
 		o4["Name"] = "multiclients";
 		o4["DisplayName"] = "Multi Clients";
@@ -1115,7 +1110,6 @@ CUser* CWebAdminSock::GetNewUser(CString& sPageRet, CUser* pUser) {
 	pNewUser->SetMultiClients(GetParam("multiclients").ToBool());
 	pNewUser->SetBounceDCCs(GetParam("bouncedccs").ToBool());
 	pNewUser->SetAutoCycle(GetParam("autocycle").ToBool());
-	pNewUser->SetKeepNick(GetParam("keepnick").ToBool());
 	pNewUser->SetUseClientIP(GetParam("useclientip").ToBool());
 	pNewUser->SetTimestampAppend(GetParam("appendtimestamp").ToBool());
 	pNewUser->SetTimestampPrepend(GetParam("prependtimestamp").ToBool());

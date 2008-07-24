@@ -16,9 +16,7 @@
 CIRCSock::CIRCSock(CUser* pUser) : Csock() {
 	m_pUser = pUser;
 	m_bISpoofReleased = false;
-	m_bKeepNick = true;
 	m_bAuthed = false;
-	m_bOrigNickPending = false;
 	m_bNamesx = false;
 	m_bUHNames = false;
 	EnableReadLine();
@@ -181,22 +179,6 @@ void CIRCSock::ReadLine(const CString& sData) {
 					if (sNick == "*") {
 						SendAltNick(sBadNick);
 						return;
-					} else {
-						// :irc.server.net 433 mynick badnick :Nickname is already in use.
-						if ((m_bKeepNick) && (m_pUser->GetKeepNick())) {
-							if (sBadNick.CaseCmp(sConfNick) == 0) {
-								vector<CClient*>& vClients = m_pUser->GetClients();
-
-								for (unsigned int a = 0; a < vClients.size(); a++) {
-									CClient* pClient = vClients[a];
-
-									if (!pClient || !pClient->DecKeepNickCounter()) {
-										SetOrigNickPending(false);
-										return;
-									}
-								}
-							}
-						}
 					}
 					break;
 				}
@@ -369,8 +351,6 @@ void CIRCSock::ReadLine(const CString& sData) {
 					// We are changing our own nick, the clients always must see this!
 					bIsVisible = true;
 					SetNick(sNewNick);
-				} else if (Nick.GetNick().CaseCmp(m_pUser->GetNick()) == 0) {
-					KeepNick(true);
 				}
 
 				MODULECALL(OnNick(Nick, sNewNick, vFoundChans), m_pUser, NULL, );
@@ -405,10 +385,6 @@ void CIRCSock::ReadLine(const CString& sData) {
 							bIsVisible = true;
 						}
 					}
-				}
-
-				if (Nick.GetNick().CaseCmp(m_pUser->GetNick()) == 0) {
-					KeepNick(true);
 				}
 
 				MODULECALL(OnQuit(Nick, sMessage, vFoundChans), m_pUser, NULL, );
@@ -647,15 +623,6 @@ void CIRCSock::ReadLine(const CString& sData) {
 	}
 
 	m_pUser->PutUser(sLine);
-}
-
-void CIRCSock::KeepNick(bool bForce) {
-	const CString& sConfNick = m_pUser->GetNick();
-
-	if (m_bAuthed && m_bKeepNick && (!IsOrigNickPending() || bForce) && m_pUser->GetKeepNick() && GetNick().CaseCmp(sConfNick) != 0) {
-		PutIRC("NICK " + sConfNick);
-		SetOrigNickPending(true);
-	}
 }
 
 bool CIRCSock::OnCTCPReply(CNick& Nick, CString& sMessage) {

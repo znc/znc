@@ -84,7 +84,6 @@ public:
 		m_bGotUser = false;
 		m_bNamesx = false;
 		m_bUHNames = false;
-		m_uKeepNickCounter = 0;
 		EnableReadLine();
 	}
 
@@ -98,7 +97,6 @@ public:
 	bool HasNamesx() const { return m_bNamesx; }
 	bool HasUHNames() const { return m_bUHNames; }
 
-	bool DecKeepNickCounter();
 	void UserCommand(const CString& sCommand);
 	void StatusCTCP(const CString& sCommand);
 	void IRCConnected(CIRCSock* pIRCSock);
@@ -138,7 +136,6 @@ protected:
 	CString		m_sPass;
 	CString		m_sUser;
 	CIRCSock*	m_pIRCSock;
-	unsigned int	m_uKeepNickCounter;
 	CSmartPtr<CAuthBase>	m_spAuth;
 	CClientTimeout*	m_pTimeout;
 };

@@ -47,19 +47,15 @@ public:
 	virtual void SockError(int iErrno);
 	virtual void Timeout();
 
-	void KeepNick(bool bForce = false);
 	void PutIRC(const CString& sLine);
 	void ResetChans();
 	void Quit();
 
 	// Setters
 	void SetPass(const CString& s) { m_sPass = s; }
-	void SetKeepNick(bool b) { m_bKeepNick = b; }
-	void SetOrigNickPending(bool b) { m_bOrigNickPending = b; }
 	// !Setters
 
 	// Getters
-	bool GetKeepNick() const { return m_bKeepNick; }
 	unsigned int GetMaxNickLen() const { return m_uMaxNickLen; }
 	EChanModeArgs GetModeType(unsigned char uMode) const;
 	unsigned char GetPermFromMode(unsigned char uMode) const;
@@ -71,7 +67,6 @@ public:
 	CString GetNickMask() const { return m_Nick.GetNickMask(); }
 	const CString& GetNick() const { return m_Nick.GetNick(); }
 	const CString& GetPass() const { return m_sPass; }
-	bool IsOrigNickPending() const { return m_bOrigNickPending; }
 	CUser* GetUser() const { return m_pUser; }
 	bool HasNamesx() const { return m_bNamesx; }
 	bool HasUHNames() const { return m_bUHNames; }
@@ -88,8 +83,6 @@ private:
 protected:
 	bool						m_bISpoofReleased;
 	bool						m_bAuthed;
-	bool						m_bKeepNick;
-	bool						m_bOrigNickPending;
 	bool						m_bNamesx;
 	bool						m_bUHNames;
 	CString						m_sPerms;

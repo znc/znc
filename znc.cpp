@@ -691,12 +691,6 @@ bool CZNC::WriteNewConfig(const CString& sConfig) {
 		}
 		// todo: Possibly add motd
 
-		if (CUtils::GetBoolInput("Would you like ZNC to keep trying for your primary nick?", false)) {
-			vsLines.push_back("\tKeepNick   = true");
-		} else {
-			vsLines.push_back("\tKeepNick   = false");
-		}
-
 		unsigned int uBufferCount = 0;
 
 		CUtils::GetNumInput("Number of lines to buffer per channel", uBufferCount, 0, ~0, 50);
@@ -1229,7 +1223,9 @@ bool CZNC::DoRehash(CString& sError)
 						pUser->SetRealName(sValue);
 						continue;
 					} else if (sName.CaseCmp("KeepNick") == 0) {
-						pUser->SetKeepNick((sValue.CaseCmp("true") == 0));
+						if (sValue.CaseCmp("true") == 0) {
+							CUtils::PrintError("WARNING: KeepNick has been deprecated, instead try -> LoadModule = keepnick");
+						}
 						continue;
 					} else if (sName.CaseCmp("ChanModes") == 0) {
 						pUser->SetDefaultChanModes(sValue);
