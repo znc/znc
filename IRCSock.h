@@ -49,7 +49,6 @@ public:
 
 	void KeepNick(bool bForce = false);
 	void PutIRC(const CString& sLine);
-	void ParseISupport(const CString& sLine);
 	void ResetChans();
 	void Quit();
 
@@ -82,6 +81,8 @@ public:
 	// !Getters
 private:
 	void SetNick(const CString& sNick);
+	void ParseISupport(const CString& sLine);
+	void ForwardRaw353(const CString& sLine) const;
 protected:
 	bool						m_bISpoofReleased;
 	bool						m_bAuthed;

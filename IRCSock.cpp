@@ -328,62 +328,20 @@ void CIRCSock::ReadLine(const CString& sData) {
 					sRest.Trim();
 					// Todo: allow for non @+= server msgs
 					CChan* pChan = m_pUser->FindChan(sRest.Token(1));
-					if (!pChan) {
-						// If we don't know that channel, a client might have
-						// sent a /names on it's own -> forward it.
-						m_pUser->PutUser(sLine);
-						return;
-					}
-
-					CString sNicks = sRest.Token(2, true);
-					if (sNicks.Left(1) == ":") {
-						sNicks.LeftChomp();
-					}
-
-					pChan->AddNicks(sNicks);
-
-					// Get everything except the actual user list
-					CString sTmp = sLine.Token(0, false, " :") + " :";
-					vector<CClient*>& vClients = m_pUser->GetClients();
-
-					for (unsigned int a = 0; a < vClients.size(); a++) {
-						if ((!m_bNamesx || vClients[a]->HasNamesx())
-								&& (!m_bUHNames || vClients[a]->HasUHNames())) {
-							m_pUser->PutUser(sLine, vClients[a]);
-						} else {
-							unsigned int i = 0;
-							// This loop runs once for
-							// every nick on the channel
-							for (;;) {
-								sNick = sNicks.Token(i).Trim_n(" ");
-								if (sNick.empty())
-									break;
-
-								if (m_bNamesx && !vClients[a]->HasNamesx()
-									&& IsPermChar(sNick[0])) {
-									// Server has, client hasnt NAMESX,
-									// so we just use the first perm char
-									while (sNick.length() > 2
-											&& IsPermChar(sNick[1])) {
-										sNick = sNick[0] + sNick.substr(2);
-									}
-								}
-
-								// Server has, client hasnt UHNAMES,
-								// so we strip away ident and host.
-								if (m_bUHNames && !vClients[a]->HasUHNames()) {
-									sNick = sNick.Token(0, false, "!");
-								}
-
-								sTmp += sNick + " ";
-								i++;
-							}
-							// Strip away the spaces we inserted at the end
-							sTmp.Trim(" ");
-							m_pUser->PutUser(sTmp, vClients[a]);
+					// If we don't know that channel, some client might have
+					// requested a /names for it and we really should forward this.
+					if (pChan) {
+						CString sNicks = sRest.Token(2, true);
+						if (sNicks.Left(1) == ":") {
+							sNicks.LeftChomp();
 						}
+
+						pChan->AddNicks(sNicks);
 					}
-					// We forwarded it in the for loop above already
+
+					ForwardRaw353(sLine);
+
+					// We forwarded it already, so return
 					return;
 				}
 				case 366: {	// end of names list
@@ -1033,6 +991,51 @@ void CIRCSock::ParseISupport(const CString& sLine) {
 		}
 
 		sArg = sLine.Token(i++);
+	}
+}
+
+void CIRCSock::ForwardRaw353(const CString& sLine) const {
+	vector<CClient*>& vClients = m_pUser->GetClients();
+	CString sNicks = sLine.Token(5, true);
+	if (sNicks.Left(1) == ":")
+		sNicks.LeftChomp();
+
+	for (unsigned int a = 0; a < vClients.size(); a++) {
+		if ((!m_bNamesx || vClients[a]->HasNamesx()) && (!m_bUHNames || vClients[a]->HasUHNames())) {
+			// Client and server have both the same UHNames and Namesx stuff enabled
+			m_pUser->PutUser(sLine, vClients[a]);
+		} else {
+			// Get everything except the actual user list
+			CString sTmp = sLine.Token(0, false, " :") + " :";
+
+			unsigned int i = 0;
+			// This loop runs once for every nick on the channel
+			for (;;) {
+				CString sNick = sNicks.Token(i).Trim_n(" ");
+				if (sNick.empty())
+					break;
+
+				if (m_bNamesx && !vClients[a]->HasNamesx() && IsPermChar(sNick[0])) {
+					// Server has, client doesn't have NAMESX, so we just use the first perm char
+					size_t pos = sNick.find_first_not_of(GetPerms());
+					if (pos >= 2 && pos != CString::npos) {
+						sNick = sNick[0] + sNick.substr(pos);
+					}
+				}
+
+				if (m_bUHNames && !vClients[a]->HasUHNames()) {
+					// Server has, client hasnt UHNAMES,
+					// so we strip away ident and host.
+					sNick = sNick.Token(0, false, "!");
+				}
+
+				sTmp += sNick + " ";
+				i++;
+			}
+			// Strip away the spaces we inserted at the end
+			sTmp.TrimRight(" ");
+			m_pUser->PutUser(sTmp, vClients[a]);
+		}
 	}
 }
 
