@@ -235,6 +235,7 @@ public:
 	{
 		perl_destruct(m_pPerl);
 		perl_free(m_pPerl);
+		PERL_SYS_TERM();
 		m_pPerl = NULL;
 	}
 
@@ -983,13 +984,16 @@ EXTERN_C void boot_DynaLoader (pTHX_ CV* cv);
 
 bool CModPerl::OnLoad(const CString & sArgs, CString & sMessage)
 {
+	const int iArgc = 5;
+	const char *pArgv[] = { "", "-e", "0", "-T", "-w", NULL };
+	PERL_SYS_INIT3( &iArgc, &pArgc, NULL );
 	m_pPerl = perl_alloc();
 	perl_construct(m_pPerl);
-	const char *pArgv[] = { "", "-e", "0", "-T", "-w" };
 
-	if (perl_parse(m_pPerl, NULL, 2, (char **)pArgv, (char **)NULL) != 0)
+	if (perl_parse(m_pPerl, NULL, iArgc, (char **)pArgv, (char **)NULL) != 0)
 	{
 		perl_free(m_pPerl);
+		PERL_SYS_TERM();
 		m_pPerl = NULL;
 		return(false);
 	}
