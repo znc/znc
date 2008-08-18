@@ -28,7 +28,7 @@
 * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 *
 *
-* $Revision: 1.80 $
+* $Revision: 1.82 $
 */
 
 #include "Csocket.h"
@@ -388,6 +388,7 @@ CCron::CCron()
 	m_iTime	= 0;
 	m_iTimeSequence = 60;
 	m_bPause = false;
+	m_bRunOnNextCall = false;
 }
 
 void CCron::run( time_t & iNow )
@@ -398,8 +399,9 @@ void CCron::run( time_t & iNow )
 	if( iNow == 0 )
 		iNow = time( NULL );
 
-	if ( ( m_bActive ) && ( iNow >= m_iTime ) )
+	if ( ( m_bActive ) && ( iNow >= m_iTime || m_bRunOnNextCall ) )
 	{
+		m_bRunOnNextCall = false; // Setting this here because RunJob() could set it back to true
 		RunJob();
 
 		if ( ( m_iMaxCycles > 0 ) && ( ++m_iCycles >= m_iMaxCycles  ) )
