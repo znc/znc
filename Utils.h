@@ -198,17 +198,17 @@ protected:
 };
 
 
-class CTable : public vector<map<CString, CString>* > {
+class CTable : public vector<map<CString, CString> > {
 public:
-	CTable();
-	virtual ~CTable();
+	CTable() {}
+	virtual ~CTable() {}
 
 	bool AddColumn(const CString& sName);
 	unsigned int AddRow();
 	bool SetCell(const CString& sColumn, const CString& sValue, unsigned int uRowIdx = ~0);
-	bool GetLine(unsigned int uIdx, CString& sLine);
+	bool GetLine(unsigned int uIdx, CString& sLine) const;
 
-	unsigned int GetColumnWidth(unsigned int uIdx);
+	unsigned int GetColumnWidth(unsigned int uIdx) const;
 private:
 protected:
 	vector<CString>				m_vsHeaders;

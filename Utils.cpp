@@ -396,15 +396,6 @@ void CUtils::PrintStatus(bool bSuccess, const CString& sMessage) {
 	fflush(stdout);
 }
 
-CTable::CTable() {}
-CTable::~CTable() {
-	for (unsigned int a = 0; a < size(); a++) {
-		delete (*this)[a];
-	}
-
-	clear();
-}
-
 bool CTable::AddColumn(const CString& sName) {
 	for (unsigned int a = 0; a < m_vsHeaders.size(); a++) {
 		if (m_vsHeaders[a].CaseCmp(sName) == 0) {
@@ -413,11 +404,13 @@ bool CTable::AddColumn(const CString& sName) {
 	}
 
 	m_vsHeaders.push_back(sName);
+	m_msuWidths[sName] = sName.size();
+
 	return true;
 }
 
 unsigned int CTable::AddRow() {
-	push_back(new map<CString, CString>);
+	push_back(map<CString, CString>());
 	return size() -1;
 }
 
@@ -430,11 +423,15 @@ bool CTable::SetCell(const CString& sColumn, const CString& sValue, unsigned int
 		uRowIdx = size() -1;
 	}
 
-	(*(*this)[uRowIdx])[sColumn] = sValue;
+	(*this)[uRowIdx][sColumn] = sValue;
+
+	if (m_msuWidths[sColumn] < sValue.size())
+		m_msuWidths[sColumn] = sValue.size();
+
 	return true;
 }
 
-bool CTable::GetLine(unsigned int uIdx, CString& sLine) {
+bool CTable::GetLine(unsigned int uIdx, CString& sLine) const {
 	stringstream ssRet;
 
 	if (!size()) {
@@ -442,7 +439,6 @@ bool CTable::GetLine(unsigned int uIdx, CString& sLine) {
 	}
 
 	if (uIdx == 1) {
-		m_msuWidths.clear();	// Clear out the width cache
 		ssRet.fill(' ');
 		ssRet << "| ";
 
@@ -470,13 +466,13 @@ bool CTable::GetLine(unsigned int uIdx, CString& sLine) {
 		uIdx -= 3;
 
 		if (uIdx < size()) {
-			map<CString, CString>* pRow = (*this)[uIdx];
+			const map<CString, CString>& mRow = (*this)[uIdx];
 			ssRet.fill(' ');
 			ssRet << "| ";
 
 			for (unsigned int c = 0; c < m_vsHeaders.size(); c++) {
 				ssRet.width(GetColumnWidth(c));
-				ssRet << std::left << (*pRow)[m_vsHeaders[c]];
+				ssRet << std::left << mRow.at(m_vsHeaders[c]);
 				ssRet << ((c == m_vsHeaders.size() -1) ? " |" : " | ");
 			}
 
@@ -515,29 +511,19 @@ bool CTable::Output(std::ostream oOut) {
 }
 */
 
-unsigned int CTable::GetColumnWidth(unsigned int uIdx) {
+unsigned int CTable::GetColumnWidth(unsigned int uIdx) const {
 	if (uIdx >= m_vsHeaders.size()) {
 		return 0;
 	}
 
 	const CString& sColName = m_vsHeaders[uIdx];
-	unsigned int uRet = sColName.size();
-	map<CString, unsigned int>::iterator it = m_msuWidths.find(sColName);
+	map<CString, unsigned int>::const_iterator it = m_msuWidths.find(sColName);
 
-	if (it != m_msuWidths.end()) {
-		return it->second;
+	if (it == m_msuWidths.end()) {
+		// AddColumn() and SetCell() should make sure that we get a value :/
+		return 0;
 	}
-
-	for (unsigned int a = 0; a < size(); a++) {
-		map<CString, CString>* pRow = (*this)[a];
-		unsigned int uTmp = (*pRow)[m_vsHeaders[uIdx]].size();
-
-		if (uTmp > uRet) {
-			uRet = uTmp;
-		}
-	}
-
-	return uRet;
+	return it->second;
 }
 
 
