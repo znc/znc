@@ -1713,6 +1713,8 @@ public:
 		SetName("Connect users");
 		Start(iSecs);
 		m_uiPosNextUser = 0;
+		// Don't wait iSecs seconds for first timer run
+		m_bRunOnNextCall = true;
 	}
 	virtual ~CConnectUserTimer() {}
 
