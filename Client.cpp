@@ -14,6 +14,40 @@
 #include "User.h"
 #include "znc.h"
 
+#define CALLMOD(MOD, CLIENT, USER, FUNC)				\
+do {									\
+	CModule* pModule = CZNC::Get().GetModules().FindModule(MOD);	\
+									\
+	if (pModule) {							\
+		try {							\
+			pModule->SetClient(CLIENT);			\
+			pModule->SetUser(USER);				\
+			pModule->FUNC;					\
+			pModule->SetClient(NULL);			\
+			pModule->SetUser(NULL);				\
+		} catch (CModule::EModException e) {			\
+			if (e == CModule::UNLOAD) {			\
+				CZNC::Get().GetModules().UnloadModule(MOD);	\
+			}						\
+		}							\
+	} else {							\
+		pModule = USER->GetModules().FindModule(sModule);	\
+		if (pModule) {						\
+			try {						\
+				pModule->SetClient(CLIENT);		\
+				pModule->FUNC;				\
+				pModule->SetClient(NULL);		\
+			} catch (CModule::EModException e) {		\
+				if (e == CModule::UNLOAD) {		\
+					USER->GetModules().UnloadModule(MOD);	\
+				}					\
+			}						\
+		} else {						\
+			PutStatus("No such module [" + sModule + "]");	\
+		}							\
+	}								\
+} while (false)
+
 CClient::~CClient() {
 	if (!m_spAuth.IsNull()) {
 		CClientAuth* pAuth = (CClientAuth*) &(*m_spAuth);
@@ -283,19 +317,7 @@ void CClient::ReadLine(const CString& sData) {
 				CString sModule = sTarget;
 				sModule.LeftChomp(m_pUser->GetStatusPrefix().length());
 
-				CModule* pModule = CZNC::Get().GetModules().FindModule(sModule);
-
-				if (pModule) {
-					pModule->SetClient(this);
-					pModule->OnModNotice(sMsg);
-					pModule->SetClient(NULL);
-				} else if ((pModule = m_pUser->GetModules().FindModule(sModule))) {
-					pModule->SetClient(this);
-					pModule->OnModNotice(sMsg);
-					pModule->SetClient(NULL);
-				} else {
-					PutStatus("No such module [" + sModule + "]");
-				}
+				CALLMOD(sModule, this, m_pUser, OnModNotice(sMsg));
 			}
 #endif
 			return;
@@ -461,14 +483,7 @@ void CClient::ReadLine(const CString& sData) {
 				}
 
 #ifdef _MODULES
-				CModule* pModule = m_pUser->GetModules().FindModule(sModule);
-				if (pModule) {
-					pModule->SetClient(this);
-					pModule->OnModCTCP(sCTCP);
-					pModule->SetClient(NULL);
-				} else {
-					PutStatus("No such module [" + sModule + "]");
-				}
+				CALLMOD(sModule, this, m_pUser, OnModCTCP(sCTCP));
 #endif
 				return;
 			}
@@ -516,24 +531,7 @@ void CClient::ReadLine(const CString& sData) {
 				CString sModule = sTarget;
 				sModule.LeftChomp(m_pUser->GetStatusPrefix().length());
 
-				CModule* pModule = CZNC::Get().GetModules().FindModule(sModule);
-
-				if (pModule) {
-					pModule->SetClient(this);
-					pModule->SetUser(m_pUser);
-					pModule->OnModCommand(sMsg);
-					pModule->SetClient(NULL);
-					pModule->SetUser(NULL);
-				} else {
-					pModule = m_pUser->GetModules().FindModule(sModule);
-					if (pModule) {
-						pModule->SetClient(this);
-						pModule->OnModCommand(sMsg);
-						pModule->SetClient(NULL);
-					} else {
-						PutStatus("No such module [" + sModule + "]");
-					}
-				}
+				CALLMOD(sModule, this, m_pUser, OnModCommand(sMsg));
 			}
 #endif
 			return;
