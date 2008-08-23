@@ -410,7 +410,8 @@ bool CTable::AddColumn(const CString& sName) {
 }
 
 unsigned int CTable::AddRow() {
-	push_back(map<CString, CString>());
+	// Add a vector with enough space for each column
+	push_back(vector<CString>(m_vsHeaders.size()));
 	return size() -1;
 }
 
@@ -423,7 +424,7 @@ bool CTable::SetCell(const CString& sColumn, const CString& sValue, unsigned int
 		uRowIdx = size() -1;
 	}
 
-	(*this)[uRowIdx][sColumn] = sValue;
+	(*this)[uRowIdx][GetColumnIndex(sColumn)] = sValue;
 
 	if (m_msuWidths[sColumn] < sValue.size())
 		m_msuWidths[sColumn] = sValue.size();
@@ -466,13 +467,13 @@ bool CTable::GetLine(unsigned int uIdx, CString& sLine) const {
 		uIdx -= 3;
 
 		if (uIdx < size()) {
-			const map<CString, CString>& mRow = (*this)[uIdx];
+			const vector<CString>& mRow = (*this)[uIdx];
 			ssRet.fill(' ');
 			ssRet << "| ";
 
 			for (unsigned int c = 0; c < m_vsHeaders.size(); c++) {
 				ssRet.width(GetColumnWidth(c));
-				ssRet << std::left << mRow.at(m_vsHeaders[c]);
+				ssRet << std::left << mRow[c];
 				ssRet << ((c == m_vsHeaders.size() -1) ? " |" : " | ");
 			}
 
@@ -510,6 +511,15 @@ bool CTable::Output(std::ostream oOut) {
 	return true;
 }
 */
+
+unsigned int CTable::GetColumnIndex(const CString& sName) const {
+	for (unsigned int i = 0; i < m_vsHeaders.size(); i++) {
+		if (m_vsHeaders[i] == sName)
+			return i;
+	}
+
+	return 0;
+}
 
 unsigned int CTable::GetColumnWidth(unsigned int uIdx) const {
 	if (uIdx >= m_vsHeaders.size()) {

@@ -198,7 +198,7 @@ protected:
 };
 
 
-class CTable : public vector<map<CString, CString> > {
+class CTable : public vector<vector<CString> > {
 public:
 	CTable() {}
 	virtual ~CTable() {}
@@ -210,6 +210,8 @@ public:
 
 	unsigned int GetColumnWidth(unsigned int uIdx) const;
 private:
+	unsigned int GetColumnIndex(const CString& sName) const;
+
 protected:
 	vector<CString>				m_vsHeaders;
 	map<CString, unsigned int>	m_msuWidths;	// Used to cache the width of a column
