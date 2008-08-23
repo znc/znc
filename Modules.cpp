@@ -795,7 +795,15 @@ bool CModules::LoadModule(const CString& sModule, const CString& sArgs, CUser* p
 	pModule->SetDescription(GetDesc());
 	push_back(pModule);
 
-	if (!pModule->OnLoad(sArgs, sRetMsg)) {
+	bool bLoaded;
+	try {
+		bLoaded = pModule->OnLoad(sArgs, sRetMsg);
+	} catch (CModule::EModException e) {
+		bLoaded = false;
+		sRetMsg = "Caught an exception";
+	}
+
+	if (!bLoaded) {
 		UnloadModule(sModule, sModPath);
 		if (!sRetMsg.empty())
 			sRetMsg = "Module [" + sModule + "] aborted: " + sRetMsg;
