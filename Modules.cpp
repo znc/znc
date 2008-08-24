@@ -18,47 +18,32 @@
 # warning "your crap box doesnt define RTLD_LOCAL !?"
 #endif
 
-#define MODUNLOADCHK(func)								\
+#define _MODUNLOADCHK(func, type)								\
 	for (unsigned int a = 0; a < size(); a++) {			\
 		try {											\
-			CModule* pMod = (*this)[a];					\
-			if (m_pUser) {								\
+			type* pMod = (type *) (*this)[a];					\
+			if (m_pUser) {							\
 				pMod->SetUser(m_pUser);					\
-				pMod->func;								\
+				pMod->func;						\
 				pMod->SetUser(NULL);					\
-			} else {									\
-				pMod->func;								\
-			}											\
+			} else {							\
+				pMod->func;						\
+			}								\
 		} catch (CModule::EModException e) {			\
 			if (e == CModule::UNLOAD) {					\
 				UnloadModule((*this)[a]->GetModName());	\
 			}											\
 		}												\
-	}													\
+	}
 
-#define GLOBALMODCALL(func)								\
-	for (unsigned int a = 0; a < size(); a++) {			\
-		try {											\
-			CGlobalModule* pMod = (CGlobalModule*) (*this)[a];			\
-			if (m_pUser) {								\
-				pMod->SetUser(m_pUser);					\
-				pMod->func;								\
-				pMod->SetUser(NULL);					\
-			} else {									\
-				pMod->func;								\
-			}											\
-		} catch (CModule::EModException e) {			\
-			if (e == CModule::UNLOAD) {					\
-				UnloadModule((*this)[a]->GetModName());	\
-			}											\
-		}												\
-	}													\
+#define MODUNLOADCHK(func)	_MODUNLOADCHK(func, CModule)
+#define GLOBALMODCALL(func)	_MODUNLOADCHK(func, CGlobalModule)
 
-#define GLOBALMODHALTCHK(func)							\
+#define _MODHALTCHK(func, type)							\
 	bool bHaltCore = false;								\
 	for (unsigned int a = 0; a < size(); a++) {			\
 		try {											\
-			CGlobalModule* pMod = (CGlobalModule*) (*this)[a];			\
+			type* pMod = (type*) (*this)[a];			\
 			CModule::EModRet e = CModule::CONTINUE;		\
 			if (m_pUser) {								\
 				pMod->SetUser(m_pUser);					\
@@ -82,34 +67,9 @@
 		}												\
 	}													\
 	return bHaltCore;
-#define MODHALTCHK(func)								\
-	bool bHaltCore = false;								\
-	for (unsigned int a = 0; a < size(); a++) {			\
-		try {											\
-			CModule* pMod = (*this)[a];					\
-			CModule::EModRet e = CModule::CONTINUE;		\
-			if (m_pUser) {								\
-				pMod->SetUser(m_pUser);					\
-				e = pMod->func;							\
-				pMod->SetUser(NULL);					\
-			} else {									\
-				e = pMod->func;							\
-			}											\
-			if (e == CModule::HALTMODS) {				\
-				break;									\
-			} else if (e == CModule::HALTCORE) {		\
-				bHaltCore = true;						\
-			} else if (e == CModule::HALT) {			\
-				bHaltCore = true;						\
-				break;									\
-			}											\
-		} catch (CModule::EModException e) {			\
-			if (e == CModule::UNLOAD) {					\
-				UnloadModule((*this)[a]->GetModName());	\
-			}											\
-		}												\
-	}													\
-	return bHaltCore;
+
+#define MODHALTCHK(func)	_MODHALTCHK(func, CModule)
+#define GLOBALMODHALTCHK(func)	_MODHALTCHK(func, CGlobalModule)
 
 /////////////////// Timer ///////////////////
 CTimer::CTimer(CModule* pModule, unsigned int uInterval, unsigned int uCycles, const CString& sLabel, const CString& sDescription) : CCron() {
