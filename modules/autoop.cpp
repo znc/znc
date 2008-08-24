@@ -257,12 +257,7 @@ public:
 				Table.SetCell("Channels", it->second->GetChannels());
 			}
 
-			CString sTmp;
-			unsigned int uTableIdx = 0;
-
-			while (Table.GetLine(uTableIdx++, sTmp)) {
-				PutModule(sTmp);
-			}
+			PutModule(Table);
 		} else if (sCommand.CaseCmp("ADDCHANS") == 0 || sCommand.CaseCmp("DELCHANS") == 0) {
 			CString sUser = sLine.Token(1);
 			CString sChans = sLine.Token(2, true);

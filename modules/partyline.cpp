@@ -427,12 +427,7 @@ public:
 			Table.SetCell("Arguments", "<channel>");
 			Table.SetCell("Description", "Show which users can not part this channel");
 
-			unsigned int uTableIdx = 0;
-			CString sTmp;
-
-			while (Table.GetLine(uTableIdx++, sTmp)) {
-				PutModule(sTmp);
-			}
+			PutModule(Table);
 		} else if (sCommand.CaseCmp("LIST") == 0) {
 			if (!m_ssChannels.size()) {
 				PutModule("There are no open channels.");
@@ -451,12 +446,7 @@ public:
 				Table.SetCell("Users", CString((*a)->GetNicks().size()));
 			}
 
-			unsigned int uTableIdx = 0;
-			CString sTmp;
-
-			while (Table.GetLine(uTableIdx++, sTmp)) {
-				PutModule(sTmp);
-			}
+			PutModule(Table);
 		} else if (sCommand.CaseCmp("ADDFIXCHAN") == 0) {
 			if (!m_pUser->IsAdmin()) {
 				PutModule("Access denied");

@@ -90,12 +90,7 @@ public:
 			}
 
 			if (Table.size()) {
-				unsigned int uTableIdx = 0;
-				CString sTmp;
-
-				while (Table.GetLine(uTableIdx++, sTmp)) {
-					PutModule(sTmp);
-				}
+				PutModule(Table);
 			} else {
 				PutModule("You have no entries.");
 			}
@@ -117,12 +112,7 @@ public:
 			Table.SetCell("Description", "List all entries");
 
 			if (Table.size()) {
-				unsigned int uTableIdx = 0;
-				CString sTmp;
-
-				while (Table.GetLine(uTableIdx++, sTmp)) {
-					PutModule(sTmp);
-				}
+				PutModule(Table);
 			} else {
 				PutModule("You have no entries.");
 			}

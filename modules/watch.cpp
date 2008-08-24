@@ -336,12 +336,7 @@ private:
 		}
 
 		if (Table.size()) {
-			unsigned int uTableIdx = 0;
-			CString sLine;
-
-			while (Table.GetLine(uTableIdx++, sLine)) {
-				PutModule(sLine);
-			}
+			PutModule(Table);
 		} else {
 			PutModule("You have no entries.");
 		}
@@ -451,14 +446,7 @@ private:
 		Table.SetCell("Command", "Help");
 		Table.SetCell("Description", "This help.");
 
-		if (Table.size()) {
-			unsigned int uTableIdx = 0;
-			CString sLine;
-
-			while (Table.GetLine(uTableIdx++, sLine)) {
-				PutModule(sLine);
-			}
-		}
+		PutModule(Table);
 	}
 
 	void Watch(const CString& sHostMask, const CString& sTarget, const CString& sPattern, bool bNotice = false) {

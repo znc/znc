@@ -132,14 +132,7 @@ public:
 					Table.SetCell("Key", it->second);
 				}
 
-				if (Table.size()) {
-					unsigned int uTableIdx = 0;
-					CString sLine;
-
-					while (Table.GetLine(uTableIdx++, sLine)) {
-						PutModule(sLine);
-					}
-				}
+				PutModule(Table);
 			}
 		} else if (sCmd.CaseCmp("HELP") == 0) {
 			PutModule("Try: SetKey, DelKey, ListKeys");

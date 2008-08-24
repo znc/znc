@@ -265,12 +265,8 @@ public:
 					Table.SetCell("Port", CString(pSock->GetLocalPort()));
 				}
 			}
-			if (Table.size())
-			{
-				unsigned int uTableIdx = 0;
-				CString sLine;
-				while (Table.GetLine(uTableIdx++, sLine))
-					PutModule(sLine);
+			if (Table.size()) {
+				PutModule(Table);
 			} else
 				PutModule("No SDCCs currently in session");
 
@@ -342,12 +338,8 @@ public:
 				}
 			}
 			if (Table.size())
-			{
-				unsigned int uTableIdx = 0;
-				CString sLine;
-				while (Table.GetLine(uTableIdx++, sLine))
-					PutModule(sLine);
-			} else
+				PutModule(Table);
+			else
 				PutModule("Error Finding Sockets");
 
 		} else if (sCom.CaseCmp("help") == 0)

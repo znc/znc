@@ -122,11 +122,7 @@ public:
 			m_ssUidls = ssUidls;	// keep the list in synch
 
 			if (Table.size()) {
-				unsigned int uTableIdx = 0;
-				CString sLine;
-				while (Table.GetLine(uTableIdx++, sLine)) {
-					PutModule(sLine);
-				}
+				PutModule(Table);
 
 				stringstream s;
 				s << "You have " << vEmails.size() << " emails.";
