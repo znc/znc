@@ -15,7 +15,6 @@
  * PERL_DESTRUCT_LEVEL is a perl env flag to force the VM to cleanup, this also stops false alarms, but within perl
  */
 
-#ifdef HAVE_PERL
 #include "Chan.h"
 #include "User.h"
 #include "znc.h"
@@ -1223,13 +1222,3 @@ Csock *CPerlSock::GetSockObj(const CS_STRING & sHostname, u_short iPort)
 
 	return(p);
 }
-
-#endif /* HAVE_PERL */
-
-
-
-
-
-
-
-
