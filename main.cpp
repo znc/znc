@@ -132,10 +132,11 @@ int main(int argc, char** argv) {
 		sConfig = "znc.conf";
 	}
 
+	CZNC* pZNC = &CZNC::Get();
+	pZNC->InitDirs(((argc) ? argv[0] : ""), sDataDir);
+
 	if (bMakeConf) {
-		CZNC& ZNC = CZNC::Get();
-		ZNC.InitDirs("", sDataDir);
-		if (ZNC.WriteNewConfig(sConfig)) {
+		if (pZNC->WriteNewConfig(sConfig)) {
 			char const* args[5];
 
 			if (argc > 2) {
@@ -163,7 +164,7 @@ int main(int argc, char** argv) {
 				return 1;
 			}
 
-			if ((chdir(ZNC.GetCurPath().c_str()) == -1)
+			if ((chdir(pZNC->GetCurPath().c_str()) == -1)
 					|| (execv(*argv, (char *const*)args) == -1)) {
 				CUtils::PrintError("Unable to launch znc [" + CString(strerror(errno)) + "]");
 				return 1;
@@ -175,8 +176,6 @@ int main(int argc, char** argv) {
 
 #ifdef HAVE_LIBSSL
 	if (bMakePem) {
-		CZNC* pZNC = &CZNC::Get();
-		pZNC->InitDirs("", sDataDir);
 		pZNC->WritePemFile(bEncPem);
 
 		delete pZNC;
@@ -196,9 +195,6 @@ int main(int argc, char** argv) {
 
 		return 0;
 	}
-
-	CZNC* pZNC = &CZNC::Get();
-	pZNC->InitDirs(((argc) ? argv[0] : ""), sDataDir);
 
 	if (!pZNC->ParseConfig(sConfig)) {
 		CUtils::PrintError("Unrecoverable config error.");
