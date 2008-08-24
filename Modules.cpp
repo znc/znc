@@ -503,6 +503,16 @@ bool CModule::PutUser(const CString& sLine) {
 bool CModule::PutStatus(const CString& sLine) {
 	return (m_pUser) ? m_pUser->PutStatus(sLine, m_pClient) : false;
 }
+unsigned int CModule::PutModule(const CTable& table, const CString& sIdent, const CString& sHost) {
+	if (!m_pUser)
+		return 0;
+
+	unsigned int idx = 0;
+	CString sLine;
+	while (table.GetLine(idx++, sLine))
+		PutModule(sLine, sIdent, sHost);
+	return idx - 1;
+}
 bool CModule::PutModule(const CString& sLine, const CString& sIdent, const CString& sHost) {
 	if (!m_pUser)
 		return false;

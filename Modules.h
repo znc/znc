@@ -283,6 +283,7 @@ public:
 	virtual bool PutUser(const CString& sLine);
 	virtual bool PutStatus(const CString& sLine);
 	virtual bool PutModule(const CString& sLine, const CString& sIdent = "", const CString& sHost = "znc.com");
+	virtual unsigned int PutModule(const CTable& table, const CString& sIdent = "", const CString& sHost = "znc.com");
 	virtual bool PutModNotice(const CString& sLine, const CString& sIdent = "", const CString& sHost = "znc.com");
 
 	const CString& GetModName() const { return m_sModName; }
