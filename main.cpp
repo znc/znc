@@ -135,6 +135,28 @@ int main(int argc, char** argv) {
 	CZNC* pZNC = &CZNC::Get();
 	pZNC->InitDirs(((argc) ? argv[0] : ""), sDataDir);
 
+#ifdef HAVE_LIBSSL
+	if (bMakePem) {
+		pZNC->WritePemFile(bEncPem);
+
+		delete pZNC;
+		return 0;
+	}
+	if (bEncPem && !bMakePem) {
+		CUtils::PrintError("--encrypt-pem should be used along with --makepem.");
+		return 1;
+	}
+
+#endif /* HAVE_LIBSSL */
+	if (bMakePass) {
+		CString sSalt;
+		CString sHash = CUtils::GetSaltedHashPass(sSalt);
+		CUtils::PrintMessage("Use this in the <User> section of your config:");
+		CUtils::PrintMessage("Pass = md5#" + sHash + "#" + sSalt + "#");
+
+		return 0;
+	}
+
 	if (bMakeConf) {
 		if (pZNC->WriteNewConfig(sConfig)) {
 			char const* args[5];
@@ -170,28 +192,6 @@ int main(int argc, char** argv) {
 				return 1;
 			}
 		}
-
-		return 0;
-	}
-
-#ifdef HAVE_LIBSSL
-	if (bMakePem) {
-		pZNC->WritePemFile(bEncPem);
-
-		delete pZNC;
-		return 0;
-	}
-	if (bEncPem && !bMakePem) {
-		CUtils::PrintError("--encrypt-pem should be used along with --makepem.");
-		return 1;
-	}
-
-#endif /* HAVE_LIBSSL */
-	if (bMakePass) {
-		CString sSalt;
-		CString sHash = CUtils::GetSaltedHashPass(sSalt);
-		CUtils::PrintMessage("Use this in the <User> section of your config:");
-		CUtils::PrintMessage("Pass = md5#" + sHash + "#" + sSalt + "#");
 
 		return 0;
 	}
