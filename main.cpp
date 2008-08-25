@@ -142,18 +142,21 @@ int main(int argc, char** argv) {
 		delete pZNC;
 		return 0;
 	}
+
 	if (bEncPem && !bMakePem) {
 		CUtils::PrintError("--encrypt-pem should be used along with --makepem.");
+		delete pZNC;
 		return 1;
 	}
-
 #endif /* HAVE_LIBSSL */
+
 	if (bMakePass) {
 		CString sSalt;
 		CString sHash = CUtils::GetSaltedHashPass(sSalt);
 		CUtils::PrintMessage("Use this in the <User> section of your config:");
 		CUtils::PrintMessage("Pass = md5#" + sHash + "#" + sSalt + "#");
 
+		delete pZNC;
 		return 0;
 	}
 
@@ -181,7 +184,8 @@ int main(int argc, char** argv) {
 		CUtils::PrintError("You are running ZNC as root! Don't do that! There are not many valid");
 		CUtils::PrintError("reasons for this and it can, in theory, cause great damage!");
 		if (!bAllowRoot) {
-			exit(1);
+			delete pZNC;
+			return 1;
 		}
 		CUtils::PrintError("You have been warned.");
 		CUtils::PrintError("Hit CTRL+C now if you don't want to run ZNC as root.");
@@ -203,7 +207,7 @@ int main(int argc, char** argv) {
 	if (iPid == -1) {
 		CUtils::PrintStatus(false, strerror(errno));
 		delete pZNC;
-		exit(1);
+		return 1;
 	}
 
 	if (iPid > 0) {
@@ -212,7 +216,8 @@ int main(int argc, char** argv) {
 
 		pZNC->WritePidFile(iPid);
 		CUtils::PrintMessage(CZNC::GetTag());
-		exit(0);
+		/* Don't destroy pZNC here or it will delete the pid file. */
+		return 0;
 	}
 
 	// Redirect std in/out/err to /dev/null
