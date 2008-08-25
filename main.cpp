@@ -158,42 +158,11 @@ int main(int argc, char** argv) {
 	}
 
 	if (bMakeConf) {
-		if (pZNC->WriteNewConfig(sConfig)) {
-			char const* args[5];
-
-			if (argc > 2) {
-				args[0] = argv[0];
-				if (!sDataDir.empty()) {
-					args[1] = "--datadir";
-					args[2] = strdup(sDataDir.c_str());
-					args[3] = argv[optind];
-					args[4] = NULL;
-				} else {
-					args[1] = argv[optind];
-					args[2] = NULL;
-				}
-			} else if (argc > 1) {
-				args[0] = argv[0];
-				if (!sDataDir.empty()) {
-					args[1] = "--datadir";
-					args[2] = strdup(sDataDir.c_str());
-					args[3] = NULL;
-				} else {
-					args[1] = NULL;
-				}
-			} else {
-				CUtils::PrintError("Unable to launch znc [Try manually restarting]");
-				return 1;
-			}
-
-			if ((chdir(pZNC->GetCurPath().c_str()) == -1)
-					|| (execv(*argv, (char *const*)args) == -1)) {
-				CUtils::PrintError("Unable to launch znc [" + CString(strerror(errno)) + "]");
-				return 1;
-			}
+		if (!pZNC->WriteNewConfig(sConfig)) {
+			delete pZNC;
+			return 0;
 		}
-
-		return 0;
+		/* Fall through to normal bootup */
 	}
 
 	if (!pZNC->ParseConfig(sConfig)) {
