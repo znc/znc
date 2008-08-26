@@ -554,24 +554,12 @@ bool CZNC::WriteConfig() {
 	return true;
 }
 
-bool CZNC::WriteNewConfig(const CString& sConfig) {
-	CString sConfigFile = ExpandConfigPath((sConfig.empty()) ? "znc.conf" : sConfig);
+bool CZNC::WriteNewConfig(CString& sConfigFile) {
 	CString sAnswer, sUser;
-	vector<CString> vsLines;
+	VCString vsLines;
 
-	if (CFile::Exists(sConfigFile)) {
-		if (!m_LockFile.TryExLock(sConfigFile)) {
-			CUtils::PrintError("ZNC is currently running on this config.");
-			return false;
-		}
-
-		if (!CUtils::GetBoolInput("This config already exists.  Would you like to overwrite it?", false)) {
-			m_LockFile.UnLock();
-			return false;
-		}
-	}
-
-	CUtils::PrintMessage("Writing new config [" + sConfigFile + "]");
+	sConfigFile = ExpandConfigPath((sConfigFile.empty()) ? "znc.conf" : sConfigFile);
+	CUtils::PrintMessage("Building new config");
 
 	CUtils::PrintMessage("");
 	CUtils::PrintMessage("First lets start with some global settings...");
@@ -769,6 +757,8 @@ bool CZNC::WriteNewConfig(const CString& sConfig) {
 #endif
 
 			vsLines.push_back("\tServer     = " + sHost + ((bSSL) ? " +" : " ") + CString(uServerPort) + " " + sPass);
+
+			CUtils::PrintMessage("");
 		} while (CUtils::GetBoolInput("Would you like to add another server?", false));
 
 		vsLines.push_back("");
@@ -796,32 +786,47 @@ bool CZNC::WriteNewConfig(const CString& sConfig) {
 	} while (CUtils::GetBoolInput("Would you like to setup another user?", false));
 	// !User
 
-	CUtils::PrintAction("Writing config [" + sConfigFile + "]");
-	CFile File(sConfigFile);
+	CFile File;
+	bool bFileOK, bFileOpen = false;
+	do {
+		CUtils::PrintAction("Writing config [" + sConfigFile + "]");
 
-	bool bFileOpen = false;
+		bFileOK = true;
+		if (CFile::Exists(sConfigFile)) {
+			if (!m_LockFile.TryExLock(sConfigFile)) {
+				CUtils::PrintStatus(false, "ZNC is currently running on this config.");
+				bFileOK = false;
+			} else {
+				m_LockFile.Close();
+				CUtils::PrintStatus(false, "This config already exists.");
+				if (CUtils::GetBoolInput("Would you like to overwrite it?", false))
+					CUtils::PrintAction("Overwriting config [" + sConfigFile + "]");
+				else
+					bFileOK = false;
+			}
+		}
 
-	if (File.Open(O_WRONLY | O_CREAT | O_TRUNC, 0600)) {
-		bFileOpen = true;
-	} else {
-		CUtils::PrintStatus(false, "Unable to open file");
-		CUtils::GetInput("Alternate location", sConfigFile, "/tmp/" + sConfig);
-
-		if (!CFile::Exists(sConfigFile) || CUtils::GetBoolInput("Would you like to overwrite the existing alt file", false)) {
-			CUtils::PrintAction("Writing to alt location [" + sConfigFile + "]");
+		if (bFileOK) {
 			File.SetFileName(sConfigFile);
-
 			if (File.Open(O_WRONLY | O_CREAT | O_TRUNC, 0600)) {
 				bFileOpen = true;
 			} else {
-				CUtils::PrintStatus(false, "Unable to open alt file");
+				CUtils::PrintStatus(false, "Unable to open file");
+				bFileOK = false;
 			}
 		}
-	}
+		if (!bFileOK) {
+			CUtils::GetInput("Please specify an alternate location (or \"stdout\" for displaying the config)", sConfigFile, sConfigFile);
+			if (sConfigFile.CaseCmp("stdout") == 0)
+				bFileOK = true;
+			else
+				sConfigFile = ExpandConfigPath(sConfigFile);
+		}
+	} while (!bFileOK);
 
 	if (!bFileOpen) {
 		CUtils::PrintMessage("");
-		CUtils::PrintMessage("Printing new config to stdout since we were unable to open a file");
+		CUtils::PrintMessage("Printing the new config to stdout:");
 		CUtils::PrintMessage("");
 		cout << endl << "----------------------------------------------------------------------------" << endl << endl;
 	}
@@ -836,7 +841,6 @@ bool CZNC::WriteNewConfig(const CString& sConfig) {
 
 	if (bFileOpen) {
 		File.Close();
-
 		CUtils::PrintStatus(true);
 	} else {
 		cout << endl << "----------------------------------------------------------------------------" << endl << endl;
@@ -845,14 +849,14 @@ bool CZNC::WriteNewConfig(const CString& sConfig) {
 	CUtils::PrintMessage("");
 	CUtils::PrintMessage("To connect to this znc you need to connect to it as your irc server", true);
 	CUtils::PrintMessage("using the port that you supplied.  You have to supply your login info", true);
-	CUtils::PrintMessage("as the irc server password like so.. user:pass.", true);
+	CUtils::PrintMessage("as the irc server password like so... user:pass.", true);
 	CUtils::PrintMessage("");
 	CUtils::PrintMessage("Try something like this in your IRC client...", true);
 	CUtils::PrintMessage("/server <znc_server_ip> " + CString(uListenPort) + " " + sUser + ":<pass>", true);
 	CUtils::PrintMessage("");
 
 	m_LockFile.UnLock();
-	return CUtils::GetBoolInput("Launch znc now?", true);
+	return bFileOpen && CUtils::GetBoolInput("Launch znc now?", true);
 }
 
 bool CZNC::ParseConfig(const CString& sConfig)
