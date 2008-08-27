@@ -236,6 +236,15 @@ void CClient::UserCommand(const CString& sLine) {
 		usleep(100000);	// Sleep for 10ms to attempt to allow the previous Broadcast() to go through to all users
 
 		throw CException(CException::EX_Shutdown);
+	} else if (m_pUser->IsAdmin() && sCommand.CaseCmp("RESTART") == 0) {
+		CString sMessage = sLine.Token(1, true);
+
+		if (sMessage.empty()) {
+			sMessage = "ZNC is being restarted NOW!!";
+		}
+
+		CZNC::Get().Broadcast(sMessage);
+		throw CException(CException::EX_Restart);
 	} else if (sCommand.CaseCmp("JUMP") == 0 ||
 			sCommand.CaseCmp("CONNECT") == 0) {
 		if (m_pUser) {
@@ -1171,6 +1180,11 @@ void CClient::HelpUser() {
 		Table.SetCell("Command", "Shutdown");
 		Table.SetCell("Arguments", "[message]");
 		Table.SetCell("Description", "Shutdown znc completely");
+
+		Table.AddRow();
+		Table.SetCell("Command", "Restart");
+		Table.SetCell("Arguments", "[message]");
+		Table.SetCell("Description", "Restarts znc");
 	}
 
 	if (Table.size()) {

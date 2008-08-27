@@ -260,10 +260,22 @@ int main(int argc, char** argv) {
 	try {
 		iRet = pZNC->Loop();
 	} catch (CException e) {
-		// EX_Shutdown is thrown to exit
 		switch (e.GetType()) {
 			case CException::EX_Shutdown:
 				iRet = 0;
+				break;
+			case CException::EX_Restart: {
+				// strdup() because GCC is stupid
+				char *args[] = {
+					strdup(argv[0]),
+					strdup("--datadir"),
+					strdup(pZNC->GetZNCPath().c_str()),
+					strdup(pZNC->GetConfigFile().c_str()),
+					NULL
+				};
+				execvp(args[0], args);
+				CUtils::PrintError("Unable to restart znc [" + CString(strerror(errno)) + "]");
+			} /* Fall through */
 			default:
 				iRet = 1;
 		}
