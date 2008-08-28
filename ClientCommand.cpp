@@ -111,7 +111,7 @@ void CClient::UserCommand(const CString& sLine) {
 		}
 	} else if (sCommand.CaseCmp("VERSION") == 0) {
 		PutStatus(CZNC::GetTag());
-	} else if (sCommand.CaseCmp("MOTD") == 0) {
+	} else if (sCommand.CaseCmp("MOTD") == 0 || sCommand.CaseCmp("ShowMOTD") == 0) {
 		if (!SendMotd()) {
 			PutStatus("There is no MOTD set.");
 		}
@@ -985,11 +985,6 @@ void CClient::HelpUser() {
 	Table.SetCell("Description", "Prints which version of znc this is");
 
 	Table.AddRow();
-	Table.SetCell("Command", "MOTD");
-	Table.SetCell("Arguments", "");
-	Table.SetCell("Description", "Show the message of the day");
-
-	Table.AddRow();
 	Table.SetCell("Command", "ListDCCs");
 	Table.SetCell("Arguments", "");
 	Table.SetCell("Description", "List all active DCCs");
@@ -1125,7 +1120,27 @@ void CClient::HelpUser() {
 		Table.SetCell("Description", "Reload a module");
 	}
 
+	Table.AddRow();
+	Table.SetCell("Command", "ShowMOTD");
+	Table.SetCell("Arguments", "");
+	Table.SetCell("Description", "Show the message of the day");
+
 	if (m_pUser->IsAdmin()) {
+		Table.AddRow();
+		Table.SetCell("Command", "SetMOTD");
+		Table.SetCell("Arguments", "<Message>");
+		Table.SetCell("Description", "Set the message of the day");
+
+		Table.AddRow();
+		Table.SetCell("Command", "AddMOTD");
+		Table.SetCell("Arguments", "<Message>");
+		Table.SetCell("Description", "Append <Message> to MOTD");
+
+		Table.AddRow();
+		Table.SetCell("Command", "ClearMOTD");
+		Table.SetCell("Arguments", "");
+		Table.SetCell("Description", "Clear the MOTD");
+
 		Table.AddRow();
 		Table.SetCell("Command", "Rehash");
 		Table.SetCell("Arguments", "");
@@ -1155,21 +1170,6 @@ void CClient::HelpUser() {
 		Table.SetCell("Command", "Uptime");
 		Table.SetCell("Arguments", "");
 		Table.SetCell("Description", "Show how long ZNC is already running");
-
-		Table.AddRow();
-		Table.SetCell("Command", "SetMOTD");
-		Table.SetCell("Arguments", "<Message>");
-		Table.SetCell("Description", "Set the message of the day");
-
-		Table.AddRow();
-		Table.SetCell("Command", "AddMOTD");
-		Table.SetCell("Arguments", "<Message>");
-		Table.SetCell("Description", "Append <Message> to MOTD");
-
-		Table.AddRow();
-		Table.SetCell("Command", "ClearMOTD");
-		Table.SetCell("Arguments", "");
-		Table.SetCell("Description", "Clear the MOTD");
 
 		Table.AddRow();
 		Table.SetCell("Command", "Broadcast");
