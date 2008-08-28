@@ -1001,10 +1001,15 @@ bool CString::RightChomp(unsigned int uLen) {
 
 //////////////// MCString ////////////////
 int MCString::WriteToDisk(const CString& sPath, mode_t iMode) {
-	if (this->empty())
-		return MCS_SUCCESS;
-
 	CFile cFile(sPath);
+
+	if (this->empty()) {
+		if (!cFile.Exists())
+			return MCS_SUCCESS;
+		if (cFile.Delete())
+			return MCS_SUCCESS;
+	}
+
 	if (!cFile.Open(O_WRONLY|O_CREAT|O_TRUNC, iMode)) {
 		return MCS_EOPEN;
 	}
