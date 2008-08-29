@@ -223,6 +223,21 @@ protected:
 	CConnectUserTimer		*m_pConnectUserTimer;
 };
 
+class CRealListener : public Csock {
+public:
+	CRealListener() : Csock() {}
+	~CRealListener() {}
+
+	virtual bool ConnectionFrom(const CString& sHost, unsigned short uPort) {
+		DEBUG_ONLY(cout << GetSockName() << " == ConnectionFrom(" << sHost << ", " << uPort << ")" << endl);
+		return CZNC::Get().IsHostAllowed(sHost);
+	}
+
+	virtual Csock* GetSockObj(const CString& sHost, unsigned short uPort) {
+		return new CClient(sHost, uPort);
+	}
+};
+
 class CListener {
 public:
 	CListener(unsigned short uPort, const CString& sBindHost, bool bSSL, bool bIPV6) {
@@ -230,12 +245,12 @@ public:
 		m_sBindHost = sBindHost;
 		m_bSSL = bSSL;
 		m_bIPV6 = bIPV6;
-		m_pClient = NULL;
+		m_pListener = NULL;
 	}
 
 	virtual ~CListener() {
-		if (m_pClient)
-			CZNC::Get().GetManager().DelSockByAddr(m_pClient);
+		if (m_pListener)
+			CZNC::Get().GetManager().DelSockByAddr(m_pListener);
 	}
 
 	// Setters
@@ -253,21 +268,22 @@ public:
 	// !Getters
 
 	bool Listen() {
-		if (!m_uPort || m_pClient) {
+		if (!m_uPort || m_pListener) {
 			return false;
 		}
 
-		m_pClient = new CClient;
+		m_pListener = new CRealListener;
 
 		bool bSSL = false;
 #ifdef HAVE_LIBSSL
 		if (IsSSL()) {
 			bSSL = true;
-			m_pClient->SetPemLocation(CZNC::Get().GetPemLocation());
+			m_pListener->SetPemLocation(CZNC::Get().GetPemLocation());
 		}
 #endif
 
-		return CZNC::Get().GetManager().ListenHost(m_uPort, "_LISTENER", m_sBindHost, bSSL, SOMAXCONN, m_pClient, 0, m_bIPV6);
+		return CZNC::Get().GetManager().ListenHost(m_uPort, "_LISTENER", m_sBindHost, bSSL, SOMAXCONN,
+				m_pListener, 0, m_bIPV6);
 	}
 private:
 protected:
@@ -275,7 +291,7 @@ protected:
 	bool			m_bIPV6;
 	unsigned short	m_uPort;
 	CString			m_sBindHost;
-	CClient*		m_pClient;
+	CRealListener*		m_pListener;
 };
 
 #endif // !_ZNC_H

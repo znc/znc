@@ -601,11 +601,6 @@ bool CClient::SendMotd() {
 	return true;
 }
 
-bool CClient::ConnectionFrom(const CString& sHost, unsigned short uPort) {
-	DEBUG_ONLY(cout << GetSockName() << " == ConnectionFrom(" << sHost << ", " << uPort << ")" << endl);
-	return CZNC::Get().IsHostAllowed(sHost);
-}
-
 void CClient::AuthUser() {
 	/*
 #ifdef _MODULES
@@ -727,12 +722,6 @@ void CClient::BouncedOff() {
 
 void CClient::IRCDisconnected() {
 	m_pIRCSock = NULL;
-}
-
-Csock* CClient::GetSockObj(const CString& sHost, unsigned short uPort) {
-	CClient* pSock = new CClient(sHost, uPort);
-	pSock->StartLoginTimeout();
-	return pSock;
 }
 
 void CClient::PutIRC(const CString& sLine) {

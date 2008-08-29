@@ -65,17 +65,7 @@ protected:
 
 class CClient : public Csock {
 public:
-	CClient() : Csock() {
-		InitClient();
-	}
-
 	CClient(const CString& sHostname, unsigned short uPort, int iTimeout = 60) : Csock(sHostname, uPort, iTimeout) {
-		InitClient();
-	}
-
-	virtual ~CClient();
-
-	void InitClient() {
 		m_pUser = NULL;
 		m_pTimeout = NULL;
 		m_pIRCSock = NULL;
@@ -85,7 +75,11 @@ public:
 		m_bNamesx = false;
 		m_bUHNames = false;
 		EnableReadLine();
+
+		StartLoginTimeout();
 	}
+
+	virtual ~CClient();
 
 	void AcceptLogin(CUser& User);
 	void RefuseLogin(const CString& sReason);
@@ -118,8 +112,6 @@ public:
 	virtual void Connected();
 	virtual void Disconnected();
 	virtual void ConnectionRefused();
-	virtual bool ConnectionFrom(const CString& sHost, unsigned short uPort);
-	virtual Csock* GetSockObj(const CString& sHost, unsigned short uPort);
 
 	void SetNick(const CString& s);
 	CUser* GetUser() const { return m_pUser; }
