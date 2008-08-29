@@ -28,7 +28,7 @@
 * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 *
 *
-* $Revision: 1.82 $
+* $Revision: 1.83 $
 */
 
 #include "Csocket.h"
@@ -851,9 +851,12 @@ int Csock::Accept( CS_STRING & sHost, u_short & iRPort )
 		struct sockaddr_in client;
 		socklen_t clen = sizeof( client );
 		iSock = accept( m_iReadSock, (struct sockaddr *) &client, &clen );
-		getpeername( iSock, (struct sockaddr *) &client, &clen );
-		sHost = inet_ntoa( client.sin_addr );
-		iRPort = ntohs( client.sin_port );
+		if( iSock != -1 )
+		{
+			getpeername( iSock, (struct sockaddr *) &client, &clen );
+			sHost = inet_ntoa( client.sin_addr );
+			iRPort = ntohs( client.sin_port );
+		}
 	}
 #ifdef HAVE_IPV6
 	else
@@ -862,11 +865,14 @@ int Csock::Accept( CS_STRING & sHost, u_short & iRPort )
 		struct sockaddr_in6 client;
 		socklen_t clen = sizeof( client );
 		iSock = accept( m_iReadSock, (struct sockaddr *) &client, &clen );
-		getpeername( iSock, (struct sockaddr *) &client, &clen );
-		if( inet_ntop( AF_INET6, &client.sin6_addr, straddr, sizeof(straddr) ) > 0 )
+		if( iSock != -1 )
 		{
-			sHost = straddr;
-			iRPort = ntohs( client.sin6_port );
+			getpeername( iSock, (struct sockaddr *) &client, &clen );
+			if( inet_ntop( AF_INET6, &client.sin6_addr, straddr, sizeof(straddr) ) > 0 )
+			{
+				sHost = straddr;
+				iRPort = ntohs( client.sin6_port );
+			}
 		}
 	}
 #endif /* HAVE_IPV6 */
