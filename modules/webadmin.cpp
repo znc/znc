@@ -733,8 +733,6 @@ bool CWebAdminSock::ChanPage(CString& sPageRet, CChan* pChan) {
 		}
 	}
 
-	m_pUser->JoinChans();
-
 	if (!CZNC::Get().WriteConfig()) {
 		GetErrorPage(sPageRet, "Channel added/modified, but config was not written");
 		return true;

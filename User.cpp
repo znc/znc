@@ -41,6 +41,7 @@ CUser::CUser(const CString& sUserName) {
 	m_sChanPrefixes = "";
 	m_uBufferCount = 50;
 	m_uMaxJoinTries = 0;
+	m_uMaxJoins = 5;
 	m_bKeepBuffer = false;
 	m_bAutoCycle = true;
 	m_bBeingDeleted = false;
@@ -295,6 +296,7 @@ bool CUser::Clone(const CUser& User, CString& sErrorRet, bool bCloneChans) {
 	SetDefaultChanModes(User.GetDefaultChanModes());
 	SetBufferCount(User.GetBufferCount());
 	SetJoinTries(User.JoinTries());
+	SetMaxJoins(User.MaxJoins());
 
 	// Allowed Hosts
 	m_ssAllowedHosts.clear();
@@ -405,8 +407,6 @@ bool CUser::Clone(const CUser& User, CString& sErrorRet, bool bCloneChans) {
 				pChan->Clone(*pNewChan);
 		}
 	}
-
-	JoinChans();
 	// !Chans
 
 	// CTCP Replies
@@ -587,6 +587,7 @@ bool CUser::WriteConfig(CFile& File) {
 	PrintLine(File, "PrependTimestamp", CString((GetTimestampPrepend()) ? "true" : "false"));
 	PrintLine(File, "TimezoneOffset", CString(m_fTimezoneOffset));
 	PrintLine(File, "JoinTries", CString(m_uMaxJoinTries));
+	PrintLine(File, "MaxJoins", CString(m_uMaxJoins));
 	File.Write("\n");
 
 	// Allow Hosts
@@ -659,6 +660,7 @@ CChan* CUser::FindChan(const CString& sName) const {
 }
 
 void CUser::JoinChans() {
+	unsigned int uJoins = m_uMaxJoins;
 	for (unsigned int a = 0; a < m_vChans.size(); a++) {
 		CChan* pChan = m_vChans[a];
 		if (!pChan->IsOn() && !pChan->IsDisabled()) {
@@ -668,6 +670,10 @@ void CUser::JoinChans() {
 			} else {
 				pChan->IncJoinTries();
 				PutIRC("JOIN " + pChan->GetName() + " " + pChan->GetKey());
+
+				// Limit the number of joins
+				if (uJoins != 0 && --uJoins == 0)
+					return;
 			}
 		}
 	}

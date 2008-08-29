@@ -141,6 +141,7 @@ public:
 	void SetTimestampPrepend(bool b) { m_bPrependTimestamp = b; }
 	void SetTimezoneOffset(float b) { m_fTimezoneOffset = b; }
 	void SetJoinTries(unsigned int i) { m_uMaxJoinTries = i; }
+	void SetMaxJoins(unsigned int i) { m_uMaxJoins = i; }
 	void SetIRCConnectEnabled(bool b) { m_bIRCConnectEnabled = b; }
 	// !Setters
 
@@ -193,6 +194,7 @@ public:
 	unsigned long long BytesRead() const { return m_uBytesRead; }
 	unsigned long long BytesWritten() const { return m_uBytesWritten; }
 	unsigned int JoinTries() const { return m_uMaxJoinTries; }
+	unsigned int MaxJoins() const { return m_uMaxJoins; }
 	// !Getters
 private:
 protected:
@@ -251,6 +253,7 @@ protected:
 	unsigned long long      m_uBytesRead;
 	unsigned long long      m_uBytesWritten;
 	unsigned int		m_uMaxJoinTries;
+	unsigned int		m_uMaxJoins;
 
 #ifdef _MODULES
 	CModules*		m_pModules;

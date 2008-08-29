@@ -1278,6 +1278,9 @@ bool CZNC::DoRehash(CString& sError)
 					} else if (sName.CaseCmp("JoinTries") == 0) {
 						pUser->SetJoinTries(sValue.ToUInt());
 						continue;
+					} else if (sName.CaseCmp("MaxJoins") == 0) {
+						pUser->SetMaxJoins(sValue.ToUInt());
+						continue;
 					} else if (sName.CaseCmp("LoadModule") == 0) {
 						CString sModName = sValue.Token(0);
 						CUtils::PrintAction("Loading Module [" + sModName + "]");
