@@ -22,6 +22,7 @@
 	for (unsigned int a = 0; a < size(); a++) {			\
 		try {											\
 			type* pMod = (type *) (*this)[a];					\
+			pMod->SetClient(m_pClient);					\
 			if (m_pUser) {							\
 				pMod->SetUser(m_pUser);					\
 				pMod->func;						\
@@ -29,6 +30,7 @@
 			} else {							\
 				pMod->func;						\
 			}								\
+			pMod->SetClient(NULL);						\
 		} catch (CModule::EModException e) {			\
 			if (e == CModule::UNLOAD) {					\
 				UnloadModule((*this)[a]->GetModName());	\
@@ -45,6 +47,7 @@
 		try {											\
 			type* pMod = (type*) (*this)[a];			\
 			CModule::EModRet e = CModule::CONTINUE;		\
+			pMod->SetClient(m_pClient);				\
 			if (m_pUser) {								\
 				pMod->SetUser(m_pUser);					\
 				e = pMod->func;							\
@@ -52,6 +55,7 @@
 			} else {									\
 				e = pMod->func;							\
 			}											\
+			pMod->SetClient(NULL);					\
 			if (e == CModule::HALTMODS) {				\
 				break;									\
 			} else if (e == CModule::HALTCORE) {		\
@@ -541,6 +545,7 @@ void CGlobalModule::OnFailedLogin(const CString& sUsername, const CString& sRemo
 
 CModules::CModules() {
 	m_pUser = NULL;
+	m_pClient = NULL;
 }
 
 CModules::~CModules() {
@@ -552,12 +557,6 @@ void CModules::UnloadAll() {
 		CString sRetMsg;
 		CString sModName = (*this)[0]->GetModName();
 		UnloadModule(sModName, sRetMsg);
-	}
-}
-
-void CModules::SetClient(CClient* pClient) {
-	for (unsigned int a = 0; a < size(); a++) {
-		(*this)[a]->SetClient(pClient);
 	}
 }
 

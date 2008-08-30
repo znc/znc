@@ -359,7 +359,7 @@ public:
 	virtual ~CModules();
 
 	void SetUser(CUser* pUser) { m_pUser = pUser; }
-	void SetClient(CClient* pClient);
+	void SetClient(CClient* pClient) { m_pClient = pClient; }
 
 	void UnloadAll();
 
@@ -426,6 +426,7 @@ public:
 
 protected:
 	CUser*		m_pUser;
+	CClient*	m_pClient;
 };
 
 class CGlobalModule : public CModule {
