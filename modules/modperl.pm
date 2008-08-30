@@ -249,7 +249,7 @@ sub PutModule
 	}
 	if ( !$host )
 	{
-		$host = "znc.com";
+		$host = "znc.in";
 	}
 
 	COREPutModule( "Module", $line, $ident, $host );
@@ -265,7 +265,7 @@ sub PutModNotice
 	}
 	if ( !$host )
 	{
-		$host = "znc.com";
+		$host = "znc.in";
 	}
 
 	COREPutModule( "ModNotice", $line, $ident, $host );

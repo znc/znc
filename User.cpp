@@ -204,7 +204,7 @@ void CUser::UserConnected(CClient* pClient) {
 	m_vClients.push_back(pClient);
 
 	if (m_RawBuffer.IsEmpty()) {
-		pClient->PutClient(":irc.znc.com 001 " + pClient->GetNick() + " :- Welcome to ZNC -");
+		pClient->PutClient(":irc.znc.in 001 " + pClient->GetNick() + " :- Welcome to ZNC -");
 	} else {
 		unsigned int uIdx = 0;
 		CString sLine;
@@ -949,7 +949,7 @@ bool CUser::SendFile(const CString& sRemoteNick, const CString& sFileName, const
 	unsigned short uPort = CZNC::Get().GetManager().ListenRand("DCC::LISTEN::" + sRemoteNick, GetLocalIP(), false, SOMAXCONN, pSock, 120);
 
 	if (GetNick().CaseCmp(sRemoteNick) == 0) {
-		PutUser(":" + GetStatusPrefix() + "status!znc@znc.com PRIVMSG " + sRemoteNick + " :\001DCC SEND " + pFile->GetShortName() + " " + CString(CUtils::GetLongIP(GetLocalIP())) + " "
+		PutUser(":" + GetStatusPrefix() + "status!znc@znc.in PRIVMSG " + sRemoteNick + " :\001DCC SEND " + pFile->GetShortName() + " " + CString(CUtils::GetLongIP(GetLocalIP())) + " "
 				+ CString(uPort) + " " + CString(pFile->GetSize()) + "\001");
 	} else {
 		PutIRC("PRIVMSG " + sRemoteNick + " :\001DCC SEND " + pFile->GetShortName() + " " + CString(CUtils::GetLongIP(GetLocalIP())) + " "

@@ -204,7 +204,7 @@ public:
 	void Replay(const CString & sChan)
 	{
 		CString sFile;
-		PutUser(":***!znc@znc.com PRIVMSG " + sChan + " :Buffer Playback...");
+		PutUser(":***!znc@znc.in PRIVMSG " + sChan + " :Buffer Playback...");
 		if (DecryptChannel(sChan, sFile))
 		{
 			CString sLine;
@@ -215,7 +215,7 @@ public:
 				PutUser(sLine);
 			}
 		}
-		PutUser(":***!znc@znc.com PRIVMSG " + sChan + " :Playback Complete.");
+		PutUser(":***!znc@znc.in PRIVMSG " + sChan + " :Playback Complete.");
 	}
 
 	CString GetPath(const CString & sChannel)
@@ -228,7 +228,7 @@ public:
 
 	CString SpoofChanMsg(const CString & sChannel, const CString & sMesg)
 	{
-		CString sReturn = ":*" + GetModName() + "!znc@znc.com PRIVMSG " + sChannel + " :" + CString(time(NULL)) + " " + sMesg;
+		CString sReturn = ":*" + GetModName() + "!znc@znc.in PRIVMSG " + sChannel + " :" + CString(time(NULL)) + " " + sMesg;
 		return(sReturn);
 	}
 

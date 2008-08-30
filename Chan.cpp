@@ -585,7 +585,7 @@ void CChan::SendBuffer(CClient* pClient) {
 		const vector<CString>& vsBuffer = GetBuffer();
 
 		if (vsBuffer.size()) {
-			m_pUser->PutUser(":***!znc@znc.com PRIVMSG " + GetName() + " :Buffer Playback...", pClient);
+			m_pUser->PutUser(":***!znc@znc.in PRIVMSG " + GetName() + " :Buffer Playback...", pClient);
 
 			for (unsigned int a = 0; a < vsBuffer.size(); a++) {
 				m_pUser->PutUser(vsBuffer[a], pClient);
@@ -595,7 +595,7 @@ void CChan::SendBuffer(CClient* pClient) {
 				ClearBuffer();
 			}
 
-			m_pUser->PutUser(":***!znc@znc.com PRIVMSG " + GetName() + " :Playback Complete.", pClient);
+			m_pUser->PutUser(":***!znc@znc.in PRIVMSG " + GetName() + " :Playback Complete.", pClient);
 		}
 	}
 }

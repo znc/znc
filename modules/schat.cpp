@@ -439,7 +439,7 @@ public:
 
 	void SendToUser(const CString & sFrom, const CString & sText)
 	{
-		//:*schat!znc@znc.com PRIVMSG Jim :
+		//:*schat!znc@znc.in PRIVMSG Jim :
 		CString sSend = ":" + sFrom + " PRIVMSG " + m_pUser->GetCurNick() + " :" + sText;
 		PutUser(sSend);
 	}

@@ -132,7 +132,7 @@ void CClient::ReadLine(const CString& sData) {
 			if ((m_bGotPass) && (m_bGotNick)) {
 				AuthUser();
 			} else if (!m_bGotPass) {
-				PutClient(":irc.znc.com NOTICE AUTH :*** "
+				PutClient(":irc.znc.in NOTICE AUTH :*** "
 					"You need to send your password. "
 					"Try /quote PASS <username>:<password>");
 			}
@@ -174,7 +174,7 @@ void CClient::ReadLine(const CString& sData) {
 		// If the client meant to ping us or we can be sure the server
 		// won't answer the ping (=no server connected) -> PONG back.
 		// else: It's the server's job to send a PONG.
-		if (sTarget.CaseCmp("irc.znc.com") == 0 || !m_pIRCSock) {
+		if (sTarget.CaseCmp("irc.znc.in") == 0 || !m_pIRCSock) {
 			PutClient("PONG " + sLine.substr(5));
 			return;
 		}
@@ -441,7 +441,7 @@ void CClient::ReadLine(const CString& sData) {
 					// Need to lookup the connection by port, filter the port, and forward to the user
 					if (strncasecmp(sTarget.c_str(), m_pUser->GetStatusPrefix().c_str(), m_pUser->GetStatusPrefix().length()) == 0) {
 						if ((m_pUser) && (m_pUser->ResumeFile(uResumePort, uResumeSize))) {
-							PutClient(":" + sTarget + "!znc@znc.com PRIVMSG " + GetNick() + " :\001DCC ACCEPT " + sFile + " " + CString(uResumePort) + " " + CString(uResumeSize) + "\001");
+							PutClient(":" + sTarget + "!znc@znc.in PRIVMSG " + GetNick() + " :\001DCC ACCEPT " + sFile + " " + CString(uResumePort) + " " + CString(uResumeSize) + "\001");
 						} else {
 							PutStatus("DCC -> [" + GetNick() + "][" + sFile + "] Unable to find send to initiate resume.");
 						}
@@ -648,7 +648,7 @@ void CClient::RefuseLogin(const CString& sReason) {
 	}
 
 	PutStatus("Bad username and/or password.");
-	PutClient(":irc.znc.com 464 " + GetNick() + " :" + sReason);
+	PutClient(":irc.znc.in 464 " + GetNick() + " :" + sReason);
 	Close();
 }
 
@@ -748,8 +748,8 @@ void CClient::PutModNotice(const CString& sModule, const CString& sLine) {
 		return;
 	}
 
-	DEBUG_ONLY(cout << "(" << m_pUser->GetUserName() << ") ZNC -> CLI [:" + m_pUser->GetStatusPrefix() + ((sModule.empty()) ? "status" : sModule) + "!znc@znc.com NOTICE " << GetNick() << " :" << sLine << "]" << endl);
-	Write(":" + m_pUser->GetStatusPrefix() + ((sModule.empty()) ? "status" : sModule) + "!znc@znc.com NOTICE " + GetNick() + " :" + sLine + "\r\n");
+	DEBUG_ONLY(cout << "(" << m_pUser->GetUserName() << ") ZNC -> CLI [:" + m_pUser->GetStatusPrefix() + ((sModule.empty()) ? "status" : sModule) + "!znc@znc.in NOTICE " << GetNick() << " :" << sLine << "]" << endl);
+	Write(":" + m_pUser->GetStatusPrefix() + ((sModule.empty()) ? "status" : sModule) + "!znc@znc.in NOTICE " + GetNick() + " :" + sLine + "\r\n");
 }
 
 void CClient::PutModule(const CString& sModule, const CString& sLine) {
@@ -757,8 +757,8 @@ void CClient::PutModule(const CString& sModule, const CString& sLine) {
 		return;
 	}
 
-	DEBUG_ONLY(cout << "(" << m_pUser->GetUserName() << ") ZNC -> CLI [:" + m_pUser->GetStatusPrefix() + ((sModule.empty()) ? "status" : sModule) + "!znc@znc.com PRIVMSG " << GetNick() << " :" << sLine << "]" << endl);
-	Write(":" + m_pUser->GetStatusPrefix() + ((sModule.empty()) ? "status" : sModule) + "!znc@znc.com PRIVMSG " + GetNick() + " :" + sLine + "\r\n");
+	DEBUG_ONLY(cout << "(" << m_pUser->GetUserName() << ") ZNC -> CLI [:" + m_pUser->GetStatusPrefix() + ((sModule.empty()) ? "status" : sModule) + "!znc@znc.in PRIVMSG " << GetNick() << " :" << sLine << "]" << endl);
+	Write(":" + m_pUser->GetStatusPrefix() + ((sModule.empty()) ? "status" : sModule) + "!znc@znc.in PRIVMSG " + GetNick() + " :" + sLine + "\r\n");
 }
 
 CString CClient::GetNick(bool bAllowIRCNick) const {
@@ -778,7 +778,7 @@ CString CClient::GetNickMask() const {
 
 	CString sHost = m_pUser->GetVHost();
 	if (sHost.empty()) {
-		sHost = "irc.znc.com";
+		sHost = "irc.znc.in";
 	}
 
 	return GetNick() + "!" + m_pUser->GetIdent() + "@" + sHost;

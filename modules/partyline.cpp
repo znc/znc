@@ -181,7 +181,7 @@ public:
 				sHost = m_pUser->GetIRCNick().GetHost();
 			}
 			if (sHost.empty()) {
-				sHost = "znc.com";
+				sHost = "znc.in";
 			}
 			PutChan(ssNicks, ":?" + sNick + "!" + m_pUser->GetIdent() + "@" + sHost + " JOIN " + *a, false);
 			pChannel->AddNick(sNick);
@@ -240,19 +240,19 @@ public:
 						PutChan(ssNicks, ":" + m_pUser->GetIRCNick().GetNickMask() + " TOPIC " + sChannel + " :" + sTopic);
 						pChannel->SetTopic(sTopic);
 					} else {
-						m_pUser->PutUser(":irc.znc.com 482 " +  m_pUser->GetIRCNick().GetNick() + " " + sChannel + " :You're not channel operator");
+						m_pUser->PutUser(":irc.znc.in 482 " +  m_pUser->GetIRCNick().GetNick() + " " + sChannel + " :You're not channel operator");
 					}
 				} else {
 					sTopic = pChannel->GetTopic();
 
 					if (sTopic.empty()) {
-						m_pUser->PutUser(":irc.znc.com 331 " + m_pUser->GetIRCNick().GetNick() + " " + sChannel + " :No topic is set.");
+						m_pUser->PutUser(":irc.znc.in 331 " + m_pUser->GetIRCNick().GetNick() + " " + sChannel + " :No topic is set.");
 					} else {
-						m_pUser->PutUser(":irc.znc.com 332 " + m_pUser->GetIRCNick().GetNick() + " " + sChannel + " :" + sTopic);
+						m_pUser->PutUser(":irc.znc.in 332 " + m_pUser->GetIRCNick().GetNick() + " " + sChannel + " :" + sTopic);
 					}
 				}
 			} else {
-			    m_pUser->PutUser(":irc.znc.com 442 " + m_pUser->GetIRCNick().GetNick() + " " + sChannel + " :You're not on that channel");
+			    m_pUser->PutUser(":irc.znc.in 442 " + m_pUser->GetIRCNick().GetNick() + " " + sChannel + " :You're not on that channel");
 			}
 			return HALT;
 		}
@@ -546,7 +546,7 @@ public:
 
 		if (!sServer.empty())
 			return sServer;
-		return "irc.znc.com";
+		return "irc.znc.in";
 	}
 
 	bool PutChan(const CString& sChan, const CString& sLine, bool bIncludeCurUser = true, bool bIncludeClient = true, CUser* pUser = NULL, CClient* pClient = NULL) {
