@@ -236,6 +236,15 @@ public:
 	virtual Csock* GetSockObj(const CString& sHost, unsigned short uPort) {
 		return new CClient(sHost, uPort);
 	}
+
+	virtual void SockError(int iErrno) {
+		DEBUG_ONLY(cout << GetSockName() << " == SockError(" << strerror(iErrno) << ")" << endl);
+		if (iErrno == EMFILE) {
+			// We have too many open fds, let's close this listening port to be able to continue
+			// to work, next rehash will (try to) reopen it.
+			Close();
+		}
+	}
 };
 
 class CListener {
