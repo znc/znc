@@ -46,3 +46,7 @@ Veit "Cru" Wahlich <cru@ircnet.de> - Patches
 
 SilverLeo - Several patches
 	Cleaned up the znc.conf resulting from WriteConfig
+
+kroimon <znc@kroimon.de> - Patches, Documentation
+	Some enhancements, some cleanups, some other stuff ;)
+	German and english wiki maintenance
