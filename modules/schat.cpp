@@ -57,6 +57,8 @@ public:
 		EnableReadLine();
 	}
 
+	~CSChatSock();
+
 	virtual Csock *GetSockObj(const CS_STRING & sHostname, u_short iPort)
 	{
 		CSChatSock *p = new CSChatSock(sHostname, iPort);
@@ -456,6 +458,12 @@ private:
 
 
 //////////////////// methods ////////////////
+
+CSChatSock::~CSChatSock()
+{
+	m_pModule->GetUser()->AddBytesRead(GetBytesRead());
+	m_pModule->GetUser()->AddBytesWritten(GetBytesWritten());
+}
 
 void CSChatSock::ReadLine(const CS_STRING & sLine)
 {

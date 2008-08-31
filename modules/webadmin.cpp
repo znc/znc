@@ -335,6 +335,9 @@ CWebAdminSock::~CWebAdminSock() {
 		CWebAdminAuth* pAuth = (CWebAdminAuth*) &(*m_spAuth);
 		pAuth->SetWebAdminSock(NULL);
 	}
+
+	CZNC::Get().AddBytesRead(GetBytesRead());
+	CZNC::Get().AddBytesWritten(GetBytesWritten());
 }
 
 bool CWebAdminSock::OnPageRequest(const CString& sURI, CString& sPageRet) {

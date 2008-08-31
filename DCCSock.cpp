@@ -9,6 +9,17 @@
 #include "DCCSock.h"
 #include "User.h"
 
+CDCCSock::~CDCCSock() {
+	if ((m_pFile) && (!m_bNoDelFile)) {
+		m_pFile->Close();
+		delete m_pFile;
+	}
+	if (m_pUser) {
+		m_pUser->AddBytesRead(GetBytesRead());
+		m_pUser->AddBytesWritten(GetBytesWritten());
+	}
+}
+
 void CDCCSock::ReadData(const char* data, int len) {
 	if (!m_pFile) {
 		DEBUG_ONLY(cout << "File not open! closing get." << endl);

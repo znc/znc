@@ -53,12 +53,7 @@ public:
 		m_bNoDelFile = false;
 	}
 */
-	virtual ~CDCCSock() {
-		if ((m_pFile) && (!m_bNoDelFile)) {
-			m_pFile->Close();
-			delete m_pFile;
-		}
-	}
+	virtual ~CDCCSock();
 
 	virtual void ReadData(const char* data, int len);
 	virtual void ConnectionRefused();

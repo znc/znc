@@ -15,6 +15,17 @@ const unsigned int CDCCBounce::m_uiMaxDCCBuffer = 10 * 1024;
 // If less than this is in the buffer, the receiving side continues
 const unsigned int CDCCBounce::m_uiMinDCCBuffer = 2 * 1024;
 
+CDCCBounce::~CDCCBounce() {
+	if (m_pPeer) {
+		m_pPeer->Shutdown();
+		m_pPeer = NULL;
+	}
+	if (m_pUser) {
+		m_pUser->AddBytesRead(GetBytesRead());
+		m_pUser->AddBytesWritten(GetBytesWritten());
+	}
+}
+
 void CDCCBounce::ReadLine(const CString& sData) {
 	CString sLine = sData;
 

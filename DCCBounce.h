@@ -47,12 +47,7 @@ public:
 			EnableReadLine();
 		}
 	}
-	virtual ~CDCCBounce() {
-		if (m_pPeer) {
-			m_pPeer->Shutdown();
-			m_pPeer = NULL;
-		}
-	}
+	virtual ~CDCCBounce();
 
 	static unsigned short DCCRequest(const CString& sNick, unsigned long uLongIP, unsigned short uPort, const CString& sFileName, bool bIsChat, CUser* pUser, const CString& sLocalIP, const CString& sRemoteIP);
 
