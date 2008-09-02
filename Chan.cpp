@@ -207,7 +207,6 @@ CString CChan::GetModeForNames() const {
 void CChan::SetModes(const CString& sModes) {
 	m_musModes.clear();
 	m_uLimit = 0;
-	m_sCurKey = "";
 	ModeChange(sModes);
 }
 
@@ -329,10 +328,6 @@ void CChan::ModeChange(const CString& sModes, const CString& sOpNick) {
 					}
 
 					break;
-			}
-
-			if (uMode == M_Key) {
-				m_sCurKey = (bAdd) ? sArg : "";
 			}
 
 			if (!bList) {

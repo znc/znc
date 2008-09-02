@@ -131,7 +131,7 @@ public:
 	bool IsOn() const { return m_bIsOn; }
 	const CString& GetName() const { return m_sName; }
 	const map<unsigned char, CString>& GetModes() const { return m_musModes; }
-	const CString& GetKey() const { return (!m_sCurKey.empty()) ? m_sCurKey : m_sKey; }
+	const CString& GetKey() const { return m_sKey; }
 	unsigned int GetLimit() const { return m_uLimit; }
 	const CString& GetTopic() const { return m_sTopic; }
 	const CString& GetTopicOwner() const { return m_sTopicOwner; }
@@ -161,7 +161,6 @@ protected:
 	bool				m_bDisabled;
 	CString				m_sName;
 	CString				m_sKey;
-	CString				m_sCurKey;
 	CString				m_sTopic;
 	CString				m_sTopicOwner;
 	unsigned long		m_ulTopicDate;
