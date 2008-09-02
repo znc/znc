@@ -251,20 +251,14 @@ void CClient::ReadLine(const CString& sData) {
 	} else if (sCommand.CaseCmp("TOPIC") == 0) {
 		CString sChan = sLine.Token(1);
 		CString sTopic = sLine.Token(2, true);
-		bool bUnset = false;
 
-		if (sTopic.Left(1) == ":") {
-			sTopic.LeftChomp();
-			if (sTopic.empty())
-				bUnset = true;
-		}
-
-		MODULECALL(OnUserTopic(sChan, sTopic), m_pUser, this, return);
-
-		sLine = "TOPIC " + sChan;
-
-		if (!sTopic.empty() || bUnset) {
-			sLine += " :" + sTopic;
+		if (!sTopic.empty()) {
+			if (sTopic.Left(1) == ":")
+				sTopic.LeftChomp();
+			MODULECALL(OnUserTopic(sChan, sTopic), m_pUser, this, return);
+			sLine = "TOPIC " + sChan + " :" + sTopic;
+		} else {
+			MODULECALL(OnUserTopicRequest(sChan), m_pUser, this, return);
 		}
 	} else if (sCommand.CaseCmp("MODE") == 0) {
 		CString sTarget = sLine.Token(1);
