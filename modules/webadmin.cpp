@@ -789,6 +789,8 @@ bool CWebAdminSock::UserPage(CString& sPageRet, CUser* pUser) {
 			m_Template["BufferCount"] = CString(pUser->GetBufferCount());
 			m_Template["TimestampFormat"] = pUser->GetTimestampFormat();
 			m_Template["TimezoneOffset"] = CString(pUser->GetTimezoneOffset());
+			m_Template["JoinTries"] = CString(pUser->JoinTries());
+			m_Template["MaxJoins"] = CString(pUser->MaxJoins());
 
 			const set<CString>& ssAllowedHosts = pUser->GetAllowedHosts();
 			for (set<CString>::const_iterator it = ssAllowedHosts.begin(); it != ssAllowedHosts.end(); it++) {
@@ -1115,6 +1117,8 @@ CUser* CWebAdminSock::GetNewUser(CString& sPageRet, CUser* pUser) {
 	pNewUser->SetTimestampAppend(GetParam("appendtimestamp").ToBool());
 	pNewUser->SetTimestampPrepend(GetParam("prependtimestamp").ToBool());
 	pNewUser->SetTimezoneOffset(GetParam("timezoneoffset").ToDouble());
+	pNewUser->SetJoinTries(GetParam("jointries").ToUInt());
+	pNewUser->SetMaxJoins(GetParam("maxjoins").ToUInt());
 
 	if (IsAdmin()) {
 		pNewUser->SetDenyLoadMod(GetParam("denyloadmod").ToBool());

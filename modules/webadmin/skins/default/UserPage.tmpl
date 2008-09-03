@@ -178,16 +178,24 @@
 		<div class="sectionbg">
 			<div class="sectionbody">
 				<div class="subsection">
+					<div class="inputlabel">Timestamp Format:</div>
+					<div><input type="text" name="timestampformat" value="<? VAR TimestampFormat ESC=HTML ?>" class="full" /></div>
+				</div>
+				<div class="subsection">
 					<div class="inputlabel">Playback Buffer Size:</div>
 					<div><input type="text" name="bufsize" value="<? VAR BufferCount ESC=HTML ?>" class="third" maxlength="9" /></div>
 				</div>
 				<div class="subsection">
-					<div class="inputlabel">Timestamp Format:</div>
-					<div><input type="text" name="timestampformat" value="<? VAR TimestampFormat ESC=HTML ?>" class="half" /></div>
-				</div>
-				<div class="subsection">
 					<div class="inputlabel">Timezone offset:</div>
 					<div><input type="text" name="timezoneoffset" value="<? VAR TimezoneOffset ESC=HTML ?>" class="third" /></div>
+				</div>
+				<div class="subsection">
+					<div class="inputlabel">Join Tries:</div>
+					<div><input type="text" name="jointries" value="<? VAR JoinTries ESC=HTML ?>" class="third" /></div>
+				</div>
+				<div class="subsection">
+					<div class="inputlabel">Max Joins:</div>
+					<div><input type="text" name="maxjoins" value="<? VAR MaxJoins ESC=HTML ?>" class="third" /></div>
 				</div>
 				<div style="clear: both;"></div>
 
