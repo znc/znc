@@ -8,8 +8,7 @@ libdir      := @libdir@
 sbindir     := @sbindir@
 localstatedir := @localstatedir@
 CXX      := @CXX@
-# CXXFLAGS are for the main binary, so don't even think of using them here
-# CXXFLAGS := @CXXFLAGS@
+# CXXFLAGS are for the main binary, so don't use them here, use MODFLAGS instead
 MODFLAGS := @MODFLAGS@
 LDFLAGS  := @LDFLAGS@
 INCLUDES := @INCLUDES@ -I..
