@@ -330,6 +330,18 @@ void CChan::ModeChange(const CString& sModes, const CString& sOpNick) {
 					break;
 			}
 
+#ifdef _MODULES
+			bool bNoChange;
+			if (bList) {
+				bNoChange = false;
+			} else if (bAdd) {
+				bNoChange = HasMode(uMode) && GetModeArg(uMode) == sArg;
+			} else {
+				bNoChange = !HasMode(uMode);
+			}
+			MODULECALL(OnMode(*pOpNick, *this, uMode, sArg, bAdd, bNoChange), m_pUser, NULL, );
+#endif
+
 			if (!bList) {
 				(bAdd) ? AddMode(uMode, sArg) : RemMode(uMode, sArg);
 			}
@@ -372,10 +384,6 @@ bool CChan::HasMode(unsigned char uMode) const {
 }
 
 bool CChan::AddMode(unsigned char uMode, const CString& sArg) {
-	if (HasMode(uMode)) {
-		return false;
-	}
-
 	m_musModes[uMode] = sArg;
 	return true;
 }
