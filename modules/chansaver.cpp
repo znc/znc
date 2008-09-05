@@ -40,16 +40,17 @@ public:
 			m_bWriteConf = false;
 		}
 
-		if (sLine.Token(1) == "324" && sLine.Token(4).find("k") != CString::npos) {
-			CChan* pChan = m_pUser->FindChan(sLine.Token(3));
-
-			if (pChan) {
-				pChan->SetInConfig(true);
-				m_bWriteConf = true;
-			}
-		}
-
 		return CONTINUE;
+	}
+
+	virtual void OnMode(const CNick& OpNick, CChan& Channel, char uMode, const CString& sArg, bool bAdded, bool bNoChange) {
+		// This is called when we join (ZNC requests the channel modes
+		// on join) *and* when someone changes the channel keys.
+		if (uMode != 'k' || bNoChange || !bAdded)
+			return;
+
+		Channel.SetKey(sArg);
+		m_bWriteConf = true;
 	}
 
 	virtual void OnJoin(const CNick& Nick, CChan& Channel) {
