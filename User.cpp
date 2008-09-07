@@ -43,7 +43,6 @@ CUser::CUser(const CString& sUserName) {
 	m_uMaxJoinTries = 0;
 	m_uMaxJoins = 5;
 	m_bKeepBuffer = false;
-	m_bAutoCycle = true;
 	m_bBeingDeleted = false;
 	m_sTimestampFormat = "[%H:%M:%S]";
 	m_bAppendTimestamp = false;
@@ -419,7 +418,6 @@ bool CUser::Clone(const CUser& User, CString& sErrorRet, bool bCloneChans) {
 
 	// Flags
 	SetKeepBuffer(User.KeepBuffer());
-	SetAutoCycle(User.AutoCycle());
 	SetMultiClients(User.MultiClients());
 	SetBounceDCCs(User.BounceDCCs());
 	SetUseClientIP(User.UseClientIP());
@@ -577,7 +575,6 @@ bool CUser::WriteConfig(CFile& File) {
 	PrintLine(File, "KeepBuffer", CString((KeepBuffer()) ? "true" : "false"));
 	PrintLine(File, "MultiClients", CString((MultiClients()) ? "true" : "false"));
 	PrintLine(File, "BounceDCCs", CString((BounceDCCs()) ? "true" : "false"));
-	PrintLine(File, "AutoCycle", CString((AutoCycle()) ? "true" : "false"));
 	PrintLine(File, "DenyLoadMod", CString((DenyLoadMod()) ? "true" : "false"));
 	PrintLine(File, "Admin", CString((IsAdmin()) ? "true" : "false"));
 	PrintLine(File, "DenySetVHost", CString((DenySetVHost()) ? "true" : "false"));
@@ -1036,7 +1033,6 @@ void CUser::SetIRCServer(const CString& s) { m_sIRCServer = s; }
 void CUser::SetQuitMsg(const CString& s) { m_sQuitMsg = s; }
 void CUser::SetBufferCount(unsigned int u) { m_uBufferCount = u; }
 void CUser::SetKeepBuffer(bool b) { m_bKeepBuffer = b; }
-void CUser::SetAutoCycle(bool b) { m_bAutoCycle = b; }
 
 void CUser::CheckIRCConnect()
 {
@@ -1114,5 +1110,4 @@ CString CUser::GetQuitMsg() const { return (!m_sQuitMsg.empty()) ? m_sQuitMsg : 
 const MCString& CUser::GetCTCPReplies() const { return m_mssCTCPReplies; }
 unsigned int CUser::GetBufferCount() const { return m_uBufferCount; }
 bool CUser::KeepBuffer() const { return m_bKeepBuffer; }
-bool CUser::AutoCycle() const { return m_bAutoCycle; }
 // !Getters

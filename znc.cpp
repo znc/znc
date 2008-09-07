@@ -1134,7 +1134,9 @@ bool CZNC::DoRehash(CString& sError)
 						pChan->SetDetached((sValue.CaseCmp("true") == 0));
 						continue;
 					} else if (sName.CaseCmp("AutoCycle") == 0) {
-						pChan->SetAutoCycle((sValue.CaseCmp("true") == 0));
+						if (sValue.CaseCmp("true") == 0) {
+							CUtils::PrintError("WARNING: AutoCycle has been removed, instead try -> LoadModule = autocycle " + pChan->GetName());
+						}
 						continue;
 					} else if (sName.CaseCmp("Key") == 0) {
 						pChan->SetKey(sValue);
@@ -1150,9 +1152,6 @@ bool CZNC::DoRehash(CString& sError)
 					} else if (sName.CaseCmp("KeepBuffer") == 0) {
 						pUser->SetKeepBuffer((sValue.CaseCmp("true") == 0));
 						continue;
-					} else if (sName.CaseCmp("AutoCycle") == 0) {
-						pUser->SetAutoCycle((sValue.CaseCmp("true") == 0));
-						continue;
 					} else if (sName.CaseCmp("Nick") == 0) {
 						pUser->SetNick(sValue);
 						continue;
@@ -1167,6 +1166,11 @@ bool CZNC::DoRehash(CString& sError)
 						continue;
 					} else if (sName.CaseCmp("AwaySuffix") == 0) {
 						CUtils::PrintMessage("WARNING: AwaySuffix has been depricated, instead try -> LoadModule = awaynick %nick%_" + sValue);
+						continue;
+					} else if (sName.CaseCmp("AutoCycle") == 0) {
+						if (sValue.CaseCmp("true") == 0) {
+							CUtils::PrintError("WARNING: AutoCycle has been removed, instead try -> LoadModule = autocycle");
+						}
 						continue;
 					} else if (sName.CaseCmp("Pass") == 0) {
 						// There are different formats for this available:

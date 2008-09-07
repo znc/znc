@@ -133,7 +133,6 @@ public:
 	bool AddCTCPReply(const CString& sCTCP, const CString& sReply);
 	void SetBufferCount(unsigned int u);
 	void SetKeepBuffer(bool b);
-	void SetAutoCycle(bool b);
 	void SetChanPrefixes(const CString& s) { m_sChanPrefixes = s; }
 	void SetBeingDeleted(bool b) { m_bBeingDeleted = b; }
 	void SetTimestampFormat(const CString& s) { m_sTimestampFormat = s; }
@@ -187,7 +186,6 @@ public:
 	const MCString& GetCTCPReplies() const;
 	unsigned int GetBufferCount() const;
 	bool KeepBuffer() const;
-	bool AutoCycle() const;
 	bool IsBeingDeleted() const { return m_bBeingDeleted; }
 	bool HasServers() const { return m_vServers.size() > 0; }
 	float GetTimezoneOffset() const { return m_fTimezoneOffset; }
@@ -234,7 +232,6 @@ protected:
 	bool				m_bAdmin;
 	bool				m_bDenySetVHost;
 	bool				m_bKeepBuffer;
-	bool				m_bAutoCycle;
 	bool				m_bBeingDeleted;
 	bool				m_bAppendTimestamp;
 	bool				m_bPrependTimestamp;

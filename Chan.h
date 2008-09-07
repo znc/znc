@@ -112,7 +112,6 @@ public:
 	void SetDefaultModes(const CString& s) { m_sDefaultModes = s; }
 	void SetBufferCount(unsigned int u) { m_uBufferCount = u; }
 	void SetKeepBuffer(bool b) { m_bKeepBuffer = b; }
-	void SetAutoCycle(bool b) { m_bAutoCycle = b; }
 	void SetWhoDone(bool b = true) { m_bWhoDone = b; }
 	void SetDetached(bool b = true) { m_bDetached = b; }
 	void SetInConfig(bool b) { m_bInConfig = b; }
@@ -143,7 +142,6 @@ public:
 	unsigned int GetNickCount() const { return m_msNicks.size(); }
 	unsigned int GetBufferCount() const { return m_uBufferCount; }
 	bool KeepBuffer() const { return m_bKeepBuffer; }
-	bool AutoCycle() const { return m_bAutoCycle; }
 	bool IsDetached() const { return m_bDetached; }
 	bool InConfig() const { return m_bInConfig; }
 	unsigned long GetCreationDate() const { return m_ulCreationDate; }
@@ -156,7 +154,6 @@ protected:
 	bool				m_bIsOn;
 	bool				m_bWhoDone;
 	bool				m_bKeepBuffer;
-	bool				m_bAutoCycle;
 	bool				m_bInConfig;
 	bool				m_bDisabled;
 	CString				m_sName;

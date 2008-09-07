@@ -684,10 +684,7 @@ bool CWebAdminSock::ChanPage(CString& sPageRet, CChan* pChan) {
 			m_Template["InConfig"] = "true";
 		}
 
-		CTemplate& o1 = m_Template.AddRow("OptionLoop");
-		o1["Name"] = "autocycle";
-		o1["DisplayName"] = "Auto Cycle";
-		if ((pChan && pChan->AutoCycle()) || (!pChan && m_pUser->AutoCycle())) { o1["Checked"] = "true"; }
+		/* o1 used to be AutoCycle which was removed */
 
 		CTemplate& o2 = m_Template.AddRow("OptionLoop");
 		o2["Name"] = "keepbuffer";
@@ -723,7 +720,6 @@ bool CWebAdminSock::ChanPage(CString& sPageRet, CChan* pChan) {
 	pChan->SetDefaultModes(GetParam("defmodes"));
 	pChan->SetBufferCount(GetParam("buffercount").ToUInt());
 	pChan->SetInConfig(GetParam("save").ToBool());
-	pChan->SetAutoCycle(GetParam("autocycle").ToBool());
 	pChan->SetKeepBuffer(GetParam("keepbuffer").ToBool());
 
 	bool bDetached = GetParam("detached").ToBool();
@@ -891,10 +887,7 @@ bool CWebAdminSock::UserPage(CString& sPageRet, CUser* pUser) {
 		o1["DisplayName"] = "Keep Buffer";
 		if (!pUser || pUser->KeepBuffer()) { o1["Checked"] = "true"; }
 
-		CTemplate& o2 = m_Template.AddRow("OptionLoop");
-		o2["Name"] = "autocycle";
-		o2["DisplayName"] = "Auto Cycle";
-		if (!pUser || pUser->AutoCycle()) { o2["Checked"] = "true"; }
+		/* o2 used to be auto cycle which was removed */
 
 		CTemplate& o4 = m_Template.AddRow("OptionLoop");
 		o4["Name"] = "multiclients";
@@ -1112,7 +1105,6 @@ CUser* CWebAdminSock::GetNewUser(CString& sPageRet, CUser* pUser) {
 	pNewUser->SetKeepBuffer(GetParam("keepbuffer").ToBool());
 	pNewUser->SetMultiClients(GetParam("multiclients").ToBool());
 	pNewUser->SetBounceDCCs(GetParam("bouncedccs").ToBool());
-	pNewUser->SetAutoCycle(GetParam("autocycle").ToBool());
 	pNewUser->SetUseClientIP(GetParam("useclientip").ToBool());
 	pNewUser->SetTimestampAppend(GetParam("appendtimestamp").ToBool());
 	pNewUser->SetTimestampPrepend(GetParam("prependtimestamp").ToBool());

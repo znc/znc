@@ -22,7 +22,6 @@ CChan::CChan(const CString& sName, CUser* pUser, bool bInConfig) {
 
 	m_bInConfig = bInConfig;
 	m_Nick.SetUser(pUser);
-	m_bAutoCycle = m_pUser->AutoCycle();
 	m_bDetached = false;
 	m_uBufferCount = m_pUser->GetBufferCount();
 	m_bKeepBuffer = m_pUser->KeepBuffer();
@@ -63,8 +62,6 @@ bool CChan::WriteConfig(CFile& File) {
 		File.Write("\t\tKeepBuffer = " + CString((KeepBuffer()) ? "true" : "false") + "\n");
 	if (IsDetached())
 		File.Write("\t\tDetached   = true\n");
-	if (m_pUser->AutoCycle() != AutoCycle())
-		File.Write("\t\tAutoCycle  = " + CString((AutoCycle()) ? "true" : "false") + "\n");
 	if (!GetKey().empty()) { File.Write("\t\tKey        = " + GetKey() + "\n"); }
 	if (!GetDefaultModes().empty()) { File.Write("\t\tModes      = " + GetDefaultModes() + "\n"); }
 
@@ -76,7 +73,6 @@ void CChan::Clone(CChan& chan) {
 	// We assume that m_sName and m_pUser are equal
 	SetBufferCount(chan.GetBufferCount());
 	SetKeepBuffer(chan.KeepBuffer());
-	SetAutoCycle(chan.AutoCycle());
 	SetKey(chan.GetKey());
 	SetDefaultModes(chan.GetDefaultModes());
 
@@ -356,10 +352,6 @@ CString CChan::GetOptions() const {
 		sRet += (sRet.empty()) ? "Detached" : ", Detached";
 	}
 
-	if (AutoCycle()) {
-		sRet += (sRet.empty()) ? "AutoCycle" : ", AutoCycle";
-	}
-
 	if (KeepBuffer()) {
 		sRet += (sRet.empty()) ? "KeepBuffer" : ", KeepBuffer";
 	}
@@ -529,16 +521,6 @@ bool CChan::RemNick(const CString& sNick) {
 
 	delete it->second;
 	m_msNicks.erase(it);
-
-	if (m_msNicks.size() == 1) {
-		CNick* pNick = m_msNicks.begin()->second;
-
-		if (!pNick->HasPerm(Op) && pNick->GetNick().CaseCmp(m_pUser->GetCurNick()) == 0) {
-			if (AutoCycle()) {
-				Cycle();
-			}
-		}
-	}
 
 	return true;
 }
