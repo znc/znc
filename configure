@@ -1239,12 +1239,10 @@ Optional Features:
 Optional Packages:
   --with-PACKAGE[=ARG]    use PACKAGE [ARG=yes]
   --without-PACKAGE       do not use PACKAGE (same as --with-PACKAGE=no)
-  --with-openssl=/path/to/openssl
-
-  --with-module-prefix=/path/to/moduledir
-
-  --with-module-data-prefix=/path/to/moduledir
-
+  --with-openssl=DIR      openssl's installation prefix
+  --with-module-prefix    module object code [LIBDIR/znc]
+  --with-module-data-prefix=DIR
+                          static module data (webadmin skins) [DATADIR/znc]
 
 Some influential environment variables:
   CXX         C++ compiler command
