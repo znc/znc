@@ -266,8 +266,20 @@ void CClient::UserCommand(const CString& sLine) {
 		}
 	} else if (sCommand.CaseCmp("DISCONNECT") == 0) {
 		if (m_pUser) {
-			if (m_pIRCSock)
+			// m_pIRCSock is only set after the low level connection
+			// to the IRC server was established. Before this we can
+			// only find the IRC socket by its name.
+			if (m_pIRCSock) {
 				m_pIRCSock->Quit();
+			} else {
+				Csock* pIRCSock;
+				CString sSockName = "IRC::" + m_pUser->GetUserName();
+				// This is *slow*, we try to avoid doing this
+				pIRCSock = CZNC::Get().GetManager().FindSockByName(sSockName);
+				if (pIRCSock)
+					pIRCSock->Close();
+			}
+
 			m_pUser->SetIRCConnectEnabled(false);
 			PutStatus("Disconnected from IRC. Use 'connect' to reconnect.");
 			return;
