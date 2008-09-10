@@ -133,8 +133,8 @@ public:
 			const set<CString>& ssNicks = (*it)->GetNicks();
 
 			if (ssNicks.find(User.GetUserName()) != ssNicks.end()) {										// If the user is on this chan
-				User.PutUser(":*" + GetModName() + "!znc@rottenboy.com KICK " + sChannel + " " + sNick + " :User Deleted");
-				PutChan(ssNicks, ":*" + GetModName() + "!znc@rottenboy.com KICK " + sChannel + " ?" + sNick + " :User Deleted", false);
+				User.PutUser(":*" + GetModName() + "!znc@znc.in KICK " + sChannel + " " + sNick + " :User Deleted");
+				PutChan(ssNicks, ":*" + GetModName() + "!znc@znc.in KICK " + sChannel + " ?" + sNick + " :User Deleted", false);
 			}
 		}
 
@@ -201,7 +201,7 @@ public:
 				}
 
 				SendNickList(m_pUser, ssNicks, (*it)->GetName());
-				PutChan(ssNicks, ":*" + GetModName() + "!znc@rottenboy.com MODE " + (*it)->GetName() + " +" + CString(m_pUser->IsAdmin() ? "o" : "v") + " ?" + m_pUser->GetUserName(), true);
+				PutChan(ssNicks, ":*" + GetModName() + "!znc@znc.in MODE " + (*it)->GetName() + " +" + CString(m_pUser->IsAdmin() ? "o" : "v") + " ?" + m_pUser->GetUserName(), true);
 			}
 		}
 	}
@@ -212,7 +212,7 @@ public:
 				const set<CString>& ssNicks = (*it)->GetNicks();
 
 				if (ssNicks.find(m_pUser->GetUserName()) != ssNicks.end()) {
-					PutChan(ssNicks, ":*" + GetModName() + "!znc@rottenboy.com MODE " + (*it)->GetName() + " -ov ?" + m_pUser->GetUserName() + " ?" + m_pUser->GetUserName(), true);
+					PutChan(ssNicks, ":*" + GetModName() + "!znc@znc.in MODE " + (*it)->GetName() + " -ov ?" + m_pUser->GetUserName() + " ?" + m_pUser->GetUserName(), true);
 				}
 			}
 		}
@@ -345,7 +345,7 @@ public:
 			SendNickList(pUser, ssNicks, pChannel->GetName());
 
 			if (pUser->IsAdmin()) {
-				PutChan(ssNicks, ":*" + GetModName() + "!znc@rottenboy.com MODE " + pChannel->GetName() + " +o ?" + pUser->GetUserName(), (pUser == m_pUser) ? false : true, pUser);
+				PutChan(ssNicks, ":*" + GetModName() + "!znc@znc.in MODE " + pChannel->GetName() + " +o ?" + pUser->GetUserName(), (pUser == m_pUser) ? false : true, pUser);
 			}
 		}
 	}
