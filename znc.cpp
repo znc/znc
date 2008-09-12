@@ -1753,18 +1753,27 @@ protected:
 			it++;
 			m_uiPosNextUser = (m_uiPosNextUser + 1) % uiUserCount;
 
-			// Is this user disconnected and does he want to connect?
-			if (pUser->GetIRCSock() == NULL && pUser->GetIRCConnectEnabled()) {
-				// The timer runs until it once didn't find any users to connect
-				bUsersLeft = true;
+			// Is this user disconnected?
+			if (pUser->GetIRCSock() != NULL)
+				continue;
 
-				DEBUG_ONLY(cout << "Connecting user [" << pUser->GetUserName()
-						<< "]" << endl);
+			// Does this user want to connect?
+			if (!pUser->GetIRCConnectEnabled())
+				continue;
 
-				if (CZNC::Get().ConnectUser(pUser))
-					// User connecting, wait until next time timer fires
-					return;
-			}
+			// Does this user have any servers?
+			if (!pUser->HasServers())
+				continue;
+
+			// The timer runs until it once didn't find any users to connect
+			bUsersLeft = true;
+
+			DEBUG_ONLY(cout << "Connecting user [" << pUser->GetUserName()
+					<< "]" << endl);
+
+			if (CZNC::Get().ConnectUser(pUser))
+				// User connecting, wait until next time timer fires
+				return;
 		}
 
 		if (bUsersLeft == false) {
