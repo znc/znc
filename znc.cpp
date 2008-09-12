@@ -210,8 +210,6 @@ bool CZNC::HandleUserDeletion()
 int CZNC::Loop() {
 	while (true) {
 		CString sError;
-		map<CString, CUser*>::iterator it;
-		map<CString, CUser*>::iterator end;
 
 		if (GetNeedRehash()) {
 			SetNeedRehash(false);
