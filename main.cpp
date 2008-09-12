@@ -55,6 +55,7 @@ static void die(int sig) {
 }
 
 static void rehash(int sig) {
+	CUtils::PrintMessage("Caught SIGHUP");
 	CZNC::Get().SetNeedRehash(true);
 }
 
