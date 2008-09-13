@@ -10,7 +10,7 @@
 #define _MAIN_H
 
 // Keep the number in sync with configure.in (and also with configure)
-#define VERSION 0.059
+#define VERSION 0.060
 
 // You can add -DVERSION_EXTRA="stuff" to your CXXFLAGS!
 #ifndef VERSION_EXTRA
