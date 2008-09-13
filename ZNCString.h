@@ -6,8 +6,8 @@
  * by the Free Software Foundation.
  */
 
-#ifndef X_STRING_H
-#define X_STRING_H
+#ifndef ZNCSTRING_H
+#define ZNCSTRING_H
 
 #include <map>
 #include <set>
@@ -181,4 +181,4 @@ public:
 	virtual CString& Decode(CString& sValue);
 };
 
-#endif // !X_STRING_H
+#endif // !ZNCSTRING_H

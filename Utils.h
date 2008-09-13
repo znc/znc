@@ -9,7 +9,7 @@
 #ifndef _UTILS_H
 #define _UTILS_H
 
-#include "String.h"
+#include "ZNCString.h"
 #include <assert.h>
 #include <map>
 #include <sys/file.h>

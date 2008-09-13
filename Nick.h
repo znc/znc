@@ -9,7 +9,7 @@
 #ifndef _NICK_H
 #define _NICK_H
 
-#include "String.h"
+#include "ZNCString.h"
 #include <set>
 #include <vector>
 

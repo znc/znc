@@ -9,7 +9,7 @@
 #ifndef _SERVER_H
 #define _SERVER_H
 
-#include "String.h"
+#include "ZNCString.h"
 
 class CServer {
 public:

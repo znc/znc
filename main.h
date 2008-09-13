@@ -68,6 +68,6 @@ using std::endl;
 #warning PATH_MAX is undefined
 #endif
 
-#include "String.h"
+#include "ZNCString.h"
 
 #endif // !_MAIN_H

@@ -6,7 +6,7 @@
  * by the Free Software Foundation.
  */
 
-#include "String.h"
+#include "ZNCString.h"
 #include "FileUtils.h"
 #include "MD5.h"
 #include "Utils.h"
@@ -1102,17 +1102,3 @@ CString& MCString::Decode(CString& sValue) {
 	sValue = sTmp;
 	return sValue;
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-

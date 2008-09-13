@@ -9,7 +9,7 @@
 #ifndef _BUFFER_H
 #define _BUFFER_H
 
-#include "String.h"
+#include "ZNCString.h"
 #include <vector>
 
 using std::vector;

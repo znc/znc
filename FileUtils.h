@@ -10,7 +10,7 @@
 #define _FILEUTILS_H
 
 #include "Csocket.h"
-#include "String.h"
+#include "ZNCString.h"
 #include <dirent.h>
 #include <map>
 #include <signal.h>
