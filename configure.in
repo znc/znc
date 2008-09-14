@@ -113,8 +113,8 @@ if test -z "$NOSSL"; then
 		appendInc -I${OPENSSL}/include
 	fi
 
-	AC_CHECK_LIB( crypto, BIO_new,,AC_ERROR([Could not find libcrypto. Try --disable-openssl]), )
 	AC_CHECK_LIB( ssl, SSL_shutdown,,AC_ERROR([Could not find libssl. Try --disable-openssl]), )
+	AC_CHECK_LIB( crypto, BIO_new,,AC_ERROR([Could not find libcrypto. Try --disable-openssl]), )
 
 	if test -z "$NOSSL"; then
 		appendCXX -DHAVE_LIBSSL
