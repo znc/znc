@@ -70,7 +70,7 @@ install_metadirs: create_install_dir
 clean:
 	rm -rf $(CLEAN)
 
-%.so: %.cpp
+%.so: %.cpp Makefile
 	@mkdir -p .depend
 	$(CXX) $(MODFLAGS) $(INCLUDES) $(LDFLAGS) -shared -o $@ $< $($(basename $<)FLAGS) -MMD -MF .depend/$<.dep
 

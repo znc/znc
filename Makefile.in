@@ -48,7 +48,7 @@ clean:
 distclean: clean
 	rm -rf $(DISTCLEAN)
 
-%.o: %.cpp
+%.o: %.cpp Makefile
 	@mkdir -p .depend
 	$(CXX) $(CXXFLAGS) $(INCLUDES) -c -o $@ $< -MMD -MF .depend/$<.dep
 
