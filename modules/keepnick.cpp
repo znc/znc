@@ -135,11 +135,11 @@ public:
 			PutModule("No longer trying to get your primary nick");
 		} else if (sCmd == "STATE") {
 			if (m_pTimer)
-				PutUser("Currently trying to get your primary nick");
+				PutModule("Currently trying to get your primary nick");
 			else
-				PutUser("Currently disabled, try 'enable'");
+				PutModule("Currently disabled, try 'enable'");
 		} else {
-			PutUser("Commands: Enable, Disable, State");
+			PutModule("Commands: Enable, Disable, State");
 		}
 	}
 
