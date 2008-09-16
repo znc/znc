@@ -1235,6 +1235,8 @@ Optional Features:
   --disable-openssl       disable openssl
   --disable-perl          disable perl
   --enable-sasl           enable sasl
+  --disable-optimization  Disable some compiler optimizations to decrease
+                          memory usage while compiling
 
 Optional Packages:
   --with-PACKAGE[=ARG]    use PACKAGE [ARG=yes]
@@ -2509,13 +2511,22 @@ if test "${enable_sasl+set}" = set; then
   enableval=$enable_sasl; if test "$enableval" = "yes" ; then SASL=1; fi
 fi
 
+# Check whether --enable-optimization was given.
+if test "${enable_optimization+set}" = set; then
+  enableval=$enable_optimization; OPTIMIZE="$enableval"
+else
+  OPTIMIZE="yes"
+fi
+
 
 if test "$DEBUG" != "no"; then
 	appendCXX -ggdb -D_DEBUG
 	# These enable some debug options in g++'s STL, e.g. invalid use of iterators
 	appendCXX -D_GLIBCXX_DEBUG -D_GLIBCXX_DEBUG_PEDANTIC -D_GLIBCXX_CONCEPT_CHECKS
 else
-	appendCXX -O2 -fomit-frame-pointer
+	if test "x$OPTIMIZE" = "xyes"; then
+		appendCXX -O2
+	fi
 fi
 
 if test "$IPV6" != "no"; then
