@@ -3402,9 +3402,7 @@ if test "${ac_cv_lib_crypto_BIO_new+set}" = set; then
   echo $ECHO_N "(cached) $ECHO_C" >&6
 else
   ac_check_lib_save_LIBS=$LIBS
-LIBS="-lcrypto eg. libssl-dev." >&5
-echo "$as_me: error: Could not find libcrypto. Try --disable-openssl or install the
-			       appropriate dependencies $LIBS"
+LIBS="-lcrypto  $LIBS"
 cat >conftest.$ac_ext <<_ACEOF
 /* confdefs.h.  */
 _ACEOF
@@ -3468,7 +3466,10 @@ _ACEOF
 
 else
   { { echo "$as_me:$LINENO: error: Could not find libcrypto. Try --disable-openssl or install the
-			       appropriate dependencies
+			       appropriate dependencies eg. libssl-dev." >&5
+echo "$as_me: error: Could not find libcrypto. Try --disable-openssl or install the
+			       appropriate dependencies eg. libssl-dev." >&2;}
+   { (exit 1); exit 1; }; }
 fi
 
 
@@ -3478,9 +3479,7 @@ if test "${ac_cv_lib_ssl_SSL_shutdown+set}" = set; then
   echo $ECHO_N "(cached) $ECHO_C" >&6
 else
   ac_check_lib_save_LIBS=$LIBS
-LIBS="-lssl eg. libssl-dev." >&5
-echo "$as_me: error: Could not find libssl. Try --disable-openssl or install the
-			       appropriate dependencies $LIBS"
+LIBS="-lssl  $LIBS"
 cat >conftest.$ac_ext <<_ACEOF
 /* confdefs.h.  */
 _ACEOF
@@ -3544,7 +3543,10 @@ _ACEOF
 
 else
   { { echo "$as_me:$LINENO: error: Could not find libssl. Try --disable-openssl or install the
-			       appropriate dependencies
+			       appropriate dependencies eg. libssl-dev." >&5
+echo "$as_me: error: Could not find libssl. Try --disable-openssl or install the
+			       appropriate dependencies eg. libssl-dev." >&2;}
+   { (exit 1); exit 1; }; }
 fi
 
 
