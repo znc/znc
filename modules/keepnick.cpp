@@ -124,6 +124,41 @@ public:
 		m_pTimer = NULL;
 	}
 
+	virtual EModRet OnUserRaw(CString& sLine) {
+		// We dont care if we are not connected to IRC
+		if (!m_pUser->IsIRCConnected())
+			return CONTINUE;
+
+		// We are trying to get the config nick and this is a /nick?
+		if (!m_pTimer || sLine.Token(0).CaseCmp("NICK") != 0)
+			return CONTINUE;
+
+		// Is the nick change for the nick we are trying to get?
+		CString sNick = sLine.Token(1);
+
+		// Don't even think of using spaces in your nick!
+		if (sNick.Left(1) == ":")
+			sNick.LeftChomp();
+
+		if (sNick.CaseCmp(GetNick()) != 0)
+			return CONTINUE;
+
+		// Indeed trying to change to this nick, generate a 433 for it.
+		// This way we can *always* block incoming 433s from the server.
+		PutUser(":" + m_pUser->GetIRCServer() + " 433 " + m_pUser->GetIRCNick().GetNick()
+				+ " " + sNick + " :ZNC is already trying to get this nickname");
+		return CONTINUE;
+	}
+
+	virtual EModRet OnRaw(CString& sLine) {
+		// Are we trying to get our primary nick and we caused this error?
+		// :irc.server.net 433 mynick badnick :Nickname is already in use.
+		if (m_pTimer && sLine.Token(1) == "433" && sLine.Token(3).CaseCmp(GetNick()) == 0)
+			return HALT;
+
+		return CONTINUE;
+	}
+
 	void OnModCommand(const CString& sCommand) {
 		CString sCmd = sCommand.AsUpper();
 
