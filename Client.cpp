@@ -336,8 +336,10 @@ void CClient::ReadLine(const CString& sData) {
 #endif
 
 		if (!m_pIRCSock) {
-			PutStatus("Your message to [" + sTarget + "] got lost, "
-					"you are not connected to IRC!");
+			// Some lagmeters do a NOTICE to their own nick, ignore those.
+			if (sTarget.CaseCmp(m_sNick) != 0)
+				PutStatus("Your notice to [" + sTarget + "] got lost, "
+						"you are not connected to IRC!");
 			return;
 		}
 
@@ -534,8 +536,10 @@ void CClient::ReadLine(const CString& sData) {
 		MODULECALL(OnUserMsg(sTarget, sMsg), m_pUser, this, return);
 
 		if (!m_pIRCSock) {
-			PutStatus("Your message to [" + sTarget + "] got lost, "
-					"you are not connected to IRC!");
+			// Some lagmeters do a PRIVMSG to their own nick, ignore those.
+			if (sTarget.CaseCmp(m_sNick) != 0)
+				PutStatus("Your message to [" + sTarget + "] got lost, "
+						"you are not connected to IRC!");
 			return;
 		}
 
