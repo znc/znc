@@ -17,6 +17,10 @@
 #include <sys/types.h>
 #include <unistd.h>
 
+// Required with GCC 4.3+ if openssl is disabled
+#include <cstring>
+#include <cstdlib>
+
 using std::stringstream;
 
 bool CUtils::stdoutIsTTY;
