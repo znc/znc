@@ -211,6 +211,9 @@ void CUser::UserConnected(CClient* pClient) {
 		while (m_RawBuffer.GetLine(GetIRCNick().GetNick(), sLine, uIdx++)) {
 			pClient->PutClient(sLine);
 		}
+
+		// The assumption is that the client got this nick from the 001 reply
+		pClient->SetNick(GetIRCNick().GetNick());
 	}
 
 	// Send the cached MOTD
