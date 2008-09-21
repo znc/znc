@@ -118,7 +118,7 @@ void CUser::IRCDisconnected() {
 	SetIRCServer("");
 
 	// Get the reconnect going
-	CZNC::Get().EnableConnectUser();
+	CheckIRCConnect();
 }
 
 CString CUser::ExpandString(const CString& sStr) const {
