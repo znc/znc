@@ -143,7 +143,7 @@ CString::CString(double i) : string() { stringstream s; s << i; *this = s.str();
 CString::CString(float i) : string() { stringstream s; s << i; *this = s.str(); }
 
 inline unsigned char* CString::strnchr(const unsigned char* src, unsigned char c, unsigned int iMaxBytes, unsigned char* pFill, unsigned int* piCount) const {
-    for (unsigned int a = 0; a < iMaxBytes && *src; a++, src++) {
+	for (unsigned int a = 0; a < iMaxBytes && *src; a++, src++) {
 		if (pFill) {
 			pFill[a] = *src;
 		}
@@ -169,7 +169,7 @@ inline unsigned char* CString::strnchr(const unsigned char* src, unsigned char c
 		*piCount = 0;
 	}
 
-    return NULL;
+	return NULL;
 }
 
 int CString::CaseCmp(const CString& s, u_long uLen) const {

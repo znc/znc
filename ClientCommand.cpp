@@ -390,34 +390,34 @@ void CClient::UserCommand(const CString& sLine) {
 		}
 	} else if (sCommand.CaseCmp("LISTSERVERS") == 0) {
 		if (m_pUser) {
-		    if (m_pUser->HasServers()) {
-			const vector<CServer*>& vServers = m_pUser->GetServers();
-			CTable Table;
-			Table.AddColumn("Host");
-			Table.AddColumn("Port");
-			Table.AddColumn("SSL");
-			Table.AddColumn("Pass");
+			if (m_pUser->HasServers()) {
+				const vector<CServer*>& vServers = m_pUser->GetServers();
+				CTable Table;
+				Table.AddColumn("Host");
+				Table.AddColumn("Port");
+				Table.AddColumn("SSL");
+				Table.AddColumn("Pass");
 
-			for (unsigned int a = 0; a < vServers.size(); a++) {
-				CServer* pServer = vServers[a];
-				Table.AddRow();
-				Table.SetCell("Host", pServer->GetName());
-				Table.SetCell("Port", CString(pServer->GetPort()));
-				Table.SetCell("SSL", (pServer->IsSSL()) ? "SSL" : "");
-				Table.SetCell("Pass", pServer->GetPass());
-			}
-
-			if (Table.size()) {
-				unsigned int uTableIdx = 0;
-				CString sTmp;
-
-				while (Table.GetLine(uTableIdx++, sTmp)) {
-					PutStatus(sTmp);
+				for (unsigned int a = 0; a < vServers.size(); a++) {
+					CServer* pServer = vServers[a];
+					Table.AddRow();
+					Table.SetCell("Host", pServer->GetName());
+					Table.SetCell("Port", CString(pServer->GetPort()));
+					Table.SetCell("SSL", (pServer->IsSSL()) ? "SSL" : "");
+					Table.SetCell("Pass", pServer->GetPass());
 				}
+
+				if (Table.size()) {
+					unsigned int uTableIdx = 0;
+					CString sTmp;
+
+					while (Table.GetLine(uTableIdx++, sTmp)) {
+						PutStatus(sTmp);
+					}
+				}
+			} else {
+				PutStatus("You don't have any servers added.");
 			}
-		    } else {
-			PutStatus("You don't have any servers added.");
-		    }
 		}
 	} else if (sCommand.CaseCmp("TOPICS") == 0) {
 		if (m_pUser) {
@@ -587,9 +587,9 @@ void CClient::UserCommand(const CString& sLine) {
 	} else if ((sCommand.CaseCmp("LISTMODS") == 0) || (sCommand.CaseCmp("LISTMODULES") == 0)) {
 #ifdef _MODULES
 		if (m_pUser->IsAdmin()) {
-		    CModules& GModules = CZNC::Get().GetModules();
+			CModules& GModules = CZNC::Get().GetModules();
 
-		    if (!GModules.size()) {
+			if (!GModules.size()) {
 				PutStatus("No global modules loaded.");
 			} else {
 				CTable GTable;
@@ -711,18 +711,18 @@ void CClient::UserCommand(const CString& sLine) {
 		bool bGlobal = false;
 
 		if (sLine.Token(1).CaseCmp("-global") == 0) {
-		    sMod = sLine.Token(2);
+			sMod = sLine.Token(2);
 
-		    if (!m_pUser->IsAdmin()) {
+			if (!m_pUser->IsAdmin()) {
 				PutStatus("Unable to load global module [" + sMod + "] Access Denied.");
 				return;
-		    }
+			}
 
-		    sArgs = sLine.Token(3, true);
-		    bGlobal = true;
+			sArgs = sLine.Token(3, true);
+			bGlobal = true;
 		} else {
-		    sMod = sLine.Token(1);
-		    sArgs = sLine.Token(2, true);
+			sMod = sLine.Token(1);
+			sArgs = sLine.Token(2, true);
 		}
 
 		if (m_pUser->DenyLoadMod()) {
@@ -758,16 +758,16 @@ void CClient::UserCommand(const CString& sLine) {
 		bool bGlobal = false;
 
 		if (sLine.Token(1).CaseCmp("-global") == 0) {
-		    sMod = sLine.Token(2);
+			sMod = sLine.Token(2);
 
-		    if (!m_pUser->IsAdmin()) {
+			if (!m_pUser->IsAdmin()) {
 				PutStatus("Unable to unload global module [" + sMod + "] Access Denied.");
 				return;
-		    }
+			}
 
-		    bGlobal = true;
+			bGlobal = true;
 		} else
-		    sMod = sLine.Token(1);
+			sMod = sLine.Token(1);
 
 		if (m_pUser->DenyLoadMod()) {
 			PutStatus("Unable to unload [" + sMod + "] Access Denied.");
@@ -782,9 +782,9 @@ void CClient::UserCommand(const CString& sLine) {
 		CString sModRet;
 
 		if (bGlobal) {
-		    CZNC::Get().GetModules().UnloadModule(sMod, sModRet);
+			CZNC::Get().GetModules().UnloadModule(sMod, sModRet);
 		} else {
-		    m_pUser->GetModules().UnloadModule(sMod, sModRet);
+			m_pUser->GetModules().UnloadModule(sMod, sModRet);
 		}
 
 		PutStatus(sModRet);
@@ -798,18 +798,18 @@ void CClient::UserCommand(const CString& sLine) {
 		bool bGlobal = false;
 
 		if (sLine.Token(1).CaseCmp("-global") == 0) {
-		    sMod = sLine.Token(2);
+			sMod = sLine.Token(2);
 
-		    if (!m_pUser->IsAdmin()) {
+			if (!m_pUser->IsAdmin()) {
 				PutStatus("Unable to reload global module [" + sMod + "] Access Denied.");
 				return;
-		    }
+			}
 
-		    sArgs = sLine.Token(3, true);
-		    bGlobal = true;
+			sArgs = sLine.Token(3, true);
+			bGlobal = true;
 		} else {
-		    sMod = sLine.Token(1);
-		    sArgs = sLine.Token(2, true);
+			sMod = sLine.Token(1);
+			sArgs = sLine.Token(2, true);
 		}
 
 		if (m_pUser->DenyLoadMod()) {
@@ -825,9 +825,9 @@ void CClient::UserCommand(const CString& sLine) {
 		CString sModRet;
 
 		if (bGlobal) {
-		    CZNC::Get().GetModules().ReloadModule(sMod, sArgs, NULL, sModRet);
+			CZNC::Get().GetModules().ReloadModule(sMod, sArgs, NULL, sModRet);
 		} else {
-		    m_pUser->GetModules().ReloadModule(sMod, sArgs, m_pUser, sModRet);
+			m_pUser->GetModules().ReloadModule(sMod, sArgs, m_pUser, sModRet);
 		}
 
 		PutStatus(sModRet);
