@@ -592,6 +592,7 @@ void CClient::UserCommand(const CString& sLine) {
 			if (!GModules.size()) {
 				PutStatus("No global modules loaded.");
 			} else {
+				PutStatus("Global modules:");
 				CTable GTable;
 				GTable.AddColumn("Name");
 				GTable.AddColumn("Description");
@@ -604,7 +605,6 @@ void CClient::UserCommand(const CString& sLine) {
 
 				unsigned int uTableIdx = 0;
 				CString sTmp;
-
 				while (GTable.GetLine(uTableIdx++, sTmp)) {
 					PutStatus(sTmp);
 				}
@@ -616,23 +616,23 @@ void CClient::UserCommand(const CString& sLine) {
 
 			if (!Modules.size()) {
 				PutStatus("You have no modules loaded.");
-				return;
-			}
+			} else {
+				PutStatus("User modules:");
+				CTable Table;
+				Table.AddColumn("Name");
+				Table.AddColumn("Description");
 
-			CTable Table;
-			Table.AddColumn("Name");
-			Table.AddColumn("Description");
+				for (unsigned int b = 0; b < Modules.size(); b++) {
+					Table.AddRow();
+					Table.SetCell("Name", Modules[b]->GetModName());
+					Table.SetCell("Description", Modules[b]->GetDescription().Ellipsize(128));
+				}
 
-			for (unsigned int b = 0; b < Modules.size(); b++) {
-				Table.AddRow();
-				Table.SetCell("Name", Modules[b]->GetModName());
-				Table.SetCell("Description", Modules[b]->GetDescription().Ellipsize(128));
-			}
-
-			unsigned int uTableIdx = 0;
-			CString sTmp;
-			while (Table.GetLine(uTableIdx++, sTmp)) {
-				PutStatus(sTmp);
+				unsigned int uTableIdx = 0;
+				CString sTmp;
+				while (Table.GetLine(uTableIdx++, sTmp)) {
+					PutStatus(sTmp);
+				}
 			}
 		}
 #else
@@ -653,6 +653,7 @@ void CClient::UserCommand(const CString& sLine) {
 			if (!ssGlobalMods.size()) {
 				PutStatus("No global modules available.");
 			} else {
+				PutStatus("Global modules:");
 				CTable GTable;
 				GTable.AddColumn("Name");
 				GTable.AddColumn("Description");
@@ -680,25 +681,25 @@ void CClient::UserCommand(const CString& sLine) {
 
 			if (!ssUserMods.size()) {
 				PutStatus("No user modules available.");
-				return;
-			}
+			} else {
+				PutStatus("User modules:");
+				CTable Table;
+				Table.AddColumn("Name");
+				Table.AddColumn("Description");
+				set<CModInfo>::iterator it;
 
-			CTable Table;
-			Table.AddColumn("Name");
-			Table.AddColumn("Description");
-			set<CModInfo>::iterator it;
+				for (it = ssUserMods.begin(); it != ssUserMods.end(); it++) {
+					const CModInfo& Info = *it;
+					Table.AddRow();
+					Table.SetCell("Name", (m_pUser->GetModules().FindModule(Info.GetName()) ? "*" : " ") + Info.GetName());
+					Table.SetCell("Description", Info.GetDescription().Ellipsize(128));
+				}
 
-			for (it = ssUserMods.begin(); it != ssUserMods.end(); it++) {
-				const CModInfo& Info = *it;
-				Table.AddRow();
-				Table.SetCell("Name", (m_pUser->GetModules().FindModule(Info.GetName()) ? "*" : " ") + Info.GetName());
-				Table.SetCell("Description", Info.GetDescription().Ellipsize(128));
-			}
-
-			unsigned int uTableIdx = 0;
-			CString sTmp;
-			while (Table.GetLine(uTableIdx++, sTmp)) {
-				PutStatus(sTmp);
+				unsigned int uTableIdx = 0;
+				CString sTmp;
+				while (Table.GetLine(uTableIdx++, sTmp)) {
+					PutStatus(sTmp);
+				}
 			}
 		}
 #else
