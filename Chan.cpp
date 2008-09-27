@@ -191,9 +191,9 @@ CString CChan::GetModeForNames() const {
 
 	for (map<unsigned char, CString>::const_iterator it = m_musModes.begin(); it != m_musModes.end(); it++) {
 		if (it->first == 's') {
-		    sMode = "@";
+			sMode = "@";
 		} else if ((it->first == 'p') && sMode.empty()){
-		    sMode = "*";
+			sMode = "*";
 		}
 	}
 

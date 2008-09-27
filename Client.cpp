@@ -265,15 +265,15 @@ void CClient::ReadLine(const CString& sData) {
 		CString sModes = sLine.Token(2, true);
 
 		if (m_pUser && m_pUser->IsChan(sTarget)) {
-		    CChan *pChan = m_pUser->FindChan(sTarget);
+			CChan *pChan = m_pUser->FindChan(sTarget);
 
-		    if (pChan && sModes.empty()) {
-			PutClient(":" + m_pUser->GetIRCServer() + " 324 " + GetNick() + " " + sTarget + " " + pChan->GetModeString());
-			if (pChan->GetCreationDate() > 0) {
-			    PutClient(":" + m_pUser->GetIRCServer() + " 329 " + GetNick() + " " + sTarget + " " + CString(pChan->GetCreationDate()));
-			}
+			if (pChan && sModes.empty()) {
+				PutClient(":" + m_pUser->GetIRCServer() + " 324 " + GetNick() + " " + sTarget + " " + pChan->GetModeString());
+				if (pChan->GetCreationDate() > 0) {
+					PutClient(":" + m_pUser->GetIRCServer() + " 329 " + GetNick() + " " + sTarget + " " + CString(pChan->GetCreationDate()));
+				}
 			return;
-		    }
+			}
 		}
 	} else if (sCommand.CaseCmp("QUIT") == 0) {
 		if (m_pUser) {

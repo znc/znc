@@ -90,7 +90,7 @@ int main(int argc, char** argv) {
 #else
 	while ((iArg = getopt_long(argc, argv, "hvnrcsd:", g_LongOpts, &iOptIndex)) != -1) {
 #endif /* HAVE_LIBSSL */
-	    switch (iArg) {
+		switch (iArg) {
 		case 'h':
 			GenerateHelp(argv[0]);
 			return 0;
@@ -124,7 +124,7 @@ int main(int argc, char** argv) {
 		default:
 			GenerateHelp(argv[0]);
 			return 1;
-	    }
+		}
 	}
 
 	if (optind < argc) {

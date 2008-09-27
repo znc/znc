@@ -252,7 +252,7 @@ public:
 					}
 				}
 			} else {
-			    m_pUser->PutUser(":irc.znc.in 442 " + m_pUser->GetIRCNick().GetNick() + " " + sChannel + " :You're not on that channel");
+				m_pUser->PutUser(":irc.znc.in 442 " + m_pUser->GetIRCNick().GetNick() + " " + sChannel + " :You're not on that channel");
 			}
 			return HALT;
 		}

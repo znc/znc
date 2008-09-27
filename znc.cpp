@@ -431,9 +431,9 @@ void CZNC::InitDirs(const CString& sArgvPath, const CString& sDataDir) {
 	}
 
 	if (sDataDir.empty()) {
-	    m_sZNCPath = m_sHomePath + "/.znc";
+		m_sZNCPath = m_sHomePath + "/.znc";
 	} else {
-	    m_sZNCPath = sDataDir;
+		m_sZNCPath = sDataDir;
 	}
 
 	// Other dirs that we use
