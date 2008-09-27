@@ -31,9 +31,9 @@ public:
 		}
 
 		CString sTmp;
-		m_bUseHiddenHost = (sTmp = GetNV("UseHiddenHost")).empty() ? true : sTmp.ToBool();
-		m_bUseChallenge  = (sTmp = GetNV("UseChallenge")).empty()  ? true : sTmp.ToBool();
-		m_bRequestPerms  = GetNV("RequestPerms").ToBool();
+		m_bUseCloakedHost = (sTmp = GetNV("UseCloakedHost")).empty() ? true : sTmp.ToBool();
+		m_bUseChallenge   = (sTmp = GetNV("UseChallenge")).empty()  ? true : sTmp.ToBool();
+		m_bRequestPerms   = GetNV("RequestPerms").ToBool();
 
 		OnIRCDisconnected(); // reset module's state
 
@@ -58,7 +58,7 @@ public:
 	}
 
 	virtual void OnIRCConnected() {
-		if (m_bUseHiddenHost)
+		if (m_bUseCloakedHost)
 			Cloak();
 		WhoAmI();
 	}
@@ -105,7 +105,7 @@ public:
 			Table2.SetCell("Type", "String");
 			Table2.SetCell("Description", "Your Q password.");
 			Table2.AddRow();
-			Table2.SetCell("Setting", "UseHiddenHost");
+			Table2.SetCell("Setting", "UseCloakedHost");
 			Table2.SetCell("Type", "Boolean");
 			Table2.SetCell("Description", "Whether to cloak your hostname (+x) automatically on connect.");
 			Table2.AddRow();
@@ -132,10 +132,10 @@ public:
 			} else if (sSetting == "password") {
 				SetPassword(sValue);
 				PutModule("Password set");
-			} else if (sSetting == "usehiddenhost") {
-				SetUseHiddenHost(sValue.ToBool());
-				PutModule("UseHiddenHost set");
-				if (m_bUseHiddenHost && IsIRCConnected())
+			} else if (sSetting == "usecloakedhost") {
+				SetUseCloakedHost(sValue.ToBool());
+				PutModule("UseCloakedHost set");
+				if (m_bUseCloakedHost && IsIRCConnected())
 					Cloak();
 			} else if (sSetting == "usechallenge") {
 				SetUseChallenge(sValue.ToBool());
@@ -157,8 +157,8 @@ public:
 			Table.SetCell("Setting", "Password");
 			Table.SetCell("Value", "*****"); // m_sPassword
 			Table.AddRow();
-			Table.SetCell("Setting", "UseHiddenHost");
-			Table.SetCell("Value", CString(m_bUseHiddenHost ? "true" : "false"));
+			Table.SetCell("Setting", "UseCloakedHost");
+			Table.SetCell("Value", CString(m_bUseCloakedHost ? "true" : "false"));
 			Table.AddRow();
 			Table.SetCell("Setting", "UseChallenge");
 			Table.SetCell("Value", CString(m_bUseChallenge ? "true" : "false"));
@@ -453,7 +453,7 @@ private:
 /* Settings */
 	CString	m_sUsername;
 	CString m_sPassword;
-	bool m_bUseHiddenHost;
+	bool m_bUseCloakedHost;
 	bool m_bUseChallenge;
 	bool m_bRequestPerms;
 
@@ -467,9 +467,9 @@ private:
 		SetNV("Password", sPassword);
 	}
 
-	void SetUseHiddenHost(const bool bUseHiddenHost) {
-		m_bUseHiddenHost = bUseHiddenHost;
-		SetNV("UseHiddenHost", CString(bUseHiddenHost ? "true" : "false"));
+	void SetUseCloakedHost(const bool bUseCloakedHost) {
+		m_bUseCloakedHost = bUseCloakedHost;
+		SetNV("UseCloakedHost", CString(bUseCloakedHost ? "true" : "false"));
 	}
 
 	void SetUseChallenge(const bool bUseChallenge) {
