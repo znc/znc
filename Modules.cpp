@@ -333,14 +333,7 @@ void CModule::ListTimers() {
 		Table.SetCell("Description", pTimer->GetDescription());
 	}
 
-	if (Table.size()) {
-		unsigned int uTableIdx = 0;
-		CString sLine;
-
-		while (Table.GetLine(uTableIdx++, sLine)) {
-			PutModule(sLine);
-		}
-	}
+	PutModule(Table);
 }
 
 bool CModule::AddSocket(CSocket* pSocket) {
@@ -432,14 +425,7 @@ void CModule::ListSockets() {
 		Table.SetCell("RemotePort", (pSocket->GetRemotePort()) ? CString(pSocket->GetRemotePort()) : CString(""));
 	}
 
-	if (Table.size()) {
-		unsigned int uTableIdx = 0;
-		CString sLine;
-
-		while (Table.GetLine(uTableIdx++, sLine)) {
-			PutModule(sLine);
-		}
-	}
+	PutModule(Table);
 }
 
 CString CModule::GetModNick() const { return ((m_pUser) ? m_pUser->GetStatusPrefix() : "*") + m_sModName; }

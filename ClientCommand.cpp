@@ -85,12 +85,7 @@ void CClient::UserCommand(const CString& sLine) {
 			Table.SetCell("Host", a->second->GetHost());
 		}
 
-		unsigned int uTableIdx = 0;
-		CString sTmp;
-
-		while (Table.GetLine(uTableIdx++, sTmp)) {
-			PutStatus(sTmp);
-		}
+		PutStatus(Table);
 	} else if (sCommand.CaseCmp("DETACH") == 0) {
 		if (m_pUser) {
 			CString sChan = sLine.Token(1);
@@ -163,14 +158,7 @@ void CClient::UserCommand(const CString& sLine) {
 				Table.SetCell("Host", vClients[a]->GetRemoteIP());
 			}
 
-			if (Table.size()) {
-				unsigned int uTableIdx = 0;
-				CString sTmp;
-
-				while (Table.GetLine(uTableIdx++, sTmp)) {
-					PutStatus(sTmp);
-				}
-			}
+			PutStatus(Table);
 		}
 	} else if (m_pUser->IsAdmin() && sCommand.CaseCmp("LISTUSERS") == 0) {
 		const map<CString, CUser*>& msUsers = CZNC::Get().GetUserMap();
@@ -194,14 +182,7 @@ void CClient::UserCommand(const CString& sLine) {
 			}
 		}
 
-		if (Table.size()) {
-			unsigned int uTableIdx = 0;
-			CString sTmp;
-
-			while (Table.GetLine(uTableIdx++, sTmp)) {
-				PutStatus(sTmp);
-			}
-		}
+		PutStatus(Table);
 	} else if (m_pUser->IsAdmin() && sCommand.CaseCmp("SetMOTD") == 0) {
 		CString sMessage = sLine.Token(1, true);
 
@@ -341,14 +322,7 @@ void CClient::UserCommand(const CString& sLine) {
 				}
 			}
 
-			if (Table.size()) {
-				unsigned int uTableIdx = 0;
-				CString sTmp;
-
-				while (Table.GetLine(uTableIdx++, sTmp)) {
-					PutStatus(sTmp);
-				}
-			}
+			PutStatus(Table);
 		}
 	} else if (sCommand.CaseCmp("ADDSERVER") == 0) {
 		CString sServer = sLine.Token(1);
@@ -407,14 +381,7 @@ void CClient::UserCommand(const CString& sLine) {
 					Table.SetCell("Pass", pServer->GetPass());
 				}
 
-				if (Table.size()) {
-					unsigned int uTableIdx = 0;
-					CString sTmp;
-
-					while (Table.GetLine(uTableIdx++, sTmp)) {
-						PutStatus(sTmp);
-					}
-				}
+				PutStatus(Table);
 			} else {
 				PutStatus("You don't have any servers added.");
 			}
@@ -435,14 +402,7 @@ void CClient::UserCommand(const CString& sLine) {
 				Table.SetCell("Topic", pChan->GetTopic());
 			}
 
-			if (Table.size()) {
-				unsigned int uTableIdx = 0;
-				CString sTmp;
-
-				while (Table.GetLine(uTableIdx++, sTmp)) {
-					PutStatus(sTmp);
-				}
-			}
+			PutStatus(Table);
 		}
 	} else if (sCommand.CaseCmp("SEND") == 0) {
 		CString sToNick = sLine.Token(1);
@@ -574,14 +534,7 @@ void CClient::UserCommand(const CString& sLine) {
 			}
 		}
 
-		if (Table.size()) {
-			unsigned int uTableIdx = 0;
-			CString sTmp;
-
-			while (Table.GetLine(uTableIdx++, sTmp)) {
-				PutStatus(sTmp);
-			}
-		} else {
+		if (PutStatus(Table) == 0) {
 			PutStatus("You have no active DCCs.");
 		}
 	} else if ((sCommand.CaseCmp("LISTMODS") == 0) || (sCommand.CaseCmp("LISTMODULES") == 0)) {
@@ -603,11 +556,7 @@ void CClient::UserCommand(const CString& sLine) {
 					GTable.SetCell("Description", GModules[b]->GetDescription().Ellipsize(128));
 				}
 
-				unsigned int uTableIdx = 0;
-				CString sTmp;
-				while (GTable.GetLine(uTableIdx++, sTmp)) {
-					PutStatus(sTmp);
-				}
+				PutStatus(GTable);
 			}
 		}
 
@@ -628,11 +577,7 @@ void CClient::UserCommand(const CString& sLine) {
 					Table.SetCell("Description", Modules[b]->GetDescription().Ellipsize(128));
 				}
 
-				unsigned int uTableIdx = 0;
-				CString sTmp;
-				while (Table.GetLine(uTableIdx++, sTmp)) {
-					PutStatus(sTmp);
-				}
+				PutStatus(Table);
 			}
 		}
 #else
@@ -666,12 +611,7 @@ void CClient::UserCommand(const CString& sLine) {
 					GTable.SetCell("Description", Info.GetDescription().Ellipsize(128));
 				}
 
-				unsigned int uTableIdx = 0;
-				CString sTmp;
-
-				while (GTable.GetLine(uTableIdx++, sTmp)) {
-					PutStatus(sTmp);
-				}
+				PutStatus(GTable);
 			}
 		}
 
@@ -695,11 +635,7 @@ void CClient::UserCommand(const CString& sLine) {
 					Table.SetCell("Description", Info.GetDescription().Ellipsize(128));
 				}
 
-				unsigned int uTableIdx = 0;
-				CString sTmp;
-				while (Table.GetLine(uTableIdx++, sTmp)) {
-					PutStatus(sTmp);
-				}
+				PutStatus(Table);
 			}
 		}
 #else
@@ -972,13 +908,7 @@ void CClient::UserCommand(const CString& sLine) {
 		Table.SetCell("Out", CString::ToByteStr(users_total_out + CZNC::Get().BytesWritten()));
 		Table.SetCell("Total", CString::ToByteStr(users_total_in + CZNC::Get().BytesRead() + users_total_out + CZNC::Get().BytesWritten()));
 
-		if (Table.size()) {
-			unsigned int uTableIdx = 0;
-			CString sTmp;
-			while (Table.GetLine(uTableIdx++, sTmp)) {
-				PutStatus(sTmp);
-			}
-		}
+		PutStatus(Table);
 	} else if (m_pUser->IsAdmin() && sCommand.CaseCmp("UPTIME") == 0) {
 		PutStatus("Running for " + CZNC::Get().GetUptime());
 	} else {
@@ -1200,12 +1130,5 @@ void CClient::HelpUser() {
 		Table.SetCell("Description", "Restarts znc");
 	}
 
-	if (Table.size()) {
-		unsigned int uTableIdx = 0;
-		CString sLine;
-
-		while (Table.GetLine(uTableIdx++, sLine)) {
-			PutStatus(sLine);
-		}
-	}
+	PutStatus(Table);
 }

@@ -100,6 +100,7 @@ public:
 
 	void PutIRC(const CString& sLine);
 	void PutClient(const CString& sLine);
+	unsigned int PutStatus(const CTable& table);
 	void PutStatus(const CString& sLine);
 	void PutStatusNotice(const CString& sLine);
 	void PutModule(const CString& sModule, const CString& sLine);

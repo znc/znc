@@ -717,6 +717,14 @@ void CClient::PutStatusNotice(const CString& sLine) {
 	PutModNotice("status", sLine);
 }
 
+unsigned int CClient::PutStatus(const CTable& table) {
+	unsigned int idx = 0;
+	CString sLine;
+	while (table.GetLine(idx++, sLine))
+		PutStatus(sLine);
+	return idx - 1;
+}
+
 void CClient::PutStatus(const CString& sLine) {
 	PutModule("status", sLine);
 }
