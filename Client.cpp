@@ -291,16 +291,11 @@ void CClient::ReadLine(const CString& sData) {
 			sMsg.LeftChomp();
 		}
 
-		if (sTarget.CaseCmp(CString(m_pUser->GetStatusPrefix() + "status")) == 0) {
-			return;
-		}
-
-		if (strncasecmp(sTarget.c_str(), m_pUser->GetStatusPrefix().c_str(), m_pUser->GetStatusPrefix().length()) == 0) {
+		if (sTarget.TrimPrefix(m_pUser->GetStatusPrefix())) {
 #ifdef _MODULES
-			CString sModule = sTarget;
-			sModule.LeftChomp(m_pUser->GetStatusPrefix().length());
-
-			CALLMOD(sModule, this, m_pUser, OnModNotice(sMsg));
+			if (sTarget.CaseCmp("status") != 0) {
+				CALLMOD(sTarget, this, m_pUser, OnModNotice(sMsg));
+			}
 #endif
 			return;
 		}
@@ -365,7 +360,7 @@ void CClient::ReadLine(const CString& sData) {
 			sCTCP.LeftChomp();
 			sCTCP.RightChomp();
 
-			if (strncasecmp(sCTCP.c_str(), "DCC ", 4) == 0 && m_pUser->BounceDCCs()) {
+			if (sCTCP.CaseCmp("DCC ", 4) == 0 && m_pUser->BounceDCCs()) {
 				CString sType = sCTCP.Token(1);
 				CString sFile = sCTCP.Token(2);
 				unsigned long uLongIP = strtoul(sCTCP.Token(3).c_str(), NULL, 10);
@@ -378,8 +373,7 @@ void CClient::ReadLine(const CString& sData) {
 				}
 
 				if (sType.CaseCmp("CHAT") == 0) {
-					if (strncasecmp(sTarget.c_str(), m_pUser->GetStatusPrefix().c_str(), m_pUser->GetStatusPrefix().length()) == 0) {
-					} else {
+					if (!sTarget.TrimPrefix(m_pUser->GetStatusPrefix())) {
 						unsigned short uBNCPort = CDCCBounce::DCCRequest(sTarget, uLongIP, uPort, "", true, m_pUser, (m_pIRCSock) ? m_pIRCSock->GetLocalIP() : GetLocalIP(), "");
 						if (uBNCPort) {
 							PutIRC("PRIVMSG " + sTarget + " :\001DCC CHAT chat " + CString(CUtils::GetLongIP(sIP)) + " " + CString(uBNCPort) + "\001");
@@ -388,8 +382,8 @@ void CClient::ReadLine(const CString& sData) {
 				} else if (sType.CaseCmp("SEND") == 0) {
 					// DCC SEND readme.txt 403120438 5550 1104
 
-					if (strncasecmp(sTarget.c_str(), m_pUser->GetStatusPrefix().c_str(), m_pUser->GetStatusPrefix().length()) == 0) {
-						if (sTarget.CaseCmp(CString(m_pUser->GetStatusPrefix() + "status")) == 0) {
+					if (sTarget.TrimPrefix(m_pUser->GetStatusPrefix())) {
+						if (sTarget.CaseCmp("status") == 0) {
 							CString sPath = m_pUser->GetDLPath();
 							if (!CFile::Exists(sPath)) {
 								PutStatus("Could not create [" + sPath + "] directory.");
@@ -403,7 +397,7 @@ void CClient::ReadLine(const CString& sData) {
 
 							m_pUser->GetFile(GetNick(), CUtils::GetIP(uLongIP), uPort, sLocalFile, uFileSize);
 						} else {
-							MODULECALL(OnDCCUserSend(sTarget, uLongIP, uPort, sFile, uFileSize), m_pUser, this, return);
+							MODULECALL(OnDCCUserSend(CString(m_pUser->GetStatusPrefix() + sTarget), uLongIP, uPort, sFile, uFileSize), m_pUser, this, return);
 						}
 					} else {
 						unsigned short uBNCPort = CDCCBounce::DCCRequest(sTarget, uLongIP, uPort, sFile, false, m_pUser, (m_pIRCSock) ? m_pIRCSock->GetLocalIP() : GetLocalIP(), "");
@@ -417,7 +411,8 @@ void CClient::ReadLine(const CString& sData) {
 					unsigned long uResumeSize = strtoul(sCTCP.Token(4).c_str(), NULL, 10);
 
 					// Need to lookup the connection by port, filter the port, and forward to the user
-					if (strncasecmp(sTarget.c_str(), m_pUser->GetStatusPrefix().c_str(), m_pUser->GetStatusPrefix().length()) == 0) {
+					CString sStatusPrefix = m_pUser->GetStatusPrefix();
+					if (sTarget.CaseCmp(sStatusPrefix, sStatusPrefix.length()) == 0) {
 						if (m_pUser->ResumeFile(uResumePort, uResumeSize)) {
 							PutClient(":" + sTarget + "!znc@znc.in PRIVMSG " + GetNick() + " :\001DCC ACCEPT " + sFile + " " + CString(uResumePort) + " " + CString(uResumeSize) + "\001");
 						} else {
@@ -425,20 +420,20 @@ void CClient::ReadLine(const CString& sData) {
 						}
 					} else {
 						CDCCBounce* pSock = (CDCCBounce*) CZNC::Get().GetManager().FindSockByLocalPort(uResumePort);
-						if ((pSock) && (strncasecmp(pSock->GetSockName().c_str(), "DCC::", 5) == 0)) {
+						if ((pSock) && (pSock->GetSockName().CaseCmp("DCC::", 5) == 0)) {
 							PutIRC("PRIVMSG " + sTarget + " :\001DCC " + sType + " " + sFile + " " + CString(pSock->GetUserPort()) + " " + sCTCP.Token(4) + "\001");
 						}
 					}
 				} else if (sType.CaseCmp("ACCEPT") == 0) {
-					if (strncasecmp(sTarget.c_str(), m_pUser->GetStatusPrefix().c_str(), m_pUser->GetStatusPrefix().length()) == 0) {
-					} else {
+					CString sStatusPrefix = m_pUser->GetStatusPrefix();
+					if (sTarget.CaseCmp(sStatusPrefix, sStatusPrefix.length()) != 0) {
 						// Need to lookup the connection by port, filter the port, and forward to the user
 						CSockManager& Manager = CZNC::Get().GetManager();
 
 						for (unsigned int a = 0; a < Manager.size(); a++) {
 							CDCCBounce* pSock = (CDCCBounce*) Manager[a];
 
-							if ((pSock) && (strncasecmp(pSock->GetSockName().c_str(), "DCC::", 5) == 0)) {
+							if ((pSock) && (pSock->GetSockName().CaseCmp("DCC::", 5) == 0)) {
 								if (pSock->GetUserPort() == atoi(sCTCP.Token(3).c_str())) {
 									PutIRC("PRIVMSG " + sTarget + " :\001DCC " + sType + " " + sFile + " " + CString(pSock->GetLocalPort()) + " " + sCTCP.Token(4) + "\001");
 								}
@@ -450,19 +445,14 @@ void CClient::ReadLine(const CString& sData) {
 				return;
 			}
 
-			if (strncasecmp(sTarget.c_str(), m_pUser->GetStatusPrefix().c_str(), m_pUser->GetStatusPrefix().length()) == 0) {
-				CString sModule = sTarget;
-				sModule.LeftChomp(m_pUser->GetStatusPrefix().length());
-
-				if (sModule == "status") {
+			if (sTarget.TrimPrefix(m_pUser->GetStatusPrefix())) {
+				if (sTarget.CaseCmp("status") == 0) {
 					StatusCTCP(sCTCP);
-
-					return;
-				}
-
+				} else {
 #ifdef _MODULES
-				CALLMOD(sModule, this, m_pUser, OnModCTCP(sCTCP));
+					CALLMOD(sTarget, this, m_pUser, OnModCTCP(sCTCP));
 #endif
+				}
 				return;
 			}
 
@@ -497,19 +487,15 @@ void CClient::ReadLine(const CString& sData) {
 			return;
 		}
 
-		if (sTarget.CaseCmp(CString(m_pUser->GetStatusPrefix() + "status")) == 0) {
-			MODULECALL(OnStatusCommand(sMsg), m_pUser, this, return);
-			UserCommand(sMsg);
-			return;
-		}
-
-		if (strncasecmp(sTarget.c_str(), m_pUser->GetStatusPrefix().c_str(), m_pUser->GetStatusPrefix().length()) == 0) {
+		if (sTarget.TrimPrefix(m_pUser->GetStatusPrefix())) {
+			if (sTarget.CaseCmp("status") == 0) {
+				MODULECALL(OnStatusCommand(sMsg), m_pUser, this, return);
+				UserCommand(sMsg);
+			} else {
 #ifdef _MODULES
-			CString sModule = sTarget;
-			sModule.LeftChomp(m_pUser->GetStatusPrefix().length());
-
-			CALLMOD(sModule, this, m_pUser, OnModCommand(sMsg));
+				CALLMOD(sTarget, this, m_pUser, OnModCommand(sMsg));
 #endif
+			}
 			return;
 		}
 
