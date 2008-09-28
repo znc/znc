@@ -965,6 +965,37 @@ CString CString::TrimRight_n(const CString& s) const {
 	return sRet;
 }
 
+bool CString::TrimPrefix(const CString& sPrefix) {
+	if (CaseCmp(sPrefix, sPrefix.length()) == 0) {
+		LeftChomp(sPrefix.length());
+		return true;
+	} else {
+		return false;
+	}
+}
+
+bool CString::TrimSuffix(const CString& sSuffix) {
+	if (Right(sSuffix.length()).CaseCmp(sSuffix) == 0) {
+		RightChomp(sSuffix.length());
+		return true;
+	} else {
+		return false;
+	}
+}
+
+
+CString CString::TrimPrefix_n(const CString& sPrefix) const {
+	CString sRet = *this;
+	sRet.TrimPrefix(sPrefix);
+	return sRet;
+}
+
+CString CString::TrimSuffix_n(const CString& sSuffix) const {
+	CString sRet = *this;
+	sRet.TrimSuffix(sSuffix);
+	return sRet;
+}
+
 CString CString::LeftChomp_n(unsigned int uLen) const {
 	CString sRet = *this;
 	sRet.LeftChomp(uLen);

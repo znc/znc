@@ -147,6 +147,11 @@ public:
 	CString TrimLeft_n(const CString& s = " \t\r\n") const;
 	CString TrimRight_n(const CString& s = " \t\r\n") const;
 
+	bool TrimPrefix(const CString& sPrefix);
+	bool TrimSuffix(const CString& sSuffix);
+	CString TrimPrefix_n(const CString& sPrefix) const;
+	CString TrimSuffix_n(const CString& sSuffix) const;
+
 	bool LeftChomp(unsigned int uLen = 1);
 	bool RightChomp(unsigned int uLen = 1);
 	CString LeftChomp_n(unsigned int uLen = 1) const;
