@@ -150,24 +150,22 @@ void CClient::ReadLine(const CString& sData) {
 		PutStatus("Hello.  How may I help you?");
 		return;
 	} else if (sCommand.CaseCmp("DETACH") == 0) {
-		if (m_pUser) {
-			CString sChan = sLine.Token(1);
+		CString sChan = sLine.Token(1);
 
-			if (sChan.empty()) {
-				PutStatusNotice("Usage: /detach <#chan>");
-				return;
-			}
-
-			CChan* pChan = m_pUser->FindChan(sChan);
-			if (!pChan) {
-				PutStatusNotice("You are not on [" + sChan + "]");
-				return;
-			}
-
-			pChan->DetachUser();
-			PutStatusNotice("Detached from [" + sChan + "]");
+		if (sChan.empty()) {
+			PutStatusNotice("Usage: /detach <#chan>");
 			return;
 		}
+
+		CChan* pChan = m_pUser->FindChan(sChan);
+		if (!pChan) {
+			PutStatusNotice("You are not on [" + sChan + "]");
+			return;
+		}
+
+		pChan->DetachUser();
+		PutStatusNotice("Detached from [" + sChan + "]");
+		return;
 	} else if (sCommand.CaseCmp("PING") == 0) {
 		CString sTarget = sLine.Token(1);
 
@@ -188,36 +186,34 @@ void CClient::ReadLine(const CString& sData) {
 			sChans.LeftChomp();
 		}
 
-		if (m_pUser) {
-			VCString vChans;
-			sChans.Split(",", vChans, false);
-			sChans.clear();
+		VCString vChans;
+		sChans.Split(",", vChans, false);
+		sChans.clear();
 
-			for (unsigned int a = 0; a < vChans.size(); a++) {
-				CString sChannel = vChans[a];
-				MODULECALL(OnUserJoin(sChannel, sKey), m_pUser, this, continue);
+		for (unsigned int a = 0; a < vChans.size(); a++) {
+			CString sChannel = vChans[a];
+			MODULECALL(OnUserJoin(sChannel, sKey), m_pUser, this, continue);
 
-				CChan* pChan = m_pUser->FindChan(sChannel);
+			CChan* pChan = m_pUser->FindChan(sChannel);
 
-				if (pChan) {
-					pChan->JoinUser(false, sKey);
-					continue;
-				}
-
-				if (!sChannel.empty()) {
-					sChans += (sChans.empty()) ? sChannel : CString("," + sChannel);
-				}
+			if (pChan) {
+				pChan->JoinUser(false, sKey);
+				continue;
 			}
 
-			if (sChans.empty()) {
-				return;
+			if (!sChannel.empty()) {
+				sChans += (sChans.empty()) ? sChannel : CString("," + sChannel);
 			}
+		}
 
-			sLine = "JOIN " + sChans;
+		if (sChans.empty()) {
+			return;
+		}
 
-			if (!sKey.empty()) {
-				sLine += " " + sKey;
-			}
+		sLine = "JOIN " + sChans;
+
+		if (!sKey.empty()) {
+			sLine += " " + sKey;
 		}
 	} else if (sCommand.CaseCmp("PART") == 0) {
 		CString sChan = sLine.Token(1);
@@ -233,14 +229,12 @@ void CClient::ReadLine(const CString& sData) {
 
 		MODULECALL(OnUserPart(sChan, sMessage), m_pUser, this, return);
 
-		if (m_pUser) {
-			CChan* pChan = m_pUser->FindChan(sChan);
+		CChan* pChan = m_pUser->FindChan(sChan);
 
-			if (pChan && !pChan->IsOn()) {
-				PutStatusNotice("Removing channel [" + sChan + "]");
-				m_pUser->DelChan(sChan);
-				return;
-			}
+		if (pChan && !pChan->IsOn()) {
+			PutStatusNotice("Removing channel [" + sChan + "]");
+			m_pUser->DelChan(sChan);
+			return;
 		}
 
 		sLine = "PART " + sChan;
@@ -264,7 +258,7 @@ void CClient::ReadLine(const CString& sData) {
 		CString sTarget = sLine.Token(1);
 		CString sModes = sLine.Token(2, true);
 
-		if (m_pUser && m_pUser->IsChan(sTarget)) {
+		if (m_pUser->IsChan(sTarget)) {
 			CChan *pChan = m_pUser->FindChan(sTarget);
 
 			if (pChan && sModes.empty()) {
@@ -276,9 +270,7 @@ void CClient::ReadLine(const CString& sData) {
 			}
 		}
 	} else if (sCommand.CaseCmp("QUIT") == 0) {
-		if (m_pUser) {
-			m_pUser->UserDisconnected(this);
-		}
+		m_pUser->UserDisconnected(this);
 
 		Close();	// Treat a client quit as a detach
 		return;		// Don't forward this msg.  We don't want the client getting us disconnected.
@@ -301,18 +293,16 @@ void CClient::ReadLine(const CString& sData) {
 			sMsg.LeftChomp();
 		}
 
-		if ((!m_pUser) || (sTarget.CaseCmp(CString(m_pUser->GetStatusPrefix() + "status"))) == 0) {
+		if (sTarget.CaseCmp(CString(m_pUser->GetStatusPrefix() + "status")) == 0) {
 			return;
 		}
 
 		if (strncasecmp(sTarget.c_str(), m_pUser->GetStatusPrefix().c_str(), m_pUser->GetStatusPrefix().length()) == 0) {
 #ifdef _MODULES
-			if (m_pUser) {
-				CString sModule = sTarget;
-				sModule.LeftChomp(m_pUser->GetStatusPrefix().length());
+			CString sModule = sTarget;
+			sModule.LeftChomp(m_pUser->GetStatusPrefix().length());
 
-				CALLMOD(sModule, this, m_pUser, OnModNotice(sMsg));
-			}
+			CALLMOD(sModule, this, m_pUser, OnModNotice(sMsg));
 #endif
 			return;
 		}
@@ -350,7 +340,7 @@ void CClient::ReadLine(const CString& sData) {
 		}
 
 		// Relay to the rest of the clients that may be connected to this user
-		if (m_pUser && m_pUser->IsChan(sTarget)) {
+		if (m_pUser->IsChan(sTarget)) {
 			vector<CClient*>& vClients = m_pUser->GetClients();
 
 			for (unsigned int a = 0; a < vClients.size(); a++) {
@@ -377,7 +367,7 @@ void CClient::ReadLine(const CString& sData) {
 			sCTCP.LeftChomp();
 			sCTCP.RightChomp();
 
-			if (strncasecmp(sCTCP.c_str(), "DCC ", 4) == 0 && m_pUser && m_pUser->BounceDCCs()) {
+			if (strncasecmp(sCTCP.c_str(), "DCC ", 4) == 0 && m_pUser->BounceDCCs()) {
 				CString sType = sCTCP.Token(1);
 				CString sFile = sCTCP.Token(2);
 				unsigned long uLongIP = strtoul(sCTCP.Token(3).c_str(), NULL, 10);
@@ -401,11 +391,7 @@ void CClient::ReadLine(const CString& sData) {
 					// DCC SEND readme.txt 403120438 5550 1104
 
 					if (strncasecmp(sTarget.c_str(), m_pUser->GetStatusPrefix().c_str(), m_pUser->GetStatusPrefix().length()) == 0) {
-						if ((!m_pUser) || (sTarget.CaseCmp(CString(m_pUser->GetStatusPrefix() + "status")) == 0)) {
-							if (!m_pUser) {
-								return;
-							}
-
+						if (sTarget.CaseCmp(CString(m_pUser->GetStatusPrefix() + "status")) == 0) {
 							CString sPath = m_pUser->GetDLPath();
 							if (!CFile::Exists(sPath)) {
 								PutStatus("Could not create [" + sPath + "] directory.");
@@ -417,9 +403,7 @@ void CClient::ReadLine(const CString& sData) {
 
 							CString sLocalFile = sPath + "/" + sFile;
 
-							if (m_pUser) {
-								m_pUser->GetFile(GetNick(), CUtils::GetIP(uLongIP), uPort, sLocalFile, uFileSize);
-							}
+							m_pUser->GetFile(GetNick(), CUtils::GetIP(uLongIP), uPort, sLocalFile, uFileSize);
 						} else {
 							MODULECALL(OnDCCUserSend(sTarget, uLongIP, uPort, sFile, uFileSize), m_pUser, this, return);
 						}
@@ -436,7 +420,7 @@ void CClient::ReadLine(const CString& sData) {
 
 					// Need to lookup the connection by port, filter the port, and forward to the user
 					if (strncasecmp(sTarget.c_str(), m_pUser->GetStatusPrefix().c_str(), m_pUser->GetStatusPrefix().length()) == 0) {
-						if ((m_pUser) && (m_pUser->ResumeFile(uResumePort, uResumeSize))) {
+						if (m_pUser->ResumeFile(uResumePort, uResumeSize)) {
 							PutClient(":" + sTarget + "!znc@znc.in PRIVMSG " + GetNick() + " :\001DCC ACCEPT " + sFile + " " + CString(uResumePort) + " " + CString(uResumeSize) + "\001");
 						} else {
 							PutStatus("DCC -> [" + GetNick() + "][" + sFile + "] Unable to find send to initiate resume.");
@@ -496,7 +480,7 @@ void CClient::ReadLine(const CString& sData) {
 				}
 
 				// Relay to the rest of the clients that may be connected to this user
-				if (m_pUser && m_pUser->IsChan(sTarget)) {
+				if (m_pUser->IsChan(sTarget)) {
 					vector<CClient*>& vClients = m_pUser->GetClients();
 
 					for (unsigned int a = 0; a < vClients.size(); a++) {
@@ -515,7 +499,7 @@ void CClient::ReadLine(const CString& sData) {
 			return;
 		}
 
-		if ((m_pUser) && (sTarget.CaseCmp(CString(m_pUser->GetStatusPrefix() + "status")) == 0)) {
+		if (sTarget.CaseCmp(CString(m_pUser->GetStatusPrefix() + "status")) == 0) {
 			MODULECALL(OnStatusCommand(sMsg), m_pUser, this, return);
 			UserCommand(sMsg);
 			return;
@@ -523,12 +507,10 @@ void CClient::ReadLine(const CString& sData) {
 
 		if (strncasecmp(sTarget.c_str(), m_pUser->GetStatusPrefix().c_str(), m_pUser->GetStatusPrefix().length()) == 0) {
 #ifdef _MODULES
-			if (m_pUser) {
-				CString sModule = sTarget;
-				sModule.LeftChomp(m_pUser->GetStatusPrefix().length());
+			CString sModule = sTarget;
+			sModule.LeftChomp(m_pUser->GetStatusPrefix().length());
 
-				CALLMOD(sModule, this, m_pUser, OnModCommand(sMsg));
-			}
+			CALLMOD(sModule, this, m_pUser, OnModCommand(sMsg));
 #endif
 			return;
 		}
@@ -553,7 +535,7 @@ void CClient::ReadLine(const CString& sData) {
 
 		// Relay to the rest of the clients that may be connected to this user
 
-		if (m_pUser && m_pUser->IsChan(sTarget)) {
+		if (m_pUser->IsChan(sTarget)) {
 			vector<CClient*>& vClients = m_pUser->GetClients();
 
 			for (unsigned int a = 0; a < vClients.size(); a++) {
