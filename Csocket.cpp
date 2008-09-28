@@ -28,13 +28,14 @@
 * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 *
 *
-* $Revision: 1.83 $
+* $Revision: 1.89 $
 */
 
 #include "Csocket.h"
 #ifdef __NetBSD__
 #include <sys/param.h>
 #endif /* __NetBSD__ */
+
 
 #include <list>
 
@@ -54,6 +55,29 @@ int GetCsockClassIdx()
 }
 
 #ifdef _WIN32
+static const char *inet_ntop(int af, const void *src, char *dst, socklen_t cnt)
+{
+	if( af == AF_INET )
+	{
+		struct sockaddr_in in;
+		memset(&in, 0, sizeof(in));
+		in.sin_family = AF_INET;
+		memcpy( &in.sin_addr, src, sizeof(struct in_addr) );
+		getnameinfo( (struct sockaddr *)&in, sizeof(struct sockaddr_in), dst, cnt, NULL, 0, NI_NUMERICHOST );
+		return dst;
+	}
+	else if( af == AF_INET6 )
+	{
+		struct sockaddr_in6 in;
+		memset( &in, 0, sizeof(in) );
+		in.sin6_family = AF_INET6;
+		memcpy( &in.sin6_addr, src, sizeof(struct in_addr6) );
+		getnameinfo( (struct sockaddr *)&in, sizeof(struct sockaddr_in6), dst, cnt, NULL, 0, NI_NUMERICHOST );
+		return dst;
+	}
+	return( NULL );
+}
+
 static inline void set_non_blocking(int fd)
 {
 	u_long iOpts = 1;
@@ -157,7 +181,9 @@ static int __GetHostByName( const CS_STRING & sHostName, struct in_addr *paddr, 
 
 		if( h_errno != TRY_AGAIN )
 		{
+#ifndef _WIN32
 			CS_DEBUG( "gethostyname: " << hstrerror( h_errno ) );
+#endif /* _WIN32 */
 			break;
 		}
 	}
@@ -1143,9 +1169,19 @@ bool Csock::ConnectSSL( const CS_STRING & sBindhost )
 	if ( iErr != 1 )
 	{
 		int sslErr = SSL_get_error( m_ssl, iErr );
-
-		if ( ( sslErr != SSL_ERROR_WANT_READ ) && ( sslErr != SSL_ERROR_WANT_WRITE ) )
-			bPass = false;
+		bPass = false;
+		if( sslErr == SSL_ERROR_WANT_READ || sslErr == SSL_ERROR_WANT_WRITE )
+			bPass = true;
+#ifdef _WIN32
+		else if( sslErr == SSL_ERROR_SYSCALL && iErr < 0 && GetLastError() == WSAENOTCONN )
+		{ 
+			// this seems to be an issue with win32 only. I've seen it happen on slow connections
+			// the issue is calling this before select(), which isn't a problem on unix. Allowing this
+			// to pass in this case is fine because subsequent ssl transactions will occur and the handshake
+			// will finish. At this point, its just instantiating the handshake.
+			bPass = true;
+		}
+#endif /* _WIN32 */
 	} else
 		bPass = true;
 
@@ -1566,12 +1602,12 @@ void Csock::PushBuff( const char *data, int len, bool bStartAtZero )
 CS_STRING & Csock::GetInternalReadBuffer() { return( m_sbuffer ); }
 CS_STRING & Csock::GetInternalWriteBuffer() { return( m_sSend ); }
 void Csock::SetMaxBufferThreshold( u_int iThreshold ) { m_iMaxStoredBufferLength = iThreshold; }
-u_int Csock::GetMaxBufferThreshold() { return( m_iMaxStoredBufferLength ); }
-int Csock::GetType() { return( m_iConnType ); }
+u_int Csock::GetMaxBufferThreshold() const { return( m_iMaxStoredBufferLength ); }
+int Csock::GetType() const { return( m_iConnType ); }
 void Csock::SetType( int iType ) { m_iConnType = iType; }
-const CS_STRING & Csock::GetSockName() { return( m_sSockName ); }
+const CS_STRING & Csock::GetSockName() const { return( m_sSockName ); }
 void Csock::SetSockName( const CS_STRING & sName ) { m_sSockName = sName; }
-const CS_STRING & Csock::GetHostName() { return( m_shostname ); }
+const CS_STRING & Csock::GetHostName() const { return( m_shostname ); }
 void Csock::SetHostName( const CS_STRING & sHostname ) { m_shostname = sHostname; }
 unsigned long long Csock::GetStartTime() const { return( m_iStartTime ); }
 void Csock::ResetStartTime() { m_iStartTime = 0; }

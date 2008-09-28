@@ -28,7 +28,7 @@
 * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 *
 *
-* $Revision: 1.195 $
+* $Revision: 1.199 $
 */
 
 // note to compile with win32 need to link to winsock2, using gcc its -lws2_32
@@ -56,6 +56,8 @@
 #define ECONNREFUSED WSAECONNREFUSED
 #define EINPROGRESS WSAEINPROGRESS
 #define ETIMEDOUT WSAETIMEDOUT
+#define EADDRNOTAVAIL WSAEADDRNOTAVAIL
+#define ECONNABORTED WSAECONNABORTED
 
 #endif /* _WIN32 */
 
@@ -292,6 +294,11 @@ inline void ShutdownWin32()
 {
 	WSACleanup();
 }
+#define InitCsocket InitWin32
+#define ShutdownCsocket ShutdownWin32
+#else
+#define InitCsocket (void)0
+#define ShutdownCsocket (void)0
 #endif /* _WIN32 */
 
 //! wrappers for FD_SET and such to work in templates.
@@ -639,18 +646,18 @@ public:
 
 	//! sets the max buffered threshold when EnableReadLine() is enabled
 	void SetMaxBufferThreshold( u_int iThreshold );
-	u_int GetMaxBufferThreshold();
+	u_int GetMaxBufferThreshold() const;
 
 	//! Returns the connection type from enum eConnType
-	int GetType();
+	int GetType() const;
 	void SetType( int iType );
 
 	//! Returns a reference to the socket name
-	const CS_STRING & GetSockName();
+	const CS_STRING & GetSockName() const;
 	void SetSockName( const CS_STRING & sName );
 
 	//! Returns a reference to the host name
-	const CS_STRING & GetHostName();
+	const CS_STRING & GetHostName() const;
 	void SetHostName( const CS_STRING & sHostname );
 
 
