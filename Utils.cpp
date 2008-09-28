@@ -8,6 +8,7 @@
 
 #include "Utils.h"
 #include "MD5.h"
+#include "main.h"
 #include <errno.h>
 #ifdef HAVE_LIBSSL
 #include <openssl/ssl.h>
@@ -521,6 +522,8 @@ unsigned int CTable::GetColumnIndex(const CString& sName) const {
 		if (m_vsHeaders[i] == sName)
 			return i;
 	}
+
+	DEBUG_ONLY(cout << "CTable::GetColumnIndex(" + sName + ") failed" << endl);
 
 	return 0;
 }
