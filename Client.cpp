@@ -14,10 +14,8 @@
 #include "User.h"
 #include "znc.h"
 
-#define CALLMOD(MOD, CLIENT, USER, FUNC)				\
-do {									\
+#define CALLMOD(MOD, CLIENT, USER, FUNC) {				\
 	CModule* pModule = CZNC::Get().GetModules().FindModule(MOD);	\
-									\
 	if (pModule) {							\
 		try {							\
 			pModule->SetClient(CLIENT);			\
@@ -31,7 +29,7 @@ do {									\
 			}						\
 		}							\
 	} else {							\
-		pModule = USER->GetModules().FindModule(sModule);	\
+		pModule = (USER)->GetModules().FindModule(MOD);	\
 		if (pModule) {						\
 			try {						\
 				pModule->SetClient(CLIENT);		\
@@ -39,14 +37,14 @@ do {									\
 				pModule->SetClient(NULL);		\
 			} catch (CModule::EModException e) {		\
 				if (e == CModule::UNLOAD) {		\
-					USER->GetModules().UnloadModule(MOD);	\
+					(USER)->GetModules().UnloadModule(MOD);	\
 				}					\
 			}						\
 		} else {						\
-			PutStatus("No such module [" + sModule + "]");	\
+			PutStatus("No such module [" + MOD + "]");	\
 		}							\
 	}								\
-} while (false)
+}
 
 CClient::~CClient() {
 	if (!m_spAuth.IsNull()) {
