@@ -49,7 +49,7 @@ void CClient::UserCommand(const CString& sLine) {
 		}
 
 		const map<CString,CNick*>& msNicks = pChan->GetNicks();
-		CIRCSock* pIRCSock = (!m_pUser) ? NULL : m_pUser->GetIRCSock();
+		CIRCSock* pIRCSock = m_pUser->GetIRCSock();
 		const CString& sPerms = (pIRCSock) ? pIRCSock->GetPerms() : "";
 
 		if (!msNicks.size()) {
@@ -87,23 +87,21 @@ void CClient::UserCommand(const CString& sLine) {
 
 		PutStatus(Table);
 	} else if (sCommand.CaseCmp("DETACH") == 0) {
-		if (m_pUser) {
-			CString sChan = sLine.Token(1);
+		CString sChan = sLine.Token(1);
 
-			if (sChan.empty()) {
-				PutStatus("Usage: Detach <#chan>");
-				return;
-			}
-
-			CChan* pChan = m_pUser->FindChan(sChan);
-			if (!pChan) {
-				PutStatus("You are not on [" + sChan + "]");
-				return;
-			}
-
-			PutStatus("Detaching you from [" + sChan + "]");
-			pChan->DetachUser();
+		if (sChan.empty()) {
+			PutStatus("Usage: Detach <#chan>");
+			return;
 		}
+
+		CChan* pChan = m_pUser->FindChan(sChan);
+		if (!pChan) {
+			PutStatus("You are not on [" + sChan + "]");
+			return;
+		}
+
+		PutStatus("Detaching you from [" + sChan + "]");
+		pChan->DetachUser();
 	} else if (sCommand.CaseCmp("VERSION") == 0) {
 		PutStatus(CZNC::GetTag());
 	} else if (sCommand.CaseCmp("MOTD") == 0 || sCommand.CaseCmp("ShowMOTD") == 0) {
@@ -125,41 +123,39 @@ void CClient::UserCommand(const CString& sLine) {
 			PutStatus("Error while trying to write config.");
 		}
 	} else if (sCommand.CaseCmp("LISTCLIENTS") == 0) {
-		if (m_pUser) {
-			CUser* pUser = m_pUser;
-			CString sNick = sLine.Token(1);
+		CUser* pUser = m_pUser;
+		CString sNick = sLine.Token(1);
 
-			if (!sNick.empty()) {
-				if (!m_pUser->IsAdmin()) {
-					PutStatus("Usage: ListClients");
-					return;
-				}
-
-				pUser = CZNC::Get().FindUser(sNick);
-
-				if (!pUser) {
-					PutStatus("No such user [" + sNick + "]");
-					return;
-				}
-			}
-
-			vector<CClient*>& vClients = pUser->GetClients();
-
-			if (vClients.empty()) {
-				PutStatus("No clients are connected");
+		if (!sNick.empty()) {
+			if (!m_pUser->IsAdmin()) {
+				PutStatus("Usage: ListClients");
 				return;
 			}
 
-			CTable Table;
-			Table.AddColumn("Host");
+			pUser = CZNC::Get().FindUser(sNick);
 
-			for (unsigned int a = 0; a < vClients.size(); a++) {
-				Table.AddRow();
-				Table.SetCell("Host", vClients[a]->GetRemoteIP());
+			if (!pUser) {
+				PutStatus("No such user [" + sNick + "]");
+				return;
 			}
-
-			PutStatus(Table);
 		}
+
+		vector<CClient*>& vClients = pUser->GetClients();
+
+		if (vClients.empty()) {
+			PutStatus("No clients are connected");
+			return;
+		}
+
+		CTable Table;
+		Table.AddColumn("Host");
+
+		for (unsigned int a = 0; a < vClients.size(); a++) {
+			Table.AddRow();
+			Table.SetCell("Host", vClients[a]->GetRemoteIP());
+		}
+
+		PutStatus(Table);
 	} else if (m_pUser->IsAdmin() && sCommand.CaseCmp("LISTUSERS") == 0) {
 		const map<CString, CUser*>& msUsers = CZNC::Get().GetUserMap();
 		CTable Table;
@@ -228,43 +224,39 @@ void CClient::UserCommand(const CString& sLine) {
 		throw CException(CException::EX_Restart);
 	} else if (sCommand.CaseCmp("JUMP") == 0 ||
 			sCommand.CaseCmp("CONNECT") == 0) {
-		if (m_pUser) {
-			if (!m_pUser->HasServers()) {
-				PutStatus("You don't have any servers added.");
-				return;
-			}
-
-			if (m_pIRCSock) {
-				m_pIRCSock->Quit();
-				PutStatus("Jumping to the next server in the list...");
-			} else {
-				PutStatus("Connecting...");
-			}
-
-			m_pUser->SetIRCConnectEnabled(true);
-			m_pUser->CheckIRCConnect();
+		if (!m_pUser->HasServers()) {
+			PutStatus("You don't have any servers added.");
 			return;
 		}
+
+		if (m_pIRCSock) {
+			m_pIRCSock->Quit();
+			PutStatus("Jumping to the next server in the list...");
+		} else {
+			PutStatus("Connecting...");
+		}
+
+		m_pUser->SetIRCConnectEnabled(true);
+		m_pUser->CheckIRCConnect();
+		return;
 	} else if (sCommand.CaseCmp("DISCONNECT") == 0) {
-		if (m_pUser) {
-			// m_pIRCSock is only set after the low level connection
-			// to the IRC server was established. Before this we can
-			// only find the IRC socket by its name.
-			if (m_pIRCSock) {
-				m_pIRCSock->Quit();
-			} else {
-				Csock* pIRCSock;
-				CString sSockName = "IRC::" + m_pUser->GetUserName();
-				// This is *slow*, we try to avoid doing this
-				pIRCSock = CZNC::Get().GetManager().FindSockByName(sSockName);
-				if (pIRCSock)
-					pIRCSock->Close();
-			}
-
-			m_pUser->SetIRCConnectEnabled(false);
-			PutStatus("Disconnected from IRC. Use 'connect' to reconnect.");
-			return;
+		// m_pIRCSock is only set after the low level connection
+		// to the IRC server was established. Before this we can
+		// only find the IRC socket by its name.
+		if (m_pIRCSock) {
+			m_pIRCSock->Quit();
+		} else {
+			Csock* pIRCSock;
+			CString sSockName = "IRC::" + m_pUser->GetUserName();
+			// This is *slow*, we try to avoid doing this
+			pIRCSock = CZNC::Get().GetManager().FindSockByName(sSockName);
+			if (pIRCSock)
+				pIRCSock->Close();
 		}
+
+		m_pUser->SetIRCConnectEnabled(false);
+		PutStatus("Disconnected from IRC. Use 'connect' to reconnect.");
+		return;
 	} else if (sCommand.CaseCmp("ENABLECHAN") == 0) {
 		CString sChan = sLine.Token(1, true);
 
@@ -281,49 +273,47 @@ void CClient::UserCommand(const CString& sLine) {
 			PutStatus("Channel [" + sChan + "] enabled.");
 		}
 	} else if (sCommand.CaseCmp("LISTCHANS") == 0) {
-		if (m_pUser) {
-			const vector<CChan*>& vChans = m_pUser->GetChans();
-			CIRCSock* pIRCSock = (!m_pUser) ? NULL : m_pUser->GetIRCSock();
-			const CString& sPerms = (pIRCSock) ? pIRCSock->GetPerms() : "";
+		const vector<CChan*>& vChans = m_pUser->GetChans();
+		CIRCSock* pIRCSock = (!m_pUser) ? NULL : m_pUser->GetIRCSock();
+		const CString& sPerms = (pIRCSock) ? pIRCSock->GetPerms() : "";
 
-			if (!vChans.size()) {
-				PutStatus("You have no channels defined");
-				return;
-			}
-
-			CTable Table;
-			Table.AddColumn("Name");
-			Table.AddColumn("Status");
-			Table.AddColumn("Conf");
-			Table.AddColumn("Buf");
-			Table.AddColumn("Modes");
-			Table.AddColumn("Users");
-
-			for (unsigned int p = 0; p < sPerms.size(); p++) {
-				CString sPerm;
-				sPerm += sPerms[p];
-				Table.AddColumn(sPerm);
-			}
-
-			for (unsigned int a = 0; a < vChans.size(); a++) {
-				CChan* pChan = vChans[a];
-				Table.AddRow();
-				Table.SetCell("Name", pChan->GetPermStr() + pChan->GetName());
-				Table.SetCell("Status", ((vChans[a]->IsOn()) ? ((vChans[a]->IsDetached()) ? "Detached" : "Joined") : ((vChans[a]->IsDisabled()) ? "Disabled" : "Trying")));
-				Table.SetCell("Conf", CString((pChan->InConfig()) ? "yes" : ""));
-				Table.SetCell("Buf", CString((pChan->KeepBuffer()) ? "*" : "") + CString(pChan->GetBufferCount()));
-				Table.SetCell("Modes", pChan->GetModeString());
-				Table.SetCell("Users", CString(pChan->GetNickCount()));
-
-				for (unsigned int b = 0; b < sPerms.size(); b++) {
-					CString sPerm;
-					sPerm += sPerms[b];
-					Table.SetCell(sPerm, CString(pChan->GetPermCount(sPerms[b])));
-				}
-			}
-
-			PutStatus(Table);
+		if (!vChans.size()) {
+			PutStatus("You have no channels defined");
+			return;
 		}
+
+		CTable Table;
+		Table.AddColumn("Name");
+		Table.AddColumn("Status");
+		Table.AddColumn("Conf");
+		Table.AddColumn("Buf");
+		Table.AddColumn("Modes");
+		Table.AddColumn("Users");
+
+		for (unsigned int p = 0; p < sPerms.size(); p++) {
+			CString sPerm;
+			sPerm += sPerms[p];
+			Table.AddColumn(sPerm);
+		}
+
+		for (unsigned int a = 0; a < vChans.size(); a++) {
+			CChan* pChan = vChans[a];
+			Table.AddRow();
+			Table.SetCell("Name", pChan->GetPermStr() + pChan->GetName());
+			Table.SetCell("Status", ((vChans[a]->IsOn()) ? ((vChans[a]->IsDetached()) ? "Detached" : "Joined") : ((vChans[a]->IsDisabled()) ? "Disabled" : "Trying")));
+			Table.SetCell("Conf", CString((pChan->InConfig()) ? "yes" : ""));
+			Table.SetCell("Buf", CString((pChan->KeepBuffer()) ? "*" : "") + CString(pChan->GetBufferCount()));
+			Table.SetCell("Modes", pChan->GetModeString());
+			Table.SetCell("Users", CString(pChan->GetNickCount()));
+
+			for (unsigned int b = 0; b < sPerms.size(); b++) {
+				CString sPerm;
+				sPerm += sPerms[b];
+				Table.SetCell(sPerm, CString(pChan->GetPermCount(sPerms[b])));
+			}
+		}
+
+		PutStatus(Table);
 	} else if (sCommand.CaseCmp("ADDSERVER") == 0) {
 		CString sServer = sLine.Token(1);
 
@@ -337,7 +327,7 @@ void CClient::UserCommand(const CString& sLine) {
 			return;
 		}
 
-		if (m_pUser && m_pUser->AddServer(sLine.Token(1, true))) {
+		if (m_pUser->AddServer(sLine.Token(1, true))) {
 			PutStatus("Server added");
 		} else {
 			PutStatus("Unable to add that server");
@@ -357,53 +347,49 @@ void CClient::UserCommand(const CString& sLine) {
 			return;
 		}
 
-		if (m_pUser && m_pUser->DelServer(sServer)) {
+		if (m_pUser->DelServer(sServer)) {
 			PutStatus("Server removed");
 		} else {
 			PutStatus("No such server");
 		}
 	} else if (sCommand.CaseCmp("LISTSERVERS") == 0) {
-		if (m_pUser) {
-			if (m_pUser->HasServers()) {
-				const vector<CServer*>& vServers = m_pUser->GetServers();
-				CTable Table;
-				Table.AddColumn("Host");
-				Table.AddColumn("Port");
-				Table.AddColumn("SSL");
-				Table.AddColumn("Pass");
-
-				for (unsigned int a = 0; a < vServers.size(); a++) {
-					CServer* pServer = vServers[a];
-					Table.AddRow();
-					Table.SetCell("Host", pServer->GetName());
-					Table.SetCell("Port", CString(pServer->GetPort()));
-					Table.SetCell("SSL", (pServer->IsSSL()) ? "SSL" : "");
-					Table.SetCell("Pass", pServer->GetPass());
-				}
-
-				PutStatus(Table);
-			} else {
-				PutStatus("You don't have any servers added.");
-			}
-		}
-	} else if (sCommand.CaseCmp("TOPICS") == 0) {
-		if (m_pUser) {
-			const vector<CChan*>& vChans = m_pUser->GetChans();
+		if (m_pUser->HasServers()) {
+			const vector<CServer*>& vServers = m_pUser->GetServers();
 			CTable Table;
-			Table.AddColumn("Name");
-			Table.AddColumn("Set By");
-			Table.AddColumn("Topic");
+			Table.AddColumn("Host");
+			Table.AddColumn("Port");
+			Table.AddColumn("SSL");
+			Table.AddColumn("Pass");
 
-			for (unsigned int a = 0; a < vChans.size(); a++) {
-				CChan* pChan = vChans[a];
+			for (unsigned int a = 0; a < vServers.size(); a++) {
+				CServer* pServer = vServers[a];
 				Table.AddRow();
-				Table.SetCell("Name", pChan->GetName());
-				Table.SetCell("Set By", pChan->GetTopicOwner());
-				Table.SetCell("Topic", pChan->GetTopic());
+				Table.SetCell("Host", pServer->GetName());
+				Table.SetCell("Port", CString(pServer->GetPort()));
+				Table.SetCell("SSL", (pServer->IsSSL()) ? "SSL" : "");
+				Table.SetCell("Pass", pServer->GetPass());
 			}
 
 			PutStatus(Table);
+		} else {
+			PutStatus("You don't have any servers added.");
 		}
+	} else if (sCommand.CaseCmp("TOPICS") == 0) {
+		const vector<CChan*>& vChans = m_pUser->GetChans();
+		CTable Table;
+		Table.AddColumn("Name");
+		Table.AddColumn("Set By");
+		Table.AddColumn("Topic");
+
+		for (unsigned int a = 0; a < vChans.size(); a++) {
+			CChan* pChan = vChans[a];
+			Table.AddRow();
+			Table.SetCell("Name", pChan->GetName());
+			Table.SetCell("Set By", pChan->GetTopicOwner());
+			Table.SetCell("Topic", pChan->GetTopic());
+		}
+
+		PutStatus(Table);
 	} else if (sCommand.CaseCmp("SEND") == 0) {
 		CString sToNick = sLine.Token(1);
 		CString sFile = sLine.Token(2);
@@ -422,9 +408,7 @@ void CClient::UserCommand(const CString& sLine) {
 			return;
 		}
 
-		if (m_pUser) {
-			m_pUser->SendFile(sToNick, sFile);
-		}
+		m_pUser->SendFile(sToNick, sFile);
 	} else if (sCommand.CaseCmp("GET") == 0) {
 		CString sFile = sLine.Token(1);
 		CString sAllowedPath = m_pUser->GetDLPath();
@@ -442,9 +426,7 @@ void CClient::UserCommand(const CString& sLine) {
 			return;
 		}
 
-		if (m_pUser) {
-			m_pUser->SendFile(GetNick(), sFile);
-		}
+		m_pUser->SendFile(GetNick(), sFile);
 	} else if (sCommand.CaseCmp("LISTDCCS") == 0) {
 		CSockManager& Manager = CZNC::Get().GetManager();
 
@@ -560,25 +542,23 @@ void CClient::UserCommand(const CString& sLine) {
 			}
 		}
 
-		if (m_pUser) {
-			CModules& Modules = m_pUser->GetModules();
+		CModules& Modules = m_pUser->GetModules();
 
-			if (!Modules.size()) {
-				PutStatus("You have no modules loaded.");
-			} else {
-				PutStatus("User modules:");
-				CTable Table;
-				Table.AddColumn("Name");
-				Table.AddColumn("Description");
+		if (!Modules.size()) {
+			PutStatus("You have no modules loaded.");
+		} else {
+			PutStatus("User modules:");
+			CTable Table;
+			Table.AddColumn("Name");
+			Table.AddColumn("Description");
 
-				for (unsigned int b = 0; b < Modules.size(); b++) {
-					Table.AddRow();
-					Table.SetCell("Name", Modules[b]->GetModName());
-					Table.SetCell("Description", Modules[b]->GetDescription().Ellipsize(128));
-				}
-
-				PutStatus(Table);
+			for (unsigned int b = 0; b < Modules.size(); b++) {
+				Table.AddRow();
+				Table.SetCell("Name", Modules[b]->GetModName());
+				Table.SetCell("Description", Modules[b]->GetDescription().Ellipsize(128));
 			}
+
+			PutStatus(Table);
 		}
 #else
 		PutStatus("Modules are not enabled.");
@@ -615,28 +595,26 @@ void CClient::UserCommand(const CString& sLine) {
 			}
 		}
 
-		if (m_pUser) {
-			set<CModInfo> ssUserMods;
-			CZNC::Get().GetModules().GetAvailableMods(ssUserMods);
+		set<CModInfo> ssUserMods;
+		CZNC::Get().GetModules().GetAvailableMods(ssUserMods);
 
-			if (!ssUserMods.size()) {
-				PutStatus("No user modules available.");
-			} else {
-				PutStatus("User modules:");
-				CTable Table;
-				Table.AddColumn("Name");
-				Table.AddColumn("Description");
-				set<CModInfo>::iterator it;
+		if (!ssUserMods.size()) {
+			PutStatus("No user modules available.");
+		} else {
+			PutStatus("User modules:");
+			CTable Table;
+			Table.AddColumn("Name");
+			Table.AddColumn("Description");
+			set<CModInfo>::iterator it;
 
-				for (it = ssUserMods.begin(); it != ssUserMods.end(); it++) {
-					const CModInfo& Info = *it;
-					Table.AddRow();
-					Table.SetCell("Name", (m_pUser->GetModules().FindModule(Info.GetName()) ? "*" : " ") + Info.GetName());
-					Table.SetCell("Description", Info.GetDescription().Ellipsize(128));
-				}
-
-				PutStatus(Table);
+			for (it = ssUserMods.begin(); it != ssUserMods.end(); it++) {
+				const CModInfo& Info = *it;
+				Table.AddRow();
+				Table.SetCell("Name", (m_pUser->GetModules().FindModule(Info.GetName()) ? "*" : " ") + Info.GetName());
+				Table.SetCell("Description", Info.GetDescription().Ellipsize(128));
 			}
+
+			PutStatus(Table);
 		}
 #else
 		PutStatus("Modules are not enabled.");
