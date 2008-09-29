@@ -145,7 +145,29 @@ void CClient::ReadLine(const CString& sData) {
 	}
 
 	if (sCommand.CaseCmp("ZNC") == 0) {
-		PutStatus("Hello.  How may I help you?");
+		CString sTarget = sLine.Token(1);
+		CString sModCommand;
+
+		if (sTarget.TrimPrefix(m_pUser->GetStatusPrefix())) {
+			sModCommand = sLine.Token(2, true);
+		} else {
+			sTarget  = "status";
+			sModCommand = sLine.Token(1, true);
+		}
+
+		if (sTarget.CaseCmp("status") == 0) {
+			if (sModCommand.empty())
+				PutStatus("Hello. How may I help you?");
+			else
+				UserCommand(sModCommand);
+		} else {
+#ifdef _MODULES
+			if (sModCommand.empty())
+				CALLMOD(sTarget, this, m_pUser, PutModule("Hello. How may I help you?"))
+			else
+				CALLMOD(sTarget, this, m_pUser, OnModCommand(sModCommand))
+#endif
+		}
 		return;
 	} else if (sCommand.CaseCmp("DETACH") == 0) {
 		CString sChan = sLine.Token(1);
