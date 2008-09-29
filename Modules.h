@@ -132,8 +132,8 @@ private:
 
 class CSocket : public Csock {
 public:
-	CSocket(CModule* pModule, const CString& sLabel);
-	CSocket(CModule* pModule, const CString& sLabel, const CString& sHostname, unsigned short uPort, int iTimeout = 60);
+	CSocket(CModule* pModule);
+	CSocket(CModule* pModule, const CString& sHostname, unsigned short uPort, int iTimeout = 60);
 	virtual ~CSocket();
 
 	using Csock::Connect;
@@ -149,17 +149,14 @@ public:
 
 	// Setters
 	void SetModule(CModule* p);
-	void SetLabel(const CString& s);
 	// !Setters
 
 	// Getters
 	CModule* GetModule() const;
-	const CString& GetLabel() const;
 	// !Getters
 private:
 protected:
 	CModule*	m_pModule;
-	CString		m_sLabel;
 };
 
 class CModInfo {
@@ -305,9 +302,9 @@ public:
 	// Socket stuff
 	bool AddSocket(CSocket* pSocket);
 	bool RemSocket(CSocket* pSocket);
-	bool RemSocket(const CString& sLabel);
+	bool RemSocket(const CString& sSockName);
 	bool UnlinkSocket(CSocket* pSocket);
-	CSocket* FindSocket(const CString& sLabel);
+	CSocket* FindSocket(const CString& sSockName);
 	virtual void ListSockets();
 	// !Socket stuff
 

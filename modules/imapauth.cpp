@@ -16,7 +16,7 @@ class CIMAPAuthMod;
 class CIMAPSock : public CSocket {
 public:
 	CIMAPSock(CIMAPAuthMod* pModule, CSmartPtr<CAuthBase> Auth)
-		: CSocket((CModule*) pModule, "IMAPMod"), m_spAuth(Auth) {
+		: CSocket((CModule*) pModule), m_spAuth(Auth) {
 			m_pIMAPMod = pModule;
 			m_bSentReply = false;
 			m_bSentLogin = false;

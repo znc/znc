@@ -99,16 +99,14 @@ const CString& CTimer::GetDescription() const { return m_sDescription; }
 /////////////////// !Timer ///////////////////
 
 /////////////////// Socket ///////////////////
-CSocket::CSocket(CModule* pModule, const CString& sLabel) : Csock() {
+CSocket::CSocket(CModule* pModule) : Csock() {
 	m_pModule = pModule;
-	m_sLabel = sLabel;
 	m_pModule->AddSocket(this);
 	EnableReadLine();
 }
 
-CSocket::CSocket(CModule* pModule, const CString& sLabel, const CString& sHostname, unsigned short uPort, int iTimeout) : Csock(sHostname, uPort, iTimeout) {
+CSocket::CSocket(CModule* pModule, const CString& sHostname, unsigned short uPort, int iTimeout) : Csock(sHostname, uPort, iTimeout) {
 	m_pModule = pModule;
-	m_sLabel = sLabel;
 	m_pModule->AddSocket(this);
 	EnableReadLine();
 }
@@ -127,6 +125,11 @@ bool CSocket::Connect(const CString& sHostname, unsigned short uPort, bool bSSL,
 		sVHost = m_pModule->GetUser()->GetVHost();
 	}
 
+	// Don't overwrite the socket name if one is already set
+	if (!GetSockName().empty()) {
+		sSockName = GetSockName();
+	}
+
 	return m_pModule->GetManager()->Connect(sHostname, uPort, sSockName, uTimeout, bSSL, sVHost, (Csock*) this);
 }
 
@@ -136,6 +139,10 @@ bool CSocket::Listen(unsigned short uPort, bool bSSL, unsigned int uTimeout) {
 
 	if (pUser) {
 		sSockName += "::" + pUser->GetUserName();
+	}
+	// Don't overwrite the socket name if one is already set
+	if (!GetSockName().empty()) {
+		sSockName = GetSockName();
 	}
 
 	return m_pModule->GetManager()->ListenAll(uPort, sSockName, bSSL, SOMAXCONN, (Csock*) this);
@@ -161,10 +168,7 @@ bool CSocket::PutModNotice(const CString& sLine, const CString& sIdent, const CS
 }
 
 void CSocket::SetModule(CModule* p) { m_pModule = p; }
-void CSocket::SetLabel(const CString& s) { m_sLabel = s; }
-
 CModule* CSocket::GetModule() const { return m_pModule; }
-const CString& CSocket::GetLabel() const { return m_sLabel; }
 /////////////////// !Socket ///////////////////
 
 CModule::CModule(void* pDLL, CUser* pUser, const CString& sModName, const CString& sDataDir) {
@@ -357,11 +361,11 @@ bool CModule::RemSocket(CSocket* pSocket) {
 	return false;
 }
 
-bool CModule::RemSocket(const CString& sLabel) {
+bool CModule::RemSocket(const CString& sSockName) {
 	for (unsigned int a = 0; a < m_vSockets.size(); a++) {
 		CSocket* pSocket = m_vSockets[a];
 
-		if (pSocket->GetLabel().CaseCmp(sLabel) == 0) {
+		if (pSocket->GetSockName().CaseCmp(sSockName) == 0) {
 			m_vSockets.erase(m_vSockets.begin() +a);
 			m_pManager->DelSockByAddr(pSocket);
 			return true;
@@ -382,10 +386,10 @@ bool CModule::UnlinkSocket(CSocket* pSocket) {
 	return false;
 }
 
-CSocket* CModule::FindSocket(const CString& sLabel) {
+CSocket* CModule::FindSocket(const CString& sSockName) {
 	for (unsigned int a = 0; a < m_vSockets.size(); a++) {
 		CSocket* pSocket = m_vSockets[a];
-		if (pSocket->GetLabel().CaseCmp(sLabel) == 0) {
+		if (pSocket->GetSockName().CaseCmp(sSockName) == 0) {
 			return pSocket;
 		}
 	}
@@ -411,7 +415,7 @@ void CModule::ListSockets() {
 		CSocket* pSocket = (CSocket*) m_vSockets[a];
 
 		Table.AddRow();
-		Table.SetCell("Name", pSocket->GetLabel());
+		Table.SetCell("Name", pSocket->GetSockName());
 
 		if (pSocket->GetType() == CSocket::LISTENER) {
 			Table.SetCell("State", "Listening");
