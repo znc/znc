@@ -543,6 +543,11 @@ unsigned int CTable::GetColumnWidth(unsigned int uIdx) const {
 	return it->second;
 }
 
+void CTable::Clear() {
+	clear();
+	m_vsHeaders.clear();
+	m_msuWidths.clear();
+}
 
 #ifdef HAVE_LIBSSL
 CBlowfish::CBlowfish(const CString & sPassword, int iEncrypt, const CString & sIvec) {

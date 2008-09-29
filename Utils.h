@@ -199,7 +199,7 @@ protected:
 };
 
 
-class CTable : public vector<vector<CString> > {
+class CTable : protected vector<vector<CString> > {
 public:
 	CTable() {}
 	virtual ~CTable() {}
@@ -210,6 +210,9 @@ public:
 	bool GetLine(unsigned int uIdx, CString& sLine) const;
 
 	unsigned int GetColumnWidth(unsigned int uIdx) const;
+
+	void Clear();
+	using vector<vector<CString> >::size;
 private:
 	unsigned int GetColumnIndex(const CString& sName) const;
 
