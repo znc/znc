@@ -80,8 +80,8 @@ public:
 	virtual ~CString() {}
 
 	inline unsigned char* strnchr(const unsigned char* src, unsigned char c, unsigned int iMaxBytes, unsigned char* pFill = NULL, unsigned int* piCount = NULL) const;
-	int CaseCmp(const CString& s, u_long uLen = CString::npos) const;
-	int StrCmp(const CString& s) const;
+	int CaseCmp(const CString& s, unsigned long uLen = CString::npos) const;
+	int StrCmp(const CString& s, unsigned long uLen = CString::npos) const;
 	static bool WildCmp(const CString& sWild, const CString& sString);
 	bool WildCmp(const CString& sWild) const;
 
