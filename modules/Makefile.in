@@ -30,13 +30,11 @@ FILES    := $(basename $(wildcard *.cpp))
 endif
 
 ifneq "$(PERL)" ""
-PERLCC   := -DHAVE_PERL `$(PERL) -MExtUtils::Embed -e perl_inc`
-PERLLD   := `$(PERL) -MExtUtils::Embed -e perl_inc -e ldopts`
-PERLHOOK := modperl_install
+modperlFLAGS := `$(PERL) -MExtUtils::Embed -e perl_inc -e ldopts`
+PERLHOOK     := modperl_install
 else
 FILES    := $(shell echo $(FILES) | sed -e "s/modperl//")
 endif
-modperlFLAGS := $(PERLLD) $(PERLCC)
 
 ifeq "@SASL@" ""
 FILES    := $(shell echo $(FILES) | sed -e "s/saslauth//")
