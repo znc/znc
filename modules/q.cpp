@@ -303,7 +303,7 @@ private:
 	}
 
 	EModRet HandleMessage(const CNick& Nick, CString sMessage) {
-		if (Nick.GetNick().CaseCmp("Q") != 0 || Nick.GetHost().CaseCmp("CServe.quakenet.org") != 0)
+		if (!Nick.GetNick().Equals("Q") || !Nick.GetHost().Equals("CServe.quakenet.org"))
 			return CONTINUE;
 
 		sMessage.Trim();
@@ -330,14 +330,14 @@ private:
 			m_msChanModes[sChannel] = sFlags;
 		}
 		else if (m_bRequestedWhoami && m_bCatchResponse
-				&& (sMessage.CaseCmp("End of list.") == 0
-				||  sMessage.CaseCmp("account, or HELLO to create an account.") == 0)) {
+				&& (sMessage.Equals("End of list.")
+				||  sMessage.Equals("account, or HELLO to create an account."))) {
 			m_bRequestedWhoami = m_bCatchResponse = false;
 			return HALT;
 		}
 
 		// AUTH
-		else if (sMessage.CaseCmp("Username or password incorrect.") == 0) {
+		else if (sMessage.Equals("Username or password incorrect.")) {
 			m_bAuthed = false;
 			PutModule("Auth failed: " + sMessage);
 			return HALT;
@@ -348,7 +348,7 @@ private:
 			WhoAmI();
 			return HALT;
 		}
-		else if (m_bRequestedChallenge && sMessage.Token(0).CaseCmp("CHALLENGE") == 0) {
+		else if (m_bRequestedChallenge && sMessage.Token(0).Equals("CHALLENGE")) {
 			m_bRequestedChallenge = false;
 			if (sMessage.find("not available once you have authed") != CString::npos) {
 				m_bAuthed = true;
@@ -409,7 +409,7 @@ private:
 	}
 
 	bool IsSelf(const CNick& Nick) {
-		return Nick.GetNick().CaseCmp(m_pUser->GetCurNick()) == 0;
+		return Nick.GetNick().Equals(m_pUser->GetCurNick());
 	}
 
 	bool PackHex(const CString& sHex, CString& sPackedHex) {

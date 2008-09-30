@@ -84,9 +84,9 @@ public:
 	}
 
 	bool operator ==(const CWatchEntry& WatchEntry) {
-		return (strcasecmp(GetHostMask().c_str(), WatchEntry.GetHostMask().c_str()) == 0
-				&& strcasecmp(GetTarget().c_str(), WatchEntry.GetTarget().c_str()) == 0
-				&& strcasecmp(GetPattern().c_str(), WatchEntry.GetPattern().c_str()) == 0
+		return (GetHostMask().Equals(WatchEntry.GetHostMask())
+				&& GetTarget().Equals(WatchEntry.GetTarget())
+				&& GetPattern().Equals(WatchEntry.GetPattern())
 		);
 	}
 
@@ -229,15 +229,15 @@ public:
 
 	virtual void OnModCommand(const CString& sCommand) {
 		CString sCmdName = sCommand.Token(0);
-		if (strcasecmp(sCmdName.c_str(), "ADD") == 0 || strcasecmp(sCmdName.c_str(), "WATCH") == 0) {
+		if (sCmdName.Equals("ADD") || sCmdName.Equals("WATCH")) {
 			Watch(sCommand.Token(1), sCommand.Token(2), sCommand.Token(3, true));
-		} else if (strcasecmp(sCmdName.c_str(), "HELP") == 0) {
+		} else if (sCmdName.Equals("HELP")) {
 			Help();
-		} else if (strcasecmp(sCmdName.c_str(), "LIST") == 0) {
+		} else if (sCmdName.Equals("LIST")) {
 			List();
-		} else if (strcasecmp(sCmdName.c_str(), "DUMP") == 0) {
+		} else if (sCmdName.Equals("DUMP")) {
 			Dump();
-		} else if (strcasecmp(sCmdName.c_str(), "ENABLE") == 0) {
+		} else if (sCmdName.Equals("ENABLE")) {
 			CString sTok = sCommand.Token(1);
 
 			if (sTok == "*") {
@@ -245,7 +245,7 @@ public:
 			} else {
 				SetDisabled(atoi(sTok.c_str()), false);
 			}
-		} else if (strcasecmp(sCmdName.c_str(), "DISABLE") == 0) {
+		} else if (sCmdName.Equals("DISABLE")) {
 			CString sTok = sCommand.Token(1);
 
 			if (sTok == "*") {
@@ -253,12 +253,12 @@ public:
 			} else {
 				SetDisabled(atoi(sTok.c_str()), true);
 			}
-		} else if (strcasecmp(sCmdName.c_str(), "SETSOURCES") == 0) {
+		} else if (sCmdName.Equals("SETSOURCES")) {
 			SetSources(atoi(sCommand.Token(1).c_str()), sCommand.Token(2, true));
-		} else if (strcasecmp(sCmdName.c_str(), "CLEAR") == 0) {
+		} else if (sCmdName.Equals("CLEAR")) {
 			m_lsWatchers.clear();
 			PutModule("All entries cleared.");
-		} else if (strcasecmp(sCmdName.c_str(), "BUFFER") == 0) {
+		} else if (sCmdName.Equals("BUFFER")) {
 			CString sCount = sCommand.Token(1);
 
 			if (sCount.size()) {
@@ -266,10 +266,10 @@ public:
 			}
 
 			PutModule("Buffer count is set to [" + CString(m_Buffer.GetLineCount()) + "]");
-		} else if (strcasecmp(sCmdName.c_str(), "DEL") == 0) {
+		} else if (sCmdName.Equals("DEL")) {
 			Remove(atoi(sCommand.Token(1).c_str()));
 		} else {
-			PutModule("Unknown command: [" + sCommand.Token(0) + "]");
+			PutModule("Unknown command: [" + sCmdName + "]");
 		}
 	}
 

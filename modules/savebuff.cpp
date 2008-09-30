@@ -157,30 +157,23 @@ public:
 		}
 	}
 
-	virtual void OnModCommand(const CString& sCommand)
+	virtual void OnModCommand(const CString& sCmdLine)
 	{
-		CString::size_type iPos = sCommand.find(" ");
-		CString sCom, sArgs;
-		if (iPos == CString::npos)
-			sCom = sCommand;
-		else
-		{
-			sCom = sCommand.substr(0, iPos);
-			sArgs = sCommand.substr(iPos + 1, CString::npos);
-		}
+		CString sCommand = sCmdLine.Token(0);
+		CString sArgs    = sCmdLine.Token(1, true);
 
-		if (strcasecmp(sCom.c_str(), "setpass") == 0)
+		if (sCommand.Equals("setpass"))
 		{
 			PutModule("Password set to [" + sArgs + "]");
 			m_sPassword = CBlowfish::MD5(sArgs);
 
-		} else if (strcasecmp(sCom.c_str(), "dumpbuff") == 0)
+		} else if (sCommand.Equals("dumpbuff"))
 		{
 			CString sFile;
 			if (DecryptChannel(sArgs, sFile))
 			{
 				CString sLine;
-				iPos = 0;
+				CString::size_type iPos = 0;
 				while (ReadLine(sFile, sLine, iPos))
 				{
 					sLine.Trim();
@@ -188,12 +181,12 @@ public:
 				}
 			}
 			PutModule("//!-- EOF " + sArgs);
-		} else if (strcasecmp(sCom.c_str(), "replay") == 0)
+		} else if (sCommand.Equals("replay"))
 		{
 			Replay(sArgs);
 			PutModule("Replayed " + sArgs);
 
-		} else if (strcasecmp(sCom.c_str(), "save") == 0)
+		} else if (sCommand.Equals("save"))
 		{
 			SaveBufferToDisk();
 			PutModule("Done.");
@@ -247,7 +240,7 @@ public:
 				continue;
 			vChans[a]->AddBuffer(SpoofChanMsg(vChans[a]->GetName(), cNick.GetNickMask() + " QUIT " + sMessage));
 		}
-		if (cNick.GetNick().CaseCmp(m_pUser->GetNick()) == 0)
+		if (cNick.GetNick().Equals(m_pUser->GetNick()))
 			SaveBufferToDisk(); // need to force a save here to see this!
 	}
 
@@ -268,7 +261,7 @@ public:
 	}
 	virtual void OnJoin(const CNick& cNick, CChan& cChannel)
 	{
-		if ((cNick.GetNick().CaseCmp(m_pUser->GetNick()) == 0) && (cChannel.GetBuffer().empty()))
+		if (cNick.GetNick().Equals(m_pUser->GetNick()) && cChannel.GetBuffer().empty())
 		{
 			BootStrap((CChan *)&cChannel);
 			if (!cChannel.GetBuffer().empty())
@@ -283,7 +276,7 @@ public:
 		if (!cChannel.KeepBuffer())
 			return;
 		((CChan &)cChannel).AddBuffer(SpoofChanMsg(cChannel.GetName(), cNick.GetNickMask() + " PART"));
-		if (cNick.GetNick().CaseCmp(m_pUser->GetNick()) == 0)
+		if (cNick.GetNick().Equals(m_pUser->GetNick()))
 			SaveBufferToDisk(); // need to force a save here to see this!
 	}
 

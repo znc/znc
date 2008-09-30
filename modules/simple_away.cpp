@@ -112,7 +112,7 @@ public:
 		const CString sCmd = sLine.Token(0);
 		const CString sArg = sLine.Token(1, true).Trim_n(" ");
 
-		if (sCmd.CaseCmp("AWAY") != 0)
+		if (!sCmd.Equals("AWAY"))
 			return CONTINUE;
 
 		// When a client sets us away, we don't touch that away message

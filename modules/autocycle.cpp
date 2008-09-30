@@ -42,7 +42,7 @@ public:
 	virtual void OnModCommand(const CString& sLine) {
 		CString sCommand = sLine.Token(0);
 
-		if (sCommand.CaseCmp("ADD") == 0) {
+		if (sCommand.Equals("ADD")) {
 			CString sChan = sLine.Token(1);
 
 			if (AlreadyAdded(sChan)) {
@@ -52,14 +52,14 @@ public:
 			} else {
 				PutModule("Usage: Add [!]<#chan>");
 			}
-		} else if (sCommand.CaseCmp("DEL") == 0) {
+		} else if (sCommand.Equals("DEL")) {
 			CString sChan = sLine.Token(1);
 
 			if (Del(sChan))
 				PutModule("Removed " + sChan + " from list");
 			else
 				PutModule("Usage: Del [!]<#chan>");
-		} else if (sCommand.CaseCmp("LIST") == 0) {
+		} else if (sCommand.Equals("LIST")) {
 			CTable Table;
 			Table.AddColumn("Chan");
 
@@ -78,7 +78,7 @@ public:
 			} else {
 				PutModule("You have no entries.");
 			}
-		} else if (sCommand.CaseCmp("HELP") == 0) {
+		} else if (sCommand.Equals("HELP")) {
 			CTable Table;
 			Table.AddColumn("Command");
 			Table.AddColumn("Description");
@@ -127,7 +127,7 @@ protected:
 
 		// Is that person us and we don't have op?
 		const CNick* pNick = Channel.GetNicks().begin()->second;
-		if (!pNick->HasPerm(CChan::Op) && pNick->GetNick().CaseCmp(m_pUser->GetCurNick()) == 0)
+		if (!pNick->HasPerm(CChan::Op) && pNick->GetNick().Equals(m_pUser->GetCurNick()))
 			Channel.Cycle();
 	}
 

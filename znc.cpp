@@ -624,7 +624,7 @@ bool CZNC::WriteNewConfig(CString& sConfigFile) {
 				const CModInfo& Info = *it;
 				CString sName = Info.GetName();
 
-				if (sName.Right(3).CaseCmp(".so") == 0) {
+				if (sName.Right(3).Equals(".so")) {
 					sName.RightChomp(3);
 				}
 
@@ -815,7 +815,7 @@ bool CZNC::WriteNewConfig(CString& sConfigFile) {
 		}
 		if (!bFileOK) {
 			CUtils::GetInput("Please specify an alternate location (or \"stdout\" for displaying the config)", sConfigFile, sConfigFile);
-			if (sConfigFile.CaseCmp("stdout") == 0)
+			if (sConfigFile.Equals("stdout"))
 				bFileOK = true;
 			else
 				sConfigFile = ExpandConfigPath(sConfigFile);
@@ -1010,7 +1010,7 @@ bool CZNC::DoRehash(CString& sError)
 
 				if (pUser) {
 					if (pChan) {
-						if (sTag.CaseCmp("Chan") == 0) {
+						if (sTag.Equals("Chan")) {
 							// Save the channel name, because AddChan
 							// deletes the CChannel*, if adding fails
 							sError = pChan->GetName();
@@ -1023,7 +1023,7 @@ bool CZNC::DoRehash(CString& sError)
 							pChan = NULL;
 							continue;
 						}
-					} else if (sTag.CaseCmp("User") == 0) {
+					} else if (sTag.Equals("User")) {
 						CString sErr;
 
 						if (pRealUser) {
@@ -1054,7 +1054,7 @@ bool CZNC::DoRehash(CString& sError)
 						continue;
 					}
 				}
-			} else if (sTag.CaseCmp("User") == 0) {
+			} else if (sTag.Equals("User")) {
 				if (pUser) {
 					sError = "You may not nest <User> tags inside of other <User> tags.";
 					CUtils::PrintError(sError);
@@ -1095,7 +1095,7 @@ bool CZNC::DoRehash(CString& sError)
 				}
 
 				continue;
-			} else if (sTag.CaseCmp("Chan") == 0) {
+			} else if (sTag.Equals("Chan")) {
 				if (!pUser) {
 					sError = "<Chan> tags must be nested inside of a <User> tag.";
 					CUtils::PrintError(sError);
@@ -1122,55 +1122,55 @@ bool CZNC::DoRehash(CString& sError)
 		if ((!sName.empty()) && (!sValue.empty())) {
 			if (pUser) {
 				if (pChan) {
-					if (sName.CaseCmp("Buffer") == 0) {
+					if (sName.Equals("Buffer")) {
 						pChan->SetBufferCount(strtoul(sValue.c_str(), NULL, 10));
 						continue;
-					} else if (sName.CaseCmp("KeepBuffer") == 0) {
-						pChan->SetKeepBuffer((sValue.CaseCmp("true") == 0));
+					} else if (sName.Equals("KeepBuffer")) {
+						pChan->SetKeepBuffer(sValue.Equals("true"));
 						continue;
-					} else if (sName.CaseCmp("Detached") == 0) {
-						pChan->SetDetached((sValue.CaseCmp("true") == 0));
+					} else if (sName.Equals("Detached")) {
+						pChan->SetDetached(sValue.Equals("true"));
 						continue;
-					} else if (sName.CaseCmp("AutoCycle") == 0) {
-						if (sValue.CaseCmp("true") == 0) {
+					} else if (sName.Equals("AutoCycle")) {
+						if (sValue.Equals("true")) {
 							CUtils::PrintError("WARNING: AutoCycle has been removed, instead try -> LoadModule = autocycle " + pChan->GetName());
 						}
 						continue;
-					} else if (sName.CaseCmp("Key") == 0) {
+					} else if (sName.Equals("Key")) {
 						pChan->SetKey(sValue);
 						continue;
-					} else if (sName.CaseCmp("Modes") == 0) {
+					} else if (sName.Equals("Modes")) {
 						pChan->SetDefaultModes(sValue);
 						continue;
 					}
 				} else {
-					if (sName.CaseCmp("Buffer") == 0) {
+					if (sName.Equals("Buffer")) {
 						pUser->SetBufferCount(strtoul(sValue.c_str(), NULL, 10));
 						continue;
-					} else if (sName.CaseCmp("KeepBuffer") == 0) {
-						pUser->SetKeepBuffer((sValue.CaseCmp("true") == 0));
+					} else if (sName.Equals("KeepBuffer")) {
+						pUser->SetKeepBuffer(sValue.Equals("true"));
 						continue;
-					} else if (sName.CaseCmp("Nick") == 0) {
+					} else if (sName.Equals("Nick")) {
 						pUser->SetNick(sValue);
 						continue;
-					} else if (sName.CaseCmp("CTCPReply") == 0) {
+					} else if (sName.Equals("CTCPReply")) {
 						pUser->AddCTCPReply(sValue.Token(0), sValue.Token(1, true));
 						continue;
-					} else if (sName.CaseCmp("QuitMsg") == 0) {
+					} else if (sName.Equals("QuitMsg")) {
 						pUser->SetQuitMsg(sValue);
 						continue;
-					} else if (sName.CaseCmp("AltNick") == 0) {
+					} else if (sName.Equals("AltNick")) {
 						pUser->SetAltNick(sValue);
 						continue;
-					} else if (sName.CaseCmp("AwaySuffix") == 0) {
+					} else if (sName.Equals("AwaySuffix")) {
 						CUtils::PrintMessage("WARNING: AwaySuffix has been depricated, instead try -> LoadModule = awaynick %nick%_" + sValue);
 						continue;
-					} else if (sName.CaseCmp("AutoCycle") == 0) {
-						if (sValue.CaseCmp("true") == 0) {
+					} else if (sName.Equals("AutoCycle")) {
+						if (sValue.Equals("true")) {
 							CUtils::PrintError("WARNING: AutoCycle has been removed, instead try -> LoadModule = autocycle");
 						}
 						continue;
-					} else if (sName.CaseCmp("Pass") == 0) {
+					} else if (sName.Equals("Pass")) {
 						// There are different formats for this available:
 						// Pass = <plain text>
 						// Pass = <md5 hash> -
@@ -1197,76 +1197,76 @@ bool CZNC::DoRehash(CString& sError)
 						}
 
 						continue;
-					} else if (sName.CaseCmp("MultiClients") == 0) {
-						pUser->SetMultiClients(sValue.CaseCmp("true") == 0);
+					} else if (sName.Equals("MultiClients")) {
+						pUser->SetMultiClients(sValue.Equals("true"));
 						continue;
-					} else if (sName.CaseCmp("BounceDCCs") == 0) {
-						pUser->SetBounceDCCs(sValue.CaseCmp("true") == 0);
+					} else if (sName.Equals("BounceDCCs")) {
+						pUser->SetBounceDCCs(sValue.Equals("true"));
 						continue;
-					} else if (sName.CaseCmp("Ident") == 0) {
+					} else if (sName.Equals("Ident")) {
 						pUser->SetIdent(sValue);
 						continue;
-					} else if (sName.CaseCmp("DenyLoadMod") == 0) {
-						pUser->SetDenyLoadMod((sValue.CaseCmp("TRUE") == 0));
+					} else if (sName.Equals("DenyLoadMod")) {
+						pUser->SetDenyLoadMod(sValue.Equals("true"));
 						continue;
-					} else if (sName.CaseCmp("Admin") == 0) {
-						pUser->SetAdmin((sValue.CaseCmp("TRUE") == 0));
+					} else if (sName.Equals("Admin")) {
+						pUser->SetAdmin(sValue.Equals("true"));
 						continue;
-					} else if (sName.CaseCmp("DenySetVHost") == 0) {
-						pUser->SetDenySetVHost((sValue.CaseCmp("TRUE") == 0));
+					} else if (sName.Equals("DenySetVHost")) {
+						pUser->SetDenySetVHost(sValue.Equals("true"));
 						continue;
-					} else if (sName.CaseCmp("StatusPrefix") == 0) {
+					} else if (sName.Equals("StatusPrefix")) {
 						if (!pUser->SetStatusPrefix(sValue)) {
 							sError = "Invalid StatusPrefix [" + sValue + "] Must be 1-5 chars, no spaces.";
 							CUtils::PrintError(sError);
 							return false;
 						}
 						continue;
-					} else if (sName.CaseCmp("DCCLookupMethod") == 0) {
-						pUser->SetUseClientIP((sValue.CaseCmp("Client") == 0));
+					} else if (sName.Equals("DCCLookupMethod")) {
+						pUser->SetUseClientIP(sValue.Equals("Client"));
 						continue;
-					} else if (sName.CaseCmp("RealName") == 0) {
+					} else if (sName.Equals("RealName")) {
 						pUser->SetRealName(sValue);
 						continue;
-					} else if (sName.CaseCmp("KeepNick") == 0) {
-						if (sValue.CaseCmp("true") == 0) {
+					} else if (sName.Equals("KeepNick")) {
+						if (sValue.Equals("true")) {
 							CUtils::PrintError("WARNING: KeepNick has been deprecated, instead try -> LoadModule = keepnick");
 						}
 						continue;
-					} else if (sName.CaseCmp("ChanModes") == 0) {
+					} else if (sName.Equals("ChanModes")) {
 						pUser->SetDefaultChanModes(sValue);
 						continue;
-					} else if (sName.CaseCmp("VHost") == 0) {
+					} else if (sName.Equals("VHost")) {
 						pUser->SetVHost(sValue);
 						continue;
-					} else if (sName.CaseCmp("Allow") == 0) {
+					} else if (sName.Equals("Allow")) {
 						pUser->AddAllowedHost(sValue);
 						continue;
-					} else if (sName.CaseCmp("Server") == 0) {
+					} else if (sName.Equals("Server")) {
 						CUtils::PrintAction("Adding Server [" + sValue + "]");
 						CUtils::PrintStatus(pUser->AddServer(sValue));
 						continue;
-					} else if (sName.CaseCmp("Chan") == 0) {
+					} else if (sName.Equals("Chan")) {
 						pUser->AddChan(sValue, true);
 						continue;
-					} else if (sName.CaseCmp("TimestampFormat") == 0) {
+					} else if (sName.Equals("TimestampFormat")) {
 						pUser->SetTimestampFormat(sValue);
 						continue;
-					} else if (sName.CaseCmp("AppendTimestamp") == 0) {
+					} else if (sName.Equals("AppendTimestamp")) {
 						pUser->SetTimestampAppend(sValue.ToBool());
 						continue;
-					} else if (sName.CaseCmp("PrependTimestamp") == 0) {
+					} else if (sName.Equals("PrependTimestamp")) {
 						pUser->SetTimestampPrepend(sValue.ToBool());
 						continue;
-					} else if (sName.CaseCmp("Timestamp") == 0) {
-						if (sValue.Trim_n().CaseCmp("true") != 0) {
-							if (sValue.Trim_n().CaseCmp("append") == 0) {
+					} else if (sName.Equals("Timestamp")) {
+						if (!sValue.Trim_n().Equals("true")) {
+							if (sValue.Trim_n().Equals("append")) {
 								pUser->SetTimestampAppend(true);
 								pUser->SetTimestampPrepend(false);
-							} else if (sValue.Trim_n().CaseCmp("prepend") == 0) {
+							} else if (sValue.Trim_n().Equals("prepend")) {
 								pUser->SetTimestampAppend(false);
 								pUser->SetTimestampPrepend(true);
-							} else if (sValue.Trim_n().CaseCmp("false") == 0) {
+							} else if (sValue.Trim_n().Equals("false")) {
 								pUser->SetTimestampAppend(false);
 								pUser->SetTimestampPrepend(false);
 							} else {
@@ -1274,16 +1274,16 @@ bool CZNC::DoRehash(CString& sError)
 							}
 						}
 						continue;
-					} else if (sName.CaseCmp("TimezoneOffset") == 0) {
+					} else if (sName.Equals("TimezoneOffset")) {
 						pUser->SetTimezoneOffset(sValue.ToDouble()); // there is no ToFloat()
 						continue;
-					} else if (sName.CaseCmp("JoinTries") == 0) {
+					} else if (sName.Equals("JoinTries")) {
 						pUser->SetJoinTries(sValue.ToUInt());
 						continue;
-					} else if (sName.CaseCmp("MaxJoins") == 0) {
+					} else if (sName.Equals("MaxJoins")) {
 						pUser->SetMaxJoins(sValue.ToUInt());
 						continue;
-					} else if (sName.CaseCmp("LoadModule") == 0) {
+					} else if (sName.Equals("LoadModule")) {
 						CString sModName = sValue.Token(0);
 						CUtils::PrintAction("Loading Module [" + sModName + "]");
 #ifdef _MODULES
@@ -1310,9 +1310,9 @@ bool CZNC::DoRehash(CString& sError)
 					}
 				}
 			} else {
-				if (sName.CaseCmp("Listen") == 0 || sName.CaseCmp("ListenPort") == 0 || sName.CaseCmp("Listen6") == 0) {
+				if (sName.Equals("Listen") || sName.Equals("ListenPort") || sName.Equals("Listen6")) {
 					bool bSSL = false;
-					bool bIPV6 = (sName.CaseCmp("Listen6") == 0);
+					bool bIPV6 = sName.Equals("Listen6");
 					CString sPort;
 
 					CString sBindHost;
@@ -1400,7 +1400,7 @@ bool CZNC::DoRehash(CString& sError)
 					CUtils::PrintStatus(true);
 
 					continue;
-				} else if (sName.CaseCmp("LoadModule") == 0) {
+				} else if (sName.Equals("LoadModule")) {
 #ifdef _MODULES
 					CString sModName = sValue.Token(0);
 					CString sArgs = sValue.Token(1, true);
@@ -1416,29 +1416,29 @@ bool CZNC::DoRehash(CString& sError)
 					CUtils::PrintError("Modules are not enabled.");
 #endif
 					continue;
-				} else if (sName.CaseCmp("ISpoofFormat") == 0) {
+				} else if (sName.Equals("ISpoofFormat")) {
 					m_sISpoofFormat = sValue;
 					continue;
-				} else if (sName.CaseCmp("ISpoofFile") == 0) {
+				} else if (sName.Equals("ISpoofFile")) {
 					if (sValue.Left(2) == "~/") {
 						sValue.LeftChomp(2);
 						sValue = GetHomePath() + "/" + sValue;
 					}
 					m_sISpoofFile = sValue;
 					continue;
-				} else if (sName.CaseCmp("MOTD") == 0) {
+				} else if (sName.Equals("MOTD")) {
 					AddMotd(sValue);
 					continue;
-				} else if (sName.CaseCmp("VHost") == 0) {
+				} else if (sName.Equals("VHost")) {
 					AddVHost(sValue);
 					continue;
-				} else if (sName.CaseCmp("PidFile") == 0) {
+				} else if (sName.Equals("PidFile")) {
 					m_sPidFile = sValue;
 					continue;
-				} else if (sName.CaseCmp("StatusPrefix") == 0) {
+				} else if (sName.Equals("StatusPrefix")) {
 					m_sStatusPrefix = sValue;
 					continue;
-				} else if (sName.CaseCmp("ConnectDelay") == 0) {
+				} else if (sName.Equals("ConnectDelay")) {
 					m_uiConnectDelay = sValue.ToUInt();
 					continue;
 				}
@@ -1446,7 +1446,7 @@ bool CZNC::DoRehash(CString& sError)
 
 		}
 
-		if (sName.CaseCmp("GM:", 3) == 0)
+		if (sName.Equals("GM:", false, 3))
 		{ // GM: prefix is a pass through to config lines for global modules
 			CGlobalModuleConfigLine cTmp;
 			cTmp.m_sName = sName.substr(3, CString::npos);
@@ -1574,7 +1574,7 @@ bool CZNC::AddVHost(const CString& sHost) {
 	}
 
 	for (unsigned int a = 0; a < m_vsVHosts.size(); a++) {
-		if (m_vsVHosts[a].CaseCmp(sHost) == 0) {
+		if (m_vsVHosts[a].Equals(sHost)) {
 			return false;
 		}
 	}

@@ -137,7 +137,7 @@ void CIMAPSock::ReadLine(const CString& sLine) {
 	} else {
 		CUser* pUser = CZNC::Get().FindUser(m_spAuth->GetUsername());
 
-		if (pUser && sLine.Left(7).CaseCmp("AUTH OK") == 0) {
+		if (pUser && sLine.Equals("AUTH OK", false, 7)) {
 			m_spAuth->AcceptLogin(*pUser);
 			m_pIMAPMod->CacheLogin(CString(m_spAuth->GetUsername() + ":" + m_spAuth->GetPassword()).MD5());		// Use MD5 so passes don't sit in memory in plain text
 			DEBUG_ONLY(cerr << "+++ Successful IMAP lookup" << endl);

@@ -205,13 +205,13 @@ public:
 	}
 
 	virtual void OnModCommand(const CString& sCommand) {
-		if (strcasecmp(sCommand.c_str(), "TIMERS") == 0) {
+		if (sCommand.Equals("TIMERS")) {
 			ListTimers();
 		}
 	}
 
 	virtual EModRet OnStatusCommand(const CString& sCommand) {
-		if (strcasecmp(sCommand.c_str(), "SAMPLE") == 0) {
+		if (sCommand.Equals("SAMPLE")) {
 			PutModule("Hi, I'm your friendly sample module.");
 			return HALT;
 		}

@@ -79,9 +79,9 @@ void CIRCSock::ReadLine(const CString& sData) {
 
 	MODULECALL(OnRaw(sLine), m_pUser, NULL, return);
 
-	if (strncasecmp(sLine.c_str(), "PING ", 5) == 0) {
+	if (sLine.Equals("PING ", false, 5)) {
 		PutIRC("PONG " + sLine.substr(5));
-	} else if (strncasecmp(sLine.c_str(), "ERROR ", 6) == 0) {
+	} else if (sLine.Equals("ERROR ", false, 6)) {
 		//ERROR :Closing Link: nick[24.24.24.24] (Excess Flood)
 		CString sError(sLine.substr(7));
 
@@ -114,7 +114,7 @@ void CIRCSock::ReadLine(const CString& sData) {
 						CClient* pClient = vClients[a];
 						CString sClientNick = pClient->GetNick(false);
 
-						if (sClientNick.CaseCmp(sNick) != 0) {
+						if (!sClientNick.Equals(sNick)) {
 							// If they connected with a nick that doesn't match the one we got on irc, then we need to update them
 							pClient->PutClient(":" + sClientNick + "!" + m_Nick.GetIdent() + "@" + m_Nick.GetHost() + " NICK :" + sNick);
 						}
@@ -240,7 +240,7 @@ void CIRCSock::ReadLine(const CString& sData) {
 
 					sServer.LeftChomp();
 
-					if (sNick.CaseCmp(GetNick()) == 0) {
+					if (sNick.Equals(GetNick())) {
 						m_Nick.SetIdent(sIdent);
 						m_Nick.SetHost(sHost);
 					}
@@ -326,7 +326,7 @@ void CIRCSock::ReadLine(const CString& sData) {
 			sCmd = sLine.Token(1);
 			CString sRest = sLine.Token(2, true);
 
-			if (sCmd.CaseCmp("NICK") == 0) {
+			if (sCmd.Equals("NICK")) {
 				CString sNewNick = sRest;
 				bool bIsVisible = false;
 
@@ -350,7 +350,7 @@ void CIRCSock::ReadLine(const CString& sData) {
 				}
 
 				// Todo: use nick compare function here
-				if (Nick.GetNick().CaseCmp(GetNick()) == 0) {
+				if (Nick.GetNick().Equals(GetNick())) {
 					// We are changing our own nick, the clients always must see this!
 					bIsVisible = true;
 					SetNick(sNewNick);
@@ -361,7 +361,7 @@ void CIRCSock::ReadLine(const CString& sData) {
 				if (!bIsVisible) {
 					return;
 				}
-			} else if (sCmd.CaseCmp("QUIT") == 0) {
+			} else if (sCmd.Equals("QUIT")) {
 				CString sMessage = sRest;
 				bool bIsVisible = false;
 
@@ -371,7 +371,7 @@ void CIRCSock::ReadLine(const CString& sData) {
 
 				// :nick!ident@host.com QUIT :message
 
-				if (Nick.GetNick().CaseCmp(GetNick()) == 0) {
+				if (Nick.GetNick().Equals(GetNick())) {
 					m_pUser->PutStatus("You quit [" + sMessage + "]");
 				}
 
@@ -395,7 +395,7 @@ void CIRCSock::ReadLine(const CString& sData) {
 				if (!bIsVisible) {
 					return;
 				}
-			} else if (sCmd.CaseCmp("JOIN") == 0) {
+			} else if (sCmd.Equals("JOIN")) {
 				CString sChan = sRest.Token(0);
 				if (sChan.Left(1) == ":") {
 					sChan.LeftChomp();
@@ -404,7 +404,7 @@ void CIRCSock::ReadLine(const CString& sData) {
 				CChan* pChan;
 
 				// Todo: use nick compare function
-				if (Nick.GetNick().CaseCmp(GetNick()) == 0) {
+				if (Nick.GetNick().Equals(GetNick())) {
 					m_pUser->AddChan(sChan, false);
 					pChan = m_pUser->FindChan(sChan);
 					if (pChan) {
@@ -426,7 +426,7 @@ void CIRCSock::ReadLine(const CString& sData) {
 						return;
 					}
 				}
-			} else if (sCmd.CaseCmp("PART") == 0) {
+			} else if (sCmd.Equals("PART")) {
 				CString sChan = sRest.Token(0);
 				if (sChan.Left(1) == ":") {
 					sChan.LeftChomp();
@@ -443,7 +443,7 @@ void CIRCSock::ReadLine(const CString& sData) {
 				}
 
 				// Todo: use nick compare function
-				if (Nick.GetNick().CaseCmp(GetNick()) == 0) {
+				if (Nick.GetNick().Equals(GetNick())) {
 					m_pUser->DelChan(sChan);
 				}
 
@@ -456,7 +456,7 @@ void CIRCSock::ReadLine(const CString& sData) {
 				if (bDetached) {
 					return;
 				}
-			} else if (sCmd.CaseCmp("MODE") == 0) {
+			} else if (sCmd.Equals("MODE")) {
 				CString sTarget = sRest.Token(0);
 				CString sModes = sRest.Token(1, true);
 				if (sModes.Left(1) == ":")
@@ -492,7 +492,7 @@ void CIRCSock::ReadLine(const CString& sData) {
 						}
 					}
 				}
-			} else if (sCmd.CaseCmp("KICK") == 0) {
+			} else if (sCmd.Equals("KICK")) {
 				// :opnick!ident@host.com KICK #chan nick :msg
 				CString sChan = sRest.Token(0);
 				CString sKickedNick = sRest.Token(1);
@@ -506,7 +506,7 @@ void CIRCSock::ReadLine(const CString& sData) {
 					MODULECALL(OnKick(Nick.GetNickMask(), sKickedNick, *pChan, sMsg), m_pUser, NULL, );
 				}
 
-				if (GetNick().CaseCmp(sKickedNick) == 0 && pChan) {
+				if (GetNick().Equals(sKickedNick) && pChan) {
 					pChan->SetIsOn(false);
 
 					// Don't try to rejoin!
@@ -516,7 +516,7 @@ void CIRCSock::ReadLine(const CString& sData) {
 				if ((pChan) && (pChan->IsDetached())) {
 					return;
 				}
-			} else if (sCmd.CaseCmp("NOTICE") == 0) {
+			} else if (sCmd.Equals("NOTICE")) {
 				// :nick!ident@host.com NOTICE #chan :Message
 				CString sTarget = sRest.Token(0);
 				CString sMsg = sRest.Token(1, true);
@@ -526,7 +526,7 @@ void CIRCSock::ReadLine(const CString& sData) {
 					sMsg.LeftChomp();
 					sMsg.RightChomp();
 
-					if (sTarget.CaseCmp(GetNick()) == 0) {
+					if (sTarget.Equals(GetNick())) {
 						if (OnCTCPReply(Nick, sMsg)) {
 							return;
 						}
@@ -535,7 +535,7 @@ void CIRCSock::ReadLine(const CString& sData) {
 					m_pUser->PutUser(":" + Nick.GetNickMask() + " NOTICE " + sTarget + " :\001" + sMsg + "\001");
 					return;
 				} else {
-					if (sTarget.CaseCmp(GetNick()) == 0) {
+					if (sTarget.Equals(GetNick())) {
 						if (OnPrivNotice(Nick, sMsg)) {
 							return;
 						}
@@ -546,14 +546,14 @@ void CIRCSock::ReadLine(const CString& sData) {
 					}
 				}
 
-				if (Nick.GetNick().CaseCmp(m_pUser->GetIRCServer()) == 0) {
+				if (Nick.GetNick().Equals(m_pUser->GetIRCServer())) {
 					m_pUser->PutUser(":" + Nick.GetNick() + " NOTICE " + sTarget + " :" + sMsg);
 				} else {
 					m_pUser->PutUser(":" + Nick.GetNickMask() + " NOTICE " + sTarget + " :" + sMsg);
 				}
 
 				return;
-			} else if (sCmd.CaseCmp("TOPIC") == 0) {
+			} else if (sCmd.Equals("TOPIC")) {
 				// :nick!ident@host.com TOPIC #chan :This is a topic
 				CChan* pChan = m_pUser->FindChan(sLine.Token(2));
 
@@ -573,7 +573,7 @@ void CIRCSock::ReadLine(const CString& sData) {
 
 					sLine = ":" + Nick.GetNickMask() + " TOPIC " + pChan->GetName() + " :" + sTopic;
 				}
-			} else if (sCmd.CaseCmp("PRIVMSG") == 0) {
+			} else if (sCmd.Equals("PRIVMSG")) {
 				// :nick!ident@host.com PRIVMSG #chan :Message
 				CString sTarget = sRest.Token(0);
 				CString sMsg = sRest.Token(1, true);
@@ -586,7 +586,7 @@ void CIRCSock::ReadLine(const CString& sData) {
 					sMsg.LeftChomp();
 					sMsg.RightChomp();
 
-					if (sTarget.CaseCmp(GetNick()) == 0) {
+					if (sTarget.Equals(GetNick())) {
 						if (OnPrivCTCP(Nick, sMsg)) {
 							return;
 						}
@@ -599,7 +599,7 @@ void CIRCSock::ReadLine(const CString& sData) {
 					m_pUser->PutUser(":" + Nick.GetNickMask() + " PRIVMSG " + sTarget + " :\001" + sMsg + "\001");
 					return;
 				} else {
-					if (sTarget.CaseCmp(GetNick()) == 0) {
+					if (sTarget.Equals(GetNick())) {
 						if (OnPrivMsg(Nick, sMsg)) {
 							return;
 						}
@@ -612,7 +612,7 @@ void CIRCSock::ReadLine(const CString& sData) {
 					m_pUser->PutUser(":" + Nick.GetNickMask() + " PRIVMSG " + sTarget + " :" + sMsg);
 					return;
 				}
-			} else if (sCmd.CaseCmp("WALLOPS") == 0) {
+			} else if (sCmd.Equals("WALLOPS")) {
 				// :blub!dummy@rox-8DBEFE92 WALLOPS :this is a test
 				CString sMsg = sRest.Token(0, true);
 
@@ -635,14 +635,13 @@ bool CIRCSock::OnCTCPReply(CNick& Nick, CString& sMessage) {
 }
 
 bool CIRCSock::OnPrivCTCP(CNick& Nick, CString& sMessage) {
-	if (sMessage.Left(7).CaseCmp("ACTION ") == 0) {
-		sMessage = sMessage.substr(7);
+	if (sMessage.TrimPrefix("ACTION ")) {
 		MODULECALL(OnPrivAction(Nick, sMessage), m_pUser, NULL, return true);
 		sMessage = "ACTION " + sMessage;
 	}
 	MODULECALL(OnPrivCTCP(Nick, sMessage), m_pUser, NULL, return true);
 
-	if (strncasecmp(sMessage.c_str(), "DCC ", 4) == 0 && m_pUser && m_pUser->BounceDCCs() && m_pUser->IsUserAttached()) {
+	if (sMessage.Equals("DCC ", false, 4) && m_pUser && m_pUser->BounceDCCs() && m_pUser->IsUserAttached()) {
 		// DCC CHAT chat 2453612361 44592
 		CString sType = sMessage.Token(1);
 		CString sFile = sMessage.Token(2);
@@ -650,33 +649,33 @@ bool CIRCSock::OnPrivCTCP(CNick& Nick, CString& sMessage) {
 		unsigned short uPort = strtoul(sMessage.Token(4).c_str(), NULL, 10);
 		unsigned long uFileSize = strtoul(sMessage.Token(5).c_str(), NULL, 10);
 
-		if (sType.CaseCmp("CHAT") == 0) {
+		if (sType.Equals("CHAT")) {
 			CNick FromNick(Nick.GetNickMask());
 			unsigned short uBNCPort = CDCCBounce::DCCRequest(FromNick.GetNick(), uLongIP, uPort, "", true, m_pUser, GetLocalIP(), CUtils::GetIP(uLongIP));
 			if (uBNCPort) {
 				m_pUser->PutUser(":" + Nick.GetNickMask() + " PRIVMSG " + GetNick() + " :\001DCC CHAT chat " + CString(CUtils::GetLongIP(GetLocalIP())) + " " + CString(uBNCPort) + "\001");
 			}
-		} else if (sType.CaseCmp("SEND") == 0) {
+		} else if (sType.Equals("SEND")) {
 			// DCC SEND readme.txt 403120438 5550 1104
 			unsigned short uBNCPort = CDCCBounce::DCCRequest(Nick.GetNick(), uLongIP, uPort, sFile, false, m_pUser, GetLocalIP(), CUtils::GetIP(uLongIP));
 			if (uBNCPort) {
 				m_pUser->PutUser(":" + Nick.GetNickMask() + " PRIVMSG " + GetNick() + " :\001DCC SEND " + sFile + " " + CString(CUtils::GetLongIP(GetLocalIP())) + " " + CString(uBNCPort) + " " + CString(uFileSize) + "\001");
 			}
-		} else if (sType.CaseCmp("RESUME") == 0) {
+		} else if (sType.Equals("RESUME")) {
 			// Need to lookup the connection by port, filter the port, and forward to the user
 			CDCCBounce* pSock = (CDCCBounce*) CZNC::Get().GetManager().FindSockByLocalPort(sMessage.Token(3).ToUShort());
 
-			if ((pSock) && (strncasecmp(pSock->GetSockName().c_str(), "DCC::", 5) == 0)) {
+			if (pSock && pSock->GetSockName().Equals("DCC::", false, 5)) {
 				m_pUser->PutUser(":" + Nick.GetNickMask() + " PRIVMSG " + GetNick() + " :\001DCC " + sType + " " + sFile + " " + CString(pSock->GetUserPort()) + " " + sMessage.Token(4) + "\001");
 			}
-		} else if (sType.CaseCmp("ACCEPT") == 0) {
+		} else if (sType.Equals("ACCEPT")) {
 			// Need to lookup the connection by port, filter the port, and forward to the user
 			CSockManager& Manager = CZNC::Get().GetManager();
 
 			for (unsigned int a = 0; a < Manager.size(); a++) {
 				CDCCBounce* pSock = (CDCCBounce*) Manager[a];
 
-				if ((pSock) && (strncasecmp(pSock->GetSockName().c_str(), "DCC::", 5) == 0)) {
+				if (pSock && pSock->GetSockName().Equals("DCC::", false, 5)) {
 					if (pSock->GetUserPort() == atoi(sMessage.Token(3).c_str())) {
 						m_pUser->PutUser(":" + Nick.GetNickMask() + " PRIVMSG " + GetNick() + " :\001DCC " + sType + " " + sFile + " " + CString(pSock->GetLocalPort()) + " " + sMessage.Token(4) + "\001");
 					}
@@ -750,8 +749,7 @@ bool CIRCSock::OnChanCTCP(CNick& Nick, const CString& sChan, CString& sMessage) 
 	CChan* pChan = m_pUser->FindChan(sChan);
 	if (pChan) {
 		// Record a /me
-		if (sMessage.Left(7).CaseCmp("ACTION ") == 0) {
-			sMessage = sMessage.substr(7);
+		if (sMessage.TrimPrefix("ACTION ")) {
 			if (pChan->KeepBuffer() || !m_pUser->IsUserAttached()) {
 				pChan->AddBuffer(":" + Nick.GetNickMask() + " PRIVMSG " + sChan + " :\001ACTION " + m_pUser->AddTimestamp(sMessage) + "\001");
 			}
@@ -895,7 +893,7 @@ void CIRCSock::ParseISupport(const CString& sLine) {
 		CString sName = sArg.Token(0, false, "=");
 		CString sValue = sArg.Token(1, true, "=");
 
-		if (sName.CaseCmp("PREFIX") == 0) {
+		if (sName.Equals("PREFIX")) {
 			CString sPrefixes = sValue.Token(1, false, ")");
 			CString sPermModes = sValue.Token(0, false, ")");
 			sPermModes.TrimLeft("(");
@@ -904,15 +902,15 @@ void CIRCSock::ParseISupport(const CString& sLine) {
 				m_sPerms = sPrefixes;
 				m_sPermModes = sPermModes;
 			}
-		} else if (sName.CaseCmp("CHANTYPES") == 0) {
+		} else if (sName.Equals("CHANTYPES")) {
 			m_pUser->SetChanPrefixes(sValue);
-		} else if (sName.CaseCmp("NICKLEN") == 0) {
+		} else if (sName.Equals("NICKLEN")) {
 			unsigned int uMax = sValue.ToUInt();
 
 			if (uMax) {
 				m_uMaxNickLen = uMax;
 			}
-		} else if (sName.CaseCmp("CHANMODES") == 0) {
+		} else if (sName.Equals("CHANMODES")) {
 			if (!sValue.empty()) {
 				m_mueChanModes.clear();
 
@@ -924,10 +922,10 @@ void CIRCSock::ParseISupport(const CString& sLine) {
 					}
 				}
 			}
-		} else if (sName.CaseCmp("NAMESX") == 0) {
+		} else if (sName.Equals("NAMESX")) {
 			m_bNamesx = true;
 			PutIRC("PROTOCTL NAMESX");
-		} else if (sName.CaseCmp("UHNAMES") == 0) {
+		} else if (sName.Equals("UHNAMES")) {
 			m_bUHNames = true;
 			PutIRC("PROTOCTL UHNAMES");
 		}
@@ -986,19 +984,19 @@ void CIRCSock::SendAltNick(const CString& sBadNick) {
 	const CString& sConfNick = m_pUser->GetNick().Left(uMax);
 	const CString& sAltNick = m_pUser->GetAltNick().Left(uMax);
 
-	if (sBadNick.CaseCmp(sConfNick) == 0) {
-		if ((!sAltNick.empty()) && (sConfNick.CaseCmp(sAltNick) != 0)) {
+	if (sBadNick.Equals(sConfNick)) {
+		if ((!sAltNick.empty()) && (!sConfNick.Equals(sAltNick))) {
 			PutIRC("NICK " + sAltNick);
 		} else {
 			PutIRC("NICK " + sConfNick.Left(uMax -1) + "-");
 		}
-	} else if (sBadNick.CaseCmp(sAltNick) == 0) {
+	} else if (sBadNick.Equals(sAltNick)) {
 		PutIRC("NICK " + sConfNick.Left(uMax -1) + "-");
-	} else if (sBadNick.CaseCmp(CString(sConfNick.Left(uMax -1) + "-")) == 0) {
+	} else if (sBadNick.Equals(CString(sConfNick.Left(uMax -1) + "-"))) {
 		PutIRC("NICK " + sConfNick.Left(uMax -1) + "|");
-	} else if (sBadNick.CaseCmp(CString(sConfNick.Left(uMax -1) + "|")) == 0) {
+	} else if (sBadNick.Equals(CString(sConfNick.Left(uMax -1) + "|"))) {
 		PutIRC("NICK " + sConfNick.Left(uMax -1) + "^");
-	} else if (sBadNick.CaseCmp(CString(sConfNick.Left(uMax -1) + "^")) == 0) {
+	} else if (sBadNick.Equals(CString(sConfNick.Left(uMax -1) + "^"))) {
 		PutIRC("NICK " + sConfNick.Left(uMax -1) + "a");
 	} else {
 		char cLetter = 0;

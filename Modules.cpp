@@ -290,7 +290,7 @@ bool CModule::RemTimer(const CString& sLabel) {
 	for (unsigned int a = 0; a < m_vTimers.size(); a++) {
 		CTimer* pTimer = m_vTimers[a];
 
-		if (pTimer->GetName().CaseCmp(sLabel) == 0) {
+		if (pTimer->GetName().Equals(sLabel)) {
 			m_vTimers.erase(m_vTimers.begin() +a);
 			m_pManager->DelCronByAddr(pTimer);
 			return true;
@@ -314,7 +314,7 @@ bool CModule::UnlinkTimer(CTimer* pTimer) {
 CTimer* CModule::FindTimer(const CString& sLabel) {
 	for (unsigned int a = 0; a < m_vTimers.size(); a++) {
 		CTimer* pTimer = m_vTimers[a];
-		if (pTimer->GetName().CaseCmp(sLabel) == 0) {
+		if (pTimer->GetName().Equals(sLabel)) {
 			return pTimer;
 		}
 	}
@@ -373,7 +373,7 @@ bool CModule::RemSocket(const CString& sSockName) {
 	for (unsigned int a = 0; a < m_vSockets.size(); a++) {
 		CSocket* pSocket = m_vSockets[a];
 
-		if (pSocket->GetSockName().CaseCmp(sSockName) == 0) {
+		if (pSocket->GetSockName().Equals(sSockName)) {
 			m_vSockets.erase(m_vSockets.begin() +a);
 			m_pManager->DelSockByAddr(pSocket);
 			return true;
@@ -397,7 +397,7 @@ bool CModule::UnlinkSocket(CSocket* pSocket) {
 CSocket* CModule::FindSocket(const CString& sSockName) {
 	for (unsigned int a = 0; a < m_vSockets.size(); a++) {
 		CSocket* pSocket = m_vSockets[a];
-		if (pSocket->GetSockName().CaseCmp(sSockName) == 0) {
+		if (pSocket->GetSockName().Equals(sSockName)) {
 			return pSocket;
 		}
 	}
@@ -639,7 +639,7 @@ void CGlobalModules::OnFailedLogin(const CString& sUsername, const CString& sRem
 
 CModule* CModules::FindModule(const CString& sModule) const {
 	for (unsigned int a = 0; a < size(); a++) {
-		if (sModule.CaseCmp((*this)[a]->GetModName()) == 0) {
+		if (sModule.Equals((*this)[a]->GetModName())) {
 			return (*this)[a];
 		}
 	}

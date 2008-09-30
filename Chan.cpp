@@ -269,7 +269,7 @@ void CChan::ModeChange(const CString& sModes, const CString& sOpNick) {
 							IncPermCount(uPerm);
 						}
 
-						if (pNick->GetNick().CaseCmp(m_pUser->GetCurNick()) == 0) {
+						if (pNick->GetNick().Equals(m_pUser->GetCurNick())) {
 							AddPerm(uPerm);
 						}
 					} else {
@@ -277,7 +277,7 @@ void CChan::ModeChange(const CString& sModes, const CString& sOpNick) {
 							DecPermCount(uPerm);
 						}
 
-						if (pNick->GetNick().CaseCmp(m_pUser->GetCurNick()) == 0) {
+						if (pNick->GetNick().Equals(m_pUser->GetCurNick())) {
 							RemPerm(uPerm);
 						}
 					}
@@ -466,7 +466,7 @@ bool CChan::AddNick(const CString& sNick) {
 		}
 	}
 
-	if (pNick->GetNick().CaseCmp(m_pUser->GetCurNick()) == 0) {
+	if (pNick->GetNick().Equals(m_pUser->GetCurNick())) {
 		for (CString::size_type i = 0; i < sPrefix.length(); i++) {
 			AddPerm(sPrefix[i]);
 		}

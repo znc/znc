@@ -76,7 +76,7 @@ public:
 		if (pIRCSock) {
 			CString sConfNick = m_pUser->GetNick();
 
-			if (pIRCSock->GetNick().CaseCmp(GetAwayNick().Left(pIRCSock->GetNick().length())) == 0) {
+			if (pIRCSock->GetNick().Equals(GetAwayNick().Left(pIRCSock->GetNick().length()))) {
 				RemTimer("BackNickTimer");
 				AddTimer(new CBackNickTimer(*this));
 			}
@@ -104,11 +104,13 @@ public:
 		}
 	}
 
-	virtual void OnModCommand(const CString& sCommand) {
-		if (strcasecmp(sCommand.c_str(), "TIMERS") == 0) {
+	virtual void OnModCommand(const CString& sLine) {
+		CString sCommand = sLine.Token(0);
+		if (sCommand.Equals("TIMERS")) {
 			ListTimers();
-		} else if (sCommand.Token(0).CaseCmp("SET") == 0) {
-			CString sFormat(sCommand.Token(1));
+		}
+		else if (sCommand.Equals("SET")) {
+			CString sFormat = sLine.Token(1);
 
 			if (!sFormat.empty()) {
 				m_sFormat = sFormat;
@@ -125,7 +127,7 @@ public:
 
 				PutModule(sMsg);
 			}
-		} else if (sCommand.Token(0).CaseCmp("SHOW") == 0) {
+		} else if (sCommand.Equals("SHOW")) {
 			if (m_pUser) {
 				CString sExpanded = GetAwayNick();
 				CString sMsg = "AwayNick is set to [" + m_sFormat + "]";
@@ -136,7 +138,7 @@ public:
 
 				PutModule(sMsg);
 			}
-		} else if (sCommand.Token(0).CaseCmp("HELP") == 0) {
+		} else if (sCommand.Equals("HELP")) {
 			PutModule("Commands are: show, timers, set [awaynick]");
 		}
 	}

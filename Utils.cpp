@@ -260,9 +260,9 @@ bool CUtils::GetBoolInput(const CString& sPrompt, bool *pbDefault) {
 
 	GetInput(sPrompt, sRet, sDefault, "yes/no");
 
-	if (sRet.CaseCmp("yes") == 0) {
+	if (sRet.Equals("yes")) {
 		return true;
-	} else if (sRet.CaseCmp("no") == 0) {
+	} else if (sRet.Equals("no")) {
 		return false;
 	}
 
@@ -403,7 +403,7 @@ void CUtils::PrintStatus(bool bSuccess, const CString& sMessage) {
 
 bool CTable::AddColumn(const CString& sName) {
 	for (unsigned int a = 0; a < m_vsHeaders.size(); a++) {
-		if (m_vsHeaders[a].CaseCmp(sName) == 0) {
+		if (m_vsHeaders[a].Equals(sName)) {
 			return false;
 		}
 	}

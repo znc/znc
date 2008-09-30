@@ -182,9 +182,9 @@ public:
 			if (sLine.empty())
 				break;	// out of the headers
 
-			if (strncasecmp(sLine.c_str(), "From: ", 6) == 0)
+			if (sLine.Equals("From: ", false, 6))
 				tmp.sFrom = sLine.substr(6, CString::npos);
-			else if (strncasecmp(sLine.c_str(), "Subject: ", 9) == 0)
+			else if (sLine.Equals("Subject: ", false, 9))
 				tmp.sSubject = sLine.substr(9, CString::npos);
 
 			if ((!tmp.sFrom.empty()) && (!tmp.sSubject.empty()))

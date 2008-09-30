@@ -52,7 +52,7 @@ public:
 	void HandleMessage(CNick& Nick, const CString& sMessage)
 	{
 		if (!m_sPass.empty()
-				&& Nick.GetNick().CaseCmp("NickServ") == 0
+				&& Nick.GetNick().Equals("NickServ")
 				&& sMessage.find("msg") != CString::npos
 				&& sMessage.AsUpper().find("IDENTIFY") != CString::npos
 				&& sMessage.find("help") == CString::npos) {

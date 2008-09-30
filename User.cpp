@@ -368,7 +368,7 @@ bool CUser::Clone(const CUser& User, CString& sErrorRet, bool bCloneChans) {
 	}
 
 	for (a = 0; a < m_vServers.size(); a++) {
-		if (sServer.CaseCmp(m_vServers[a]->GetName()) == 0) {
+		if (sServer.Equals(m_vServers[a]->GetName())) {
 			m_uServerIdx = a +1;
 			break;
 		}
@@ -513,7 +513,7 @@ bool CUser::AddChan(CChan* pChan) {
 	}
 
 	for (unsigned int a = 0; a < m_vChans.size(); a++) {
-		if (m_vChans[a]->GetName().CaseCmp(pChan->GetName()) == 0) {
+		if (m_vChans[a]->GetName().Equals(pChan->GetName())) {
 			delete pChan;
 			return false;
 		}
@@ -535,7 +535,7 @@ bool CUser::AddChan(const CString& sName, bool bInConfig) {
 
 bool CUser::DelChan(const CString& sName) {
 	for (vector<CChan*>::iterator a = m_vChans.begin(); a != m_vChans.end(); a++) {
-		if (sName.CaseCmp((*a)->GetName()) == 0) {
+		if (sName.Equals((*a)->GetName())) {
 			delete *a;
 			m_vChans.erase(a);
 			return true;
@@ -651,7 +651,7 @@ bool CUser::WriteConfig(CFile& File) {
 CChan* CUser::FindChan(const CString& sName) const {
 	for (unsigned int a = 0; a < m_vChans.size(); a++) {
 		CChan* pChan = m_vChans[a];
-		if (sName.CaseCmp(pChan->GetName()) == 0) {
+		if (sName.Equals(pChan->GetName())) {
 			return pChan;
 		}
 	}
@@ -682,7 +682,7 @@ void CUser::JoinChans() {
 CServer* CUser::FindServer(const CString& sName) const {
 	for (unsigned int a = 0; a < m_vServers.size(); a++) {
 		CServer* pServer = m_vServers[a];
-		if (sName.CaseCmp(pServer->GetName()) == 0) {
+		if (sName.Equals(pServer->GetName())) {
 			return pServer;
 		}
 	}
@@ -700,7 +700,7 @@ bool CUser::DelServer(const CString& sName) {
 	for (vector<CServer*>::iterator it = m_vServers.begin(); it != m_vServers.end(); it++, a++) {
 		CServer* pServer = *it;
 
-		if (pServer->GetName().CaseCmp(sName) == 0) {
+		if (pServer->GetName().Equals(sName)) {
 			CServer* pCurServer = GetCurrentServer();
 			m_vServers.erase(it);
 
@@ -813,7 +813,7 @@ bool CUser::CheckPass(const CString& sPass) const {
 
 	CString sSaltedPass = sPass + m_sPassSalt;
 
-	return (m_sPass.CaseCmp(sSaltedPass.MD5()) == 0);
+	return (m_sPass.Equals(sSaltedPass.MD5()));
 }
 
 /*CClient* CUser::GetClient() {
@@ -823,7 +823,7 @@ bool CUser::CheckPass(const CString& sPass) const {
 
 	for (unsigned int a = 0; a < Manager.size(); a++) {
 		Csock* pSock = Manager[a];
-		if (pSock->GetSockName().CaseCmp(sSockName) == 0) {
+		if (pSock->GetSockName().Equals(sSockName)) {
 			if (!pSock->IsClosed()) {
 				return (CClient*) pSock;
 			}
@@ -918,7 +918,7 @@ bool CUser::ResumeFile(unsigned short uPort, unsigned long uFileSize) {
 	CSockManager& Manager = CZNC::Get().GetManager();
 
 	for (unsigned int a = 0; a < Manager.size(); a++) {
-		if (strncasecmp(Manager[a]->GetSockName().c_str(), "DCC::LISTEN::", 13) == 0) {
+		if (Manager[a]->GetSockName().Equals("DCC::LISTEN::", false, 13)) {
 			CDCCSock* pSock = (CDCCSock*) Manager[a];
 
 			if (pSock->GetLocalPort() == uPort) {
@@ -948,7 +948,7 @@ bool CUser::SendFile(const CString& sRemoteNick, const CString& sFileName, const
 
 	unsigned short uPort = CZNC::Get().GetManager().ListenRand("DCC::LISTEN::" + sRemoteNick, GetLocalIP(), false, SOMAXCONN, pSock, 120);
 
-	if (GetNick().CaseCmp(sRemoteNick) == 0) {
+	if (GetNick().Equals(sRemoteNick)) {
 		PutUser(":" + GetStatusPrefix() + "status!znc@znc.in PRIVMSG " + sRemoteNick + " :\001DCC SEND " + pFile->GetShortName() + " " + CString(CUtils::GetLongIP(GetLocalIP())) + " "
 				+ CString(uPort) + " " + CString(pFile->GetSize()) + "\001");
 	} else {

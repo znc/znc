@@ -83,7 +83,7 @@ void CClient::ReadLine(const CString& sData) {
 		sCommand = sLine.Token(0);
 	}
 
-	if (sCommand.CaseCmp("PASS") == 0) {
+	if (sCommand.Equals("PASS")) {
 		if (!IsAttached()) {
 			m_bGotPass = true;
 			m_sPass = sLine.Token(1);
@@ -99,7 +99,7 @@ void CClient::ReadLine(const CString& sData) {
 
 			return;		// Don't forward this msg.  ZNC has already registered us.
 		}
-	} else if (sCommand.CaseCmp("NICK") == 0) {
+	} else if (sCommand.Equals("NICK")) {
 		CString sNick = sLine.Token(1);
 		if (sNick.Left(1) == ":") {
 			sNick.LeftChomp();
@@ -119,7 +119,7 @@ void CClient::ReadLine(const CString& sData) {
 			// No need to forward it
 			return;
 		}
-	} else if (sCommand.CaseCmp("USER") == 0) {
+	} else if (sCommand.Equals("USER")) {
 		if (!IsAttached()) {
 			if (m_sUser.empty()) {
 				m_sUser = sLine.Token(1);
@@ -144,7 +144,7 @@ void CClient::ReadLine(const CString& sData) {
 		return;
 	}
 
-	if (sCommand.CaseCmp("ZNC") == 0) {
+	if (sCommand.Equals("ZNC")) {
 		CString sTarget = sLine.Token(1);
 		CString sModCommand;
 
@@ -155,7 +155,7 @@ void CClient::ReadLine(const CString& sData) {
 			sModCommand = sLine.Token(1, true);
 		}
 
-		if (sTarget.CaseCmp("status") == 0) {
+		if (sTarget.Equals("status")) {
 			if (sModCommand.empty())
 				PutStatus("Hello. How may I help you?");
 			else
@@ -169,7 +169,7 @@ void CClient::ReadLine(const CString& sData) {
 #endif
 		}
 		return;
-	} else if (sCommand.CaseCmp("DETACH") == 0) {
+	} else if (sCommand.Equals("DETACH")) {
 		CString sChan = sLine.Token(1);
 
 		if (sChan.empty()) {
@@ -186,19 +186,19 @@ void CClient::ReadLine(const CString& sData) {
 		pChan->DetachUser();
 		PutStatusNotice("Detached from [" + sChan + "]");
 		return;
-	} else if (sCommand.CaseCmp("PING") == 0) {
+	} else if (sCommand.Equals("PING")) {
 		CString sTarget = sLine.Token(1);
 
 		// If the client meant to ping us or we can be sure the server
 		// won't answer the ping (=no server connected) -> PONG back.
 		// else: It's the server's job to send a PONG.
-		if (sTarget.CaseCmp("irc.znc.in") == 0 || !m_pIRCSock) {
+		if (sTarget.Equals("irc.znc.in") || !m_pIRCSock) {
 			PutClient("PONG " + sLine.substr(5));
 			return;
 		}
-	} else if (sCommand.CaseCmp("PONG") == 0) {
+	} else if (sCommand.Equals("PONG")) {
 		return;	// Block pong replies, we already responded to the pings
-	} else if (sCommand.CaseCmp("JOIN") == 0) {
+	} else if (sCommand.Equals("JOIN")) {
 		CString sChans = sLine.Token(1);
 		CString sKey = sLine.Token(2);
 
@@ -235,7 +235,7 @@ void CClient::ReadLine(const CString& sData) {
 		if (!sKey.empty()) {
 			sLine += " " + sKey;
 		}
-	} else if (sCommand.CaseCmp("PART") == 0) {
+	} else if (sCommand.Equals("PART")) {
 		CString sChan = sLine.Token(1);
 		CString sMessage = sLine.Token(2, true);
 
@@ -262,7 +262,7 @@ void CClient::ReadLine(const CString& sData) {
 		if (!sMessage.empty()) {
 			sLine += " :" + sMessage;
 		}
-	} else if (sCommand.CaseCmp("TOPIC") == 0) {
+	} else if (sCommand.Equals("TOPIC")) {
 		CString sChan = sLine.Token(1);
 		CString sTopic = sLine.Token(2, true);
 
@@ -274,7 +274,7 @@ void CClient::ReadLine(const CString& sData) {
 		} else {
 			MODULECALL(OnUserTopicRequest(sChan), m_pUser, this, return);
 		}
-	} else if (sCommand.CaseCmp("MODE") == 0) {
+	} else if (sCommand.Equals("MODE")) {
 		CString sTarget = sLine.Token(1);
 		CString sModes = sLine.Token(2, true);
 
@@ -289,23 +289,23 @@ void CClient::ReadLine(const CString& sData) {
 			return;
 			}
 		}
-	} else if (sCommand.CaseCmp("QUIT") == 0) {
+	} else if (sCommand.Equals("QUIT")) {
 		m_pUser->UserDisconnected(this);
 
 		Close();	// Treat a client quit as a detach
 		return;		// Don't forward this msg.  We don't want the client getting us disconnected.
-	} else if (sCommand.CaseCmp("PROTOCTL") == 0) {
+	} else if (sCommand.Equals("PROTOCTL")) {
 		unsigned int i = 1;
 		while (!sLine.Token(i).empty()) {
-			if (sLine.Token(i).CaseCmp("NAMESX") == 0) {
+			if (sLine.Token(i).Equals("NAMESX")) {
 				m_bNamesx = true;
-			} else if (sLine.Token(i).CaseCmp("UHNAMES") == 0) {
+			} else if (sLine.Token(i).Equals("UHNAMES")) {
 				m_bUHNames = true;
 			}
 			i++;
 		}
 		return;	// If the server understands it, we already enabled namesx / uhnames
-	} else if (sCommand.CaseCmp("NOTICE") == 0) {
+	} else if (sCommand.Equals("NOTICE")) {
 		CString sTarget = sLine.Token(1);
 		CString sMsg = sLine.Token(2, true);
 
@@ -315,7 +315,7 @@ void CClient::ReadLine(const CString& sData) {
 
 		if (sTarget.TrimPrefix(m_pUser->GetStatusPrefix())) {
 #ifdef _MODULES
-			if (sTarget.CaseCmp("status") != 0) {
+			if (!sTarget.Equals("status")) {
 				CALLMOD(sTarget, this, m_pUser, OnModNotice(sMsg));
 			}
 #endif
@@ -342,7 +342,7 @@ void CClient::ReadLine(const CString& sData) {
 
 		if (!m_pIRCSock) {
 			// Some lagmeters do a NOTICE to their own nick, ignore those.
-			if (sTarget.CaseCmp(m_sNick) != 0)
+			if (!sTarget.Equals(m_sNick))
 				PutStatus("Your notice to [" + sTarget + "] got lost, "
 						"you are not connected to IRC!");
 			return;
@@ -369,7 +369,7 @@ void CClient::ReadLine(const CString& sData) {
 
 		PutIRC("NOTICE " + sTarget + " :" + sMsg);
 		return;
-	} else if (sCommand.CaseCmp("PRIVMSG") == 0) {
+	} else if (sCommand.Equals("PRIVMSG")) {
 		CString sTarget = sLine.Token(1);
 		CString sMsg = sLine.Token(2, true);
 
@@ -382,7 +382,7 @@ void CClient::ReadLine(const CString& sData) {
 			sCTCP.LeftChomp();
 			sCTCP.RightChomp();
 
-			if (sCTCP.CaseCmp("DCC ", 4) == 0 && m_pUser->BounceDCCs()) {
+			if (sCTCP.Equals("DCC ", false, 4) && m_pUser->BounceDCCs()) {
 				CString sType = sCTCP.Token(1);
 				CString sFile = sCTCP.Token(2);
 				unsigned long uLongIP = strtoul(sCTCP.Token(3).c_str(), NULL, 10);
@@ -394,18 +394,18 @@ void CClient::ReadLine(const CString& sData) {
 					uLongIP = CUtils::GetLongIP(GetRemoteIP());
 				}
 
-				if (sType.CaseCmp("CHAT") == 0) {
+				if (sType.Equals("CHAT")) {
 					if (!sTarget.TrimPrefix(m_pUser->GetStatusPrefix())) {
 						unsigned short uBNCPort = CDCCBounce::DCCRequest(sTarget, uLongIP, uPort, "", true, m_pUser, (m_pIRCSock) ? m_pIRCSock->GetLocalIP() : GetLocalIP(), "");
 						if (uBNCPort) {
 							PutIRC("PRIVMSG " + sTarget + " :\001DCC CHAT chat " + CString(CUtils::GetLongIP(sIP)) + " " + CString(uBNCPort) + "\001");
 						}
 					}
-				} else if (sType.CaseCmp("SEND") == 0) {
+				} else if (sType.Equals("SEND")) {
 					// DCC SEND readme.txt 403120438 5550 1104
 
 					if (sTarget.TrimPrefix(m_pUser->GetStatusPrefix())) {
-						if (sTarget.CaseCmp("status") == 0) {
+						if (sTarget.Equals("status")) {
 							CString sPath = m_pUser->GetDLPath();
 							if (!CFile::Exists(sPath)) {
 								PutStatus("Could not create [" + sPath + "] directory.");
@@ -427,14 +427,14 @@ void CClient::ReadLine(const CString& sData) {
 							PutIRC("PRIVMSG " + sTarget + " :\001DCC SEND " + sFile + " " + CString(CUtils::GetLongIP(sIP)) + " " + CString(uBNCPort) + " " + CString(uFileSize) + "\001");
 						}
 					}
-				} else if (sType.CaseCmp("RESUME") == 0) {
+				} else if (sType.Equals("RESUME")) {
 					// PRIVMSG user :DCC RESUME "znc.o" 58810 151552
 					unsigned short uResumePort = atoi(sCTCP.Token(3).c_str());
 					unsigned long uResumeSize = strtoul(sCTCP.Token(4).c_str(), NULL, 10);
 
 					// Need to lookup the connection by port, filter the port, and forward to the user
 					CString sStatusPrefix = m_pUser->GetStatusPrefix();
-					if (sTarget.CaseCmp(sStatusPrefix, sStatusPrefix.length()) == 0) {
+					if (sTarget.Equals(sStatusPrefix, false, sStatusPrefix.length())) {
 						if (m_pUser->ResumeFile(uResumePort, uResumeSize)) {
 							PutClient(":" + sTarget + "!znc@znc.in PRIVMSG " + GetNick() + " :\001DCC ACCEPT " + sFile + " " + CString(uResumePort) + " " + CString(uResumeSize) + "\001");
 						} else {
@@ -442,20 +442,20 @@ void CClient::ReadLine(const CString& sData) {
 						}
 					} else {
 						CDCCBounce* pSock = (CDCCBounce*) CZNC::Get().GetManager().FindSockByLocalPort(uResumePort);
-						if ((pSock) && (pSock->GetSockName().CaseCmp("DCC::", 5) == 0)) {
+						if (pSock && pSock->GetSockName().Equals("DCC::", false, 5)) {
 							PutIRC("PRIVMSG " + sTarget + " :\001DCC " + sType + " " + sFile + " " + CString(pSock->GetUserPort()) + " " + sCTCP.Token(4) + "\001");
 						}
 					}
-				} else if (sType.CaseCmp("ACCEPT") == 0) {
+				} else if (sType.Equals("ACCEPT")) {
 					CString sStatusPrefix = m_pUser->GetStatusPrefix();
-					if (sTarget.CaseCmp(sStatusPrefix, sStatusPrefix.length()) != 0) {
+					if (!sTarget.Equals(sStatusPrefix, false, sStatusPrefix.length())) {
 						// Need to lookup the connection by port, filter the port, and forward to the user
 						CSockManager& Manager = CZNC::Get().GetManager();
 
 						for (unsigned int a = 0; a < Manager.size(); a++) {
 							CDCCBounce* pSock = (CDCCBounce*) Manager[a];
 
-							if ((pSock) && (pSock->GetSockName().CaseCmp("DCC::", 5) == 0)) {
+							if (pSock && pSock->GetSockName().Equals("DCC::", false, 5)) {
 								if (pSock->GetUserPort() == atoi(sCTCP.Token(3).c_str())) {
 									PutIRC("PRIVMSG " + sTarget + " :\001DCC " + sType + " " + sFile + " " + CString(pSock->GetLocalPort()) + " " + sCTCP.Token(4) + "\001");
 								}
@@ -468,7 +468,7 @@ void CClient::ReadLine(const CString& sData) {
 			}
 
 			if (sTarget.TrimPrefix(m_pUser->GetStatusPrefix())) {
-				if (sTarget.CaseCmp("status") == 0) {
+				if (sTarget.Equals("status")) {
 					StatusCTCP(sCTCP);
 				} else {
 #ifdef _MODULES
@@ -480,7 +480,7 @@ void CClient::ReadLine(const CString& sData) {
 
 			CChan* pChan = m_pUser->FindChan(sTarget);
 
-			if (sCTCP.Token(0).CaseCmp("ACTION") == 0) {
+			if (sCTCP.Token(0).Equals("ACTION")) {
 				CString sMessage = sCTCP.Token(1, true);
 				MODULECALL(OnUserAction(sTarget, sMessage), m_pUser, this, return);
 				sCTCP = "ACTION " + sMessage;
@@ -510,7 +510,7 @@ void CClient::ReadLine(const CString& sData) {
 		}
 
 		if (sTarget.TrimPrefix(m_pUser->GetStatusPrefix())) {
-			if (sTarget.CaseCmp("status") == 0) {
+			if (sTarget.Equals("status")) {
 				MODULECALL(OnStatusCommand(sMsg), m_pUser, this, return);
 				UserCommand(sMsg);
 			} else {
@@ -525,7 +525,7 @@ void CClient::ReadLine(const CString& sData) {
 
 		if (!m_pIRCSock) {
 			// Some lagmeters do a PRIVMSG to their own nick, ignore those.
-			if (sTarget.CaseCmp(m_sNick) != 0)
+			if (!sTarget.Equals(m_sNick))
 				PutStatus("Your message to [" + sTarget + "] got lost, "
 						"you are not connected to IRC!");
 			return;
@@ -566,9 +566,9 @@ void CClient::SetNick(const CString& s) {
 void CClient::StatusCTCP(const CString& sLine) {
 	CString sCommand = sLine.Token(0);
 
-	if (sCommand.CaseCmp("PING") == 0) {
+	if (sCommand.Equals("PING")) {
 		PutStatusNotice("\001PING " + sLine.Token(1, true) + "\001");
-	} else if (sCommand.CaseCmp("VERSION") == 0) {
+	} else if (sCommand.Equals("VERSION")) {
 		PutStatusNotice("\001VERSION " + CZNC::GetTag() + "\001");
 	}
 }

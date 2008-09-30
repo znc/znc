@@ -136,9 +136,9 @@ public:
 			sOpt = sArgs.Token(0);
 			sArgs = sArgs.Token(1, true);
 
-			if (sOpt.CaseCmp("-IPV6") == 0) {
+			if (sOpt.Equals("-IPV6")) {
 				bIPv6 = true;
-			} else if (sOpt.CaseCmp("-IPV4") == 0) {
+			} else if (sOpt.Equals("-IPV4")) {
 				bIPv6 = false;
 			} else {
 				sMessage = "Unknown option [" + sOpt + "] valid options are -ipv4 or -ipv6";
@@ -362,15 +362,15 @@ bool CWebAdminSock::OnPageRequest(const CString& sURI, CString& sPageRet) {
 		m_Template["Title"] = "Main Page";
 		m_Template["Action"] = "home";
 		PrintPage(sPageRet, "Main.tmpl");
-	} else if (sURI.Left(5).CaseCmp("/css/") == 0) {
+	} else if (sURI.Equals("/css/", false, 5)) {
 		SetDocRoot(GetSkinDir() + "/css");
 		PrintFile(sURI.substr(5), "text/css");
 		return false;
-	} else if (sURI.Left(5).CaseCmp("/img/") == 0) {
+	} else if (sURI.Equals("/img/", false, 5)) {
 		SetDocRoot(GetSkinDir() + "/img");
 		PrintFile(sURI.substr(5));
 		return false;
-	} else if (sURI.Left(4).CaseCmp("/js/") == 0) {
+	} else if (sURI.Equals("/js/", false, 4)) {
 		SetDocRoot(GetSkinDir() + "/js");
 		PrintFile(sURI.substr(4), "application/x-javascript");
 		return false;

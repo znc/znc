@@ -23,7 +23,7 @@ public:
 	{
 		for (MCString::iterator it = BeginNV(); it != EndNV(); it++)
 		{
-			if (sChannel.CaseCmp(it->first) == 0)
+			if (sChannel.Equals(it->first))
 			{
 				CChan* pChan = m_pUser->FindChan(sChannel);
 

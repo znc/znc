@@ -38,21 +38,21 @@ CString CTemplateLoopContext::GetValue(const CString& sName) {
 		return "";
 	}
 
-	if (sName.CaseCmp("__ID__") == 0) {
+	if (sName.Equals("__ID__")) {
 		return CString(GetRowIndex() +1);
-	} else if (sName.CaseCmp("__COUNT__") == 0) {
+	} else if (sName.Equals("__COUNT__")) {
 		return CString(GetRowCount());
-	} else if (sName.CaseCmp("__ODD__") == 0) {
+	} else if (sName.Equals("__ODD__")) {
 		return ((GetRowIndex() %2) ? "" : "1");
-	} else if (sName.CaseCmp("__EVEN__") == 0) {
+	} else if (sName.Equals("__EVEN__")) {
 		return ((GetRowIndex() %2) ? "1" : "");
-	} else if (sName.CaseCmp("__FIRST__") == 0) {
+	} else if (sName.Equals("__FIRST__")) {
 		return ((GetRowIndex() == 0) ? "1" : "");
-	} else if (sName.CaseCmp("__LAST__") == 0) {
+	} else if (sName.Equals("__LAST__")) {
 		return ((GetRowIndex() == m_pvRows->size() -1) ? "1" : "");
-	} else if (sName.CaseCmp("__OUTER__") == 0) {
+	} else if (sName.Equals("__OUTER__")) {
 		return ((GetRowIndex() == 0 || GetRowIndex() == m_pvRows->size() -1) ? "1" : "");
-	} else if (sName.CaseCmp("__INNER__") == 0) {
+	} else if (sName.Equals("__INNER__")) {
 		return ((GetRowIndex() == 0 || GetRowIndex() == m_pvRows->size() -1) ? "" : "1");
 	}
 
@@ -185,13 +185,13 @@ bool CTemplate::Print(const CString& sFileName, ostream& oOut) {
 						CString sArgs = sMid.Token(1, true);
 
 						if (!uSkip) {
-							if (sAction.CaseCmp("INC") == 0) {
+							if (sAction.Equals("INC")) {
 								if (!Print(File.GetDir() + sArgs, oOut)) {
 									return false;
 								}
-							} else if (sAction.CaseCmp("SETOPTION") == 0) {
+							} else if (sAction.Equals("SETOPTION")) {
 								m_spOptions->Parse(sArgs);
-							} else if (sAction.CaseCmp("ADDROW") == 0) {
+							} else if (sAction.Equals("ADDROW")) {
 								CString sLoopName = sArgs.Token(0);
 								MCString msRow;
 
@@ -202,12 +202,12 @@ bool CTemplate::Print(const CString& sFileName, ostream& oOut) {
 										NewRow[it->first] = it->second;
 									}
 								}
-							} else if (sAction.CaseCmp("SET") == 0) {
+							} else if (sAction.Equals("SET")) {
 								CString sName = sArgs.Token(0);
 								CString sValue = sArgs.Token(1, true);
 
 								(*this)[sName] = sValue;
-							} else if (sAction.CaseCmp("JOIN") == 0) {
+							} else if (sAction.Equals("JOIN")) {
 								VCString vsArgs;
 								sArgs.Split(" ", vsArgs, false, "\"", "\"");
 
@@ -219,7 +219,7 @@ bool CTemplate::Print(const CString& sFileName, ostream& oOut) {
 									for (unsigned int a = 1; a < vsArgs.size(); a++) {
 										const CString& sArg = vsArgs[a];
 
-										if (sArg.Left(4).CaseCmp("ESC=") == 0) {
+										if (sArg.Equals("ESC=", false, 4)) {
 											eEscape = CString::ToEscape(sArg.LeftChomp_n(4));
 										} else {
 											CString sValue = GetValue(sArg);
@@ -235,9 +235,9 @@ bool CTemplate::Print(const CString& sFileName, ostream& oOut) {
 										}
 									}
 								}
-							} else if (sAction.CaseCmp("VAR") == 0) {
+							} else if (sAction.Equals("VAR")) {
 								sOutput += GetValue(sArgs);
-							} else if (sAction.CaseCmp("LOOP") == 0) {
+							} else if (sAction.Equals("LOOP")) {
 								CTemplateLoopContext* pContext = GetCurLoopContext();
 
 								if (!pContext || pContext->GetFilePosition() != uCurPos) {
@@ -253,7 +253,7 @@ bool CTemplate::Print(const CString& sFileName, ostream& oOut) {
 										uSkip++;
 									}
 								}
-							} else if (sAction.CaseCmp("IF") == 0) {
+							} else if (sAction.Equals("IF")) {
 								if (ValidIf(sArgs)) {
 									uNestedIfs++;
 									bValidLastIf = true;
@@ -262,19 +262,19 @@ bool CTemplate::Print(const CString& sFileName, ostream& oOut) {
 									bValidLastIf = false;
 								}
 							}
-						} else if (sAction.CaseCmp("IF") == 0) {
+						} else if (sAction.Equals("IF")) {
 							uSkip++;
-						} else if (sAction.CaseCmp("LOOP") == 0) {
+						} else if (sAction.Equals("LOOP")) {
 							uSkip++;
 						}
 
-						if (sAction.CaseCmp("ENDIF") == 0) {
+						if (sAction.Equals("ENDIF")) {
 							if (uSkip) {
 								uSkip--;
 							} else {
 								uNestedIfs--;
 							}
-						} else if (sAction.CaseCmp("ENDLOOP") == 0) {
+						} else if (sAction.Equals("ENDLOOP")) {
 							if (uSkip) {
 								uSkip--;
 							} else {
@@ -296,11 +296,11 @@ bool CTemplate::Print(const CString& sFileName, ostream& oOut) {
 									}
 								}
 							}
-						} else if (sAction.CaseCmp("ELSE") == 0) {
+						} else if (sAction.Equals("ELSE")) {
 							if (!bValidLastIf && uSkip == 1) {
 								CString sArg = sArgs.Token(0);
 
-								if (sArg.empty() || (sArg.CaseCmp("IF") == 0 && ValidIf(sArgs.Token(1, true)))) {
+								if (sArg.empty() || (sArg.Equals("IF") && ValidIf(sArgs.Token(1, true)))) {
 									uSkip = 0;
 									bValidLastIf = true;
 								}
@@ -413,7 +413,7 @@ bool CTemplate::ValidExpr(const CString& sExpr) {
 		return (bNegate != IsTrue(sName));
 	}
 
-	return (bNegate != (GetValue(sName).CaseCmp(sValue) == 0));
+	return (bNegate != GetValue(sName).Equals(sValue));
 }
 
 bool CTemplate::IsTrue(const CString& sName) {

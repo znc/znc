@@ -91,7 +91,7 @@ public:
 	virtual void OnModCommand(const CString& sCommand) {
 		CString sCmd = sCommand.Token(0);
 
-		if (sCmd.CaseCmp("DELKEY") == 0) {
+		if (sCmd.Equals("DELKEY")) {
 			CString sTarget = sCommand.Token(1);
 
 			if (!sTarget.empty()) {
@@ -103,14 +103,12 @@ public:
 			} else {
 				PutModule("Usage DelKey <#chan|Nick>");
 			}
-		} else if (sCmd.CaseCmp("SETKEY") == 0) {
+		} else if (sCmd.Equals("SETKEY")) {
 			CString sTarget = sCommand.Token(1);
 			CString sKey = sCommand.Token(2, true);
 
 			// Strip "cbc:" from beginning of string incase someone pastes directly from mircryption
-			if (sKey.Left(4).CaseCmp("cbc:") == 0) {
-				sKey.LeftChomp(4);
-			}
+			sKey.TrimPrefix("cbc:");
 
 			if (!sKey.empty()) {
 				SetNV(sTarget.AsLower(), sKey);
@@ -118,7 +116,7 @@ public:
 			} else {
 				PutModule("Usage: SetKey <#chan|Nick> <Key>");
 			}
-		} else if (sCmd.CaseCmp("LISTKEYS") == 0) {
+		} else if (sCmd.Equals("LISTKEYS")) {
 			if (BeginNV() == EndNV()) {
 				PutModule("You have no encryption keys set.");
 			} else {
@@ -134,7 +132,7 @@ public:
 
 				PutModule(Table);
 			}
-		} else if (sCmd.CaseCmp("HELP") == 0) {
+		} else if (sCmd.Equals("HELP")) {
 			PutModule("Try: SetKey, DelKey, ListKeys");
 		} else {
 			PutModule("Unknown command, try 'Help'");

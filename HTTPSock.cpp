@@ -65,21 +65,21 @@ void CHTTPSock::ReadLine(const CString& sData) {
 
 	CString sName = sLine.Token(0);
 
-	if (sName.CaseCmp("GET") == 0) {
+	if (sName.Equals("GET")) {
 		m_bPost = false;
 		m_sURI = sLine.Token(1);
 		ParseURI();
-	} else if (sName.CaseCmp("POST") == 0) {
+	} else if (sName.Equals("POST")) {
 		m_bPost = true;
 		m_sURI = sLine.Token(1);
 		ParseURI();
-	} else if (sName.CaseCmp("Authorization:") == 0) {
+	} else if (sName.Equals("Authorization:")) {
 		CString sUnhashed;
 		sLine.Token(2).Base64Decode(sUnhashed);
 		m_sUser = sUnhashed.Token(0, false, ":");
 		m_sPass = sUnhashed.Token(1, true, ":");
 		m_bLoggedIn = OnLogin(m_sUser, m_sPass);
-	} else if (sName.CaseCmp("Content-Length:") == 0) {
+	} else if (sName.Equals("Content-Length:")) {
 		m_uPostLen = sLine.Token(1).ToULong();
 	} else if (sLine.empty()) {
 		m_bGotHeader = true;
@@ -136,21 +136,21 @@ bool CHTTPSock::PrintFile(const CString& sFileName, CString sContentType) {
 	}
 
 	if (sContentType.empty()) {
-		if (sFileName.Right(5).CaseCmp(".html") == 0 || sFileName.Right(4).CaseCmp(".htm") == 0) {
+		if (sFileName.Right(5).Equals(".html") || sFileName.Right(4).Equals(".htm")) {
 			sContentType = "text/html";
-		} else if (sFileName.Right(4).CaseCmp(".css") == 0) {
+		} else if (sFileName.Right(4).Equals(".css")) {
 			sContentType = "text/css";
-		} else if (sFileName.Right(3).CaseCmp(".js") == 0) {
+		} else if (sFileName.Right(3).Equals(".js")) {
 			sContentType = "application/x-javascript";
-		} else if (sFileName.Right(4).CaseCmp(".jpg") == 0) {
+		} else if (sFileName.Right(4).Equals(".jpg")) {
 			sContentType = "image/jpeg";
-		} else if (sFileName.Right(4).CaseCmp(".gif") == 0) {
+		} else if (sFileName.Right(4).Equals(".gif")) {
 			sContentType = "image/gif";
-		} else if (sFileName.Right(4).CaseCmp(".ico") == 0) {
+		} else if (sFileName.Right(4).Equals(".ico")) {
 			sContentType = "image/x-icon";
-		} else if (sFileName.Right(4).CaseCmp(".png") == 0) {
+		} else if (sFileName.Right(4).Equals(".png")) {
 			sContentType = "image/png";
-		} else if (sFileName.Right(4).CaseCmp(".bmp") == 0) {
+		} else if (sFileName.Right(4).Equals(".bmp")) {
 			sContentType = "image/bmp";
 		} else {
 			sContentType = "text/plain";

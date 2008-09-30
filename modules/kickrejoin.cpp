@@ -96,7 +96,7 @@ public:
 	}
 
 	virtual void OnKick(const CNick& OpNick, const CString& sKickedNick, CChan& pChan, const CString& sMessage) {
-		if (m_pUser->GetCurNick().CaseCmp(sKickedNick) == 0) {
+		if (m_pUser->GetCurNick().Equals(sKickedNick)) {
 			if (!delay) {
 				PutIRC("JOIN " + pChan.GetName() + " " + pChan.GetKey());
 				pChan.Enable();

@@ -60,9 +60,11 @@ public:
 		return true;
 	}
 
-	virtual void OnModCommand(const CString& sCommand) {
-		if ((strcasecmp(sCommand.c_str(), "cd") == 0) || (strncasecmp(sCommand.c_str(), "cd ", 3) == 0)) {
-			CString sPath = CDir::ChangeDir(m_sPath, ((sCommand.length() == 2) ? CString(CZNC::Get().GetHomePath()) : CString(sCommand.substr(3))), CZNC::Get().GetHomePath());
+	virtual void OnModCommand(const CString& sLine) {
+		CString sCommand = sLine.Token(0);
+		if (sCommand.Equals("cd")) {
+			CString sArg = sCommand.Token(1, true);
+			CString sPath = CDir::ChangeDir(m_sPath, (sArg.empty() ? CString(CZNC::Get().GetHomePath()) : sArg), CZNC::Get().GetHomePath());
 			CFile Dir(sPath);
 
 			if (Dir.IsDir()) {
@@ -74,9 +76,9 @@ public:
 			}
 
 			PutShell("znc$");
-		} else if (strcasecmp(sCommand.Token(0).c_str(), "SEND") == 0) {
-			CString sToNick = sCommand.Token(1);
-			CString sFile = sCommand.Token(2);
+		} else if (sCommand.Equals("SEND")) {
+			CString sToNick = sLine.Token(1);
+			CString sFile = sLine.Token(2);
 
 			if ((sToNick.empty()) || (sFile.empty())) {
 				PutShell("usage: Send <nick> <file>");
@@ -91,8 +93,8 @@ public:
 					m_pUser->SendFile(sToNick, sFile, GetModName());
 				}
 			}
-		} else if (strcasecmp(sCommand.Token(0).c_str(), "GET") == 0) {
-			CString sFile = sCommand.Token(1);
+		} else if (sCommand.Equals("GET")) {
+			CString sFile = sLine.Token(1);
 
 			if (sFile.empty()) {
 				PutShell("usage: Get <file>");
@@ -108,12 +110,12 @@ public:
 				}
 			}
 		} else {
-			RunCommand(sCommand);
+			RunCommand(sLine);
 		}
 	}
 
 	virtual EModRet OnStatusCommand(const CString& sCommand) {
-		if (strcasecmp(sCommand.c_str(), "SHELL") == 0) {
+		if (sCommand.Equals("SHELL")) {
 			PutShell("-- ZNC Shell Service --");
 			return HALT;
 		}
@@ -122,7 +124,7 @@ public:
 	}
 
 	virtual EModRet OnDCCUserSend(const CNick& RemoteNick, unsigned long uLongIP, unsigned short uPort, const CString& sFile, unsigned long uFileSize) {
-		if (strcasecmp(RemoteNick.GetNick().c_str(), CString(GetModNick()).c_str()) == 0) {
+		if (RemoteNick.GetNick().Equals(GetModNick())) {
 			CString sLocalFile = CDir::ChangeDir(m_sPath, sFile, CZNC::Get().GetHomePath());
 
 			m_pUser->GetFile(m_pUser->GetCurNick(), CUtils::GetIP(uLongIP), uPort, sLocalFile, uFileSize, GetModName());

@@ -219,17 +219,15 @@ public:
 	}
 
 	virtual EModRet OnUserRaw(CString& sLine) {
-		if (sLine.Left(5).CaseCmp("WHO ~") == 0) {
+		if (sLine.Equals("WHO ~", false, 5)) {
 			return HALT;
-		} else if (sLine.Left(6).CaseCmp("MODE ~") == 0) {
+		} else if (sLine.Equals("MODE ~", false, 6)) {
 			return HALT;
-		} else if (sLine.Left(8).CaseCmp("TOPIC ~#") == 0) {
+		} else if (sLine.Equals("TOPIC ~#", false, 8)) {
 			CString sChannel = sLine.Token(1);
 			CString sTopic = sLine.Token(2, true);
 
-			if (sTopic.Left(1) == ":") {
-				sTopic.LeftChomp();
-			}
+			sTopic.TrimPrefix(":");
 
 			CPartylineChannel* pChannel = FindChannel(sChannel);
 
@@ -391,7 +389,7 @@ public:
 	virtual void OnModCommand(const CString& sLine) {
 		CString sCommand = sLine.Token(0);
 
-		if (sCommand.CaseCmp("HELP") == 0) {
+		if (sCommand.Equals("HELP")) {
 			CTable Table;
 			Table.AddColumn("Command");
 			Table.AddColumn("Arguments");
@@ -428,7 +426,7 @@ public:
 			Table.SetCell("Description", "Show which users can not part this channel");
 
 			PutModule(Table);
-		} else if (sCommand.CaseCmp("LIST") == 0) {
+		} else if (sCommand.Equals("LIST")) {
 			if (!m_ssChannels.size()) {
 				PutModule("There are no open channels.");
 				return;
@@ -447,7 +445,7 @@ public:
 			}
 
 			PutModule(Table);
-		} else if (sCommand.CaseCmp("ADDFIXCHAN") == 0) {
+		} else if (sCommand.Equals("ADDFIXCHAN")) {
 			if (!m_pUser->IsAdmin()) {
 				PutModule("Access denied");
 				return;
@@ -474,7 +472,7 @@ public:
 			SaveFixedChans(pUser);
 
 			PutModule("Fixed " + sUser + " to channel " + sChan);
-		} else if (sCommand.CaseCmp("DELFIXCHAN") == 0) {
+		} else if (sCommand.Equals("DELFIXCHAN")) {
 			if (!m_pUser->IsAdmin()) {
 				PutModule("Access denied");
 				return;
@@ -499,7 +497,7 @@ public:
 			SaveFixedChans(pUser);
 
 			PutModule("Removed " + sUser + " from " + sChan);
-		} else if (sCommand.CaseCmp("LISTFIXCHANS") == 0) {
+		} else if (sCommand.Equals("LISTFIXCHANS")) {
 			if (!m_pUser->IsAdmin()) {
 				PutModule("Access denied");
 				return;
@@ -517,7 +515,7 @@ public:
 				}
 			}
 			PutModule("--- End of list");
-		} else if (sCommand.CaseCmp("LISTFIXUSERS") == 0) {
+		} else if (sCommand.Equals("LISTFIXUSERS")) {
 			if (!m_pUser->IsAdmin()) {
 				PutModule("Access denied");
 				return;

@@ -161,12 +161,12 @@ public:
 
 	virtual EModRet OnUserRaw(CString & sLine)
 	{
-		if (sLine.CaseCmp("schat ", 6) == 0)
+		if (sLine.Equals("schat ", false, 6))
 		{
 			OnModCommand("chat " + sLine.substr(6));
 			return(HALT);
 
-		} else if (sLine.CaseCmp("schat") == 0)
+		} else if (sLine.Equals("schat"))
 		{
 			PutModule("SChat User Area ...");
 			OnModCommand("help");
@@ -184,7 +184,7 @@ public:
 		sCom = sCommand.Token(0);
 		sArgs = sCommand.Token(1, true);
 
-		if ((sCom.CaseCmp("chat") == 0) && (!sArgs.empty())) {
+		if (sCom.Equals("chat") && !sArgs.empty()) {
 			CString sSockName = "SCHAT::" + m_pUser->GetUserName();
 			CString sNick = "(s)" + sArgs;
 			for (u_int a= 0; a < m_pManager->size(); a++)
@@ -193,7 +193,7 @@ public:
 					continue;
 
 				CSChatSock *pSock = (CSChatSock *)(*m_pManager)[a];
-				if (pSock->GetChatNick().CaseCmp(sNick.c_str()) == 0)
+				if (pSock->GetChatNick().Equals(sNick))
 				{
 					PutModule("Already Connected to [" + sArgs + "]");
 					return;
@@ -223,7 +223,7 @@ public:
 
 			PutIRC(s.str());
 
-		} else if (sCom.CaseCmp("list") == 0)
+		} else if (sCom.Equals("list"))
 		{
 			CString sName = "SCHAT::" + m_pUser->GetUserName();
 			CTable Table;
@@ -272,7 +272,7 @@ public:
 			} else
 				PutModule("No SDCCs currently in session");
 
-		} else if (sCom.CaseCmp("close") == 0)
+		} else if (sCom.Equals("close"))
 		{
 			CString sName = "SCHAT::" + m_pUser->GetUserName();
 			for (u_int a = 0; a < m_pManager->size(); a++)
@@ -281,17 +281,17 @@ public:
 					continue;
 
 				CSChatSock *pSock = (CSChatSock *)(*m_pManager)[a];
-				if (sArgs.CaseCmp("(s)", 3) != 0)
+				if (!sArgs.Equals("(s)", false, 3))
 					sArgs = "(s)" + sArgs;
 
-				if (sArgs.CaseCmp(pSock->GetChatNick()) == 0)
+				if (sArgs.Equals(pSock->GetChatNick()))
 				{
 					pSock->Close();
 					return;
 				}
 			}
 			PutModule("No Such Chat [" + sArgs + "]");
-		} else if (sCom.CaseCmp("showsocks") == 0)
+		} else if (sCom.Equals("showsocks"))
 		{
 			CTable Table;
 			Table.AddColumn("SockName");
@@ -344,7 +344,7 @@ public:
 			else
 				PutModule("Error Finding Sockets");
 
-		} else if (sCom.CaseCmp("help") == 0)
+		} else if (sCom.Equals("help"))
 		{
 			PutModule("Commands are: ");
 			PutModule("    help           - This text.");
@@ -353,7 +353,7 @@ public:
 			PutModule("    close <nick>   - Close a chat to a nick.");
 			PutModule("    timers         - Shows related timers.");
 			PutModule("    showsocks      - Shows all socket connections.");
-		} else if (sCom.CaseCmp("timers") == 0)
+		} else if (sCom.Equals("timers"))
 			ListTimers();
 		else
 			PutModule("Unknown command [" + sCom + "] [" + sArgs + "]");
@@ -361,7 +361,7 @@ public:
 
 	virtual EModRet OnPrivCTCP(CNick& Nick, CString& sMessage)
 	{
-		if (sMessage.CaseCmp("DCC SCHAT ", 10) == 0)
+		if (sMessage.Equals("DCC SCHAT ", false, 10))
 		{
 			// chat ip port
 			unsigned long iIP = sMessage.Token(3).ToULong();
@@ -413,7 +413,7 @@ public:
 
 				if (it != m_siiWaitingChats.end())
 				{
-					if (sMessage.CaseCmp("yes") != 0)
+					if (!sMessage.Equals("yes"))
 						SendToUser(sTarget + "!" + sTarget + "@" +
 								CUtils::GetIP(it->second.first),
 								"Refusing to accept DCC SCHAT!");

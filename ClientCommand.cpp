@@ -26,9 +26,9 @@ void CClient::UserCommand(const CString& sLine) {
 
 	CString sCommand = sLine.Token(0);
 
-	if (sCommand.CaseCmp("HELP") == 0) {
+	if (sCommand.Equals("HELP")) {
 		HelpUser();
-	} else if (sCommand.CaseCmp("LISTNICKS") == 0) {
+	} else if (sCommand.Equals("LISTNICKS")) {
 		CString sChan = sLine.Token(1);
 
 		if (sChan.empty()) {
@@ -86,7 +86,7 @@ void CClient::UserCommand(const CString& sLine) {
 		}
 
 		PutStatus(Table);
-	} else if (sCommand.CaseCmp("DETACH") == 0) {
+	} else if (sCommand.Equals("DETACH")) {
 		CString sChan = sLine.Token(1);
 
 		if (sChan.empty()) {
@@ -102,13 +102,13 @@ void CClient::UserCommand(const CString& sLine) {
 
 		PutStatus("Detaching you from [" + sChan + "]");
 		pChan->DetachUser();
-	} else if (sCommand.CaseCmp("VERSION") == 0) {
+	} else if (sCommand.Equals("VERSION")) {
 		PutStatus(CZNC::GetTag());
-	} else if (sCommand.CaseCmp("MOTD") == 0 || sCommand.CaseCmp("ShowMOTD") == 0) {
+	} else if (sCommand.Equals("MOTD") || sCommand.Equals("ShowMOTD")) {
 		if (!SendMotd()) {
 			PutStatus("There is no MOTD set.");
 		}
-	} else if (m_pUser->IsAdmin() && sCommand.CaseCmp("Rehash") == 0) {
+	} else if (m_pUser->IsAdmin() && sCommand.Equals("Rehash")) {
 		CString sRet;
 
 		if (CZNC::Get().RehashConfig(sRet)) {
@@ -116,13 +116,13 @@ void CClient::UserCommand(const CString& sLine) {
 		} else {
 			PutStatus("Rehashing failed: " + sRet);
 		}
-	} else if (m_pUser->IsAdmin() && sCommand.CaseCmp("SaveConfig") == 0) {
+	} else if (m_pUser->IsAdmin() && sCommand.Equals("SaveConfig")) {
 		if (CZNC::Get().WriteConfig()) {
 			PutStatus("Wrote config to [" + CZNC::Get().GetConfigFile() + "]");
 		} else {
 			PutStatus("Error while trying to write config.");
 		}
-	} else if (sCommand.CaseCmp("LISTCLIENTS") == 0) {
+	} else if (sCommand.Equals("LISTCLIENTS")) {
 		CUser* pUser = m_pUser;
 		CString sNick = sLine.Token(1);
 
@@ -156,7 +156,7 @@ void CClient::UserCommand(const CString& sLine) {
 		}
 
 		PutStatus(Table);
-	} else if (m_pUser->IsAdmin() && sCommand.CaseCmp("LISTUSERS") == 0) {
+	} else if (m_pUser->IsAdmin() && sCommand.Equals("LISTUSERS")) {
 		const map<CString, CUser*>& msUsers = CZNC::Get().GetUserMap();
 		CTable Table;
 		Table.AddColumn("Username");
@@ -179,7 +179,7 @@ void CClient::UserCommand(const CString& sLine) {
 		}
 
 		PutStatus(Table);
-	} else if (m_pUser->IsAdmin() && sCommand.CaseCmp("SetMOTD") == 0) {
+	} else if (m_pUser->IsAdmin() && sCommand.Equals("SetMOTD")) {
 		CString sMessage = sLine.Token(1, true);
 
 		if (sMessage.empty()) {
@@ -188,7 +188,7 @@ void CClient::UserCommand(const CString& sLine) {
 			CZNC::Get().SetMotd(sMessage);
 			PutStatus("MOTD set to [" + sMessage + "]");
 		}
-	} else if (m_pUser->IsAdmin() && sCommand.CaseCmp("AddMOTD") == 0) {
+	} else if (m_pUser->IsAdmin() && sCommand.Equals("AddMOTD")) {
 		CString sMessage = sLine.Token(1, true);
 
 		if (sMessage.empty()) {
@@ -197,12 +197,12 @@ void CClient::UserCommand(const CString& sLine) {
 			CZNC::Get().AddMotd(sMessage);
 			PutStatus("Added [" + sMessage + "] to MOTD");
 		}
-	} else if (m_pUser->IsAdmin() && sCommand.CaseCmp("ClearMOTD") == 0) {
+	} else if (m_pUser->IsAdmin() && sCommand.Equals("ClearMOTD")) {
 		CZNC::Get().ClearMotd();
 		PutStatus("Cleared MOTD");
-	} else if (m_pUser->IsAdmin() && sCommand.CaseCmp("BROADCAST") == 0) {
+	} else if (m_pUser->IsAdmin() && sCommand.Equals("BROADCAST")) {
 		CZNC::Get().Broadcast(sLine.Token(1, true));
-	} else if (m_pUser->IsAdmin() && sCommand.CaseCmp("SHUTDOWN") == 0) {
+	} else if (m_pUser->IsAdmin() && sCommand.Equals("SHUTDOWN")) {
 		CString sMessage = sLine.Token(1, true);
 
 		if (sMessage.empty()) {
@@ -213,7 +213,7 @@ void CClient::UserCommand(const CString& sLine) {
 		usleep(100000);	// Sleep for 10ms to attempt to allow the previous Broadcast() to go through to all users
 
 		throw CException(CException::EX_Shutdown);
-	} else if (m_pUser->IsAdmin() && sCommand.CaseCmp("RESTART") == 0) {
+	} else if (m_pUser->IsAdmin() && sCommand.Equals("RESTART")) {
 		CString sMessage = sLine.Token(1, true);
 
 		if (sMessage.empty()) {
@@ -222,8 +222,7 @@ void CClient::UserCommand(const CString& sLine) {
 
 		CZNC::Get().Broadcast(sMessage);
 		throw CException(CException::EX_Restart);
-	} else if (sCommand.CaseCmp("JUMP") == 0 ||
-			sCommand.CaseCmp("CONNECT") == 0) {
+	} else if (sCommand.Equals("JUMP") || sCommand.Equals("CONNECT")) {
 		if (!m_pUser->HasServers()) {
 			PutStatus("You don't have any servers added.");
 			return;
@@ -239,7 +238,7 @@ void CClient::UserCommand(const CString& sLine) {
 		m_pUser->SetIRCConnectEnabled(true);
 		m_pUser->CheckIRCConnect();
 		return;
-	} else if (sCommand.CaseCmp("DISCONNECT") == 0) {
+	} else if (sCommand.Equals("DISCONNECT")) {
 		// m_pIRCSock is only set after the low level connection
 		// to the IRC server was established. Before this we can
 		// only find the IRC socket by its name.
@@ -257,7 +256,7 @@ void CClient::UserCommand(const CString& sLine) {
 		m_pUser->SetIRCConnectEnabled(false);
 		PutStatus("Disconnected from IRC. Use 'connect' to reconnect.");
 		return;
-	} else if (sCommand.CaseCmp("ENABLECHAN") == 0) {
+	} else if (sCommand.Equals("ENABLECHAN")) {
 		CString sChan = sLine.Token(1, true);
 
 		if (sChan.empty()) {
@@ -272,7 +271,7 @@ void CClient::UserCommand(const CString& sLine) {
 			pChan->Enable();
 			PutStatus("Channel [" + sChan + "] enabled.");
 		}
-	} else if (sCommand.CaseCmp("LISTCHANS") == 0) {
+	} else if (sCommand.Equals("LISTCHANS")) {
 		const vector<CChan*>& vChans = m_pUser->GetChans();
 		CIRCSock* pIRCSock = (!m_pUser) ? NULL : m_pUser->GetIRCSock();
 		const CString& sPerms = (pIRCSock) ? pIRCSock->GetPerms() : "";
@@ -314,7 +313,7 @@ void CClient::UserCommand(const CString& sLine) {
 		}
 
 		PutStatus(Table);
-	} else if (sCommand.CaseCmp("ADDSERVER") == 0) {
+	} else if (sCommand.Equals("ADDSERVER")) {
 		CString sServer = sLine.Token(1);
 
 		if (sServer.empty()) {
@@ -332,7 +331,7 @@ void CClient::UserCommand(const CString& sLine) {
 		} else {
 			PutStatus("Unable to add that server");
 		}
-	} else if (sCommand.CaseCmp("REMSERVER") == 0 || sCommand.CaseCmp("DELSERVER") == 0) {
+	} else if (sCommand.Equals("REMSERVER") || sCommand.Equals("DELSERVER")) {
 		CString sServer = sLine.Token(1);
 
 		if (sServer.empty()) {
@@ -352,7 +351,7 @@ void CClient::UserCommand(const CString& sLine) {
 		} else {
 			PutStatus("No such server");
 		}
-	} else if (sCommand.CaseCmp("LISTSERVERS") == 0) {
+	} else if (sCommand.Equals("LISTSERVERS")) {
 		if (m_pUser->HasServers()) {
 			const vector<CServer*>& vServers = m_pUser->GetServers();
 			CTable Table;
@@ -374,7 +373,7 @@ void CClient::UserCommand(const CString& sLine) {
 		} else {
 			PutStatus("You don't have any servers added.");
 		}
-	} else if (sCommand.CaseCmp("TOPICS") == 0) {
+	} else if (sCommand.Equals("TOPICS")) {
 		const vector<CChan*>& vChans = m_pUser->GetChans();
 		CTable Table;
 		Table.AddColumn("Name");
@@ -390,7 +389,7 @@ void CClient::UserCommand(const CString& sLine) {
 		}
 
 		PutStatus(Table);
-	} else if (sCommand.CaseCmp("SEND") == 0) {
+	} else if (sCommand.Equals("SEND")) {
 		CString sToNick = sLine.Token(1);
 		CString sFile = sLine.Token(2);
 		CString sAllowedPath = m_pUser->GetDLPath();
@@ -409,7 +408,7 @@ void CClient::UserCommand(const CString& sLine) {
 		}
 
 		m_pUser->SendFile(sToNick, sFile);
-	} else if (sCommand.CaseCmp("GET") == 0) {
+	} else if (sCommand.Equals("GET")) {
 		CString sFile = sLine.Token(1);
 		CString sAllowedPath = m_pUser->GetDLPath();
 		CString sAbsolutePath;
@@ -427,7 +426,7 @@ void CClient::UserCommand(const CString& sLine) {
 		}
 
 		m_pUser->SendFile(GetNick(), sFile);
-	} else if (sCommand.CaseCmp("LISTDCCS") == 0) {
+	} else if (sCommand.Equals("LISTDCCS")) {
 		CSockManager& Manager = CZNC::Get().GetManager();
 
 		CTable Table;
@@ -439,18 +438,18 @@ void CClient::UserCommand(const CString& sLine) {
 		Table.AddColumn("File");
 
 		for (unsigned int a = 0; a < Manager.size(); a++) {
-			const CString& sSockName = Manager[a]->GetSockName();
+			CString sSockName = Manager[a]->GetSockName();
 
-			if (strncasecmp(sSockName.c_str(), "DCC::", 5) == 0) {
-				if (strncasecmp(sSockName.c_str() +5, "XFER::REMOTE::", 14) == 0) {
+			if (sSockName.TrimPrefix("DCC::")) {
+				if (sSockName.Equals("XFER::REMOTE::", false, 14)) {
 					continue;
 				}
 
-				if (strncasecmp(sSockName.c_str() +5, "CHAT::REMOTE::", 14) == 0) {
+				if (sSockName.Equals("CHAT::REMOTE::", false, 14)) {
 					continue;
 				}
 
-				if (strncasecmp(sSockName.c_str() +5, "SEND", 4) == 0) {
+				if (sSockName.Equals("SEND", false, 4)) {
 					CDCCSock* pSock = (CDCCSock*) Manager[a];
 
 					Table.AddRow();
@@ -460,7 +459,7 @@ void CClient::UserCommand(const CString& sLine) {
 					Table.SetCell("Nick", pSock->GetRemoteNick());
 					Table.SetCell("IP", pSock->GetRemoteIP());
 					Table.SetCell("File", pSock->GetFileName());
-				} else if (strncasecmp(sSockName.c_str() +5, "GET", 3) == 0) {
+				} else if (sSockName.Equals("GET", false, 3)) {
 					CDCCSock* pSock = (CDCCSock*) Manager[a];
 
 					Table.AddRow();
@@ -470,7 +469,7 @@ void CClient::UserCommand(const CString& sLine) {
 					Table.SetCell("Nick", pSock->GetRemoteNick());
 					Table.SetCell("IP", pSock->GetRemoteIP());
 					Table.SetCell("File", pSock->GetFileName());
-				} else if (strncasecmp(sSockName.c_str() +5, "LISTEN", 6) == 0) {
+				} else if (sSockName.Equals("LISTEN", false, 6)) {
 					CDCCSock* pSock = (CDCCSock*) Manager[a];
 
 					Table.AddRow();
@@ -479,7 +478,7 @@ void CClient::UserCommand(const CString& sLine) {
 					Table.SetCell("Nick", pSock->GetRemoteNick());
 					Table.SetCell("IP", pSock->GetRemoteIP());
 					Table.SetCell("File", pSock->GetFileName());
-				} else if (strncasecmp(sSockName.c_str() +5, "XFER::LOCAL", 11) == 0) {
+				} else if (sSockName.Equals("XFER::LOCAL", false, 11)) {
 					CDCCBounce* pSock = (CDCCBounce*) Manager[a];
 
 					CString sState = "Waiting";
@@ -496,7 +495,7 @@ void CClient::UserCommand(const CString& sLine) {
 					Table.SetCell("Nick", pSock->GetRemoteNick());
 					Table.SetCell("IP", pSock->GetRemoteIP());
 					Table.SetCell("File", pSock->GetFileName());
-				} else if (strncasecmp(sSockName.c_str() +5, "CHAT::LOCAL", 11) == 0) {
+				} else if (sSockName.Equals("CHAT::LOCAL", false, 11)) {
 					CDCCBounce* pSock = (CDCCBounce*) Manager[a];
 
 					CString sState = "Waiting";
@@ -519,7 +518,7 @@ void CClient::UserCommand(const CString& sLine) {
 		if (PutStatus(Table) == 0) {
 			PutStatus("You have no active DCCs.");
 		}
-	} else if ((sCommand.CaseCmp("LISTMODS") == 0) || (sCommand.CaseCmp("LISTMODULES") == 0)) {
+	} else if (sCommand.Equals("LISTMODS") || sCommand.Equals("LISTMODULES")) {
 #ifdef _MODULES
 		if (m_pUser->IsAdmin()) {
 			CModules& GModules = CZNC::Get().GetModules();
@@ -564,7 +563,7 @@ void CClient::UserCommand(const CString& sLine) {
 		PutStatus("Modules are not enabled.");
 #endif
 		return;
-	} else if ((sCommand.CaseCmp("LISTAVAILMODS") == 0) || (sCommand.CaseCmp("LISTAVAILABLEMODULES") == 0)) {
+	} else if (sCommand.Equals("LISTAVAILMODS") || sCommand.Equals("LISTAVAILABLEMODULES")) {
 #ifdef _MODULES
 		if (m_pUser->DenyLoadMod()) {
 			PutStatus("Access Denied.");
@@ -620,12 +619,12 @@ void CClient::UserCommand(const CString& sLine) {
 		PutStatus("Modules are not enabled.");
 #endif
 		return;
-	} else if ((sCommand.CaseCmp("LOADMOD") == 0) || (sCommand.CaseCmp("LOADMODULE") == 0)) {
+	} else if (sCommand.Equals("LOADMOD") || sCommand.Equals("LOADMODULE")) {
 		CString sMod;
 		CString sArgs;
 		bool bGlobal = false;
 
-		if (sLine.Token(1).CaseCmp("-global") == 0) {
+		if (sLine.Token(1).Equals("-global")) {
 			sMod = sLine.Token(2);
 
 			if (!m_pUser->IsAdmin()) {
@@ -668,11 +667,11 @@ void CClient::UserCommand(const CString& sLine) {
 		PutStatus("Unable to load [" + sMod + "] Modules are not enabled.");
 #endif
 		return;
-	} else if ((sCommand.CaseCmp("UNLOADMOD") == 0) || (sCommand.CaseCmp("UNLOADMODULE") == 0)) {
+	} else if (sCommand.Equals("UNLOADMOD") || sCommand.Equals("UNLOADMODULE")) {
 		CString sMod;
 		bool bGlobal = false;
 
-		if (sLine.Token(1).CaseCmp("-global") == 0) {
+		if (sLine.Token(1).Equals("-global")) {
 			sMod = sLine.Token(2);
 
 			if (!m_pUser->IsAdmin()) {
@@ -707,12 +706,12 @@ void CClient::UserCommand(const CString& sLine) {
 		PutStatus("Unable to unload [" + sMod + "] Modules are not enabled.");
 #endif
 		return;
-	} else if ((sCommand.CaseCmp("RELOADMOD") == 0) || (sCommand.CaseCmp("RELOADMODULE") == 0)) {
+	} else if (sCommand.Equals("RELOADMOD") || sCommand.Equals("RELOADMODULE")) {
 		CString sMod;
 		CString sArgs;
 		bool bGlobal = false;
 
-		if (sLine.Token(1).CaseCmp("-global") == 0) {
+		if (sLine.Token(1).Equals("-global")) {
 			sMod = sLine.Token(2);
 
 			if (!m_pUser->IsAdmin()) {
@@ -750,7 +749,7 @@ void CClient::UserCommand(const CString& sLine) {
 		PutStatus("Unable to unload [" + sMod + "] Modules are not enabled.");
 #endif
 		return;
-	} else if (sCommand.CaseCmp("SETVHOST") == 0 && (m_pUser->IsAdmin() || !m_pUser->DenySetVHost())) {
+	} else if (sCommand.Equals("SETVHOST") && (m_pUser->IsAdmin() || !m_pUser->DenySetVHost())) {
 		CString sVHost = sLine.Token(1);
 
 		if (sVHost.empty()) {
@@ -760,10 +759,10 @@ void CClient::UserCommand(const CString& sLine) {
 
 		m_pUser->SetVHost(sVHost);
 		PutStatus("Set VHost to [" + m_pUser->GetVHost() + "]");
-	} else if (sCommand.CaseCmp("CLEARVHOST") == 0 && (m_pUser->IsAdmin() || !m_pUser->DenySetVHost())) {
+	} else if (sCommand.Equals("CLEARVHOST") && (m_pUser->IsAdmin() || !m_pUser->DenySetVHost())) {
 		m_pUser->SetVHost("");
 		PutStatus("VHost Cleared");
-	} else if (sCommand.CaseCmp("PLAYBUFFER") == 0) {
+	} else if (sCommand.Equals("PLAYBUFFER")) {
 		CString sChan = sLine.Token(1);
 
 		if (sChan.empty()) {
@@ -789,7 +788,7 @@ void CClient::UserCommand(const CString& sLine) {
 		}
 
 		pChan->SendBuffer(this);
-	} else if (sCommand.CaseCmp("CLEARBUFFER") == 0) {
+	} else if (sCommand.Equals("CLEARBUFFER")) {
 		CString sChan = sLine.Token(1);
 
 		if (sChan.empty()) {
@@ -811,7 +810,7 @@ void CClient::UserCommand(const CString& sLine) {
 
 		pChan->ClearBuffer();
 		PutStatus("The buffer for [" + sChan + "] has been cleared");
-	} else if (sCommand.CaseCmp("CLEARALLCHANNELBUFFERS") == 0) {
+	} else if (sCommand.Equals("CLEARALLCHANNELBUFFERS")) {
 		vector<CChan*>::const_iterator it;
 		const vector<CChan*>& vChans = m_pUser->GetChans();
 
@@ -819,7 +818,7 @@ void CClient::UserCommand(const CString& sLine) {
 			(*it)->ClearBuffer();
 		}
 		PutStatus("All channel buffers have been cleared");
-	} else if (sCommand.CaseCmp("SETBUFFER") == 0) {
+	} else if (sCommand.Equals("SETBUFFER")) {
 		CString sChan = sLine.Token(1);
 
 		if (sChan.empty()) {
@@ -849,7 +848,7 @@ void CClient::UserCommand(const CString& sLine) {
 		pChan->SetBufferCount(uLineCount);
 
 		PutStatus("BufferCount for [" + sChan + "] set to [" + CString(pChan->GetBufferCount()) + "]");
-	} else if (m_pUser->IsAdmin() && sCommand.CaseCmp("TRAFFIC") == 0) {
+	} else if (m_pUser->IsAdmin() && sCommand.Equals("TRAFFIC")) {
 		CZNC::Get().UpdateTrafficStats();
 		const map<CString, CUser*>& msUsers = CZNC::Get().GetUserMap();
 		CTable Table;
@@ -887,7 +886,7 @@ void CClient::UserCommand(const CString& sLine) {
 		Table.SetCell("Total", CString::ToByteStr(users_total_in + CZNC::Get().BytesRead() + users_total_out + CZNC::Get().BytesWritten()));
 
 		PutStatus(Table);
-	} else if (m_pUser->IsAdmin() && sCommand.CaseCmp("UPTIME") == 0) {
+	} else if (m_pUser->IsAdmin() && sCommand.Equals("UPTIME")) {
 		PutStatus("Running for " + CZNC::Get().GetUptime());
 	} else {
 		PutStatus("Unknown command [" + sCommand + "] try 'Help'");

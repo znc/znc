@@ -163,7 +163,7 @@ public:
 			for (map<CString, CAutoOpUser*>::iterator it = m_msUsers.begin(); it != m_msUsers.end(); it++) {
 				// and the nick who joined is a valid user
 				if (it->second->HostMatches(Nick.GetHostMask()) && it->second->ChannelMatches(Channel.GetName())) {
-					if (it->second->GetUserKey().CaseCmp("__NOKEY__") == 0) {
+					if (it->second->GetUserKey().Equals("__NOKEY__")) {
 						PutIRC("MODE " + Channel.GetName() + " +o " + Nick.GetNick());
 					} else {
 						// then insert this nick into the queue, the timer does the rest
@@ -195,15 +195,15 @@ public:
 	}
 
 	virtual EModRet OnPrivNotice(CNick& Nick, CString& sMessage) {
-		if (sMessage.Token(0).CaseCmp("!ZNCAO") != 0) {
+		if (!sMessage.Token(0).Equals("!ZNCAO")) {
 			return CONTINUE;
 		}
 
 		CString sCommand = sMessage.Token(1);
 
-		if (sCommand.CaseCmp("CHALLENGE") == 0) {
+		if (sCommand.Equals("CHALLENGE")) {
 			ChallengeRespond(Nick, sMessage.Token(2));
-		} else if (sCommand.CaseCmp("RESPONSE") == 0) {
+		} else if (sCommand.Equals("RESPONSE")) {
 			VerifyResponse(Nick, sMessage.Token(2));
 		}
 
@@ -213,16 +213,16 @@ public:
 	virtual void OnModCommand(const CString& sLine) {
 		CString sCommand = sLine.Token(0).AsUpper();
 
-		if (sCommand.CaseCmp("HELP") == 0) {
+		if (sCommand.Equals("HELP")) {
 			PutModule("Commands are: ListUsers, AddChans, DelChans, AddUser, DelUser");
-		} else if (sCommand.CaseCmp("TIMERS") == 0) {
+		} else if (sCommand.Equals("TIMERS")) {
 			ListTimers();
-		} else if (sCommand.CaseCmp("ADDUSER") == 0 || sCommand.CaseCmp("DELUSER") == 0) {
+		} else if (sCommand.Equals("ADDUSER") || sCommand.Equals("DELUSER")) {
 			CString sUser = sLine.Token(1);
 			CString sHost = sLine.Token(2);
 			CString sKey = sLine.Token(3);
 
-			if (sCommand.CaseCmp("ADDUSER") == 0) {
+			if (sCommand.Equals("ADDUSER")) {
 				if (sHost.empty()) {
 					PutModule("Usage: " + sCommand + " <user> <hostmask> <key> [channels]");
 				} else {
@@ -236,7 +236,7 @@ public:
 				DelUser(sUser);
 				DelNV(sUser);
 			}
-		} else if (sCommand.CaseCmp("LISTUSERS") == 0) {
+		} else if (sCommand.Equals("LISTUSERS")) {
 			if (m_msUsers.empty()) {
 				PutModule("There are no users defined");
 				return;
@@ -258,7 +258,7 @@ public:
 			}
 
 			PutModule(Table);
-		} else if (sCommand.CaseCmp("ADDCHANS") == 0 || sCommand.CaseCmp("DELCHANS") == 0) {
+		} else if (sCommand.Equals("ADDCHANS") || sCommand.Equals("DELCHANS")) {
 			CString sUser = sLine.Token(1);
 			CString sChans = sLine.Token(2, true);
 
@@ -274,7 +274,7 @@ public:
 				return;
 			}
 
-			if (sCommand.CaseCmp("ADDCHANS") == 0) {
+			if (sCommand.Equals("ADDCHANS")) {
 				pUser->AddChans(sChans);
 				PutModule("Channel(s) added to user [" + pUser->GetUsername() + "]");
 			} else {

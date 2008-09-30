@@ -50,7 +50,7 @@ public:
 			return;
 
 		// Do we already have the nick we want?
-		if (pIRCSock->GetNick().CaseCmp(GetNick()) == 0)
+		if (pIRCSock->GetNick().Equals(GetNick()))
 			return;
 
 		PutIRC("NICK " + GetNick());
@@ -69,12 +69,12 @@ public:
 	void OnNick(const CNick& Nick, const CString& sNewNick, const vector<CChan*>& vChans) {
 		if (sNewNick == GetUser()->GetIRCSock()->GetNick()) {
 			// We are changing our own nick
-			if (Nick.GetNick().CaseCmp(GetNick()) == 0) {
+			if (Nick.GetNick().Equals(GetNick())) {
 				// We are changing our nick away from the conf setting.
 				// Let's assume the user wants this and disable
 				// this module (to avoid fighting nickserv).
 				Disable();
-			} else if (sNewNick.CaseCmp(GetNick()) == 0) {
+			} else if (sNewNick.Equals(GetNick())) {
 				// We are changing our nick to the conf setting,
 				// so we don't need that timer anymore.
 				Disable();
@@ -83,14 +83,14 @@ public:
 		}
 
 		// If the nick we want is free now, be fast and get the nick
-		if (Nick.GetNick().CaseCmp(GetNick()) == 0) {
+		if (Nick.GetNick().Equals(GetNick())) {
 			KeepNick();
 		}
 	}
 
 	void OnQuit(const CNick& Nick, const CString& sMessage, const vector<CChan*>& vChans) {
 		// If someone with the nick we want quits, be fast and get the nick
-		if (Nick.GetNick().CaseCmp(GetNick()) == 0) {
+		if (Nick.GetNick().Equals(GetNick())) {
 			KeepNick();
 		}
 	}
@@ -101,7 +101,7 @@ public:
 	}
 
 	void OnIRCConnected() {
-		if (GetUser()->GetIRCSock()->GetNick().CaseCmp(GetNick()) != 0) {
+		if (!GetUser()->GetIRCSock()->GetNick().Equals(GetNick())) {
 			// We don't have the nick we want, try to get it
 			Enable();
 		}
@@ -130,7 +130,7 @@ public:
 			return CONTINUE;
 
 		// We are trying to get the config nick and this is a /nick?
-		if (!m_pTimer || sLine.Token(0).CaseCmp("NICK") != 0)
+		if (!m_pTimer || !sLine.Token(0).Equals("NICK"))
 			return CONTINUE;
 
 		// Is the nick change for the nick we are trying to get?
@@ -140,7 +140,7 @@ public:
 		if (sNick.Left(1) == ":")
 			sNick.LeftChomp();
 
-		if (sNick.CaseCmp(GetNick()) != 0)
+		if (!sNick.Equals(GetNick()))
 			return CONTINUE;
 
 		// Indeed trying to change to this nick, generate a 433 for it.
@@ -153,7 +153,7 @@ public:
 	virtual EModRet OnRaw(CString& sLine) {
 		// Are we trying to get our primary nick and we caused this error?
 		// :irc.server.net 433 mynick badnick :Nickname is already in use.
-		if (m_pTimer && sLine.Token(1) == "433" && sLine.Token(3).CaseCmp(GetNick()) == 0)
+		if (m_pTimer && sLine.Token(1) == "433" && sLine.Token(3).Equals(GetNick()))
 			return HALT;
 
 		return CONTINUE;

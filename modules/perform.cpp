@@ -41,12 +41,12 @@ public:
 			if (sPerf.Left(1) == "/")
 				sPerf.LeftChomp();
 
-			if (sPerf.Token(0).CaseCmp("MSG") == 0) {
+			if (sPerf.Token(0).Equals("MSG")) {
 				sPerf = "PRIVMSG " + sPerf.Token(1, true);
 			}
 
-			if ((sPerf.Token(0).CaseCmp("PRIVMSG") == 0 ||
-				sPerf.Token(0).CaseCmp("NOTICE") == 0) &&
+			if ((sPerf.Token(0).Equals("PRIVMSG") ||
+				sPerf.Token(0).Equals("NOTICE")) &&
 				sPerf.Token(2).Left(1) != ":") {
 				sPerf = sPerf.Token(0) + " " + sPerf.Token(1)
 					+ " :" + sPerf.Token(2, true);

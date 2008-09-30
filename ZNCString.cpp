@@ -276,13 +276,13 @@ CString CString::AsLower() const {
 }
 
 CString::EEscape CString::ToEscape(const CString& sEsc) {
-	if (sEsc.CaseCmp("ASCII") == 0) {
+	if (sEsc.Equals("ASCII")) {
 		return EASCII;
-	} else if (sEsc.CaseCmp("HTML") == 0) {
+	} else if (sEsc.Equals("HTML")) {
 		return EHTML;
-	} else if (sEsc.CaseCmp("URL") == 0) {
+	} else if (sEsc.Equals("URL")) {
 		return EURL;
-	} else if (sEsc.CaseCmp("SQL") == 0) {
+	} else if (sEsc.Equals("SQL")) {
 		return ESQL;
 	}
 
@@ -919,7 +919,7 @@ CString CString::ToTimeStr(unsigned long s) {
 	return sRet.RightChomp_n();
 }
 
-bool CString::ToBool() const { return (!Trim_n().Trim_n("0").empty() && Trim_n().CaseCmp("false") != 0); }
+bool CString::ToBool() const { return (!Trim_n().Trim_n("0").empty() && !Trim_n().Equals("false")); }
 short CString::ToShort() const { return strtoul(this->c_str(), (char**) NULL, 10); }
 unsigned short CString::ToUShort() const { return strtoul(this->c_str(), (char**) NULL, 10); }
 unsigned int CString::ToUInt() const { return strtoul(this->c_str(), (char**) NULL, 10); }
@@ -976,7 +976,7 @@ CString CString::TrimRight_n(const CString& s) const {
 }
 
 bool CString::TrimPrefix(const CString& sPrefix) {
-	if (CaseCmp(sPrefix, sPrefix.length()) == 0) {
+	if (Equals(sPrefix, false, sPrefix.length())) {
 		LeftChomp(sPrefix.length());
 		return true;
 	} else {
@@ -985,7 +985,7 @@ bool CString::TrimPrefix(const CString& sPrefix) {
 }
 
 bool CString::TrimSuffix(const CString& sSuffix) {
-	if (Right(sSuffix.length()).CaseCmp(sSuffix) == 0) {
+	if (Right(sSuffix.length()).Equals(sSuffix)) {
 		RightChomp(sSuffix.length());
 		return true;
 	} else {
