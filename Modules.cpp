@@ -103,16 +103,24 @@ CSocket::CSocket(CModule* pModule) : Csock() {
 	m_pModule = pModule;
 	m_pModule->AddSocket(this);
 	EnableReadLine();
+	SetMaxBufferThreshold(10240);
 }
 
 CSocket::CSocket(CModule* pModule, const CString& sHostname, unsigned short uPort, int iTimeout) : Csock(sHostname, uPort, iTimeout) {
 	m_pModule = pModule;
 	m_pModule->AddSocket(this);
 	EnableReadLine();
+	SetMaxBufferThreshold(10240);
 }
 
 CSocket::~CSocket() {
 	m_pModule->UnlinkSocket(this);
+}
+
+void CSocket::ReachedMaxBuffer() {
+	DEBUG_ONLY(cout << GetSockName() << " == ReachedMaxBuffer()" << endl);
+	PutModule("Some socket reached its max buffer limit and was closed!");
+	Close();
 }
 
 bool CSocket::Connect(const CString& sHostname, unsigned short uPort, bool bSSL, unsigned int uTimeout) {

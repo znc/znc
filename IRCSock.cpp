@@ -36,6 +36,9 @@ CIRCSock::CIRCSock(CUser* pUser) : Csock() {
 	m_mueChanModes['t'] = NoArg;
 	m_mueChanModes['i'] = NoArg;
 	m_mueChanModes['n'] = NoArg;
+
+	// RFC says a line can have 512 chars max, but we don't care ;)
+	SetMaxBufferThreshold(1024);
 }
 
 CIRCSock::~CIRCSock() {
@@ -876,6 +879,12 @@ void CIRCSock::ConnectionRefused() {
 	}
 	m_pUser->ClearRawBuffer();
 	m_pUser->ClearMotdBuffer();
+}
+
+void CIRCSock::ReachedMaxBuffer() {
+	DEBUG_ONLY(cout << GetSockName() << " == ReachedMaxBuffer()" << endl);
+	m_pUser->PutStatus("Received a too long line from the IRC server!");
+	Quit();
 }
 
 void CIRCSock::ParseISupport(const CString& sLine) {

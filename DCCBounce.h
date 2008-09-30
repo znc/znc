@@ -43,6 +43,7 @@ public:
 		m_sRemoteIP = sRemoteIP;
 		m_bIsRemote = false;
 
+		SetMaxBufferThreshold(10240);
 		if (bIsChat) {
 			EnableReadLine();
 		}
@@ -56,6 +57,7 @@ public:
 	virtual void ReadPaused();
 	virtual void Timeout();
 	virtual void ConnectionRefused();
+	virtual void ReachedMaxBuffer();
 	virtual void SockError(int iErrno);
 	virtual void Connected();
 	virtual void Disconnected();

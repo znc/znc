@@ -38,6 +38,15 @@ void CDCCBounce::ReadLine(const CString& sData) {
 	PutPeer(sLine);
 }
 
+void CDCCBounce::ReachedMaxBuffer() {
+	DEBUG_ONLY(cout << GetSockName() << " == ReachedMaxBuffer()" << endl);
+
+	CString sType = (m_bIsChat) ? "Chat" : "Xfer";
+
+	m_pUser->PutStatus("DCC " + sType + " Bounce (" + m_sRemoteNick + "): Too long line received");
+	Close();
+}
+
 void CDCCBounce::ReadData(const char* data, int len) {
 	size_t BufLen;
 

@@ -75,6 +75,9 @@ public:
 		m_bNamesx = false;
 		m_bUHNames = false;
 		EnableReadLine();
+		// RFC says a line can have 512 chars max, but we are
+		// a little more gentle ;)
+		SetMaxBufferThreshold(1024);
 
 		StartLoginTimeout();
 	}
@@ -113,6 +116,7 @@ public:
 	virtual void Connected();
 	virtual void Disconnected();
 	virtual void ConnectionRefused();
+	virtual void ReachedMaxBuffer();
 
 	void SetNick(const CString& s);
 	CUser* GetUser() const { return m_pUser; }

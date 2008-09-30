@@ -19,6 +19,7 @@ CHTTPSock::CHTTPSock() : Csock() {
 	m_bDone = false;
 	m_uPostLen = 0;
 	EnableReadLine();
+	SetMaxBufferThreshold(10240);
 }
 
 CHTTPSock::CHTTPSock(const CString& sHostname, unsigned short uPort, int iTimeout) : Csock(sHostname, uPort, iTimeout) {
@@ -29,6 +30,7 @@ CHTTPSock::CHTTPSock(const CString& sHostname, unsigned short uPort, int iTimeou
 	m_bDone = false;
 	m_uPostLen = 0;
 	EnableReadLine();
+	SetMaxBufferThreshold(10240);
 }
 
 CHTTPSock::~CHTTPSock() {}
@@ -382,6 +384,11 @@ void CHTTPSock::Connected() {
 }
 
 void CHTTPSock::Disconnected() {
+}
+
+void CHTTPSock::ReachedMaxBuffer() {
+	DEBUG_ONLY(cout << GetSockName() << " == ReachedMaxBuffer()" << endl);
+	Close();
 }
 
 Csock* CHTTPSock::GetSockObj(const CString& sHost, unsigned short uPort) {

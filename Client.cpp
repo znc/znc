@@ -696,6 +696,14 @@ void CClient::Disconnected() {
 	MODULECALL(OnUserDetached(), m_pUser, this, );
 }
 
+void CClient::ReachedMaxBuffer() {
+	DEBUG_ONLY(cout << GetSockName() << " == ReachedMaxBuffer()" << endl);
+	if (IsAttached()) {
+		PutClient("ERROR :Closing link [Too long raw line]");
+	}
+	Close();
+}
+
 void CClient::IRCConnected(CIRCSock* pIRCSock) {
 	m_pIRCSock = pIRCSock;
 }

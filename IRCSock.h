@@ -46,6 +46,7 @@ public:
 	virtual void ConnectionRefused();
 	virtual void SockError(int iErrno);
 	virtual void Timeout();
+	virtual void ReachedMaxBuffer();
 
 	void PutIRC(const CString& sLine);
 	void ResetChans();
