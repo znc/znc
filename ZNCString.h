@@ -82,6 +82,7 @@ public:
 	inline unsigned char* strnchr(const unsigned char* src, unsigned char c, unsigned int iMaxBytes, unsigned char* pFill = NULL, unsigned int* piCount = NULL) const;
 	int CaseCmp(const CString& s, unsigned long uLen = CString::npos) const;
 	int StrCmp(const CString& s, unsigned long uLen = CString::npos) const;
+	bool Equals(const CString& s, bool bCaseSensitive = false, unsigned long uLen = CString::npos) const;
 	static bool WildCmp(const CString& sWild, const CString& sString);
 	bool WildCmp(const CString& sWild) const;
 

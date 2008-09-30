@@ -186,6 +186,13 @@ int CString::StrCmp(const CString& s, unsigned long uLen) const {
 	return strcmp(c_str(), s.c_str());
 }
 
+bool CString::Equals(const CString& s, bool bCaseSensitive, unsigned long uLen) const {
+	if (bCaseSensitive)
+		return (StrCmp(s, uLen) == 0);
+	else
+		return (CaseCmp(s, uLen) == 0);
+}
+
 bool CString::WildCmp(const CString& sWild, const CString& sString) {
 	// Written by Jack Handy - jakkhandy@hotmail.com
 	const char *wild = sWild.c_str(), *CString = sString.c_str();
