@@ -24,6 +24,7 @@ CNick::~CNick() {}
 
 void CNick::Reset() {
 	m_cPerm = '\0';
+	m_suChanPerms.clear();
 }
 
 CString CNick::Concat(const CString& sNick, const CString& sSuffix, unsigned int uMaxNickLen) {

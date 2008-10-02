@@ -45,6 +45,7 @@ void CChan::Reset() {
 	m_sTopicOwner = "";
 	m_ulTopicDate = 0;
 	m_ulCreationDate = 0;
+	m_Nick.Reset();
 	ClearNicks();
 	ResetJoinTries();
 }
