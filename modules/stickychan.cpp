@@ -78,14 +78,17 @@ public:
 	{
 		for (MCString::iterator it = BeginNV(); it != EndNV(); it++)
 		{
-			if (!m_pUser->FindChan(it->first))
-			{
-				CChan *pChan = new CChan(it->first, m_pUser, true);
+			CChan *pChan = m_pUser->FindChan(it->first);
+			if (!pChan) {
+				pChan = new CChan(it->first, m_pUser, true);
 				if (!it->second.empty())
 					pChan->SetKey(it->second);
 				m_pUser->AddChan(pChan);
-				PutModule("Joining [" + it->first + "]");
-				PutIRC("JOIN " + it->first + (it->second.empty() ? "" : it->second));
+			}
+			if (!pChan->IsOn()) {
+				PutModule("Joining [" + pChan->GetName() + "]");
+				PutIRC("JOIN " + pChan->GetName() + (pChan->GetKey().empty()
+							? "" : " " + pChan->GetKey()));
 			}
 		}
 	}
