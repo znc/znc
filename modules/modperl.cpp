@@ -984,8 +984,10 @@ EXTERN_C void boot_DynaLoader (pTHX_ CV* cv);
 bool CModPerl::OnLoad(const CString & sArgs, CString & sMessage)
 {
 	int iArgc = 5;
-	char * pArgv[] = { "", "-e", "0", "-T", "-w", NULL };
+	char *p[] = { "", "-e", "0", "-T", "-w", NULL };
+	char **pArgv = static_cast<char **>(p);
 	PERL_SYS_INIT3( &iArgc, &pArgv, &environ );
+
 	m_pPerl = perl_alloc();
 	perl_construct(m_pPerl);
 
