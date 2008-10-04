@@ -11,7 +11,7 @@
 #include "HTTPSock.h"
 #include "znc.h"
 
-CHTTPSock::CHTTPSock() : Csock() {
+CHTTPSock::CHTTPSock(CModule *pMod) : CSocket(pMod) {
 	m_bSentHeader = false;
 	m_bGotHeader = false;
 	m_bLoggedIn = false;
@@ -22,7 +22,7 @@ CHTTPSock::CHTTPSock() : Csock() {
 	SetMaxBufferThreshold(10240);
 }
 
-CHTTPSock::CHTTPSock(const CString& sHostname, unsigned short uPort, int iTimeout) : Csock(sHostname, uPort, iTimeout) {
+CHTTPSock::CHTTPSock(CModule *pMod, const CString& sHostname, unsigned short uPort, int iTimeout) : CSocket(pMod, sHostname, uPort, iTimeout) {
 	m_bSentHeader = false;
 	m_bGotHeader = false;
 	m_bLoggedIn = false;
@@ -392,7 +392,7 @@ void CHTTPSock::ReachedMaxBuffer() {
 }
 
 Csock* CHTTPSock::GetSockObj(const CString& sHost, unsigned short uPort) {
-	CHTTPSock* pSock = new CHTTPSock;
+	CHTTPSock* pSock = new CHTTPSock(m_pModule);
 	pSock->SetSockName("HTTP::CLIENT");
 	pSock->SetTimeout(120);
 

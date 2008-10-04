@@ -11,13 +11,12 @@
 #ifndef _HTTPSOCK_H
 #define _HTTPSOCK_H
 
-#include "Csocket.h"
-#include "main.h"
+#include "Modules.h"
 
-class CHTTPSock : public Csock {
+class CHTTPSock : public CSocket {
 public:
-	CHTTPSock();
-	CHTTPSock(const CString& sHostname, unsigned short uPort, int iTimeout = 60);
+	CHTTPSock(CModule *pMod);
+	CHTTPSock(CModule *pMod, const CString& sHostname, unsigned short uPort, int iTimeout = 60);
 	virtual ~CHTTPSock();
 
 	// Csocket derived members

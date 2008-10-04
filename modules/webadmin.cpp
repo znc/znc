@@ -96,9 +96,10 @@ public:
 	virtual Csock* GetSockObj(const CString& sHost, unsigned short uPort);
 	bool IsAdmin(bool bAllowUserAdmin = true) const { return m_bAdmin; }
 
+	CWebAdminMod* GetModule() const { return (CWebAdminMod*) m_pModule; }
+
 private:
 protected:
-	CWebAdminMod*			m_pModule;
 	CUser*					m_pUser;
 	CUser*					m_pSessionUser;
 	bool					m_bAdmin;
@@ -114,15 +115,6 @@ public:
 	}
 
 	virtual ~CWebAdminMod() {
-		while (m_spSocks.size()) {							// Loop through the sockets that we have created
-			m_pManager->DelSockByAddr(*m_spSocks.begin());	// Delete each one which will call SockDestroyed() and erase it from the set
-		}													// This way we don't want to erase it ourselves, that's why we're using the funky while loop
-
-		m_spSocks.clear();
-	}
-
-	virtual bool OnBoot() {
-		return true;
 	}
 
 	virtual bool OnLoad(const CString& sArgStr, CString& sMessage) {
@@ -180,14 +172,6 @@ public:
 		return b;
 	}
 
-	void AddSock(CWebAdminSock* pSock) {
-		m_spSocks.insert(pSock);
-	}
-
-	void SockDestroyed(CWebAdminSock* pSock) {
-		m_spSocks.erase(pSock);
-	}
-
 	void SetSkinName(const CString& s) {
 		m_sSkinName = s;
 		SetNV("SkinName", m_sSkinName);
@@ -219,14 +203,13 @@ public:
 private:
 	unsigned short				m_uPort;
 	CString						m_sSkinName;
-	set<CWebAdminSock*>			m_spSocks;
 	CString						m_sListenHost;
 	map<CString, unsigned int>	m_suSwitchCounters;
 };
 
 CString CWebAdminSock::GetSkinDir() {
 	CString sSkinDir = m_pModule->GetModDataDir() + "/skins/"
-		+ m_pModule->GetSkinName() + "/";
+		+ GetModule()->GetSkinName() + "/";
 
 	if (CFile::IsDir(sSkinDir)) {
 		return sSkinDir;
@@ -302,35 +285,31 @@ void CWebAdminSock::ListUsersPage(CString& sPageRet) {
 }
 
 Csock* CWebAdminSock::GetSockObj(const CString& sHost, unsigned short uPort) {
-	CWebAdminSock* pSock = new CWebAdminSock(m_pModule, sHost, uPort);
+	CWebAdminSock* pSock = new CWebAdminSock(GetModule(), sHost, uPort);
 	pSock->SetSockName("WebAdmin::Client");
 	pSock->SetTimeout(120);
-	m_pModule->AddSock(pSock);
 
 	return pSock;
 }
 
-CWebAdminSock::CWebAdminSock(CWebAdminMod* pModule) : CHTTPSock() {
+CWebAdminSock::CWebAdminSock(CWebAdminMod* pModule) : CHTTPSock(pModule) {
 	m_pModule = pModule;
 	m_pUser = NULL;
 	m_pSessionUser = NULL;
 	m_bAdmin = false;
-	m_pModule->AddSock(this);
 	SetDocRoot(GetSkinDir());
 }
 
-CWebAdminSock::CWebAdminSock(CWebAdminMod* pModule, const CString& sHostname, unsigned short uPort, int iTimeout) : CHTTPSock(sHostname, uPort, iTimeout) {
+CWebAdminSock::CWebAdminSock(CWebAdminMod* pModule, const CString& sHostname, unsigned short uPort, int iTimeout)
+		: CHTTPSock(pModule, sHostname, uPort, iTimeout) {
 	m_pModule = pModule;
 	m_pUser = NULL;
 	m_pSessionUser = NULL;
 	m_bAdmin = false;
-	m_pModule->AddSock(this);
 	SetDocRoot(GetSkinDir());
 }
 
 CWebAdminSock::~CWebAdminSock() {
-	m_pModule->SockDestroyed(this);
-
 	if (!m_spAuth.IsNull()) {
 		CWebAdminAuth* pAuth = (CWebAdminAuth*) &(*m_spAuth);
 		pAuth->SetWebAdminSock(NULL);
@@ -388,7 +367,7 @@ bool CWebAdminSock::OnPageRequest(const CString& sURI, CString& sPageRet) {
 		}
 	} else if (sURI == "/switchuser") {
 		unsigned int uCurCnt = GetParam("cnt").ToUInt();
-		unsigned int uCounter = m_pModule->GetSwitchCounter(GetRemoteIP());
+		unsigned int uCounter = GetModule()->GetSwitchCounter(GetRemoteIP());
 
 		if (!uCurCnt) {
 			Redirect("/switchuser?cnt=" + CString(uCounter));
@@ -397,7 +376,7 @@ bool CWebAdminSock::OnPageRequest(const CString& sURI, CString& sPageRet) {
 
 		if (uCurCnt >= uCounter) {
 			m_bLoggedIn = false;
-			m_pModule->IncSwitchCounter(GetRemoteIP());
+			GetModule()->IncSwitchCounter(GetRemoteIP());
 			ForceLogin();
 		} else {
 			Redirect("/home");
@@ -557,7 +536,7 @@ bool CWebAdminSock::SettingsPage(CString& sPageRet) {
 					CTemplate& l = m_Template.AddRow("SkinLoop");
 					l["Name"] = SubDir.GetShortName();
 
-					if (SubDir.GetShortName() == m_pModule->GetSkinName()) {
+					if (SubDir.GetShortName() == GetModule()->GetSkinName()) {
 						l["Checked"] = "true";
 					}
 				}
@@ -610,7 +589,7 @@ bool CWebAdminSock::SettingsPage(CString& sPageRet) {
 		CZNC::Get().AddVHost(vsArgs[a].Trim_n());
 	}
 
-	m_pModule->SetSkinName(GetParam("skin"));
+	GetModule()->SetSkinName(GetParam("skin"));
 
 	set<CString> ssArgs;
 	GetParamValues("loadmod", ssArgs);
