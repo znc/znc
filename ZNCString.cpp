@@ -14,7 +14,7 @@
 
 using std::stringstream;
 
-const char* g_szHTMLescapes[256] = {
+static const char* const g_szHTMLescapes[256] = {
 	"&#0;", 0, 0, 0, 0, 0, 0, 0, 0, 0,               // 0-9
 	0, 0, 0, 0, 0, 0, 0, 0, 0, 0,                    // 10-19
 	0, 0, 0, 0, 0, 0, 0, 0, 0, 0,                    // 20-29
@@ -716,7 +716,7 @@ CString CString::Base64Decode_n() const {
 }
 
 bool CString::Base64Encode(CString& sRet, unsigned int uWrap) const {
-	static char b64table[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
+	const char b64table[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
 	sRet.clear();
 	size_t len = size();
 	const unsigned char* input = (const unsigned char*) c_str();

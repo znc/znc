@@ -50,8 +50,6 @@ static const unsigned char base64_table[256] = {
 	XX,XX,XX,XX, XX,XX,XX,XX, XX,XX,XX,XX, XX,XX,XX,XX,
 };
 
-extern const char* g_szHTMLescapes[256];
-
 class CString : public string {
 public:
 	typedef enum {

@@ -46,11 +46,11 @@ public:
 
 protected:
 	void md5_starts( md5_context *ctx ) const;
-	void md5_update( md5_context *ctx, uint8 *input, uint32 length ) const;
+	void md5_update( md5_context *ctx, const uint8 *input, uint32 length ) const;
 	void md5_finish( md5_context *ctx, uint8 digest[16] ) const;
 
 private:
-	void md5_process( md5_context *ctx, uint8 data[64] ) const;
+	void md5_process( md5_context *ctx, const uint8 data[64] ) const;
 };
 
 #endif /* _MD5_H */

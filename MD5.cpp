@@ -61,7 +61,7 @@ void CMD5::md5_starts(md5_context *ctx) const {
 	ctx->state[3] = 0x10325476;
 }
 
-void CMD5::md5_process(md5_context *ctx, uint8 data[64]) const {
+void CMD5::md5_process(md5_context *ctx, const uint8 data[64]) const {
 	uint32 X[16], A, B, C, D;
 
 	GET_UINT32(X[0],  data,  0);
@@ -180,7 +180,7 @@ void CMD5::md5_process(md5_context *ctx, uint8 data[64]) const {
 	ctx->state[3] += D;
 }
 
-void CMD5::md5_update(md5_context *ctx, uint8 *input, uint32 length) const {
+void CMD5::md5_update(md5_context *ctx, const uint8 *input, uint32 length) const {
 	uint32 left, fill;
 
 	if (!length) return;
@@ -215,7 +215,7 @@ void CMD5::md5_update(md5_context *ctx, uint8 *input, uint32 length) const {
 	}
 }
 
-static uint8 md5_padding[64] = {
+static const uint8 md5_padding[64] = {
 	0x80, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 	   0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 	   0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
