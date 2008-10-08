@@ -8,29 +8,21 @@
 
 #include "User.h"
 
-class CPerform : public CModule
-{
+class CPerform : public CModule {
 public:
-	MODCONSTRUCTOR(CPerform)
-	{
-	}
+	MODCONSTRUCTOR(CPerform) {}
 
-	virtual ~CPerform()
-	{
-	}
+	virtual ~CPerform() {}
 
-	virtual bool OnLoad(const CString& sArgs, CString& sMessage)
-	{
+	virtual bool OnLoad(const CString& sArgs, CString& sMessage) {
 		GetNV("Perform").Split("\n", m_vPerform, false);
 
 		return true;
 	}
 
-	virtual void OnModCommand(const CString& sCommand)
-	{
+	virtual void OnModCommand(const CString& sCommand) {
 		CString sCmdName = sCommand.Token(0).AsLower();
-		if (sCmdName == "add")
-		{
+		if (sCmdName == "add") {
 			CString sPerf = sCommand.Token(1, true);
 
 			if (sPerf.empty()) {
@@ -54,26 +46,20 @@ public:
 			m_vPerform.push_back(sPerf);
 			PutModule("Added!");
 			Save();
-		} else if (sCmdName == "del")
-		{
+		} else if (sCmdName == "del") {
 			u_int iNum = atoi(sCommand.Token(1, true).c_str());
-			if (iNum > m_vPerform.size() || iNum <= 0)
-			{
+			if (iNum > m_vPerform.size() || iNum <= 0) {
 				PutModule("Illegal # Requested");
 				return;
-			}
-			else
-			{
+			} else {
 				m_vPerform.erase(m_vPerform.begin() + iNum - 1);
 				PutModule("Command Erased.");
 			}
 			Save();
-		} else if (sCmdName == "list")
-		{
+		} else if (sCmdName == "list") {
 			int i = 1;
 			CString sExpanded;
-			for (VCString::iterator it = m_vPerform.begin(); it != m_vPerform.end(); it++, i++)
-			{
+			for (VCString::iterator it = m_vPerform.begin(); it != m_vPerform.end(); it++, i++) {
 				sExpanded = GetUser()->ExpandString(*it);
 				if (sExpanded != *it)
 					PutModule(CString(i) + ": " + *it + " (" + sExpanded + ")");
@@ -81,28 +67,23 @@ public:
 					PutModule(CString(i) + ": " + *it);
 			}
 			PutModule(" -- End of List");
-		}else
-		{
+		} else {
 			PutModule("Commands: add <command>, del <nr>, list");
 		}
 	}
 
-	virtual void OnIRCConnected()
-	{
+	virtual void OnIRCConnected() {
 		for (VCString::iterator it = m_vPerform.begin();
-			it != m_vPerform.end();  it++)
-		{
+			it != m_vPerform.end();  it++) {
 			PutIRC(GetUser()->ExpandString(*it));
 		}
 	}
 
 private:
-	bool Save()
-	{
+	bool Save() {
 		CString sBuffer = "";
 
-		for (VCString::iterator it = m_vPerform.begin(); it != m_vPerform.end(); it++)
-		{
+		for (VCString::iterator it = m_vPerform.begin(); it != m_vPerform.end(); it++) {
 			sBuffer += *it + "\n";
 		}
 		SetNV("Perform", sBuffer);
