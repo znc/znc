@@ -59,6 +59,7 @@ public:
 		ESQL
 	} EEscape;
 
+	explicit CString(bool b) : string(b ? "true" : "false") {}
 	explicit CString(char c);
 	explicit CString(unsigned char c);
 	explicit CString(short i);
@@ -74,6 +75,7 @@ public:
 
 	CString() : string() {}
 	CString(const char* c) : string(c) {}
+	CString(const char* c, size_t l) : string(c, l) {}
 	CString(const string& s) : string(s) {}
 	virtual ~CString() {}
 
