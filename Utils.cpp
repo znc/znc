@@ -258,15 +258,15 @@ bool CUtils::GetBoolInput(const CString& sPrompt, bool *pbDefault) {
 		sDefault = (*pbDefault) ? "yes" : "no";
 	}
 
-	GetInput(sPrompt, sRet, sDefault, "yes/no");
+	while (true) {
+		GetInput(sPrompt, sRet, sDefault, "yes/no");
 
-	if (sRet.Equals("yes")) {
-		return true;
-	} else if (sRet.Equals("no")) {
-		return false;
+		if (sRet.Equals("y") || sRet.Equals("yes")) {
+			return true;
+		} else if (sRet.Equals("n") || sRet.Equals("no")) {
+			return false;
+		}
 	}
-
-	return GetBoolInput(sPrompt, pbDefault);
 }
 
 bool CUtils::GetNumInput(const CString& sPrompt, unsigned int& uRet, unsigned int uMin, unsigned int uMax, unsigned int uDefault) {
