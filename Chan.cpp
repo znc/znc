@@ -60,7 +60,7 @@ bool CChan::WriteConfig(CFile& File) {
 	if (m_pUser->GetBufferCount() != GetBufferCount())
 		File.Write("\t\tBuffer     = " + CString(GetBufferCount()) + "\n");
 	if (m_pUser->KeepBuffer() != KeepBuffer())
-		File.Write("\t\tKeepBuffer = " + CString((KeepBuffer()) ? "true" : "false") + "\n");
+		File.Write("\t\tKeepBuffer = " + CString(KeepBuffer()) + "\n");
 	if (IsDetached())
 		File.Write("\t\tDetached   = true\n");
 	if (!GetKey().empty()) { File.Write("\t\tKey        = " + GetKey() + "\n"); }

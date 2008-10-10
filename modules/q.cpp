@@ -158,13 +158,13 @@ public:
 			Table.SetCell("Value", "*****"); // m_sPassword
 			Table.AddRow();
 			Table.SetCell("Setting", "UseCloakedHost");
-			Table.SetCell("Value", CString(m_bUseCloakedHost ? "true" : "false"));
+			Table.SetCell("Value", CString(m_bUseCloakedHost));
 			Table.AddRow();
 			Table.SetCell("Setting", "UseChallenge");
-			Table.SetCell("Value", CString(m_bUseChallenge ? "true" : "false"));
+			Table.SetCell("Value", CString(m_bUseChallenge));
 			Table.AddRow();
 			Table.SetCell("Setting", "RequestPerms");
-			Table.SetCell("Value", CString(m_bRequestPerms ? "true" : "false"));
+			Table.SetCell("Value", CString(m_bRequestPerms));
 			PutModule(Table);
 
 		} else if (sCommand == "status") {
@@ -469,17 +469,17 @@ private:
 
 	void SetUseCloakedHost(const bool bUseCloakedHost) {
 		m_bUseCloakedHost = bUseCloakedHost;
-		SetNV("UseCloakedHost", CString(bUseCloakedHost ? "true" : "false"));
+		SetNV("UseCloakedHost", CString(bUseCloakedHost));
 	}
 
 	void SetUseChallenge(const bool bUseChallenge) {
 		m_bUseChallenge = bUseChallenge;
-		SetNV("UseChallenge", CString(bUseChallenge ? "true" : "false"));
+		SetNV("UseChallenge", CString(bUseChallenge));
 	}
 
 	void SetRequestPerms(const bool bRequestPerms) {
 		m_bRequestPerms = bRequestPerms;
-		SetNV("RequestPerms", CString(bRequestPerms ? "true" : "false"));
+		SetNV("RequestPerms", CString(bRequestPerms));
 	}
 };
 
