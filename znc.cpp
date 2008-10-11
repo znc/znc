@@ -571,6 +571,15 @@ bool CZNC::WriteNewConfig(CString& sConfigFile) {
 #ifdef HAVE_LIBSSL
 	if (CUtils::GetBoolInput("Would you like ZNC to listen using SSL?", false)) {
 		sSSL = "+";
+
+		CString sPemFile = GetPemLocation();
+		if (!CFile::Exists(sPemFile)) {
+			CUtils::PrintError("Unable to locate pem file: [" + sPemFile + "]");
+			if (CUtils::GetBoolInput("Would you like to create a new pem file now?",
+						true)) {
+				WritePemFile();
+			}
+		}
 	}
 #endif
 
