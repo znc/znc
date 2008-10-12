@@ -71,6 +71,8 @@ public:
 	// !Getters
 private:
 protected:
+	void Init();
+
 	bool					m_bSentHeader;
 	bool					m_bGotHeader;
 	bool					m_bLoggedIn;
@@ -85,6 +87,8 @@ protected:
 	CString					m_sDocRoot;
 	map<CString, VCString>	m_msvsParams;
 	MCString				m_msHeaders;
+	bool					m_bHTTP10Client;
+	CString					m_sIfNoneMatch;
 };
 
 #endif // !_HTTPSOCK_H

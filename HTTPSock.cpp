@@ -12,22 +12,20 @@
 #include "znc.h"
 
 CHTTPSock::CHTTPSock(CModule *pMod) : CSocket(pMod) {
-	m_bSentHeader = false;
-	m_bGotHeader = false;
-	m_bLoggedIn = false;
-	m_bPost = false;
-	m_bDone = false;
-	m_uPostLen = 0;
-	EnableReadLine();
-	SetMaxBufferThreshold(10240);
+	Init();
 }
 
 CHTTPSock::CHTTPSock(CModule *pMod, const CString& sHostname, unsigned short uPort, int iTimeout) : CSocket(pMod, sHostname, uPort, iTimeout) {
+	Init();
+}
+
+void CHTTPSock::Init() {
 	m_bSentHeader = false;
 	m_bGotHeader = false;
 	m_bLoggedIn = false;
 	m_bPost = false;
 	m_bDone = false;
+	m_bHTTP10Client = false;
 	m_uPostLen = 0;
 	EnableReadLine();
 	SetMaxBufferThreshold(10240);
@@ -68,6 +66,7 @@ void CHTTPSock::ReadLine(const CString& sData) {
 	if (sName.Equals("GET")) {
 		m_bPost = false;
 		m_sURI = sLine.Token(1);
+		m_bHTTP10Client = sLine.Token(2).Equals("HTTP/1.0");
 		ParseURI();
 	} else if (sName.Equals("POST")) {
 		m_bPost = true;
@@ -81,6 +80,9 @@ void CHTTPSock::ReadLine(const CString& sData) {
 		m_bLoggedIn = OnLogin(m_sUser, m_sPass);
 	} else if (sName.Equals("Content-Length:")) {
 		m_uPostLen = sLine.Token(1).ToULong();
+	} else if (sName.Equals("If-None-Match:")) {
+		// this is for proper client cache support (HTTP 304) on static files:
+		m_sIfNoneMatch = sLine.Token(1, true);
 	} else if (sLine.empty()) {
 		m_bGotHeader = true;
 		DisableReadLine();
@@ -157,14 +159,36 @@ bool CHTTPSock::PrintFile(const CString& sFileName, CString sContentType) {
 		}
 	}
 
-	PrintHeader(File.GetSize(), sContentType);
+	const time_t iMTime = File.GetMTime();
+	bool bNotModified = false;
+	CString sETag;
 
-	char szBuf[4096];
-	int iLen = 0;
+	if (iMTime > 0 && !m_bHTTP10Client) {
+		sETag = "-" + CString(iMTime); // lighttpd style ETag
 
-	while ((iLen = File.Read(szBuf, 4096)) > 0) {
-		Write(szBuf, iLen);
+		AddHeader("ETag", "\"" + sETag + "\"");
+		AddHeader("Cache-Control", "private");
+
+		if (!m_sIfNoneMatch.empty()) {
+			m_sIfNoneMatch.Trim("\\\"'");
+			bNotModified = (m_sIfNoneMatch.Equals(sETag, true));
+		}
 	}
+
+	if (bNotModified) {
+		PrintHeader(0, sContentType, 304, "Not Modified");
+	} else {
+		char szBuf[4096];
+		int iLen = 0;
+
+		PrintHeader(File.GetSize(), sContentType);
+
+		while ((iLen = File.Read(szBuf, 4096)) > 0) {
+			Write(szBuf, iLen);
+		}
+	}
+
+	DEBUG_ONLY(cout << "ETag: [" << sETag << "] / If-None-Match [" << m_sIfNoneMatch << "]" << endl);
 
 	Close(Csock::CLT_AFTERWRITE);
 
@@ -333,16 +357,19 @@ bool CHTTPSock::PrintHeader(unsigned long uContentLength, const CString& sConten
 
 	DEBUG_ONLY(cout << "- " << uStatusId << " (" << sStatusMsg << ") [" << m_sContentType << "]" << endl);
 
-	Write("HTTP/1.0 " + CString(uStatusId) + " " + sStatusMsg + "\r\n");
+	Write("HTTP/" + CString(m_bHTTP10Client ? "1.0 " : "1.1 ") + CString(uStatusId) + " " + sStatusMsg + "\r\n");
 	//Write("Date: Tue, 28 Jun 2005 20:45:36 GMT\r\n");
 	Write("Server: " + CZNC::GetTag() + "\r\n");
-	Write("Content-Length: " + CString(uContentLength) + "\r\n");
-	Write("Connection: Close\r\n");
+	if (uContentLength > 0) {
+		Write("Content-Length: " + CString(uContentLength) + "\r\n");
+	}
 	Write("Content-Type: " + m_sContentType + "\r\n");
 
 	for (MCString::iterator it = m_msHeaders.begin(); it != m_msHeaders.end(); it++) {
 		Write(it->first + ": " + it->second + "\r\n");
 	}
+
+	Write("Connection: Close\r\n");
 
 	Write("\r\n");
 	m_bSentHeader = true;
