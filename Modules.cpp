@@ -562,8 +562,14 @@ void CModules::UnloadAll() {
 
 bool CModules::OnBoot() {
 	for (unsigned int a = 0; a < size(); a++) {
-		if (!(*this)[a]->OnBoot()) {
-			return false;
+		try {
+			if (!(*this)[a]->OnBoot()) {
+				return false;
+			}
+		} catch (CModule::EModException e) {
+			if (e == CModule::UNLOAD) {
+				UnloadModule((*this)[a]->GetModName());
+			}
 		}
 	}
 
