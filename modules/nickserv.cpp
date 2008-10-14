@@ -35,17 +35,10 @@ public:
 		if (sCmdName == "set") {
 			CString sPass = sCommand.Token(1, true);
 			m_sPass = sPass;
-			PutModule("Password set");
-		} else if (sCmdName == "show") {
-			if (m_sPass.empty())
-				PutModule("No password set");
-			else
-				PutModule("Current password: " + m_sPass);
-		} else if (sCmdName == "save") {
 			SetNV("Password", m_sPass);
-			PutModule("Saved!");
+			PutModule("Password set");
 		} else {
-			PutModule("Commands: set <password>, show, save");
+			PutModule("Commands: set <password>");
 		}
 	}
 
