@@ -1,25 +1,18 @@
 dnl Keep the version number in sync with main.h!
 AC_INIT([znc], [0.061])
-SAVED_CXXFLAGS="$CXXFLAGS"
+AC_CONFIG_SRCDIR([znc.cpp])
+AC_LANG([C++])
+
+# AC_PROG_CXX sets CXXFLAGS to "-O2 -g" if it is unset which we don't want
+CXXFLAGS="$CXXFLAGS "
 AC_PROG_CXX
 AC_CANONICAL_HOST
-
-CXXFLAGS="$SAVED_CXXFLAGS"
-INCLUDES=""
 
 appendLib () {
 	if test "$LIBS" != ""; then
 		LIBS="$LIBS $*"
 	else
 		LIBS=$*
-	fi
-}
-
-appendInc () {
-	if test "$INCLUDES" != ""; then
-		INCLUDES="$INCLUDES $*"
-	else
-		INCLUDES=$*
 	fi
 }
 
@@ -43,7 +36,7 @@ appendCXX "-D_FORTIFY_SOURCE=2"
 
 case "${host_os}" in
 	freebsd*)
-		appendInc -I/usr/local/include
+		appendCXX -I/usr/local/include
 		appendLib -L/usr/local/lib -lcompat
 		MODFLAGS="$MODFLAGS -L/usr/local/lib"
 	;;
@@ -64,31 +57,31 @@ if test -z "$ISCYGWIN" ; then
 fi
 
 AC_ARG_WITH( [openssl],
-	AC_HELP_STRING([--with-openssl=DIR], [openssl's installation prefix]),
+	AS_HELP_STRING([--with-openssl=DIR], [openssl's installation prefix]),
 	[OPENSSL=$withval],)
 AC_ARG_ENABLE( [debug],
-	AC_HELP_STRING([--enable-debug], [enable debuging]),
+	AS_HELP_STRING([--enable-debug], [enable debuging]),
 	[DEBUG="$enableval"],
 	[DEBUG="no"])
 AC_ARG_ENABLE( [ipv6],
-	AC_HELP_STRING([--enable-ipv6], [enable ipv6 support]),
+	AS_HELP_STRING([--enable-ipv6], [enable ipv6 support]),
 	[IPV6="$enableval"],
 	[IPV6="no"])
 AC_ARG_ENABLE( [modules],
-	AC_HELP_STRING([--disable-modules], [disable modules]),
+	AS_HELP_STRING([--disable-modules], [disable modules]),
 	[MODULES="$enableval"],
 	[MODULES="yes"])
 AC_ARG_ENABLE( [openssl],
-	AC_HELP_STRING([--disable-openssl], [disable openssl]),
+	AS_HELP_STRING([--disable-openssl], [disable openssl]),
 	[if test "$enableval" = "no" ; then NOSSL=1; fi],)
 AC_ARG_ENABLE( [perl],
-	AC_HELP_STRING([--disable-perl], [disable perl]),
+	AS_HELP_STRING([--disable-perl], [disable perl]),
 	[if test "$enableval" = "no" ; then NOPERL=1; fi],)
 AC_ARG_ENABLE( [sasl],
-	AC_HELP_STRING([--enable-sasl], [enable sasl]),
+	AS_HELP_STRING([--enable-sasl], [enable sasl]),
 	[if test "$enableval" = "yes" ; then SASL=1; fi],)
 AC_ARG_ENABLE( [optimization],
-	AC_HELP_STRING([--disable-optimization], [Disable some compiler optimizations to
+	AS_HELP_STRING([--disable-optimization], [Disable some compiler optimizations to
 			decrease memory usage while compiling]),
 	[OPTIMIZE="$enableval"],
 	[OPTIMIZE="yes"])
@@ -112,22 +105,20 @@ if test "x$GXX" = "xyes"; then
 fi
 
 AC_CHECK_LIB( gnugetopt, getopt_long,)
-AC_CHECK_FUNCS( stat lstat chmod open, , AC_ERROR([Missing Required libc feature]))
+AC_CHECK_FUNCS( stat lstat chmod open, , AC_MSG_ERROR([missing required libc feature]))
 
 if test -z "$NOSSL"; then
 	if test -n "$OPENSSL"; then
 		appendLib -L${OPENSSL}/lib
-		appendInc -I${OPENSSL}/include
+		appendCXX -I${OPENSSL}/include
 	fi
 
 	# Don't reorder this!
 	# On some arches libssl depends on libcrypto without linking to it :(
 	AC_CHECK_LIB( crypto, BIO_new,,
-		     AC_ERROR([Could not find libcrypto. Try --disable-openssl or install the
-			       appropriate dependencies eg. libssl-dev.]), )
+		AC_MSG_ERROR([could not find libcrypto. Try --disable-openssl or install the appropriate dependencies eg. libssl-dev.]), )
 	AC_CHECK_LIB( ssl, SSL_shutdown,,
-		     AC_ERROR([Could not find libssl. Try --disable-openssl or install the
-			       appropriate dependencies eg. libssl-dev.]), )
+		AC_MSG_ERROR([could not find libssl. Try --disable-openssl or install the appropriate dependencies eg. libssl-dev.]), )
 
 	if test -z "$NOSSL"; then
 		appendCXX -DHAVE_LIBSSL
@@ -139,14 +130,13 @@ if test -z "$prefix" || test $prefix = "NONE"; then
 fi
 
 AC_ARG_WITH( [module-prefix],
-	AC_HELP_STRING([--with-module-prefix],
-		       [module object code [[LIBDIR/znc]]]),
+	AS_HELP_STRING([--with-module-prefix], [module object code [[LIBDIR/znc]]]),
 	[MODDIR=$withval],
 	[MODDIR="${libdir}/znc"] )
 
 AC_ARG_WITH( [module-data-prefix],
-	AC_HELP_STRING([--with-module-data-prefix=DIR],
-		       [static module data (webadmin skins) [[DATADIR/znc]]]),
+	AS_HELP_STRING([--with-module-data-prefix=DIR],
+		[static module data (webadmin skins) [[DATADIR/znc]]]),
 	[DATADIR=$withval],
 	[DATADIR="${datadir}/znc"] )
 
@@ -165,7 +155,7 @@ if test "$MODULES" = "yes"; then
 	appendLib "$SAVED_LIBS"
 
 	if test $FOUND_DL = "no" ; then
-		AC_ERROR([Could not find dlopen. Try --disable-modules])
+		AC_MSG_ERROR([could not find dlopen. Try --disable-modules])
 	fi
 
 	appendCXX -D_MODULES
@@ -184,38 +174,35 @@ if test "$MODULES" = "yes"; then
 	appendCXX "-D_DATADIR_=\\\"${DATADIR}\\\""
 
 	if test -z "$NOPERL"; then
-		echo -n "checking for perl... "
+		AC_MSG_CHECKING([for perl])
 		PERL=`which perl`
 		if test -n "$PERL"; then
-			echo "$PERL"
+			AC_MSG_RESULT([$PERL])
 			AC_CHECK_LIB(perl, perl_alloc,unset NOPERL,
-				AC_ERROR([Could not find libperl. Try --disable-perl]),
+				AC_MSG_ERROR([could not find libperl. Try --disable-perl]),
 				[`$PERL -MExtUtils::Embed -e ccopts -e ldopts`])
 		else
-			echo "no"
-			AC_ERROR([Could not find perl binary. Try --disable-perl])
+			AC_MSG_RESULT([no])
+			AC_MSG_ERROR([could not find perl binary. Try --disable-perl])
 		fi
 	fi
 
 	if test -n "$SASL"; then
 		AC_CHECK_LIB( sasl2, sasl_server_init,
 			[: Dont let autoconf add -lsasl2, Makefile handles that],
-			AC_ERROR([Could not find libsasl2. Try --disable-sasl.]))
+			AC_MSG_ERROR([could not find libsasl2. Try --disable-sasl.]))
 	fi
 fi
 
-VERSION=AC_PACKAGE_VERSION
 #
 # Auto detect modules
 
 AC_SUBST([CXXFLAGS])
+AC_SUBST([CPPFLAGS])
 AC_SUBST([MODFLAGS])
 AC_SUBST([LDFLAGS])
-AC_SUBST([INCLUDES])
 AC_SUBST([LIBS])
-AC_SUBST([MODULES])
 AC_SUBST([MODTARGET])
-AC_SUBST([VERSION])
 AC_SUBST([NOSSL])
 AC_SUBST([PERL])
 AC_SUBST([SASL])
@@ -231,7 +218,7 @@ fi
 AC_OUTPUT
 
 echo
-echo znc $VERSION configured
+echo znc AC_PACKAGE_VERSION configured
 echo
 echo "debug:   $DEBUG"
 echo "ipv6:    $IPV6"

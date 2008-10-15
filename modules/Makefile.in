@@ -9,9 +9,8 @@ sbindir     := @sbindir@
 localstatedir := @localstatedir@
 CXX      := @CXX@
 # CXXFLAGS are for the main binary, so don't use them here, use MODFLAGS instead
-MODFLAGS := @MODFLAGS@
+MODFLAGS := @CPPFLAGS@ @MODFLAGS@ -I..
 LDFLAGS  := @LDFLAGS@
-INCLUDES := @INCLUDES@ -I..
 # LIBS are not and should not be used in here.
 # The znc binary links already against those.
 # LIBS     := @LIBS@
@@ -41,7 +40,6 @@ FILES    := $(shell echo $(FILES) | sed -e "s/saslauth//")
 endif
 saslauthFLAGS := -lsasl2
 
-SRCS     := $(wildcard ../*.cpp) $(addsuffix .cpp, $(FILES))
 TARGETS  := $(addsuffix .so, $(FILES))
 
 CLEAN    := *.so
@@ -70,7 +68,7 @@ clean:
 
 %.so: %.cpp Makefile
 	@mkdir -p .depend
-	$(CXX) $(MODFLAGS) $(INCLUDES) $(LDFLAGS) -shared -o $@ $< $($(basename $<)FLAGS) -MMD -MF .depend/$<.dep
+	$(CXX) $(MODFLAGS) $(LDFLAGS) -shared -o $@ $< $($(basename $<)FLAGS) -MMD -MF .depend/$<.dep
 
 modperl_install: create_install_dir
 	for i in *.pm; do \

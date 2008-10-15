@@ -8,9 +8,8 @@ libdir      := @libdir@
 sbindir     := @sbindir@
 localstatedir := @localstatedir@
 CXX      := @CXX@
-CXXFLAGS := @CXXFLAGS@
+CXXFLAGS := @CPPFLAGS@ @CXXFLAGS@
 LDFLAGS  := @LDFLAGS@
-INCLUDES := @INCLUDES@
 LIBS     := @LIBS@
 
 SRCS := ZNCString.cpp Csocket.cpp main.cpp znc.cpp User.cpp IRCSock.cpp Client.cpp DCCBounce.cpp \
@@ -50,9 +49,9 @@ distclean: clean
 
 %.o: %.cpp Makefile
 	@mkdir -p .depend
-	$(CXX) $(CXXFLAGS) $(INCLUDES) -c -o $@ $< -MMD -MF .depend/$<.dep
+	$(CXX) $(CXXFLAGS) -c -o $@ $< -MMD -MF .depend/$<.dep
 
-install: znc @MODTARGET@
+install: znc
 	mkdir -p $(DESTDIR)$(bindir)
 	mkdir -p $(DESTDIR)$(prefix)/include/znc
 	install -m 0755 znc $(DESTDIR)$(bindir)
