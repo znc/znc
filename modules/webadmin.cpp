@@ -43,6 +43,7 @@ public:
 	virtual bool OnPageRequest(const CString& sURI, CString& sPageRet);
 	virtual bool OnLogin(const CString& sUser, const CString& sPass);
 
+	CString GetAvailSkinsDir();
 	CString GetSkinDir();
 	void PrintPage(CString& sPageRet, const CString& sTmplName);
 
@@ -207,9 +208,12 @@ private:
 	map<CString, unsigned int>	m_suSwitchCounters;
 };
 
+CString CWebAdminSock::GetAvailSkinsDir() {
+	return m_pModule->GetModDataDir() + "/skins/";
+}
+
 CString CWebAdminSock::GetSkinDir() {
-	CString sSkinDir = m_pModule->GetModDataDir() + "/skins/"
-		+ GetModule()->GetSkinName() + "/";
+	CString sSkinDir = GetAvailSkinsDir() + GetModule()->GetSkinName() + "/";
 
 	if (CFile::IsDir(sSkinDir)) {
 		return sSkinDir;
@@ -520,7 +524,7 @@ bool CWebAdminSock::SettingsPage(CString& sPageRet) {
 #endif
 		}
 
-		CString sDir(GetSkinDir() + "/..");
+		CString sDir(GetAvailSkinsDir());
 
 		if (CFile::IsDir(sDir)) {
 			CDir Dir(sDir);
