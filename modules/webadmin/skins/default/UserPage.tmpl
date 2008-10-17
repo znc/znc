@@ -139,7 +139,7 @@
 				<table>
 					<thead>
 					<tr>
-						<td>[<a href="/addchan?user=<? VAR Username ESC=URL ?>">Add</a>]</td>
+						<td>[<a href="addchan?user=<? VAR Username ESC=URL ?>">Add</a>]</td>
 				<? IF ChannelLoop ?>
 						<td>Save</td>
 						<td>Name</td>
@@ -157,7 +157,7 @@
 					<tr class="<? IF __EVEN__ ?>evenrow<? ELSE ?>oddrow<? ENDIF ?>">
 						<td>
 							<input type="hidden" name="channel" value="<? VAR Name ESC=HTML ?>" />
-							[<a href="/editchan?user=<? VAR Username ESC=URL ?>&amp;name=<? VAR Name ESC=URL ?>">Edit</a>] [<a href="/delchan?user=<? VAR Username ESC=URL ?>&amp;name=<? VAR Name ESC=URL ?>">Del</a>]
+							[<a href="editchan?user=<? VAR Username ESC=URL ?>&amp;name=<? VAR Name ESC=URL ?>">Edit</a>] [<a href="delchan?user=<? VAR Username ESC=URL ?>&amp;name=<? VAR Name ESC=URL ?>">Del</a>]
 						</td>
 						<td><input type="checkbox" name="save_<? VAR Name ESC=HTML ?>"<? IF InConfig ?> checked="checked"<? ENDIF ?> /></td>
 						<td><? VAR Name ESC=HTML ?></td>

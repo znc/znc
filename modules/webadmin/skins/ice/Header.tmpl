@@ -3,7 +3,7 @@
 <head>
 	<title>ZNC - <?VAR Title ESC=HTML?></title>
 	<meta http-equiv="content-type" content="text/html; charset=iso-8859-1" />
-	<link rel="stylesheet" type="text/css" href="/css/main.css" />
+	<link rel="stylesheet" type="text/css" href="css/main.css" />
 </head>
 
 <body>
@@ -16,15 +16,15 @@
 			<div id="gnav">
 				<div id="nav">
 					<ul id="menu">
-						<li<? IF Action == "home" ?> class="on"<? ENDIF ?>><a href="/home">Home</a></li>
+						<li<? IF Action == "home" ?> class="on"<? ENDIF ?>><a href="home">Home</a></li>
 			<? IF IsAdmin ?>
-						<li<? IF Action == "settings" ?> class="on"<? ENDIF ?>><a href="/settings">Settings</a></li>
-						<li<? IF Action == "adduser" ?> class="on"<? ENDIF ?>><a href="/adduser">Add User</a></li>
-						<li<? IF Action == "listusers" || Action == "edituser" ?> class="on"<? ENDIF ?>><a href="/listusers">Edit Users</a></li>
+						<li<? IF Action == "settings" ?> class="on"<? ENDIF ?>><a href="settings">Settings</a></li>
+						<li<? IF Action == "adduser" ?> class="on"<? ENDIF ?>><a href="adduser">Add User</a></li>
+						<li<? IF Action == "listusers" || Action == "edituser" ?> class="on"<? ENDIF ?>><a href="listusers">Edit Users</a></li>
 			<? ELSE ?>
-						<li<? IF Action == "edituser" ?> class="on"<? ENDIF ?>><a href="/edituser">My Settings</a></li>
+						<li<? IF Action == "edituser" ?> class="on"<? ENDIF ?>><a href="edituser">My Settings</a></li>
 			<? ENDIF ?>
-						<li<? IF Action == "switchuser" ?> class="on"<? ENDIF ?>><a href="/switchuser">Switch User</a></li>
+						<li<? IF Action == "switchuser" ?> class="on"<? ENDIF ?>><a href="switchuser">Switch User</a></li>
 					</ul>
 				</div>
 			</div>

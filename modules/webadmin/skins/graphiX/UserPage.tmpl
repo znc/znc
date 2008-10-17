@@ -202,7 +202,7 @@
 						<? IF Edit ?>
 							<table width="98%" cellpadding="0" cellspacing="0" style="border: 1px solid #000000;" align="center">
 							<tr>
-								<td width="100" class="main2title" style="border-bottom: 1px solid #000000; border-right: 1px solid #000000;">[<a href="/addchan?user=<? VAR Username ESC=URL ?>">Add</a>]</td>
+								<td width="100" class="main2title" style="border-bottom: 1px solid #000000; border-right: 1px solid #000000;">[<a href="addchan?user=<? VAR Username ESC=URL ?>">Add</a>]</td>
 								<? IF ChannelLoop ?>
 									<td class="main2title" style="border-bottom: 1px solid #000000; border-right: 1px solid #000000;">Save</td>
 									<td class="main2title" style="border-bottom: 1px solid #000000; border-right: 1px solid #000000;">Name</td>
@@ -219,7 +219,7 @@
 								<tr class="<? IF __EVEN__ ?>evenrow<? ELSE ?>oddrow<? ENDIF ?>">
 									<td>
 										<input type="hidden" name="channel" value="<? VAR Name ESC=HTML ?>" />
-										[<a href="/editchan?user=<? VAR Username ESC=URL ?>&amp;name=<? VAR Name ESC=URL ?>">Edit</a>] [<a href="/delchan?user=<? VAR Username ESC=URL ?>&amp;name=<? VAR Name ESC=URL ?>">Del</a>]
+										[<a href="editchan?user=<? VAR Username ESC=URL ?>&amp;name=<? VAR Name ESC=URL ?>">Edit</a>] [<a href="delchan?user=<? VAR Username ESC=URL ?>&amp;name=<? VAR Name ESC=URL ?>">Del</a>]
 									</td>
 									<td><input type="checkbox" name="save_<? VAR Name ESC=HTML ?>"<? IF InConfig ?> checked="checked"<? ENDIF ?> /></td>
 									<td><? VAR Name ESC=HTML ?></td>

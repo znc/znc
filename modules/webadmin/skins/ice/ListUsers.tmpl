@@ -1,6 +1,6 @@
 <? INC Header.tmpl ?>
 		<?IF !UserLoop?>
-				There are no users defined.  Click <a href="/adduser">here</a> if you would like to add one.
+				There are no users defined.  Click <a href="adduser">here</a> if you would like to add one.
 		<?ELSE?>
 				<table>
 					<thead>
@@ -17,8 +17,8 @@
 					<tr class="<?IF __EVEN__?>evenrow<?ELSE?>oddrow<?ENDIF?>">
 						<td>
 							<span class="nowrap">
-								[<a href="/edituser?user=<?VAR Username ESC=URL?>">Edit</a>]
-								<? IF !IsSelf ?>[<a href="/deluser?user=<?VAR Username ESC=URL?>" onClick="return confirm('Do you really wish to remove this user?');">Delete</a>]<? ENDIF ?>
+								[<a href="edituser?user=<?VAR Username ESC=URL?>">Edit</a>]
+								<? IF !IsSelf ?>[<a href="deluser?user=<?VAR Username ESC=URL?>" onClick="return confirm('Do you really wish to remove this user?');">Delete</a>]<? ENDIF ?>
 							</span>
 						</td>
 						<td><? VAR Username ESC=HTML ?></td>
