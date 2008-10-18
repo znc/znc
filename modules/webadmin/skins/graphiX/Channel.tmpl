@@ -1,6 +1,6 @@
 <? INC Header.tmpl ?>
 
-<form action="<? IF Edit ?>/editchan<? ELSE ?>/addchan<? ENDIF ?>" method="post">
+<form action="<? IF Edit ?>editchan<? ELSE ?>addchan<? ENDIF ?>" method="post">
 		<input type="hidden" name="submitted" value="1">
 		<input type="hidden" name="user" value="<? VAR User ESC=HTML ?>">
 

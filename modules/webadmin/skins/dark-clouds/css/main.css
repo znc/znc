@@ -33,7 +33,7 @@ a:hover {
 }
 
 .header {
-	background-image: url('/img/clouds-header.jpg');
+	background-image: url('../img/clouds-header.jpg');
 	padding: 10px;
 	border: 1px solid #000000;
 	height: 100px;
