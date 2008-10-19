@@ -9,16 +9,12 @@ OK="[ ok ]"
 prefix="@prefix@"
 exec_prefix="@exec_prefix@"
 bindir="@bindir@"
-PATH="$PATH:$bindir"
+PATH="$bindir:$PATH"
 
 # Check if we got everything we need
 
 SED=sed
 ZNC_CONFIG=znc-config
-
-if test "x$CXX" = "x" ; then
-	CXX=g++
-fi
 
 check_binary()
 {
@@ -31,6 +27,14 @@ check_binary()
 
 check_binary ${SED}
 check_binary ${ZNC_CONFIG} "Please (re)install ZNC."
+
+if test "x$CXX" = "x" ; then
+	CXX=`${ZNC_CONFIG} --cxx`
+fi
+if test "x$CXX" = "x" ; then
+	CXX=g++
+fi
+
 check_binary ${CXX} "What happened to your compiler?"
 
 if test -z "$1"; then
