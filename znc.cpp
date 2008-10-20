@@ -1593,8 +1593,15 @@ bool CZNC::AddVHost(const CString& sHost) {
 }
 
 bool CZNC::RemVHost(const CString& sHost) {
-	// @todo
-	return true;
+	VCString::iterator it;
+	for (it = m_vsVHosts.begin(); it != m_vsVHosts.end(); it++) {
+		if (sHost.Equals(*it)) {
+			m_vsVHosts.erase(it);
+			return true;
+		}
+	}
+
+	return false;
 }
 
 void CZNC::Broadcast(const CString& sMessage, bool bAdminOnly,

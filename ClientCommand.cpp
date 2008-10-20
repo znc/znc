@@ -749,12 +749,78 @@ void CClient::UserCommand(const CString& sLine) {
 		PutStatus("Unable to unload [" + sMod + "] Modules are not enabled.");
 #endif
 		return;
+	} else if (sCommand.Equals("ADDVHOST") && m_pUser->IsAdmin()) {
+		CString sVHost = sLine.Token(1);
+
+		if (sVHost.empty()) {
+			PutStatus("Usage: AddVHost <VHost>");
+			return;
+		}
+
+		if (CZNC::Get().AddVHost(sVHost)) {
+			PutStatus("Done");
+		} else {
+			PutStatus("The VHost [" + sVHost + "] is already in the list");
+		}
+	} else if ((sCommand.Equals("REMVHOST") || sCommand.Equals("DELVHOST")) && m_pUser->IsAdmin()) {
+		CString sVHost = sLine.Token(1);
+
+		if (sVHost.empty()) {
+			PutStatus("Usage: RemVHost <VHost>");
+			return;
+		}
+
+		if (CZNC::Get().RemVHost(sVHost)) {
+			PutStatus("Done");
+		} else {
+			PutStatus("The VHost [" + sVHost + "] is not in the list");
+		}
+	} else if (sCommand.Equals("LISTVHOSTS") && (m_pUser->IsAdmin() || !m_pUser->DenySetVHost())) {
+		const VCString& vsVHosts = CZNC::Get().GetVHosts();
+
+		if (vsVHosts.empty()) {
+			PutStatus("No VHosts configured");
+			return;
+		}
+
+		CTable Table;
+		Table.AddColumn("VHost");
+
+		VCString::const_iterator it;
+		for (it = vsVHosts.begin(); it != vsVHosts.end(); it++) {
+			Table.AddRow();
+			Table.SetCell("VHost", *it);
+		}
+		PutStatus(Table);
 	} else if (sCommand.Equals("SETVHOST") && (m_pUser->IsAdmin() || !m_pUser->DenySetVHost())) {
 		CString sVHost = sLine.Token(1);
 
 		if (sVHost.empty()) {
 			PutStatus("Usage: SetVHost <VHost>");
 			return;
+		}
+
+		if (sVHost.Equals(m_pUser->GetVHost())) {
+			PutStatus("You already have this VHost!");
+			return;
+		}
+
+		const VCString& vsVHosts = CZNC::Get().GetVHosts();
+		if (!m_pUser->IsAdmin() && !vsVHosts.empty()) {
+			VCString::const_iterator it;
+			bool bFound = false;
+
+			for (it = vsVHosts.begin(); it != vsVHosts.end(); it++) {
+				if (sVHost.Equals(*it)) {
+					bFound = true;
+					break;
+				}
+			}
+
+			if (!bFound) {
+				PutStatus("You may not use this VHost. See [ListVHosts] for a list");
+				return;
+			}
 		}
 
 		m_pUser->SetVHost(sVHost);
@@ -986,7 +1052,24 @@ void CClient::HelpUser() {
 	Table.SetCell("Arguments", "<#chan> [linecount]");
 	Table.SetCell("Description", "Set the buffer count for a channel");
 
+	if (m_pUser->IsAdmin()) {
+		Table.AddRow();
+		Table.SetCell("Command", "AddVHost");
+		Table.SetCell("Arguments", "<vhost (ip preferred)>");
+		Table.SetCell("Description", "Adds a VHost for normal users to use");
+
+		Table.AddRow();
+		Table.SetCell("Command", "RemVHost");
+		Table.SetCell("Arguments", "<vhost>");
+		Table.SetCell("Description", "Removes a VHost from the list");
+	}
+
 	if (m_pUser->IsAdmin() || !m_pUser->DenySetVHost()) {
+		Table.AddRow();
+		Table.SetCell("Command", "ListVHosts");
+		Table.SetCell("Arguments", "");
+		Table.SetCell("Description", "Shows the configured list of vhosts");
+
 		Table.AddRow();
 		Table.SetCell("Command", "SetVHost");
 		Table.SetCell("Arguments", "<vhost (ip preferred)>");
