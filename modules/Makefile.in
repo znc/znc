@@ -1,3 +1,7 @@
+# Support out-of-tree builds
+srcdir      := @srcdir@
+VPATH       := @srcdir@
+
 prefix      := @prefix@
 exec_prefix := @exec_prefix@
 datarootdir := @datarootdir@
@@ -9,7 +13,7 @@ sbindir     := @sbindir@
 localstatedir := @localstatedir@
 CXX      := @CXX@
 # CXXFLAGS are for the main binary, so don't use them here, use MODFLAGS instead
-MODFLAGS := @CPPFLAGS@ @MODFLAGS@ -I..
+MODFLAGS := @CPPFLAGS@ @MODFLAGS@ -I$(srcdir)/..
 LDFLAGS  := @LDFLAGS@
 # LIBS are not and should not be used in here.
 # The znc binary links already against those.
@@ -18,14 +22,16 @@ PERL     := @PERL@
 MODDIR   := @MODDIR@
 DATADIR  := @DATADIR@
 
+FILES    := $(basename $(wildcard $(srcdir)/*.cpp))
+# Strip away the srcdir, we want them to be created in the current dir
+FILES    := $(shell echo $(FILES) | sed -e "s:$(srcdir)/::g")
+
 ifeq "@NOSSL@" "1"
-FILES    := $(foreach file, $(wildcard *.cpp), \
-	$(if $(shell grep REQUIRESSL $(file)), \
+FILES    := $(foreach file, $(FILES), \
+	$(if $(shell grep REQUIRESSL $(srcdir)/$(file).cpp), \
 		, \
 		$(basename $(file)) \
 	))
-else
-FILES    := $(basename $(wildcard *.cpp))
 endif
 
 ifneq "$(PERL)" ""
@@ -57,8 +63,9 @@ create_install_dir:
 	rm -rf $(DESTDIR)$(MODDIR)/*.so
 
 install_metadirs: create_install_dir
-	for a in *; do \
-		if [ -d $$a ] && [ -f $${a}.so ]; then \
+	for a in $(srcdir)/*; do \
+		d=$$(echo $$a | sed -e "s:$(srcdir)/::g"); \
+		if [ -d $$a ] && [ -f $${d}.so ]; then \
 			cp -Rp $$a $(DESTDIR)$(DATADIR); \
 		fi \
 	done
@@ -68,10 +75,10 @@ clean:
 
 %.so: %.cpp Makefile
 	@mkdir -p .depend
-	$(CXX) $(MODFLAGS) $(LDFLAGS) -shared -o $@ $< $($(basename $<)FLAGS) -MMD -MF .depend/$<.dep
+	$(CXX) $(MODFLAGS) $(LDFLAGS) -shared -o $@ $< $($(basename $@)FLAGS) -MMD -MF .depend/$@.dep
 
 modperl_install: create_install_dir
-	for i in *.pm; do \
+	for i in $(srcdir)/*.pm; do \
 		install -m 0644 $$i $(DESTDIR)$(MODDIR); \
 	done
 

@@ -1,3 +1,7 @@
+# Support out-of-tree builds
+srcdir      := @srcdir@
+VPATH       := @srcdir@
+
 prefix      := @prefix@
 exec_prefix := @exec_prefix@
 datarootdir := @datarootdir@
@@ -49,7 +53,7 @@ distclean: clean
 
 %.o: %.cpp Makefile
 	@mkdir -p .depend
-	$(CXX) $(CXXFLAGS) -c -o $@ $< -MMD -MF .depend/$<.dep
+	$(CXX) $(CXXFLAGS) -c -o $@ $< -MMD -MF .depend/$@.dep
 
 install: znc
 	mkdir -p $(DESTDIR)$(bindir)
@@ -57,7 +61,7 @@ install: znc
 	install -m 0755 znc $(DESTDIR)$(bindir)
 	install -m 0755 znc-config $(DESTDIR)$(bindir)
 	install -m 0755 znc-buildmod $(DESTDIR)$(bindir)
-	install -m 0644 *.h $(DESTDIR)$(prefix)/include/znc
+	install -m 0644 $(srcdir)/*.h $(DESTDIR)$(prefix)/include/znc
 	@if test -n "@MODTARGET@"; then \
 		$(MAKE) -C modules install DESTDIR=$(DESTDIR); \
 	fi
