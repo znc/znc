@@ -14,6 +14,7 @@ localstatedir := @localstatedir@
 CXX      := @CXX@
 # CXXFLAGS are for the main binary, so don't use them here, use MODFLAGS instead
 MODFLAGS := @CPPFLAGS@ @MODFLAGS@ -I$(srcdir)/..
+MODLINK  := @MODLINK@
 LDFLAGS  := @LDFLAGS@
 # LIBS are not and should not be used in here.
 # The znc binary links already against those.
@@ -75,7 +76,7 @@ clean:
 
 %.so: %.cpp Makefile
 	@mkdir -p .depend
-	$(CXX) $(MODFLAGS) $(LDFLAGS) -shared -o $@ $< $($(basename $@)FLAGS) -MMD -MF .depend/$@.dep
+	$(CXX) $(MODFLAGS) $(LDFLAGS) $(MODLINK) -o $@ $< $($(basename $@)FLAGS) -MMD -MF .depend/$@.dep
 
 modperl_install: create_install_dir
 	for i in $(srcdir)/*.pm; do \

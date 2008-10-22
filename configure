@@ -630,6 +630,8 @@ host_cpu
 host_vendor
 host_os
 MODFLAGS
+MODULES
+MODLINK
 MODTARGET
 NOSSL
 PERL
@@ -2426,6 +2428,14 @@ appendCXX () {
 	fi
 }
 
+appendMod () {
+	if test "$MODFLAGS" != ""; then
+		MODFLAGS="$MODFLAGS $*"
+	else
+		MODFLAGS=$*
+	fi
+}
+
 appendLD () {
 	if test "$LDFLAGS" != ""; then
 		LDFLAGS="$LDFLAGS $*"
@@ -2440,7 +2450,7 @@ case "${host_os}" in
 	freebsd*)
 		appendCXX -I/usr/local/include
 		appendLib -L/usr/local/lib -lcompat
-		MODFLAGS="$MODFLAGS -L/usr/local/lib"
+		appendMod -L/usr/local/lib
 	;;
 	solaris*)
 		appendLib -lsocket -lnsl
@@ -2448,6 +2458,9 @@ case "${host_os}" in
 	;;
 	cygwin)
 		ISCYGWIN=1
+	;;
+	darwin*)
+		ISDARWIN=1
 	;;
 esac
 
@@ -3055,15 +3068,28 @@ echo "$as_me: error: could not find dlopen. Try --disable-modules" >&2;}
 	fi
 
 	appendCXX -D_MODULES
-	MODFLAGS="$MODFLAGS $CXXFLAGS"
-	if test -z "$ISSUN"; then
+	appendMod "$CXXFLAGS"
+
+	if test -z "$ISSUN" -a -z "$ISDARWIN"; then
+		# This is an unknown compiler flag on some OS
 		appendLD -Wl,--export-dynamic
 	fi
 	MODTARGET="modules"
 
-	# FIXME why don't we do this for sun?
+	# FIXME why do we need this for sun?
 	if test -n "$ISSUN"; then
-		MODFLAGS="$MODFLAGS -mimpure-text"
+		appendMod -mimpure-text
+	fi
+
+	if test -z "$ISDARWIN"; then
+		MODLINK="-shared"
+	else
+		# Mac OS X differentiates between shared libs (-dynamiclib)
+		# and loadable modules (-bundle).
+		MODLINK="-bundle -flat_namespace -undefined suppress"
+		# TODO test if -twolevel_namespace and/or
+		# -undefined dynamic_lookup work
+		# (dynamic_lookup might only work on 10.4 and later)
 	fi
 
 	appendCXX "-D_MODDIR_=\\\"${MODDIR}\\\""
@@ -3229,6 +3255,8 @@ fi
 
 #
 # Auto detect modules
+
+
 
 
 
@@ -3938,6 +3966,8 @@ host_cpu!$host_cpu$ac_delim
 host_vendor!$host_vendor$ac_delim
 host_os!$host_os$ac_delim
 MODFLAGS!$MODFLAGS$ac_delim
+MODULES!$MODULES$ac_delim
+MODLINK!$MODLINK$ac_delim
 MODTARGET!$MODTARGET$ac_delim
 NOSSL!$NOSSL$ac_delim
 PERL!$PERL$ac_delim
@@ -3948,7 +3978,7 @@ LIBOBJS!$LIBOBJS$ac_delim
 LTLIBOBJS!$LTLIBOBJS$ac_delim
 _ACEOF
 
-  if test `sed -n "s/.*$ac_delim\$/X/p" conf$$subs.sed | grep -c X` = 61; then
+  if test `sed -n "s/.*$ac_delim\$/X/p" conf$$subs.sed | grep -c X` = 63; then
     break
   elif $ac_last_try; then
     { { echo "$as_me:$LINENO: error: could not make $CONFIG_STATUS" >&5

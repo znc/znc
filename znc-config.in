@@ -8,6 +8,7 @@ datadir="@datadir@"
 
 CXX="@CXX@"
 CXXFLAGS="@CPPFLAGS@ @MODFLAGS@ -I@prefix@/include/znc"
+MODLINK="@MODLINK@"
 # LIBS="@LIBS@"
 # No libs needed, ZNC links against $LIBS and thus modules don't need to.
 LIBS=""
@@ -19,6 +20,7 @@ if test -z "$1"; then
 	echo "USAGE: $0 <flag>"
 	echo "	--cxx        [$CXX]"
 	echo "	--cflags     [$CXXFLAGS]"
+	echo "	--modlink    [$MODLINK]"
 	echo "	--libs       [$LIBS]"
 	echo "	--moddir     [$MODDIR]"
 	echo "	--datadir    [$DATADIR]"
@@ -32,6 +34,8 @@ case $1 in
 		echo $CXX;;
 	--cflags)
 		echo $CXXFLAGS;;
+	--modlink)
+		echo $MODLINK;;
 	--include)
 		# Left here for backwards compatibility
 		;;

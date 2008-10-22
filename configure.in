@@ -24,6 +24,14 @@ appendCXX () {
 	fi
 }
 
+appendMod () {
+	if test "$MODFLAGS" != ""; then
+		MODFLAGS="$MODFLAGS $*"
+	else
+		MODFLAGS=$*
+	fi
+}
+
 appendLD () {
 	if test "$LDFLAGS" != ""; then
 		LDFLAGS="$LDFLAGS $*"
@@ -38,7 +46,7 @@ case "${host_os}" in
 	freebsd*)
 		appendCXX -I/usr/local/include
 		appendLib -L/usr/local/lib -lcompat
-		MODFLAGS="$MODFLAGS -L/usr/local/lib"
+		appendMod -L/usr/local/lib
 	;;
 	solaris*)
 		appendLib -lsocket -lnsl
@@ -46,6 +54,9 @@ case "${host_os}" in
 	;;
 	cygwin)
 		ISCYGWIN=1
+	;;
+	darwin*)
+		ISDARWIN=1
 	;;
 esac
 
@@ -159,15 +170,28 @@ if test "$MODULES" = "yes"; then
 	fi
 
 	appendCXX -D_MODULES
-	MODFLAGS="$MODFLAGS $CXXFLAGS"
-	if test -z "$ISSUN"; then
+	appendMod "$CXXFLAGS"
+
+	if test -z "$ISSUN" -a -z "$ISDARWIN"; then
+		# This is an unknown compiler flag on some OS
 		appendLD -Wl,--export-dynamic
 	fi
 	MODTARGET="modules"
 
-	# FIXME why don't we do this for sun?
+	# FIXME why do we need this for sun?
 	if test -n "$ISSUN"; then
-		MODFLAGS="$MODFLAGS -mimpure-text"
+		appendMod -mimpure-text
+	fi
+
+	if test -z "$ISDARWIN"; then
+		MODLINK="-shared"
+	else
+		# Mac OS X differentiates between shared libs (-dynamiclib)
+		# and loadable modules (-bundle).
+		MODLINK="-bundle -flat_namespace -undefined suppress"
+		# TODO test if -twolevel_namespace and/or
+		# -undefined dynamic_lookup work
+		# (dynamic_lookup might only work on 10.4 and later)
 	fi
 
 	appendCXX "-D_MODDIR_=\\\"${MODDIR}\\\""
@@ -202,6 +226,7 @@ AC_SUBST([CPPFLAGS])
 AC_SUBST([MODFLAGS])
 AC_SUBST([LDFLAGS])
 AC_SUBST([LIBS])
+AC_SUBST([MODLINK])
 AC_SUBST([MODTARGET])
 AC_SUBST([NOSSL])
 AC_SUBST([PERL])
