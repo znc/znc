@@ -166,9 +166,14 @@ public:
 		}
 #endif
 
+		errno = 0;
 		bool b = m_pManager->ListenHost(m_uPort, "WebAdmin::Listener", m_sListenHost, bSSL, SOMAXCONN, pListenSock, 0, bIPv6);
 		if (!b) {
-			sMessage = "Could not bind to port " + CString(m_uPort) + ": " + CString(strerror(errno));
+			sMessage = "Could not bind to port " + CString(m_uPort);
+			if (!m_sListenHost.empty())
+				sMessage += " on vhost [" + m_sListenHost + "]";
+			if (errno != 0)
+				sMessage += ": " + CString(strerror(errno));
 		}
 		return b;
 	}
