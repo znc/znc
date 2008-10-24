@@ -291,7 +291,7 @@ public:
 				}
 			}
 			PutModule("No Such Chat [" + sArgs + "]");
-		} else if (sCom.Equals("showsocks"))
+		} else if (sCom.Equals("showsocks") && m_pUser->IsAdmin())
 		{
 			CTable Table;
 			Table.AddColumn("SockName");
@@ -352,7 +352,9 @@ public:
 			PutModule("    list           - List current chats.");
 			PutModule("    close <nick>   - Close a chat to a nick.");
 			PutModule("    timers         - Shows related timers.");
-			PutModule("    showsocks      - Shows all socket connections.");
+			if (m_pUser->IsAdmin()) {
+				PutModule("    showsocks      - Shows all socket connections.");
+			}
 		} else if (sCom.Equals("timers"))
 			ListTimers();
 		else
