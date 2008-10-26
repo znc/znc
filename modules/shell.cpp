@@ -114,7 +114,7 @@ public:
 		}
 	}
 
-	virtual EModRet OnStatusCommand(const CString& sCommand) {
+	virtual EModRet OnStatusCommand(CString& sCommand) {
 		if (sCommand.Equals("SHELL")) {
 			PutShell("-- ZNC Shell Service --");
 			return HALT;

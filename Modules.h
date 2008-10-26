@@ -243,7 +243,7 @@ public:
 
 	virtual EModRet OnRaw(CString& sLine);
 
-	virtual EModRet OnStatusCommand(const CString& sCommand);
+	virtual EModRet OnStatusCommand(CString& sCommand);
 	virtual void OnModCommand(const CString& sCommand);
 	virtual void OnModNotice(const CString& sMessage);
 	virtual void OnModCTCP(const CString& sMessage);
@@ -384,7 +384,7 @@ public:
 
 	virtual bool OnRaw(CString& sLine);
 
-	virtual bool OnStatusCommand(const CString& sCommand);
+	virtual bool OnStatusCommand(CString& sCommand);
 	virtual bool OnModCommand(const CString& sCommand);
 	virtual bool OnModNotice(const CString& sMessage);
 	virtual bool OnModCTCP(const CString& sMessage);

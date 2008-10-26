@@ -462,7 +462,7 @@ void CModule::OnMode(const CNick& OpNick, CChan& Channel, char uMode, const CStr
 
 CModule::EModRet CModule::OnRaw(CString& sLine) { return CONTINUE; }
 
-CModule::EModRet CModule::OnStatusCommand(const CString& sCommand) { return CONTINUE; }
+CModule::EModRet CModule::OnStatusCommand(CString& sCommand) { return CONTINUE; }
 void CModule::OnModCommand(const CString& sCommand) {}
 void CModule::OnModNotice(const CString& sMessage) {}
 void CModule::OnModCTCP(const CString& sMessage) {}
@@ -619,7 +619,7 @@ bool CModules::OnChanMsg(CNick& Nick, CChan& Channel, CString& sMessage) { MODHA
 bool CModules::OnPrivNotice(CNick& Nick, CString& sMessage) { MODHALTCHK(OnPrivNotice(Nick, sMessage)); }
 bool CModules::OnChanNotice(CNick& Nick, CChan& Channel, CString& sMessage) { MODHALTCHK(OnChanNotice(Nick, Channel, sMessage)); }
 bool CModules::OnTopic(CNick& Nick, CChan& Channel, CString& sTopic) { MODHALTCHK(OnTopic(Nick, Channel, sTopic)); }
-bool CModules::OnStatusCommand(const CString& sCommand) { MODHALTCHK(OnStatusCommand(sCommand)); }
+bool CModules::OnStatusCommand(CString& sCommand) { MODHALTCHK(OnStatusCommand(sCommand)); }
 bool CModules::OnModCommand(const CString& sCommand) { MODUNLOADCHK(OnModCommand(sCommand)); return false; }
 bool CModules::OnModNotice(const CString& sMessage) { MODUNLOADCHK(OnModNotice(sMessage)); return false; }
 bool CModules::OnModCTCP(const CString& sMessage) { MODUNLOADCHK(OnModCTCP(sMessage)); return false; }

@@ -210,7 +210,7 @@ public:
 		}
 	}
 
-	virtual EModRet OnStatusCommand(const CString& sCommand) {
+	virtual EModRet OnStatusCommand(CString& sCommand) {
 		if (sCommand.Equals("SAMPLE")) {
 			PutModule("Hi, I'm your friendly sample module.");
 			return HALT;

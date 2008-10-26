@@ -471,7 +471,7 @@ public:
 
 	bool Eval(const CString & sScript, const CString & sFuncName = ZNCEvalCB);
 
-	virtual EModRet OnStatusCommand(const CString& sLine)
+	virtual EModRet OnStatusCommand(CString& sLine)
 	{
 		CString sCommand = sLine.Token(0);
 
