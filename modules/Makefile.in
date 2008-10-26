@@ -36,7 +36,10 @@ FILES    := $(foreach file, $(FILES), \
 endif
 
 ifneq "$(PERL)" ""
-modperlFLAGS := `$(PERL) -MExtUtils::Embed -e perl_inc -e ldopts`
+# We execute this now so that we see the 'beauty' of these flags in make's output
+modperlFLAGS := $(shell $(PERL) -MExtUtils::Embed -e perl_inc -e ldopts)
+# Perl API is ugly, casting string literals to char* :(
+modperlFLAGS += -Wno-write-strings
 PERLHOOK     := modperl_install
 else
 FILES    := $(shell echo $(FILES) | sed -e "s/modperl//")
