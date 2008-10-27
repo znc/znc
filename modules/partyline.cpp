@@ -122,23 +122,9 @@ public:
 	}
 
 	virtual EModRet OnDeleteUser(CUser& User) {
-		const CString& sNick = User.GetUserName();
-		CString sHost = User.GetVHost();
-
-		CUser* pTmp = m_pUser;
-		m_pUser = &User;
-
 		for (set<CPartylineChannel*>::iterator it = m_ssChannels.begin(); it != m_ssChannels.end(); it++) {	// Loop through each chan
-			const CString& sChannel = (*it)->GetName();
-			const set<CString>& ssNicks = (*it)->GetNicks();
-
-			if (ssNicks.find(User.GetUserName()) != ssNicks.end()) {										// If the user is on this chan
-				User.PutUser(":*" + GetModName() + "!znc@znc.in KICK " + sChannel + " " + sNick + " :User Deleted");
-				PutChan(ssNicks, ":*" + GetModName() + "!znc@znc.in KICK " + sChannel + " ?" + sNick + " :User Deleted", false);
-			}
+			PartUser(&User, *it, true, "User deleted");
 		}
-
-		m_pUser = pTmp;
 
 		return CONTINUE;
 	}
@@ -275,10 +261,15 @@ public:
 		return HALT;
 	}
 
-	void PartUser(CUser* pUser, CPartylineChannel* pChannel, bool bForce = false) {
+	void PartUser(CUser* pUser, CPartylineChannel* pChannel, bool bForce = false,
+			const CString& sMessage = "") {
 		if (!pChannel || !pChannel->IsInChannel(pUser->GetUserName())) {
 			return;
 		}
+
+		CString sMsg = sMessage;
+		if (!sMsg.empty())
+			sMsg = " :" + sMsg;
 
 		if (!pChannel->IsFixedChan(pUser->GetUserName()) || bForce) {
 			pChannel->DelNick(pUser->GetUserName());
@@ -291,8 +282,10 @@ public:
 				sHost = pUser->GetIRCNick().GetHost();
 			}
 
-			pUser->PutUser(":" + pUser->GetIRCNick().GetNickMask() + " PART " + pChannel->GetName());
-			PutChan(ssNicks, ":?" + pUser->GetUserName() + "!" + pUser->GetIdent() + "@" + sHost + " PART " + pChannel->GetName(), false);
+			pUser->PutUser(":" + pUser->GetIRCNick().GetNickMask() + " PART "
+					+ pChannel->GetName() + sMsg);
+			PutChan(ssNicks, ":?" + pUser->GetUserName() + "!" + pUser->GetIdent() + "@" + sHost + " PART "
+					+ pChannel->GetName() + sMsg, false);
 
 			if (ssNicks.empty()) {
 				delete pChannel;
