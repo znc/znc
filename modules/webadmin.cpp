@@ -111,7 +111,6 @@ protected:
 class CWebAdminMod : public CGlobalModule {
 public:
 	GLOBALMODCONSTRUCTOR(CWebAdminMod) {
-		m_uPort = 8080;
 		m_sSkinName = GetNV("SkinName");
 	}
 
@@ -121,9 +120,11 @@ public:
 	virtual bool OnLoad(const CString& sArgStr, CString& sMessage) {
 		bool bSSL = false;
 		bool bIPv6 = false;
+		unsigned short uPort = 8080;
 		CString sArgs(sArgStr);
 		CString sOpt;
 		CString sPort;
+		CString sListenHost;
 
 		if (sArgs.Left(1) == "-") {
 			sOpt = sArgs.Token(0);
@@ -140,7 +141,7 @@ public:
 		}
 
 		if (sArgs.find(" ") != CString::npos) {
-			m_sListenHost = sArgs.Token(0);
+			sListenHost = sArgs.Token(0);
 			sPort = sArgs.Token(1);
 		} else {
 			sPort = sArgs.Token(0);
@@ -156,7 +157,7 @@ public:
 		}
 
 		if (!sPort.empty()) {
-			m_uPort = sPort.ToUShort();
+			uPort = sPort.ToUShort();
 		}
 
 		CWebAdminSock* pListenSock = new CWebAdminSock(this);
@@ -167,11 +168,11 @@ public:
 #endif
 
 		errno = 0;
-		bool b = m_pManager->ListenHost(m_uPort, "WebAdmin::Listener", m_sListenHost, bSSL, SOMAXCONN, pListenSock, 0, bIPv6);
+		bool b = m_pManager->ListenHost(uPort, "WebAdmin::Listener", sListenHost, bSSL, SOMAXCONN, pListenSock, 0, bIPv6);
 		if (!b) {
-			sMessage = "Could not bind to port " + CString(m_uPort);
-			if (!m_sListenHost.empty())
-				sMessage += " on vhost [" + m_sListenHost + "]";
+			sMessage = "Could not bind to port " + CString(uPort);
+			if (!sListenHost.empty())
+				sMessage += " on vhost [" + sListenHost + "]";
 			if (errno != 0)
 				sMessage += ": " + CString(strerror(errno));
 		}
@@ -207,9 +208,7 @@ public:
 	}
 
 private:
-	unsigned short				m_uPort;
 	CString						m_sSkinName;
-	CString						m_sListenHost;
 	map<CString, unsigned int>	m_suSwitchCounters;
 };
 
