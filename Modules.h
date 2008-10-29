@@ -254,8 +254,10 @@ public:
 	virtual void OnJoin(const CNick& Nick, CChan& Channel);
 	virtual void OnPart(const CNick& Nick, CChan& Channel);
 
-	virtual void OnUserAttached();
-	virtual void OnUserDetached();
+	virtual void OnUserAttached(bool thisFunctionWasRemoved, bool UseOnClientLogin) {}
+	virtual void OnUserDetached(bool thisFunctionWasRemoved, bool UseOnClientDisconnect) {}
+	virtual void OnClientLogin();
+	virtual void OnClientDisconnect();
 	virtual EModRet OnUserRaw(CString& sLine);
 	virtual EModRet OnUserCTCPReply(CString& sTarget, CString& sMessage);
 	virtual EModRet OnUserCTCP(CString& sTarget, CString& sMessage);
@@ -395,8 +397,8 @@ public:
 	virtual bool OnJoin(const CNick& Nick, CChan& Channel);
 	virtual bool OnPart(const CNick& Nick, CChan& Channel);
 
-	virtual bool OnUserAttached();
-	virtual bool OnUserDetached();
+	virtual bool OnClientLogin();
+	virtual bool OnClientDisconnect();
 	virtual bool OnUserRaw(CString& sLine);
 	virtual bool OnUserCTCPReply(CString& sTarget, CString& sMessage);
 	virtual bool OnUserCTCP(CString& sTarget, CString& sMessage);
@@ -441,6 +443,7 @@ public:
 
 	virtual EModRet OnConfigLine(const CString& sName, const CString& sValue, CUser* pUser, CChan* pChan);
 	virtual EModRet OnDeleteUser(CUser& User);
+	virtual void OnClientConnect(CClient* pClient, const CString& sHost, unsigned short uPort);
 	virtual EModRet OnLoginAttempt(CSmartPtr<CAuthBase> Auth);
 	virtual void OnFailedLogin(const CString& sUsername, const CString& sRemoteIP);
 private:
@@ -453,6 +456,7 @@ public:
 
 	virtual bool OnConfigLine(const CString& sName, const CString& sValue, CUser* pUser, CChan* pChan);
 	virtual bool OnDeleteUser(CUser& User);
+	virtual void OnClientConnect(CClient* pClient, const CString& sHost, unsigned short uPort);
 	virtual bool OnLoginAttempt(CSmartPtr<CAuthBase> Auth);
 	virtual void OnFailedLogin(const CString& sUsername, const CString& sRemoteIP);
 private:

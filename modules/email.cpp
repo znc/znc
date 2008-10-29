@@ -62,14 +62,14 @@ public:
 		return true;
 	}
 
-	virtual void OnUserAttached()
+	virtual void OnClientLogin()
 	{
 		stringstream s;
 		s << "You have " << m_ssUidls.size() << " emails.";
 		PutModule(s.str());
 		StartTimer();
 	}
-	virtual void OnUserDetached()
+	virtual void OnClientDisconnect()
 	{
 		RemTimer("EMAIL::" + m_pUser->GetUserName());
 	}

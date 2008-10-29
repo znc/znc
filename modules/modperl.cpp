@@ -302,8 +302,8 @@ public:
 	void UnSetUser() { m_pUser = NULL; }
 
 	virtual bool OnLoad(const CString & sArgs, CString & sMessage);
-	virtual void OnUserAttached() {  CBNone("OnUserAttached"); }
-	virtual void OnUserDetached() {  CBNone("OnUserDetached"); }
+	virtual void OnClientLogin() { CBNone("OnClientLogin"); }
+	virtual void OnClientDisconnect() { CBNone("OnClientDisconnect"); }
 	virtual void OnIRCDisconnected() {  CBNone("OnIRCDisconnected"); }
 	virtual void OnIRCConnected() {  CBNone("OnIRCConnected"); }
 

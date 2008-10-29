@@ -135,7 +135,7 @@ public:
 		return true;
 	}
 
-	virtual void OnUserAttached()
+	virtual void OnClientLogin()
 	{
 		CString sName = "SCHAT::" + m_pUser->GetUserName();
 		for (u_int a = 0; a < m_pManager->size(); a++)

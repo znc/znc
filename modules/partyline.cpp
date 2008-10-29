@@ -148,7 +148,7 @@ public:
 		m_spInjectedPrefixes.erase(m_pUser);
 	}
 
-	virtual void OnUserAttached() {
+	virtual void OnClientLogin() {
 		if (m_spInjectedPrefixes.find(m_pUser) == m_spInjectedPrefixes.end()) {
 			m_pClient->PutClient(":" + GetIRCServer(m_pUser) + " 005 " + m_pUser->GetIRCNick().GetNick() + " CHANTYPES=" + m_pUser->GetChanPrefixes() + "~ :are supported by this server.");
 		}
@@ -193,7 +193,7 @@ public:
 		}
 	}
 
-	virtual void OnUserDetached() {
+	virtual void OnClientDisconnect() {
 		if (!m_pUser->IsUserAttached() && !m_pUser->IsBeingDeleted()) {
 			for (set<CPartylineChannel*>::iterator it = m_ssChannels.begin(); it != m_ssChannels.end(); it++) {
 				const set<CString>& ssNicks = (*it)->GetNicks();

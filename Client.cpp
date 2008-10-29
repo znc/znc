@@ -660,7 +660,7 @@ void CClient::AcceptLogin(CUser& User) {
 
 	SendMotd();
 
-	MODULECALL(OnUserAttached(), m_pUser, this, );
+	MODULECALL(OnClientLogin(), m_pUser, this, );
 }
 
 void CClient::StartLoginTimeout() {
@@ -693,7 +693,7 @@ void CClient::Disconnected() {
 
 	m_pIRCSock = NULL;
 
-	MODULECALL(OnUserDetached(), m_pUser, this, );
+	MODULECALL(OnClientDisconnect(), m_pUser, this, );
 }
 
 void CClient::ReachedMaxBuffer() {

@@ -138,11 +138,11 @@ public:
 		}
 	}
 
-	virtual void OnUserAttached()
+	virtual void OnClientLogin()
 	{
 		Back(true);
 	}
-	virtual void OnUserDetached()
+	virtual void OnClientDisconnect()
 	{
 		Away();
 	}

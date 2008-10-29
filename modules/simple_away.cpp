@@ -79,11 +79,11 @@ public:
 			SetAway(false);
 	}
 
-	virtual void OnUserAttached() {
+	virtual void OnClientLogin() {
 		SetBack();
 	}
 
-	virtual void OnUserDetached() {
+	virtual void OnClientDisconnect() {
 		/* There might still be other clients */
 		if (!m_pUser->IsUserAttached())
 			SetAway();

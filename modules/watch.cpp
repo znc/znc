@@ -163,7 +163,7 @@ public:
 		Process(OpNick, "* " + OpNick.GetNick() + " sets mode: " + sModes + " " + sArgs + " on " + Channel.GetName(), Channel.GetName());
 	}
 
-	virtual void OnUserAttached() {
+	virtual void OnClientLogin() {
 		CString sBufLine;
 		while (m_Buffer.GetNextLine(m_pUser->GetCurNick(), sBufLine)) {
 			PutUser(sBufLine);

@@ -94,11 +94,11 @@ public:
 		RemTimer("BackNickTimer");
 	}
 
-	virtual void OnUserAttached() {
+	virtual void OnClientLogin() {
 		StartBackNickTimer();
 	}
 
-	virtual void OnUserDetached() {
+	virtual void OnClientDisconnect() {
 		if (!m_pUser->IsUserAttached()) {
 			StartAwayNickTimer();
 		}
