@@ -630,7 +630,6 @@ host_cpu
 host_vendor
 host_os
 MODFLAGS
-MODULES
 MODLINK
 MODTARGET
 NOSSL
@@ -3268,7 +3267,6 @@ fi
 
 
 
-
 ac_config_files="$ac_config_files Makefile"
 
 ac_config_files="$ac_config_files znc-config"
@@ -3966,7 +3964,6 @@ host_cpu!$host_cpu$ac_delim
 host_vendor!$host_vendor$ac_delim
 host_os!$host_os$ac_delim
 MODFLAGS!$MODFLAGS$ac_delim
-MODULES!$MODULES$ac_delim
 MODLINK!$MODLINK$ac_delim
 MODTARGET!$MODTARGET$ac_delim
 NOSSL!$NOSSL$ac_delim
@@ -3978,7 +3975,7 @@ LIBOBJS!$LIBOBJS$ac_delim
 LTLIBOBJS!$LTLIBOBJS$ac_delim
 _ACEOF
 
-  if test `sed -n "s/.*$ac_delim\$/X/p" conf$$subs.sed | grep -c X` = 63; then
+  if test `sed -n "s/.*$ac_delim\$/X/p" conf$$subs.sed | grep -c X` = 62; then
     break
   elif $ac_last_try; then
     { { echo "$as_me:$LINENO: error: could not make $CONFIG_STATUS" >&5
