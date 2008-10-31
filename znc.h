@@ -235,7 +235,9 @@ public:
 
 	virtual Csock* GetSockObj(const CString& sHost, unsigned short uPort) {
 		CClient *pClient = new CClient(sHost, uPort);
+#ifdef _MODULES
 		CZNC::Get().GetModules().OnClientConnect(pClient, sHost, uPort);
+#endif
 		return pClient;
 	}
 
