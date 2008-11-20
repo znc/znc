@@ -1224,7 +1224,7 @@ Optional Features:
   --disable-FEATURE       do not include FEATURE (same as --enable-FEATURE=no)
   --enable-FEATURE[=ARG]  include FEATURE [ARG=yes]
   --enable-debug          enable debuging
-  --enable-ipv6           enable ipv6 support
+  --disable-ipv6          disable ipv6 support
   --disable-modules       disable modules
   --disable-openssl       disable openssl
   --disable-perl          disable perl
@@ -2487,7 +2487,7 @@ fi
 if test "${enable_ipv6+set}" = set; then
   enableval=$enable_ipv6; IPV6="$enableval"
 else
-  IPV6="no"
+  IPV6="yes"
 fi
 
 # Check whether --enable-modules was given.
