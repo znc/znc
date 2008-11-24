@@ -333,6 +333,10 @@ public:
 	virtual EModRet OnUserRaw(CString& sLine) { return(CBSingle("OnUserRaw", sLine)); }
 	virtual EModRet OnRaw(CString& sLine) { return(CBSingle("OnRaw", sLine)); }
 
+	virtual EModRet OnIRCRegistration(CString& sPass, CString& sNick, CString& sIdent, CString& sRealName) {
+		return(CBFour("OnIRCRegistration", sPass, sNick, sIdent, sRealName));
+	}
+
 	virtual void OnModCommand(const CString& sCommand)
 	{
 		if (CBSingle("OnModCommand", sCommand) == 0)

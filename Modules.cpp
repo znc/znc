@@ -448,6 +448,7 @@ void CModule::OnPreRehash() {}
 void CModule::OnPostRehash() {}
 void CModule::OnIRCDisconnected() {}
 void CModule::OnIRCConnected() {}
+CModule::EModRet CModule::OnIRCRegistration(CString& sPass, CString& sNick, CString& sIdent, CString& sRealName) { return CONTINUE; }
 CModule::EModRet CModule::OnBroadcast(CString& sMessage) { return CONTINUE; }
 
 CModule::EModRet CModule::OnDCCUserSend(const CNick& RemoteNick, unsigned long uLongIP, unsigned short uPort, const CString& sFile, unsigned long uFileSize) { return CONTINUE; }
@@ -580,6 +581,7 @@ bool CModules::OnBoot() {
 bool CModules::OnPreRehash() { MODUNLOADCHK(OnPreRehash()); return false; }
 bool CModules::OnPostRehash() { MODUNLOADCHK(OnPostRehash()); return false; }
 bool CModules::OnIRCConnected() { MODUNLOADCHK(OnIRCConnected()); return false; }
+bool CModules::OnIRCRegistration(CString& sPass, CString& sNick, CString& sIdent, CString& sRealName) { MODHALTCHK(OnIRCRegistration(sPass, sNick, sIdent, sRealName)); }
 bool CModules::OnBroadcast(CString& sMessage) { MODHALTCHK(OnBroadcast(sMessage)); }
 bool CModules::OnIRCDisconnected() { MODUNLOADCHK(OnIRCDisconnected()); return false; }
 bool CModules::OnDCCUserSend(const CNick& RemoteNick, unsigned long uLongIP, unsigned short uPort, const CString& sFile, unsigned long uFileSize) { MODHALTCHK(OnDCCUserSend(RemoteNick, uLongIP, uPort, sFile, uFileSize)); }

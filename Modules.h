@@ -229,6 +229,7 @@ public:
 	virtual void OnPostRehash();
 	virtual void OnIRCDisconnected();
 	virtual void OnIRCConnected();
+	virtual EModRet OnIRCRegistration(CString& sPass, CString& sNick, CString& sIdent, CString& sRealName);
 	virtual EModRet OnBroadcast(CString& sMessage);
 
 	virtual EModRet OnDCCUserSend(const CNick& RemoteNick, unsigned long uLongIP, unsigned short uPort, const CString& sFile, unsigned long uFileSize);
@@ -372,6 +373,7 @@ public:
 	virtual bool OnPostRehash();
 	virtual bool OnIRCDisconnected();
 	virtual bool OnIRCConnected();
+	virtual bool OnIRCRegistration(CString& sPass, CString& sNick, CString& sIdent, CString& sRealName);
 	virtual bool OnBroadcast(CString& sMessage);
 
 	virtual bool OnDCCUserSend(const CNick& RemoteNick, unsigned long uLongIP, unsigned short uPort, const CString& sFile, unsigned long uFileSize);

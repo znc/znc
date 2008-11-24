@@ -52,6 +52,11 @@ public:
 		PutModule("You got disconnected BoyOh.");
 	}
 
+	virtual EModRet OnIRCRegistration(CString& sPass, CString& sNick, CString& sIdent, CString& sRealName) {
+		sRealName += " - ZNC";
+		return CONTINUE;
+	}
+
 	virtual EModRet OnBroadcast(CString& sMessage) {
 		PutModule("------ [" + sMessage + "]");
 		sMessage = "======== [" + sMessage + "] ========";

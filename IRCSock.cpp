@@ -805,12 +805,19 @@ void CIRCSock::Connected() {
 	DEBUG_ONLY(cout << GetSockName() << " == Connected()" << endl);
 	m_pUser->IRCConnected(this);
 
-	if (!m_sPass.empty()) {
-		PutIRC("PASS " + m_sPass);
+	CString sPass = m_sPass;
+	CString sNick = m_pUser->GetNick();
+	CString sIdent = m_pUser->GetIdent();
+	CString sRealName = m_pUser->GetRealName();
+
+	MODULECALL(OnIRCRegistration(sPass, sNick, sIdent, sRealName), m_pUser, NULL, return);
+
+	if (!sPass.empty()) {
+		PutIRC("PASS " + sPass);
 	}
 
-	PutIRC("NICK " + m_pUser->GetNick());
-	PutIRC("USER " + m_pUser->GetIdent() + " \"" + m_pUser->GetIdent() + "\" \"" + m_pUser->GetIdent() + "\" :" + m_pUser->GetRealName());
+	PutIRC("NICK " + sNick);
+	PutIRC("USER " + sIdent + " \"" + sIdent + "\" \"" + sIdent + "\" :" + sRealName);
 }
 
 void CIRCSock::Disconnected() {
