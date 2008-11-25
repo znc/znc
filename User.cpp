@@ -669,6 +669,8 @@ void CUser::JoinChans() {
 				pChan->Disable();
 			} else {
 				pChan->IncJoinTries();
+				MODULECALL(OnTimerAutoJoin(*pChan), this, NULL, continue);
+
 				PutIRC("JOIN " + pChan->GetName() + " " + pChan->GetKey());
 
 				// Limit the number of joins

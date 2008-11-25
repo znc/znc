@@ -336,6 +336,7 @@ public:
 	virtual EModRet OnIRCRegistration(CString& sPass, CString& sNick, CString& sIdent, CString& sRealName) {
 		return(CBFour("OnIRCRegistration", sPass, sNick, sIdent, sRealName));
 	}
+	virtual EModRet OnTimerAutoJoin(CChan& Channel) { return(CBSingle("OnTimerAutoJoin", CHAN(Channel))); }
 
 	virtual void OnModCommand(const CString& sCommand)
 	{

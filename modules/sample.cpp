@@ -105,6 +105,11 @@ public:
 		PutModule("* Quits: " + Nick.GetNick() + " (" + Nick.GetIdent() + "!" + Nick.GetHost() + ") (" + sMessage + ")");
 	}
 
+	virtual EModRet OnTimerAutoJoin(CChan& Channel) {
+		PutModule("Attempting to join " + Channel.GetName());
+		return CONTINUE;
+	}
+
 	virtual void OnJoin(const CNick& Nick, CChan& Channel) {
 		PutModule("* Joins: " + Nick.GetNick() + " (" + Nick.GetIdent() + "!" + Nick.GetHost() + ")");
 	}

@@ -280,6 +280,7 @@ public:
 	virtual EModRet OnPrivNotice(CNick& Nick, CString& sMessage);
 	virtual EModRet OnChanNotice(CNick& Nick, CChan& Channel, CString& sMessage);
 	virtual EModRet OnTopic(CNick& Nick, CChan& Channel, CString& sTopic);
+	virtual EModRet OnTimerAutoJoin(CChan& Channel);
 
 	void * GetDLL();
 	static double GetCoreVersion() { return VERSION; }
@@ -422,6 +423,7 @@ public:
 	virtual bool OnPrivNotice(CNick& Nick, CString& sMessage);
 	virtual bool OnChanNotice(CNick& Nick, CChan& Channel, CString& sMessage);
 	virtual bool OnTopic(CNick& Nick, CChan& Channel, CString& sTopic);
+	virtual bool OnTimerAutoJoin(CChan& Channel);
 
 	CModule* FindModule(const CString& sModule) const;
 	bool LoadModule(const CString& sModule, const CString& sArgs, CUser* pUser, CString& sRetMsg, bool bFake = false);
