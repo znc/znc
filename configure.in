@@ -44,7 +44,8 @@ appendCXX "-D_FORTIFY_SOURCE=2"
 
 case "${host_os}" in
 	freebsd*)
-		appendCXX -I/usr/local/include
+		# -D__GNU_LIBRARY__ makes this work on fbsd 4.11
+		appendCXX -I/usr/local/include -D__GNU_LIBRARY__
 		appendLib -L/usr/local/lib -lcompat
 		appendMod -L/usr/local/lib
 	;;
