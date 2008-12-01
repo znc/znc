@@ -629,11 +629,11 @@ host
 host_cpu
 host_vendor
 host_os
+PERL
 MODFLAGS
 MODLINK
 MODTARGET
 NOSSL
-PERL
 SASL
 MODDIR
 DATADIR
@@ -3096,12 +3096,47 @@ echo "$as_me: error: could not find dlopen. Try --disable-modules" >&2;}
 	appendCXX "-D_DATADIR_=\\\"${DATADIR}\\\""
 
 	if test -z "$NOPERL"; then
-		{ echo "$as_me:$LINENO: checking for perl" >&5
-echo $ECHO_N "checking for perl... $ECHO_C" >&6; }
-		PERL=`which perl`
-		if test -n "$PERL"; then
-			{ echo "$as_me:$LINENO: result: $PERL" >&5
+		# Extract the first word of "perl", so it can be a program name with args.
+set dummy perl; ac_word=$2
+{ echo "$as_me:$LINENO: checking for $ac_word" >&5
+echo $ECHO_N "checking for $ac_word... $ECHO_C" >&6; }
+if test "${ac_cv_path_PERL+set}" = set; then
+  echo $ECHO_N "(cached) $ECHO_C" >&6
+else
+  case $PERL in
+  [\\/]* | ?:[\\/]*)
+  ac_cv_path_PERL="$PERL" # Let the user override the test with a path.
+  ;;
+  *)
+  as_save_IFS=$IFS; IFS=$PATH_SEPARATOR
+for as_dir in $PATH
+do
+  IFS=$as_save_IFS
+  test -z "$as_dir" && as_dir=.
+  for ac_exec_ext in '' $ac_executable_extensions; do
+  if { test -f "$as_dir/$ac_word$ac_exec_ext" && $as_test_x "$as_dir/$ac_word$ac_exec_ext"; }; then
+    ac_cv_path_PERL="$as_dir/$ac_word$ac_exec_ext"
+    echo "$as_me:$LINENO: found $as_dir/$ac_word$ac_exec_ext" >&5
+    break 2
+  fi
+done
+done
+IFS=$as_save_IFS
+
+  ;;
+esac
+fi
+PERL=$ac_cv_path_PERL
+if test -n "$PERL"; then
+  { echo "$as_me:$LINENO: result: $PERL" >&5
 echo "${ECHO_T}$PERL" >&6; }
+else
+  { echo "$as_me:$LINENO: result: no" >&5
+echo "${ECHO_T}no" >&6; }
+fi
+
+
+		if test -n "$PERL"; then
 			{ echo "$as_me:$LINENO: checking for perl_alloc in -lperl" >&5
 echo $ECHO_N "checking for perl_alloc in -lperl... $ECHO_C" >&6; }
 if test "${ac_cv_lib_perl_perl_alloc+set}" = set; then
@@ -3172,8 +3207,6 @@ echo "$as_me: error: could not find libperl. Try --disable-perl" >&2;}
 fi
 
 		else
-			{ echo "$as_me:$LINENO: result: no" >&5
-echo "${ECHO_T}no" >&6; }
 			{ { echo "$as_me:$LINENO: error: could not find perl binary. Try --disable-perl" >&5
 echo "$as_me: error: could not find perl binary. Try --disable-perl" >&2;}
    { (exit 1); exit 1; }; }
@@ -3964,11 +3997,11 @@ host!$host$ac_delim
 host_cpu!$host_cpu$ac_delim
 host_vendor!$host_vendor$ac_delim
 host_os!$host_os$ac_delim
+PERL!$PERL$ac_delim
 MODFLAGS!$MODFLAGS$ac_delim
 MODLINK!$MODLINK$ac_delim
 MODTARGET!$MODTARGET$ac_delim
 NOSSL!$NOSSL$ac_delim
-PERL!$PERL$ac_delim
 SASL!$SASL$ac_delim
 MODDIR!$MODDIR$ac_delim
 DATADIR!$DATADIR$ac_delim

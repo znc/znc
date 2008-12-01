@@ -199,15 +199,12 @@ if test "$MODULES" = "yes"; then
 	appendCXX "-D_DATADIR_=\\\"${DATADIR}\\\""
 
 	if test -z "$NOPERL"; then
-		AC_MSG_CHECKING([for perl])
-		PERL=`which perl`
+		AC_PATH_PROG([PERL], [perl], [])
 		if test -n "$PERL"; then
-			AC_MSG_RESULT([$PERL])
 			AC_CHECK_LIB(perl, perl_alloc,unset NOPERL,
 				AC_MSG_ERROR([could not find libperl. Try --disable-perl]),
 				[`$PERL -MExtUtils::Embed -e ccopts -e ldopts`])
 		else
-			AC_MSG_RESULT([no])
 			AC_MSG_ERROR([could not find perl binary. Try --disable-perl])
 		fi
 	fi
