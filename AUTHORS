@@ -1,53 +1,21 @@
-Prozac <prozac@rottenboy.com> - Author, Developer
-	ZNC Engine
-	Design
-	Modules
-	Documentation
+ZNC is developed by these people:
 
-Jim Hull <imaginos@imaginos.net> - Developer
-	Csocket.h
-	Modules - away, email, savebuff, schat
-	AutoConf
+Prozac <prozac@rottenboy.com>
+Jim Hull <imaginos@imaginos.net>
+Uli Schlachter <psychon@znc.in>
+crox
+SilverLeo
+kroimon <znc@kroimon.de>
 
-crox - Developer
-	Continually implements many features, bug-fixes and patches
-	Examples: load/unload/reload global modules
-	Modules - fish
+These people have helped develop ZNC, for example by sending in patches,
+writing new modules or finding significant bugs:
 
-psychon <psychon@znc.in> - Developer
-	Continually implements many features, bug-fixes and patches
-	Examples: NAMESX and UHNAMES support
-	Modules - perform
-
-Heiko Hund <heiko@ist.eigentlich.net> - ModuleWriter
-	Wrote the saslauth module
-
-derblubber - BetaTester
-	Found numerous bugs
-	Suggested many features
-
-Kuja <Kuja@znc.in> - BetaTester, Documentation
-	Found numerous bugs
-	Hosts and contributes to the ZNC wiki
-
-toby <ich@toby.in> - BetaTester, ShellProvider
-	Found numerous bugs
-	Suggested many features
-	Provided shell for testing
-
-Zack3000 - BetaTester, ShellProvider
-	Provided shell for testing
-
-d4n13L <daniel@danielschmitz.de> - WebDesigner
-	Contributed graphiX webadmin skin
-
-Veit "Cru" Wahlich <cru@ircnet.de> - Patches
-	Implementation of "Deny SetVHost" capabilities in znc and webadmin
-
-SilverLeo - Several patches
-	Cleaned up the znc.conf resulting from WriteConfig
-
-kroimon <znc@kroimon.de> - Patches, Documentation
-	Some enhancements, some cleanups, some other stuff ;)
-	Modules: q
-	German and english wiki maintenance
+Kuja <Kuja@znc.in> - runs and pays for znc.in
+Heiko Hund <heiko@ist.eigentlich.net> - saslauth module
+derblubber
+toby <ich@toby.in>
+Zack3000
+d4n13L <daniel@danielschmitz.de> - graphiX webadmin skin
+Veit "Cru" Wahlich <cru@ircnet.de>
+flakes
+Freman (http://fremnet.net/contact)
