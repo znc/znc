@@ -11,6 +11,8 @@
 
 // Keep the number in sync with configure.in (and also with configure)
 #define VERSION		0.063
+// The following defines are for #if comparison (preprocessor only likes ints)
+#define VERSION_MAJOR	0
 #define VERSION_MINOR	63
 
 // You can add -DVERSION_EXTRA="stuff" to your CXXFLAGS!
