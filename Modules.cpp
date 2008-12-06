@@ -902,7 +902,7 @@ bool CModules::GetModInfo(CModInfo& ModInfo, const CString& sModule) {
 		return false;
 	}
 
-	unsigned int uDLFlags = RTLD_LAZY | RTLD_GLOBAL;
+	unsigned int uDLFlags = RTLD_LAZY | RTLD_LOCAL;
 
 	void* p = dlopen((sModPath).c_str(), uDLFlags);
 
