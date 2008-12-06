@@ -45,6 +45,7 @@ public:
 	{
 		m_pModule = pMod;
 	}
+
 	CSChatSock(int itimeout = 60) : Csock(itimeout)
 	{
 		m_pModule = NULL;
@@ -81,6 +82,7 @@ public:
 	{
 		m_pModule = p;
 	}
+
 	void SetChatNick(const CString & sNick)
 	{
 		m_sChatNick = sNick;
@@ -122,8 +124,7 @@ public:
 	{
 		m_sPemFile = sArgs;
 
-		if (m_sPemFile.empty())
-		{
+		if (m_sPemFile.empty()) {
 			m_sPemFile = CZNC::Get().GetPemLocation();
 		}
 
@@ -138,10 +139,9 @@ public:
 	virtual void OnClientLogin()
 	{
 		CString sName = "SCHAT::" + m_pUser->GetUserName();
-		for (u_int a = 0; a < m_pManager->size(); a++)
-		{
-			if ((*m_pManager)[a]->GetSockName() != sName.c_str() ||
-					((*m_pManager)[a]->GetType() == CSChatSock::LISTENER))
+		for (u_int a = 0; a < m_pManager->size(); a++) {
+			if ((*m_pManager)[a]->GetSockName() != sName ||
+					(*m_pManager)[a]->GetType() == CSChatSock::LISTENER)
 				continue;
 
 			CSChatSock *p = (CSChatSock *)(*m_pManager)[a];
@@ -152,8 +152,7 @@ public:
 	void CleanSocks()
 	{
 		CString sName = "SCHAT::" + m_pUser->GetUserName();
-		for (u_int a= 0; a < m_pManager->size(); a++)
-		{
+		for (u_int a= 0; a < m_pManager->size(); a++) {
 			if ((*m_pManager)[a]->GetSockName() == sName)
 				m_pManager->DelSock(a--);
 		}
@@ -161,17 +160,14 @@ public:
 
 	virtual EModRet OnUserRaw(CString & sLine)
 	{
-		if (sLine.Equals("schat ", false, 6))
-		{
+		if (sLine.Equals("schat ", false, 6)) {
 			OnModCommand("chat " + sLine.substr(6));
 			return(HALT);
 
-		} else if (sLine.Equals("schat"))
-		{
+		} else if (sLine.Equals("schat")) {
 			PutModule("SChat User Area ...");
 			OnModCommand("help");
 			return(HALT);
-
 		}
 
 		return(CONTINUE);
@@ -179,22 +175,18 @@ public:
 
 	virtual void OnModCommand(const CString& sCommand)
 	{
-		CString sCom, sArgs;
-
-		sCom = sCommand.Token(0);
-		sArgs = sCommand.Token(1, true);
+		CString sCom = sCommand.Token(0);
+		CString sArgs = sCommand.Token(1, true);
 
 		if (sCom.Equals("chat") && !sArgs.empty()) {
 			CString sSockName = "SCHAT::" + m_pUser->GetUserName();
 			CString sNick = "(s)" + sArgs;
-			for (u_int a= 0; a < m_pManager->size(); a++)
-			{
+			for (u_int a= 0; a < m_pManager->size(); a++) {
 				if ((*m_pManager)[a]->GetSockName() != sSockName)
 					continue;
 
 				CSChatSock *pSock = (CSChatSock *)(*m_pManager)[a];
-				if (pSock->GetChatNick().Equals(sNick))
-				{
+				if (pSock->GetChatNick().Equals(sNick)) {
 					PutModule("Already Connected to [" + sArgs + "]");
 					return;
 				}
@@ -209,8 +201,7 @@ public:
 			u_short iPort = m_pManager->ListenRand(sSockName, m_pUser->GetLocalIP(), true,
 					SOMAXCONN, pSock, 60);
 
-			if (iPort == 0)
-			{
+			if (iPort == 0) {
 				PutModule("Failed to start chat!");
 				return;
 			}
@@ -223,8 +214,7 @@ public:
 
 			PutIRC(s.str());
 
-		} else if (sCom.Equals("list"))
-		{
+		} else if (sCom.Equals("list")) {
 			CString sName = "SCHAT::" + m_pUser->GetUserName();
 			CTable Table;
 			Table.AddColumn("Nick");
@@ -233,8 +223,7 @@ public:
 			Table.AddColumn("Port");
 			Table.AddColumn("Status");
 			Table.AddColumn("Cipher");
-			for (u_int a= 0; a < m_pManager->size(); a++)
-			{
+			for (u_int a= 0; a < m_pManager->size(); a++) {
 				if ((*m_pManager)[a]->GetSockName() != sName)
 					continue;
 
@@ -245,24 +234,21 @@ public:
 				unsigned long long iStartTime = pSock->GetStartTime();
 				time_t iTime = iStartTime / 1000;
 				char *pTime = ctime(&iTime);
-				if (pTime)
-				{
+				if (pTime) {
 					CString sTime = pTime;
 					sTime.Trim();
 					Table.SetCell("Created", sTime);
 				}
 
-				if (pSock->GetType() != CSChatSock::LISTENER)
-				{
+				if (pSock->GetType() != CSChatSock::LISTENER) {
 					Table.SetCell("Status", "Established");
 					Table.SetCell("Host", pSock->GetRemoteIP());
 					Table.SetCell("Port", CString(pSock->GetRemotePort()));
 					SSL_SESSION *pSession = pSock->GetSSLSession();
-					if ((pSession) && (pSession->cipher) && (pSession->cipher->name))
+					if (pSession && pSession->cipher && pSession->cipher->name)
 						Table.SetCell("Cipher", pSession->cipher->name);
 
-				} else
-				{
+				} else {
 					Table.SetCell("Status", "Waiting");
 					Table.SetCell("Port", CString(pSock->GetLocalPort()));
 				}
@@ -272,11 +258,9 @@ public:
 			} else
 				PutModule("No SDCCs currently in session");
 
-		} else if (sCom.Equals("close"))
-		{
+		} else if (sCom.Equals("close")) {
 			CString sName = "SCHAT::" + m_pUser->GetUserName();
-			for (u_int a = 0; a < m_pManager->size(); a++)
-			{
+			for (u_int a = 0; a < m_pManager->size(); a++) {
 				if ((*m_pManager)[a]->GetSockName() != sName)
 					continue;
 
@@ -284,15 +268,13 @@ public:
 				if (!sArgs.Equals("(s)", false, 3))
 					sArgs = "(s)" + sArgs;
 
-				if (sArgs.Equals(pSock->GetChatNick()))
-				{
+				if (sArgs.Equals(pSock->GetChatNick())) {
 					pSock->Close();
 					return;
 				}
 			}
 			PutModule("No Such Chat [" + sArgs + "]");
-		} else if (sCom.Equals("showsocks") && m_pUser->IsAdmin())
-		{
+		} else if (sCom.Equals("showsocks") && m_pUser->IsAdmin()) {
 			CTable Table;
 			Table.AddColumn("SockName");
 			Table.AddColumn("Created");
@@ -300,23 +282,20 @@ public:
 			Table.AddColumn("RemoteIP:Port");
 			Table.AddColumn("Type");
 			Table.AddColumn("Cipher");
-			for (u_int a = 0; a < m_pManager->size(); a++)
-			{
+			for (u_int a = 0; a < m_pManager->size(); a++) {
 				Table.AddRow();
 				Csock *pSock = (*m_pManager)[a];
 				Table.SetCell("SockName", pSock->GetSockName());
 				unsigned long long iStartTime = pSock->GetStartTime();
 				time_t iTime = iStartTime / 1000;
 				char *pTime = ctime(&iTime);
-				if (pTime)
-				{
+				if (pTime) {
 					CString sTime = pTime;
 					sTime.Trim();
 					Table.SetCell("Created", sTime);
 				}
 
-				if (pSock->GetType() != Csock::LISTENER)
-				{
+				if (pSock->GetType() != Csock::LISTENER) {
 					if (pSock->GetType() == Csock::OUTBOUND)
 						Table.SetCell("Type", "Outbound");
 					else
@@ -326,13 +305,12 @@ public:
 					Table.SetCell("RemoteIP:Port", pSock->GetRemoteIP() + ":" +
 							CString(pSock->GetRemotePort()));
 					SSL_SESSION *pSession = pSock->GetSSLSession();
-					if ((pSession) && (pSession->cipher) && (pSession->cipher->name))
+					if (pSession && pSession->cipher && pSession->cipher->name)
 						Table.SetCell("Cipher", pSession->cipher->name);
 					else
 						Table.SetCell("Cipher", "None");
 
-				} else
-				{
+				} else {
 					Table.SetCell("Type", "Listener");
 					Table.SetCell("LocalIP:Port", pSock->GetLocalIP() +
 							":" + CString(pSock->GetLocalPort()));
@@ -344,9 +322,8 @@ public:
 			else
 				PutModule("Error Finding Sockets");
 
-		} else if (sCom.Equals("help"))
-		{
-			PutModule("Commands are: ");
+		} else if (sCom.Equals("help")) {
+			PutModule("Commands are:");
 			PutModule("    help           - This text.");
 			PutModule("    chat <nick>    - Chat a nick.");
 			PutModule("    list           - List current chats.");
@@ -363,14 +340,12 @@ public:
 
 	virtual EModRet OnPrivCTCP(CNick& Nick, CString& sMessage)
 	{
-		if (sMessage.Equals("DCC SCHAT ", false, 10))
-		{
+		if (sMessage.Equals("DCC SCHAT ", false, 10)) {
 			// chat ip port
 			unsigned long iIP = sMessage.Token(3).ToULong();
 			unsigned short iPort = sMessage.Token(4).ToUShort();
 
-			if ((iIP > 0) && (iPort > 0))
-			{
+			if (iIP > 0 && iPort > 0) {
 				pair<u_long, u_short> pTmp;
 				CString sMask;
 
@@ -402,19 +377,17 @@ public:
 		m_pManager->Connect(CUtils::GetIP(iIP), iPort, sSockName, 60, true, m_pUser->GetLocalIP(), p);
 		RemTimer("Remove " + sNick); // delete any associated timer to this nick
 	}
+
 	virtual EModRet OnUserMsg(CString& sTarget, CString& sMessage)
 	{
-		if (sTarget.Left(3) == "(s)")
-		{
+		if (sTarget.Left(3) == "(s)") {
 			CString sSockName = "SCHAT::" + m_pUser->GetUserName() + "::" + sTarget;
 			CSChatSock *p = (CSChatSock *)m_pManager->FindSockByName(sSockName);
-			if (!p)
-			{
+			if (!p) {
 				map< CString,pair< u_long,u_short > >::iterator it;
 				it = m_siiWaitingChats.find(sTarget);
 
-				if (it != m_siiWaitingChats.end())
-				{
+				if (it != m_siiWaitingChats.end()) {
 					if (!sMessage.Equals("yes"))
 						SendToUser(sTarget + "!" + sTarget + "@" +
 								CUtils::GetIP(it->second.first),
@@ -469,8 +442,7 @@ CSChatSock::~CSChatSock()
 
 void CSChatSock::ReadLine(const CS_STRING & sLine)
 {
-	if (m_pModule)
-	{
+	if (m_pModule) {
 		CString sText = sLine;
 		if (sText[sText.length()-1] == '\n')
 			sText.erase(sText.length()-1, 1);
@@ -501,8 +473,7 @@ void CSChatSock::Connected()
 
 void CSChatSock::Timeout()
 {
-	if (m_pModule)
-	{
+	if (m_pModule) {
 		if (GetType() == LISTENER)
 			m_pModule->PutModule("Timeout while waiting for [" + m_sChatNick + "]");
 		else
