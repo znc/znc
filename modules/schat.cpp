@@ -102,10 +102,18 @@ public:
 
 	virtual void DumpBuffer()
 	{
-		for (vector<CS_STRING>::reverse_iterator it = m_vBuffer.rbegin(); it != m_vBuffer.rend(); it++)
-			ReadLine(*it);
+		if (m_vBuffer.empty()) {
+			// Always show a message to the user, so he knows
+			// this schat still exists.
+			ReadLine("*** Reattached.");
+		} else {
+			// Buffer playback
+			vector<CS_STRING>::reverse_iterator it = m_vBuffer.rbegin();
+			for (; it != m_vBuffer.rend(); it++)
+				ReadLine(*it);
 
-		m_vBuffer.clear();
+			m_vBuffer.clear();
+		}
 	}
 
 private:
