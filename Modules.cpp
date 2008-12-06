@@ -114,7 +114,17 @@ CSocket::CSocket(CModule* pModule, const CString& sHostname, unsigned short uPor
 }
 
 CSocket::~CSocket() {
+	CUser *pUser = m_pModule->GetUser();
+
 	m_pModule->UnlinkSocket(this);
+
+	if (!m_pModule->IsGlobal() && pUser) {
+		pUser->AddBytesWritten(GetBytesWritten());
+		pUser->AddBytesRead(GetBytesRead());
+	} else {
+		CZNC::Get().AddBytesWritten(GetBytesWritten());
+		CZNC::Get().AddBytesRead(GetBytesRead());
+	}
 }
 
 void CSocket::ReachedMaxBuffer() {
@@ -181,6 +191,7 @@ CModule* CSocket::GetModule() const { return m_pModule; }
 
 CModule::CModule(void* pDLL, CUser* pUser, const CString& sModName, const CString& sDataDir) {
 	m_bFake = false;
+	m_bGlobal = false;
 	m_pDLL = pDLL;
 	m_pManager = &(CZNC::Get().GetManager());;
 	m_pUser = pUser;
@@ -779,6 +790,7 @@ bool CModules::LoadModule(const CString& sModule, const CString& sArgs, CUser* p
 	}
 
 	pModule->SetDescription(GetDesc());
+	pModule->SetGlobal(bIsGlobal);
 	push_back(pModule);
 
 	bool bLoaded;
