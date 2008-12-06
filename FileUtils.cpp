@@ -200,9 +200,19 @@ bool CFile::Copy(const CString& sOldFileName, const CString& sNewFileName, bool 
 	}
 
 	char szBuf[8192];
-	unsigned int len = 0;
+	int len = 0;
 
 	while ((len = OldFile.Read(szBuf, 8192))) {
+		if (len < 0) {
+			DEBUG_ONLY(cout << "CFile::Copy() failed: " << strerror(errno);)
+			OldFile.Close();
+
+			// That file is only a partial copy, get rid of it
+			NewFile.Close();
+			NewFile.Delete();
+
+			return false;
+		}
 		NewFile.Write(szBuf, len);
 	}
 
