@@ -398,17 +398,14 @@ bool CZNC::IsHostAllowed(const CString& sHostMask) const {
 }
 
 void CZNC::InitDirs(const CString& sArgvPath, const CString& sDataDir) {
-	char buf[PATH_MAX];
 	char *home;
-
-	if (getcwd(buf, PATH_MAX) == NULL) {
-		CUtils::PrintError("getcwd() failed, can't read my current dir");
-		exit(-1);
-	}
 
 	// If the bin was not ran from the current directory, we need to add that dir onto our cwd
 	CString::size_type uPos = sArgvPath.rfind('/');
-	m_sCurPath = (uPos == CString::npos) ? CString(buf) : CDir::ChangeDir(buf, sArgvPath.substr(0, uPos), "");
+	if (uPos == CString::npos)
+		m_sCurPath = "./";
+	else
+		m_sCurPath = CDir::ChangeDir("./", sArgvPath.Left(uPos), "");
 
 	// Try to set the user's home dir, default to binpath on failure
 	home = getenv("HOME");

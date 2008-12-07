@@ -65,12 +65,6 @@ using std::cout;
 using std::cerr;
 using std::endl;
 
-#include <limits.h>
-#ifndef PATH_MAX
-#define PATH_MAX	1024
-#warning PATH_MAX is undefined
-#endif
-
 #include "ZNCString.h"
 
 #endif // !_MAIN_H
