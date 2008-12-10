@@ -74,10 +74,6 @@ int main(int argc, char** argv) {
 	srand(time(NULL));
 	CUtils::SetStdoutIsTTY(isatty(1));
 
-#ifdef HAVE_LIBSSL
-	InitSSL();
-#endif /* HAVE_LIBSSL */
-
 	int iArg, iOptIndex = -1;
 	bool bMakeConf = false;
 	bool bMakePass = false;

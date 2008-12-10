@@ -28,7 +28,7 @@
 * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 *
 *
-* $Revision: 1.89 $
+* $Revision: 1.90 $
 */
 
 #include "Csocket.h"
@@ -309,6 +309,31 @@ int GetAddrInfo( const CS_STRING & sHostname, Csock *pSock, CSSockAddr & csSockA
 	}
 #endif /* ! HAVE_IPV6 */
 	return( ETIMEDOUT );
+}
+
+bool InitCsocket()
+{
+#ifdef _WIN32
+	WSADATA wsaData;
+	int iResult = WSAStartup( MAKEWORD( 2, 2 ), &wsaData );
+	if( iResult != NO_ERROR )
+		return( false );
+#endif /* _WIN32 */
+#ifdef HAVE_LIBSSL
+	if( !InitSSL() )
+		return( false );
+#endif /* HAVE_LIBSSL */
+	return( true );
+}
+
+void ShutdownCsocket()
+{
+#ifdef HAVE_LIBSSL
+	ERR_free_strings();
+#endif /* HAVE_LIBSSL */
+#ifdef _WIN32
+	WSACleanup();
+#endif /* _WIN32 */
 }
 
 #ifdef HAVE_LIBSSL

@@ -28,7 +28,7 @@
 * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 *
 *
-* $Revision: 1.199 $
+* $Revision: 1.200 $
 */
 
 // note to compile with win32 need to link to winsock2, using gcc its -lws2_32
@@ -261,14 +261,26 @@ enum ECompType
 	CT_RLE	= 2
 };
 
+void SSLErrors( const char *filename, u_int iLineNum );
+
 /**
- * @brief You HAVE to call this in order to use the SSL library
+ * @brief You HAVE to call this in order to use the SSL library, calling InitCsocket() also calls this
+ * so unless you need to call InitSSL for a specific reason call InitCsocket()
  * @return true on success
  */
 
 bool InitSSL( ECompType eCompressionType = CT_NONE );
-void SSLErrors( const char *filename, u_int iLineNum );
+
 #endif /* HAVE_LIBSSL */
+
+/**
+ * This does all the csocket initialized inclusing InitSSL() and win32 specific initializations, only needs to be called once
+ */
+bool InitCsocket();
+/**
+ * Shutdown and release global allocated memory
+ */
+void ShutdownCsocket();
 
 //! @todo need to make this sock specific via getsockopt
 inline int GetSockError()
@@ -279,27 +291,6 @@ inline int GetSockError()
 	return( errno );
 #endif /* _WIN32 */
 }
-
-#ifdef _WIN32
-inline bool InitWin32()
-{
-	WSADATA wsaData;
-	int iResult = WSAStartup( MAKEWORD( 2, 2 ), &wsaData );
-	if( iResult != NO_ERROR )
-		return( false );
-
-	return( true );
-}
-inline void ShutdownWin32()
-{
-	WSACleanup();
-}
-#define InitCsocket InitWin32
-#define ShutdownCsocket ShutdownWin32
-#else
-#define InitCsocket (void)0
-#define ShutdownCsocket (void)0
-#endif /* _WIN32 */
 
 //! wrappers for FD_SET and such to work in templates.
 inline void TFD_ZERO( fd_set *set )
