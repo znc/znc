@@ -146,11 +146,10 @@ public:
 #endif
 	const CString& GetStatusPrefix() const { return m_sStatusPrefix; }
 	const CString& GetCurPath() const { if (!CFile::Exists(m_sCurPath)) { CDir::MakeDir(m_sCurPath); } return m_sCurPath; }
-	const CString& GetModPath() const { if (!CFile::Exists(m_sModPath)) { CDir::MakeDir(m_sModPath); } return m_sModPath; }
 	const CString& GetHomePath() const { if (!CFile::Exists(m_sHomePath)) { CDir::MakeDir(m_sHomePath); } return m_sHomePath; }
 	const CString& GetZNCPath() const { if (!CFile::Exists(m_sZNCPath)) { CDir::MakeDir(m_sZNCPath); } return m_sZNCPath; }
-	const CString& GetConfPath() const { if (!CFile::Exists(m_sConfPath)) { CDir::MakeDir(m_sConfPath); } return m_sConfPath; }
-	const CString& GetUserPath() const { if (!CFile::Exists(m_sUserPath)) { CDir::MakeDir(m_sUserPath); } return m_sUserPath; }
+	CString GetUserPath() const;
+	CString GetModPath() const;
 	CString GetPemLocation() const { return GetZNCPath() + "/znc.pem"; }
 	const CString& GetConfigFile() const { return m_sConfigFile; }
 	bool WritePemFile(bool bEncPem = false);
@@ -198,11 +197,8 @@ protected:
 	CSockManager			m_Manager;
 
 	CString					m_sCurPath;
-	CString					m_sModPath;
 	CString					m_sHomePath;
 	CString					m_sZNCPath;
-	CString					m_sConfPath;
-	CString					m_sUserPath;
 
 	CString					m_sConfigFile;
 	CString					m_sStatusPrefix;

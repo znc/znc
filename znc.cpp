@@ -438,11 +438,25 @@ void CZNC::InitDirs(const CString& sArgvPath, const CString& sDataDir) {
 	} else {
 		m_sZNCPath = sDataDir;
 	}
+}
 
-	// Other dirs that we use
-	m_sConfPath = m_sZNCPath + "/configs";
-	m_sModPath = m_sZNCPath + "/modules";
-	m_sUserPath = m_sZNCPath + "/users";
+CString CZNC::GetUserPath() const {
+	CString sUserPath = m_sZNCPath + "/users/";
+	if (!CFile::Exists(sUserPath)) {
+		CDir::MakeDir(sUserPath);
+	}
+
+	return sUserPath;
+}
+
+CString CZNC::GetModPath() const {
+	CString sModPath = m_sZNCPath + "/modules/";
+
+	if (!CFile::Exists(sModPath)) {
+		CDir::MakeDir(sModPath);
+	}
+
+	return sModPath;
 }
 
 
@@ -450,12 +464,12 @@ CString CZNC::ExpandConfigPath(const CString& sConfigFile) {
 	CString sRetPath;
 
 	if (sConfigFile.empty()) {
-		sRetPath = GetConfPath() + "/znc.conf";
+		sRetPath = GetZNCPath() + "/configs/znc.conf";
 	} else {
 		if (sConfigFile.Left(2) == "./" || sConfigFile.Left(3) == "../") {
 			sRetPath = GetCurPath() + "/" + sConfigFile;
 		} else if (sConfigFile.Left(1) != "/") {
-			sRetPath = GetConfPath() + "/" + sConfigFile;
+			sRetPath = GetZNCPath() + "/configs/" + sConfigFile;
 		} else {
 			sRetPath = sConfigFile;
 		}
