@@ -281,12 +281,12 @@ void CClient::ReadLine(const CString& sData) {
 		if (m_pUser->IsChan(sTarget)) {
 			CChan *pChan = m_pUser->FindChan(sTarget);
 
-			if (pChan && sModes.empty()) {
+			if (pChan && sModes.empty() && !pChan->GetModeString().empty()) {
 				PutClient(":" + m_pUser->GetIRCServer() + " 324 " + GetNick() + " " + sTarget + " " + pChan->GetModeString());
 				if (pChan->GetCreationDate() > 0) {
 					PutClient(":" + m_pUser->GetIRCServer() + " 329 " + GetNick() + " " + sTarget + " " + CString(pChan->GetCreationDate()));
 				}
-			return;
+				return;
 			}
 		}
 	} else if (sCommand.Equals("QUIT")) {
