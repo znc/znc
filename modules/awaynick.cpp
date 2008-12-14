@@ -83,10 +83,19 @@ public:
 		}
 	}
 
-	virtual void OnIRCConnected() {
+	virtual EModRet OnIRCRegistration(CString& sPass, CString& sNick,
+			CString& sIdent, CString& sRealName) {
 		if (m_pUser && !m_pUser->IsUserAttached()) {
-			StartAwayNickTimer();
+			CString sAwayNick = m_sFormat;
+
+			// ExpandString doesn't know our nick yet, so do it by hand.
+			sAwayNick.Replace("%nick%", sNick);
+
+			// We don't limit this to NICKLEN, because we dont know
+			// NICKLEN yet.
+			sNick = m_pUser->ExpandString(sAwayNick);
 		}
+		return CONTINUE;
 	}
 
 	virtual void OnIRCDisconnected() {
