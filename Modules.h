@@ -303,6 +303,8 @@ public:
 	bool RemTimer(const CString& sLabel);
 	bool UnlinkTimer(CTimer* pTimer);
 	CTimer* FindTimer(const CString& sLabel);
+	vector<CTimer*>::const_iterator BeginTimers() const { return m_vTimers.begin(); }
+	vector<CTimer*>::const_iterator EndTimers() const { return m_vTimers.end(); }
 	virtual void ListTimers();
 	// !Timer stuff
 
@@ -312,6 +314,8 @@ public:
 	bool RemSocket(const CString& sSockName);
 	bool UnlinkSocket(CSocket* pSocket);
 	CSocket* FindSocket(const CString& sSockName);
+	vector<CSocket*>::const_iterator BeginSockets() const { return m_vSockets.begin(); }
+	vector<CSocket*>::const_iterator EndSockets() const { return m_vSockets.end(); }
 	virtual void ListSockets();
 	// !Socket stuff
 
