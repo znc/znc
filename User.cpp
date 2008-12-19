@@ -730,7 +730,7 @@ bool CUser::DelServer(const CString& sName) {
 	return false;
 }
 
-bool CUser::AddServer(const CString& sName, bool bIPV6) {
+bool CUser::AddServer(const CString& sName) {
 	if (sName.empty()) {
 		return false;
 	}
@@ -750,18 +750,12 @@ bool CUser::AddServer(const CString& sName, bool bIPV6) {
 	unsigned short uPort = strtoul(sPort.c_str(), NULL, 10);
 	CString sPass = sLine.Token(2, true);
 
-	return AddServer(sHost, uPort, sPass, bSSL, bIPV6);
+	return AddServer(sHost, uPort, sPass, bSSL);
 }
 
-bool CUser::AddServer(const CString& sName, unsigned short uPort, const CString& sPass, bool bSSL, bool bIPV6) {
+bool CUser::AddServer(const CString& sName, unsigned short uPort, const CString& sPass, bool bSSL) {
 #ifndef HAVE_LIBSSL
 	if (bSSL) {
-		return false;
-	}
-#endif
-
-#ifndef HAVE_IPV6
-	if (bIPV6) {
 		return false;
 	}
 #endif
@@ -774,7 +768,7 @@ bool CUser::AddServer(const CString& sName, unsigned short uPort, const CString&
 		uPort = 6667;
 	}
 
-	CServer* pServer = new CServer(sName, uPort, sPass, bSSL, bIPV6);
+	CServer* pServer = new CServer(sName, uPort, sPass, bSSL);
 	m_vServers.push_back(pServer);
 
 	CheckIRCConnect();

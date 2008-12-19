@@ -43,8 +43,8 @@ public:
 	void JoinChans();
 	CServer* FindServer(const CString& sName) const;
 	bool DelServer(const CString& sName);
-	bool AddServer(const CString& sName, bool bIPV6 = false);
-	bool AddServer(const CString& sName, unsigned short uPort, const CString& sPass = "", bool bSSL = false, bool bIPV6 = false);
+	bool AddServer(const CString& sName);
+	bool AddServer(const CString& sName, unsigned short uPort, const CString& sPass = "", bool bSSL = false);
 	CServer* GetNextServer();
 	CServer* GetCurrentServer() const;
 	bool CheckPass(const CString& sPass) const;
