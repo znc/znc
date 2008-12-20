@@ -784,9 +784,6 @@ bool CUser::AddServer(const CString& sName, unsigned short uPort, const CString&
 		if (bSSL != pServer->IsSSL())
 			continue;
 
-		if (bIPV6 != pServer->IsIPV6())
-			continue;
-
 		// Server is already added
 		return false;
 	}
