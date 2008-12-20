@@ -768,6 +768,29 @@ bool CUser::AddServer(const CString& sName, unsigned short uPort, const CString&
 		uPort = 6667;
 	}
 
+	// Check if server is already added
+	for (unsigned int a = 0; a < m_vServers.size(); a++) {
+		CServer* pServer = m_vServers[a];
+
+		if (!sName.Equals(pServer->GetName()))
+			continue;
+
+		if (uPort != pServer->GetPort())
+			continue;
+
+		if (sPass != pServer->GetPass())
+			continue;
+
+		if (bSSL != pServer->IsSSL())
+			continue;
+
+		if (bIPV6 != pServer->IsIPV6())
+			continue;
+
+		// Server is already added
+		return false;
+	}
+
 	CServer* pServer = new CServer(sName, uPort, sPass, bSSL);
 	m_vServers.push_back(pServer);
 

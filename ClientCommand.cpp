@@ -321,15 +321,11 @@ void CClient::UserCommand(const CString& sLine) {
 			return;
 		}
 
-		if (m_pUser->FindServer(sServer)) {
-			PutStatus("That server already exists");
-			return;
-		}
-
 		if (m_pUser->AddServer(sLine.Token(1, true))) {
 			PutStatus("Server added");
 		} else {
 			PutStatus("Unable to add that server");
+			PutStatus("Perhaps the server is already added or openssl is disabled?");
 		}
 	} else if (sCommand.Equals("REMSERVER") || sCommand.Equals("DELSERVER")) {
 		CString sServer = sLine.Token(1);
