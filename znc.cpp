@@ -441,7 +441,7 @@ void CZNC::InitDirs(const CString& sArgvPath, const CString& sDataDir) {
 }
 
 CString CZNC::GetConfPath() const {
-	CString sConfPath = m_sZNCPath + "/configs/";
+	CString sConfPath = m_sZNCPath + "/configs";
 	if (!CFile::Exists(sConfPath)) {
 		CDir::MakeDir(sConfPath);
 	}
@@ -450,7 +450,7 @@ CString CZNC::GetConfPath() const {
 }
 
 CString CZNC::GetUserPath() const {
-	CString sUserPath = m_sZNCPath + "/users/";
+	CString sUserPath = m_sZNCPath + "/users";
 	if (!CFile::Exists(sUserPath)) {
 		CDir::MakeDir(sUserPath);
 	}
@@ -459,7 +459,7 @@ CString CZNC::GetUserPath() const {
 }
 
 CString CZNC::GetModPath() const {
-	CString sModPath = m_sZNCPath + "/modules/";
+	CString sModPath = m_sZNCPath + "/modules";
 
 	if (!CFile::Exists(sModPath)) {
 		CDir::MakeDir(sModPath);
