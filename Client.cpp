@@ -679,7 +679,7 @@ void CClient::LoginTimeout() {
 
 void CClient::Connected() {
 	DEBUG_ONLY(cout << GetSockName() << " == Connected();" << endl);
-	SetTimeout(900);	// Now that we are connected, let nature take its course
+	SetTimeout(240, TMO_READ);	// Now that we are connected, let nature take its course
 }
 
 void CClient::ConnectionRefused() {
@@ -687,6 +687,7 @@ void CClient::ConnectionRefused() {
 }
 
 void CClient::Disconnected() {
+	DEBUG_ONLY(cout << GetSockName() << " == Disconnected()" << endl);
 	if (m_pUser) {
 		m_pUser->UserDisconnected(this);
 	}
