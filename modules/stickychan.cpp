@@ -76,6 +76,9 @@ public:
 
 	virtual void RunJob()
 	{
+		if (!m_pUser->GetIRCSock())
+			return;
+
 		for (MCString::iterator it = BeginNV(); it != EndNV(); it++)
 		{
 			CChan *pChan = m_pUser->FindChan(it->first);
