@@ -39,9 +39,9 @@ public:
 	virtual void AcceptLogin(CUser& User) = 0;
 	virtual void RefuseLogin(const CString& sReason) = 0;
 
-	virtual const CString& GetUsername() const { return m_sUsername; }
-	virtual const CString& GetPassword() const { return m_sPassword; }
-	virtual const CString& GetRemoteIP() const { return m_sRemoteIP; }
+	const CString& GetUsername() const { return m_sUsername; }
+	const CString& GetPassword() const { return m_sPassword; }
+	const CString& GetRemoteIP() const { return m_sRemoteIP; }
 
 private:
 	CString		m_sUsername;

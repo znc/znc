@@ -14,7 +14,7 @@
 class CServer {
 public:
 	CServer(const CString& sName, unsigned short uPort = 6667, const CString& sPass = "", bool bSSL = false);
-	virtual ~CServer();
+	~CServer();
 
 	const CString& GetName() const;
 	unsigned short GetPort() const;

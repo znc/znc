@@ -24,7 +24,7 @@ public:
 	CFile();
 	CFile(const CString& sLongName);
 	CFile(int iFD, const CString& sLongName);
-	virtual ~CFile();
+	~CFile();
 
 	enum EOptions {
 		F_Read		= O_RDONLY,
@@ -147,11 +147,11 @@ public:
 		m_eSortAttr = CFile::FA_Name;
 	}
 
-	virtual ~CDir() {
+	~CDir() {
 		CleanUp();
 	}
 
-	virtual void CleanUp() {
+	void CleanUp() {
 		for (unsigned int a = 0; a < size(); a++) {
 			delete (*this)[a];
 		}

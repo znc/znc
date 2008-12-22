@@ -51,7 +51,7 @@ public:
 	} EModes;
 
 	CChan(const CString& sName, CUser* pUser, bool bInConfig);
-	virtual ~CChan();
+	~CChan();
 
 	void Reset();
 	bool WriteConfig(CFile& File);

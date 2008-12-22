@@ -27,7 +27,7 @@ public:
 	CSockManager() : TSocketManager<Csock>() {}
 	virtual ~CSockManager() {}
 
-	virtual bool ListenHost(u_short iPort, const CString& sSockName, const CString& sBindHost, int isSSL = false, int iMaxConns = SOMAXCONN, Csock *pcSock = NULL, u_int iTimeout = 0, bool bIsIPv6 = false) {
+	bool ListenHost(u_short iPort, const CString& sSockName, const CString& sBindHost, int isSSL = false, int iMaxConns = SOMAXCONN, Csock *pcSock = NULL, u_int iTimeout = 0, bool bIsIPv6 = false) {
 		CSListener L(iPort, sBindHost);
 
 		L.SetSockName(sSockName);
@@ -44,11 +44,11 @@ public:
 		return Listen(L, pcSock);
 	}
 
-	virtual bool ListenAll(u_short iPort, const CString& sSockName, int isSSL = false, int iMaxConns = SOMAXCONN, Csock *pcSock = NULL, u_int iTimeout = 0, bool bIsIPv6 = false) {
+	bool ListenAll(u_short iPort, const CString& sSockName, int isSSL = false, int iMaxConns = SOMAXCONN, Csock *pcSock = NULL, u_int iTimeout = 0, bool bIsIPv6 = false) {
 		return ListenHost(iPort, sSockName, "", isSSL, iMaxConns, pcSock, iTimeout, bIsIPv6);
 	}
 
-	virtual u_short ListenRand(const CString& sSockName, const CString& sBindHost, int isSSL = false, int iMaxConns = SOMAXCONN, Csock *pcSock = NULL, u_int iTimeout = 0, bool bIsIPv6 = false) {
+	u_short ListenRand(const CString& sSockName, const CString& sBindHost, int isSSL = false, int iMaxConns = SOMAXCONN, Csock *pcSock = NULL, u_int iTimeout = 0, bool bIsIPv6 = false) {
 		unsigned short uPort = 0;
 		CSListener L(0, sBindHost);
 
@@ -68,11 +68,11 @@ public:
 		return uPort;
 	}
 
-	virtual u_short ListenAllRand(const CString& sSockName, int isSSL = false, int iMaxConns = SOMAXCONN, Csock *pcSock = NULL, u_int iTimeout = 0, bool bIsIPv6 = false) {
+	u_short ListenAllRand(const CString& sSockName, int isSSL = false, int iMaxConns = SOMAXCONN, Csock *pcSock = NULL, u_int iTimeout = 0, bool bIsIPv6 = false) {
 		return(ListenRand(sSockName, "", isSSL, iMaxConns, pcSock, iTimeout, bIsIPv6));
 	}
 
-	virtual bool Connect(const CString& sHostname, u_short iPort , const CString& sSockName, int iTimeout = 60, bool isSSL = false, const CString& sBindHost = "", Csock *pcSock = NULL) {
+	bool Connect(const CString& sHostname, u_short iPort , const CString& sSockName, int iTimeout = 60, bool isSSL = false, const CString& sBindHost = "", Csock *pcSock = NULL) {
 		CSConnection C(sHostname, iPort, iTimeout);
 
 		C.SetSockName(sSockName);
@@ -90,7 +90,7 @@ class CConnectUserTimer;
 class CZNC {
 public:
 	CZNC();
-	virtual ~CZNC();
+	~CZNC();
 
 	void DeleteUsers();
 	int Loop();
@@ -223,7 +223,7 @@ protected:
 class CRealListener : public Csock {
 public:
 	CRealListener() : Csock() {}
-	~CRealListener() {}
+	virtual ~CRealListener() {}
 
 	virtual bool ConnectionFrom(const CString& sHost, unsigned short uPort) {
 		DEBUG_ONLY(cout << GetSockName() << " == ConnectionFrom(" << sHost << ", " << uPort << ")" << endl);
@@ -258,7 +258,7 @@ public:
 		m_pListener = NULL;
 	}
 
-	virtual ~CListener() {
+	~CListener() {
 		if (m_pListener)
 			CZNC::Get().GetManager().DelSockByAddr(m_pListener);
 	}

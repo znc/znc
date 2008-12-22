@@ -77,7 +77,7 @@ public:
 	CString(const char* c) : string(c) {}
 	CString(const char* c, size_t l) : string(c, l) {}
 	CString(const string& s) : string(s) {}
-	virtual ~CString() {}
+	~CString() {}
 
 	inline unsigned char* strnchr(const unsigned char* src, unsigned char c, unsigned int iMaxBytes, unsigned char* pFill = NULL, unsigned int* piCount = NULL) const;
 	int CaseCmp(const CString& s, unsigned long uLen = CString::npos) const;

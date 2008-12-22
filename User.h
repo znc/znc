@@ -32,7 +32,7 @@ class CServer;
 class CUser {
 public:
 	CUser(const CString& sUserName);
-	virtual ~CUser();
+	~CUser();
 
 	bool PrintLine(CFile& File, const CString& sName, const CString& sValue);
 	bool WriteConfig(CFile& File);

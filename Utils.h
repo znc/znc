@@ -41,7 +41,7 @@ static const char g_HexDigits[] = "0123456789abcdef";
 class CUtils {
 public:
 	CUtils();
-	virtual ~CUtils();
+	~CUtils();
 
 	static CString GetIP(unsigned long addr);
 	static unsigned long GetLongIP(const CString& sIP);

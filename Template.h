@@ -27,7 +27,7 @@ public:
 		m_eEscapeTo = CString::EASCII;
 	}
 
-	virtual ~CTemplateOptions() {}
+	~CTemplateOptions() {}
 
 	void Parse(const CString& sLine);
 
@@ -50,7 +50,7 @@ public:
 		m_pvRows = pRows;
 	}
 
-	virtual ~CTemplateLoopContext() {}
+	~CTemplateLoopContext() {}
 
 	// Setters
 	void SetName(const CString& s) { m_sName = s; }
@@ -86,7 +86,7 @@ public:
 	CTemplate() : MCString(), m_spOptions(new CTemplateOptions) {}
 	CTemplate(const CString& sFileName) : MCString(), m_sFileName(sFileName), m_spOptions(new CTemplateOptions) {}
 	CTemplate(const CSmartPtr<CTemplateOptions>& Options) : MCString(), m_spOptions(Options) {}
-	virtual ~CTemplate();
+	~CTemplate();
 
 	bool SetFile(const CString& sFileName);
 	bool Print(ostream& oOut = cout);

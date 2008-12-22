@@ -17,7 +17,7 @@ using std::vector;
 class CBufLine {
 public:
 	CBufLine(const CString& sPre, const CString& sPost, bool bIncNick);
-	virtual ~CBufLine();
+	~CBufLine();
 	void GetLine(const CString& sTarget, CString& sRet) const;
 
 	const CString& GetPre() const { return m_sPre; }
@@ -38,7 +38,7 @@ protected:
 class CBuffer : private vector<CBufLine> {
 public:
 	CBuffer(unsigned int uLineCount = 100);
-	virtual ~CBuffer();
+	~CBuffer();
 
 	int AddLine(const CString& sPre, const CString& sPost, bool bIncNick = true);
 	/// Same as AddLine, but if there is already a line with sPre it is replaced.

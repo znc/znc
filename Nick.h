@@ -26,7 +26,7 @@ class CNick
 public:
 	CNick();
 	CNick(const CString& sNick);
-	virtual ~CNick();
+	~CNick();
 
 	void Reset();
 	void Parse(const CString& sNickMask);

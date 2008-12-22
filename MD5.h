@@ -30,7 +30,7 @@ public:
 	CMD5();
 	CMD5(const string& sText);
 	CMD5(const char* szText, uint32 nTextLen);
-	virtual ~CMD5();
+	~CMD5();
 
 	operator string() const
 	{
