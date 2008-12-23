@@ -34,13 +34,8 @@ CChan::~CChan() {
 }
 
 void CChan::Reset() {
-	m_bWhoDone = false;
 	m_bIsOn = false;
-	m_suUserPerms.clear();
 	m_musModes.clear();
-	m_muuPermCount.clear();
-	m_uLimit = 0;
-	m_uClientRequests = 0;
 	m_sTopic = "";
 	m_sTopicOwner = "";
 	m_ulTopicDate = 0;
@@ -98,8 +93,6 @@ void CChan::Cycle() const {
 
 void CChan::JoinUser(bool bForce, const CString& sKey, CClient* pClient) {
 	if (!bForce && (!IsOn() || !IsDetached())) {
-		IncClientRequests();
-
 		m_pUser->PutIRC("JOIN " + GetName() + " " + ((sKey.empty()) ? GetKey() : sKey));
 		return;
 	}
@@ -203,30 +196,7 @@ CString CChan::GetModeForNames() const {
 
 void CChan::SetModes(const CString& sModes) {
 	m_musModes.clear();
-	m_uLimit = 0;
 	ModeChange(sModes);
-}
-
-void CChan::IncClientRequests() {
-	m_uClientRequests++;
-}
-
-bool CChan::DecClientRequests() {
-	if (!m_uClientRequests) {
-		return false;
-	}
-
-	m_uClientRequests--;
-	return true;
-}
-
-bool CChan::Who() {
-	if (m_bWhoDone) {
-		return false;
-	}
-
-	m_pUser->PutIRC("WHO " + GetName());
-	return true;
 }
 
 void CChan::OnWho(const CString& sNick, const CString& sIdent, const CString& sHost) {
@@ -266,17 +236,13 @@ void CChan::ModeChange(const CString& sModes, const CString& sOpNick) {
 
 				if (uPerm) {
 					if (bAdd) {
-						if (pNick->AddPerm(uPerm)) {
-							IncPermCount(uPerm);
-						}
+						pNick->AddPerm(uPerm);
 
 						if (pNick->GetNick().Equals(m_pUser->GetCurNick())) {
 							AddPerm(uPerm);
 						}
 					} else {
-						if (pNick->RemPerm(uPerm)) {
-							DecPermCount(uPerm);
-						}
+						pNick->RemPerm(uPerm);
 
 						if (pNick->GetNick().Equals(m_pUser->GetCurNick())) {
 							RemPerm(uPerm);
@@ -462,9 +428,7 @@ bool CChan::AddNick(const CString& sNick) {
 		pNick->SetHost(sHost);
 
 	for (CString::size_type i = 0; i < sPrefix.length(); i++) {
-		if (pNick->AddPerm(sPrefix[i])) {
-			IncPermCount(sPrefix[i]);
-		}
+		pNick->AddPerm(sPrefix[i]);
 	}
 
 	if (pNick->GetNick().Equals(m_pUser->GetCurNick())) {
@@ -478,31 +442,19 @@ bool CChan::AddNick(const CString& sNick) {
 	return true;
 }
 
-unsigned int CChan::GetPermCount(unsigned char uPerm) const {
-	map<unsigned char, unsigned int>::const_iterator it = m_muuPermCount.find(uPerm);
-	return (it == m_muuPermCount.end()) ? 0 : it->second;
-}
+map<char, unsigned int> CChan::GetPermCounts() const {
+	map<char, unsigned int> mRet;
 
-void CChan::DecPermCount(unsigned char uPerm) {
-	map<unsigned char, unsigned int>::iterator it = m_muuPermCount.find(uPerm);
+	map<CString,CNick*>::const_iterator it;
+	for (it = m_msNicks.begin(); it != m_msNicks.end(); it++) {
+		CString sPerms = it->second->GetPermStr();
 
-	if (it == m_muuPermCount.end()) {
-		m_muuPermCount[uPerm] = 0;
-	} else {
-		if (it->second) {
-			m_muuPermCount[uPerm]--;
+		for (unsigned int p = 0; p < sPerms.size(); p++) {
+			mRet[sPerms[p]]++;
 		}
 	}
-}
 
-void CChan::IncPermCount(unsigned char uPerm) {
-	map<unsigned char, unsigned int>::iterator it = m_muuPermCount.find(uPerm);
-
-	if (it == m_muuPermCount.end()) {
-		m_muuPermCount[uPerm] = 1;
-	} else {
-		m_muuPermCount[uPerm]++;
-	}
+	return mRet;
 }
 
 bool CChan::RemNick(const CString& sNick) {
@@ -512,12 +464,6 @@ bool CChan::RemNick(const CString& sNick) {
 	it = m_msNicks.find(sNick);
 	if (it == m_msNicks.end()) {
 		return false;
-	}
-
-	const set<unsigned char>& suPerms = it->second->GetChanPerms();
-
-	for (it2 = suPerms.begin(); it2 != suPerms.end(); it2++) {
-		DecPermCount(*it2);
 	}
 
 	delete it->second;

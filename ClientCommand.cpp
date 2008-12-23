@@ -305,10 +305,10 @@ void CClient::UserCommand(const CString& sLine) {
 			Table.SetCell("Modes", pChan->GetModeString());
 			Table.SetCell("Users", CString(pChan->GetNickCount()));
 
+			map<char, unsigned int> mPerms = pChan->GetPermCounts();
 			for (unsigned int b = 0; b < sPerms.size(); b++) {
-				CString sPerm;
-				sPerm += sPerms[b];
-				Table.SetCell(sPerm, CString(pChan->GetPermCount(sPerms[b])));
+				char cPerm = sPerms[b];
+				Table.SetCell(CString(cPerm), CString(mPerms[cPerm]));
 			}
 		}
 

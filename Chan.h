@@ -61,10 +61,6 @@ public:
 	void DetachUser();
 	void AttachUser();
 
-	void IncClientRequests();
-	bool DecClientRequests();
-
-	bool Who();
 	void OnWho(const CString& sNick, const CString& sIdent, const CString& sHost);
 
 	// Modes
@@ -102,8 +98,6 @@ public:
 	// !wrappers
 
 	// Setters
-	void IncPermCount(unsigned char uPerm);
-	void DecPermCount(unsigned char uPerm);
 	void SetIsOn(bool b) { m_bIsOn = b; if (!b) { Reset(); } }
 	void SetKey(const CString& s) { m_sKey = s; }
 	void SetTopic(const CString& s) { m_sTopic = s; }
@@ -112,7 +106,6 @@ public:
 	void SetDefaultModes(const CString& s) { m_sDefaultModes = s; }
 	void SetBufferCount(unsigned int u) { m_uBufferCount = u; }
 	void SetKeepBuffer(bool b) { m_bKeepBuffer = b; }
-	void SetWhoDone(bool b = true) { m_bWhoDone = b; }
 	void SetDetached(bool b = true) { m_bDetached = b; }
 	void SetInConfig(bool b) { m_bInConfig = b; }
 	void SetCreationDate(unsigned long u) { m_ulCreationDate = u; }
@@ -126,17 +119,15 @@ public:
 	bool HasMode(unsigned char uMode) const;
 	CString GetOptions() const;
 	CString GetModeArg(unsigned char uMode) const;
-	unsigned int GetPermCount(unsigned char uPerm) const;
+	map<char, unsigned int> GetPermCounts() const;
 	bool IsOn() const { return m_bIsOn; }
 	const CString& GetName() const { return m_sName; }
 	const map<unsigned char, CString>& GetModes() const { return m_musModes; }
 	const CString& GetKey() const { return m_sKey; }
-	unsigned int GetLimit() const { return m_uLimit; }
 	const CString& GetTopic() const { return m_sTopic; }
 	const CString& GetTopicOwner() const { return m_sTopicOwner; }
 	unsigned int GetTopicDate() const { return m_ulTopicDate; }
 	const CString& GetDefaultModes() const { return m_sDefaultModes; }
-	const vector<CString>& GetBans() const { return m_vsBans; }
 	const vector<CString>& GetBuffer() const { return m_vsBuffer; }
 	const map<CString,CNick*>& GetNicks() const { return m_msNicks; }
 	unsigned int GetNickCount() const { return m_msNicks.size(); }
@@ -152,7 +143,6 @@ private:
 protected:
 	bool				m_bDetached;
 	bool				m_bIsOn;
-	bool				m_bWhoDone;
 	bool				m_bKeepBuffer;
 	bool				m_bInConfig;
 	bool				m_bDisabled;
@@ -164,18 +154,13 @@ protected:
 	unsigned long		m_ulCreationDate;
 	CUser*				m_pUser;
 	CNick				m_Nick;
-	unsigned int		m_uLimit;
 	unsigned int		m_uJoinTries;
 	CString				m_sDefaultModes;
-	vector<CString>		m_vsBans;
 	map<CString,CNick*>	m_msNicks;	// Todo: make this caseless (irc style)
-	set<unsigned int>	m_suUserPerms;
 	unsigned int		m_uBufferCount;
-	unsigned int		m_uClientRequests;	// Used to tell how many times a client tried to join this chan
 	vector<CString>		m_vsBuffer;
 
 	map<unsigned char, CString>			m_musModes;
-	map<unsigned char, unsigned int>	m_muuPermCount;
 };
 
 #endif // !_CHAN_H

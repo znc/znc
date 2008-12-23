@@ -155,20 +155,6 @@ void CIRCSock::ReadLine(const CString& sData) {
 				case 376:	// end motd
 					m_pUser->AddMotdBuffer(":" + sServer + " " + sCmd + " ", " " + sRest);
 					break;
-				case 471: // :irc.server.net 471 nick #chan :Cannot join channel (+l)
-				case 473: // :irc.server.net 473 nick #chan :Cannot join channel (+i)
-				case 475: // :irc.server.net 475 nick #chan :Cannot join channel (+k)
-					if (m_pUser->IsUserAttached()) {
-						CChan* pChan = m_pUser->FindChan(sRest.substr(0, sRest.find(' ')));
-
-						if ((pChan) && (!pChan->IsOn())) {
-							if (!pChan->DecClientRequests()) {
-								return;
-							}
-						}
-					}
-
-					break;
 				case 437:
 					// :irc.server.net 437 * badnick :Nick/channel is temporarily unavailable
 					// :irc.server.net 437 mynick badnick :Nick/channel is temporarily unavailable
@@ -183,16 +169,6 @@ void CIRCSock::ReadLine(const CString& sData) {
 						SendAltNick(sBadNick);
 						return;
 					}
-					break;
-				}
-				case 315: {
-					// :irc.server.com 315 yournick #chan :End of /WHO list.
-					CChan* pChan = m_pUser->FindChan(sLine.Token(3));
-
-					if (pChan) {
-						pChan->SetWhoDone();
-					}
-
 					break;
 				}
 				case 331: {
