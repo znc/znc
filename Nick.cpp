@@ -23,8 +23,7 @@ CNick::CNick(const CString& sNick) {
 CNick::~CNick() {}
 
 void CNick::Reset() {
-	m_cPerm = '\0';
-	m_suChanPerms.clear();
+	m_sChanPerms.clear();
 }
 
 CString CNick::Concat(const CString& sNick, const CString& sSuffix, unsigned int uMaxNickLen) {
@@ -77,13 +76,12 @@ unsigned int CNick::GetCommonChans(vector<CChan*>& vRetChans, CUser* pUser) cons
 }
 
 void CNick::SetUser(CUser* pUser) { m_pUser = pUser; }
-void CNick::SetPermChar(char c) { m_cPerm = c; }
 void CNick::SetNick(const CString& s) { m_sNick = s; }
 void CNick::SetIdent(const CString& s) { m_sIdent = s; }
 void CNick::SetHost(const CString& s) { m_sHost = s; }
 
 bool CNick::HasPerm(unsigned char uPerm) const {
-	return (uPerm && m_suChanPerms.find(uPerm) != m_suChanPerms.end());
+	return (uPerm && m_sChanPerms.find(uPerm) != CString::npos);
 }
 
 bool CNick::AddPerm(unsigned char uPerm) {
@@ -91,39 +89,36 @@ bool CNick::AddPerm(unsigned char uPerm) {
 		return false;
 	}
 
-	m_suChanPerms.insert(uPerm);
-	UpdatePermChar();
+	m_sChanPerms.append(1, uPerm);
 
 	return true;
 }
 
 bool CNick::RemPerm(unsigned char uPerm) {
-	if (!HasPerm(uPerm)) {
+	CString::size_type uPos = m_sChanPerms.find(uPerm);
+	if (uPos == CString::npos) {
 		return false;
 	}
 
-	m_suChanPerms.erase(uPerm);
-	UpdatePermChar();
+	m_sChanPerms.erase(uPos);
 
 	return true;
 }
 
-void CNick::UpdatePermChar() {
+unsigned char CNick::GetPermChar() const {
 	CIRCSock* pIRCSock = (!m_pUser) ? NULL : m_pUser->GetIRCSock();
 	const CString& sChanPerms = (!pIRCSock) ? "@+" : pIRCSock->GetPerms();
-	m_cPerm = 0;
 
 	for (unsigned int a = 0; a < sChanPerms.size(); a++) {
 		const unsigned char& c = sChanPerms[a];
 		if (HasPerm(c)) {
-			m_cPerm = c;
-			break;
+			return c;
 		}
 	}
+
+	return '\0';
 }
 
-const set<unsigned char>& CNick::GetChanPerms() const { return m_suChanPerms; }
-unsigned char CNick::GetPermChar() const { return m_cPerm; }
 CString CNick::GetPermStr() const {
 	CIRCSock* pIRCSock = (!m_pUser) ? NULL : m_pUser->GetIRCSock();
 	const CString& sChanPerms = (!pIRCSock) ? "@+" : pIRCSock->GetPerms();

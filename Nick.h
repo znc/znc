@@ -36,8 +36,6 @@ public:
 
 	// Setters
 	void SetUser(CUser* pUser);
-	void UpdatePermChar();
-	void SetPermChar(char c);
 	void SetNick(const CString& s);
 	void SetIdent(const CString& s);
 	void SetHost(const CString& s);
@@ -46,7 +44,6 @@ public:
 	// !Setters
 
 	// Getters
-	const set<unsigned char>& GetChanPerms() const;
 	CString GetPermStr() const;
 	unsigned char GetPermChar() const;
 	bool HasPerm(unsigned char uPerm) const;
@@ -57,8 +54,7 @@ public:
 	// !Getters
 private:
 protected:
-	set<unsigned char>	m_suChanPerms;
-	unsigned char		m_cPerm;
+	CString			m_sChanPerms;
 	CUser*				m_pUser;
 	CString				m_sNick;
 	CString				m_sIdent;
