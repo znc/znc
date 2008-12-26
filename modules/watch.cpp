@@ -154,9 +154,11 @@ class CWatcherMod : public CModule {
 public:
 	MODCONSTRUCTOR(CWatcherMod) {
 		m_Buffer.SetLineCount(500);
+		Load();
 	}
 
 	virtual ~CWatcherMod() {
+		Save();
 	}
 
 	virtual void OnRawMode(const CNick& OpNick, CChan& Channel, const CString& sModes, const CString& sArgs) {
@@ -477,6 +479,55 @@ private:
 		} else {
 			PutModule(sMessage);
 		}
+	}
+
+	void Save() {
+		ClearNV(false);
+		for (list<CWatchEntry>::iterator it = m_lsWatchers.begin(); it != m_lsWatchers.end(); it++) {
+			CWatchEntry& WatchEntry = *it;
+			CString sSave;
+
+			sSave  = WatchEntry.GetHostMask() + "\n";
+			sSave += WatchEntry.GetTarget() + "\n";
+			sSave += WatchEntry.GetPattern() + "\n";
+			sSave += (WatchEntry.IsDisabled() ? "disabled\n" : "enabled\n");
+			sSave += WatchEntry.GetSourcesStr();
+			// Without this, loading fails if GetSourcesStr()
+			// returns an empty string
+			sSave += " ";
+
+			SetNV(sSave, "", false);
+		}
+
+		SaveRegistry();
+	}
+
+	void Load() {
+		// Just to make sure we dont mess up badly
+		m_lsWatchers.clear();
+
+		bool bWarn = false;
+
+		for (MCString::iterator it = BeginNV(); it != EndNV(); it++) {
+			VCString vList;
+			it->first.Split("\n", vList);
+
+			if (vList.size() != 5) {
+				bWarn = true;
+				continue;
+			}
+
+			CWatchEntry WatchEntry(vList[0], vList[1], vList[2]);
+			if (vList[3].Equals("disabled"))
+				WatchEntry.SetDisabled(true);
+			else
+				WatchEntry.SetDisabled(false);
+			WatchEntry.SetSources(vList[4]);
+			m_lsWatchers.push_back(WatchEntry);
+		}
+
+		if (bWarn)
+			PutModule("WARNING: malformed entry found while loading");
 	}
 
 	list<CWatchEntry>	m_lsWatchers;

@@ -279,6 +279,15 @@ bool CModule::DelNV(const CString & sName, bool bWriteToDisk) {
 	return true;
 }
 
+bool CModule::ClearNV(bool bWriteToDisk) {
+	m_mssRegistry.clear();
+
+	if (bWriteToDisk) {
+		return SaveRegistry();
+	}
+	return true;
+}
+
 bool CModule::AddTimer(CTimer* pTimer) {
 	if ((!pTimer) || (FindTimer(pTimer->GetName()))) {
 		delete pTimer;

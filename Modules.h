@@ -328,6 +328,7 @@ public:
 	MCString::iterator EndNV() { return m_mssRegistry.end(); }
 	MCString::iterator BeginNV() { return m_mssRegistry.begin(); }
 	void DelNV(MCString::iterator it) { m_mssRegistry.erase(it); }
+	bool ClearNV(bool bWriteToDisk = true);
 
 	const CString& GetSavePath() const { if (!CFile::Exists(m_sSavePath)) { CDir::MakeDir(m_sSavePath); } return m_sSavePath; }
 
