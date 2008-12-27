@@ -45,12 +45,7 @@ public:
 		m_bInitialized = false;
 	}
 
-	virtual ~CEmail()
-	{
-		vector<Csock*> vSocks = m_pManager->FindSocksByName("EMAIL::" + m_pUser->GetUserName());
-		for (u_int a = 0; a < vSocks.size(); a++)
-			m_pManager->DelSockByAddr(vSocks[a]);
-	}
+	virtual ~CEmail() {}
 
 	virtual bool OnLoad(const CString & sArgs, CString& sMessage) {
 		m_sMailPath = sArgs;
@@ -138,10 +133,10 @@ private:
 	bool			m_bInitialized;
 };
 
-class CEmailFolder : public Csock
+class CEmailFolder : public CSocket
 {
 public:
-	CEmailFolder(CEmail *pModule, const CString & sMailbox) : Csock()
+	CEmailFolder(CEmail *pModule, const CString & sMailbox) : CSocket(pModule)
 	{
 		m_pModule = pModule;
 		m_sMailbox = sMailbox;
@@ -243,7 +238,7 @@ void CEmail::StartParser()
 		CEmailFolder *p = new CEmailFolder(this, m_sMailPath);
 		p->SetRSock(iFD);
 		p->SetWSock(iFD);
-		m_pManager->AddSock((Csock *)p, "EMAIL::" + m_pUser->GetUserName());
+		m_pManager->AddSock(p, "EMAIL::" + m_pUser->GetUserName());
 	}
 }
 
