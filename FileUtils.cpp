@@ -278,8 +278,7 @@ int CFile::Read(char *pszBuffer, int iBytes) {
 }
 
 bool CFile::ReadLine(CString& sData, const CString & sDelimiter) {
-	char buff[64];
-	sData.clear();
+	char buff[4096];
 
 	if (m_iFD == -1) {
 		return false;
@@ -287,16 +286,16 @@ bool CFile::ReadLine(CString& sData, const CString & sDelimiter) {
 
 	bool bEOF = false;
 
-	while (true) {
+	while (!bEOF) {
 		CString::size_type iFind = m_sBuffer.find(sDelimiter);
 		if (iFind != CString::npos) {
+			// We found a line, return it
 			sData = m_sBuffer.substr(0, (iFind + 1));
 			m_sBuffer.erase(0, (iFind + 1));
-			break;
+			return true;
 		}
 
-		memset((char *)buff, '\0', 64);
-		int iBytes = read(m_iFD, buff, 64);
+		int iBytes = read(m_iFD, buff, sizeof(buff));
 
 		switch(iBytes) {
 			case -1: {
@@ -312,24 +311,19 @@ bool CFile::ReadLine(CString& sData, const CString & sDelimiter) {
 				break;
 			}
 		}
-
-		if (bEOF) {
-			break;
-		}
 	}
 
-	CString::size_type iFind = m_sBuffer.find(sDelimiter);
-	if (iFind != CString::npos) {
-		return true;
-	}
+	// We are at the end of the file or an error happened
 
-	if (bEOF && m_sBuffer.size()) {
+	if (m_sBuffer.size()) {
+		// ..but there is still some partial line in the buffer
 		sData = m_sBuffer;
 		m_sBuffer.clear();
 		return true;
 	}
 
-	return !bEOF;
+	// Nothing left for reading :(
+	return false;
 }
 
 int CFile::Write(const char *pszBuffer, u_int iBytes) {
