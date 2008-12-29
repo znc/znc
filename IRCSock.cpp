@@ -81,6 +81,9 @@ void CIRCSock::ReadLine(const CString& sData) {
 
 	if (sLine.Equals("PING ", false, 5)) {
 		PutIRC("PONG " + sLine.substr(5));
+	} else if (sLine.Token(1).Equals("PONG") && sLine.Token(3).Equals(":ZNC")) {
+		// We asked for this so don't forward the reply to clients.
+		return;
 	} else if (sLine.Equals("ERROR ", false, 6)) {
 		//ERROR :Closing Link: nick[24.24.24.24] (Excess Flood)
 		CString sError(sLine.substr(7));
