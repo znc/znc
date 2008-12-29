@@ -526,12 +526,12 @@ void CClient::UserCommand(const CString& sLine) {
 				PutStatus("Global modules:");
 				CTable GTable;
 				GTable.AddColumn("Name");
-				GTable.AddColumn("Description");
+				GTable.AddColumn("Arguments");
 
 				for (unsigned int b = 0; b < GModules.size(); b++) {
 					GTable.AddRow();
 					GTable.SetCell("Name", GModules[b]->GetModName());
-					GTable.SetCell("Description", GModules[b]->GetDescription().Ellipsize(128));
+					GTable.SetCell("Arguments", GModules[b]->GetArgs());
 				}
 
 				PutStatus(GTable);
@@ -546,12 +546,12 @@ void CClient::UserCommand(const CString& sLine) {
 			PutStatus("User modules:");
 			CTable Table;
 			Table.AddColumn("Name");
-			Table.AddColumn("Description");
+			Table.AddColumn("Arguments");
 
 			for (unsigned int b = 0; b < Modules.size(); b++) {
 				Table.AddRow();
 				Table.SetCell("Name", Modules[b]->GetModName());
-				Table.SetCell("Description", Modules[b]->GetDescription().Ellipsize(128));
+				Table.SetCell("Arguments", Modules[b]->GetArgs());
 			}
 
 			PutStatus(Table);
