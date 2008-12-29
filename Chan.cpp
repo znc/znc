@@ -372,26 +372,13 @@ void CChan::ClearNicks() {
 
 int CChan::AddNicks(const CString& sNicks) {
 	int iRet = 0;
-	CString sCurNick;
+	VCString vsNicks;
+	VCString::iterator it;
 
-	for (unsigned int a = 0; a < sNicks.size(); a++) {
-		switch (sNicks[a]) {
-			case ' ':
-				if (AddNick(sCurNick)) {
-					iRet++;
-				}
+	sNicks.Split(" ", vsNicks, false);
 
-				sCurNick = "";
-
-				break;
-			default:
-				sCurNick += sNicks[a];
-				break;
-		}
-	}
-
-	if (!sCurNick.empty()) {
-		if (AddNick(sCurNick)) {
+	for (it = vsNicks.begin(); it != vsNicks.end(); it++) {
+		if (AddNick(*it)) {
 			iRet++;
 		}
 	}
