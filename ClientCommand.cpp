@@ -350,6 +350,7 @@ void CClient::UserCommand(const CString& sLine) {
 	} else if (sCommand.Equals("LISTSERVERS")) {
 		if (m_pUser->HasServers()) {
 			const vector<CServer*>& vServers = m_pUser->GetServers();
+			CServer* pCurServ = m_pUser->GetCurrentServer();
 			CTable Table;
 			Table.AddColumn("Host");
 			Table.AddColumn("Port");
@@ -359,7 +360,7 @@ void CClient::UserCommand(const CString& sLine) {
 			for (unsigned int a = 0; a < vServers.size(); a++) {
 				CServer* pServer = vServers[a];
 				Table.AddRow();
-				Table.SetCell("Host", pServer->GetName());
+				Table.SetCell("Host", pServer->GetName() + (pServer == pCurServ ? "*" : ""));
 				Table.SetCell("Port", CString(pServer->GetPort()));
 				Table.SetCell("SSL", (pServer->IsSSL()) ? "SSL" : "");
 				Table.SetCell("Pass", pServer->GetPass());
