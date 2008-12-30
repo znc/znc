@@ -42,9 +42,9 @@ if test -z "$1"; then
 	exit 1
 fi
 
-CXXFLAGS=`${ZNC_CONFIG} --cflags`
-INCLUDES=`${ZNC_CONFIG} --include`
-LIBS=`${ZNC_CONFIG} --libs`
+CXXFLAGS="`${ZNC_CONFIG} --cflags` $CXXFLAGS"
+INCLUDES="`${ZNC_CONFIG} --include` $INCLUDES"
+LIBS="`${ZNC_CONFIG} --libs` $LIBS"
 
 # Get the first word and strip away the first two chars (which is -I)
 INC_PATH=`echo ${INCLUDES} | ${SED} 's: .*::' | ${SED} 's:^..::'`
