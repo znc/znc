@@ -67,6 +67,11 @@ public:
 
 	void StartAwayNickTimer() {
 		RemTimer("AwayNickTimer");
+		if (FindTimer("BackNickTimer")) {
+			// Client disconnected before we got set back, so do nothing.
+			RemTimer("BackNickTimer");
+			return;
+		}
 		AddTimer(new CAwayNickTimer(*this));
 	}
 
@@ -76,7 +81,7 @@ public:
 		if (pIRCSock) {
 			CString sConfNick = m_pUser->GetNick();
 
-			if (pIRCSock->GetNick().Equals(GetAwayNick().Left(pIRCSock->GetNick().length()))) {
+			if (pIRCSock->GetNick().Equals(m_sAwayNick.Left(pIRCSock->GetNick().length()))) {
 				RemTimer("BackNickTimer");
 				AddTimer(new CBackNickTimer(*this));
 			}
@@ -86,14 +91,14 @@ public:
 	virtual EModRet OnIRCRegistration(CString& sPass, CString& sNick,
 			CString& sIdent, CString& sRealName) {
 		if (m_pUser && !m_pUser->IsUserAttached()) {
-			CString sAwayNick = m_sFormat;
+			m_sAwayNick = m_sFormat;
 
 			// ExpandString doesn't know our nick yet, so do it by hand.
-			sAwayNick.Replace("%nick%", sNick);
+			m_sAwayNick.Replace("%nick%", sNick);
 
 			// We don't limit this to NICKLEN, because we dont know
 			// NICKLEN yet.
-			sNick = m_pUser->ExpandString(sAwayNick);
+			sNick = m_sAwayNick = m_pUser->ExpandString(m_sAwayNick);
 		}
 		return CONTINUE;
 	}
@@ -160,11 +165,13 @@ public:
 			uLen = pIRCSock->GetMaxNickLen();
 		}
 
-		return m_pUser->ExpandString(m_sFormat).Left(uLen);
+		m_sAwayNick = m_pUser->ExpandString(m_sFormat).Left(uLen);
+		return m_sAwayNick;
 	}
 
 private:
 	CString		m_sFormat;
+	CString		m_sAwayNick;
 };
 
 CAwayNickTimer::CAwayNickTimer(CAwayNickMod& Module)
