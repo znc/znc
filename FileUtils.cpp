@@ -326,6 +326,30 @@ bool CFile::ReadLine(CString& sData, const CString & sDelimiter) {
 	return false;
 }
 
+bool CFile::ReadFile(CString& sData, size_t iMaxSize) {
+	char buff[4096];
+	size_t iBytesRead = 0;
+
+	sData.clear();
+
+	while (iBytesRead < iMaxSize) {
+		int iBytes = Read(buff, sizeof(buff));
+
+		if (iBytes < 0)
+			// Error
+			return false;
+
+		if (iBytes == 0)
+			// EOF
+			return true;
+
+		sData.append(buff, iBytes);
+	}
+
+	// Buffer limit reached
+	return false;
+}
+
 int CFile::Write(const char *pszBuffer, u_int iBytes) {
 	if (m_iFD == -1) {
 		return -1;

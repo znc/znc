@@ -101,15 +101,17 @@ public:
 		CString sFile;
 		if (DecryptMessages(sFile))
 		{
-			CString sLine;
-			CString::size_type iPos = 0;
-			while (ReadLine(sFile, sLine, iPos))
-			{
+			VCString vsLines;
+			VCString::iterator it;
+
+			sFile.Split("\n", vsLines);
+
+			for (it = vsLines.begin(); it != vsLines.end(); it++) {
+				CString sLine(*it);
 				sLine.Trim();
 				AddMessage(sLine);
 			}
-		} else
-		{
+		} else {
 			m_sPassword = "";
 			CUtils::PrintError("[" + GetModName() + ".so] Failed to Decrypt Messages");
 			return(false);
@@ -132,8 +134,12 @@ public:
 			CString sPath = GetPath();
 			if (!sPath.empty())
 			{
-				WriteFile(sPath, sFile);
-				chmod(sPath.c_str(), 0600);
+				CFile File(sPath);
+				if (File.Open(O_WRONLY | O_CREAT | O_TRUNC, 0600)) {
+					File.Chmod(0600);
+					File.Write(sFile);
+				}
+				File.Close();
 			}
 		}
 	}
@@ -379,11 +385,15 @@ private:
 		CString sFile;
 		sBuffer = "";
 
-		if ((sMessages.empty()) || (!ReadFile(sMessages, sFile)))
+		CFile File(sMessages);
+
+		if (sMessages.empty() || !File.Open(O_RDONLY) || !File.ReadFile(sFile))
 		{
 			 PutModule("Unable to find buffer");
 			 return(true); // gonna be successful here
 		}
+
+		File.Close();
 
 		if (!sFile.empty())
 		{

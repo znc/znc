@@ -103,10 +103,13 @@ public:
 			if (!pChan->GetBuffer().empty())
 				return(true); // reloaded a module probably in this case, so just verify we can decrypt the file
 
-			CString sLine;
-			CString::size_type iPos = 0;
-			while (ReadLine(sFile, sLine, iPos))
-			{
+			VCString vsLines;
+			VCString::iterator it;
+
+			sFile.Split("\n", vsLines);
+
+			for (it = vsLines.begin(); it != vsLines.end(); it++) {
+				CString sLine(*it);
 				sLine.Trim();
 				pChan->AddBuffer(sLine);
 			}
@@ -150,8 +153,12 @@ public:
 				CString sPath = GetPath(vChans[a]->GetName());
 				if (!sPath.empty())
 				{
-					WriteFile(sPath, sFile);
-					chmod(sPath.c_str(), 0600);
+					CFile File(sPath);
+					if (File.Open(O_WRONLY | O_CREAT | O_TRUNC, 0600)) {
+						File.Chmod(0600);
+						File.Write(sFile);
+					}
+					File.Close();
 				}
 			}
 		}
@@ -172,10 +179,13 @@ public:
 			CString sFile;
 			if (DecryptChannel(sArgs, sFile))
 			{
-				CString sLine;
-				CString::size_type iPos = 0;
-				while (ReadLine(sFile, sLine, iPos))
-				{
+				VCString vsLines;
+				VCString::iterator it;
+
+				sFile.Split("\n", vsLines);
+
+				for (it = vsLines.begin(); it != vsLines.end(); it++) {
+					CString sLine(*it);
 					sLine.Trim();
 					PutModule("[" + sLine + "]");
 				}
@@ -200,10 +210,13 @@ public:
 		PutUser(":***!znc@znc.in PRIVMSG " + sChan + " :Buffer Playback...");
 		if (DecryptChannel(sChan, sFile))
 		{
-			CString sLine;
-			CString::size_type iPos = 0;
-			while (ReadLine(sFile, sLine, iPos))
-			{
+			VCString vsLines;
+			VCString::iterator it;
+
+			sFile.Split("\n", vsLines);
+
+			for (it = vsLines.begin(); it != vsLines.end(); it++) {
+				CString sLine(*it);
 				sLine.Trim();
 				PutUser(sLine);
 			}
@@ -213,7 +226,7 @@ public:
 
 	CString GetPath(const CString & sChannel)
 	{
-		CString sBuffer = m_pUser->GetUserName() + Lower(sChannel);
+		CString sBuffer = m_pUser->GetUserName() + sChannel.AsLower();
 		CString sRet = GetSavePath();
 		sRet += "/" + CBlowfish::MD5(sBuffer, true);
 		return(sRet);
@@ -289,8 +302,12 @@ private:
 		CString sFile;
 		sBuffer = "";
 
-		if ((sChannel.empty()) || (!ReadFile(sChannel, sFile)))
+		CFile File(sChannel);
+
+		if (sChannel.empty() || !File.Open(O_RDONLY) || !File.ReadFile(sFile))
 			 return(true); // gonna be successful here
+
+		File.Close();
 
 		if (!sFile.empty())
 		{

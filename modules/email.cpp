@@ -169,10 +169,13 @@ public:
 	{
 		EmailST tmp;
 		tmp.sUidl = (char *)CMD5(m_sMailBuffer.substr(0, 255));
-		CString sLine;
-		CString::size_type iPos = 0;
-		while (::ReadLine(m_sMailBuffer, sLine, iPos))
-		{
+		VCString vsLines;
+		VCString::iterator it;
+
+		m_sMailBuffer.Split("\n", vsLines);
+
+		for (it = vsLines.begin(); it != vsLines.end(); it++) {
+			CString sLine(*it);
 			sLine.Trim();
 			if (sLine.empty())
 				break;	// out of the headers

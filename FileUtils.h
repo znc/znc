@@ -112,6 +112,7 @@ public:
 	bool Open(int iFlags, mode_t iMode = 0644);
 	int Read(char *pszBuffer, int iBytes);
 	bool ReadLine(CString & sData, const CString & sDelimiter = "\n");
+	bool ReadFile(CString& sData, size_t iMaxSize = 512 * 1024);
 	int Write(const char *pszBuffer, u_int iBytes);
 	int Write(const CString & sData);
 	void Close();

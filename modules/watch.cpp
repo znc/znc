@@ -70,7 +70,7 @@ public:
 			for (unsigned int a = 0; a < m_vsSources.size(); a++) {
 				const CWatchSource& WatchSource = m_vsSources[a];
 
-				if (sSource.AsLower().WildCmp(Lower(WatchSource.GetSource()))) {
+				if (sSource.AsLower().WildCmp(WatchSource.GetSource().AsLower())) {
 					if (WatchSource.IsNegated()) {
 						return false;
 					} else {
@@ -80,7 +80,7 @@ public:
 			}
 		}
 
-		return (bGoodSource && Nick.GetHostMask().AsLower().WildCmp(Lower(m_sHostMask))) && sText.AsLower().WildCmp(Lower(m_sPattern));
+		return (bGoodSource && Nick.GetHostMask().AsLower().WildCmp(m_sHostMask.AsLower())) && sText.AsLower().WildCmp(m_sPattern.AsLower());
 	}
 
 	bool operator ==(const CWatchEntry& WatchEntry) {
