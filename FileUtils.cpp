@@ -223,7 +223,10 @@ bool CFile::Copy(const CString& sOldFileName, const CString& sNewFileName, bool 
 }
 
 bool CFile::Chmod(mode_t mode) {
-	return CFile::Chmod(m_sLongName, mode);
+	if (m_iFD == -1) {
+		return false;
+	}
+	return (fchmod(m_iFD, mode) == 0);
 }
 
 bool CFile::Chmod(const CString& sFile, mode_t mode) {
