@@ -458,6 +458,7 @@ public:
 	virtual void OnClientConnect(CClient* pClient, const CString& sHost, unsigned short uPort);
 	virtual EModRet OnLoginAttempt(CSmartPtr<CAuthBase> Auth);
 	virtual void OnFailedLogin(const CString& sUsername, const CString& sRemoteIP);
+	virtual EModRet OnUnknownUserRaw(CClient* pClient, CString& sLine);
 private:
 };
 
@@ -471,6 +472,7 @@ public:
 	void OnClientConnect(CClient* pClient, const CString& sHost, unsigned short uPort);
 	bool OnLoginAttempt(CSmartPtr<CAuthBase> Auth);
 	void OnFailedLogin(const CString& sUsername, const CString& sRemoteIP);
+	bool OnUnknownUserRaw(CClient* pClient, CString& sLine);
 private:
 };
 

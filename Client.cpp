@@ -72,6 +72,9 @@ void CClient::ReadLine(const CString& sData) {
 #ifdef _MODULES
 	if (IsAttached()) {
 		MODULECALL(OnUserRaw(sLine), m_pUser, this, return);
+	} else {
+		if (CZNC::Get().GetModules().OnUnknownUserRaw(this, sLine))
+			return;
 	}
 #endif
 
