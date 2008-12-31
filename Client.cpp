@@ -67,7 +67,7 @@ void CClient::ReadLine(const CString& sData) {
 		sLine.RightChomp();
 	}
 
-	DEBUG_ONLY(cout << "(" << ((m_pUser) ? m_pUser->GetUserName() : CString("")) << ") CLI -> ZNC [" << sLine << "]" << endl);
+	DEBUG_ONLY(cout << "(" << ((m_pUser) ? m_pUser->GetUserName() : GetRemoteIP()) << ") CLI -> ZNC [" << sLine << "]" << endl);
 
 #ifdef _MODULES
 	if (IsAttached()) {
@@ -729,7 +729,7 @@ void CClient::PutIRC(const CString& sLine) {
 }
 
 void CClient::PutClient(const CString& sLine) {
-	DEBUG_ONLY(cout << "(" << ((m_pUser) ? m_pUser->GetUserName() : CString("")) << ") ZNC -> CLI [" << sLine << "]" << endl);
+	DEBUG_ONLY(cout << "(" << ((m_pUser) ? m_pUser->GetUserName() : GetRemoteIP()) << ") ZNC -> CLI [" << sLine << "]" << endl);
 	Write(sLine + "\r\n");
 }
 
