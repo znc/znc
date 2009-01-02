@@ -65,8 +65,6 @@ bool CFile::IsFifo(bool bUseLstat) const { return CFile::IsFifo(m_sLongName, bUs
 bool CFile::IsLnk(bool bUseLstat) const { return CFile::IsLnk(m_sLongName, bUseLstat); }
 bool CFile::IsSock(bool bUseLstat) const { return CFile::IsSock(m_sLongName, bUseLstat); }
 
-bool CFile::access(int mode) { return (::access(m_sLongName.c_str(), mode) == 0); }
-
 // for gettin file types, using fstat instead
 bool CFile::FType(const CString sFileName, EFileTypes eType, bool bUseLstat) {
 	struct stat st;
@@ -261,7 +259,8 @@ bool CFile::Open(int iFlags, mode_t iMode) {
 		return false;
 	}
 
-	m_iFD = open(m_sLongName.c_str(), iFlags, iMode);
+	// We never want to get a controlling TTY through this -> O_NOCTTY
+	m_iFD = open(m_sLongName.c_str(), iFlags | O_NOCTTY, iMode);
 	if (m_iFD < 0)
 		return false;
 

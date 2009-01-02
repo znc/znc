@@ -60,8 +60,6 @@ public:
 	bool IsLnk(bool bUseLstat = true) const;
 	bool IsSock(bool bUseLstat = false) const;
 
-	bool access(int mode);
-
 	// for gettin file types, using fstat instead
 	static bool FType(const CString sFileName, EFileTypes eType, bool bUseLstat = false);
 
