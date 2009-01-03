@@ -637,6 +637,7 @@ NOSSL
 SASL
 MODDIR
 DATADIR
+VERSION
 LIBOBJS
 LTLIBOBJS'
 ac_subst_files=''
@@ -3286,8 +3287,8 @@ fi
 	fi
 fi
 
-#
-# Auto detect modules
+VERSION=0.063
+
 
 
 
@@ -4005,11 +4006,12 @@ NOSSL!$NOSSL$ac_delim
 SASL!$SASL$ac_delim
 MODDIR!$MODDIR$ac_delim
 DATADIR!$DATADIR$ac_delim
+VERSION!$VERSION$ac_delim
 LIBOBJS!$LIBOBJS$ac_delim
 LTLIBOBJS!$LTLIBOBJS$ac_delim
 _ACEOF
 
-  if test `sed -n "s/.*$ac_delim\$/X/p" conf$$subs.sed | grep -c X` = 62; then
+  if test `sed -n "s/.*$ac_delim\$/X/p" conf$$subs.sed | grep -c X` = 63; then
     break
   elif $ac_last_try; then
     { { echo "$as_me:$LINENO: error: could not make $CONFIG_STATUS" >&5

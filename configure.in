@@ -216,8 +216,7 @@ if test "$MODULES" = "yes"; then
 	fi
 fi
 
-#
-# Auto detect modules
+VERSION=AC_PACKAGE_VERSION
 
 AC_SUBST([CXXFLAGS])
 AC_SUBST([CPPFLAGS])
@@ -231,6 +230,7 @@ AC_SUBST([PERL])
 AC_SUBST([SASL])
 AC_SUBST([MODDIR])
 AC_SUBST([DATADIR])
+AC_SUBST([VERSION])
 AC_CONFIG_FILES([Makefile])
 AC_CONFIG_FILES([znc-config])
 AC_CONFIG_FILES([znc-buildmod])
