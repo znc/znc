@@ -901,7 +901,7 @@ void CClient::UserCommand(const CString& sLine) {
 			return;
 		}
 
-		unsigned int uLineCount = strtoul(sLine.Token(2).c_str(), NULL, 10);
+		unsigned int uLineCount = sLine.Token(2).ToUInt();
 
 		if (uLineCount > 500) {
 			PutStatus("Max linecount is 500.");

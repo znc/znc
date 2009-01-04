@@ -195,7 +195,7 @@ public:
 				return;
 			} else
 			{
-				u_int iNum = atoi(sWhich.c_str());
+				u_int iNum = sWhich.ToUInt();
 				if (iNum >= m_vMessages.size())
 				{
 					PutModNotice("Illegal Message # Requested", "away");
@@ -241,7 +241,7 @@ public:
 					m_vMessages.erase(m_vMessages.begin() + a--);
 					continue;
 				}
-				time_t iTime = strtol(sTime.c_str(), NULL, 10);
+				time_t iTime = sTime.ToULong();
 				char szFormat[64];
 				struct tm t;
 				localtime_r(&iTime, &t);

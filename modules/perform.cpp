@@ -47,7 +47,7 @@ public:
 			PutModule("Added!");
 			Save();
 		} else if (sCmdName == "del") {
-			u_int iNum = atoi(sCommand.Token(1, true).c_str());
+			u_int iNum = sCommand.Token(1, true).ToUInt();
 			if (iNum > m_vPerform.size() || iNum <= 0) {
 				PutModule("Illegal # Requested");
 				return;

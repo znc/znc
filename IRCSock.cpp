@@ -98,7 +98,7 @@ void CIRCSock::ReadLine(const CString& sData) {
 
 		if ((sCmd.length() == 3) && (isdigit(sCmd[0])) && (isdigit(sCmd[1])) && (isdigit(sCmd[2]))) {
 			CString sServer = sLine.Token(0); sServer.LeftChomp();
-			unsigned int uRaw = strtoul(sCmd.c_str(), NULL, 10);
+			unsigned int uRaw = sCmd.ToUInt();
 			CString sNick = sLine.Token(2);
 			CString sRest = sLine.Token(3, true);
 
@@ -202,7 +202,7 @@ void CIRCSock::ReadLine(const CString& sData) {
 
 					if (pChan) {
 						sNick = sLine.Token(4);
-						unsigned long ulDate = strtoul(sLine.Token(5).c_str(), NULL, 10);
+						unsigned long ulDate = sLine.Token(5).ToULong();
 
 						pChan->SetTopicOwner(sNick);
 						pChan->SetTopicDate(ulDate);
@@ -249,7 +249,7 @@ void CIRCSock::ReadLine(const CString& sData) {
 					CChan* pChan = m_pUser->FindChan(sRest.Token(0));
 
 					if (pChan) {
-						unsigned long ulDate = strtoul(sLine.Token(4).c_str(), NULL, 10);
+						unsigned long ulDate = sLine.Token(4).ToULong();
 						pChan->SetCreationDate(ulDate);
 					}
 				}
@@ -624,9 +624,9 @@ bool CIRCSock::OnPrivCTCP(CNick& Nick, CString& sMessage) {
 		// DCC CHAT chat 2453612361 44592
 		CString sType = sMessage.Token(1);
 		CString sFile = sMessage.Token(2);
-		unsigned long uLongIP = strtoul(sMessage.Token(3).c_str(), NULL, 10);
-		unsigned short uPort = strtoul(sMessage.Token(4).c_str(), NULL, 10);
-		unsigned long uFileSize = strtoul(sMessage.Token(5).c_str(), NULL, 10);
+		unsigned long uLongIP = sMessage.Token(3).ToULong();
+		unsigned short uPort = sMessage.Token(4).ToUShort();
+		unsigned long uFileSize = sMessage.Token(5).ToULong();
 
 		if (sType.Equals("CHAT")) {
 			CNick FromNick(Nick.GetNickMask());
@@ -655,7 +655,7 @@ bool CIRCSock::OnPrivCTCP(CNick& Nick, CString& sMessage) {
 				CDCCBounce* pSock = (CDCCBounce*) Manager[a];
 
 				if (pSock && pSock->GetSockName().Equals("DCC::", false, 5)) {
-					if (pSock->GetUserPort() == atoi(sMessage.Token(3).c_str())) {
+					if (pSock->GetUserPort() == sMessage.Token(3).ToUShort()) {
 						m_pUser->PutUser(":" + Nick.GetNickMask() + " PRIVMSG " + GetNick() + " :\001DCC " + sType + " " + sFile + " " + CString(pSock->GetLocalPort()) + " " + sMessage.Token(4) + "\001");
 					}
 				}

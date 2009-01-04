@@ -135,6 +135,7 @@ public:
 	short ToShort() const;
 	unsigned short ToUShort() const;
 	int ToInt() const;
+	long ToLong() const;
 	unsigned int ToUInt() const;
 	unsigned long ToULong() const;
 	unsigned long long ToULongLong() const;

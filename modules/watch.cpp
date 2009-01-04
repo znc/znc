@@ -245,7 +245,7 @@ public:
 			if (sTok == "*") {
 				SetDisabled(~0, false);
 			} else {
-				SetDisabled(atoi(sTok.c_str()), false);
+				SetDisabled(sTok.ToUInt(), false);
 			}
 		} else if (sCmdName.Equals("DISABLE")) {
 			CString sTok = sCommand.Token(1);
@@ -253,10 +253,10 @@ public:
 			if (sTok == "*") {
 				SetDisabled(~0, true);
 			} else {
-				SetDisabled(atoi(sTok.c_str()), true);
+				SetDisabled(sTok.ToUInt(), true);
 			}
 		} else if (sCmdName.Equals("SETSOURCES")) {
-			SetSources(atoi(sCommand.Token(1).c_str()), sCommand.Token(2, true));
+			SetSources(sCommand.Token(1).ToUInt(), sCommand.Token(2, true));
 		} else if (sCmdName.Equals("CLEAR")) {
 			m_lsWatchers.clear();
 			PutModule("All entries cleared.");
@@ -264,12 +264,12 @@ public:
 			CString sCount = sCommand.Token(1);
 
 			if (sCount.size()) {
-				m_Buffer.SetLineCount(atoi(sCount.c_str()));
+				m_Buffer.SetLineCount(sCount.ToUInt());
 			}
 
 			PutModule("Buffer count is set to [" + CString(m_Buffer.GetLineCount()) + "]");
 		} else if (sCmdName.Equals("DEL")) {
-			Remove(atoi(sCommand.Token(1).c_str()));
+			Remove(sCommand.Token(1).ToUInt());
 		} else {
 			PutModule("Unknown command: [" + sCmdName + "]");
 		}

@@ -388,9 +388,9 @@ void CClient::ReadLine(const CString& sData) {
 			if (sCTCP.Equals("DCC ", false, 4) && m_pUser->BounceDCCs()) {
 				CString sType = sCTCP.Token(1);
 				CString sFile = sCTCP.Token(2);
-				unsigned long uLongIP = strtoul(sCTCP.Token(3).c_str(), NULL, 10);
-				unsigned short uPort = strtoul(sCTCP.Token(4).c_str(), NULL, 10);
-				unsigned long uFileSize = strtoul(sCTCP.Token(5).c_str(), NULL, 10);
+				unsigned long uLongIP = sCTCP.Token(3).ToULong();
+				unsigned short uPort = sCTCP.Token(4).ToUShort();
+				unsigned long uFileSize = sCTCP.Token(5).ToULong();
 				CString sIP = (m_pIRCSock) ? m_pIRCSock->GetLocalIP() : GetLocalIP();
 
 				if (!m_pUser->UseClientIP()) {
@@ -432,8 +432,8 @@ void CClient::ReadLine(const CString& sData) {
 					}
 				} else if (sType.Equals("RESUME")) {
 					// PRIVMSG user :DCC RESUME "znc.o" 58810 151552
-					unsigned short uResumePort = atoi(sCTCP.Token(3).c_str());
-					unsigned long uResumeSize = strtoul(sCTCP.Token(4).c_str(), NULL, 10);
+					unsigned short uResumePort = sCTCP.Token(3).ToUShort();
+					unsigned long uResumeSize = sCTCP.Token(4).ToULong();
 
 					// Need to lookup the connection by port, filter the port, and forward to the user
 					CString sStatusPrefix = m_pUser->GetStatusPrefix();
@@ -459,7 +459,7 @@ void CClient::ReadLine(const CString& sData) {
 							CDCCBounce* pSock = (CDCCBounce*) Manager[a];
 
 							if (pSock && pSock->GetSockName().Equals("DCC::", false, 5)) {
-								if (pSock->GetUserPort() == atoi(sCTCP.Token(3).c_str())) {
+								if (pSock->GetUserPort() == sCTCP.Token(3).ToUShort()) {
 									PutIRC("PRIVMSG " + sTarget + " :\001DCC " + sType + " " + sFile + " " + CString(pSock->GetLocalPort()) + " " + sCTCP.Token(4) + "\001");
 								}
 							}

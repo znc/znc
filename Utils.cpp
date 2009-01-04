@@ -289,7 +289,7 @@ bool CUtils::GetNumInput(const CString& sPrompt, unsigned int& uRet, unsigned in
 			return false;
 		}
 
-		uRet = atoi(sNum.c_str());
+		uRet = sNum.ToUInt();
 
 		if ((uRet >= uMin && uRet <= uMax)) {
 			break;

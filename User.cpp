@@ -747,7 +747,7 @@ bool CUser::AddServer(const CString& sName) {
 		sPort.LeftChomp();
 	}
 
-	unsigned short uPort = strtoul(sPort.c_str(), NULL, 10);
+	unsigned short uPort = sPort.ToUShort();
 	CString sPass = sLine.Token(2, true);
 
 	return AddServer(sHost, uPort, sPass, bSSL);

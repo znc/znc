@@ -1158,7 +1158,7 @@ bool CZNC::DoRehash(CString& sError)
 			if (pUser) {
 				if (pChan) {
 					if (sName.Equals("Buffer")) {
-						pChan->SetBufferCount(strtoul(sValue.c_str(), NULL, 10));
+						pChan->SetBufferCount(sValue.ToUInt());
 						continue;
 					} else if (sName.Equals("KeepBuffer")) {
 						pChan->SetKeepBuffer(sValue.Equals("true"));
@@ -1180,7 +1180,7 @@ bool CZNC::DoRehash(CString& sError)
 					}
 				} else {
 					if (sName.Equals("Buffer")) {
-						pUser->SetBufferCount(strtoul(sValue.c_str(), NULL, 10));
+						pUser->SetBufferCount(sValue.ToUInt());
 						continue;
 					} else if (sName.Equals("KeepBuffer")) {
 						pUser->SetKeepBuffer(sValue.Equals("true"));
@@ -1380,7 +1380,7 @@ bool CZNC::DoRehash(CString& sError)
 						sIPV6Comment = " using ipv6";
 					}
 
-					unsigned short uPort = strtol(sPort.c_str(), NULL, 10);
+					unsigned short uPort = sPort.ToUShort();
 					CUtils::PrintAction("Binding to port [" + CString((bSSL) ? "+" : "") + CString(uPort) + "]" + sHostComment + sIPV6Comment);
 
 #ifndef HAVE_IPV6
