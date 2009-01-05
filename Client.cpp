@@ -63,9 +63,7 @@ CClient::~CClient() {
 void CClient::ReadLine(const CString& sData) {
 	CString sLine = sData;
 
-	while ((sLine.Right(1) == "\r") || (sLine.Right(1) == "\n")) {
-		sLine.RightChomp();
-	}
+	sLine.TrimRight("\n\r");
 
 	DEBUG_ONLY(cout << "(" << ((m_pUser) ? m_pUser->GetUserName() : GetRemoteIP()) << ") CLI -> ZNC [" << sLine << "]" << endl);
 

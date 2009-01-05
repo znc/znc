@@ -71,9 +71,7 @@ void CIRCSock::Quit() {
 void CIRCSock::ReadLine(const CString& sData) {
 	CString sLine = sData;
 
-	while ((sLine.Right(1) == "\r") || (sLine.Right(1) == "\n")) {
-		sLine.RightChomp();
-	}
+	sLine.TrimRight("\n\r");
 
 	DEBUG_ONLY(cout << "(" << m_pUser->GetUserName() << ") IRC -> ZNC [" << sLine << "]" << endl);
 
