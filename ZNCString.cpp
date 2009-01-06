@@ -937,25 +937,31 @@ bool CString::Trim(const CString& s) {
 }
 
 bool CString::TrimLeft(const CString& s) {
-	bool bRet = false;
+	size_type i = find_first_not_of(s);
 
-	while (length() && s.find(Left(1)) != CString::npos) {
-		LeftChomp();
-		bRet = true;
-	}
+	if (i == 0)
+		return false;
 
-	return bRet;
+	if (i != npos)
+		this->erase(0, i);
+	else
+		this->clear();
+
+	return true;
 }
 
 bool CString::TrimRight(const CString& s) {
-	bool bRet = false;
+	size_type i = find_last_not_of(s);
 
-	while (length() && s.find(Right(1)) != CString::npos) {
-		RightChomp();
-		bRet = true;
-	}
+	if (i + 1 == length())
+		return false;
 
-	return bRet;
+	if (i != npos)
+		this->erase(i + 1, npos);
+	else
+		this->clear();
+
+	return true;
 }
 
 CString CString::Trim_n(const CString& s) const {
