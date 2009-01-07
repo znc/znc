@@ -896,10 +896,6 @@ void CClient::UserCommand(const CString& sLine) {
 			return;
 		}
 
-		if (!pChan->IsOn()) {
-			PutStatus("You are not on [" + sChan + "] [trying]");
-			return;
-		}
 
 		unsigned int uLineCount = sLine.Token(2).ToUInt();
 
