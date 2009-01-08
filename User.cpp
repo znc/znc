@@ -827,9 +827,7 @@ bool CUser::CheckPass(const CString& sPass) const {
 		return (sPass == m_sPass);
 	}
 
-	CString sSaltedPass = sPass + m_sPassSalt;
-
-	return (m_sPass.Equals(sSaltedPass.MD5()));
+	return m_sPass.Equals(CUtils::SaltedHash(sPass, m_sPassSalt));
 }
 
 /*CClient* CUser::GetClient() {

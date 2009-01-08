@@ -999,8 +999,8 @@ CUser* CWebAdminSock::GetNewUser(CString& sPageRet, CUser* pUser) {
 
 	if (!sArg.empty()) {
 		CString sSalt = CUtils::GetSalt();
-		CString sSaltedPass = sArg + sSalt;
-		pNewUser->SetPass(sSaltedPass.MD5(), true, sSalt);
+		CString sHash = CUtils::SaltedHash(sArg, sSalt);
+		pNewUser->SetPass(sHash, true, sSalt);
 	}
 
 	VCString vsArgs;

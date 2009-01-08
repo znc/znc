@@ -55,6 +55,7 @@ public:
 	static CString GetHashPass();
 	static CString GetSaltedHashPass(CString& sSalt);
 	static CString GetSalt();
+	static CString SaltedHash(const CString& sPass, const CString& sSalt);
 	static char* GetPass(const CString& sPrompt);
 	static bool GetInput(const CString& sPrompt, CString& sRet, const CString& sDefault = "", const CString& sHint = "");
 	static bool GetBoolInput(const CString& sPrompt, bool bDefault);
