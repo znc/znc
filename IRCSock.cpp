@@ -727,7 +727,7 @@ bool CIRCSock::OnChanCTCP(CNick& Nick, const CString& sChan, CString& sMessage) 
 	if (pChan) {
 		// Record a /me
 		if (sMessage.TrimPrefix("ACTION ")) {
-			if (pChan->KeepBuffer() || !m_pUser->IsUserAttached()) {
+			if (pChan->KeepBuffer() || !m_pUser->IsUserAttached() || pChan->IsDetached()) {
 				pChan->AddBuffer(":" + Nick.GetNickMask() + " PRIVMSG " + sChan + " :\001ACTION " + m_pUser->AddTimestamp(sMessage) + "\001");
 			}
 			MODULECALL(OnChanAction(Nick, *pChan, sMessage), m_pUser, NULL, return true);
@@ -747,7 +747,7 @@ bool CIRCSock::OnChanNotice(CNick& Nick, const CString& sChan, CString& sMessage
 	if (pChan) {
 		MODULECALL(OnChanNotice(Nick, *pChan, sMessage), m_pUser, NULL, return true);
 
-		if ((pChan->KeepBuffer()) || (!m_pUser->IsUserAttached())) {
+		if (pChan->KeepBuffer() || !m_pUser->IsUserAttached() || pChan->IsDetached()) {
 			pChan->AddBuffer(":" + Nick.GetNickMask() + " NOTICE " + sChan + " :" + m_pUser->AddTimestamp(sMessage));
 		}
 	}
@@ -760,7 +760,7 @@ bool CIRCSock::OnChanMsg(CNick& Nick, const CString& sChan, CString& sMessage) {
 	if (pChan) {
 		MODULECALL(OnChanMsg(Nick, *pChan, sMessage), m_pUser, NULL, return true);
 
-		if (pChan->KeepBuffer() || !m_pUser->IsUserAttached()) {
+		if (pChan->KeepBuffer() || !m_pUser->IsUserAttached() || pChan->IsDetached()) {
 			pChan->AddBuffer(":" + Nick.GetNickMask() + " PRIVMSG " + sChan + " :" + m_pUser->AddTimestamp(sMessage));
 		}
 	}
