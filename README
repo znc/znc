@@ -24,7 +24,8 @@ Optional Requirements
 ---------------------
 
 SSL support:
- - openssl 0.9.7d or later (try installing openssl-dev or openssl-devel)
+ - openssl 0.9.7d or later (try installing openssl-dev, openssl-devel or
+   libssl-dev)
 modperl:
  - This needs perl and the bundled libperl
 saslauth:
@@ -38,7 +39,7 @@ Installation is done with the ./configure ; make ; make install commands.
 You can use
   ./configure --help
 if you want to get a list of options, though the defaults should be suiting
-most needs. After you compiled it with make (or gmake if make doesnt work) you
+most needs. After you compiled it with make (or gmake if make doesn't work) you
 can install it with
  make install
 though you don't need to as ZNC supports in-place execution.
@@ -80,15 +81,16 @@ Once you have started ZNC you can connect with your favorite IRC-client to ZNC.
 You should use username:password as the server password (e.g. /pass user:pass).
 
 Once you are connected you can do /msg *status help for some commands.
-Every module you have loaded (/msg *status listmods) additionally gets
+Every module you have loaded (/msg *status listmods) should additionally provide
  /msg *modulename help
 
 File Locations
 --------------
 
 In its data dir (~/.znc is default) ZNC saves most of its data. The only
-exception are modules, which are saved in <prefix>/libexec and the znc binary
-itself. More modules (e.g. if you install some later) can be saved in
+exception are modules and module data, which are saved in <prefix>/lib/znc
+and <prefix>/share/znc, and the znc binary itself.
+More modules (e.g. if you install some later) can be saved in
 <data dir>/modules (-> ~/.znc/modules).
 
 In the datadir are only two files:
@@ -101,7 +103,7 @@ These directories are also in there:
  modules - ZNC also looks in here for a module.
  moddata - Global modules save their settings here.
            (e.g. webadmin saves the current skin name in here)
- users - This is per-user data and mainly contains just a moddata directory.
+ users   - This is per-user data and mainly contains just a moddata directory.
 
 ZNC's config file
 -----------------
@@ -109,8 +111,10 @@ ZNC's config file
 This file shouldn't be too hard too understand. An explanation of all the
 items can be found here: http://en.znc.in/wiki/index.php/Configuration
 
-Currently it is NOT possible to rehash the config file so you better use
-webadmin or the admin module to change settings on-the-fly.
+To rehash the config file, you can send ZNC SIGHUP via
+ pkill -SIGHUP znc
+or you can login to znc and use
+ /msg *status rehash
 
 Writing own modules
 -------------------
