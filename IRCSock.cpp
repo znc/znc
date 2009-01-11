@@ -156,6 +156,23 @@ void CIRCSock::ReadLine(const CString& sData) {
 				case 376:	// end motd
 					m_pUser->AddMotdBuffer(":" + sServer + " " + sCmd + " ", " " + sRest);
 					break;
+				case 470: {
+					// :irc.unreal.net 470 mynick [Link] #chan1 has become full, so you are automatically being transferred to the linked channel #chan2
+					// :mccaffrey.freenode.net 470 mynick #electronics ##electronics :Forwarding to another channel
+
+					// freenode style numeric
+					CChan* pChan = m_pUser->FindChan(sRest.Token(0));
+					if (!pChan) {
+						// unreal style numeric
+						pChan = m_pUser->FindChan(sRest.Token(1));
+					}
+					if (pChan) {
+						pChan->Disable();
+						m_pUser->PutStatus("Channel [" + pChan->GetName() + "] is linked to "
+								"another channel and was thus disabled.");
+					}
+					break;
+				}
 				case 437:
 					// :irc.server.net 437 * badnick :Nick/channel is temporarily unavailable
 					// :irc.server.net 437 mynick badnick :Nick/channel is temporarily unavailable
