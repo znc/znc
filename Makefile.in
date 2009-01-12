@@ -9,6 +9,7 @@ bindir      := @bindir@
 datadir     := @datadir@
 sysconfdir  := @sysconfdir@
 libdir      := @libdir@
+includedir  := @includedir@
 sbindir     := @sbindir@
 localstatedir := @localstatedir@
 CXX      := @CXX@
@@ -57,11 +58,11 @@ distclean: clean
 
 install: znc
 	mkdir -p $(DESTDIR)$(bindir)
-	mkdir -p $(DESTDIR)$(prefix)/include/znc
+	mkdir -p $(DESTDIR)$(includedir)/znc
 	install -m 0755 znc $(DESTDIR)$(bindir)
 	install -m 0755 znc-config $(DESTDIR)$(bindir)
 	install -m 0755 znc-buildmod $(DESTDIR)$(bindir)
-	install -m 0644 $(srcdir)/*.h $(DESTDIR)$(prefix)/include/znc
+	install -m 0644 $(srcdir)/*.h $(DESTDIR)$(includedir)/znc
 	@if test -n "@MODTARGET@"; then \
 		$(MAKE) -C modules install DESTDIR=$(DESTDIR); \
 	fi
