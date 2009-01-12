@@ -805,6 +805,7 @@ bool CModules::LoadModule(const CString& sModule, const CString& sArgs, CUser* p
 
 	pModule->SetDescription(GetDesc());
 	pModule->SetGlobal(bIsGlobal);
+	pModule->SetArgs(sArgs);
 	push_back(pModule);
 
 	bool bLoaded;
@@ -823,8 +824,6 @@ bool CModules::LoadModule(const CString& sModule, const CString& sArgs, CUser* p
 			sRetMsg = "Module [" + sModule + "] aborted.";
 		return false;
 	}
-
-	pModule->SetArgs(sArgs);
 
 	if (!sRetMsg.empty()) {
 		sRetMsg = "Loaded module [" + sModule + "] [" + sRetMsg + "] [" + sModPath + "]";
