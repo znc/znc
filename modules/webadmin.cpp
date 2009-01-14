@@ -606,9 +606,14 @@ bool CWebAdminSock::SettingsPage(CString& sPageRet) {
 		if (!sModName.empty()) {
 			CString sArgs = GetParam("modargs_" + sModName);
 
-			if (!CZNC::Get().GetModules().FindModule(sModName)) {
+			CModule *pMod = CZNC::Get().GetModules().FindModule(sModName);
+			if (!pMod) {
 				if (!CZNC::Get().GetModules().LoadModule(sModName, sArgs, NULL, sModRet)) {
 					DEBUG_ONLY(cerr << "Unable to load module [" << sModName << "] [" << sModRet << "]" << endl);
+				}
+			} else if (pMod->GetArgs() != sArgs) {
+				if (!CZNC::Get().GetModules().ReloadModule(sModName, sArgs, NULL, sModRet)) {
+					DEBUG_ONLY(cerr << "Unable to reload module [" << sModName << "] [" << sModRet << "]" << endl);
 				}
 			} else {
 				DEBUG_ONLY(cerr << "Unable to load module [" << sModName << "] because it is already loaded" << endl);
