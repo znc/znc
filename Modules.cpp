@@ -723,7 +723,7 @@ bool CModules::LoadModule(const CString& sModule, const CString& sArgs, CUser* p
 		return true;
 	}
 
-	unsigned int uDLFlags = RTLD_LAZY;
+	unsigned int uDLFlags = RTLD_NOW;
 	uDLFlags |= (pUser) ? RTLD_LOCAL : RTLD_GLOBAL;
 
 	void* p = dlopen((sModPath).c_str(), uDLFlags);
