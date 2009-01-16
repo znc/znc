@@ -284,7 +284,8 @@ private:
 				if (m_pUser->IsUserAttached()) {
 					m_pUser->PutUser(":" + WatchEntry.GetTarget() + "!watch@znc.in PRIVMSG " + m_pUser->GetCurNick() + " :" + sMessage);
 				} else {
-					m_Buffer.AddLine(":" + WatchEntry.GetTarget() + "!watch@znc.in PRIVMSG ", " :" + sMessage);
+					m_Buffer.AddLine(":" + WatchEntry.GetTarget() + "!watch@znc.in PRIVMSG ",
+							" :" + m_pUser->AddTimestamp(sMessage));
 				}
 			}
 		}
