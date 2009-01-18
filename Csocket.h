@@ -28,7 +28,7 @@
 * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 *
 *
-* $Revision: 1.200 $
+* $Revision: 1.202 $
 */
 
 // note to compile with win32 need to link to winsock2, using gcc its -lws2_32
@@ -473,7 +473,8 @@ public:
 	{
 		CLT_DONT			= 0, //! don't close DER
 		CLT_NOW				= 1, //! close immediatly
-		CLT_AFTERWRITE		= 2  //! close after finishing writing the buffer
+		CLT_AFTERWRITE		= 2,  //! close after finishing writing the buffer
+		CLT_DEREFERENCE		= 3	 //! used after copy in Csock::Dereference() to cleanup a sock thats being shutdown
 	};
 
 	Csock & operator<<( const CS_STRING & s );
@@ -1726,11 +1727,14 @@ public:
 
 		T * pSock = (*this)[iPos];
 
-		if ( pSock->IsConnected() )
-			pSock->Disconnected(); // only call disconnected event if connected event was called (IE IsConnected was set)
+		if( pSock->GetCloseType() != T::CLT_DEREFERENCE )
+		{
+			if ( pSock->IsConnected() )
+				pSock->Disconnected(); // only call disconnected event if connected event was called (IE IsConnected was set)
 
-		m_iBytesRead += pSock->GetBytesRead();
-		m_iBytesWritten += pSock->GetBytesWritten();
+			m_iBytesRead += pSock->GetBytesRead();
+			m_iBytesWritten += pSock->GetBytesWritten();
+		}
 
 		CS_Delete( pSock );
 		this->erase( this->begin() + iPos );
@@ -1753,8 +1757,8 @@ public:
 		Csock *pSock = (*this)[iOrginalSockIdx];
 		pNewSock->Copy( *pSock );
 		pSock->Dereference();
-		CS_Delete( pSock );
 		(*this)[iOrginalSockIdx] = (T *)pNewSock;
+		this->push_back( (T *)pSock ); // this allows it to get cleaned up
 		return( true );
 	}
 
@@ -1825,7 +1829,8 @@ private:
 		// before we go any further, Process work needing to be done on the job
 		for( unsigned int i = 0; i < this->size(); i++ )
 		{
-			if ( ( (*this)[i]->GetCloseType() == T::CLT_NOW ) || ( ( (*this)[i]->GetCloseType() == T::CLT_AFTERWRITE ) && ( (*this)[i]->GetWriteBuffer().empty() ) ) )
+			Csock::ECloseType eCloseType = (*this)[i]->GetCloseType();
+			if( eCloseType == T::CLT_NOW || eCloseType == T::CLT_DEREFERENCE || ( eCloseType == T::CLT_AFTERWRITE && (*this)[i]->GetWriteBuffer().empty() ) )
 				DelSock( i-- ); // close any socks that have requested it
 			else
 				(*this)[i]->Cron(); // call the Cron handler here
