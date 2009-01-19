@@ -304,7 +304,7 @@ private:
 
 		CFile File(sChannel);
 
-		if (sChannel.empty() || !File.Open(O_RDONLY) || !File.ReadFile(sFile))
+		if (sChannel.empty() || !File.Open() || !File.ReadFile(sFile))
 			 return(true); // gonna be successful here
 
 		File.Close();

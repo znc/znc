@@ -138,7 +138,7 @@ bool CTemplate::Print(const CString& sFileName, ostream& oOut) {
 
 	CFile File(sFileName);
 
-	if (!File.Open(O_RDONLY)) {
+	if (!File.Open()) {
 		DEBUG_ONLY(cerr << "Unable to open file [" << sFileName << "] in CTemplate::Print()" << endl);
 		return false;
 	}

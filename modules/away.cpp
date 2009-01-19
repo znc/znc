@@ -387,7 +387,7 @@ private:
 
 		CFile File(sMessages);
 
-		if (sMessages.empty() || !File.Open(O_RDONLY) || !File.ReadFile(sFile))
+		if (sMessages.empty() || !File.Open() || !File.ReadFile(sFile))
 		{
 			 PutModule("Unable to find buffer");
 			 return(true); // gonna be successful here

@@ -164,7 +164,7 @@ CFile* CDCCSock::OpenFile(bool bWrite) {
 			return NULL;
 		}
 
-		if (!m_pFile->Open(O_RDONLY)) {
+		if (!m_pFile->Open()) {
 			delete m_pFile;
 			m_pFile = NULL;
 			m_pUser->PutModule(m_sModuleName, "DCC -> [" + m_sRemoteNick + "] - Could not open file [" + m_sLocalFile + "]");

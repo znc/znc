@@ -189,7 +189,7 @@ bool CFile::Copy(const CString& sOldFileName, const CString& sNewFileName, bool 
 	CFile OldFile(sOldFileName);
 	CFile NewFile(sNewFileName);
 
-	if (!OldFile.Open(O_RDONLY)) {
+	if (!OldFile.Open()) {
 		return false;
 	}
 

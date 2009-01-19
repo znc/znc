@@ -247,7 +247,7 @@ public:
 
 		CString sBuffer, sScript;
 		CFile cFile(sModule);
-		if (!cFile.Exists() || !cFile.Open(O_RDONLY))
+		if (!cFile.Exists() || !cFile.Open())
 			return false;
 
 		while (cFile.ReadLine(sBuffer))
