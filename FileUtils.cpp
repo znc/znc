@@ -372,6 +372,31 @@ void CFile::Close() {
 }
 void CFile::ClearBuffer() { m_sBuffer.clear(); }
 
+bool CFile::TryExLock(const CString& sLockFile, int iFlags) {
+	Open(sLockFile, iFlags);
+	return TryExLock();
+}
+
+bool CFile::TryExLock() {
+	return Lock(LOCK_EX|LOCK_NB);
+}
+
+bool CFile::UnLock() {
+	return Lock(LOCK_UN);
+}
+
+bool CFile::Lock(int iOperation) {
+	if (m_iFD == -1) {
+		return false;
+	}
+
+	if (::flock(m_iFD, iOperation) != 0) {
+		return false;
+	}
+
+	return true;
+}
+
 bool CFile::IsOpen() const { return (m_iFD != -1); }
 CString CFile::GetLongName() const { return m_sLongName; }
 CString CFile::GetShortName() const { return m_sShortName; }

@@ -209,8 +209,8 @@ protected:
 	CString					m_sPidFile;
 	VCString				m_vsVHosts;
 	VCString				m_vsMotd;
-	CLockFile				m_LockFile;
-	CLockFile*				m_pISpoofLockFile;
+	CFile					m_LockFile;
+	CFile*					m_pISpoofLockFile;
 	uint					m_uiConnectDelay;
 #ifdef _MODULES
 	CGlobalModules*			m_pModules;

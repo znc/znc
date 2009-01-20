@@ -116,6 +116,10 @@ public:
 	void Close();
 	void ClearBuffer();
 
+	bool TryExLock(const CString& sLockFile, int iFlags = O_RDONLY);
+	bool TryExLock();
+	bool UnLock();
+
 	bool IsOpen() const;
 	CString GetLongName() const;
 	CString GetShortName() const;
@@ -123,6 +127,9 @@ public:
 	void SetFD(int iFD);
 
 private:
+	// flock() wrapper
+	bool Lock(int iOperation);
+
 	CString	m_sBuffer;
 	int		m_iFD;
 

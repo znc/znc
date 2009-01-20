@@ -247,28 +247,26 @@ bool CZNC::WriteISpoof(CUser* pUser) {
 		return false;
 
 	if (!m_sISpoofFile.empty()) {
-		m_pISpoofLockFile = new CLockFile;
+		m_pISpoofLockFile = new CFile;
 		if (!m_pISpoofLockFile->TryExLock(m_sISpoofFile, true)) {
 			delete m_pISpoofLockFile;
 			m_pISpoofLockFile = NULL;
 			return false;
 		}
 
-		CFile File(m_pISpoofLockFile->GetFD(), m_pISpoofLockFile->GetFileName());
-
 		char buf[1024];
 		memset((char*) buf, 0, 1024);
-		File.Read(buf, 1023);
+		m_pISpoofLockFile->Read(buf, 1023);
 		m_sOrigISpoof = buf;
 
-		if (!File.Seek(0) || !File.Truncate()) {
+		if (!m_pISpoofLockFile->Seek(0) || !m_pISpoofLockFile->Truncate()) {
 			delete m_pISpoofLockFile;
 			m_pISpoofLockFile = NULL;
 			return false;
 		}
 
 		CString sData = m_sISpoofFormat.Token(0, false, "%") + pUser->GetIdent() + m_sISpoofFormat.Token(1, true, "%");
-		File.Write(sData + "\n");
+		m_pISpoofLockFile->Write(sData + "\n");
 	}
 	return true;
 }
@@ -278,10 +276,8 @@ void CZNC::ReleaseISpoof() {
 		return;
 
 	if (!m_sISpoofFile.empty()) {
-		CFile File(m_pISpoofLockFile->GetFD(), m_pISpoofLockFile->GetFileName());
-
-		if (File.Seek(0) && File.Truncate()) {
-			File.Write(m_sOrigISpoof);
+		if (m_pISpoofLockFile->Seek(0) && m_pISpoofLockFile->Truncate()) {
+			m_pISpoofLockFile->Write(m_sOrigISpoof);
 		}
 
 		m_sOrigISpoof = "";
@@ -959,6 +955,10 @@ bool CZNC::DoRehash(CString& sError)
 		return false;
 	}
 
+	// (re)open the config file
+	if (m_LockFile.IsOpen())
+		m_LockFile.Close();
+
 	if (!m_LockFile.Open(m_sConfigFile)) {
 		sError = "Can not open config file";
 		CUtils::PrintStatus(false, sError);
@@ -971,7 +971,7 @@ bool CZNC::DoRehash(CString& sError)
 		return false;
 	}
 
-	CFile File(m_LockFile.GetFD(), m_sConfigFile);
+	CFile &File = m_LockFile;
 
 	// This fd is re-used for rehashing, so we must seek back to the beginning!
 	if (!File.Seek(0)) {
@@ -1578,8 +1578,6 @@ bool CZNC::DoRehash(CString& sError)
 		// TODO last <User> not closed
 		delete pUser;
 	}
-
-	File.Close();
 
 	if (m_msUsers.size() == 0) {
 		sError = "You must define at least one user in your config.";
