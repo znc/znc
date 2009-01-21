@@ -61,13 +61,6 @@ case "${host_os}" in
 	;;
 esac
 
-# cygwin
-# warning: -fPIC ignored for target (all code is position independent)
-
-if test -z "$ISCYGWIN" ; then
-	appendCXX -fPIC
-fi
-
 AC_ARG_WITH( [openssl],
 	AS_HELP_STRING([--with-openssl=DIR], [openssl's installation prefix]),
 	[OPENSSL=$withval],)
@@ -182,6 +175,12 @@ if test "$MODULES" = "yes"; then
 	# FIXME why do we need this for sun?
 	if test -n "$ISSUN"; then
 		appendMod -mimpure-text
+	fi
+
+	# cygwin doesn't know -fPIC, everything else needs it (for modules)
+	# warning: -fPIC ignored for target (all code is position independent)
+	if test -z "$ISCYGWIN" ; then
+		appendMod -fPIC
 	fi
 
 	if test -z "$ISDARWIN"; then

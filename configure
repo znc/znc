@@ -2465,13 +2465,6 @@ case "${host_os}" in
 	;;
 esac
 
-# cygwin
-# warning: -fPIC ignored for target (all code is position independent)
-
-if test -z "$ISCYGWIN" ; then
-	appendCXX -fPIC
-fi
-
 
 # Check whether --with-openssl was given.
 if test "${with_openssl+set}" = set; then
@@ -3080,6 +3073,12 @@ echo "$as_me: error: could not find dlopen. Try --disable-modules" >&2;}
 	# FIXME why do we need this for sun?
 	if test -n "$ISSUN"; then
 		appendMod -mimpure-text
+	fi
+
+	# cygwin doesn't know -fPIC, everything else needs it (for modules)
+	# warning: -fPIC ignored for target (all code is position independent)
+	if test -z "$ISCYGWIN" ; then
+		appendMod -fPIC
 	fi
 
 	if test -z "$ISDARWIN"; then
