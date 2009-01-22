@@ -149,17 +149,18 @@ CString CUtils::GetIP(unsigned long addr) {
 unsigned long CUtils::GetLongIP(const CString& sIP) {
 	unsigned long ret;
 	char ip[4][4];
-	int i;
+	unsigned int i;
 
 	i = sscanf(sIP.c_str(), "%3[0-9].%3[0-9].%3[0-9].%3[0-9]",
 			ip[0], ip[1], ip[2], ip[3]);
 	if (i != 4)
 		return 0;
 
-	ret  = atoi(ip[0]) << 24;
-	ret += atoi(ip[1]) << 16;
-	ret += atoi(ip[2]) << 8;
-	ret += atoi(ip[3]) << 0;
+	// Beware that atoi("200") << 24 would overflow and turn negative!
+	ret  = atol(ip[0]) << 24;
+	ret += atol(ip[1]) << 16;
+	ret += atol(ip[2]) << 8;
+	ret += atol(ip[3]) << 0;
 
 	return ret;
 }
