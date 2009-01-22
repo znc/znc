@@ -110,7 +110,7 @@ if test "x$GXX" = "xyes"; then
 fi
 
 AC_CHECK_LIB( gnugetopt, getopt_long,)
-AC_CHECK_FUNCS( stat lstat chmod open, , AC_MSG_ERROR([missing required libc feature]))
+AC_CHECK_FUNC([lstat], [appendCXX -DHAVE_LSTAT])
 
 if test -z "$NOSSL"; then
 	if test -n "$OPENSSL"; then
