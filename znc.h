@@ -211,7 +211,7 @@ protected:
 	VCString				m_vsMotd;
 	CFile					m_LockFile;
 	CFile*					m_pISpoofLockFile;
-	uint					m_uiConnectDelay;
+	unsigned int				m_uiConnectDelay;
 #ifdef _MODULES
 	CGlobalModules*			m_pModules;
 #endif
