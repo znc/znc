@@ -394,7 +394,7 @@ bool CFile::Lock(int iOperation) {
 		return false;
 	}
 
-	if (::flock(m_iFD, iOperation) != 0) {
+	if (flock(m_iFD, iOperation) != 0) {
 		return false;
 	}
 
