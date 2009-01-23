@@ -210,7 +210,7 @@ CString CUtils::SaltedHash(const CString& sPass, const CString& sSalt) {
 	return CString(sPass + sSalt).MD5();
 }
 
-char* CUtils::GetPass(const CString& sPrompt) {
+CString CUtils::GetPass(const CString& sPrompt) {
 	PrintPrompt(sPrompt);
 	return getpass("");
 }

@@ -71,12 +71,10 @@ public:
 	{
 		if (m_sPassword.empty())
 		{
-			char *pTmp = CUtils::GetPass("Enter Encryption Key for away.so: ");
+			CString sTmp = CUtils::GetPass("Enter Encryption Key for away.so: ");
 
-			if (pTmp)
-				m_sPassword = CBlowfish::MD5(pTmp);
-
-			*pTmp = 0;
+			if (!sTmp.empty())
+				m_sPassword = CBlowfish::MD5(sTmp);
 		}
 
 		if (!BootStrap())
