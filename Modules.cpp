@@ -189,7 +189,7 @@ void CSocket::SetModule(CModule* p) { m_pModule = p; }
 CModule* CSocket::GetModule() const { return m_pModule; }
 /////////////////// !Socket ///////////////////
 
-CModule::CModule(void* pDLL, CUser* pUser, const CString& sModName, const CString& sDataDir) {
+CModule::CModule(ModHandle pDLL, CUser* pUser, const CString& sModName, const CString& sDataDir) {
 	m_bFake = false;
 	m_bGlobal = false;
 	m_pDLL = pDLL;
@@ -205,7 +205,7 @@ CModule::CModule(void* pDLL, CUser* pUser, const CString& sModName, const CStrin
 	}
 }
 
-CModule::CModule(void* pDLL, const CString& sModName, const CString& sDataDir) {
+CModule::CModule(ModHandle pDLL, const CString& sModName, const CString& sDataDir) {
 	m_bFake = false;
 	m_pDLL = pDLL;
 	m_pManager = &(CZNC::Get().GetManager());
@@ -519,7 +519,7 @@ CModule::EModRet CModule::OnChanNotice(CNick& Nick, CChan& Channel, CString& sMe
 CModule::EModRet CModule::OnTopic(CNick& Nick, CChan& Channel, CString& sTopic) { return CONTINUE; }
 CModule::EModRet CModule::OnTimerAutoJoin(CChan& Channel) { return CONTINUE; }
 
-void* CModule::GetDLL() { return m_pDLL; }
+ModHandle CModule::GetDLL() { return m_pDLL; }
 bool CModule::PutIRC(const CString& sLine) {
 	return (m_pUser) ? m_pUser->PutIRC(sLine) : false;
 }
@@ -726,7 +726,7 @@ bool CModules::LoadModule(const CString& sModule, const CString& sArgs, CUser* p
 	unsigned int uDLFlags = RTLD_NOW;
 	uDLFlags |= (pUser) ? RTLD_LOCAL : RTLD_GLOBAL;
 
-	void* p = dlopen((sModPath).c_str(), uDLFlags);
+	ModHandle p = dlopen((sModPath).c_str(), uDLFlags);
 
 	if (!p) {
 		sRetMsg = "Unable to load module [" + sModule + "] [" + dlerror() + "]";
@@ -778,7 +778,7 @@ bool CModules::LoadModule(const CString& sModule, const CString& sArgs, CUser* p
 	CModule* pModule = NULL;
 
 	if (pUser) {
-		typedef CModule* (*fp)(void*, CUser* pUser,
+		typedef CModule* (*fp)(ModHandle, CUser* pUser,
 				const CString& sModName, const CString& sDataPath);
 		fp Load = (fp) dlsym(p, "Load");
 
@@ -790,7 +790,7 @@ bool CModules::LoadModule(const CString& sModule, const CString& sArgs, CUser* p
 
 		pModule = Load(p, pUser, sModule, sDataPath);
 	} else {
-		typedef CModule* (*fp)(void*, const CString& sModName,
+		typedef CModule* (*fp)(ModHandle, const CString& sModName,
 				const CString& sDataPath);
 		fp Load = (fp) dlsym(p, "Load");
 
@@ -866,7 +866,7 @@ bool CModules::UnloadModule(const CString& sModule, CString& sRetMsg) {
 		return false;
 	}
 
-	void* p = pModule->GetDLL();
+	ModHandle p = pModule->GetDLL();
 
 	if (p) {
 		typedef void (*fp)(CModule*);
@@ -929,7 +929,7 @@ bool CModules::GetModInfo(CModInfo& ModInfo, const CString& sModule) {
 
 	unsigned int uDLFlags = RTLD_LAZY | RTLD_LOCAL;
 
-	void* p = dlopen((sModPath).c_str(), uDLFlags);
+	ModHandle p = dlopen((sModPath).c_str(), uDLFlags);
 
 	if (!p) {
 		return false;

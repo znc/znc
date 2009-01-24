@@ -36,19 +36,21 @@ class CClient;
 #endif
 #endif
 
+typedef void* ModHandle;
+
 #define MODCONSTRUCTOR(CLASS) \
-	CLASS(void *pDLL, CUser* pUser, const CString& sModName, \
+	CLASS(ModHandle pDLL, CUser* pUser, const CString& sModName, \
 			const CString& sModPath) \
 			: CModule(pDLL, pUser, sModName, sModPath)
 #define MODULEDEFS(CLASS, DESCRIPTION) \
 	extern "C" { \
 		CString GetDescription() { return DESCRIPTION; } \
 		bool IsGlobal() { return false; } \
-		CModule* Load(void* p, CUser* pUser, const CString& sModName, \
+		CModule* Load(ModHandle p, CUser* pUser, const CString& sModName, \
 				const CString& sModPath); \
 		void Unload(CModule* pMod); double GetVersion(); } \
 		double GetVersion() { return VERSION; } \
-		CModule* Load(void* p, CUser* pUser, const CString& sModName, \
+		CModule* Load(ModHandle p, CUser* pUser, const CString& sModName, \
 				const CString& sModPath) \
 		{ return new CLASS(p, pUser, sModName, sModPath); } \
 		void Unload(CModule* pMod) { if (pMod) { delete pMod; } \
@@ -57,17 +59,17 @@ class CClient;
 
 // Global Module Macros
 #define GLOBALMODCONSTRUCTOR(CLASS) \
-	CLASS(void *pDLL, const CString& sModName, const CString& sModPath) \
+	CLASS(ModHandle pDLL, const CString& sModName, const CString& sModPath) \
 			: CGlobalModule(pDLL, sModName, sModPath)
 #define GLOBALMODULEDEFS(CLASS, DESCRIPTION) \
 	extern "C" { \
 		CString GetDescription() { return DESCRIPTION; } \
 		bool IsGlobal() { return true; } \
-		CGlobalModule* Load(void* p, const CString& sModName, \
+		CGlobalModule* Load(ModHandle p, const CString& sModName, \
 				const CString& sModPath); \
 		void Unload(CGlobalModule* pMod); double GetVersion(); } \
 		double GetVersion() { return VERSION; } \
-		CGlobalModule* Load(void* p, const CString& sModName, \
+		CGlobalModule* Load(ModHandle p, const CString& sModName, \
 				const CString& sModPath) \
 		{ return new CLASS(p, sModName, sModPath); } \
 		void Unload(CGlobalModule* pMod) { if (pMod) { delete pMod; } \
@@ -203,9 +205,9 @@ protected:
 
 class CModule {
 public:
-	CModule(void* pDLL, CUser* pUser, const CString& sModName,
+	CModule(ModHandle pDLL, CUser* pUser, const CString& sModName,
 			const CString& sDataDir);
-	CModule(void* pDLL, const CString& sModName, const CString& sDataDir);
+	CModule(ModHandle pDLL, const CString& sModName, const CString& sDataDir);
 	virtual ~CModule();
 
 	typedef enum {
@@ -282,7 +284,7 @@ public:
 	virtual EModRet OnTopic(CNick& Nick, CChan& Channel, CString& sTopic);
 	virtual EModRet OnTimerAutoJoin(CChan& Channel);
 
-	void * GetDLL();
+	ModHandle GetDLL();
 	static double GetCoreVersion() { return VERSION; }
 
 	virtual bool PutIRC(const CString& sLine);
@@ -355,7 +357,7 @@ protected:
 	CString			m_sDescription;
 	vector<CTimer*>		m_vTimers;
 	vector<CSocket*>	m_vSockets;
-	void*			m_pDLL;
+	ModHandle 		m_pDLL;
 	CSockManager*		m_pManager;
 	CUser*			m_pUser;
 	CClient*		m_pClient;
@@ -449,7 +451,7 @@ protected:
 
 class CGlobalModule : public CModule {
 public:
-	CGlobalModule(void* pDLL, const CString& sModName,
+	CGlobalModule(ModHandle pDLL, const CString& sModName,
 			const CString &sDataDir) : CModule(pDLL, sModName, sDataDir) {}
 	virtual ~CGlobalModule() {}
 
