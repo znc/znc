@@ -133,14 +133,6 @@ public:
 
 				const vector<CString> & vBuffer = vChans[a]->GetBuffer();
 
-				if (vBuffer.empty())
-				{
-					if (!m_sPassword.empty())
-						BootStrap(vChans[a]);
-
-					continue;
-				}
-
 				CString sFile = CRYPT_VERIFICATION_TOKEN;
 
 				for (u_int b = 0; b < vBuffer.size(); b++)
