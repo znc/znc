@@ -8,6 +8,7 @@
 
 #include "DCCSock.h"
 #include "User.h"
+#include "Utils.h"
 
 CDCCSock::~CDCCSock() {
 	if ((m_pFile) && (!m_bNoDelFile)) {

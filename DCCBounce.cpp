@@ -15,6 +15,43 @@ const unsigned int CDCCBounce::m_uiMaxDCCBuffer = 10 * 1024;
 // If less than this is in the buffer, the receiving side continues
 const unsigned int CDCCBounce::m_uiMinDCCBuffer = 2 * 1024;
 
+CDCCBounce::CDCCBounce(CUser* pUser, unsigned long uLongIP, unsigned short uPort,
+		const CString& sFileName, const CString& sRemoteNick,
+		const CString& sRemoteIP, CString sLocalIP, bool bIsChat) : Csock() {
+	m_uRemotePort = uPort;
+	m_sConnectIP = CUtils::GetIP(uLongIP);
+	m_sRemoteIP = sRemoteIP;
+	m_sFileName = sFileName;
+	m_sRemoteNick = sRemoteNick;
+	m_pUser = pUser;
+	m_bIsChat = bIsChat;
+	m_sLocalIP = sLocalIP;
+	m_pPeer = NULL;
+	m_bIsRemote = false;
+
+	if (bIsChat) {
+		EnableReadLine();
+	}
+}
+
+CDCCBounce::CDCCBounce(const CString& sHostname, unsigned short uPort, CUser* pUser,
+		const CString& sRemoteNick, const CString& sRemoteIP, const CString& sFileName,
+		int iTimeout, bool bIsChat) : Csock(sHostname, uPort, iTimeout) {
+	m_uRemotePort = 0;
+	m_bIsChat = bIsChat;
+	m_pUser = pUser;
+	m_pPeer = NULL;
+	m_sRemoteNick = sRemoteNick;
+	m_sFileName = sFileName;
+	m_sRemoteIP = sRemoteIP;
+	m_bIsRemote = false;
+
+	SetMaxBufferThreshold(10240);
+	if (bIsChat) {
+		EnableReadLine();
+	}
+}
+
 CDCCBounce::~CDCCBounce() {
 	if (m_pPeer) {
 		m_pPeer->Shutdown();

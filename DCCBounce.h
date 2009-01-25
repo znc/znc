@@ -10,44 +10,17 @@
 #define _DCCBOUNCE_H
 
 #include "Csocket.h"
-#include "Utils.h"
 
 class CUser;
 
 class CDCCBounce : public Csock {
 public:
-	CDCCBounce(CUser* pUser, unsigned long uLongIP, unsigned short uPort, const CString& sFileName, const CString& sRemoteNick, const CString& sRemoteIP, CString sLocalIP, bool bIsChat = false) : Csock() {
-		m_uRemotePort = uPort;
-		m_sConnectIP = CUtils::GetIP(uLongIP);
-		m_sRemoteIP = sRemoteIP;
-		m_sFileName = sFileName;
-		m_sRemoteNick = sRemoteNick;
-		m_pUser = pUser;
-		m_bIsChat = bIsChat;
-		m_sLocalIP = sLocalIP;
-		m_pPeer = NULL;
-		m_bIsRemote = false;
-
-		if (bIsChat) {
-			EnableReadLine();
-		}
-	}
-
-	CDCCBounce(const CString& sHostname, unsigned short uPort, CUser* pUser, const CString& sRemoteNick, const CString& sRemoteIP, const CString& sFileName, int iTimeout = 60, bool bIsChat = false) : Csock(sHostname, uPort, iTimeout) {
-		m_uRemotePort = 0;
-		m_bIsChat = bIsChat;
-		m_pUser = pUser;
-		m_pPeer = NULL;
-		m_sRemoteNick = sRemoteNick;
-		m_sFileName = sFileName;
-		m_sRemoteIP = sRemoteIP;
-		m_bIsRemote = false;
-
-		SetMaxBufferThreshold(10240);
-		if (bIsChat) {
-			EnableReadLine();
-		}
-	}
+	CDCCBounce(CUser* pUser, unsigned long uLongIP, unsigned short uPort,
+			const CString& sFileName, const CString& sRemoteNick,
+			const CString& sRemoteIP, CString sLocalIP, bool bIsChat = false);
+	CDCCBounce(const CString& sHostname, unsigned short uPort, CUser* pUser,
+			const CString& sRemoteNick, const CString& sRemoteIP,
+			const CString& sFileName, int iTimeout = 60, bool bIsChat = false);
 	virtual ~CDCCBounce();
 
 	static unsigned short DCCRequest(const CString& sNick, unsigned long uLongIP, unsigned short uPort, const CString& sFileName, bool bIsChat, CUser* pUser, const CString& sLocalIP, const CString& sRemoteIP);

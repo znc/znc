@@ -15,7 +15,6 @@
 #include "Modules.h"
 #endif
 #include "Nick.h"
-#include "Utils.h"
 #include <set>
 #include <vector>
 
