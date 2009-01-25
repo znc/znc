@@ -1694,13 +1694,19 @@ bool CZNC::DeleteUser(const CString& sUsername) {
 }
 
 bool CZNC::AddUser(CUser* pUser, CString& sErrorRet) {
-	if (pUser->IsValid(sErrorRet)) {
-		m_msUsers[pUser->GetUserName()] = pUser;
-		return true;
+	if (FindUser(pUser->GetUserName()) != NULL) {
+		DEBUG_ONLY(cout << "User [" << pUser->GetUserName() << "]"
+				" - already exists" << endl);
+		return false;
 	}
+	if (!pUser->IsValid(sErrorRet)) {
+		DEBUG_ONLY(cout << "Invalid user [" << pUser->GetUserName() << "]"
+				" - [" << sErrorRet << "]" << endl);
+		return false;
+	}
+	m_msUsers[pUser->GetUserName()] = pUser;
+	return true;
 
-	DEBUG_ONLY(cout << "Invalid user [" << pUser->GetUserName() << "] - [" << sErrorRet << "]" << endl);
-	return false;
 }
 
 CZNC& CZNC::Get() {
