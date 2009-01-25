@@ -27,6 +27,8 @@ using std::vector;
 #define DEBUG_ONLY(f) ((void)0)
 #endif
 
+#define DEBUG(f) DEBUG_ONLY(cout << f << endl)
+
 static inline void SetFdCloseOnExec(int fd)
 {
 	int flags = fcntl(fd, F_GETFD, 0);
