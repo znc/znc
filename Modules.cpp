@@ -128,7 +128,7 @@ CSocket::~CSocket() {
 }
 
 void CSocket::ReachedMaxBuffer() {
-	DEBUG_ONLY(cout << GetSockName() << " == ReachedMaxBuffer()" << endl);
+	DEBUG(GetSockName() << " == ReachedMaxBuffer()");
 	PutModule("Some socket reached its max buffer limit and was closed!");
 	Close();
 }

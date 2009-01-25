@@ -34,7 +34,7 @@ CString CTemplateLoopContext::GetValue(const CString& sName) {
 	CTemplate* pTemplate = GetCurRow();
 
 	if (!pTemplate) {
-		DEBUG_ONLY(cerr << "Loop [" << GetName() << "] has no row index [" << GetCurRow() << "]" << endl);
+		DEBUG("Loop [" << GetName() << "] has no row index [" << GetCurRow() << "]");
 		return "";
 	}
 
@@ -74,12 +74,12 @@ CTemplate::~CTemplate() {
 
 bool CTemplate::SetFile(const CString& sFileName) {
 	if (sFileName.empty()) {
-		DEBUG_ONLY(cerr << "CTemplate::SetFile() - Filename is empty" << endl);
+		DEBUG("CTemplate::SetFile() - Filename is empty");
 		return false;
 	}
 
 	if (!CFile::Exists(sFileName)) {
-		DEBUG_ONLY(cerr << "CTemplate::SetFile() - [" << sFileName << "] does not exist" << endl);
+		DEBUG("CTemplate::SetFile() - [" << sFileName << "] does not exist");
 		return false;
 	}
 
@@ -132,14 +132,14 @@ bool CTemplate::Print(ostream& oOut) {
 
 bool CTemplate::Print(const CString& sFileName, ostream& oOut) {
 	if (sFileName.empty()) {
-		DEBUG_ONLY(cerr << "Empty filename in CTemplate::Print()" << endl);
+		DEBUG("Empty filename in CTemplate::Print()");
 		return false;
 	}
 
 	CFile File(sFileName);
 
 	if (!File.Open()) {
-		DEBUG_ONLY(cerr << "Unable to open file [" << sFileName << "] in CTemplate::Print()" << endl);
+		DEBUG("Unable to open file [" << sFileName << "] in CTemplate::Print()");
 		return false;
 	}
 
@@ -313,8 +313,8 @@ bool CTemplate::Print(const CString& sFileName, ostream& oOut) {
 					}
 				}
 
-				DEBUG_ONLY(cerr << "Malformed tag on line " << uLineNum << " of [" << File.GetLongName() << "]" << endl);
-				DEBUG_ONLY(cerr << "--------------- [" << sLine << "]" << endl);
+				DEBUG("Malformed tag on line " << uLineNum << " of [" << File.GetLongName() << "]");
+				DEBUG("--------------- [" << sLine << "]");
 			}
 		} while (iPos != CString::npos);
 

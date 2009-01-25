@@ -146,12 +146,12 @@ bool CZNC::ConnectUser(CUser *pUser) {
 		return false;
 
 	if (!WriteISpoof(pUser)) {
-		DEBUG_ONLY(cout << "ISpoof could not be written" << endl);
+		DEBUG("ISpoof could not be written");
 		pUser->PutStatus("ISpoof could not be written, retrying...");
 		return true;
 	}
 
-	DEBUG_ONLY(cout << "User [" << pUser->GetUserName() << "] is connecting to [" << pServer->GetName() << ":" << pServer->GetPort() << "] ..." << endl);
+	DEBUG("User [" << pUser->GetUserName() << "] is connecting to [" << pServer->GetName() << ":" << pServer->GetPort() << "] ...");
 	pUser->PutStatus("Attempting to connect to [" + pServer->GetName() + ":" + CString(pServer->GetPort()) + "] ...");
 
 	pIRCSock = new CIRCSock(pUser);
@@ -558,14 +558,14 @@ bool CZNC::WriteConfig() {
 		CString sErr;
 
 		if (!it->second->IsValid(sErr)) {
-			DEBUG_ONLY(cerr << "** Error writing config for user [" << it->first << "] [" << sErr << "]" << endl);
+			DEBUG("** Error writing config for user [" << it->first << "] [" << sErr << "]");
 			continue;
 		}
 
 		File.Write("\n");
 
 		if (!it->second->WriteConfig(File)) {
-			DEBUG_ONLY(cerr << "** Error writing config for user [" << it->first << "]" << endl);
+			DEBUG("** Error writing config for user [" << it->first << "]");
 		}
 	}
 
@@ -1065,7 +1065,7 @@ bool CZNC::DoRehash(CString& sError)
 							if (!pRealUser->Clone(*pUser, sErr)
 									|| !AddUser(pRealUser, sErr)) {
 								sError = "Invalid user [" + pUser->GetUserName() + "] " + sErr;
-								DEBUG_ONLY(cout << "CUser::Clone() failed in rehash" << endl);
+								DEBUG("CUser::Clone() failed in rehash");
 							}
 							pUser->SetBeingDeleted(true);
 							delete pUser;
@@ -1695,18 +1695,16 @@ bool CZNC::DeleteUser(const CString& sUsername) {
 
 bool CZNC::AddUser(CUser* pUser, CString& sErrorRet) {
 	if (FindUser(pUser->GetUserName()) != NULL) {
-		DEBUG_ONLY(cout << "User [" << pUser->GetUserName() << "]"
-				" - already exists" << endl);
+		DEBUG("User [" << pUser->GetUserName() << "] - already exists");
 		return false;
 	}
 	if (!pUser->IsValid(sErrorRet)) {
-		DEBUG_ONLY(cout << "Invalid user [" << pUser->GetUserName() << "]"
-				" - [" << sErrorRet << "]" << endl);
+		DEBUG("Invalid user [" << pUser->GetUserName() << "] - ["
+				<< sErrorRet << "]");
 		return false;
 	}
 	m_msUsers[pUser->GetUserName()] = pUser;
 	return true;
-
 }
 
 CZNC& CZNC::Get() {
@@ -1814,8 +1812,7 @@ protected:
 			// The timer runs until it once didn't find any users to connect
 			bUsersLeft = true;
 
-			DEBUG_ONLY(cout << "Connecting user [" << pUser->GetUserName()
-					<< "]" << endl);
+			DEBUG("Connecting user [" << pUser->GetUserName() << "]");
 
 			if (CZNC::Get().ConnectUser(pUser))
 				// User connecting, wait until next time timer fires
@@ -1823,7 +1820,7 @@ protected:
 		}
 
 		if (bUsersLeft == false) {
-			DEBUG_ONLY(cout << "ConnectUserTimer done" << endl);
+			DEBUG("ConnectUserTimer done");
 			CZNC::Get().DisableConnectUser();
 		}
 	}

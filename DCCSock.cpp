@@ -22,7 +22,7 @@ CDCCSock::~CDCCSock() {
 
 void CDCCSock::ReadData(const char* data, int len) {
 	if (!m_pFile) {
-		DEBUG_ONLY(cout << "File not open! closing get." << endl);
+		DEBUG("File not open! closing get.");
 		m_pUser->PutModule(m_sModuleName, ((m_bSend) ? "DCC -> [" : "DCC <- [") + m_sRemoteNick + "][" + m_sFileName + "] - File not open!");
 		Close();
 	}
@@ -54,22 +54,22 @@ void CDCCSock::ReadData(const char* data, int len) {
 }
 
 void CDCCSock::ConnectionRefused() {
-	DEBUG_ONLY(cout << GetSockName() << " == ConnectionRefused()" << endl);
+	DEBUG(GetSockName() << " == ConnectionRefused()");
 	m_pUser->PutModule(m_sModuleName, ((m_bSend) ? "DCC -> [" : "DCC <- [") + m_sRemoteNick + "][" + m_sFileName + "] - Connection Refused.");
 }
 
 void CDCCSock::Timeout() {
-	DEBUG_ONLY(cout << GetSockName() << " == Timeout()" << endl);
+	DEBUG(GetSockName() << " == Timeout()");
 	m_pUser->PutModule(m_sModuleName, ((m_bSend) ? "DCC -> [" : "DCC <- [") + m_sRemoteNick + "][" + m_sFileName + "] - Timed Out.");
 }
 
 void CDCCSock::SockError(int iErrno) {
-	DEBUG_ONLY(cout << GetSockName() << " == SockError(" << iErrno << ")" << endl);
+	DEBUG(GetSockName() << " == SockError(" << iErrno << ")");
 	m_pUser->PutModule(m_sModuleName, ((m_bSend) ? "DCC -> [" : "DCC <- [") + m_sRemoteNick + "][" + m_sFileName + "] - Socket Error [" + CString(iErrno) + "]");
 }
 
 void CDCCSock::Connected() {
-	DEBUG_ONLY(cout << GetSockName() << " == Connected(" << GetRemoteIP() << ")" << endl);
+	DEBUG(GetSockName() << " == Connected(" << GetRemoteIP() << ")");
 	m_pUser->PutModule(m_sModuleName, ((m_bSend) ? "DCC -> [" : "DCC <- [") + m_sRemoteNick + "][" + m_sFileName + "] - Transfer Started.");
 
 	if (m_bSend) {
@@ -82,7 +82,7 @@ void CDCCSock::Connected() {
 void CDCCSock::Disconnected() {
 	const CString sStart = ((m_bSend) ? "DCC -> [" : "DCC <- [") + m_sRemoteNick + "][" + m_sFileName + "] - ";
 
-	DEBUG_ONLY(cout << GetSockName() << " == Disconnected()" << endl);
+	DEBUG(GetSockName() << " == Disconnected()");
 
 	if (m_uBytesSoFar > m_uFileSize) {
 		m_pUser->PutModule(m_sModuleName, sStart + "TooMuchData!");

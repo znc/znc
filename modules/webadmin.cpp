@@ -609,14 +609,14 @@ bool CWebAdminSock::SettingsPage(CString& sPageRet) {
 			CModule *pMod = CZNC::Get().GetModules().FindModule(sModName);
 			if (!pMod) {
 				if (!CZNC::Get().GetModules().LoadModule(sModName, sArgs, NULL, sModRet)) {
-					DEBUG_ONLY(cerr << "Unable to load module [" << sModName << "] [" << sModRet << "]" << endl);
+					DEBUG("Unable to load module [" << sModName << "] [" << sModRet << "]");
 				}
 			} else if (pMod->GetArgs() != sArgs) {
 				if (!CZNC::Get().GetModules().ReloadModule(sModName, sArgs, NULL, sModRet)) {
-					DEBUG_ONLY(cerr << "Unable to reload module [" << sModName << "] [" << sModRet << "]" << endl);
+					DEBUG("Unable to reload module [" << sModName << "] [" << sModRet << "]");
 				}
 			} else {
-				DEBUG_ONLY(cerr << "Unable to load module [" << sModName << "] because it is already loaded" << endl);
+				DEBUG("Unable to load module [" << sModName << "] because it is already loaded");
 			}
 		}
 	}
@@ -1047,10 +1047,10 @@ CUser* CWebAdminSock::GetNewUser(CString& sPageRet, CUser* pUser) {
 
 				try {
 					if (!pNewUser->GetModules().LoadModule(sModName, sArgs, pNewUser, sModRet, (pUser != NULL))) {
-						DEBUG_ONLY(cerr << "Unable to load module [" << sModName << "] [" << sModRet << "]" << endl);
+						DEBUG("Unable to load module [" << sModName << "] [" << sModRet << "]");
 					}
 				} catch (...) {
-					DEBUG_ONLY(cerr << "Unable to load module [" << sModName << "] [" << sArgs << "]" << endl);
+					DEBUG("Unable to load module [" << sModName << "] [" << sArgs << "]");
 				}
 			}
 		}
@@ -1064,10 +1064,10 @@ CUser* CWebAdminSock::GetNewUser(CString& sPageRet, CUser* pUser) {
 
 			try {
 				if (!pNewUser->GetModules().LoadModule(sModName, sArgs, pNewUser, sModRet, (pUser != NULL))) {
-					DEBUG_ONLY(cerr << "Unable to load module [" << sModName << "] [" << sModRet << "]" << endl);
+					DEBUG("Unable to load module [" << sModName << "] [" << sModRet << "]");
 				}
 			} catch (...) {
-				DEBUG_ONLY(cerr << "Unable to load module [" << sModName << "]" << endl);
+				DEBUG("Unable to load module [" << sModName << "]");
 			}
 		}
 	}

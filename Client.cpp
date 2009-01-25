@@ -65,7 +65,7 @@ void CClient::ReadLine(const CString& sData) {
 
 	sLine.TrimRight("\n\r");
 
-	DEBUG_ONLY(cout << "(" << ((m_pUser) ? m_pUser->GetUserName() : GetRemoteIP()) << ") CLI -> ZNC [" << sLine << "]" << endl);
+	DEBUG("(" << ((m_pUser) ? m_pUser->GetUserName() : GetRemoteIP()) << ") CLI -> ZNC [" << sLine << "]");
 
 #ifdef _MODULES
 	if (IsAttached()) {
@@ -679,16 +679,16 @@ void CClient::LoginTimeout() {
 }
 
 void CClient::Connected() {
-	DEBUG_ONLY(cout << GetSockName() << " == Connected();" << endl);
+	DEBUG(GetSockName() << " == Connected();");
 	SetTimeout(240, TMO_READ);	// Now that we are connected, let nature take its course
 }
 
 void CClient::ConnectionRefused() {
-	DEBUG_ONLY(cout << GetSockName() << " == ConnectionRefused()" << endl);
+	DEBUG(GetSockName() << " == ConnectionRefused()");
 }
 
 void CClient::Disconnected() {
-	DEBUG_ONLY(cout << GetSockName() << " == Disconnected()" << endl);
+	DEBUG(GetSockName() << " == Disconnected()");
 	if (m_pUser) {
 		m_pUser->UserDisconnected(this);
 	}
@@ -699,7 +699,7 @@ void CClient::Disconnected() {
 }
 
 void CClient::ReachedMaxBuffer() {
-	DEBUG_ONLY(cout << GetSockName() << " == ReachedMaxBuffer()" << endl);
+	DEBUG(GetSockName() << " == ReachedMaxBuffer()");
 	if (IsAttached()) {
 		PutClient("ERROR :Closing link [Too long raw line]");
 	}
@@ -727,7 +727,7 @@ void CClient::PutIRC(const CString& sLine) {
 }
 
 void CClient::PutClient(const CString& sLine) {
-	DEBUG_ONLY(cout << "(" << ((m_pUser) ? m_pUser->GetUserName() : GetRemoteIP()) << ") ZNC -> CLI [" << sLine << "]" << endl);
+	DEBUG("(" << ((m_pUser) ? m_pUser->GetUserName() : GetRemoteIP()) << ") ZNC -> CLI [" << sLine << "]");
 	Write(sLine + "\r\n");
 }
 
@@ -752,7 +752,7 @@ void CClient::PutModNotice(const CString& sModule, const CString& sLine) {
 		return;
 	}
 
-	DEBUG_ONLY(cout << "(" << m_pUser->GetUserName() << ") ZNC -> CLI [:" + m_pUser->GetStatusPrefix() + ((sModule.empty()) ? "status" : sModule) + "!znc@znc.in NOTICE " << GetNick() << " :" << sLine << "]" << endl);
+	DEBUG("(" << m_pUser->GetUserName() << ") ZNC -> CLI [:" + m_pUser->GetStatusPrefix() + ((sModule.empty()) ? "status" : sModule) + "!znc@znc.in NOTICE " << GetNick() << " :" << sLine << "]");
 	Write(":" + m_pUser->GetStatusPrefix() + ((sModule.empty()) ? "status" : sModule) + "!znc@znc.in NOTICE " + GetNick() + " :" + sLine + "\r\n");
 }
 
@@ -761,7 +761,7 @@ void CClient::PutModule(const CString& sModule, const CString& sLine) {
 		return;
 	}
 
-	DEBUG_ONLY(cout << "(" << m_pUser->GetUserName() << ") ZNC -> CLI [:" + m_pUser->GetStatusPrefix() + ((sModule.empty()) ? "status" : sModule) + "!znc@znc.in PRIVMSG " << GetNick() << " :" << sLine << "]" << endl);
+	DEBUG("(" << m_pUser->GetUserName() << ") ZNC -> CLI [:" + m_pUser->GetStatusPrefix() + ((sModule.empty()) ? "status" : sModule) + "!znc@znc.in PRIVMSG " << GetNick() << " :" << sLine << "]");
 	Write(":" + m_pUser->GetStatusPrefix() + ((sModule.empty()) ? "status" : sModule) + "!znc@znc.in PRIVMSG " + GetNick() + " :" + sLine + "\r\n");
 }
 

@@ -62,17 +62,17 @@ public:
 		CString const key(CString(user + ":" + pass).MD5());
 		if (m_Cache.HasItem(key)) {
 			Auth->AcceptLogin(*pUser);
-			DEBUG_ONLY(cerr << "+++ Found in cache" << endl);
+			DEBUG("+++ Found in cache");
 		}
 		else if (sasl_server_new("znc", NULL, NULL, NULL, NULL, cbs, 0, &sasl_conn) == SASL_OK &&
 		         sasl_checkpass(sasl_conn, user.c_str(), user.size(), pass.c_str(), pass.size()) == SASL_OK) {
 			Auth->AcceptLogin(*pUser);
 			m_Cache.AddItem(key);
-			DEBUG_ONLY(cerr << "+++ Successful SASL password check" << endl);
+			DEBUG("+++ Successful SASL password check");
 		}
 		else {
 			Auth->RefuseLogin("SASL Authentication failed");
-			DEBUG_ONLY(cerr << "--- FAILED SASL password check" << endl);
+			DEBUG("--- FAILED SASL password check");
 		}
 
 		sasl_dispose(&sasl_conn);

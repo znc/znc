@@ -226,7 +226,7 @@ public:
 	virtual ~CRealListener() {}
 
 	virtual bool ConnectionFrom(const CString& sHost, unsigned short uPort) {
-		DEBUG_ONLY(cout << GetSockName() << " == ConnectionFrom(" << sHost << ", " << uPort << ")" << endl);
+		DEBUG(GetSockName() << " == ConnectionFrom(" << sHost << ", " << uPort << ")");
 		return CZNC::Get().IsHostAllowed(sHost);
 	}
 
@@ -239,7 +239,7 @@ public:
 	}
 
 	virtual void SockError(int iErrno) {
-		DEBUG_ONLY(cout << GetSockName() << " == SockError(" << strerror(iErrno) << ")" << endl);
+		DEBUG(GetSockName() << " == SockError(" << strerror(iErrno) << ")");
 		if (iErrno == EMFILE) {
 			// We have too many open fds, let's close this listening port to be able to continue
 			// to work, next rehash will (try to) reopen it.

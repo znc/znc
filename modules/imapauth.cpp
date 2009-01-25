@@ -86,7 +86,7 @@ public:
 		}
 
 		if (pUser && m_Cache.HasItem(CString(Auth->GetUsername() + ":" + Auth->GetPassword()).MD5())) {
-			DEBUG_ONLY(cerr << "+++ Found in cache" << endl);
+			DEBUG("+++ Found in cache");
 			Auth->AcceptLogin(*pUser);
 			return HALT;
 		}
@@ -140,10 +140,10 @@ void CIMAPSock::ReadLine(const CString& sLine) {
 		if (pUser && sLine.Equals("AUTH OK", false, 7)) {
 			m_spAuth->AcceptLogin(*pUser);
 			m_pIMAPMod->CacheLogin(CString(m_spAuth->GetUsername() + ":" + m_spAuth->GetPassword()).MD5());		// Use MD5 so passes don't sit in memory in plain text
-			DEBUG_ONLY(cerr << "+++ Successful IMAP lookup" << endl);
+			DEBUG("+++ Successful IMAP lookup");
 		} else {
 			m_spAuth->RefuseLogin("Invalid Password");
-			DEBUG_ONLY(cerr << "--- FAILED IMAP lookup" << endl);
+			DEBUG("--- FAILED IMAP lookup");
 		}
 
 		m_bSentReply = true;

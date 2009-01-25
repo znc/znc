@@ -33,13 +33,13 @@ void CDCCBounce::ReadLine(const CString& sData) {
 		sLine.RightChomp();
 	}
 
-	DEBUG_ONLY(cout << GetSockName() << " <- [" << sLine << "]" << endl);
+	DEBUG(GetSockName() << " <- [" << sLine << "]");
 
 	PutPeer(sLine);
 }
 
 void CDCCBounce::ReachedMaxBuffer() {
-	DEBUG_ONLY(cout << GetSockName() << " == ReachedMaxBuffer()" << endl);
+	DEBUG(GetSockName() << " == ReachedMaxBuffer()");
 
 	CString sType = (m_bIsChat) ? "Chat" : "Xfer";
 
@@ -56,8 +56,8 @@ void CDCCBounce::ReadData(const char* data, int len) {
 		BufLen = m_pPeer->GetInternalWriteBuffer().length();
 
 		if (BufLen >= m_uiMaxDCCBuffer) {
-			DEBUG_ONLY(cout << GetSockName() << " The send buffer is over the "
-					"limit (" << BufLen <<"), throttling" << endl);
+			DEBUG(GetSockName() << " The send buffer is over the "
+					"limit (" << BufLen <<"), throttling");
 			PauseRead();
 		}
 	}
@@ -69,7 +69,7 @@ void CDCCBounce::ReadPaused() {
 }
 
 void CDCCBounce::Timeout() {
-	DEBUG_ONLY(cout << GetSockName() << " == Timeout()" << endl);
+	DEBUG(GetSockName() << " == Timeout()");
 	CString sType = (m_bIsChat) ? "Chat" : "Xfer";
 
 	if (IsRemote()) {
@@ -87,7 +87,7 @@ void CDCCBounce::Timeout() {
 }
 
 void CDCCBounce::ConnectionRefused() {
-	DEBUG_ONLY(cout << GetSockName() << " == ConnectionRefused()" << endl);
+	DEBUG(GetSockName() << " == ConnectionRefused()");
 
 	CString sType = (m_bIsChat) ? "Chat" : "Xfer";
 	CString sHost = Csock::GetHostName();
@@ -101,7 +101,7 @@ void CDCCBounce::ConnectionRefused() {
 }
 
 void CDCCBounce::SockError(int iErrno) {
-	DEBUG_ONLY(cout << GetSockName() << " == SockError(" << iErrno << ")" << endl);
+	DEBUG(GetSockName() << " == SockError(" << iErrno << ")");
 	CString sType = (m_bIsChat) ? "Chat" : "Xfer";
 
 	if (IsRemote()) {
@@ -117,17 +117,17 @@ void CDCCBounce::SockError(int iErrno) {
 }
 
 void CDCCBounce::Connected() {
-	DEBUG_ONLY(cout << GetSockName() << " == Connected()" << endl);
+	DEBUG(GetSockName() << " == Connected()");
 	SetTimeout(0);
 }
 
 void CDCCBounce::Disconnected() {
-	DEBUG_ONLY(cout << GetSockName() << " == Disconnected()" << endl);
+	DEBUG(GetSockName() << " == Disconnected()");
 }
 
 void CDCCBounce::Shutdown() {
 	m_pPeer = NULL;
-	DEBUG_ONLY(cout << GetSockName() << " == Close(); because my peer told me to" << endl);
+	DEBUG(GetSockName() << " == Close(); because my peer told me to");
 	Close();
 }
 
@@ -155,7 +155,7 @@ Csock* CDCCBounce::GetSockObj(const CString& sHost, unsigned short uPort) {
 }
 
 void CDCCBounce::PutServ(const CString& sLine) {
-	DEBUG_ONLY(cout << GetSockName() << " -> [" << sLine << "]" << endl);
+	DEBUG(GetSockName() << " -> [" << sLine << "]");
 	Write(sLine + "\r\n");
 }
 

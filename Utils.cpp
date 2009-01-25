@@ -491,7 +491,7 @@ unsigned int CTable::GetColumnIndex(const CString& sName) const {
 			return i;
 	}
 
-	DEBUG_ONLY(cout << "CTable::GetColumnIndex(" + sName + ") failed" << endl);
+	DEBUG("CTable::GetColumnIndex(" + sName + ") failed");
 
 	return 0;
 }

@@ -282,7 +282,7 @@ public:
 				sTmp[a] = ' ';
 		}
 		PutModule(sTmp);
-		DEBUG_ONLY(cerr << sTmp << endl);
+		DEBUG(sTmp);
 	}
 
 	CSockManager * GetSockManager() { return(m_pManager); }
@@ -1051,7 +1051,7 @@ void CModPerl::LoadPerlMod(const CString & sModule)
 {
 	if (!m_pUser)
 	{
-		DEBUG_ONLY(cerr << "LoadPerlMod: No User is set!!!" << endl);
+		DEBUG("LoadPerlMod: No User is set!!!");
 		return;
 	}
 
@@ -1082,7 +1082,7 @@ void CModPerl::UnloadPerlMod(const CString & sModule)
 	DestroyAllSocks(sModule);
 	if (!m_pUser)
 	{
-		DEBUG_ONLY(cerr << "UnloadPerlMod: No User is set!!!" << endl);
+		DEBUG("UnloadPerlMod: No User is set!!!");
 		return;
 	}
 	Eval("ZNC::COREUnloadMod('" + m_pUser->GetUserName() + "', '" + sModule + "');");

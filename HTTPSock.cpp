@@ -99,7 +99,7 @@ void CHTTPSock::ReadLine(const CString& sData) {
 void CHTTPSock::GetPage() {
 	CString sPage;
 
-	DEBUG_ONLY(cout << "Page Request [" << m_sURI << "] ");
+	DEBUG("Page Request [" << m_sURI << "] ");
 
 	if (!OnPageRequest(m_sURI, sPage)) {
 		PrintNotFound();
@@ -124,8 +124,8 @@ bool CHTTPSock::PrintFile(const CString& sFileName, CString sContentType) {
 
 		if (sFilePath.Left(m_sDocRoot.size()) != m_sDocRoot) {
 			PrintErrorPage(403, "Forbidden", "You don't have permission to access that file on this server.");
-			DEBUG_ONLY(cout << "THIS FILE:     [" << sFilePath << "] does not live in ..." << endl);
-			DEBUG_ONLY(cout << "DOCUMENT ROOT: [" << m_sDocRoot << "]" << endl);
+			DEBUG("THIS FILE:     [" << sFilePath << "] does not live in ...");
+			DEBUG("DOCUMENT ROOT: [" << m_sDocRoot << "]");
 			return false;
 		}
 	}
@@ -188,7 +188,7 @@ bool CHTTPSock::PrintFile(const CString& sFileName, CString sContentType) {
 		}
 	}
 
-	DEBUG_ONLY(cout << "ETag: [" << sETag << "] / If-None-Match [" << m_sIfNoneMatch << "]" << endl);
+	DEBUG("ETag: [" << sETag << "] / If-None-Match [" << m_sIfNoneMatch << "]");
 
 	Close(Csock::CLT_AFTERWRITE);
 
@@ -343,7 +343,7 @@ bool CHTTPSock::SentHeader() const {
 
 bool CHTTPSock::PrintHeader(unsigned long uContentLength, const CString& sContentType, unsigned int uStatusId, const CString& sStatusMsg) {
 	if (SentHeader()) {
-		DEBUG_ONLY(cout << "- Header already sent!" << endl);
+		DEBUG("- Header already sent!");
 		return false;
 	}
 
@@ -355,7 +355,7 @@ bool CHTTPSock::PrintHeader(unsigned long uContentLength, const CString& sConten
 		m_sContentType = "text/html";
 	}
 
-	DEBUG_ONLY(cout << "- " << uStatusId << " (" << sStatusMsg << ") [" << m_sContentType << "]" << endl);
+	DEBUG("- " << uStatusId << " (" << sStatusMsg << ") [" << m_sContentType << "]");
 
 	Write("HTTP/" + CString(m_bHTTP10Client ? "1.0 " : "1.1 ") + CString(uStatusId) + " " + sStatusMsg + "\r\n");
 	//Write("Date: Tue, 28 Jun 2005 20:45:36 GMT\r\n");
@@ -390,7 +390,7 @@ bool CHTTPSock::Redirect(const CString& sURL) {
 		return false;
 	}
 
-	DEBUG_ONLY(cout << "- Redirect to [" << sURL << "]" << endl);
+	DEBUG("- Redirect to [" << sURL << "]");
 	CString sPage = GetErrorPage(302, "Found", "The document has moved <a href=\"" + sURL.Escape_n(CString::EHTML) + "\">here</a>.");
 	AddHeader("Location", sURL);
 	PrintHeader(sPage.length(), "text/html", 302, "Found");
@@ -414,7 +414,7 @@ void CHTTPSock::Disconnected() {
 }
 
 void CHTTPSock::ReachedMaxBuffer() {
-	DEBUG_ONLY(cout << GetSockName() << " == ReachedMaxBuffer()" << endl);
+	DEBUG(GetSockName() << " == ReachedMaxBuffer()");
 	Close();
 }
 

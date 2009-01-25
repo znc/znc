@@ -73,7 +73,7 @@ void CIRCSock::ReadLine(const CString& sData) {
 
 	sLine.TrimRight("\n\r");
 
-	DEBUG_ONLY(cout << "(" << m_pUser->GetUserName() << ") IRC -> ZNC [" << sLine << "]" << endl);
+	DEBUG("(" << m_pUser->GetUserName() << ") IRC -> ZNC [" << sLine << "]");
 
 	MODULECALL(OnRaw(sLine), m_pUser, NULL, return);
 
@@ -786,7 +786,7 @@ bool CIRCSock::OnChanMsg(CNick& Nick, const CString& sChan, CString& sMessage) {
 }
 
 void CIRCSock::PutIRC(const CString& sLine) {
-	DEBUG_ONLY(cout << "(" << m_pUser->GetUserName() << ") ZNC -> IRC [" << sLine << "]" << endl);
+	DEBUG("(" << m_pUser->GetUserName() << ") ZNC -> IRC [" << sLine << "]");
 	Write(sLine + "\r\n");
 }
 
@@ -796,7 +796,7 @@ void CIRCSock::SetNick(const CString& sNick) {
 }
 
 void CIRCSock::Connected() {
-	DEBUG_ONLY(cout << GetSockName() << " == Connected()" << endl);
+	DEBUG(GetSockName() << " == Connected()");
 	m_pUser->IRCConnected(this);
 
 	CString sPass = m_sPass;
@@ -817,7 +817,7 @@ void CIRCSock::Connected() {
 void CIRCSock::Disconnected() {
 	MODULECALL(OnIRCDisconnected(), m_pUser, NULL, );
 
-	DEBUG_ONLY(cout << GetSockName() << " == Disconnected()" << endl);
+	DEBUG(GetSockName() << " == Disconnected()");
 	if (!m_pUser->IsBeingDeleted() && m_pUser->GetIRCConnectEnabled() &&
 			m_pUser->GetServers().size() != 0) {
 		m_pUser->PutStatus("Disconnected from IRC. Reconnecting...");
@@ -842,8 +842,8 @@ void CIRCSock::SockError(int iErrno) {
 		sError = strerror(iErrno);
 	}
 
-	DEBUG_ONLY(cout << GetSockName() << " == SockError(" << iErrno << " "
-			<< sError << ")" << endl);
+	DEBUG(GetSockName() << " == SockError(" << iErrno << " "
+			<< sError << ")");
 	if (!m_pUser->IsBeingDeleted()) {
 		if (GetConState() != CST_OK)
 			m_pUser->PutStatus("Cannot connect to IRC (" +
@@ -860,7 +860,7 @@ void CIRCSock::SockError(int iErrno) {
 }
 
 void CIRCSock::Timeout() {
-	DEBUG_ONLY(cout << GetSockName() << " == Timeout()" << endl);
+	DEBUG(GetSockName() << " == Timeout()");
 	if (!m_pUser->IsBeingDeleted()) {
 		m_pUser->PutStatus("IRC connection timed out.  Reconnecting...");
 	}
@@ -872,7 +872,7 @@ void CIRCSock::Timeout() {
 }
 
 void CIRCSock::ConnectionRefused() {
-	DEBUG_ONLY(cout << GetSockName() << " == ConnectionRefused()" << endl);
+	DEBUG(GetSockName() << " == ConnectionRefused()");
 	if (!m_pUser->IsBeingDeleted()) {
 		m_pUser->PutStatus("Connection Refused.  Reconnecting...");
 	}
@@ -881,7 +881,7 @@ void CIRCSock::ConnectionRefused() {
 }
 
 void CIRCSock::ReachedMaxBuffer() {
-	DEBUG_ONLY(cout << GetSockName() << " == ReachedMaxBuffer()" << endl);
+	DEBUG(GetSockName() << " == ReachedMaxBuffer()");
 	m_pUser->PutStatus("Received a too long line from the IRC server!");
 	Quit();
 }

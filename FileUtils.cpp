@@ -206,7 +206,7 @@ bool CFile::Copy(const CString& sOldFileName, const CString& sNewFileName, bool 
 
 	while ((len = OldFile.Read(szBuf, 8192))) {
 		if (len < 0) {
-			DEBUG_ONLY(cout << "CFile::Copy() failed: " << strerror(errno) << endl);
+			DEBUG("CFile::Copy() failed: " << strerror(errno));
 			OldFile.Close();
 
 			// That file is only a partial copy, get rid of it
