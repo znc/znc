@@ -16,26 +16,40 @@ CXX      := @CXX@
 CXXFLAGS := @CPPFLAGS@ @CXXFLAGS@
 LDFLAGS  := @LDFLAGS@
 LIBS     := @LIBS@
+LIBZNC   := @LIBZNC@
+LIBZNCDIR:= @LIBZNCDIR@
 
-SRCS := ZNCString.cpp Csocket.cpp main.cpp znc.cpp User.cpp IRCSock.cpp Client.cpp DCCBounce.cpp \
+LIB_SRCS  := ZNCString.cpp Csocket.cpp znc.cpp User.cpp IRCSock.cpp Client.cpp DCCBounce.cpp \
 	DCCSock.cpp Chan.cpp Nick.cpp Server.cpp Modules.cpp MD5.cpp Buffer.cpp Utils.cpp \
 	FileUtils.cpp HTTPSock.cpp Template.cpp ClientCommand.cpp
-OBJS := $(patsubst %cpp,%o,$(SRCS))
-CLEAN := znc *.o core core.*
+BIN_SRCS  := main.cpp
+LIB_OBJS  := $(patsubst %cpp,%o,$(LIB_SRCS))
+BIN_OBJS  := $(patsubst %cpp,%o,$(BIN_SRCS))
+CLEAN     := znc *.o core core.*
 DISTCLEAN := Makefile config.log config.status znc-config znc-buildmod .depend \
 	modules/.depend modules/Makefile man/Makefile
 
 .PHONY: all man modules clean distclean install
 
-all: znc man @MODTARGET@
+all: znc man @MODTARGET@ $(LIBZNC)
+
+ifeq "$(LIBZNC)" ""
+OBJS := $(BIN_OBJS) $(LIB_OBJS)
 
 znc: $(OBJS)
 	$(CXX) $(LDFLAGS) -o $@ $(OBJS) $(LIBS)
+else
+znc: $(BIN_OBJS) $(LIBZNC)
+	$(CXX) $(LDFLAGS) -o $@ $(BIN_OBJS) -L. -lznc -Wl,-rpath,$(LIBZNCDIR) $(LIBS)
+
+$(LIBZNC): $(LIB_OBJS)
+	$(CXX) $(LDFLAGS) -shared -o $@ $(LIB_OBJS) $(LIBS)
+endif
 
 man:
 	@$(MAKE) -C man
 
-modules:
+modules: $(LIBZNC)
 	@if test -n "@MODTARGET@"; then \
 		$(MAKE) -C modules; \
 	else \
@@ -56,13 +70,17 @@ distclean: clean
 	@mkdir -p .depend
 	$(CXX) $(CXXFLAGS) -c -o $@ $< -MMD -MF .depend/$@.dep
 
-install: znc
+install: znc $(LIBZNC)
 	mkdir -p $(DESTDIR)$(bindir)
 	mkdir -p $(DESTDIR)$(includedir)/znc
 	install -m 0755 znc $(DESTDIR)$(bindir)
 	install -m 0755 znc-config $(DESTDIR)$(bindir)
 	install -m 0755 znc-buildmod $(DESTDIR)$(bindir)
 	install -m 0644 $(srcdir)/*.h $(DESTDIR)$(includedir)/znc
+	@if test -n "$(LIBZNC)"; then \
+		mkdir -p $(DESTDIR)$(LIBZNCDIR) ; \
+		install -m 0755 $(LIBZNC) $(DESTDIR)$(LIBZNCDIR) ; \
+	fi
 	@if test -n "@MODTARGET@"; then \
 		$(MAKE) -C modules install DESTDIR=$(DESTDIR); \
 	fi

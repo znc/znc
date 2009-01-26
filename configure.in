@@ -177,10 +177,14 @@ if test "$MODULES" = "yes"; then
 		appendMod -mimpure-text
 	fi
 
-	# cygwin doesn't know -fPIC, everything else needs it (for modules)
-	# warning: -fPIC ignored for target (all code is position independent)
 	if test -z "$ISCYGWIN" ; then
+		# cygwin doesn't need -fPIC, everything else does (for modules)
+		# warning: -fPIC ignored for target (all code is position independent)
 		appendMod -fPIC
+	else
+		# But cygwin does want most of znc in a shared lib
+		LIBZNC="libznc.dll"
+		LIBZNCDIR="$libdir/znc"
 	fi
 
 	if test -z "$ISDARWIN"; then
@@ -222,6 +226,8 @@ AC_SUBST([CPPFLAGS])
 AC_SUBST([MODFLAGS])
 AC_SUBST([LDFLAGS])
 AC_SUBST([LIBS])
+AC_SUBST([LIBZNC])
+AC_SUBST([LIBZNCDIR])
 AC_SUBST([MODLINK])
 AC_SUBST([MODTARGET])
 AC_SUBST([NOSSL])

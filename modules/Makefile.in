@@ -22,6 +22,12 @@ LDFLAGS  := @LDFLAGS@
 PERL     := @PERL@
 MODDIR   := @MODDIR@
 DATADIR  := @DATADIR@
+LIBZNC   := @LIBZNC@
+LIBZNCDIR:= @LIBZNCDIR@
+
+ifneq "$(LIBZNC)" ""
+LDFLAGS += -L.. -lznc -Wl,-rpath,$(LIBZNCDIR)
+endif
 
 FILES    := $(basename $(wildcard $(srcdir)/*.cpp))
 # Strip away the srcdir, we want them to be created in the current dir
