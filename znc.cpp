@@ -248,7 +248,7 @@ bool CZNC::WriteISpoof(CUser* pUser) {
 
 	if (!m_sISpoofFile.empty()) {
 		m_pISpoofLockFile = new CFile;
-		if (!m_pISpoofLockFile->TryExLock(m_sISpoofFile, true)) {
+		if (!m_pISpoofLockFile->TryExLock(m_sISpoofFile, O_RDWR | O_CREAT)) {
 			delete m_pISpoofLockFile;
 			m_pISpoofLockFile = NULL;
 			return false;
