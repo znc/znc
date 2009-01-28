@@ -16,6 +16,10 @@
 #  define lstat(a, b)	stat(a, b)
 #endif
 
+#ifndef O_BINARY
+#  define O_BINARY	0
+#endif
+
 CFile::CFile() {
 	m_iFD = -1;
 	m_bClose = false;
@@ -264,7 +268,13 @@ bool CFile::Open(int iFlags, mode_t iMode) {
 	}
 
 	// We never want to get a controlling TTY through this -> O_NOCTTY
-	m_iFD = open(m_sLongName.c_str(), iFlags | O_NOCTTY, iMode);
+	iMode |= O_NOCTTY;
+
+	// Some weird OS from MS needs O_BINARY or else it generates fake EOFs
+	// when reading ^Z from a file.
+	iMode |= O_BINARY;
+
+	m_iFD = open(m_sLongName.c_str(), iFlags, iMode);
 	if (m_iFD < 0)
 		return false;
 
