@@ -59,7 +59,7 @@ void CFile::SetFileName(const CString& sLongName) {
 
 bool CFile::IsDir(const CString& sLongName, bool bUseLstat) {
 	// Some OS don't like trailing slashes for directories
-	return CFile::FType(sLongName.Trim_Right_n("/"),
+	return CFile::FType(sLongName.TrimRight_n("/"),
 			FT_DIRECTORY, bUseLstat);
 }
 
