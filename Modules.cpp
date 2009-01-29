@@ -784,7 +784,7 @@ bool CModules::LoadModule(const CString& sModule, const CString& sArgs, CUser* p
 
 		if (!Load) {
 			dlclose(p);
-			sRetMsg = "Could not find Load() in module [" + sModule + "]";
+			sRetMsg = "Could not find ZNCModLoad() in module [" + sModule + "]";
 			return false;
 		}
 
@@ -796,7 +796,7 @@ bool CModules::LoadModule(const CString& sModule, const CString& sArgs, CUser* p
 
 		if (!Load) {
 			dlclose(p);
-			sRetMsg = "Could not find Load() in module [" + sModule + "]";
+			sRetMsg = "Could not find ZNCModLoad() in module [" + sModule + "]";
 			return false;
 		}
 
@@ -887,7 +887,7 @@ bool CModules::UnloadModule(const CString& sModule, CString& sRetMsg) {
 
 			return true;
 		} else {
-			sRetMsg = "Unable to unload module [" + sMod + "] could not find Unload()";
+			sRetMsg = "Unable to unload module [" + sMod + "] could not find ZNCModUnload()";
 			return false;
 		}
 	}
