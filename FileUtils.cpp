@@ -57,8 +57,13 @@ void CFile::SetFileName(const CString& sLongName) {
 	}
 }
 
+bool CFile::IsDir(const CString& sLongName, bool bUseLstat) {
+	// Some OS don't like trailing slashes for directories
+	return CFile::FType(sLongName.Trim_Right_n("/"),
+			FT_DIRECTORY, bUseLstat);
+}
+
 bool CFile::IsReg(const CString& sLongName, bool bUseLstat) { return CFile::FType(sLongName, FT_REGULAR, bUseLstat); }
-bool CFile::IsDir(const CString& sLongName, bool bUseLstat) { return CFile::FType(sLongName, FT_DIRECTORY, bUseLstat); }
 bool CFile::IsChr(const CString& sLongName, bool bUseLstat)  { return CFile::FType(sLongName, FT_CHARACTER, bUseLstat); }
 bool CFile::IsBlk(const CString& sLongName, bool bUseLstat)  { return CFile::FType(sLongName, FT_BLOCK, bUseLstat); }
 bool CFile::IsFifo(const CString& sLongName, bool bUseLstat)  { return CFile::FType(sLongName, FT_FIFO, bUseLstat); }
