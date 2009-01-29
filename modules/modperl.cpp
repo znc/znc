@@ -926,6 +926,7 @@ CModPerl::EModRet CModPerl::CallBack(const PString & sHookName, const VPString &
 		return(CONTINUE);
 
 	dSP;
+	ENTER;
 	SAVETMPS;
 
 	PUSHMARK(SP);
@@ -957,7 +958,7 @@ CModPerl::EModRet CModPerl::CallBack(const PString & sHookName, const VPString &
 
 	PUTBACK;
 
-	int iCount = call_pv(sFuncToCall.c_str(), G_EVAL|G_SCALAR);
+	int iCount = call_pv(sFuncToCall.c_str(), G_EVAL|G_SCALAR|G_KEEPERR);
 
 	SPAGAIN;
 	int iRet = CONTINUE;
@@ -969,6 +970,7 @@ CModPerl::EModRet CModPerl::CallBack(const PString & sHookName, const VPString &
 
 		if (eCBType == CB_TIMER)
 			iRet = HALT;
+		POPs;
 	} else
 	{
 		if (iCount == 1)
@@ -977,6 +979,7 @@ CModPerl::EModRet CModPerl::CallBack(const PString & sHookName, const VPString &
 
 	PUTBACK;
 	FREETMPS;
+	LEAVE;
 
 	return((CModPerl::EModRet)iRet);
 }
@@ -1039,10 +1042,10 @@ bool CModPerl::OnLoad(const CString & sArgs, CString & sMessage)
 
 	sv_2mortal((SV*)pZNCSpace);
 
-	newCONSTSUB(pZNCSpace, "CONTINUE", PString(CONTINUE).GetSV());
-	newCONSTSUB(pZNCSpace, "HALT", PString(HALT).GetSV());
-	newCONSTSUB(pZNCSpace, "HALTMODS", PString(HALTMODS).GetSV());
-	newCONSTSUB(pZNCSpace, "HALTCORE", PString(HALTCORE).GetSV());
+	newCONSTSUB(pZNCSpace, "CONTINUE", PString(CONTINUE).GetSV(false));
+	newCONSTSUB(pZNCSpace, "HALT", PString(HALT).GetSV(false));
+	newCONSTSUB(pZNCSpace, "HALTMODS", PString(HALTMODS).GetSV(false));
+	newCONSTSUB(pZNCSpace, "HALTCORE", PString(HALTCORE).GetSV(false));
 
 	return(true);
 }
