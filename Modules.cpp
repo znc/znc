@@ -734,11 +734,11 @@ bool CModules::LoadModule(const CString& sModule, const CString& sArgs, CUser* p
 	}
 
 	typedef double (*dFP)();
-	dFP Version = (dFP) dlsym(p, "GetVersion");
+	dFP Version = (dFP) dlsym(p, "ZNCModVersion");
 
 	if (!Version) {
 		dlclose(p);
-		sRetMsg = "Could not find Version() in module [" + sModule + "]";
+		sRetMsg = "Could not find ZNCModVersion() in module [" + sModule + "]";
 		return false;
 	}
 
@@ -749,20 +749,20 @@ bool CModules::LoadModule(const CString& sModule, const CString& sArgs, CUser* p
 	}
 
 	typedef bool (*bFP)();
-	bFP IsGlobal = (bFP) dlsym(p, "IsGlobal");
+	bFP IsGlobal = (bFP) dlsym(p, "ZNCModGlobal");
 
 	if (!IsGlobal) {
 		dlclose(p);
-		sRetMsg = "Could not find IsGlobal() in module [" + sModule + "]";
+		sRetMsg = "Could not find ZNCModGlobal() in module [" + sModule + "]";
 		return false;
 	}
 
 	typedef CString (*sFP)();
-	sFP GetDesc = (sFP) dlsym(p, "GetDescription");
+	sFP GetDesc = (sFP) dlsym(p, "ZNCModDescription");
 
 	if (!GetDesc) {
 		dlclose(p);
-		sRetMsg = "Could not find GetDescription() in module [" + sModule + "]";
+		sRetMsg = "Could not find ZNCModDescription() in module [" + sModule + "]";
 		return false;
 	}
 
@@ -780,7 +780,7 @@ bool CModules::LoadModule(const CString& sModule, const CString& sArgs, CUser* p
 	if (pUser) {
 		typedef CModule* (*fp)(ModHandle, CUser* pUser,
 				const CString& sModName, const CString& sDataPath);
-		fp Load = (fp) dlsym(p, "Load");
+		fp Load = (fp) dlsym(p, "ZNCModLoad");
 
 		if (!Load) {
 			dlclose(p);
@@ -792,7 +792,7 @@ bool CModules::LoadModule(const CString& sModule, const CString& sArgs, CUser* p
 	} else {
 		typedef CModule* (*fp)(ModHandle, const CString& sModName,
 				const CString& sDataPath);
-		fp Load = (fp) dlsym(p, "Load");
+		fp Load = (fp) dlsym(p, "ZNCModLoad");
 
 		if (!Load) {
 			dlclose(p);
@@ -870,7 +870,7 @@ bool CModules::UnloadModule(const CString& sModule, CString& sRetMsg) {
 
 	if (p) {
 		typedef void (*fp)(CModule*);
-		fp Unload = (fp)dlsym(p, "Unload");
+		fp Unload = (fp)dlsym(p, "ZNCModUnload");
 
 		if (Unload) {
 			Unload(pModule);
@@ -936,7 +936,7 @@ bool CModules::GetModInfo(CModInfo& ModInfo, const CString& sModule) {
 	}
 
 	typedef double (*dFP)();
-	dFP Version = (dFP) dlsym(p, "GetVersion");
+	dFP Version = (dFP) dlsym(p, "ZNCModVersion");
 
 	if (!Version) {
 		dlclose(p);
@@ -944,7 +944,7 @@ bool CModules::GetModInfo(CModInfo& ModInfo, const CString& sModule) {
 	}
 
 	typedef bool (*bFP)();
-	bFP IsGlobal = (bFP) dlsym(p, "IsGlobal");
+	bFP IsGlobal = (bFP) dlsym(p, "ZNCModGlobal");
 
 	if (!IsGlobal) {
 		dlclose(p);
@@ -952,7 +952,7 @@ bool CModules::GetModInfo(CModInfo& ModInfo, const CString& sModule) {
 	}
 
 	typedef CString (*sFP)();
-	sFP GetDescription = (sFP) dlsym(p, "GetDescription");
+	sFP GetDescription = (sFP) dlsym(p, "ZNCModDescription");
 
 	if (!GetDescription) {
 		dlclose(p);

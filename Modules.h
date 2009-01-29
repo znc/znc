@@ -44,16 +44,13 @@ typedef void* ModHandle;
 			: CModule(pDLL, pUser, sModName, sModPath)
 #define MODULEDEFS(CLASS, DESCRIPTION) \
 	extern "C" { \
-		CString GetDescription() { return DESCRIPTION; } \
-		bool IsGlobal() { return false; } \
-		CModule* Load(ModHandle p, CUser* pUser, const CString& sModName, \
-				const CString& sModPath); \
-		void Unload(CModule* pMod); double GetVersion(); } \
-		double GetVersion() { return VERSION; } \
-		CModule* Load(ModHandle p, CUser* pUser, const CString& sModName, \
+		CString ZNCModDescription() { return DESCRIPTION; } \
+		bool ZNCModGlobal() { return false; } \
+		double ZNCModVersion() { return VERSION; } \
+		CModule* ZNCModLoad(ModHandle p, CUser* pUser, const CString& sModName, \
 				const CString& sModPath) \
 		{ return new CLASS(p, pUser, sModName, sModPath); } \
-		void Unload(CModule* pMod) { if (pMod) { delete pMod; } \
+		void ZNCModUnload(CModule* pMod) { if (pMod) { delete pMod; } } \
 	}
 // !User Module Macros
 
@@ -63,16 +60,13 @@ typedef void* ModHandle;
 			: CGlobalModule(pDLL, sModName, sModPath)
 #define GLOBALMODULEDEFS(CLASS, DESCRIPTION) \
 	extern "C" { \
-		CString GetDescription() { return DESCRIPTION; } \
-		bool IsGlobal() { return true; } \
-		CGlobalModule* Load(ModHandle p, const CString& sModName, \
-				const CString& sModPath); \
-		void Unload(CGlobalModule* pMod); double GetVersion(); } \
-		double GetVersion() { return VERSION; } \
-		CGlobalModule* Load(ModHandle p, const CString& sModName, \
+		CString ZNCModDescription() { return DESCRIPTION; } \
+		bool ZNCModGlobal() { return true; } \
+		double ZNCModVersion() { return VERSION; } \
+		CGlobalModule* ZNCModLoad(ModHandle p, const CString& sModName, \
 				const CString& sModPath) \
 		{ return new CLASS(p, sModName, sModPath); } \
-		void Unload(CGlobalModule* pMod) { if (pMod) { delete pMod; } \
+		void ZNCModUnload(CGlobalModule* pMod) { if (pMod) { delete pMod; } } \
 	}
 // !Global Module Macros
 
