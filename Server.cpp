@@ -18,16 +18,12 @@ CServer::CServer(const CString& sName, unsigned short uPort, const CString& sPas
 CServer::~CServer() {}
 
 bool CServer::IsValidHostName(const CString& sHostName) {
-	const char* p = sHostName.c_str();
-
 	if (sHostName.empty()) {
 		return false;
 	}
 
-	while (*p) {
-		if (*p++ == ' ') {
-			return false;
-		}
+	if (sHostName.find(' ') != CString::npos) {
+		return false;
 	}
 
 	return true;
