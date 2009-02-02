@@ -550,7 +550,9 @@ int CExecSock::popen2(int & iReadFD, int & iWriteFD, const CString & sCommand) {
 			NULL
 		};
 		execvp("sh", (char * const *) pArgv);
-		exit(0);
+		// if execvp returns, there was an error
+		perror("execvp");
+		exit(1);
 	}
 
 	close(wpipes[0]);
