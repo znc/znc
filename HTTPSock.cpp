@@ -116,9 +116,7 @@ bool CHTTPSock::PrintFile(const CString& sFileName, CString sContentType) {
 	CString sFilePath = sFileName;
 
 	if (!m_sDocRoot.empty()) {
-		while (sFilePath.Left(1) == "/") {
-			sFilePath.LeftChomp(1);
-		}
+		sFilePath.TrimLeft("/");
 
 		sFilePath = CDir::ChangeDir(m_sDocRoot, sFilePath, m_sDocRoot);
 
