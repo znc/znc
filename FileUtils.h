@@ -26,13 +26,6 @@ public:
 	CFile(int iFD, const CString& sLongName);
 	~CFile();
 
-	enum EOptions {
-		F_Read		= O_RDONLY,
-		F_Write		= O_WRONLY,
-		F_Create	= O_CREAT,
-		F_Truncate	= O_TRUNC
-	};
-
 	enum EFileTypes {
 		FT_REGULAR,
 		FT_DIRECTORY,

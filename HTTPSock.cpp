@@ -132,7 +132,7 @@ bool CHTTPSock::PrintFile(const CString& sFileName, CString sContentType) {
 
 	CFile File(sFilePath);
 
-	if (!File.Open(CFile::F_Read)) {
+	if (!File.Open()) {
 		PrintNotFound();
 		return false;
 	}
