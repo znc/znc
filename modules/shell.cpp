@@ -165,12 +165,7 @@ void CShellSock::ReadLine(const CString& sData) {
 	CString sLine = sData;
 
 	sLine.TrimRight("\r\n");
-
-	CString::size_type a = sLine.find('\t');
-	while (a != CString::npos) {
-		sLine.replace(a, 1, "    ");
-		a = sLine.find('\t');
-	}
+	sLine.Replace("\t", "    ");
 
 	m_pParent->SetClient(m_pClient);
 	m_pParent->PutShell(sLine);
