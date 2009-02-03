@@ -29,29 +29,6 @@ bool CUtils::stdoutIsTTY;
 CUtils::CUtils() {}
 CUtils::~CUtils() {}
 
-#ifdef __sun
-char *strcasestr(const char *big, const char *little) {
-	int len;
-
-	if (!little || !big || !little[0]) {
-		return (char *) big;
-	}
-
-	len = strlen(little);
-	while (*big) {
-		if (tolower(*big) == tolower(*little)) {
-			if (strncasecmp(big, little, len) == 0) {
-				return (char *) big;
-			}
-		}
-
-		big++;
-	}
-
-	return NULL;
-}
-#endif /* __sun */
-
 #ifdef HAVE_LIBSSL
 void CUtils::GenerateCert(FILE *pOut, bool bEncPrivKey, const CString& sHost) {
 	EVP_PKEY *pKey = NULL;
