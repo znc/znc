@@ -836,8 +836,12 @@ void CIRCSock::SockError(int iErrno) {
 		sError = "Your VHost could not be resolved";
 	} else if (iErrno == EADDRNOTAVAIL) {
 		// Csocket uses this if it can't resolve the dest host name
+		// ...but it also does generate this if bind() fails -.-
 		sError = strerror(iErrno);
-		sError += " (Is your IRC server's host name valid?)";
+		if (GetBindHost().empty())
+			sError += " (Is your IRC server's host name valid?)";
+		else
+			sError += " (Is your IRC server's host name and vhost valid?)";
 	} else {
 		sError = strerror(iErrno);
 	}
