@@ -14,10 +14,17 @@ class CShellMod;
 
 class CShellSock : public CExecSock {
 public:
-	CShellSock(CShellMod* pShellMod, CClient* pClient, const CString& sExec) : CExecSock(sExec) {
+	CShellSock(CShellMod* pShellMod, CClient* pClient, const CString& sExec) : CExecSock() {
 		EnableReadLine();
 		m_pParent = pShellMod;
 		m_pClient = pClient;
+
+		if (Execute(sExec) == -1) {
+			CString s = "Failed to execute: ";
+			s += strerror(errno);
+			ReadLine(s);
+			return;
+		}
 
 		// Get rid of that write fd, we aren't going to use it
 		// (And clients expecting input will fail this way).

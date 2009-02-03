@@ -292,14 +292,12 @@ public:
 		m_iPid = -1;
 	}
 
-	CExecSock(const CString& sExec) : Csock() {
-		Execute(sExec);
-	}
-
 	int Execute(const CString & sExec) {
 		int iReadFD, iWriteFD;
 		m_iPid = popen2(iReadFD, iWriteFD, sExec);
-		ConnectFD(iReadFD, iWriteFD, "0.0.0.0:0");
+		if (m_iPid != -1) {
+			ConnectFD(iReadFD, iWriteFD, "0.0.0.0:0");
+		}
 		return(m_iPid);
 	}
 	void Kill(int iSignal)
