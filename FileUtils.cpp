@@ -365,6 +365,7 @@ bool CFile::ReadFile(CString& sData, size_t iMaxSize) {
 			return true;
 
 		sData.append(buff, iBytes);
+		iBytesRead += iBytes;
 	}
 
 	// Buffer limit reached
