@@ -122,20 +122,23 @@ public:
 		bool bIPv6 = false;
 		unsigned short uPort = 8080;
 		CString sArgs(sArgStr);
-		CString sOpt;
 		CString sPort;
 		CString sListenHost;
 
-		if (sArgs.Left(1) == "-") {
-			sOpt = sArgs.Token(0);
+		m_bShareIRCPorts = true;
+
+		while (sArgs.Left(1) == "-") {
+			CString sOpt = sArgs.Token(0);
 			sArgs = sArgs.Token(1, true);
 
 			if (sOpt.Equals("-IPV6")) {
 				bIPv6 = true;
 			} else if (sOpt.Equals("-IPV4")) {
 				bIPv6 = false;
+			} else if (sOpt.Equals("-noircport")) {
+				m_bShareIRCPorts = false;
 			} else {
-				sMessage = "Unknown option [" + sOpt + "] valid options are -ipv4 or -ipv6";
+				sMessage = "Unknown option [" + sOpt + "] valid options are -ipv4, -ipv6 or -noircport";
 				return false;
 			}
 		}
@@ -207,8 +210,31 @@ public:
 		return ++it->second;
 	}
 
+	virtual EModRet OnUnknownUserRaw(CClient* pClient, CString& sLine) {
+		if (!m_bShareIRCPorts)
+			return CONTINUE;
+
+		// If this is a HTTP request, we should handle it
+		if (sLine.WildCmp("GET * HTTP/1.?")
+				|| sLine.WildCmp("POST * HTTP/1.?")) {
+			CWebAdminSock* pSock = new CWebAdminSock(this);
+			CZNC::Get().GetManager().SwapSockByAddr(pSock, pClient);
+			// And don't forget to give it some sane name / timeout
+			pSock->SetSockName("WebAdmin::Client");
+			pSock->SetTimeout(120);
+
+			// TODO can we somehow get rid of this?
+			pSock->ReadLine(sLine);
+			pSock->PushBuff("", 0, true);
+
+			return HALT;
+		}
+		return CONTINUE;
+	}
+
 private:
-	CString						m_sSkinName;
+	CString				m_sSkinName;
+	bool				m_bShareIRCPorts;
 	map<CString, unsigned int>	m_suSwitchCounters;
 };
 
