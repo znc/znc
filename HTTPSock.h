@@ -27,11 +27,11 @@ public:
 	virtual void Timeout();
 	virtual void Connected();
 	virtual void Disconnected();
-	virtual Csock* GetSockObj(const CString& sHost, unsigned short uPort);
+	virtual Csock* GetSockObj(const CString& sHost, unsigned short uPort) = 0;
 	// !Csocket derived members
 
 	// Hooks
-	virtual bool OnPageRequest(const CString& sURI, CString& sPageRet);
+	virtual bool OnPageRequest(const CString& sURI, CString& sPageRet) = 0;
 	virtual bool OnLogin(const CString& sUser, const CString& sPass);
 	// !Hooks
 

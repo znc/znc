@@ -283,10 +283,6 @@ const map<CString, VCString>& CHTTPSock::GetParams() const {
 	return m_msvsParams;
 }
 
-bool CHTTPSock::OnPageRequest(const CString& sURI, CString& sPageRet) {
-	return false;
-}
-
 bool CHTTPSock::PrintNotFound() {
 	return PrintErrorPage(404, "Not Found", "The requested URL was not found on this server.");
 }
@@ -414,14 +410,6 @@ void CHTTPSock::Disconnected() {
 void CHTTPSock::ReachedMaxBuffer() {
 	DEBUG(GetSockName() << " == ReachedMaxBuffer()");
 	Close();
-}
-
-Csock* CHTTPSock::GetSockObj(const CString& sHost, unsigned short uPort) {
-	CHTTPSock* pSock = new CHTTPSock(m_pModule);
-	pSock->SetSockName("HTTP::CLIENT");
-	pSock->SetTimeout(120);
-
-	return pSock;
 }
 
 #endif // _MODULES
