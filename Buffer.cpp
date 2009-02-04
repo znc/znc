@@ -74,3 +74,12 @@ bool CBuffer::GetNextLine(const CString& sTarget, CString& sRet) {
 	erase(begin());
 	return true;
 }
+
+void CBuffer::SetLineCount(unsigned int u) {
+	m_uLineCount = u;
+
+	// We may need to shrink the buffer if the allowed size got smaller
+	while (size() > m_uLineCount) {
+		erase(begin());
+	}
+}

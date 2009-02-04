@@ -49,7 +49,7 @@ public:
 	void Clear() { clear(); }
 
 	// Setters
-	void SetLineCount(unsigned int u) { m_uLineCount = u; }
+	void SetLineCount(unsigned int u);
 	// !Setters
 
 	// Getters
