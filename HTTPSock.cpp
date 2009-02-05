@@ -186,7 +186,7 @@ bool CHTTPSock::PrintFile(const CString& sFileName, CString sContentType) {
 		}
 	}
 
-	DEBUG("ETag: [" << sETag << "] / If-None-Match [" << m_sIfNoneMatch << "]");
+	DEBUG("- ETag: [" << sETag << "] / If-None-Match [" << m_sIfNoneMatch << "]");
 
 	Close(Csock::CLT_AFTERWRITE);
 
