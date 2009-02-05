@@ -176,13 +176,30 @@ bool CHTTPSock::PrintFile(const CString& sFileName, CString sContentType) {
 	if (bNotModified) {
 		PrintHeader(0, sContentType, 304, "Not Modified");
 	} else {
+		unsigned long long iSize = File.GetSize();
+
+		// Don't try to send files over 16 MiB, because it might block
+		// the whole process and use huge amounts of memory.
+		if (iSize > 16 * 1024 * 1024) {
+			DEBUG("- Abort: File is over 16 MiB big: " << iSize);
+			PrintErrorPage(500, "Internal Server Error", "File too big");
+			return true;
+		}
+
 		char szBuf[4096];
-		int iLen = 0;
+		unsigned long long iLen = 0;
+		int i;
 
-		PrintHeader(File.GetSize(), sContentType);
+		PrintHeader(iSize, sContentType);
 
-		while ((iLen = File.Read(szBuf, 4096)) > 0) {
-			Write(szBuf, iLen);
+		// while we haven't reached iSize and read() succeeds...
+		while (iLen < iSize && (i = File.Read(szBuf, sizeof(szBuf))) > 0) {
+			Write(szBuf, i);
+			iLen += i;
+		}
+
+		if (i < 0) {
+			DEBUG("- Error while reading file: " << strerror(errno));
 		}
 	}
 
