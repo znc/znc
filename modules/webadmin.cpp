@@ -143,11 +143,15 @@ public:
 			}
 		}
 
+		// No arguments left: Only port sharing
+		if (sArgs.empty() && m_bShareIRCPorts)
+			return true;
+
 		if (sArgs.find(" ") != CString::npos) {
 			sListenHost = sArgs.Token(0);
-			sPort = sArgs.Token(1);
+			sPort = sArgs.Token(1, true);
 		} else {
-			sPort = sArgs.Token(0);
+			sPort = sArgs;
 		}
 
 		if (sPort.Left(1) == "+") {
@@ -163,6 +167,11 @@ public:
 			uPort = sPort.ToUShort();
 		}
 
+		return OpenListener(sMessage, uPort, sListenHost, bSSL, bIPv6);
+	}
+
+	bool OpenListener(CString &sMessage, u_short uPort, const CString& sListenHost,
+			bool bSSL = false, bool bIPv6 = false) {
 		CWebAdminSock* pListenSock = new CWebAdminSock(this);
 #ifdef HAVE_LIBSSL
 		if (bSSL) {
