@@ -688,10 +688,6 @@ CModule* CModules::FindModule(const CString& sModule) const {
 }
 
 bool CModules::LoadModule(const CString& sModule, const CString& sArgs, CUser* pUser, CString& sRetMsg, bool bFake) {
-#ifndef _MODULES
-	sRetMsg = "Unable to load module [" + sModule + "] module support was not enabled.";
-	return false;
-#else
 	sRetMsg = "";
 
 	for (unsigned int a = 0; a < sModule.length(); a++) {
@@ -831,7 +827,6 @@ bool CModules::LoadModule(const CString& sModule, const CString& sArgs, CUser* p
 		sRetMsg = "Loaded module [" + sModule + "] [" + sModPath + "]";
 	}
 	return true;
-#endif // !_MODULES
 }
 
 bool CModules::UnloadModule(const CString& sModule) {
@@ -841,10 +836,6 @@ bool CModules::UnloadModule(const CString& sModule) {
 
 bool CModules::UnloadModule(const CString& sModule, CString& sRetMsg) {
 	CString sMod = sModule;	// Make a copy incase the reference passed in is from CModule::GetModName()
-#ifndef _MODULES
-	sRetMsg = "Unable to unload module [" + sMod + "] module support was not enabled.";
-	return false;
-#else
 	CModule* pModule = FindModule(sMod);
 	sRetMsg = "";
 
@@ -894,7 +885,6 @@ bool CModules::UnloadModule(const CString& sModule, CString& sRetMsg) {
 
 	sRetMsg = "Unable to unload module [" + sMod + "]";
 	return false;
-#endif // !_MODULES
 }
 
 bool CModules::ReloadModule(const CString& sModule, const CString& sArgs, CUser* pUser, CString& sRetMsg) {
