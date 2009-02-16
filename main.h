@@ -10,10 +10,10 @@
 #define _MAIN_H
 
 // Keep the number in sync with configure.in (and also with configure)
-#define VERSION		0.063
+#define VERSION		0.064
 // The following defines are for #if comparison (preprocessor only likes ints)
 #define VERSION_MAJOR	0
-#define VERSION_MINOR	63
+#define VERSION_MINOR	64
 
 // You can add -DVERSION_EXTRA="stuff" to your CXXFLAGS!
 #ifndef VERSION_EXTRA
