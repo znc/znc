@@ -7,8 +7,8 @@ crox
 SilverLeo
 kroimon <znc@kroimon.de>
 
-These people have helped develop ZNC, for example by sending in patches,
-writing new modules or finding significant bugs:
+These people, in no particular order, have helped develop ZNC, for example by
+sending in patches, writing new modules or finding significant bugs:
 
 Kuja <Kuja@znc.in> - runs and pays for znc.in
 Heiko Hund <heiko@ist.eigentlich.net> - saslauth module
@@ -19,3 +19,4 @@ d4n13L <daniel@danielschmitz.de> - graphiX webadmin skin
 Veit "Cru" Wahlich <cru@ircnet.de>
 flakes
 Freman (http://fremnet.net/contact)
+Sebastian Ramacher <sebastinas@users.sourceforge.net>
