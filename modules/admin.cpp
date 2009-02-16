@@ -1,0 +1,381 @@
+/*
+ * Copyright (C) 2008 by Stefan Rado
+ * based on admin.cpp by Sebastian Ramacher
+ * based on admin.cpp in crox branch
+ *
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License version 2 as published
+ * by the Free Software Foundation.
+ */
+
+#include "znc.h"
+#include "User.h"
+#include "Modules.h"
+
+template<std::size_t N>
+struct array_size_helper {
+	char __place_holder[N];
+};
+
+template<class T, std::size_t N>
+array_size_helper<N> array_size(T (&)[N]) {
+	return array_size_helper<N>();
+}
+
+#define ARRAY_SIZE(array) sizeof(array_size((array)))
+
+class CAdminMod : public CGlobalModule {
+	using CGlobalModule::PutModule;
+
+	void PrintHelp(const CString&) {
+		CTable CmdTable;
+		CmdTable.AddColumn("Command");
+		CmdTable.AddColumn("Arguments");
+		CmdTable.AddColumn("Description");
+		static const char* help[][3] = {
+			{"Get",       "variable [username]",           "Prints the variable's value for the given or current user"},
+			{"Set",       "variable [username] value",     "Sets the variable's value for the given or current user"},
+			{"ListUsers", "",                              "Lists users"},
+			{"AddUser",   "username password [ircserver]", "Adds a new user"},
+			{"DelUser",   "username",                      "Deletes a user"},
+			{"AddServer", "[username] server",             "Adds a new IRC server for the given or current user"}
+		};
+		for (unsigned int i = 0; i != ARRAY_SIZE(help); ++i) {
+			CmdTable.AddRow();
+			CmdTable.SetCell("Command",     help[i][0]);
+			CmdTable.SetCell("Arguments",   help[i][1]);
+			CmdTable.SetCell("Description", help[i][2]);
+		}
+		PutModule(CmdTable);
+
+		PutModule("The following variables are available when using the Set/Get commands:");
+
+		CTable VarTable;
+		VarTable.AddColumn("Variable");
+		VarTable.AddColumn("Type");
+		static const char* vars[][2] = {
+			{"Ident",            "String"},
+			{"RealName",         "String"},
+			{"VHost",            "String"},
+			{"MultiClients",     "Boolean (true/false)"},
+			{"BounceDCCs",       "Boolean (true/false)"},
+			{"UseClientIP",      "Boolean (true/false)"},
+			{"DenyLoadMod",      "Boolean (true/false)"},
+			{"DefaultChanModes", "String"},
+			{"QuitMsg",          "String"},
+			{"BufferCount",      "Integer"},
+			{"KeepBuffer",       "Boolean (true/false)"},
+		};
+		for (unsigned int i = 0; i != ARRAY_SIZE(vars); ++i) {
+			VarTable.AddRow();
+			VarTable.SetCell("Variable", vars[i][0]);
+			VarTable.SetCell("Type",     vars[i][1]);
+		}
+		PutModule(VarTable);
+	}
+
+	CUser* GetUser(const CString& username) {
+		if (username.size() && username != "$me")
+			return CZNC::Get().FindUser(username);
+		else
+			return m_pUser;
+	}
+
+	void Get(const CString& sLine) {
+		const CString var      = sLine.Token(1).AsLower();
+		const CString username = sLine.Token(2, true);
+
+		if (var.empty()) {
+				PutModule("Usage: get <variable> [username]");
+				return;
+		}
+
+		CUser* user = GetUser(username);
+		if (!user) {
+			PutModule("Error: User not found: " + username);
+			return;
+		}
+		if (user != m_pUser && !m_pUser->IsAdmin()) {
+			PutModule("Error: You need to have admin rights to modify other users!");
+			return;
+		}
+
+		if (var == "nick")
+			PutModule("Nick = " + user->GetNick());
+		else if (var == "altnick")
+			PutModule("AltNick = " + user->GetAltNick());
+		else if (var == "ident")
+			PutModule("Ident = " + user->GetIdent());
+		else if (var == "realname")
+			PutModule("RealName = " + user->GetRealName());
+		else if (var == "vhost")
+			PutModule("VHost = " + user->GetVHost());
+		else if (var == "multiclients")
+			PutModule("MultiClients = " + CString(user->MultiClients() ? "true" : "false"));
+		else if (var == "bouncedccs")
+			PutModule("BounceDCCs = " + CString(user->BounceDCCs() ? "true" : "false"));
+		else if (var == "useclientip")
+			PutModule("UseClientIP = " + CString(user->UseClientIP() ? "true" : "false"));
+		else if (var == "denyloadmod")
+			PutModule("DenyLoadMod = " + CString(user->DenyLoadMod() ? "true" : "false"));
+		else if (var == "defaultchanmodes")
+			PutModule("DefaultChanModes = " + user->GetDefaultChanModes());
+		else if (var == "quitmsg")
+			PutModule("QuitMsg = " + user->GetQuitMsg());
+		else if (var == "buffercount")
+			PutModule("BufferCount = " + CString(user->GetBufferCount()));
+		else if (var == "keepbuffer")
+			PutModule("KeepBuffer = " + CString(user->KeepBuffer() ? "true" : "false"));
+		else
+			PutModule("Error: Unknown variable");
+	}
+
+	void Set(const CString& sLine) {
+		const CString var = sLine.Token(1).AsLower();
+		CString username  = sLine.Token(2);
+		CString value     = sLine.Token(3, true);
+
+		if (value.empty()) {
+			if (!username.empty()) {
+				value    = username;
+				username = "";
+			} else {
+				PutModule("Usage: set <variable> [username] <value>");
+				return;
+			}
+		}
+
+		CUser* user = GetUser(username);
+		if (!user) {
+			PutModule("Error: User not found: " + username);
+			return;
+		}
+		if (user != m_pUser && !m_pUser->IsAdmin()) {
+			PutModule("Error: You need to have admin rights to modify other users!");
+			return;
+		}
+
+		if (var == "nick") {
+			user->SetNick(value);
+			PutModule("Nick = " + value);
+		}
+		else if (var == "altnick") {
+			user->SetAltNick(value);
+			PutModule("AltNick = " + value);
+		}
+		else if (var == "ident") {
+			user->SetIdent(value);
+			PutModule("Ident = " + value);
+		}
+		else if (var == "realname") {
+			user->SetRealName(value);
+			PutModule("RealName = " + value);
+		}
+		else if (var == "vhost") {
+			user->SetVHost(value);
+			PutModule("VHost = " + value);
+		}
+		else if (var == "multiclients") {
+			bool b = value.ToBool();
+			user->SetMultiClients(b);
+			PutModule("MultiClients = " + CString(b ? "true" : "false"));
+		}
+		else if (var == "bouncedccs") {
+			bool b = value.ToBool();
+			user->SetBounceDCCs(b);
+			PutModule("BounceDCCs = " + CString(b ? "true" : "false"));
+		}
+		else if (var == "useclientip") {
+			bool b = value.ToBool();
+			user->SetUseClientIP(b);
+			PutModule("UseClientIP = " + CString(b ? "true" : "false"));
+		}
+		else if (var == "denyloadmod") {
+			bool b = value.ToBool();
+			user->SetDenyLoadMod(b);
+			PutModule("DenyLoadMod = " + CString(b ? "true" : "false"));
+		}
+		else if (var == "defaultchanmodes") {
+			user->SetDefaultChanModes(value);
+			PutModule("DefaultChanModes = " + value);
+		}
+		else if (var == "quitmsg") {
+			user->SetQuitMsg(value);
+			PutModule("QuitMsg = " + value);
+		}
+		else if (var == "buffercount") {
+			unsigned int i = value.ToInt();
+			user->SetBufferCount(i);
+			PutModule("BufferCount = " + value);
+		}
+		else if (var == "keepbuffer") {
+			bool b = value.AsLower() == "true";
+			user->SetKeepBuffer(b);
+			PutModule("KeepBuffer = " + CString(b ? "true" : "false"));
+		}
+		else
+			PutModule("Error: Unknown variable");
+	}
+
+	void ListUsers(const CString&) {
+		if (!m_pUser->IsAdmin())
+			return;
+
+		const map<CString, CUser*>& msUsers = CZNC::Get().GetUserMap();
+		CTable Table;
+		Table.AddColumn("Username");
+		Table.AddColumn("Realname");
+		Table.AddColumn("IsAdmin");
+		Table.AddColumn("Nick");
+		Table.AddColumn("AltNick");
+		Table.AddColumn("Ident");
+		Table.AddColumn("VHost");
+
+		for (map<CString, CUser*>::const_iterator it = msUsers.begin(); it != msUsers.end(); it++) {
+			Table.AddRow();
+			Table.SetCell("Username", it->first);
+			Table.SetCell("Realname", it->second->GetRealName());
+			if (!it->second->IsAdmin())
+				Table.SetCell("IsAdmin", "No");
+			else
+				Table.SetCell("IsAdmin", "Yes");
+			Table.SetCell("Nick", it->second->GetNick());
+			Table.SetCell("AltNick", it->second->GetAltNick());
+			Table.SetCell("Ident", it->second->GetIdent());
+			Table.SetCell("VHost", it->second->GetVHost());
+		}
+
+		PutModule(Table);
+	}
+
+	void AddUser(const CString& sLine) {
+		if (!m_pUser->IsAdmin()) {
+			PutModule("Error: You need to have admin rights to add new users!");
+			return;
+		}
+
+		const CString
+			sUsername  = sLine.Token(1),
+			sPassword  = sLine.Token(2),
+			sIRCServer = sLine.Token(3, true);
+		if (sUsername.empty() || sPassword.empty()) {
+			PutModule("Usage: adduser <username> <password> [ircserver]");
+			return;
+		}
+
+		if (CZNC::Get().FindUser(sUsername)) {
+			PutModule("Error: User " + sUsername + " already exists!");
+			return;
+		}
+
+		CUser* pNewUser = new CUser(sUsername);
+		CString sSalt = CUtils::GetSalt();
+		pNewUser->SetPass(CString(sPassword + sSalt).MD5(), true, sSalt);
+		if (sIRCServer.size())
+			pNewUser->AddServer(sIRCServer);
+
+		CString sErr;
+		if (!CZNC::Get().AddUser(pNewUser, sErr)) {
+			delete pNewUser;
+			PutModule("Error: User not added! [" + sErr + "]");
+			return;
+		}
+
+		PutModule("User " + sUsername + " added!");
+		return;
+	}
+
+	void DelUser(const CString& sLine) {
+		if (!m_pUser->IsAdmin()) {
+			PutModule("Error: You need to have admin rights to delete users!");
+			return;
+		}
+
+		const CString sUsername  = sLine.Token(1);
+		if (sUsername.empty()) {
+			PutModule("Usage: deluser <username>");
+			return;
+		}
+
+		CUser *pUser = CZNC::Get().FindUser(sUsername);
+
+		if (!pUser) {
+			PutModule("Error: User " + sUsername + " does not exist!");
+			return;
+		}
+
+		if (pUser == m_pUser) {
+			PutModule("Error: You can't delete yourself!");
+			return;
+		}
+
+		if (!CZNC::Get().DeleteUser(pUser->GetUserName())) {
+			// This can't happen, because we got the user from FindUser()
+			PutModule("Error: Internal error!");
+			return;
+		}
+
+		PutModule("User " + sUsername + " deleted!");
+		return;
+	}
+
+	void AddServer(const CString& sLine) {
+		CString username = sLine.Token(1);
+		CString server   = sLine.Token(2, true);
+
+		if (server.empty()) {
+			if (!username.empty()) {
+				server = username;
+				username = "";
+			} else {
+				PutModule("Usage: addserver [username] <server>");
+				return;
+			}
+		}
+
+		CUser* user = GetUser(username);
+		if (!user) {
+			PutModule("Error: User not found: " + username);
+			return;
+		}
+		if (user != m_pUser && !m_pUser->IsAdmin()) {
+			PutModule("Error: You need to have admin rights to modify other users!");
+			return;
+		}
+
+		user->AddServer(server);
+		PutModule("Added IRC Server: " + server);
+	}
+
+
+	typedef void (CAdminMod::* fn)(const CString&);
+	typedef std::map<CString, fn> function_map;
+	function_map fnmap_;
+
+public:
+	GLOBALMODCONSTRUCTOR(CAdminMod) {
+		fnmap_["help"]      = &CAdminMod::PrintHelp;
+		fnmap_["get"]       = &CAdminMod::Get;
+		fnmap_["set"]       = &CAdminMod::Set;
+		fnmap_["listusers"] = &CAdminMod::ListUsers;
+		fnmap_["adduser"]   = &CAdminMod::AddUser;
+		fnmap_["deluser"]   = &CAdminMod::DelUser;
+		fnmap_["addserver"] = &CAdminMod::AddServer;
+	}
+
+	virtual ~CAdminMod() {}
+
+	virtual void OnModCommand(const CString& sLine) {
+		if (!m_pUser)
+			return;
+
+		const CString cmd = sLine.Token(0).AsLower();
+		function_map::iterator it = fnmap_.find(cmd);
+		if (it != fnmap_.end())
+			(this->*it->second)(sLine);
+		else
+			PutModule("Unknown command");
+	}
+};
+
+GLOBALMODULEDEFS(CAdminMod, "Dynamic configuration of users/settings through irc")
