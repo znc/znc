@@ -128,8 +128,13 @@ public:
 			const vector<CChan *>& vChans = m_pUser->GetChans();
 			for (u_int a = 0; a < vChans.size(); a++)
 			{
-				if (!vChans[a]->KeepBuffer())
+				CString sPath = GetPath(vChans[a]->GetName());
+				CFile File(sPath);
+
+				if (!vChans[a]->KeepBuffer()) {
+					File.Delete();
 					continue;
+				}
 
 				const vector<CString> & vBuffer = vChans[a]->GetBuffer();
 
@@ -140,10 +145,8 @@ public:
 
 				CBlowfish c(m_sPassword, BF_ENCRYPT);
 				sFile = c.Crypt(sFile);
-				CString sPath = GetPath(vChans[a]->GetName());
 				if (!sPath.empty())
 				{
-					CFile File(sPath);
 					if (File.Open(O_WRONLY | O_CREAT | O_TRUNC, 0600)) {
 						File.Chmod(0600);
 						File.Write(sFile);
@@ -230,17 +233,12 @@ public:
 
 	virtual void OnRawMode(const CNick& cOpNick, CChan& cChannel, const CString& sModes, const CString& sArgs)
 	{
-		if (!cChannel.KeepBuffer())
-			return;
-
-		((CChan &)cChannel).AddBuffer(SpoofChanMsg(cChannel.GetName(), cOpNick.GetNickMask() + " MODE " + sModes + " " + sArgs));
+		cChannel.AddBuffer(SpoofChanMsg(cChannel.GetName(), cOpNick.GetNickMask() + " MODE " + sModes + " " + sArgs));
 	}
 	virtual void OnQuit(const CNick& cNick, const CString& sMessage, const vector<CChan*>& vChans)
 	{
 		for (u_int a = 0; a < vChans.size(); a++)
 		{
-			if (!vChans[a]->KeepBuffer())
-				continue;
 			vChans[a]->AddBuffer(SpoofChanMsg(vChans[a]->GetName(), cNick.GetNickMask() + " QUIT " + sMessage));
 		}
 		if (cNick.GetNick().Equals(m_pUser->GetNick()))
@@ -251,16 +249,12 @@ public:
 	{
 		for (u_int a = 0; a < vChans.size(); a++)
 		{
-			if (!vChans[a]->KeepBuffer())
-				continue;
 			vChans[a]->AddBuffer(SpoofChanMsg(vChans[a]->GetName(), cNick.GetNickMask() + " NICK " + sNewNick));
 		}
 	}
 	virtual void OnKick(const CNick& cNick, const CString& sOpNick, CChan& cChannel, const CString& sMessage)
 	{
-		if (!cChannel.KeepBuffer())
-			return;
-		((CChan &)cChannel).AddBuffer(SpoofChanMsg(cChannel.GetName(), sOpNick + " KICK " + cNick.GetNickMask() + " " + sMessage));
+		cChannel.AddBuffer(SpoofChanMsg(cChannel.GetName(), sOpNick + " KICK " + cNick.GetNickMask() + " " + sMessage));
 	}
 	virtual void OnJoin(const CNick& cNick, CChan& cChannel)
 	{
@@ -270,15 +264,11 @@ public:
 			if (!cChannel.GetBuffer().empty())
 				Replay(cChannel.GetName());
 		}
-		if (!cChannel.KeepBuffer())
-			return;
-		((CChan &)cChannel).AddBuffer(SpoofChanMsg(cChannel.GetName(), cNick.GetNickMask() + " JOIN"));
+		cChannel.AddBuffer(SpoofChanMsg(cChannel.GetName(), cNick.GetNickMask() + " JOIN"));
 	}
 	virtual void OnPart(const CNick& cNick, CChan& cChannel)
 	{
-		if (!cChannel.KeepBuffer())
-			return;
-		((CChan &)cChannel).AddBuffer(SpoofChanMsg(cChannel.GetName(), cNick.GetNickMask() + " PART"));
+		cChannel.AddBuffer(SpoofChanMsg(cChannel.GetName(), cNick.GetNickMask() + " PART"));
 		if (cNick.GetNick().Equals(m_pUser->GetNick()))
 			SaveBufferToDisk(); // need to force a save here to see this!
 	}
