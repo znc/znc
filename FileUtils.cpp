@@ -22,27 +22,16 @@
 
 CFile::CFile() {
 	m_iFD = -1;
-	m_bClose = false;
 }
 
 CFile::CFile(const CString& sLongName) {
 	m_iFD = -1;
-	m_bClose = false;
-
-	SetFileName(sLongName);
-}
-
-CFile::CFile(int iFD, const CString& sLongName) {
-	m_iFD = iFD;
-	m_bClose = false;
 
 	SetFileName(sLongName);
 }
 
 CFile::~CFile() {
-	if (m_bClose && m_iFD != -1) {
-		Close();
-	}
+	Close();
 }
 
 void CFile::SetFileName(const CString& sLongName) {
@@ -286,7 +275,6 @@ bool CFile::Open(int iFlags, mode_t iMode) {
 	/* Make sure this FD isn't given to childs */
 	SetFdCloseOnExec(m_iFD);
 
-	m_bClose = true;
 	return true;
 }
 
@@ -384,11 +372,11 @@ int CFile::Write(const CString & sData) {
 	return Write(sData.data(), sData.size());
 }
 void CFile::Close() {
-	if (m_iFD >= 0 && m_bClose) {
+	if (m_iFD >= 0) {
 		close(m_iFD);
-		m_iFD = -1;
-		m_bClose = false;
 	}
+	m_iFD = -1;
+	ClearBuffer();
 }
 void CFile::ClearBuffer() { m_sBuffer.clear(); }
 
@@ -429,8 +417,6 @@ CString CFile::GetDir() const {
 
 	return sDir;
 }
-
-void CFile::SetFD(int iFD) { m_iFD = iFD; }
 
 CString CDir::ChangeDir(const CString& sPath, const CString& sAdd, const CString& sHomeDir) {
 	if (sAdd == "~") {

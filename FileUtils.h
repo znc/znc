@@ -23,7 +23,6 @@ class CFile {
 public:
 	CFile();
 	CFile(const CString& sLongName);
-	CFile(int iFD, const CString& sLongName);
 	~CFile();
 
 	enum EFileTypes {
@@ -117,7 +116,6 @@ public:
 	CString GetLongName() const;
 	CString GetShortName() const;
 	CString GetDir() const;
-	void SetFD(int iFD);
 
 private:
 	// flock() wrapper
@@ -129,7 +127,6 @@ private:
 protected:
 	CString	m_sLongName;	//!< Absolute filename (m_sPath + "/" + m_sShortName)
 	CString	m_sShortName;	//!< Filename alone, without path
-	bool	m_bClose;
 };
 
 class CDir : public vector<CFile*> {
