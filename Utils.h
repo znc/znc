@@ -22,12 +22,10 @@ using std::map;
 using std::vector;
 
 #ifdef _DEBUG
-#define DEBUG_ONLY(f)   f
+#define DEBUG(f) (cout << f << endl)
 #else
-#define DEBUG_ONLY(f) ((void)0)
+#define DEBUG(f) ((void)0)
 #endif
-
-#define DEBUG(f) DEBUG_ONLY(cout << f << endl)
 
 static inline void SetFdCloseOnExec(int fd)
 {
