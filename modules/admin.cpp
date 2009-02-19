@@ -1,4 +1,5 @@
 /*
+ * Copyright (C) 2004-2009  See the AUTHORS file for details.
  * Copyright (C) 2008 by Stefan Rado
  * based on admin.cpp by Sebastian Ramacher
  * based on admin.cpp in crox branch
@@ -24,8 +25,8 @@ array_size_helper<N> array_size(T (&)[N]) {
 
 #define ARRAY_SIZE(array) sizeof(array_size((array)))
 
-class CAdminMod : public CGlobalModule {
-	using CGlobalModule::PutModule;
+class CAdminMod : public CModule {
+	using CModule::PutModule;
 
 	void PrintHelp(const CString&) {
 		CTable CmdTable;
@@ -53,18 +54,21 @@ class CAdminMod : public CGlobalModule {
 		CTable VarTable;
 		VarTable.AddColumn("Variable");
 		VarTable.AddColumn("Type");
+		const char* string = "String";
+		const char* boolean = "Boolean (true/false)";
+		const char* integer = "Integer";
 		static const char* vars[][2] = {
-			{"Ident",            "String"},
-			{"RealName",         "String"},
-			{"VHost",            "String"},
-			{"MultiClients",     "Boolean (true/false)"},
-			{"BounceDCCs",       "Boolean (true/false)"},
-			{"UseClientIP",      "Boolean (true/false)"},
-			{"DenyLoadMod",      "Boolean (true/false)"},
-			{"DefaultChanModes", "String"},
-			{"QuitMsg",          "String"},
-			{"BufferCount",      "Integer"},
-			{"KeepBuffer",       "Boolean (true/false)"},
+			{"Ident",            string},
+			{"RealName",         string},
+			{"VHost",            string},
+			{"MultiClients",     boolean},
+			{"BounceDCCs",       boolean},
+			{"UseClientIP",      boolean},
+			{"DenyLoadMod",      boolean},
+			{"DefaultChanModes", string},
+			{"QuitMsg",          string},
+			{"BufferCount",      integer},
+			{"KeepBuffer",       boolean},
 		};
 		for (unsigned int i = 0; i != ARRAY_SIZE(vars); ++i) {
 			VarTable.AddRow();
@@ -72,13 +76,14 @@ class CAdminMod : public CGlobalModule {
 			VarTable.SetCell("Type",     vars[i][1]);
 		}
 		PutModule(VarTable);
+
+		PutModule("You can use $me as the user name for modifying your own user.");
 	}
 
 	CUser* GetUser(const CString& username) {
-		if (username.size() && username != "$me")
-			return CZNC::Get().FindUser(username);
-		else
+		if (username.Equals("$me"))
 			return m_pUser;
+		return CZNC::Get().FindUser(username);
 	}
 
 	void Get(const CString& sLine) {
@@ -353,7 +358,7 @@ class CAdminMod : public CGlobalModule {
 	function_map fnmap_;
 
 public:
-	GLOBALMODCONSTRUCTOR(CAdminMod) {
+	MODCONSTRUCTOR(CAdminMod) {
 		fnmap_["help"]      = &CAdminMod::PrintHelp;
 		fnmap_["get"]       = &CAdminMod::Get;
 		fnmap_["set"]       = &CAdminMod::Set;
@@ -378,4 +383,4 @@ public:
 	}
 };
 
-GLOBALMODULEDEFS(CAdminMod, "Dynamic configuration of users/settings through irc")
+MODULEDEFS(CAdminMod, "Dynamic configuration of users/settings through irc")
