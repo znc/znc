@@ -58,26 +58,16 @@ public:
 
 	virtual bool OnLoad(const CString& sArgs, CString& sMessage)
 	{
-		if (!sArgs.empty())
-		{
-			m_sPassword = CBlowfish::MD5(sArgs);
-			return(OnBoot());
-		}
-
-		return true;
-	}
-
-	virtual bool OnBoot()
-	{
-		if (m_sPassword.empty())
-		{
-			CString sTmp = CUtils::GetPass("Enter Encryption Key for " + GetModName() + ".so");
-
-			if (!sTmp.empty())
-				m_sPassword = CBlowfish::MD5(sTmp);
-		}
-
 		const vector<CChan *>& vChans = m_pUser->GetChans();
+
+		if (sArgs.empty())
+		{
+			sMessage = "This module needs as an argument a keyphrase used for encryption";
+			return false;
+		}
+
+		m_sPassword = CBlowfish::MD5(sArgs);
+
 		for (u_int a = 0; a < vChans.size(); a++)
 		{
 			if (!vChans[a]->KeepBuffer())
@@ -85,6 +75,8 @@ public:
 
 			if (!BootStrap(vChans[a]))
 			{
+				sMessage = "Failed to decrypt your saved messages - "
+					"Did you give the right encryption key as an argument to this module?";
 				m_bBootError = true;
 				return(false);
 			}

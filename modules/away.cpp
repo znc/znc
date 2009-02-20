@@ -62,28 +62,20 @@ public:
 		if (!sMyArgs.empty())
 		{
 			m_sPassword = CBlowfish::MD5(sMyArgs);
-		}
-
-		return true;
-	}
-
-	virtual bool OnBoot()
-	{
-		if (m_sPassword.empty())
-		{
-			CString sTmp = CUtils::GetPass("Enter Encryption Key for away.so: ");
-
-			if (!sTmp.empty())
-				m_sPassword = CBlowfish::MD5(sTmp);
+		} else {
+			sMessage = "This module needs as an argument a keyphrase used for encryption";
+			return false;
 		}
 
 		if (!BootStrap())
 		{
+			sMessage = "Failed to decrypt your saved messages - "
+				"Did you give the right encryption key as an argument to this module?";
 			m_bBootError = true;
-			return(false);
+			return false;
 		}
 
-		return(true);
+		return true;
 	}
 
 	virtual void OnIRCConnected()
