@@ -34,7 +34,7 @@ int CBuffer::AddLine(const CString& sPre, const CString& sPost, bool bIncNick) {
 		return 0;
 	}
 
-	if (size() >= m_uLineCount) {
+	while (size() >= m_uLineCount) {
 		erase(begin());
 	}
 
