@@ -619,13 +619,17 @@ CClientAuth::CClientAuth(CClient* pClient, const CString& sUsername, const CStri
 	m_pClient = pClient;
 }
 
-void CClientAuth::RefuseLogin(const CString& sReason) {
+void CClientAuth::RefusedLogin(const CString& sReason) {
 	if (m_pClient) {
 		m_pClient->RefuseLogin(sReason);
 	}
+}
+
+void CAuthBase::RefuseLogin(const CString& sReason) {
 #ifdef _MODULES
 	CZNC::Get().GetModules().OnFailedLogin(GetUsername(), GetRemoteIP());
 #endif
+	RefusedLogin(sReason);
 }
 
 void CClient::RefuseLogin(const CString& sReason) {
@@ -639,7 +643,7 @@ void CClient::RefuseLogin(const CString& sReason) {
 	Close();
 }
 
-void CClientAuth::AcceptLogin(CUser& User) {
+void CClientAuth::AcceptedLogin(CUser& User) {
 	if (m_pClient) {
 		m_pClient->AcceptLogin(User);
 	}

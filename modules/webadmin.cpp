@@ -26,8 +26,8 @@ public:
 	virtual ~CWebAdminAuth() {}
 
 	void SetWebAdminSock(CWebAdminSock* pWebAdminSock) { m_pWebAdminSock = pWebAdminSock; }
-	void AcceptLogin(CUser& User);
-	void RefuseLogin(const CString& sReason);
+	void AcceptedLogin(CUser& User);
+	void RefusedLogin(const CString& sReason);
 private:
 protected:
 	CWebAdminSock*	m_pWebAdminSock;
@@ -1165,7 +1165,7 @@ CWebAdminAuth::CWebAdminAuth(CWebAdminSock* pWebAdminSock, const CString& sUsern
 	m_pWebAdminSock = pWebAdminSock;
 }
 
-void CWebAdminAuth::AcceptLogin(CUser& User) {
+void CWebAdminAuth::AcceptedLogin(CUser& User) {
 	if (m_pWebAdminSock) {
 		m_pWebAdminSock->SetSessionUser(&User);
 		m_pWebAdminSock->SetLoggedIn(true);
@@ -1173,7 +1173,7 @@ void CWebAdminAuth::AcceptLogin(CUser& User) {
 	}
 }
 
-void CWebAdminAuth::RefuseLogin(const CString& sReason) {
+void CWebAdminAuth::RefusedLogin(const CString& sReason) {
 	if (m_pWebAdminSock) {
 		m_pWebAdminSock->SetLoggedIn(false);
 		m_pWebAdminSock->UnPauseRead();

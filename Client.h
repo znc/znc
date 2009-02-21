@@ -36,12 +36,16 @@ public:
 		m_sRemoteIP = sRemoteIP;
 	}
 
-	virtual void AcceptLogin(CUser& User) = 0;
-	virtual void RefuseLogin(const CString& sReason) = 0;
+	void AcceptLogin(CUser& User) { AcceptedLogin(User); }
+	void RefuseLogin(const CString& sReason);
 
 	const CString& GetUsername() const { return m_sUsername; }
 	const CString& GetPassword() const { return m_sPassword; }
 	const CString& GetRemoteIP() const { return m_sRemoteIP; }
+
+protected:
+	virtual void AcceptedLogin(CUser& User) = 0;
+	virtual void RefusedLogin(const CString& sReason) = 0;
 
 private:
 	CString		m_sUsername;
@@ -56,8 +60,8 @@ public:
 	virtual ~CClientAuth() {}
 
 	void SetClient(CClient* pClient) { m_pClient = pClient; }
-	void AcceptLogin(CUser& User);
-	void RefuseLogin(const CString& sReason);
+	void AcceptedLogin(CUser& User);
+	void RefusedLogin(const CString& sReason);
 private:
 protected:
 	CClient*	m_pClient;
