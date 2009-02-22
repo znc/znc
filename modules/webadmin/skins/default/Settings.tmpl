@@ -101,7 +101,7 @@
 					<tr class="background: <? IF __EVEN__ ?>evenrow<? ELSE ?>oddrow<? ENDIF ?>">
 						<td><input type="checkbox" name="loadmod" id="lm_<? VAR Name ESC=HTML ?>" value="<? VAR Name ESC=HTML ?>"<? IF Checked ?> checked="checked"<? ENDIF ?><? IF Disabled ?> disabled="disabled"<? ENDIF ?> /><label for="lm_<? VAR Name ESC=HTML ?>"> <? VAR Name ESC=HTML ?></label></td>
 						<td><input type="text" name="modargs_<? VAR Name ESC=HTML ?>" value="<? VAR Args ESC=HTML ?>" /></td>
-						<td><? VAR Description ?></td>
+						<td><? VAR Description ESC=HTML ?></td>
 					</tr>
 					<? ENDLOOP ?>
 				</table>
