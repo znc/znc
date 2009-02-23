@@ -188,7 +188,7 @@ bool CHTTPSock::PrintFile(const CString& sFileName, CString sContentType) {
 
 		char szBuf[4096];
 		unsigned long long iLen = 0;
-		int i;
+		int i = 0;
 
 		PrintHeader(iSize, sContentType);
 
