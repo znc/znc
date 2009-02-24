@@ -104,6 +104,7 @@ public:
 	CString Left(unsigned int uCount) const;
 	CString Right(unsigned int uCount) const;
 
+	CString FirstLine() const { return Token(0, false, "\n"); }
 	CString Token(unsigned int uPos, bool bRest = false, const CString& sSep = " ") const;
 	unsigned int URLSplit(MCString& msRet) const;
 	unsigned int Split(const CString& sDelim, VCString& vsRet, bool bAllowEmpty = true, const CString& sLeft = "", const CString& sRight = "") const;

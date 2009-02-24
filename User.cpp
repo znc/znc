@@ -554,11 +554,12 @@ bool CUser::PrintLine(CFile& File, const CString& sName, const CString& sValue) 
 		return false;
 	}
 
-	return File.Write("\t" + sName + " = " + sValue + "\n");
+	return File.Write("\t" + sName.FirstLine()
+			+ " = " + sValue.FirstLine() + "\n");
 }
 
 bool CUser::WriteConfig(CFile& File) {
-	File.Write("<User " + GetUserName() + ">\n");
+	File.Write("<User " + GetUserName().FirstLine() + ">\n");
 
 	if (IsPassHashed()) {
 		if (m_sPassSalt.empty()) {

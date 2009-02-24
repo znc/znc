@@ -50,16 +50,18 @@ bool CChan::WriteConfig(CFile& File) {
 		return false;
 	}
 
-	File.Write("\t<Chan " + GetName() + ">\n");
+	File.Write("\t<Chan " + GetName().FirstLine() + ">\n");
 
 	if (m_pUser->GetBufferCount() != GetBufferCount())
-		File.Write("\t\tBuffer     = " + CString(GetBufferCount()) + "\n");
+		m_pUser->PrintLine(File, "\tBuffer", CString(GetBufferCount()));
 	if (m_pUser->KeepBuffer() != KeepBuffer())
-		File.Write("\t\tKeepBuffer = " + CString(KeepBuffer()) + "\n");
+		m_pUser->PrintLine(File, "\tKeepBuffer", CString(KeepBuffer()));
 	if (IsDetached())
-		File.Write("\t\tDetached   = true\n");
-	if (!GetKey().empty()) { File.Write("\t\tKey        = " + GetKey() + "\n"); }
-	if (!GetDefaultModes().empty()) { File.Write("\t\tModes      = " + GetDefaultModes() + "\n"); }
+		m_pUser->PrintLine(File, "\tDetached", "true");
+	if (!GetKey().empty())
+		m_pUser->PrintLine(File, "\tKey", GetKey());
+	if (!GetDefaultModes().empty())
+		m_pUser->PrintLine(File, "\tModes", GetDefaultModes());
 
 	File.Write("\t</Chan>\n");
 	return true;

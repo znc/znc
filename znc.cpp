@@ -514,7 +514,7 @@ bool CZNC::WriteConfig() {
 		CString sHostPortion = pListener->GetBindHost();
 
 		if (!sHostPortion.empty()) {
-			sHostPortion += " ";
+			sHostPortion = sHostPortion.FirstLine() + " ";
 		}
 
 		CString s6 = (pListener->IsIPV6()) ? "6" : " ";
@@ -525,32 +525,39 @@ bool CZNC::WriteConfig() {
 	File.Write("ConnectDelay = " + CString(m_uiConnectDelay) + "\n");
 
 	if (!m_sISpoofFile.empty()) {
-		File.Write("ISpoofFile   = " + m_sISpoofFile + "\n");
-		if (!m_sISpoofFormat.empty()) { File.Write("ISpoofFormat = " + m_sISpoofFormat + "\n"); }
+		File.Write("ISpoofFile   = " + m_sISpoofFile.FirstLine() + "\n");
+		if (!m_sISpoofFormat.empty()) {
+			File.Write("ISpoofFormat = " + m_sISpoofFormat.FirstLine() + "\n");
+		}
 	}
 
-	if (!m_sPidFile.empty()) { File.Write("PidFile      = " + m_sPidFile + "\n"); }
-	if (!m_sStatusPrefix.empty()) { File.Write("StatusPrefix = " + m_sStatusPrefix + "\n"); }
+	if (!m_sPidFile.empty()) {
+		File.Write("PidFile      = " + m_sPidFile.FirstLine() + "\n");
+	}
+	if (!m_sStatusPrefix.empty()) {
+		File.Write("StatusPrefix = " + m_sStatusPrefix.FirstLine() + "\n");
+	}
 
 	for (unsigned int m = 0; m < m_vsMotd.size(); m++) {
-		File.Write("Motd         = " + m_vsMotd[m] + "\n");
+		File.Write("Motd         = " + m_vsMotd[m].FirstLine() + "\n");
 	}
 
 	for (unsigned int v = 0; v < m_vsVHosts.size(); v++) {
-		File.Write("VHost        = " + m_vsVHosts[v] + "\n");
+		File.Write("VHost        = " + m_vsVHosts[v].FirstLine() + "\n");
 	}
 
 #ifdef _MODULES
 	CGlobalModules& Mods = GetModules();
 
 	for (unsigned int a = 0; a < Mods.size(); a++) {
+		CString sName = Mods[a]->GetModName();
 		CString sArgs = Mods[a]->GetArgs();
 
 		if (!sArgs.empty()) {
-			sArgs = " " + sArgs;
+			sArgs = " " + sArgs.FirstLine();
 		}
 
-		File.Write("LoadModule   = " + Mods[a]->GetModName() + sArgs + "\n");
+		File.Write("LoadModule   = " + sName.FirstLine() + sArgs + "\n");
 	}
 #endif
 
