@@ -171,9 +171,13 @@ CString& CUser::AddTimestamp(const CString& sStr, CString& sRet) const {
 	} else {
 		time(&tm);
 		tm += (time_t)(m_fTimezoneOffset * 60 * 60); // offset is in hours
-		strftime(szTimestamp, sizeof(szTimestamp) / sizeof(char), GetTimestampFormat().c_str(), localtime(&tm));
+		size_t i = strftime(szTimestamp, sizeof(szTimestamp), GetTimestampFormat().c_str(), localtime(&tm));
+		if (i != 0) {
+			sRet = sStr;
+		} else {
+			sRet.clear();
+		}
 
-		sRet = sStr;
 		if (m_bPrependTimestamp) {
 			sRet = szTimestamp;
 			sRet += " " + sStr;
