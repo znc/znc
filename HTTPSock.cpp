@@ -259,38 +259,61 @@ bool CHTTPSock::HasParam(const CString& sName) const {
 	return (m_msvsParams.find(sName) != m_msvsParams.end());
 }
 
-CString CHTTPSock::GetParam(const CString& sName) const {
+CString CHTTPSock::GetRawParam(const CString& sName) const {
 	CString sRet;
 
-	VCString vsParams;
-	if (GetParamValues(sName, vsParams)) {
-		sRet = vsParams[0];
+	map<CString, VCString>::const_iterator it = m_msvsParams.find(sName);
+
+	if (it != m_msvsParams.end() && it->second.size() > 0) {
+		sRet = it->second[0];
 	}
 
 	return sRet;
 }
 
-unsigned int CHTTPSock::GetParamValues(const CString& sName, set<CString>& ssRet) const {
+CString CHTTPSock::GetParam(const CString& sName, const CString& sFilter) const {
+	CString sRet = GetRawParam(sName);
+
+	for (size_t i = 0; i < sFilter.length(); i++) {
+		sRet.Replace(CString(sFilter.at(i)), "");
+	}
+
+	return sRet;
+}
+
+unsigned int CHTTPSock::GetParamValues(const CString& sName, set<CString>& ssRet, const CString& sFilter) const {
 	ssRet.clear();
 
 	map<CString, VCString>::const_iterator it = m_msvsParams.find(sName);
 
 	if (it != m_msvsParams.end()) {
 		for (unsigned int a = 0; a < it->second.size(); a++) {
-			ssRet.insert(it->second[a]);
+			CString sParam = it->second[a];
+
+			for (size_t i = 0; i < sFilter.length(); i++) {
+				sParam.Replace(CString(sFilter.at(i)), "");
+			}
+			ssRet.insert(sParam);
 		}
 	}
 
 	return ssRet.size();
 }
 
-unsigned int CHTTPSock::GetParamValues(const CString& sName, VCString& vsRet) const {
+unsigned int CHTTPSock::GetParamValues(const CString& sName, VCString& vsRet, const CString& sFilter) const {
 	vsRet.clear();
 
 	map<CString, VCString>::const_iterator it = m_msvsParams.find(sName);
 
 	if (it != m_msvsParams.end()) {
-		vsRet = it->second;
+		for (unsigned int a = 0; a < it->second.size(); a++) {
+			CString sParam = it->second[a];
+
+			for (size_t i = 0; i < sFilter.length(); i++) {
+				sParam.Replace(CString(sFilter.at(i)), "");
+			}
+			vsRet.push_back(sParam);
+		}
 	}
 
 	return vsRet.size();

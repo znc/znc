@@ -614,7 +614,7 @@ bool CWebAdminSock::SettingsPage(CString& sPageRet) {
 	//sArg = GetParam(""); if (!sArg.empty()) { CZNC::Get().Set(sArg); }
 
 	VCString vsArgs;
-	GetParam("motd").Split("\n", vsArgs);
+	GetRawParam("motd").Split("\n", vsArgs);
 	CZNC::Get().ClearMotd();
 
 	unsigned int a = 0;
@@ -622,7 +622,7 @@ bool CWebAdminSock::SettingsPage(CString& sPageRet) {
 		CZNC::Get().AddMotd(vsArgs[a].TrimRight_n());
 	}
 
-	GetParam("vhosts").Split("\n", vsArgs);
+	GetRawParam("vhosts").Split("\n", vsArgs);
 	CZNC::Get().ClearVHosts();
 
 	for (a = 0; a < vsArgs.size(); a++) {
@@ -1044,14 +1044,14 @@ CUser* CWebAdminSock::GetNewUser(CString& sPageRet, CUser* pUser) {
 	}
 
 	VCString vsArgs;
-	GetParam("servers").Split("\n", vsArgs);
+	GetRawParam("servers").Split("\n", vsArgs);
 	unsigned int a = 0;
 
 	for (a = 0; a < vsArgs.size(); a++) {
 		pNewUser->AddServer(vsArgs[a].Trim_n());
 	}
 
-	GetParam("allowedips").Split("\n", vsArgs);
+	GetRawParam("allowedips").Split("\n", vsArgs);
 	if (vsArgs.size()) {
 		for (a = 0; a < vsArgs.size(); a++) {
 			pNewUser->AddAllowedHost(vsArgs[a].Trim_n());
@@ -1064,7 +1064,7 @@ CUser* CWebAdminSock::GetNewUser(CString& sPageRet, CUser* pUser) {
 		pNewUser->AddAllowedHost(GetParam("ownip"));
 	}
 
-	GetParam("ctcpreplies").Split("\n", vsArgs);
+	GetRawParam("ctcpreplies").Split("\n", vsArgs);
 	for (a = 0; a < vsArgs.size(); a++) {
 		CString sReply = vsArgs[a].TrimRight_n("\r");
 		pNewUser->AddCTCPReply(sReply.Token(0).Trim_n(), sReply.Token(1, true).Trim_n());

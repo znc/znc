@@ -58,15 +58,16 @@ public:
 
 	// Getters
 	bool HasParam(const CString& sName) const;
-	CString GetParam(const CString& sName) const;
+	CString GetRawParam(const CString& sName) const;
+	CString GetParam(const CString& sName, const CString& sFilter = "\r\n") const;
 	bool IsLoggedIn() const { return m_bLoggedIn; }
 	const CString& GetDocRoot() const;
 	const CString& GetUser() const;
 	const CString& GetPass() const;
 	const CString& GetParamString() const;
 	const CString& GetContentType() const;
-	unsigned int GetParamValues(const CString& sName, VCString& vsRet) const;
-	unsigned int GetParamValues(const CString& sName, set<CString>& ssRet) const;
+	unsigned int GetParamValues(const CString& sName, VCString& vsRet, const CString& sFilter = "\r\n") const;
+	unsigned int GetParamValues(const CString& sName, set<CString>& ssRet, const CString& sFilter = "\r\n") const;
 	const map<CString, VCString>& GetParams() const;
 	// !Getters
 private:
