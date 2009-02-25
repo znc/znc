@@ -3082,9 +3082,6 @@ echo "$as_me: error: could not find dlopen. Try --disable-modules" >&2;}
 		# (dynamic_lookup might only work on 10.4 and later)
 	fi
 
-	appendCXX "-D_MODDIR_=\\\"${MODDIR}\\\""
-	appendCXX "-D_DATADIR_=\\\"${DATADIR}\\\""
-
 	if test -z "$NOPERL"; then
 		# Extract the first word of "perl", so it can be a program name with args.
 set dummy perl; ac_word=$2
@@ -3274,6 +3271,9 @@ echo "$as_me: error: could not find libsasl2. Try --disable-sasl." >&2;}
 fi
 
 	fi
+
+	appendCXX "-D_MODDIR_=\\\"${MODDIR}\\\""
+	appendCXX "-D_DATADIR_=\\\"${DATADIR}\\\""
 fi
 
 VERSION=0.067

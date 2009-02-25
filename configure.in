@@ -198,9 +198,6 @@ if test "$MODULES" = "yes"; then
 		# (dynamic_lookup might only work on 10.4 and later)
 	fi
 
-	appendCXX "-D_MODDIR_=\\\"${MODDIR}\\\""
-	appendCXX "-D_DATADIR_=\\\"${DATADIR}\\\""
-
 	if test -z "$NOPERL"; then
 		AC_PATH_PROG([PERL], [perl], [])
 		if test -n "$PERL"; then
@@ -217,6 +214,9 @@ if test "$MODULES" = "yes"; then
 			[: Dont let autoconf add -lsasl2, Makefile handles that],
 			AC_MSG_ERROR([could not find libsasl2. Try --disable-sasl.]))
 	fi
+
+	appendCXX "-D_MODDIR_=\\\"${MODDIR}\\\""
+	appendCXX "-D_DATADIR_=\\\"${DATADIR}\\\""
 fi
 
 VERSION=AC_PACKAGE_VERSION
