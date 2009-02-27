@@ -88,6 +88,8 @@ void CClient::ReadLine(const CString& sData) {
 		if (!IsAttached()) {
 			m_bGotPass = true;
 			m_sPass = sLine.Token(1);
+			if (m_sPass.Left(1) == ":")
+				m_sPass.LeftChomp();
 
 			if (m_sPass.find(":") != CString::npos) {
 				m_sUser = m_sPass.Token(0, false, ":");
