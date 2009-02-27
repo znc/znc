@@ -57,7 +57,7 @@ public:
 	}
 	virtual ~CWatchEntry() {}
 
-	bool IsMatch(const CNick& Nick, const CString& sText, const CString& sSource) {
+	bool IsMatch(const CNick& Nick, const CString& sText, const CString& sSource, const CUser* pUser) {
 		if (IsDisabled()) {
 			return false;
 		}
@@ -80,7 +80,14 @@ public:
 			}
 		}
 
-		return (bGoodSource && Nick.GetHostMask().AsLower().WildCmp(m_sHostMask.AsLower())) && sText.AsLower().WildCmp(m_sPattern.AsLower());
+		if (!bGoodSource)
+			return false;
+		if (!Nick.GetHostMask().AsLower().WildCmp(m_sHostMask.AsLower()))
+			return false;
+		if (!sText.AsLower().WildCmp(pUser->ExpandString(m_sPattern).AsLower()))
+			return false;
+
+		return true;
 	}
 
 	bool operator ==(const CWatchEntry& WatchEntry) {
@@ -162,7 +169,8 @@ public:
 	}
 
 	virtual void OnRawMode(const CNick& OpNick, CChan& Channel, const CString& sModes, const CString& sArgs) {
-		Process(OpNick, "* " + OpNick.GetNick() + " sets mode: " + sModes + " " + sArgs + " on " + Channel.GetName(), Channel.GetName());
+		Process(OpNick, "* " + OpNick.GetNick() + " sets mode: " + sModes + " " +
+			sArgs + " on " + Channel.GetName(), Channel.GetName());
 	}
 
 	virtual void OnClientLogin() {
@@ -175,19 +183,23 @@ public:
 	}
 
 	virtual void OnKick(const CNick& OpNick, const CString& sKickedNick, CChan& Channel, const CString& sMessage) {
-		Process(OpNick, "* " + OpNick.GetNick() + " kicked " + sKickedNick + " from " + Channel.GetName() + " because [" + sMessage + "]", Channel.GetName());
+		Process(OpNick, "* " + OpNick.GetNick() + " kicked " + sKickedNick + " from " + 
+			Channel.GetName() + " because [" + sMessage + "]", Channel.GetName());
 	}
 
 	virtual void OnQuit(const CNick& Nick, const CString& sMessage, const vector<CChan*>& vChans) {
-		Process(Nick, "* Quits: " + Nick.GetNick() + " (" + Nick.GetIdent() + "@" + Nick.GetHost() + ") (" + sMessage + ")", "");
+		Process(Nick, "* Quits: " + Nick.GetNick() + " (" + Nick.GetIdent() + "@" + Nick.GetHost() + ") "
+			"(" + sMessage + ")", "");
 	}
 
 	virtual void OnJoin(const CNick& Nick, CChan& Channel) {
-		Process(Nick, "* " + Nick.GetNick() + " (" + Nick.GetIdent() + "@" + Nick.GetHost() + ") joins " + Channel.GetName(), Channel.GetName());
+		Process(Nick, "* " + Nick.GetNick() + " (" + Nick.GetIdent() + "@" + Nick.GetHost() + ") joins " +
+			Channel.GetName(), Channel.GetName());
 	}
 
 	virtual void OnPart(const CNick& Nick, CChan& Channel) {
-		Process(Nick, "* " + Nick.GetNick() + " (" + Nick.GetIdent() + "@" + Nick.GetHost() + ") parts " + Channel.GetName(), Channel.GetName());
+		Process(Nick, "* " + Nick.GetNick() + " (" + Nick.GetIdent() + "@" + Nick.GetHost() + ") parts " +
+			Channel.GetName(), Channel.GetName());
 	}
 
 	virtual void OnNick(const CNick& OldNick, const CString& sNewNick, const vector<CChan*>& vChans) {
@@ -205,7 +217,8 @@ public:
 	}
 
 	virtual EModRet OnChanCTCP(CNick& Nick, CChan& Channel, CString& sMessage) {
-		Process(Nick, "* CTCP: " + Nick.GetNick() + " [" + sMessage + "] to [" + Channel.GetName() + "]", Channel.GetName());
+		Process(Nick, "* CTCP: " + Nick.GetNick() + " [" + sMessage + "] to "
+			"[" + Channel.GetName() + "]", Channel.GetName());
 		return CONTINUE;
 	}
 
@@ -280,9 +293,10 @@ private:
 		for (list<CWatchEntry>::iterator it = m_lsWatchers.begin(); it != m_lsWatchers.end(); it++) {
 			CWatchEntry& WatchEntry = *it;
 
-			if (WatchEntry.IsMatch(Nick, sMessage, sSource)) {
+			if (WatchEntry.IsMatch(Nick, sMessage, sSource, m_pUser)) {
 				if (m_pUser->IsUserAttached()) {
-					m_pUser->PutUser(":" + WatchEntry.GetTarget() + "!watch@znc.in PRIVMSG " + m_pUser->GetCurNick() + " :" + sMessage);
+					m_pUser->PutUser(":" + WatchEntry.GetTarget() + "!watch@znc.in PRIVMSG " +
+							m_pUser->GetCurNick() + " :" + sMessage);
 				} else {
 					m_Buffer.AddLine(":" + WatchEntry.GetTarget() + "!watch@znc.in PRIVMSG ",
 							" :" + m_pUser->AddTimestamp(sMessage));
@@ -359,10 +373,12 @@ private:
 		for (list<CWatchEntry>::iterator it = m_lsWatchers.begin(); it != m_lsWatchers.end(); it++, uIdx++) {
 			CWatchEntry& WatchEntry = *it;
 
-			PutModule("/msg " + GetModNick() + " ADD " + WatchEntry.GetHostMask() + " " + WatchEntry.GetTarget() + " " + WatchEntry.GetPattern());
+			PutModule("/msg " + GetModNick() + " ADD " + WatchEntry.GetHostMask() + " " +
+				WatchEntry.GetTarget() + " " + WatchEntry.GetPattern());
 
 			if (WatchEntry.GetSourcesStr().size()) {
-				PutModule("/msg " + GetModNick() + " SETSOURCES " + CString(uIdx) + " " + WatchEntry.GetSourcesStr());
+				PutModule("/msg " + GetModNick() + " SETSOURCES " + CString(uIdx) + " " +
+					WatchEntry.GetSourcesStr());
 			}
 
 			if (WatchEntry.IsDisabled()) {
@@ -468,7 +484,8 @@ private:
 			}
 
 			if (!bExists) {
-				sMessage = "Adding entry: [" + WatchEntry.GetHostMask() + "] watching for [" + WatchEntry.GetPattern() + "] -> [" + WatchEntry.GetTarget() + "]";
+				sMessage = "Adding entry: [" + WatchEntry.GetHostMask() + "] watching for "
+					"[" + WatchEntry.GetPattern() + "] -> [" + WatchEntry.GetTarget() + "]";
 				m_lsWatchers.push_back(WatchEntry);
 			}
 		} else {
