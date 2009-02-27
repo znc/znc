@@ -70,7 +70,7 @@ public:
 	virtual void OnModCommand(const CString& sLine) {
 		CString sCommand = sLine.Token(0);
 		if (sCommand.Equals("cd")) {
-			CString sArg = sCommand.Token(1, true);
+			CString sArg = sLine.Token(1, true);
 			CString sPath = CDir::ChangeDir(m_sPath, (sArg.empty() ? CString(CZNC::Get().GetHomePath()) : sArg), CZNC::Get().GetHomePath());
 			CFile Dir(sPath);
 
