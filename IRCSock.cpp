@@ -614,7 +614,9 @@ void CIRCSock::ReadLine(const CString& sData) {
 					sMsg.LeftChomp();
 				}
 
-				m_pUser->AddQueryBuffer(":" + Nick.GetNickMask() + " WALLOPS ", ":" + m_pUser->AddTimestamp(sMsg), false);
+				if (!m_pUser->IsUserAttached()) {
+					m_pUser->AddQueryBuffer(":" + Nick.GetNickMask() + " WALLOPS ", ":" + m_pUser->AddTimestamp(sMsg), false);
+				}
 			}
 		}
 	}
