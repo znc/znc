@@ -1702,6 +1702,7 @@ bool CZNC::DeleteUser(const CString& sUsername) {
 
 bool CZNC::AddUser(CUser* pUser, CString& sErrorRet) {
 	if (FindUser(pUser->GetUserName()) != NULL) {
+		sErrorRet = "User already exists";
 		DEBUG("User [" << pUser->GetUserName() << "] - already exists");
 		return false;
 	}
