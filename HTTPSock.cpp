@@ -34,9 +34,6 @@ void CHTTPSock::Init() {
 CHTTPSock::~CHTTPSock() {}
 
 void CHTTPSock::ReadData(const char* data, int len) {
-	string s;
-	s.append(data, len);
-
 	if (!m_bDone && m_bGotHeader && m_bPost) {
 		m_sPostData.append(data, len);
 		CheckPost();
