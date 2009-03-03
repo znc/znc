@@ -28,7 +28,7 @@
 * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 *
 *
-* $Revision: 1.202 $
+* $Revision: 1.203 $
 */
 
 // note to compile with win32 need to link to winsock2, using gcc its -lws2_32
@@ -1888,6 +1888,12 @@ private:
 					{
 						pcSock->Close();
 					}
+					if( pcSock->GetWriteBuffer().size() )
+					{ // this means we need to write again, not everything got knocked out
+						TFD_SET( iWSock, &wfds );
+						bHasWriteable = true;
+					}
+
 				} else
 				{
 					if ( !bIsReadPaused )
