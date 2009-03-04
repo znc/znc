@@ -735,12 +735,7 @@ bool CString::Base64Encode(CString& sRet, unsigned int uWrap) const {
 		return 0;
 	}
 
-	//p = output = (unsigned char *)malloc(toalloc);
 	p = output = new unsigned char [toalloc];
-
-	if (!p) {
-		return false;
-	}
 
 	while (i < len - mod) {
 		*p++ = b64table[input[i++] >> 2];
@@ -781,11 +776,16 @@ bool CString::Base64Encode(CString& sRet, unsigned int uWrap) const {
 }
 
 unsigned long CString::Base64Decode(CString& sRet) const {
-	const char* in = c_str();
+	CString sTmp(*this);
+	// remove new lines
+	sTmp.Replace("\r", "");
+	sTmp.Replace("\n", "");
+
+	const char* in = sTmp.c_str();
 	char c, c1, *p;
 	unsigned long i;
-	unsigned long uLen = size();
-	char* out = (char*) malloc(size() +1);
+	unsigned long uLen = sTmp.size();
+	char* out = new char[uLen + 1];
 
 	for (i = 0, p = out; i < uLen; i++) {
 		c = (char)base64_table[(unsigned char)in[i++]];
@@ -812,7 +812,7 @@ unsigned long CString::Base64Decode(CString& sRet) const {
 	unsigned long uRet = p - out;
 	sRet.clear();
 	sRet.append(out, uRet);
-	free(out);
+	delete[] out;
 
 	return uRet;
 }
