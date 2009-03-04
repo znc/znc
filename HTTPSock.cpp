@@ -51,12 +51,12 @@ void CHTTPSock::CheckPost() {
 }
 
 void CHTTPSock::ReadLine(const CString& sData) {
-	CString sLine = sData;
-	sLine.TrimRight("\r\n");
-
 	if (m_bGotHeader) {
 		return;
 	}
+
+	CString sLine = sData;
+	sLine.TrimRight("\r\n");
 
 	CString sName = sLine.Token(0);
 
