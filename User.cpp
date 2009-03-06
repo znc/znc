@@ -40,7 +40,7 @@ CUser::CUser(const CString& sUserName) {
 	m_sStatusPrefix = "*";
 	m_sChanPrefixes = "";
 	m_uBufferCount = 50;
-	m_uMaxJoinTries = 0;
+	m_uMaxJoinTries = 10;
 	m_uMaxJoins = 5;
 	m_bKeepBuffer = false;
 	m_bBeingDeleted = false;
