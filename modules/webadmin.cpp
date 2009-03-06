@@ -252,9 +252,14 @@ CString CWebAdminSock::GetAvailSkinsDir() {
 }
 
 CString CWebAdminSock::GetSkinDir() {
-	CString sSkinDir = GetAvailSkinsDir() + GetModule()->GetSkinName() + "/";
+	CString sAvailSkins = GetAvailSkinsDir();
+	CString sSkinDir = sAvailSkins + GetModule()->GetSkinName() + "/";
+	CString sDir = CDir::ChangeDir("./", sSkinDir, "/");
 
-	if (CFile::IsDir(sSkinDir)) {
+	// Via ChangeDir() we check if someone tries to use e.g. a skin name
+	// with embed .. or such evilness.
+	if (sDir.Left(sAvailSkins.length()) == sAvailSkins
+			&& CFile::IsDir(sSkinDir)) {
 		return sSkinDir;
 	}
 
@@ -263,8 +268,6 @@ CString CWebAdminSock::GetSkinDir() {
 
 void CWebAdminSock::PrintPage(CString& sPageRet, const CString& sTmplName) {
 	sPageRet.clear();
-	// @todo possibly standardize the location of meta files such as these skins
-	// @todo give an option for changing the current skin from 'default'
 	CString sTmpl;
 
 	if (IsAdmin()) {
