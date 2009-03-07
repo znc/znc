@@ -628,6 +628,16 @@ void CClientAuth::RefusedLogin(const CString& sReason) {
 }
 
 void CAuthBase::RefuseLogin(const CString& sReason) {
+	CUser* pUser = GetUser(GetUsername());
+
+	// If the username is valid, notify that user that someone tried to
+	// login. Use sReason because there are other reasons than "wrong
+	// password" for a login to be rejected (e.g. fail2ban).
+	if (pUser) {
+		pUser->PutStatus("Another client attempted to login as you ["
+				+ sReason + "].");
+	}
+
 #ifdef _MODULES
 	CZNC::Get().GetModules().OnFailedLogin(GetUsername(), GetRemoteIP());
 #endif

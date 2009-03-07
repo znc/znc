@@ -1750,10 +1750,6 @@ void CZNC::AuthUser(CSmartPtr<CAuthBase> AuthClass) {
 	CUser* pUser = GetUser(AuthClass->GetUsername());
 
 	if (!pUser || !pUser->CheckPass(AuthClass->GetPassword())) {
-		if (pUser) {
-			pUser->PutStatus("Another client attempted to login as you, with a bad password.");
-		}
-
 		AuthClass->RefuseLogin("Invalid Password");
 		return;
 	}
