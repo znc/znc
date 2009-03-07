@@ -164,10 +164,6 @@ public:
 		Load();
 	}
 
-	virtual ~CWatcherMod() {
-		Save();
-	}
-
 	virtual void OnRawMode(const CNick& OpNick, CChan& Channel, const CString& sModes, const CString& sArgs) {
 		Process(OpNick, "* " + OpNick.GetNick() + " sets mode: " + sModes + " " +
 			sArgs + " on " + Channel.GetName(), Channel.GetName());
@@ -273,6 +269,7 @@ public:
 		} else if (sCmdName.Equals("CLEAR")) {
 			m_lsWatchers.clear();
 			PutModule("All entries cleared.");
+			Save();
 		} else if (sCmdName.Equals("BUFFER")) {
 			CString sCount = sCommand.Token(1);
 
@@ -312,6 +309,7 @@ private:
 			}
 
 			PutModule(((bDisabled) ? "Disabled all entries." : "Enabled all entries."));
+			Save();
 			return;
 		}
 
@@ -327,6 +325,7 @@ private:
 
 		(*it).SetDisabled(bDisabled);
 		PutModule("Id " + CString(uIdx +1) + ((bDisabled) ? " Disabled" : " Enabled"));
+		Save();
 	}
 
 	void List() {
@@ -402,6 +401,7 @@ private:
 
 		(*it).SetSources(sSources);
 		PutModule("Sources set for Id " + CString(uIdx +1) + ".");
+		Save();
 	}
 
 	void Remove(unsigned int uIdx) {
@@ -417,6 +417,7 @@ private:
 
 		m_lsWatchers.erase(it);
 		PutModule("Id " + CString(uIdx +1) + " Removed.");
+		Save();
 	}
 
 	void Help() {
@@ -497,6 +498,7 @@ private:
 		} else {
 			PutModule(sMessage);
 		}
+		Save();
 	}
 
 	void Save() {
