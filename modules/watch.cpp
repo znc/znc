@@ -164,6 +164,8 @@ public:
 		Load();
 	}
 
+	virtual ~CWatcherMod() {}
+
 	virtual void OnRawMode(const CNick& OpNick, CChan& Channel, const CString& sModes, const CString& sArgs) {
 		Process(OpNick, "* " + OpNick.GetNick() + " sets mode: " + sModes + " " +
 			sArgs + " on " + Channel.GetName(), Channel.GetName());
