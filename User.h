@@ -60,6 +60,9 @@ public:
 #ifdef _MODULES
 	void DelModules();
 
+	// Unloads a module on all users who have it loaded and loads it again.
+	static bool UpdateModule(const CString &sModule);
+
 	// Modules
 	CModules& GetModules() { return *m_pModules; }
 	const CModules& GetModules() const { return *m_pModules; }

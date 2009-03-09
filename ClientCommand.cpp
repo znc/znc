@@ -746,6 +746,25 @@ void CClient::UserCommand(const CString& sLine) {
 		PutStatus("Unable to unload [" + sMod + "] Modules are not enabled.");
 #endif
 		return;
+	} else if ((sCommand.Equals("UPDATEMOD") || sCommand.Equals("UPDATEMODULE")) && pUser->IsAdmin() ) {
+#ifndef _MODULES
+		PutStatus("Modules are not enabled.");
+#else
+		CString sMod = sLine.Token(1);
+
+		if (m_pUser->DenyLoadMod() || !m_pUser->IsAdmin()) {
+			PutStatus("Unable to reload [" + sMod + "] Access Denied.");
+			return;
+		}
+
+		PutStatus("Reloading [" + sMod + "] on all users...");
+		if (CUser::UpdateModule(sMod)) {
+			PutStatus("Done");
+		} else {
+			PutStatus("Done, but there were errors, some users no longer have ["
+					+ sMod + "] loaded");
+		}
+#endif
 	} else if (sCommand.Equals("ADDVHOST") && m_pUser->IsAdmin()) {
 		CString sVHost = sLine.Token(1);
 
@@ -1114,6 +1133,13 @@ void CClient::HelpUser() {
 		Table.SetCell("Command", "ReloadMod");
 		Table.SetCell("Arguments", "<module>");
 		Table.SetCell("Description", "Reload a module");
+
+		if (m_pUser->IsAdmin()) {
+			Table.AddRow();
+			Table.SetCell("Command", "UpdateMod");
+			Table.SetCell("Arguments", "<module>");
+			Table.SetCell("Description", "Reload a module on all users");
+		}
 	}
 
 	Table.AddRow();
