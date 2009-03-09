@@ -746,7 +746,7 @@ void CClient::UserCommand(const CString& sLine) {
 		PutStatus("Unable to unload [" + sMod + "] Modules are not enabled.");
 #endif
 		return;
-	} else if ((sCommand.Equals("UPDATEMOD") || sCommand.Equals("UPDATEMODULE")) && pUser->IsAdmin() ) {
+	} else if ((sCommand.Equals("UPDATEMOD") || sCommand.Equals("UPDATEMODULE")) && m_pUser->IsAdmin() ) {
 #ifndef _MODULES
 		PutStatus("Modules are not enabled.");
 #else
