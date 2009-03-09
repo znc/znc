@@ -973,7 +973,6 @@ void CModules::GetAvailableMods(set<CModInfo>& ssMods, bool bGlobal) {
 
 		if (GetModInfo(ModInfo, sName)) {
 			if (ModInfo.IsGlobal() == bGlobal) {
-				ModInfo.SetSystem(false);
 				ssMods.insert(ModInfo);
 			}
 		}
@@ -988,7 +987,6 @@ void CModules::GetAvailableMods(set<CModInfo>& ssMods, bool bGlobal) {
 
 		if (GetModInfo(ModInfo, sName)) {
 			if (ModInfo.IsGlobal() == bGlobal) {
-				ModInfo.SetSystem(false);
 				ssMods.insert(ModInfo);
 			}
 		}
@@ -1003,7 +1001,6 @@ void CModules::GetAvailableMods(set<CModInfo>& ssMods, bool bGlobal) {
 
 		if (GetModInfo(ModInfo, sName)) {
 			if (ModInfo.IsGlobal() == bGlobal) {
-				ModInfo.SetSystem(true);
 				ssMods.insert(ModInfo);
 			}
 		}

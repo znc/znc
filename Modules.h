@@ -161,8 +161,7 @@ protected:
 class CModInfo {
 public:
 	CModInfo() {}
-	CModInfo(const CString& sName, const CString& sPath, bool bSystem, bool bGlobal) {
-		m_bSystem = bSystem;
+	CModInfo(const CString& sName, const CString& sPath, bool bGlobal) {
 		m_bGlobal = bGlobal;
 		m_sName = sName;
 		m_sPath = sPath;
@@ -177,7 +176,6 @@ public:
 	const CString& GetName() const { return m_sName; }
 	const CString& GetPath() const { return m_sPath; }
 	const CString& GetDescription() const { return m_sDescription; }
-	bool IsSystem() const { return m_bSystem; }
 	bool IsGlobal() const { return m_bGlobal; }
 	// !Getters
 
@@ -185,12 +183,10 @@ public:
 	void SetName(const CString& s) { m_sName = s; }
 	void SetPath(const CString& s) { m_sPath = s; }
 	void SetDescription(const CString& s) { m_sDescription = s; }
-	void SetSystem(bool b) { m_bSystem = b; }
 	void SetGlobal(bool b) { m_bGlobal = b; }
 	// !Setters
 private:
 protected:
-	bool	m_bSystem;
 	bool	m_bGlobal;
 	CString	m_sName;
 	CString	m_sPath;

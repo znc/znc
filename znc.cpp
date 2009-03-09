@@ -766,7 +766,7 @@ bool CZNC::WriteNewConfig(CString& sConfigFile) {
 					const CModInfo& Info = *it;
 					CString sName = Info.GetName();
 
-					if (CUtils::GetBoolInput("Load " + CString((Info.IsSystem()) ? "system" : "local") + " module <\033[1m" + sName + "\033[22m>?", false)) {
+					if (CUtils::GetBoolInput("Load module <\033[1m" + sName + "\033[22m>?", false)) {
 						vsLines.push_back("\tLoadModule = " + sName);
 					}
 				}
