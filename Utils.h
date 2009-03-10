@@ -328,10 +328,10 @@ public:
 
 	/**
 	 * @brief Attach() to a raw pointer
-	 * @param p The raw pointer to keep track of, ***WARNING*** Do _NOT_ allow more than one CSmartPtr keep track of the same raw pointer
+	 * @param pRawPtr The raw pointer to keep track of, ***WARNING*** Do _NOT_ allow more than one CSmartPtr keep track of the same raw pointer
 	 * @return Reference to self
 	 */
-	CSmartPtr<T>& operator =(T* p) { Attach(p); return *this; }
+	CSmartPtr<T>& operator =(T* pRawPtr) { Attach(pRawPtr); return *this; }
 
 	/**
 	 * @brief Copies an existing CSmartPtr adding another reference to the counter
@@ -360,6 +360,14 @@ public:
 	// !Overloaded operators
 
 	/**
+	 * @brief Implicit type conversion to bool for things like if (!ptr) {} and if (ptr) {}
+	 * @return @see IsNull()
+	 */
+	operator bool() const {
+		return !IsNull();
+	}
+
+	/**
 	 * @brief Check to see if the underlying raw pointer is null
 	 * @return Whether or not underlying raw pointer is null
 	 */
@@ -373,8 +381,6 @@ public:
 	 * @return Reference to self
 	 */
 	CSmartPtr<T>& Attach(T* pRawPtr) {
-		assert(pRawPtr);
-
 		if (pRawPtr != m_pType) {					// Check for assignment to self
 			Release();								// Release the current pointer
 			m_pType = pRawPtr;						// Point to the passed raw pointer
@@ -408,6 +414,7 @@ public:
 	// Getters
 	T* GetPtr() const { return m_pType; }
 	unsigned int* GetCount() const { return m_puCount; }
+	unsigned int GetClientCount() const { return (m_puCount) ? *m_puCount : 0; }
 	// !Getters
 private:
 	T*				m_pType;	//!< Raw pointer to the class being referenced
