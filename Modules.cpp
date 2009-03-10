@@ -953,6 +953,11 @@ bool CModules::GetModInfo(CModInfo& ModInfo, const CString& sModule) {
 	ModInfo.SetDescription(GetDescription());
 	ModInfo.SetName(sModule);
 	ModInfo.SetPath(sModPath);
+
+	if (CModule::GetCoreVersion() != Version()) {
+		ModInfo.SetDescription("--- Version mismatch, recompile this module. ---");
+	}
+
 	dlclose(p);
 
 	return true;
