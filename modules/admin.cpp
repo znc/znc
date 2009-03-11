@@ -69,6 +69,7 @@ class CAdminMod : public CModule {
 			{"QuitMsg",          string},
 			{"BufferCount",      integer},
 			{"KeepBuffer",       boolean},
+			{"Password",         string}
 		};
 		for (unsigned int i = 0; i != ARRAY_SIZE(vars); ++i) {
 			VarTable.AddRow();
@@ -93,6 +94,9 @@ class CAdminMod : public CModule {
 		if (var.empty()) {
 				PutModule("Usage: get <variable> [username]");
 				return;
+		}
+		if (username.empty()) {
+			username = m_pUser->GetUserName();
 		}
 
 		CUser* user = GetUser(username);
@@ -143,7 +147,7 @@ class CAdminMod : public CModule {
 		if (value.empty()) {
 			if (!username.empty()) {
 				value    = username;
-				username = "";
+				username = m_pUser->GetUserName();;
 			} else {
 				PutModule("Usage: set <variable> [username] <value>");
 				return;
@@ -218,6 +222,12 @@ class CAdminMod : public CModule {
 			user->SetKeepBuffer(b);
 			PutModule("KeepBuffer = " + CString(b ? "true" : "false"));
 		}
+		else if (var == "password") {
+			const CString sSalt = CUtils::GetSalt();
+			const CString sHash = CUtils::SaltedHash(value, sSalt);
+			user->SetPass(sHash, true, sSalt);
+			PutModule("Password has been changed!!");
+		}
 		else
 			PutModule("Error: Unknown variable");
 	}
@@ -275,7 +285,7 @@ class CAdminMod : public CModule {
 
 		CUser* pNewUser = new CUser(sUsername);
 		CString sSalt = CUtils::GetSalt();
-		pNewUser->SetPass(CString(sPassword + sSalt).MD5(), true, sSalt);
+		pNewUser->SetPass(CUtils::SaltedHash(sPassword, sSalt), true, sSalt);
 		if (sIRCServer.size())
 			pNewUser->AddServer(sIRCServer);
 
