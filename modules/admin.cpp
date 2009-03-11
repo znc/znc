@@ -89,7 +89,7 @@ class CAdminMod : public CModule {
 
 	void Get(const CString& sLine) {
 		const CString var      = sLine.Token(1).AsLower();
-		const CString username = sLine.Token(2, true);
+		CString username = sLine.Token(2, true);
 
 		if (var.empty()) {
 				PutModule("Usage: get <variable> [username]");
