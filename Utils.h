@@ -347,7 +347,7 @@ public:
 			}
 
 			m_pType = &(*CopyFrom);				// Make our pointers reference the same raw pointer and counter
-			m_puCount = CopyFrom.GetCount();
+			m_puCount = CopyFrom.m_puCount;
 
 			if (m_pType) {						// If we now point to something valid, increment the counter
 				assert(m_puCount);
@@ -413,7 +413,7 @@ public:
 
 	// Getters
 	T* GetPtr() const { return m_pType; }
-	unsigned int* GetCount() const { return m_puCount; }
+	const unsigned int* GetCount() const { return m_puCount; }
 	unsigned int GetClientCount() const { return (m_puCount) ? *m_puCount : 0; }
 	// !Getters
 private:
