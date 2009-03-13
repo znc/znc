@@ -179,11 +179,12 @@ void CIRCSock::ReadLine(const CString& sData) {
 					// :irc.server.net 437 mynick badnick :Cannot change nickname while banned on channel
 					if (m_pUser->IsChan(sRest.Token(0)) || sNick != "*")
 						break;
+				case 432: // :irc.server.com 432 * nick :Erroneous Nickname: Illegal characters
 				case 433: {
 					CString sBadNick = sRest.Token(0);
 					CString sConfNick = m_pUser->GetNick().Left(GetMaxNickLen());
 
-					if (sNick == "*") {
+					if (!m_bAuthed) {
 						SendAltNick(sBadNick);
 						return;
 					}
