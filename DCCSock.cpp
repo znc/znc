@@ -138,7 +138,7 @@ Csock* CDCCSock::GetSockObj(const CString& sHost, unsigned short uPort) {
 CFile* CDCCSock::OpenFile(bool bWrite) {
 	if ((m_pFile) || (m_sLocalFile.empty())) {
 		m_pUser->PutModule(m_sModuleName, ((bWrite) ? "DCC <- [" : "DCC -> [") + m_sRemoteNick + "][" + m_sLocalFile + "] - Unable to open file.");
-		return false;
+		return NULL;
 	}
 
 	m_pFile = new CFile(m_sLocalFile);
