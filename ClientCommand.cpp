@@ -210,8 +210,6 @@ void CClient::UserCommand(const CString& sLine) {
 		}
 
 		CZNC::Get().Broadcast(sMessage);
-		usleep(100000);	// Sleep for 10ms to attempt to allow the previous Broadcast() to go through to all users
-
 		throw CException(CException::EX_Shutdown);
 	} else if (m_pUser->IsAdmin() && sCommand.Equals("RESTART")) {
 		CString sMessage = sLine.Token(1, true);
