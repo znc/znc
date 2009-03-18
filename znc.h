@@ -185,8 +185,6 @@ private:
 	bool DoRehash(CString& sError);
 	// Returns true if something was done
 	bool HandleUserDeletion();
-	// Backup znc.conf
-	bool BackupConfig() const;
 
 protected:
 	time_t				m_TimeStarted;

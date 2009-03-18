@@ -483,29 +483,11 @@ CString CZNC::ExpandConfigPath(const CString& sConfigFile) {
 	return sRetPath;
 }
 
-bool CZNC::BackupConfig() const {
-	CString sBackup = GetConfigFile() + "-backup";
-
-	// Create a new backup overwriting an old one we might have
-	if (CFile::Copy(m_sConfigFile, sBackup, true))
-		return true;
-
-	// Don't abort if no config file exists
-	if (!CFile::Exists(m_sConfigFile))
-		// No backup because we got nothing to backup
-		return true;
-
-	return false;
-}
-
 bool CZNC::WriteConfig() {
-	CFile File(GetConfigFile());
+	// We first write to a temporary file and then move it to the right place
+	CFile File(GetConfigFile() + "~");
 
-	if (!BackupConfig()) {
-		return false;
-	}
-
-	if (m_sConfigFile.empty() || !File.Open(O_WRONLY | O_CREAT | O_TRUNC, 0600)) {
+	if (GetConfigFile().empty() || !File.Open(O_WRONLY | O_CREAT | O_TRUNC, 0600)) {
 		return false;
 	}
 
@@ -576,7 +558,11 @@ bool CZNC::WriteConfig() {
 		}
 	}
 
+	File.Sync();
 	File.Close();
+
+	// We wrote to a temporary name, move it to the right place
+	File.Move(GetConfigFile(), true);
 
 	return true;
 }
