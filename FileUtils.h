@@ -98,6 +98,7 @@ public:
 	static bool Chmod(const CString& sFile, mode_t mode);
 	bool Seek(unsigned long uPos);
 	bool Truncate();
+	bool Sync();
 	bool Open(const CString& sFileName, int iFlags = O_RDONLY, mode_t iMode = 0644);
 	bool Open(int iFlags = O_RDONLY, mode_t iMode = 0644);
 	int Read(char *pszBuffer, int iBytes);

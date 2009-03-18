@@ -254,6 +254,14 @@ bool CFile::Truncate() {
 	return false;
 }
 
+bool CFile::Sync() {
+	if (m_iFD != -1 && fsync(m_iFD) == 0) {
+		return true;
+	}
+
+	return false;
+}
+
 bool CFile::Open(const CString& sFileName, int iFlags, mode_t iMode) {
 	SetFileName(sFileName);
 	return Open(iFlags, iMode);
