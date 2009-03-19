@@ -93,7 +93,7 @@ public:
 	~CZNC();
 
 	void DeleteUsers();
-	int Loop();
+	void Loop();
 	bool WriteISpoof(CUser* pUser);
 	void ReleaseISpoof();
 	bool WritePidFile(int iPid);

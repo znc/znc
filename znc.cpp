@@ -213,7 +213,7 @@ bool CZNC::HandleUserDeletion()
 	return true;
 }
 
-int CZNC::Loop() {
+void CZNC::Loop() {
 	while (true) {
 		CString sError;
 
@@ -238,8 +238,6 @@ int CZNC::Loop() {
 		// 500 msec to 600 sec
 		m_Manager.DynamicSelectLoop(500 * 1000, 600 * 1000 * 1000);
 	}
-
-	return 0;
 }
 
 bool CZNC::WriteISpoof(CUser* pUser) {

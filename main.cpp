@@ -255,7 +255,7 @@ int main(int argc, char** argv) {
 	int iRet = 0;
 
 	try {
-		iRet = pZNC->Loop();
+		pZNC->Loop();
 	} catch (CException e) {
 		switch (e.GetType()) {
 			case CException::EX_Shutdown:
