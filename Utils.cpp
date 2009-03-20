@@ -155,8 +155,6 @@ CString CUtils::GetHashPass() {
 			return pass1.MD5();
 		}
 	}
-
-	return "";
 }
 
 CString CUtils::GetSaltedHashPass(CString& sSalt) {
@@ -175,8 +173,6 @@ CString CUtils::GetSaltedHashPass(CString& sSalt) {
 			return SaltedHash(pass1, sSalt);
 		}
 	}
-
-	return "";
 }
 
 CString CUtils::GetSalt() {

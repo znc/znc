@@ -100,7 +100,7 @@ bool CFile::FType(const CString sFileName, EFileTypes eType, bool bUseLstat) {
 		case FT_SOCK:
 			return S_ISSOCK(st.st_mode);
 		default:
-			return false;
+			break;
 	}
 	return false;
 }

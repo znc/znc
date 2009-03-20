@@ -182,7 +182,6 @@ void CIRCSock::ReadLine(const CString& sData) {
 				case 432: // :irc.server.com 432 * nick :Erroneous Nickname: Illegal characters
 				case 433: {
 					CString sBadNick = sRest.Token(0);
-					CString sConfNick = m_pUser->GetNick().Left(GetMaxNickLen());
 
 					if (!m_bAuthed) {
 						SendAltNick(sBadNick);
@@ -681,11 +680,10 @@ bool CIRCSock::OnPrivCTCP(CNick& Nick, CString& sMessage) {
 		}
 
 		return true;
-	} else {
-		return OnGeneralCTCP(Nick, sMessage);
 	}
 
-	return false;
+	// This handles everything which wasn't handled yet
+	return OnGeneralCTCP(Nick, sMessage);
 }
 
 bool CIRCSock::OnGeneralCTCP(CNick& Nick, CString& sMessage) {
