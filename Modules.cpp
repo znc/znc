@@ -807,7 +807,7 @@ bool CModules::LoadModule(const CString& sModule, const CString& sArgs, CUser* p
 	bool bLoaded;
 	try {
 		bLoaded = pModule->OnLoad(sArgs, sRetMsg);
-	} catch (CModule::EModException e) {
+	} catch (CModule::EModException) {
 		bLoaded = false;
 		sRetMsg = "Caught an exception";
 	}

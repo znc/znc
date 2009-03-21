@@ -72,4 +72,4 @@ private:
 	TCacheMap<CString>	m_Cache;
 };
 
-GLOBALMODULEDEFS(CFailToBanMod, "Block IPs for some time after a failed login");
+GLOBALMODULEDEFS(CFailToBanMod, "Block IPs for some time after a failed login")

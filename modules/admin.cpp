@@ -19,7 +19,7 @@ struct array_size_helper {
 };
 
 template<class T, std::size_t N>
-array_size_helper<N> array_size(T (&)[N]) {
+static array_size_helper<N> array_size(T (&)[N]) {
 	return array_size_helper<N>();
 }
 

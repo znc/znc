@@ -23,7 +23,7 @@ namespace
 		CUser	*m_pUser;
 		CChan	*m_pChan;
 	};
-};
+}
 
 CZNC::CZNC() {
 	if (!InitCsocket()) {
