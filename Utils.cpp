@@ -275,7 +275,7 @@ void CUtils::PrintError(const CString& sMessage) {
 	if (stdoutIsTTY)
 		fprintf(stdout, "\033[1m\033[34m[\033[31m ** \033[34m]\033[39m\033[22m %s\n", sMessage.c_str());
 	else
-		fprintf(stdout, "[ ** ] %s\n", sMessage.c_str());
+		fprintf(stdout, "%s\n", sMessage.c_str());
 	fflush(stdout);
 }
 
@@ -335,7 +335,7 @@ void CUtils::PrintStatus(bool bSuccess, const CString& sMessage) {
 				fprintf(stdout, "[ %s ]", sMessage.c_str());
 			}
 
-			fprintf(stdout, "\n[ !! ]\n");
+			fprintf(stdout, "\n");
 		}
 	}
 
