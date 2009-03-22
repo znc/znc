@@ -22,15 +22,17 @@
 	for (unsigned int a = 0; a < size(); a++) {			\
 		try {											\
 			type* pMod = (type *) (*this)[a];					\
+			CClient* pOldClient = pMod->GetClient();			\
 			pMod->SetClient(m_pClient);					\
 			if (m_pUser) {							\
+				CUser* pOldUser = pMod->GetUser();			\
 				pMod->SetUser(m_pUser);					\
 				pMod->func;						\
-				pMod->SetUser(NULL);					\
+				pMod->SetUser(pOldUser);				\
 			} else {							\
 				pMod->func;						\
 			}								\
-			pMod->SetClient(NULL);						\
+			pMod->SetClient(pOldClient);					\
 		} catch (CModule::EModException e) {			\
 			if (e == CModule::UNLOAD) {					\
 				UnloadModule((*this)[a]->GetModName());	\
@@ -47,15 +49,17 @@
 		try {											\
 			type* pMod = (type*) (*this)[a];			\
 			CModule::EModRet e = CModule::CONTINUE;		\
+			CClient* pOldClient = pMod->GetClient();			\
 			pMod->SetClient(m_pClient);				\
 			if (m_pUser) {								\
+				CUser* pOldUser = pMod->GetUser();			\
 				pMod->SetUser(m_pUser);					\
 				e = pMod->func;							\
-				pMod->SetUser(NULL);					\
+				pMod->SetUser(pOldUser);				\
 			} else {									\
 				e = pMod->func;							\
 			}											\
-			pMod->SetClient(NULL);					\
+			pMod->SetClient(pOldClient);				\
 			if (e == CModule::HALTMODS) {				\
 				break;									\
 			} else if (e == CModule::HALTCORE) {		\

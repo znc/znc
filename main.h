@@ -33,15 +33,21 @@
 	if (macUSER) {											\
 		CGlobalModules& GMods = CZNC::Get().GetModules();	\
 		CModules& UMods = macUSER->GetModules();			\
-		GMods.SetUser(macUSER); GMods.SetClient(macCLIENT);	\
+		CUser* pOldGUser = GMods.GetUser();				\
+		CClient* pOldGClient = GMods.GetClient();			\
+		CClient* pOldUClient = UMods.GetClient();			\
+		GMods.SetUser(macUSER);						\
+		GMods.SetClient(macCLIENT);	\
 		UMods.SetClient(macCLIENT);							\
 		if (GMods.macFUNC || UMods.macFUNC) {				\
-			GMods.SetUser(NULL); GMods.SetClient(NULL);		\
-			UMods.SetClient(NULL);							\
+			GMods.SetUser(pOldGUser);				\
+			GMods.SetClient(pOldGClient);		\
+			UMods.SetClient(pOldUClient);							\
 			macEXITER;										\
 		}													\
-		GMods.SetUser(NULL); GMods.SetClient(NULL);			\
-		UMods.SetClient(NULL);								\
+		GMods.SetUser(pOldGUser);					\
+		GMods.SetClient(pOldGClient);			\
+		UMods.SetClient(pOldUClient);								\
 	}
 #else
 #define MODULECALL(macFUNC, macUSER, macCLIENT, macEXITER)

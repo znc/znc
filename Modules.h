@@ -366,6 +366,8 @@ public:
 
 	void SetUser(CUser* pUser) { m_pUser = pUser; }
 	void SetClient(CClient* pClient) { m_pClient = pClient; }
+	CUser* GetUser() { return m_pUser; }
+	CClient* GetClient() { return m_pClient; }
 
 	void UnloadAll();
 
