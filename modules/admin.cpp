@@ -213,12 +213,12 @@ class CAdminMod : public CModule {
 			PutModule("QuitMsg = " + value);
 		}
 		else if (var == "buffercount") {
-			unsigned int i = value.ToInt();
+			unsigned int i = value.ToUInt();
 			user->SetBufferCount(i);
 			PutModule("BufferCount = " + value);
 		}
 		else if (var == "keepbuffer") {
-			bool b = value.AsLower() == "true";
+			bool b = value.ToBool();
 			user->SetKeepBuffer(b);
 			PutModule("KeepBuffer = " + CString(b ? "true" : "false"));
 		}
