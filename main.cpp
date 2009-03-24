@@ -12,6 +12,7 @@
 static struct option g_LongOpts[] = {
 	{ "help",			no_argument,	0,	'h' },
 	{ "version",			no_argument,	0,	'v' },
+	{ "foreground",			no_argument,	0,	'f' },
 	{ "no-color",			no_argument,	0,	'n' },
 	{ "allow-root",			no_argument,	0,	'r' },
 	{ "makeconf",			no_argument,	0,	'c' },
@@ -29,6 +30,7 @@ static void GenerateHelp(const char *appname) {
 	CUtils::PrintMessage("Options are:");
 	CUtils::PrintMessage("\t-h, --help         List available command line options (this page)");
 	CUtils::PrintMessage("\t-v, --version      Output version information and exit");
+	CUtils::PrintMessage("\t-f, --foreground   Don't fork into the background");
 	CUtils::PrintMessage("\t-n, --no-color     Don't use escape sequences in the output");
 	CUtils::PrintMessage("\t-r, --allow-root   Don't complain if ZNC is run as root");
 	CUtils::PrintMessage("\t-c, --makeconf     Interactively create a new config");
@@ -43,8 +45,8 @@ static void GenerateHelp(const char *appname) {
 static void die(int sig) {
 	signal(SIGPIPE, SIG_DFL);
 
-#ifdef _DEBUG
 	CUtils::PrintMessage("Exiting on SIG [" + CString(sig) + "]");
+#ifdef _DEBUG
 	if ((sig == SIGABRT) || (sig == SIGSEGV)) {
 		abort();
 	}
@@ -78,13 +80,19 @@ int main(int argc, char** argv) {
 	bool bMakeConf = false;
 	bool bMakePass = false;
 	bool bAllowRoot = false;
+	bool bForeground =
+#ifdef _DEBUG
+		true;
+#else
+		false;
+#endif
 #ifdef HAVE_LIBSSL
 	bool bMakePem = false;
 	bool bEncPem = false;
 
-	while ((iArg = getopt_long(argc, argv, "hvnrcsped:", g_LongOpts, &iOptIndex)) != -1) {
+	while ((iArg = getopt_long(argc, argv, "hvnrcsped:f", g_LongOpts, &iOptIndex)) != -1) {
 #else
-	while ((iArg = getopt_long(argc, argv, "hvnrcsd:", g_LongOpts, &iOptIndex)) != -1) {
+	while ((iArg = getopt_long(argc, argv, "hvnrcsd:f", g_LongOpts, &iOptIndex)) != -1) {
 #endif /* HAVE_LIBSSL */
 		switch (iArg) {
 		case 'h':
@@ -115,6 +123,9 @@ int main(int argc, char** argv) {
 #endif /* HAVE_LIBSSL */
 		case 'd':
 			sDataDir = CString(optarg);
+			break;
+		case 'f':
+			bForeground = true;
 			break;
 		case '?':
 		default:
@@ -190,46 +201,46 @@ int main(int argc, char** argv) {
 		sleep(30);
 	}
 
-#ifdef _DEBUG
-	int iPid = getpid();
-	CUtils::PrintMessage("Staying open for debugging [pid: " + CString(iPid) + "]");
-
-	pZNC->WritePidFile(iPid);
-	CUtils::PrintMessage(CZNC::GetTag());
-#else
-	CUtils::PrintAction("Forking into the background");
-
-	int iPid = fork();
-
-	if (iPid == -1) {
-		CUtils::PrintStatus(false, strerror(errno));
-		delete pZNC;
-		return 1;
-	}
-
-	if (iPid > 0) {
-		// We are the parent. We are done and will go to bed.
-		CUtils::PrintStatus(true, "[pid: " + CString(iPid) + "]");
+	if (bForeground) {
+		int iPid = getpid();
+		CUtils::PrintMessage("Staying open for debugging [pid: " + CString(iPid) + "]");
 
 		pZNC->WritePidFile(iPid);
 		CUtils::PrintMessage(CZNC::GetTag());
-		/* Don't destroy pZNC here or it will delete the pid file. */
-		return 0;
+	} else {
+		CUtils::PrintAction("Forking into the background");
+
+		int iPid = fork();
+
+		if (iPid == -1) {
+			CUtils::PrintStatus(false, strerror(errno));
+			delete pZNC;
+			return 1;
+		}
+
+		if (iPid > 0) {
+			// We are the parent. We are done and will go to bed.
+			CUtils::PrintStatus(true, "[pid: " + CString(iPid) + "]");
+
+			pZNC->WritePidFile(iPid);
+			CUtils::PrintMessage(CZNC::GetTag());
+			/* Don't destroy pZNC here or it will delete the pid file. */
+			return 0;
+		}
+
+		// Redirect std in/out/err to /dev/null
+		close(0); open("/dev/null", O_RDONLY);
+		close(1); open("/dev/null", O_WRONLY);
+		close(2); open("/dev/null", O_WRONLY);
+
+		CUtils::SetStdoutIsTTY(false);
+
+		// We are the child. There is no way we can be a process group
+		// leader, thus setsid() must succeed.
+		setsid();
+		// Now we are in our own process group and session (no controlling
+		// terminal). We are independent!
 	}
-
-	// Redirect std in/out/err to /dev/null
-	close(0); open("/dev/null", O_RDONLY);
-	close(1); open("/dev/null", O_WRONLY);
-	close(2); open("/dev/null", O_WRONLY);
-
-	CUtils::SetStdoutIsTTY(false);
-
-	// We are the child. There is no way we can be a process group
-	// leader, thus setsid() must succeed.
-	setsid();
-	// Now we are in our own process group and session (no controlling
-	// terminal). We are independent!
-#endif
 
 	struct sigaction sa;
 	sa.sa_flags = 0;
