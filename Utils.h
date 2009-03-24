@@ -21,11 +21,11 @@
 using std::map;
 using std::vector;
 
-#ifdef _DEBUG
-#define DEBUG(f) (cout << f << endl)
-#else
-#define DEBUG(f) ((void)0)
-#endif
+#define DEBUG(f) do { \
+	if (CUtils::Debug()) { \
+		cout << f << endl; \
+	} \
+} while (0);
 
 static inline void SetFdCloseOnExec(int fd)
 {
@@ -46,6 +46,8 @@ public:
 	static CString GetIP(unsigned long addr);
 	static unsigned long GetLongIP(const CString& sIP);
 	static void SetStdoutIsTTY(bool b) { stdoutIsTTY = b; }
+	static void SetDebug(bool b) { debug = b; }
+	static bool Debug() { return debug; }
 
 	static void PrintError(const CString& sMessage);
 	static void PrintMessage(const CString& sMessage, bool bStrong = false);
@@ -77,6 +79,7 @@ public:
 private:
 protected:
 	static bool stdoutIsTTY;
+	static bool debug;
 };
 
 class CException {

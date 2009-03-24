@@ -12,6 +12,7 @@
 static struct option g_LongOpts[] = {
 	{ "help",			no_argument,	0,	'h' },
 	{ "version",			no_argument,	0,	'v' },
+	{ "debug",			no_argument,	0,	'g' },
 	{ "foreground",			no_argument,	0,	'f' },
 	{ "no-color",			no_argument,	0,	'n' },
 	{ "allow-root",			no_argument,	0,	'r' },
@@ -31,6 +32,7 @@ static void GenerateHelp(const char *appname) {
 	CUtils::PrintMessage("\t-h, --help         List available command line options (this page)");
 	CUtils::PrintMessage("\t-v, --version      Output version information and exit");
 	CUtils::PrintMessage("\t-f, --foreground   Don't fork into the background");
+	CUtils::PrintMessage("\t-g, --debug        Output debugging information (Implies -f)");
 	CUtils::PrintMessage("\t-n, --no-color     Don't use escape sequences in the output");
 	CUtils::PrintMessage("\t-r, --allow-root   Don't complain if ZNC is run as root");
 	CUtils::PrintMessage("\t-c, --makeconf     Interactively create a new config");
@@ -90,9 +92,9 @@ int main(int argc, char** argv) {
 	bool bMakePem = false;
 	bool bEncPem = false;
 
-	while ((iArg = getopt_long(argc, argv, "hvnrcsped:f", g_LongOpts, &iOptIndex)) != -1) {
+	while ((iArg = getopt_long(argc, argv, "hvnrcsped:gf", g_LongOpts, &iOptIndex)) != -1) {
 #else
-	while ((iArg = getopt_long(argc, argv, "hvnrcsd:f", g_LongOpts, &iOptIndex)) != -1) {
+	while ((iArg = getopt_long(argc, argv, "hvnrcsd:gf", g_LongOpts, &iOptIndex)) != -1) {
 #endif /* HAVE_LIBSSL */
 		switch (iArg) {
 		case 'h':
@@ -126,6 +128,10 @@ int main(int argc, char** argv) {
 			break;
 		case 'f':
 			bForeground = true;
+			break;
+		case 'g':
+			bForeground = true;
+			CUtils::SetDebug(true);
 			break;
 		case '?':
 		default:
@@ -238,8 +244,8 @@ int main(int argc, char** argv) {
 		// We are the child. There is no way we can be a process group
 		// leader, thus setsid() must succeed.
 		setsid();
-		// Now we are in our own process group and session (no controlling
-		// terminal). We are independent!
+		// Now we are in our own process group and session (no
+		// controlling terminal). We are independent!
 	}
 
 	struct sigaction sa;

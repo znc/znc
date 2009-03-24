@@ -24,7 +24,13 @@
 
 using std::stringstream;
 
-bool CUtils::stdoutIsTTY;
+bool CUtils::stdoutIsTTY = true;
+bool CUtils::debug =
+#ifdef _DEBUG
+		true;
+#else
+		false;
+#endif
 
 CUtils::CUtils() {}
 CUtils::~CUtils() {}
@@ -553,4 +559,3 @@ CString CBlowfish::Crypt(const CString & sData) {
 }
 
 #endif // HAVE_LIBSSL
-
