@@ -85,7 +85,7 @@
 #include <set>
 #include <map>
 
-#include "main.h" // require this as a general rule, most projects have a defines.h or the like
+#include "defines.h" // require this as a general rule, most projects have a defines.h or the like
 
 #ifndef CS_STRING
 #	ifdef _HAS_CSTRING_
@@ -103,11 +103,13 @@
 #endif /* __DEBUG__ */
 #endif /* CS_DEBUG */
 
+#ifndef PERROR
 #ifdef __DEBUG__
 #	define PERROR( f ) __Perror( f, __FILE__, __LINE__ )
 #else
 #	define PERROR( f )	(void)0
 #endif /* __DEBUG__ */
+#endif
 
 #ifndef _NO_CSOCKET_NS // some people may not want to use a namespace
 namespace Csocket
