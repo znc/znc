@@ -1,6 +1,6 @@
 /** @file
 *
-*    Copyright (c) 1999-2007 Jim Hull <imaginos@imaginos.net>
+*    Copyright (c) 1999-2009 Jim Hull <imaginos@imaginos.net>
 *    All rights reserved
 *
 * Redistribution and use in source and binary forms, with or without modification,
@@ -28,7 +28,7 @@
 * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 *
 *
-* $Revision: 1.95 $
+* $Revision: 1.97 $
 */
 
 #include "Csocket.h"
@@ -397,7 +397,7 @@ void SSLErrors( const char *filename, u_int iLineNum )
 
 void __Perror( const CS_STRING & s, const char *pszFile, unsigned int iLineNo )
 {
-#if defined(__sun) || defined(_WIN32) || __NetBSD_Version__ < 4000000000
+#if defined(__sun) || defined(_WIN32) || (defined(__NetBSD_Version__) && __NetBSD_Version__ < 4000000000)
 	std::cerr << s << "(" << pszFile << ":" << iLineNo << "): " << strerror( GetSockError() ) << endl;
 #else
 	char buff[512];
@@ -1268,10 +1268,9 @@ bool Csock::Write( const char *data, int len )
 		// to keep openssl from spinning, just initiate the connection with 1 byte so the connection establishes faster
 		iBytesToSend = 1;
 	}
-	else if ( ( m_iMaxBytes > 0 ) && ( m_iMaxMilliSeconds > 0 ) )
-#else
-	if ( ( m_iMaxBytes > 0 ) && ( m_iMaxMilliSeconds > 0 ) )
+	else
 #endif /* HAVE_LIBSSL */
+	if ( ( m_iMaxBytes > 0 ) && ( m_iMaxMilliSeconds > 0 ) )
 	{
 		unsigned long long iNOW = millitime();
 		// figure out the shaping here

@@ -1,6 +1,6 @@
 /**
 *
-*    Copyright (c) 1999-2007 Jim Hull <imaginos@imaginos.net>
+*    Copyright (c) 1999-2009 Jim Hull <imaginos@imaginos.net>
 *    All rights reserved
 *
 * Redistribution and use in source and binary forms, with or without modification,
@@ -28,7 +28,7 @@
 * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 *
 *
-* $Revision: 1.203 $
+* $Revision: 1.205 $
 */
 
 // note to compile with win32 need to link to winsock2, using gcc its -lws2_32
