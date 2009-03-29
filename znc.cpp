@@ -646,10 +646,6 @@ bool CZNC::WriteNewConfig(CString& sConfigFile) {
 				const CModInfo& Info = *it;
 				CString sName = Info.GetName();
 
-				if (sName.Right(3).Equals(".so")) {
-					sName.RightChomp(3);
-				}
-
 				if (CUtils::GetBoolInput("Load global module <\033[1m" + sName + "\033[22m>?", false)) {
 					vsLines.push_back("LoadModule = " + sName);
 				}
