@@ -53,9 +53,4 @@
 #define MODULECALL(macFUNC, macUSER, macCLIENT, macEXITER)
 #endif
 
-#include <iostream>
-using std::cout;
-using std::cerr;
-using std::endl;
-
 #endif // !_MAIN_H

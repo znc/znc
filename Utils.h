@@ -17,9 +17,12 @@
 #include <sys/time.h>
 #include <unistd.h>
 #include <vector>
+#include <iostream>
 
 using std::map;
 using std::vector;
+using std::cout;
+using std::endl;
 
 #define DEBUG(f) do { \
 	if (CUtils::Debug()) { \
