@@ -52,7 +52,7 @@ public:
 	const CString& GetHostmask() const { return m_sHostmask; }
 
 	bool ChannelMatches(const CString& sChan) const {
-		for (set<CString>::iterator it = m_ssChans.begin(); it != m_ssChans.end(); it++) {
+		for (set<CString>::const_iterator it = m_ssChans.begin(); it != m_ssChans.end(); it++) {
 			if (sChan.AsLower().WildCmp(*it)) {
 				return true;
 			}
@@ -68,7 +68,7 @@ public:
 	CString GetChannels() const {
 		CString sRet;
 
-		for (set<CString>::iterator it = m_ssChans.begin(); it != m_ssChans.end(); it++) {
+		for (set<CString>::const_iterator it = m_ssChans.begin(); it != m_ssChans.end(); it++) {
 			if (!sRet.empty()) {
 				sRet += " ";
 			}
@@ -100,7 +100,7 @@ public:
 	CString ToString() const {
 		CString sChans;
 
-		for (set<CString>::iterator it = m_ssChans.begin(); it != m_ssChans.end(); it++) {
+		for (set<CString>::const_iterator it = m_ssChans.begin(); it != m_ssChans.end(); it++) {
 			if (!sChans.empty()) {
 				sChans += " ";
 			}
