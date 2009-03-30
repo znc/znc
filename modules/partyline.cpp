@@ -596,7 +596,7 @@ public:
 	void SendNickList(CUser* pUser, const set<CString>& ssNicks, const CString& sChan) {
 		CString sNickList;
 
-		for (set<CString>::iterator it = ssNicks.begin(); it != ssNicks.end(); it++) {
+		for (set<CString>::const_iterator it = ssNicks.begin(); it != ssNicks.end(); it++) {
 			CUser* pChanUser = CZNC::Get().FindUser(*it);
 
 			if (pChanUser && pChanUser->IsUserAttached()) {

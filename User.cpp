@@ -262,7 +262,7 @@ void CUser::UserConnected(CClient* pClient) {
 	if (GetIRCSock() != NULL) {
 		CString sUserMode("");
 		const set<unsigned char>& scUserModes = GetIRCSock()->GetUserModes();
-		for (set<unsigned char>::iterator it = scUserModes.begin();
+		for (set<unsigned char>::const_iterator it = scUserModes.begin();
 				it != scUserModes.end(); it++) {
 			sUserMode += *it;
 		}
@@ -482,7 +482,7 @@ bool CUser::IsHostAllowed(const CString& sHostMask) const {
 		return true;
 	}
 
-	for (set<CString>::iterator a = m_ssAllowedHosts.begin(); a != m_ssAllowedHosts.end(); a++) {
+	for (set<CString>::const_iterator a = m_ssAllowedHosts.begin(); a != m_ssAllowedHosts.end(); a++) {
 		if (sHostMask.WildCmp(*a)) {
 			return true;
 		}
