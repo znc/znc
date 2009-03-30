@@ -68,28 +68,28 @@ public:
 	// Functions to retrieve file information
 	//
 	bool Exists() const;
-	unsigned long long GetSize() const;
+	off_t GetSize() const;
 	time_t GetATime() const;
 	time_t GetMTime() const;
 	time_t GetCTime() const;
-	int GetUID() const;
-	int GetGID() const;
+	uid_t GetUID() const;
+	gid_t GetGID() const;
 	static bool Exists(const CString& sFile);
 
-	static unsigned long long GetSize(const CString& sFile);
+	static off_t GetSize(const CString& sFile);
 	static time_t GetATime(const CString& sFile);
 	static time_t GetMTime(const CString& sFile);
 	static time_t GetCTime(const CString& sFile);
-	static int GetUID(const CString& sFile);
-	static int GetGID(const CString& sFile);
+	static uid_t GetUID(const CString& sFile);
+	static gid_t GetGID(const CString& sFile);
 	static int GetInfo(const CString& sFile, struct stat& st);
 
 	//
 	// Functions to manipulate the file on the filesystem
 	//
 	bool Delete();
-	int Move(const CString& sNewFileName, bool bOverwrite = false);
-	int Copy(const CString& sNewFileName, bool bOverwrite = false);
+	bool Move(const CString& sNewFileName, bool bOverwrite = false);
+	bool Copy(const CString& sNewFileName, bool bOverwrite = false);
 
 	static bool Delete(const CString& sFileName);
 	static bool Move(const CString& sOldFileName, const CString& sNewFileName, bool bOverwrite = false);

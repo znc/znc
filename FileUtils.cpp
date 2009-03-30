@@ -109,18 +109,18 @@ bool CFile::FType(const CString sFileName, EFileTypes eType, bool bUseLstat) {
 // Functions to retrieve file information
 //
 bool CFile::Exists() const { return CFile::Exists(m_sLongName); }
-unsigned long long CFile::GetSize() const { return CFile::GetSize(m_sLongName); }
+off_t CFile::GetSize() const { return CFile::GetSize(m_sLongName); }
 time_t CFile::GetATime() const { return CFile::GetATime(m_sLongName); }
 time_t CFile::GetMTime() const { return CFile::GetMTime(m_sLongName); }
 time_t CFile::GetCTime() const { return CFile::GetCTime(m_sLongName); }
-int CFile::GetUID() const { return CFile::GetUID(m_sLongName); }
-int CFile::GetGID() const { return CFile::GetGID(m_sLongName); }
+uid_t CFile::GetUID() const { return CFile::GetUID(m_sLongName); }
+gid_t CFile::GetGID() const { return CFile::GetGID(m_sLongName); }
 bool CFile::Exists(const CString& sFile) {
 	struct stat st;
 	return (stat(sFile.c_str(), &st) == 0);
 }
 
-unsigned long long CFile::GetSize(const CString& sFile) {
+off_t CFile::GetSize(const CString& sFile) {
 	struct stat st;
 	if (stat(sFile.c_str(), &st) != 0) {
 		return 0;
@@ -144,12 +144,12 @@ time_t CFile::GetCTime(const CString& sFile) {
 	return (stat(sFile.c_str(), &st) != 0) ? 0 : st.st_ctime;
 }
 
-int CFile::GetUID(const CString& sFile) {
+uid_t CFile::GetUID(const CString& sFile) {
 	struct stat st;
 	return (stat(sFile.c_str(), &st) != 0) ? -1 : (int) st.st_uid;
 }
 
-int CFile::GetGID(const CString& sFile) {
+gid_t CFile::GetGID(const CString& sFile) {
 	struct stat st;
 	return (stat(sFile.c_str(), &st) != 0) ? -1 : (int) st.st_gid;
 }
@@ -161,11 +161,11 @@ int CFile::GetInfo(const CString& sFile, struct stat& st) {
 // Functions to manipulate the file on the filesystem
 //
 bool CFile::Delete() { return CFile::Delete(m_sLongName); }
-int CFile::Move(const CString& sNewFileName, bool bOverwrite) {
+bool CFile::Move(const CString& sNewFileName, bool bOverwrite) {
 	return CFile::Move(m_sLongName, sNewFileName, bOverwrite);
 }
 
-int CFile::Copy(const CString& sNewFileName, bool bOverwrite) {
+bool CFile::Copy(const CString& sNewFileName, bool bOverwrite) {
 	return CFile::Copy(m_sLongName, sNewFileName, bOverwrite);
 }
 
