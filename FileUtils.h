@@ -69,17 +69,17 @@ public:
 	//
 	bool Exists() const;
 	unsigned long long GetSize() const;
-	unsigned int GetATime() const;
-	unsigned int GetMTime() const;
-	unsigned int GetCTime() const;
+	time_t GetATime() const;
+	time_t GetMTime() const;
+	time_t GetCTime() const;
 	int GetUID() const;
 	int GetGID() const;
 	static bool Exists(const CString& sFile);
 
 	static unsigned long long GetSize(const CString& sFile);
-	static unsigned int GetATime(const CString& sFile);
-	static unsigned int GetMTime(const CString& sFile);
-	static unsigned int GetCTime(const CString& sFile);
+	static time_t GetATime(const CString& sFile);
+	static time_t GetMTime(const CString& sFile);
+	static time_t GetCTime(const CString& sFile);
 	static int GetUID(const CString& sFile);
 	static int GetGID(const CString& sFile);
 	static int GetInfo(const CString& sFile, struct stat& st);

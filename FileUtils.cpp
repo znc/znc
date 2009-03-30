@@ -110,9 +110,9 @@ bool CFile::FType(const CString sFileName, EFileTypes eType, bool bUseLstat) {
 //
 bool CFile::Exists() const { return CFile::Exists(m_sLongName); }
 unsigned long long CFile::GetSize() const { return CFile::GetSize(m_sLongName); }
-unsigned int CFile::GetATime() const { return CFile::GetATime(m_sLongName); }
-unsigned int CFile::GetMTime() const { return CFile::GetMTime(m_sLongName); }
-unsigned int CFile::GetCTime() const { return CFile::GetCTime(m_sLongName); }
+time_t CFile::GetATime() const { return CFile::GetATime(m_sLongName); }
+time_t CFile::GetMTime() const { return CFile::GetMTime(m_sLongName); }
+time_t CFile::GetCTime() const { return CFile::GetCTime(m_sLongName); }
 int CFile::GetUID() const { return CFile::GetUID(m_sLongName); }
 int CFile::GetGID() const { return CFile::GetGID(m_sLongName); }
 bool CFile::Exists(const CString& sFile) {
@@ -129,17 +129,17 @@ unsigned long long CFile::GetSize(const CString& sFile) {
 	return (S_ISREG(st.st_mode)) ? st.st_size : 0;
 }
 
-unsigned int CFile::GetATime(const CString& sFile) {
+time_t CFile::GetATime(const CString& sFile) {
 	struct stat st;
 	return (stat(sFile.c_str(), &st) != 0) ? 0 : st.st_atime;
 }
 
-unsigned int CFile::GetMTime(const CString& sFile) {
+time_t CFile::GetMTime(const CString& sFile) {
 	struct stat st;
 	return (stat(sFile.c_str(), &st) != 0) ? 0 : st.st_mtime;
 }
 
-unsigned int CFile::GetCTime(const CString& sFile) {
+time_t CFile::GetCTime(const CString& sFile) {
 	struct stat st;
 	return (stat(sFile.c_str(), &st) != 0) ? 0 : st.st_ctime;
 }
