@@ -482,10 +482,24 @@ CString CZNC::ExpandConfigPath(const CString& sConfigFile) {
 }
 
 bool CZNC::WriteConfig() {
-	// We first write to a temporary file and then move it to the right place
-	CFile File(GetConfigFile() + "~");
+	if (GetConfigFile().empty()) {
+		return false;
+	}
 
-	if (GetConfigFile().empty() || !File.Open(O_WRONLY | O_CREAT | O_TRUNC, 0600)) {
+	// Close the old handle to the config file, we are replacing that file.
+	m_LockFile.Close();
+
+	// We first write to a temporary file and then move it to the right place
+	m_LockFile.SetFileName(GetConfigFile() + "~");
+
+	if (!m_LockFile.Open(O_WRONLY | O_CREAT | O_TRUNC, 0600)) {
+		return false;
+	}
+
+	// We have to "transfer" our lock on the config to the new file.
+	// The old file (= inode) is going away and thus a lock on it would be
+	// useless. These lock should always succeed (races, anyone?).
+	if (!m_LockFile.TryExLock()) {
 		return false;
 	}
 
@@ -499,31 +513,31 @@ bool CZNC::WriteConfig() {
 
 		CString s6 = (pListener->IsIPV6()) ? "6" : " ";
 
-		File.Write("Listen" + s6 + "      = " + sHostPortion + CString((pListener->IsSSL()) ? "+" : "") + CString(pListener->GetPort()) + "\n");
+		m_LockFile.Write("Listen" + s6 + "      = " + sHostPortion + CString((pListener->IsSSL()) ? "+" : "") + CString(pListener->GetPort()) + "\n");
 	}
 
-	File.Write("ConnectDelay = " + CString(m_uiConnectDelay) + "\n");
+	m_LockFile.Write("ConnectDelay = " + CString(m_uiConnectDelay) + "\n");
 
 	if (!m_sISpoofFile.empty()) {
-		File.Write("ISpoofFile   = " + m_sISpoofFile.FirstLine() + "\n");
+		m_LockFile.Write("ISpoofFile   = " + m_sISpoofFile.FirstLine() + "\n");
 		if (!m_sISpoofFormat.empty()) {
-			File.Write("ISpoofFormat = " + m_sISpoofFormat.FirstLine() + "\n");
+			m_LockFile.Write("ISpoofFormat = " + m_sISpoofFormat.FirstLine() + "\n");
 		}
 	}
 
 	if (!m_sPidFile.empty()) {
-		File.Write("PidFile      = " + m_sPidFile.FirstLine() + "\n");
+		m_LockFile.Write("PidFile      = " + m_sPidFile.FirstLine() + "\n");
 	}
 	if (!m_sStatusPrefix.empty()) {
-		File.Write("StatusPrefix = " + m_sStatusPrefix.FirstLine() + "\n");
+		m_LockFile.Write("StatusPrefix = " + m_sStatusPrefix.FirstLine() + "\n");
 	}
 
 	for (unsigned int m = 0; m < m_vsMotd.size(); m++) {
-		File.Write("Motd         = " + m_vsMotd[m].FirstLine() + "\n");
+		m_LockFile.Write("Motd         = " + m_vsMotd[m].FirstLine() + "\n");
 	}
 
 	for (unsigned int v = 0; v < m_vsVHosts.size(); v++) {
-		File.Write("VHost        = " + m_vsVHosts[v].FirstLine() + "\n");
+		m_LockFile.Write("VHost        = " + m_vsVHosts[v].FirstLine() + "\n");
 	}
 
 #ifdef _MODULES
@@ -537,7 +551,7 @@ bool CZNC::WriteConfig() {
 			sArgs = " " + sArgs.FirstLine();
 		}
 
-		File.Write("LoadModule   = " + sName.FirstLine() + sArgs + "\n");
+		m_LockFile.Write("LoadModule   = " + sName.FirstLine() + sArgs + "\n");
 	}
 #endif
 
@@ -549,18 +563,22 @@ bool CZNC::WriteConfig() {
 			continue;
 		}
 
-		File.Write("\n");
+		m_LockFile.Write("\n");
 
-		if (!it->second->WriteConfig(File)) {
+		if (!it->second->WriteConfig(m_LockFile)) {
 			DEBUG("** Error writing config for user [" << it->first << "]");
 		}
 	}
 
-	File.Sync();
-	File.Close();
+	// If Sync() fails... well, let's hope nothing important breaks..
+	m_LockFile.Sync();
 
 	// We wrote to a temporary name, move it to the right place
-	File.Move(GetConfigFile(), true);
+	if (!m_LockFile.Move(GetConfigFile(), true))
+		return false;
+
+	// Everything went fine, just need to update the saved path.
+	m_LockFile.SetFileName(GetConfigFile());
 
 	return true;
 }
