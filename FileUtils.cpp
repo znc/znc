@@ -309,8 +309,8 @@ bool CFile::ReadLine(CString& sData, const CString & sDelimiter) {
 		CString::size_type iFind = m_sBuffer.find(sDelimiter);
 		if (iFind != CString::npos) {
 			// We found a line, return it
-			sData = m_sBuffer.substr(0, (iFind + 1));
-			m_sBuffer.erase(0, (iFind + 1));
+			sData = m_sBuffer.substr(0, iFind + sDelimiter.length());
+			m_sBuffer.erase(0, iFind + sDelimiter.length());
 			return true;
 		}
 
@@ -323,7 +323,7 @@ bool CFile::ReadLine(CString& sData, const CString & sDelimiter) {
 
 	// We are at the end of the file or an error happened
 
-	if (m_sBuffer.size()) {
+	if (!m_sBuffer.empty()) {
 		// ..but there is still some partial line in the buffer
 		sData = m_sBuffer;
 		m_sBuffer.clear();
