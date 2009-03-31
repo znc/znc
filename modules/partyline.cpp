@@ -343,7 +343,7 @@ public:
 			SendNickList(pUser, ssNicks, pChannel->GetName());
 
 			if (pUser->IsAdmin()) {
-				PutChan(ssNicks, ":*" + GetModName() + "!znc@znc.in MODE " + pChannel->GetName() + " +o ?" + pUser->GetUserName(), (pUser == m_pUser) ? false : true, pUser);
+				PutChan(ssNicks, ":*" + GetModName() + "!znc@znc.in MODE " + pChannel->GetName() + " +o ?" + pUser->GetUserName(), false);
 			}
 		}
 	}
