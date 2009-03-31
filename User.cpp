@@ -581,8 +581,12 @@ bool CUser::PrintLine(CFile& File, const CString& sName, const CString& sValue) 
 		return false;
 	}
 
-	return File.Write("\t" + sName.FirstLine()
-			+ " = " + sValue.FirstLine() + "\n");
+	// FirstLine() so that no one can inject new lines to the config if he
+	// manages to add "\n" to e.g. sValue.
+	CString sLine = "\t" + sName.FirstLine() + " = " + sValue.FirstLine() + "\n";
+	if (File.Write(sLine) <= 0)
+		return false;
+	return true;
 }
 
 bool CUser::WriteConfig(CFile& File) {
