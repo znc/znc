@@ -28,12 +28,16 @@ void CDCCSock::ReadData(const char* data, int len) {
 		Close();
 	}
 
+	// DCC specs says the receiving end sends the number of bytes it
+	// received so far as a 4 byte integer in network byte order, so we need
+	// uint32_t to do the job portably. This also means that the maximum
+	// file that we can transfer is 4 GiB big (see OpenFile()).
 	if (m_bSend) {
 		m_sSendBuf.append(data, len);
 
 		while (m_sSendBuf.size() >= 4) {
-			unsigned int iRemoteSoFar;
-			memcpy(&iRemoteSoFar, m_sSendBuf.data(), 4);
+			uint32_t iRemoteSoFar;
+			memcpy(&iRemoteSoFar, m_sSendBuf.data(), sizeof(iRemoteSoFar));
 			iRemoteSoFar = ntohl(iRemoteSoFar);
 
 			if ((iRemoteSoFar + 65536) >= m_uBytesSoFar) {
@@ -45,8 +49,8 @@ void CDCCSock::ReadData(const char* data, int len) {
 	} else {
 		m_pFile->Write(data, len);
 		m_uBytesSoFar += len;
-		unsigned long uSoFar = htonl(m_uBytesSoFar);
-		Write((char*) &uSoFar, sizeof(unsigned long));
+		uint32_t uSoFar = htonl(m_uBytesSoFar);
+		Write((char*) &uSoFar, sizeof(uSoFar));
 
 		if (m_uBytesSoFar >= m_uFileSize) {
 			Close();
@@ -172,7 +176,17 @@ CFile* CDCCSock::OpenFile(bool bWrite) {
 			return NULL;
 		}
 
-		m_uFileSize = m_pFile->GetSize();
+		// The DCC specs only allow file transfers with files smaller
+		// than 4GiB (see ReadData()).
+		off_t uFileSize = m_pFile->GetSize();
+		if (uFileSize > 0xffffffff) {
+			delete m_pFile;
+			m_pFile = NULL;
+			m_pUser->PutModule(m_sModuleName, "DCC -> [" + m_sRemoteNick + "] - File too large (>4 GiB) [" + m_sLocalFile + "]");
+			return NULL;
+		}
+
+		m_uFileSize = (unsigned long) uFileSize;
 	}
 
 	m_sFileName = m_pFile->GetShortName();
