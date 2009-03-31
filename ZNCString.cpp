@@ -296,8 +296,7 @@ CString CString::Escape_n(EEscape eFrom, EEscape eTo) const {
 	const unsigned char *p = (const unsigned char*) data();
 	unsigned int iLength = length();
 	sRet.reserve(iLength *3);
-	unsigned int iMaxLen = (eFrom == EHTML) ? 20 : 0;
-	unsigned char pTmp[iMaxLen +1];
+	unsigned char pTmp[21];
 	unsigned int iCounted = 0;
 
 	for (unsigned int a = 0; a < iLength; a++, p = pStart + a) {
@@ -305,7 +304,7 @@ CString CString::Escape_n(EEscape eFrom, EEscape eTo) const {
 
 		switch (eFrom) {
 			case EHTML:
-				if ((*p == '&') && (strnchr((unsigned char*) p, ';', iMaxLen, pTmp, &iCounted))) {
+				if ((*p == '&') && (strnchr((unsigned char*) p, ';', sizeof(pTmp) - 1, pTmp, &iCounted))) {
 					if ((iCounted >= 3) && (pTmp[1] == '#')) {	// do XML and HTML &#97; &#x3c
 						int base = 10;
 
