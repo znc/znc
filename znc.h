@@ -104,7 +104,7 @@ public:
 	void InitDirs(const CString& sArgvPath, const CString& sDataDir);
 	bool OnBoot();
 	CString ExpandConfigPath(const CString& sConfigFile);
-	bool WriteNewConfig(CString& sConfigFile);
+	bool WriteNewConfig(const CString& sConfigFile);
 	bool WriteConfig();
 	bool ParseConfig(const CString& sConfig);
 	bool RehashConfig(CString& sError);

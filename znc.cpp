@@ -583,11 +583,11 @@ bool CZNC::WriteConfig() {
 	return true;
 }
 
-bool CZNC::WriteNewConfig(CString& sConfigFile) {
+bool CZNC::WriteNewConfig(const CString& sConfigFile) {
 	CString sAnswer, sUser;
 	VCString vsLines;
 
-	sConfigFile = ExpandConfigPath((sConfigFile.empty()) ? "znc.conf" : sConfigFile);
+	m_sConfigFile = ExpandConfigPath((sConfigFile.empty()) ? "znc.conf" : sConfigFile);
 	CUtils::PrintMessage("Building new config");
 
 	CUtils::PrintMessage("");
@@ -823,25 +823,25 @@ bool CZNC::WriteNewConfig(CString& sConfigFile) {
 	CFile File;
 	bool bFileOK, bFileOpen = false;
 	do {
-		CUtils::PrintAction("Writing config [" + sConfigFile + "]");
+		CUtils::PrintAction("Writing config [" + m_sConfigFile + "]");
 
 		bFileOK = true;
-		if (CFile::Exists(sConfigFile)) {
-			if (!m_LockFile.TryExLock(sConfigFile)) {
+		if (CFile::Exists(m_sConfigFile)) {
+			if (!m_LockFile.TryExLock(m_sConfigFile)) {
 				CUtils::PrintStatus(false, "ZNC is currently running on this config.");
 				bFileOK = false;
 			} else {
 				m_LockFile.Close();
 				CUtils::PrintStatus(false, "This config already exists.");
 				if (CUtils::GetBoolInput("Would you like to overwrite it?", false))
-					CUtils::PrintAction("Overwriting config [" + sConfigFile + "]");
+					CUtils::PrintAction("Overwriting config [" + m_sConfigFile + "]");
 				else
 					bFileOK = false;
 			}
 		}
 
 		if (bFileOK) {
-			File.SetFileName(sConfigFile);
+			File.SetFileName(m_sConfigFile);
 			if (File.Open(O_WRONLY | O_CREAT | O_TRUNC, 0600)) {
 				bFileOpen = true;
 			} else {
@@ -850,11 +850,11 @@ bool CZNC::WriteNewConfig(CString& sConfigFile) {
 			}
 		}
 		if (!bFileOK) {
-			CUtils::GetInput("Please specify an alternate location (or \"stdout\" for displaying the config)", sConfigFile, sConfigFile);
-			if (sConfigFile.Equals("stdout"))
+			CUtils::GetInput("Please specify an alternate location (or \"stdout\" for displaying the config)", m_sConfigFile, m_sConfigFile);
+			if (m_sConfigFile.Equals("stdout"))
 				bFileOK = true;
 			else
-				sConfigFile = ExpandConfigPath(sConfigFile);
+				m_sConfigFile = ExpandConfigPath(m_sConfigFile);
 		}
 	} while (!bFileOK);
 
