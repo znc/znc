@@ -64,11 +64,7 @@ CDCCBounce::~CDCCBounce() {
 }
 
 void CDCCBounce::ReadLine(const CString& sData) {
-	CString sLine = sData;
-
-	while ((sLine.Right(1) == "\r") || (sLine.Right(1) == "\n")) {
-		sLine.RightChomp();
-	}
+	CString sLine = sData.TrimRight_n("\r\n");
 
 	DEBUG(GetSockName() << " <- [" << sLine << "]");
 
