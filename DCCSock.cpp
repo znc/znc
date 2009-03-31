@@ -111,6 +111,14 @@ void CDCCSock::SendPacket() {
 		return;
 	}
 
+	if (GetInternalWriteBuffer().size() > 1024 * 1024) {
+		// There is still enough data to be written, don't add more
+		// stuff to that buffer.
+		DEBUG("SendPacket(): Skipping send, buffer still full enough [" << GetInternalWriteBuffer().size() << "]["
+				<< m_sRemoteNick << "][" << m_sFileName << "]");
+		return;
+	}
+
 	char szBuf[4096];
 	int iLen = m_pFile->Read(szBuf, 4096);
 
