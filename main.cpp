@@ -127,7 +127,7 @@ int main(int argc, char** argv) {
 		case 'f':
 			bForeground = true;
 			break;
-		case 'g':
+		case 'D':
 			bForeground = true;
 			CUtils::SetDebug(true);
 			break;
