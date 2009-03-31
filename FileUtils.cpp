@@ -299,14 +299,13 @@ int CFile::Read(char *pszBuffer, int iBytes) {
 
 bool CFile::ReadLine(CString& sData, const CString & sDelimiter) {
 	char buff[4096];
+	int iBytes;
 
 	if (m_iFD == -1) {
 		return false;
 	}
 
-	bool bEOF = false;
-
-	while (!bEOF) {
+	do {
 		CString::size_type iFind = m_sBuffer.find(sDelimiter);
 		if (iFind != CString::npos) {
 			// We found a line, return it
@@ -315,23 +314,12 @@ bool CFile::ReadLine(CString& sData, const CString & sDelimiter) {
 			return true;
 		}
 
-		int iBytes = read(m_iFD, buff, sizeof(buff));
+		iBytes = read(m_iFD, buff, sizeof(buff));
 
-		switch(iBytes) {
-			case -1: {
-				bEOF = true;
-				break;
-			}
-			case 0: {
-				bEOF = true;
-				break;
-			}
-			default: {
-				m_sBuffer.append(buff, iBytes);
-				break;
-			}
+		if (iBytes > 0) {
+			m_sBuffer.append(buff, iBytes);
 		}
-	}
+	} while (iBytes > 0);
 
 	// We are at the end of the file or an error happened
 
