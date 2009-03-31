@@ -9,7 +9,7 @@
 #include "znc.h"
 #include <getopt.h>
 
-static struct option g_LongOpts[] = {
+static const struct option g_LongOpts[] = {
 	{ "help",			no_argument,	0,	'h' },
 	{ "version",			no_argument,	0,	'v' },
 	{ "debug",			no_argument,	0,	'D' },
