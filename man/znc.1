@@ -12,17 +12,23 @@ znc \- An advanced IRC bouncer
 .RB [ \-n ]
 .RB [ \-d
 .IR datadir ]
+.RB [ \-D ]
+.RB [ \-f ]
 .br
 .B znc
 .RB [ \-n ]
 .RB [ \-d
 .IR datadir ]
+.RB [ \-D ]
+.RB [ \-f ]
 .B \-\-makeconf
 .br
 .B znc
 .RB [ \-n ]
 .RB [ \-d
 .IR datadir ]
+.RB [ \-D ]
+.RB [ \-f ]
 .B \-\-makepem
 .SH DESCRIPTION
 .B znc
@@ -43,6 +49,13 @@ Show the full version number.
 .TP
 .BR \-n ", " \-\-no-color
 Don't use any color escape sequences.
+.TP
+.BR \-f ", " \-\-foreground
+Don't fork the ZNC process into the background.
+.TP
+.BR \-D ", " \-\-debug
+Print debug output to the console. Implies
+.BR --foreground .
 .TP
 .BI \-d " DATADIR" "\fR,\fP \-\-datadir=" DATADIR
 Specify another datadir.
