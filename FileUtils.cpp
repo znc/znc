@@ -236,8 +236,8 @@ bool CFile::Chmod(const CString& sFile, mode_t mode) {
 	return (chmod(sFile.c_str(), mode) == 0);
 }
 
-bool CFile::Seek(unsigned long uPos) {
-	if (m_iFD != -1 && (unsigned int) lseek(m_iFD, uPos, SEEK_SET) == uPos) {
+bool CFile::Seek(off_t uPos) {
+	if (m_iFD != -1 && lseek(m_iFD, uPos, SEEK_SET) == uPos) {
 		ClearBuffer();
 		return true;
 	}
