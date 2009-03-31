@@ -173,7 +173,7 @@ bool CHTTPSock::PrintFile(const CString& sFileName, CString sContentType) {
 	if (bNotModified) {
 		PrintHeader(0, sContentType, 304, "Not Modified");
 	} else {
-		unsigned long long iSize = File.GetSize();
+		off_t iSize = File.GetSize();
 
 		// Don't try to send files over 16 MiB, because it might block
 		// the whole process and use huge amounts of memory.
@@ -184,7 +184,7 @@ bool CHTTPSock::PrintFile(const CString& sFileName, CString sContentType) {
 		}
 
 		char szBuf[4096];
-		unsigned long long iLen = 0;
+		off_t iLen = 0;
 		int i = 0;
 
 		PrintHeader(iSize, sContentType);
