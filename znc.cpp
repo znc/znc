@@ -587,7 +587,7 @@ bool CZNC::WriteNewConfig(const CString& sConfigFile) {
 	CString sAnswer, sUser;
 	VCString vsLines;
 
-	m_sConfigFile = ExpandConfigPath((sConfigFile.empty()) ? "znc.conf" : sConfigFile);
+	m_sConfigFile = ExpandConfigPath(sConfigFile);
 	CUtils::PrintMessage("Building new config");
 
 	CUtils::PrintMessage("");

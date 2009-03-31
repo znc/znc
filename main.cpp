@@ -140,8 +140,6 @@ int main(int argc, char** argv) {
 
 	if (optind < argc) {
 		sConfig = argv[optind];
-	} else {
-		sConfig = "znc.conf";
 	}
 
 	CZNC* pZNC = &CZNC::Get();
