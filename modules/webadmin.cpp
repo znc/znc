@@ -95,7 +95,7 @@ public:
 	// !Setters
 
 	virtual Csock* GetSockObj(const CString& sHost, unsigned short uPort);
-	bool IsAdmin(bool bAllowUserAdmin = true) const { return m_bAdmin; }
+	bool IsAdmin() const { return m_bAdmin; }
 
 	CWebAdminMod* GetModule() const { return (CWebAdminMod*) m_pModule; }
 
