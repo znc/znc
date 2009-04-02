@@ -372,7 +372,7 @@ bool CHTTPSock::SentHeader() const {
 	return m_bSentHeader;
 }
 
-bool CHTTPSock::PrintHeader(unsigned long uContentLength, const CString& sContentType, unsigned int uStatusId, const CString& sStatusMsg) {
+bool CHTTPSock::PrintHeader(off_t uContentLength, const CString& sContentType, unsigned int uStatusId, const CString& sStatusMsg) {
 	if (SentHeader()) {
 		DEBUG("- Header already sent!");
 		return false;

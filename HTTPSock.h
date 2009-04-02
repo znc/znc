@@ -37,7 +37,7 @@ public:
 
 	void CheckPost();
 	bool SentHeader() const;
-	bool PrintHeader(unsigned long uContentLength, const CString& sContentType = "", unsigned int uStatusId = 200, const CString& sStatusMsg = "OK");
+	bool PrintHeader(off_t uContentLength, const CString& sContentType = "", unsigned int uStatusId = 200, const CString& sStatusMsg = "OK");
 	void AddHeader(const CString& sName, const CString& sValue);
 	void SetContentType(const CString& sContentType);
 
