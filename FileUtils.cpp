@@ -372,7 +372,10 @@ int CFile::Write(const CString & sData) {
 }
 void CFile::Close() {
 	if (m_iFD >= 0) {
-		close(m_iFD);
+		if (close(m_iFD) < 0) {
+			DEBUG("CFile::Close(): close() failed with ["
+					<< strerror(errno) << "]");
+		}
 	}
 	m_iFD = -1;
 	ClearBuffer();
