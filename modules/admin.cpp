@@ -39,6 +39,7 @@ class CAdminMod : public CModule {
 			{"ListUsers", "",                              "Lists users"},
 			{"AddUser",   "username password [ircserver]", "Adds a new user"},
 			{"DelUser",   "username",                      "Deletes a user"},
+			{"CloneUser", "oldusername newusername",       "Clones a user"},
 			{"AddServer", "[username] server",             "Adds a new IRC server for the given or current user"}
 		};
 		for (unsigned int i = 0; i != ARRAY_SIZE(help); ++i) {
@@ -334,6 +335,47 @@ class CAdminMod : public CModule {
 		return;
 	}
 
+	void CloneUser(const CString& sLine) {
+		if (!m_pUser->IsAdmin()) {
+			PutModule("Error: You need to have admin rights to add new users!");
+			return;
+		}
+
+		const CString
+			sOldUsername = sLine.Token(1),
+			sNewUsername = sLine.Token(2, true);
+
+		if (sOldUsername.empty() || sNewUsername.empty()) {
+			PutModule("Usage: cloneuser <oldusername> <newusername>");
+			return;
+		}
+
+		CUser *pOldUser = CZNC::Get().FindUser(sOldUsername);
+
+		if (!pOldUser) {
+			PutModule("Error: User [" + sOldUsername + "] not found!");
+			return;
+		}
+
+		CUser* pNewUser = new CUser(sOldUsername);
+		CString sError;
+		if (!pNewUser->Clone(*pOldUser, sError)) {
+			delete pNewUser;
+			PutModule("Error: Cloning failed! [" + sError + "]");
+			return;
+		}
+		pNewUser->SetUserName(sNewUsername);
+
+		if (!CZNC::Get().AddUser(pNewUser, sError)) {
+			delete pNewUser;
+			PutModule("Error: User not added! [" + sError + "]");
+			return;
+		}
+
+		PutModule("User [" + sNewUsername + "] added!");
+		return;
+	}
+
 	void AddServer(const CString& sLine) {
 		CString username = sLine.Token(1);
 		CString server   = sLine.Token(2, true);
@@ -375,6 +417,7 @@ public:
 		fnmap_["listusers"] = &CAdminMod::ListUsers;
 		fnmap_["adduser"]   = &CAdminMod::AddUser;
 		fnmap_["deluser"]   = &CAdminMod::DelUser;
+		fnmap_["cloneuser"] = &CAdminMod::CloneUser;
 		fnmap_["addserver"] = &CAdminMod::AddServer;
 	}
 
