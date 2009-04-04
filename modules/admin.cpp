@@ -307,7 +307,7 @@ class CAdminMod : public CModule {
 			return;
 		}
 
-		const CString sUsername  = sLine.Token(1);
+		const CString sUsername  = sLine.Token(1, true);
 		if (sUsername.empty()) {
 			PutModule("Usage: deluser <username>");
 			return;
