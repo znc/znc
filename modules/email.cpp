@@ -128,7 +128,7 @@ public:
 
 private:
 	CString			m_sMailPath;
-	u_int			m_iLastCheck;
+	time_t			m_iLastCheck;
 	set<CString>		m_ssUidls;
 	bool			m_bInitialized;
 };
