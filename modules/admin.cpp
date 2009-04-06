@@ -121,13 +121,13 @@ class CAdminMod : public CModule {
 		else if (var == "vhost")
 			PutModule("VHost = " + user->GetVHost());
 		else if (var == "multiclients")
-			PutModule("MultiClients = " + CString(user->MultiClients() ? "true" : "false"));
+			PutModule("MultiClients = " + CString(user->MultiClients()));
 		else if (var == "bouncedccs")
-			PutModule("BounceDCCs = " + CString(user->BounceDCCs() ? "true" : "false"));
+			PutModule("BounceDCCs = " + CString(user->BounceDCCs()));
 		else if (var == "useclientip")
-			PutModule("UseClientIP = " + CString(user->UseClientIP() ? "true" : "false"));
+			PutModule("UseClientIP = " + CString(user->UseClientIP()));
 		else if (var == "denyloadmod")
-			PutModule("DenyLoadMod = " + CString(user->DenyLoadMod() ? "true" : "false"));
+			PutModule("DenyLoadMod = " + CString(user->DenyLoadMod()));
 		else if (var == "defaultchanmodes")
 			PutModule("DefaultChanModes = " + user->GetDefaultChanModes());
 		else if (var == "quitmsg")
@@ -135,7 +135,7 @@ class CAdminMod : public CModule {
 		else if (var == "buffercount")
 			PutModule("BufferCount = " + CString(user->GetBufferCount()));
 		else if (var == "keepbuffer")
-			PutModule("KeepBuffer = " + CString(user->KeepBuffer() ? "true" : "false"));
+			PutModule("KeepBuffer = " + CString(user->KeepBuffer()));
 		else
 			PutModule("Error: Unknown variable");
 	}
@@ -188,22 +188,22 @@ class CAdminMod : public CModule {
 		else if (var == "multiclients") {
 			bool b = value.ToBool();
 			user->SetMultiClients(b);
-			PutModule("MultiClients = " + CString(b ? "true" : "false"));
+			PutModule("MultiClients = " + CString(b));
 		}
 		else if (var == "bouncedccs") {
 			bool b = value.ToBool();
 			user->SetBounceDCCs(b);
-			PutModule("BounceDCCs = " + CString(b ? "true" : "false"));
+			PutModule("BounceDCCs = " + CString(b));
 		}
 		else if (var == "useclientip") {
 			bool b = value.ToBool();
 			user->SetUseClientIP(b);
-			PutModule("UseClientIP = " + CString(b ? "true" : "false"));
+			PutModule("UseClientIP = " + CString(b));
 		}
 		else if (var == "denyloadmod") {
 			bool b = value.ToBool();
 			user->SetDenyLoadMod(b);
-			PutModule("DenyLoadMod = " + CString(b ? "true" : "false"));
+			PutModule("DenyLoadMod = " + CString(b));
 		}
 		else if (var == "defaultchanmodes") {
 			user->SetDefaultChanModes(value);
@@ -221,7 +221,7 @@ class CAdminMod : public CModule {
 		else if (var == "keepbuffer") {
 			bool b = value.ToBool();
 			user->SetKeepBuffer(b);
-			PutModule("KeepBuffer = " + CString(b ? "true" : "false"));
+			PutModule("KeepBuffer = " + CString(b));
 		}
 		else if (var == "password") {
 			const CString sSalt = CUtils::GetSalt();
