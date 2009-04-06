@@ -367,9 +367,13 @@ bool CWebAdminSock::OnPageRequest(const CString& sURI, CString& sPageRet) {
 		return false;
 	}
 
+	const CString& sSkin = GetModule()->GetSkinName();
+	CString sTmp = sURI;
+
 	m_Template["SessionUser"] = GetUser();
 	m_Template["SessionIP"] = GetRemoteIP();
 	m_Template["Tag"] = CZNC::GetTag();
+	m_Template["Skin"] = sSkin;
 
 	if (IsAdmin()) {
 		m_Template["IsAdmin"] = "true";
@@ -384,17 +388,9 @@ bool CWebAdminSock::OnPageRequest(const CString& sURI, CString& sPageRet) {
 		m_Template["Title"] = "Main Page";
 		m_Template["Action"] = "home";
 		PrintPage(sPageRet, "Main.tmpl");
-	} else if (sURI.Equals("/css/", false, 5)) {
-		SetDocRoot(GetSkinDir() + "/css");
-		PrintFile(sURI.substr(5), "text/css");
-		return false;
-	} else if (sURI.Equals("/img/", false, 5)) {
-		SetDocRoot(GetSkinDir() + "/img");
-		PrintFile(sURI.substr(5));
-		return false;
-	} else if (sURI.Equals("/js/", false, 4)) {
-		SetDocRoot(GetSkinDir() + "/js");
-		PrintFile(sURI.substr(4), "application/x-javascript");
+	} else if (sTmp.TrimPrefix("/" + sSkin + "/")) {
+		SetDocRoot(GetSkinDir() + "/data");
+		PrintFile(sTmp);
 		return false;
 	} else if (sURI == "/home") {
 		m_Template["Title"] = "Main Page";

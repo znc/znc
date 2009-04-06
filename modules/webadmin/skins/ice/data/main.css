@@ -1,5 +1,5 @@
 body {
-	background: url(../img/pagebg.gif) top repeat-x #0C1833 fixed;
+	background: url(pagebg.gif) top repeat-x #0C1833 fixed;
 	color: #fff;
 	margin: 0px auto;
 }
@@ -41,7 +41,7 @@ table td {
 
 table thead {
 	border-bottom: 2px solid #000;
-	background: url(../img/linkbg.jpg) 0px -30px repeat-x #369;
+	background: url(linkbg.jpg) 0px -30px repeat-x #369;
 	color: #fff;
 	font-weight: bold;
 }
@@ -112,7 +112,7 @@ textarea {
 .sectiontitle {
 	float: left;
 	white-space: nowrap;
-	background: url(../img/linkbg.jpg) 0px 0px repeat-x #336;
+	background: url(linkbg.jpg) 0px 0px repeat-x #336;
 	color: #eee;
 	font-size: 14px;
 	font-weight: bold;
@@ -139,7 +139,7 @@ textarea {
 	border-top: 1px solid #000;
 	border-bottom: 1px solid #000;
 	float: left;
-	background: url(../img/linkbg.jpg) repeat-x;
+	background: url(linkbg.jpg) repeat-x;
 	margin-bottom: 10px;
 }
 
@@ -166,7 +166,7 @@ textarea {
 	color: #fff;
 	padding: 0px 10px;
 	text-decoration: none;
-	background: url(../img/linkbg.jpg) 0px 0px repeat-x;
+	background: url(linkbg.jpg) 0px 0px repeat-x;
 }
 
 #gnav a:hover {

@@ -1,13 +1,12 @@
 body {
-	background: #555;
+	background-image: url('graphix_bg.jpg');
 	margin-top: 10px;
-        background: #444;
 }
 
 td {
 	font-family: verdana;
 	font-size: 12px;
-	color: white;
+	color: #000000;
 }
 
 input, select, textarea {
@@ -15,25 +14,25 @@ input, select, textarea {
 	font-size: 12px;
 	color: #000000;
 	border: 1px solid #000000;
-	background-color: #999;
+	background-color: #C8EAFC;
 }
 
 a:link, a:active, a:visited {
 	font-family: verdana;
 	font-size: 12px;
-	color: #E9630A;
+	color: #000000;
 	text-decoration: none;
 }
 
 a:hover {
 	font-family: verdana;
 	font-size: 12px;
-	color: #E9A640;
+	color: #000000;
 	text-decoration: underline;
 }
 
 .header {
-	background-image: url('../img/clouds-header.jpg');
+	background-image: url('graphix_header.jpg');
 	padding: 10px;
 	border: 1px solid #000000;
 	height: 100px;
@@ -48,7 +47,7 @@ a:hover {
 	border-left: 1px solid #000000;
 	border-bottom: 1px solid #000000;
 	border-right: 1px solid #000000;
-	background-color: #444;
+	background-color: #3B98F5;
 	height: 20px;
 }
 
@@ -62,20 +61,20 @@ a:hover {
 .switchuser a:link, a:active, a:visited {
 	font-family: verdana;
 	font-size: 12px;
-	color: white;
+	color: #000000;
 	text-decoration: none;
 }
 
 .switchuser a:hover {
 	font-family: verdana;
 	font-size: 12px;
-	color: white;
+	color: #FFFFFF;
 	text-decoration: underline;
 }
 
 .menu {
 	width: 160px;
-	background-color: #333;
+	background-color: #B4D8FC;
 	border-left: 1px solid #000000;
 	vertical-align: top;
 	padding-bottom: 20px;
@@ -85,7 +84,7 @@ a:hover {
 	vertical-align: middle;
 	text-align: center;
 	height: 30px;
-	background-color: #D49712;
+	background-color: #FFFFFF;
 	font-weight: bold;
 	border-bottom: 1px solid #000000;
 }
@@ -94,7 +93,7 @@ a:hover {
 	vertical-align: middle;
 	text-align: center;
 	height: 30px;
-	background-color: #777;
+	background-color: #3B98F5;
 	border-right: 1px solid #000000;
 	border-bottom: 1px solid #000000;
 }
@@ -131,13 +130,13 @@ a:hover {
 	width: 640px;
 	vertical-align: top;
 	padding: 15px;
-	background-color: #444;
+	background-color: #FFFFFF;
 	border-right: 1px solid #000000;
 }
 
 .cbar {
 	border: 1px solid #000000;
-	background-color: #D49712;
+	background-color: #3B98F5;
 	height: 20px;
 	text-align: right;
 	padding-right: 5px;
@@ -159,7 +158,7 @@ a:hover {
 
 .maintitle {
 	height: 20px;
-	background-color: #D49712;
+	background-color: #3B98F5;
 	color: #000000;
 	font-weight: bold;
 	padding-left: 5px;
@@ -195,7 +194,7 @@ a:hover {
 
 .main2title {
 	height: 20px;
-	background-color: #EC8E00;
+	background-color: #3B98F5;
 	color: #000000;
 	font-weight: bold;
 	padding-left: 2px;
@@ -212,7 +211,7 @@ a:hover {
 
 .evenrow {
 	height: 20px;
-	background-color: #777;
+	background-color: #C8EAFC;
 }
 
 .evenrow td {
