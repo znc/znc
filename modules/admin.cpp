@@ -12,6 +12,7 @@
 #include "znc.h"
 #include "User.h"
 #include "Modules.h"
+#include "Chan.h"
 
 template<std::size_t N>
 struct array_size_helper {
@@ -36,6 +37,8 @@ class CAdminMod : public CModule {
 		static const char* help[][3] = {
 			{"Get",       "variable [username]",           "Prints the variable's value for the given or current user"},
 			{"Set",       "variable [username] value",     "Sets the variable's value for the given or current user"},
+			{"GetChan",   "variable [username] chan",      "Prints the variable's value for the given channel"},
+			{"SetChan",   "variable [username] chan value", "Sets the variable's value for the given channel"},
 			{"ListUsers", "",                              "Lists users"},
 			{"AddUser",   "username password [ircserver]", "Adds a new user"},
 			{"DelUser",   "username",                      "Deletes a user"},
@@ -78,6 +81,24 @@ class CAdminMod : public CModule {
 			VarTable.SetCell("Type",     vars[i][1]);
 		}
 		PutModule(VarTable);
+
+		PutModule("The following variables are available when using the SetChan/GetChan commands:");
+		CTable CVarTable;
+		CVarTable.AddColumn("Variable");
+		CVarTable.AddColumn("Type");
+		static const char* cvars[][2] = {
+			{"DefModes",         string},
+			{"Buffer",           integer},
+			{"InConfig",         boolean},
+			{"KeepBuffer",       boolean},
+			{"Detached",         boolean},
+		};
+		for (unsigned int i = 0; i != ARRAY_SIZE(cvars); ++i) {
+			CVarTable.AddRow();
+			CVarTable.SetCell("Variable", cvars[i][0]);
+			CVarTable.SetCell("Type",     cvars[i][1]);
+		}
+		PutModule(CVarTable);
 
 		PutModule("You can use $me as the user name for modifying your own user.");
 	}
@@ -230,6 +251,114 @@ class CAdminMod : public CModule {
 			PutModule("Password has been changed!!");
 		}
 		else
+			PutModule("Error: Unknown variable");
+	}
+
+	void GetChan(const CString& sLine) {
+		const CString var  = sLine.Token(1).AsLower();
+		CString username   = sLine.Token(2);
+		CString chan = sLine.Token(3, true);
+
+		if (var.empty()) {
+			PutModule("Usage: getchan <variable> [username] [chan]");
+			return;
+		}
+		if (chan.empty()) {
+			chan = username;
+			username = "";
+		}
+		if (username.empty()) {
+			username = m_pUser->GetUserName();
+		}
+
+		CUser* user = GetUser(username);
+		if (!user) {
+			PutModule("Error: User not found: " + username);
+			return;
+		}
+		if (user != m_pUser && !m_pUser->IsAdmin()) {
+			PutModule("Error: You need to have admin rights to modify other users!");
+			return;
+		}
+
+		CChan* pChan = user->FindChan(chan);
+		if (!pChan) {
+			PutModule("Error: Channel not found: " + chan);
+			return;
+		}
+
+		if (var == "defmodes")
+			PutModule("DefModes = " + pChan->GetDefaultModes());
+		else if (var == "buffer")
+			PutModule("Buffer = " + CString(pChan->GetBufferCount()));
+		else if (var == "inconfig")
+			PutModule("InConfig = " + pChan->InConfig());
+		else if (var == "keepbuffer")
+			PutModule("KeepBuffer = " + pChan->KeepBuffer());
+		else if (var == "detached")
+			PutModule("Detached = " + pChan->IsDetached());
+		else
+			PutModule("Error: Unknown variable");
+	}
+
+	void SetChan(const CString& sLine) {
+		const CString var = sLine.Token(1).AsLower();
+		CString username  = sLine.Token(2);
+		CString chan      = sLine.Token(3);
+		CString value     = sLine.Token(4, true);
+
+		if (value.empty()) {
+			if (!username.empty() && !chan.empty()) {
+				value    = chan;
+				chan     = username;
+				username = m_pUser->GetUserName();;
+			} else {
+				PutModule("Usage: set <variable> [username] <value>");
+				return;
+			}
+		}
+
+		CUser* user = GetUser(username);
+		if (!user) {
+			PutModule("Error: User not found: " + username);
+			return;
+		}
+		if (user != m_pUser && !m_pUser->IsAdmin()) {
+			PutModule("Error: You need to have admin rights to modify other users!");
+			return;
+		}
+
+		CChan* pChan = user->FindChan(chan);
+		if (!pChan) {
+			PutModule("Error: Channel not found: " + chan);
+			return;
+		}
+
+		if (var == "defmodes") {
+			pChan->SetDefaultModes(value);
+			PutModule("DefModes = " + value);
+		} else if (var == "buffer") {
+			unsigned int i = value.ToUInt();
+			pChan->SetBufferCount(i);
+			PutModule("Buffer = " + CString(i));
+		} else if (var == "inconfig") {
+			bool b = value.ToBool();
+			pChan->SetInConfig(b);
+			PutModule("InConfig = " + CString(b));
+		} else if (var == "keepbuffer") {
+			bool b = value.ToBool();
+			pChan->SetKeepBuffer(b);
+			PutModule("KeepBuffer = " + CString(b));
+		} else if (var == "detached") {
+			bool b = value.ToBool();
+			if (pChan->IsDetached() != b) {
+				if (b)
+					pChan->DetachUser();
+				else
+					pChan->AttachUser();
+			}
+			PutModule("Detached = " + CString(b));
+		} else
 			PutModule("Error: Unknown variable");
 	}
 
@@ -414,6 +543,8 @@ public:
 		fnmap_["help"]      = &CAdminMod::PrintHelp;
 		fnmap_["get"]       = &CAdminMod::Get;
 		fnmap_["set"]       = &CAdminMod::Set;
+		fnmap_["getchan"]   = &CAdminMod::GetChan;
+		fnmap_["setchan"]   = &CAdminMod::SetChan;
 		fnmap_["listusers"] = &CAdminMod::ListUsers;
 		fnmap_["adduser"]   = &CAdminMod::AddUser;
 		fnmap_["deluser"]   = &CAdminMod::DelUser;
