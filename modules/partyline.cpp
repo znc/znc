@@ -9,6 +9,11 @@
 #include "User.h"
 #include "znc.h"
 
+// If you change these and it breaks, you get to keep the pieces
+#define CHAN_PREFIX_1	"~"
+#define CHAN_PREFIX_1C	'~'
+#define CHAN_PREFIX	CHAN_PREFIX_1 "#"
+
 class CPartylineChannel {
 public:
 	CPartylineChannel(const CString& sName) { m_sName = sName.AsLower(); }
@@ -60,8 +65,8 @@ public:
 		for (map<CString, CUser*>::const_iterator it = msUsers.begin(); it != msUsers.end(); it++) {
 			CUser* pUser = it->second;
 			if (pUser->GetIRCSock()) {
-				if (pUser->GetChanPrefixes().find("~") == CString::npos) {
-					pUser->PutUser(":" + GetIRCServer(pUser) + " 005 " + pUser->GetIRCNick().GetNick() + " CHANTYPES=" + pUser->GetChanPrefixes() + "~ :are supported by this server.");
+				if (pUser->GetChanPrefixes().find(CHAN_PREFIX_1) == CString::npos) {
+					pUser->PutUser(":" + GetIRCServer(pUser) + " 005 " + pUser->GetIRCNick().GetNick() + " CHANTYPES=" + pUser->GetChanPrefixes() + CHAN_PREFIX_1 " :are supported by this server.");
 				}
 			}
 		}
@@ -69,7 +74,7 @@ public:
 		CString sChan;
 		unsigned int a = 0;
 		while (!(sChan = sArgs.Token(a++)).empty()) {
-			if (sChan.Left(2) == "~#") {
+			if (sChan.Left(2) == CHAN_PREFIX) {
 				sChan = sChan.Left(32);
 				m_ssDefaultChans.insert(sChan);
 			}
@@ -136,7 +141,7 @@ public:
 			if (uPos != CString::npos) {
 				uPos = sLine.find(" ", uPos);
 
-				sLine.insert(uPos, "~");
+				sLine.insert(uPos, CHAN_PREFIX_1);
 				m_spInjectedPrefixes.insert(m_pUser);
 			}
 		}
@@ -150,7 +155,7 @@ public:
 
 	virtual void OnClientLogin() {
 		if (m_spInjectedPrefixes.find(m_pUser) == m_spInjectedPrefixes.end()) {
-			m_pClient->PutClient(":" + GetIRCServer(m_pUser) + " 005 " + m_pUser->GetIRCNick().GetNick() + " CHANTYPES=" + m_pUser->GetChanPrefixes() + "~ :are supported by this server.");
+			m_pClient->PutClient(":" + GetIRCServer(m_pUser) + " 005 " + m_pUser->GetIRCNick().GetNick() + " CHANTYPES=" + m_pUser->GetChanPrefixes() + CHAN_PREFIX_1 " :are supported by this server.");
 		}
 
 		// Make sure this user is in the default channels
@@ -206,11 +211,11 @@ public:
 	}
 
 	virtual EModRet OnUserRaw(CString& sLine) {
-		if (sLine.Equals("WHO ~", false, 5)) {
+		if (sLine.Equals("WHO " CHAN_PREFIX_1, false, 5)) {
 			return HALT;
-		} else if (sLine.Equals("MODE ~", false, 6)) {
+		} else if (sLine.Equals("MODE " CHAN_PREFIX_1, false, 6)) {
 			return HALT;
-		} else if (sLine.Equals("TOPIC ~#", false, 8)) {
+		} else if (sLine.Equals("TOPIC " CHAN_PREFIX, false, 8)) {
 			CString sChannel = sLine.Token(1);
 			CString sTopic = sLine.Token(2, true);
 
@@ -246,11 +251,11 @@ public:
 	}
 
 	virtual EModRet OnUserPart(CString& sChannel, CString& sMessage) {
-		if (sChannel.Left(1) != "~") {
+		if (sChannel.Left(1) != CHAN_PREFIX_1) {
 			return CONTINUE;
 		}
 
-		if (sChannel.Left(2) != "~#") {
+		if (sChannel.Left(2) != CHAN_PREFIX) {
 			m_pClient->PutClient(":" + GetIRCServer(m_pUser) + " 403 " + m_pUser->GetIRCNick().GetNick() + " " + sChannel + " :No such channel");
 			return HALT;
 		}
@@ -305,12 +310,12 @@ public:
 	}
 
 	virtual EModRet OnUserJoin(CString& sChannel, CString& sKey) {
-		if (sChannel.Left(1) != "~") {
+		if (sChannel.Left(1) != CHAN_PREFIX_1) {
 			return CONTINUE;
 		}
 
-		if (sChannel.Left(2) != "~#") {
-			m_pClient->PutClient(":" + GetIRCServer(m_pUser) + " 403 " + m_pUser->GetIRCNick().GetNick() + " " + sChannel + " :Channels look like ~#znc");
+		if (sChannel.Left(2) != CHAN_PREFIX) {
+			m_pClient->PutClient(":" + GetIRCServer(m_pUser) + " 403 " + m_pUser->GetIRCNick().GetNick() + " " + sChannel + " :Channels look like " CHAN_PREFIX "znc");
 			return HALT;
 		}
 
@@ -355,7 +360,7 @@ public:
 
 		char cPrefix = sTarget[0];
 
-		if (cPrefix != '~' && cPrefix != '?') {
+		if (cPrefix != CHAN_PREFIX_1C && cPrefix != '?') {
 			return CONTINUE;
 		}
 
@@ -365,7 +370,7 @@ public:
 			sHost = m_pUser->GetIRCNick().GetHost();
 		}
 
-		if (cPrefix == '~') {
+		if (cPrefix == CHAN_PREFIX_1C) {
 			if (FindChannel(sTarget) == NULL) {
 				m_pClient->PutClient(":" + GetIRCServer(m_pUser) + " 403 " + m_pUser->GetIRCNick().GetNick() + " " + sTarget + " :No such channel");
 				return HALT;
@@ -455,7 +460,7 @@ public:
 			CUser* pUser = CZNC::Get().FindUser(sUser);
 			CPartylineChannel* pChan;
 
-			if (sChan.Left(2) != "~#") {
+			if (sChan.Left(2) != CHAN_PREFIX) {
 				PutModule("Invalid channel name");
 				return;
 			}
