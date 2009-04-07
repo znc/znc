@@ -1430,7 +1430,7 @@ bool CZNC::DoRehash(CString& sError)
 					CListener* pListener = new CListener(uPort, sBindHost, bSSL, bIPV6);
 
 					if (!pListener->Listen()) {
-						sError = "Unable to bind";
+						sError = "Unable to bind [" + CString(strerror(errno)) + "]";
 						CUtils::PrintStatus(false, sError);
 						delete pListener;
 						return false;
