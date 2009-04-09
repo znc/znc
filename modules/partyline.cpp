@@ -129,7 +129,7 @@ public:
 	virtual EModRet OnDeleteUser(CUser& User) {
 		// Loop through each chan
 		for (set<CPartylineChannel*>::iterator it = m_ssChannels.begin(); it != m_ssChannels.end(); it++) {
-			RemoveUser(&User, *it, "KICK", true, "User deleted");
+			RemoveUser(&User, *it, "KICK", true, "User deleted", true);
 		}
 
 		return CONTINUE;
@@ -273,7 +273,7 @@ public:
 	}
 
 	void RemoveUser(CUser* pUser, CPartylineChannel* pChannel, const CString& sCommand,
-			bool bForce = false, const CString& sMessage = "") {
+			bool bForce = false, const CString& sMessage = "", bool bNickAsTarget = false) {
 		if (!pChannel || !pChannel->IsInChannel(pUser->GetUserName())) {
 			return;
 		}
@@ -294,10 +294,17 @@ public:
 				sHost = pUser->GetIRCNick().GetHost();
 			}
 
-			pUser->PutUser(":" + pUser->GetIRCNick().GetNickMask() + sCmd
-					+ pChannel->GetName() + sMsg);
-			PutChan(ssNicks, ":?" + pUser->GetUserName() + "!" + pUser->GetIdent() + "@" + sHost
-					+ sCmd + pChannel->GetName() + sMsg, false);
+			if (bNickAsTarget) {
+				pUser->PutUser(":" + pUser->GetIRCNick().GetNickMask() + sCmd
+						+ pChannel->GetName() + " " + pUser->GetIRCNick().GetNick() + sMsg);
+				PutChan(ssNicks, ":?" + pUser->GetUserName() + "!" + pUser->GetIdent() + "@" + sHost
+						+ sCmd + pChannel->GetName() + " ?" + pUser->GetUserName() + sMsg, false);
+			} else {
+				pUser->PutUser(":" + pUser->GetIRCNick().GetNickMask() + sCmd
+						+ pChannel->GetName() + sMsg);
+				PutChan(ssNicks, ":?" + pUser->GetUserName() + "!" + pUser->GetIdent() + "@" + sHost
+						+ sCmd + pChannel->GetName() + sMsg, false);
+			}
 
 			if (ssNicks.empty()) {
 				delete pChannel;
