@@ -275,6 +275,9 @@ public:
 	// Setters
 	void SetTTL(unsigned int u) { m_uTTL = u; }
 	// !Setters
+	// Getters
+	unsigned int GetTTL() { return m_uTTL; }
+	// !Getters
 private:
 	typedef pair<unsigned long long, V> value;
 	typedef typename map<K, value>::iterator iterator;
