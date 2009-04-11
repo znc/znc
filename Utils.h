@@ -21,6 +21,7 @@
 
 using std::map;
 using std::vector;
+using std::pair;
 using std::cout;
 using std::endl;
 
@@ -167,7 +168,7 @@ private:
  * @author prozac <prozac@rottenboy.com>
  * @brief Insert an object with a time-to-live and check later if it still exists
  */
-template<typename T>
+template<typename K, typename V = bool>
 class TCacheMap {
 public:
 	TCacheMap(unsigned int uTTL = 5000) {
@@ -180,7 +181,7 @@ public:
 	 * @brief This function adds an item to the cache using the default time-to-live value
 	 * @param Item the item to add to the cache
 	 */
-	void AddItem(const T& Item) {
+	void AddItem(const K& Item) {
 		AddItem(Item, m_uTTL);
 	}
 
@@ -189,13 +190,38 @@ public:
 	 * @param Item the item to add to the cache
 	 * @param uTTL the time-to-live for this specific item
 	 */
-	void AddItem(const T& Item, unsigned int uTTL) {
+	void AddItem(const K& Item, unsigned int uTTL) {
 		if (!uTTL) {			// If time-to-live is zero we don't want to waste our time adding it
 			RemItem(Item);		// Remove the item incase it already exists
 			return;
 		}
 
-		m_mItems[Item] = CUtils::GetMillTime() + uTTL;
+		m_mItems[Item] = value(CUtils::GetMillTime() + uTTL, V());
+		Cleanup();
+	}
+
+	/**
+	 * @brief This function adds an item to the cache using the default time-to-live value
+	 * @param Item the item to add to the cache
+	 * @param Val The value associated with the key Item
+	 */
+	void AddItem(const K& Item, const V& Val) {
+		AddItem(Item, Val, m_uTTL);
+	}
+
+	/**
+	 * @brief This function adds an item to the cache using a custom time-to-live value
+	 * @param Item the item to add to the cache
+	 * @param Val The value associated with the key Item
+	 * @param uTTL the time-to-live for this specific item
+	 */
+	void AddItem(const K& Item, const V& Val, unsigned int uTTL) {
+		if (!uTTL) {			// If time-to-live is zero we don't want to waste our time adding it
+			RemItem(Item);		// Remove the item incase it already exists
+			return;
+		}
+
+		m_mItems[Item] = value(CUtils::GetMillTime() + uTTL, Val);
 		Cleanup();
 	}
 
@@ -204,9 +230,22 @@ public:
 	 * @param Item The item to check for
 	 * @return true if item exists
 	 */
-	bool HasItem(const T& Item) {
+	bool HasItem(const K& Item) {
 		Cleanup();
 		return (m_mItems.find(Item) != m_mItems.end());
+	}
+
+	/**
+	 * @brief Performs a Cleanup() and returns a pointer to the object, or NULL
+	 * @param Item The item to check for
+	 * @return Pointer to the item or NULL if there is no suitable one
+	 */
+	V* GetItem(const K& Item) {
+		Cleanup();
+		iterator it = m_mItems.find(Item);
+		if (it == m_mItems.end())
+			return NULL;
+		return &it->second.second;
 	}
 
 	/**
@@ -214,7 +253,7 @@ public:
 	 * @param Item The item to be removed
 	 * @return true if item existed and was removed, false if it never existed
 	 */
-	bool RemItem(const T& Item) {
+	bool RemItem(const K& Item) {
 		return m_mItems.erase(Item);
 	}
 
@@ -222,10 +261,10 @@ public:
 	 * @brief Cycles through the queue removing all of the stale entries
 	 */
 	void Cleanup() {
-		typename map<T, unsigned long long>::iterator it = m_mItems.begin();
+		iterator it = m_mItems.begin();
 
 		while (it != m_mItems.end()) {
-			if (CUtils::GetMillTime() > (it->second)) {
+			if (CUtils::GetMillTime() > (it->second.first)) {
 				m_mItems.erase(it++);
 			} else {
 				++it;
@@ -237,7 +276,9 @@ public:
 	void SetTTL(unsigned int u) { m_uTTL = u; }
 	// !Setters
 private:
-	map<T, unsigned long long>	m_mItems;	//!< Map of cached items.  The value portion of the map is for the expire time
+	typedef pair<unsigned long long, V> value;
+	typedef typename map<K, value>::iterator iterator;
+	map<K, value>	m_mItems;	//!< Map of cached items.  The value portion of the map is for the expire time
 	unsigned int	m_uTTL;					//!< Default time-to-live duration
 };
 
