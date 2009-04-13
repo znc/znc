@@ -28,7 +28,7 @@
 * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 *
 *
-* $Revision: 1.205 $
+* $Revision: 1.206 $
 */
 
 // note to compile with win32 need to link to winsock2, using gcc its -lws2_32
@@ -109,7 +109,7 @@
 #else
 #	define PERROR( f )	(void)0
 #endif /* __DEBUG__ */
-#endif
+#endif /* PERROR */
 
 #ifndef _NO_CSOCKET_NS // some people may not want to use a namespace
 namespace Csocket
@@ -954,6 +954,14 @@ public:
 	const std::vector<CCron *> & GetCrons() const { return( m_vcCrons ); }
 
 	void SetSkipConnect( bool b ) { m_bSkipConnect = b; }
+
+	/**
+	 * @brief override this call with your own DNS lookup method if you have one. By default this function is blocking
+	 * @param sHostname the hostname to resolve
+	 * @param csSockAddr the destination sock address info @see CSSockAddr
+	 * @return 0 on success, ETIMEDOUT if no lookup was found, EAGAIN if you should check again later for an answer
+	 */
+	virtual int GetAddrInfo( const CS_STRING & sHostname, CSSockAddr & csSockAddr );
 
 private:
 	//! making private for safety

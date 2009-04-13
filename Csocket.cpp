@@ -28,7 +28,7 @@
 * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 *
 *
-* $Revision: 1.97 $
+* $Revision: 1.98 $
 */
 
 #include "Csocket.h"
@@ -193,7 +193,7 @@ static int __GetHostByName( const CS_STRING & sHostName, struct in_addr *paddr, 
 	if ( iReturn == 0 )
 		memcpy( &paddr->s_addr, hent->h_addr_list[0], sizeof( paddr->s_addr ) );
 
-	return( iReturn );
+	return( iReturn == TRY_AGAIN ? EAGAIN : iReturn );
 }
 #endif /* !HAVE_IPV6 */
 
@@ -858,7 +858,7 @@ bool Csock::Listen( u_short iPort, int iMaxConns, const CS_STRING & sBindHost, u
 	m_sBindHost = sBindHost;
 	if ( !sBindHost.empty() )
 	{
-		if( GetAddrInfo( sBindHost, this, m_address ) != 0 )
+		if( GetAddrInfo( sBindHost, m_address ) != 0 )
 			return( false );
 	}
 
@@ -2011,6 +2011,11 @@ int Csock::GetPending()
 #endif /* HAVE_LIBSSL */
 }
 
+int Csock::GetAddrInfo( const CS_STRING & sHostname, CSSockAddr & csSockAddr )
+{
+	return( ::GetAddrInfo( sHostname, this, csSockAddr ) );
+}
+
 int Csock::DNSLookup( EDNSLType eDNSLType )
 {
 	if ( eDNSLType == DNS_VHOST )
@@ -2029,7 +2034,7 @@ int Csock::DNSLookup( EDNSLType eDNSLType )
 	int iRet = ETIMEDOUT;
 	if ( eDNSLType == DNS_VHOST )
 	{
-		iRet = GetAddrInfo( m_sBindHost, this, m_bindhost );
+		iRet = GetAddrInfo( m_sBindHost, m_bindhost );
 #ifdef HAVE_IPV6
 		if( m_bindhost.GetIPv6() )
 		{
@@ -2043,7 +2048,7 @@ int Csock::DNSLookup( EDNSLType eDNSLType )
 	}
 	else
 	{
-		iRet = GetAddrInfo( m_shostname, this, m_address );
+		iRet = GetAddrInfo( m_shostname, m_address );
 	}
 
 	if( !CreateSocksFD() )
@@ -2056,7 +2061,7 @@ int Csock::DNSLookup( EDNSLType eDNSLType )
 		m_iDNSTryCount = 0;
 		return( 0 );
 	}
-	else if ( iRet == TRY_AGAIN )
+	else if ( iRet == EAGAIN )
 	{
 		m_iDNSTryCount++;
 		if ( m_iDNSTryCount > 20 )
