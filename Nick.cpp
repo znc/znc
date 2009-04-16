@@ -24,6 +24,7 @@ CNick::~CNick() {}
 
 void CNick::Reset() {
 	m_sChanPerms.clear();
+	m_pUser = NULL;
 }
 
 void CNick::Parse(const CString& sNickMask) {
