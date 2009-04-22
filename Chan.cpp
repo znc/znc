@@ -506,17 +506,29 @@ void CChan::SendBuffer(CClient* pClient) {
 		const vector<CString>& vsBuffer = GetBuffer();
 
 		if (vsBuffer.size()) {
-			m_pUser->PutUser(":***!znc@znc.in PRIVMSG " + GetName() + " :Buffer Playback...", pClient);
+			bool bSkipStatusMsg = false;
+			MODULECALL(OnChanBufferStarting(*this, *pClient), m_pUser, NULL, bSkipStatusMsg = true);
+
+			if (!bSkipStatusMsg) {
+				m_pUser->PutUser(":***!znc@znc.in PRIVMSG " + GetName() + " :Buffer Playback...", pClient);
+			}
 
 			for (unsigned int a = 0; a < vsBuffer.size(); a++) {
-				m_pUser->PutUser(vsBuffer[a], pClient);
+				CString sLine(vsBuffer[a]);
+				MODULECALL(OnChanBufferPlayLine(*this, *pClient, sLine), m_pUser, NULL, continue);
+				m_pUser->PutUser(sLine, pClient);
 			}
 
 			if (!KeepBuffer()) {
 				ClearBuffer();
 			}
 
-			m_pUser->PutUser(":***!znc@znc.in PRIVMSG " + GetName() + " :Playback Complete.", pClient);
+			bSkipStatusMsg = false;
+			MODULECALL(OnChanBufferEnding(*this, *pClient), m_pUser, NULL, bSkipStatusMsg = true);
+
+			if (!bSkipStatusMsg) {
+				m_pUser->PutUser(":***!znc@znc.in PRIVMSG " + GetName() + " :Playback Complete.", pClient);
+			}
 		}
 	}
 }

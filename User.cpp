@@ -280,6 +280,7 @@ void CUser::UserConnected(CClient* pClient) {
 
 	CString sBufLine;
 	while (m_QueryBuffer.GetNextLine(GetIRCNick().GetNick(), sBufLine)) {
+		MODULECALL(OnPrivBufferPlayLine(*pClient, sBufLine), this, NULL, continue);
 		pClient->PutClient(sBufLine);
 	}
 

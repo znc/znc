@@ -261,6 +261,11 @@ public:
 	virtual void OnJoin(const CNick& Nick, CChan& Channel);
 	virtual void OnPart(const CNick& Nick, CChan& Channel);
 
+	virtual EModRet OnChanBufferStarting(CChan& Chan, CClient& Client);
+	virtual EModRet OnChanBufferEnding(CChan& Chan, CClient& Client);
+	virtual EModRet OnChanBufferPlayLine(CChan& Chan, CClient& Client, CString& sLine);
+	virtual EModRet OnPrivBufferPlayLine(CClient& Client, CString& sLine);
+
 	virtual void OnUserAttached(bool thisFunctionWasRemoved, bool UseOnClientLogin) {}
 	virtual void OnUserDetached(bool thisFunctionWasRemoved, bool UseOnClientDisconnect) {}
 	virtual void OnClientLogin();
@@ -415,6 +420,11 @@ public:
 	bool OnKick(const CNick& Nick, const CString& sOpNick, CChan& Channel, const CString& sMessage);
 	bool OnJoin(const CNick& Nick, CChan& Channel);
 	bool OnPart(const CNick& Nick, CChan& Channel);
+
+	bool OnChanBufferStarting(CChan& Chan, CClient& Client);
+	bool OnChanBufferEnding(CChan& Chan, CClient& Client);
+	bool OnChanBufferPlayLine(CChan& Chan, CClient& Client, CString& sLine);
+	bool OnPrivBufferPlayLine(CClient& Client, CString& sLine);
 
 	bool OnClientLogin();
 	bool OnClientDisconnect();
