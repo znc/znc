@@ -652,8 +652,9 @@ void CClient::UserCommand(const CString& sLine) {
 		} else {
 			b = m_pUser->GetModules().LoadModule(sMod, sArgs, m_pUser, sModRet);
 		}
+
 		if (!b) {
-			PutStatus("Unable to load module [" + sMod + "] [" + sModRet + "]");
+			PutStatus(sModRet);
 			return;
 		}
 
