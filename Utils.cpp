@@ -36,7 +36,7 @@ CUtils::CUtils() {}
 CUtils::~CUtils() {}
 
 #ifdef HAVE_LIBSSL
-void CUtils::GenerateCert(FILE *pOut, bool bEncPrivKey, const CString& sHost) {
+void CUtils::GenerateCert(FILE *pOut, const CString& sHost) {
 	EVP_PKEY *pKey = NULL;
 	X509 *pCert = NULL;
 	X509_NAME *pName = NULL;
@@ -52,7 +52,7 @@ void CUtils::GenerateCert(FILE *pOut, bool bEncPrivKey, const CString& sHost) {
 			return;
 		}
 
-		PEM_write_RSAPrivateKey(pOut, pRSA, (bEncPrivKey ? EVP_des_ede3_cbc() : NULL), NULL, 0, NULL, NULL);
+		PEM_write_RSAPrivateKey(pOut, pRSA, NULL, NULL, 0, NULL, NULL);
 
 		if (!(pCert = X509_new())) {
 			EVP_PKEY_free(pKey);

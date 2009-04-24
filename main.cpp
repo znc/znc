@@ -20,7 +20,6 @@ static const struct option g_LongOpts[] = {
 	{ "makepass",			no_argument,	0,	's' },
 #ifdef HAVE_LIBSSL
 	{ "makepem",			no_argument,	0,	'p' },
-	{ "encrypt-pem",		no_argument,	0, 	'e' },
 #endif /* HAVE_LIBSSL */
 	{ "datadir",                    required_argument,	0,   'd' },
 	{ 0, 0, 0, 0 }
@@ -39,7 +38,6 @@ static void GenerateHelp(const char *appname) {
 	CUtils::PrintMessage("\t-s, --makepass     Generates a password for use in config");
 #ifdef HAVE_LIBSSL
 	CUtils::PrintMessage("\t-p, --makepem      Generates a pemfile for use with SSL");
-	CUtils::PrintMessage("\t-e, --encrypt-pem  when used along with --makepem, encrypts the private key in the pemfile");
 #endif /* HAVE_LIBSSL */
 	CUtils::PrintMessage("\t-d, --datadir      Set a different znc repository (default is ~/.znc)");
 }
@@ -88,9 +86,8 @@ int main(int argc, char** argv) {
 #endif
 #ifdef HAVE_LIBSSL
 	bool bMakePem = false;
-	bool bEncPem = false;
 
-	while ((iArg = getopt_long(argc, argv, "hvnrcsped:Df", g_LongOpts, &iOptIndex)) != -1) {
+	while ((iArg = getopt_long(argc, argv, "hvnrcspd:Df", g_LongOpts, &iOptIndex)) != -1) {
 #else
 	while ((iArg = getopt_long(argc, argv, "hvnrcsd:Df", g_LongOpts, &iOptIndex)) != -1) {
 #endif /* HAVE_LIBSSL */
@@ -116,9 +113,6 @@ int main(int argc, char** argv) {
 #ifdef HAVE_LIBSSL
 		case 'p':
 			bMakePem = true;
-			break;
-		case 'e':
-			bEncPem = true;
 			break;
 #endif /* HAVE_LIBSSL */
 		case 'd':
@@ -147,16 +141,10 @@ int main(int argc, char** argv) {
 
 #ifdef HAVE_LIBSSL
 	if (bMakePem) {
-		pZNC->WritePemFile(bEncPem);
+		pZNC->WritePemFile();
 
 		delete pZNC;
 		return 0;
-	}
-
-	if (bEncPem && !bMakePem) {
-		CUtils::PrintError("--encrypt-pem should be used along with --makepem.");
-		delete pZNC;
-		return 1;
 	}
 #endif /* HAVE_LIBSSL */
 

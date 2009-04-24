@@ -153,7 +153,7 @@ public:
 	CString GetModPath() const;
 	CString GetPemLocation() const { return GetZNCPath() + "/znc.pem"; }
 	const CString& GetConfigFile() const { return m_sConfigFile; }
-	bool WritePemFile(bool bEncPem = false);
+	bool WritePemFile();
 	const CString& GetISpoofFile() const { return m_sISpoofFile; }
 	const CString& GetISpoofFormat() const { return m_sISpoofFormat; }
 	const VCString& GetVHosts() const { return m_vsVHosts; }

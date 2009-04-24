@@ -77,7 +77,7 @@ public:
 		return iTime;
 	}
 #ifdef HAVE_LIBSSL
-	static void GenerateCert(FILE *pOut, bool bEncPrivKey = false, const CString& sHost = "");
+	static void GenerateCert(FILE *pOut, const CString& sHost = "");
 #endif /* HAVE_LIBSSL */
 
 private:
