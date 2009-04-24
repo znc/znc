@@ -3266,13 +3266,15 @@ fi
 
 
 		if test -n "$PERL"; then
+			my_saved_LDFLAGS="$LDFLAGS"
+			appendLD `$PERL -MExtUtils::Embed -e ccopts -e ldopts`
 			{ $as_echo "$as_me:$LINENO: checking for perl_alloc in -lperl" >&5
 $as_echo_n "checking for perl_alloc in -lperl... " >&6; }
 if test "${ac_cv_lib_perl_perl_alloc+set}" = set; then
   $as_echo_n "(cached) " >&6
 else
   ac_check_lib_save_LIBS=$LIBS
-LIBS="-lperl `$PERL -MExtUtils::Embed -e ccopts -e ldopts` $LIBS"
+LIBS="-lperl  $LIBS"
 cat >conftest.$ac_ext <<_ACEOF
 /* confdefs.h.  */
 _ACEOF
@@ -3339,6 +3341,7 @@ $as_echo "$as_me: error: could not find libperl. Try --disable-perl" >&2;}
    { (exit 1); exit 1; }; }
 fi
 
+			LDFLAGS="$my_saved_LDFLAGS"
 		else
 			{ { $as_echo "$as_me:$LINENO: error: could not find perl binary. Try --disable-perl" >&5
 $as_echo "$as_me: error: could not find perl binary. Try --disable-perl" >&2;}

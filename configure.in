@@ -201,9 +201,11 @@ if test "$MODULES" = "yes"; then
 	if test -z "$NOPERL"; then
 		AC_PATH_PROG([PERL], [perl], [])
 		if test -n "$PERL"; then
+			my_saved_LDFLAGS="$LDFLAGS"
+			appendLD `$PERL -MExtUtils::Embed -e ccopts -e ldopts`
 			AC_CHECK_LIB(perl, perl_alloc,unset NOPERL,
-				AC_MSG_ERROR([could not find libperl. Try --disable-perl]),
-				[`$PERL -MExtUtils::Embed -e ccopts -e ldopts`])
+				AC_MSG_ERROR([could not find libperl. Try --disable-perl]))
+			LDFLAGS="$my_saved_LDFLAGS"
 		else
 			AC_MSG_ERROR([could not find perl binary. Try --disable-perl])
 		fi
