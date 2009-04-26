@@ -3198,11 +3198,6 @@ $as_echo "$as_me: error: could not find dlopen. Try --disable-modules" >&2;}
 	fi
 	MODTARGET="modules"
 
-	# FIXME why do we need this for sun?
-	if test -n "$ISSUN"; then
-		appendMod -mimpure-text
-	fi
-
 	if test -z "$ISCYGWIN" ; then
 		# cygwin doesn't need -fPIC, everything else does (for modules)
 		# warning: -fPIC ignored for target (all code is position independent)
