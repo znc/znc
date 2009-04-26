@@ -12,6 +12,7 @@
 #include "ZNCString.h"
 #include <assert.h>
 #include <cstdio>
+#include <fcntl.h>
 #include <map>
 #include <sys/file.h>
 #include <sys/time.h>
