@@ -86,7 +86,12 @@ public:
 				pChan = new CChan(it->first, m_pUser, true);
 				if (!it->second.empty())
 					pChan->SetKey(it->second);
-				m_pUser->AddChan(pChan);
+				if (!m_pUser->AddChan(pChan)) {
+					/* AddChan() deleted that channel */
+					PutModule("Could not join [" + it->first
+							+ "] (# prefix missing?)");
+					continue;
+				}
 			}
 			if (!pChan->IsOn()) {
 				PutModule("Joining [" + pChan->GetName() + "]");
