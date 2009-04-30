@@ -87,7 +87,7 @@ public:
 	bool PutStatusNotice(const CString& sLine, CClient* pClient = NULL, CClient* pSkipClient = NULL);
 	bool PutModule(const CString& sModule, const CString& sLine, CClient* pClient = NULL, CClient* pSkipClient = NULL);
 
-	bool IsUserAttached() const { return (m_vClients.size() > 0); }
+	bool IsUserAttached() const { return !m_vClients.empty(); }
 	void UserConnected(CClient* pClient);
 	void UserDisconnected(CClient* pClient);
 
