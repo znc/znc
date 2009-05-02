@@ -46,7 +46,8 @@ public:
 	{
 		if (!m_sPass.empty()
 				&& Nick.GetNick().Equals("NickServ")
-				&& sMessage.find("msg") != CString::npos
+				&& (sMessage.find("msg") != CString::npos
+				 || sMessage.find("authenticate") != CString::npos)
 				&& sMessage.AsUpper().find("IDENTIFY") != CString::npos
 				&& sMessage.find("help") == CString::npos) {
 			PutIRC("PRIVMSG NickServ :IDENTIFY " + m_sPass);
