@@ -3449,6 +3449,10 @@ ac_config_files="$ac_config_files znc-buildmod"
 
 ac_config_files="$ac_config_files man/Makefile"
 
+ac_config_files="$ac_config_files znc.pc"
+
+ac_config_files="$ac_config_files znc-uninstalled.pc"
+
 if test "$MODULES" = "yes"; then
 	ac_config_files="$ac_config_files modules/Makefile"
 
@@ -4065,6 +4069,8 @@ do
     "znc-config") CONFIG_FILES="$CONFIG_FILES znc-config" ;;
     "znc-buildmod") CONFIG_FILES="$CONFIG_FILES znc-buildmod" ;;
     "man/Makefile") CONFIG_FILES="$CONFIG_FILES man/Makefile" ;;
+    "znc.pc") CONFIG_FILES="$CONFIG_FILES znc.pc" ;;
+    "znc-uninstalled.pc") CONFIG_FILES="$CONFIG_FILES znc-uninstalled.pc" ;;
     "modules/Makefile") CONFIG_FILES="$CONFIG_FILES modules/Makefile" ;;
 
   *) { { $as_echo "$as_me:$LINENO: error: invalid argument: $ac_config_target" >&5

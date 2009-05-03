@@ -18,6 +18,7 @@ LDFLAGS  := @LDFLAGS@
 LIBS     := @LIBS@
 LIBZNC   := @LIBZNC@
 LIBZNCDIR:= @LIBZNCDIR@
+PKGCONFIGDIR := $(prefix)/lib/pkgconfig
 
 LIB_SRCS  := ZNCString.cpp Csocket.cpp znc.cpp User.cpp IRCSock.cpp Client.cpp DCCBounce.cpp \
 	DCCSock.cpp Chan.cpp Nick.cpp Server.cpp Modules.cpp MD5.cpp Buffer.cpp Utils.cpp \
@@ -73,10 +74,12 @@ distclean: clean
 install: znc $(LIBZNC)
 	mkdir -p $(DESTDIR)$(bindir)
 	mkdir -p $(DESTDIR)$(includedir)/znc
+	mkdir -p $(DESTDIR)$(PKGCONFIGDIR)
 	install -m 0755 znc $(DESTDIR)$(bindir)
 	install -m 0755 znc-config $(DESTDIR)$(bindir)
 	install -m 0755 znc-buildmod $(DESTDIR)$(bindir)
 	install -m 0644 $(srcdir)/*.h $(DESTDIR)$(includedir)/znc
+	install -m 0644 znc.pc $(DESTDIR)$(PKGCONFIGDIR)
 	@if test -n "$(LIBZNC)"; then \
 		mkdir -p $(DESTDIR)$(LIBZNCDIR) ; \
 		install -m 0755 $(LIBZNC) $(DESTDIR)$(LIBZNCDIR) ; \
