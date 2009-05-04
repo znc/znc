@@ -8,6 +8,7 @@
 
 #include "znc.h"
 #include <getopt.h>
+#include <sys/wait.h>
 
 static const struct option g_LongOpts[] = {
 	{ "help",			no_argument,	0,	'h' },
@@ -59,6 +60,11 @@ static void die(int sig) {
 static void rehash(int sig) {
 	CUtils::PrintMessage("Caught SIGHUP");
 	CZNC::Get().SetNeedRehash(true);
+}
+
+static void reapChilds(int sig) {
+	while (waitpid(-1, NULL, WNOHANG) > 0) {
+	}
 }
 
 static bool isRoot() {
@@ -241,6 +247,9 @@ int main(int argc, char** argv) {
 
 	sa.sa_handler = rehash;
 	sigaction(SIGHUP,  &sa, (struct sigaction*) NULL);
+
+	sa.sa_handler = reapChilds;
+	sigaction(SIGCHLD, &sa, (struct sigaction*) NULL);
 
 	// Once this signal is caught, the signal handler is reset
 	// to SIG_DFL. This avoids endless loop with signals.
