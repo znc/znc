@@ -295,7 +295,7 @@ void CClient::ReadLine(const CString& sData) {
 	} else if (sCommand.Equals("QUIT")) {
 		m_pUser->UserDisconnected(this);
 
-		Close();	// Treat a client quit as a detach
+		Close(Csock::CLT_AFTERWRITE);	// Treat a client quit as a detach
 		return;		// Don't forward this msg.  We don't want the client getting us disconnected.
 	} else if (sCommand.Equals("PROTOCTL")) {
 		unsigned int i = 1;
@@ -652,7 +652,7 @@ void CClient::RefuseLogin(const CString& sReason) {
 
 	PutStatus("Bad username and/or password.");
 	PutClient(":irc.znc.in 464 " + GetNick() + " :" + sReason);
-	Close();
+	Close(Csock::CLT_AFTERWRITE);
 }
 
 void CClientAuth::AcceptedLogin(CUser& User) {
@@ -729,7 +729,7 @@ void CClient::IRCConnected(CIRCSock* pIRCSock) {
 void CClient::BouncedOff() {
 	PutStatusNotice("You are being disconnected because another user just authenticated as you.");
 	m_pIRCSock = NULL;
-	Close();
+	Close(Csock::CLT_AFTERWRITE);
 }
 
 void CClient::IRCDisconnected() {
