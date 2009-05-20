@@ -273,6 +273,7 @@ public:
 	bool IsIPV6() const { return m_bIPV6; }
 	unsigned short GetPort() const { return m_uPort; }
 	const CString& GetBindHost() const { return m_sBindHost; }
+	CRealListener* GetRealListener() const { return m_pListener; }
 	// !Getters
 
 	bool Listen() {
