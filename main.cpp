@@ -62,11 +62,6 @@ static void rehash(int sig) {
 	CZNC::Get().SetNeedRehash(true);
 }
 
-static void reapChilds(int sig) {
-	while (waitpid(-1, NULL, WNOHANG) > 0) {
-	}
-}
-
 static bool isRoot() {
 	// User root? If one of these were root, we could switch the others to root, too
 	if (geteuid() == 0 || getuid() == 0)
@@ -247,9 +242,6 @@ int main(int argc, char** argv) {
 
 	sa.sa_handler = rehash;
 	sigaction(SIGHUP,  &sa, (struct sigaction*) NULL);
-
-	sa.sa_handler = reapChilds;
-	sigaction(SIGCHLD, &sa, (struct sigaction*) NULL);
 
 	// Once this signal is caught, the signal handler is reset
 	// to SIG_DFL. This avoids endless loop with signals.
