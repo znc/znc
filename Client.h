@@ -41,6 +41,7 @@ public:
 
 	const CString& GetUsername() const { return m_sUsername; }
 	const CString& GetPassword() const { return m_sPassword; }
+	Csock *GetSocket() const { return m_pSock; }
 	CString GetRemoteIP() const;
 
 protected:
