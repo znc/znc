@@ -620,7 +620,7 @@ void CClient::AuthUser() {
 }
 
 CClientAuth::CClientAuth(CClient* pClient, const CString& sUsername, const CString& sPassword)
-		: CAuthBase(sUsername, sPassword, pClient->GetRemoteIP()) {
+		: CAuthBase(sUsername, sPassword, pClient) {
 	m_pClient = pClient;
 }
 
@@ -628,6 +628,12 @@ void CClientAuth::RefusedLogin(const CString& sReason) {
 	if (m_pClient) {
 		m_pClient->RefuseLogin(sReason);
 	}
+}
+
+CString CAuthBase::GetRemoteIP() const {
+	if (m_pSock)
+		return m_pSock->GetRemoteIP();
+	return "";
 }
 
 void CAuthBase::RefuseLogin(const CString& sReason) {

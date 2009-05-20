@@ -23,17 +23,17 @@ class CClientTimeout;
 
 class CAuthBase {
 public:
-	CAuthBase(const CString& sUsername, const CString& sPassword, const CString& sRemoteIP) {
-		SetLoginInfo(sUsername, sPassword, sRemoteIP);
+	CAuthBase(const CString& sUsername, const CString& sPassword, Csock *pSock) {
+		SetLoginInfo(sUsername, sPassword, pSock);
 	}
 
 	virtual ~CAuthBase() {}
 
 	virtual void SetLoginInfo(const CString& sUsername, const CString& sPassword,
-			const CString& sRemoteIP) {
+			Csock *pSock) {
 		m_sUsername = sUsername;
 		m_sPassword = sPassword;
-		m_sRemoteIP = sRemoteIP;
+		m_pSock = pSock;
 	}
 
 	void AcceptLogin(CUser& User) { AcceptedLogin(User); }
@@ -41,7 +41,7 @@ public:
 
 	const CString& GetUsername() const { return m_sUsername; }
 	const CString& GetPassword() const { return m_sPassword; }
-	const CString& GetRemoteIP() const { return m_sRemoteIP; }
+	CString GetRemoteIP() const;
 
 protected:
 	virtual void AcceptedLogin(CUser& User) = 0;
@@ -50,7 +50,7 @@ protected:
 private:
 	CString		m_sUsername;
 	CString		m_sPassword;
-	CString		m_sRemoteIP;
+	Csock*		m_pSock;
 };
 
 

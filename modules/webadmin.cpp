@@ -1160,7 +1160,7 @@ CUser* CWebAdminSock::GetNewUser(CString& sPageRet, CUser* pUser) {
 
 CWebAdminAuth::CWebAdminAuth(CWebAdminSock* pWebAdminSock, const CString& sUsername,
 		const CString& sPassword)
-		: CAuthBase(sUsername, sPassword, pWebAdminSock->GetRemoteIP()) {
+		: CAuthBase(sUsername, sPassword, pWebAdminSock) {
 	m_pWebAdminSock = pWebAdminSock;
 }
 
