@@ -287,6 +287,9 @@ public:
 		if (IsSSL()) {
 			bSSL = true;
 			m_pListener->SetPemLocation(CZNC::Get().GetPemLocation());
+
+			// Ask the client for a cert, if it got none, nothing bad happens
+			m_pListener->SetRequireClientCertFlags(SSL_VERIFY_PEER);
 		}
 #endif
 
