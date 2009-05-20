@@ -28,7 +28,7 @@
 * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 *
 *
-* $Revision: 1.206 $
+* $Revision: 1.207 $
 */
 
 // note to compile with win32 need to link to winsock2, using gcc its -lws2_32
@@ -746,8 +746,11 @@ public:
 
 	//! Returns The Peers Public Key
 	CS_STRING GetPeerPubKey();
-	bool RequiresClientCert();
+	unsigned int GetRequireClientCertFlags();
+	//! legacy, deprecated @see SetRequireClientCertFlags
 	void SetRequiresClientCert( bool bRequiresCert );
+	//! bitwise flags, 0 means don't require cert, SSL_VERIFY_PEER verifies peers, SSL_VERIFY_FAIL_IF_NO_PEER_CERT will cause the connection to fail if no cert 
+	void SetRequireClientCertFlags( unsigned int iRequireClientCertFlags ) { m_iRequireClientCertFlags = iRequireClientCertFlags; }
 
 #endif /* HAVE_LIBSSL */
 
@@ -971,7 +974,7 @@ private:
 	u_short		m_iport, m_iRemotePort, m_iLocalPort;
 	int			m_iReadSock, m_iWriteSock, m_itimeout, m_iConnType, m_iMethod, m_iTcount;
 	bool		m_bssl, m_bIsConnected, m_bBLOCK, m_bFullsslAccept;
-	bool		m_bsslEstablished, m_bEnableReadLine, m_bRequireClientCert, m_bPauseRead;
+	bool		m_bsslEstablished, m_bEnableReadLine, m_bPauseRead;
 	CS_STRING	m_shostname, m_sbuffer, m_sSockName, m_sPemFile, m_sCipherType, m_sParentName;
 	CS_STRING	m_sSend, m_sPemPass, m_sLocalIP, m_sRemoteIP;
 	ECloseType	m_eCloseType;
@@ -988,6 +991,7 @@ private:
 	SSL 				*m_ssl;
 	SSL_CTX				*m_ssl_ctx;
 	SSL_METHOD			*m_ssl_method;
+	unsigned int		m_iRequireClientCertFlags;
 
 	FPCertVerifyCB		m_pCerVerifyCB;
 
@@ -1116,7 +1120,7 @@ public:
 		m_iAFrequire = CSSockAddr::RAF_ANY;
 #ifdef HAVE_LIBSSL
 		m_sCipher = "HIGH";
-		m_bRequiresClientCert = false;
+		m_iRequireCertFlags = 0;
 #endif /* HAVE_LIBSSL */
 	}
 	virtual ~CSListener() {}
@@ -1132,7 +1136,7 @@ public:
 	const CS_STRING & GetCipher() const { return( m_sCipher ); }
 	const CS_STRING & GetPemLocation() const { return( m_sPemLocation ); }
 	const CS_STRING & GetPemPass() const { return( m_sPemPass ); }
-	bool GetRequiresClientCert() const { return( m_bRequiresClientCert ); }
+	unsigned int GetRequireClientCertFlags() const { return( m_iRequireCertFlags ); }
 #endif /* HAVE_LIBSSL */
 
 	//! sets the port to listen on. Set to 0 to listen on a random port
@@ -1157,8 +1161,10 @@ public:
 	void SetPemLocation( const CS_STRING & s ) { m_sPemLocation = s; }
 	//! set the pemfile pass
 	void SetPemPass( const CS_STRING & s ) { m_sPemPass = s; }
-	//! set to true if require a client certificate
-	void SetRequiresClientCert( bool b ) { m_bRequiresClientCert = b; }
+	//! set to true if require a client certificate (deprecated @see SetRequireClientCertFlags)
+	void SetRequiresClientCert( bool b ) { m_iRequireCertFlags = ( b ? SSL_VERIFY_PEER|SSL_VERIFY_FAIL_IF_NO_PEER_CERT : 0 ); }
+	//! bitwise flags, 0 means don't require cert, SSL_VERIFY_PEER verifies peers, SSL_VERIFY_FAIL_IF_NO_PEER_CERT will cause the connection to fail if no cert 
+	void SetRequireClientCertFlags( unsigned int iRequireCertFlags ) { m_iRequireCertFlags = iRequireCertFlags; }
 #endif /* HAVE_LIBSSL */
 private:
 	u_short		m_iPort;
@@ -1170,7 +1176,7 @@ private:
 
 #ifdef HAVE_LIBSSL
 	CS_STRING	m_sPemLocation, m_sPemPass, m_sCipher;
-	bool		m_bRequiresClientCert;
+	unsigned int		m_iRequireCertFlags;
 #endif /* HAVE_LIBSSL */
 };
 
@@ -1318,7 +1324,7 @@ public:
 			pcSock->SetPemLocation( cListen.GetPemLocation() );
 			pcSock->SetPemPass( cListen.GetPemPass() );
 			pcSock->SetCipher( cListen.GetCipher() );
-			pcSock->SetRequiresClientCert( cListen.GetRequiresClientCert() );
+			pcSock->SetRequireClientCertFlags( cListen.GetRequireClientCertFlags() );
 		}
 #endif /* HAVE_LIBSSL */
 
@@ -2065,7 +2071,7 @@ private:
 							NewpcSock->SetCipher( pcSock->GetCipher() );
 							NewpcSock->SetPemLocation( pcSock->GetPemLocation() );
 							NewpcSock->SetPemPass( pcSock->GetPemPass() );
-							NewpcSock->SetRequiresClientCert( pcSock->RequiresClientCert() );
+							NewpcSock->SetRequireClientCertFlags( pcSock->GetRequireClientCertFlags() );
 							bAddSock = NewpcSock->AcceptSSL();
 						}
 

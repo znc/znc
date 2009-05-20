@@ -28,7 +28,7 @@
 * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 *
 *
-* $Revision: 1.98 $
+* $Revision: 1.99 $
 */
 
 #include "Csocket.h"
@@ -583,7 +583,6 @@ void Csock::Copy( const Csock & cCopy )
 	m_bFullsslAccept	= cCopy.m_bFullsslAccept;
 	m_bsslEstablished	= cCopy.m_bsslEstablished;
 	m_bEnableReadLine	= cCopy.m_bEnableReadLine;
-	m_bRequireClientCert = cCopy.m_bRequireClientCert;
 	m_bPauseRead		= cCopy.m_bPauseRead;
 	m_shostname		= cCopy.m_shostname;
 	m_sbuffer		= cCopy.m_sbuffer;
@@ -613,6 +612,7 @@ void Csock::Copy( const Csock & cCopy )
 	m_bSkipConnect		= cCopy.m_bSkipConnect;
 
 #ifdef HAVE_LIBSSL
+	m_iRequireClientCertFlags = cCopy.m_iRequireClientCertFlags;
 	m_sSSLBuffer	= cCopy.m_sSSLBuffer;
 
 	FREE_SSL();
@@ -1164,9 +1164,9 @@ bool Csock::SSLServerSetup()
 	SSL_set_rfd( m_ssl, m_iReadSock );
 	SSL_set_wfd( m_ssl, m_iWriteSock );
 	SSL_set_accept_state( m_ssl );
-	if ( m_bRequireClientCert )
+	if ( m_iRequireClientCertFlags )
 	{
-		SSL_set_verify( m_ssl, SSL_VERIFY_FAIL_IF_NO_PEER_CERT|SSL_VERIFY_PEER, ( m_pCerVerifyCB ? m_pCerVerifyCB : CertVerifyCB ) );
+		SSL_set_verify( m_ssl, m_iRequireClientCertFlags, ( m_pCerVerifyCB ? m_pCerVerifyCB : CertVerifyCB ) );
 		SSL_set_ex_data( m_ssl, GetCsockClassIdx(), this );
 	}
 
@@ -1911,8 +1911,8 @@ CS_STRING Csock::GetPeerPubKey()
 	}
 	return( sKey );
 }
-bool Csock::RequiresClientCert() { return( m_bRequireClientCert ); }
-void Csock::SetRequiresClientCert( bool bRequiresCert ) { m_bRequireClientCert = bRequiresCert; }
+unsigned int Csock::GetRequireClientCertFlags() { return( m_iRequireClientCertFlags ); }
+void Csock::SetRequiresClientCert( bool bRequiresCert ) { m_iRequireClientCertFlags = ( bRequiresCert ? SSL_VERIFY_FAIL_IF_NO_PEER_CERT|SSL_VERIFY_PEER : 0 ); }
 
 #endif /* HAVE_LIBSSL */
 
@@ -2157,6 +2157,7 @@ void Csock::Init( const CS_STRING & sHostname, u_short iport, int itimeout )
 #ifdef HAVE_LIBSSL
 	m_ssl = NULL;
 	m_ssl_ctx = NULL;
+	m_iRequireClientCertFlags = 0;
 #endif /* HAVE_LIBSSL */
 	m_iTcount = 0;
 	m_iReadSock = -1;
@@ -2178,7 +2179,6 @@ void Csock::Init( const CS_STRING & sHostname, u_short iport, int itimeout )
 	m_bFullsslAccept = false;
 	m_bsslEstablished = false;
 	m_bEnableReadLine = false;
-	m_bRequireClientCert = false;
 	m_iMaxStoredBufferLength = 1024;
 	m_iConnType = INBOUND;
 	m_iRemotePort = 0;
