@@ -664,8 +664,12 @@ bool CZNC::WriteNewConfig(const CString& sConfigFile) {
 				const CModInfo& Info = *it;
 				CString sName = Info.GetName();
 
-				if (CUtils::GetBoolInput("Load global module <\033[1m" + sName + "\033[22m>?", false)) {
-					vsLines.push_back("LoadModule = " + sName);
+				if (CUtils::StdoutIsTTY()) {
+					if (CUtils::GetBoolInput("Load global module <\033[1m" + sName + "\033[22m>?", false))
+						vsLines.push_back("LoadModule = " + sName);
+				} else {
+					if (CUtils::GetBoolInput("Load global module <" + sName + ">?", false))
+						vsLines.push_back("LoadModule = " + sName);
 				}
 			}
 		}
@@ -764,8 +768,12 @@ bool CZNC::WriteNewConfig(const CString& sConfigFile) {
 					const CModInfo& Info = *it;
 					CString sName = Info.GetName();
 
-					if (CUtils::GetBoolInput("Load module <\033[1m" + sName + "\033[22m>?", false)) {
-						vsLines.push_back("\tLoadModule = " + sName);
+					if (CUtils::StdoutIsTTY()) {
+						if (CUtils::GetBoolInput("Load module <\033[1m" + sName + "\033[22m>?", false))
+							vsLines.push_back("\tLoadModule = " + sName);
+					} else {
+						if (CUtils::GetBoolInput("Load module <" + sName + ">?", false))
+							vsLines.push_back("\tLoadModule = " + sName);
 					}
 				}
 			}

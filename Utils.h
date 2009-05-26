@@ -51,6 +51,7 @@ public:
 	static CString GetIP(unsigned long addr);
 	static unsigned long GetLongIP(const CString& sIP);
 	static void SetStdoutIsTTY(bool b) { stdoutIsTTY = b; }
+	static bool StdoutIsTTY() { return stdoutIsTTY; }
 	static void SetDebug(bool b) { debug = b; }
 	static bool Debug() { return debug; }
 
