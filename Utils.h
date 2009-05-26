@@ -396,13 +396,11 @@ public:
 				return *this;					// Then just bail out
 			}
 
-			m_pType = &(*CopyFrom);				// Make our pointers reference the same raw pointer and counter
+			m_pType = CopyFrom.m_pType;			// Make our pointers reference the same raw pointer and counter
 			m_puCount = CopyFrom.m_puCount;
 
-			if (m_pType) {						// If we now point to something valid, increment the counter
-				assert(m_puCount);
-				(*m_puCount)++;
-			}
+			assert(m_puCount);					// We now point to something valid, so increment the counter
+			(*m_puCount)++;
 		}
 
 		return *this;
@@ -463,8 +461,7 @@ public:
 
 	// Getters
 	T* GetPtr() const { return m_pType; }
-	const unsigned int* GetCount() const { return m_puCount; }
-	unsigned int GetClientCount() const { return (m_puCount) ? *m_puCount : 0; }
+	unsigned int GetCount() const { return (m_puCount) ? *m_puCount : 0; }
 	// !Getters
 private:
 	T*				m_pType;	//!< Raw pointer to the class being referenced
