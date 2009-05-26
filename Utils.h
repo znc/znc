@@ -199,7 +199,6 @@ public:
 		}
 
 		m_mItems[Item] = value(CUtils::GetMillTime() + uTTL, V());
-		Cleanup();
 	}
 
 	/**
@@ -224,7 +223,6 @@ public:
 		}
 
 		m_mItems[Item] = value(CUtils::GetMillTime() + uTTL, Val);
-		Cleanup();
 	}
 
 	/**
