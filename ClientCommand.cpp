@@ -928,41 +928,22 @@ void CClient::UserCommand(const CString& sLine) {
 
 		PutStatus("BufferCount for [" + sChan + "] set to [" + CString(pChan->GetBufferCount()) + "]");
 	} else if (m_pUser->IsAdmin() && sCommand.Equals("TRAFFIC")) {
-		CZNC::Get().UpdateTrafficStats();
-		const map<CString, CUser*>& msUsers = CZNC::Get().GetUserMap();
+		map<CString, std::pair<unsigned long long, unsigned long long> >::const_iterator it;
+		map<CString, std::pair<unsigned long long, unsigned long long> > traffic =
+			CZNC::Get().GetTrafficStats();
 		CTable Table;
 		Table.AddColumn("Username");
 		Table.AddColumn("In");
 		Table.AddColumn("Out");
 		Table.AddColumn("Total");
-		unsigned long long users_total_in = 0;
-		unsigned long long users_total_out = 0;
-		for (map<CString, CUser*>::const_iterator it = msUsers.begin(); it != msUsers.end(); it++) {
+
+		for (it = traffic.begin(); it != traffic.end(); it++) {
 			Table.AddRow();
 			Table.SetCell("Username", it->first);
-			Table.SetCell("In", CString::ToByteStr(it->second->BytesRead()));
-			Table.SetCell("Out", CString::ToByteStr(it->second->BytesWritten()));
-			Table.SetCell("Total", CString::ToByteStr(it->second->BytesRead() + it->second->BytesWritten()));
-			users_total_in += it->second->BytesRead();
-			users_total_out += it->second->BytesWritten();
+			Table.SetCell("In", CString::ToByteStr(it->second.first));
+			Table.SetCell("Out", CString::ToByteStr(it->second.second));
+			Table.SetCell("Total", CString::ToByteStr(it->second.first + it->second.second));
 		}
-		Table.AddRow();
-		Table.SetCell("Username", "<Users>");
-		Table.SetCell("In", CString::ToByteStr(users_total_in));
-		Table.SetCell("Out", CString::ToByteStr(users_total_out));
-		Table.SetCell("Total", CString::ToByteStr(users_total_in + users_total_out));
-
-		Table.AddRow();
-		Table.SetCell("Username", "<ZNC>");
-		Table.SetCell("In", CString::ToByteStr(CZNC::Get().BytesRead()));
-		Table.SetCell("Out", CString::ToByteStr(CZNC::Get().BytesWritten()));
-		Table.SetCell("Total", CString::ToByteStr(CZNC::Get().BytesRead() + CZNC::Get().BytesWritten()));
-
-		Table.AddRow();
-		Table.SetCell("Username", "<Total>");
-		Table.SetCell("In", CString::ToByteStr(users_total_in + CZNC::Get().BytesRead()));
-		Table.SetCell("Out", CString::ToByteStr(users_total_out + CZNC::Get().BytesWritten()));
-		Table.SetCell("Total", CString::ToByteStr(users_total_in + CZNC::Get().BytesRead() + users_total_out + CZNC::Get().BytesWritten()));
 
 		PutStatus(Table);
 	} else if (m_pUser->IsAdmin() && sCommand.Equals("UPTIME")) {

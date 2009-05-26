@@ -1726,23 +1726,46 @@ CZNC& CZNC::Get() {
 	return *pZNC;
 }
 
-void CZNC::UpdateTrafficStats() {
-	CSockManager* p = &m_Manager;
-	for (unsigned int a = 0; a < p->size(); a++) {
-		if ((*p)[a]->GetSockName().Left(5) == "IRC::") {
-			CIRCSock *i = (CIRCSock *)(*p)[a];
-			i->GetUser()->AddBytesRead((*p)[a]->GetBytesRead());
-			(*p)[a]->ResetBytesRead();
-			i->GetUser()->AddBytesWritten((*p)[a]->GetBytesWritten());
-			(*p)[a]->ResetBytesWritten();
-		} else if ((*p)[a]->GetSockName().Left(5) == "USR::") {
-			CClient *c = (CClient *)(*p)[a];
-			c->GetUser()->AddBytesRead((*p)[a]->GetBytesRead());
-			(*p)[a]->ResetBytesRead();
-			c->GetUser()->AddBytesWritten((*p)[a]->GetBytesWritten());
-			(*p)[a]->ResetBytesWritten();
+map<CString, std::pair<unsigned long long, unsigned long long> > CZNC::GetTrafficStats() {
+	map<CString, std::pair<unsigned long long, unsigned long long> > ret;
+	unsigned long long uiUsers_in, uiUsers_out, uiZNC_in, uiZNC_out;
+	const map<CString, CUser*>& msUsers = CZNC::Get().GetUserMap();
+
+	uiUsers_in = uiUsers_out = 0;
+	uiZNC_in  = BytesRead();
+	uiZNC_out = BytesWritten();
+
+	for (map<CString, CUser*>::const_iterator it = msUsers.begin(); it != msUsers.end(); it++) {
+		ret[it->first] = std::pair<unsigned long long, unsigned long long>
+			(it->second->BytesRead(), it->second->BytesWritten());
+		uiUsers_in  += it->second->BytesRead();
+		uiUsers_out += it->second->BytesWritten();
+	}
+
+	for (CSockManager::const_iterator it = m_Manager.begin(); it != m_Manager.end(); it++) {
+		if ((*it)->GetSockName().Left(5) == "IRC::") {
+			CIRCSock *p = (CIRCSock *) *it;
+			ret[p->GetUser()->GetUserName()].first  += p->GetBytesRead();
+			ret[p->GetUser()->GetUserName()].second += p->GetBytesWritten();
+			uiUsers_in  += p->GetBytesRead();
+			uiUsers_out += p->GetBytesWritten();
+		} else if ((*it)->GetSockName().Left(5) == "USR::") {
+			CClient *p = (CClient *) *it;
+			ret[p->GetUser()->GetUserName()].first  += p->GetBytesRead();
+			ret[p->GetUser()->GetUserName()].second += p->GetBytesWritten();
+			uiUsers_in  += p->GetBytesRead();
+			uiUsers_out += p->GetBytesWritten();
+		} else {
+			uiZNC_in  += (*it)->GetBytesRead();
+			uiZNC_out += (*it)->GetBytesWritten();
 		}
 	}
+
+	ret["<Users>"] = std::pair<unsigned long long, unsigned long long>(uiUsers_in, uiUsers_out);
+	ret["<ZNC>"]   = std::pair<unsigned long long, unsigned long long>(uiZNC_in, uiZNC_out);
+	ret["<Total>"] = std::pair<unsigned long long, unsigned long long>(uiUsers_in + uiZNC_in, uiUsers_out + uiZNC_out);
+
+	return ret;
 }
 
 void CZNC::AuthUser(CSmartPtr<CAuthBase> AuthClass) {
