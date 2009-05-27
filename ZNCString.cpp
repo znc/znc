@@ -139,8 +139,8 @@ CString::CString(long i) : string() { stringstream s; s << i; *this = s.str(); }
 CString::CString(unsigned long i) : string() { stringstream s; s << i; *this = s.str(); }
 CString::CString(long long i) : string() { stringstream s; s << i; *this = s.str(); }
 CString::CString(unsigned long long i) : string() { stringstream s; s << i; *this = s.str(); }
-CString::CString(double i) : string() { stringstream s; s << i; *this = s.str(); }
-CString::CString(float i) : string() { stringstream s; s << i; *this = s.str(); }
+CString::CString(double i, int precision) : string() { stringstream s; s.precision(precision); s << std::fixed << i; *this = s.str(); }
+CString::CString(float i, int precision) : string() { stringstream s; s.precision(precision); s << std::fixed << i; *this = s.str(); }
 
 inline unsigned char* CString::strnchr(const unsigned char* src, unsigned char c, unsigned int iMaxBytes, unsigned char* pFill, unsigned int* piCount) const {
 	for (unsigned int a = 0; a < iMaxBytes && *src; a++, src++) {

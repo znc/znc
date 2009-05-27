@@ -70,8 +70,8 @@ public:
 	explicit CString(unsigned long i);
 	explicit CString(long long i);
 	explicit CString(unsigned long long i);
-	explicit CString(double i);
-	explicit CString(float i);
+	explicit CString(double i, int precision = 2);
+	explicit CString(float i, int precision = 2);
 
 	CString() : string() {}
 	CString(const char* c) : string(c) {}
