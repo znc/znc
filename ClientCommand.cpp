@@ -928,9 +928,10 @@ void CClient::UserCommand(const CString& sLine) {
 
 		PutStatus("BufferCount for [" + sChan + "] set to [" + CString(pChan->GetBufferCount()) + "]");
 	} else if (m_pUser->IsAdmin() && sCommand.Equals("TRAFFIC")) {
-		map<CString, std::pair<unsigned long long, unsigned long long> >::const_iterator it;
-		map<CString, std::pair<unsigned long long, unsigned long long> > traffic =
-			CZNC::Get().GetTrafficStats();
+		CZNC::TrafficStatsPair Users, ZNC, Total;
+		CZNC::TrafficStatsMap traffic = CZNC::Get().GetTrafficStats(Users, ZNC, Total);
+		CZNC::TrafficStatsMap::const_iterator it;
+
 		CTable Table;
 		Table.AddColumn("Username");
 		Table.AddColumn("In");
@@ -944,6 +945,24 @@ void CClient::UserCommand(const CString& sLine) {
 			Table.SetCell("Out", CString::ToByteStr(it->second.second));
 			Table.SetCell("Total", CString::ToByteStr(it->second.first + it->second.second));
 		}
+
+		Table.AddRow();
+		Table.SetCell("Username", "<Users>");
+		Table.SetCell("In", CString::ToByteStr(Users.first));
+		Table.SetCell("Out", CString::ToByteStr(Users.second));
+		Table.SetCell("Total", CString::ToByteStr(Users.first + Users.second));
+
+		Table.AddRow();
+		Table.SetCell("Username", "<ZNC>");
+		Table.SetCell("In", CString::ToByteStr(ZNC.first));
+		Table.SetCell("Out", CString::ToByteStr(ZNC.second));
+		Table.SetCell("Total", CString::ToByteStr(ZNC.first + ZNC.second));
+
+		Table.AddRow();
+		Table.SetCell("Username", "<Total>");
+		Table.SetCell("In", CString::ToByteStr(Total.first));
+		Table.SetCell("Out", CString::ToByteStr(Total.second));
+		Table.SetCell("Total", CString::ToByteStr(Total.first + Total.second));
 
 		PutStatus(Table);
 	} else if (m_pUser->IsAdmin() && sCommand.Equals("UPTIME")) {

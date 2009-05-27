@@ -1726,8 +1726,9 @@ CZNC& CZNC::Get() {
 	return *pZNC;
 }
 
-map<CString, std::pair<unsigned long long, unsigned long long> > CZNC::GetTrafficStats() {
-	map<CString, std::pair<unsigned long long, unsigned long long> > ret;
+CZNC::TrafficStatsMap CZNC::GetTrafficStats(TrafficStatsPair &Users,
+			TrafficStatsPair &ZNC, TrafficStatsPair &Total) {
+	TrafficStatsMap ret;
 	unsigned long long uiUsers_in, uiUsers_out, uiZNC_in, uiZNC_out;
 	const map<CString, CUser*>& msUsers = CZNC::Get().GetUserMap();
 
@@ -1736,8 +1737,7 @@ map<CString, std::pair<unsigned long long, unsigned long long> > CZNC::GetTraffi
 	uiZNC_out = BytesWritten();
 
 	for (map<CString, CUser*>::const_iterator it = msUsers.begin(); it != msUsers.end(); it++) {
-		ret[it->first] = std::pair<unsigned long long, unsigned long long>
-			(it->second->BytesRead(), it->second->BytesWritten());
+		ret[it->first] = TrafficStatsPair(it->second->BytesRead(), it->second->BytesWritten());
 		uiUsers_in  += it->second->BytesRead();
 		uiUsers_out += it->second->BytesWritten();
 	}
@@ -1761,9 +1761,9 @@ map<CString, std::pair<unsigned long long, unsigned long long> > CZNC::GetTraffi
 		}
 	}
 
-	ret["<Users>"] = std::pair<unsigned long long, unsigned long long>(uiUsers_in, uiUsers_out);
-	ret["<ZNC>"]   = std::pair<unsigned long long, unsigned long long>(uiZNC_in, uiZNC_out);
-	ret["<Total>"] = std::pair<unsigned long long, unsigned long long>(uiUsers_in + uiZNC_in, uiUsers_out + uiZNC_out);
+	Users = TrafficStatsPair(uiUsers_in, uiUsers_out);
+	ZNC   = TrafficStatsPair(uiZNC_in, uiZNC_out);
+	Total = TrafficStatsPair(uiUsers_in + uiZNC_in, uiUsers_out + uiZNC_out);
 
 	return ret;
 }

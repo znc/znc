@@ -124,10 +124,16 @@ public:
 	void AddBytesWritten(unsigned long long u) { m_uBytesWritten += u; }
 	unsigned long long BytesRead() const { return m_uBytesRead; }
 	unsigned long long BytesWritten() const { return m_uBytesWritten; }
-	// Returns a map which maps user names to <traffic in, traffic out>, special
-	// "usernames" are <Users> (All users total), <ZNC> (Traffic which couldn't be
-	// accounted to any user) and <Total> (Total traffic, <Users> + <ZNC>).
-	map<CString, std::pair<unsigned long long, unsigned long long> > GetTrafficStats();
+
+	// Traffic fun
+	typedef std::pair<unsigned long long, unsigned long long> TrafficStatsPair;
+	typedef std::map<CString, TrafficStatsPair> TrafficStatsMap;
+	// Returns a map which maps user names to <traffic in, traffic out>
+	// while also providing the traffic of all users together, traffic which
+	// couldn't be accounted to any particular user and the total traffic
+	// generated through ZNC.
+	TrafficStatsMap GetTrafficStats(TrafficStatsPair &Users,
+			TrafficStatsPair &ZNC, TrafficStatsPair &Total);
 
 	// Authenticate a user.
 	// The result is passed back via callbacks to CAuthBase.
