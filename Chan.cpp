@@ -401,9 +401,13 @@ bool CChan::AddNick(const CString& sNick) {
 	}
 
 	sTmp = p;
-	sIdent = sTmp.Token(1, true, "!").Token(0, false, "@");
-	sHost = sTmp.Token(1, true, "@");
-	sTmp = sTmp.Token(0, false, "!");
+
+	// The UHNames extension gets us nick!ident@host instead of just plain nick
+	sIdent = sTmp.Token(1, true, "!");
+	sHost  = sIdent.Token(1, true, "@");
+	sIdent = sIdent.Token(0, false, "@");
+	// Get the nick
+	sTmp   = sTmp.Token(0, false, "!");
 
 	CNick* pNick = FindNick(sTmp);
 	if (!pNick) {
