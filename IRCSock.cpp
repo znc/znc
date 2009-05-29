@@ -79,6 +79,8 @@ void CIRCSock::ReadLine(const CString& sData) {
 
 	if (sLine.Equals("PING ", false, 5)) {
 		PutIRC("PONG " + sLine.substr(5));
+		m_pUser->PutUser(sLine);
+		return;
 	} else if (sLine.Equals("PONG ", false, 5) && sLine.Token(3).Equals(":ZNC")) {
 		// We asked for this so don't forward the reply to clients.
 		return;
@@ -91,6 +93,7 @@ void CIRCSock::ReadLine(const CString& sData) {
 		}
 
 		m_pUser->PutStatus("Error from Server [" + sError + "]");
+		return;
 	}
 
 	CString sCmd = sLine.Token(1);
