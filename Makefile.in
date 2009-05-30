@@ -18,7 +18,7 @@ LDFLAGS  := @LDFLAGS@
 LIBS     := @LIBS@
 LIBZNC   := @LIBZNC@
 LIBZNCDIR:= @LIBZNCDIR@
-PKGCONFIGDIR := $(prefix)/lib/pkgconfig
+PKGCONFIGDIR := $(libdir)/pkgconfig
 
 LIB_SRCS  := ZNCString.cpp Csocket.cpp znc.cpp User.cpp IRCSock.cpp Client.cpp DCCBounce.cpp \
 	DCCSock.cpp Chan.cpp Nick.cpp Server.cpp Modules.cpp MD5.cpp Buffer.cpp Utils.cpp \
