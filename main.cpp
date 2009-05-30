@@ -280,7 +280,7 @@ int main(int argc, char** argv) {
 					args[pos++] = strdup("--debug");
 				else if (bForeground)
 					args[pos++] = strdup("--foreground");
-				if (CUtils::StdoutIsTTY())
+				if (!CUtils::StdoutIsTTY())
 					args[pos++] = strdup("--no-color");
 				if (bAllowRoot)
 					args[pos++] = strdup("--allow-root");
