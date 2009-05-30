@@ -10,9 +10,9 @@
 #define _BUFFER_H
 
 #include "ZNCString.h"
-#include <vector>
+#include <deque>
 
-using std::vector;
+using std::deque;
 
 class CBufLine {
 public:
@@ -35,7 +35,7 @@ protected:
 	bool	m_bIncNick;
 };
 
-class CBuffer : private vector<CBufLine> {
+class CBuffer : private deque<CBufLine> {
 public:
 	CBuffer(unsigned int uLineCount = 100);
 	~CBuffer();
