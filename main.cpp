@@ -269,9 +269,25 @@ int main(int argc, char** argv) {
 					strdup(argv[0]),
 					strdup("--datadir"),
 					strdup(pZNC->GetZNCPath().c_str()),
-					strdup(pZNC->GetConfigFile().c_str()),
+					NULL,
+					NULL,
+					NULL,
+					NULL,
 					NULL
 				};
+				int pos = 3;
+				if (CUtils::Debug())
+					args[pos++] = strdup("--debug");
+				else if (bForeground)
+					args[pos++] = strdup("--foreground");
+				if (CUtils::StdoutIsTTY())
+					args[pos++] = strdup("--no-color");
+				if (bAllowRoot)
+					args[pos++] = strdup("--allow-root");
+				args[pos++] = strdup(pZNC->GetConfigFile().c_str());
+				// The above code adds 4 entries to args tops
+				// which means the array should be big enough
+
 				execvp(args[0], args);
 				CUtils::PrintError("Unable to restart znc [" + CString(strerror(errno)) + "]");
 			} /* Fall through */
