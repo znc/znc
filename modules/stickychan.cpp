@@ -112,6 +112,19 @@ static void RunTimer(CModule * pModule, CFPTimer *pTimer)
 
 bool CStickyChan::OnLoad(const CString& sArgs, CString& sMessage)
 {
+	VCString vsChans;
+	VCString::iterator it;
+	sArgs.Split(",", vsChans, false);
+
+	for (it = vsChans.begin(); it != vsChans.end(); it++) {
+		CString sChan = it->Token(0);
+		CString sKey = it->Token(1, true);
+		SetNV(sChan, sKey);
+	}
+
+	// Since we now have these channels added, clear the argument list
+	SetArgs("");
+
 	AddTimer(RunTimer, "StickyChanTimer", 15);
 	return(true);
 }
