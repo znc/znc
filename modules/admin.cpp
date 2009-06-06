@@ -62,6 +62,8 @@ class CAdminMod : public CModule {
 		const char* boolean = "Boolean (true/false)";
 		const char* integer = "Integer";
 		static const char* vars[][2] = {
+			{"Nick",             string},
+			{"Altnick",          string},
 			{"Ident",            string},
 			{"RealName",         string},
 			{"VHost",            string},
