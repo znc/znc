@@ -263,7 +263,7 @@ public:
 	CFile::EFileAttr GetSortAttr() { return m_eSortAttr; }
 	bool IsDescending() { return m_bDesc; }
 
-	static CString ChangeDir(const CString& sPath, const CString& sAdd, const CString& sHomeDir);
+	static CString ChangeDir(const CString& sPath, const CString& sAdd, const CString& sHomeDir = "");
 	static bool MakeDir(const CString& sPath, mode_t iMode = 0700);
 
 	static CString GetCWD() {

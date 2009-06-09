@@ -7,6 +7,7 @@
  */
 
 #include "FileUtils.h"
+#include "znc.h"
 #include "Utils.h"
 #include <sys/stat.h>
 #include <sys/types.h>
@@ -420,12 +421,18 @@ CString CFile::GetDir() const {
 	return sDir;
 }
 
-CString CDir::ChangeDir(const CString& sPath, const CString& sAdd, const CString& sHomeDir) {
+CString CDir::ChangeDir(const CString& sPath, const CString& sAdd, const CString& sHome) {
+	CString sHomeDir(sHome);
+
+	if (sHomeDir.empty()) {
+		sHomeDir = CZNC::Get().GetHomePath();
+	}
+
 	if (sAdd == "~") {
 		return sHomeDir;
 	}
 
-	CString sAddDir = sAdd;
+	CString sAddDir(sAdd);
 
 	if (sAddDir.Left(2) == "~/") {
 		sAddDir.LeftChomp();
