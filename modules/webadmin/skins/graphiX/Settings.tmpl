@@ -21,7 +21,7 @@
 							<? LOOP ListenLoop ?>
 							<tr class="<? IF __EVEN__ ?>evenrow<? ELSE ?>oddrow<? ENDIF ?>">
 								<td><? VAR Port ESC=HTML ?></td>
-								<td><? VAR BindHost ESC=HTML DEFAULT=* ?></td>
+								<td><? VAR BindHost ESC=HTML DEFAULT=** ?></td>
 								<td><? IF IsSSL ?>True<? ELSE ?>False<? ENDIF ?></td>
 								<td style="border-right: 0px;"><? IF IsIPV6 ?>True<? ELSE ?>False<? ENDIF ?></td>
 							</tr>

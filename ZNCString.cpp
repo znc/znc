@@ -187,10 +187,11 @@ int CString::StrCmp(const CString& s, unsigned long uLen) const {
 }
 
 bool CString::Equals(const CString& s, bool bCaseSensitive, unsigned long uLen) const {
-	if (bCaseSensitive)
+	if (bCaseSensitive) {
 		return (StrCmp(s, uLen) == 0);
-	else
+	} else {
 		return (CaseCmp(s, uLen) == 0);
+	}
 }
 
 bool CString::WildCmp(const CString& sWild, const CString& sString) {
@@ -495,7 +496,8 @@ unsigned int CString::Replace(CString& sStr, const CString& sReplace, const CStr
 	return uRet;
 }
 
-CString CString::Token(unsigned int uPos, bool bRest, const CString& sSep) const {
+CString CString::Token(unsigned int uPos, bool bRest, const CString& sSep, bool bAllowEmpty,
+                       const CString& sLeft, const CString& sRight, bool bTrimQuotes) const {
 	const char *sep_str = sSep.c_str();
 	size_t sep_len = sSep.length();
 	const char *str = c_str();
@@ -503,10 +505,22 @@ CString CString::Token(unsigned int uPos, bool bRest, const CString& sSep) const
 	size_t start_pos = 0;
 	size_t end_pos;
 
+	if (!bAllowEmpty) {
+		while (strncmp(&str[start_pos], sep_str, sep_len) == 0) {
+			start_pos += sep_len;
+		}
+	}
+
 	// First, find the start of our token
 	while (uPos != 0 && start_pos < str_len) {
-		if (strncmp(&str[start_pos], sep_str, sep_len) == 0) {
+		bool bFoundSep = false;
+
+		while (strncmp(&str[start_pos], sep_str, sep_len) == 0 && (!bFoundSep || !bAllowEmpty)) {
 			start_pos += sep_len;
+			bFoundSep = true;
+		}
+
+		if (bFoundSep) {
 			uPos--;
 		} else {
 			start_pos++;
@@ -581,7 +595,48 @@ unsigned int CString::URLSplit(MCString& msRet) const {
 	return msRet.size();
 }
 
-unsigned int CString::Split(const CString& sDelim, VCString& vsRet, bool bAllowEmpty, const CString& sLeft, const CString& sRight) const {
+unsigned int CString::OptionSplit(MCString& msRet, bool bUpperKeys) const {
+	CString sName;
+	CString sCopy(*this);
+	msRet.clear();
+
+	while (!sCopy.empty()) {
+		sName = sCopy.Token(0, false, "=", false, "\"", "\"", false).Trim_n();
+		sCopy = sCopy.Token(1, true, "=", false, "\"", "\"", false).TrimLeft_n();
+
+		if (sName.empty()) {
+			continue;
+		}
+
+		VCString vsNames;
+		sName.Split(" ", vsNames, false, "\"", "\"");
+
+		for (unsigned int a = 0; a < vsNames.size(); a++) {
+			CString sKeyName = vsNames[a];
+
+			if (bUpperKeys) {
+				sKeyName.MakeUpper();
+			}
+
+			if ((a +1) == vsNames.size()) {
+				msRet[sKeyName] = sCopy.Token(0, false, " ", false, "\"", "\"");
+				sCopy = sCopy.Token(1, true, " ", false, "\"", "\"", false);
+			} else {
+				msRet[sKeyName] = "";
+			}
+		}
+	}
+
+	return msRet.size();
+}
+
+unsigned int CString::QuoteSplit(VCString& vsRet) const {
+	vsRet.clear();
+	return Split(" ", vsRet, false, "\"", "\"", true);
+}
+
+unsigned int CString::Split(const CString& sDelim, VCString& vsRet, bool bAllowEmpty,
+		const CString& sLeft, const CString& sRight, bool bTrimQuotes, bool bTrimWhiteSpace) const {
 	vsRet.clear();
 
 	if (empty()) {
@@ -603,18 +658,30 @@ unsigned int CString::Split(const CString& sDelim, VCString& vsRet, bool bAllowE
 
 	while (*p) {
 		if (uLeftLen && uRightLen && !bInside && strncasecmp(p, sLeft.c_str(), uLeftLen) == 0) {
+			if (!bTrimQuotes) {
+				sTmp += sLeft;
+			}
+
 			p += uLeftLen;
 			bInside = true;
 			continue;
 		}
 
 		if (uLeftLen && uRightLen && bInside && strncasecmp(p, sRight.c_str(), uRightLen) == 0) {
+			if (!bTrimQuotes) {
+				sTmp += sRight;
+			}
+
 			p += uRightLen;
 			bInside = false;
 			continue;
 		}
 
 		if (uDelimLen && !bInside && strncasecmp(p, sDelim.c_str(), uDelimLen) == 0) {
+			if (bTrimWhiteSpace) {
+				sTmp.Trim();
+			}
+
 			vsRet.push_back(sTmp);
 			sTmp.clear();
 			p += uDelimLen;
@@ -639,32 +706,12 @@ unsigned int CString::Split(const CString& sDelim, VCString& vsRet, bool bAllowE
 	}
 
 	return vsRet.size();
-
-	/*vsRet.clear();
-	CString sTmp = *this;
-
-	while (sTmp.size()) {
-		CString sTok = sTmp.Token(0, false, sDelim);
-		CString sRest = sTmp.Token(1, true, sDelim);
-
-		if (bAllowEmpty || !sTok.empty()) {
-			vsRet.push_back(sTok);
-		}
-
-		if (bAllowEmpty && sRest.empty() && sTok.size() < sTmp.size()) {
-			vsRet.push_back("");
-		}
-
-		sTmp = sRest;
-	}
-
-	return vsRet.size();*/
 }
 
-unsigned int CString::Split(const CString& sDelim, SCString& ssRet, bool bAllowEmpty, const CString& sLeft, const CString& sRight) const {
+unsigned int CString::Split(const CString& sDelim, SCString& ssRet, bool bAllowEmpty, const CString& sLeft, const CString& sRight, bool bTrimQuotes, bool bTrimWhiteSpace) const {
 	VCString vsTokens;
 
-	Split(sDelim, vsTokens, bAllowEmpty, sLeft, sRight);
+	Split(sDelim, vsTokens, bAllowEmpty, sLeft, sRight, bTrimQuotes, bTrimWhiteSpace);
 
 	ssRet.clear();
 

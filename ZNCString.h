@@ -13,12 +13,14 @@
 #include <set>
 #include <string>
 #include <vector>
+#include <list>
 #include <sys/types.h>
 
 using std::map;
 using std::set;
 using std::string;
 using std::vector;
+using std::list;
 
 #define _SQL(s) CString("'" + CString(s).Escape_n(CString::ESQL) + "'")
 #define _URL(s) CString("'" + CString(s).Escape_n(CString::EURL) + "'")
@@ -29,6 +31,7 @@ class MCString;
 
 typedef set<CString>				SCString;
 typedef vector<CString>				VCString;
+typedef list<CString>				LCString;
 
 static const unsigned char XX = 0xff;
 static const unsigned char base64_table[256] = {
@@ -105,10 +108,19 @@ public:
 	CString Right(unsigned int uCount) const;
 
 	CString FirstLine() const { return Token(0, false, "\n"); }
-	CString Token(unsigned int uPos, bool bRest = false, const CString& sSep = " ") const;
+	CString Token(unsigned int uPos, bool bRest = false, const CString& sSep = " ", bool bAllowEmpty = false, const CString& sLeft = "", const CString& sRight = "", bool bTrimQuotes = true) const;
+
 	unsigned int URLSplit(MCString& msRet) const;
-	unsigned int Split(const CString& sDelim, VCString& vsRet, bool bAllowEmpty = true, const CString& sLeft = "", const CString& sRight = "") const;
-	unsigned int Split(const CString& sDelim, SCString& ssRet, bool bAllowEmpty = true, const CString& sLeft = "", const CString& sRight = "") const;
+	unsigned int OptionSplit(MCString& msRet, bool bUpperKeys = false) const;
+	unsigned int QuoteSplit(VCString& vsRet) const;
+
+	unsigned int Split(const CString& sDelim, VCString& vsRet, bool bAllowEmpty = true,
+					   const CString& sLeft = "", const CString& sRight = "", bool bTrimQuotes = true,
+					   bool bTrimWhiteSpace = false) const;
+
+	unsigned int Split(const CString& sDelim, SCString& ssRet, bool bAllowEmpty = true,
+					   const CString& sLeft = "", const CString& sRight = "", bool bTrimQuotes = true,
+					   bool bTrimWhiteSpace = false) const;
 
 	static CString RandomString(unsigned int uLength);
 
