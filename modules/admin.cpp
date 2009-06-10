@@ -108,7 +108,16 @@ class CAdminMod : public CModule {
 	CUser* GetUser(const CString& username) {
 		if (username.Equals("$me"))
 			return m_pUser;
-		return CZNC::Get().FindUser(username);
+		CUser *pUser = CZNC::Get().FindUser(username);
+		if (!pUser) {
+			PutModule("Error: User not found: " + username);
+			return NULL;
+		}
+		if (user != m_pUser && !m_pUser->IsAdmin()) {
+			PutModule("Error: You need to have admin rights to modify other users!");
+			return NULL;
+		}
+		return pUser;
 	}
 
 	void Get(const CString& sLine) {
@@ -124,14 +133,8 @@ class CAdminMod : public CModule {
 		}
 
 		CUser* user = GetUser(username);
-		if (!user) {
-			PutModule("Error: User not found: " + username);
+		if (!user)
 			return;
-		}
-		if (user != m_pUser && !m_pUser->IsAdmin()) {
-			PutModule("Error: You need to have admin rights to modify other users!");
-			return;
-		}
 
 		if (var == "nick")
 			PutModule("Nick = " + user->GetNick());
@@ -179,14 +182,8 @@ class CAdminMod : public CModule {
 		}
 
 		CUser* user = GetUser(username);
-		if (!user) {
-			PutModule("Error: User not found: " + username);
+		if (!user)
 			return;
-		}
-		if (user != m_pUser && !m_pUser->IsAdmin()) {
-			PutModule("Error: You need to have admin rights to modify other users!");
-			return;
-		}
 
 		if (var == "nick") {
 			user->SetNick(value);
@@ -274,14 +271,8 @@ class CAdminMod : public CModule {
 		}
 
 		CUser* user = GetUser(username);
-		if (!user) {
-			PutModule("Error: User not found: " + username);
+		if (!user)
 			return;
-		}
-		if (user != m_pUser && !m_pUser->IsAdmin()) {
-			PutModule("Error: You need to have admin rights to modify other users!");
-			return;
-		}
 
 		CChan* pChan = user->FindChan(chan);
 		if (!pChan) {
@@ -321,14 +312,8 @@ class CAdminMod : public CModule {
 		}
 
 		CUser* user = GetUser(username);
-		if (!user) {
-			PutModule("Error: User not found: " + username);
+		if (!user)
 			return;
-		}
-		if (user != m_pUser && !m_pUser->IsAdmin()) {
-			PutModule("Error: You need to have admin rights to modify other users!");
-			return;
-		}
 
 		CChan* pChan = user->FindChan(chan);
 		if (!pChan) {
@@ -522,14 +507,8 @@ class CAdminMod : public CModule {
 		}
 
 		CUser* user = GetUser(username);
-		if (!user) {
-			PutModule("Error: User not found: " + username);
+		if (!user)
 			return;
-		}
-		if (user != m_pUser && !m_pUser->IsAdmin()) {
-			PutModule("Error: You need to have admin rights to modify other users!");
-			return;
-		}
 
 		user->AddServer(server);
 		PutModule("Added IRC Server: " + server);
