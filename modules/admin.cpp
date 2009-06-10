@@ -113,7 +113,7 @@ class CAdminMod : public CModule {
 			PutModule("Error: User not found: " + username);
 			return NULL;
 		}
-		if (user != m_pUser && !m_pUser->IsAdmin()) {
+		if (pUser != m_pUser && !m_pUser->IsAdmin()) {
 			PutModule("Error: You need to have admin rights to modify other users!");
 			return NULL;
 		}
