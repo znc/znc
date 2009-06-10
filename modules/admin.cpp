@@ -172,13 +172,8 @@ class CAdminMod : public CModule {
 		CString value     = sLine.Token(3, true);
 
 		if (value.empty()) {
-			if (!username.empty()) {
-				value    = username;
-				username = m_pUser->GetUserName();;
-			} else {
-				PutModule("Usage: set <variable> [username] <value>");
-				return;
-			}
+			PutModule("Usage: set <variable> <username> <value>");
+			return;
 		}
 
 		CUser* user = GetUser(username);
@@ -259,7 +254,7 @@ class CAdminMod : public CModule {
 		CString chan = sLine.Token(3, true);
 
 		if (var.empty()) {
-			PutModule("Usage: getchan <variable> [username] [chan]");
+			PutModule("Usage: getchan <variable> [username] <chan>");
 			return;
 		}
 		if (chan.empty()) {
@@ -301,14 +296,8 @@ class CAdminMod : public CModule {
 		CString value     = sLine.Token(4, true);
 
 		if (value.empty()) {
-			if (!username.empty() && !chan.empty()) {
-				value    = chan;
-				chan     = username;
-				username = m_pUser->GetUserName();;
-			} else {
-				PutModule("Usage: set <variable> [username] <value>");
-				return;
-			}
+			PutModule("Usage: set <variable> <username> <value>");
+			return;
 		}
 
 		CUser* user = GetUser(username);
@@ -497,13 +486,8 @@ class CAdminMod : public CModule {
 		CString server   = sLine.Token(2, true);
 
 		if (server.empty()) {
-			if (!username.empty()) {
-				server = username;
-				username = "";
-			} else {
-				PutModule("Usage: addserver [username] <server>");
-				return;
-			}
+			PutModule("Usage: addserver <username> <server>");
+			return;
 		}
 
 		CUser* user = GetUser(username);
