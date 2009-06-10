@@ -58,9 +58,9 @@ class CAdminMod : public CModule {
 		CTable VarTable;
 		VarTable.AddColumn("Variable");
 		VarTable.AddColumn("Type");
-		const char* string = "String";
-		const char* boolean = "Boolean (true/false)";
-		const char* integer = "Integer";
+		static const char* string = "String";
+		static const char* boolean = "Boolean (true/false)";
+		static const char* integer = "Integer";
 		static const char* vars[][2] = {
 			{"Nick",             string},
 			{"Altnick",          string},
