@@ -137,6 +137,14 @@ void CSocket::ReachedMaxBuffer() {
 	Close();
 }
 
+void CSocket::SockError(int iErrno) {
+	DEBUG(GetSockName() << " == SockError(" << strerror(iErrno) << ")");
+	if (iErrno == EMFILE) {
+		// We have too many open fds, this can cause a busy loop.
+		Close();
+	}
+}
+
 bool CSocket::Connect(const CString& sHostname, unsigned short uPort, bool bSSL, unsigned int uTimeout) {
 	CUser* pUser = m_pModule->GetUser();
 	CString sSockName = "MOD::C::" + m_pModule->GetModName();
