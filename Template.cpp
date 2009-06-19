@@ -43,7 +43,7 @@ CString CTemplateLoopContext::GetValue(const CString& sName, bool bFromIf) {
 	CTemplate* pTemplate = GetCurRow();
 
 	if (!pTemplate) {
-		DEBUG("Loop [" + GetName() + "] has no row index [" + CString(GetCurRow()) + "]");
+		DEBUG("Loop [" + GetName() + "] has no row index [" + CString(GetRowIndex()) + "]");
 		return "";
 	}
 
