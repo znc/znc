@@ -93,7 +93,7 @@ bool CNick::RemPerm(unsigned char uPerm) {
 		return false;
 	}
 
-	m_sChanPerms.erase(uPos);
+	m_sChanPerms.erase(uPos, 1);
 
 	return true;
 }
