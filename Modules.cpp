@@ -160,7 +160,7 @@ bool CSocket::Connect(const CString& sHostname, unsigned short uPort, bool bSSL,
 		sSockName = GetSockName();
 	}
 
-	return m_pModule->GetManager()->Connect(sHostname, uPort, sSockName, uTimeout, bSSL, sVHost, (Csock*) this);
+	return m_pModule->GetManager()->Connect(sHostname, uPort, sSockName, uTimeout, bSSL, sVHost, this);
 }
 
 bool CSocket::Listen(unsigned short uPort, bool bSSL, unsigned int uTimeout) {
@@ -175,7 +175,7 @@ bool CSocket::Listen(unsigned short uPort, bool bSSL, unsigned int uTimeout) {
 		sSockName = GetSockName();
 	}
 
-	return m_pModule->GetManager()->ListenAll(uPort, sSockName, bSSL, SOMAXCONN, (Csock*) this);
+	return m_pModule->GetManager()->ListenAll(uPort, sSockName, bSSL, SOMAXCONN, this);
 }
 
 bool CSocket::PutIRC(const CString& sLine) {
