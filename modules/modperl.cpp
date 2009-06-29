@@ -116,16 +116,16 @@ typedef vector< PString > VPString;
 class CModPerl;
 static CModPerl *g_ModPerl = NULL;
 
-class CPerlSock : public Csock
+class CPerlSock : public CZNCSock
 {
 public:
-	CPerlSock() : Csock()
+	CPerlSock() : CZNCSock()
 	{
 		m_iParentFD = -1;
 		SetSockName(ZNCSOCK);
 	}
 	CPerlSock(const CS_STRING & sHost, u_short iPort, int iTimeout = 60)
-		: Csock(sHost, iPort, iTimeout)
+		: CZNCSock(sHost, iPort, iTimeout)
 	{
 		m_iParentFD = -1;
 		SetSockName(ZNCSOCK);

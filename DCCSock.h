@@ -15,9 +15,9 @@
 class CUser;
 // !Forward Declarations
 
-class CDCCSock : public Csock {
+class CDCCSock : public CZNCSock {
 public:
-	CDCCSock(CUser* pUser, const CString& sRemoteNick, const CString& sLocalFile, const CString& sModuleName, unsigned long uFileSize = 0, CFile* pFile = NULL) : Csock() {
+	CDCCSock(CUser* pUser, const CString& sRemoteNick, const CString& sLocalFile, const CString& sModuleName, unsigned long uFileSize = 0, CFile* pFile = NULL) : CZNCSock() {
 		m_sRemoteNick = sRemoteNick;
 		m_uFileSize = uFileSize;
 		m_uRemotePort = 0;
@@ -30,7 +30,7 @@ public:
 		m_bNoDelFile = false;
 	}
 
-	CDCCSock(CUser* pUser, const CString& sRemoteNick, const CString& sRemoteIP, unsigned short uRemotePort, const CString& sLocalFile, unsigned long uFileSize, const CString& sModuleName) : Csock() {
+	CDCCSock(CUser* pUser, const CString& sRemoteNick, const CString& sRemoteIP, unsigned short uRemotePort, const CString& sLocalFile, unsigned long uFileSize, const CString& sModuleName) : CZNCSock() {
 		m_sRemoteNick = sRemoteNick;
 		m_sRemoteIP = sRemoteIP;
 		m_uRemotePort = uRemotePort;

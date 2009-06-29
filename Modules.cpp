@@ -103,14 +103,14 @@ const CString& CTimer::GetDescription() const { return m_sDescription; }
 /////////////////// !Timer ///////////////////
 
 /////////////////// Socket ///////////////////
-CSocket::CSocket(CModule* pModule) : Csock() {
+CSocket::CSocket(CModule* pModule) : CZNCSock() {
 	m_pModule = pModule;
 	m_pModule->AddSocket(this);
 	EnableReadLine();
 	SetMaxBufferThreshold(10240);
 }
 
-CSocket::CSocket(CModule* pModule, const CString& sHostname, unsigned short uPort, int iTimeout) : Csock(sHostname, uPort, iTimeout) {
+CSocket::CSocket(CModule* pModule, const CString& sHostname, unsigned short uPort, int iTimeout) : CZNCSock(sHostname, uPort, iTimeout) {
 	m_pModule = pModule;
 	m_pModule->AddSocket(this);
 	EnableReadLine();

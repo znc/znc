@@ -163,9 +163,9 @@ protected:
 	CConnectUserTimer		*m_pConnectUserTimer;
 };
 
-class CRealListener : public Csock {
+class CRealListener : public CZNCSock {
 public:
-	CRealListener() : Csock() {}
+	CRealListener() : CZNCSock() {}
 	virtual ~CRealListener() {}
 
 	virtual bool ConnectionFrom(const CString& sHost, unsigned short uPort) {

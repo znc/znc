@@ -7,3 +7,11 @@
  */
 
 #include "Socket.h"
+
+CSockManager::CSockManager() : TSocketManager<CZNCSock>()
+{
+}
+
+CSockManager::~CSockManager()
+{
+}

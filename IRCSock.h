@@ -9,7 +9,7 @@
 #ifndef _IRCSOCK_H
 #define _IRCSOCK_H
 
-#include "Csocket.h"
+#include "Socket.h"
 #include "Nick.h"
 
 // Forward Declarations
@@ -17,7 +17,7 @@ class CChan;
 class CUser;
 // !Forward Declarations
 
-class CIRCSock : public Csock {
+class CIRCSock : public CZNCSock {
 public:
 	CIRCSock(CUser* pUser);
 	virtual ~CIRCSock();

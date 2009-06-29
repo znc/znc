@@ -17,7 +17,7 @@ const unsigned int CDCCBounce::m_uiMinDCCBuffer = 2 * 1024;
 
 CDCCBounce::CDCCBounce(CUser* pUser, unsigned long uLongIP, unsigned short uPort,
 		const CString& sFileName, const CString& sRemoteNick,
-		const CString& sRemoteIP, CString sLocalIP, bool bIsChat) : Csock() {
+		const CString& sRemoteIP, CString sLocalIP, bool bIsChat) : CZNCSock() {
 	m_uRemotePort = uPort;
 	m_sConnectIP = CUtils::GetIP(uLongIP);
 	m_sRemoteIP = sRemoteIP;
@@ -36,7 +36,7 @@ CDCCBounce::CDCCBounce(CUser* pUser, unsigned long uLongIP, unsigned short uPort
 
 CDCCBounce::CDCCBounce(const CString& sHostname, unsigned short uPort, CUser* pUser,
 		const CString& sRemoteNick, const CString& sRemoteIP, const CString& sFileName,
-		int iTimeout, bool bIsChat) : Csock(sHostname, uPort, iTimeout) {
+		int iTimeout, bool bIsChat) : CZNCSock(sHostname, uPort, iTimeout) {
 	m_uRemotePort = 0;
 	m_bIsChat = bIsChat;
 	m_pUser = pUser;

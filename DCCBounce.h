@@ -9,11 +9,11 @@
 #ifndef _DCCBOUNCE_H
 #define _DCCBOUNCE_H
 
-#include "Csocket.h"
+#include "Socket.h"
 
 class CUser;
 
-class CDCCBounce : public Csock {
+class CDCCBounce : public CZNCSock {
 public:
 	CDCCBounce(CUser* pUser, unsigned long uLongIP, unsigned short uPort,
 			const CString& sFileName, const CString& sRemoteNick,

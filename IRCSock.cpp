@@ -13,7 +13,7 @@
 #include "User.h"
 #include "znc.h"
 
-CIRCSock::CIRCSock(CUser* pUser) : Csock() {
+CIRCSock::CIRCSock(CUser* pUser) : CZNCSock() {
 	m_pUser = pUser;
 	m_bISpoofReleased = false;
 	m_bAuthed = false;

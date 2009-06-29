@@ -9,7 +9,7 @@
 #ifndef _FILEUTILS_H
 #define _FILEUTILS_H
 
-#include "Csocket.h"
+#include "Socket.h"
 #include "ZNCString.h"
 #include <dirent.h>
 #include <map>
@@ -284,9 +284,9 @@ protected:
 };
 
 //! @author imaginos@imaginos.net
-class CExecSock : public Csock {
+class CExecSock : public CZNCSock {
 public:
-	CExecSock() : Csock() {
+	CExecSock() : CZNCSock() {
 		m_iPid = -1;
 	}
 
