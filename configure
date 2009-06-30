@@ -2955,6 +2955,12 @@ $as_echo "no" >&6; }
 	fi
 
 fi
+	if test -z "$PKG_CONFIG"
+	then
+		{ { $as_echo "$as_me:$LINENO: error: pkg-config not found. Try --disable-c-ares." >&5
+$as_echo "$as_me: error: pkg-config not found. Try --disable-c-ares." >&2;}
+   { (exit 1); exit 1; }; }
+	fi
 
 pkg_failed=no
 { $as_echo "$as_me:$LINENO: checking for c_ares" >&5
