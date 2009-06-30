@@ -11,11 +11,32 @@
 
 #include "Csocket.h"
 
+#ifdef HAVE_ARES
+struct DNSLookup;
+#endif
+
 class CZNCSock : public Csock {
 public:
-	CZNCSock(int timeout = 60) : Csock(timeout) {}
-	CZNCSock(const CString& sHost, u_short port, int timeout = 60) : Csock(sHost, port, timeout) {}
-	~CZNCSock() {}
+	CZNCSock(int timeout = 60) : Csock(timeout) {
+#ifdef HAVE_ARES
+		m_dns_lookup = NULL;
+#endif
+	}
+	CZNCSock(const CString& sHost, u_short port, int timeout = 60) : Csock(sHost, port, timeout) {
+#ifdef HAVE_ARES
+		m_dns_lookup = NULL;
+#endif
+	}
+
+	~CZNCSock();
+
+#ifdef HAVE_ARES
+	static void ares_callback(void *lookup, int status, int timeout, struct hostent *h);
+	virtual int GetAddrInfo(const CS_STRING & sHostname, CSSockAddr & csSockAddr);
+
+private:
+	struct DNSLookup	*m_dns_lookup;
+#endif
 };
 
 class CSockManager : public TSocketManager<CZNCSock> {
@@ -79,6 +100,12 @@ public:
 	}
 private:
 protected:
+#ifdef HAVE_ARES
+	int Select(int nfds, fd_set *readfds, fd_set *writefds, fd_set *exceptfds, struct timeval *timeout);
+
+private:
+	using TSocketManager<CZNCSock>::Select;
+#endif /* HAVE_ARES */
 };
 
 #endif /* SOCKET_H */

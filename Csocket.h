@@ -1826,7 +1826,7 @@ protected:
 	{
 		return( select( nfds, readfds, writefds, exceptfds, timeout ) );
 	}
-private:
+protected:
 	/**
 	* fills a map of socks to a message for check
 	* map is empty if none are ready, check GetErrno() for the error, if not SUCCESS Select() failed
