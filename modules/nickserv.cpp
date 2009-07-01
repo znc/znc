@@ -37,8 +37,11 @@ public:
 			m_sPass = sPass;
 			SetNV("Password", m_sPass);
 			PutModule("Password set");
+		} else if (xCmdName == "clear") {
+			m_sPass = "";
+			DelNV("Password");
 		} else {
-			PutModule("Commands: set <password>");
+			PutModule("Commands: set <password>, clear");
 		}
 	}
 
