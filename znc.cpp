@@ -193,7 +193,9 @@ bool CZNC::HandleUserDeletion()
 #endif
 		m_msUsers.erase(pUser->GetUserName());
 
-		CIRCSock* pIRCSock = pUser->GetIRCSock();
+		// Don't use pUser->GetIRCSock(), as that only returns something if the
+		// CIRCSock is already connected, not when it's still connecting!
+		CIRCSock* pIRCSock = (CIRCSock*) m_Manager.FindSockByName("IRC::" + pUser->GetUserName());
 
 		if (pIRCSock) {
 			m_Manager.DelSockByAddr(pIRCSock);
