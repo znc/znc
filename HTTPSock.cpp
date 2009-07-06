@@ -11,6 +11,8 @@
 #include "HTTPSock.h"
 #include "znc.h"
 
+#define MAX_POST_SIZE	1024 * 1024
+
 CHTTPSock::CHTTPSock(CModule *pMod) : CSocket(pMod) {
 	Init();
 }
@@ -77,6 +79,8 @@ void CHTTPSock::ReadLine(const CString& sData) {
 		m_bLoggedIn = OnLogin(m_sUser, m_sPass);
 	} else if (sName.Equals("Content-Length:")) {
 		m_uPostLen = sLine.Token(1).ToULong();
+		if (m_uPostLen > MAX_POST_SIZE)
+			PrintErrorPage(413, "Request Entity Too Large", "The request you sent was too large.");
 	} else if (sName.Equals("If-None-Match:")) {
 		// this is for proper client cache support (HTTP 304) on static files:
 		m_sIfNoneMatch = sLine.Token(1, true);
