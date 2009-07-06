@@ -67,8 +67,11 @@ public:
 					PutModule(CString(i) + ": " + *it);
 			}
 			PutModule(" -- End of List");
+		} else if (sCmdName == "execute") {
+			OnIRCConnected();
+			PutModule("perform commands sent");
 		} else {
-			PutModule("Commands: add <command>, del <nr>, list");
+			PutModule("Commands: add <command>, del <nr>, list, execute");
 		}
 	}
 
