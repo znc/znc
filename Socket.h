@@ -98,6 +98,8 @@ public:
 
 		return TSocketManager<CZNCSock>::Connect(C, pcSock);
 	}
+
+	unsigned int GetAnonConnectionCount(const CString &sIP) const;
 private:
 protected:
 #ifdef HAVE_ARES

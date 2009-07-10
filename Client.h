@@ -85,6 +85,8 @@ public:
 		SetMaxBufferThreshold(1024);
 
 		StartLoginTimeout();
+
+		SetNick("unknown-nick");
 	}
 
 	virtual ~CClient();

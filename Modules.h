@@ -151,6 +151,9 @@ public:
 	// This defaults to closing the socket, feel free to override
 	virtual void ReachedMaxBuffer();
 	virtual void SockError(int iErrno);
+	// This limits the global connections from this IP to defeat DoS
+	// attacks, feel free to override
+	virtual bool ConnectionFrom(const CString& sHost, unsigned short uPort);
 
 	bool Connect(const CString& sHostname, unsigned short uPort, bool bSSL = false, unsigned int uTimeout = 60);
 	bool Listen(unsigned short uPort, bool bSSL = false, unsigned int uTimeout = 0);

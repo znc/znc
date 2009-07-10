@@ -145,6 +145,10 @@ void CSocket::SockError(int iErrno) {
 	}
 }
 
+bool CSocket::ConnectionFrom(const CString& sHost, unsigned short uPort) {
+	return CZNC::Get().AllowConnectionFrom(sHost);
+}
+
 bool CSocket::Connect(const CString& sHostname, unsigned short uPort, bool bSSL, unsigned int uTimeout) {
 	CUser* pUser = m_pModule->GetUser();
 	CString sSockName = "MOD::C::" + m_pModule->GetModName();

@@ -191,3 +191,20 @@ int CZNCSock::GetAddrInfo(const CS_STRING &sHostname, CSSockAddr &csSockAddr) {
 	return 0;
 }
 #endif
+
+unsigned int CSockManager::GetAnonConnectionCount(const CString &sIP) const {
+	const_iterator it;
+	unsigned int ret = 0;
+
+	for (it = begin(); it != end(); it++) {
+		CZNCSock *pSock = *it;
+		// Logged in CClients have "USR::<username>" as their sockname
+		if (pSock->GetRemoteIP() == sIP && pSock->GetSockName().Left(5) != "USR::") {
+			ret++;
+		}
+	}
+
+	DEBUG("There are [" << ret << "] clients from [" << sIP << "]");
+
+	return ret;
+}

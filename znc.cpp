@@ -399,6 +399,12 @@ bool CZNC::IsHostAllowed(const CString& sHostMask) const {
 	return false;
 }
 
+bool CZNC::AllowConnectionFrom(const CString& sIP) const {
+	if (GetManager().GetAnonConnectionCount(sIP) >= 10)
+		return false;
+	return true;
+}
+
 void CZNC::InitDirs(const CString& sArgvPath, const CString& sDataDir) {
 	char *home;
 

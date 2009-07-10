@@ -37,6 +37,8 @@ public:
 	CUser* GetUser(const CString& sUser);
 	Csock* FindSockByName(const CString& sSockName);
 	bool IsHostAllowed(const CString& sHostMask) const;
+	// This returns false if there are too many anonymous connections from this ip
+	bool AllowConnectionFrom(const CString& sIP) const;
 	void InitDirs(const CString& sArgvPath, const CString& sDataDir);
 	bool OnBoot();
 	CString ExpandConfigPath(const CString& sConfigFile);
@@ -86,6 +88,7 @@ public:
 	// Getters
 	bool GetNeedRehash() const { return m_bNeedRehash; }
 	CSockManager& GetManager() { return m_Manager; }
+	const CSockManager& GetManager() const { return m_Manager; }
 #ifdef _MODULES
 	CGlobalModules& GetModules() { return *m_pModules; }
 #endif
@@ -175,9 +178,16 @@ public:
 
 	virtual Csock* GetSockObj(const CString& sHost, unsigned short uPort) {
 		CClient *pClient = new CClient(sHost, uPort);
+		if (CZNC::Get().AllowConnectionFrom(sHost))
 #ifdef _MODULES
-		CZNC::Get().GetModules().OnClientConnect(pClient, sHost, uPort);
+			CZNC::Get().GetModules().OnClientConnect(pClient, sHost, uPort);
 #endif
+		else {
+			pClient->RefuseLogin("Too many anonymous connections from your IP");
+#ifdef _MODULES
+			CZNC::Get().GetModules().OnFailedLogin("", sHost);
+#endif
+		}
 		return pClient;
 	}
 
