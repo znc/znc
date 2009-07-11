@@ -15,7 +15,7 @@
 #include "User.h"
 #include "znc.h"
 
-void CClient::UserCommand(const CString& sLine) {
+void CClient::UserCommand(CString& sLine) {
 	if (!m_pUser) {
 		return;
 	}
@@ -23,6 +23,8 @@ void CClient::UserCommand(const CString& sLine) {
 	if (sLine.empty()) {
 		return;
 	}
+
+	MODULECALL(OnStatusCommand(sLine), m_pUser, this, return);
 
 	CString sCommand = sLine.Token(0);
 

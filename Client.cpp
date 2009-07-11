@@ -517,7 +517,6 @@ void CClient::ReadLine(const CString& sData) {
 
 		if (sTarget.TrimPrefix(m_pUser->GetStatusPrefix())) {
 			if (sTarget.Equals("status")) {
-				MODULECALL(OnStatusCommand(sMsg), m_pUser, this, return);
 				UserCommand(sMsg);
 			} else {
 #ifdef _MODULES
