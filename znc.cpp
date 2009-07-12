@@ -36,6 +36,7 @@ CZNC::CZNC() {
 #endif
 	m_pISpoofLockFile = NULL;
 	m_uiConnectDelay = 30;
+	m_uiAnonIPLimit = 10;
 	SetISpoofFormat(""); // Set ISpoofFormat to default
 	m_uBytesRead = 0;
 	m_uBytesWritten = 0;
@@ -400,7 +401,9 @@ bool CZNC::IsHostAllowed(const CString& sHostMask) const {
 }
 
 bool CZNC::AllowConnectionFrom(const CString& sIP) const {
-	if (GetManager().GetAnonConnectionCount(sIP) >= 10)
+	if (m_uiAnonIPLimit == 0)
+		return true;
+	if (GetManager().GetAnonConnectionCount(sIP) >= m_uiAnonIPLimit)
 		return false;
 	return true;
 }
@@ -510,6 +513,8 @@ bool CZNC::WriteConfig() {
 	if (!m_LockFile.TryExLock()) {
 		return false;
 	}
+
+	m_LockFile.Write("AnonIPLimit  = " + CString(m_uiAnonIPLimit) + "\n");
 
 	for (size_t l = 0; l < m_vpListeners.size(); l++) {
 		CListener* pListener = m_vpListeners[l];
@@ -1496,6 +1501,9 @@ bool CZNC::DoRehash(CString& sError)
 					continue;
 				} else if (sName.Equals("ConnectDelay")) {
 					m_uiConnectDelay = sValue.ToUInt();
+					continue;
+				} else if (sName.Equals("AnonIPLimit")) {
+					m_uiAnonIPLimit = sValue.ToUInt();
 					continue;
 				}
 			}
