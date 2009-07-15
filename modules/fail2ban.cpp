@@ -38,6 +38,10 @@ public:
 		return true;
 	}
 
+	virtual void OnPostRehash() {
+		m_Cache.Clear();
+	}
+
 	void Add(const CString& sHost, unsigned int count) {
 		m_Cache.AddItem(sHost, count, m_Cache.GetTTL());
 	}

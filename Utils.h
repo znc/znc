@@ -272,6 +272,13 @@ public:
 		}
 	}
 
+	/**
+	 * @brief Clear all entries
+	 */
+	void Clear() {
+		m_mItems.clear();
+	}
+
 	// Setters
 	void SetTTL(unsigned int u) { m_uTTL = u; }
 	// !Setters
