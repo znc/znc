@@ -121,11 +121,10 @@ if test "x$ARES" = "xyes"; then
 	if test -z "$PKG_CONFIG"
 	then
 		AC_MSG_ERROR([pkg-config not found. Try --disable-c-ares.
-Disabling c-ares may result in a slight performance decrease, but will not have any other side-effects])
+Disabling c-ares may result in a slight performance decrease but will not have any other side-effects])
 	fi
-	PKG_CHECK_MODULES([c_ares], [libcares],,
-		AC_MSG_ERROR([c-ares not found. Try --disable-c-ares.
-Disabling c-ares may result in a slight performance decrease, but will not have any other side-effects]))
+	PKG_CHECK_MODULES([c_ares], [libcares],, AC_MSG_ERROR([c-ares not found. Try --disable-c-ares.
+Disabling c-ares may result in a slight performance decrease but will not have any other side-effects]))
 	appendCXX $c_ares_CFLAGS -DHAVE_ARES
 	appendLib $c_ares_LIBS
 fi
