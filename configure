@@ -2957,8 +2957,10 @@ $as_echo "no" >&6; }
 fi
 	if test -z "$PKG_CONFIG"
 	then
-		{ { $as_echo "$as_me:$LINENO: error: pkg-config not found. Try --disable-c-ares." >&5
-$as_echo "$as_me: error: pkg-config not found. Try --disable-c-ares." >&2;}
+		{ { $as_echo "$as_me:$LINENO: error: pkg-config not found. Try --disable-c-ares.
+Disabling c-ares may result in a slight performance decrease, but will not have any other side-effects" >&5
+$as_echo "$as_me: error: pkg-config not found. Try --disable-c-ares.
+Disabling c-ares may result in a slight performance decrease, but will not have any other side-effects" >&2;}
    { (exit 1); exit 1; }; }
 	fi
 
@@ -3022,13 +3024,11 @@ fi
 
 	{ $as_echo "$as_me:$LINENO: result: no" >&5
 $as_echo "no" >&6; }
-                { { $as_echo "$as_me:$LINENO: error: c-ares not found. Try --disable-c-ares." >&5
-$as_echo "$as_me: error: c-ares not found. Try --disable-c-ares." >&2;}
-   { (exit 1); exit 1; }; }
+                { { $as_echo "$as_me:$LINENO: error: c-ares not found. Try --disable-c-ares.
+Disabling c-ares may result in a slight performance decrease
 elif test $pkg_failed = untried; then
-	{ { $as_echo "$as_me:$LINENO: error: c-ares not found. Try --disable-c-ares." >&5
-$as_echo "$as_me: error: c-ares not found. Try --disable-c-ares." >&2;}
-   { (exit 1); exit 1; }; }
+	{ { $as_echo "$as_me:$LINENO: error: c-ares not found. Try --disable-c-ares.
+Disabling c-ares may result in a slight performance decrease
 else
 	c_ares_CFLAGS=$pkg_cv_c_ares_CFLAGS
 	c_ares_LIBS=$pkg_cv_c_ares_LIBS
