@@ -179,11 +179,11 @@ public:
 
 	virtual Csock* GetSockObj(const CString& sHost, unsigned short uPort) {
 		CClient *pClient = new CClient(sHost, uPort);
-		if (CZNC::Get().AllowConnectionFrom(sHost))
+		if (CZNC::Get().AllowConnectionFrom(sHost)) {
 #ifdef _MODULES
 			CZNC::Get().GetModules().OnClientConnect(pClient, sHost, uPort);
 #endif
-		else {
+		} else {
 			pClient->RefuseLogin("Too many anonymous connections from your IP");
 #ifdef _MODULES
 			CZNC::Get().GetModules().OnFailedLogin("", sHost);
