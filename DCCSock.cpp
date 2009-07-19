@@ -186,8 +186,8 @@ CFile* CDCCSock::OpenFile(bool bWrite) {
 
 		// The DCC specs only allow file transfers with files smaller
 		// than 4GiB (see ReadData()).
-		off_t uFileSize = m_pFile->GetSize();
-		if (uFileSize > (off_t) 0xffffffff) {
+		unsigned long long uFileSize = m_pFile->GetSize();
+		if (uFileSize > (unsigned long long) 0xffffffff) {
 			delete m_pFile;
 			m_pFile = NULL;
 			m_pUser->PutModule(m_sModuleName, "DCC -> [" + m_sRemoteNick + "] - File too large (>4 GiB) [" + m_sLocalFile + "]");
