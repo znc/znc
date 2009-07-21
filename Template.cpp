@@ -106,6 +106,8 @@ CString CTemplate::ExpandFile(const CString& sFilename) {
 		CString sFilePath(CDir::ChangeDir(sRoot, sFile));
 
 		if (CFile::Exists(sFilePath)) {
+			// This only works if sRoot got a trailing slash! The
+			// code which adds paths makes sure this is true.
 			if (sRoot.empty() || sFilePath.Left(sRoot.length()) == sRoot) {
 				//DEBUG("\t\tFound  [" + sFilePath + "]\n");
 				return sFilePath;

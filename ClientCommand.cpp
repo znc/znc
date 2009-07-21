@@ -397,9 +397,9 @@ void CClient::UserCommand(CString& sLine) {
 			return;
 		}
 
-		sAbsolutePath = CDir::ChangeDir(m_pUser->GetDLPath(), sFile, CZNC::Get().GetHomePath());
+		sAbsolutePath = CDir::CheckPathPrefix(sAllowedPath, sFile);
 
-		if (sAbsolutePath.Left(sAllowedPath.length()) != sAllowedPath) {
+		if (sAbsolutePath.empty()) {
 			PutStatus("Illegal path.");
 			return;
 		}
@@ -415,9 +415,9 @@ void CClient::UserCommand(CString& sLine) {
 			return;
 		}
 
-		sAbsolutePath = CDir::ChangeDir(m_pUser->GetDLPath(), sFile, CZNC::Get().GetHomePath());
+		sAbsolutePath = CDir::CheckPathPrefix(sAllowedPath, sFile);
 
-		if (sAbsolutePath.Left(sAllowedPath.length()) != sAllowedPath) {
+		if (sAbsolutePath.empty()) {
 			PutStatus("Illegal path.");
 			return;
 		}

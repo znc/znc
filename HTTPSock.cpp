@@ -119,9 +119,9 @@ bool CHTTPSock::PrintFile(const CString& sFileName, CString sContentType) {
 	if (!m_sDocRoot.empty()) {
 		sFilePath.TrimLeft("/");
 
-		sFilePath = CDir::ChangeDir(m_sDocRoot, sFilePath, m_sDocRoot);
+		sFilePath = CDir::CheckPathPrefix(m_sDocRoot, sFilePath, m_sDocRoot);
 
-		if (sFilePath.Left(m_sDocRoot.size()) != m_sDocRoot) {
+		if (sFilePath.empty()) {
 			PrintErrorPage(403, "Forbidden", "You don't have permission to access that file on this server.");
 			DEBUG("THIS FILE:     [" << sFilePath << "] does not live in ...");
 			DEBUG("DOCUMENT ROOT: [" << m_sDocRoot << "]");

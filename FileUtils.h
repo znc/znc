@@ -263,6 +263,9 @@ public:
 	CFile::EFileAttr GetSortAttr() { return m_eSortAttr; }
 	bool IsDescending() { return m_bDesc; }
 
+	// Check if sPath + "/" + sAdd (~/ is handled) is an absolute path which
+	// resides under sPath. Returns absolute path on success, else "".
+	static CString CheckPathPrefix(const CString& sPath, const CString& sAdd, const CString& sHomeDir = "");
 	static CString ChangeDir(const CString& sPath, const CString& sAdd, const CString& sHomeDir = "");
 	static bool MakeDir(const CString& sPath, mode_t iMode = 0700);
 
