@@ -10,15 +10,49 @@
 #include "User.h"
 #include "Utils.h"
 
+CDCCSock::CDCCSock(CUser* pUser, const CString& sRemoteNick, const CString& sLocalFile, const CString& sModuleName,
+		unsigned long uFileSize, CFile* pFile) : CZNCSock() {
+	m_sRemoteNick = sRemoteNick;
+	m_uFileSize = uFileSize;
+	m_uRemotePort = 0;
+	m_uBytesSoFar = 0;
+	m_pUser = pUser;
+	m_pFile = pFile;
+	m_sLocalFile = sLocalFile;
+	m_sModuleName = sModuleName;
+	m_bSend = true;
+	m_bNoDelFile = false;
+
+	m_pUser->AddDCCSock(this);
+}
+
+CDCCSock::CDCCSock(CUser* pUser, const CString& sRemoteNick, const CString& sRemoteIP, unsigned short uRemotePort,
+		const CString& sLocalFile, unsigned long uFileSize, const CString& sModuleName) : CZNCSock() {
+	m_sRemoteNick = sRemoteNick;
+	m_sRemoteIP = sRemoteIP;
+	m_uRemotePort = uRemotePort;
+	m_uFileSize = uFileSize;
+	m_uBytesSoFar = 0;
+	m_pUser = pUser;
+	m_pFile = NULL;
+	m_sLocalFile = sLocalFile;
+	m_sModuleName = sModuleName;
+	m_bSend = false;
+	m_bNoDelFile = false;
+
+	m_pUser->AddDCCSock(this);
+}
+
 CDCCSock::~CDCCSock() {
 	if ((m_pFile) && (!m_bNoDelFile)) {
 		m_pFile->Close();
 		delete m_pFile;
 	}
-	if (m_pUser) {
-		m_pUser->AddBytesRead(GetBytesRead());
-		m_pUser->AddBytesWritten(GetBytesWritten());
-	}
+
+	m_pUser->AddBytesRead(GetBytesRead());
+	m_pUser->AddBytesWritten(GetBytesWritten());
+
+	m_pUser->DelDCCSock(this);
 }
 
 void CDCCSock::ReadData(const char* data, int len) {
