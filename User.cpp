@@ -69,6 +69,13 @@ CUser::~CUser() {
 		delete m_vChans[b];
 	}
 
+	// This will cause an endless loop if the destructor doesn't remove the
+	// socket from this list / if the socket doesn't exist any more.
+	while (!m_sDCCBounces.empty())
+		CZNC::Get().GetManager().DelSockByAddr((CZNCSock*) *m_sDCCBounces.begin());
+	while (!m_sDCCSocks.empty())
+		CZNC::Get().GetManager().DelSockByAddr((CZNCSock*) *m_sDCCSocks.begin());
+
 	CZNC::Get().GetManager().DelCronByAddr(m_pJoinTimer);
 	CZNC::Get().GetManager().DelCronByAddr(m_pMiscTimer);
 }

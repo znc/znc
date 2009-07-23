@@ -17,42 +17,8 @@ class CUser;
 
 class CDCCSock : public CZNCSock {
 public:
-	CDCCSock(CUser* pUser, const CString& sRemoteNick, const CString& sLocalFile, const CString& sModuleName, unsigned long uFileSize = 0, CFile* pFile = NULL) : CZNCSock() {
-		m_sRemoteNick = sRemoteNick;
-		m_uFileSize = uFileSize;
-		m_uRemotePort = 0;
-		m_uBytesSoFar = 0;
-		m_pUser = pUser;
-		m_pFile = pFile;
-		m_sLocalFile = sLocalFile;
-		m_sModuleName = sModuleName;
-		m_bSend = true;
-		m_bNoDelFile = false;
-	}
-
-	CDCCSock(CUser* pUser, const CString& sRemoteNick, const CString& sRemoteIP, unsigned short uRemotePort, const CString& sLocalFile, unsigned long uFileSize, const CString& sModuleName) : CZNCSock() {
-		m_sRemoteNick = sRemoteNick;
-		m_sRemoteIP = sRemoteIP;
-		m_uRemotePort = uRemotePort;
-		m_uFileSize = uFileSize;
-		m_uBytesSoFar = 0;
-		m_pUser = pUser;
-		m_pFile = NULL;
-		m_sLocalFile = sLocalFile;
-		m_sModuleName = sModuleName;
-		m_bSend = false;
-		m_bNoDelFile = false;
-	}
-
-/*	CDCCSock(CUser* pUser, const CString& sHostname, unsigned short uPort, int iTimeout = 60) : Csock(sHostname, uPort, iTimeout) {
-		m_uRemotePort = 0;
-		m_uBytesSoFar = 0;
-		m_uFileSize = 0;
-		m_pFile = NULL;
-		m_pUser = pUser;
-		m_bNoDelFile = false;
-	}
-*/
+	CDCCSock(CUser* pUser, const CString& sRemoteNick, const CString& sLocalFile, const CString& sModuleName, unsigned long uFileSize = 0, CFile* pFile = NULL);
+	CDCCSock(CUser* pUser, const CString& sRemoteNick, const CString& sRemoteIP, unsigned short uRemotePort, const CString& sLocalFile, unsigned long uFileSize, const CString& sModuleName);
 	virtual ~CDCCSock();
 
 	virtual void ReadData(const char* data, int len);
