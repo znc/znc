@@ -43,6 +43,8 @@ public:
 	int AddLine(const CString& sPre, const CString& sPost, bool bIncNick = true);
 	/// Same as AddLine, but if there is already a line with sPre it is replaced.
 	int UpdateLine(const CString& sPre, const CString& sPost, bool bIncNick = true);
+	/// Same as UpdateLine, but does nothing if this exact line already exists
+	int UpdateExactLine(const CString& sPre, const CString& sPost, bool bIncNick = true);
 	bool GetNextLine(const CString& sTarget, CString& sRet);
 	bool GetLine(const CString& sTarget, CString& sRet, unsigned int uIdx) const;
 	bool IsEmpty() const { return empty(); }
