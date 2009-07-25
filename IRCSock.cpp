@@ -139,7 +139,7 @@ void CIRCSock::ReadLine(const CString& sData) {
 			}
 			case 5:
 				ParseISupport(sRest);
-				m_pUser->AddRawBuffer(":" + sServer + " " + sCmd + " ", " " + sRest);
+				m_pUser->UpdateExactRawBuffer(":" + sServer + " " + sCmd + " ", " " + sRest);
 				break;
 			case 2:
 			case 3:

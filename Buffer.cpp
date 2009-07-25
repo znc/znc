@@ -54,6 +54,15 @@ int CBuffer::UpdateLine(const CString& sPre, const CString& sPost, bool bIncNick
 	return AddLine(sPre, sPost, bIncNick);
 }
 
+int CBuffer::UpdateExactLine(const CString& sPre, const CString& sPost, bool bIncNick) {
+	for (iterator it = begin(); it != end(); it++) {
+		if (it->GetPre() == sPre && it->GetPost() == sPost)
+			return size();
+	}
+
+	return AddLine(sPre, sPost, bIncNick);
+}
+
 bool CBuffer::GetLine(const CString& sTarget, CString& sRet, unsigned int uIdx) const {
 	if (uIdx >= size()) {
 		return false;
