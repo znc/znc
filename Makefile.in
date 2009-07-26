@@ -80,13 +80,32 @@ install: znc $(LIBZNC)
 	install -m 0755 znc-buildmod $(DESTDIR)$(bindir)
 	install -m 0644 $(srcdir)/*.h $(DESTDIR)$(includedir)/znc
 	install -m 0644 znc.pc $(DESTDIR)$(PKGCONFIGDIR)
-	@if test -n "$(LIBZNC)"; then \
-		mkdir -p $(DESTDIR)$(LIBZNCDIR) ; \
-		install -m 0755 $(LIBZNC) $(DESTDIR)$(LIBZNCDIR) ; \
-	fi
 	@if test -n "@MODTARGET@"; then \
 		$(MAKE) -C modules install DESTDIR=$(DESTDIR); \
 	fi
+	if test -n "$(LIBZNC)"; then \
+		mkdir -p $(DESTDIR)$(LIBZNCDIR) || exit 1 ; \
+		install -m 0755 $(LIBZNC) $(DESTDIR)$(LIBZNCDIR) || exit 1 ; \
+	fi
 	@$(MAKE) -C man install DESTDIR=$(DESTDIR)
+
+uninstall:
+	rm $(DESTDIR)$(bindir)/znc
+	rm $(DESTDIR)$(bindir)/znc-config
+	rm $(DESTDIR)$(bindir)/znc-buildmod
+	rm $(DESTDIR)$(includedir)/znc/*.h
+	rm $(DESTDIR)$(PKGCONFIGDIR)/znc.pc
+	if test -n "$(LIBZNC)"; then \
+		rm $(LIBZNC) $(DESTDIR)$(LIBZNCDIR)/$(LIBZNC) || exit 1 ; \
+		rmdir $(DESTDIR)$(LIBZNCDIR) || exit 1 ; \
+	fi
+	@$(MAKE) -C man uninstall DESTDIR=$(DESTDIR)
+	@if test -n "modules"; then \
+		$(MAKE) -C modules uninstall DESTDIR=$(DESTDIR); \
+	fi
+	rmdir $(DESTDIR)$(bindir)
+	rmdir $(DESTDIR)$(includedir)/znc
+	rmdir $(DESTDIR)$(PKGCONFIGDIR)
+	@echo "Successfully uninstalled, but emptry directories were left behind"
 
 -include $(wildcard .depend/*.dep)

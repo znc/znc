@@ -19,3 +19,9 @@ clean:
 install: $(MAN1)
 	mkdir -p $(DESTDIR)$(mandir)/man1
 	install -m 644 $(MAN1) $(DESTDIR)$(mandir)/man1
+
+uninstall:
+	for file in $(MAN1) ; do \
+		rm $(DESTDIR)$(mandir)/man1/$$file || exit 1 ; \
+	done
+	rmdir $(DESTDIR)$(mandir)/man1

@@ -92,4 +92,11 @@ modperl_install: create_install_dir
 		install -m 0644 $$i $(DESTDIR)$(MODDIR); \
 	done
 
+uninstall:
+	# Yes, we are lazy, just remove everything in there
+	rm -rf $(DESTDIR)$(MODDIR)/*
+	rm -rf $(DESTDIR)$(DATADIR)/*
+	rmdir $(DESTDIR)$(MODDIR)
+	rmdir $(DESTDIR)$(DATADIR)
+
 -include $(wildcard .depend/*.dep)
