@@ -14,7 +14,7 @@ MODLINK="@MODLINK@"
 LIBS=""
 MODDIR="@MODDIR@"
 DATADIR="@DATADIR@"
-VERSION="@VERSION@"
+VERSION="@PACKAGE_VERSION@"
 
 if test -z "$1"; then
 	echo "USAGE: $0 <flag>"
