@@ -28,7 +28,7 @@ LIB_OBJS  := $(patsubst %cpp,%o,$(LIB_SRCS))
 BIN_OBJS  := $(patsubst %cpp,%o,$(BIN_SRCS))
 CLEAN     := znc *.o core core.*
 DISTCLEAN := Makefile config.log config.status znc-config znc-buildmod .depend \
-	modules/.depend modules/Makefile man/Makefile
+	modules/.depend modules/Makefile man/Makefile znc.pc znc-uninstalled.pc
 
 .PHONY: all man modules clean distclean install
 
@@ -96,7 +96,7 @@ uninstall:
 	rm $(DESTDIR)$(includedir)/znc/*.h
 	rm $(DESTDIR)$(PKGCONFIGDIR)/znc.pc
 	if test -n "$(LIBZNC)"; then \
-		rm $(LIBZNC) $(DESTDIR)$(LIBZNCDIR)/$(LIBZNC) || exit 1 ; \
+		rm $(DESTDIR)$(LIBZNCDIR)/$(LIBZNC) || exit 1 ; \
 		rmdir $(DESTDIR)$(LIBZNCDIR) || exit 1 ; \
 	fi
 	@$(MAKE) -C man uninstall DESTDIR=$(DESTDIR)
