@@ -830,6 +830,19 @@ void CIRCSock::Disconnected() {
 	m_pUser->ClearMotdBuffer();
 
 	ResetChans();
+
+	// send a "reset user modes" cmd to the client.
+	// otherwise, on reconnect, it might think it still
+	// had user modes that it actually doesn't have.
+	CString sUserMode;
+	for (set<unsigned char>::const_iterator it = m_scUserModes.begin(); it != m_scUserModes.end(); it++) {
+		sUserMode += *it;
+	}
+	if (!sUserMode.empty()) {
+		m_pUser->PutUser(":" + m_pUser->GetIRCNick().GetNickMask() + " MODE " + m_pUser->GetIRCNick().GetNick() + " :-" + sUserMode);
+	}
+
+	// also clear the user modes in our space:
 	m_scUserModes.clear();
 }
 
