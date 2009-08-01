@@ -274,7 +274,7 @@ void CUser::UserConnected(CClient* pClient) {
 			sUserMode += *it;
 		}
 		if (!sUserMode.empty()) {
-			pClient->PutClient(":" + GetIRCNick().GetNick() + " MODE " + GetIRCNick().GetNick() + " :+" + sUserMode);
+			pClient->PutClient(":" + GetIRCNick().GetNickMask() + " MODE " + GetIRCNick().GetNick() + " :+" + sUserMode);
 		}
 	}
 
