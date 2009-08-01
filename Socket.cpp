@@ -48,7 +48,7 @@ CSockManager::CSockManager() : TSocketManager<CZNCSock>() {
 	int i = ares_init(&GetAres());
 	if (i != ARES_SUCCESS) {
 		CUtils::PrintError("Could not initialize c-ares: " + CString(ares_strerror(i)));
-		exit(0);
+		exit(-1);
 	}
 	DEBUG("Successfully initialized c-ares");
 #endif
