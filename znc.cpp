@@ -27,7 +27,7 @@ namespace
 
 CZNC::CZNC() {
 	if (!InitCsocket()) {
-		CUtils::PrintError("Failed to initialize Csocket!");
+		CUtils::PrintError("Could not initialize Csocket!");
 		exit(-1);
 	}
 
