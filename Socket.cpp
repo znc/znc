@@ -64,6 +64,14 @@ CSockManager::~CSockManager() {
 int CSockManager::Select(int nfds, fd_set *readfds, fd_set *writefds, fd_set *exceptfds, struct timeval *timeout)
 {
 	int ret;
+	fd_set tmp;
+
+	// Csocket sometimes can use NULL for exceptfds and c-ares doesn't like NULLs
+	if (writefds == NULL)
+	{
+		writefds = &tmp;
+		FD_ZERO(writefds);
+	}
 
 	// We assume that nfds is already the max. number of sockets allowed by
 	// the OS, so we don't need to update it here.
