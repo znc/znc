@@ -7,6 +7,7 @@ AC_LANG([C++])
 CXXFLAGS="$CXXFLAGS "
 AC_PROG_CXX
 AC_CANONICAL_HOST
+AC_SYS_LARGEFILE
 
 appendLib () {
 	if test "$LIBS" != ""; then
