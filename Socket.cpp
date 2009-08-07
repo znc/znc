@@ -66,7 +66,7 @@ int CSockManager::Select(int nfds, fd_set *readfds, fd_set *writefds, fd_set *ex
 	int ret;
 	fd_set tmp;
 
-	// Csocket sometimes can use NULL for exceptfds and c-ares doesn't like NULLs
+	// Csocket sometimes can use NULL for writefds and c-ares doesn't like NULLs here
 	if (writefds == NULL)
 	{
 		writefds = &tmp;
