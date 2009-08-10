@@ -460,8 +460,12 @@ public:
 	bool UnloadModule(const CString& sModule, CString& sRetMsg);
 	bool ReloadModule(const CString& sModule, const CString& sArgs, CUser* pUser, CString& sRetMsg);
 
-	bool GetModInfo(CModInfo& ModInfo, const CString& sModule);
+	bool GetModInfo(CModInfo& ModInfo, const CString& sModule, CString &sRetMsg);
 	void GetAvailableMods(set<CModInfo>& ssMods, bool bGlobal = false);
+
+private:
+	ModHandle OpenModule(const CString& sModule, CString& sModPath, CString& sDataPath,
+			bool &bVersionMismatch, bool &bIsGlobal, CString& sDesc, CString& sRetMsg);
 
 protected:
 	CUser*		m_pUser;

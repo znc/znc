@@ -635,8 +635,9 @@ void CClient::UserCommand(CString& sLine) {
 
 #ifdef _MODULES
 		CModInfo ModInfo;
-		if (!CZNC::Get().GetModules().GetModInfo(ModInfo, sMod)) {
-			PutStatus("Unable to find modinfo [" + sMod + "]");
+		CString sRetMsg;
+		if (!CZNC::Get().GetModules().GetModInfo(ModInfo, sMod, sRetMsg)) {
+			PutStatus("Unable to find modinfo [" + sMod + "] [" + sRetMsg + "]");
 			return;
 		}
 
@@ -676,7 +677,9 @@ void CClient::UserCommand(CString& sLine) {
 		}
 #ifdef _MODULES
 		CModInfo ModInfo;
-		if (!CZNC::Get().GetModules().GetModInfo(ModInfo, sMod)) {
+		CString sRetMsg;
+#warning If a module is removed while it is loaded, one can no longer unload it?
+		if (!CZNC::Get().GetModules().GetModInfo(ModInfo, sMod, sRetMsg)) {
 			PutStatus("Unable to find modinfo for [" + sMod + "]");
 			return;
 		}
@@ -719,8 +722,9 @@ void CClient::UserCommand(CString& sLine) {
 		}
 #ifdef _MODULES
 		CModInfo ModInfo;
-		if (!CZNC::Get().GetModules().GetModInfo(ModInfo, sMod)) {
-			PutStatus("Unable to find modinfo for [" + sMod + "]");
+		CString sRetMsg;
+		if (!CZNC::Get().GetModules().GetModInfo(ModInfo, sMod, sRetMsg)) {
+			PutStatus("Unable to find modinfo for [" + sMod + "] [" + sRetMsg + "]");
 			return;
 		}
 
