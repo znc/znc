@@ -676,32 +676,19 @@ void CClient::UserCommand(CString& sLine) {
 			return;
 		}
 #ifdef _MODULES
-		CModInfo ModInfo;
-		CString sRetMsg;
-#warning If a module is removed while it is loaded, one can no longer unload it?
-		if (!CZNC::Get().GetModules().GetModInfo(ModInfo, sMod, sRetMsg)) {
-			PutStatus("Unable to find modinfo for [" + sMod + "]");
-			return;
-		}
-
-		bool bGlobal = ModInfo.IsGlobal();
-
-		if (bGlobal && !m_pUser->IsAdmin()) {
-			PutStatus("Unable to unload global module [" + sMod + "] Access Denied.");
-			return;
-		}
-
 		if (sMod.empty()) {
 			PutStatus("Usage: UnloadMod <module>");
 			return;
 		}
 
 		CString sModRet;
+		bool b;
 
-		if (bGlobal) {
-			CZNC::Get().GetModules().UnloadModule(sMod, sModRet);
-		} else {
-			m_pUser->GetModules().UnloadModule(sMod, sModRet);
+		// First, try to unload the user module
+		b = m_pUser->GetModules().UnloadModule(sMod, sModRet);
+		if (!b && m_pUser->IsAdmin()) {
+			// If that failed and the user is an admin, try to unload a global module
+			b = CZNC::Get().GetModules().UnloadModule(sMod, sModRet);
 		}
 
 		PutStatus(sModRet);
