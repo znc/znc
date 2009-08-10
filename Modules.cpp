@@ -715,79 +715,36 @@ CModule* CModules::FindModule(const CString& sModule) const {
 bool CModules::LoadModule(const CString& sModule, const CString& sArgs, CUser* pUser, CString& sRetMsg, bool bFake) {
 	sRetMsg = "";
 
-	for (unsigned int a = 0; a < sModule.length(); a++) {
-		if (((sModule[a] < '0') || (sModule[a] > '9')) && ((sModule[a] < 'a') || (sModule[a] > 'z')) && ((sModule[a] < 'A') || (sModule[a] > 'Z')) && (sModule[a] != '_')) {
-			sRetMsg = "Unable to load module [" + sModule + "] module names can only be letters, numbers, or underscores.";
-			return false;
-		}
-	}
-
 	if (FindModule(sModule) != NULL) {
 		sRetMsg = "Module [" + sModule + "] already loaded.";
 		return false;
 	}
 
-	CString sModPath, sDataPath;
-
-	if (!CZNC::Get().FindModPath(sModule, sModPath, sDataPath)) {
-		sRetMsg = "Unable to find module [" + sModule + "]";
-		return false;
-	}
-
 	if (bFake) {
-		CModule* pModule = new CModule(NULL, sModule, sDataPath);
+		CModule* pModule = new CModule(NULL, sModule, "");
 		pModule->SetArgs(sArgs);
 		pModule->SetDescription("<<Fake Module>>");
 		pModule->SetFake(true);
 		push_back(pModule);
-		sRetMsg = "Loaded fake module [" + sModule + "] [" + sModPath + "]";
+		sRetMsg = "Loaded fake module [" + sModule + "]";
 		return true;
 	}
 
-	unsigned int uDLFlags = RTLD_NOW;
-	uDLFlags |= (pUser) ? RTLD_LOCAL : RTLD_GLOBAL;
+	CString sModPath, sDataPath;
+	CString sDesc;
+	bool bVersionMismatch;
+	bool bIsGlobal;
+	ModHandle p = OpenModule(sModule, sModPath, sDataPath, bVersionMismatch, bIsGlobal, sDesc, sRetMsg);
 
-	ModHandle p = dlopen((sModPath).c_str(), uDLFlags);
-
-	if (!p) {
-		sRetMsg = "Unable to load module [" + sModule + "] [" + dlerror() + "]";
+	if (!p)
 		return false;
-	}
 
-	typedef double (*dFP)();
-	dFP Version = (dFP) dlsym(p, "ZNCModVersion");
-
-	if (!Version) {
-		dlclose(p);
-		sRetMsg = "Could not find ZNCModVersion() in module [" + sModule + "]";
-		return false;
-	}
-
-	if (CModule::GetCoreVersion() != Version()) {
+	if (bVersionMismatch) {
 		dlclose(p);
 		sRetMsg = "Version mismatch, recompile this module.";
 		return false;
 	}
 
-	typedef bool (*bFP)();
-	bFP IsGlobal = (bFP) dlsym(p, "ZNCModGlobal");
-
-	if (!IsGlobal) {
-		dlclose(p);
-		sRetMsg = "Could not find ZNCModGlobal() in module [" + sModule + "]";
-		return false;
-	}
-
-	typedef CString (*sFP)();
-	sFP GetDesc = (sFP) dlsym(p, "ZNCModDescription");
-
-	if (!GetDesc) {
-		dlclose(p);
-		sRetMsg = "Could not find ZNCModDescription() in module [" + sModule + "]";
-		return false;
-	}
-
-	bool bIsGlobal = IsGlobal();
 	if ((pUser == NULL) != bIsGlobal) {
 		dlclose(p);
 		sRetMsg = "Module [" + sModule + "] is ";
@@ -824,7 +781,7 @@ bool CModules::LoadModule(const CString& sModule, const CString& sArgs, CUser* p
 		pModule = Load(p, sModule, sDataPath);
 	}
 
-	pModule->SetDescription(GetDesc());
+	pModule->SetDescription(sDesc);
 	pModule->SetGlobal(bIsGlobal);
 	pModule->SetArgs(sArgs);
 	push_back(pModule);
@@ -927,59 +884,23 @@ bool CModules::ReloadModule(const CString& sModule, const CString& sArgs, CUser*
 	return true;
 }
 
-bool CModules::GetModInfo(CModInfo& ModInfo, const CString& sModule) {
-	for (unsigned int a = 0; a < sModule.length(); a++) {
-		const char& c = sModule[a];
-
-		if ((c < '0' || c > '9') && (c < 'a' || c > 'z') && (c < 'A' || c > 'Z') && c != '_') {
-			return false;
-		}
-	}
-
+bool CModules::GetModInfo(CModInfo& ModInfo, const CString& sModule, CString& sRetMsg) {
 	CString sModPath, sTmp;
+	CString sDesc;
+	bool bVersionMismatch;
+	bool bIsGlobal;
 
-	if (!CZNC::Get().FindModPath(sModule, sModPath, sTmp)) {
+	ModHandle p = OpenModule(sModule, sModPath, sTmp, bVersionMismatch, bIsGlobal, sDesc, sRetMsg);
+
+	if (!p)
 		return false;
-	}
 
-	unsigned int uDLFlags = RTLD_LAZY | RTLD_LOCAL;
-
-	ModHandle p = dlopen((sModPath).c_str(), uDLFlags);
-
-	if (!p) {
-		return false;
-	}
-
-	typedef double (*dFP)();
-	dFP Version = (dFP) dlsym(p, "ZNCModVersion");
-
-	if (!Version) {
-		dlclose(p);
-		return false;
-	}
-
-	typedef bool (*bFP)();
-	bFP IsGlobal = (bFP) dlsym(p, "ZNCModGlobal");
-
-	if (!IsGlobal) {
-		dlclose(p);
-		return false;
-	}
-
-	typedef CString (*sFP)();
-	sFP GetDescription = (sFP) dlsym(p, "ZNCModDescription");
-
-	if (!GetDescription) {
-		dlclose(p);
-		return false;
-	}
-
-	ModInfo.SetGlobal(IsGlobal());
-	ModInfo.SetDescription(GetDescription());
+	ModInfo.SetGlobal(bIsGlobal);
+	ModInfo.SetDescription(sDesc);
 	ModInfo.SetName(sModule);
 	ModInfo.SetPath(sModPath);
 
-	if (CModule::GetCoreVersion() != Version()) {
+	if (bVersionMismatch) {
 		ModInfo.SetDescription("--- Version mismatch, recompile this module. ---");
 	}
 
@@ -1001,7 +922,8 @@ void CModules::GetAvailableMods(set<CModInfo>& ssMods, bool bGlobal) {
 		CModInfo ModInfo;
 		sName.RightChomp(3);
 
-		if (GetModInfo(ModInfo, sName)) {
+		CString sIgnoreRetMsg;
+		if (GetModInfo(ModInfo, sName, sIgnoreRetMsg)) {
 			if (ModInfo.IsGlobal() == bGlobal) {
 				ssMods.insert(ModInfo);
 			}
@@ -1015,7 +937,8 @@ void CModules::GetAvailableMods(set<CModInfo>& ssMods, bool bGlobal) {
 		CModInfo ModInfo;
 		sName.RightChomp(3);
 
-		if (GetModInfo(ModInfo, sName)) {
+		CString sIgnoreRetMsg;
+		if (GetModInfo(ModInfo, sName, sIgnoreRetMsg)) {
 			if (ModInfo.IsGlobal() == bGlobal) {
 				ssMods.insert(ModInfo);
 			}
@@ -1029,12 +952,76 @@ void CModules::GetAvailableMods(set<CModInfo>& ssMods, bool bGlobal) {
 		CModInfo ModInfo;
 		sName.RightChomp(3);
 
-		if (GetModInfo(ModInfo, sName)) {
+		CString sIgnoreRetMsg;
+		if (GetModInfo(ModInfo, sName, sIgnoreRetMsg)) {
 			if (ModInfo.IsGlobal() == bGlobal) {
 				ssMods.insert(ModInfo);
 			}
 		}
 	}
+}
+
+ModHandle CModules::OpenModule(const CString& sModule, CString& sModPath, CString& sDataPath,
+			bool &bVersionMismatch, bool &bIsGlobal, CString& sDesc, CString& sRetMsg)
+{
+	for (unsigned int a = 0; a < sModule.length(); a++) {
+		if (((sModule[a] < '0') || (sModule[a] > '9')) && ((sModule[a] < 'a') || (sModule[a] > 'z')) && ((sModule[a] < 'A') || (sModule[a] > 'Z')) && (sModule[a] != '_')) {
+			sRetMsg = "Module names can only contain letters, numbers and underscores, [" + sModule + "] is invalid.";
+			return NULL;
+		}
+	}
+
+	if (!CZNC::Get().FindModPath(sModule, sModPath, sDataPath)) {
+		sRetMsg = "Unable to find module [" + sModule + "]";
+		return NULL;
+	}
+
+	ModHandle p = dlopen((sModPath).c_str(), RTLD_NOW | RTLD_LOCAL);
+
+	if (!p) {
+		sRetMsg = "Unable to open module [" + sModule + "] [" + dlerror() + "]";
+		return NULL;
+	}
+
+	typedef double (*dFP)();
+	dFP Version = (dFP) dlsym(p, "ZNCModVersion");
+
+	if (!Version) {
+		dlclose(p);
+		sRetMsg = "Could not find ZNCModVersion() in module [" + sModule + "]";
+		return NULL;
+	}
+
+	typedef bool (*bFP)();
+	bFP IsGlobal = (bFP) dlsym(p, "ZNCModGlobal");
+
+	if (!IsGlobal) {
+		dlclose(p);
+		sRetMsg = "Could not find ZNCModGlobal() in module [" + sModule + "]";
+		return NULL;
+	}
+
+	typedef CString (*sFP)();
+	sFP GetDesc = (sFP) dlsym(p, "ZNCModDescription");
+
+	if (!GetDesc) {
+		dlclose(p);
+		sRetMsg = "Could not find ZNCModDescription() in module [" + sModule + "]";
+		return false;
+	}
+
+	bIsGlobal = IsGlobal();
+	sDesc = GetDesc();
+
+	if (CModule::GetCoreVersion() != Version()) {
+		bVersionMismatch = true;
+		sRetMsg = "Version mismatch, recompile this module.";
+	} else {
+		sRetMsg = "";
+		bVersionMismatch = false;
+	}
+
+	return p;
 }
 
 #endif // _MODULES
