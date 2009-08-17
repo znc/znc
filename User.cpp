@@ -708,21 +708,28 @@ void CUser::JoinChans() {
 	for (unsigned int a = 0; a < m_vChans.size(); a++) {
 		CChan* pChan = m_vChans[a];
 		if (!pChan->IsOn() && !pChan->IsDisabled()) {
-			if (JoinTries() != 0 && pChan->GetJoinTries() >= JoinTries()) {
-				PutStatus("The channel " + pChan->GetName() + " could not be joined, disabling it.");
-				pChan->Disable();
-			} else {
-				pChan->IncJoinTries();
-				MODULECALL(OnTimerAutoJoin(*pChan), this, NULL, continue);
+			if (!JoinChan(pChan))
+				continue;
 
-				PutIRC("JOIN " + pChan->GetName() + " " + pChan->GetKey());
-
-				// Limit the number of joins
-				if (uJoins != 0 && --uJoins == 0)
-					return;
-			}
+			// Limit the number of joins
+			if (uJoins != 0 && --uJoins == 0)
+				return;
 		}
 	}
+}
+
+bool CUser::JoinChan(CChan* pChan) {
+	if (JoinTries() != 0 && pChan->GetJoinTries() >= JoinTries()) {
+		PutStatus("The channel " + pChan->GetName() + " could not be joined, disabling it.");
+		pChan->Disable();
+	} else {
+		pChan->IncJoinTries();
+		MODULECALL(OnTimerAutoJoin(*pChan), this, NULL, return false);
+
+		PutIRC("JOIN " + pChan->GetName() + " " + pChan->GetKey());
+		return true;
+	}
+	return false;
 }
 
 CServer* CUser::FindServer(const CString& sName) const {

@@ -42,6 +42,7 @@ public:
 	bool AddChan(const CString& sName, bool bInConfig);
 	bool DelChan(const CString& sName);
 	void JoinChans();
+	bool JoinChan(CChan* pChan);
 	CServer* FindServer(const CString& sName) const;
 	bool DelServer(const CString& sName);
 	bool AddServer(const CString& sName);
