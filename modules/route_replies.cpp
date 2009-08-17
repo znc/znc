@@ -43,8 +43,9 @@ static const struct {
 		{"254", false},
 		{"255", false},
 		{"265", false},
-		{"266", false},
-		{"250", true},
+		{"266", true},
+		// We don't handle 250 here since some IRCds don't sent it
+		//{"250", true},
 		{NULL, true}
 	}},
 	{"WHOIS", {
