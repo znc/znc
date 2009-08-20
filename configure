@@ -556,6 +556,7 @@ LIBOBJS
 DATADIR
 MODDIR
 SASL
+EXTRA
 NOSSL
 MODTARGET
 MODLINK
@@ -623,6 +624,7 @@ ac_subst_files=''
 ac_user_opts='
 enable_option_checking
 enable_largefile
+enable_extra
 with_openssl
 enable_debug
 enable_ipv6
@@ -1262,6 +1264,7 @@ Optional Features:
   --disable-FEATURE       do not include FEATURE (same as --enable-FEATURE=no)
   --enable-FEATURE[=ARG]  include FEATURE [ARG=yes]
   --disable-largefile     omit support for large files
+  --enable-extra          enable some extra modules
   --enable-debug          enable debuging
   --disable-ipv6          disable ipv6 support
   --disable-modules       disable modules
@@ -2715,6 +2718,13 @@ case "${host_os}" in
 	;;
 esac
 
+# Check whether --enable-extra was given.
+if test "${enable_extra+set}" = set; then :
+  enableval=$enable_extra; EXTRA="$enableval"
+else
+  EXTRA="no"
+fi
+
 
 # Check whether --with-openssl was given.
 if test "${with_openssl+set}" = set; then :
@@ -3401,6 +3411,7 @@ fi
 	appendCXX "-D_MODDIR_=\\\"${MODDIR}\\\""
 	appendCXX "-D_DATADIR_=\\\"${DATADIR}\\\""
 fi
+
 
 
 
@@ -4594,3 +4605,4 @@ if test x"$SASL" = "x" ; then
 else
 	echo "sasl:    yes"
 fi
+echo "extra:   $EXTRA"

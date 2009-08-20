@@ -29,9 +29,15 @@ ifneq "$(LIBZNC)" ""
 LDFLAGS += -L.. -lznc -Wl,-rpath,$(LIBZNCDIR)
 endif
 
-FILES    := $(basename $(wildcard $(srcdir)/*.cpp))
+FILES    := $(wildcard $(srcdir)/*.cpp)
+# If extra is enabled
+ifeq "@EXTRA@" "yes"
+FILES    += $(wildcard $(srcdir)/extra/*.cpp)
+endif
+
+FILES    := $(basename $(FILES))
 # Strip away the srcdir, we want them to be created in the current dir
-FILES    := $(shell echo $(FILES) | sed -e "s:$(srcdir)/::g")
+FILES    := $(shell echo $(FILES) | sed -e "s: $(srcdir)/: :g")
 
 ifeq "@NOSSL@" "1"
 FILES    := $(foreach file, $(FILES), \
@@ -58,7 +64,7 @@ saslauthFLAGS := -lsasl2
 
 TARGETS  := $(addsuffix .so, $(FILES))
 
-CLEAN    := *.so
+CLEAN    := *.so extra/*.so
 
 .PHONY: all clean install modperl_install
 
@@ -85,6 +91,8 @@ clean:
 
 %.so: %.cpp Makefile
 	@mkdir -p .depend
+	@mkdir -p .depend/extra
+	@mkdir -p extra
 	$(CXX) $(MODFLAGS) $(LDFLAGS) $(MODLINK) -o $@ $< $($(basename $@)FLAGS) -MMD -MF .depend/$@.dep
 
 modperl_install: create_install_dir
