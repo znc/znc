@@ -62,6 +62,10 @@ case "${host_os}" in
 	;;
 esac
 
+AC_ARG_ENABLE( [extra],
+	AS_HELP_STRING([--enable-extra], [enable some extra modules]),
+	[EXTRA="$enableval"],
+	[EXTRA="no"])
 AC_ARG_WITH( [openssl],
 	AS_HELP_STRING([--with-openssl=DIR], [openssl installation prefix]),
 	[OPENSSL=$withval],)
@@ -244,6 +248,7 @@ AC_SUBST([LIBZNCDIR])
 AC_SUBST([MODLINK])
 AC_SUBST([MODTARGET])
 AC_SUBST([NOSSL])
+AC_SUBST([EXTRA])
 AC_SUBST([PERL])
 AC_SUBST([SASL])
 AC_SUBST([MODDIR])
@@ -281,3 +286,4 @@ if test x"$SASL" = "x" ; then
 else
 	echo "sasl:    yes"
 fi
+echo "extra:   $EXTRA"
