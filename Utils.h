@@ -293,46 +293,6 @@ private:
 };
 
 /**
- * @class CNoCopy
- * @author prozac <prozac@rottenboy.com>
- * @brief This class is intended to be derived from to prevent copying of your derived class, the implementations of the copy constructor and equals operator were intentionally made private and omitted
- */
-class CNoCopy {
-protected:
-	CNoCopy() {}	// Allow construction
-	~CNoCopy() {}	// and destruction of derived objects
-private:
-	CNoCopy(const CNoCopy&);				// Disallow copying
-	CNoCopy& operator =(const CNoCopy&);	// and assignment
-};
-
-/**
- * @class CSafePtr
- * @author prozac <prozac@rottenboy.com>
- * @brief Safe deletion of a pointer.
- *
- * This class is intended to be created on the stack and hold a pointer which
- * will be deleted upon destruction.  It is useful for functions where you need
- * an allocated pointer and have many return paths.  It prevents copying to get
- * around the exclusive ownership situation which makes std::auto_ptr
- * invalidate the first pointer on copy.  This is intended to be used in
- * simplistic situations such as local variables.
- */
-template<typename T>
-class CSafePtr : private CNoCopy {
-public:
-	CSafePtr() { m_pType = new T; }
-	CSafePtr(T* p) { m_pType = p; }
-	virtual ~CSafePtr() { delete m_pType; }
-
-	T& operator *() const { assert(m_pType); return *m_pType; }
-	T* operator ->() const { assert(m_pType); return m_pType; }
-private:
-	operator T() const;
-	T*	m_pType;
-};
-
-/**
  * @class CSmartPtr
  * @author prozac <prozac@rottenboy.com>
  * @brief This is a standard reference counting pointer.  Be careful not to have two of these point to the same raw pointer or one will be deleted while the other still thinks it is valid.
