@@ -63,7 +63,7 @@ case "${host_os}" in
 esac
 
 AC_ARG_WITH( [openssl],
-	AS_HELP_STRING([--with-openssl=DIR], [openssl's installation prefix]),
+	AS_HELP_STRING([--with-openssl=DIR], [openssl installation prefix]),
 	[OPENSSL=$withval],)
 AC_ARG_ENABLE( [debug],
 	AS_HELP_STRING([--enable-debug], [enable debuging]),
@@ -281,4 +281,3 @@ if test x"$SASL" = "x" ; then
 else
 	echo "sasl:    yes"
 fi
-
