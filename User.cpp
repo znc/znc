@@ -704,6 +704,10 @@ CChan* CUser::FindChan(const CString& sName) const {
 }
 
 void CUser::JoinChans() {
+	// Avoid divsion by zero, it's bad!
+	if (m_vChans.size() == 0)
+		return;
+
 	// We start at a random offset into the channel list so that if your
 	// first 3 channels are invite-only and you got MaxJoins == 3, ZNC will
 	// still be able to join the rest of your channels.
