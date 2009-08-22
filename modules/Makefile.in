@@ -25,6 +25,8 @@ DATADIR  := @DATADIR@
 LIBZNC   := @LIBZNC@
 LIBZNCDIR:= @LIBZNCDIR@
 
+TCL_FLAGS:= @TCL_FLAGS@
+
 ifneq "$(LIBZNC)" ""
 LDFLAGS += -L.. -lznc -Wl,-rpath,$(LIBZNCDIR)
 endif
@@ -62,6 +64,14 @@ FILES    := $(shell echo $(FILES) | sed -e "s/saslauth//")
 endif
 saslauthFLAGS := -lsasl2
 
+ifeq "$(TCL_FLAGS)" ""
+FILES       := $(shell echo $(FILES) | sed -e "s:extra/modtcl::g")
+else
+TCLHOOK     := modtcl_install
+endif
+modtclFLAGS := $(TCL_FLAGS)
+
+
 TARGETS  := $(addsuffix .so, $(FILES))
 
 CLEAN    := *.so extra/*.so
@@ -70,7 +80,7 @@ CLEAN    := *.so extra/*.so
 
 all: $(TARGETS)
 
-install: all create_install_dir install_metadirs $(PERLHOOK)
+install: all create_install_dir install_metadirs $(PERLHOOK) $(TCLHOOK)
 	install -m 0755 $(TARGETS) $(DESTDIR)$(MODDIR)
 
 create_install_dir:
@@ -93,12 +103,16 @@ clean:
 	@mkdir -p .depend
 	@mkdir -p .depend/extra
 	@mkdir -p extra
-	$(CXX) $(MODFLAGS) $(LDFLAGS) $(MODLINK) -o $@ $< $($(basename $@)FLAGS) -MMD -MF .depend/$@.dep
+	$(CXX) $(MODFLAGS) $(LDFLAGS) $(MODLINK) -o $@ $< $($(shell echo '$(basename $@)' | sed -e 's:extra/::')FLAGS) -MMD -MF .depend/$@.dep
 
 modperl_install: create_install_dir
 	for i in $(srcdir)/*.pm; do \
 		install -m 0644 $$i $(DESTDIR)$(MODDIR); \
 	done
+
+modtcl_install:
+	mkdir -p $(DESTDIR)$(DATADIR)/modtcl/
+	install -m 0644 $(srcdir)/extra/modtcl.tcl $(srcdir)/extra/binds.tcl $(DESTDIR)$(DATADIR)/modtcl/
 
 uninstall:
 	# Yes, we are lazy, just remove everything in there

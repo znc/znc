@@ -556,6 +556,7 @@ LIBOBJS
 DATADIR
 MODDIR
 SASL
+TCL_FLAGS
 EXTRA
 NOSSL
 MODTARGET
@@ -636,6 +637,9 @@ enable_optimization
 enable_c_ares
 with_module_prefix
 with_module_data_prefix
+enable_tcl
+with_tcl_flags
+with_tcl
 '
       ac_precious_vars='build_alias
 host_alias
@@ -1274,6 +1278,7 @@ Optional Features:
   --disable-optimization  Disable some compiler optimizations to decrease
                           memory usage while compiling
   --disable-c-ares        disable c-ares usage
+  --enable-tcl            enable modtcl
 
 Optional Packages:
   --with-PACKAGE[=ARG]    use PACKAGE [ARG=yes]
@@ -1282,6 +1287,8 @@ Optional Packages:
   --with-module-prefix    module object code [LIBDIR/znc]
   --with-module-data-prefix=DIR
                           static module data (webadmin skins) [DATADIR/znc]
+  --with-tcl-flags=FLAGS  The flags needed for compiling and linking modtcl
+  --with-tcl=DIR          directory containing tclConfig.sh
 
 Some influential environment variables:
   CXX         C++ compiler command
@@ -3408,9 +3415,83 @@ fi
 
 	fi
 
+	# Check if we want modtcl
+	# Check whether --enable-tcl was given.
+if test "${enable_tcl+set}" = set; then :
+  enableval=$enable_tcl; TCL="yes"
+else
+  TCL="no"
+fi
+
+
+
+# Check whether --with-tcl-flags was given.
+if test "${with_tcl_flags+set}" = set; then :
+  withval=$with_tcl_flags; TCL_FLAGS="$withval"
+fi
+
+
+	if test x"$TCL" = "xyes"
+	then
+
+# Check whether --with-tcl was given.
+if test "${with_tcl+set}" = set; then :
+  withval=$with_tcl; TCL_DIR="${withval}"
+fi
+
+
+		# This need most likely most be extended in the future, but I dont think
+		# it's a good idea to stuff a shitload of random stuff in here right now
+		for path in $TCL_DIR /usr/lib /usr/lib/tcl8.4 /usr/lib/tcl8.5
+		do
+			file="${path}/tclConfig.sh"
+			as_ac_File=`$as_echo "ac_cv_file_${file}" | $as_tr_sh`
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for ${file}" >&5
+$as_echo_n "checking for ${file}... " >&6; }
+if { as_var=$as_ac_File; eval "test \"\${$as_var+set}\" = set"; }; then :
+  $as_echo_n "(cached) " >&6
+else
+  test "$cross_compiling" = yes &&
+  as_fn_error "cannot check for file existence when cross compiling" "$LINENO" 5
+if test -r "${file}"; then
+  eval "$as_ac_File=yes"
+else
+  eval "$as_ac_File=no"
+fi
+fi
+eval ac_res=\$$as_ac_File
+	       { $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_res" >&5
+$as_echo "$ac_res" >&6; }
+eval as_val=\$$as_ac_File
+   if test "x$as_val" = x""yes; then :
+  TCL_CONF="$file" ; break
+fi
+
+		done
+
+		if test x"${TCL_CONF}" = x
+		then
+			# They --enable-tcl'd, so give them some sane default
+			TCL_FLAGS="-I/usr/include/tcl -ltcl"
+			{ $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: Could not find tclConfig.sh, using some sane defaults." >&5
+$as_echo "$as_me: WARNING: Could not find tclConfig.sh, using some sane defaults." >&2;}
+		else
+			{ $as_echo "$as_me:${as_lineno-$LINENO}: checking modtcl flags" >&5
+$as_echo_n "checking modtcl flags... " >&6; }
+			. ${TCL_CONF}
+			# eval because those vars depend on other vars in there
+			eval "TCL_LIB_SPEC=\"${TCL_LIB_SPEC}\""
+			eval "TCL_INCLUDE_SPEC=\"${TCL_INCLUDE_SPEC}\""
+			TCL_FLAGS="$TCL_INCLUDE_SPEC $TCL_LIB_SPEC"
+			{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $TCL_FLAGS" >&5
+$as_echo "$TCL_FLAGS" >&6; }
+		fi
+	fi
+
 	appendCXX "-D_MODDIR_=\\\"${MODDIR}\\\""
 	appendCXX "-D_DATADIR_=\\\"${DATADIR}\\\""
 fi
+
 
 
 
@@ -4606,3 +4687,8 @@ else
 	echo "sasl:    yes"
 fi
 echo "extra:   $EXTRA"
+if test x"$TCL_FLAGS" = "x" ; then
+	echo "tcl:     no"
+else
+	echo "tcl:     yes"
+fi
