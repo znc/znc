@@ -734,7 +734,13 @@ bool CModules::LoadModule(const CString& sModule, const CString& sArgs, CUser* p
 	CString sDesc;
 	bool bVersionMismatch;
 	bool bIsGlobal;
-	ModHandle p = OpenModule(sModule, sModPath, sDataPath, bVersionMismatch, bIsGlobal, sDesc, sRetMsg);
+
+	if (!FindModPath(sModule, sModPath, sDataPath)) {
+		sRetMsg = "Unable to find module [" + sModule + "]";
+		return false;
+	}
+
+	ModHandle p = OpenModule(sModule, sModPath, bVersionMismatch, bIsGlobal, sDesc, sRetMsg);
 
 	if (!p)
 		return false;
@@ -886,11 +892,21 @@ bool CModules::ReloadModule(const CString& sModule, const CString& sArgs, CUser*
 
 bool CModules::GetModInfo(CModInfo& ModInfo, const CString& sModule, CString& sRetMsg) {
 	CString sModPath, sTmp;
+
+	if (!FindModPath(sModule, sModPath, sTmp)) {
+		sRetMsg = "Unable to find module [" + sModule + "]";
+		return false;
+	}
+
+	return GetModPathInfo(ModInfo, sModule, sModPath, sRetMsg);
+}
+
+bool CModules::GetModPathInfo(CModInfo& ModInfo, const CString& sModule, const CString& sModPath, CString& sRetMsg) {
 	CString sDesc;
 	bool bVersionMismatch;
 	bool bIsGlobal;
 
-	ModHandle p = OpenModule(sModule, sModPath, sTmp, bVersionMismatch, bIsGlobal, sDesc, sRetMsg);
+	ModHandle p = OpenModule(sModule, sModPath, bVersionMismatch, bIsGlobal, sDesc, sRetMsg);
 
 	if (!p)
 		return false;
@@ -924,11 +940,12 @@ void CModules::GetAvailableMods(set<CModInfo>& ssMods, bool bGlobal) {
 		for (a = 0; a < Dir.size(); a++) {
 			CFile& File = *Dir[a];
 			CString sName = File.GetShortName();
+			CString sPath = File.GetLongName();
 			CModInfo ModInfo;
 			sName.RightChomp(3);
 
 			CString sIgnoreRetMsg;
-			if (GetModInfo(ModInfo, sName, sIgnoreRetMsg)) {
+			if (GetModPathInfo(ModInfo, sName, sPath, sIgnoreRetMsg)) {
 				if (ModInfo.IsGlobal() == bGlobal) {
 					ssMods.insert(ModInfo);
 				}
@@ -981,18 +998,13 @@ CModules::ModDirList CModules::GetModDirs() {
 	return ret;
 }
 
-ModHandle CModules::OpenModule(const CString& sModule, CString& sModPath, CString& sDataPath,
-			bool &bVersionMismatch, bool &bIsGlobal, CString& sDesc, CString& sRetMsg) {
+ModHandle CModules::OpenModule(const CString& sModule, const CString& sModPath, bool &bVersionMismatch,
+		bool &bIsGlobal, CString& sDesc, CString& sRetMsg) {
 	for (unsigned int a = 0; a < sModule.length(); a++) {
 		if (((sModule[a] < '0') || (sModule[a] > '9')) && ((sModule[a] < 'a') || (sModule[a] > 'z')) && ((sModule[a] < 'A') || (sModule[a] > 'Z')) && (sModule[a] != '_')) {
 			sRetMsg = "Module names can only contain letters, numbers and underscores, [" + sModule + "] is invalid.";
 			return NULL;
 		}
-	}
-
-	if (!FindModPath(sModule, sModPath, sDataPath)) {
-		sRetMsg = "Unable to find module [" + sModule + "]";
-		return NULL;
 	}
 
 	ModHandle p = dlopen((sModPath).c_str(), RTLD_NOW | RTLD_LOCAL);
