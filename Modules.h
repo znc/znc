@@ -463,6 +463,11 @@ public:
 	bool GetModInfo(CModInfo& ModInfo, const CString& sModule, CString &sRetMsg);
 	void GetAvailableMods(set<CModInfo>& ssMods, bool bGlobal = false);
 
+	// This returns the path to the .so and to the data dir
+	// which is where static data (webadmin skins) are saved
+	static bool FindModPath(const CString& sModule, CString& sModPath,
+			CString& sDataPath);
+
 private:
 	ModHandle OpenModule(const CString& sModule, CString& sModPath, CString& sDataPath,
 			bool &bVersionMismatch, bool &bIsGlobal, CString& sDesc, CString& sRetMsg);

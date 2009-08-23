@@ -961,6 +961,36 @@ void CModules::GetAvailableMods(set<CModInfo>& ssMods, bool bGlobal) {
 	}
 }
 
+bool CModules::FindModPath(const CString& sModule, CString& sModPath,
+		CString& sDataPath) {
+	CString sMod = sModule;
+	CString sDir = sMod;
+	if (sModule.find(".") == CString::npos)
+		sMod += ".so";
+
+	sDataPath = CZNC::Get().GetCurPath() + "/modules/";
+	sModPath = sDataPath + sMod;
+
+	if (!CFile::Exists(sModPath)) {
+		sDataPath = CZNC::Get().GetModPath() + "/";
+		sModPath = sDataPath + sMod;
+
+		if (!CFile::Exists(sModPath)) {
+			sDataPath = _DATADIR_ + CString("/");
+			sModPath = _MODDIR_ + CString("/") + sMod;
+
+			if (!CFile::Exists(sModPath)) {
+				return false;
+			}
+		}
+	}
+
+	sDataPath += sDir;
+
+	return true;
+}
+
+
 ModHandle CModules::OpenModule(const CString& sModule, CString& sModPath, CString& sDataPath,
 			bool &bVersionMismatch, bool &bIsGlobal, CString& sDesc, CString& sRetMsg)
 {
@@ -971,7 +1001,7 @@ ModHandle CModules::OpenModule(const CString& sModule, CString& sModPath, CStrin
 		}
 	}
 
-	if (!CZNC::Get().FindModPath(sModule, sModPath, sDataPath)) {
+	if (!FindModPath(sModule, sModPath, sDataPath)) {
 		sRetMsg = "Unable to find module [" + sModule + "]";
 		return NULL;
 	}
