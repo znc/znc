@@ -915,47 +915,23 @@ void CModules::GetAvailableMods(set<CModInfo>& ssMods, bool bGlobal) {
 	unsigned int a = 0;
 	CDir Dir;
 
-	Dir.FillByWildcard(CZNC::Get().GetCurPath() + "/modules", "*.so");
-	for (a = 0; a < Dir.size(); a++) {
-		CFile& File = *Dir[a];
-		CString sName = File.GetShortName();
-		CModInfo ModInfo;
-		sName.RightChomp(3);
+	ModDirList dirs = GetModDirs();
 
-		CString sIgnoreRetMsg;
-		if (GetModInfo(ModInfo, sName, sIgnoreRetMsg)) {
-			if (ModInfo.IsGlobal() == bGlobal) {
-				ssMods.insert(ModInfo);
-			}
-		}
-	}
+	while (!dirs.empty()) {
+		Dir.FillByWildcard(dirs.top().first, "*.so");
+		dirs.pop();
 
-	Dir.FillByWildcard(CZNC::Get().GetModPath(), "*.so");
-	for (a = 0; a < Dir.size(); a++) {
-		CFile& File = *Dir[a];
-		CString sName = File.GetShortName();
-		CModInfo ModInfo;
-		sName.RightChomp(3);
+		for (a = 0; a < Dir.size(); a++) {
+			CFile& File = *Dir[a];
+			CString sName = File.GetShortName();
+			CModInfo ModInfo;
+			sName.RightChomp(3);
 
-		CString sIgnoreRetMsg;
-		if (GetModInfo(ModInfo, sName, sIgnoreRetMsg)) {
-			if (ModInfo.IsGlobal() == bGlobal) {
-				ssMods.insert(ModInfo);
-			}
-		}
-	}
-
-	Dir.FillByWildcard(_MODDIR_, "*.so");
-	for (a = 0; a < Dir.size(); a++) {
-		CFile& File = *Dir[a];
-		CString sName = File.GetShortName();
-		CModInfo ModInfo;
-		sName.RightChomp(3);
-
-		CString sIgnoreRetMsg;
-		if (GetModInfo(ModInfo, sName, sIgnoreRetMsg)) {
-			if (ModInfo.IsGlobal() == bGlobal) {
-				ssMods.insert(ModInfo);
+			CString sIgnoreRetMsg;
+			if (GetModInfo(ModInfo, sName, sIgnoreRetMsg)) {
+				if (ModInfo.IsGlobal() == bGlobal) {
+					ssMods.insert(ModInfo);
+				}
 			}
 		}
 	}
@@ -968,32 +944,45 @@ bool CModules::FindModPath(const CString& sModule, CString& sModPath,
 	if (sModule.find(".") == CString::npos)
 		sMod += ".so";
 
-	sDataPath = CZNC::Get().GetCurPath() + "/modules/";
-	sModPath = sDataPath + sMod;
+	ModDirList dirs = GetModDirs();
 
-	if (!CFile::Exists(sModPath)) {
-		sDataPath = CZNC::Get().GetModPath() + "/";
-		sModPath = sDataPath + sMod;
+	while (!dirs.empty()) {
+		sModPath = dirs.top().first + sMod;
+		sDataPath = dirs.top().second;
+		dirs.pop();
 
-		if (!CFile::Exists(sModPath)) {
-			sDataPath = _DATADIR_ + CString("/");
-			sModPath = _MODDIR_ + CString("/") + sMod;
-
-			if (!CFile::Exists(sModPath)) {
-				return false;
-			}
+		if (CFile::Exists(sModPath)) {
+			sDataPath += sDir;
+			return true;
 		}
 	}
 
-	sDataPath += sDir;
-
-	return true;
+	return false;
 }
 
+CModules::ModDirList CModules::GetModDirs() {
+	ModDirList ret;
+
+	// ./modules
+	CString sDir = CZNC::Get().GetCurPath() + "/modules/";
+	ret.push(std::make_pair(sDir, sDir));
+
+	// ./modules/extra
+	sDir = CZNC::Get().GetCurPath() + "/modules/extra/";
+	ret.push(std::make_pair(sDir, sDir));
+
+	// ~/.znc/modules
+	sDir = CZNC::Get().GetModPath() + "/";
+	ret.push(std::make_pair(sDir, sDir));
+
+	// <moduledir> and <datadir> (<prefix>/lib/znc)
+	ret.push(std::make_pair(_MODDIR_ + CString("/"), _DATADIR_ + CString("/")));
+
+	return ret;
+}
 
 ModHandle CModules::OpenModule(const CString& sModule, CString& sModPath, CString& sDataPath,
-			bool &bVersionMismatch, bool &bIsGlobal, CString& sDesc, CString& sRetMsg)
-{
+			bool &bVersionMismatch, bool &bIsGlobal, CString& sDesc, CString& sRetMsg) {
 	for (unsigned int a = 0; a < sModule.length(); a++) {
 		if (((sModule[a] < '0') || (sModule[a] > '9')) && ((sModule[a] < 'a') || (sModule[a] > 'z')) && ((sModule[a] < 'A') || (sModule[a] > 'Z')) && (sModule[a] != '_')) {
 			sRetMsg = "Module names can only contain letters, numbers and underscores, [" + sModule + "] is invalid.";
