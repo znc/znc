@@ -242,7 +242,7 @@ public:
 	{
 		CString sModule, sTmp;
 
-		if (!CZNC::Get().FindModPath("modperl.pm", sModule, sTmp))
+		if (!CModules::FindModPath("modperl.pm", sModule, sTmp))
 			return false;
 
 		CString sBuffer, sScript;
@@ -1060,7 +1060,7 @@ void CModPerl::LoadPerlMod(const CString & sModule)
 
 	CString sModPath, sTmp;
 
-	if (!CZNC::Get().FindModPath(sModule, sModPath, sTmp))
+	if (!CModules::FindModPath(sModule, sModPath, sTmp))
 		PutStatus("No such module " + sModule);
 	else
 	{

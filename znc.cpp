@@ -1672,35 +1672,6 @@ void CZNC::Broadcast(const CString& sMessage, bool bAdminOnly,
 	}
 }
 
-bool CZNC::FindModPath(const CString& sModule, CString& sModPath,
-		CString& sDataPath) const {
-	CString sMod = sModule;
-	CString sDir = sMod;
-	if (sModule.find(".") == CString::npos)
-		sMod += ".so";
-
-	sDataPath = GetCurPath() + "/modules/";
-	sModPath = sDataPath + sMod;
-
-	if (!CFile::Exists(sModPath)) {
-		sDataPath = GetModPath() + "/";
-		sModPath = sDataPath + sMod;
-
-		if (!CFile::Exists(sModPath)) {
-			sDataPath = _DATADIR_ + CString("/");
-			sModPath = _MODDIR_ + CString("/") + sMod;
-
-			if (!CFile::Exists(sModPath)) {
-				return false;
-			}
-		}
-	}
-
-	sDataPath += sDir;
-
-	return true;
-}
-
 CUser* CZNC::FindUser(const CString& sUsername) {
 	map<CString,CUser*>::iterator it = m_msUsers.find(sUsername);
 
