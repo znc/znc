@@ -15,6 +15,7 @@
 #include "Utils.h"
 #include <set>
 #include <vector>
+#include <stack>
 
 using std::vector;
 using std::set;
@@ -467,6 +468,10 @@ public:
 	// which is where static data (webadmin skins) are saved
 	static bool FindModPath(const CString& sModule, CString& sModPath,
 			CString& sDataPath);
+	// Return a list of <module dir, data dir> pairs for directories in
+	// which modules can be found.
+	typedef std::stack<std::pair<CString, CString> > ModDirList;
+	static ModDirList GetModDirs();
 
 private:
 	ModHandle OpenModule(const CString& sModule, CString& sModPath, CString& sDataPath,
