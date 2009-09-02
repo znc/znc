@@ -34,6 +34,8 @@ static const struct {
 	{"NAMES", {
 		{"353", false},
 		{"366", true},
+		// No such nick/channel
+		{"401", true},
 		{NULL, true},
 	}},
 	{"LUSERS", {
