@@ -17,7 +17,7 @@ public:
 	virtual ~CBuffExtras() {}
 
 	void AddBuffer(CChan& Channel, const CString& sMessage) {
-		// If they have keep buffer disabled, only add messages if a client is connected
+		// If they have keep buffer disabled, only add messages if no client is connected
 		if (!Channel.KeepBuffer() && m_pUser->IsUserAttached())
 			return;
 

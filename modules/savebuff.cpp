@@ -223,15 +223,23 @@ public:
 		return(sReturn);
 	}
 
+	void AddBuffer(CChan& chan, const CString &sLine)
+	{
+		// If they have keep buffer disabled, only add messages if no client is connected
+		if (!chan.KeepBuffer() && m_pUser->IsUserAttached())
+			return;
+		chan.AddBuffer(sLine);
+	}
+
 	virtual void OnRawMode(const CNick& cOpNick, CChan& cChannel, const CString& sModes, const CString& sArgs)
 	{
-		cChannel.AddBuffer(SpoofChanMsg(cChannel.GetName(), cOpNick.GetNickMask() + " MODE " + sModes + " " + sArgs));
+		AddBuffer(cChannel, SpoofChanMsg(cChannel.GetName(), cOpNick.GetNickMask() + " MODE " + sModes + " " + sArgs));
 	}
 	virtual void OnQuit(const CNick& cNick, const CString& sMessage, const vector<CChan*>& vChans)
 	{
 		for (u_int a = 0; a < vChans.size(); a++)
 		{
-			vChans[a]->AddBuffer(SpoofChanMsg(vChans[a]->GetName(), cNick.GetNickMask() + " QUIT " + sMessage));
+			AddBuffer(*vChans[a], SpoofChanMsg(vChans[a]->GetName(), cNick.GetNickMask() + " QUIT " + sMessage));
 		}
 		if (cNick.GetNick().Equals(m_pUser->GetNick()))
 			SaveBufferToDisk(); // need to force a save here to see this!
@@ -241,12 +249,12 @@ public:
 	{
 		for (u_int a = 0; a < vChans.size(); a++)
 		{
-			vChans[a]->AddBuffer(SpoofChanMsg(vChans[a]->GetName(), cNick.GetNickMask() + " NICK " + sNewNick));
+			AddBuffer(*vChans[a], SpoofChanMsg(vChans[a]->GetName(), cNick.GetNickMask() + " NICK " + sNewNick));
 		}
 	}
 	virtual void OnKick(const CNick& cNick, const CString& sOpNick, CChan& cChannel, const CString& sMessage)
 	{
-		cChannel.AddBuffer(SpoofChanMsg(cChannel.GetName(), sOpNick + " KICK " + cNick.GetNickMask() + " " + sMessage));
+		AddBuffer(cChannel, SpoofChanMsg(cChannel.GetName(), sOpNick + " KICK " + cNick.GetNickMask() + " " + sMessage));
 	}
 	virtual void OnJoin(const CNick& cNick, CChan& cChannel)
 	{
@@ -256,11 +264,11 @@ public:
 			if (!cChannel.GetBuffer().empty())
 				Replay(cChannel.GetName());
 		}
-		cChannel.AddBuffer(SpoofChanMsg(cChannel.GetName(), cNick.GetNickMask() + " JOIN"));
+		AddBuffer(cChannel, SpoofChanMsg(cChannel.GetName(), cNick.GetNickMask() + " JOIN"));
 	}
 	virtual void OnPart(const CNick& cNick, CChan& cChannel)
 	{
-		cChannel.AddBuffer(SpoofChanMsg(cChannel.GetName(), cNick.GetNickMask() + " PART"));
+		AddBuffer(cChannel, SpoofChanMsg(cChannel.GetName(), cNick.GetNickMask() + " PART"));
 		if (cNick.GetNick().Equals(m_pUser->GetNick()))
 			SaveBufferToDisk(); // need to force a save here to see this!
 	}
