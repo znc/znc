@@ -32,7 +32,7 @@ CUser::CUser(const CString& sUserName) {
 	m_MotdBuffer.SetLineCount(200);		// This should be more than enough motd lines
 	m_bMultiClients = true;
 	m_bBounceDCCs = true;
-	m_bPassHashed = false;
+	m_eHashType = HASH_NONE;
 	m_bUseClientIP = false;
 	m_bDenyLoadMod = false;
 	m_bAdmin= false;
@@ -324,7 +324,7 @@ bool CUser::Clone(const CUser& User, CString& sErrorRet, bool bCloneChans) {
 	}
 
 	if (!User.GetPass().empty()) {
-		SetPass(User.GetPass(), User.IsPassHashed(), User.GetPassSalt());
+		SetPass(User.GetPass(), User.GetPassHashType(), User.GetPassSalt());
 	}
 
 	SetNick(User.GetNick(false));
@@ -600,11 +600,14 @@ bool CUser::PrintLine(CFile& File, const CString& sName, const CString& sValue) 
 bool CUser::WriteConfig(CFile& File) {
 	File.Write("<User " + GetUserName().FirstLine() + ">\n");
 
-	if (IsPassHashed()) {
+	if (m_eHashType != HASH_NONE) {
+		CString sHash = "md5";
+		if (m_eHashType == HASH_SHA256)
+			sHash = "sha256";
 		if (m_sPassSalt.empty()) {
-			PrintLine(File, "Pass", "md5#" + GetPass());
+			PrintLine(File, "Pass", sHash + "#" + GetPass());
 		} else {
-			PrintLine(File, "Pass", "md5#" + GetPass() + "#" + m_sPassSalt + "#");
+			PrintLine(File, "Pass", sHash + "#" + GetPass() + "#" + m_sPassSalt + "#");
 		}
 	} else {
 		PrintLine(File, "Pass", "plain#" + GetPass());
@@ -883,11 +886,16 @@ CServer* CUser::GetCurrentServer() const {
 }
 
 bool CUser::CheckPass(const CString& sPass) const {
-	if (!m_bPassHashed) {
+	switch (m_eHashType)
+	{
+	case HASH_MD5:
+		return m_sPass.Equals(CUtils::SaltedMD5Hash(sPass, m_sPassSalt));
+	case HASH_SHA256:
+		return m_sPass.Equals(CUtils::SaltedSHA256Hash(sPass, m_sPassSalt));
+	case HASH_NONE:
+	default:
 		return (sPass == m_sPass);
 	}
-
-	return m_sPass.Equals(CUtils::SaltedHash(sPass, m_sPassSalt));
 }
 
 /*CClient* CUser::GetClient() {
@@ -1094,9 +1102,9 @@ void CUser::SetAltNick(const CString& s) { m_sAltNick = s; }
 void CUser::SetIdent(const CString& s) { m_sIdent = s; }
 void CUser::SetRealName(const CString& s) { m_sRealName = s; }
 void CUser::SetVHost(const CString& s) { m_sVHost = s; }
-void CUser::SetPass(const CString& s, bool bHashed, const CString& sSalt) {
+void CUser::SetPass(const CString& s, eHashType eHash, const CString& sSalt) {
 	m_sPass = s;
-	m_bPassHashed = bHashed;
+	m_eHashType = eHash;
 	m_sPassSalt = sSalt;
 }
 void CUser::SetMultiClients(bool b) { m_bMultiClients = b; }
@@ -1154,7 +1162,7 @@ const CString& CUser::GetIdent(bool bAllowDefault) const { return (bAllowDefault
 const CString& CUser::GetRealName() const { return m_sRealName.empty() ? m_sUserName : m_sRealName; }
 const CString& CUser::GetVHost() const { return m_sVHost; }
 const CString& CUser::GetPass() const { return m_sPass; }
-bool CUser::IsPassHashed() const { return m_bPassHashed; }
+CUser::eHashType CUser::GetPassHashType() const { return m_eHashType; }
 const CString& CUser::GetPassSalt() const { return m_sPassSalt; }
 
 bool CUser::ConnectPaused() {

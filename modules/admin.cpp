@@ -240,8 +240,8 @@ class CAdminMod : public CModule {
 		}
 		else if (var == "password") {
 			const CString sSalt = CUtils::GetSalt();
-			const CString sHash = CUtils::SaltedHash(value, sSalt);
-			user->SetPass(sHash, true, sSalt);
+			const CString sHash = CUser::SaltedHash(value, sSalt);
+			user->SetPass(sHash, CUser::HASH_DEFAULT, sSalt);
 			PutModule("Password has been changed!!");
 		}
 		else
@@ -391,7 +391,7 @@ class CAdminMod : public CModule {
 
 		CUser* pNewUser = new CUser(sUsername);
 		CString sSalt = CUtils::GetSalt();
-		pNewUser->SetPass(CUtils::SaltedHash(sPassword, sSalt), true, sSalt);
+		pNewUser->SetPass(CUser::SaltedHash(sPassword, sSalt), CUser::HASH_DEFAULT, sSalt);
 		if (sIRCServer.size())
 			pNewUser->AddServer(sIRCServer);
 

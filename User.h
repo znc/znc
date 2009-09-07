@@ -35,6 +35,20 @@ public:
 	CUser(const CString& sUserName);
 	~CUser();
 
+	enum eHashType {
+		HASH_NONE,
+		HASH_MD5,
+		HASH_SHA256,
+
+		HASH_DEFAULT = HASH_SHA256
+	};
+
+	// If you change the default hash here and in HASH_DEFAULT,
+	// don't forget CUtils::sDefaultHash!
+	static CString SaltedHash(const CString& sPass, const CString& sSalt) {
+		return CUtils::SaltedSHA256Hash(sPass, sSalt);
+	}
+
 	bool PrintLine(CFile& File, const CString& sName, const CString& sValue);
 	bool WriteConfig(CFile& File);
 	CChan* FindChan(const CString& sName) const;
@@ -131,7 +145,7 @@ public:
 	void SetIdent(const CString& s);
 	void SetRealName(const CString& s);
 	void SetVHost(const CString& s);
-	void SetPass(const CString& s, bool bHashed, const CString& sSalt = "");
+	void SetPass(const CString& s, eHashType eHash, const CString& sSalt = "");
 	void SetBounceDCCs(bool b);
 	void SetMultiClients(bool b);
 	void SetUseClientIP(bool b);
@@ -169,7 +183,7 @@ public:
 	const CString& GetRealName() const;
 	const CString& GetVHost() const;
 	const CString& GetPass() const;
-	bool IsPassHashed() const;
+	eHashType GetPassHashType() const;
 	const CString& GetPassSalt() const;
 	const set<CString>& GetAllowedHosts() const;
 	const CString& GetTimestampFormat() const;
@@ -228,6 +242,7 @@ protected:
 	MCString		m_mssCTCPReplies;
 	CString			m_sTimestampFormat;
 	float			m_fTimezoneOffset;
+	eHashType		m_eHashType;
 
 	// Paths
 	CString			m_sUserPath;
@@ -239,7 +254,6 @@ protected:
 	CBuffer				m_QueryBuffer;
 	bool				m_bMultiClients;
 	bool				m_bBounceDCCs;
-	bool				m_bPassHashed;
 	bool				m_bUseClientIP;
 	bool				m_bDenyLoadMod;
 	bool				m_bAdmin;

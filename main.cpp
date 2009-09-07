@@ -153,7 +153,7 @@ int main(int argc, char** argv) {
 		CString sSalt;
 		CString sHash = CUtils::GetSaltedHashPass(sSalt);
 		CUtils::PrintMessage("Use this in the <User> section of your config:");
-		CUtils::PrintMessage("Pass = md5#" + sHash + "#" + sSalt + "#");
+		CUtils::PrintMessage("Pass = " + CUtils::sDefaultHash + "#" + sHash + "#" + sSalt + "#");
 
 		delete pZNC;
 		return 0;

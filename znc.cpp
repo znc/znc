@@ -706,7 +706,7 @@ bool CZNC::WriteNewConfig(const CString& sConfigFile) {
 		vsLines.push_back("<User " + sUser + ">");
 		CString sSalt;
 		sAnswer = CUtils::GetSaltedHashPass(sSalt);
-		vsLines.push_back("\tPass       = md5#" + sAnswer + "#" + sSalt + "#");
+		vsLines.push_back("\tPass       = " + CUtils::sDefaultHash + "#" + sAnswer + "#" + sSalt + "#");
 
 		if (CUtils::GetBoolInput("Would you like this user to be an admin?", bFirstUser)) {
 			vsLines.push_back("\tAdmin      = true");
@@ -1236,24 +1236,29 @@ bool CZNC::DoRehash(CString& sError)
 						// Pass = <plain text>
 						// Pass = <md5 hash> -
 						// Pass = plain#<plain text>
-						// Pass = md5#<md5 hash>
-						// Pass = md5#<salted md5 hash>#<salt>#
-						// The last one is the md5 hash of 'password' + 'salt'
+						// Pass = <hash name>#<hash>
+						// Pass = <hash name>#<salted hash>#<salt>#
+						// 'Salted hash' means hash of 'password' + 'salt'
+						// Possible hashes are md5 and sha256
 						if (sValue.Right(1) == "-") {
 							sValue.RightChomp();
 							sValue.Trim();
-							pUser->SetPass(sValue, true);
+							pUser->SetPass(sValue, CUser::HASH_MD5);
 						} else {
 							CString sMethod = sValue.Token(0, false, "#");
 							CString sPass = sValue.Token(1, true, "#");
-							if (sMethod == "md5") {
+							if (sMethod == "md5" || sMethod == "sha256") {
+								CUser::eHashType type = CUser::HASH_MD5;
+								if (sMethod == "sha256")
+									type = CUser::HASH_SHA256;
+
 								CString sSalt = sPass.Token(1, false, "#");
 								sPass = sPass.Token(0, false, "#");
-								pUser->SetPass(sPass, true, sSalt);
+								pUser->SetPass(sPass, type, sSalt);
 							} else if (sMethod == "plain") {
-								pUser->SetPass(sPass, false);
+								pUser->SetPass(sPass, CUser::HASH_NONE);
 							} else {
-								pUser->SetPass(sValue, false);
+								pUser->SetPass(sValue, CUser::HASH_NONE);
 							}
 						}
 
