@@ -228,9 +228,11 @@ public:
 				|| sLine.WildCmp("POST * HTTP/1.?")) {
 			CWebAdminSock* pSock = new CWebAdminSock(this);
 			CZNC::Get().GetManager().SwapSockByAddr(pSock, pClient);
-			// And don't forget to give it some sane name / timeout
+
+			// And don't forget to give it some sane settings again
 			pSock->SetSockName("WebAdmin::Client");
 			pSock->SetTimeout(120);
+			pSock->SetMaxBufferThreshold(10240);
 
 			// TODO can we somehow get rid of this?
 			pSock->ReadLine(sLine);
