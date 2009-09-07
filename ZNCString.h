@@ -125,6 +125,7 @@ public:
 	static CString RandomString(unsigned int uLength);
 
 	CString MD5() const;
+	CString SHA256() const;
 	unsigned long Base64Decode(CString& sRet) const;
 	unsigned long Base64Decode();
 	CString Base64Decode_n() const;
