@@ -119,4 +119,3 @@ uninstall:
 	rmdir $(DESTDIR)$(DATADIR)
 
 -include $(wildcard .depend/*.dep)
--include $(wildcard .depend/extra/*.dep)
