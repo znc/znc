@@ -18,7 +18,6 @@ class CZNC;
 class CUser;
 class CIRCSock;
 class CClient;
-class CClientTimeout;
 // !Forward Declarations
 
 class CAuthBase {
@@ -70,9 +69,8 @@ protected:
 
 class CClient : public CZNCSock {
 public:
-	CClient(const CString& sHostname, unsigned short uPort, int iTimeout = 60) : CZNCSock(sHostname, uPort, iTimeout) {
+	CClient(const CString& sHostname, unsigned short uPort) : CZNCSock(sHostname, uPort) {
 		m_pUser = NULL;
-		m_pTimeout = NULL;
 		m_pIRCSock = NULL;
 		m_bGotPass = false;
 		m_bGotNick = false;
@@ -84,7 +82,9 @@ public:
 		// a little more gentle ;)
 		SetMaxBufferThreshold(1024);
 
-		StartLoginTimeout();
+		// Disable all timeout types. The socket will now time out in 60
+		// seconds, no matter what. AcceptLogin() fixes this up.
+		SetTimeout(60, 0);
 
 		SetNick("unknown-nick");
 	}
@@ -93,8 +93,6 @@ public:
 
 	void AcceptLogin(CUser& User);
 	void RefuseLogin(const CString& sReason);
-	void StartLoginTimeout();
-	void LoginTimeout();
 
 	CString GetNick(bool bAllowIRCNick = true) const;
 	CString GetNickMask() const;
@@ -121,6 +119,7 @@ public:
 	void HelpUser();
 	void AuthUser();
 	virtual void Connected();
+	virtual void Timeout();
 	virtual void Disconnected();
 	virtual void ConnectionRefused();
 	virtual void ReachedMaxBuffer();
@@ -141,7 +140,6 @@ protected:
 	CString		m_sUser;
 	CIRCSock*	m_pIRCSock;
 	CSmartPtr<CAuthBase>	m_spAuth;
-	CClientTimeout*	m_pTimeout;
 };
 
 #endif // !_CLIENT_H

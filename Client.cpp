@@ -55,9 +55,6 @@ CClient::~CClient() {
 		m_pUser->AddBytesRead(GetBytesRead());
 		m_pUser->AddBytesWritten(GetBytesWritten());
 	}
-	if (m_pTimeout) {
-		CZNC::Get().GetManager().DelCronByAddr(m_pTimeout);
-	}
 }
 
 void CClient::ReadLine(const CString& sData) {
@@ -658,11 +655,6 @@ void CAuthBase::RefuseLogin(const CString& sReason) {
 }
 
 void CClient::RefuseLogin(const CString& sReason) {
-	if (m_pTimeout) {
-		m_pTimeout->Stop();
-		m_pTimeout = NULL;
-	}
-
 	PutStatus("Bad username and/or password.");
 	PutClient(":irc.znc.in 464 " + GetNick() + " :" + sReason);
 	Close(Csock::CLT_AFTERWRITE);
@@ -678,10 +670,9 @@ void CClient::AcceptLogin(CUser& User) {
 	m_sPass = "";
 	m_pUser = &User;
 
-	if (m_pTimeout) {
-		m_pTimeout->Stop();
-		m_pTimeout = NULL;
-	}
+	// Set our proper timeout and set back our proper timeout mode
+	// (constructor set a different timeout and mode)
+	SetTimeout(240, TMO_READ);
 
 	SetSockName("USR::" + m_pUser->GetUserName());
 
@@ -693,23 +684,12 @@ void CClient::AcceptLogin(CUser& User) {
 	MODULECALL(OnClientLogin(), m_pUser, this, );
 }
 
-void CClient::StartLoginTimeout() {
-	m_pTimeout = new CClientTimeout(this);
-	CZNC::Get().GetManager().AddCron(m_pTimeout);
-}
-
-void CClient::LoginTimeout() {
+void CClient::Timeout() {
 	PutClient("ERROR :Closing link [Timeout]");
-	Close(Csock::CLT_AFTERWRITE);
-	if (m_pTimeout) {
-		m_pTimeout->Stop();
-		m_pTimeout = NULL;
-	}
 }
 
 void CClient::Connected() {
 	DEBUG(GetSockName() << " == Connected();");
-	SetTimeout(240, TMO_READ);	// Now that we are connected, let nature take its course
 }
 
 void CClient::ConnectionRefused() {

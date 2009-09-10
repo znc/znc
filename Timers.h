@@ -64,24 +64,4 @@ protected:
 	CUser*	m_pUser;
 };
 
-class CClientTimeout : public CCron {
-public:
-	CClientTimeout(CClient* pClient) : CCron() {
-		m_pClient = pClient;
-		SetName("CClientTimeout::UNKNOWN");
-		StartMaxCycles(60, 1);
-	}
-	virtual ~CClientTimeout() {}
-
-protected:
-	virtual void RunJob() {
-		if (m_pClient) {
-			m_pClient->LoginTimeout();
-			m_pClient = NULL;
-		}
-	}
-
-	CClient*	m_pClient;
-};
-
 #endif // !_TIMERS_H
