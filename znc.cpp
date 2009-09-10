@@ -1794,7 +1794,18 @@ public:
 		// Don't wait iSecs seconds for first timer run
 		m_bRunOnNextCall = true;
 	}
-	virtual ~CConnectUserTimer() {}
+	virtual ~CConnectUserTimer() {
+		// This is only needed when ZNC shuts down:
+		// CZNC::~CZNC() sets its CConnectUserTimer pointer to NULL and
+		// calls the manager's Cleanup() which destroys all sockets and
+		// timers. If something calls CZNC::EnableConnectUser() here
+		// (e.g. because a CIRCSock is destroyed), the socket manager
+		// deletes that timer almost immediately, but CZNC now got a
+		// dangling pointer to this timer which can crash later on.
+		//
+		// Unlikely but possible ;)
+		CZNC::Get().LeakConnectUser(this);
+	}
 
 protected:
 	virtual void RunJob() {
@@ -1869,4 +1880,9 @@ void CZNC::DisableConnectUser() {
 	// This will kill the cron
 	m_pConnectUserTimer->Stop();
 	m_pConnectUserTimer = NULL;
+}
+
+void CZNC::LeakConnectUser(CConnectUserTimer *pTimer) {
+	if (m_pConnectUserTimer == pTimer)
+		m_pConnectUserTimer = NULL;
 }

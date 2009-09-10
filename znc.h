@@ -125,6 +125,9 @@ public:
 	void EnableConnectUser();
 	void DisableConnectUser();
 
+	// Never call this unless you are CConnectUserTimer::~CConnectUserTimer()
+	void LeakConnectUser(CConnectUserTimer *pTimer);
+
 private:
 	bool DoRehash(CString& sError);
 	// Returns true if something was done
