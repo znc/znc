@@ -48,10 +48,8 @@ CUser::CUser(const CString& sUserName) {
 	m_bAppendTimestamp = false;
 	m_bPrependTimestamp = true;
 	m_bIRCConnectEnabled = true;
-	m_pJoinTimer = new CJoinTimer(this);
-	m_pMiscTimer = new CMiscTimer(this);
-	CZNC::Get().GetManager().AddCron(m_pJoinTimer);
-	CZNC::Get().GetManager().AddCron(m_pMiscTimer);
+	m_pUserTimer = new CUserTimer(this);
+	CZNC::Get().GetManager().AddCron(m_pUserTimer);
 	m_sUserPath = CZNC::Get().GetUserPath() + "/" + sUserName;
 	m_sDLPath = GetUserPath() + "/downloads";
 }
@@ -76,8 +74,7 @@ CUser::~CUser() {
 	while (!m_sDCCSocks.empty())
 		CZNC::Get().GetManager().DelSockByAddr((CZNCSock*) *m_sDCCSocks.begin());
 
-	CZNC::Get().GetManager().DelCronByAddr(m_pJoinTimer);
-	CZNC::Get().GetManager().DelCronByAddr(m_pMiscTimer);
+	CZNC::Get().GetManager().DelCronByAddr(m_pUserTimer);
 }
 
 #ifdef _MODULES
