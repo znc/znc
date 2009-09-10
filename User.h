@@ -24,8 +24,7 @@ using std::vector;
 class CChan;
 class CClient;
 class CIRCSock;
-class CJoinTimer;
-class CMiscTimer;
+class CUserTimer;
 class CServer;
 class CDCCBounce;
 class CDCCSock;
@@ -265,8 +264,7 @@ protected:
 	bool				m_bIRCConnectEnabled;
 	CIRCSock*			m_pIRCSock;
 
-	CJoinTimer*			m_pJoinTimer;
-	CMiscTimer*			m_pMiscTimer;
+	CUserTimer*			m_pUserTimer;
 
 	vector<CServer*>	m_vServers;
 	vector<CChan*>		m_vChans;
