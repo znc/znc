@@ -28,7 +28,7 @@
 * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 *
 *
-* $Revision: 1.104 $
+* $Revision: 1.105 $
 */
 
 #include "Csocket.h"
@@ -574,7 +574,7 @@ void Csock::Copy( const Csock & cCopy )
 	m_iLocalPort	= cCopy.m_iLocalPort;
 	m_iReadSock		= cCopy.m_iReadSock;
 	m_iWriteSock	= cCopy.m_iWriteSock;
-	m_itimeout		= cCopy.m_iWriteSock;
+	m_itimeout		= cCopy.m_itimeout;
 	m_iConnType		= cCopy.m_iConnType;
 	m_iMethod		= cCopy.m_iMethod;
 	m_bssl			= cCopy.m_bssl;
