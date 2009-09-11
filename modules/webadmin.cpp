@@ -1070,43 +1070,6 @@ CUser* CWebAdminSock::GetNewUser(CString& sPageRet, CUser* pUser) {
 		pNewUser->AddCTCPReply(sReply.Token(0).Trim_n(), sReply.Token(1, true).Trim_n());
 	}
 
-	if (IsAdmin() || (pUser && !pUser->DenyLoadMod())) {
-		GetParamValues("loadmod", vsArgs);
-
-		for (a = 0; a < vsArgs.size(); a++) {
-			CString sModRet;
-			CString sModName = vsArgs[a].TrimRight_n("\r");
-
-			if (!sModName.empty()) {
-				CString sArgs = GetParam("modargs_" + sModName);
-
-				try {
-					if (!pNewUser->GetModules().LoadModule(sModName, sArgs, pNewUser, sModRet, (pUser != NULL))) {
-						DEBUG("Unable to load module [" << sModName << "] [" << sModRet << "]");
-					}
-				} catch (...) {
-					DEBUG("Unable to load module [" << sModName << "] [" << sArgs << "]");
-				}
-			}
-		}
-	} else if (pUser) {
-		CModules& Modules = pUser->GetModules();
-
-		for (a = 0; a < Modules.size(); a++) {
-			CString sModName = Modules[a]->GetModName();
-			CString sArgs = Modules[a]->GetArgs();
-			CString sModRet;
-
-			try {
-				if (!pNewUser->GetModules().LoadModule(sModName, sArgs, pNewUser, sModRet, (pUser != NULL))) {
-					DEBUG("Unable to load module [" << sModName << "] [" << sModRet << "]");
-				}
-			} catch (...) {
-				DEBUG("Unable to load module [" << sModName << "]");
-			}
-		}
-	}
-
 	sArg = GetParam("nick"); if (!sArg.empty()) { pNewUser->SetNick(sArg); }
 	sArg = GetParam("altnick"); if (!sArg.empty()) { pNewUser->SetAltNick(sArg); }
 	sArg = GetParam("statusprefix"); if (!sArg.empty()) { pNewUser->SetStatusPrefix(sArg); }
@@ -1144,7 +1107,9 @@ CUser* CWebAdminSock::GetNewUser(CString& sPageRet, CUser* pUser) {
 		pNewUser->SetDenySetVHost(pUser->DenySetVHost());
 	}
 
-	if (pUser && pUser != CZNC::Get().FindUser(GetUser())) {
+	// If pUser is not NULL, we are editing an existing user.
+	// Users must not be able to change their own admin flag.
+	if (pUser != CZNC::Get().FindUser(GetUser())) {
 		pNewUser->SetAdmin(GetParam("isadmin").ToBool());
 	} else if (pUser) {
 		pNewUser->SetAdmin(pUser->IsAdmin());
@@ -1154,6 +1119,43 @@ CUser* CWebAdminSock::GetNewUser(CString& sPageRet, CUser* pUser) {
 	for (a = 0; a < vsArgs.size(); a++) {
 		const CString& sChan = vsArgs[a];
 		pNewUser->AddChan(sChan.TrimRight_n("\r"), GetParam("save_" + sChan).ToBool());
+	}
+
+	if (IsAdmin() || (pUser && !pUser->DenyLoadMod())) {
+		GetParamValues("loadmod", vsArgs);
+
+		for (a = 0; a < vsArgs.size(); a++) {
+			CString sModRet;
+			CString sModName = vsArgs[a].TrimRight_n("\r");
+
+			if (!sModName.empty()) {
+				CString sArgs = GetParam("modargs_" + sModName);
+
+				try {
+					if (!pNewUser->GetModules().LoadModule(sModName, sArgs, pNewUser, sModRet, (pUser != NULL))) {
+						DEBUG("Unable to load module [" << sModName << "] [" << sModRet << "]");
+					}
+				} catch (...) {
+					DEBUG("Unable to load module [" << sModName << "] [" << sArgs << "]");
+				}
+			}
+		}
+	} else if (pUser) {
+		CModules& Modules = pUser->GetModules();
+
+		for (a = 0; a < Modules.size(); a++) {
+			CString sModName = Modules[a]->GetModName();
+			CString sArgs = Modules[a]->GetArgs();
+			CString sModRet;
+
+			try {
+				if (!pNewUser->GetModules().LoadModule(sModName, sArgs, pNewUser, sModRet, (pUser != NULL))) {
+					DEBUG("Unable to load module [" << sModName << "] [" << sModRet << "]");
+				}
+			} catch (...) {
+				DEBUG("Unable to load module [" << sModName << "]");
+			}
+		}
 	}
 
 	return pNewUser;
