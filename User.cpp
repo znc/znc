@@ -354,39 +354,6 @@ bool CUser::Clone(const CUser& User, CString& sErrorRet, bool bCloneChans) {
 
 	// !Allowed Hosts
 
-#ifdef _MODULES
-	// Modules
-	set<CString> ssUnloadMods;
-	CModules& vCurMods = GetModules();
-	const CModules& vNewMods = User.GetModules();
-
-	for (a = 0; a < vNewMods.size(); a++) {
-		CString sModRet;
-		CModule* pNewMod = vNewMods[a];
-		CModule* pCurMod = vCurMods.FindModule(pNewMod->GetModName());
-
-		if (!pCurMod) {
-			vCurMods.LoadModule(pNewMod->GetModName(), pNewMod->GetArgs(), this, sModRet);
-		} else if (pNewMod->GetArgs() != pCurMod->GetArgs()) {
-			vCurMods.ReloadModule(pNewMod->GetModName(), pNewMod->GetArgs(), this, sModRet);
-		}
-	}
-
-	for (a = 0; a < vCurMods.size(); a++) {
-		CModule* pCurMod = vCurMods[a];
-		CModule* pNewMod = vNewMods.FindModule(pCurMod->GetModName());
-
-		if (!pNewMod) {
-			ssUnloadMods.insert(pCurMod->GetModName());
-		}
-	}
-
-	for (set<CString>::iterator it = ssUnloadMods.begin(); it != ssUnloadMods.end(); it++) {
-		vCurMods.UnloadModule(*it);
-	}
-	// !Modules
-#endif // !_MODULES
-
 	// Servers
 	const vector<CServer*>& vServers = User.GetServers();
 	CString sServer;
@@ -468,6 +435,39 @@ bool CUser::Clone(const CUser& User, CString& sErrorRet, bool bCloneChans) {
 	SetTimestampFormat(User.GetTimestampFormat());
 	SetTimezoneOffset(User.GetTimezoneOffset());
 	// !Flags
+
+#ifdef _MODULES
+	// Modules
+	set<CString> ssUnloadMods;
+	CModules& vCurMods = GetModules();
+	const CModules& vNewMods = User.GetModules();
+
+	for (a = 0; a < vNewMods.size(); a++) {
+		CString sModRet;
+		CModule* pNewMod = vNewMods[a];
+		CModule* pCurMod = vCurMods.FindModule(pNewMod->GetModName());
+
+		if (!pCurMod) {
+			vCurMods.LoadModule(pNewMod->GetModName(), pNewMod->GetArgs(), this, sModRet);
+		} else if (pNewMod->GetArgs() != pCurMod->GetArgs()) {
+			vCurMods.ReloadModule(pNewMod->GetModName(), pNewMod->GetArgs(), this, sModRet);
+		}
+	}
+
+	for (a = 0; a < vCurMods.size(); a++) {
+		CModule* pCurMod = vCurMods[a];
+		CModule* pNewMod = vNewMods.FindModule(pCurMod->GetModName());
+
+		if (!pNewMod) {
+			ssUnloadMods.insert(pCurMod->GetModName());
+		}
+	}
+
+	for (set<CString>::iterator it = ssUnloadMods.begin(); it != ssUnloadMods.end(); it++) {
+		vCurMods.UnloadModule(*it);
+	}
+	// !Modules
+#endif // !_MODULES
 
 	return true;
 }
