@@ -360,7 +360,7 @@ bool CHTTPSock::ForceLogin() {
 	}
 
 	CString sPage = GetErrorPage(401, "Unauthorized", "You need to login to view this page.");
-	AddHeader("WWW-Authenticate", "Basic realm=\"" + CZNC::GetTag() + "\"");
+	AddHeader("WWW-Authenticate", "Basic realm=\"" + CZNC::GetTag(false) + "\"");
 	PrintHeader(sPage.length(), "text/html", 401, "Unauthorized");
 	Write(sPage);
 	Close(Csock::CLT_AFTERWRITE);
