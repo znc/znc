@@ -58,12 +58,12 @@ FILES    := $(shell echo $(FILES) | sed -e "s/modperl//")
 endif
 
 ifeq "@SASL@" ""
-FILES    := $(shell echo $(FILES) | sed -e "s/saslauth//")
+FILES    := $(shell echo $(FILES) | sed -e "s:extra/saslauth::")
 endif
 saslauthFLAGS := -lsasl2
 
 ifeq "$(TCL_FLAGS)" ""
-FILES       := $(shell echo $(FILES) | sed -e "s:extra/modtcl::g")
+FILES       := $(shell echo $(FILES) | sed -e "s:extra/modtcl::")
 else
 TCLHOOK     := modtcl_install
 endif
