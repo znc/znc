@@ -15,7 +15,7 @@
 #include "Utils.h"
 #include <set>
 #include <vector>
-#include <stack>
+#include <queue>
 
 using std::vector;
 using std::set;
@@ -471,7 +471,7 @@ public:
 			CString& sDataPath);
 	// Return a list of <module dir, data dir> pairs for directories in
 	// which modules can be found.
-	typedef std::stack<std::pair<CString, CString> > ModDirList;
+	typedef std::queue<std::pair<CString, CString> > ModDirList;
 	static ModDirList GetModDirs();
 
 private:

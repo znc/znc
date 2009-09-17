@@ -934,7 +934,7 @@ void CModules::GetAvailableMods(set<CModInfo>& ssMods, bool bGlobal) {
 	ModDirList dirs = GetModDirs();
 
 	while (!dirs.empty()) {
-		Dir.FillByWildcard(dirs.top().first, "*.so");
+		Dir.FillByWildcard(dirs.front().first, "*.so");
 		dirs.pop();
 
 		for (a = 0; a < Dir.size(); a++) {
@@ -964,8 +964,8 @@ bool CModules::FindModPath(const CString& sModule, CString& sModPath,
 	ModDirList dirs = GetModDirs();
 
 	while (!dirs.empty()) {
-		sModPath = dirs.top().first + sMod;
-		sDataPath = dirs.top().second;
+		sModPath = dirs.front().first + sMod;
+		sDataPath = dirs.front().second;
 		dirs.pop();
 
 		if (CFile::Exists(sModPath)) {
