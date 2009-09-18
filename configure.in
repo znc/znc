@@ -70,7 +70,7 @@ AC_ARG_WITH( [openssl],
 	AS_HELP_STRING([--with-openssl=DIR], [openssl installation prefix]),
 	[OPENSSL=$withval],)
 AC_ARG_ENABLE( [debug],
-	AS_HELP_STRING([--enable-debug], [enable debuging]),
+	AS_HELP_STRING([--enable-debug], [enable debugging]),
 	[DEBUG="$enableval"],
 	[DEBUG="no"])
 AC_ARG_ENABLE( [ipv6],
@@ -252,7 +252,7 @@ if test "$MODULES" = "yes"; then
 				[directory containing tclConfig.sh]),
 				TCL_DIR="${withval}")
 
-		# This need most likely most be extended in the future, but I dont think
+		# This will need to be extended in the future, but I don't think
 		# it's a good idea to stuff a shitload of random stuff in here right now
 		for path in $TCL_DIR /usr/lib /usr/lib/tcl8.4 /usr/lib/tcl8.5
 		do

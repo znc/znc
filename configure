@@ -1269,7 +1269,7 @@ Optional Features:
   --enable-FEATURE[=ARG]  include FEATURE [ARG=yes]
   --disable-largefile     omit support for large files
   --enable-extra          enable some extra modules
-  --enable-debug          enable debuging
+  --enable-debug          enable debugging
   --disable-ipv6          disable ipv6 support
   --disable-modules       disable modules
   --disable-openssl       disable openssl
@@ -3440,7 +3440,7 @@ if test "${with_tcl+set}" = set; then :
 fi
 
 
-		# This need most likely most be extended in the future, but I dont think
+		# This will need to be extended in the future, but I don't think
 		# it's a good idea to stuff a shitload of random stuff in here right now
 		for path in $TCL_DIR /usr/lib /usr/lib/tcl8.4 /usr/lib/tcl8.5
 		do
