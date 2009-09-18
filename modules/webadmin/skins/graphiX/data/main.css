@@ -58,7 +58,7 @@ a:hover {
 	width: 150px;
 }
 
-.switchuser a:link, a:active, a:visited {
+.switchuser a:link, .switchuser a:active, .switchuser a:visited {
 	font-family: verdana;
 	font-size: 12px;
 	color: #000000;
@@ -98,7 +98,7 @@ a:hover {
 	border-bottom: 1px solid #000000;
 }
 
-.menuactive a:link, a:active, a:visited {
+.menuactive a:link, .menuactive a:active, .menuactive a:visited {
 	font-family: verdana;
 	font-size: 12px;
 	color: #000000;
@@ -112,7 +112,7 @@ a:hover {
 	text-decoration: underline;
 }
 
-.menuinactive a:link, a:active, a:visited {
+.menuinactive a:link, .menuinactive a:active, .menuinactive a:visited {
 	font-family: verdana;
 	font-size: 12px;
 	color: #000000;
@@ -142,7 +142,7 @@ a:hover {
 	padding-right: 5px;
 }
 
-.cbar a:link, a:active, a:visited {
+.cbar a:link, .cbar a:active, .cbar a:visited {
 	font-family: verdana;
 	font-size: 12px;
 	color: #000000;
