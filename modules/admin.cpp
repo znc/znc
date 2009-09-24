@@ -36,9 +36,9 @@ class CAdminMod : public CModule {
 		CmdTable.AddColumn("Description");
 		static const char* help[][3] = {
 			{"Get",       "variable [username]",           "Prints the variable's value for the given or current user"},
-			{"Set",       "variable [username] value",     "Sets the variable's value for the given or current user"},
+			{"Set",       "variable username value",       "Sets the variable's value for the given user (use $me for the current user)"},
 			{"GetChan",   "variable [username] chan",      "Prints the variable's value for the given channel"},
-			{"SetChan",   "variable [username] chan value", "Sets the variable's value for the given channel"},
+			{"SetChan",   "variable username chan value",   "Sets the variable's value for the given channel"},
 			{"ListUsers", "",                              "Lists users"},
 			{"AddUser",   "username password [ircserver]", "Adds a new user"},
 			{"DelUser",   "username",                      "Deletes a user"},
