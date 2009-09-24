@@ -3165,10 +3165,6 @@ fi
 	fi
 fi
 
-if test -z "$prefix" || test $prefix = "NONE"; then
-	prefix="/usr/local"
-fi
-
 
 # Check whether --with-module-prefix was given.
 if test "${with_module_prefix+set}" = set; then :
