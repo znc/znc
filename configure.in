@@ -152,10 +152,6 @@ if test -z "$NOSSL"; then
 	fi
 fi
 
-if test -z "$prefix" || test $prefix = "NONE"; then
-	prefix="/usr/local"
-fi
-
 AC_ARG_WITH( [module-prefix],
 	AS_HELP_STRING([--with-module-prefix], [module object code [[LIBDIR/znc]]]),
 	[MODDIR=$withval],
