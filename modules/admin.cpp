@@ -296,7 +296,7 @@ class CAdminMod : public CModule {
 		CString value     = sLine.Token(4, true);
 
 		if (value.empty()) {
-			PutModule("Usage: set <variable> <username> <value>");
+			PutModule("Usage: setchan <variable> <username> <chan> <value>");
 			return;
 		}
 
