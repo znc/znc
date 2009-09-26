@@ -57,7 +57,7 @@ public:
 	void JoinChans();
 	bool JoinChan(CChan* pChan);
 	CServer* FindServer(const CString& sName) const;
-	bool DelServer(const CString& sName);
+	bool DelServer(const CString& sName, unsigned short uPort, const CString& sPass);
 	bool AddServer(const CString& sName);
 	bool AddServer(const CString& sName, unsigned short uPort, const CString& sPass = "", bool bSSL = false);
 	CServer* GetNextServer();

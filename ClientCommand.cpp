@@ -329,9 +329,11 @@ void CClient::UserCommand(CString& sLine) {
 		}
 	} else if (sCommand.Equals("REMSERVER") || sCommand.Equals("DELSERVER")) {
 		CString sServer = sLine.Token(1);
+		unsigned short uPort = sLine.Token(2).ToUShort();
+		CString sPass = sLine.Token(3);
 
 		if (sServer.empty()) {
-			PutStatus("Usage: RemServer <host>");
+			PutStatus("Usage: RemServer <host> [port] [pass]");
 			return;
 		}
 
@@ -340,7 +342,7 @@ void CClient::UserCommand(CString& sLine) {
 			return;
 		}
 
-		if (m_pUser->DelServer(sServer)) {
+		if (m_pUser->DelServer(sServer, uPort, sPass)) {
 			PutStatus("Server removed");
 		} else {
 			PutStatus("No such server");
