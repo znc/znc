@@ -335,9 +335,7 @@ void CClient::UserCommand(CString& sLine) {
 			return;
 		}
 
-		const vector<CServer*>& vServers = m_pUser->GetServers();
-
-		if (vServers.size() <= 0) {
+		if (!m_pUser->HasServers()) {
 			PutStatus("You don't have any servers added.");
 			return;
 		}
