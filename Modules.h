@@ -24,6 +24,7 @@ using std::set;
 class CAuthBase;
 class CChan;
 class CClient;
+class CIRCSock;
 // !Forward Declarations
 
 // User Module Macros
@@ -239,6 +240,7 @@ public:
 	virtual void OnPostRehash();
 	virtual void OnIRCDisconnected();
 	virtual void OnIRCConnected();
+	virtual EModRet OnIRCConnecting(CIRCSock *pIRCSock);
 	virtual EModRet OnIRCRegistration(CString& sPass, CString& sNick, CString& sIdent, CString& sRealName);
 	virtual EModRet OnBroadcast(CString& sMessage);
 
@@ -399,6 +401,7 @@ public:
 	bool OnPostRehash();
 	bool OnIRCDisconnected();
 	bool OnIRCConnected();
+	bool OnIRCConnecting(CIRCSock *pIRCSock);
 	bool OnIRCRegistration(CString& sPass, CString& sNick, CString& sIdent, CString& sRealName);
 	bool OnBroadcast(CString& sMessage);
 
