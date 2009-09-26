@@ -752,7 +752,7 @@ CServer* CUser::FindServer(const CString& sName) const {
 	return NULL;
 }
 
-bool CUser::DelServer(const CString& sName) {
+bool CUser::DelServer(const CString& sName, unsigned short uPort, const CString& sPass) {
 	if (sName.empty()) {
 		return false;
 	}
@@ -762,29 +762,36 @@ bool CUser::DelServer(const CString& sName) {
 	for (vector<CServer*>::iterator it = m_vServers.begin(); it != m_vServers.end(); it++, a++) {
 		CServer* pServer = *it;
 
-		if (pServer->GetName().Equals(sName)) {
-			CServer* pCurServer = GetCurrentServer();
-			m_vServers.erase(it);
+		if (!pServer->GetName().Equals(sName))
+			continue;
 
-			if (pServer == pCurServer) {
-				CIRCSock* pIRCSock = GetIRCSock();
+		if (uPort != 0 && pServer->GetPort() != uPort)
+			continue;
 
-				if (m_uServerIdx) {
-					m_uServerIdx--;
-				}
+		if (!sPass.empty() && pServer->GetPass() != sPass)
+			continue;
 
-				if (pIRCSock) {
-					pIRCSock->Quit();
-					PutStatus("Your current server was removed, jumping...");
-				}
-			} else if (m_uServerIdx >= m_vServers.size()) {
-				m_uServerIdx = 0;
+		CServer* pCurServer = GetCurrentServer();
+		m_vServers.erase(it);
+
+		if (pServer == pCurServer) {
+			CIRCSock* pIRCSock = GetIRCSock();
+
+			if (m_uServerIdx) {
+				m_uServerIdx--;
 			}
 
-			delete pServer;
-
-			return true;
+			if (pIRCSock) {
+				pIRCSock->Quit();
+				PutStatus("Your current server was removed, jumping...");
+			}
+		} else if (m_uServerIdx >= m_vServers.size()) {
+			m_uServerIdx = 0;
 		}
+
+		delete pServer;
+
+		return true;
 	}
 
 	return false;
