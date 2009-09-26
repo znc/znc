@@ -213,7 +213,7 @@ public:
 	unsigned int GetBufferCount() const;
 	bool KeepBuffer() const;
 	bool IsBeingDeleted() const { return m_bBeingDeleted; }
-	bool HasServers() const { return m_vServers.size() > 0; }
+	bool HasServers() const { return !m_vServers.empty(); }
 	float GetTimezoneOffset() const { return m_fTimezoneOffset; }
 	unsigned long long BytesRead() const { return m_uBytesRead; }
 	unsigned long long BytesWritten() const { return m_uBytesWritten; }
