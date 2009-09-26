@@ -165,6 +165,13 @@ bool CZNC::ConnectUser(CUser *pUser) {
 	}
 #endif
 
+	MODULECALL(OnIRCConnecting(pIRCSock), pUser, NULL,
+		DEBUG("Some module aborted the connection attempt");
+		ReleaseISpoof();
+		delete pIRCSock;
+		return false;
+	);
+
 	if (!m_Manager.Connect(pServer->GetName(), pServer->GetPort(), sSockName, 120, bSSL, pUser->GetVHost(), pIRCSock)) {
 		ReleaseISpoof();
 		pUser->PutStatus("Unable to connect. (Bad host?)");

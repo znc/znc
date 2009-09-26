@@ -484,6 +484,7 @@ void CModule::OnPreRehash() {}
 void CModule::OnPostRehash() {}
 void CModule::OnIRCDisconnected() {}
 void CModule::OnIRCConnected() {}
+CModule::EModRet CModule::OnIRCConnecting(CIRCSock *IRCSock) { return CONTINUE; }
 CModule::EModRet CModule::OnIRCRegistration(CString& sPass, CString& sNick, CString& sIdent, CString& sRealName) { return CONTINUE; }
 CModule::EModRet CModule::OnBroadcast(CString& sMessage) { return CONTINUE; }
 
@@ -624,6 +625,7 @@ bool CModules::OnBoot() {
 bool CModules::OnPreRehash() { MODUNLOADCHK(OnPreRehash()); return false; }
 bool CModules::OnPostRehash() { MODUNLOADCHK(OnPostRehash()); return false; }
 bool CModules::OnIRCConnected() { MODUNLOADCHK(OnIRCConnected()); return false; }
+bool CModules::OnIRCConnecting(CIRCSock *pIRCSock) { MODHALTCHK(OnIRCConnecting(pIRCSock)); }
 bool CModules::OnIRCRegistration(CString& sPass, CString& sNick, CString& sIdent, CString& sRealName) { MODHALTCHK(OnIRCRegistration(sPass, sNick, sIdent, sRealName)); }
 bool CModules::OnBroadcast(CString& sMessage) { MODHALTCHK(OnBroadcast(sMessage)); }
 bool CModules::OnIRCDisconnected() { MODUNLOADCHK(OnIRCDisconnected()); return false; }
