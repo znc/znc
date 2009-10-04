@@ -204,24 +204,27 @@ void CClient::UserCommand(CString& sLine) {
 		PutStatus("Cleared MOTD");
 	} else if (m_pUser->IsAdmin() && sCommand.Equals("BROADCAST")) {
 		CZNC::Get().Broadcast(sLine.Token(1, true));
-	} else if (m_pUser->IsAdmin() && sCommand.Equals("SHUTDOWN")) {
+	} else if (m_pUser->IsAdmin() && (sCommand.Equals("SHUTDOWN") || sCommand.Equals("RESTART"))) {
+		bool bRestart = sCommand.Equals("RESTART");
 		CString sMessage = sLine.Token(1, true);
+		bool bForce = false;
 
-		if (sMessage.empty()) {
-			sMessage = "ZNC is being shutdown NOW!!";
+		if (sMessage.Token(0).Equals("FORCE")) {
+			bForce = true;
+			sMessage = sMessage.Token(1, true);
 		}
 
-		CZNC::Get().Broadcast(sMessage);
-		throw CException(CException::EX_Shutdown);
-	} else if (m_pUser->IsAdmin() && sCommand.Equals("RESTART")) {
-		CString sMessage = sLine.Token(1, true);
-
 		if (sMessage.empty()) {
-			sMessage = "ZNC is being restarted NOW!!";
+			sMessage = (bRestart ? "ZNC is being restarted NOW!" : "ZNC is being shut down NOW!");
 		}
 
-		CZNC::Get().Broadcast(sMessage);
-		throw CException(CException::EX_Restart);
+		if(!CZNC::Get().WriteConfig() && !bForce) {
+			PutStatus("ERROR: Writing config file to disk failed! Aborting. Use " +
+				sCommand.AsUpper() + " FORCE to ignore.");
+		} else {
+			CZNC::Get().Broadcast(sMessage);
+			throw CException(bRestart ? CException::EX_Restart : CException::EX_Shutdown);
+		}
 	} else if (sCommand.Equals("JUMP") || sCommand.Equals("CONNECT")) {
 		if (!m_pUser->HasServers()) {
 			PutStatus("You don't have any servers added.");
