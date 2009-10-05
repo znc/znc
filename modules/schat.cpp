@@ -121,7 +121,7 @@ public:
 
 	virtual void OnClientLogin()
 	{
-		vector<CSocket*>::const_iterator it;
+		set<CSocket*>::const_iterator it;
 		for (it = BeginSockets(); it != EndSockets(); it++) {
 			CSChatSock *p = (CSChatSock*) *it;
 
@@ -154,7 +154,7 @@ public:
 
 		if (sCom.Equals("chat") && !sArgs.empty()) {
 			CString sNick = "(s)" + sArgs;
-			vector<CSocket*>::const_iterator it;
+			set<CSocket*>::const_iterator it;
 			for (it = BeginSockets(); it != EndSockets(); it++) {
 				CSChatSock *pSock = (CSChatSock*) *it;
 
@@ -193,7 +193,7 @@ public:
 			Table.AddColumn("Status");
 			Table.AddColumn("Cipher");
 
-			vector<CSocket*>::const_iterator it;
+			set<CSocket*>::const_iterator it;
 			for (it = BeginSockets(); it != EndSockets(); it++) {
 				Table.AddRow();
 
@@ -230,7 +230,7 @@ public:
 			if (!sArgs.Equals("(s)", false, 3))
 				sArgs = "(s)" + sArgs;
 
-			vector<CSocket*>::const_iterator it;
+			set<CSocket*>::const_iterator it;
 			for (it = BeginSockets(); it != EndSockets(); it++) {
 				CSChatSock *pSock = (CSChatSock*) *it;
 
@@ -249,7 +249,7 @@ public:
 			Table.AddColumn("Type");
 			Table.AddColumn("Cipher");
 
-			vector<CSocket*>::const_iterator it;
+			set<CSocket*>::const_iterator it;
 			for (it = BeginSockets(); it != EndSockets(); it++) {
 				Table.AddRow();
 				Csock *pSock = *it;
