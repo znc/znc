@@ -63,7 +63,6 @@ public:
 
 	static const CString sDefaultHash;
 
-	static CString GetHashPass();
 	static CString GetSaltedHashPass(CString& sSalt);
 	static CString GetSalt();
 	static CString SaltedMD5Hash(const CString& sPass, const CString& sSalt);

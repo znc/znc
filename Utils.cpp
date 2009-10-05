@@ -148,21 +148,6 @@ unsigned long CUtils::GetLongIP(const CString& sIP) {
 	return ret;
 }
 
-CString CUtils::GetHashPass() {
-	while (true) {
-		CString pass1 = CUtils::GetPass("Enter Password");
-		CString pass2 = CUtils::GetPass("Confirm Password");
-
-		if (!pass1.Equals(pass2, true)) {
-			CUtils::PrintError("The supplied passwords did not match");
-		} else if (pass1.empty()) {
-			CUtils::PrintError("You can not use an empty password");
-		} else {
-			return pass1.MD5();
-		}
-	}
-}
-
 // If you change this here and in GetSaltedHashPass(),
 // don't forget CUser::HASH_DEFAULT!
 const CString CUtils::sDefaultHash = "sha256";
