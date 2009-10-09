@@ -98,7 +98,7 @@ AC_ARG_ENABLE( [optimization],
 AC_ARG_ENABLE( [c-ares],
 	AS_HELP_STRING([--disable-c-ares], [disable c-ares usage]),
 	[ARES="$enableval"],
-	[ARES="yes"])
+	[ARES="auto"])
 
 if test "$DEBUG" != "no"; then
 	appendCXX -ggdb -D_DEBUG
@@ -121,17 +121,30 @@ fi
 AC_CHECK_LIB( gnugetopt, getopt_long,)
 AC_CHECK_FUNC([lstat], [appendCXX -DHAVE_LSTAT])
 
-if test "x$ARES" = "xyes"; then
+if test "x$ARES" != "xno"; then
+	old_ARES=$ARES
 	PKG_PROG_PKG_CONFIG()
 	if test -z "$PKG_CONFIG"
 	then
-		AC_MSG_ERROR([pkg-config not found. Try --disable-c-ares.
-Disabling c-ares may result in a slight performance decrease but will not have any other side-effects])
+		ARES=no
+	else
+		PKG_CHECK_MODULES([c_ares], [libcares],, ARES=no)
 	fi
-	PKG_CHECK_MODULES([c_ares], [libcares],, AC_MSG_ERROR([c-ares not found. Try --disable-c-ares.
-Disabling c-ares may result in a slight performance decrease but will not have any other side-effects]))
-	appendCXX $c_ares_CFLAGS -DHAVE_ARES
-	appendLib $c_ares_LIBS
+
+	if test "x$ARES" = "xno" ; then
+		# This looks better in the summary at the end
+		ARES="not found"
+		if test "x$old_ARES" != "xauto" ; then
+			AC_MSG_ERROR(["c-ares not found. Try --disable-c-ares.
+Disabling c-ares may result in a slight performance decrease but will not have any other side-effects"])
+		else
+			AC_MSG_WARN(["c-ares was not found and thus disabled"])
+		fi
+	else
+		appendCXX $c_ares_CFLAGS -DHAVE_ARES
+		appendLib $c_ares_LIBS
+		ARES=yes
+	fi
 fi
 
 if test -z "$NOSSL"; then
