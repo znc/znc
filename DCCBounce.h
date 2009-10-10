@@ -17,13 +17,13 @@ class CDCCBounce : public CZNCSock {
 public:
 	CDCCBounce(CUser* pUser, unsigned long uLongIP, unsigned short uPort,
 			const CString& sFileName, const CString& sRemoteNick,
-			const CString& sRemoteIP, CString sLocalIP, bool bIsChat = false);
+			const CString& sRemoteIP, bool bIsChat = false);
 	CDCCBounce(const CString& sHostname, unsigned short uPort, CUser* pUser,
 			const CString& sRemoteNick, const CString& sRemoteIP,
 			const CString& sFileName, int iTimeout = 60, bool bIsChat = false);
 	virtual ~CDCCBounce();
 
-	static unsigned short DCCRequest(const CString& sNick, unsigned long uLongIP, unsigned short uPort, const CString& sFileName, bool bIsChat, CUser* pUser, const CString& sLocalIP, const CString& sRemoteIP);
+	static unsigned short DCCRequest(const CString& sNick, unsigned long uLongIP, unsigned short uPort, const CString& sFileName, bool bIsChat, CUser* pUser, const CString& sRemoteIP);
 
 	void ReadLine(const CString& sData);
 	virtual void ReadData(const char* data, int len);

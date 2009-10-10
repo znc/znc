@@ -330,6 +330,7 @@ bool CUser::Clone(const CUser& User, CString& sErrorRet, bool bCloneChans) {
 	SetRealName(User.GetRealName());
 	SetStatusPrefix(User.GetStatusPrefix());
 	SetVHost(User.GetVHost());
+	SetDCCVHost(User.GetDCCVHost());
 	SetQuitMsg(User.GetQuitMsg());
 	SetDefaultChanModes(User.GetDefaultChanModes());
 	SetBufferCount(User.GetBufferCount());
@@ -614,6 +615,7 @@ bool CUser::WriteConfig(CFile& File) {
 	PrintLine(File, "Ident", GetIdent());
 	PrintLine(File, "RealName", GetRealName());
 	PrintLine(File, "VHost", GetVHost());
+	PrintLine(File, "DCCVHost", GetDCCVHost());
 	PrintLine(File, "QuitMsg", GetQuitMsg());
 	if (CZNC::Get().GetStatusPrefix() != GetStatusPrefix())
 		PrintLine(File, "StatusPrefix", GetStatusPrefix());
@@ -933,6 +935,12 @@ CString CUser::GetLocalIP() {
 	return "";
 }
 
+CString CUser::GetLocalDCCIP() {
+	if (!GetDCCVHost().empty())
+		return GetDCCVHost();
+	return GetLocalIP();
+}
+
 bool CUser::PutIRC(const CString& sLine) {
 	CIRCSock* pIRCSock = GetIRCSock();
 
@@ -1032,13 +1040,13 @@ bool CUser::SendFile(const CString& sRemoteNick, const CString& sFileName, const
 		return false;
 	}
 
-	unsigned short uPort = CZNC::Get().GetManager().ListenRand("DCC::LISTEN::" + sRemoteNick, GetLocalIP(), false, SOMAXCONN, pSock, 120);
+	unsigned short uPort = CZNC::Get().GetManager().ListenRand("DCC::LISTEN::" + sRemoteNick, GetLocalDCCIP(), false, SOMAXCONN, pSock, 120);
 
 	if (GetNick().Equals(sRemoteNick)) {
-		PutUser(":" + GetStatusPrefix() + "status!znc@znc.in PRIVMSG " + sRemoteNick + " :\001DCC SEND " + pFile->GetShortName() + " " + CString(CUtils::GetLongIP(GetLocalIP())) + " "
+		PutUser(":" + GetStatusPrefix() + "status!znc@znc.in PRIVMSG " + sRemoteNick + " :\001DCC SEND " + pFile->GetShortName() + " " + CString(CUtils::GetLongIP(GetLocalDCCIP())) + " "
 				+ CString(uPort) + " " + CString(pFile->GetSize()) + "\001");
 	} else {
-		PutIRC("PRIVMSG " + sRemoteNick + " :\001DCC SEND " + pFile->GetShortName() + " " + CString(CUtils::GetLongIP(GetLocalIP())) + " "
+		PutIRC("PRIVMSG " + sRemoteNick + " :\001DCC SEND " + pFile->GetShortName() + " " + CString(CUtils::GetLongIP(GetLocalDCCIP())) + " "
 			    + CString(uPort) + " " + CString(pFile->GetSize()) + "\001");
 	}
 
@@ -1059,7 +1067,7 @@ bool CUser::GetFile(const CString& sRemoteNick, const CString& sRemoteIP, unsign
 		return false;
 	}
 
-	if (!CZNC::Get().GetManager().Connect(sRemoteIP, uRemotePort, "DCC::GET::" + sRemoteNick, 60, false, GetLocalIP(), pSock)) {
+	if (!CZNC::Get().GetManager().Connect(sRemoteIP, uRemotePort, "DCC::GET::" + sRemoteNick, 60, false, GetLocalDCCIP(), pSock)) {
 		PutModule(sModuleName, "DCC <- [" + sRemoteNick + "][" + sFileName + "] - Unable to connect.");
 		return false;
 	}
@@ -1106,6 +1114,7 @@ void CUser::SetAltNick(const CString& s) { m_sAltNick = s; }
 void CUser::SetIdent(const CString& s) { m_sIdent = s; }
 void CUser::SetRealName(const CString& s) { m_sRealName = s; }
 void CUser::SetVHost(const CString& s) { m_sVHost = s; }
+void CUser::SetDCCVHost(const CString& s) { m_sDCCVHost = s; }
 void CUser::SetPass(const CString& s, eHashType eHash, const CString& sSalt) {
 	m_sPass = s;
 	m_eHashType = eHash;
@@ -1165,6 +1174,7 @@ const CString& CUser::GetAltNick(bool bAllowDefault) const { return (bAllowDefau
 const CString& CUser::GetIdent(bool bAllowDefault) const { return (bAllowDefault && m_sIdent.empty()) ? GetCleanUserName() : m_sIdent; }
 const CString& CUser::GetRealName() const { return m_sRealName.empty() ? m_sUserName : m_sRealName; }
 const CString& CUser::GetVHost() const { return m_sVHost; }
+const CString& CUser::GetDCCVHost() const { return m_sDCCVHost; }
 const CString& CUser::GetPass() const { return m_sPass; }
 CUser::eHashType CUser::GetPassHashType() const { return m_eHashType; }
 const CString& CUser::GetPassSalt() const { return m_sPassSalt; }

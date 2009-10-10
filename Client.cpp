@@ -395,7 +395,7 @@ void CClient::ReadLine(const CString& sData) {
 				unsigned long uLongIP = sCTCP.Token(3).ToULong();
 				unsigned short uPort = sCTCP.Token(4).ToUShort();
 				unsigned long uFileSize = sCTCP.Token(5).ToULong();
-				CString sIP = (m_pIRCSock) ? m_pIRCSock->GetLocalIP() : GetLocalIP();
+				CString sIP = m_pUser->GetLocalDCCIP();
 
 				if (!m_pUser->UseClientIP()) {
 					uLongIP = CUtils::GetLongIP(GetRemoteIP());
@@ -403,7 +403,7 @@ void CClient::ReadLine(const CString& sData) {
 
 				if (sType.Equals("CHAT")) {
 					if (!sTarget.TrimPrefix(m_pUser->GetStatusPrefix())) {
-						unsigned short uBNCPort = CDCCBounce::DCCRequest(sTarget, uLongIP, uPort, "", true, m_pUser, (m_pIRCSock) ? m_pIRCSock->GetLocalIP() : GetLocalIP(), "");
+						unsigned short uBNCPort = CDCCBounce::DCCRequest(sTarget, uLongIP, uPort, "", true, m_pUser, "");
 						if (uBNCPort) {
 							PutIRC("PRIVMSG " + sTarget + " :\001DCC CHAT chat " + CString(CUtils::GetLongIP(sIP)) + " " + CString(uBNCPort) + "\001");
 						}
@@ -434,7 +434,7 @@ void CClient::ReadLine(const CString& sData) {
 							MODULECALL(OnDCCUserSend(CString(m_pUser->GetStatusPrefix() + sTarget), uLongIP, uPort, sFile, uFileSize), m_pUser, this, return);
 						}
 					} else {
-						unsigned short uBNCPort = CDCCBounce::DCCRequest(sTarget, uLongIP, uPort, sFile, false, m_pUser, (m_pIRCSock) ? m_pIRCSock->GetLocalIP() : GetLocalIP(), "");
+						unsigned short uBNCPort = CDCCBounce::DCCRequest(sTarget, uLongIP, uPort, sFile, false, m_pUser, "");
 						if (uBNCPort) {
 							PutIRC("PRIVMSG " + sTarget + " :\001DCC SEND " + sFile + " " + CString(CUtils::GetLongIP(sIP)) + " " + CString(uBNCPort) + " " + CString(uFileSize) + "\001");
 						}

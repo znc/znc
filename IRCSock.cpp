@@ -650,15 +650,17 @@ bool CIRCSock::OnPrivCTCP(CNick& Nick, CString& sMessage) {
 
 		if (sType.Equals("CHAT")) {
 			CNick FromNick(Nick.GetNickMask());
-			unsigned short uBNCPort = CDCCBounce::DCCRequest(FromNick.GetNick(), uLongIP, uPort, "", true, m_pUser, GetLocalIP(), CUtils::GetIP(uLongIP));
+			unsigned short uBNCPort = CDCCBounce::DCCRequest(FromNick.GetNick(), uLongIP, uPort, "", true, m_pUser, CUtils::GetIP(uLongIP));
 			if (uBNCPort) {
-				m_pUser->PutUser(":" + Nick.GetNickMask() + " PRIVMSG " + GetNick() + " :\001DCC CHAT chat " + CString(CUtils::GetLongIP(GetLocalIP())) + " " + CString(uBNCPort) + "\001");
+				CString sIP = m_pUser->GetLocalDCCIP();
+				m_pUser->PutUser(":" + Nick.GetNickMask() + " PRIVMSG " + GetNick() + " :\001DCC CHAT chat " + CString(CUtils::GetLongIP(sIP)) + " " + CString(uBNCPort) + "\001");
 			}
 		} else if (sType.Equals("SEND")) {
 			// DCC SEND readme.txt 403120438 5550 1104
-			unsigned short uBNCPort = CDCCBounce::DCCRequest(Nick.GetNick(), uLongIP, uPort, sFile, false, m_pUser, GetLocalIP(), CUtils::GetIP(uLongIP));
+			unsigned short uBNCPort = CDCCBounce::DCCRequest(Nick.GetNick(), uLongIP, uPort, sFile, false, m_pUser, CUtils::GetIP(uLongIP));
 			if (uBNCPort) {
-				m_pUser->PutUser(":" + Nick.GetNickMask() + " PRIVMSG " + GetNick() + " :\001DCC SEND " + sFile + " " + CString(CUtils::GetLongIP(GetLocalIP())) + " " + CString(uBNCPort) + " " + CString(uFileSize) + "\001");
+				CString sIP = m_pUser->GetLocalDCCIP();
+				m_pUser->PutUser(":" + Nick.GetNickMask() + " PRIVMSG " + GetNick() + " :\001DCC SEND " + sFile + " " + CString(CUtils::GetLongIP(sIP)) + " " + CString(uBNCPort) + " " + CString(uFileSize) + "\001");
 			}
 		} else if (sType.Equals("RESUME")) {
 			// Need to lookup the connection by port, filter the port, and forward to the user
