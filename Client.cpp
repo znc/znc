@@ -325,9 +325,13 @@ void CClient::ReadLine(const CString& sData) {
 			return;
 		}
 
+		// No idea what this is supposed to do, but it doesn't seem to
+		// make sense. Comment this out and wait for complaints.
+#if 0
 		if (sMsg.WildCmp("DCC * (*)")) {
 			sMsg = "DCC " + sLine.Token(3) + " (" + ((m_pIRCSock) ? m_pIRCSock->GetLocalIP() : GetLocalIP()) + ")";
 		}
+#endif
 
 #ifdef _MODULES
 		if (sMsg.WildCmp("\001*\001")) {
