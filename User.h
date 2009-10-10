@@ -111,6 +111,7 @@ public:
 	void UserDisconnected(CClient* pClient);
 
 	CString GetLocalIP();
+	CString GetLocalDCCIP();
 	bool IsIRCConnected() const { return GetIRCSock() != NULL; }
 	void IRCConnected(CIRCSock* pIRCSock);
 	void IRCDisconnected();
@@ -144,6 +145,7 @@ public:
 	void SetIdent(const CString& s);
 	void SetRealName(const CString& s);
 	void SetVHost(const CString& s);
+	void SetDCCVHost(const CString& s);
 	void SetPass(const CString& s, eHashType eHash, const CString& sSalt = "");
 	void SetBounceDCCs(bool b);
 	void SetMultiClients(bool b);
@@ -181,6 +183,7 @@ public:
 	const CString& GetIdent(bool bAllowDefault = true) const;
 	const CString& GetRealName() const;
 	const CString& GetVHost() const;
+	const CString& GetDCCVHost() const;
 	const CString& GetPass() const;
 	eHashType GetPassHashType() const;
 	const CString& GetPassSalt() const;
@@ -230,6 +233,7 @@ protected:
 	CString			m_sIdent;
 	CString			m_sRealName;
 	CString			m_sVHost;
+	CString			m_sDCCVHost;
 	CString			m_sPass;
 	CString			m_sPassSalt;
 	CString			m_sStatusPrefix;

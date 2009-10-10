@@ -17,7 +17,7 @@ const unsigned int CDCCBounce::m_uiMinDCCBuffer = 2 * 1024;
 
 CDCCBounce::CDCCBounce(CUser* pUser, unsigned long uLongIP, unsigned short uPort,
 		const CString& sFileName, const CString& sRemoteNick,
-		const CString& sRemoteIP, CString sLocalIP, bool bIsChat) : CZNCSock() {
+		const CString& sRemoteIP, bool bIsChat) : CZNCSock() {
 	m_uRemotePort = uPort;
 	m_sConnectIP = CUtils::GetIP(uLongIP);
 	m_sRemoteIP = sRemoteIP;
@@ -25,7 +25,7 @@ CDCCBounce::CDCCBounce(CUser* pUser, unsigned long uLongIP, unsigned short uPort
 	m_sRemoteNick = sRemoteNick;
 	m_pUser = pUser;
 	m_bIsChat = bIsChat;
-	m_sLocalIP = sLocalIP;
+	m_sLocalIP = pUser->GetLocalDCCIP();
 	m_pPeer = NULL;
 	m_bIsRemote = false;
 
@@ -205,9 +205,10 @@ void CDCCBounce::PutPeer(const CString& sLine) {
 	}
 }
 
-unsigned short CDCCBounce::DCCRequest(const CString& sNick, unsigned long uLongIP, unsigned short uPort, const CString& sFileName, bool bIsChat, CUser* pUser, const CString& sLocalIP, const CString& sRemoteIP) {
-	CDCCBounce* pDCCBounce = new CDCCBounce(pUser, uLongIP, uPort, sFileName, sNick, sRemoteIP, sLocalIP, bIsChat);
-	unsigned short uListenPort = CZNC::Get().GetManager().ListenRand("DCC::" + CString((bIsChat) ? "Chat" : "Xfer") + "::Local::" + sNick, sLocalIP, false, SOMAXCONN, pDCCBounce, 120);
+unsigned short CDCCBounce::DCCRequest(const CString& sNick, unsigned long uLongIP, unsigned short uPort, const CString& sFileName, bool bIsChat, CUser* pUser, const CString& sRemoteIP) {
+	CDCCBounce* pDCCBounce = new CDCCBounce(pUser, uLongIP, uPort, sFileName, sNick, sRemoteIP, bIsChat);
+	unsigned short uListenPort = CZNC::Get().GetManager().ListenRand("DCC::" + CString((bIsChat) ? "Chat" : "Xfer") + "::Local::" + sNick,
+			pUser->GetLocalDCCIP(), false, SOMAXCONN, pDCCBounce, 120);
 
 	return uListenPort;
 }

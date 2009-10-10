@@ -1312,6 +1312,9 @@ bool CZNC::DoRehash(CString& sError)
 					} else if (sName.Equals("VHost")) {
 						pUser->SetVHost(sValue);
 						continue;
+					} else if (sName.Equals("DCCVHost")) {
+						pUser->SetDCCVHost(sValue);
+						continue;
 					} else if (sName.Equals("Allow")) {
 						pUser->AddAllowedHost(sValue);
 						continue;
