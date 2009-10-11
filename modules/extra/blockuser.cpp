@@ -54,6 +54,11 @@ public:
 	void OnModCommand(const CString& sCommand) {
 		CString sCmd = sCommand.Token(0);
 
+		if (!m_pUser->IsAdmin()) {
+			PutModule("Access denied");
+			return;
+		}
+
 		if (sCmd.Equals("list")) {
 			CTable Table;
 			MCString::iterator it;
@@ -86,7 +91,7 @@ public:
 				PutModule("Unblocked [" + sUser + "]");
 			else
 				PutModule("This user is not blocked");
-		} else if (sCmd.Equals("help")) {
+		} else {
 			PutModule("Commands: list, block [user], unblock [user]");
 		}
 	}
