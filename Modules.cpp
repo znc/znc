@@ -333,18 +333,10 @@ bool CModule::RemTimer(CTimer* pTimer) {
 }
 
 bool CModule::RemTimer(const CString& sLabel) {
-	set<CTimer*>::iterator it;
-	for (it = m_sTimers.begin(); it != m_sTimers.end(); ++it) {
-		CTimer* pTimer = *it;
-
-		if (pTimer->GetName().Equals(sLabel)) {
-			m_sTimers.erase(it);
-			m_pManager->DelCronByAddr(pTimer);
-			return true;
-		}
-	}
-
-	return false;
+	CTimer *pTimer = FindTimer(sLabel);
+	if (!pTimer)
+		return false;
+	return RemTimer(pTimer);
 }
 
 bool CModule::UnlinkTimer(CTimer* pTimer) {
