@@ -328,6 +328,7 @@ bool CModule::AddTimer(FPTimer_t pFBCallback, const CString& sLabel, u_int uInte
 bool CModule::RemTimer(CTimer* pTimer) {
 	if (m_sTimers.erase(pTimer) == 0)
 		return false;
+	m_pManager->DelCronByAddr(pTimer);
 	return true;
 }
 
