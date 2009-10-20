@@ -470,6 +470,7 @@ class CAdminMod : public CModule {
 			return;
 		}
 		pNewUser->SetUserName(sNewUsername);
+		pNewUser->SetIRCConnectEnabled(false);
 
 		if (!CZNC::Get().AddUser(pNewUser, sError)) {
 			delete pNewUser;
