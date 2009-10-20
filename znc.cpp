@@ -167,6 +167,7 @@ bool CZNC::ConnectUser(CUser *pUser) {
 
 	MODULECALL(OnIRCConnecting(pIRCSock), pUser, NULL,
 		DEBUG("Some module aborted the connection attempt");
+		pUser->PutStatus("Some module aborted the connection attempt");
 		ReleaseISpoof();
 		delete pIRCSock;
 		return false;
