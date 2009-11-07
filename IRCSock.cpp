@@ -153,51 +153,30 @@ void CIRCSock::ReadLine(const CString& sData) {
 			case 266:	// global users
 				m_pUser->UpdateRawBuffer(":" + sServer + " " + sCmd + " ", " " + sRest);
 				break;
-			case 422:	// MOTD File is missing
-			case 375: 	// begin motd
-				m_pUser->ClearMotdBuffer();
-			case 372:	// motd
-			case 376:	// end motd
-				m_pUser->AddMotdBuffer(":" + sServer + " " + sCmd + " ", " " + sRest);
-				break;
-			case 470: {
-				// :irc.unreal.net 470 mynick [Link] #chan1 has become full, so you are automatically being transferred to the linked channel #chan2
-				// :mccaffrey.freenode.net 470 mynick #electronics ##electronics :Forwarding to another channel
-
-				// freenode style numeric
-				CChan* pChan = m_pUser->FindChan(sRest.Token(0));
-				if (!pChan) {
-					// unreal style numeric
-					pChan = m_pUser->FindChan(sRest.Token(1));
-				}
-				if (pChan) {
-					pChan->Disable();
-					m_pUser->PutStatus("Channel [" + pChan->GetName() + "] is linked to "
-							"another channel and was thus disabled.");
-				}
-				break;
-			}
-			case 437:
-				// :irc.server.net 437 * badnick :Nick/channel is temporarily unavailable
-				// :irc.server.net 437 mynick badnick :Nick/channel is temporarily unavailable
-				// :irc.server.net 437 mynick badnick :Cannot change nickname while banned on channel
-				if (m_pUser->IsChan(sRest.Token(0)) || sNick != "*")
-					break;
-			case 432: // :irc.server.com 432 * nick :Erroneous Nickname: Illegal characters
-			case 433: {
-				CString sBadNick = sRest.Token(0);
-
-				if (!m_bAuthed) {
-					SendAltNick(sBadNick);
-					return;
-				}
-				break;
-			}
 			case 305:
 				m_pUser->SetIRCAway(false);
 				break;
 			case 306:
 				m_pUser->SetIRCAway(true);
+				break;
+			case 324: {	// MODE
+				sRest.Trim();
+				CChan* pChan = m_pUser->FindChan(sRest.Token(0));
+
+				if (pChan) {
+					pChan->SetModes(sRest.Token(1, true));
+				}
+			}
+				break;
+			case 329: {
+				sRest.Trim();
+				CChan* pChan = m_pUser->FindChan(sRest.Token(0));
+
+				if (pChan) {
+					unsigned long ulDate = sLine.Token(4).ToULong();
+					pChan->SetCreationDate(ulDate);
+				}
+			}
 				break;
 			case 331: {
 				// :irc.server.com 331 yournick #chan :No topic is set.
@@ -260,25 +239,6 @@ void CIRCSock::ReadLine(const CString& sData) {
 
 				break;
 			}
-			case 324: {	// MODE
-				sRest.Trim();
-				CChan* pChan = m_pUser->FindChan(sRest.Token(0));
-
-				if (pChan) {
-					pChan->SetModes(sRest.Token(1, true));
-				}
-			}
-				break;
-			case 329: {
-				sRest.Trim();
-				CChan* pChan = m_pUser->FindChan(sRest.Token(0));
-
-				if (pChan) {
-					unsigned long ulDate = sLine.Token(4).ToULong();
-					pChan->SetCreationDate(ulDate);
-				}
-			}
-				break;
 			case 353: {	// NAMES
 				sRest.Trim();
 				// Todo: allow for non @+= server msgs
@@ -323,6 +283,46 @@ void CIRCSock::ReadLine(const CString& sData) {
 				}
 
 				return;	// return so we don't send them the raw twice
+			}
+			case 375: 	// begin motd
+			case 422:	// MOTD File is missing
+				m_pUser->ClearMotdBuffer();
+			case 372:	// motd
+			case 376:	// end motd
+				m_pUser->AddMotdBuffer(":" + sServer + " " + sCmd + " ", " " + sRest);
+				break;
+			case 437:
+				// :irc.server.net 437 * badnick :Nick/channel is temporarily unavailable
+				// :irc.server.net 437 mynick badnick :Nick/channel is temporarily unavailable
+				// :irc.server.net 437 mynick badnick :Cannot change nickname while banned on channel
+				if (m_pUser->IsChan(sRest.Token(0)) || sNick != "*")
+					break;
+			case 432: // :irc.server.com 432 * nick :Erroneous Nickname: Illegal characters
+			case 433: {
+				CString sBadNick = sRest.Token(0);
+
+				if (!m_bAuthed) {
+					SendAltNick(sBadNick);
+					return;
+				}
+				break;
+			}
+			case 470: {
+				// :irc.unreal.net 470 mynick [Link] #chan1 has become full, so you are automatically being transferred to the linked channel #chan2
+				// :mccaffrey.freenode.net 470 mynick #electronics ##electronics :Forwarding to another channel
+
+				// freenode style numeric
+				CChan* pChan = m_pUser->FindChan(sRest.Token(0));
+				if (!pChan) {
+					// unreal style numeric
+					pChan = m_pUser->FindChan(sRest.Token(1));
+				}
+				if (pChan) {
+					pChan->Disable();
+					m_pUser->PutStatus("Channel [" + pChan->GetName() + "] is linked to "
+							"another channel and was thus disabled.");
+				}
+				break;
 			}
 		}
 	} else {
