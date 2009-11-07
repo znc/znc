@@ -193,6 +193,12 @@ void CIRCSock::ReadLine(const CString& sData) {
 				}
 				break;
 			}
+			case 305:
+				m_pUser->SetIRCAway(false);
+				break;
+			case 306:
+				m_pUser->SetIRCAway(true);
+				break;
 			case 331: {
 				// :irc.server.com 331 yournick #chan :No topic is set.
 				CChan* pChan = m_pUser->FindChan(sLine.Token(3));
