@@ -321,7 +321,7 @@ private:
 			pTimer->Stop();
 			UnlinkTimer(pTimer);
 		}
-		AddTimer(new CRouteTimeout(this, 20, 1, "RouteTimeout",
+		AddTimer(new CRouteTimeout(this, 60, 1, "RouteTimeout",
 				"Recover from missing / wrong server replies"));
 
 		m_pDoing = it->first;
