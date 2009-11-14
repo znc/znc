@@ -768,9 +768,14 @@ bool CUser::DelServer(const CString& sName, unsigned short uPort, const CString&
 	}
 
 	unsigned int a = 0;
+	bool bSawCurrentServer = false;
+	CServer* pCurServer = GetCurrentServer();
 
 	for (vector<CServer*>::iterator it = m_vServers.begin(); it != m_vServers.end(); it++, a++) {
 		CServer* pServer = *it;
+
+		if (pServer == pCurServer)
+			bSawCurrentServer = true;
 
 		if (!pServer->GetName().Equals(sName))
 			continue;
@@ -781,12 +786,12 @@ bool CUser::DelServer(const CString& sName, unsigned short uPort, const CString&
 		if (!sPass.empty() && pServer->GetPass() != sPass)
 			continue;
 
-		CServer* pCurServer = GetCurrentServer();
 		m_vServers.erase(it);
 
 		if (pServer == pCurServer) {
 			CIRCSock* pIRCSock = GetIRCSock();
 
+			// Make sure we don't skip the next server in the list!
 			if (m_uServerIdx) {
 				m_uServerIdx--;
 			}
@@ -795,8 +800,11 @@ bool CUser::DelServer(const CString& sName, unsigned short uPort, const CString&
 				pIRCSock->Quit();
 				PutStatus("Your current server was removed, jumping...");
 			}
-		} else if (m_uServerIdx >= m_vServers.size()) {
-			m_uServerIdx = 0;
+		} else if (!bSawCurrentServer) {
+			// Our current server comes after the server which we
+			// are removing. This means that it now got a different
+			// index in m_vServers!
+			m_uServerIdx--;
 		}
 
 		delete pServer;
