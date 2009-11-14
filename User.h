@@ -278,7 +278,7 @@ protected:
 	set<CDCCBounce*>	m_sDCCBounces;
 	set<CDCCSock*>		m_sDCCSocks;
 	set<CString>		m_ssAllowedHosts;
-	unsigned int		m_uServerIdx;
+	unsigned int		m_uServerIdx; ///< Index in m_vServers of our current server + 1
 	unsigned int		m_uBufferCount;
 	unsigned long long      m_uBytesRead;
 	unsigned long long      m_uBytesWritten;
