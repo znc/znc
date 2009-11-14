@@ -379,20 +379,20 @@ bool CUser::Clone(const CUser& User, CString& sErrorRet, bool bCloneChans) {
 		AddServer(pServer->GetName(), pServer->GetPort(), pServer->GetPass(), pServer->IsSSL());
 	}
 
+	m_uServerIdx = 0;
 	for (a = 0; a < m_vServers.size(); a++) {
 		if (sServer.Equals(m_vServers[a]->GetName())) {
-			m_uServerIdx = a +1;
+			m_uServerIdx = a + 1;
 			break;
 		}
+	}
+	if (m_uServerIdx == 0) {
+		m_uServerIdx = m_vServers.size();
+		CIRCSock* pSock = GetIRCSock();
 
-		if (a == m_vServers.size() -1) {
-			m_uServerIdx = m_vServers.size();
-			CIRCSock* pSock = GetIRCSock();
-
-			if (pSock) {
-				PutStatus("Jumping servers because this server is no longer in the list");
-				pSock->Quit();
-			}
+		if (pSock) {
+			PutStatus("Jumping servers because this server is no longer in the list");
+			pSock->Quit();
 		}
 	}
 	// !Servers
