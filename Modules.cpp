@@ -1045,7 +1045,7 @@ ModHandle CModules::OpenModule(const CString& sModule, const CString& sModPath, 
 		return NULL;
 	}
 
-	typedef CString (*sFP)();
+	typedef const char *(*sFP)();
 	sFP GetDesc = (sFP) dlsym(p, "ZNCModDescription");
 
 	if (!GetDesc) {
