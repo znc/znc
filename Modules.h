@@ -45,13 +45,13 @@ typedef void* ModHandle;
 #define MODULEDEFS(CLASS, DESCRIPTION) \
 	extern "C" { \
 		/* First the definitions to shut up some compiler warnings */ \
-		CString ZNCModDescription(); \
+		const char *ZNCModDescription(); \
 		bool ZNCModGlobal(); \
 		double ZNCModVersion(); \
 		CModule* ZNCModLoad(ModHandle p, CUser* pUser, const CString& sModName, \
 				const CString& sModPath); \
 		void ZNCModUnload(CModule* pMod); \
-		CString ZNCModDescription() { return DESCRIPTION; } \
+		const char *ZNCModDescription() { return DESCRIPTION; } \
 		bool ZNCModGlobal() { return false; } \
 		double ZNCModVersion() { return VERSION; } \
 		CModule* ZNCModLoad(ModHandle p, CUser* pUser, const CString& sModName, \
@@ -68,13 +68,13 @@ typedef void* ModHandle;
 #define GLOBALMODULEDEFS(CLASS, DESCRIPTION) \
 	extern "C" { \
 		/* First the definitions to shut up some compiler warnings */ \
-		CString ZNCModDescription(); \
+		const char *ZNCModDescription(); \
 		bool ZNCModGlobal(); \
 		double ZNCModVersion(); \
 		CGlobalModule* ZNCModLoad(ModHandle p, const CString& sModName, \
 				const CString& sModPath); \
 		void ZNCModUnload(CGlobalModule* pMod); \
-		CString ZNCModDescription() { return DESCRIPTION; } \
+		const char *ZNCModDescription() { return DESCRIPTION; } \
 		bool ZNCModGlobal() { return true; } \
 		double ZNCModVersion() { return VERSION; } \
 		CGlobalModule* ZNCModLoad(ModHandle p, const CString& sModName, \
