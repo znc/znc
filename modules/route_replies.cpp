@@ -256,18 +256,19 @@ public:
 	{
 		// The timer will be deleted after this by the event loop
 
-		PutModule("This module hit a timeout. This is a BUG!");
+		if (GetNV("silent_timeouts") != "yes") {
+			PutModule("This module hit a timeout which is possibly a bug.");
+			PutModule("Use \"silent yes\" to disable this message.");
+			PutModule("Last request: " + m_sLastRequest);
+			PutModule("Expected replies: ");
 
-		PutModule("Last request: " + m_sLastRequest);
-
-		PutModule("Expected replies: ");
-
-		for (size_t i = 0; m_pReplies[i].szReply != NULL; i++) {
-			if (m_pReplies[i].bLastResponse)
-				PutModule(m_pReplies[i].szReply +
-						CString(" (last)"));
-			else
-				PutModule(m_pReplies[i].szReply);
+			for (size_t i = 0; m_pReplies[i].szReply != NULL; i++) {
+				if (m_pReplies[i].bLastResponse)
+					PutModule(m_pReplies[i].szReply +
+							CString(" (last)"));
+				else
+					PutModule(m_pReplies[i].szReply);
+			}
 		}
 
 		m_pDoing = NULL;
@@ -329,6 +330,29 @@ private:
 		m_sLastRequest = it->second[0].sLine;
 		PutIRC(it->second[0].sLine);
 		it->second.erase(it->second.begin());
+	}
+
+	virtual void OnModCommand(const CString& sCommand) {
+		const CString sCmd = sCommand.Token(0);
+		const CString sArgs = sCommand.Token(1, true);
+
+		if (sCmd.Equals("silent")) {
+			if (sArgs.Equals("yes")) {
+				SetNV("silent_timeouts", "yes");
+				PutModule("Disabled timeout messages");
+			} else if (sArgs.Equals("no")) {
+				DelNV("silent_timeouts");
+				PutModule("Enabled timeout messages");
+			} else if (sArgs.empty()) {
+				if (GetNV("silent_timeouts") == "yes")
+					PutModule("Timeout messages are disabled");
+				else
+					PutModule("Timeout message are enabled");
+			} else
+				PutModule("Invalid argument");
+		} else {
+			PutModule("Available commands: silent [yes/no], silent");
+		}
 	}
 
 	CClient	*m_pDoing;
