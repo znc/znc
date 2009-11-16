@@ -38,22 +38,25 @@ class CIRCSock;
 
 typedef void* ModHandle;
 
+#define MODCOMMONDEFS(DESCRIPTION, GLOBAL) \
+	const char *ZNCModDescription(); \
+	bool ZNCModGlobal(); \
+	double ZNCModVersion(); \
+	const char *ZNCModDescription() { return DESCRIPTION; } \
+	double ZNCModVersion() { return VERSION; } \
+	bool ZNCModGlobal() { return GLOBAL; } \
+
 #define MODCONSTRUCTOR(CLASS) \
 	CLASS(ModHandle pDLL, CUser* pUser, const CString& sModName, \
 			const CString& sModPath) \
 			: CModule(pDLL, pUser, sModName, sModPath)
 #define MODULEDEFS(CLASS, DESCRIPTION) \
 	extern "C" { \
+		MODCOMMONDEFS(DESCRIPTION, false) \
 		/* First the definitions to shut up some compiler warnings */ \
-		const char *ZNCModDescription(); \
-		bool ZNCModGlobal(); \
-		double ZNCModVersion(); \
 		CModule* ZNCModLoad(ModHandle p, CUser* pUser, const CString& sModName, \
 				const CString& sModPath); \
 		void ZNCModUnload(CModule* pMod); \
-		const char *ZNCModDescription() { return DESCRIPTION; } \
-		bool ZNCModGlobal() { return false; } \
-		double ZNCModVersion() { return VERSION; } \
 		CModule* ZNCModLoad(ModHandle p, CUser* pUser, const CString& sModName, \
 				const CString& sModPath) \
 		{ return new CLASS(p, pUser, sModName, sModPath); } \
@@ -67,16 +70,11 @@ typedef void* ModHandle;
 			: CGlobalModule(pDLL, sModName, sModPath)
 #define GLOBALMODULEDEFS(CLASS, DESCRIPTION) \
 	extern "C" { \
+		MODCOMMONDEFS(DESCRIPTION, true) \
 		/* First the definitions to shut up some compiler warnings */ \
-		const char *ZNCModDescription(); \
-		bool ZNCModGlobal(); \
-		double ZNCModVersion(); \
 		CGlobalModule* ZNCModLoad(ModHandle p, const CString& sModName, \
 				const CString& sModPath); \
 		void ZNCModUnload(CGlobalModule* pMod); \
-		const char *ZNCModDescription() { return DESCRIPTION; } \
-		bool ZNCModGlobal() { return true; } \
-		double ZNCModVersion() { return VERSION; } \
 		CGlobalModule* ZNCModLoad(ModHandle p, const CString& sModName, \
 				const CString& sModPath) \
 		{ return new CLASS(p, sModName, sModPath); } \
