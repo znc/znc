@@ -37,7 +37,11 @@
 #define SHA256_DIGEST_SIZE ( 256 / 8)
 #define SHA256_BLOCK_SIZE  ( 512 / 8)
 
-#include <stdint.h>
+// C99 defines stdint.h which defines a uint32_t and uint8_t type.
+// But the other kids didn't want to play with poor little Solaris 9 and so he
+// just defines these in inttypes.h which is also part of C99 and is supposed to
+// include stdint.h. Solaris 9 is a weirdo. :(
+#include <inttypes.h>
 
 typedef struct {
     unsigned int tot_len;
