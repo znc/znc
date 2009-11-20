@@ -41,7 +41,7 @@ CZNC::CZNC() {
 	m_uBytesRead = 0;
 	m_uBytesWritten = 0;
 	m_pConnectUserTimer = NULL;
-	m_bNeedRehash = false;
+	m_eConfigState = ECONFIG_NOTHING;
 	m_TimeStarted = time(NULL);
 }
 
@@ -228,8 +228,9 @@ void CZNC::Loop() {
 	while (true) {
 		CString sError;
 
-		if (GetNeedRehash()) {
-			SetNeedRehash(false);
+		switch (GetConfigState()) {
+		case ECONFIG_NEED_REHASH:
+			SetConfigState(ECONFIG_NOTHING);
 
 			if (RehashConfig(sError)) {
 				Broadcast("Rehashing succeeded", true);
@@ -237,6 +238,18 @@ void CZNC::Loop() {
 				Broadcast("Rehashing failed: " + sError, true);
 				Broadcast("ZNC is in some possibly inconsistent state!", true);
 			}
+			break;
+		case ECONFIG_NEED_WRITE:
+			SetConfigState(ECONFIG_NOTHING);
+
+			if (WriteConfig()) {
+				Broadcast("Writing the config suceeded", true);
+			} else {
+				Broadcast("Writing the config file failed", true);
+			}
+			break;
+		case ECONFIG_NOTHING:
+			break;
 		}
 
 		// Check for users that need to be deleted
