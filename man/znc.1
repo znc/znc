@@ -79,6 +79,22 @@ This is the server certificate
 .B znc
 uses.
 You need this for SSL.
+.SH SIGNALS
+This section explains how
+.B znc
+reacts to different signals:
+.TP
+.B SIGINT
+Exit ZNC. This is equivalent to
+.I /znc shutdown
+.TP
+.B SIGHUP
+Reload znc.conf. This is equivalent to
+.I /znc rehash
+.TP
+.B SIGUSR1
+Rewrite znc.conf. This is equivalent to
+.I /znc saveconfig
 .SH FILES
 .TP
 .I /usr/local/share/znc/
