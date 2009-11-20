@@ -57,9 +57,19 @@ static void die(int sig) {
 	exit(sig);
 }
 
-static void rehash(int sig) {
-	CUtils::PrintMessage("Caught SIGHUP");
-	CZNC::Get().SetNeedRehash(true);
+static void signalHandler(int sig) {
+	switch (sig) {
+	case SIGHUP:
+		CUtils::PrintMessage("Caught SIGHUP");
+		CZNC::Get().SetConfigState(CZNC::ECONFIG_NEED_REHASH);
+		break;
+	case SIGUSR1:
+		CUtils::PrintMessage("Caught SIGUSR1");
+		CZNC::Get().SetConfigState(CZNC::ECONFIG_NEED_WRITE);
+		break;
+	default:
+		CUtils::PrintMessage("WTF? Signal handler called for a signal it doesn't know?");
+	}
 }
 
 static bool isRoot() {
@@ -240,8 +250,9 @@ int main(int argc, char** argv) {
 	sa.sa_handler = SIG_IGN;
 	sigaction(SIGPIPE, &sa, (struct sigaction*) NULL);
 
-	sa.sa_handler = rehash;
+	sa.sa_handler = signalHandler;
 	sigaction(SIGHUP,  &sa, (struct sigaction*) NULL);
+	sigaction(SIGUSR1, &sa, (struct sigaction*) NULL);
 
 	// Once this signal is caught, the signal handler is reset
 	// to SIG_DFL. This avoids endless loop with signals.
