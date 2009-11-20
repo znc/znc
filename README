@@ -119,6 +119,11 @@ To rehash the config file, you can send ZNC SIGHUP via
 or you can login to znc and use
  /msg *status rehash
 
+If you changed some settings while znc is running, a simple
+ pkill -SIGUSR1 znc
+will make ZNC rewrite its config file. Alternatively you can use this:
+ /msg *status saveconfig
+
 Writing own modules
 -------------------
 
