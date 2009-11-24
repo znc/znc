@@ -81,7 +81,7 @@ void CIRCSock::ReadLine(const CString& sData) {
 		PutIRC("PONG " + sLine.substr(5));
 		m_pUser->PutUser(sLine);
 		return;
-	} else if (sLine.Equals("PONG ", false, 5) && sLine.Token(3).Equals(":ZNC")) {
+	} else if (sLine.Token(1).Equals("PONG") && sLine.Token(3).Equals(":ZNC")) {
 		// We asked for this so don't forward the reply to clients.
 		return;
 	} else if (sLine.Equals("ERROR ", false, 6)) {
