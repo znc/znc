@@ -25,7 +25,7 @@ public:
 
 	virtual ~CWebAdminAuth() {}
 
-	void SetWebAdminSock(CWebAdminSock* pWebAdminSock) { m_pWebAdminSock = pWebAdminSock; }
+	void Invalidate() { m_pWebAdminSock = NULL; CAuthBase::Invalidate(); }
 	void AcceptedLogin(CUser& User);
 	void RefusedLogin(const CString& sReason);
 private:
@@ -359,7 +359,7 @@ CWebAdminSock::CWebAdminSock(CWebAdminMod* pModule, const CString& sHostname, un
 CWebAdminSock::~CWebAdminSock() {
 	if (!m_spAuth.IsNull()) {
 		CWebAdminAuth* pAuth = (CWebAdminAuth*) &(*m_spAuth);
-		pAuth->SetWebAdminSock(NULL);
+		pAuth->Invalidate();
 	}
 }
 
