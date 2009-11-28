@@ -35,13 +35,17 @@ public:
 		m_pSock = pSock;
 	}
 
-	void AcceptLogin(CUser& User) { AcceptedLogin(User); }
+	void AcceptLogin(CUser& User);
 	void RefuseLogin(const CString& sReason);
 
 	const CString& GetUsername() const { return m_sUsername; }
 	const CString& GetPassword() const { return m_sPassword; }
 	Csock *GetSocket() const { return m_pSock; }
 	CString GetRemoteIP() const;
+
+	// Invalidate this CAuthBase instance which means it will no longer use
+	// m_pSock and AcceptLogin() or RefusedLogin() will have no effect.
+	virtual void Invalidate();
 
 protected:
 	virtual void AcceptedLogin(CUser& User) = 0;
@@ -59,7 +63,7 @@ public:
 	CClientAuth(CClient* pClient, const CString& sUsername, const CString& sPassword);
 	virtual ~CClientAuth() {}
 
-	void SetClient(CClient* pClient) { m_pClient = pClient; }
+	void Invalidate() { m_pClient = NULL; CAuthBase::Invalidate(); }
 	void AcceptedLogin(CUser& User);
 	void RefusedLogin(const CString& sReason);
 private:

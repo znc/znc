@@ -49,7 +49,7 @@
 CClient::~CClient() {
 	if (!m_spAuth.IsNull()) {
 		CClientAuth* pAuth = (CClientAuth*) &(*m_spAuth);
-		pAuth->SetClient(NULL);
+		pAuth->Invalidate();
 	}
 	if (m_pUser != NULL) {
 		m_pUser->AddBytesRead(GetBytesRead());
@@ -641,8 +641,22 @@ CString CAuthBase::GetRemoteIP() const {
 	return "";
 }
 
+void CAuthBase::Invalidate() {
+	m_pSock = NULL;
+}
+
+void CAuthBase::AcceptLogin(CUser& User) {
+	if (m_pSock) {
+		AcceptedLogin(User);
+		Invalidate();
+	}
+}
+
 void CAuthBase::RefuseLogin(const CString& sReason) {
 	CUser* pUser = CZNC::Get().GetUser(GetUsername());
+
+	if (!m_pSock)
+		return;
 
 	// If the username is valid, notify that user that someone tried to
 	// login. Use sReason because there are other reasons than "wrong
@@ -656,6 +670,7 @@ void CAuthBase::RefuseLogin(const CString& sReason) {
 	CZNC::Get().GetModules().OnFailedLogin(GetUsername(), GetRemoteIP());
 #endif
 	RefusedLogin(sReason);
+	Invalidate();
 }
 
 void CClient::RefuseLogin(const CString& sReason) {
