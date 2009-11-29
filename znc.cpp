@@ -287,7 +287,13 @@ bool CZNC::WriteISpoof(CUser* pUser) {
 			return false;
 		}
 
-		CString sData = m_sISpoofFormat.Token(0, false, "%") + pUser->GetIdent() + m_sISpoofFormat.Token(1, true, "%");
+		CString sData = pUser->ExpandString(m_sISpoofFormat);
+
+		// If the format doesn't contain anything expandable, we'll
+		// assume this is an "old"-style format string.
+		if (sData == m_sISpoofFormat) {
+			sData.Replace("%", pUser->GetIdent());
+		}
 		m_pISpoofLockFile->Write(sData + "\n");
 	}
 	return true;
