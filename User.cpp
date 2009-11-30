@@ -198,17 +198,16 @@ CString CUser::AddTimestamp(const CString& sStr) const {
 CString& CUser::AddTimestamp(const CString& sStr, CString& sRet) const {
 	char szTimestamp[1024];
 	time_t tm;
+	sRet = sStr;
 
-	if (GetTimestampFormat().empty() || (!m_bAppendTimestamp && !m_bPrependTimestamp)) {
-		sRet = sStr;
-	} else {
+	if (!GetTimestampFormat().empty() && (m_bAppendTimestamp || m_bPrependTimestamp)) {
 		time(&tm);
 		tm += (time_t)(m_fTimezoneOffset * 60 * 60); // offset is in hours
 		size_t i = strftime(szTimestamp, sizeof(szTimestamp), GetTimestampFormat().c_str(), localtime(&tm));
-		if (i != 0) {
-			sRet = sStr;
-		} else {
-			sRet.clear();
+		// If strftime returns 0, an error occured in format, or result is empty
+		// In both cases just don't prepend/append anything to our string
+		if (0 == i) {
+			return sRet;
 		}
 
 		if (m_bPrependTimestamp) {
