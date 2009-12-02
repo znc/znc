@@ -309,8 +309,8 @@ public:
 				sTime.Trim();
 			}
 			if (m_sReason.empty())
-				m_sReason = "away :Auto Away at " + sTime;
-			PutIRC(m_sReason);
+				m_sReason = "Auto Away at " + sTime;
+			PutIRC("AWAY :" + m_sReason);
 			m_bIsAway = true;
 		}
 	}
