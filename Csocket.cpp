@@ -857,7 +857,9 @@ bool Csock::Listen( u_short iPort, int iMaxConns, const CS_STRING & sBindHost, u
 	m_sBindHost = sBindHost;
 	if ( !sBindHost.empty() )
 	{
-		if( GetAddrInfo( sBindHost, m_address ) != 0 )
+		// forcing this to block regardless of resolver overloading, because listen is not currently setup to
+		// to handle nonblocking operations. This is used to resolve local ip's for binding anyways and should be instant
+		if( ::GetAddrInfo( sBindHost, this, m_address ) != 0 )
 			return( false );
 	}
 
