@@ -166,13 +166,13 @@ if test -z "$NOSSL"; then
 fi
 
 AC_ARG_WITH( [module-prefix],
-	AS_HELP_STRING([--with-module-prefix], [module object code [[LIBDIR/znc]]]),
+	AS_HELP_STRING([--with-module-prefix], [module object code [LIBDIR/znc]]),
 	[MODDIR=$withval],
 	[MODDIR="${libdir}/znc"] )
 
 AC_ARG_WITH( [module-data-prefix],
 	AS_HELP_STRING([--with-module-data-prefix=DIR],
-		[static module data (webadmin skins) [[DATADIR/znc]]]),
+		[static module data (webadmin skins) [DATADIR/znc]]),
 	[DATADIR=$withval],
 	[DATADIR="${datadir}/znc"] )
 
