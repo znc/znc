@@ -1220,7 +1220,7 @@ const vector<CChan*>& CUser::GetChans() const { return m_vChans; }
 const vector<CServer*>& CUser::GetServers() const { return m_vServers; }
 const CNick& CUser::GetIRCNick() const { return m_IRCNick; }
 const CString& CUser::GetIRCServer() const { return m_sIRCServer; }
-CString CUser::GetQuitMsg() const { return (!m_sQuitMsg.empty()) ? m_sQuitMsg : CZNC::GetTag(false); }
+CString CUser::GetQuitMsg() const { return (!m_sQuitMsg.Trim_n().empty()) ? m_sQuitMsg : CZNC::GetTag(false); }
 const MCString& CUser::GetCTCPReplies() const { return m_mssCTCPReplies; }
 unsigned int CUser::GetBufferCount() const { return m_uBufferCount; }
 bool CUser::KeepBuffer() const { return m_bKeepBuffer; }
