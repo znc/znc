@@ -1655,7 +1655,9 @@ bool CZNC::DoRehash(CString& sError)
 		return false;
 	}
 
-	// Make sure that users that want to connect do so
+	// Make sure that users that want to connect do so and also make sure a
+	// new ConnectDelay setting is applied.
+	DisableConnectUser();
 	EnableConnectUser();
 
 	return true;
