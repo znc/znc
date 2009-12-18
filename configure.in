@@ -1,5 +1,5 @@
 dnl Keep the version number in sync with main.h!
-AC_INIT([znc], [0.078])
+AC_INIT([znc], [0.079])
 AC_CONFIG_SRCDIR([znc.cpp])
 AC_LANG([C++])
 
