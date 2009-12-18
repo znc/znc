@@ -291,6 +291,7 @@ int main(int argc, char** argv) {
 				// The above code adds 4 entries to args tops
 				// which means the array should be big enough
 
+				delete pZNC;
 				execvp(args[0], args);
 				CUtils::PrintError("Unable to restart znc [" + CString(strerror(errno)) + "]");
 			} /* Fall through */
