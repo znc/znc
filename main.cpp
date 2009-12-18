@@ -47,11 +47,6 @@ static void die(int sig) {
 	signal(SIGPIPE, SIG_DFL);
 
 	CUtils::PrintMessage("Exiting on SIG [" + CString(sig) + "]");
-#ifdef _DEBUG
-	if ((sig == SIGABRT) || (sig == SIGSEGV)) {
-		abort();
-	}
-#endif /* _DEBUG */
 
 	delete &CZNC::Get();
 	exit(sig);
@@ -259,10 +254,7 @@ int main(int argc, char** argv) {
 	sa.sa_flags = SA_RESETHAND;
 	sa.sa_handler = die;
 	sigaction(SIGINT,  &sa, (struct sigaction*) NULL);
-	sigaction(SIGILL,  &sa, (struct sigaction*) NULL);
 	sigaction(SIGQUIT, &sa, (struct sigaction*) NULL);
-	sigaction(SIGBUS,  &sa, (struct sigaction*) NULL);
-	sigaction(SIGSEGV, &sa, (struct sigaction*) NULL);
 	sigaction(SIGTERM, &sa, (struct sigaction*) NULL);
 
 	int iRet = 0;
