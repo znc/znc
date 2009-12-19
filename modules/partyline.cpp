@@ -547,7 +547,7 @@ public:
 			}
 			PutModule("--- End of list");
 	} else {
-			PutModule("Unkown command, try 'HELP'");
+			PutModule("Unknown command, try 'HELP'");
 		}
 	}
 
