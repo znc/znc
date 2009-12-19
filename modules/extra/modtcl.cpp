@@ -50,7 +50,9 @@ protected:
 
 class CModTcl : public CModule {
 public:
-	MODCONSTRUCTOR(CModTcl) {}
+	MODCONSTRUCTOR(CModTcl) {
+		interp = NULL;
+	}
 
 	virtual ~CModTcl() {
 		if (interp) {
@@ -66,7 +68,6 @@ public:
 		}
 #endif
 
-		interp = NULL;
 		AddTimer(new CModTclStartTimer(this, 1, 1, "ModTclStarter", "Timer for modtcl to load the interpreter."));
 		return true;
 	}
