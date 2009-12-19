@@ -59,6 +59,13 @@ public:
 	}
 
 	virtual bool OnLoad(const CString& sArgs, CString& sErrorMsg) {
+#ifndef MOD_MODTCL_ALLOW_EVERYONE
+		if (!m_pUser->IsAdmin()) {
+			sErrorMsg = "You must be admin to use the modtcl module";
+			return false;
+		}
+#endif
+
 		interp = NULL;
 		AddTimer(new CModTclStartTimer(this, 1, 1, "ModTclStarter", "Timer for modtcl to load the interpreter."));
 		return true;
