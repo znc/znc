@@ -28,14 +28,13 @@
 * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 *
 *
-* $Revision: 1.105 $
+* $Revision: 1.108 $
 */
 
 #include "Csocket.h"
 #ifdef __NetBSD__
 #include <sys/param.h>
 #endif /* __NetBSD__ */
-
 
 #include <list>
 
@@ -196,6 +195,49 @@ static int __GetHostByName( const CS_STRING & sHostName, struct in_addr *paddr, 
 	return( iReturn == TRY_AGAIN ? EAGAIN : iReturn );
 }
 #endif /* !HAVE_IPV6 */
+
+#ifdef HAVE_C_ARES
+void Csock::FreeAres()
+{
+	if( m_pARESChannel )
+	{
+		ares_destroy( m_pARESChannel );
+		m_pARESChannel = NULL;
+	}
+}
+#endif /* HAVE_C_ARES */
+
+#ifdef HAVE_C_ARES
+void AresHostCallback( void *pArg, int status, int timeouts, struct hostent *hent )
+{
+	Csock *pSock = (Csock *)pArg;
+	if( status == ARES_SUCCESS && hent )
+	{
+		CSSockAddr *pSockAddr = pSock->GetCurrentAddr();
+		if( hent->h_addrtype == AF_INET )
+		{
+			pSock->SetIPv6( false );
+			memcpy( pSockAddr->GetAddr(), hent->h_addr_list[0], sizeof( *(pSockAddr->GetAddr()) ) );
+		}
+#ifdef HAVE_IPV6
+		else if( hent->h_addrtype == AF_INET6 )
+		{
+			pSock->SetIPv6( true );
+			memcpy( pSockAddr->GetAddr6(), hent->h_addr_list[0], sizeof( *(pSockAddr->GetAddr6()) ) );
+		}
+#endif /* HAVE_IPV6 */
+		else
+		{
+			status = ARES_ENOTFOUND;
+		}
+	}
+	else
+	{
+		CS_DEBUG( ares_strerror( status ) );
+	}
+	pSock->SetAresFinished( status );
+}
+#endif /* HAVE_C_ARES */
 
 int GetAddrInfo( const CS_STRING & sHostname, Csock *pSock, CSSockAddr & csSockAddr )
 {
@@ -530,6 +572,12 @@ Csock *Csock::GetSockObj( const CS_STRING & sHostname, u_short iPort )
 
 Csock::~Csock()
 {
+#ifdef HAVE_C_ARES
+	if( m_pARESChannel )
+		ares_cancel( m_pARESChannel );
+	FreeAres();
+#endif /* HAVE_C_ARES */
+
 #ifdef HAVE_LIBSSL
 	FREE_SSL();
 	FREE_CTX();
@@ -610,6 +658,11 @@ void Csock::Copy( const Csock & cCopy )
 	m_bindhost			= cCopy.m_bindhost;
 	m_bIsIPv6			= cCopy.m_bIsIPv6;
 	m_bSkipConnect		= cCopy.m_bSkipConnect;
+#ifdef HAVE_C_ARES
+	FreeAres(); // Not copying this state, but making sure its nulled out
+	m_iARESStatus = -1; // set it to unitialized
+	m_pCurrAddr = NULL;
+#endif /* HAVE_C_ARES */
 
 #ifdef HAVE_LIBSSL
 	m_iRequireClientCertFlags = cCopy.m_iRequireClientCertFlags;
@@ -2006,6 +2059,48 @@ int Csock::GetPending()
 
 int Csock::GetAddrInfo( const CS_STRING & sHostname, CSSockAddr & csSockAddr )
 {
+#ifdef HAVE_IPV6
+	if( csSockAddr.GetAFRequire() != AF_INET && inet_pton( AF_INET6, sHostname.c_str(), csSockAddr.GetAddr6() ) > 0 )
+	{
+		SetIPv6( true );
+		return( 0 );
+	}
+#endif /* HAVE_IPV6 */
+	if( inet_pton( AF_INET, sHostname.c_str(), csSockAddr.GetAddr() ) > 0 )
+	{
+#ifdef HAVE_IPV6
+		SetIPv6( false );
+#endif /* HAVE_IPV6 */
+		return( 0 );
+	}
+
+#ifdef HAVE_C_ARES
+	if( GetType() != LISTENER )
+	{ // right now the current function in Listen() is it blocks, the easy way around this at the moment is to use ip
+		if( !m_pARESChannel )
+		{
+			if( ares_init( &m_pARESChannel ) != ARES_SUCCESS )
+			{ // TODO throw some debug?
+				FreeAres();
+				return( ETIMEDOUT );
+			}
+			m_pCurrAddr = &csSockAddr; // flag its starting
+			int iFamily = AF_INET;
+
+#ifdef HAVE_IPV6
+			iFamily = csSockAddr.GetAFRequire() == CSSockAddr::RAF_ANY ? AF_INET6 : csSockAddr.GetAFRequire();
+#endif /* HAVE_IPV6 */
+			ares_gethostbyname( m_pARESChannel, sHostname.c_str(), iFamily, AresHostCallback, this );
+		}
+		if( !m_pCurrAddr )
+		{ // this means its finished
+			FreeAres();
+			return( m_iARESStatus == ARES_SUCCESS ? 0 : ETIMEDOUT );
+		}
+		return( EAGAIN );
+	}
+#endif /* HAVE_C_ARES */
+
 	return( ::GetAddrInfo( sHostname, this, csSockAddr ) );
 }
 
@@ -2147,7 +2242,7 @@ int Csock::SOCKET( bool bListen )
 	return( iRet );
 }
 
-void Csock::Init( const CS_STRING & sHostname, u_short iport, int itimeout )
+void Csock::Init( const CS_STRING & sHostname, u_short uPort, int itimeout )
 {
 #ifdef HAVE_LIBSSL
 	m_ssl = NULL;
@@ -2160,7 +2255,7 @@ void Csock::Init( const CS_STRING & sHostname, u_short iport, int itimeout )
 	m_itimeout = itimeout;
 	m_bssl = false;
 	m_bIsConnected = false;
-	m_iport = iport;
+	m_iport = uPort;
 	m_shostname = sHostname;
 	m_sbuffer.clear();
 	m_eCloseType = CLT_DONT;
@@ -2189,5 +2284,10 @@ void Csock::Init( const CS_STRING & sHostname, u_short iport, int itimeout )
 	m_bIsIPv6 = false;
 	m_bSkipConnect = false;
 	m_iLastCheckTimeoutTime = 0;
+#ifdef HAVE_C_ARES
+	m_pARESChannel = NULL;
+	m_pCurrAddr = NULL;
+	m_iARESStatus = -1;
+#endif /* HAVE_C_ARES */
 }
 
