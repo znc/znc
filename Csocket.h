@@ -28,7 +28,7 @@
 * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 *
 *
-* $Revision: 1.211 $
+* $Revision: 1.213 $
 */
 
 // note to compile with win32 need to link to winsock2, using gcc its -lws2_32
@@ -60,6 +60,10 @@
 #define ECONNABORTED WSAECONNABORTED
 
 #endif /* _WIN32 */
+
+#ifdef HAVE_C_ARES
+#include <ares.h>
+#endif /* HAVE_C_ARES */
 
 #include <stdlib.h>
 #include <errno.h>
@@ -923,12 +927,12 @@ public:
 
 	enum EDNSLType
 	{
-		DNS_VHOST,
-		DNS_DEST
+		DNS_VHOST, //!< this lookup is for the vhost bind
+		DNS_DEST //!< this lookup is for the destination address
 	};
 
 	/**
-	 * nonblocking dns lookup (when -pthread is set to compile)
+	 * dns lookup @see EDNSLType
 	 * @return 0 for success, EAGAIN to check back again (same arguments as before), ETIMEDOUT on failure
 	 */
 	int DNSLookup( EDNSLType eDNSLType );
@@ -965,6 +969,12 @@ public:
 	 * @return 0 on success, ETIMEDOUT if no lookup was found, EAGAIN if you should check again later for an answer
 	 */
 	virtual int GetAddrInfo( const CS_STRING & sHostname, CSSockAddr & csSockAddr );
+
+#ifdef HAVE_C_ARES
+	CSSockAddr * GetCurrentAddr() const { return( m_pCurrAddr ); }
+	void SetAresFinished( int status ) { m_pCurrAddr = NULL; m_iARESStatus = status; }
+	ares_channel GetAresChannel() { return( m_pARESChannel ); }
+#endif /* HAVE_C_ARES */
 
 private:
 	//! making private for safety
@@ -1010,6 +1020,12 @@ private:
 	ECONState		m_eConState;
 	CS_STRING		m_sBindHost;
 	u_int			m_iCurBindCount, m_iDNSTryCount;
+#ifdef HAVE_C_ARES
+	void FreeAres();
+	ares_channel	m_pARESChannel;
+	CSSockAddr		*m_pCurrAddr;
+	int				m_iARESStatus;
+#endif /* HAVE_C_ARES */
 
 };
 
@@ -1369,7 +1385,6 @@ public:
 
 			if ( ( pcSock->GetType() != T::OUTBOUND ) || ( pcSock->GetConState() == T::CST_OK ) )
 				continue;
-
 			if ( pcSock->GetConState() == T::CST_DNS )
 			{
 				if ( pcSock->DNSLookup( T::DNS_VHOST ) == ETIMEDOUT )
@@ -1847,23 +1862,31 @@ protected:
 		TFD_ZERO( &rfds );
 		TFD_ZERO( &wfds );
 
-		// before we go any further, Process work needing to be done on the job
-		for( unsigned int i = 0; i < this->size(); i++ )
-		{
-			Csock::ECloseType eCloseType = (*this)[i]->GetCloseType();
-			if( eCloseType == T::CLT_NOW || eCloseType == T::CLT_DEREFERENCE || ( eCloseType == T::CLT_AFTERWRITE && (*this)[i]->GetWriteBuffer().empty() ) )
-				DelSock( i-- ); // close any socks that have requested it
-			else
-				(*this)[i]->Cron(); // call the Cron handler here
-		}
-
 		bool bHasWriteable = false;
 		bool bHasAvailSocks = false;
 		unsigned long long iNOW = 0;
-
 		for( unsigned int i = 0; i < this->size(); i++ )
 		{
 			T *pcSock = (*this)[i];
+
+			Csock::ECloseType eCloseType = pcSock->GetCloseType();
+
+			if( eCloseType == T::CLT_NOW || eCloseType == T::CLT_DEREFERENCE || ( eCloseType == T::CLT_AFTERWRITE && pcSock->GetWriteBuffer().empty() ) )
+			{
+				DelSock( i-- ); // close any socks that have requested it
+				continue;
+			}
+			else
+				pcSock->Cron(); // call the Cron handler here
+		
+#ifdef HAVE_C_ARES
+			ares_channel pChannel = pcSock->GetAresChannel();
+			if( pChannel )
+			{
+				ares_fds( pChannel, &rfds, &wfds );
+				bHasWriteable = true;
+			}
+#endif /* HAVE_C_ARES */
 
 			if ( pcSock->GetConState() != T::CST_OK )
 				continue;
@@ -1929,18 +1952,8 @@ protected:
 
 			} else
 				TFD_SET( iRSock, &rfds );
-		}
-
-		// first check to see if any ssl sockets are ready for immediate read
-		// a mini select() type deal for ssl
-		for( unsigned int i = 0; i < this->size(); i++ )
-		{
-			T *pcSock = (*this)[i];
-
-			if ( pcSock->GetConState() != T::CST_OK )
-				continue;
-
-			if ( ( pcSock->GetSSL() ) && ( pcSock->GetType() != Csock::LISTENER ) )
+			
+			if( pcSock->GetSSL() && pcSock->GetType() != Csock::LISTENER )
 			{
 				if ( ( pcSock->GetPending() > 0 ) && ( !pcSock->IsReadPaused() ) )
 					SelectSock( mpeSocks, SUCCESS, pcSock );
@@ -1960,7 +1973,6 @@ protected:
 			tv.tv_usec = iQuickReset;
 			tv.tv_sec = 0;
 		}
-
 
 		if ( bHasWriteable )
 			iSel = Select(FD_SETSIZE, &rfds, &wfds, NULL, &tv);
@@ -2001,6 +2013,12 @@ protected:
 		for( unsigned int i = 0; i < this->size(); i++ )
 		{
 			T *pcSock = (*this)[i];
+
+#ifdef HAVE_C_ARES
+			ares_channel pChannel = pcSock->GetAresChannel();
+			if( pChannel )
+				ares_process( pChannel, &rfds, &wfds );
+#endif /* HAVE_C_ARES */
 
 			if ( pcSock->GetConState() != T::CST_OK )
 				continue;
