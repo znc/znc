@@ -51,8 +51,6 @@ CUser::CUser(const CString& sUserName) {
 	m_bIRCConnectEnabled = true;
 	m_pUserTimer = new CUserTimer(this);
 	CZNC::Get().GetManager().AddCron(m_pUserTimer);
-	m_sUserPath = CZNC::Get().GetUserPath() + "/" + sUserName;
-	m_sDLPath = GetUserPath() + "/downloads";
 }
 
 CUser::~CUser() {
@@ -1113,6 +1111,10 @@ CString CUser::MakeCleanUserName(const CString& sUserName) {
 void CUser::SetUserName(const CString& s) {
 	m_sCleanUserName = CUser::MakeCleanUserName(s);
 	m_sUserName = s;
+
+	// set paths that depend on the user name:
+	m_sUserPath = CZNC::Get().GetUserPath() + "/" + m_sUserName;
+	m_sDLPath = GetUserPath() + "/downloads";
 }
 
 bool CUser::IsChan(const CString& sChan) const {
