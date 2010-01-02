@@ -640,11 +640,18 @@ bool CIRCSock::OnCTCPReply(CNick& Nick, CString& sMessage) {
 }
 
 bool CIRCSock::OnPrivCTCP(CNick& Nick, CString& sMessage) {
+	MODULECALL(OnPrivCTCP(Nick, sMessage), m_pUser, NULL, return true);
+
 	if (sMessage.TrimPrefix("ACTION ")) {
 		MODULECALL(OnPrivAction(Nick, sMessage), m_pUser, NULL, return true);
+
+		if (!m_pUser->IsUserAttached()) {
+			// If the user is detached, add to the buffer
+			m_pUser->AddQueryBuffer(":" + Nick.GetNickMask() + " PRIVMSG ", " :\001ACTION " + m_pUser->AddTimestamp(sMessage) + "\001");
+		}
+
 		sMessage = "ACTION " + sMessage;
 	}
-	MODULECALL(OnPrivCTCP(Nick, sMessage), m_pUser, NULL, return true);
 
 	if (sMessage.Equals("DCC ", false, 4) && m_pUser && m_pUser->BounceDCCs() && m_pUser->IsUserAttached()) {
 		// DCC CHAT chat 2453612361 44592
