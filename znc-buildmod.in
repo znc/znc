@@ -45,6 +45,7 @@ fi
 CXXFLAGS="`${ZNC_CONFIG} --cflags` $CXXFLAGS"
 INCLUDES="`${ZNC_CONFIG} --include` $INCLUDES"
 LIBS="`${ZNC_CONFIG} --libs` $LIBS"
+LDFLAGS="`${ZNC_CONFIG} --libznc` $LDFLAGS"
 
 # Get the first word and strip away the first two chars (which is -I)
 INC_PATH=`echo ${INCLUDES} | ${SED} 's: .*::' | ${SED} 's:^..::'`
@@ -66,7 +67,7 @@ do
 		echo "${ERROR} Building ${MOD}.so... File not found"
 	else
 		printf "Building ${MOD}.so... "
-		if ${CXX} ${CXXFLAGS} ${INCLUDES} ${LIBS} -shared -o ${MOD}.so ${FILE} ; then
+		if ${CXX} ${CXXFLAGS} ${INCLUDES} ${LDFLAGS} ${LIBS} -shared -o ${MOD}.so ${FILE} ; then
 			echo "${OK}"
 		else
 			echo "${ERROR} Error while building ${MOD}.so"

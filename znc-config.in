@@ -16,6 +16,15 @@ MODDIR="@MODDIR@"
 DATADIR="@DATADIR@"
 VERSION="@PACKAGE_VERSION@"
 
+# Ugly cygwin stuff :(
+LIBZNC="@LIBZNC@"
+LIBZNCDIR="@LIBZNCDIR@"
+if test "x" = "x$LIBZNC"; then
+	LIBZNCFLAGS=""
+else
+	LIBZNCFLAGS="-L\"$LIBZNCDIR\" -lznc"
+fi
+
 if test -z "$1"; then
 	echo "USAGE: $0 <flag>"
 	echo "	--cxx        [$CXX]"
@@ -26,6 +35,7 @@ if test -z "$1"; then
 	echo "	--datadir    [$DATADIR]"
 	echo "	--version    [$VERSION]"
 	echo "	--prefix     [$prefix]"
+	echo "	--libznc     [$LIBZNCFLAGS]"
 	exit 1
 fi
 
@@ -49,6 +59,8 @@ case $1 in
 		echo $VERSION;;
 	--prefix)
 		echo $prefix;;
+	--libznc)
+		echo $LIBZNCFLAGS;;
 esac
 
 exit 0
