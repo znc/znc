@@ -43,17 +43,8 @@ if test -z "$1"; then
 fi
 
 CXXFLAGS="`${ZNC_CONFIG} --cflags` $CXXFLAGS"
-INCLUDES="`${ZNC_CONFIG} --include` $INCLUDES"
 LIBS="`${ZNC_CONFIG} --libs` $LIBS"
 LDFLAGS="`${ZNC_CONFIG} --libznc` $LDFLAGS"
-
-# Get the first word and strip away the first two chars (which is -I)
-INC_PATH=`echo ${INCLUDES} | ${SED} 's: .*::' | ${SED} 's:^..::'`
-
-if test ! -d "${INC_PATH}"; then
-	echo "${ERROR} Unable to find znc include dir [${INC_PATH}]. Please (re)install ZNC."
-	exit 1
-fi
 
 while test ! -z "$1"
 do
