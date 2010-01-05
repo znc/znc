@@ -25,8 +25,8 @@ check_binary()
 	fi
 }
 
-check_binary ${SED}
-check_binary ${ZNC_CONFIG} "Please (re)install ZNC."
+check_binary "${SED}"
+check_binary "${ZNC_CONFIG}" "Please (re)install ZNC."
 
 if test "x$CXX" = "x" ; then
 	CXX=`${ZNC_CONFIG} --cxx`
@@ -50,7 +50,7 @@ LDFLAGS="`${ZNC_CONFIG} --libznc` $LDFLAGS"
 # Get the first word and strip away the first two chars (which is -I)
 INC_PATH=`echo ${INCLUDES} | ${SED} 's: .*::' | ${SED} 's:^..::'`
 
-if test ! -d ${INC_PATH}; then
+if test ! -d "${INC_PATH}"; then
 	echo "${ERROR} Unable to find znc include dir [${INC_PATH}]. Please (re)install ZNC."
 	exit 1
 fi
@@ -63,14 +63,14 @@ do
 	MOD="${FILE%.cpp}"
 	MOD="${MOD%.cc}"
 
-	if test ! -f ${FILE}; then
-		echo "${ERROR} Building ${MOD}.so... File not found"
+	if test ! -f "${FILE}"; then
+		echo "${ERROR} Building \"${MOD}.so\"... File not found"
 	else
-		printf "Building ${MOD}.so... "
-		if ${CXX} ${CXXFLAGS} ${INCLUDES} ${LDFLAGS} ${LIBS} -shared -o ${MOD}.so ${FILE} ; then
+		printf "Building \"${MOD}.so\"... "
+		if ${CXX} ${CXXFLAGS} ${INCLUDES} ${LDFLAGS} ${LIBS} -shared -o "${MOD}.so" "${FILE}" ; then
 			echo "${OK}"
 		else
-			echo "${ERROR} Error while building ${MOD}.so"
+			echo "${ERROR} Error while building \"${MOD}.so\""
 			exit 1
 		fi
 	fi
