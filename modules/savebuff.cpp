@@ -18,12 +18,11 @@
 #include "User.h"
 #include <sys/stat.h>
 
-/* TODO list
- * store timestamp to be displayed
- * store OnJoin, OnQuit, OnPart, etc send down as messages
- */
-
 #define CRYPT_VERIFICATION_TOKEN "::__:SAVEBUFF:__::"
+// this is basically plain text, but so is having the pass in the command line so *shrug*
+// you could at least do something kind of cool like a bunch of unprintable text
+#define CRYPT_LAME_PASS "::__:NOPASS:__::"
+#define CRYPT_ASK_PASS "--ask-pass"
 
 class CSaveBuff;
 
@@ -45,8 +44,7 @@ public:
 	MODCONSTRUCTOR(CSaveBuff)
 	{
 		m_bBootError = false;
-		// m_sPassword = CBlowfish::MD5("");
-		AddTimer(new CSaveBuffJob(this, 60, 0, "SaveBuff", "Saves the current buffer to disk every 1 minute"));
+		m_bFirstLoad = false;
 	}
 	virtual ~CSaveBuff()
 	{
@@ -58,31 +56,40 @@ public:
 
 	virtual bool OnLoad(const CString& sArgs, CString& sMessage)
 	{
-		const vector<CChan *>& vChans = m_pUser->GetChans();
-
-		if (sArgs.empty())
+		if( sArgs == CRYPT_ASK_PASS )
 		{
-			sMessage = "This module needs as an argument a keyphrase used for encryption";
-			return false;
+			char *pPass = getpass( "Enter pass for savebuff: " );
+			if( pPass )
+				m_sPassword = CBlowfish::MD5( pPass );
 		}
-
-		m_sPassword = CBlowfish::MD5(sArgs);
-
-		for (u_int a = 0; a < vChans.size(); a++)
-		{
-			if (!vChans[a]->KeepBuffer())
-				continue;
-
-			if (!BootStrap(vChans[a]))
-			{
-				sMessage = "Failed to decrypt your saved messages - "
-					"Did you give the right encryption key as an argument to this module?";
-				m_bBootError = true;
-				return(false);
-			}
-		}
+		else if( sArgs.empty() )
+			m_sPassword = CBlowfish::MD5( CRYPT_LAME_PASS ); 
+		else
+			m_sPassword = CBlowfish::MD5(sArgs);
 
 		return true;
+	}
+
+	virtual void OnIRCConnected()
+	{
+		// dropped this into here because there seems to have been a changed where the module is loaded before the channels.
+		// this is a good trigger to tell it to backfill the channels
+		if( !m_bFirstLoad )
+		{
+			m_bFirstLoad = true;
+			AddTimer(new CSaveBuffJob(this, 60, 0, "SaveBuff", "Saves the current buffer to disk every 1 minute"));
+			const vector<CChan *>& vChans = m_pUser->GetChans();
+			for (u_int a = 0; a < vChans.size(); a++)
+			{
+				if (!vChans[a]->KeepBuffer())
+					continue;
+
+				if (!BootStrap(vChans[a]))
+				{
+					PutUser(":***!znc@znc.in PRIVMSG " + vChans[a]->GetName() + " :Failed to decrypt this channel, did you change the encryption pass?");
+				}
+			}
+		}
 	}
 
 	bool BootStrap(CChan *pChan)
@@ -133,7 +140,9 @@ public:
 				CString sFile = CRYPT_VERIFICATION_TOKEN;
 
 				for (u_int b = 0; b < vBuffer.size(); b++)
+				{
 						sFile += vBuffer[b] + "\n";
+				}
 
 				CBlowfish c(m_sPassword, BF_ENCRYPT);
 				sFile = c.Crypt(sFile);
@@ -217,6 +226,7 @@ public:
 		return(sRet);
 	}
 
+#ifdef LEGACY_SAVEBUFF /* event logging is deprecated now in savebuf. Use buffextras module along side of this */
 	CString SpoofChanMsg(const CString & sChannel, const CString & sMesg)
 	{
 		CString sReturn = ":*" + GetModName() + "!znc@znc.in PRIVMSG " + sChannel + " :" + CString(time(NULL)) + " " + sMesg;
@@ -272,9 +282,11 @@ public:
 		if (cNick.GetNick().Equals(m_pUser->GetNick()))
 			SaveBufferToDisk(); // need to force a save here to see this!
 	}
+#endif /* LEGACY_SAVEBUFF */
 
 private:
 	bool	m_bBootError;
+	bool	m_bFirstLoad;
 	CString	m_sPassword;
 	bool DecryptChannel(const CString & sChan, CString & sBuffer)
 	{
