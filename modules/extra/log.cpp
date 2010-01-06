@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008-2009  See the AUTHORS file for details.
+ * Copyright (C) 2008-2010  See the AUTHORS file for details.
  * Copyright (C) 2006-2007, CNU <bshalm@broadpark.no> (http://cnu.dieplz.net/znc)
  *
  * This program is free software; you can redistribute it and/or modify it
