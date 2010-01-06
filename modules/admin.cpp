@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004-2009  See the AUTHORS file for details.
+ * Copyright (C) 2004-2010  See the AUTHORS file for details.
  * Copyright (C) 2008 by Stefan Rado
  * based on admin.cpp by Sebastian Ramacher
  * based on admin.cpp in crox branch
