@@ -61,13 +61,18 @@ public:
 			char *pPass = getpass( "Enter pass for savebuff: " );
 			if( pPass )
 				m_sPassword = CBlowfish::MD5( pPass );
+			else
+			{
+				m_bBootError = true;
+				sMessage = "Nothing retrieved from console. aborting";
+			}
 		}
 		else if( sArgs.empty() )
 			m_sPassword = CBlowfish::MD5( CRYPT_LAME_PASS ); 
 		else
 			m_sPassword = CBlowfish::MD5(sArgs);
 
-		return true;
+		return( !m_bBootError );
 	}
 
 	virtual void OnIRCConnected()
@@ -155,6 +160,10 @@ public:
 					File.Close();
 				}
 			}
+		}
+		else
+		{
+			PutModule( "Password is unset usually meaning the decryption failed. You can setpass to the appropriate pass and things should start working, or setpass to a new pass and save to reinstantiate" );
 		}
 	}
 
