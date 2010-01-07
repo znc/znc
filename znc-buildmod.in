@@ -45,6 +45,7 @@ fi
 CXXFLAGS="`${ZNC_CONFIG} --cflags` $CXXFLAGS"
 LIBS="`${ZNC_CONFIG} --libs` $LIBS"
 LDFLAGS="`${ZNC_CONFIG} --libznc` $LDFLAGS"
+MODLINK="`${ZNC_CONFIG} --modlink` $MODLINK"
 
 while test ! -z "$1"
 do
@@ -58,7 +59,7 @@ do
 		echo "${ERROR} Building \"${MOD}.so\"... File not found"
 	else
 		printf "Building \"${MOD}.so\"... "
-		if ${CXX} ${CXXFLAGS} ${INCLUDES} ${LDFLAGS} ${LIBS} -shared -o "${MOD}.so" "${FILE}" ; then
+		if ${CXX} ${CXXFLAGS} ${INCLUDES} ${LDFLAGS} ${LIBS} ${MODLINK} -o "${MOD}.so" "${FILE}" ; then
 			echo "${OK}"
 		else
 			echo "${ERROR} Error while building \"${MOD}.so\""
