@@ -183,8 +183,7 @@ bool CFile::Move(const CString& sOldFileName, const CString& sNewFileName, bool 
 		return false;
 	}
 
-	//CString sNewLongName = (sNewFileName[0] == '/') ? sNewFileName : m_sPath + "/" + sNewFileName;
-	return (rename(sOldFileName.c_str(), sNewFileName.c_str()) == 0) ? true : false;
+	return (rename(sOldFileName.c_str(), sNewFileName.c_str()) == 0);
 }
 
 bool CFile::Copy(const CString& sOldFileName, const CString& sNewFileName, bool bOverwrite) {
