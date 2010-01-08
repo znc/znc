@@ -10,7 +10,6 @@
 #include "Chan.h"
 #include "DCCBounce.h"
 #include "IRCSock.h"
-#include "Timers.h"
 #include "User.h"
 #include "znc.h"
 
