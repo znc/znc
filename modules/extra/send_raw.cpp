@@ -9,34 +9,48 @@
 #include "User.h"
 #include "znc.h"
 
-class CSendRaw_Mod: public CGlobalModule {
+class CSendRaw_Mod: public CModule {
 public:
-	GLOBALMODCONSTRUCTOR(CSendRaw_Mod) {}
+	MODCONSTRUCTOR(CSendRaw_Mod) {}
 
 	virtual ~CSendRaw_Mod() {
 	}
 
-	virtual void OnModCommand(const CString& sLine) {
-		CString sUser = sLine.Token(0);
-		CString sSend = sLine.Token(1, true);
-		CUser *pUser;
-
+	virtual bool OnLoad(const CString& sArgs, CString& sErrorMsg) {
 		if (!m_pUser->IsAdmin()) {
-			PutModule("You must have admin privileges to use this");
-			return;
+			sErrorMsg = "You must have admin privileges to load this module";
+			return false;
 		}
 
-		pUser = CZNC::Get().FindUser(sUser);
+		return true;
+	}
+
+	virtual void OnModCommand(const CString& sLine) {
+		const CString sUser = sLine.Token(0);
+		const CString sDirection = sLine.Token(1);
+		CUser *pUser = CZNC::Get().FindUser(sUser);
 
 		if (!pUser) {
 			PutModule("User not found");
-			PutModule("The expected format is: <user> <line to send>");
+			PutModule("The expected format is: <user> [<in|out>] <line to send>");
+			PutModule("Out (default): The line will be sent to the user's IRC server");
+			PutModule("In: The line will be sent to the user's IRC client");
 			return;
 		}
 
-		pUser->PutIRC(sSend);
+		if (!sDirection.CaseCmp("in")) {
+			pUser->PutUser(sLine.Token(2, true));
+		} else if (!sDirection.CaseCmp("out")) {
+			pUser->PutIRC(sLine.Token(2, true));
+		} else {
+			/* The user did not supply a direction, let's send the line out.
+			We do this to preserve backwards compatibility. */
+			pUser->PutIRC(sLine.Token(1, true));
+		}
+
 		PutModule("done");
 	}
 };
 
-GLOBALMODULEDEFS(CSendRaw_Mod, "Let's you send some raw IRC lines as someone else");
+MODULEDEFS(CSendRaw_Mod, "Lets you send some raw IRC lines as/to someone else");
+
