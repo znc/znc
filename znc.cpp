@@ -35,6 +35,7 @@ CZNC::CZNC() {
 	m_pModules = new CGlobalModules();
 #endif
 	m_pISpoofLockFile = NULL;
+	m_uiConnectDelay = 30;
 	m_uiAnonIPLimit = 10;
 	SetISpoofFormat(""); // Set ISpoofFormat to default
 	m_uBytesRead = 0;
@@ -561,7 +562,8 @@ bool CZNC::WriteConfig() {
 		m_LockFile.Write("Listen" + s6 + "      = " + sHostPortion + CString((pListener->IsSSL()) ? "+" : "") + CString(pListener->GetPort()) + "\n");
 	}
 
-	m_LockFile.Write("ConnectDelay = " + CString(m_sConnectThrottle.GetTTL()/1000) + "\n");
+	m_LockFile.Write("ConnectDelay = " + CString(m_uiConnectDelay) + "\n");
+	m_LockFile.Write("ServerThrottle = " + CString(m_sConnectThrottle.GetTTL()/1000) + "\n");
 
 	if (!m_sISpoofFile.empty()) {
 		m_LockFile.Write("ISpoofFile   = " + m_sISpoofFile.FirstLine() + "\n");
@@ -1540,6 +1542,9 @@ bool CZNC::DoRehash(CString& sError)
 					m_sStatusPrefix = sValue;
 					continue;
 				} else if (sName.Equals("ConnectDelay")) {
+					m_uiConnectDelay = sValue.ToUInt();
+					continue;
+				} else if (sName.Equals("ServerThrottle")) {
 					m_sConnectThrottle.SetTTL(sValue.ToUInt()*1000);
 					continue;
 				} else if (sName.Equals("AnonIPLimit")) {
@@ -1906,7 +1911,7 @@ void CZNC::EnableConnectUser() {
 	if (m_pConnectUserTimer != NULL)
 		return;
 
-	m_pConnectUserTimer = new CConnectUserTimer(3);
+	m_pConnectUserTimer = new CConnectUserTimer(m_uiConnectDelay);
 	GetManager().AddCron(m_pConnectUserTimer);
 }
 

@@ -162,6 +162,7 @@ protected:
 	VCString				m_vsMotd;
 	CFile					m_LockFile;
 	CFile*					m_pISpoofLockFile;
+	unsigned int				m_uiConnectDelay;
 	unsigned int				m_uiAnonIPLimit;
 #ifdef _MODULES
 	CGlobalModules*			m_pModules;
