@@ -35,7 +35,6 @@ CZNC::CZNC() {
 	m_pModules = new CGlobalModules();
 #endif
 	m_pISpoofLockFile = NULL;
-	m_uiConnectDelay = 30;
 	m_uiAnonIPLimit = 10;
 	SetISpoofFormat(""); // Set ISpoofFormat to default
 	m_uBytesRead = 0;
@@ -43,6 +42,7 @@ CZNC::CZNC() {
 	m_pConnectUserTimer = NULL;
 	m_eConfigState = ECONFIG_NOTHING;
 	m_TimeStarted = time(NULL);
+	m_sConnectThrottle.SetTTL(30000);
 }
 
 CZNC::~CZNC() {
@@ -146,11 +146,16 @@ bool CZNC::ConnectUser(CUser *pUser) {
 	if (!pServer)
 		return false;
 
+	if (m_sConnectThrottle.GetItem(pServer->GetName()))
+		return false;
+
 	if (!WriteISpoof(pUser)) {
 		DEBUG("ISpoof could not be written");
 		pUser->PutStatus("ISpoof could not be written, retrying...");
 		return true;
 	}
+
+	m_sConnectThrottle.AddItem(pServer->GetName());
 
 	DEBUG("User [" << pUser->GetUserName() << "] is connecting to [" << pServer->GetName() << ":" << pServer->GetPort() << "] ...");
 	pUser->PutStatus("Attempting to connect to [" + pServer->GetName() + ":" + CString(pServer->GetPort()) + "] ...");
@@ -556,7 +561,7 @@ bool CZNC::WriteConfig() {
 		m_LockFile.Write("Listen" + s6 + "      = " + sHostPortion + CString((pListener->IsSSL()) ? "+" : "") + CString(pListener->GetPort()) + "\n");
 	}
 
-	m_LockFile.Write("ConnectDelay = " + CString(m_uiConnectDelay) + "\n");
+	m_LockFile.Write("ConnectDelay = " + CString(m_sConnectThrottle.GetTTL()/1000) + "\n");
 
 	if (!m_sISpoofFile.empty()) {
 		m_LockFile.Write("ISpoofFile   = " + m_sISpoofFile.FirstLine() + "\n");
@@ -1535,7 +1540,7 @@ bool CZNC::DoRehash(CString& sError)
 					m_sStatusPrefix = sValue;
 					continue;
 				} else if (sName.Equals("ConnectDelay")) {
-					m_uiConnectDelay = sValue.ToUInt();
+					m_sConnectThrottle.SetTTL(sValue.ToUInt()*1000);
 					continue;
 				} else if (sName.Equals("AnonIPLimit")) {
 					m_uiAnonIPLimit = sValue.ToUInt();
@@ -1901,7 +1906,7 @@ void CZNC::EnableConnectUser() {
 	if (m_pConnectUserTimer != NULL)
 		return;
 
-	m_pConnectUserTimer = new CConnectUserTimer(m_uiConnectDelay);
+	m_pConnectUserTimer = new CConnectUserTimer(3);
 	GetManager().AddCron(m_pConnectUserTimer);
 }
 

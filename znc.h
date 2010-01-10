@@ -162,7 +162,6 @@ protected:
 	VCString				m_vsMotd;
 	CFile					m_LockFile;
 	CFile*					m_pISpoofLockFile;
-	unsigned int				m_uiConnectDelay;
 	unsigned int				m_uiAnonIPLimit;
 #ifdef _MODULES
 	CGlobalModules*			m_pModules;
@@ -170,6 +169,7 @@ protected:
 	unsigned long long		m_uBytesRead;
 	unsigned long long		m_uBytesWritten;
 	CConnectUserTimer		*m_pConnectUserTimer;
+	TCacheMap<CString>		m_sConnectThrottle;
 };
 
 class CRealListener : public CZNCSock {
