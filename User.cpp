@@ -267,7 +267,6 @@ void CUser::UserConnected(CClient* pClient) {
 		BounceAllClients();
 	}
 
-	PutStatus("Another client authenticated as your user, use the 'ListClients' command to see all clients");
 	m_vClients.push_back(pClient);
 
 	if (m_RawBuffer.IsEmpty()) {
