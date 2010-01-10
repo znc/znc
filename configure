@@ -3091,7 +3091,7 @@ Disabling c-ares may result in a slight performance decrease but will not have a
 $as_echo "$as_me: WARNING: \"c-ares was not found and thus disabled\"" >&2;}
 		fi
 	else
-		appendCXX $c_ares_CFLAGS -DHAVE_ARES
+		appendCXX $c_ares_CFLAGS -DHAVE_C_ARES
 		appendLib $c_ares_LIBS
 		ARES=yes
 	fi

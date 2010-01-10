@@ -141,7 +141,7 @@ Disabling c-ares may result in a slight performance decrease but will not have a
 			AC_MSG_WARN(["c-ares was not found and thus disabled"])
 		fi
 	else
-		appendCXX $c_ares_CFLAGS -DHAVE_ARES
+		appendCXX $c_ares_CFLAGS -DHAVE_C_ARES
 		appendLib $c_ares_LIBS
 		ARES=yes
 	fi

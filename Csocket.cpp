@@ -208,7 +208,7 @@ void Csock::FreeAres()
 #endif /* HAVE_C_ARES */
 
 #ifdef HAVE_C_ARES
-void AresHostCallback( void *pArg, int status, int timeouts, struct hostent *hent )
+static void AresHostCallback( void *pArg, int status, int timeouts, struct hostent *hent )
 {
 	Csock *pSock = (Csock *)pArg;
 	if( status == ARES_SUCCESS && hent )
