@@ -681,6 +681,7 @@ bool CZNC::WriteNewConfig(const CString& sConfigFile) {
 #ifdef _MODULES
 	set<CModInfo> ssGlobalMods;
 	GetModules().GetAvailableMods(ssGlobalMods, true);
+	size_t uNrOtherGlobalMods = FilterUncommonModules(ssGlobalMods);
 
 	if (ssGlobalMods.size()) {
 		CUtils::PrintMessage("");
@@ -703,6 +704,10 @@ bool CZNC::WriteNewConfig(const CString& sConfigFile) {
 			unsigned int uTableIdx = 0; CString sLine;
 			while (Table.GetLine(uTableIdx++, sLine)) {
 				CUtils::PrintMessage(sLine);
+			}
+
+			if (uNrOtherGlobalMods > 0) {
+				CUtils::PrintMessage("And " + CString(uNrOtherGlobalMods) + " other (uncommon) modules. You can enable those later.");
 			}
 
 			CUtils::PrintMessage("");
@@ -784,6 +789,7 @@ bool CZNC::WriteNewConfig(const CString& sConfigFile) {
 #ifdef _MODULES
 		set<CModInfo> ssUserMods;
 		GetModules().GetAvailableMods(ssUserMods);
+		size_t uNrOtherUserMods = FilterUncommonModules(ssUserMods);
 
 		if (ssUserMods.size()) {
 			vsLines.push_back("");
@@ -807,6 +813,10 @@ bool CZNC::WriteNewConfig(const CString& sConfigFile) {
 				unsigned int uTableIdx = 0; CString sLine;
 				while (Table.GetLine(uTableIdx++, sLine)) {
 					CUtils::PrintMessage(sLine);
+				}
+
+				if (uNrOtherUserMods > 0) {
+					CUtils::PrintMessage("And " + CString(uNrOtherUserMods) + " other (uncommon) modules. You can enable those later.");
 				}
 
 				CUtils::PrintMessage("");
@@ -947,6 +957,28 @@ bool CZNC::WriteNewConfig(const CString& sConfigFile) {
 	m_LockFile.UnLock();
 	return bFileOpen && CUtils::GetBoolInput("Launch znc now?", true);
 }
+
+#ifdef _MODULES
+size_t CZNC::FilterUncommonModules(set<CModInfo>& ssModules) {
+	const char* ns[] = { "webadmin", "admin",
+		"chansaver", "keepnick", "simple_away", "partyline",
+		"kickrejoin", "nickserv", "perform" };
+	const set<CString> ssNames(ns, ns + sizeof(ns) / sizeof(ns[0]));
+
+	size_t uNrRemoved = 0;
+	for(set<CModInfo>::iterator it = ssModules.begin(); it != ssModules.end(); ) {
+		if(ssNames.count(it->GetName()) > 0) {
+			it++;
+		} else {
+			set<CModInfo>::iterator it2 = it++;
+			ssModules.erase(it2);
+			uNrRemoved++;
+		}
+	}
+
+	return uNrRemoved;
+}
+#endif
 
 bool CZNC::ParseConfig(const CString& sConfig)
 {
