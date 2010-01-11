@@ -93,6 +93,7 @@ public:
 	const CSockManager& GetManager() const { return m_Manager; }
 #ifdef _MODULES
 	CGlobalModules& GetModules() { return *m_pModules; }
+	size_t FilterUncommonModules(set<CModInfo>& ssModules);
 #endif
 	const CString& GetStatusPrefix() const { return m_sStatusPrefix; }
 	const CString& GetCurPath() const { if (!CFile::Exists(m_sCurPath)) { CDir::MakeDir(m_sCurPath); } return m_sCurPath; }
