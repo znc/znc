@@ -28,7 +28,7 @@
 * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 *
 *
-* $Revision: 1.108 $
+* $Revision: 1.115 $
 */
 
 #include "Csocket.h"
@@ -41,6 +41,7 @@
 #define CS_SRANDBUFFER 128
 
 using namespace std;
+
 
 #ifndef _NO_CSOCKET_NS // some people may not want to use a namespace
 namespace Csocket
@@ -77,26 +78,26 @@ static const char *inet_ntop(int af, const void *src, char *dst, socklen_t cnt)
 	return( NULL );
 }
 
-static inline void set_non_blocking(int fd)
+static inline void set_non_blocking(cs_sock_t fd)
 {
 	u_long iOpts = 1;
 	ioctlsocket( fd, FIONBIO, &iOpts );
 }
 
-static inline void set_blocking(int fd)
+static inline void set_blocking(cs_sock_t fd)
 {
 	u_long iOpts = 0;
 	ioctlsocket( fd, FIONBIO, &iOpts );
 }
 
-static inline void set_close_on_exec(int fd)
+static inline void set_close_on_exec(cs_sock_t fd)
 {
 	// TODO add this for windows
 	// see http://gcc.gnu.org/ml/java-patches/2002-q1/msg00696.html
 	// for infos on how to do this
 }
 #else
-static inline void set_non_blocking(int fd)
+static inline void set_non_blocking(cs_sock_t fd)
 {
 	int fdflags = fcntl(fd, F_GETFL, 0);
 	if ( fdflags < 0 )
@@ -104,7 +105,7 @@ static inline void set_non_blocking(int fd)
 	fcntl( fd, F_SETFL, fdflags|O_NONBLOCK );
 }
 
-static inline void set_blocking(int fd)
+static inline void set_blocking(cs_sock_t fd)
 {
 	int fdflags = fcntl(fd, F_GETFL, 0);
 	if ( fdflags < 0 )
@@ -113,7 +114,7 @@ static inline void set_blocking(int fd)
 	fcntl( fd, F_SETFL, fdflags );
 }
 
-static inline void set_close_on_exec(int fd)
+static inline void set_close_on_exec(cs_sock_t fd)
 {
 	int fdflags = fcntl(fd, F_GETFD, 0);
 	if ( fdflags < 0 )
@@ -592,8 +593,8 @@ Csock::~Csock()
 	} else if( m_iReadSock >= 0 )
 		CS_CLOSE( m_iReadSock );
 
-	m_iReadSock = -1;
-	m_iWriteSock = -1;
+	m_iReadSock = CS_INVALID_SOCK;
+	m_iWriteSock = CS_INVALID_SOCK;
 
 	// delete any left over crons
 	for( vector<CCron *>::size_type i = 0; i < m_vcCrons.size(); i++ )
@@ -602,7 +603,7 @@ Csock::~Csock()
 
 void Csock::Dereference()
 {
-	m_iWriteSock = m_iReadSock = -1;
+	m_iWriteSock = m_iReadSock = CS_INVALID_SOCK;
 
 #ifdef HAVE_LIBSSL
 	m_ssl = NULL;
@@ -617,7 +618,7 @@ void Csock::Copy( const Csock & cCopy )
 {
 	m_iTcount		= cCopy.m_iTcount;
 	m_iLastCheckTimeoutTime	=	cCopy.m_iLastCheckTimeoutTime;
-	m_iport 		= cCopy.m_iport;
+	m_uPort 		= cCopy.m_uPort;
 	m_iRemotePort	= cCopy.m_iRemotePort;
 	m_iLocalPort	= cCopy.m_iLocalPort;
 	m_iReadSock		= cCopy.m_iReadSock;
@@ -916,9 +917,9 @@ bool Csock::Listen( u_short iPort, int iMaxConns, const CS_STRING & sBindHost, u
 			return( false );
 	}
 
-	m_iReadSock = m_iWriteSock = SOCKET( true );
+	m_iReadSock = m_iWriteSock = CreateSocket( true );
 
-	if ( m_iReadSock == -1 )
+	if ( m_iReadSock == CS_INVALID_SOCK )
 		return( false );
 
 	m_address.SinFamily();
@@ -1041,6 +1042,15 @@ bool Csock::SSLClientSetup()
 	FREE_SSL();
 	FREE_CTX();
 
+#ifdef _WIN64
+	if( m_iReadSock != (int)m_iReadSock || m_iWriteSock != (int)m_iWriteSock )
+	{
+		// sanity check the FD to be sure its compatible with openssl
+		CS_DEBUG( "ERROR: sockfd larger than OpenSSL can handle" );
+		return( false );
+	}
+#endif /* _WIN32 */
+
 	switch( m_iMethod )
 	{
 		case SSL2:
@@ -1106,8 +1116,8 @@ bool Csock::SSLClientSetup()
 	if ( !m_ssl )
 		return( false );
 
-	SSL_set_rfd( m_ssl, m_iReadSock );
-	SSL_set_wfd( m_ssl, m_iWriteSock );
+	SSL_set_rfd( m_ssl, (int)m_iReadSock );
+	SSL_set_wfd( m_ssl, (int)m_iWriteSock );
 	SSL_set_verify( m_ssl, SSL_VERIFY_PEER, ( m_pCerVerifyCB ? m_pCerVerifyCB : CertVerifyCB ) );
 	SSL_set_ex_data( m_ssl, GetCsockClassIdx(), this );
 
@@ -1125,6 +1135,16 @@ bool Csock::SSLServerSetup()
 	m_bssl = true;
 	FREE_SSL();
 	FREE_CTX();
+
+#ifdef _WIN64
+	if( m_iReadSock != (int)m_iReadSock || m_iWriteSock != (int)m_iWriteSock )
+	{
+		// sanity check the FD to be sure its compatible with openssl
+		CS_DEBUG( "ERROR: sockfd larger than OpenSSL can handle" );
+		return( false );
+	}
+#endif /* _WIN32 */
+
 
 	switch( m_iMethod )
 	{
@@ -1207,8 +1227,8 @@ bool Csock::SSLServerSetup()
 		return( false );
 
 	// Call for client Verification
-	SSL_set_rfd( m_ssl, m_iReadSock );
-	SSL_set_wfd( m_ssl, m_iWriteSock );
+	SSL_set_rfd( m_ssl, (int)m_iReadSock );
+	SSL_set_wfd( m_ssl, (int)m_iWriteSock );
 	SSL_set_accept_state( m_ssl );
 	if ( m_iRequireClientCertFlags )
 	{
@@ -1226,7 +1246,7 @@ bool Csock::SSLServerSetup()
 bool Csock::ConnectSSL( const CS_STRING & sBindhost )
 {
 #ifdef HAVE_LIBSSL
-	if ( m_iReadSock == -1 )
+	if ( m_iReadSock == CS_INVALID_SOCK )
 		if ( !Connect( sBindhost ) )
 			return( false );
 	if ( !m_ssl )
@@ -1580,12 +1600,12 @@ CS_STRING Csock::GetRemoteIP()
 bool Csock::IsConnected() { return( m_bIsConnected ); }
 void Csock::SetIsConnected( bool b ) { m_bIsConnected = b; }
 
-int & Csock::GetRSock() { return( m_iReadSock ); }
-void Csock::SetRSock( int iSock ) { m_iReadSock = iSock; }
-int & Csock::GetWSock() { return( m_iWriteSock ); }
-void Csock::SetWSock( int iSock ) { m_iWriteSock = iSock; }
-void Csock::SetSock( int iSock ) { m_iWriteSock = iSock; m_iReadSock = iSock; }
-int & Csock::GetSock() { return( m_iReadSock ); }
+cs_sock_t & Csock::GetRSock() { return( m_iReadSock ); }
+void Csock::SetRSock( cs_sock_t iSock ) { m_iReadSock = iSock; }
+cs_sock_t & Csock::GetWSock() { return( m_iWriteSock ); }
+void Csock::SetWSock( cs_sock_t iSock ) { m_iWriteSock = iSock; }
+void Csock::SetSock( cs_sock_t iSock ) { m_iWriteSock = iSock; m_iReadSock = iSock; }
+cs_sock_t & Csock::GetSock() { return( m_iReadSock ); }
 void Csock::ResetTimer() { m_iLastCheckTimeoutTime = 0; m_iTcount = 0; }
 void Csock::PauseRead() { m_bPauseRead = true; }
 bool Csock::IsReadPaused() { return( m_bPauseRead ); }
@@ -1779,8 +1799,8 @@ u_short Csock::GetLocalPort()
 	return( m_iLocalPort );
 }
 
-u_short Csock::GetPort() { return( m_iport ); }
-void Csock::SetPort( u_short iPort ) { m_iport = iPort; }
+u_short Csock::GetPort() { return( m_uPort ); }
+void Csock::SetPort( u_short iPort ) { m_uPort = iPort; }
 void Csock::Close( ECloseType eCloseType )
 {
 	m_eCloseType = eCloseType;
@@ -2059,6 +2079,7 @@ int Csock::GetPending()
 
 int Csock::GetAddrInfo( const CS_STRING & sHostname, CSSockAddr & csSockAddr )
 {
+#ifndef _WIN32
 #ifdef HAVE_IPV6
 	if( csSockAddr.GetAFRequire() != AF_INET && inet_pton( AF_INET6, sHostname.c_str(), csSockAddr.GetAddr6() ) > 0 )
 	{
@@ -2073,6 +2094,7 @@ int Csock::GetAddrInfo( const CS_STRING & sHostname, CSSockAddr & csSockAddr )
 #endif /* HAVE_IPV6 */
 		return( 0 );
 	}
+#endif /* _WIN32 */
 
 #ifdef HAVE_C_ARES
 	if( GetType() != LISTENER )
@@ -2088,6 +2110,7 @@ int Csock::GetAddrInfo( const CS_STRING & sHostname, CSSockAddr & csSockAddr )
 			int iFamily = AF_INET;
 
 #ifdef HAVE_IPV6
+			// as of ares 1.6.0 if it fails on af_inet6, it falls back to af_inet, this code was here in the previous Csocket version, just adding the comment as a reminder
 			iFamily = csSockAddr.GetAFRequire() == CSSockAddr::RAF_ANY ? AF_INET6 : csSockAddr.GetAFRequire();
 #endif /* HAVE_IPV6 */
 			ares_gethostbyname( m_pARESChannel, sHostname.c_str(), iFamily, AresHostCallback, this );
@@ -2153,12 +2176,14 @@ int Csock::DNSLookup( EDNSLType eDNSLType )
 	}
 	else if ( iRet == EAGAIN )
 	{
+#ifndef HAVE_C_ARES
 		m_iDNSTryCount++;
 		if ( m_iDNSTryCount > 20 )
 		{
 			m_iDNSTryCount = 0;
 			return( ETIMEDOUT );
 		}
+#endif /* HAVE_C_ARES */
 		return( EAGAIN );
 	}
 	m_iDNSTryCount = 0;
@@ -2218,12 +2243,12 @@ void Csock::FREE_CTX()
 
 #endif /* HAVE_LIBSSL */
 
-int Csock::SOCKET( bool bListen )
+cs_sock_t Csock::CreateSocket( bool bListen )
 {
 #ifdef HAVE_IPV6
-	int iRet = socket( ( GetIPv6() ? PF_INET6 : PF_INET ), SOCK_STREAM, IPPROTO_TCP );
+	cs_sock_t iRet = socket( ( GetIPv6() ? PF_INET6 : PF_INET ), SOCK_STREAM, IPPROTO_TCP );
 #else
-	int iRet = socket( PF_INET, SOCK_STREAM, IPPROTO_TCP );
+	cs_sock_t iRet = socket( PF_INET, SOCK_STREAM, IPPROTO_TCP );
 #endif /* HAVE_IPV6 */
 
 	if ( iRet >= 0 ) {
@@ -2250,12 +2275,12 @@ void Csock::Init( const CS_STRING & sHostname, u_short uPort, int itimeout )
 	m_iRequireClientCertFlags = 0;
 #endif /* HAVE_LIBSSL */
 	m_iTcount = 0;
-	m_iReadSock = -1;
-	m_iWriteSock = -1;
+	m_iReadSock = CS_INVALID_SOCK;
+	m_iWriteSock = CS_INVALID_SOCK;
 	m_itimeout = itimeout;
 	m_bssl = false;
 	m_bIsConnected = false;
-	m_iport = uPort;
+	m_uPort = uPort;
 	m_shostname = sHostname;
 	m_sbuffer.clear();
 	m_eCloseType = CLT_DONT;
