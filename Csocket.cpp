@@ -28,7 +28,7 @@
 * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 *
 *
-* $Revision: 1.115 $
+* $Revision: 1.117 $
 */
 
 #include "Csocket.h"
@@ -77,6 +77,30 @@ static const char *inet_ntop(int af, const void *src, char *dst, socklen_t cnt)
 	}
 	return( NULL );
 }
+
+#if defined(_WIN32) && (!defined(_WIN32_WINNT) || (_WIN32_WINNT < 0x0600))
+//! thanks to KiNgMaR @ #znc for this wrapper
+static int inet_pton( int af, const char *src, void *dst )
+{
+	sockaddr_storage aAddress;
+	int iAddrLen = sizeof( sockaddr_storage );
+	memset( &aAddress, 0, iAddrLen );
+	char *pTmp = strdup( src );
+	aAddress.ss_family = af; // this is important:
+	// The function fails if the sin_family member of the SOCKADDR_IN structure is not set to AF_INET or AF_INET6.
+	int iRet = WSAStringToAddressA( pTmp, af, NULL, (sockaddr *)&aAddress, &iAddrLen );
+	free( pTmp );
+	if( iRet == 0 )
+	{
+		if( af == AF_INET6 )
+			 memcpy(dst, &((sockaddr_in6 *)&aAddress)->sin6_addr, sizeof(in6_addr));
+		else
+			 memcpy(dst, &((sockaddr_in *)&aAddress)->sin_addr, sizeof(in_addr));
+		return( 1 );
+	}
+	return( -1 );
+}
+#endif
 
 static inline void set_non_blocking(cs_sock_t fd)
 {
@@ -1049,7 +1073,7 @@ bool Csock::SSLClientSetup()
 		CS_DEBUG( "ERROR: sockfd larger than OpenSSL can handle" );
 		return( false );
 	}
-#endif /* _WIN32 */
+#endif /* _WIN64 */
 
 	switch( m_iMethod )
 	{
@@ -1143,7 +1167,7 @@ bool Csock::SSLServerSetup()
 		CS_DEBUG( "ERROR: sockfd larger than OpenSSL can handle" );
 		return( false );
 	}
-#endif /* _WIN32 */
+#endif /* _WIN64 */
 
 
 	switch( m_iMethod )
@@ -2079,7 +2103,6 @@ int Csock::GetPending()
 
 int Csock::GetAddrInfo( const CS_STRING & sHostname, CSSockAddr & csSockAddr )
 {
-#ifndef _WIN32
 #ifdef HAVE_IPV6
 	if( csSockAddr.GetAFRequire() != AF_INET && inet_pton( AF_INET6, sHostname.c_str(), csSockAddr.GetAddr6() ) > 0 )
 	{
@@ -2094,7 +2117,6 @@ int Csock::GetAddrInfo( const CS_STRING & sHostname, CSSockAddr & csSockAddr )
 #endif /* HAVE_IPV6 */
 		return( 0 );
 	}
-#endif /* _WIN32 */
 
 #ifdef HAVE_C_ARES
 	if( GetType() != LISTENER )
