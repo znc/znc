@@ -28,7 +28,7 @@
 * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 *
 *
-* $Revision: 1.118 $
+* $Revision: 1.119 $
 */
 
 #include "Csocket.h"
@@ -2143,9 +2143,10 @@ int Csock::GetAddrInfo( const CS_STRING & sHostname, CSSockAddr & csSockAddr )
 			}
 			m_pCurrAddr = &csSockAddr; // flag its starting
 
+			int iFamily = AF_INET;
 #ifdef HAVE_IPV6
 			// as of ares 1.6.0 if it fails on af_inet6, it falls back to af_inet, this code was here in the previous Csocket version, just adding the comment as a reminder
-			int iFamily = csSockAddr.GetAFRequire() == CSSockAddr::RAF_ANY ? AF_INET6 : csSockAddr.GetAFRequire();
+			iFamily = csSockAddr.GetAFRequire() == CSSockAddr::RAF_ANY ? AF_INET6 : csSockAddr.GetAFRequire();
 #endif /* HAVE_IPV6 */
 			ares_gethostbyname( m_pARESChannel, sHostname.c_str(), iFamily, AresHostCallback, this );
 		}
@@ -2154,7 +2155,7 @@ int Csock::GetAddrInfo( const CS_STRING & sHostname, CSSockAddr & csSockAddr )
 			FreeAres();
 #ifdef HAVE_IPV6
 #if ARES_VERSION < CREATE_ARES_VER( 1, 5, 3 )
-			if( m_iARESStatus != ARES_SUCCESS && csSockAddr.GetAFRequire() == CSSockAddr::RAF_ANY && csSockAddr.GetAFRequire() == CSSockAddr::RAF_ANY )
+			if( m_iARESStatus != ARES_SUCCESS && csSockAddr.GetAFRequire() == CSSockAddr::RAF_ANY )
 			{ // this is a workaround for ares < 1.5.3 where the builtin retry on failed AF_INET6 isn't there yet
 				CS_DEBUG( "Retry for older version of c-ares with AF_INET only" );
 				// this means we tried previously with AF_INET6 and failed, so force AF_INET and retry
