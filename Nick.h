@@ -51,6 +51,8 @@ public:
 	const CString& GetHost() const;
 	CString GetNickMask() const;
 	// !Getters
+
+	void Clone(const CNick& SourceNick);
 private:
 protected:
 	CString			m_sChanPerms;
