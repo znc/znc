@@ -151,3 +151,12 @@ CString CNick::GetHostMask() const {
 
 	return (sRet);
 }
+
+void CNick::Clone(const CNick& SourceNick) {
+	SetNick(SourceNick.GetNick());
+	SetIdent(SourceNick.GetIdent());
+	SetHost(SourceNick.GetHost());
+
+	m_sChanPerms = SourceNick.m_sChanPerms;
+	m_pUser = SourceNick.m_pUser;
+}
