@@ -28,7 +28,7 @@
 * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 *
 *
-* $Revision: 1.219 $
+* $Revision: 1.221 $
 */
 
 // note to compile with win32 need to link to winsock2, using gcc its -lws2_32
@@ -931,6 +931,9 @@ public:
 
 		return( true );
 	}
+
+	//! puts the socks back to the state they were prior to calling CreateSocksFD
+	void CloseSocksFD();
 
 	const CS_STRING & GetBindHost() const { return( m_sBindHost ); }
 	void SetBindHost( const CS_STRING & sBindHost ) { m_sBindHost = sBindHost; }

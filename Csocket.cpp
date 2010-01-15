@@ -28,7 +28,7 @@
 * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 *
 *
-* $Revision: 1.119 $
+* $Revision: 1.121 $
 */
 
 #include "Csocket.h"
@@ -362,6 +362,7 @@ int GetAddrInfo( const CS_STRING & sHostname, Csock *pSock, CSSockAddr & csSockA
 					bFound = true;
 					break;
 				}
+				pSock->CloseSocksFD();
 			}
 			else if( bTryConnect )
 			{
@@ -620,6 +621,15 @@ Csock::~Csock()
 	FREE_CTX();
 #endif /* HAVE_LIBSSL */
 
+	CloseSocksFD();
+
+	// delete any left over crons
+	for( vector<CCron *>::size_type i = 0; i < m_vcCrons.size(); i++ )
+		CS_Delete( m_vcCrons[i] );
+}
+
+void Csock::CloseSocksFD()
+{
 	if ( m_iReadSock != m_iWriteSock )
 	{
 		if( m_iReadSock >= 0 )
@@ -631,11 +641,8 @@ Csock::~Csock()
 
 	m_iReadSock = CS_INVALID_SOCK;
 	m_iWriteSock = CS_INVALID_SOCK;
-
-	// delete any left over crons
-	for( vector<CCron *>::size_type i = 0; i < m_vcCrons.size(); i++ )
-		CS_Delete( m_vcCrons[i] );
 }
+
 
 void Csock::Dereference()
 {
@@ -2166,10 +2173,7 @@ int Csock::GetAddrInfo( const CS_STRING & sHostname, CSSockAddr & csSockAddr )
 					// the Connect() failed, so throw a retry back in with ipv4, and let it process normally
 					CS_DEBUG( "Failed ipv6 connection with PF_UNSPEC, falling back to ipv4" );
 					m_iARESStatus = -1;
-					if( m_iReadSock != m_iWriteSock )
-						CS_CLOSE( m_iWriteSock );
-					CS_CLOSE( m_iReadSock );
-					m_iReadSock = m_iWriteSock = CS_INVALID_SOCK;
+					CloseSocksFD();
 					SetAFRequire( CSSockAddr::RAF_INET );
 					return( GetAddrInfo( sHostname, csSockAddr ) );
 				}
