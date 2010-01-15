@@ -1026,7 +1026,19 @@ ModHandle CModules::OpenModule(const CString& sModule, const CString& sModPath, 
 		}
 	}
 
-	ModHandle p = dlopen((sModPath).c_str(), RTLD_NOW | RTLD_LOCAL);
+	// The second argument to dlopen() has a long history. It seems clear
+	// that (despite what the man page says) we must include either of
+	// RTLD_NOW and RTLD_LAZY and either of RTLD_GLOBAL and RTLD_LOCAL.
+	//
+	// RTLD_NOW vs. RTLD_LAZY: We use RTLD_NOW to avoid znc dying due to
+	// failed symbol lookups later on. Doesn't really seem to have much of a
+	// performance impact.
+	//
+	// RTLD_GLOBAL vs. RTLD_LOCAL: If perl is loaded with RTLD_LOCAL and later on
+	// loads own modules (which it apparently does with RTLD_LAZY), we will die in a
+	// name lookup since one of perl's symbols isn't found. That's worse
+	// than any theoretical issue with RTLD_LOCAL.
+	ModHandle p = dlopen((sModPath).c_str(), RTLD_NOW | RTLD_GLOBAL);
 
 	if (!p) {
 		sRetMsg = "Unable to open module [" + sModule + "] [" + dlerror() + "]";
