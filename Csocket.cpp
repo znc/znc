@@ -2154,6 +2154,26 @@ int Csock::GetAddrInfo( const CS_STRING & sHostname, CSSockAddr & csSockAddr )
 		{ // this means its finished
 			FreeAres();
 #ifdef HAVE_IPV6
+			if( m_iARESStatus == ARES_SUCCESS && csSockAddr.GetAFRequire() == CSSockAddr::RAF_ANY && GetIPv6() )
+			{
+				// this means that ares_host returned an ipv6 host, so try a connect right away
+				if( CreateSocksFD() && Connect( GetBindHost(), true ) )
+				{
+					SetSkipConnect( true );
+				}
+				else if( GetSockError() == ENETUNREACH )
+				{
+					// the Connect() failed, so throw a retry back in with ipv4, and let it process normally
+					CS_DEBUG( "Failed ipv6 connection with PF_UNSPEC, falling back to ipv4" );
+					m_iARESStatus = -1;
+					if( m_iReadSock != m_iWriteSock )
+						CS_CLOSE( m_iWriteSock );
+					CS_CLOSE( m_iReadSock );
+					m_iReadSock = m_iWriteSock = CS_INVALID_SOCK;
+					SetAFRequire( CSSockAddr::RAF_INET );
+					return( GetAddrInfo( sHostname, csSockAddr ) );
+				}
+			}
 #if ARES_VERSION < CREATE_ARES_VER( 1, 5, 3 )
 			if( m_iARESStatus != ARES_SUCCESS && csSockAddr.GetAFRequire() == CSSockAddr::RAF_ANY )
 			{ // this is a workaround for ares < 1.5.3 where the builtin retry on failed AF_INET6 isn't there yet
