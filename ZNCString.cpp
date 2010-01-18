@@ -15,121 +15,6 @@
 
 using std::stringstream;
 
-static const char* const g_szHTMLescapes[256] = {
-	"&#0;", 0, 0, 0, 0, 0, 0, 0, 0, 0,               // 0-9
-	0, 0, 0, 0, 0, 0, 0, 0, 0, 0,                    // 10-19
-	0, 0, 0, 0, 0, 0, 0, 0, 0, 0,                    // 20-29
-	0, 0, 0, 0, "&quot;", 0, 0, 0, "&amp;", "&#39;", // 30-39
-	0, 0, 0, 0, 0, 0, 0, 0, 0, 0,                    // 40-49
-	0, 0, 0, 0, 0, 0, 0, 0, 0, 0,                    // 50-59
-	"&lt;", 0, "&gt;", 0, 0, 0, 0, 0, 0, 0,          // 60-69
-	0, 0, 0, 0, 0, 0, 0, 0, 0, 0,                    // 70-79
-	0, 0, 0, 0, 0, 0, 0, 0, 0, 0,                    // 80-89
-	0, 0, 0, 0, 0, 0, 0, 0, 0, 0,                    // 90-99
-	0, 0, 0, 0, 0, 0, 0, 0, 0, 0,                    // 100-109
-	0, 0, 0, 0, 0, 0, 0, 0, 0, 0,                    // 110-119
-	0, 0, 0, 0, 0, 0, 0, 0, 0, 0,                    // 120-129
-	0, 0, 0, 0, 0, 0, 0, 0, 0, 0,                    // 130-139
-	0, 0, 0, 0, 0, 0, 0, 0, 0, 0,                    // 140-149
-	0, 0, 0, "&trade;", 0, 0, 0, 0, 0, 0,            // 150-159
-	"&nbsp;",   // 160
-	"&iexcl;",  // 161
-	"&cent;",   // 162
-	"&pound;",  // 163
-	"&curren;", // 164
-	"&yen;",    // 165
-	"&brvbar;", // 166
-	"&sect;",   // 167
-	"&uml;",    // 168
-	"&copy;",   // 169
-	"&ordf;",   // 170
-	"&laquo;",  // 171
-	"&not;",    // 172
-	"&shy;",    // 173
-	"&reg;",    // 174
-	"&macr;",   // 175
-	"&deg;",    // 176
-	"&plusmn;", // 177
-	"&sup2;",   // 178
-	"&sup3;",   // 179
-	"&acute;",  // 180
-	"&micro;",  // 181
-	"&para;",   // 182
-	"&middot;", // 183
-	"&cedil;",  // 184
-	"&sup1;",   // 185
-	"&ordm;",   // 186
-	"&raquo;",  // 187
-	"&frac14;", // 188
-	"&frac12;", // 189
-	"&frac34;", // 190
-	"&iquest;", // 191
-	"&Agrave;", // 192
-	"&Aacute;", // 193
-	"&Acirc;",  // 194
-	"&Atilde;", // 195
-	"&Auml;",   // 196
-	"&Aring;",  // 197
-	"&AElig;",  // 198
-	"&Ccedil;", // 199
-	"&Egrave;", // 200
-	"&Eacute;", // 201
-	"&Ecirc;",  // 202
-	"&Euml;",   // 203
-	"&Igrave;", // 204
-	"&Iacute;", // 205
-	"&Icirc;",  // 206
-	"&Iuml;",   // 207
-	"&ETH;",    // 208
-	"&Ntilde;", // 209
-	"&Ograve;", // 210
-	"&Oacute;", // 211
-	"&Ocirc;",  // 212
-	"&Otilde;", // 213
-	"&Ouml;",   // 214
-	"&times;",  // 215
-	"&Oslash;", // 216
-	"&Ugrave;", // 217
-	"&Uacute;", // 218
-	"&Ucirc;",  // 219
-	"&Uuml;",   // 220
-	"&Yacute;", // 221
-	"&THORN;",  // 222
-	"&szlig;",  // 223
-	"&agrave;", // 224
-	"&aacute;", // 225
-	"&acirc;",  // 226
-	"&atilde;", // 227
-	"&auml;",   // 228
-	"&aring;",  // 229
-	"&aelig;",  // 230
-	"&ccedil;", // 231
-	"&egrave;", // 232
-	"&eacute;", // 233
-	"&ecirc;",  // 234
-	"&euml;",   // 235
-	"&igrave;", // 236
-	"&iacute;", // 237
-	"&icirc;",  // 238
-	"&iuml;",   // 239
-	"&eth;",    // 240
-	"&ntilde;", // 241
-	"&ograve;", // 242
-	"&oacute;", // 243
-	"&ocirc;",  // 244
-	"&otilde;", // 245
-	"&ouml;",   // 246
-	"&divide;", // 247
-	"&oslash;", // 248
-	"&ugrave;", // 249
-	"&uacute;", // 250
-	"&ucirc;",  // 251
-	"&uuml;",   // 252
-	"&yacute;", // 253
-	"&thorn;",  // 254
-	"&yuml;",   // 255
-};
-
 CString::CString(char c) : string() { stringstream s; s << c; *this = s.str(); }
 CString::CString(unsigned char c) : string() { stringstream s; s << c; *this = s.str(); }
 CString::CString(short i) : string() { stringstream s; s << i; *this = s.str(); }
@@ -307,6 +192,8 @@ CString CString::Escape_n(EEscape eFrom, EEscape eTo) const {
 		switch (eFrom) {
 			case EHTML:
 				if ((*p == '&') && (strnchr((unsigned char*) p, ';', sizeof(pTmp) - 1, pTmp, &iCounted))) {
+					// please note that we do not have any Unicode or UTF-8 support here at all.
+
 					if ((iCounted >= 3) && (pTmp[1] == '#')) {	// do XML and HTML &#97; &#x3c
 						int base = 10;
 
@@ -324,11 +211,11 @@ CString CString::Escape_n(EEscape eFrom, EEscape eTo) const {
 						}
 					}
 
-					for (unsigned int c = 0; c < 256; c++) {
-						if (g_szHTMLescapes[c] && strcmp(g_szHTMLescapes[c], (const char*) &pTmp) == 0) {
-							ch = c;
-							break;
-						}
+					if (ch == 0) {
+						if (!strncasecmp((const char*) &pTmp, "lt", 2)) ch = '<';
+						else if (!strncasecmp((const char*) &pTmp, "gt", 2)) ch = '>';
+						else if (!strncasecmp((const char*) &pTmp, "quot", 4)) ch = '"';
+						else if (!strncasecmp((const char*) &pTmp, "amp", 3)) ch = '&';
 					}
 
 					if (ch > 0) {
@@ -394,9 +281,11 @@ CString CString::Escape_n(EEscape eFrom, EEscape eTo) const {
 
 		switch (eTo) {
 			case EHTML:
-				if (g_szHTMLescapes[ch]) {
-					sRet += g_szHTMLescapes[ch];
-				} else {
+				if (ch == '<') sRet += "&lt;";
+				else if (ch == '>') sRet += "&gt;";
+				else if (ch == '"') sRet += "&quot;";
+				else if (ch == '&') sRet += "&amp;";
+				else {
 					sRet += ch;
 				}
 
