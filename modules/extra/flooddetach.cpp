@@ -59,7 +59,7 @@ public:
 
 		for (it = m_chans.begin(); it != m_chans.end(); it++) {
 			// The timeout for this channel did not expire yet?
-			if (it->second.first + m_iThresholdSecs >= now)
+			if (it->second.first + (time_t)m_iThresholdSecs >= now)
 				continue;
 
 			CChan *pChan = m_pUser->FindChan(it->first);
