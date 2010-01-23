@@ -46,10 +46,33 @@ typedef void* ModHandle;
 	double ZNCModVersion() { return VERSION; } \
 	bool ZNCModGlobal() { return GLOBAL; } \
 
+/** Instead of writing a constructor, you should call this macro. It accepts all
+ *  the necessary arguments and passes them on to CModule's constructor. You
+ *  should assume that there are no arguments to the constructor.
+ *
+ *  Usage:
+ *  \code
+ *  class MyModule : public CModule {
+ *      MODCONSTRUCTOR(MyModule) {
+ *          // Your own constructor's code here
+ *      }
+ *  }
+ *  \endcode
+ *
+ *  @param CLASS The name of your module's class.
+ *  @see For global modules you need GLOBALMODCONSTRUCTOR.
+ */
 #define MODCONSTRUCTOR(CLASS) \
 	CLASS(ModHandle pDLL, CUser* pUser, const CString& sModName, \
 			const CString& sModPath) \
 			: CModule(pDLL, pUser, sModName, sModPath)
+
+/** At the end of your source file, you must call this macro in global context.
+ *  It defines some static functions which ZNC needs to load this module.
+ *  @param CLASS The name of your module's class.
+ *  @param DESCRIPTION A short description of your module.
+ *  @see For global modules you need GLOBALMODULEDEFS.
+ */
 #define MODULEDEFS(CLASS, DESCRIPTION) \
 	extern "C" { \
 		MODCOMMONDEFS(DESCRIPTION, false) \
@@ -65,9 +88,12 @@ typedef void* ModHandle;
 // !User Module Macros
 
 // Global Module Macros
+/** This works exactly like MODCONSTRUCTOR, but for global modules. */
 #define GLOBALMODCONSTRUCTOR(CLASS) \
 	CLASS(ModHandle pDLL, const CString& sModName, const CString& sModPath) \
 			: CGlobalModule(pDLL, sModName, sModPath)
+
+/** This works exactly like MODULEDEFS, but for global modules. */
 #define GLOBALMODULEDEFS(CLASS, DESCRIPTION) \
 	extern "C" { \
 		MODCOMMONDEFS(DESCRIPTION, true) \
