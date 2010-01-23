@@ -53,4 +53,22 @@
 #define MODULECALL(macFUNC, macUSER, macCLIENT, macEXITER)
 #endif
 
+/** @mainpage
+ *  Welcome to the API documentation for ZNC.
+ *
+ *  To write your own module, you should start with writing a new class which
+ *  inherits from CModule. Use #MODCONSTRUCTOR for the module's constructor and
+ *  call #MODULEDEFS at the end of your source file.
+ *  Congratulations, you just wrote your first module. <br>
+ *  For global modules, the procedure is similar. Instead of CModule you inherit
+ *  from CGlobalModule. The two macros are replaced by #GLOBALMODCONSTRUCTOR and
+ *  #GLOBALMODULEDEFS.
+ *
+ *  If you want your module to actually do something, you should override some
+ *  of the hooks from CModule. These are the functions whose names start with
+ *  "Do". They are called when the associated event happens.
+ *
+ *  Feel free to also look at existing modules.
+ */
+
 #endif // !_MAIN_H

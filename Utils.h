@@ -26,6 +26,17 @@ using std::pair;
 using std::cout;
 using std::endl;
 
+/** Output a debug info if debugging is enabled.
+ *  If ZNC was compiled with <code>--enable-debug</code> or was started with
+ *  <code>--debug</code>, the given argument will be sent to stdout.
+ *
+ *  You can use all the features of C++ streams:
+ *  @code
+ *  DEBUG("I had " << errors << " errors");
+ *  @endcode
+ *
+ *  @param f The expression you want to display.
+ */
 #define DEBUG(f) do { \
 	if (CUtils::Debug()) { \
 		cout << f << endl; \
@@ -110,19 +121,78 @@ protected:
 };
 
 
+/** Generate a grid-like output from a given input.
+ *
+ *  @code
+ *  CTable table;
+ *  table.AddColumn("a");
+ *  table.AddColumn("b");
+ *  table.AddRow();
+ *  table.SetCell("a", "hello");
+ *  table.SetCell("b", "world");
+ *
+ *  unsigned int idx = 0;
+ *  CString tmp;
+ *  while (table.GetLine(idx++, tmp)) {
+ *      // Output tmp somehow
+ *  }
+ *  @endcode
+ *
+ *  The above code would generate the following output:
+ *  @verbatim
++-------+-------+
+| a     | b     |
++-------+-------+
+| hello | world |
++-------+-------+@endverbatim
+ */
 class CTable : protected vector<vector<CString> > {
 public:
 	CTable() {}
 	virtual ~CTable() {}
 
+	/** Adds a new column to the table.
+	 *  Please note that you should add all columns before starting to fill
+	 *  the table!
+	 *  @param sName The name of the column.
+	 *  @return false if a column by that name already existed.
+	 */
 	bool AddColumn(const CString& sName);
+
+	/** Adds a new row to the table.
+	 *  After calling this you can fill the row with content.
+	 *  @return The index of this row
+	 */
 	unsigned int AddRow();
+
+	/** Sets a given cell in the table to a value.
+	 *  @param sColumn The name of the column you want to fill.
+	 *  @param sValue The value to write into that column.
+	 *  @param uRowIdx The index of the row to use as returned by AddRow().
+	 *                 If this is not given, the last row will be used.
+	 *  @return True if setting the cell was successful.
+	 */
 	bool SetCell(const CString& sColumn, const CString& sValue, unsigned int uRowIdx = ~0);
+
+	/** Get a line of the table's output
+	 *  @param uIdx The index of the line you want.
+	 *  @param sLine This string will receive the output.
+	 *  @return True unless uIdx is past the end of the table.
+	 */
 	bool GetLine(unsigned int uIdx, CString& sLine) const;
 
+	/** Return the width of the given column.
+	 *  Please note that adding and filling new rows might change the
+	 *  result of this function!
+	 *  @param uIdx The index of the column you are interested in.
+	 *  @return The width of the column.
+	 */
 	unsigned int GetColumnWidth(unsigned int uIdx) const;
 
+	/// Completely clear the table.
 	void Clear();
+
+	/// @return The number of rows in this table, not counting the header.
 	using vector<vector<CString> >::size;
 private:
 	unsigned int GetColumnIndex(const CString& sName) const;
