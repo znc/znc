@@ -4,7 +4,7 @@
 	<div class="section">
 		<input type="hidden" name="submitted" value="1" />
 
-		<div class="sectiontitle">Authentication</div>
+		<h3>Authentication</h3>
 		<div class="sectionbg">
 			<div class="sectionbody">
 				<div class="subsection">
@@ -17,22 +17,22 @@
 						<input type="text" name="user" value="<? VAR Username ESC=HTML ?>" class="half" maxlength="128" />
 						<? ENDIF ?>
 					</div>
-
+				</div>
+				<div class="subsection">
 					<div class="inputlabel">Password:</div>
 					<div><input type="password" name="password" class="half" /></div>
+				</div>
+				<div class="subsection">
 					<div class="inputlabel">Confirm Password:</div>
 					<div><input type="password" name="password2" class="half" /></div>
 				</div>
-				<div>
+				<div class="subsection half">
 					<div class="inputlabel">Allowed IPs:</div>
-					<textarea name="allowedips" class="half"><? LOOP AllowedHostLoop ?><? VAR Host ESC=HTML ?>
+					<textarea name="allowedips" cols="70" rows="5"><? LOOP AllowedHostLoop ?><? VAR Host ESC=HTML ?>
 <? ENDLOOP ?>
 </textarea>
-					<? IF OwnIP ?>
-						<div class="subsection">
-							<span style="white-space: nowrap;"><input type="checkbox" name="ownip" id="ownip" value="<? VAR OwnIP ESC=HTML ?>" checked="checked" /><label for="ownip"> <? VAR OwnIP ESC=HTML ?> (your current ip)</label></span>&nbsp;&nbsp;
-						</div>
-					<? ENDIF ?>
+					<br /><span class="info">Leave empty to allow connections from all IPs.<br />
+					Otherwise, one entry per line, wildcards * and ? are available.</span>
 				</div>
 				<div style="clear: both;"></div>
 			</div>
@@ -40,7 +40,10 @@
 	</div>
 
 	<div class="section">
-		<div class="sectiontitle">IRC Information</div>
+		<h3>IRC Information</h3>
+		<? IF !Edit ?>
+		<span class="info">Nick, AltNick, Ident, RealName and QuitMsg can be left empty to use default values.</span>
+		<? ENDIF ?>
 		<div class="sectionbg">
 			<div class="sectionbody">
 				<div class="subsection">
@@ -84,11 +87,12 @@
 				</div>
 				<div style="clear: both;"></div>
 
-				<div class="subsection">
+				<div class="subsection half">
 					<div class="inputlabel">Servers:</div>
-					<div><textarea name="servers" class="half"><? LOOP ServerLoop ?><? VAR Server ESC=HTML ?>
+					<div><textarea name="servers" cols="70" rows="5"><? LOOP ServerLoop ?><? VAR Server ESC=HTML ?>
 <? ENDLOOP ?>
 </textarea></div>
+					<br /><span class="info">One server per line, host [+]port[ password]</span>
 				</div>
 				<div style="clear: both;"></div>
 			</div>
@@ -96,7 +100,7 @@
 	</div>
 
 	<div class="section">
-		<div class="sectiontitle">Modules</div>
+		<h3>Modules</h3>
 		<div class="sectionbg">
 			<div class="sectionbody">
 				<table>
@@ -107,35 +111,33 @@
 						<td>Description</td>
 					</tr>
 					</thead>
+					<tbody>
 
 				<? LOOP ModuleLoop ?>
 					<tr class="<? IF __EVEN__ ?>evenrow<? ELSE ?>oddrow<? ENDIF ?>">
-						<td>
+						<td class="mod_name">
 							<input type="checkbox" name="loadmod" id="lm_<? VAR Name ESC=HTML ?>" value="<? VAR Name ESC=HTML ?>"<? IF Checked ?> checked="checked"<? ENDIF ?><? IF Disabled ?> disabled="disabled"<? ENDIF ?> /><label for="lm_<? VAR Name ESC=HTML ?>"> <? VAR Name ESC=HTML ?></label>
 						</td>
-						<td>
+						<td class="mod_args">
 							<? IF Disabled ?><? VAR Args ESC=HTML ?><? ELSE ?><input class="third" type="text" name="modargs_<? VAR Name ESC=HTML ?>" value="<? VAR Args ESC=HTML ?>" /><? ENDIF ?>
 						</td>
-						<td><? VAR Description ESC=HTML ?></td>
+						<td class="mod_descr"><? VAR Description ESC=HTML ?></td>
 					</tr>
 				<? ENDLOOP ?>
 
+					</tbody>
 				</table>
 			</div>
 		</div>
 	</div>
 
 	<div class="section">
-		<div class="sectiontitle">Channels</div>
+		<h3>Channels</h3>
+		<? IF !Edit ?>
+		<span class="info">You will be able to add + modify channels here after you created the user.</span><br />
+		<? ELSE ?>
 		<div class="sectionbg">
 			<div class="sectionbody">
-				<div class="subsection">
-					<div class="inputlabel">Default Modes:</div>
-					<div><input type="text" name="chanmodes" value="<? VAR DefaultChanModes ESC=HTML ?>" class="third" maxlength="32" /></div>
-				</div>
-				<div style="clear: both;"></div>
-
-			<? IF Edit ?>
 				<table>
 					<thead>
 					<tr>
@@ -153,6 +155,7 @@
 					</tr>
 					</thead>
 
+					<tbody>
 			<? LOOP ChannelLoop ?>
 					<tr class="<? IF __EVEN__ ?>evenrow<? ELSE ?>oddrow<? ENDIF ?>">
 						<td>
@@ -167,26 +170,57 @@
 						<td><? VAR Options ESC=HTML ?></td>
 					</tr>
 			<? ENDLOOP ?>
+					</tbody>
 				</table>
-			<? ENDIF ?>
+			</div>
+		</div>
+		<? ENDIF ?>
+	</div>
+
+	<div class="section">
+		<h3>Default Channel Settings</h3>
+		<div class="sectionbg">
+			<div class="sectionbody">
+				<div class="subsection third">
+					<div class="inputlabel">Modes:</div>
+					<div><input type="text" name="chanmodes" value="<? VAR DefaultChanModes ESC=HTML ?>" maxlength="32" /></div>
+					<br /><span class="info">Empty = use standard value</span>
+				</div>
+				<div class="subsection third">
+					<div class="inputlabel">Buffer Size:</div>
+					<div><input type="text" name="bufsize" value="<? VAR BufferCount ESC=HTML ?>" maxlength="9" /></div>
+					<br /><span class="info">Empty = use standard value</span>
+				</div>
 			</div>
 		</div>
 	</div>
 
 	<div class="section">
-		<div class="sectiontitle">ZNC Behavior</div>
+		<h3>Flags</h3>
+		<div class="sectionbg">
+			<div class="sectionbody lotsofcheckboxes">
+				<? LOOP OptionLoop ?>
+				<span class="checkboxandlabel">
+					<input type="checkbox" name="<? VAR Name ESC=HTML?>" id="opt_<? VAR Name ESC=HTML ?>" value="1"<? IF Checked ?> checked="checked"<? ENDIF ?><? IF Disabled ?> disabled="disabled"<? ENDIF ?> />
+					<label for="opt_<? VAR Name ESC=HTML ?>"><? VAR DisplayName ESC=HTML ?></label>
+				</span>
+				<? ENDLOOP ?>
+				<div style="clear:both;"></div>
+			</div>
+		</div>
+	</div>
+
+	<div class="section">
+		<h3>ZNC Behavior</h3>
+		<span class="info">Any of the following text boxes can be left empty to use their default value.</span>
 		<div class="sectionbg">
 			<div class="sectionbody">
 				<div class="subsection">
 					<div class="inputlabel">Timestamp Format:</div>
-					<div><input type="text" name="timestampformat" value="<? VAR TimestampFormat ESC=HTML ?>" class="full" /></div>
+					<div><input type="text" name="timestampformat" value="<? VAR TimestampFormat ESC=HTML ?>" class="half" /></div>
 				</div>
 				<div class="subsection">
-					<div class="inputlabel">Playback Buffer Size:</div>
-					<div><input type="text" name="bufsize" value="<? VAR BufferCount ESC=HTML ?>" class="third" maxlength="9" /></div>
-				</div>
-				<div class="subsection">
-					<div class="inputlabel">Timezone offset:</div>
+					<div class="inputlabel">Timezone Offset:</div>
 					<div><input type="text" name="timezoneoffset" value="<? VAR TimezoneOffset ESC=HTML ?>" class="third" /></div>
 				</div>
 				<div class="subsection">
@@ -197,28 +231,20 @@
 					<div class="inputlabel">Max Joins:</div>
 					<div><input type="text" name="maxjoins" value="<? VAR MaxJoins ESC=HTML ?>" class="third" /></div>
 				</div>
-				<div style="clear: both;"></div>
-
-				<div style="margin-bottom: 10px;">
-					<div class="inputlabel">Options:</div>
-					<? LOOP OptionLoop ?>
-					<span style="white-space: nowrap;"><input type="checkbox" name="<? VAR Name ESC=HTML?>" id="opt_<? VAR Name ESC=HTML ?>" value="1"<? IF Checked ?> checked="checked"<? ENDIF ?><? IF Disabled ?> disabled="disabled"<? ENDIF ?> /><label for="opt_<? VAR Name ESC=HTML ?>"><? VAR DisplayName ESC=HTML ?></label></span>&nbsp;&nbsp;
-					<? ENDLOOP ?>
-				</div>
-
-				<div class="subsection">
+				<div class="subsection half">
 					<div class="inputlabel">CTCP Replies:</div>
-					<div><textarea name="ctcpreplies" class="half"><? LOOP CTCPLoop ?><? VAR CTCP ESC=HTML ?>
+					<div><textarea name="ctcpreplies" cols="70" rows="3"><? LOOP CTCPLoop ?><? VAR CTCP ESC=HTML ?>
 <? ENDLOOP ?>
 </textarea></div>
+					<br /><span class="info">One reply per line. Example: TIME Buy a watch!</span>
 				</div>
 				<div style="clear: both;"></div>
 			</div>
 		</div>
 	</div>
 
-	<div>
-		<input type="submit" value="Submit" />
+	<div class="submitline">
+		<input type="submit" value="<? IF Edit ?>Save<? ELSE ?>Create<? ENDIF ?>" />
 	</div>
 </form>
 

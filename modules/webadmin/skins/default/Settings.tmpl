@@ -4,7 +4,7 @@
 	<div class="section">
 		<input type="hidden" name="submitted" value="1" />
 
-		<div class="sectiontitle">Listen Port(s)</div>
+		<h3>Listen Port(s)</h3>
 		<div class="sectionbg">
 			<div class="sectionbody">
 				<div class="subsection">
@@ -18,14 +18,16 @@
 									<td>IPv6</td>
 								</tr>
 							</thead>
+							<tbody>
 							<? LOOP ListenLoop ?>
 								<tr class="<? IF __EVEN__ ?>evenrow<? ELSE ?>oddrow<? ENDIF ?>">
 									<td><? VAR Port ESC=HTML ?></td>
 									<td><? VAR BindHost ESC=HTML DEFAULT=** ?></td>
-									<td><? IF IsSSL ?>True<? ENDIF ?></td>
-									<td><? IF IsIPV6 ?>True<? ENDIF ?></td>
+									<td><? IF IsSSL ?>Yes<? ELSE ?>No<? ENDIF ?></td>
+									<td><? IF IsIPV6 ?>Yes<? ELSE ?>No<? ENDIF ?></td>
 								</tr>
 							<? ENDLOOP ?>
+							</tbody>
 						</table>
 					</div>
 				</div>
@@ -35,7 +37,7 @@
 	</div>
 
 	<div class="section">
-		<div class="sectiontitle">Settings</div>
+		<h3>Settings</h3>
 		<div class="sectionbg">
 			<div class="sectionbody">
 				<div class="subsection">
@@ -50,35 +52,39 @@
 				</div>
 				<div style="clear: both;"></div>
 
-				<div class="subsection">
+				<div class="subsection third">
 					<div class="inputlabel">Status Prefix:</div>
-					<div><input type="text" name="statusprefix" value="<? VAR StatusPrefix ESC=HTML ?>" size="32" maxlength="128" /></div>
+					<div><input type="text" name="statusprefix" value="<? VAR StatusPrefix ESC=HTML ?>" /></div>
+					<br /><span class="info">Default for new users only.</span>
 				</div>
 				<div style="clear: both;"></div>
 
-				<div class="subsection">
+				<div class="subsection half">
 					<div class="inputlabel">ISpoofFile:</div>
-					<div><input type="text" name="ispooffile" value="<? VAR ISpoofFile ESC=HTML ?>" size="32" maxlength="128" /></div>
+					<div><input type="text" name="ispooffile" value="<? VAR ISpoofFile ESC=HTML ?>" /></div>
+					<br /><span class="info">Example: ~/.oidentd.conf</span>
 				</div>
 
-				<div class="subsection">
+				<div class="subsection half">
 					<div class="inputlabel">ISpoofFormat:</div>
-					<div><input type="text" name="ispoofformat" value="<? VAR ISpoofFormat ESC=HTML ?>" size="32" maxlength="128" /></div>
+					<div><input type="text" name="ispoofformat" value="<? VAR ISpoofFormat ESC=HTML ?>" /></div>
 				</div>
 				<div style="clear: both;"></div>
 
-				<div class="subsection">
+				<div class="subsection twothird">
 					<div class="inputlabel">MOTD:</div>
 					<div><textarea name="motd" cols="70" rows="5"><? LOOP MOTDLoop ?><? VAR Line ESC=HTML ?>
 <? ENDLOOP ?>
 </textarea></div>
+					<br /><span class="info">"Message of the Day", sent to all ZNC users on connect.</span>
 				</div>
 
-				<div class="subsection">
+				<div class="subsection twothird">
 					<div class="inputlabel">VHosts:</div>
 					<div><textarea name="vhosts" cols="70" rows="8"><? LOOP VHostLoop ?><? VAR VHost ESC=HTML ?>
 <? ENDLOOP ?>
 </textarea></div>
+					<br /><span class="info">One host name or IP entry per line.</span>
 				</div>
 				<div style="clear: both;"></div>
 			</div>
@@ -86,7 +92,7 @@
 	</div>
 
 	<div class="section">
-		<div class="sectiontitle">Global Modules</div>
+		<h3>Global Modules</h3>
 		<div class="sectionbg">
 			<div class="sectionbody">
 				<table>
@@ -97,20 +103,22 @@
 						<td>Description</td>
 					</tr>
 					</thead>
+					<tbody>
 					<? LOOP ModuleLoop ?>
-					<tr class="background: <? IF __EVEN__ ?>evenrow<? ELSE ?>oddrow<? ENDIF ?>">
-						<td><input type="checkbox" name="loadmod" id="lm_<? VAR Name ESC=HTML ?>" value="<? VAR Name ESC=HTML ?>"<? IF Checked ?> checked="checked"<? ENDIF ?><? IF Disabled ?> disabled="disabled"<? ENDIF ?> /><label for="lm_<? VAR Name ESC=HTML ?>"> <? VAR Name ESC=HTML ?></label></td>
-						<td><input type="text" name="modargs_<? VAR Name ESC=HTML ?>" value="<? VAR Args ESC=HTML ?>" /></td>
-						<td><? VAR Description ESC=HTML ?></td>
+					<tr class="<? IF __EVEN__ ?>evenrow<? ELSE ?>oddrow<? ENDIF ?>">
+						<td class="mod_name"><input type="checkbox" name="loadmod" id="lm_<? VAR Name ESC=HTML ?>" value="<? VAR Name ESC=HTML ?>"<? IF Checked ?> checked="checked"<? ENDIF ?><? IF Disabled ?> disabled="disabled"<? ENDIF ?> /><label for="lm_<? VAR Name ESC=HTML ?>"> <? VAR Name ESC=HTML ?></label></td>
+						<td class="mod_args"><input type="text" name="modargs_<? VAR Name ESC=HTML ?>" value="<? VAR Args ESC=HTML ?>" /></td>
+						<td class="mod_descr"><? VAR Description ESC=HTML ?></td>
 					</tr>
 					<? ENDLOOP ?>
+					</tbody>
 				</table>
 			</div>
 		</div>
 	</div>
 
-	<div>
-		<input type="submit" value="Submit" />
+	<div class="submitline">
+		<input type="submit" value="Save" />
 	</div>
 </form>
 

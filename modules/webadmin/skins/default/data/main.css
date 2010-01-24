@@ -1,138 +1,249 @@
+@charset "UTF-8";
+
+* {
+	margin: 0;
+	padding: 0;
+}
+
+html {
+	height: 100%;
+}
+
 body {
+	height: 100%;
 	background-color: #fff;
 	color: #000;
+	font-family: Tahoma, sans-serif;
+}
+
+a, a:link, a:active, a:visited, a:focus {
+	color: #00008B;
+	text-decoration: none;
+	outline: none;
+}
+
+a:hover {
+	text-decoration: underline;
+}
+
+#main a:visited {
+	color: #99008B;
+}
+
+#container {
+	background-color: #eee;
+	min-height: 80%;
+	overflow: hidden;
+	margin: 0 auto;
 	width: 800px;
+
+	border: 1px solid #ccc;
+	border-top: none;
+	-moz-box-shadow: 0 0 1em #666;
+	-webkit-box-shadow: 0 0 1em #666;
 }
 
-a:visited { color: #000; }
-a:hover { color: #000; }
-a, a:active { color: #000; }
-
-.nowrap { white-space: nowrap; }
-.clear { clear: both; }
-
-table a, table a:visited, table a:hover, table a:active { color: #000; }
-
-table {
-	color: #000;
-	border-collapse: collapse;
-	border: 2px solid #000;
-	padding: 0px;
-	margin: 0px;
+#tag {
+	height: 4em;
+	line-height: 4em;
+	text-align: center;
+	font-size: 70%;
+	color: #aaa;
 }
 
-table td {
-	border: 1px solid #000;
+#navbar {
+	display: block;
+	height: 45px;
+	background-color: #ccc;
+}
+
+#navbar h1 {
+	float: left;
+	line-height: 45px;
+	padding: 0 0.9em 0 0.6em;
+	font-style: italic;
+	background-color: #aaa;
+	font-size: 100%;
+	font-weight: normal;
+}
+
+ul.nav {
+	float: left;
+	margin-left: 20px;
+}
+
+ul.nav li {
+	list-style: none;
+	float: left;
+	margin-right: 55px;
+}
+
+ul.nav li a {
+	line-height: 45px;
+	height: 45px;
+	display: inline-block;
+}
+
+#ident {
+	text-align: right;
 	padding: 4px;
-	margin: 0px;
+	font-size: 70%;
+	color: #888;
 }
 
-table thead {
-	border-bottom: 2px solid #000;
-	background-color: #ff9;
-	font-weight: bold;
+ul.nav li:before {
+	content: "» ";
 }
 
-input.full, textarea.full {
-	width: 620px;
+#main {
+	clear: both;
+	padding: 0 20px 20px 20px;
+
+	font-size: 90%;
 }
 
-input.half, textarea.half {
-	width: 300px;
+h2 {
+	margin-bottom: 0.4em;
 }
 
-input.third, textarea.third {
-	width: 150px;
+h3 {
+	margin-top: 1.2em;
+	margin-bottom: 0.4em;
+}
+
+.section {
+	clear: both;
+}
+
+.sectionbody {
+	margin-left: 1em;
+}
+
+.sectionbody input, textarea, select {
+	border: 2px solid #ccc;
+	font-family: Tahoma, sans-serif;
+	padding: 3px;
+	font-size: 14px;
+}
+
+input:focus, textarea:focus, select:focus {
+	-moz-box-shadow: 0 0 0.4em #aaa;
+	-webkit-box-shadow: 0 0 0.4em #aaa;
 }
 
 textarea {
 	height: 90px;
 }
 
-#banner {
-	border-bottom: 2px solid #000;
-	text-align: center;
+.submitline input {
+	width: 200px;
+	height: 2.2em;
 }
 
-#ident {
-	float: left;
-	font-weight: bold;
-	text-align: right;
+input.full, textarea.full,
+.full input, .full textarea {
+	width: 600px;
 }
 
-#sidebar {
-	border-right: 1px solid #000;
-	height: 500px;
-	width: 100px;
-	float: left;
+input.twothird, textarea.twothird,
+.twothird input, .twothird textarea {
+	width: 450px;
 }
 
-#main {
-	margin: 5px 0px 20px 5px;
-	float: left;
-	width: 670px;
+input.half, textarea.half,
+.half input, .half textarea {
+	width: 300px;
 }
 
-#tag {
-	font-weight: bold;
-	text-align: right;
+input.third, textarea.third,
+.third input, .third textarea {
+	width: 150px;
 }
 
-.oddrow {
-	background-color: #ffc;
+table {
+	border: 1px solid #ccc;
 }
 
-.evenrow {
-	background-color: #cc9;
+td {
+	padding: 5px 10px;
+	min-width: 80px;
 }
 
-.inputlabel {
-	font-size: small;
-	font-weight: bold;
-	color: #000;
+thead td {
+	background-color: #a0a0a0;
 }
 
-ul.nav, ul.nav ul {
-	cursor: default;
-	margin: 0px 0px 0px 0px;
-	padding: 5px 5px 5px 5px;
+tbody td {
+	background-color: #cecece;
 }
 
-ul.nav li {
-	list-style-type: none;
-	padding: 0px 2px 1px 2px;
-	margin: 2px 0px 2px 0px;
+tr.evenrow td {
+	background-color: #dadada;
 }
 
-.section {
-	padding-bottom: 20px;
+div.submitline {
+	margin: 1em;
+}
+
+.info {
+	font-style: italic;
+	font-size: 80%;
 }
 
 .subsection {
-	float: left;
-	margin-right: 10px;
-	margin-bottom: 10px;
-}
-
-.sectiontitle {
-	float: left;
-	white-space: nowrap;
-	background-color: #ff9;
-	color: #000;
-	font-weight: bold;
-	border: 1px solid #000;
-	padding: 0px 5px 0px 5px;
-	margin: 0px 15px -10px 8px;
-}
-
-.sectionbg {
 	clear: both;
-	background-color: #cc9;
-	color: #000;
-	border: 2px solid #000;
-	padding: 0px;
+	margin: 0;
 }
 
-.sectionbody {
-	margin: 15px 5px 5px 15px;
+.subsection div {
+	float: left;
+}
+
+.subsection .inputlabel {
+	width: 120px;
+	text-align: right;
+	padding: 10px 5px 0 0;
+}
+
+.subsection input, .subsection select, .subsection textarea {
+	margin: 5px 0 5px 0;
+	vertical-align: middle;
+}
+
+.section .info {
+	margin-bottom: 5px;
+	display: block;
+}
+
+.subsection .info {
+	text-align: right;
+}
+
+.half .info {
+	width: 435px;
+}
+
+.third .info {
+	width: 285px;
+}
+
+.twothird .info {
+	width: 585px;
+}
+
+td.mod_descr,
+td.mod_name,
+td.mod_args input {
+	font-size: 80%;
+}
+
+.checkboxandlabel {
+	white-space: nowrap;
+}
+
+.lotsofcheckboxes .checkboxandlabel {
+	display: block;
+	float: left;
+	width: 200px;
+	margin-top: 0.5em;
 }
