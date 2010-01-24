@@ -4,50 +4,53 @@
 	<div class="section">
 		<input type="hidden" name="submitted" value="1" />
 		<input type="hidden" name="user" value="<? VAR User ESC=HTML ?>" />
+		<? IF Edit ?><input type="hidden" name="name" value="<? VAR ChanName ESC=HTML ?>" /><? ENDIF ?>
 
-		<div class="sectiontitle">Channel Info</div>
+		<h3>Channel Info</h3>
 		<div class="sectionbg">
 			<div class="sectionbody">
-				<div class="subsection">
+				<? IF !Edit ?>
+				<div class="subsection half">
 					<div class="inputlabel">Channel Name:</div>
-				<? IF Edit ?>
-					<input type="hidden" name="name" value="<? VAR ChanName ESC=HTML ?>" />
-					<? VAR ChanName ESC=HTML ?>
-				<? ELSE ?>
-					<div><input type="text" name="name" value="" size="32" /></div>
-				<? ENDIF ?>
+					<div><input type="text" name="name" value="" /></div>
+					<br /><span class="info">If the channel has a key and you want to save the key, type: #CHAN KEY</span>
 				</div>
+				<? ENDIF ?>
 
 				<div class="subsection">
 					<div class="inputlabel">Buffer Count:</div>
-					<div><input type="text" name="buffercount" value="<? VAR BufferCount ESC=HTML ?>" size="8" /></div>
+					<div><input type="text" name="buffercount" value="<? VAR BufferCount ESC=HTML ?>" size="10" /></div>
 				</div>
 
 				<div class="subsection">
 					<div class="inputlabel">Default Modes:</div>
-					<div><input type="text" name="defmodes" value="<? VAR DefModes ESC=HTML ?>" size="16" /></div>
+					<div><input type="text" name="defmodes" value="<? VAR DefModes ESC=HTML ?>" size="10" /></div>
 				</div>
 
-				<div style="clear: both;"></div>
-
-				<div class="subsection">
-					<div class="inputlabel">Save:</div>
-					<div><input type="checkbox" name="save" id="save" value="true"<? IF InConfig ?> checked="checked"<? ENDIF ?> /><label for="save"> Save to config</label></div>
-				</div>
-
-				<div class="subsection">
-					<div class="inputlabel">Options:</div>
-					<? LOOP OptionLoop ?>
-					<input type="checkbox" name="<? VAR Name ESC=HTML ?>" id="opt_<? VAR Name ESC=HTML ?>" value="true"<? IF Checked ?> checked="checked"<? ENDIF ?><? IF Disabled ?> disabled="disabled"<? ENDIF ?> /><label for="opt_<? VAR Name ESC=HTML ?>"> <? VAR DisplayName ESC=HTML ?></label>
-					<? ENDLOOP ?>
-				</div>
-
-				<div style="clear: both;"></div>
 			</div>
 		</div>
 	</div>
 
-	<div>
+	<div class="section">
+		<h3>Flags</h3>
+		<div class="sectionbg">
+			<div class="sectionbody lotsofcheckboxes">
+				<span class="checkboxandlabel">
+					<input type="checkbox" name="save" id="save" value="true"<? IF InConfig ?> checked="checked"<? ENDIF ?> />
+					<label for="save">Save to config</label>
+				</span>
+				<? LOOP OptionLoop ?>
+				<span class="checkboxandlabel">
+					<input type="checkbox" name="<? VAR Name ESC=HTML ?>" id="opt_<? VAR Name ESC=HTML ?>" value="true"<? IF Checked ?> checked="checked"<? ENDIF ?><? IF Disabled ?> disabled="disabled"<? ENDIF ?> />
+					<label for="opt_<? VAR Name ESC=HTML ?>"><? VAR DisplayName ESC=HTML ?></label>
+				</span>
+				<? ENDLOOP ?>
+				<div style="clear:both;"></div>
+			</div>
+		</div>
+	</div>
+
+	<div class="submitline">
 		<input type="submit" value="<? IF Edit ?>Save<? ELSE ?>Add Channel<? ENDIF ?>" />
 	</div>
 </form>
