@@ -166,7 +166,7 @@ bool CHTTPSock::PrintFile(const CString& sFileName, CString sContentType) {
 		sETag = "-" + CString(iMTime); // lighttpd style ETag
 
 		AddHeader("ETag", "\"" + sETag + "\"");
-		AddHeader("Cache-Control", "private");
+		AddHeader("Cache-Control", "public");
 
 		if (!m_sIfNoneMatch.empty()) {
 			m_sIfNoneMatch.Trim("\\\"'");
