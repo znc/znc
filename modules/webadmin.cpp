@@ -830,14 +830,6 @@ bool CWebAdminSock::UserPage(CString& sPageRet, CUser* pUser) {
 				l["CTCP"] = it2->first + " " + it2->second;
 			}
 
-			if (pUser == CZNC::Get().FindUser(GetUser())) {
-				CString sIP = GetRemoteIP();
-
-				if (!sIP.empty()) {
-					m_Template["OwnIP"] = sIP.Token(0, false, ".") + "." + sIP.Token(1, false, ".") + "." + sIP.Token(2, false, ".") + ".*";
-				}
-			}
-
 			const vector<CChan*>& Channels = pUser->GetChans();
 			for (unsigned int c = 0; c < Channels.size(); c++) {
 				CChan* pChan = Channels[c];
@@ -1058,10 +1050,6 @@ CUser* CWebAdminSock::GetNewUser(CString& sPageRet, CUser* pUser) {
 		}
 	} else {
 		pNewUser->AddAllowedHost("*");
-	}
-
-	if (HasParam("ownip")) {
-		pNewUser->AddAllowedHost(GetParam("ownip"));
 	}
 
 	GetRawParam("ctcpreplies").Split("\n", vsArgs);
