@@ -52,10 +52,6 @@
 						<textarea style="width: 100%;" name="allowedips" cols="40" rows="5"><? LOOP AllowedHostLoop ?><? VAR Host ESC=HTML ?>
 <? ENDLOOP ?>
 </textarea>
-
-						<? IF OwnIP ?>
-						<br><br><input type="checkbox" id="ownip" name="ownip" value="<? VAR OwnIP ESC=HTML ?>" checked="checked"><label for="ownip"> <? VAR OwnIP ESC=HTML ?> (your current ip)</label>
-						<? ENDIF ?>
 					</td>
 				</tr>
 			</table>

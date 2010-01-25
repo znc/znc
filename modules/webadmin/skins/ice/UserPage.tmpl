@@ -28,11 +28,6 @@
 					<textarea name="allowedips" class="half"><? LOOP AllowedHostLoop ?><? VAR Host ESC=HTML ?>
 <? ENDLOOP ?>
 </textarea>
-					<? IF OwnIP ?>
-						<div class="subsection">
-							<span style="white-space: nowrap;"><input type="checkbox" name="ownip" id="ownip" value="<? VAR OwnIP ESC=HTML ?>" checked="checked" /><label for="ownip"> <? VAR OwnIP ESC=HTML ?> (your current ip)</label></span>&nbsp;&nbsp;
-						</div>
-					<? ENDIF ?>
 				</div>
 				<div style="clear: both;"></div>
 			</div>
