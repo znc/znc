@@ -186,7 +186,7 @@ void CClient::ReadLine(const CString& sData) {
 		// If the client meant to ping us or we can be sure the server
 		// won't answer the ping (=no server connected) -> PONG back.
 		// else: It's the server's job to send a PONG.
-		if (sTarget.Equals("irc.znc.in") || !m_pIRCSock) {
+		if (sTarget.Equals("irc.znc.in") || !GetIRCSock()) {
 			PutClient("PONG " + sLine.substr(5));
 			return;
 		}
@@ -323,7 +323,7 @@ void CClient::ReadLine(const CString& sData) {
 		// make sense. Comment this out and wait for complaints.
 #if 0
 		if (sMsg.WildCmp("DCC * (*)")) {
-			sMsg = "DCC " + sLine.Token(3) + " (" + ((m_pIRCSock) ? m_pIRCSock->GetLocalIP() : GetLocalIP()) + ")";
+			sMsg = "DCC " + sLine.Token(3) + " (" + ((GetIRCSock()) ? GetIRCSock()->GetLocalIP() : GetLocalIP()) + ")";
 		}
 #endif
 
@@ -341,7 +341,7 @@ void CClient::ReadLine(const CString& sData) {
 		}
 #endif
 
-		if (!m_pIRCSock) {
+		if (!GetIRCSock()) {
 			// Some lagmeters do a NOTICE to their own nick, ignore those.
 			if (!sTarget.Equals(m_sNick))
 				PutStatus("Your notice to [" + sTarget + "] got lost, "
@@ -528,7 +528,7 @@ void CClient::ReadLine(const CString& sData) {
 
 		MODULECALL(OnUserMsg(sTarget, sMsg), m_pUser, this, return);
 
-		if (!m_pIRCSock) {
+		if (!GetIRCSock()) {
 			// Some lagmeters do a PRIVMSG to their own nick, ignore those.
 			if (!sTarget.Equals(m_sNick))
 				PutStatus("Your message to [" + sTarget + "] got lost, "
@@ -743,8 +743,8 @@ void CClient::IRCDisconnected() {
 }
 
 void CClient::PutIRC(const CString& sLine) {
-	if (m_pIRCSock) {
-		m_pIRCSock->PutIRC(sLine);
+	if (GetIRCSock()) {
+		GetIRCSock()->PutIRC(sLine);
 	}
 }
 
@@ -790,16 +790,16 @@ void CClient::PutModule(const CString& sModule, const CString& sLine) {
 CString CClient::GetNick(bool bAllowIRCNick) const {
 	CString sRet;
 
-	if ((bAllowIRCNick) && (IsAttached()) && (m_pIRCSock)) {
-		sRet = m_pIRCSock->GetNick();
+	if ((bAllowIRCNick) && (IsAttached()) && (GetIRCSock())) {
+		sRet = GetIRCSock()->GetNick();
 	}
 
 	return (sRet.empty()) ? m_sNick : sRet;
 }
 
 CString CClient::GetNickMask() const {
-	if (m_pIRCSock && m_pIRCSock->IsAuthed()) {
-		return m_pIRCSock->GetNickMask();
+	if (GetIRCSock() && GetIRCSock()->IsAuthed()) {
+		return GetIRCSock()->GetNickMask();
 	}
 
 	CString sHost = m_pUser->GetVHost();

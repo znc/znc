@@ -231,8 +231,8 @@ void CClient::UserCommand(CString& sLine) {
 			return;
 		}
 
-		if (m_pIRCSock) {
-			m_pIRCSock->Quit();
+		if (GetIRCSock()) {
+			GetIRCSock()->Quit();
 			PutStatus("Jumping to the next server in the list...");
 		} else {
 			PutStatus("Connecting...");
@@ -245,8 +245,8 @@ void CClient::UserCommand(CString& sLine) {
 		// m_pIRCSock is only set after the low level connection
 		// to the IRC server was established. Before this we can
 		// only find the IRC socket by its name.
-		if (m_pIRCSock) {
-			m_pIRCSock->Quit();
+		if (GetIRCSock()) {
+			GetIRCSock()->Quit();
 		} else {
 			Csock* pIRCSock;
 			CString sSockName = "IRC::" + m_pUser->GetUserName();
