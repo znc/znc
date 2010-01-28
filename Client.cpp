@@ -113,11 +113,6 @@ void CClient::ReadLine(const CString& sData) {
 			}
 			return;		// Don't forward this msg.  ZNC will handle nick changes until auth is complete
 		}
-
-		if (!m_pIRCSock) {
-			// No need to forward it
-			return;
-		}
 	} else if (sCommand.Equals("USER")) {
 		if (!IsAttached()) {
 			if (m_sUser.empty()) {
