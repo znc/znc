@@ -28,7 +28,7 @@
 * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 *
 *
-* $Revision: 1.121 $
+* $Revision: 1.122 $
 */
 
 #include "Csocket.h"
@@ -632,11 +632,11 @@ void Csock::CloseSocksFD()
 {
 	if ( m_iReadSock != m_iWriteSock )
 	{
-		if( m_iReadSock >= 0 )
+		if( m_iReadSock != CS_INVALID_SOCK )
 			CS_CLOSE( m_iReadSock );
-		if( m_iWriteSock >= 0 )
+		if( m_iWriteSock != CS_INVALID_SOCK )
 			CS_CLOSE( m_iWriteSock );
-	} else if( m_iReadSock >= 0 )
+	} else if( m_iReadSock CS_INVALID_SOCK )
 		CS_CLOSE( m_iReadSock );
 
 	m_iReadSock = CS_INVALID_SOCK;
@@ -888,7 +888,7 @@ bool Csock::Connect( const CS_STRING & sBindHost, bool bSkipSetup )
 
 int Csock::WriteSelect()
 {
-	if ( m_iWriteSock < 0 )
+	if ( m_iWriteSock == CS_INVALID_SOCK )
 		return( SEL_ERR );
 
 	struct timeval tv;
@@ -918,7 +918,7 @@ int Csock::WriteSelect()
 
 int Csock::ReadSelect()
 {
-	if ( m_iReadSock < 0 )
+	if ( m_iReadSock == CS_INVALID_SOCK )
 		return( SEL_ERR );
 
 	struct timeval tv;
@@ -993,15 +993,15 @@ bool Csock::Listen( u_short iPort, int iMaxConns, const CS_STRING & sBindHost, u
 	return( true );
 }
 
-int Csock::Accept( CS_STRING & sHost, u_short & iRPort )
+cs_sock_t Csock::Accept( CS_STRING & sHost, u_short & iRPort )
 {
-	int iSock = -1;
+	cs_sock_t iSock = CS_INVALID_SOCK;
 	if( !GetIPv6() )
 	{
 		struct sockaddr_in client;
 		socklen_t clen = sizeof( client );
 		iSock = accept( m_iReadSock, (struct sockaddr *) &client, &clen );
-		if( iSock != -1 )
+		if( iSock != CS_INVALID_SOCK )
 		{
 			getpeername( iSock, (struct sockaddr *) &client, &clen );
 			sHost = inet_ntoa( client.sin_addr );
@@ -1015,7 +1015,7 @@ int Csock::Accept( CS_STRING & sHost, u_short & iRPort )
 		struct sockaddr_in6 client;
 		socklen_t clen = sizeof( client );
 		iSock = accept( m_iReadSock, (struct sockaddr *) &client, &clen );
-		if( iSock != -1 )
+		if( iSock != CS_INVALID_SOCK )
 		{
 			getpeername( iSock, (struct sockaddr *) &client, &clen );
 			if( inet_ntop( AF_INET6, &client.sin6_addr, straddr, sizeof(straddr) ) > 0 )
@@ -1027,7 +1027,7 @@ int Csock::Accept( CS_STRING & sHost, u_short & iRPort )
 	}
 #endif /* HAVE_IPV6 */
 
-	if ( iSock != -1 )
+	if ( iSock != CS_INVALID_SOCK )
 	{
 		// Make it close-on-exec
 		set_close_on_exec( iSock );
@@ -1041,7 +1041,7 @@ int Csock::Accept( CS_STRING & sHost, u_short & iRPort )
 		if ( !ConnectionFrom( sHost, iRPort ) )
 		{
 			CS_CLOSE( iSock );
-			iSock = -1;
+			iSock = CS_INVALID_SOCK;
 		}
 
 	}
@@ -1574,9 +1574,9 @@ CS_STRING Csock::GetLocalIP()
 	if ( !m_sLocalIP.empty() )
 		return( m_sLocalIP );
 
-	int iSock = GetSock();
+	cs_sock_t iSock = GetSock();
 
-	if ( iSock < 0 )
+	if ( iSock == CS_INVALID_SOCK )
 		return( "" );
 
 	if( !GetIPv6() )
@@ -1608,13 +1608,10 @@ CS_STRING Csock::GetRemoteIP()
 	if ( !m_sRemoteIP.empty() )
 		return( m_sRemoteIP );
 
-	int iSock = GetSock();
+	cs_sock_t iSock = GetSock();
 
-	if ( iSock < 0 )
-	{
-		std::cerr << "What the hell is wrong with my fd!?" << endl;
+	if ( iSock == CS_INVALID_SOCK )
 		return( "" );
-	}
 
 	if( !GetIPv6() )
 	{
@@ -1787,9 +1784,9 @@ u_short Csock::GetRemotePort()
 	if ( m_iRemotePort > 0 )
 		return( m_iRemotePort );
 
-	int iSock = GetSock();
+	cs_sock_t iSock = GetSock();
 
-	if ( iSock >= 0 )
+	if ( iSock != CS_INVALID_SOCK )
 	{
 		if( !GetIPv6() )
 		{
@@ -1817,9 +1814,9 @@ u_short Csock::GetLocalPort()
 	if ( m_iLocalPort > 0 )
 		return( m_iLocalPort );
 
-	int iSock = GetSock();
+	cs_sock_t iSock = GetSock();
 
-	if ( iSock >= 0 )
+	if ( iSock != CS_INVALID_SOCK )
 	{
 		if( !GetIPv6() )
 		{
@@ -1880,7 +1877,7 @@ int Csock::PemPassCB( char *buf, int size, int rwflag, void *pcSocket )
 	memset( buf, '\0', size );
 	strncpy( buf, sPassword.c_str(), size );
 	buf[size-1] = '\0';
-	return( strlen( buf ) );
+	return( (int)strlen( buf ) );
 }
 
 int Csock::CertVerifyCB( int preverify_ok, X509_STORE_CTX *x509_ctx )
@@ -2321,7 +2318,7 @@ cs_sock_t Csock::CreateSocket( bool bListen )
 	cs_sock_t iRet = socket( PF_INET, SOCK_STREAM, IPPROTO_TCP );
 #endif /* HAVE_IPV6 */
 
-	if ( iRet >= 0 ) {
+	if ( iRet != CS_INVALID_SOCK ) {
 		set_close_on_exec( iRet );
 
 		if ( bListen ) {

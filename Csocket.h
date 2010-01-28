@@ -28,7 +28,7 @@
 * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 *
 *
-* $Revision: 1.221 $
+* $Revision: 1.222 $
 */
 
 // note to compile with win32 need to link to winsock2, using gcc its -lws2_32
@@ -314,12 +314,12 @@ inline void TFD_ZERO( fd_set *set )
 	FD_ZERO( set );
 }
 
-inline void TFD_SET( u_int iSock, fd_set *set )
+inline void TFD_SET( cs_sock_t iSock, fd_set *set )
 {
 	FD_SET( iSock, set );
 }
 
-inline bool TFD_ISSET( u_int iSock, fd_set *set )
+inline bool TFD_ISSET( cs_sock_t iSock, fd_set *set )
 {
 	if ( FD_ISSET( iSock, set ) )
 		return( true );
@@ -327,7 +327,7 @@ inline bool TFD_ISSET( u_int iSock, fd_set *set )
 	return( false );
 }
 
-inline void TFD_CLR( u_int iSock, fd_set *set )
+inline void TFD_CLR( cs_sock_t iSock, fd_set *set )
 {
 	FD_CLR( iSock, set );
 }
@@ -535,7 +535,7 @@ public:
 	virtual bool Listen( u_short iPort, int iMaxConns = SOMAXCONN, const CS_STRING & sBindHost = "", u_int iTimeout = 0 );
 
 	//! Accept an inbound connection, this is used internally
-	virtual int Accept( CS_STRING & sHost, u_short & iRPort );
+	virtual cs_sock_t Accept( CS_STRING & sHost, u_short & iRPort );
 
 	//! Accept an inbound SSL connection, this is used internally and called after Accept
 	virtual bool AcceptSSL();
@@ -1365,9 +1365,9 @@ public:
 			AddSock( pcSock, cListen.GetSockName() );
 			if( ( piRandPort ) && ( cListen.GetPort() == 0 ) )
 			{
-				int iSock = pcSock->GetSock();
+				cs_sock_t iSock = pcSock->GetSock();
 
-				if ( iSock < 0 )
+				if ( iSock == CS_INVALID_SOCK )
 				{
 					CS_DEBUG( "Failed to attain a valid file descriptor" );
 					pcSock->Close();
@@ -1735,7 +1735,7 @@ public:
 
 	//! Get the Select Timeout in MICROSECONDS ( 1000 == 1 millisecond )
 	u_long GetSelectTimeout() { return( m_iSelectWait ); }
-	//! Set the Select Timeout in MICROSECODS ( 1000 == 1 millisecond )
+	//! Set the Select Timeout in MICROSECONDS ( 1000 == 1 millisecond )
 	//! Setting this to 0 will cause no timeout to happen, Select() will return instantly
 	void  SetSelectTimeout( u_long iTimeout ) { m_iSelectWait = iTimeout; }
 
@@ -2084,9 +2084,9 @@ private:
 				{
 					CS_STRING sHost;
 					u_short port;
-					int inSock = pcSock->Accept( sHost, port );
+					cs_sock_t inSock = pcSock->Accept( sHost, port );
 
-					if ( inSock != -1 )
+					if ( inSock != CS_INVALID_SOCK )
 					{
 						if ( T::TMO_ACCEPT & pcSock->GetTimeoutType() )
 							pcSock->ResetTimer();	// let them now it got dinged
