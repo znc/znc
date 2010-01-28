@@ -739,9 +739,7 @@ void CClient::BouncedOff() {
 }
 
 void CClient::PutIRC(const CString& sLine) {
-	if (GetIRCSock()) {
-		GetIRCSock()->PutIRC(sLine);
-	}
+	m_pUser->PutIRC(sLine);
 }
 
 void CClient::PutClient(const CString& sLine) {
