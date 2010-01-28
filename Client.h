@@ -75,7 +75,6 @@ class CClient : public CZNCSock {
 public:
 	CClient(const CString& sHostname, unsigned short uPort) : CZNCSock(sHostname, uPort) {
 		m_pUser = NULL;
-		m_pIRCSock = NULL;
 		m_bGotPass = false;
 		m_bGotNick = false;
 		m_bGotUser = false;
@@ -105,8 +104,6 @@ public:
 
 	void UserCommand(CString& sCommand);
 	void StatusCTCP(const CString& sCommand);
-	void IRCConnected(CIRCSock* pIRCSock);
-	void IRCDisconnected();
 	void BouncedOff();
 	bool IsAttached() const { return m_pUser != NULL; }
 
@@ -130,8 +127,8 @@ public:
 
 	void SetNick(const CString& s);
 	CUser* GetUser() const { return m_pUser; }
-	const CIRCSock* GetIRCSock() const { return m_pIRCSock; }
-	CIRCSock* GetIRCSock() { return m_pIRCSock; }
+	const CIRCSock* GetIRCSock() const;
+	CIRCSock* GetIRCSock();
 private:
 
 protected:
@@ -144,7 +141,6 @@ protected:
 	CString		m_sNick;
 	CString		m_sPass;
 	CString		m_sUser;
-	CIRCSock*	m_pIRCSock;
 	CSmartPtr<CAuthBase>	m_spAuth;
 };
 

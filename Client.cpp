@@ -568,6 +568,14 @@ void CClient::SetNick(const CString& s) {
 	m_sNick = s;
 }
 
+const CIRCSock* CClient::GetIRCSock() const {
+	return m_pUser->GetIRCSock();
+}
+
+CIRCSock* CClient::GetIRCSock() {
+	return m_pUser->GetIRCSock();
+}
+
 void CClient::StatusCTCP(const CString& sLine) {
 	CString sCommand = sLine.Token(0);
 
@@ -689,7 +697,6 @@ void CClient::AcceptLogin(CUser& User) {
 
 	SetSockName("USR::" + m_pUser->GetUserName());
 
-	m_pIRCSock = (CIRCSock*) CZNC::Get().FindSockByName("IRC::" + m_pUser->GetUserName());
 	m_pUser->UserConnected(this);
 
 	SendMotd();
@@ -715,8 +722,6 @@ void CClient::Disconnected() {
 		m_pUser->UserDisconnected(this);
 	}
 
-	m_pIRCSock = NULL;
-
 	MODULECALL(OnClientDisconnect(), m_pUser, this, );
 }
 
@@ -728,18 +733,9 @@ void CClient::ReachedMaxBuffer() {
 	Close();
 }
 
-void CClient::IRCConnected(CIRCSock* pIRCSock) {
-	m_pIRCSock = pIRCSock;
-}
-
 void CClient::BouncedOff() {
 	PutStatusNotice("You are being disconnected because another user just authenticated as you.");
-	m_pIRCSock = NULL;
 	Close(Csock::CLT_AFTERWRITE);
-}
-
-void CClient::IRCDisconnected() {
-	m_pIRCSock = NULL;
 }
 
 void CClient::PutIRC(const CString& sLine) {

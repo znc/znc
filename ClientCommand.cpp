@@ -242,7 +242,7 @@ void CClient::UserCommand(CString& sLine) {
 		m_pUser->CheckIRCConnect();
 		return;
 	} else if (sCommand.Equals("DISCONNECT")) {
-		// m_pIRCSock is only set after the low level connection
+		// GetIRCSock() is only set after the low level connection
 		// to the IRC server was established. Before this we can
 		// only find the IRC socket by its name.
 		if (GetIRCSock()) {

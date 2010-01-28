@@ -166,18 +166,10 @@ void CUser::DelServers()
 
 void CUser::IRCConnected(CIRCSock* pIRCSock) {
 	m_pIRCSock = pIRCSock;
-
-	for (unsigned int a = 0; a < m_vClients.size(); a++) {
-		m_vClients[a]->IRCConnected(pIRCSock);
-	}
 }
 
 void CUser::IRCDisconnected() {
 	m_pIRCSock = NULL;
-
-	for (unsigned int a = 0; a < m_vClients.size(); a++) {
-		m_vClients[a]->IRCDisconnected();
-	}
 
 	SetIRCServer("");
 	m_bIRCAway = false;
