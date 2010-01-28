@@ -130,6 +130,8 @@ public:
 
 	void SetNick(const CString& s);
 	CUser* GetUser() const { return m_pUser; }
+	const CIRCSock* GetIRCSock() const { return m_pIRCSock; }
+	CIRCSock* GetIRCSock() { return m_pIRCSock; }
 private:
 
 protected:
