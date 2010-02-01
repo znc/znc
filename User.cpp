@@ -276,15 +276,11 @@ void CUser::UserConnected(CClient* pClient) {
 	}
 
 	// Send the cached MOTD
-	if (m_MotdBuffer.IsEmpty()) {
-		PutIRC("MOTD");
-	} else {
-		unsigned int uIdx = 0;
-		CString sLine;
+	unsigned int uIdx = 0;
+	CString sLine;
 
-		while (m_MotdBuffer.GetLine(GetIRCNick().GetNick(), sLine, uIdx++)) {
-			pClient->PutClient(sLine);
-		}
+	while (m_MotdBuffer.GetLine(GetIRCNick().GetNick(), sLine, uIdx++)) {
+		pClient->PutClient(sLine);
 	}
 
 	if (GetIRCSock() != NULL) {
