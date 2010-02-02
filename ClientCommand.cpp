@@ -298,8 +298,11 @@ void CClient::UserCommand(CString& sLine) {
 			Table.AddColumn(sPerm);
 		}
 
+		unsigned int uNumDetached = 0, uNumDisabled = 0,
+			uNumJoined = 0;
+
 		for (unsigned int a = 0; a < vChans.size(); a++) {
-			CChan* pChan = vChans[a];
+			const CChan* pChan = vChans[a];
 			Table.AddRow();
 			Table.SetCell("Name", pChan->GetPermStr() + pChan->GetName());
 			Table.SetCell("Status", ((vChans[a]->IsOn()) ? ((vChans[a]->IsDetached()) ? "Detached" : "Joined") : ((vChans[a]->IsDisabled()) ? "Disabled" : "Trying")));
@@ -313,9 +316,15 @@ void CClient::UserCommand(CString& sLine) {
 				char cPerm = sPerms[b];
 				Table.SetCell(CString(cPerm), CString(mPerms[cPerm]));
 			}
+
+			if(pChan->IsDetached()) uNumDetached++;
+			if(pChan->IsOn()) uNumJoined++;
+			if(pChan->IsDisabled()) uNumDisabled++;
 		}
 
 		PutStatus(Table);
+		PutStatus("Total: " + CString(vChans.size()) + " - Joined: " + CString(uNumJoined) +
+			" - Detached: " + CString(uNumDetached) + " - Disabled: " + CString(uNumDisabled));
 	} else if (sCommand.Equals("ADDSERVER")) {
 		CString sServer = sLine.Token(1);
 
