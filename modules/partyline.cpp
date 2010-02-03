@@ -313,6 +313,11 @@ public:
 		} else {
 			// some clients dont wait for the server to send an answer to a part, so we need to make them join again
 			pUser->PutUser(":" + pUser->GetIRCNick().GetNickMask() + " JOIN " + pChannel->GetName());
+			if (!pChannel->GetTopic().empty()) {
+				pUser->PutUser(":" + GetIRCServer(pUser) + " 332 " + pUser->GetIRCNick().GetNickMask() + " " + pChannel->GetName() + " :" + pChannel->GetTopic());
+			}
+			const set<CString>& ssNicks = pChannel->GetNicks();
+			SendNickList(pUser, ssNicks, pChannel->GetName());
 		}
 	}
 
