@@ -556,12 +556,14 @@ public:
 	 */
 	virtual EModRet OnChanCTCP(CNick& Nick, CChan& Channel, CString& sMessage);
 	/** Called when we receive a private CTCP ACTION ("/me" in query) <em>from IRC</em>.
+	 *  This is called after CModule::OnPrivCTCP().
 	 *  @param Nick The nick the action came from.
 	 *  @param sMessage The action message
 	 *  @return See CModule::EModRet.
 	 */
 	virtual EModRet OnPrivAction(CNick& Nick, CString& sMessage);
 	/** Called when we receive a channel CTCP ACTION ("/me" in a channel) <em>from IRC</em>.
+	 *  This is called after CModule::OnChanCTCP().
 	 *  @param Nick The nick the action came from.
 	 *  @param Channel The channel the action was sent to.
 	 *  @param sMessage The action message
