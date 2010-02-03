@@ -99,6 +99,7 @@ void CUtils::GenerateCert(FILE *pOut, const CString& sHost) {
 		X509_NAME_add_entry_by_txt(pName, "emailAddress", MBSTRING_ASC, (unsigned char *)sEmailAddr.c_str(), -1, -1, 0);
 
 		X509_set_subject_name(pCert, pName);
+		X509_set_issuer_name(pCert, pName);
 
 		if (!X509_sign(pCert, pKey, EVP_md5())) {
 			X509_free(pCert);
