@@ -11,7 +11,7 @@
 #ifndef _HTTPSOCK_H
 #define _HTTPSOCK_H
 
-#include "Modules.h"
+class CModule;
 
 class CHTTPSock : public CSocket {
 public:
@@ -49,7 +49,7 @@ public:
 	void ParseParams(const CString& sParams);
 	void ParseURI();
 	void GetPage();
-	bool PrintFile(const CString& sFileName, CString sContentType = "");
+	virtual bool PrintFile(const CString& sFileName, CString sContentType = "");
 
 	// Setters
 	void SetDocRoot(const CString& s);
@@ -60,6 +60,7 @@ public:
 	bool HasParam(const CString& sName) const;
 	CString GetRawParam(const CString& sName) const;
 	CString GetParam(const CString& sName, const CString& sFilter = "\r\n") const;
+	CString GetPath() const;
 	bool IsLoggedIn() const { return m_bLoggedIn; }
 	const CString& GetDocRoot() const;
 	const CString& GetUser() const;
