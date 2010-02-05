@@ -8,6 +8,7 @@
 
 #ifdef _MODULES
 
+#include "Modules.h"
 #include "HTTPSock.h"
 #include "znc.h"
 
@@ -107,10 +108,12 @@ void CHTTPSock::GetPage() {
 		return;
 	}
 
-	if (PrintHeader(sPage.length())) {
-		Write(sPage);
-		Close(Csock::CLT_AFTERWRITE);
+	if (!SentHeader()) {
+		PrintHeader(sPage.length());
 	}
+
+	Write(sPage);
+	Close(Csock::CLT_AFTERWRITE);
 }
 
 bool CHTTPSock::PrintFile(const CString& sFileName, CString sContentType) {
@@ -214,6 +217,10 @@ bool CHTTPSock::PrintFile(const CString& sFileName, CString sContentType) {
 void CHTTPSock::ParseURI() {
 	ParseParams(m_sURI.Token(1, true, "?"));
 	m_sURI = m_sURI.Token(0, false, "?");
+}
+
+CString CHTTPSock::GetPath() const {
+	return m_sURI.Token(0, false, "?");
 }
 
 void CHTTPSock::ParseParams(const CString& sParams) {
