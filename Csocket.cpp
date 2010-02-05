@@ -28,7 +28,7 @@
 * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 *
 *
-* $Revision: 1.122 $
+* $Revision: 1.123 $
 */
 
 #include "Csocket.h"
@@ -636,7 +636,7 @@ void Csock::CloseSocksFD()
 			CS_CLOSE( m_iReadSock );
 		if( m_iWriteSock != CS_INVALID_SOCK )
 			CS_CLOSE( m_iWriteSock );
-	} else if( m_iReadSock CS_INVALID_SOCK )
+	} else if( m_iReadSock != CS_INVALID_SOCK )
 		CS_CLOSE( m_iReadSock );
 
 	m_iReadSock = CS_INVALID_SOCK;
