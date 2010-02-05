@@ -163,42 +163,6 @@ private:
 	FPTimer_t	m_pFBCallback;
 };
 
-class CSocket : public CZNCSock {
-public:
-	CSocket(CModule* pModule);
-	CSocket(CModule* pModule, const CString& sHostname, unsigned short uPort, int iTimeout = 60);
-	virtual ~CSocket();
-
-	using Csock::Connect;
-	using Csock::Listen;
-
-	// This defaults to closing the socket, feel free to override
-	virtual void ReachedMaxBuffer();
-	virtual void SockError(int iErrno);
-	// This limits the global connections from this IP to defeat DoS
-	// attacks, feel free to override
-	virtual bool ConnectionFrom(const CString& sHost, unsigned short uPort);
-
-	bool Connect(const CString& sHostname, unsigned short uPort, bool bSSL = false, unsigned int uTimeout = 60);
-	bool Listen(unsigned short uPort, bool bSSL = false, unsigned int uTimeout = 0);
-	virtual bool PutIRC(const CString& sLine);
-	virtual bool PutUser(const CString& sLine);
-	virtual bool PutStatus(const CString& sLine);
-	virtual bool PutModule(const CString& sLine, const CString& sIdent = "", const CString& sHost = "znc.in");
-	virtual bool PutModNotice(const CString& sLine, const CString& sIdent = "", const CString& sHost = "znc.in");
-
-	// Setters
-	void SetModule(CModule* p);
-	// !Setters
-
-	// Getters
-	CModule* GetModule() const;
-	// !Getters
-private:
-protected:
-	CModule*	m_pModule;
-};
-
 class CModInfo {
 public:
 	CModInfo() {}
