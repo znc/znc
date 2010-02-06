@@ -507,7 +507,7 @@ void CIRCSock::ReadLine(const CString& sData) {
 
 			if (pChan) {
 				pChan->RemNick(sKickedNick);
-				MODULECALL(OnKick(Nick.GetNickMask(), sKickedNick, *pChan, sMsg), m_pUser, NULL, );
+				MODULECALL(OnKick(Nick, sKickedNick, *pChan, sMsg), m_pUser, NULL, );
 			}
 
 			if (GetNick().Equals(sKickedNick) && pChan) {

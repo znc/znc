@@ -381,12 +381,12 @@ public:
 	 */
 	virtual void OnNick(const CNick& Nick, const CString& sNewNick, const vector<CChan*>& vChans);
 	/** Called when a nick is kicked from a channel.
-	 *  @param Nick The nick which is kicked.
-	 *  @param sOpNick The nick which generated the kick.
+	 *  @param OpNick The nick which generated the kick.
+	 *  @param sKickedNick The nick which was kicked.
 	 *  @param Channel The channel on which this kick occurs.
 	 *  @param sMessage The kick message.
 	 */
-	virtual void OnKick(const CNick& Nick, const CString& sOpNick, CChan& Channel, const CString& sMessage);
+	virtual void OnKick(const CNick& OpNick, const CString& sKickedNick, CChan& Channel, const CString& sMessage);
 	/** Called when a nick joins a channel.
 	 *  @param Nick The nick who joined.
 	 *  @param Channel The channel which was joined.
