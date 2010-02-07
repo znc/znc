@@ -71,6 +71,7 @@ class CAdminMod : public CModule {
 			{"BounceDCCs",       boolean},
 			{"UseClientIP",      boolean},
 			{"DenyLoadMod",      boolean},
+			{"DenySetVHost",     boolean},
 			{"DefaultChanModes", string},
 			{"QuitMsg",          string},
 			{"BufferCount",      integer},
@@ -78,7 +79,10 @@ class CAdminMod : public CModule {
 			{"Password",         string},
 			{"JoinTries",        integer},
 			{"MaxJoins",         integer},
-			{"Admin",            boolean}
+			{"Admin",            boolean},
+			{"AppendTimestamp",  boolean},
+			{"PrependTimestamp", boolean},
+			{"DCCVHost",         boolean}
 		};
 		for (unsigned int i = 0; i != ARRAY_SIZE(vars); ++i) {
 			VarTable.AddRow();
@@ -93,10 +97,11 @@ class CAdminMod : public CModule {
 		CVarTable.AddColumn("Type");
 		static const char* cvars[][2] = {
 			{"DefModes",         string},
+			{"Key",              string},
 			{"Buffer",           integer},
 			{"InConfig",         boolean},
 			{"KeepBuffer",       boolean},
-			{"Detached",         boolean},
+			{"Detached",         boolean}
 		};
 		for (unsigned int i = 0; i != ARRAY_SIZE(cvars); ++i) {
 			CVarTable.AddRow();
@@ -157,6 +162,8 @@ class CAdminMod : public CModule {
 			PutModule("UseClientIP = " + CString(user->UseClientIP()));
 		else if (var == "denyloadmod")
 			PutModule("DenyLoadMod = " + CString(user->DenyLoadMod()));
+		else if (var == "denysetvhost")
+			PutModule("DenySetVHost = " + CString(user->DenySetVHost()));
 		else if (var == "defaultchanmodes")
 			PutModule("DefaultChanModes = " + user->GetDefaultChanModes());
 		else if (var == "quitmsg")
@@ -169,6 +176,12 @@ class CAdminMod : public CModule {
 			PutModule("MaxJoins = " + CString(user->MaxJoins()));
 		else if (var == "jointries")
 			PutModule("JoinTries = " + CString(user->JoinTries()));
+		else if (var == "appendtimestamp")
+			PutModule("AppendTimestamp = " + CString(user->GetTimestampAppend()));
+		else if (var == "preprendtimestamp")
+			PutModule("PreprendTimestamp = " + CString(user->GetTimestampPrepend()));
+		else if (var == "dccvhost")
+			PutModule("DCCVHost = " + CString(user->GetDCCVHost()));
 		else if (var == "admin")
 			PutModule("Admin = " + CString(user->IsAdmin()));
 		else
@@ -237,6 +250,15 @@ class CAdminMod : public CModule {
 				PutModule("Access denied!");
 			}
 		}
+		else if (var == "denysetvhost") {
+			if(m_pUser->IsAdmin()) {
+				bool b = value.ToBool();
+				user->SetDenySetVHost(b);
+				PutModule("DenySetVHost = " + CString(b));
+			} else {
+				PutModule("Access denied!");
+			}
+		}
 		else if (var == "defaultchanmodes") {
 			user->SetDefaultChanModes(value);
 			PutModule("DefaultChanModes = " + value);
@@ -276,6 +298,24 @@ class CAdminMod : public CModule {
 				bool b = value.ToBool();
 				user->SetAdmin(b);
 				PutModule("Admin = " + CString(user->IsAdmin()));
+			} else {
+				PutModule("Access denied!");
+			}
+		}
+		else if (var == "prependtimestamp") {
+			bool b = value.ToBool();
+			user->SetTimestampPrepend(b);
+			PutModule("PrependTimestamp = " + CString(b));
+		}
+		else if (var == "appendtimestamp") {
+			bool b = value.ToBool();
+			user->SetTimestampAppend(b);
+			PutModule("AppendTimestamp = " + CString(b));
+		}
+		else if (var == "dccvhost") {
+			if(!user->DenySetVHost() || m_pUser->IsAdmin()) {
+				user->SetDCCVHost(value);
+				PutModule("DCCVHost = " + value);
 			} else {
 				PutModule("Access denied!");
 			}
@@ -321,6 +361,8 @@ class CAdminMod : public CModule {
 			PutModule("KeepBuffer = " + pChan->KeepBuffer());
 		else if (var == "detached")
 			PutModule("Detached = " + pChan->IsDetached());
+		else if (var == "key")
+			PutModule("Key = " + pChan->GetKey());
 		else
 			PutModule("Error: Unknown variable");
 	}
@@ -370,6 +412,9 @@ class CAdminMod : public CModule {
 					pChan->AttachUser();
 			}
 			PutModule("Detached = " + CString(b));
+		} else if (var == "key") {
+			pChan->SetKey(value);
+			PutModule("Key = " + value);
 		} else
 			PutModule("Error: Unknown variable");
 	}
