@@ -75,7 +75,9 @@ class CAdminMod : public CModule {
 			{"QuitMsg",          string},
 			{"BufferCount",      integer},
 			{"KeepBuffer",       boolean},
-			{"Password",         string}
+			{"Password",         string},
+			{"JoinTries",        integer},
+			{"MaxJoins",         integer}
 		};
 		for (unsigned int i = 0; i != ARRAY_SIZE(vars); ++i) {
 			VarTable.AddRow();
@@ -162,6 +164,10 @@ class CAdminMod : public CModule {
 			PutModule("BufferCount = " + CString(user->GetBufferCount()));
 		else if (var == "keepbuffer")
 			PutModule("KeepBuffer = " + CString(user->KeepBuffer()));
+		else if (var == "maxjoins")
+			PutModule("MaxJoins = " + CString(user->MaxJoins()));
+		else if (var == "jointries")
+			PutModule("JoinTries = " + CString(user->JoinTries()));
 		else
 			PutModule("Error: Unknown variable");
 	}
@@ -251,6 +257,16 @@ class CAdminMod : public CModule {
 			const CString sHash = CUser::SaltedHash(value, sSalt);
 			user->SetPass(sHash, CUser::HASH_DEFAULT, sSalt);
 			PutModule("Password has been changed!!");
+		}
+		else if (var == "maxjoins") {
+			unsigned int i = value.ToUInt();
+			user->SetMaxJoins(i);
+			PutModule("MaxJoins = " + CString(user->MaxJoins()));
+		}
+		else if (var == "jointries") {
+			unsigned int i = value.ToUInt();
+			user->SetJoinTries(i);
+			PutModule("JoinTries = " + CString(user->JoinTries()));
 		}
 		else
 			PutModule("Error: Unknown variable");
