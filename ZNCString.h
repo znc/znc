@@ -21,6 +21,7 @@ using std::set;
 using std::string;
 using std::vector;
 using std::list;
+using std::pair;
 
 #define _SQL(s) CString("'" + CString(s).Escape_n(CString::ESQL) + "'")
 #define _URL(s) CString("'" + CString(s).Escape_n(CString::EURL) + "'")
@@ -29,9 +30,14 @@ using std::list;
 class CString;
 class MCString;
 
-typedef set<CString>				SCString;
-typedef vector<CString>				VCString;
-typedef list<CString>				LCString;
+typedef set<CString>					SCString;
+typedef set<CString>					SPair;
+
+typedef vector<CString>					VCString;
+typedef vector<pair<CString, CString> >	VPair;
+
+typedef list<CString>					LCString;
+typedef list<pair<CString, CString> >	LPair;
 
 static const unsigned char XX = 0xff;
 static const unsigned char base64_table[256] = {
