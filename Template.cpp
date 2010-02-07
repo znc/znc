@@ -90,26 +90,30 @@ void CTemplate::Init() {
 	}
 	*/
 
-	ClearPath();
+	ClearPaths();
 	m_pParent = NULL;
 }
 
-CString CTemplate::ExpandFile(const CString& sFilename) {
-	if (sFilename.Left(1) == "/" || sFilename.Left(2) == "./") {
+CString CTemplate::ExpandFile(const CString& sFilename, bool bFromInc) {
+	/*if (sFilename.Left(1) == "/" || sFilename.Left(2) == "./") {
 		return sFilename;
-	}
+	}*/
 
-	CString sFile(ResolveLiteral(sFilename));
+	CString sFile(ResolveLiteral(sFilename).TrimLeft_n("/"));
 
-	for (LCString::iterator it = m_lsPaths.begin(); it != m_lsPaths.end(); it++) {
-		CString sRoot = *it;
+	for (list<pair<CString, bool> >::iterator it = m_lsbPaths.begin(); it != m_lsbPaths.end(); it++) {
+		if (it->second && !bFromInc) {
+			continue;
+		}
+
+		CString sRoot = it->first;
 		CString sFilePath(CDir::ChangeDir(sRoot, sFile));
 
 		if (CFile::Exists(sFilePath)) {
 			// This only works if sRoot got a trailing slash! The
 			// code which adds paths makes sure this is true.
 			if (sRoot.empty() || sFilePath.Left(sRoot.length()) == sRoot) {
-				//DEBUG("\t\tFound  [" + sFilePath + "]\n");
+				DEBUG("\t\tFound  [" + sFilePath + "]\n");
 				return sFilePath;
 			} else {
 				DEBUG("\t\tOutside of root [" + sFilePath + "] !~ [" + sRoot + "]");
@@ -119,15 +123,15 @@ CString CTemplate::ExpandFile(const CString& sFilename) {
 		}
 	}
 
-	switch (m_lsPaths.size()) {
+	switch (m_lsbPaths.size()) {
 		case 0:
 			DEBUG("Unable to find [" + sFile + "] using the current directory");
 			break;
 		case 1:
-			DEBUG("Unable to find [" + sFile + "] in the defined path [" + *m_lsPaths.begin());
+			DEBUG("Unable to find [" + sFile + "] in the defined path [" + m_lsbPaths.begin()->first + "]");
 			break;
 		default:
-			DEBUG("Unable to find [" + sFile + "] in any of the " + CString(m_lsPaths.size()) + " defined paths");
+			DEBUG("Unable to find [" + sFile + "] in any of the " + CString(m_lsbPaths.size()) + " defined paths");
 	}
 
 	return "";
@@ -138,32 +142,40 @@ void CTemplate::SetPath(const CString& sPaths) {
 	sPaths.Split(":", vsDirs, false);
 
 	for (size_t a = 0; a < vsDirs.size(); a++) {
-		AppendPath(vsDirs[a]);
+		AppendPath(vsDirs[a], false);
 	}
 }
 
-void CTemplate::PrependPath(const CString& sPath) {
+void CTemplate::PrependPath(const CString& sPath, bool bIncludesOnly) {
 	DEBUG("CTemplate::PrependPath(" + sPath + ") == [" + CDir::ChangeDir("./", sPath + "/") + "]");
-	m_lsPaths.push_front(CDir::ChangeDir("./", sPath + "/"));
+	m_lsbPaths.push_front(make_pair(CDir::ChangeDir("./", sPath + "/"), bIncludesOnly));
 }
 
-void CTemplate::AppendPath(const CString& sPath) {
+void CTemplate::AppendPath(const CString& sPath, bool bIncludesOnly) {
 	DEBUG("CTemplate::AppendPath(" + sPath + ") == [" + CDir::ChangeDir("./", sPath + "/") + "]");
-	m_lsPaths.push_back(CDir::ChangeDir("./", sPath + "/"));
+	m_lsbPaths.push_back(make_pair(CDir::ChangeDir("./", sPath + "/"), bIncludesOnly));
 }
 
 void CTemplate::RemovePath(const CString& sPath) {
 	DEBUG("CTemplate::RemovePath(" + sPath + ") == [" + CDir::ChangeDir("./", sPath + "/") + "]");
-	m_lsPaths.remove(CDir::ChangeDir("./", sPath + "/"));
+	//m_lsbPaths.remove(CDir::ChangeDir("./", sPath + "/"));
+
+	for (list<pair<CString, bool> >::iterator it = m_lsbPaths.begin(); it != m_lsbPaths.end(); it++) {
+		if (it->first == sPath) {
+			m_lsbPaths.remove(*it);
+			RemovePath(sPath);
+			return;
+		}
+	}
 }
 
-void CTemplate::ClearPath() {
-	m_lsPaths.clear();
+void CTemplate::ClearPaths() {
+	m_lsbPaths.clear();
 }
 
 bool CTemplate::SetFile(const CString& sFileName) {
-	m_sFileName = ExpandFile(sFileName);
-	PrependPath(sFileName + "/..");
+	m_sFileName = ExpandFile(sFileName, false);
+	//PrependPath(sFileName + "/..");
 
 	if (sFileName.empty()) {
 		DEBUG("CTemplate::SetFile() - Filename is empty");
@@ -230,6 +242,7 @@ bool CTemplate::PrintString(CString& sRet) {
 }
 
 bool CTemplate::Print(ostream& oOut) {
+	DEBUG("==     Print(o) m_sFileName = [" + m_sFileName + "]");
 	return Print(m_sFileName, oOut);
 }
 
@@ -311,7 +324,8 @@ bool CTemplate::Print(const CString& sFileName, ostream& oOut) {
 
 				if (!uSkip) {
 					if (sAction.Equals("INC")) {
-						if (!Print(ExpandFile(sArgs), oOut)) {
+						if (!Print(ExpandFile(sArgs, true), oOut)) {
+							DEBUG("Unable to print INC'd file [" + sArgs + "]");
 							return false;
 						}
 					} else if (sAction.Equals("SETOPTION")) {
@@ -365,7 +379,7 @@ bool CTemplate::Print(const CString& sFileName, ostream& oOut) {
 						sSetBlockVar = sArgs;
 						bInSetBlock = true;
 					} else if (sAction.Equals("EXPAND")) {
-						sOutput += ExpandFile(sArgs);
+						sOutput += ExpandFile(sArgs, true);
 					} else if (sAction.Equals("VAR")) {
 						sOutput += GetValue(sArgs);
 					} else if (sAction.Equals("LT")) {
