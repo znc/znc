@@ -77,7 +77,8 @@ class CAdminMod : public CModule {
 			{"KeepBuffer",       boolean},
 			{"Password",         string},
 			{"JoinTries",        integer},
-			{"MaxJoins",         integer}
+			{"MaxJoins",         integer},
+			{"Admin",            boolean}
 		};
 		for (unsigned int i = 0; i != ARRAY_SIZE(vars); ++i) {
 			VarTable.AddRow();
@@ -168,6 +169,8 @@ class CAdminMod : public CModule {
 			PutModule("MaxJoins = " + CString(user->MaxJoins()));
 		else if (var == "jointries")
 			PutModule("JoinTries = " + CString(user->JoinTries()));
+		else if (var == "admin")
+			PutModule("Admin = " + CString(user->IsAdmin()));
 		else
 			PutModule("Error: Unknown variable");
 	}
@@ -267,6 +270,15 @@ class CAdminMod : public CModule {
 			unsigned int i = value.ToUInt();
 			user->SetJoinTries(i);
 			PutModule("JoinTries = " + CString(user->JoinTries()));
+		}
+		else if (var == "admin") {
+			if(m_pUser->IsAdmin() && user != m_pUser) {
+				bool b = value.ToBool();
+				user->SetAdmin(b);
+				PutModule("Admin = " + CString(user->IsAdmin()));
+			} else {
+				PutModule("Access denied!");
+			}
 		}
 		else
 			PutModule("Error: Unknown variable");
