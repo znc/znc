@@ -259,7 +259,7 @@ class CAdminMod : public CModule {
 			const CString sSalt = CUtils::GetSalt();
 			const CString sHash = CUser::SaltedHash(value, sSalt);
 			user->SetPass(sHash, CUser::HASH_DEFAULT, sSalt);
-			PutModule("Password has been changed!!");
+			PutModule("Password has been changed!");
 		}
 		else if (var == "maxjoins") {
 			unsigned int i = value.ToUInt();
