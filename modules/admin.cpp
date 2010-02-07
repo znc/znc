@@ -197,8 +197,12 @@ class CAdminMod : public CModule {
 			PutModule("RealName = " + value);
 		}
 		else if (var == "vhost") {
-			user->SetVHost(value);
-			PutModule("VHost = " + value);
+			if(!user->DenySetVHost() || m_pUser->IsAdmin()) {
+				user->SetVHost(value);
+				PutModule("VHost = " + value);
+			} else {
+				PutModule("Access denied!");
+			}
 		}
 		else if (var == "multiclients") {
 			bool b = value.ToBool();
@@ -216,9 +220,13 @@ class CAdminMod : public CModule {
 			PutModule("UseClientIP = " + CString(b));
 		}
 		else if (var == "denyloadmod") {
-			bool b = value.ToBool();
-			user->SetDenyLoadMod(b);
-			PutModule("DenyLoadMod = " + CString(b));
+			if(m_pUser->IsAdmin()) {
+				bool b = value.ToBool();
+				user->SetDenyLoadMod(b);
+				PutModule("DenyLoadMod = " + CString(b));
+			} else {
+				PutModule("Access denied!");
+			}
 		}
 		else if (var == "defaultchanmodes") {
 			user->SetDefaultChanModes(value);
