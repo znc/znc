@@ -175,7 +175,7 @@ void CTemplate::ClearPaths() {
 
 bool CTemplate::SetFile(const CString& sFileName) {
 	m_sFileName = ExpandFile(sFileName, false);
-	//PrependPath(sFileName + "/..");
+	PrependPath(sFileName + "/..");
 
 	if (sFileName.empty()) {
 		DEBUG("CTemplate::SetFile() - Filename is empty");
