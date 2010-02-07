@@ -169,6 +169,7 @@ public:
 	void SetTimezoneOffset(float b) { m_fTimezoneOffset = b; }
 	void SetJoinTries(unsigned int i) { m_uMaxJoinTries = i; }
 	void SetMaxJoins(unsigned int i) { m_uMaxJoins = i; }
+	void SetSkinName(const CString& s) { m_sSkinName = s; }
 	void SetIRCConnectEnabled(bool b) { m_bIRCConnectEnabled = b; }
 	void SetIRCAway(bool b) { m_bIRCAway = b; }
 	// !Setters
@@ -223,6 +224,7 @@ public:
 	unsigned long long BytesWritten() const { return m_uBytesWritten; }
 	unsigned int JoinTries() const { return m_uMaxJoinTries; }
 	unsigned int MaxJoins() const { return m_uMaxJoins; }
+	CString GetSkinName() const;
 	// !Getters
 private:
 protected:
@@ -284,6 +286,7 @@ protected:
 	unsigned long long      m_uBytesWritten;
 	unsigned int		m_uMaxJoinTries;
 	unsigned int		m_uMaxJoins;
+	CString				m_sSkinName;
 
 #ifdef _MODULES
 	CModules*		m_pModules;
