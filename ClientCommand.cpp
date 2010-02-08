@@ -716,9 +716,15 @@ void CClient::UserCommand(CString& sLine) {
 		sArgs = sLine.Token(2, true);
 
 		if (m_pUser->DenyLoadMod()) {
-			PutStatus("Unable to reload [" + sMod + "] Access Denied.");
+			PutStatus("Unable to reload modules. Access Denied.");
 			return;
 		}
+
+		if (sMod.empty()) {
+			PutStatus("Usage: ReloadMod <module> [args]");
+			return;
+		}
+
 #ifdef _MODULES
 		CModInfo ModInfo;
 		CString sRetMsg;
@@ -731,11 +737,6 @@ void CClient::UserCommand(CString& sLine) {
 
 		if (bGlobal && !m_pUser->IsAdmin()) {
 			PutStatus("Unable to reload global module [" + sMod + "] Access Denied.");
-			return;
-		}
-
-		if (sMod.empty()) {
-			PutStatus("Usage: ReloadMod <module> [args]");
 			return;
 		}
 
