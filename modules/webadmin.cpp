@@ -354,7 +354,6 @@ CWebAdminSock::CWebAdminSock(CWebAdminMod* pModule, const CString& sHostname, un
 	m_pSessionUser = NULL;
 	m_bAdmin = false;
 	SetDocRoot(GetSkinDir());
-	m_Template.AppendPath("./");
 }
 
 CWebAdminSock::~CWebAdminSock() {

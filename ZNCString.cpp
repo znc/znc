@@ -388,25 +388,6 @@ unsigned int CString::Replace(CString& sStr, const CString& sReplace, const CStr
 
 CString CString::Token(unsigned int uPos, bool bRest, const CString& sSep, bool bAllowEmpty,
                        const CString& sLeft, const CString& sRight, bool bTrimQuotes) const {
-	VCString vsTokens;
-	if (Split(sSep, vsTokens, bAllowEmpty, sLeft, sRight, bTrimQuotes) > uPos) {
-		CString sRet;
-
-		for (unsigned int a = uPos; a < vsTokens.size(); a++) {
-			if (a > uPos) {
-				sRet += sSep;
-			}
-
-			sRet += vsTokens[a];
-
-			if (!bRest) {
-				break;
-			}
-		}
-
-		return sRet;
-	}
-
 	const char *sep_str = sSep.c_str();
 	size_t sep_len = sSep.length();
 	const char *str = c_str();

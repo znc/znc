@@ -145,14 +145,14 @@ public:
 	void Init();
 
 	CTemplate* GetParent(bool bRoot);
-	CString ExpandFile(const CString& sFilename, bool bFromInc = false);
+	CString ExpandFile(const CString& sFilename);
 	bool SetFile(const CString& sFileName);
 
 	void SetPath(const CString& sPath);	// Sets the dir:dir:dir type path to look at for templates, as of right now no ../../.. protection
-	void PrependPath(const CString& sPath, bool bIncludesOnly = false);
-	void AppendPath(const CString& sPath, bool bIncludesOnly = false);
+	void PrependPath(const CString& sPath);
+	void AppendPath(const CString& sPath);
 	void RemovePath(const CString& sPath);
-	void ClearPaths();
+	void ClearPath();
 	CString ResolvePath(const CString& sPath, const CString& sFilename);
 	bool PrintString(CString& sRet);
 	bool Print(ostream& oOut = cout);
@@ -175,7 +175,7 @@ public:
 private:
 	CTemplate*							m_pParent;
 	CString								m_sFileName;
-	list<pair<CString, bool> >			m_lsbPaths;
+	LCString							m_lsPaths;
 	map<CString, vector<CTemplate*> >	m_mvLoops;
 	vector<CTemplateLoopContext*>		m_vLoopContexts;
 	CSmartPtr<CTemplateOptions>			m_spOptions;

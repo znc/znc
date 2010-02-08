@@ -645,8 +645,6 @@ bool CUser::WriteConfig(CFile& File) {
 	PrintLine(File, "QuitMsg", GetQuitMsg());
 	if (CZNC::Get().GetStatusPrefix() != GetStatusPrefix())
 		PrintLine(File, "StatusPrefix", GetStatusPrefix());
-	if (CZNC::Get().GetSkinName() != GetSkinName())
-		PrintLine(File, "Skin", GetSkinName());
 	PrintLine(File, "ChanModes", GetDefaultChanModes());
 	PrintLine(File, "Buffer", CString(GetBufferCount()));
 	PrintLine(File, "KeepBuffer", CString(KeepBuffer()));
@@ -1249,6 +1247,4 @@ CString CUser::GetQuitMsg() const { return (!m_sQuitMsg.Trim_n().empty()) ? m_sQ
 const MCString& CUser::GetCTCPReplies() const { return m_mssCTCPReplies; }
 unsigned int CUser::GetBufferCount() const { return m_uBufferCount; }
 bool CUser::KeepBuffer() const { return m_bKeepBuffer; }
-CString CUser::GetSkinName() const { return (!m_sSkinName.empty()) ? m_sSkinName : CZNC::Get().GetSkinName(); }
-//CString CUser::GetSkinName() const { return m_sSkinName; }
 // !Getters
