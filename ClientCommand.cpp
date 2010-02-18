@@ -1005,28 +1005,23 @@ void CClient::HelpUser() {
 
 	Table.AddRow();
 	Table.SetCell("Command", "Version");
-	Table.SetCell("Arguments", "");
-	Table.SetCell("Description", "Prints which version of znc this is");
+	Table.SetCell("Description", "Print which version of ZNC this is");
 
 	Table.AddRow();
 	Table.SetCell("Command", "ListDCCs");
-	Table.SetCell("Arguments", "");
 	Table.SetCell("Description", "List all active DCCs");
 
 	Table.AddRow();
 	Table.SetCell("Command", "ListMods");
-	Table.SetCell("Arguments", "");
 	Table.SetCell("Description", "List all loaded modules");
 
 	Table.AddRow();
 	Table.SetCell("Command", "ListAvailMods");
-	Table.SetCell("Arguments", "");
 	Table.SetCell("Description", "List all available modules");
 
 	if (!m_pUser->IsAdmin()) { // If they are an admin we will add this command below with an argument
 		Table.AddRow();
 		Table.SetCell("Command", "ListChans");
-		Table.SetCell("Arguments", "");
 		Table.SetCell("Description", "List all channels");
 	}
 
@@ -1038,13 +1033,11 @@ void CClient::HelpUser() {
 	if (!m_pUser->IsAdmin()) {
 		Table.AddRow();
 		Table.SetCell("Command", "ListClients");
-		Table.SetCell("Arguments", "");
-		Table.SetCell("Description", "List all clients connected to your znc user");
+		Table.SetCell("Description", "List all clients connected to your ZNC user");
 	}
 
 	Table.AddRow();
 	Table.SetCell("Command", "ListServers");
-	Table.SetCell("Arguments", "");
 	Table.SetCell("Description", "List all servers");
 
 	Table.AddRow();
@@ -1069,8 +1062,7 @@ void CClient::HelpUser() {
 
 	Table.AddRow();
 	Table.SetCell("Command", "Topics");
-	Table.SetCell("Arguments", "");
-	Table.SetCell("Description", "Show topics in all channels");
+	Table.SetCell("Description", "Show topics in all your channels");
 
 	Table.AddRow();
 	Table.SetCell("Command", "PlayBuffer");
@@ -1084,7 +1076,6 @@ void CClient::HelpUser() {
 
 	Table.AddRow();
 	Table.SetCell("Command", "ClearAllChannelBuffers");
-	Table.SetCell("Arguments", "");
 	Table.SetCell("Description", "Clear the channel buffers");
 
 	Table.AddRow();
@@ -1107,33 +1098,28 @@ void CClient::HelpUser() {
 	if (m_pUser->IsAdmin() || !m_pUser->DenySetVHost()) {
 		Table.AddRow();
 		Table.SetCell("Command", "ListVHosts");
-		Table.SetCell("Arguments", "");
 		Table.SetCell("Description", "Shows the configured list of vhosts");
 
 		Table.AddRow();
 		Table.SetCell("Command", "SetVHost");
-		Table.SetCell("Arguments", "<vhost (ip preferred)>");
+		Table.SetCell("Arguments", "<vhost (IP preferred)>");
 		Table.SetCell("Description", "Set the VHost for this connection");
 
 		Table.AddRow();
 		Table.SetCell("Command", "ClearVHost");
-		Table.SetCell("Arguments", "");
 		Table.SetCell("Description", "Clear the VHost for this connection");
 	}
 
 	Table.AddRow();
 	Table.SetCell("Command", "Jump");
-	Table.SetCell("Arguments", "");
 	Table.SetCell("Description", "Jump to the next server in the list");
 
 	Table.AddRow();
 	Table.SetCell("Command", "Disconnect");
-	Table.SetCell("Arguments", "");
 	Table.SetCell("Description", "Disconnect from IRC");
 
 	Table.AddRow();
 	Table.SetCell("Command", "Connect");
-	Table.SetCell("Arguments", "");
 	Table.SetCell("Description", "Reconnect to IRC");
 
 	Table.AddRow();
@@ -1148,8 +1134,7 @@ void CClient::HelpUser() {
 
 	Table.AddRow();
 	Table.SetCell("Command", "Uptime");
-	Table.SetCell("Arguments", "");
-	Table.SetCell("Description", "Show how long ZNC is already running");
+	Table.SetCell("Description", "Show for how long ZNC has been running");
 
 	if (!m_pUser->DenyLoadMod()) {
 		Table.AddRow();
@@ -1177,39 +1162,34 @@ void CClient::HelpUser() {
 
 	Table.AddRow();
 	Table.SetCell("Command", "ShowMOTD");
-	Table.SetCell("Arguments", "");
-	Table.SetCell("Description", "Show the message of the day");
+	Table.SetCell("Description", "Show ZNC's message of the day");
 
 	if (m_pUser->IsAdmin()) {
 		Table.AddRow();
 		Table.SetCell("Command", "SetMOTD");
 		Table.SetCell("Arguments", "<Message>");
-		Table.SetCell("Description", "Set the message of the day");
+		Table.SetCell("Description", "Set ZNC's message of the day");
 
 		Table.AddRow();
 		Table.SetCell("Command", "AddMOTD");
 		Table.SetCell("Arguments", "<Message>");
-		Table.SetCell("Description", "Append <Message> to MOTD");
+		Table.SetCell("Description", "Append <Message> to ZNC's MOTD");
 
 		Table.AddRow();
 		Table.SetCell("Command", "ClearMOTD");
-		Table.SetCell("Arguments", "");
-		Table.SetCell("Description", "Clear the MOTD");
+		Table.SetCell("Description", "Clear ZNC's MOTD");
 
 		Table.AddRow();
 		Table.SetCell("Command", "Rehash");
-		Table.SetCell("Arguments", "");
 		Table.SetCell("Description", "Reload znc.conf from disk");
 
 		Table.AddRow();
 		Table.SetCell("Command", "SaveConfig");
-		Table.SetCell("Arguments", "");
 		Table.SetCell("Description", "Save the current settings to disk");
 
 		Table.AddRow();
 		Table.SetCell("Command", "ListUsers");
-		Table.SetCell("Arguments", "");
-		Table.SetCell("Description", "List all users/clients connected to znc");
+		Table.SetCell("Description", "List all ZNC users and their connection status");
 
 		Table.AddRow();
 		Table.SetCell("Command", "ListChans");
@@ -1219,27 +1199,26 @@ void CClient::HelpUser() {
 		Table.AddRow();
 		Table.SetCell("Command", "ListClients");
 		Table.SetCell("Arguments", "[User]");
-		Table.SetCell("Description", "List all clients connected to your znc user");
+		Table.SetCell("Description", "List all connected clients");
 
 		Table.AddRow();
 		Table.SetCell("Command", "Traffic");
-		Table.SetCell("Arguments", "");
-		Table.SetCell("Description", "Show basic traffic stats for all znc users");
+		Table.SetCell("Description", "Show basic traffic stats for all ZNC users");
 
 		Table.AddRow();
 		Table.SetCell("Command", "Broadcast");
 		Table.SetCell("Arguments", "[message]");
-		Table.SetCell("Description", "Broadcast a message to all users");
+		Table.SetCell("Description", "Broadcast a message to all ZNC users");
 
 		Table.AddRow();
 		Table.SetCell("Command", "Shutdown");
 		Table.SetCell("Arguments", "[message]");
-		Table.SetCell("Description", "Shutdown znc completely");
+		Table.SetCell("Description", "Shut down ZNC completely");
 
 		Table.AddRow();
 		Table.SetCell("Command", "Restart");
 		Table.SetCell("Arguments", "[message]");
-		Table.SetCell("Description", "Restarts znc");
+		Table.SetCell("Description", "Restart ZNC");
 	}
 
 	PutStatus(Table);
