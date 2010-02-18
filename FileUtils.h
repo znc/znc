@@ -53,7 +53,7 @@ public:
 	bool IsSock(bool bUseLstat = false) const;
 
 	// for gettin file types, using fstat instead
-	static bool FType(const CString sFileName, EFileTypes eType, bool bUseLstat = false);
+	static bool FType(const CString& sFileName, EFileTypes eType, bool bUseLstat = false);
 
 	enum EFileAttr {
 		FA_Name,

@@ -72,7 +72,7 @@ bool CFile::IsLnk(bool bUseLstat) const { return CFile::IsLnk(m_sLongName, bUseL
 bool CFile::IsSock(bool bUseLstat) const { return CFile::IsSock(m_sLongName, bUseLstat); }
 
 // for gettin file types, using fstat instead
-bool CFile::FType(const CString sFileName, EFileTypes eType, bool bUseLstat) {
+bool CFile::FType(const CString& sFileName, EFileTypes eType, bool bUseLstat) {
 	struct stat st;
 
 	if (!bUseLstat) {
