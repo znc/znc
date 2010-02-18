@@ -800,9 +800,9 @@ public:
 	bool UnloadModule(const CString& sModule, CString& sRetMsg);
 	bool ReloadModule(const CString& sModule, const CString& sArgs, CUser* pUser, CString& sRetMsg);
 
-	bool GetModInfo(CModInfo& ModInfo, const CString& sModule, CString &sRetMsg);
-	bool GetModPathInfo(CModInfo& ModInfo, const CString& sModule, const CString& sModPath, CString &sRetMsg);
-	void GetAvailableMods(set<CModInfo>& ssMods, bool bGlobal = false);
+	static bool GetModInfo(CModInfo& ModInfo, const CString& sModule, CString &sRetMsg);
+	static bool GetModPathInfo(CModInfo& ModInfo, const CString& sModule, const CString& sModPath, CString &sRetMsg);
+	static void GetAvailableMods(set<CModInfo>& ssMods, bool bGlobal = false);
 
 	// This returns the path to the .so and to the data dir
 	// which is where static data (webadmin skins) are saved
@@ -814,7 +814,7 @@ public:
 	static ModDirList GetModDirs();
 
 private:
-	ModHandle OpenModule(const CString& sModule, const CString& sModPath,
+	static ModHandle OpenModule(const CString& sModule, const CString& sModPath,
 			bool &bVersionMismatch, bool &bIsGlobal, CString& sDesc, CString& sRetMsg);
 
 protected:
