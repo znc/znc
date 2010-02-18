@@ -28,7 +28,7 @@
 * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 *
 *
-* $Revision: 1.222 $
+* $Revision: 1.223 $
 */
 
 // note to compile with win32 need to link to winsock2, using gcc its -lws2_32
@@ -565,7 +565,7 @@ public:
 	* @param len the length of data
 	*
 	*/
-	virtual bool Write( const char *data, int len );
+	virtual bool Write( const char *data, size_t len );
 
 	/**
 	* convience function
@@ -588,7 +588,7 @@ public:
 	* Returns READ_TIMEDOUT for a connection that timed out at the TCP level
 	* Otherwise returns the bytes read into data
 	*/
-	virtual int Read( char *data, int len );
+	virtual ssize_t Read( char *data, size_t len );
 	CS_STRING GetLocalIP();
 	CS_STRING GetRemoteIP();
 
@@ -641,7 +641,7 @@ public:
 	* pushes data up on the buffer, if a line is ready
 	* it calls the ReadLine event
 	*/
-	virtual void PushBuff( const char *data, int len, bool bStartAtZero = false );
+	virtual void PushBuff( const char *data, size_t len, bool bStartAtZero = false );
 
 	//! This gives access to the internal read buffer, if your
 	//! not going to use ReadLine(), then you may want to clear this out
@@ -829,7 +829,7 @@ public:
 	*
 	* Ready to read data event
 	*/
-	virtual void ReadData( const char *data, int len ) {}
+	virtual void ReadData( const char *data, size_t len ) {}
 	/**
 	* Override these functions for an easy interface when using the Socket Manager
 	* Don't bother using these callbacks if you are using this class directly (without Socket Manager)
@@ -898,7 +898,7 @@ public:
 
 
 	//! return how long it has been (in seconds) since the last read or successful write
-	int GetTimeSinceLastDataTransaction( time_t iNow = 0 )
+	time_t GetTimeSinceLastDataTransaction( time_t iNow = 0 )
 	{
 		if( m_iLastCheckTimeoutTime == 0 )
 			return( 0 );
@@ -1004,7 +1004,8 @@ private:
 	ECloseType	m_eCloseType;
 
 	unsigned long long	m_iMaxMilliSeconds, m_iLastSendTime, m_iBytesRead, m_iBytesWritten, m_iStartTime;
-	unsigned int		m_iMaxBytes, m_iLastSend, m_iMaxStoredBufferLength, m_iTimeoutType;
+	unsigned int		m_iMaxBytes, m_iMaxStoredBufferLength, m_iTimeoutType;
+	size_t				m_iLastSend;
 
 	CSSockAddr 		m_address, m_bindhost;
 	bool			m_bIsIPv6, m_bSkipConnect;
@@ -1487,7 +1488,7 @@ public:
 
 						CSCharBuffer cBuff( iLen );
 
-						int bytes = pcSock->Read( cBuff(), iLen );
+						ssize_t bytes = pcSock->Read( cBuff(), iLen );
 
 						if ( ( bytes != T::READ_TIMEDOUT ) && ( bytes != T::READ_CONNREFUSED )
 							&& ( !pcSock->IsConnected() ) )
