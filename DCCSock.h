@@ -21,7 +21,7 @@ public:
 	CDCCSock(CUser* pUser, const CString& sRemoteNick, const CString& sRemoteIP, unsigned short uRemotePort, const CString& sLocalFile, unsigned long uFileSize, const CString& sModuleName);
 	virtual ~CDCCSock();
 
-	virtual void ReadData(const char* data, int len);
+	virtual void ReadData(const char* data, size_t len);
 	virtual void ConnectionRefused();
 	virtual void SockError(int iErrno);
 	virtual void Timeout();

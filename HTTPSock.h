@@ -20,7 +20,7 @@ public:
 	virtual ~CHTTPSock();
 
 	// Csocket derived members
-	virtual void ReadData(const char* data, int len);
+	virtual void ReadData(const char* data, size_t len);
 	virtual void ReadLine(const CString& sData);
 	virtual void ReachedMaxBuffer();
 	virtual void SockError(int iErrno);

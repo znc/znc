@@ -85,7 +85,7 @@ void CDCCBounce::ReachedMaxBuffer() {
 	Close();
 }
 
-void CDCCBounce::ReadData(const char* data, int len) {
+void CDCCBounce::ReadData(const char* data, size_t len) {
 	size_t BufLen;
 
 	if (m_pPeer) {

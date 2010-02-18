@@ -55,7 +55,7 @@ CDCCSock::~CDCCSock() {
 	m_pUser->DelDCCSock(this);
 }
 
-void CDCCSock::ReadData(const char* data, int len) {
+void CDCCSock::ReadData(const char* data, size_t len) {
 	if (!m_pFile) {
 		DEBUG("File not open! closing get.");
 		m_pUser->PutModule(m_sModuleName, ((m_bSend) ? "DCC -> [" : "DCC <- [") + m_sRemoteNick + "][" + m_sFileName + "] - File not open!");
