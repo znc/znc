@@ -413,8 +413,8 @@ public:
 	// Overloaded operators
 	T& operator *() const { assert(m_pType); return *m_pType; }
 	T* operator ->() const { assert(m_pType); return m_pType; }
-	bool operator ==(T* rhs) { return (m_pType == rhs); }
-	bool operator ==(const CSmartPtr<T>& rhs) { return (m_pType == *rhs); }
+	bool operator ==(T* rhs) const { return (m_pType == rhs); }
+	bool operator ==(const CSmartPtr<T>& rhs) const { return (m_pType == *rhs); }
 
 	/**
 	 * @brief Attach() to a raw pointer
