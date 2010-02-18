@@ -365,7 +365,7 @@ public:
 		}
 	}
 
-	virtual EModRet OnUserMsg(CString& sTarget, CString& sMessage) {
+	virtual EModRet HandleMessage(const CString& sCmd, const CString& sTarget, const CString& sMessage) {
 		if (sTarget.empty()) {
 			return CONTINUE;
 		}
@@ -388,19 +388,39 @@ public:
 				return HALT;
 			}
 
-			PutChan(sTarget, ":?" + m_pUser->GetUserName() + "!" + m_pUser->GetIdent() + "@" + sHost + " PRIVMSG " + sTarget + " :" + sMessage, true, false);
+			PutChan(sTarget, ":?" + m_pUser->GetUserName() + "!" + m_pUser->GetIdent() + "@" + sHost + " " + sCmd + " " + sTarget + " :" + sMessage, true, false);
 		} else {
 			CString sNick = sTarget.LeftChomp_n(1);
 			CUser* pUser = CZNC::Get().FindUser(sNick);
 
 			if (pUser) {
-				pUser->PutUser(":?" + m_pUser->GetUserName() + "!" + m_pUser->GetIdent() + "@" + sHost + " PRIVMSG " + pUser->GetIRCNick().GetNick() + " :" + sMessage);
+				pUser->PutUser(":?" + m_pUser->GetUserName() + "!" + m_pUser->GetIdent() + "@" + sHost + " " + sCmd + " " + pUser->GetIRCNick().GetNick() + " :" + sMessage);
 			} else {
 				m_pClient->PutClient(":" + GetIRCServer(m_pUser) + " 403 " + m_pUser->GetIRCNick().GetNick() + " " + sTarget + " :No such znc user: " + sNick + "");
 			}
 		}
 
 		return HALT;
+	}
+
+	virtual EModRet OnUserMsg(CString& sTarget, CString& sMessage) {
+		return HandleMessage("PRIVMSG", sTarget, sMessage);
+	}
+
+	virtual EModRet OnUserNotice(CString& sTarget, CString& sMessage) {
+		return HandleMessage("NOTICE", sTarget, sMessage);
+	}
+
+	virtual EModRet OnUserAction(CString& sTarget, CString& sMessage) {
+		return HandleMessage("PRIVMSG", sTarget, "\001ACTION " + sMessage + "\001");
+	}
+
+	virtual EModRet OnUserCTCP(CString& sTarget, CString& sMessage) {
+		return HandleMessage("PRIVMSG", sTarget, "\001" + sMessage + "\001");
+	}
+
+	virtual EModRet OnUserCTCPReply(CString& sTarget, CString& sMessage) {
+		return HandleMessage("NOTICE", sTarget, "\001" + sMessage + "\001");
 	}
 
 	virtual void OnModCommand(const CString& sLine) {
