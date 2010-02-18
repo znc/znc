@@ -678,14 +678,12 @@ public:
 
 	// Setters
 	void SetFake(bool b) { m_bFake = b; }
-	void SetGlobal(bool b) { m_bGlobal = b; }
 	void SetDescription(const CString& s) { m_sDescription = s; }
 	void SetArgs(const CString& s) { m_sArgs = s; }
 	// !Setters
 
 	// Getters
 	bool IsFake() const { return m_bFake; }
-	bool IsGlobal() const { return m_bGlobal; }
 	const CString& GetDescription() const { return m_sDescription; }
 	const CString& GetArgs() const { return m_sArgs; }
 
@@ -704,7 +702,6 @@ public:
 
 protected:
 	bool			m_bFake;
-	bool			m_bGlobal;
 	CString			m_sDescription;
 	set<CTimer*>		m_sTimers;
 	set<CSocket*>		m_sSockets;

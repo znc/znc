@@ -105,7 +105,6 @@ const CString& CTimer::GetDescription() const { return m_sDescription; }
 
 CModule::CModule(ModHandle pDLL, CUser* pUser, const CString& sModName, const CString& sDataDir) {
 	m_bFake = false;
-	m_bGlobal = false;
 	m_pDLL = pDLL;
 	m_pManager = &(CZNC::Get().GetManager());;
 	m_pUser = pUser;
@@ -699,7 +698,6 @@ bool CModules::LoadModule(const CString& sModule, const CString& sArgs, CUser* p
 	}
 
 	pModule->SetDescription(sDesc);
-	pModule->SetGlobal(bIsGlobal);
 	pModule->SetArgs(sArgs);
 	push_back(pModule);
 
