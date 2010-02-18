@@ -778,6 +778,11 @@ void CClient::UserCommand(CString& sLine) {
 #else
 		CString sMod = sLine.Token(1);
 
+		if (sMod.empty()) {
+			PutStatus("Usage: UpdateMod <module>");
+			return;
+		}
+
 		if (m_pUser->DenyLoadMod() || !m_pUser->IsAdmin()) {
 			PutStatus("Unable to reload [" + sMod + "] Access Denied.");
 			return;
@@ -1047,7 +1052,7 @@ void CClient::HelpUser() {
 
 	Table.AddRow();
 	Table.SetCell("Command", "RemServer");
-	Table.SetCell("Arguments", "<host>");
+	Table.SetCell("Arguments", "<host> [port] [pass]");
 	Table.SetCell("Description", "Remove a server from the list");
 
 	Table.AddRow();
@@ -1086,7 +1091,7 @@ void CClient::HelpUser() {
 	if (m_pUser->IsAdmin()) {
 		Table.AddRow();
 		Table.SetCell("Command", "AddVHost");
-		Table.SetCell("Arguments", "<vhost (ip preferred)>");
+		Table.SetCell("Arguments", "<vhost (IP preferred)>");
 		Table.SetCell("Description", "Adds a VHost for normal users to use");
 
 		Table.AddRow();
