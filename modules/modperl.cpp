@@ -157,7 +157,7 @@ public:
 // # OnDisconnect($sockhandle)
 	virtual void Disconnected();
 // # OnData($sockhandle, $bytes, $length)
-	virtual void ReadData(const char *data, int len);
+	virtual void ReadData(const char *data, size_t len);
 // # OnReadLine($sockhandle, $line)
 	virtual void ReadLine(const CS_STRING & sLine);
 
@@ -1196,7 +1196,7 @@ void CPerlSock::Disconnected()
 	SOCKCB("OnDisconnect");
 }
 // # OnData($sockhandle, $bytes, $length)
-void CPerlSock::ReadData(const char *data, int len)
+void CPerlSock::ReadData(const char *data, size_t len)
 {
 	SetupArgs();
 	PString sData;

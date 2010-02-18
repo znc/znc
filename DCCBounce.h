@@ -26,7 +26,7 @@ public:
 	static unsigned short DCCRequest(const CString& sNick, unsigned long uLongIP, unsigned short uPort, const CString& sFileName, bool bIsChat, CUser* pUser, const CString& sRemoteIP);
 
 	void ReadLine(const CString& sData);
-	virtual void ReadData(const char* data, int len);
+	virtual void ReadData(const char* data, size_t len);
 	virtual void ReadPaused();
 	virtual void Timeout();
 	virtual void ConnectionRefused();
