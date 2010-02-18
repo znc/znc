@@ -67,7 +67,7 @@ public:
 	void SetModes(const CString& s);
 	void ModeChange(const CString& sModes, const CString& sNick = "");
 	bool AddMode(unsigned char uMode, const CString& sArg);
-	bool RemMode(unsigned char uMode, const CString& sArg);
+	bool RemMode(unsigned char uMode);
 	void OnOp(const CString& sOpNick, const CString& sNick, bool bOpped);
 	void OnVoice(const CString& sOpNick, const CString& sNick, bool bVoiced);
 	CString GetModeString() const;
