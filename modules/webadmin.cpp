@@ -1020,14 +1020,14 @@ CUser* CWebAdminSock::GetNewUser(CString& sPageRet, CUser* pUser) {
 		sUsername = pUser->GetUserName();
 	}
 
-	CUser* pNewUser = new CUser(sUsername);
-
 	CString sArg = GetParam("password");
 
 	if (sArg != GetParam("password2")) {
 		GetErrorPage(sPageRet, "Invalid Submission [Passwords do not match]");
 		return NULL;
 	}
+
+	CUser* pNewUser = new CUser(sUsername);
 
 	if (!sArg.empty()) {
 		CString sSalt = CUtils::GetSalt();
