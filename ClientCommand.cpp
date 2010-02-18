@@ -277,12 +277,29 @@ void CClient::UserCommand(CString& sLine) {
 			PutStatus("Channel [" + sChan + "] enabled.");
 		}
 	} else if (sCommand.Equals("LISTCHANS")) {
-		const vector<CChan*>& vChans = m_pUser->GetChans();
-		CIRCSock* pIRCSock = (!m_pUser) ? NULL : m_pUser->GetIRCSock();
+		CUser* pUser = m_pUser;
+		const CString sNick = sLine.Token(1);
+
+		if (!sNick.empty()) {
+			if (!m_pUser->IsAdmin()) {
+				PutStatus("Usage: ListChans");
+				return;
+			}
+
+			pUser = CZNC::Get().FindUser(sNick);
+
+			if (!pUser) {
+				PutStatus("No such user [" + sNick + "]");
+				return;
+			}
+		}
+
+		const vector<CChan*>& vChans = pUser->GetChans();
+		CIRCSock* pIRCSock = pUser->GetIRCSock();
 		const CString& sPerms = (pIRCSock) ? pIRCSock->GetPerms() : "";
 
 		if (!vChans.size()) {
-			PutStatus("You have no channels defined");
+			PutStatus("There are no channels defined.");
 			return;
 		}
 
@@ -1006,17 +1023,19 @@ void CClient::HelpUser() {
 	Table.SetCell("Arguments", "");
 	Table.SetCell("Description", "List all available modules");
 
-	Table.AddRow();
-	Table.SetCell("Command", "ListChans");
-	Table.SetCell("Arguments", "");
-	Table.SetCell("Description", "List all channels");
+	if (!m_pUser->IsAdmin()) { // If they are an admin we will add this command below with an argument
+		Table.AddRow();
+		Table.SetCell("Command", "ListChans");
+		Table.SetCell("Arguments", "");
+		Table.SetCell("Description", "List all channels");
+	}
 
 	Table.AddRow();
 	Table.SetCell("Command", "ListNicks");
 	Table.SetCell("Arguments", "<#chan>");
 	Table.SetCell("Description", "List all nicks on a channel");
 
-	if (!m_pUser->IsAdmin()) { // If they are an admin we will add this command below with an argument
+	if (!m_pUser->IsAdmin()) {
 		Table.AddRow();
 		Table.SetCell("Command", "ListClients");
 		Table.SetCell("Arguments", "");
@@ -1191,6 +1210,11 @@ void CClient::HelpUser() {
 		Table.SetCell("Command", "ListUsers");
 		Table.SetCell("Arguments", "");
 		Table.SetCell("Description", "List all users/clients connected to znc");
+
+		Table.AddRow();
+		Table.SetCell("Command", "ListChans");
+		Table.SetCell("Arguments", "[User]");
+		Table.SetCell("Description", "List all channels");
 
 		Table.AddRow();
 		Table.SetCell("Command", "ListClients");
