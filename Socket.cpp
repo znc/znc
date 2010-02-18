@@ -50,7 +50,7 @@ CSocket::~CSocket() {
 
 	m_pModule->UnlinkSocket(this);
 
-	if (!m_pModule->IsGlobal() && pUser) {
+	if (pUser) {
 		pUser->AddBytesWritten(GetBytesWritten());
 		pUser->AddBytesRead(GetBytesRead());
 	} else {
