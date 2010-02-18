@@ -192,7 +192,7 @@ bool CZNC::HandleUserDeletion()
 	map<CString, CUser*>::iterator it;
 	map<CString, CUser*>::iterator end;
 
-	if (m_msDelUsers.size() == 0)
+	if (m_msDelUsers.empty())
 		return false;
 
 	end = m_msDelUsers.end();
@@ -683,7 +683,7 @@ bool CZNC::WriteNewConfig(const CString& sConfigFile) {
 	GetModules().GetAvailableMods(ssGlobalMods, true);
 	size_t uNrOtherGlobalMods = FilterUncommonModules(ssGlobalMods);
 
-	if (ssGlobalMods.size()) {
+	if (!ssGlobalMods.empty()) {
 		CUtils::PrintMessage("");
 		CUtils::PrintMessage("-- Global Modules --");
 		CUtils::PrintMessage("");
@@ -1020,7 +1020,7 @@ bool CZNC::RehashConfig(CString& sError)
 
 	// Rehashing failed, try to recover
 	CString s;
-	while (m_msDelUsers.size()) {
+	while (!m_msDelUsers.empty()) {
 		AddUser(m_msDelUsers.begin()->second, s);
 		m_msDelUsers.erase(m_msDelUsers.begin());
 	}
@@ -1078,7 +1078,7 @@ bool CZNC::DoRehash(CString& sError)
 	m_vsMotd.clear();
 
 	// Delete all listeners
-	while (m_vpListeners.size()) {
+	while (!m_vpListeners.empty()) {
 		delete m_vpListeners[0];
 		m_vpListeners.erase(m_vpListeners.begin());
 	}
@@ -1685,13 +1685,13 @@ bool CZNC::DoRehash(CString& sError)
 		delete pUser;
 	}
 
-	if (m_msUsers.size() == 0) {
+	if (m_msUsers.empty()) {
 		sError = "You must define at least one user in your config.";
 		CUtils::PrintError(sError);
 		return false;
 	}
 
-	if (m_vpListeners.size() == 0) {
+	if (m_vpListeners.empty()) {
 		sError = "You must supply at least one Listen port in your config.";
 		CUtils::PrintError(sError);
 		return false;

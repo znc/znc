@@ -733,7 +733,7 @@ CChan* CUser::FindChan(const CString& sName) const {
 
 void CUser::JoinChans() {
 	// Avoid divsion by zero, it's bad!
-	if (m_vChans.size() == 0)
+	if (m_vChans.empty())
 		return;
 
 	// We start at a random offset into the channel list so that if your
@@ -962,7 +962,7 @@ CString CUser::GetLocalIP() {
 		return pIRCSock->GetLocalIP();
 	}
 
-	if (m_vClients.size()) {
+	if (!m_vClients.empty()) {
 		return m_vClients[0]->GetLocalIP();
 	}
 
@@ -1117,7 +1117,7 @@ CString CUser::GetCurNick() const {
 		return pIRCSock->GetNick();
 	}
 
-	if (m_vClients.size()) {
+	if (!m_vClients.empty()) {
 		return m_vClients[0]->GetNick();
 	}
 

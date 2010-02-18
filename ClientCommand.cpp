@@ -583,7 +583,7 @@ void CClient::UserCommand(CString& sLine) {
 			set<CModInfo> ssGlobalMods;
 			CZNC::Get().GetModules().GetAvailableMods(ssGlobalMods, true);
 
-			if (!ssGlobalMods.size()) {
+			if (ssGlobalMods.empty()) {
 				PutStatus("No global modules available.");
 			} else {
 				PutStatus("Global modules:");
