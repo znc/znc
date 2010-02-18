@@ -166,6 +166,7 @@ void CClient::UserCommand(CString& sLine) {
 		Table.AddColumn("OnIRC");
 		Table.AddColumn("IRC Server");
 		Table.AddColumn("IRC User");
+		Table.AddColumn("Channels");
 
 		for (map<CString, CUser*>::const_iterator it = msUsers.begin(); it != msUsers.end(); it++) {
 			Table.AddRow();
@@ -177,6 +178,7 @@ void CClient::UserCommand(CString& sLine) {
 				Table.SetCell("OnIRC", "Yes");
 				Table.SetCell("IRC Server", it->second->GetIRCServer());
 				Table.SetCell("IRC User", it->second->GetIRCNick().GetNickMask());
+				Table.SetCell("Channels", CString(it->second->GetChans().size()));
 			}
 		}
 
