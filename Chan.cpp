@@ -308,7 +308,7 @@ void CChan::ModeChange(const CString& sModes, const CString& sOpNick) {
 #endif
 
 			if (!bList) {
-				(bAdd) ? AddMode(uMode, sArg) : RemMode(uMode, sArg);
+				(bAdd) ? AddMode(uMode, sArg) : RemMode(uMode);
 			}
 		}
 	}
@@ -349,7 +349,7 @@ bool CChan::AddMode(unsigned char uMode, const CString& sArg) {
 	return true;
 }
 
-bool CChan::RemMode(unsigned char uMode, const CString& sArg) {
+bool CChan::RemMode(unsigned char uMode) {
 	if (!HasMode(uMode)) {
 		return false;
 	}
