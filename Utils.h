@@ -41,7 +41,7 @@ using std::endl;
 	if (CUtils::Debug()) { \
 		cout << f << endl; \
 	} \
-} while (0);
+} while (0)
 
 static inline void SetFdCloseOnExec(int fd)
 {
