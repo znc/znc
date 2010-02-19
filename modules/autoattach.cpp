@@ -55,6 +55,11 @@ public:
 		return CONTINUE;
 	}
 
+	virtual EModRet OnChanAction(CNick& Nick, CChan& Channel, CString& sMessage) {
+		TryAttach(Channel);
+		return CONTINUE;
+	}
+
 	virtual void OnModCommand(const CString& sLine) {
 		CString sCommand = sLine.Token(0);
 
