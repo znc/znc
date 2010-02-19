@@ -62,7 +62,7 @@ public:
 	virtual bool OnLoad(const CString& sArgs, CString& sMessage) {
 		const map<CString, CUser*>& msUsers = CZNC::Get().GetUserMap();
 
-		for (map<CString, CUser*>::const_iterator it = msUsers.begin(); it != msUsers.end(); it++) {
+		for (map<CString, CUser*>::const_iterator it = msUsers.begin(); it != msUsers.end(); ++it) {
 			CUser* pUser = it->second;
 			if (pUser->GetIRCSock()) {
 				if (pUser->GetChanPrefixes().find(CHAN_PREFIX_1) == CString::npos) {
@@ -87,7 +87,7 @@ public:
 
 	void Load() {
 		VCString vsChannels;
-		for (MCString::iterator it = BeginNV(); it != EndNV(); it++) {
+		for (MCString::iterator it = BeginNV(); it != EndNV(); ++it) {
 			CUser* pUser = CZNC::Get().FindUser(it->first);
 			CPartylineChannel* pChannel;
 			it->second.Split(",", vsChannels, false);
@@ -97,7 +97,7 @@ public:
 				continue;
 			}
 
-			for (VCString::iterator i = vsChannels.begin(); i != vsChannels.end(); i++) {
+			for (VCString::iterator i = vsChannels.begin(); i != vsChannels.end(); ++i) {
 				if (i->Trim_n().empty())
 					continue;
 				pChannel = GetChannel(*i);
@@ -114,7 +114,7 @@ public:
 		const CString &sUser = pUser->GetUserName();
 
 		for (set<CPartylineChannel*>::iterator it = m_ssChannels.begin();
-				it != m_ssChannels.end(); it++) {
+				it != m_ssChannels.end(); ++it) {
 			if ((*it)->IsFixedChan(sUser)) {
 				sChans += "," + (*it)->GetName();
 			}
@@ -128,7 +128,7 @@ public:
 
 	virtual EModRet OnDeleteUser(CUser& User) {
 		// Loop through each chan
-		for (set<CPartylineChannel*>::iterator it = m_ssChannels.begin(); it != m_ssChannels.end(); it++) {
+		for (set<CPartylineChannel*>::iterator it = m_ssChannels.begin(); it != m_ssChannels.end(); ++it) {
 			RemoveUser(&User, *it, "KICK", true, "User deleted", true);
 		}
 
@@ -159,7 +159,7 @@ public:
 		}
 
 		// Make sure this user is in the default channels
-		for (set<CString>::iterator a = m_ssDefaultChans.begin(); a != m_ssDefaultChans.end(); a++) {
+		for (set<CString>::iterator a = m_ssDefaultChans.begin(); a != m_ssDefaultChans.end(); ++a) {
 			CPartylineChannel* pChannel = GetChannel(*a);
 			const CString& sNick = m_pUser->GetUserName();
 
@@ -181,7 +181,7 @@ public:
 
 		CString sNickMask = m_pClient->GetNickMask();
 
-		for (set<CPartylineChannel*>::iterator it = m_ssChannels.begin(); it != m_ssChannels.end(); it++) {
+		for (set<CPartylineChannel*>::iterator it = m_ssChannels.begin(); it != m_ssChannels.end(); ++it) {
 			const set<CString>& ssNicks = (*it)->GetNicks();
 
 			if ((*it)->IsInChannel(m_pUser->GetUserName())) {
@@ -200,7 +200,7 @@ public:
 
 	virtual void OnClientDisconnect() {
 		if (!m_pUser->IsUserAttached() && !m_pUser->IsBeingDeleted()) {
-			for (set<CPartylineChannel*>::iterator it = m_ssChannels.begin(); it != m_ssChannels.end(); it++) {
+			for (set<CPartylineChannel*>::iterator it = m_ssChannels.begin(); it != m_ssChannels.end(); ++it) {
 				const set<CString>& ssNicks = (*it)->GetNicks();
 
 				if (ssNicks.find(m_pUser->GetUserName()) != ssNicks.end()) {
@@ -474,7 +474,7 @@ public:
 			Table.AddColumn("Channel");
 			Table.AddColumn("Users");
 
-			for (set<CPartylineChannel*>::const_iterator a = m_ssChannels.begin(); a != m_ssChannels.end(); a++) {
+			for (set<CPartylineChannel*>::const_iterator a = m_ssChannels.begin(); a != m_ssChannels.end(); ++a) {
 				Table.AddRow();
 
 				Table.SetCell("Channel", (*a)->GetName());
@@ -546,7 +546,7 @@ public:
 				return;
 			}
 
-			for (set<CPartylineChannel*>::const_iterator a = m_ssChannels.begin(); a != m_ssChannels.end(); a++) {
+			for (set<CPartylineChannel*>::const_iterator a = m_ssChannels.begin(); a != m_ssChannels.end(); ++a) {
 				if ((*a)->IsFixedChan(sUser)) {
 					PutModule((*a)->GetName());
 				}
@@ -565,7 +565,7 @@ public:
 				return;
 			}
 			const set<CString>& sNicks = pChan->GetNicks();
-			for (set<CString>::const_iterator it = sNicks.begin(); it != sNicks.end(); it++) {
+			for (set<CString>::const_iterator it = sNicks.begin(); it != sNicks.end(); ++it) {
 				if (pChan->IsFixedChan(*it)) {
 					PutModule(*it);
 				}
@@ -603,7 +603,7 @@ public:
 		if (!pClient)
 			pClient = m_pClient;
 
-		for (map<CString, CUser*>::const_iterator it = msUsers.begin(); it != msUsers.end(); it++) {
+		for (map<CString, CUser*>::const_iterator it = msUsers.begin(); it != msUsers.end(); ++it) {
 			if (ssNicks.find(it->first) != ssNicks.end()) {
 				if (it->second == pUser) {
 					if (bIncludeCurUser) {
@@ -625,7 +625,7 @@ public:
 
 		const vector<CClient*>& vClients = pUser->GetClients();
 		vector<CClient*>::const_iterator it;
-		for (it = vClients.begin(); it != vClients.end(); it++) {
+		for (it = vClients.begin(); it != vClients.end(); ++it) {
 			(*it)->PutClient(sPre + (*it)->GetNick() + sPost);
 		}
 	}
@@ -633,7 +633,7 @@ public:
 	void SendNickList(CUser* pUser, const set<CString>& ssNicks, const CString& sChan) {
 		CString sNickList;
 
-		for (set<CString>::const_iterator it = ssNicks.begin(); it != ssNicks.end(); it++) {
+		for (set<CString>::const_iterator it = ssNicks.begin(); it != ssNicks.end(); ++it) {
 			CUser* pChanUser = CZNC::Get().FindUser(*it);
 
 			if (pChanUser && pChanUser->IsUserAttached()) {
@@ -658,7 +658,7 @@ public:
 	CPartylineChannel* FindChannel(const CString& sChan) {
 		CString sChannel = sChan.AsLower();
 
-		for (set<CPartylineChannel*>::iterator it = m_ssChannels.begin(); it != m_ssChannels.end(); it++) {
+		for (set<CPartylineChannel*>::iterator it = m_ssChannels.begin(); it != m_ssChannels.end(); ++it) {
 			if ((*it)->GetName().AsLower() == sChannel)
 				return *it;
 		}

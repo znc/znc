@@ -308,7 +308,7 @@ private:
 		}
 
 		const map<CString,CNick*>& msNicks = pChannel->GetNicks();
-		for (map<CString,CNick*>::const_iterator it = msNicks.begin(); it != msNicks.end(); it++) {
+		for (map<CString,CNick*>::const_iterator it = msNicks.begin(); it != msNicks.end(); ++it) {
 			const CNick& Nick = *it->second;
 			l[0] = (Nick.GetNick()).c_str();
 			l[1] = (Nick.GetIdent()).c_str();

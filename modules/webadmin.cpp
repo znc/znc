@@ -586,7 +586,7 @@ bool CWebAdminSock::SettingsPage(CString& sPageRet) {
 		set<CModInfo> ssGlobalMods;
 		CZNC::Get().GetModules().GetAvailableMods(ssGlobalMods, true);
 
-		for (set<CModInfo>::iterator it = ssGlobalMods.begin(); it != ssGlobalMods.end(); it++) {
+		for (set<CModInfo>::iterator it = ssGlobalMods.begin(); it != ssGlobalMods.end(); ++it) {
 			const CModInfo& Info = *it;
 			CTemplate& l = m_Template.AddRow("ModuleLoop");
 
@@ -634,7 +634,7 @@ bool CWebAdminSock::SettingsPage(CString& sPageRet) {
 	set<CString> ssArgs;
 	GetParamValues("loadmod", ssArgs);
 
-	for (set<CString>::iterator it = ssArgs.begin(); it != ssArgs.end(); it++) {
+	for (set<CString>::iterator it = ssArgs.begin(); it != ssArgs.end(); ++it) {
 		CString sModRet;
 		CString sModName = (*it).TrimRight_n("\r");
 
@@ -667,7 +667,7 @@ bool CWebAdminSock::SettingsPage(CString& sPageRet) {
 		}
 	}
 
-	for (set<CString>::iterator it2 = ssUnloadMods.begin(); it2 != ssUnloadMods.end(); it2++) {
+	for (set<CString>::iterator it2 = ssUnloadMods.begin(); it2 != ssUnloadMods.end(); ++it2) {
 		CZNC::Get().GetModules().UnloadModule(*it2);
 	}
 
@@ -813,7 +813,7 @@ bool CWebAdminSock::UserPage(CString& sPageRet, CUser* pUser) {
 			m_Template["MaxJoins"] = CString(pUser->MaxJoins());
 
 			const set<CString>& ssAllowedHosts = pUser->GetAllowedHosts();
-			for (set<CString>::const_iterator it = ssAllowedHosts.begin(); it != ssAllowedHosts.end(); it++) {
+			for (set<CString>::const_iterator it = ssAllowedHosts.begin(); it != ssAllowedHosts.end(); ++it) {
 				CTemplate& l = m_Template.AddRow("AllowedHostLoop");
 				l["Host"] = *it;
 			}
@@ -825,7 +825,7 @@ bool CWebAdminSock::UserPage(CString& sPageRet, CUser* pUser) {
 			}
 
 			const MCString& msCTCPReplies = pUser->GetCTCPReplies();
-			for (MCString::const_iterator it2 = msCTCPReplies.begin(); it2 != msCTCPReplies.end(); it2++) {
+			for (MCString::const_iterator it2 = msCTCPReplies.begin(); it2 != msCTCPReplies.end(); ++it2) {
 				CTemplate& l = m_Template.AddRow("CTCPLoop");
 				l["CTCP"] = it2->first + " " + it2->second;
 			}
@@ -881,7 +881,7 @@ bool CWebAdminSock::UserPage(CString& sPageRet, CUser* pUser) {
 		set<CModInfo> ssUserMods;
 		CZNC::Get().GetModules().GetAvailableMods(ssUserMods);
 
-		for (set<CModInfo>::iterator it = ssUserMods.begin(); it != ssUserMods.end(); it++) {
+		for (set<CModInfo>::iterator it = ssUserMods.begin(); it != ssUserMods.end(); ++it) {
 			const CModInfo& Info = *it;
 			CTemplate& l = m_Template.AddRow("ModuleLoop");
 

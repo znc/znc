@@ -57,7 +57,7 @@ public:
 		Limits::iterator it;
 		time_t now = time(NULL);
 
-		for (it = m_chans.begin(); it != m_chans.end(); it++) {
+		for (it = m_chans.begin(); it != m_chans.end(); ++it) {
 			// The timeout for this channel did not expire yet?
 			if (it->second.first + (time_t)m_iThresholdSecs >= now)
 				continue;

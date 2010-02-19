@@ -89,7 +89,7 @@ public:
 
 	virtual void OnIRCConnected() {
 		for (VCString::iterator it = m_vPerform.begin();
-			it != m_vPerform.end();  it++) {
+			it != m_vPerform.end();  ++it) {
 			PutIRC(GetUser()->ExpandString(*it));
 		}
 	}
@@ -98,7 +98,7 @@ private:
 	bool Save() {
 		CString sBuffer = "";
 
-		for (VCString::iterator it = m_vPerform.begin(); it != m_vPerform.end(); it++) {
+		for (VCString::iterator it = m_vPerform.begin(); it != m_vPerform.end(); ++it) {
 			sBuffer += *it + "\n";
 		}
 		SetNV("Perform", sBuffer);

@@ -53,7 +53,7 @@ CZNC::~CZNC() {
 #ifdef _MODULES
 	m_pModules->UnloadAll();
 
-	for (map<CString,CUser*>::iterator a = m_msUsers.begin(); a != m_msUsers.end(); a++) {
+	for (map<CString,CUser*>::iterator a = m_msUsers.begin(); a != m_msUsers.end(); ++a) {
 		a->second->GetModules().UnloadAll();
 	}
 #endif
@@ -62,7 +62,7 @@ CZNC::~CZNC() {
 		delete m_vpListeners[b];
 	}
 
-	for (map<CString,CUser*>::iterator a = m_msUsers.begin(); a != m_msUsers.end(); a++) {
+	for (map<CString,CUser*>::iterator a = m_msUsers.begin(); a != m_msUsers.end(); ++a) {
 		a->second->SetBeingDeleted(true);
 	}
 
@@ -113,7 +113,7 @@ bool CZNC::OnBoot() {
 		return false;
 	}
 
-	for (map<CString,CUser*>::iterator it = m_msUsers.begin(); it != m_msUsers.end(); it++) {
+	for (map<CString,CUser*>::iterator it = m_msUsers.begin(); it != m_msUsers.end(); ++it) {
 		if (!it->second->GetModules().OnBoot()) {
 			return false;
 		}
@@ -196,7 +196,7 @@ bool CZNC::HandleUserDeletion()
 		return false;
 
 	end = m_msDelUsers.end();
-	for (it = m_msDelUsers.begin(); it != end; it++) {
+	for (it = m_msDelUsers.begin(); it != end; ++it) {
 		CUser* pUser = it->second;
 		pUser->SetBeingDeleted(true);
 
@@ -404,7 +404,7 @@ bool CZNC::WritePemFile() {
 }
 
 void CZNC::DeleteUsers() {
-	for (map<CString,CUser*>::iterator a = m_msUsers.begin(); a != m_msUsers.end(); a++) {
+	for (map<CString,CUser*>::iterator a = m_msUsers.begin(); a != m_msUsers.end(); ++a) {
 		a->second->SetBeingDeleted(true);
 		delete a->second;
 	}
@@ -424,7 +424,7 @@ Csock* CZNC::FindSockByName(const CString& sSockName) {
 }
 
 bool CZNC::IsHostAllowed(const CString& sHostMask) const {
-	for (map<CString,CUser*>::const_iterator a = m_msUsers.begin(); a != m_msUsers.end(); a++) {
+	for (map<CString,CUser*>::const_iterator a = m_msUsers.begin(); a != m_msUsers.end(); ++a) {
 		if (a->second->IsHostAllowed(sHostMask)) {
 			return true;
 		}
@@ -602,7 +602,7 @@ bool CZNC::WriteConfig() {
 	}
 #endif
 
-	for (map<CString,CUser*>::iterator it = m_msUsers.begin(); it != m_msUsers.end(); it++) {
+	for (map<CString,CUser*>::iterator it = m_msUsers.begin(); it != m_msUsers.end(); ++it) {
 		CString sErr;
 
 		if (!it->second->IsValid(sErr)) {
@@ -694,7 +694,7 @@ bool CZNC::WriteNewConfig(const CString& sConfigFile) {
 			Table.AddColumn("Description");
 			set<CModInfo>::iterator it;
 
-			for (it = ssGlobalMods.begin(); it != ssGlobalMods.end(); it++) {
+			for (it = ssGlobalMods.begin(); it != ssGlobalMods.end(); ++it) {
 				const CModInfo& Info = *it;
 				Table.AddRow();
 				Table.SetCell("Name", Info.GetName());
@@ -712,7 +712,7 @@ bool CZNC::WriteNewConfig(const CString& sConfigFile) {
 
 			CUtils::PrintMessage("");
 
-			for (it = ssGlobalMods.begin(); it != ssGlobalMods.end(); it++) {
+			for (it = ssGlobalMods.begin(); it != ssGlobalMods.end(); ++it) {
 				const CModInfo& Info = *it;
 				CString sName = Info.GetName();
 
@@ -803,7 +803,7 @@ bool CZNC::WriteNewConfig(const CString& sConfigFile) {
 				Table.AddColumn("Description");
 				set<CModInfo>::iterator it;
 
-				for (it = ssUserMods.begin(); it != ssUserMods.end(); it++) {
+				for (it = ssUserMods.begin(); it != ssUserMods.end(); ++it) {
 					const CModInfo& Info = *it;
 					Table.AddRow();
 					Table.SetCell("Name", Info.GetName());
@@ -821,7 +821,7 @@ bool CZNC::WriteNewConfig(const CString& sConfigFile) {
 
 				CUtils::PrintMessage("");
 
-				for (it = ssUserMods.begin(); it != ssUserMods.end(); it++) {
+				for (it = ssUserMods.begin(); it != ssUserMods.end(); ++it) {
 					const CModInfo& Info = *it;
 					CString sName = Info.GetName();
 
@@ -994,7 +994,7 @@ bool CZNC::RehashConfig(CString& sError)
 #ifdef _MODULES
 	GetModules().OnPreRehash();
 	for (map<CString, CUser*>::iterator itb = m_msUsers.begin();
-			itb != m_msUsers.end(); itb++) {
+			itb != m_msUsers.end(); ++itb) {
 		itb->second->GetModules().OnPreRehash();
 	}
 #endif
@@ -1010,7 +1010,7 @@ bool CZNC::RehashConfig(CString& sError)
 #ifdef _MODULES
 		GetModules().OnPostRehash();
 		for (map<CString, CUser*>::iterator it = m_msUsers.begin();
-				it != m_msUsers.end(); it++) {
+				it != m_msUsers.end(); ++it) {
 			it->second->GetModules().OnPostRehash();
 		}
 #endif
@@ -1606,7 +1606,7 @@ bool CZNC::DoRehash(CString& sError)
 
 #ifdef _MODULES
 	// First step: Load and reload new modules or modules with new arguments
-	for (MCString::iterator it = msModules.begin(); it != msModules.end(); it++) {
+	for (MCString::iterator it = msModules.begin(); it != msModules.end(); ++it) {
 		CString sModName = it->first;
 		CString sArgs = it->second;
 		CString sModRet;
@@ -1656,7 +1656,7 @@ bool CZNC::DoRehash(CString& sError)
 			ssUnload.insert(pCurMod->GetModName());
 	}
 
-	for (set<CString>::iterator it = ssUnload.begin(); it != ssUnload.end(); it++) {
+	for (set<CString>::iterator it = ssUnload.begin(); it != ssUnload.end(); ++it) {
 		if (GetModules().UnloadModule(*it))
 			CUtils::PrintMessage("Unloaded Global Module [" + *it + "]");
 		else
@@ -1664,7 +1664,7 @@ bool CZNC::DoRehash(CString& sError)
 	}
 
 	// last step, throw unhandled config items at global config
-	for (std::list<CGlobalModuleConfigLine>::iterator it = lGlobalModuleConfigLine.begin(); it != lGlobalModuleConfigLine.end(); it++)
+	for (std::list<CGlobalModuleConfigLine>::iterator it = lGlobalModuleConfigLine.begin(); it != lGlobalModuleConfigLine.end(); ++it)
 	{
 		if ((pChan && pChan == it->m_pChan) || (pUser && pUser == it->m_pUser))
 			continue; // skip unclosed user or chan
@@ -1726,7 +1726,7 @@ bool CZNC::AddVHost(const CString& sHost) {
 
 bool CZNC::RemVHost(const CString& sHost) {
 	VCString::iterator it;
-	for (it = m_vsVHosts.begin(); it != m_vsVHosts.end(); it++) {
+	for (it = m_vsVHosts.begin(); it != m_vsVHosts.end(); ++it) {
 		if (sHost.Equals(*it)) {
 			m_vsVHosts.erase(it);
 			return true;
@@ -1738,7 +1738,7 @@ bool CZNC::RemVHost(const CString& sHost) {
 
 void CZNC::Broadcast(const CString& sMessage, bool bAdminOnly,
 		CUser* pSkipUser, CClient *pSkipClient) {
-	for (map<CString,CUser*>::iterator a = m_msUsers.begin(); a != m_msUsers.end(); a++) {
+	for (map<CString,CUser*>::iterator a = m_msUsers.begin(); a != m_msUsers.end(); ++a) {
 		if (bAdminOnly && !a->second->IsAdmin())
 			continue;
 
@@ -1802,13 +1802,13 @@ CZNC::TrafficStatsMap CZNC::GetTrafficStats(TrafficStatsPair &Users,
 	uiZNC_in  = BytesRead();
 	uiZNC_out = BytesWritten();
 
-	for (map<CString, CUser*>::const_iterator it = msUsers.begin(); it != msUsers.end(); it++) {
+	for (map<CString, CUser*>::const_iterator it = msUsers.begin(); it != msUsers.end(); ++it) {
 		ret[it->first] = TrafficStatsPair(it->second->BytesRead(), it->second->BytesWritten());
 		uiUsers_in  += it->second->BytesRead();
 		uiUsers_out += it->second->BytesWritten();
 	}
 
-	for (CSockManager::const_iterator it = m_Manager.begin(); it != m_Manager.end(); it++) {
+	for (CSockManager::const_iterator it = m_Manager.begin(); it != m_Manager.end(); ++it) {
 		if ((*it)->GetSockName().Left(5) == "IRC::") {
 			CIRCSock *p = (CIRCSock *) *it;
 			ret[p->GetUser()->GetUserName()].first  += p->GetBytesRead();

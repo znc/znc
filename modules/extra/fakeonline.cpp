@@ -37,7 +37,7 @@ public:
 			sLine.Token(1, true).TrimLeft_n(":").Split(" ", vsNicks, false);
 
 			CString sBNCNicks = "";
-			for (it = vsNicks.begin(); it != vsNicks.end(); it++) {
+			for (it = vsNicks.begin(); it != vsNicks.end(); ++it) {
 				if (IsOnlineModNick(*it)) {
 					sBNCNicks += " " + *it;
 				}
