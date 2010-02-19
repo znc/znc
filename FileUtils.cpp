@@ -490,7 +490,7 @@ bool CDir::MakeDir(const CString& sPath, mode_t iMode) {
 
 	// For every single subpath, do...
 	sPath.Split("/", dirs, false);
-	for (it = dirs.begin(); it != dirs.end(); it++) {
+	for (it = dirs.begin(); it != dirs.end(); ++it) {
 		// Add this to the path we already created
 		sDir += *it;
 

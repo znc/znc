@@ -124,7 +124,7 @@ public:
 				Table.AddColumn("Target");
 				Table.AddColumn("Key");
 
-				for (MCString::iterator it = BeginNV(); it != EndNV(); it++) {
+				for (MCString::iterator it = BeginNV(); it != EndNV(); ++it) {
 					Table.AddRow();
 					Table.SetCell("Target", it->first);
 					Table.SetCell("Key", it->second);

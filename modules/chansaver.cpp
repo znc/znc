@@ -19,7 +19,7 @@ public:
 
 		m_bWriteConf = false;
 
-		for (; it != end; it++) {
+		for (; it != end; ++it) {
 			CChan *pChan = *it;
 
 			// If that channel isn't yet in the config,

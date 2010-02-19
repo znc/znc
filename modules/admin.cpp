@@ -433,7 +433,7 @@ class CAdminMod : public CModule {
 		Table.AddColumn("Ident");
 		Table.AddColumn("VHost");
 
-		for (map<CString, CUser*>::const_iterator it = msUsers.begin(); it != msUsers.end(); it++) {
+		for (map<CString, CUser*>::const_iterator it = msUsers.begin(); it != msUsers.end(); ++it) {
 			Table.AddRow();
 			Table.SetCell("Username", it->first);
 			Table.SetCell("Realname", it->second->GetRealName());

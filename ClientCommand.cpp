@@ -71,7 +71,7 @@ void CClient::UserCommand(CString& sLine) {
 		Table.AddColumn("Ident");
 		Table.AddColumn("Host");
 
-		for (map<CString,CNick*>::const_iterator a = msNicks.begin(); a != msNicks.end(); a++) {
+		for (map<CString,CNick*>::const_iterator a = msNicks.begin(); a != msNicks.end(); ++a) {
 			Table.AddRow();
 
 			for (unsigned int b = 0; b < sPerms.size(); b++) {
@@ -168,7 +168,7 @@ void CClient::UserCommand(CString& sLine) {
 		Table.AddColumn("IRC User");
 		Table.AddColumn("Channels");
 
-		for (map<CString, CUser*>::const_iterator it = msUsers.begin(); it != msUsers.end(); it++) {
+		for (map<CString, CUser*>::const_iterator it = msUsers.begin(); it != msUsers.end(); ++it) {
 			Table.AddRow();
 			Table.SetCell("Username", it->first);
 			Table.SetCell("Clients", CString(it->second->GetClients().size()));
@@ -611,7 +611,7 @@ void CClient::UserCommand(CString& sLine) {
 				GTable.AddColumn("Description");
 				set<CModInfo>::iterator it;
 
-				for (it = ssGlobalMods.begin(); it != ssGlobalMods.end(); it++) {
+				for (it = ssGlobalMods.begin(); it != ssGlobalMods.end(); ++it) {
 					const CModInfo& Info = *it;
 					GTable.AddRow();
 					GTable.SetCell("Name", (CZNC::Get().GetModules().FindModule(Info.GetName()) ? "*" : " ") + Info.GetName());
@@ -634,7 +634,7 @@ void CClient::UserCommand(CString& sLine) {
 			Table.AddColumn("Description");
 			set<CModInfo>::iterator it;
 
-			for (it = ssUserMods.begin(); it != ssUserMods.end(); it++) {
+			for (it = ssUserMods.begin(); it != ssUserMods.end(); ++it) {
 				const CModInfo& Info = *it;
 				Table.AddRow();
 				Table.SetCell("Name", (m_pUser->GetModules().FindModule(Info.GetName()) ? "*" : " ") + Info.GetName());
@@ -834,7 +834,7 @@ void CClient::UserCommand(CString& sLine) {
 		Table.AddColumn("VHost");
 
 		VCString::const_iterator it;
-		for (it = vsVHosts.begin(); it != vsVHosts.end(); it++) {
+		for (it = vsVHosts.begin(); it != vsVHosts.end(); ++it) {
 			Table.AddRow();
 			Table.SetCell("VHost", *it);
 		}
@@ -857,7 +857,7 @@ void CClient::UserCommand(CString& sLine) {
 			VCString::const_iterator it;
 			bool bFound = false;
 
-			for (it = vsVHosts.begin(); it != vsVHosts.end(); it++) {
+			for (it = vsVHosts.begin(); it != vsVHosts.end(); ++it) {
 				if (sVHost.Equals(*it)) {
 					bFound = true;
 					break;
@@ -927,7 +927,7 @@ void CClient::UserCommand(CString& sLine) {
 		vector<CChan*>::const_iterator it;
 		const vector<CChan*>& vChans = m_pUser->GetChans();
 
-		for (it = vChans.begin(); it != vChans.end(); it++) {
+		for (it = vChans.begin(); it != vChans.end(); ++it) {
 			(*it)->ClearBuffer();
 		}
 		PutStatus("All channel buffers have been cleared");
@@ -968,7 +968,7 @@ void CClient::UserCommand(CString& sLine) {
 		Table.AddColumn("Out");
 		Table.AddColumn("Total");
 
-		for (it = traffic.begin(); it != traffic.end(); it++) {
+		for (it = traffic.begin(); it != traffic.end(); ++it) {
 			Table.AddRow();
 			Table.SetCell("Username", it->first);
 			Table.SetCell("In", CString::ToByteStr(it->second.first));
