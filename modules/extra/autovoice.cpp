@@ -29,7 +29,7 @@ public:
 	const CString& GetHostmask() const { return m_sHostmask; }
 
 	bool ChannelMatches(const CString& sChan) const {
-		for (set<CString>::const_iterator it = m_ssChans.begin(); it != m_ssChans.end(); it++) {
+		for (set<CString>::const_iterator it = m_ssChans.begin(); it != m_ssChans.end(); ++it) {
 			if (sChan.AsLower().WildCmp(*it)) {
 				return true;
 			}
@@ -45,7 +45,7 @@ public:
 	CString GetChannels() const {
 		CString sRet;
 
-		for (set<CString>::const_iterator it = m_ssChans.begin(); it != m_ssChans.end(); it++) {
+		for (set<CString>::const_iterator it = m_ssChans.begin(); it != m_ssChans.end(); ++it) {
 			if (!sRet.empty()) {
 				sRet += " ";
 			}
@@ -77,7 +77,7 @@ public:
 	CString ToString() const {
 		CString sChans;
 
-		for (set<CString>::const_iterator it = m_ssChans.begin(); it != m_ssChans.end(); it++) {
+		for (set<CString>::const_iterator it = m_ssChans.begin(); it != m_ssChans.end(); ++it) {
 			if (!sChans.empty()) {
 				sChans += " ";
 			}
@@ -135,7 +135,7 @@ public:
 	}
 
 	virtual ~CAutoVoiceMod() {
-		for (map<CString, CAutoVoiceUser*>::iterator it = m_msUsers.begin(); it != m_msUsers.end(); it++) {
+		for (map<CString, CAutoVoiceUser*>::iterator it = m_msUsers.begin(); it != m_msUsers.end(); ++it) {
 			delete it->second;
 		}
 
@@ -145,7 +145,7 @@ public:
 	virtual void OnJoin(const CNick& Nick, CChan& Channel) {
 		// If we have ops in this chan
 		if (Channel.HasPerm(CChan::Op) || Channel.HasPerm(CChan::HalfOp)) {
-			for (map<CString, CAutoVoiceUser*>::iterator it = m_msUsers.begin(); it != m_msUsers.end(); it++) {
+			for (map<CString, CAutoVoiceUser*>::iterator it = m_msUsers.begin(); it != m_msUsers.end(); ++it) {
 				// and the nick who joined is a valid user
 				if (it->second->HostMatches(Nick.GetHostMask()) && it->second->ChannelMatches(Channel.GetName())) {
 					PutIRC("MODE " + Channel.GetName() + " +v " + Nick.GetNick());
@@ -190,7 +190,7 @@ public:
 			Table.AddColumn("Hostmask");
 			Table.AddColumn("Channels");
 
-			for (map<CString, CAutoVoiceUser*>::iterator it = m_msUsers.begin(); it != m_msUsers.end(); it++) {
+			for (map<CString, CAutoVoiceUser*>::iterator it = m_msUsers.begin(); it != m_msUsers.end(); ++it) {
 				Table.AddRow();
 				Table.SetCell("User", it->second->GetUsername());
 				Table.SetCell("Hostmask", it->second->GetHostmask());
@@ -235,7 +235,7 @@ public:
 	}
 
 	CAutoVoiceUser* FindUserByHost(const CString& sHostmask, const CString& sChannel = "") {
-		for (map<CString, CAutoVoiceUser*>::iterator it = m_msUsers.begin(); it != m_msUsers.end(); it++) {
+		for (map<CString, CAutoVoiceUser*>::iterator it = m_msUsers.begin(); it != m_msUsers.end(); ++it) {
 			CAutoVoiceUser* pUser = it->second;
 
 			if (pUser->HostMatches(sHostmask) && (sChannel.empty() || pUser->ChannelMatches(sChannel))) {

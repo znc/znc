@@ -122,7 +122,7 @@ public:
 	virtual void OnClientLogin()
 	{
 		set<CSocket*>::const_iterator it;
-		for (it = BeginSockets(); it != EndSockets(); it++) {
+		for (it = BeginSockets(); it != EndSockets(); ++it) {
 			CSChatSock *p = (CSChatSock*) *it;
 
 			if (p->GetType() == CSChatSock::LISTENER)
@@ -155,7 +155,7 @@ public:
 		if (sCom.Equals("chat") && !sArgs.empty()) {
 			CString sNick = "(s)" + sArgs;
 			set<CSocket*>::const_iterator it;
-			for (it = BeginSockets(); it != EndSockets(); it++) {
+			for (it = BeginSockets(); it != EndSockets(); ++it) {
 				CSChatSock *pSock = (CSChatSock*) *it;
 
 				if (pSock->GetChatNick().Equals(sNick)) {
@@ -194,7 +194,7 @@ public:
 			Table.AddColumn("Cipher");
 
 			set<CSocket*>::const_iterator it;
-			for (it = BeginSockets(); it != EndSockets(); it++) {
+			for (it = BeginSockets(); it != EndSockets(); ++it) {
 				Table.AddRow();
 
 				CSChatSock *pSock = (CSChatSock*) *it;
@@ -231,7 +231,7 @@ public:
 				sArgs = "(s)" + sArgs;
 
 			set<CSocket*>::const_iterator it;
-			for (it = BeginSockets(); it != EndSockets(); it++) {
+			for (it = BeginSockets(); it != EndSockets(); ++it) {
 				CSChatSock *pSock = (CSChatSock*) *it;
 
 				if (sArgs.Equals(pSock->GetChatNick())) {
@@ -250,7 +250,7 @@ public:
 			Table.AddColumn("Cipher");
 
 			set<CSocket*>::const_iterator it;
-			for (it = BeginSockets(); it != EndSockets(); it++) {
+			for (it = BeginSockets(); it != EndSockets(); ++it) {
 				Table.AddRow();
 				Csock *pSock = *it;
 				Table.SetCell("SockName", pSock->GetSockName());

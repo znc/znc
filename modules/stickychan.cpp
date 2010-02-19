@@ -21,7 +21,7 @@ public:
 
 	virtual EModRet OnUserPart(CString& sChannel, CString& sMessage)
 	{
-		for (MCString::iterator it = BeginNV(); it != EndNV(); it++)
+		for (MCString::iterator it = BeginNV(); it != EndNV(); ++it)
 		{
 			if (sChannel.Equals(it->first))
 			{
@@ -59,7 +59,7 @@ public:
 		else if ((sCmdName == "list") && (sChannel.empty()))
 		{
 			int i = 1;
-			for (MCString::iterator it = BeginNV(); it != EndNV(); it++, i++)
+			for (MCString::iterator it = BeginNV(); it != EndNV(); ++it, i++)
 			{
 				if (it->second.empty())
 					PutModule(CString(i) + ": " + it->first);
@@ -79,7 +79,7 @@ public:
 		if (!m_pUser->GetIRCSock())
 			return;
 
-		for (MCString::iterator it = BeginNV(); it != EndNV(); it++)
+		for (MCString::iterator it = BeginNV(); it != EndNV(); ++it)
 		{
 			CChan *pChan = m_pUser->FindChan(it->first);
 			if (!pChan) {
@@ -116,7 +116,7 @@ bool CStickyChan::OnLoad(const CString& sArgs, CString& sMessage)
 	VCString::iterator it;
 	sArgs.Split(",", vsChans, false);
 
-	for (it = vsChans.begin(); it != vsChans.end(); it++) {
+	for (it = vsChans.begin(); it != vsChans.end(); ++it) {
 		CString sChan = it->Token(0);
 		CString sKey = it->Token(1, true);
 		SetNV(sChan, sKey);
