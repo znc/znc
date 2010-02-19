@@ -86,12 +86,10 @@ void CDCCBounce::ReachedMaxBuffer() {
 }
 
 void CDCCBounce::ReadData(const char* data, size_t len) {
-	size_t BufLen;
-
 	if (m_pPeer) {
 		m_pPeer->Write(data, len);
 
-		BufLen = m_pPeer->GetInternalWriteBuffer().length();
+		size_t BufLen = m_pPeer->GetInternalWriteBuffer().length();
 
 		if (BufLen >= m_uiMaxDCCBuffer) {
 			DEBUG(GetSockName() << " The send buffer is over the "

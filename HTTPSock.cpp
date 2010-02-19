@@ -407,7 +407,7 @@ bool CHTTPSock::PrintHeader(off_t uContentLength, const CString& sContentType, u
 	}
 	Write("Content-Type: " + m_sContentType + "\r\n");
 
-	for (MCString::iterator it = m_msHeaders.begin(); it != m_msHeaders.end(); it++) {
+	for (MCString::iterator it = m_msHeaders.begin(); it != m_msHeaders.end(); ++it) {
 		Write(it->first + ": " + it->second + "\r\n");
 	}
 

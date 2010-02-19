@@ -40,7 +40,7 @@ void CUtils::GenerateCert(FILE *pOut, const CString& sHost) {
 	EVP_PKEY *pKey = NULL;
 	X509 *pCert = NULL;
 	X509_NAME *pName = NULL;
-	int days = 365;
+	const int days = 365;
 
 	u_int iSeed = time(NULL);
 	int serial = (rand_r(&iSeed) % 9999);

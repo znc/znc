@@ -111,14 +111,14 @@ void CChan::JoinUser(bool bForce, const CString& sKey, CClient* pClient) {
 	CString sPerm, sNick;
 
 	vector<CClient*>& vpClients = m_pUser->GetClients();
-	for (vector<CClient*>::iterator it = vpClients.begin(); it != vpClients.end(); it++) {
+	for (vector<CClient*>::iterator it = vpClients.begin(); it != vpClients.end(); ++it) {
 		CClient* pThisClient;
 		if (!pClient)
 			pThisClient = *it;
 		else
 			pThisClient = pClient;
 
-		for (map<CString,CNick*>::iterator a = m_msNicks.begin(); a != m_msNicks.end(); a++) {
+		for (map<CString,CNick*>::iterator a = m_msNicks.begin(); a != m_msNicks.end(); ++a) {
 			if (pThisClient->HasNamesx()) {
 				sPerm = a->second->GetPermStr();
 			} else {
@@ -172,7 +172,7 @@ void CChan::AttachUser() {
 CString CChan::GetModeString() const {
 	CString sModes, sArgs;
 
-	for (map<unsigned char, CString>::const_iterator it = m_musModes.begin(); it != m_musModes.end(); it++) {
+	for (map<unsigned char, CString>::const_iterator it = m_musModes.begin(); it != m_musModes.end(); ++it) {
 		sModes += it->first;
 		if (it->second.size()) {
 			sArgs += " " + it->second;
@@ -185,7 +185,7 @@ CString CChan::GetModeString() const {
 CString CChan::GetModeForNames() const {
 	CString sMode;
 
-	for (map<unsigned char, CString>::const_iterator it = m_musModes.begin(); it != m_musModes.end(); it++) {
+	for (map<unsigned char, CString>::const_iterator it = m_musModes.begin(); it != m_musModes.end(); ++it) {
 		if (it->first == 's') {
 			sMode = "@";
 		} else if ((it->first == 'p') && sMode.empty()){
@@ -365,7 +365,7 @@ CString CChan::GetModeArg(CString& sArgs) const {
 }
 
 void CChan::ClearNicks() {
-	for (map<CString,CNick*>::iterator a = m_msNicks.begin(); a != m_msNicks.end(); a++) {
+	for (map<CString,CNick*>::iterator a = m_msNicks.begin(); a != m_msNicks.end(); ++a) {
 		delete a->second;
 	}
 
@@ -379,7 +379,7 @@ int CChan::AddNicks(const CString& sNicks) {
 
 	sNicks.Split(" ", vsNicks, false);
 
-	for (it = vsNicks.begin(); it != vsNicks.end(); it++) {
+	for (it = vsNicks.begin(); it != vsNicks.end(); ++it) {
 		if (AddNick(*it)) {
 			iRet++;
 		}
@@ -439,7 +439,7 @@ map<char, unsigned int> CChan::GetPermCounts() const {
 	map<char, unsigned int> mRet;
 
 	map<CString,CNick*>::const_iterator it;
-	for (it = m_msNicks.begin(); it != m_msNicks.end(); it++) {
+	for (it = m_msNicks.begin(); it != m_msNicks.end(); ++it) {
 		CString sPerms = it->second->GetPermStr();
 
 		for (unsigned int p = 0; p < sPerms.size(); p++) {

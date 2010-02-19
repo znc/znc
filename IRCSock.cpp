@@ -49,7 +49,7 @@ CIRCSock::~CIRCSock() {
 
 	m_pUser->IRCDisconnected();
 
-	for (map<CString, CChan*>::iterator a = m_msChans.begin(); a != m_msChans.end(); a++) {
+	for (map<CString, CChan*>::iterator a = m_msChans.begin(); a != m_msChans.end(); ++a) {
 		delete a->second;
 	}
 
@@ -861,7 +861,7 @@ void CIRCSock::Disconnected() {
 	// otherwise, on reconnect, it might think it still
 	// had user modes that it actually doesn't have.
 	CString sUserMode;
-	for (set<unsigned char>::const_iterator it = m_scUserModes.begin(); it != m_scUserModes.end(); it++) {
+	for (set<unsigned char>::const_iterator it = m_scUserModes.begin(); it != m_scUserModes.end(); ++it) {
 		sUserMode += *it;
 	}
 	if (!sUserMode.empty()) {
@@ -1101,7 +1101,7 @@ CIRCSock::EChanModeArgs CIRCSock::GetModeType(unsigned char uMode) const {
 }
 
 void CIRCSock::ResetChans() {
-	for (map<CString, CChan*>::iterator a = m_msChans.begin(); a != m_msChans.end(); a++) {
+	for (map<CString, CChan*>::iterator a = m_msChans.begin(); a != m_msChans.end(); ++a) {
 		a->second->Reset();
 	}
 }

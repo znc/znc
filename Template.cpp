@@ -69,7 +69,7 @@ CString CTemplateLoopContext::GetValue(const CString& sName, bool bFromIf) {
 }
 
 CTemplate::~CTemplate() {
-	for (map<CString, vector<CTemplate*> >::iterator it = m_mvLoops.begin(); it != m_mvLoops.end(); it++) {
+	for (map<CString, vector<CTemplate*> >::iterator it = m_mvLoops.begin(); it != m_mvLoops.end(); ++it) {
 		vector<CTemplate*>& vLoop = it->second;
 		for (unsigned int a = 0; a < vLoop.size(); a++) {
 			delete vLoop[a];
@@ -101,7 +101,7 @@ CString CTemplate::ExpandFile(const CString& sFilename) {
 
 	CString sFile(ResolveLiteral(sFilename));
 
-	for (LCString::iterator it = m_lsPaths.begin(); it != m_lsPaths.end(); it++) {
+	for (LCString::iterator it = m_lsPaths.begin(); it != m_lsPaths.end(); ++it) {
 		CString sRoot = *it;
 		CString sFilePath(CDir::ChangeDir(sRoot, sFile));
 
@@ -323,7 +323,7 @@ bool CTemplate::Print(const CString& sFileName, ostream& oOut) {
 						if (sArgs.Token(1, true, " ").OptionSplit(msRow)) {
 							CTemplate& NewRow = AddRow(sLoopName);
 
-							for (MCString::iterator it = msRow.begin(); it != msRow.end(); it++) {
+							for (MCString::iterator it = msRow.begin(); it != msRow.end(); ++it) {
 								NewRow[it->first] = it->second;
 							}
 						}
@@ -767,11 +767,11 @@ CString CTemplate::GetValue(const CString& sArgs, bool bFromIf) {
 
 	if (!vspTagHandlers.empty()) { // @todo this should go up to the top to grab handlers
 		CTemplate* pTmpl = GetCurTemplate();
-		CString sCustomOutput;
 
 		if (sRet.empty()) {
 			for (unsigned int j = 0; j < vspTagHandlers.size(); j++) {
 				CSmartPtr<CTemplateTagHandler> spTagHandler = vspTagHandlers[j];
+				CString sCustomOutput;
 
 				if (!bFromIf && spTagHandler->HandleVar(*pTmpl, sArgs.Token(0), sArgs.Token(1, true), sCustomOutput)) {
 					sRet = sCustomOutput;

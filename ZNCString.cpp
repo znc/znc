@@ -1018,7 +1018,7 @@ int MCString::WriteToDisk(const CString& sPath, mode_t iMode) {
 		return MCS_EOPEN;
 	}
 
-	for (MCString::iterator it = this->begin(); it != this->end(); it++) {
+	for (MCString::iterator it = this->begin(); it != this->end(); ++it) {
 		CString sKey = it->first;
 		CString sValue = it->second;
 		if (!WriteFilter(sKey, sValue)) {
@@ -1070,7 +1070,7 @@ static const char hexdigits[] = "0123456789abcdef";
 
 CString& MCString::Encode(CString& sValue) {
 	CString sTmp;
-	for (CString::iterator it = sValue.begin(); it != sValue.end(); it++) {
+	for (CString::iterator it = sValue.begin(); it != sValue.end(); ++it) {
 		if (isalnum(*it)) {
 			sTmp += *it;
 		} else {

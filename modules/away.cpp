@@ -96,7 +96,7 @@ public:
 
 			sFile.Split("\n", vsLines);
 
-			for (it = vsLines.begin(); it != vsLines.end(); it++) {
+			for (it = vsLines.begin(); it != vsLines.end(); ++it) {
 				CString sLine(*it);
 				sLine.Trim();
 				AddMessage(sLine);
@@ -248,7 +248,7 @@ public:
 				sTmp += sMessage;
 				msvOutput[sWhom].push_back(sTmp);
 			}
-			for (map< CString, vector< CString> >::iterator it = msvOutput.begin(); it != msvOutput.end(); it++)
+			for (map< CString, vector< CString> >::iterator it = msvOutput.begin(); it != msvOutput.end(); ++it)
 			{
 				PutModule(it->first, "away");
 				for (u_int a = 0; a < it->second.size(); a++)
