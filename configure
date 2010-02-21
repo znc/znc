@@ -3454,7 +3454,7 @@ fi
 	# Check if we want modtcl
 	# Check whether --enable-tcl was given.
 if test "${enable_tcl+set}" = set; then :
-  enableval=$enable_tcl; TCL="yes"
+  enableval=$enable_tcl; TCL="$enableval"
 else
   TCL="no"
 fi
