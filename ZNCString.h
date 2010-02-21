@@ -114,7 +114,8 @@ public:
 	CString Right(unsigned int uCount) const;
 
 	CString FirstLine() const { return Token(0, false, "\n"); }
-	CString Token(unsigned int uPos, bool bRest = false, const CString& sSep = " ", bool bAllowEmpty = false, const CString& sLeft = "", const CString& sRight = "", bool bTrimQuotes = true) const;
+	CString Token(unsigned int uPos, bool bRest = false, const CString& sSep = " ", bool bAllowEmpty = false) const;
+	CString Token(unsigned int uPos, bool bRest, const CString& sSep, bool bAllowEmpty, const CString& sLeft, const CString& sRight, bool bTrimQuotes = true) const;
 
 	unsigned int URLSplit(MCString& msRet) const;
 	unsigned int OptionSplit(MCString& msRet, bool bUpperKeys = false) const;
