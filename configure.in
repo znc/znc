@@ -246,7 +246,7 @@ if test "$MODULES" = "yes"; then
 	# Check if we want modtcl
 	AC_ARG_ENABLE( [tcl],
 		AS_HELP_STRING([--enable-tcl], [enable modtcl]),
-		[TCL="yes"],
+		[TCL="$enableval"],
 		[TCL="no"])
 
 	AC_ARG_WITH( [tcl-flags],
