@@ -12,6 +12,8 @@
 #include "User.h"
 #include "znc.h"
 #include <dlfcn.h>
+#include "WebModules.h"
+#include "Template.h"
 
 #ifndef RTLD_LOCAL
 # define RTLD_LOCAL 0
@@ -387,6 +389,10 @@ void CModule::ListSockets() {
 
 CString CModule::GetModNick() const { return ((m_pUser) ? m_pUser->GetStatusPrefix() : "*") + m_sModName; }
 
+// Webmods
+bool CModule::OnWebRequest(CWebSock& WebSock, const CString& sPageName, CTemplate& Tmpl) { return false; }
+// !Webmods
+
 bool CModule::OnLoad(const CString& sArgs, CString& sMessage) { sMessage = ""; return true; }
 bool CModule::OnBoot() { return true; }
 void CModule::OnPreRehash() {}
@@ -701,6 +707,8 @@ bool CModules::LoadModule(const CString& sModule, const CString& sArgs, CUser* p
 	pModule->SetDescription(sDesc);
 	pModule->SetGlobal(bIsGlobal);
 	pModule->SetArgs(sArgs);
+	DEBUG("********************************* [" + CZNC::Get().GetCurPath() + "] [" + sModPath + "] [" + CDir::ChangeDir(CZNC::Get().GetCurPath(), sModPath) + "]");
+	pModule->SetModPath(CDir::ChangeDir(CZNC::Get().GetCurPath(), sModPath));
 	push_back(pModule);
 
 	bool bLoaded;

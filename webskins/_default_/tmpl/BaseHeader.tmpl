@@ -1,0 +1,55 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<? SETOPTION ESC=HTML ?>
+<html>
+	<head>
+		<meta http-equiv="content-type" content="text/html; charset=ISO-8859-1">
+		<title>ZNC - <? VAR Title DEFAULT="Web Frontend" ?></title>
+		<link rel="stylesheet" type="text/css" href="/pub/main.css" />
+		<? LOOP CSSLoop ?>
+		<?IF HREF?><link rel="stylesheet" type="text/css" href="<? VAR HREF ?>" /><?ENDIF?>
+		<?ENDLOOP?>
+
+		<!--[if lt IE 8]><script type="text/javascript">var MSIE = 1;</script><![endif]-->
+		<? LOOP JSLoop ?>
+		<?IF HREF?><script type="text/javascript" src="<? VAR HREF ?>"></script><?ENDIF?>
+		<?ENDLOOP?>
+	</head>
+
+	<body>
+		<!-- Wrapper -->
+		<div id="wrapper">
+			<!-- Banner -->
+			<div id="banner"><p><? VAR Tag ?></p></div>
+			<!-- !Banner -->
+
+			<!-- Loginbar -->
+			<div id="infobar">
+				<span>Logged in as: <em><? VAR SessionUser DEFAULT="-Guest-" ?></em> (from: <? VAR SessionIP ?>)</span>
+				<? IF LoggedIn ?>
+				<span class="switchuser"><a href="/logout">Logout</a></span>
+				<? ELSE ?>
+				<span class="switchuser"><a href="/login">Login</a></span>
+				<? ENDIF ?>
+			</div>
+			<!-- / Loginbar -->
+
+			<!-- Main -->
+			<div id="main">
+				<!-- Menu -->
+				<div id="menu">
+					<? INC Menu.tmpl ?>
+				</div>
+				<!-- / Menu -->
+
+				<!-- Content -->
+				<div id="content">
+
+					<div id="breadcrumb">ZNC
+						<? IF ModName ?><b>&raquo;</b> <? VAR ModName ?><? ENDIF ?>
+						<? REM ?><? IF PageName ?><b>&raquo;</b> <? VAR PageName ?><? ENDIF ?><? ENDREM ?>
+						<? IF Title ?><b>&raquo;</b> <? VAR Title ?><? ENDIF ?>
+					</div>
+
+					<div id="subpage">
+
+						<? REM ?>Called from subpage then finished in Footer.tmpl<? ENDREM ?>

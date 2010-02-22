@@ -82,6 +82,7 @@ public:
 
 	// Setters
 	void SetConfigState(enum ConfigState e) { m_eConfigState = e; }
+	void SetSkinName(const CString& s) { m_sSkinName = s; }
 	void SetStatusPrefix(const CString& s) { m_sStatusPrefix = (s.empty()) ? "*" : s; }
 	void SetISpoofFile(const CString& s) { m_sISpoofFile = s; }
 	void SetISpoofFormat(const CString& s) { m_sISpoofFormat = (s.empty()) ? "global { reply \"%\" }" : s; }
@@ -95,6 +96,7 @@ public:
 	CGlobalModules& GetModules() { return *m_pModules; }
 	size_t FilterUncommonModules(set<CModInfo>& ssModules);
 #endif
+	CString GetSkinName() const { return m_sSkinName; }
 	const CString& GetStatusPrefix() const { return m_sStatusPrefix; }
 	const CString& GetCurPath() const { if (!CFile::Exists(m_sCurPath)) { CDir::MakeDir(m_sCurPath); } return m_sCurPath; }
 	const CString& GetHomePath() const { if (!CFile::Exists(m_sHomePath)) { CDir::MakeDir(m_sHomePath); } return m_sHomePath; }
@@ -115,6 +117,8 @@ public:
 	// Static allocator
 	static CZNC& Get();
 	CUser* FindUser(const CString& sUsername);
+	CModule* FindModule(const CString& sModName, const CString& sUsername);
+	CModule* FindModule(const CString& sModName, CUser* pUser);
 	bool DeleteUser(const CString& sUsername);
 	bool AddUser(CUser* pUser, CString& sErrorRet);
 	const map<CString,CUser*> & GetUserMap() const { return(m_msUsers); }
@@ -154,6 +158,7 @@ protected:
 	CString					m_sZNCPath;
 
 	CString					m_sConfigFile;
+	CString					m_sSkinName;
 	CString					m_sStatusPrefix;
 	CString					m_sISpoofFile;
 	CString					m_sOrigISpoof;
@@ -263,7 +268,7 @@ protected:
 	bool			m_bIPV6;
 	unsigned short	m_uPort;
 	CString			m_sBindHost;
-	CRealListener*		m_pListener;
+	CRealListener*	m_pListener;
 };
 
 #endif // !_ZNC_H

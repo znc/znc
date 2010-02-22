@@ -1,0 +1,42 @@
+<? INC Header.tmpl ?>
+
+<form method="POST" action="/mods/notes/addnote">
+<table>
+	<tr>
+		<td>Key:</td>
+		<td>Note:</td>
+		<td>&nbsp;</td>
+	</tr>
+	<tr>
+		<td><input type="text" name="key" size="8"></td>
+		<td><input type="text" name="note" size="32"></td>
+		<td><input type="submit" name="add" value="Add Note"></td>
+	</tr>
+</table>
+</form>
+
+<? IF !NotesLoop ?>
+You have no notes to display
+<? ELSE ?>
+
+<table class="data">
+	<thead>
+		<tr>
+			<td style="width: 10px;">&nbsp;</td>
+			<td>Key</td>
+			<td>Note</td>
+		</tr>
+	</thead>
+	<tbody>
+		<? LOOP NotesLoop ?>
+		<tr class="<? IF __EVEN__ ?>altrow<? ENDIF ?>">
+			<td><a href="/mods/notes/delnote?key=<? VAR Key ESC=URL,HTML ?>"><img src="/modfiles/<? VAR ModName TOP ?>/trash.gif" alt="[del]"></a>&nbsp;&nbsp;&nbsp;</td>
+			<td><? VAR Key ?></td>
+			<td><? VAR Note ?></td>
+		</tr>
+		<? ENDLOOP ?>
+	</tbody>
+</table>
+<? ENDIF ?>
+
+<? INC Footer.tmpl ?>

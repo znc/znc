@@ -1,0 +1,53 @@
+<? INC Header.tmpl ?>
+
+<form action="<? IF Edit ?>editchan<? ELSE ?>addchan<? ENDIF ?>" method="post">
+	<input type="hidden" name="submitted" value="1">
+	<input type="hidden" name="user" value="<? VAR User ?>">
+
+	<table class="section">
+		<thead><tr><td colspan="2">Channel Info</td></tr>
+
+		<tbody>
+			<tr>
+				<td>Channel Name:</td>
+
+				<td>
+					<? IF Edit ?>
+						<input type="hidden" name="name" value="<? VAR ChanName ?>">
+						<? VAR ChanName ?>
+					<? ELSE ?>
+						<div><input type="text" name="name" value="" size="32"></div>
+					<? ENDIF ?>
+				</td>
+			</tr>
+
+			<tr>
+				<td>Buffer Count:</td>
+				<td><input type="text" name="buffercount" value="<? VAR BufferCount ?>" size="8" /></td>
+			</tr>
+
+			<tr>
+				<td>Default Modes:</td>
+				<td><input type="text" name="defmodes" value="<? VAR DefModes ?>" size="16" /></td>
+			</tr>
+
+			<tr>
+				<td>Save:</td>
+				<td><input type="checkbox" name="save" id="save" value="true"<? IF InConfig ?> checked="checked"<? ENDIF ?> /><label for="save"> Save to config</label></td>
+			</tr>
+
+			<tr>
+				<td>Options:</td>
+				<td>
+					<? LOOP OptionLoop ?>
+					<input type="checkbox" name="<? VAR Name ?>" id="opt_<? VAR Name ?>" value="true"<? IF Checked ?> checked="checked"<? ENDIF ?><? IF Disabled ?> disabled="disabled"<? ENDIF ?> /><label for="opt_<? VAR Name ?>"> <? VAR DisplayName ?></label><br>
+					<? ENDLOOP ?>
+				</td>
+			</tr>
+		</tbody>
+	</table>
+
+	<input type="submit" value="<? IF Edit ?>Save<? ELSE ?>Add Channel<? ENDIF ?>" />
+</form>
+
+<? INC Footer.tmpl ?>

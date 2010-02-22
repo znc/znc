@@ -11,6 +11,7 @@
 #ifndef _MODULES_H
 #define _MODULES_H
 
+#include "WebModules.h"
 #include "FileUtils.h"
 #include "Utils.h"
 #include <set>
@@ -22,6 +23,8 @@ using std::set;
 class CAuthBase;
 class CChan;
 class CClient;
+class CWebSock;
+class CTemplate;
 class CIRCSock;
 // !Forward Declarations
 
@@ -268,6 +271,17 @@ public:
 	 *  @return false to abort ZNC startup.
 	 */
 	virtual bool OnBoot();
+
+	// For handling web traffic
+	virtual bool WebRequiresLogin() { return true; }
+	virtual bool WebRequiresAdmin() { return false; }
+	virtual CString GetWebNavTitle() { return ""; }
+	virtual bool OnWebRequest(CWebSock& WebSock, const CString& sPageName, CTemplate& Tmpl);
+	virtual void AddSubPage(TWebSubPage spSubPage) { m_vSubPages.push_back(spSubPage); }
+	virtual void ClearSubPages() { m_vSubPages.clear(); }
+	virtual VWebSubPages& GetSubPages() { return m_vSubPages; }
+	// !Web
+
 	/** Called just before znc.conf is rehashed */
 	virtual void OnPreRehash();
 	/** This module hook is called after a <em>successful</em> rehash. */
@@ -680,6 +694,7 @@ public:
 	void SetFake(bool b) { m_bFake = b; }
 	void SetGlobal(bool b) { m_bGlobal = b; }
 	void SetDescription(const CString& s) { m_sDescription = s; }
+	void SetModPath(const CString& s) { m_sModPath = s; }
 	void SetArgs(const CString& s) { m_sArgs = s; }
 	// !Setters
 
@@ -688,6 +703,7 @@ public:
 	bool IsGlobal() const { return m_bGlobal; }
 	const CString& GetDescription() const { return m_sDescription; }
 	const CString& GetArgs() const { return m_sArgs; }
+	const CString& GetModPath() const { return m_sModPath; }
 
 	/** @returns For user modules this returns the user for which this
 	 *           module was loaded. For global modules this returns NULL,
@@ -716,8 +732,10 @@ protected:
 	CString			m_sDataDir;
 	CString			m_sSavePath;
 	CString			m_sArgs;
+	CString			m_sModPath;
 private:
 	MCString		m_mssRegistry; //!< way to save name/value pairs. Note there is no encryption involved in this
+	VWebSubPages	m_vSubPages;
 };
 
 class CModules : public vector<CModule*> {

@@ -1,0 +1,258 @@
+<? INC Header.tmpl ?>
+
+<form action="<? IF Edit ?>edituser<? ELSE ?>adduser<? ENDIF ?>" method="post">
+	<input type="hidden" name="submitted" value="1">
+	<table class="section">
+		<thead><tr><td colspan="2">Authentication</td></tr></thead>
+
+		<tbody>
+			<tr>
+				<td>
+					Username:
+				</td>
+
+				<td>
+					<? IF Edit ?>
+					<input type="hidden" name="user" value="<? VAR Username ?>">
+					<input type="text" name="newuser" value="<? VAR Username ?>" size="32" maxlength="128" disabled="disabled">
+					<? ELSE ?>
+					<input type="text" name="user" value="<? VAR Username ?>" size="32" maxlength="128">
+					<? ENDIF ?>
+				</td>
+			</tr>
+
+			<tr>
+				<td>Password:</td>
+				<td><input type="password" name="password" size="32"></td>
+			</tr>
+
+			<tr>
+				<td>Confirm password:</td>
+				<td><input type="password" name="password2" size="32"></td>
+			</tr>
+
+			<tr>
+				<td>Allowed IPs:</td>
+				<td><textarea name="allowedips" cols="40" rows="5"><? LOOP AllowedHostLoop ?><? VAR Host ?>
+<? ENDLOOP ?>
+</textarea>
+				</td>
+			</tr>
+		</tbody>
+	</table>
+
+	<table class="section">
+		<thead><tr><td colspan="2">IRC Information</td></tr></thead>
+
+		<tbody>
+			<tr>
+				<td>Nickname:</td>
+				<td><input type="text" name="nick" value="<? VAR Nick ?>" size="22" maxlength="128"></td>
+			</tr>
+
+			<tr>
+				<td>Alt. Nickname:</td>
+				<td><input type="text" name="altnick" value="<? VAR AltNick ?>" size="22" maxlength="128"></td>
+			</tr>
+
+			<tr>
+				<td>Status Prefix:</td>
+				<td><input type="text" name="statusprefix" value="<? VAR StatusPrefix ?>" size="16" maxlength="5"></td>
+			</tr>
+
+			<tr>
+				<td>Ident:</td>
+				<td><input type="text" name="ident" value="<? VAR Ident ?>" size="22" maxlength="128"></td>
+			</tr>
+
+			<tr>
+				<td>Realname:</td>
+				<td><input type="text" name="realname" value="<? VAR RealName ?>" size="68" maxlength="256"></td>
+			</tr>
+
+			<tr>
+				<td>VHost:</td>
+				<td><select name="vhost">
+					<option value="">- Default -</option>
+					<? LOOP VHostLoop ?><option value="<? VAR VHost ?>"<? IF Checked ?> selected="selected"<? ENDIF ?>><? VAR VHost ?></option><? ENDLOOP ?>
+					</select>
+				</td>
+			</tr>
+
+			<tr>
+				<td>Quit-MSG:</td>
+				<td><input type="text" name="quitmsg" value="<? VAR QuitMsg ?>" size="68" maxlength="256"></td>
+			</tr>
+
+			<tr>
+				<td>Servers:</td>
+				<td><textarea name="servers" cols="40" rows="5"><? LOOP ServerLoop ?><? VAR Server ?>
+<? ENDLOOP ?>
+</textarea>
+				</td>
+			</tr>
+		</tbody>
+	</table>
+
+	<table class="section">
+		<thead><tr><td>Module(s)</td></tr></thead>
+
+		<tbody>
+			<tr>
+				<td>
+					<table class="data">
+						<thead>
+							<tr>
+								<td>Name</td>
+								<td>Arguments</td>
+								<td>Description</td>
+							</tr>
+						</thead>
+
+						<? LOOP ModuleLoop ?>
+						<tbody>
+							<tr class="<? IF __EVEN__ ?>altrow<? ENDIF ?>">
+								<td>
+									<span class="nowrap"><input type="checkbox" name="loadmod" id="lm_<? VAR Name ?>" value="<? VAR Name ?>"<? IF Checked ?> checked="checked"<? ENDIF ?><? IF Disabled ?> disabled="disabled"<? ENDIF ?> /><label for="lm_<? VAR Name ?>"> <? VAR Name ?></label></span>
+								</td>
+								<td>
+									<? IF Disabled ?><? VAR Args ?><? ELSE ?><input type="text" name="modargs_<? VAR Name ?>" value="<? VAR Args ?>" /><? ENDIF ?>
+								</td>
+								<td><? VAR Description ?></td>
+							</tr>
+						</tbody>
+						<? ENDLOOP ?>
+					</table>
+				</td>
+			</tr>
+		</tbody>
+	</table>
+
+	<table class="section">
+		<thead>
+			<tr>
+				<td colspan="2">Channel(s)</td>
+			</tr>
+		</thead>
+
+		<tbody>
+			<tr>
+				<td>Default Modes:</td>
+				<td><input type="text" name="chanmodes" value="<? VAR DefaultChanModes ?>" size="32" maxlength="32"></td>
+			</tr>
+
+			<tr>
+				<td colspan="2">
+				<? IF !ChannelLoop ?>
+					<center>- There are no channels defined -</center>
+				<? ELSE ?>
+					<? IF Edit ?>
+						<table class="data">
+							<thead>
+								<tr>
+									<td>[<a href="addchan?user=<? VAR Username ESC=URL ?>">Add</a>]</td>
+									<? IF ChannelLoop ?>
+										<td>Save</td>
+										<td>Name</td>
+										<td>CurModes</td>
+										<td>DefModes</td>
+										<td>BufferCount</td>
+										<td>Options</td>
+									<? ELSE ?>
+										<td>- Add a channel (opens in same page)</td>
+									<? ENDIF ?>
+								</tr>
+							</thead>
+
+							<tbody>
+							<? LOOP ChannelLoop ?>
+								<tr class="<? IF __EVEN__ ?>altrow<? ENDIF ?>">
+									<td>
+										<input type="hidden" name="channel" value="<? VAR Name ?>" />
+										[<a href="editchan?user=<? VAR Username ESC=URL ?>&amp;name=<? VAR Name ESC=URL ?>">Edit</a>] [<a href="delchan?user=<? VAR Username ESC=URL ?>&amp;name=<? VAR Name ESC=URL ?>">Del</a>]
+									</td>
+									<td><input type="checkbox" name="save_<? VAR Name ?>"<? IF InConfig ?> checked="checked"<? ENDIF ?> /></td>
+									<td><? VAR Name ?></td>
+									<td><? VAR CurModes ?></td>
+									<td><? VAR DefModes ?></td>
+									<td><? VAR BufferCount ?></td>
+									<td><? VAR Options ?></td>
+								</tr>
+							<? ENDLOOP ?>
+							</tbody>
+						</table>
+					<? ENDIF ?>
+				<? ENDIF ?>
+				</td>
+			</tr>
+		</tbody>
+	</table>
+
+	<table class="section">
+		<thead><tr><td colspan="2">ZNC Behavior</td></tr></thead>
+
+		<tbody>
+			<tr>
+				<td>Skin:</td>
+				<td>
+					<? IF SkinLoop ROWS > 1 ?>
+					<select name="skin">
+						<option value="">- Global -</option>
+						<? LOOP SkinLoop ?>
+						<option value="<? VAR Name ?>"<? IF Checked ?> selected="selected"<? ENDIF ?>><? IF Name == "_default_" ?>- Default -<? ELSE ?><? VAR Name ?><? ENDIF ?></option>
+						<? ENDLOOP ?>
+					</select>
+					<? ELSE ?>
+					No other skins found
+					<? ENDIF ?>
+				</td>
+			</tr>
+
+			<tr>
+				<td>Playback Buffer Size:</td>
+				<td><input type="text" name="bufsize" value="<? VAR BufferCount ?>" size="32" maxlength="9"></td>
+			</tr>
+
+			<tr>
+				<td>Timestamp Format:</td>
+				<td><input type="text" name="timestampformat" value="<? VAR TimestampFormat ?>" size="32"></td>
+			</tr>
+
+			<tr>
+				<td>Timezone offset:</td>
+				<td><input type="text" name="timezoneoffset" value="<? VAR TimezoneOffset ?>" size="32"></td>
+			</tr>
+
+			<tr>
+				<td>Join Tries:</td>
+				<td><input type="text" name="jointries" value="<? VAR JoinTries ?>" size="32"></td>
+			</tr>
+
+			<tr>
+				<td>Max Joins:</td>
+				<td><input type="text" name="maxjoins" value="<? VAR MaxJoins ?>" size="32"></td>
+			</tr>
+
+			<tr>
+				<td>Options:</td>
+				<td>
+					<? LOOP OptionLoop ?>
+					<span class="nowrap"><input type="checkbox" name="<? VAR Name ?>" id="opt_<? VAR Name ?>" value="1"<? IF Checked ?> checked="checked"<? ENDIF ?><? IF Disabled ?> disabled="disabled"<? ENDIF ?> /><label for="opt_<? VAR Name ?>"><? VAR DisplayName ?></label><br></span>
+					<? ENDLOOP ?>
+				</td>
+			</tr>
+
+			<tr>
+				<td>CTCP Replies:</td>
+				<td><textarea name="ctcpreplies" cols="40" rows="5"><? LOOP CTCPLoop ?><? VAR CTCP ?>
+<? ENDLOOP ?>
+</textarea>
+				</td>
+			</tr>
+		</tbody>
+	</table>
+
+	<input type="submit" value="<? IF Edit ?>Save User<? ELSE ?>Add User<? ENDIF ?>">
+</form>
+
+<? INC Footer.tmpl ?>

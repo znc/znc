@@ -138,6 +138,29 @@ public:
 	void AddBytesRead(unsigned long long u) { m_uBytesRead += u; }
 	void AddBytesWritten(unsigned long long u) { m_uBytesWritten += u; }
 
+	// Counter for logging out of the web interface
+	unsigned int GetWebLogoutCounter(const CString& sToken) {
+		map<CString, unsigned int>::iterator it = m_suWebLogoutCounters.find(sToken);
+
+		if (it == m_suWebLogoutCounters.end()) {
+			m_suWebLogoutCounters[sToken] = 1;
+			return 1;
+		}
+
+		return it->second;
+	}
+
+	unsigned int IncWebLogoutCounter(const CString& sToken) {
+		map<CString, unsigned int>::iterator it = m_suWebLogoutCounters.find(sToken);
+
+		if (it == m_suWebLogoutCounters.end()) {
+			m_suWebLogoutCounters[sToken] = 2;
+			return 2;
+		}
+
+		return ++it->second;
+	}
+
 	// Setters
 	void SetUserName(const CString& s);
 	void SetNick(const CString& s);
@@ -169,6 +192,7 @@ public:
 	void SetTimezoneOffset(float b) { m_fTimezoneOffset = b; }
 	void SetJoinTries(unsigned int i) { m_uMaxJoinTries = i; }
 	void SetMaxJoins(unsigned int i) { m_uMaxJoins = i; }
+	void SetSkinName(const CString& s) { m_sSkinName = s; }
 	void SetIRCConnectEnabled(bool b) { m_bIRCConnectEnabled = b; }
 	void SetIRCAway(bool b) { m_bIRCAway = b; }
 	// !Setters
@@ -223,6 +247,7 @@ public:
 	unsigned long long BytesWritten() const { return m_uBytesWritten; }
 	unsigned int JoinTries() const { return m_uMaxJoinTries; }
 	unsigned int MaxJoins() const { return m_uMaxJoins; }
+	CString GetSkinName() const;
 	// !Getters
 private:
 protected:
@@ -284,6 +309,9 @@ protected:
 	unsigned long long      m_uBytesWritten;
 	unsigned int		m_uMaxJoinTries;
 	unsigned int		m_uMaxJoins;
+	CString				m_sSkinName;
+
+	map<CString, unsigned int>  m_suWebLogoutCounters;
 
 #ifdef _MODULES
 	CModules*		m_pModules;

@@ -1,0 +1,18 @@
+<? INC BaseHeader.tmpl ?>
+<? REM ?>
+
+This is a wrapper file which simply includes BaseHeader.tmpl so that new skins can make
+a Header.tmpl similar to...
+
+<? ADDROW CSSLoop HREF=/pub/myskin.css ?>
+<? INC BaseHeader.tmpl ?>
+
+...this way a skin can base itself off of the same html as the default skin but still add
+custom css/js
+
+@todo In the future I'd like to support something like <? INC File.tmpl SUPER ?> or even
+      just do a current file vs inc'd file comparison to make sure they aren't the same.
+	  This way we can <? INC Header.tmpl ?> from the "derived" Header.tmpl and not cause
+	  an recursive loop.
+
+<? ENDREM ?>
