@@ -100,7 +100,7 @@ private:
 	bool IsBlocked(const CString& sUser) {
 		MCString::iterator it;
 		for (it = BeginNV(); it != EndNV(); ++it) {
-			if (sUser.Equals(it->first)) {
+			if (sUser == it->first) {
 				return true;
 			}
 		}
