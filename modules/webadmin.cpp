@@ -504,7 +504,7 @@ public:
 				CTemplate& l = Tmpl.AddRow("SkinLoop");
 				l["Name"] = SubDir.GetShortName();
 
-				if (SubDir.GetShortName() == (WebSock.IsLoggedIn() ? WebSock.GetSessionUser()->GetSkinName() : CZNC::Get().GetSkinName())) {
+				if (pUser && SubDir.GetShortName() == pUser->GetSkinName()) {
 					l["Checked"] = "true";
 				}
 			}
