@@ -87,6 +87,7 @@ create_install_dir:
 	rm -rf $(DESTDIR)$(MODDIR)/*.so
 
 install_metadirs: create_install_dir
+	cp -Rp $(srcdir)/www $(DESTDIR)$(MODDIR)
 	for a in $(srcdir)/*; do \
 		d=$$(echo $$a | sed -e "s:$(srcdir)/::g"); \
 		if [ -d $$a ] && [ -f $${d}.so ]; then \

@@ -1,0 +1,21 @@
+table.section thead td,
+table.data thead td {
+	background-color: #049712;
+}
+
+table.data thead td {
+	background-color: #007700;
+}
+
+#banner {
+	background-image: url('forest-header.png');
+}
+
+#menu .item.active {
+	background-color: #049712;
+	font-weight: bold;
+}
+
+#footerbar {
+	background-color: #049712;
+}

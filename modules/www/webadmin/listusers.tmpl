@@ -1,0 +1,35 @@
+<? INC Header.tmpl ?>
+
+		<? IF !UserLoop ?>
+			There are no users defined.<br>
+			Click <a href="adduser">here</a>, if you would like to add one.
+		<? ELSE ?>
+			<table class="data">
+				<thead>
+					<tr>
+						<td>Action</td>
+						<td>Username</td>
+						<td>Clients</td>
+						<td>Current Server</td>
+						<td>IRC Nick</td>
+					</tr>
+				</thead>
+
+				<? LOOP UserLoop ?>
+					<tr class="<? IF __EVEN__ ?>altrow<? ENDIF ?>">
+						<td>
+							<span class="nowrap">
+								[<a href="edituser?user=<? VAR Username ESC=URL ?>">Edit</a>]
+								<? IF !IsSelf ?>[<a href="deluser?user=<? VAR Username ESC=URL ?>" onClick="return confirm('Do you really wish to remove this user?');">Delete</a>]<? ENDIF ?>
+							</span>
+						</td>
+						<td><b><? VAR Username DEFAULT="-N/A-" ?></b></td>
+						<td><? VAR Clients DEFAULT="-N/A-" ?></td>
+						<td><? VAR Server DEFAULT="-N/A-" ?></td>
+						<td><? VAR IRCNick DEFAULT="-N/A-" ?></td>
+					</tr>
+				<? ENDLOOP ?>
+			</table>
+		<? ENDIF ?>
+
+<? INC Footer.tmpl ?>

@@ -90,26 +90,34 @@ void CTemplate::Init() {
 	}
 	*/
 
-	ClearPath();
+	ClearPaths();
 	m_pParent = NULL;
 }
 
-CString CTemplate::ExpandFile(const CString& sFilename) {
-	if (sFilename.Left(1) == "/" || sFilename.Left(2) == "./") {
+CString CTemplate::ExpandFile(const CString& sFilename, bool bFromInc) {
+	/*if (sFilename.Left(1) == "/" || sFilename.Left(2) == "./") {
 		return sFilename;
-	}
+	}*/
 
-	CString sFile(ResolveLiteral(sFilename));
+	CString sFile(ResolveLiteral(sFilename).TrimLeft_n("/"));
 
-	for (LCString::iterator it = m_lsPaths.begin(); it != m_lsPaths.end(); ++it) {
-		CString sRoot = *it;
+	for (list<pair<CString, bool> >::iterator it = m_lsbPaths.begin(); it != m_lsbPaths.end(); ++it) {
+		CString& sRoot = it->first;
 		CString sFilePath(CDir::ChangeDir(sRoot, sFile));
 
+		// Make sure path ends with a slash because "/foo/pub*" matches "/foo/public_keep_out/" but "/foo/pub/*" doesn't
+		if (!sRoot.empty() && sRoot.Right(1) != "/") {
+			sRoot += "/";
+		}
+
+		if (it->second && !bFromInc) {
+			DEBUG("\t\tSkipping path (not from INC)  [" + sFilePath + "]");
+			continue;
+		}
+
 		if (CFile::Exists(sFilePath)) {
-			// This only works if sRoot got a trailing slash! The
-			// code which adds paths makes sure this is true.
 			if (sRoot.empty() || sFilePath.Left(sRoot.length()) == sRoot) {
-				//DEBUG("\t\tFound  [" + sFilePath + "]\n");
+				DEBUG("\t\tFound  [" + sFilePath + "]\n");
 				return sFilePath;
 			} else {
 				DEBUG("\t\tOutside of root [" + sFilePath + "] !~ [" + sRoot + "]");
@@ -119,15 +127,15 @@ CString CTemplate::ExpandFile(const CString& sFilename) {
 		}
 	}
 
-	switch (m_lsPaths.size()) {
+	switch (m_lsbPaths.size()) {
 		case 0:
 			DEBUG("Unable to find [" + sFile + "] using the current directory");
 			break;
 		case 1:
-			DEBUG("Unable to find [" + sFile + "] in the defined path [" + *m_lsPaths.begin());
+			DEBUG("Unable to find [" + sFile + "] in the defined path [" + m_lsbPaths.begin()->first + "]");
 			break;
 		default:
-			DEBUG("Unable to find [" + sFile + "] in any of the " + CString(m_lsPaths.size()) + " defined paths");
+			DEBUG("Unable to find [" + sFile + "] in any of the " + CString(m_lsbPaths.size()) + " defined paths");
 	}
 
 	return "";
@@ -138,31 +146,48 @@ void CTemplate::SetPath(const CString& sPaths) {
 	sPaths.Split(":", vsDirs, false);
 
 	for (size_t a = 0; a < vsDirs.size(); a++) {
-		AppendPath(vsDirs[a]);
+		AppendPath(vsDirs[a], false);
 	}
 }
 
-void CTemplate::PrependPath(const CString& sPath) {
-	DEBUG("CTemplate::PrependPath(" + sPath + ") == [" + CDir::ChangeDir("./", sPath + "/") + "]");
-	m_lsPaths.push_front(CDir::ChangeDir("./", sPath + "/"));
+CString CTemplate::MakePath(const CString& sPath) const {
+	CString sRet(CDir::ChangeDir("./", sPath + "/"));
+
+	if (!sRet.empty() && sRet.Right(1) != "/") {
+		sRet += "/";
+	}
+
+	return sRet;
 }
 
-void CTemplate::AppendPath(const CString& sPath) {
-	DEBUG("CTemplate::AppendPath(" + sPath + ") == [" + CDir::ChangeDir("./", sPath + "/") + "]");
-	m_lsPaths.push_back(CDir::ChangeDir("./", sPath + "/"));
+void CTemplate::PrependPath(const CString& sPath, bool bIncludesOnly) {
+	DEBUG("CTemplate::PrependPath(" + sPath + ") == [" + MakePath(sPath) + "]");
+	m_lsbPaths.push_front(make_pair(MakePath(sPath), bIncludesOnly));
+}
+
+void CTemplate::AppendPath(const CString& sPath, bool bIncludesOnly) {
+	DEBUG("CTemplate::AppendPath(" + sPath + ") == [" + MakePath(sPath) + "]");
+	m_lsbPaths.push_back(make_pair(MakePath(sPath), bIncludesOnly));
 }
 
 void CTemplate::RemovePath(const CString& sPath) {
 	DEBUG("CTemplate::RemovePath(" + sPath + ") == [" + CDir::ChangeDir("./", sPath + "/") + "]");
-	m_lsPaths.remove(CDir::ChangeDir("./", sPath + "/"));
+
+	for (list<pair<CString, bool> >::iterator it = m_lsbPaths.begin(); it != m_lsbPaths.end(); ++it) {
+		if (it->first == sPath) {
+			m_lsbPaths.remove(*it);
+			RemovePath(sPath);	// @todo probably shouldn't use recursion, being lazy
+			return;
+		}
+	}
 }
 
-void CTemplate::ClearPath() {
-	m_lsPaths.clear();
+void CTemplate::ClearPaths() {
+	m_lsbPaths.clear();
 }
 
 bool CTemplate::SetFile(const CString& sFileName) {
-	m_sFileName = ExpandFile(sFileName);
+	m_sFileName = ExpandFile(sFileName, false);
 	PrependPath(sFileName + "/..");
 
 	if (sFileName.empty()) {
@@ -230,6 +255,7 @@ bool CTemplate::PrintString(CString& sRet) {
 }
 
 bool CTemplate::Print(ostream& oOut) {
+	DEBUG("==     Print(o) m_sFileName = [" + m_sFileName + "]");
 	return Print(m_sFileName, oOut);
 }
 
@@ -311,7 +337,8 @@ bool CTemplate::Print(const CString& sFileName, ostream& oOut) {
 
 				if (!uSkip) {
 					if (sAction.Equals("INC")) {
-						if (!Print(ExpandFile(sArgs), oOut)) {
+						if (!Print(ExpandFile(sArgs, true), oOut)) {
+							DEBUG("Unable to print INC'd file [" + sArgs + "]");
 							return false;
 						}
 					} else if (sAction.Equals("SETOPTION")) {
@@ -365,7 +392,7 @@ bool CTemplate::Print(const CString& sFileName, ostream& oOut) {
 						sSetBlockVar = sArgs;
 						bInSetBlock = true;
 					} else if (sAction.Equals("EXPAND")) {
-						sOutput += ExpandFile(sArgs);
+						sOutput += ExpandFile(sArgs, true);
 					} else if (sAction.Equals("VAR")) {
 						sOutput += GetValue(sArgs);
 					} else if (sAction.Equals("LT")) {
@@ -643,8 +670,20 @@ bool CTemplate::ValidExpr(const CString& sExpression) {
 	}
 
 	if (sExpr.find("!=") != CString::npos) {
+		// GOOD:
+		// >>>>>>>>>>>>>>>>>>>     [PageName] [index]  -> [PageName != "index"]
+		// >>>>>>>>>>>>>>>>>>>     [PageName] [help]  -> [PageName != "help"]
+		//
+		// BAD:
+		// >>>>>>>>>>>>>>>>>>>     [PageName] ["index"]  -> [PageName != "index"]
+		// >>>>>>>>>>>>>>>>>>>     [PageName] ["help"]  -> [PageName != "help"]
+		//
+
+//CString CTemplate::Token(const CString& sStr, unsigned int uPos, bool bRest, const CString& sSep, bool bAllowEmpty,
+ //                      const CString& sLeft, const CString& sRight, bool bTrimQuotes) {
 		sName = sExpr.Token(0, false, "!=").Trim_n();
 		sValue = sExpr.Token(1, true, "!=", false, "\"", "\"", true).Trim_n();
+		DEBUG(">>>>>>>>>>>>>>>>>>>     [" + sName + "] [" + sValue + "]  -> [" + sExpr + "]");
 		bNegate = !bNegate;
 	} else if (sExpr.find("==") != CString::npos) {
 		sName = sExpr.Token(0, false, "==").Trim_n();

@@ -575,6 +575,11 @@ bool CZNC::WriteConfig() {
 	if (!m_sPidFile.empty()) {
 		m_LockFile.Write("PidFile      = " + m_sPidFile.FirstLine() + "\n");
 	}
+
+	if (!m_sSkinName.empty()) {
+		m_LockFile.Write("Skin         = " + m_sSkinName.FirstLine() + "\n");
+	}
+
 	if (!m_sStatusPrefix.empty()) {
 		m_LockFile.Write("StatusPrefix = " + m_sStatusPrefix.FirstLine() + "\n");
 	}
@@ -1418,6 +1423,9 @@ bool CZNC::DoRehash(CString& sError)
 					} else if (sName.Equals("MaxJoins")) {
 						pUser->SetMaxJoins(sValue.ToUInt());
 						continue;
+					} else if (sName.Equals("Skin")) {
+						pUser->SetSkinName(sValue);
+						continue;
 					} else if (sName.Equals("LoadModule")) {
 						CString sModName = sValue.Token(0);
 						CUtils::PrintAction("Loading Module [" + sModName + "]");
@@ -1569,6 +1577,9 @@ bool CZNC::DoRehash(CString& sError)
 					continue;
 				} else if (sName.Equals("PidFile")) {
 					m_sPidFile = sValue;
+					continue;
+				} else if (sName.Equals("Skin")) {
+					SetSkinName(sValue);
 					continue;
 				} else if (sName.Equals("StatusPrefix")) {
 					m_sStatusPrefix = sValue;
@@ -1749,6 +1760,24 @@ void CZNC::Broadcast(const CString& sMessage, bool bAdminOnly,
 			a->second->PutStatusNotice("*** " + sMsg, NULL, pSkipClient);
 		}
 	}
+}
+
+CModule* CZNC::FindModule(const CString& sModName, const CString& sUsername) {
+	if (sUsername.empty()) {
+		return CZNC::Get().GetModules().FindModule(sModName);
+	}
+
+	CUser* pUser = FindUser(sUsername);
+
+	return (!pUser) ? NULL : pUser->GetModules().FindModule(sModName);
+}
+
+CModule* CZNC::FindModule(const CString& sModName, CUser* pUser) {
+	if (pUser) {
+		return pUser->GetModules().FindModule(sModName);
+	}
+
+	return CZNC::Get().GetModules().FindModule(sModName);
 }
 
 CUser* CZNC::FindUser(const CString& sUsername) {
