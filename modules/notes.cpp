@@ -31,7 +31,7 @@ public:
 
 	virtual bool WebRequiresLogin() { return true; }
 	virtual bool WebRequiresAdmin() { return false; }
-	virtual CString GetWebNavTitle() { return "Notes"; }
+	virtual CString GetWebMenuTitle() { return "Notes"; }
 
 	virtual void OnClientLogin() {
 		ListNotes(true);

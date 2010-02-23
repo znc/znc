@@ -275,7 +275,7 @@ public:
 	// For handling web traffic
 	virtual bool WebRequiresLogin() { return true; }
 	virtual bool WebRequiresAdmin() { return false; }
-	virtual CString GetWebNavTitle() { return ""; }
+	virtual CString GetWebMenuTitle() { return ""; }
 	virtual bool OnWebRequest(CWebSock& WebSock, const CString& sPageName, CTemplate& Tmpl);
 	virtual void AddSubPage(TWebSubPage spSubPage) { m_vSubPages.push_back(spSubPage); }
 	virtual void ClearSubPages() { m_vSubPages.clear(); }
