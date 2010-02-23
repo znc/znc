@@ -40,7 +40,7 @@
 				<td>Options:</td>
 				<td>
 					<? LOOP OptionLoop ?>
-					<input type="checkbox" name="<? VAR Name ?>" id="opt_<? VAR Name ?>" value="true"<? IF Checked ?> checked="checked"<? ENDIF ?><? IF Disabled ?> disabled="disabled"<? ENDIF ?> /><label for="opt_<? VAR Name ?>"> <? VAR DisplayName ?></label><br>
+					<input type="checkbox" class="checkbox" name="<? VAR Name ?>" id="opt_<? VAR Name ?>" value="true"<? IF Checked ?> checked="checked"<? ENDIF ?><? IF Disabled ?> disabled="disabled"<? ENDIF ?> /><label for="opt_<? VAR Name ?>"> <? VAR DisplayName ?></label><br>
 					<? ENDLOOP ?>
 				</td>
 			</tr>

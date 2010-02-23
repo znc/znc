@@ -113,7 +113,7 @@
 						<tbody>
 							<tr class="<? IF __EVEN__ ?>altrow<? ENDIF ?>">
 								<td>
-									<span class="nowrap"><input type="checkbox" name="loadmod" id="lm_<? VAR Name ?>" value="<? VAR Name ?>"<? IF Checked ?> checked="checked"<? ENDIF ?><? IF Disabled ?> disabled="disabled"<? ENDIF ?> /><label for="lm_<? VAR Name ?>"> <? VAR Name ?></label></span>
+									<span class="nowrap"><input type="checkbox" class="checkbox" name="loadmod" id="lm_<? VAR Name ?>" value="<? VAR Name ?>"<? IF Checked ?> checked="checked"<? ENDIF ?><? IF Disabled ?> disabled="disabled"<? ENDIF ?> /><label for="lm_<? VAR Name ?>"> <? VAR Name ?></label></span>
 								</td>
 								<td>
 									<? IF Disabled ?><? VAR Args ?><? ELSE ?><input type="text" name="modargs_<? VAR Name ?>" value="<? VAR Args ?>" /><? ENDIF ?>
@@ -171,7 +171,7 @@
 										<input type="hidden" name="channel" value="<? VAR Name ?>" />
 										[<a href="editchan?user=<? VAR Username ESC=URL ?>&amp;name=<? VAR Name ESC=URL ?>">Edit</a>] [<a href="delchan?user=<? VAR Username ESC=URL ?>&amp;name=<? VAR Name ESC=URL ?>">Del</a>]
 									</td>
-									<td><input type="checkbox" name="save_<? VAR Name ?>"<? IF InConfig ?> checked="checked"<? ENDIF ?> /></td>
+									<td><input type="checkbox" class="checkbox" name="save_<? VAR Name ?>"<? IF InConfig ?> checked="checked"<? ENDIF ?> /></td>
 									<td><? VAR Name ?></td>
 									<td><? VAR CurModes ?></td>
 									<td><? VAR DefModes ?></td>
@@ -237,7 +237,7 @@
 				<td>Options:</td>
 				<td>
 					<? LOOP OptionLoop ?>
-					<span class="nowrap"><input type="checkbox" name="<? VAR Name ?>" id="opt_<? VAR Name ?>" value="1"<? IF Checked ?> checked="checked"<? ENDIF ?><? IF Disabled ?> disabled="disabled"<? ENDIF ?> /><label for="opt_<? VAR Name ?>"><? VAR DisplayName ?></label><br></span>
+					<span class="nowrap"><input type="checkbox" class="checkbox" name="<? VAR Name ?>" id="opt_<? VAR Name ?>" value="1"<? IF Checked ?> checked="checked"<? ENDIF ?><? IF Disabled ?> disabled="disabled"<? ENDIF ?> /><label for="opt_<? VAR Name ?>"><? VAR DisplayName ?></label><br></span>
 					<? ENDLOOP ?>
 				</td>
 			</tr>
