@@ -130,7 +130,7 @@
 								<tbody>
 									<? LOOP ModuleLoop ?>
 									<tr class="<? IF __EVEN__ ?>altrow<? ENDIF ?>">
-										<td><span class="nowrap"><input type="checkbox" name="loadmod" id="lm_<? VAR Name ?>" value="<? VAR Name ?>"<? IF Checked ?> checked="checked"<? ENDIF ?><? IF Disabled ?> disabled="disabled"<? ENDIF ?> /><label for="lm_<? VAR Name ?>"> <? VAR Name ?></label></span></td>
+										<td><span class="nowrap"><input type="checkbox" class="checkbox" name="loadmod" id="lm_<? VAR Name ?>" value="<? VAR Name ?>"<? IF Checked ?> checked="checked"<? ENDIF ?><? IF Disabled ?> disabled="disabled"<? ENDIF ?> /><label for="lm_<? VAR Name ?>"> <? VAR Name ?></label></span></td>
 										<td><input type="text" name="modargs_<? VAR Name ?>" value="<? VAR Args ?>" /></td>
 										<td><? VAR Description ?></td>
 									</tr>

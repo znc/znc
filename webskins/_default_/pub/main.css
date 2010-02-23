@@ -74,6 +74,10 @@ table.section input {
 	width: 100%;
 }
 
+table.section input.checkbox {
+	width: auto;
+}
+
 /* !FORMS */
 
 .nowrap {
