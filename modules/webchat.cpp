@@ -31,7 +31,7 @@ public:
 
 	virtual bool WebRequiresLogin() { return true; }
 	virtual bool WebRequiresAdmin() { return false; }
-	virtual CString GetWebNavTitle() { return "webchat"; }
+	virtual CString GetWebMenuTitle() { return "webchat"; }
 
 	virtual VWebSubPages& GetSubPages() {
 		ClearSubPages();

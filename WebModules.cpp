@@ -260,7 +260,7 @@ void CWebSock::SetVars() {
 }
 
 bool CWebSock::AddModLoop(const CString& sLoopName, CModule& Module) {
-	CString sTitle(Module.GetWebNavTitle());
+	CString sTitle(Module.GetWebMenuTitle());
 
 	DEBUG("===   ===   ===   ===   === [" + Module.GetModName() + "] [" + CString(IsLoggedIn()) + "]");
 
@@ -341,7 +341,7 @@ bool CWebSock::PrintTemplate(const CString& sPageName, CString& sPageRet, CModul
 		m_Template["ModName"] = pModule->GetModName();
 
 		if (m_Template.find("Title") == m_Template.end()) {
-			m_Template["Title"] = pModule->GetWebNavTitle();
+			m_Template["Title"] = pModule->GetWebMenuTitle();
 		}
 	}
 

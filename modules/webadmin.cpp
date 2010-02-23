@@ -220,7 +220,7 @@ public:
 
 	virtual bool WebRequiresLogin() { return true; }
 	virtual bool WebRequiresAdmin() { return false; }
-	virtual CString GetWebNavTitle() { return "webadmin"; }
+	virtual CString GetWebMenuTitle() { return "webadmin"; }
 	virtual bool OnWebRequest(CWebSock& WebSock, const CString& sPageName, CTemplate& Tmpl) {
 		std::cerr << "=============================== webadmin      sPageName=[" << sPageName << "]" << std::endl;
 
