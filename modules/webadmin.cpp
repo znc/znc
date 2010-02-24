@@ -33,13 +33,13 @@ using std::make_pair;
 class CWebAdminMod : public CGlobalModule {
 public:
 	GLOBALMODCONSTRUCTOR(CWebAdminMod) {
-		AddSubPage(new CWebSubPage("settings", "Global Settings"));
-
 		VPair vParams;
 		vParams.push_back(make_pair("user", ""));
 		AddSubPage(new CWebSubPage("edituser", "Your Settings", vParams));
-		AddSubPage(new CWebSubPage("listusers", "List Users"));
-		AddSubPage(new CWebSubPage("adduser", "Add User"));
+
+		AddSubPage(new CWebSubPage("settings", "Global Settings", CWebSubPage::F_ADMIN));
+		AddSubPage(new CWebSubPage("listusers", "List Users", CWebSubPage::F_ADMIN));
+		AddSubPage(new CWebSubPage("adduser", "Add User", CWebSubPage::F_ADMIN));
 	}
 
 	virtual ~CWebAdminMod() {
@@ -223,11 +223,26 @@ public:
 	virtual CString GetWebMenuTitle() { return "webadmin"; }
 	virtual bool OnWebRequest(CWebSock& WebSock, const CString& sPageName, CTemplate& Tmpl) {
 		if (sPageName == "settings") {
+			// Admin Check
+			if (!WebSock.IsAdmin()) {
+				return false;
+			}
+
 			return SettingsPage(WebSock, Tmpl);
 		} else if (sPageName == "adduser") {
+			// Admin Check
+			if (!WebSock.IsAdmin()) {
+				return false;
+			}
+
 			return UserPage(WebSock, Tmpl);
 		} else if (sPageName == "editchan") {
 			CUser* pUser = CZNC::Get().FindUser(WebSock.GetParam("user"));
+
+			// Admin/Self Check
+			if (!WebSock.IsAdmin() && (!WebSock.GetSessionUser() || WebSock.GetSessionUser() != pUser)) {
+				return false;
+			}
 
 			if (!pUser) {
 				WebSock.PrintErrorPage("No such username");
@@ -244,6 +259,11 @@ public:
 		} else if (sPageName == "addchan") {
 			CUser* pUser = CZNC::Get().FindUser(WebSock.GetParam("user"));
 
+			// Admin/Self Check
+			if (!WebSock.IsAdmin() && (!WebSock.GetSessionUser() || WebSock.GetSessionUser() != pUser)) {
+				return false;
+			}
+
 			if (pUser) {
 				return ChanPage(WebSock, Tmpl, pUser);
 			}
@@ -252,22 +272,27 @@ public:
 		} else if (sPageName == "delchan") {
 			CUser* pUser = CZNC::Get().FindUser(WebSock.GetParam("user"));
 
+			// Admin/Self Check
+			if (!WebSock.IsAdmin() && (!WebSock.GetSessionUser() || WebSock.GetSessionUser() != pUser)) {
+				return false;
+			}
+
 			if (pUser) {
 				return DelChan(WebSock, pUser);
 			}
 
 			WebSock.PrintErrorPage("No such username");
 		} else if (sPageName == "deluser") {
+			// Admin Check
 			if (!WebSock.IsAdmin()) {
-				WebSock.PrintErrorPage("You are not an admin");
-				return true;
+				return false;
 			}
 
 			CString sUser = WebSock.GetParam("user");
 			CUser* pUser = CZNC::Get().FindUser(sUser);
 
 			if (pUser && pUser == WebSock.GetSessionUser()) {
-				WebSock.PrintErrorPage("You are not allowed to delete yourself");
+				WebSock.PrintErrorPage("Please don't delete yourself, suicide is not the answer!");
 				return true;
 			} else if (CZNC::Get().DeleteUser(sUser)) {
 				WebSock.Redirect("listusers");
@@ -279,12 +304,22 @@ public:
 		} else if (sPageName == "edituser") {
 			CUser* pUser = WebSock.HasParam("user") ? CZNC::Get().FindUser(WebSock.GetParam("user")) : WebSock.GetSessionUser();
 
+			// Admin/Self Check
+			if (!WebSock.IsAdmin() && (!WebSock.GetSessionUser() || WebSock.GetSessionUser() != pUser)) {
+				return false;
+			}
+
 			if (pUser) {
 				return UserPage(WebSock, Tmpl, pUser);
 			}
 
 			WebSock.PrintErrorPage("No such username");
 		} else if (sPageName == "listusers") {
+			// Admin Check
+			if (!WebSock.IsAdmin()) {
+				return false;
+			}
+
 			return ListUsersPage(WebSock, Tmpl);
 		} else if (sPageName.empty() || sPageName == "index") {
 			return true;
