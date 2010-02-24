@@ -222,8 +222,6 @@ public:
 	virtual bool WebRequiresAdmin() { return false; }
 	virtual CString GetWebMenuTitle() { return "webadmin"; }
 	virtual bool OnWebRequest(CWebSock& WebSock, const CString& sPageName, CTemplate& Tmpl) {
-		std::cerr << "=============================== webadmin      sPageName=[" << sPageName << "]" << std::endl;
-
 		if (sPageName == "settings") {
 			return SettingsPage(WebSock, Tmpl);
 		} else if (sPageName == "adduser") {
