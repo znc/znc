@@ -281,17 +281,22 @@ bool CWebSock::AddModLoop(const CString& sLoopName, CModule& Module) {
 		VWebSubPages& vSubPages = Module.GetSubPages();
 
 		for (unsigned int a = 0; a < vSubPages.size(); a++) {
-			CTemplate& SubRow = Row.AddRow("SubPageLoop");
 			TWebSubPage& SubPage = vSubPages[a];
+
+			// bActive is whether or not the current url matches this subpage (params will be checked below)
+			bool bActive = (m_sModName == Module.GetModName() && m_sPage == SubPage->GetName());
+
+			if (SubPage->RequiresAdmin() && !IsAdmin()) {
+				continue;	// Don't add admin-only subpages to requests from non-admin users
+			}
+
+			CTemplate& SubRow = Row.AddRow("SubPageLoop");
 
 			SubRow["ModName"] = Module.GetModName();
 			SubRow["PageName"] = SubPage->GetName();
 			SubRow["Title"] = SubPage->GetTitle().empty() ? SubPage->GetName() : SubPage->GetTitle();
 
 			CString& sParams = SubRow["Params"];
-
-			// bActive is whether or not the current url matches this subpage (including the params below)
-			bool bActive = (m_sModName == Module.GetModName() && m_sPage == SubPage->GetName());
 
 			const VPair& vParams = SubPage->GetParams();
 			for (size_t b = 0; b < vParams.size(); b++) {
@@ -452,6 +457,19 @@ bool CWebSock::OnPageRequest(const CString& sURI, CString& sPageRet) {
 		} else if (pModule && !pModule->IsGlobal() && pModule->GetUser() != m_pSessionUser) {
 			sPageRet = GetErrorPage(403, "Forbidden", "You must login as " + pModule->GetUser()->GetUserName() + " in order to view this page");
 			return true;
+		}
+
+		VWebSubPages& vSubPages = pModule->GetSubPages();
+
+		for (unsigned int a = 0; a < vSubPages.size(); a++) {
+			TWebSubPage& SubPage = vSubPages[a];
+
+			bool bActive = (m_sModName == pModule->GetModName() && m_sPage == SubPage->GetName());
+
+			if (bActive && SubPage->RequiresAdmin() && !IsAdmin()) {
+				sPageRet = GetErrorPage(403, "Forbidden", "You need to be an admin to access this page");
+				return true;
+			}
 		}
 
 		if (pModule && !pModule->IsGlobal() && (!IsLoggedIn() || pModule->GetUser() != GetSessionUser())) {

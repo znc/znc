@@ -34,21 +34,31 @@ private:
 
 class CWebSubPage {
 public:
-	CWebSubPage(const CString& sName, const CString& sTitle = "") : m_sName(sName), m_sTitle(sTitle) {
+	CWebSubPage(const CString& sName, const CString& sTitle = "", unsigned int uFlags = 0) : m_sName(sName), m_sTitle(sTitle) {
+		m_uFlags = uFlags;
 	}
 
-	CWebSubPage(const CString& sName, const CString& sTitle, const VPair& vParams) : m_sName(sName), m_sTitle(sTitle), m_vParams(vParams) {}
+	CWebSubPage(const CString& sName, const CString& sTitle, const VPair& vParams, unsigned int uFlags = 0) : m_sName(sName), m_sTitle(sTitle), m_vParams(vParams) {
+		m_uFlags = uFlags;
+	}
+
 	virtual ~CWebSubPage() {}
+
+	enum {
+		F_ADMIN = 1
+	};
 
 	void SetName(const CString& s) { m_sName = s; }
 	void SetTitle(const CString& s) { m_sTitle = s; }
 	void AddParam(const CString& sName, const CString& sValue) { m_vParams.push_back(make_pair(sName, sValue)); }
 
+	bool RequiresAdmin() const { return m_uFlags & F_ADMIN; }
+
 	const CString& GetName() const { return m_sName; }
 	const CString& GetTitle() const { return m_sTitle; }
 	const VPair& GetParams() const { return m_vParams; }
-
 private:
+	unsigned int	m_uFlags;
 	CString			m_sName;
 	CString			m_sTitle;
 	VPair			m_vParams;
