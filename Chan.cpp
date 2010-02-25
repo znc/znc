@@ -215,13 +215,11 @@ void CChan::ModeChange(const CString& sModes, const CString& sOpNick) {
 	CString sArgs = sModes.Token(1, true);
 	bool bAdd = true;
 
-#ifdef _MODULES
 	CNick* pOpNick = FindNick(sOpNick);
 
 	if (pOpNick) {
 		MODULECALL(OnRawMode(*pOpNick, *this, sModeArg, sArgs), m_pUser, NULL, );
 	}
-#endif
 
 	for (unsigned int a = 0; a < sModeArg.size(); a++) {
 		const unsigned char& uMode = sModeArg[a];
@@ -250,7 +248,6 @@ void CChan::ModeChange(const CString& sModes, const CString& sOpNick) {
 							RemPerm(uPerm);
 						}
 					}
-#ifdef _MODULES
 					bool bNoChange = (pNick->HasPerm(uPerm) == bAdd);
 
 					if (uMode && pOpNick) {
@@ -270,7 +267,6 @@ void CChan::ModeChange(const CString& sModes, const CString& sOpNick) {
 							}
 						}
 					}
-#endif
 				}
 			}
 		} else {
@@ -295,7 +291,6 @@ void CChan::ModeChange(const CString& sModes, const CString& sOpNick) {
 					break;
 			}
 
-#ifdef _MODULES
 			bool bNoChange;
 			if (bList) {
 				bNoChange = false;
@@ -305,7 +300,6 @@ void CChan::ModeChange(const CString& sModes, const CString& sOpNick) {
 				bNoChange = !HasMode(uMode);
 			}
 			MODULECALL(OnMode(*pOpNick, *this, uMode, sArg, bAdd, bNoChange), m_pUser, NULL, );
-#endif
 
 			if (!bList) {
 				(bAdd) ? AddMode(uMode, sArg) : RemMode(uMode);

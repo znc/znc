@@ -6,8 +6,6 @@
  * by the Free Software Foundation.
  */
 
-#ifdef _MODULES
-
 #include "Template.h"
 #include "FileUtils.h"
 #include <sstream>
@@ -852,5 +850,3 @@ CString CTemplate::GetValue(const CString& sArgs, bool bFromIf) {
 
 	return sRet;
 }
-
-#endif // _MODULES

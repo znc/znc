@@ -6,8 +6,6 @@
  * by the Free Software Foundation.
  */
 
-#ifdef _MODULES
-
 #include "Modules.h"
 #include "User.h"
 #include "znc.h"
@@ -990,5 +988,3 @@ ModHandle CModules::OpenModule(const CString& sModule, const CString& sModPath, 
 
 	return p;
 }
-
-#endif // _MODULES

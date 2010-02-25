@@ -32,7 +32,7 @@ DISTCLEAN := Makefile config.log config.status znc-config znc-buildmod .depend \
 
 .PHONY: all man modules clean distclean install
 
-all: znc man @MODTARGET@ $(LIBZNC)
+all: znc man modules $(LIBZNC)
 
 ifeq "$(LIBZNC)" ""
 OBJS := $(BIN_OBJS) $(LIB_OBJS)
@@ -51,17 +51,11 @@ man:
 	@$(MAKE) -C man
 
 modules: $(LIBZNC)
-	@if test -n "@MODTARGET@"; then \
-		$(MAKE) -C modules; \
-	else \
-		echo "Modules are not enabled"; \
-	fi
+	$(MAKE) -C modules;
 
 clean:
 	rm -rf $(CLEAN)
-	@if test -n "@MODTARGET@"; then \
-		$(MAKE) -C modules clean; \
-	fi
+	@$(MAKE) -C modules clean;
 	@$(MAKE) -C man clean
 
 distclean: clean
@@ -82,9 +76,7 @@ install: znc $(LIBZNC)
 	install -m 0755 znc-buildmod $(DESTDIR)$(bindir)
 	install -m 0644 $(srcdir)/*.h $(DESTDIR)$(includedir)/znc
 	install -m 0644 znc.pc $(DESTDIR)$(PKGCONFIGDIR)
-	@if test -n "@MODTARGET@"; then \
-		$(MAKE) -C modules install DESTDIR=$(DESTDIR); \
-	fi
+	@$(MAKE) -C modules install DESTDIR=$(DESTDIR);
 	if test -n "$(LIBZNC)"; then \
 		mkdir -p $(DESTDIR)$(LIBZNCDIR) || exit 1 ; \
 		install -m 0755 $(LIBZNC) $(DESTDIR)$(LIBZNCDIR) || exit 1 ; \

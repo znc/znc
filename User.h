@@ -11,9 +11,7 @@
 
 #include "Buffer.h"
 #include "FileUtils.h"
-#ifdef _MODULES
 #include "Modules.h"
-#endif
 #include "Nick.h"
 #include <set>
 #include <vector>
@@ -73,7 +71,6 @@ public:
 
 	void DelClients();
 	void DelServers();
-#ifdef _MODULES
 	void DelModules();
 
 	// Unloads a module on all users who have it loaded and loads it again.
@@ -83,7 +80,6 @@ public:
 	CModules& GetModules() { return *m_pModules; }
 	const CModules& GetModules() const { return *m_pModules; }
 	// !Modules
-#endif
 
 	// Buffers
 	void AddRawBuffer(const CString& sPre, const CString& sPost, bool bIncNick = true) { m_RawBuffer.AddLine(sPre, sPost, bIncNick); }
@@ -313,9 +309,7 @@ protected:
 
 	map<CString, unsigned int>  m_suWebLogoutCounters;
 
-#ifdef _MODULES
 	CModules*		m_pModules;
-#endif
 };
 
 #endif // !_USER_H

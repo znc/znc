@@ -6,8 +6,6 @@
  * by the Free Software Foundation.
  */
 
-#ifdef _MODULES
-
 #ifndef _TEMPLATE_H
 #define _TEMPLATE_H
 
@@ -184,5 +182,3 @@ private:
 };
 
 #endif // !_TEMPLATE_H
-
-#endif // _MODULES

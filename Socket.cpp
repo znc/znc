@@ -28,8 +28,6 @@ unsigned int CSockManager::GetAnonConnectionCount(const CString &sIP) const {
 	return ret;
 }
 
-#ifdef _MODULES
-
 /////////////////// CSocket ///////////////////
 CSocket::CSocket(CModule* pModule) : CZNCSock() {
 	m_pModule = pModule;
@@ -132,5 +130,3 @@ bool CSocket::PutModNotice(const CString& sLine, const CString& sIdent, const CS
 void CSocket::SetModule(CModule* p) { m_pModule = p; }
 CModule* CSocket::GetModule() const { return m_pModule; }
 /////////////////// !CSocket ///////////////////
-
-#endif // _MODULES
