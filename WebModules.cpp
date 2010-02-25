@@ -1,8 +1,15 @@
+/*
+ * Copyright (C) 2004-2010  See the AUTHORS file for details.
+ *
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License version 2 as published
+ * by the Free Software Foundation.
+ */
+
 #include "WebModules.h"
 #include "User.h"
 #include "znc.h"
 #include <sstream>
-
 
 CZNCTagHandler::CZNCTagHandler(CWebSock& WebSock) : CTemplateTagHandler(), m_WebSock(WebSock) {
 }
