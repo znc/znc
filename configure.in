@@ -77,10 +77,6 @@ AC_ARG_ENABLE( [ipv6],
 	AS_HELP_STRING([--disable-ipv6], [disable ipv6 support]),
 	[IPV6="$enableval"],
 	[IPV6="yes"])
-AC_ARG_ENABLE( [modules],
-	AS_HELP_STRING([--disable-modules], [disable modules]),
-	[MODULES="$enableval"],
-	[MODULES="yes"])
 AC_ARG_ENABLE( [openssl],
 	AS_HELP_STRING([--disable-openssl], [disable openssl]),
 	[if test "$enableval" = "no" ; then NOSSL=1; fi],)
@@ -177,7 +173,10 @@ AC_ARG_WITH( [module-data-prefix],
 	[DATADIR="${datadir}/znc"] )
 
 
-if test "$MODULES" = "yes"; then
+# This used to be
+# if test "$MODULES" = "yes"; then
+# but I'm too lazy to reindent all of this
+if test "yes" = "yes"; then
 	FOUND_DL=no
 
 	# Don't use any libs like -lssl -lcrypto when checking for dlopen(),
@@ -194,14 +193,12 @@ if test "$MODULES" = "yes"; then
 		AC_MSG_ERROR([could not find dlopen. Try --disable-modules])
 	fi
 
-	appendCXX -D_MODULES
 	appendMod "$CXXFLAGS"
 
 	if test -z "$ISSUN" -a -z "$ISDARWIN"; then
 		# This is an unknown compiler flag on some OS
 		appendLD -Wl,--export-dynamic
 	fi
-	MODTARGET="modules"
 
 	if test -z "$ISCYGWIN" ; then
 		# cygwin doesn't need -fPIC, everything else does (for modules)
@@ -297,7 +294,6 @@ AC_SUBST([LIBS])
 AC_SUBST([LIBZNC])
 AC_SUBST([LIBZNCDIR])
 AC_SUBST([MODLINK])
-AC_SUBST([MODTARGET])
 AC_SUBST([NOSSL])
 AC_SUBST([EXTRA])
 AC_SUBST([PERL])
@@ -311,9 +307,7 @@ AC_CONFIG_FILES([znc-buildmod])
 AC_CONFIG_FILES([man/Makefile])
 AC_CONFIG_FILES([znc.pc])
 AC_CONFIG_FILES([znc-uninstalled.pc])
-if test "$MODULES" = "yes"; then
-	AC_CONFIG_FILES([modules/Makefile])
-fi
+AC_CONFIG_FILES([modules/Makefile])
 AC_OUTPUT
 
 echo
@@ -327,7 +321,6 @@ else
 	echo "openssl: yes"
 fi
 echo "c-ares:  $ARES"
-echo "modules: $MODULES"
 if test x"$PERL" = "x" ; then
 	echo "perl:    no"
 else

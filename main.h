@@ -32,7 +32,6 @@
 #define _DATADIR_ "/usr/share/znc"
 #endif
 
-#ifdef _MODULES
 #define MODULECALL(macFUNC, macUSER, macCLIENT, macEXITER)	\
 	if (macUSER) {											\
 		CGlobalModules& GMods = CZNC::Get().GetModules();	\
@@ -53,9 +52,6 @@
 		GMods.SetClient(pOldGClient);			\
 		UMods.SetClient(pOldUClient);								\
 	}
-#else
-#define MODULECALL(macFUNC, macUSER, macCLIENT, macEXITER)
-#endif
 
 /** @mainpage
  *  Welcome to the API documentation for ZNC.

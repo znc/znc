@@ -59,9 +59,7 @@ CUser::CUser(const CString& sUserName) {
 	m_uServerIdx = 0;
 	m_uBytesRead = 0;
 	m_uBytesWritten = 0;
-#ifdef _MODULES
 	m_pModules = new CModules;
-#endif
 	m_RawBuffer.SetLineCount(100);		// This should be more than enough raws, especially since we are buffering the MOTD separately
 	m_MotdBuffer.SetLineCount(200);		// This should be more than enough motd lines
 	m_bMultiClients = true;
@@ -90,9 +88,7 @@ CUser::CUser(const CString& sUserName) {
 CUser::~CUser() {
 	DelClients();
 
-#ifdef _MODULES
 	DelModules();
-#endif
 
 	DelServers();
 
@@ -110,7 +106,6 @@ CUser::~CUser() {
 	CZNC::Get().GetManager().DelCronByAddr(m_pUserTimer);
 }
 
-#ifdef _MODULES
 void CUser::DelModules() {
 	if (m_pModules) {
 		delete m_pModules;
@@ -144,7 +139,6 @@ bool CUser::UpdateModule(const CString &sModule) {
 
 	return !error;
 }
-#endif
 
 void CUser::DelClients() {
 	for (unsigned int c = 0; c < m_vClients.size(); c++) {
@@ -464,7 +458,6 @@ bool CUser::Clone(const CUser& User, CString& sErrorRet, bool bCloneChans) {
 	SetTimezoneOffset(User.GetTimezoneOffset());
 	// !Flags
 
-#ifdef _MODULES
 	// Modules
 	set<CString> ssUnloadMods;
 	CModules& vCurMods = GetModules();
@@ -495,7 +488,6 @@ bool CUser::Clone(const CUser& User, CString& sErrorRet, bool bCloneChans) {
 		vCurMods.UnloadModule(*it);
 	}
 	// !Modules
-#endif // !_MODULES
 
 	return true;
 }
@@ -682,7 +674,6 @@ bool CUser::WriteConfig(CFile& File) {
 		File.Write("\n");
 	}
 
-#ifdef _MODULES
 	// Modules
 	CModules& Mods = GetModules();
 
@@ -699,7 +690,6 @@ bool CUser::WriteConfig(CFile& File) {
 
 		File.Write("\n");
 	}
-#endif
 
 	// Servers
 	for (unsigned int b = 0; b < m_vServers.size(); b++) {

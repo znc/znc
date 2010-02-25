@@ -11,9 +11,7 @@
 
 #include "Client.h"
 #include "FileUtils.h"
-#ifdef _MODULES
 #include "Modules.h"
-#endif
 #include "Socket.h"
 #include <map>
 
@@ -92,10 +90,8 @@ public:
 	enum ConfigState GetConfigState() const { return m_eConfigState; }
 	CSockManager& GetManager() { return m_Manager; }
 	const CSockManager& GetManager() const { return m_Manager; }
-#ifdef _MODULES
 	CGlobalModules& GetModules() { return *m_pModules; }
 	size_t FilterUncommonModules(set<CModInfo>& ssModules);
-#endif
 	CString GetSkinName() const { return m_sSkinName; }
 	const CString& GetStatusPrefix() const { return m_sStatusPrefix; }
 	const CString& GetCurPath() const { if (!CFile::Exists(m_sCurPath)) { CDir::MakeDir(m_sCurPath); } return m_sCurPath; }
@@ -170,9 +166,7 @@ protected:
 	CFile*					m_pISpoofLockFile;
 	unsigned int				m_uiConnectDelay;
 	unsigned int				m_uiAnonIPLimit;
-#ifdef _MODULES
 	CGlobalModules*			m_pModules;
-#endif
 	unsigned long long		m_uBytesRead;
 	unsigned long long		m_uBytesWritten;
 	CConnectUserTimer		*m_pConnectUserTimer;
@@ -192,14 +186,10 @@ public:
 	virtual Csock* GetSockObj(const CString& sHost, unsigned short uPort) {
 		CClient *pClient = new CClient(sHost, uPort);
 		if (CZNC::Get().AllowConnectionFrom(sHost)) {
-#ifdef _MODULES
 			CZNC::Get().GetModules().OnClientConnect(pClient, sHost, uPort);
-#endif
 		} else {
 			pClient->RefuseLogin("Too many anonymous connections from your IP");
-#ifdef _MODULES
 			CZNC::Get().GetModules().OnFailedLogin("", sHost);
-#endif
 		}
 		return pClient;
 	}

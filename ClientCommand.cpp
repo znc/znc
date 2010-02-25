@@ -547,7 +547,6 @@ void CClient::UserCommand(CString& sLine) {
 			PutStatus("You have no active DCCs.");
 		}
 	} else if (sCommand.Equals("LISTMODS") || sCommand.Equals("LISTMODULES")) {
-#ifdef _MODULES
 		if (m_pUser->IsAdmin()) {
 			CModules& GModules = CZNC::Get().GetModules();
 
@@ -587,12 +586,8 @@ void CClient::UserCommand(CString& sLine) {
 
 			PutStatus(Table);
 		}
-#else
-		PutStatus("Modules are not enabled.");
-#endif
 		return;
 	} else if (sCommand.Equals("LISTAVAILMODS") || sCommand.Equals("LISTAVAILABLEMODULES")) {
-#ifdef _MODULES
 		if (m_pUser->DenyLoadMod()) {
 			PutStatus("Access Denied.");
 			return;
@@ -643,9 +638,6 @@ void CClient::UserCommand(CString& sLine) {
 
 			PutStatus(Table);
 		}
-#else
-		PutStatus("Modules are not enabled.");
-#endif
 		return;
 	} else if (sCommand.Equals("LOADMOD") || sCommand.Equals("LOADMODULE")) {
 		CString sMod;
@@ -664,7 +656,6 @@ void CClient::UserCommand(CString& sLine) {
 			return;
 		}
 
-#ifdef _MODULES
 		CModInfo ModInfo;
 		CString sRetMsg;
 		if (!CZNC::Get().GetModules().GetModInfo(ModInfo, sMod, sRetMsg)) {
@@ -694,9 +685,6 @@ void CClient::UserCommand(CString& sLine) {
 		}
 
 		PutStatus(sModRet);
-#else
-		PutStatus("Unable to load [" + sMod + "] Modules are not enabled.");
-#endif
 		return;
 	} else if (sCommand.Equals("UNLOADMOD") || sCommand.Equals("UNLOADMODULE")) {
 		CString sMod;
@@ -706,7 +694,6 @@ void CClient::UserCommand(CString& sLine) {
 			PutStatus("Unable to unload [" + sMod + "] Access Denied.");
 			return;
 		}
-#ifdef _MODULES
 		if (sMod.empty()) {
 			PutStatus("Usage: UnloadMod <module>");
 			return;
@@ -723,9 +710,6 @@ void CClient::UserCommand(CString& sLine) {
 		}
 
 		PutStatus(sModRet);
-#else
-		PutStatus("Unable to unload [" + sMod + "] Modules are not enabled.");
-#endif
 		return;
 	} else if (sCommand.Equals("RELOADMOD") || sCommand.Equals("RELOADMODULE")) {
 		CString sMod;
@@ -744,7 +728,6 @@ void CClient::UserCommand(CString& sLine) {
 			return;
 		}
 
-#ifdef _MODULES
 		CModInfo ModInfo;
 		CString sRetMsg;
 		if (!CZNC::Get().GetModules().GetModInfo(ModInfo, sMod, sRetMsg)) {
@@ -768,14 +751,8 @@ void CClient::UserCommand(CString& sLine) {
 		}
 
 		PutStatus(sModRet);
-#else
-		PutStatus("Unable to unload [" + sMod + "] Modules are not enabled.");
-#endif
 		return;
 	} else if ((sCommand.Equals("UPDATEMOD") || sCommand.Equals("UPDATEMODULE")) && m_pUser->IsAdmin() ) {
-#ifndef _MODULES
-		PutStatus("Modules are not enabled.");
-#else
 		CString sMod = sLine.Token(1);
 
 		if (sMod.empty()) {
@@ -795,7 +772,6 @@ void CClient::UserCommand(CString& sLine) {
 			PutStatus("Done, but there were errors, some users no longer have ["
 					+ sMod + "] loaded");
 		}
-#endif
 	} else if (sCommand.Equals("ADDVHOST") && m_pUser->IsAdmin()) {
 		CString sVHost = sLine.Token(1);
 

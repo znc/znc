@@ -64,7 +64,6 @@ void CClient::ReadLine(const CString& sData) {
 
 	DEBUG("(" << ((m_pUser) ? m_pUser->GetUserName() : GetRemoteIP()) << ") CLI -> ZNC [" << sLine << "]");
 
-#ifdef _MODULES
 	if (IsAttached()) {
 		MODULECALL(OnUserRaw(sLine), m_pUser, this, return);
 	} else {
@@ -91,7 +90,6 @@ void CClient::ReadLine(const CString& sData) {
 			return;
 		}
 	}
-#endif
 
 	CString sCommand = sLine.Token(0);
 	if (sCommand.Left(1) == ":") {
@@ -176,12 +174,10 @@ void CClient::ReadLine(const CString& sData) {
 			else
 				UserCommand(sModCommand);
 		} else {
-#ifdef _MODULES
 			if (sModCommand.empty())
 				CALLMOD(sTarget, this, m_pUser, PutModule("Hello. How may I help you?"))
 			else
 				CALLMOD(sTarget, this, m_pUser, OnModCommand(sModCommand))
-#endif
 		}
 		return;
 	} else if (sCommand.Equals("DETACH")) {
@@ -332,11 +328,9 @@ void CClient::ReadLine(const CString& sData) {
 		}
 
 		if (sTarget.TrimPrefix(m_pUser->GetStatusPrefix())) {
-#ifdef _MODULES
 			if (!sTarget.Equals("status")) {
 				CALLMOD(sTarget, this, m_pUser, OnModNotice(sMsg));
 			}
-#endif
 			return;
 		}
 
@@ -348,7 +342,6 @@ void CClient::ReadLine(const CString& sData) {
 		}
 #endif
 
-#ifdef _MODULES
 		if (sMsg.WildCmp("\001*\001")) {
 			CString sCTCP = sMsg;
 			sCTCP.LeftChomp();
@@ -360,7 +353,6 @@ void CClient::ReadLine(const CString& sData) {
 		} else {
 			MODULECALL(OnUserNotice(sTarget, sMsg), m_pUser, this, return);
 		}
-#endif
 
 		if (!GetIRCSock()) {
 			// Some lagmeters do a NOTICE to their own nick, ignore those.
@@ -498,9 +490,7 @@ void CClient::ReadLine(const CString& sData) {
 				if (sTarget.Equals("status")) {
 					StatusCTCP(sCTCP);
 				} else {
-#ifdef _MODULES
 					CALLMOD(sTarget, this, m_pUser, OnModCTCP(sCTCP));
-#endif
 				}
 				return;
 			}
@@ -540,9 +530,7 @@ void CClient::ReadLine(const CString& sData) {
 			if (sTarget.Equals("status")) {
 				UserCommand(sMsg);
 			} else {
-#ifdef _MODULES
 				CALLMOD(sTarget, this, m_pUser, OnModCommand(sMsg));
-#endif
 			}
 			return;
 		}
@@ -622,26 +610,6 @@ bool CClient::SendMotd() {
 }
 
 void CClient::AuthUser() {
-	/*
-#ifdef _MODULES
-	if (CZNC::Get().GetModules().OnLoginAttempt(m_sUser, m_sPass, *this)) {
-		return;
-	}
-#endif
-
-	CUser* pUser = CZNC::Get().GetUser(m_sUser);
-
-	if (pUser && pUser->CheckPass(m_sPass)) {
-		AcceptLogin(*pUser);
-	} else {
-		if (pUser) {
-			pUser->PutStatus("Another client attempted to login as you, with a bad password.");
-		}
-
-		RefuseLogin();
-	}
-	*/
-
 	m_spAuth = new CClientAuth(this, m_sUser, m_sPass);
 
 	CZNC::Get().AuthUser(m_spAuth);
@@ -689,9 +657,7 @@ void CAuthBase::RefuseLogin(const CString& sReason) {
 				"to login as you, but was rejected [" + sReason + "].");
 	}
 
-#ifdef _MODULES
 	CZNC::Get().GetModules().OnFailedLogin(GetUsername(), GetRemoteIP());
-#endif
 	RefusedLogin(sReason);
 	Invalidate();
 }

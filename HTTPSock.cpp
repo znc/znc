@@ -6,8 +6,6 @@
  * by the Free Software Foundation.
  */
 
-#ifdef _MODULES
-
 #include "Modules.h"
 #include "HTTPSock.h"
 #include "znc.h"
@@ -459,5 +457,3 @@ void CHTTPSock::ReachedMaxBuffer() {
 	DEBUG(GetSockName() << " == ReachedMaxBuffer()");
 	Close();
 }
-
-#endif // _MODULES

@@ -31,9 +31,7 @@ CZNC::CZNC() {
 		exit(-1);
 	}
 
-#ifdef _MODULES
 	m_pModules = new CGlobalModules();
-#endif
 	m_pISpoofLockFile = NULL;
 	m_uiConnectDelay = 30;
 	m_uiAnonIPLimit = 10;
@@ -50,13 +48,11 @@ CZNC::~CZNC() {
 	if (m_pISpoofLockFile)
 		ReleaseISpoof();
 
-#ifdef _MODULES
 	m_pModules->UnloadAll();
 
 	for (map<CString,CUser*>::iterator a = m_msUsers.begin(); a != m_msUsers.end(); ++a) {
 		a->second->GetModules().UnloadAll();
 	}
-#endif
 
 	for (size_t b = 0; b < m_vpListeners.size(); b++) {
 		delete m_vpListeners[b];
@@ -71,9 +67,7 @@ CZNC::~CZNC() {
 	m_Manager.Cleanup();
 	DeleteUsers();
 
-#ifdef _MODULES
 	delete m_pModules;
-#endif
 
 	ShutdownCsocket();
 	DeletePidFile();
@@ -108,7 +102,6 @@ CString CZNC::GetUptime() const {
 }
 
 bool CZNC::OnBoot() {
-#ifdef _MODULES
 	if (!GetModules().OnBoot()) {
 		return false;
 	}
@@ -118,7 +111,6 @@ bool CZNC::OnBoot() {
 			return false;
 		}
 	}
-#endif
 
 	return true;
 }
@@ -200,12 +192,10 @@ bool CZNC::HandleUserDeletion()
 		CUser* pUser = it->second;
 		pUser->SetBeingDeleted(true);
 
-#ifdef _MODULES
 		if (GetModules().OnDeleteUser(*pUser)) {
 			pUser->SetBeingDeleted(false);
 			continue;
 		}
-#endif
 		m_msUsers.erase(pUser->GetUserName());
 
 		// Don't use pUser->GetIRCSock(), as that only returns something if the
@@ -217,9 +207,7 @@ bool CZNC::HandleUserDeletion()
 		}
 
 		pUser->DelClients();
-#ifdef _MODULES
 		pUser->DelModules();
-#endif
 		AddBytesRead(pUser->BytesRead());
 		AddBytesWritten(pUser->BytesWritten());
 		delete pUser;
@@ -592,7 +580,6 @@ bool CZNC::WriteConfig() {
 		m_LockFile.Write("VHost        = " + m_vsVHosts[v].FirstLine() + "\n");
 	}
 
-#ifdef _MODULES
 	CGlobalModules& Mods = GetModules();
 
 	for (unsigned int a = 0; a < Mods.size(); a++) {
@@ -605,7 +592,6 @@ bool CZNC::WriteConfig() {
 
 		m_LockFile.Write("LoadModule   = " + sName.FirstLine() + sArgs + "\n");
 	}
-#endif
 
 	for (map<CString,CUser*>::iterator it = m_msUsers.begin(); it != m_msUsers.end(); ++it) {
 		CString sErr;
@@ -683,7 +669,6 @@ bool CZNC::WriteNewConfig(const CString& sConfigFile) {
 	vsLines.push_back("Listen" + s6 + "    = " + sListenHost + sSSL + CString(uListenPort));
 	// !Listen
 
-#ifdef _MODULES
 	set<CModInfo> ssGlobalMods;
 	GetModules().GetAvailableMods(ssGlobalMods, true);
 	size_t uNrOtherGlobalMods = FilterUncommonModules(ssGlobalMods);
@@ -731,7 +716,6 @@ bool CZNC::WriteNewConfig(const CString& sConfigFile) {
 			}
 		}
 	}
-#endif
 
 	// User
 	CUtils::PrintMessage("");
@@ -791,7 +775,6 @@ bool CZNC::WriteNewConfig(const CString& sConfigFile) {
 			vsLines.push_back("\tChanModes  = " + sAnswer);
 		}
 
-#ifdef _MODULES
 		set<CModInfo> ssUserMods;
 		GetModules().GetAvailableMods(ssUserMods);
 		size_t uNrOtherUserMods = FilterUncommonModules(ssUserMods);
@@ -840,7 +823,6 @@ bool CZNC::WriteNewConfig(const CString& sConfigFile) {
 				}
 			}
 		}
-#endif
 
 		vsLines.push_back("");
 		CUtils::PrintMessage("");
@@ -963,7 +945,6 @@ bool CZNC::WriteNewConfig(const CString& sConfigFile) {
 	return bFileOpen && CUtils::GetBoolInput("Launch znc now?", true);
 }
 
-#ifdef _MODULES
 size_t CZNC::FilterUncommonModules(set<CModInfo>& ssModules) {
 	const char* ns[] = { "webadmin", "admin",
 		"chansaver", "keepnick", "simple_away", "partyline",
@@ -983,7 +964,6 @@ size_t CZNC::FilterUncommonModules(set<CModInfo>& ssModules) {
 
 	return uNrRemoved;
 }
-#endif
 
 bool CZNC::ParseConfig(const CString& sConfig)
 {
@@ -996,13 +976,11 @@ bool CZNC::ParseConfig(const CString& sConfig)
 
 bool CZNC::RehashConfig(CString& sError)
 {
-#ifdef _MODULES
 	GetModules().OnPreRehash();
 	for (map<CString, CUser*>::iterator itb = m_msUsers.begin();
 			itb != m_msUsers.end(); ++itb) {
 		itb->second->GetModules().OnPreRehash();
 	}
-#endif
 
 	// This clears m_msDelUsers
 	HandleUserDeletion();
@@ -1012,13 +990,11 @@ bool CZNC::RehashConfig(CString& sError)
 	m_msUsers.clear();
 
 	if (DoRehash(sError)) {
-#ifdef _MODULES
 		GetModules().OnPostRehash();
 		for (map<CString, CUser*>::iterator it = m_msUsers.begin();
 				it != m_msUsers.end(); ++it) {
 			it->second->GetModules().OnPostRehash();
 		}
-#endif
 
 		return true;
 	}
@@ -1094,9 +1070,7 @@ bool CZNC::DoRehash(CString& sError)
 	CUser* pRealUser = NULL;	// If we rehash a user, this is the real one
 	CChan* pChan = NULL;	// Used to keep track of which chan block we are in
 	unsigned int uLineNum = 0;
-#ifdef _MODULES
 	MCString msModules;	// Modules are queued for later loading
-#endif
 
 	std::list<CGlobalModuleConfigLine> lGlobalModuleConfigLine;
 
@@ -1429,7 +1403,6 @@ bool CZNC::DoRehash(CString& sError)
 					} else if (sName.Equals("LoadModule")) {
 						CString sModName = sValue.Token(0);
 						CUtils::PrintAction("Loading Module [" + sModName + "]");
-#ifdef _MODULES
 						CString sModRet;
 						CString sArgs = sValue.Token(1, true);
 
@@ -1445,10 +1418,6 @@ bool CZNC::DoRehash(CString& sError)
 							sError = sModRet;
 							return false;
 						}
-#else
-						sError = "Modules are not enabled.";
-						CUtils::PrintStatus(false, sError);
-#endif
 						continue;
 					}
 				}
@@ -1544,7 +1513,6 @@ bool CZNC::DoRehash(CString& sError)
 
 					continue;
 				} else if (sName.Equals("LoadModule")) {
-#ifdef _MODULES
 					CString sModName = sValue.Token(0);
 					CString sArgs = sValue.Token(1, true);
 
@@ -1555,9 +1523,6 @@ bool CZNC::DoRehash(CString& sError)
 						return false;
 					}
 					msModules[sModName] = sArgs;
-#else
-					CUtils::PrintError("Modules are not enabled.");
-#endif
 					continue;
 				} else if (sName.Equals("ISpoofFormat")) {
 					m_sISpoofFormat = sValue;
@@ -1615,7 +1580,6 @@ bool CZNC::DoRehash(CString& sError)
 		}
 	}
 
-#ifdef _MODULES
 	// First step: Load and reload new modules or modules with new arguments
 	for (MCString::iterator it = msModules.begin(); it != msModules.end(); ++it) {
 		CString sModName = it->first;
@@ -1684,7 +1648,6 @@ bool CZNC::DoRehash(CString& sError)
 			CUtils::PrintMessage("unhandled global module config line [GM:" + it->m_sName + "] = [" + it->m_sValue + "]");
 		}
 	}
-#endif
 
 	if (pChan) {
 		// TODO last <Chan> not closed
@@ -1864,12 +1827,10 @@ CZNC::TrafficStatsMap CZNC::GetTrafficStats(TrafficStatsPair &Users,
 }
 
 void CZNC::AuthUser(CSmartPtr<CAuthBase> AuthClass) {
-#ifdef _MODULES
 	// TODO unless the auth module calls it, CUser::IsHostAllowed() is not honoured
 	if (GetModules().OnLoginAttempt(AuthClass)) {
 		return;
 	}
-#endif
 
 	CUser* pUser = GetUser(AuthClass->GetUsername());
 
