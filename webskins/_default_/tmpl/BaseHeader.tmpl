@@ -47,7 +47,7 @@
 					<div id="breadcrumb">ZNC
 						<? IF ModName ?><b>&raquo;</b> <? VAR ModName ?><? ENDIF ?>
 						<? REM ?><? IF PageName ?><b>&raquo;</b> <? VAR PageName ?><? ENDIF ?><? ENDREM ?>
-						<? IF Title ?><b>&raquo;</b> <? VAR Title ?><? ENDIF ?>
+						<? IF Title && Title != *ModName ?><b>&raquo;</b> <? VAR Title ?><? ENDIF ?>
 					</div>
 
 					<div id="subpage">
