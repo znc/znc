@@ -1,22 +1,24 @@
-						<div class="item <? IF !ModName && PageName == "index" ?>active<? ENDIF ?>"><a href="/">Home</a></div>
-						<div class="item <? IF !ModName && PageName == "help" ?>active<? ENDIF ?>"><a href="/help">Help</a></div>
+				<div id="menu">
+					<div class="item <? IF !ModName && PageName == "index" ?>active<? ENDIF ?>"><a href="/">Home</a></div>
+					<div class="item <? IF !ModName && PageName == "help" ?>active<? ENDIF ?>"><a href="/help">Help</a></div>
 
-				<? IF GlobalModLoop ?>
-						<div class="title">Global Modules:</div>
-					<? LOOP GlobalModLoop ?>
-						<div class="item <? IF Active ?>active<? ENDIF ?>"><a href="/mods/<? VAR ModName ?>"><? VAR Title ?></a></div>
-						<? LOOP SubPageLoop ?>
-						<div class="subitem <? IF Active ?>active<? ENDIF ?>"><a href="/mods/<? VAR ModName ?>/<? VAR PageName ?><? IF Params ?>?<? VAR Params ?><? ENDIF ?>"><? IF Active ?>&raquo; <? ENDIF ?><? VAR Title ?><? IF Active ?> &laquo;<? ENDIF ?></a></div>
-						<? ENDLOOP ?>
-					<? ENDLOOP ?>
-				<? ENDIF ?>
+		<? IF GlobalModLoop ?>
+					<div class="title">Global Modules:</div>
+			<? LOOP GlobalModLoop ?>
+					<div class="item <? IF Active ?>active<? ENDIF ?>"><a href="/mods/<? VAR ModName ?>"><? VAR Title ?></a></div>
+				<? LOOP SubPageLoop ?>
+					<div class="subitem <? IF Active ?>active<? ENDIF ?>"><a href="/mods/<? VAR ModName ?>/<? VAR PageName ?><? IF Params ?>?<? VAR Params ?><? ENDIF ?>"><? IF Active ?>&raquo; <? ENDIF ?><? VAR Title ?><? IF Active ?> &laquo;<? ENDIF ?></a></div>
+				<? ENDLOOP ?>
+			<? ENDLOOP ?>
+		<? ENDIF ?>
 
-				<? IF UserModLoop ?>
-						<div class="title">User Modules:</div>
-					<? LOOP UserModLoop ?>
-						<div class="item <? IF Active ?>active<? ENDIF ?>"><a href="/mods/<? IF ModUser ?><? VAR ModUser ?>:<? ENDIF ?><? VAR ModName ?>"><? VAR Title ?></a></div>
-						<? LOOP SubPageLoop ?>
-						<div class="subitem <? IF Active ?>active<? ENDIF ?>"><a href="/mods/<? VAR ModName ?>/<? VAR PageName ?><? IF Params ?>?<? VAR Params ?><? ENDIF ?>"><? IF Active ?>&raquo; <? ENDIF ?><? VAR Title ?></a></div>
-						<? ENDLOOP ?>
-					<? ENDLOOP ?>
-				<? ENDIF ?>
+		<? IF UserModLoop ?>
+					<div class="title">User Modules:</div>
+			<? LOOP UserModLoop ?>
+					<div class="item <? IF Active ?>active<? ENDIF ?>"><a href="/mods/<? IF ModUser ?><? VAR ModUser ?>:<? ENDIF ?><? VAR ModName ?>"><? VAR Title ?></a></div>
+				<? LOOP SubPageLoop ?>
+					<div class="subitem <? IF Active ?>active<? ENDIF ?>"><a href="/mods/<? VAR ModName ?>/<? VAR PageName ?><? IF Params ?>?<? VAR Params ?><? ENDIF ?>"><? IF Active ?>&raquo; <? ENDIF ?><? VAR Title ?></a></div>
+				<? ENDLOOP ?>
+			<? ENDLOOP ?>
+		<? ENDIF ?>
+				</div>
