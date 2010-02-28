@@ -1,5 +1,5 @@
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
-<? SETOPTION ESC=HTML ?>
+<? INC DocType.tmpl ?>
+<? INC Options.tmpl ?>
 <html>
 	<head>
 		<meta http-equiv="content-type" content="text/html; charset=ISO-8859-1">
@@ -13,43 +13,52 @@
 		<? LOOP JSLoop ?>
 		<?IF HREF?><script type="text/javascript" src="<? VAR HREF ?>"></script><?ENDIF?>
 		<?ENDLOOP?>
+
+		<? INC ExtraHeader.tmpl ?>
 	</head>
 
 	<body>
 		<!-- Wrapper -->
 		<div id="wrapper">
 			<!-- Banner -->
-			<div id="banner"><p><? VAR Tag ?></p></div>
+			<? INC Banner.tmpl ?>
 			<!-- !Banner -->
 
-			<!-- Loginbar -->
-			<div id="infobar">
-				<span>Logged in as: <em><? VAR SessionUser DEFAULT="-Guest-" ?></em> (from: <? VAR SessionIP ?>)</span>
-				<? IF LoggedIn ?>
-				<span class="switchuser"><a href="/logout">Logout</a></span>
-				<? ELSE ?>
-				<span class="switchuser"><a href="/login">Login</a></span>
-				<? ENDIF ?>
-			</div>
-			<!-- / Loginbar -->
+			<!-- MessageBar -->
+			<? INC MessageBar.tmpl ?>
+			<!-- !MessageBar -->
+
+			<!-- InfoBar -->
+			<? INC InfoBar.tmpl ?>
+			<!-- !InfoBar -->
 
 			<!-- Main -->
 			<div id="main">
 				<!-- Menu -->
-				<div id="menu">
-					<? INC Menu.tmpl ?>
-				</div>
-				<!-- / Menu -->
+				<? INC Menu.tmpl ?>
+				<!-- !Menu -->
 
 				<!-- Content -->
 				<div id="content">
 
-					<div id="breadcrumb">ZNC
-						<? IF ModName ?><b>&raquo;</b> <? VAR ModName ?><? ENDIF ?>
-						<? REM ?><? IF PageName ?><b>&raquo;</b> <? VAR PageName ?><? ENDIF ?><? ENDREM ?>
-						<? IF Title && Title != *ModName ?><b>&raquo;</b> <? VAR Title ?><? ENDIF ?>
-					</div>
+					<!-- BreadCrumbs -->
+					<? INC BreadCrumbs.tmpl ?>
+					<!-- !BreadCrumbs -->
 
 					<div id="subpage">
 
-						<? REM ?>Called from subpage then finished in Footer.tmpl<? ENDREM ?>
+						<? REM ?>
+							In your subpage (module page or static page) you'll probably want to do something like this...
+
+								<? INC Header.tmpl ?>
+								This is my <b>super</b> cool sub page!
+								<? INC Footer.tmpl ?>
+
+							If you'd like to add your own local css file to be included after the global main.css,
+							you can make your own Header.tmpl like so...
+
+								<? ADDROW CSSLoop HREF=/pub/your_local.css ?>
+								<? ADDROW JSLoop HREF=/pub/your_local.js ?>
+								<? INC BaseHeader.tmpl ?>
+
+						<? ENDREM ?>
