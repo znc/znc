@@ -70,6 +70,7 @@ public:
 	}
 
 	CUser* GetNewUser(CWebSock& WebSock, CUser* pUser) {
+		CSmartPtr<CWebSession> spSession = WebSock.GetSession();
 		CString sUsername = WebSock.GetParam("newuser");
 
 		if (sUsername.empty()) {
@@ -136,7 +137,7 @@ public:
 
 		sArg = WebSock.GetParam("vhost");
 		// To change VHosts be admin or don't have DenySetVHost
-		if (WebSock.IsAdmin() || !WebSock.GetSessionUser()->DenySetVHost()) {
+		if (spSession->IsAdmin() || !spSession->GetUser()->DenySetVHost()) {
 			if (!sArg.empty()) {
 				pNewUser->SetVHost(sArg);
 			}
@@ -156,7 +157,7 @@ public:
 		pNewUser->SetJoinTries(WebSock.GetParam("jointries").ToUInt());
 		pNewUser->SetMaxJoins(WebSock.GetParam("maxjoins").ToUInt());
 
-		if (WebSock.IsAdmin()) {
+		if (spSession->IsAdmin()) {
 			pNewUser->SetDenyLoadMod(WebSock.GetParam("denyloadmod").ToBool());
 			pNewUser->SetDenySetVHost(WebSock.GetParam("denysetvhost").ToBool());
 		} else if (pUser) {
@@ -178,7 +179,7 @@ public:
 			pNewUser->AddChan(sChan.TrimRight_n("\r"), WebSock.GetParam("save_" + sChan).ToBool());
 		}
 
-		if (WebSock.IsAdmin() || (pUser && !pUser->DenyLoadMod())) {
+		if (spSession->IsAdmin() || (pUser && !pUser->DenyLoadMod())) {
 			WebSock.GetParamValues("loadmod", vsArgs);
 
 			for (a = 0; a < vsArgs.size(); a++) {
@@ -222,16 +223,18 @@ public:
 	virtual bool WebRequiresAdmin() { return false; }
 	virtual CString GetWebMenuTitle() { return "webadmin"; }
 	virtual bool OnWebRequest(CWebSock& WebSock, const CString& sPageName, CTemplate& Tmpl) {
+		CSmartPtr<CWebSession> spSession = WebSock.GetSession();
+
 		if (sPageName == "settings") {
 			// Admin Check
-			if (!WebSock.IsAdmin()) {
+			if (!spSession->IsAdmin()) {
 				return false;
 			}
 
 			return SettingsPage(WebSock, Tmpl);
 		} else if (sPageName == "adduser") {
 			// Admin Check
-			if (!WebSock.IsAdmin()) {
+			if (!spSession->IsAdmin()) {
 				return false;
 			}
 
@@ -240,7 +243,7 @@ public:
 			CUser* pUser = CZNC::Get().FindUser(WebSock.GetParam("user"));
 
 			// Admin/Self Check
-			if (!WebSock.IsAdmin() && (!WebSock.GetSessionUser() || WebSock.GetSessionUser() != pUser)) {
+			if (!spSession->IsAdmin() && (!spSession->GetUser() || spSession->GetUser() != pUser)) {
 				return false;
 			}
 
@@ -260,7 +263,7 @@ public:
 			CUser* pUser = CZNC::Get().FindUser(WebSock.GetParam("user"));
 
 			// Admin/Self Check
-			if (!WebSock.IsAdmin() && (!WebSock.GetSessionUser() || WebSock.GetSessionUser() != pUser)) {
+			if (!spSession->IsAdmin() && (!spSession->GetUser() || spSession->GetUser() != pUser)) {
 				return false;
 			}
 
@@ -273,7 +276,7 @@ public:
 			CUser* pUser = CZNC::Get().FindUser(WebSock.GetParam("user"));
 
 			// Admin/Self Check
-			if (!WebSock.IsAdmin() && (!WebSock.GetSessionUser() || WebSock.GetSessionUser() != pUser)) {
+			if (!spSession->IsAdmin() && (!spSession->GetUser() || spSession->GetUser() != pUser)) {
 				return false;
 			}
 
@@ -284,14 +287,14 @@ public:
 			WebSock.PrintErrorPage("No such username");
 		} else if (sPageName == "deluser") {
 			// Admin Check
-			if (!WebSock.IsAdmin()) {
+			if (!spSession->IsAdmin()) {
 				return false;
 			}
 
 			CString sUser = WebSock.GetParam("user");
 			CUser* pUser = CZNC::Get().FindUser(sUser);
 
-			if (pUser && pUser == WebSock.GetSessionUser()) {
+			if (pUser && pUser == spSession->GetUser()) {
 				WebSock.PrintErrorPage("Please don't delete yourself, suicide is not the answer!");
 				return true;
 			} else if (CZNC::Get().DeleteUser(sUser)) {
@@ -302,10 +305,10 @@ public:
 			WebSock.PrintErrorPage("No such username");
 			return true;
 		} else if (sPageName == "edituser") {
-			CUser* pUser = WebSock.HasParam("user") ? CZNC::Get().FindUser(WebSock.GetParam("user")) : WebSock.GetSessionUser();
+			CUser* pUser = WebSock.HasParam("user") ? CZNC::Get().FindUser(WebSock.GetParam("user")) : spSession->GetUser();
 
 			// Admin/Self Check
-			if (!WebSock.IsAdmin() && (!WebSock.GetSessionUser() || WebSock.GetSessionUser() != pUser)) {
+			if (!spSession->IsAdmin() && (!spSession->GetUser() || spSession->GetUser() != pUser)) {
 				return false;
 			}
 
@@ -316,7 +319,7 @@ public:
 			WebSock.PrintErrorPage("No such username");
 		} else if (sPageName == "listusers") {
 			// Admin Check
-			if (!WebSock.IsAdmin()) {
+			if (!spSession->IsAdmin()) {
 				return false;
 			}
 
@@ -440,6 +443,7 @@ public:
 	}
 
 	bool UserPage(CWebSock& WebSock, CTemplate& Tmpl, CUser* pUser = NULL) {
+		CSmartPtr<CWebSession> spSession = WebSock.GetSession();
 		Tmpl.SetFile("add_edit_user.tmpl");
 
 		if (!WebSock.GetParam("submitted").ToUInt()) {
@@ -507,7 +511,7 @@ public:
 			// To change VHosts be admin or don't have DenySetVHost
 			const VCString& vsVHosts = CZNC::Get().GetVHosts();
 			bool bFoundVHost = false;
-			if (WebSock.IsAdmin() || !WebSock.GetSessionUser()->DenySetVHost()) {
+			if (spSession->IsAdmin() || !spSession->GetUser()->DenySetVHost()) {
 				for (unsigned int b = 0; b < vsVHosts.size(); b++) {
 					const CString& sVHost = vsVHosts[b];
 					CTemplate& l = Tmpl.AddRow("VHostLoop");
@@ -557,7 +561,7 @@ public:
 					l["Checked"] = "true";
 				}
 
-				if (!WebSock.IsAdmin() && pUser && pUser->DenyLoadMod()) {
+				if (!spSession->IsAdmin() && pUser && pUser->DenyLoadMod()) {
 					l["Disabled"] = "true";
 				}
 			}
@@ -594,7 +598,7 @@ public:
 			o8["DisplayName"] = "Prepend Timestamps";
 			if (pUser && pUser->GetTimestampPrepend()) { o8["Checked"] = "true"; }
 
-			if (WebSock.IsAdmin()) {
+			if (spSession->IsAdmin()) {
 				CTemplate& o9 = Tmpl.AddRow("OptionLoop");
 				o9["Name"] = "denyloadmod";
 				o9["DisplayName"] = "Deny LoadMod";
@@ -657,7 +661,7 @@ public:
 			}
 		}
 
-		if (!WebSock.IsAdmin()) {
+		if (!spSession->IsAdmin()) {
 			WebSock.Redirect("edituser");
 		} else {
 			WebSock.Redirect("listusers");
@@ -667,6 +671,7 @@ public:
 	}
 
 	bool ListUsersPage(CWebSock& WebSock, CTemplate& Tmpl) {
+		CSmartPtr<CWebSession> spSession = WebSock.GetSession();
 		const map<CString,CUser*>& msUsers = CZNC::Get().GetUserMap();
 		Tmpl["Title"] = "List Users";
 		Tmpl["Action"] = "listusers";
@@ -682,7 +687,7 @@ public:
 			l["Clients"] = CString(User.GetClients().size());
 			l["IRCNick"] = User.GetIRCNick().GetNick();
 
-			if (&User == WebSock.GetSessionUser()) {
+			if (&User == spSession->GetUser()) {
 				l["IsSelf"] = "true";
 			}
 

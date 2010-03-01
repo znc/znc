@@ -135,17 +135,48 @@ a:hover {
 	border-right: 1px solid #000;
 }
 
+.successbar,
+.errorbar {
+	width: 790px;
+	height: 20px;
+	border-bottom: 1px solid #000;
+	border-right: 1px solid #000;
+	background: #900;
+	padding: 2px 5px;
+	font-weight: bold;
+}
+
+.successbar {
+	background: #070;
+}
+
+
 #infobar span {
 	float: left;
 	padding-left: 5px;
 }
 
-#infobar span.switchuser {
-	text-align: center;
+#infobar span.loginbox,
+#infobar span.logoutbox {
+	text-align: right;
+	padding-right: 5px;
 	border-left: 1px solid #000000;
 	height: 100%;
-	width: 150px;
+	width: 250px;
 	float: right;
+}
+
+#infobar span.logoutbox {
+	text-align: center;
+	width: 100px;
+}
+
+#infobar span.loginbox input {
+	width: 60px;
+}
+
+#infobar span.loginbox input.submit {
+	width: 40px;
 }
 
 #subpage {
