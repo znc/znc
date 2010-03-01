@@ -615,6 +615,10 @@ unsigned int CString::Split(const CString& sDelim, VCString& vsRet, bool bAllowE
 	}
 
 	if (!sTmp.empty()) {
+		if (bTrimWhiteSpace) {
+			sTmp.Trim();
+		}
+
 		vsRet.push_back(sTmp);
 	}
 
