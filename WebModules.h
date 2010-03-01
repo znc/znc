@@ -155,7 +155,6 @@ private:
 	CString                 m_sModName;     // Gets filled by ResolveModule()
 	CString                 m_sPath;        // Gets filled by ResolveModule()
 	CString                 m_sPage;        // Gets filled by ResolveModule()
-	mutable map<CString, CSmartPtr<CWebSession> >	m_mspSessions;
 	CSmartPtr<CWebSession>	m_spSession;
 };
 
