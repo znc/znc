@@ -32,6 +32,32 @@ private:
 };
 
 
+class CWebSession {
+public:
+	CWebSession(const CString& sId = "");
+	virtual ~CWebSession() {}
+
+	const CString& GetId() const { return m_sId; }
+	CUser* GetUser() const { return m_pUser; }
+	bool IsLoggedIn() const { return m_pUser && m_bLoggedIn; }
+	bool IsAdmin() const;
+
+	bool SetLoggedIn(bool b) { m_bLoggedIn = b; return m_bLoggedIn; }
+	CUser* SetUser(CUser* p) { m_pUser = p; return m_pUser; }
+
+	void ClearMessageLoops();
+	void FillMessageLoops(CTemplate& Tmpl);
+	size_t AddError(const CString& sMessage);
+	size_t AddSuccess(const CString& sMessage);
+private:
+	CString		m_sId;
+	CUser*		m_pUser;
+	bool		m_bLoggedIn;
+	VCString	m_vsErrorMsgs;
+	VCString	m_vsSuccessMsgs;
+};
+
+
 class CWebSubPage {
 public:
 	CWebSubPage(const CString& sName, const CString& sTitle = "", unsigned int uFlags = 0) : m_sName(sName), m_sTitle(sTitle) {
@@ -84,9 +110,9 @@ public:
 	CWebSock(CModule* pModule, const CString& sHostname, unsigned short uPort, int iTimeout = 60);
 	virtual ~CWebSock();
 
-	virtual bool OnPageRequest(const CString& sURI, CString& sPageRet);
-
+	virtual bool ForceLogin();
 	virtual bool OnLogin(const CString& sUser, const CString& sPass);
+	virtual bool OnPageRequest(const CString& sURI, CString& sPageRet);
 
 	void ParsePath();	// This parses the path portion of the url into some member vars
 	CModule* ResolveModule();
@@ -108,26 +134,20 @@ public:
 	}
 
 	void PrintErrorPage(const CString& sMessage);
-	size_t AddError(const CString& sMessage);
-	size_t AddSuccess(const CString& sMessage);
 
-	// Setters
-	void SetSessionUser(CUser* p) {
-		m_pSessionUser = p;
-	}
-	// !Setters
+	CSmartPtr<CWebSession> GetSession() const;
 
 	virtual Csock* GetSockObj(const CString& sHost, unsigned short uPort);
-	bool IsAdmin() const;
-	CUser* GetSessionUser() const;
 	CString GetModWebPath(const CString& sModName) const;
 	CString GetSkinPath(const CString& sSkinName) const;
 	CModule* GetModule() const { return (CModule*) m_pModule; }
 	size_t GetAvailSkins(vector<CFile>& vRet);
 	CString GetSkinName() const;
 
+	CString GetCookie(const CString& sKey) const;
+	bool SetCookie(const CString& sKey, const CString& sValue);
+
 private:
-	CUser*					m_pSessionUser;
 	bool					m_bPathsSet;
 	CTemplate				m_Template;
 	CSmartPtr<CAuthBase>	m_spAuth;
@@ -135,6 +155,8 @@ private:
 	CString                 m_sModName;     // Gets filled by ResolveModule()
 	CString                 m_sPath;        // Gets filled by ResolveModule()
 	CString                 m_sPage;        // Gets filled by ResolveModule()
+	mutable map<CString, CSmartPtr<CWebSession> >	m_mspSessions;
+	CSmartPtr<CWebSession>	m_spSession;
 };
 
 #endif // !_WEBMODULES_H

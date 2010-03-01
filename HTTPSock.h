@@ -29,8 +29,10 @@ public:
 	// !Csocket derived members
 
 	// Hooks
-	virtual bool OnPageRequest(const CString& sURI, CString& sPageRet) = 0;
+	virtual bool ForceLogin();
 	virtual bool OnLogin(const CString& sUser, const CString& sPass);
+	virtual bool OnPageRequest(const CString& sURI, CString& sPageRet) = 0;
+	virtual bool PrintFile(const CString& sFileName, CString sContentType = "");
 	// !Hooks
 
 	void CheckPost();
@@ -41,13 +43,17 @@ public:
 
 	bool PrintNotFound();
 	bool Redirect(const CString& sURL);
-	bool ForceLogin();
 	CString GetErrorPage(unsigned int uStatusId, const CString& sStatusMsg, const CString& sMessage);
 	bool PrintErrorPage(unsigned int uStatusId, const CString& sStatusMsg, const CString& sMessage);
 	void ParseParams(const CString& sParams);
 	void ParseURI();
 	void GetPage();
-	virtual bool PrintFile(const CString& sFileName, CString sContentType = "");
+
+	// Cookies
+	bool SetCookie(const CString& sKey, const CString& sValue);
+	const MCString& GetCookies() const;
+	CString GetCookie(const CString& sKey) const;
+	// Cookies
 
 	// Setters
 	void SetDocRoot(const CString& s);
@@ -89,6 +95,7 @@ protected:
 	MCString				m_msHeaders;
 	bool					m_bHTTP10Client;
 	CString					m_sIfNoneMatch;
+	MCString				m_msCookies;
 };
 
 #endif // !_HTTPSOCK_H
