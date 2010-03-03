@@ -668,20 +668,8 @@ bool CTemplate::ValidExpr(const CString& sExpression) {
 	}
 
 	if (sExpr.find("!=") != CString::npos) {
-		// GOOD:
-		// >>>>>>>>>>>>>>>>>>>     [PageName] [index]  -> [PageName != "index"]
-		// >>>>>>>>>>>>>>>>>>>     [PageName] [help]  -> [PageName != "help"]
-		//
-		// BAD:
-		// >>>>>>>>>>>>>>>>>>>     [PageName] ["index"]  -> [PageName != "index"]
-		// >>>>>>>>>>>>>>>>>>>     [PageName] ["help"]  -> [PageName != "help"]
-		//
-
-//CString CTemplate::Token(const CString& sStr, unsigned int uPos, bool bRest, const CString& sSep, bool bAllowEmpty,
- //                      const CString& sLeft, const CString& sRight, bool bTrimQuotes) {
 		sName = sExpr.Token(0, false, "!=").Trim_n();
 		sValue = sExpr.Token(1, true, "!=", false, "\"", "\"", true).Trim_n();
-		DEBUG(">>>>>>>>>>>>>>>>>>>     [" + sName + "] [" + sValue + "]  -> [" + sExpr + "]");
 		bNegate = !bNegate;
 	} else if (sExpr.find("==") != CString::npos) {
 		sName = sExpr.Token(0, false, "==").Trim_n();
