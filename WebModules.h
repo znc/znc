@@ -156,6 +156,8 @@ private:
 	CString                 m_sPath;        // Gets filled by ResolveModule()
 	CString                 m_sPage;        // Gets filled by ResolveModule()
 	CSmartPtr<CWebSession>	m_spSession;
+
+	static map<CString, CSmartPtr<CWebSession> > m_mspSessions;
 };
 
 #endif // !_WEBMODULES_H
