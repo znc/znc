@@ -26,7 +26,7 @@ bool CZNCTagHandler::HandleTag(CTemplate& Tmpl, const CString& sName, const CStr
 
 CWebSession::CWebSession(const CString& sId) : m_sId(sId) {
 	if (m_sId.empty()) {
-		m_sId = CBlowfish::MD5(CString::RandomString(4096), true);
+		m_sId = CString::RandomString(32);
 		DEBUG("Auto generated session: [" + m_sId + "]");
 	}
 
