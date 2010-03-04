@@ -11,6 +11,8 @@
 #include "znc.h"
 #include <sstream>
 
+map<CString, CSmartPtr<CWebSession> > CWebSock::m_mspSessions;
+
 CZNCTagHandler::CZNCTagHandler(CWebSock& WebSock) : CTemplateTagHandler(), m_WebSock(WebSock) {
 }
 
@@ -604,16 +606,15 @@ CSmartPtr<CWebSession> CWebSock::GetSession() const {
 		return m_spSession;
 	}
 
-	static map<CString, CSmartPtr<CWebSession> > mspSessions;
-	map<CString, CSmartPtr<CWebSession> >::const_iterator it = mspSessions.find(GetCookie("SessionId"));
+	map<CString, CSmartPtr<CWebSession> >::const_iterator it = m_mspSessions.find(GetCookie("SessionId"));
 
-	if (it != mspSessions.end()) {
+	if (it != m_mspSessions.end()) {
 		DEBUG("Found existing session from cookie: [" + GetCookie("SessionId") + "] IsLoggedIn(" + CString(it->second->IsLoggedIn() ? "true" : "false") + ")");
 		return it->second;
 	}
 
 	CSmartPtr<CWebSession> spSession(new CWebSession());
-	mspSessions.insert(make_pair(spSession->GetId(), spSession));
+	m_mspSessions.insert(make_pair(spSession->GetId(), spSession));
 
 	return spSession;
 }
