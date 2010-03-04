@@ -186,9 +186,6 @@ public:
 
 		return false;
 	}
-
-private:
-	map<CString, unsigned int>	m_suSwitchCounters;
 };
 
 MODULEDEFS(CNotesMod, "Keep and replay notes")
