@@ -495,6 +495,9 @@ bool CModule::PutModNotice(const CString& sLine, const CString& sIdent, const CS
 // CGlobalModule //
 ///////////////////
 CModule::EModRet CGlobalModule::OnConfigLine(const CString& sName, const CString& sValue, CUser* pUser, CChan* pChan) { return CONTINUE; }
+CModule::EModRet CGlobalModule::OnWriteConfig(CFile& Config) { return CONTINUE; }
+void CGlobalModule::OnWriteUserConfig(CFile& Config, CUser& User) {}
+void CGlobalModule::OnWriteChanConfig(CFile& Config, CChan& Chan) {}
 CModule::EModRet CGlobalModule::OnDeleteUser(CUser& User) { return CONTINUE; }
 void CGlobalModule::OnClientConnect(CClient* pClient, const CString& sHost, unsigned short uPort) {}
 CModule::EModRet CGlobalModule::OnLoginAttempt(CSmartPtr<CAuthBase> Auth) { return CONTINUE; }
@@ -595,6 +598,18 @@ bool CModules::OnModCTCP(const CString& sMessage) { MODUNLOADCHK(OnModCTCP(sMess
 ////////////////////
 bool CGlobalModules::OnConfigLine(const CString& sName, const CString& sValue, CUser* pUser, CChan* pChan) {
 	GLOBALMODHALTCHK(OnConfigLine(sName, sValue, pUser, pChan));
+}
+
+bool CGlobalModules::OnWriteConfig(CFile& Config) {
+	GLOBALMODHALTCHK(OnWriteConfig(Config));
+}
+
+void CGlobalModules::OnWriteUserConfig(CFile& Config, CUser& User) {
+	GLOBALMODCALL(OnWriteUserConfig(Config, User));
+}
+
+void CGlobalModules::OnWriteChanConfig(CFile& Config, CChan& Chan) {
+	GLOBALMODCALL(OnWriteChanConfig(Config, Chan));
 }
 
 bool CGlobalModules::OnDeleteUser(CUser& User) {

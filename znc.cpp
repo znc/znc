@@ -535,6 +535,10 @@ bool CZNC::WriteConfig() {
 		return false;
 	}
 
+	if (GetModules().OnWriteConfig(m_LockFile)) {
+		return false;
+	}
+
 	m_LockFile.Write("AnonIPLimit  = " + CString(m_uiAnonIPLimit) + "\n");
 
 	for (size_t l = 0; l < m_vpListeners.size(); l++) {

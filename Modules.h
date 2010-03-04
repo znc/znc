@@ -862,9 +862,32 @@ public:
 	 *  @param pChan If this line was found in a chan section, then this is
 	 *               the corresponding CChan instance.
 	 *  @return See CModule::EModRet.
-	 *  @todo How are modules supposed to write these into the config?
 	 */
 	virtual EModRet OnConfigLine(const CString& sName, const CString& sValue, CUser* pUser, CChan* pChan);
+	/** Called when ZNC starts rewriting the config file. This can be used
+	 *  re-write the "GM:" lines for OnConfigLine() which would get lost
+	 *  otherwise.
+	 *  @param Config Reference to the CFile which will be used for writing
+	 *                the config file.
+	 *  @return See CModule::EModRet.
+	 */
+	virtual EModRet OnWriteConfig(CFile& Config);
+	/** Called just before ZNC finishes a user section in the config file.
+	 *  This can be used to re-write the "GM:" lines for OnConfigLine()
+	 *  which would get lost otherwise.
+	 *  @param Config Reference to the CFile which will be used for writing
+	 *                the config file.
+	 *  @param User The user which is being written.
+	 */
+	virtual void OnWriteUserConfig(CFile& Config, CUser& User);
+	/** Called just before ZNC finishes a chan section in the config file.
+	 *  This can be used to re-write the "GM:" lines for OnConfigLine()
+	 *  which would get lost otherwise.
+	 *  @param Config Reference to the CFile which will be used for writing
+	 *                the config file.
+	 *  @param Chan The channel which is being written.
+	 */
+	virtual void OnWriteChanConfig(CFile& Config, CChan& Chan);
 	/** This module hook is called when a user is deleted.
 	 *  @param User The user which will be deleted.
 	 *  @return See CModule::EModRet.
@@ -907,6 +930,9 @@ public:
 	~CGlobalModules() {}
 
 	bool OnConfigLine(const CString& sName, const CString& sValue, CUser* pUser, CChan* pChan);
+	bool OnWriteConfig(CFile& Config);
+	void OnWriteUserConfig(CFile& Config, CUser& User);
+	void OnWriteChanConfig(CFile& Config, CChan& Chan);
 	bool OnDeleteUser(CUser& User);
 	void OnClientConnect(CClient* pClient, const CString& sHost, unsigned short uPort);
 	bool OnLoginAttempt(CSmartPtr<CAuthBase> Auth);
