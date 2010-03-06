@@ -934,12 +934,14 @@ void CIRCSock::ReachedMaxBuffer() {
 }
 
 void CIRCSock::ParseISupport(const CString& sLine) {
-	unsigned int i = 0;
-	CString sArg = sLine.Token(i++);
+	VCString vsTokens;
+	VCString::iterator it;
 
-	while (!sArg.empty()) {
-		CString sName = sArg.Token(0, false, "=");
-		CString sValue = sArg.Token(1, true, "=");
+	sLine.Split(" ", vsTokens, false);
+
+	for (it = vsTokens.begin(); it != vsTokens.end(); ++it) {
+		CString sName = it->Token(0, false, "=");
+		CString sValue = it->Token(1, true, "=");
 
 		if (sName.Equals("PREFIX")) {
 			CString sPrefixes = sValue.Token(1, false, ")");
@@ -971,14 +973,16 @@ void CIRCSock::ParseISupport(const CString& sLine) {
 				}
 			}
 		} else if (sName.Equals("NAMESX")) {
+			if (m_bNamesx)
+				continue;
 			m_bNamesx = true;
 			PutIRC("PROTOCTL NAMESX");
 		} else if (sName.Equals("UHNAMES")) {
+			if (m_bUHNames)
+				continue;
 			m_bUHNames = true;
 			PutIRC("PROTOCTL UHNAMES");
 		}
-
-		sArg = sLine.Token(i++);
 	}
 }
 
