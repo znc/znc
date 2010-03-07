@@ -37,12 +37,18 @@ public:
 			}
 			else {
 				CUtils::PrintError("Ignoring invalid SASL pwcheck method: " + *it);
+				sMessage = "Ignored invalid SASL pwcheck method";
 			}
 		}
 		method.TrimRight();
 
-		if (sasl_server_init(NULL, NULL) != SASL_OK){
-			CUtils::PrintError("SASL Could Not Be Initialized - Halting Startup");
+		if (method.empty()) {
+			sMessage = "Need a pwcheck method as argument (saslauthd, auxprop)";
+			return false;
+		}
+
+		if (sasl_server_init(NULL, NULL) != SASL_OK) {
+			sMessage = "SASL Could Not Be Initialized - Halting Startup";
 			return false;
 		}
 
