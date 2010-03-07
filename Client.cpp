@@ -309,14 +309,16 @@ void CClient::ReadLine(const CString& sData) {
 		Close(Csock::CLT_AFTERWRITE);	// Treat a client quit as a detach
 		return;		// Don't forward this msg.  We don't want the client getting us disconnected.
 	} else if (sCommand.Equals("PROTOCTL")) {
-		unsigned int i = 1;
-		while (!sLine.Token(i).empty()) {
-			if (sLine.Token(i).Equals("NAMESX")) {
+		VCString vsTokens;
+		VCString::const_iterator it;
+		sLine.Token(1, true).Split(" ", vsTokens, false);
+
+		for (it = vsTokens.begin(); it != vsTokens.end(); ++it) {
+			if (*it == "NAMESX") {
 				m_bNamesx = true;
-			} else if (sLine.Token(i).Equals("UHNAMES")) {
+			} else if (*it == "UHNAMES") {
 				m_bUHNames = true;
 			}
-			i++;
 		}
 		return;	// If the server understands it, we already enabled namesx / uhnames
 	} else if (sCommand.Equals("NOTICE")) {

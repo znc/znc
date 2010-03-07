@@ -130,21 +130,18 @@ public:
 	void SetPattern(const CString& s) { m_sPattern = s; }
 	void SetDisabled(bool b = true) { m_bDisabled = b; }
 	void SetSources(const CString& sSources) {
-		unsigned int uIdx = 1;
-		CString sSrc = sSources.Token(0);
+		VCString vsSources;
+		VCString::iterator it;
+		sSources.Split(" ", vsSources, false);
 
 		m_vsSources.clear();
 
-		while (sSrc.size()) {
-			if (sSrc[0] == '!') {
-				if (sSrc.size() > 1) {
-					m_vsSources.push_back(CWatchSource(sSrc.substr(1), true));
-				}
+		for (it = vsSources.begin(); it != vsSources.end(); ++it) {
+			if (it->at(0) == '!' && it->size() > 1) {
+				m_vsSources.push_back(CWatchSource(it->substr(1), true));
 			} else {
-				m_vsSources.push_back(CWatchSource(sSrc, false));
+				m_vsSources.push_back(CWatchSource(*it, false));
 			}
-
-			sSrc = sSources.Token(uIdx++);
 		}
 	}
 	// !Setters

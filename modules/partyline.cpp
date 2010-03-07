@@ -71,12 +71,13 @@ public:
 			}
 		}
 
-		CString sChan;
-		unsigned int a = 0;
-		while (!(sChan = sArgs.Token(a++)).empty()) {
-			if (sChan.Left(2) == CHAN_PREFIX) {
-				sChan = sChan.Left(32);
-				m_ssDefaultChans.insert(sChan);
+		VCString vsChans;
+		VCString::const_iterator it;
+		sArgs.Split(" ", vsChans, false);
+
+		for (it = vsChans.begin(); it != vsChans.end(); ++it) {
+			if (it->Left(2) == CHAN_PREFIX) {
+				m_ssDefaultChans.insert(it->Left(32));
 			}
 		}
 
