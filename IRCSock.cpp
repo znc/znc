@@ -988,48 +988,54 @@ void CIRCSock::ParseISupport(const CString& sLine) {
 
 void CIRCSock::ForwardRaw353(const CString& sLine) const {
 	vector<CClient*>& vClients = m_pUser->GetClients();
+	vector<CClient*>::iterator it;
+
+	for (it = vClients.begin(); it != vClients.end(); ++it) {
+		ForwardRaw353(sLine, *it);
+	}
+}
+
+void CIRCSock::ForwardRaw353(const CString& sLine, CClient* pClient) const {
 	CString sNicks = sLine.Token(5, true);
 	if (sNicks.Left(1) == ":")
 		sNicks.LeftChomp();
 
-	for (unsigned int a = 0; a < vClients.size(); a++) {
-		if ((!m_bNamesx || vClients[a]->HasNamesx()) && (!m_bUHNames || vClients[a]->HasUHNames())) {
-			// Client and server have both the same UHNames and Namesx stuff enabled
-			m_pUser->PutUser(sLine, vClients[a]);
-		} else {
-			// Get everything except the actual user list
-			CString sTmp = sLine.Token(0, false, " :") + " :";
+	if ((!m_bNamesx || pClient->HasNamesx()) && (!m_bUHNames || pClient->HasUHNames())) {
+		// Client and server have both the same UHNames and Namesx stuff enabled
+		m_pUser->PutUser(sLine, pClient);
+	} else {
+		// Get everything except the actual user list
+		CString sTmp = sLine.Token(0, false, " :") + " :";
 
-			VCString vsNicks;
-			VCString::const_iterator it;
+		VCString vsNicks;
+		VCString::const_iterator it;
 
-			// This loop runs once for every nick on the channel
-			sNicks.Split(" ", vsNicks, false);
-			for (it = vsNicks.begin(); it != vsNicks.end(); ++it) {
-				CString sNick = *it;
-				if (sNick.empty())
-					break;
+		// This loop runs once for every nick on the channel
+		sNicks.Split(" ", vsNicks, false);
+		for (it = vsNicks.begin(); it != vsNicks.end(); ++it) {
+			CString sNick = *it;
+			if (sNick.empty())
+				break;
 
-				if (m_bNamesx && !vClients[a]->HasNamesx() && IsPermChar(sNick[0])) {
-					// Server has, client doesn't have NAMESX, so we just use the first perm char
-					size_t pos = sNick.find_first_not_of(GetPerms());
-					if (pos >= 2 && pos != CString::npos) {
-						sNick = sNick[0] + sNick.substr(pos);
-					}
+			if (m_bNamesx && !pClient->HasNamesx() && IsPermChar(sNick[0])) {
+				// Server has, client doesn't have NAMESX, so we just use the first perm char
+				size_t pos = sNick.find_first_not_of(GetPerms());
+				if (pos >= 2 && pos != CString::npos) {
+					sNick = sNick[0] + sNick.substr(pos);
 				}
-
-				if (m_bUHNames && !vClients[a]->HasUHNames()) {
-					// Server has, client hasnt UHNAMES,
-					// so we strip away ident and host.
-					sNick = sNick.Token(0, false, "!");
-				}
-
-				sTmp += sNick + " ";
 			}
-			// Strip away the spaces we inserted at the end
-			sTmp.TrimRight(" ");
-			m_pUser->PutUser(sTmp, vClients[a]);
+
+			if (m_bUHNames && !pClient->HasUHNames()) {
+				// Server has, client hasnt UHNAMES,
+				// so we strip away ident and host.
+				sNick = sNick.Token(0, false, "!");
+			}
+
+			sTmp += sNick + " ";
 		}
+		// Strip away the spaces we inserted at the end
+		sTmp.TrimRight(" ");
+		m_pUser->PutUser(sTmp, pClient);
 	}
 }
 

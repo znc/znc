@@ -15,6 +15,7 @@
 // Forward Declarations
 class CChan;
 class CUser;
+class CClient;
 // !Forward Declarations
 
 class CIRCSock : public CZNCSock {
@@ -79,6 +80,7 @@ private:
 	void SetNick(const CString& sNick);
 	void ParseISupport(const CString& sLine);
 	void ForwardRaw353(const CString& sLine) const;
+	void ForwardRaw353(const CString& sLine, CClient* pClient) const;
 	// This is called when we connect and the nick we want is already taken
 	void SendAltNick(const CString& sBadNick);
 protected:
