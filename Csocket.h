@@ -28,7 +28,7 @@
 * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 *
 *
-* $Revision: 1.223 $
+* $Revision: 1.227 $
 */
 
 // note to compile with win32 need to link to winsock2, using gcc its -lws2_32
@@ -119,11 +119,18 @@
 
 #ifdef _WIN32
 typedef SOCKET cs_sock_t;
+#ifdef _WIN64
+typedef signed __int64 cs_ssize_t;
+#else
+typedef signed int cs_ssize_t;
+#endif  /* _WIN64 */
 #define CS_INVALID_SOCK	INVALID_SOCKET
 #else
 typedef int cs_sock_t;
+typedef ssize_t cs_ssize_t;
 #define CS_INVALID_SOCK	-1
 #endif /* _WIN32 */
+
 
 #ifndef _NO_CSOCKET_NS // some people may not want to use a namespace
 namespace Csocket
@@ -588,7 +595,7 @@ public:
 	* Returns READ_TIMEDOUT for a connection that timed out at the TCP level
 	* Otherwise returns the bytes read into data
 	*/
-	virtual ssize_t Read( char *data, size_t len );
+	virtual cs_ssize_t Read( char *data, size_t len );
 	CS_STRING GetLocalIP();
 	CS_STRING GetRemoteIP();
 
@@ -1347,6 +1354,12 @@ public:
 				pcSock->SetIPv6( true );
 #endif /* HAVE_IPV6 */
 		}
+#ifdef HAVE_IPV6
+		else
+		{
+				pcSock->SetIPv6( true );
+		}
+#endif /* HAVE_IPV6 */
 #ifdef HAVE_LIBSSL
 		pcSock->SetSSL( cListen.GetIsSSL() );
 		if( ( cListen.GetIsSSL() ) && ( !cListen.GetPemLocation().empty() ) )
@@ -1488,7 +1501,7 @@ public:
 
 						CSCharBuffer cBuff( iLen );
 
-						ssize_t bytes = pcSock->Read( cBuff(), iLen );
+						cs_ssize_t bytes = pcSock->Read( cBuff(), iLen );
 
 						if ( ( bytes != T::READ_TIMEDOUT ) && ( bytes != T::READ_CONNREFUSED )
 							&& ( !pcSock->IsConnected() ) )
@@ -1949,7 +1962,7 @@ private:
 					{
 						pcSock->Close();
 					}
-					if( pcSock->GetWriteBuffer().size() )
+					if( !pcSock->GetWriteBuffer().empty() )
 					{ // this means we need to write again, not everything got knocked out
 						TFD_SET( iWSock, &wfds );
 						bHasWriteable = true;
