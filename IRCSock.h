@@ -76,11 +76,13 @@ public:
 	// This is true if we are past raw 001
 	bool IsAuthed() const { return m_bAuthed; }
 	// !Getters
+
+	// This handles NAMESX and UHNAMES in a raw 353 reply
+	void ForwardRaw353(const CString& sLine) const;
+	void ForwardRaw353(const CString& sLine, CClient* pClient) const;
 private:
 	void SetNick(const CString& sNick);
 	void ParseISupport(const CString& sLine);
-	void ForwardRaw353(const CString& sLine) const;
-	void ForwardRaw353(const CString& sLine, CClient* pClient) const;
 	// This is called when we connect and the nick we want is already taken
 	void SendAltNick(const CString& sBadNick);
 protected:
