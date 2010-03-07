@@ -1000,10 +1000,13 @@ void CIRCSock::ForwardRaw353(const CString& sLine) const {
 			// Get everything except the actual user list
 			CString sTmp = sLine.Token(0, false, " :") + " :";
 
-			unsigned int i = 0;
+			VCString vsNicks;
+			VCString::const_iterator it;
+
 			// This loop runs once for every nick on the channel
-			for (;;) {
-				CString sNick = sNicks.Token(i).Trim_n(" ");
+			sNicks.Split(" ", vsNicks, false);
+			for (it = vsNicks.begin(); it != vsNicks.end(); ++it) {
+				CString sNick = *it;
 				if (sNick.empty())
 					break;
 
@@ -1022,7 +1025,6 @@ void CIRCSock::ForwardRaw353(const CString& sLine) const {
 				}
 
 				sTmp += sNick + " ";
-				i++;
 			}
 			// Strip away the spaces we inserted at the end
 			sTmp.TrimRight(" ");

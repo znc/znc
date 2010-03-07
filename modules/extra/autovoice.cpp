@@ -109,14 +109,13 @@ public:
 	virtual bool OnLoad(const CString& sArgs, CString& sMessage) {
 		// Load the chans from the command line
 		unsigned int a = 0;
-		CString sChan = sArgs.Token(a++);
+		VCString vsChans;
+		sArgs.Split(" ", vsChans, false);
 
-		while (!sChan.empty()) {
+		for (VCString::const_iterator it = vsChans.begin(); it != vsChans.end(); ++it) {
 			CString sName = "Args";
 			sName += CString(a);
-			AddUser(sName, "*", sChan);
-
-			sChan = sArgs.Token(a++);
+			AddUser(sName, "*", *it);
 		}
 
 		// Load the saved users

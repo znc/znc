@@ -27,17 +27,17 @@ public:
 	}
 
 	virtual bool OnLoad(const CString& sArgs, CString& sMessage) {
-		int i(0);
-		CString arg(sArgs.Token(i));
+		VCString vsChans;
+		VCString::const_iterator it;
+		sArgs.Split(" ", vsChans, false);
 
-		while (!arg.empty()) {
-			if (arg.StrCmp("saslauthd") || arg.StrCmp("auxprop")) {
-				method += arg + " ";
+		for (it = vsChans.begin(); it != vsChans.end(); ++it) {
+			if (it->StrCmp("saslauthd") || it->StrCmp("auxprop")) {
+				method += *it + " ";
 			}
 			else {
-				CUtils::PrintError("Ignoring invalid SASL pwcheck method: " + arg);
+				CUtils::PrintError("Ignoring invalid SASL pwcheck method: " + *it);
 			}
-			arg = sArgs.Token(++i);
 		}
 		method.TrimRight();
 

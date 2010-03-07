@@ -17,15 +17,13 @@ public:
 	}
 
 	virtual bool OnLoad(const CString& sArgs, CString& sMessage) {
-		unsigned int a = 0;
-		CString sChan = sArgs.Token(a++);
+		VCString vsChans;
+		sArgs.Split(" ", vsChans, false);
 
-		while (!sChan.empty()) {
-			if (!Add(sChan)) {
-				PutModule("Unable to add [" + sChan + "]");
+		for (VCString::const_iterator it = vsChans.begin(); it != vsChans.end(); ++it) {
+			if (!Add(*it)) {
+				PutModule("Unable to add [" + *it + "]");
 			}
-
-			sChan = sArgs.Token(a++);
 		}
 
 		// Load our saved settings, ignore errors
