@@ -634,6 +634,39 @@ void CIRCSock::ReadLine(const CString& sData) {
 			if (!m_pUser->IsUserAttached()) {
 				m_pUser->AddQueryBuffer(":" + Nick.GetNickMask() + " WALLOPS ", ":" + m_pUser->AddTimestamp(sMsg), false);
 			}
+		} else if (sCmd.Equals("CAP")) {
+			// sRest.Token(0) is most likely "*". No idea why, the
+			// CAP spec don't mention this, but all implementations
+			// I've seen add this extra asterisk
+			CString sSubCmd = sRest.Token(1);
+			CString sArgs = sRest.Token(2, true).TrimPrefix_n(":");
+
+			if (sSubCmd == "LS" && !m_bAuthed) {
+				VCString vsTokens;
+				VCString::iterator it;
+				sArgs.Split(" ", vsTokens, false);
+
+				for (it = vsTokens.begin(); it != vsTokens.end(); ++it) {
+					if (*it == "multi-prefix" || *it == "userhost-in-names") {
+						PutIRC("CAP REQ " + *it);
+					}
+				}
+
+				// Tell the IRC server we are done with CAP
+				PutIRC("CAP END");
+			} else if (sSubCmd == "ACK" && !m_bAuthed) {
+				VCString vsTokens;
+				VCString::iterator it;
+				sArgs.Split(" ", vsTokens, false);
+
+				for (it = vsTokens.begin(); it != vsTokens.end(); ++it) {
+					if (*it == "multi-prefix") {
+						m_bNamesx = true;
+					} else if (*it == "userhost-in-names") {
+						m_bUHNames = true;
+					}
+				}
+			}
 		}
 	}
 
@@ -832,6 +865,8 @@ void CIRCSock::Connected() {
 	CString sRealName = m_pUser->GetRealName();
 
 	MODULECALL(OnIRCRegistration(sPass, sNick, sIdent, sRealName), m_pUser, NULL, return);
+
+	PutIRC("CAP LS");
 
 	if (!sPass.empty()) {
 		PutIRC("PASS " + sPass);
