@@ -8,6 +8,7 @@
 
 #include "znc.h"
 #include "User.h"
+#include "IRCSock.h"
 
 struct reply {
 	const char *szReply;
@@ -214,7 +215,7 @@ public:
 
 		while (m_pReplies[i].szReply != NULL) {
 			if (m_pReplies[i].szReply == sCmd) {
-				if (RouteReply(sLine, m_pReplies[i].bLastResponse))
+				if (RouteReply(sLine, m_pReplies[i].bLastResponse, sCmd == "353"))
 					return HALTCORE;
 				return CONTINUE;
 			}
@@ -277,12 +278,16 @@ public:
 	}
 
 private:
-	bool RouteReply(const CString& sLine, bool bFinished = false)
+	bool RouteReply(const CString& sLine, bool bFinished = false, bool bIsRaw353 = false)
 	{
 		if (!m_pDoing)
 			return false;
 
-		m_pDoing->PutClient(sLine);
+		// 353 needs special treatment due to NAMESX and UHNAMES
+		if (bIsRaw353)
+			GetUser()->GetIRCSock()->ForwardRaw353(sLine, m_pDoing);
+		else
+			m_pDoing->PutClient(sLine);
 
 		if (bFinished) {
 			// Stop the timeout
