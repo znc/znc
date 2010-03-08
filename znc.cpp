@@ -549,7 +549,18 @@ bool CZNC::WriteConfig() {
 			sHostPortion = sHostPortion.FirstLine() + " ";
 		}
 
-		CString s6 = (pListener->IsIPV6()) ? "6" : " ";
+		CString s6;
+		switch (pListener->GetAddrType()) {
+			case ADDR_IPV4ONLY:
+				s6 = "4";
+				break;
+			case ADDR_IPV6ONLY:
+				s6 = "6";
+				break;
+			case ADDR_ALL:
+				s6 = " ";
+				break;
+		}
 
 		m_LockFile.Write("Listen" + s6 + "      = " + sHostPortion + CString((pListener->IsSSL()) ? "+" : "") + CString(pListener->GetPort()) + "\n");
 	}
@@ -1426,14 +1437,20 @@ bool CZNC::DoRehash(CString& sError)
 					}
 				}
 			} else {
-				if (sName.Equals("Listen") || sName.Equals("ListenPort") || sName.Equals("Listen6")) {
+				if (sName.Equals("Listen") || sName.Equals("ListenPort") || sName.Equals("Listen6") || sName.Equals("Listen4")) {
 					bool bSSL = false;
-					bool bIPV6 = sName.Equals("Listen6");
+					EAddrType eAddr = ADDR_ALL;
+					if (sName.Equals("Listen4")) {
+						eAddr = ADDR_IPV4ONLY;
+					}
+					if (sName.Equals("Listen6")) {
+						eAddr = ADDR_IPV6ONLY;
+					}
 					CString sPort;
 
 					CString sBindHost;
 
-					if (!bIPV6) {
+					if (ADDR_IPV4ONLY == eAddr) {
 						sValue.Replace(":", " ");
 					}
 
@@ -1457,15 +1474,22 @@ bool CZNC::DoRehash(CString& sError)
 
 					CString sIPV6Comment;
 
-					if (bIPV6) {
-						sIPV6Comment = " using ipv6";
+					switch (eAddr) {
+						case ADDR_ALL:
+							sIPV6Comment = "";
+							break;
+						case ADDR_IPV4ONLY:
+							sIPV6Comment = " using ipv4";
+							break;
+						case ADDR_IPV6ONLY:
+							sIPV6Comment = " using ipv6";
 					}
 
 					unsigned short uPort = sPort.ToUShort();
 					CUtils::PrintAction("Binding to port [" + CString((bSSL) ? "+" : "") + CString(uPort) + "]" + sHostComment + sIPV6Comment);
 
 #ifndef HAVE_IPV6
-					if (bIPV6) {
+					if (ADDR_IPV6ONLY == eAddr) {
 						sError = "IPV6 is not enabled";
 						CUtils::PrintStatus(false, sError);
 						return false;
@@ -1503,7 +1527,7 @@ bool CZNC::DoRehash(CString& sError)
 						return false;
 					}
 
-					CListener* pListener = new CListener(uPort, sBindHost, bSSL, bIPV6);
+					CListener* pListener = new CListener(uPort, sBindHost, bSSL, eAddr);
 
 					if (!pListener->Listen()) {
 						sError = "Unable to bind [" + CString(strerror(errno)) + "]";

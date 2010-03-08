@@ -207,11 +207,11 @@ public:
 
 class CListener {
 public:
-	CListener(unsigned short uPort, const CString& sBindHost, bool bSSL, bool bIPV6) {
+	CListener(unsigned short uPort, const CString& sBindHost, bool bSSL, EAddrType eAddr) {
 		m_uPort = uPort;
 		m_sBindHost = sBindHost;
 		m_bSSL = bSSL;
-		m_bIPV6 = bIPV6;
+		m_eAddr = eAddr;
 		m_pListener = NULL;
 	}
 
@@ -222,14 +222,14 @@ public:
 
 	// Setters
 	void SetSSL(bool b) { m_bSSL = b; }
-	void SetIPV6(bool b) { m_bIPV6 = b; }
+	void SetAddrType(EAddrType eAddr) { m_eAddr = eAddr; }
 	void SetPort(unsigned short u) { m_uPort = u; }
 	void SetBindHost(const CString& s) { m_sBindHost = s; }
 	// !Setters
 
 	// Getters
 	bool IsSSL() const { return m_bSSL; }
-	bool IsIPV6() const { return m_bIPV6; }
+	EAddrType GetAddrType() const { return m_eAddr; }
 	unsigned short GetPort() const { return m_uPort; }
 	const CString& GetBindHost() const { return m_sBindHost; }
 	CRealListener* GetRealListener() const { return m_pListener; }
@@ -251,12 +251,12 @@ public:
 #endif
 
 		return CZNC::Get().GetManager().ListenHost(m_uPort, "_LISTENER", m_sBindHost, bSSL, SOMAXCONN,
-				m_pListener, 0, m_bIPV6);
+				m_pListener, 0, m_eAddr);
 	}
 private:
 protected:
 	bool			m_bSSL;
-	bool			m_bIPV6;
+	EAddrType		m_eAddr;
 	unsigned short	m_uPort;
 	CString			m_sBindHost;
 	CRealListener*	m_pListener;

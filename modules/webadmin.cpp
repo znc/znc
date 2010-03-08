@@ -735,9 +735,20 @@ public:
 #endif
 
 #ifdef HAVE_IPV6
-				if (pListener->IsIPV6()) {
-					l["IsIPV6"] = "true";
+				switch (pListener->GetAddrType()) {
+					case ADDR_IPV4ONLY:
+						l["IsIPV4"] = "true";
+						break;
+					case ADDR_IPV6ONLY:
+						l["IsIPV6"] = "true";
+						break;
+					case ADDR_ALL:
+						l["IsIPV4"] = "true";
+						l["IsIPV6"] = "true";
+						break;
 				}
+#else
+				l["IsIPV4"] = "true";
 #endif
 			}
 

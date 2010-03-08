@@ -20,12 +20,18 @@ public:
 	~CZNCSock() {}
 };
 
+enum EAddrType {
+	ADDR_IPV4ONLY,
+	ADDR_IPV6ONLY,
+	ADDR_ALL
+};
+
 class CSockManager : public TSocketManager<CZNCSock> {
 public:
 	CSockManager() {}
 	virtual ~CSockManager() {}
 
-	bool ListenHost(u_short iPort, const CString& sSockName, const CString& sBindHost, bool bSSL = false, int iMaxConns = SOMAXCONN, CZNCSock *pcSock = NULL, u_int iTimeout = 0, bool bIsIPv6 = false) {
+	bool ListenHost(u_short iPort, const CString& sSockName, const CString& sBindHost, bool bSSL = false, int iMaxConns = SOMAXCONN, CZNCSock *pcSock = NULL, u_int iTimeout = 0, EAddrType eAddr = ADDR_ALL) {
 		CSListener L(iPort, sBindHost);
 
 		L.SetSockName(sSockName);
@@ -34,19 +40,27 @@ public:
 		L.SetMaxConns(iMaxConns);
 
 #ifdef HAVE_IPV6
-		if (bIsIPv6) {
-			L.SetAFRequire(CSSockAddr::RAF_INET6);
+		switch (eAddr) {
+			case ADDR_IPV4ONLY:
+				L.SetAFRequire(CSSockAddr::RAF_INET);
+				break;
+			case ADDR_IPV6ONLY:
+				L.SetAFRequire(CSSockAddr::RAF_INET6);
+				break;
+			case ADDR_ALL:
+				L.SetAFRequire(CSSockAddr::RAF_ANY);
+				break;
 		}
 #endif
 
 		return Listen(L, pcSock);
 	}
 
-	bool ListenAll(u_short iPort, const CString& sSockName, bool bSSL = false, int iMaxConns = SOMAXCONN, CZNCSock *pcSock = NULL, u_int iTimeout = 0, bool bIsIPv6 = false) {
-		return ListenHost(iPort, sSockName, "", bSSL, iMaxConns, pcSock, iTimeout, bIsIPv6);
+	bool ListenAll(u_short iPort, const CString& sSockName, bool bSSL = false, int iMaxConns = SOMAXCONN, CZNCSock *pcSock = NULL, u_int iTimeout = 0, EAddrType eAddr = ADDR_ALL) {
+		return ListenHost(iPort, sSockName, "", bSSL, iMaxConns, pcSock, iTimeout, eAddr);
 	}
 
-	u_short ListenRand(const CString& sSockName, const CString& sBindHost, bool bSSL = false, int iMaxConns = SOMAXCONN, CZNCSock *pcSock = NULL, u_int iTimeout = 0, bool bIsIPv6 = false) {
+	u_short ListenRand(const CString& sSockName, const CString& sBindHost, bool bSSL = false, int iMaxConns = SOMAXCONN, CZNCSock *pcSock = NULL, u_int iTimeout = 0, EAddrType eAddr = ADDR_ALL) {
 		unsigned short uPort = 0;
 		CSListener L(0, sBindHost);
 
@@ -56,8 +70,16 @@ public:
 		L.SetMaxConns(iMaxConns);
 
 #ifdef HAVE_IPV6
-		if (bIsIPv6) {
-			L.SetAFRequire(CSSockAddr::RAF_INET6);
+		switch (eAddr) {
+			case ADDR_IPV4ONLY:
+				L.SetAFRequire(CSSockAddr::RAF_INET);
+				break;
+			case ADDR_IPV6ONLY:
+				L.SetAFRequire(CSSockAddr::RAF_INET6);
+				break;
+			case ADDR_ALL:
+				L.SetAFRequire(CSSockAddr::RAF_ANY);
+				break;
 		}
 #endif
 
@@ -66,8 +88,8 @@ public:
 		return uPort;
 	}
 
-	u_short ListenAllRand(const CString& sSockName, bool bSSL = false, int iMaxConns = SOMAXCONN, CZNCSock *pcSock = NULL, u_int iTimeout = 0, bool bIsIPv6 = false) {
-		return(ListenRand(sSockName, "", bSSL, iMaxConns, pcSock, iTimeout, bIsIPv6));
+	u_short ListenAllRand(const CString& sSockName, bool bSSL = false, int iMaxConns = SOMAXCONN, CZNCSock *pcSock = NULL, u_int iTimeout = 0, EAddrType eAddr = ADDR_ALL) {
+		return(ListenRand(sSockName, "", bSSL, iMaxConns, pcSock, iTimeout, eAddr));
 	}
 
 	bool Connect(const CString& sHostname, u_short iPort , const CString& sSockName, int iTimeout = 60, bool bSSL = false, const CString& sBindHost = "", CZNCSock *pcSock = NULL) {
