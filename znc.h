@@ -179,8 +179,9 @@ public:
 	virtual ~CRealListener() {}
 
 	virtual bool ConnectionFrom(const CString& sHost, unsigned short uPort) {
-		DEBUG(GetSockName() << " == ConnectionFrom(" << sHost << ", " << uPort << ")");
-		return CZNC::Get().IsHostAllowed(sHost);
+		bool bHostAllowed = CZNC::Get().IsHostAllowed(sHost);
+		DEBUG(GetSockName() << " == ConnectionFrom(" << sHost << ", " << uPort << ") [" << (bHostAllowed ? "Allowed" : "Not allowed") << "]");
+		return bHostAllowed;
 	}
 
 	virtual Csock* GetSockObj(const CString& sHost, unsigned short uPort) {
