@@ -27,11 +27,6 @@ bool CZNCTagHandler::HandleTag(CTemplate& Tmpl, const CString& sName, const CStr
 }
 
 CWebSession::CWebSession(const CString& sId) : m_sId(sId) {
-	if (m_sId.empty()) {
-		m_sId = CString::RandomString(32);
-		DEBUG("Auto generated session: [" + m_sId + "]");
-	}
-
 	m_bLoggedIn = false;
 	m_pUser = NULL;
 }
@@ -601,7 +596,7 @@ void CWebSock::PrintErrorPage(const CString& sMessage) {
 	m_Template["Error"] = sMessage;
 }
 
-CSmartPtr<CWebSession> CWebSock::GetSession() const {
+CSmartPtr<CWebSession> CWebSock::GetSession() {
 	if (!m_spSession.IsNull()) {
 		return m_spSession;
 	}
@@ -613,7 +608,18 @@ CSmartPtr<CWebSession> CWebSock::GetSession() const {
 		return it->second;
 	}
 
-	CSmartPtr<CWebSession> spSession(new CWebSession());
+	CString sSessionID;
+	do {
+		sSessionID = CString::RandomString(32);
+		sSessionID += ":" + GetRemoteIP() + ":" + CString(GetRemotePort());
+		sSessionID += ":" + GetLocalIP()  + ":" + CString(GetLocalPort());
+		sSessionID += ":" + CString(time(NULL));
+		sSessionID = sSessionID.SHA256();
+
+		DEBUG("Auto generated session: [" + sSessionID + "]");
+	} while (m_mspSessions.find(sSessionID) != m_mspSessions.end());
+
+	CSmartPtr<CWebSession> spSession(new CWebSession(sSessionID));
 	m_mspSessions.insert(make_pair(spSession->GetId(), spSession));
 
 	return spSession;
@@ -640,7 +646,7 @@ Csock* CWebSock::GetSockObj(const CString& sHost, unsigned short uPort) {
 	return pSock;
 }
 
-CString CWebSock::GetSkinName() const {
+CString CWebSock::GetSkinName() {
 	CSmartPtr<CWebSession> spSession = GetSession();
 
 	if (spSession->IsLoggedIn() && !spSession->GetUser()->GetSkinName().empty()) {

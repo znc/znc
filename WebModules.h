@@ -34,7 +34,7 @@ private:
 
 class CWebSession {
 public:
-	CWebSession(const CString& sId = "");
+	CWebSession(const CString& sId);
 	virtual ~CWebSession() {}
 
 	const CString& GetId() const { return m_sId; }
@@ -135,14 +135,14 @@ public:
 
 	void PrintErrorPage(const CString& sMessage);
 
-	CSmartPtr<CWebSession> GetSession() const;
+	CSmartPtr<CWebSession> GetSession();
 
 	virtual Csock* GetSockObj(const CString& sHost, unsigned short uPort);
 	CString GetModWebPath(const CString& sModName) const;
 	CString GetSkinPath(const CString& sSkinName) const;
 	CModule* GetModule() const { return (CModule*) m_pModule; }
 	size_t GetAvailSkins(vector<CFile>& vRet);
-	CString GetSkinName() const;
+	CString GetSkinName();
 
 	CString GetCookie(const CString& sKey) const;
 	bool SetCookie(const CString& sKey, const CString& sValue);
