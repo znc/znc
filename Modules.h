@@ -888,6 +888,13 @@ public:
 	 *  @param Chan The channel which is being written.
 	 */
 	virtual void OnWriteChanConfig(CFile& Config, CChan& Chan);
+	/** This module hook is called when a user is being added.
+	 * @param User The user which will be added.
+	 * @param sErrorRet A message that may be displayed to the user if
+	 * 	the module stops adding the user.
+	 * @return See CModule::EModRet.
+	 */
+	virtual EModRet OnAddUser(CUser& User, CString& sErrorRet);
 	/** This module hook is called when a user is deleted.
 	 *  @param User The user which will be deleted.
 	 *  @return See CModule::EModRet.
@@ -933,6 +940,7 @@ public:
 	bool OnWriteConfig(CFile& Config);
 	void OnWriteUserConfig(CFile& Config, CUser& User);
 	void OnWriteChanConfig(CFile& Config, CChan& Chan);
+	bool OnAddUser(CUser& User, CString& sErrorRet);
 	bool OnDeleteUser(CUser& User);
 	void OnClientConnect(CClient* pClient, const CString& sHost, unsigned short uPort);
 	bool OnLoginAttempt(CSmartPtr<CAuthBase> Auth);
