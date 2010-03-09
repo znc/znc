@@ -667,10 +667,10 @@ bool CZNC::WriteNewConfig(const CString& sConfigFile) {
 	}
 #endif
 
-	CString s6 = " ";
+	CString s6 = "4";
 #ifdef HAVE_IPV6
 	if (CUtils::GetBoolInput("Would you like ZNC to listen using ipv6?", false)) {
-		s6 = "6";
+		s6 = " ";
 	}
 #endif
 
