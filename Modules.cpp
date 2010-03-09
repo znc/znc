@@ -498,6 +498,7 @@ CModule::EModRet CGlobalModule::OnConfigLine(const CString& sName, const CString
 CModule::EModRet CGlobalModule::OnWriteConfig(CFile& Config) { return CONTINUE; }
 void CGlobalModule::OnWriteUserConfig(CFile& Config, CUser& User) {}
 void CGlobalModule::OnWriteChanConfig(CFile& Config, CChan& Chan) {}
+CModule::EModRet CGlobalModule::OnAddUser(CUser& User, CString& sErrorRet) { return CONTINUE; }
 CModule::EModRet CGlobalModule::OnDeleteUser(CUser& User) { return CONTINUE; }
 void CGlobalModule::OnClientConnect(CClient* pClient, const CString& sHost, unsigned short uPort) {}
 CModule::EModRet CGlobalModule::OnLoginAttempt(CSmartPtr<CAuthBase> Auth) { return CONTINUE; }
@@ -610,6 +611,10 @@ void CGlobalModules::OnWriteUserConfig(CFile& Config, CUser& User) {
 
 void CGlobalModules::OnWriteChanConfig(CFile& Config, CChan& Chan) {
 	GLOBALMODCALL(OnWriteChanConfig(Config, Chan));
+}
+
+bool CGlobalModules::OnAddUser(CUser& User, CString& sErrorRet) {
+	GLOBALMODHALTCHK(OnAddUser(User, sErrorRet));
 }
 
 bool CGlobalModules::OnDeleteUser(CUser& User) {
