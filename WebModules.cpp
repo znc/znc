@@ -96,6 +96,11 @@ void CWebAuth::RefusedLogin(const CString& sReason) {
 	}
 }
 
+void CWebAuth::Invalidate() {
+	CAuthBase::Invalidate();
+	m_pWebSock = NULL;
+}
+
 CWebSock::CWebSock(CModule* pModule) : CHTTPSock(pModule) {
 	m_pModule = pModule;
 	m_bPathsSet = false;
@@ -113,8 +118,7 @@ CWebSock::CWebSock(CModule* pModule, const CString& sHostname, unsigned short uP
 
 CWebSock::~CWebSock() {
 	if (!m_spAuth.IsNull()) {
-		CWebAuth* pAuth = (CWebAuth*) &(*m_spAuth);
-		pAuth->SetWebSock(NULL);
+		m_spAuth->Invalidate();
 	}
 
 	CUser *pUser = GetSession()->GetUser();

@@ -98,6 +98,7 @@ public:
 	void SetWebSock(CWebSock* pWebSock) { m_pWebSock = pWebSock; }
 	void AcceptedLogin(CUser& User);
 	void RefusedLogin(const CString& sReason);
+	void Invalidate();
 private:
 protected:
 	CWebSock*	m_pWebSock;
