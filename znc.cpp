@@ -1803,7 +1803,7 @@ bool CZNC::AddUser(CUser* pUser, CString& sErrorRet) {
 				<< sErrorRet << "]");
 		return false;
 	}
-	if (!GetModules().OnAddUser(*pUser, sErrorRet)) {
+	if (GetModules().OnAddUser(*pUser, sErrorRet)) {
 		DEBUG("AddUser [" << pUser->GetUserName() << "] aborted by a module ["
 			<< sErrorRet << "]");
 		return false;
