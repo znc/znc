@@ -118,10 +118,10 @@ CWebSock::~CWebSock() {
 	}
 
 	// If the module IsFake() then it was created as a dummy and needs to be deleted
-	CModule* pMod = GetModule();
-	if (pMod && pMod->IsFake()) {
-		pMod->UnlinkSocket(this);
-		delete pMod;
+	if (m_pModule && m_pModule->IsFake()) {
+		m_pModule->UnlinkSocket(this);
+		delete m_pModule;
+		m_pModule = NULL;
 	}
 }
 

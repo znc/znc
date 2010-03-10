@@ -44,11 +44,15 @@ CSocket::CSocket(CModule* pModule, const CString& sHostname, unsigned short uPor
 }
 
 CSocket::~CSocket() {
-	CUser *pUser = m_pModule->GetUser();
+	CUser *pUser = NULL;
 
-	m_pModule->UnlinkSocket(this);
+	// CWebSock could cause us to have a NULL pointer here
+	if (m_pModule) {
+		pUser = m_pModule->GetUser();
+		m_pModule->UnlinkSocket(this);
+	}
 
-	if (!m_pModule->IsGlobal() && pUser) {
+	if (pUser && !m_pModule->IsGlobal()) {
 		pUser->AddBytesWritten(GetBytesWritten());
 		pUser->AddBytesRead(GetBytesRead());
 	} else {
