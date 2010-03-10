@@ -11,7 +11,8 @@
 #include "znc.h"
 #include <sstream>
 
-map<CString, CSmartPtr<CWebSession> > CWebSock::m_mspSessions;
+// Sessions are valid for a day, (24h, ...)
+TCacheMap<CString, CSmartPtr<CWebSession> > CWebSock::m_mspSessions(24 * 60 * 60 * 1000);
 
 CZNCTagHandler::CZNCTagHandler(CWebSock& WebSock) : CTemplateTagHandler(), m_WebSock(WebSock) {
 }
@@ -601,11 +602,13 @@ CSmartPtr<CWebSession> CWebSock::GetSession() {
 		return m_spSession;
 	}
 
-	map<CString, CSmartPtr<CWebSession> >::const_iterator it = m_mspSessions.find(GetCookie("SessionId"));
+	CSmartPtr<CWebSession> *pSession = m_mspSessions.GetItem(GetCookie("SessionId"));
 
-	if (it != m_mspSessions.end()) {
-		DEBUG("Found existing session from cookie: [" + GetCookie("SessionId") + "] IsLoggedIn(" + CString(it->second->IsLoggedIn() ? "true" : "false") + ")");
-		return it->second;
+	if (pSession != NULL) {
+		// Refresh the timeout
+		m_mspSessions.AddItem((*pSession)->GetId(), *pSession);
+		DEBUG("Found existing session from cookie: [" + GetCookie("SessionId") + "] IsLoggedIn(" + CString((*pSession)->IsLoggedIn() ? "true" : "false") + ")");
+		return *pSession;
 	}
 
 	CString sSessionID;
@@ -617,10 +620,10 @@ CSmartPtr<CWebSession> CWebSock::GetSession() {
 		sSessionID = sSessionID.SHA256();
 
 		DEBUG("Auto generated session: [" + sSessionID + "]");
-	} while (m_mspSessions.find(sSessionID) != m_mspSessions.end());
+	} while (m_mspSessions.HasItem(sSessionID));
 
 	CSmartPtr<CWebSession> spSession(new CWebSession(sSessionID));
-	m_mspSessions.insert(make_pair(spSession->GetId(), spSession));
+	m_mspSessions.AddItem(spSession->GetId(), spSession);
 
 	return spSession;
 }

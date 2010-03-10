@@ -157,7 +157,7 @@ private:
 	CString                 m_sPage;        // Gets filled by ResolveModule()
 	CSmartPtr<CWebSession>	m_spSession;
 
-	static map<CString, CSmartPtr<CWebSession> > m_mspSessions;
+	static TCacheMap<CString, CSmartPtr<CWebSession> > m_mspSessions;
 };
 
 #endif // !_WEBMODULES_H
