@@ -117,6 +117,15 @@ CWebSock::~CWebSock() {
 		pAuth->SetWebSock(NULL);
 	}
 
+	CUser *pUser = GetSession()->GetUser();
+	if (pUser) {
+		pUser->AddBytesWritten(GetBytesWritten());
+		pUser->AddBytesRead(GetBytesRead());
+	} else {
+		CZNC::Get().AddBytesWritten(GetBytesWritten());
+		CZNC::Get().AddBytesRead(GetBytesRead());
+	}
+
 	// If the module IsFake() then it was created as a dummy and needs to be deleted
 	if (m_pModule && m_pModule->IsFake()) {
 		m_pModule->UnlinkSocket(this);
