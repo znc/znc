@@ -33,7 +33,7 @@ CZNC::CZNC() {
 
 	m_pModules = new CGlobalModules();
 	m_pISpoofLockFile = NULL;
-	m_uiConnectDelay = 30;
+	m_uiConnectDelay = 5;
 	m_uiAnonIPLimit = 10;
 	SetISpoofFormat(""); // Set ISpoofFormat to default
 	m_uBytesRead = 0;
