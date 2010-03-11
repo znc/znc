@@ -358,7 +358,7 @@ public:
 	// Getters
 	unsigned int GetTTL() { return m_uTTL; }
 	// !Getters
-private:
+protected:
 	typedef pair<unsigned long long, V> value;
 	typedef typename map<K, value>::iterator iterator;
 	map<K, value>	m_mItems;	//!< Map of cached items.  The value portion of the map is for the expire time

@@ -208,6 +208,7 @@ bool CZNC::HandleUserDeletion()
 
 		pUser->DelClients();
 		pUser->DelModules();
+		CWebSock::FinishUserSessions(*pUser);
 		AddBytesRead(pUser->BytesRead());
 		AddBytesWritten(pUser->BytesWritten());
 		delete pUser;
