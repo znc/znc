@@ -12,7 +12,7 @@
 #include <sstream>
 
 // Sessions are valid for a day, (24h, ...)
-TCacheMap<CString, CSmartPtr<CWebSession> > CWebSock::m_mspSessions(24 * 60 * 60 * 1000);
+CWebSessionMap CWebSock::m_mspSessions(24 * 60 * 60 * 1000);
 
 CZNCTagHandler::CZNCTagHandler(CWebSock& WebSock) : CTemplateTagHandler(), m_WebSock(WebSock) {
 }
@@ -66,6 +66,17 @@ size_t CWebSession::AddSuccess(const CString& sMessage) {
 	return m_vsSuccessMsgs.size();
 }
 
+void CWebSessionMap::FinishUserSessions(const CUser& User) {
+	iterator it = m_mItems.begin();
+
+	while (it != m_mItems.end()) {
+		if (it->second.second->GetUser() == &User) {
+			m_mItems.erase(it++);
+		} else {
+			++it;
+		}
+	}
+}
 
 void CWebAuth::AcceptedLogin(CUser& User) {
 	if (m_pWebSock) {

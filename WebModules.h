@@ -104,6 +104,11 @@ protected:
 	CWebSock*	m_pWebSock;
 };
 
+class CWebSessionMap : public TCacheMap<CString, CSmartPtr<CWebSession> > {
+	public:
+		CWebSessionMap(unsigned int uTTL = 5000) : TCacheMap<CString, CSmartPtr<CWebSession> >(uTTL) {}
+		void FinishUserSessions(const CUser& User);
+};
 
 class CWebSock : public CHTTPSock {
 public:
@@ -148,6 +153,10 @@ public:
 	CString GetCookie(const CString& sKey) const;
 	bool SetCookie(const CString& sKey, const CString& sValue);
 
+	static void FinishUserSessions(const CUser& User) {
+		m_mspSessions.FinishUserSessions(User);
+	}
+
 private:
 	bool					m_bPathsSet;
 	CTemplate				m_Template;
@@ -158,7 +167,7 @@ private:
 	CString                 m_sPage;        // Gets filled by ResolveModule()
 	CSmartPtr<CWebSession>	m_spSession;
 
-	static TCacheMap<CString, CSmartPtr<CWebSession> > m_mspSessions;
+	static CWebSessionMap m_mspSessions;
 };
 
 #endif // !_WEBMODULES_H
