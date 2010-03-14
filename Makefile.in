@@ -51,7 +51,7 @@ man:
 	@$(MAKE) -C man
 
 modules: $(LIBZNC)
-	$(MAKE) -C modules;
+	@$(MAKE) -C modules;
 
 clean:
 	rm -rf $(CLEAN)

@@ -562,7 +562,6 @@ SASL
 TCL_FLAGS
 EXTRA
 NOSSL
-MODTARGET
 MODLINK
 LIBZNCDIR
 LIBZNC
@@ -632,7 +631,6 @@ enable_extra
 with_openssl
 enable_debug
 enable_ipv6
-enable_modules
 enable_openssl
 enable_perl
 enable_sasl
@@ -1274,7 +1272,6 @@ Optional Features:
   --enable-extra          enable some extra modules
   --enable-debug          enable debugging
   --disable-ipv6          disable ipv6 support
-  --disable-modules       disable modules
   --disable-openssl       disable openssl
   --disable-perl          disable perl
   --enable-sasl           enable sasl
@@ -2779,13 +2776,6 @@ else
   IPV6="yes"
 fi
 
-# Check whether --enable-modules was given.
-if test "${enable_modules+set}" = set; then :
-  enableval=$enable_modules; MODULES="$enableval"
-else
-  MODULES="yes"
-fi
-
 # Check whether --enable-openssl was given.
 if test "${enable_openssl+set}" = set; then :
   enableval=$enable_openssl; if test "$enableval" = "no" ; then NOSSL=1; fi
@@ -3224,7 +3214,10 @@ fi
 
 
 
-if test "$MODULES" = "yes"; then
+# This used to be
+# if test "$MODULES" = "yes"; then
+# but I'm too lazy to reindent all of this
+if test "yes" = "yes"; then
 	FOUND_DL=no
 
 	# Don't use any libs like -lssl -lcrypto when checking for dlopen(),
@@ -3284,14 +3277,12 @@ fi
 		as_fn_error "could not find dlopen. Try --disable-modules" "$LINENO" 5
 	fi
 
-	appendCXX -D_MODULES
 	appendMod "$CXXFLAGS"
 
 	if test -z "$ISSUN" -a -z "$ISDARWIN"; then
 		# This is an unknown compiler flag on some OS
 		appendLD -Wl,--export-dynamic
 	fi
-	MODTARGET="modules"
 
 	if test -z "$ISCYGWIN" ; then
 		# cygwin doesn't need -fPIC, everything else does (for modules)
@@ -3543,7 +3534,6 @@ fi
 
 
 
-
 ac_config_files="$ac_config_files Makefile"
 
 ac_config_files="$ac_config_files znc-config"
@@ -3556,10 +3546,8 @@ ac_config_files="$ac_config_files znc.pc"
 
 ac_config_files="$ac_config_files znc-uninstalled.pc"
 
-if test "$MODULES" = "yes"; then
-	ac_config_files="$ac_config_files modules/Makefile"
+ac_config_files="$ac_config_files modules/Makefile"
 
-fi
 cat >confcache <<\_ACEOF
 # This file is a shell script that caches the results of configure
 # tests run on this system so they can be shared between configure
@@ -4715,7 +4703,6 @@ else
 	echo "openssl: yes"
 fi
 echo "c-ares:  $ARES"
-echo "modules: $MODULES"
 if test x"$PERL" = "x" ; then
 	echo "perl:    no"
 else
