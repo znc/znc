@@ -412,13 +412,17 @@ bool CWebSock::AddModLoop(const CString& sLoopName, CModule& Module) {
 	return false;
 }
 
-bool CWebSock::PrintStaticFile(const CString& sPath, CString& sPageRet, CModule* pModule) {
+CWebSock::EPageReqResult CWebSock::PrintStaticFile(const CString& sPath, CString& sPageRet, CModule* pModule) {
 	SetPaths(pModule);
 	DEBUG("About to print [" + m_Template.ExpandFile(sPath) + "]");
-	return PrintFile(m_Template.ExpandFile(sPath.TrimLeft_n("/")));
+	if (PrintFile(m_Template.ExpandFile(sPath.TrimLeft_n("/")))) {
+		return PAGE_PRINT;
+	} else {
+		return PAGE_NOTFOUND;
+	}
 }
 
-bool CWebSock::PrintTemplate(const CString& sPageName, CString& sPageRet, CModule* pModule) {
+CWebSock::EPageReqResult CWebSock::PrintTemplate(const CString& sPageName, CString& sPageRet, CModule* pModule) {
 	SetVars();
 	m_Template["PageName"] = sPageName;
 
@@ -437,10 +441,14 @@ bool CWebSock::PrintTemplate(const CString& sPageName, CString& sPageRet, CModul
 	}
 
 	if (m_Template.GetFileName().empty() && !m_Template.SetFile(sPageName + ".tmpl")) {
-		return false;
+		return PAGE_NOTFOUND;
 	}
 
-	return m_Template.PrintString(sPageRet);
+	if (m_Template.PrintString(sPageRet)) {
+		return PAGE_PRINT;
+	} else {
+		return PAGE_NOTFOUND;
+	}
 }
 
 CString CWebSock::GetModWebPath(const CString& sModName) const {
@@ -495,14 +503,18 @@ bool CWebSock::SetCookie(const CString& sKey, const CString& sValue) {
 
 void CWebSock::OnPageRequest(const CString& sURI) {
 	CString sPageRet;
-	if (OnPageRequestInternal(sURI, sPageRet)) {
+	EPageReqResult eRet = OnPageRequestInternal(sURI, sPageRet);
+	switch (eRet) {
+	case PAGE_PRINT:
 		PrintPage(sPageRet);
-	} else {
+		break;
+	default:
 		PrintNotFound();
+		break;
 	}
 }
 
-bool CWebSock::OnPageRequestInternal(const CString& sURI, CString& sPageRet) {
+CWebSock::EPageReqResult CWebSock::OnPageRequestInternal(const CString& sURI, CString& sPageRet) {
 	DEBUG("CWebSock::OnPageRequest(" + sURI + ")");
 	m_spSession = GetSession();
 	SetCookie("SessionId", m_spSession->GetId());
@@ -522,7 +534,7 @@ bool CWebSock::OnPageRequestInternal(const CString& sURI, CString& sPageRet) {
 		SetLoggedIn(false);
 		Redirect("/");
 
-		return true;
+		return PAGE_PRINT;
 	} else if (sURI == "/login" || sURI.Left(7) == "/login/") {
 		if (GetParam("submitted").ToBool()) {
 			m_sUser = GetParam("user");
@@ -530,7 +542,7 @@ bool CWebSock::OnPageRequestInternal(const CString& sURI, CString& sPageRet) {
 			m_bLoggedIn = OnLogin(m_sUser, m_sPass);
 
 			Redirect("/");
-			return true;
+			return PAGE_PRINT;
 		}
 
 		return PrintTemplate("login", sPageRet);
@@ -541,7 +553,7 @@ bool CWebSock::OnPageRequestInternal(const CString& sURI, CString& sPageRet) {
 		// Make sure modules are treated as directories
 		if (sURI.Right(1) != "/" && sURI.find(".") == CString::npos && sURI.TrimLeft_n("/mods/").TrimLeft_n("/").find("/") == CString::npos) {
 			Redirect(sURI + "/");
-			return true;
+			return PAGE_PRINT;
 		}
 
 		if (m_sModName.empty()) {
@@ -553,22 +565,22 @@ bool CWebSock::OnPageRequestInternal(const CString& sURI, CString& sPageRet) {
 
 		if (!pModule && m_sForceUser.empty()) {
 			if (!ForceLogin()) {
-				return true;
+				return PAGE_PRINT;
 			}
 
 			pModule = CZNC::Get().FindModule(m_sModName, m_spSession->GetUser());
 		}
 
 		if (!pModule) {
-			return false;
+			return PAGE_NOTFOUND;
 		} else if (pModule->WebRequiresLogin() && !ForceLogin()) {
-			return true;
+			return PAGE_PRINT;
 		} else if (pModule->WebRequiresAdmin() && !m_spSession->IsAdmin()) {
 			sPageRet = GetErrorPage(403, "Forbidden", "You need to be an admin to access this module");
-			return true;
+			return PAGE_PRINT;
 		} else if (pModule && !pModule->IsGlobal() && pModule->GetUser() != m_spSession->GetUser()) {
 			sPageRet = GetErrorPage(403, "Forbidden", "You must login as " + pModule->GetUser()->GetUserName() + " in order to view this page");
-			return true;
+			return PAGE_PRINT;
 		}
 
 		VWebSubPages& vSubPages = pModule->GetSubPages();
@@ -580,7 +592,7 @@ bool CWebSock::OnPageRequestInternal(const CString& sURI, CString& sPageRet) {
 
 			if (bActive && SubPage->RequiresAdmin() && !m_spSession->IsAdmin()) {
 				sPageRet = GetErrorPage(403, "Forbidden", "You need to be an admin to access this page");
-				return true;
+				return PAGE_PRINT;
 			}
 		}
 
@@ -593,7 +605,11 @@ bool CWebSock::OnPageRequestInternal(const CString& sURI, CString& sPageRet) {
 			m_Template.AppendPath(GetModWebPath(m_sModName) + "/files/");
 
 			std::cerr << "===================== fffffffffffffffffffff   [" << m_sModName << "]  [" << m_sPage << "]" << std::endl;
-			return PrintFile(m_Template.ExpandFile(m_sPage.TrimLeft_n("/")));
+			if (PrintFile(m_Template.ExpandFile(m_sPage.TrimLeft_n("/")))) {
+				return PAGE_PRINT;
+			} else {
+				return PAGE_NOTFOUND;
+			}
 		} else {
 			SetPaths(pModule, true);
 
@@ -602,7 +618,7 @@ bool CWebSock::OnPageRequestInternal(const CString& sURI, CString& sPageRet) {
 			}
 
 			sPageRet = GetErrorPage(404, "Not Implemented", "The requested module does not acknowledge web requests");
-			return false;
+			return PAGE_PRINT;
 		}
 	} else {
 		CString sPage(sURI.Trim_n("/"));
@@ -611,7 +627,7 @@ bool CWebSock::OnPageRequestInternal(const CString& sURI, CString& sPageRet) {
 				unsigned char c = sPage[a];
 
 				if ((c < '0' || c > '9') && (c < 'a' || c > 'z') && (c < 'A' || c > 'Z') && c != '_') {
-					return false;
+					return PAGE_NOTFOUND;
 				}
 			}
 
@@ -619,7 +635,7 @@ bool CWebSock::OnPageRequestInternal(const CString& sURI, CString& sPageRet) {
 		}
 	}
 
-	return false;
+	return PAGE_NOTFOUND;
 }
 
 void CWebSock::PrintErrorPage(const CString& sMessage) {
