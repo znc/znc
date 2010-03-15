@@ -114,7 +114,8 @@ class CWebSock : public CHTTPSock {
 public:
 	enum EPageReqResult {
 		PAGE_NOTFOUND,
-		PAGE_PRINT
+		PAGE_PRINT,
+		PAGE_DEFERRED
 	};
 
 	CWebSock(CModule* pModule);
