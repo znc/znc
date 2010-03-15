@@ -87,6 +87,7 @@ void CWebAuth::AcceptedLogin(CUser& User) {
 
 		m_pWebSock->SetLoggedIn(true);
 		m_pWebSock->UnPauseRead();
+		m_pWebSock->Redirect("/");
 
 		DEBUG("Successful login attempt ==> USER [" + User.GetUserName() + "] ==> SESSION [" + spSession->GetId() + "]");
 	}
@@ -102,6 +103,7 @@ void CWebAuth::RefusedLogin(const CString& sReason) {
 
 		m_pWebSock->SetLoggedIn(false);
 		m_pWebSock->UnPauseRead();
+		m_pWebSock->Redirect("/");
 
 		DEBUG("UNSUCCESSFUL login attempt ==> REASON [" + sReason + "] ==> SESSION [" + spSession->GetId() + "]");
 	}
@@ -508,6 +510,9 @@ void CWebSock::OnPageRequest(const CString& sURI) {
 	case PAGE_PRINT:
 		PrintPage(sPageRet);
 		break;
+	case PAGE_DEFERRED:
+		// Something else will later do these calls
+		break;
 	default:
 		PrintNotFound();
 		break;
@@ -541,8 +546,8 @@ CWebSock::EPageReqResult CWebSock::OnPageRequestInternal(const CString& sURI, CS
 			m_sPass = GetParam("pass");
 			m_bLoggedIn = OnLogin(m_sUser, m_sPass);
 
-			Redirect("/");
-			return PAGE_PRINT;
+			// AcceptedLogin()/RefusedLogin() will call Redirect()
+			return PAGE_DEFERRED;
 		}
 
 		return PrintTemplate("login", sPageRet);
