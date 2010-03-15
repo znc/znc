@@ -117,7 +117,7 @@ public:
 	virtual ~CWebSock();
 
 	virtual bool ForceLogin();
-	virtual bool OnLogin(const CString& sUser, const CString& sPass);
+	virtual void OnLogin(const CString& sUser, const CString& sPass);
 	virtual void OnPageRequest(const CString& sURI);
 
 	void ParsePath();	// This parses the path portion of the url into some member vars
