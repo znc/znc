@@ -118,7 +118,7 @@ public:
 
 	virtual bool ForceLogin();
 	virtual bool OnLogin(const CString& sUser, const CString& sPass);
-	virtual bool OnPageRequest(const CString& sURI, CString& sPageRet);
+	virtual void OnPageRequest(const CString& sURI);
 
 	void ParsePath();	// This parses the path portion of the url into some member vars
 	CModule* ResolveModule();
@@ -158,6 +158,8 @@ public:
 	}
 
 private:
+	bool OnPageRequestInternal(const CString& sURI, CString& sPageRet);
+
 	bool					m_bPathsSet;
 	CTemplate				m_Template;
 	CSmartPtr<CAuthBase>	m_spAuth;

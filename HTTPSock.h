@@ -31,7 +31,7 @@ public:
 	// Hooks
 	virtual bool ForceLogin();
 	virtual bool OnLogin(const CString& sUser, const CString& sPass);
-	virtual bool OnPageRequest(const CString& sURI, CString& sPageRet) = 0;
+	virtual void OnPageRequest(const CString& sURI) = 0;
 	virtual bool PrintFile(const CString& sFileName, CString sContentType = "");
 	// !Hooks
 
@@ -77,6 +77,7 @@ public:
 	// !Getters
 private:
 protected:
+	void PrintPage(const CString& sPage);
 	void Init();
 
 	bool					m_bSentHeader;
