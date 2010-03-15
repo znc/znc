@@ -112,6 +112,11 @@ class CWebSessionMap : public TCacheMap<CString, CSmartPtr<CWebSession> > {
 
 class CWebSock : public CHTTPSock {
 public:
+	enum EPageReqResult {
+		PAGE_NOTFOUND,
+		PAGE_PRINT
+	};
+
 	CWebSock(CModule* pModule);
 	CWebSock(CModule* pModule, const CString& sHostname, unsigned short uPort, int iTimeout = 60);
 	virtual ~CWebSock();
@@ -124,8 +129,8 @@ public:
 	CModule* ResolveModule();
 
 	//virtual bool PrintFile(const CString& sFileName, CString sContentType = "");
-	bool PrintTemplate(const CString& sPageName, CString& sPageRet, CModule* pModule = NULL);
-	bool PrintStaticFile(const CString& sPath, CString& sPageRet, CModule* pModule = NULL);
+	EPageReqResult PrintTemplate(const CString& sPageName, CString& sPageRet, CModule* pModule = NULL);
+	EPageReqResult PrintStaticFile(const CString& sPath, CString& sPageRet, CModule* pModule = NULL);
 
 	bool AddModLoop(const CString& sLoopName, CModule& Module);
 	void SetPaths(CModule* pModule, bool bIsTemplate = false);
@@ -158,7 +163,7 @@ public:
 	}
 
 private:
-	bool OnPageRequestInternal(const CString& sURI, CString& sPageRet);
+	EPageReqResult OnPageRequestInternal(const CString& sURI, CString& sPageRet);
 
 	bool					m_bPathsSet;
 	CTemplate				m_Template;
