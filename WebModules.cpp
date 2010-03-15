@@ -527,7 +527,7 @@ bool CWebSock::OnPageRequestInternal(const CString& sURI, CString& sPageRet) {
 		if (GetParam("submitted").ToBool()) {
 			m_sUser = GetParam("user");
 			m_sPass = GetParam("pass");
-			OnLogin(m_sUser, m_sPass);
+			m_bLoggedIn = OnLogin(m_sUser, m_sPass);
 
 			Redirect("/");
 			return true;
@@ -661,7 +661,7 @@ CSmartPtr<CWebSession> CWebSock::GetSession() {
 	return spSession;
 }
 
-void CWebSock::OnLogin(const CString& sUser, const CString& sPass) {
+bool CWebSock::OnLogin(const CString& sUser, const CString& sPass) {
 	DEBUG("=================== CWebSock::OnLogin()");
 	m_spAuth = new CWebAuth(this, sUser, sPass);
 
@@ -669,6 +669,9 @@ void CWebSock::OnLogin(const CString& sUser, const CString& sPass) {
 	// until then. CWebAuth will UnPauseRead().
 	PauseRead();
 	CZNC::Get().AuthUser(m_spAuth);
+
+	// If CWebAuth already set this, don't change it.
+	return IsLoggedIn();
 }
 
 Csock* CWebSock::GetSockObj(const CString& sHost, unsigned short uPort) {
