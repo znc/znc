@@ -125,15 +125,12 @@ void CHTTPSock::ReadLine(const CString& sData) {
 }
 
 void CHTTPSock::GetPage() {
-	CString sPage;
-
 	DEBUG("Page Request [" << m_sURI << "] ");
 
-	if (!OnPageRequest(m_sURI, sPage)) {
-		PrintNotFound();
-		return;
-	}
+	OnPageRequest(m_sURI);
+}
 
+void CHTTPSock::PrintPage(const CString& sPage) {
 	if (!SentHeader()) {
 		PrintHeader(sPage.length());
 	}

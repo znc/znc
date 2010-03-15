@@ -493,7 +493,16 @@ bool CWebSock::SetCookie(const CString& sKey, const CString& sValue) {
 	return CHTTPSock::SetCookie(sKey, sValue);
 }
 
-bool CWebSock::OnPageRequest(const CString& sURI, CString& sPageRet) {
+void CWebSock::OnPageRequest(const CString& sURI) {
+	CString sPageRet;
+	if (OnPageRequestInternal(sURI, sPageRet)) {
+		PrintPage(sPageRet);
+	} else {
+		PrintNotFound();
+	}
+}
+
+bool CWebSock::OnPageRequestInternal(const CString& sURI, CString& sPageRet) {
 	DEBUG("CWebSock::OnPageRequest(" + sURI + ")");
 	m_spSession = GetSession();
 	SetCookie("SessionId", m_spSession->GetId());
