@@ -725,7 +725,6 @@ bool CModules::LoadModule(const CString& sModule, const CString& sArgs, CUser* p
 	pModule->SetDescription(sDesc);
 	pModule->SetGlobal(bIsGlobal);
 	pModule->SetArgs(sArgs);
-	DEBUG("********************************* [" + CZNC::Get().GetCurPath() + "] [" + sModPath + "] [" + CDir::ChangeDir(CZNC::Get().GetCurPath(), sModPath) + "]");
 	pModule->SetModPath(CDir::ChangeDir(CZNC::Get().GetCurPath(), sModPath));
 	push_back(pModule);
 

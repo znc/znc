@@ -115,13 +115,11 @@ CString CTemplate::ExpandFile(const CString& sFilename, bool bFromInc) {
 
 		if (CFile::Exists(sFilePath)) {
 			if (sRoot.empty() || sFilePath.Left(sRoot.length()) == sRoot) {
-				DEBUG("\t\tFound  [" + sFilePath + "]\n");
+				DEBUG("    Found  [" + sFilePath + "]");
 				return sFilePath;
 			} else {
 				DEBUG("\t\tOutside of root [" + sFilePath + "] !~ [" + sRoot + "]");
 			}
-		} else {
-			DEBUG("\t\tNo such file [" + sFilePath + "]");
 		}
 	}
 
@@ -253,7 +251,6 @@ bool CTemplate::PrintString(CString& sRet) {
 }
 
 bool CTemplate::Print(ostream& oOut) {
-	DEBUG("==     Print(o) m_sFileName = [" + m_sFileName + "]");
 	return Print(m_sFileName, oOut);
 }
 
