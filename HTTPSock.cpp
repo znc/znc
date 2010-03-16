@@ -65,7 +65,6 @@ void CHTTPSock::CheckPost() {
 		GetPage();
 		m_sPostData.clear();
 		m_bDone = true;
-		Close(Csock::CLT_AFTERWRITE);
 	}
 }
 
