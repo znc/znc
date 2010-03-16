@@ -196,7 +196,7 @@ CModule* CWebSock::ResolveModule() {
 		if (pUser) {
 			pModRet = pUser->GetModules().FindModule(m_sModName);
 		} else {
-			DEBUG("User not found while trying to handle web requrest for [" + m_sPage + "]");
+			DEBUG("User not found while trying to handle web request for [" + m_sPage + "]");
 		}
 	} else {
 		// This could be user level or global level, check both
@@ -264,8 +264,6 @@ void CWebSock::SetPaths(CModule* pModule, bool bIsTemplate) {
 
 	CString sHomeSkinsDir(CZNC::Get().GetZNCPath() + "/webskins/");
 	CString sSkinName(GetSkinName());
-
-	DEBUG("---- sHomeSkinsDir=[" + sHomeSkinsDir + "] sSkinName=[" + sSkinName + "]");
 
 	// Module specific paths
 
@@ -345,8 +343,6 @@ void CWebSock::SetVars() {
 
 bool CWebSock::AddModLoop(const CString& sLoopName, CModule& Module) {
 	CString sTitle(Module.GetWebMenuTitle());
-
-	DEBUG("===   ===   ===   ===   === [" + Module.GetModName() + "] [" + CString(IsLoggedIn()) + "]");
 
 	if (!sTitle.empty() && (IsLoggedIn() || (!Module.WebRequiresLogin() && !Module.WebRequiresAdmin())) && (m_spSession->IsAdmin() || !Module.WebRequiresAdmin())) {
 		CTemplate& Row = m_Template.AddRow(sLoopName);
@@ -520,7 +516,6 @@ void CWebSock::OnPageRequest(const CString& sURI) {
 }
 
 CWebSock::EPageReqResult CWebSock::OnPageRequestInternal(const CString& sURI, CString& sPageRet) {
-	DEBUG("CWebSock::OnPageRequest(" + sURI + ")");
 	m_spSession = GetSession();
 	SetCookie("SessionId", m_spSession->GetId());
 
