@@ -483,20 +483,20 @@ bool CWebSock::ForceLogin() {
 	return false;
 }
 
-CString CWebSock::GetCookie(const CString& sKey) const {
+CString CWebSock::GetRequestCookie(const CString& sKey) const {
 	if (!m_sModName.empty()) {
-		return CHTTPSock::GetCookie("Mod::" + m_sModName + "::" + sKey);
+		return CHTTPSock::GetRequestCookie("Mod::" + m_sModName + "::" + sKey);
 	}
 
-	return CHTTPSock::GetCookie(sKey);
+	return CHTTPSock::GetRequestCookie(sKey);
 }
 
-bool CWebSock::SetCookie(const CString& sKey, const CString& sValue) {
+bool CWebSock::SendCookie(const CString& sKey, const CString& sValue) {
 	if (!m_sModName.empty()) {
-		return CHTTPSock::SetCookie("Mod::" + m_sModName + "::" + sKey, sValue);
+		return CHTTPSock::SendCookie("Mod::" + m_sModName + "::" + sKey, sValue);
 	}
 
-	return CHTTPSock::SetCookie(sKey, sValue);
+	return CHTTPSock::SendCookie(sKey, sValue);
 }
 
 void CWebSock::OnPageRequest(const CString& sURI) {
@@ -516,10 +516,8 @@ void CWebSock::OnPageRequest(const CString& sURI) {
 }
 
 CWebSock::EPageReqResult CWebSock::OnPageRequestInternal(const CString& sURI, CString& sPageRet) {
-	bool bNoCookie = (GetCookie("SessionId").empty());
-
 	m_spSession = GetSession();
-	SetCookie("SessionId", m_spSession->GetId());
+	SendCookie("SessionId", m_spSession->GetId());
 
 	if (m_spSession->IsLoggedIn()) {
 		m_sUser = m_spSession->GetUser()->GetUserName();
@@ -528,7 +526,7 @@ CWebSock::EPageReqResult CWebSock::OnPageRequestInternal(const CString& sURI, CS
 
 	// Handle the static pages that don't require a login
 	if (sURI == "/") {
-		if(!m_bLoggedIn && GetParam("cookie_check").ToBool() && bNoCookie) {
+		if(!m_bLoggedIn && GetParam("cookie_check").ToBool() && GetRequestCookie("SessionId").empty()) {
 			m_spSession->AddError("Your browser does not have cookies enabled for this site!");
 		}
 		return PrintTemplate("index", sPageRet);
@@ -657,12 +655,13 @@ CSmartPtr<CWebSession> CWebSock::GetSession() {
 		return m_spSession;
 	}
 
-	CSmartPtr<CWebSession> *pSession = m_mspSessions.GetItem(GetCookie("SessionId"));
+	const CString sCookieSessionId = GetRequestCookie("SessionId");
+	CSmartPtr<CWebSession> *pSession = m_mspSessions.GetItem(sCookieSessionId);
 
 	if (pSession != NULL) {
 		// Refresh the timeout
 		m_mspSessions.AddItem((*pSession)->GetId(), *pSession);
-		DEBUG("Found existing session from cookie: [" + GetCookie("SessionId") + "] IsLoggedIn(" + CString((*pSession)->IsLoggedIn() ? "true" : "false") + ")");
+		DEBUG("Found existing session from cookie: [" + sCookieSessionId + "] IsLoggedIn(" + CString((*pSession)->IsLoggedIn() ? "true" : "false") + ")");
 		return *pSession;
 	}
 
