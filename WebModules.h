@@ -156,8 +156,8 @@ public:
 	size_t GetAvailSkins(vector<CFile>& vRet);
 	CString GetSkinName();
 
-	CString GetCookie(const CString& sKey) const;
-	bool SetCookie(const CString& sKey, const CString& sValue);
+	CString GetRequestCookie(const CString& sKey) const;
+	bool SendCookie(const CString& sKey, const CString& sValue);
 
 	static void FinishUserSessions(const CUser& User) {
 		m_mspSessions.FinishUserSessions(User);
