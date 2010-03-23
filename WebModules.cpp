@@ -582,9 +582,11 @@ CWebSock::EPageReqResult CWebSock::OnPageRequestInternal(const CString& sURI, CS
 		} else if (pModule->WebRequiresAdmin() && !m_spSession->IsAdmin()) {
 			sPageRet = GetErrorPage(403, "Forbidden", "You need to be an admin to access this module");
 			return PAGE_PRINT;
-		} else if (pModule && !pModule->IsGlobal() && pModule->GetUser() != m_spSession->GetUser()) {
+		} else if (!pModule->IsGlobal() && pModule->GetUser() != m_spSession->GetUser()) {
 			sPageRet = GetErrorPage(403, "Forbidden", "You must login as " + pModule->GetUser()->GetUserName() + " in order to view this page");
 			return PAGE_PRINT;
+		} else if (pModule->OnWebPreRequest(*this, m_sPage)) {
+			return PAGE_DEFERRED;
 		}
 
 		VWebSubPages& vSubPages = pModule->GetSubPages();
