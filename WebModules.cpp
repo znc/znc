@@ -535,6 +535,8 @@ CWebSock::EPageReqResult CWebSock::OnPageRequestInternal(const CString& sURI, CS
 		return PrintTemplate("index", sPageRet);
 	} else if (sURI == "/favicon.ico") {
 		return PrintStaticFile("/pub/favicon.ico", sPageRet);
+	} else if (sURI == "/robots.txt") {
+		return PrintStaticFile("/pub/robots.txt", sPageRet);
 	} else if (sURI == "/logout") {
 		m_spSession->SetLoggedIn(false);
 		SetLoggedIn(false);
