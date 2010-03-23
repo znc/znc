@@ -414,7 +414,7 @@ CWebSock::EPageReqResult CWebSock::PrintStaticFile(const CString& sPath, CString
 	SetPaths(pModule);
 	DEBUG("About to print [" + m_Template.ExpandFile(sPath) + "]");
 	if (PrintFile(m_Template.ExpandFile(sPath.TrimLeft_n("/")))) {
-		return PAGE_DEFERRED;
+		return PAGE_DONE;
 	} else {
 		return PAGE_NOTFOUND;
 	}
@@ -507,7 +507,10 @@ void CWebSock::OnPageRequest(const CString& sURI) {
 		PrintPage(sPageRet);
 		break;
 	case PAGE_DEFERRED:
-		// Something else will later do these calls
+		// Something else will later call Close()
+		break;
+	case PAGE_DONE:
+		// Redirect or something like that, it's done, Close() has been called
 		break;
 	default:
 		PrintNotFound();
@@ -538,7 +541,7 @@ CWebSock::EPageReqResult CWebSock::OnPageRequestInternal(const CString& sURI, CS
 		Redirect("/");
 
 		// We already sent a reply
-		return PAGE_DEFERRED;
+		return PAGE_DONE;
 	} else if (sURI == "/login" || sURI.Left(7) == "/login/") {
 		if (GetParam("submitted").ToBool()) {
 			m_sUser = GetParam("user");
@@ -557,7 +560,7 @@ CWebSock::EPageReqResult CWebSock::OnPageRequestInternal(const CString& sURI, CS
 		// Make sure modules are treated as directories
 		if (sURI.Right(1) != "/" && sURI.find(".") == CString::npos && sURI.TrimLeft_n("/mods/").TrimLeft_n("/").find("/") == CString::npos) {
 			Redirect(sURI + "/");
-			return PAGE_DEFERRED;
+			return PAGE_DONE;
 		}
 
 		if (m_sModName.empty()) {
@@ -569,7 +572,7 @@ CWebSock::EPageReqResult CWebSock::OnPageRequestInternal(const CString& sURI, CS
 
 		if (!pModule && m_sForceUser.empty()) {
 			if (!ForceLogin()) {
-				return PAGE_DEFERRED;
+				return PAGE_DONE;
 			}
 
 			pModule = CZNC::Get().FindModule(m_sModName, m_spSession->GetUser());
