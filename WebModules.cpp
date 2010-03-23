@@ -87,7 +87,7 @@ void CWebAuth::AcceptedLogin(CUser& User) {
 
 		m_pWebSock->SetLoggedIn(true);
 		m_pWebSock->UnPauseRead();
-		m_pWebSock->Redirect("/");
+		m_pWebSock->Redirect("/?cookie_check=true");
 
 		DEBUG("Successful login attempt ==> USER [" + User.GetUserName() + "] ==> SESSION [" + spSession->GetId() + "]");
 	}
@@ -103,7 +103,7 @@ void CWebAuth::RefusedLogin(const CString& sReason) {
 
 		m_pWebSock->SetLoggedIn(false);
 		m_pWebSock->UnPauseRead();
-		m_pWebSock->Redirect("/");
+		m_pWebSock->Redirect("/?cookie_check=true");
 
 		DEBUG("UNSUCCESSFUL login attempt ==> REASON [" + sReason + "] ==> SESSION [" + spSession->GetId() + "]");
 	}
@@ -516,6 +516,8 @@ void CWebSock::OnPageRequest(const CString& sURI) {
 }
 
 CWebSock::EPageReqResult CWebSock::OnPageRequestInternal(const CString& sURI, CString& sPageRet) {
+	bool bNoCookie = (GetCookie("SessionId").empty());
+
 	m_spSession = GetSession();
 	SetCookie("SessionId", m_spSession->GetId());
 
@@ -526,6 +528,9 @@ CWebSock::EPageReqResult CWebSock::OnPageRequestInternal(const CString& sURI, CS
 
 	// Handle the static pages that don't require a login
 	if (sURI == "/") {
+		if(!m_bLoggedIn && GetParam("cookie_check").ToBool() && bNoCookie) {
+			m_spSession->AddError("Your browser does not have cookies enabled for this site!");
+		}
 		return PrintTemplate("index", sPageRet);
 	} else if (sURI == "/favicon.ico") {
 		return PrintStaticFile("/pub/favicon.ico", sPageRet);
