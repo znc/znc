@@ -270,16 +270,49 @@ public:
 	 */
 	virtual bool OnBoot();
 
-	// For handling web traffic
+
+	/** Modules which can only be used with an active user session have to return true here.
+	 *  @return false for modules that can do stuff for non-logged in web users as well.
+	 */
 	virtual bool WebRequiresLogin() { return true; }
+	/** Return true if this module should only be usable for admins on the web.
+	 *  @return false if normal users can use this module's web pages as well.
+	 */
 	virtual bool WebRequiresAdmin() { return false; }
+	/** Return the title of the module's section in the web interface's side bar.
+	 *  @return The Title.
+	 */
 	virtual CString GetWebMenuTitle() { return ""; }
+	/** For WebMods: Called before the list of registered SubPages will be checked.
+	 *  Important: If you return true, you need to take care of calling WebSock.Close!
+	 *  This allows for stuff like returning non-templated data, long-polling and other fun.
+	 *  @param WebSock The active request.
+	 *  @param sPageName The name of the page that has been requested.
+	 *  @return true if you handled the page request or false if the name is to be checked
+	 *          against the list of registered SubPages and their permission settings.
+	 */
 	virtual bool OnWebPreRequest(CWebSock& WebSock, const CString& sPageName);
+	/** If OnWebPreRequest returned false, and the RequiresAdmin/IsAdmin check has been passed,
+	 *  this method will be called with the page name. It will also be called for pages that
+	 *  have NOT been specifically registered with AddSubPage.
+	 *  @param WebSock The active request.
+	 *  @param sPageName The name of the page that has been requested.
+	 *  @param Tmpl The active template. You can add variables, loops and stuff to it.
+	 *  @return You MUST return true if you want the template to be evaluated and sent to the browser.
+	 */
 	virtual bool OnWebRequest(CWebSock& WebSock, const CString& sPageName, CTemplate& Tmpl);
+	/** Registers a sub page for the sidebar.
+	 *  @param spSubPage The SubPage instance.
+	 */
 	virtual void AddSubPage(TWebSubPage spSubPage) { m_vSubPages.push_back(spSubPage); }
+	/** Removes all registered (AddSubPage'd) SubPages.
+	 */
 	virtual void ClearSubPages() { m_vSubPages.clear(); }
+	/** Returns a list of all registered SubPages. Don't mess with it too much.
+	 *  @return The List.
+	 */
 	virtual VWebSubPages& GetSubPages() { return m_vSubPages; }
-	// !Web
+
 
 	/** Called just before znc.conf is rehashed */
 	virtual void OnPreRehash();
