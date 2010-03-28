@@ -379,12 +379,12 @@ class CAdminMod : public CModule {
 		CString sChan      = sLine.Token(3);
 		CString sValue     = sLine.Token(4, true);
 
-		if (value.empty()) {
+		if (sValue.empty()) {
 			PutModule("Usage: setchan <variable> <username> <chan> <value>");
 			return;
 		}
 
-		CUser* user = GetUser(sUsername);
+		CUser* pUser = GetUser(sUsername);
 		if (!pUser)
 			return;
 
