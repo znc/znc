@@ -38,7 +38,7 @@ class CAdminMod : public CModule {
 			{"Get",          "variable [username]",           "Prints the variable's value for the given or current user"},
 			{"Set",          "variable username value",       "Sets the variable's value for the given user (use $me for the current user)"},
 			{"GetChan",      "variable [username] chan",      "Prints the variable's value for the given channel"},
-			{"SetChan",      "variable username chan value",   "Sets the variable's value for the given channel"},
+			{"SetChan",      "variable username chan value",  "Sets the variable's value for the given channel"},
 			{"ListUsers",    "",                              "Lists users"},
 			{"AddUser",      "username password [ircserver]", "Adds a new user"},
 			{"DelUser",      "username",                      "Deletes a user"},
@@ -116,12 +116,12 @@ class CAdminMod : public CModule {
 		PutModule("You can use $me as the user name for modifying your own user.");
 	}
 
-	CUser* GetUser(const CString& username) {
-		if (username.Equals("$me"))
+	CUser* GetUser(const CString& sUsername) {
+		if (sUsername.Equals("$me"))
 			return m_pUser;
-		CUser *pUser = CZNC::Get().FindUser(username);
+		CUser *pUser = CZNC::Get().FindUser(sUsername);
 		if (!pUser) {
-			PutModule("Error: User not found: " + username);
+			PutModule("Error: User not found: " + sUsername);
 			return NULL;
 		}
 		if (pUser != m_pUser && !m_pUser->IsAdmin()) {
@@ -132,193 +132,196 @@ class CAdminMod : public CModule {
 	}
 
 	void Get(const CString& sLine) {
-		const CString var      = sLine.Token(1).AsLower();
-		CString username = sLine.Token(2, true);
+		const CString sVar = sLine.Token(1).AsLower();
+		CString sUsername  = sLine.Token(2, true);
+		CUser* pUser;
 
-		if (var.empty()) {
+		if (sVar.empty()) {
 				PutModule("Usage: get <variable> [username]");
 				return;
 		}
-		if (username.empty()) {
-			username = m_pUser->GetUserName();
+
+		if (sUsername.empty()) {
+			pUser = m_pUser;
+		} else {
+			pUser = GetUser(sUsername);
 		}
 
-		CUser* user = GetUser(username);
-		if (!user)
+		if (!pUser)
 			return;
 
-		if (var == "nick")
-			PutModule("Nick = " + user->GetNick());
-		else if (var == "altnick")
-			PutModule("AltNick = " + user->GetAltNick());
-		else if (var == "ident")
-			PutModule("Ident = " + user->GetIdent());
-		else if (var == "realname")
-			PutModule("RealName = " + user->GetRealName());
-		else if (var == "vhost")
-			PutModule("VHost = " + user->GetVHost());
-		else if (var == "multiclients")
-			PutModule("MultiClients = " + CString(user->MultiClients()));
-		else if (var == "bouncedccs")
-			PutModule("BounceDCCs = " + CString(user->BounceDCCs()));
-		else if (var == "useclientip")
-			PutModule("UseClientIP = " + CString(user->UseClientIP()));
-		else if (var == "denyloadmod")
-			PutModule("DenyLoadMod = " + CString(user->DenyLoadMod()));
-		else if (var == "denysetvhost")
-			PutModule("DenySetVHost = " + CString(user->DenySetVHost()));
-		else if (var == "defaultchanmodes")
-			PutModule("DefaultChanModes = " + user->GetDefaultChanModes());
-		else if (var == "quitmsg")
-			PutModule("QuitMsg = " + user->GetQuitMsg());
-		else if (var == "buffercount")
-			PutModule("BufferCount = " + CString(user->GetBufferCount()));
-		else if (var == "keepbuffer")
-			PutModule("KeepBuffer = " + CString(user->KeepBuffer()));
-		else if (var == "maxjoins")
-			PutModule("MaxJoins = " + CString(user->MaxJoins()));
-		else if (var == "jointries")
-			PutModule("JoinTries = " + CString(user->JoinTries()));
-		else if (var == "appendtimestamp")
-			PutModule("AppendTimestamp = " + CString(user->GetTimestampAppend()));
-		else if (var == "preprendtimestamp")
-			PutModule("PreprendTimestamp = " + CString(user->GetTimestampPrepend()));
-		else if (var == "dccvhost")
-			PutModule("DCCVHost = " + CString(user->GetDCCVHost()));
-		else if (var == "admin")
-			PutModule("Admin = " + CString(user->IsAdmin()));
+		if (sVar == "nick")
+			PutModule("Nick = " + pUser->GetNick());
+		else if (sVar == "altnick")
+			PutModule("AltNick = " + pUser->GetAltNick());
+		else if (sVar == "ident")
+			PutModule("Ident = " + pUser->GetIdent());
+		else if (sVar == "realname")
+			PutModule("RealName = " + pUser->GetRealName());
+		else if (sVar == "vhost")
+			PutModule("VHost = " + pUser->GetVHost());
+		else if (sVar == "multiclients")
+			PutModule("MultiClients = " + CString(pUser->MultiClients()));
+		else if (sVar == "bouncedccs")
+			PutModule("BounceDCCs = " + CString(pUser->BounceDCCs()));
+		else if (sVar == "useclientip")
+			PutModule("UseClientIP = " + CString(pUser->UseClientIP()));
+		else if (sVar == "denyloadmod")
+			PutModule("DenyLoadMod = " + CString(pUser->DenyLoadMod()));
+		else if (sVar == "denysetvhost")
+			PutModule("DenySetVHost = " + CString(pUser->DenySetVHost()));
+		else if (sVar == "defaultchanmodes")
+			PutModule("DefaultChanModes = " + pUser->GetDefaultChanModes());
+		else if (sVar == "quitmsg")
+			PutModule("QuitMsg = " + pUser->GetQuitMsg());
+		else if (sVar == "buffercount")
+			PutModule("BufferCount = " + CString(pUser->GetBufferCount()));
+		else if (sVar == "keepbuffer")
+			PutModule("KeepBuffer = " + CString(pUser->KeepBuffer()));
+		else if (sVar == "maxjoins")
+			PutModule("MaxJoins = " + CString(pUser->MaxJoins()));
+		else if (sVar == "jointries")
+			PutModule("JoinTries = " + CString(pUser->JoinTries()));
+		else if (sVar == "appendtimestamp")
+			PutModule("AppendTimestamp = " + CString(pUser->GetTimestampAppend()));
+		else if (sVar == "preprendtimestamp")
+			PutModule("PreprendTimestamp = " + CString(pUser->GetTimestampPrepend()));
+		else if (sVar == "dccvhost")
+			PutModule("DCCVHost = " + CString(pUser->GetDCCVHost()));
+		else if (sVar == "admin")
+			PutModule("Admin = " + CString(pUser->IsAdmin()));
 		else
 			PutModule("Error: Unknown variable");
 	}
 
 	void Set(const CString& sLine) {
-		const CString var = sLine.Token(1).AsLower();
-		CString username  = sLine.Token(2);
-		CString value     = sLine.Token(3, true);
+		const CString sVar  = sLine.Token(1).AsLower();
+		CString sUserName   = sLine.Token(2);
+		CString sValue      = sLine.Token(3, true);
 
-		if (value.empty()) {
+		if (sValue.empty()) {
 			PutModule("Usage: set <variable> <username> <value>");
 			return;
 		}
 
-		CUser* user = GetUser(username);
-		if (!user)
+		CUser* pUser = GetUser(sUserName);
+		if (!pUser)
 			return;
 
-		if (var == "nick") {
-			user->SetNick(value);
-			PutModule("Nick = " + value);
+		if (sVar == "nick") {
+			pUser->SetNick(sValue);
+			PutModule("Nick = " + sValue);
 		}
-		else if (var == "altnick") {
-			user->SetAltNick(value);
-			PutModule("AltNick = " + value);
+		else if (sVar == "altnick") {
+			pUser->SetAltNick(sValue);
+			PutModule("AltNick = " + sValue);
 		}
-		else if (var == "ident") {
-			user->SetIdent(value);
-			PutModule("Ident = " + value);
+		else if (sVar == "ident") {
+			pUser->SetIdent(sValue);
+			PutModule("Ident = " + sValue);
 		}
-		else if (var == "realname") {
-			user->SetRealName(value);
-			PutModule("RealName = " + value);
+		else if (sVar == "realname") {
+			pUser->SetRealName(sValue);
+			PutModule("RealName = " + sValue);
 		}
-		else if (var == "vhost") {
-			if(!user->DenySetVHost() || m_pUser->IsAdmin()) {
-				user->SetVHost(value);
-				PutModule("VHost = " + value);
+		else if (sVar == "vhost") {
+			if(!pUser->DenySetVHost() || m_pUser->IsAdmin()) {
+				pUser->SetVHost(sValue);
+				PutModule("VHost = " + sValue);
 			} else {
 				PutModule("Access denied!");
 			}
 		}
-		else if (var == "multiclients") {
-			bool b = value.ToBool();
-			user->SetMultiClients(b);
+		else if (sVar == "multiclients") {
+			bool b = sValue.ToBool();
+			pUser->SetMultiClients(b);
 			PutModule("MultiClients = " + CString(b));
 		}
-		else if (var == "bouncedccs") {
-			bool b = value.ToBool();
-			user->SetBounceDCCs(b);
+		else if (sVar == "bouncedccs") {
+			bool b = sValue.ToBool();
+			pUser->SetBounceDCCs(b);
 			PutModule("BounceDCCs = " + CString(b));
 		}
-		else if (var == "useclientip") {
-			bool b = value.ToBool();
-			user->SetUseClientIP(b);
+		else if (sVar == "useclientip") {
+			bool b = sValue.ToBool();
+			pUser->SetUseClientIP(b);
 			PutModule("UseClientIP = " + CString(b));
 		}
-		else if (var == "denyloadmod") {
+		else if (sVar == "denyloadmod") {
 			if(m_pUser->IsAdmin()) {
-				bool b = value.ToBool();
-				user->SetDenyLoadMod(b);
+				bool b = sValue.ToBool();
+				pUser->SetDenyLoadMod(b);
 				PutModule("DenyLoadMod = " + CString(b));
 			} else {
 				PutModule("Access denied!");
 			}
 		}
-		else if (var == "denysetvhost") {
+		else if (sVar == "denysetvhost") {
 			if(m_pUser->IsAdmin()) {
-				bool b = value.ToBool();
-				user->SetDenySetVHost(b);
+				bool b = sValue.ToBool();
+				pUser->SetDenySetVHost(b);
 				PutModule("DenySetVHost = " + CString(b));
 			} else {
 				PutModule("Access denied!");
 			}
 		}
-		else if (var == "defaultchanmodes") {
-			user->SetDefaultChanModes(value);
-			PutModule("DefaultChanModes = " + value);
+		else if (sVar == "defaultchanmodes") {
+			pUser->SetDefaultChanModes(sValue);
+			PutModule("DefaultChanModes = " + sValue);
 		}
-		else if (var == "quitmsg") {
-			user->SetQuitMsg(value);
-			PutModule("QuitMsg = " + value);
+		else if (sVar == "quitmsg") {
+			pUser->SetQuitMsg(sValue);
+			PutModule("QuitMsg = " + sValue);
 		}
-		else if (var == "buffercount") {
-			unsigned int i = value.ToUInt();
-			user->SetBufferCount(i);
-			PutModule("BufferCount = " + value);
+		else if (sVar == "buffercount") {
+			unsigned int i = sValue.ToUInt();
+			pUser->SetBufferCount(i);
+			PutModule("BufferCount = " + sValue);
 		}
-		else if (var == "keepbuffer") {
-			bool b = value.ToBool();
-			user->SetKeepBuffer(b);
+		else if (sVar == "keepbuffer") {
+			bool b = sValue.ToBool();
+			pUser->SetKeepBuffer(b);
 			PutModule("KeepBuffer = " + CString(b));
 		}
-		else if (var == "password") {
+		else if (sVar == "password") {
 			const CString sSalt = CUtils::GetSalt();
-			const CString sHash = CUser::SaltedHash(value, sSalt);
-			user->SetPass(sHash, CUser::HASH_DEFAULT, sSalt);
+			const CString sHash = CUser::SaltedHash(sValue, sSalt);
+			pUser->SetPass(sHash, CUser::HASH_DEFAULT, sSalt);
 			PutModule("Password has been changed!");
 		}
-		else if (var == "maxjoins") {
-			unsigned int i = value.ToUInt();
-			user->SetMaxJoins(i);
-			PutModule("MaxJoins = " + CString(user->MaxJoins()));
+		else if (sVar == "maxjoins") {
+			unsigned int i = sValue.ToUInt();
+			pUser->SetMaxJoins(i);
+			PutModule("MaxJoins = " + CString(pUser->MaxJoins()));
 		}
-		else if (var == "jointries") {
-			unsigned int i = value.ToUInt();
-			user->SetJoinTries(i);
-			PutModule("JoinTries = " + CString(user->JoinTries()));
+		else if (sVar == "jointries") {
+			unsigned int i = sValue.ToUInt();
+			pUser->SetJoinTries(i);
+			PutModule("JoinTries = " + CString(pUser->JoinTries()));
 		}
-		else if (var == "admin") {
-			if(m_pUser->IsAdmin() && user != m_pUser) {
-				bool b = value.ToBool();
-				user->SetAdmin(b);
-				PutModule("Admin = " + CString(user->IsAdmin()));
+		else if (sVar == "admin") {
+			if(m_pUser->IsAdmin() && pUser != m_pUser) {
+				bool b = sValue.ToBool();
+				pUser->SetAdmin(b);
+				PutModule("Admin = " + CString(pUser->IsAdmin()));
 			} else {
 				PutModule("Access denied!");
 			}
 		}
-		else if (var == "prependtimestamp") {
-			bool b = value.ToBool();
-			user->SetTimestampPrepend(b);
+		else if (sVar == "prependtimestamp") {
+			bool b = sValue.ToBool();
+			pUser->SetTimestampPrepend(b);
 			PutModule("PrependTimestamp = " + CString(b));
 		}
-		else if (var == "appendtimestamp") {
-			bool b = value.ToBool();
-			user->SetTimestampAppend(b);
+		else if (sVar == "appendtimestamp") {
+			bool b = sValue.ToBool();
+			pUser->SetTimestampAppend(b);
 			PutModule("AppendTimestamp = " + CString(b));
 		}
-		else if (var == "dccvhost") {
-			if(!user->DenySetVHost() || m_pUser->IsAdmin()) {
-				user->SetDCCVHost(value);
-				PutModule("DCCVHost = " + value);
+		else if (sVar == "dccvhost") {
+			if(!pUser->DenySetVHost() || m_pUser->IsAdmin()) {
+				pUser->SetDCCVHost(sValue);
+				PutModule("DCCVHost = " + sValue);
 			} else {
 				PutModule("Access denied!");
 			}
@@ -328,86 +331,86 @@ class CAdminMod : public CModule {
 	}
 
 	void GetChan(const CString& sLine) {
-		const CString var  = sLine.Token(1).AsLower();
-		CString username   = sLine.Token(2);
-		CString chan = sLine.Token(3, true);
+		const CString sVar  = sLine.Token(1).AsLower();
+		CString sUsername   = sLine.Token(2);
+		CString sChan = sLine.Token(3, true);
 
-		if (var.empty()) {
+		if (sVar.empty()) {
 			PutModule("Usage: getchan <variable> [username] <chan>");
 			return;
 		}
-		if (chan.empty()) {
-			chan = username;
-			username = "";
+		if (sChan.empty()) {
+			sChan = sUsername;
+			sUsername = "";
 		}
-		if (username.empty()) {
-			username = m_pUser->GetUserName();
+		if (sUsername.empty()) {
+			sUsername = m_pUser->GetUserName();
 		}
 
-		CUser* user = GetUser(username);
-		if (!user)
+		CUser* pUser = GetUser(sUsername);
+		if (!pUser)
 			return;
 
-		CChan* pChan = user->FindChan(chan);
+		CChan* pChan = pUser->FindChan(sChan);
 		if (!pChan) {
-			PutModule("Error: Channel not found: " + chan);
+			PutModule("Error: Channel not found: " + sChan);
 			return;
 		}
 
-		if (var == "defmodes")
+		if (sVar == "defmodes")
 			PutModule("DefModes = " + pChan->GetDefaultModes());
-		else if (var == "buffer")
+		else if (sVar == "buffer")
 			PutModule("Buffer = " + CString(pChan->GetBufferCount()));
-		else if (var == "inconfig")
+		else if (sVar == "inconfig")
 			PutModule("InConfig = " + pChan->InConfig());
-		else if (var == "keepbuffer")
+		else if (sVar == "keepbuffer")
 			PutModule("KeepBuffer = " + pChan->KeepBuffer());
-		else if (var == "detached")
+		else if (sVar == "detached")
 			PutModule("Detached = " + pChan->IsDetached());
-		else if (var == "key")
+		else if (sVar == "key")
 			PutModule("Key = " + pChan->GetKey());
 		else
 			PutModule("Error: Unknown variable");
 	}
 
 	void SetChan(const CString& sLine) {
-		const CString var = sLine.Token(1).AsLower();
-		CString username  = sLine.Token(2);
-		CString chan      = sLine.Token(3);
-		CString value     = sLine.Token(4, true);
+		const CString sVar = sLine.Token(1).AsLower();
+		CString sUsername  = sLine.Token(2);
+		CString sChan      = sLine.Token(3);
+		CString sValue     = sLine.Token(4, true);
 
 		if (value.empty()) {
 			PutModule("Usage: setchan <variable> <username> <chan> <value>");
 			return;
 		}
 
-		CUser* user = GetUser(username);
-		if (!user)
+		CUser* user = GetUser(sUsername);
+		if (!pUser)
 			return;
 
-		CChan* pChan = user->FindChan(chan);
+		CChan* pChan = pUser->FindChan(sChan);
 		if (!pChan) {
-			PutModule("Error: Channel not found: " + chan);
+			PutModule("Error: Channel not found: " + sChan);
 			return;
 		}
 
-		if (var == "defmodes") {
-			pChan->SetDefaultModes(value);
-			PutModule("DefModes = " + value);
-		} else if (var == "buffer") {
-			unsigned int i = value.ToUInt();
+		if (sVar == "defmodes") {
+			pChan->SetDefaultModes(sValue);
+			PutModule("DefModes = " + sValue);
+		} else if (sVar == "buffer") {
+			unsigned int i = sValue.ToUInt();
 			pChan->SetBufferCount(i);
 			PutModule("Buffer = " + CString(i));
-		} else if (var == "inconfig") {
-			bool b = value.ToBool();
+		} else if (sVar == "inconfig") {
+			bool b = sValue.ToBool();
 			pChan->SetInConfig(b);
 			PutModule("InConfig = " + CString(b));
-		} else if (var == "keepbuffer") {
-			bool b = value.ToBool();
+		} else if (sVar == "keepbuffer") {
+			bool b = sValue.ToBool();
 			pChan->SetKeepBuffer(b);
 			PutModule("KeepBuffer = " + CString(b));
-		} else if (var == "detached") {
-			bool b = value.ToBool();
+		} else if (sVar == "detached") {
+			bool b = sValue.ToBool();
 			if (pChan->IsDetached() != b) {
 				if (b)
 					pChan->DetachUser();
@@ -415,9 +418,9 @@ class CAdminMod : public CModule {
 					pChan->AttachUser();
 			}
 			PutModule("Detached = " + CString(b));
-		} else if (var == "key") {
-			pChan->SetKey(value);
-			PutModule("Key = " + value);
+		} else if (sVar == "key") {
+			pChan->SetKey(sValue);
+			PutModule("Key = " + sValue);
 		} else
 			PutModule("Error: Unknown variable");
 	}
@@ -567,33 +570,28 @@ class CAdminMod : public CModule {
 	}
 
 	void AddServer(const CString& sLine) {
-		CString username = sLine.Token(1);
-		CString server   = sLine.Token(2, true);
+		CString sUsername = sLine.Token(1);
+		const CString sServer = sLine.Token(2, true);
 
-		if (server.empty()) {
+		if (sServer.empty()) {
 			PutModule("Usage: addserver <username> <server>");
 			return;
 		}
 
-		CUser* user = GetUser(username);
-		if (!user)
+		CUser* pUser = GetUser(sUsername);
+		if (!pUser)
 			return;
 
-		user->AddServer(server);
-		PutModule("Added IRC Server: " + server);
+		pUser->AddServer(sServer);
+		PutModule("Added IRC Server: " + sServer);
 	}
-	
+
 	void LoadModuleForUser(const CString& sLine) {
 		CString sUsername = sLine.Token(1);
 		CString sModName  = sLine.Token(2);
-		CString sArgs     = sLine.Token(3, true); 
+		CString sArgs     = sLine.Token(3, true);
 		CString sModRet;
 
-		if (!m_pUser->IsAdmin()) {
-			PutModule("Error: You need to have admin rights to modify users!");
-			return;
-		}		
-		
 		if (sModName.empty()) {
 			PutModule("Usage: loadmodule <username> <modulename>");
 			return;
@@ -618,19 +616,14 @@ class CAdminMod : public CModule {
 			}
 		} else {
 			PutModule("Unable to load module [" + sModName + "] because it is already loaded");
-		}		
+		}
 	}
 
 	void UnLoadModuleForUser(const CString& sLine) {
 		CString sUsername = sLine.Token(1);
 		CString sModName  = sLine.Token(2);
-		CString sArgs     = sLine.Token(3, true); 
+		CString sArgs     = sLine.Token(3, true);
 		CString sModRet;
-		
-		if (!m_pUser->IsAdmin()) {
-			PutModule("Error: You need to have admin rights to modify users!");
-			return;
-		}
 
 		if (sModName.empty()) {
 			PutModule("Usage: loadmodule <username> <modulename>");
@@ -645,9 +638,9 @@ class CAdminMod : public CModule {
 			PutModule("Unable to unload module [" + sModName + "] [" + sModRet + "]");
 		} else {
 			PutModule("Unloaded module [" + sModName + "] [" + sModRet + "]");
-		}	
+		}
 	}
-	
+
 	void ListModuleForUser(const CString& sLine) {
 		CString sUsername = sLine.Token(1, true);
 
@@ -656,7 +649,7 @@ class CAdminMod : public CModule {
 			PutModule("Usage: listmods <username of other user>");
 			return;
 		}
-			
+
 		CModules& Modules = pUser->GetModules();
 
 		if (!Modules.size()) {
@@ -675,8 +668,8 @@ class CAdminMod : public CModule {
 
 			PutModule(Table);
 		}
-		
-	}	
+
+	}
 
 	typedef void (CAdminMod::* fn)(const CString&);
 	typedef std::map<CString, fn> function_map;
