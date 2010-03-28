@@ -35,15 +35,18 @@ class CAdminMod : public CModule {
 		CmdTable.AddColumn("Arguments");
 		CmdTable.AddColumn("Description");
 		static const char* help[][3] = {
-			{"Get",       "variable [username]",           "Prints the variable's value for the given or current user"},
-			{"Set",       "variable username value",       "Sets the variable's value for the given user (use $me for the current user)"},
-			{"GetChan",   "variable [username] chan",      "Prints the variable's value for the given channel"},
-			{"SetChan",   "variable username chan value",   "Sets the variable's value for the given channel"},
-			{"ListUsers", "",                              "Lists users"},
-			{"AddUser",   "username password [ircserver]", "Adds a new user"},
-			{"DelUser",   "username",                      "Deletes a user"},
-			{"CloneUser", "oldusername newusername",       "Clones a user"},
-			{"AddServer", "[username] server",             "Adds a new IRC server for the given or current user"}
+			{"Get",          "variable [username]",           "Prints the variable's value for the given or current user"},
+			{"Set",          "variable username value",       "Sets the variable's value for the given user (use $me for the current user)"},
+			{"GetChan",      "variable [username] chan",      "Prints the variable's value for the given channel"},
+			{"SetChan",      "variable username chan value",   "Sets the variable's value for the given channel"},
+			{"ListUsers",    "",                              "Lists users"},
+			{"AddUser",      "username password [ircserver]", "Adds a new user"},
+			{"DelUser",      "username",                      "Deletes a user"},
+			{"CloneUser",    "oldusername newusername",       "Clones a user"},
+			{"AddServer",    "[username] server",             "Adds a new IRC server for the given or current user"},
+			{"LoadModule",   "username modulename",           "Loads a Module for a user"},
+			{"UnLoadModule", "username modulename",           "Removes a Module of a user"},
+			{"ListMods",     "username",                      "Get the list of modules for a user"}
 		};
 		for (unsigned int i = 0; i != ARRAY_SIZE(help); ++i) {
 			CmdTable.AddRow();
@@ -579,7 +582,101 @@ class CAdminMod : public CModule {
 		user->AddServer(server);
 		PutModule("Added IRC Server: " + server);
 	}
+	
+	void LoadModuleForUser(const CString& sLine) {
+		CString sUsername = sLine.Token(1);
+		CString sModName  = sLine.Token(2);
+		CString sArgs     = sLine.Token(3, true); 
+		CString sModRet;
 
+		if (!m_pUser->IsAdmin()) {
+			PutModule("Error: You need to have admin rights to modify users!");
+			return;
+		}		
+		
+		if (sModName.empty()) {
+			PutModule("Usage: loadmodule <username> <modulename>");
+			return;
+		}
+
+		CUser* pUser = GetUser(sUsername);
+		if (!pUser)
+			return;
+
+		CModule *pMod = (pUser)->GetModules().FindModule(sModName);
+		if (!pMod) {
+			if (!(pUser)->GetModules().LoadModule(sModName, sArgs, pUser, sModRet, false)) {
+				PutModule("Unable to load module [" + sModName + "] [" + sModRet + "]");
+			} else {
+				PutModule("Loaded module [" + sModName + "]");
+			}
+		} else if (pMod->GetArgs() != sArgs) {
+			if (!(pUser)->GetModules().ReloadModule(sModName, sArgs, pUser, sModRet)) {
+				PutModule("Unable to reload module [" + sModName + "] [" + sModRet + "]");
+			} else {
+				PutModule("Reloaded module [" + sModName + "]");
+			}
+		} else {
+			PutModule("Unable to load module [" + sModName + "] because it is already loaded");
+		}		
+	}
+
+	void UnLoadModuleForUser(const CString& sLine) {
+		CString sUsername = sLine.Token(1);
+		CString sModName  = sLine.Token(2);
+		CString sArgs     = sLine.Token(3, true); 
+		CString sModRet;
+		
+		if (!m_pUser->IsAdmin()) {
+			PutModule("Error: You need to have admin rights to modify users!");
+			return;
+		}
+
+		if (sModName.empty()) {
+			PutModule("Usage: loadmodule <username> <modulename>");
+			return;
+		}
+
+		CUser* pUser = GetUser(sUsername);
+		if (!pUser)
+			return;
+
+		if (!(pUser)->GetModules().UnloadModule(sModName, sModRet)) {
+			PutModule("Unable to unload module [" + sModName + "] [" + sModRet + "]");
+		} else {
+			PutModule("Unloaded module [" + sModName + "] [" + sModRet + "]");
+		}	
+	}
+	
+	void ListModuleForUser(const CString& sLine) {
+		CString sUsername = sLine.Token(1, true);
+
+		CUser* pUser = GetUser(sUsername);
+		if (!pUser || (pUser != m_pUser && !m_pUser->IsAdmin())) {
+			PutModule("Usage: listmods <username of other user>");
+			return;
+		}
+			
+		CModules& Modules = pUser->GetModules();
+
+		if (!Modules.size()) {
+			PutModule("This user has no modules loaded.");
+		} else {
+			PutModule("User modules:");
+			CTable Table;
+			Table.AddColumn("Name");
+			Table.AddColumn("Arguments");
+
+			for (unsigned int b = 0; b < Modules.size(); b++) {
+				Table.AddRow();
+				Table.SetCell("Name", Modules[b]->GetModName());
+				Table.SetCell("Arguments", Modules[b]->GetArgs());
+			}
+
+			PutModule(Table);
+		}
+		
+	}	
 
 	typedef void (CAdminMod::* fn)(const CString&);
 	typedef std::map<CString, fn> function_map;
@@ -587,16 +684,19 @@ class CAdminMod : public CModule {
 
 public:
 	MODCONSTRUCTOR(CAdminMod) {
-		fnmap_["help"]      = &CAdminMod::PrintHelp;
-		fnmap_["get"]       = &CAdminMod::Get;
-		fnmap_["set"]       = &CAdminMod::Set;
-		fnmap_["getchan"]   = &CAdminMod::GetChan;
-		fnmap_["setchan"]   = &CAdminMod::SetChan;
-		fnmap_["listusers"] = &CAdminMod::ListUsers;
-		fnmap_["adduser"]   = &CAdminMod::AddUser;
-		fnmap_["deluser"]   = &CAdminMod::DelUser;
-		fnmap_["cloneuser"] = &CAdminMod::CloneUser;
-		fnmap_["addserver"] = &CAdminMod::AddServer;
+		fnmap_["help"]         = &CAdminMod::PrintHelp;
+		fnmap_["get"]          = &CAdminMod::Get;
+		fnmap_["set"]          = &CAdminMod::Set;
+		fnmap_["getchan"]      = &CAdminMod::GetChan;
+		fnmap_["setchan"]      = &CAdminMod::SetChan;
+		fnmap_["listusers"]    = &CAdminMod::ListUsers;
+		fnmap_["adduser"]      = &CAdminMod::AddUser;
+		fnmap_["deluser"]      = &CAdminMod::DelUser;
+		fnmap_["cloneuser"]    = &CAdminMod::CloneUser;
+		fnmap_["addserver"]    = &CAdminMod::AddServer;
+		fnmap_["loadmodule"]   = &CAdminMod::LoadModuleForUser;
+		fnmap_["unloadmodule"] = &CAdminMod::UnLoadModuleForUser;
+		fnmap_["listmods"]     = &CAdminMod::ListModuleForUser;
 	}
 
 	virtual ~CAdminMod() {}
