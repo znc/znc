@@ -63,7 +63,7 @@ bool CChan::WriteConfig(CFile& File) {
 	if (!GetDefaultModes().empty())
 		m_pUser->PrintLine(File, "\tModes", GetDefaultModes());
 
-	CZNC::Get().GetModules().OnWriteChanConfig(File, *this);
+	MODULECALL(OnWriteChanConfig(File, *this), m_pUser, NULL,);
 
 	File.Write("\t</Chan>\n");
 	return true;

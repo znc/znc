@@ -707,7 +707,7 @@ bool CUser::WriteConfig(CFile& File) {
 		}
 	}
 
-	CZNC::Get().GetModules().OnWriteUserConfig(File, *this);
+	MODULECALL(OnWriteUserConfig(File), this, NULL,);
 
 	File.Write("</User>\n");
 
