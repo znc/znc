@@ -345,6 +345,22 @@ public:
 	 */
 	virtual EModRet OnBroadcast(CString& sMessage);
 
+	/** Called just before ZNC finishes a user section in the config file.
+	 *  This can be used to re-write the "GM:" lines for OnConfigLine()
+	 *  which would get lost otherwise.
+	 *  @param Config Reference to the CFile which will be used for writing
+	 *                the config file.
+	 */
+	virtual void OnWriteUserConfig(CFile& Config);
+	/** Called just before ZNC finishes a chan section in the config file.
+	 *  This can be used to re-write the "GM:" lines for OnConfigLine()
+	 *  which would get lost otherwise.
+	 *  @param Config Reference to the CFile which will be used for writing
+	 *                the config file.
+	 *  @param Chan The channel which is being written.
+	 */
+	virtual void OnWriteChanConfig(CFile& Config, CChan& Chan);
+
 	/** This module hook is called when a user sends a DCC SEND request to
 	 *  your module fake-nickname.
 	 */
@@ -790,6 +806,8 @@ public:
 	bool OnIRCConnecting(CIRCSock *pIRCSock);
 	bool OnIRCRegistration(CString& sPass, CString& sNick, CString& sIdent, CString& sRealName);
 	bool OnBroadcast(CString& sMessage);
+	bool OnWriteUserConfig(CFile& Config);
+	bool OnWriteChanConfig(CFile& Config, CChan& Chan);
 
 	bool OnDCCUserSend(const CNick& RemoteNick, unsigned long uLongIP, unsigned short uPort, const CString& sFile, unsigned long uFileSize);
 
@@ -906,22 +924,6 @@ public:
 	 *  @return See CModule::EModRet.
 	 */
 	virtual EModRet OnWriteConfig(CFile& Config);
-	/** Called just before ZNC finishes a user section in the config file.
-	 *  This can be used to re-write the "GM:" lines for OnConfigLine()
-	 *  which would get lost otherwise.
-	 *  @param Config Reference to the CFile which will be used for writing
-	 *                the config file.
-	 *  @param User The user which is being written.
-	 */
-	virtual void OnWriteUserConfig(CFile& Config, CUser& User);
-	/** Called just before ZNC finishes a chan section in the config file.
-	 *  This can be used to re-write the "GM:" lines for OnConfigLine()
-	 *  which would get lost otherwise.
-	 *  @param Config Reference to the CFile which will be used for writing
-	 *                the config file.
-	 *  @param Chan The channel which is being written.
-	 */
-	virtual void OnWriteChanConfig(CFile& Config, CChan& Chan);
 	/** This module hook is called when a user is being added.
 	 * @param User The user which will be added.
 	 * @param sErrorRet A message that may be displayed to the user if
@@ -972,8 +974,6 @@ public:
 
 	bool OnConfigLine(const CString& sName, const CString& sValue, CUser* pUser, CChan* pChan);
 	bool OnWriteConfig(CFile& Config);
-	void OnWriteUserConfig(CFile& Config, CUser& User);
-	void OnWriteChanConfig(CFile& Config, CChan& Chan);
 	bool OnAddUser(CUser& User, CString& sErrorRet);
 	bool OnDeleteUser(CUser& User);
 	void OnClientConnect(CClient* pClient, const CString& sHost, unsigned short uPort);
