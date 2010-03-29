@@ -1676,7 +1676,7 @@ bool CZNC::DoRehash(CString& sError)
 		if (it->m_pUser) {
 			MODULECALL(OnConfigLine(it->m_sName, it->m_sValue, it->m_pUser, it->m_pChan), it->m_pUser, NULL, bHandled = true);
 		} else {
-			bHandled = GetModules().OnConfigLine(it->m_sName, it->m_sValue, it->m_pUser, it->m_pChan));
+			bHandled = GetModules().OnConfigLine(it->m_sName, it->m_sValue, it->m_pUser, it->m_pChan);
 		}
 		if (!bHandled) {
 			CUtils::PrintMessage("unhandled global module config line [GM:" + it->m_sName + "] = [" + it->m_sValue + "]");

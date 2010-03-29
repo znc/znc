@@ -546,7 +546,7 @@ bool CModules::OnIRCConnected() { MODUNLOADCHK(OnIRCConnected()); return false; 
 bool CModules::OnIRCConnecting(CIRCSock *pIRCSock) { MODHALTCHK(OnIRCConnecting(pIRCSock)); }
 bool CModules::OnIRCRegistration(CString& sPass, CString& sNick, CString& sIdent, CString& sRealName) { MODHALTCHK(OnIRCRegistration(sPass, sNick, sIdent, sRealName)); }
 bool CModules::OnBroadcast(CString& sMessage) { MODHALTCHK(OnBroadcast(sMessage)); }
-bool CModules::OnConfigLine(const CString& sName, const CString& sValue, CUser* pUser, CChan* pChan) { GLOBALMODHALTCHK(OnConfigLine(sName, sValue, pUser, pChan)); }
+bool CModules::OnConfigLine(const CString& sName, const CString& sValue, CUser* pUser, CChan* pChan) { MODHALTCHK(OnConfigLine(sName, sValue, pUser, pChan)); }
 bool CModules::OnWriteUserConfig(CFile& Config) { MODUNLOADCHK(OnWriteUserConfig(Config)); return false; }
 bool CModules::OnWriteChanConfig(CFile& Config, CChan& Chan) { MODUNLOADCHK(OnWriteChanConfig(Config, Chan)); return false; }
 bool CModules::OnIRCDisconnected() { MODUNLOADCHK(OnIRCDisconnected()); return false; }
