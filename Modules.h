@@ -345,6 +345,17 @@ public:
 	 */
 	virtual EModRet OnBroadcast(CString& sMessage);
 
+	/** Called when a module-specific config line is read from znc.conf.
+	 *  Module specific config lines are always prefixed with "GM:".
+	 *  @param sName Name of the config entry without the "GM:" prefix.
+	 *  @param sValue The value of the config entry.
+	 *  @param pUser If this line was found in a user section, then this is
+	 *               the corresponding CUser instance.
+	 *  @param pChan If this line was found in a chan section, then this is
+	 *               the corresponding CChan instance.
+	 *  @return See CModule::EModRet.
+	 */
+	virtual EModRet OnConfigLine(const CString& sName, const CString& sValue, CUser* pUser, CChan* pChan);
 	/** Called just before ZNC finishes a user section in the config file.
 	 *  This can be used to re-write the "GM:" lines for OnConfigLine()
 	 *  which would get lost otherwise.
@@ -806,6 +817,7 @@ public:
 	bool OnIRCConnecting(CIRCSock *pIRCSock);
 	bool OnIRCRegistration(CString& sPass, CString& sNick, CString& sIdent, CString& sRealName);
 	bool OnBroadcast(CString& sMessage);
+	bool OnConfigLine(const CString& sName, const CString& sValue, CUser* pUser, CChan* pChan);
 	bool OnWriteUserConfig(CFile& Config);
 	bool OnWriteChanConfig(CFile& Config, CChan& Chan);
 
@@ -905,17 +917,6 @@ public:
 			const CString &sDataDir) : CModule(pDLL, sModName, sDataDir) {}
 	virtual ~CGlobalModule() {}
 
-	/** Called when a module-specific config line is read from znc.conf.
-	 *  Module specific config lines are always prefixed with "GM:".
-	 *  @param sName Name of the config entry without the "GM:" prefix.
-	 *  @param sValue The value of the config entry.
-	 *  @param pUser If this line was found in a user section, then this is
-	 *               the corresponding CUser instance.
-	 *  @param pChan If this line was found in a chan section, then this is
-	 *               the corresponding CChan instance.
-	 *  @return See CModule::EModRet.
-	 */
-	virtual EModRet OnConfigLine(const CString& sName, const CString& sValue, CUser* pUser, CChan* pChan);
 	/** Called when ZNC starts rewriting the config file. This can be used
 	 *  re-write the "GM:" lines for OnConfigLine() which would get lost
 	 *  otherwise.
@@ -972,7 +973,6 @@ public:
 	CGlobalModules() : CModules() {}
 	~CGlobalModules() {}
 
-	bool OnConfigLine(const CString& sName, const CString& sValue, CUser* pUser, CChan* pChan);
 	bool OnWriteConfig(CFile& Config);
 	bool OnAddUser(CUser& User, CString& sErrorRet);
 	bool OnDeleteUser(CUser& User);
