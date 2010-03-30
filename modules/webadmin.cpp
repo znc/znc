@@ -156,6 +156,7 @@ public:
 		pNewUser->SetTimezoneOffset(WebSock.GetParam("timezoneoffset").ToDouble());
 		pNewUser->SetJoinTries(WebSock.GetParam("jointries").ToUInt());
 		pNewUser->SetMaxJoins(WebSock.GetParam("maxjoins").ToUInt());
+		pNewUser->SetIRCConnectEnabled(WebSock.GetParam("doconnect").ToBool());
 
 		if (spSession->IsAdmin()) {
 			pNewUser->SetDenyLoadMod(WebSock.GetParam("denyloadmod").ToBool());
@@ -466,6 +467,7 @@ public:
 				Tmpl["TimezoneOffset"] = CString(pUser->GetTimezoneOffset());
 				Tmpl["JoinTries"] = CString(pUser->JoinTries());
 				Tmpl["MaxJoins"] = CString(pUser->MaxJoins());
+				Tmpl["IRCConnectEnabled"] = CString(pUser->GetIRCConnectEnabled());
 
 				const set<CString>& ssAllowedHosts = pUser->GetAllowedHosts();
 				for (set<CString>::const_iterator it = ssAllowedHosts.begin(); it != ssAllowedHosts.end(); ++it) {
@@ -506,6 +508,7 @@ public:
 				Tmpl["Action"] = "adduser";
 				Tmpl["Title"] = "Add User";
 				Tmpl["StatusPrefix"] = "*";
+				Tmpl["IRCConnectEnabled"] = "true";
 			}
 
 			// To change VHosts be admin or don't have DenySetVHost
