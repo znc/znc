@@ -666,6 +666,7 @@ CSmartPtr<CWebSession> CWebSock::GetSession() {
 	if (pSession != NULL) {
 		// Refresh the timeout
 		m_mspSessions.AddItem((*pSession)->GetId(), *pSession);
+		m_spSession = *pSession;
 		DEBUG("Found existing session from cookie: [" + sCookieSessionId + "] IsLoggedIn(" + CString((*pSession)->IsLoggedIn() ? "true" : "false") + ")");
 		return *pSession;
 	}
