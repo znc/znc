@@ -92,12 +92,11 @@ a:visited,
 a:hover {
 	font-family: verdana;
 	font-size: 12px;
-	color: #000;
+	color: #fff;
 	text-decoration: none;
 }
 
 a:hover {
-	color: #fff;
 	text-decoration: underline;
 }
 
@@ -237,6 +236,10 @@ a:hover {
 #menu .subitem.active a:hover {
 	color: #000;
 	text-decoration: none;
+}
+
+#menu a {
+	color: #000;
 }
 
 /* !MENU */
