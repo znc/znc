@@ -445,6 +445,7 @@ bool CUser::Clone(const CUser& User, CString& sErrorRet, bool bCloneChans) {
 	// !CTCP Replies
 
 	// Flags
+	SetIRCConnectEnabled(User.GetIRCConnectEnabled());
 	SetKeepBuffer(User.KeepBuffer());
 	SetMultiClients(User.MultiClients());
 	SetBounceDCCs(User.BounceDCCs());
