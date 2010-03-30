@@ -1388,6 +1388,9 @@ bool CZNC::DoRehash(CString& sError)
 					} else if (sName.Equals("PrependTimestamp")) {
 						pUser->SetTimestampPrepend(sValue.ToBool());
 						continue;
+					} else if (sName.Equals("IRCConnectEnabled")) {
+						pUser->SetIRCConnectEnabled(sValue.ToBool());
+						continue;
 					} else if (sName.Equals("Timestamp")) {
 						if (!sValue.Trim_n().Equals("true")) {
 							if (sValue.Trim_n().Equals("append")) {
