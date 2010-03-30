@@ -39,10 +39,9 @@ public:
 
 	const CString& GetId() const { return m_sId; }
 	CUser* GetUser() const { return m_pUser; }
-	bool IsLoggedIn() const { return m_pUser && m_bLoggedIn; }
+	bool IsLoggedIn() const { return m_pUser != NULL; }
 	bool IsAdmin() const;
 
-	bool SetLoggedIn(bool b) { m_bLoggedIn = b; return m_bLoggedIn; }
 	CUser* SetUser(CUser* p) { m_pUser = p; return m_pUser; }
 
 	void ClearMessageLoops();
@@ -52,7 +51,6 @@ public:
 private:
 	CString		m_sId;
 	CUser*		m_pUser;
-	bool		m_bLoggedIn;
 	VCString	m_vsErrorMsgs;
 	VCString	m_vsSuccessMsgs;
 };

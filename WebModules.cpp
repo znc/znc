@@ -28,7 +28,6 @@ bool CZNCTagHandler::HandleTag(CTemplate& Tmpl, const CString& sName, const CStr
 }
 
 CWebSession::CWebSession(const CString& sId) : m_sId(sId) {
-	m_bLoggedIn = false;
 	m_pUser = NULL;
 }
 
@@ -83,7 +82,6 @@ void CWebAuth::AcceptedLogin(CUser& User) {
 		CSmartPtr<CWebSession> spSession = m_pWebSock->GetSession();
 
 		spSession->SetUser(&User);
-		spSession->SetLoggedIn(true);
 
 		m_pWebSock->SetLoggedIn(true);
 		m_pWebSock->UnPauseRead();
@@ -99,7 +97,6 @@ void CWebAuth::RefusedLogin(const CString& sReason) {
 
 		spSession->AddError("Invalid login!");
 		spSession->SetUser(NULL);
-		spSession->SetLoggedIn(false);
 
 		m_pWebSock->SetLoggedIn(false);
 		m_pWebSock->UnPauseRead();
@@ -534,7 +531,7 @@ CWebSock::EPageReqResult CWebSock::OnPageRequestInternal(const CString& sURI, CS
 	} else if (sURI == "/robots.txt") {
 		return PrintStaticFile("/pub/robots.txt", sPageRet);
 	} else if (sURI == "/logout") {
-		GetSession()->SetLoggedIn(false);
+		GetSession()->SetUser(NULL);
 		SetLoggedIn(false);
 		Redirect("/");
 
