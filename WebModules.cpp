@@ -683,6 +683,8 @@ CSmartPtr<CWebSession> CWebSock::GetSession() {
 	CSmartPtr<CWebSession> spSession(new CWebSession(sSessionID));
 	m_mspSessions.AddItem(spSession->GetId(), spSession);
 
+	m_spSession = spSession;
+
 	return spSession;
 }
 
