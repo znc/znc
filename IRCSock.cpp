@@ -384,6 +384,10 @@ void CIRCSock::ReadLine(const CString& sData) {
 
 			if (Nick.GetNick().Equals(GetNick())) {
 				m_pUser->PutStatus("You quit [" + sMessage + "]");
+				// We don't call module hooks and we don't
+				// forward this quit to clients (Some clients
+				// disconnect if they receive such a QUIT)
+				return;
 			}
 
 			vector<CChan*> vFoundChans;
