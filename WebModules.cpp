@@ -478,11 +478,16 @@ bool CWebSock::ForceLogin() {
 }
 
 CString CWebSock::GetRequestCookie(const CString& sKey) const {
+	CString sRet;
+
 	if (!m_sModName.empty()) {
-		return CHTTPSock::GetRequestCookie("Mod::" + m_sModName + "::" + sKey);
+		sRet = CHTTPSock::GetRequestCookie("Mod::" + m_sModName + "::" + sKey);
 	}
 
-	return CHTTPSock::GetRequestCookie(sKey);
+	if (sRet.empty()) {
+		return CHTTPSock::GetRequestCookie(sKey);
+	}
+	return sRet;
 }
 
 bool CWebSock::SendCookie(const CString& sKey, const CString& sValue) {
