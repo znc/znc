@@ -174,10 +174,7 @@ void CWebSock::ParsePath() {
 		m_sPage = "index";
 	}
 
-	DEBUG("Path   [" + m_sPath + "]");
-	DEBUG("User   [" + m_sForceUser + "]");
-	DEBUG("Module [" + m_sModName + "]");
-	DEBUG("Page   [" + m_sPage + "]");
+	DEBUG("Path [" + m_sPath + "], User [" + m_sForceUser + "], Module [" + m_sModName + "], Page [" + m_sPage + "]");
 }
 
 CModule* CWebSock::ResolveModule() {
