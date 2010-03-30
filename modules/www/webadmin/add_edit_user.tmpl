@@ -148,9 +148,13 @@
 			</tr>
 
 			<tr>
-				<td colspan="2">
+				<td colspan="2" class="tdbottom">
 				<? IF !ChannelLoop ?>
-					<center>- <a href="addchan?user=<? VAR Username ESC=URL ?>">Add a Channel</a> -</center>
+					<? IF !Edit ?>
+						<span class="info">You will be able to add + modify channels here after you created the user.</span>
+					<? ELSE ?>
+						- <a href="addchan?user=<? VAR Username ESC=URL ?>">Add a Channel</a> -
+					<? ENDIF ?>
 				<? ELSE ?>
 					<? IF Edit ?>
 						<table class="data">
