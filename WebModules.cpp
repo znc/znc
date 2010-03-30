@@ -206,7 +206,7 @@ CModule* CWebSock::ResolveModule() {
 				return NULL;
 			}
 
-			pModRet = m_spSession->GetUser()->GetModules().FindModule(m_sModName);
+			pModRet = GetSession()->GetUser()->GetModules().FindModule(m_sModName);
 		}
 	}
 
@@ -311,12 +311,12 @@ void CWebSock::SetVars() {
 	m_Template["Tag"] = CZNC::GetTag();
 	m_Template["SkinName"] = GetSkinName();
 
-	if (m_spSession->IsAdmin()) {
+	if (GetSession()->IsAdmin()) {
 		m_Template["IsAdmin"] = "true";
 	}
 
-	m_spSession->FillMessageLoops(m_Template);
-	m_spSession->ClearMessageLoops();
+	GetSession()->FillMessageLoops(m_Template);
+	GetSession()->ClearMessageLoops();
 
 	// Global Mods
 	CGlobalModules& vgMods = CZNC::Get().GetModules();
@@ -326,7 +326,7 @@ void CWebSock::SetVars() {
 
 	// User Mods
 	if (IsLoggedIn()) {
-		CModules& vMods = m_spSession->GetUser()->GetModules();
+		CModules& vMods = GetSession()->GetUser()->GetModules();
 
 		for (unsigned int a = 0; a < vMods.size(); a++) {
 			AddModLoop("UserModLoop", *vMods[a]);
@@ -341,7 +341,7 @@ void CWebSock::SetVars() {
 bool CWebSock::AddModLoop(const CString& sLoopName, CModule& Module) {
 	CString sTitle(Module.GetWebMenuTitle());
 
-	if (!sTitle.empty() && (IsLoggedIn() || (!Module.WebRequiresLogin() && !Module.WebRequiresAdmin())) && (m_spSession->IsAdmin() || !Module.WebRequiresAdmin())) {
+	if (!sTitle.empty() && (IsLoggedIn() || (!Module.WebRequiresLogin() && !Module.WebRequiresAdmin())) && (GetSession()->IsAdmin() || !Module.WebRequiresAdmin())) {
 		CTemplate& Row = m_Template.AddRow(sLoopName);
 
 		Row["ModName"] = Module.GetModName();
@@ -363,7 +363,7 @@ bool CWebSock::AddModLoop(const CString& sLoopName, CModule& Module) {
 			// bActive is whether or not the current url matches this subpage (params will be checked below)
 			bool bActive = (m_sModName == Module.GetModName() && m_sPage == SubPage->GetName());
 
-			if (SubPage->RequiresAdmin() && !m_spSession->IsAdmin()) {
+			if (SubPage->RequiresAdmin() && !GetSession()->IsAdmin()) {
 				continue;	// Don't add admin-only subpages to requests from non-admin users
 			}
 
@@ -471,11 +471,11 @@ CString CWebSock::GetSkinPath(const CString& sSkinName) const {
 }
 
 bool CWebSock::ForceLogin() {
-	if (m_spSession->IsLoggedIn()) {
+	if (GetSession()->IsLoggedIn()) {
 		return true;
 	}
 
-	m_spSession->AddError("You must login to view that page");
+	GetSession()->AddError("You must login to view that page");
 	Redirect("/");
 	return false;
 }
@@ -516,18 +516,17 @@ void CWebSock::OnPageRequest(const CString& sURI) {
 }
 
 CWebSock::EPageReqResult CWebSock::OnPageRequestInternal(const CString& sURI, CString& sPageRet) {
-	m_spSession = GetSession();
-	SendCookie("SessionId", m_spSession->GetId());
+	SendCookie("SessionId", GetSession()->GetId());
 
-	if (m_spSession->IsLoggedIn()) {
-		m_sUser = m_spSession->GetUser()->GetUserName();
+	if (GetSession()->IsLoggedIn()) {
+		m_sUser = GetSession()->GetUser()->GetUserName();
 		m_bLoggedIn = true;
 	}
 
 	// Handle the static pages that don't require a login
 	if (sURI == "/") {
 		if(!m_bLoggedIn && GetParam("cookie_check").ToBool() && GetRequestCookie("SessionId").empty()) {
-			m_spSession->AddError("Your browser does not have cookies enabled for this site!");
+			GetSession()->AddError("Your browser does not have cookies enabled for this site!");
 		}
 		return PrintTemplate("index", sPageRet);
 	} else if (sURI == "/favicon.ico") {
@@ -535,7 +534,7 @@ CWebSock::EPageReqResult CWebSock::OnPageRequestInternal(const CString& sURI, CS
 	} else if (sURI == "/robots.txt") {
 		return PrintStaticFile("/pub/robots.txt", sPageRet);
 	} else if (sURI == "/logout") {
-		m_spSession->SetLoggedIn(false);
+		GetSession()->SetLoggedIn(false);
 		SetLoggedIn(false);
 		Redirect("/");
 
@@ -574,17 +573,17 @@ CWebSock::EPageReqResult CWebSock::OnPageRequestInternal(const CString& sURI, CS
 				return PAGE_DONE;
 			}
 
-			pModule = CZNC::Get().FindModule(m_sModName, m_spSession->GetUser());
+			pModule = CZNC::Get().FindModule(m_sModName, GetSession()->GetUser());
 		}
 
 		if (!pModule) {
 			return PAGE_NOTFOUND;
 		} else if (pModule->WebRequiresLogin() && !ForceLogin()) {
 			return PAGE_PRINT;
-		} else if (pModule->WebRequiresAdmin() && !m_spSession->IsAdmin()) {
+		} else if (pModule->WebRequiresAdmin() && !GetSession()->IsAdmin()) {
 			sPageRet = GetErrorPage(403, "Forbidden", "You need to be an admin to access this module");
 			return PAGE_PRINT;
-		} else if (!pModule->IsGlobal() && pModule->GetUser() != m_spSession->GetUser()) {
+		} else if (!pModule->IsGlobal() && pModule->GetUser() != GetSession()->GetUser()) {
 			sPageRet = GetErrorPage(403, "Forbidden", "You must login as " + pModule->GetUser()->GetUserName() + " in order to view this page");
 			return PAGE_PRINT;
 		} else if (pModule->OnWebPreRequest(*this, m_sPage)) {
@@ -598,13 +597,13 @@ CWebSock::EPageReqResult CWebSock::OnPageRequestInternal(const CString& sURI, CS
 
 			bool bActive = (m_sModName == pModule->GetModName() && m_sPage == SubPage->GetName());
 
-			if (bActive && SubPage->RequiresAdmin() && !m_spSession->IsAdmin()) {
+			if (bActive && SubPage->RequiresAdmin() && !GetSession()->IsAdmin()) {
 				sPageRet = GetErrorPage(403, "Forbidden", "You need to be an admin to access this page");
 				return PAGE_PRINT;
 			}
 		}
 
-		if (pModule && !pModule->IsGlobal() && (!IsLoggedIn() || pModule->GetUser() != m_spSession->GetUser())) {
+		if (pModule && !pModule->IsGlobal() && (!IsLoggedIn() || pModule->GetUser() != GetSession()->GetUser())) {
 			AddModLoop("UserModLoop", *pModule);
 		}
 
