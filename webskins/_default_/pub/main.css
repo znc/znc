@@ -56,6 +56,10 @@ table.section table.data {
 	margin: 10 auto;
 }
 
+table td.tdbottom {
+	text-align: center;
+}
+
 /* !TABLES */
 
 /* FORMS */
