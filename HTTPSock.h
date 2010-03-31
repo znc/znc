@@ -9,6 +9,8 @@
 #ifndef _HTTPSOCK_H
 #define _HTTPSOCK_H
 
+#include "Socket.h"
+
 class CModule;
 
 class CHTTPSock : public CSocket {
