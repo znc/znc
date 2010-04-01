@@ -1856,7 +1856,7 @@ bool CZNC::DelListener(CListener* pListener) {
 	for (it = m_vpListeners.begin(); it < m_vpListeners.end(); ++it) {
 		if (*it == pListener) {
 			m_vpListeners.erase(it);
-			delete *it;
+			delete pListener;
 			return true;
 		}
 	}
