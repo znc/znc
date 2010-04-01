@@ -175,8 +175,8 @@ protected:
 
 class CRealListener : public CZNCSock {
 public:
-	CRealListener() : CZNCSock() {}
-	virtual ~CRealListener() {}
+	CRealListener(CListener *pParent) : CZNCSock(), m_pParent(pParent) {}
+	virtual ~CRealListener();
 
 	virtual bool ConnectionFrom(const CString& sHost, unsigned short uPort) {
 		bool bHostAllowed = CZNC::Get().IsHostAllowed(sHost);
@@ -203,6 +203,9 @@ public:
 			Close();
 		}
 	}
+
+private:
+	CListener* m_pParent;
 };
 
 class CListener {
@@ -225,6 +228,7 @@ public:
 	void SetAddrType(EAddrType eAddr) { m_eAddr = eAddr; }
 	void SetPort(unsigned short u) { m_uPort = u; }
 	void SetBindHost(const CString& s) { m_sBindHost = s; }
+	void SetRealListener(CRealListener* p) { m_pListener = p; }
 	// !Setters
 
 	// Getters
@@ -240,7 +244,7 @@ public:
 			return false;
 		}
 
-		m_pListener = new CRealListener;
+		m_pListener = new CRealListener(this);
 
 		bool bSSL = false;
 #ifdef HAVE_LIBSSL

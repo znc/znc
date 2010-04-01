@@ -1992,3 +1992,7 @@ void CZNC::LeakConnectUser(CConnectUserTimer *pTimer) {
 	if (m_pConnectUserTimer == pTimer)
 		m_pConnectUserTimer = NULL;
 }
+
+CRealListener::~CRealListener() {
+	m_pParent->SetRealListener(NULL);
+}
