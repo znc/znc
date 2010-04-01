@@ -119,6 +119,11 @@ public:
 	bool AddUser(CUser* pUser, CString& sErrorRet);
 	const map<CString,CUser*> & GetUserMap() const { return(m_msUsers); }
 
+	// Listener yummy
+	CListener* FindListener(u_short uPort, const CString& BindHost, EAddrType eAddr);
+	bool AddListener(CListener*);
+	bool DelListener(CListener*);
+
 	// Message of the Day
 	void SetMotd(const CString& sMessage) { ClearMotd(); AddMotd(sMessage); }
 	void AddMotd(const CString& sMessage) { if (!sMessage.empty()) { m_vsMotd.push_back(sMessage); } }

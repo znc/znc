@@ -1821,6 +1821,49 @@ bool CZNC::AddUser(CUser* pUser, CString& sErrorRet) {
 	return true;
 }
 
+CListener* CZNC::FindListener(u_short uPort, const CString& sBindHost, EAddrType eAddr) {
+	vector<CListener*>::iterator it;
+
+	for (it = m_vpListeners.begin(); it < m_vpListeners.end(); ++it) {
+		if ((*it)->GetPort() != uPort)
+			continue;
+		if ((*it)->GetBindHost() != sBindHost)
+			continue;
+		if ((*it)->GetAddrType() != eAddr)
+			continue;
+		return *it;
+	}
+	return NULL;
+}
+
+bool CZNC::AddListener(CListener* pListener) {
+	if (!pListener->GetRealListener()) {
+		// Listener doesnt actually listen
+		delete pListener;
+		return false;
+	}
+
+	// We don't check if there is an identical listener already listening
+	// since one can't listen on e.g. the same port multiple times
+
+	m_vpListeners.push_back(pListener);
+	return true;
+}
+
+bool CZNC::DelListener(CListener* pListener) {
+	vector<CListener*>::iterator it;
+
+	for (it = m_vpListeners.begin(); it < m_vpListeners.end(); ++it) {
+		if (*it == pListener) {
+			m_vpListeners.erase(it);
+			delete *it;
+			return true;
+		}
+	}
+
+	return false;
+}
+
 CZNC& CZNC::Get() {
 	static CZNC* pZNC = new CZNC;
 	return *pZNC;
