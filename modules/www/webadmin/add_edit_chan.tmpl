@@ -3,8 +3,8 @@
 <form action="<? IF Edit ?>editchan<? ELSE ?>addchan<? ENDIF ?>" method="post">
 	<div class="section">
 		<input type="hidden" name="submitted" value="1" />
-		<input type="hidden" name="user" value="<? VAR User ESC=HTML ?>" />
-		<? IF Edit ?><input type="hidden" name="name" value="<? VAR ChanName ESC=HTML ?>" /><? ENDIF ?>
+		<input type="hidden" name="user" value="<? VAR User ?>" />
+		<? IF Edit ?><input type="hidden" name="name" value="<? VAR ChanName ?>" /><? ENDIF ?>
 
 		<h3>Channel Info</h3>
 		<div class="sectionbg">
@@ -19,12 +19,12 @@
 
 				<div class="subsection">
 					<div class="inputlabel">Buffer Count:</div>
-					<div><input type="text" name="buffercount" value="<? VAR BufferCount ESC=HTML ?>" size="10" /></div>
+					<div><input type="text" name="buffercount" value="<? VAR BufferCount ?>" size="10" /></div>
 				</div>
 
 				<div class="subsection">
 					<div class="inputlabel">Default Modes:</div>
-					<div><input type="text" name="defmodes" value="<? VAR DefModes ESC=HTML ?>" size="10" /></div>
+					<div><input type="text" name="defmodes" value="<? VAR DefModes ?>" size="10" /></div>
 				</div>
 
 			</div>
@@ -41,8 +41,8 @@
 				</span>
 				<? LOOP OptionLoop ?>
 				<span class="checkboxandlabel">
-					<input type="checkbox" name="<? VAR Name ESC=HTML ?>" id="opt_<? VAR Name ESC=HTML ?>" value="true"<? IF Checked ?> checked="checked"<? ENDIF ?><? IF Disabled ?> disabled="disabled"<? ENDIF ?> />
-					<label for="opt_<? VAR Name ESC=HTML ?>"><? VAR DisplayName ESC=HTML ?></label>
+					<input type="checkbox" name="<? VAR Name ?>" id="opt_<? VAR Name ?>" value="true"<? IF Checked ?> checked="checked"<? ENDIF ?><? IF Disabled ?> disabled="disabled"<? ENDIF ?> />
+					<label for="opt_<? VAR Name ?>"><? VAR DisplayName ?></label>
 				</span>
 				<? ENDLOOP ?>
 				<div style="clear:both;"></div>
