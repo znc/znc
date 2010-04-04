@@ -467,9 +467,9 @@ void CZNC::InitDirs(const CString& sArgvPath, const CString& sDataDir) {
 	}
 }
 
-CString CZNC::GetConfPath() const {
+CString CZNC::GetConfPath(bool bAllowMkDir) const {
 	CString sConfPath = m_sZNCPath + "/configs";
-	if (!CFile::Exists(sConfPath)) {
+	if (bAllowMkDir && !CFile::Exists(sConfPath)) {
 		CDir::MakeDir(sConfPath);
 	}
 
@@ -496,16 +496,16 @@ CString CZNC::GetModPath() const {
 }
 
 
-CString CZNC::ExpandConfigPath(const CString& sConfigFile) {
+CString CZNC::ExpandConfigPath(const CString& sConfigFile, bool bAllowMkDir) {
 	CString sRetPath;
 
 	if (sConfigFile.empty()) {
-		sRetPath = GetConfPath() + "/znc.conf";
+		sRetPath = GetConfPath(bAllowMkDir) + "/znc.conf";
 	} else {
 		if (sConfigFile.Left(2) == "./" || sConfigFile.Left(3) == "../") {
 			sRetPath = GetCurPath() + "/" + sConfigFile;
 		} else if (sConfigFile.Left(1) != "/") {
-			sRetPath = GetConfPath() + "/" + sConfigFile;
+			sRetPath = GetConfPath(bAllowMkDir) + "/" + sConfigFile;
 		} else {
 			sRetPath = sConfigFile;
 		}
@@ -985,7 +985,7 @@ bool CZNC::ParseConfig(const CString& sConfig)
 {
 	CString s;
 
-	m_sConfigFile = ExpandConfigPath(sConfig);
+	m_sConfigFile = ExpandConfigPath(sConfig, false);
 
 	return DoRehash(s);
 }
