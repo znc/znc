@@ -1,9 +1,8 @@
-table.section thead td,
-table.data thead td {
+h3 {
 	background-color: #049712;
 }
 
-table.data thead td {
+table thead td {
 	background-color: #007700;
 }
 
