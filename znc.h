@@ -45,7 +45,7 @@ public:
 	bool AllowConnectionFrom(const CString& sIP) const;
 	void InitDirs(const CString& sArgvPath, const CString& sDataDir);
 	bool OnBoot();
-	CString ExpandConfigPath(const CString& sConfigFile);
+	CString ExpandConfigPath(const CString& sConfigFile, bool bAllowMkDir = true);
 	bool WriteNewConfig(const CString& sConfigFile);
 	bool WriteConfig();
 	bool ParseConfig(const CString& sConfig);
@@ -97,7 +97,7 @@ public:
 	const CString& GetCurPath() const { if (!CFile::Exists(m_sCurPath)) { CDir::MakeDir(m_sCurPath); } return m_sCurPath; }
 	const CString& GetHomePath() const { if (!CFile::Exists(m_sHomePath)) { CDir::MakeDir(m_sHomePath); } return m_sHomePath; }
 	const CString& GetZNCPath() const { if (!CFile::Exists(m_sZNCPath)) { CDir::MakeDir(m_sZNCPath); } return m_sZNCPath; }
-	CString GetConfPath() const;
+	CString GetConfPath(bool bAllowMkDir = true) const;
 	CString GetUserPath() const;
 	CString GetModPath() const;
 	CString GetPemLocation() const { return GetZNCPath() + "/znc.pem"; }
