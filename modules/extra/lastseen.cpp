@@ -90,7 +90,7 @@ public:
 	// Web stuff:
 
 	virtual bool WebRequiresLogin() { return true; }
-	virtual bool WebRequiresAdmin() { return false; }
+	virtual bool WebRequiresAdmin() { return true; }
 	virtual CString GetWebMenuTitle() { return "Last Seen"; }
 
 	virtual bool OnWebRequest(CWebSock& WebSock, const CString& sPageName, CTemplate& Tmpl) {
@@ -122,8 +122,8 @@ public:
 				} else {
 					unsigned int uChans = 0;
 					const vector<CChan*>& vChans = pUser->GetChans();
-					for (unsigned int a = 0; a < vChans.size(); a++) {
-						if (vChans[a]->IsOn()) uChans++;
+					for (unsigned int a = 0; a < vChans.size(); ++a) {
+						if (vChans[a]->IsOn()) ++uChans;
 					}
 					Row["Info"] += ", joined to " + CString(uChans) + " channel(s)";
 				}
