@@ -406,12 +406,12 @@ bool CWebSock::AddModLoop(const CString& sLoopName, CModule& Module) {
 
 CWebSock::EPageReqResult CWebSock::PrintStaticFile(const CString& sPath, CString& sPageRet, CModule* pModule) {
 	SetPaths(pModule);
-	DEBUG("About to print [" + m_Template.ExpandFile(sPath) + "]");
-	if (PrintFile(m_Template.ExpandFile(sPath.TrimLeft_n("/")))) {
-		return PAGE_DONE;
-	} else {
-		return PAGE_NOTFOUND;
-	}
+	CString sFile = m_Template.ExpandFile(sPath.TrimLeft_n("/"));
+	DEBUG("About to print [" + sFile+ "]");
+	// Either PrintFile() fails and sends an error page or it suceeds and
+	// sends a result. In both cases we don't have anything more to do.
+	PrintFile(sFile);
+	return PAGE_DONE;
 }
 
 CWebSock::EPageReqResult CWebSock::PrintTemplate(const CString& sPageName, CString& sPageRet, CModule* pModule) {
