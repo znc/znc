@@ -15,6 +15,7 @@
 									<td>Port</td>
 									<td>BindHost</td>
 									<td>SSL</td>
+									<td>IPv4</td>
 									<td>IPv6</td>
 								</tr>
 							</thead>
@@ -24,6 +25,7 @@
 									<td><? VAR Port ESC=HTML ?></td>
 									<td><? VAR BindHost ESC=HTML DEFAULT=** ?></td>
 									<td><? IF IsSSL ?>Yes<? ELSE ?>No<? ENDIF ?></td>
+									<td><? IF IsIPV4 ?>Yes<? ELSE ?>No<? ENDIF ?></td>
 									<td><? IF IsIPV6 ?>Yes<? ELSE ?>No<? ENDIF ?></td>
 								</tr>
 							<? ENDLOOP ?>
