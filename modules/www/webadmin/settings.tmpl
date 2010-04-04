@@ -47,7 +47,7 @@
 					<div>
 						<select name="skin">
 							<? LOOP SkinLoop ?>
-							<option value="<? VAR Name ESC=HTML ?>"<? IF Checked ?> selected="selected"<? ENDIF ?>><? VAR Name ESC=HTML ?></option>
+							<option value="<? VAR Name ESC=HTML ?>"<? IF Checked ?> selected="selected"<? ENDIF ?>><? IF Name == "_default_" ?>Default<? ELSE ?><? VAR Name ?><? ENDIF ?></option>
 							<? ENDLOOP ?>
 						</select>
 					</div>

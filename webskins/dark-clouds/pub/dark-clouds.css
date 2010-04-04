@@ -62,16 +62,13 @@ h3 {
 .subsection {
 	clear: both;
 	border-top: 1px solid #000;
-	margin: 0 0 1em 0;
-	padding: 8px 10px 0 8px;
+	margin: 0;
+	padding: 8px 10px 5px 8px;
 }
 
 .subsection div {
 	display: inline-block;
-}
-
-.subsection div {
-	padding: 3px 0 0 0;
+	padding-bottom: 3px;
 }
 
 .subsection .inputlabel {
@@ -81,7 +78,7 @@ h3 {
 
 .subsection .info {
 	display: block;
-	margin-top: 3px;
+	margin: 5px 0 2px 0;
 	font-size: 80%;
 }
 

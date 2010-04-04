@@ -23,7 +23,7 @@
 					<div><input type="password" name="password" class="half" /></div>
 				</div>
 				<div class="subsection">
-					<div class="inputlabel">Confirm Password:</div>
+					<div class="inputlabel">Confirm password:</div>
 					<div><input type="password" name="password2" class="half" /></div>
 				</div>
 				<div class="subsection half">
@@ -47,11 +47,11 @@
 		<div class="sectionbg">
 			<div class="sectionbody">
 				<div class="subsection">
-					<div class="inputlabel">Nick:</div>
+					<div class="inputlabel">Nickname:</div>
 					<div><input type="text" name="nick" value="<? VAR Nick ESC=HTML ?>" class="half" maxlength="128" /></div>
 				</div>
 				<div class="subsection">
-					<div class="inputlabel">AltNick:</div>
+					<div class="inputlabel">Alt. Nickname:</div>
 					<div><input type="text" name="altnick" value="<? VAR AltNick ESC=HTML ?>" class="half" maxlength="128" /></div>
 				</div>
 				<div style="clear: both;"></div>
@@ -65,24 +65,24 @@
 				</div>
 				<div style="clear: both;"></div>
 				<div class="subsection">
-					<div class="inputlabel">RealName:</div>
+					<div class="inputlabel">Realname:</div>
 					<div><input type="text" name="realname" value="<? VAR RealName ESC=HTML ?>" class="full" maxlength="256" /></div>
 				</div>
 				<div style="clear: both;"></div>
 
-				<div class="subsection">
 			<? IF VHostLoop ?>
+				<div class="subsection">
 					<div class="inputlabel">VHost:</div>
 					<select name="vhost">
 						<option value="">- Default -</option>
 						<? LOOP VHostLoop ?><option value="<? VAR VHost ESC=HTML ?>"<? IF Checked ?> selected="selected"<? ENDIF ?>><? VAR VHost ESC=HTML ?></option><? ENDLOOP ?>
 					</select>
-			<? ENDIF ?>
 				</div>
 				<div style="clear: both;"></div>
+			<? ENDIF ?>
 
 				<div class="subsection">
-					<div class="inputlabel">QuitMsg:</div>
+					<div class="inputlabel">Quit Message:</div>
 					<div><input type="text" name="quitmsg" value="<? VAR QuitMsg ESC=HTML ?>" class="full" maxlength="256" /></div>
 				</div>
 				<div style="clear: both;"></div>
@@ -95,6 +95,14 @@
 					<br /><span class="info">One server per line, host [+]port[ password]</span>
 				</div>
 				<div style="clear: both;"></div>
+
+				<div class="subsection">
+					<div class="inputlabel">Active:</div>
+					<div><input type="checkbox" name="doconnect" id="doconnect_checkbox"<? IF IRCConnectEnabled ?> checked="checked"<? ENDIF ?> />
+						<label for="doconnect_checkbox">Connect to IRC &amp; automatically re-connect</label></div>
+				</div>
+				<div style="clear: both;"></div>
+
 			</div>
 		</div>
 	</div>
@@ -237,6 +245,21 @@
 <? ENDLOOP ?>
 </textarea></div>
 					<br /><span class="info">One reply per line. Example: TIME Buy a watch!</span>
+				</div>
+				<div class="subsection">
+					<div class="inputlabel">Skin:</div>
+					<div>
+						<? IF SkinLoop ROWS > 1 ?>
+						<select name="skin">
+							<option value="">- Global -</option>
+							<? LOOP SkinLoop ?>
+							<option value="<? VAR Name ?>"<? IF Checked ?> selected="selected"<? ENDIF ?>><? IF Name == "_default_" ?>Default<? ELSE ?><? VAR Name ?><? ENDIF ?></option>
+							<? ENDLOOP ?>
+						</select>
+						<? ELSE ?>
+						No other skins found
+						<? ENDIF ?>
+					</div>
 				</div>
 				<div style="clear: both;"></div>
 			</div>
