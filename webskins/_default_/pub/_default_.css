@@ -176,6 +176,10 @@ input.third, textarea.third,
 	width: 150px;
 }
 
+textarea.monospace {
+	font-family: Lucida Console, monospace;
+}
+
 table {
 	border: 1px solid #ccc;
 }
