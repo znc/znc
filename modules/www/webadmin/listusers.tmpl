@@ -23,10 +23,10 @@
 								<? IF !IsSelf ?>[<a href="deluser?user=<?VAR Username ESC=URL?>" onClick="return confirm('Do you really wish to remove this user?');">Delete</a>]<? ENDIF ?>
 							</span>
 						</td>
-						<td><? VAR Username ESC=HTML ?></td>
-						<td><? VAR Clients ESC=HTML ?></td>
-						<td><? VAR Server ESC=HTML DEFAULT="-N/A-" ?></td>
-						<td><? VAR IRCNick ESC=HTML ?></td>
+						<td><? VAR Username ?></td>
+						<td><? VAR Clients ?></td>
+						<td><? VAR Server DEFAULT="-N/A-" ?></td>
+						<td><? VAR IRCNick ?></td>
 					</tr>
 			<?ENDLOOP?>
 					</tbody>
