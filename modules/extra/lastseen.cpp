@@ -7,30 +7,34 @@
  */
 
 #include "User.h"
+#include "Chan.h"
 #include "znc.h"
 
 using std::map;
+using std::pair;
+using std::multimap;
 
 class CLastSeenMod : public CGlobalModule {
+private:
+	time_t GetTime(const CUser *pUser) {
+		return GetNV(pUser->GetUserName()).ToULong();
+	}
+
+	void SetTime(const CUser *pUser) {
+		SetNV(pUser->GetUserName(), CString(time(NULL)));
+	}
+
+	typedef multimap<time_t, CUser*> MTimeMulti;
+	typedef map<CString, CUser*> MUsers;
 public:
-	GLOBALMODCONSTRUCTOR(CLastSeenMod)
-	{
+	GLOBALMODCONSTRUCTOR(CLastSeenMod) {
 	}
 
 	virtual ~CLastSeenMod() {}
 
-	time_t GetTime(CUser *pUser)
-	{
-		return GetNV(pUser->GetUserName()).ToULong();
-	}
+	// IRC stuff:
 
-	void SetTime(CUser *pUser)
-	{
-		SetNV(pUser->GetUserName(), CString(time(NULL)));
-	}
-
-	virtual void OnModCommand(const CString& sLine)
-	{
+	virtual void OnModCommand(const CString& sLine) {
 		const CString sCommand = sLine.Token(0).AsLower();
 
 		if (!GetUser()->IsAdmin()) {
@@ -40,8 +44,8 @@ public:
 
 		if (sCommand == "show") {
 			char buf[1024];
-			const map<CString, CUser*>& mUsers = CZNC::Get().GetUserMap();
-			map<CString, CUser*>::const_iterator it;
+			const MUsers& mUsers = CZNC::Get().GetUserMap();
+			MUsers::const_iterator it;
 			CTable Table;
 
 			Table.AddColumn("User");
@@ -68,17 +72,68 @@ public:
 		}
 	}
 
-	virtual void OnClientLogin()
-	{
+	// Event stuff:
+
+	virtual void OnClientLogin() {
 		SetTime(GetUser());
 	}
 
-	virtual void OnClientDisconnect()
-	{
+	virtual void OnClientDisconnect() {
 		SetTime(GetUser());
 	}
 
-private:
+	virtual EModRet OnDeleteUser(CUser& User) {
+		DelNV(User.GetUserName());
+		return CONTINUE;
+	}
+
+	// Web stuff:
+
+	virtual bool WebRequiresLogin() { return true; }
+	virtual bool WebRequiresAdmin() { return false; }
+	virtual CString GetWebMenuTitle() { return "Last Seen"; }
+
+	virtual bool OnWebRequest(CWebSock& WebSock, const CString& sPageName, CTemplate& Tmpl) {
+		if (sPageName.empty() || sPageName == "index") {
+			MTimeMulti mmSorted;
+			const MUsers& mUsers = CZNC::Get().GetUserMap();
+
+			for (MUsers::const_iterator uit = mUsers.begin(); uit != mUsers.end(); ++uit) {
+				mmSorted.insert(pair<time_t, CUser*>(GetTime(uit->second), uit->second));
+			}
+
+			char buf[1024] = {0};
+
+			for (MTimeMulti::const_iterator it = mmSorted.begin(); it != mmSorted.end(); ++it) {
+				CUser *pUser = it->second;
+				CTemplate& Row = Tmpl.AddRow("UserLoop");
+
+				Row["Username"] = pUser->GetUserName();
+				Row["IsSelf"] = CString(pUser == WebSock.GetSession()->GetUser());
+
+				if(it->first > 0) {
+					strftime(buf, sizeof(buf), "%c", localtime(&it->first));
+					Row["LastSeen"] = buf;
+				}
+
+				Row["Info"] = CString(pUser->GetClients().size()) + " client(s)";
+				if(!pUser->GetCurrentServer()) {
+					Row["Info"] += ", not connected to IRC";
+				} else {
+					unsigned int uChans = 0;
+					const vector<CChan*>& vChans = pUser->GetChans();
+					for (unsigned int a = 0; a < vChans.size(); a++) {
+						if (vChans[a]->IsOn()) uChans++;
+					}
+					Row["Info"] += ", joined to " + CString(uChans) + " channel(s)";
+				}
+			}
+
+			return true;
+		}
+
+		return false;
+	}
 };
 
 GLOBALMODULEDEFS(CLastSeenMod, "Collects data about when a user last logged in")
