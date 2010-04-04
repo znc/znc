@@ -28,12 +28,11 @@ table thead td {
 	background-color: #EC8E00;
 	color: #000;
 	font-weight: bold;
-	padding: 2px;
+	padding: 6px;
 }
 
 table td {
-	height: 20px;
-	padding: 2px 3px;
+	padding: 4px;
 	border: 1px solid #000;
 }
 
@@ -56,24 +55,34 @@ h3 {
 }
 
 .sectionbody {
-	padding: 10px;
+	padding: 0;
+	margin: 0;
 }
 
 .subsection {
 	clear: both;
+	border-top: 1px solid #000;
+	margin: 0 0 1em 0;
+	padding: 8px 10px 0 8px;
 }
 
 .subsection div {
-	min-height: 30px;
-	/*float: left;
-	border: 1px solid orange;*/
 	display: inline-block;
 }
 
+.subsection div {
+	padding: 3px 0 0 0;
+}
+
 .subsection .inputlabel {
-	
-	width: 200px;
-	height: 30px;
+	width: 150px;
+	vertical-align: top;
+}
+
+.subsection .info {
+	display: block;
+	margin-top: 3px;
+	font-size: 80%;
 }
 
 /* !SECTIONS */
@@ -86,16 +95,39 @@ input, select, textarea {
 	color: #000000;
 	border: 1px solid #000000;
 	background-color: #999;
+	padding: 2px;
 }
 
-table.section textarea,
-table.section select,
-table.section input {
-	width: 100%;
+textarea {
+	height: 90px;
 }
 
-table.section input.checkbox {
-	width: auto;
+textarea.monospace {
+	font-family: Lucida Console, monospace;
+}
+
+.submitline input {
+	width: 180px;
+}
+
+input.full, textarea.full,
+.full input, .full textarea {
+	width: 430px;
+}
+
+input.twothird, textarea.twothird,
+.twothird input, .twothird textarea {
+	width: 370px;
+}
+
+input.half, textarea.half,
+.half input, .half textarea {
+	width: 280px;
+}
+
+input.third, textarea.third,
+.third input, .third textarea {
+	width: 100px;
 }
 
 /* !FORMS */
