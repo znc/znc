@@ -555,6 +555,23 @@ CWebSock::EPageReqResult CWebSock::OnPageRequestInternal(const CString& sURI, CS
 		return PrintTemplate("login", sPageRet);
 	} else if (sURI.Left(5) == "/pub/") {
 		return PrintStaticFile(sURI, sPageRet);
+	} else if (sURI.Left(11) == "/skinfiles/") {
+		CString sSkinName = sURI.substr(11);
+		CString::size_type uPathStart = sSkinName.find("/");
+		if (uPathStart != CString::npos) {
+			CString sFilePath = sSkinName.substr(uPathStart + 1);
+			sSkinName.erase(uPathStart);
+
+			m_Template.ClearPaths();
+			m_Template.AppendPath(GetSkinPath(sSkinName) + "pub");
+
+			if (PrintFile(m_Template.ExpandFile(sFilePath))) {
+				return PAGE_DONE;
+			} else {
+				return PAGE_NOTFOUND;
+			}
+		}
+		return PAGE_NOTFOUND;
 	} else if (sURI.Left(6) == "/mods/" || sURI.Left(10) == "/modfiles/") {
 		ParsePath();
 		// Make sure modules are treated as directories

@@ -1,10 +1,9 @@
 <? INC DocType.tmpl ?>
 <? INC Options.tmpl ?>
-<html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
 	<head>
-		<meta http-equiv="content-type" content="text/html; charset=ISO-8859-1">
+		<meta http-equiv="content-type" content="text/html; charset=UTF-8" />
 		<title>ZNC - <? VAR Title DEFAULT="Web Frontend" ?></title>
-		<link rel="stylesheet" type="text/css" href="/pub/main.css" />
 		<? LOOP CSSLoop ?>
 		<?IF HREF?><link rel="stylesheet" type="text/css" href="<? VAR HREF ?>" /><?ENDIF?>
 		<?ENDLOOP?>
