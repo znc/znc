@@ -1,4 +1,4 @@
 			<div id="infobar">
-				<span>Logged in as: <em><? VAR SessionUser DEFAULT="-Guest-" ?></em> (from: <? VAR SessionIP ?>)</span>
+				<span id="infobar_ident">Logged in as: <span class="user_name"><? VAR SessionUser DEFAULT="-Guest-" ?></span> (from <? VAR SessionIP ?>)</span>
 				<? INC LoginBar.tmpl ?>
 			</div>

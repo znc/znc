@@ -1,263 +1,261 @@
-html,
-body {
-	background: #555;
-	padding: 0;
-	margin: 10px 0;
-	background: #444;
-	font-family: verdana;
-	font-size: 12px;
-	color: white;
-}
+@charset "UTF-8";
 
-img {
-	border: 0;
-	padding: 0;
+* {
 	margin: 0;
+	padding: 0;
 }
 
-/* TABLES */
-
-table {
-	border-collapse: collapse;
-	font-size: 12px;
+html {
+	height: 100%;
 }
 
-table.section,
-table.data {
-	width: 100%;
-	margin-bottom: 15px;
-	border: 1px solid #f00;
-}
-
-table.section td,
-table.data td {
-	height: 20px;
-	border: 1px solid #000;
-	padding: 2px 3px;
-}
-
-table.section thead td,
-table.data thead td {
-	background-color: #D49712;
+body {
+	height: 100%;
+	background-color: #fff;
 	color: #000;
-	font-weight: bold;
+	font-family: Tahoma, sans-serif;
 }
 
-table.data thead td {
-	background-color: #EC8E00;
-}
-
-table.data tbody .altrow td {
-	background-color: #777;
-}
-
-table.section table.data {
-	width: 95%;
-	margin: 10 auto;
-}
-
-table td.tdbottom {
-	text-align: center;
-}
-
-/* !TABLES */
-
-/* FORMS */
-
-input, select, textarea {
-	font-family: verdana;
-	font-size: 12px;
-	color: #000000;
-	border: 1px solid #000000;
-	background-color: #999;
-}
-
-table.section textarea,
-table.section select,
-table.section input {
-	width: 100%;
-}
-
-table.section input.checkbox {
-	width: auto;
-}
-
-/* !FORMS */
-
-.nowrap {
-	white-space: nowrap;
-}
-
-/* LINKS */
-
-a:link,
-a:active,
-a:visited,
-a:hover {
-	font-family: verdana;
-	font-size: 12px;
-	color: #fff;
+a, a:link, a:active, a:visited, a:focus {
+	color: #00008B;
 	text-decoration: none;
+	outline: none;
 }
 
 a:hover {
 	text-decoration: underline;
 }
 
-/* !LINKS */
+#main a:visited {
+	color: #99008B;
+}
 
 #wrapper {
+	background-color: #eee;
+	min-height: 80%;
+	overflow: hidden;
+	margin: 0 auto;
 	width: 800px;
-	border: 1px solid #000;
-	margin-left: auto;
-	margin-right: auto;
+
+	border: 1px solid #ccc;
+	border-top: none;
+	-moz-box-shadow: 0 0 1em #666;
+	-webkit-box-shadow: 0 0 1em #666;
 }
 
-#banner {
-	background-image: url('clouds-header.jpg');
-	padding: 0;
-	border-bottom: 1px solid #000000;
-	height: 100px;
-	width: 800px;
-	text-align: right;
-	font-weight: bold;
-	font-size: 13px;
-	position: relative;
+#banner_top {
+	background-color: #ccc;
 }
 
-#banner p {
-	position: absolute;
-	bottom: 0;
-	right: 20px;
+h1 {
+	line-height: 37px;
+	padding: 0 0.9em 0 0.6em;
+	width: 50px;
+	text-align: center;
+	background-color: #aaa;
+	font-weight: normal;
+	font-style: italic;
+	font-size: 100%;
+}
+
+#tag {
+	height: 4em;
+	line-height: 4em;
+	text-align: center;
+	font-size: 70%;
+	color: #aaa;
+}
+
+ul.nav {
+	float: left;
+	margin-left: 20px;
+	list-style: none;
+}
+
+ul.nav li, ul.nav ul {
+	list-style: none;
+}
+
+ul.nav li.topitem {
+	float: left;
+	margin-right: 55px;
+}
+
+ul.nav li.topitem a {
+	display: inline-block;
+}
+
+ul.nav li.parent ul li {
+	font-size: 80%;
 }
 
 #infobar {
-	width: 800px;
-	height: 20px;
-	border-bottom: 1px solid #000;
-	border-right: 1px solid #000;
-}
-
-.successbar,
-.errorbar {
-	width: 790px;
-	height: 20px;
-	border-bottom: 1px solid #000;
-	border-right: 1px solid #000;
-	background: #900;
-	padding: 2px 5px;
-	font-weight: bold;
-}
-
-.successbar {
-	background: #070;
-}
-
-
-#infobar span {
-	float: left;
-	padding-left: 5px;
-}
-
-#infobar span.loginbox,
-#infobar span.logoutbox {
 	text-align: right;
-	padding-right: 5px;
-	border-left: 1px solid #000000;
-	height: 100%;
-	width: 250px;
-	float: right;
+	clear: both;
 }
 
-#infobar span.logoutbox {
-	text-align: center;
-	width: 100px;
+#infobar_ident, .logoutbox, .loginbox {
+	padding: 4px;
+	font-size: 70%;
+	color: #888;
 }
 
-#infobar span.loginbox input {
-	width: 60px;
-}
-
-#infobar span.loginbox input.submit {
-	width: 40px;
-}
-
-#subpage {
-	padding: 10px;
+ul.nav li.topitem:before {
+	content: "» ";
 }
 
 #content {
-	float: right;
-	width: 640px;
-	padding: 0;
-	background-color: #444;
-}
-
-/* MENU */
-
-#menu {
-	float: left;
-	background-color: #333;
-	width: 160px;
-	margin: 0;
-	margin-bottom: 20px;
-	left: 0;
-}
-
-#menu .title,
-#menu .item,
-#menu .subitem {
-	vertical-align: middle;
-	text-align: center;
-	padding: 8px 5px;
-	background-color: #777;
-	border-bottom: 1px solid #000;
-	border-right: 1px solid #000;
-}
-
-#menu .title {
-	text-align: left;
-	padding-left: 3px;
-	background-color: #333;
-	font-weight: bold;
-}
-
-#menu .item.active {
-	background-color: #D49712;
-	font-weight: bold;
-}
-
-#menu .subitem {
-	text-align: left;
-	padding: 3px 5px 3px 10px;
-	background-color: #999;
-}
-
-#menu .subitem.active {
-	font-weight: bold;
-}
-
-#menu .subitem.active a:hover {
-	color: #000;
-	text-decoration: none;
-}
-
-#menu a {
-	color: #000;
-}
-
-/* !MENU */
-
-#footerbar {
 	clear: both;
-	background-color: #D49712;
-	border-top: 1px solid #000000;
-	height: 20px;
-	text-align: right;
-	padding-right: 5px;
 }
 
-#breadcrumb {
+#main {
+	padding: 0 20px 20px 20px;
+
+	font-size: 90%;
+}
+
+h2 {
+	margin-bottom: 0.4em;
+}
+
+h3 {
+	margin-top: 1.2em;
+	margin-bottom: 0.4em;
+}
+
+.section {
+	clear: both;
+}
+
+.sectionbody {
+	margin-left: 1em;
+}
+
+.sectionbody input, textarea, select {
+	border: 2px solid #ccc;
+	font-family: Tahoma, sans-serif;
+	padding: 3px;
+	font-size: 14px;
+}
+
+input:focus, textarea:focus, select:focus {
+	-moz-box-shadow: 0 0 0.4em #aaa;
+	-webkit-box-shadow: 0 0 0.4em #aaa;
+}
+
+textarea {
+	height: 90px;
+}
+
+div.submitline {
+	margin: 1em;
+}
+
+.submitline input {
+	width: 200px;
+	height: 2.2em;
+}
+
+input.full, textarea.full,
+.full input, .full textarea {
+	width: 600px;
+}
+
+input.twothird, textarea.twothird,
+.twothird input, .twothird textarea {
+	width: 450px;
+}
+
+input.half, textarea.half,
+.half input, .half textarea {
+	width: 300px;
+}
+
+input.third, textarea.third,
+.third input, .third textarea {
+	width: 150px;
+}
+
+table {
+	border: 1px solid #ccc;
+}
+
+td {
 	padding: 5px 10px;
-	border-bottom: 1px solid #000;
+	min-width: 80px;
+}
+
+thead td {
+	background-color: #a0a0a0;
+}
+
+tbody td {
+	background-color: #cecece;
+}
+
+tr.evenrow td {
+	background-color: #dadada;
+}
+
+.info {
+	font-style: italic;
+	font-size: 80%;
+}
+
+.subsection {
+	clear: both;
+	margin: 0;
+}
+
+.subsection div {
+	float: left;
+}
+
+.subsection .inputlabel {
+	width: 120px;
+	text-align: right;
+	padding: 10px 5px 0 0;
+}
+
+.subsection input, .subsection select, .subsection textarea {
+	margin: 5px 0 5px 0;
+	vertical-align: middle;
+}
+
+.section .info {
+	margin-bottom: 5px;
+	display: block;
+}
+
+.subsection .info {
+	text-align: right;
+}
+
+.half .info {
+	width: 435px;
+}
+
+.third .info {
+	width: 285px;
+}
+
+.twothird .info {
+	width: 585px;
+}
+
+td.mod_descr,
+td.mod_name,
+td.mod_args input {
+	font-size: 80%;
+}
+
+.checkboxandlabel {
+	white-space: nowrap;
+}
+
+.lotsofcheckboxes .checkboxandlabel {
+	display: block;
+	float: left;
+	width: 200px;
+	margin-top: 0.5em;
 }

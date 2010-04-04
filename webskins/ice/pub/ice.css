@@ -152,6 +152,12 @@ textarea {
 	margin-bottom: 10px;
 }
 
+#menu ul, #menu li {
+	list-style: none;
+	padding: 0;
+	margin: 0;
+}
+
 #gnav {
 	width: 700px;
 	border-top: 1px solid #000;
@@ -161,21 +167,12 @@ textarea {
 	margin-bottom: 10px;
 }
 
-#gnav #menu {
+#menu ul.nav {
 	width: 690px;
 	float: left;
 }
 
-#gnav ul {
-	margin: 0px;
-	padding: 0px;
-}
-
-#gnav li {
-	display: block;
-}
-
-#gnav a {
+#menu a {
 	font-size: 12px;
 	font-weight: bold;
 	height: 30px;
@@ -187,22 +184,19 @@ textarea {
 	background: url(linkbg.jpg) 0px 0px repeat-x;
 }
 
-#gnav a:hover {
+#menu a:hover {
 	background-position: 0px -30px;
 	text-decoration: none;
 }
 
-#gnav .on a {
+#menu a.active {
 	background-position: 0px -30px;
 }
 
-#gnav #nav {
+#menu {
 	float: left;
 	border-left: 1px solid #000;
 	display: inline;
-}
-
-#nav {
 	margin-left: 10px;
 }
 
@@ -212,4 +206,3 @@ textarea {
 	border-right: 1px solid #000;
 	float: left;
 }
-
