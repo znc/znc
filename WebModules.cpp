@@ -639,12 +639,19 @@ CWebSock::EPageReqResult CWebSock::OnPageRequestInternal(const CString& sURI, CS
 		} else {
 			SetPaths(pModule, true);
 
+			/* if a module returns false from OnWebRequest, it does not
+			   want the template to be printed, usually because it did a redirect. */
 			if (pModule->OnWebRequest(*this, m_sPage, m_Template)) {
 				return PrintTemplate(m_sPage, sPageRet, pModule);
 			}
 
-			sPageRet = GetErrorPage(404, "Not Implemented", "The requested module does not acknowledge web requests");
-			return PAGE_PRINT;
+			if (!SentHeader()) {
+				sPageRet = GetErrorPage(404, "Not Implemented", "The requested module does not acknowledge web requests");
+				return PAGE_PRINT;
+			} else {
+				Close(CLT_AFTERWRITE); // make sure the connection is going to be closed
+				return PAGE_DONE;
+			}
 		}
 	} else {
 		CString sPage(sURI.Trim_n("/"));

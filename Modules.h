@@ -299,6 +299,7 @@ public:
 	 *  @param sPageName The name of the page that has been requested.
 	 *  @param Tmpl The active template. You can add variables, loops and stuff to it.
 	 *  @return You MUST return true if you want the template to be evaluated and sent to the browser.
+	 *          Return false if you called Redirect() or PrintErrorPage(). If you didn't, a 404 page will be sent.
 	 */
 	virtual bool OnWebRequest(CWebSock& WebSock, const CString& sPageName, CTemplate& Tmpl);
 	/** Registers a sub page for the sidebar.
