@@ -19,9 +19,19 @@ img {
 
 table {
 	font-size: 12px;
-	width: 100%;
-	margin-bottom: 15px;
 	border-collapse: collapse;
+	width: 100%;
+}
+
+.section table {
+	/* we can't selectively remove the border from left,right and bottom
+		so we make it look consistent at least */
+	border-top: 2px solid black;
+}
+
+.subsection table {
+	margin-bottom: 15px;
+	border-top: 1px solid black;
 }
 
 table thead td {
@@ -36,6 +46,10 @@ table td {
 	border: 1px solid #000;
 }
 
+td.mod_name {
+	white-space: nowrap;
+}
+
 /* !TABLES */
 
 /* SECTIONS */
@@ -43,7 +57,7 @@ table td {
 .section {
 	border: 1px solid #000;
 	padding: 0;
-	margin-bottom: 1em;
+	margin: 0 0 2em 0;
 }
 
 h3 {
@@ -76,10 +90,23 @@ h3 {
 	vertical-align: top;
 }
 
-.subsection .info {
+.section .info {
 	display: block;
+	padding: 5px 8px;
+	font-style: italic;
+	background-color: #777;
+	border-top: 1px solid #000;
+	color: #000;
+}
+
+.subsection .info {
 	margin: 2px 0 2px 0;
+	padding: 0;
+	font-style: normal;
 	font-size: 80%;
+	background: transparent;
+	border: none;
+	color: #fff;
 }
 
 /* !SECTIONS */
@@ -127,6 +154,22 @@ input.third, textarea.third,
 	width: 100px;
 }
 
+.checkboxandlabel {
+	white-space: nowrap;
+}
+
+.section .lotsofcheckboxes {
+	margin: 0.5em 5px 1em 10px;
+	overflow: hidden;
+}
+
+.lotsofcheckboxes .checkboxandlabel {
+	display: block;
+	float: left;
+	width: 200px;
+	margin-top: 0.5em;
+}
+
 /* !FORMS */
 
 .nowrap {
@@ -156,7 +199,7 @@ table thead td a:hover {
 	text-decoration: none;
 }
 
-#menu a, #logoutbox a, #footerbar a {
+#menu a, #logoutbox a {
 	color: #000;
 }
 
@@ -189,8 +232,8 @@ table thead td a:hover {
 
 #infobar {
 	width: 800px;
-	height: 20px;
-	line-height: 20px;
+	height: 24px;
+	line-height: 24px;
 	border-bottom: 1px solid #000;
 	border-right: 1px solid #000;
 }
@@ -205,7 +248,7 @@ table thead td a:hover {
 	text-align: right;
 	padding-right: 5px;
 	border-left: 1px solid #000000;
-	width: 250px;
+	width: 270px;
 	float: right;
 }
 
@@ -219,7 +262,8 @@ table thead td a:hover {
 }
 
 #infobar .loginbox input.submit {
-	width: 40px;
+	width: 50px;
+	padding: 1px;
 }
 
 #infobar_ident .user_name {
@@ -273,7 +317,7 @@ table thead td a:hover {
 #menu li.parent span.title {
 	display: block;
 	text-align: left;
-	padding-left: 3px;
+	padding-left: 10px;
 	background-color: #333;
 	font-weight: bold;
 }
@@ -294,7 +338,8 @@ table thead td a:hover {
 	border: none;
 }
 
-#menu .modtitle.active {
+#menu .modtitle.active,
+#menu .topitem.active {
 	background-color: #D49712;
 	font-weight: bold;
 }
@@ -326,7 +371,12 @@ table thead td a:hover {
 	padding-right: 5px;
 }
 
+#footerbar a {
+	color: #fff;
+}
+
 #breadcrumb {
-	padding: 5px 10px;
+	margin: 5px 10px;
+	padding: 5px 1px;
 	border-bottom: 1px solid #000;
 }
