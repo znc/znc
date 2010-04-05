@@ -1,22 +1,28 @@
 <? INC Header.tmpl ?>
 
-<form method="POST" action="/mods/notes/addnote">
-<table>
-	<tr>
-		<td>Key:</td>
-		<td>Note:</td>
-		<td>&nbsp;</td>
-	</tr>
-	<tr>
-		<td><input type="text" name="key" size="8"></td>
-		<td><input type="text" name="note" size="32"></td>
-		<td><input type="submit" name="add" value="Add Note"></td>
-	</tr>
-</table>
+<form method="post" action="/mods/notes/addnote">
+	<div class="section">
+		<h3>Add A Note</h3>
+		<div class="sectionbg">
+			<div class="sectionbody">
+				<div class="subsection third">
+					<div class="inputlabel">Key:</div>
+					<div><input type="text" name="key" size="8" /></div>
+				</div>
+				<div class="subsection full">
+					<div class="inputlabel">Note:</div>
+					<div><input type="text" name="note" size="40" /></div>
+				</div>
+				<div class="subsection submitline">
+					<input type="submit" name="add" value="Add Note" />
+				</div>
+			</div>
+		</div>
+	</div>
 </form>
 
 <? IF !NotesLoop ?>
-You have no notes to display
+<p>You have no notes to display.</p>
 <? ELSE ?>
 
 <table class="data">
@@ -29,8 +35,8 @@ You have no notes to display
 	</thead>
 	<tbody>
 		<? LOOP NotesLoop ?>
-		<tr class="<? IF __EVEN__ ?>altrow<? ENDIF ?>">
-			<td><a href="/mods/notes/delnote?key=<? VAR Key ESC=URL,HTML ?>"><img src="/modfiles/<? VAR ModName TOP ?>/trash.gif" alt="[del]"></a>&nbsp;&nbsp;&nbsp;</td>
+		<tr class="<? IF __EVEN__ ?>evenrow<? ELSE ?>oddrow<? ENDIF ?>">
+			<td><a href="/mods/notes/delnote?key=<? VAR Key ESC=URL,HTML ?>"><img src="/modfiles/<? VAR ModName TOP ?>/trash.gif" alt="[del]" /></a></td>
 			<td><? VAR Key ?></td>
 			<td><? VAR Note ?></td>
 		</tr>

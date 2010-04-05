@@ -10,7 +10,8 @@ table thead td {
 	background-image: url('forest-header.png');
 }
 
-#menu .modtitle.active {
+#menu .modtitle.active,
+#menu .topitem.active {
 	background-color: #049712;
 	font-weight: bold;
 }
