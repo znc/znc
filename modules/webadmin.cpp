@@ -20,15 +20,6 @@
 using std::stringstream;
 using std::make_pair;
 
-/*
-	void GetErrorPage(CString& sPageRet, const CString& sError) {
-		m_Template["Action"] = "error";
-		m_Template["Title"] = "Error";
-		m_Template["Error"] = sError;
-
-		PrintPage(sPageRet, "Error.tmpl");
-	}
-*/
 
 class CWebAdminMod : public CGlobalModule {
 public:
@@ -185,16 +176,22 @@ public:
 			for (a = 0; a < vsArgs.size(); a++) {
 				CString sModRet;
 				CString sModName = vsArgs[a].TrimRight_n("\r");
+				CString sModLoadError;
 
 				if (!sModName.empty()) {
 					CString sArgs = WebSock.GetParam("modargs_" + sModName);
 
 					try {
 						if (!pNewUser->GetModules().LoadModule(sModName, sArgs, pNewUser, sModRet, (pUser != NULL))) {
-							DEBUG("Unable to load module [" << sModName << "] [" << sModRet << "]");
+							sModLoadError = "Unable to load module [" + sModName + "] [" + sModRet + "]";
 						}
 					} catch (...) {
-						DEBUG("Unable to load module [" << sModName << "] [" << sArgs << "]");
+						sModLoadError = "Unable to load module [" + sModName + "] [" + sArgs + "]";
+					}
+
+					if (!sModLoadError.empty()) {
+						DEBUG(sModLoadError);
+						spSession->AddError(sModLoadError);
 					}
 				}
 			}
@@ -205,13 +202,19 @@ public:
 				CString sModName = Modules[a]->GetModName();
 				CString sArgs = Modules[a]->GetArgs();
 				CString sModRet;
+				CString sModLoadError;
 
 				try {
 					if (!pNewUser->GetModules().LoadModule(sModName, sArgs, pNewUser, sModRet, (pUser != NULL))) {
-						DEBUG("Unable to load module [" << sModName << "] [" << sModRet << "]");
+						sModLoadError = "Unable to load module [" + sModName + "] [" + sModRet + "]";
 					}
 				} catch (...) {
-					DEBUG("Unable to load module [" << sModName << "]");
+					sModLoadError = "Unable to load module [" + sModName + "]";
+				}
+
+				if (!sModLoadError.empty()) {
+					DEBUG(sModLoadError);
+					spSession->AddError(sModLoadError);
 				}
 			}
 		}
@@ -669,7 +672,8 @@ public:
 			WebSock.Redirect("listusers");
 		}
 
-		return true;
+		/* we don't want the template to be printed while we redirect */
+		return false;
 	}
 
 	bool ListUsersPage(CWebSock& WebSock, CTemplate& Tmpl) {
@@ -820,6 +824,7 @@ public:
 		for (set<CString>::iterator it = ssArgs.begin(); it != ssArgs.end(); ++it) {
 			CString sModRet;
 			CString sModName = (*it).TrimRight_n("\r");
+			CString sModLoadError;
 
 			if (!sModName.empty()) {
 				CString sArgs = WebSock.GetParam("modargs_" + sModName);
@@ -827,14 +832,17 @@ public:
 				CModule *pMod = CZNC::Get().GetModules().FindModule(sModName);
 				if (!pMod) {
 					if (!CZNC::Get().GetModules().LoadModule(sModName, sArgs, NULL, sModRet)) {
-						DEBUG("Unable to load module [" << sModName << "] [" << sModRet << "]");
+						sModLoadError = "Unable to load module [" + sModName + "] [" + sModRet + "]";
 					}
 				} else if (pMod->GetArgs() != sArgs) {
 					if (!CZNC::Get().GetModules().ReloadModule(sModName, sArgs, NULL, sModRet)) {
-						DEBUG("Unable to reload module [" << sModName << "] [" << sModRet << "]");
+						sModLoadError = "Unable to reload module [" + sModName + "] [" + sModRet + "]";
 					}
-				} else {
-					DEBUG("Unable to load module [" << sModName << "] because it is already loaded");
+				}
+
+				if (!sModLoadError.empty()) {
+					DEBUG(sModLoadError);
+					WebSock.GetSession()->AddError(sModLoadError);
 				}
 			}
 		}
@@ -855,11 +863,12 @@ public:
 		}
 
 		if (!CZNC::Get().WriteConfig()) {
-			//WebSock.SetError("Settings changed, but config was not written");
+			WebSock.GetSession()->AddError("Settings changed, but config was not written");
 		}
 
 		WebSock.Redirect("settings");
-		return true;
+		/* we don't want the template to be printed while we redirect */
+		return false;
 	}
 
 private:
