@@ -125,7 +125,9 @@ public:
 					for (unsigned int a = 0; a < vChans.size(); ++a) {
 						if (vChans[a]->IsOn()) ++uChans;
 					}
-					Row["Info"] += ", joined to " + CString(uChans) + " channel(s)";
+					Row["Info"] += ", joined to " + CString(uChans);
+					if(uChans != vChans.size()) Row["Info"] += " out of " + CString(vChans.size()) + " configured";
+					Row["Info"] += " channel(s)";
 				}
 			}
 
