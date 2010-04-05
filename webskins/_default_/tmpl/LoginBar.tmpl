@@ -3,12 +3,12 @@
 				<? ELSE IF !ModName && PageName == "login" ?>
 				<span class="logoutbox">&nbsp;</span>
 				<? ELSE ?>
-				<span class="loginbox">
-					<form action="/login" method="POST">
-						<input type="hidden" name="submitted" value="1">
-						User:<input type="text" name="user">
-						Pass:<input type="password" name="pass">
-						<input type="submit" class="submit" value="Login">
-					</form>
-				</span>
+				<form action="/login" method="post">
+					<div class="loginbox">
+						<input type="hidden" name="submitted" value="1" />
+						User:<input type="text" name="user" />
+						Pass:<input type="password" name="pass" />
+						<input type="submit" class="submit" value="Login" />
+					</div>
+				</form>
 				<? ENDIF ?>

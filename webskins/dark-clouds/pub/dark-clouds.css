@@ -200,8 +200,8 @@ table thead td a:hover {
 	padding-left: 5px;
 }
 
-#infobar span.loginbox,
-#infobar span.logoutbox {
+#infobar .loginbox,
+#infobar .logoutbox {
 	text-align: right;
 	padding-right: 5px;
 	border-left: 1px solid #000000;
@@ -209,16 +209,16 @@ table thead td a:hover {
 	float: right;
 }
 
-#infobar span.logoutbox {
+#infobar .logoutbox {
 	text-align: center;
 	width: 100px;
 }
 
-#infobar span.loginbox input {
+#infobar .loginbox input {
 	width: 60px;
 }
 
-#infobar span.loginbox input.submit {
+#infobar .loginbox input.submit {
 	width: 40px;
 }
 
