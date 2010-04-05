@@ -18,6 +18,7 @@ LDFLAGS  := @LDFLAGS@
 LIBS     := @LIBS@
 LIBZNC   := @LIBZNC@
 LIBZNCDIR:= @LIBZNCDIR@
+MODDIR   := @MODDIR@
 PKGCONFIGDIR := $(libdir)/pkgconfig
 
 LIB_SRCS  := ZNCString.cpp Csocket.cpp znc.cpp User.cpp IRCSock.cpp Client.cpp DCCBounce.cpp \
@@ -69,8 +70,8 @@ install: znc $(LIBZNC)
 	mkdir -p $(DESTDIR)$(bindir)
 	mkdir -p $(DESTDIR)$(includedir)/znc
 	mkdir -p $(DESTDIR)$(PKGCONFIGDIR)
-	mkdir -p $(DESTDIR)$(libdir)/znc
-	cp -Rp webskins $(DESTDIR)$(libdir)/znc
+	mkdir -p $(DESTDIR)$(MODDIR)
+	cp -Rp webskins $(DESTDIR)$(MODDIR)
 	install -m 0755 znc $(DESTDIR)$(bindir)
 	install -m 0755 znc-config $(DESTDIR)$(bindir)
 	install -m 0755 znc-buildmod $(DESTDIR)$(bindir)
@@ -89,6 +90,7 @@ uninstall:
 	rm $(DESTDIR)$(bindir)/znc-buildmod
 	rm $(DESTDIR)$(includedir)/znc/*.h
 	rm $(DESTDIR)$(PKGCONFIGDIR)/znc.pc
+	rm -rf $(DESTDIR)$(MODDIR)/webskins
 	if test -n "$(LIBZNC)"; then \
 		rm $(DESTDIR)$(LIBZNCDIR)/$(LIBZNC) || exit 1 ; \
 		rmdir $(DESTDIR)$(LIBZNCDIR) || exit 1 ; \
@@ -100,6 +102,6 @@ uninstall:
 	rmdir $(DESTDIR)$(bindir)
 	rmdir $(DESTDIR)$(includedir)/znc
 	rmdir $(DESTDIR)$(PKGCONFIGDIR)
-	@echo "Successfully uninstalled, but emptry directories were left behind"
+	@echo "Successfully uninstalled, but empty directories were left behind"
 
 -include $(wildcard .depend/*.dep)
