@@ -1,12 +1,15 @@
-html,
+html {
+	margin: 0;
+	padding: 0;
+}
+
 body {
-	background: #555;
 	padding: 0;
 	margin: 10px 0;
-	background: #444;
+	background-color: #444;
 	font-family: verdana;
 	font-size: 12px;
-	color: white;
+	color: #fff;
 }
 
 img {
@@ -48,6 +51,10 @@ table td {
 
 td.mod_name {
 	white-space: nowrap;
+}
+
+.evenrow {
+	background-color: #555;
 }
 
 /* !TABLES */
@@ -179,8 +186,6 @@ input.third, textarea.third,
 /* LINKS */
 
 a {
-	font-family: verdana;
-	font-size: 12px;
 	color: #EC8E00;
 	text-decoration: none;
 }
@@ -208,8 +213,8 @@ table thead td a:hover {
 #wrapper {
 	width: 800px;
 	border: 1px solid #000;
-	margin-left: auto;
-	margin-right: auto;
+	background-color: #333; /* for the menu column */
+	margin: 0 auto;
 }
 
 #banner {
@@ -277,13 +282,13 @@ table thead td a:hover {
 	line-height: 24px;
 	border-bottom: 1px solid #000;
 	border-right: 1px solid #000;
-	background: #900;
+	background-color: #900;
 	padding: 2px 5px;
 	font-weight: bold;
 }
 
 .successbar {
-	background: #070;
+	background-color: #070;
 }
 
 #subpage {
@@ -291,9 +296,9 @@ table thead td a:hover {
 }
 
 #content {
-	float: right;
+	float: left;
 	width: 640px;
-	padding: 0;
+	padding: 0 0 1.5em 0;
 	background-color: #444;
 }
 
@@ -303,9 +308,7 @@ table thead td a:hover {
 	float: left;
 	background-color: #333;
 	width: 160px;
-	margin: 0;
-	margin-bottom: 20px;
-	left: 0;
+	padding-bottom: 1px;
 }
 
 #menu ul, #menu li {
@@ -370,10 +373,12 @@ table thead td a:hover {
 	line-height: 20px;
 	text-align: right;
 	padding-right: 5px;
+	font-size: 80%;
+	color: #000;
 }
 
 #footerbar a {
-	color: #fff;
+	color: #000;
 }
 
 #breadcrumb {
