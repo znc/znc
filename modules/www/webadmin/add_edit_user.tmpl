@@ -28,9 +28,9 @@
 				</div>
 				<div class="subsection half">
 					<div class="inputlabel">Allowed IPs:</div>
-					<textarea name="allowedips" cols="70" rows="5"><? LOOP AllowedHostLoop ?><? VAR Host ?>
+					<div><textarea name="allowedips" cols="70" rows="5"><? LOOP AllowedHostLoop ?><? VAR Host ?>
 <? ENDLOOP ?>
-</textarea>
+</textarea></div>
 					<br /><span class="info">Leave empty to allow connections from all IPs.<br />
 					Otherwise, one entry per line, wildcards * and ? are available.</span>
 				</div>
@@ -92,7 +92,7 @@
 					<div><textarea name="servers" cols="70" rows="5"><? LOOP ServerLoop ?><? VAR Server ?>
 <? ENDLOOP ?>
 </textarea></div>
-					<br /><span class="info">One server per line, host [+]port[ password]</span>
+					<br /><span class="info">One server per line, host [[+]port] [password]</span>
 				</div>
 				<div style="clear: both;"></div>
 
