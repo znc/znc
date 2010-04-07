@@ -3238,23 +3238,18 @@ fi
 
 
 
-# This used to be
-# if test "$MODULES" = "yes"; then
-# but I'm too lazy to reindent all of this
-if test "yes" = "yes"; then
-	FOUND_DL=no
+FOUND_DL=no
+# Don't use any libs like -lssl -lcrypto when checking for dlopen(),
+# because they might change the test results
+SAVED_LIBS="$LIBS"
+LIBS=""
 
-	# Don't use any libs like -lssl -lcrypto when checking for dlopen(),
-	# because they might change the test results
-	SAVED_LIBS="$LIBS"
-	LIBS=""
-
-	ac_fn_cxx_check_func "$LINENO" "dlopen" "ac_cv_func_dlopen"
+ac_fn_cxx_check_func "$LINENO" "dlopen" "ac_cv_func_dlopen"
 if test "x$ac_cv_func_dlopen" = x""yes; then :
   FOUND_DL=yes
 fi
 
-	{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for dlopen in -ldl" >&5
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for dlopen in -ldl" >&5
 $as_echo_n "checking for dlopen in -ldl... " >&6; }
 if test "${ac_cv_lib_dl_dlopen+set}" = set; then :
   $as_echo_n "(cached) " >&6
@@ -3295,43 +3290,43 @@ if test "x$ac_cv_lib_dl_dlopen" = x""yes; then :
 fi
 
 
-	appendLib "$SAVED_LIBS"
+appendLib "$SAVED_LIBS"
 
-	if test $FOUND_DL = "no" ; then
-		as_fn_error "could not find dlopen. Try --disable-modules" "$LINENO" 5
-	fi
+if test $FOUND_DL = "no" ; then
+	as_fn_error "Could not find dlopen. Try --disable-modules" "$LINENO" 5
+fi
 
-	appendMod "$CXXFLAGS"
+appendMod "$CXXFLAGS"
 
-	if test -z "$ISSUN" -a -z "$ISDARWIN"; then
-		# This is an unknown compiler flag on some OS
-		appendLD -Wl,--export-dynamic
-	fi
+if test -z "$ISSUN" -a -z "$ISDARWIN"; then
+	# This is an unknown compiler flag on some OS
+	appendLD -Wl,--export-dynamic
+fi
 
-	if test -z "$ISCYGWIN" ; then
-		# cygwin doesn't need -fPIC, everything else does (for modules)
-		# warning: -fPIC ignored for target (all code is position independent)
-		appendMod -fPIC
-	else
-		# But cygwin does want most of znc in a shared lib
-		LIBZNC="libznc.dll"
-		LIBZNCDIR="$libdir/znc"
-	fi
+if test -z "$ISCYGWIN" ; then
+	# cygwin doesn't need -fPIC, everything else does (for modules)
+	# warning: -fPIC ignored for target (all code is position independent)
+	appendMod -fPIC
+else
+	# But cygwin does want most of znc in a shared lib
+	LIBZNC="libznc.dll"
+	LIBZNCDIR="$libdir/znc"
+fi
 
-	if test -z "$ISDARWIN"; then
-		MODLINK="-shared"
-	else
-		# Mac OS X differentiates between shared libs (-dynamiclib)
-		# and loadable modules (-bundle).
-		MODLINK="-bundle -flat_namespace -undefined suppress"
-		# TODO test if -twolevel_namespace and/or
-		# -undefined dynamic_lookup work
-		# (dynamic_lookup might only work on 10.4 and later)
-	fi
+if test -z "$ISDARWIN"; then
+	MODLINK="-shared"
+else
+	# Mac OS X differentiates between shared libs (-dynamiclib)
+	# and loadable modules (-bundle).
+	MODLINK="-bundle -flat_namespace -undefined suppress"
+	# TODO test if -twolevel_namespace and/or
+	# -undefined dynamic_lookup work
+	# (dynamic_lookup might only work on 10.4 and later)
+fi
 
-	if test "x$PERL" != "xno"; then
-		old_PERL="$PERL"
-		# Extract the first word of "perl", so it can be a program name with args.
+if test "x$PERL" != "xno"; then
+	old_PERL="$PERL"
+	# Extract the first word of "perl", so it can be a program name with args.
 set dummy perl; ac_word=$2
 { $as_echo "$as_me:${as_lineno-$LINENO}: checking for $ac_word" >&5
 $as_echo_n "checking for $ac_word... " >&6; }
@@ -3371,10 +3366,10 @@ $as_echo "no" >&6; }
 fi
 
 
-		if test -n "$PERL_BINARY"; then
-			my_saved_LDFLAGS="$LDFLAGS"
-			appendLD `$PERL_BINARY -MExtUtils::Embed -e ccopts -e ldopts`
-			{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for perl_alloc in -lperl" >&5
+	if test -n "$PERL_BINARY"; then
+		my_saved_LDFLAGS="$LDFLAGS"
+		appendLD `$PERL_BINARY -MExtUtils::Embed -e ccopts -e ldopts`
+		{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for perl_alloc in -lperl" >&5
 $as_echo_n "checking for perl_alloc in -lperl... " >&6; }
 if test "${ac_cv_lib_perl_perl_alloc+set}" = set; then :
   $as_echo_n "(cached) " >&6
@@ -3421,11 +3416,11 @@ else
   PERL="no"
 fi
 
-			LDFLAGS="$my_saved_LDFLAGS"
-		else
-			PERL="no"
-		fi
-		if test "x$PERL" = "xno"; then
+		LDFLAGS="$my_saved_LDFLAGS"
+	else
+		PERL="no"
+	fi
+	if test "x$PERL" = "xno"; then
 
 	# This looks better in the summary at the end
 	PERL="not found"
@@ -3436,13 +3431,13 @@ fi
 $as_echo "$as_me: WARNING: perl was not found and thus disabled" >&2;}
 	fi
 
-		else
-			PERL=yes
-		fi
+	else
+		PERL=yes
 	fi
+fi
 
-	if test -n "$SASL"; then
-		{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for sasl_server_init in -lsasl2" >&5
+if test -n "$SASL"; then
+	{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for sasl_server_init in -lsasl2" >&5
 $as_echo_n "checking for sasl_server_init in -lsasl2... " >&6; }
 if test "${ac_cv_lib_sasl2_sasl_server_init+set}" = set; then :
   $as_echo_n "(cached) " >&6
@@ -3484,10 +3479,10 @@ else
   as_fn_error "could not find libsasl2. Try --disable-sasl." "$LINENO" 5
 fi
 
-	fi
+fi
 
-	# Check if we want modtcl
-	# Check whether --enable-tcl was given.
+# Check if we want modtcl
+# Check whether --enable-tcl was given.
 if test "${enable_tcl+set}" = set; then :
   enableval=$enable_tcl; TCL="$enableval"
 else
@@ -3502,8 +3497,8 @@ if test "${with_tcl_flags+set}" = set; then :
 fi
 
 
-	if test x"$TCL" = "xyes"
-	then
+if test x"$TCL" = "xyes"
+then
 
 # Check whether --with-tcl was given.
 if test "${with_tcl+set}" = set; then :
@@ -3511,12 +3506,12 @@ if test "${with_tcl+set}" = set; then :
 fi
 
 
-		# This will need to be extended in the future, but I don't think
-		# it's a good idea to stuff a shitload of random stuff in here right now
-		for path in $TCL_DIR /usr/lib /usr/lib/tcl8.4 /usr/lib/tcl8.5
-		do
-			file="${path}/tclConfig.sh"
-			as_ac_File=`$as_echo "ac_cv_file_${file}" | $as_tr_sh`
+	# This will need to be extended in the future, but I don't think
+	# it's a good idea to stuff a shitload of random stuff in here right now
+	for path in $TCL_DIR /usr/lib /usr/lib/tcl8.4 /usr/lib/tcl8.5
+	do
+		file="${path}/tclConfig.sh"
+		as_ac_File=`$as_echo "ac_cv_file_${file}" | $as_tr_sh`
 { $as_echo "$as_me:${as_lineno-$LINENO}: checking for ${file}" >&5
 $as_echo_n "checking for ${file}... " >&6; }
 if { as_var=$as_ac_File; eval "test \"\${$as_var+set}\" = set"; }; then :
@@ -3538,30 +3533,29 @@ eval as_val=\$$as_ac_File
   TCL_CONF="$file" ; break
 fi
 
-		done
+	done
 
-		if test x"${TCL_CONF}" = x
-		then
-			# They --enable-tcl'd, so give them some sane default
-			TCL_FLAGS="-I/usr/include/tcl -ltcl"
-			{ $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: Could not find tclConfig.sh, using some sane defaults." >&5
+	if test x"${TCL_CONF}" = x
+	then
+		# They --enable-tcl'd, so give them some sane default
+		TCL_FLAGS="-I/usr/include/tcl -ltcl"
+		{ $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: Could not find tclConfig.sh, using some sane defaults." >&5
 $as_echo "$as_me: WARNING: Could not find tclConfig.sh, using some sane defaults." >&2;}
-		else
-			{ $as_echo "$as_me:${as_lineno-$LINENO}: checking modtcl flags" >&5
+	else
+		{ $as_echo "$as_me:${as_lineno-$LINENO}: checking modtcl flags" >&5
 $as_echo_n "checking modtcl flags... " >&6; }
-			. ${TCL_CONF}
-			# eval because those vars depend on other vars in there
-			eval "TCL_LIB_SPEC=\"${TCL_LIB_SPEC}\""
-			eval "TCL_INCLUDE_SPEC=\"${TCL_INCLUDE_SPEC}\""
-			TCL_FLAGS="$TCL_INCLUDE_SPEC $TCL_LIB_SPEC"
-			{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $TCL_FLAGS" >&5
+		. ${TCL_CONF}
+		# eval because those vars depend on other vars in there
+		eval "TCL_LIB_SPEC=\"${TCL_LIB_SPEC}\""
+		eval "TCL_INCLUDE_SPEC=\"${TCL_INCLUDE_SPEC}\""
+		TCL_FLAGS="$TCL_INCLUDE_SPEC $TCL_LIB_SPEC"
+		{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $TCL_FLAGS" >&5
 $as_echo "$TCL_FLAGS" >&6; }
-		fi
 	fi
-
-	appendCXX "-D_MODDIR_=\\\"${MODDIR}\\\""
-	appendCXX "-D_DATADIR_=\\\"${DATADIR}\\\""
 fi
+
+appendCXX "-D_MODDIR_=\\\"${MODDIR}\\\""
+appendCXX "-D_DATADIR_=\\\"${DATADIR}\\\""
 
 
 
