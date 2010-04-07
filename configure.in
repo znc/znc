@@ -188,125 +188,119 @@ AC_ARG_WITH( [module-data-prefix],
 	[DATADIR="${datadir}/znc"] )
 
 
-# This used to be
-# if test "$MODULES" = "yes"; then
-# but I'm too lazy to reindent all of this
-if test "yes" = "yes"; then
-	FOUND_DL=no
+FOUND_DL=no
+# Don't use any libs like -lssl -lcrypto when checking for dlopen(),
+# because they might change the test results
+SAVED_LIBS="$LIBS"
+LIBS=""
 
-	# Don't use any libs like -lssl -lcrypto when checking for dlopen(),
-	# because they might change the test results
-	SAVED_LIBS="$LIBS"
-	LIBS=""
+AC_CHECK_FUNC(dlopen, FOUND_DL=yes,)
+AC_CHECK_LIB( dl, dlopen, FOUND_DL=yes ; appendLib -ldl,)
 
-	AC_CHECK_FUNC(dlopen, FOUND_DL=yes,)
-	AC_CHECK_LIB( dl, dlopen, FOUND_DL=yes ; appendLib -ldl,)
+appendLib "$SAVED_LIBS"
 
-	appendLib "$SAVED_LIBS"
-
-	if test $FOUND_DL = "no" ; then
-		AC_MSG_ERROR([could not find dlopen. Try --disable-modules])
-	fi
-
-	appendMod "$CXXFLAGS"
-
-	if test -z "$ISSUN" -a -z "$ISDARWIN"; then
-		# This is an unknown compiler flag on some OS
-		appendLD -Wl,--export-dynamic
-	fi
-
-	if test -z "$ISCYGWIN" ; then
-		# cygwin doesn't need -fPIC, everything else does (for modules)
-		# warning: -fPIC ignored for target (all code is position independent)
-		appendMod -fPIC
-	else
-		# But cygwin does want most of znc in a shared lib
-		LIBZNC="libznc.dll"
-		LIBZNCDIR="$libdir/znc"
-	fi
-
-	if test -z "$ISDARWIN"; then
-		MODLINK="-shared"
-	else
-		# Mac OS X differentiates between shared libs (-dynamiclib)
-		# and loadable modules (-bundle).
-		MODLINK="-bundle -flat_namespace -undefined suppress"
-		# TODO test if -twolevel_namespace and/or
-		# -undefined dynamic_lookup work
-		# (dynamic_lookup might only work on 10.4 and later)
-	fi
-
-	if test "x$PERL" != "xno"; then
-		old_PERL="$PERL"
-		AC_PATH_PROG([PERL_BINARY], [perl], [])
-		if test -n "$PERL_BINARY"; then
-			my_saved_LDFLAGS="$LDFLAGS"
-			appendLD `$PERL_BINARY -MExtUtils::Embed -e ccopts -e ldopts`
-			AC_CHECK_LIB(perl, perl_alloc,, PERL="no")
-			LDFLAGS="$my_saved_LDFLAGS"
-		else
-			PERL="no"
-		fi
-		if test "x$PERL" = "xno"; then
-			ZNC_AUTO_FAIL([PERL],
-				[perl not found. Try --disable-perl.],
-				[perl was not found and thus disabled])
-		else
-			PERL=yes
-		fi
-	fi
-
-	if test -n "$SASL"; then
-		AC_CHECK_LIB( sasl2, sasl_server_init,
-			[: Dont let autoconf add -lsasl2, Makefile handles that],
-			AC_MSG_ERROR([could not find libsasl2. Try --disable-sasl.]))
-	fi
-
-	# Check if we want modtcl
-	AC_ARG_ENABLE( [tcl],
-		AS_HELP_STRING([--enable-tcl], [enable modtcl]),
-		[TCL="$enableval"],
-		[TCL="no"])
-
-	AC_ARG_WITH( [tcl-flags],
-		AS_HELP_STRING([--with-tcl-flags=FLAGS],
-			[The flags needed for compiling and linking modtcl]),
-		[TCL_FLAGS="$withval"],)
-
-	if test x"$TCL" = "xyes"
-	then
-		AC_ARG_WITH( [tcl],
-			AS_HELP_STRING([--with-tcl=DIR],
-				[directory containing tclConfig.sh]),
-				TCL_DIR="${withval}")
-
-		# This will need to be extended in the future, but I don't think
-		# it's a good idea to stuff a shitload of random stuff in here right now
-		for path in $TCL_DIR /usr/lib /usr/lib/tcl8.4 /usr/lib/tcl8.5
-		do
-			file="${path}/tclConfig.sh"
-			AC_CHECK_FILE(${file}, [TCL_CONF="$file" ; break])
-		done
-
-		if test x"${TCL_CONF}" = x
-		then
-			# They --enable-tcl'd, so give them some sane default
-			TCL_FLAGS="-I/usr/include/tcl -ltcl"
-			AC_MSG_WARN([Could not find tclConfig.sh, using some sane defaults.])
-		else
-			AC_MSG_CHECKING([modtcl flags])
-			. ${TCL_CONF}
-			# eval because those vars depend on other vars in there
-			eval "TCL_LIB_SPEC=\"${TCL_LIB_SPEC}\""
-			eval "TCL_INCLUDE_SPEC=\"${TCL_INCLUDE_SPEC}\""
-			TCL_FLAGS="$TCL_INCLUDE_SPEC $TCL_LIB_SPEC"
-			AC_MSG_RESULT([$TCL_FLAGS])
-		fi
-	fi
-
-	appendCXX "-D_MODDIR_=\\\"${MODDIR}\\\""
-	appendCXX "-D_DATADIR_=\\\"${DATADIR}\\\""
+if test $FOUND_DL = "no" ; then
+	AC_MSG_ERROR([Could not find dlopen. Try --disable-modules])
 fi
+
+appendMod "$CXXFLAGS"
+
+if test -z "$ISSUN" -a -z "$ISDARWIN"; then
+	# This is an unknown compiler flag on some OS
+	appendLD -Wl,--export-dynamic
+fi
+
+if test -z "$ISCYGWIN" ; then
+	# cygwin doesn't need -fPIC, everything else does (for modules)
+	# warning: -fPIC ignored for target (all code is position independent)
+	appendMod -fPIC
+else
+	# But cygwin does want most of znc in a shared lib
+	LIBZNC="libznc.dll"
+	LIBZNCDIR="$libdir/znc"
+fi
+
+if test -z "$ISDARWIN"; then
+	MODLINK="-shared"
+else
+	# Mac OS X differentiates between shared libs (-dynamiclib)
+	# and loadable modules (-bundle).
+	MODLINK="-bundle -flat_namespace -undefined suppress"
+	# TODO test if -twolevel_namespace and/or
+	# -undefined dynamic_lookup work
+	# (dynamic_lookup might only work on 10.4 and later)
+fi
+
+if test "x$PERL" != "xno"; then
+	old_PERL="$PERL"
+	AC_PATH_PROG([PERL_BINARY], [perl], [])
+	if test -n "$PERL_BINARY"; then
+		my_saved_LDFLAGS="$LDFLAGS"
+		appendLD `$PERL_BINARY -MExtUtils::Embed -e ccopts -e ldopts`
+		AC_CHECK_LIB(perl, perl_alloc,, PERL="no")
+		LDFLAGS="$my_saved_LDFLAGS"
+	else
+		PERL="no"
+	fi
+	if test "x$PERL" = "xno"; then
+		ZNC_AUTO_FAIL([PERL],
+			[perl not found. Try --disable-perl.],
+			[perl was not found and thus disabled])
+	else
+		PERL=yes
+	fi
+fi
+
+if test -n "$SASL"; then
+	AC_CHECK_LIB( sasl2, sasl_server_init,
+		[: Dont let autoconf add -lsasl2, Makefile handles that],
+		AC_MSG_ERROR([could not find libsasl2. Try --disable-sasl.]))
+fi
+
+# Check if we want modtcl
+AC_ARG_ENABLE( [tcl],
+	AS_HELP_STRING([--enable-tcl], [enable modtcl]),
+	[TCL="$enableval"],
+	[TCL="no"])
+
+AC_ARG_WITH( [tcl-flags],
+	AS_HELP_STRING([--with-tcl-flags=FLAGS],
+		[The flags needed for compiling and linking modtcl]),
+	[TCL_FLAGS="$withval"],)
+
+if test x"$TCL" = "xyes"
+then
+	AC_ARG_WITH( [tcl],
+		AS_HELP_STRING([--with-tcl=DIR],
+			[directory containing tclConfig.sh]),
+			TCL_DIR="${withval}")
+
+	# This will need to be extended in the future, but I don't think
+	# it's a good idea to stuff a shitload of random stuff in here right now
+	for path in $TCL_DIR /usr/lib /usr/lib/tcl8.4 /usr/lib/tcl8.5
+	do
+		file="${path}/tclConfig.sh"
+		AC_CHECK_FILE(${file}, [TCL_CONF="$file" ; break])
+	done
+
+	if test x"${TCL_CONF}" = x
+	then
+		# They --enable-tcl'd, so give them some sane default
+		TCL_FLAGS="-I/usr/include/tcl -ltcl"
+		AC_MSG_WARN([Could not find tclConfig.sh, using some sane defaults.])
+	else
+		AC_MSG_CHECKING([modtcl flags])
+		. ${TCL_CONF}
+		# eval because those vars depend on other vars in there
+		eval "TCL_LIB_SPEC=\"${TCL_LIB_SPEC}\""
+		eval "TCL_INCLUDE_SPEC=\"${TCL_INCLUDE_SPEC}\""
+		TCL_FLAGS="$TCL_INCLUDE_SPEC $TCL_LIB_SPEC"
+		AC_MSG_RESULT([$TCL_FLAGS])
+	fi
+fi
+
+appendCXX "-D_MODDIR_=\\\"${MODDIR}\\\""
+appendCXX "-D_DATADIR_=\\\"${DATADIR}\\\""
 
 AC_SUBST([CXXFLAGS])
 AC_SUBST([CPPFLAGS])
