@@ -566,7 +566,7 @@ MODLINK
 LIBZNCDIR
 LIBZNC
 MODFLAGS
-PERL
+PERL_BINARY
 c_ares_LIBS
 c_ares_CFLAGS
 PKG_CONFIG
@@ -2782,12 +2782,14 @@ fi
 if test "${enable_openssl+set}" = set; then :
   enableval=$enable_openssl; SSL="$enableval"
 else
-  SSL="yes"
+  SSL="auto"
 fi
 
 # Check whether --enable-perl was given.
 if test "${enable_perl+set}" = set; then :
-  enableval=$enable_perl; if test "$enableval" = "no" ; then NOPERL=1; fi
+  enableval=$enable_perl; PERL="$enableval"
+else
+  PERL="auto"
 fi
 
 # Check whether --enable-sasl was given.
@@ -3078,12 +3080,12 @@ fi
 
 	# This looks better in the summary at the end
 	ARES="not found"
-	if "x$old_ARES" != "xauto" ; then
-		as_fn_error "\"c-ares not found. Try --disable-c-ares.
-Disabling c-ares may result in a slight performance decrease but will not have any other side-effects\"" "$LINENO" 5
+	if test "x$old_ARES" != "xauto" ; then
+		as_fn_error "c-ares not found. Try --disable-c-ares.
+Disabling c-ares may result in a slight performance decrease but will not have any other side-effects" "$LINENO" 5
 	else
-		{ $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: \"c-ares was not found and thus disabled\"" >&5
-$as_echo "$as_me: WARNING: \"c-ares was not found and thus disabled\"" >&2;}
+		{ $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: c-ares was not found and thus disabled" >&5
+$as_echo "$as_me: WARNING: c-ares was not found and thus disabled" >&2;}
 	fi
 
 	else
@@ -3201,16 +3203,17 @@ fi
 
 	# This looks better in the summary at the end
 	SSL="not found"
-	if "x$old_SSL" != "xauto" ; then
-		as_fn_error "\"OpenSSL not found. Try --disable-openssl.\"" "$LINENO" 5
+	if test "x$old_SSL" != "xauto" ; then
+		as_fn_error "OpenSSL not found. Try --disable-openssl." "$LINENO" 5
 	else
-		{ $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: \"OpenSSL was not found and thus disabled\"" >&5
-$as_echo "$as_me: WARNING: \"OpenSSL was not found and thus disabled\"" >&2;}
+		{ $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: OpenSSL was not found and thus disabled" >&5
+$as_echo "$as_me: WARNING: OpenSSL was not found and thus disabled" >&2;}
 	fi
 
 		NOSSL=1
 	else
 		appendCXX -DHAVE_LIBSSL
+		SSL=yes
 	fi
 else
 	NOSSL=1
@@ -3326,17 +3329,18 @@ fi
 		# (dynamic_lookup might only work on 10.4 and later)
 	fi
 
-	if test -z "$NOPERL"; then
+	if test "x$PERL" != "xno"; then
+		old_PERL="$PERL"
 		# Extract the first word of "perl", so it can be a program name with args.
 set dummy perl; ac_word=$2
 { $as_echo "$as_me:${as_lineno-$LINENO}: checking for $ac_word" >&5
 $as_echo_n "checking for $ac_word... " >&6; }
-if test "${ac_cv_path_PERL+set}" = set; then :
+if test "${ac_cv_path_PERL_BINARY+set}" = set; then :
   $as_echo_n "(cached) " >&6
 else
-  case $PERL in
+  case $PERL_BINARY in
   [\\/]* | ?:[\\/]*)
-  ac_cv_path_PERL="$PERL" # Let the user override the test with a path.
+  ac_cv_path_PERL_BINARY="$PERL_BINARY" # Let the user override the test with a path.
   ;;
   *)
   as_save_IFS=$IFS; IFS=$PATH_SEPARATOR
@@ -3346,7 +3350,7 @@ do
   test -z "$as_dir" && as_dir=.
     for ac_exec_ext in '' $ac_executable_extensions; do
   if { test -f "$as_dir/$ac_word$ac_exec_ext" && $as_test_x "$as_dir/$ac_word$ac_exec_ext"; }; then
-    ac_cv_path_PERL="$as_dir/$ac_word$ac_exec_ext"
+    ac_cv_path_PERL_BINARY="$as_dir/$ac_word$ac_exec_ext"
     $as_echo "$as_me:${as_lineno-$LINENO}: found $as_dir/$ac_word$ac_exec_ext" >&5
     break 2
   fi
@@ -3357,19 +3361,19 @@ IFS=$as_save_IFS
   ;;
 esac
 fi
-PERL=$ac_cv_path_PERL
-if test -n "$PERL"; then
-  { $as_echo "$as_me:${as_lineno-$LINENO}: result: $PERL" >&5
-$as_echo "$PERL" >&6; }
+PERL_BINARY=$ac_cv_path_PERL_BINARY
+if test -n "$PERL_BINARY"; then
+  { $as_echo "$as_me:${as_lineno-$LINENO}: result: $PERL_BINARY" >&5
+$as_echo "$PERL_BINARY" >&6; }
 else
   { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
 $as_echo "no" >&6; }
 fi
 
 
-		if test -n "$PERL"; then
+		if test -n "$PERL_BINARY"; then
 			my_saved_LDFLAGS="$LDFLAGS"
-			appendLD `$PERL -MExtUtils::Embed -e ccopts -e ldopts`
+			appendLD `$PERL_BINARY -MExtUtils::Embed -e ccopts -e ldopts`
 			{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for perl_alloc in -lperl" >&5
 $as_echo_n "checking for perl_alloc in -lperl... " >&6; }
 if test "${ac_cv_lib_perl_perl_alloc+set}" = set; then :
@@ -3407,14 +3411,33 @@ fi
 { $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_lib_perl_perl_alloc" >&5
 $as_echo "$ac_cv_lib_perl_perl_alloc" >&6; }
 if test "x$ac_cv_lib_perl_perl_alloc" = x""yes; then :
-  unset NOPERL
+  cat >>confdefs.h <<_ACEOF
+#define HAVE_LIBPERL 1
+_ACEOF
+
+  LIBS="-lperl $LIBS"
+
 else
-  as_fn_error "could not find libperl. Try --disable-perl" "$LINENO" 5
+  PERL="no"
 fi
 
 			LDFLAGS="$my_saved_LDFLAGS"
 		else
-			as_fn_error "could not find perl binary. Try --disable-perl" "$LINENO" 5
+			PERL="no"
+		fi
+		if test "x$PERL" = "xno"; then
+
+	# This looks better in the summary at the end
+	PERL="not found"
+	if test "x$old_PERL" != "xauto" ; then
+		as_fn_error "perl not found. Try --disable-perl." "$LINENO" 5
+	else
+		{ $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: perl was not found and thus disabled" >&5
+$as_echo "$as_me: WARNING: perl was not found and thus disabled" >&2;}
+	fi
+
+		else
+			PERL=yes
 		fi
 	fi
 
@@ -3539,7 +3562,6 @@ $as_echo "$TCL_FLAGS" >&6; }
 	appendCXX "-D_MODDIR_=\\\"${MODDIR}\\\""
 	appendCXX "-D_DATADIR_=\\\"${DATADIR}\\\""
 fi
-
 
 
 
@@ -4718,17 +4740,9 @@ echo znc 0.089 configured
 echo
 echo "debug:   $DEBUG"
 echo "ipv6:    $IPV6"
-if test x"$NOSSL" = "x1" ; then
-	echo "openssl: no"
-else
-	echo "openssl: yes"
-fi
+echo "openssl: $SSL"
 echo "c-ares:  $ARES"
-if test x"$PERL" = "x" ; then
-	echo "perl:    no"
-else
-	echo "perl:    yes"
-fi
+echo "perl:    $PERL"
 if test x"$SASL" = "x" ; then
 	echo "sasl:    no"
 else
