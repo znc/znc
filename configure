@@ -2778,7 +2778,9 @@ fi
 
 # Check whether --enable-openssl was given.
 if test "${enable_openssl+set}" = set; then :
-  enableval=$enable_openssl; if test "$enableval" = "no" ; then NOSSL=1; fi
+  enableval=$enable_openssl; SSL="$enableval"
+else
+  SSL="yes"
 fi
 
 # Check whether --enable-perl was given.
@@ -3087,7 +3089,7 @@ $as_echo "$as_me: WARNING: \"c-ares was not found and thus disabled\"" >&2;}
 	fi
 fi
 
-if test -z "$NOSSL"; then
+if test "x$SSL" != "xno"; then
 	if test -n "$OPENSSL"; then
 		appendLib -L${OPENSSL}/lib
 		appendCXX -I${OPENSSL}/include
@@ -3190,9 +3192,9 @@ else
 fi
 
 
-	if test -z "$NOSSL"; then
-		appendCXX -DHAVE_LIBSSL
-	fi
+	appendCXX -DHAVE_LIBSSL
+else
+	NOSSL=1
 fi
 
 

@@ -79,7 +79,8 @@ AC_ARG_ENABLE( [ipv6],
 	[IPV6="yes"])
 AC_ARG_ENABLE( [openssl],
 	AS_HELP_STRING([--disable-openssl], [disable openssl]),
-	[if test "$enableval" = "no" ; then NOSSL=1; fi],)
+	[SSL="$enableval"],
+	[SSL="yes"])
 AC_ARG_ENABLE( [perl],
 	AS_HELP_STRING([--disable-perl], [disable perl]),
 	[if test "$enableval" = "no" ; then NOPERL=1; fi],)
@@ -143,7 +144,7 @@ Disabling c-ares may result in a slight performance decrease but will not have a
 	fi
 fi
 
-if test -z "$NOSSL"; then
+if test "x$SSL" != "xno"; then
 	if test -n "$OPENSSL"; then
 		appendLib -L${OPENSSL}/lib
 		appendCXX -I${OPENSSL}/include
@@ -156,9 +157,9 @@ if test -z "$NOSSL"; then
 	AC_CHECK_LIB( ssl, SSL_shutdown,,
 		AC_MSG_ERROR([could not find libssl. Try --disable-openssl or install the appropriate dependencies eg. libssl-dev.]), )
 
-	if test -z "$NOSSL"; then
-		appendCXX -DHAVE_LIBSSL
-	fi
+	appendCXX -DHAVE_LIBSSL
+else
+	NOSSL=1
 fi
 
 AC_ARG_WITH( [module-prefix],
