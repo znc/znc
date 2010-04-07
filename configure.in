@@ -3,6 +3,16 @@ AC_INIT([znc], [0.089])
 AC_CONFIG_SRCDIR([znc.cpp])
 AC_LANG([C++])
 
+AC_DEFUN(ZNC_AUTO_FAIL, [
+	# This looks better in the summary at the end
+	$1="not found"
+	if "x$old_$1" != "xauto" ; then
+		AC_MSG_ERROR([$2])
+	else
+		AC_MSG_WARN([$3])
+	fi
+])
+
 # AC_PROG_CXX sets CXXFLAGS to "-O2 -g" if it is unset which we don't want
 CXXFLAGS="$CXXFLAGS "
 AC_PROG_CXX
@@ -129,14 +139,10 @@ if test "x$ARES" != "xno"; then
 	fi
 
 	if test "x$ARES" = "xno" ; then
-		# This looks better in the summary at the end
-		ARES="not found"
-		if test "x$old_ARES" != "xauto" ; then
-			AC_MSG_ERROR(["c-ares not found. Try --disable-c-ares.
-Disabling c-ares may result in a slight performance decrease but will not have any other side-effects"])
-		else
-			AC_MSG_WARN(["c-ares was not found and thus disabled"])
-		fi
+		ZNC_AUTO_FAIL([ARES],
+			["c-ares not found. Try --disable-c-ares.
+Disabling c-ares may result in a slight performance decrease but will not have any other side-effects"],
+			["c-ares was not found and thus disabled"])
 	else
 		appendCXX $c_ares_CFLAGS -DHAVE_C_ARES
 		appendLib $c_ares_LIBS
@@ -150,14 +156,20 @@ if test "x$SSL" != "xno"; then
 		appendCXX -I${OPENSSL}/include
 	fi
 
+	old_SSL=$SSL
 	# Don't reorder this!
 	# On some arches libssl depends on libcrypto without linking to it :(
-	AC_CHECK_LIB( crypto, BIO_new,,
-		AC_MSG_ERROR([could not find libcrypto. Try --disable-openssl or install the appropriate dependencies eg. libssl-dev.]), )
-	AC_CHECK_LIB( ssl, SSL_shutdown,,
-		AC_MSG_ERROR([could not find libssl. Try --disable-openssl or install the appropriate dependencies eg. libssl-dev.]), )
+	AC_CHECK_LIB( crypto, BIO_new,, SSL=no )
+	AC_CHECK_LIB( ssl, SSL_shutdown,, SSL=no )
 
-	appendCXX -DHAVE_LIBSSL
+	if test "x$SSL" = "xno" ; then
+		ZNC_AUTO_FAIL([SSL],
+			["OpenSSL not found. Try --disable-openssl."],
+			["OpenSSL was not found and thus disabled"])
+		NOSSL=1
+	else
+		appendCXX -DHAVE_LIBSSL
+	fi
 else
 	NOSSL=1
 fi

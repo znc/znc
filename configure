@@ -1892,6 +1892,8 @@ ac_link='$CXX -o conftest$ac_exeext $CXXFLAGS $CPPFLAGS $LDFLAGS conftest.$ac_ex
 ac_compiler_gnu=$ac_cv_cxx_compiler_gnu
 
 
+
+
 # AC_PROG_CXX sets CXXFLAGS to "-O2 -g" if it is unset which we don't want
 CXXFLAGS="$CXXFLAGS "
 ac_ext=cpp
@@ -3073,15 +3075,17 @@ fi
 	fi
 
 	if test "x$ARES" = "xno" ; then
-		# This looks better in the summary at the end
-		ARES="not found"
-		if test "x$old_ARES" != "xauto" ; then
-			as_fn_error "\"c-ares not found. Try --disable-c-ares.
+
+	# This looks better in the summary at the end
+	ARES="not found"
+	if "x$old_ARES" != "xauto" ; then
+		as_fn_error "\"c-ares not found. Try --disable-c-ares.
 Disabling c-ares may result in a slight performance decrease but will not have any other side-effects\"" "$LINENO" 5
-		else
-			{ $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: \"c-ares was not found and thus disabled\"" >&5
+	else
+		{ $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: \"c-ares was not found and thus disabled\"" >&5
 $as_echo "$as_me: WARNING: \"c-ares was not found and thus disabled\"" >&2;}
-		fi
+	fi
+
 	else
 		appendCXX $c_ares_CFLAGS -DHAVE_C_ARES
 		appendLib $c_ares_LIBS
@@ -3095,6 +3099,7 @@ if test "x$SSL" != "xno"; then
 		appendCXX -I${OPENSSL}/include
 	fi
 
+	old_SSL=$SSL
 	# Don't reorder this!
 	# On some arches libssl depends on libcrypto without linking to it :(
 	{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for BIO_new in -lcrypto" >&5
@@ -3141,7 +3146,7 @@ _ACEOF
   LIBS="-lcrypto $LIBS"
 
 else
-  as_fn_error "could not find libcrypto. Try --disable-openssl or install the appropriate dependencies eg. libssl-dev." "$LINENO" 5
+  SSL=no
 fi
 
 	{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for SSL_shutdown in -lssl" >&5
@@ -3188,11 +3193,25 @@ _ACEOF
   LIBS="-lssl $LIBS"
 
 else
-  as_fn_error "could not find libssl. Try --disable-openssl or install the appropriate dependencies eg. libssl-dev." "$LINENO" 5
+  SSL=no
 fi
 
 
-	appendCXX -DHAVE_LIBSSL
+	if test "x$SSL" = "xno" ; then
+
+	# This looks better in the summary at the end
+	SSL="not found"
+	if "x$old_SSL" != "xauto" ; then
+		as_fn_error "\"OpenSSL not found. Try --disable-openssl.\"" "$LINENO" 5
+	else
+		{ $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: \"OpenSSL was not found and thus disabled\"" >&5
+$as_echo "$as_me: WARNING: \"OpenSSL was not found and thus disabled\"" >&2;}
+	fi
+
+		NOSSL=1
+	else
+		appendCXX -DHAVE_LIBSSL
+	fi
 else
 	NOSSL=1
 fi
