@@ -3,7 +3,7 @@ AC_INIT([znc], [0.089])
 AC_CONFIG_SRCDIR([znc.cpp])
 AC_LANG([C++])
 
-AC_DEFUN(ZNC_AUTO_FAIL, [
+AC_DEFUN([ZNC_AUTO_FAIL], [
 	# This looks better in the summary at the end
 	$1="not found"
 	if test "x$old_$1" != "xauto" ; then
