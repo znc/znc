@@ -19,7 +19,7 @@ LDFLAGS  := @LDFLAGS@
 # LIBS are not and should not be used in here.
 # The znc binary links already against those.
 # LIBS     := @LIBS@
-PERL     := @PERL@
+PERL     := @PERL_BINARY@
 MODDIR   := @MODDIR@
 DATADIR  := @DATADIR@
 LIBZNC   := @LIBZNC@
