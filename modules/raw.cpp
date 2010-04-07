@@ -19,7 +19,7 @@ public:
 	}
 
 	virtual void OnModCommand(const CString& sCommand) {
-		m_pUser->PutUser(sCommand);
+		PutIRC(sCommand);
 	}
 
 	virtual EModRet OnUserRaw(CString& sLine) {
