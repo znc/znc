@@ -1,3 +1,8 @@
+html, body {
+	margin: 0;
+	padding: 0;
+}
+
 body {
 	background: url(pagebg.gif) top repeat-x #0C1833 fixed;
 	color: #fff;
@@ -76,7 +81,7 @@ input.full, textarea.full {
 }
 
 input.half, textarea.half {
-	width: 300px;
+	width: 297px;
 }
 
 input.third, textarea.third {
@@ -205,4 +210,16 @@ textarea {
 	line-height: 30px;
 	border-right: 1px solid #000;
 	float: left;
+}
+
+td.mod_name,
+.checkboxandlabel {
+	white-space: nowrap;
+}
+
+.lotsofcheckboxes .checkboxandlabel {
+	display: block;
+	float: left;
+	width: 200px;
+	margin-top: 0.5em;
 }
