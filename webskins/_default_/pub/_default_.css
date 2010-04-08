@@ -41,6 +41,7 @@ a:hover {
 	border-top: none;
 	-moz-box-shadow: 0 0 1em #666;
 	-webkit-box-shadow: 0 0 1em #666;
+	box-shadow: 0 0 1em #666;
 }
 
 #banner_top {
@@ -89,19 +90,64 @@ ul.nav li.parent ul li {
 	font-size: 80%;
 }
 
+ul.nav li.topitem:before {
+	content: "» ";
+}
+
 #infobar {
 	text-align: right;
 	clear: both;
+	position: relative;
+	top: -30px;
+	margin-left: 380px;
+	background-color: #ccc;
+	color: #333;
+	padding: 0 6px 3px 0;
+}
+
+.errorbar + #infobar {
+	top: -59px;
+}
+
+#infobar input {
+	border: none;
+	font-family: Tahoma, sans-serif;
+	padding: 1px;
+	font-size: 14px;
+	margin: 0 4px;
+	width: 120px;
+}
+
+#infobar input.submit {
+	border: 1px solid #333;
+	font-size: 12px;
+	width: 60px;
 }
 
 #infobar_ident, .logoutbox, .loginbox {
 	padding: 4px;
 	font-size: 70%;
-	color: #888;
 }
 
-ul.nav li.topitem:before {
-	content: "» ";
+#infobar_ident {
+	margin-right: 4px;
+}
+
+.logoutbox, .loginbox {
+	padding-top: 7px;
+}
+
+.successbar,
+.errorbar {
+	width: 100%;
+	background-color: #900;
+	padding: 5px 10px;
+	font-weight: bold;
+	color: #fff;
+}
+
+.successbar {
+	background-color: #070;
 }
 
 #content {
@@ -110,7 +156,6 @@ ul.nav li.topitem:before {
 
 #main {
 	padding: 0 20px 20px 20px;
-
 	font-size: 90%;
 }
 
@@ -141,6 +186,8 @@ h3 {
 input:focus, textarea:focus, select:focus {
 	-moz-box-shadow: 0 0 0.4em #aaa;
 	-webkit-box-shadow: 0 0 0.4em #aaa;
+	box-shadow: 0 0 0.4em #aaa;
+	outline: none; /* for webkit */
 }
 
 textarea {
@@ -182,6 +229,7 @@ textarea.monospace {
 
 table {
 	border: 1px solid #ccc;
+	border-spacing: 1px;
 }
 
 td {
@@ -223,7 +271,16 @@ tr.evenrow td {
 
 .subsection input, .subsection select, .subsection textarea {
 	margin: 5px 0 5px 0;
+	min-width: 100px;
 	vertical-align: middle;
+}
+
+.subsection div.checkbox {
+	padding: 9px 0 0 3px;
+}
+
+.subsection div.checkbox input {
+	min-width: 0;
 }
 
 .section .info {
@@ -253,6 +310,7 @@ td.mod_args input {
 	font-size: 80%;
 }
 
+td.mod_name,
 .checkboxandlabel {
 	white-space: nowrap;
 }
