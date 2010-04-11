@@ -243,6 +243,7 @@ public:
 	unsigned long long BytesWritten() const { return m_uBytesWritten; }
 	unsigned int JoinTries() const { return m_uMaxJoinTries; }
 	unsigned int MaxJoins() const { return m_uMaxJoins; }
+	bool IsIRCAway() { return m_bIRCAway; }
 	CString GetSkinName() const;
 	// !Getters
 private:
