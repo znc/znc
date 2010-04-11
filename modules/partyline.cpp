@@ -326,12 +326,13 @@ public:
 				pUser->PutUser(":" + pUser->GetIRCNick().GetNickMask() + sCmd
 						+ pChannel->GetName() + " " + pUser->GetIRCNick().GetNick() + sMsg);
 				PutChan(ssNicks, ":?" + pUser->GetUserName() + "!" + pUser->GetIdent() + "@" + sHost
-						+ sCmd + pChannel->GetName() + " ?" + pUser->GetUserName() + sMsg, false);
+						+ sCmd + pChannel->GetName() + " ?" + pUser->GetUserName() + sMsg,
+						false, true, pUser);
 			} else {
 				pUser->PutUser(":" + pUser->GetIRCNick().GetNickMask() + sCmd
 						+ pChannel->GetName() + sMsg);
 				PutChan(ssNicks, ":?" + pUser->GetUserName() + "!" + pUser->GetIdent() + "@" + sHost
-						+ sCmd + pChannel->GetName() + sMsg, false);
+						+ sCmd + pChannel->GetName() + sMsg, false, true, pUser);
 			}
 
 			if (ssNicks.empty()) {
@@ -380,7 +381,7 @@ public:
 			}
 
 			pUser->PutUser(":" + pUser->GetIRCNick().GetNickMask() + " JOIN " + pChannel->GetName());
-			PutChan(ssNicks, ":?" + sNick + "!" + pUser->GetIdent() + "@" + sHost + " JOIN " + pChannel->GetName(), false);
+			PutChan(ssNicks, ":?" + sNick + "!" + pUser->GetIdent() + "@" + sHost + " JOIN " + pChannel->GetName(), false, true, pUser);
 
 			if (!pChannel->GetTopic().empty()) {
 				pUser->PutUser(":" + GetIRCServer(pUser) + " 332 " + pUser->GetIRCNick().GetNickMask() + " " + pChannel->GetName() + " :" + pChannel->GetTopic());
@@ -388,7 +389,7 @@ public:
 			SendNickList(pUser, ssNicks, pChannel->GetName());
 
 			if (pUser->IsAdmin()) {
-				PutChan(ssNicks, ":*" + GetModName() + "!znc@znc.in MODE " + pChannel->GetName() + " +o ?" + pUser->GetUserName(), false);
+				PutChan(ssNicks, ":*" + GetModName() + "!znc@znc.in MODE " + pChannel->GetName() + " +o ?" + pUser->GetUserName(), false, true, pUser);
 			}
 		}
 	}
