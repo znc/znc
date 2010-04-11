@@ -3,9 +3,9 @@ ZNC is developed by these people:
 Prozac <prozac@rottenboy.com>
 Jim Hull <imaginos@imaginos.net>
 Uli Schlachter <psychon@znc.in>
-crox
 SilverLeo
 kroimon <znc@kroimon.de>
+flakes
 
 These people, in no particular order, have helped develop ZNC, for example by
 sending in patches, writing new modules or finding significant bugs:
@@ -16,7 +16,7 @@ toby <ich@toby.in>
 Zack3000
 d4n13L <daniel@danielschmitz.de> - graphiX webadmin skin
 Veit "Cru" Wahlich <cru@ircnet.de>
-flakes
+crox
 Freman (http://fremnet.net/contact)
 Sebastian Ramacher <sebastinas@users.sourceforge.net>
 cnu - master of destruction (security issues)
@@ -25,3 +25,4 @@ Michael "Svedrin" Ziegler <diese-addy@funzt-halt.net>
 Robert Lacroix (http://www.robertlacroix.com)
 zynox
 Martin "Nirjen" Martimeo <martin@martimeo.de>
+Reed Loden <reed@reedloden.com>
