@@ -119,7 +119,8 @@ public:
 
 			if (sAction == "topic") {
 				pChannel = FindChannel(sKey);
-				if (pChannel && !sKey.empty()) {
+				if (pChannel && !(it->second).empty()) {
+					PutChan(pChannel->GetNicks(), ":irc.znc.in TOPIC " + pChannel->GetName() + " :" + it->second);
 					pChannel->SetTopic(it->second);
 				}
 			}
