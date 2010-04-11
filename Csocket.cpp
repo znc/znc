@@ -28,13 +28,18 @@
 * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 *
 *
-* $Revision: 1.134 $
+* $Revision: 1.135 $
 */
 
 #include "Csocket.h"
 #ifdef __NetBSD__
 #include <sys/param.h>
 #endif /* __NetBSD__ */
+
+#ifdef HAVE_LIBSSL
+#include <openssl/conf.h>
+#include <openssl/engine.h>
+#endif /* HAVE_LIBSSL */
 
 #include <list>
 
@@ -404,7 +409,12 @@ bool InitCsocket()
 void ShutdownCsocket()
 {
 #ifdef HAVE_LIBSSL
+	ERR_remove_state(0);
+	ENGINE_cleanup();
+	CONF_modules_unload(1);
 	ERR_free_strings();
+	EVP_cleanup();
+	CRYPTO_cleanup_all_ex_data();
 #endif /* HAVE_LIBSSL */
 #ifdef HAVE_C_ARES
 #if ARES_VERSION >= CREATE_ARES_VER( 1, 6, 1 )
@@ -2028,6 +2038,29 @@ CS_STRING Csock::GetPeerPubKey()
 		}
 	}
 	return( sKey );
+}
+int Csock::GetPeerFingerprint( CS_STRING & sFP )
+{
+	sFP.clear();
+
+	if ( !GetSSL() )
+		return 0;
+
+	X509* pCert = getX509();
+
+	// Inspired by charybdis
+	if ( pCert )
+	{
+		for (int i = 0; i < SHA_DIGEST_LENGTH; i++)
+		{
+			char buf[3];
+			snprintf(buf, 3, "%02x", pCert->sha1_hash[i]);
+			sFP += buf;
+		}
+		X509_free(pCert);
+	}
+
+	return SSL_get_verify_result(m_ssl);
 }
 unsigned int Csock::GetRequireClientCertFlags() { return( m_iRequireClientCertFlags ); }
 void Csock::SetRequiresClientCert( bool bRequiresCert ) { m_iRequireClientCertFlags = ( bRequiresCert ? SSL_VERIFY_FAIL_IF_NO_PEER_CERT|SSL_VERIFY_PEER : 0 ); }

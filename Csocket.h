@@ -28,7 +28,7 @@
 * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 *
 *
-* $Revision: 1.227 $
+* $Revision: 1.228 $
 */
 
 // note to compile with win32 need to link to winsock2, using gcc its -lws2_32
@@ -765,8 +765,11 @@ public:
 #ifdef HAVE_LIBSSL
 	X509 *getX509();
 
-	//! Returns The Peers Public Key
+	//! Returns the peer's public key
 	CS_STRING GetPeerPubKey();
+	//! Returns the peer's certificate finger print
+	int GetPeerFingerprint( CS_STRING & sFP);
+
 	unsigned int GetRequireClientCertFlags();
 	//! legacy, deprecated @see SetRequireClientCertFlags
 	void SetRequiresClientCert( bool bRequiresCert );
