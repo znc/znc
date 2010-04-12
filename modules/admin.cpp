@@ -64,6 +64,7 @@ class CAdminMod : public CModule {
 		static const char* string = "String";
 		static const char* boolean = "Boolean (true/false)";
 		static const char* integer = "Integer";
+		static const char* doublenum = "Double";
 		static const char* vars[][2] = {
 			{"Nick",             string},
 			{"Altnick",          string},
@@ -82,6 +83,7 @@ class CAdminMod : public CModule {
 			{"Password",         string},
 			{"JoinTries",        integer},
 			{"MaxJoins",         integer},
+			{"TimezoneOffset",   doublenum},
 			{"Admin",            boolean},
 			{"AppendTimestamp",  boolean},
 			{"PrependTimestamp", boolean},
@@ -182,6 +184,8 @@ class CAdminMod : public CModule {
 			PutModule("MaxJoins = " + CString(pUser->MaxJoins()));
 		else if (sVar == "jointries")
 			PutModule("JoinTries = " + CString(pUser->JoinTries()));
+		else if (sVar == "timezoneoffset")
+			PutModule("TimezoneOffset = " + CString(pUser->GetTimezoneOffset()));
 		else if (sVar == "appendtimestamp")
 			PutModule("AppendTimestamp = " + CString(pUser->GetTimestampAppend()));
 		else if (sVar == "preprendtimestamp")
@@ -298,6 +302,11 @@ class CAdminMod : public CModule {
 			unsigned int i = sValue.ToUInt();
 			pUser->SetJoinTries(i);
 			PutModule("JoinTries = " + CString(pUser->JoinTries()));
+		}
+		else if (sVar == "timezoneoffset") {
+			double d = sValue.ToDouble();
+			pUser->SetTimezoneOffset(d);
+			PutModule("TimezoneOffset = " + CString(pUser->GetTimezoneOffset()));
 		}
 		else if (sVar == "admin") {
 			if(m_pUser->IsAdmin() && pUser != m_pUser) {
