@@ -35,7 +35,7 @@ a:hover {
 	min-height: 80%;
 	overflow: hidden;
 	margin: 0 auto;
-	width: 800px;
+	width: 900px;
 
 	border: 1px solid #ccc;
 	border-top: none;
@@ -70,13 +70,14 @@ h1 {
 #main {
 	padding: 0 20px 20px 20px;
 	font-size: 90%;
+	width: 700px;
 }
 
 #menu {
 	border-left: 2px solid #aaa;
 	padding-left: 10px;
 	position: absolute;
-	margin-left: 600px;
+	margin-left: 700px;
 	width: 170px;
 	font-size: 14px;
 }
@@ -185,12 +186,12 @@ h3 {
 }
 
 .textsection, .toptable {
-	width: 570px;
+	width: 670px;
 	overflow: hidden;
 }
 
 .toptable table {
-	max-width: 570px;
+	max-width: 670px;
 }
 
 .toptable td {
@@ -236,7 +237,7 @@ div.submitline {
 
 input.full, textarea.full,
 .full input, .full textarea {
-	width: 600px;
+	width: 500px;
 }
 
 input.twothird, textarea.twothird,
@@ -354,7 +355,7 @@ td.mod_name,
 }
 
 #breadcrumb {
-	width: 570px;
+	width: 670px;
 	padding: 0 0 3px 1px;
 	margin-bottom: 10px;
 	border-bottom: 1px solid #aaa;
