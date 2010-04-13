@@ -1,8 +1,11 @@
 <? INC Header.tmpl ?>
 
 		<?IF !UserLoop?>
+			<div class="textsection">
 				There are no users defined. Click <a href="adduser">here</a> if you would like to add one.
+			</div>
 		<?ELSE?>
+			<div class="toptable">
 				<table>
 					<thead>
 					<tr>
@@ -31,6 +34,7 @@
 			<?ENDLOOP?>
 					</tbody>
 				</table>
+			</div>
 		<?ENDIF?>
 
 <? INC Footer.tmpl ?>
