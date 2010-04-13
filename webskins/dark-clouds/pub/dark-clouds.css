@@ -1,3 +1,5 @@
+@charset "UTF-8";
+
 html {
 	margin: 0;
 	padding: 0;
@@ -356,6 +358,14 @@ table thead td a:hover {
 
 #menu .subitem.active {
 	font-weight: bold;
+}
+
+#menu .subitem.active a:before {
+	content: "» ";
+}
+
+#menu .subitem.active a:after {
+	content: " «";
 }
 
 #menu .subitem.active a:hover {
