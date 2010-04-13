@@ -70,7 +70,7 @@ h1 {
 #main {
 	padding: 0 20px 20px 20px;
 	font-size: 90%;
-	width: 700px;
+	width: 680px;
 }
 
 #menu {
@@ -188,14 +188,6 @@ h3 {
 .textsection, .toptable {
 	width: 670px;
 	overflow: hidden;
-}
-
-.toptable table {
-	max-width: 670px;
-}
-
-.toptable td {
-	word-wrap: break-word;
 }
 
 .section {
@@ -359,4 +351,8 @@ td.mod_name,
 	padding: 0 0 3px 1px;
 	margin-bottom: 10px;
 	border-bottom: 1px solid #aaa;
+}
+
+td {
+	word-wrap: break-word;
 }
