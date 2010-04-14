@@ -1,3 +1,5 @@
+@charset "UTF-8";
+
 * {
 	font-family: Tahoma, sans-serif;
 	margin: 0;
@@ -21,6 +23,11 @@ body {
 	margin-top: 1em;
 	-moz-border-radius: 5px;
 	border-radius: 5px;
+}
+
+#content {
+	width: 614px;
+	margin-left: 4px;
 }
 
 h1 {
@@ -50,8 +57,13 @@ h2 {
 	margin: 10px;
 }
 
-a:hover {
+a {
 	text-decoration: underline;
+	color: #f90;
+}
+
+a:hover {
+	text-decoration: none;
 }
 
 table a, table a:visited, table a:hover, table a:active { color: #000; }
@@ -136,6 +148,7 @@ textarea {
 
 #main {
 	padding: 10px;
+	margin-top: -20px;
 }
 
 #banner {
@@ -150,31 +163,77 @@ textarea {
 	padding: 5px;
 }
 
-#menu ul, #menu li {
+#menu {
+	position: absolute;
+	margin-left: 619px;
+	width: 170px;
+}
+
+ul.nav, ul.nav li, ul.nav ul {
 	list-style: none;
 }
 
-#menu ul.nav {
+ul.nav li.topitem {
+	margin-right: 55px;
+}
+
+ul.nav li, ul.nav li.topitem .title {
+	display: block;
+	width: 170px;
+}
+
+ul.nav li.topitem .title {
+	font-size: 11px;
+	text-align: center;
+	height: 23px;
+	line-height: 23px;
+}
+
+ul.nav li.topitem, ul.nav li.subitem, ul.nav li.modtitle {
+	border: 1px solid #000;
+	border-top: none;
+}
+
+ul.nav li:first-child {
+	border-top: 1px solid #000;
+}
+
+ul.nav li.parent {
+	background: none;
+	border: none;
+}
+
+ul.nav li.subitem {
+	font-size: 90%;
 }
 
 #menu a {
 	font-size: 12px;
-	font-weight: bold;
-	height: 30px;
-	float: left;
 	display: block;
+	height: 30px;
+	line-height: 30px;
 	color: #fff;
-	padding: 0 10px;
+	padding-left: 10px;
 	text-decoration: none;
+	background: url(linkbg.jpg) 0px 0px repeat-x;
 }
 
 #menu a:hover {
-	text-decoration: none;
+	color: #000;
+	background-position: 0px -30px;
 }
 
-#menu {
-	position: absolute;
-	margin-left: 620px;
+#menu .topitem a, #menu .modtitle a {
+	font-weight: bold;
+}
+
+#menu .subitem a {
+	font-weight: normal;
+	padding-left: 20px;
+}
+
+ul.nav li.active a:before {
+	content: "» ";
 }
 
 .inputlabel {
@@ -202,7 +261,7 @@ h3 {
 	font-size: 13px;
 	font-weight: bold;
 	border: 1px solid #000;
-	padding: 2px 7px 2px 7px;
+	padding: 2px 7px;
 	margin: 0 15px -12px 8px;
 	-moz-border-radius: 3px;
 	border-radius: 3px;
@@ -212,7 +271,7 @@ h3 {
 	clear: both;
 	background-color: #ddd;
 	color: #000;
-	border: 1px solid #000;
+	border: 2px solid #000;
 	-moz-border-radius: 5px;
 	border-radius: 5px;
 }
@@ -287,6 +346,24 @@ div.submitline {
 
 .loginbox {
 	padding: 13px 0 0 0;
+}
+
+.successbar,
+.errorbar {
+	background-color: #900;
+	padding: 5px 10px;
+	font-weight: bold;
+	color: #fff;
+	height: 23px;
+	line-height: 23px;
+}
+
+.successbar {
+	background-color: #070;
+}
+
+.errorbar + #infobar {
+	top: -58px;
 }
 
 textarea.monospace {
