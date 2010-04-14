@@ -1,16 +1,44 @@
-html, body {
+* {
+	font-family: Tahoma, sans-serif;
 	margin: 0;
 	padding: 0;
+}
+
+html, body {
+	height: 99%;
 }
 
 body {
 	background: url(pagebg.gif) top repeat-x #0C1833 fixed;
 	color: #fff;
-	margin: 0px auto;
 }
 
-body, textarea, input, select {
-	font-family: sans-serif;
+#wrapper {
+	margin: 0 auto;
+	width: 800px;
+	background-color: #4C688A;
+	min-height: 90%;
+	margin-top: 1em;
+	-moz-border-radius: 5px;
+	border-radius: 5px;
+}
+
+h1 {
+	background-image: url(linkbg.jpg);
+	height: 34px;
+	line-height: 34px;
+	font-size: 23px;
+	padding: 0 10px;
+	color: #030406;
+	text-shadow: #fff 0 0 6px;
+	border-bottom: 1px solid #030406;
+	-moz-border-radius-topleft: 5px;
+	-moz-border-radius-topright: 5px;
+	border-radius-topleft: 5px;
+	border-radius-topright: 5px;
+}
+
+body, textarea, input, select, td, button {
 	font-size: 13px;
 }
 
@@ -18,74 +46,88 @@ textarea, input {
 	padding: 1px;
 }
 
-td {
-	font-size: 13px;
-}
-
-th, thead td {
-	font-size: 14px;
-}
-
-#wrapper {
-	margin: 0px auto;
-	padding: 0px;
-	width: 700px;
-	background-color: #4C688A;
-}
-
 h2 {
 	margin: 10px;
-	padding: 0px;
 }
 
 a:hover {
 	text-decoration: underline;
 }
 
-.nowrap { white-space: nowrap; }
-.clear { clear: both; }
-
 table a, table a:visited, table a:hover, table a:active { color: #000; }
 
 table {
 	color: #000;
-	border-collapse: collapse;
-	border: 2px solid #000;
-	padding: 0px;
+	-moz-border-radius: 3px;
+	border-radius: 3px;
+	border-spacing: 0;
+	border: 1px solid #000;
 	margin: 10px;
 }
 
 table td {
-	border: 1px solid #000;
+	border-left: 1px solid #000;
+	border-top: 1px solid #000;
 	padding: 4px;
-	margin: 0px;
 }
 
 table thead {
-	border-bottom: 2px solid #000;
 	background: url(linkbg.jpg) 0px -30px repeat-x #369;
 	color: #fff;
 	font-weight: bold;
 }
 
+th, thead td {
+	font-size: 13px;
+	border-bottom: 1px solid #000;
+	min-width: 50px;
+}
+
+tr td:first-child {
+	border-left: none;
+}
+
+table tr:first-child td {
+	border-top: none;
+}
+
 .oddrow {
-	background-color: #ddd;
+	background-color: #ccc;
 }
 
 .evenrow {
-	background-color: #bbb;
+	background-color: #ddd;
 }
 
-input.full, textarea.full {
-	width: 620px;
+input.full, textarea.full,
+.full input, .full textarea {
+	width: 560px;
 }
 
-input.half, textarea.half {
-	width: 297px;
+input.twothird, textarea.twothird,
+.twothird input, .twothird textarea {
+	width: 375px;
 }
 
-input.third, textarea.third {
-	width: 150px;
+input.half, textarea.half,
+.half input, .half textarea {
+	width: 267px;
+}
+
+input.third, textarea.third,
+.third input, .third textarea {
+	width: 125px;
+}
+
+.subsection div.checkbox {
+	padding: 9px 0 0 3px;
+}
+
+.subsection div.checkbox input {
+	min-width: 0;
+	display: block;
+	margin-right: 5px;
+	float: left;
 }
 
 textarea {
@@ -93,8 +135,6 @@ textarea {
 }
 
 #main {
-	width: 680px;
-	clear: both;
 	padding: 10px;
 }
 
@@ -104,77 +144,17 @@ textarea {
 }
 
 #tag {
-	font-size: 14px;
-	color: #f90;
-	font-weight: bold;
-	text-align: right;
-}
-
-#ident {
-	font-weight: bold;
-	text-align: right;
 	font-size: 11px;
-}
-
-.inputlabel {
-	font-size: small;
-	font-weight: bold;
-	color: #000;
-}
-
-.section {
-	padding-bottom: 20px;
-	width: 680px;
-}
-
-.subsection {
-	float: left;
-	margin: 5px 10px;
-}
-
-.sectiontitle {
-	float: left;
-	white-space: nowrap;
-	background: url(linkbg.jpg) 0px 0px repeat-x #336;
-	color: #eee;
-	font-size: 14px;
-	font-weight: bold;
-	border: 1px solid #000;
-	padding: 0px 5px 0px 5px;
-	margin: 0px 15px -10px 8px;
-}
-
-.sectionbg {
-	clear: both;
-	background-color: #ccc;
-	color: #000;
-	border: 2px solid #000;
-	padding: 0px;
-}
-
-.sectionbody {
-	margin-top: 15px;
-	margin-bottom: 10px;
+	color: #f90;
+	text-align: center;
+	padding: 5px;
 }
 
 #menu ul, #menu li {
 	list-style: none;
-	padding: 0;
-	margin: 0;
-}
-
-#gnav {
-	width: 700px;
-	border-top: 1px solid #000;
-	border-bottom: 1px solid #000;
-	float: left;
-	background: url(linkbg.jpg) repeat-x;
-	margin-bottom: 10px;
 }
 
 #menu ul.nav {
-	width: 690px;
-	float: left;
 }
 
 #menu a {
@@ -184,32 +164,83 @@ textarea {
 	float: left;
 	display: block;
 	color: #fff;
-	padding: 0px 10px;
+	padding: 0 10px;
 	text-decoration: none;
-	background: url(linkbg.jpg) 0px 0px repeat-x;
 }
 
 #menu a:hover {
-	background-position: 0px -30px;
 	text-decoration: none;
 }
 
-#menu a.active {
-	background-position: 0px -30px;
-}
-
 #menu {
-	float: left;
-	border-left: 1px solid #000;
-	display: inline;
-	margin-left: 10px;
+	position: absolute;
+	margin-left: 620px;
 }
 
-#gnav li {
-	height: 30px;
-	line-height: 30px;
-	border-right: 1px solid #000;
+.inputlabel {
+	font-size: small;
+	font-weight: bold;
+	color: #000;
+}
+
+.section {
+	clear: both;
+	padding-bottom: 20px;
+	width: 600px;
+}
+
+.subsection {
 	float: left;
+	margin: 5px 10px;
+}
+
+h3 {
+	float: left;
+	white-space: nowrap;
+	background: url(linkbg.jpg) 0px 0px repeat-x #336;
+	color: #eee;
+	font-size: 13px;
+	font-weight: bold;
+	border: 1px solid #000;
+	padding: 2px 7px 2px 7px;
+	margin: 0 15px -12px 8px;
+	-moz-border-radius: 3px;
+	border-radius: 3px;
+}
+
+.sectionbg {
+	clear: both;
+	background-color: #ddd;
+	color: #000;
+	border: 1px solid #000;
+	-moz-border-radius: 5px;
+	border-radius: 5px;
+}
+
+.sectionbody {
+	margin-top: 15px;
+	margin-bottom: 10px;
+	overflow: hidden;
+}
+
+.subsection input, .subsection textarea, .subsection select {
+	display: block;
+	margin: 3px 0 0 1px;
+}
+
+.info {
+	font-size: 11px;
+	font-style: italic;
+	display: block;
+}
+
+.section .info {
+	float: left;
+}
+
+.subsection .info {
+	float: none;
+	margin: -1em 0 3px 0;
 }
 
 td.mod_name,
@@ -217,9 +248,51 @@ td.mod_name,
 	white-space: nowrap;
 }
 
+.lotsofcheckboxes {
+	padding: 0 0 0 1em;
+}
+
 .lotsofcheckboxes .checkboxandlabel {
 	display: block;
 	float: left;
 	width: 200px;
-	margin-top: 0.5em;
+	margin-top: 5px;
+}
+
+div.submitline {
+	margin-top: 1em;
+}
+
+.submitline input {
+	width: 100px;
+}
+
+#infobar {
+	text-align: right;
+	clear: both;
+	position: relative;
+	top: -22px;
+	margin-left: 380px;
+	color: #ddd;
+	padding: 0 5px 3px 0;
+}
+
+#infobar_ident, .logoutbox {
+	font-size: 11px;
+}
+
+.logoutbox a {
+	color: #ddd;
+}
+
+.loginbox {
+	padding: 13px 0 0 0;
+}
+
+textarea.monospace {
+	font-family: Lucida Console, monospace;
+}
+
+#breadcrumb {
+	margin-bottom: 1.5em;
 }
