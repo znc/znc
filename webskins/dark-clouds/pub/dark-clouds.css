@@ -396,3 +396,7 @@ table thead td a:hover {
 	padding: 5px 1px;
 	border-bottom: 1px solid #000;
 }
+
+.textsection p {
+	margin-bottom: 0.7em;
+}

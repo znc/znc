@@ -356,3 +356,7 @@ td.mod_name,
 td {
 	word-wrap: break-word;
 }
+
+.textsection p {
+	margin-bottom: 0.7em;
+}
