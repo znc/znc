@@ -100,7 +100,46 @@ public:
 			}
 		}
 	}
-private:
+
+	virtual bool WebRequiresLogin() { return true; }
+	virtual bool WebRequiresAdmin() { return false; }
+	virtual CString GetWebMenuTitle() { return "Sticky Chans"; }
+
+	virtual bool OnWebRequest(CWebSock& WebSock, const CString& sPageName, CTemplate& Tmpl) {
+		if (sPageName.empty() || sPageName == "index") {
+			bool bSubmitted = (WebSock.GetParam("submitted").ToInt() != 0);
+
+			const vector<CChan*>& Channels = m_pUser->GetChans();
+			for (unsigned int c = 0; c < Channels.size(); c++) {
+				const CString sChan = Channels[c]->GetName();
+				bool bStick = FindNV(sChan) != EndNV();
+
+				if(bSubmitted) {
+					bool bNewStick = WebSock.GetParam("stick_" + sChan).ToBool();
+					if(bNewStick && !bStick)
+						SetNV(sChan, ""); // no password support for now unless chansaver is active too
+					else if(!bNewStick && bStick) {
+						MCString::iterator it = FindNV(sChan);
+						if(it != EndNV())
+							DelNV(it);
+					}
+					bStick = bNewStick;
+				}
+
+				CTemplate& Row = Tmpl.AddRow("ChannelLoop");
+				Row["Name"] = sChan;
+				Row["Sticky"] = CString(bStick);
+			}
+
+			if(bSubmitted) {
+				WebSock.GetSession()->AddSuccess("Changes have been saved!");
+			}
+
+			return true;
+		}
+
+		return false;
+	}
 
 };
 

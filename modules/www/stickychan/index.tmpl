@@ -1,0 +1,27 @@
+<? INC Header.tmpl ?>
+
+<form action="" method="post">
+	<table class="data">
+		<thead>
+			<tr>
+				<td>Name</td>
+				<td>Sticky</td>
+			</tr>
+		</thead>
+		<tbody>
+			<? LOOP ChannelLoop ?>
+			<tr class="<? IF __EVEN__ ?>evenrow<? ELSE ?>oddrow<? ENDIF ?>">
+				<td><? VAR Name ?></td>
+				<td><input type="checkbox" name="stick_<? VAR Name ?>"<? IF Sticky ?> checked="checked"<? ENDIF ?> /></td>
+			</tr>
+			<? ENDLOOP ?>
+		</tbody>
+	</table>
+
+	<div class="submitline">
+		<input type="hidden" name="submitted" value="1" />
+		<input type="submit" value="Save" />
+	</div>
+</form>
+
+<? INC Footer.tmpl ?>
