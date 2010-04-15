@@ -134,29 +134,6 @@ public:
 	void AddBytesRead(unsigned long long u) { m_uBytesRead += u; }
 	void AddBytesWritten(unsigned long long u) { m_uBytesWritten += u; }
 
-	// Counter for logging out of the web interface
-	unsigned int GetWebLogoutCounter(const CString& sToken) {
-		map<CString, unsigned int>::iterator it = m_suWebLogoutCounters.find(sToken);
-
-		if (it == m_suWebLogoutCounters.end()) {
-			m_suWebLogoutCounters[sToken] = 1;
-			return 1;
-		}
-
-		return it->second;
-	}
-
-	unsigned int IncWebLogoutCounter(const CString& sToken) {
-		map<CString, unsigned int>::iterator it = m_suWebLogoutCounters.find(sToken);
-
-		if (it == m_suWebLogoutCounters.end()) {
-			m_suWebLogoutCounters[sToken] = 2;
-			return 2;
-		}
-
-		return ++it->second;
-	}
-
 	// Setters
 	void SetUserName(const CString& s);
 	void SetNick(const CString& s);
@@ -307,8 +284,6 @@ protected:
 	unsigned int		m_uMaxJoinTries;
 	unsigned int		m_uMaxJoins;
 	CString				m_sSkinName;
-
-	map<CString, unsigned int>  m_suWebLogoutCounters;
 
 	CModules*		m_pModules;
 };
