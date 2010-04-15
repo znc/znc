@@ -101,8 +101,6 @@ public:
 		}
 	}
 
-	virtual bool WebRequiresLogin() { return true; }
-	virtual bool WebRequiresAdmin() { return false; }
 	virtual CString GetWebMenuTitle() { return "Sticky Chans"; }
 
 	virtual bool OnWebRequest(CWebSock& WebSock, const CString& sPageName, CTemplate& Tmpl) {

@@ -29,8 +29,6 @@ public:
 		return true;
 	}
 
-	virtual bool WebRequiresLogin() { return true; }
-	virtual bool WebRequiresAdmin() { return false; }
 	virtual CString GetWebMenuTitle() { return "Notes"; }
 
 	virtual void OnClientLogin() {

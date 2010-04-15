@@ -89,7 +89,6 @@ public:
 
 	// Web stuff:
 
-	virtual bool WebRequiresLogin() { return true; }
 	virtual bool WebRequiresAdmin() { return true; }
 	virtual CString GetWebMenuTitle() { return "Last Seen"; }
 
