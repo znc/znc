@@ -940,11 +940,11 @@ public:
 	virtual EModRet OnDeleteUser(CUser& User);
 	/** This module hook is called when there is an incoming connection on
 	 *  any of ZNC's listening sockets.
-	 *  @param pClient The incoming client socket.
+	 *  @param pSock The incoming client socket.
 	 *  @param sHost The IP the client is connecting from.
 	 *  @param uPort The port the client is connecting from.
 	 */
-	virtual void OnClientConnect(CClient* pClient, const CString& sHost, unsigned short uPort);
+	virtual void OnClientConnect(CZNCSock* pSock, const CString& sHost, unsigned short uPort);
 	/** This module hook is called when a client tries to login. If your
 	 *  module wants to handle the login attempt, it must return
 	 *  CModule::EModRet::HALT;
@@ -977,7 +977,7 @@ public:
 	bool OnWriteConfig(CFile& Config);
 	bool OnAddUser(CUser& User, CString& sErrorRet);
 	bool OnDeleteUser(CUser& User);
-	void OnClientConnect(CClient* pClient, const CString& sHost, unsigned short uPort);
+	void OnClientConnect(CZNCSock* pSock, const CString& sHost, unsigned short uPort);
 	bool OnLoginAttempt(CSmartPtr<CAuthBase> Auth);
 	void OnFailedLogin(const CString& sUsername, const CString& sRemoteIP);
 	bool OnUnknownUserRaw(CClient* pClient, CString& sLine);

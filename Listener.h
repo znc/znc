@@ -66,4 +66,11 @@ protected:
 	CRealListener*	m_pListener;
 };
 
+class CIncomingConnection : public CZNCSock {
+public:
+	CIncomingConnection(const CString& sHostname, unsigned short uPort);
+	virtual ~CIncomingConnection() {}
+	virtual void ReadLine(const CString& sData);
+};
+
 #endif // !_LISTENER_H

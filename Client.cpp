@@ -67,25 +67,6 @@ void CClient::ReadLine(const CString& sData) {
 	if (IsAttached()) {
 		MODULECALL(OnUserRaw(sLine), m_pUser, this, return);
 	} else {
-		// If it's an HTTP Request - Check the webmods
-		if (sLine.WildCmp("GET * HTTP/1.?") || sLine.WildCmp("POST * HTTP/1.?")) {
-			CModule* pMod = new CModule(NULL, "<webmod>", "");
-			pMod->SetFake(true);
-
-			CWebSock* pSock = new CWebSock(pMod);
-			CZNC::Get().GetManager().SwapSockByAddr(pSock, this);
-
-			// And don't forget to give it some sane name / timeout
-			pSock->SetSockName("WebMod::Client");
-			pSock->SetTimeout(120);
-
-			// TODO can we somehow get rid of this?
-			pSock->ReadLine(sLine);
-			pSock->PushBuff("", 0, true);
-
-			return;
-		}
-
 		if (CZNC::Get().GetModules().OnUnknownUserRaw(this, sLine)) {
 			return;
 		}
