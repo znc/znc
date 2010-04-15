@@ -2,7 +2,16 @@
 
 <div class="textsection">
 
-				Welcome to ZNC's web interface!
+	<p>Welcome to ZNC's web interface!</p>
+
+	<?IF LoggedIn ?>
+		<?IF !GlobalModLoop ?>
+			<?IF !UserModLoop ?>
+				<p>No Web-enabled modules have been loaded. Edit the config file (<code>znc.conf</code>), or load modules
+					from IRC (<code>/msg *status help</code>). Once you loaded some Web-enabled modules, the menu will expand.</p>
+			<? ENDIF ?>
+		<? ENDIF ?>
+	<? ENDIF ?>
 
 </div>
 

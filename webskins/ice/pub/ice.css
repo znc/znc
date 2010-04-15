@@ -373,3 +373,7 @@ textarea.monospace {
 #breadcrumb {
 	margin-bottom: 1.5em;
 }
+
+.textsection p {
+	margin-bottom: 0.7em;
+}
