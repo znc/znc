@@ -14,6 +14,7 @@
 #include "Server.h"
 #include "User.h"
 #include "znc.h"
+#include "Listener.h"
 
 void CClient::UserCommand(CString& sLine) {
 	if (!m_pUser) {

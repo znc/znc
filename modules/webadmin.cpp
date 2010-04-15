@@ -14,6 +14,7 @@
 #include "znc.h"
 #include "WebModules.h"
 #include "ZNCString.h"
+#include "Listener.h"
 #include <sstream>
 #include <utility>
 

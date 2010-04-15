@@ -11,6 +11,7 @@
 #include "IRCSock.h"
 #include "Server.h"
 #include "User.h"
+#include "Listener.h"
 #include <pwd.h>
 #include <list>
 
@@ -2034,8 +2035,4 @@ void CZNC::DisableConnectUser() {
 void CZNC::LeakConnectUser(CConnectUserTimer *pTimer) {
 	if (m_pConnectUserTimer == pTimer)
 		m_pConnectUserTimer = NULL;
-}
-
-CRealListener::~CRealListener() {
-	m_pParent->SetRealListener(NULL);
 }
