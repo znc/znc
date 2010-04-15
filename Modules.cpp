@@ -501,7 +501,7 @@ bool CModule::PutModNotice(const CString& sLine, const CString& sIdent, const CS
 CModule::EModRet CGlobalModule::OnWriteConfig(CFile& Config) { return CONTINUE; }
 CModule::EModRet CGlobalModule::OnAddUser(CUser& User, CString& sErrorRet) { return CONTINUE; }
 CModule::EModRet CGlobalModule::OnDeleteUser(CUser& User) { return CONTINUE; }
-void CGlobalModule::OnClientConnect(CClient* pClient, const CString& sHost, unsigned short uPort) {}
+void CGlobalModule::OnClientConnect(CZNCSock* pClient, const CString& sHost, unsigned short uPort) {}
 CModule::EModRet CGlobalModule::OnLoginAttempt(CSmartPtr<CAuthBase> Auth) { return CONTINUE; }
 void CGlobalModule::OnFailedLogin(const CString& sUsername, const CString& sRemoteIP) {}
 CModule::EModRet CGlobalModule::OnUnknownUserRaw(CClient* pClient, CString& sLine) { return CONTINUE; }
@@ -613,7 +613,7 @@ bool CGlobalModules::OnDeleteUser(CUser& User) {
 	GLOBALMODHALTCHK(OnDeleteUser(User));
 }
 
-void CGlobalModules::OnClientConnect(CClient* pClient, const CString& sHost, unsigned short uPort) {
+void CGlobalModules::OnClientConnect(CZNCSock* pClient, const CString& sHost, unsigned short uPort) {
 	GLOBALMODCALL(OnClientConnect(pClient, sHost, uPort));
 }
 

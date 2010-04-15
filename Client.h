@@ -73,7 +73,7 @@ protected:
 
 class CClient : public CZNCSock {
 public:
-	CClient(const CString& sHostname, unsigned short uPort) : CZNCSock(sHostname, uPort) {
+	CClient() : CZNCSock() {
 		m_pUser = NULL;
 		m_bGotPass = false;
 		m_bGotNick = false;
@@ -84,10 +84,6 @@ public:
 		// RFC says a line can have 512 chars max, but we are
 		// a little more gentle ;)
 		SetMaxBufferThreshold(1024);
-
-		// Disable all timeout types. The socket will now time out in 60
-		// seconds, no matter what. AcceptLogin() fixes this up.
-		SetTimeout(60, 0);
 
 		SetNick("unknown-nick");
 	}

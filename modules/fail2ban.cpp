@@ -52,7 +52,7 @@ public:
 		PutModule("is blocked after a failed login.");
 	}
 
-	virtual void OnClientConnect(CClient* pClient, const CString& sHost, unsigned short uPort) {
+	virtual void OnClientConnect(CZNCSock* pClient, const CString& sHost, unsigned short uPort) {
 		unsigned int *pCount = m_Cache.GetItem(sHost);
 		if (sHost.empty() || pCount == NULL || *pCount < m_uiAllowedFailed) {
 			return;
@@ -61,7 +61,7 @@ public:
 		// refresh their ban
 		Add(sHost, *pCount);
 
-		pClient->PutClient("ERROR :Closing link [Please try again later - reconnecting too fast]");
+		pClient->Write("ERROR :Closing link [Please try again later - reconnecting too fast]\r\n");
 		pClient->Close(Csock::CLT_AFTERWRITE);
 	}
 
