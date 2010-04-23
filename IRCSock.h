@@ -51,7 +51,7 @@ public:
 
 	void PutIRC(const CString& sLine);
 	void ResetChans();
-	void Quit();
+	void Quit(const CString& sQuitMsg = "");
 
 	// Setters
 	void SetPass(const CString& s) { m_sPass = s; }

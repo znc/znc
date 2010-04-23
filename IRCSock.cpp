@@ -63,8 +63,9 @@ CIRCSock::~CIRCSock() {
 	GetUser()->AddBytesWritten(GetBytesWritten());
 }
 
-void CIRCSock::Quit() {
-	PutIRC("QUIT :" + m_pUser->GetQuitMsg());
+void CIRCSock::Quit(const CString& sQuitMsg) {
+	CString sMsg = (!sQuitMsg.empty()) ? sQuitMsg : m_pUser->GetQuitMsg();
+	PutIRC("QUIT :" + sMsg);
 	Close(CLT_AFTERWRITE);
 }
 
