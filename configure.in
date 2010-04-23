@@ -72,13 +72,13 @@ case "${host_os}" in
 	;;
 esac
 
+AC_ARG_WITH( [openssl],
+	AS_HELP_STRING([--with-openssl=DIR], [openssl installation prefix]),
+	[OPENSSL=$withval],)
 AC_ARG_ENABLE( [extra],
 	AS_HELP_STRING([--enable-extra], [enable some extra modules]),
 	[EXTRA="$enableval"],
 	[EXTRA="no"])
-AC_ARG_WITH( [openssl],
-	AS_HELP_STRING([--with-openssl=DIR], [openssl installation prefix]),
-	[OPENSSL=$withval],)
 AC_ARG_ENABLE( [debug],
 	AS_HELP_STRING([--enable-debug], [enable debugging]),
 	[DEBUG="$enableval"],
@@ -107,6 +107,11 @@ AC_ARG_ENABLE( [c-ares],
 	AS_HELP_STRING([--disable-c-ares], [disable c-ares usage]),
 	[ARES="$enableval"],
 	[ARES="auto"])
+AC_ARG_ENABLE( [run-from-source],
+	AS_HELP_STRING([--enable-run-from-source], [znc will be runnable without installation]),
+	[if test "x$withval" = "xyes" ; then
+		appendCXX -DRUN_FROM_SOURCE
+	fi])
 
 if test "$DEBUG" != "no"; then
 	appendCXX -ggdb -D_DEBUG

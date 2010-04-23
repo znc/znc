@@ -627,8 +627,8 @@ ac_subst_files=''
 ac_user_opts='
 enable_option_checking
 enable_largefile
-enable_extra
 with_openssl
+enable_extra
 enable_debug
 enable_ipv6
 enable_openssl
@@ -636,6 +636,7 @@ enable_perl
 enable_sasl
 enable_optimization
 enable_c_ares
+enable_run_from_source
 with_module_prefix
 with_module_data_prefix
 enable_tcl
@@ -1278,6 +1279,8 @@ Optional Features:
   --disable-optimization  Disable some compiler optimizations to decrease
                           memory usage while compiling
   --disable-c-ares        disable c-ares usage
+  --enable-run-from-source
+                          znc will be runnable without installation
   --enable-tcl            enable modtcl
 
 Optional Packages:
@@ -2751,17 +2754,17 @@ case "${host_os}" in
 	;;
 esac
 
+
+# Check whether --with-openssl was given.
+if test "${with_openssl+set}" = set; then :
+  withval=$with_openssl; OPENSSL=$withval
+fi
+
 # Check whether --enable-extra was given.
 if test "${enable_extra+set}" = set; then :
   enableval=$enable_extra; EXTRA="$enableval"
 else
   EXTRA="no"
-fi
-
-
-# Check whether --with-openssl was given.
-if test "${with_openssl+set}" = set; then :
-  withval=$with_openssl; OPENSSL=$withval
 fi
 
 # Check whether --enable-debug was given.
@@ -2809,6 +2812,13 @@ if test "${enable_c_ares+set}" = set; then :
   enableval=$enable_c_ares; ARES="$enableval"
 else
   ARES="auto"
+fi
+
+# Check whether --enable-run-from-source was given.
+if test "${enable_run_from_source+set}" = set; then :
+  enableval=$enable_run_from_source; if test "x$withval" = "xyes" ; then
+		appendCXX -DRUN_FROM_SOURCE
+	fi
 fi
 
 
