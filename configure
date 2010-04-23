@@ -2816,7 +2816,7 @@ fi
 
 # Check whether --enable-run-from-source was given.
 if test "${enable_run_from_source+set}" = set; then :
-  enableval=$enable_run_from_source; if test "x$withval" = "xyes" ; then
+  enableval=$enable_run_from_source; if test "x$enableval" = "xyes" ; then
 		appendCXX -DRUN_FROM_SOURCE
 	fi
 fi
