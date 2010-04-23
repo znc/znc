@@ -249,7 +249,8 @@ void CClient::UserCommand(CString& sLine) {
 		// to the IRC server was established. Before this we can
 		// only find the IRC socket by its name.
 		if (GetIRCSock()) {
-			GetIRCSock()->Quit();
+			CString sQuitMsg = sLine.Token(1, true);
+			GetIRCSock()->Quit(sQuitMsg);
 		} else {
 			Csock* pIRCSock;
 			CString sSockName = "IRC::" + m_pUser->GetUserName();
@@ -1190,6 +1191,7 @@ void CClient::HelpUser() {
 
 	Table.AddRow();
 	Table.SetCell("Command", "Disconnect");
+	Table.SetCell("Arguments", "[message]");
 	Table.SetCell("Description", "Disconnect from IRC");
 
 	Table.AddRow();
