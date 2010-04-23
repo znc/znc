@@ -907,10 +907,11 @@ bool CModules::FindModPath(const CString& sModule, CString& sModPath,
 
 CModules::ModDirList CModules::GetModDirs() {
 	ModDirList ret;
+	CString sDir;
 
 #ifdef RUN_FROM_SOURCE
 	// ./modules
-	CString sDir = CZNC::Get().GetCurPath() + "/modules/";
+	sDir = CZNC::Get().GetCurPath() + "/modules/";
 	ret.push(std::make_pair(sDir, sDir));
 
 	// ./modules/extra

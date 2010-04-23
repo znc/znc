@@ -109,7 +109,7 @@ AC_ARG_ENABLE( [c-ares],
 	[ARES="auto"])
 AC_ARG_ENABLE( [run-from-source],
 	AS_HELP_STRING([--enable-run-from-source], [znc will be runnable without installation]),
-	[if test "x$withval" = "xyes" ; then
+	[if test "x$enableval" = "xyes" ; then
 		appendCXX -DRUN_FROM_SOURCE
 	fi])
 
