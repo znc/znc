@@ -141,6 +141,7 @@ public:
 	void LeakConnectUser(CConnectUserTimer *pTimer);
 
 private:
+	CFile* InitPidFile();
 	bool DoRehash(CString& sError);
 	// Returns true if something was done
 	bool HandleUserDeletion();
