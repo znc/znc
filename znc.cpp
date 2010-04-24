@@ -311,7 +311,7 @@ void CZNC::ReleaseISpoof() {
 	m_pISpoofLockFile = NULL;
 }
 
-bool CZNC::WritePidFile(int iPid) {
+CFile* CZNC::InitPidFile() {
 	if (!m_sPidFile.empty()) {
 		CString sFile;
 
@@ -321,40 +321,45 @@ bool CZNC::WritePidFile(int iPid) {
 		else
 			sFile = m_sPidFile;
 
-		CFile File(sFile);
-		CUtils::PrintAction("Writing pid file [" + sFile + "]");
-
-		if (File.Open(O_WRONLY | O_TRUNC | O_CREAT)) {
-			File.Write(CString(iPid) + "\n");
-			File.Close();
-			CUtils::PrintStatus(true);
-			return true;
-		}
-
-		CUtils::PrintStatus(false);
+		return new CFile(sFile);
 	}
 
-	return false;
+	return NULL;
+}
+
+bool CZNC::WritePidFile(int iPid) {
+	CFile* File = InitPidFile();
+	if (File == NULL)
+		return false;
+
+	CUtils::PrintAction("Writing pid file [" + File->GetLongName() + "]");
+
+	bool bRet = false;
+	if (File->Open(O_WRONLY | O_TRUNC | O_CREAT)) {
+		File->Write(CString(iPid) + "\n");
+		File->Close();
+		bRet = true;
+	}
+
+	delete File;
+	CUtils::PrintStatus(bRet);
+	return bRet;
 }
 
 bool CZNC::DeletePidFile() {
-	if (!m_sPidFile.empty()) {
-		CString sFile;
-		// absolute path or relative to the data dir?
-		if (m_sPidFile[0] != '/')
-			sFile = GetZNCPath() + "/" + m_sPidFile;
-		else
-			sFile = m_sPidFile;
+	CFile* File = InitPidFile();
+	if (File == NULL)
+		return false;
 
-		CFile File(sFile);
-		CUtils::PrintAction("Deleting pid file [" + sFile + "]");
-		if (File.Delete()) {
-			CUtils::PrintStatus(true);
-			return true;
-		}
-		CUtils::PrintStatus(false);
-	}
-	return false;
+	CUtils::PrintAction("Deleting pid file [" + File->GetLongName() + "]");
+
+	bool bRet = false;
+	if (File->Delete())
+		bRet = true;
+
+	delete File;
+	CUtils::PrintStatus(bRet);
+	return bRet;
 }
 
 bool CZNC::WritePemFile() {
