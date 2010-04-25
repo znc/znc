@@ -1,6 +1,7 @@
 <? INC Header.tmpl ?>
 
 <form action="settings" method="post">
+	<? INC _csrf_check.tmpl ?>
 	<div class="section">
 		<input type="hidden" name="submitted" value="1" />
 
