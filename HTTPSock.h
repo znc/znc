@@ -76,6 +76,7 @@ public:
 	unsigned int GetParamValues(const CString& sName, VCString& vsRet, const CString& sFilter = "\r\n") const;
 	unsigned int GetParamValues(const CString& sName, set<CString>& ssRet, const CString& sFilter = "\r\n") const;
 	const map<CString, VCString>& GetParams() const;
+	bool IsPost() const;
 	// !Getters
 private:
 protected:
