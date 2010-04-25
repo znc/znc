@@ -307,6 +307,7 @@ void CWebSock::SetVars() {
 	m_Template["SessionIP"] = GetRemoteIP();
 	m_Template["Tag"] = CZNC::GetTag(GetSession()->GetUser() != NULL);
 	m_Template["SkinName"] = GetSkinName();
+	m_Template["_CSRF_Check"] = GetCSRFCheck();
 
 	if (GetSession()->IsAdmin()) {
 		m_Template["IsAdmin"] = "true";
