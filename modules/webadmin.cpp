@@ -293,6 +293,20 @@ public:
 				return false;
 			}
 
+			if (!WebSock.IsPost()) {
+				CString sUser = WebSock.GetParam("user", true);
+				CUser* pUser = CZNC::Get().FindUser(sUser);
+
+				if (!pUser) {
+					WebSock.PrintErrorPage("No such username");
+					return true;
+				}
+
+				Tmpl.SetFile("del_user.tmpl");
+				Tmpl["Username"] = sUser;
+				return true;
+			}
+
 			CString sUser = WebSock.GetParam("user");
 			CUser* pUser = CZNC::Get().FindUser(sUser);
 
