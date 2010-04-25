@@ -28,6 +28,12 @@ unsigned int CSockManager::GetAnonConnectionCount(const CString &sIP) const {
 	return ret;
 }
 
+CS_STRING CZNCSock::ConvertAddress(void *addr, bool ipv6) {
+	CString sRet = Csock::ConvertAddress(addr, ipv6);
+	sRet.TrimPrefix("::ffff:");
+	return sRet;
+}
+
 /////////////////// CSocket ///////////////////
 CSocket::CSocket(CModule* pModule) : CZNCSock() {
 	m_pModule = pModule;

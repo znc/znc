@@ -18,6 +18,8 @@ public:
 	CZNCSock(int timeout = 60) : Csock(timeout) {}
 	CZNCSock(const CString& sHost, u_short port, int timeout = 60) : Csock(sHost, port, timeout) {}
 	~CZNCSock() {}
+
+	virtual CS_STRING ConvertAddress(void *addr, bool ipv6 = false);
 };
 
 enum EAddrType {
