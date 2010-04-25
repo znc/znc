@@ -1,18 +1,23 @@
 <? INC Header.tmpl ?>
 
 <div class="section">
-	Are you sure you want to delete "<? VAR Username ?>"?
-
-	<form action="deluser" method="post">
-		<? INC _csrf_check.tmpl ?>
-		<input type="hidden" name="submitted" value="1" />
-		<input type="hidden" name="user" value="<? VAR Username ?>" />
-
-		<div class="yesnobutton"><input type="submit" value="Yes" /></div>
-	</form>
-	<form action="listusers" method="get">
-		<div class="yesnobutton"><input type="submit" value="No" /></div>
-	</form>
+	<h3>Confirm User Deletion</h3>
+	<div class="sectionbg">
+		<div class="sectionbody">
+			<div class="subsection">
+				Are you sure you want to delete "<? VAR Username ?>"?
+				<form action="deluser" method="post">
+					<? INC _csrf_check.tmpl ?>
+					<input type="hidden" name="submitted" value="1" />
+					<input type="hidden" name="user" value="<? VAR Username ?>" />
+					<div class="yesnobutton"><input type="submit" value="Yes" /></div>
+				</form>
+				<form action="listusers" method="get">
+					<div class="yesnobutton"><input type="submit" value="No" /></div>
+				</form>
+			</div>
+		</div>
+	</div>
 </div>
 
 <? INC Footer.tmpl ?>
