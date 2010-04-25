@@ -542,7 +542,7 @@ CWebSock::EPageReqResult CWebSock::OnPageRequestInternal(const CString& sURI, CS
 
 		// We already sent a reply
 		return PAGE_DONE;
-	} else if (sURI == "/login" || sURI.Left(7) == "/login/") {
+	} else if (sURI == "/login") {
 		if (GetParam("submitted").ToBool()) {
 			m_sUser = GetParam("user");
 			m_sPass = GetParam("pass");
