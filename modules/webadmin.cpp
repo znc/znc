@@ -40,9 +40,7 @@ public:
 		return true;
 	}
 
-	CString GetModArgs(CWebSock& WebSock, const CString& sModName, bool bGlobal = false) {
-		CUser* pUser = CZNC::Get().FindUser(WebSock.GetParam("user"));
-
+	CString GetModArgs(CUser* pUser, const CString& sModName, bool bGlobal = false) {
 		if (!bGlobal && !pUser) {
 			return "";
 		}
@@ -604,7 +602,7 @@ public:
 
 				l["Name"] = Info.GetName();
 				l["Description"] = Info.GetDescription();
-				l["Args"] = GetModArgs(WebSock, Info.GetName());
+				l["Args"] = GetModArgs(pUser, Info.GetName());
 
 				if (pUser && pUser->GetModules().FindModule(Info.GetName())) {
 					l["Checked"] = "true";
@@ -832,7 +830,7 @@ public:
 
 				l["Name"] = Info.GetName();
 				l["Description"] = Info.GetDescription();
-				l["Args"] = GetModArgs(WebSock, Info.GetName(), true);
+				l["Args"] = GetModArgs(NULL, Info.GetName(), true);
 			}
 
 			return true;
