@@ -361,6 +361,10 @@ const map<CString, VCString>& CHTTPSock::GetParams() const {
 	return m_msvsParams;
 }
 
+bool CHTTPSock::IsPost() const {
+	return m_bPost;
+}
+
 bool CHTTPSock::PrintNotFound() {
 	return PrintErrorPage(404, "Not Found", "The requested URL was not found on this server.");
 }

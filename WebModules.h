@@ -147,6 +147,7 @@ public:
 	void PrintErrorPage(const CString& sMessage);
 
 	CSmartPtr<CWebSession> GetSession();
+	CString GetCSRFCheck();
 
 	virtual Csock* GetSockObj(const CString& sHost, unsigned short uPort);
 	CString GetModWebPath(const CString& sModName) const;

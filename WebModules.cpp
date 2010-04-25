@@ -518,6 +518,16 @@ void CWebSock::OnPageRequest(const CString& sURI) {
 }
 
 CWebSock::EPageReqResult CWebSock::OnPageRequestInternal(const CString& sURI, CString& sPageRet) {
+	// Check that they really POSTed from one our forms by checking if they
+	// know the "secret" CSRF check value. Don't do this for login since
+	// CSRF against the login form makes no sense and the login form does a
+	// cookies-enabled check which would break otherwise.
+	if (IsPost() && GetParam("_CSRF_Check") != GetCSRFCheck() && sURI != "/login") {
+		sPageRet = GetErrorPage(403, "Access denied", "POST requests need to send "
+				"a secret token to prevent cross-site request forgery attacks.");
+		return PAGE_PRINT;
+	}
+
 	SendCookie("SessionId", GetSession()->GetId());
 
 	if (GetSession()->IsLoggedIn()) {
@@ -712,6 +722,11 @@ CSmartPtr<CWebSession> CWebSock::GetSession() {
 	m_spSession = spSession;
 
 	return spSession;
+}
+
+CString CWebSock::GetCSRFCheck() {
+	CSmartPtr<CWebSession> pSession = GetSession();
+	return pSession->GetId().MD5();
 }
 
 bool CWebSock::OnLogin(const CString& sUser, const CString& sPass) {
