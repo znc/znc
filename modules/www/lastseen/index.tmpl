@@ -18,7 +18,7 @@
 				<td><? VAR Info ?></td>
 				<td><span class="nowrap">
 					[<a href="/mods/webadmin/edituser?user=<?VAR Username ESC=URL?>">Edit</a>]
-					<? IF !IsSelf ?>[<a href="/mods/webadmin/deluser?user=<?VAR Username ESC=URL?>" onclick="return confirm('Do you really wish to remove this user?');">Delete</a>]<? ENDIF ?>
+					<? IF !IsSelf ?>[<a href="/mods/webadmin/deluser?user=<?VAR Username ESC=URL?>">Delete</a>]<? ENDIF ?>
 					</span></td>
 			</tr>
 			<? ENDLOOP ?>
