@@ -20,7 +20,7 @@ CZNCTagHandler::CZNCTagHandler(CWebSock& WebSock) : CTemplateTagHandler(), m_Web
 bool CZNCTagHandler::HandleTag(CTemplate& Tmpl, const CString& sName, const CString& sArgs, CString& sOutput) {
 	if (sName.Equals("URLPARAM")) {
 		//sOutput = CZNC::Get()
-		sOutput = m_WebSock.GetParam(sArgs.Token(0));
+		sOutput = m_WebSock.GetParam(sArgs.Token(0), false);
 		return true;
 	}
 
@@ -388,7 +388,7 @@ bool CWebSock::AddModLoop(const CString& sLoopName, CModule& Module) {
 						sParams += ssNV.second.Escape_n(CString::EURL);
 					}
 
-					if (bActive && GetParam(ssNV.first) != ssNV.second) {
+					if (bActive && GetParam(ssNV.first, false) != ssNV.second) {
 						bActive = false;
 					}
 				}
@@ -538,7 +538,7 @@ CWebSock::EPageReqResult CWebSock::OnPageRequestInternal(const CString& sURI, CS
 
 	// Handle the static pages that don't require a login
 	if (sURI == "/") {
-		if(!m_bLoggedIn && GetParam("cookie_check").ToBool() && GetRequestCookie("SessionId").empty()) {
+		if(!m_bLoggedIn && GetParam("cookie_check", false).ToBool() && GetRequestCookie("SessionId").empty()) {
 			GetSession()->AddError("Your browser does not have cookies enabled for this site!");
 		}
 		return PrintTemplate("index", sPageRet);
