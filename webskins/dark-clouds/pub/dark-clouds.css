@@ -400,3 +400,13 @@ table thead td a:hover {
 .textsection p {
 	margin-bottom: 0.7em;
 }
+
+.yesnobutton {
+	float: left;
+	width: 110px;
+	padding-top: 10px;
+}
+
+.yesnobutton input {
+	width: 100px;
+}
