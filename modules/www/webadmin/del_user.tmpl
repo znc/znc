@@ -1,0 +1,18 @@
+<? INC Header.tmpl ?>
+
+<div class="section">
+	Are you sure you want to delete "<? VAR Username ?>"?
+
+	<form action="deluser" method="post">
+		<? INC _csrf_check.tmpl ?>
+		<input type="hidden" name="submitted" value="1" />
+		<input type="hidden" name="user" value="<? VAR Username ?>" />
+
+		<input type="submit" value="Yes" />
+	</form>
+	<form action="listusers" method="get">
+		<input type="submit" value="No" />
+	</form>
+</div>
+
+<? INC Footer.tmpl ?>
