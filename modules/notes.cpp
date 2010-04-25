@@ -173,7 +173,7 @@ public:
 
 			return true;
 		} else if (sPageName == "delnote") {
-			DelNote(WebSock.GetParam("key"));
+			DelNote(WebSock.GetParam("key", false));
 			WebSock.Redirect("/mods/notes/");
 			return true;
 		} else if (sPageName == "addnote") {
