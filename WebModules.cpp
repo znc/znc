@@ -563,7 +563,8 @@ CWebSock::EPageReqResult CWebSock::OnPageRequestInternal(const CString& sURI, CS
 			return PAGE_DEFERRED;
 		}
 
-		return PrintTemplate("login", sPageRet);
+		Redirect("/"); // the login form is here
+		return PAGE_DONE;
 	} else if (sURI.Left(5) == "/pub/") {
 		return PrintStaticFile(sURI, sPageRet);
 	} else if (sURI.Left(11) == "/skinfiles/") {
