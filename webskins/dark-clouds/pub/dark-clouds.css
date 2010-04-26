@@ -135,10 +135,6 @@ textarea {
 	height: 90px;
 }
 
-textarea.monospace {
-	font-family: Lucida Console, monospace;
-}
-
 .submitline input {
 	width: 180px;
 }
@@ -401,12 +397,3 @@ table thead td a:hover {
 	margin-bottom: 0.7em;
 }
 
-.yesnobutton {
-	float: left;
-	width: 110px;
-	padding-top: 10px;
-}
-
-.yesnobutton input {
-	width: 100px;
-}

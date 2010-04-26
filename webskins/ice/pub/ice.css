@@ -366,10 +366,6 @@ div.submitline {
 	top: -58px;
 }
 
-textarea.monospace {
-	font-family: Lucida Console, monospace;
-}
-
 #breadcrumb {
 	margin-bottom: 1.5em;
 }
@@ -378,12 +374,3 @@ textarea.monospace {
 	margin-bottom: 0.7em;
 }
 
-.yesnobutton {
-	float: left;
-	width: 110px;
-	padding-top: 10px;
-}
-
-.yesnobutton input {
-	width: 100px;
-}
