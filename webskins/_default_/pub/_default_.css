@@ -247,10 +247,6 @@ input.third, textarea.third,
 	width: 150px;
 }
 
-textarea.monospace {
-	font-family: Lucida Console, monospace;
-}
-
 table {
 	border: 1px solid #ccc;
 	border-spacing: 1px;
@@ -359,14 +355,4 @@ td {
 
 .textsection p {
 	margin-bottom: 0.7em;
-}
-
-.yesnobutton {
-	float: left;
-	width: 110px;
-	padding-top: 10px;
-}
-
-.yesnobutton input {
-	width: 100px;
 }
