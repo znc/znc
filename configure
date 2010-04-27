@@ -3416,12 +3416,7 @@ fi
 { $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_lib_perl_perl_alloc" >&5
 $as_echo "$ac_cv_lib_perl_perl_alloc" >&6; }
 if test "x$ac_cv_lib_perl_perl_alloc" = x""yes; then :
-  cat >>confdefs.h <<_ACEOF
-#define HAVE_LIBPERL 1
-_ACEOF
-
-  LIBS="-lperl $LIBS"
-
+  : No, we do not want autoconf to do sth automatically
 else
   PERL="no"
 fi
