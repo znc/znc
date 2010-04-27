@@ -242,7 +242,9 @@ if test "x$PERL" != "xno"; then
 	if test -n "$PERL_BINARY"; then
 		my_saved_LDFLAGS="$LDFLAGS"
 		appendLD `$PERL_BINARY -MExtUtils::Embed -e ccopts -e ldopts`
-		AC_CHECK_LIB(perl, perl_alloc,, PERL="no")
+		AC_CHECK_LIB(perl, perl_alloc,
+			     [: No, we do not want autoconf to do sth automatically],
+			     PERL="no")
 		LDFLAGS="$my_saved_LDFLAGS"
 	else
 		PERL="no"
