@@ -306,6 +306,33 @@ then
 	fi
 fi
 
+if test x"$EXTRA" = "xyes"
+then
+	AC_CHECK_FUNC( iconv, CHARSET=1 )
+	AC_CHECK_LIB( iconv, iconv_open, LIBICONV=-liconv ; CHARSET=1 )
+	if test "x$CHARSET" = "x1"
+	then
+		AC_MSG_CHECKING([whether iconv expects a const second argument])
+		AC_COMPILE_IFELSE([
+			AC_LANG_PROGRAM([[
+		#include <iconv.h>
+		]], [[
+			const char input[] = "X"; const char *inptr = input; size_t inbytes = 1;
+			char buf[1]; char *outptr = buf; size_t outbytes = 1;
+			iconv_t ic = iconv_open("ISO8859-1", "UTF8");
+			iconv(ic, (char**)&inptr, &inbytes, &outptr, &outbytes);
+		]])], [
+			AC_MSG_RESULT([no])
+			appendMod -DICONV_CONST=
+		], [
+			AC_MSG_RESULT([yes])
+			appendMod -DICONV_CONST=const
+		])
+	else
+		AC_MSG_WARN([libiconv was not found, disabling the charset module])
+	fi
+fi
+
 appendCXX "-D_MODDIR_=\\\"${MODDIR}\\\""
 appendCXX "-D_DATADIR_=\\\"${DATADIR}\\\""
 
@@ -321,6 +348,8 @@ AC_SUBST([NOSSL])
 AC_SUBST([EXTRA])
 AC_SUBST([TCL_FLAGS])
 AC_SUBST([SASL])
+AC_SUBST([CHARSET])
+AC_SUBST([LIBICONV])
 AC_SUBST([MODDIR])
 AC_SUBST([DATADIR])
 AC_CONFIG_FILES([Makefile])

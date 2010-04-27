@@ -62,6 +62,11 @@ FILES    := $(shell echo $(FILES) | sed -e "s:extra/saslauth::")
 endif
 saslauthFLAGS := -lsasl2
 
+ifeq "@CHARSET@" ""
+FILES    := $(shell echo $(FILES) | sed -e "s:extra/charset::")
+endif
+charsetFLAGS := @LIBICONV@
+
 ifeq "$(TCL_FLAGS)" ""
 FILES       := $(shell echo $(FILES) | sed -e "s:extra/modtcl::")
 else
