@@ -9,6 +9,13 @@
 #include "Modules.h"
 #include <iconv.h>
 
+#ifndef ICONV_CONST
+/* configure is supposed to define this, depending on whether the second
+	argument to iconv is const char** or just char**, but if it isn't defined,
+	we default to GNU/Linux which is non-const. */
+#define ICONV_CONST
+#endif
+
 class CCharsetMod : public CModule
 {
 private:
@@ -32,7 +39,7 @@ private:
 			bBreak = (uInLen < 1);
 
 			if(iconv(ic, // this is ugly, but keeps the code short:
-				(uInLen < 1 ? NULL : const_cast<char**>(&pIn)),
+				(uInLen < 1 ? NULL : (ICONV_CONST char**)&pIn),
 				(uInLen < 1 ? NULL : &uInLen),
 				&pOut, &uBufSize) == (size_t)-1)
 				// explanation: iconv needs a last call with input = NULL to
@@ -82,7 +89,7 @@ private:
 			const char* pIn = sData.c_str();
 			size_t uInLen = sData.size();
 
-			size_t uResult = iconv(ic, const_cast<char**>(&pIn), &uInLen, &pResultWalker, &uResultBufSize);
+			size_t uResult = iconv(ic, (ICONV_CONST char**)&pIn, &uInLen, &pResultWalker, &uResultBufSize);
 
 			iconv_close(ic);
 
