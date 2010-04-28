@@ -9,6 +9,7 @@
 #include "Template.h"
 #include "FileUtils.h"
 #include <sstream>
+#include <algorithm>
 
 using std::stringstream;
 
@@ -200,6 +201,15 @@ bool CTemplate::SetFile(const CString& sFileName) {
 
 	return true;
 }
+
+class CLoopSorter {
+	CString m_sType;
+public:
+	CLoopSorter(const CString& sType) : m_sType(sType) {}
+	bool operator()(CTemplate* pTemplate1, CTemplate* pTemplate2) {
+		return (pTemplate1->GetValue(m_sType, false) < pTemplate2->GetValue(m_sType, false));
+	}
+};
 
 CTemplate& CTemplate::AddRow(const CString& sName) {
 	CTemplate* pTmpl = new CTemplate(m_spOptions, this);
@@ -429,7 +439,23 @@ bool CTemplate::Print(const CString& sFileName, ostream& oOut) {
 
 							CString sLoopName = sArgs.Token(0);
 							bool bReverse = (sArgs.Token(1).Equals("REVERSE"));
+							bool bSort = (sArgs.Token(1).Left(4).Equals("SORT"));
 							vector<CTemplate*>* pvLoop = GetLoop(sLoopName);
+
+							if (bSort) {
+								CString sKey;
+
+								if(sArgs.Token(1).TrimPrefix_n("SORT").Left(4).Equals("ASC=")) {
+									sKey = sArgs.Token(1).TrimPrefix_n("SORTASC=");
+								} else if(sArgs.Token(1).TrimPrefix_n("SORT").Left(5).Equals("DESC=")) {
+									sKey = sArgs.Token(1).TrimPrefix_n("SORTDESC=");
+									bReverse = true;
+								}
+
+								if (!sKey.empty()) {
+									std::sort(pvLoop->begin(), pvLoop->end(), CLoopSorter(sKey));
+								}
+							}
 
 							if (pvLoop) {
 								// If we found data for this loop, add it to our context vector
