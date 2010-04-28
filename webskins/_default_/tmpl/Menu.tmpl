@@ -3,10 +3,10 @@
 		<li class="topitem<? IF !ModName && PageName == "index" ?> active<? ENDIF ?>"><a href="/">Home</a></li>
 		<li class="topitem<? IF !ModName && PageName == "help" ?> active<? ENDIF ?>"><a href="/help">Help</a></li>
 
-		<? IF GlobalModLoop SORTASC=ModName ?>
+		<? IF GlobalModLoop ?>
 			<li class="topitem parent"><span class="title">Global Modules</span>
 				<ul>
-				<? LOOP GlobalModLoop ?>
+				<? LOOP GlobalModLoop SORTASC=ModName ?>
 					<li class="modtitle<? IF Active ?> active<? ENDIF ?>"><a href="/mods/<? VAR ModName ?>"><? VAR Title ?></a></li>
 					<? LOOP SubPageLoop ?>
 						<li class="subitem<? IF Active ?> active<? ENDIF ?>"><a href="/mods/<? VAR ModName ?>/<? VAR PageName ?><? IF Params ?>?<? VAR Params ?><? ENDIF ?>"><? VAR Title ?></a></li>
@@ -16,10 +16,10 @@
 			</li>
 		<? ENDIF ?>
 
-		<? IF UserModLoop SORTASC=ModName ?>
+		<? IF UserModLoop ?>
 			<li class="topitem parent"><span class="title">User Modules</span>
 				<ul>
-				<? LOOP UserModLoop ?>
+				<? LOOP UserModLoop SORTASC=ModName ?>
 					<li class="modtitle<? IF Active ?> active<? ENDIF ?>"><a href="/mods/<? IF ModUser ?><? VAR ModUser ?>:<? ENDIF ?><? VAR ModName ?>"><? VAR Title ?></a></li>
 					<? LOOP SubPageLoop ?>
 						<li class="subitem<? IF Active ?> active<? ENDIF ?>"><a href="/mods/<? VAR ModName ?>/<? VAR PageName ?><? IF Params ?>?<? VAR Params ?><? ENDIF ?>"><? VAR Title ?></a></li>
