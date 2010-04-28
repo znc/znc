@@ -2821,6 +2821,9 @@ if test "${enable_run_from_source+set}" = set; then :
   enableval=$enable_run_from_source; if test "x$enableval" = "xyes" ; then
 		appendCXX -DRUN_FROM_SOURCE
 	fi
+	RUNFROMSOURCE="$enableval"
+else
+  RUNFROMSOURCE="no"
 fi
 
 
@@ -4827,19 +4830,26 @@ fi
 echo
 echo znc 0.089 configured
 echo
-echo "debug:   $DEBUG"
-echo "ipv6:    $IPV6"
-echo "openssl: $SSL"
-echo "c-ares:  $ARES"
-echo "perl:    $PERL"
+echo "debug:        $DEBUG"
+echo "ipv6:         $IPV6"
+echo "openssl:      $SSL"
+echo "c-ares:       $ARES"
+echo "perl:         $PERL"
 if test x"$SASL" = "x" ; then
-	echo "sasl:    no"
+	echo "sasl:         no"
 else
-	echo "sasl:    yes"
+	echo "sasl:         yes"
 fi
-echo "extra:   $EXTRA"
+echo "extra:        $EXTRA"
 if test x"$TCL_FLAGS" = "x" ; then
-	echo "tcl:     no"
+	echo "tcl:          no"
 else
-	echo "tcl:     yes"
+	echo "tcl:          yes"
 fi
+if test x"$CHARSET" = "x" ; then
+	echo "charset:      no"
+else
+	echo "charset:      yes"
+fi
+echo "run from src: $RUNFROMSOURCE"
+
