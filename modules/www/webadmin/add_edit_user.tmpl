@@ -165,7 +165,7 @@
 					</thead>
 
 					<tbody>
-			<? LOOP ChannelLoop ?>
+			<? LOOP ChannelLoop SORTASC=Name ?>
 					<tr class="<? IF __EVEN__ ?>evenrow<? ELSE ?>oddrow<? ENDIF ?>">
 						<td>
 							<input type="hidden" name="channel" value="<? VAR Name ?>" />

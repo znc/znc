@@ -10,7 +10,7 @@
 			</tr>
 		</thead>
 		<tbody>
-			<? LOOP ChannelLoop ?>
+			<? LOOP ChannelLoop SORTASC=Name ?>
 			<tr class="<? IF __EVEN__ ?>evenrow<? ELSE ?>oddrow<? ENDIF ?>">
 				<td><? VAR Name ?></td>
 				<td><input type="checkbox" name="stick_<? VAR Name ?>"<? IF Sticky ?> checked="checked"<? ENDIF ?> /></td>
