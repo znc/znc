@@ -442,7 +442,7 @@ bool CTemplate::Print(const CString& sFileName, ostream& oOut) {
 							bool bSort = (sArgs.Token(1).Left(4).Equals("SORT"));
 							vector<CTemplate*>* pvLoop = GetLoop(sLoopName);
 
-							if (bSort && pvLoop->size() > 1) {
+							if (bSort && pvLoop != NULL &&  pvLoop->size() > 1) {
 								CString sKey;
 
 								if(sArgs.Token(1).TrimPrefix_n("SORT").Left(4).Equals("ASC=")) {
