@@ -586,7 +586,7 @@ bool CClient::SendMotd() {
 	}
 
 	for (unsigned int a = 0; a < vsMotd.size(); a++) {
-		PutStatusNotice(vsMotd[a]);
+		PutStatusNotice(m_pUser->ExpandString(vsMotd[a]));
 	}
 
 	return true;
