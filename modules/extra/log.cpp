@@ -97,7 +97,7 @@ CString CLogMod::GetServer()
 
 	if (pServer->IsSSL())
 		sSSL = "+";
-	return pServer->GetName() + ":" + sSSL + CString(pServer->GetPort());
+	return pServer->GetName() + " " + sSSL + CString(pServer->GetPort());
 }
 
 void CLogMod::OnIRCConnected()

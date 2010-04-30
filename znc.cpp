@@ -151,8 +151,8 @@ bool CZNC::ConnectUser(CUser *pUser) {
 
 	m_sConnectThrottle.AddItem(pServer->GetName());
 
-	DEBUG("User [" << pUser->GetUserName() << "] is connecting to [" << pServer->GetName() << ":" << pServer->GetPort() << "] ...");
-	pUser->PutStatus("Attempting to connect to [" + pServer->GetName() + ":" + CString(pServer->GetPort()) + "] ...");
+	DEBUG("User [" << pUser->GetUserName() << "] is connecting to [" << pServer->GetName() << " " << pServer->GetPort() << "] ...");
+	pUser->PutStatus("Attempting to connect to [" + pServer->GetName() + " " + CString(pServer->GetPort()) + "] ...");
 
 	pIRCSock = new CIRCSock(pUser);
 	pIRCSock->SetPass(pServer->GetPass());
