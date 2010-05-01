@@ -146,7 +146,7 @@ public:
 	CString ExpandFile(const CString& sFilename, bool bFromInc = false);
 	bool SetFile(const CString& sFileName);
 
-	void SetPath(const CString& sPath);	// Sets the dir:dir:dir type path to look at for templates, as of right now no ../../.. protection
+	void SetPath(const CString& sPath);  // Sets the dir:dir:dir type path to look at for templates, as of right now no ../../.. protection
 	CString MakePath(const CString& sPath) const;
 	void PrependPath(const CString& sPath, bool bIncludesOnly = false);
 	void AppendPath(const CString& sPath, bool bIncludesOnly = false);

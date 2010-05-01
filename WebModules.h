@@ -112,9 +112,9 @@ class CWebSock : public CHTTPSock {
 public:
 	enum EPageReqResult {
 		PAGE_NOTFOUND, // print 404 and Close()
-		PAGE_PRINT, // print page contents and Close()
+		PAGE_PRINT,    // print page contents and Close()
 		PAGE_DEFERRED, // async processing, Close() will be called from a different place
-		PAGE_DONE // all stuff has been done and Close() has been called (e.g. by CHTTPSock::Redirect)
+		PAGE_DONE      // all stuff has been done and Close() has been called (e.g. by CHTTPSock::Redirect)
 	};
 
 	CWebSock(CModule* pModule);
@@ -125,7 +125,7 @@ public:
 	virtual bool OnLogin(const CString& sUser, const CString& sPass);
 	virtual void OnPageRequest(const CString& sURI);
 
-	void ParsePath();	// This parses the path portion of the url into some member vars
+	void ParsePath();   // This parses the path portion of the url into some member vars
 	CModule* ResolveModule();
 
 	//virtual bool PrintFile(const CString& sFileName, CString sContentType = "");

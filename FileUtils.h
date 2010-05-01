@@ -126,8 +126,8 @@ private:
 	int     m_iFD;
 
 protected:
-	CString m_sLongName;	//!< Absolute filename (m_sPath + "/" + m_sShortName)
-	CString m_sShortName;	//!< Filename alone, without path
+	CString m_sLongName;  //!< Absolute filename (m_sPath + "/" + m_sShortName)
+	CString m_sShortName; //!< Filename alone, without path
 };
 
 class CDir : public vector<CFile*> {
@@ -218,7 +218,7 @@ public:
 				continue;
 			}
 
-			CFile *file = new CFile(sDir + "/" + de->d_name/*, this*/);	// @todo need to pass pointer to 'this' if we want to do Sort()
+			CFile *file = new CFile(sDir + "/" + de->d_name/*, this*/); // @todo need to pass pointer to 'this' if we want to do Sort()
 			push_back(file);
 		}
 
