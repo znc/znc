@@ -29,6 +29,7 @@ public:
 		vParams.push_back(make_pair("user", ""));
 		AddSubPage(new CWebSubPage("settings", "Global Settings", CWebSubPage::F_ADMIN));
 		AddSubPage(new CWebSubPage("edituser", "Your Settings", vParams));
+		AddSubPage(new CWebSubPage("traffic", "Traffic Info", CWebSubPage::F_ADMIN));
 		AddSubPage(new CWebSubPage("listusers", "List Users", CWebSubPage::F_ADMIN));
 		AddSubPage(new CWebSubPage("adduser", "Add User", CWebSubPage::F_ADMIN));
 	}
@@ -363,12 +364,10 @@ public:
 
 			WebSock.PrintErrorPage("No such username");
 			return true;
-		} else if (sPageName == "listusers") {
-			if (!spSession->IsAdmin()) {
-				return false;
-			}
-
+		} else if (sPageName == "listusers" && spSession->IsAdmin()) {
 			return ListUsersPage(WebSock, Tmpl);
+		} else if (sPageName == "traffic" && spSession->IsAdmin()) {
+			return TrafficPage(WebSock, Tmpl);
 		} else if (sPageName.empty() || sPageName == "index") {
 			return true;
 		}
@@ -742,6 +741,60 @@ public:
 			if (pServer) {
 				l["Server"] = pServer->GetName();
 			}
+		}
+
+		return true;
+	}
+
+	bool TrafficPage(CWebSock& WebSock, CTemplate& Tmpl) {
+		CSmartPtr<CWebSession> spSession = WebSock.GetSession();
+		Tmpl["Uptime"] = CZNC::Get().GetUptime();
+
+		if (spSession->IsAdmin()) {
+			const map<CString,CUser*>& msUsers = CZNC::Get().GetUserMap();
+			Tmpl["TotalUsers"] = CString(msUsers.size());
+
+			unsigned int uiAttached = 0, uiClients = 0, uiServers = 0;
+
+			for (map<CString,CUser*>::const_iterator it = msUsers.begin(); it != msUsers.end(); ++it) {
+				CUser& User = *it->second;
+				if (User.IsUserAttached()) {
+					uiAttached++;
+				}
+				if (User.IsIRCConnected()) {
+					uiServers++;
+				}
+				uiClients += User.GetClients().size();
+			}
+
+			Tmpl["AttachedUsers"] = CString(uiAttached);
+			Tmpl["TotalCConnections"] = CString(uiClients);
+			Tmpl["TotalIRCConnections"] = CString(uiServers);
+
+			CZNC::TrafficStatsPair Users, ZNC, Total;
+			CZNC::TrafficStatsMap traffic = CZNC::Get().GetTrafficStats(Users, ZNC, Total);
+			CZNC::TrafficStatsMap::const_iterator it;
+
+			for (it = traffic.begin(); it != traffic.end(); ++it) {
+				CTemplate& l = Tmpl.AddRow("TrafficLoop");
+
+				l["Username"] = it->first;
+				l["In"] = CString::ToByteStr(it->second.first);
+				l["Out"] = CString::ToByteStr(it->second.second);
+				l["Total"] = CString::ToByteStr(it->second.first + it->second.second);
+			}
+
+			Tmpl["UserIn"] = CString::ToByteStr(Users.first);
+			Tmpl["UserOut"] = CString::ToByteStr(Users.second);
+			Tmpl["UserTotal"] = CString::ToByteStr(Users.first + Users.second);
+
+			Tmpl["ZNCIn"] = CString::ToByteStr(ZNC.first);
+			Tmpl["ZNCOut"] = CString::ToByteStr(ZNC.second);
+			Tmpl["ZNCTotal"] = CString::ToByteStr(ZNC.first + ZNC.second);
+
+			Tmpl["AllIn"] = CString::ToByteStr(Total.first);
+			Tmpl["AllOut"] = CString::ToByteStr(Total.second);
+			Tmpl["AllTotal"] = CString::ToByteStr(Total.first + Total.second);
 		}
 
 		return true;
