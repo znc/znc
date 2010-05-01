@@ -1427,6 +1427,13 @@ bool CZNC::DoRehash(CString& sError)
 						continue;
 					} else if (sName.Equals("LoadModule")) {
 						CString sModName = sValue.Token(0);
+
+						// XXX Legacy crap, added in znc 0.089
+						if (sModName == "discon_kick") {
+							CUtils::PrintMessage("NOTICE: [discon_kick] was renamed, loading [disconkick] instead");
+							sModName = "disconkick";
+						}
+
 						CUtils::PrintAction("Loading Module [" + sModName + "]");
 						CString sModRet;
 						CString sArgs = sValue.Token(1, true);
