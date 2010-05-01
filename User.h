@@ -46,7 +46,7 @@ public:
 		return CUtils::SaltedSHA256Hash(sPass, sSalt);
 	}
 
-	bool PrintLine(CFile& File, const CString& sName, const CString& sValue);
+	bool PrintLine(CFile& File, CString sName, CString sValue);
 	bool WriteConfig(CFile& File);
 	CChan* FindChan(const CString& sName) const;
 	bool AddChan(CChan* pChan);

@@ -602,8 +602,13 @@ bool CUser::DelChan(const CString& sName) {
 	return false;
 }
 
-bool CUser::PrintLine(CFile& File, const CString& sName, const CString& sValue) {
+bool CUser::PrintLine(CFile& File, CString sName, CString sValue) {
+	sName.Trim();
+	sValue.Trim();
+
 	if (sName.empty() || sValue.empty()) {
+		DEBUG("Refused writing an invalid line to a user config. ["
+			<< sName << "] [" << sValue << "]");
 		return false;
 	}
 
