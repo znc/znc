@@ -27,6 +27,11 @@ bool CListener::Listen() {
 			m_pListener, 0, m_eAddr);
 }
 
+CListener::~CListener() {
+	if (m_pListener)
+		CZNC::Get().GetManager().DelSockByAddr(m_pListener);
+}
+
 CRealListener::~CRealListener() {
 	m_pParent->SetRealListener(NULL);
 }
@@ -38,7 +43,7 @@ bool CRealListener::ConnectionFrom(const CString& sHost, unsigned short uPort) {
 }
 
 Csock* CRealListener::GetSockObj(const CString& sHost, unsigned short uPort) {
-	CIncomingConnection *pClient = new CIncomingConnection(sHost, uPort);
+	CIncomingConnection *pClient = new CIncomingConnection(sHost, uPort, m_pParent->GetAcceptType());
 	if (CZNC::Get().AllowConnectionFrom(sHost)) {
 		CZNC::Get().GetModules().OnClientConnect(pClient, sHost, uPort);
 	} else {
@@ -58,7 +63,8 @@ void CRealListener::SockError(int iErrno) {
 	}
 }
 
-CIncomingConnection::CIncomingConnection(const CString& sHostname, unsigned short uPort) : CZNCSock(sHostname, uPort) {
+CIncomingConnection::CIncomingConnection(const CString& sHostname, unsigned short uPort, CListener::AcceptType eAcceptType) : CZNCSock(sHostname, uPort) {
+	m_eAcceptType = eAcceptType;
 	// The socket will time out in 120 secs, no matter what.
 	// This has to be fixed up later, if desired.
 	SetTimeout(120, 0);
@@ -68,10 +74,22 @@ CIncomingConnection::CIncomingConnection(const CString& sHostname, unsigned shor
 
 void CIncomingConnection::ReadLine(const CString& sLine) {
 	bool bIsHTTP = (sLine.WildCmp("GET * HTTP/1.?\r\n") || sLine.WildCmp("POST * HTTP/1.?\r\n"));
+	bool bAcceptHTTP = (m_eAcceptType == CListener::ACCEPT_ALL)
+		|| (m_eAcceptType == CListener::ACCEPT_HTTP);
+	bool bAcceptIRC = (m_eAcceptType == CListener::ACCEPT_ALL)
+		|| (m_eAcceptType == CListener::ACCEPT_IRC);
 	Csock *pSock = NULL;
 
 	if (!bIsHTTP) {
 		// Let's assume it's an IRC connection
+
+		if (!bAcceptIRC) {
+			Write("ERROR :We don't take kindly to your types around here!\r\n");
+			Close(CLT_AFTERWRITE);
+
+			DEBUG("Refused IRC connection to non IRC port");
+			return;
+		}
 
 		pSock = new CClient();
 		CZNC::Get().GetManager().SwapSockByAddr(pSock, this);
@@ -80,6 +98,14 @@ void CIncomingConnection::ReadLine(const CString& sLine) {
 		pSock->SetSockName("USR::???");
 	} else {
 		// This is a HTTP request, let the webmods handle it
+
+		if (!bAcceptHTTP) {
+			Write("HTTP/1.0 403 Access Denied\r\n\r\nNo HTTP requests allowed\r\n");
+			Close(CLT_AFTERWRITE);
+
+			DEBUG("Refused HTTP connection to non HTTP port");
+			return;
+		}
 
 		CModule* pMod = new CModule(NULL, "<webmod>", "");
 		pMod->SetFake(true);
@@ -91,9 +117,7 @@ void CIncomingConnection::ReadLine(const CString& sLine) {
 		pSock->SetSockName("WebMod::Client");
 	}
 
-	if (pSock) {
-		// TODO can we somehow get rid of this?
-		pSock->ReadLine(sLine);
-		pSock->PushBuff("", 0, true);
-	}
+	// TODO can we somehow get rid of this?
+	pSock->ReadLine(sLine);
+	pSock->PushBuff("", 0, true);
 }
