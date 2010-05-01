@@ -325,6 +325,7 @@ CString CHTTPSock::GetParam(const CString& sName, bool bPost, const CString& sFi
 
 CString CHTTPSock::GetParam(const CString& sName, const map<CString, VCString>& msvsParams, const CString& sFilter) {
 	CString sRet = GetRawParam(sName, msvsParams);
+	sRet.Trim();
 
 	for (size_t i = 0; i < sFilter.length(); i++) {
 		sRet.Replace(CString(sFilter.at(i)), "");
@@ -347,6 +348,7 @@ unsigned int CHTTPSock::GetParamValues(const CString& sName, set<CString>& ssRet
 	if (it != msvsParams.end()) {
 		for (unsigned int a = 0; a < it->second.size(); a++) {
 			CString sParam = it->second[a];
+			sParam.Trim();
 
 			for (size_t i = 0; i < sFilter.length(); i++) {
 				sParam.Replace(CString(sFilter.at(i)), "");
@@ -372,6 +374,7 @@ unsigned int CHTTPSock::GetParamValues(const CString& sName, VCString& vsRet, co
 	if (it != msvsParams.end()) {
 		for (unsigned int a = 0; a < it->second.size(); a++) {
 			CString sParam = it->second[a];
+			sParam.Trim();
 
 			for (size_t i = 0; i < sFilter.length(); i++) {
 				sParam.Replace(CString(sFilter.at(i)), "");
