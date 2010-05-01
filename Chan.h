@@ -28,26 +28,26 @@ class CClient;
 class CChan {
 public:
 	typedef enum {
-		Voice	= '+',
-		HalfOp 	= '%',
-		Op		= '@',
-		Admin	= '!',
-		Owner	= '*'
+		Voice   = '+',
+		HalfOp  = '%',
+		Op      = '@',
+		Admin   = '!',
+		Owner   = '*'
 	} EUserPerms;
 
 	typedef enum {
-		M_Private		= 'p',
-		M_Secret		= 's',
-		M_Moderated		= 'm',
-		M_InviteOnly	= 'i',
-		M_NoMessages	= 'n',
-		M_OpTopic		= 't',
-		M_Limit			= 'l',
-		M_Key			= 'k',
-		M_Op			= 'o',
-		M_Voice			= 'v',
-		M_Ban			= 'b',
-		M_Except		= 'e'
+		M_Private    = 'p',
+		M_Secret     = 's',
+		M_Moderated  = 'm',
+		M_InviteOnly = 'i',
+		M_NoMessages = 'n',
+		M_OpTopic    = 't',
+		M_Limit      = 'l',
+		M_Key        = 'k',
+		M_Op         = 'o',
+		M_Voice      = 'v',
+		M_Ban        = 'b',
+		M_Except     = 'e'
 	} EModes;
 
 	CChan(const CString& sName, CUser* pUser, bool bInConfig);
@@ -141,26 +141,26 @@ public:
 	// !Getters
 private:
 protected:
-	bool				m_bDetached;
-	bool				m_bIsOn;
-	bool				m_bKeepBuffer;
-	bool				m_bInConfig;
-	bool				m_bDisabled;
-	CString				m_sName;
-	CString				m_sKey;
-	CString				m_sTopic;
-	CString				m_sTopicOwner;
-	unsigned long		m_ulTopicDate;
-	unsigned long		m_ulCreationDate;
-	CUser*				m_pUser;
-	CNick				m_Nick;
-	unsigned int		m_uJoinTries;
-	CString				m_sDefaultModes;
-	map<CString,CNick*>	m_msNicks;	// Todo: make this caseless (irc style)
-	unsigned int		m_uBufferCount;
-	vector<CString>		m_vsBuffer;
+	bool                         m_bDetached;
+	bool                         m_bIsOn;
+	bool                         m_bKeepBuffer;
+	bool                         m_bInConfig;
+	bool                         m_bDisabled;
+	CString                      m_sName;
+	CString                      m_sKey;
+	CString                      m_sTopic;
+	CString                      m_sTopicOwner;
+	unsigned long                m_ulTopicDate;
+	unsigned long                m_ulCreationDate;
+	CUser*                       m_pUser;
+	CNick                        m_Nick;
+	unsigned int                 m_uJoinTries;
+	CString                      m_sDefaultModes;
+	map<CString,CNick*>          m_msNicks;       // Todo: make this caseless (irc style)
+	unsigned int                 m_uBufferCount;
+	vector<CString>              m_vsBuffer;
 
-	map<unsigned char, CString>			m_musModes;
+	map<unsigned char, CString>  m_musModes;
 };
 
 #endif // !_CHAN_H

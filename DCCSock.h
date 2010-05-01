@@ -60,19 +60,19 @@ public:
 	// !Getters
 private:
 protected:
-	CString					m_sRemoteNick;
-	CString					m_sRemoteIP;
-	CString					m_sFileName;
-	CString					m_sLocalFile;
-	CString					m_sSendBuf;
-	CString					m_sModuleName;
-	unsigned short			m_uRemotePort;
-	unsigned long			m_uFileSize;
-	unsigned long			m_uBytesSoFar;
-	bool					m_bSend;
-	bool					m_bNoDelFile;
-	CFile*					m_pFile;
-	CUser*					m_pUser;
+	CString         m_sRemoteNick;
+	CString         m_sRemoteIP;
+	CString         m_sFileName;
+	CString         m_sLocalFile;
+	CString         m_sSendBuf;
+	CString         m_sModuleName;
+	unsigned short  m_uRemotePort;
+	unsigned long   m_uFileSize;
+	unsigned long   m_uBytesSoFar;
+	bool            m_bSend;
+	bool            m_bNoDelFile;
+	CFile*          m_pFile;
+	CUser*          m_pUser;
 };
 
 #endif // !_DCCSOCK_H

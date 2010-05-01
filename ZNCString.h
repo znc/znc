@@ -191,11 +191,11 @@ public:
 
 	enum
 	{
-		MCS_SUCCESS 	= 0,
-		MCS_EOPEN 		= 1,
-		MCS_EWRITE 		= 2,
-		MCS_EWRITEFIL 	= 3,
-		MCS_EREADFIL	= 4
+		MCS_SUCCESS   = 0,
+		MCS_EOPEN     = 1,
+		MCS_EWRITE    = 2,
+		MCS_EWRITEFIL = 3,
+		MCS_EREADFIL  = 4
 	};
 
 	int WriteToDisk(const CString& sPath, mode_t iMode = 0644);

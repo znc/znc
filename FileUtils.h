@@ -122,12 +122,12 @@ private:
 	// flock() wrapper
 	bool Lock(int iOperation);
 
-	CString	m_sBuffer;
-	int		m_iFD;
+	CString m_sBuffer;
+	int     m_iFD;
 
 protected:
-	CString	m_sLongName;	//!< Absolute filename (m_sPath + "/" + m_sShortName)
-	CString	m_sShortName;	//!< Filename alone, without path
+	CString m_sLongName;	//!< Absolute filename (m_sPath + "/" + m_sShortName)
+	CString m_sShortName;	//!< Filename alone, without path
 };
 
 class CDir : public vector<CFile*> {
@@ -282,8 +282,8 @@ public:
 
 private:
 protected:
-	CFile::EFileAttr	m_eSortAttr;
-	bool				m_bDesc;
+	CFile::EFileAttr m_eSortAttr;
+	bool             m_bDesc;
 };
 
 //! @author imaginos@imaginos.net
@@ -316,6 +316,6 @@ public:
 	void close2(int iPid, int iReadFD, int iWriteFD);
 
 private:
-	int			m_iPid;
+	int  m_iPid;
 };
 #endif // !_FILEUTILS_H

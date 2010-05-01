@@ -147,36 +147,36 @@ private:
 	bool HandleUserDeletion();
 
 protected:
-	time_t				m_TimeStarted;
+	time_t                 m_TimeStarted;
 
-	enum ConfigState		m_eConfigState;
-	vector<CListener*>		m_vpListeners;
-	map<CString,CUser*>		m_msUsers;
-	map<CString,CUser*>		m_msDelUsers;
-	CSockManager			m_Manager;
+	enum ConfigState       m_eConfigState;
+	vector<CListener*>     m_vpListeners;
+	map<CString,CUser*>    m_msUsers;
+	map<CString,CUser*>    m_msDelUsers;
+	CSockManager           m_Manager;
 
-	CString					m_sCurPath;
-	CString					m_sHomePath;
-	CString					m_sZNCPath;
+	CString                m_sCurPath;
+	CString                m_sHomePath;
+	CString                m_sZNCPath;
 
-	CString					m_sConfigFile;
-	CString					m_sSkinName;
-	CString					m_sStatusPrefix;
-	CString					m_sISpoofFile;
-	CString					m_sOrigISpoof;
-	CString					m_sISpoofFormat;
-	CString					m_sPidFile;
-	VCString				m_vsVHosts;
-	VCString				m_vsMotd;
-	CFile					m_LockFile;
-	CFile*					m_pISpoofLockFile;
-	unsigned int				m_uiConnectDelay;
-	unsigned int				m_uiAnonIPLimit;
-	CGlobalModules*			m_pModules;
-	unsigned long long		m_uBytesRead;
-	unsigned long long		m_uBytesWritten;
-	CConnectUserTimer		*m_pConnectUserTimer;
-	TCacheMap<CString>		m_sConnectThrottle;
+	CString                m_sConfigFile;
+	CString                m_sSkinName;
+	CString                m_sStatusPrefix;
+	CString                m_sISpoofFile;
+	CString                m_sOrigISpoof;
+	CString                m_sISpoofFormat;
+	CString                m_sPidFile;
+	VCString               m_vsVHosts;
+	VCString               m_vsMotd;
+	CFile                  m_LockFile;
+	CFile*                 m_pISpoofLockFile;
+	unsigned int           m_uiConnectDelay;
+	unsigned int           m_uiAnonIPLimit;
+	CGlobalModules*        m_pModules;
+	unsigned long long     m_uBytesRead;
+	unsigned long long     m_uBytesWritten;
+	CConnectUserTimer     *m_pConnectUserTimer;
+	TCacheMap<CString>     m_sConnectThrottle;
 };
 
 #endif // !_ZNC_H

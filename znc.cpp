@@ -19,10 +19,10 @@ namespace
 { // private namespace for local things
 	struct CGlobalModuleConfigLine
 	{
-		CString	m_sName;
-		CString	m_sValue;
-		CUser	*m_pUser;
-		CChan	*m_pChan;
+		CString  m_sName;
+		CString  m_sValue;
+		CUser   *m_pUser;
+		CChan   *m_pChan;
 	};
 }
 
@@ -2024,7 +2024,7 @@ protected:
 	}
 
 private:
-	size_t	m_uiPosNextUser;
+	size_t m_uiPosNextUser;
 };
 
 void CZNC::EnableConnectUser() {

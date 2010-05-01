@@ -24,10 +24,10 @@ public:
 	static bool IsValidHostName(const CString& sHostName);
 private:
 protected:
-	CString			m_sName;
-	unsigned short	m_uPort;
-	CString			m_sPass;
-	bool			m_bSSL;
+	CString         m_sName;
+	unsigned short  m_uPort;
+	CString         m_sPass;
+	bool            m_bSSL;
 };
 
 #endif // !_SERVER_H

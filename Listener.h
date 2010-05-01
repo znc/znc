@@ -56,12 +56,12 @@ public:
 
 private:
 protected:
-	bool			m_bSSL;
-	EAddrType		m_eAddr;
-	unsigned short	m_uPort;
-	CString			m_sBindHost;
-	CRealListener*	m_pListener;
-	AcceptType	m_eAcceptType;
+	bool            m_bSSL;
+	EAddrType       m_eAddr;
+	unsigned short  m_uPort;
+	CString         m_sBindHost;
+	CRealListener*  m_pListener;
+	AcceptType      m_eAcceptType;
 };
 
 class CRealListener : public CZNCSock {
@@ -84,7 +84,7 @@ public:
 	virtual void ReadLine(const CString& sData);
 
 private:
-	CListener::AcceptType	m_eAcceptType;
+	CListener::AcceptType m_eAcceptType;
 };
 
 #endif // !_LISTENER_H

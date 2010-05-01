@@ -117,7 +117,7 @@ public:
 	EType GetType() const { return m_eType; }
 private:
 protected:
-	EType	m_eType;
+	EType  m_eType;
 };
 
 
@@ -198,8 +198,8 @@ private:
 	unsigned int GetColumnIndex(const CString& sName) const;
 
 protected:
-	vector<CString>				m_vsHeaders;
-	map<CString, unsigned int>	m_msuWidths;	// Used to cache the width of a column
+	vector<CString>            m_vsHeaders;
+	map<CString, unsigned int> m_msuWidths;  // Used to cache the width of a column
 };
 
 
@@ -231,9 +231,9 @@ public:
 	CString Crypt(const CString & sData);
 
 private:
-	unsigned char		*m_ivec;
-	BF_KEY 				m_bkey;
-	int					m_iEncrypt, m_num;
+	unsigned char  *m_ivec;
+	BF_KEY          m_bkey;
+	int             m_iEncrypt, m_num;
 };
 
 #endif /* HAVE_LIBSSL */
@@ -361,8 +361,8 @@ public:
 protected:
 	typedef pair<unsigned long long, V> value;
 	typedef typename map<K, value>::iterator iterator;
-	map<K, value>	m_mItems;	//!< Map of cached items.  The value portion of the map is for the expire time
-	unsigned int	m_uTTL;					//!< Default time-to-live duration
+	map<K, value>   m_mItems;   //!< Map of cached items.  The value portion of the map is for the expire time
+	unsigned int    m_uTTL;     //!< Default time-to-live duration
 };
 
 /**
@@ -502,8 +502,8 @@ public:
 	unsigned int GetCount() const { return (m_puCount) ? *m_puCount : 0; }
 	// !Getters
 private:
-	T*				m_pType;	//!< Raw pointer to the class being referenced
-	unsigned int*	m_puCount;	//!< Counter of how many CSmartPtr's are referencing the same raw pointer
+	T*            m_pType;      //!< Raw pointer to the class being referenced
+	unsigned int* m_puCount;    //!< Counter of how many CSmartPtr's are referencing the same raw pointer
 };
 
 template<typename T>

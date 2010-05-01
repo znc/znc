@@ -142,7 +142,7 @@ public:
 	// !Getters
 private:
 protected:
-	CModule*	m_pModule;
+	CModule*  m_pModule;
 };
 
 #endif /* SOCKET_H */

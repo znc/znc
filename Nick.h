@@ -55,11 +55,11 @@ public:
 	void Clone(const CNick& SourceNick);
 private:
 protected:
-	CString			m_sChanPerms;
-	CUser*				m_pUser;
-	CString				m_sNick;
-	CString				m_sIdent;
-	CString				m_sHost;
+	CString    m_sChanPerms;
+	CUser*     m_pUser;
+	CString    m_sNick;
+	CString    m_sIdent;
+	CString    m_sHost;
 };
 
 #endif // !_NICK_H
