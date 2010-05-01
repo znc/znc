@@ -1,0 +1,94 @@
+<? INC Header.tmpl ?>
+
+<div class="textsection">
+
+<div class="section">
+	<h3>Information</h3>
+	<div class="sectionbg">
+		<div class="sectionbody">
+			<table>
+				<tbody>
+					<tr class="oddrow">
+						<td>Uptime</td>
+						<td><? VAR Uptime ?></td>
+					</tr>
+				<? IF IsAdmin ?>
+					<tr class="evenrow">
+						<td>Total Users</td>
+						<td><? VAR TotalUsers ?></td>
+					</tr>
+					<tr class="oddrow">
+						<td>Attached Users</td>
+						<td><? VAR AttachedUsers ?></td>
+					</tr>
+					<tr class="evenrow">
+						<td>Total Client Connections</td>
+						<td><? VAR TotalCConnections ?></td>
+					</tr>
+					<tr class="oddrow">
+						<td>Total IRC Connections</td>
+						<td><? VAR TotalIRCConnections ?></td>
+					</tr>
+				<? ENDIF ?>
+				</tbody>
+			</table>
+		</div>
+	</div>
+</div>
+
+<? IF IsAdmin && TrafficLoop ?>
+<div class="section">
+	<h3>Traffic</h3>
+	<div class="sectionbg">
+		<div class="sectionbody">
+			<table>
+				<thead>
+					<tr>
+						<td>Username</td>
+						<td>In</td>
+						<td>Out</td>
+						<td>Total</td>
+					</tr>
+				</thead>
+				<tbody>
+				<? LOOP TrafficLoop SORTASC=Username ?>
+					<tr class="<? IF __EVEN__ ?>evenrow<? ELSE ?>oddrow<? ENDIF ?>">
+						<td><? VAR Username ?></td>
+						<td><? VAR In ?></td>
+						<td><? VAR Out ?></td>
+						<td><? VAR Total ?></td>
+					</tr>
+					<? REM ?>Add the totals separately so that if sort is ever used they stay at the bottom
+								 By keeping them inside the loop we can figure out even/odd classes though.
+					<? ENDREM ?>
+					<? IF __LAST__ ?>
+					<tr class="<? IF __EVEN__ ?>oddrow<? ELSE ?>evenrow<? ENDIF ?>">
+						<td>User Total</td>
+						<td><? VAR UserIn TOP ?></td>
+						<td><? VAR UserOut TOP ?></td>
+						<td><? VAR UserTotal TOP ?></td>
+					</tr>
+					<tr class="<? IF __EVEN__ ?>evenrow<? ELSE ?>oddrow<? ENDIF ?>">
+						<td>ZNC Total</td>
+						<td><? VAR ZNCIn TOP ?></td>
+						<td><? VAR ZNCOut TOP ?></td>
+						<td><? VAR ZNCTotal TOP ?></td>
+					</tr>
+					<tr class="<? IF __EVEN__ ?>oddrow<? ELSE ?>evenrow<? ENDIF ?>">
+						<td>Grand Total</td>
+						<td><? VAR AllIn TOP ?></td>
+						<td><? VAR AllOut TOP ?></td>
+						<td><? VAR AllTotal TOP ?></td>
+					</tr>
+					<? ENDIF ?>
+				<? ENDLOOP ?>
+				</tbody>
+			</table>
+		</div>
+	</div>
+</div>
+<? ENDIF ?>
+
+</div>
+
+<? INC Footer.tmpl ?>
