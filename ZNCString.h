@@ -30,14 +30,14 @@ using std::pair;
 class CString;
 class MCString;
 
-typedef set<CString>					SCString;
-typedef set<CString>					SPair;
+typedef set<CString> SCString;
+typedef set<CString> SPair;
 
-typedef vector<CString>					VCString;
-typedef vector<pair<CString, CString> >	VPair;
+typedef vector<CString>                 VCString;
+typedef vector<pair<CString, CString> > VPair;
 
-typedef list<CString>					LCString;
-typedef list<pair<CString, CString> >	LPair;
+typedef list<CString>                   LCString;
+typedef list<pair<CString, CString> >   LPair;
 
 static const unsigned char XX = 0xff;
 static const unsigned char base64_table[256] = {
