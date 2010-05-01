@@ -32,25 +32,25 @@
 #define _DATADIR_ "/usr/share/znc"
 #endif
 
-#define MODULECALL(macFUNC, macUSER, macCLIENT, macEXITER)	\
-	if (macUSER) {											\
-		CGlobalModules& GMods = CZNC::Get().GetModules();	\
-		CModules& UMods = macUSER->GetModules();			\
-		CUser* pOldGUser = GMods.GetUser();				\
-		CClient* pOldGClient = GMods.GetClient();			\
-		CClient* pOldUClient = UMods.GetClient();			\
-		GMods.SetUser(macUSER);						\
-		GMods.SetClient(macCLIENT);	\
-		UMods.SetClient(macCLIENT);							\
-		if (GMods.macFUNC || UMods.macFUNC) {				\
-			GMods.SetUser(pOldGUser);				\
-			GMods.SetClient(pOldGClient);		\
-			UMods.SetClient(pOldUClient);							\
-			macEXITER;										\
-		}													\
-		GMods.SetUser(pOldGUser);					\
-		GMods.SetClient(pOldGClient);			\
-		UMods.SetClient(pOldUClient);								\
+#define MODULECALL(macFUNC, macUSER, macCLIENT, macEXITER)         \
+	if (macUSER) {                                             \
+		CGlobalModules& GMods = CZNC::Get().GetModules();  \
+		CModules& UMods = macUSER->GetModules();           \
+		CUser* pOldGUser = GMods.GetUser();                \
+		CClient* pOldGClient = GMods.GetClient();          \
+		CClient* pOldUClient = UMods.GetClient();          \
+		GMods.SetUser(macUSER);                            \
+		GMods.SetClient(macCLIENT);                        \
+		UMods.SetClient(macCLIENT);                        \
+		if (GMods.macFUNC || UMods.macFUNC) {              \
+			GMods.SetUser(pOldGUser);                  \
+			GMods.SetClient(pOldGClient);              \
+			UMods.SetClient(pOldUClient);              \
+			macEXITER;                                 \
+		}                                                  \
+		GMods.SetUser(pOldGUser);                          \
+		GMods.SetClient(pOldGClient);                      \
+		UMods.SetClient(pOldUClient);                      \
 	}
 
 /** @mainpage

@@ -266,8 +266,8 @@ public:
 	 * @param uTTL the time-to-live for this specific item
 	 */
 	void AddItem(const K& Item, unsigned int uTTL) {
-		if (!uTTL) {			// If time-to-live is zero we don't want to waste our time adding it
-			RemItem(Item);		// Remove the item incase it already exists
+		if (!uTTL) {            // If time-to-live is zero we don't want to waste our time adding it
+			RemItem(Item);  // Remove the item incase it already exists
 			return;
 		}
 
@@ -290,8 +290,8 @@ public:
 	 * @param uTTL the time-to-live for this specific item
 	 */
 	void AddItem(const K& Item, const V& Val, unsigned int uTTL) {
-		if (!uTTL) {			// If time-to-live is zero we don't want to waste our time adding it
-			RemItem(Item);		// Remove the item incase it already exists
+		if (!uTTL) {             // If time-to-live is zero we don't want to waste our time adding it
+			RemItem(Item);   // Remove the item incase it already exists
 			return;
 		}
 
@@ -427,17 +427,17 @@ public:
 	 * @return Reference to self
 	 */
 	CSmartPtr<T>& operator =(const CSmartPtr<T>& CopyFrom) {
-		if (&CopyFrom != this) {				// Check for assignment to self
-			Release();							// Release the current pointer
+		if (&CopyFrom != this) {              // Check for assignment to self
+			Release();                    // Release the current pointer
 
-			if (CopyFrom.IsNull()) {			// If the source raw pointer is null
-				return *this;					// Then just bail out
+			if (CopyFrom.IsNull()) {      // If the source raw pointer is null
+				return *this;         // Then just bail out
 			}
 
-			m_pType = CopyFrom.m_pType;			// Make our pointers reference the same raw pointer and counter
+			m_pType = CopyFrom.m_pType;   // Make our pointers reference the same raw pointer and counter
 			m_puCount = CopyFrom.m_puCount;
 
-			assert(m_puCount);					// We now point to something valid, so increment the counter
+			assert(m_puCount);            // We now point to something valid, so increment the counter
 			(*m_puCount)++;
 		}
 
@@ -467,12 +467,12 @@ public:
 	 * @return Reference to self
 	 */
 	CSmartPtr<T>& Attach(T* pRawPtr) {
-		if (pRawPtr != m_pType) {					// Check for assignment to self
-			Release();								// Release the current pointer
-			m_pType = pRawPtr;						// Point to the passed raw pointer
+		if (pRawPtr != m_pType) {                        // Check for assignment to self
+			Release();                               // Release the current pointer
+			m_pType = pRawPtr;                       // Point to the passed raw pointer
 
-			if (m_pType) {							// If the passed pointer was valid
-				m_puCount = new unsigned int(1);	// Create a new counter starting at 1 (us)
+			if (m_pType) {                           // If the passed pointer was valid
+				m_puCount = new unsigned int(1); // Create a new counter starting at 1 (us)
 			}
 		}
 
@@ -483,16 +483,16 @@ public:
 	 * @brief Releases the underlying raw pointer and cleans up if we were the last reference to said pointer
 	 */
 	void Release() {
-		if (m_pType) {				// Only release if there is something to be released
+		if (m_pType) {              // Only release if there is something to be released
 			assert(m_puCount);
-			(*m_puCount)--;			// Decrement our counter
+			(*m_puCount)--;     // Decrement our counter
 
-			if (!*m_puCount) {		// If we were the last reference to this pointer, then clean up
+			if (!*m_puCount) {  // If we were the last reference to this pointer, then clean up
 				delete m_puCount;
 				delete m_pType;
 			}
 
-			m_pType = NULL;			// Get rid of our references
+			m_pType = NULL;     // Get rid of our references
 			m_puCount = NULL;
 		}
 	}
