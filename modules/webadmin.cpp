@@ -750,52 +750,50 @@ public:
 		CSmartPtr<CWebSession> spSession = WebSock.GetSession();
 		Tmpl["Uptime"] = CZNC::Get().GetUptime();
 
-		if (spSession->IsAdmin()) {
-			const map<CString,CUser*>& msUsers = CZNC::Get().GetUserMap();
-			Tmpl["TotalUsers"] = CString(msUsers.size());
+		const map<CString,CUser*>& msUsers = CZNC::Get().GetUserMap();
+		Tmpl["TotalUsers"] = CString(msUsers.size());
 
-			unsigned int uiAttached = 0, uiClients = 0, uiServers = 0;
+		unsigned int uiAttached = 0, uiClients = 0, uiServers = 0;
 
-			for (map<CString,CUser*>::const_iterator it = msUsers.begin(); it != msUsers.end(); ++it) {
-				CUser& User = *it->second;
-				if (User.IsUserAttached()) {
-					uiAttached++;
-				}
-				if (User.IsIRCConnected()) {
-					uiServers++;
-				}
-				uiClients += User.GetClients().size();
+		for (map<CString,CUser*>::const_iterator it = msUsers.begin(); it != msUsers.end(); ++it) {
+			CUser& User = *it->second;
+			if (User.IsUserAttached()) {
+				uiAttached++;
 			}
-
-			Tmpl["AttachedUsers"] = CString(uiAttached);
-			Tmpl["TotalCConnections"] = CString(uiClients);
-			Tmpl["TotalIRCConnections"] = CString(uiServers);
-
-			CZNC::TrafficStatsPair Users, ZNC, Total;
-			CZNC::TrafficStatsMap traffic = CZNC::Get().GetTrafficStats(Users, ZNC, Total);
-			CZNC::TrafficStatsMap::const_iterator it;
-
-			for (it = traffic.begin(); it != traffic.end(); ++it) {
-				CTemplate& l = Tmpl.AddRow("TrafficLoop");
-
-				l["Username"] = it->first;
-				l["In"] = CString::ToByteStr(it->second.first);
-				l["Out"] = CString::ToByteStr(it->second.second);
-				l["Total"] = CString::ToByteStr(it->second.first + it->second.second);
+			if (User.IsIRCConnected()) {
+				uiServers++;
 			}
-
-			Tmpl["UserIn"] = CString::ToByteStr(Users.first);
-			Tmpl["UserOut"] = CString::ToByteStr(Users.second);
-			Tmpl["UserTotal"] = CString::ToByteStr(Users.first + Users.second);
-
-			Tmpl["ZNCIn"] = CString::ToByteStr(ZNC.first);
-			Tmpl["ZNCOut"] = CString::ToByteStr(ZNC.second);
-			Tmpl["ZNCTotal"] = CString::ToByteStr(ZNC.first + ZNC.second);
-
-			Tmpl["AllIn"] = CString::ToByteStr(Total.first);
-			Tmpl["AllOut"] = CString::ToByteStr(Total.second);
-			Tmpl["AllTotal"] = CString::ToByteStr(Total.first + Total.second);
+			uiClients += User.GetClients().size();
 		}
+
+		Tmpl["AttachedUsers"] = CString(uiAttached);
+		Tmpl["TotalCConnections"] = CString(uiClients);
+		Tmpl["TotalIRCConnections"] = CString(uiServers);
+
+		CZNC::TrafficStatsPair Users, ZNC, Total;
+		CZNC::TrafficStatsMap traffic = CZNC::Get().GetTrafficStats(Users, ZNC, Total);
+		CZNC::TrafficStatsMap::const_iterator it;
+
+		for (it = traffic.begin(); it != traffic.end(); ++it) {
+			CTemplate& l = Tmpl.AddRow("TrafficLoop");
+
+			l["Username"] = it->first;
+			l["In"] = CString::ToByteStr(it->second.first);
+			l["Out"] = CString::ToByteStr(it->second.second);
+			l["Total"] = CString::ToByteStr(it->second.first + it->second.second);
+		}
+
+		Tmpl["UserIn"] = CString::ToByteStr(Users.first);
+		Tmpl["UserOut"] = CString::ToByteStr(Users.second);
+		Tmpl["UserTotal"] = CString::ToByteStr(Users.first + Users.second);
+
+		Tmpl["ZNCIn"] = CString::ToByteStr(ZNC.first);
+		Tmpl["ZNCOut"] = CString::ToByteStr(ZNC.second);
+		Tmpl["ZNCTotal"] = CString::ToByteStr(ZNC.first + ZNC.second);
+
+		Tmpl["AllIn"] = CString::ToByteStr(Total.first);
+		Tmpl["AllOut"] = CString::ToByteStr(Total.second);
+		Tmpl["AllTotal"] = CString::ToByteStr(Total.first + Total.second);
 
 		return true;
 	}
