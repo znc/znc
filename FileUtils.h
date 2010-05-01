@@ -160,46 +160,6 @@ public:
 		return FillByWildcard(sDir, "*");
 	}
 
-/*	static bool Create(const CString& sDir, mode_t mode = 0755) {
-		VCCString vSubDirs = sDir.split("[/\\\\]+");
-		CCString sCurDir;
-
-		for (unsigned int a = 0; a < vSubDirs.size(); a++) {
-			sCurDir += vSubDirs[a] + "/";
-			if ((!CDir::Exists(sCurDir)) && (mkdir(sCurDir.c_str(), mode) != 0)) {
-				return false;
-			}
-		}
-
-		return true;
-	}
-
-	int FillByRegex(const CCString& sDir, const CCString& sRegex, const CCString& sFlags = "") {
-		CleanUp();
-		DIR* dir = opendir((sDir.empty()) ? "." : sDir.c_str());
-
-		if (!dir) {
-			return 0;
-		}
-
-		struct dirent * de;
-
-		while ((de = readdir(dir)) != 0) {
-			if ((strcmp(de->d_name, ".") == 0) || (strcmp(de->d_name, "..") == 0)) {
-				continue;
-			}
-			if ((!sRegex.empty()) && (!CCString::search(de->d_name, sRegex, sFlags))) {
-				continue;
-			}
-
-			CFile *file = new CFile(sDir, de->d_name, this);
-			push_back(file);
-		}
-
-		closedir(dir);
-		return size();
-	}*/
-
 	int FillByWildcard(const CString& sDir, const CString& sWildcard) {
 		CleanUp();
 		DIR* dir = opendir((sDir.empty()) ? "." : sDir.c_str());
