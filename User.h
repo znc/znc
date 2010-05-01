@@ -225,67 +225,67 @@ public:
 	// !Getters
 private:
 protected:
-	time_t			m_uConnectTime;
-	CString			m_sUserName;
-	CString			m_sCleanUserName;
-	CString			m_sNick;
-	CString			m_sAltNick;
-	CString			m_sIdent;
-	CString			m_sRealName;
-	CString			m_sVHost;
-	CString			m_sDCCVHost;
-	CString			m_sPass;
-	CString			m_sPassSalt;
-	CString			m_sStatusPrefix;
-	CString			m_sDefaultChanModes;
-	CString			m_sChanPrefixes;
-	CNick			m_IRCNick;
-	bool			m_bIRCAway;
-	CString			m_sIRCServer;
-	CString			m_sQuitMsg;
-	MCString		m_mssCTCPReplies;
-	CString			m_sTimestampFormat;
-	float			m_fTimezoneOffset;
-	eHashType		m_eHashType;
+	time_t                m_uConnectTime;
+	CString               m_sUserName;
+	CString               m_sCleanUserName;
+	CString               m_sNick;
+	CString               m_sAltNick;
+	CString               m_sIdent;
+	CString               m_sRealName;
+	CString               m_sVHost;
+	CString               m_sDCCVHost;
+	CString               m_sPass;
+	CString               m_sPassSalt;
+	CString               m_sStatusPrefix;
+	CString               m_sDefaultChanModes;
+	CString               m_sChanPrefixes;
+	CNick                 m_IRCNick;
+	bool                  m_bIRCAway;
+	CString               m_sIRCServer;
+	CString               m_sQuitMsg;
+	MCString              m_mssCTCPReplies;
+	CString               m_sTimestampFormat;
+	float                 m_fTimezoneOffset;
+	eHashType             m_eHashType;
 
 	// Paths
-	CString			m_sUserPath;
-	CString			m_sDLPath;
+	CString               m_sUserPath;
+	CString               m_sDLPath;
 	// !Paths
 
-	CBuffer				m_RawBuffer;
-	CBuffer				m_MotdBuffer;
-	CBuffer				m_QueryBuffer;
-	bool				m_bMultiClients;
-	bool				m_bBounceDCCs;
-	bool				m_bUseClientIP;
-	bool				m_bDenyLoadMod;
-	bool				m_bAdmin;
-	bool				m_bDenySetVHost;
-	bool				m_bKeepBuffer;
-	bool				m_bBeingDeleted;
-	bool				m_bAppendTimestamp;
-	bool				m_bPrependTimestamp;
-	bool				m_bIRCConnectEnabled;
-	CIRCSock*			m_pIRCSock;
+	CBuffer               m_RawBuffer;
+	CBuffer               m_MotdBuffer;
+	CBuffer               m_QueryBuffer;
+	bool                  m_bMultiClients;
+	bool                  m_bBounceDCCs;
+	bool                  m_bUseClientIP;
+	bool                  m_bDenyLoadMod;
+	bool                  m_bAdmin;
+	bool                  m_bDenySetVHost;
+	bool                  m_bKeepBuffer;
+	bool                  m_bBeingDeleted;
+	bool                  m_bAppendTimestamp;
+	bool                  m_bPrependTimestamp;
+	bool                  m_bIRCConnectEnabled;
+	CIRCSock*             m_pIRCSock;
 
-	CUserTimer*			m_pUserTimer;
+	CUserTimer*           m_pUserTimer;
 
-	vector<CServer*>	m_vServers;
-	vector<CChan*>		m_vChans;
-	vector<CClient*>	m_vClients;
-	set<CDCCBounce*>	m_sDCCBounces;
-	set<CDCCSock*>		m_sDCCSocks;
-	set<CString>		m_ssAllowedHosts;
-	unsigned int		m_uServerIdx; ///< Index in m_vServers of our current server + 1
-	unsigned int		m_uBufferCount;
-	unsigned long long      m_uBytesRead;
-	unsigned long long      m_uBytesWritten;
-	unsigned int		m_uMaxJoinTries;
-	unsigned int		m_uMaxJoins;
-	CString				m_sSkinName;
+	vector<CServer*>      m_vServers;
+	vector<CChan*>        m_vChans;
+	vector<CClient*>      m_vClients;
+	set<CDCCBounce*>      m_sDCCBounces;
+	set<CDCCSock*>        m_sDCCSocks;
+	set<CString>          m_ssAllowedHosts;
+	unsigned int          m_uServerIdx; ///< Index in m_vServers of our current server + 1
+	unsigned int          m_uBufferCount;
+	unsigned long long    m_uBytesRead;
+	unsigned long long    m_uBytesWritten;
+	unsigned int          m_uMaxJoinTries;
+	unsigned int          m_uMaxJoins;
+	CString               m_sSkinName;
 
-	CModules*		m_pModules;
+	CModules*             m_pModules;
 };
 
 #endif // !_USER_H

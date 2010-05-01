@@ -91,25 +91,25 @@ protected:
 	void PrintPage(const CString& sPage);
 	void Init();
 
-	bool					m_bSentHeader;
-	bool					m_bGotHeader;
-	bool					m_bLoggedIn;
-	bool					m_bPost;
-	bool					m_bDone;
-	unsigned long			m_uPostLen;
-	CString					m_sPostData;
-	CString					m_sURI;
-	CString					m_sUser;
-	CString					m_sPass;
-	CString					m_sContentType;
-	CString					m_sDocRoot;
-	map<CString, VCString>	m_msvsPOSTParams;
-	map<CString, VCString>	m_msvsGETParams;
-	MCString				m_msHeaders;
-	bool					m_bHTTP10Client;
-	CString					m_sIfNoneMatch;
-	MCString				m_msRequestCookies;
-	MCString				m_msResponseCookies;
+	bool                     m_bSentHeader;
+	bool                     m_bGotHeader;
+	bool                     m_bLoggedIn;
+	bool                     m_bPost;
+	bool                     m_bDone;
+	unsigned long            m_uPostLen;
+	CString                  m_sPostData;
+	CString                  m_sURI;
+	CString                  m_sUser;
+	CString                  m_sPass;
+	CString                  m_sContentType;
+	CString                  m_sDocRoot;
+	map<CString, VCString>   m_msvsPOSTParams;
+	map<CString, VCString>   m_msvsGETParams;
+	MCString                 m_msHeaders;
+	bool                     m_bHTTP10Client;
+	CString                  m_sIfNoneMatch;
+	MCString                 m_msRequestCookies;
+	MCString                 m_msResponseCookies;
 };
 
 #endif // !_HTTPSOCK_H

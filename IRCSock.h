@@ -24,10 +24,11 @@ public:
 	virtual ~CIRCSock();
 
 	typedef enum {
-		ListArg		= 0,	// These values must line up with their position in the CHANMODE argument to raw 005
-		HasArg		= 1,
-		ArgWhenSet	= 2,
-		NoArg		= 3
+		// These values must line up with their position in the CHANMODE argument to raw 005
+		ListArg    = 0,
+		HasArg     = 1,
+		ArgWhenSet = 2,
+		NoArg      = 3
 	} EChanModeArgs;
 
 	// Message Handlers
@@ -86,19 +87,19 @@ private:
 	// This is called when we connect and the nick we want is already taken
 	void SendAltNick(const CString& sBadNick);
 protected:
-	bool						m_bISpoofReleased;
-	bool						m_bAuthed;
-	bool						m_bNamesx;
-	bool						m_bUHNames;
-	CString						m_sPerms;
-	CString						m_sPermModes;
-	set<unsigned char>			m_scUserModes;
-	map<unsigned char, EChanModeArgs>	m_mueChanModes;
-	CUser*						m_pUser;
-	CNick						m_Nick;
-	CString						m_sPass;
-	map<CString, CChan*>		m_msChans;
-	unsigned int				m_uMaxNickLen;
+	bool                                m_bISpoofReleased;
+	bool                                m_bAuthed;
+	bool                                m_bNamesx;
+	bool                                m_bUHNames;
+	CString                             m_sPerms;
+	CString                             m_sPermModes;
+	set<unsigned char>                  m_scUserModes;
+	map<unsigned char, EChanModeArgs>   m_mueChanModes;
+	CUser*                              m_pUser;
+	CNick                               m_Nick;
+	CString                             m_sPass;
+	map<CString, CChan*>                m_msChans;
+	unsigned int                        m_uMaxNickLen;
 };
 
 #endif // !_IRCSOCK_H

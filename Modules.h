@@ -136,8 +136,8 @@ public:
 	// !Getters
 private:
 protected:
-	CModule*	m_pModule;
-	CString		m_sDescription;
+	CModule*   m_pModule;
+	CString    m_sDescription;
 };
 
 typedef void (*FPTimer_t)(CModule *, CFPTimer *);
@@ -161,7 +161,7 @@ protected:
 	}
 
 private:
-	FPTimer_t	m_pFBCallback;
+	FPTimer_t  m_pFBCallback;
 };
 
 class CModInfo {
@@ -193,10 +193,10 @@ public:
 	// !Setters
 private:
 protected:
-	bool	m_bGlobal;
-	CString	m_sName;
-	CString	m_sPath;
-	CString	m_sDescription;
+	bool     m_bGlobal;
+	CString  m_sName;
+	CString  m_sPath;
+	CString  m_sDescription;
 };
 
 /** The base class for your own ZNC modules.
@@ -227,20 +227,20 @@ public:
 		/** ZNC will continue event processing normally. This is what
 		 *  you should return normally.
 		 */
-		CONTINUE	= 1,
+		CONTINUE = 1,
 		/** This is the same as both CModule::HALTMODS and
 		 * CModule::HALTCORE together.
 		 */
-		HALT		= 2,
+		HALT     = 2,
 		/** Stop sending this even to other modules which were not
 		 *  called yet. Internally, the event is handled normally.
 		 */
-		HALTMODS	= 3,
+		HALTMODS = 3,
 		/** Continue calling other modules. When done, ignore the event
 		 *  in the ZNC core. (For most module hooks this means that a
 		 *  given event won't be forwarded to the connected users)
 		 */
-		HALTCORE	= 4
+		HALTCORE = 4
 	} EModRet;
 
 	typedef enum {
@@ -779,23 +779,23 @@ public:
 	// !Getters
 
 protected:
-	bool			m_bFake;
-	bool			m_bGlobal;
-	CString			m_sDescription;
-	set<CTimer*>		m_sTimers;
-	set<CSocket*>		m_sSockets;
-	ModHandle 		m_pDLL;
-	CSockManager*		m_pManager;
-	CUser*			m_pUser;
-	CClient*		m_pClient;
-	CString			m_sModName;
-	CString			m_sDataDir;
-	CString			m_sSavePath;
-	CString			m_sArgs;
-	CString			m_sModPath;
+	bool               m_bFake;
+	bool               m_bGlobal;
+	CString            m_sDescription;
+	set<CTimer*>       m_sTimers;
+	set<CSocket*>      m_sSockets;
+	ModHandle          m_pDLL;
+	CSockManager*      m_pManager;
+	CUser*             m_pUser;
+	CClient*           m_pClient;
+	CString            m_sModName;
+	CString            m_sDataDir;
+	CString            m_sSavePath;
+	CString            m_sArgs;
+	CString            m_sModPath;
 private:
-	MCString		m_mssRegistry; //!< way to save name/value pairs. Note there is no encryption involved in this
-	VWebSubPages	m_vSubPages;
+	MCString           m_mssRegistry; //!< way to save name/value pairs. Note there is no encryption involved in this
+	VWebSubPages       m_vSubPages;
 };
 
 class CModules : public vector<CModule*> {
@@ -810,7 +810,7 @@ public:
 
 	void UnloadAll();
 
-	bool OnBoot();						// Return false to abort
+	bool OnBoot();
 	bool OnPreRehash();
 	bool OnPostRehash();
 	bool OnIRCDisconnected();
@@ -899,8 +899,8 @@ private:
 			bool &bVersionMismatch, bool &bIsGlobal, CString& sDesc, CString& sRetMsg);
 
 protected:
-	CUser*		m_pUser;
-	CClient*	m_pClient;
+	CUser*    m_pUser;
+	CClient*  m_pClient;
 };
 
 /** Base class for global modules. If you want to write a global module, your
@@ -929,7 +929,7 @@ public:
 	/** This module hook is called when a user is being added.
 	 * @param User The user which will be added.
 	 * @param sErrorRet A message that may be displayed to the user if
-	 * 	the module stops adding the user.
+	 *                  the module stops adding the user.
 	 * @return See CModule::EModRet.
 	 */
 	virtual EModRet OnAddUser(CUser& User, CString& sErrorRet);

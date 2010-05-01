@@ -30,9 +30,9 @@ public:
 
 private:
 protected:
-	CString	m_sPre;
-	CString	m_sPost;
-	bool	m_bIncNick;
+	CString m_sPre;
+	CString m_sPost;
+	bool    m_bIncNick;
 };
 
 class CBuffer : private deque<CBufLine> {
@@ -59,7 +59,7 @@ public:
 	// !Getters
 private:
 protected:
-	unsigned int	m_uLineCount;
+	unsigned int m_uLineCount;
 };
 
 #endif // !_BUFFER_H

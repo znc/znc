@@ -58,8 +58,8 @@ public:
 	CString::EEscape GetEscapeTo() const { return m_eEscapeTo; }
 	// !Getters
 private:
-	CString::EEscape	m_eEscapeFrom;
-	CString::EEscape	m_eEscapeTo;
+	CString::EEscape   m_eEscapeFrom;
+	CString::EEscape   m_eEscapeTo;
 };
 
 
@@ -99,12 +99,12 @@ public:
 	CString GetValue(const CString& sName, bool bFromIf = false);
 	// !Getters
 private:
-	bool				m_bReverse;			//!< Iterate through this loop in reverse order
-	bool				m_bHasData;			//!< Tells whether this loop has real data or not
-	CString				m_sName;			//!< The name portion of the <?LOOP name?> tag
-	unsigned int		m_uRowIndex;		//!< The index of the current row we're on
-	unsigned long		m_uFilePosition;	//!< The file position of the opening <?LOOP?> tag
-	vector<CTemplate*>*	m_pvRows;			//!< This holds pointers to the templates associated with this loop
+	bool                  m_bReverse;       //!< Iterate through this loop in reverse order
+	bool                  m_bHasData;       //!< Tells whether this loop has real data or not
+	CString               m_sName;          //!< The name portion of the <?LOOP name?> tag
+	unsigned int          m_uRowIndex;      //!< The index of the current row we're on
+	unsigned long         m_uFilePosition;  //!< The file position of the opening <?LOOP?> tag
+	vector<CTemplate*>*   m_pvRows;         //!< This holds pointers to the templates associated with this loop
 };
 
 
@@ -172,13 +172,13 @@ public:
 	const CString& GetFileName() const { return m_sFileName; }
 	// !Getters
 private:
-	CTemplate*							m_pParent;
-	CString								m_sFileName;
-	list<pair<CString, bool> >			m_lsbPaths;
-	map<CString, vector<CTemplate*> >	m_mvLoops;
-	vector<CTemplateLoopContext*>		m_vLoopContexts;
-	CSmartPtr<CTemplateOptions>			m_spOptions;
-	vector<CSmartPtr<CTemplateTagHandler> >		m_vspTagHandlers;
+	CTemplate*                               m_pParent;
+	CString                                  m_sFileName;
+	list<pair<CString, bool> >               m_lsbPaths;
+	map<CString, vector<CTemplate*> >        m_mvLoops;
+	vector<CTemplateLoopContext*>            m_vLoopContexts;
+	CSmartPtr<CTemplateOptions>              m_spOptions;
+	vector<CSmartPtr<CTemplateTagHandler> >  m_vspTagHandlers;
 };
 
 #endif // !_TEMPLATE_H

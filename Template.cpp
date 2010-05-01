@@ -278,7 +278,7 @@ bool CTemplate::Print(const CString& sFileName, ostream& oOut) {
 	}
 
 	CString sLine;
-	CString	sSetBlockVar;
+	CString sSetBlockVar;
 	bool bValidLastIf = false;
 	bool bInSetBlock = false;
 	unsigned long uFilePos = 0;

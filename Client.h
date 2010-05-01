@@ -52,9 +52,9 @@ protected:
 	virtual void RefusedLogin(const CString& sReason) = 0;
 
 private:
-	CString		m_sUsername;
-	CString		m_sPassword;
-	Csock*		m_pSock;
+	CString  m_sUsername;
+	CString  m_sPassword;
+	Csock*   m_pSock;
 };
 
 
@@ -68,7 +68,7 @@ public:
 	void RefusedLogin(const CString& sReason);
 private:
 protected:
-	CClient*	m_pClient;
+	CClient* m_pClient;
 };
 
 class CClient : public CZNCSock {
@@ -128,16 +128,16 @@ public:
 private:
 
 protected:
-	bool		m_bGotPass;
-	bool		m_bGotNick;
-	bool		m_bGotUser;
-	bool		m_bNamesx;
-	bool		m_bUHNames;
-	CUser*		m_pUser;
-	CString		m_sNick;
-	CString		m_sPass;
-	CString		m_sUser;
-	CSmartPtr<CAuthBase>	m_spAuth;
+	bool                 m_bGotPass;
+	bool                 m_bGotNick;
+	bool                 m_bGotUser;
+	bool                 m_bNamesx;
+	bool                 m_bUHNames;
+	CUser*               m_pUser;
+	CString              m_sNick;
+	CString              m_sPass;
+	CString              m_sUser;
+	CSmartPtr<CAuthBase> m_spAuth;
 };
 
 #endif // !_CLIENT_H

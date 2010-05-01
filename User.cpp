@@ -45,7 +45,7 @@ protected:
 		}
 	}
 
-	CUser*	m_pUser;
+	CUser* m_pUser;
 };
 
 CUser::CUser(const CString& sUserName) {

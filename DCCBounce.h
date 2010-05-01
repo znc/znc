@@ -57,19 +57,19 @@ public:
 	// !Getters
 private:
 protected:
-	CString					m_sRemoteNick;
-	CString					m_sRemoteIP;
-	CString					m_sConnectIP;
-	CString					m_sLocalIP;
-	CString					m_sFileName;
-	CUser*					m_pUser;
-	CDCCBounce*				m_pPeer;
-	unsigned short				m_uRemotePort;
-	bool					m_bIsChat;
-	bool					m_bIsRemote;
+	CString                      m_sRemoteNick;
+	CString                      m_sRemoteIP;
+	CString                      m_sConnectIP;
+	CString                      m_sLocalIP;
+	CString                      m_sFileName;
+	CUser*                       m_pUser;
+	CDCCBounce*                  m_pPeer;
+	unsigned short               m_uRemotePort;
+	bool                         m_bIsChat;
+	bool                         m_bIsRemote;
 
-	static const unsigned int		m_uiMaxDCCBuffer;
-	static const unsigned int		m_uiMinDCCBuffer;
+	static const unsigned int    m_uiMaxDCCBuffer;
+	static const unsigned int    m_uiMinDCCBuffer;
 };
 
 #endif // !_DCCBOUNCE_H
