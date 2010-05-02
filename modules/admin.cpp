@@ -614,7 +614,7 @@ class CAdminMod : public CModule {
 			PutModule("Loading modules has been denied");
 			return;
 		}
-			
+
 		CModule *pMod = (pUser)->GetModules().FindModule(sModName);
 		if (!pMod) {
 			if (!(pUser)->GetModules().LoadModule(sModName, sArgs, pUser, sModRet, false)) {
@@ -647,11 +647,11 @@ class CAdminMod : public CModule {
 		CUser* pUser = GetUser(sUsername);
 		if (!pUser)
 			return;
-			
+
 		if (pUser->DenyLoadMod() && !m_pUser->IsAdmin()) {
 			PutModule("Loading modules has been denied");
 			return;
-		}	
+		}
 
 		if (!(pUser)->GetModules().UnloadModule(sModName, sModRet)) {
 			PutModule("Unable to unload module [" + sModName + "] [" + sModRet + "]");

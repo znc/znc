@@ -68,7 +68,7 @@ public:
 	}
 
 private:
-	bool	m_bWriteConf;
+	bool m_bWriteConf;
 };
 
 MODULEDEFS(CChanSaverMod, "Keep config up-to-date when user joins/parts")

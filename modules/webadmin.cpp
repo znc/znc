@@ -965,7 +965,7 @@ public:
 	}
 
 private:
-	map<CString, unsigned int>	m_suSwitchCounters;
+	map<CString, unsigned int>  m_suSwitchCounters;
 };
 
 GLOBALMODULEDEFS(CWebAdminMod, "Web based administration module")

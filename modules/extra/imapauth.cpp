@@ -32,10 +32,10 @@ public:
 	virtual void ReadLine(const CString& sLine);
 private:
 protected:
-	CIMAPAuthMod*			m_pIMAPMod;
-	bool					m_bSentLogin;
-	bool					m_bSentReply;
-	CSmartPtr<CAuthBase>	m_spAuth;
+	CIMAPAuthMod*        m_pIMAPMod;
+	bool                 m_bSentLogin;
+	bool                 m_bSentReply;
+	CSmartPtr<CAuthBase> m_spAuth;
 };
 
 
@@ -56,7 +56,7 @@ public:
 
 	virtual bool OnLoad(const CString& sArgs, CString& sMessage) {
 		if (sArgs.Trim_n().empty()) {
-			return true;	// use defaults
+			return true; // use defaults
 		}
 
 		m_sServer = sArgs.Token(0);
@@ -80,7 +80,7 @@ public:
 	virtual EModRet OnLoginAttempt(CSmartPtr<CAuthBase> Auth) {
 		CUser* pUser = CZNC::Get().FindUser(Auth->GetUsername());
 
-		if (!pUser) {	// @todo Will want to do some sort of && !m_bAllowCreate in the future
+		if (!pUser) { // @todo Will want to do some sort of && !m_bAllowCreate in the future
 			Auth->RefuseLogin("Invalid User - Halting IMAP Lookup");
 			return HALT;
 		}
@@ -109,13 +109,13 @@ public:
 	// !Getters
 private:
 	// Settings
-	CString				m_sServer;
-	unsigned short		m_uPort;
-	bool				m_bSSL;
-	CString				m_sUserFormat;
+	CString         m_sServer;
+	unsigned short  m_uPort;
+	bool            m_bSSL;
+	CString         m_sUserFormat;
 	// !Settings
 
-	TCacheMap<CString>	m_Cache;
+	TCacheMap<CString> m_Cache;
 };
 
 void CIMAPSock::ReadLine(const CString& sLine) {
@@ -139,7 +139,7 @@ void CIMAPSock::ReadLine(const CString& sLine) {
 
 		if (pUser && sLine.Equals("AUTH OK", false, 7)) {
 			m_spAuth->AcceptLogin(*pUser);
-			m_pIMAPMod->CacheLogin(CString(m_spAuth->GetUsername() + ":" + m_spAuth->GetPassword()).MD5());		// Use MD5 so passes don't sit in memory in plain text
+			m_pIMAPMod->CacheLogin(CString(m_spAuth->GetUsername() + ":" + m_spAuth->GetPassword()).MD5()); // Use MD5 so passes don't sit in memory in plain text
 			DEBUG("+++ Successful IMAP lookup");
 		} else {
 			m_spAuth->RefuseLogin("Invalid Password");

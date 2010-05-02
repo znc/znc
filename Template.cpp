@@ -173,7 +173,7 @@ void CTemplate::RemovePath(const CString& sPath) {
 	for (list<pair<CString, bool> >::iterator it = m_lsbPaths.begin(); it != m_lsbPaths.end(); ++it) {
 		if (it->first == sPath) {
 			m_lsbPaths.remove(*it);
-			RemovePath(sPath);	// @todo probably shouldn't use recursion, being lazy
+			RemovePath(sPath); // @todo probably shouldn't use recursion, being lazy
 			return;
 		}
 	}

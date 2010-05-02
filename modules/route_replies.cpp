@@ -360,11 +360,11 @@ private:
 		}
 	}
 
-	CClient	*m_pDoing;
-	const struct reply	*m_pReplies;
-	requestQueue	m_vsPending;
+	CClient            *m_pDoing;
+	const struct reply *m_pReplies;
+	requestQueue        m_vsPending;
 	// This field is only used for display purpose.
-	CString		m_sLastRequest;
+	CString             m_sLastRequest;
 };
 
 void CRouteTimeout::RunJob()

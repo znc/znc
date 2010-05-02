@@ -18,10 +18,10 @@ using std::stringstream;
 
 struct EmailST
 {
-	CString	sFrom;
-	CString	sSubject;
-	CString	sUidl;
-	u_int	iSize;
+	CString sFrom;
+	CString sSubject;
+	CString sUidl;
+	u_int   iSize;
 };
 
 class CEmailJob : public CTimer
@@ -114,7 +114,7 @@ public:
 				ssUidls.insert(vEmails[a].sUidl);
 			}
 
-			m_ssUidls = ssUidls;	// keep the list in synch
+			m_ssUidls = ssUidls; // keep the list in synch
 
 			if (Table.size()) {
 				PutModule(Table);
@@ -127,10 +127,10 @@ public:
 	}
 
 private:
-	CString			m_sMailPath;
-	time_t			m_iLastCheck;
-	set<CString>		m_ssUidls;
-	bool			m_bInitialized;
+	CString      m_sMailPath;
+	time_t       m_iLastCheck;
+	set<CString> m_ssUidls;
+	bool         m_bInitialized;
 };
 
 class CEmailFolder : public CSocket
@@ -146,7 +146,7 @@ public:
 	virtual ~CEmailFolder()
 	{
 		if (!m_sMailBuffer.empty())
-			ProcessMail();	// get the last one
+			ProcessMail(); // get the last one
 
 		if (!m_vEmails.empty())
 			m_pModule->ParseEmails(m_vEmails);
@@ -178,7 +178,7 @@ public:
 			CString sLine(*it);
 			sLine.Trim();
 			if (sLine.empty())
-				break;	// out of the headers
+				break; // out of the headers
 
 			if (sLine.Equals("From: ", false, 6))
 				tmp.sFrom = sLine.substr(6, CString::npos);
@@ -192,10 +192,10 @@ public:
 		m_vEmails.push_back(tmp);
 	}
 private:
-	CEmail				*m_pModule;
-	CString				m_sMailbox;
-	CString				m_sMailBuffer;
-	vector<EmailST>		m_vEmails;
+	CEmail          *m_pModule;
+	CString          m_sMailbox;
+	CString          m_sMailBuffer;
+	vector<EmailST>  m_vEmails;
 };
 
 void CEmail::OnModCommand(const CString& sCommand)
@@ -222,17 +222,17 @@ void CEmail::StartParser()
 	CString sParserName = "EMAIL::" + m_pUser->GetUserName();
 
 	if (m_pManager->FindSockByName(sParserName))
-		return;	// one at a time sucker
+		return; // one at a time sucker
 
 	CFile cFile(m_sMailPath);
 	if ((!cFile.Exists()) || (cFile.GetSize() == 0))
 	{
 		m_bInitialized = true;
-		return;	// der
+		return; // der
 	}
 
 	if (cFile.GetMTime() <= m_iLastCheck)
-		return;	// only check if modified
+		return; // only check if modified
 
 	int iFD = open(m_sMailPath.c_str(), O_RDONLY);
 	if (iFD >= 0)

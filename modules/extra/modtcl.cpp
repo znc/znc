@@ -17,12 +17,12 @@
 
 #define STDVAR (ClientData cd, Tcl_Interp *irp, int argc, const char *argv[])
 
-#define BADARGS(nl, nh, example) do {					\
-	if ((argc < (nl)) || (argc > (nh))) {				\
-		Tcl_AppendResult(irp, "wrong # args: should be \"",	\
-			argv[0], (example), "\"", NULL);		\
-		return TCL_ERROR;					\
-	}								\
+#define BADARGS(nl, nh, example) do {                               \
+	if ((argc < (nl)) || (argc > (nh))) {                       \
+		Tcl_AppendResult(irp, "wrong # args: should be \"", \
+			argv[0], (example), "\"", NULL);            \
+		return TCL_ERROR;                                   \
+	}                                                           \
 } while (0)
 
 class CModTcl;
@@ -34,7 +34,7 @@ public:
 	virtual ~CModTclTimer() {}
 protected:
 	virtual void RunJob();
-	CModTcl*	m_pParent;
+	CModTcl* m_pParent;
 };
 
 class CModTclStartTimer : public CTimer {
@@ -44,7 +44,7 @@ public:
 	virtual ~CModTclStartTimer() {}
 protected:
 	virtual void RunJob();
-	CModTcl*	m_pParent;
+	CModTcl* m_pParent;
 };
 
 

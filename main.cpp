@@ -11,18 +11,18 @@
 #include <sys/wait.h>
 
 static const struct option g_LongOpts[] = {
-	{ "help",			no_argument,	0,	'h' },
-	{ "version",			no_argument,	0,	'v' },
-	{ "debug",			no_argument,	0,	'D' },
-	{ "foreground",			no_argument,	0,	'f' },
-	{ "no-color",			no_argument,	0,	'n' },
-	{ "allow-root",			no_argument,	0,	'r' },
-	{ "makeconf",			no_argument,	0,	'c' },
-	{ "makepass",			no_argument,	0,	's' },
+	{ "help",        no_argument,       0, 'h' },
+	{ "version",     no_argument,       0, 'v' },
+	{ "debug",       no_argument,       0, 'D' },
+	{ "foreground",  no_argument,       0, 'f' },
+	{ "no-color",    no_argument,       0, 'n' },
+	{ "allow-root",  no_argument,       0, 'r' },
+	{ "makeconf",    no_argument,       0, 'c' },
+	{ "makepass",    no_argument,       0, 's' },
 #ifdef HAVE_LIBSSL
-	{ "makepem",			no_argument,	0,	'p' },
+	{ "makepem",     no_argument,       0, 'p' },
 #endif /* HAVE_LIBSSL */
-	{ "datadir",                    required_argument,	0,   'd' },
+	{ "datadir",     required_argument, 0, 'd' },
 	{ 0, 0, 0, 0 }
 };
 

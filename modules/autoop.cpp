@@ -11,7 +11,7 @@
 
 class CAutoOpMod;
 
-#define AUTOOP_CHALLENGE_LENGTH	32
+#define AUTOOP_CHALLENGE_LENGTH 32
 
 class CAutoOpTimer : public CTimer {
 public:
@@ -27,7 +27,7 @@ private:
 protected:
 	virtual void RunJob();
 
-	CAutoOpMod*		m_pParent;
+	CAutoOpMod* m_pParent;
 };
 
 class CAutoOpUser {
@@ -121,10 +121,10 @@ public:
 	}
 private:
 protected:
-	CString			m_sUsername;
-	CString			m_sUserKey;
-	CString			m_sHostmask;
-	set<CString>	m_ssChans;
+	CString      m_sUsername;
+	CString      m_sUserKey;
+	CString      m_sHostmask;
+	set<CString> m_ssChans;
 };
 
 class CAutoOpMod : public CModule {
@@ -452,8 +452,8 @@ public:
 		}
 	}
 private:
-	map<CString, CAutoOpUser*>		m_msUsers;
-	MCString						m_msQueue;
+	map<CString, CAutoOpUser*> m_msUsers;
+	MCString                   m_msQueue;
 };
 
 void CAutoOpTimer::RunJob() {

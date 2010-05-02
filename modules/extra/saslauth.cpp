@@ -61,7 +61,7 @@ public:
 		CUser* pUser(CZNC::Get().FindUser(user));
 		sasl_conn_t *sasl_conn(0);
 
-		if (!pUser) {	// @todo Will want to do some sort of && !m_bAllowCreate in the future
+		if (!pUser) { // @todo Will want to do some sort of && !m_bAllowCreate in the future
 			Auth->RefuseLogin("Invalid User - Halting SASL Authentication");
 			return HALT;
 		}
@@ -87,10 +87,10 @@ public:
 	}
 
 private:
-	TCacheMap<CString>	m_Cache;
+	TCacheMap<CString>     m_Cache;
 
-	static sasl_callback_t	cbs[];
-	static CString		method;
+	static sasl_callback_t cbs[];
+	static CString         method;
 
 	static int getopt(void *context, const char *plugin_name, const char *option, const char **result, unsigned *len) {
 		if (!method.empty() && strcmp(option, "pwcheck_method") == 0) {

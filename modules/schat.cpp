@@ -35,7 +35,7 @@ public:
 
 protected:
 	virtual void RunJob();
-	CString		m_sNick;
+	CString m_sNick;
 };
 
 class CSChatSock : public CSocket
@@ -54,7 +54,7 @@ public:
 
 	virtual bool ConnectionFrom(const CS_STRING & sHost, u_short iPort)
 	{
-		Close();	// close the listener after the first connection
+		Close(); // close the listener after the first connection
 		return(true);
 	}
 
@@ -92,9 +92,9 @@ public:
 	}
 
 private:
-	CSChat 					*m_pModule;
-	CString					m_sChatNick;
-	vector<CS_STRING>		m_vBuffer;
+	CSChat  *m_pModule;
+	CString  m_sChatNick;
+	VCString m_vBuffer;
 };
 
 class CSChat : public CModule
@@ -393,8 +393,8 @@ public:
 	}
 
 private:
-	map< CString,pair< u_long,u_short > >		m_siiWaitingChats;
-	CString		m_sPemFile;
+	map< CString,pair< u_long,u_short > > m_siiWaitingChats;
+	CString                               m_sPemFile;
 };
 
 

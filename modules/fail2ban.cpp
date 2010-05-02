@@ -91,8 +91,8 @@ public:
 	}
 
 private:
-	TCacheMap<CString, unsigned int>	m_Cache;
-	unsigned int			m_uiAllowedFailed;
+	TCacheMap<CString, unsigned int> m_Cache;
+	unsigned int                     m_uiAllowedFailed;
 };
 
 GLOBALMODULEDEFS(CFailToBanMod, "Block IPs for some time after a failed login")

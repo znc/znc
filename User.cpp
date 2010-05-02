@@ -60,8 +60,8 @@ CUser::CUser(const CString& sUserName) {
 	m_uBytesRead = 0;
 	m_uBytesWritten = 0;
 	m_pModules = new CModules;
-	m_RawBuffer.SetLineCount(100);		// This should be more than enough raws, especially since we are buffering the MOTD separately
-	m_MotdBuffer.SetLineCount(200);		// This should be more than enough motd lines
+	m_RawBuffer.SetLineCount(100);   // This should be more than enough raws, especially since we are buffering the MOTD separately
+	m_MotdBuffer.SetLineCount(200);  // This should be more than enough motd lines
 	m_bMultiClients = true;
 	m_bBounceDCCs = true;
 	m_eHashType = HASH_NONE;
@@ -913,7 +913,7 @@ CServer* CUser::GetNextServer() {
 		m_uServerIdx = 0;
 	}
 
-	return m_vServers[m_uServerIdx++];	// Todo: cycle through these
+	return m_vServers[m_uServerIdx++];
 }
 
 CServer* CUser::GetCurrentServer() const {

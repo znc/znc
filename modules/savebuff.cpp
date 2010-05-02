@@ -294,9 +294,9 @@ public:
 #endif /* LEGACY_SAVEBUFF */
 
 private:
-	bool	m_bBootError;
-	bool	m_bFirstLoad;
-	CString	m_sPassword;
+	bool    m_bBootError;
+	bool    m_bFirstLoad;
+	CString m_sPassword;
 	bool DecryptChannel(const CString & sChan, CString & sBuffer)
 	{
 		CString sChannel = GetPath(sChan);

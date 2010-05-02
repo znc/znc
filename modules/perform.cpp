@@ -106,7 +106,7 @@ private:
 		return true;
 	}
 
-	VCString	m_vPerform;
+	VCString m_vPerform;
 };
 
 MODULEDEFS(CPerform, "Adds perform capabilities")
