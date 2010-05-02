@@ -89,7 +89,7 @@ public:
 	}
 
 private:
-	EType	m_eType;
+	EType m_eType;
 };
 
 
@@ -163,10 +163,10 @@ public:
 
 
 private:
-	CString		m_sModuleName;
-	CString		m_sUsername;	// NEED these so we can send the signal to the right guy
-	int			m_iParentFD;
-	VPString	m_vArgs;
+	CString  m_sModuleName;
+	CString  m_sUsername; // NEED these so we can send the signal to the right guy
+	int      m_iParentFD;
+	VPString m_vArgs;
 
 	void SetupArgs()
 	{
@@ -198,9 +198,9 @@ public:
 protected:
 	virtual void RunJob();
 
-	CString		m_sFuncName;
-	CString		m_sUserName;
-	CString		m_sModuleName;
+	CString m_sFuncName;
+	CString m_sUserName;
+	CString m_sModuleName;
 };
 
 class CModPerl : public CGlobalModule
@@ -424,10 +424,10 @@ public:
 
 	enum ECBTYPES
 	{
-		CB_LOCAL 	= 1,
-		CB_ONHOOK 	= 2,
-		CB_TIMER 	= 3,
-		CB_SOCK		= 4
+		CB_LOCAL  = 1,
+		CB_ONHOOK = 2,
+		CB_TIMER  = 3,
+		CB_SOCK   = 4
 	};
 
 	EModRet CallBack(const PString & sHookName, const VPString & vsArgs,
@@ -503,7 +503,7 @@ public:
 	void UnloadPerlMod(const CString & sModule);
 
 private:
-	PerlInterpreter	*m_pPerl;
+	PerlInterpreter *m_pPerl;
 
 };
 

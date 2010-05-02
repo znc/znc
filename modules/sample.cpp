@@ -88,12 +88,12 @@ public:
 	}
 
 	virtual EModRet OnRaw(CString& sLine) {
-	//	PutModule("OnRaw() [" + sLine + "]");
+		// PutModule("OnRaw() [" + sLine + "]");
 		return CONTINUE;
 	}
 
 	virtual EModRet OnUserRaw(CString& sLine) {
-	//	PutModule("UserRaw() [" + sLine + "]");
+		// PutModule("UserRaw() [" + sLine + "]");
 		return CONTINUE;
 	}
 

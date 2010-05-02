@@ -451,11 +451,11 @@ private:
 	}
 
 /* Settings */
-	CString	m_sUsername;
+	CString m_sUsername;
 	CString m_sPassword;
-	bool m_bUseCloakedHost;
-	bool m_bUseChallenge;
-	bool m_bRequestPerms;
+	bool    m_bUseCloakedHost;
+	bool    m_bUseChallenge;
+	bool    m_bRequestPerms;
 
 	void SetUsername(const CString& sUsername) {
 		m_sUsername = sUsername;

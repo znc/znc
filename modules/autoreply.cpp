@@ -85,7 +85,7 @@ public:
 	}
 
 private:
-	TCacheMap<CString>	m_Messaged;
+	TCacheMap<CString> m_Messaged;
 };
 
 MODULEDEFS(CAutoReplyMod, "Reply to queries when you are away")

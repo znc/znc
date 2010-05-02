@@ -106,7 +106,7 @@ void CIRCSock::ReadLine(const CString& sData) {
 		CString sRest = sLine.Token(3, true);
 
 		switch (uRaw) {
-			case 1:	{// :irc.server.com 001 nick :Welcome to the Internet Relay Network nick
+			case 1: { // :irc.server.com 001 nick :Welcome to the Internet Relay Network nick
 				if (m_bAuthed && sServer == "irc.znc.in") {
 					// m_bAuthed == true => we already received another 001 => we might be in a traffic loop
 					m_pUser->PutStatus("ZNC seems to be connected to itself, disconnecting...");
@@ -115,7 +115,7 @@ void CIRCSock::ReadLine(const CString& sData) {
 				}
 
 				m_pUser->SetIRCServer(sServer);
-				SetTimeout(240, TMO_READ);	// Now that we are connected, let nature take its course
+				SetTimeout(240, TMO_READ);  // Now that we are connected, let nature take its course
 				PutIRC("WHO " + sNick);
 
 				m_bAuthed = true;
@@ -152,13 +152,13 @@ void CIRCSock::ReadLine(const CString& sData) {
 			case 2:
 			case 3:
 			case 4:
-			case 250:	// highest connection count
-			case 251:	// user count
-			case 252:	// oper count
-			case 254:	// channel count
-			case 255:	// client count
-			case 265:	// local users
-			case 266:	// global users
+			case 250:  // highest connection count
+			case 251:  // user count
+			case 252:  // oper count
+			case 254:  // channel count
+			case 255:  // client count
+			case 265:  // local users
+			case 266:  // global users
 				m_pUser->UpdateRawBuffer(":" + sServer + " " + sCmd + " ", " " + sRest);
 				break;
 			case 305:
@@ -167,7 +167,7 @@ void CIRCSock::ReadLine(const CString& sData) {
 			case 306:
 				m_pUser->SetIRCAway(true);
 				break;
-			case 324: {	// MODE
+			case 324: {  // MODE
 				sRest.Trim();
 				CChan* pChan = m_pUser->FindChan(sRest.Token(0));
 
@@ -247,7 +247,7 @@ void CIRCSock::ReadLine(const CString& sData) {
 
 				break;
 			}
-			case 353: {	// NAMES
+			case 353: {  // NAMES
 				sRest.Trim();
 				// Todo: allow for non @+= server msgs
 				CChan* pChan = m_pUser->FindChan(sRest.Token(1));
@@ -267,8 +267,8 @@ void CIRCSock::ReadLine(const CString& sData) {
 				// We forwarded it already, so return
 				return;
 			}
-			case 366: {	// end of names list
-				m_pUser->PutUser(sLine);	// First send them the raw
+			case 366: {  // end of names list
+				m_pUser->PutUser(sLine);  // First send them the raw
 
 				// :irc.server.com 366 nick #chan :End of /NAMES list.
 				CChan* pChan = m_pUser->FindChan(sRest.Token(0));
@@ -290,13 +290,13 @@ void CIRCSock::ReadLine(const CString& sData) {
 					}
 				}
 
-				return;	// return so we don't send them the raw twice
+				return;  // return so we don't send them the raw twice
 			}
-			case 375: 	// begin motd
-			case 422:	// MOTD File is missing
+			case 375:  // begin motd
+			case 422:  // MOTD File is missing
 				m_pUser->ClearMotdBuffer();
-			case 372:	// motd
-			case 376:	// end motd
+			case 372:  // motd
+			case 376:  // end motd
 				m_pUser->AddMotdBuffer(":" + sServer + " " + sCmd + " ", " " + sRest);
 				break;
 			case 437:
@@ -487,7 +487,6 @@ void CIRCSock::ReadLine(const CString& sData) {
 				}
 			} else if (sTarget == m_Nick.GetNick()) {
 				CString sModeArg = sModes.Token(0);
-//					CString sArgs = sModes.Token(1, true); Usermode changes got no params
 				bool bAdd = true;
 /* no module call defined (yet?)
 				MODULECALL(OnRawUserMode(*pOpNick, *this, sModeArg, sArgs), m_pUser, NULL, );

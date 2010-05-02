@@ -212,8 +212,8 @@ public:
 		return false;
 	}
 private:
-	vector<CString>	m_vsChans;
-	vector<CString>	m_vsNegChans;
+	vector<CString> m_vsChans;
+	vector<CString> m_vsNegChans;
 };
 
 MODULEDEFS(CChanAttach, "Reattaches you to channels on activity.")

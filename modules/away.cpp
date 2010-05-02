@@ -83,7 +83,7 @@ public:
 		if (m_bIsAway)
 			Away(true); // reset away if we are reconnected
 		else
-			Back();	// ircd seems to remember your away if you killed the client and came back
+			Back(); // ircd seems to remember your away if you killed the client and came back
 	}
 
 	bool BootStrap()
@@ -367,8 +367,8 @@ public:
 	bool IsAway() { return(m_bIsAway); }
 
 private:
-	CString	m_sPassword;
-	bool	m_bBootError;
+	CString m_sPassword;
+	bool    m_bBootError;
 	bool DecryptMessages(CString & sBuffer)
 	{
 		CString sMessages = GetPath();
@@ -413,11 +413,11 @@ private:
 		m_vMessages.push_back(sText);
 	}
 
-	time_t			m_iLastSentData;
-	bool			m_bIsAway;
-	time_t		m_iAutoAway;
-	vector<CString>	m_vMessages;
-	CString			m_sReason;
+	time_t          m_iLastSentData;
+	bool            m_bIsAway;
+	time_t          m_iAutoAway;
+	vector<CString> m_vMessages;
+	CString         m_sReason;
 };
 
 

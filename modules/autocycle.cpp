@@ -220,8 +220,8 @@ protected:
 	}
 
 private:
-	vector<CString>	m_vsChans;
-	vector<CString>	m_vsNegChans;
+	vector<CString> m_vsChans;
+	vector<CString> m_vsNegChans;
 };
 
 MODULEDEFS(CAutoCycleMod, "Rejoins channels to gain Op if you're the only user left")

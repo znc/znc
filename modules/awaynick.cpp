@@ -20,7 +20,7 @@ private:
 	virtual void RunJob();
 
 private:
-	CAwayNickMod&	m_Module;
+	CAwayNickMod& m_Module;
 };
 
 class CBackNickTimer : public CTimer {
@@ -40,7 +40,7 @@ private:
 	}
 
 private:
-	CModule&	m_Module;
+	CModule& m_Module;
 };
 
 class CAwayNickMod : public CModule {
@@ -170,8 +170,8 @@ public:
 	}
 
 private:
-	CString		m_sFormat;
-	CString		m_sAwayNick;
+	CString m_sFormat;
+	CString m_sAwayNick;
 };
 
 CAwayNickTimer::CAwayNickTimer(CAwayNickMod& Module)

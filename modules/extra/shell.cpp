@@ -35,10 +35,10 @@ public:
 	virtual void ReadLine(const CString& sData);
 	virtual void Disconnected();
 
-	CShellMod*	m_pParent;
+	CShellMod* m_pParent;
 
 private:
-	CClient*	m_pClient;
+	CClient*   m_pClient;
 };
 
 class CShellMod : public CModule {
@@ -158,7 +158,7 @@ public:
 		m_pManager->AddSock(new CShellSock(this, m_pClient, "cd " + m_sPath + " && " + sCommand), "SHELL");
 	}
 private:
-	CString	m_sPath;
+	CString m_sPath;
 };
 
 void CShellSock::ReadLine(const CString& sData) {

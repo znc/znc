@@ -10,9 +10,9 @@
 #include "znc.h"
 
 // If you change these and it breaks, you get to keep the pieces
-#define CHAN_PREFIX_1	"~"
-#define CHAN_PREFIX_1C	'~'
-#define CHAN_PREFIX	CHAN_PREFIX_1 "#"
+#define CHAN_PREFIX_1   "~"
+#define CHAN_PREFIX_1C  '~'
+#define CHAN_PREFIX     CHAN_PREFIX_1 "#"
 
 class CPartylineChannel {
 public:
@@ -35,10 +35,10 @@ public:
 	bool IsFixedChan(const CString& s) { return m_ssFixedNicks.find(s) != m_ssFixedNicks.end(); }
 
 protected:
-	CString	m_sTopic;
-	CString	m_sName;
-	set<CString>	m_ssNicks;
-	set<CString>	m_ssFixedNicks;
+	CString      m_sTopic;
+	CString      m_sName;
+	set<CString> m_ssNicks;
+	set<CString> m_ssFixedNicks;
 };
 
 class CPartylineMod : public CGlobalModule {
@@ -707,9 +707,9 @@ public:
 	}
 
 private:
-	set<CPartylineChannel*>	m_ssChannels;
-	set<CUser*>		m_spInjectedPrefixes;
-	set<CString>	m_ssDefaultChans;
+	set<CPartylineChannel*> m_ssChannels;
+	set<CUser*>             m_spInjectedPrefixes;
+	set<CString>            m_ssDefaultChans;
 };
 
 GLOBALMODULEDEFS(CPartylineMod, "Internal channels and queries for users connected to znc")

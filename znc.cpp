@@ -1087,12 +1087,12 @@ bool CZNC::DoRehash(CString& sError)
 	}
 
 	CString sLine;
-	bool bCommented = false;	// support for /**/ style comments
-	CUser* pUser = NULL;	// Used to keep track of which user block we are in
-	CUser* pRealUser = NULL;	// If we rehash a user, this is the real one
-	CChan* pChan = NULL;	// Used to keep track of which chan block we are in
+	bool bCommented = false;     // support for /**/ style comments
+	CUser* pUser = NULL;         // Used to keep track of which user block we are in
+	CUser* pRealUser = NULL;     // If we rehash a user, this is the real one
+	CChan* pChan = NULL;         // Used to keep track of which chan block we are in
 	unsigned int uLineNum = 0;
-	MCString msModules;	// Modules are queued for later loading
+	MCString msModules;          // Modules are queued for later loading
 
 	std::list<CGlobalModuleConfigLine> lGlobalModuleConfigLine;
 
