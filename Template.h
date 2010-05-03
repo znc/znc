@@ -13,7 +13,6 @@
 #include <iostream>
 
 using std::ostream;
-using std::cout;
 using std::endl;
 
 class CTemplate;
@@ -154,8 +153,8 @@ public:
 	void ClearPaths();
 	CString ResolvePath(const CString& sPath, const CString& sFilename);
 	bool PrintString(CString& sRet);
-	bool Print(ostream& oOut = cout);
-	bool Print(const CString& sFileName, ostream& oOut = cout);
+	bool Print(ostream& oOut);
+	bool Print(const CString& sFileName, ostream& oOut);
 	bool ValidIf(const CString& sArgs);
 	bool ValidExpr(const CString& sExpr);
 	bool IsTrue(const CString& sName);
