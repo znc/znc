@@ -276,7 +276,7 @@ void CWebSock::SetPaths(CModule* pModule, bool bIsTemplate) {
 
 		// 3. ./modules/<mod_name>/
 		//
-		m_Template.AppendPath(GetModWebPath(sModName));
+		m_Template.AppendPath(GetModWebPath(pModule));
 
 		// 4. ~/.znc/webskins/<user_skin_setting>/mods/<mod_name>/
 		//
@@ -444,14 +444,17 @@ CWebSock::EPageReqResult CWebSock::PrintTemplate(const CString& sPageName, CStri
 	}
 }
 
-CString CWebSock::GetModWebPath(const CString& sModName) const {
-	CString sRet = CZNC::Get().GetCurPath() + "/modules/www/" + sModName;
+CString CWebSock::GetModWebPath(const CModule* pModule) const {
+	// This is: /path/to/module.so
+	const CString& sModPath = pModule->GetModPath();
 
-	if (!CFile::IsDir(sRet)) {
-		sRet = CString(_MODDIR_) + "/www/" + sModName;
-	}
+	// Find the last '/' in sModPath...
+	CString::size_type pos = sModPath.find_last_of('/');
 
-	return sRet + "/";
+	// ...and set sModDir to the dir in which sModPath resides
+	CString sModDir = sModPath.substr(0, pos);
+
+	return sModDir + "/www/" + pModule->GetModName();
 }
 
 CString CWebSock::GetSkinPath(const CString& sSkinName) const {
@@ -640,7 +643,7 @@ CWebSock::EPageReqResult CWebSock::OnPageRequestInternal(const CString& sURI, CS
 
 		if (sURI.Left(10) == "/modfiles/") {
 			m_Template.AppendPath(GetSkinPath(GetSkinName()) + "/mods/" + m_sModName + "/files/");
-			m_Template.AppendPath(GetModWebPath(m_sModName) + "/files/");
+			m_Template.AppendPath(GetModWebPath(pModule) + "/files/");
 
 			std::cerr << "===================== fffffffffffffffffffff   [" << m_sModName << "]  [" << m_sPage << "]" << std::endl;
 			if (PrintFile(m_Template.ExpandFile(m_sPage.TrimLeft_n("/")))) {
