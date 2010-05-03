@@ -645,7 +645,6 @@ CWebSock::EPageReqResult CWebSock::OnPageRequestInternal(const CString& sURI, CS
 			m_Template.AppendPath(GetSkinPath(GetSkinName()) + "/mods/" + m_sModName + "/files/");
 			m_Template.AppendPath(GetModWebPath(pModule) + "/files/");
 
-			std::cerr << "===================== fffffffffffffffffffff   [" << m_sModName << "]  [" << m_sPage << "]" << std::endl;
 			if (PrintFile(m_Template.ExpandFile(m_sPage.TrimLeft_n("/")))) {
 				return PAGE_PRINT;
 			} else {
