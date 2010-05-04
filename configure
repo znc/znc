@@ -2896,6 +2896,68 @@ if test "x$ac_cv_func_lstat" = x""yes; then :
 fi
 
 
+# ----- Check for dlopen
+
+FOUND_DL=no
+# Don't use any libs like -lssl -lcrypto when checking for dlopen(),
+# because they might change the test results
+SAVED_LIBS="$LIBS"
+LIBS=""
+
+ac_fn_cxx_check_func "$LINENO" "dlopen" "ac_cv_func_dlopen"
+if test "x$ac_cv_func_dlopen" = x""yes; then :
+  FOUND_DL=yes
+fi
+
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for dlopen in -ldl" >&5
+$as_echo_n "checking for dlopen in -ldl... " >&6; }
+if test "${ac_cv_lib_dl_dlopen+set}" = set; then :
+  $as_echo_n "(cached) " >&6
+else
+  ac_check_lib_save_LIBS=$LIBS
+LIBS="-ldl  $LIBS"
+cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+/* end confdefs.h.  */
+
+/* Override any GCC internal prototype to avoid an error.
+   Use char because int might match the return type of a GCC
+   builtin and then its argument prototype would still apply.  */
+#ifdef __cplusplus
+extern "C"
+#endif
+char dlopen ();
+int
+main ()
+{
+return dlopen ();
+  ;
+  return 0;
+}
+_ACEOF
+if ac_fn_cxx_try_link "$LINENO"; then :
+  ac_cv_lib_dl_dlopen=yes
+else
+  ac_cv_lib_dl_dlopen=no
+fi
+rm -f core conftest.err conftest.$ac_objext \
+    conftest$ac_exeext conftest.$ac_ext
+LIBS=$ac_check_lib_save_LIBS
+fi
+{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_lib_dl_dlopen" >&5
+$as_echo "$ac_cv_lib_dl_dlopen" >&6; }
+if test "x$ac_cv_lib_dl_dlopen" = x""yes; then :
+  FOUND_DL=yes ; appendLib -ldl
+fi
+
+
+appendLib "$SAVED_LIBS"
+
+if test $FOUND_DL = "no" ; then
+	as_fn_error "Could not find dlopen. Try --disable-modules" "$LINENO" 5
+fi
+
+# ----- Check for c-ares
+
 if test "x$ARES" != "xno"; then
 	old_ARES=$ARES
 
@@ -3023,10 +3085,11 @@ pkg_failed=no
 { $as_echo "$as_me:${as_lineno-$LINENO}: checking for c_ares" >&5
 $as_echo_n "checking for c_ares... " >&6; }
 
-if test -n "$c_ares_CFLAGS"; then
-    pkg_cv_c_ares_CFLAGS="$c_ares_CFLAGS"
- elif test -n "$PKG_CONFIG"; then
-    if test -n "$PKG_CONFIG" && \
+if test -n "$PKG_CONFIG"; then
+    if test -n "$c_ares_CFLAGS"; then
+        pkg_cv_c_ares_CFLAGS="$c_ares_CFLAGS"
+    else
+        if test -n "$PKG_CONFIG" && \
     { { $as_echo "$as_me:${as_lineno-$LINENO}: \$PKG_CONFIG --exists --print-errors \"libcares\""; } >&5
   ($PKG_CONFIG --exists --print-errors "libcares") 2>&5
   ac_status=$?
@@ -3036,13 +3099,15 @@ if test -n "$c_ares_CFLAGS"; then
 else
   pkg_failed=yes
 fi
- else
-    pkg_failed=untried
+    fi
+else
+	pkg_failed=untried
 fi
-if test -n "$c_ares_LIBS"; then
-    pkg_cv_c_ares_LIBS="$c_ares_LIBS"
- elif test -n "$PKG_CONFIG"; then
-    if test -n "$PKG_CONFIG" && \
+if test -n "$PKG_CONFIG"; then
+    if test -n "$c_ares_LIBS"; then
+        pkg_cv_c_ares_LIBS="$c_ares_LIBS"
+    else
+        if test -n "$PKG_CONFIG" && \
     { { $as_echo "$as_me:${as_lineno-$LINENO}: \$PKG_CONFIG --exists --print-errors \"libcares\""; } >&5
   ($PKG_CONFIG --exists --print-errors "libcares") 2>&5
   ac_status=$?
@@ -3052,8 +3117,9 @@ if test -n "$c_ares_LIBS"; then
 else
   pkg_failed=yes
 fi
- else
-    pkg_failed=untried
+    fi
+else
+	pkg_failed=untried
 fi
 
 
@@ -3066,9 +3132,9 @@ else
         _pkg_short_errors_supported=no
 fi
         if test $_pkg_short_errors_supported = yes; then
-	        c_ares_PKG_ERRORS=`$PKG_CONFIG --short-errors --print-errors "libcares" 2>&1`
+	        c_ares_PKG_ERRORS=`$PKG_CONFIG --short-errors --errors-to-stdout --print-errors "libcares"`
         else
-	        c_ares_PKG_ERRORS=`$PKG_CONFIG --print-errors "libcares" 2>&1`
+	        c_ares_PKG_ERRORS=`$PKG_CONFIG --errors-to-stdout --print-errors "libcares"`
         fi
 	# Put the nasty error message in config.log where it belongs
 	echo "$c_ares_PKG_ERRORS" >&5
@@ -3105,6 +3171,8 @@ $as_echo "$as_me: WARNING: c-ares was not found and thus disabled" >&2;}
 		ARES=yes
 	fi
 fi
+
+# ----- Check for openssl
 
 if test "x$SSL" != "xno"; then
 	if test -n "$OPENSSL"; then
@@ -3247,65 +3315,6 @@ else
   DATADIR="${datadir}/znc"
 fi
 
-
-
-FOUND_DL=no
-# Don't use any libs like -lssl -lcrypto when checking for dlopen(),
-# because they might change the test results
-SAVED_LIBS="$LIBS"
-LIBS=""
-
-ac_fn_cxx_check_func "$LINENO" "dlopen" "ac_cv_func_dlopen"
-if test "x$ac_cv_func_dlopen" = x""yes; then :
-  FOUND_DL=yes
-fi
-
-{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for dlopen in -ldl" >&5
-$as_echo_n "checking for dlopen in -ldl... " >&6; }
-if test "${ac_cv_lib_dl_dlopen+set}" = set; then :
-  $as_echo_n "(cached) " >&6
-else
-  ac_check_lib_save_LIBS=$LIBS
-LIBS="-ldl  $LIBS"
-cat confdefs.h - <<_ACEOF >conftest.$ac_ext
-/* end confdefs.h.  */
-
-/* Override any GCC internal prototype to avoid an error.
-   Use char because int might match the return type of a GCC
-   builtin and then its argument prototype would still apply.  */
-#ifdef __cplusplus
-extern "C"
-#endif
-char dlopen ();
-int
-main ()
-{
-return dlopen ();
-  ;
-  return 0;
-}
-_ACEOF
-if ac_fn_cxx_try_link "$LINENO"; then :
-  ac_cv_lib_dl_dlopen=yes
-else
-  ac_cv_lib_dl_dlopen=no
-fi
-rm -f core conftest.err conftest.$ac_objext \
-    conftest$ac_exeext conftest.$ac_ext
-LIBS=$ac_check_lib_save_LIBS
-fi
-{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_lib_dl_dlopen" >&5
-$as_echo "$ac_cv_lib_dl_dlopen" >&6; }
-if test "x$ac_cv_lib_dl_dlopen" = x""yes; then :
-  FOUND_DL=yes ; appendLib -ldl
-fi
-
-
-appendLib "$SAVED_LIBS"
-
-if test $FOUND_DL = "no" ; then
-	as_fn_error "Could not find dlopen. Try --disable-modules" "$LINENO" 5
-fi
 
 appendMod "$CXXFLAGS"
 
