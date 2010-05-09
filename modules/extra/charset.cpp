@@ -47,11 +47,12 @@ private:
 			{
 				if(errno == EINVAL)
 				{
-					iconv_close(ic);
+					// charset is not what we think it is.
 					return (size_t)-1;
 				}
 				else if(errno != E2BIG)
 				{
+					// something bad happened, internal error.
 					return (size_t)-2;
 				}
 			}
@@ -77,71 +78,78 @@ private:
 			iconv_close(ic);
 			return false;
 		}
-		else if(uLength != (size_t)-2)
+		else if(uLength == (size_t)-2)
 		{
+			// internal error, preserve errno from GetConversionLength:
+			int tmp_errno = errno;
+			iconv_close(ic);
+			errno = tmp_errno;
+			return false;
+		}
+		else
+		{
+			// no error, so let's do the actual conversion.
+
 			iconv(ic, NULL, NULL, NULL, NULL); // reset
 
+			// state vars for iconv:
 			size_t uResultBufSize = uLength + 1;
 			char *pResult = new char[uResultBufSize];
 			memset(pResult, 0, uResultBufSize);
 			char *pResultWalker = pResult;
-
 			const char* pIn = sData.c_str();
 			size_t uInLen = sData.size();
 
+			// let's fcking do it!
 			size_t uResult = iconv(ic, (ICONV_CONST char**)&pIn, &uInLen, &pResultWalker, &uResultBufSize);
+			bool bResult = (uResult != (size_t)-1);
 
 			iconv_close(ic);
 
-			if(uResult != (size_t)-1)
+			if(bResult)
 			{
 				sData.erase();
 				sData.append(pResult, uLength);
+			}
 
-				delete[] pResult;
-				return true;
-			}
-			else
-			{
-				delete[] pResult;
-			}
+			delete[] pResult;
+
+			return bResult;
 		}
-
-		int tmp_errno = errno;
-		iconv_close(ic);
-		errno = tmp_errno;
-		return false;
 	}
 
 	bool ConvertCharset(const VCString& vsFrom, const CString& sTo, CString& sData)
 	{
 		CString sDataCopy(sData);
 
+		// check whether sData already is encoded with the right charset:
 		iconv_t icTest = iconv_open(sTo.c_str(), sTo.c_str());
 		if(icTest != (iconv_t)-1)
 		{
 			size_t uTest = GetConversionLength(icTest, sData);
+			iconv_close(icTest);
 
 			if(uTest != (size_t)-1 && uTest != (size_t)-2)
 			{
 				return true;
 			}
-
-			iconv_close(icTest);
 		}
 
 		bool bConverted = false;
 
+		// try all possible source charsets:
 		for(VCString::const_iterator itf = vsFrom.begin(); itf != vsFrom.end(); itf++)
 		{
 			if(ConvertCharset(*itf, sTo, sDataCopy))
 			{
+				// conversion successful!
 				sData = sDataCopy;
 				bConverted = true;
 				break;
 			}
 			else
 			{
+				// reset string and try the next charset:
 				sDataCopy = sData;
 			}
 		}
@@ -160,6 +168,8 @@ public:
 				"<client_charset1[,client_charset2[,...]]> "
 				"<server_charset1[,server_charset2[,...]]>";
 			return false;
+			// the first charset in each list is the preferred one for
+			// messages to the client / to the server.
 		}
 
 		VCString vsFrom, vsTo;
@@ -197,12 +207,14 @@ public:
 
 	EModRet OnRaw(CString& sLine)
 	{
+		// convert IRC server -> client
 		ConvertCharset(m_vsServerCharsets, m_vsClientCharsets[0], sLine);
 		return CONTINUE;
 	}
 
 	EModRet OnUserRaw(CString& sLine)
 	{
+		// convert client -> IRC server
 		ConvertCharset(m_vsClientCharsets, m_vsServerCharsets[0], sLine);
 		return CONTINUE;
 	}
