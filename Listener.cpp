@@ -100,7 +100,7 @@ void CIncomingConnection::ReadLine(const CString& sLine) {
 		// This is a HTTP request, let the webmods handle it
 
 		if (!bAcceptHTTP) {
-			Write("HTTP/1.0 403 Access Denied\r\n\r\nNo HTTP requests allowed\r\n");
+			Write("HTTP/1.0 403 Access Denied\r\n\r\nWeb Access is not enabled.\r\n");
 			Close(CLT_AFTERWRITE);
 
 			DEBUG("Refused HTTP connection to non HTTP port");
