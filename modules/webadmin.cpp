@@ -827,6 +827,9 @@ public:
 				l["Port"] = CString(pListener->GetPort());
 				l["BindHost"] = pListener->GetBindHost();
 
+				l["IsWeb"] = CString(pListener->GetAcceptType() != CListener::ACCEPT_IRC);
+				l["IsIRC"] = CString(pListener->GetAcceptType() != CListener::ACCEPT_HTTP);
+
 #ifdef HAVE_LIBSSL
 				if (pListener->IsSSL()) {
 					l["IsSSL"] = "true";

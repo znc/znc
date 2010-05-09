@@ -18,6 +18,8 @@
 									<td>SSL</td>
 									<td>IPv4</td>
 									<td>IPv6</td>
+									<td>IRC</td>
+									<td>Web</td>
 								</tr>
 							</thead>
 							<tbody>
@@ -28,6 +30,8 @@
 									<td><? IF IsSSL ?>Yes<? ELSE ?>No<? ENDIF ?></td>
 									<td><? IF IsIPV4 ?>Yes<? ELSE ?>No<? ENDIF ?></td>
 									<td><? IF IsIPV6 ?>Yes<? ELSE ?>No<? ENDIF ?></td>
+									<td><? IF IsIRC ?>Yes<? ELSE ?>No<? ENDIF ?></td>
+									<td><? IF IsWeb ?>Yes<? ELSE ?>No<? ENDIF ?></td>
 								</tr>
 							<? ENDLOOP ?>
 							</tbody>
