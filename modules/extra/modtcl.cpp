@@ -106,8 +106,7 @@ public:
 		if (!sMyArgs.empty()) {
 			i = Tcl_EvalFile(interp, sMyArgs.c_str());
 			if (i != TCL_OK) {
-				result = interp->result;
-				PutModule(CString(result));
+				PutModule(Tcl_GetStringResult(interp));
 			}
 		}
 
@@ -140,8 +139,7 @@ public:
 		while (Tcl_DoOneEvent(TCL_DONT_WAIT)) {}
 		i = Tcl_Eval(interp,"Binds::ProcessTime");
 		if (i != TCL_OK) {
-			result = interp->result;
-			PutModule(CString(result));
+			PutModule(Tcl_GetStringResult(interp));
 		}
 	}
 
@@ -183,8 +181,7 @@ public:
 		CString sCommand = "Binds::ProcessPubm {" + sNick + "} {" + sHost + "} - {" + sChannel + "} {" + sMes + "}";
 		i = Tcl_Eval(interp, sCommand.c_str());
 		if (i != TCL_OK) {
-			result = interp->result;
-			PutModule(CString(result));
+			PutModule(Tcl_GetStringResult(interp));
 		}
 		return CONTINUE;
 	}
@@ -201,8 +198,7 @@ public:
 			sCommand = "Binds::ProcessNick {" + sOldNick + "} {" + sHost + "} - {" + vChans[n]->GetName() + "} {" + sNewNickTmp + "}";
 			i = Tcl_Eval(interp, sCommand.c_str());
 			if (i != TCL_OK) {
-				result = interp->result;
-				PutModule(CString(result));
+				PutModule(Tcl_GetStringResult(interp));
 			}
 		}
 	}
@@ -215,8 +211,7 @@ public:
 		CString sCommand = "Binds::ProcessKick {" + sOpNick + "} {" + sOpHost + "} - {" + Channel.GetName() + "} {" + sNick + "} {" + sMessage + "}";
 		i = Tcl_Eval(interp, sCommand.c_str());
 		if (i != TCL_OK) {
-			result = interp->result;
-			PutModule(CString(result));
+			PutModule(Tcl_GetStringResult(interp));
 		}
 	}
 
@@ -224,7 +219,6 @@ public:
 private:
 	Tcl_Interp *interp;
 	int i;
-	char *result;
 
 	static CString argvit(const char *argv[], unsigned int end, unsigned int begin, CString delim) {
 		CString sRet;
