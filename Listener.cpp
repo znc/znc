@@ -13,39 +13,6 @@ CListener::~CListener() {
 		CZNC::Get().GetManager().DelSockByAddr(m_pListener);
 }
 
-// Settings may not be changed when we are already listening
-#define CHECK() if (m_pListener) return;
-
-void CListener::SetSSL(bool b) {
-	CHECK();
-	m_bSSL = b;
-}
-
-void CListener::SetAddrType(EAddrType eAddr) {
-	CHECK();
-	m_eAddr = eAddr;
-}
-
-void CListener::SetPort(unsigned short u) {
-	CHECK();
-	m_uPort = u;
-}
-
-void CListener::SetBindHost(const CString& s) {
-	CHECK();
-	m_sBindHost = s;
-}
-
-void CListener::SetRealListener(CRealListener* p) {
-	CHECK();
-	m_pListener = p;
-}
-
-void CListener::SetAcceptType(AcceptType a) {
-	CHECK();
-	m_eAcceptType = a;
-}
-
 bool CListener::Listen() {
 	if (!m_uPort || m_pListener) {
 		return false;
@@ -65,8 +32,12 @@ bool CListener::Listen() {
 			m_pListener, 0, m_eAddr);
 }
 
+void CListener::ResetRealListener() {
+	m_pListener = NULL;
+}
+
 CRealListener::~CRealListener() {
-	m_pParent->SetRealListener(NULL);
+	m_pParent->ResetRealListener();
 }
 
 bool CRealListener::ConnectionFrom(const CString& sHost, unsigned short uPort) {
@@ -96,7 +67,7 @@ void CRealListener::SockError(int iErrno) {
 	}
 }
 
-CIncomingConnection::CIncomingConnection(const CString& sHostname, unsigned short uPort, CListener::AcceptType eAcceptType) : CZNCSock(sHostname, uPort) {
+CIncomingConnection::CIncomingConnection(const CString& sHostname, unsigned short uPort, CListener::EAcceptType eAcceptType) : CZNCSock(sHostname, uPort) {
 	m_eAcceptType = eAcceptType;
 	// The socket will time out in 120 secs, no matter what.
 	// This has to be fixed up later, if desired.
