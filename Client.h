@@ -98,7 +98,8 @@ public:
 	bool HasNamesx() const { return m_bNamesx; }
 	bool HasUHNames() const { return m_bUHNames; }
 
-	void UserCommand(CString& sCommand);
+	void UserCommand(CString& sLine);
+	void UserPortCommand(CString& sLine);
 	void StatusCTCP(const CString& sCommand);
 	void BouncedOff();
 	bool IsAttached() const { return m_pUser != NULL; }
