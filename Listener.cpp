@@ -8,6 +8,44 @@
 
 #include "Listener.h"
 
+CListener::~CListener() {
+	if (m_pListener)
+		CZNC::Get().GetManager().DelSockByAddr(m_pListener);
+}
+
+// Settings may not be changed when we are already listening
+#define CHECK() if (m_pListener) return;
+
+void CListener::SetSSL(bool b) {
+	CHECK();
+	m_bSSL = b;
+}
+
+void CListener::SetAddrType(EAddrType eAddr) {
+	CHECK();
+	m_eAddr = eAddr;
+}
+
+void CListener::SetPort(unsigned short u) {
+	CHECK();
+	m_uPort = u;
+}
+
+void CListener::SetBindHost(const CString& s) {
+	CHECK();
+	m_sBindHost = s;
+}
+
+void CListener::SetRealListener(CRealListener* p) {
+	CHECK();
+	m_pListener = p;
+}
+
+void CListener::SetAcceptType(AcceptType a) {
+	CHECK();
+	m_eAcceptType = a;
+}
+
 bool CListener::Listen() {
 	if (!m_uPort || m_pListener) {
 		return false;
@@ -25,11 +63,6 @@ bool CListener::Listen() {
 
 	return CZNC::Get().GetManager().ListenHost(m_uPort, "_LISTENER", m_sBindHost, bSSL, SOMAXCONN,
 			m_pListener, 0, m_eAddr);
-}
-
-CListener::~CListener() {
-	if (m_pListener)
-		CZNC::Get().GetManager().DelSockByAddr(m_pListener);
 }
 
 CRealListener::~CRealListener() {
