@@ -35,12 +35,12 @@ public:
 	~CListener();
 
 	// Setters
-	void SetSSL(bool b) { m_bSSL = b; }
-	void SetAddrType(EAddrType eAddr) { m_eAddr = eAddr; }
-	void SetPort(unsigned short u) { m_uPort = u; }
-	void SetBindHost(const CString& s) { m_sBindHost = s; }
-	void SetRealListener(CRealListener* p) { m_pListener = p; }
-	void SetAcceptType(AcceptType a) { m_eAcceptType = a; }
+	void SetSSL(bool b);
+	void SetAddrType(EAddrType eAddr);
+	void SetPort(unsigned short u);
+	void SetBindHost(const CString& s);
+	void SetRealListener(CRealListener* p);
+	void SetAcceptType(AcceptType a);
 	// !Setters
 
 	// Getters
