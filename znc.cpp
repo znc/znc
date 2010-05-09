@@ -556,6 +556,12 @@ bool CZNC::WriteConfig() {
 			sHostPortion = sHostPortion.FirstLine() + " ";
 		}
 
+		CString sAcceptProtocol;
+		if(pListener->GetAcceptType() == CListener::ACCEPT_IRC)
+			sAcceptProtocol = "irc_only ";
+		else if(pListener->GetAcceptType() == CListener::ACCEPT_HTTP)
+			sAcceptProtocol = "web_only ";
+
 		CString s6;
 		switch (pListener->GetAddrType()) {
 			case ADDR_IPV4ONLY:
@@ -569,7 +575,8 @@ bool CZNC::WriteConfig() {
 				break;
 		}
 
-		m_LockFile.Write("Listen" + s6 + "      = " + sHostPortion + CString((pListener->IsSSL()) ? "+" : "") + CString(pListener->GetPort()) + "\n");
+		m_LockFile.Write("Listen" + s6 + "      = " + sAcceptProtocol + sHostPortion +
+			CString((pListener->IsSSL()) ? "+" : "") + CString(pListener->GetPort()) + "\n");
 	}
 
 	m_LockFile.Write("ConnectDelay = " + CString(m_uiConnectDelay) + "\n");
@@ -1455,7 +1462,6 @@ bool CZNC::DoRehash(CString& sError)
 				}
 			} else {
 				if (sName.Equals("Listen") || sName.Equals("ListenPort") || sName.Equals("Listen6") || sName.Equals("Listen4")) {
-					bool bSSL = false;
 					EAddrType eAddr = ADDR_ALL;
 					if (sName.Equals("Listen4")) {
 						eAddr = ADDR_IPV4ONLY;
@@ -1463,8 +1469,15 @@ bool CZNC::DoRehash(CString& sError)
 					if (sName.Equals("Listen6")) {
 						eAddr = ADDR_IPV6ONLY;
 					}
-					CString sPort;
 
+					CListener::EAcceptType eAccept = CListener::ACCEPT_ALL;
+					if (sValue.TrimPrefix("irc_only "))
+						eAccept = CListener::ACCEPT_IRC;
+					else if (sValue.TrimPrefix("web_only "))
+						eAccept = CListener::ACCEPT_HTTP;
+
+					bool bSSL = false;
+					CString sPort;
 					CString sBindHost;
 
 					if (ADDR_IPV4ONLY == eAddr) {
@@ -1544,10 +1557,11 @@ bool CZNC::DoRehash(CString& sError)
 						return false;
 					}
 
-					CListener* pListener = new CListener(uPort, sBindHost, bSSL, eAddr);
+					CListener* pListener = new CListener(uPort, sBindHost, bSSL, eAddr, eAccept);
 
 					if (!pListener->Listen()) {
-						sError = "Unable to bind [" + CString(strerror(errno)) + "]";
+						sError = (errno == 0 ? CString("unknown error, check the host name") : CString(strerror(errno)));
+						sError = "Unable to bind [" + sError + "]";
 						CUtils::PrintStatus(false, sError);
 						delete pListener;
 						return false;

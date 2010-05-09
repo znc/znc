@@ -21,27 +21,18 @@ public:
 		ACCEPT_IRC,
 		ACCEPT_HTTP,
 		ACCEPT_ALL
-	} AcceptType;
+	} EAcceptType;
 
-	CListener(unsigned short uPort, const CString& sBindHost, bool bSSL, EAddrType eAddr) {
+	CListener(unsigned short uPort, const CString& sBindHost, bool bSSL, EAddrType eAddr, EAcceptType eAccept = ACCEPT_ALL) {
 		m_uPort = uPort;
 		m_sBindHost = sBindHost;
 		m_bSSL = bSSL;
 		m_eAddr = eAddr;
 		m_pListener = NULL;
-		m_eAcceptType = ACCEPT_ALL;
+		m_eAcceptType = eAccept;
 	}
 
 	~CListener();
-
-	// Setters
-	void SetSSL(bool b);
-	void SetAddrType(EAddrType eAddr);
-	void SetPort(unsigned short u);
-	void SetBindHost(const CString& s);
-	void SetRealListener(CRealListener* p);
-	void SetAcceptType(AcceptType a);
-	// !Setters
 
 	// Getters
 	bool IsSSL() const { return m_bSSL; }
@@ -49,10 +40,11 @@ public:
 	unsigned short GetPort() const { return m_uPort; }
 	const CString& GetBindHost() const { return m_sBindHost; }
 	CRealListener* GetRealListener() const { return m_pListener; }
-	AcceptType GetAcceptType() const { return m_eAcceptType; }
+	EAcceptType GetAcceptType() const { return m_eAcceptType; }
 	// !Getters
 
 	bool Listen();
+	void ResetRealListener();
 
 private:
 protected:
@@ -61,7 +53,7 @@ protected:
 	unsigned short  m_uPort;
 	CString         m_sBindHost;
 	CRealListener*  m_pListener;
-	AcceptType      m_eAcceptType;
+	EAcceptType     m_eAcceptType;
 };
 
 class CRealListener : public CZNCSock {
@@ -79,12 +71,12 @@ private:
 
 class CIncomingConnection : public CZNCSock {
 public:
-	CIncomingConnection(const CString& sHostname, unsigned short uPort, CListener::AcceptType eAcceptType);
+	CIncomingConnection(const CString& sHostname, unsigned short uPort, CListener::EAcceptType eAcceptType);
 	virtual ~CIncomingConnection() {}
 	virtual void ReadLine(const CString& sData);
 
 private:
-	CListener::AcceptType m_eAcceptType;
+	CListener::EAcceptType m_eAcceptType;
 };
 
 #endif // !_LISTENER_H
