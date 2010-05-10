@@ -45,6 +45,7 @@ public:
 
 		if (sLine == "#?") {
 			ListNotes(true);
+			return HALT;
 		} else if (sLine.Left(2) == "#-") {
 			sKey = sLine.Token(0).LeftChomp_n(2);
 			if (DelNote(sKey)) {
@@ -52,6 +53,7 @@ public:
 			} else {
 				PutModNotice("Unable to delete note [" + sKey + "]");
 			}
+			return HALT;
 		} else if (sLine.Left(2) == "#+") {
 			sKey = sLine.Token(0).LeftChomp_n(2);
 			bOverwrite = true;
@@ -62,7 +64,7 @@ public:
 		CString sValue(sLine.Token(1, true));
 
 		if (!sKey.empty()) {
-			if (!bOverwrite && !GetNV(sKey).empty()) {
+			if (!bOverwrite && FindNV(sKey) != EndNV()) {
 				PutModNotice("That note already exists.  Use /#+<key> <note> to overwrite.");
 			} else if (AddNote(sKey, sValue)) {
 				if (!bOverwrite) {
