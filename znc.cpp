@@ -575,7 +575,7 @@ bool CZNC::WriteConfig() {
 				break;
 		}
 
-		m_LockFile.Write("Listen" + s6 + "      = " + sAcceptProtocol + sHostPortion +
+		m_LockFile.Write("Listener" + s6 + "    = " + sAcceptProtocol + sHostPortion +
 			CString((pListener->IsSSL()) ? "+" : "") + CString(pListener->GetPort()) + "\n");
 	}
 
@@ -695,7 +695,7 @@ bool CZNC::WriteNewConfig(const CString& sConfigFile) {
 		sListenHost += " ";
 	}
 
-	vsLines.push_back("Listen" + s6 + "    = " + sListenHost + sSSL + CString(uListenPort));
+	vsLines.push_back("Listener" + s6 + "  = " + sListenHost + sSSL + CString(uListenPort));
 	// !Listen
 
 	set<CModInfo> ssGlobalMods;
@@ -1461,12 +1461,13 @@ bool CZNC::DoRehash(CString& sError)
 					}
 				}
 			} else {
-				if (sName.Equals("Listen") || sName.Equals("ListenPort") || sName.Equals("Listen6") || sName.Equals("Listen4")) {
+				if (sName.Equals("Listen") || sName.Equals("Listen6") || sName.Equals("Listen4")
+						|| sName.Equals("Listener") || sName.Equals("Listener6") || sName.Equals("Listener4")) {
 					EAddrType eAddr = ADDR_ALL;
-					if (sName.Equals("Listen4")) {
+					if (sName.Equals("Listen4") || sName.Equals("Listen") || sName.Equals("Listener4")) {
 						eAddr = ADDR_IPV4ONLY;
 					}
-					if (sName.Equals("Listen6")) {
+					if (sName.Equals("Listener6")) {
 						eAddr = ADDR_IPV6ONLY;
 					}
 
