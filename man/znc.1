@@ -1,4 +1,4 @@
-.TH ZNC 1 2008\-06\-01 ZNC
+.TH ZNC 1 2010\-05\-10 ZNC
 .SH NAME
 znc \- An advanced IRC bouncer
 .SH SYNOPSIS
@@ -69,8 +69,6 @@ Interactively create a new configuration.
 .BR \-s ", " \-\-makepass
 Hash a password for use in
 .IR znc.conf .
-.B znc
-uses MD5 for hashing and can use salted hashes.
 .TP
 .BR \-p ", " \-\-makepem
 Generate
@@ -105,7 +103,7 @@ Static module data like webadmin skins
 installs its modules to this directory.
 .TP
 .I /usr/local/include/znc/
-These are the headers needed for compilling own modules.
+These are the headers needed for compiling own modules.
 .TP
 .I ~/.znc
 This is the default datadir. The following paths assume that you use this.
@@ -130,17 +128,6 @@ This is the path to
 Use
 .I \-\-makeconf
 for an easy way to generate it.
-.TP
-.I ~/.znc/configs/znc.conf-backup
-.B znc
-may rewrite
-.I znc.conf
-to save your new settings.
-In case this goes wrong, you still have this backup of
-.I znc.conf
-which is overwritten everytime
-.B znc
-saves its config.
 .TP
 .IB ~/.znc/users/ USERNAME /
 The data for every user is saved in this dir.
