@@ -513,7 +513,9 @@ void CWebSock::OnPageRequest(const CString& sURI) {
 		// Something else will later call Close()
 		break;
 	case PAGE_DONE:
-		// Redirect or something like that, it's done, Close() has been called
+		// Redirect or something like that, it's done, just make sure
+		// the connection will be closed
+		Close(CLT_AFTERWRITE);
 		break;
 	default:
 		PrintNotFound();
@@ -656,6 +658,11 @@ CWebSock::EPageReqResult CWebSock::OnPageRequestInternal(const CString& sURI, CS
 			/* if a module returns false from OnWebRequest, it does not
 			   want the template to be printed, usually because it did a redirect. */
 			if (pModule->OnWebRequest(*this, m_sPage, m_Template)) {
+				// If they already sent a reply, let's assume
+				// they did what they wanted to do.
+				if (SentHeader()) {
+					return PAGE_DONE;
+				}
 				return PrintTemplate(m_sPage, sPageRet, pModule);
 			}
 
@@ -663,7 +670,6 @@ CWebSock::EPageReqResult CWebSock::OnPageRequestInternal(const CString& sURI, CS
 				sPageRet = GetErrorPage(404, "Not Implemented", "The requested module does not acknowledge web requests");
 				return PAGE_PRINT;
 			} else {
-				Close(CLT_AFTERWRITE); // make sure the connection is going to be closed
 				return PAGE_DONE;
 			}
 		}

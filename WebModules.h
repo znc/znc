@@ -114,7 +114,7 @@ public:
 		PAGE_NOTFOUND, // print 404 and Close()
 		PAGE_PRINT,    // print page contents and Close()
 		PAGE_DEFERRED, // async processing, Close() will be called from a different place
-		PAGE_DONE      // all stuff has been done and Close() has been called (e.g. by CHTTPSock::Redirect)
+		PAGE_DONE      // all stuff has been done
 	};
 
 	CWebSock(CModule* pModule);
