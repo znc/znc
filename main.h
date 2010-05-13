@@ -24,12 +24,12 @@
 #define _MODDIR_ "/usr/lib/znc"
 #endif
 
-#ifndef _SKINDIR_
-#define _SKINDIR_ _MODDIR_ "/webskins"
-#endif
-
 #ifndef _DATADIR_
 #define _DATADIR_ "/usr/share/znc"
+#endif
+
+#ifndef _SKINDIR_
+#define _SKINDIR_ _DATADIR_ "/webskins"
 #endif
 
 #define MODULECALL(macFUNC, macUSER, macCLIENT, macEXITER)         \
