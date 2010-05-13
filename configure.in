@@ -161,19 +161,23 @@ if test "x$ARES" != "xno"; then
 	if test -z "$PKG_CONFIG"
 	then
 		ARES=no
+		ZNC_AUTO_FAIL([ARES],
+			[pkg-config not found. Try --disable-c-ares.
+Disabling c-ares may result in a slight performance decrease but will not have any other side-effects],
+			[pkg-config was not found and thus c-ares was disabled])
 	else
 		PKG_CHECK_MODULES([c_ares], [libcares],, ARES=no)
-	fi
 
-	if test "x$ARES" = "xno" ; then
-		ZNC_AUTO_FAIL([ARES],
-			[c-ares not found. Try --disable-c-ares.
+		if test "x$ARES" = "xno" ; then
+			ZNC_AUTO_FAIL([ARES],
+				[c-ares not found. Try --disable-c-ares.
 Disabling c-ares may result in a slight performance decrease but will not have any other side-effects],
-			[c-ares was not found and thus disabled])
-	else
-		appendCXX $c_ares_CFLAGS -DHAVE_C_ARES
-		appendLib $c_ares_LIBS
-		ARES=yes
+				[c-ares was not found and thus disabled])
+		else
+			appendCXX $c_ares_CFLAGS -DHAVE_C_ARES
+			appendLib $c_ares_LIBS
+			ARES=yes
+		fi
 	fi
 fi
 
