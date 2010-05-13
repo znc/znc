@@ -3079,6 +3079,17 @@ fi
 	if test -z "$PKG_CONFIG"
 	then
 		ARES=no
+
+	# This looks better in the summary at the end
+	ARES="not found"
+	if test "x$old_ARES" != "xauto" ; then
+		as_fn_error "pkg-config not found. Try --disable-c-ares.
+Disabling c-ares may result in a slight performance decrease but will not have any other side-effects" "$LINENO" 5
+	else
+		{ $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: pkg-config was not found and thus c-ares was disabled" >&5
+$as_echo "$as_me: WARNING: pkg-config was not found and thus c-ares was disabled" >&2;}
+	fi
+
 	else
 
 pkg_failed=no
@@ -3151,9 +3162,8 @@ else
 $as_echo "yes" >&6; }
 	:
 fi
-	fi
 
-	if test "x$ARES" = "xno" ; then
+		if test "x$ARES" = "xno" ; then
 
 	# This looks better in the summary at the end
 	ARES="not found"
@@ -3165,10 +3175,11 @@ Disabling c-ares may result in a slight performance decrease but will not have a
 $as_echo "$as_me: WARNING: c-ares was not found and thus disabled" >&2;}
 	fi
 
-	else
-		appendCXX $c_ares_CFLAGS -DHAVE_C_ARES
-		appendLib $c_ares_LIBS
-		ARES=yes
+		else
+			appendCXX $c_ares_CFLAGS -DHAVE_C_ARES
+			appendLib $c_ares_LIBS
+			ARES=yes
+		fi
 	fi
 fi
 
