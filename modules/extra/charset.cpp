@@ -67,6 +67,8 @@ private:
 	{
 		if(sData.empty()) return true;
 
+		DEBUG("charset: Trying to convert [" + sData.Escape_n(CString::EURL) + "] from [" + sFrom + "] to [" + sTo + "]...");
+
 		iconv_t ic = iconv_open(sTo.c_str(), sFrom.c_str());
 		if(ic == (iconv_t)-1) return false;
 
@@ -108,8 +110,13 @@ private:
 
 			if(bResult)
 			{
-				sData.erase();
-				sData.append(pResult, uLength);
+				sData.assign(pResult, uLength);
+
+				DEBUG("charset: Converted: [" + sData.Escape_n(CString::EURL) + "] from [" + sFrom + "] to [" + sTo + "]!");
+			}
+			else
+			{
+				DEBUG("Conversion failed: [" << uResult << "]");
 			}
 
 			delete[] pResult;
@@ -131,6 +138,7 @@ private:
 
 			if(uTest != (size_t)-1 && uTest != (size_t)-2)
 			{
+				DEBUG("charset: [" + sData.Escape_n(CString::EURL) + "] is valid [" + sTo + "] already.");
 				return true;
 			}
 		}
