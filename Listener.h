@@ -43,6 +43,10 @@ public:
 	EAcceptType GetAcceptType() const { return m_eAcceptType; }
 	// !Getters
 
+	// It doesn't make sense to change any of the settings after Listen()
+	// except this one, so don't add other setters!
+	void SetAcceptType(EAcceptType eType) { m_eAcceptType = eType; }
+
 	bool Listen();
 	void ResetRealListener();
 
