@@ -454,6 +454,12 @@ CString CWebSock::GetModWebPath(const CModule* pModule) const {
 	// ...and set sModDir to the dir in which sModPath resides
 	CString sModDir = sModPath.substr(0, pos);
 
+	// Check if module is loaded from ~/.znc/modules or from source or from installed prefix
+	if (sModDir.Equals(_MODDIR_)) {
+		// Loaded from installed prefix
+		return CString(_DATADIR_) + "/www/" + pModule->GetModName();
+	}
+
 	return sModDir + "/www/" + pModule->GetModName();
 }
 

@@ -19,6 +19,7 @@ LIBS     := @LIBS@
 LIBZNC   := @LIBZNC@
 LIBZNCDIR:= @LIBZNCDIR@
 MODDIR   := @MODDIR@
+DATADIR  := @DATADIR@
 PKGCONFIGDIR := $(libdir)/pkgconfig
 
 LIB_SRCS  := ZNCString.cpp Csocket.cpp znc.cpp User.cpp IRCSock.cpp Client.cpp DCCBounce.cpp \
@@ -72,7 +73,8 @@ install: znc $(LIBZNC)
 	mkdir -p $(DESTDIR)$(includedir)/znc
 	mkdir -p $(DESTDIR)$(PKGCONFIGDIR)
 	mkdir -p $(DESTDIR)$(MODDIR)
-	cp -Rp webskins $(DESTDIR)$(MODDIR)
+	mkdir -p $(DESTDIR)$(DATADIR)
+	cp -Rp webskins $(DESTDIR)$(DATADIR)
 	install -m 0755 znc $(DESTDIR)$(bindir)
 	install -m 0755 znc-config $(DESTDIR)$(bindir)
 	install -m 0755 znc-buildmod $(DESTDIR)$(bindir)
