@@ -115,7 +115,8 @@ public:
 					Row["LastSeen"] = buf;
 				}
 
-				Row["Info"] = CString(pUser->GetClients().size()) + " client(s)";
+				Row["Info"] = CString(pUser->GetClients().size()) +
+					" client" + CString(pUser->GetClients().size() == 1 ? "" : "s");
 				if(!pUser->GetCurrentServer()) {
 					Row["Info"] += ", not connected to IRC";
 				} else {
@@ -124,9 +125,13 @@ public:
 					for (unsigned int a = 0; a < vChans.size(); ++a) {
 						if (vChans[a]->IsOn()) ++uChans;
 					}
+					unsigned int n = uChans;
 					Row["Info"] += ", joined to " + CString(uChans);
-					if(uChans != vChans.size()) Row["Info"] += " out of " + CString(vChans.size()) + " configured";
-					Row["Info"] += " channel(s)";
+					if(uChans != vChans.size()) {
+						Row["Info"] += " out of " + CString(vChans.size()) + " configured";
+						n = vChans.size();
+					}
+					Row["Info"] += " channel" + CString(n == 1 ? "" : "s");
 				}
 			}
 
