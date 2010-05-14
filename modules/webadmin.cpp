@@ -102,8 +102,7 @@ public:
 
 		// Now turn that into a listener instance
 		CListener *pListener = new CListener(uPort, sListenHost, bSSL,
-				(!bIPv6 ? ADDR_IPV4ONLY : ADDR_ALL),
-				(bShareIRCPorts ? CListener::ACCEPT_ALL : CListener::ACCEPT_HTTP));
+				(!bIPv6 ? ADDR_IPV4ONLY : ADDR_ALL), CListener::ACCEPT_HTTP);
 
 		if (!pListener->Listen()) {
 			sMessage = "Failed to add backwards-compatible listener";
