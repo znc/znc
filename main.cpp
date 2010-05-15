@@ -185,6 +185,19 @@ int main(int argc, char** argv) {
 		return 0;
 	}
 
+	if (isRoot()) {
+		CUtils::PrintError("You are running ZNC as root! Don't do that! There are not many valid");
+		CUtils::PrintError("reasons for this and it can, in theory, cause great damage!");
+		if (!bAllowRoot) {
+			delete pZNC;
+			return 1;
+		}
+		CUtils::PrintError("You have been warned.");
+		CUtils::PrintError("Hit CTRL+C now if you don't want to run ZNC as root.");
+		CUtils::PrintError("ZNC will start in 30 seconds.");
+		sleep(30);
+	}
+
 	if (bMakeConf) {
 		if (!pZNC->WriteNewConfig(sConfig)) {
 			delete pZNC;
@@ -203,19 +216,6 @@ int main(int argc, char** argv) {
 		CUtils::PrintError("Exiting due to module boot errors.");
 		delete pZNC;
 		return 1;
-	}
-
-	if (isRoot()) {
-		CUtils::PrintError("You are running ZNC as root! Don't do that! There are not many valid");
-		CUtils::PrintError("reasons for this and it can, in theory, cause great damage!");
-		if (!bAllowRoot) {
-			delete pZNC;
-			return 1;
-		}
-		CUtils::PrintError("You have been warned.");
-		CUtils::PrintError("Hit CTRL+C now if you don't want to run ZNC as root.");
-		CUtils::PrintError("ZNC will start in 30 seconds.");
-		sleep(30);
 	}
 
 	if (bForeground) {
