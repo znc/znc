@@ -109,4 +109,4 @@ private:
 	VCString m_vPerform;
 };
 
-MODULEDEFS(CPerform, "Adds perform capabilities")
+MODULEDEFS(CPerform, "Keeps a list of commands to be executed when ZNC connects to IRC.")
