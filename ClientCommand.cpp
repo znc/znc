@@ -1034,15 +1034,28 @@ void CClient::UserPortCommand(CString& sLine) {
 	}
 
 	unsigned short uPort = sPort.ToUShort();
-	CString sBindHost = sLine.Token(3);
 
 	if (sCommand.Equals("ADDPORT")) {
-		if (sPort.empty() || sAddr.empty()) {
-			PutStatus("Usage: AddPort <[+]port> <ipv4|ipv6|all> [bindhost]");
+		CListener::EAcceptType eAccept = CListener::ACCEPT_ALL;
+		CString sAccept = sLine.Token(3);
+
+		if (sAccept.Equals("WEB")) {
+			eAccept = CListener::ACCEPT_HTTP;
+		} else if (sAccept.Equals("IRC")) {
+			eAccept = CListener::ACCEPT_IRC;
+		} else if (sAccept.Equals("ALL")) {
+			eAccept = CListener::ACCEPT_ALL;
+		} else {
+			sAccept.clear();
+		}
+
+		if (sPort.empty() || sAddr.empty() || sAccept.empty()) {
+			PutStatus("Usage: AddPort <[+]port> <ipv4|ipv6|all> <web|irc|all> [bindhost]");
 		} else {
 			bool bSSL = (sPort.Left(1).Equals("+"));
+			const CString sBindHost = sLine.Token(4);
 
-			CListener* pListener = new CListener(uPort, sBindHost, bSSL, eAddr);
+			CListener* pListener = new CListener(uPort, sBindHost, bSSL, eAddr, eAccept);
 
 			if (!pListener->Listen()) {
 				delete pListener;
@@ -1058,6 +1071,8 @@ void CClient::UserPortCommand(CString& sLine) {
 		if (sPort.empty() || sAddr.empty()) {
 			PutStatus("Usage: DelPort <port> <ipv4|ipv6|all> [bindhost]");
 		} else {
+			const CString sBindHost = sLine.Token(3);
+
 			CListener* pListener = CZNC::Get().FindListener(uPort, sBindHost, eAddr);
 
 			if (pListener) {
