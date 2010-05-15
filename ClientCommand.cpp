@@ -991,10 +991,8 @@ void CClient::UserPortCommand(CString& sLine) {
 		Table.AddColumn("Port");
 		Table.AddColumn("BindHost");
 		Table.AddColumn("SSL");
-		Table.AddColumn("IPv4");
-		Table.AddColumn("IPv6");
-		Table.AddColumn("IRC");
-		Table.AddColumn("Web");
+		Table.AddColumn("Proto");
+		Table.AddColumn("IRC/Web");
 
 		vector<CListener*>::const_iterator it;
 		const vector<CListener*>& vpListeners = CZNC::Get().GetListeners();
@@ -1002,16 +1000,14 @@ void CClient::UserPortCommand(CString& sLine) {
 		for (it = vpListeners.begin(); it < vpListeners.end(); ++it) {
 			Table.AddRow();
 			Table.SetCell("Port", CString((*it)->GetPort()));
-			Table.SetCell("BindHost", (*it)->GetBindHost());
+			Table.SetCell("BindHost", ((*it)->GetBindHost().empty() ? CString("*") : (*it)->GetBindHost()));
 			Table.SetCell("SSL", CString((*it)->IsSSL()));
 
 			EAddrType eAddr = (*it)->GetAddrType();
-			Table.SetCell("IPv4", CString(eAddr == ADDR_IPV4ONLY || eAddr == ADDR_ALL));
-			Table.SetCell("IPv6", CString(eAddr == ADDR_IPV6ONLY || eAddr == ADDR_ALL));
+			Table.SetCell("Proto", (eAddr == ADDR_ALL ? "All" : (eAddr == ADDR_IPV4ONLY ? "IPv4" : "IPv6")));
 
 			CListener::EAcceptType eAccept = (*it)->GetAcceptType();
-			Table.SetCell("IRC", CString(eAccept != CListener::ACCEPT_HTTP));
-			Table.SetCell("Web", CString(eAccept != CListener::ACCEPT_IRC));
+			Table.SetCell("IRC/Web", (eAccept == CListener::ACCEPT_ALL ? "All" : (eAccept == CListener::ACCEPT_IRC ? "IRC" : "Web")));
 		}
 
 		PutStatus(Table);
