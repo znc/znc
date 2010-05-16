@@ -21,6 +21,8 @@ class CCharsetMod : public CModule
 private:
 	VCString m_vsClientCharsets;
 	VCString m_vsServerCharsets;
+	bool m_bForce; // don't check whether the input string is already a
+	// valid string in the target charset. Instead, always apply conversion.
 
 	size_t GetConversionLength(iconv_t& ic, const CString& sData)
 	{
@@ -129,17 +131,20 @@ private:
 	{
 		CString sDataCopy(sData);
 
-		// check whether sData already is encoded with the right charset:
-		iconv_t icTest = iconv_open(sTo.c_str(), sTo.c_str());
-		if(icTest != (iconv_t)-1)
+		if(!m_bForce)
 		{
-			size_t uTest = GetConversionLength(icTest, sData);
-			iconv_close(icTest);
-
-			if(uTest != (size_t)-1 && uTest != (size_t)-2)
+			// check whether sData already is encoded with the right charset:
+			iconv_t icTest = iconv_open(sTo.c_str(), sTo.c_str());
+			if(icTest != (iconv_t)-1)
 			{
-				DEBUG("charset: [" + sData.Escape_n(CString::EURL) + "] is valid [" + sTo + "] already.");
-				return true;
+				size_t uTest = GetConversionLength(icTest, sData);
+				iconv_close(icTest);
+
+				if(uTest != (size_t)-1 && uTest != (size_t)-2)
+				{
+					DEBUG("charset: [" + sData.Escape_n(CString::EURL) + "] is valid [" + sTo + "] already.");
+					return true;
+				}
 			}
 		}
 
@@ -166,13 +171,24 @@ private:
 	}
 
 public:
-	MODCONSTRUCTOR(CCharsetMod) {}
+	MODCONSTRUCTOR(CCharsetMod)
+	{
+		m_bForce = false;
+	}
 
 	bool OnLoad(const CString& sArgs, CString& sMessage)
 	{
-		if(sArgs.Token(1).empty() || !sArgs.Token(2).empty())
+		size_t uIndex = 0;
+
+		if(sArgs.Token(0).Equals("-force"))
 		{
-			sMessage = "This module needs two charset lists as arguments: "
+			m_bForce = true;
+			++uIndex;
+		}
+
+		if(sArgs.Token(uIndex + 1).empty() || !sArgs.Token(uIndex + 2).empty())
+		{
+			sMessage = "This module needs two charset lists as arguments: [-force] "
 				"<client_charset1[,client_charset2[,...]]> "
 				"<server_charset1[,server_charset2[,...]]>";
 			return false;
@@ -181,8 +197,8 @@ public:
 		}
 
 		VCString vsFrom, vsTo;
-		sArgs.Token(0).Split(",", vsFrom);
-		sArgs.Token(1).Split(",", vsTo);
+		sArgs.Token(uIndex).Split(",", vsFrom);
+		sArgs.Token(uIndex + 1).Split(",", vsTo);
 
 		// probe conversions:
 		for(VCString::const_iterator itf = vsFrom.begin(); itf != vsFrom.end(); itf++)
