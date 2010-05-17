@@ -167,7 +167,10 @@ public:
 						PutIRC("MODE " + Channel.GetName() + " +o " + Nick.GetNick());
 					} else {
 						// then insert this nick into the queue, the timer does the rest
-						m_msQueue[Nick.GetNick().AsLower()] = "";
+						CString sNick = Nick.GetNick().AsLower();
+						if (m_msQueue.find(sNick) == m_msQueue.end()) {
+							m_msQueue[sNick] = "";
+						}
 					}
 
 					break;
