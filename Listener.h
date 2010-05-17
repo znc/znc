@@ -23,7 +23,7 @@ public:
 		ACCEPT_ALL
 	} EAcceptType;
 
-	CListener(unsigned short uPort, const CString& sBindHost, bool bSSL, EAddrType eAddr, EAcceptType eAccept = ACCEPT_ALL) {
+	CListener(unsigned short uPort, const CString& sBindHost, bool bSSL, EAddrType eAddr, EAcceptType eAccept) {
 		m_uPort = uPort;
 		m_sBindHost = sBindHost;
 		m_bSSL = bSSL;
