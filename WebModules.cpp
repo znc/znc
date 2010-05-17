@@ -277,9 +277,9 @@ void CWebSock::SetPaths(CModule* pModule, bool bIsTemplate) {
 		//
 		m_Template.AppendPath(GetSkinPath("_default_") + "/mods/" + sModName + "/");
 
-		// 3. ./modules/<mod_name>/
+		// 3. ./modules/<mod_name>/tmpl/
 		//
-		m_Template.AppendPath(GetModWebPath(pModule));
+		m_Template.AppendPath(pModule->GetModDataDir() + "/tmpl/");
 
 		// 4. ~/.znc/webskins/<user_skin_setting>/mods/<mod_name>/
 		//
@@ -445,25 +445,6 @@ CWebSock::EPageReqResult CWebSock::PrintTemplate(const CString& sPageName, CStri
 	} else {
 		return PAGE_NOTFOUND;
 	}
-}
-
-CString CWebSock::GetModWebPath(const CModule* pModule) const {
-	// This is: /path/to/module.so
-	const CString& sModPath = pModule->GetModPath();
-
-	// Find the last '/' in sModPath...
-	CString::size_type pos = sModPath.find_last_of('/');
-
-	// ...and set sModDir to the dir in which sModPath resides
-	CString sModDir = sModPath.substr(0, pos);
-
-	// Check if module is loaded from ~/.znc/modules or from source or from installed prefix
-	if (sModDir.Equals(_MODDIR_)) {
-		// Loaded from installed prefix
-		return CString(_DATADIR_) + "/www/" + pModule->GetModName();
-	}
-
-	return sModDir + "/www/" + pModule->GetModName();
 }
 
 CString CWebSock::GetSkinPath(const CString& sSkinName) const {
@@ -654,7 +635,7 @@ CWebSock::EPageReqResult CWebSock::OnPageRequestInternal(const CString& sURI, CS
 
 		if (sURI.Left(10) == "/modfiles/") {
 			m_Template.AppendPath(GetSkinPath(GetSkinName()) + "/mods/" + m_sModName + "/files/");
-			m_Template.AppendPath(GetModWebPath(pModule) + "/files/");
+			m_Template.AppendPath(pModule->GetModDataDir() + "/files/");
 
 			if (PrintFile(m_Template.ExpandFile(m_sPage.TrimLeft_n("/")))) {
 				return PAGE_PRINT;

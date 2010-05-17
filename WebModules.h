@@ -150,7 +150,6 @@ public:
 	CString GetCSRFCheck();
 
 	virtual Csock* GetSockObj(const CString& sHost, unsigned short uPort);
-	CString GetModWebPath(const CModule* pModule) const;
 	CString GetSkinPath(const CString& sSkinName) const;
 	CModule* GetModule() const { return (CModule*) m_pModule; }
 	size_t GetAvailSkins(vector<CFile>& vRet);
