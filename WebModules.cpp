@@ -11,6 +11,9 @@
 #include "znc.h"
 #include <sstream>
 
+/// @todo Do we want to make this a configure option?
+#define _SKINDIR_ _DATADIR_ "/webskins"
+
 // Sessions are valid for a day, (24h, ...)
 CWebSessionMap CWebSock::m_mspSessions(24 * 60 * 60 * 1000);
 
