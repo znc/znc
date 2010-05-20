@@ -185,6 +185,13 @@ int main(int argc, char** argv) {
 		return 0;
 	}
 
+#ifndef RUN_FROM_SOURCE
+	if (CFile::Exists(pZNC->GetCurPath() + "/znc-uninstalled.pc")) {
+		CUtils::PrintError("It looks like you are running znc without installing it first.");
+		CUtils::PrintError("Recompile with --enable-run-from-source if you intend to do that.");
+	}
+#endif
+
 	if (isRoot()) {
 		CUtils::PrintError("You are running ZNC as root! Don't do that! There are not many valid");
 		CUtils::PrintError("reasons for this and it can, in theory, cause great damage!");
