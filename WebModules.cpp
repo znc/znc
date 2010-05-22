@@ -143,6 +143,10 @@ CWebSock::~CWebSock() {
 		CZNC::Get().AddBytesRead(GetBytesRead());
 	}
 
+	// bytes have been accounted for, so make sure they don't get again:
+	ResetBytesWritten();
+	ResetBytesRead();
+
 	// If the module IsFake() then it was created as a dummy and needs to be deleted
 	if (m_pModule && m_pModule->IsFake()) {
 		m_pModule->UnlinkSocket(this);
