@@ -1106,8 +1106,9 @@ bool CZNC::DoRehash(CString& sError)
 	while (File.ReadLine(sLine)) {
 		uLineNum++;
 
-		// Remove all leading / trailing spaces and line endings
-		sLine.Trim();
+		// Remove all leading spaces and trailing line endings
+		sLine.TrimLeft();
+		sLine.TrimRight("\r\n");
 
 		if ((sLine.empty()) || (sLine[0] == '#') || (sLine.Left(2) == "//")) {
 			continue;
@@ -1251,8 +1252,15 @@ bool CZNC::DoRehash(CString& sError)
 		// If we have a regular line, figure out where it goes
 		CString sName = sLine.Token(0, false, "=");
 		CString sValue = sLine.Token(1, true, "=");
+
+		// Only remove the first space, people might want
+		// leading spaces (e.g. in the MOTD).
+		if (sValue.Left(1) == " ")
+			sValue.LeftChomp();
+
+		// We don't have any names with spaces, trim all
+		// leading/trailing spaces.
 		sName.Trim();
-		sValue.Trim();
 
 		if ((!sName.empty()) && (!sValue.empty())) {
 			if (pUser) {
