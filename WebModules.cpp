@@ -114,16 +114,14 @@ void CWebAuth::Invalidate() {
 	m_pWebSock = NULL;
 }
 
-CWebSock::CWebSock(CModule* pModule) : CHTTPSock(pModule) {
-	m_pModule = pModule;
+CWebSock::CWebSock() : CHTTPSock(NULL) {
 	m_bPathsSet = false;
 
 	m_Template.AddTagHandler(new CZNCTagHandler(*this));
 }
 
-CWebSock::CWebSock(CModule* pModule, const CString& sHostname, unsigned short uPort, int iTimeout)
-		: CHTTPSock(pModule, sHostname, uPort, iTimeout) {
-	m_pModule = pModule;
+CWebSock::CWebSock(const CString& sHostname, unsigned short uPort, int iTimeout)
+		: CHTTPSock(NULL, sHostname, uPort, iTimeout) {
 	m_bPathsSet = false;
 
 	m_Template.AddTagHandler(new CZNCTagHandler(*this));
@@ -134,6 +132,8 @@ CWebSock::~CWebSock() {
 		m_spAuth->Invalidate();
 	}
 
+	// we have to account for traffic here because CSocket does
+	// not have a valid CModule* pointer.
 	CUser *pUser = GetSession()->GetUser();
 	if (pUser) {
 		pUser->AddBytesWritten(GetBytesWritten());
@@ -146,13 +146,6 @@ CWebSock::~CWebSock() {
 	// bytes have been accounted for, so make sure they don't get again:
 	ResetBytesWritten();
 	ResetBytesRead();
-
-	// If the module IsFake() then it was created as a dummy and needs to be deleted
-	if (m_pModule && m_pModule->IsFake()) {
-		m_pModule->UnlinkSocket(this);
-		delete m_pModule;
-		m_pModule = NULL;
-	}
 }
 
 void CWebSock::ParsePath() {
@@ -216,9 +209,6 @@ CModule* CWebSock::ResolveModule() {
 
 	if (!pModRet) {
 		DEBUG("Module not found");
-	} else if (pModRet->IsFake()) {
-		DEBUG("Fake module found, ignoring");
-		pModRet = NULL;
 	}
 
 	return pModRet;
@@ -747,9 +737,8 @@ bool CWebSock::OnLogin(const CString& sUser, const CString& sPass) {
 }
 
 Csock* CWebSock::GetSockObj(const CString& sHost, unsigned short uPort) {
-	CWebSock* pSock = new CWebSock(GetModule(), sHost, uPort);
+	CWebSock* pSock = new CWebSock(sHost, uPort, 120);
 	pSock->SetSockName("Web::Client");
-	pSock->SetTimeout(120);
 
 	return pSock;
 }

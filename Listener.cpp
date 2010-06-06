@@ -111,10 +111,7 @@ void CIncomingConnection::ReadLine(const CString& sLine) {
 			return;
 		}
 
-		CModule* pMod = new CModule(NULL, "<webmod>", "");
-		pMod->SetFake(true);
-
-		pSock = new CWebSock(pMod);
+		pSock = new CWebSock();
 		CZNC::Get().GetManager().SwapSockByAddr(pSock, this);
 
 		// And don't forget to give it some sane name / timeout

@@ -37,14 +37,14 @@ CS_STRING CZNCSock::ConvertAddress(void *addr, bool ipv6) {
 /////////////////// CSocket ///////////////////
 CSocket::CSocket(CModule* pModule) : CZNCSock() {
 	m_pModule = pModule;
-	m_pModule->AddSocket(this);
+	if (m_pModule) m_pModule->AddSocket(this);
 	EnableReadLine();
 	SetMaxBufferThreshold(10240);
 }
 
 CSocket::CSocket(CModule* pModule, const CString& sHostname, unsigned short uPort, int iTimeout) : CZNCSock(sHostname, uPort, iTimeout) {
 	m_pModule = pModule;
-	m_pModule->AddSocket(this);
+	if (m_pModule) m_pModule->AddSocket(this);
 	EnableReadLine();
 	SetMaxBufferThreshold(10240);
 }
@@ -58,7 +58,7 @@ CSocket::~CSocket() {
 		m_pModule->UnlinkSocket(this);
 	}
 
-	if (pUser && !m_pModule->IsGlobal()) {
+	if (pUser && m_pModule && !m_pModule->IsGlobal()) {
 		pUser->AddBytesWritten(GetBytesWritten());
 		pUser->AddBytesRead(GetBytesRead());
 	} else {
@@ -69,7 +69,7 @@ CSocket::~CSocket() {
 
 void CSocket::ReachedMaxBuffer() {
 	DEBUG(GetSockName() << " == ReachedMaxBuffer()");
-	PutModule("Some socket reached its max buffer limit and was closed!");
+	if (m_pModule) m_pModule->PutModule("Some socket reached its max buffer limit and was closed!");
 	Close();
 }
 
@@ -86,6 +86,11 @@ bool CSocket::ConnectionFrom(const CString& sHost, unsigned short uPort) {
 }
 
 bool CSocket::Connect(const CString& sHostname, unsigned short uPort, bool bSSL, unsigned int uTimeout) {
+	if (!m_pModule) {
+		DEBUG("ERROR: CSocket::Connect called on instance without m_pModule handle!");
+		return false;
+	}
+
 	CUser* pUser = m_pModule->GetUser();
 	CString sSockName = "MOD::C::" + m_pModule->GetModName();
 	CString sVHost;
@@ -104,6 +109,11 @@ bool CSocket::Connect(const CString& sHostname, unsigned short uPort, bool bSSL,
 }
 
 bool CSocket::Listen(unsigned short uPort, bool bSSL, unsigned int uTimeout) {
+	if (!m_pModule) {
+		DEBUG("ERROR: CSocket::Listen called on instance without m_pModule handle!");
+		return false;
+	}
+
 	CUser* pUser = m_pModule->GetUser();
 	CString sSockName = "MOD::L::" + m_pModule->GetModName();
 
@@ -118,25 +128,5 @@ bool CSocket::Listen(unsigned short uPort, bool bSSL, unsigned int uTimeout) {
 	return m_pModule->GetManager()->ListenAll(uPort, sSockName, bSSL, SOMAXCONN, this);
 }
 
-bool CSocket::PutIRC(const CString& sLine) {
-	return (m_pModule) ? m_pModule->PutIRC(sLine) : false;
-}
-
-bool CSocket::PutUser(const CString& sLine) {
-	return (m_pModule) ? m_pModule->PutUser(sLine) : false;
-}
-
-bool CSocket::PutStatus(const CString& sLine) {
-	return (m_pModule) ? m_pModule->PutStatus(sLine) : false;
-}
-
-bool CSocket::PutModule(const CString& sLine, const CString& sIdent, const CString& sHost) {
-	return (m_pModule) ? m_pModule->PutModule(sLine, sIdent, sHost) : false;
-}
-bool CSocket::PutModNotice(const CString& sLine, const CString& sIdent, const CString& sHost) {
-	return (m_pModule) ? m_pModule->PutModNotice(sLine, sIdent, sHost) : false;
-}
-
-void CSocket::SetModule(CModule* p) { m_pModule = p; }
 CModule* CSocket::GetModule() const { return m_pModule; }
 /////////////////// !CSocket ///////////////////

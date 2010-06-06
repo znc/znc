@@ -117,8 +117,8 @@ public:
 		PAGE_DONE      // all stuff has been done
 	};
 
-	CWebSock(CModule* pModule);
-	CWebSock(CModule* pModule, const CString& sHostname, unsigned short uPort, int iTimeout = 60);
+	CWebSock();
+	CWebSock(const CString& sHostname, unsigned short uPort, int iTimeout = 60);
 	virtual ~CWebSock();
 
 	virtual bool ForceLogin();

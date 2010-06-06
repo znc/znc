@@ -127,15 +127,6 @@ public:
 
 	bool Connect(const CString& sHostname, unsigned short uPort, bool bSSL = false, unsigned int uTimeout = 60);
 	bool Listen(unsigned short uPort, bool bSSL = false, unsigned int uTimeout = 0);
-	virtual bool PutIRC(const CString& sLine);
-	virtual bool PutUser(const CString& sLine);
-	virtual bool PutStatus(const CString& sLine);
-	virtual bool PutModule(const CString& sLine, const CString& sIdent = "", const CString& sHost = "znc.in");
-	virtual bool PutModNotice(const CString& sLine, const CString& sIdent = "", const CString& sHost = "znc.in");
-
-	// Setters
-	void SetModule(CModule* p);
-	// !Setters
 
 	// Getters
 	CModule* GetModule() const;
