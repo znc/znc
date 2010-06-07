@@ -652,7 +652,7 @@ void CIRCSock::ReadLine(const CString& sData) {
 
 				for (it = vsTokens.begin(); it != vsTokens.end(); ++it) {
 					if (*it == "multi-prefix" || *it == "userhost-in-names") {
-						PutIRC("CAP REQ " + *it);
+						PutIRC("CAP REQ :" + *it);
 					}
 				}
 
