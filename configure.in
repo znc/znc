@@ -135,6 +135,7 @@ fi
 
 AC_CHECK_LIB( gnugetopt, getopt_long,)
 AC_CHECK_FUNC([lstat], [appendCXX -DHAVE_LSTAT])
+PKG_PROG_PKG_CONFIG()
 
 # ----- Check for dlopen
 
@@ -157,7 +158,6 @@ fi
 
 if test "x$ARES" != "xno"; then
 	old_ARES=$ARES
-	PKG_PROG_PKG_CONFIG()
 	if test -z "$PKG_CONFIG"
 	then
 		ARES=no
@@ -190,10 +190,16 @@ if test "x$SSL" != "xno"; then
 	fi
 
 	old_SSL=$SSL
-	# Don't reorder this!
-	# On some arches libssl depends on libcrypto without linking to it :(
-	AC_CHECK_LIB( crypto, BIO_new,, SSL=no )
-	AC_CHECK_LIB( ssl, SSL_shutdown,, SSL=no )
+	PKG_CHECK_MODULES([openssl], [openssl], [
+		appendLib "$openssl_LIBS"
+		appendCXX "$openssl_CFLAGS"
+	], [
+		AC_MSG_RESULT([no])
+		# Don't reorder this!
+		# On some arches libssl depends on libcrypto without linking to it :(
+		AC_CHECK_LIB( crypto, BIO_new,, SSL=no )
+		AC_CHECK_LIB( ssl, SSL_shutdown,, SSL=no )
+	])
 
 	if test "x$SSL" = "xno" ; then
 		ZNC_AUTO_FAIL([SSL],
