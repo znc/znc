@@ -264,6 +264,7 @@ if test "x$PERL" != "xno"; then
 		ZNC_AUTO_FAIL([PERL],
 			[perl not found. Try --disable-perl.],
 			[perl was not found and thus disabled])
+		PERL_BINARY=""
 	else
 		PERL=yes
 	fi

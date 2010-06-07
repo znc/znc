@@ -3457,6 +3457,7 @@ fi
 $as_echo "$as_me: WARNING: perl was not found and thus disabled" >&2;}
 	fi
 
+		PERL_BINARY=""
 	else
 		PERL=yes
 	fi
