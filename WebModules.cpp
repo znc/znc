@@ -120,13 +120,6 @@ CWebSock::CWebSock() : CHTTPSock(NULL) {
 	m_Template.AddTagHandler(new CZNCTagHandler(*this));
 }
 
-CWebSock::CWebSock(const CString& sHostname, unsigned short uPort, int iTimeout)
-		: CHTTPSock(NULL, sHostname, uPort, iTimeout) {
-	m_bPathsSet = false;
-
-	m_Template.AddTagHandler(new CZNCTagHandler(*this));
-}
-
 CWebSock::~CWebSock() {
 	if (!m_spAuth.IsNull()) {
 		m_spAuth->Invalidate();
@@ -737,10 +730,10 @@ bool CWebSock::OnLogin(const CString& sUser, const CString& sPass) {
 }
 
 Csock* CWebSock::GetSockObj(const CString& sHost, unsigned short uPort) {
-	CWebSock* pSock = new CWebSock(sHost, uPort, 120);
-	pSock->SetSockName("Web::Client");
-
-	return pSock;
+	// All listening is done by CListener, thus CWebSock should never have
+	// to listen, but since GetSockObj() is pure virtual...
+	DEBUG("CWebSock::GetSockObj() called - this should never happen!");
+	return NULL;
 }
 
 CString CWebSock::GetSkinName() {

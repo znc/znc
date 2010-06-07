@@ -118,7 +118,6 @@ public:
 	};
 
 	CWebSock();
-	CWebSock(const CString& sHostname, unsigned short uPort, int iTimeout = 60);
 	virtual ~CWebSock();
 
 	virtual bool ForceLogin();
