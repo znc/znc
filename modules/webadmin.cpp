@@ -255,7 +255,7 @@ public:
 					CString sArgs = WebSock.GetParam("modargs_" + sModName);
 
 					try {
-						if (!pNewUser->GetModules().LoadModule(sModName, sArgs, pNewUser, sModRet, (pUser != NULL))) {
+						if (!pNewUser->GetModules().LoadModule(sModName, sArgs, pNewUser, sModRet)) {
 							sModLoadError = "Unable to load module [" + sModName + "] [" + sModRet + "]";
 						}
 					} catch (...) {
@@ -278,7 +278,7 @@ public:
 				CString sModLoadError;
 
 				try {
-					if (!pNewUser->GetModules().LoadModule(sModName, sArgs, pNewUser, sModRet, (pUser != NULL))) {
+					if (!pNewUser->GetModules().LoadModule(sModName, sArgs, pNewUser, sModRet)) {
 						sModLoadError = "Unable to load module [" + sModName + "] [" + sModRet + "]";
 					}
 				} catch (...) {
