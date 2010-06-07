@@ -104,7 +104,6 @@ const CString& CTimer::GetDescription() const { return m_sDescription; }
 
 
 CModule::CModule(ModHandle pDLL, CUser* pUser, const CString& sModName, const CString& sDataDir) {
-	m_bFake = false;
 	m_bGlobal = false;
 	m_pDLL = pDLL;
 	m_pManager = &(CZNC::Get().GetManager());;
@@ -120,7 +119,6 @@ CModule::CModule(ModHandle pDLL, CUser* pUser, const CString& sModName, const CS
 }
 
 CModule::CModule(ModHandle pDLL, const CString& sModName, const CString& sDataDir) {
-	m_bFake = false;
 	m_pDLL = pDLL;
 	m_pManager = &(CZNC::Get().GetManager());
 	m_pUser = NULL;
@@ -639,22 +637,12 @@ CModule* CModules::FindModule(const CString& sModule) const {
 	return NULL;
 }
 
-bool CModules::LoadModule(const CString& sModule, const CString& sArgs, CUser* pUser, CString& sRetMsg, bool bFake) {
+bool CModules::LoadModule(const CString& sModule, const CString& sArgs, CUser* pUser, CString& sRetMsg) {
 	sRetMsg = "";
 
 	if (FindModule(sModule) != NULL) {
 		sRetMsg = "Module [" + sModule + "] already loaded.";
 		return false;
-	}
-
-	if (bFake) {
-		CModule* pModule = new CModule(NULL, sModule, "");
-		pModule->SetArgs(sArgs);
-		pModule->SetDescription("<<Fake Module>>");
-		pModule->SetFake(true);
-		push_back(pModule);
-		sRetMsg = "Loaded fake module [" + sModule + "]";
-		return true;
 	}
 
 	CString sModPath, sDataPath;
@@ -757,19 +745,6 @@ bool CModules::UnloadModule(const CString& sModule, CString& sRetMsg) {
 
 	if (!pModule) {
 		sRetMsg = "Module [" + sMod + "] not loaded.";
-		return false;
-	}
-
-	if (pModule->IsFake()) {
-		for (iterator it = begin(); it != end(); ++it) {
-			if (*it == pModule) {
-				erase(it);
-				sRetMsg = "Fake module [" + sMod + "] unloaded";
-				return true;
-			}
-		}
-
-		sRetMsg = "Fake module [" + sMod + "] not loaded.";
 		return false;
 	}
 

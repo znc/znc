@@ -751,7 +751,6 @@ public:
 	const CString& GetSavePath() const { if (!CFile::Exists(m_sSavePath)) { CDir::MakeDir(m_sSavePath); } return m_sSavePath; }
 
 	// Setters
-	void SetFake(bool b) { m_bFake = b; }
 	void SetGlobal(bool b) { m_bGlobal = b; }
 	void SetDescription(const CString& s) { m_sDescription = s; }
 	void SetModPath(const CString& s) { m_sModPath = s; }
@@ -759,7 +758,6 @@ public:
 	// !Setters
 
 	// Getters
-	bool IsFake() const { return m_bFake; }
 	bool IsGlobal() const { return m_bGlobal; }
 	const CString& GetDescription() const { return m_sDescription; }
 	const CString& GetArgs() const { return m_sArgs; }
@@ -779,7 +777,6 @@ public:
 	// !Getters
 
 protected:
-	bool               m_bFake;
 	bool               m_bGlobal;
 	CString            m_sDescription;
 	set<CTimer*>       m_sTimers;
@@ -876,7 +873,7 @@ public:
 	bool OnTimerAutoJoin(CChan& Channel);
 
 	CModule* FindModule(const CString& sModule) const;
-	bool LoadModule(const CString& sModule, const CString& sArgs, CUser* pUser, CString& sRetMsg, bool bFake = false);
+	bool LoadModule(const CString& sModule, const CString& sArgs, CUser* pUser, CString& sRetMsg);
 	bool UnloadModule(const CString& sModule);
 	bool UnloadModule(const CString& sModule, CString& sRetMsg);
 	bool ReloadModule(const CString& sModule, const CString& sArgs, CUser* pUser, CString& sRetMsg);
