@@ -208,8 +208,11 @@ public:
 			pNewUser->SetVHost(pUser->GetVHost());
 		}
 
-		pNewUser->SetSkinName(WebSock.GetParam("skin"));
+		// First apply the old limit in case the new one is too high
+		if (pUser)
+			pNewUser->SetBufferCount(pUser->GetBufferCount(), true);
 		pNewUser->SetBufferCount(WebSock.GetParam("bufsize").ToUInt());
+		pNewUser->SetSkinName(WebSock.GetParam("skin"));
 		pNewUser->SetKeepBuffer(WebSock.GetParam("keepbuffer").ToBool());
 		pNewUser->SetMultiClients(WebSock.GetParam("multiclients").ToBool());
 		pNewUser->SetBounceDCCs(WebSock.GetParam("bouncedccs").ToBool());
@@ -510,8 +513,8 @@ public:
 			pUser->AddChan(pChan);
 		}
 
-		pChan->SetDefaultModes(WebSock.GetParam("defmodes"));
 		pChan->SetBufferCount(WebSock.GetParam("buffercount").ToUInt());
+		pChan->SetDefaultModes(WebSock.GetParam("defmodes"));
 		pChan->SetInConfig(WebSock.GetParam("save").ToBool());
 		pChan->SetKeepBuffer(WebSock.GetParam("keepbuffer").ToBool());
 

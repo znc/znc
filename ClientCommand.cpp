@@ -927,14 +927,12 @@ void CClient::UserCommand(CString& sLine) {
 
 		unsigned int uLineCount = sLine.Token(2).ToUInt();
 
-		if (uLineCount > 500) {
-			PutStatus("Max linecount is 500.");
-			return;
+		if (pChan->SetBufferCount(uLineCount)) {
+			PutStatus("BufferCount for [" + sChan + "] set to [" + CString(pChan->GetBufferCount()) + "]");
+		} else {
+			PutStatus("Setting the buffer count failed, max buffer count is "
+					+ CString(CZNC::Get().GetMaxBufferSize()));
 		}
-
-		pChan->SetBufferCount(uLineCount);
-
-		PutStatus("BufferCount for [" + sChan + "] set to [" + CString(pChan->GetBufferCount()) + "]");
 	} else if (m_pUser->IsAdmin() && sCommand.Equals("TRAFFIC")) {
 		CZNC::TrafficStatsPair Users, ZNC, Total;
 		CZNC::TrafficStatsMap traffic = CZNC::Get().GetTrafficStats(Users, ZNC, Total);

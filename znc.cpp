@@ -39,6 +39,7 @@ CZNC::CZNC() {
 	SetISpoofFormat(""); // Set ISpoofFormat to default
 	m_uBytesRead = 0;
 	m_uBytesWritten = 0;
+	m_uiMaxBufferSize = 500;
 	m_pConnectUserTimer = NULL;
 	m_eConfigState = ECONFIG_NOTHING;
 	m_TimeStarted = time(NULL);
@@ -1266,7 +1267,7 @@ bool CZNC::DoRehash(CString& sError)
 			if (pUser) {
 				if (pChan) {
 					if (sName.Equals("Buffer")) {
-						pChan->SetBufferCount(sValue.ToUInt());
+						pChan->SetBufferCount(sValue.ToUInt(), true);
 						continue;
 					} else if (sName.Equals("KeepBuffer")) {
 						pChan->SetKeepBuffer(sValue.Equals("true"));
@@ -1288,7 +1289,7 @@ bool CZNC::DoRehash(CString& sError)
 					}
 				} else {
 					if (sName.Equals("Buffer")) {
-						pUser->SetBufferCount(sValue.ToUInt());
+						pUser->SetBufferCount(sValue.ToUInt(), true);
 						continue;
 					} else if (sName.Equals("KeepBuffer")) {
 						pUser->SetKeepBuffer(sValue.Equals("true"));
@@ -1625,6 +1626,9 @@ bool CZNC::DoRehash(CString& sError)
 					continue;
 				} else if (sName.Equals("AnonIPLimit")) {
 					m_uiAnonIPLimit = sValue.ToUInt();
+					continue;
+				} else if (sName.Equals("MaxBufferSize")) {
+					m_uiMaxBufferSize = sValue.ToUInt();
 					continue;
 				}
 			}

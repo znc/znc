@@ -279,8 +279,13 @@ class CAdminMod : public CModule {
 		}
 		else if (sVar == "buffercount") {
 			unsigned int i = sValue.ToUInt();
-			pUser->SetBufferCount(i);
-			PutModule("BufferCount = " + sValue);
+			// Admins don't have to honour the buffer limit
+			if (pUser->SetBufferCount(i), m_pUser->IsAdmin()) {
+				PutModule("BufferCount = " + sValue);
+			} else {
+				PutModule("Setting failed, limit is " +
+						CString(CZNC::Get().GetMaxBufferSize()));
+			}
 		}
 		else if (sVar == "keepbuffer") {
 			bool b = sValue.ToBool();
@@ -408,8 +413,13 @@ class CAdminMod : public CModule {
 			PutModule("DefModes = " + sValue);
 		} else if (sVar == "buffer") {
 			unsigned int i = sValue.ToUInt();
-			pChan->SetBufferCount(i);
-			PutModule("Buffer = " + CString(i));
+			// Admins don't have to honour the buffer limit
+			if (pChan->SetBufferCount(i), m_pUser->IsAdmin()) {
+				PutModule("Buffer = " + sValue);
+			} else {
+				PutModule("Setting failed, limit is " +
+						CString(CZNC::Get().GetMaxBufferSize()));
+			}
 		} else if (sVar == "inconfig") {
 			bool b = sValue.ToBool();
 			pChan->SetInConfig(b);

@@ -84,6 +84,7 @@ public:
 	void SetStatusPrefix(const CString& s) { m_sStatusPrefix = (s.empty()) ? "*" : s; }
 	void SetISpoofFile(const CString& s) { m_sISpoofFile = s; }
 	void SetISpoofFormat(const CString& s) { m_sISpoofFormat = (s.empty()) ? "global { reply \"%\" }" : s; }
+	void SetMaxBufferSize(unsigned int i) { m_uiMaxBufferSize = i; }
 	// !Setters
 
 	// Getters
@@ -108,6 +109,7 @@ public:
 	const VCString& GetVHosts() const { return m_vsVHosts; }
 	const vector<CListener*>& GetListeners() const { return m_vpListeners; }
 	time_t TimeStarted() const { return m_TimeStarted; }
+	unsigned int GetMaxBufferSize() const { return m_uiMaxBufferSize; }
 	// !Getters
 
 	// Static allocator
@@ -172,6 +174,7 @@ protected:
 	CFile*                 m_pISpoofLockFile;
 	unsigned int           m_uiConnectDelay;
 	unsigned int           m_uiAnonIPLimit;
+	unsigned int           m_uiMaxBufferSize;
 	CGlobalModules*        m_pModules;
 	unsigned long long     m_uBytesRead;
 	unsigned long long     m_uBytesWritten;

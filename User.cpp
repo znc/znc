@@ -354,7 +354,7 @@ bool CUser::Clone(const CUser& User, CString& sErrorRet, bool bCloneChans) {
 	SetQuitMsg(User.GetQuitMsg());
 	SetSkinName(User.GetSkinName());
 	SetDefaultChanModes(User.GetDefaultChanModes());
-	SetBufferCount(User.GetBufferCount());
+	SetBufferCount(User.GetBufferCount(), true);
 	SetJoinTries(User.JoinTries());
 	SetMaxJoins(User.MaxJoins());
 
@@ -1168,11 +1168,16 @@ void CUser::SetDenySetVHost(bool b) { m_bDenySetVHost = b; }
 void CUser::SetDefaultChanModes(const CString& s) { m_sDefaultChanModes = s; }
 void CUser::SetIRCServer(const CString& s) { m_sIRCServer = s; }
 void CUser::SetQuitMsg(const CString& s) { m_sQuitMsg = s; }
-void CUser::SetBufferCount(unsigned int u) { m_uBufferCount = u; }
 void CUser::SetKeepBuffer(bool b) { m_bKeepBuffer = b; }
 
-void CUser::CheckIRCConnect()
-{
+bool CUser::SetBufferCount(unsigned int u, bool bForce) {
+	if (!bForce && u > CZNC::Get().GetMaxBufferSize())
+		return false;
+	m_uBufferCount = u;
+	return true;
+}
+
+void CUser::CheckIRCConnect() {
 	// Do we want to connect?
 	if (m_bIRCConnectEnabled && GetIRCSock() == NULL)
 		CZNC::Get().EnableConnectUser();
