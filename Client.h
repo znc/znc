@@ -78,6 +78,7 @@ public:
 		m_bGotPass = false;
 		m_bGotNick = false;
 		m_bGotUser = false;
+		m_bInCap = false;
 		m_bNamesx = false;
 		m_bUHNames = false;
 		EnableReadLine();
@@ -127,11 +128,14 @@ public:
 	const CIRCSock* GetIRCSock() const;
 	CIRCSock* GetIRCSock();
 private:
+	void HandleCap(const CString& sLine);
+	void RespondCap(const CString& sResponse);
 
 protected:
 	bool                 m_bGotPass;
 	bool                 m_bGotNick;
 	bool                 m_bGotUser;
+	bool                 m_bInCap;
 	bool                 m_bNamesx;
 	bool                 m_bUHNames;
 	CUser*               m_pUser;

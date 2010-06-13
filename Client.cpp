@@ -126,10 +126,16 @@ void CClient::ReadLine(const CString& sData) {
 
 			return;  // Don't forward this msg.  ZNC has already registered us.
 		}
+	} else if (sCommand.Equals("CAP")) {
+		HandleCap(sLine);
+
+		// Don't let the client talk to the server directly about CAP,
+		// we don't want anything enabled that znc does not support.
+		return;
 	}
 
 	if (!m_pUser) {
-		// Only NICK, USER and PASS are allowed before login
+		// Only CAP, NICK, USER and PASS are allowed before login
 		return;
 	}
 
@@ -588,7 +594,7 @@ bool CClient::SendMotd() {
 }
 
 void CClient::AuthUser() {
-	if (!m_bGotNick || !m_bGotUser)
+	if (!m_bGotNick || !m_bGotUser || m_bInCap || IsAttached())
 		return;
 
 	m_spAuth = new CClientAuth(this, m_sUser, m_sPass);
@@ -770,4 +776,27 @@ CString CClient::GetNickMask() const {
 	}
 
 	return GetNick() + "!" + m_pUser->GetIdent() + "@" + sHost;
+}
+
+void CClient::RespondCap(const CString& sResponse)
+{
+	PutClient(":irc.znc.in CAP " + GetNick() + " " + sResponse);
+}
+
+void CClient::HandleCap(const CString& sLine)
+{
+	CString sSubCmd = sLine.Token(1);
+
+	if (sSubCmd.Equals("LS")) {
+		RespondCap("LS :");
+		m_bInCap = true;
+	} else if (sSubCmd.Equals("END")) {
+		m_bInCap = false;
+		AuthUser();
+	} else if (sSubCmd.Equals("REQ")) {
+		// No capabilities supported for now
+		RespondCap("NAK :" + sLine.Token(2, true).TrimPrefix_n(":"));
+	} else if (sSubCmd.Equals("LIST")) {
+		RespondCap("LIST :");
+	}
 }

@@ -671,6 +671,9 @@ void CIRCSock::ReadLine(const CString& sData) {
 					}
 				}
 			}
+
+			// Don't forward any CAP stuff to the client
+			return;
 		}
 	}
 
