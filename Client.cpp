@@ -788,15 +788,43 @@ void CClient::HandleCap(const CString& sLine)
 	CString sSubCmd = sLine.Token(1);
 
 	if (sSubCmd.Equals("LS")) {
-		RespondCap("LS :");
+		RespondCap("LS :userhost-in-names multi-prefix");
 		m_bInCap = true;
 	} else if (sSubCmd.Equals("END")) {
 		m_bInCap = false;
 		AuthUser();
 	} else if (sSubCmd.Equals("REQ")) {
-		// No capabilities supported for now
-		RespondCap("NAK :" + sLine.Token(2, true).TrimPrefix_n(":"));
+		bool bReqUHNames = false;
+		bool bReqNamesx = false;
+
+		VCString vsTokens;
+		VCString::iterator it;
+		sLine.Token(2).TrimPrefix_n(":").Split(" ", vsTokens, false);
+
+		for (it = vsTokens.begin(); it != vsTokens.end(); ++it) {
+			if (*it == "multi-prefix") {
+				bReqNamesx = true;
+			} else if (*it == "userhost-in-names") {
+				bReqUHNames = true;
+			} else {
+				// Some unsupported capability is requested
+				RespondCap("NAK :" + sLine.Token(2, true).TrimPrefix_n(":"));
+				return;
+			}
+		}
+
+		// All is fine, we support what was requested
+		RespondCap("ACK :" + sLine.Token(2, true).TrimPrefix_n(":"));
+		if (bReqUHNames)
+			m_bUHNames = true;
+		if (bReqNamesx)
+			m_bNamesx = true;
 	} else if (sSubCmd.Equals("LIST")) {
-		RespondCap("LIST :");
+		CString sList = "";
+		if (m_bNamesx)
+			sList += "multi-prefix ";
+		if (m_bUHNames)
+			sList += "userhost-in-names ";
+		RespondCap("LIST :" + sList.TrimSuffix_n(" "));
 	}
 }
