@@ -548,6 +548,7 @@ bool CZNC::WriteConfig() {
 	}
 
 	m_LockFile.Write("AnonIPLimit  = " + CString(m_uiAnonIPLimit) + "\n");
+	m_LockFile.Write("MaxBufferSize= " + CString(m_uiMaxBufferSize) + "\n");
 
 	for (size_t l = 0; l < m_vpListeners.size(); l++) {
 		CListener* pListener = m_vpListeners[l];
