@@ -92,10 +92,7 @@ void CClient::ReadLine(const CString& sData) {
 				m_sPass = m_sPass.Token(1, true, ":");
 			}
 
-			if ((m_bGotNick) && (m_bGotUser)) {
-				AuthUser();
-			}
-
+			AuthUser();
 			return;  // Don't forward this msg.  ZNC has already registered us.
 		}
 	} else if (sCommand.Equals("NICK")) {
@@ -108,9 +105,7 @@ void CClient::ReadLine(const CString& sData) {
 			m_sNick = sNick;
 			m_bGotNick = true;
 
-			if ((m_bGotPass) && (m_bGotUser)) {
-				AuthUser();
-			}
+			AuthUser();
 			return;  // Don't forward this msg.  ZNC will handle nick changes until auth is complete
 		}
 	} else if (sCommand.Equals("USER")) {
@@ -121,9 +116,9 @@ void CClient::ReadLine(const CString& sData) {
 
 			m_bGotUser = true;
 
-			if ((m_bGotPass) && (m_bGotNick)) {
+			if (m_bGotPass) {
 				AuthUser();
-			} else if (!m_bGotPass) {
+			} else {
 				PutClient(":irc.znc.in NOTICE AUTH :*** "
 					"You need to send your password. "
 					"Try /quote PASS <username>:<password>");
@@ -593,6 +588,9 @@ bool CClient::SendMotd() {
 }
 
 void CClient::AuthUser() {
+	if (!m_bGotNick || !m_bGotUser)
+		return;
+
 	m_spAuth = new CClientAuth(this, m_sUser, m_sPass);
 
 	CZNC::Get().AuthUser(m_spAuth);
