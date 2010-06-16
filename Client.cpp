@@ -796,16 +796,24 @@ void CClient::HandleCap(const CString& sLine)
 	} else if (sSubCmd.Equals("REQ")) {
 		bool bReqUHNames = false;
 		bool bReqNamesx = false;
+		bool bValueUHNames = false;
+		bool bValueNamesx = false;
 
 		VCString vsTokens;
 		VCString::iterator it;
 		sLine.Token(2).TrimPrefix_n(":").Split(" ", vsTokens, false);
 
 		for (it = vsTokens.begin(); it != vsTokens.end(); ++it) {
+			bool bVal = true;
+			if (it->TrimPrefix("-"))
+				bVal = false;
+
 			if (*it == "multi-prefix") {
 				bReqNamesx = true;
+				bValueNamesx = bVal;
 			} else if (*it == "userhost-in-names") {
 				bReqUHNames = true;
+				bValueUHNames = bVal;
 			} else {
 				// Some unsupported capability is requested
 				RespondCap("NAK :" + sLine.Token(2, true).TrimPrefix_n(":"));
@@ -816,9 +824,9 @@ void CClient::HandleCap(const CString& sLine)
 		// All is fine, we support what was requested
 		RespondCap("ACK :" + sLine.Token(2, true).TrimPrefix_n(":"));
 		if (bReqUHNames)
-			m_bUHNames = true;
+			m_bUHNames = bValueUHNames;
 		if (bReqNamesx)
-			m_bNamesx = true;
+			m_bNamesx = bValueNamesx;
 	} else if (sSubCmd.Equals("LIST")) {
 		CString sList = "";
 		if (m_bNamesx)
