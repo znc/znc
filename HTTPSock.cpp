@@ -43,19 +43,11 @@ void CHTTPSock::ReadData(const char* data, size_t len) {
 
 bool CHTTPSock::SendCookie(const CString& sKey, const CString& sValue) {
 	if (!sKey.empty() && !sValue.empty()) {
-		if (m_msRequestCookies.find(sKey) == m_msRequestCookies.end() ||
-			m_msRequestCookies[sKey].StrCmp(sValue) != 0)
-		{
-			m_msResponseCookies[sKey] = sValue;
-		}
+		m_msResponseCookies[sKey] = sValue;
 		return true;
 	}
 
 	return false;
-}
-
-const MCString& CHTTPSock::GetRequestCookies() const {
-	return m_msRequestCookies;
 }
 
 CString CHTTPSock::GetRequestCookie(const CString& sKey) const {

@@ -52,7 +52,6 @@ public:
 	void GetPage();
 
 	// Cookies
-	const MCString& GetRequestCookies() const;
 	CString GetRequestCookie(const CString& sKey) const;
 	bool SendCookie(const CString& sKey, const CString& sValue);
 	// Cookies

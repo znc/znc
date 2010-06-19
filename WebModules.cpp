@@ -458,25 +458,29 @@ bool CWebSock::ForceLogin() {
 	return false;
 }
 
-CString CWebSock::GetRequestCookie(const CString& sKey) const {
+CString CWebSock::GetRequestCookie(const CString& sKey) {
+	const CString sPrefixedKey = CString(GetLocalPort()) + "-" + sKey;
 	CString sRet;
 
 	if (!m_sModName.empty()) {
-		sRet = CHTTPSock::GetRequestCookie("Mod::" + m_sModName + "::" + sKey);
+		sRet = CHTTPSock::GetRequestCookie("Mod-" + m_sModName + "-" + sPrefixedKey);
 	}
 
 	if (sRet.empty()) {
-		return CHTTPSock::GetRequestCookie(sKey);
+		return CHTTPSock::GetRequestCookie(sPrefixedKey);
 	}
+
 	return sRet;
 }
 
 bool CWebSock::SendCookie(const CString& sKey, const CString& sValue) {
+	const CString sPrefixedKey = CString(GetLocalPort()) + "-" + sKey;
+
 	if (!m_sModName.empty()) {
-		return CHTTPSock::SendCookie("Mod::" + m_sModName + "::" + sKey, sValue);
+		return CHTTPSock::SendCookie("Mod-" + m_sModName + "-" + sPrefixedKey, sValue);
 	}
 
-	return CHTTPSock::SendCookie(sKey, sValue);
+	return CHTTPSock::SendCookie(sPrefixedKey, sValue);
 }
 
 void CWebSock::OnPageRequest(const CString& sURI) {

@@ -154,7 +154,7 @@ public:
 	size_t GetAvailSkins(vector<CFile>& vRet);
 	CString GetSkinName();
 
-	CString GetRequestCookie(const CString& sKey) const;
+	CString GetRequestCookie(const CString& sKey);
 	bool SendCookie(const CString& sKey, const CString& sValue);
 
 	static void FinishUserSessions(const CUser& User) {
