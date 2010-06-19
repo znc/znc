@@ -440,33 +440,6 @@ bool CTable::GetLine(unsigned int uIdx, CString& sLine) const {
 	return false;
 }
 
-/*
-bool CTable::Output(std::ostream oOut) {
-	stringstream ssSep;
-
-	ssSep << "-+-";
-
-	oOut << endl << ssSep.str() << endl;
-
-	for (unsigned int b = 0; b < size(); b++) {
-		map<CString, CString>* pRow = (*this)[b];
-
-		oOut << " | ";
-
-		for (unsigned int c = 0; c < m_vsHeaders.size(); c++) {
-			oOut.width(GetColumnWidth(c));
-			oOut << (*pRow)[m_vsHeaders[c]];
-			oOut << " | ";
-		}
-
-		oOut << endl;
-	}
-
-	oOut << ssSep.str() << endl;
-	return true;
-}
-*/
-
 unsigned int CTable::GetColumnIndex(const CString& sName) const {
 	for (unsigned int i = 0; i < m_vsHeaders.size(); i++) {
 		if (m_vsHeaders[i] == sName)
