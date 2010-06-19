@@ -355,9 +355,14 @@ bool CTable::AddColumn(const CString& sName) {
 }
 
 unsigned int CTable::AddRow() {
+	// Don't add a row if no headers are defined
+	if (sHeaders.empty()) {
+		return (unsigned int) -1;
+	}
+
 	// Add a vector with enough space for each column
 	push_back(vector<CString>(m_vsHeaders.size()));
-	return size() -1;
+	return size() - 1;
 }
 
 bool CTable::SetCell(const CString& sColumn, const CString& sValue, unsigned int uRowIdx) {
@@ -369,7 +374,12 @@ bool CTable::SetCell(const CString& sColumn, const CString& sValue, unsigned int
 		uRowIdx = size() -1;
 	}
 
-	(*this)[uRowIdx][GetColumnIndex(sColumn)] = sValue;
+	unsigned int uColIdx = GetColumnIndex(sColumn);
+
+	if (uColIdx == (unsigned int) -1)
+		return false;
+
+	(*this)[uRowIdx][uColIdx] = sValue;
 
 	if (m_msuWidths[sColumn] < sValue.size())
 		m_msuWidths[sColumn] = sValue.size();
@@ -465,7 +475,7 @@ unsigned int CTable::GetColumnIndex(const CString& sName) const {
 
 	DEBUG("CTable::GetColumnIndex(" + sName + ") failed");
 
-	return 0;
+	return (unsigned int) -1;
 }
 
 unsigned int CTable::GetColumnWidth(unsigned int uIdx) const {
