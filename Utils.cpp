@@ -356,7 +356,7 @@ bool CTable::AddColumn(const CString& sName) {
 
 unsigned int CTable::AddRow() {
 	// Don't add a row if no headers are defined
-	if (sHeaders.empty()) {
+	if (m_vsHeaders.empty()) {
 		return (unsigned int) -1;
 	}
 
