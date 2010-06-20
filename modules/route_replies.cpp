@@ -112,6 +112,21 @@ static const struct {
 		{"266", true},
 		{NULL, true},
 	}},
+	// This is just a list of all possible /mode replies stuffed together.
+	// Since there should never be more than one of these going on, this
+	// should work fine and makes the code simpler.
+	{"MODE", {
+		// MODE I
+		{"346", false},
+		{"347", true},
+		// MODE b
+		{"367", false},
+		{"368", true},
+		// MODE e
+		{"348", false},
+		{"349", true},
+		{NULL, true},
+	 }},
 	// END (last item!)
 	{NULL, {{NULL, true}}}
 };
@@ -235,9 +250,43 @@ public:
 		if (!m_pUser->GetIRCSock())
 			return CONTINUE;
 
+		if (sCmd.Equals("MODE")) {
+			// Check if this is a mode request that needs to be handled
+
+			// If there are arguments to a mode change,
+			// we must not route it.
+			if (!sLine.Token(3, true).empty())
+				return CONTINUE;
+
+			// Grab the mode change parameter
+			CString sMode = sLine.Token(2);
+
+			// If this is a channel mode request, znc core replies to it
+			if (sMode.empty())
+				return CONTINUE;
+
+			// Check if this is a mode change or a specific
+			// mode request (the later needs to be routed).
+			sMode.TrimPrefix("+");
+			if (sMode.length() != 1)
+				return CONTINUE;
+
+			// Now just check if it's one of the supported modes
+			switch (sMode[0]) {
+			case 'I':
+			case 'b':
+			case 'e':
+				break;
+			default:
+				return CONTINUE;
+			}
+
+			// Ok, this looks like we should route it.
+			// Fall through to the next loop
+		}
+
 		for (size_t i = 0; vRouteReplies[i].szRequest != NULL; i++) {
 			if (vRouteReplies[i].szRequest == sCmd) {
-
 				struct queued_req req = {
 					sLine, vRouteReplies[i].vReplies
 				};
