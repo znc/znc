@@ -231,12 +231,11 @@ public:
 	virtual EModRet OnUserRaw(CString& sLine)
 	{
 		CString sCmd = sLine.Token(0).AsUpper();
-		size_t i = 0;
 
 		if (!m_pUser->GetIRCSock())
 			return CONTINUE;
 
-		while (vRouteReplies[i].szRequest != NULL) {
+		for (size_t i = 0; vRouteReplies[i].szRequest != NULL; i++) {
 			if (vRouteReplies[i].szRequest == sCmd) {
 
 				struct queued_req req = {
@@ -247,7 +246,6 @@ public:
 
 				return HALTCORE;
 			}
-			i++;
 		}
 
 		return CONTINUE;
