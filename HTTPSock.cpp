@@ -43,7 +43,12 @@ void CHTTPSock::ReadData(const char* data, size_t len) {
 
 bool CHTTPSock::SendCookie(const CString& sKey, const CString& sValue) {
 	if (!sKey.empty() && !sValue.empty()) {
-		m_msResponseCookies[sKey] = sValue;
+		if (m_msRequestCookies.find(sKey) == m_msRequestCookies.end() ||
+			m_msRequestCookies[sKey].StrCmp(sValue) != 0)
+		{
+			// only queue a Set-Cookie to be sent if the client didn't send a Cookie header of the same name+value.
+			m_msResponseCookies[sKey] = sValue;
+		}
 		return true;
 	}
 
