@@ -403,21 +403,19 @@ bool CHTTPSock::PrintErrorPage(unsigned int uStatusId, const CString& sStatusMsg
 		return false;
 	}
 
-	CString sPage = GetErrorPage(uStatusId, sStatusMsg, sMessage);
-	PrintHeader(sPage.length(), "text/html", uStatusId, sStatusMsg);
-	Write(sPage);
-	Close(Csock::CLT_AFTERWRITE);
-
-	return true;
-}
-
-CString CHTTPSock::GetErrorPage(unsigned int uStatusId, const CString& sStatusMsg, const CString& sMessage) {
-	return "<!DOCTYPE HTML PUBLIC \"-//IETF//DTD HTML 2.0//EN\">\r\n"
+	CString sPage =
+		"<!DOCTYPE HTML PUBLIC \"-//IETF//DTD HTML 2.0//EN\">\r\n"
 		"<html><head>\r\n<title>" + CString(uStatusId) + " " + sStatusMsg.Escape_n(CString::EHTML) + "</title>\r\n"
 		"</head><body>\r\n<h1>" + sStatusMsg.Escape_n(CString::EHTML) + "</h1>\r\n"
 		"<p>" + sMessage.Escape_n(CString::EHTML) + "</p>\r\n"
 		"<hr />\r\n<address>" + CZNC::GetTag(false).Escape_n(CString::EHTML) + " at " + GetLocalIP().Escape_n(CString::EHTML) + " Port " + CString(GetLocalPort()) + "</address>\r\n"
 		"</body></html>\r\n";
+
+	PrintHeader(sPage.length(), "text/html", uStatusId, sStatusMsg);
+	Write(sPage);
+	Close(Csock::CLT_AFTERWRITE);
+
+	return true;
 }
 
 bool CHTTPSock::ForceLogin() {
@@ -430,11 +428,8 @@ bool CHTTPSock::ForceLogin() {
 		return false;
 	}
 
-	CString sPage = GetErrorPage(401, "Unauthorized", "You need to login to view this page.");
 	AddHeader("WWW-Authenticate", "Basic realm=\"" + CZNC::GetTag(false) + "\"");
-	PrintHeader(sPage.length(), "text/html", 401, "Unauthorized");
-	Write(sPage);
-	Close(Csock::CLT_AFTERWRITE);
+	PrintErrorPage(401, "Unauthorized", "You need to login to view this page.");
 
 	return false;
 }
@@ -504,11 +499,8 @@ bool CHTTPSock::Redirect(const CString& sURL) {
 	}
 
 	DEBUG("- Redirect to [" << sURL << "]");
-	CString sPage = GetErrorPage(302, "Found", "The document has moved <a href=\"" + sURL.Escape_n(CString::EHTML) + "\">here</a>.");
 	AddHeader("Location", sURL);
-	PrintHeader(sPage.length(), "text/html", 302, "Found");
-	Write(sPage);
-	Close(Csock::CLT_AFTERWRITE);
+	PrintErrorPage(302, "Found", "The document has moved <a href=\"" + sURL.Escape_n(CString::EHTML) + "\">here</a>.");
 
 	return true;
 }

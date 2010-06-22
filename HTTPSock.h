@@ -45,7 +45,6 @@ public:
 
 	bool PrintNotFound();
 	bool Redirect(const CString& sURL);
-	CString GetErrorPage(unsigned int uStatusId, const CString& sStatusMsg, const CString& sMessage);
 	bool PrintErrorPage(unsigned int uStatusId, const CString& sStatusMsg, const CString& sMessage);
 	static void ParseParams(const CString& sParams, map<CString, VCString>& msvsParams);
 	void ParseURI();
