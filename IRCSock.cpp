@@ -645,7 +645,16 @@ void CIRCSock::ReadLine(const CString& sData) {
 			// CAP spec don't mention this, but all implementations
 			// I've seen add this extra asterisk
 			CString sSubCmd = sRest.Token(1);
-			CString sArgs = sRest.Token(2, true).TrimPrefix_n(":");
+
+			// If the caplist of a reply is too long, it's split
+			// into multiple replies. A "*" is prepended to show
+			// that the list was split into multiple replies.
+			CString sArgs;
+			if (sRest.Token(2) == "*") {
+				sArgs = sRest.Token(3, true).TrimPrefix_n(":");
+			} else {
+				sArgs = sRest.Token(2, true).TrimPrefix_n(":");
+			}
 
 			if (sSubCmd == "LS" && !m_bAuthed) {
 				VCString vsTokens;
