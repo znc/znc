@@ -161,6 +161,9 @@ public:
 		m_mspSessions.FinishUserSessions(User);
 	}
 
+protected:
+	using CHTTPSock::PrintErrorPage;
+
 private:
 	EPageReqResult OnPageRequestInternal(const CString& sURI, CString& sPageRet);
 

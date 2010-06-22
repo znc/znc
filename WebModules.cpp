@@ -510,9 +510,9 @@ CWebSock::EPageReqResult CWebSock::OnPageRequestInternal(const CString& sURI, CS
 	// CSRF against the login form makes no sense and the login form does a
 	// cookies-enabled check which would break otherwise.
 	if (IsPost() && GetParam("_CSRF_Check") != GetCSRFCheck() && sURI != "/login") {
-		sPageRet = GetErrorPage(403, "Access denied", "POST requests need to send "
+		PrintErrorPage(403, "Access denied", "POST requests need to send "
 				"a secret token to prevent cross-site request forgery attacks.");
-		return PAGE_PRINT;
+		return PAGE_DONE;
 	}
 
 	SendCookie("SessionId", GetSession()->GetId());
@@ -598,11 +598,11 @@ CWebSock::EPageReqResult CWebSock::OnPageRequestInternal(const CString& sURI, CS
 		} else if (pModule->WebRequiresLogin() && !ForceLogin()) {
 			return PAGE_PRINT;
 		} else if (pModule->WebRequiresAdmin() && !GetSession()->IsAdmin()) {
-			sPageRet = GetErrorPage(403, "Forbidden", "You need to be an admin to access this module");
-			return PAGE_PRINT;
+			PrintErrorPage(403, "Forbidden", "You need to be an admin to access this module");
+			return PAGE_DONE;
 		} else if (!pModule->IsGlobal() && pModule->GetUser() != GetSession()->GetUser()) {
-			sPageRet = GetErrorPage(403, "Forbidden", "You must login as " + pModule->GetUser()->GetUserName() + " in order to view this page");
-			return PAGE_PRINT;
+			PrintErrorPage(403, "Forbidden", "You must login as " + pModule->GetUser()->GetUserName() + " in order to view this page");
+			return PAGE_DONE;
 		} else if (pModule->OnWebPreRequest(*this, m_sPage)) {
 			return PAGE_DEFERRED;
 		}
@@ -615,8 +615,8 @@ CWebSock::EPageReqResult CWebSock::OnPageRequestInternal(const CString& sURI, CS
 			bool bActive = (m_sModName == pModule->GetModName() && m_sPage == SubPage->GetName());
 
 			if (bActive && SubPage->RequiresAdmin() && !GetSession()->IsAdmin()) {
-				sPageRet = GetErrorPage(403, "Forbidden", "You need to be an admin to access this page");
-				return PAGE_PRINT;
+				PrintErrorPage(403, "Forbidden", "You need to be an admin to access this page");
+				return PAGE_DONE;
 			}
 		}
 
@@ -648,11 +648,9 @@ CWebSock::EPageReqResult CWebSock::OnPageRequestInternal(const CString& sURI, CS
 			}
 
 			if (!SentHeader()) {
-				sPageRet = GetErrorPage(404, "Not Implemented", "The requested module does not acknowledge web requests");
-				return PAGE_PRINT;
-			} else {
-				return PAGE_DONE;
+				PrintErrorPage(404, "Not Implemented", "The requested module does not acknowledge web requests");
 			}
+			return PAGE_DONE;
 		}
 	} else {
 		CString sPage(sURI.Trim_n("/"));
