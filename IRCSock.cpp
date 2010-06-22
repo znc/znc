@@ -517,8 +517,10 @@ void CIRCSock::ReadLine(const CString& sData) {
 			CChan* pChan = m_pUser->FindChan(sChan);
 
 			if (pChan) {
-				pChan->RemNick(sKickedNick);
 				MODULECALL(OnKick(Nick, sKickedNick, *pChan, sMsg), m_pUser, NULL, );
+				// do not remove the nick till after the OnKick call, so modules
+				// can do Chan.FindNick or something to get more info.
+				pChan->RemNick(sKickedNick);
 			}
 
 			if (GetNick().Equals(sKickedNick) && pChan) {
