@@ -62,7 +62,7 @@
  *
  *  If you want your module to actually do something, you should override some
  *  of the hooks from CModule. These are the functions whose names start with
- *  "Do". They are called when the associated event happens.
+ *  "On". They are called when the associated event happens.
  *
  *  Feel free to also look at existing modules.
  */
