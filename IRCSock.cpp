@@ -79,11 +79,12 @@ void CIRCSock::ReadLine(const CString& sData) {
 	MODULECALL(OnRaw(sLine), m_pUser, NULL, return);
 
 	if (sLine.Equals("PING ", false, 5)) {
+		// Generate a reply and don't forward this to any user,
+		// we don't want any PING forwarded
 		PutIRC("PONG " + sLine.substr(5));
-		m_pUser->PutUser(sLine);
 		return;
-	} else if (sLine.Token(1).Equals("PONG") && sLine.Token(3).Equals(":ZNC")) {
-		// We asked for this so don't forward the reply to clients.
+	} else if (sLine.Token(1).Equals("PONG")) {
+		// Block PONGs, we already responded to the pings
 		return;
 	} else if (sLine.Equals("ERROR ", false, 6)) {
 		//ERROR :Closing Link: nick[24.24.24.24] (Excess Flood)
