@@ -38,6 +38,7 @@ public:
 		Ping();
 		m_bIsAway = false;
 		m_bBootError = false;
+		m_saveMessages = true;
 		SetAwayTime(300);
 		AddTimer(new CAwayJob(this, 60, 0, "AwayJob", "Checks for idle and saves messages every 1 minute"));
 	}
@@ -50,29 +51,38 @@ public:
 	virtual bool OnLoad(const CString& sArgs, CString& sMessage)
 	{
 		CString sMyArgs = sArgs;
-		if (sMyArgs.Token(0) == "-notimer")
+		size_t uIndex = 0;
+		if (sMyArgs.Token(0) == "-nostore")
+		{
+			uIndex++;
+			m_saveMessages = false;
+		}
+		if (sMyArgs.Token(uIndex) == "-notimer")
 		{
 			SetAwayTime(0);
-			sMyArgs = sMyArgs.Token(1, true);
-		} else if (sMyArgs.Token(0) == "-timer")
+			sMyArgs = sMyArgs.Token(uIndex + 1, true);
+		} else if (sMyArgs.Token(uIndex) == "-timer")
 		{
-			SetAwayTime(sMyArgs.Token(1).ToInt());
-			sMyArgs = sMyArgs.Token(2, true);
+			SetAwayTime(sMyArgs.Token(uIndex + 1).ToInt());
+			sMyArgs = sMyArgs.Token(uIndex + 2, true);
 		}
-		if (!sMyArgs.empty())
+		if (m_saveMessages)
 		{
-			m_sPassword = CBlowfish::MD5(sMyArgs);
-		} else {
-			sMessage = "This module needs as an argument a keyphrase used for encryption";
-			return false;
-		}
+			if (!sMyArgs.empty())
+			{
+				m_sPassword = CBlowfish::MD5(sMyArgs);
+			} else {
+				sMessage = "This module needs as an argument a keyphrase used for encryption";
+				return false;
+			}
 
-		if (!BootStrap())
-		{
-			sMessage = "Failed to decrypt your saved messages - "
-				"Did you give the right encryption key as an argument to this module?";
-			m_bBootError = true;
-			return false;
+			if (!BootStrap())
+			{
+				sMessage = "Failed to decrypt your saved messages - "
+					"Did you give the right encryption key as an argument to this module?";
+				m_bBootError = true;
+				return false;
+			}
 		}
 
 		return true;
@@ -199,7 +209,7 @@ public:
 				SaveBufferToDisk();
 			}
 		}
-		else if (sCmdName == "save")
+		else if (sCmdName == "save" && m_saveMessages)
 		{
 			SaveBufferToDisk();
 			PutModNotice("Messages saved to disk.", "away");
@@ -410,7 +420,10 @@ private:
 
 	void AddMessage(const CString & sText)
 	{
-		m_vMessages.push_back(sText);
+		if (m_saveMessages)
+		{
+			m_vMessages.push_back(sText);
+		}
 	}
 
 	time_t          m_iLastSentData;
@@ -418,6 +431,7 @@ private:
 	time_t          m_iAutoAway;
 	vector<CString> m_vMessages;
 	CString         m_sReason;
+	bool            m_saveMessages;
 };
 
 
