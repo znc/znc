@@ -751,6 +751,7 @@ bool CZNC::WriteNewConfig(const CString& sConfigFile) {
 	// User
 	CUtils::PrintMessage("");
 	CUtils::PrintMessage("Now we need to setup a user...");
+	CUtils::PrintMessage("ZNC needs one user per IRC network.");
 	CUtils::PrintMessage("");
 
 	bool bFirstUser = true;
@@ -870,13 +871,13 @@ bool CZNC::WriteNewConfig(const CString& sConfigFile) {
 			CUtils::GetInput("[" + sHost + "] Password (probably empty)", sPass);
 
 #ifdef HAVE_LIBSSL
-			bSSL = CUtils::GetBoolInput("Does this server use SSL? (probably no)", false);
+			bSSL = CUtils::GetBoolInput("Does this server use SSL?", false);
 #endif
 
 			vsLines.push_back("\tServer     = " + sHost + ((bSSL) ? " +" : " ") + CString(uServerPort) + " " + sPass);
 
 			CUtils::PrintMessage("");
-		} while (CUtils::GetBoolInput("Would you like to add another server?", false));
+		} while (CUtils::GetBoolInput("Would you like to add another server for this IRC network?", false));
 
 		vsLines.push_back("");
 		CUtils::PrintMessage("");
@@ -900,7 +901,7 @@ bool CZNC::WriteNewConfig(const CString& sConfigFile) {
 
 		CUtils::PrintMessage("");
 		bFirstUser = false;
-	} while (CUtils::GetBoolInput("Would you like to setup another user?", false));
+	} while (CUtils::GetBoolInput("Would you like to setup another user (e.g. for connecting to another network)?", false));
 	// !User
 
 	CFile File;
