@@ -499,10 +499,6 @@ public:
 	 */
 	virtual EModRet OnPrivBufferPlayLine(CClient& Client, CString& sLine);
 
-	/** @deprecated Use CModule::OnClientLogin instead. */
-	virtual void OnUserAttached(bool thisFunctionWasRemoved, bool UseOnClientLogin) {}
-	/** @deprecated Use CModule::OnClientDisconnect instead. */
-	virtual void OnUserDetached(bool thisFunctionWasRemoved, bool UseOnClientDisconnect) {}
 	/** Called when a client successfully logged in to ZNC. */
 	virtual void OnClientLogin();
 	/** Called when a client disconnected from ZNC. */
