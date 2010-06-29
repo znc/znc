@@ -293,7 +293,7 @@ public:
 		if (sUsername.empty())
 			return(m_pUser);
 
-		CUser *pUser = CZNC::Get().GetUser(sUsername);
+		CUser *pUser = CZNC::Get().FindUser(sUsername);
 		if (bSetUserContext)
 			m_pUser = pUser;
 

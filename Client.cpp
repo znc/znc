@@ -629,7 +629,7 @@ void CAuthBase::RefuseLogin(const CString& sReason) {
 	if (!m_pSock)
 		return;
 
-	CUser* pUser = CZNC::Get().GetUser(GetUsername());
+	CUser* pUser = CZNC::Get().FindUser(GetUsername());
 
 	// If the username is valid, notify that user that someone tried to
 	// login. Use sReason because there are other reasons than "wrong

@@ -409,12 +409,6 @@ void CZNC::DeleteUsers() {
 	DisableConnectUser();
 }
 
-CUser* CZNC::GetUser(const CString& sUser) {
-	// Todo: make this case insensitive
-	map<CString,CUser*>::iterator it = m_msUsers.find(sUser);
-	return (it == m_msUsers.end()) ? NULL : it->second;
-}
-
 Csock* CZNC::FindSockByName(const CString& sSockName) {
 	return m_Manager.FindSockByName(sSockName);
 }
@@ -1959,7 +1953,7 @@ void CZNC::AuthUser(CSmartPtr<CAuthBase> AuthClass) {
 		return;
 	}
 
-	CUser* pUser = GetUser(AuthClass->GetUsername());
+	CUser* pUser = FindUser(AuthClass->GetUsername());
 
 	if (!pUser || !pUser->CheckPass(AuthClass->GetPassword())) {
 		AuthClass->RefuseLogin("Invalid Password");
