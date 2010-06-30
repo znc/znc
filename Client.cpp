@@ -796,7 +796,7 @@ void CClient::HandleCap(const CString& sLine)
 
 		VCString vsTokens;
 		VCString::iterator it;
-		sLine.Token(2).TrimPrefix_n(":").Split(" ", vsTokens, false);
+		sLine.Token(2, true).TrimPrefix_n(":").Split(" ", vsTokens, false);
 
 		for (it = vsTokens.begin(); it != vsTokens.end(); ++it) {
 			bool bVal = true;
