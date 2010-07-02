@@ -1914,18 +1914,18 @@ CZNC::TrafficStatsMap CZNC::GetTrafficStats(TrafficStatsPair &Users,
 	}
 
 	for (CSockManager::const_iterator it = m_Manager.begin(); it != m_Manager.end(); ++it) {
+		CUser *pUser = NULL;
 		if ((*it)->GetSockName().Left(5) == "IRC::") {
-			CIRCSock *p = (CIRCSock *) *it;
-			ret[p->GetUser()->GetUserName()].first  += p->GetBytesRead();
-			ret[p->GetUser()->GetUserName()].second += p->GetBytesWritten();
-			uiUsers_in  += p->GetBytesRead();
-			uiUsers_out += p->GetBytesWritten();
+			pUser = ((CIRCSock *) *it)->GetUser();
 		} else if ((*it)->GetSockName().Left(5) == "USR::") {
-			CClient *p = (CClient *) *it;
-			ret[p->GetUser()->GetUserName()].first  += p->GetBytesRead();
-			ret[p->GetUser()->GetUserName()].second += p->GetBytesWritten();
-			uiUsers_in  += p->GetBytesRead();
-			uiUsers_out += p->GetBytesWritten();
+			pUser = ((CClient*) *it)->GetUser();
+		}
+
+		if (pUser) {
+			ret[pUser->GetUserName()].first  += (*it)->GetBytesRead();
+			ret[pUser->GetUserName()].second += (*it)->GetBytesWritten();
+			uiUsers_in  += (*it)->GetBytesRead();
+			uiUsers_out += (*it)->GetBytesWritten();
 		} else {
 			uiZNC_in  += (*it)->GetBytesRead();
 			uiZNC_out += (*it)->GetBytesWritten();
