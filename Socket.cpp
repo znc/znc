@@ -18,7 +18,8 @@ unsigned int CSockManager::GetAnonConnectionCount(const CString &sIP) const {
 	for (it = begin(); it != end(); ++it) {
 		CZNCSock *pSock = *it;
 		// Logged in CClients have "USR::<username>" as their sockname
-		if (pSock->GetRemoteIP() == sIP && pSock->GetSockName().Left(5) != "USR::") {
+		if (pSock->GetType() == Csock::INBOUND && pSock->GetRemoteIP() == sIP
+				&& pSock->GetSockName().Left(5) != "USR::") {
 			ret++;
 		}
 	}
