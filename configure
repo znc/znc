@@ -573,6 +573,8 @@ openssl_LIBS
 openssl_CFLAGS
 c_ares_LIBS
 c_ares_CFLAGS
+PKG_CONFIG_LIBDIR
+PKG_CONFIG_PATH
 PKG_CONFIG
 host_os
 host_vendor
@@ -657,6 +659,8 @@ LIBS
 CPPFLAGS
 CCC
 PKG_CONFIG
+PKG_CONFIG_PATH
+PKG_CONFIG_LIBDIR
 c_ares_CFLAGS
 c_ares_LIBS
 openssl_CFLAGS
@@ -1308,6 +1312,10 @@ Some influential environment variables:
   CPPFLAGS    (Objective) C/C++ preprocessor flags, e.g. -I<include dir> if
               you have headers in a nonstandard directory <include dir>
   PKG_CONFIG  path to pkg-config utility
+  PKG_CONFIG_PATH
+              directories to add to pkg-config's search path
+  PKG_CONFIG_LIBDIR
+              path overriding pkg-config's built-in search path
   c_ares_CFLAGS
               C compiler flags for c_ares, overriding pkg-config
   c_ares_LIBS linker flags for c_ares, overriding pkg-config
@@ -2905,6 +2913,10 @@ fi
 
 
 
+
+
+
+
 if test "x$ac_cv_env_PKG_CONFIG_set" != "xset"; then
 	if test -n "$ac_tool_prefix"; then
   # Extract the first word of "${ac_tool_prefix}pkg-config", so it can be a program name with args.
@@ -3017,7 +3029,6 @@ $as_echo "yes" >&6; }
 $as_echo "no" >&6; }
 		PKG_CONFIG=""
 	fi
-
 fi
 
 # ----- Check for dlopen
@@ -3104,11 +3115,10 @@ pkg_failed=no
 { $as_echo "$as_me:${as_lineno-$LINENO}: checking for c_ares" >&5
 $as_echo_n "checking for c_ares... " >&6; }
 
-if test -n "$PKG_CONFIG"; then
-    if test -n "$c_ares_CFLAGS"; then
-        pkg_cv_c_ares_CFLAGS="$c_ares_CFLAGS"
-    else
-        if test -n "$PKG_CONFIG" && \
+if test -n "$c_ares_CFLAGS"; then
+    pkg_cv_c_ares_CFLAGS="$c_ares_CFLAGS"
+ elif test -n "$PKG_CONFIG"; then
+    if test -n "$PKG_CONFIG" && \
     { { $as_echo "$as_me:${as_lineno-$LINENO}: \$PKG_CONFIG --exists --print-errors \"libcares\""; } >&5
   ($PKG_CONFIG --exists --print-errors "libcares") 2>&5
   ac_status=$?
@@ -3118,15 +3128,13 @@ if test -n "$PKG_CONFIG"; then
 else
   pkg_failed=yes
 fi
-    fi
-else
-	pkg_failed=untried
+ else
+    pkg_failed=untried
 fi
-if test -n "$PKG_CONFIG"; then
-    if test -n "$c_ares_LIBS"; then
-        pkg_cv_c_ares_LIBS="$c_ares_LIBS"
-    else
-        if test -n "$PKG_CONFIG" && \
+if test -n "$c_ares_LIBS"; then
+    pkg_cv_c_ares_LIBS="$c_ares_LIBS"
+ elif test -n "$PKG_CONFIG"; then
+    if test -n "$PKG_CONFIG" && \
     { { $as_echo "$as_me:${as_lineno-$LINENO}: \$PKG_CONFIG --exists --print-errors \"libcares\""; } >&5
   ($PKG_CONFIG --exists --print-errors "libcares") 2>&5
   ac_status=$?
@@ -3136,14 +3144,15 @@ if test -n "$PKG_CONFIG"; then
 else
   pkg_failed=yes
 fi
-    fi
-else
-	pkg_failed=untried
+ else
+    pkg_failed=untried
 fi
 
 
 
 if test $pkg_failed = yes; then
+   	{ $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
+$as_echo "no" >&6; }
 
 if $PKG_CONFIG --atleast-pkgconfig-version 0.20; then
         _pkg_short_errors_supported=yes
@@ -3151,24 +3160,24 @@ else
         _pkg_short_errors_supported=no
 fi
         if test $_pkg_short_errors_supported = yes; then
-	        c_ares_PKG_ERRORS=`$PKG_CONFIG --short-errors --errors-to-stdout --print-errors "libcares"`
+	        c_ares_PKG_ERRORS=`$PKG_CONFIG --short-errors --print-errors "libcares" 2>&1`
         else
-	        c_ares_PKG_ERRORS=`$PKG_CONFIG --errors-to-stdout --print-errors "libcares"`
+	        c_ares_PKG_ERRORS=`$PKG_CONFIG --print-errors "libcares" 2>&1`
         fi
 	# Put the nasty error message in config.log where it belongs
 	echo "$c_ares_PKG_ERRORS" >&5
 
-	{ $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
-$as_echo "no" >&6; }
-                ARES=no
+	ARES=no
 elif test $pkg_failed = untried; then
+     	{ $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
+$as_echo "no" >&6; }
 	ARES=no
 else
 	c_ares_CFLAGS=$pkg_cv_c_ares_CFLAGS
 	c_ares_LIBS=$pkg_cv_c_ares_LIBS
         { $as_echo "$as_me:${as_lineno-$LINENO}: result: yes" >&5
 $as_echo "yes" >&6; }
-	:
+
 fi
 
 		if test "x$ARES" = "xno" ; then
@@ -3205,11 +3214,10 @@ pkg_failed=no
 { $as_echo "$as_me:${as_lineno-$LINENO}: checking for openssl" >&5
 $as_echo_n "checking for openssl... " >&6; }
 
-if test -n "$PKG_CONFIG"; then
-    if test -n "$openssl_CFLAGS"; then
-        pkg_cv_openssl_CFLAGS="$openssl_CFLAGS"
-    else
-        if test -n "$PKG_CONFIG" && \
+if test -n "$openssl_CFLAGS"; then
+    pkg_cv_openssl_CFLAGS="$openssl_CFLAGS"
+ elif test -n "$PKG_CONFIG"; then
+    if test -n "$PKG_CONFIG" && \
     { { $as_echo "$as_me:${as_lineno-$LINENO}: \$PKG_CONFIG --exists --print-errors \"openssl\""; } >&5
   ($PKG_CONFIG --exists --print-errors "openssl") 2>&5
   ac_status=$?
@@ -3219,15 +3227,13 @@ if test -n "$PKG_CONFIG"; then
 else
   pkg_failed=yes
 fi
-    fi
-else
-	pkg_failed=untried
+ else
+    pkg_failed=untried
 fi
-if test -n "$PKG_CONFIG"; then
-    if test -n "$openssl_LIBS"; then
-        pkg_cv_openssl_LIBS="$openssl_LIBS"
-    else
-        if test -n "$PKG_CONFIG" && \
+if test -n "$openssl_LIBS"; then
+    pkg_cv_openssl_LIBS="$openssl_LIBS"
+ elif test -n "$PKG_CONFIG"; then
+    if test -n "$PKG_CONFIG" && \
     { { $as_echo "$as_me:${as_lineno-$LINENO}: \$PKG_CONFIG --exists --print-errors \"openssl\""; } >&5
   ($PKG_CONFIG --exists --print-errors "openssl") 2>&5
   ac_status=$?
@@ -3237,14 +3243,15 @@ if test -n "$PKG_CONFIG"; then
 else
   pkg_failed=yes
 fi
-    fi
-else
-	pkg_failed=untried
+ else
+    pkg_failed=untried
 fi
 
 
 
 if test $pkg_failed = yes; then
+   	{ $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
+$as_echo "no" >&6; }
 
 if $PKG_CONFIG --atleast-pkgconfig-version 0.20; then
         _pkg_short_errors_supported=yes
@@ -3252,15 +3259,13 @@ else
         _pkg_short_errors_supported=no
 fi
         if test $_pkg_short_errors_supported = yes; then
-	        openssl_PKG_ERRORS=`$PKG_CONFIG --short-errors --errors-to-stdout --print-errors "openssl"`
+	        openssl_PKG_ERRORS=`$PKG_CONFIG --short-errors --print-errors "openssl" 2>&1`
         else
-	        openssl_PKG_ERRORS=`$PKG_CONFIG --errors-to-stdout --print-errors "openssl"`
+	        openssl_PKG_ERRORS=`$PKG_CONFIG --print-errors "openssl" 2>&1`
         fi
 	# Put the nasty error message in config.log where it belongs
 	echo "$openssl_PKG_ERRORS" >&5
 
-	{ $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
-$as_echo "no" >&6; }
 
 		{ $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
 $as_echo "no" >&6; }
@@ -3362,6 +3367,8 @@ fi
 
 
 elif test $pkg_failed = untried; then
+     	{ $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
+$as_echo "no" >&6; }
 
 		{ $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
 $as_echo "no" >&6; }
