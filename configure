@@ -3119,12 +3119,12 @@ if test -n "$c_ares_CFLAGS"; then
     pkg_cv_c_ares_CFLAGS="$c_ares_CFLAGS"
  elif test -n "$PKG_CONFIG"; then
     if test -n "$PKG_CONFIG" && \
-    { { $as_echo "$as_me:${as_lineno-$LINENO}: \$PKG_CONFIG --exists --print-errors \"libcares\""; } >&5
-  ($PKG_CONFIG --exists --print-errors "libcares") 2>&5
+    { { $as_echo "$as_me:${as_lineno-$LINENO}: \$PKG_CONFIG --exists --print-errors \"libcares >= 1.5.0\""; } >&5
+  ($PKG_CONFIG --exists --print-errors "libcares >= 1.5.0") 2>&5
   ac_status=$?
   $as_echo "$as_me:${as_lineno-$LINENO}: \$? = $ac_status" >&5
   test $ac_status = 0; }; then
-  pkg_cv_c_ares_CFLAGS=`$PKG_CONFIG --cflags "libcares" 2>/dev/null`
+  pkg_cv_c_ares_CFLAGS=`$PKG_CONFIG --cflags "libcares >= 1.5.0" 2>/dev/null`
 else
   pkg_failed=yes
 fi
@@ -3135,12 +3135,12 @@ if test -n "$c_ares_LIBS"; then
     pkg_cv_c_ares_LIBS="$c_ares_LIBS"
  elif test -n "$PKG_CONFIG"; then
     if test -n "$PKG_CONFIG" && \
-    { { $as_echo "$as_me:${as_lineno-$LINENO}: \$PKG_CONFIG --exists --print-errors \"libcares\""; } >&5
-  ($PKG_CONFIG --exists --print-errors "libcares") 2>&5
+    { { $as_echo "$as_me:${as_lineno-$LINENO}: \$PKG_CONFIG --exists --print-errors \"libcares >= 1.5.0\""; } >&5
+  ($PKG_CONFIG --exists --print-errors "libcares >= 1.5.0") 2>&5
   ac_status=$?
   $as_echo "$as_me:${as_lineno-$LINENO}: \$? = $ac_status" >&5
   test $ac_status = 0; }; then
-  pkg_cv_c_ares_LIBS=`$PKG_CONFIG --libs "libcares" 2>/dev/null`
+  pkg_cv_c_ares_LIBS=`$PKG_CONFIG --libs "libcares >= 1.5.0" 2>/dev/null`
 else
   pkg_failed=yes
 fi
@@ -3160,9 +3160,9 @@ else
         _pkg_short_errors_supported=no
 fi
         if test $_pkg_short_errors_supported = yes; then
-	        c_ares_PKG_ERRORS=`$PKG_CONFIG --short-errors --print-errors "libcares" 2>&1`
+	        c_ares_PKG_ERRORS=`$PKG_CONFIG --short-errors --print-errors "libcares >= 1.5.0" 2>&1`
         else
-	        c_ares_PKG_ERRORS=`$PKG_CONFIG --print-errors "libcares" 2>&1`
+	        c_ares_PKG_ERRORS=`$PKG_CONFIG --print-errors "libcares >= 1.5.0" 2>&1`
         fi
 	# Put the nasty error message in config.log where it belongs
 	echo "$c_ares_PKG_ERRORS" >&5

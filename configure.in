@@ -166,7 +166,7 @@ if test "x$ARES" != "xno"; then
 Disabling c-ares may result in a slight performance decrease but will not have any other side-effects],
 			[pkg-config was not found and thus c-ares was disabled])
 	else
-		PKG_CHECK_MODULES([c_ares], [libcares],, ARES=no)
+		PKG_CHECK_MODULES([c_ares], [libcares >= 1.5.0],, ARES=no)
 
 		if test "x$ARES" = "xno" ; then
 			ZNC_AUTO_FAIL([ARES],
