@@ -3205,7 +3205,9 @@ fi
 if test "x$SSL" != "xno"; then
 	if test -n "$OPENSSL"; then
 		appendLib -L${OPENSSL}/lib
+		appendLib -L${OPENSSL}/lib64
 		appendCXX -I${OPENSSL}/include
+		PKG_CONFIG_PATH="$OPENSSL/lib/pkgconfig/:$OPENSSL/lib64/pkgconfig/:$PKG_CONFIG_PATH"
 	fi
 
 	old_SSL=$SSL
