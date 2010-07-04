@@ -46,9 +46,13 @@ table thead td {
 	padding: 6px;
 }
 
-table td {
+table td, table th {
 	padding: 4px;
 	border: 1px solid #000;
+}
+
+table th {
+	text-align: left;
 }
 
 td.mod_name {

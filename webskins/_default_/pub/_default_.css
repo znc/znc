@@ -252,13 +252,17 @@ table {
 	border-spacing: 1px;
 }
 
-td {
+td, th {
 	padding: 5px 10px;
 	min-width: 50px;
 }
 
-thead td {
+thead td, th {
 	background-color: #a0a0a0;
+}
+
+th {
+	text-align: left;
 }
 
 tbody td {
