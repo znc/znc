@@ -1,3 +1,5 @@
+SHELL       := @SHELL@
+
 # Support out-of-tree builds
 srcdir      := @srcdir@
 VPATH       := @srcdir@
