@@ -26,6 +26,10 @@ MODDIR   := @MODDIR@
 DATADIR  := @DATADIR@
 LIBZNC   := @LIBZNC@
 LIBZNCDIR:= @LIBZNCDIR@
+INSTALL         := @INSTALL@
+INSTALL_PROGRAM := @INSTALL_PROGRAM@
+INSTALL_SCRIPT  := @INSTALL_SCRIPT@
+INSTALL_DATA    := @INSTALL_DATA@
 
 TCL_FLAGS:= @TCL_FLAGS@
 
@@ -86,7 +90,7 @@ CLEAN    := *.so extra/*.so
 all: $(TARGETS)
 
 install: all create_install_dir install_metadirs $(PERLHOOK) $(TCLHOOK)
-	install -m 0755 $(TARGETS) $(DESTDIR)$(MODDIR)
+	$(INSTALL_PROGRAM) $(TARGETS) $(DESTDIR)$(MODDIR)
 
 create_install_dir:
 	mkdir -p $(DESTDIR)$(MODDIR)
@@ -111,12 +115,12 @@ clean:
 
 modperl_install: create_install_dir
 	for i in $(srcdir)/*.pm; do \
-		install -m 0644 $$i $(DESTDIR)$(MODDIR); \
+		$(INSTALL_DATA) $$i $(DESTDIR)$(MODDIR); \
 	done
 
 modtcl_install:
 	mkdir -p $(DESTDIR)$(DATADIR)/modtcl/
-	install -m 0644 $(srcdir)/extra/modtcl.tcl $(srcdir)/extra/binds.tcl $(DESTDIR)$(DATADIR)/modtcl/
+	$(INSTALL_DATA) $(srcdir)/extra/modtcl.tcl $(srcdir)/extra/binds.tcl $(DESTDIR)$(DATADIR)/modtcl/
 
 uninstall:
 	# Yes, we are lazy, just remove everything in there

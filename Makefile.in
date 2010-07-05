@@ -23,6 +23,10 @@ LIBZNCDIR:= @LIBZNCDIR@
 MODDIR   := @MODDIR@
 DATADIR  := @DATADIR@
 PKGCONFIGDIR := $(libdir)/pkgconfig
+INSTALL         := @INSTALL@
+INSTALL_PROGRAM := @INSTALL_PROGRAM@
+INSTALL_SCRIPT  := @INSTALL_SCRIPT@
+INSTALL_DATA    := @INSTALL_DATA@
 
 LIB_SRCS  := ZNCString.cpp Csocket.cpp znc.cpp User.cpp IRCSock.cpp Client.cpp DCCBounce.cpp \
 	DCCSock.cpp Chan.cpp Nick.cpp Server.cpp Modules.cpp MD5.cpp Buffer.cpp Utils.cpp \
@@ -77,15 +81,15 @@ install: znc $(LIBZNC)
 	mkdir -p $(DESTDIR)$(MODDIR)
 	mkdir -p $(DESTDIR)$(DATADIR)
 	cp -Rp $(srcdir)/webskins $(DESTDIR)$(DATADIR)
-	install -m 0755 znc $(DESTDIR)$(bindir)
-	install -m 0755 znc-config $(DESTDIR)$(bindir)
-	install -m 0755 znc-buildmod $(DESTDIR)$(bindir)
-	install -m 0644 $(srcdir)/*.h $(DESTDIR)$(includedir)/znc
-	install -m 0644 znc.pc $(DESTDIR)$(PKGCONFIGDIR)
+	$(INSTALL_PROGRAM) znc $(DESTDIR)$(bindir)
+	$(INSTALL_SCRIPT) znc-config $(DESTDIR)$(bindir)
+	$(INSTALL_SCRIPT) znc-buildmod $(DESTDIR)$(bindir)
+	$(INSTALL_DATA) $(srcdir)/*.h $(DESTDIR)$(includedir)/znc
+	$(INSTALL_DATA) znc.pc $(DESTDIR)$(PKGCONFIGDIR)
 	@$(MAKE) -C modules install DESTDIR=$(DESTDIR);
 	if test -n "$(LIBZNC)"; then \
 		mkdir -p $(DESTDIR)$(LIBZNCDIR) || exit 1 ; \
-		install -m 0755 $(LIBZNC) $(DESTDIR)$(LIBZNCDIR) || exit 1 ; \
+		$(INSTALL_PROGRAM) $(LIBZNC) $(DESTDIR)$(LIBZNCDIR) || exit 1 ; \
 	fi
 	@$(MAKE) -C man install DESTDIR=$(DESTDIR)
 
