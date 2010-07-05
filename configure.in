@@ -197,7 +197,6 @@ if test "x$SSL" != "xno"; then
 		appendLib "$openssl_LIBS"
 		appendCXX "$openssl_CFLAGS"
 	], [
-		AC_MSG_RESULT([no])
 		# Don't reorder this!
 		# On some arches libssl depends on libcrypto without linking to it :(
 		AC_CHECK_LIB( crypto, BIO_new,, SSL=no )

@@ -3365,8 +3365,6 @@ fi
 	echo "$openssl_PKG_ERRORS" >&5
 
 
-		{ $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
-$as_echo "no" >&6; }
 		# Don't reorder this!
 		# On some arches libssl depends on libcrypto without linking to it :(
 		{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for BIO_new in -lcrypto" >&5
@@ -3468,8 +3466,6 @@ elif test $pkg_failed = untried; then
      	{ $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
 $as_echo "no" >&6; }
 
-		{ $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
-$as_echo "no" >&6; }
 		# Don't reorder this!
 		# On some arches libssl depends on libcrypto without linking to it :(
 		{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for BIO_new in -lcrypto" >&5
