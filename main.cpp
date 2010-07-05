@@ -254,6 +254,16 @@ int main(int argc, char** argv) {
 			return 0;
 		}
 
+		/* fcntl() locks don't necessarily propagate to forked()
+		 *   children.  Reacquire the lock here.  Use the blocking
+		 *   call to avoid race condition with parent exiting.
+		 */
+		if (!pZNC->WaitForChildLock()) {
+			CUtils::PrintError("Child was unable to obtain lock on config file.");
+			delete pZNC;
+			return 1;
+		}
+
 		// Redirect std in/out/err to /dev/null
 		close(0); open("/dev/null", O_RDONLY);
 		close(1); open("/dev/null", O_WRONLY);

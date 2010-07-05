@@ -111,6 +111,7 @@ public:
 
 	bool TryExLock(const CString& sLockFile, int iFlags = O_RDONLY | O_CREAT);
 	bool TryExLock();
+	bool ExLock();
 	bool UnLock();
 
 	bool IsOpen() const;
@@ -119,8 +120,8 @@ public:
 	CString GetDir() const;
 
 private:
-	// flock() wrapper
-	bool Lock(int iOperation);
+	// fcntl() locking wrapper
+	bool Lock(int iType, bool bBlocking);
 
 	CString m_sBuffer;
 	int     m_iFD;

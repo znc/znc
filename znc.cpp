@@ -1058,7 +1058,9 @@ bool CZNC::DoRehash(CString& sError)
 	if (m_LockFile.IsOpen())
 		m_LockFile.Close();
 
-	if (!m_LockFile.Open(m_sConfigFile)) {
+	// need to open the config file Read/Write for fcntl()
+	// exclusive locking to work properly!
+	if (!m_LockFile.Open(m_sConfigFile, O_RDWR)) {
 		sError = "Can not open config file";
 		CUtils::PrintStatus(false, sError);
 		return false;
@@ -2070,4 +2072,8 @@ void CZNC::DisableConnectUser() {
 void CZNC::LeakConnectUser(CConnectUserTimer *pTimer) {
 	if (m_pConnectUserTimer == pTimer)
 		m_pConnectUserTimer = NULL;
+}
+
+bool CZNC::WaitForChildLock() {
+	return m_LockFile.ExLock();
 }

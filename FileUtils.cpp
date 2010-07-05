@@ -12,6 +12,7 @@
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <sys/wait.h>
+#include <fcntl.h>
 
 #ifndef HAVE_LSTAT
 #  define lstat(a, b)	stat(a, b)
@@ -388,23 +389,33 @@ bool CFile::TryExLock(const CString& sLockFile, int iFlags) {
 }
 
 bool CFile::TryExLock() {
-	return Lock(LOCK_EX|LOCK_NB);
+	return Lock(F_WRLCK, false);
+}
+
+bool CFile::ExLock() {
+	return Lock(F_WRLCK, true);
 }
 
 bool CFile::UnLock() {
-	return Lock(LOCK_UN);
+	return Lock(F_UNLCK, true);
 }
 
-bool CFile::Lock(int iOperation) {
+bool CFile::Lock(int iType, bool bBlocking) {
+	struct flock fl;
+
 	if (m_iFD == -1) {
 		return false;
 	}
 
-	if (flock(m_iFD, iOperation) != 0) {
+	fl.l_type   = iType;
+	fl.l_whence = SEEK_SET;
+	fl.l_start  = 0;
+	fl.l_len    = 0;
+	if (fcntl(m_iFD, (bBlocking ? F_SETLKW : F_SETLK), &fl) == -1) {
 		return false;
+	} else {
+		return true;
 	}
-
-	return true;
 }
 
 bool CFile::IsOpen() const { return (m_iFD != -1); }

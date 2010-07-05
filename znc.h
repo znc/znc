@@ -38,6 +38,7 @@ public:
 	void ReleaseISpoof();
 	bool WritePidFile(int iPid);
 	bool DeletePidFile();
+	bool WaitForChildLock();
 	Csock* FindSockByName(const CString& sSockName);
 	bool IsHostAllowed(const CString& sHostMask) const;
 	// This returns false if there are too many anonymous connections from this ip
