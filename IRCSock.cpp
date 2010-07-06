@@ -316,6 +316,11 @@ void CIRCSock::ReadLine(const CString& sData) {
 				}
 				break;
 			}
+			case 451:
+				// :irc.server.com 451 CAP :You have not registered
+				// Servers that dont support CAP will give us this error, dont send it to the client
+				if (sNick.Equals("CAP"))
+					return;
 			case 470: {
 				// :irc.unreal.net 470 mynick [Link] #chan1 has become full, so you are automatically being transferred to the linked channel #chan2
 				// :mccaffrey.freenode.net 470 mynick #electronics ##electronics :Forwarding to another channel
