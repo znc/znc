@@ -326,7 +326,7 @@ int main(int argc, char** argv) {
 					args[pos++] = strdup("--no-color");
 				if (bAllowRoot)
 					args[pos++] = strdup("--allow-root");
-				// The above code adds 4 entries to args tops
+				// The above code adds 3 entries to args tops
 				// which means the array should be big enough
 
 				delete pZNC;
