@@ -113,6 +113,8 @@ public:
 	void PutModule(const CString& sModule, const CString& sLine);
 	void PutModNotice(const CString& sModule, const CString& sLine);
 
+	bool IsCapEnabled(const CString& sCap) { return 1 == m_ssAcceptedCaps.count(sCap); }
+
 	virtual void ReadLine(const CString& sData);
 	bool SendMotd();
 	void HelpUser();
@@ -143,6 +145,7 @@ protected:
 	CString              m_sPass;
 	CString              m_sUser;
 	CSmartPtr<CAuthBase> m_spAuth;
+	SCString             m_ssAcceptedCaps;
 };
 
 #endif // !_CLIENT_H

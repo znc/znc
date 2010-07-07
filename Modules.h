@@ -959,6 +959,24 @@ public:
 	 *        (Well, ok, m_pUser isn't known yet...)
 	 */
 	virtual EModRet OnUnknownUserRaw(CClient* pClient, CString& sLine);
+
+	/** Called when a client told us CAP LS. Use ssCaps.insert("cap-name")
+	 *  for announcing capabilities which your module supports.
+	 *  @param pClient client which wants caps.
+	 */
+	virtual void OnClientCapLs(SCString& ssCaps);
+	/** Called only to check if your module supports turning on/off named capability.
+	 *  @param sCap name of capability.
+	 *  @param bState On or off, depending on which case is interesting for client.
+	 *  @return true if your module supports this capability in the specified state.
+	 */
+	virtual bool IsClientCapSupported(const CString& sCap, bool bState);
+	/** Called when we actually need to turn a capability on or off for a client.
+	 *  @param pClient client which requested this.
+	 *  @param sCap name of wanted capability.
+	 *  @param bState On or off, depending on which case client needs.
+	 */
+	virtual void OnClientCapRequest(CClient* pClient, const CString& sCap, bool bState);
 private:
 };
 
@@ -974,6 +992,9 @@ public:
 	bool OnLoginAttempt(CSmartPtr<CAuthBase> Auth);
 	void OnFailedLogin(const CString& sUsername, const CString& sRemoteIP);
 	bool OnUnknownUserRaw(CClient* pClient, CString& sLine);
+	void OnClientCapLs(SCString& ssCaps);
+	bool IsClientCapSupported(const CString& sCap, bool bState);
+	void OnClientCapRequest(CClient* pClient, const CString& sCap, bool bState);
 private:
 };
 

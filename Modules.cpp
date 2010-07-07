@@ -503,6 +503,9 @@ void CGlobalModule::OnClientConnect(CZNCSock* pClient, const CString& sHost, uns
 CModule::EModRet CGlobalModule::OnLoginAttempt(CSmartPtr<CAuthBase> Auth) { return CONTINUE; }
 void CGlobalModule::OnFailedLogin(const CString& sUsername, const CString& sRemoteIP) {}
 CModule::EModRet CGlobalModule::OnUnknownUserRaw(CClient* pClient, CString& sLine) { return CONTINUE; }
+void CGlobalModule::OnClientCapLs(SCString& ssCaps) {}
+bool CGlobalModule::IsClientCapSupported(const CString& sCap, bool bState) { return false; }
+void CGlobalModule::OnClientCapRequest(CClient* pClient, const CString& sCap, bool bState) {}
 
 
 CModules::CModules() {
@@ -626,6 +629,42 @@ void CGlobalModules::OnFailedLogin(const CString& sUsername, const CString& sRem
 bool CGlobalModules::OnUnknownUserRaw(CClient* pClient, CString& sLine) {
 	GLOBALMODHALTCHK(OnUnknownUserRaw(pClient, sLine));
 }
+
+void CGlobalModules::OnClientCapLs(SCString& ssCaps) {
+	GLOBALMODCALL(OnClientCapLs(ssCaps));
+}
+
+// Maybe create new macro for this?
+bool CGlobalModules::IsClientCapSupported(const CString& sCap, bool bState) {
+	bool bResult = false;
+	for (unsigned int a = 0; a < size(); ++a) {
+		try {
+			CGlobalModule* pMod = (CGlobalModule*) (*this)[a];
+			CClient* pOldClient = pMod->GetClient();
+			pMod->SetClient(m_pClient);
+			if (m_pUser) {
+				CUser* pOldUser = pMod->GetUser();
+				pMod->SetUser(m_pUser);
+				bResult |= pMod->IsClientCapSupported(sCap, bState);
+				pMod->SetUser(pOldUser);
+			} else {
+				// WTF? Is that possible?
+				bResult |= pMod->IsClientCapSupported(sCap, bState);
+			}
+			pMod->SetClient(pOldClient);
+		} catch (CModule::EModException e) {
+			if (CModule::UNLOAD == e) {
+				UnloadModule((*this)[a]->GetModName());
+			}
+		}
+	}
+	return bResult;
+}
+
+void CGlobalModules::OnClientCapRequest(CClient* pClient, const CString& sCap, bool bState) {
+	GLOBALMODCALL(OnClientCapRequest(pClient, sCap, bState));
+}
+
 
 CModule* CModules::FindModule(const CString& sModule) const {
 	for (unsigned int a = 0; a < size(); a++) {
