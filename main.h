@@ -28,6 +28,24 @@
 #define _DATADIR_ "/usr/share/znc"
 #endif
 
+#define ALLMODULECALL(macFUNC, macEXITER)                                     \
+	do {                                                                  \
+		CGlobalModules& GMods = CZNC::Get().GetModules();             \
+		if (GMods.macFUNC) {                                          \
+			macEXITER;                                            \
+		} else {                                                      \
+			const map<CString, CUser*>& mUsers =                  \
+				CZNC::Get().GetUserMap();                     \
+			map<CString, CUser*>::const_iterator it;              \
+			for (it = mUsers.begin(); it != mUsers.end(); ++it) { \
+				CModules& UMods = it->second->GetModules();   \
+				if (UMods.macFUNC) {                          \
+					macEXITER;                            \
+				}                                             \
+			}                                                     \
+		}                                                             \
+	} while (false)
+
 #define GLOBALMODULECALL(macFUNC, macUSER, macCLIENT, macEXITER)   \
 	do {                                                       \
 		CGlobalModules& GMods = CZNC::Get().GetModules();  \
