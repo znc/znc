@@ -962,7 +962,7 @@ public:
 
 	/** Called when a client told us CAP LS. Use ssCaps.insert("cap-name")
 	 *  for announcing capabilities which your module supports.
-	 *  @param pClient client which wants caps.
+	 *  @param ssCaps set of caps which will be sent to client.
 	 */
 	virtual void OnClientCapLs(SCString& ssCaps);
 	/** Called only to check if your module supports turning on/off named capability.
