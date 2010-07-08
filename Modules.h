@@ -988,13 +988,13 @@ public:
 	bool OnWriteConfig(CFile& Config);
 	bool OnAddUser(CUser& User, CString& sErrorRet);
 	bool OnDeleteUser(CUser& User);
-	void OnClientConnect(CZNCSock* pSock, const CString& sHost, unsigned short uPort);
+	bool OnClientConnect(CZNCSock* pSock, const CString& sHost, unsigned short uPort);
 	bool OnLoginAttempt(CSmartPtr<CAuthBase> Auth);
-	void OnFailedLogin(const CString& sUsername, const CString& sRemoteIP);
+	bool OnFailedLogin(const CString& sUsername, const CString& sRemoteIP);
 	bool OnUnknownUserRaw(CClient* pClient, CString& sLine);
-	void OnClientCapLs(SCString& ssCaps);
+	bool OnClientCapLs(SCString& ssCaps);
 	bool IsClientCapSupported(const CString& sCap, bool bState);
-	void OnClientCapRequest(CClient* pClient, const CString& sCap, bool bState);
+	bool OnClientCapRequest(CClient* pClient, const CString& sCap, bool bState);
 private:
 };
 

@@ -104,15 +104,7 @@ CString CZNC::GetUptime() const {
 }
 
 bool CZNC::OnBoot() {
-	if (!GetModules().OnBoot()) {
-		return false;
-	}
-
-	for (map<CString,CUser*>::iterator it = m_msUsers.begin(); it != m_msUsers.end(); ++it) {
-		if (!it->second->GetModules().OnBoot()) {
-			return false;
-		}
-	}
+	ALLMODULECALL(OnBoot(), return false);
 
 	return true;
 }
@@ -537,9 +529,7 @@ bool CZNC::WriteConfig() {
 		return false;
 	}
 
-	if (GetModules().OnWriteConfig(m_LockFile)) {
-		return false;
-	}
+	GLOBALMODULECALL(OnWriteConfig(m_LockFile), NULL, NULL, return false);
 
 	m_LockFile.Write("AnonIPLimit  = " + CString(m_uiAnonIPLimit) + "\n");
 	m_LockFile.Write("MaxBufferSize= " + CString(m_uiMaxBufferSize) + "\n");
@@ -1002,11 +992,7 @@ bool CZNC::ParseConfig(const CString& sConfig)
 
 bool CZNC::RehashConfig(CString& sError)
 {
-	GetModules().OnPreRehash();
-	for (map<CString, CUser*>::iterator itb = m_msUsers.begin();
-			itb != m_msUsers.end(); ++itb) {
-		itb->second->GetModules().OnPreRehash();
-	}
+	ALLMODULECALL(OnPreRehash(), );
 
 	// This clears m_msDelUsers
 	HandleUserDeletion();
@@ -1016,11 +1002,7 @@ bool CZNC::RehashConfig(CString& sError)
 	m_msUsers.clear();
 
 	if (DoRehash(sError)) {
-		GetModules().OnPostRehash();
-		for (map<CString, CUser*>::iterator it = m_msUsers.begin();
-				it != m_msUsers.end(); ++it) {
-			it->second->GetModules().OnPostRehash();
-		}
+		ALLMODULECALL(OnPostRehash(), );
 
 		return true;
 	}
@@ -1717,7 +1699,7 @@ bool CZNC::DoRehash(CString& sError)
 		if (it->m_pUser) {
 			MODULECALL(OnConfigLine(it->m_sName, it->m_sValue, it->m_pUser, it->m_pChan), it->m_pUser, NULL, bHandled = true);
 		} else {
-			bHandled = GetModules().OnConfigLine(it->m_sName, it->m_sValue, it->m_pUser, it->m_pChan);
+			GLOBALMODULECALL(OnConfigLine(it->m_sName, it->m_sValue, it->m_pUser, it->m_pChan), it->m_pUser, NULL, bHandled = true);
 		}
 		if (!bHandled) {
 			CUtils::PrintMessage("unhandled global module config line [GM:" + it->m_sName + "] = [" + it->m_sValue + "]");
@@ -1850,11 +1832,11 @@ bool CZNC::AddUser(CUser* pUser, CString& sErrorRet) {
 				<< sErrorRet << "]");
 		return false;
 	}
-	if (GetModules().OnAddUser(*pUser, sErrorRet)) {
+	GLOBALMODULECALL(OnAddUser(*pUser, sErrorRet), pUser, NULL,
 		DEBUG("AddUser [" << pUser->GetUserName() << "] aborted by a module ["
 			<< sErrorRet << "]");
 		return false;
-	}
+	);
 	m_msUsers[pUser->GetUserName()] = pUser;
 	return true;
 }
@@ -1951,9 +1933,7 @@ CZNC::TrafficStatsMap CZNC::GetTrafficStats(TrafficStatsPair &Users,
 
 void CZNC::AuthUser(CSmartPtr<CAuthBase> AuthClass) {
 	// TODO unless the auth module calls it, CUser::IsHostAllowed() is not honoured
-	if (GetModules().OnLoginAttempt(AuthClass)) {
-		return;
-	}
+	GLOBALMODULECALL(OnLoginAttempt(AuthClass), NULL, NULL, return);
 
 	CUser* pUser = FindUser(AuthClass->GetUsername());
 

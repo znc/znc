@@ -67,9 +67,7 @@ void CClient::ReadLine(const CString& sData) {
 	if (IsAttached()) {
 		MODULECALL(OnUserRaw(sLine), m_pUser, this, return);
 	} else {
-		if (CZNC::Get().GetModules().OnUnknownUserRaw(this, sLine)) {
-			return;
-		}
+		GLOBALMODULECALL(OnUnknownUserRaw(this, sLine), m_pUser, this, return);
 	}
 
 	CString sCommand = sLine.Token(0);
@@ -639,7 +637,7 @@ void CAuthBase::RefuseLogin(const CString& sReason) {
 				"to login as you, but was rejected [" + sReason + "].");
 	}
 
-	CZNC::Get().GetModules().OnFailedLogin(GetUsername(), GetRemoteIP());
+	GLOBALMODULECALL(OnFailedLogin(GetUsername(), GetRemoteIP()), NULL, NULL, );
 	RefusedLogin(sReason);
 	Invalidate();
 }
@@ -784,7 +782,7 @@ void CClient::HandleCap(const CString& sLine)
 
 	if (sSubCmd.Equals("LS")) {
 		SCString ssOfferCaps;
-		CZNC::Get().GetModules().OnClientCapLs(ssOfferCaps);
+		GLOBALMODULECALL(OnClientCapLs(ssOfferCaps), m_pUser, this, );
 		CString sRes;
 		for (SCString::iterator i = ssOfferCaps.begin(); i != ssOfferCaps.end(); ++i) {
 			sRes += *i + " ";
@@ -805,7 +803,12 @@ void CClient::HandleCap(const CString& sLine)
 			if (sCap.TrimPrefix("-"))
 				bVal = false;
 
-			if ("multi-prefix" != sCap && "userhost-in-names" != sCap && !CZNC::Get().GetModules().IsClientCapSupported(sCap, bVal)) {
+			bool bAccepted = ("multi-prefix" == sCap) || ("userhost-in-names" == sCap);
+			if (!bAccepted) {
+				GLOBALMODULECALL(IsClientCapSupported(sCap, bVal), m_pUser, this, bAccepted = true);
+			}
+
+			if (!bAccepted) {
 				// Some unsupported capability is requested
 				RespondCap("NAK :" + sLine.Token(2, true).TrimPrefix_n(":"));
 				return;
@@ -823,7 +826,7 @@ void CClient::HandleCap(const CString& sLine)
 			} else if ("userhost-in-names" == *it) {
 				m_bUHNames = bVal;
 			} else {
-				CZNC::Get().GetModules().OnClientCapRequest(this, *it, bVal);
+				GLOBALMODULECALL(OnClientCapRequest(this, *it, bVal), m_pUser, this, );
 			}
 
 			if (bVal) {

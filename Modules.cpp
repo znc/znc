@@ -529,7 +529,7 @@ bool CModules::OnBoot() {
 	for (unsigned int a = 0; a < size(); a++) {
 		try {
 			if (!(*this)[a]->OnBoot()) {
-				return false;
+				return true;
 			}
 		} catch (CModule::EModException e) {
 			if (e == CModule::UNLOAD) {
@@ -538,7 +538,7 @@ bool CModules::OnBoot() {
 		}
 	}
 
-	return true;
+	return false;
 }
 
 bool CModules::OnPreRehash() { MODUNLOADCHK(OnPreRehash()); return false; }
@@ -614,24 +614,27 @@ bool CGlobalModules::OnDeleteUser(CUser& User) {
 	GLOBALMODHALTCHK(OnDeleteUser(User));
 }
 
-void CGlobalModules::OnClientConnect(CZNCSock* pClient, const CString& sHost, unsigned short uPort) {
+bool CGlobalModules::OnClientConnect(CZNCSock* pClient, const CString& sHost, unsigned short uPort) {
 	GLOBALMODCALL(OnClientConnect(pClient, sHost, uPort));
+	return false;
 }
 
 bool CGlobalModules::OnLoginAttempt(CSmartPtr<CAuthBase> Auth) {
 	GLOBALMODHALTCHK(OnLoginAttempt(Auth));
 }
 
-void CGlobalModules::OnFailedLogin(const CString& sUsername, const CString& sRemoteIP) {
+bool CGlobalModules::OnFailedLogin(const CString& sUsername, const CString& sRemoteIP) {
 	GLOBALMODCALL(OnFailedLogin(sUsername, sRemoteIP));
+	return false;
 }
 
 bool CGlobalModules::OnUnknownUserRaw(CClient* pClient, CString& sLine) {
 	GLOBALMODHALTCHK(OnUnknownUserRaw(pClient, sLine));
 }
 
-void CGlobalModules::OnClientCapLs(SCString& ssCaps) {
+bool CGlobalModules::OnClientCapLs(SCString& ssCaps) {
 	GLOBALMODCALL(OnClientCapLs(ssCaps));
+	return false;
 }
 
 // Maybe create new macro for this?
@@ -661,8 +664,9 @@ bool CGlobalModules::IsClientCapSupported(const CString& sCap, bool bState) {
 	return bResult;
 }
 
-void CGlobalModules::OnClientCapRequest(CClient* pClient, const CString& sCap, bool bState) {
+bool CGlobalModules::OnClientCapRequest(CClient* pClient, const CString& sCap, bool bState) {
 	GLOBALMODCALL(OnClientCapRequest(pClient, sCap, bState));
+	return false;
 }
 
 
