@@ -28,25 +28,33 @@
 #define _DATADIR_ "/usr/share/znc"
 #endif
 
-#define MODULECALL(macFUNC, macUSER, macCLIENT, macEXITER)         \
-	if (macUSER) {                                             \
+#define GLOBALMODULECALL(macFUNC, macUSER, macCLIENT, macEXITER)   \
+	do {                                                       \
 		CGlobalModules& GMods = CZNC::Get().GetModules();  \
-		CModules& UMods = macUSER->GetModules();           \
 		CUser* pOldGUser = GMods.GetUser();                \
 		CClient* pOldGClient = GMods.GetClient();          \
-		CClient* pOldUClient = UMods.GetClient();          \
 		GMods.SetUser(macUSER);                            \
 		GMods.SetClient(macCLIENT);                        \
-		UMods.SetClient(macCLIENT);                        \
-		if (GMods.macFUNC || UMods.macFUNC) {              \
+		if (GMods.macFUNC) {                               \
 			GMods.SetUser(pOldGUser);                  \
 			GMods.SetClient(pOldGClient);              \
-			UMods.SetClient(pOldUClient);              \
 			macEXITER;                                 \
 		}                                                  \
 		GMods.SetUser(pOldGUser);                          \
 		GMods.SetClient(pOldGClient);                      \
-		UMods.SetClient(pOldUClient);                      \
+	} while (false)
+
+#define MODULECALL(macFUNC, macUSER, macCLIENT, macEXITER)                \
+	if (macUSER) {                                                    \
+		GLOBALMODULECALL(macFUNC, macUSER, macCLIENT, macEXITER); \
+		CModules& UMods = macUSER->GetModules();                  \
+		CClient* pOldUClient = UMods.GetClient();                 \
+		UMods.SetClient(macCLIENT);                               \
+		if (UMods.macFUNC) {                                      \
+			UMods.SetClient(pOldUClient);                     \
+			macEXITER;                                        \
+		}                                                         \
+		UMods.SetClient(pOldUClient);                             \
 	}
 
 /** @mainpage
