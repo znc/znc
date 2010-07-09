@@ -502,10 +502,10 @@ CModule::EModRet CGlobalModule::OnDeleteUser(CUser& User) { return CONTINUE; }
 void CGlobalModule::OnClientConnect(CZNCSock* pClient, const CString& sHost, unsigned short uPort) {}
 CModule::EModRet CGlobalModule::OnLoginAttempt(CSmartPtr<CAuthBase> Auth) { return CONTINUE; }
 void CGlobalModule::OnFailedLogin(const CString& sUsername, const CString& sRemoteIP) {}
-CModule::EModRet CGlobalModule::OnUnknownUserRaw(CClient* pClient, CString& sLine) { return CONTINUE; }
+CModule::EModRet CGlobalModule::OnUnknownUserRaw(CString& sLine) { return CONTINUE; }
 void CGlobalModule::OnClientCapLs(SCString& ssCaps) {}
 bool CGlobalModule::IsClientCapSupported(const CString& sCap, bool bState) { return false; }
-void CGlobalModule::OnClientCapRequest(CClient* pClient, const CString& sCap, bool bState) {}
+void CGlobalModule::OnClientCapRequest(const CString& sCap, bool bState) {}
 
 
 CModules::CModules() {
@@ -628,8 +628,8 @@ bool CGlobalModules::OnFailedLogin(const CString& sUsername, const CString& sRem
 	return false;
 }
 
-bool CGlobalModules::OnUnknownUserRaw(CClient* pClient, CString& sLine) {
-	GLOBALMODHALTCHK(OnUnknownUserRaw(pClient, sLine));
+bool CGlobalModules::OnUnknownUserRaw(CString& sLine) {
+	GLOBALMODHALTCHK(OnUnknownUserRaw(sLine));
 }
 
 bool CGlobalModules::OnClientCapLs(SCString& ssCaps) {
@@ -664,8 +664,8 @@ bool CGlobalModules::IsClientCapSupported(const CString& sCap, bool bState) {
 	return bResult;
 }
 
-bool CGlobalModules::OnClientCapRequest(CClient* pClient, const CString& sCap, bool bState) {
-	GLOBALMODCALL(OnClientCapRequest(pClient, sCap, bState));
+bool CGlobalModules::OnClientCapRequest(const CString& sCap, bool bState) {
+	GLOBALMODCALL(OnClientCapRequest(sCap, bState));
 	return false;
 }
 

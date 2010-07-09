@@ -953,12 +953,11 @@ public:
 	/** This function behaves like CModule::OnRaw(), but is also called
 	 *  before the client successfully logged in to ZNC. You should always
 	 *  prefer to use CModule::OnRaw() if possible.
-	 *  @param pClient The client.
 	 *  @param sLine The raw traffic line which the client sent.
 	 *  @todo Why doesn't this use m_pUser and m_pClient?
 	 *        (Well, ok, m_pUser isn't known yet...)
 	 */
-	virtual EModRet OnUnknownUserRaw(CClient* pClient, CString& sLine);
+	virtual EModRet OnUnknownUserRaw(CString& sLine);
 
 	/** Called when a client told us CAP LS. Use ssCaps.insert("cap-name")
 	 *  for announcing capabilities which your module supports.
@@ -972,11 +971,10 @@ public:
 	 */
 	virtual bool IsClientCapSupported(const CString& sCap, bool bState);
 	/** Called when we actually need to turn a capability on or off for a client.
-	 *  @param pClient client which requested this.
 	 *  @param sCap name of wanted capability.
 	 *  @param bState On or off, depending on which case client needs.
 	 */
-	virtual void OnClientCapRequest(CClient* pClient, const CString& sCap, bool bState);
+	virtual void OnClientCapRequest(const CString& sCap, bool bState);
 private:
 };
 
@@ -991,10 +989,10 @@ public:
 	bool OnClientConnect(CZNCSock* pSock, const CString& sHost, unsigned short uPort);
 	bool OnLoginAttempt(CSmartPtr<CAuthBase> Auth);
 	bool OnFailedLogin(const CString& sUsername, const CString& sRemoteIP);
-	bool OnUnknownUserRaw(CClient* pClient, CString& sLine);
+	bool OnUnknownUserRaw(CString& sLine);
 	bool OnClientCapLs(SCString& ssCaps);
 	bool IsClientCapSupported(const CString& sCap, bool bState);
-	bool OnClientCapRequest(CClient* pClient, const CString& sCap, bool bState);
+	bool OnClientCapRequest(const CString& sCap, bool bState);
 private:
 };
 

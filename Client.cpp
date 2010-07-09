@@ -67,7 +67,7 @@ void CClient::ReadLine(const CString& sData) {
 	if (IsAttached()) {
 		MODULECALL(OnUserRaw(sLine), m_pUser, this, return);
 	} else {
-		GLOBALMODULECALL(OnUnknownUserRaw(this, sLine), m_pUser, this, return);
+		GLOBALMODULECALL(OnUnknownUserRaw(sLine), m_pUser, this, return);
 	}
 
 	CString sCommand = sLine.Token(0);
@@ -826,7 +826,7 @@ void CClient::HandleCap(const CString& sLine)
 			} else if ("userhost-in-names" == *it) {
 				m_bUHNames = bVal;
 			} else {
-				GLOBALMODULECALL(OnClientCapRequest(this, *it, bVal), m_pUser, this, );
+				GLOBALMODULECALL(OnClientCapRequest(*it, bVal), m_pUser, this, );
 			}
 
 			if (bVal) {
