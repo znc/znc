@@ -1707,13 +1707,17 @@ bool CZNC::DoRehash(CString& sError)
 	}
 
 	if (pChan) {
-		// TODO last <Chan> not closed
+		sError = "Last <Chan> section not properly closed. File truncated?";
+		CUtils::PrintError(sError);
 		delete pChan;
+		return false;
 	}
 
 	if (pUser) {
-		// TODO last <User> not closed
+		sError = "Last <User> section not properly closed. File truncated?";
+		CUtils::PrintError(sError);
 		delete pUser;
+		return false;
 	}
 
 	if (m_msUsers.empty()) {
