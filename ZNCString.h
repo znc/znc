@@ -141,8 +141,8 @@ public:
 	CString Base64Encode_n(unsigned int uWrap = 0) const;
 
 #ifdef HAVE_LIBSSL
-	CString Encrypt_n(const CString& sPass, const CString& sIvec = "");
-	CString Decrypt_n(const CString& sPass, const CString& sIvec = "");
+	CString Encrypt_n(const CString& sPass, const CString& sIvec = "") const;
+	CString Decrypt_n(const CString& sPass, const CString& sIvec = "") const;
 	void Encrypt(const CString& sPass, const CString& sIvec = "");
 	void Decrypt(const CString& sPass, const CString& sIvec = "");
 	void Crypt(const CString& sPass, bool bEncrypt, const CString& sIvec = "");
@@ -198,15 +198,15 @@ public:
 		MCS_EREADFIL  = 4
 	};
 
-	int WriteToDisk(const CString& sPath, mode_t iMode = 0644);
+	int WriteToDisk(const CString& sPath, mode_t iMode = 0644) const;
 	int ReadFromDisk(const CString& sPath, mode_t iMode = 0644);
 
-	virtual bool WriteFilter(CString& sKey, CString& sValue) { return true; }
-	virtual bool ReadFilter(CString& sKey, CString& sValue) { return true; }
+	virtual bool WriteFilter(CString& sKey, CString& sValue) const { return true; }
+	virtual bool ReadFilter(CString& sKey, CString& sValue) const { return true; }
 
 	//! make them parse safe, right now using hex encoding on anything !isalnum
-	virtual CString& Encode(CString& sValue);
-	virtual CString& Decode(CString& sValue);
+	virtual CString& Encode(CString& sValue) const;
+	virtual CString& Decode(CString& sValue) const;
 };
 
 #endif // !ZNCSTRING_H

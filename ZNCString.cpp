@@ -805,13 +805,13 @@ CString CString::SHA256() const {
 }
 
 #ifdef HAVE_LIBSSL
-CString CString::Encrypt_n(const CString& sPass, const CString& sIvec) {
+CString CString::Encrypt_n(const CString& sPass, const CString& sIvec) const {
 	CString sRet;
 	sRet.Encrypt(sPass, sIvec);
 	return sRet;
 }
 
-CString CString::Decrypt_n(const CString& sPass, const CString& sIvec) {
+CString CString::Decrypt_n(const CString& sPass, const CString& sIvec) const {
 	CString sRet;
 	sRet.Decrypt(sPass, sIvec);
 	return sRet;
@@ -1031,7 +1031,7 @@ bool CString::RightChomp(unsigned int uLen) {
 }
 
 //////////////// MCString ////////////////
-int MCString::WriteToDisk(const CString& sPath, mode_t iMode) {
+int MCString::WriteToDisk(const CString& sPath, mode_t iMode) const {
 	CFile cFile(sPath);
 
 	if (this->empty()) {
@@ -1045,7 +1045,7 @@ int MCString::WriteToDisk(const CString& sPath, mode_t iMode) {
 		return MCS_EOPEN;
 	}
 
-	for (MCString::iterator it = this->begin(); it != this->end(); ++it) {
+	for (MCString::const_iterator it = this->begin(); it != this->end(); ++it) {
 		CString sKey = it->first;
 		CString sValue = it->second;
 		if (!WriteFilter(sKey, sValue)) {
@@ -1095,7 +1095,7 @@ int MCString::ReadFromDisk(const CString& sPath, mode_t iMode) {
 
 static const char hexdigits[] = "0123456789abcdef";
 
-CString& MCString::Encode(CString& sValue) {
+CString& MCString::Encode(CString& sValue) const {
 	CString sTmp;
 	for (CString::iterator it = sValue.begin(); it != sValue.end(); ++it) {
 		if (isalnum(*it)) {
@@ -1111,7 +1111,7 @@ CString& MCString::Encode(CString& sValue) {
 	return sValue;
 }
 
-CString& MCString::Decode(CString& sValue) {
+CString& MCString::Decode(CString& sValue) const {
 	const char *pTmp = sValue.c_str();
 	char *endptr;
 	CString sTmp;

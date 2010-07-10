@@ -602,7 +602,7 @@ bool CUser::DelChan(const CString& sName) {
 	return false;
 }
 
-bool CUser::PrintLine(CFile& File, CString sName, CString sValue) {
+bool CUser::PrintLine(CFile& File, CString sName, CString sValue) const {
 	sName.Trim();
 	sValue.Trim();
 
@@ -674,7 +674,7 @@ bool CUser::WriteConfig(CFile& File) {
 
 	// CTCP Replies
 	if (!m_mssCTCPReplies.empty()) {
-		for (MCString::iterator itb = m_mssCTCPReplies.begin(); itb != m_mssCTCPReplies.end(); ++itb) {
+		for (MCString::const_iterator itb = m_mssCTCPReplies.begin(); itb != m_mssCTCPReplies.end(); ++itb) {
 			PrintLine(File, "CTCPReply", itb->first.AsUpper() + " " + itb->second);
 		}
 
@@ -1177,7 +1177,7 @@ bool CUser::SetBufferCount(unsigned int u, bool bForce) {
 	return true;
 }
 
-void CUser::CheckIRCConnect() {
+void CUser::CheckIRCConnect() const {
 	// Do we want to connect?
 	if (m_bIRCConnectEnabled && GetIRCSock() == NULL)
 		CZNC::Get().EnableConnectUser();

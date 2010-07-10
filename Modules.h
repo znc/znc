@@ -255,7 +255,7 @@ public:
 
 	/** This function throws CModule::UNLOAD which causes this module to be unloaded.
 	 */
-	void Unload();
+	void Unload() const;
 
 	/** This module hook is called when a module is loaded
 	 *  @param sArgsi The arguments for the modules.
@@ -645,7 +645,7 @@ public:
 	 */
 	virtual EModRet OnTimerAutoJoin(CChan& Channel);
 
-	ModHandle GetDLL();
+	ModHandle GetDLL() const;
 	static double GetCoreVersion() { return VERSION; }
 
 	/** This function sends a given raw IRC line to the IRC server, if we
@@ -716,7 +716,7 @@ public:
 	bool RemTimer(CTimer* pTimer);
 	bool RemTimer(const CString& sLabel);
 	bool UnlinkTimer(CTimer* pTimer);
-	CTimer* FindTimer(const CString& sLabel);
+	CTimer* FindTimer(const CString& sLabel) const;
 	set<CTimer*>::const_iterator BeginTimers() const { return m_sTimers.begin(); }
 	set<CTimer*>::const_iterator EndTimers() const { return m_sTimers.end(); }
 	virtual void ListTimers();
@@ -727,16 +727,16 @@ public:
 	bool RemSocket(CSocket* pSocket);
 	bool RemSocket(const CString& sSockName);
 	bool UnlinkSocket(CSocket* pSocket);
-	CSocket* FindSocket(const CString& sSockName);
+	CSocket* FindSocket(const CString& sSockName) const;
 	set<CSocket*>::const_iterator BeginSockets() const { return m_sSockets.begin(); }
 	set<CSocket*>::const_iterator EndSockets() const { return m_sSockets.end(); }
 	virtual void ListSockets();
 	// !Socket stuff
 
 	bool LoadRegistry();
-	bool SaveRegistry();
+	bool SaveRegistry() const;
 	bool SetNV(const CString & sName, const CString & sValue, bool bWriteToDisk = true);
-	CString GetNV(const CString & sName);
+	CString GetNV(const CString & sName) const;
 	bool DelNV(const CString & sName, bool bWriteToDisk = true);
 	MCString::iterator FindNV(const CString & sName) { return m_mssRegistry.find(sName); }
 	MCString::iterator EndNV() { return m_mssRegistry.end(); }
@@ -764,12 +764,12 @@ public:
 	 *           except when we are in a user-specific module hook in which
 	 *           case this is the user pointer.
 	 */
-	CUser* GetUser() { return m_pUser; }
+	CUser* GetUser() const { return m_pUser; }
 	/** @returns NULL except when we are in a client-specific module hook in
 	 *           which case this is the client for which the hook is called.
 	 */
-	CClient* GetClient() { return m_pClient; }
-	CSockManager* GetManager() { return m_pManager; }
+	CClient* GetClient() const { return m_pClient; }
+	CSockManager* GetManager() const { return m_pManager; }
 	// !Getters
 
 protected:

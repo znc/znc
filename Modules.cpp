@@ -144,14 +144,14 @@ CModule::~CModule() {
 
 void CModule::SetUser(CUser* pUser) { m_pUser = pUser; }
 void CModule::SetClient(CClient* pClient) { m_pClient = pClient; }
-void CModule::Unload() { throw UNLOAD; }
+void CModule::Unload() const { throw UNLOAD; }
 
 bool CModule::LoadRegistry() {
 	//CString sPrefix = (m_pUser) ? m_pUser->GetUserName() : ".global";
 	return (m_mssRegistry.ReadFromDisk(GetSavePath() + "/.registry", 0600) == MCString::MCS_SUCCESS);
 }
 
-bool CModule::SaveRegistry() {
+bool CModule::SaveRegistry() const {
 	//CString sPrefix = (m_pUser) ? m_pUser->GetUserName() : ".global";
 	return (m_mssRegistry.WriteToDisk(GetSavePath() + "/.registry", 0600) == MCString::MCS_SUCCESS);
 }
@@ -165,8 +165,8 @@ bool CModule::SetNV(const CString & sName, const CString & sValue, bool bWriteTo
 	return true;
 }
 
-CString CModule::GetNV(const CString & sName) {
-	MCString::iterator it = m_mssRegistry.find(sName);
+CString CModule::GetNV(const CString & sName) const {
+	MCString::const_iterator it = m_mssRegistry.find(sName);
 
 	if (it != m_mssRegistry.end()) {
 		return it->second;
@@ -247,7 +247,7 @@ bool CModule::UnlinkTimer(CTimer* pTimer) {
 	return false;
 }
 
-CTimer* CModule::FindTimer(const CString& sLabel) {
+CTimer* CModule::FindTimer(const CString& sLabel) const {
 	set<CTimer*>::iterator it;
 	for (it = m_sTimers.begin(); it != m_sTimers.end(); ++it) {
 		CTimer* pTimer = *it;
@@ -335,7 +335,7 @@ bool CModule::UnlinkSocket(CSocket* pSocket) {
 	return false;
 }
 
-CSocket* CModule::FindSocket(const CString& sSockName) {
+CSocket* CModule::FindSocket(const CString& sSockName) const {
 	set<CSocket*>::iterator it;
 	for (it = m_sSockets.begin(); it != m_sSockets.end(); ++it) {
 		CSocket* pSocket = *it;
@@ -456,7 +456,7 @@ CModule::EModRet CModule::OnChanNotice(CNick& Nick, CChan& Channel, CString& sMe
 CModule::EModRet CModule::OnTopic(CNick& Nick, CChan& Channel, CString& sTopic) { return CONTINUE; }
 CModule::EModRet CModule::OnTimerAutoJoin(CChan& Channel) { return CONTINUE; }
 
-ModHandle CModule::GetDLL() { return m_pDLL; }
+ModHandle CModule::GetDLL() const { return m_pDLL; }
 bool CModule::PutIRC(const CString& sLine) {
 	return (m_pUser) ? m_pUser->PutIRC(sLine) : false;
 }

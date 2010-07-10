@@ -46,7 +46,7 @@ public:
 		return CUtils::SaltedSHA256Hash(sPass, sSalt);
 	}
 
-	bool PrintLine(CFile& File, CString sName, CString sValue);
+	bool PrintLine(CFile& File, CString sName, CString sValue) const;
 	bool WriteConfig(CFile& File);
 	CChan* FindChan(const CString& sName) const;
 	bool AddChan(CChan* pChan);
@@ -111,7 +111,7 @@ public:
 	bool IsIRCConnected() const { return GetIRCSock() != NULL; }
 	void IRCConnected(CIRCSock* pIRCSock);
 	void IRCDisconnected();
-	void CheckIRCConnect();
+	void CheckIRCConnect() const;
 
 	void AddDCCBounce(CDCCBounce* p) { m_sDCCBounces.insert(p); }
 	void DelDCCBounce(CDCCBounce* p) { m_sDCCBounces.erase(p); }
@@ -220,7 +220,7 @@ public:
 	unsigned long long BytesWritten() const { return m_uBytesWritten; }
 	unsigned int JoinTries() const { return m_uMaxJoinTries; }
 	unsigned int MaxJoins() const { return m_uMaxJoins; }
-	bool IsIRCAway() { return m_bIRCAway; }
+	bool IsIRCAway() const { return m_bIRCAway; }
 	CString GetSkinName() const;
 	// !Getters
 private:
