@@ -42,6 +42,14 @@ DISTCLEAN := Makefile config.log config.status znc-config znc-buildmod .depend \
 .PHONY: all man modules clean distclean install
 
 all: znc man modules $(LIBZNC)
+	@echo ""
+	@echo " ZNC was successfully compiled. You may use"
+	@echo " '$(MAKE) install' to install ZNC to '$(prefix)'."
+	@echo " You can then use '$(bindir)/znc --makeconf'"
+	@echo " to generate a config file."
+	@echo ""
+	@echo " If you need help with using ZNC, please visit our wiki at:"
+	@echo "   http://znc.in"
 
 ifeq "$(LIBZNC)" ""
 OBJS := $(BIN_OBJS) $(LIB_OBJS)
