@@ -107,10 +107,8 @@ CUser::~CUser() {
 }
 
 void CUser::DelModules() {
-	if (m_pModules) {
-		delete m_pModules;
-		m_pModules = NULL;
-	}
+	delete m_pModules;
+	m_pModules = NULL;
 }
 
 bool CUser::UpdateModule(const CString &sModule) {
