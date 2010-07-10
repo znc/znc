@@ -111,7 +111,7 @@ public:
 	bool IsIRCConnected() const { return GetIRCSock() != NULL; }
 	void IRCConnected(CIRCSock* pIRCSock);
 	void IRCDisconnected();
-	void CheckIRCConnect() const;
+	void CheckIRCConnect();
 
 	void AddDCCBounce(CDCCBounce* p) { m_sDCCBounces.insert(p); }
 	void DelDCCBounce(CDCCBounce* p) { m_sDCCBounces.erase(p); }

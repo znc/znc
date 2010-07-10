@@ -1175,7 +1175,7 @@ bool CUser::SetBufferCount(unsigned int u, bool bForce) {
 	return true;
 }
 
-void CUser::CheckIRCConnect() const {
+void CUser::CheckIRCConnect() {
 	// Do we want to connect?
 	if (m_bIRCConnectEnabled && GetIRCSock() == NULL)
 		CZNC::Get().EnableConnectUser();

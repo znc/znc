@@ -255,7 +255,7 @@ public:
 
 	/** This function throws CModule::UNLOAD which causes this module to be unloaded.
 	 */
-	void Unload() const;
+	void Unload() { throw UNLOAD; }
 
 	/** This module hook is called when a module is loaded
 	 *  @param sArgsi The arguments for the modules.
@@ -645,7 +645,7 @@ public:
 	 */
 	virtual EModRet OnTimerAutoJoin(CChan& Channel);
 
-	ModHandle GetDLL() const;
+	ModHandle GetDLL() { return m_pDLL; }
 	static double GetCoreVersion() { return VERSION; }
 
 	/** This function sends a given raw IRC line to the IRC server, if we
@@ -716,7 +716,7 @@ public:
 	bool RemTimer(CTimer* pTimer);
 	bool RemTimer(const CString& sLabel);
 	bool UnlinkTimer(CTimer* pTimer);
-	CTimer* FindTimer(const CString& sLabel) const;
+	CTimer* FindTimer(const CString& sLabel);
 	set<CTimer*>::const_iterator BeginTimers() const { return m_sTimers.begin(); }
 	set<CTimer*>::const_iterator EndTimers() const { return m_sTimers.end(); }
 	virtual void ListTimers();
@@ -727,7 +727,7 @@ public:
 	bool RemSocket(CSocket* pSocket);
 	bool RemSocket(const CString& sSockName);
 	bool UnlinkSocket(CSocket* pSocket);
-	CSocket* FindSocket(const CString& sSockName) const;
+	CSocket* FindSocket(const CString& sSockName);
 	set<CSocket*>::const_iterator BeginSockets() const { return m_sSockets.begin(); }
 	set<CSocket*>::const_iterator EndSockets() const { return m_sSockets.end(); }
 	virtual void ListSockets();
@@ -764,12 +764,12 @@ public:
 	 *           except when we are in a user-specific module hook in which
 	 *           case this is the user pointer.
 	 */
-	CUser* GetUser() const { return m_pUser; }
+	CUser* GetUser() { return m_pUser; }
 	/** @returns NULL except when we are in a client-specific module hook in
 	 *           which case this is the client for which the hook is called.
 	 */
-	CClient* GetClient() const { return m_pClient; }
-	CSockManager* GetManager() const { return m_pManager; }
+	CClient* GetClient() { return m_pClient; }
+	CSockManager* GetManager() { return m_pManager; }
 	// !Getters
 
 protected:

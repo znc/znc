@@ -144,7 +144,6 @@ CModule::~CModule() {
 
 void CModule::SetUser(CUser* pUser) { m_pUser = pUser; }
 void CModule::SetClient(CClient* pClient) { m_pClient = pClient; }
-void CModule::Unload() const { throw UNLOAD; }
 
 bool CModule::LoadRegistry() {
 	//CString sPrefix = (m_pUser) ? m_pUser->GetUserName() : ".global";
@@ -247,7 +246,7 @@ bool CModule::UnlinkTimer(CTimer* pTimer) {
 	return false;
 }
 
-CTimer* CModule::FindTimer(const CString& sLabel) const {
+CTimer* CModule::FindTimer(const CString& sLabel) {
 	set<CTimer*>::iterator it;
 	for (it = m_sTimers.begin(); it != m_sTimers.end(); ++it) {
 		CTimer* pTimer = *it;
@@ -335,7 +334,7 @@ bool CModule::UnlinkSocket(CSocket* pSocket) {
 	return false;
 }
 
-CSocket* CModule::FindSocket(const CString& sSockName) const {
+CSocket* CModule::FindSocket(const CString& sSockName) {
 	set<CSocket*>::iterator it;
 	for (it = m_sSockets.begin(); it != m_sSockets.end(); ++it) {
 		CSocket* pSocket = *it;
@@ -456,7 +455,6 @@ CModule::EModRet CModule::OnChanNotice(CNick& Nick, CChan& Channel, CString& sMe
 CModule::EModRet CModule::OnTopic(CNick& Nick, CChan& Channel, CString& sTopic) { return CONTINUE; }
 CModule::EModRet CModule::OnTimerAutoJoin(CChan& Channel) { return CONTINUE; }
 
-ModHandle CModule::GetDLL() const { return m_pDLL; }
 bool CModule::PutIRC(const CString& sLine) {
 	return (m_pUser) ? m_pUser->PutIRC(sLine) : false;
 }
