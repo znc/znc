@@ -5142,6 +5142,7 @@ fi
 echo
 echo znc 0.093 configured
 echo
+echo "prefix:       $prefix"
 echo "debug:        $DEBUG"
 echo "ipv6:         $IPV6"
 echo "openssl:      $SSL"
