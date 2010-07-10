@@ -356,7 +356,7 @@ public:
 	void SetTTL(unsigned int u) { m_uTTL = u; }
 	// !Setters
 	// Getters
-	unsigned int GetTTL() { return m_uTTL; }
+	unsigned int GetTTL() const { return m_uTTL; }
 	// !Getters
 protected:
 	typedef pair<unsigned long long, V> value;
