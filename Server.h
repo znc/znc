@@ -20,7 +20,7 @@ public:
 	unsigned short GetPort() const;
 	const CString& GetPass() const;
 	bool IsSSL() const;
-	CString GetString() const;
+	CString GetString(bool bIncludePassword = true) const;
 	static bool IsValidHostName(const CString& sHostName);
 private:
 protected:
