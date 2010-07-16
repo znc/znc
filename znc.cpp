@@ -459,7 +459,7 @@ void CZNC::InitDirs(const CString& sArgvPath, const CString& sDataDir) {
 		m_sZNCPath = sDataDir;
 	}
 
-	m_sPemFile = m_sZNCPath + "/znc.pem";
+	m_sSSLCertFile = m_sZNCPath + "/znc.pem";
 }
 
 CString CZNC::GetConfPath(bool bAllowMkDir) const {
@@ -535,7 +535,7 @@ bool CZNC::WriteConfig() {
 
 	m_LockFile.Write("AnonIPLimit  = " + CString(m_uiAnonIPLimit) + "\n");
 	m_LockFile.Write("MaxBufferSize= " + CString(m_uiMaxBufferSize) + "\n");
-	m_LockFile.Write("SslPemFile   = " + CString(m_sPemFile) + "\n");
+	m_LockFile.Write("SSLCertFile  = " + CString(m_sSSLCertFile) + "\n");
 
 	for (size_t l = 0; l < m_vpListeners.size(); l++) {
 		CListener* pListener = m_vpListeners[l];
@@ -1613,8 +1613,8 @@ bool CZNC::DoRehash(CString& sError)
 				} else if (sName.Equals("MaxBufferSize")) {
 					m_uiMaxBufferSize = sValue.ToUInt();
 					continue;
-				} else if (sName.Equals("SslPemFile")) {
-					m_sPemFile = sValue;
+				} else if (sName.Equals("SSLCertFile")) {
+					m_sSSLCertFile = sValue;
 					continue;
 				}
 			}
