@@ -168,7 +168,10 @@ public:
 			if (uPos != CString::npos) {
 				uPos = sLine.find(" ", uPos);
 
-				sLine.insert(uPos, CHAN_PREFIX_1);
+				if (uPos == CString::npos)
+					sLine.append(CHAN_PREFIX_1);
+				else
+					sLine.insert(uPos, CHAN_PREFIX_1);
 				m_spInjectedPrefixes.insert(m_pUser);
 			}
 		}
