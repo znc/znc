@@ -650,7 +650,7 @@ class CAdminMod : public CModule {
 		CString sModRet;
 
 		if (sModName.empty()) {
-			PutModule("Usage: loadmodule <username> <modulename>");
+			PutModule("Usage: unloadmodule <username> <modulename>");
 			return;
 		}
 
