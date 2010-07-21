@@ -36,7 +36,7 @@ public:
 			// Get the list of nicks which are being asked for
 			sLine.Token(1, true).TrimLeft_n(":").Split(" ", vsNicks, false);
 
-			CString sBNCNicks = "";
+			CString sBNCNicks;
 			for (it = vsNicks.begin(); it != vsNicks.end(); ++it) {
 				if (IsOnlineModNick(*it)) {
 					sBNCNicks += " " + *it;
@@ -45,9 +45,15 @@ public:
 			// Remove the leading space
 			sBNCNicks.LeftChomp();
 
-			// We let the server handle this request and then act on
-			// the 303 response.
-			m_ISONRequests.push_back(sBNCNicks);
+			if (!m_pUser->GetIRCSock()) {
+				// if we are not connected to any IRC server, send
+				// an empty or module-nick filled response.
+				PutUser(":irc.znc.in 303 " + m_pUser->GetNick() + " :" + sBNCNicks);
+			} else {
+				// We let the server handle this request and then act on
+				// the 303 response from the IRC server.
+				m_ISONRequests.push_back(sBNCNicks);
+			}
 		}
 
 		//Handle WHOIS
