@@ -105,6 +105,7 @@ void CChan::Cycle() const {
 void CChan::JoinUser(bool bForce, const CString& sKey, CClient* pClient) {
 	if (!bForce && (!IsOn() || !IsDetached())) {
 		m_pUser->PutIRC("JOIN " + GetName() + " " + ((sKey.empty()) ? GetKey() : sKey));
+		SetDetached(false);
 		return;
 	}
 
