@@ -88,7 +88,7 @@ void CIRCSock::ReadLine(const CString& sData) {
 		return;
 	} else if (sLine.Equals("ERROR ", false, 6)) {
 		//ERROR :Closing Link: nick[24.24.24.24] (Excess Flood)
-		CString sError(sLine.substr(7));
+		CString sError(sLine.substr(6));
 
 		if (sError.Left(1) == ":") {
 			sError.LeftChomp();

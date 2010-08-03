@@ -52,7 +52,7 @@ public:
 		if (sLine.Equals("ERROR ", false, 6)) {
 			//ERROR :Closing Link: nick[24.24.24.24] (Excess Flood)
 			//ERROR :Closing Link: nick[24.24.24.24] Killer (Local kill by Killer (reason))
-			CString sError(sLine.substr(7));
+			CString sError(sLine.substr(6));
 			if (sError.Left(1) == ":")
 				sError.LeftChomp();
 			Log("[" + m_pUser->GetUserName() + "] disconnected from IRC: " +

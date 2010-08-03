@@ -400,7 +400,7 @@ private:
 			CBlowfish c(m_sPassword, BF_DECRYPT);
 			sBuffer = c.Crypt(sFile);
 
-			if (sBuffer.substr(0, strlen(CRYPT_VERIFICATION_TOKEN)) != CRYPT_VERIFICATION_TOKEN)
+			if (sBuffer.Left(strlen(CRYPT_VERIFICATION_TOKEN)) != CRYPT_VERIFICATION_TOKEN)
 			{
 				// failed to decode :(
 				PutModule("Unable to decode Encrypted messages");

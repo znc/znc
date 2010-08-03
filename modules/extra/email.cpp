@@ -154,7 +154,7 @@ public:
 
 	virtual void ReadLine(const CS_STRING & sLine)
 	{
-		if (sLine.substr(0, 5) == "From ")
+		if (sLine.Left(5) == "From ")
 		{
 			if (!m_sMailBuffer.empty())
 			{
@@ -168,7 +168,7 @@ public:
 	void ProcessMail()
 	{
 		EmailST tmp;
-		tmp.sUidl = (char *)CMD5(m_sMailBuffer.substr(0, 255));
+		tmp.sUidl = (char *)CMD5(m_sMailBuffer.Left(255));
 		VCString vsLines;
 		VCString::iterator it;
 
@@ -200,15 +200,7 @@ private:
 
 void CEmail::OnModCommand(const CString& sCommand)
 {
-	CString::size_type iPos = sCommand.find(" ");
-	CString sCom, sArgs;
-	if (iPos == CString::npos)
-		sCom = sCommand;
-	else
-	{
-		sCom = sCommand.substr(0, iPos);
-		sArgs = sCommand.substr(iPos + 1, CString::npos);
-	}
+	CString sCom = sCommand.Token(0);
 
 	if (sCom == "timers")
 	{
