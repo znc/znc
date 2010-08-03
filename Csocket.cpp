@@ -28,7 +28,7 @@
 * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 *
 *
-* $Revision: 1.138 $
+* $Revision: 1.139 $
 */
 
 #include "Csocket.h"
@@ -479,7 +479,7 @@ void SSLErrors( const char *filename, u_int iLineNum )
 		char szError[512];
 		memset( (char *) szError, '\0', 512 );
 		ERR_error_string_n( iSSLError, szError, 511 );
-		if ( strlen( szError ) > 0 )
+		if ( *szError )
 			CS_DEBUG( szError );
 	}
 }
@@ -682,7 +682,6 @@ void Csock::Copy( const Csock & cCopy )
 	m_bssl			= cCopy.m_bssl;
 	m_bIsConnected	= cCopy.m_bIsConnected;
 	m_bBLOCK		= cCopy.m_bBLOCK;
-	m_bFullsslAccept	= cCopy.m_bFullsslAccept;
 	m_bsslEstablished	= cCopy.m_bsslEstablished;
 	m_bEnableReadLine	= cCopy.m_bEnableReadLine;
 	m_bPauseRead		= cCopy.m_bPauseRead;
@@ -1078,11 +1077,8 @@ bool Csock::AcceptSSL()
 
 	if ( err == 1 )
 	{
-		m_bFullsslAccept = true;
 		return( true );
 	}
-
-	m_bFullsslAccept = false;
 
 	int sslErr = SSL_get_error( m_ssl, err );
 
@@ -1930,7 +1926,6 @@ void Csock::SetSSLMethod( int iMethod ) { m_iMethod = iMethod; }
 int Csock::GetSSLMethod() { return( m_iMethod ); }
 void Csock::SetSSLObject( SSL *ssl ) { m_ssl = ssl; }
 void Csock::SetCTXObject( SSL_CTX *sslCtx ) { m_ssl_ctx = sslCtx; }
-void Csock::SetFullSSLAccept() { m_bFullsslAccept = true; }
 
 SSL_SESSION * Csock::GetSSLSession()
 {
@@ -1943,7 +1938,6 @@ SSL_SESSION * Csock::GetSSLSession()
 
 const CS_STRING & Csock::GetWriteBuffer() { return( m_sSend ); }
 void Csock::ClearWriteBuffer() { m_sSend.clear(); }
-bool Csock::FullSSLAccept() { return ( m_bFullsslAccept ); }
 bool Csock::SslIsEstablished() { return ( m_bsslEstablished ); }
 
 bool Csock::ConnectInetd( bool bIsSSL, const CS_STRING & sHostname )
@@ -2433,7 +2427,6 @@ void Csock::Init( const CS_STRING & sHostname, u_short uPort, int itimeout )
 	m_iMaxMilliSeconds = 0;
 	m_iLastSendTime = 0;
 	m_iLastSend = 0;
-	m_bFullsslAccept = false;
 	m_bsslEstablished = false;
 	m_bEnableReadLine = false;
 	m_iMaxStoredBufferLength = 1024;

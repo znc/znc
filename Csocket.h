@@ -28,7 +28,7 @@
 * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 *
 *
-* $Revision: 1.232 $
+* $Revision: 1.238 $
 */
 
 // note to compile with win32 need to link to winsock2, using gcc its -lws2_32
@@ -131,6 +131,9 @@ typedef ssize_t cs_ssize_t;
 #define CS_INVALID_SOCK	-1
 #endif /* _WIN32 */
 
+#ifdef CSOCK_USE_POLL
+#include <poll.h>
+#endif /* CSOCK_USE_POLL */
 
 #ifndef _NO_CSOCKET_NS // some people may not want to use a namespace
 namespace Csocket
@@ -742,7 +745,6 @@ public:
 
 	void SetSSLObject( SSL *ssl );
 	void SetCTXObject( SSL_CTX *sslCtx );
-	void SetFullSSLAccept();
 	SSL_SESSION * GetSSLSession();
 
 	void SetCertVerifyCB( FPCertVerifyCB pFP ) { m_pCerVerifyCB = pFP; }
@@ -753,7 +755,6 @@ public:
 	void ClearWriteBuffer();
 
 	//! is SSL_accept finished ?
-	bool FullSSLAccept();
 	//! is the ssl properly finished (from write no error)
 	bool SslIsEstablished();
 
@@ -1009,7 +1010,7 @@ private:
 	u_short		m_uPort, m_iRemotePort, m_iLocalPort;
 	cs_sock_t	m_iReadSock, m_iWriteSock;
 	int m_itimeout, m_iConnType, m_iMethod, m_iTcount;
-	bool		m_bssl, m_bIsConnected, m_bBLOCK, m_bFullsslAccept;
+	bool		m_bssl, m_bIsConnected, m_bBLOCK;
 	bool		m_bsslEstablished, m_bEnableReadLine, m_bPauseRead;
 	CS_STRING	m_shostname, m_sbuffer, m_sSockName, m_sPemFile, m_sCipherType, m_sParentName;
 	CS_STRING	m_sSend, m_sPemPass, m_sLocalIP, m_sRemoteIP;
@@ -1266,6 +1267,8 @@ public:
 		m_errno = SUCCESS;
 		m_iCallTimeouts = millitime();
 		m_iSelectWait = 100000; // Default of 100 milliseconds
+		m_iBytesRead = 0;
+		m_iBytesWritten = 0;
 	}
 
 	virtual ~TSocketManager()
@@ -1868,9 +1871,102 @@ public:
 
 protected:
 	//! this is a strict wrapper around C-api select(). Added in the event you need to do special work here
-	virtual int Select(int nfds, fd_set *readfds, fd_set *writefds, fd_set *exceptfds, struct timeval *timeout)
+	enum ECheckType
 	{
-		return( select( nfds, readfds, writefds, exceptfds, timeout ) );
+		eCheckRead = 1,
+		eCheckWrite = 2
+	};
+
+	void FDSetCheck( int iFd, map< int, short > & miiReadyFds, ECheckType eType )
+	{
+		map< int, short >::iterator it = miiReadyFds.find( iFd );
+		if( it != miiReadyFds.end() )
+			it->second |= eType;
+		else
+			miiReadyFds[iFd] = eType;
+	}
+	bool FDHasCheck( int iFd, map< int, short > & miiReadyFds, ECheckType eType )
+	{
+		map< int, short >::iterator it = miiReadyFds.find( iFd );
+		if( it != miiReadyFds.end() )
+			return( (it->second & eType) );
+		return( false );
+	}
+	virtual int Select( map< int, short > & miiReadyFds, struct timeval *tvtimeout)
+	{
+#ifdef CSOCK_USE_POLL
+		if( miiReadyFds.empty() )
+			return( select( 0, NULL, NULL, NULL, tvtimeout ) );
+
+		struct pollfd * pFDs = (struct pollfd *)malloc( sizeof( struct pollfd ) * miiReadyFds.size() );
+		size_t uCurrPoll = 0;
+		for( map< int, short >::iterator it = miiReadyFds.begin(); it != miiReadyFds.end(); ++it, ++uCurrPoll )
+		{
+			short iEvents = 0;
+			if( it->second & eCheckRead )
+				iEvents |= POLLIN;
+			if( it->second & eCheckWrite )
+				iEvents |= POLLOUT;
+			pFDs[uCurrPoll].fd = it->first;
+			pFDs[uCurrPoll].events = iEvents;
+			pFDs[uCurrPoll].revents = 0;
+		}
+		int iTimeout = (int)(tvtimeout->tv_usec / 1000);
+		iTimeout += (int)(tvtimeout->tv_sec * 1000);
+		size_t uMaxFD = miiReadyFds.size();
+		int iRet = poll( pFDs, uMaxFD, iTimeout );
+		miiReadyFds.clear();
+		for( uCurrPoll = 0; uCurrPoll < uMaxFD; ++uCurrPoll )
+		{
+			short iEvents = 0;
+			if( (pFDs[uCurrPoll].revents & POLLIN ) )
+				iEvents |= eCheckRead;
+			if( (pFDs[uCurrPoll].revents & POLLOUT ) )
+				iEvents |= eCheckWrite;
+			map< int, short >::iterator it = miiReadyFds.find( pFDs[uCurrPoll].fd );
+			if( it != miiReadyFds.end() )
+				it->second |= iEvents;
+			else
+				miiReadyFds[pFDs[uCurrPoll].fd] = iEvents;
+		}
+		free( pFDs );
+#else
+		fd_set rfds, wfds;
+		TFD_ZERO( &rfds );
+		TFD_ZERO( &wfds );
+		bool bHasWrite = false;
+		int iHighestFD = 0;
+		for( map< int, short >::iterator it = miiReadyFds.begin(); it != miiReadyFds.end(); ++it )
+		{
+			if (iHighestFD < it->first)
+				iHighestFD = it->first;
+			if( it->second & eCheckRead )
+			{
+				TFD_SET( it->first, &rfds );
+			}
+			if( it->second & eCheckWrite )
+			{
+				bHasWrite = true;
+				TFD_SET( it->first, &wfds );
+			}
+		}
+
+		int iRet = select( iHighestFD + 1, &rfds, ( bHasWrite ? &wfds : NULL ), NULL, tvtimeout );
+		if( iRet <= 0 )
+			miiReadyFds.clear();
+		else
+		{
+			for( map< int, short >::iterator it = miiReadyFds.begin(); it != miiReadyFds.end(); ++it )
+			{
+				if( (it->second & eCheckRead) && !TFD_ISSET( it->first, &rfds ) )
+					it->second &= ~eCheckRead;
+				if( (it->second & eCheckWrite) && !TFD_ISSET( it->first, &wfds ) )
+					it->second &= ~eCheckWrite;
+			}
+		}
+#endif /* CSOCK_USE_POLL */
+
+		return( iRet );
 	}
 private:
 	/**
@@ -1883,16 +1979,13 @@ private:
 	{
 		mpeSocks.clear();
 		struct timeval tv;
-		fd_set rfds, wfds;
 
+		map< int, short > miiReadyFds;
 		tv.tv_sec = m_iSelectWait / 1000000;
 		tv.tv_usec = m_iSelectWait % 1000000;
 		u_int iQuickReset = 100;
 		if ( m_iSelectWait == 0 )
 			iQuickReset = 0;
-
-		TFD_ZERO( &rfds );
-		TFD_ZERO( &wfds );
 
 		bool bHasWriteable = false;
 		bool bHasAvailSocks = false;
@@ -1910,12 +2003,29 @@ private:
 			}
 			else
 				pcSock->Cron(); // call the Cron handler here
+
+			cs_sock_t & iRSock = pcSock->GetRSock();
+			cs_sock_t & iWSock = pcSock->GetWSock();
+#ifndef CSOCK_USE_POLL
+			if( iRSock > FD_SETSIZE || iWSock > FD_SETSIZE )
+			{
+				CS_DEBUG( "FD is larger than select() can handle" );
+				DelSock( i-- );
+				continue;
+			}
+#endif /* CSOCK_USE_POLL */
 		
 #ifdef HAVE_C_ARES
 			ares_channel pChannel = pcSock->GetAresChannel();
 			if( pChannel )
 			{
-				ares_fds( pChannel, &rfds, &wfds );
+				ares_socket_t aiAresSocks[1];
+				aiAresSocks[0] = ARES_SOCKET_BAD;
+				int iSockMask = ares_getsock( pChannel, aiAresSocks, 1 );
+				if( ARES_GETSOCK_READABLE( iSockMask, 0 ) )
+					FDSetCheck( aiAresSocks[0], miiReadyFds, eCheckRead );
+				if( ARES_GETSOCK_WRITABLE( iSockMask, 0 ) )
+					FDSetCheck( aiAresSocks[0], miiReadyFds, eCheckWrite );
 				// let ares drop the timeout if it has something timing out sooner then whats in tv currently
 				ares_timeout( pChannel, &tv, &tv );
 				bHasWriteable = true;
@@ -1927,8 +2037,6 @@ private:
 
 			bHasAvailSocks = true;
 
-			cs_sock_t & iRSock = pcSock->GetRSock();
-			cs_sock_t & iWSock = pcSock->GetWSock();
 			bool bIsReadPaused = pcSock->IsReadPaused();
 			if ( bIsReadPaused )
 			{
@@ -1943,24 +2051,16 @@ private:
 
 			if ( pcSock->GetType() != T::LISTENER )
 			{
-				if ( ( pcSock->GetSSL() ) && ( pcSock->GetType() == T::INBOUND ) && ( !pcSock->FullSSLAccept() ) )
-				{
-					tv.tv_usec = iQuickReset;	// just make sure this returns quick incase we still need pending
-					tv.tv_sec = 0;
-					// try accept on this socket again
-					if ( !pcSock->AcceptSSL() )
-						pcSock->Close();
-
-				} else if ( ( pcSock->IsConnected() ) && ( pcSock->GetWriteBuffer().empty() ) )
+				if ( ( pcSock->IsConnected() ) && ( pcSock->GetWriteBuffer().empty() ) )
 				{
 					if ( !bIsReadPaused )
-						TFD_SET( iRSock, &rfds );
+						FDSetCheck( iRSock, miiReadyFds, eCheckRead );
 
 				} else if ( ( pcSock->GetSSL() ) && ( !pcSock->SslIsEstablished() ) && ( !pcSock->GetWriteBuffer().empty() ) )
 				{
 					// do this here, cause otherwise ssl will cause a small
 					// cpu spike waiting for the handshake to finish
-					TFD_SET( iRSock, &rfds );
+					FDSetCheck( iRSock, miiReadyFds, eCheckRead );
 					// resend this data
 					if ( !pcSock->Write( "" ) )
 					{
@@ -1968,24 +2068,27 @@ private:
 					}
 					if( !pcSock->GetWriteBuffer().empty() )
 					{ // this means we need to write again, not everything got knocked out
-						TFD_SET( iWSock, &wfds );
+						FDSetCheck( iWSock, miiReadyFds, eCheckWrite );
 						bHasWriteable = true;
 					}
 
 				} else
 				{
 					if ( !bIsReadPaused )
-						TFD_SET( iRSock, &rfds );
+						FDSetCheck( iRSock, miiReadyFds, eCheckRead );
 
 					if( pcSock->AllowWrite( iNOW ) )
 					{
-						TFD_SET( iWSock, &wfds );
+						FDSetCheck( iWSock, miiReadyFds, eCheckWrite );
 						bHasWriteable = true;
 					}
 				}
 
-			} else
-				TFD_SET( iRSock, &rfds );
+			} 
+			else
+			{
+				FDSetCheck( iRSock, miiReadyFds, eCheckRead );
+			}
 			
 			if( pcSock->GetSSL() && pcSock->GetType() != Csock::LISTENER )
 			{
@@ -2008,10 +2111,7 @@ private:
 			tv.tv_sec = 0;
 		}
 
-		if ( bHasWriteable )
-			iSel = Select(FD_SETSIZE, &rfds, &wfds, NULL, &tv);
-		else
-			iSel = Select(FD_SETSIZE, &rfds, NULL, NULL, &tv);
+		iSel = Select( miiReadyFds, &tv );
 		if ( iSel == 0 )
 		{
 			if ( mpeSocks.empty() )
@@ -2063,7 +2163,13 @@ private:
 #ifdef HAVE_C_ARES
 			ares_channel pChannel = pcSock->GetAresChannel();
 			if( pChannel )
-				ares_process( pChannel, &rfds, &wfds );
+			{
+				ares_socket_t aiAresSocks[1];
+				aiAresSocks[0] = ARES_SOCKET_BAD;
+				ares_getsock( pChannel, aiAresSocks, 1 );
+				if( FDHasCheck( aiAresSocks[0], miiReadyFds, eCheckRead ) || FDHasCheck( aiAresSocks[0], miiReadyFds, eCheckWrite ) )
+					ares_process_fd( pChannel, aiAresSocks[0], aiAresSocks[0] );
+			}
 #endif /* HAVE_C_ARES */
 
 			if ( pcSock->GetConState() != T::CST_OK )
@@ -2081,7 +2187,7 @@ private:
 				continue; // watch for invalid socks
 			}
 
-			if ( TFD_ISSET( iWSock, &wfds ) )
+			if ( FDHasCheck( iWSock, miiReadyFds, eCheckWrite ) )
 			{
 				if ( iSel > 0 )
 				{
@@ -2099,7 +2205,8 @@ private:
 
 				SelectSock( mpeSocks, iErrno, pcSock );
 
-			} else if ( TFD_ISSET( iRSock, &rfds ) )
+			} 
+			else if ( FDHasCheck( iRSock, miiReadyFds, eCheckRead ) )
 			{
 				if ( iSel > 0 )
 					iErrno = SUCCESS;
