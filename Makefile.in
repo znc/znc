@@ -39,6 +39,16 @@ CLEAN     := znc *.o core core.*
 DISTCLEAN := Makefile config.log config.status znc-config znc-buildmod .depend \
 	modules/.depend modules/Makefile man/Makefile znc.pc znc-uninstalled.pc
 
+ifeq "$(VERBOSE)" ""
+Q=@
+E=@echo
+C=-s
+else
+Q=
+E=@\#
+C=
+endif
+
 .PHONY: all man modules clean distclean install
 
 all: znc man modules $(LIBZNC)
@@ -55,20 +65,23 @@ ifeq "$(LIBZNC)" ""
 OBJS := $(BIN_OBJS) $(LIB_OBJS)
 
 znc: $(OBJS)
-	$(CXX) $(LDFLAGS) -o $@ $(OBJS) $(LIBS)
+	$(E) Linking znc...
+	$(Q)$(CXX) $(LDFLAGS) -o $@ $(OBJS) $(LIBS)
 else
 znc: $(BIN_OBJS) $(LIBZNC)
-	$(CXX) $(LDFLAGS) -o $@ $(BIN_OBJS) -L. -lznc -Wl,-rpath,$(LIBZNCDIR) $(LIBS)
+	$(E) Linking znc...
+	$(Q)$(CXX) $(LDFLAGS) -o $@ $(BIN_OBJS) -L. -lznc -Wl,-rpath,$(LIBZNCDIR) $(LIBS)
 
 $(LIBZNC): $(LIB_OBJS)
-	$(CXX) $(LDFLAGS) -shared -o $@ $(LIB_OBJS) $(LIBS)
+	$(E) Linking $(LIBZNC)...
+	$(Q)$(CXX) $(LDFLAGS) -shared -o $@ $(LIB_OBJS) $(LIBS)
 endif
 
 man:
-	@$(MAKE) -C man
+	@$(MAKE) -C man $(C)
 
 modules: $(LIBZNC)
-	@$(MAKE) -C modules;
+	@$(MAKE) -C modules $(C)
 
 clean:
 	rm -rf $(CLEAN)
@@ -80,7 +93,8 @@ distclean: clean
 
 %.o: %.cpp Makefile
 	@mkdir -p .depend
-	$(CXX) $(CXXFLAGS) -c -o $@ $< -MMD -MF .depend/$@.dep
+	$(E) Building $@...
+	$(Q)$(CXX) $(CXXFLAGS) -c -o $@ $< -MMD -MF .depend/$@.dep
 
 install: znc $(LIBZNC)
 	mkdir -p $(DESTDIR)$(bindir)

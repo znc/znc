@@ -13,10 +13,19 @@ INSTALL_DATA := @INSTALL_DATA@
 
 MAN1        := znc.1.gz znc-buildmod.1.gz znc-config.1.gz
 
+ifeq "$(VERBOSE)" ""
+Q=@
+E=@echo
+else
+Q=
+E=@\#
+endif
+
 all: $(MAN1)
 
 %.1.gz: %.1 Makefile
-	gzip -9 <$< >$@
+	$(E) Packing man page $<...
+	$(Q)gzip -9 <$< >$@
 
 clean:
 	-rm -f $(MAN1)

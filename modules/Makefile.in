@@ -33,6 +33,14 @@ INSTALL_DATA    := @INSTALL_DATA@
 
 TCL_FLAGS:= @TCL_FLAGS@
 
+ifeq "$(VERBOSE)" ""
+Q=@
+E=@echo
+else
+Q=
+E=@\#
+endif
+
 ifneq "$(LIBZNC)" ""
 LDFLAGS += -L.. -lznc -Wl,-rpath,$(LIBZNCDIR)
 endif
@@ -111,7 +119,8 @@ clean:
 %.so: %.cpp Makefile
 	@mkdir -p .depend
 	@mkdir -p extra
-	$(CXX) $(MODFLAGS) $(LDFLAGS) $(MODLINK) -o $@ $< $($(notdir $(basename $@))FLAGS) -MMD -MF .depend/$(notdir $@).dep
+	$(E) Building $(if $(filter %extra/,$(dir $<)),extra )module $(notdir $(basename $@))...
+	$(Q)$(CXX) $(MODFLAGS) $(LDFLAGS) $(MODLINK) -o $@ $< $($(notdir $(basename $@))FLAGS) -MMD -MF .depend/$(notdir $@).dep
 
 modperl_install: create_install_dir
 	for i in $(srcdir)/*.pm; do \
