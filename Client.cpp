@@ -807,9 +807,7 @@ void CClient::HandleCap(const CString& sLine)
 				bVal = false;
 
 			bool bAccepted = ("multi-prefix" == sCap) || ("userhost-in-names" == sCap);
-			if (!bAccepted) {
-				GLOBALMODULECALL(IsClientCapSupported(sCap, bVal), m_pUser, this, bAccepted = true);
-			}
+			GLOBALMODULECALL(IsClientCapSupported(sCap, bVal), m_pUser, this, bAccepted = true);
 
 			if (!bAccepted) {
 				// Some unsupported capability is requested
@@ -828,9 +826,8 @@ void CClient::HandleCap(const CString& sLine)
 				m_bNamesx = bVal;
 			} else if ("userhost-in-names" == *it) {
 				m_bUHNames = bVal;
-			} else {
-				GLOBALMODULECALL(OnClientCapRequest(*it, bVal), m_pUser, this, );
 			}
+			GLOBALMODULECALL(OnClientCapRequest(*it, bVal), m_pUser, this, );
 
 			if (bVal) {
 				m_ssAcceptedCaps.insert(*it);
