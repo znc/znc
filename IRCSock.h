@@ -40,6 +40,7 @@ public:
 	bool OnChanMsg(CNick& Nick, const CString& sChan, CString& sMessage);
 	bool OnPrivNotice(CNick& Nick, CString& sMessage);
 	bool OnChanNotice(CNick& Nick, const CString& sChan, CString& sMessage);
+	bool OnServerCapAvailable(const CString& sCap);
 	// !Message Handlers
 
 	virtual void ReadLine(const CString& sData);
@@ -76,6 +77,7 @@ public:
 	const set<unsigned char>& GetUserModes() const { return m_scUserModes; }
 	// This is true if we are past raw 001
 	bool IsAuthed() const { return m_bAuthed; }
+	bool IsCapAccepted(const CString& sCap) { return 1 == m_ssAcceptedCaps.count(sCap); }
 	// !Getters
 
 	// This handles NAMESX and UHNAMES in a raw 353 reply
@@ -100,6 +102,8 @@ protected:
 	CString                             m_sPass;
 	map<CString, CChan*>                m_msChans;
 	unsigned int                        m_uMaxNickLen;
+	SCString                            m_ssAcceptedCaps;
+	SCString                            m_ssPendingCaps;
 };
 
 #endif // !_IRCSOCK_H

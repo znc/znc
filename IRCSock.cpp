@@ -647,54 +647,78 @@ void CIRCSock::ReadLine(const CString& sData) {
 				m_pUser->AddQueryBuffer(":" + Nick.GetNickMask() + " WALLOPS ", ":" + m_pUser->AddTimestamp(sMsg), false);
 			}
 		} else if (sCmd.Equals("CAP")) {
-			// sRest.Token(0) is most likely "*". No idea why, the
-			// CAP spec don't mention this, but all implementations
-			// I've seen add this extra asterisk
-			CString sSubCmd = sRest.Token(1);
+			// CAPs are supported only before authorization.
+			if (!m_bAuthed) {
+				// sRest.Token(0) is most likely "*". No idea why, the
+				// CAP spec don't mention this, but all implementations
+				// I've seen add this extra asterisk
+				CString sSubCmd = sRest.Token(1);
 
-			// If the caplist of a reply is too long, it's split
-			// into multiple replies. A "*" is prepended to show
-			// that the list was split into multiple replies.
-			CString sArgs;
-			if (sRest.Token(2) == "*") {
-				sArgs = sRest.Token(3, true).TrimPrefix_n(":");
-			} else {
-				sArgs = sRest.Token(2, true).TrimPrefix_n(":");
-			}
-
-			if (sSubCmd == "LS" && !m_bAuthed) {
-				VCString vsTokens;
-				VCString::iterator it;
-				sArgs.Split(" ", vsTokens, false);
-
-				for (it = vsTokens.begin(); it != vsTokens.end(); ++it) {
-					if (*it == "multi-prefix" || *it == "userhost-in-names") {
-						PutIRC("CAP REQ :" + *it);
-					}
+				// If the caplist of a reply is too long, it's split
+				// into multiple replies. A "*" is prepended to show
+				// that the list was split into multiple replies.
+				// This is useful mainly for LS. For ACK and NAK
+				// replies, there's no real need for this, because
+				// we request only 1 capability per line.
+				// If we will need to support broken servers or will
+				// send several requests per line, need to delay ACK
+				// actions until all ACK lines are received and
+				// to recognize past request of NAK by 100 chars
+				// of this reply.
+				CString sArgs;
+				if (sRest.Token(2) == "*") {
+					sArgs = sRest.Token(3, true).TrimPrefix_n(":");
+				} else {
+					sArgs = sRest.Token(2, true).TrimPrefix_n(":");
 				}
 
-				// Tell the IRC server we are done with CAP
-				PutIRC("CAP END");
-			} else if (sSubCmd == "ACK" && !m_bAuthed) {
-				VCString vsTokens;
-				VCString::iterator it;
-				sArgs.Split(" ", vsTokens, false);
+				if (sSubCmd == "LS") {
+					VCString vsTokens;
+					VCString::iterator it;
+					sArgs.Split(" ", vsTokens, false);
 
-				for (it = vsTokens.begin(); it != vsTokens.end(); ++it) {
-					if (*it == "multi-prefix") {
+					for (it = vsTokens.begin(); it != vsTokens.end(); ++it) {
+						if (OnServerCapAvailable(*it) || *it == "multi-prefix" || *it == "userhost-in-names") {
+							// For real support of ack (~) modifier need also
+							// to queue these cap requests.
+							PutIRC("CAP REQ :" + *it);
+							m_ssPendingCaps.insert(*it);
+						}
+					}
+				} else if (sSubCmd == "ACK") {
+					sArgs.Trim();
+					m_ssPendingCaps.erase(sArgs);
+					MODULECALL(OnServerCapAccepted(sArgs), m_pUser, NULL, );
+					if ("multi-prefix" == sArgs) {
 						m_bNamesx = true;
-					} else if (*it == "userhost-in-names") {
+					} else if ("userhost-in-names" == sArgs) {
 						m_bUHNames = true;
 					}
+					m_ssAcceptedCaps.insert(sArgs);
+				} else if (sSubCmd == "NAK") {
+					// This should work because there's no [known]
+					// capability with length of name more than 100 characters.
+					sArgs.Trim();
+					m_ssPendingCaps.erase(sArgs);
+					MODULECALL(OnServerCapRejected(sArgs), m_pUser, NULL, );
+				}
+
+				if (m_ssPendingCaps.empty()) {
+					// We already got all needed ACK/NAK replies.
+					PutIRC("CAP END");
 				}
 			}
-
 			// Don't forward any CAP stuff to the client
 			return;
 		}
 	}
 
 	m_pUser->PutUser(sLine);
+}
+
+bool CIRCSock::OnServerCapAvailable(const CString& sCap) {
+	MODULECALL(OnServerCapAvailable(sCap), m_pUser, NULL, return true);
+	return false;
 }
 
 bool CIRCSock::OnCTCPReply(CNick& Nick, CString& sMessage) {
