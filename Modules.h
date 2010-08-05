@@ -644,14 +644,12 @@ public:
 	 *          needs to turn it on with CAP REQ.
 	 */
 	virtual bool OnServerCapAvailable(const CString& sCap);
-	/** Called for every CAP accepted by server (with CAP ACK after our CAP REQ).
-	 *  @param sCap capability accepted by server.
+	/** Called for every CAP accepted or rejected by server
+	 *  (with CAP ACK or CAP NAK after our CAP REQ).
+	 *  @param sCap capability accepted/rejected by server.
+	 *  @param sSuccess true if capability was accepted, false if rejected.
 	 */
-	virtual void OnServerCapAccepted(const CString& sCap);
-	/** Called for every CAP rejected by server (with CAP NAK after our CAP REQ).
-	 *  @param sCap capability rejected by server.
-	 */
-	virtual void OnServerCapRejected(const CString& sCap);
+	virtual void OnServerCapResult(const CString& sCap, bool bSuccess);
 
 	/** This module hook is called just before ZNC tries to join a channel
 	 *  by itself because it's in the config but wasn't joined yet.
@@ -884,8 +882,7 @@ public:
 	bool OnTimerAutoJoin(CChan& Channel);
 
 	bool OnServerCapAvailable(const CString& sCap);
-	bool OnServerCapAccepted(const CString& sCap);
-	bool OnServerCapRejected(const CString& sCap);
+	bool OnServerCapResult(const CString& sCap, bool bSuccess);
 
 	CModule* FindModule(const CString& sModule) const;
 	bool LoadModule(const CString& sModule, const CString& sArgs, CUser* pUser, CString& sRetMsg);

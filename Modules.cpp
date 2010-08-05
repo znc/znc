@@ -456,8 +456,7 @@ CModule::EModRet CModule::OnTopic(CNick& Nick, CChan& Channel, CString& sTopic) 
 CModule::EModRet CModule::OnTimerAutoJoin(CChan& Channel) { return CONTINUE; }
 
 bool CModule::OnServerCapAvailable(const CString& sCap) { return false; }
-void CModule::OnServerCapAccepted(const CString& sCap) {}
-void CModule::OnServerCapRejected(const CString& sCap) {}
+void CModule::OnServerCapResult(const CString& sCap, bool bSuccess) {}
 
 bool CModule::PutIRC(const CString& sLine) {
 	return (m_pUser) ? m_pUser->PutIRC(sLine) : false;
@@ -628,8 +627,7 @@ bool CModules::OnServerCapAvailable(const CString& sCap) {
 	return bResult;
 }
 
-bool CModules::OnServerCapAccepted(const CString& sCap) { MODUNLOADCHK(OnServerCapAccepted(sCap)); return false; }
-bool CModules::OnServerCapRejected(const CString& sCap) { MODUNLOADCHK(OnServerCapRejected(sCap)); return false; }
+bool CModules::OnServerCapResult(const CString& sCap, bool bSuccess) { MODUNLOADCHK(OnServerCapResult(sCap, bSuccess)); return false; }
 
 ////////////////////
 // CGlobalModules //

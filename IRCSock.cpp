@@ -688,7 +688,7 @@ void CIRCSock::ReadLine(const CString& sData) {
 				} else if (sSubCmd == "ACK") {
 					sArgs.Trim();
 					m_ssPendingCaps.erase(sArgs);
-					MODULECALL(OnServerCapAccepted(sArgs), m_pUser, NULL, );
+					MODULECALL(OnServerCapResult(sArgs, true), m_pUser, NULL, );
 					if ("multi-prefix" == sArgs) {
 						m_bNamesx = true;
 					} else if ("userhost-in-names" == sArgs) {
@@ -700,7 +700,7 @@ void CIRCSock::ReadLine(const CString& sData) {
 					// capability with length of name more than 100 characters.
 					sArgs.Trim();
 					m_ssPendingCaps.erase(sArgs);
-					MODULECALL(OnServerCapRejected(sArgs), m_pUser, NULL, );
+					MODULECALL(OnServerCapResult(sArgs, false), m_pUser, NULL, );
 				}
 
 				if (m_ssPendingCaps.empty()) {
