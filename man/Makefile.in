@@ -24,7 +24,7 @@ endif
 all: $(MAN1)
 
 %.1.gz: %.1 Makefile
-	$(E) Packing man page $<...
+	$(E) Packing man page $@...
 	$(Q)gzip -9 <$< >$@
 
 clean:
