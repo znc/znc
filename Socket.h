@@ -126,7 +126,7 @@ public:
 	virtual bool ConnectionFrom(const CString& sHost, unsigned short uPort);
 
 	bool Connect(const CString& sHostname, unsigned short uPort, bool bSSL = false, unsigned int uTimeout = 60);
-	bool Listen(unsigned short uPort, bool bSSL = false, unsigned int uTimeout = 0);
+	bool Listen(unsigned short uPort, bool bSSL, unsigned int uTimeout = 0);
 
 	// Getters
 	CModule* GetModule() const;
