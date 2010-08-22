@@ -60,6 +60,7 @@ public:
 	bool AddServer(const CString& sName, unsigned short uPort, const CString& sPass = "", bool bSSL = false);
 	CServer* GetNextServer();
 	CServer* GetCurrentServer() const;
+	bool SetNextServer(const CServer* pServer);
 	bool CheckPass(const CString& sPass) const;
 	bool AddAllowedHost(const CString& sHostMask);
 	bool IsHostAllowed(const CString& sHostMask) const;

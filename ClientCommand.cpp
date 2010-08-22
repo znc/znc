@@ -234,11 +234,38 @@ void CClient::UserCommand(CString& sLine) {
 			return;
 		}
 
+		CString sArgs = sLine.Token(1, true);
+		CServer *pServer = NULL;
+
+		if (!sArgs.empty()) {
+			pServer = m_pUser->FindServer(sArgs);
+			if (!pServer) {
+				PutStatus("Server [" + sArgs + "] not found");
+				return;
+			}
+			m_pUser->SetNextServer(pServer);
+
+			if (!GetIRCSock()) {
+				// If we are already connecting to some server,
+				// we have to abort that attempt
+				Csock *pIRCSock = CZNC::Get().GetManager()
+					.FindSockByName("IRC::" + m_pUser->GetUserName());
+				if (pIRCSock)
+					pIRCSock->Close();
+			}
+		}
+
 		if (GetIRCSock()) {
 			GetIRCSock()->Quit();
-			PutStatus("Jumping to the next server in the list...");
+			if (pServer)
+				PutStatus("Connecting to [" + pServer->GetName() + "]...");
+			else
+				PutStatus("Jumping to the next server in the list...");
 		} else {
-			PutStatus("Connecting...");
+			if (pServer)
+				PutStatus("Connecting to [" + pServer->GetName() + "]...");
+			else
+				PutStatus("Connecting...");
 		}
 
 		m_pUser->SetIRCConnectEnabled(true);
@@ -1193,8 +1220,8 @@ void CClient::HelpUser() {
 	}
 
 	Table.AddRow();
-	Table.SetCell("Command", "Jump");
-	Table.SetCell("Description", "Jump to the next server in the list");
+	Table.SetCell("Command", "Jump [server]");
+	Table.SetCell("Description", "Jump to the next or the specified server");
 
 	Table.AddRow();
 	Table.SetCell("Command", "Disconnect");

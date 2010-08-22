@@ -925,6 +925,17 @@ CServer* CUser::GetCurrentServer() const {
 	return m_vServers[uIdx];
 }
 
+bool CUser::SetNextServer(const CServer* pServer) {
+	for (unsigned int a = 0; a < m_vServers.size(); a++) {
+		if (m_vServers[a] == pServer) {
+			m_uServerIdx = a;
+			return true;
+		}
+	}
+
+	return false;
+}
+
 bool CUser::CheckPass(const CString& sPass) const {
 	switch (m_eHashType)
 	{
