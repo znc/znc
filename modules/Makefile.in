@@ -33,6 +33,9 @@ INSTALL_DATA    := @INSTALL_DATA@
 
 TCL_FLAGS:= @TCL_FLAGS@
 
+ifneq "$(V)" ""
+VERBOSE=1
+endif
 ifeq "$(VERBOSE)" ""
 Q=@
 E=@echo

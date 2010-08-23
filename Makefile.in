@@ -39,6 +39,9 @@ CLEAN     := znc *.o core core.*
 DISTCLEAN := Makefile config.log config.status znc-config znc-buildmod .depend \
 	modules/.depend modules/Makefile man/Makefile znc.pc znc-uninstalled.pc
 
+ifneq "$(V)" ""
+VERBOSE=1
+endif
 ifeq "$(VERBOSE)" ""
 Q=@
 E=@echo
