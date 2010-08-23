@@ -88,7 +88,6 @@ public:
 	CString(const string& s) : string(s) {}
 	~CString() {}
 
-	inline unsigned char* strnchr(const unsigned char* src, unsigned char c, unsigned int iMaxBytes, unsigned char* pFill = NULL, unsigned int* piCount = NULL) const;
 	int CaseCmp(const CString& s, unsigned long uLen = CString::npos) const;
 	int StrCmp(const CString& s, unsigned long uLen = CString::npos) const;
 	bool Equals(const CString& s, bool bCaseSensitive = false, unsigned long uLen = CString::npos) const;
@@ -182,6 +181,7 @@ public:
 
 private:
 protected:
+	unsigned char* strnchr(const unsigned char* src, unsigned char c, unsigned int iMaxBytes, unsigned char* pFill = NULL, unsigned int* piCount = NULL) const;
 };
 
 class MCString : public map<CString, CString> {
