@@ -22,6 +22,7 @@ static const struct {
 } vRouteReplies[] = {
 	{"WHO", {
 		{"352", false},
+		{"354", false}, // e.g. Quaknet uses this for WHO #chan %n
 		{"403", true}, // No such chan
 		{"315", true},
 		{NULL, true}
