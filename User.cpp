@@ -70,7 +70,7 @@ CUser::CUser(const CString& sUserName) {
 	m_bDenyLoadMod = false;
 	m_bAdmin= false;
 	m_bIRCAway = false;
-	m_bDenySetVHost= false;
+	m_bDenySetBindHost= false;
 	m_sStatusPrefix = "*";
 	m_sChanPrefixes = "";
 	m_uBufferCount = 50;
@@ -195,7 +195,8 @@ CString& CUser::ExpandString(const CString& sStr, CString& sRet) const {
 	sRet.Replace("%altnick%", GetAltNick());
 	sRet.Replace("%ident%", GetIdent());
 	sRet.Replace("%realname%", GetRealName());
-	sRet.Replace("%vhost%", GetVHost());
+	sRet.Replace("%vhost%", GetBindHost());
+	sRet.Replace("%bindhost%", GetBindHost());
 	sRet.Replace("%version%", CZNC::GetVersion());
 	sRet.Replace("%time%", sTime);
 	sRet.Replace("%uptime%", CZNC::Get().GetUptime());
@@ -348,8 +349,8 @@ bool CUser::Clone(const CUser& User, CString& sErrorRet, bool bCloneChans) {
 	SetIdent(User.GetIdent(false));
 	SetRealName(User.GetRealName());
 	SetStatusPrefix(User.GetStatusPrefix());
-	SetVHost(User.GetVHost());
-	SetDCCVHost(User.GetDCCVHost());
+	SetBindHost(User.GetBindHost());
+	SetDCCBindHost(User.GetDCCBindHost());
 	SetQuitMsg(User.GetQuitMsg());
 	SetSkinName(User.GetSkinName());
 	SetDefaultChanModes(User.GetDefaultChanModes());
@@ -451,7 +452,7 @@ bool CUser::Clone(const CUser& User, CString& sErrorRet, bool bCloneChans) {
 	SetUseClientIP(User.UseClientIP());
 	SetDenyLoadMod(User.DenyLoadMod());
 	SetAdmin(User.IsAdmin());
-	SetDenySetVHost(User.DenySetVHost());
+	SetDenySetBindHost(User.DenySetBindHost());
 	SetTimestampAppend(User.GetTimestampAppend());
 	SetTimestampPrepend(User.GetTimestampPrepend());
 	SetTimestampFormat(User.GetTimestampFormat());
@@ -638,8 +639,8 @@ bool CUser::WriteConfig(CFile& File) {
 	PrintLine(File, "AltNick", GetAltNick());
 	PrintLine(File, "Ident", GetIdent());
 	PrintLine(File, "RealName", GetRealName());
-	PrintLine(File, "VHost", GetVHost());
-	PrintLine(File, "DCCVHost", GetDCCVHost());
+	PrintLine(File, "BindHost", GetBindHost());
+	PrintLine(File, "DCCBindHost", GetDCCBindHost());
 	PrintLine(File, "QuitMsg", GetQuitMsg());
 	if (CZNC::Get().GetStatusPrefix() != GetStatusPrefix())
 		PrintLine(File, "StatusPrefix", GetStatusPrefix());
@@ -651,7 +652,7 @@ bool CUser::WriteConfig(CFile& File) {
 	PrintLine(File, "BounceDCCs", CString(BounceDCCs()));
 	PrintLine(File, "DenyLoadMod", CString(DenyLoadMod()));
 	PrintLine(File, "Admin", CString(IsAdmin()));
-	PrintLine(File, "DenySetVHost", CString(DenySetVHost()));
+	PrintLine(File, "DenySetBindHost", CString(DenySetBindHost()));
 	PrintLine(File, "DCCLookupMethod", CString((UseClientIP()) ? "client" : "default"));
 	PrintLine(File, "TimestampFormat", GetTimestampFormat());
 	PrintLine(File, "AppendTimestamp", CString(GetTimestampAppend()));
@@ -981,8 +982,8 @@ CString CUser::GetLocalIP() {
 }
 
 CString CUser::GetLocalDCCIP() {
-	if (!GetDCCVHost().empty())
-		return GetDCCVHost();
+	if (!GetDCCBindHost().empty())
+		return GetDCCBindHost();
 	return GetLocalIP();
 }
 
@@ -1162,8 +1163,8 @@ void CUser::SetNick(const CString& s) { m_sNick = s; }
 void CUser::SetAltNick(const CString& s) { m_sAltNick = s; }
 void CUser::SetIdent(const CString& s) { m_sIdent = s; }
 void CUser::SetRealName(const CString& s) { m_sRealName = s; }
-void CUser::SetVHost(const CString& s) { m_sVHost = s; }
-void CUser::SetDCCVHost(const CString& s) { m_sDCCVHost = s; }
+void CUser::SetBindHost(const CString& s) { m_sBindHost = s; }
+void CUser::SetDCCBindHost(const CString& s) { m_sDCCBindHost = s; }
 void CUser::SetPass(const CString& s, eHashType eHash, const CString& sSalt) {
 	m_sPass = s;
 	m_eHashType = eHash;
@@ -1174,7 +1175,7 @@ void CUser::SetBounceDCCs(bool b) { m_bBounceDCCs = b; }
 void CUser::SetUseClientIP(bool b) { m_bUseClientIP = b; }
 void CUser::SetDenyLoadMod(bool b) { m_bDenyLoadMod = b; }
 void CUser::SetAdmin(bool b) { m_bAdmin = b; }
-void CUser::SetDenySetVHost(bool b) { m_bDenySetVHost = b; }
+void CUser::SetDenySetBindHost(bool b) { m_bDenySetBindHost = b; }
 void CUser::SetDefaultChanModes(const CString& s) { m_sDefaultChanModes = s; }
 void CUser::SetIRCServer(const CString& s) { m_sIRCServer = s; }
 void CUser::SetQuitMsg(const CString& s) { m_sQuitMsg = s; }
@@ -1227,8 +1228,8 @@ const CString& CUser::GetNick(bool bAllowDefault) const { return (bAllowDefault 
 const CString& CUser::GetAltNick(bool bAllowDefault) const { return (bAllowDefault && m_sAltNick.empty()) ? GetCleanUserName() : m_sAltNick; }
 const CString& CUser::GetIdent(bool bAllowDefault) const { return (bAllowDefault && m_sIdent.empty()) ? GetCleanUserName() : m_sIdent; }
 const CString& CUser::GetRealName() const { return m_sRealName.empty() ? m_sUserName : m_sRealName; }
-const CString& CUser::GetVHost() const { return m_sVHost; }
-const CString& CUser::GetDCCVHost() const { return m_sDCCVHost; }
+const CString& CUser::GetBindHost() const { return m_sBindHost; }
+const CString& CUser::GetDCCBindHost() const { return m_sDCCBindHost; }
 const CString& CUser::GetPass() const { return m_sPass; }
 CUser::eHashType CUser::GetPassHashType() const { return m_eHashType; }
 const CString& CUser::GetPassSalt() const { return m_sPassSalt; }
@@ -1250,7 +1251,7 @@ bool CUser::ConnectPaused() {
 bool CUser::UseClientIP() const { return m_bUseClientIP; }
 bool CUser::DenyLoadMod() const { return m_bDenyLoadMod; }
 bool CUser::IsAdmin() const { return m_bAdmin; }
-bool CUser::DenySetVHost() const { return m_bDenySetVHost; }
+bool CUser::DenySetBindHost() const { return m_bDenySetBindHost; }
 bool CUser::MultiClients() const { return m_bMultiClients; }
 bool CUser::BounceDCCs() const { return m_bBounceDCCs; }
 const CString& CUser::GetStatusPrefix() const { return m_sStatusPrefix; }

@@ -21,7 +21,7 @@ CIRCSock::CIRCSock(CUser* pUser) : CZNCSock() {
 	m_bUHNames = false;
 	EnableReadLine();
 	m_Nick.SetIdent(pUser->GetIdent());
-	m_Nick.SetHost(pUser->GetVHost());
+	m_Nick.SetHost(pUser->GetBindHost());
 
 	m_uMaxNickLen = 9;
 	m_sPerms = "*!@%+";
@@ -959,7 +959,7 @@ void CIRCSock::SockError(int iErrno) {
 	CString sError;
 
 	if (iErrno == EDOM) {
-		sError = "Your VHost could not be resolved";
+		sError = "Your bind host could not be resolved";
 	} else if (iErrno == EADDRNOTAVAIL) {
 		// Csocket uses this if it can't resolve the dest host name
 		// ...but it also does generate this if bind() fails -.-
@@ -967,7 +967,7 @@ void CIRCSock::SockError(int iErrno) {
 		if (GetBindHost().empty())
 			sError += " (Is your IRC server's host name valid?)";
 		else
-			sError += " (Is your IRC server's host name and vhost valid?)";
+			sError += " (Is your IRC server's host name and znc bind host valid?)";
 	} else {
 		sError = strerror(iErrno);
 	}

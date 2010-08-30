@@ -70,12 +70,12 @@ class CAdminMod : public CModule {
 			{"Altnick",          string},
 			{"Ident",            string},
 			{"RealName",         string},
-			{"VHost",            string},
+			{"BindHost",         string},
 			{"MultiClients",     boolean},
 			{"BounceDCCs",       boolean},
 			{"UseClientIP",      boolean},
 			{"DenyLoadMod",      boolean},
-			{"DenySetVHost",     boolean},
+			{"DenySetBindHost",  boolean},
 			{"DefaultChanModes", string},
 			{"QuitMsg",          string},
 			{"BufferCount",      integer},
@@ -87,7 +87,7 @@ class CAdminMod : public CModule {
 			{"Admin",            boolean},
 			{"AppendTimestamp",  boolean},
 			{"PrependTimestamp", boolean},
-			{"DCCVHost",         boolean}
+			{"DCCBindHost",      boolean}
 		};
 		for (unsigned int i = 0; i != ARRAY_SIZE(vars); ++i) {
 			VarTable.AddRow();
@@ -160,8 +160,8 @@ class CAdminMod : public CModule {
 			PutModule("Ident = " + pUser->GetIdent());
 		else if (sVar == "realname")
 			PutModule("RealName = " + pUser->GetRealName());
-		else if (sVar == "vhost")
-			PutModule("VHost = " + pUser->GetVHost());
+		else if (sVar == "bindhost")
+			PutModule("BindHost = " + pUser->GetBindHost());
 		else if (sVar == "multiclients")
 			PutModule("MultiClients = " + CString(pUser->MultiClients()));
 		else if (sVar == "bouncedccs")
@@ -170,8 +170,8 @@ class CAdminMod : public CModule {
 			PutModule("UseClientIP = " + CString(pUser->UseClientIP()));
 		else if (sVar == "denyloadmod")
 			PutModule("DenyLoadMod = " + CString(pUser->DenyLoadMod()));
-		else if (sVar == "denysetvhost")
-			PutModule("DenySetVHost = " + CString(pUser->DenySetVHost()));
+		else if (sVar == "denysetbindhost")
+			PutModule("DenySetBindHost = " + CString(pUser->DenySetBindHost()));
 		else if (sVar == "defaultchanmodes")
 			PutModule("DefaultChanModes = " + pUser->GetDefaultChanModes());
 		else if (sVar == "quitmsg")
@@ -190,8 +190,8 @@ class CAdminMod : public CModule {
 			PutModule("AppendTimestamp = " + CString(pUser->GetTimestampAppend()));
 		else if (sVar == "preprendtimestamp")
 			PutModule("PreprendTimestamp = " + CString(pUser->GetTimestampPrepend()));
-		else if (sVar == "dccvhost")
-			PutModule("DCCVHost = " + CString(pUser->GetDCCVHost()));
+		else if (sVar == "dccbindhost")
+			PutModule("DCCBindHost = " + CString(pUser->GetDCCBindHost()));
 		else if (sVar == "admin")
 			PutModule("Admin = " + CString(pUser->IsAdmin()));
 		else
@@ -228,10 +228,10 @@ class CAdminMod : public CModule {
 			pUser->SetRealName(sValue);
 			PutModule("RealName = " + sValue);
 		}
-		else if (sVar == "vhost") {
-			if(!pUser->DenySetVHost() || m_pUser->IsAdmin()) {
-				pUser->SetVHost(sValue);
-				PutModule("VHost = " + sValue);
+		else if (sVar == "bindhost") {
+			if(!pUser->DenySetBindHost() || m_pUser->IsAdmin()) {
+				pUser->SetBindHost(sValue);
+				PutModule("BindHost = " + sValue);
 			} else {
 				PutModule("Access denied!");
 			}
@@ -260,11 +260,11 @@ class CAdminMod : public CModule {
 				PutModule("Access denied!");
 			}
 		}
-		else if (sVar == "denysetvhost") {
+		else if (sVar == "denysetbindhost") {
 			if(m_pUser->IsAdmin()) {
 				bool b = sValue.ToBool();
-				pUser->SetDenySetVHost(b);
-				PutModule("DenySetVHost = " + CString(b));
+				pUser->SetDenySetBindHost(b);
+				PutModule("DenySetBindHost = " + CString(b));
 			} else {
 				PutModule("Access denied!");
 			}
@@ -332,10 +332,10 @@ class CAdminMod : public CModule {
 			pUser->SetTimestampAppend(b);
 			PutModule("AppendTimestamp = " + CString(b));
 		}
-		else if (sVar == "dccvhost") {
-			if(!pUser->DenySetVHost() || m_pUser->IsAdmin()) {
-				pUser->SetDCCVHost(sValue);
-				PutModule("DCCVHost = " + sValue);
+		else if (sVar == "dccbindhost") {
+			if(!pUser->DenySetBindHost() || m_pUser->IsAdmin()) {
+				pUser->SetDCCBindHost(sValue);
+				PutModule("DCCBindHost = " + sValue);
 			} else {
 				PutModule("Access denied!");
 			}
@@ -456,7 +456,7 @@ class CAdminMod : public CModule {
 		Table.AddColumn("Nick");
 		Table.AddColumn("AltNick");
 		Table.AddColumn("Ident");
-		Table.AddColumn("VHost");
+		Table.AddColumn("BindHost");
 
 		for (map<CString, CUser*>::const_iterator it = msUsers.begin(); it != msUsers.end(); ++it) {
 			Table.AddRow();
@@ -469,7 +469,7 @@ class CAdminMod : public CModule {
 			Table.SetCell("Nick", it->second->GetNick());
 			Table.SetCell("AltNick", it->second->GetAltNick());
 			Table.SetCell("Ident", it->second->GetIdent());
-			Table.SetCell("VHost", it->second->GetVHost());
+			Table.SetCell("BindHost", it->second->GetBindHost());
 		}
 
 		PutModule(Table);

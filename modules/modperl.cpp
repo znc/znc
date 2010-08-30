@@ -704,7 +704,7 @@ XS(XS_ZNC_GetString)
 			else if (sName == "AltNick") sReturn = pUser->GetAltNick();
 			else if (sName == "Ident") sReturn = pUser->GetIdent();
 			else if (sName == "RealName") sReturn = pUser->GetRealName();
-			else if (sName == "VHost") sReturn = pUser->GetVHost();
+			else if (sName == "VHost" || sName == "BindHost") sReturn = pUser->GetBindHost();
 			else if (sName == "Pass") sReturn = pUser->GetPass();
 			else if (sName == "CurPath") sReturn = CZNC::Get().GetCurPath();
 			else if (sName == "DLPath") sReturn = pUser->GetDLPath();

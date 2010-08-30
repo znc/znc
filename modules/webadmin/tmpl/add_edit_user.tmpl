@@ -71,12 +71,12 @@
 				</div>
 				<div style="clear: both;"></div>
 
-			<? IF VHostLoop ?>
+			<? IF BindHostLoop ?>
 				<div class="subsection">
-					<div class="inputlabel">VHost:</div>
-					<select name="vhost">
+					<div class="inputlabel">BindHost:</div>
+					<select name="bindhost">
 						<option value="">- Default -</option>
-						<? LOOP VHostLoop ?><option value="<? VAR VHost ?>"<? IF Checked ?> selected="selected"<? ENDIF ?>><? VAR VHost ?></option><? ENDLOOP ?>
+						<? LOOP BindHostLoop ?><option value="<? VAR BindHost ?>"<? IF Checked ?> selected="selected"<? ENDIF ?>><? VAR BindHost ?></option><? ENDLOOP ?>
 					</select>
 				</div>
 				<div style="clear: both;"></div>

@@ -94,11 +94,11 @@ bool CSocket::Connect(const CString& sHostname, unsigned short uPort, bool bSSL,
 
 	CUser* pUser = m_pModule->GetUser();
 	CString sSockName = "MOD::C::" + m_pModule->GetModName();
-	CString sVHost;
+	CString sBindHost;
 
 	if (pUser) {
 		sSockName += "::" + pUser->GetUserName();
-		sVHost = m_pModule->GetUser()->GetVHost();
+		sBindHost = m_pModule->GetUser()->GetBindHost();
 	}
 
 	// Don't overwrite the socket name if one is already set
@@ -106,7 +106,7 @@ bool CSocket::Connect(const CString& sHostname, unsigned short uPort, bool bSSL,
 		sSockName = GetSockName();
 	}
 
-	return m_pModule->GetManager()->Connect(sHostname, uPort, sSockName, uTimeout, bSSL, sVHost, this);
+	return m_pModule->GetManager()->Connect(sHostname, uPort, sSockName, uTimeout, bSSL, sBindHost, this);
 }
 
 bool CSocket::Listen(unsigned short uPort, bool bSSL, unsigned int uTimeout) {

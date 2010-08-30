@@ -165,7 +165,7 @@ bool CZNC::ConnectUser(CUser *pUser) {
 		return false;
 	);
 
-	if (!m_Manager.Connect(pServer->GetName(), pServer->GetPort(), sSockName, 120, bSSL, pUser->GetVHost(), pIRCSock)) {
+	if (!m_Manager.Connect(pServer->GetName(), pServer->GetPort(), sSockName, 120, bSSL, pUser->GetBindHost(), pIRCSock)) {
 		ReleaseISpoof();
 		pUser->PutStatus("Unable to connect. (Bad host?)");
 	}
@@ -594,8 +594,8 @@ bool CZNC::WriteConfig() {
 		m_LockFile.Write("Motd         = " + m_vsMotd[m].FirstLine() + "\n");
 	}
 
-	for (unsigned int v = 0; v < m_vsVHosts.size(); v++) {
-		m_LockFile.Write("VHost        = " + m_vsVHosts[v].FirstLine() + "\n");
+	for (unsigned int v = 0; v < m_vsBindHosts.size(); v++) {
+		m_LockFile.Write("BindHost     = " + m_vsBindHosts[v].FirstLine() + "\n");
 	}
 
 	CGlobalModules& Mods = GetModules();
@@ -771,9 +771,9 @@ bool CZNC::WriteNewConfig(const CString& sConfigFile) {
 		vsLines.push_back("\tIdent      = " + sAnswer);
 		CUtils::GetInput("Real Name", sAnswer, "Got ZNC?");
 		vsLines.push_back("\tRealName   = " + sAnswer);
-		CUtils::GetInput("VHost", sAnswer, "", "optional");
+		CUtils::GetInput("Bind Host", sAnswer, "", "optional");
 		if (!sAnswer.empty()) {
-			vsLines.push_back("\tVHost      = " + sAnswer);
+			vsLines.push_back("\tBindHost   = " + sAnswer);
 		}
 		// todo: Possibly add motd
 
@@ -1068,7 +1068,7 @@ bool CZNC::DoRehash(CString& sError)
 
 	CUtils::PrintStatus(true);
 
-	m_vsVHosts.clear();
+	m_vsBindHosts.clear();
 	m_vsMotd.clear();
 
 	// Delete all listeners
@@ -1344,8 +1344,8 @@ bool CZNC::DoRehash(CString& sError)
 					} else if (sName.Equals("Admin")) {
 						pUser->SetAdmin(sValue.Equals("true"));
 						continue;
-					} else if (sName.Equals("DenySetVHost")) {
-						pUser->SetDenySetVHost(sValue.Equals("true"));
+					} else if (sName.Equals("DenySetBindHost") || sName.Equals("DenySetVHost")) {
+						pUser->SetDenySetBindHost(sValue.Equals("true"));
 						continue;
 					} else if (sName.Equals("StatusPrefix")) {
 						if (!pUser->SetStatusPrefix(sValue)) {
@@ -1368,11 +1368,11 @@ bool CZNC::DoRehash(CString& sError)
 					} else if (sName.Equals("ChanModes")) {
 						pUser->SetDefaultChanModes(sValue);
 						continue;
-					} else if (sName.Equals("VHost")) {
-						pUser->SetVHost(sValue);
+					} else if (sName.Equals("BindHost") || sName.Equals("VHost")) {
+						pUser->SetBindHost(sValue);
 						continue;
-					} else if (sName.Equals("DCCVHost")) {
-						pUser->SetDCCVHost(sValue);
+					} else if (sName.Equals("DCCBindHost") || sName.Equals("DCCVHost")) {
+						pUser->SetDCCBindHost(sValue);
 						continue;
 					} else if (sName.Equals("Allow")) {
 						pUser->AddAllowedHost(sValue);
@@ -1589,8 +1589,8 @@ bool CZNC::DoRehash(CString& sError)
 				} else if (sName.Equals("MOTD")) {
 					AddMotd(sValue);
 					continue;
-				} else if (sName.Equals("VHost")) {
-					AddVHost(sValue);
+				} else if (sName.Equals("BindHost") || sName.Equals("VHost")) {
+					AddBindHost(sValue);
 					continue;
 				} else if (sName.Equals("PidFile")) {
 					m_sPidFile = sValue;
@@ -1746,30 +1746,30 @@ bool CZNC::DoRehash(CString& sError)
 	return true;
 }
 
-void CZNC::ClearVHosts() {
-	m_vsVHosts.clear();
+void CZNC::ClearBindHosts() {
+	m_vsBindHosts.clear();
 }
 
-bool CZNC::AddVHost(const CString& sHost) {
+bool CZNC::AddBindHost(const CString& sHost) {
 	if (sHost.empty()) {
 		return false;
 	}
 
-	for (unsigned int a = 0; a < m_vsVHosts.size(); a++) {
-		if (m_vsVHosts[a].Equals(sHost)) {
+	for (unsigned int a = 0; a < m_vsBindHosts.size(); a++) {
+		if (m_vsBindHosts[a].Equals(sHost)) {
 			return false;
 		}
 	}
 
-	m_vsVHosts.push_back(sHost);
+	m_vsBindHosts.push_back(sHost);
 	return true;
 }
 
-bool CZNC::RemVHost(const CString& sHost) {
+bool CZNC::RemBindHost(const CString& sHost) {
 	VCString::iterator it;
-	for (it = m_vsVHosts.begin(); it != m_vsVHosts.end(); ++it) {
+	for (it = m_vsBindHosts.begin(); it != m_vsBindHosts.end(); ++it) {
 		if (sHost.Equals(*it)) {
-			m_vsVHosts.erase(it);
+			m_vsBindHosts.erase(it);
 			return true;
 		}
 	}

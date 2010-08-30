@@ -149,14 +149,14 @@ public:
 
 
 			Table.SetCell("Name", pSocket->GetSockName());
-			CString sVHost;
+			CString sBindHost;
 			if (bShowHosts) {
-				sVHost = pSocket->GetBindHost();
+				sBindHost = pSocket->GetBindHost();
 			}
-			if (sVHost.empty()) {
-				sVHost = pSocket->GetLocalIP();
+			if (sBindHost.empty()) {
+				sBindHost = pSocket->GetLocalIP();
 			}
-			Table.SetCell("Local", sVHost + " " + CString(pSocket->GetLocalPort()));
+			Table.SetCell("Local", sBindHost + " " + CString(pSocket->GetLocalPort()));
 
 			CString sHost;
 			if (!bShowHosts) {

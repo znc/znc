@@ -801,85 +801,85 @@ void CClient::UserCommand(CString& sLine) {
 			PutStatus("Done, but there were errors, some users no longer have ["
 					+ sMod + "] loaded");
 		}
-	} else if (sCommand.Equals("ADDVHOST") && m_pUser->IsAdmin()) {
-		CString sVHost = sLine.Token(1);
+	} else if ((sCommand.Equals("ADDBINDHOST") || sCommand.Equals("ADDVHOST")) && m_pUser->IsAdmin()) {
+		CString sHost = sLine.Token(1);
 
-		if (sVHost.empty()) {
-			PutStatus("Usage: AddVHost <VHost>");
+		if (sHost.empty()) {
+			PutStatus("Usage: AddBindHost <host>");
 			return;
 		}
 
-		if (CZNC::Get().AddVHost(sVHost)) {
+		if (CZNC::Get().AddBindHost(sHost)) {
 			PutStatus("Done");
 		} else {
-			PutStatus("The VHost [" + sVHost + "] is already in the list");
+			PutStatus("The host [" + sHost + "] is already in the list");
 		}
-	} else if ((sCommand.Equals("REMVHOST") || sCommand.Equals("DELVHOST")) && m_pUser->IsAdmin()) {
-		CString sVHost = sLine.Token(1);
+	} else if ((sCommand.Equals("REMBINDHOST") || sCommand.Equals("REMVHOST") || sCommand.Equals("DELVHOST")) && m_pUser->IsAdmin()) {
+		CString sHost = sLine.Token(1);
 
-		if (sVHost.empty()) {
-			PutStatus("Usage: RemVHost <VHost>");
+		if (sHost.empty()) {
+			PutStatus("Usage: RemBindHost <host>");
 			return;
 		}
 
-		if (CZNC::Get().RemVHost(sVHost)) {
+		if (CZNC::Get().RemBindHost(sHost)) {
 			PutStatus("Done");
 		} else {
-			PutStatus("The VHost [" + sVHost + "] is not in the list");
+			PutStatus("The host [" + sHost + "] is not in the list");
 		}
-	} else if (sCommand.Equals("LISTVHOSTS") && (m_pUser->IsAdmin() || !m_pUser->DenySetVHost())) {
-		const VCString& vsVHosts = CZNC::Get().GetVHosts();
+	} else if ((sCommand.Equals("LISTBINDHOSTS") || sCommand.Equals("LISTVHOSTS")) && (m_pUser->IsAdmin() || !m_pUser->DenySetBindHost())) {
+		const VCString& vsHosts = CZNC::Get().GetBindHosts();
 
-		if (vsVHosts.empty()) {
-			PutStatus("No VHosts configured");
+		if (vsHosts.empty()) {
+			PutStatus("No bind hosts configured");
 			return;
 		}
 
 		CTable Table;
-		Table.AddColumn("VHost");
+		Table.AddColumn("Host");
 
 		VCString::const_iterator it;
-		for (it = vsVHosts.begin(); it != vsVHosts.end(); ++it) {
+		for (it = vsHosts.begin(); it != vsHosts.end(); ++it) {
 			Table.AddRow();
-			Table.SetCell("VHost", *it);
+			Table.SetCell("Host", *it);
 		}
 		PutStatus(Table);
-	} else if (sCommand.Equals("SETVHOST") && (m_pUser->IsAdmin() || !m_pUser->DenySetVHost())) {
-		CString sVHost = sLine.Token(1);
+	} else if ((sCommand.Equals("SETBINDHOST") || sCommand.Equals("SETVHOST")) && (m_pUser->IsAdmin() || !m_pUser->DenySetBindHost())) {
+		CString sHost = sLine.Token(1);
 
-		if (sVHost.empty()) {
-			PutStatus("Usage: SetVHost <VHost>");
+		if (sHost.empty()) {
+			PutStatus("Usage: SetBindHost <host>");
 			return;
 		}
 
-		if (sVHost.Equals(m_pUser->GetVHost())) {
-			PutStatus("You already have this VHost!");
+		if (sHost.Equals(m_pUser->GetBindHost())) {
+			PutStatus("You already have this bind host!");
 			return;
 		}
 
-		const VCString& vsVHosts = CZNC::Get().GetVHosts();
-		if (!m_pUser->IsAdmin() && !vsVHosts.empty()) {
+		const VCString& vsHosts = CZNC::Get().GetBindHosts();
+		if (!m_pUser->IsAdmin() && !vsHosts.empty()) {
 			VCString::const_iterator it;
 			bool bFound = false;
 
-			for (it = vsVHosts.begin(); it != vsVHosts.end(); ++it) {
-				if (sVHost.Equals(*it)) {
+			for (it = vsHosts.begin(); it != vsHosts.end(); ++it) {
+				if (sHost.Equals(*it)) {
 					bFound = true;
 					break;
 				}
 			}
 
 			if (!bFound) {
-				PutStatus("You may not use this VHost. See [ListVHosts] for a list");
+				PutStatus("You may not use this bind host. See [ListBindHosts] for a list");
 				return;
 			}
 		}
 
-		m_pUser->SetVHost(sVHost);
-		PutStatus("Set VHost to [" + m_pUser->GetVHost() + "]");
-	} else if (sCommand.Equals("CLEARVHOST") && (m_pUser->IsAdmin() || !m_pUser->DenySetVHost())) {
-		m_pUser->SetVHost("");
-		PutStatus("VHost Cleared");
+		m_pUser->SetBindHost(sHost);
+		PutStatus("Set bind host to [" + m_pUser->GetBindHost() + "]");
+	} else if ((sCommand.Equals("CLEARBINDHOST") || sCommand.Equals("CLEARVHOST")) && (m_pUser->IsAdmin() || !m_pUser->DenySetBindHost())) {
+		m_pUser->SetBindHost("");
+		PutStatus("Bind Host Cleared");
 	} else if (sCommand.Equals("PLAYBUFFER")) {
 		CString sChan = sLine.Token(1);
 
@@ -1194,29 +1194,29 @@ void CClient::HelpUser() {
 
 	if (m_pUser->IsAdmin()) {
 		Table.AddRow();
-		Table.SetCell("Command", "AddVHost");
-		Table.SetCell("Arguments", "<vhost (IP preferred)>");
-		Table.SetCell("Description", "Adds a VHost for normal users to use");
+		Table.SetCell("Command", "AddBindHost");
+		Table.SetCell("Arguments", "<host (IP preferred)>");
+		Table.SetCell("Description", "Adds a bind host for normal users to use");
 
 		Table.AddRow();
-		Table.SetCell("Command", "RemVHost");
-		Table.SetCell("Arguments", "<vhost>");
-		Table.SetCell("Description", "Removes a VHost from the list");
+		Table.SetCell("Command", "RemBindHost");
+		Table.SetCell("Arguments", "<host>");
+		Table.SetCell("Description", "Removes a bind host from the list");
 	}
 
-	if (m_pUser->IsAdmin() || !m_pUser->DenySetVHost()) {
+	if (m_pUser->IsAdmin() || !m_pUser->DenySetBindHost()) {
 		Table.AddRow();
-		Table.SetCell("Command", "ListVHosts");
-		Table.SetCell("Description", "Shows the configured list of vhosts");
+		Table.SetCell("Command", "ListBindHosts");
+		Table.SetCell("Description", "Shows the configured list of bind hosts");
 
 		Table.AddRow();
-		Table.SetCell("Command", "SetVHost");
-		Table.SetCell("Arguments", "<vhost (IP preferred)>");
-		Table.SetCell("Description", "Set the VHost for this connection");
+		Table.SetCell("Command", "SetBindHost");
+		Table.SetCell("Arguments", "<host (IP preferred)>");
+		Table.SetCell("Description", "Set the bind host for this connection");
 
 		Table.AddRow();
-		Table.SetCell("Command", "ClearVHost");
-		Table.SetCell("Description", "Clear the VHost for this connection");
+		Table.SetCell("Command", "ClearBindHost");
+		Table.SetCell("Description", "Clear the bind host for this connection");
 	}
 
 	Table.AddRow();

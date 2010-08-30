@@ -196,7 +196,7 @@ public:
 			if (pChannel->IsInChannel(sNick))
 				continue;
 
-			CString sHost = m_pUser->GetVHost();
+			CString sHost = m_pUser->GetBindHost();
 			const set<CString>& ssNicks = pChannel->GetNicks();
 
 			if (sHost.empty()) {
@@ -319,7 +319,7 @@ public:
 			pChannel->DelFixedNick(pUser->GetUserName());
 
 			const set<CString>& ssNicks = pChannel->GetNicks();
-			CString sHost = pUser->GetVHost();
+			CString sHost = pUser->GetBindHost();
 
 			if (sHost.empty()) {
 				sHost = pUser->GetIRCNick().GetHost();
@@ -377,7 +377,7 @@ public:
 			const CString& sNick = pUser->GetUserName();
 			pChannel->AddNick(sNick);
 
-			CString sHost = pUser->GetVHost();
+			CString sHost = pUser->GetBindHost();
 
 			if (sHost.empty()) {
 				sHost = pUser->GetIRCNick().GetHost();
@@ -408,7 +408,7 @@ public:
 			return CONTINUE;
 		}
 
-		CString sHost = m_pUser->GetVHost();
+		CString sHost = m_pUser->GetBindHost();
 
 		if (sHost.empty()) {
 			sHost = m_pUser->GetIRCNick().GetHost();

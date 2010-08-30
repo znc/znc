@@ -766,7 +766,7 @@ CString CClient::GetNickMask() const {
 		return GetIRCSock()->GetNickMask();
 	}
 
-	CString sHost = m_pUser->GetVHost();
+	CString sHost = m_pUser->GetBindHost();
 	if (sHost.empty()) {
 		sHost = "irc.znc.in";
 	}

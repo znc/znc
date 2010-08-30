@@ -198,14 +198,14 @@ public:
 		sArg = WebSock.GetParam("chanmodes"); if (!sArg.empty()) { pNewUser->SetDefaultChanModes(sArg); }
 		sArg = WebSock.GetParam("timestampformat"); if (!sArg.empty()) { pNewUser->SetTimestampFormat(sArg); }
 
-		sArg = WebSock.GetParam("vhost");
-		// To change VHosts be admin or don't have DenySetVHost
-		if (spSession->IsAdmin() || !spSession->GetUser()->DenySetVHost()) {
+		sArg = WebSock.GetParam("bindhost");
+		// To change BindHosts be admin or don't have DenySetBindHost
+		if (spSession->IsAdmin() || !spSession->GetUser()->DenySetBindHost()) {
 			if (!sArg.empty()) {
-				pNewUser->SetVHost(sArg);
+				pNewUser->SetBindHost(sArg);
 			}
 		} else if (pUser){
-			pNewUser->SetVHost(pUser->GetVHost());
+			pNewUser->SetBindHost(pUser->GetBindHost());
 		}
 
 		// First apply the old limit in case the new one is too high
@@ -226,10 +226,10 @@ public:
 
 		if (spSession->IsAdmin()) {
 			pNewUser->SetDenyLoadMod(WebSock.GetParam("denyloadmod").ToBool());
-			pNewUser->SetDenySetVHost(WebSock.GetParam("denysetvhost").ToBool());
+			pNewUser->SetDenySetBindHost(WebSock.GetParam("denysetbindhost").ToBool());
 		} else if (pUser) {
 			pNewUser->SetDenyLoadMod(pUser->DenyLoadMod());
-			pNewUser->SetDenySetVHost(pUser->DenySetVHost());
+			pNewUser->SetDenySetBindHost(pUser->DenySetBindHost());
 		}
 
 		// If pUser is not NULL, we are editing an existing user.
@@ -630,27 +630,27 @@ public:
 				Tmpl["IRCConnectEnabled"] = "true";
 			}
 
-			// To change VHosts be admin or don't have DenySetVHost
-			const VCString& vsVHosts = CZNC::Get().GetVHosts();
-			bool bFoundVHost = false;
-			if (spSession->IsAdmin() || !spSession->GetUser()->DenySetVHost()) {
-				for (unsigned int b = 0; b < vsVHosts.size(); b++) {
-					const CString& sVHost = vsVHosts[b];
-					CTemplate& l = Tmpl.AddRow("VHostLoop");
+			// To change BindHosts be admin or don't have DenySetBindHost
+			const VCString& vsBindHosts = CZNC::Get().GetBindHosts();
+			bool bFoundBindHost = false;
+			if (spSession->IsAdmin() || !spSession->GetUser()->DenySetBindHost()) {
+				for (unsigned int b = 0; b < vsBindHosts.size(); b++) {
+					const CString& sBindHost = vsBindHosts[b];
+					CTemplate& l = Tmpl.AddRow("BindHostLoop");
 
-					l["VHost"] = sVHost;
+					l["BindHost"] = sBindHost;
 
-					if (pUser && pUser->GetVHost() == sVHost) {
+					if (pUser && pUser->GetBindHost() == sBindHost) {
 						l["Checked"] = "true";
-						bFoundVHost = true;
+						bFoundBindHost = true;
 					}
 				}
 
-				// If our current vhost is not in the global list...
-				if (pUser && !bFoundVHost && !pUser->GetVHost().empty()) {
-					CTemplate& l = Tmpl.AddRow("VHostLoop");
+				// If our current bindhost is not in the global list...
+				if (pUser && !bFoundBindHost && !pUser->GetBindHost().empty()) {
+					CTemplate& l = Tmpl.AddRow("BindHostLoop");
 
-					l["VHost"] = pUser->GetVHost();
+					l["BindHost"] = pUser->GetBindHost();
 					l["Checked"] = "true";
 				}
 			}
@@ -733,9 +733,9 @@ public:
 				if (pUser && pUser == CZNC::Get().FindUser(WebSock.GetUser())) { o10["Disabled"] = "true"; }
 
 				CTemplate& o11 = Tmpl.AddRow("OptionLoop");
-				o11["Name"] = "denysetvhost";
-				o11["DisplayName"] = "Deny SetVHost";
-				if (pUser && pUser->DenySetVHost()) { o11["Checked"] = "true"; }
+				o11["Name"] = "denysetbindhost";
+				o11["DisplayName"] = "Deny SetBindHost";
+				if (pUser && pUser->DenySetBindHost()) { o11["Checked"] = "true"; }
 			}
 
 			return true;
@@ -876,17 +876,17 @@ public:
 
 	bool SettingsPage(CWebSock& WebSock, CTemplate& Tmpl) {
 		if (!WebSock.GetParam("submitted").ToUInt()) {
-			CString sVHosts, sMotd;
+			CString sBindHosts, sMotd;
 			Tmpl["Action"] = "settings";
 			Tmpl["Title"] = "Settings";
 			Tmpl["StatusPrefix"] = CZNC::Get().GetStatusPrefix();
 			Tmpl["ISpoofFile"] = CZNC::Get().GetISpoofFile();
 			Tmpl["ISpoofFormat"] = CZNC::Get().GetISpoofFormat();
 
-			const VCString& vsVHosts = CZNC::Get().GetVHosts();
-			for (unsigned int a = 0; a < vsVHosts.size(); a++) {
-				CTemplate& l = Tmpl.AddRow("VHostLoop");
-				l["VHost"] = vsVHosts[a];
+			const VCString& vsBindHosts = CZNC::Get().GetBindHosts();
+			for (unsigned int a = 0; a < vsBindHosts.size(); a++) {
+				CTemplate& l = Tmpl.AddRow("BindHostLoop");
+				l["BindHost"] = vsBindHosts[a];
 			}
 
 			const VCString& vsMotd = CZNC::Get().GetMotd();
@@ -981,11 +981,11 @@ public:
 			CZNC::Get().AddMotd(vsArgs[a].TrimRight_n());
 		}
 
-		WebSock.GetRawParam("vhosts").Split("\n", vsArgs);
-		CZNC::Get().ClearVHosts();
+		WebSock.GetRawParam("bindhosts").Split("\n", vsArgs);
+		CZNC::Get().ClearBindHosts();
 
 		for (a = 0; a < vsArgs.size(); a++) {
-			CZNC::Get().AddVHost(vsArgs[a].Trim_n());
+			CZNC::Get().AddBindHost(vsArgs[a].Trim_n());
 		}
 
 		CZNC::Get().SetSkinName(WebSock.GetParam("skin"));
