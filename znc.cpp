@@ -846,6 +846,8 @@ bool CZNC::WriteNewConfig(const CString& sConfigFile) {
 		vsLines.push_back("");
 		CUtils::PrintMessage("");
 		CUtils::PrintMessage("-- IRC Servers --");
+		CUtils::PrintMessage("Only add servers from the same IRC network.");
+		CUtils::PrintMessage("If a server somehow doesn't work, another server will be used.");
 		CUtils::PrintMessage("");
 
 		do {
