@@ -590,7 +590,7 @@ bool CClient::SendMotd() {
 }
 
 void CClient::AuthUser() {
-	if (!m_bGotNick || !m_bGotUser || m_bInCap || IsAttached())
+	if (!m_bGotNick || !m_bGotUser || !m_bGotPass || m_bInCap || IsAttached())
 		return;
 
 	m_spAuth = new CClientAuth(this, m_sUser, m_sPass);
