@@ -1042,9 +1042,6 @@ public:
 		/* we don't want the template to be printed while we redirect */
 		return false;
 	}
-
-private:
-	map<CString, unsigned int>  m_suSwitchCounters;
 };
 
 GLOBALMODULEDEFS(CWebAdminMod, "Web based administration module")
