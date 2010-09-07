@@ -568,6 +568,7 @@ MODLINK
 LIBZNCDIR
 LIBZNC
 MODFLAGS
+SWIG_BINARY
 PERL_BINARY
 openssl_LIBS
 openssl_CFLAGS
@@ -642,6 +643,7 @@ enable_debug
 enable_ipv6
 enable_openssl
 enable_perl
+enable_swig
 enable_sasl
 enable_optimization
 enable_c_ares
@@ -1288,7 +1290,13 @@ Optional Features:
   --enable-debug          enable debugging
   --disable-ipv6          disable ipv6 support
   --disable-openssl       disable openssl
-  --disable-perl          disable perl
+  --enable-perl           enable perl
+  --disable-swig          Disable automatic generation of source files needed
+                          for modperl. This value is ignored if perl is
+                          disabled or not found. If you disable swig, but
+                          still want to use modperl, please download the
+                          necessary files to modules/modperl. Check
+                          http://en.znc.in/wiki/Modperl for details.
   --enable-sasl           enable sasl
   --disable-optimization  Disable some compiler optimizations to decrease
                           memory usage while compiling
@@ -2913,7 +2921,14 @@ fi
 if test "${enable_perl+set}" = set; then :
   enableval=$enable_perl; PERL="$enableval"
 else
-  PERL="auto"
+  PERL="no"
+fi
+
+# Check whether --enable-swig was given.
+if test "${enable_swig+set}" = set; then :
+  enableval=$enable_swig; SWIG="$enableval"
+else
+  SWIG="auto"
 fi
 
 # Check whether --enable-sasl was given.
@@ -3649,6 +3664,7 @@ fi
 
 if test "x$PERL" != "xno"; then
 	old_PERL="$PERL"
+	old_SWIG="$SWIG"
 	# Extract the first word of "perl", so it can be a program name with args.
 set dummy perl; ac_word=$2
 { $as_echo "$as_me:${as_lineno-$LINENO}: checking for $ac_word" >&5
@@ -3734,6 +3750,53 @@ else
   PERL="no"
 fi
 
+		if test "x$PERL" != "xno"; then
+			if test "x$SWIG" != "xno"; then
+				# Extract the first word of "swig", so it can be a program name with args.
+set dummy swig; ac_word=$2
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for $ac_word" >&5
+$as_echo_n "checking for $ac_word... " >&6; }
+if test "${ac_cv_path_SWIG_BINARY+set}" = set; then :
+  $as_echo_n "(cached) " >&6
+else
+  case $SWIG_BINARY in
+  [\\/]* | ?:[\\/]*)
+  ac_cv_path_SWIG_BINARY="$SWIG_BINARY" # Let the user override the test with a path.
+  ;;
+  *)
+  as_save_IFS=$IFS; IFS=$PATH_SEPARATOR
+for as_dir in $PATH
+do
+  IFS=$as_save_IFS
+  test -z "$as_dir" && as_dir=.
+    for ac_exec_ext in '' $ac_executable_extensions; do
+  if { test -f "$as_dir/$ac_word$ac_exec_ext" && $as_test_x "$as_dir/$ac_word$ac_exec_ext"; }; then
+    ac_cv_path_SWIG_BINARY="$as_dir/$ac_word$ac_exec_ext"
+    $as_echo "$as_me:${as_lineno-$LINENO}: found $as_dir/$ac_word$ac_exec_ext" >&5
+    break 2
+  fi
+done
+  done
+IFS=$as_save_IFS
+
+  ;;
+esac
+fi
+SWIG_BINARY=$ac_cv_path_SWIG_BINARY
+if test -n "$SWIG_BINARY"; then
+  { $as_echo "$as_me:${as_lineno-$LINENO}: result: $SWIG_BINARY" >&5
+$as_echo "$SWIG_BINARY" >&6; }
+else
+  { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
+$as_echo "no" >&6; }
+fi
+
+
+				if test -z "$SWIG_BINARY"; then
+					SWIG="no"
+				fi
+			fi
+		fi
 		LDFLAGS="$my_saved_LDFLAGS"
 	else
 		PERL="no"
@@ -3751,7 +3814,22 @@ $as_echo "$as_me: WARNING: perl was not found and thus disabled" >&2;}
 
 		PERL_BINARY=""
 	else
-		PERL=yes
+		if test "x$SWIG" = "xno"; then
+			SWIG_BINARY=""
+			if test "x$old_SWIG" = "xno"; then
+				PERL="yes, but with manual download"
+				{ $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: swig was disabled, so you should put needed sources for modperl to modules/modperl.
+						Please check http://en.znc.in/wiki/Modperl for details." >&5
+$as_echo "$as_me: WARNING: swig was disabled, so you should put needed sources for modperl to modules/modperl.
+						Please check http://en.znc.in/wiki/Modperl for details." >&2;}
+			else
+				as_fn_error $? "swig was not found. Try --disable-perl, or download the necessary sources and use --disable-swig.
+						Please check http://en.znc.in/wiki/Modperl for details." "$LINENO" 5
+			fi
+		else
+			PERL="yes"
+			SWIG="yes"
+		fi
 	fi
 fi
 

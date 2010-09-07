@@ -22,6 +22,7 @@ LDFLAGS  := @LDFLAGS@
 # The znc binary links already against those.
 # LIBS     := @LIBS@
 PERL     := @PERL_BINARY@
+SWIG     := @SWIG_BINARY@
 MODDIR   := @MODDIR@
 DATADIR  := @DATADIR@
 LIBZNC   := @LIBZNC@
@@ -69,6 +70,10 @@ ifneq "$(PERL)" ""
 modperlFLAGS := $(shell $(PERL) -MExtUtils::Embed -e perl_inc -e ldopts)
 # Perl API is ugly, casting string literals to char* and redeclaring functions :(
 modperlFLAGS += -Wno-write-strings -Wno-redundant-decls -Wno-missing-declarations
+# This is for SWIG
+modperlFLAGS += -DSWIG_TYPE_TABLE=znc
+# Find additional headers for out-of-tree build
+modperlFLAGS += -I.
 PERLHOOK     := modperl_install
 else
 FILES    := $(shell echo $(FILES) | sed -e "s/modperl//")
@@ -94,7 +99,7 @@ modtclFLAGS := $(TCL_FLAGS)
 
 TARGETS  := $(addsuffix .so, $(FILES))
 
-CLEAN    := *.so extra/*.so
+CLEAN    := *.so extra/*.so modperl/ZNC.so modperl/modperl_wrap.cxx modperl/ZNC.pm
 
 .PHONY: all clean install modperl_install
 
@@ -125,10 +130,34 @@ clean:
 	$(E) Building $(if $(filter %extra/,$(dir $<)),extra )module $(notdir $(basename $@))...
 	$(Q)$(CXX) $(MODFLAGS) $(LDFLAGS) $(MODLINK) -o $@ $< $($(notdir $(basename $@))FLAGS) -MMD -MF .depend/$(notdir $@).dep
 
-modperl_install: create_install_dir
+modperl.so: modperl/ZNC.so
+modperl/ZNC.so: modperl/modperl_wrap.cxx Makefile
+	$(E) Building ZNC perl bindings library...
+	$(Q)$(CXX) $(MODFLAGS) $(LDFLAGS) $(MODLINK) -I$(srcdir) -DSWIG_TYPE_TABLE=znc $(shell $(PERL) -MExtUtils::Embed -e perl_inc -e ldopts) -o $@ $<
+ifneq "$(SWIG)" ""
+modperl/modperl_wrap.cxx: modperl/modperl.i Makefile modperl/module.h modperl/CString.i
+	$(E) Generating ZNC API for perl...
+	@mkdir -p modperl
+	$(Q)$(SWIG) -perl5 -c++ -shadow -outdir modperl -I$(srcdir) -w362,315,401,402 -o $@.warn $<
+	$(Q)$(PERL) -pe '$$x==2 and print "items+=0;" and $$x=3;/^XS\(SWIG_init\)/ and $$x=1;$$x==1 and /dXSARGS/ and $$x=2' $@.warn > $@
+	$(Q)rm -rf $@.warn
+	$(Q)$(SWIG) -perl5 -c++ -shadow -external-runtime modperl/swigperlrun.h
+endif
+
+modperl_install: create_install_dir install_metadirs
 	for i in $(srcdir)/*.pm; do \
 		$(INSTALL_DATA) $$i $(DESTDIR)$(MODDIR); \
 	done
+	for a in $(srcdir)/*; do \
+		if [ -d $$a ] && [ -f $${a}.pm ]; then \
+			cp -Rp $$a $(DESTDIR)$(DATADIR); \
+		fi \
+	done
+	rm -rf $(DESTDIR)$(DATADIR)/modperl
+	mkdir -p $(DESTDIR)$(MODDIR)/modperl
+	$(INSTALL_PROGRAM) $(srcdir)/modperl/ZNC.so $(DESTDIR)$(MODDIR)/modperl
+	$(INSTALL_DATA) $(srcdir)/modperl/ZNC.pm $(DESTDIR)$(MODDIR)/modperl
+	$(INSTALL_DATA) $(srcdir)/modperl/startup.pl $(DESTDIR)$(MODDIR)/modperl
 
 modtcl_install:
 	mkdir -p $(DESTDIR)$(DATADIR)/modtcl/

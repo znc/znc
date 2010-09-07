@@ -93,9 +93,16 @@ AC_ARG_ENABLE( [openssl],
 	[SSL="$enableval"],
 	[SSL="auto"])
 AC_ARG_ENABLE( [perl],
-	AS_HELP_STRING([--disable-perl], [disable perl]),
+	AS_HELP_STRING([--enable-perl], [enable perl]),
 	[PERL="$enableval"],
-	[PERL="auto"])
+	[PERL="no"])
+AC_ARG_ENABLE( [swig],
+	AS_HELP_STRING([--disable-swig], [Disable automatic generation of source files needed for modperl.
+			This value is ignored if perl is disabled or not found. If you disable swig,
+			but still want to use modperl, please download the necessary files to modules/modperl.
+			Check http://en.znc.in/wiki/Modperl for details.]),
+	[SWIG="$enableval"],
+	[SWIG="auto"])
 AC_ARG_ENABLE( [sasl],
 	AS_HELP_STRING([--enable-sasl], [enable sasl]),
 	[if test "$enableval" = "yes" ; then SASL=1; fi],)
@@ -257,6 +264,7 @@ fi
 
 if test "x$PERL" != "xno"; then
 	old_PERL="$PERL"
+	old_SWIG="$SWIG"
 	AC_PATH_PROG([PERL_BINARY], [perl], [])
 	if test -n "$PERL_BINARY"; then
 		my_saved_LDFLAGS="$LDFLAGS"
@@ -264,6 +272,14 @@ if test "x$PERL" != "xno"; then
 		AC_CHECK_LIB(perl, perl_alloc,
 			     [: No, we do not want autoconf to do sth automatically],
 			     PERL="no")
+		if test "x$PERL" != "xno"; then
+			if test "x$SWIG" != "xno"; then
+				AC_PATH_PROG([SWIG_BINARY], [swig], [])
+				if test -z "$SWIG_BINARY"; then
+					SWIG="no"
+				fi
+			fi
+		fi
 		LDFLAGS="$my_saved_LDFLAGS"
 	else
 		PERL="no"
@@ -274,7 +290,20 @@ if test "x$PERL" != "xno"; then
 			[perl was not found and thus disabled])
 		PERL_BINARY=""
 	else
-		PERL=yes
+		if test "x$SWIG" = "xno"; then
+			SWIG_BINARY=""
+			if test "x$old_SWIG" = "xno"; then
+				PERL="yes, but with manual download"
+				AC_MSG_WARN([swig was disabled, so you should put needed sources for modperl to modules/modperl.
+						Please check http://en.znc.in/wiki/Modperl for details.])
+			else
+				AC_MSG_ERROR([swig was not found. Try --disable-perl, or download the necessary sources and use --disable-swig.
+						Please check http://en.znc.in/wiki/Modperl for details.])
+			fi
+		else
+			PERL="yes"
+			SWIG="yes"
+		fi
 	fi
 fi
 

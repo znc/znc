@@ -1,0 +1,157 @@
+/*
+ * Copyright (C) 2004-2010  See the AUTHORS file for details.
+ *
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License version 2 as published
+ * by the Free Software Foundation.
+ */
+
+#pragma once
+
+#include "Modules.h"
+
+class CPerlModule : public CModule {
+    CString m_sPerlID;
+	VWebSubPages* _GetSubPages();
+public:
+    CPerlModule(CUser* pUser, const CString& sModName, const CString& sDataPath,
+            const CString& sPerlID)
+            : CModule(NULL, pUser, sModName, sDataPath) {
+        m_sPerlID = sPerlID;
+    }
+    CString GetPerlID() { return m_sPerlID; }
+    
+	virtual bool OnBoot();
+	virtual bool WebRequiresLogin();
+	virtual bool WebRequiresAdmin();
+	virtual CString GetWebMenuTitle();
+	virtual bool OnWebPreRequest(CWebSock& WebSock, const CString& sPageName);
+	virtual bool OnWebRequest(CWebSock& WebSock, const CString& sPageName, CTemplate& Tmpl);
+	virtual VWebSubPages& GetSubPages();
+	virtual void OnPreRehash();
+	virtual void OnPostRehash();
+	virtual void OnIRCDisconnected();
+	virtual void OnIRCConnected();
+	virtual EModRet OnIRCConnecting(CIRCSock *pIRCSock);
+	virtual EModRet OnIRCRegistration(CString& sPass, CString& sNick, CString& sIdent, CString& sRealName);
+	virtual EModRet OnBroadcast(CString& sMessage);
+	virtual EModRet OnConfigLine(const CString& sName, const CString& sValue, CUser* pUser, CChan* pChan);
+	virtual void OnWriteUserConfig(CFile& Config);
+	virtual void OnWriteChanConfig(CFile& Config, CChan& Chan);
+	virtual EModRet OnDCCUserSend(const CNick& RemoteNick, unsigned long uLongIP, unsigned short uPort, const CString& sFile, unsigned long uFileSize);
+	virtual void OnChanPermission(const CNick& OpNick, const CNick& Nick, CChan& Channel, unsigned char uMode, bool bAdded, bool bNoChange);
+	virtual void OnOp(const CNick& OpNick, const CNick& Nick, CChan& Channel, bool bNoChange);
+	virtual void OnDeop(const CNick& OpNick, const CNick& Nick, CChan& Channel, bool bNoChange);
+	virtual void OnVoice(const CNick& OpNick, const CNick& Nick, CChan& Channel, bool bNoChange);
+	virtual void OnDevoice(const CNick& OpNick, const CNick& Nick, CChan& Channel, bool bNoChange);
+	virtual void OnMode(const CNick& OpNick, CChan& Channel, char uMode, const CString& sArg, bool bAdded, bool bNoChange);
+	virtual void OnRawMode(const CNick& OpNick, CChan& Channel, const CString& sModes, const CString& sArgs);
+	virtual EModRet OnRaw(CString& sLine);
+	virtual EModRet OnStatusCommand(CString& sCommand);
+	virtual void OnModCommand(const CString& sCommand);
+	virtual void OnModNotice(const CString& sMessage);
+	virtual void OnModCTCP(const CString& sMessage);
+	virtual void OnQuit(const CNick& Nick, const CString& sMessage, const vector<CChan*>& vChans);
+	virtual void OnNick(const CNick& Nick, const CString& sNewNick, const vector<CChan*>& vChans);
+	virtual void OnKick(const CNick& OpNick, const CString& sKickedNick, CChan& Channel, const CString& sMessage);
+	virtual void OnJoin(const CNick& Nick, CChan& Channel);
+	virtual void OnPart(const CNick& Nick, CChan& Channel);
+	virtual EModRet OnChanBufferStarting(CChan& Chan, CClient& Client);
+	virtual EModRet OnChanBufferEnding(CChan& Chan, CClient& Client);
+	virtual EModRet OnChanBufferPlayLine(CChan& Chan, CClient& Client, CString& sLine);
+	virtual EModRet OnPrivBufferPlayLine(CClient& Client, CString& sLine);
+	virtual void OnClientLogin();
+	virtual void OnClientDisconnect();
+	virtual EModRet OnUserRaw(CString& sLine);
+	virtual EModRet OnUserCTCPReply(CString& sTarget, CString& sMessage);
+	virtual EModRet OnUserCTCP(CString& sTarget, CString& sMessage);
+	virtual EModRet OnUserAction(CString& sTarget, CString& sMessage);
+	virtual EModRet OnUserMsg(CString& sTarget, CString& sMessage);
+	virtual EModRet OnUserNotice(CString& sTarget, CString& sMessage);
+	virtual EModRet OnUserJoin(CString& sChannel, CString& sKey);
+	virtual EModRet OnUserPart(CString& sChannel, CString& sMessage);
+	virtual EModRet OnUserTopic(CString& sChannel, CString& sTopic);
+	virtual EModRet OnUserTopicRequest(CString& sChannel);
+	virtual EModRet OnCTCPReply(CNick& Nick, CString& sMessage);
+	virtual EModRet OnPrivCTCP(CNick& Nick, CString& sMessage);
+	virtual EModRet OnChanCTCP(CNick& Nick, CChan& Channel, CString& sMessage);
+	virtual EModRet OnPrivAction(CNick& Nick, CString& sMessage);
+	virtual EModRet OnChanAction(CNick& Nick, CChan& Channel, CString& sMessage);
+	virtual EModRet OnPrivMsg(CNick& Nick, CString& sMessage);
+	virtual EModRet OnChanMsg(CNick& Nick, CChan& Channel, CString& sMessage);
+	virtual EModRet OnPrivNotice(CNick& Nick, CString& sMessage);
+	virtual EModRet OnChanNotice(CNick& Nick, CChan& Channel, CString& sMessage);
+	virtual EModRet OnTopic(CNick& Nick, CChan& Channel, CString& sTopic);
+	virtual bool OnServerCapAvailable(const CString& sCap);
+	virtual void OnServerCapResult(const CString& sCap, bool bSuccess);
+	virtual EModRet OnTimerAutoJoin(CChan& Channel);	
+};
+
+static inline CPerlModule* AsPerlModule(CModule* p) {
+    return dynamic_cast<CPerlModule*>(p);
+}
+
+enum ELoadPerlMod {
+    Perl_NotFound,
+    Perl_Loaded,
+    Perl_LoadError,
+};
+
+class CPerlTimer : public CTimer {
+    CString m_sPerlID;
+public:
+	CPerlTimer(CPerlModule* pModule, unsigned int uInterval, unsigned int uCycles, const CString& sLabel, const CString& sDescription, const CString& sPerlID)
+					: CTimer (pModule, uInterval, uCycles, sLabel, sDescription), m_sPerlID(sPerlID) {
+		pModule->AddTimer(this);
+	}
+	virtual void RunJob();
+    CString GetPerlID() { return m_sPerlID; }
+};
+
+inline CPerlTimer* CreatePerlTimer(CPerlModule* pModule, unsigned int uInterval, unsigned int uCycles,
+		const CString& sLabel, const CString& sDescription, const CString& sPerlID) {
+	return new CPerlTimer(pModule, uInterval, uCycles, sLabel, sDescription, sPerlID);
+}
+
+class CPerlSocket : public CSocket {
+	CString m_sPerlID;
+public:
+	CPerlSocket(CPerlModule* pModule, const CString& sPerlID) : CSocket(pModule), m_sPerlID(sPerlID) {}
+    CString GetPerlID() { return m_sPerlID; }
+	virtual void Connected();
+	virtual void Disconnected();
+	virtual void Timeout();
+	virtual void ConnectionRefused();
+	virtual void ReadData(const char *data, size_t len);
+	virtual void ReadLine(const CString& sLine);
+	virtual Csock* GetSockObj(const CString& sHost, unsigned short uPort);
+};
+
+inline CPerlSocket* CreatePerlSocket(CPerlModule* pModule, const CString& sPerlID) {
+	return new CPerlSocket(pModule, sPerlID);
+}
+
+inline bool HaveIPv6() {
+#ifdef HAVE_IPV6
+	return true;
+#endif
+	return false;
+}
+
+inline bool HaveSSL() {
+#ifdef HAVE_LIBSSL
+	return true;
+#endif
+	return false;
+}
+
+inline bool HaveCAres() {
+#ifdef HAVE_C_ARES
+	return true;
+#endif
+	return false;
+}
+
+inline int _GetSOMAXCONN() {
+	return SOMAXCONN;
+}
