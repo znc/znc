@@ -1576,6 +1576,43 @@ bool CZNC::DoRehash(CString& sError)
 						CUtils::PrintError(sError);
 						return false;
 					}
+					CString sModRet;
+					CModule *pOldMod;
+
+					pOldMod = GetModules().FindModule(sModName);
+					if (!pOldMod) {
+						CUtils::PrintAction("Loading Global Module [" + sModName + "]");
+
+						bool bModRet = GetModules().LoadModule(sModName, sArgs, NULL, sModRet);
+
+						// If the module was loaded, sModRet contains
+						// "Loaded Module [name] ..." and we strip away this beginning.
+						if (bModRet)
+							sModRet = sModRet.Token(1, true, sModName + "] ");
+
+						CUtils::PrintStatus(bModRet, sModRet);
+						if (!bModRet) {
+							sError = sModRet;
+							return false;
+						}
+					} else if (pOldMod->GetArgs() != sArgs) {
+						CUtils::PrintAction("Reloading Global Module [" + sModName + "]");
+
+						bool bModRet = GetModules().ReloadModule(sModName, sArgs, NULL, sModRet);
+
+						// If the module was loaded, sModRet contains
+						// "Loaded Module [name] ..." and we strip away this beginning.
+						if (bModRet)
+							sModRet = sModRet.Token(1, true, sModName + "] ");
+
+						CUtils::PrintStatus(bModRet, sModRet);
+						if (!bModRet) {
+							sError = sModRet;
+							return false;
+						}
+					} else
+						CUtils::PrintMessage("Module [" + sModName + "] already loaded.");
+
 					msModules[sModName] = sArgs;
 					continue;
 				} else if (sName.Equals("ISpoofFormat")) {
@@ -1640,49 +1677,7 @@ bool CZNC::DoRehash(CString& sError)
 		}
 	}
 
-	// First step: Load and reload new modules or modules with new arguments
-	for (MCString::iterator it = msModules.begin(); it != msModules.end(); ++it) {
-		CString sModName = it->first;
-		CString sArgs = it->second;
-		CString sModRet;
-		CModule *pOldMod;
-
-		pOldMod = GetModules().FindModule(sModName);
-		if (!pOldMod) {
-			CUtils::PrintAction("Loading Global Module [" + sModName + "]");
-
-			bool bModRet = GetModules().LoadModule(sModName, sArgs, NULL, sModRet);
-
-			// If the module was loaded, sModRet contains
-			// "Loaded Module [name] ..." and we strip away this beginning.
-			if (bModRet)
-				sModRet = sModRet.Token(1, true, sModName + "] ");
-
-			CUtils::PrintStatus(bModRet, sModRet);
-			if (!bModRet) {
-				sError = sModRet;
-				return false;
-			}
-		} else if (pOldMod->GetArgs() != sArgs) {
-			CUtils::PrintAction("Reloading Global Module [" + sModName + "]");
-
-			bool bModRet = GetModules().ReloadModule(sModName, sArgs, NULL, sModRet);
-
-			// If the module was loaded, sModRet contains
-			// "Loaded Module [name] ..." and we strip away this beginning.
-			if (bModRet)
-				sModRet = sModRet.Token(1, true, sModName + "] ");
-
-			CUtils::PrintStatus(bModRet, sModRet);
-			if (!bModRet) {
-				sError = sModRet;
-				return false;
-			}
-		} else
-			CUtils::PrintMessage("Module [" + sModName + "] already loaded.");
-	}
-
-	// Second step: Unload modules which are no longer in the config
+	// Unload modules which are no longer in the config
 	set<CString> ssUnload;
 	for (size_t i = 0; i < GetModules().size(); i++) {
 		CModule *pCurMod = GetModules()[i];
