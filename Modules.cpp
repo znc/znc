@@ -507,6 +507,14 @@ CModule::EModRet CGlobalModule::OnUnknownUserRaw(CString& sLine) { return CONTIN
 void CGlobalModule::OnClientCapLs(SCString& ssCaps) {}
 bool CGlobalModule::IsClientCapSupported(const CString& sCap, bool bState) { return false; }
 void CGlobalModule::OnClientCapRequest(const CString& sCap, bool bState) {}
+CModule::EModRet CGlobalModule::OnModuleLoading(const CString& sModName, const CString& sArgs,
+		bool& bSuccess, CString& sRetMsg) { return CONTINUE; }
+CModule::EModRet CGlobalModule::OnModuleUnloading(CModule* pModule, bool& bSuccess, CString& sRetMsg) {
+	return CONTINUE;
+}
+CModule::EModRet CGlobalModule::OnGetModInfo(CModInfo& ModInfo, const CString& sModule,
+		bool& bSuccess, CString& sRetMsg) { return CONTINUE; }
+void CGlobalModule::OnGetAvailableMods(set<CModInfo>& ssMods, bool bGlobal) {}
 
 
 CModules::CModules() {
@@ -699,6 +707,25 @@ bool CGlobalModules::OnClientCapRequest(const CString& sCap, bool bState) {
 	return false;
 }
 
+bool CGlobalModules::OnModuleLoading(const CString& sModName, const CString& sArgs,
+		bool& bSuccess, CString& sRetMsg) {
+	GLOBALMODHALTCHK(OnModuleLoading(sModName, sArgs, bSuccess, sRetMsg));
+}
+
+bool CGlobalModules::OnModuleUnloading(CModule* pModule, bool& bSuccess, CString& sRetMsg) {
+	GLOBALMODHALTCHK(OnModuleUnloading(pModule, bSuccess, sRetMsg));
+}
+
+bool CGlobalModules::OnGetModInfo(CModInfo& ModInfo, const CString& sModule,
+		bool& bSuccess, CString& sRetMsg) {
+	GLOBALMODHALTCHK(OnGetModInfo(ModInfo, sModule, bSuccess, sRetMsg));
+}
+
+bool CGlobalModules::OnGetAvailableMods(set<CModInfo>& ssMods, bool bGlobal) {
+	GLOBALMODCALL(OnGetAvailableMods(ssMods, bGlobal));
+	return false;
+}
+
 
 CModule* CModules::FindModule(const CString& sModule) const {
 	for (unsigned int a = 0; a < size(); a++) {
@@ -717,6 +744,9 @@ bool CModules::LoadModule(const CString& sModule, const CString& sArgs, CUser* p
 		sRetMsg = "Module [" + sModule + "] already loaded.";
 		return false;
 	}
+
+	bool bSuccess;
+	GLOBALMODULECALL(OnModuleLoading(sModule, sArgs, bSuccess, sRetMsg), pUser, NULL, return bSuccess);
 
 	CString sModPath, sDataPath;
 	CString sDesc;
@@ -821,6 +851,9 @@ bool CModules::UnloadModule(const CString& sModule, CString& sRetMsg) {
 		return false;
 	}
 
+	bool bSuccess;
+	GLOBALMODULECALL(OnModuleUnloading(pModule, bSuccess, sRetMsg), pModule->GetUser(), NULL, return bSuccess);
+
 	ModHandle p = pModule->GetDLL();
 
 	if (p) {
@@ -868,6 +901,9 @@ bool CModules::ReloadModule(const CString& sModule, const CString& sArgs, CUser*
 
 bool CModules::GetModInfo(CModInfo& ModInfo, const CString& sModule, CString& sRetMsg) {
 	CString sModPath, sTmp;
+
+	bool bSuccess;
+	GLOBALMODULECALL(OnGetModInfo(ModInfo, sModule, bSuccess, sRetMsg), NULL, NULL, return bSuccess);
 
 	if (!FindModPath(sModule, sModPath, sTmp)) {
 		sRetMsg = "Unable to find module [" + sModule + "]";
@@ -928,6 +964,8 @@ void CModules::GetAvailableMods(set<CModInfo>& ssMods, bool bGlobal) {
 			}
 		}
 	}
+
+	GLOBALMODULECALL(OnGetAvailableMods(ssMods, bGlobal), NULL, NULL, );
 }
 
 bool CModules::FindModPath(const CString& sModule, CString& sModPath,
