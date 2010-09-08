@@ -76,6 +76,19 @@ CIncomingConnection::CIncomingConnection(const CString& sHostname, unsigned shor
 	EnableReadLine();
 }
 
+void CIncomingConnection::ReachedMaxBuffer() {
+	if (GetCloseType() != CLT_DONT)
+		return; // Already closing
+
+	// We don't actually SetMaxBufferThreshold() because that would be
+	// inherited by sockets after SwapSockByAddr().
+	if (GetInternalReadBuffer().length() <= 4096)
+		return;
+
+	// We should never get here with legitimate requests :/
+	Close();
+}
+
 void CIncomingConnection::ReadLine(const CString& sLine) {
 	bool bIsHTTP = (sLine.WildCmp("GET * HTTP/1.?\r\n") || sLine.WildCmp("POST * HTTP/1.?\r\n"));
 	bool bAcceptHTTP = (m_eAcceptType == CListener::ACCEPT_ALL)

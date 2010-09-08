@@ -78,6 +78,7 @@ public:
 	CIncomingConnection(const CString& sHostname, unsigned short uPort, CListener::EAcceptType eAcceptType);
 	virtual ~CIncomingConnection() {}
 	virtual void ReadLine(const CString& sData);
+	virtual void ReachedMaxBuffer();
 
 private:
 	CListener::EAcceptType m_eAcceptType;
