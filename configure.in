@@ -295,10 +295,10 @@ if test "x$PERL" != "xno"; then
 			if test "x$old_SWIG" = "xno"; then
 				PERL="yes, but with manual download"
 				AC_MSG_WARN([swig was disabled, so you should put needed sources for modperl to modules/modperl.
-						Please check http://en.znc.in/wiki/Modperl for details.])
+Please check http://en.znc.in/wiki/Modperl for details.])
 			else
 				AC_MSG_ERROR([swig was not found. Try --disable-perl, or download the necessary sources and use --disable-swig.
-						Please check http://en.znc.in/wiki/Modperl for details.])
+Please check http://en.znc.in/wiki/Modperl for details.])
 			fi
 		else
 			PERL="yes"

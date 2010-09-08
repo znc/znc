@@ -3819,12 +3819,12 @@ $as_echo "$as_me: WARNING: perl was not found and thus disabled" >&2;}
 			if test "x$old_SWIG" = "xno"; then
 				PERL="yes, but with manual download"
 				{ $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: swig was disabled, so you should put needed sources for modperl to modules/modperl.
-						Please check http://en.znc.in/wiki/Modperl for details." >&5
+Please check http://en.znc.in/wiki/Modperl for details." >&5
 $as_echo "$as_me: WARNING: swig was disabled, so you should put needed sources for modperl to modules/modperl.
-						Please check http://en.znc.in/wiki/Modperl for details." >&2;}
+Please check http://en.znc.in/wiki/Modperl for details." >&2;}
 			else
 				as_fn_error $? "swig was not found. Try --disable-perl, or download the necessary sources and use --disable-swig.
-						Please check http://en.znc.in/wiki/Modperl for details." "$LINENO" 5
+Please check http://en.znc.in/wiki/Modperl for details." "$LINENO" 5
 			fi
 		else
 			PERL="yes"
