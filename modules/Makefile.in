@@ -131,18 +131,20 @@ clean:
 	$(E) Building $(if $(filter %extra/,$(dir $<)),extra )module $(notdir $(basename $@))...
 	$(Q)$(CXX) $(MODFLAGS) $(LDFLAGS) $(MODLINK) -o $@ $< $($(notdir $(basename $@))FLAGS) -MMD -MF .depend/$(notdir $@).dep
 
-modperl.so: modperl/ZNC.so
-modperl/ZNC.so: modperl/modperl_wrap.cxx Makefile
+modperl.so: modperl/ZNC.so modperl/swigperlrun.h
+modperl/ZNC.so: modperl/ZNC.cpp Makefile
 	$(E) Building ZNC perl bindings library...
 	$(Q)$(CXX) $(MODFLAGS) $(LDFLAGS) $(MODLINK) -I$(srcdir) $(PERLCOMMON) -o $@ $<
 ifneq "$(SWIG)" ""
-modperl/modperl_wrap.cxx: modperl/modperl.i Makefile modperl/module.h modperl/CString.i
+modperl/swigperlrun.h:
+	@mkdir -p modperl
+	$(Q)$(SWIG) -perl5 -c++ -shadow -external-runtime $@
+modperl/ZNC.cpp: modperl/modperl.i Makefile modperl/module.h modperl/CString.i
 	$(E) Generating ZNC API for perl...
 	@mkdir -p modperl
 	$(Q)$(SWIG) -perl5 -c++ -shadow -outdir modperl -I$(srcdir) -w362,315,401,402 -o $@.warn $<
 	$(Q)$(PERL) -pe '$$x==2 and print "items+=0;" and $$x=3;/^XS\(SWIG_init\)/ and $$x=1;$$x==1 and /dXSARGS/ and $$x=2' $@.warn > $@
 	$(Q)rm -rf $@.warn
-	$(Q)$(SWIG) -perl5 -c++ -shadow -external-runtime modperl/swigperlrun.h
 endif
 
 modperl_install: create_install_dir install_metadirs
