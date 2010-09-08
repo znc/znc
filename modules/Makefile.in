@@ -67,11 +67,12 @@ endif
 
 ifneq "$(PERL)" ""
 # We execute this now so that we see the 'beauty' of these flags in make's output
-modperlFLAGS := $(shell $(PERL) -MExtUtils::Embed -e perl_inc -e ldopts)
+PERLCOMMON   := $(shell $(PERL) -MExtUtils::Embed -e perl_inc -e ldopts)
 # Perl API is ugly, casting string literals to char* and redeclaring functions :(
-modperlFLAGS += -Wno-write-strings -Wno-redundant-decls -Wno-missing-declarations
+PERLCOMMON   += -Wno-write-strings -Wno-redundant-decls -Wno-missing-declarations
 # This is for SWIG
-modperlFLAGS += -DSWIG_TYPE_TABLE=znc
+PERLCOMMON   += -DSWIG_TYPE_TABLE=znc
+modperlFLAGS := $(PERLCOMMON)
 # Find additional headers for out-of-tree build
 modperlFLAGS += -I.
 PERLHOOK     := modperl_install
@@ -133,7 +134,7 @@ clean:
 modperl.so: modperl/ZNC.so
 modperl/ZNC.so: modperl/modperl_wrap.cxx Makefile
 	$(E) Building ZNC perl bindings library...
-	$(Q)$(CXX) $(MODFLAGS) $(LDFLAGS) $(MODLINK) -I$(srcdir) -DSWIG_TYPE_TABLE=znc $(shell $(PERL) -MExtUtils::Embed -e perl_inc -e ldopts) -o $@ $<
+	$(Q)$(CXX) $(MODFLAGS) $(LDFLAGS) $(MODLINK) -I$(srcdir) $(PERLCOMMON) -o $@ $<
 ifneq "$(SWIG)" ""
 modperl/modperl_wrap.cxx: modperl/modperl.i Makefile modperl/module.h modperl/CString.i
 	$(E) Generating ZNC API for perl...
