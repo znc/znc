@@ -93,6 +93,9 @@ public:
 
 	virtual EModRet OnModuleLoading(const CString& sModName, const CString& sArgs,
 			bool& bSuccess, CString& sRetMsg) {
+		if (!GetUser()) {
+			return CONTINUE;
+		}
 		switch (LoadPerlModule(sModName, sArgs, GetUser(), sRetMsg)) {
 			case Perl_NotFound:
 				return CONTINUE;
