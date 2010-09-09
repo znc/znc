@@ -7,7 +7,7 @@
 				<td>User</td>
 				<td>Last Seen</td>
 				<td>Info</td>
-				<td>Action</td>
+				<? IF WebAdminLoaded ?><td>Action</td><? ENDIF ?>
 			</tr>
 		</thead>
 		<tbody>
@@ -16,10 +16,10 @@
 				<td><? VAR Username ?></td>
 				<td><? VAR LastSeen DEFAULT="- unknown -" ?></td>
 				<td><? VAR Info ?></td>
-				<td><span class="nowrap">
+				<? IF WebAdminLoaded TOP ?><td><span class="nowrap">
 					[<a href="/mods/webadmin/edituser?user=<?VAR Username ESC=URL?>">Edit</a>]
 					<? IF !IsSelf ?>[<a href="/mods/webadmin/deluser?user=<?VAR Username ESC=URL?>">Delete</a>]<? ENDIF ?>
-					</span></td>
+					</span></td><? ENDIF ?>
 			</tr>
 			<? ENDLOOP ?>
 		</tbody>

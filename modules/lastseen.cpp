@@ -94,6 +94,16 @@ public:
 
 	virtual bool OnWebRequest(CWebSock& WebSock, const CString& sPageName, CTemplate& Tmpl) {
 		if (sPageName.empty() || sPageName == "index") {
+			CModules& GModules = CZNC::Get().GetModules();
+			if (GModules.size()) {
+				for (unsigned int b = 0; b < GModules.size(); b++) {
+					if(GModules[b]->GetModName().Equals("WEBADMIN")) {
+						Tmpl["WebAdminLoaded"] = "true";
+						break;
+					}
+				}
+			}
+			
 			MTimeMulti mmSorted;
 			const MUsers& mUsers = CZNC::Get().GetUserMap();
 
@@ -134,7 +144,7 @@ public:
 					Row["Info"] += " channel" + CString(n == 1 ? "" : "s");
 				}
 			}
-
+			
 			return true;
 		}
 
