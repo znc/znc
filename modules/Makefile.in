@@ -149,7 +149,7 @@ endif
 
 modperl_install: create_install_dir install_metadirs
 	for i in $(srcdir)/*.pm; do \
-		$(INSTALL_DATA) $$i $(DESTDIR)$(MODDIR); \
+		test -r $$i && $(INSTALL_DATA) $$i $(DESTDIR)$(MODDIR); true; \
 	done
 	for a in $(srcdir)/*; do \
 		if [ -d $$a ] && [ -f $${a}.pm ]; then \
