@@ -96,6 +96,39 @@ public:
 		}
 	}
 
+	bool OnEmbeddedWebRequest(CWebSock& WebSock, const CString& sPageName, CTemplate& Tmpl) {
+		if (sPageName == "webadmin/user" && WebSock.GetSession()->IsAdmin()) {
+			CString sAction = Tmpl["WebadminAction"];
+			if (sAction == "display") {
+				Tmpl["Blocked"] = CString(IsBlocked(Tmpl["Username"]));
+				Tmpl["Self"] = CString(Tmpl["Username"].Equals(WebSock.GetSession()->GetUser()->GetUserName()));
+				return true;
+			}
+			if (sAction == "change" && WebSock.GetParam("embed_blockuser_presented").ToBool()) {
+				if (Tmpl["Username"].Equals(WebSock.GetSession()->GetUser()->GetUserName()) &&
+						WebSock.GetParam("embed_blockuser_block").ToBool()) {
+					WebSock.GetSession()->AddError("You can't block yourself");
+				} else if (WebSock.GetParam("embed_blockuser_block").ToBool()) {
+					if (!WebSock.GetParam("embed_blockuser_old").ToBool()) {
+						if (Block(Tmpl["Username"])) {
+							WebSock.GetSession()->AddSuccess("Blocked [" + Tmpl["Username"] + "]");
+						} else {
+							WebSock.GetSession()->AddError("Couldn't block [" + Tmpl["Username"] + "]");
+						}
+					}
+				} else  if (WebSock.GetParam("embed_blockuser_old").ToBool()){
+					if (DelNV(Tmpl["Username"])) {
+						WebSock.GetSession()->AddSuccess("Unblocked [" + Tmpl["Username"] + "]");
+					} else {
+						WebSock.GetSession()->AddError("User [" + Tmpl["Username"] + "is not blocked");
+					}
+				}
+				return true;
+			}
+		}
+		return false;
+	}
+
 private:
 	bool IsBlocked(const CString& sUser) {
 		MCString::iterator it;
