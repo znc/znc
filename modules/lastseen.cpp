@@ -150,6 +150,24 @@ public:
 
 		return false;
 	}
+
+	virtual bool OnEmbeddedWebRequest(CWebSock& WebSock, const CString& sPageName, CTemplate& Tmpl) {
+		if (sPageName == "webadmin/user" && WebSock.GetSession()->IsAdmin()) {
+			CUser* pUser = CZNC::Get().FindUser(Tmpl["Username"]);
+			if (pUser) {
+				time_t last = GetTime(pUser);
+				if (last) {
+					char buf[1024] = {0};
+					strftime(buf, sizeof(buf), "%c", localtime(&last));
+					Tmpl["LastSeen"] = buf;
+				}
+			}
+			return true;
+		}
+
+		return false;
+	}
+
 };
 
 GLOBALMODULEDEFS(CLastSeenMod, "Collects data about when a user last logged in")
