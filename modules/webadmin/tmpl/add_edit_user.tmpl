@@ -267,6 +267,15 @@
 		</div>
 	</div>
 
+	<? LOOP EmbeddedModuleLoop ?>
+		<? IF Embed ?>
+		<div class="section">
+			<h3>Module <? VAR ModName ?></h3>
+			<? INC *Embed ?>
+		</div>
+		<? ENDIF ?>
+	<? ENDLOOP ?>
+
 	<div class="submitline">
 		<input type="submit" value="<? IF Edit ?>Save<? ELSE ?>Create<? ENDIF ?>" />
 	</div>

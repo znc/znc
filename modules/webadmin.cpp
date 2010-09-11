@@ -21,6 +21,38 @@
 using std::stringstream;
 using std::make_pair;
 
+/* Stuff to be able to write this:
+   // i will be name of local variable, see below
+   // pUser can be NULL if only global modules are needed
+   FOR_EACH_MODULE(i, pUser) {
+       // i is local variable of type CModules::iterator,
+	   // so *i has type CModule*
+   }
+*/
+struct FOR_EACH_MODULE_Type {
+	bool bOnCMuser;
+	CModules CMtemp;
+	CModules& CMuser;
+	FOR_EACH_MODULE_Type(CUser* pUser) : CMuser(pUser ? pUser->GetModules() : CMtemp) {
+		bOnCMuser = false;
+	}
+	operator bool() { return false; }
+};
+
+inline bool FOR_EACH_MODULE_CanContinue(FOR_EACH_MODULE_Type& state, CModules::iterator& i) {
+	if (!state.bOnCMuser && i == CZNC::Get().GetModules().end()) {
+		i = state.CMuser.begin();
+		state.bOnCMuser = true;
+	}
+	if (state.bOnCMuser && i == state.CMuser.end()) {
+		return false;
+	}
+	return true;
+}
+
+#define FOR_EACH_MODULE(I, pUser)\
+	if (FOR_EACH_MODULE_Type FOR_EACH_MODULE_Var = pUser) {} else\
+	for (CModules::iterator I = CZNC::Get().GetModules().begin(); FOR_EACH_MODULE_CanContinue(FOR_EACH_MODULE_Var, I); ++I)
 
 class CWebAdminMod : public CGlobalModule {
 public:
@@ -493,6 +525,16 @@ public:
 			o3["DisplayName"] = "Detached";
 			if (pChan && pChan->IsDetached()) { o3["Checked"] = "true"; }
 
+			FOR_EACH_MODULE(i, pUser) {
+				CTemplate& mod = Tmpl.AddRow("EmbeddedModuleLoop");
+				mod.insert(Tmpl.begin(), Tmpl.end());
+				mod["WebadminAction"] = "display";
+				if ((*i)->OnEmbeddedWebRequest(WebSock, "webadmin/channel", mod)) {
+					mod["Embed"] = WebSock.FindTmpl(*i, "WebadminChan.tmpl");
+					mod["ModName"] = (*i)->GetModName();
+				}
+			}
+
 			return true;
 		}
 
@@ -528,6 +570,14 @@ public:
 			}
 		}
 
+		CTemplate TmplMod;
+		TmplMod["User"] = pUser->GetUserName();
+		TmplMod["ChanName"] = sChanName;
+		TmplMod["WebadminAction"] = "change";
+		FOR_EACH_MODULE(it, pUser) {
+			(*it)->OnEmbeddedWebRequest(WebSock, "webadmin/channel", TmplMod);
+		}
+	
 		if (!CZNC::Get().WriteConfig()) {
 			WebSock.PrintErrorPage("Channel added/modified, but config was not written");
 			return true;
@@ -738,6 +788,16 @@ public:
 				if (pUser && pUser->DenySetBindHost()) { o11["Checked"] = "true"; }
 			}
 
+			FOR_EACH_MODULE(i, pUser) {
+				CTemplate& mod = Tmpl.AddRow("EmbeddedModuleLoop");
+				mod.insert(Tmpl.begin(), Tmpl.end());
+				mod["WebadminAction"] = "display";
+				if ((*i)->OnEmbeddedWebRequest(WebSock, "webadmin/user", mod)) {
+					mod["Embed"] = WebSock.FindTmpl(*i, "WebadminUser.tmpl");
+					mod["ModName"] = (*i)->GetModName();
+				}
+			}
+
 			return true;
 		}
 
@@ -755,6 +815,7 @@ public:
 		}
 
 		CString sErr;
+		CString sAction;
 
 		if (!pUser) {
 			// Add User Submission
@@ -764,10 +825,8 @@ public:
 				return true;
 			}
 
-			if (!CZNC::Get().WriteConfig()) {
-				WebSock.PrintErrorPage("User added, but config was not written");
-				return true;
-			}
+			pUser = pNewUser;
+			sAction = "added";
 		} else {
 			// Edit User Submission
 			if (!pUser->Clone(*pNewUser, sErr, false)) {
@@ -777,10 +836,19 @@ public:
 			}
 
 			delete pNewUser;
-			if (!CZNC::Get().WriteConfig()) {
-				WebSock.PrintErrorPage("User edited, but config was not written");
-				return true;
-			}
+			sAction = "edited";
+		}
+
+		CTemplate TmplMod;
+		TmplMod["Username"] = sUsername;
+		TmplMod["WebadminAction"] = "change";
+		FOR_EACH_MODULE(it, pUser) {
+			(*it)->OnEmbeddedWebRequest(WebSock, "webadmin/user", TmplMod);
+		}
+	
+		if (!CZNC::Get().WriteConfig()) {
+			WebSock.PrintErrorPage("User " + sAction + ", but config was not written");
+			return true;
 		}
 
 		if (!spSession->IsAdmin()) {
