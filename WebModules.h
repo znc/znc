@@ -132,6 +132,8 @@ public:
 	EPageReqResult PrintStaticFile(const CString& sPath, CString& sPageRet, CModule* pModule = NULL);
 
 	bool AddModLoop(const CString& sLoopName, CModule& Module);
+	VCString GetDirs(CModule* pModule, bool bIsTemplate);
+	CString FindTmpl(CModule* pModule, const CString& sName);
 	void SetPaths(CModule* pModule, bool bIsTemplate = false);
 	void SetVars();
 

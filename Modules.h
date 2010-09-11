@@ -313,6 +313,16 @@ public:
 	 *  @return The List.
 	 */
 	virtual VWebSubPages& GetSubPages() { return m_vSubPages; }
+	/** Using this hook, module can embed web stuff directly to different places.
+	 *  This method is called whenever embededded modules I/O happens.
+	 *  Name of used .tmpl file (if any) is up to caller.
+	 *  @param WebSock Socket for web connection, don't do bad things with it.
+	 *  @param sPageName Describes the place where web stuff is embedded to.
+	 *  @param Tmpl Template. Depending on context, you can do various stuff with it.
+	 *  @return If you don't need to embed web stuff to the specified place, just return false.
+	 *          Exact meaning of return value is up to caller, and depends on context.
+	 */
+	virtual bool OnEmbeddedWebRequest(CWebSock& WebSock, const CString& sPageName, CTemplate& Tmpl);
 
 
 	/** Called just before znc.conf is rehashed */

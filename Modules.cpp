@@ -387,6 +387,7 @@ CString CModule::GetModNick() const { return ((m_pUser) ? m_pUser->GetStatusPref
 // Webmods
 bool CModule::OnWebPreRequest(CWebSock& WebSock, const CString& sPageName) { return false; }
 bool CModule::OnWebRequest(CWebSock& WebSock, const CString& sPageName, CTemplate& Tmpl) { return false; }
+bool CModule::OnEmbeddedWebRequest(CWebSock& WebSock, const CString& sPageName, CTemplate& Tmpl) { return false; }
 // !Webmods
 
 bool CModule::OnLoad(const CString& sArgs, CString& sMessage) { sMessage = ""; return true; }
