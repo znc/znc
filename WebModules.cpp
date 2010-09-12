@@ -293,10 +293,11 @@ VCString CWebSock::GetDirs(CModule* pModule, bool bIsTemplate) {
 
 CString CWebSock::FindTmpl(CModule* pModule, const CString& sName) {
 	VCString vsDirs = GetDirs(pModule, true);
+	CString sFile = pModule->GetModName() + "_" + sName;
 	for (size_t i = 0; i < vsDirs.size(); ++i) {
-		CString sFilePath(CDir::ChangeDir(vsDirs[i], sName));
-		if (CFile::Exists(sFilePath)) {
-			return sFilePath;
+		if (CFile::Exists(CDir::ChangeDir(vsDirs[i], sFile))) {
+			m_Template.AppendPath(vsDirs[i]);
+			return sFile;
 		}
 	}
 	return sName;
