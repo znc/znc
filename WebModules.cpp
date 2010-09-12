@@ -294,8 +294,9 @@ VCString CWebSock::GetDirs(CModule* pModule, bool bIsTemplate) {
 CString CWebSock::FindTmpl(CModule* pModule, const CString& sName) {
 	VCString vsDirs = GetDirs(pModule, true);
 	for (size_t i = 0; i < vsDirs.size(); ++i) {
-		if (CFile::Exists(vsDirs[i] + sName)) {
-			return vsDirs[i] + sName;
+		CString sFilePath(CDir::ChangeDir(vsDirs[i], sName));
+		if (CFile::Exists(sFilePath)) {
+			return sFilePath;
 		}
 	}
 	return sName;
