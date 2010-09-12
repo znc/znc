@@ -774,3 +774,16 @@ CModule::EModRet CPerlModule::OnTimerAutoJoin(CChan& Channel) {
 	return result;
 }
 
+bool CPerlModule::OnEmbeddedWebRequest(CWebSock& WebSock, const CString& sPageName, CTemplate& Tmpl) {
+	bool result = false;
+	PSTART_IDF(OnEmbeddedWebRequest);
+	mXPUSHi(static_cast<int>(false)); // Default value
+	PUSH_PTR(CWebSock*, &WebSock);
+	PUSH_STR(sPageName);
+	PUSH_PTR(CTemplate*, &Tmpl);
+	PCALLMOD(,
+		result = SvUV(ST(0));
+	);
+	return result;
+}
+

@@ -84,7 +84,8 @@ public:
 	virtual EModRet OnTopic(CNick& Nick, CChan& Channel, CString& sTopic);
 	virtual bool OnServerCapAvailable(const CString& sCap);
 	virtual void OnServerCapResult(const CString& sCap, bool bSuccess);
-	virtual EModRet OnTimerAutoJoin(CChan& Channel);	
+	virtual EModRet OnTimerAutoJoin(CChan& Channel);
+	bool OnEmbeddedWebRequest(CWebSock&, const CString&, CTemplate&);
 };
 
 static inline CPerlModule* AsPerlModule(CModule* p) {
