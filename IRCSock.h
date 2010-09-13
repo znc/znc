@@ -55,6 +55,16 @@ public:
 	void ResetChans();
 	void Quit(const CString& sQuitMsg = "");
 
+	/** You can call this from CModule::OnServerCapResult to suspend
+	 *  sending other CAP requests and CAP END for a while. Each
+	 *  call to PauseCap should be balanced with a call to ResumeCap.
+	 */
+	void PauseCap();
+	/** If you used PauseCap, call this when CAP negotiation and logging in
+	 *  should be resumed again.
+	 */
+	void ResumeCap();
+
 	// Setters
 	void SetPass(const CString& s) { m_sPass = s; }
 	// !Setters
@@ -88,6 +98,7 @@ private:
 	void ParseISupport(const CString& sLine);
 	// This is called when we connect and the nick we want is already taken
 	void SendAltNick(const CString& sBadNick);
+	void SendNextCap();
 protected:
 	bool                                m_bISpoofReleased;
 	bool                                m_bAuthed;
@@ -102,6 +113,7 @@ protected:
 	CString                             m_sPass;
 	map<CString, CChan*>                m_msChans;
 	unsigned int                        m_uMaxNickLen;
+	unsigned int                        m_uCapPaused;
 	SCString                            m_ssAcceptedCaps;
 	SCString                            m_ssPendingCaps;
 };

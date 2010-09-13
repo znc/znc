@@ -24,6 +24,7 @@ CIRCSock::CIRCSock(CUser* pUser) : CZNCSock() {
 	m_Nick.SetHost(pUser->GetBindHost());
 
 	m_uMaxNickLen = 9;
+	m_uCapPaused = 0;
 	m_sPerms = "*!@%+";
 	m_sPermModes = "qaohv";
 	m_mueChanModes['b'] = ListArg;
@@ -679,15 +680,11 @@ void CIRCSock::ReadLine(const CString& sData) {
 
 					for (it = vsTokens.begin(); it != vsTokens.end(); ++it) {
 						if (OnServerCapAvailable(*it) || *it == "multi-prefix" || *it == "userhost-in-names") {
-							// For real support of ack (~) modifier need also
-							// to queue these cap requests.
-							PutIRC("CAP REQ :" + *it);
 							m_ssPendingCaps.insert(*it);
 						}
 					}
 				} else if (sSubCmd == "ACK") {
 					sArgs.Trim();
-					m_ssPendingCaps.erase(sArgs);
 					MODULECALL(OnServerCapResult(sArgs, true), m_pUser, NULL, );
 					if ("multi-prefix" == sArgs) {
 						m_bNamesx = true;
@@ -699,14 +696,10 @@ void CIRCSock::ReadLine(const CString& sData) {
 					// This should work because there's no [known]
 					// capability with length of name more than 100 characters.
 					sArgs.Trim();
-					m_ssPendingCaps.erase(sArgs);
 					MODULECALL(OnServerCapResult(sArgs, false), m_pUser, NULL, );
 				}
-
-				if (m_ssPendingCaps.empty()) {
-					// We already got all needed ACK/NAK replies.
-					PutIRC("CAP END");
-				}
+				
+				SendNextCap();
 			}
 			// Don't forward any CAP stuff to the client
 			return;
@@ -714,6 +707,28 @@ void CIRCSock::ReadLine(const CString& sData) {
 	}
 
 	m_pUser->PutUser(sLine);
+}
+
+void CIRCSock::SendNextCap() {
+	if (!m_uCapPaused) {
+		if (m_ssPendingCaps.empty()) {
+			// We already got all needed ACK/NAK replies.
+			PutIRC("CAP END");
+		} else {
+			CString sCap = *m_ssPendingCaps.begin();
+			m_ssPendingCaps.erase(m_ssPendingCaps.begin());
+			PutIRC("CAP REQ :" + sCap);
+		}
+	}
+}
+
+void CIRCSock::PauseCap() {
+	++m_uCapPaused;
+}
+
+void CIRCSock::ResumeCap() {
+	--m_uCapPaused;
+	SendNextCap();
 }
 
 bool CIRCSock::OnServerCapAvailable(const CString& sCap) {
