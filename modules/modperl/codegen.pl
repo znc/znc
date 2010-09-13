@@ -111,6 +111,8 @@ while (<$in>) {
             when (/CString/) { say $out "\tPUSH_STR($a->{var});" }
             when (/\*$/)     { my $t=$a->{type}; $t=~s/^const//; say $out "\tPUSH_PTR($t, $a->{var});" }
             when (/&$/)      { my $b=$a->{base}; $b=~s/^const//; say $out "\tPUSH_PTR($b*, &$a->{var});" }
+			when (/unsigned/){ say $out "\tmXPUSHu($a->{var});" }
+			default          { say $out "\tmXPUSHi($a->{var});" }
         }
     }
     say $out "\tPCALLMOD(,";
@@ -131,6 +133,7 @@ sub sv {
         when (/^(.*)\*$/)         { return "SvToPtr<$1>(\"$type\")" }
         when ('CString')          { return 'PString' }
         when ('CModule::EModRet') { return 'SvToEModRet' }
-        default                   { return 'SvUV' }
+        when (/unsigned/)         { return 'SvUV' }
+        default                   { return 'SvIV' }
     }
 }

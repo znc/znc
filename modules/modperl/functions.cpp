@@ -54,7 +54,7 @@ bool CPerlModule::OnBoot() {
 	PSTART_IDF(OnBoot);
 	mXPUSHi(static_cast<int>(true)); // Default value
 	PCALLMOD(,
-		result = SvUV(ST(0));
+		result = SvIV(ST(0));
 	);
 	return result;
 }
@@ -64,7 +64,7 @@ bool CPerlModule::WebRequiresLogin() {
 	PSTART_IDF(WebRequiresLogin);
 	mXPUSHi(static_cast<int>(true)); // Default value
 	PCALLMOD(,
-		result = SvUV(ST(0));
+		result = SvIV(ST(0));
 	);
 	return result;
 }
@@ -74,7 +74,7 @@ bool CPerlModule::WebRequiresAdmin() {
 	PSTART_IDF(WebRequiresAdmin);
 	mXPUSHi(static_cast<int>(false)); // Default value
 	PCALLMOD(,
-		result = SvUV(ST(0));
+		result = SvIV(ST(0));
 	);
 	return result;
 }
@@ -96,7 +96,7 @@ bool CPerlModule::OnWebPreRequest(CWebSock& WebSock, const CString& sPageName) {
 	PUSH_PTR(CWebSock*, &WebSock);
 	PUSH_STR(sPageName);
 	PCALLMOD(,
-		result = SvUV(ST(0));
+		result = SvIV(ST(0));
 	);
 	return result;
 }
@@ -109,7 +109,7 @@ bool CPerlModule::OnWebRequest(CWebSock& WebSock, const CString& sPageName, CTem
 	PUSH_STR(sPageName);
 	PUSH_PTR(CTemplate*, &Tmpl);
 	PCALLMOD(,
-		result = SvUV(ST(0));
+		result = SvIV(ST(0));
 	);
 	return result;
 }
@@ -229,7 +229,10 @@ CModule::EModRet CPerlModule::OnDCCUserSend(const CNick& RemoteNick, unsigned lo
 	PSTART_IDF(OnDCCUserSend);
 	mXPUSHi(static_cast<int>(CONTINUE)); // Default value
 	PUSH_PTR( CNick*, &RemoteNick);
+	mXPUSHu(uLongIP);
+	mXPUSHu(uPort);
 	PUSH_STR(sFile);
+	mXPUSHu(uFileSize);
 	PCALLMOD(,
 		result = SvToEModRet(ST(0));
 	);
@@ -242,6 +245,9 @@ void CPerlModule::OnChanPermission(const CNick& OpNick, const CNick& Nick, CChan
 	PUSH_PTR( CNick*, &OpNick);
 	PUSH_PTR( CNick*, &Nick);
 	PUSH_PTR(CChan*, &Channel);
+	mXPUSHu(uMode);
+	mXPUSHi(bAdded);
+	mXPUSHi(bNoChange);
 	PCALLMOD(,
 	);
 }
@@ -252,6 +258,7 @@ void CPerlModule::OnOp(const CNick& OpNick, const CNick& Nick, CChan& Channel, b
 	PUSH_PTR( CNick*, &OpNick);
 	PUSH_PTR( CNick*, &Nick);
 	PUSH_PTR(CChan*, &Channel);
+	mXPUSHi(bNoChange);
 	PCALLMOD(,
 	);
 }
@@ -262,6 +269,7 @@ void CPerlModule::OnDeop(const CNick& OpNick, const CNick& Nick, CChan& Channel,
 	PUSH_PTR( CNick*, &OpNick);
 	PUSH_PTR( CNick*, &Nick);
 	PUSH_PTR(CChan*, &Channel);
+	mXPUSHi(bNoChange);
 	PCALLMOD(,
 	);
 }
@@ -272,6 +280,7 @@ void CPerlModule::OnVoice(const CNick& OpNick, const CNick& Nick, CChan& Channel
 	PUSH_PTR( CNick*, &OpNick);
 	PUSH_PTR( CNick*, &Nick);
 	PUSH_PTR(CChan*, &Channel);
+	mXPUSHi(bNoChange);
 	PCALLMOD(,
 	);
 }
@@ -282,6 +291,7 @@ void CPerlModule::OnDevoice(const CNick& OpNick, const CNick& Nick, CChan& Chann
 	PUSH_PTR( CNick*, &OpNick);
 	PUSH_PTR( CNick*, &Nick);
 	PUSH_PTR(CChan*, &Channel);
+	mXPUSHi(bNoChange);
 	PCALLMOD(,
 	);
 }
@@ -291,7 +301,10 @@ void CPerlModule::OnMode(const CNick& OpNick, CChan& Channel, char uMode, const 
 	mXPUSHi(0); // Default value
 	PUSH_PTR( CNick*, &OpNick);
 	PUSH_PTR(CChan*, &Channel);
+	mXPUSHi(uMode);
 	PUSH_STR(sArg);
+	mXPUSHi(bAdded);
+	mXPUSHi(bNoChange);
 	PCALLMOD(,
 	);
 }
@@ -750,7 +763,7 @@ bool CPerlModule::OnServerCapAvailable(const CString& sCap) {
 	mXPUSHi(static_cast<int>(false)); // Default value
 	PUSH_STR(sCap);
 	PCALLMOD(,
-		result = SvUV(ST(0));
+		result = SvIV(ST(0));
 	);
 	return result;
 }
@@ -759,6 +772,7 @@ void CPerlModule::OnServerCapResult(const CString& sCap, bool bSuccess) {
 	PSTART_IDF(OnServerCapResult);
 	mXPUSHi(0); // Default value
 	PUSH_STR(sCap);
+	mXPUSHi(bSuccess);
 	PCALLMOD(,
 	);
 }
@@ -782,7 +796,7 @@ bool CPerlModule::OnEmbeddedWebRequest(CWebSock& WebSock, const CString& sPageNa
 	PUSH_STR(sPageName);
 	PUSH_PTR(CTemplate*, &Tmpl);
 	PCALLMOD(,
-		result = SvUV(ST(0));
+		result = SvIV(ST(0));
 	);
 	return result;
 }
