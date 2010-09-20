@@ -329,9 +329,19 @@ sub NV {
 }
 
 sub CreateTimer {
-	my ($self, $job, $interval, $cycles, $description) = @_;
+	my $self = shift;
 	my $id = ZNC::Core::CreateUUID;
-	my $ctimer = ZNC::CreatePerlTimer($self->{_cmod}, $interval, $cycles, "perl-timer-$id", $description, $id);
+	my ($ctimer, $job);
+	if (ref($_[0]) eq 'CODE') {
+		# for those who doesn't want to use named args
+		$job = shift;
+		my ($interval, $cycles, $description) = @_;
+		$ctimer = ZNC::CreatePerlTimer($self->{_cmod}, $interval, $cycles, "perl-timer-$id", $description, $id);
+	} else {
+		my %a = @_;
+		$job = $a{task};
+		$ctimer = ZNC::CreatePerlTimer($self->{_cmod}, $a{interval}//10, $a{cycles}//1, "perl-timer-$id", $a{description}//'Just Another Perl Timer', $id);
+	}
 	$self->{_ptimers}{$id}{job} = $job;
 	$self->{_ptimers}{$id}{cobj} = $ctimer;
 }
