@@ -293,6 +293,7 @@ sub OnTopic {}
 sub OnServerCapAvailable {}
 sub OnServerCapResult {}
 sub OnTimerAutoJoin {}
+sub OnEmbeddedWebRequest {}
 
 
 # Functions of CModule will be usable from perl modules.
