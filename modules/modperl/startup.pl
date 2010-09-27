@@ -112,7 +112,7 @@ sub GetModInfo {
 	return ($ZNC::Perl_LoadError, "Incorrect perl module.") unless IsModule $modpath, $modname;
 	require $modpath;
     my $pmod = bless {}, $modname;
-    return ($ZNC::Perl_Loaded, $modpath->GetPerlStr, $pmod->description)
+    return ($ZNC::Perl_Loaded, $modpath, $pmod->description)
 }
 
 sub ModInfoByPath {
