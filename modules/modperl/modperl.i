@@ -10,6 +10,9 @@
 #ifdef Copy
 # undef Copy
 #endif
+#ifdef Pause
+# undef Pause
+#endif
 #include <utility>
 #include "../Utils.h"
 #include "../Socket.h"
