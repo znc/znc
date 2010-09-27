@@ -151,7 +151,6 @@ public:
 	void AppendPath(const CString& sPath, bool bIncludesOnly = false);
 	void RemovePath(const CString& sPath);
 	void ClearPaths();
-	CString ResolvePath(const CString& sPath, const CString& sFilename);
 	bool PrintString(CString& sRet);
 	bool Print(ostream& oOut);
 	bool Print(const CString& sFileName, ostream& oOut);
