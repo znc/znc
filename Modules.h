@@ -657,7 +657,7 @@ public:
 	/** Called for every CAP accepted or rejected by server
 	 *  (with CAP ACK or CAP NAK after our CAP REQ).
 	 *  @param sCap capability accepted/rejected by server.
-	 *  @param sSuccess true if capability was accepted, false if rejected.
+	 *  @param bSuccess true if capability was accepted, false if rejected.
 	 */
 	virtual void OnServerCapResult(const CString& sCap, bool bSuccess);
 
@@ -1016,7 +1016,7 @@ public:
 	 *  @param pModule the module.
 	 *  @param[out] bSuccess the module was unloaded successfully
 	 *                       as result of this module hook?
-	 *  @param[out] bRetMsg text about unloading of the module.
+	 *  @param[out] sRetMsg text about unloading of the module.
 	 *  @return See CModule::EModRet.
 	 */
 	virtual EModRet OnModuleUnloading(CModule* pModule, bool& bSuccess, CString& sRetMsg);
