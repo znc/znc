@@ -27,25 +27,25 @@ sub CreateUUID {
 }
 
 sub unloadByIDUser {
-    my ($id, $user) = @_;
-    $pmods{$id}->OnShutdown;
-    $user->GetModules->removeModule($pmods{$id}{_cmod});
-    delete $pmods{$id}{_cmod};# Just for the case
+	my ($id, $user) = @_;
+	$pmods{$id}->OnShutdown;
+	$user->GetModules->removeModule($pmods{$id}{_cmod});
+	delete $pmods{$id}{_cmod};# Just for the case
 	delete $pmods{$id}{_nv};
 	delete $pmods{$id}{_ptimers};
 	delete $pmods{$id}{_sockets};
-    delete $pmods{$id};
+	delete $pmods{$id};
 }
 
 sub UnloadModule {
-    my ($cmod) = @_;
-    unloadByIDUser($cmod->GetPerlID, $cmod->GetUser);
+	my ($cmod) = @_;
+	unloadByIDUser($cmod->GetPerlID, $cmod->GetUser);
 }
 
 sub UnloadAll {
-    while (my ($id, $pmod) = each %pmods) {
-        unloadByIDUser($id, $pmod->{_cmod}->GetUser);
-    }
+	while (my ($id, $pmod) = each %pmods) {
+		unloadByIDUser($id, $pmod->{_cmod}->GetUser);
+	}
 }
 
 sub IsModule {
@@ -56,84 +56,84 @@ sub IsModule {
 }
 
 sub LoadModule {
-    my ($modname, $args, $user) = @_;
-    $modname =~ /^\w+$/ or return ($ZNC::Perl_LoadError, "Module names can only contain letters, numbers and underscores, [$modname] is invalid.");
-    return ($ZNC::Perl_LoadError, "Module [$modname] already loaded.") if defined $user->GetModules->FindModule($modname);
-    my $modpath = ZNC::String->new;
-    my $datapath = ZNC::String->new;
-    ZNC::CModules::FindModPath("$modname.pm", $modpath, $datapath) or return ($ZNC::Perl_NotFound, "Unable to find module [$modname]");
-    $modpath = $modpath->GetPerlStr;
+	my ($modname, $args, $user) = @_;
+	$modname =~ /^\w+$/ or return ($ZNC::Perl_LoadError, "Module names can only contain letters, numbers and underscores, [$modname] is invalid.");
+	return ($ZNC::Perl_LoadError, "Module [$modname] already loaded.") if defined $user->GetModules->FindModule($modname);
+	my $modpath = ZNC::String->new;
+	my $datapath = ZNC::String->new;
+	ZNC::CModules::FindModPath("$modname.pm", $modpath, $datapath) or return ($ZNC::Perl_NotFound, "Unable to find module [$modname]");
+	$modpath = $modpath->GetPerlStr;
 	return ($ZNC::Perl_LoadError, "Incorrect perl module.") unless IsModule $modpath, $modname;
-    require $modpath;
-    my $id = CreateUUID;
+	require $modpath;
+	my $id = CreateUUID;
 	$datapath = $datapath->GetPerlStr;
 	$datapath =~ s/\.pm$//;
-    my $cmod = ZNC::CPerlModule->new($user, $modname, $datapath, $id);
+	my $cmod = ZNC::CPerlModule->new($user, $modname, $datapath, $id);
 	my %nv;
 	tie %nv, 'ZNC::ModuleNV', $cmod;
-    my $pmod = bless {
+	my $pmod = bless {
 		_cmod=>$cmod,
 		_nv=>\%nv
 	}, $modname;
-    $cmod->SetDescription($pmod->description);
-    $cmod->SetArgs($args);
-    $cmod->SetModPath($modpath);
-    $pmods{$id} = $pmod;
-    $user->GetModules->push_back($cmod);
-    my $x = '';
-    my $loaded = 0;
-    eval {
-        $loaded = $pmod->OnLoad($args, $x);
-    };
+	$cmod->SetDescription($pmod->description);
+	$cmod->SetArgs($args);
+	$cmod->SetModPath($modpath);
+	$pmods{$id} = $pmod;
+	$user->GetModules->push_back($cmod);
+	my $x = '';
+	my $loaded = 0;
+	eval {
+		$loaded = $pmod->OnLoad($args, $x);
+	};
 	if ($@) {
 		$x .= ' ' if '' ne $x;
 		$x .= $@;
 	}
-    if (!$loaded) {
-        unloadByIDUser($id, $user);
-        if ($x) {
-            return ($ZNC::Perl_LoadError, "Module [$modname] aborted: $x");
-        }
-        return ($ZNC::Perl_LoadError, "Module [$modname] aborted.");
-    }
-    if ($x) {
-        return ($ZNC::Perl_Loaded, "Loaded module [$modname] [$x] [$modpath]");
-    }
-    return ($ZNC::Perl_Loaded, "Loaded module [$modname] [$modpath]")
+	if (!$loaded) {
+		unloadByIDUser($id, $user);
+		if ($x) {
+			return ($ZNC::Perl_LoadError, "Module [$modname] aborted: $x");
+		}
+		return ($ZNC::Perl_LoadError, "Module [$modname] aborted.");
+	}
+	if ($x) {
+		return ($ZNC::Perl_Loaded, "Loaded module [$modname] [$x] [$modpath]");
+	}
+	return ($ZNC::Perl_Loaded, "Loaded module [$modname] [$modpath]")
 }
 
 sub GetModInfo {
-    my ($modname) = @_;
-    $modname =~ /^\w+$/ or return ($ZNC::Perl_LoadError, "Module names can only contain letters, numbers and underscores, [$modname] is invalid.");
-    my $modpath = ZNC::String->new;
-    my $datapath = ZNC::String->new;
-    ZNC::CModules::FindModPath("$modname.pm", $modpath, $datapath) or return ($ZNC::Perl_NotFound, "Unable to find module [$modname]");
-    $modpath = $modpath->GetPerlStr;
+	my ($modname) = @_;
+	$modname =~ /^\w+$/ or return ($ZNC::Perl_LoadError, "Module names can only contain letters, numbers and underscores, [$modname] is invalid.");
+	my $modpath = ZNC::String->new;
+	my $datapath = ZNC::String->new;
+	ZNC::CModules::FindModPath("$modname.pm", $modpath, $datapath) or return ($ZNC::Perl_NotFound, "Unable to find module [$modname]");
+	$modpath = $modpath->GetPerlStr;
 	return ($ZNC::Perl_LoadError, "Incorrect perl module.") unless IsModule $modpath, $modname;
 	require $modpath;
-    my $pmod = bless {}, $modname;
-    return ($ZNC::Perl_Loaded, $modpath, $pmod->description)
+	my $pmod = bless {}, $modname;
+	return ($ZNC::Perl_Loaded, $modpath, $pmod->description)
 }
 
 sub ModInfoByPath {
-    my ($modpath, $modname) = @_;
+	my ($modpath, $modname) = @_;
 	die "Incorrect perl module." unless IsModule $modpath, $modname;
-    require $modpath;
-    my $pmod = bless {}, $modname;
-    return ($pmod->description)
+	require $modpath;
+	my $pmod = bless {}, $modname;
+	return ($pmod->description)
 }
 
 sub CallModFunc {
-    my $id = shift;
-    my $func = shift;
+	my $id = shift;
+	my $func = shift;
 	my $default = shift;
-    my @arg = @_;
-    my $res = $pmods{$id}->$func(@arg);
+	my @arg = @_;
+	my $res = $pmods{$id}->$func(@arg);
 #	print "Returned from $func(@_): $res, (@arg)\n";
 	unless (defined $res) {
 		$res = $default if defined $default;
 	}
-    ($res, @arg)
+	($res, @arg)
 }
 
 sub CallTimer {
@@ -222,7 +222,7 @@ sub SCALAR {
 package ZNC::Module;
 
 sub description {
-    "< Placeholder for a description >"
+	"< Placeholder for a description >"
 }
 
 # Default implementations for module hooks. They can be overriden in derived modules.

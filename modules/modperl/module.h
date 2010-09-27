@@ -11,16 +11,16 @@
 #include "Modules.h"
 
 class CPerlModule : public CModule {
-    CString m_sPerlID;
+	CString m_sPerlID;
 	VWebSubPages* _GetSubPages();
 public:
-    CPerlModule(CUser* pUser, const CString& sModName, const CString& sDataPath,
-            const CString& sPerlID)
-            : CModule(NULL, pUser, sModName, sDataPath) {
-        m_sPerlID = sPerlID;
-    }
-    CString GetPerlID() { return m_sPerlID; }
-    
+	CPerlModule(CUser* pUser, const CString& sModName, const CString& sDataPath,
+			const CString& sPerlID)
+			: CModule(NULL, pUser, sModName, sDataPath) {
+		m_sPerlID = sPerlID;
+	}
+	CString GetPerlID() { return m_sPerlID; }
+
 	virtual bool OnBoot();
 	virtual bool WebRequiresLogin();
 	virtual bool WebRequiresAdmin();
@@ -89,24 +89,24 @@ public:
 };
 
 static inline CPerlModule* AsPerlModule(CModule* p) {
-    return dynamic_cast<CPerlModule*>(p);
+	return dynamic_cast<CPerlModule*>(p);
 }
 
 enum ELoadPerlMod {
-    Perl_NotFound,
-    Perl_Loaded,
-    Perl_LoadError,
+	Perl_NotFound,
+	Perl_Loaded,
+	Perl_LoadError,
 };
 
 class CPerlTimer : public CTimer {
-    CString m_sPerlID;
+	CString m_sPerlID;
 public:
 	CPerlTimer(CPerlModule* pModule, unsigned int uInterval, unsigned int uCycles, const CString& sLabel, const CString& sDescription, const CString& sPerlID)
 					: CTimer (pModule, uInterval, uCycles, sLabel, sDescription), m_sPerlID(sPerlID) {
 		pModule->AddTimer(this);
 	}
 	virtual void RunJob();
-    CString GetPerlID() { return m_sPerlID; }
+	CString GetPerlID() { return m_sPerlID; }
 };
 
 inline CPerlTimer* CreatePerlTimer(CPerlModule* pModule, unsigned int uInterval, unsigned int uCycles,
@@ -118,7 +118,7 @@ class CPerlSocket : public CSocket {
 	CString m_sPerlID;
 public:
 	CPerlSocket(CPerlModule* pModule, const CString& sPerlID) : CSocket(pModule), m_sPerlID(sPerlID) {}
-    CString GetPerlID() { return m_sPerlID; }
+	CString GetPerlID() { return m_sPerlID; }
 	virtual void Connected();
 	virtual void Disconnected();
 	virtual void Timeout();
