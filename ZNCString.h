@@ -59,6 +59,13 @@ static const unsigned char base64_table[256] = {
 	XX,XX,XX,XX, XX,XX,XX,XX, XX,XX,XX,XX, XX,XX,XX,XX,
 };
 
+/**
+ * @brief String class that is used inside znc.
+ *
+ * All strings that are used in ZNC and its modules should use instances of this
+ * class. It provides helpful functions for parsing input like Token() and
+ * Split().
+ */
 class CString : public string {
 public:
 	typedef enum {
@@ -88,15 +95,68 @@ public:
 	CString(const string& s) : string(s) {}
 	~CString() {}
 
+	/**
+	 * Compare this string caselessly to some other string.
+	 * @param s The string to compare to.
+	 * @param uLen The number of characters to compare.
+	 * @return An integer less than, equal to, or greater than zero if this
+	 *         string smaller, equal.... to the given string.
+	 */
 	int CaseCmp(const CString& s, unsigned long uLen = CString::npos) const;
+	/**
+	 * Compare this string case sensitively to some other string.
+	 * @param s The string to compare to.
+	 * @param uLen The number of characters to compare.
+	 * @return An integer less than, equal to, or greater than zero if this
+	 *         string smaller, equal.... to the given string.
+	 */
 	int StrCmp(const CString& s, unsigned long uLen = CString::npos) const;
+	/**
+	 * Check if this string is equal to some other string.
+	 * @param s The string to compare to.
+	 * @param bCaseSensitive True if you want the comparision to be case
+	 *                       sensitive.
+	 * @param uLen Number of characters to consider.
+	 * @return True if the strings are equal.
+	 */
 	bool Equals(const CString& s, bool bCaseSensitive = false, unsigned long uLen = CString::npos) const;
+	/**
+	 * Do a wildcard comparision between two strings.
+	 * For example, the following returns true:
+	 * <code>WildCmp("*!?bar@foo", "I_am!~bar@foo");</code>
+	 * @param sWild The wildcards used for the comparison.
+	 * @param sString The string that is used for comparing.
+	 * @return true if the wildcard matches.
+	 */
 	static bool WildCmp(const CString& sWild, const CString& sString);
+	/**
+	 * Do a wild compare on this string.
+	 * @param sWild The wildcards used to for the comparison.
+	 * @return The result of <code>this->WildCmp(sWild, *this);</code>.
+	 */
 	bool WildCmp(const CString& sWild) const;
 
+	/**
+	 * Turn all characters in this string into their upper-case equivalent.
+	 * @returns A reference to *this.
+	 */
 	CString& MakeUpper();
+	/**
+	 * Turn all characters in this string into their lower-case equivalent.
+	 * @returns A reference to *this.
+	 */
 	CString& MakeLower();
+	/**
+	 * Return a copy of this string with all characters turned into
+	 * upper-case.
+	 * @return The new string.
+	 */
 	CString AsUpper() const;
+	/**
+	 * Return a copy of this string with all characters turned into
+	 * lower-case.
+	 * @return The new string.
+	 */
 	CString AsLower() const;
 
 	static EEscape ToEscape(const CString& sEsc);
