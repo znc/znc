@@ -63,6 +63,7 @@ public:
 			PERL_SYS_TERM();
 			m_pPerl = NULL;
 			sMessage = "Can't initialize perl.";
+			DEBUG(__PRETTY_FUNCTION__ << " can't init perl");
 			return false;
 		}
 		PL_exit_flags |= PERL_EXIT_DESTRUCT_END;
@@ -86,6 +87,7 @@ public:
 			result = static_cast<ELoadPerlMod>(SvUV(ST(0)));
 			sRetMsg = PString(ST(1));
 		}
+		DEBUG(__PRETTY_FUNCTION__ << " " << sRetMsg);
 
 		PEND;
 		return result;
@@ -125,6 +127,7 @@ public:
 				bSuccess = true;
 				sRetMsg = "Module [" + sModName + "] unloaded";
 			}
+			DEBUG(__PRETTY_FUNCTION__ << " " << sRetMsg);
 			return HALT;
 		}
 		return CONTINUE;
@@ -172,6 +175,7 @@ public:
 			sRetMsg = "Something weird happened";
 		}
 		PEND;
+		DEBUG(__PRETTY_FUNCTION__ << " " << sRetMsg);
 		return result;
 	}
 
