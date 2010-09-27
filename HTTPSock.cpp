@@ -115,7 +115,6 @@ void CHTTPSock::ReadLine(const CString& sData) {
 		m_sIfNoneMatch = sLine.Token(1, true);
 	} else if (sLine.empty()) {
 		m_bGotHeader = true;
-		DisableReadLine();
 
 		if (m_bPost) {
 			m_sPostData = GetInternalReadBuffer();
@@ -123,6 +122,8 @@ void CHTTPSock::ReadLine(const CString& sData) {
 		} else {
 			GetPage();
 		}
+
+		DisableReadLine();
 	}
 }
 
