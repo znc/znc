@@ -2147,7 +2147,10 @@ void Csock::DelCronByAddr( CCron *pcCron )
 }
 
 void Csock::EnableReadLine() { m_bEnableReadLine = true; }
-void Csock::DisableReadLine() { m_bEnableReadLine = false; }
+void Csock::DisableReadLine() {
+	m_bEnableReadLine = false;
+	m_sbuffer.clear();
+}
 
 void Csock::ReachedMaxBuffer()
 {
