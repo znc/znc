@@ -9,21 +9,45 @@
 use strict;
 use warnings;
 use ZNC;
-use Data::UUID;
 use IO::File;
-use feature 'switch';
+use feature 'switch', 'say';
 
 package ZNC::Core;
 
+my $uuidtype;
 my $uuidgen;
 our %pmods;
 
 sub Init {
-	$uuidgen = new Data::UUID;
+	if (eval { require Data::UUID }) {
+		$uuidtype = 'Data::UUID';
+		$uuidgen = new Data::UUID;
+	} elsif (eval { require UUID }) {
+		$uuidtype = 'UUID';
+	} else {
+		$uuidtype = 'int';
+		$uuidgen = 0;
+	}
 }
 
 sub CreateUUID {
-	$uuidgen->create_str;
+	my $res;
+	given ($uuidtype) {
+		when ('Data::UUID') {
+			$res = $uuidgen->create_str;
+		}
+		when ('UUID') {
+			my ($uuid, $str);
+			UUID::generate($uuid);
+			UUID::unparse($uuid, $res);
+		}
+		when ('int') {
+			$uuidgen++;
+			$res = "$uuidgen";
+		}
+	}
+	say "Created new UUID for modperl with '$uuidtype': $res";
+	return $res;
 }
 
 sub unloadByIDUser {
