@@ -19,6 +19,10 @@ public:
 		vector<CChan*>::const_iterator it;
 
 		for (it = vChans.begin(); it != vChans.end(); ++it) {
+			// Skip detached channels, they weren't read yet
+			if ((*it)->IsDetached())
+				continue;
+
 			(*it)->ClearBuffer();
 			// We force KeepBuffer on all channels since this module
 			// doesnt make any sense without
