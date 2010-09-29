@@ -122,6 +122,10 @@ AC_ARG_ENABLE( [run-from-source],
 	fi
 	RUNFROMSOURCE="$enableval"],
 	[RUNFROMSOURCE="no"])
+AC_ARG_ENABLE( [poll],
+	AS_HELP_STRING([--disable-poll], [use select() instead of poll()]),
+	[POLL="$enableval"],
+	[POLL="yes"])
 
 if test "$DEBUG" != "no"; then
 	appendCXX -ggdb -D_DEBUG
@@ -139,6 +143,10 @@ fi
 
 if test "x$GXX" = "xyes"; then
 	appendCXX -Wall -W -Wno-unused-parameter -Woverloaded-virtual -Wshadow
+fi
+
+if test "$POLL" = "yes"; then
+	appendCXX -DCSOCK_USE_POLL
 fi
 
 AC_CHECK_LIB( gnugetopt, getopt_long,)

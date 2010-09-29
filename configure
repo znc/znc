@@ -648,6 +648,7 @@ enable_sasl
 enable_optimization
 enable_c_ares
 enable_run_from_source
+enable_poll
 with_module_prefix
 with_module_data_prefix
 enable_tcl
@@ -1303,6 +1304,7 @@ Optional Features:
   --disable-c-ares        disable c-ares usage
   --enable-run-from-source
                           znc will be runnable without installation
+  --disable-poll          use select() instead of poll()
   --enable-tcl            enable modtcl
 
 Optional Packages:
@@ -2960,6 +2962,13 @@ else
   RUNFROMSOURCE="no"
 fi
 
+# Check whether --enable-poll was given.
+if test "${enable_poll+set}" = set; then :
+  enableval=$enable_poll; POLL="$enableval"
+else
+  POLL="yes"
+fi
+
 
 if test "$DEBUG" != "no"; then
 	appendCXX -ggdb -D_DEBUG
@@ -2977,6 +2986,10 @@ fi
 
 if test "x$GXX" = "xyes"; then
 	appendCXX -Wall -W -Wno-unused-parameter -Woverloaded-virtual -Wshadow
+fi
+
+if test "$POLL" = "yes"; then
+	appendCXX -DCSOCK_USE_POLL
 fi
 
 { $as_echo "$as_me:${as_lineno-$LINENO}: checking for getopt_long in -lgnugetopt" >&5
