@@ -169,7 +169,7 @@ public:
 	 *
 	 * You can specify a "safe zone" via sLeft and sRight. Anything inside
 	 * of such a zone will not be replaced. This does not do recursion, so
-	 * e.g. with <code>Replace("(a()a)", "a", "a", "(", ")", true)</code>
+	 * e.g. with <code>Replace("(a()a)", "a", "b", "(", ")", true)</code>
 	 * you would get "a(b)" as result. The second opening brace and the
 	 * second closing brace would not be seen as a delimitered and thus
 	 * wouldn't be removed. The first a is inside a "safe zone" and thus is
