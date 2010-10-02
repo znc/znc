@@ -46,7 +46,8 @@ public:
 	virtual void OnMode(const CNick& OpNick, CChan& Channel, char uMode, const CString& sArg, bool bAdded, bool bNoChange) {
 		// This is called when we join (ZNC requests the channel modes
 		// on join) *and* when someone changes the channel keys.
-		if (uMode != 'k' || bNoChange || !bAdded)
+		// We ignore channel key "*" because of some broken nets.
+		if (uMode != 'k' || bNoChange || !bAdded || sArg == "*")
 			return;
 
 		Channel.SetKey(sArg);
