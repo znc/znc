@@ -249,6 +249,17 @@ void CPerlTimer::RunJob() {
 	}
 }
 
+CPerlTimer::~CPerlTimer() {
+	CPerlModule* pMod = AsPerlModule(GetModule());
+	if (pMod) {
+		PSTART;
+		PUSH_STR(pMod->GetPerlID());
+		PUSH_STR(GetPerlID());
+		PCALL("ZNC::Core::RemoveTimer");
+		PEND;
+	}
+}
+
 #define SOCKSTART PSTART; PUSH_STR(pMod->GetPerlID()); PUSH_STR(GetPerlID())
 #define SOCKCBCHECK(OnSuccess) PCALL("ZNC::Core::CallSocket"); if (SvTRUE(ERRSV)) { Close(); DEBUG("Perl socket hook died with: " + PString(ERRSV)); } else { OnSuccess; } PEND
 #define CBSOCK(Func) void CPerlSocket::Func() {\
@@ -296,6 +307,15 @@ Csock* CPerlSocket::GetSockObj(const CString& sHost, unsigned short uPort) {
 		);
 	}
 	return result;
+}
+
+CPerlSocket::~CPerlSocket() {
+	CPerlModule* pMod = AsPerlModule(GetModule());
+	if (pMod) {
+		SOCKSTART;
+		PCALL("ZNC::Core::RemoveSocket");
+		PEND;
+	}
 }
 
 GLOBALMODULEDEFS(CModPerl, "Loads perl scripts as ZNC modules")

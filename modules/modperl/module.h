@@ -107,6 +107,7 @@ public:
 	}
 	virtual void RunJob();
 	CString GetPerlID() { return m_sPerlID; }
+	~CPerlTimer();
 };
 
 inline CPerlTimer* CreatePerlTimer(CPerlModule* pModule, unsigned int uInterval, unsigned int uCycles,
@@ -119,6 +120,7 @@ class CPerlSocket : public CSocket {
 public:
 	CPerlSocket(CPerlModule* pModule, const CString& sPerlID) : CSocket(pModule), m_sPerlID(sPerlID) {}
 	CString GetPerlID() { return m_sPerlID; }
+	~CPerlSocket();
 	virtual void Connected();
 	virtual void Disconnected();
 	virtual void Timeout();

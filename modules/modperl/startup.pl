@@ -171,6 +171,18 @@ sub CallSocket {
 	$pmods{$modid}->_CallSocket(@_)
 }
 
+sub RemoveTimer {
+	my $modid = shift;
+	my $timerid = shift;
+	$pmods{$modid}->_RemoveTimer($timerid)
+}
+
+sub RemoveSocket {
+	my $modid = shift;
+	my $sockid = shift;
+	$pmods{$modid}->_RemoveSocket($sockid)
+}
+
 package ZNC::ModuleNV;
 
 sub TIEHASH {
@@ -377,6 +389,13 @@ sub _CallTimer {
 	&{$self->{_ptimers}{$id}{job}}($self, $self->{_ptimers}{$id}{obj});
 }
 
+sub _RemoveTimer {
+	my $self = shift;
+	my $id = shift;
+	say "Removing perl timer $id";
+	delete $self->{_ptimers}{$id}
+}
+
 sub CreateSocket {
 	my $self = shift;
 	my $class = shift;
@@ -396,6 +415,13 @@ sub _CallSocket {
 	my $id = shift;
 	my $func = shift;
 	$self->{_sockets}{$id}->$func(@_)
+}
+
+sub _RemoveSocket {
+	my $self = shift;
+	my $id = shift;
+	say "Removing perl socket $id";
+	delete $self->{_sockets}{$id}
 }
 
 package ZNC::Socket;
