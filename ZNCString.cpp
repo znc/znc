@@ -1031,7 +1031,7 @@ bool CString::RightChomp(unsigned int uLen) {
 }
 
 //////////////// MCString ////////////////
-int MCString::WriteToDisk(const CString& sPath, mode_t iMode) const {
+MCString::status_t MCString::WriteToDisk(const CString& sPath, mode_t iMode) const {
 	CFile cFile(sPath);
 
 	if (this->empty()) {
@@ -1066,10 +1066,10 @@ int MCString::WriteToDisk(const CString& sPath, mode_t iMode) const {
 	return MCS_SUCCESS;
 }
 
-int MCString::ReadFromDisk(const CString& sPath, mode_t iMode) {
+MCString::status_t MCString::ReadFromDisk(const CString& sPath) {
 	clear();
 	CFile cFile(sPath);
-	if (!cFile.Open(O_RDONLY, iMode)) {
+	if (!cFile.Open(O_RDONLY)) {
 		return MCS_EOPEN;
 	}
 

@@ -147,7 +147,7 @@ void CModule::SetClient(CClient* pClient) { m_pClient = pClient; }
 
 bool CModule::LoadRegistry() {
 	//CString sPrefix = (m_pUser) ? m_pUser->GetUserName() : ".global";
-	return (m_mssRegistry.ReadFromDisk(GetSavePath() + "/.registry", 0600) == MCString::MCS_SUCCESS);
+	return (m_mssRegistry.ReadFromDisk(GetSavePath() + "/.registry") == MCString::MCS_SUCCESS);
 }
 
 bool CModule::SaveRegistry() const {
