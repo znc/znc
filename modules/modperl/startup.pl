@@ -368,25 +368,23 @@ sub NV {
 sub CreateTimer {
 	my $self = shift;
 	my $id = ZNC::Core::CreateUUID;
-	my ($ctimer, $job);
-	if (ref($_[0]) eq 'CODE') {
-		# for those who doesn't want to use named args
-		$job = shift;
-		my ($interval, $cycles, $description) = @_;
-		$ctimer = ZNC::CreatePerlTimer($self->{_cmod}, $interval, $cycles, "perl-timer-$id", $description, $id);
-	} else {
-		my %a = @_;
-		$job = $a{task};
-		$ctimer = ZNC::CreatePerlTimer($self->{_cmod}, $a{interval}//10, $a{cycles}//1, "perl-timer-$id", $a{description}//'Just Another Perl Timer', $id);
-	}
-	$self->{_ptimers}{$id}{job} = $job;
-	$self->{_ptimers}{$id}{cobj} = $ctimer;
+	my %a = @_;
+	$self->{_ptimers}{$id}{cobj} = ZNC::CreatePerlTimer(
+			$self->{_cmod},
+			$a{interval}//10,
+			$a{cycles}//1,
+			"perl-timer-$id",
+			$a{description}//'Just Another Perl Timer',
+			$id);
+	$self->{_ptimers}{$id}{job} = $a{task};
+	$self->{_ptimers}{$id}{context} = $a{context};
 }
 
 sub _CallTimer {
 	my $self = shift;
 	my $id = shift;
-	&{$self->{_ptimers}{$id}{job}}($self, $self->{_ptimers}{$id}{obj});
+	my $t = $self->{_ptimers}{$id};
+	&{$t->{job}}($self, context=>$t->{context}, timer=>$t->{cobj});
 }
 
 sub _RemoveTimer {
