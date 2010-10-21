@@ -184,7 +184,7 @@ public:
 	}
 
 	virtual void OnClientLogin() {
-		if (m_spInjectedPrefixes.find(m_pUser) == m_spInjectedPrefixes.end()) {
+		if (m_spInjectedPrefixes.find(m_pUser) == m_spInjectedPrefixes.end() && !m_pUser->GetChanPrefixes().empty()) {
 			m_pClient->PutClient(":" + GetIRCServer(m_pUser) + " 005 " + m_pUser->GetIRCNick().GetNick() + " CHANTYPES=" + m_pUser->GetChanPrefixes() + CHAN_PREFIX_1 " :are supported by this server.");
 		}
 
