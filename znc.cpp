@@ -673,14 +673,7 @@ bool CZNC::WriteNewConfig(const CString& sConfigFile) {
 	CString s6 = "4";
 #ifdef HAVE_IPV6
 	if (CUtils::GetBoolInput("Would you like ZNC to listen using ipv6?", false)) {
-#ifdef IPV6_V6ONLY
 		s6 = " ";
-#else
-		// When we have IPV6_V6ONLY, "Listener" will listen on both v4 and v6.
-		// If we don't have it, "Listener" and "Listener6" are equivalent. Let's
-		// use "Listener6" in this case since that describes the result better.
-		s6 = "6";
-#endif
 	}
 #endif
 
@@ -1471,16 +1464,6 @@ bool CZNC::DoRehash(CString& sError)
 					if (sName.Equals("Listener6")) {
 						eAddr = ADDR_IPV6ONLY;
 					}
-#if defined(HAVE_IPV6) && !defined(IPV6_V6ONLY)
-					if (sName.Equals("Listener")) {
-						CUtils::PrintMessage("Your system doesn't support IPV6_V6ONLY.", true);
-						CUtils::PrintMessage("Please use \"Listener4\" and \"Listener6\""
-								" to explicitly select between IPV4 and IPV6");
-						// Let's hope that this causes
-						// the least surprise.
-						eAddr = ADDR_IPV4ONLY;
-					}
-#endif
 
 					CListener::EAcceptType eAccept = CListener::ACCEPT_ALL;
 					if (sValue.TrimPrefix("irc_only "))
