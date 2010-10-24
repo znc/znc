@@ -1919,7 +1919,7 @@ protected:
 		for( uCurrPoll = 0; uCurrPoll < uMaxFD; ++uCurrPoll )
 		{
 			short iEvents = 0;
-			if( (pFDs[uCurrPoll].revents & POLLIN ) )
+			if( (pFDs[uCurrPoll].revents & (POLLIN|POLLERR|POLLHUP|POLLNVAL) ) )
 				iEvents |= eCheckRead;
 			if( (pFDs[uCurrPoll].revents & POLLOUT ) )
 				iEvents |= eCheckWrite;
