@@ -3219,7 +3219,7 @@ fi
 appendLib "$SAVED_LIBS"
 
 if test $FOUND_DL = "no" ; then
-	as_fn_error $? "Could not find dlopen. Try --disable-modules" "$LINENO" 5
+	as_fn_error $? "Could not find dlopen. ZNC will not work on this box until you upgrade this ancient system or at least install needed system libraries." "$LINENO" 5
 fi
 
 # ----- Check for c-ares

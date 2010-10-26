@@ -167,7 +167,7 @@ AC_CHECK_LIB( dl, dlopen, FOUND_DL=yes ; appendLib -ldl,)
 appendLib "$SAVED_LIBS"
 
 if test $FOUND_DL = "no" ; then
-	AC_MSG_ERROR([Could not find dlopen. Try --disable-modules])
+	AC_MSG_ERROR([Could not find dlopen. ZNC will not work on this box until you upgrade this ancient system or at least install needed system libraries.])
 fi
 
 # ----- Check for c-ares
