@@ -601,8 +601,10 @@ class CAdminMod : public CModule {
 		if (!pUser)
 			return;
 
-		pUser->AddServer(sServer);
-		PutModule("Added IRC Server: " + sServer);
+		if (pUser->AddServer(sServer))
+			PutModule("Added IRC Server: " + sServer);
+		else
+			PutModule("Could not add IRC server");
 	}
 
 	void LoadModuleForUser(const CString& sLine) {
