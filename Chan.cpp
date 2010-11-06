@@ -128,18 +128,18 @@ void CChan::JoinUser(bool bForce, const CString& sKey, CClient* pClient) {
 		else
 			pThisClient = pClient;
 
-		for (map<CString,CNick*>::iterator a = m_msNicks.begin(); a != m_msNicks.end(); ++a) {
+		for (map<CString,CNick>::iterator a = m_msNicks.begin(); a != m_msNicks.end(); ++a) {
 			if (pThisClient->HasNamesx()) {
-				sPerm = a->second->GetPermStr();
+				sPerm = a->second.GetPermStr();
 			} else {
-				char c = a->second->GetPermChar();
+				char c = a->second.GetPermChar();
 				sPerm = "";
 				if (c != '\0') {
 					sPerm += c;
 				}
 			}
-			if (pThisClient->HasUHNames() && !a->second->GetIdent().empty() && !a->second->GetHost().empty()) {
-				sNick = a->first + "!" + a->second->GetIdent() + "@" + a->second->GetHost();
+			if (pThisClient->HasUHNames() && !a->second.GetIdent().empty() && !a->second.GetHost().empty()) {
+				sNick = a->first + "!" + a->second.GetIdent() + "@" + a->second.GetHost();
 			} else {
 				sNick = a->first;
 			}
@@ -369,10 +369,6 @@ CString CChan::GetModeArg(CString& sArgs) const {
 }
 
 void CChan::ClearNicks() {
-	for (map<CString,CNick*>::iterator a = m_msNicks.begin(); a != m_msNicks.end(); ++a) {
-		delete a->second;
-	}
-
 	m_msNicks.clear();
 }
 
@@ -434,7 +430,7 @@ bool CChan::AddNick(const CString& sNick) {
 		}
 	}
 
-	m_msNicks[pNick->GetNick()] = pNick;
+	m_msNicks[pNick->GetNick()] = *pNick;
 
 	return true;
 }
@@ -442,9 +438,9 @@ bool CChan::AddNick(const CString& sNick) {
 map<char, unsigned int> CChan::GetPermCounts() const {
 	map<char, unsigned int> mRet;
 
-	map<CString,CNick*>::const_iterator it;
+	map<CString,CNick>::const_iterator it;
 	for (it = m_msNicks.begin(); it != m_msNicks.end(); ++it) {
-		CString sPerms = it->second->GetPermStr();
+		CString sPerms = it->second.GetPermStr();
 
 		for (unsigned int p = 0; p < sPerms.size(); p++) {
 			mRet[sPerms[p]]++;
@@ -455,7 +451,7 @@ map<char, unsigned int> CChan::GetPermCounts() const {
 }
 
 bool CChan::RemNick(const CString& sNick) {
-	map<CString,CNick*>::iterator it;
+	map<CString,CNick>::iterator it;
 	set<unsigned char>::iterator it2;
 
 	it = m_msNicks.find(sNick);
@@ -463,21 +459,20 @@ bool CChan::RemNick(const CString& sNick) {
 		return false;
 	}
 
-	delete it->second;
 	m_msNicks.erase(it);
 
 	return true;
 }
 
 bool CChan::ChangeNick(const CString& sOldNick, const CString& sNewNick) {
-	map<CString,CNick*>::iterator it = m_msNicks.find(sOldNick);
+	map<CString,CNick>::iterator it = m_msNicks.find(sOldNick);
 
 	if (it == m_msNicks.end()) {
 		return false;
 	}
 
 	// Rename this nick
-	it->second->SetNick(sNewNick);
+	it->second.SetNick(sNewNick);
 
 	// Insert a new element into the map then erase the old one, do this to change the key to the new nick
 	m_msNicks[sNewNick] = it->second;
@@ -486,9 +481,14 @@ bool CChan::ChangeNick(const CString& sOldNick, const CString& sNewNick) {
 	return true;
 }
 
-CNick* CChan::FindNick(const CString& sNick) const {
-	map<CString,CNick*>::const_iterator it = m_msNicks.find(sNick);
-	return (it != m_msNicks.end()) ? it->second : NULL;
+const CNick* CChan::FindNick(const CString& sNick) const {
+	map<CString,CNick>::const_iterator it = m_msNicks.find(sNick);
+	return (it != m_msNicks.end()) ? &it->second : NULL;
+}
+
+CNick* CChan::FindNick(const CString& sNick) {
+	map<CString,CNick>::iterator it = m_msNicks.find(sNick);
+	return (it != m_msNicks.end()) ? &it->second : NULL;
 }
 
 int CChan::AddBuffer(const CString& sLine) {

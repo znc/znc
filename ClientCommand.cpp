@@ -51,7 +51,7 @@ void CClient::UserCommand(CString& sLine) {
 			return;
 		}
 
-		const map<CString,CNick*>& msNicks = pChan->GetNicks();
+		const map<CString,CNick>& msNicks = pChan->GetNicks();
 		CIRCSock* pIRCSock = m_pUser->GetIRCSock();
 		const CString& sPerms = (pIRCSock) ? pIRCSock->GetPerms() : "";
 
@@ -72,20 +72,20 @@ void CClient::UserCommand(CString& sLine) {
 		Table.AddColumn("Ident");
 		Table.AddColumn("Host");
 
-		for (map<CString,CNick*>::const_iterator a = msNicks.begin(); a != msNicks.end(); ++a) {
+		for (map<CString,CNick>::const_iterator a = msNicks.begin(); a != msNicks.end(); ++a) {
 			Table.AddRow();
 
 			for (unsigned int b = 0; b < sPerms.size(); b++) {
-				if (a->second->HasPerm(sPerms[b])) {
+				if (a->second.HasPerm(sPerms[b])) {
 					CString sPerm;
 					sPerm += sPerms[b];
 					Table.SetCell(sPerm, sPerm);
 				}
 			}
 
-			Table.SetCell("Nick", a->second->GetNick());
-			Table.SetCell("Ident", a->second->GetIdent());
-			Table.SetCell("Host", a->second->GetHost());
+			Table.SetCell("Nick", a->second.GetNick());
+			Table.SetCell("Ident", a->second.GetIdent());
+			Table.SetCell("Host", a->second.GetHost());
 		}
 
 		PutStatus(Table);

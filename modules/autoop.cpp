@@ -352,7 +352,7 @@ public:
 				for (size_t a = 0; a < Chans.size(); a++) {
 					const CChan& Chan = *Chans[a];
 
-					CNick* pNick = Chan.FindNick(Nick.GetNick());
+					const CNick* pNick = Chan.FindNick(Nick.GetNick());
 
 					if (pNick) {
 						if (pNick->HasPerm(CChan::Op) && pUser->ChannelMatches(Chan.GetName())) {
@@ -446,7 +446,7 @@ public:
 			const CChan& Chan = *Chans[a];
 
 			if (Chan.HasPerm(CChan::Op) && User.ChannelMatches(Chan.GetName())) {
-				CNick* pNick = Chan.FindNick(Nick.GetNick());
+				const CNick* pNick = Chan.FindNick(Nick.GetNick());
 
 				if (pNick && !pNick->HasPerm(CChan::Op)) {
 					PutIRC("MODE " + Chan.GetName() + " +o " + Nick.GetNick());

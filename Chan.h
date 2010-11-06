@@ -75,7 +75,8 @@ public:
 
 	// Nicks
 	void ClearNicks();
-	CNick* FindNick(const CString& sNick) const;
+	const CNick* FindNick(const CString& sNick) const;
+	CNick* FindNick(const CString& sNick);
 	int AddNicks(const CString& sNicks);
 	bool AddNick(const CString& sNick);
 	bool RemNick(const CString& sNick);
@@ -127,7 +128,7 @@ public:
 	unsigned int GetTopicDate() const { return m_ulTopicDate; }
 	const CString& GetDefaultModes() const { return m_sDefaultModes; }
 	const vector<CString>& GetBuffer() const { return m_vsBuffer; }
-	const map<CString,CNick*>& GetNicks() const { return m_msNicks; }
+	const map<CString,CNick>& GetNicks() const { return m_msNicks; }
 	unsigned int GetNickCount() const { return m_msNicks.size(); }
 	unsigned int GetBufferCount() const { return m_uBufferCount; }
 	bool KeepBuffer() const { return m_bKeepBuffer; }
@@ -154,7 +155,7 @@ protected:
 	CNick                        m_Nick;
 	unsigned int                 m_uJoinTries;
 	CString                      m_sDefaultModes;
-	map<CString,CNick*>          m_msNicks;       // Todo: make this caseless (irc style)
+	map<CString,CNick>           m_msNicks;       // Todo: make this caseless (irc style)
 	unsigned int                 m_uBufferCount;
 	vector<CString>              m_vsBuffer;
 
