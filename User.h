@@ -68,7 +68,6 @@ public:
 	static bool IsValidUserName(const CString& sUserName);
 	static CString MakeCleanUserName(const CString& sUserName);
 	bool IsLastServer() const;
-	bool ConnectPaused();
 
 	void DelClients();
 	void DelServers();
@@ -226,7 +225,6 @@ public:
 	// !Getters
 private:
 protected:
-	time_t                m_uConnectTime;
 	CString               m_sUserName;
 	CString               m_sCleanUserName;
 	CString               m_sNick;

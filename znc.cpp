@@ -123,9 +123,6 @@ bool CZNC::ConnectUser(CUser *pUser) {
 	if (pIRCSock || !pUser->HasServers())
 		return false;
 
-	if (pUser->ConnectPaused())
-		return false;
-
 	CServer* pServer = pUser->GetNextServer();
 
 	if (!pServer)

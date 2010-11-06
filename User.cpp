@@ -51,7 +51,6 @@ protected:
 CUser::CUser(const CString& sUserName) {
 	m_pIRCSock = NULL;
 	m_fTimezoneOffset = 0;
-	m_uConnectTime = 0;
 	SetUserName(sUserName);
 	m_sNick = m_sCleanUserName;
 	m_sIdent = m_sCleanUserName;
@@ -1246,20 +1245,6 @@ const CString& CUser::GetDCCBindHost() const { return m_sDCCBindHost; }
 const CString& CUser::GetPass() const { return m_sPass; }
 CUser::eHashType CUser::GetPassHashType() const { return m_eHashType; }
 const CString& CUser::GetPassSalt() const { return m_sPassSalt; }
-
-bool CUser::ConnectPaused() {
-	if (!m_uConnectTime) {
-		m_uConnectTime = time(NULL);
-		return false;
-	}
-
-	if (time(NULL) - m_uConnectTime >= 5) {
-		m_uConnectTime = time(NULL);
-		return false;
-	}
-
-	return true;
-}
 
 bool CUser::UseClientIP() const { return m_bUseClientIP; }
 bool CUser::DenyLoadMod() const { return m_bDenyLoadMod; }
