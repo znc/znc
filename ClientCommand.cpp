@@ -106,7 +106,26 @@ void CClient::UserCommand(CString& sLine) {
 		PutStatus("Detaching you from [" + sChan + "]");
 		pChan->DetachUser();
 	} else if (sCommand.Equals("VERSION")) {
+		const char *features = "IPv6: "
+#ifdef HAVE_IPV6
+			"yes"
+#else
+			"no"
+#endif
+			", SSL: "
+#ifdef HAVE_LIBSSL
+			"yes"
+#else
+			"no"
+#endif
+			", c-ares: "
+#ifdef HAVE_C_ARES
+			"yes";
+#else
+			"no";
+#endif
 		PutStatus(CZNC::GetTag());
+		PutStatus(features);
 	} else if (sCommand.Equals("MOTD") || sCommand.Equals("ShowMOTD")) {
 		if (!SendMotd()) {
 			PutStatus("There is no MOTD set.");
