@@ -109,8 +109,8 @@ public:
 
 	CString GetLocalIP();
 	CString GetLocalDCCIP();
-	bool IsIRCConnected() const { return GetIRCSock() != NULL; }
-	void IRCConnected(CIRCSock* pIRCSock);
+	bool IsIRCConnected() const;
+	void SetIRCSocket(CIRCSock* pIRCSock);
 	void IRCDisconnected();
 	void CheckIRCConnect();
 

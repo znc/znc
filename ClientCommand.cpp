@@ -245,13 +245,11 @@ void CClient::UserCommand(CString& sLine) {
 			}
 			m_pUser->SetNextServer(pServer);
 
-			if (!GetIRCSock()) {
-				// If we are already connecting to some server,
-				// we have to abort that attempt
-				Csock *pIRCSock = CZNC::Get().GetManager()
-					.FindSockByName("IRC::" + m_pUser->GetUserName());
-				if (pIRCSock)
-					pIRCSock->Close();
+			// If we are already connecting to some server,
+			// we have to abort that attempt
+			Csock *pIRCSock = GetIRCSock();
+			if (pIRCSock && !pIRCSock->IsConnected()) {
+				pIRCSock->Close();
 			}
 		}
 
@@ -278,13 +276,6 @@ void CClient::UserCommand(CString& sLine) {
 		if (GetIRCSock()) {
 			CString sQuitMsg = sLine.Token(1, true);
 			GetIRCSock()->Quit(sQuitMsg);
-		} else {
-			Csock* pIRCSock;
-			CString sSockName = "IRC::" + m_pUser->GetUserName();
-			// This is *slow*, we try to avoid doing this
-			pIRCSock = CZNC::Get().GetManager().FindSockByName(sSockName);
-			if (pIRCSock)
-				pIRCSock->Close();
 		}
 
 		m_pUser->SetIRCConnectEnabled(false);

@@ -131,11 +131,15 @@ const CString& CNick::GetNick() const { return m_sNick; }
 const CString& CNick::GetIdent() const { return m_sIdent; }
 const CString& CNick::GetHost() const { return m_sHost; }
 CString CNick::GetNickMask() const {
-	if (m_sNick.find('.') != CString::npos) {
-		return m_sNick;
+	CString sRet = m_sNick;
+
+	if (!m_sHost.empty()) {
+		if (!m_sIdent.empty())
+			sRet += "!" + m_sIdent;
+		sRet += "@" + m_sHost;
 	}
 
-	return (m_sNick + "!" + m_sIdent + "@" + m_sHost);
+	return sRet;
 }
 
 CString CNick::GetHostMask() const {

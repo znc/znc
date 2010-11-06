@@ -111,9 +111,7 @@ bool CZNC::OnBoot() {
 
 bool CZNC::ConnectUser(CUser *pUser) {
 	CString sSockName = "IRC::" + pUser->GetUserName();
-	// Don't use pUser->GetIRCSock(), as that only returns something if the
-	// CIRCSock is already connected, not when it's still connecting!
-	CIRCSock* pIRCSock = (CIRCSock*) m_Manager.FindSockByName(sSockName);
+	CIRCSock* pIRCSock = pUser->GetIRCSock();
 
 	if (m_pISpoofLockFile != NULL) {
 		return false;
@@ -192,9 +190,7 @@ bool CZNC::HandleUserDeletion()
 		}
 		m_msUsers.erase(pUser->GetUserName());
 
-		// Don't use pUser->GetIRCSock(), as that only returns something if the
-		// CIRCSock is already connected, not when it's still connecting!
-		CIRCSock* pIRCSock = (CIRCSock*) m_Manager.FindSockByName("IRC::" + pUser->GetUserName());
+		CIRCSock* pIRCSock = pUser->GetIRCSock();
 
 		if (pIRCSock) {
 			m_Manager.DelSockByAddr(pIRCSock);
@@ -399,10 +395,6 @@ void CZNC::DeleteUsers() {
 
 	m_msUsers.clear();
 	DisableConnectUser();
-}
-
-Csock* CZNC::FindSockByName(const CString& sSockName) {
-	return m_Manager.FindSockByName(sSockName);
 }
 
 bool CZNC::IsHostAllowed(const CString& sHostMask) const {

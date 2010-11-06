@@ -38,6 +38,8 @@ CIRCSock::CIRCSock(CUser* pUser) : CZNCSock() {
 	m_mueChanModes['i'] = NoArg;
 	m_mueChanModes['n'] = NoArg;
 
+	pUser->SetIRCSocket(this);
+
 	// RFC says a line can have 512 chars max, but we don't care ;)
 	SetMaxBufferThreshold(1024);
 }
@@ -65,6 +67,10 @@ CIRCSock::~CIRCSock() {
 }
 
 void CIRCSock::Quit(const CString& sQuitMsg) {
+	if (!m_bAuthed) {
+		Close(CLT_NOW);
+		return;
+	}
 	CString sMsg = (!sQuitMsg.empty()) ? sQuitMsg : m_pUser->GetQuitMsg();
 	PutIRC("QUIT :" + sMsg);
 	Close(CLT_AFTERWRITE);
@@ -920,7 +926,6 @@ void CIRCSock::SetNick(const CString& sNick) {
 
 void CIRCSock::Connected() {
 	DEBUG(GetSockName() << " == Connected()");
-	m_pUser->IRCConnected(this);
 
 	CString sPass = m_sPass;
 	CString sNick = m_pUser->GetNick();

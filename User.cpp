@@ -157,8 +157,21 @@ void CUser::DelServers()
 	m_vServers.clear();
 }
 
-void CUser::IRCConnected(CIRCSock* pIRCSock) {
+void CUser::SetIRCSocket(CIRCSock* pIRCSock) {
 	m_pIRCSock = pIRCSock;
+}
+
+bool CUser::IsIRCConnected() const
+{
+	const CIRCSock* pSock = GetIRCSock();
+
+	if (!pSock)
+		return false;
+
+	if (!pSock->IsConnected())
+		return false;
+
+	return true;
 }
 
 void CUser::IRCDisconnected() {
