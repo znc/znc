@@ -28,7 +28,6 @@
 * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 *
 *
-* $Revision: 1.139 $
 */
 
 #include "Csocket.h"
@@ -588,7 +587,7 @@ u_int CCron::GetCyclesLeft() const { return( ( m_iMaxCycles > m_iCycles ? ( m_iM
 bool CCron::isValid() { return( m_bActive ); }
 const CS_STRING & CCron::GetName() const { return( m_sName ); }
 void CCron::SetName( const CS_STRING & sName ) { m_sName = sName; }
-void CCron::RunJob() { CS_DEBUG( "This should be overriden" ); }
+void CCron::RunJob() { CS_DEBUG( "This should be overridden" ); }
 
 Csock::Csock( int itimeout )
 {
@@ -1666,7 +1665,7 @@ CS_STRING Csock::ConvertAddress( void *addr, bool bIPv6 )
 	return( sRet );
 }
 
-bool Csock::IsConnected() { return( m_bIsConnected ); }
+bool Csock::IsConnected() const { return( m_bIsConnected ); }
 void Csock::SetIsConnected( bool b ) { m_bIsConnected = b; }
 
 cs_sock_t & Csock::GetRSock() { return( m_iReadSock ); }

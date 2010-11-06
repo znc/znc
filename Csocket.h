@@ -28,7 +28,6 @@
 * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 *
 *
-* $Revision: 1.238 $
 */
 
 // note to compile with win32 need to link to winsock2, using gcc its -lws2_32
@@ -605,7 +604,7 @@ public:
 	virtual CS_STRING ConvertAddress( void *addr, bool bIPv6 = false );
 
 	//! Tells you if the socket is connected
-	virtual bool IsConnected();
+	virtual bool IsConnected() const;
 	//! Sets the sock, telling it its connected (internal use only)
 	virtual void SetIsConnected( bool b );
 
@@ -1877,22 +1876,22 @@ protected:
 		eCheckWrite = 2
 	};
 
-	void FDSetCheck( int iFd, map< int, short > & miiReadyFds, ECheckType eType )
+	void FDSetCheck( int iFd, std::map< int, short > & miiReadyFds, ECheckType eType )
 	{
-		map< int, short >::iterator it = miiReadyFds.find( iFd );
+		std::map< int, short >::iterator it = miiReadyFds.find( iFd );
 		if( it != miiReadyFds.end() )
 			it->second |= eType;
 		else
 			miiReadyFds[iFd] = eType;
 	}
-	bool FDHasCheck( int iFd, map< int, short > & miiReadyFds, ECheckType eType )
+	bool FDHasCheck( int iFd, std::map< int, short > & miiReadyFds, ECheckType eType )
 	{
-		map< int, short >::iterator it = miiReadyFds.find( iFd );
+		std::map< int, short >::iterator it = miiReadyFds.find( iFd );
 		if( it != miiReadyFds.end() )
 			return( (it->second & eType) );
 		return( false );
 	}
-	virtual int Select( map< int, short > & miiReadyFds, struct timeval *tvtimeout)
+	virtual int Select( std::map< int, short > & miiReadyFds, struct timeval *tvtimeout)
 	{
 #ifdef CSOCK_USE_POLL
 		if( miiReadyFds.empty() )
@@ -1900,7 +1899,7 @@ protected:
 
 		struct pollfd * pFDs = (struct pollfd *)malloc( sizeof( struct pollfd ) * miiReadyFds.size() );
 		size_t uCurrPoll = 0;
-		for( map< int, short >::iterator it = miiReadyFds.begin(); it != miiReadyFds.end(); ++it, ++uCurrPoll )
+		for( std::map< int, short >::iterator it = miiReadyFds.begin(); it != miiReadyFds.end(); ++it, ++uCurrPoll )
 		{
 			short iEvents = 0;
 			if( it->second & eCheckRead )
@@ -1923,7 +1922,7 @@ protected:
 				iEvents |= eCheckRead;
 			if( (pFDs[uCurrPoll].revents & POLLOUT ) )
 				iEvents |= eCheckWrite;
-			map< int, short >::iterator it = miiReadyFds.find( pFDs[uCurrPoll].fd );
+			std::map< int, short >::iterator it = miiReadyFds.find( pFDs[uCurrPoll].fd );
 			if( it != miiReadyFds.end() )
 				it->second |= iEvents;
 			else
@@ -1936,10 +1935,9 @@ protected:
 		TFD_ZERO( &wfds );
 		bool bHasWrite = false;
 		int iHighestFD = 0;
-		for( map< int, short >::iterator it = miiReadyFds.begin(); it != miiReadyFds.end(); ++it )
+		for( std::map< int, short >::iterator it = miiReadyFds.begin(); it != miiReadyFds.end(); ++it )
 		{
-			if (iHighestFD < it->first)
-				iHighestFD = it->first;
+			iHighestFD = std::max( it->first, iHighestFD );
 			if( it->second & eCheckRead )
 			{
 				TFD_SET( it->first, &rfds );
@@ -1956,7 +1954,7 @@ protected:
 			miiReadyFds.clear();
 		else
 		{
-			for( map< int, short >::iterator it = miiReadyFds.begin(); it != miiReadyFds.end(); ++it )
+			for( std::map< int, short >::iterator it = miiReadyFds.begin(); it != miiReadyFds.end(); ++it )
 			{
 				if( (it->second & eCheckRead) && !TFD_ISSET( it->first, &rfds ) )
 					it->second &= ~eCheckRead;
@@ -1980,7 +1978,7 @@ private:
 		mpeSocks.clear();
 		struct timeval tv;
 
-		map< int, short > miiReadyFds;
+		std::map< int, short > miiReadyFds;
 		tv.tv_sec = m_iSelectWait / 1000000;
 		tv.tv_usec = m_iSelectWait % 1000000;
 		u_int iQuickReset = 100;
