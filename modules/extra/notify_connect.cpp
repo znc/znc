@@ -27,4 +27,4 @@ private:
 	}
 };
 
-GLOBALMODULEDEFS(CNotifyConnectMod, "Notifies all admin users when a client connects or disconnects.");
+GLOBALMODULEDEFS(CNotifyConnectMod, "Notifies all admin users when a client connects or disconnects.")

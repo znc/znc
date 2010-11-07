@@ -494,4 +494,4 @@ void CModTclStartTimer::RunJob() {
 		p->Start();
 }
 
-MODULEDEFS(CModTcl, "Loads Tcl scripts as ZNC modules");
+MODULEDEFS(CModTcl, "Loads Tcl scripts as ZNC modules")
