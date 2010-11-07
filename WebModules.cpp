@@ -520,6 +520,7 @@ void CWebSock::OnPageRequest(const CString& sURI) {
 		// the connection will be closed
 		Close(CLT_AFTERWRITE);
 		break;
+	case PAGE_NOTFOUND:
 	default:
 		PrintNotFound();
 		break;
