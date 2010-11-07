@@ -942,13 +942,16 @@ bool CZNC::WriteNewConfig(const CString& sConfigFile) {
 		cout << endl << "----------------------------------------------------------------------------" << endl << endl;
 	}
 
+	const CString sProtocol(sSSL.empty() ? "http" : "https");
 	CUtils::PrintMessage("");
 	CUtils::PrintMessage("To connect to this znc you need to connect to it as your irc server", true);
 	CUtils::PrintMessage("using the port that you supplied.  You have to supply your login info", true);
 	CUtils::PrintMessage("as the irc server password like so... user:pass.", true);
 	CUtils::PrintMessage("");
 	CUtils::PrintMessage("Try something like this in your IRC client...", true);
-	CUtils::PrintMessage("/server <znc_server_ip> " + CString(uListenPort) + " " + sUser + ":<pass>", true);
+	CUtils::PrintMessage("/server <znc_server_ip> " + sSSL + CString(uListenPort) + " " + sUser + ":<pass>", true);
+	CUtils::PrintMessage("And this in your browser...", true);
+	CUtils::PrintMessage(sProtocol + "://<znc_server_ip>:" + CString(uListenPort) + "/", true);
 	CUtils::PrintMessage("");
 
 	m_LockFile.UnLock();
