@@ -63,7 +63,7 @@ bool CChan::WriteConfig(CFile& File) {
 	if (!GetDefaultModes().empty())
 		m_pUser->PrintLine(File, "\tModes", GetDefaultModes());
 
-	MODULECALL(OnWriteChanConfig(File, *this), m_pUser, NULL,);
+	MODULECALL(OnWriteChanConfig(File, *this), m_pUser, NULL, NOTHING);
 
 	File.Write("\t</Chan>\n");
 	return true;
@@ -228,7 +228,7 @@ void CChan::ModeChange(const CString& sModes, const CString& sOpNick) {
 	CNick* pOpNick = FindNick(sOpNick);
 
 	if (pOpNick) {
-		MODULECALL(OnRawMode(*pOpNick, *this, sModeArg, sArgs), m_pUser, NULL, );
+		MODULECALL(OnRawMode(*pOpNick, *this, sModeArg, sArgs), m_pUser, NULL, NOTHING);
 	}
 
 	for (unsigned int a = 0; a < sModeArg.size(); a++) {
@@ -261,19 +261,19 @@ void CChan::ModeChange(const CString& sModes, const CString& sOpNick) {
 					bool bNoChange = (pNick->HasPerm(uPerm) == bAdd);
 
 					if (uMode && pOpNick) {
-						MODULECALL(OnChanPermission(*pOpNick, *pNick, *this, uMode, bAdd, bNoChange), m_pUser, NULL, );
+						MODULECALL(OnChanPermission(*pOpNick, *pNick, *this, uMode, bAdd, bNoChange), m_pUser, NULL, NOTHING);
 
 						if (uMode == CChan::M_Op) {
 							if (bAdd) {
-								MODULECALL(OnOp(*pOpNick, *pNick, *this, bNoChange), m_pUser, NULL, );
+								MODULECALL(OnOp(*pOpNick, *pNick, *this, bNoChange), m_pUser, NULL, NOTHING);
 							} else {
-								MODULECALL(OnDeop(*pOpNick, *pNick, *this, bNoChange), m_pUser, NULL, );
+								MODULECALL(OnDeop(*pOpNick, *pNick, *this, bNoChange), m_pUser, NULL, NOTHING);
 							}
 						} else if (uMode == CChan::M_Voice) {
 							if (bAdd) {
-								MODULECALL(OnVoice(*pOpNick, *pNick, *this, bNoChange), m_pUser, NULL, );
+								MODULECALL(OnVoice(*pOpNick, *pNick, *this, bNoChange), m_pUser, NULL, NOTHING);
 							} else {
-								MODULECALL(OnDevoice(*pOpNick, *pNick, *this, bNoChange), m_pUser, NULL, );
+								MODULECALL(OnDevoice(*pOpNick, *pNick, *this, bNoChange), m_pUser, NULL, NOTHING);
 							}
 						}
 					}
@@ -309,7 +309,7 @@ void CChan::ModeChange(const CString& sModes, const CString& sOpNick) {
 			} else {
 				bNoChange = !HasMode(uMode);
 			}
-			MODULECALL(OnMode(*pOpNick, *this, uMode, sArg, bAdd, bNoChange), m_pUser, NULL, );
+			MODULECALL(OnMode(*pOpNick, *this, uMode, sArg, bAdd, bNoChange), m_pUser, NULL, NOTHING);
 
 			if (!bList) {
 				(bAdd) ? AddMode(uMode, sArg) : RemMode(uMode);

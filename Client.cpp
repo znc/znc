@@ -640,7 +640,7 @@ void CAuthBase::RefuseLogin(const CString& sReason) {
 				"to login as you, but was rejected [" + sReason + "].");
 	}
 
-	GLOBALMODULECALL(OnFailedLogin(GetUsername(), GetRemoteIP()), NULL, NULL, );
+	GLOBALMODULECALL(OnFailedLogin(GetUsername(), GetRemoteIP()), NULL, NULL, NOTHING);
 	RefusedLogin(sReason);
 	Invalidate();
 }
@@ -671,7 +671,7 @@ void CClient::AcceptLogin(CUser& User) {
 
 	SendMotd();
 
-	MODULECALL(OnClientLogin(), m_pUser, this, );
+	MODULECALL(OnClientLogin(), m_pUser, this, NOTHING);
 }
 
 void CClient::Timeout() {
@@ -692,7 +692,7 @@ void CClient::Disconnected() {
 		m_pUser->UserDisconnected(this);
 	}
 
-	MODULECALL(OnClientDisconnect(), m_pUser, this, );
+	MODULECALL(OnClientDisconnect(), m_pUser, this, NOTHING);
 }
 
 void CClient::ReachedMaxBuffer() {
@@ -785,7 +785,7 @@ void CClient::HandleCap(const CString& sLine)
 
 	if (sSubCmd.Equals("LS")) {
 		SCString ssOfferCaps;
-		GLOBALMODULECALL(OnClientCapLs(ssOfferCaps), m_pUser, this, );
+		GLOBALMODULECALL(OnClientCapLs(ssOfferCaps), m_pUser, this, NOTHING);
 		CString sRes;
 		for (SCString::iterator i = ssOfferCaps.begin(); i != ssOfferCaps.end(); ++i) {
 			sRes += *i + " ";
@@ -827,7 +827,7 @@ void CClient::HandleCap(const CString& sLine)
 			} else if ("userhost-in-names" == *it) {
 				m_bUHNames = bVal;
 			}
-			GLOBALMODULECALL(OnClientCapRequest(*it, bVal), m_pUser, this, );
+			GLOBALMODULECALL(OnClientCapRequest(*it, bVal), m_pUser, this, NOTHING);
 
 			if (bVal) {
 				m_ssAcceptedCaps.insert(*it);
@@ -849,7 +849,7 @@ void CClient::HandleCap(const CString& sLine)
 			bool bRemoving = false;
 			GLOBALMODULECALL(IsClientCapSupported(*i, false), m_pUser, this, bRemoving = true);
 			if (bRemoving) {
-				GLOBALMODULECALL(OnClientCapRequest(*i, false), m_pUser, this, );
+				GLOBALMODULECALL(OnClientCapRequest(*i, false), m_pUser, this, NOTHING);
 				ssRemoved.insert(*i);
 			}
 		}

@@ -989,7 +989,7 @@ bool CZNC::ParseConfig(const CString& sConfig)
 
 bool CZNC::RehashConfig(CString& sError)
 {
-	ALLMODULECALL(OnPreRehash(), );
+	ALLMODULECALL(OnPreRehash(), NOTHING);
 
 	// This clears m_msDelUsers
 	HandleUserDeletion();
@@ -999,7 +999,7 @@ bool CZNC::RehashConfig(CString& sError)
 	m_msUsers.clear();
 
 	if (DoRehash(sError)) {
-		ALLMODULECALL(OnPostRehash(), );
+		ALLMODULECALL(OnPostRehash(), NOTHING);
 
 		return true;
 	}

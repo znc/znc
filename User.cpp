@@ -726,7 +726,7 @@ bool CUser::WriteConfig(CFile& File) {
 		}
 	}
 
-	MODULECALL(OnWriteUserConfig(File), this, NULL,);
+	MODULECALL(OnWriteUserConfig(File), this, NULL, NOTHING);
 
 	File.Write("</User>\n");
 

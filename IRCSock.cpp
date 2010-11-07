@@ -143,7 +143,7 @@ void CIRCSock::ReadLine(const CString& sData) {
 
 				SetNick(sNick);
 
-				MODULECALL(OnIRCConnected(), m_pUser, NULL, );
+				MODULECALL(OnIRCConnected(), m_pUser, NULL, NOTHING);
 
 				m_pUser->ClearRawBuffer();
 				m_pUser->AddRawBuffer(":" + sServer + " " + sCmd + " ", " " + sRest);
@@ -381,7 +381,7 @@ void CIRCSock::ReadLine(const CString& sData) {
 				SetNick(sNewNick);
 			}
 
-			MODULECALL(OnNick(Nick, sNewNick, vFoundChans), m_pUser, NULL, );
+			MODULECALL(OnNick(Nick, sNewNick, vFoundChans), m_pUser, NULL, NOTHING);
 
 			if (!bIsVisible) {
 				return;
@@ -419,7 +419,7 @@ void CIRCSock::ReadLine(const CString& sData) {
 				}
 			}
 
-			MODULECALL(OnQuit(Nick, sMessage, vFoundChans), m_pUser, NULL, );
+			MODULECALL(OnQuit(Nick, sMessage, vFoundChans), m_pUser, NULL, NOTHING);
 
 			if (!bIsVisible) {
 				return;
@@ -449,7 +449,7 @@ void CIRCSock::ReadLine(const CString& sData) {
 
 			if (pChan) {
 				pChan->AddNick(Nick.GetNickMask());
-				MODULECALL(OnJoin(Nick.GetNickMask(), *pChan), m_pUser, NULL, );
+				MODULECALL(OnJoin(Nick.GetNickMask(), *pChan), m_pUser, NULL, NOTHING);
 
 				if (pChan->IsDetached()) {
 					return;
@@ -465,7 +465,7 @@ void CIRCSock::ReadLine(const CString& sData) {
 			bool bDetached = false;
 			if (pChan) {
 				pChan->RemNick(Nick.GetNick());
-				MODULECALL(OnPart(Nick.GetNickMask(), *pChan), m_pUser, NULL, );
+				MODULECALL(OnPart(Nick.GetNickMask(), *pChan), m_pUser, NULL, NOTHING);
 
 				if (pChan->IsDetached())
 					bDetached = true;
@@ -530,7 +530,7 @@ void CIRCSock::ReadLine(const CString& sData) {
 			CChan* pChan = m_pUser->FindChan(sChan);
 
 			if (pChan) {
-				MODULECALL(OnKick(Nick, sKickedNick, *pChan, sMsg), m_pUser, NULL, );
+				MODULECALL(OnKick(Nick, sKickedNick, *pChan, sMsg), m_pUser, NULL, NOTHING);
 				// do not remove the nick till after the OnKick call, so modules
 				// can do Chan.FindNick or something to get more info.
 				pChan->RemNick(sKickedNick);
@@ -691,7 +691,7 @@ void CIRCSock::ReadLine(const CString& sData) {
 					}
 				} else if (sSubCmd == "ACK") {
 					sArgs.Trim();
-					MODULECALL(OnServerCapResult(sArgs, true), m_pUser, NULL, );
+					MODULECALL(OnServerCapResult(sArgs, true), m_pUser, NULL, NOTHING);
 					if ("multi-prefix" == sArgs) {
 						m_bNamesx = true;
 					} else if ("userhost-in-names" == sArgs) {
@@ -702,7 +702,7 @@ void CIRCSock::ReadLine(const CString& sData) {
 					// This should work because there's no [known]
 					// capability with length of name more than 100 characters.
 					sArgs.Trim();
-					MODULECALL(OnServerCapResult(sArgs, false), m_pUser, NULL, );
+					MODULECALL(OnServerCapResult(sArgs, false), m_pUser, NULL, NOTHING);
 				}
 				
 				SendNextCap();
@@ -948,7 +948,7 @@ void CIRCSock::Connected() {
 }
 
 void CIRCSock::Disconnected() {
-	MODULECALL(OnIRCDisconnected(), m_pUser, NULL, );
+	MODULECALL(OnIRCDisconnected(), m_pUser, NULL, NOTHING);
 
 	DEBUG(GetSockName() << " == Disconnected()");
 	if (!m_pUser->IsBeingDeleted() && m_pUser->GetIRCConnectEnabled() &&

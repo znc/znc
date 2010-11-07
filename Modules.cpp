@@ -966,7 +966,7 @@ void CModules::GetAvailableMods(set<CModInfo>& ssMods, bool bGlobal) {
 		}
 	}
 
-	GLOBALMODULECALL(OnGetAvailableMods(ssMods, bGlobal), NULL, NULL, );
+	GLOBALMODULECALL(OnGetAvailableMods(ssMods, bGlobal), NULL, NULL, NOTHING);
 }
 
 bool CModules::FindModPath(const CString& sModule, CString& sModPath,

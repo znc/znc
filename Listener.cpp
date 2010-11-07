@@ -49,11 +49,11 @@ bool CRealListener::ConnectionFrom(const CString& sHost, unsigned short uPort) {
 Csock* CRealListener::GetSockObj(const CString& sHost, unsigned short uPort) {
 	CIncomingConnection *pClient = new CIncomingConnection(sHost, uPort, m_pParent->GetAcceptType());
 	if (CZNC::Get().AllowConnectionFrom(sHost)) {
-		GLOBALMODULECALL(OnClientConnect(pClient, sHost, uPort), NULL, NULL, );
+		GLOBALMODULECALL(OnClientConnect(pClient, sHost, uPort), NULL, NULL, NOTHING);
 	} else {
 		pClient->Write(":irc.znc.in 464 unknown-nick :Too many anonymous connections from your IP\r\n");
 		pClient->Close(Csock::CLT_AFTERWRITE);
-		GLOBALMODULECALL(OnFailedLogin("", sHost), NULL, NULL, );
+		GLOBALMODULECALL(OnFailedLogin("", sHost), NULL, NULL, NOTHING);
 	}
 	return pClient;
 }

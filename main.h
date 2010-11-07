@@ -28,6 +28,8 @@
 #define _DATADIR_ "/usr/share/znc"
 #endif
 
+#define NOTHING (void)0
+
 #define ALLMODULECALL(macFUNC, macEXITER)                                     \
 	do {                                                                  \
 		CGlobalModules& GMods = CZNC::Get().GetModules();             \
