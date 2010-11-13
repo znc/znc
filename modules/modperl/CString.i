@@ -17,31 +17,52 @@ class CString;
 SWIGINTERN int
 SWIG_AsPtr_std_string SWIG_PERL_DECL_ARGS_2(SV * obj, CString **val)
 {
-  char* buf = 0 ; size_t size = 0; int alloc = SWIG_OLDOBJ;
-  if (SWIG_IsOK((SWIG_AsCharPtrAndSize(obj, &buf, &size, &alloc)))) {
-	if (buf) {
-	  if (val) *val = new CString(buf, size - 1);
-	  if (alloc == SWIG_NEWOBJ) free((char*)buf);
-	  return SWIG_NEWOBJ;
-	} else {
-	  if (val) *val = 0;
-	  return SWIG_OLDOBJ;
-	}
-  } else {
-	static int init = 0;
-	static swig_type_info* descriptor = 0;
-	if (!init) {
-	  descriptor = SWIG_TypeQuery("CString" " *");
-	  init = 1;
-	}
-	if (descriptor) {
-	  CString *vptr;
-	  int res = SWIG_ConvertPtr(obj, (void**)&vptr, descriptor, 0);
-	  if (SWIG_IsOK(res) && val) *val = vptr;
-	  return res;
-	}
-  }
-  return SWIG_ERROR;
+    char* buf = 0 ; size_t size = 0;
+    int found = 0;
+    if (SvMAGICAL(obj)) {
+        SV *tmp = sv_newmortal();
+        SvSetSV(tmp, obj);
+        obj = tmp;
+    }
+    static int init = 0;
+    static swig_type_info* descriptor = 0;
+    if (!init) {
+        descriptor = SWIG_TypeQuery("CString" " *");
+        init = 1;
+    }
+    if (descriptor) {
+        CString *vptr;
+        int res = SWIG_ConvertPtr(obj, (void**)&vptr, descriptor, 0);
+        if (SWIG_IsOK(res)) {
+            if (val) *val = vptr;
+            return res;
+        }
+    }
+    swig_type_info* pchar_descriptor = SWIG_pchar_descriptor();
+    if (pchar_descriptor) {
+        char* vptr = 0;
+        if (SWIG_ConvertPtr(obj, (void**)&vptr, pchar_descriptor, 0) == SWIG_OK) {
+            buf = vptr;
+            size = vptr ? (strlen(vptr) + 1) : 0;
+            found = 1;
+        }
+    }
+    if (!found) {
+        STRLEN len = 0;
+        buf = SvPV(obj, len);
+        size = len + 1;
+        found = 1;
+    }
+    if (found) {
+        if (buf) {
+            if (val) *val = new CString(buf, size - 1);
+            return SWIG_NEWOBJ;
+        } else {
+            if (val) *val = 0;
+            return SWIG_OLDOBJ;
+        }
+    }
+    return SWIG_ERROR;
 }
 }
 /*@SWIG@*/
