@@ -770,10 +770,42 @@ void CUser::JoinChans() {
 		}
 	}
 
-	for (set<CChan*>::iterator it = sChans.begin();
-			it != sChans.end(); ++it) {
-		PutIRC("JOIN " + (*it)->GetName() + " " + (*it)->GetKey());
+	while (!sChans.empty())
+		JoinChans(sChans);
+}
+
+void CUser::JoinChans(set<CChan*>& sChans) {
+	CString sKeys, sJoin;
+	bool bHaveKey = false;
+	size_t uiJoinLength = strlen("JOIN ");
+
+	while (!sChans.empty()) {
+		set<CChan*>::iterator it = sChans.begin();
+		const CString& sName = (*it)->GetName();
+		const CString& sKey = (*it)->GetKey();
+		size_t len = sName.length() + sKey.length();
+		len += 2; // two comma
+
+		if (!sKeys.empty() && uiJoinLength + len >= 512)
+			break;
+
+		if (!sJoin.empty()) {
+			sJoin += ",";
+			sKeys += ",";
+		}
+		uiJoinLength += len;
+		sJoin += sName;
+		if (!sKey.empty()) {
+			sKeys += sKey;
+			bHaveKey = true;
+		}
+		sChans.erase(it);
 	}
+
+	if (bHaveKey)
+		PutIRC("JOIN " + sJoin + " " + sKeys);
+	else
+		PutIRC("JOIN " + sJoin);
 }
 
 bool CUser::JoinChan(CChan* pChan) {

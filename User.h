@@ -224,6 +224,7 @@ public:
 	// !Getters
 private:
 	bool JoinChan(CChan* pChan);
+	void JoinChans(set<CChan*>& sChans);
 
 protected:
 	CString               m_sUserName;
