@@ -53,7 +53,6 @@ public:
 	bool AddChan(const CString& sName, bool bInConfig);
 	bool DelChan(const CString& sName);
 	void JoinChans();
-	bool JoinChan(CChan* pChan);
 	CServer* FindServer(const CString& sName) const;
 	bool DelServer(const CString& sName, unsigned short uPort, const CString& sPass);
 	bool AddServer(const CString& sName);
@@ -224,6 +223,8 @@ public:
 	CString GetSkinName() const;
 	// !Getters
 private:
+	bool JoinChan(CChan* pChan);
+
 protected:
 	CString               m_sUserName;
 	CString               m_sCleanUserName;

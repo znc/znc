@@ -754,6 +754,7 @@ void CUser::JoinChans() {
 	// still be able to join the rest of your channels.
 	unsigned int start = rand() % m_vChans.size();
 	unsigned int uJoins = m_uMaxJoins;
+	set<CChan*> sChans;
 	for (unsigned int a = 0; a < m_vChans.size(); a++) {
 		unsigned int idx = (start + a) % m_vChans.size();
 		CChan* pChan = m_vChans[idx];
@@ -761,10 +762,17 @@ void CUser::JoinChans() {
 			if (!JoinChan(pChan))
 				continue;
 
+			sChans.insert(pChan);
+
 			// Limit the number of joins
 			if (uJoins != 0 && --uJoins == 0)
-				return;
+				break;
 		}
+	}
+
+	for (set<CChan*>::iterator it = sChans.begin();
+			it != sChans.end(); ++it) {
+		PutIRC("JOIN " + (*it)->GetName() + " " + (*it)->GetKey());
 	}
 }
 
@@ -775,8 +783,6 @@ bool CUser::JoinChan(CChan* pChan) {
 	} else {
 		pChan->IncJoinTries();
 		MODULECALL(OnTimerAutoJoin(*pChan), this, NULL, return false);
-
-		PutIRC("JOIN " + pChan->GetName() + " " + pChan->GetKey());
 		return true;
 	}
 	return false;
