@@ -18,6 +18,7 @@ package ZNC::Core;
 my $uuidtype;
 my $uuidgen;
 our %pmods;
+my %modrefcount;
 
 sub Init {
 	if (eval { require Data::UUID }) {
@@ -53,6 +54,8 @@ sub CreateUUID {
 
 sub unloadByIDUser {
 	my ($id, $user) = @_;
+	my $modpath = $pmods{$id}{_cmod}->GetModPath;
+	my $modname = $pmods{$id}{_cmod}->GetModName;
 	$pmods{$id}->OnShutdown;
 	$user->GetModules->removeModule($pmods{$id}{_cmod});
 	delete $pmods{$id}{_cmod};# Just for the case
@@ -60,6 +63,11 @@ sub unloadByIDUser {
 	delete $pmods{$id}{_ptimers};
 	delete $pmods{$id}{_sockets};
 	delete $pmods{$id};
+	unless (--$modrefcount{$modname}) {
+		say "Unloading $modpath from perl";
+		ZNC::_CleanupStash($modname);
+		delete $INC{$modpath};
+	}
 }
 
 sub UnloadModule {
@@ -89,7 +97,16 @@ sub LoadModule {
 	ZNC::CModules::FindModPath("$modname.pm", $modpath, $datapath) or return ($ZNC::Perl_NotFound, "Unable to find module [$modname]");
 	$modpath = $modpath->GetPerlStr;
 	return ($ZNC::Perl_LoadError, "Incorrect perl module.") unless IsModule $modpath, $modname;
-	require $modpath;
+	eval {
+		require $modpath;
+	};
+	if ($@) {
+		# modrefcount was 0 before this, otherwise it couldn't die.
+		# so can safely remove module from %INC
+		delete $INC{$modpath};
+		die $@;
+	}
+	$modrefcount{$modname}++;
 	my $id = CreateUUID;
 	$datapath = $datapath->GetPerlStr;
 	$datapath =~ s/\.pm$//;

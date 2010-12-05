@@ -189,6 +189,12 @@ typedef vector<pair<CString, CString> > VPair;
 	}
 %}
 
+%inline %{
+	void _CleanupStash(const CString& sModname) {
+		hv_clear(gv_stashpv(sModname.c_str(), 0));
+	}
+%}
+
 %perlcode %{
 	package ZNC;
 	*CONTINUE = *ZNC::CModule::CONTINUE;
