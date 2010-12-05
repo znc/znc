@@ -6,6 +6,7 @@
 # by the Free Software Foundation.
 #
 
+use 5.010;
 use strict;
 use warnings;
 use ZNC;

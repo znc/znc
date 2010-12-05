@@ -3718,7 +3718,7 @@ $as_echo "no" >&6; }
 fi
 
 
-	if test -n "$PERL_BINARY"; then
+	if test -n "$PERL_BINARY" && eval "$PERL_BINARY -e'use 5.010'"; then
 		my_saved_LDFLAGS="$LDFLAGS"
 		appendLD `$PERL_BINARY -MExtUtils::Embed -e ccopts -e ldopts`
 		{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for perl_alloc in -lperl" >&5

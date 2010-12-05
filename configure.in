@@ -274,7 +274,7 @@ if test "x$PERL" != "xno"; then
 	old_PERL="$PERL"
 	old_SWIG="$SWIG"
 	AC_PATH_PROG([PERL_BINARY], [perl], [])
-	if test -n "$PERL_BINARY"; then
+	if test -n "$PERL_BINARY" && eval "$PERL_BINARY -e'use 5.010'"; then
 		my_saved_LDFLAGS="$LDFLAGS"
 		appendLD `$PERL_BINARY -MExtUtils::Embed -e ccopts -e ldopts`
 		AC_CHECK_LIB(perl, perl_alloc,
