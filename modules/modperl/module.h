@@ -158,3 +158,19 @@ inline bool HaveCAres() {
 inline int _GetSOMAXCONN() {
 	return SOMAXCONN;
 }
+
+inline int GetVersionMajor() {
+	return VERSION_MAJOR;
+}
+
+inline int GetVersionMinor() {
+	return VERSION_MINOR;
+}
+
+inline double GetVersion() {
+	return VERSION;
+}
+
+inline CString GetVersionExtra() {
+	return VERSION_EXTRA;
+}
