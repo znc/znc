@@ -7,8 +7,8 @@
 	<?IF LoggedIn ?>
 		<?IF !GlobalModLoop ?>
 			<?IF !UserModLoop ?>
-				<p>No Web-enabled modules have been loaded. Edit the config file (<code>znc.conf</code>), or load modules
-					from IRC (<code>/msg *status help</code>). Once you loaded some Web-enabled modules, the menu will expand.</p>
+				<p>No Web-enabled modules have been loaded. Load modules from IRC ("<code>/msg *status help</code>" and
+					"<code>/msg *status loadmod &lt;module&gt;</code>"). Once you have loaded some Web-enabled modules, the menu will expand.</p>
 			<? ENDIF ?>
 		<? ENDIF ?>
 	<? ENDIF ?>
