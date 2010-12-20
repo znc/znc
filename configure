@@ -3961,6 +3961,19 @@ $as_echo_n "checking modtcl flags... " >&6; }
 		{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $TCL_FLAGS" >&5
 $as_echo "$TCL_FLAGS" >&6; }
 	fi
+	my_saved_LDFLAGS="$LDFLAGS"
+	appendLD "$TCL_FLAGS"
+	ac_fn_cxx_check_func "$LINENO" "Tcl_CreateInterp" "ac_cv_func_Tcl_CreateInterp"
+if test "x$ac_cv_func_Tcl_CreateInterp" = x""yes; then :
+  TCL_TEST=yes
+else
+  TCL_TEST=no
+fi
+
+	if test x"$TCL_TEST" = "xno"; then
+		as_fn_error $? "tcl not found, try --disable-tcl, or install tcl properly." "$LINENO" 5
+	fi
+	LDFLAGS="$my_saved_LDFLAGS"
 fi
 
 if test x"$EXTRA" = "xyes"

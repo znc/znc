@@ -361,6 +361,13 @@ then
 		TCL_FLAGS="$TCL_INCLUDE_SPEC $TCL_LIB_SPEC"
 		AC_MSG_RESULT([$TCL_FLAGS])
 	fi
+	my_saved_LDFLAGS="$LDFLAGS"
+	appendLD "$TCL_FLAGS"
+	AC_CHECK_FUNC([Tcl_CreateInterp], [TCL_TEST=yes], [TCL_TEST=no])
+	if test x"$TCL_TEST" = "xno"; then
+		AC_MSG_ERROR([tcl not found, try --disable-tcl, or install tcl properly.])
+	fi
+	LDFLAGS="$my_saved_LDFLAGS"
 fi
 
 if test x"$EXTRA" = "xyes"
