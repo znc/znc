@@ -3971,7 +3971,7 @@ else
 fi
 
 	if test x"$TCL_TEST" = "xno"; then
-		as_fn_error $? "tcl not found, try --disable-tcl, or install tcl properly." "$LINENO" 5
+		as_fn_error $? "tcl not found, try --disable-tcl, or install tcl properly. If tcl is installed to a non-standard path, use --enable-tcl --with-tcl=/path" "$LINENO" 5
 	fi
 	LDFLAGS="$my_saved_LDFLAGS"
 fi
