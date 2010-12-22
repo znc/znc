@@ -157,10 +157,11 @@ modperl_install: create_install_dir install_metadirs
 			cp -Rp $$a $(DESTDIR)$(DATADIR); \
 		fi \
 	done
+	+test -r $(srcdir)/modperl/ZNC.pm && cp -p $(srcdir)/modperl/ZNC.pm modperl/
 	rm -rf $(DESTDIR)$(DATADIR)/modperl
 	mkdir -p $(DESTDIR)$(MODDIR)/modperl
-	$(INSTALL_PROGRAM) $(srcdir)/modperl/ZNC.so $(DESTDIR)$(MODDIR)/modperl
-	$(INSTALL_DATA) $(srcdir)/modperl/ZNC.pm $(DESTDIR)$(MODDIR)/modperl
+	$(INSTALL_PROGRAM) modperl/ZNC.so $(DESTDIR)$(MODDIR)/modperl
+	$(INSTALL_DATA) modperl/ZNC.pm $(DESTDIR)$(MODDIR)/modperl
 	$(INSTALL_DATA) $(srcdir)/modperl/startup.pl $(DESTDIR)$(MODDIR)/modperl
 
 modtcl_install:
