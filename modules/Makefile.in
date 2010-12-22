@@ -23,6 +23,7 @@ LDFLAGS  := @LDFLAGS@
 # LIBS     := @LIBS@
 PERL_ON  := @PERL@
 PERL     := @PERL_BINARY@
+PYCFG    := @PYTHONCFG_BINARY@
 SWIG     := @SWIG_BINARY@
 MODDIR   := @MODDIR@
 DATADIR  := @DATADIR@
@@ -81,6 +82,16 @@ else
 FILES    := $(shell echo $(FILES) | sed -e "s/modperl//")
 endif
 
+ifneq "$(PYCFG)" ""
+PYTHONCOMMON := $(shell $(PYCFG) --includes) $(shell $(PYCFG) --ldflags)
+PYTHONCOMMON += -DSWIG_TYPE_TABLE=znc
+PYTHONCOMMON += -Wno-missing-field-initializers -Wno-unused
+modpythonFLAGS := $(PYTHONCOMMON) -I.
+PYTHONHOOK   := modpython_install
+else
+FILES    := $(shell echo $(FILES) | sed -e "s/modpython//")
+endif
+
 ifeq "@SASL@" ""
 FILES    := $(shell echo $(FILES) | sed -e "s:extra/saslauth::")
 endif
@@ -101,14 +112,16 @@ modtclFLAGS := $(TCL_FLAGS)
 
 TARGETS  := $(addsuffix .so, $(FILES))
 
-CLEAN    := *.so extra/*.so modperl/ZNC.so modperl/modperl_wrap.cxx modperl/ZNC.pm
+CLEAN    := *.so extra/*.so
+CLEAN    += modperl/ZNC.so modperl/ZNC.pm modpython/functions.cpp modpython/compiler
+CLEAN    += modpython/_znc_core.so modpython/_znc_core.cpp modpython/znc_core.py modpython/znc_core.pyc
 
 .PHONY: all clean install install_metadirs create_install_dir uninstall
-.PHONY: modperl_install modtcl_install
+.PHONY: modperl_install modtcl_install modpython_install modpython_compilepyc
 
 all: $(TARGETS)
 
-install: all create_install_dir install_metadirs $(PERLHOOK) $(TCLHOOK)
+install: all create_install_dir install_metadirs $(PERLHOOK) $(TCLHOOK) $(PYTHONHOOK)
 	$(INSTALL_PROGRAM) $(TARGETS) $(DESTDIR)$(MODDIR)
 
 create_install_dir:
@@ -149,6 +162,23 @@ modperl/ZNC.cpp: modperl/modperl.i Makefile modperl/module.h modperl/CString.i
 	$(Q)rm -rf $@.warn
 endif
 
+modpython.so: modpython/_znc_core.so modpython/swigpyrun.h
+modpython/_znc_core.so: modpython/_znc_core.cpp Makefile modpython/functions.cpp
+	$(E) Building ZNC python bindings library...
+	$(Q)$(CXX) $(MODFLAGS) $(LDFLAGS) $(MODLINK) -I$(srcdir) $(PYTHONCOMMON) -o $@ $< -Wno-shadow
+ifneq "$(SWIG)" ""
+modpython/swigpyrun.h:
+	@mkdir -p modpython
+	$(Q)$(SWIG) -python -py3 -c++ -shadow -external-runtime $@
+modpython/_znc_core.cpp: modpython/modpython.i Makefile
+	$(E) Generating ZNC API for python...
+	@mkdir -p modpython
+	$(Q)$(SWIG) -python -py3 -c++ -shadow -outdir modpython -I$(srcdir) -w362,315,401 -o $@ $<
+endif
+modpython/functions.cpp: modpython/functions.in
+	@mkdir -p modpython
+	$(Q)$(PY_PERL) $(srcdir)/modpython/codegen.pl $< $@
+
 modperl_install: create_install_dir install_metadirs
 	+for i in $(srcdir)/*.pm; do \
 		test -r $$i && $(INSTALL_DATA) $$i $(DESTDIR)$(MODDIR); \
@@ -164,6 +194,32 @@ modperl_install: create_install_dir install_metadirs
 	$(INSTALL_PROGRAM) modperl/ZNC.so $(DESTDIR)$(MODDIR)/modperl
 	$(INSTALL_DATA) modperl/ZNC.pm $(DESTDIR)$(MODDIR)/modperl
 	$(INSTALL_DATA) $(srcdir)/modperl/startup.pl $(DESTDIR)$(MODDIR)/modperl
+
+modpython/compiler: modpython/compiler.cpp
+	$(CXX) $(PYTHONCOMMON) -o $@ $<
+
+modpython_compilepyc: modpython/compiler
+	+cp -p $(srcdir)/*.py ./
+	+cp -p $(srcdir)/*.pyc ./
+	+cp -p $(srcdir)/modpython/znc*.py modpython/
+	$<
+
+modpython_install: create_install_dir install_metadirs modpython_compilepyc
+	+for i in *.pyc; do \
+		test -r $$i && $(INSTALL_DATA) $$i $(DESTDIR)$(MODDIR); \
+	done
+	for a in $(srcdir)/*; do \
+		if [ -d $$a ]; then \
+			if [ -f $${a}.py ] || [ -f $${a}.pyc ]; then \
+				cp -Rp $$a $(DESTDIR)$(DATADIR); \
+			fi \
+		fi \
+	done
+	rm -rf $(DESTDIR)$(DATADIR)/modpython
+	mkdir -p $(DESTDIR)$(MODDIR)/modpython
+	$(INSTALL_PROGRAM) modpython/_znc_core.so $(DESTDIR)$(MODDIR)/modpython
+	$(INSTALL_DATA) modpython/znc_core.pyc $(DESTDIR)$(MODDIR)/modpython
+	$(INSTALL_DATA) modpython/znc.pyc $(DESTDIR)$(MODDIR)/modpython
 
 modtcl_install:
 	mkdir -p $(DESTDIR)$(DATADIR)/modtcl/
