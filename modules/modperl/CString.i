@@ -1,3 +1,7 @@
+/*
+   SWIG-generated sources are used here.
+   */
+
 
 %{
 #include <string>
