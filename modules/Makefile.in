@@ -21,6 +21,7 @@ LDFLAGS  := @LDFLAGS@
 # LIBS are not and should not be used in here.
 # The znc binary links already against those.
 # LIBS     := @LIBS@
+PERL_ON  := @PERL@
 PERL     := @PERL_BINARY@
 SWIG     := @SWIG_BINARY@
 MODDIR   := @MODDIR@
@@ -65,7 +66,7 @@ FILES    := $(foreach file, $(FILES), \
 	))
 endif
 
-ifneq "$(PERL)" ""
+ifeq "$(PERL_ON)" "yes"
 # We execute this now so that we see the 'beauty' of these flags in make's output
 PERLCOMMON   := $(shell $(PERL) -MExtUtils::Embed -e perl_inc -e ldopts)
 # Perl API is ugly, casting string literals to char* and redeclaring functions :(
