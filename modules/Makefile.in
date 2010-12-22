@@ -149,8 +149,8 @@ modperl/ZNC.cpp: modperl/modperl.i Makefile modperl/module.h modperl/CString.i
 endif
 
 modperl_install: create_install_dir install_metadirs
-	for i in $(srcdir)/*.pm; do \
-		test -r $$i && $(INSTALL_DATA) $$i $(DESTDIR)$(MODDIR); true; \
+	+for i in $(srcdir)/*.pm; do \
+		test -r $$i && $(INSTALL_DATA) $$i $(DESTDIR)$(MODDIR); \
 	done
 	for a in $(srcdir)/*; do \
 		if [ -d $$a ] && [ -f $${a}.pm ]; then \
