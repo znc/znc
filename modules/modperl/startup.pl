@@ -387,28 +387,40 @@ sub CreateTimer {
 	my $self = shift;
 	my $id = ZNC::Core::CreateUUID;
 	my %a = @_;
-	$self->{_ptimers}{$id}{cobj} = ZNC::CreatePerlTimer(
+	my $ctimer = ZNC::CreatePerlTimer(
 			$self->{_cmod},
 			$a{interval}//10,
 			$a{cycles}//1,
 			"perl-timer-$id",
 			$a{description}//'Just Another Perl Timer',
 			$id);
-	$self->{_ptimers}{$id}{job} = $a{task};
-	$self->{_ptimers}{$id}{context} = $a{context};
+	my $ptimer = {
+		_ctimer=>$ctimer,
+		_modid=>$self->GetPerlID
+	};
+	$self->{_ptimers}{$id} = $ptimer;
+	if (ref($a{task}) eq 'CODE') {
+		bless $ptimer, 'ZNC::Timer';
+		$ptimer->{job} = $a{task};
+		$ptimer->{context} = $a{context};
+	} else {
+		bless $ptimer, $a{task};
+	}
+	$ptimer;
 }
 
 sub _CallTimer {
 	my $self = shift;
 	my $id = shift;
 	my $t = $self->{_ptimers}{$id};
-	&{$t->{job}}($self, context=>$t->{context}, timer=>$t->{cobj});
+	$t->RunJob;
 }
 
 sub _RemoveTimer {
 	my $self = shift;
 	my $id = shift;
 	say "Removing perl timer $id";
+	$self->{_ptimers}{$id}->OnShutdown;
 	delete $self->{_ptimers}{$id}
 }
 
@@ -437,8 +449,43 @@ sub _RemoveSocket {
 	my $self = shift;
 	my $id = shift;
 	say "Removing perl socket $id";
+	$self->{_sockets}{$id}->OnShutdown;
 	delete $self->{_sockets}{$id}
 }
+
+package ZNC::Timer;
+
+sub GetModule {
+	my $self = shift;
+	$ZNC::Core::pmods{$self->{_modid}};
+}
+
+sub RunJob {
+	my $self = shift;
+	if (ref($self->{job}) eq 'CODE') {
+		&{$self->{job}}($self->GetModule, context=>$self->{context}, timer=>$self->{_ctimer});
+	}
+}
+
+sub OnShutdown {}
+
+our $AUTOLOAD;
+
+sub AUTOLOAD {
+	my $name = $AUTOLOAD;
+	$name =~ s/^.*:://; # Strip fully-qualified portion.
+	my $sub = sub {
+		my $self = shift;
+		$self->{_ctimer}->$name(@_)
+	};
+	no strict 'refs';
+	*{$AUTOLOAD} = $sub;
+	use strict 'refs';
+	goto &{$sub};
+}
+
+sub DESTROY {}
+
 
 package ZNC::Socket;
 
@@ -455,6 +502,7 @@ sub OnConnectionRefused {}
 sub OnReadData {}
 sub OnReadLine {}
 sub OnAccepted {}
+sub OnShutdown {}
 
 sub _Accepted {
 	my $self = shift;
