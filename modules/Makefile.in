@@ -177,7 +177,7 @@ modpython/_znc_core.cpp: modpython/modpython.i Makefile
 endif
 modpython/functions.cpp: modpython/functions.in
 	@mkdir -p modpython
-	$(Q)$(PY_PERL) $(srcdir)/modpython/codegen.pl $< $@
+	$(Q)$(PERL) $(srcdir)/modpython/codegen.pl $< $@
 
 modperl_install: create_install_dir install_metadirs
 	+for i in $(srcdir)/*.pm; do \
