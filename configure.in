@@ -333,9 +333,8 @@ if test "x$PYTHON" != "xno"; then
 	old_PYTHON="$PYTHON"
 	AC_PATH_PROG([PYTHONCFG_BINARY], ["$PYTHON"])
 	if test -n "$PYTHONCFG_BINARY"; then
-		my_saved_LDFLAGS="$LDFLAGS"
-		appendLD `$PYTHONCFG_BINARY --includes`
-		appendLD `$PYTHONCFG_BINARY --ldflags`
+		my_saved_LIBS="$LIBS"
+		appendLib `$PYTHONCFG_BINARY --ldflags`
 		AC_CHECK_FUNC([Py_Initialize], [], [PYTHON="no"])
 		if test "x$PYTHON" != "xno"; then
 			# Yes, modpython depends on perl.
@@ -344,7 +343,7 @@ if test "x$PYTHON" != "xno"; then
 				AC_MSG_ERROR([To compile modpython you need to be able to execute perl scripts. Try --disable-python or install perl.])
 			fi
 		fi
-		LDFLAGS="$my_saved_LDFLAGS"
+		LIBS="$my_saved_LIBS"
 	else
 		PYTHON="no"
 	fi
@@ -404,13 +403,13 @@ then
 		TCL_FLAGS="$TCL_INCLUDE_SPEC $TCL_LIB_SPEC"
 		AC_MSG_RESULT([$TCL_FLAGS])
 	fi
-	my_saved_LDFLAGS="$LDFLAGS"
-	appendLD "$TCL_FLAGS"
+	my_saved_LIBS="$LIBS"
+	appendLib "$TCL_FLAGS"
 	AC_CHECK_FUNC([Tcl_CreateInterp], [TCL_TEST=yes], [TCL_TEST=no])
 	if test x"$TCL_TEST" = "xno"; then
 		AC_MSG_ERROR([tcl not found, try --disable-tcl, or install tcl properly. If tcl is installed to a non-standard path, use --enable-tcl --with-tcl=/path])
 	fi
-	LDFLAGS="$my_saved_LDFLAGS"
+	LIBS="$my_saved_LIBS"
 fi
 
 if test x"$EXTRA" = "xyes"

@@ -3914,9 +3914,8 @@ fi
 
 
 	if test -n "$PYTHONCFG_BINARY"; then
-		my_saved_LDFLAGS="$LDFLAGS"
-		appendLD `$PYTHONCFG_BINARY --includes`
-		appendLD `$PYTHONCFG_BINARY --ldflags`
+		my_saved_LIBS="$LIBS"
+		appendLib `$PYTHONCFG_BINARY --ldflags`
 		ac_fn_cxx_check_func "$LINENO" "Py_Initialize" "ac_cv_func_Py_Initialize"
 if test "x$ac_cv_func_Py_Initialize" = x""yes; then :
 
@@ -3970,7 +3969,7 @@ fi
 				as_fn_error $? "To compile modpython you need to be able to execute perl scripts. Try --disable-python or install perl." "$LINENO" 5
 			fi
 		fi
-		LDFLAGS="$my_saved_LDFLAGS"
+		LIBS="$my_saved_LIBS"
 	else
 		PYTHON="no"
 	fi
@@ -4106,8 +4105,8 @@ $as_echo_n "checking modtcl flags... " >&6; }
 		{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $TCL_FLAGS" >&5
 $as_echo "$TCL_FLAGS" >&6; }
 	fi
-	my_saved_LDFLAGS="$LDFLAGS"
-	appendLD "$TCL_FLAGS"
+	my_saved_LIBS="$LIBS"
+	appendLib "$TCL_FLAGS"
 	ac_fn_cxx_check_func "$LINENO" "Tcl_CreateInterp" "ac_cv_func_Tcl_CreateInterp"
 if test "x$ac_cv_func_Tcl_CreateInterp" = x""yes; then :
   TCL_TEST=yes
@@ -4118,7 +4117,7 @@ fi
 	if test x"$TCL_TEST" = "xno"; then
 		as_fn_error $? "tcl not found, try --disable-tcl, or install tcl properly. If tcl is installed to a non-standard path, use --enable-tcl --with-tcl=/path" "$LINENO" 5
 	fi
-	LDFLAGS="$my_saved_LDFLAGS"
+	LIBS="$my_saved_LIBS"
 fi
 
 if test x"$EXTRA" = "xyes"
