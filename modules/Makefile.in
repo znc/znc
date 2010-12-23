@@ -181,7 +181,7 @@ modpython/functions.cpp: modpython/functions.in
 	$(Q)$(PERL) $(srcdir)/modpython/codegen.pl $< $@
 
 modperl_install: create_install_dir install_metadirs
-	+for i in $(srcdir)/*.pm; do \
+	-for i in $(srcdir)/*.pm; do \
 		test -r $$i && $(INSTALL_DATA) $$i $(DESTDIR)$(MODDIR); \
 	done
 	for a in $(srcdir)/*; do \
@@ -189,7 +189,7 @@ modperl_install: create_install_dir install_metadirs
 			cp -Rp $$a $(DESTDIR)$(DATADIR); \
 		fi \
 	done
-	+test -r $(srcdir)/modperl/ZNC.pm && cp -p $(srcdir)/modperl/ZNC.pm modperl/
+	-test -r $(srcdir)/modperl/ZNC.pm && cp -p $(srcdir)/modperl/ZNC.pm modperl/
 	rm -rf $(DESTDIR)$(DATADIR)/modperl
 	mkdir -p $(DESTDIR)$(MODDIR)/modperl
 	$(INSTALL_PROGRAM) modperl/ZNC.so $(DESTDIR)$(MODDIR)/modperl
@@ -200,13 +200,13 @@ modpython/compiler: modpython/compiler.cpp
 	$(CXX) $(PYTHONCOMMON) -o $@ $<
 
 modpython_compilepyc: modpython/compiler
-	+cp -p $(srcdir)/*.py ./
-	+cp -p $(srcdir)/*.pyc ./
-	+cp -p $(srcdir)/modpython/znc*.py modpython/
+	-cp -p $(srcdir)/*.py ./
+	-cp -p $(srcdir)/*.pyc ./
+	-cp -p $(srcdir)/modpython/znc*.py modpython/
 	$<
 
 modpython_install: create_install_dir install_metadirs modpython_compilepyc
-	+for i in *.pyc; do \
+	-for i in *.pyc; do \
 		test -r $$i && $(INSTALL_DATA) $$i $(DESTDIR)$(MODDIR); \
 	done
 	for a in $(srcdir)/*; do \
