@@ -106,6 +106,8 @@ install: znc $(LIBZNC)
 	mkdir -p $(DESTDIR)$(MODDIR)
 	mkdir -p $(DESTDIR)$(DATADIR)
 	cp -Rp $(srcdir)/webskins $(DESTDIR)$(DATADIR)
+	find $(DESTDIR)$(DATADIR)/webskins -type d -exec chmod 0755 '{}' \;
+	find $(DESTDIR)$(DATADIR)/webskins -type f -exec chmod 0644 '{}' \;
 	$(INSTALL_PROGRAM) znc $(DESTDIR)$(bindir)
 	$(INSTALL_SCRIPT) znc-config $(DESTDIR)$(bindir)
 	$(INSTALL_SCRIPT) znc-buildmod $(DESTDIR)$(bindir)
@@ -124,7 +126,7 @@ uninstall:
 	rm $(DESTDIR)$(bindir)/znc-buildmod
 	rm $(DESTDIR)$(includedir)/znc/*.h
 	rm $(DESTDIR)$(PKGCONFIGDIR)/znc.pc
-	rm -rf $(DESTDIR)$(MODDIR)/webskins
+	rm -rf $(DESTDIR)$(DATADIR)/webskins
 	if test -n "$(LIBZNC)"; then \
 		rm $(DESTDIR)$(LIBZNCDIR)/$(LIBZNC) || exit 1 ; \
 		rmdir $(DESTDIR)$(LIBZNCDIR) || exit 1 ; \

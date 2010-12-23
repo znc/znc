@@ -116,6 +116,12 @@ TARGETS  := $(addsuffix .so, $(FILES))
 CLEAN    := *.so extra/*.so
 CLEAN    += modperl/ZNC.so modperl/ZNC.pm modpython/functions.cpp modpython/compiler
 CLEAN    += modpython/_znc_core.so modpython/_znc_core.cpp modpython/znc_core.py modpython/znc_core.pyc
+CLEAN    += modperl/swigperlrun.h modperl/ZNC.cpp
+CLEAN    += modpython/swigpyrun.h modpython/znc.pyc
+ifneq "$(srcdir)" "."
+# Copied from source for out-of-tree builds
+CLEAN    += modpython/znc.py
+endif
 
 .PHONY: all clean install install_metadirs create_install_dir uninstall
 .PHONY: modperl_install modtcl_install modpython_install modpython_compilepyc
@@ -132,7 +138,7 @@ create_install_dir:
 
 install_metadirs: create_install_dir
 	for a in $(srcdir)/*; do \
-		d=$$(echo $$a | sed -e "s:$(srcdir)/::g"); \
+		d=$$(echo $$a | sed -e "s:$(srcdir)/::g;s:modperl::;s:modpython::"); \
 		if [ -d $$a ] && [ -f $${d}.so ]; then \
 			cp -Rp $$a $(DESTDIR)$(DATADIR); \
 		fi \
@@ -181,16 +187,14 @@ modpython/functions.cpp: modpython/functions.in
 	$(Q)$(PERL) $(srcdir)/modpython/codegen.pl $< $@
 
 modperl_install: create_install_dir install_metadirs
-	-for i in $(srcdir)/*.pm; do \
-		test -r $$i && $(INSTALL_DATA) $$i $(DESTDIR)$(MODDIR); \
+	for i in $(wildcard $(srcdir)/*.pm); do \
+		$(INSTALL_DATA) $$i $(DESTDIR)$(MODDIR); \
 	done
 	for a in $(srcdir)/*; do \
 		if [ -d $$a ] && [ -f $${a}.pm ]; then \
 			cp -Rp $$a $(DESTDIR)$(DATADIR); \
 		fi \
 	done
-	-test -r $(srcdir)/modperl/ZNC.pm && cp -p $(srcdir)/modperl/ZNC.pm modperl/
-	rm -rf $(DESTDIR)$(DATADIR)/modperl
 	mkdir -p $(DESTDIR)$(MODDIR)/modperl
 	$(INSTALL_PROGRAM) modperl/ZNC.so $(DESTDIR)$(MODDIR)/modperl
 	$(INSTALL_DATA) modperl/ZNC.pm $(DESTDIR)$(MODDIR)/modperl
@@ -200,14 +204,15 @@ modpython/compiler: modpython/compiler.cpp
 	$(CXX) $(PYTHONCOMMON) -o $@ $<
 
 modpython_compilepyc: modpython/compiler
-	-cp -p $(srcdir)/*.py ./
-	-cp -p $(srcdir)/*.pyc ./
-	-cp -p $(srcdir)/modpython/znc*.py modpython/
+	# This is allowed to fail only if $(srcdir) == pwd.
+	-cp $(srcdir)/*.py ./
+	-cp $(srcdir)/*.pyc ./
+	-cp $(srcdir)/modpython/znc*.py modpython/
 	$<
 
 modpython_install: create_install_dir install_metadirs modpython_compilepyc
-	-for i in *.pyc; do \
-		test -r $$i && $(INSTALL_DATA) $$i $(DESTDIR)$(MODDIR); \
+	for i in $(wildcard *.pyc); do \
+		$(INSTALL_DATA) $$i $(DESTDIR)$(MODDIR); \
 	done
 	for a in $(srcdir)/*; do \
 		if [ -d $$a ]; then \
@@ -216,7 +221,6 @@ modpython_install: create_install_dir install_metadirs modpython_compilepyc
 			fi \
 		fi \
 	done
-	rm -rf $(DESTDIR)$(DATADIR)/modpython
 	mkdir -p $(DESTDIR)$(MODDIR)/modpython
 	$(INSTALL_PROGRAM) modpython/_znc_core.so $(DESTDIR)$(MODDIR)/modpython
 	$(INSTALL_DATA) modpython/znc_core.pyc $(DESTDIR)$(MODDIR)/modpython
