@@ -85,7 +85,8 @@ endif
 ifneq "$(PYCFG)" ""
 PYTHONCOMMON := $(shell $(PYCFG) --includes) $(shell $(PYCFG) --ldflags)
 PYTHONCOMMON += -DSWIG_TYPE_TABLE=znc
-PYTHONCOMMON += -Wno-missing-field-initializers -Wno-unused
+PYTHONCOMMON += -Wno-missing-field-initializers -Wno-unused -Wno-shadow
+PYTHONCOMMON += -Wno-missing-declarations -Wno-uninitialized
 modpythonFLAGS := $(PYTHONCOMMON) -I.
 PYTHONHOOK   := modpython_install
 else
@@ -165,7 +166,7 @@ endif
 modpython.so: modpython/_znc_core.so modpython/swigpyrun.h
 modpython/_znc_core.so: modpython/_znc_core.cpp Makefile modpython/functions.cpp
 	$(E) Building ZNC python bindings library...
-	$(Q)$(CXX) $(MODFLAGS) $(LDFLAGS) $(MODLINK) -I$(srcdir) $(PYTHONCOMMON) -o $@ $< -Wno-shadow
+	$(Q)$(CXX) $(MODFLAGS) $(LDFLAGS) $(MODLINK) -I$(srcdir) $(PYTHONCOMMON) -o $@ $<
 ifneq "$(SWIG)" ""
 modpython/swigpyrun.h:
 	@mkdir -p modpython
