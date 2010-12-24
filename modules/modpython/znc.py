@@ -118,8 +118,6 @@ class Module:
 		t = timer()
 		t._ctimer = CreatePyTimer(self._cmod, interval, cycles, label, description, t)
 		return t
-	def GetNV(self):
-		return self._nv
 	def GetSubPages(self): pass
 	def OnShutdown(self): pass
 	def OnBoot(self): pass
@@ -253,7 +251,7 @@ def load_module(modname, args, user, retmsg, modpython):
 	cl = pymodule.__dict__[modname]
 	module = cl()
 	module._cmod = CreatePyModule(user, modname, datapath, module, modpython)
-	module._nv = ModuleNV(module._cmod)
+	module.nv = ModuleNV(module._cmod)
 	descr = None
 	if '__doc__' in cl.__dict__:
 		descr = cl.__doc__
