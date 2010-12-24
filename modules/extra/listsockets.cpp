@@ -88,6 +88,69 @@ public:
 		}
 	}
 
+	CString GetSocketState(Csock* pSocket) {
+		switch (pSocket->GetType()) {
+			case Csock::LISTENER:
+				return "Listener";
+			case Csock::INBOUND:
+				return "Inbound";
+			case Csock::OUTBOUND:
+				if (pSocket->IsConnected())
+					return "Outbound";
+				else
+					return "Connecting";
+		}
+
+		return "UNKNOWN";
+	}
+
+	CString GetCreatedTime(Csock* pSocket) {
+		unsigned long long iStartTime = pSocket->GetStartTime();
+		time_t iTime = iStartTime / 1000;
+		return FormatTime("%Y-%m-%d %H:%M:%S", iTime);
+	}
+
+	CString GetLocalHost(Csock* pSocket, bool bShowHosts) {
+		CString sBindHost;
+
+		if (bShowHosts) {
+			sBindHost = pSocket->GetBindHost();
+		}
+
+		if (sBindHost.empty()) {
+			sBindHost = pSocket->GetLocalIP();
+		}
+
+		return sBindHost + " " + CString(pSocket->GetLocalPort());
+	}
+
+	CString GetRemoteHost(Csock* pSocket, bool bShowHosts) {
+		CString sHost;
+		u_short uPort;
+
+		if (!bShowHosts) {
+			sHost = pSocket->GetRemoteIP();
+		}
+
+		// While connecting, there might be no ip available
+		if (sHost.empty()) {
+			sHost = pSocket->GetHostName();
+		}
+
+		// While connecting, GetRemotePort() would return 0
+		if (pSocket->GetType() == Csock::OUTBOUND) {
+			uPort = pSocket->GetPort();
+		} else {
+			uPort = pSocket->GetRemotePort();
+		}
+
+		if (uPort != 0) {
+			return sHost + " " + CString(uPort);
+		}
+
+		return sHost;
+	}
+
 	void ShowSocks(bool bShowHosts) {
 		CSockManager& m = CZNC::Get().GetManager();
 		if (!m.size()) {
@@ -116,69 +179,16 @@ public:
 			socks.pop();
 
 			Table.AddRow();
-
-			switch (pSocket->GetType()) {
-			case Csock::LISTENER:
-				Table.SetCell("State", "Listen");
-				break;
-			case Csock::INBOUND:
-				Table.SetCell("State", "Inbound");
-				break;
-			case Csock::OUTBOUND:
-				if (pSocket->IsConnected())
-					Table.SetCell("State", "Outbound");
-				else
-					Table.SetCell("State", "Connecting");
-				break;
-			default:
-				Table.SetCell("State", "UNKNOWN");
-				break;
-			}
-
-			unsigned long long iStartTime = pSocket->GetStartTime();
-			time_t iTime = iStartTime / 1000;
-			Table.SetCell("Created", FormatTime("%Y-%m-%d %H:%M:%S", iTime));
+			Table.SetCell("Name", pSocket->GetSockName());
+			Table.SetCell("Created", GetCreatedTime(pSocket));
+			Table.SetCell("State", GetSocketState(pSocket));
 
 #ifdef HAVE_LIBSSL
-			if (pSocket->GetSSL()) {
-				Table.SetCell("SSL", "Yes");
-			} else {
-				Table.SetCell("SSL", "No");
-			}
+			Table.SetCell("SSL", pSocket->GetSSL() ? "Yes" : "No");
 #endif
 
-
-			Table.SetCell("Name", pSocket->GetSockName());
-			CString sBindHost;
-			if (bShowHosts) {
-				sBindHost = pSocket->GetBindHost();
-			}
-			if (sBindHost.empty()) {
-				sBindHost = pSocket->GetLocalIP();
-			}
-			Table.SetCell("Local", sBindHost + " " + CString(pSocket->GetLocalPort()));
-
-			CString sHost;
-			if (!bShowHosts) {
-				sHost = pSocket->GetRemoteIP();
-			}
-			// While connecting, there might be no ip available
-			if (sHost.empty()) {
-				sHost = pSocket->GetHostName();
-			}
-
-			u_short uPort;
-			// While connecting, GetRemotePort() would return 0
-			if (pSocket->GetType() == Csock::OUTBOUND) {
-				uPort = pSocket->GetPort();
-			} else {
-				uPort = pSocket->GetRemotePort();
-			}
-			if (uPort != 0) {
-				Table.SetCell("Remote", sHost + " " + CString(uPort));
-			} else {
-				Table.SetCell("Remote", sHost);
-			}
+			Table.SetCell("Local", GetLocalHost(pSocket, bShowHosts));
+			Table.SetCell("Remote", GetRemoteHost(pSocket, bShowHosts));
 		}
 
 		PutModule(Table);
