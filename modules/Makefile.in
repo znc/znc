@@ -1,3 +1,5 @@
+all:
+
 SHELL       := @SHELL@
 
 # Support out-of-tree builds
@@ -56,6 +58,10 @@ FILES    := $(notdir $(wildcard $(srcdir)/*.cpp))
 ifeq "@EXTRA@" "yes"
 FILES    += $(addprefix extra/, $(notdir $(wildcard $(srcdir)/extra/*.cpp)))
 endif
+
+include modperl/Makefile.inc
+include modpython/Makefile.inc
+include Makefile.modtcl
 
 FILES    := $(basename $(FILES))
 
@@ -116,9 +122,5 @@ uninstall:
 	rm -rf $(DESTDIR)$(DATADIR)/*
 	rmdir $(DESTDIR)$(MODDIR)
 	rmdir $(DESTDIR)$(DATADIR)
-
-include modperl/Makefile.inc
-include modpython/Makefile.inc
-include Makefile.modtcl
 
 -include $(wildcard .depend/*.dep)
