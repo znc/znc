@@ -72,21 +72,34 @@ public:
 		return true;
 	}
 
+	std::priority_queue<CSocketSorter> GetSockets() {
+		CSockManager& m = CZNC::Get().GetManager();
+		std::priority_queue<CSocketSorter> ret;
+
+		for (unsigned int a = 0; a < m.size(); a++) {
+			Csock* pSock = m[a];
+			// These sockets went through SwapSockByAddr. That means
+			// another socket took over the connection from this
+			// socket. So ignore this to avoid listing the
+			// connection twice.
+			if (pSock->GetCloseType() == Csock::CLT_DEREFERENCE)
+				continue;
+			ret.push(pSock);
+		}
+
+		return ret;
+	}
+
 	virtual bool WebRequiresAdmin() { return true; }
 	virtual CString GetWebMenuTitle() { return "List sockets"; }
 
 	virtual bool OnWebRequest(CWebSock& WebSock, const CString& sPageName, CTemplate& Tmpl) {
 		if (sPageName.empty() || sPageName == "index") {
-			CSockManager& m = CZNC::Get().GetManager();
-			if (!m.size()) {
+			if (CZNC::Get().GetManager().empty()) {
 				return false;
 			}
 
-			std::priority_queue<CSocketSorter> socks;
-
-			for (unsigned int a = 0; a < m.size(); a++) {
-				socks.push(m[a]);
-			}
+			std::priority_queue<CSocketSorter> socks = GetSockets();
 
 			while (!socks.empty()) {
 				Csock* pSocket = socks.top().GetSock();
@@ -187,17 +200,12 @@ public:
 	}
 
 	void ShowSocks(bool bShowHosts) {
-		CSockManager& m = CZNC::Get().GetManager();
-		if (!m.size()) {
+		if (CZNC::Get().GetManager().empty()) {
 			PutStatus("You have no open sockets.");
 			return;
 		}
 
-		std::priority_queue<CSocketSorter> socks;
-
-		for (unsigned int a = 0; a < m.size(); a++) {
-			socks.push(m[a]);
-		}
+		std::priority_queue<CSocketSorter> socks = GetSockets();
 
 		CTable Table;
 		Table.AddColumn("Name");
