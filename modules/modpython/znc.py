@@ -237,6 +237,9 @@ def find_open(modname):
 		# nothing found
 		return (None, None)
 
+def get_descr(cls):
+	return getattr(cls, 'description', '< Placeholder for a description >')
+
 def load_module(modname, args, user, retmsg, modpython):
 	'''Returns 0 if not found, 1 on loading error, 2 on success'''
 	if re.search(r'[^a-zA-Z0-9_]', modname) is not None:
@@ -252,12 +255,7 @@ def load_module(modname, args, user, retmsg, modpython):
 	module = cl()
 	module._cmod = CreatePyModule(user, modname, datapath, module, modpython)
 	module.nv = ModuleNV(module._cmod)
-	descr = None
-	if '__doc__' in cl.__dict__:
-		descr = cl.__doc__
-	if descr is None:
-		descr = '< Placeholder for a description >'
-	module.SetDescription(descr)
+	module.SetDescription(get_descr(cl))
 	module.SetArgs(args)
 	module.SetModPath(pymodule.__file__)
 	user.GetModules().push_back(module._cmod)
@@ -310,13 +308,8 @@ def get_mod_info(modname, retmsg, modinfo):
 		retmsg.s = "Python module [{0}] doesn't have class named [{1}]".format(pymodule.__file__, modname)
 		return 1
 	cl = pymodule.__dict__[modname]
-	descr = None
-	if '__doc__' in cl.__dict__:
-		descr = cl.__doc__
-	if descr is None:
-		descr = '< Placeholder for a description >'
 	modinfo.SetGlobal(False)
-	modinfo.SetDescription(descr)
+	modinfo.SetDescription(get_descr(cl))
 	modinfo.SetName(modname)
 	modinfo.SetPath(pymodule.__file__)
 	return 2
@@ -339,13 +332,8 @@ def get_mod_info_path(path, modname, modinfo):
 	if modname not in pymodule.__dict__:
 		return 0
 	cl = pymodule.__dict__[modname]
-	descr = None
-	if '__doc__' in cl.__dict__:
-		descr = cl.__doc__
-	if descr is None:
-		descr = '< Placeholder for a description >'
 	modinfo.SetGlobal(False)
-	modinfo.SetDescription(descr)
+	modinfo.SetDescription(get_descr(cl))
 	modinfo.SetName(modname)
 	modinfo.SetPath(pymodule.__file__)
 	return 1
