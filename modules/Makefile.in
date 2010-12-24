@@ -67,32 +67,6 @@ FILES    := $(foreach file, $(FILES), \
 	))
 endif
 
-ifeq "$(PERL_ON)" "yes"
-# We execute this now so that we see the 'beauty' of these flags in make's output
-PERLCOMMON   := $(shell $(PERL) -MExtUtils::Embed -e perl_inc -e ldopts)
-# Perl API is ugly, casting string literals to char* and redeclaring functions :(
-PERLCOMMON   += -Wno-write-strings -Wno-redundant-decls -Wno-missing-declarations
-# This is for SWIG
-PERLCOMMON   += -DSWIG_TYPE_TABLE=znc
-modperlFLAGS := $(PERLCOMMON)
-# Find additional headers for out-of-tree build
-modperlFLAGS += -I.
-PERLHOOK     := modperl_install
-else
-FILES    := $(shell echo $(FILES) | sed -e "s/modperl//")
-endif
-
-ifneq "$(PYCFG)" ""
-PYTHONCOMMON := $(shell $(PYCFG) --includes) $(shell $(PYCFG) --ldflags)
-PYTHONCOMMON += -DSWIG_TYPE_TABLE=znc
-PYTHONCOMMON += -Wno-missing-field-initializers -Wno-unused -Wno-shadow
-PYTHONCOMMON += -Wno-missing-declarations -Wno-uninitialized
-modpythonFLAGS := $(PYTHONCOMMON) -I.
-PYTHONHOOK   := modpython_install
-else
-FILES    := $(shell echo $(FILES) | sed -e "s/modpython//")
-endif
-
 ifeq "@SASL@" ""
 FILES    := $(shell echo $(FILES) | sed -e "s:extra/saslauth::")
 endif
@@ -103,32 +77,15 @@ FILES    := $(shell echo $(FILES) | sed -e "s:extra/charset::")
 endif
 charsetFLAGS := @LIBICONV@
 
-ifeq "$(TCL_FLAGS)" ""
-FILES       := $(shell echo $(FILES) | sed -e "s:extra/modtcl::")
-else
-TCLHOOK     := modtcl_install
-endif
-modtclFLAGS := $(TCL_FLAGS)
-
-
 TARGETS  := $(addsuffix .so, $(FILES))
 
 CLEAN    := *.so extra/*.so
-CLEAN    += modperl/ZNC.so modperl/ZNC.pm modpython/functions.cpp modpython/compiler
-CLEAN    += modpython/_znc_core.so modpython/_znc_core.cpp modpython/znc_core.py modpython/znc_core.pyc
-CLEAN    += modperl/swigperlrun.h modperl/ZNC.cpp
-CLEAN    += modpython/swigpyrun.h modpython/znc.pyc
-ifneq "$(srcdir)" "."
-# Copied from source for out-of-tree builds
-CLEAN    += modpython/znc.py
-endif
 
 .PHONY: all clean install install_metadirs create_install_dir uninstall
-.PHONY: modperl_install modtcl_install modpython_install modpython_compilepyc
 
 all: $(TARGETS)
 
-install: all create_install_dir install_metadirs $(PERLHOOK) $(TCLHOOK) $(PYTHONHOOK)
+install: all create_install_dir install_metadirs
 	$(INSTALL_PROGRAM) $(TARGETS) $(DESTDIR)$(MODDIR)
 
 create_install_dir:
@@ -153,89 +110,15 @@ clean:
 	$(E) Building $(if $(filter %extra/,$(dir $<)),extra )module $(notdir $(basename $@))...
 	$(Q)$(CXX) $(MODFLAGS) $(LDFLAGS) $(MODLINK) -o $@ $< $($(notdir $(basename $@))FLAGS) -MMD -MF .depend/$(notdir $@).dep
 
-modperl.so: modperl/ZNC.so modperl/swigperlrun.h
-modperl/ZNC.so: modperl/ZNC.cpp Makefile
-	$(E) Building ZNC Perl bindings library...
-	$(Q)$(CXX) $(MODFLAGS) $(LDFLAGS) $(MODLINK) -I$(srcdir) $(PERLCOMMON) -o $@ $<
-ifneq "$(SWIG)" ""
-modperl/swigperlrun.h:
-	@mkdir -p modperl
-	$(Q)$(SWIG) -perl5 -c++ -shadow -external-runtime $@
-modperl/ZNC.cpp: modperl/modperl.i Makefile modperl/module.h modperl/CString.i
-	$(E) Generating ZNC API for Perl...
-	@mkdir -p modperl
-	$(Q)$(SWIG) -perl5 -c++ -shadow -outdir modperl -I$(srcdir) -w362,315,401,402 -o $@.warn $<
-	$(Q)$(PERL) -pe '$$x==2 and print "items+=0;" and $$x=3;/^XS\(SWIG_init\)/ and $$x=1;$$x==1 and /dXSARGS/ and $$x=2' $@.warn > $@
-	$(Q)rm -rf $@.warn
-endif
-
-modpython.so: modpython/_znc_core.so modpython/swigpyrun.h modpython_compilepyc
-modpython/_znc_core.so: modpython/_znc_core.cpp Makefile modpython/functions.cpp
-	$(E) Building ZNC python bindings library...
-	$(Q)$(CXX) $(MODFLAGS) $(LDFLAGS) $(MODLINK) -I$(srcdir) $(PYTHONCOMMON) -o $@ $<
-ifneq "$(SWIG)" ""
-modpython/swigpyrun.h:
-	@mkdir -p modpython
-	$(Q)$(SWIG) -python -py3 -c++ -shadow -external-runtime $@
-modpython/_znc_core.cpp: modpython/modpython.i Makefile
-	$(E) Generating ZNC API for python...
-	@mkdir -p modpython
-	$(Q)$(SWIG) -python -py3 -c++ -shadow -outdir modpython -I$(srcdir) -w362,315,401 -o $@ $<
-endif
-modpython/functions.cpp: modpython/functions.in
-	@mkdir -p modpython
-	$(Q)$(PERL) $(srcdir)/modpython/codegen.pl $< $@
-
-modperl_install: create_install_dir install_metadirs modperl.so
-	for i in $(wildcard $(srcdir)/*.pm); do \
-		$(INSTALL_DATA) $$i $(DESTDIR)$(MODDIR); \
-	done
-	for a in $(srcdir)/*; do \
-		if [ -d $$a ] && [ -f $${a}.pm ]; then \
-			cp -Rp $$a $(DESTDIR)$(DATADIR); \
-		fi \
-	done
-	mkdir -p $(DESTDIR)$(MODDIR)/modperl
-	$(INSTALL_PROGRAM) modperl/ZNC.so $(DESTDIR)$(MODDIR)/modperl
-	$(INSTALL_DATA) modperl/ZNC.pm $(DESTDIR)$(MODDIR)/modperl
-	$(INSTALL_DATA) $(srcdir)/modperl/startup.pl $(DESTDIR)$(MODDIR)/modperl
-
-modpython/compiler: modpython/compiler.cpp
-	$(E) Building optimizator for python files...
-	$(Q)$(CXX) $(PYTHONCOMMON) -o $@ $<
-
-modpython_compilepyc: modpython/compiler
-	# This is allowed to fail only if $(srcdir) == pwd.
-	-$(Q)cp $(srcdir)/*.py ./
-	-$(Q)cp $(srcdir)/*.pyc ./
-	-$(Q)cp $(srcdir)/modpython/znc*.py modpython/
-	$(Q)$<
-
-modpython_install: create_install_dir install_metadirs modpython.so
-	for i in $(wildcard *.pyc); do \
-		$(INSTALL_DATA) $$i $(DESTDIR)$(MODDIR); \
-	done
-	for a in $(srcdir)/*; do \
-		if [ -d $$a ]; then \
-			if [ -f $${a}.py ] || [ -f $${a}.pyc ]; then \
-				cp -Rp $$a $(DESTDIR)$(DATADIR); \
-			fi \
-		fi \
-	done
-	mkdir -p $(DESTDIR)$(MODDIR)/modpython
-	$(INSTALL_PROGRAM) modpython/_znc_core.so $(DESTDIR)$(MODDIR)/modpython
-	$(INSTALL_DATA) modpython/znc_core.pyc $(DESTDIR)$(MODDIR)/modpython
-	$(INSTALL_DATA) modpython/znc.pyc $(DESTDIR)$(MODDIR)/modpython
-
-modtcl_install:
-	mkdir -p $(DESTDIR)$(DATADIR)/modtcl/
-	$(INSTALL_DATA) $(srcdir)/extra/modtcl.tcl $(srcdir)/extra/binds.tcl $(DESTDIR)$(DATADIR)/modtcl/
-
 uninstall:
 	# Yes, we are lazy, just remove everything in there
 	rm -rf $(DESTDIR)$(MODDIR)/*
 	rm -rf $(DESTDIR)$(DATADIR)/*
 	rmdir $(DESTDIR)$(MODDIR)
 	rmdir $(DESTDIR)$(DATADIR)
+
+include modperl/Makefile.inc
+include modpython/Makefile.inc
+include Makefile.modtcl
 
 -include $(wildcard .depend/*.dep)
