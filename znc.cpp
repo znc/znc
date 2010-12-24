@@ -26,6 +26,11 @@ namespace
 	};
 }
 
+static inline CString FormatBindError() {
+	CString sError = (errno == 0 ? CString("unknown error, check the host name") : CString(strerror(errno)));
+	return "Unable to bind [" + sError + "]";
+}
+
 CZNC::CZNC() {
 	if (!InitCsocket()) {
 		CUtils::PrintError("Could not initialize Csocket!");
@@ -640,34 +645,52 @@ bool CZNC::WriteNewConfig(const CString& sConfigFile) {
 	CUtils::PrintMessage("");
 
 	// Listen
-	unsigned int uListenPort = 0;
-	while (!CUtils::GetNumInput("What port would you like ZNC to listen on?", uListenPort, 1, 65535)) ;
-
-	CString sSSL;
-#ifdef HAVE_LIBSSL
-	if (CUtils::GetBoolInput("Would you like ZNC to listen using SSL?", false)) {
-		sSSL = "+";
-
-		CString sPemFile = GetPemLocation();
-		if (!CFile::Exists(sPemFile)) {
-			CUtils::PrintError("Unable to locate pem file: [" + sPemFile + "]");
-			if (CUtils::GetBoolInput("Would you like to create a new pem file now?",
-						true)) {
-				WritePemFile();
-			}
-		}
-	}
-#endif
-
-	CString s6 = "4";
-#ifdef HAVE_IPV6
-	if (CUtils::GetBoolInput("Would you like ZNC to listen using ipv6?", false)) {
-		s6 = " ";
-	}
-#endif
-
+	CString s6;
 	CString sListenHost;
-	CUtils::GetInput("Listen Host", sListenHost, "", "Blank for all ips");
+	CString sSSL;
+	unsigned int uListenPort = 0;
+	bool bSuccess;
+
+	do {
+		bSuccess = true;
+		while (!CUtils::GetNumInput("What port would you like ZNC to listen on?", uListenPort, 1, 65535)) ;
+
+#ifdef HAVE_LIBSSL
+		if (CUtils::GetBoolInput("Would you like ZNC to listen using SSL?", !sSSL.empty())) {
+			sSSL = "+";
+
+			CString sPemFile = GetPemLocation();
+			if (!CFile::Exists(sPemFile)) {
+				CUtils::PrintError("Unable to locate pem file: [" + sPemFile + "]");
+				if (CUtils::GetBoolInput("Would you like to create a new pem file now?",
+							true)) {
+					WritePemFile();
+				}
+			}
+		} else
+			sSSL = "";
+#endif
+
+#ifdef HAVE_IPV6
+		if (CUtils::GetBoolInput("Would you like ZNC to listen using ipv6?", s6 == " ")) {
+			s6 = " ";
+		} else {
+			s6 = "4";
+		}
+#endif
+
+		CUtils::GetInput("Listen Host", sListenHost, sListenHost, "Blank for all ips");
+
+		CUtils::PrintAction("Verifying the listener");
+		CListener* pListener = new CListener(uListenPort, sListenHost, !sSSL.empty(),
+				s6.empty() ? ADDR_IPV4ONLY : ADDR_ALL, CListener::ACCEPT_ALL);
+		if (!pListener->Listen()) {
+			CUtils::PrintStatus(false, FormatBindError());
+			bSuccess = false;
+		} else
+			CUtils::PrintStatus(true);
+		delete pListener;
+	} while (!bSuccess);
 
 	if (!sListenHost.empty()) {
 		sListenHost += " ";
@@ -1547,8 +1570,7 @@ bool CZNC::DoRehash(CString& sError)
 					CListener* pListener = new CListener(uPort, sBindHost, bSSL, eAddr, eAccept);
 
 					if (!pListener->Listen()) {
-						sError = (errno == 0 ? CString("unknown error, check the host name") : CString(strerror(errno)));
-						sError = "Unable to bind [" + sError + "]";
+						sError = FormatBindError();
 						CUtils::PrintStatus(false, sError);
 						delete pListener;
 						return false;
