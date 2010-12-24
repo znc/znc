@@ -1,0 +1,28 @@
+<? INC Header.tmpl ?>
+
+<table class="data">
+	<thead>
+		<tr>
+			<td>Name</td>
+			<td>Created</td>
+			<td>State</td>
+			<td>SSL</td>
+			<td>Local</td>
+			<td>Remote</td>
+		</tr>
+	</thead>
+	<tbody>
+		<? LOOP SocketsLoop ?>
+		<tr class="<? IF __EVEN__ ?>evenrow<? ELSE ?>oddrow<? ENDIF ?>">
+			<td><? VAR Name ?></td>
+			<td><? VAR Created ?></td>
+			<td><? VAR State ?></td>
+			<td><? VAR SSL ?></td>
+			<td><? VAR Local ?></td>
+			<td><? VAR Remote ?></td>
+		</tr>
+		<? ENDLOOP ?>
+	</tbody>
+</table>
+
+<? INC Footer.tmpl ?>

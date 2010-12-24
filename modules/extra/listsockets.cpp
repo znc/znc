@@ -72,6 +72,41 @@ public:
 		return true;
 	}
 
+	virtual bool WebRequiresAdmin() { return true; }
+	virtual CString GetWebMenuTitle() { return "List sockets"; }
+
+	virtual bool OnWebRequest(CWebSock& WebSock, const CString& sPageName, CTemplate& Tmpl) {
+		if (sPageName.empty() || sPageName == "index") {
+			CSockManager& m = CZNC::Get().GetManager();
+			if (!m.size()) {
+				return false;
+			}
+
+			std::priority_queue<CSocketSorter> socks;
+
+			for (unsigned int a = 0; a < m.size(); a++) {
+				socks.push(m[a]);
+			}
+
+			while (!socks.empty()) {
+				Csock* pSocket = socks.top().GetSock();
+				socks.pop();
+
+				CTemplate& Row = Tmpl.AddRow("SocketsLoop");
+				Row["Name"] = pSocket->GetSockName();
+				Row["Created"] = GetCreatedTime(pSocket);
+				Row["State"] = GetSocketState(pSocket);
+				Row["SSL"] = pSocket->GetSSL() ? "Yes" : "No";
+				Row["Local"] = GetLocalHost(pSocket, true);
+				Row["Remote"] = GetRemoteHost(pSocket, true);
+			}
+
+			return true;
+		}
+
+		return false;
+	}
+
 	virtual void OnModCommand(const CString& sLine) {
 		CString sCommand = sLine.Token(0);
 		CString sArg = sLine.Token(1, true);
