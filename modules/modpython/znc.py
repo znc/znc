@@ -305,7 +305,7 @@ def unload_module(module):
 
 def get_mod_info(modname, retmsg, modinfo):
 	'''0-not found, 1-error, 2-success'''
-	pymodule, = find_open(modname)
+	pymodule, datadir = find_open(modname)
 	if pymodule is None:
 		return 0
 	if modname not in pymodule.__dict__:
