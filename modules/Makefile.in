@@ -186,7 +186,7 @@ modpython/functions.cpp: modpython/functions.in
 	@mkdir -p modpython
 	$(Q)$(PERL) $(srcdir)/modpython/codegen.pl $< $@
 
-modperl_install: create_install_dir install_metadirs
+modperl_install: create_install_dir install_metadirs modperl.so
 	for i in $(wildcard $(srcdir)/*.pm); do \
 		$(INSTALL_DATA) $$i $(DESTDIR)$(MODDIR); \
 	done
@@ -210,7 +210,7 @@ modpython_compilepyc: modpython/compiler
 	-cp $(srcdir)/modpython/znc*.py modpython/
 	$<
 
-modpython_install: create_install_dir install_metadirs modpython_compilepyc
+modpython_install: create_install_dir install_metadirs modpython_compilepyc modpython.so
 	for i in $(wildcard *.pyc); do \
 		$(INSTALL_DATA) $$i $(DESTDIR)$(MODDIR); \
 	done
