@@ -169,7 +169,7 @@ modperl/ZNC.cpp: modperl/modperl.i Makefile modperl/module.h modperl/CString.i
 	$(Q)rm -rf $@.warn
 endif
 
-modpython.so: modpython/_znc_core.so modpython/swigpyrun.h
+modpython.so: modpython/_znc_core.so modpython/swigpyrun.h modpython_compilepyc
 modpython/_znc_core.so: modpython/_znc_core.cpp Makefile modpython/functions.cpp
 	$(E) Building ZNC python bindings library...
 	$(Q)$(CXX) $(MODFLAGS) $(LDFLAGS) $(MODLINK) -I$(srcdir) $(PYTHONCOMMON) -o $@ $<
@@ -201,16 +201,17 @@ modperl_install: create_install_dir install_metadirs modperl.so
 	$(INSTALL_DATA) $(srcdir)/modperl/startup.pl $(DESTDIR)$(MODDIR)/modperl
 
 modpython/compiler: modpython/compiler.cpp
-	$(CXX) $(PYTHONCOMMON) -o $@ $<
+	$(E) Building optimizator for python files...
+	$(Q)$(CXX) $(PYTHONCOMMON) -o $@ $<
 
 modpython_compilepyc: modpython/compiler
 	# This is allowed to fail only if $(srcdir) == pwd.
-	-cp $(srcdir)/*.py ./
-	-cp $(srcdir)/*.pyc ./
-	-cp $(srcdir)/modpython/znc*.py modpython/
-	$<
+	-$(Q)cp $(srcdir)/*.py ./
+	-$(Q)cp $(srcdir)/*.pyc ./
+	-$(Q)cp $(srcdir)/modpython/znc*.py modpython/
+	$(Q)$<
 
-modpython_install: create_install_dir install_metadirs modpython_compilepyc modpython.so
+modpython_install: create_install_dir install_metadirs modpython.so
 	for i in $(wildcard *.pyc); do \
 		$(INSTALL_DATA) $$i $(DESTDIR)$(MODDIR); \
 	done
