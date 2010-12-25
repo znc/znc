@@ -8,9 +8,17 @@
 
 #include <Python.h>
 
-int main() {
+int main(int argc, char** argv) {
 	Py_Initialize();
-	int res = PyRun_SimpleString("import compileall; print('Optimizing python files for later use...'); compileall.compile_dir('.')");
+	int res = PyRun_SimpleString(
+			"import compileall\n"
+			"print('Optimizing python files for later use...')\n"
+			"import sys\n"
+			"if sys.version_info < (3, 2):\n"
+			"    compileall.compile_dir('.')\n"
+			"else:\n"
+			"    compileall.compile_dir('.', legacy=True)\n"
+			);
 	Py_Finalize();
 	return res;
 }
