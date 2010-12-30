@@ -12,8 +12,8 @@ use warnings;
 use IO::File;
 use feature 'switch', 'say';
 
-open my $in, "functions.in" or die;
-open my $out, "> functions.cpp" or die;
+open my $in, $ARGV[0] or die;
+open my $out, ">", $ARGV[1] or die;
 
 print $out <<'EOF';
 /*

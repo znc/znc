@@ -14,14 +14,14 @@ FILES    := $(shell echo $(FILES) | sed -e "s/modperl//")
 endif
 
 CLEAN    += modperl/ZNC.so modperl/ZNC.pm
-CLEAN    += modperl/swigperlrun.h modperl/ZNC.cpp
+CLEAN    += modperl/swigperlrun.h modperl/ZNC.cpp modperl/functions.cpp
 
 .PHONY: modperl_install
 
 install: $(PERLHOOK)
 
 modperl.so: modperl/ZNC.so modperl/swigperlrun.h
-modperl/ZNC.so: modperl/ZNC.cpp Makefile
+modperl/ZNC.so: modperl/ZNC.cpp Makefile modperl/functions.cpp
 	$(E) Building ZNC Perl bindings library...
 	$(Q)$(CXX) $(MODFLAGS) $(LDFLAGS) $(MODLINK) -I$(srcdir) $(PERLCOMMON) -o $@ $<
 ifneq "$(SWIG)" ""
@@ -35,6 +35,9 @@ modperl/ZNC.cpp: modperl/modperl.i Makefile modperl/module.h modperl/CString.i
 	$(Q)$(PERL) -pe '$$x==2 and print "items+=0;" and $$x=3;/^XS\(SWIG_init\)/ and $$x=1;$$x==1 and /dXSARGS/ and $$x=2' $@.warn > $@
 	$(Q)rm -rf $@.warn
 endif
+modperl/functions.cpp: modperl/functions.in
+	@mkdir -p modperl
+	$(Q)$(PERL) $(srcdir)/modperl/codegen.pl $< $@
 
 modperl_install: create_install_dir install_metadirs modperl.so
 	for i in $(wildcard $(srcdir)/*.pm); do \
