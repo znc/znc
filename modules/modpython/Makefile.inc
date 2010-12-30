@@ -9,7 +9,7 @@ modpythonFLAGS := $(PYTHONCOMMON) -I.
 
 PYTHONHOOK   := modpython_install
 CLEAN    += modpython/_znc_core.so modpython/_znc_core.cpp modpython/znc_core.py modpython/znc_core.pyc
-CLEAN    += modpython/swigpyrun.h modpython/znc.pyc modpython/functions.cpp modpython/compiler
+CLEAN    += modpython/swigpyrun.h modpython/znc.pyc modpython/functions.cpp modpython/compiler *.pyc
 ifneq "$(srcdir)" "."
 # Copied from source for out-of-tree builds
 CLEAN    += modpython/znc.py
@@ -19,11 +19,22 @@ else
 FILES    := $(shell echo $(FILES) | sed -e "s/modpython//")
 endif
 
-.PHONY: modpython_install modpython_compilepyc
+.PHONY: modpython_install modpython_all
 
 install: $(PYTHONHOOK)
 
-modpython.so: modpython/_znc_core.so modpython/swigpyrun.h modpython_compilepyc
+# This will run: modpython/compiler blah.py blah.pyc
+%.pyc: modpython/compiler %.py
+	$(E) Compiling $@...
+	$(Q)$^ $@
+
+ifneq "$(PYCFG)" ""
+all: modpython_all
+endif
+modpython_all: modpython/_znc_core.so modpython/swigpyrun.h modpython/znc.pyc modpython/znc_core.pyc
+modpython_all: $(addsuffix c, $(notdir $(wildcard $(srcdir)/*.py)))
+
+modpython/znc_core.py: modpython/_znc_core.so
 modpython/_znc_core.so: modpython/_znc_core.cpp Makefile modpython/functions.cpp
 	$(E) Building ZNC python bindings library...
 	$(Q)$(CXX) $(MODFLAGS) $(LDFLAGS) $(MODLINK) -I$(srcdir) $(PYTHONCOMMON) -o $@ $<
@@ -44,20 +55,13 @@ modpython/compiler: modpython/compiler.cpp
 	$(E) Building optimizator for python files...
 	$(Q)$(CXX) $(PYTHONCOMMON) -o $@ $<
 
-modpython_compilepyc: modpython/compiler
-	# This is allowed to fail only if $(srcdir) == pwd.
-	-$(Q)cp $(srcdir)/*.py ./
-	-$(Q)cp $(srcdir)/*.pyc ./
-	-$(Q)cp $(srcdir)/modpython/znc*.py modpython/
-	$(Q)$<
-
-modpython_install: create_install_dir install_metadirs modpython.so
+modpython_install: create_install_dir install_metadirs modpython_all
 	for i in $(wildcard *.pyc); do \
 		$(INSTALL_DATA) $$i $(DESTDIR)$(MODDIR); \
 	done
 	for a in $(srcdir)/*; do \
 		if [ -d $$a ]; then \
-			if [ -f $${a}.py ] || [ -f $${a}.pyc ]; then \
+			if [ -f $${a}.py ]; then \
 				cp -Rp $$a $(DESTDIR)$(DATADIR); \
 			fi \
 		fi \

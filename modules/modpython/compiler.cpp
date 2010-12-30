@@ -10,15 +10,27 @@
 
 int main(int argc, char** argv) {
 	Py_Initialize();
-	int res = PyRun_SimpleString(
-			"import compileall\n"
-			"print('Optimizing python files for later use...')\n"
-			"import sys\n"
-			"if sys.version_info < (3, 2):\n"
-			"    compileall.compile_dir('.')\n"
-			"else:\n"
-			"    compileall.compile_dir('.', legacy=True)\n"
-			);
+	PyObject* pyModule = PyImport_ImportModule("py_compile");
+	if (!pyModule) {
+		PyErr_Print();
+		Py_Finalize();
+		return 1;
+	}
+	PyObject* pyFunc = PyObject_GetAttrString(pyModule, "compile");
+	Py_CLEAR(pyModule);
+	if (!pyFunc) {
+		PyErr_Print();
+		Py_Finalize();
+		return 2;
+	}
+	PyObject* pyRes = PyObject_CallFunction(pyFunc, const_cast<char*>("ss"), argv[1], argv[2]);
+	Py_CLEAR(pyFunc);
+	if (!pyRes) {
+		PyErr_Print();
+		Py_Finalize();
+		return 3;
+	}
+	Py_CLEAR(pyRes);
 	Py_Finalize();
-	return res;
+	return 0;
 }
