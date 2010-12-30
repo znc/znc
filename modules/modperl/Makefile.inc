@@ -1,3 +1,5 @@
+# vim: filetype=make
+
 ifeq "$(PERL_ON)" "yes"
 # We execute this now so that we see the 'beauty' of these flags in make's output
 PERLCOMMON   := $(shell $(PERL) -MExtUtils::Embed -e perl_inc -e ldopts)

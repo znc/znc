@@ -174,3 +174,4 @@ typedef vector<pair<CString, CString> > VPair;
 	}
 %}
 
+/* vim: set filetype=cpp noexpandtab: */

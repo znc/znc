@@ -1,3 +1,5 @@
+# vim: filetype=make
+
 ifneq "$(PYCFG)" ""
 PYTHONCOMMON := $(shell $(PYCFG) --includes) $(shell $(PYCFG) --ldflags)
 PYTHONCOMMON += -DSWIG_TYPE_TABLE=znc

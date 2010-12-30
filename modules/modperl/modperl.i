@@ -204,3 +204,4 @@ typedef vector<pair<CString, CString> > VPair;
 	*UNLOAD = *ZNC::CModule::UNLOAD;
 %}
 
+/* vim: set filetype=cpp noexpandtab: */
