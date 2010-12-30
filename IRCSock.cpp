@@ -460,12 +460,13 @@ void CIRCSock::ReadLine(const CString& sData) {
 			if (sChan.Left(1) == ":") {
 				sChan.LeftChomp();
 			}
+			CString sMsg = sRest.Token(1, true).TrimPrefix_n(":");
 
 			CChan* pChan = m_pUser->FindChan(sChan);
 			bool bDetached = false;
 			if (pChan) {
 				pChan->RemNick(Nick.GetNick());
-				MODULECALL(OnPart(Nick.GetNickMask(), *pChan), m_pUser, NULL, NOTHING);
+				MODULECALL(OnPart(Nick.GetNickMask(), *pChan, sMsg), m_pUser, NULL, NOTHING);
 
 				if (pChan->IsDetached())
 					bDetached = true;

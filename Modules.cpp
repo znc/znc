@@ -424,7 +424,7 @@ void CModule::OnQuit(const CNick& Nick, const CString& sMessage, const vector<CC
 void CModule::OnNick(const CNick& Nick, const CString& sNewNick, const vector<CChan*>& vChans) {}
 void CModule::OnKick(const CNick& Nick, const CString& sKickedNick, CChan& Channel, const CString& sMessage) {}
 void CModule::OnJoin(const CNick& Nick, CChan& Channel) {}
-void CModule::OnPart(const CNick& Nick, CChan& Channel) {}
+void CModule::OnPart(const CNick& Nick, CChan& Channel, const CString& sMessage) {}
 
 CModule::EModRet CModule::OnChanBufferStarting(CChan& Chan, CClient& Client) { return CONTINUE; }
 CModule::EModRet CModule::OnChanBufferEnding(CChan& Chan, CClient& Client) { return CONTINUE; }
@@ -588,7 +588,7 @@ bool CModules::OnQuit(const CNick& Nick, const CString& sMessage, const vector<C
 bool CModules::OnNick(const CNick& Nick, const CString& sNewNick, const vector<CChan*>& vChans) { MODUNLOADCHK(OnNick(Nick, sNewNick, vChans)); return false; }
 bool CModules::OnKick(const CNick& Nick, const CString& sKickedNick, CChan& Channel, const CString& sMessage) { MODUNLOADCHK(OnKick(Nick, sKickedNick, Channel, sMessage)); return false; }
 bool CModules::OnJoin(const CNick& Nick, CChan& Channel) { MODUNLOADCHK(OnJoin(Nick, Channel)); return false; }
-bool CModules::OnPart(const CNick& Nick, CChan& Channel) { MODUNLOADCHK(OnPart(Nick, Channel)); return false; }
+bool CModules::OnPart(const CNick& Nick, CChan& Channel, const CString& sMessage) { MODUNLOADCHK(OnPart(Nick, Channel, sMessage)); return false; }
 bool CModules::OnChanBufferStarting(CChan& Chan, CClient& Client) { MODHALTCHK(OnChanBufferStarting(Chan, Client)); }
 bool CModules::OnChanBufferEnding(CChan& Chan, CClient& Client) { MODHALTCHK(OnChanBufferEnding(Chan, Client)); }
 bool CModules::OnChanBufferPlayLine(CChan& Chan, CClient& Client, CString& sLine) { MODHALTCHK(OnChanBufferPlayLine(Chan, Client, sLine)); }

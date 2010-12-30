@@ -192,9 +192,9 @@ public:
 			Channel.GetName(), Channel.GetName());
 	}
 
-	virtual void OnPart(const CNick& Nick, CChan& Channel) {
+	virtual void OnPart(const CNick& Nick, CChan& Channel, const CString& sMessage) {
 		Process(Nick, "* " + Nick.GetNick() + " (" + Nick.GetIdent() + "@" + Nick.GetHost() + ") parts " +
-			Channel.GetName(), Channel.GetName());
+			Channel.GetName() + "(" + sMessage + ")", Channel.GetName());
 	}
 
 	virtual void OnNick(const CNick& OldNick, const CString& sNewNick, const vector<CChan*>& vChans) {

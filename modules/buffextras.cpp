@@ -47,8 +47,8 @@ public:
 		AddBuffer(Channel, Nick.GetNickMask() + " joined");
 	}
 
-	virtual void OnPart(const CNick& Nick, CChan& Channel) {
-		AddBuffer(Channel, Nick.GetNickMask() + " parted");
+	virtual void OnPart(const CNick& Nick, CChan& Channel, const CString& sMessage) {
+		AddBuffer(Channel, Nick.GetNickMask() + " parted with message: [" + sMessage + "]");
 	}
 
 	virtual void OnNick(const CNick& OldNick, const CString& sNewNick, const vector<CChan*>& vChans) {

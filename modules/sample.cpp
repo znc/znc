@@ -114,7 +114,7 @@ public:
 		PutModule("* Joins: " + Nick.GetNick() + " (" + Nick.GetIdent() + "!" + Nick.GetHost() + ")");
 	}
 
-	virtual void OnPart(const CNick& Nick, CChan& Channel) {
+	virtual void OnPart(const CNick& Nick, CChan& Channel, const CString& sMessage) {
 		PutModule("* Parts: " + Nick.GetNick() + " (" + Nick.GetIdent() + "!" + Nick.GetHost() + ")");
 	}
 

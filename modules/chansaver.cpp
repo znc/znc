@@ -61,7 +61,7 @@ public:
 		}
 	}
 
-	virtual void OnPart(const CNick& Nick, CChan& Channel) {
+	virtual void OnPart(const CNick& Nick, CChan& Channel, const CString& sMessage) {
 		if (Nick.GetNick() == m_pUser->GetIRCNick().GetNick()) {
 			Channel.SetInConfig(false);
 			CZNC::Get().WriteConfig();

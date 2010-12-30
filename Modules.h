@@ -479,8 +479,9 @@ public:
 	/** Called when a nick parts a channel.
 	 *  @param Nick The nick who parted.
 	 *  @param Channel The channel which was parted.
+	 *  @param sMessage The part message.
 	 */
-	virtual void OnPart(const CNick& Nick, CChan& Channel);
+	virtual void OnPart(const CNick& Nick, CChan& Channel, const CString& sMessage);
 
 	/** Called before a channel buffer is played back to a client.
 	 *  @param Chan The channel which will be played back.
@@ -859,7 +860,7 @@ public:
 	bool OnNick(const CNick& Nick, const CString& sNewNick, const vector<CChan*>& vChans);
 	bool OnKick(const CNick& Nick, const CString& sOpNick, CChan& Channel, const CString& sMessage);
 	bool OnJoin(const CNick& Nick, CChan& Channel);
-	bool OnPart(const CNick& Nick, CChan& Channel);
+	bool OnPart(const CNick& Nick, CChan& Channel, const CString& sMessage);
 
 	bool OnChanBufferStarting(CChan& Chan, CClient& Client);
 	bool OnChanBufferEnding(CChan& Chan, CClient& Client);

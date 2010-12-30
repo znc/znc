@@ -101,7 +101,7 @@ public:
 		}
 	}
 
-	virtual void OnPart(const CNick& Nick, CChan& Channel) {
+	virtual void OnPart(const CNick& Nick, CChan& Channel, const CString& sMessage) {
 		AutoCycle(Channel);
 	}
 
