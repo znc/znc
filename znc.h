@@ -146,6 +146,7 @@ private:
 	bool DoRehash(CString& sError);
 	// Returns true if something was done
 	bool HandleUserDeletion();
+	CString MakeConfigHeader();
 
 protected:
 	time_t                 m_TimeStarted;
