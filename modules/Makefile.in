@@ -53,6 +53,8 @@ ifneq "$(LIBZNC)" ""
 LDFLAGS += -L.. -lznc -Wl,-rpath,$(LIBZNCDIR)
 endif
 
+CLEAN    :=
+
 FILES    := $(notdir $(wildcard $(srcdir)/*.cpp))
 # If extra is enabled
 ifeq "@EXTRA@" "yes"
@@ -85,7 +87,7 @@ charsetFLAGS := @LIBICONV@
 
 TARGETS  := $(addsuffix .so, $(FILES))
 
-CLEAN    := *.so extra/*.so
+CLEAN    += *.so extra/*.so
 
 .PHONY: all clean install install_metadirs create_install_dir uninstall
 

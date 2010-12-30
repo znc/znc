@@ -4,16 +4,17 @@ PYTHONCOMMON += -DSWIG_TYPE_TABLE=znc
 PYTHONCOMMON += -Wno-missing-field-initializers -Wno-unused -Wno-shadow
 PYTHONCOMMON += -Wno-missing-declarations -Wno-uninitialized
 modpythonFLAGS := $(PYTHONCOMMON) -I.
-PYTHONHOOK   := modpython_install
-else
-FILES    := $(shell echo $(FILES) | sed -e "s/modpython//")
-endif
 
+PYTHONHOOK   := modpython_install
 CLEAN    += modpython/_znc_core.so modpython/_znc_core.cpp modpython/znc_core.py modpython/znc_core.pyc
 CLEAN    += modpython/swigpyrun.h modpython/znc.pyc modpython/functions.cpp modpython/compiler
 ifneq "$(srcdir)" "."
 # Copied from source for out-of-tree builds
 CLEAN    += modpython/znc.py
+endif
+
+else
+FILES    := $(shell echo $(FILES) | sed -e "s/modpython//")
 endif
 
 .PHONY: modpython_install modpython_compilepyc

@@ -8,13 +8,14 @@ PERLCOMMON   += -DSWIG_TYPE_TABLE=znc
 modperlFLAGS := $(PERLCOMMON)
 # Find additional headers for out-of-tree build
 modperlFLAGS += -I.
+
 PERLHOOK     := modperl_install
+CLEAN    += modperl/ZNC.so modperl/ZNC.pm
+CLEAN    += modperl/swigperlrun.h modperl/ZNC.cpp modperl/functions.cpp
+
 else
 FILES    := $(shell echo $(FILES) | sed -e "s/modperl//")
 endif
-
-CLEAN    += modperl/ZNC.so modperl/ZNC.pm
-CLEAN    += modperl/swigperlrun.h modperl/ZNC.cpp modperl/functions.cpp
 
 .PHONY: modperl_install
 
