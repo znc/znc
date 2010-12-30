@@ -153,7 +153,7 @@ class Module:
 	def OnNick(self, Nick, sNewNick, vChans): pass
 	def OnKick(self, OpNick, sKickedNick, Channel, sMessage): pass
 	def OnJoin(self, Nick, Channel): pass
-	def OnPart(self, Nick, Channel): pass
+	def OnPart(self, Nick, Channel, sMessage=None): pass
 	def OnChanBufferStarting(self, Chan, Client): pass
 	def OnChanBufferEnding(self, Chan, Client): pass
 	def OnChanBufferPlayLine(self, Chan, Client, sLine): pass
