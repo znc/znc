@@ -69,7 +69,7 @@ public:
 	virtual void OnNick(const CNick& Nick, const CString& sNewNick, const vector<CChan*>& vChans);
 	virtual void OnKick(const CNick& OpNick, const CString& sKickedNick, CChan& Channel, const CString& sMessage);
 	virtual void OnJoin(const CNick& Nick, CChan& Channel);
-	virtual void OnPart(const CNick& Nick, CChan& Channel);
+	virtual void OnPart(const CNick& Nick, CChan& Channel, const CString& sMessage);
 	virtual EModRet OnChanBufferStarting(CChan& Chan, CClient& Client);
 	virtual EModRet OnChanBufferEnding(CChan& Chan, CClient& Client);
 	virtual EModRet OnChanBufferPlayLine(CChan& Chan, CClient& Client, CString& sLine);

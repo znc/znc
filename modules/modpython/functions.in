@@ -32,7 +32,7 @@ void OnQuit(const CNick& Nick, const CString& sMessage, const vector<CChan*>& vC
 void OnNick(const CNick& Nick, const CString& sNewNick, const vector<CChan*>& vChans)
 void OnKick(const CNick& OpNick, const CString& sKickedNick, CChan& Channel, const CString& sMessage)
 void OnJoin(const CNick& Nick, CChan& Channel)
-void OnPart(const CNick& Nick, CChan& Channel)
+void OnPart(const CNick& Nick, CChan& Channel, const CString& sMessage)
 EModRet OnChanBufferStarting(CChan& Chan, CClient& Client)
 EModRet OnChanBufferEnding(CChan& Chan, CClient& Client)
 EModRet OnChanBufferPlayLine(CChan& Chan, CClient& Client, CString& sLine)
