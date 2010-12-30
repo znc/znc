@@ -61,9 +61,9 @@ ifeq "@EXTRA@" "yes"
 FILES    += $(addprefix extra/, $(notdir $(wildcard $(srcdir)/extra/*.cpp)))
 endif
 
-include modperl/Makefile.inc
-include modpython/Makefile.inc
-include Makefile.modtcl
+include $(srcdir)/modperl/Makefile.inc
+include $(srcdir)/modpython/Makefile.inc
+include $(srcdir)/Makefile.modtcl
 
 FILES    := $(basename $(FILES))
 
