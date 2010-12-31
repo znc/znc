@@ -125,35 +125,20 @@ public:
 	virtual void OnPageRequest(const CString& sURI);
 
 	void ParsePath();   // This parses the path portion of the url into some member vars
-	CModule* ResolveModule();
 
-	//virtual bool PrintFile(const CString& sFileName, CString sContentType = "");
 	EPageReqResult PrintTemplate(const CString& sPageName, CString& sPageRet, CModule* pModule = NULL);
 	EPageReqResult PrintStaticFile(const CString& sPath, CString& sPageRet, CModule* pModule = NULL);
 
-	bool AddModLoop(const CString& sLoopName, CModule& Module);
-	VCString GetDirs(CModule* pModule, bool bIsTemplate);
 	CString FindTmpl(CModule* pModule, const CString& sName);
-	void SetPaths(CModule* pModule, bool bIsTemplate = false);
-	void SetVars();
-
-	void FillErrorPage(CString& sPageRet, const CString& sError) {
-		m_Template["Action"] = "error";
-		m_Template["Title"] = "Error";
-		m_Template["Error"] = sError;
-
-		PrintTemplate("error", sPageRet);
-	}
 
 	void PrintErrorPage(const CString& sMessage);
 
 	CSmartPtr<CWebSession> GetSession();
-	CString GetCSRFCheck();
 
 	virtual Csock* GetSockObj(const CString& sHost, unsigned short uPort);
-	CString GetSkinPath(const CString& sSkinName) const;
+	static CString GetSkinPath(const CString& sSkinName);
 	CModule* GetModule() const { return (CModule*) m_pModule; }
-	size_t GetAvailSkins(vector<CFile>& vRet);
+	size_t GetAvailSkins(vector<CFile>& vRet) const;
 	CString GetSkinName();
 
 	CString GetRequestCookie(const CString& sKey);
@@ -166,15 +151,21 @@ public:
 protected:
 	using CHTTPSock::PrintErrorPage;
 
+	bool AddModLoop(const CString& sLoopName, CModule& Module);
+	VCString GetDirs(CModule* pModule, bool bIsTemplate);
+	void SetPaths(CModule* pModule, bool bIsTemplate = false);
+	void SetVars();
+	CString GetCSRFCheck();
+
 private:
 	EPageReqResult OnPageRequestInternal(const CString& sURI, CString& sPageRet);
 
 	bool                    m_bPathsSet;
 	CTemplate               m_Template;
 	CSmartPtr<CAuthBase>    m_spAuth;
-	CString                 m_sModName;     // Gets filled by ResolveModule()
-	CString                 m_sPath;        // Gets filled by ResolveModule()
-	CString                 m_sPage;        // Gets filled by ResolveModule()
+	CString                 m_sModName;     // Gets filled by ParsePath()
+	CString                 m_sPath;        // Gets filled by ParsePath()
+	CString                 m_sPage;        // Gets filled by ParsePath()
 	CSmartPtr<CWebSession>  m_spSession;
 
 	static CWebSessionMap   m_mspSessions;

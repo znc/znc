@@ -160,34 +160,7 @@ void CWebSock::ParsePath() {
 	DEBUG("Path [" + m_sPath + "], Module [" + m_sModName + "], Page [" + m_sPage + "]");
 }
 
-CModule* CWebSock::ResolveModule() {
-	ParsePath();
-	CModule* pModRet = NULL;
-
-	// Dot means static file, not module
-	if (m_sModName.find(".") != CString::npos) {
-		return NULL;
-	}
-
-	// This could be user level or global level, check both
-	pModRet = CZNC::Get().GetModules().FindModule(m_sModName);
-
-	if (!pModRet) {
-		if (!ForceLogin()) {
-			return NULL;
-		}
-
-		pModRet = GetSession()->GetUser()->GetModules().FindModule(m_sModName);
-	}
-
-	if (!pModRet) {
-		DEBUG("Module not found");
-	}
-
-	return pModRet;
-}
-
-size_t CWebSock::GetAvailSkins(vector<CFile>& vRet) {
+size_t CWebSock::GetAvailSkins(vector<CFile>& vRet) const {
 	vRet.clear();
 
 	CString sRoot(GetSkinPath("_default_"));
@@ -436,7 +409,7 @@ CWebSock::EPageReqResult CWebSock::PrintTemplate(const CString& sPageName, CStri
 	}
 }
 
-CString CWebSock::GetSkinPath(const CString& sSkinName) const {
+CString CWebSock::GetSkinPath(const CString& sSkinName) {
 	CString sRet = CZNC::Get().GetZNCPath() + "/webskins/" + sSkinName;
 
 	if (!CFile::IsDir(sRet)) {
