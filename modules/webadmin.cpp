@@ -506,6 +506,7 @@ public:
 				Tmpl["ChanName"] = pChan->GetName();
 				Tmpl["BufferCount"] = CString(pChan->GetBufferCount());
 				Tmpl["DefModes"] = pChan->GetDefaultModes();
+				Tmpl["Key"] = pChan->GetKey();
 
 				if (pChan->InConfig()) {
 					Tmpl["InConfig"] = "true";
@@ -564,6 +565,7 @@ public:
 		pChan->SetDefaultModes(WebSock.GetParam("defmodes"));
 		pChan->SetInConfig(WebSock.GetParam("save").ToBool());
 		pChan->SetKeepBuffer(WebSock.GetParam("keepbuffer").ToBool());
+		pChan->SetKey(WebSock.GetParam("key"));
 
 		bool bDetached = WebSock.GetParam("detached").ToBool();
 
