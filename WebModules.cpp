@@ -143,9 +143,7 @@ CWebSock::~CWebSock() {
 
 void CWebSock::ParsePath() {
 	// The URI looks like:
-	//         /[user:][module][/page][?arg1=val1&arg2=val2...]
-
-	m_sForceUser.clear();
+	//         /[module][/page][?arg1=val1&arg2=val2...]
 
 	m_sPath = GetPath().TrimLeft_n("/");
 
@@ -155,16 +153,11 @@ void CWebSock::ParsePath() {
 	m_sModName = m_sPath.Token(0, false, "/");
 	m_sPage = m_sPath.Token(1, true, "/");
 
-	if (m_sModName.find(":") != CString::npos) {
-		m_sForceUser = m_sModName.Token(0, false, ":");
-		m_sModName = m_sModName.Token(1, false, ":");
-	}
-
 	if (m_sPage.empty()) {
 		m_sPage = "index";
 	}
 
-	DEBUG("Path [" + m_sPath + "], User [" + m_sForceUser + "], Module [" + m_sModName + "], Page [" + m_sPage + "]");
+	DEBUG("Path [" + m_sPath + "], Module [" + m_sModName + "], Page [" + m_sPage + "]");
 }
 
 CModule* CWebSock::ResolveModule() {
@@ -176,28 +169,15 @@ CModule* CWebSock::ResolveModule() {
 		return NULL;
 	}
 
-	// First look for forced user-mods
-	if (!m_sForceUser.empty()) {
-		CUser* pUser = CZNC::Get().FindUser(m_sForceUser);
+	// This could be user level or global level, check both
+	pModRet = CZNC::Get().GetModules().FindModule(m_sModName);
 
-		if (pUser) {
-			pModRet = pUser->GetModules().FindModule(m_sModName);
-		} else {
-			DEBUG("User not found while trying to handle web request for [" + m_sPage + "]");
+	if (!pModRet) {
+		if (!ForceLogin()) {
+			return NULL;
 		}
-	} else {
-		// This could be user level or global level, check both
-		pModRet = CZNC::Get().GetModules().FindModule(m_sModName);
 
-		if (!pModRet) {
-			// It's not a loaded global module and it has no forced username so we
-			// have to force a login to try a module loaded by the current user
-			if (!ForceLogin()) {
-				return NULL;
-			}
-
-			pModRet = GetSession()->GetUser()->GetModules().FindModule(m_sModName);
-		}
+		pModRet = GetSession()->GetUser()->GetModules().FindModule(m_sModName);
 	}
 
 	if (!pModRet) {
@@ -605,16 +585,11 @@ CWebSock::EPageReqResult CWebSock::OnPageRequestInternal(const CString& sURI, CS
 			return PrintTemplate("modlist", sPageRet);
 		}
 
-		DEBUG("FindModule(" + m_sModName + ", " + m_sForceUser + ")");
-		CModule* pModule = CZNC::Get().FindModule(m_sModName, m_sForceUser);
-
-		if (!pModule && m_sForceUser.empty()) {
-			if (!ForceLogin()) {
-				return PAGE_DONE;
-			}
-
-			pModule = CZNC::Get().FindModule(m_sModName, GetSession()->GetUser());
+		if (!ForceLogin()) {
+			return PAGE_DONE;
 		}
+
+		CModule* pModule = CZNC::Get().FindModule(m_sModName, GetSession()->GetUser());
 
 		if (!pModule) {
 			return PAGE_NOTFOUND;
