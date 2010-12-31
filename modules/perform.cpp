@@ -15,7 +15,7 @@ public:
 
 	virtual ~CPerform() {}
 
-	CString ParsePerform(const CString& sArg) {
+	CString ParsePerform(const CString& sArg) const {
 		CString sPerf = sArg;
 
 		if (sPerf.Left(1) == "/")
@@ -67,7 +67,7 @@ public:
 		} else if (sCmdName == "list") {
 			int i = 1;
 			CString sExpanded;
-			for (VCString::iterator it = m_vPerform.begin(); it != m_vPerform.end(); it++, i++) {
+			for (VCString::const_iterator it = m_vPerform.begin(); it != m_vPerform.end(); it++, i++) {
 				sExpanded = GetUser()->ExpandString(*it);
 				if (sExpanded != *it)
 					PutModule(CString(i) + ": " + *it + " (" + sExpanded + ")");
@@ -95,8 +95,7 @@ public:
 	}
 
 	virtual void OnIRCConnected() {
-		for (VCString::iterator it = m_vPerform.begin();
-			it != m_vPerform.end();  ++it) {
+		for (VCString::const_iterator it = m_vPerform.begin(); it != m_vPerform.end(); ++it) {
 			PutIRC(GetUser()->ExpandString(*it));
 		}
 	}
@@ -104,18 +103,23 @@ public:
 	virtual CString GetWebMenuTitle() { return "Perform"; }
 
 	virtual bool OnWebRequest(CWebSock& WebSock, const CString& sPageName, CTemplate& Tmpl) {
+		if (sPageName != "index") {
+			// only accept requests to /mods/perform/
+			return false;
+		}
+
 		if (WebSock.IsPost()) {
 			VCString vsPerf;
 			WebSock.GetRawParam("perform", true).Split("\n", vsPerf, false);
 			m_vPerform.clear();
 
-			for (VCString::iterator it = vsPerf.begin(); it != vsPerf.end(); ++it)
+			for (VCString::const_iterator it = vsPerf.begin(); it != vsPerf.end(); ++it)
 				m_vPerform.push_back(ParsePerform(*it));
 
 			Save();
 		}
 
-		for (VCString::iterator it = m_vPerform.begin(); it != m_vPerform.end(); ++it) {
+		for (VCString::const_iterator it = m_vPerform.begin(); it != m_vPerform.end(); ++it) {
 			CTemplate& Row = Tmpl.AddRow("PerformLoop");
 			Row["Perform"] = *it;
 		}
@@ -127,7 +131,7 @@ private:
 	void Save() {
 		CString sBuffer = "";
 
-		for (VCString::iterator it = m_vPerform.begin(); it != m_vPerform.end(); ++it) {
+		for (VCString::const_iterator it = m_vPerform.begin(); it != m_vPerform.end(); ++it) {
 			sBuffer += *it + "\n";
 		}
 		SetNV("Perform", sBuffer);
