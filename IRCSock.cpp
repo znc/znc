@@ -988,7 +988,7 @@ void CIRCSock::SockError(int iErrno) {
 		if (GetBindHost().empty())
 			sError += " (Is your IRC server's host name valid?)";
 		else
-			sError += " (Is your IRC server's host name and znc bind host valid?)";
+			sError += " (Is your IRC server's host name and ZNC bind host valid?)";
 	} else {
 		sError = strerror(iErrno);
 	}

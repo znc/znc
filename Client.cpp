@@ -128,7 +128,7 @@ void CClient::ReadLine(const CString& sData) {
 		HandleCap(sLine);
 
 		// Don't let the client talk to the server directly about CAP,
-		// we don't want anything enabled that znc does not support.
+		// we don't want anything enabled that ZNC does not support.
 		return;
 	}
 

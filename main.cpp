@@ -40,7 +40,7 @@ static void GenerateHelp(const char *appname) {
 #ifdef HAVE_LIBSSL
 	CUtils::PrintMessage("\t-p, --makepem      Generates a pemfile for use with SSL");
 #endif /* HAVE_LIBSSL */
-	CUtils::PrintMessage("\t-d, --datadir      Set a different znc repository (default is ~/.znc)");
+	CUtils::PrintMessage("\t-d, --datadir      Set a different ZNC repository (default is ~/.znc)");
 }
 
 static void die(int sig) {
@@ -189,7 +189,7 @@ int main(int argc, char** argv) {
 
 #ifndef RUN_FROM_SOURCE
 	if (CFile::Exists(pZNC->GetCurPath() + "/znc-uninstalled.pc")) {
-		CUtils::PrintError("It looks like you are running znc without installing it first.");
+		CUtils::PrintError("It looks like you are running ZNC without installing it first.");
 		CUtils::PrintError("Recompile with --enable-run-from-source if you intend to do that.");
 	}
 #endif
@@ -331,7 +331,7 @@ int main(int argc, char** argv) {
 
 				delete pZNC;
 				execvp(args[0], args);
-				CUtils::PrintError("Unable to restart znc [" + CString(strerror(errno)) + "]");
+				CUtils::PrintError("Unable to restart ZNC [" + CString(strerror(errno)) + "]");
 			} /* Fall through */
 			default:
 				iRet = 1;

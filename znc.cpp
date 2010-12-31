@@ -659,7 +659,7 @@ bool CZNC::WriteNewConfig(const CString& sConfigFile) {
 	CUtils::PrintMessage("Building new config");
 
 	CUtils::PrintMessage("");
-	CUtils::PrintMessage("First lets start with some global settings...");
+	CUtils::PrintMessage("First let's start with some global settings...");
 	CUtils::PrintMessage("");
 
 	// Listen
@@ -767,7 +767,7 @@ bool CZNC::WriteNewConfig(const CString& sConfigFile) {
 
 	// User
 	CUtils::PrintMessage("");
-	CUtils::PrintMessage("Now we need to setup a user...");
+	CUtils::PrintMessage("Now we need to set up a user...");
 	CUtils::PrintMessage("ZNC needs one user per IRC network.");
 	CUtils::PrintMessage("");
 
@@ -877,7 +877,7 @@ bool CZNC::WriteNewConfig(const CString& sConfigFile) {
 		CUtils::PrintMessage("");
 		CUtils::PrintMessage("-- IRC Servers --");
 		CUtils::PrintMessage("Only add servers from the same IRC network.");
-		CUtils::PrintMessage("If a server somehow doesn't work, another server will be used.");
+		CUtils::PrintMessage("If a server from the list can't be reached, another server will be used.");
 		CUtils::PrintMessage("");
 
 		do {
@@ -920,7 +920,7 @@ bool CZNC::WriteNewConfig(const CString& sConfigFile) {
 
 		CUtils::PrintMessage("");
 		bFirstUser = false;
-	} while (CUtils::GetBoolInput("Would you like to setup another user (e.g. for connecting to another network)?", false));
+	} while (CUtils::GetBoolInput("Would you like to set up another user (e.g. for connecting to another network)?", false));
 	// !User
 
 	CFile File;
@@ -985,9 +985,9 @@ bool CZNC::WriteNewConfig(const CString& sConfigFile) {
 
 	const CString sProtocol(sSSL.empty() ? "http" : "https");
 	CUtils::PrintMessage("");
-	CUtils::PrintMessage("To connect to this znc you need to connect to it as your irc server", true);
+	CUtils::PrintMessage("To connect to this ZNC you need to connect to it as your IRC server", true);
 	CUtils::PrintMessage("using the port that you supplied.  You have to supply your login info", true);
-	CUtils::PrintMessage("as the irc server password like so... user:pass.", true);
+	CUtils::PrintMessage("as the IRC server password like this: user:pass.", true);
 	CUtils::PrintMessage("");
 	CUtils::PrintMessage("Try something like this in your IRC client...", true);
 	CUtils::PrintMessage("/server <znc_server_ip> " + sSSL + CString(uListenPort) + " " + sUser + ":<pass>", true);
@@ -996,7 +996,7 @@ bool CZNC::WriteNewConfig(const CString& sConfigFile) {
 	CUtils::PrintMessage("");
 
 	m_LockFile.UnLock();
-	return bFileOpen && CUtils::GetBoolInput("Launch znc now?", true);
+	return bFileOpen && CUtils::GetBoolInput("Launch ZNC now?", true);
 }
 
 size_t CZNC::FilterUncommonModules(set<CModInfo>& ssModules) {
@@ -1064,7 +1064,7 @@ bool CZNC::DoRehash(CString& sError)
 	if (!CFile::Exists(m_sConfigFile)) {
 		sError = "No such file";
 		CUtils::PrintStatus(false, sError);
-		CUtils::PrintMessage("Restart znc with the --makeconf option if you wish to create this config.");
+		CUtils::PrintMessage("Restart ZNC with the --makeconf option if you wish to create this config.");
 		return false;
 	}
 
