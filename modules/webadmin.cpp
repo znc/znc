@@ -233,11 +233,16 @@ public:
 		sArg = WebSock.GetParam("bindhost");
 		// To change BindHosts be admin or don't have DenySetBindHost
 		if (spSession->IsAdmin() || !spSession->GetUser()->DenySetBindHost()) {
+			CString sArg2 = WebSock.GetParam("dccbindhost");
 			if (!sArg.empty()) {
 				pNewUser->SetBindHost(sArg);
 			}
+			if (!sArg2.empty()) {
+				pNewUser->SetDCCBindHost(sArg2);
+			}
 		} else if (pUser){
 			pNewUser->SetBindHost(pUser->GetBindHost());
+			pNewUser->SetDCCBindHost(pUser->GetDCCBindHost());
 		}
 
 		// First apply the old limit in case the new one is too high
@@ -681,18 +686,26 @@ public:
 			}
 
 			// To change BindHosts be admin or don't have DenySetBindHost
-			const VCString& vsBindHosts = CZNC::Get().GetBindHosts();
-			bool bFoundBindHost = false;
 			if (spSession->IsAdmin() || !spSession->GetUser()->DenySetBindHost()) {
+				const VCString& vsBindHosts = CZNC::Get().GetBindHosts();
+				bool bFoundBindHost = false;
+				bool bFoundDCCBindHost = false;
 				for (unsigned int b = 0; b < vsBindHosts.size(); b++) {
 					const CString& sBindHost = vsBindHosts[b];
 					CTemplate& l = Tmpl.AddRow("BindHostLoop");
+					CTemplate& k = Tmpl.AddRow("DCCBindHostLoop");
 
 					l["BindHost"] = sBindHost;
+					k["BindHost"] = sBindHost;
 
 					if (pUser && pUser->GetBindHost() == sBindHost) {
 						l["Checked"] = "true";
 						bFoundBindHost = true;
+					}
+
+					if (pUser && pUser->GetDCCBindHost() == sBindHost) {
+						k["Checked"] = "true";
+						bFoundDCCBindHost = true;
 					}
 				}
 
@@ -701,6 +714,12 @@ public:
 					CTemplate& l = Tmpl.AddRow("BindHostLoop");
 
 					l["BindHost"] = pUser->GetBindHost();
+					l["Checked"] = "true";
+				}
+				if (pUser && !bFoundDCCBindHost && !pUser->GetDCCBindHost().empty()) {
+					CTemplate& l = Tmpl.AddRow("DCCBindHostLoop");
+
+					l["BindHost"] = pUser->GetDCCBindHost();
 					l["Checked"] = "true";
 				}
 			}

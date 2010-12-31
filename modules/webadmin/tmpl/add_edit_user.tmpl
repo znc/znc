@@ -82,6 +82,17 @@
 				<div style="clear: both;"></div>
 			<? ENDIF ?>
 
+			<? IF DCCBindHostLoop ?>
+				<div class="subsection">
+					<div class="inputlabel">DCCBindHost:</div>
+					<select name="dccbindhost">
+						<option value="">- Default -</option>
+						<? LOOP DCCBindHostLoop ?><option value="<? VAR BindHost ?>"<? IF Checked ?> selected="selected"<? ENDIF ?>><? VAR BindHost ?></option><? ENDLOOP ?>
+					</select>
+				</div>
+				<div style="clear: both;"></div>
+			<? ENDIF ?>
+
 				<div class="subsection">
 					<div class="inputlabel">Quit Message:</div>
 					<div><input type="text" name="quitmsg" value="<? VAR QuitMsg ?>" class="full" maxlength="256" /></div>
