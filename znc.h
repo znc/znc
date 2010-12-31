@@ -84,6 +84,9 @@ public:
 	void SetISpoofFile(const CString& s) { m_sISpoofFile = s; }
 	void SetISpoofFormat(const CString& s) { m_sISpoofFormat = (s.empty()) ? "global { reply \"%\" }" : s; }
 	void SetMaxBufferSize(unsigned int i) { m_uiMaxBufferSize = i; }
+	void SetAnonIPLimit(unsigned int i) { m_uiAnonIPLimit = i; }
+	void SetServerThrottle(unsigned int i) { m_sConnectThrottle.SetTTL(i*1000); }
+	void SetConnectDelay(unsigned int i);
 	// !Setters
 
 	// Getters
@@ -109,6 +112,9 @@ public:
 	const vector<CListener*>& GetListeners() const { return m_vpListeners; }
 	time_t TimeStarted() const { return m_TimeStarted; }
 	unsigned int GetMaxBufferSize() const { return m_uiMaxBufferSize; }
+	unsigned int GetAnonIPLimit() const { return m_uiAnonIPLimit; }
+	unsigned int GetServerThrottle() const { return m_sConnectThrottle.GetTTL() / 1000; }
+	unsigned int GetConnectDelay() const { return m_uiConnectDelay; }
 	// !Getters
 
 	// Static allocator

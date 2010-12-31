@@ -2071,6 +2071,13 @@ private:
 	size_t m_uiPosNextUser;
 };
 
+void CZNC::SetConnectDelay(unsigned int i) {
+	if (m_uiConnectDelay != i && m_pConnectUserTimer != NULL) {
+		m_pConnectUserTimer->Start(i);
+	}
+	m_uiConnectDelay = i;
+}
+
 void CZNC::EnableConnectUser() {
 	if (m_pConnectUserTimer != NULL)
 		return;
