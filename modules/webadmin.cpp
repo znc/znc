@@ -971,6 +971,10 @@ public:
 			Tmpl["StatusPrefix"] = CZNC::Get().GetStatusPrefix();
 			Tmpl["ISpoofFile"] = CZNC::Get().GetISpoofFile();
 			Tmpl["ISpoofFormat"] = CZNC::Get().GetISpoofFormat();
+			Tmpl["MaxBufferSize"] = CString(CZNC::Get().GetMaxBufferSize());
+			Tmpl["ConnectDelay"] = CString(CZNC::Get().GetConnectDelay());
+			Tmpl["ServerThrottle"] = CString(CZNC::Get().GetServerThrottle());
+			Tmpl["AnonIPLimit"] = CString(CZNC::Get().GetAnonIPLimit());
 
 			const VCString& vsBindHosts = CZNC::Get().GetBindHosts();
 			for (unsigned int a = 0; a < vsBindHosts.size(); a++) {
@@ -1059,7 +1063,10 @@ public:
 		sArg = WebSock.GetParam("statusprefix"); CZNC::Get().SetStatusPrefix(sArg);
 		sArg = WebSock.GetParam("ispooffile"); CZNC::Get().SetISpoofFile(sArg);
 		sArg = WebSock.GetParam("ispoofformat"); CZNC::Get().SetISpoofFormat(sArg);
-		//sArg = GetParam(""); if (!sArg.empty()) { CZNC::Get().Set(sArg); }
+		sArg = WebSock.GetParam("maxbufsize"); CZNC::Get().SetMaxBufferSize(sArg.ToUInt());
+		sArg = WebSock.GetParam("connectdelay"); CZNC::Get().SetConnectDelay(sArg.ToUInt());
+		sArg = WebSock.GetParam("serverthrottle"); CZNC::Get().SetServerThrottle(sArg.ToUInt());
+		sArg = WebSock.GetParam("anoniplimit"); CZNC::Get().SetAnonIPLimit(sArg.ToUInt());
 
 		VCString vsArgs;
 		WebSock.GetRawParam("motd").Split("\n", vsArgs);

@@ -78,6 +78,30 @@
 				</div>
 				<div style="clear: both;"></div>
 
+				<div class="subsection half">
+					<div class="inputlabel">Maximum Buffer Size:</div>
+					<div><input type="text" name="maxbufsize" value="<? VAR MaxBufferSize ?>" /></div>
+				</div>
+				<div style="clear: both;"></div>
+
+				<div class="subsection half">
+					<div class="inputlabel">Connect Delay:</div>
+					<div><input type="text" name="connectdelay" value="<? VAR ConnectDelay ?>" /></div>
+				</div>
+				<div style="clear: both;"></div>
+
+				<div class="subsection half">
+					<div class="inputlabel">Server Throttle:</div>
+					<div><input type="text" name="serverthrottle" value="<? VAR ServerThrottle ?>" /></div>
+				</div>
+				<div style="clear: both;"></div>
+
+				<div class="subsection half">
+					<div class="inputlabel">Anonymous IP Limit:</div>
+					<div><input type="text" name="anoniplimit" value="<? VAR AnonIPLimit ?>" /></div>
+				</div>
+				<div style="clear: both;"></div>
+
 				<div class="subsection twothird">
 					<div class="inputlabel">MOTD:</div>
 					<div><textarea name="motd" cols="70" rows="5" class="monospace"><? LOOP MOTDLoop ?><? VAR Line ?>
