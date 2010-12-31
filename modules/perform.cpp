@@ -15,6 +15,26 @@ public:
 
 	virtual ~CPerform() {}
 
+	CString ParsePerform(const CString& sArg) {
+		CString sPerf = sArg;
+
+		if (sPerf.Left(1) == "/")
+			sPerf.LeftChomp();
+
+		if (sPerf.Token(0).Equals("MSG")) {
+			sPerf = "PRIVMSG " + sPerf.Token(1, true);
+		}
+
+		if ((sPerf.Token(0).Equals("PRIVMSG") ||
+				sPerf.Token(0).Equals("NOTICE")) &&
+				sPerf.Token(2).Left(1) != ":") {
+			sPerf = sPerf.Token(0) + " " + sPerf.Token(1)
+				+ " :" + sPerf.Token(2, true);
+		}
+
+		return sPerf;
+	}
+
 	virtual bool OnLoad(const CString& sArgs, CString& sMessage) {
 		GetNV("Perform").Split("\n", m_vPerform, false);
 
@@ -31,20 +51,7 @@ public:
 				return;
 			}
 
-			if (sPerf.Left(1) == "/")
-				sPerf.LeftChomp();
-
-			if (sPerf.Token(0).Equals("MSG")) {
-				sPerf = "PRIVMSG " + sPerf.Token(1, true);
-			}
-
-			if ((sPerf.Token(0).Equals("PRIVMSG") ||
-				sPerf.Token(0).Equals("NOTICE")) &&
-				sPerf.Token(2).Left(1) != ":") {
-				sPerf = sPerf.Token(0) + " " + sPerf.Token(1)
-					+ " :" + sPerf.Token(2, true);
-			}
-			m_vPerform.push_back(sPerf);
+			m_vPerform.push_back(ParsePerform(sPerf));
 			PutModule("Added!");
 			Save();
 		} else if (sCmdName == "del") {
@@ -98,7 +105,13 @@ public:
 
 	virtual bool OnWebRequest(CWebSock& WebSock, const CString& sPageName, CTemplate& Tmpl) {
 		if (WebSock.IsPost()) {
-			WebSock.GetRawParam("perform", true).Split("\n", m_vPerform, false);
+			VCString vsPerf;
+			WebSock.GetRawParam("perform", true).Split("\n", vsPerf, false);
+			m_vPerform.clear();
+
+			for (VCString::iterator it = vsPerf.begin(); it != vsPerf.end(); ++it)
+				m_vPerform.push_back(ParsePerform(*it));
+
 			Save();
 		}
 
