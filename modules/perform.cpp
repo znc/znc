@@ -94,16 +94,30 @@ public:
 		}
 	}
 
+	virtual CString GetWebMenuTitle() { return "Perform"; }
+
+	virtual bool OnWebRequest(CWebSock& WebSock, const CString& sPageName, CTemplate& Tmpl) {
+		if (WebSock.IsPost()) {
+			WebSock.GetRawParam("perform", true).Split("\n", m_vPerform, false);
+			Save();
+		}
+
+		for (VCString::iterator it = m_vPerform.begin(); it != m_vPerform.end(); ++it) {
+			CTemplate& Row = Tmpl.AddRow("PerformLoop");
+			Row["Perform"] = *it;
+		}
+
+		return true;
+	}
+
 private:
-	bool Save() {
+	void Save() {
 		CString sBuffer = "";
 
 		for (VCString::iterator it = m_vPerform.begin(); it != m_vPerform.end(); ++it) {
 			sBuffer += *it + "\n";
 		}
 		SetNV("Perform", sBuffer);
-
-		return true;
 	}
 
 	VCString m_vPerform;
