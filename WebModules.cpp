@@ -558,11 +558,15 @@ CWebSock::EPageReqResult CWebSock::OnPageRequestInternal(const CString& sURI, CS
 			return PrintTemplate("modlist", sPageRet);
 		}
 
-		if (!ForceLogin()) {
-			return PAGE_DONE;
-		}
+		CModule *pModule = CZNC::Get().GetModules().FindModule(m_sModName);
+		if (!pModule) {
+			// Check if GetSession()->GetUser() is NULL and display
+			// an error in that case
+			if (!ForceLogin())
+				return PAGE_DONE;
 
-		CModule* pModule = CZNC::Get().FindModule(m_sModName, GetSession()->GetUser());
+			pModule = GetSession()->GetUser()->GetModules().FindModule(m_sModName);
+		}
 
 		if (!pModule) {
 			return PAGE_NOTFOUND;
