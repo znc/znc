@@ -554,10 +554,6 @@ CWebSock::EPageReqResult CWebSock::OnPageRequestInternal(const CString& sURI, CS
 			return PAGE_DONE;
 		}
 
-		if (m_sModName.empty()) {
-			return PrintTemplate("modlist", sPageRet);
-		}
-
 		CModule *pModule = CZNC::Get().GetModules().FindModule(m_sModName);
 		if (!pModule) {
 			// Check if GetSession()->GetUser() is NULL and display
