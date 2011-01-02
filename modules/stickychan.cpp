@@ -104,7 +104,7 @@ public:
 	virtual CString GetWebMenuTitle() { return "Sticky Chans"; }
 
 	virtual bool OnWebRequest(CWebSock& WebSock, const CString& sPageName, CTemplate& Tmpl) {
-		if (sPageName.empty() || sPageName == "index") {
+		if (sPageName == "index") {
 			bool bSubmitted = (WebSock.GetParam("submitted").ToInt() != 0);
 
 			const vector<CChan*>& Channels = m_pUser->GetChans();

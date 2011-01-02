@@ -481,7 +481,7 @@ public:
 			return ListUsersPage(WebSock, Tmpl);
 		} else if (sPageName == "traffic" && spSession->IsAdmin()) {
 			return TrafficPage(WebSock, Tmpl);
-		} else if (sPageName.empty() || sPageName == "index") {
+		} else if (sPageName == "index") {
 			return true;
 		}
 

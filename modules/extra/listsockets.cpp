@@ -94,7 +94,7 @@ public:
 	virtual CString GetWebMenuTitle() { return "List sockets"; }
 
 	virtual bool OnWebRequest(CWebSock& WebSock, const CString& sPageName, CTemplate& Tmpl) {
-		if (sPageName.empty() || sPageName == "index") {
+		if (sPageName == "index") {
 			if (CZNC::Get().GetManager().empty()) {
 				return false;
 			}
