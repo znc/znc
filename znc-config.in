@@ -7,7 +7,7 @@ bindir="@bindir@"
 datadir="@datadir@"
 
 CXX="@CXX@"
-CXXFLAGS="@CPPFLAGS@ @MODFLAGS@ -I@prefix@/include/znc"
+CXXFLAGS="@DEFS@ @CPPFLAGS@ @MODFLAGS@ -I@prefix@/include/znc"
 MODLINK="@MODLINK@"
 # LIBS="@LIBS@"
 # No libs needed, ZNC links against $LIBS and thus modules don't need to.

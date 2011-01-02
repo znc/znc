@@ -7,6 +7,7 @@ datadir=@datadir@
 includedir=@includedir@
 
 cxx=@CXX@
+DEFS=@DEFS@
 CPPFLAGS=@CPPFLAGS@
 MODFLAGS=@MODFLAGS@
 version=@PACKAGE_VERSION@
@@ -20,4 +21,4 @@ Name: ZNC
 Description: An advanced IRC proxy
 Version: ${version}
 URL: http://znc.in
-Cflags: ${CPPFLAGS} ${MODFLAGS} ${INC_PATH}
+Cflags: ${DEFS} ${CPPFLAGS} ${MODFLAGS} ${INC_PATH}
