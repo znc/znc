@@ -165,7 +165,7 @@ public:
 	}
 
 	virtual bool OnWebRequest(CWebSock& WebSock, const CString& sPageName, CTemplate& Tmpl) {
-		if (sPageName.empty() || sPageName == "index") {
+		if (sPageName == "index") {
 			for (MCString::iterator it = BeginNV(); it != EndNV(); ++it) {
 				CTemplate& Row = Tmpl.AddRow("NotesLoop");
 
