@@ -8,29 +8,34 @@
 
 #include <Python.h>
 
+void fail(PyObject* py, int n) {
+	// Doesn't clear any variables, but meh, finalize anyway...
+	if (!py) {
+		PyErr_Print();
+		Py_Finalize();
+		exit(n);
+	}
+}
+
 int main(int argc, char** argv) {
+	// Don't use this as an example: this has awful memory leaks.
 	Py_Initialize();
+
 	PyObject* pyModule = PyImport_ImportModule("py_compile");
-	if (!pyModule) {
-		PyErr_Print();
-		Py_Finalize();
-		return 1;
-	}
+	fail(pyModule, 1);
+
 	PyObject* pyFunc = PyObject_GetAttrString(pyModule, "compile");
-	Py_CLEAR(pyModule);
-	if (!pyFunc) {
-		PyErr_Print();
-		Py_Finalize();
-		return 2;
-	}
-	PyObject* pyRes = PyObject_CallFunction(pyFunc, const_cast<char*>("ss"), argv[1], argv[2]);
-	Py_CLEAR(pyFunc);
-	if (!pyRes) {
-		PyErr_Print();
-		Py_Finalize();
-		return 3;
-	}
-	Py_CLEAR(pyRes);
+	fail(pyFunc, 2);
+	
+	PyObject* pyKW = Py_BuildValue("{sssN}", "cfile", argv[2], "doraise", Py_True);
+	fail(pyKW, 3);
+
+	PyObject* pyArg = Py_BuildValue("(s)", argv[1]);
+	fail(pyArg, 4);
+
+	PyObject* pyRes = PyObject_Call(pyFunc, pyArg, pyKW);
+	fail(pyRes, 5);
+
 	Py_Finalize();
 	return 0;
 }
