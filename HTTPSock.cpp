@@ -221,6 +221,7 @@ bool CHTTPSock::PrintFile(const CString& sFileName, CString sContentType) {
 	if (iMTime > 0 && !m_bHTTP10Client) {
 		sETag = "-" + CString(iMTime); // lighttpd style ETag
 
+		AddHeader("Last-Modified", GetDate(iMTime));
 		AddHeader("ETag", "\"" + sETag + "\"");
 		AddHeader("Cache-Control", "public");
 
