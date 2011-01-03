@@ -10,6 +10,9 @@
 #include "HTTPSock.h"
 #include "znc.h"
 
+#include <sstream>
+#include <iomanip>
+
 #define MAX_POST_SIZE	1024 * 1024
 
 CHTTPSock::CHTTPSock(CModule *pMod) : CSocket(pMod) {
@@ -125,6 +128,28 @@ void CHTTPSock::ReadLine(const CString& sData) {
 
 		DisableReadLine();
 	}
+}
+
+CString CHTTPSock::GetDate(time_t stamp) {
+	struct tm tm;
+	std::stringstream stream;
+	const char *wkday[] = { "Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat" };
+	const char *month[] = { "Jan", "Feb", "Mar", "Apr", "May", "Jun",
+		"Jul", "Aug", "Sep", "Oct", "Nov", "Dec" };
+
+	if (stamp == 0)
+		time(&stamp);
+	gmtime_r(&stamp, &tm);
+
+	stream << wkday[tm.tm_wday] << ", ";
+	stream << std::setfill('0') << std::setw(2) << tm.tm_mday << " ";
+	stream << month[tm.tm_mon] << " ";
+	stream << std::setfill('0') << std::setw(4) << tm.tm_year + 1900 << " ";
+	stream << std::setfill('0') << std::setw(2) << tm.tm_hour << ":";
+	stream << std::setfill('0') << std::setw(2) << tm.tm_min << ":";
+	stream << std::setfill('0') << std::setw(2) << tm.tm_sec << " GMT";
+
+	return stream.str();
 }
 
 void CHTTPSock::GetPage() {
@@ -460,7 +485,7 @@ bool CHTTPSock::PrintHeader(off_t uContentLength, const CString& sContentType, u
 	DEBUG("- " << uStatusId << " (" << sStatusMsg << ") [" << m_sContentType << "]");
 
 	Write("HTTP/" + CString(m_bHTTP10Client ? "1.0 " : "1.1 ") + CString(uStatusId) + " " + sStatusMsg + "\r\n");
-	//Write("Date: Tue, 28 Jun 2005 20:45:36 GMT\r\n");
+	Write("Date: " + GetDate() + "\r\n");
 	Write("Server: " + CZNC::GetTag(false) + "\r\n");
 	if (uContentLength > 0) {
 		Write("Content-Length: " + CString(uContentLength) + "\r\n");

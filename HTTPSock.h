@@ -49,6 +49,7 @@ public:
 	static void ParseParams(const CString& sParams, map<CString, VCString>& msvsParams);
 	void ParseURI();
 	void GetPage();
+	static CString GetDate(time_t tm = 0);
 
 	// Cookies
 	CString GetRequestCookie(const CString& sKey) const;
