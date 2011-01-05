@@ -4210,9 +4210,6 @@ $as_echo "$as_me: WARNING: libiconv was not found, disabling the charset module"
 	fi
 fi
 
-appendCXX "-D_MODDIR_=\\\"${MODDIR}\\\""
-appendCXX "-D_DATADIR_=\\\"${DATADIR}\\\""
-
 
 
 

@@ -20,14 +20,6 @@
 #define VERSION_EXTRA ""
 #endif
 
-#ifndef _MODDIR_
-#define _MODDIR_ "/usr/lib/znc"
-#endif
-
-#ifndef _DATADIR_
-#define _DATADIR_ "/usr/share/znc"
-#endif
-
 #define NOTHING (void)0
 
 #define ALLMODULECALL(macFUNC, macEXITER)                                     \

@@ -439,9 +439,6 @@ then
 	fi
 fi
 
-appendCXX "-D_MODDIR_=\\\"${MODDIR}\\\""
-appendCXX "-D_DATADIR_=\\\"${DATADIR}\\\""
-
 AC_SUBST([CXXFLAGS])
 AC_SUBST([CPPFLAGS])
 AC_SUBST([MODFLAGS])
