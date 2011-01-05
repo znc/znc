@@ -2971,7 +2971,8 @@ fi
 # Check whether --enable-run-from-source was given.
 if test "${enable_run_from_source+set}" = set; then :
   enableval=$enable_run_from_source; if test "x$enableval" = "xyes" ; then
-		appendCXX -DRUN_FROM_SOURCE
+		$as_echo "#define RUN_FROM_SOURCE 1" >>confdefs.h
+
 	fi
 	RUNFROMSOURCE="$enableval"
 else
@@ -2987,9 +2988,15 @@ fi
 
 
 if test "$DEBUG" != "no"; then
-	appendCXX -ggdb -D_DEBUG
+	$as_echo "#define _DEBUG 1" >>confdefs.h
+
 	# These enable some debug options in g++'s STL, e.g. invalid use of iterators
-	appendCXX -D_GLIBCXX_DEBUG -D_GLIBCXX_DEBUG_PEDANTIC -D_GLIBCXX_CONCEPT_CHECKS
+	$as_echo "#define _GLIBCXX_DEBUG 1" >>confdefs.h
+
+	$as_echo "#define _GLIBCXX_DEBUG_PEDANTIC 1" >>confdefs.h
+
+	$as_echo "#define _GLIBCXX_CONCEPT_CHECKS 1" >>confdefs.h
+
 else
 	if test "x$OPTIMIZE" = "xyes"; then
 		appendCXX -O2
@@ -2997,7 +3004,8 @@ else
 fi
 
 if test "$IPV6" != "no"; then
-	appendCXX -DHAVE_IPV6
+	$as_echo "#define HAVE_IPV6 1" >>confdefs.h
+
 fi
 
 if test "x$GXX" = "xyes"; then
@@ -3005,7 +3013,8 @@ if test "x$GXX" = "xyes"; then
 fi
 
 if test "$POLL" = "yes"; then
-	appendCXX -DCSOCK_USE_POLL
+	$as_echo "#define CSOCK_USE_POLL 1" >>confdefs.h
+
 fi
 
 { $as_echo "$as_me:${as_lineno-$LINENO}: checking for getopt_long in -lgnugetopt" >&5
@@ -3055,7 +3064,8 @@ fi
 
 ac_fn_cxx_check_func "$LINENO" "lstat" "ac_cv_func_lstat"
 if test "x$ac_cv_func_lstat" = x""yes; then :
-  appendCXX -DHAVE_LSTAT
+  $as_echo "#define HAVE_LSTAT 1" >>confdefs.h
+
 fi
 
 
@@ -3340,7 +3350,9 @@ $as_echo "$as_me: WARNING: c-ares was not found and thus disabled" >&2;}
 	fi
 
 		else
-			appendCXX $c_ares_CFLAGS -DHAVE_C_ARES
+			$as_echo "#define HAVE_C_ARES 1" >>confdefs.h
+
+			appendCXX $c_ares_CFLAGS
 			appendLib $c_ares_LIBS
 			ARES=yes
 		fi
@@ -3638,7 +3650,8 @@ $as_echo "$as_me: WARNING: OpenSSL was not found and thus disabled" >&2;}
 
 		NOSSL=1
 	else
-		appendCXX -DHAVE_LIBSSL
+		$as_echo "#define HAVE_LIBSSL 1" >>confdefs.h
+
 		SSL=yes
 	fi
 else

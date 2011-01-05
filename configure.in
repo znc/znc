@@ -124,7 +124,7 @@ AC_ARG_ENABLE( [c-ares],
 AC_ARG_ENABLE( [run-from-source],
 	AS_HELP_STRING([--enable-run-from-source], [znc will be runnable without installation]),
 	[if test "x$enableval" = "xyes" ; then
-		appendCXX -DRUN_FROM_SOURCE
+		AC_DEFINE([RUN_FROM_SOURCE])
 	fi
 	RUNFROMSOURCE="$enableval"],
 	[RUNFROMSOURCE="no"])
@@ -134,9 +134,11 @@ AC_ARG_ENABLE( [poll],
 	[POLL="yes"])
 
 if test "$DEBUG" != "no"; then
-	appendCXX -ggdb -D_DEBUG
+	AC_DEFINE([_DEBUG])
 	# These enable some debug options in g++'s STL, e.g. invalid use of iterators
-	appendCXX -D_GLIBCXX_DEBUG -D_GLIBCXX_DEBUG_PEDANTIC -D_GLIBCXX_CONCEPT_CHECKS
+	AC_DEFINE([_GLIBCXX_DEBUG])
+	AC_DEFINE([_GLIBCXX_DEBUG_PEDANTIC])
+	AC_DEFINE([_GLIBCXX_CONCEPT_CHECKS])
 else
 	if test "x$OPTIMIZE" = "xyes"; then
 		appendCXX -O2
@@ -144,7 +146,7 @@ else
 fi
 
 if test "$IPV6" != "no"; then
-	appendCXX -DHAVE_IPV6
+	AC_DEFINE([HAVE_IPV6])
 fi
 
 if test "x$GXX" = "xyes"; then
@@ -152,11 +154,11 @@ if test "x$GXX" = "xyes"; then
 fi
 
 if test "$POLL" = "yes"; then
-	appendCXX -DCSOCK_USE_POLL
+	AC_DEFINE([CSOCK_USE_POLL])
 fi
 
 AC_CHECK_LIB( gnugetopt, getopt_long,)
-AC_CHECK_FUNC([lstat], [appendCXX -DHAVE_LSTAT])
+AC_CHECK_FUNC([lstat], [AC_DEFINE([HAVE_LSTAT])])
 PKG_PROG_PKG_CONFIG()
 
 # ----- Check for dlopen
@@ -196,7 +198,8 @@ Disabling c-ares may result in a slight performance decrease but will not have a
 Disabling c-ares may result in a slight performance decrease but will not have any other side-effects],
 				[c-ares was not found and thus disabled])
 		else
-			appendCXX $c_ares_CFLAGS -DHAVE_C_ARES
+			AC_DEFINE([HAVE_C_ARES])
+			appendCXX $c_ares_CFLAGS
 			appendLib $c_ares_LIBS
 			ARES=yes
 		fi
@@ -230,7 +233,7 @@ if test "x$SSL" != "xno"; then
 			[OpenSSL was not found and thus disabled])
 		NOSSL=1
 	else
-		appendCXX -DHAVE_LIBSSL
+		AC_DEFINE([HAVE_LIBSSL])
 		SSL=yes
 	fi
 else
