@@ -13,13 +13,6 @@ AUTOHEADER_FLAGS="${AUTOHEADER_FLAGS} ${FLAGS}"
 AUTOCONF_FLAGS="${AUTOCONF_FLAGS} ${FLAGS}"
 AUTOMAKE_FLAGS="${AUTOMAKE_FLAGS---add-missing} ${FLAGS}"
 
-# Allow invocation from a separate build directory
-srcdir=`dirname $0`
-test -z "$srcdir" && srcdir=.
-
-ORIGDIR=`pwd`
-cd "$srcdir"
-
 die() {
 	echo "$@"
 	exit 1
@@ -29,7 +22,7 @@ do_cmd() {
 	$@
 }
 
-test -f configure.ac || die "No $srcdir/configure.ac found."
+test -f configure.ac || die "No configure.ac found."
 
 # Generate aclocal.m4 for use by autoconf
 do_cmd $ACLOCAL    $ACLOCAL_FLAGS
@@ -43,9 +36,3 @@ do_cmd $AUTOMAKE   $AUTOMAKE_FLAGS || true
 test -f config.guess -a -f config.sub -a -f install-sh ||
 	die "Automake didn't install config.guess, config.sub and install-sh!"
 
-cd "$ORIGDIR" || exit 1
-
-if test -z "$NOCONFIGURE"
-then
-	do_cmd "$srcdir/configure" --cache-file=config.cache ${1+"$@"} || exit 1
-fi
