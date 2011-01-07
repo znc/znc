@@ -36,6 +36,10 @@
 #define stat struct stat
 %}
 
+%begin %{
+#include "zncconfig.h"
+%}
+
 %include <typemaps.i>
 %include <stl.i>
 %include <std_list.i>

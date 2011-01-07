@@ -42,6 +42,10 @@ public:
 using std::allocator;
 %}
 
+%begin %{
+#include "zncconfig.h"
+%}
+
 %include <pyabc.i>
 %include <typemaps.i>
 %include <stl.i>
