@@ -9,6 +9,7 @@
 #ifndef _FILEUTILS_H
 #define _FILEUTILS_H
 
+#include "zncconfig.h"
 #include "Socket.h"
 #include "ZNCString.h"
 #include <dirent.h>

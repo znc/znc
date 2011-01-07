@@ -34,6 +34,9 @@
 
 #ifndef _HAS_CSOCKET_
 #define _HAS_CSOCKET_
+
+#include "zncconfig.h"
+
 #include <stdio.h>
 #include <unistd.h>
 #include <sys/time.h>

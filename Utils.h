@@ -9,6 +9,7 @@
 #ifndef _UTILS_H
 #define _UTILS_H
 
+#include "zncconfig.h"
 #include "ZNCString.h"
 #include <assert.h>
 #include <cstdio>

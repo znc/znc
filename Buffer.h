@@ -9,6 +9,7 @@
 #ifndef _BUFFER_H
 #define _BUFFER_H
 
+#include "zncconfig.h"
 #include "ZNCString.h"
 #include <deque>
 

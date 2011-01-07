@@ -9,6 +9,8 @@
 #ifndef _MAIN_H
 #define _MAIN_H
 
+#include "zncconfig.h"
+
 // The following defines are for #if comparison (preprocessor only likes ints)
 #define VERSION_MAJOR  0
 #define VERSION_MINOR  97

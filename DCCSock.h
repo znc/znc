@@ -9,6 +9,7 @@
 #ifndef _DCCSOCK_H
 #define _DCCSOCK_H
 
+#include "zncconfig.h"
 #include "FileUtils.h"
 
 // Forward Declarations

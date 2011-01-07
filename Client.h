@@ -9,6 +9,7 @@
 #ifndef _CLIENT_H
 #define _CLIENT_H
 
+#include "zncconfig.h"
 #include "Socket.h"
 #include "Utils.h"
 #include "main.h"

@@ -9,6 +9,7 @@
 #ifndef _USER_H
 #define _USER_H
 
+#include "zncconfig.h"
 #include "Buffer.h"
 #include "FileUtils.h"
 #include "Modules.h"

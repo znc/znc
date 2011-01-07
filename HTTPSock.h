@@ -9,6 +9,7 @@
 #ifndef _HTTPSOCK_H
 #define _HTTPSOCK_H
 
+#include "zncconfig.h"
 #include "Socket.h"
 
 class CModule;

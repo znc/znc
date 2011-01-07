@@ -9,6 +9,7 @@
 #ifndef _WEBMODULES_H
 #define _WEBMODULES_H
 
+#include "zncconfig.h"
 #include "Client.h"
 #include "Template.h"
 #include "HTTPSock.h"

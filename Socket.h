@@ -9,6 +9,7 @@
 #ifndef SOCKET_H
 #define SOCKET_H
 
+#include "zncconfig.h"
 #include "Csocket.h"
 
 class CModule;

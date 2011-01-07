@@ -9,6 +9,7 @@
 #ifndef _TEMPLATE_H
 #define _TEMPLATE_H
 
+#include "zncconfig.h"
 #include "Utils.h"
 #include <iostream>
 

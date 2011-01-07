@@ -9,6 +9,7 @@
 #ifndef _DCCBOUNCE_H
 #define _DCCBOUNCE_H
 
+#include "zncconfig.h"
 #include "Socket.h"
 
 class CUser;

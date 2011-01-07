@@ -9,6 +9,7 @@
 #ifndef _ZNC_H
 #define _ZNC_H
 
+#include "zncconfig.h"
 #include "Client.h"
 #include "FileUtils.h"
 #include "Modules.h"

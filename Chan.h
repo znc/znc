@@ -9,6 +9,7 @@
 #ifndef _CHAN_H
 #define _CHAN_H
 
+#include "zncconfig.h"
 #include "FileUtils.h"
 #include "Nick.h"
 #include "ZNCString.h"

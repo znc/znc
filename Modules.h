@@ -9,6 +9,7 @@
 #ifndef _MODULES_H
 #define _MODULES_H
 
+#include "zncconfig.h"
 #include "WebModules.h"
 #include "FileUtils.h"
 #include "Utils.h"

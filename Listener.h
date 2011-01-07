@@ -9,6 +9,7 @@
 #ifndef _LISTENER_H
 #define _LISTENER_H
 
+#include "zncconfig.h"
 #include "znc.h"
 
 // Forward Declarations
