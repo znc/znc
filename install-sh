@@ -1,5 +1,0 @@
-#!/bin/sh
-echo 'This file should *not* needed, but autocrap wants it.'
-echo 'If you are seeing this message while installing, you really should get'
-echo 'a proper OS. Whatever currently runs on this box is severely broken.'
-exit 1
