@@ -267,12 +267,7 @@ public:
 	 * @param uTTL the time-to-live for this specific item
 	 */
 	void AddItem(const K& Item, unsigned int uTTL) {
-		if (!uTTL) {            // If time-to-live is zero we don't want to waste our time adding it
-			RemItem(Item);  // Remove the item incase it already exists
-			return;
-		}
-
-		m_mItems[Item] = value(CUtils::GetMillTime() + uTTL, V());
+		AddItem(Item, V(), uTTL);
 	}
 
 	/**
