@@ -394,7 +394,14 @@ then
 	for path in $TCL_DIR /usr/lib /usr/lib/tcl8.4 /usr/lib/tcl8.5
 	do
 		file="${path}/tclConfig.sh"
-		AC_CHECK_FILE(${file}, [TCL_CONF="$file" ; break])
+		AC_MSG_CHECKING([for ${file}])
+		if test -r ${file}
+		then
+			TCL_CONF=${file}
+			AC_MSG_RESULT([yes])
+			break
+		fi
+		AC_MSG_RESULT([no])
 	done
 
 	if test x"${TCL_CONF}" = x
