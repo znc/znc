@@ -36,3 +36,6 @@ do_cmd $AUTOMAKE   $AUTOMAKE_FLAGS || true
 test -f config.guess -a -f config.sub -a -f install-sh ||
 	die "Automake didn't install config.guess, config.sub and install-sh!"
 
+echo "(Yes, automake is supposed to fail, ignore that)"
+echo
+echo "You may now run ./configure."
