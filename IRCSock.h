@@ -117,6 +117,10 @@ protected:
 	unsigned int                        m_uCapPaused;
 	SCString                            m_ssAcceptedCaps;
 	SCString                            m_ssPendingCaps;
+	time_t                              m_lastCTCP;
+	unsigned int                        m_uNumCTCP;
+	static const unsigned int           m_uCTCPFloodTime;
+	static const unsigned int           m_uCTCPFloodCount;
 };
 
 #endif // !_IRCSOCK_H

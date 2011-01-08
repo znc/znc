@@ -13,6 +13,10 @@
 #include "User.h"
 #include "znc.h"
 
+// These are used in OnGeneralCTCP()
+const unsigned int CIRCSock::m_uCTCPFloodTime = 5;
+const unsigned int CIRCSock::m_uCTCPFloodCount = 5;
+
 CIRCSock::CIRCSock(CUser* pUser) : CZNCSock() {
 	m_pUser = pUser;
 	m_bISpoofReleased = false;
@@ -25,6 +29,8 @@ CIRCSock::CIRCSock(CUser* pUser) : CZNCSock() {
 
 	m_uMaxNickLen = 9;
 	m_uCapPaused = 0;
+	m_lastCTCP = 0;
+	m_uNumCTCP = 0;
 	m_sPerms = "*!@%+";
 	m_sPermModes = "qaohv";
 	m_mueChanModes['b'] = ListArg;
@@ -839,6 +845,18 @@ bool CIRCSock::OnGeneralCTCP(CNick& Nick, CString& sMessage) {
 	}
 
 	if (!sReply.empty()) {
+		time_t now = time(NULL);
+		// If the last CTCP is older than m_uCTCPFloodTime, reset the counter
+		if (m_lastCTCP + m_uCTCPFloodTime < now)
+			m_uNumCTCP = 0;
+		m_lastCTCP = now;
+		// If we are over the limit, don't reply to this CTCP
+		if (m_uNumCTCP >= m_uCTCPFloodCount) {
+			DEBUG("CTCP flood detected - not replying to query");
+			return false;
+		}
+		m_uNumCTCP++;
+
 		PutIRC("NOTICE " + Nick.GetNick() + " :\001" + sQuery + " " + sReply + "\001");
 		return true;
 	}
