@@ -500,6 +500,11 @@ void CWebSock::OnPageRequest(const CString& sURI) {
 }
 
 CWebSock::EPageReqResult CWebSock::OnPageRequestInternal(const CString& sURI, CString& sPageRet) {
+	if (GetSession()->GetIP() != GetRemoteIP()) {
+		PrintErrorPage(403, "Access denied", "This session does not belong to your IP.");
+		return PAGE_DONE;
+	}
+
 	// Check that they really POSTed from one our forms by checking if they
 	// know the "secret" CSRF check value. Don't do this for login since
 	// CSRF against the login form makes no sense and the login form does a

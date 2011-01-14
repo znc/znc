@@ -39,6 +39,7 @@ public:
 	~CWebSession();
 
 	const CString& GetId() const { return m_sId; }
+	const CString& GetIP() const { return m_sIP; }
 	CUser* GetUser() const { return m_pUser; }
 	bool IsLoggedIn() const { return m_pUser != NULL; }
 	bool IsAdmin() const;
