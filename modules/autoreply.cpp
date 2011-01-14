@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004-2010  See the AUTHORS file for details.
+ * Copyright (C) 2004-2011  See the AUTHORS file for details.
  * Copyright (C) 2008 Michael "Svedrin" Ziegler diese-addy@funzt-halt.net
  *
  * This program is free software; you can redistribute it and/or modify it

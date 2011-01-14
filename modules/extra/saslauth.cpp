@@ -1,6 +1,6 @@
 /**
  * Copyright (C) 2008 Heiko Hund <heiko@ist.eigentlich.net>
- * Copyright (C) 2008-2010  See the AUTHORS file for details.
+ * Copyright (C) 2008-2011  See the AUTHORS file for details.
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License version 2 as published
