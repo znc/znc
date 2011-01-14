@@ -14,23 +14,40 @@
 /// @todo Do we want to make this a configure option?
 #define _SKINDIR_ _DATADIR_ "/webskins"
 
-// Sessions are valid for a day, (24h, ...)
-CWebSessionMap CWebSock::m_mspSessions(24 * 60 * 60 * 1000);
-static std::multimap<CString, CWebSession*> mIPSessions;
+const unsigned int CWebSock::m_uiMaxSessions = 5;
+
+// We need this class to make sure the contained maps and their content is
+// destroyed in the order that we want.
+struct CSessionManager {
+	// Sessions are valid for a day, (24h, ...)
+	CSessionManager() : m_mspSessions(24 * 60 * 60 * 1000) {}
+	~CSessionManager() {
+		// Make sure all sessions are destroyed before any of our maps
+		// are destroyed
+		m_mspSessions.Clear();
+	}
+
+	CWebSessionMap m_mspSessions;
+	std::multimap<CString, CWebSession*> m_mIPSessions;
+};
 typedef std::multimap<CString, CWebSession*>::iterator mIPSessionsIterator;
 
-const unsigned int CWebSock::m_uiMaxSessions = 5;
+static CSessionManager Sessions;
+
+void CWebSock::FinishUserSessions(const CUser& User) {
+	Sessions.m_mspSessions.FinishUserSessions(User);
+}
 
 CWebSession::~CWebSession() {
 	// Find our entry in mIPSessions
 	pair<mIPSessionsIterator, mIPSessionsIterator> p =
-		mIPSessions.equal_range(m_sIP);
+		Sessions.m_mIPSessions.equal_range(m_sIP);
 	mIPSessionsIterator it = p.first;
 	mIPSessionsIterator end = p.second;
 
 	while (it != end) {
 		if (it->second == this) {
-			mIPSessions.erase(it++);
+			Sessions.m_mIPSessions.erase(it++);
 		} else {
 			++it;
 		}
@@ -52,7 +69,7 @@ bool CZNCTagHandler::HandleTag(CTemplate& Tmpl, const CString& sName, const CStr
 
 CWebSession::CWebSession(const CString& sId, const CString& sIP) : m_sId(sId), m_sIP(sIP) {
 	m_pUser = NULL;
-	mIPSessions.insert(make_pair(sIP, this));
+	Sessions.m_mIPSessions.insert(make_pair(sIP, this));
 }
 
 bool CWebSession::IsAdmin() const { return IsLoggedIn() && m_pUser->IsAdmin(); }
@@ -681,19 +698,19 @@ CSmartPtr<CWebSession> CWebSock::GetSession() {
 	}
 
 	const CString sCookieSessionId = GetRequestCookie("SessionId");
-	CSmartPtr<CWebSession> *pSession = m_mspSessions.GetItem(sCookieSessionId);
+	CSmartPtr<CWebSession> *pSession = Sessions.m_mspSessions.GetItem(sCookieSessionId);
 
 	if (pSession != NULL) {
 		// Refresh the timeout
-		m_mspSessions.AddItem((*pSession)->GetId(), *pSession);
+		Sessions.m_mspSessions.AddItem((*pSession)->GetId(), *pSession);
 		m_spSession = *pSession;
 		DEBUG("Found existing session from cookie: [" + sCookieSessionId + "] IsLoggedIn(" + CString((*pSession)->IsLoggedIn() ? "true" : "false") + ")");
 		return *pSession;
 	}
 
-	if (mIPSessions.count(GetRemoteIP()) > m_uiMaxSessions) {
-		mIPSessionsIterator it = mIPSessions.find(GetRemoteIP());
-		mIPSessions.erase(it);
+	if (Sessions.m_mIPSessions.count(GetRemoteIP()) > m_uiMaxSessions) {
+		mIPSessionsIterator it = Sessions.m_mIPSessions.find(GetRemoteIP());
+		Sessions.m_mIPSessions.erase(it);
 	}
 
 	CString sSessionID;
@@ -705,10 +722,10 @@ CSmartPtr<CWebSession> CWebSock::GetSession() {
 		sSessionID = sSessionID.SHA256();
 
 		DEBUG("Auto generated session: [" + sSessionID + "]");
-	} while (m_mspSessions.HasItem(sSessionID));
+	} while (Sessions.m_mspSessions.HasItem(sSessionID));
 
 	CSmartPtr<CWebSession> spSession(new CWebSession(sSessionID, GetRemoteIP()));
-	m_mspSessions.AddItem(spSession->GetId(), spSession);
+	Sessions.m_mspSessions.AddItem(spSession->GetId(), spSession);
 
 	m_spSession = spSession;
 

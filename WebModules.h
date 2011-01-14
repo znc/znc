@@ -147,9 +147,7 @@ public:
 	CString GetRequestCookie(const CString& sKey);
 	bool SendCookie(const CString& sKey, const CString& sValue);
 
-	static void FinishUserSessions(const CUser& User) {
-		m_mspSessions.FinishUserSessions(User);
-	}
+	static void FinishUserSessions(const CUser& User);
 
 protected:
 	using CHTTPSock::PrintErrorPage;
@@ -171,7 +169,6 @@ private:
 	CString                 m_sPage;        // Gets filled by ParsePath()
 	CSmartPtr<CWebSession>  m_spSession;
 
-	static CWebSessionMap   m_mspSessions;
 	static const unsigned int m_uiMaxSessions;
 };
 
