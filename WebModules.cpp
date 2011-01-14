@@ -16,6 +16,24 @@
 
 // Sessions are valid for a day, (24h, ...)
 CWebSessionMap CWebSock::m_mspSessions(24 * 60 * 60 * 1000);
+static std::multimap<CString, CWebSession*> mIPSessions;
+typedef std::multimap<CString, CWebSession*>::iterator mIPSessionsIterator;
+
+CWebSession::~CWebSession() {
+	// Find our entry in mIPSessions
+	pair<mIPSessionsIterator, mIPSessionsIterator> p =
+		mIPSessions.equal_range(m_sIP);
+	mIPSessionsIterator it = p.first;
+	mIPSessionsIterator end = p.second;
+
+	while (it != end) {
+		if (it->second == this) {
+			mIPSessions.erase(it++);
+		} else {
+			++it;
+		}
+	}
+}
 
 CZNCTagHandler::CZNCTagHandler(CWebSock& WebSock) : CTemplateTagHandler(), m_WebSock(WebSock) {
 }
@@ -30,8 +48,9 @@ bool CZNCTagHandler::HandleTag(CTemplate& Tmpl, const CString& sName, const CStr
 	return false;
 }
 
-CWebSession::CWebSession(const CString& sId) : m_sId(sId) {
+CWebSession::CWebSession(const CString& sId, const CString& sIP) : m_sId(sId), m_sIP(sIP) {
 	m_pUser = NULL;
+	mIPSessions.insert(make_pair(sIP, this));
 }
 
 bool CWebSession::IsAdmin() const { return IsLoggedIn() && m_pUser->IsAdmin(); }
@@ -676,7 +695,7 @@ CSmartPtr<CWebSession> CWebSock::GetSession() {
 		DEBUG("Auto generated session: [" + sSessionID + "]");
 	} while (m_mspSessions.HasItem(sSessionID));
 
-	CSmartPtr<CWebSession> spSession(new CWebSession(sSessionID));
+	CSmartPtr<CWebSession> spSession(new CWebSession(sSessionID, GetRemoteIP()));
 	m_mspSessions.AddItem(spSession->GetId(), spSession);
 
 	m_spSession = spSession;

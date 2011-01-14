@@ -35,8 +35,8 @@ private:
 
 class CWebSession {
 public:
-	CWebSession(const CString& sId);
-	virtual ~CWebSession() {}
+	CWebSession(const CString& sId, const CString& sIP);
+	~CWebSession();
 
 	const CString& GetId() const { return m_sId; }
 	CUser* GetUser() const { return m_pUser; }
@@ -51,6 +51,7 @@ public:
 	size_t AddSuccess(const CString& sMessage);
 private:
 	CString         m_sId;
+	CString         m_sIP;
 	CUser*          m_pUser;
 	VCString        m_vsErrorMsgs;
 	VCString        m_vsSuccessMsgs;
