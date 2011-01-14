@@ -19,6 +19,8 @@ CWebSessionMap CWebSock::m_mspSessions(24 * 60 * 60 * 1000);
 static std::multimap<CString, CWebSession*> mIPSessions;
 typedef std::multimap<CString, CWebSession*>::iterator mIPSessionsIterator;
 
+const unsigned int CWebSock::m_uiMaxSessions = 5;
+
 CWebSession::~CWebSession() {
 	// Find our entry in mIPSessions
 	pair<mIPSessionsIterator, mIPSessionsIterator> p =
@@ -687,6 +689,11 @@ CSmartPtr<CWebSession> CWebSock::GetSession() {
 		m_spSession = *pSession;
 		DEBUG("Found existing session from cookie: [" + sCookieSessionId + "] IsLoggedIn(" + CString((*pSession)->IsLoggedIn() ? "true" : "false") + ")");
 		return *pSession;
+	}
+
+	if (mIPSessions.count(GetRemoteIP()) > m_uiMaxSessions) {
+		mIPSessionsIterator it = mIPSessions.find(GetRemoteIP());
+		mIPSessions.erase(it);
 	}
 
 	CString sSessionID;

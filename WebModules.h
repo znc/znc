@@ -172,6 +172,7 @@ private:
 	CSmartPtr<CWebSession>  m_spSession;
 
 	static CWebSessionMap   m_mspSessions;
+	static const unsigned int m_uiMaxSessions;
 };
 
 #endif // !_WEBMODULES_H
