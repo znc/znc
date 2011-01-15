@@ -48,6 +48,12 @@ public:
 	virtual ~CEmail() {}
 
 	virtual bool OnLoad(const CString & sArgs, CString& sMessage) {
+#ifndef MOD_EMAIL_ALLOW_EVERYONE
+		if (!m_pUser->IsAdmin()) {
+			sMessage = "You must be admin to use the email module";
+			return false;
+		}
+#endif
 		m_sMailPath = sArgs;
 
 		StartParser();
