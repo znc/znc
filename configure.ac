@@ -258,7 +258,7 @@ AC_ARG_WITH( [module-data-prefix],
 
 appendMod "$CXXFLAGS"
 
-if test -z "$ISSUN" -a -z "$ISDARWIN"; then
+if test -z "$ISSUN" -a -z "$ISDARWIN" -a -z "$ISCYGWIN"; then
 	# This is an unknown compiler flag on some OS
 	appendLD -Wl,--export-dynamic
 fi
@@ -270,7 +270,7 @@ if test -z "$ISCYGWIN" ; then
 else
 	# But cygwin does want most of znc in a shared lib
 	LIBZNC="libznc.dll"
-	LIBZNCDIR="$libdir/znc"
+	LIBZNCDIR="$bindir"
 fi
 
 if test -z "$ISDARWIN"; then
