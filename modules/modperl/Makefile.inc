@@ -26,8 +26,9 @@ install: $(PERLHOOK)
 modperl.so: modperl/ZNC.so modperl/swigperlrun.h
 modperl/ZNC.so: modperl/ZNC.cpp Makefile modperl/functions.cpp
 	@mkdir -p modperl
+	@mkdir -p .depend
 	$(E) Building ZNC Perl bindings library...
-	$(Q)$(CXX) $(MODFLAGS) $(LDFLAGS) $(MODLINK) -I$(srcdir) -MMD -MF .depend/modperl.library.dep $(PERLCOMMON) -o $@ $<
+	$(Q)$(CXX) $(MODFLAGS) $(LDFLAGS) $(MODLINK) -I$(srcdir) -MMD -MF .depend/modperl.library.dep $(PERLCOMMON) -Wno-unused-variable -o $@ $<
 ifneq "$(SWIG)" ""
 modperl/swigperlrun.h:
 	@mkdir -p modperl
@@ -35,9 +36,8 @@ modperl/swigperlrun.h:
 modperl/ZNC.cpp: modperl/modperl.i Makefile modperl/module.h modperl/CString.i
 	$(E) Generating ZNC API for Perl...
 	@mkdir -p modperl
-	$(Q)$(SWIG) -perl5 -c++ -shadow -outdir modperl -I$(srcdir) -MMD -MF .depend/modperl.swig.dep -w362,315,401,402 -o $@.warn $<
-	$(Q)$(PERL) -pe '$$x==2 and print "items+=0;" and $$x=3;/^XS\(SWIG_init\)/ and $$x=1;$$x==1 and /dXSARGS/ and $$x=2' $@.warn > $@
-	$(Q)rm -rf $@.warn
+	@mkdir -p .depend
+	$(Q)$(SWIG) -perl5 -c++ -shadow -outdir modperl -I$(srcdir) -MMD -MF .depend/modperl.swig.dep -w362,315,401,402 -o $@ $<
 endif
 modperl/functions.cpp: modperl/functions.in
 	@mkdir -p modperl

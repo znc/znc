@@ -37,6 +37,7 @@ modpython_all: $(addsuffix c, $(notdir $(wildcard $(srcdir)/*.py)))
 modpython/znc_core.py: modpython/_znc_core.so
 modpython/_znc_core.so: modpython/_znc_core.cpp Makefile modpython/functions.cpp
 	@mkdir -p modpython
+	@mkdir -p .depend
 	$(E) Building ZNC python bindings library...
 	$(Q)$(CXX) $(MODFLAGS) $(LDFLAGS) $(MODLINK) -I$(srcdir) -MMD -MF .depend/modpython.library.dep $(PYTHONCOMMON) -o $@ $<
 ifneq "$(SWIG)" ""
@@ -46,6 +47,7 @@ modpython/swigpyrun.h:
 modpython/_znc_core.cpp: modpython/modpython.i Makefile
 	$(E) Generating ZNC API for python...
 	@mkdir -p modpython
+	@mkdir -p .depend
 	$(Q)$(SWIG) -python -py3 -c++ -shadow -outdir modpython -I$(srcdir) -MMD -MF .depend/modpython.swig.dep -w362,315,401 -o $@ $<
 endif
 modpython/functions.cpp: modpython/functions.in
