@@ -14,7 +14,7 @@
 #include "znc.h"
 
 // These are used in OnGeneralCTCP()
-const unsigned int CIRCSock::m_uCTCPFloodTime = 5;
+const time_t CIRCSock::m_uCTCPFloodTime = 5;
 const unsigned int CIRCSock::m_uCTCPFloodCount = 5;
 
 CIRCSock::CIRCSock(CUser* pUser) : CZNCSock() {
