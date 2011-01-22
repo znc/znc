@@ -168,20 +168,8 @@ PKG_PROG_PKG_CONFIG()
 
 # ----- Check for dlopen
 
-FOUND_DL=no
-# Don't use any libs like -lssl -lcrypto when checking for dlopen(),
-# because they might change the test results
-SAVED_LIBS="$LIBS"
-LIBS=""
-
-AC_CHECK_FUNC(dlopen, FOUND_DL=yes,)
-AC_CHECK_LIB( dl, dlopen, FOUND_DL=yes ; appendLib -ldl,)
-
-appendLib "$SAVED_LIBS"
-
-if test $FOUND_DL = "no" ; then
-	AC_MSG_ERROR([Could not find dlopen. ZNC will not work on this box until you upgrade this ancient system or at least install needed system libraries.])
-fi
+AC_SEARCH_LIBS([dlopen], [dl], [],
+		[AC_MSG_ERROR([Could not find dlopen. ZNC will not work on this box until you upgrade this ancient system or at least install the necessary system libraries.])])
 
 # ----- Check for c-ares
 
