@@ -51,11 +51,6 @@ public:
 		return CONTINUE;
 	}
 
-	virtual EModRet OnUserJoin(CString& sChannel, CString& sKey) {
-		ClearAllBuffers();
-		return CONTINUE;
-	}
-
 	virtual EModRet OnUserPart(CString& sChannel, CString& sMessage) {
 		ClearAllBuffers();
 		return CONTINUE;
@@ -65,12 +60,6 @@ public:
 		ClearAllBuffers();
 		return CONTINUE;
 	}
-
-	virtual void OnClientLogin() {
-		ClearAllBuffers();
-	}
-
-	// No OnClientDisconnect(), disconnect could be coming from e.g. a timeout
 };
 
 MODULEDEFS(CClearBufferOnMsgMod, "Clear all channel buffers whenever the user does something")
