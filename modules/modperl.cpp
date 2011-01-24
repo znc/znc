@@ -39,7 +39,7 @@ public:
 
 #define PSTART dSP; I32 ax; int ret = 0; ENTER; SAVETMPS; PUSHMARK(SP)
 #define PCALL(name) PUTBACK; ret = call_pv(name, G_EVAL|G_ARRAY); SPAGAIN; SP -= ret; ax = (SP - PL_stack_base) + 1
-#define PEND PUTBACK; FREETMPS; LEAVE
+#define PEND ax += 0; PUTBACK; FREETMPS; LEAVE
 #define PUSH_STR(s) XPUSHs(PString(s).GetSV())
 #define PUSH_PTR(type, p) XPUSHs(SWIG_NewInstanceObj(const_cast<type>(p), SWIG_TypeQuery(#type), SWIG_SHADOW))
 
