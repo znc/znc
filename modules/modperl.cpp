@@ -127,6 +127,7 @@ public:
 				bSuccess = true;
 				sRetMsg = "Module [" + sModName + "] unloaded";
 			}
+			PEND;
 			DEBUG(__PRETTY_FUNCTION__ << " " << sRetMsg);
 			return HALT;
 		}
