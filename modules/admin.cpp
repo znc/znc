@@ -286,7 +286,7 @@ class CAdminMod : public CModule {
 		else if (sVar == "buffercount") {
 			unsigned int i = sValue.ToUInt();
 			// Admins don't have to honour the buffer limit
-			if (pUser->SetBufferCount(i), m_pUser->IsAdmin()) {
+			if (pUser->SetBufferCount(i, m_pUser->IsAdmin())) {
 				PutModule("BufferCount = " + sValue);
 			} else {
 				PutModule("Setting failed, limit is " +
@@ -432,7 +432,7 @@ class CAdminMod : public CModule {
 		} else if (sVar == "buffer") {
 			unsigned int i = sValue.ToUInt();
 			// Admins don't have to honour the buffer limit
-			if (pChan->SetBufferCount(i), m_pUser->IsAdmin()) {
+			if (pChan->SetBufferCount(i, m_pUser->IsAdmin())) {
 				PutModule("Buffer = " + sValue);
 			} else {
 				PutModule("Setting failed, limit is " +
