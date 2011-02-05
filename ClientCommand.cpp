@@ -105,7 +105,7 @@ void CClient::UserCommand(CString& sLine) {
 				continue;
 			uMatches++;
 
-			if (!(*it)->IsDetached())
+			if ((*it)->IsDetached())
 				continue;
 			uDetached++;
 			(*it)->DetachUser();
