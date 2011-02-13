@@ -142,7 +142,7 @@ See http://en.znc.in/wiki/index.php/Modperl
 Further infos
 -------------
 
-Please visit http://znc.sf.net or #znc on EFNet if you still have questions.
+Please visit http://znc.in/ or #znc on EFNet if you still have questions.
 
-You can get the latest development version with subversion:
- svn checkout https://znc.svn.sourceforge.net/svnroot/znc/trunk znc
+You can get the latest development version with git:
+ git clone git://github.com/znc/znc.git
