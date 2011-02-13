@@ -1,0 +1,15 @@
+Makefile
+config.*
+/znc-buildmod
+/znc-config
+/znc
+/man/*.gz
+*.pc
+.depend
+
+# Compiled Object files
+*.o
+
+# Compiled Dynamic libraries
+*.so
+
