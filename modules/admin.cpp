@@ -13,6 +13,7 @@
 #include "User.h"
 #include "Modules.h"
 #include "Chan.h"
+#include "IRCSock.h"
 
 template<std::size_t N>
 struct array_size_helper {
@@ -44,6 +45,8 @@ class CAdminMod : public CModule {
 			{"DelUser",      "username",                      "Deletes a user"},
 			{"CloneUser",    "oldusername newusername",       "Clones a user"},
 			{"AddServer",    "[username] server",             "Adds a new IRC server for the given or current user"},
+			{"Reconnect",    "username",                      "Cycles the user's IRC server connection"},
+			{"Disconnect",   "username",                      "Disconnects the user from their IRC server"},
 			{"LoadModule",   "username modulename",           "Loads a Module for a user"},
 			{"UnLoadModule", "username modulename",           "Removes a Module of a user"},
 			{"ListMods",     "username",                      "Get the list of modules for a user"}
@@ -625,6 +628,52 @@ class CAdminMod : public CModule {
 			PutModule("Could not add IRC server");
 	}
 
+	void ReconnectUser(const CString& sLine) {
+		const CString sUsername = sLine.Token(1);
+
+		CUser* pUser = GetUser(sUsername);
+		if (!pUser) {
+			PutModule("User not found.");
+			return;
+		}
+
+		CIRCSock *pIRCSock = pUser->GetIRCSock();
+		// cancel connection attempt:
+		if (pIRCSock && !pIRCSock->IsConnected()) {
+			pIRCSock->Close();
+		}
+		// or close existing connection:
+		else if(pIRCSock) {
+			pIRCSock->Quit();
+		}
+
+		// then reconnect
+		pUser->SetIRCConnectEnabled(true);
+		pUser->CheckIRCConnect();
+
+		PutModule("Queued user for a reconnect.");
+	}
+
+	void DisconnectUser(const CString& sLine) {
+		const CString sUsername = sLine.Token(1);
+
+		CUser* pUser = GetUser(sUsername);
+		if (!pUser) {
+			PutModule("User not found.");
+			return;
+		}
+
+		CIRCSock *pIRCSock = pUser->GetIRCSock();
+		if (pIRCSock && !pIRCSock->IsConnected())
+			pIRCSock->Close();
+		else if(pIRCSock)
+			pIRCSock->Quit();
+
+		pUser->SetIRCConnectEnabled(false);
+
+		PutModule("Closed user's IRC connection.");
+	}
+
 	void LoadModuleForUser(const CString& sLine) {
 		CString sUsername = sLine.Token(1);
 		CString sModName  = sLine.Token(2);
@@ -736,6 +785,8 @@ public:
 		fnmap_["deluser"]      = &CAdminMod::DelUser;
 		fnmap_["cloneuser"]    = &CAdminMod::CloneUser;
 		fnmap_["addserver"]    = &CAdminMod::AddServer;
+		fnmap_["reconnect"]    = &CAdminMod::ReconnectUser;
+		fnmap_["disconnect"]   = &CAdminMod::DisconnectUser;
 		fnmap_["loadmodule"]   = &CAdminMod::LoadModuleForUser;
 		fnmap_["unloadmodule"] = &CAdminMod::UnLoadModuleForUser;
 		fnmap_["listmods"]     = &CAdminMod::ListModuleForUser;
@@ -756,4 +807,4 @@ public:
 	}
 };
 
-MODULEDEFS(CAdminMod, "Dynamic configuration of users/settings through irc")
+MODULEDEFS(CAdminMod, "Dynamic configuration of users/settings through IRC")
