@@ -248,7 +248,7 @@ public:
 		// First apply the old limit in case the new one is too high
 		if (pUser)
 			pNewUser->SetBufferCount(pUser->GetBufferCount(), true);
-		pNewUser->SetBufferCount(WebSock.GetParam("bufsize").ToUInt());
+		pNewUser->SetBufferCount(WebSock.GetParam("bufsize").ToUInt(), spSession->IsAdmin());
 		pNewUser->SetSkinName(WebSock.GetParam("skin"));
 		pNewUser->SetKeepBuffer(WebSock.GetParam("keepbuffer").ToBool());
 		pNewUser->SetMultiClients(WebSock.GetParam("multiclients").ToBool());
@@ -489,6 +489,7 @@ public:
 	}
 
 	bool ChanPage(CWebSock& WebSock, CTemplate& Tmpl, CUser* pUser, CChan* pChan = NULL) {
+		CSmartPtr<CWebSession> spSession = WebSock.GetSession();
 		Tmpl.SetFile("add_edit_chan.tmpl");
 
 		if (!pUser) {
@@ -561,7 +562,7 @@ public:
 			pUser->AddChan(pChan);
 		}
 
-		pChan->SetBufferCount(WebSock.GetParam("buffercount").ToUInt());
+		pChan->SetBufferCount(WebSock.GetParam("buffercount").ToUInt(), spSession->IsAdmin());
 		pChan->SetDefaultModes(WebSock.GetParam("defmodes"));
 		pChan->SetInConfig(WebSock.GetParam("save").ToBool());
 		pChan->SetKeepBuffer(WebSock.GetParam("keepbuffer").ToBool());
