@@ -1329,12 +1329,12 @@ void CClient::HelpUser() {
 
 		Table.AddRow();
 		Table.SetCell("Command", "AddPort");
-		Table.SetCell("Arguments", "<[+]port> <ipv4|ipv6|all> <web|irc|all> [bindhost]");
+		Table.SetCell("Arguments", "<arguments>");
 		Table.SetCell("Description", "Add another port for ZNC to listen on");
 
 		Table.AddRow();
 		Table.SetCell("Command", "DelPort");
-		Table.SetCell("Arguments", "<port> <ipv4|ipv6|all> [bindhost]");
+		Table.SetCell("Arguments", "<arguments>");
 		Table.SetCell("Description", "Remove a port from ZNC");
 
 		Table.AddRow();
