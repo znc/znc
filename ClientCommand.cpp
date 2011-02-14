@@ -297,9 +297,6 @@ void CClient::UserCommand(CString& sLine) {
 		m_pUser->CheckIRCConnect();
 		return;
 	} else if (sCommand.Equals("DISCONNECT")) {
-		// GetIRCSock() is only set after the low level connection
-		// to the IRC server was established. Before this we can
-		// only find the IRC socket by its name.
 		if (GetIRCSock()) {
 			CString sQuitMsg = sLine.Token(1, true);
 			GetIRCSock()->Quit(sQuitMsg);
@@ -1332,12 +1329,12 @@ void CClient::HelpUser() {
 
 		Table.AddRow();
 		Table.SetCell("Command", "AddPort");
-		Table.SetCell("Arguments", "<[+]port> <ipv4|ipv6|all> <web|irc|all> [bindhost]");
+		Table.SetCell("Arguments", "<arguments>");
 		Table.SetCell("Description", "Add another port for ZNC to listen on");
 
 		Table.AddRow();
 		Table.SetCell("Command", "DelPort");
-		Table.SetCell("Arguments", "<port> <ipv4|ipv6|all> [bindhost]");
+		Table.SetCell("Arguments", "<arguments>");
 		Table.SetCell("Description", "Remove a port from ZNC");
 
 		Table.AddRow();
