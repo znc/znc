@@ -97,14 +97,22 @@ void CClient::UserCommand(CString& sLine) {
 			return;
 		}
 
-		CChan* pChan = m_pUser->FindChan(sChan);
-		if (!pChan) {
-			PutStatus("You are not on [" + sChan + "]");
-			return;
+		const vector<CChan*>& vChans = m_pUser->GetChans();
+		vector<CChan*>::const_iterator it;
+		unsigned int uMatches = 0, uDetached = 0;
+		for (it = vChans.begin(); it != vChans.end(); ++it) {
+			if (!(*it)->GetName().WildCmp(sChan))
+				continue;
+			uMatches++;
+
+			if ((*it)->IsDetached())
+				continue;
+			uDetached++;
+			(*it)->DetachUser();
 		}
 
-		PutStatus("Detaching you from [" + sChan + "]");
-		pChan->DetachUser();
+		PutStatus("There were [" + CString(uMatches) + "] channels matching [" + sChan + "]");
+		PutStatus("Detached [" + CString(uDetached) + "] channels");
 	} else if (sCommand.Equals("VERSION")) {
 		const char *features = "IPv6: "
 #ifdef HAVE_IPV6
@@ -306,14 +314,22 @@ void CClient::UserCommand(CString& sLine) {
 		if (sChan.empty()) {
 			PutStatus("Usage: EnableChan <channel>");
 		} else {
-			CChan* pChan = m_pUser->FindChan(sChan);
-			if (!pChan) {
-				PutStatus("Channel [" + sChan + "] not found.");
-				return;
+			const vector<CChan*>& vChans = m_pUser->GetChans();
+			vector<CChan*>::const_iterator it;
+			unsigned int uMatches = 0, uEnabled = 0;
+			for (it = vChans.begin(); it != vChans.end(); ++it) {
+				if (!(*it)->GetName().WildCmp(sChan))
+					continue;
+				uMatches++;
+
+				if (!(*it)->IsDisabled())
+					continue;
+				uEnabled++;
+				(*it)->Enable();
 			}
 
-			pChan->Enable();
-			PutStatus("Channel [" + sChan + "] enabled.");
+			PutStatus("There were [" + CString(uMatches) + "] channels matching [" + sChan + "]");
+			PutStatus("Enabled [" + CString(uEnabled) + "] channels");
 		}
 	} else if (sCommand.Equals("LISTCHANS")) {
 		CUser* pUser = m_pUser;
@@ -931,13 +947,17 @@ void CClient::UserCommand(CString& sLine) {
 			return;
 		}
 
-		if (!pChan->IsOn()) {
-			PutStatus("You are not on [" + sChan + "] [trying]");
-			return;
-		}
+		const vector<CChan*>& vChans = m_pUser->GetChans();
+		vector<CChan*>::const_iterator it;
+		unsigned int uMatches = 0;
+		for (it = vChans.begin(); it != vChans.end(); ++it) {
+			if (!(*it)->GetName().WildCmp(sChan))
+				continue;
+			uMatches++;
 
-		pChan->ClearBuffer();
-		PutStatus("The buffer for [" + sChan + "] has been cleared");
+			(*it)->ClearBuffer();
+		}
+		PutStatus("The buffer for [" + CString(uMatches) + "] channels matching [" + sChan + "] has been cleared");
 	} else if (sCommand.Equals("CLEARALLCHANNELBUFFERS")) {
 		vector<CChan*>::const_iterator it;
 		const vector<CChan*>& vChans = m_pUser->GetChans();
@@ -954,21 +974,25 @@ void CClient::UserCommand(CString& sLine) {
 			return;
 		}
 
-		CChan* pChan = m_pUser->FindChan(sChan);
-
-		if (!pChan) {
-			PutStatus("You are not on [" + sChan + "]");
-			return;
-		}
-
-
 		unsigned int uLineCount = sLine.Token(2).ToUInt();
 
-		if (pChan->SetBufferCount(uLineCount)) {
-			PutStatus("BufferCount for [" + sChan + "] set to [" + CString(pChan->GetBufferCount()) + "]");
-		} else {
-			PutStatus("Setting the buffer count failed, max buffer count is "
-					+ CString(CZNC::Get().GetMaxBufferSize()));
+		const vector<CChan*>& vChans = m_pUser->GetChans();
+		vector<CChan*>::const_iterator it;
+		unsigned int uMatches = 0, uFail = 0;
+		for (it = vChans.begin(); it != vChans.end(); ++it) {
+			if (!(*it)->GetName().WildCmp(sChan))
+				continue;
+			uMatches++;
+
+			if (!(*it)->SetBufferCount(uLineCount))
+				uFail++;
+		}
+
+		PutStatus("BufferCount for [" + CString(uMatches - uFail) +
+				"] channels was set to [" + CString(uLineCount) + "]");
+		if (uFail > 0) {
+			PutStatus("Setting BufferCount failed for [" + CString(uFail) + "] channels, "
+					"max buffer count is " + CString(CZNC::Get().GetMaxBufferSize()));
 		}
 	} else if (m_pUser->IsAdmin() && sCommand.Equals("TRAFFIC")) {
 		CZNC::TrafficStatsPair Users, ZNC, Total;
@@ -1121,6 +1145,9 @@ void CClient::HelpUser() {
 	Table.AddColumn("Command");
 	Table.AddColumn("Arguments");
 	Table.AddColumn("Description");
+
+	PutStatus("In the following list all occurences of <#chan> support wildcards (* and ?)");
+	PutStatus("(Except ListNicks)");
 
 	Table.AddRow();
 	Table.SetCell("Command", "Version");
