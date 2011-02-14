@@ -2,6 +2,7 @@ ZNC - An advanced IRC bouncer
 =============================
 
 Table of contents:
+
 - Minimal Requirements
 - Optional Requirements
 - Installing ZNC
@@ -17,6 +18,7 @@ Minimal Requirements
 --------------------
 
 Core:
+
  - GNU make (try gmake if make fails)
  - GCC 3 or later
 
@@ -24,6 +26,7 @@ Optional Requirements
 ---------------------
 
 SSL support:
+
  - openssl 0.9.7d or later (try installing openssl-dev, openssl-devel or
    libssl-dev)
 Asynchronous DNS lookup:
@@ -37,27 +40,27 @@ saslauth:
 Installing ZNC
 --------------
 
-Installation is done with the ./configure ; make ; make install commands.
+Installation is done with the `./configure ; make ; make install` commands.
 
 You can use
-  ./configure --help
+	./configure --help
 if you want to get a list of options, though the defaults should be suiting
 most needs. After you compiled it with make (or gmake if make doesn't work) you
 can install it with
- make install
+	make install
 though you don't need to as ZNC supports in-place execution.
 
 Setting up znc.conf
 -------------------
 
-For setting up a configuration file in ~/.znc you can simply do
- znc --makeconf
+For setting up a configuration file in `~/.znc` you can simply do
+	znc --makeconf
 or
- ./znc --makeconf
+	./znc --makeconf
 for in-place execution.
 
 If you are using SSL you should do
- znc --makepem
+	znc --makepem
 
 Special config options
 ----------------------
@@ -66,6 +69,7 @@ When you create your ZNC configuration file via --makeconf, you are asked two
 questions which might not be easy to understand.
 
 > Number of lines to buffer per channel
+
 How many messages should be buffered for each channel. When you connect to ZNC
 you get a buffer replay for each channel which shows what was said last. This
 option selects the number of lines this replay should consist of. Increasing
@@ -73,6 +77,7 @@ this can greatly increase ZNC's memory usage if you are hosting many users.
 The default value should be fine for most setups.
 
 > Would you like to keep buffers after replay?
+
 If this is disabled, you get the buffer playback only once and then it is
 deleted. If this is enabled, the buffer is not deleted. This may be useful if
 you regularly use more than one client to connect to ZNC.
@@ -81,32 +86,34 @@ Using ZNC
 ---------
 
 Once you have started ZNC you can connect with your favorite IRC-client to ZNC.
-You should use username:password as the server password (e.g. /pass user:pass).
+You should use `username:password` as the server password (e.g. `/pass user:pass`).
 
-Once you are connected you can do /msg *status help for some commands.
-Every module you have loaded (/msg *status listmods) should additionally provide
- /msg *modulename help
+Once you are connected you can do `/msg *status help` for some commands.
+Every module you have loaded (`/msg *status listmods`) should additionally provide
+	/msg *modulename help
 
 File Locations
 --------------
 
-In its data dir (~/.znc is default) ZNC saves most of its data. The only
-exception are modules and module data, which are saved in <prefix>/lib/znc
-and <prefix>/share/znc, and the znc binary itself.
+In its data dir (`~/.znc` is default) ZNC saves most of its data. The only
+exception are modules and module data, which are saved in `<prefix>/lib/znc`
+and `<prefix>/share/znc`, and the znc binary itself.
 More modules (e.g. if you install some later) can be saved in
-<data dir>/modules (-> ~/.znc/modules).
+`<data dir>/modules` (-> `~/.znc/modules`).
 
 In the datadir are only two files:
- znc.pid - The pid of the currently running ZNC instance.
- znc.pem - This is the server certificate ZNC uses for listening and is created
-           with znc --makepem.
+
+- `znc.pid` - The pid of the currently running ZNC instance.
+- `znc.pem` - This is the server certificate ZNC uses for listening and is created
+ with `znc --makepem`.
 
 These directories are also in there:
- configs - Contains znc.conf (ZNC's config file) and backups of older configs.
- modules - ZNC also looks in here for a module.
- moddata - Global modules save their settings here.
-           (e.g. webadmin saves the current skin name in here)
- users   - This is per-user data and mainly contains just a moddata directory.
+
+- configs - Contains `znc.conf` (ZNC's config file) and backups of older configs.
+- modules - ZNC also looks in here for a module.
+- moddata - Global modules save their settings here.
+  (e.g. webadmin saves the current skin name in here)
+- users   - This is per-user data and mainly contains just a moddata directory.
 
 ZNC's config file
 -----------------
@@ -115,14 +122,14 @@ This file shouldn't be too hard too understand. An explanation of all the
 items can be found here: http://en.znc.in/wiki/index.php/Configuration
 
 To rehash the config file, you can send ZNC SIGHUP via
- pkill -SIGHUP znc
+	pkill -SIGHUP znc
 or you can login to znc and use
- /msg *status rehash
+	/msg *status rehash
 
 If you changed some settings while znc is running, a simple
- pkill -SIGUSR1 znc
+	pkill -SIGUSR1 znc
 will make ZNC rewrite its config file. Alternatively you can use this:
- /msg *status saveconfig
+	/msg *status saveconfig
 
 Writing own modules
 -------------------
@@ -145,4 +152,4 @@ Further infos
 Please visit http://znc.in/ or #znc on EFNet if you still have questions.
 
 You can get the latest development version with git:
- git clone git://github.com/znc/znc.git
+	git clone git://github.com/znc/znc.git
