@@ -1074,7 +1074,7 @@ ModHandle CModules::OpenModule(const CString& sModule, const CString& sModPath, 
 	if (!GetDesc) {
 		dlclose(p);
 		sRetMsg = "Could not find ZNCModDescription() in module [" + sModule + "]";
-		return false;
+		return NULL;
 	}
 
 	if (CModule::GetCoreVersion() != Version()) {
