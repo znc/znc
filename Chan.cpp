@@ -220,12 +220,20 @@ void CChan::OnWho(const CString& sNick, const CString& sIdent, const CString& sH
 	}
 }
 
-void CChan::ModeChange(const CString& sModes, const CString& sOpNick) {
+void CChan::ModeChange(const CString& sModes, const CNick* pOpNick) {
 	CString sModeArg = sModes.Token(0);
 	CString sArgs = sModes.Token(1, true);
 	bool bAdd = true;
 
-	CNick* pOpNick = FindNick(sOpNick);
+	/* Try to find a CNick* from this channel so that pOpNick->HasPerm()
+	 * works as expected. */
+	if (pOpNick) {
+		CNick* OpNick = FindNick(pOpNick->GetNick());
+		/* If nothing was found, use the original pOpNick, else use the
+		 * CNick* from FindNick() */
+		if (OpNick)
+			pOpNick = OpNick;
+	}
 
 	if (pOpNick) {
 		MODULECALL(OnRawMode(*pOpNick, *this, sModeArg, sArgs), m_pUser, NULL, NOTHING);

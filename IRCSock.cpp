@@ -500,7 +500,7 @@ void CIRCSock::ReadLine(const CString& sData) {
 
 			CChan* pChan = m_pUser->FindChan(sTarget);
 			if (pChan) {
-				pChan->ModeChange(sModes, Nick.GetNick());
+				pChan->ModeChange(sModes, &Nick);
 
 				if (pChan->IsDetached()) {
 					return;

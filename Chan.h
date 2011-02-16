@@ -66,7 +66,7 @@ public:
 
 	// Modes
 	void SetModes(const CString& s);
-	void ModeChange(const CString& sModes, const CString& sNick = "");
+	void ModeChange(const CString& sModes, const CNick* OpNick = NULL);
 	bool AddMode(unsigned char uMode, const CString& sArg);
 	bool RemMode(unsigned char uMode);
 	CString GetModeString() const;
