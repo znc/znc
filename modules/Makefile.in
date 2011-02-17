@@ -63,7 +63,7 @@ endif
 
 include $(srcdir)/modperl/Makefile.inc
 include $(srcdir)/modpython/Makefile.inc
-include $(srcdir)/Makefile.modtcl
+include $(srcdir)/modtcl/Makefile.inc
 
 FILES    := $(basename $(FILES))
 
