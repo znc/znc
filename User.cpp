@@ -1265,6 +1265,10 @@ bool CUser::AddCTCPReply(const CString& sCTCP, const CString& sReply) {
 	return true;
 }
 
+bool CUser::DelCTCPReply(const CString& sCTCP) {
+	return m_mssCTCPReplies.erase(sCTCP) > 0;
+}
+
 bool CUser::SetStatusPrefix(const CString& s) {
 	if ((!s.empty()) && (s.length() < 6) && (s.find(' ') == CString::npos)) {
 		m_sStatusPrefix = (s.empty()) ? "*" : s;
