@@ -614,8 +614,12 @@ class CAdminMod : public CModule {
 
 	void AddServer(const CString& sLine) {
 		CString sUsername = sLine.Token(1);
-		const CString sServer = sLine.Token(2, true);
+		CString sServer = sLine.Token(2, true);
 
+		if (sServer.empty()) {
+			sServer = sUsername;
+			sUsername = m_pUser->GetUserName();
+		}
 		if (sServer.empty()) {
 			PutModule("Usage: addserver <username> <server>");
 			return;
@@ -632,9 +636,12 @@ class CAdminMod : public CModule {
 	}
 
 	void ReconnectUser(const CString& sLine) {
-		const CString sUsername = sLine.Token(1);
+		CString sUserName = sLine.Token(1, true);
 
-		CUser* pUser = GetUser(sUsername);
+		if (sUserName.empty()) {
+			sUserName = m_pUser->GetUserName();
+		}
+		CUser* pUser = GetUser(sUserName);
 		if (!pUser) {
 			PutModule("User not found.");
 			return;
@@ -658,9 +665,12 @@ class CAdminMod : public CModule {
 	}
 
 	void DisconnectUser(const CString& sLine) {
-		const CString sUsername = sLine.Token(1);
+		CString sUserName = sLine.Token(1, true);
 
-		CUser* pUser = GetUser(sUsername);
+		if (sUserName.empty()) {
+			sUserName = m_pUser->GetUserName();
+		}
+		CUser* pUser = GetUser(sUserName);
 		if (!pUser) {
 			PutModule("User not found.");
 			return;
@@ -678,9 +688,12 @@ class CAdminMod : public CModule {
 	}
 
 	void ListCTCP(const CString& sLine) {
-		CString sUsername = sLine.Token(1);
+		CString sUserName = sLine.Token(1, true);
 
-		CUser* pUser = GetUser(sUsername);
+		if (sUserName.empty()) {
+			sUserName = m_pUser->GetUserName();
+		}
+		CUser* pUser = GetUser(sUserName);
 		if (!pUser)
 			return;
 
@@ -703,10 +716,15 @@ class CAdminMod : public CModule {
 	}
 
 	void AddCTCP(const CString& sLine) {
-		CString sUsername    = sLine.Token(1);
+		CString sUserName    = sLine.Token(1);
 		CString sCTCPRequest = sLine.Token(2);
 		CString sCTCPReply   = sLine.Token(3, true);
 
+		if (sCTCPRequest.empty()) {
+			sCTCPRequest = sUserName;
+			sCTCPReply = sLine.Token(2, true);
+			sUserName = m_pUser->GetUserName();
+		}
 		if (sCTCPRequest.empty()) {
 			PutModule("Usage: AddCTCP [user] [request] [reply]");
 			PutModule("This will cause ZNC to reply to the CTCP instead of forwarding it to clients.");
@@ -714,7 +732,7 @@ class CAdminMod : public CModule {
 			return;
 		}
 
-		CUser* pUser = GetUser(sUsername);
+		CUser* pUser = GetUser(sUserName);
 		if (!pUser)
 			return;
 
@@ -725,10 +743,14 @@ class CAdminMod : public CModule {
 	}
 
 	void DelCTCP(const CString& sLine) {
-		CString sUsername    = sLine.Token(1);
-		CString sCTCPRequest = sLine.Token(2);
+		CString sUserName    = sLine.Token(1);
+		CString sCTCPRequest = sLine.Token(2, true);
 
-		CUser* pUser = GetUser(sUsername);
+		if (sCTCPRequest.empty()) {
+			sCTCPRequest = sUserName;
+			sUserName = m_pUser->GetUserName();
+		}
+		CUser* pUser = GetUser(sUserName);
 		if (!pUser)
 			return;
 
