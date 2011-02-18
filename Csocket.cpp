@@ -1594,10 +1594,14 @@ CS_STRING Csock::GetLocalIP()
 
 	if( !GetIPv6() )
 	{
+		char straddr[INET_ADDRSTRLEN];
 		struct sockaddr_in mLocalAddr;
 		socklen_t mLocalLen = sizeof( mLocalAddr );
-		if ( getsockname( iSock, (struct sockaddr *) &mLocalAddr, &mLocalLen ) == 0 )
-			m_sLocalIP = inet_ntoa( mLocalAddr.sin_addr );
+		if ( ( getsockname( iSock, (struct sockaddr *) &mLocalAddr, &mLocalLen ) == 0 )
+			&& ( inet_ntop( AF_INET, &mLocalAddr.sin_addr, straddr, sizeof(straddr) ) ) )
+		{
+			m_sLocalIP = straddr;
+		}
 	}
 #ifdef HAVE_IPV6
 	else

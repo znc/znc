@@ -34,8 +34,7 @@
 
 #ifndef _HAS_CSOCKET_
 #define _HAS_CSOCKET_
-
-#include "zncconfig.h"
+#include "defines.h" // require this as a general rule, most projects have a defines.h or the like
 
 #include <stdio.h>
 #include <unistd.h>
@@ -92,8 +91,6 @@
 #include <string>
 #include <set>
 #include <map>
-
-#include "defines.h" // require this as a general rule, most projects have a defines.h or the like
 
 #ifndef CS_STRING
 #	ifdef _HAS_CSTRING_
@@ -1437,7 +1434,7 @@ public:
 			{
 				if ( !pcSock->SetupVHost() )
 				{
-					pcSock->SockError( errno );
+					pcSock->SockError( GetSockError() );
 					DelSock( a-- );
 					continue;
 				}
@@ -1569,6 +1566,7 @@ public:
 			}
 
 			case SELECT_TIMEOUT:
+			case SELECT_TRYAGAIN:
 			case SELECT_ERROR:
 			default	:
 				break;
@@ -1630,7 +1628,7 @@ public:
 	virtual void AddSock( T *pcSock, const CS_STRING & sSockName )
 	{
 		pcSock->SetSockName( sSockName );
-		push_back( pcSock );
+		this->push_back( pcSock );
 	}
 
 	//! returns a pointer to the FIRST sock found by port or NULL on no match
@@ -1988,7 +1986,6 @@ private:
 		if ( m_iSelectWait == 0 )
 			iQuickReset = 0;
 
-		bool bHasWriteable = false;
 		bool bHasAvailSocks = false;
 		unsigned long long iNOW = 0;
 		for( unsigned int i = 0; i < this->size(); i++ )
@@ -2029,7 +2026,6 @@ private:
 					FDSetCheck( aiAresSocks[0], miiReadyFds, eCheckWrite );
 				// let ares drop the timeout if it has something timing out sooner then whats in tv currently
 				ares_timeout( pChannel, &tv, &tv );
-				bHasWriteable = true;
 			}
 #endif /* HAVE_C_ARES */
 
@@ -2070,7 +2066,6 @@ private:
 					if( !pcSock->GetWriteBuffer().empty() )
 					{ // this means we need to write again, not everything got knocked out
 						FDSetCheck( iWSock, miiReadyFds, eCheckWrite );
-						bHasWriteable = true;
 					}
 
 				} else
@@ -2081,7 +2076,6 @@ private:
 					if( pcSock->AllowWrite( iNOW ) )
 					{
 						FDSetCheck( iWSock, miiReadyFds, eCheckWrite );
-						bHasWriteable = true;
 					}
 				}
 

@@ -9,6 +9,8 @@
 #ifndef _DEFINES_H
 #define _DEFINES_H
 
+#include "zncconfig.h"
+
 // This header file is just for Csocket
 
 #include "main.h"
