@@ -230,7 +230,7 @@ void CZNC::Loop() {
 			SetConfigState(ECONFIG_NOTHING);
 
 			if (WriteConfig()) {
-				Broadcast("Writing the config suceeded", true);
+				Broadcast("Writing the config succeeded", true);
 			} else {
 				Broadcast("Writing the config file failed", true);
 			}

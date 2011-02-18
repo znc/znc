@@ -55,7 +55,7 @@ modpython/functions.cpp: modpython/functions.in
 	$(Q)$(PERL) $(srcdir)/modpython/codegen.pl $< $@
 
 modpython/compiler: modpython/compiler.cpp Makefile
-	$(E) Building optimizator for python files...
+	$(E) Building optimizer for python files...
 	$(Q)$(CXX) $(PYTHONCOMMON) -o $@ $<
 
 modpython_install: create_install_dir install_metadirs modpython_all
