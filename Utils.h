@@ -195,6 +195,9 @@ public:
 
 	/// @return The number of rows in this table, not counting the header.
 	using vector<vector<CString> >::size;
+
+	/// @return True if this table doesn't contain any rows.
+	using vector<vector<CString> >::empty;
 private:
 	unsigned int GetColumnIndex(const CString& sName) const;
 
