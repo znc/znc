@@ -822,14 +822,10 @@ bool CIRCSock::OnPrivCTCP(CNick& Nick, CString& sMessage) {
 
 bool CIRCSock::OnGeneralCTCP(CNick& Nick, CString& sMessage) {
 	const MCString& mssCTCPReplies = m_pUser->GetCTCPReplies();
-	MCString::const_iterator it = mssCTCPReplies.find(sMessage.AsUpper());
 	CString sQuery = sMessage.Token(0).AsUpper();
+	MCString::const_iterator it = mssCTCPReplies.find(sQuery);
 	bool bHaveReply = false;
 	CString sReply;
-
-	if (it == mssCTCPReplies.end()) {
-		it = mssCTCPReplies.find(sQuery);
-	}
 
 	if (it != mssCTCPReplies.end()) {
 		sReply = m_pUser->ExpandString(it->second);

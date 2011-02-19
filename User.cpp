@@ -1253,12 +1253,20 @@ void CUser::SetIRCNick(const CNick& n) {
 }
 
 bool CUser::AddCTCPReply(const CString& sCTCP, const CString& sReply) {
+	// Reject CTCP requests containing spaces
+	if (sCTCP.find_first_of(' ') != CString::npos) {
+		return false;
+	}
+	// Reject empty CTCP requests
 	if (sCTCP.empty()) {
 		return false;
 	}
-
 	m_mssCTCPReplies[sCTCP.AsUpper()] = sReply;
 	return true;
+}
+
+bool CUser::DelCTCPReply(const CString& sCTCP) {
+	return m_mssCTCPReplies.erase(sCTCP) > 0;
 }
 
 bool CUser::SetStatusPrefix(const CString& s) {

@@ -390,7 +390,7 @@ bool CTable::SetCell(const CString& sColumn, const CString& sValue, unsigned int
 bool CTable::GetLine(unsigned int uIdx, CString& sLine) const {
 	stringstream ssRet;
 
-	if (!size()) {
+	if (empty()) {
 		return false;
 	}
 

@@ -49,7 +49,10 @@ class CAdminMod : public CModule {
 			{"Disconnect",   "username",                      "Disconnects the user from their IRC server"},
 			{"LoadModule",   "username modulename",           "Loads a Module for a user"},
 			{"UnLoadModule", "username modulename",           "Removes a Module of a user"},
-			{"ListMods",     "username",                      "Get the list of modules for a user"}
+			{"ListMods",     "username",                      "Get the list of modules for a user"},
+			{"ListCTCPs",    "username",                      "List the configured CTCP replies"},
+			{"AddCTCP",      "username ctcp [reply]",         "Configure a new CTCP reply"},
+			{"DelCTCP",      "username ctcp",                 "Remove a CTCP reply"}
 		};
 		for (unsigned int i = 0; i != ARRAY_SIZE(help); ++i) {
 			CmdTable.AddRow();
@@ -611,8 +614,12 @@ class CAdminMod : public CModule {
 
 	void AddServer(const CString& sLine) {
 		CString sUsername = sLine.Token(1);
-		const CString sServer = sLine.Token(2, true);
+		CString sServer = sLine.Token(2, true);
 
+		if (sServer.empty()) {
+			sServer = sUsername;
+			sUsername = m_pUser->GetUserName();
+		}
 		if (sServer.empty()) {
 			PutModule("Usage: addserver <username> <server>");
 			return;
@@ -629,9 +636,12 @@ class CAdminMod : public CModule {
 	}
 
 	void ReconnectUser(const CString& sLine) {
-		const CString sUsername = sLine.Token(1);
+		CString sUserName = sLine.Token(1, true);
 
-		CUser* pUser = GetUser(sUsername);
+		if (sUserName.empty()) {
+			sUserName = m_pUser->GetUserName();
+		}
+		CUser* pUser = GetUser(sUserName);
 		if (!pUser) {
 			PutModule("User not found.");
 			return;
@@ -655,9 +665,12 @@ class CAdminMod : public CModule {
 	}
 
 	void DisconnectUser(const CString& sLine) {
-		const CString sUsername = sLine.Token(1);
+		CString sUserName = sLine.Token(1, true);
 
-		CUser* pUser = GetUser(sUsername);
+		if (sUserName.empty()) {
+			sUserName = m_pUser->GetUserName();
+		}
+		CUser* pUser = GetUser(sUserName);
 		if (!pUser) {
 			PutModule("User not found.");
 			return;
@@ -672,6 +685,84 @@ class CAdminMod : public CModule {
 		pUser->SetIRCConnectEnabled(false);
 
 		PutModule("Closed user's IRC connection.");
+	}
+
+	void ListCTCP(const CString& sLine) {
+		CString sUserName = sLine.Token(1, true);
+
+		if (sUserName.empty()) {
+			sUserName = m_pUser->GetUserName();
+		}
+		CUser* pUser = GetUser(sUserName);
+		if (!pUser)
+			return;
+
+		const MCString& msCTCPReplies = pUser->GetCTCPReplies();
+		CTable Table;
+		Table.AddColumn("Request");
+		Table.AddColumn("Reply");
+		for (MCString::const_iterator it = msCTCPReplies.begin(); it != msCTCPReplies.end(); it++) {
+			Table.AddRow();
+			Table.SetCell("Request", it->first);
+			Table.SetCell("Reply", it->second);
+		}
+
+		if (Table.empty()) {
+			PutModule("No CTCP replies for user [" + pUser->GetUserName() + "] configured!");
+		} else {
+			PutModule("CTCP replies for user [" + pUser->GetUserName() + "]:");
+			PutModule(Table);
+		}
+	}
+
+	void AddCTCP(const CString& sLine) {
+		CString sUserName    = sLine.Token(1);
+		CString sCTCPRequest = sLine.Token(2);
+		CString sCTCPReply   = sLine.Token(3, true);
+
+		if (sCTCPRequest.empty()) {
+			sCTCPRequest = sUserName;
+			sCTCPReply = sLine.Token(2, true);
+			sUserName = m_pUser->GetUserName();
+		}
+		if (sCTCPRequest.empty()) {
+			PutModule("Usage: AddCTCP [user] [request] [reply]");
+			PutModule("This will cause ZNC to reply to the CTCP instead of forwarding it to clients.");
+			PutModule("An empty reply will cause the CTCP request to be blocked.");
+			return;
+		}
+
+		CUser* pUser = GetUser(sUserName);
+		if (!pUser)
+			return;
+
+		if (pUser->AddCTCPReply(sCTCPRequest, sCTCPReply))
+			PutModule("Added!");
+		else
+			PutModule("Error!");
+	}
+
+	void DelCTCP(const CString& sLine) {
+		CString sUserName    = sLine.Token(1);
+		CString sCTCPRequest = sLine.Token(2, true);
+
+		if (sCTCPRequest.empty()) {
+			sCTCPRequest = sUserName;
+			sUserName = m_pUser->GetUserName();
+		}
+		CUser* pUser = GetUser(sUserName);
+		if (!pUser)
+			return;
+
+		if (sCTCPRequest.empty()) {
+			PutModule("Usage: DelCTCP [user] [request]");
+			return;
+		}
+
+		if (pUser->DelCTCPReply(sCTCPRequest))
+			PutModule("Successfully removed [" + sCTCPRequest + "]");
+		else
+			PutModule("Error: [" + sCTCPRequest + "] not found!");
 	}
 
 	void LoadModuleForUser(const CString& sLine) {
@@ -790,6 +881,9 @@ public:
 		fnmap_["loadmodule"]   = &CAdminMod::LoadModuleForUser;
 		fnmap_["unloadmodule"] = &CAdminMod::UnLoadModuleForUser;
 		fnmap_["listmods"]     = &CAdminMod::ListModuleForUser;
+		fnmap_["listctcps"]    = &CAdminMod::ListCTCP;
+		fnmap_["addctcp"]      = &CAdminMod::AddCTCP;
+		fnmap_["delctcp"]      = &CAdminMod::DelCTCP;
 	}
 
 	virtual ~CAdminMod() {}

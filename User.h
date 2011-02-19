@@ -155,6 +155,7 @@ public:
 	void SetIRCServer(const CString& s);
 	void SetQuitMsg(const CString& s);
 	bool AddCTCPReply(const CString& sCTCP, const CString& sReply);
+	bool DelCTCPReply(const CString& sCTCP);
 	bool SetBufferCount(unsigned int u, bool bForce = false);
 	void SetKeepBuffer(bool b);
 	void SetChanPrefixes(const CString& s) { m_sChanPrefixes = s; }
