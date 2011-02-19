@@ -108,6 +108,9 @@ int main(int argc, char** argv) {
 	bool bMakePass = false;
 	bool bAllowRoot = false;
 	bool bForeground = false;
+#ifdef ALWAYS_RUN_IN_FOREGROUND
+	bForeground = true;
+#endif
 #ifdef HAVE_LIBSSL
 	bool bMakePem = false;
 
