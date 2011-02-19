@@ -729,41 +729,39 @@ bool CZNC::WriteNewConfig(const CString& sConfigFile) {
 		CUtils::PrintMessage("-- Global Modules --");
 		CUtils::PrintMessage("");
 
-		if (CUtils::GetBoolInput("Do you want to load any global modules?")) {
-			CTable Table;
-			Table.AddColumn("Name");
-			Table.AddColumn("Description");
-			set<CModInfo>::iterator it;
+		CTable Table;
+		Table.AddColumn("Name");
+		Table.AddColumn("Description");
+		set<CModInfo>::iterator it;
 
-			for (it = ssGlobalMods.begin(); it != ssGlobalMods.end(); ++it) {
-				const CModInfo& Info = *it;
-				Table.AddRow();
-				Table.SetCell("Name", Info.GetName());
-				Table.SetCell("Description", Info.GetDescription().Ellipsize(128));
-			}
+		for (it = ssGlobalMods.begin(); it != ssGlobalMods.end(); ++it) {
+			const CModInfo& Info = *it;
+			Table.AddRow();
+			Table.SetCell("Name", Info.GetName());
+			Table.SetCell("Description", Info.GetDescription().Ellipsize(128));
+		}
 
-			unsigned int uTableIdx = 0; CString sLine;
-			while (Table.GetLine(uTableIdx++, sLine)) {
-				CUtils::PrintMessage(sLine);
-			}
+		unsigned int uTableIdx = 0; CString sLine;
+		while (Table.GetLine(uTableIdx++, sLine)) {
+			CUtils::PrintMessage(sLine);
+		}
 
-			if (uNrOtherGlobalMods > 0) {
-				CUtils::PrintMessage("And " + CString(uNrOtherGlobalMods) + " other (uncommon) modules. You can enable those later.");
-			}
+		if (uNrOtherGlobalMods > 0) {
+			CUtils::PrintMessage("And " + CString(uNrOtherGlobalMods) + " other (uncommon) modules. You can enable those later.");
+		}
 
-			CUtils::PrintMessage("");
+		CUtils::PrintMessage("");
 
-			for (it = ssGlobalMods.begin(); it != ssGlobalMods.end(); ++it) {
-				const CModInfo& Info = *it;
-				CString sName = Info.GetName();
+		for (it = ssGlobalMods.begin(); it != ssGlobalMods.end(); ++it) {
+			const CModInfo& Info = *it;
+			CString sName = Info.GetName();
 
-				if (CUtils::StdoutIsTTY()) {
-					if (CUtils::GetBoolInput("Load global module <\033[1m" + sName + "\033[22m>?", false))
-						vsLines.push_back("LoadModule = " + sName);
-				} else {
-					if (CUtils::GetBoolInput("Load global module <" + sName + ">?", false))
-						vsLines.push_back("LoadModule = " + sName);
-				}
+			if (CUtils::StdoutIsTTY()) {
+				if (CUtils::GetBoolInput("Load global module <\033[1m" + sName + "\033[22m>?", false))
+					vsLines.push_back("LoadModule = " + sName);
+			} else {
+				if (CUtils::GetBoolInput("Load global module <" + sName + ">?", false))
+					vsLines.push_back("LoadModule = " + sName);
 			}
 		}
 	}
@@ -837,41 +835,39 @@ bool CZNC::WriteNewConfig(const CString& sConfigFile) {
 			CUtils::PrintMessage("-- User Modules --");
 			CUtils::PrintMessage("");
 
-			if (CUtils::GetBoolInput("Do you want to automatically load any user modules for this user?")) {
-				CTable Table;
-				Table.AddColumn("Name");
-				Table.AddColumn("Description");
-				set<CModInfo>::iterator it;
+			CTable Table;
+			Table.AddColumn("Name");
+			Table.AddColumn("Description");
+			set<CModInfo>::iterator it;
 
-				for (it = ssUserMods.begin(); it != ssUserMods.end(); ++it) {
-					const CModInfo& Info = *it;
-					Table.AddRow();
-					Table.SetCell("Name", Info.GetName());
-					Table.SetCell("Description", Info.GetDescription().Ellipsize(128));
-				}
+			for (it = ssUserMods.begin(); it != ssUserMods.end(); ++it) {
+				const CModInfo& Info = *it;
+				Table.AddRow();
+				Table.SetCell("Name", Info.GetName());
+				Table.SetCell("Description", Info.GetDescription().Ellipsize(128));
+			}
 
-				unsigned int uTableIdx = 0; CString sLine;
-				while (Table.GetLine(uTableIdx++, sLine)) {
-					CUtils::PrintMessage(sLine);
-				}
+			unsigned int uTableIdx = 0; CString sLine;
+			while (Table.GetLine(uTableIdx++, sLine)) {
+				CUtils::PrintMessage(sLine);
+			}
 
-				if (uNrOtherUserMods > 0) {
-					CUtils::PrintMessage("And " + CString(uNrOtherUserMods) + " other (uncommon) modules. You can enable those later.");
-				}
+			if (uNrOtherUserMods > 0) {
+				CUtils::PrintMessage("And " + CString(uNrOtherUserMods) + " other (uncommon) modules. You can enable those later.");
+			}
 
-				CUtils::PrintMessage("");
+			CUtils::PrintMessage("");
 
-				for (it = ssUserMods.begin(); it != ssUserMods.end(); ++it) {
-					const CModInfo& Info = *it;
-					CString sName = Info.GetName();
+			for (it = ssUserMods.begin(); it != ssUserMods.end(); ++it) {
+				const CModInfo& Info = *it;
+				CString sName = Info.GetName();
 
-					if (CUtils::StdoutIsTTY()) {
-						if (CUtils::GetBoolInput("Load module <\033[1m" + sName + "\033[22m>?", false))
-							vsLines.push_back("\tLoadModule = " + sName);
-					} else {
-						if (CUtils::GetBoolInput("Load module <" + sName + ">?", false))
-							vsLines.push_back("\tLoadModule = " + sName);
-					}
+				if (CUtils::StdoutIsTTY()) {
+					if (CUtils::GetBoolInput("Load module <\033[1m" + sName + "\033[22m>?", false))
+						vsLines.push_back("\tLoadModule = " + sName);
+				} else {
+					if (CUtils::GetBoolInput("Load module <" + sName + ">?", false))
+						vsLines.push_back("\tLoadModule = " + sName);
 				}
 			}
 		}
