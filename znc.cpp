@@ -255,9 +255,9 @@ bool CZNC::WriteISpoof(CUser* pUser) {
 	if (m_pISpoofLockFile != NULL)
 		return false;
 
-	if (!m_sISpoofFile.empty()) {
+	if (!GetISpoofFile().empty()) {
 		m_pISpoofLockFile = new CFile;
-		if (!m_pISpoofLockFile->TryExLock(m_sISpoofFile, O_RDWR | O_CREAT)) {
+		if (!m_pISpoofLockFile->TryExLock(GetISpoofFile(), O_RDWR | O_CREAT)) {
 			DEBUG("Couldn't open and lock ISpoofFile: " << strerror(errno));
 			delete m_pISpoofLockFile;
 			m_pISpoofLockFile = NULL;
@@ -283,7 +283,7 @@ bool CZNC::WriteISpoof(CUser* pUser) {
 		if (sData == m_sISpoofFormat) {
 			sData.Replace("%", pUser->GetIdent());
 		}
-		DEBUG("Writing [" + sData + "] to ISpoofFile [" + m_sISpoofFile + "]");
+		DEBUG("Writing [" + sData + "] to ISpoofFile [" + m_pISpoofLockFile->GetLongName() + "]");
 		m_pISpoofLockFile->Write(sData + "\n");
 	}
 	return true;
@@ -293,16 +293,14 @@ void CZNC::ReleaseISpoof() {
 	if (m_pISpoofLockFile == NULL)
 		return;
 
-	if (!m_sISpoofFile.empty()) {
-		if (m_pISpoofLockFile->Seek(0) && m_pISpoofLockFile->Truncate()) {
-			DEBUG("Writing [" + m_sOrigISpoof + "] to ISpoofFile [" + m_sISpoofFile + "]");
-			m_pISpoofLockFile->Write(m_sOrigISpoof);
-		} else {
-			DEBUG("Error while restoring ISpoof: " << strerror(errno));
-		}
-
-		m_sOrigISpoof = "";
+	if (m_pISpoofLockFile->Seek(0) && m_pISpoofLockFile->Truncate()) {
+		DEBUG("Writing [" + m_sOrigISpoof + "] to ISpoofFile [" + m_pISpoofLockFile->GetLongName() + "]");
+		m_pISpoofLockFile->Write(m_sOrigISpoof);
+	} else {
+		DEBUG("Error while restoring ISpoof: " << strerror(errno));
 	}
+
+	m_sOrigISpoof = "";
 
 	delete m_pISpoofLockFile;
 	m_pISpoofLockFile = NULL;
