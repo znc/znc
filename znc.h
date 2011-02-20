@@ -104,7 +104,7 @@ public:
 	CString GetConfPath(bool bAllowMkDir = true) const;
 	CString GetUserPath() const;
 	CString GetModPath() const;
-	CString GetPemLocation() const { return m_sSSLCertFile; }
+	CString GetPemLocation() const { return CDir::ChangeDir("", m_sSSLCertFile); }
 	const CString& GetConfigFile() const { return m_sConfigFile; }
 	bool WritePemFile();
 	const CString& GetISpoofFile() const { return m_sISpoofFile; }
