@@ -1650,10 +1650,6 @@ bool CZNC::DoRehash(CString& sError)
 					m_sISpoofFormat = sValue;
 					continue;
 				} else if (sName.Equals("ISpoofFile")) {
-					if (sValue.Left(2) == "~/") {
-						sValue.LeftChomp(2);
-						sValue = GetHomePath() + "/" + sValue;
-					}
 					m_sISpoofFile = sValue;
 					continue;
 				} else if (sName.Equals("MOTD")) {
