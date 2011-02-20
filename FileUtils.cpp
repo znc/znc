@@ -37,7 +37,10 @@ CFile::~CFile() {
 }
 
 void CFile::SetFileName(const CString& sLongName) {
-	m_sLongName = sLongName;
+	if (sLongName.Left(2) == "~/") {
+		m_sLongName = CZNC::Get().GetHomePath() + sLongName.substr(1);
+	} else
+		m_sLongName = sLongName;
 
 	m_sShortName = sLongName;
 	m_sShortName.TrimRight("/");
