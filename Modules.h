@@ -200,6 +200,58 @@ protected:
 	CString  m_sDescription;
 };
 
+/** A helper class for handling commands in modules. */
+class CModCommand {
+public:
+	/// Type for the callback function that handles the actual command.
+	typedef void (CModule::*ModCmdFunc)(const CString& sLine);
+
+	/// Default constructor, needed so that this can be saved in a std::map.
+	CModCommand();
+
+	/** Construct a new CModCommand.
+	 * @param sCmd The name of the command.
+	 * @param func The command's callback function.
+	 * @param sArgs Help text describing the arguments to this command.
+	 * @param sDesc Help text describing what this command does.
+	 */
+	CModCommand(const CString& sCmd, ModCmdFunc func, const CString& sArgs, const CString& sDesc);
+
+	/** Copy constructor, needed so that this can be saved in a std::map.
+	 * @param other Object to copy from.
+	 */
+	CModCommand(const CModCommand& other);
+
+	/** Assignment operator, needed so that this can be saved in a std::map.
+	 * @param other Object to copy from.
+	 */
+	CModCommand& operator=(const CModCommand& other);
+
+	/** Initialize a CTable so that it can be used with AddHelp().
+	 * @param Table The instance of CTable to initialize.
+	 */
+	static void InitHelp(CTable& Table);
+
+	/** Add this command to the CTable instance.
+	 * @param Table Instance of CTable to which this should be added.
+	 * @warning The Table should be initialized via InitHelp().
+	 */
+	void AddHelp(CTable& Table) const;
+
+	const CString& GetCommand() const { return m_sCmd; }
+	ModCmdFunc GetFunction() const { return m_pFunc; }
+	const CString& GetArgs() const { return m_sArgs; }
+	const CString& GetDescription() const { return m_sDesc; }
+
+	void Call(CModule *pMod, const CString& sLine) const { (pMod->*m_pFunc)(sLine); }
+
+private:
+	CString m_sCmd;
+	ModCmdFunc m_pFunc;
+	CString m_sArgs;
+	CString m_sDesc;
+};
+
 /** The base class for your own ZNC modules.
  *
  *  If you want to write a module for znc, you will have to implement a class
@@ -758,6 +810,31 @@ public:
 	virtual void ListSockets();
 	// !Socket stuff
 
+	// Command stuff
+	/// Register the "Help" command.
+	void AddHelpCommand();
+	/// @return True if the command was successfully added.
+	bool AddCommand(const CModCommand& Command);
+	/// @return True if the command was successfully added.
+	bool AddCommand(const CString& sCmd, CModCommand::ModCmdFunc func, const CString& sArgs = "", const CString& sDesc = "");
+	/// @return True if the command was successfully removed.
+	bool RemCommand(const CString& sCmd);
+	/// @return The CModCommand instance or NULL if none was found.
+	const CModCommand* FindCommand(const CString& sCmd) const;
+	/** This function tries to dispatch the given command via the correct
+	 * instance of CModCommand. Before this can be called, commands have to
+	 * be added via AddCommand(). If no "help" command is added, this
+	 * function will call HandleHelpCommand.
+	 * @param sLine The command line to handle.
+	 * @return True if something was done, else false.
+	 */
+	bool HandleCommand(const CString& sLine);
+	/** Send a description of all registered commands via PutModule().
+	 * @param sLine The help command that is being asked for.
+	 */
+	void HandleHelpCommand(const CString& sLine = "");
+	// !Command stuff
+
 	bool LoadRegistry();
 	bool SaveRegistry() const;
 	bool SetNV(const CString & sName, const CString & sValue, bool bWriteToDisk = true);
@@ -814,6 +891,7 @@ protected:
 private:
 	MCString           m_mssRegistry; //!< way to save name/value pairs. Note there is no encryption involved in this
 	VWebSubPages       m_vSubPages;
+	map<CString, CModCommand> m_mCommands;
 };
 
 class CModules : public vector<CModule*> {

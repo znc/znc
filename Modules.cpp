@@ -382,6 +382,68 @@ void CModule::ListSockets() {
 	PutModule(Table);
 }
 
+bool CModule::AddCommand(const CModCommand& Command)
+{
+	if (Command.GetFunction() == NULL)
+		return false;
+	if (Command.GetCommand().find(' ') != CString::npos)
+		return false;
+	if (FindCommand(Command.GetCommand()) != NULL)
+		return false;
+
+	m_mCommands[Command.GetCommand()] = Command;
+	return true;
+}
+
+bool CModule::AddCommand(const CString& sCmd, CModCommand::ModCmdFunc func, const CString& sArgs, const CString& sDesc)
+{
+	CModCommand cmd(sCmd, func, sArgs, sDesc);
+	return AddCommand(cmd);
+}
+
+void CModule::AddHelpCommand()
+{
+	AddCommand("Help", &CModule::HandleHelpCommand, "", "Generate this output");
+}
+
+bool CModule::RemCommand(const CString& sCmd)
+{
+	return m_mCommands.erase(sCmd) > 0;
+}
+
+const CModCommand* CModule::FindCommand(const CString& sCmd) const
+{
+	map<CString, CModCommand>::const_iterator it;
+	for (it = m_mCommands.begin(); it != m_mCommands.end(); ++it) {
+		if (!it->first.Equals(sCmd))
+			continue;
+		return &it->second;
+	}
+	return NULL;
+}
+
+bool CModule::HandleCommand(const CString& sLine) {
+	const CString& sCmd = sLine.Token(0);
+	const CModCommand* pCmd = FindCommand(sCmd);
+
+	if (pCmd) {
+		pCmd->Call(this, sLine);
+		return true;
+	}
+
+	return false;
+}
+
+void CModule::HandleHelpCommand(const CString& sLine) {
+	CTable Table;
+	map<CString, CModCommand>::const_iterator it;
+
+	CModCommand::InitHelp(Table);
+	for (it = m_mCommands.begin(); it != m_mCommands.end(); ++it)
+		it->second.AddHelp(Table);
+	PutModule(Table);
+}
+
 CString CModule::GetModNick() const { return ((m_pUser) ? m_pUser->GetStatusPrefix() : "*") + m_sModName; }
 
 // Webmods
@@ -416,7 +478,7 @@ void CModule::OnMode(const CNick& OpNick, CChan& Channel, char uMode, const CStr
 CModule::EModRet CModule::OnRaw(CString& sLine) { return CONTINUE; }
 
 CModule::EModRet CModule::OnStatusCommand(CString& sCommand) { return CONTINUE; }
-void CModule::OnModCommand(const CString& sCommand) {}
+void CModule::OnModCommand(const CString& sCommand) { HandleCommand(sCommand); }
 void CModule::OnModNotice(const CString& sMessage) {}
 void CModule::OnModCTCP(const CString& sMessage) {}
 
@@ -1088,4 +1150,41 @@ ModHandle CModules::OpenModule(const CString& sModule, const CString& sModPath, 
 	}
 
 	return p;
+}
+
+CModCommand::CModCommand()
+	: m_sCmd(), m_pFunc(NULL), m_sArgs(), m_sDesc()
+{
+}
+
+CModCommand::CModCommand(const CString& sCmd, ModCmdFunc func, const CString& sArgs, const CString& sDesc)
+	: m_sCmd(sCmd), m_pFunc(func), m_sArgs(sArgs), m_sDesc(sDesc)
+{
+}
+
+CModCommand::CModCommand(const CModCommand& other)
+	: m_sCmd(other.m_sCmd), m_pFunc(other.m_pFunc), m_sArgs(other.m_sArgs), m_sDesc(other.m_sDesc)
+{
+}
+
+CModCommand& CModCommand::operator=(const CModCommand& other)
+{
+	m_sCmd = other.m_sCmd;
+	m_pFunc = other.m_pFunc;
+	m_sArgs = other.m_sArgs;
+	m_sDesc = other.m_sDesc;
+	return *this;
+}
+
+void CModCommand::InitHelp(CTable& Table) {
+	Table.AddColumn("Command");
+	Table.AddColumn("Arguments");
+	Table.AddColumn("Description");
+}
+
+void CModCommand::AddHelp(CTable& Table) const {
+	Table.AddRow();
+	Table.SetCell("Command", GetCommand());
+	Table.SetCell("Arguments", GetArgs());
+	Table.SetCell("Description", GetDescription());
 }
