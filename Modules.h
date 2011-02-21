@@ -494,6 +494,13 @@ public:
 	 *  @param sCommand The command that was sent.
 	 */
 	virtual void OnModCommand(const CString& sCommand);
+	/** This is similar to OnModCommand(), but it is only called if
+	 * HandleCommand didn't find any that wants to handle this. This is only
+	 * called if HandleCommand() is called, which practically means that
+	 * this is only called if you don't overload OnModCommand().
+	 *  @param sCommand The command that was sent.
+	 */
+	virtual void OnUnknownModCommand(const CString& sCommand);
 	/** Called when a your module nick was sent a notice.
 	 *  @param sMessage The message which was sent.
 	 */

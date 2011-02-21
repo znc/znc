@@ -431,6 +431,8 @@ bool CModule::HandleCommand(const CString& sLine) {
 		return true;
 	}
 
+	OnUnknownModCommand(sLine);
+
 	return false;
 }
 
@@ -478,9 +480,16 @@ void CModule::OnMode(const CNick& OpNick, CChan& Channel, char uMode, const CStr
 CModule::EModRet CModule::OnRaw(CString& sLine) { return CONTINUE; }
 
 CModule::EModRet CModule::OnStatusCommand(CString& sCommand) { return CONTINUE; }
-void CModule::OnModCommand(const CString& sCommand) { HandleCommand(sCommand); }
 void CModule::OnModNotice(const CString& sMessage) {}
 void CModule::OnModCTCP(const CString& sMessage) {}
+
+void CModule::OnModCommand(const CString& sCommand) {
+	HandleCommand(sCommand);
+}
+void CModule::OnUnknownModCommand(const CString& sLine) {
+	if (!m_mCommands.empty())
+		PutModule("Unknown command!");
+}
 
 void CModule::OnQuit(const CNick& Nick, const CString& sMessage, const vector<CChan*>& vChans) {}
 void CModule::OnNick(const CNick& Nick, const CString& sNewNick, const vector<CChan*>& vChans) {}
