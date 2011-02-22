@@ -162,7 +162,7 @@ public:
 			if (sCommand.Token(1) != "-quiet")
 			{
 				sReason = sCommand.Token(1, true);
-				PutModNotice("You have been marked as away", "away");
+				PutModNotice("You have been marked as away");
 			}
 			else
 				sReason = sCommand.Token(2, true);
@@ -171,40 +171,40 @@ public:
 		else if (sCmdName == "back")
 		{
 			if ((m_vMessages.empty()) && (sCommand.Token(1) != "-quiet"))
-				PutModNotice("Welcome Back!", "away");
+				PutModNotice("Welcome Back!");
 			Back();
 		}
 		else if (sCmdName == "messages")
 		{
 			for (u_int a = 0; a < m_vMessages.size(); a++)
-				PutModule(m_vMessages[a], "away");
+				PutModule(m_vMessages[a]);
 		}
 		else if (sCmdName == "delete")
 		{
 			CString sWhich = sCommand.Token(1);
 			if (sWhich == "all")
 			{
-				PutModNotice("Deleted " + CString(m_vMessages.size()) + " Messages.", "away");
+				PutModNotice("Deleted " + CString(m_vMessages.size()) + " Messages.");
 				for (u_int a = 0; a < m_vMessages.size(); a++)
 					m_vMessages.erase(m_vMessages.begin() + a--);
 
 			}
 			else if (sWhich.empty())
 			{
-				PutModNotice("USAGE: delete <num|all>", "away");
+				PutModNotice("USAGE: delete <num|all>");
 				return;
 			} else
 			{
 				u_int iNum = sWhich.ToUInt();
 				if (iNum >= m_vMessages.size())
 				{
-					PutModNotice("Illegal Message # Requested", "away");
+					PutModNotice("Illegal Message # Requested");
 					return;
 				}
 				else
 				{
 					m_vMessages.erase(m_vMessages.begin() + iNum);
-					PutModNotice("Message Erased.", "away");
+					PutModNotice("Message Erased.");
 				}
 				SaveBufferToDisk();
 			}
@@ -212,7 +212,7 @@ public:
 		else if (sCmdName == "save" && m_saveMessages)
 		{
 			SaveBufferToDisk();
-			PutModNotice("Messages saved to disk.", "away");
+			PutModNotice("Messages saved to disk.");
 		}
 		else if (sCmdName == "ping")
 		{
@@ -237,7 +237,7 @@ public:
 				if ((sTime.empty()) || (sWhom.empty()) || (sMessage.empty()))
 				{
 					// illegal format
-					PutModule("Corrupt message! [" + m_vMessages[a] + "]", "away");
+					PutModule("Corrupt message! [" + m_vMessages[a] + "]");
 					m_vMessages.erase(m_vMessages.begin() + a--);
 					continue;
 				}
@@ -248,7 +248,7 @@ public:
 				size_t iCount = strftime(szFormat, 64, "%F %T", &t);
 				if (iCount <= 0)
 				{
-					PutModule("Corrupt time stamp! [" + m_vMessages[a] + "]", "away");
+					PutModule("Corrupt time stamp! [" + m_vMessages[a] + "]");
 					m_vMessages.erase(m_vMessages.begin() + a--);
 					continue;
 				}
@@ -260,11 +260,11 @@ public:
 			}
 			for (map< CString, vector< CString> >::iterator it = msvOutput.begin(); it != msvOutput.end(); ++it)
 			{
-				PutModule(it->first, "away");
+				PutModule(it->first);
 				for (u_int a = 0; a < it->second.size(); a++)
 					PutModule(it->second[a]);
 			}
-			PutModule("#--- End Messages", "away");
+			PutModule("#--- End Messages");
 		} else if (sCmdName == "enabletimer")
 		{
 			SetAwayTime(300);
@@ -289,7 +289,7 @@ public:
 			PutModule("Current timer setting: " + CString(GetAwayTime()) + " seconds");
 		} else
 		{
-			PutModule("Commands: away [-quiet], back [-quiet], delete <num|all>, ping, show, save, enabletimer, disabletimer, settimer <secs>, timer", "away");
+			PutModule("Commands: away [-quiet], back [-quiet], delete <num|all>, ping, show, save, enabletimer, disabletimer, settimer <secs>, timer");
 		}
 	}
 
@@ -333,13 +333,13 @@ public:
 		{
 			if (bUsePrivMessage)
 			{
-				PutModule("Welcome Back!", "away");
-				PutModule("You have " + CString(m_vMessages.size()) + " messages!", "away");
+				PutModule("Welcome Back!");
+				PutModule("You have " + CString(m_vMessages.size()) + " messages!");
 			}
 			else
 			{
-				PutModNotice("Welcome Back!", "away");
-				PutModNotice("You have " + CString(m_vMessages.size()) + " messages!", "away");
+				PutModNotice("Welcome Back!");
+				PutModNotice("You have " + CString(m_vMessages.size()) + " messages!");
 			}
 		}
 		m_sReason = "";
