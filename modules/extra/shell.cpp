@@ -142,16 +142,11 @@ public:
 		return CONTINUE;
 	}
 
-	void PutShell(const CString& sLine) {
-		CString sPath = m_sPath;
-
-		CString::size_type a = sPath.find(' ');
-		while (a != CString::npos) {
-			sPath.replace(a, 1, "_");
-			a = sPath.find(' ');
-		}
-
-		PutModule(sLine, "shell", sPath);
+	void PutShell(const CString& sMsg) {
+		CString sPath = m_sPath.Replace_n(" ", "_");
+		CString sSource = ":" + GetModNick() + "!shell@" + sPath;
+		CString sLine = sSource + " PRIVMSG " + m_pUser->GetCurNick() + " :" + sMsg;
+		PutUser(sLine);
 	}
 
 	void RunCommand(const CString& sCommand) {
