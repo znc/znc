@@ -34,7 +34,7 @@ public:
 				CUser *pUser = CZNC::Get().FindUser(WebSock.GetParam("user"));
 				bool bOutgoing = WebSock.GetParam("direction") == "out";
 				const CString sLine = WebSock.GetParam("line");
- 
+
 				if (!pUser) {
 					Tmpl["user"] = WebSock.GetParam("user");
 					Tmpl[bOutgoing ? "direction_out" : "direction_in"] = "true";
