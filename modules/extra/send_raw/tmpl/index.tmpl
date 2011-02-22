@@ -1,0 +1,43 @@
+<? INC Header.tmpl ?>
+
+<form method="post" action="/mods/send_raw/">
+	<? INC _csrf_check.tmpl ?>
+
+	<div class="section">
+		<h3>Send a raw IRC line</h3>
+
+		<div class="sectionbg">
+			<div class="sectionbody">
+				<div class="subsection third">
+					<div class="inputlabel">User:</div>
+					<div><select name="user">
+						<? LOOP UserLoop?>
+							<option value="<? VAR Username ESC=HTML ?>"><? VAR Username ESC=HTML ?></option>
+						<? ENDLOOP ?>
+					</select></div>
+				</div>
+
+				<div class="subsection third">
+					<div class="inputlabel">Direction:</div>
+					<div>
+						<select name="direction">
+							<option value="in"<? IF direction_in ?> selected="yes"<? ENDIF ?>>in</option>
+							<option value="out"<? IF direction_out ?> selected="yes"<? ENDIF ?>>out</option>
+						</select>
+					</div>
+				</div>
+
+				<div class="subsection full">
+					<div class="inputlabel">Line:</div>
+					<div><input type="text" name="line" value="<? VAR line ?>" /></div>
+				</div>
+
+				<div class="subsection submitline">
+					<input type="submit" value="Send">
+				</div>
+			</div>
+		</div>
+	</div>	
+</form>
+
+<? INC Footer.tmpl ?>

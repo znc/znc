@@ -25,6 +25,45 @@ public:
 		return true;
 	}
 
+	virtual CString GetWebMenuTitle() { return "Send Raw"; }
+	virtual bool WebRequiresAdmin() { return true; }
+
+	virtual bool OnWebRequest(CWebSock& WebSock, const CString& sPageName, CTemplate& Tmpl) {
+		if (sPageName == "index") {
+			if (WebSock.IsPost()) {
+				CUser *pUser = CZNC::Get().FindUser(WebSock.GetParam("user"));
+				bool bOutgoing = WebSock.GetParam("direction") == "out";
+				const CString sLine = WebSock.GetParam("line");
+ 
+				if (!pUser) {
+					Tmpl["user"] = WebSock.GetParam("user");
+					Tmpl[bOutgoing ? "direction_out" : "direction_in"] = "true";
+					Tmpl["line"] = sLine;
+					WebSock.GetSession()->AddError("User not found");
+					return true;
+				}
+
+				if (bOutgoing) {
+					pUser->PutIRC(sLine);
+				} else {
+					pUser->PutUser(sLine);
+				}
+
+				WebSock.GetSession()->AddSuccess("Line sent");
+			}
+
+			const map<CString,CUser*>& msUsers = CZNC::Get().GetUserMap();
+			for (map<CString,CUser*>::const_iterator it = msUsers.begin(); it != msUsers.end(); ++it) {
+				CTemplate& l = Tmpl.AddRow("UserLoop");
+				l["Username"] = (*it->second).GetUserName();
+			}
+
+			return true;
+		}
+
+		return false;
+	}
+
 	virtual void OnModCommand(const CString& sLine) {
 		const CString sUser = sLine.Token(0);
 		const CString sDirection = sLine.Token(1);
