@@ -101,6 +101,7 @@ public:
 	bool PutStatus(const CString& sLine, CClient* pClient = NULL, CClient* pSkipClient = NULL);
 	bool PutStatusNotice(const CString& sLine, CClient* pClient = NULL, CClient* pSkipClient = NULL);
 	bool PutModule(const CString& sModule, const CString& sLine, CClient* pClient = NULL, CClient* pSkipClient = NULL);
+	bool PutModNotice(const CString& sModule, const CString& sLine, CClient* pClient = NULL, CClient* pSkipClient = NULL);
 
 	bool IsUserAttached() const { return !m_vClients.empty(); }
 	void UserConnected(CClient* pClient);

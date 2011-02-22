@@ -757,28 +757,22 @@ public:
 	 *  module hook for a specific client, only that client gets this
 	 *  message, else all connected clients will receive it.
 	 *  @param sLine The message which should be sent.
-	 *  @param sIdent The ident for the module nick. Defaults to the module name.
-	 *  @param sHost The hostname for the module nick. Defaults to znc.in
 	 *  @return true if the line was sent to at least one client.
 	 */
-	virtual bool PutModule(const CString& sLine, const CString& sIdent = "", const CString& sHost = "znc.in");
+	virtual bool PutModule(const CString& sLine);
 	/** This function calls CModule::PutModule(const CString&, const
 	 *  CString&, const CString&) for each line in the table.
 	 *  @param table The table which should be send.
-	 *  @param sIdent The ident which should be used.
-	 *  @param sHost The hostname used for the query.
 	 *  @return The number of lines sent.
 	 */
-	virtual unsigned int PutModule(const CTable& table, const CString& sIdent = "", const CString& sHost = "znc.in");
+	virtual unsigned int PutModule(const CTable& table);
 	/** Send a notice from your module nick. If we are in a module hook for
 	 *  a specific client, only that client gets this notice, else all
 	 *  clients will receive it.
 	 *  @param sLine The line which should be sent.
-	 *  @param sIdent The ident used for the notice.
-	 *  @param sHost The host name used for the notice.
 	 *  @return true if the line was sent to at least one client.
 	 */
-	virtual bool PutModNotice(const CString& sLine, const CString& sIdent = "", const CString& sHost = "znc.in");
+	virtual bool PutModNotice(const CString& sLine);
 
 	/** @returns The name of the module. */
 	const CString& GetModName() const { return m_sModName; }

@@ -1104,6 +1104,20 @@ bool CUser::PutModule(const CString& sModule, const CString& sLine, CClient* pCl
 	return (pClient == NULL);
 }
 
+bool CUser::PutModNotice(const CString& sModule, const CString& sLine, CClient* pClient, CClient* pSkipClient) {
+	for (unsigned int a = 0; a < m_vClients.size(); a++) {
+		if ((!pClient || pClient == m_vClients[a]) && pSkipClient != m_vClients[a]) {
+			m_vClients[a]->PutModNotice(sModule, sLine);
+
+			if (pClient) {
+				return true;
+			}
+		}
+	}
+
+	return (pClient == NULL);
+}
+
 bool CUser::ResumeFile(unsigned short uPort, unsigned long uFileSize) {
 	CSockManager& Manager = CZNC::Get().GetManager();
 

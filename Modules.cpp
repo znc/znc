@@ -539,31 +539,25 @@ bool CModule::PutUser(const CString& sLine) {
 bool CModule::PutStatus(const CString& sLine) {
 	return (m_pUser) ? m_pUser->PutStatus(sLine, m_pClient) : false;
 }
-unsigned int CModule::PutModule(const CTable& table, const CString& sIdent, const CString& sHost) {
+unsigned int CModule::PutModule(const CTable& table) {
 	if (!m_pUser)
 		return 0;
 
 	unsigned int idx = 0;
 	CString sLine;
 	while (table.GetLine(idx++, sLine))
-		PutModule(sLine, sIdent, sHost);
+		PutModule(sLine);
 	return idx - 1;
 }
-bool CModule::PutModule(const CString& sLine, const CString& sIdent, const CString& sHost) {
+bool CModule::PutModule(const CString& sLine) {
 	if (!m_pUser)
 		return false;
-	return m_pUser->PutUser(":" + GetModNick() + "!" +
-		(sIdent.empty() ? GetModName() : sIdent) + "@" + sHost +
-		" PRIVMSG " + m_pUser->GetCurNick() + " :" + sLine,
-		m_pClient);
+	return m_pUser->PutModule(GetModName(), sLine, m_pClient);
 }
-bool CModule::PutModNotice(const CString& sLine, const CString& sIdent, const CString& sHost) {
+bool CModule::PutModNotice(const CString& sLine) {
 	if (!m_pUser)
 		return false;
-	return m_pUser->PutUser(":" + GetModNick() + "!" +
-		(sIdent.empty() ? GetModName() : sIdent) + "@" + sHost +
-		" NOTICE " + m_pUser->GetCurNick() + " :" + sLine,
-		m_pClient);
+	return m_pUser->PutModNotice(GetModName(), sLine, m_pClient);
 }
 
 ///////////////////
