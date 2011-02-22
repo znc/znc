@@ -52,6 +52,12 @@ public:
 				WebSock.GetSession()->AddSuccess("Line sent");
 			}
 
+			const map<CString,CUser*>& msUsers = CZNC::Get().GetUserMap();
+			for (map<CString,CUser*>::const_iterator it = msUsers.begin(); it != msUsers.end(); ++it) {
+				CTemplate& l = Tmpl.AddRow("UserLoop");
+				l["Username"] = (*it->second).GetUserName();
+			}
+
 			return true;
 		}
 

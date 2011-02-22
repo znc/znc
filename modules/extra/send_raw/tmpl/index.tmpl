@@ -10,7 +10,11 @@
 			<div class="sectionbody">
 				<div class="subsection third">
 					<div class="inputlabel">User:</div>
-					<div><input type="text" name="user" value="<? VAR user ?>" /></div>
+					<div><select name="user">
+						<? LOOP UserLoop?>
+							<option value="<? VAR Username ESC=HTML ?>"><? VAR Username ESC=HTML ?></option>
+						<? ENDLOOP ?>
+					</select></div>
 				</div>
 
 				<div class="subsection third">
