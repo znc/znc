@@ -358,7 +358,7 @@ private:
 	}
 
 	void Dump() {
-		if (!m_lsWatchers.size()) {
+		if (m_lsWatchers.empty()) {
 			PutModule("You have no entries.");
 			return;
 		}
