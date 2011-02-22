@@ -18,6 +18,7 @@ Makefile
 /znc-config
 
 # modperl and modpython generated code
+/modules/modperl/functions.cpp
 /modules/modperl/ZNC.cpp
 /modules/modperl/ZNC.pm
 /modules/modperl/swigperlrun.h
@@ -27,6 +28,7 @@ Makefile
 /modules/modpython/swigpyrun.h
 /modules/modpython/znc_core.py
 /modules/modpython/*.pyc
+/modules/*.pyc
 
 # Compiled Object files
 *.o
