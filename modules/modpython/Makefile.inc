@@ -59,7 +59,7 @@ modpython/compiler: modpython/compiler.cpp Makefile
 	$(Q)$(CXX) $(PYTHONCOMMON) -o $@ $<
 
 modpython_install: create_install_dir install_metadirs modpython_all
-	for i in *.pyc; do \
+	-for i in *.pyc; do \
 		$(INSTALL_DATA) $$i $(DESTDIR)$(MODDIR); \
 	done
 	for a in $(srcdir)/*; do \
