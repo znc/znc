@@ -824,8 +824,8 @@ public:
 	const CModCommand* FindCommand(const CString& sCmd) const;
 	/** This function tries to dispatch the given command via the correct
 	 * instance of CModCommand. Before this can be called, commands have to
-	 * be added via AddCommand(). If no "help" command is added, this
-	 * function will call HandleHelpCommand.
+	 * be added via AddCommand(). If no matching commands are found then
+	 * OnUnknownModCommand will be called.
 	 * @param sLine The command line to handle.
 	 * @return True if something was done, else false.
 	 */
