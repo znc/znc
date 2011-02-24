@@ -136,7 +136,6 @@ public:
 	void AddBytesWritten(unsigned long long u) { m_uBytesWritten += u; }
 
 	// Setters
-	void SetUserName(const CString& s);
 	void SetNick(const CString& s);
 	void SetAltNick(const CString& s);
 	void SetIdent(const CString& s);
@@ -230,8 +229,8 @@ private:
 	void JoinChans(set<CChan*>& sChans);
 
 protected:
-	CString               m_sUserName;
-	CString               m_sCleanUserName;
+	const CString         m_sUserName;
+	const CString         m_sCleanUserName;
 	CString               m_sNick;
 	CString               m_sAltNick;
 	CString               m_sIdent;

@@ -48,10 +48,15 @@ protected:
 	CUser* m_pUser;
 };
 
-CUser::CUser(const CString& sUserName) {
+CUser::CUser(const CString& sUserName)
+		: m_sUserName(sUserName), m_sCleanUserName(MakeCleanUserName(sUserName))
+{
+	// set paths that depend on the user name:
+	m_sUserPath = CZNC::Get().GetUserPath() + "/" + m_sUserName;
+	m_sDLPath = m_sUserPath + "/downloads";
+
 	m_pIRCSock = NULL;
 	m_fTimezoneOffset = 0;
-	SetUserName(sUserName);
 	m_sNick = m_sCleanUserName;
 	m_sIdent = m_sCleanUserName;
 	m_sRealName = sUserName;
@@ -343,13 +348,11 @@ bool CUser::Clone(const CUser& User, CString& sErrorRet, bool bCloneChans) {
 		return false;
 	}
 
+	// user names can only specified for the constructor, changing it later
+	// on breaks too much stuff (e.g. lots of paths depend on the user name)
 	if (GetUserName() != User.GetUserName()) {
-		if (CZNC::Get().FindUser(User.GetUserName())) {
-			sErrorRet = "New username already exists";
-			return false;
-		}
-
-		SetUserName(User.GetUserName());
+		DEBUG("Ignoring username in CUser::Clone(), old username [" << GetUserName()
+				<< "]; New username [" << User.GetUserName() << "]");
 	}
 
 	if (!User.GetPass().empty()) {
@@ -1205,15 +1208,6 @@ CString CUser::MakeCleanUserName(const CString& sUserName) {
 }
 
 // Setters
-void CUser::SetUserName(const CString& s) {
-	m_sCleanUserName = CUser::MakeCleanUserName(s);
-	m_sUserName = s;
-
-	// set paths that depend on the user name:
-	m_sUserPath = CZNC::Get().GetUserPath() + "/" + m_sUserName;
-	m_sDLPath = GetUserPath() + "/downloads";
-}
-
 bool CUser::IsChan(const CString& sChan) const {
 	if (sChan.empty())
 		return false; // There is no way this is a chan

@@ -563,14 +563,13 @@ class CAdminMod : public CModule {
 			return;
 		}
 
-		CUser* pNewUser = new CUser(sOldUsername);
+		CUser* pNewUser = new CUser(sNewUsername);
 		CString sError;
 		if (!pNewUser->Clone(*pOldUser, sError)) {
 			delete pNewUser;
 			PutModule("Error: Cloning failed! [" + sError + "]");
 			return;
 		}
-		pNewUser->SetUserName(sNewUsername);
 		pNewUser->SetIRCConnectEnabled(false);
 
 		if (!CZNC::Get().AddUser(pNewUser, sError)) {
