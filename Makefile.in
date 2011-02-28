@@ -107,7 +107,7 @@ install: znc $(LIBZNC)
 	mkdir -p $(DESTDIR)$(PKGCONFIGDIR)
 	mkdir -p $(DESTDIR)$(MODDIR)
 	mkdir -p $(DESTDIR)$(DATADIR)
-	cp -Rp $(srcdir)/webskins $(DESTDIR)$(DATADIR)
+	cp -R $(srcdir)/webskins $(DESTDIR)$(DATADIR)
 	find $(DESTDIR)$(DATADIR)/webskins -type d -exec chmod 0755 '{}' \;
 	find $(DESTDIR)$(DATADIR)/webskins -type f -exec chmod 0644 '{}' \;
 	$(INSTALL_PROGRAM) znc $(DESTDIR)$(bindir)

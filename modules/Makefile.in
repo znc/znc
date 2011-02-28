@@ -105,7 +105,7 @@ install_metadirs: create_install_dir
 	for a in $(srcdir)/*; do \
 		d=$$(echo $$a | sed -e "s:$(srcdir)/::g;s:modperl::;s:modpython::"); \
 		if [ -d $$a ] && [ -f $${d}.so ]; then \
-			cp -Rp $$a $(DESTDIR)$(DATADIR); \
+			cp -R $$a $(DESTDIR)$(DATADIR); \
 		fi \
 	done
 
