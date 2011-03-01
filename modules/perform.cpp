@@ -37,16 +37,28 @@ class CPerform : public CModule {
 	}
 
 	void List(const CString& sCommand) {
-		int i = 1;
+		CTable Table;
+		unsigned int index = 1;
 		CString sExpanded;
-		for (VCString::const_iterator it = m_vPerform.begin(); it != m_vPerform.end(); it++, i++) {
+
+		Table.AddColumn("Id");
+		Table.AddColumn("Perform");
+		Table.AddColumn("Expanded");
+
+		for (VCString::const_iterator it = m_vPerform.begin(); it != m_vPerform.end(); it++, index++) {
+			Table.AddRow();
+			Table.SetCell("Id", CString(index));
+			Table.SetCell("Perform", *it);
+
 			sExpanded = GetUser()->ExpandString(*it);
-			if (sExpanded != *it)
-				PutModule(CString(i) + ": " + *it + " (" + sExpanded + ")");
-			else
-				PutModule(CString(i) + ": " + *it);
+			if (sExpanded != *it) {
+				Table.SetCell("Expanded", sExpanded);
+			}
 		}
-		PutModule(" -- End of List");
+
+		if (PutModule(Table) == 0) {
+			PutModule("No commands in your perform list.");
+		}
 	}
 
 	void Execute(const CString& sCommand) {
