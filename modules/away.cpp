@@ -298,7 +298,7 @@ public:
 			PutModule("Current timer setting: " + CString(GetAwayTime()) + " seconds");
 		} else
 		{
-			PutModule("Commands: away [-quiet], back [-quiet], delete <num|all>, ping, show, save, enabletimer, disabletimer, settimer <secs>, timer");
+			PutModule("Commands: away [-quiet], back [-quiet], delete <num|all>, ping, show, save, enabletimer, disabletimer, replay, settimer <secs>, timer");
 		}
 	}
 
