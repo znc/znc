@@ -179,6 +179,15 @@ public:
 			for (u_int a = 0; a < m_vMessages.size(); a++)
 				PutModule(m_vMessages[a]);
 		}
+		else if (sCmdName == "replay")
+		{
+			CString nick = GetClient()->GetNick();
+			for (u_int a = 0; a < m_vMessages.size(); a++) {
+				CString sWhom = m_vMessages[a].Token(1, false, ":");
+				CString sMessage = m_vMessages[a].Token(2, true, ":");
+				PutUser(":" + sWhom + " PRIVMSG " + nick + " :" + sMessage);
+			}
+		}
 		else if (sCmdName == "delete")
 		{
 			CString sWhich = sCommand.Token(1);
