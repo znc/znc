@@ -32,6 +32,139 @@ protected:
 
 class CAway : public CModule
 {
+	void AwayCommand(const CString& sCommand) {
+		CString sReason;
+
+		if (sCommand.Token(1) != "-quiet") {
+			sReason = sCommand.Token(1, true);
+			PutModNotice("You have been marked as away");
+		} else {
+			sReason = sCommand.Token(2, true);
+		}
+
+		Away(false, sReason);
+	}
+
+	void BackCommand(const CString& sCommand) {
+		if ((m_vMessages.empty()) && (sCommand.Token(1) != "-quiet"))
+			PutModNotice("Welcome Back!");
+		Back();
+	}
+
+	void MessagesCommand(const CString& sCommand) {
+		for (u_int a = 0; a < m_vMessages.size(); a++)
+			PutModule(m_vMessages[a]);
+	}
+
+	void DeleteCommand(const CString& sCommand) {
+		CString sWhich = sCommand.Token(1);
+		if (sWhich == "all") {
+			PutModNotice("Deleted " + CString(m_vMessages.size()) + " Messages.");
+			for (u_int a = 0; a < m_vMessages.size(); a++)
+				m_vMessages.erase(m_vMessages.begin() + a--);
+		} else if (sWhich.empty()) {
+			PutModNotice("USAGE: delete <num|all>");
+			return;
+		} else {
+			u_int iNum = sWhich.ToUInt();
+			if (iNum >= m_vMessages.size()) {
+				PutModNotice("Illegal Message # Requested");
+				return;
+			} else {
+				m_vMessages.erase(m_vMessages.begin() + iNum);
+				PutModNotice("Message Erased.");
+			}
+			SaveBufferToDisk();
+		}
+	}
+
+	void SaveCommand(const CString& sCommand) {
+		if (m_saveMessages) {
+			SaveBufferToDisk();
+			PutModNotice("Messages saved to disk.");
+		} else {
+			PutModNotice("There are no messages to save.");
+		}
+	}
+
+	void PingCommand(const CString& sCommand) {
+		Ping();
+		if (m_bIsAway)
+			Back();
+	}
+
+	void PassCommand(const CString& sCommand) {
+		m_sPassword = sCommand.Token(1);
+		PutModNotice("Password Updated to [" + m_sPassword + "]");
+	}
+
+	void ShowCommand(const CString& sCommand) {
+		map< CString, vector< CString> > msvOutput;
+		for (u_int a = 0; a < m_vMessages.size(); a++) {
+			CString sTime = m_vMessages[a].Token(0, false, ":");
+			CString sWhom = m_vMessages[a].Token(1, false, ":");
+			CString sMessage = m_vMessages[a].Token(2, true, ":");
+
+			if ((sTime.empty()) || (sWhom.empty()) || (sMessage.empty())) {
+				// illegal format
+				PutModule("Corrupt message! [" + m_vMessages[a] + "]");
+				m_vMessages.erase(m_vMessages.begin() + a--);
+				continue;
+			}
+
+			time_t iTime = sTime.ToULong();
+			char szFormat[64];
+			struct tm t;
+			localtime_r(&iTime, &t);
+			size_t iCount = strftime(szFormat, 64, "%F %T", &t);
+
+			if (iCount <= 0) {
+				PutModule("Corrupt time stamp! [" + m_vMessages[a] + "]");
+				m_vMessages.erase(m_vMessages.begin() + a--);
+				continue;
+			}
+
+			CString sTmp = "    " + CString(a) + ") [";
+			sTmp.append(szFormat, iCount);
+			sTmp += "] ";
+			sTmp += sMessage;
+			msvOutput[sWhom].push_back(sTmp);
+		}
+
+		for (map< CString, vector< CString> >::iterator it = msvOutput.begin(); it != msvOutput.end(); ++it) {
+			PutModule(it->first);
+			for (u_int a = 0; a < it->second.size(); a++)
+				PutModule(it->second[a]);
+		}
+
+		PutModule("#--- End Messages");
+	}
+
+	void EnableTimerCommand(const CString& sCommand) {
+		SetAwayTime(300);
+		PutModule("Timer set to 300 seconds");
+	}
+
+	void DisableTimerCommand(const CString& sCommand) {
+		SetAwayTime(0);
+		PutModule("Timer disabled");
+	}
+
+	void SetTimerCommand(const CString& sCommand) {
+		int iSetting = sCommand.Token(1).ToInt();
+
+		SetAwayTime(iSetting);
+
+		if (iSetting == 0)
+			PutModule("Timer disabled");
+		else
+			PutModule("Timer set to " + CString(iSetting) + " seconds");
+	}
+
+	void TimerCommand(const CString& sCommand) {
+		PutModule("Current timer setting: " + CString(GetAwayTime()) + " seconds");
+	}
+
 public:
 	MODCONSTRUCTOR(CAway)
 	{
@@ -41,7 +174,27 @@ public:
 		m_saveMessages = true;
 		SetAwayTime(300);
 		AddTimer(new CAwayJob(this, 60, 0, "AwayJob", "Checks for idle and saves messages every 1 minute"));
+
+		AddHelpCommand();
+		AddCommand("Away",         static_cast<CModCommand::ModCmdFunc>(&CAway::AwayCommand),
+			"[-quiet]");
+		AddCommand("Back",         static_cast<CModCommand::ModCmdFunc>(&CAway::BackCommand),
+			"[-quiet]");
+		AddCommand("Messages",     static_cast<CModCommand::ModCmdFunc>(&CAway::BackCommand));
+		AddCommand("Delete",       static_cast<CModCommand::ModCmdFunc>(&CAway::DeleteCommand),
+			"delete <num|all>");
+		AddCommand("Save",         static_cast<CModCommand::ModCmdFunc>(&CAway::SaveCommand));
+		AddCommand("Ping",         static_cast<CModCommand::ModCmdFunc>(&CAway::PingCommand));
+		AddCommand("Pass",         static_cast<CModCommand::ModCmdFunc>(&CAway::PassCommand));
+		AddCommand("Show",         static_cast<CModCommand::ModCmdFunc>(&CAway::ShowCommand));
+		AddCommand("EnableTimer",  static_cast<CModCommand::ModCmdFunc>(&CAway::EnableTimerCommand));
+		AddCommand("DisableTimer", static_cast<CModCommand::ModCmdFunc>(&CAway::DisableTimerCommand));
+		AddCommand("SetTimer",     static_cast<CModCommand::ModCmdFunc>(&CAway::SetTimerCommand),
+			"<secs>");
+		AddCommand("Timer",        static_cast<CModCommand::ModCmdFunc>(&CAway::TimerCommand));
+
 	}
+
 	virtual ~CAway()
 	{
 		if (!m_bBootError)
@@ -151,146 +304,6 @@ public:
 	virtual void OnClientDisconnect()
 	{
 		Away();
-	}
-
-	virtual void OnModCommand(const CString& sCommand)
-	{
-		CString sCmdName = sCommand.Token(0);
-		if (sCmdName == "away")
-		{
-			CString sReason;
-			if (sCommand.Token(1) != "-quiet")
-			{
-				sReason = sCommand.Token(1, true);
-				PutModNotice("You have been marked as away");
-			}
-			else
-				sReason = sCommand.Token(2, true);
-			Away(false, sReason);
-		}
-		else if (sCmdName == "back")
-		{
-			if ((m_vMessages.empty()) && (sCommand.Token(1) != "-quiet"))
-				PutModNotice("Welcome Back!");
-			Back();
-		}
-		else if (sCmdName == "messages")
-		{
-			for (u_int a = 0; a < m_vMessages.size(); a++)
-				PutModule(m_vMessages[a]);
-		}
-		else if (sCmdName == "delete")
-		{
-			CString sWhich = sCommand.Token(1);
-			if (sWhich == "all")
-			{
-				PutModNotice("Deleted " + CString(m_vMessages.size()) + " Messages.");
-				for (u_int a = 0; a < m_vMessages.size(); a++)
-					m_vMessages.erase(m_vMessages.begin() + a--);
-
-			}
-			else if (sWhich.empty())
-			{
-				PutModNotice("USAGE: delete <num|all>");
-				return;
-			} else
-			{
-				u_int iNum = sWhich.ToUInt();
-				if (iNum >= m_vMessages.size())
-				{
-					PutModNotice("Illegal Message # Requested");
-					return;
-				}
-				else
-				{
-					m_vMessages.erase(m_vMessages.begin() + iNum);
-					PutModNotice("Message Erased.");
-				}
-				SaveBufferToDisk();
-			}
-		}
-		else if (sCmdName == "save" && m_saveMessages)
-		{
-			SaveBufferToDisk();
-			PutModNotice("Messages saved to disk.");
-		}
-		else if (sCmdName == "ping")
-		{
-			Ping();
-			if (m_bIsAway)
-				Back();
-		}
-		else if (sCmdName == "pass")
-		{
-			m_sPassword = sCommand.Token(1);
-			PutModNotice("Password Updated to [" + m_sPassword + "]");
-		}
-		else if (sCmdName == "show")
-		{
-			map< CString, vector< CString> > msvOutput;
-			for (u_int a = 0; a < m_vMessages.size(); a++)
-			{
-				CString sTime = m_vMessages[a].Token(0, false, ":");
-				CString sWhom = m_vMessages[a].Token(1, false, ":");
-				CString sMessage = m_vMessages[a].Token(2, true, ":");
-
-				if ((sTime.empty()) || (sWhom.empty()) || (sMessage.empty()))
-				{
-					// illegal format
-					PutModule("Corrupt message! [" + m_vMessages[a] + "]");
-					m_vMessages.erase(m_vMessages.begin() + a--);
-					continue;
-				}
-				time_t iTime = sTime.ToULong();
-				char szFormat[64];
-				struct tm t;
-				localtime_r(&iTime, &t);
-				size_t iCount = strftime(szFormat, 64, "%F %T", &t);
-				if (iCount <= 0)
-				{
-					PutModule("Corrupt time stamp! [" + m_vMessages[a] + "]");
-					m_vMessages.erase(m_vMessages.begin() + a--);
-					continue;
-				}
-				CString sTmp = "    " + CString(a) + ") [";
-				sTmp.append(szFormat, iCount);
-				sTmp += "] ";
-				sTmp += sMessage;
-				msvOutput[sWhom].push_back(sTmp);
-			}
-			for (map< CString, vector< CString> >::iterator it = msvOutput.begin(); it != msvOutput.end(); ++it)
-			{
-				PutModule(it->first);
-				for (u_int a = 0; a < it->second.size(); a++)
-					PutModule(it->second[a]);
-			}
-			PutModule("#--- End Messages");
-		} else if (sCmdName == "enabletimer")
-		{
-			SetAwayTime(300);
-			PutModule("Timer set to 300 seconds");
-		} else if (sCmdName == "disabletimer")
-		{
-			SetAwayTime(0);
-			PutModule("Timer disabled");
-		} else if (sCmdName == "settimer")
-		{
-			int iSetting = sCommand.Token(1).ToInt();
-
-			SetAwayTime(iSetting);
-
-			if (iSetting == 0)
-				PutModule("Timer disabled");
-			else
-				PutModule("Timer set to " + CString(iSetting) + " seconds");
-
-		} else if (sCmdName == "timer")
-		{
-			PutModule("Current timer setting: " + CString(GetAwayTime()) + " seconds");
-		} else
-		{
-			PutModule("Commands: away [-quiet], back [-quiet], delete <num|all>, ping, show, save, enabletimer, disabletimer, settimer <secs>, timer");
-		}
 	}
 
 	CString GetPath()
