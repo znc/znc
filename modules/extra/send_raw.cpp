@@ -53,12 +53,12 @@ public:
 		if (sPageName == "index") {
 			if (WebSock.IsPost()) {
 				CUser *pUser = CZNC::Get().FindUser(WebSock.GetParam("user"));
-				bool bOutgoing = WebSock.GetParam("direction") == "out";
+				bool bToServer = WebSock.GetParam("send_to") == "server";
 				const CString sLine = WebSock.GetParam("line");
 
 				if (!pUser) {
 					Tmpl["user"] = WebSock.GetParam("user");
-					Tmpl[bOutgoing ? "direction_out" : "direction_in"] = "true";
+					Tmpl[bToServer ? "to_server" : "to_client"] = "true";
 					Tmpl["line"] = sLine;
 					WebSock.GetSession()->AddError("User not found");
 					return true;
