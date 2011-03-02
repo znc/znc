@@ -10,9 +10,30 @@
 #include "znc.h"
 
 class CSendRaw_Mod: public CModule {
-public:
-	MODCONSTRUCTOR(CSendRaw_Mod) {}
 
+	void SendClient(const CString& sLine) {
+		CUser *pUser = CZNC::Get().FindUser(sLine.Token(1));
+
+		if (pUser) {
+			pUser->PutUser(sLine.Token(2, true));
+			PutModule("Sent [" + sLine.Token(2, true) + "] to " + pUser->GetUserName());
+		} else {
+			PutModule("User [" + sLine.Token(1) + "] not found");
+		}
+	}
+	
+	void SendServer(const CString& sLine) {
+		CUser *pUser = CZNC::Get().FindUser(sLine.Token(1));
+
+		if (pUser) {
+			pUser->PutIRC(sLine.Token(2, true));
+			PutModule("Sent [" + sLine.Token(2, true) + "] to IRC Server of " + pUser->GetUserName());
+		} else {
+			PutModule("User [" + sLine.Token(1) + "] not found");
+		}
+	}
+
+public:
 	virtual ~CSendRaw_Mod() {
 	}
 
@@ -32,18 +53,19 @@ public:
 		if (sPageName == "index") {
 			if (WebSock.IsPost()) {
 				CUser *pUser = CZNC::Get().FindUser(WebSock.GetParam("user"));
-				bool bOutgoing = WebSock.GetParam("direction") == "out";
+				bool bToServer = WebSock.GetParam("send_to") == "server";
 				const CString sLine = WebSock.GetParam("line");
 
 				if (!pUser) {
-					Tmpl["user"] = WebSock.GetParam("user");
-					Tmpl[bOutgoing ? "direction_out" : "direction_in"] = "true";
-					Tmpl["line"] = sLine;
 					WebSock.GetSession()->AddError("User not found");
 					return true;
 				}
 
-				if (bOutgoing) {
+				Tmpl["user"] = pUser->GetUserName();
+				Tmpl[bToServer ? "to_server" : "to_client"] = "true";
+				Tmpl["line"] = sLine;
+
+				if (bToServer) {
 					pUser->PutIRC(sLine);
 				} else {
 					pUser->PutUser(sLine);
@@ -64,30 +86,36 @@ public:
 		return false;
 	}
 
-	virtual void OnModCommand(const CString& sLine) {
+	/* This is here for backwards compatibility. We used to accept commands in this format:
+	   <user> [<in|out>] <line> */
+	virtual void OnUnknownModCommand(const CString& sLine) {
 		const CString sUser = sLine.Token(0);
 		const CString sDirection = sLine.Token(1);
 		CUser *pUser = CZNC::Get().FindUser(sUser);
 
 		if (!pUser) {
-			PutModule("User not found");
-			PutModule("The expected format is: <user> [<in|out>] <line to send>");
-			PutModule("Out (default): The line will be sent to the user's IRC server");
-			PutModule("In: The line will be sent to the user's IRC client");
+			/* Since the user doesn't exist we'll adopt the default action of this method */
+			PutModule("Unknown command!");
 			return;
 		}
 
-		if (!sDirection.CaseCmp("in")) {
-			pUser->PutUser(sLine.Token(2, true));
-		} else if (!sDirection.CaseCmp("out")) {
-			pUser->PutIRC(sLine.Token(2, true));
+		if (sDirection.Equals("IN")) {
+			SendClient("Client " + sUser + " " + sLine.Token(2, true));
+		} else if (sDirection.Equals("OUT")) {
+			SendServer("Server " + sUser + " " + sLine.Token(2, true));
 		} else {
-			/* The user did not supply a direction, let's send the line out.
-			We do this to preserve backwards compatibility. */
-			pUser->PutIRC(sLine.Token(1, true));
+			/* No direction given -- assume it's out for compatibility */
+			SendServer("Server " + sUser + " " + sLine.Token(1, true));
 		}
+	}
 
-		PutModule("done");
+	MODCONSTRUCTOR(CSendRaw_Mod) {
+		AddHelpCommand();
+		AddCommand("Client",          static_cast<CModCommand::ModCmdFunc>(&CSendRaw_Mod::SendClient),
+			"[user] [data to send]",  "The data will be sent to the user's IRC client(s)");
+		AddCommand("Server",            static_cast<CModCommand::ModCmdFunc>(&CSendRaw_Mod::SendServer),
+			"[user] [data to send]",  "The data will be sent to the IRC server the user is connected to");
+		
 	}
 };
 

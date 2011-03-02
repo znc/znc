@@ -18,11 +18,11 @@
 				</div>
 
 				<div class="subsection third">
-					<div class="inputlabel">Direction:</div>
+					<div class="inputlabel">Send to:</div>
 					<div>
-						<select name="direction">
-							<option value="in"<? IF direction_in ?> selected="yes"<? ENDIF ?>>in</option>
-							<option value="out"<? IF direction_out ?> selected="yes"<? ENDIF ?>>out</option>
+						<select name="send_to">
+							<option value="client"<? IF to_client ?> selected="yes"<? ENDIF ?>>Client</option>
+							<option value="server"<? IF to_server ?> selected="yes"<? ENDIF ?>>Server</option>
 						</select>
 					</div>
 				</div>
