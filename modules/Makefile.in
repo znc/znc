@@ -106,8 +106,8 @@ install_metadirs: create_install_dir
 		d=$$(echo $$a | sed -e "s:$(srcdir)/::g;s:modperl::;s:modpython::"); \
 		if [ -d $$a ] && [ -f $${d}.so ]; then \
 			cp -R $$a $(DESTDIR)$(DATADIR); \
-			find $(DESTDIR)$(DATADIR)/$$a -type d -exec chmod 0755 '{}' \;; \
-			find $(DESTDIR)$(DATADIR)/$$a -type f -exec chmod 0644 '{}' \;; \
+			find $(DESTDIR)$(DATADIR)/$$d -type d -exec chmod 0755 '{}' \;; \
+			find $(DESTDIR)$(DATADIR)/$$d -type f -exec chmod 0644 '{}' \;; \
 		fi \
 	done
 
