@@ -93,23 +93,19 @@ CLEAN    += *.so extra/*.so
 
 all: $(TARGETS)
 
-install: all create_install_dir install_metadirs
+install: all create_install_dir install_datadir
 	$(INSTALL_PROGRAM) $(TARGETS) $(DESTDIR)$(MODDIR)
 
 create_install_dir:
 	mkdir -p $(DESTDIR)$(MODDIR)
 	mkdir -p $(DESTDIR)$(DATADIR)
 	rm -rf $(DESTDIR)$(MODDIR)/*.so
+	rm -rf $(DESTDIR)$(DATADIR)/modules
 
-install_metadirs: create_install_dir
-	for a in $(srcdir)/*; do \
-		d=$$(echo $$a | sed -e "s:$(srcdir)/::g;s:modperl::;s:modpython::"); \
-		if [ -d $$a ] && [ -f $${d}.so ]; then \
-			cp -R $$a $(DESTDIR)$(DATADIR); \
-			find $(DESTDIR)$(DATADIR)/$$a -type d -exec chmod 0755 '{}' \;; \
-			find $(DESTDIR)$(DATADIR)/$$a -type f -exec chmod 0644 '{}' \;; \
-		fi \
-	done
+install_datadir: create_install_dir
+	cp -R $(srcdir)/data $(DESTDIR)$(DATADIR)/modules
+	find $(DESTDIR)$(DATADIR)/modules -type d -exec chmod 0755 '{}' \;
+	find $(DESTDIR)$(DATADIR)/modules -type f -exec chmod 0644 '{}' \;
 
 clean:
 	rm -rf $(CLEAN)
