@@ -13,7 +13,6 @@ PATH="$bindir:$PATH"
 
 # Check if we got everything we need
 
-SED=sed
 ZNC_CONFIG=znc-config
 
 check_binary()
@@ -25,7 +24,6 @@ check_binary()
 	fi
 }
 
-check_binary "${SED}"
 check_binary "${ZNC_CONFIG}" "Please (re)install ZNC."
 
 if test "x$CXX" = "x" ; then
