@@ -159,8 +159,16 @@ public:
 			} else {
 				PutModule("Unable to delete note [" + sKey + "]");
 			}
+		} else if (sCmd.Equals("GET")) {
+			CString sNote = GetNV(sLine.Token(1, true));
+
+			if (sNote.empty()) {
+				PutModule("This note doesn't exist.");
+			} else {
+				PutModule(sNote);
+			}
 		} else {
-			PutModule("Commands are: Help, List, Add <key> <note>, Del <key>, Mod <key> <note>");
+			PutModule("Commands are: Help, List, Add <key> <note>, Del <key>, Mod <key> <note>, Get <key>");
 		}
 	}
 
