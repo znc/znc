@@ -94,9 +94,9 @@ sub LoadModule {
 	return ($ZNC::Perl_LoadError, "Module [$modname] already loaded.") if defined $user->GetModules->FindModule($modname);
 	my $modpath = ZNC::String->new;
 	my $datapath = ZNC::String->new;
-	ZNC::CModules::FindModPath("$modname.pm", $modpath, $datapath) or return ($ZNC::Perl_NotFound, "Unable to find module [$modname]");
+	ZNC::CModules::FindModPath("$modname.pm", $modpath, $datapath) or return ($ZNC::Perl_NotFound);
 	$modpath = $modpath->GetPerlStr;
-	return ($ZNC::Perl_LoadError, "Incorrect perl module.") unless IsModule $modpath, $modname;
+	return ($ZNC::Perl_LoadError, "Incorrect perl module [$modpath]") unless IsModule $modpath, $modname;
 	eval {
 		require $modpath;
 	};
