@@ -164,7 +164,7 @@ if test "$POLL" = "yes"; then
 fi
 
 AC_CHECK_LIB( gnugetopt, getopt_long,)
-AC_CHECK_FUNCS([lstat])
+AC_CHECK_FUNCS([lstat getopt_long])
 PKG_PROG_PKG_CONFIG()
 
 # ----- Check for dlopen

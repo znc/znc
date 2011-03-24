@@ -7,8 +7,27 @@
  */
 
 #include "znc.h"
-#include <getopt.h>
 #include <sys/wait.h>
+
+#ifdef HAVE_GETOPT_LONG
+#include <getopt.h>
+#else
+#define no_argument 0
+#define required_argument 1
+#define optional_argument 2
+
+struct option {
+	const char *a;
+	int opt;
+	int *flag;
+	int val;
+};
+
+static inline int getopt_long(int argc, char * const argv[], const char *optstring, const struct option *, int *)
+{
+	return getopt(argc, argv, optstring);
+}
+#endif
 
 static const struct option g_LongOpts[] = {
 	{ "help",        no_argument,       0, 'h' },
