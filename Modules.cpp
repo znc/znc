@@ -438,12 +438,13 @@ bool CModule::HandleCommand(const CString& sLine) {
 
 void CModule::HandleHelpCommand(const CString& sLine) {
 	CString sFilter = sLine.Token(1, true);
+	unsigned int iFilterLength = sFilter.size();
 	CTable Table;
 	map<CString, CModCommand>::const_iterator it;
 
 	CModCommand::InitHelp(Table);
 	for (it = m_mCommands.begin(); it != m_mCommands.end(); ++it) {
-		if (sFilter.empty() || (it->second.GetCommand().Equals(sFilter, false, sFilter.size()))) {
+		if (sFilter.empty() || (it->second.GetCommand().Equals(sFilter, false, iFilterLength))) {
 			it->second.AddHelp(Table);
 		}
 	}
