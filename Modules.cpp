@@ -403,7 +403,7 @@ bool CModule::AddCommand(const CString& sCmd, CModCommand::ModCmdFunc func, cons
 
 void CModule::AddHelpCommand()
 {
-	AddCommand("Help", &CModule::HandleHelpCommand, "", "Generate this output");
+	AddCommand("Help", &CModule::HandleHelpCommand, "filter", "Generate this output");
 }
 
 bool CModule::RemCommand(const CString& sCmd)
@@ -437,12 +437,16 @@ bool CModule::HandleCommand(const CString& sLine) {
 }
 
 void CModule::HandleHelpCommand(const CString& sLine) {
+	CString sFilter = sLine.Token(1, true);
 	CTable Table;
 	map<CString, CModCommand>::const_iterator it;
 
 	CModCommand::InitHelp(Table);
-	for (it = m_mCommands.begin(); it != m_mCommands.end(); ++it)
-		it->second.AddHelp(Table);
+	for (it = m_mCommands.begin(); it != m_mCommands.end(); ++it) {
+		if (sFilter.empty() || (it->second.GetCommand().Equals(sFilter, false, sFilter.size()))) {
+			it->second.AddHelp(Table);
+		}
+	}
 	PutModule(Table);
 }
 
