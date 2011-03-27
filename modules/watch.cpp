@@ -84,10 +84,7 @@ public:
 			return false;
 		if (!Nick.GetHostMask().AsLower().WildCmp(m_sHostMask.AsLower()))
 			return false;
-		if (!sText.AsLower().WildCmp(pUser->ExpandString(m_sPattern).AsLower()))
-			return false;
-
-		return true;
+		return (sText.AsLower().WildCmp(pUser->ExpandString(m_sPattern).AsLower()));
 	}
 
 	bool operator ==(const CWatchEntry& WatchEntry) {

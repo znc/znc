@@ -69,10 +69,7 @@ static void signalHandler(int sig) {
 
 static bool isRoot() {
 	// User root? If one of these were root, we could switch the others to root, too
-	if (geteuid() == 0 || getuid() == 0)
-		return true;
-
-	return false;
+	return (geteuid() == 0 || getuid() == 0);
 }
 
 static void seedPRNG() {

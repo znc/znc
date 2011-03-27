@@ -168,14 +168,7 @@ void CUser::SetIRCSocket(CIRCSock* pIRCSock) {
 bool CUser::IsIRCConnected() const
 {
 	const CIRCSock* pSock = GetIRCSock();
-
-	if (!pSock)
-		return false;
-
-	if (!pSock->IsConnected())
-		return false;
-
-	return true;
+	return (pSock && pSock->IsConnected());
 }
 
 void CUser::IRCDisconnected() {
@@ -630,9 +623,7 @@ bool CUser::PrintLine(CFile& File, CString sName, CString sValue) const {
 	// FirstLine() so that no one can inject new lines to the config if he
 	// manages to add "\n" to e.g. sValue.
 	CString sLine = "\t" + sName.FirstLine() + " = " + sValue.FirstLine() + "\n";
-	if (File.Write(sLine) <= 0)
-		return false;
-	return true;
+	return (File.Write(sLine) > 0);
 }
 
 bool CUser::WriteConfig(CFile& File) {

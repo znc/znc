@@ -44,10 +44,7 @@ inline bool FOR_EACH_MODULE_CanContinue(FOR_EACH_MODULE_Type& state, CModules::i
 		i = state.CMuser.begin();
 		state.bOnCMuser = true;
 	}
-	if (state.bOnCMuser && i == state.CMuser.end()) {
-		return false;
-	}
-	return true;
+	return !(state.bOnCMuser && i == state.CMuser.end());
 }
 
 #define FOR_EACH_MODULE(I, pUser)\

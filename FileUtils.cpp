@@ -259,11 +259,7 @@ bool CFile::Truncate() {
 }
 
 bool CFile::Sync() {
-	if (m_iFD != -1 && fsync(m_iFD) == 0) {
-		return true;
-	}
-
-	return false;
+	return (m_iFD != -1 && fsync(m_iFD) == 0);
 }
 
 bool CFile::Open(const CString& sFileName, int iFlags, mode_t iMode) {
@@ -414,11 +410,7 @@ bool CFile::Lock(int iType, bool bBlocking) {
 	fl.l_whence = SEEK_SET;
 	fl.l_start  = 0;
 	fl.l_len    = 0;
-	if (fcntl(m_iFD, (bBlocking ? F_SETLKW : F_SETLK), &fl) == -1) {
-		return false;
-	} else {
-		return true;
-	}
+	return (fcntl(m_iFD, (bBlocking ? F_SETLKW : F_SETLK), &fl) != -1);
 }
 
 bool CFile::IsOpen() const { return (m_iFD != -1); }
