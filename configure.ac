@@ -474,6 +474,7 @@ AC_CONFIG_FILES([man/Makefile])
 AC_CONFIG_FILES([znc.pc])
 AC_CONFIG_FILES([znc-uninstalled.pc])
 AC_CONFIG_FILES([modules/Makefile])
+AC_CONFIG_FILES([test/Makefile])
 AC_OUTPUT
 
 echo

@@ -24,6 +24,7 @@ using std::set;
 // Forward Declarations
 class CUser;
 class CClient;
+class CConfig;
 // !Forward Declarations
 
 class CChan {
@@ -51,7 +52,7 @@ public:
 		M_Except     = 'e'
 	} EModes;
 
-	CChan(const CString& sName, CUser* pUser, bool bInConfig);
+	CChan(const CString& sName, CUser* pUser, bool bInConfig, CConfig *pConfig = NULL);
 	~CChan();
 
 	void Reset();

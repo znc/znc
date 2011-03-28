@@ -10,8 +10,9 @@
 #include "IRCSock.h"
 #include "User.h"
 #include "znc.h"
+#include "Config.h"
 
-CChan::CChan(const CString& sName, CUser* pUser, bool bInConfig) {
+CChan::CChan(const CString& sName, CUser* pUser, bool bInConfig, CConfig *pConfig) {
 	m_sName = sName.Token(0);
 	m_sKey = sName.Token(1);
 	m_pUser = pUser;
@@ -27,6 +28,23 @@ CChan::CChan(const CString& sName, CUser* pUser, bool bInConfig) {
 	m_bKeepBuffer = m_pUser->KeepBuffer();
 	m_bDisabled = false;
 	Reset();
+
+	if (pConfig) {
+		CString sValue;
+		if (pConfig->FindStringEntry("buffer", sValue))
+			SetBufferCount(sValue.ToUInt(), true);
+		if (pConfig->FindStringEntry("keepbuffer", sValue))
+			SetKeepBuffer(sValue.ToBool());
+		if (pConfig->FindStringEntry("detached", sValue))
+			SetDetached(sValue.ToBool());
+		if (pConfig->FindStringEntry("autocycle", sValue))
+			if (sValue.Equals("true"))
+				CUtils::PrintError("WARNING: AutoCycle has been removed, instead try -> LoadModule = autocycle " + sName);
+		if (pConfig->FindStringEntry("key", sValue))
+			SetKey(sValue);
+		if (pConfig->FindStringEntry("modes", sValue))
+			SetDefaultModes(sValue);
+	}
 }
 
 CChan::~CChan() {

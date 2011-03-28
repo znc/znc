@@ -22,6 +22,7 @@ using std::vector;
 
 class CChan;
 class CClient;
+class CConfig;
 class CIRCSock;
 class CUserTimer;
 class CServer;
@@ -32,6 +33,8 @@ class CUser {
 public:
 	CUser(const CString& sUserName);
 	~CUser();
+
+	bool ParseConfig(CConfig* Config, CString& sError);
 
 	enum eHashType {
 		HASH_NONE,

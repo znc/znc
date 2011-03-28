@@ -21,6 +21,7 @@ using std::map;
 class CListener;
 class CUser;
 class CConnectUserTimer;
+class CConfig;
 
 class CZNC {
 public:
@@ -142,12 +143,15 @@ public:
 	// Never call this unless you are CConnectUserTimer::~CConnectUserTimer()
 	void LeakConnectUser(CConnectUserTimer *pTimer);
 
+	static void DumpConfig(const CConfig* Config);
+
 private:
 	CFile* InitPidFile();
 	bool DoRehash(CString& sError);
 	// Returns true if something was done
 	bool HandleUserDeletion();
 	CString MakeConfigHeader();
+	bool AddListener(const CString& sLine, CString& sError);
 
 protected:
 	time_t                 m_TimeStarted;

@@ -8,6 +8,7 @@
 
 #include "User.h"
 #include "Chan.h"
+#include "Config.h"
 #include "DCCSock.h"
 #include "IRCSock.h"
 #include "Server.h"
@@ -109,6 +110,217 @@ CUser::~CUser() {
 		CZNC::Get().GetManager().DelSockByAddr((CZNCSock*) *m_sDCCSocks.begin());
 
 	CZNC::Get().GetManager().DelCronByAddr(m_pUserTimer);
+}
+
+template<class T>
+struct TOption {
+	const char *name;
+	void (CUser::*pSetter)(T);
+};
+
+bool CUser::ParseConfig(CConfig* pConfig, CString& sError) {
+	TOption<const CString&> StringOptions[] = {
+		{ "nick", &CUser::SetNick },
+		{ "quitmsg", &CUser::SetQuitMsg },
+		{ "altnick", &CUser::SetAltNick },
+		{ "ident", &CUser::SetIdent },
+		{ "realname", &CUser::SetRealName },
+		{ "chanmodes", &CUser::SetDefaultChanModes },
+		{ "bindhost", &CUser::SetBindHost },
+		{ "vhost", &CUser::SetBindHost },
+		{ "dccbindhost", &CUser::SetDCCBindHost },
+		{ "dccvhost", &CUser::SetDCCBindHost },
+		{ "timestampformat", &CUser::SetTimestampFormat },
+		{ "skin", &CUser::SetSkinName },
+	};
+	size_t numStringOptions = sizeof(StringOptions) / sizeof(StringOptions[0]);
+	TOption<unsigned int> UIntOptions[] = {
+		{ "jointries", &CUser::SetJoinTries },
+		{ "maxjoins", &CUser::SetMaxJoins },
+	};
+	size_t numUIntOptions = sizeof(UIntOptions) / sizeof(UIntOptions[0]);
+	TOption<bool> BoolOptions[] = {
+		{ "keepbuffer", &CUser::SetKeepBuffer },
+		{ "multiclients", &CUser::SetMultiClients },
+		{ "bouncedccs", &CUser::SetBounceDCCs },
+		{ "denyloadmod", &CUser::SetDenyLoadMod },
+		{ "admin", &CUser::SetAdmin },
+		{ "denysetbindhost", &CUser::SetDenySetBindHost },
+		{ "denysetvhost", &CUser::SetDenySetBindHost },
+		{ "appendtimestamp", &CUser::SetTimestampAppend },
+		{ "prependtimestamp", &CUser::SetTimestampPrepend },
+		{ "ircconnectenabled", &CUser::SetIRCConnectEnabled },
+	};
+	size_t numBoolOptions = sizeof(BoolOptions) / sizeof(BoolOptions[0]);
+
+	for (size_t i = 0; i < numStringOptions; i++) {
+		CString sValue;
+		if (pConfig->FindStringEntry(StringOptions[i].name, sValue))
+			(this->*StringOptions[i].pSetter)(sValue);
+	}
+	for (size_t i = 0; i < numUIntOptions; i++) {
+		CString sValue;
+		if (pConfig->FindStringEntry(UIntOptions[i].name, sValue))
+			(this->*UIntOptions[i].pSetter)(sValue.ToUInt());
+	}
+	for (size_t i = 0; i < numBoolOptions; i++) {
+		CString sValue;
+		if (pConfig->FindStringEntry(BoolOptions[i].name, sValue))
+			(this->*BoolOptions[i].pSetter)(sValue.ToBool());
+	}
+
+	VCString vsList;
+	VCString::const_iterator vit;
+	pConfig->FindStringVector("allow", vsList);
+	for (vit = vsList.begin(); vit != vsList.end(); ++vit) {
+		AddAllowedHost(*vit);
+	}
+	pConfig->FindStringVector("ctcpreply", vsList);
+	for (vit = vsList.begin(); vit != vsList.end(); ++vit) {
+		const CString& sValue = *vit;
+		AddCTCPReply(sValue.Token(0), sValue.Token(1, true));
+	}
+	pConfig->FindStringVector("server", vsList);
+	for (vit = vsList.begin(); vit != vsList.end(); ++vit) {
+		CUtils::PrintAction("Adding Server [" + *vit + "]");
+		CUtils::PrintStatus(AddServer(*vit));
+	}
+	pConfig->FindStringVector("chan", vsList);
+	for (vit = vsList.begin(); vit != vsList.end(); ++vit) {
+		AddChan(*vit, true);
+	}
+
+	CString sValue;
+	if (pConfig->FindStringEntry("buffer", sValue))
+		SetBufferCount(sValue.ToUInt(), true);
+	if (pConfig->FindStringEntry("awaysuffix", sValue)) {
+		CUtils::PrintMessage("WARNING: AwaySuffix has been depricated, instead try -> LoadModule = awaynick %nick%_" + sValue);
+	}
+	if (pConfig->FindStringEntry("autocycle", sValue)) {
+		if (sValue.Equals("true"))
+			CUtils::PrintError("WARNING: AutoCycle has been removed, instead try -> LoadModule = autocycle");
+	}
+	if (pConfig->FindStringEntry("keepnick", sValue)) {
+		if (sValue.Equals("true"))
+			CUtils::PrintError("WARNING: KeepNick has been deprecated, instead try -> LoadModule = keepnick");
+	}
+	if (pConfig->FindStringEntry("statusprefix", sValue)) {
+		if (!SetStatusPrefix(sValue)) {
+			sError = "Invalid StatusPrefix [" + sValue + "] Must be 1-5 chars, no spaces.";
+			CUtils::PrintError(sError);
+			return false;
+		}
+	}
+	if (pConfig->FindStringEntry("timezoneoffset", sValue)) {
+		SetTimezoneOffset(sValue.ToDouble());
+	}
+	if (pConfig->FindStringEntry("timestamp", sValue)) {
+		if (!sValue.Trim_n().Equals("true")) {
+			if (sValue.Trim_n().Equals("append")) {
+				SetTimestampAppend(true);
+				SetTimestampPrepend(false);
+			} else if (sValue.Trim_n().Equals("prepend")) {
+				SetTimestampAppend(false);
+				SetTimestampPrepend(true);
+			} else if (sValue.Trim_n().Equals("false")) {
+				SetTimestampAppend(false);
+				SetTimestampPrepend(false);
+			} else {
+				SetTimestampFormat(sValue);
+			}
+		}
+	}
+	if (pConfig->FindStringEntry("dcclookupmethod", sValue))
+		SetUseClientIP(sValue.Equals("Client"));
+	pConfig->FindStringEntry("pass", sValue);
+	// There are different formats for this available:
+	// Pass = <plain text>
+	// Pass = <md5 hash> -
+	// Pass = plain#<plain text>
+	// Pass = <hash name>#<hash>
+	// Pass = <hash name>#<salted hash>#<salt>#
+	// 'Salted hash' means hash of 'password' + 'salt'
+	// Possible hashes are md5 and sha256
+	if (sValue.Right(1) == "-") {
+		sValue.RightChomp();
+		sValue.Trim();
+		SetPass(sValue, CUser::HASH_MD5);
+	} else {
+		CString sMethod = sValue.Token(0, false, "#");
+		CString sPass = sValue.Token(1, true, "#");
+		if (sMethod == "md5" || sMethod == "sha256") {
+			CUser::eHashType type = CUser::HASH_MD5;
+			if (sMethod == "sha256")
+				type = CUser::HASH_SHA256;
+
+			CString sSalt = sPass.Token(1, false, "#");
+			sPass = sPass.Token(0, false, "#");
+			SetPass(sPass, type, sSalt);
+		} else if (sMethod == "plain") {
+			SetPass(sPass, CUser::HASH_NONE);
+		} else {
+			SetPass(sValue, CUser::HASH_NONE);
+		}
+	}
+
+	CConfig::SubConfig subConf;
+	CConfig::SubConfig::const_iterator subIt;
+	pConfig->FindSubConfig("chan", subConf);
+	for (subIt = subConf.begin(); subIt != subConf.end(); ++subIt) {
+		const CString& sChanName = subIt->first;
+		CConfig* pSubConf = subIt->second.m_pSubConfig;
+		CChan* pChan = new CChan(sChanName, this, true, pSubConf);
+
+		if (!pSubConf->empty()) {
+			sError = "Unhandled lines in config for User [" + GetUserName() + "], Channel [" + sChanName + "]!";
+			CUtils::PrintError(sError);
+
+			CZNC::DumpConfig(pSubConf);
+			return false;
+		}
+
+		// Save the channel name, because AddChan
+		// deletes the CChannel*, if adding fails
+		sError = pChan->GetName();
+		if (!AddChan(pChan)) {
+			sError = "Channel [" + sError + "] defined more than once";
+			CUtils::PrintError(sError);
+			return false;
+		}
+		sError.clear();
+	}
+
+	pConfig->FindStringVector("loadmodule", vsList);
+	for (vit = vsList.begin(); vit != vsList.end(); ++vit) {
+		sValue = *vit;
+		CString sModName = sValue.Token(0);
+
+		// XXX Legacy crap, added in znc 0.089
+		if (sModName == "discon_kick") {
+			CUtils::PrintMessage("NOTICE: [discon_kick] was renamed, loading [disconkick] instead");
+			sModName = "disconkick";
+		}
+
+		CUtils::PrintAction("Loading Module [" + sModName + "]");
+		CString sModRet;
+		CString sArgs = sValue.Token(1, true);
+
+		bool bModRet = GetModules().LoadModule(sModName, sArgs, this, sModRet);
+
+		// If the module was loaded, sModRet contains
+		// "Loaded Module [name] ..." and we strip away this beginning.
+		if (bModRet)
+			sModRet = sModRet.Token(1, true, sModName + "] ");
+
+		CUtils::PrintStatus(bModRet, sModRet);
+		if (!bModRet) {
+			sError = sModRet;
+			return false;
+		}
+		continue;
+	}
+
+	return true;
 }
 
 void CUser::DelModules() {

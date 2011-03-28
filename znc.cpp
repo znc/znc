@@ -12,6 +12,7 @@
 #include "Server.h"
 #include "User.h"
 #include "Listener.h"
+#include "Config.h"
 #include <list>
 
 static inline CString FormatBindError() {
@@ -1008,13 +1009,11 @@ bool CZNC::DoRehash(CString& sError)
 	m_pLockFile = pFile;
 	CFile &File = *pFile;
 
-	// This fd is re-used for rehashing, so we must seek back to the beginning!
-	if (!File.Seek(0)) {
-		sError = "Could not seek to the beginning of the config.";
+	CConfig config;
+	if (!config.Parse(File, sError)) {
 		CUtils::PrintStatus(false, sError);
 		return false;
 	}
-
 	CUtils::PrintStatus(true);
 
 	m_vsBindHosts.clear();
@@ -1026,609 +1025,188 @@ bool CZNC::DoRehash(CString& sError)
 		m_vpListeners.erase(m_vpListeners.begin());
 	}
 
-	CString sLine;
-	bool bCommented = false;     // support for /**/ style comments
-	CUser* pUser = NULL;         // Used to keep track of which user block we are in
-	CUser* pRealUser = NULL;     // If we rehash a user, this is the real one
-	CChan* pChan = NULL;         // Used to keep track of which chan block we are in
-	unsigned int uLineNum = 0;
 	MCString msModules;          // Modules are queued for later loading
 
-	while (File.ReadLine(sLine)) {
-		uLineNum++;
+	const char *szListenerEntries[] = {
+		"listen", "listen6", "listen4",
+		"listener", "listener6", "listener4"
+	};
+	const size_t numListenerEntries = sizeof(szListenerEntries) / sizeof(szListenerEntries[0]);
+	VCString vsList;
 
-		// Remove all leading spaces and trailing line endings
-		sLine.TrimLeft();
-		sLine.TrimRight("\r\n");
+	for (size_t i = 0; i < numListenerEntries; i++) {
+		config.FindStringVector(szListenerEntries[i], vsList);
+		VCString::const_iterator it = vsList.begin();
 
-		if ((sLine.empty()) || (sLine[0] == '#') || (sLine.Left(2) == "//")) {
-			continue;
+		for (; it != vsList.end(); ++it) {
+			if (!AddListener(szListenerEntries[i] + CString(" ") + *it, sError))
+				return false;
 		}
-
-		if (sLine.Left(2) == "/*") {
-			if (sLine.Right(2) != "*/") {
-				bCommented = true;
-			}
-
-			continue;
-		}
-
-		if (bCommented) {
-			if (sLine.Right(2) == "*/") {
-				bCommented = false;
-			}
-
-			continue;
-		}
-
-		if ((sLine.Left(1) == "<") && (sLine.Right(1) == ">")) {
-			sLine.LeftChomp();
-			sLine.RightChomp();
-			sLine.Trim();
-
-			CString sTag = sLine.substr(0, sLine.find_first_of(" \t\r\n"));
-			CString sValue = (sTag.size() < sLine.size()) ? sLine.substr(sTag.size() +1) : "";
-
-			sTag.Trim();
-			sValue.Trim();
-
-			if (sLine.Left(1) == "/") {
-				sTag = sTag.substr(1);
-
-				if (pUser) {
-					if (pChan) {
-						if (sTag.Equals("Chan")) {
-							// Save the channel name, because AddChan
-							// deletes the CChannel*, if adding fails
-							sError = pChan->GetName();
-							if (!pUser->AddChan(pChan)) {
-								sError = "Channel [" + sError + "] defined more than once";
-								CUtils::PrintError(sError);
-								return false;
-							}
-							sError.clear();
-							pChan = NULL;
-							continue;
-						}
-					} else if (sTag.Equals("User")) {
-						CString sErr;
-
-						if (pRealUser) {
-							if (!pRealUser->Clone(*pUser, sErr)
-									|| !AddUser(pRealUser, sErr)) {
-								sError = "Invalid user [" + pUser->GetUserName() + "] " + sErr;
-								DEBUG("CUser::Clone() failed in rehash");
-							}
-							pUser->SetBeingDeleted(true);
-							delete pUser;
-							pUser = NULL;
-						} else if (!AddUser(pUser, sErr)) {
-							sError = "Invalid user [" + pUser->GetUserName() + "] " + sErr;
-						}
-
-						if (!sError.empty()) {
-							CUtils::PrintError(sError);
-							if (pUser) {
-								pUser->SetBeingDeleted(true);
-								delete pUser;
-								pUser = NULL;
-							}
-							return false;
-						}
-
-						pUser = NULL;
-						pRealUser = NULL;
-						continue;
-					}
-				}
-			} else if (sTag.Equals("User")) {
-				if (pUser) {
-					sError = "You may not nest <User> tags inside of other <User> tags.";
-					CUtils::PrintError(sError);
-					return false;
-				}
-
-				if (sValue.empty()) {
-					sError = "You must supply a username in the <User> tag.";
-					CUtils::PrintError(sError);
-					return false;
-				}
-
-				if (m_msUsers.find(sValue) != m_msUsers.end()) {
-					sError = "User [" + sValue + "] defined more than once.";
-					CUtils::PrintError(sError);
-					return false;
-				}
-
-				CUtils::PrintMessage("Loading user [" + sValue + "]");
-
-				// Either create a CUser* or use an existing one
-				map<CString, CUser*>::iterator it = m_msDelUsers.find(sValue);
-
-				if (it != m_msDelUsers.end()) {
-					pRealUser = it->second;
-					m_msDelUsers.erase(it);
-				} else
-					pRealUser = NULL;
-
-				pUser = new CUser(sValue);
-
-				if (!m_sStatusPrefix.empty()) {
-					if (!pUser->SetStatusPrefix(m_sStatusPrefix)) {
-						sError = "Invalid StatusPrefix [" + m_sStatusPrefix + "] Must be 1-5 chars, no spaces.";
-						CUtils::PrintError(sError);
-						return false;
-					}
-				}
-
-				continue;
-			} else if (sTag.Equals("Chan")) {
-				if (!pUser) {
-					sError = "<Chan> tags must be nested inside of a <User> tag.";
-					CUtils::PrintError(sError);
-					return false;
-				}
-
-				if (pChan) {
-					sError = "You may not nest <Chan> tags inside of other <Chan> tags.";
-					CUtils::PrintError(sError);
-					return false;
-				}
-
-				pChan = new CChan(sValue, pUser, true);
-				continue;
-			}
-		}
-
-		// If we have a regular line, figure out where it goes
-		CString sName = sLine.Token(0, false, "=");
-		CString sValue = sLine.Token(1, true, "=");
-
-		// Only remove the first space, people might want
-		// leading spaces (e.g. in the MOTD).
-		if (sValue.Left(1) == " ")
-			sValue.LeftChomp();
-
-		// We don't have any names with spaces, trim all
-		// leading/trailing spaces.
-		sName.Trim();
-
-		if ((!sName.empty()) && (!sValue.empty())) {
-			if (pUser) {
-				if (pChan) {
-					if (sName.Equals("Buffer")) {
-						pChan->SetBufferCount(sValue.ToUInt(), true);
-						continue;
-					} else if (sName.Equals("KeepBuffer")) {
-						pChan->SetKeepBuffer(sValue.Equals("true"));
-						continue;
-					} else if (sName.Equals("Detached")) {
-						pChan->SetDetached(sValue.Equals("true"));
-						continue;
-					} else if (sName.Equals("AutoCycle")) {
-						if (sValue.Equals("true")) {
-							CUtils::PrintError("WARNING: AutoCycle has been removed, instead try -> LoadModule = autocycle " + pChan->GetName());
-						}
-						continue;
-					} else if (sName.Equals("Key")) {
-						pChan->SetKey(sValue);
-						continue;
-					} else if (sName.Equals("Modes")) {
-						pChan->SetDefaultModes(sValue);
-						continue;
-					}
-				} else {
-					if (sName.Equals("Buffer")) {
-						pUser->SetBufferCount(sValue.ToUInt(), true);
-						continue;
-					} else if (sName.Equals("KeepBuffer")) {
-						pUser->SetKeepBuffer(sValue.Equals("true"));
-						continue;
-					} else if (sName.Equals("Nick")) {
-						pUser->SetNick(sValue);
-						continue;
-					} else if (sName.Equals("CTCPReply")) {
-						pUser->AddCTCPReply(sValue.Token(0), sValue.Token(1, true));
-						continue;
-					} else if (sName.Equals("QuitMsg")) {
-						pUser->SetQuitMsg(sValue);
-						continue;
-					} else if (sName.Equals("AltNick")) {
-						pUser->SetAltNick(sValue);
-						continue;
-					} else if (sName.Equals("AwaySuffix")) {
-						CUtils::PrintMessage("WARNING: AwaySuffix has been depricated, instead try -> LoadModule = awaynick %nick%_" + sValue);
-						continue;
-					} else if (sName.Equals("AutoCycle")) {
-						if (sValue.Equals("true")) {
-							CUtils::PrintError("WARNING: AutoCycle has been removed, instead try -> LoadModule = autocycle");
-						}
-						continue;
-					} else if (sName.Equals("Pass")) {
-						// There are different formats for this available:
-						// Pass = <plain text>
-						// Pass = <md5 hash> -
-						// Pass = plain#<plain text>
-						// Pass = <hash name>#<hash>
-						// Pass = <hash name>#<salted hash>#<salt>#
-						// 'Salted hash' means hash of 'password' + 'salt'
-						// Possible hashes are md5 and sha256
-						if (sValue.Right(1) == "-") {
-							sValue.RightChomp();
-							sValue.Trim();
-							pUser->SetPass(sValue, CUser::HASH_MD5);
-						} else {
-							CString sMethod = sValue.Token(0, false, "#");
-							CString sPass = sValue.Token(1, true, "#");
-							if (sMethod == "md5" || sMethod == "sha256") {
-								CUser::eHashType type = CUser::HASH_MD5;
-								if (sMethod == "sha256")
-									type = CUser::HASH_SHA256;
-
-								CString sSalt = sPass.Token(1, false, "#");
-								sPass = sPass.Token(0, false, "#");
-								pUser->SetPass(sPass, type, sSalt);
-							} else if (sMethod == "plain") {
-								pUser->SetPass(sPass, CUser::HASH_NONE);
-							} else {
-								pUser->SetPass(sValue, CUser::HASH_NONE);
-							}
-						}
-
-						continue;
-					} else if (sName.Equals("MultiClients")) {
-						pUser->SetMultiClients(sValue.Equals("true"));
-						continue;
-					} else if (sName.Equals("BounceDCCs")) {
-						pUser->SetBounceDCCs(sValue.Equals("true"));
-						continue;
-					} else if (sName.Equals("Ident")) {
-						pUser->SetIdent(sValue);
-						continue;
-					} else if (sName.Equals("DenyLoadMod")) {
-						pUser->SetDenyLoadMod(sValue.Equals("true"));
-						continue;
-					} else if (sName.Equals("Admin")) {
-						pUser->SetAdmin(sValue.Equals("true"));
-						continue;
-					} else if (sName.Equals("DenySetBindHost") || sName.Equals("DenySetVHost")) {
-						pUser->SetDenySetBindHost(sValue.Equals("true"));
-						continue;
-					} else if (sName.Equals("StatusPrefix")) {
-						if (!pUser->SetStatusPrefix(sValue)) {
-							sError = "Invalid StatusPrefix [" + sValue + "] Must be 1-5 chars, no spaces.";
-							CUtils::PrintError(sError);
-							return false;
-						}
-						continue;
-					} else if (sName.Equals("DCCLookupMethod")) {
-						pUser->SetUseClientIP(sValue.Equals("Client"));
-						continue;
-					} else if (sName.Equals("RealName")) {
-						pUser->SetRealName(sValue);
-						continue;
-					} else if (sName.Equals("KeepNick")) {
-						if (sValue.Equals("true")) {
-							CUtils::PrintError("WARNING: KeepNick has been deprecated, instead try -> LoadModule = keepnick");
-						}
-						continue;
-					} else if (sName.Equals("ChanModes")) {
-						pUser->SetDefaultChanModes(sValue);
-						continue;
-					} else if (sName.Equals("BindHost") || sName.Equals("VHost")) {
-						pUser->SetBindHost(sValue);
-						continue;
-					} else if (sName.Equals("DCCBindHost") || sName.Equals("DCCVHost")) {
-						pUser->SetDCCBindHost(sValue);
-						continue;
-					} else if (sName.Equals("Allow")) {
-						pUser->AddAllowedHost(sValue);
-						continue;
-					} else if (sName.Equals("Server")) {
-						CUtils::PrintAction("Adding Server [" + sValue + "]");
-						CUtils::PrintStatus(pUser->AddServer(sValue));
-						continue;
-					} else if (sName.Equals("Chan")) {
-						pUser->AddChan(sValue, true);
-						continue;
-					} else if (sName.Equals("TimestampFormat")) {
-						pUser->SetTimestampFormat(sValue);
-						continue;
-					} else if (sName.Equals("AppendTimestamp")) {
-						pUser->SetTimestampAppend(sValue.ToBool());
-						continue;
-					} else if (sName.Equals("PrependTimestamp")) {
-						pUser->SetTimestampPrepend(sValue.ToBool());
-						continue;
-					} else if (sName.Equals("IRCConnectEnabled")) {
-						pUser->SetIRCConnectEnabled(sValue.ToBool());
-						continue;
-					} else if (sName.Equals("Timestamp")) {
-						if (!sValue.Trim_n().Equals("true")) {
-							if (sValue.Trim_n().Equals("append")) {
-								pUser->SetTimestampAppend(true);
-								pUser->SetTimestampPrepend(false);
-							} else if (sValue.Trim_n().Equals("prepend")) {
-								pUser->SetTimestampAppend(false);
-								pUser->SetTimestampPrepend(true);
-							} else if (sValue.Trim_n().Equals("false")) {
-								pUser->SetTimestampAppend(false);
-								pUser->SetTimestampPrepend(false);
-							} else {
-								pUser->SetTimestampFormat(sValue);
-							}
-						}
-						continue;
-					} else if (sName.Equals("TimezoneOffset")) {
-						pUser->SetTimezoneOffset(sValue.ToDouble()); // there is no ToFloat()
-						continue;
-					} else if (sName.Equals("JoinTries")) {
-						pUser->SetJoinTries(sValue.ToUInt());
-						continue;
-					} else if (sName.Equals("MaxJoins")) {
-						pUser->SetMaxJoins(sValue.ToUInt());
-						continue;
-					} else if (sName.Equals("Skin")) {
-						pUser->SetSkinName(sValue);
-						continue;
-					} else if (sName.Equals("LoadModule")) {
-						CString sModName = sValue.Token(0);
-
-						// XXX Legacy crap, added in znc 0.089
-						if (sModName == "discon_kick") {
-							CUtils::PrintMessage("NOTICE: [discon_kick] was renamed, loading [disconkick] instead");
-							sModName = "disconkick";
-						}
-
-						CUtils::PrintAction("Loading Module [" + sModName + "]");
-						CString sModRet;
-						CString sArgs = sValue.Token(1, true);
-
-						bool bModRet = pUser->GetModules().LoadModule(sModName, sArgs, pUser, sModRet);
-
-						// If the module was loaded, sModRet contains
-						// "Loaded Module [name] ..." and we strip away this beginning.
-						if (bModRet)
-							sModRet = sModRet.Token(1, true, sModName + "] ");
-
-						CUtils::PrintStatus(bModRet, sModRet);
-						if (!bModRet) {
-							sError = sModRet;
-							return false;
-						}
-						continue;
-					}
-				}
-			} else {
-				if (sName.Equals("Listen") || sName.Equals("Listen6") || sName.Equals("Listen4")
-						|| sName.Equals("Listener") || sName.Equals("Listener6") || sName.Equals("Listener4")) {
-					EAddrType eAddr = ADDR_ALL;
-					if (sName.Equals("Listen4") || sName.Equals("Listen") || sName.Equals("Listener4")) {
-						eAddr = ADDR_IPV4ONLY;
-					}
-					if (sName.Equals("Listener6")) {
-						eAddr = ADDR_IPV6ONLY;
-					}
-
-					CListener::EAcceptType eAccept = CListener::ACCEPT_ALL;
-					if (sValue.TrimPrefix("irc_only "))
-						eAccept = CListener::ACCEPT_IRC;
-					else if (sValue.TrimPrefix("web_only "))
-						eAccept = CListener::ACCEPT_HTTP;
-
-					bool bSSL = false;
-					CString sPort;
-					CString sBindHost;
-
-					if (ADDR_IPV4ONLY == eAddr) {
-						sValue.Replace(":", " ");
-					}
-
-					if (sValue.find(" ") != CString::npos) {
-						sBindHost = sValue.Token(0, false, " ");
-						sPort = sValue.Token(1, true, " ");
-					} else {
-						sPort = sValue;
-					}
-
-					if (sPort.Left(1) == "+") {
-						sPort.LeftChomp();
-						bSSL = true;
-					}
-
-					CString sHostComment;
-
-					if (!sBindHost.empty()) {
-						sHostComment = " on host [" + sBindHost + "]";
-					}
-
-					CString sIPV6Comment;
-
-					switch (eAddr) {
-						case ADDR_ALL:
-							sIPV6Comment = "";
-							break;
-						case ADDR_IPV4ONLY:
-							sIPV6Comment = " using ipv4";
-							break;
-						case ADDR_IPV6ONLY:
-							sIPV6Comment = " using ipv6";
-					}
-
-					unsigned short uPort = sPort.ToUShort();
-					CUtils::PrintAction("Binding to port [" + CString((bSSL) ? "+" : "") + CString(uPort) + "]" + sHostComment + sIPV6Comment);
-
-#ifndef HAVE_IPV6
-					if (ADDR_IPV6ONLY == eAddr) {
-						sError = "IPV6 is not enabled";
-						CUtils::PrintStatus(false, sError);
-						return false;
-					}
-#endif
-
-#ifndef HAVE_LIBSSL
-					if (bSSL) {
-						sError = "SSL is not enabled";
-						CUtils::PrintStatus(false, sError);
-						return false;
-					}
-#else
-					CString sPemFile = GetPemLocation();
-
-					if (bSSL && !CFile::Exists(sPemFile)) {
-						sError = "Unable to locate pem file: [" + sPemFile + "]";
-						CUtils::PrintStatus(false, sError);
-
-						// If stdin is e.g. /dev/null and we call GetBoolInput(),
-						// we are stuck in an endless loop!
-						if (isatty(0) && CUtils::GetBoolInput("Would you like to create a new pem file?", true)) {
-							sError.clear();
-							WritePemFile();
-						} else {
-							return false;
-						}
-
-						CUtils::PrintAction("Binding to port [+" + CString(uPort) + "]" + sHostComment + sIPV6Comment);
-					}
-#endif
-					if (!uPort) {
-						sError = "Invalid port";
-						CUtils::PrintStatus(false, sError);
-						return false;
-					}
-
-					CListener* pListener = new CListener(uPort, sBindHost, bSSL, eAddr, eAccept);
-
-					if (!pListener->Listen()) {
-						sError = FormatBindError();
-						CUtils::PrintStatus(false, sError);
-						delete pListener;
-						return false;
-					}
-
-					m_vpListeners.push_back(pListener);
-					CUtils::PrintStatus(true);
-
-					continue;
-				} else if (sName.Equals("LoadModule")) {
-					CString sModName = sValue.Token(0);
-					CString sArgs = sValue.Token(1, true);
-
-					if (msModules.find(sModName) != msModules.end()) {
-						sError = "Module [" + sModName +
-							"] already loaded";
-						CUtils::PrintError(sError);
-						return false;
-					}
-					CString sModRet;
-					CModule *pOldMod;
-
-					pOldMod = GetModules().FindModule(sModName);
-					if (!pOldMod) {
-						CUtils::PrintAction("Loading Global Module [" + sModName + "]");
-
-						bool bModRet = GetModules().LoadModule(sModName, sArgs, NULL, sModRet);
-
-						// If the module was loaded, sModRet contains
-						// "Loaded Module [name] ..." and we strip away this beginning.
-						if (bModRet)
-							sModRet = sModRet.Token(1, true, sModName + "] ");
-
-						CUtils::PrintStatus(bModRet, sModRet);
-						if (!bModRet) {
-							sError = sModRet;
-							return false;
-						}
-					} else if (pOldMod->GetArgs() != sArgs) {
-						CUtils::PrintAction("Reloading Global Module [" + sModName + "]");
-
-						bool bModRet = GetModules().ReloadModule(sModName, sArgs, NULL, sModRet);
-
-						// If the module was loaded, sModRet contains
-						// "Loaded Module [name] ..." and we strip away this beginning.
-						if (bModRet)
-							sModRet = sModRet.Token(1, true, sModName + "] ");
-
-						CUtils::PrintStatus(bModRet, sModRet);
-						if (!bModRet) {
-							sError = sModRet;
-							return false;
-						}
-					} else
-						CUtils::PrintMessage("Module [" + sModName + "] already loaded.");
-
-					msModules[sModName] = sArgs;
-					continue;
-				// Convert old-style ISpoofFormat's and ISpoofFile to identfile module
-				} else if (sName.Equals("ISpoofFormat") || sName.Equals("ISpoofFile")) {
-					CModule *pIdentFileMod = GetModules().FindModule("identfile");
-					if (!pIdentFileMod) {
-						CUtils::PrintAction("Loading Global Module [identfile]");
-
-						CString sModRet;
-						bool bModRet = GetModules().LoadModule("identfile", "", NULL, sModRet);
-
-						if (bModRet) {
-							sModRet = sModRet.Token(1, true, "identfile] ");
-						}
-
-						CUtils::PrintStatus(bModRet, sModRet);
-						if (!bModRet) {
-							sError = sModRet;
-							return false;
-						}
-
-						pIdentFileMod = GetModules().FindModule("identfile");
-						msModules["identfile"] = "";
-					}
-
-					if (!pIdentFileMod->SetNV(sName.TrimPrefix_n("ISpoof"), sValue)) {
-						sError = "Failed to convert " + sName + " to the identfile module";
-						CUtils::PrintError(sError);
-						return false;
-					}
-					continue;
-				} else if (sName.Equals("MOTD")) {
-					AddMotd(sValue);
-					continue;
-				} else if (sName.Equals("BindHost") || sName.Equals("VHost")) {
-					AddBindHost(sValue);
-					continue;
-				} else if (sName.Equals("PidFile")) {
-					m_sPidFile = sValue;
-					continue;
-				} else if (sName.Equals("Skin")) {
-					SetSkinName(sValue);
-					continue;
-				} else if (sName.Equals("StatusPrefix")) {
-					m_sStatusPrefix = sValue;
-					continue;
-				} else if (sName.Equals("ConnectDelay")) {
-					m_uiConnectDelay = sValue.ToUInt();
-					continue;
-				} else if (sName.Equals("ServerThrottle")) {
-					m_sConnectThrottle.SetTTL(sValue.ToUInt()*1000);
-					continue;
-				} else if (sName.Equals("AnonIPLimit")) {
-					m_uiAnonIPLimit = sValue.ToUInt();
-					continue;
-				} else if (sName.Equals("MaxBufferSize")) {
-					m_uiMaxBufferSize = sValue.ToUInt();
-					continue;
-				} else if (sName.Equals("SSLCertFile")) {
-					m_sSSLCertFile = sValue;
-					continue;
-				}
-			}
-
-		}
-
-		{
-			sError = "Unhandled line " + CString(uLineNum) + " in config: [" + sLine + "]";
+	}
+
+	VCString::const_iterator vit;
+	config.FindStringVector("loadmodule", vsList);
+	for (vit = vsList.begin(); vit != vsList.end(); ++vit) {
+		CString sModName = vit->Token(0);
+		CString sArgs = vit->Token(1, true);
+
+		if (msModules.find(sModName) != msModules.end()) {
+			sError = "Module [" + sModName +
+				"] already loaded";
 			CUtils::PrintError(sError);
 			return false;
 		}
+		CString sModRet;
+		CModule *pOldMod;
+
+		pOldMod = GetModules().FindModule(sModName);
+		if (!pOldMod) {
+			CUtils::PrintAction("Loading Global Module [" + sModName + "]");
+
+			bool bModRet = GetModules().LoadModule(sModName, sArgs, NULL, sModRet);
+
+			// If the module was loaded, sModRet contains
+			// "Loaded Module [name] ..." and we strip away this beginning.
+			if (bModRet)
+				sModRet = sModRet.Token(1, true, sModName + "] ");
+
+			CUtils::PrintStatus(bModRet, sModRet);
+			if (!bModRet) {
+				sError = sModRet;
+				return false;
+			}
+		} else if (pOldMod->GetArgs() != sArgs) {
+			CUtils::PrintAction("Reloading Global Module [" + sModName + "]");
+
+			bool bModRet = GetModules().ReloadModule(sModName, sArgs, NULL, sModRet);
+
+			// If the module was loaded, sModRet contains
+			// "Loaded Module [name] ..." and we strip away this beginning.
+			if (bModRet)
+				sModRet = sModRet.Token(1, true, sModName + "] ");
+
+			CUtils::PrintStatus(bModRet, sModRet);
+			if (!bModRet) {
+				sError = sModRet;
+				return false;
+			}
+		} else
+			CUtils::PrintMessage("Module [" + sModName + "] already loaded.");
+
+		msModules[sModName] = sArgs;
 	}
+
+	config.FindStringVector("motd", vsList);
+	for (vit = vsList.begin(); vit != vsList.end(); ++vit) {
+		AddMotd(*vit);
+	}
+
+	config.FindStringVector("bindhost", vsList);
+	for (vit = vsList.begin(); vit != vsList.end(); ++vit) {
+		AddBindHost(*vit);
+	}
+	config.FindStringVector("vhost", vsList);
+	for (vit = vsList.begin(); vit != vsList.end(); ++vit) {
+		AddBindHost(*vit);
+	}
+
+	CString sVal;
+	if (config.FindStringEntry("pidfile", sVal))
+		m_sPidFile = sVal;
+	if (config.FindStringEntry("statusprefix", sVal))
+		m_sStatusPrefix = sVal;
+	if (config.FindStringEntry("sslcertfile", sVal))
+		m_sSSLCertFile = sVal;
+	if (config.FindStringEntry("skin", sVal))
+		SetSkinName(sVal);
+	if (config.FindStringEntry("connectdelay", sVal))
+		m_uiConnectDelay = sVal.ToUInt();
+	if (config.FindStringEntry("serverthrottle", sVal))
+		m_sConnectThrottle.SetTTL(sVal.ToUInt() * 1000);
+	if (config.FindStringEntry("anoniplimit", sVal))
+		m_uiAnonIPLimit = sVal.ToUInt();
+	if (config.FindStringEntry("maxbuffersize", sVal))
+		m_uiMaxBufferSize = sVal.ToUInt();
+
+	CConfig::SubConfig subConf;
+	CConfig::SubConfig::const_iterator subIt;
+	config.FindSubConfig("user", subConf);
+	for (subIt = subConf.begin(); subIt != subConf.end(); ++subIt) {
+		const CString& sUserName = subIt->first;
+		CConfig* pSubConf = subIt->second.m_pSubConfig;
+		CUser* pRealUser = NULL;
+
+		CUtils::PrintMessage("Loading user [" + sUserName + "]");
+
+		// Either create a CUser* or use an existing one
+		map<CString, CUser*>::iterator it = m_msDelUsers.find(sUserName);
+
+		if (it != m_msDelUsers.end()) {
+			pRealUser = it->second;
+			m_msDelUsers.erase(it);
+		}
+
+		CUser* pUser = new CUser(sUserName);
+
+		if (!m_sStatusPrefix.empty()) {
+			if (!pUser->SetStatusPrefix(m_sStatusPrefix)) {
+				sError = "Invalid StatusPrefix [" + m_sStatusPrefix + "] Must be 1-5 chars, no spaces.";
+				CUtils::PrintError(sError);
+				return false;
+			}
+		}
+
+		if (!pUser->ParseConfig(pSubConf, sError)) {
+			CUtils::PrintError(sError);
+			delete pUser;
+			pUser = NULL;
+			return false;
+		}
+
+		if (!pSubConf->empty()) {
+			sError = "Unhandled lines in config for User [" + sUserName + "]!";
+			CUtils::PrintError(sError);
+
+			DumpConfig(pSubConf);
+			return false;
+		}
+
+		CString sErr;
+		if (pRealUser) {
+			if (!pRealUser->Clone(*pUser, sErr)
+					|| !AddUser(pRealUser, sErr)) {
+				sError = "Invalid user [" + pUser->GetUserName() + "] " + sErr;
+				DEBUG("CUser::Clone() failed in rehash");
+			}
+			pUser->SetBeingDeleted(true);
+			delete pUser;
+			pUser = NULL;
+		} else if (!AddUser(pUser, sErr)) {
+			sError = "Invalid user [" + pUser->GetUserName() + "] " + sErr;
+		}
+
+		if (!sError.empty()) {
+			CUtils::PrintError(sError);
+			if (pUser) {
+				pUser->SetBeingDeleted(true);
+				delete pUser;
+				pUser = NULL;
+			}
+			return false;
+		}
+
+		pUser = NULL;
+		pRealUser = NULL;
+	}
+
+	if (!config.empty()) {
+		sError = "Unhandled lines in config!";
+		CUtils::PrintError(sError);
+
+		DumpConfig(&config);
+		return false;
+	}
+
 
 	// Unload modules which are no longer in the config
 	set<CString> ssUnload;
@@ -1644,20 +1222,6 @@ bool CZNC::DoRehash(CString& sError)
 			CUtils::PrintMessage("Unloaded Global Module [" + *it + "]");
 		else
 			CUtils::PrintMessage("Could not unload [" + *it + "]");
-	}
-
-	if (pChan) {
-		sError = "Last <Chan> section not properly closed. File truncated?";
-		CUtils::PrintError(sError);
-		delete pChan;
-		return false;
-	}
-
-	if (pUser) {
-		sError = "Last <User> section not properly closed. File truncated?";
-		CUtils::PrintError(sError);
-		delete pUser;
-		return false;
 	}
 
 	if (m_msUsers.empty()) {
@@ -1678,6 +1242,30 @@ bool CZNC::DoRehash(CString& sError)
 	EnableConnectUser();
 
 	return true;
+}
+
+void CZNC::DumpConfig(const CConfig* pConfig) {
+	CConfig::EntryMapIterator eit = pConfig->BeginEntries();
+	for (; eit != pConfig->EndEntries(); ++eit) {
+		const CString& sKey = eit->first;
+		const VCString& vsList = eit->second;
+		VCString::const_iterator it = vsList.begin();
+		for (; it != vsList.end(); ++it) {
+			CUtils::PrintError(sKey + " = " + *it);
+		}
+	}
+
+	CConfig::SubConfigMapIterator sit = pConfig->BeginSubConfigs();
+	for (; sit != pConfig->EndSubConfigs(); ++sit) {
+		const CString& sKey = sit->first;
+		const CConfig::SubConfig& sSub = sit->second;
+		CConfig::SubConfig::const_iterator it = sSub.begin();
+
+		for (; it != sSub.end(); ++it) {
+			CUtils::PrintError("SubConfig [" + sKey + " " + it->first + "]:");
+			DumpConfig(it->second.m_pSubConfig);
+		}
+	}
 }
 
 void CZNC::ClearBindHosts() {
@@ -1798,6 +1386,120 @@ CListener* CZNC::FindListener(u_short uPort, const CString& sBindHost, EAddrType
 		return *it;
 	}
 	return NULL;
+}
+
+bool CZNC::AddListener(const CString& sLine, CString& sError) {
+	CString sName = sLine.Token(0);
+	CString sValue = sLine.Token(1, true);
+
+	EAddrType eAddr = ADDR_ALL;
+	if (sName.Equals("Listen4") || sName.Equals("Listen") || sName.Equals("Listener4")) {
+		eAddr = ADDR_IPV4ONLY;
+	}
+	if (sName.Equals("Listener6")) {
+		eAddr = ADDR_IPV6ONLY;
+	}
+
+	CListener::EAcceptType eAccept = CListener::ACCEPT_ALL;
+	if (sValue.TrimPrefix("irc_only "))
+		eAccept = CListener::ACCEPT_IRC;
+	else if (sValue.TrimPrefix("web_only "))
+		eAccept = CListener::ACCEPT_HTTP;
+
+	bool bSSL = false;
+	CString sPort;
+	CString sBindHost;
+
+	if (ADDR_IPV4ONLY == eAddr) {
+		sValue.Replace(":", " ");
+	}
+
+	if (sValue.find(" ") != CString::npos) {
+		sBindHost = sValue.Token(0, false, " ");
+		sPort = sValue.Token(1, true, " ");
+	} else {
+		sPort = sValue;
+	}
+
+	if (sPort.Left(1) == "+") {
+		sPort.LeftChomp();
+		bSSL = true;
+	}
+
+	CString sHostComment;
+
+	if (!sBindHost.empty()) {
+		sHostComment = " on host [" + sBindHost + "]";
+	}
+
+	CString sIPV6Comment;
+
+	switch (eAddr) {
+		case ADDR_ALL:
+			sIPV6Comment = "";
+			break;
+		case ADDR_IPV4ONLY:
+			sIPV6Comment = " using ipv4";
+			break;
+		case ADDR_IPV6ONLY:
+			sIPV6Comment = " using ipv6";
+	}
+
+	unsigned short uPort = sPort.ToUShort();
+	CUtils::PrintAction("Binding to port [" + CString((bSSL) ? "+" : "") + CString(uPort) + "]" + sHostComment + sIPV6Comment);
+
+#ifndef HAVE_IPV6
+	if (ADDR_IPV6ONLY == eAddr) {
+		sError = "IPV6 is not enabled";
+		CUtils::PrintStatus(false, sError);
+		return false;
+	}
+#endif
+
+#ifndef HAVE_LIBSSL
+	if (bSSL) {
+		sError = "SSL is not enabled";
+		CUtils::PrintStatus(false, sError);
+		return false;
+	}
+#else
+	CString sPemFile = GetPemLocation();
+
+	if (bSSL && !CFile::Exists(sPemFile)) {
+		sError = "Unable to locate pem file: [" + sPemFile + "]";
+		CUtils::PrintStatus(false, sError);
+
+		// If stdin is e.g. /dev/null and we call GetBoolInput(),
+		// we are stuck in an endless loop!
+		if (isatty(0) && CUtils::GetBoolInput("Would you like to create a new pem file?", true)) {
+			sError.clear();
+			WritePemFile();
+		} else {
+			return false;
+		}
+
+		CUtils::PrintAction("Binding to port [+" + CString(uPort) + "]" + sHostComment + sIPV6Comment);
+	}
+#endif
+	if (!uPort) {
+		sError = "Invalid port";
+		CUtils::PrintStatus(false, sError);
+		return false;
+	}
+
+	CListener* pListener = new CListener(uPort, sBindHost, bSSL, eAddr, eAccept);
+
+	if (!pListener->Listen()) {
+		sError = FormatBindError();
+		CUtils::PrintStatus(false, sError);
+		delete pListener;
+		return false;
+	}
+
+	m_vpListeners.push_back(pListener);
+	CUtils::PrintStatus(true);
+
+	return true;
 }
 
 bool CZNC::AddListener(CListener* pListener) {
