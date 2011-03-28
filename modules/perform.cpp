@@ -10,8 +10,87 @@
 #include <algorithm>
 
 class CPerform : public CModule {
+	void Add(const CString& sCommand) {
+		CString sPerf = sCommand.Token(1, true);
+
+		if (sPerf.empty()) {
+			PutModule("Usage: add <command>");
+			return;
+		}
+
+		m_vPerform.push_back(ParsePerform(sPerf));
+		PutModule("Added!");
+		Save();
+	}
+
+	void Del(const CString& sCommand) {
+		u_int iNum = sCommand.Token(1, true).ToUInt();
+		
+		if (iNum > m_vPerform.size() || iNum <= 0) {
+			PutModule("Illegal # Requested");
+			return;
+		} else {
+			m_vPerform.erase(m_vPerform.begin() + iNum - 1);
+			PutModule("Command Erased.");
+		}
+		Save();
+	}
+
+	void List(const CString& sCommand) {
+		CTable Table;
+		unsigned int index = 1;
+		CString sExpanded;
+
+		Table.AddColumn("Id");
+		Table.AddColumn("Perform");
+		Table.AddColumn("Expanded");
+
+		for (VCString::const_iterator it = m_vPerform.begin(); it != m_vPerform.end(); it++, index++) {
+			Table.AddRow();
+			Table.SetCell("Id", CString(index));
+			Table.SetCell("Perform", *it);
+
+			sExpanded = GetUser()->ExpandString(*it);
+			if (sExpanded != *it) {
+				Table.SetCell("Expanded", sExpanded);
+			}
+		}
+
+		if (PutModule(Table) == 0) {
+			PutModule("No commands in your perform list.");
+		}
+	}
+
+	void Execute(const CString& sCommand) {
+		OnIRCConnected();
+		PutModule("perform commands sent");
+	}
+
+	void Swap(const CString& sCommand) {
+		u_int iNumA = sCommand.Token(1).ToUInt();
+		u_int iNumB = sCommand.Token(2).ToUInt();
+
+		if (iNumA > m_vPerform.size() || iNumA <= 0 || iNumB > m_vPerform.size() || iNumB <= 0) {
+			PutModule("Illegal # Requested");
+		} else {
+			std::iter_swap(m_vPerform.begin() + (iNumA - 1), m_vPerform.begin() + (iNumB - 1));
+			PutModule("Commands Swapped.");
+			Save();
+		}
+	}
+
 public:
-	MODCONSTRUCTOR(CPerform) {}
+	MODCONSTRUCTOR(CPerform) {
+		AddHelpCommand();
+		AddCommand("Add",     static_cast<CModCommand::ModCmdFunc>(&CPerform::Add),
+			"<command>");
+		AddCommand("Del",     static_cast<CModCommand::ModCmdFunc>(&CPerform::Del),
+			"<nr>");
+		AddCommand("List",    static_cast<CModCommand::ModCmdFunc>(&CPerform::List));
+		AddCommand("Execute", static_cast<CModCommand::ModCmdFunc>(&CPerform::Execute));
+		AddCommand("Swap",    static_cast<CModCommand::ModCmdFunc>(&CPerform::Swap),
+			"<nr> <nr>");
+	}
 
 	virtual ~CPerform() {}
 
@@ -39,59 +118,6 @@ public:
 		GetNV("Perform").Split("\n", m_vPerform, false);
 
 		return true;
-	}
-
-	virtual void OnModCommand(const CString& sCommand) {
-		CString sCmdName = sCommand.Token(0).AsLower();
-		if (sCmdName == "add") {
-			CString sPerf = sCommand.Token(1, true);
-
-			if (sPerf.empty()) {
-				PutModule("Usage: add <command>");
-				return;
-			}
-
-			m_vPerform.push_back(ParsePerform(sPerf));
-			PutModule("Added!");
-			Save();
-		} else if (sCmdName == "del") {
-			u_int iNum = sCommand.Token(1, true).ToUInt();
-			if (iNum > m_vPerform.size() || iNum <= 0) {
-				PutModule("Illegal # Requested");
-				return;
-			} else {
-				m_vPerform.erase(m_vPerform.begin() + iNum - 1);
-				PutModule("Command Erased.");
-			}
-			Save();
-		} else if (sCmdName == "list") {
-			int i = 1;
-			CString sExpanded;
-			for (VCString::const_iterator it = m_vPerform.begin(); it != m_vPerform.end(); it++, i++) {
-				sExpanded = GetUser()->ExpandString(*it);
-				if (sExpanded != *it)
-					PutModule(CString(i) + ": " + *it + " (" + sExpanded + ")");
-				else
-					PutModule(CString(i) + ": " + *it);
-			}
-			PutModule(" -- End of List");
-		} else if (sCmdName == "execute") {
-			OnIRCConnected();
-			PutModule("perform commands sent");
-		} else if (sCmdName == "swap") {
-			u_int iNumA = sCommand.Token(1).ToUInt();
-			u_int iNumB = sCommand.Token(2).ToUInt();
-
-			if (iNumA > m_vPerform.size() || iNumA <= 0 || iNumB > m_vPerform.size() || iNumB <= 0) {
-				PutModule("Illegal # Requested");
-			} else {
-				std::iter_swap(m_vPerform.begin() + (iNumA - 1), m_vPerform.begin() + (iNumB - 1));
-				PutModule("Commands Swapped.");
-				Save();
-			}
-		} else {
-			PutModule("Commands: add <command>, del <nr>, list, execute, swap <nr> <nr>");
-		}
 	}
 
 	virtual void OnIRCConnected() {
