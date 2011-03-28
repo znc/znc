@@ -115,7 +115,7 @@ public:
 
 				Row["Info"] = CString(pUser->GetClients().size()) +
 					" client" + CString(pUser->GetClients().size() == 1 ? "" : "s");
-				if(!pUser->GetCurrentServer()) {
+				if (!pUser->IsIRCConnected()) {
 					Row["Info"] += ", not connected to IRC";
 				} else {
 					unsigned int uChans = 0;
