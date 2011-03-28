@@ -99,7 +99,7 @@ public:
 	CString GetSkinName() const { return m_sSkinName; }
 	const CString& GetStatusPrefix() const { return m_sStatusPrefix; }
 	const CString& GetCurPath() const { if (!CFile::Exists(m_sCurPath)) { CDir::MakeDir(m_sCurPath); } return m_sCurPath; }
-	const CString& GetHomePath() const { if (!CFile::Exists(m_sHomePath)) { CDir::MakeDir(m_sHomePath); } return m_sHomePath; }
+	const CString& GetHomePath() const { return CFile::GetHomePath(); }
 	const CString& GetZNCPath() const { if (!CFile::Exists(m_sZNCPath)) { CDir::MakeDir(m_sZNCPath); } return m_sZNCPath; }
 	CString GetConfPath(bool bAllowMkDir = true) const;
 	CString GetUserPath() const;
@@ -165,7 +165,6 @@ protected:
 	CSockManager           m_Manager;
 
 	CString                m_sCurPath;
-	CString                m_sHomePath;
 	CString                m_sZNCPath;
 
 	CString                m_sConfigFile;

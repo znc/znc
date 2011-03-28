@@ -12,7 +12,6 @@
 #include "Server.h"
 #include "User.h"
 #include "Listener.h"
-#include <pwd.h>
 #include <list>
 
 namespace
@@ -418,8 +417,6 @@ bool CZNC::AllowConnectionFrom(const CString& sIP) const {
 }
 
 void CZNC::InitDirs(const CString& sArgvPath, const CString& sDataDir) {
-	char *home;
-
 	// If the bin was not ran from the current directory, we need to add that dir onto our cwd
 	CString::size_type uPos = sArgvPath.rfind('/');
 	if (uPos == CString::npos)
@@ -428,27 +425,10 @@ void CZNC::InitDirs(const CString& sArgvPath, const CString& sDataDir) {
 		m_sCurPath = CDir::ChangeDir("./", sArgvPath.Left(uPos), "");
 
 	// Try to set the user's home dir, default to binpath on failure
-	home = getenv("HOME");
-
-	m_sHomePath.clear();
-	if (home) {
-		m_sHomePath = home;
-	}
-
-	if (m_sHomePath.empty()) {
-		struct passwd* pUserInfo = getpwuid(getuid());
-
-		if (pUserInfo) {
-			m_sHomePath = pUserInfo->pw_dir;
-		}
-	}
-
-	if (m_sHomePath.empty()) {
-		m_sHomePath = m_sCurPath;
-	}
+	CFile::InitHomePath(m_sCurPath);
 
 	if (sDataDir.empty()) {
-		m_sZNCPath = m_sHomePath + "/.znc";
+		m_sZNCPath = CFile::GetHomePath() + "/.znc";
 	} else {
 		m_sZNCPath = sDataDir;
 	}

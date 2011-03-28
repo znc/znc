@@ -7,12 +7,12 @@
  */
 
 #include "FileUtils.h"
-#include "znc.h"
 #include "Utils.h"
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <sys/wait.h>
 #include <fcntl.h>
+#include <pwd.h>
 
 #ifndef HAVE_LSTAT
 #  define lstat(a, b)	stat(a, b)
@@ -21,6 +21,8 @@
 #ifndef O_BINARY
 #  define O_BINARY	0
 #endif
+
+CString CFile::m_sHomePath;
 
 CFile::CFile() {
 	m_iFD = -1;
@@ -38,7 +40,7 @@ CFile::~CFile() {
 
 void CFile::SetFileName(const CString& sLongName) {
 	if (sLongName.Left(2) == "~/") {
-		m_sLongName = CZNC::Get().GetHomePath() + sLongName.substr(1);
+		m_sLongName = CFile::GetHomePath() + sLongName.substr(1);
 	} else
 		m_sLongName = sLongName;
 
@@ -426,11 +428,32 @@ CString CFile::GetDir() const {
 	return sDir;
 }
 
+void CFile::InitHomePath(const CString& sFallback) {
+	const char *home = getenv("HOME");
+
+	m_sHomePath.clear();
+	if (home) {
+		m_sHomePath = home;
+	}
+
+	if (m_sHomePath.empty()) {
+		const struct passwd* pUserInfo = getpwuid(getuid());
+
+		if (pUserInfo) {
+			m_sHomePath = pUserInfo->pw_dir;
+		}
+	}
+
+	if (m_sHomePath.empty()) {
+		m_sHomePath = sFallback;
+	}
+}
+
 CString CDir::ChangeDir(const CString& sPath, const CString& sAdd, const CString& sHome) {
 	CString sHomeDir(sHome);
 
 	if (sHomeDir.empty()) {
-		sHomeDir = CZNC::Get().GetHomePath();
+		sHomeDir = CFile::GetHomePath();
 	}
 
 	if (sAdd == "~") {

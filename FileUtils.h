@@ -120,12 +120,17 @@ public:
 	CString GetShortName() const;
 	CString GetDir() const;
 
+	static void InitHomePath(const CString& sFallback);
+	static const CString& GetHomePath() { return m_sHomePath; }
+
 private:
 	// fcntl() locking wrapper
 	bool Lock(int iType, bool bBlocking);
 
 	CString m_sBuffer;
 	int     m_iFD;
+
+	static CString m_sHomePath;
 
 protected:
 	CString m_sLongName;  //!< Absolute filename (m_sPath + "/" + m_sShortName)
