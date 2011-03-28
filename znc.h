@@ -37,6 +37,7 @@ public:
 	void Loop();
 	bool WriteISpoof(CUser* pUser);
 	void ReleaseISpoof();
+	bool IsISpoofLocked() { return m_pISpoofLockFile != NULL; }
 	bool WritePidFile(int iPid);
 	bool DeletePidFile();
 	bool WaitForChildLock();

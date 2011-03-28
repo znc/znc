@@ -1989,6 +1989,11 @@ protected:
 		const map<CString,CUser*>& mUsers = CZNC::Get().GetUserMap();
 		map<CString,CUser*>::const_iterator it = mUsers.begin();
 
+		if (CZNC::Get().IsISpoofLocked()) {
+			// Meh, gotta retry later
+			return;
+		}
+
 		uiUserCount = CZNC::Get().GetUserMap().size();
 
 		if (m_uiPosNextUser >= uiUserCount) {
