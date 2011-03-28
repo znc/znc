@@ -20,6 +20,7 @@ public:
 	void PutLog(const CString& sLine, const CNick& Nick);
 	CString GetServer();
 
+	virtual bool OnLoad(const CString& sArgs, CString& sMessage);
 	virtual void OnIRCConnected();
 	virtual void OnIRCDisconnected();
 	virtual EModRet OnBroadcast(CString& sMessage);
@@ -46,6 +47,9 @@ public:
 	virtual EModRet OnUserMsg(CString& sTarget, CString& sMessage);
 	virtual EModRet OnPrivMsg(CNick& Nick, CString& sMessage);
 	virtual EModRet OnChanMsg(CNick& Nick, CChan& Channel, CString& sMessage);
+
+private:
+	CString                 m_sLogPath;
 };
 
 void CLogMod::PutLog(const CString& sLine, const CString& sWindow /*= "Status"*/)
@@ -60,13 +64,28 @@ void CLogMod::PutLog(const CString& sLine, const CString& sWindow /*= "Status"*/
 	curtime += (time_t) (m_pUser->GetTimezoneOffset() * 60 * 60);
 	timeinfo = localtime(&curtime);
 
-	/* Generate file name: ~/.znc/users/<user>/moddata/log/WINDOW_YYYYMMDD.log  */
-	sPath = GetSavePath() + "/" + sWindow.Replace_n("/", "?") + "_";
-	snprintf(buffer, sizeof(buffer), "%04d%02d%02d.log", timeinfo->tm_year + 1900,
-			timeinfo->tm_mon + 1, timeinfo->tm_mday);
-	sPath += buffer;
+	// Generate file name
+	if (!strftime(buffer, sizeof(buffer), m_sLogPath.c_str(), timeinfo))
+	{
+		DEBUG("Could not format log path [" << sPath << "]");
+		return;
+	}
+	sPath = buffer;
+
+	// $WINDOW has to be handled last, since it can contain %
+	sPath.Replace("$WINDOW", sWindow.Replace_n("/", "?"));
+
+	// Check if it's allowed to write in this specific path
+	sPath = CDir::CheckPathPrefix(GetSavePath(), sPath);
+	if (sPath.empty())
+	{
+		DEBUG("Invalid log path ["<<m_sLogPath<<"].");
+		return;
+	}
 
 	CFile LogFile(sPath);
+	CString sLogDir = LogFile.GetDir();
+	if (!CFile::Exists(sLogDir)) CDir::MakeDir(sLogDir);
 	if (LogFile.Open(O_WRONLY | O_APPEND | O_CREAT))
 	{
 		snprintf(buffer, sizeof(buffer), "[%02d:%02d:%02d] ",
@@ -99,6 +118,30 @@ CString CLogMod::GetServer()
 		sSSL = "+";
 	return pServer->GetName() + " " + sSSL + CString(pServer->GetPort());
 }
+
+bool CLogMod::OnLoad(const CString& sArgs, CString& sMessage)
+{
+	// Use load parameter as save path
+	m_sLogPath = sArgs;
+
+	// Add default filename to path if it's a folder
+	if (m_sLogPath.Right(1) == "/" || m_sLogPath.find("$WINDOW")==string::npos)
+	{
+		m_sLogPath += "/$WINDOW_%Y%m%d.log";
+	}
+
+	// Check if it's allowed to write in this path in general
+	m_sLogPath = CDir::CheckPathPrefix(GetSavePath(), m_sLogPath);
+	if (m_sLogPath.empty())
+	{
+		sMessage = "Invalid log path ["+m_sLogPath+"].";
+		return false;
+	} else {
+		sMessage = "Logging to ["+m_sLogPath+"].";
+		return true;
+	}
+}
+
 
 void CLogMod::OnIRCConnected()
 {
