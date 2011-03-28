@@ -10,8 +10,59 @@
 #include "Modules.h"
 
 class CChanAttach : public CModule {
+	void HandleAdd(const CString& sLine) {
+		CString sChan = sLine.Token(1);
+
+		if (AlreadyAdded(sChan)) {
+			PutModule(sChan + " is already added");
+		} else if (Add(sChan)) {
+			PutModule("Added " + sChan + " to list");
+		} else {
+			PutModule("Usage: Add [!]<#chan>");
+		}
+	}
+
+	void HandleDel(const CString& sLine) {
+		CString sChan = sLine.Token(1);
+
+		if (Del(sChan)) {
+			PutModule("Removed " + sChan + " from list");
+		} else {
+			PutModule("Usage: Del [!]<#chan>");
+		}
+	}
+
+	void HandleList(const CString& sLine) {
+		CTable Table;
+		Table.AddColumn("Chan");
+
+		for (unsigned int a = 0; a < m_vsChans.size(); a++) {
+			Table.AddRow();
+			Table.SetCell("Chan", m_vsChans[a]);
+		}
+
+		for (unsigned int b = 0; b < m_vsNegChans.size(); b++) {
+			Table.AddRow();
+			Table.SetCell("Chan", "!" + m_vsNegChans[b]);
+		}
+
+		if (Table.size()) {
+			PutModule(Table);
+		} else {
+			PutModule("You have no entries.");
+		}
+	}
+
 public:
-	MODCONSTRUCTOR(CChanAttach) {}
+	MODCONSTRUCTOR(CChanAttach) {
+		AddHelpCommand();
+		AddCommand("Add",    static_cast<CModCommand::ModCmdFunc>(&CChanAttach::HandleAdd),
+			"[!]<#chan>", "Add an entry, use !#chan to negate and * for wildcards");
+		AddCommand("Del",    static_cast<CModCommand::ModCmdFunc>(&CChanAttach::HandleDel),
+			"[!]<#chan>", "Remove an entry, needs to be an exact match");
+		AddCommand("List",    static_cast<CModCommand::ModCmdFunc>(&CChanAttach::HandleList),
+			"",           "List all entries");
+	}
 
 	virtual ~CChanAttach() {
 	}
@@ -56,70 +107,6 @@ public:
 	virtual EModRet OnChanAction(CNick& Nick, CChan& Channel, CString& sMessage) {
 		TryAttach(Channel);
 		return CONTINUE;
-	}
-
-	virtual void OnModCommand(const CString& sLine) {
-		CString sCommand = sLine.Token(0);
-
-		if (sCommand.Equals("ADD")) {
-			CString sChan = sLine.Token(1);
-
-			if (AlreadyAdded(sChan)) {
-				PutModule(sChan + " is already added");
-			} else if (Add(sChan)) {
-				PutModule("Added " + sChan + " to list");
-			} else {
-				PutModule("Usage: Add [!]<#chan>");
-			}
-		} else if (sCommand.Equals("DEL")) {
-			CString sChan = sLine.Token(1);
-
-			if (Del(sChan))
-				PutModule("Removed " + sChan + " from list");
-			else
-				PutModule("Usage: Del [!]<#chan>");
-		} else if (sCommand.Equals("LIST")) {
-			CTable Table;
-			Table.AddColumn("Chan");
-
-			for (unsigned int a = 0; a < m_vsChans.size(); a++) {
-				Table.AddRow();
-				Table.SetCell("Chan", m_vsChans[a]);
-			}
-
-			for (unsigned int b = 0; b < m_vsNegChans.size(); b++) {
-				Table.AddRow();
-				Table.SetCell("Chan", "!" + m_vsNegChans[b]);
-			}
-
-			if (Table.size()) {
-				PutModule(Table);
-			} else {
-				PutModule("You have no entries.");
-			}
-		} else if (sCommand.Equals("HELP")) {
-			CTable Table;
-			Table.AddColumn("Command");
-			Table.AddColumn("Description");
-
-			Table.AddRow();
-			Table.SetCell("Command", "Add");
-			Table.SetCell("Description", "Add an entry, use !#chan to negate and * for wildcards");
-
-			Table.AddRow();
-			Table.SetCell("Command", "Del");
-			Table.SetCell("Description", "Remove an entry, needs to be an exact match");
-
-			Table.AddRow();
-			Table.SetCell("Command", "List");
-			Table.SetCell("Description", "List all entries");
-
-			if (Table.size()) {
-				PutModule(Table);
-			} else {
-				PutModule("You have no entries.");
-			}
-		}
 	}
 
 	bool AlreadyAdded(const CString& sInput) {
