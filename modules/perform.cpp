@@ -25,7 +25,7 @@ class CPerform : public CModule {
 
 	void Del(const CString& sCommand) {
 		u_int iNum = sCommand.Token(1, true).ToUInt();
-		
+
 		if (iNum > m_vPerform.size() || iNum <= 0) {
 			PutModule("Illegal # Requested");
 			return;
