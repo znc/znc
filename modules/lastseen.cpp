@@ -64,7 +64,7 @@ public:
 			for (it = mUsers.begin(); it != mUsers.end(); ++it) {
 				Table.AddRow();
 				Table.SetCell("User", it->first);
-				Table.SetCell("Last Seen", FormatLastSeen(it->second));
+				Table.SetCell("Last Seen", FormatLastSeen(it->second, "never"));
 			}
 
 			PutModule(Table);
