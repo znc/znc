@@ -414,7 +414,7 @@ bool CZNC::IsHostAllowed(const CString& sHostMask) const {
 bool CZNC::AllowConnectionFrom(const CString& sIP) const {
 	if (m_uiAnonIPLimit == 0)
 		return true;
-	return (GetManager().GetAnonConnectionCount(sIP) < m_uiAnonIPLimit)
+	return (GetManager().GetAnonConnectionCount(sIP) < m_uiAnonIPLimit);
 }
 
 void CZNC::InitDirs(const CString& sArgvPath, const CString& sDataDir) {
