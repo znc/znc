@@ -348,9 +348,7 @@ bool CZNC::DeletePidFile() {
 
 	CUtils::PrintAction("Deleting pid file [" + File->GetLongName() + "]");
 
-	bool bRet = false;
-	if (File->Delete())
-		bRet = true;
+	bool bRet = File->Delete();
 
 	delete File;
 	CUtils::PrintStatus(bRet);
@@ -416,9 +414,7 @@ bool CZNC::IsHostAllowed(const CString& sHostMask) const {
 bool CZNC::AllowConnectionFrom(const CString& sIP) const {
 	if (m_uiAnonIPLimit == 0)
 		return true;
-	if (GetManager().GetAnonConnectionCount(sIP) >= m_uiAnonIPLimit)
-		return false;
-	return true;
+	return (GetManager().GetAnonConnectionCount(sIP) < m_uiAnonIPLimit)
 }
 
 void CZNC::InitDirs(const CString& sArgvPath, const CString& sDataDir) {

@@ -18,15 +18,7 @@ CServer::CServer(const CString& sName, unsigned short uPort, const CString& sPas
 CServer::~CServer() {}
 
 bool CServer::IsValidHostName(const CString& sHostName) {
-	if (sHostName.empty()) {
-		return false;
-	}
-
-	if (sHostName.find(' ') != CString::npos) {
-		return false;
-	}
-
-	return true;
+	return (!sHostName.empty() && (sHostName.find(' ') == CString::npos));
 }
 
 const CString& CServer::GetName() const { return m_sName; }
