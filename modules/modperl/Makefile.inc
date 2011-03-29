@@ -43,14 +43,9 @@ modperl/functions.cpp: modperl/functions.in
 	@mkdir -p modperl
 	$(Q)$(PERL) $(srcdir)/modperl/codegen.pl $< $@
 
-modperl_install: create_install_dir install_metadirs modperl.so
+modperl_install: create_install_dir modperl.so
 	for i in $(wildcard $(srcdir)/*.pm); do \
 		$(INSTALL_DATA) $$i $(DESTDIR)$(MODDIR); \
-	done
-	for a in $(srcdir)/*; do \
-		if [ -d $$a ] && [ -f $${a}.pm ]; then \
-			cp -Rp $$a $(DESTDIR)$(DATADIR); \
-		fi \
 	done
 	mkdir -p $(DESTDIR)$(MODDIR)/modperl
 	$(INSTALL_PROGRAM) modperl/ZNC.so $(DESTDIR)$(MODDIR)/modperl

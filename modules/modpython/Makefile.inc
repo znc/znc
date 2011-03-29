@@ -58,16 +58,9 @@ modpython/compiler: modpython/compiler.cpp Makefile
 	$(E) Building optimizer for python files...
 	$(Q)$(CXX) $(PYTHONCOMMON) -o $@ $<
 
-modpython_install: create_install_dir install_metadirs modpython_all
+modpython_install: create_install_dir modpython_all
 	-for i in *.pyc; do \
 		$(INSTALL_DATA) $$i $(DESTDIR)$(MODDIR); \
-	done
-	for a in $(srcdir)/*; do \
-		if [ -d $$a ]; then \
-			if [ -f $${a}.py ]; then \
-				cp -Rp $$a $(DESTDIR)$(DATADIR); \
-			fi \
-		fi \
 	done
 	mkdir -p $(DESTDIR)$(MODDIR)/modpython
 	$(INSTALL_PROGRAM) modpython/_znc_core.so $(DESTDIR)$(MODDIR)/modpython
