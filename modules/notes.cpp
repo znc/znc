@@ -18,12 +18,69 @@
 using std::stringstream;
 
 class CNotesMod : public CModule {
-public:
-	MODCONSTRUCTOR(CNotesMod) {
+	void ListCommand(const CString &sLine) {
+		ListNotes();
 	}
 
-	virtual ~CNotesMod() {
+	void AddNoteCommand(const CString &sLine) {
+		CString sKey(sLine.Token(1));
+		CString sValue(sLine.Token(2, true));
+
+		if (!GetNV(sKey).empty()) {
+			PutModule("That note already exists.  Use MOD <key> <note> to overwrite.");
+		} else if (AddNote(sKey, sValue)) {
+			PutModule("Added note [" + sKey + "]");
+		} else {
+			PutModule("Unable to add note [" + sKey + "]");
+		}
 	}
+
+	void ModCommand(const CString &sLine) {
+		CString sKey(sLine.Token(1));
+		CString sValue(sLine.Token(2, true));
+
+		if (AddNote(sKey, sValue)) {
+			PutModule("Set note for [" + sKey + "]");
+		} else {
+			PutModule("Unable to add note [" + sKey + "]");
+		}
+	}
+
+	void GetCommand(const CString &sLine) {
+		CString sNote = GetNV(sLine.Token(1, true));
+
+		if (sNote.empty()) {
+			PutModule("This note doesn't exist.");
+		} else {
+			PutModule(sNote);
+		}
+	}
+
+	void DelCommand(const CString &sLine) {
+		CString sKey(sLine.Token(1));
+
+		if (DelNote(sKey)) {
+			PutModule("Deleted note [" + sKey + "]");
+		} else {
+			PutModule("Unable to delete note [" + sKey + "]");
+		}
+	}
+
+public:
+	MODCONSTRUCTOR(CNotesMod) {
+		AddHelpCommand();
+		AddCommand("List",   static_cast<CModCommand::ModCmdFunc>(&CNotesMod::ListCommand));
+		AddCommand("Add",    static_cast<CModCommand::ModCmdFunc>(&CNotesMod::AddNoteCommand),
+			"<key> <note>");
+		AddCommand("Del",    static_cast<CModCommand::ModCmdFunc>(&CNotesMod::DelCommand),
+			"<key>",         "Delete a note");
+		AddCommand("Mod",    static_cast<CModCommand::ModCmdFunc>(&CNotesMod::ModCommand),
+			"<key> <note>",  "Modify a note");
+		AddCommand("Get",    static_cast<CModCommand::ModCmdFunc>(&CNotesMod::GetCommand),
+			"<key>");
+	}
+
+	virtual ~CNotesMod() {}
 
 	virtual bool OnLoad(const CString& sArgStr, CString& sMessage) {
 		return true;
@@ -123,52 +180,6 @@ public:
 					PutModule("You have no entries.");
 				}
 			}
-		}
-	}
-
-	virtual void OnModCommand(const CString& sLine) {
-		CString sCmd(sLine.Token(0));
-
-		if (sLine.Equals("LIST")) {
-			ListNotes();
-		} else if (sCmd.Equals("ADD")) {
-			CString sKey(sLine.Token(1));
-			CString sValue(sLine.Token(2, true));
-
-			if (!GetNV(sKey).empty()) {
-				PutModule("That note already exists.  Use MOD <key> <note> to overwrite.");
-			} else if (AddNote(sKey, sValue)) {
-				PutModule("Added note [" + sKey + "]");
-			} else {
-				PutModule("Unable to add note [" + sKey + "]");
-			}
-		} else if (sCmd.Equals("MOD")) {
-			CString sKey(sLine.Token(1));
-			CString sValue(sLine.Token(2, true));
-
-			if (AddNote(sKey, sValue)) {
-				PutModule("Set note for [" + sKey + "]");
-			} else {
-				PutModule("Unable to add note [" + sKey + "]");
-			}
-		} else if (sCmd.Equals("DEL")) {
-			CString sKey(sLine.Token(1));
-
-			if (DelNote(sKey)) {
-				PutModule("Deleted note [" + sKey + "]");
-			} else {
-				PutModule("Unable to delete note [" + sKey + "]");
-			}
-		} else if (sCmd.Equals("GET")) {
-			CString sNote = GetNV(sLine.Token(1, true));
-
-			if (sNote.empty()) {
-				PutModule("This note doesn't exist.");
-			} else {
-				PutModule(sNote);
-			}
-		} else {
-			PutModule("Commands are: Help, List, Add <key> <note>, Del <key>, Mod <key> <note>, Get <key>");
 		}
 	}
 
