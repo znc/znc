@@ -1,0 +1,27 @@
+<? INC Header.tmpl ?>
+
+<? IF Cert ?>
+<p>You already have a certificate set, use the form below to overrite the current certificate. Alternatively click <a href="/mods/cert/delete">here</a> to <a href="/mods/cert/delete">delete</a> your certificate.</p>
+<? ELSE ?>
+<p>You do not have a cert.</p>
+<? ENDIF ?>
+
+<form method="post" action="/mods/cert/update">
+	<? INC _csrf_check.tmpl ?>
+	<div class="section">
+		<h3>Certificate</h3>
+		<div class="sectionbg">
+			<div class="sectionbody">
+				<div class="subsection full">
+					<div class="inputlabel">PEM File:</div>
+					<div><textarea style="height: 300px;"></textarea></div>
+				</div>
+				<div class="subsection submitline">
+					<input type="submit" name="add" value="Update" />
+				</div>
+			</div>
+		</div>
+	</div>
+</form>
+
+<? INC Footer.tmpl ?>
