@@ -139,6 +139,7 @@ class Module:
 	def OnIRCDisconnected(self): pass
 	def OnIRCConnected(self): pass
 	def OnIRCConnecting(self, IRCSock): pass
+	def OnIRCConnectionError(self, IRCSock): pass
 	def OnIRCRegistration(self, sPass, sNick, sIdent, sRealName): pass
 	def OnBroadcast(self, sMessage): pass
 	def OnConfigLine(self, sName, sValue, pUser, pChan): pass

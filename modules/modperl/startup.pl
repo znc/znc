@@ -295,6 +295,7 @@ sub OnPostRehash {}
 sub OnIRCDisconnected {}
 sub OnIRCConnected {}
 sub OnIRCConnecting {}
+sub OnIRCConnectionError {}
 sub OnIRCRegistration {}
 sub OnBroadcast {}
 sub OnConfigLine {}

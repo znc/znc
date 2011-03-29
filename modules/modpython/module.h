@@ -55,6 +55,7 @@ public:
 	virtual void OnIRCDisconnected();
 	virtual void OnIRCConnected();
 	virtual EModRet OnIRCConnecting(CIRCSock *pIRCSock);
+	virtual void OnIRCConnectionError(CIRCSock *pIRCSock);
 	virtual EModRet OnIRCRegistration(CString& sPass, CString& sNick, CString& sIdent, CString& sRealName);
 	virtual EModRet OnBroadcast(CString& sMessage);
 	virtual EModRet OnConfigLine(const CString& sName, const CString& sValue, CUser* pUser, CChan* pChan);

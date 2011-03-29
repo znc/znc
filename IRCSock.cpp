@@ -51,6 +51,10 @@ CIRCSock::CIRCSock(CUser* pUser) : CZNCSock() {
 }
 
 CIRCSock::~CIRCSock() {
+	if (!m_bAuthed) {
+		MODULECALL(OnIRCConnectionError(this), m_pUser, NULL, NOTHING);
+	}
+
 	const vector<CChan*>& vChans = m_pUser->GetChans();
 	for (unsigned int a = 0; a < vChans.size(); a++) {
 		vChans[a]->Reset();
