@@ -37,41 +37,36 @@ private:
 
 	typedef multimap<time_t, CUser*> MTimeMulti;
 	typedef map<CString, CUser*> MUsers;
-public:
-	GLOBALMODCONSTRUCTOR(CLastSeenMod) {
-	}
 
-	virtual ~CLastSeenMod() {}
-
-	// IRC stuff:
-
-	virtual void OnModCommand(const CString& sLine) {
-		const CString sCommand = sLine.Token(0).AsLower();
-
+	void ShowCommand(const CString &sLine) {
 		if (!GetUser()->IsAdmin()) {
 			PutModule("Access denied");
 			return;
 		}
 
-		if (sCommand == "show") {
-			const MUsers& mUsers = CZNC::Get().GetUserMap();
-			MUsers::const_iterator it;
-			CTable Table;
+		const MUsers& mUsers = CZNC::Get().GetUserMap();
+		MUsers::const_iterator it;
+		CTable Table;
 
-			Table.AddColumn("User");
-			Table.AddColumn("Last Seen");
+		Table.AddColumn("User");
+		Table.AddColumn("Last Seen");
 
-			for (it = mUsers.begin(); it != mUsers.end(); ++it) {
-				Table.AddRow();
-				Table.SetCell("User", it->first);
-				Table.SetCell("Last Seen", FormatLastSeen(it->second));
-			}
-
-			PutModule(Table);
-		} else {
-			PutModule("This module only supports 'show'");
+		for (it = mUsers.begin(); it != mUsers.end(); ++it) {
+			Table.AddRow();
+			Table.SetCell("User", it->first);
+			Table.SetCell("Last Seen", FormatLastSeen(it->second, "never"));
 		}
+
+		PutModule(Table);
 	}
+
+public:
+	GLOBALMODCONSTRUCTOR(CLastSeenMod) {
+		AddHelpCommand();
+		AddCommand("Show", static_cast<CModCommand::ModCmdFunc>(&CLastSeenMod::ShowCommand));
+	}
+
+	virtual ~CLastSeenMod() {}
 
 	// Event stuff:
 
@@ -115,7 +110,7 @@ public:
 
 				Row["Info"] = CString(pUser->GetClients().size()) +
 					" client" + CString(pUser->GetClients().size() == 1 ? "" : "s");
-				if(!pUser->GetCurrentServer()) {
+				if (!pUser->IsIRCConnected()) {
 					Row["Info"] += ", not connected to IRC";
 				} else {
 					unsigned int uChans = 0;
