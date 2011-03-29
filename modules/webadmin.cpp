@@ -967,8 +967,6 @@ public:
 			Tmpl["Action"] = "settings";
 			Tmpl["Title"] = "Settings";
 			Tmpl["StatusPrefix"] = CZNC::Get().GetStatusPrefix();
-			Tmpl["ISpoofFile"] = CZNC::Get().GetISpoofFile();
-			Tmpl["ISpoofFormat"] = CZNC::Get().GetISpoofFormat();
 			Tmpl["MaxBufferSize"] = CString(CZNC::Get().GetMaxBufferSize());
 			Tmpl["ConnectDelay"] = CString(CZNC::Get().GetConnectDelay());
 			Tmpl["ServerThrottle"] = CString(CZNC::Get().GetServerThrottle());
@@ -1059,8 +1057,6 @@ public:
 
 		CString sArg;
 		sArg = WebSock.GetParam("statusprefix"); CZNC::Get().SetStatusPrefix(sArg);
-		sArg = WebSock.GetParam("ispooffile"); CZNC::Get().SetISpoofFile(sArg);
-		sArg = WebSock.GetParam("ispoofformat"); CZNC::Get().SetISpoofFormat(sArg);
 		sArg = WebSock.GetParam("maxbufsize"); CZNC::Get().SetMaxBufferSize(sArg.ToUInt());
 		sArg = WebSock.GetParam("connectdelay"); CZNC::Get().SetConnectDelay(sArg.ToUInt());
 		sArg = WebSock.GetParam("serverthrottle"); CZNC::Get().SetServerThrottle(sArg.ToUInt());

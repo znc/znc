@@ -37,10 +37,8 @@ CZNC::CZNC() {
 	}
 
 	m_pModules = new CGlobalModules();
-	m_pISpoofLockFile = NULL;
 	m_uiConnectDelay = 5;
 	m_uiAnonIPLimit = 10;
-	SetISpoofFormat(""); // Set ISpoofFormat to default
 	m_uBytesRead = 0;
 	m_uBytesWritten = 0;
 	m_uiMaxBufferSize = 500;
@@ -51,9 +49,6 @@ CZNC::CZNC() {
 }
 
 CZNC::~CZNC() {
-	if (m_pISpoofLockFile)
-		ReleaseISpoof();
-
 	m_pModules->UnloadAll();
 
 	for (map<CString,CUser*>::iterator a = m_msUsers.begin(); a != m_msUsers.end(); ++a) {
@@ -117,10 +112,6 @@ bool CZNC::ConnectUser(CUser *pUser) {
 	CString sSockName = "IRC::" + pUser->GetUserName();
 	CIRCSock* pIRCSock = pUser->GetIRCSock();
 
-	if (m_pISpoofLockFile != NULL) {
-		return false;
-	}
-
 	if (!pUser->GetIRCConnectEnabled())
 		return false;
 
@@ -134,12 +125,6 @@ bool CZNC::ConnectUser(CUser *pUser) {
 
 	if (m_sConnectThrottle.GetItem(pServer->GetName()))
 		return false;
-
-	if (!WriteISpoof(pUser)) {
-		DEBUG("ISpoof [" + m_sISpoofFile + "] could not be written");
-		pUser->PutStatus("ISpoof [" + m_sISpoofFile + "] could not be written, retrying...");
-		return true;
-	}
 
 	m_sConnectThrottle.AddItem(pServer->GetName());
 
@@ -159,13 +144,11 @@ bool CZNC::ConnectUser(CUser *pUser) {
 	MODULECALL(OnIRCConnecting(pIRCSock), pUser, NULL,
 		DEBUG("Some module aborted the connection attempt");
 		pUser->PutStatus("Some module aborted the connection attempt");
-		ReleaseISpoof();
 		delete pIRCSock;
 		return false;
 	);
 
 	if (!m_Manager.Connect(pServer->GetName(), pServer->GetPort(), sSockName, 120, bSSL, pUser->GetBindHost(), pIRCSock)) {
-		ReleaseISpoof();
 		pUser->PutStatus("Unable to connect. (Bad host?)");
 	}
 
@@ -248,61 +231,6 @@ void CZNC::Loop() {
 		// 500 msec to 600 sec
 		m_Manager.DynamicSelectLoop(500 * 1000, 600 * 1000 * 1000);
 	}
-}
-
-bool CZNC::WriteISpoof(CUser* pUser) {
-	if (m_pISpoofLockFile != NULL)
-		return false;
-
-	if (!GetISpoofFile().empty()) {
-		m_pISpoofLockFile = new CFile;
-		if (!m_pISpoofLockFile->TryExLock(GetISpoofFile(), O_RDWR | O_CREAT)) {
-			DEBUG("Couldn't open and lock ISpoofFile: " << strerror(errno));
-			delete m_pISpoofLockFile;
-			m_pISpoofLockFile = NULL;
-			return false;
-		}
-
-		char buf[1024];
-		memset((char*) buf, 0, 1024);
-		m_pISpoofLockFile->Read(buf, 1023);
-		m_sOrigISpoof = buf;
-
-		if (!m_pISpoofLockFile->Seek(0) || !m_pISpoofLockFile->Truncate()) {
-			DEBUG("Couldn't truncate the ISpoofFile: " << strerror(errno));
-			delete m_pISpoofLockFile;
-			m_pISpoofLockFile = NULL;
-			return false;
-		}
-
-		CString sData = pUser->ExpandString(m_sISpoofFormat);
-
-		// If the format doesn't contain anything expandable, we'll
-		// assume this is an "old"-style format string.
-		if (sData == m_sISpoofFormat) {
-			sData.Replace("%", pUser->GetIdent());
-		}
-		DEBUG("Writing [" + sData + "] to ISpoofFile [" + m_pISpoofLockFile->GetLongName() + "]");
-		m_pISpoofLockFile->Write(sData + "\n");
-	}
-	return true;
-}
-
-void CZNC::ReleaseISpoof() {
-	if (m_pISpoofLockFile == NULL)
-		return;
-
-	if (m_pISpoofLockFile->Seek(0) && m_pISpoofLockFile->Truncate()) {
-		DEBUG("Writing [" + m_sOrigISpoof + "] to ISpoofFile [" + m_pISpoofLockFile->GetLongName() + "]");
-		m_pISpoofLockFile->Write(m_sOrigISpoof);
-	} else {
-		DEBUG("Error while restoring ISpoof: " << strerror(errno));
-	}
-
-	m_sOrigISpoof = "";
-
-	delete m_pISpoofLockFile;
-	m_pISpoofLockFile = NULL;
 }
 
 CFile* CZNC::InitPidFile() {
@@ -546,13 +474,6 @@ bool CZNC::WriteConfig() {
 
 	m_LockFile.Write("ConnectDelay = " + CString(m_uiConnectDelay) + "\n");
 	m_LockFile.Write("ServerThrottle = " + CString(m_sConnectThrottle.GetTTL()/1000) + "\n");
-
-	if (!m_sISpoofFile.empty()) {
-		m_LockFile.Write("ISpoofFile   = " + m_sISpoofFile.FirstLine() + "\n");
-		if (!m_sISpoofFormat.empty()) {
-			m_LockFile.Write("ISpoofFormat = " + m_sISpoofFormat.FirstLine() + "\n");
-		}
-	}
 
 	if (!m_sPidFile.empty()) {
 		m_LockFile.Write("PidFile      = " + m_sPidFile.FirstLine() + "\n");
@@ -1620,12 +1541,6 @@ bool CZNC::DoRehash(CString& sError)
 
 					msModules[sModName] = sArgs;
 					continue;
-				} else if (sName.Equals("ISpoofFormat")) {
-					m_sISpoofFormat = sValue;
-					continue;
-				} else if (sName.Equals("ISpoofFile")) {
-					m_sISpoofFile = sValue;
-					continue;
 				} else if (sName.Equals("MOTD")) {
 					AddMotd(sValue);
 					continue;
@@ -1988,11 +1903,6 @@ protected:
 		bool bUsersLeft = false;
 		const map<CString,CUser*>& mUsers = CZNC::Get().GetUserMap();
 		map<CString,CUser*>::const_iterator it = mUsers.begin();
-
-		if (CZNC::Get().IsISpoofLocked()) {
-			// Meh, gotta retry later
-			return;
-		}
 
 		uiUserCount = CZNC::Get().GetUserMap().size();
 

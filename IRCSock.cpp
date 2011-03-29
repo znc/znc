@@ -19,7 +19,6 @@ const unsigned int CIRCSock::m_uCTCPFloodCount = 5;
 
 CIRCSock::CIRCSock(CUser* pUser) : CZNCSock() {
 	m_pUser = pUser;
-	m_bISpoofReleased = false;
 	m_bAuthed = false;
 	m_bNamesx = false;
 	m_bUHNames = false;
@@ -64,10 +63,6 @@ CIRCSock::~CIRCSock() {
 
 	for (map<CString, CChan*>::iterator a = m_msChans.begin(); a != m_msChans.end(); ++a) {
 		delete a->second;
-	}
-
-	if (!m_bISpoofReleased) {
-		CZNC::Get().ReleaseISpoof();
 	}
 
 	Quit();
@@ -157,9 +152,6 @@ void CIRCSock::ReadLine(const CString& sData) {
 
 				m_pUser->ClearRawBuffer();
 				m_pUser->AddRawBuffer(":" + sServer + " " + sCmd + " ", " " + sRest);
-
-				CZNC::Get().ReleaseISpoof();
-				m_bISpoofReleased = true;
 
 				break;
 			}

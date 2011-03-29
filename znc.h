@@ -35,9 +35,6 @@ public:
 
 	void DeleteUsers();
 	void Loop();
-	bool WriteISpoof(CUser* pUser);
-	void ReleaseISpoof();
-	bool IsISpoofLocked() { return m_pISpoofLockFile != NULL; }
 	bool WritePidFile(int iPid);
 	bool DeletePidFile();
 	bool WaitForChildLock();
@@ -83,8 +80,6 @@ public:
 	void SetConfigState(enum ConfigState e) { m_eConfigState = e; }
 	void SetSkinName(const CString& s) { m_sSkinName = s; }
 	void SetStatusPrefix(const CString& s) { m_sStatusPrefix = (s.empty()) ? "*" : s; }
-	void SetISpoofFile(const CString& s) { m_sISpoofFile = s; }
-	void SetISpoofFormat(const CString& s) { m_sISpoofFormat = (s.empty()) ? "global { reply \"%\" }" : s; }
 	void SetMaxBufferSize(unsigned int i) { m_uiMaxBufferSize = i; }
 	void SetAnonIPLimit(unsigned int i) { m_uiAnonIPLimit = i; }
 	void SetServerThrottle(unsigned int i) { m_sConnectThrottle.SetTTL(i*1000); }
@@ -108,8 +103,6 @@ public:
 	CString GetPemLocation() const { return CDir::ChangeDir("", m_sSSLCertFile); }
 	const CString& GetConfigFile() const { return m_sConfigFile; }
 	bool WritePemFile();
-	const CString& GetISpoofFile() const { return m_sISpoofFile; }
-	const CString& GetISpoofFormat() const { return m_sISpoofFormat; }
 	const VCString& GetBindHosts() const { return m_vsBindHosts; }
 	const vector<CListener*>& GetListeners() const { return m_vpListeners; }
 	time_t TimeStarted() const { return m_TimeStarted; }
@@ -171,15 +164,11 @@ protected:
 	CString                m_sConfigFile;
 	CString                m_sSkinName;
 	CString                m_sStatusPrefix;
-	CString                m_sISpoofFile;
-	CString                m_sOrigISpoof;
-	CString                m_sISpoofFormat;
 	CString                m_sPidFile;
 	CString                m_sSSLCertFile;
 	VCString               m_vsBindHosts;
 	VCString               m_vsMotd;
 	CFile                  m_LockFile;
-	CFile*                 m_pISpoofLockFile;
 	unsigned int           m_uiConnectDelay;
 	unsigned int           m_uiAnonIPLimit;
 	unsigned int           m_uiMaxBufferSize;

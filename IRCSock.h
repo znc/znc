@@ -101,7 +101,6 @@ private:
 	void SendAltNick(const CString& sBadNick);
 	void SendNextCap();
 protected:
-	bool                                m_bISpoofReleased;
 	bool                                m_bAuthed;
 	bool                                m_bNamesx;
 	bool                                m_bUHNames;
