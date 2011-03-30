@@ -1541,6 +1541,35 @@ bool CZNC::DoRehash(CString& sError)
 
 					msModules[sModName] = sArgs;
 					continue;
+				// Convert old-style ISpoofFormat's and ISpoofFile to identfile module
+				} else if (sName.Equals("ISpoofFormat") || sName.Equals("ISpoofFile")) {
+					CModule *pIdentFileMod = GetModules().FindModule("identfile");
+					if (!pIdentFileMod) {
+						CUtils::PrintAction("Loading Global Module [identfile]");
+
+						CString sModRet;
+						bool bModRet = GetModules().LoadModule("identfile", "", NULL, sModRet);
+
+						if (bModRet) {
+							sModRet = sModRet.Token(1, true, "identfile] ");
+						}
+
+						CUtils::PrintStatus(bModRet, sModRet);
+						if (!bModRet) {
+							sError = sModRet;
+							return false;
+						}
+
+						pIdentFileMod = GetModules().FindModule("identfile");
+						msModules["identfile"] = "";
+					}
+
+					if (!pIdentFileMod->SetNV(sName.TrimPrefix_n("ISpoof"), sValue)) {
+						sError = "Failed to convert " + sName + " to the identfile module";
+						CUtils::PrintError(sError);
+						return false;
+					}
+					continue;
 				} else if (sName.Equals("MOTD")) {
 					AddMotd(sValue);
 					continue;
