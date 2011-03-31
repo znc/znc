@@ -333,7 +333,7 @@ if test "x$PYTHON" != "xno"; then
 	fi
 	PKG_CHECK_MODULES([python], [$PYTHON >= 3.0],, AC_MSG_ERROR([$PYTHON.pc not found or is wrong. Try --disable-python or install python3.]))
 	my_saved_LIBS="$LIBS"
-	my_saved_CXXFLAGS="CXXFLAGS"
+	my_saved_CXXFLAGS="$CXXFLAGS"
 	appendLib $python_LIBS
 	appendCXX $python_CFLAGS
 	AC_CHECK_FUNC([Py_Initialize], [], [PYTHON="no"])
