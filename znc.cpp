@@ -59,6 +59,7 @@ CZNC::~CZNC() {
 	DeleteUsers();
 
 	delete m_pModules;
+	delete m_pLockFile;
 
 	ShutdownCsocket();
 	DeletePidFile();
