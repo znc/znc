@@ -859,8 +859,21 @@ bool CZNC::WriteNewConfig(const CString& sConfigFile) {
 
 	if (bFileOpen) {
 		File.Close();
-		CUtils::PrintStatus(true);
+		if (File.HadError())
+			CUtils::PrintStatus(false, "There was an error while writing the config");
+		else
+			CUtils::PrintStatus(true);
 	} else {
+		cout << endl << "----------------------------------------------------------------------------" << endl << endl;
+	}
+
+	if (File.HadError()) {
+		bFileOpen = false;
+		CUtils::PrintMessage("Printing the new config to stdout instead:");
+		cout << endl << "----------------------------------------------------------------------------" << endl << endl;
+		for (unsigned int a = 0; a < vsLines.size(); a++) {
+			cout << vsLines[a] << endl;
+		}
 		cout << endl << "----------------------------------------------------------------------------" << endl << endl;
 	}
 
