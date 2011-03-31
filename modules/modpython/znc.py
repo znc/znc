@@ -142,9 +142,6 @@ class Module:
 	def OnIRCConnectionError(self, IRCSock): pass
 	def OnIRCRegistration(self, sPass, sNick, sIdent, sRealName): pass
 	def OnBroadcast(self, sMessage): pass
-	def OnConfigLine(self, sName, sValue, pUser, pChan): pass
-	def OnWriteUserConfig(self, Config): pass
-	def OnWriteChanConfig(self, Config, Chan): pass
 	def OnDCCUserSend(self, RemoteNick, uLongIP, uPort, sFile, uFileSize): pass
 	def OnChanPermission(self, OpNick, Nick, Channel, uMode, bAdded, bNoChange): pass
 	def OnOp(self, OpNick, Nick, Channel, bNoChange): pass

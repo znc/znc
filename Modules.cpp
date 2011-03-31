@@ -464,9 +464,6 @@ CModule::EModRet CModule::OnIRCConnecting(CIRCSock *IRCSock) { return CONTINUE; 
 void CModule::OnIRCConnectionError(CIRCSock *IRCSock) {}
 CModule::EModRet CModule::OnIRCRegistration(CString& sPass, CString& sNick, CString& sIdent, CString& sRealName) { return CONTINUE; }
 CModule::EModRet CModule::OnBroadcast(CString& sMessage) { return CONTINUE; }
-CModule::EModRet CModule::OnConfigLine(const CString& sName, const CString& sValue, CUser* pUser, CChan* pChan) { return CONTINUE; }
-void CModule::OnWriteUserConfig(CFile& Config) {}
-void CModule::OnWriteChanConfig(CFile& Config, CChan& Chan) {}
 
 CModule::EModRet CModule::OnDCCUserSend(const CNick& RemoteNick, unsigned long uLongIP, unsigned short uPort, const CString& sFile, unsigned long uFileSize) { return CONTINUE; }
 
@@ -564,7 +561,6 @@ bool CModule::PutModNotice(const CString& sLine) {
 ///////////////////
 // CGlobalModule //
 ///////////////////
-CModule::EModRet CGlobalModule::OnWriteConfig(CFile& Config) { return CONTINUE; }
 CModule::EModRet CGlobalModule::OnAddUser(CUser& User, CString& sErrorRet) { return CONTINUE; }
 CModule::EModRet CGlobalModule::OnDeleteUser(CUser& User) { return CONTINUE; }
 void CGlobalModule::OnClientConnect(CZNCSock* pClient, const CString& sHost, unsigned short uPort) {}
@@ -624,9 +620,6 @@ bool CModules::OnIRCConnecting(CIRCSock *pIRCSock) { MODHALTCHK(OnIRCConnecting(
 bool CModules::OnIRCConnectionError(CIRCSock *pIRCSock) { MODUNLOADCHK(OnIRCConnectionError(pIRCSock)); return false; }
 bool CModules::OnIRCRegistration(CString& sPass, CString& sNick, CString& sIdent, CString& sRealName) { MODHALTCHK(OnIRCRegistration(sPass, sNick, sIdent, sRealName)); }
 bool CModules::OnBroadcast(CString& sMessage) { MODHALTCHK(OnBroadcast(sMessage)); }
-bool CModules::OnConfigLine(const CString& sName, const CString& sValue, CUser* pUser, CChan* pChan) { MODHALTCHK(OnConfigLine(sName, sValue, pUser, pChan)); }
-bool CModules::OnWriteUserConfig(CFile& Config) { MODUNLOADCHK(OnWriteUserConfig(Config)); return false; }
-bool CModules::OnWriteChanConfig(CFile& Config, CChan& Chan) { MODUNLOADCHK(OnWriteChanConfig(Config, Chan)); return false; }
 bool CModules::OnIRCDisconnected() { MODUNLOADCHK(OnIRCDisconnected()); return false; }
 bool CModules::OnDCCUserSend(const CNick& RemoteNick, unsigned long uLongIP, unsigned short uPort, const CString& sFile, unsigned long uFileSize) { MODHALTCHK(OnDCCUserSend(RemoteNick, uLongIP, uPort, sFile, uFileSize)); }
 bool CModules::OnChanPermission(const CNick& OpNick, const CNick& Nick, CChan& Channel, unsigned char uMode, bool bAdded, bool bNoChange) { MODUNLOADCHK(OnChanPermission(OpNick, Nick, Channel, uMode, bAdded, bNoChange)); return false; }
@@ -708,10 +701,6 @@ bool CModules::OnServerCapResult(const CString& sCap, bool bSuccess) { MODUNLOAD
 ////////////////////
 // CGlobalModules //
 ////////////////////
-bool CGlobalModules::OnWriteConfig(CFile& Config) {
-	GLOBALMODHALTCHK(OnWriteConfig(Config));
-}
-
 bool CGlobalModules::OnAddUser(CUser& User, CString& sErrorRet) {
 	GLOBALMODHALTCHK(OnAddUser(User, sErrorRet));
 }

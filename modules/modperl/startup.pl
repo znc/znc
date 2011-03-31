@@ -298,9 +298,6 @@ sub OnIRCConnecting {}
 sub OnIRCConnectionError {}
 sub OnIRCRegistration {}
 sub OnBroadcast {}
-sub OnConfigLine {}
-sub OnWriteUserConfig {}
-sub OnWriteChanConfig {}
 sub OnDCCUserSend {}
 sub OnChanPermission {}
 sub OnOp {}

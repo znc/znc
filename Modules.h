@@ -414,33 +414,6 @@ public:
 	 */
 	virtual EModRet OnBroadcast(CString& sMessage);
 
-	/** Called when a module-specific config line is read from znc.conf.
-	 *  Module specific config lines are always prefixed with "GM:".
-	 *  @param sName Name of the config entry without the "GM:" prefix.
-	 *  @param sValue The value of the config entry.
-	 *  @param pUser If this line was found in a user section, then this is
-	 *               the corresponding CUser instance.
-	 *  @param pChan If this line was found in a chan section, then this is
-	 *               the corresponding CChan instance.
-	 *  @return See CModule::EModRet.
-	 */
-	virtual EModRet OnConfigLine(const CString& sName, const CString& sValue, CUser* pUser, CChan* pChan);
-	/** Called just before ZNC finishes a user section in the config file.
-	 *  This can be used to re-write the "GM:" lines for OnConfigLine()
-	 *  which would get lost otherwise.
-	 *  @param Config Reference to the CFile which will be used for writing
-	 *                the config file.
-	 */
-	virtual void OnWriteUserConfig(CFile& Config);
-	/** Called just before ZNC finishes a chan section in the config file.
-	 *  This can be used to re-write the "GM:" lines for OnConfigLine()
-	 *  which would get lost otherwise.
-	 *  @param Config Reference to the CFile which will be used for writing
-	 *                the config file.
-	 *  @param Chan The channel which is being written.
-	 */
-	virtual void OnWriteChanConfig(CFile& Config, CChan& Chan);
-
 	/** This module hook is called when a user sends a DCC SEND request to
 	 *  your module fake-nickname.
 	 */
@@ -921,9 +894,6 @@ public:
 	bool OnIRCConnectionError(CIRCSock *pIRCSock);
 	bool OnIRCRegistration(CString& sPass, CString& sNick, CString& sIdent, CString& sRealName);
 	bool OnBroadcast(CString& sMessage);
-	bool OnConfigLine(const CString& sName, const CString& sValue, CUser* pUser, CChan* pChan);
-	bool OnWriteUserConfig(CFile& Config);
-	bool OnWriteChanConfig(CFile& Config, CChan& Chan);
 
 	bool OnDCCUserSend(const CNick& RemoteNick, unsigned long uLongIP, unsigned short uPort, const CString& sFile, unsigned long uFileSize);
 
@@ -1024,14 +994,6 @@ public:
 			const CString &sDataDir) : CModule(pDLL, sModName, sDataDir) {}
 	virtual ~CGlobalModule() {}
 
-	/** Called when ZNC starts rewriting the config file. This can be used
-	 *  re-write the "GM:" lines for OnConfigLine() which would get lost
-	 *  otherwise.
-	 *  @param Config Reference to the CFile which will be used for writing
-	 *                the config file.
-	 *  @return See CModule::EModRet.
-	 */
-	virtual EModRet OnWriteConfig(CFile& Config);
 	/** This module hook is called when a user is being added.
 	 * @param User The user which will be added.
 	 * @param sErrorRet A message that may be displayed to the user if
@@ -1129,7 +1091,6 @@ public:
 	CGlobalModules() : CModules() {}
 	~CGlobalModules() {}
 
-	bool OnWriteConfig(CFile& Config);
 	bool OnAddUser(CUser& User, CString& sErrorRet);
 	bool OnDeleteUser(CUser& User);
 	bool OnClientConnect(CZNCSock* pSock, const CString& sHost, unsigned short uPort);
