@@ -28,15 +28,7 @@
 #include "../FileUtils.h"
 #include "modpython/module.h"
 
-class CPyRetString {
-public:
-	CString& s;
-	CPyRetString(CString& S) : s(S) {}
-	static PyObject* wrap(CString& S) {
-		CPyRetString* x = new CPyRetString(S);
-		return SWIG_NewInstanceObj(x, SWIG_TypeQuery("CPyRetString*"), SWIG_POINTER_OWN);
-	}
-};
+#include "modpython/retstring.h"
 
 #define stat struct stat
 using std::allocator;
@@ -61,21 +53,6 @@ namespace std {
 
 %include "modpython/cstring.i"
 %template(_stringlist) std::list<CString>;
-/*%typemap(out) std::list<CString> {
-	std::list<CString>::const_iterator i;
-	unsigned int j;
-	int len = $1.size();
-	SV **svs = new SV*[len];
-	for (i=$1.begin(), j=0; i!=$1.end(); i++, j++) {
-		svs[j] = sv_newmortal();
-		SwigSvFromString(svs[j], *i);
-	}
-	AV *myav = av_make(len, svs);
-	delete[] svs;
-	$result = newRV_noinc((SV*) myav);
-	sv_2mortal($result);
-	argvi++;
-}*/
 
 %typemap(out) CModules::ModDirList %{
 	$result = PyList_New($1.size());

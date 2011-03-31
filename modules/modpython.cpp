@@ -17,16 +17,7 @@
 
 #include "modpython/swigpyrun.h"
 #include "modpython/module.h"
-
-class CPyRetString {
-public:
-	CString& s;
-	CPyRetString(CString& S) : s(S) {}
-	static PyObject* wrap(CString& S) {
-		CPyRetString* x = new CPyRetString(S);
-		return SWIG_NewInstanceObj(x, SWIG_TypeQuery("CPyRetString*"), SWIG_POINTER_OWN);
-	}
-};
+#include "modpython/retstring.h"
 
 class CModPython: public CGlobalModule {
 
