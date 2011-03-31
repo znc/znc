@@ -110,7 +110,7 @@ public:
 	void Close();
 	void ClearBuffer();
 
-	bool TryExLock(const CString& sLockFile, int iFlags = O_RDONLY | O_CREAT);
+	bool TryExLock(const CString& sLockFile, int iFlags = O_RDWR | O_CREAT);
 	bool TryExLock();
 	bool ExLock();
 	bool UnLock();
