@@ -168,7 +168,7 @@ protected:
 	CString                m_sSSLCertFile;
 	VCString               m_vsBindHosts;
 	VCString               m_vsMotd;
-	CFile                  m_LockFile;
+	CFile*                 m_pLockFile;
 	unsigned int           m_uiConnectDelay;
 	unsigned int           m_uiAnonIPLimit;
 	unsigned int           m_uiMaxBufferSize;

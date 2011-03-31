@@ -35,6 +35,7 @@ CZNC::CZNC() {
 	m_eConfigState = ECONFIG_NOTHING;
 	m_TimeStarted = time(NULL);
 	m_sConnectThrottle.SetTTL(30000);
+	m_pLockFile = NULL;
 }
 
 CZNC::~CZNC() {
@@ -405,28 +406,28 @@ bool CZNC::WriteConfig() {
 		return false;
 	}
 
-	// Close the old handle to the config file, we are replacing that file.
-	m_LockFile.Close();
-
 	// We first write to a temporary file and then move it to the right place
-	m_LockFile.SetFileName(GetConfigFile() + "~");
+	CFile *pFile = new CFile(GetConfigFile() + "~");
 
-	if (!m_LockFile.Open(O_WRONLY | O_CREAT | O_TRUNC, 0600)) {
+	if (!pFile->Open(O_WRONLY | O_CREAT | O_TRUNC, 0600)) {
+		delete pFile;
 		return false;
 	}
 
 	// We have to "transfer" our lock on the config to the new file.
 	// The old file (= inode) is going away and thus a lock on it would be
 	// useless. These lock should always succeed (races, anyone?).
-	if (!m_LockFile.TryExLock()) {
+	if (!pFile->TryExLock()) {
+		pFile->Delete();
+		delete pFile;
 		return false;
 	}
 
-	m_LockFile.Write(MakeConfigHeader() + "\n");
+	pFile->Write(MakeConfigHeader() + "\n");
 
-	m_LockFile.Write("AnonIPLimit  = " + CString(m_uiAnonIPLimit) + "\n");
-	m_LockFile.Write("MaxBufferSize= " + CString(m_uiMaxBufferSize) + "\n");
-	m_LockFile.Write("SSLCertFile  = " + CString(m_sSSLCertFile) + "\n");
+	pFile->Write("AnonIPLimit  = " + CString(m_uiAnonIPLimit) + "\n");
+	pFile->Write("MaxBufferSize= " + CString(m_uiMaxBufferSize) + "\n");
+	pFile->Write("SSLCertFile  = " + CString(m_sSSLCertFile) + "\n");
 
 	for (size_t l = 0; l < m_vpListeners.size(); l++) {
 		CListener* pListener = m_vpListeners[l];
@@ -455,31 +456,31 @@ bool CZNC::WriteConfig() {
 				break;
 		}
 
-		m_LockFile.Write("Listener" + s6 + "    = " + sAcceptProtocol + sHostPortion +
+		pFile->Write("Listener" + s6 + "    = " + sAcceptProtocol + sHostPortion +
 			CString((pListener->IsSSL()) ? "+" : "") + CString(pListener->GetPort()) + "\n");
 	}
 
-	m_LockFile.Write("ConnectDelay = " + CString(m_uiConnectDelay) + "\n");
-	m_LockFile.Write("ServerThrottle = " + CString(m_sConnectThrottle.GetTTL()/1000) + "\n");
+	pFile->Write("ConnectDelay = " + CString(m_uiConnectDelay) + "\n");
+	pFile->Write("ServerThrottle = " + CString(m_sConnectThrottle.GetTTL()/1000) + "\n");
 
 	if (!m_sPidFile.empty()) {
-		m_LockFile.Write("PidFile      = " + m_sPidFile.FirstLine() + "\n");
+		pFile->Write("PidFile      = " + m_sPidFile.FirstLine() + "\n");
 	}
 
 	if (!m_sSkinName.empty()) {
-		m_LockFile.Write("Skin         = " + m_sSkinName.FirstLine() + "\n");
+		pFile->Write("Skin         = " + m_sSkinName.FirstLine() + "\n");
 	}
 
 	if (!m_sStatusPrefix.empty()) {
-		m_LockFile.Write("StatusPrefix = " + m_sStatusPrefix.FirstLine() + "\n");
+		pFile->Write("StatusPrefix = " + m_sStatusPrefix.FirstLine() + "\n");
 	}
 
 	for (unsigned int m = 0; m < m_vsMotd.size(); m++) {
-		m_LockFile.Write("Motd         = " + m_vsMotd[m].FirstLine() + "\n");
+		pFile->Write("Motd         = " + m_vsMotd[m].FirstLine() + "\n");
 	}
 
 	for (unsigned int v = 0; v < m_vsBindHosts.size(); v++) {
-		m_LockFile.Write("BindHost     = " + m_vsBindHosts[v].FirstLine() + "\n");
+		pFile->Write("BindHost     = " + m_vsBindHosts[v].FirstLine() + "\n");
 	}
 
 	CGlobalModules& Mods = GetModules();
@@ -492,7 +493,7 @@ bool CZNC::WriteConfig() {
 			sArgs = " " + sArgs.FirstLine();
 		}
 
-		m_LockFile.Write("LoadModule   = " + sName.FirstLine() + sArgs + "\n");
+		pFile->Write("LoadModule   = " + sName.FirstLine() + sArgs + "\n");
 	}
 
 	for (map<CString,CUser*>::iterator it = m_msUsers.begin(); it != m_msUsers.end(); ++it) {
@@ -503,27 +504,37 @@ bool CZNC::WriteConfig() {
 			continue;
 		}
 
-		m_LockFile.Write("\n");
+		pFile->Write("\n");
 
-		if (!it->second->WriteConfig(m_LockFile)) {
+		if (!it->second->WriteConfig(*pFile)) {
 			DEBUG("** Error writing config for user [" << it->first << "]");
 		}
 	}
 
 	// If Sync() fails... well, let's hope nothing important breaks..
-	m_LockFile.Sync();
+	pFile->Sync();
 
-	if (m_LockFile.HadError()) {
+	if (pFile->HadError()) {
 		DEBUG("Error while writing the config, errno says: " + CString(strerror(errno)));
+		pFile->Delete();
+		delete pFile;
 		return false;
 	}
 
 	// We wrote to a temporary name, move it to the right place
-	if (!m_LockFile.Move(GetConfigFile(), true))
+	if (!pFile->Move(GetConfigFile(), true)) {
+		DEBUG("Error while replacing the config file with a new version");
+		pFile->Delete();
+		delete pFile;
 		return false;
+	}
 
 	// Everything went fine, just need to update the saved path.
-	m_LockFile.SetFileName(GetConfigFile());
+	pFile->SetFileName(GetConfigFile());
+
+	// Make sure the lock is kept alive as long as we need it.
+	delete m_pLockFile;
+	m_pLockFile = pFile;
 
 	return true;
 }
@@ -816,11 +827,11 @@ bool CZNC::WriteNewConfig(const CString& sConfigFile) {
 
 		bFileOK = true;
 		if (CFile::Exists(m_sConfigFile)) {
-			if (!m_LockFile.TryExLock(m_sConfigFile)) {
+			if (!File.TryExLock(m_sConfigFile)) {
 				CUtils::PrintStatus(false, "ZNC is currently running on this config.");
 				bFileOK = false;
 			} else {
-				m_LockFile.Close();
+				File.Close();
 				CUtils::PrintStatus(false, "This config already exists.");
 				if (CUtils::GetBoolInput("Would you like to overwrite it?", false))
 					CUtils::PrintAction("Overwriting config [" + m_sConfigFile + "]");
@@ -894,7 +905,7 @@ bool CZNC::WriteNewConfig(const CString& sConfigFile) {
 	CUtils::PrintMessage(sProtocol + "://<znc_server_ip>:" + CString(uListenPort) + "/", true);
 	CUtils::PrintMessage("");
 
-	m_LockFile.UnLock();
+	File.UnLock();
 	return bFileOpen && CUtils::GetBoolInput("Launch ZNC now?", true);
 }
 
@@ -973,25 +984,28 @@ bool CZNC::DoRehash(CString& sError)
 		return false;
 	}
 
-	// (re)open the config file
-	if (m_LockFile.IsOpen())
-		m_LockFile.Close();
+	CFile *pFile = new CFile(m_sConfigFile);
 
 	// need to open the config file Read/Write for fcntl()
 	// exclusive locking to work properly!
-	if (!m_LockFile.Open(m_sConfigFile, O_RDWR)) {
+	if (!pFile->Open(m_sConfigFile, O_RDWR)) {
 		sError = "Can not open config file";
 		CUtils::PrintStatus(false, sError);
+		delete pFile;
 		return false;
 	}
 
-	if (!m_LockFile.TryExLock()) {
+	if (!pFile->TryExLock()) {
 		sError = "ZNC is already running on this config.";
 		CUtils::PrintStatus(false, sError);
+		delete pFile;
 		return false;
 	}
 
-	CFile &File = m_LockFile;
+	// (re)open the config file
+	delete m_pLockFile;
+	m_pLockFile = pFile;
+	CFile &File = *pFile;
 
 	// This fd is re-used for rehashing, so we must seek back to the beginning!
 	if (!File.Seek(0)) {
@@ -1991,5 +2005,5 @@ void CZNC::LeakConnectUser(CConnectUserTimer *pTimer) {
 }
 
 bool CZNC::WaitForChildLock() {
-	return m_LockFile.ExLock();
+	return m_pLockFile && m_pLockFile->ExLock();
 }
