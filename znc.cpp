@@ -513,6 +513,11 @@ bool CZNC::WriteConfig() {
 	// If Sync() fails... well, let's hope nothing important breaks..
 	m_LockFile.Sync();
 
+	if (m_LockFile.HadError()) {
+		DEBUG("Error while writing the config, errno says: " + CString(strerror(errno)));
+		return false;
+	}
+
 	// We wrote to a temporary name, move it to the right place
 	if (!m_LockFile.Move(GetConfigFile(), true))
 		return false;
