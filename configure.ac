@@ -101,9 +101,9 @@ AC_ARG_ENABLE( [perl],
 	[PERL="$enableval"],
 	[PERL="no"])
 AC_ARG_ENABLE( [python],
-	AS_HELP_STRING([--enable-python[[[=python3-config]]]], [enable python.
-			By default python3-config is used, but you can use
-			another name if your python3-config has another name.]),
+	AS_HELP_STRING([--enable-python[[[=python3]]]], [enable python.
+			By default python3.pc of pkg-config is used, but you can use
+			another name, for example python-3.1]),
 	[PYTHON="$enableval"],
 	[PYTHON="no"])
 AC_ARG_ENABLE( [swig],
@@ -325,22 +325,26 @@ fi
 if test "x$PYTHON" != "xno"; then
 	# Default value for just --enable-python
 	if test "x$PYTHON" = "xyes"; then
-		PYTHON="python3-config"
+		PYTHON="python3"
 	fi
 	old_PYTHON="$PYTHON"
-	AC_PATH_PROG([PYTHONCFG_BINARY], ["$PYTHON"])
-	if test -n "$PYTHONCFG_BINARY"; then
-		my_saved_LIBS="$LIBS"
-		appendLib `$PYTHONCFG_BINARY --ldflags`
-		AC_CHECK_FUNC([Py_Initialize], [], [PYTHON="no"])
-		if test "x$PYTHON" != "xno"; then
-			# Yes, modpython depends on perl.
-			AC_PATH_PROG([PERL_BINARY], [perl])
-			if test -z "$PERL_BINARY"; then
-				AC_MSG_ERROR([To compile modpython you need to be able to execute perl scripts. Try --disable-python or install perl.])
-			fi
+	if test -z "$PKG_CONFIG"; then
+		AC_MSG_ERROR([pkg-config is required for modpython.])
+	fi
+	PKG_CHECK_MODULES([python], [$PYTHON >= 3.0],, AC_MSG_ERROR([$PYTHON.pc not found or is wrong. Try --disable-python or install python3.]))
+	my_saved_LIBS="$LIBS"
+	my_saved_CXXFLAGS="CXXFLAGS"
+	appendLib $python_LIBS
+	appendCXX $python_CFLAGS
+	AC_CHECK_FUNC([Py_Initialize], [], [PYTHON="no"])
+	if test "x$PYTHON" != "xno"; then
+		# Yes, modpython depends on perl.
+		AC_PATH_PROG([PERL_BINARY], [perl])
+		if test -z "$PERL_BINARY"; then
+			AC_MSG_ERROR([To compile modpython you need to be able to execute perl scripts. Try --disable-python or install perl.])
 		fi
 		LIBS="$my_saved_LIBS"
+		CXXFLAGS="$my_saved_CXXFLAGS"
 	else
 		PYTHON="no"
 	fi
@@ -460,6 +464,9 @@ AC_SUBST([LIBICONV])
 AC_SUBST([MODDIR])
 AC_SUBST([DATADIR])
 AC_SUBST([PERL])
+AC_SUBST([PYTHON])
+AC_SUBST([python_CFLAGS])
+AC_SUBST([python_LIBS])
 AC_CONFIG_FILES([Makefile])
 AC_CONFIG_FILES([znc-config])
 AC_CONFIG_FILES([znc-buildmod])

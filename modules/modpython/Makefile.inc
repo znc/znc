@@ -1,7 +1,7 @@
 # vim: filetype=make
 
-ifneq "$(PYCFG)" ""
-PYTHONCOMMON := $(shell $(PYCFG) --includes) $(shell $(PYCFG) --ldflags)
+ifeq "$(PYTHON_ON)" "yes"
+PYTHONCOMMON := $(PY_CFLAGS) $(PY_LDFLAGS)
 PYTHONCOMMON += -DSWIG_TYPE_TABLE=znc
 PYTHONCOMMON += -Wno-missing-field-initializers -Wno-unused -Wno-shadow
 PYTHONCOMMON += -Wno-missing-declarations -Wno-uninitialized
@@ -28,7 +28,7 @@ install: $(PYTHONHOOK)
 	$(E) Compiling $@...
 	$(Q)$^ $@
 
-ifneq "$(PYCFG)" ""
+ifeq "$(PYTHON_ON)" "yes"
 all: modpython_all
 endif
 modpython_all: modpython/_znc_core.so modpython/swigpyrun.h modpython/znc.pyc modpython/znc_core.pyc
