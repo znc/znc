@@ -106,6 +106,18 @@ public:
 	CString s;
 };
 
+%extend CPyRetString {
+	CString __str__() {
+		return $self->s;
+	}
+};
+
+%extend String {
+	CString __str__() {
+		return $self->s;
+	}
+};
+
 %extend CModule {
 	MCString_iter BeginNV_() {
 		return MCString_iter($self->BeginNV());
