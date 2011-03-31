@@ -26,11 +26,13 @@ CString CFile::m_sHomePath;
 
 CFile::CFile() {
 	m_iFD = -1;
+	ResetError();
 }
 
 CFile::CFile(const CString& sLongName) {
 	m_iFD = -1;
 
+	ResetError();
 	SetFileName(sLongName);
 }
 
@@ -167,13 +169,25 @@ int CFile::GetInfo(const CString& sFile, struct stat& st) {
 //
 // Functions to manipulate the file on the filesystem
 //
-bool CFile::Delete() { return CFile::Delete(m_sLongName); }
+bool CFile::Delete() {
+	if (CFile::Delete(m_sLongName))
+		return true;
+	m_bHadError = true;
+	return false;
+}
+
 bool CFile::Move(const CString& sNewFileName, bool bOverwrite) {
-	return CFile::Move(m_sLongName, sNewFileName, bOverwrite);
+	if (CFile::Move(m_sLongName, sNewFileName, bOverwrite))
+		return true;
+	m_bHadError = true;
+	return false;
 }
 
 bool CFile::Copy(const CString& sNewFileName, bool bOverwrite) {
-	return CFile::Copy(m_sLongName, sNewFileName, bOverwrite);
+	if (CFile::Copy(m_sLongName, sNewFileName, bOverwrite))
+		return true;
+	m_bHadError = true;
+	return false;
 }
 
 bool CFile::Delete(const CString& sFileName) {
@@ -235,7 +249,11 @@ bool CFile::Chmod(mode_t mode) {
 	if (m_iFD == -1) {
 		return false;
 	}
-	return (fchmod(m_iFD, mode) == 0);
+	if (fchmod(m_iFD, mode) != 0) {
+		m_bHadError = true;
+		return false;
+	}
+	return true;
 }
 
 bool CFile::Chmod(const CString& sFile, mode_t mode) {
@@ -248,6 +266,8 @@ bool CFile::Seek(off_t uPos) {
 		return true;
 	}
 
+	m_bHadError = true;
+
 	return false;
 }
 
@@ -257,11 +277,16 @@ bool CFile::Truncate() {
 		return true;
 	}
 
+	m_bHadError = true;
+
 	return false;
 }
 
 bool CFile::Sync() {
-	return (m_iFD != -1 && fsync(m_iFD) == 0);
+	if (m_iFD != -1 && fsync(m_iFD) == 0)
+		return true;
+	m_bHadError = true;
+	return false;
 }
 
 bool CFile::Open(const CString& sFileName, int iFlags, mode_t iMode) {
@@ -271,6 +296,7 @@ bool CFile::Open(const CString& sFileName, int iFlags, mode_t iMode) {
 
 bool CFile::Open(int iFlags, mode_t iMode) {
 	if (m_iFD != -1) {
+		m_bHadError = true;
 		return false;
 	}
 
@@ -282,8 +308,10 @@ bool CFile::Open(int iFlags, mode_t iMode) {
 	iMode |= O_BINARY;
 
 	m_iFD = open(m_sLongName.c_str(), iFlags, iMode);
-	if (m_iFD < 0)
+	if (m_iFD < 0) {
+		m_bHadError = true;
 		return false;
+	}
 
 	/* Make sure this FD isn't given to childs */
 	SetFdCloseOnExec(m_iFD);
@@ -296,7 +324,10 @@ int CFile::Read(char *pszBuffer, int iBytes) {
 		return -1;
 	}
 
-	return read(m_iFD, pszBuffer, iBytes);
+	int res = read(m_iFD, pszBuffer, iBytes);
+	if (res != iBytes)
+		m_bHadError = true;
+	return res;
 }
 
 bool CFile::ReadLine(CString& sData, const CString & sDelimiter) {
@@ -366,7 +397,10 @@ int CFile::Write(const char *pszBuffer, u_int iBytes) {
 		return -1;
 	}
 
-	return write(m_iFD, pszBuffer, iBytes);
+	u_int res = write(m_iFD, pszBuffer, iBytes);
+	if (res != iBytes)
+		m_bHadError = true;
+	return res;
 }
 
 int CFile::Write(const CString & sData) {
@@ -375,6 +409,7 @@ int CFile::Write(const CString & sData) {
 void CFile::Close() {
 	if (m_iFD >= 0) {
 		if (close(m_iFD) < 0) {
+			m_bHadError = true;
 			DEBUG("CFile::Close(): close() failed with ["
 					<< strerror(errno) << "]");
 		}

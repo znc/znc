@@ -120,6 +120,9 @@ public:
 	CString GetShortName() const;
 	CString GetDir() const;
 
+	bool HadError() const { return m_bHadError; }
+	void ResetError() { m_bHadError = false; }
+
 	static void InitHomePath(const CString& sFallback);
 	static const CString& GetHomePath() { return m_sHomePath; }
 
@@ -129,6 +132,7 @@ private:
 
 	CString m_sBuffer;
 	int     m_iFD;
+	bool    m_bHadError;
 
 	static CString m_sHomePath;
 
