@@ -149,17 +149,26 @@ public:
 	CString __str__() {
 		return $self->GetUserName();
 	}
+	CString __repr__() {
+		return "<CUser " + $self->GetUserName() + ">";
+	}
 };
 
 %extend CChan {
 	CString __str__() {
 		return $self->GetName();
 	}
+	CString __repr__() {
+		return "<CChan " + $self->GetName() + ">";
+	}
 };
 
 %extend CNick {
 	CString __str__() {
 		return $self->GetNick();
+	}
+	CString __repr__() {
+		return "<CNick " + $self->GetHostMask() + ">";
 	}
 };
 
