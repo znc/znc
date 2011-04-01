@@ -113,6 +113,8 @@ class ModuleNV(collections.MutableMapping):
 		raise NotImplemented
 
 class Module:
+	def __str__(self):
+		return self.GetModName()
 	def OnLoad(self, sArgs, sMessage):
 		return True
 	def _GetSubPages(self):

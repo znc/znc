@@ -119,6 +119,9 @@ public:
 };
 
 %extend CModule {
+	CString __str__() {
+		return $self->GetModName();
+	}
 	MCString_iter BeginNV_() {
 		return MCString_iter($self->BeginNV());
 	}
@@ -141,6 +144,24 @@ public:
 		return false;
 	}
 }
+
+%extend CUser {
+	CString __str__() {
+		return $self->GetUserName();
+	}
+};
+
+%extend CChan {
+	CString __str__() {
+		return $self->GetName();
+	}
+};
+
+%extend CNick {
+	CString __str__() {
+		return $self->GetNick();
+	}
+};
 
 /* Web */
 
