@@ -150,6 +150,8 @@ int main() {
 		TEST_SUCCESS("Foo = bar // baz\n// Bar = baz", "foo=bar // baz\n"),
 		TEST_SUCCESS("Foo = bar /* baz */\n/*** Foo = baz ***/\n   /**** asdsdfdf \n Some quite invalid stuff ***/\n", "foo=bar /* baz */\n"),
 		TEST_ERROR("<foo foo>\n/* Just a comment\n</foo>", "Error on line 3: Comment not closed at end of file."),
+		TEST_SUCCESS("/* Foo\n/* Bar */", ""),
+		TEST_SUCCESS("/* Foo\n// */", ""),
 	};
 	unsigned int i;
 	unsigned int failed = 0;

@@ -76,23 +76,14 @@ bool CConfig::Parse(CFile& file, CString& sErrorMsg)
 		sLine.TrimLeft();
 		sLine.TrimRight("\r\n");
 
+		if (bCommented || sLine.Left(2) == "/*") {
+			/* Does this comment end on the same line again? */
+			bCommented = (sLine.Right(2) != "*/");
+
+			continue;
+		}
+
 		if ((sLine.empty()) || (sLine[0] == '#') || (sLine.Left(2) == "//")) {
-			continue;
-		}
-
-		if (sLine.Left(2) == "/*") {
-			if (sLine.Right(2) != "*/") {
-				bCommented = true;
-			}
-
-			continue;
-		}
-
-		if (bCommented) {
-			if (sLine.Right(2) == "*/") {
-				bCommented = false;
-			}
-
 			continue;
 		}
 
