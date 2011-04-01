@@ -15,55 +15,49 @@ from znc_core import *
 
 
 class Socket:
+    ADDR_MAP = {
+        'ipv4': ADDR_IPV4ONLY,
+        'ipv6': ADDR_IPV6ONLY,
+        'all': ADDR_ALL
+    }
+
     def _Accepted(self, host, port):
-        psock = self.OnAccepted(host, port)
-        print(psock)
-        try:
-            return psock._csock
-        except AttributeError:
-            return None
+        return getattr(self.OnAccepted(host, port), '_csock', None)
 
     def GetModule(self):
         return AsPyModule(self._csock.GetModule()).GetNewPyObj()
 
     def Listen(self, addrtype='all', port=None, bindhost='', ssl=False,
                maxconns=GetSOMAXCONN(), timeout=0):
-        addr = ADDR_ALL
-        addrtype = addrtype.lower()
-        if addrtype == 'ipv4':
-            addr = ADDR_IPV4ONLY
-        elif addrtype == 'ipv6':
-            addr = ADDR_IPV6ONLY
-        elif addrtype != 'all':
+        try:
+            addr = self.ADDR_MAP[addrtype.lower()]
+        except KeyError:
             raise ValueError(
                 "Specified addrtype [{0}] isn't supported".format(addrtype))
+
+        args = (
+            "python socket for {0}".format(self.GetModule()),
+            bindhost,
+            ssl,
+            maxconns,
+            self._csock,
+            timeout,
+            addr
+        )
+
         if port is None:
-            return self.GetModule().GetManager().ListenRand(
-                "python socket for {0}".format(self.GetModule().GetModName()),
-                bindhost,
-                ssl,
-                maxconns,
-                self._csock,
-                timeout,
-                addr
-            )
-        if self.GetModule().GetManager().ListenHost(
-                port,
-                'python socket for {0}'.format(self.GetModule().GetModName()),
-                bindhost,
-                ssl,
-                maxconns,
-                self._csock,
-                timeout,
-                addr):
+            return self.GetModule().GetManager().ListenRand(*args)
+
+        if self.GetModule().GetManager().ListenHost(port, *args):
             return port
+
         return 0
 
     def Connect(self, host, port, timeout=60, ssl=False, bindhost=''):
         return self.GetModule().GetManager().Connect(
             host,
             port,
-            'python conn socket for {0}'.format(self.GetModule().GetModName()),
+            'python conn socket for {0}'.format(self.GetModule()),
             timeout,
             ssl,
             bindhost,
@@ -155,6 +149,8 @@ class ModuleNV(collections.MutableMapping):
 
 
 class Module:
+    description = '< Placeholder for a description >'
+
     def __str__(self):
         return self.GetModName()
 
@@ -428,10 +424,6 @@ def find_open(modname):
         return (None, None)
 
 
-def get_descr(cls):
-    return getattr(cls, 'description', '< Placeholder for a description >')
-
-
 def load_module(modname, args, user, retmsg, modpython):
     '''Returns 0 if not found, 1 on loading error, 2 on success'''
     if re.search(r'[^a-zA-Z0-9_]', modname) is not None:
@@ -449,7 +441,7 @@ def load_module(modname, args, user, retmsg, modpython):
     module = cl()
     module._cmod = CreatePyModule(user, modname, datapath, module, modpython)
     module.nv = ModuleNV(module._cmod)
-    module.SetDescription(get_descr(cl))
+    module.SetDescription(cl.description)
     module.SetArgs(args)
     module.SetModPath(pymodule.__file__)
     user.GetModules().push_back(module._cmod)
@@ -510,7 +502,7 @@ def get_mod_info(modname, retmsg, modinfo):
         return 1
     cl = pymodule.__dict__[modname]
     modinfo.SetGlobal(False)
-    modinfo.SetDescription(get_descr(cl))
+    modinfo.SetDescription(cl.description)
     modinfo.SetName(modname)
     modinfo.SetPath(pymodule.__file__)
     return 2
