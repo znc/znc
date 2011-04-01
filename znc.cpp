@@ -1096,6 +1096,35 @@ bool CZNC::DoRehash(CString& sError)
 		msModules[sModName] = sArgs;
 	}
 
+	CString sISpoofFormat, sISpoofFile;
+	config.FindStringEntry("ispoofformat", sISpoofFormat);
+	config.FindStringEntry("ispooffile", sISpoofFile);
+	if (!sISpoofFormat.empty() || !sISpoofFile.empty()) {
+		CModule *pIdentFileMod = GetModules().FindModule("identfile");
+		if (!pIdentFileMod) {
+			CUtils::PrintAction("Loading Global Module [identfile]");
+
+			CString sModRet;
+			bool bModRet = GetModules().LoadModule("identfile", "", NULL, sModRet);
+
+			if (bModRet) {
+				sModRet = sModRet.Token(1, true, "identfile] ");
+			}
+
+			CUtils::PrintStatus(bModRet, sModRet);
+			if (!bModRet) {
+				sError = sModRet;
+				return false;
+			}
+
+			pIdentFileMod = GetModules().FindModule("identfile");
+			msModules["identfile"] = "";
+		}
+
+		pIdentFileMod->SetNV("File", sISpoofFile);
+		pIdentFileMod->SetNV("Format", sISpoofFormat);
+	}
+
 	config.FindStringVector("motd", vsList);
 	for (vit = vsList.begin(); vit != vsList.end(); ++vit) {
 		AddMotd(*vit);
