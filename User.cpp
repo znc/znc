@@ -70,9 +70,7 @@ CUser::CUser(const CString& sUserName)
 	m_MotdBuffer.SetLineCount(200);  // This should be more than enough motd lines
 	m_QueryBuffer.SetLineCount(250);
 	m_bMultiClients = true;
-	m_bBounceDCCs = true;
 	m_eHashType = HASH_NONE;
-	m_bUseClientIP = false;
 	m_bDenyLoadMod = false;
 	m_bAdmin= false;
 	m_bIRCAway = false;
@@ -105,8 +103,6 @@ CUser::~CUser() {
 
 	// This will cause an endless loop if the destructor doesn't remove the
 	// socket from this list / if the socket doesn't exist any more.
-	while (!m_sDCCBounces.empty())
-		CZNC::Get().GetManager().DelSockByAddr((CZNCSock*) *m_sDCCBounces.begin());
 	while (!m_sDCCSocks.empty())
 		CZNC::Get().GetManager().DelSockByAddr((CZNCSock*) *m_sDCCSocks.begin());
 
@@ -143,7 +139,6 @@ bool CUser::ParseConfig(CConfig* pConfig, CString& sError) {
 	TOption<bool> BoolOptions[] = {
 		{ "keepbuffer", &CUser::SetKeepBuffer },
 		{ "multiclients", &CUser::SetMultiClients },
-		{ "bouncedccs", &CUser::SetBounceDCCs },
 		{ "denyloadmod", &CUser::SetDenyLoadMod },
 		{ "admin", &CUser::SetAdmin },
 		{ "denysetbindhost", &CUser::SetDenySetBindHost },
@@ -192,6 +187,26 @@ bool CUser::ParseConfig(CConfig* pConfig, CString& sError) {
 	}
 
 	CString sValue;
+
+	CString sDCCLookupValue;
+	pConfig->FindStringEntry("dcclookupmethod", sDCCLookupValue);
+	if (pConfig->FindStringEntry("bouncedccs", sValue))  {
+		if (sValue.ToBool()) {
+			CUtils::PrintAction("Loading Module [bouncedcc]");
+			CString sModRet;
+			bool bModRet = GetModules().LoadModule("bouncedcc", "", this, sModRet);
+
+			CUtils::PrintStatus(bModRet, sModRet);
+			if (!bModRet) {
+				sError = sModRet;
+				return false;
+			}
+
+			if (sDCCLookupValue.Equals("Client")) {
+				GetModules().FindModule("bouncedcc")->SetNV("UseClientIP", "1");
+			}
+		}
+	}
 	if (pConfig->FindStringEntry("buffer", sValue))
 		SetBufferCount(sValue.ToUInt(), true);
 	if (pConfig->FindStringEntry("awaysuffix", sValue)) {
@@ -231,8 +246,6 @@ bool CUser::ParseConfig(CConfig* pConfig, CString& sError) {
 			}
 		}
 	}
-	if (pConfig->FindStringEntry("dcclookupmethod", sValue))
-		SetUseClientIP(sValue.Equals("Client"));
 	pConfig->FindStringEntry("pass", sValue);
 	// There are different formats for this available:
 	// Pass = <plain text>
@@ -664,8 +677,6 @@ bool CUser::Clone(const CUser& User, CString& sErrorRet, bool bCloneChans) {
 	SetIRCConnectEnabled(User.GetIRCConnectEnabled());
 	SetKeepBuffer(User.KeepBuffer());
 	SetMultiClients(User.MultiClients());
-	SetBounceDCCs(User.BounceDCCs());
-	SetUseClientIP(User.UseClientIP());
 	SetDenyLoadMod(User.DenyLoadMod());
 	SetAdmin(User.IsAdmin());
 	SetDenySetBindHost(User.DenySetBindHost());
@@ -863,11 +874,9 @@ bool CUser::WriteConfig(CFile& File) {
 	PrintLine(File, "Buffer", CString(GetBufferCount()));
 	PrintLine(File, "KeepBuffer", CString(KeepBuffer()));
 	PrintLine(File, "MultiClients", CString(MultiClients()));
-	PrintLine(File, "BounceDCCs", CString(BounceDCCs()));
 	PrintLine(File, "DenyLoadMod", CString(DenyLoadMod()));
 	PrintLine(File, "Admin", CString(IsAdmin()));
 	PrintLine(File, "DenySetBindHost", CString(DenySetBindHost()));
-	PrintLine(File, "DCCLookupMethod", CString((UseClientIP()) ? "client" : "default"));
 	PrintLine(File, "TimestampFormat", GetTimestampFormat());
 	PrintLine(File, "AppendTimestamp", CString(GetTimestampAppend()));
 	PrintLine(File, "PrependTimestamp", CString(GetTimestampPrepend()));
@@ -1426,8 +1435,6 @@ void CUser::SetPass(const CString& s, eHashType eHash, const CString& sSalt) {
 	m_sPassSalt = sSalt;
 }
 void CUser::SetMultiClients(bool b) { m_bMultiClients = b; }
-void CUser::SetBounceDCCs(bool b) { m_bBounceDCCs = b; }
-void CUser::SetUseClientIP(bool b) { m_bUseClientIP = b; }
 void CUser::SetDenyLoadMod(bool b) { m_bDenyLoadMod = b; }
 void CUser::SetAdmin(bool b) { m_bAdmin = b; }
 void CUser::SetDenySetBindHost(bool b) { m_bDenySetBindHost = b; }
@@ -1497,12 +1504,10 @@ const CString& CUser::GetPass() const { return m_sPass; }
 CUser::eHashType CUser::GetPassHashType() const { return m_eHashType; }
 const CString& CUser::GetPassSalt() const { return m_sPassSalt; }
 
-bool CUser::UseClientIP() const { return m_bUseClientIP; }
 bool CUser::DenyLoadMod() const { return m_bDenyLoadMod; }
 bool CUser::IsAdmin() const { return m_bAdmin; }
 bool CUser::DenySetBindHost() const { return m_bDenySetBindHost; }
 bool CUser::MultiClients() const { return m_bMultiClients; }
-bool CUser::BounceDCCs() const { return m_bBounceDCCs; }
 const CString& CUser::GetStatusPrefix() const { return m_sStatusPrefix; }
 const CString& CUser::GetDefaultChanModes() const { return m_sDefaultChanModes; }
 const vector<CChan*>& CUser::GetChans() const { return m_vChans; }
