@@ -10,7 +10,7 @@
 #define _LISTENER_H
 
 #include "zncconfig.h"
-#include "znc.h"
+#include "Socket.h"
 
 // Forward Declarations
 class CRealListener;

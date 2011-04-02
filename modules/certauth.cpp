@@ -11,6 +11,7 @@
 #include "Modules.h"
 #include "User.h"
 #include "Listener.h"
+#include "znc.h"
 
 class CSSLClientCertMod : public CGlobalModule {
 public:

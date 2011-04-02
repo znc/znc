@@ -7,6 +7,7 @@
  */
 
 #include "Listener.h"
+#include "znc.h"
 
 CListener::~CListener() {
 	if (m_pListener)
