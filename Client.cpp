@@ -418,8 +418,6 @@ void CClient::ReadLine(const CString& sData) {
 							}
 
 							m_pUser->GetFile(GetNick(), CUtils::GetIP(uLongIP), uPort, sAbsolutePath, uFileSize);
-						} else {
-							MODULECALL(OnDCCUserSend(CString(m_pUser->GetStatusPrefix() + sTarget), uLongIP, uPort, sFile, uFileSize), m_pUser, this, return);
 						}
 					} else {
 						unsigned short uBNCPort = CDCCBounce::DCCRequest(sTarget, uLongIP, uPort, sFile, false, m_pUser, "");
