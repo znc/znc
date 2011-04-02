@@ -123,16 +123,14 @@ public:
 		}
 	}
 
-	virtual EModRet OnDCCUserSend(const CNick& RemoteNick, unsigned long uLongIP, unsigned short uPort, const CString& sFile, unsigned long uFileSize) {
-		if (RemoteNick.GetNick().Equals(GetModNick())) {
-			CString sLocalFile = CDir::ChangeDir(m_sPath, sFile, CZNC::Get().GetHomePath());
-
+	virtual void OnModCTCP(const CString& sMessage) {
+		if (sMessage.Equals("DCC SEND ", false, 9)) {
+			CString sLocalFile = CDir::ChangeDir(m_sPath, sMessage.Token(2), CZNC::Get().GetHomePath());
+			unsigned long uLongIP = sMessage.Token(3).ToULong();
+			unsigned short uPort = sMessage.Token(4).ToUShort();
+			unsigned long uFileSize = sMessage.Token(5).ToULong();
 			m_pUser->GetFile(m_pUser->GetCurNick(), CUtils::GetIP(uLongIP), uPort, sLocalFile, uFileSize, GetModName());
-
-			return HALT;
 		}
-
-		return CONTINUE;
 	}
 
 	void PutShell(const CString& sMsg) {

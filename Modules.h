@@ -413,11 +413,6 @@ public:
 	 */
 	virtual EModRet OnBroadcast(CString& sMessage);
 
-	/** This module hook is called when a user sends a DCC SEND request to
-	 *  your module fake-nickname.
-	 */
-	virtual EModRet OnDCCUserSend(const CNick& RemoteNick, unsigned long uLongIP, unsigned short uPort, const CString& sFile, unsigned long uFileSize);
-
 	/** This module hook is called when a user mode on a channel changes.
 	 *  @param OpNick The nick who sent the mode change.
 	 *  @param Nick The nick whose channel mode changes.
@@ -893,8 +888,6 @@ public:
 	bool OnIRCConnectionError(CIRCSock *pIRCSock);
 	bool OnIRCRegistration(CString& sPass, CString& sNick, CString& sIdent, CString& sRealName);
 	bool OnBroadcast(CString& sMessage);
-
-	bool OnDCCUserSend(const CNick& RemoteNick, unsigned long uLongIP, unsigned short uPort, const CString& sFile, unsigned long uFileSize);
 
 	bool OnChanPermission(const CNick& OpNick, const CNick& Nick, CChan& Channel, unsigned char uMode, bool bAdded, bool bNoChange);
 	bool OnOp(const CNick& OpNick, const CNick& Nick, CChan& Channel, bool bNoChange);
