@@ -307,11 +307,6 @@ bool CUser::ParseConfig(CConfig* pConfig, CString& sError) {
 
 		bool bModRet = GetModules().LoadModule(sModName, sArgs, this, sModRet);
 
-		// If the module was loaded, sModRet contains
-		// "Loaded Module [name] ..." and we strip away this beginning.
-		if (bModRet)
-			sModRet = sModRet.Token(1, true, sModName + "] ");
-
 		CUtils::PrintStatus(bModRet, sModRet);
 		if (!bModRet) {
 			sError = sModRet;

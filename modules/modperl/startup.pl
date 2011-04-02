@@ -139,9 +139,9 @@ sub LoadModule {
 		return ($ZNC::Perl_LoadError, "Module [$modname] aborted.");
 	}
 	if ($x) {
-		return ($ZNC::Perl_Loaded, "Loaded module [$modname] [$x] [$modpath]");
+		return ($ZNC::Perl_Loaded, "[$x] [$modpath]");
 	}
-	return ($ZNC::Perl_Loaded, "Loaded module [$modname] [$modpath]")
+	return ($ZNC::Perl_Loaded, "[$modpath]")
 }
 
 sub GetModInfo {

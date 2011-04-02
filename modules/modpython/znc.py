@@ -288,9 +288,9 @@ def load_module(modname, args, user, retmsg, modpython):
 
 	if loaded:
 		if retmsg.s == '':
-			retmsg.s = "Loaded module [{0}] [{1}]".format(modname, pymodule.__file__)
+			retmsg.s = "[{0}]".format(pymodule.__file__)
 		else:
-			retmsg.s = "Loaded module [{0}] [{2}] [{1}]".format(modname, pymodule.__file__, retmsg.s)
+			retmsg.s = "[{1}] [{0}]".format(pymodule.__file__, retmsg.s)
 		return 2
 	print(retmsg.s)
 

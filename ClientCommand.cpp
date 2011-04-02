@@ -731,10 +731,8 @@ void CClient::UserCommand(CString& sLine) {
 			b = m_pUser->GetModules().LoadModule(sMod, sArgs, m_pUser, sModRet);
 		}
 
-		if (!b) {
-			PutStatus(sModRet);
-			return;
-		}
+		if (b)
+			sModRet = "Loaded module [" + sMod + "] " + sModRet;
 
 		PutStatus(sModRet);
 		return;

@@ -1065,11 +1065,6 @@ bool CZNC::DoRehash(CString& sError)
 
 			bool bModRet = GetModules().LoadModule(sModName, sArgs, NULL, sModRet);
 
-			// If the module was loaded, sModRet contains
-			// "Loaded Module [name] ..." and we strip away this beginning.
-			if (bModRet)
-				sModRet = sModRet.Token(1, true, sModName + "] ");
-
 			CUtils::PrintStatus(bModRet, sModRet);
 			if (!bModRet) {
 				sError = sModRet;
@@ -1079,11 +1074,6 @@ bool CZNC::DoRehash(CString& sError)
 			CUtils::PrintAction("Reloading Global Module [" + sModName + "]");
 
 			bool bModRet = GetModules().ReloadModule(sModName, sArgs, NULL, sModRet);
-
-			// If the module was loaded, sModRet contains
-			// "Loaded Module [name] ..." and we strip away this beginning.
-			if (bModRet)
-				sModRet = sModRet.Token(1, true, sModName + "] ");
 
 			CUtils::PrintStatus(bModRet, sModRet);
 			if (!bModRet) {
@@ -1106,10 +1096,6 @@ bool CZNC::DoRehash(CString& sError)
 
 			CString sModRet;
 			bool bModRet = GetModules().LoadModule("identfile", "", NULL, sModRet);
-
-			if (bModRet) {
-				sModRet = sModRet.Token(1, true, "identfile] ");
-			}
 
 			CUtils::PrintStatus(bModRet, sModRet);
 			if (!bModRet) {

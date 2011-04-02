@@ -886,10 +886,9 @@ bool CModules::LoadModule(const CString& sModule, const CString& sArgs, CUser* p
 	}
 
 	if (!sRetMsg.empty()) {
-		sRetMsg = "Loaded module [" + sModule + "] [" + sRetMsg + "] [" + sModPath + "]";
-	} else {
-		sRetMsg = "Loaded module [" + sModule + "] [" + sModPath + "]";
+		sRetMsg += "[" + sRetMsg + "] ";
 	}
+	sRetMsg += "[" + sModPath + "]";
 	return true;
 }
 
