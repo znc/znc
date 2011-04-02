@@ -663,7 +663,7 @@ void CClient::AcceptLogin(CUser& User) {
 
 	// Set our proper timeout and set back our proper timeout mode
 	// (constructor set a different timeout and mode)
-	SetTimeout(240, TMO_READ);
+	SetTimeout(540, TMO_READ);
 
 	SetSockName("USR::" + m_pUser->GetUserName());
 

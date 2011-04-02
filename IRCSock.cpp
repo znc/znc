@@ -128,7 +128,7 @@ void CIRCSock::ReadLine(const CString& sData) {
 				}
 
 				m_pUser->SetIRCServer(sServer);
-				SetTimeout(240, TMO_READ);  // Now that we are connected, let nature take its course
+				SetTimeout(540, TMO_READ);  // Now that we are connected, let nature take its course
 				PutIRC("WHO " + sNick);
 
 				m_bAuthed = true;
