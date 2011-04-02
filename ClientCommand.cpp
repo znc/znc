@@ -8,7 +8,6 @@
 
 #include "Client.h"
 #include "Chan.h"
-#include "DCCBounce.h"
 #include "DCCSock.h"
 #include "FileUtils.h"
 #include "IRCSock.h"
@@ -522,14 +521,6 @@ void CClient::UserCommand(CString& sLine) {
 			CString sSockName = Manager[a]->GetSockName();
 
 			if (sSockName.TrimPrefix("DCC::")) {
-				if (sSockName.Equals("XFER::REMOTE::", false, 14)) {
-					continue;
-				}
-
-				if (sSockName.Equals("CHAT::REMOTE::", false, 14)) {
-					continue;
-				}
-
 				if (sSockName.Equals("SEND", false, 4)) {
 					CDCCSock* pSock = (CDCCSock*) Manager[a];
 
@@ -559,39 +550,6 @@ void CClient::UserCommand(CString& sLine) {
 					Table.SetCell("Nick", pSock->GetRemoteNick());
 					Table.SetCell("IP", pSock->GetRemoteIP());
 					Table.SetCell("File", pSock->GetFileName());
-				} else if (sSockName.Equals("XFER::LOCAL", false, 11)) {
-					CDCCBounce* pSock = (CDCCBounce*) Manager[a];
-
-					CString sState = "Waiting";
-					if ((pSock->IsConnected()) || (pSock->IsPeerConnected())) {
-						sState = "Halfway";
-						if ((pSock->IsPeerConnected()) && (pSock->IsPeerConnected())) {
-							sState = "Connected";
-						}
-					}
-
-					Table.AddRow();
-					Table.SetCell("Type", "Xfer");
-					Table.SetCell("State", sState);
-					Table.SetCell("Nick", pSock->GetRemoteNick());
-					Table.SetCell("IP", pSock->GetRemoteIP());
-					Table.SetCell("File", pSock->GetFileName());
-				} else if (sSockName.Equals("CHAT::LOCAL", false, 11)) {
-					CDCCBounce* pSock = (CDCCBounce*) Manager[a];
-
-					CString sState = "Waiting";
-					if ((pSock->IsConnected()) || (pSock->IsPeerConnected())) {
-						sState = "Halfway";
-						if ((pSock->IsPeerConnected()) && (pSock->IsPeerConnected())) {
-							sState = "Connected";
-						}
-					}
-
-					Table.AddRow();
-					Table.SetCell("Type", "Chat");
-					Table.SetCell("State", sState);
-					Table.SetCell("Nick", pSock->GetRemoteNick());
-					Table.SetCell("IP", pSock->GetRemoteIP());
 				}
 			}
 		}

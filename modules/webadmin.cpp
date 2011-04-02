@@ -249,7 +249,6 @@ public:
 		pNewUser->SetSkinName(WebSock.GetParam("skin"));
 		pNewUser->SetKeepBuffer(WebSock.GetParam("keepbuffer").ToBool());
 		pNewUser->SetMultiClients(WebSock.GetParam("multiclients").ToBool());
-		pNewUser->SetBounceDCCs(WebSock.GetParam("bouncedccs").ToBool());
 		pNewUser->SetUseClientIP(WebSock.GetParam("useclientip").ToBool());
 		pNewUser->SetTimestampAppend(WebSock.GetParam("appendtimestamp").ToBool());
 		pNewUser->SetTimestampPrepend(WebSock.GetParam("prependtimestamp").ToBool());
@@ -768,11 +767,6 @@ public:
 			o4["Name"] = "multiclients";
 			o4["DisplayName"] = "Multi Clients";
 			if (!pUser || pUser->MultiClients()) { o4["Checked"] = "true"; }
-
-			CTemplate& o5 = Tmpl.AddRow("OptionLoop");
-			o5["Name"] = "bouncedccs";
-			o5["DisplayName"] = "Bounce DCCs";
-			if (!pUser || pUser->BounceDCCs()) { o5["Checked"] = "true"; }
 
 			CTemplate& o6 = Tmpl.AddRow("OptionLoop");
 			o6["Name"] = "useclientip";

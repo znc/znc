@@ -29,7 +29,6 @@
 #include "../znc.h"
 #include "../Server.h"
 #include "../ZNCString.h"
-#include "../DCCBounce.h"
 #include "../DCCSock.h"
 #include "../FileUtils.h"
 #include "../ZNCDebug.h"
@@ -79,7 +78,6 @@ namespace std {
 %include "../Csocket.h"
 %template(ZNCSocketManager) TSocketManager<CZNCSock>;
 %include "../Socket.h"
-%include "../DCCBounce.h"
 %include "../DCCSock.h"
 %include "../FileUtils.h"
 %include "../Modules.h"

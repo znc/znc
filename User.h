@@ -26,7 +26,6 @@ class CFile;
 class CIRCSock;
 class CUserTimer;
 class CServer;
-class CDCCBounce;
 class CDCCSock;
 
 class CUser {
@@ -117,8 +116,6 @@ public:
 	void IRCDisconnected();
 	void CheckIRCConnect();
 
-	void AddDCCBounce(CDCCBounce* p) { m_sDCCBounces.insert(p); }
-	void DelDCCBounce(CDCCBounce* p) { m_sDCCBounces.erase(p); }
 	void AddDCCSock(CDCCSock* p) { m_sDCCSocks.insert(p); }
 	void DelDCCSock(CDCCSock* p) { m_sDCCSocks.erase(p); }
 
@@ -146,7 +143,6 @@ public:
 	void SetBindHost(const CString& s);
 	void SetDCCBindHost(const CString& s);
 	void SetPass(const CString& s, eHashType eHash, const CString& sSalt = "");
-	void SetBounceDCCs(bool b);
 	void SetMultiClients(bool b);
 	void SetUseClientIP(bool b);
 	void SetDenyLoadMod(bool b);
@@ -205,7 +201,6 @@ public:
 	bool DenyLoadMod() const;
 	bool IsAdmin() const;
 	bool DenySetBindHost() const;
-	bool BounceDCCs() const;
 	bool MultiClients() const;
 	const CString& GetStatusPrefix() const;
 	const CString& GetDefaultChanModes() const;
@@ -263,7 +258,6 @@ protected:
 	CBuffer               m_MotdBuffer;
 	CBuffer               m_QueryBuffer;
 	bool                  m_bMultiClients;
-	bool                  m_bBounceDCCs;
 	bool                  m_bUseClientIP;
 	bool                  m_bDenyLoadMod;
 	bool                  m_bAdmin;
@@ -280,7 +274,6 @@ protected:
 	vector<CServer*>      m_vServers;
 	vector<CChan*>        m_vChans;
 	vector<CClient*>      m_vClients;
-	set<CDCCBounce*>      m_sDCCBounces;
 	set<CDCCSock*>        m_sDCCSocks;
 	set<CString>          m_ssAllowedHosts;
 	unsigned int          m_uServerIdx; ///< Index in m_vServers of our current server + 1
