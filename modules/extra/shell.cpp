@@ -123,15 +123,6 @@ public:
 		}
 	}
 
-	virtual EModRet OnStatusCommand(CString& sCommand) {
-		if (sCommand.Equals("SHELL")) {
-			PutShell("-- ZNC Shell Service --");
-			return HALT;
-		}
-
-		return CONTINUE;
-	}
-
 	virtual EModRet OnDCCUserSend(const CNick& RemoteNick, unsigned long uLongIP, unsigned short uPort, const CString& sFile, unsigned long uFileSize) {
 		if (RemoteNick.GetNick().Equals(GetModNick())) {
 			CString sLocalFile = CDir::ChangeDir(m_sPath, sFile, CZNC::Get().GetHomePath());
