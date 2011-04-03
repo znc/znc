@@ -117,7 +117,7 @@ int main(int argc, char** argv) {
 	CString sDataDir = "";
 
 	seedPRNG();
-	CUtils::SetStdoutIsTTY(isatty(1));
+	CDebug::SetStdoutIsTTY(isatty(1));
 
 	int iArg, iOptIndex = -1;
 	bool bMakeConf = false;
@@ -142,7 +142,7 @@ int main(int argc, char** argv) {
 			cout << CZNC::GetTag() << endl;
 			return 0;
 		case 'n':
-			CUtils::SetStdoutIsTTY(false);
+			CDebug::SetStdoutIsTTY(false);
 			break;
 		case 'r':
 			bAllowRoot = true;
@@ -166,7 +166,7 @@ int main(int argc, char** argv) {
 			break;
 		case 'D':
 			bForeground = true;
-			CUtils::SetDebug(true);
+			CDebug::SetDebug(true);
 			break;
 		case '?':
 		default:
@@ -285,7 +285,7 @@ int main(int argc, char** argv) {
 		close(1); open("/dev/null", O_WRONLY);
 		close(2); open("/dev/null", O_WRONLY);
 
-		CUtils::SetStdoutIsTTY(false);
+		CDebug::SetStdoutIsTTY(false);
 
 		// We are the child. There is no way we can be a process group
 		// leader, thus setsid() must succeed.
@@ -334,11 +334,11 @@ int main(int argc, char** argv) {
 					NULL
 				};
 				int pos = 3;
-				if (CUtils::Debug())
+				if (CDebug::Debug())
 					args[pos++] = strdup("--debug");
 				else if (bForeground)
 					args[pos++] = strdup("--foreground");
-				if (!CUtils::StdoutIsTTY())
+				if (!CDebug::StdoutIsTTY())
 					args[pos++] = strdup("--no-color");
 				if (bAllowRoot)
 					args[pos++] = strdup("--allow-root");

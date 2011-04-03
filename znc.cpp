@@ -677,7 +677,7 @@ bool CZNC::WriteNewConfig(const CString& sConfigFile) {
 			const CModInfo& Info = *it;
 			CString sName = Info.GetName();
 
-			if (CUtils::StdoutIsTTY()) {
+			if (CDebug::StdoutIsTTY()) {
 				if (CUtils::GetBoolInput("Load global module <\033[1m" + sName + "\033[22m>?", false))
 					vsLines.push_back("LoadModule = " + sName);
 			} else {
@@ -783,7 +783,7 @@ bool CZNC::WriteNewConfig(const CString& sConfigFile) {
 				const CModInfo& Info = *it;
 				CString sName = Info.GetName();
 
-				if (CUtils::StdoutIsTTY()) {
+				if (CDebug::StdoutIsTTY()) {
 					if (CUtils::GetBoolInput("Load module <\033[1m" + sName + "\033[22m>?", false))
 						vsLines.push_back("\tLoadModule = " + sName);
 				} else {

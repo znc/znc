@@ -13,7 +13,8 @@
 
 // This header file is just for Csocket
 
-#include "Utils.h"
+#include "ZNCDebug.h"
+#include "ZNCString.h"
 
 #define CS_STRING CString
 #define _NO_CSOCKET_NS

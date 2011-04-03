@@ -19,30 +19,10 @@
 #include <sys/time.h>
 #include <unistd.h>
 #include <vector>
-#include <iostream>
 
 using std::map;
 using std::vector;
 using std::pair;
-using std::cout;
-using std::endl;
-
-/** Output a debug info if debugging is enabled.
- *  If ZNC was compiled with <code>--enable-debug</code> or was started with
- *  <code>--debug</code>, the given argument will be sent to stdout.
- *
- *  You can use all the features of C++ streams:
- *  @code
- *  DEBUG("I had " << errors << " errors");
- *  @endcode
- *
- *  @param f The expression you want to display.
- */
-#define DEBUG(f) do { \
-	if (CUtils::Debug()) { \
-		cout << f << endl; \
-	} \
-} while (0)
 
 static inline void SetFdCloseOnExec(int fd)
 {
@@ -62,10 +42,6 @@ public:
 
 	static CString GetIP(unsigned long addr);
 	static unsigned long GetLongIP(const CString& sIP);
-	static void SetStdoutIsTTY(bool b) { stdoutIsTTY = b; }
-	static bool StdoutIsTTY() { return stdoutIsTTY; }
-	static void SetDebug(bool b) { debug = b; }
-	static bool Debug() { return debug; }
 
 	static void PrintError(const CString& sMessage);
 	static void PrintMessage(const CString& sMessage, bool bStrong = false);
@@ -99,8 +75,6 @@ public:
 
 private:
 protected:
-	static bool stdoutIsTTY;
-	static bool debug;
 };
 
 class CException {
