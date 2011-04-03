@@ -160,7 +160,24 @@ if test "x$GXX" = "xyes"; then
 fi
 
 if test "$POLL" = "yes"; then
-	AC_DEFINE([CSOCK_USE_POLL], [1], [Use poll() instead of select()])
+	# poll() is broken on Mac OS, it fails with POLLNVAL for pipe()s.
+	if test -n "$ISDARWIN"
+	then
+		# Did they give us --enable-poll?
+		if test -n "$enable_poll"
+		then
+			# Yes, they asked for this.
+			AC_MSG_WARN([poll() is known to be broken on Mac OS X. You have been warned.])
+		else
+			# No, our default value of "yes" got applied.
+			AC_MSG_WARN([poll() is known to be broken on Mac OS X. Using select() instead.])
+			AC_MSG_WARN([Use --enable-poll for forcing poll() to be used.])
+			POLL=no
+		fi
+	fi
+	if test "$POLL" = "yes"; then
+		AC_DEFINE([CSOCK_USE_POLL], [1], [Use poll() instead of select()])
+	fi
 fi
 
 AC_CHECK_LIB( gnugetopt, getopt_long,)
