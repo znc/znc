@@ -724,15 +724,15 @@ public:
 				}
 			}
 
-			vector<CFile> vDirs;
+			vector<CString> vDirs;
 			WebSock.GetAvailSkins(vDirs);
 
 			for (unsigned int d = 0; d < vDirs.size(); d++) {
-				const CFile& SubDir = vDirs[d];
+				const CString& SubDir = vDirs[d];
 				CTemplate& l = Tmpl.AddRow("SkinLoop");
-				l["Name"] = SubDir.GetShortName();
+				l["Name"] = SubDir;
 
-				if (pUser && SubDir.GetShortName() == pUser->GetSkinName()) {
+				if (pUser && SubDir == pUser->GetSkinName()) {
 					l["Checked"] = "true";
 				}
 			}
@@ -1019,15 +1019,15 @@ public:
 #endif
 			}
 
-			vector<CFile> vDirs;
+			vector<CString> vDirs;
 			WebSock.GetAvailSkins(vDirs);
 
 			for (unsigned int d = 0; d < vDirs.size(); d++) {
-				const CFile& SubDir = vDirs[d];
+				const CString& SubDir = vDirs[d];
 				CTemplate& l = Tmpl.AddRow("SkinLoop");
-				l["Name"] = SubDir.GetShortName();
+				l["Name"] = SubDir;
 
-				if (SubDir.GetShortName() == CZNC::Get().GetSkinName()) {
+				if (SubDir == CZNC::Get().GetSkinName()) {
 					l["Checked"] = "true";
 				}
 			}

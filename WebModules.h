@@ -10,11 +10,11 @@
 #define _WEBMODULES_H
 
 #include "zncconfig.h"
-#include "Client.h"
 #include "Template.h"
 #include "HTTPSock.h"
-#include "FileUtils.h"
 
+class CAuthBase;
+class CUser;
 class CWebSock;
 class CModule;
 class CWebSubPage;
@@ -91,20 +91,6 @@ private:
 	VPair           m_vParams;
 };
 
-class CWebAuth : public CAuthBase {
-public:
-	CWebAuth(CWebSock* pWebSock, const CString& sUsername, const CString& sPassword);
-	virtual ~CWebAuth() {}
-
-	void SetWebSock(CWebSock* pWebSock) { m_pWebSock = pWebSock; }
-	void AcceptedLogin(CUser& User);
-	void RefusedLogin(const CString& sReason);
-	void Invalidate();
-private:
-protected:
-	CWebSock*   m_pWebSock;
-};
-
 class CWebSessionMap : public TCacheMap<CString, CSmartPtr<CWebSession> > {
 	public:
 		CWebSessionMap(unsigned int uTTL = 5000) : TCacheMap<CString, CSmartPtr<CWebSession> >(uTTL) {}
@@ -141,7 +127,7 @@ public:
 	virtual Csock* GetSockObj(const CString& sHost, unsigned short uPort);
 	static CString GetSkinPath(const CString& sSkinName);
 	CModule* GetModule() const { return (CModule*) m_pModule; }
-	size_t GetAvailSkins(vector<CFile>& vRet) const;
+	void GetAvailSkins(VCString& vRet) const;
 	CString GetSkinName();
 
 	CString GetRequestCookie(const CString& sKey);

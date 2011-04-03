@@ -34,6 +34,20 @@ typedef std::multimap<CString, CWebSession*>::iterator mIPSessionsIterator;
 
 static CSessionManager Sessions;
 
+class CWebAuth : public CAuthBase {
+public:
+	CWebAuth(CWebSock* pWebSock, const CString& sUsername, const CString& sPassword);
+	virtual ~CWebAuth() {}
+
+	void SetWebSock(CWebSock* pWebSock) { m_pWebSock = pWebSock; }
+	void AcceptedLogin(CUser& User);
+	void RefusedLogin(const CString& sReason);
+	void Invalidate();
+private:
+protected:
+	CWebSock*   m_pWebSock;
+};
+
 void CWebSock::FinishUserSessions(const CUser& User) {
 	Sessions.m_mspSessions.FinishUserSessions(User);
 }
@@ -198,7 +212,7 @@ void CWebSock::ParsePath() {
 	DEBUG("Path [" + m_sPath + "], Module [" + m_sModName + "], Page [" + m_sPage + "]");
 }
 
-size_t CWebSock::GetAvailSkins(vector<CFile>& vRet) const {
+void CWebSock::GetAvailSkins(VCString& vRet) const {
 	vRet.clear();
 
 	CString sRoot(GetSkinPath("_default_"));
@@ -218,7 +232,8 @@ size_t CWebSock::GetAvailSkins(vector<CFile>& vRet) const {
 			const CFile& SubDir = *Dir[d];
 
 			if (SubDir.IsDir() && SubDir.GetShortName() == "_default_") {
-				vRet.push_back(SubDir);
+				vRet.push_back(SubDir.GetShortName());
+				break;
 			}
 		}
 
@@ -226,12 +241,10 @@ size_t CWebSock::GetAvailSkins(vector<CFile>& vRet) const {
 			const CFile& SubDir = *Dir[e];
 
 			if (SubDir.IsDir() && SubDir.GetShortName() != "_default_" && SubDir.GetShortName() != ".svn") {
-				vRet.push_back(SubDir);
+				vRet.push_back(SubDir.GetShortName());
 			}
 		}
 	}
-
-	return vRet.size();
 }
 
 VCString CWebSock::GetDirs(CModule* pModule, bool bIsTemplate) {
