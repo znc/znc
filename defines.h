@@ -13,7 +13,6 @@
 
 // This header file is just for Csocket
 
-#include "main.h"
 #include "Utils.h"
 
 #define CS_STRING CString
