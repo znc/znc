@@ -384,6 +384,27 @@ CString CZNC::GetModPath() const {
 	return sModPath;
 }
 
+const CString& CZNC::GetCurPath() const {
+	if (!CFile::Exists(m_sCurPath)) {
+		CDir::MakeDir(m_sCurPath);
+	}
+	return m_sCurPath;
+}
+
+const CString& CZNC::GetHomePath() const {
+	return CFile::GetHomePath();
+}
+
+const CString& CZNC::GetZNCPath() const {
+	if (!CFile::Exists(m_sZNCPath)) {
+		CDir::MakeDir(m_sZNCPath);
+	}
+	return m_sZNCPath;
+}
+
+CString CZNC::GetPemLocation() const {
+	return CDir::ChangeDir("", m_sSSLCertFile);
+}
 
 CString CZNC::ExpandConfigPath(const CString& sConfigFile, bool bAllowMkDir) {
 	CString sRetPath;

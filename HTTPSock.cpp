@@ -6,8 +6,9 @@
  * by the Free Software Foundation.
  */
 
-#include "Modules.h"
 #include "HTTPSock.h"
+#include "FileUtils.h"
+#include "Modules.h"
 #include "znc.h"
 
 #include <sstream>

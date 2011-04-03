@@ -145,6 +145,13 @@ CModule::~CModule() {
 void CModule::SetUser(CUser* pUser) { m_pUser = pUser; }
 void CModule::SetClient(CClient* pClient) { m_pClient = pClient; }
 
+const CString& CModule::GetSavePath() const {
+	if (!CFile::Exists(m_sSavePath)) {
+		CDir::MakeDir(m_sSavePath);
+	}
+	return m_sSavePath;
+}
+
 bool CModule::LoadRegistry() {
 	//CString sPrefix = (m_pUser) ? m_pUser->GetUserName() : ".global";
 	return (m_mssRegistry.ReadFromDisk(GetSavePath() + "/.registry") == MCString::MCS_SUCCESS);

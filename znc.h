@@ -11,7 +11,6 @@
 
 #include "zncconfig.h"
 #include "Client.h"
-#include "FileUtils.h"
 #include "Modules.h"
 #include "Socket.h"
 #include <map>
@@ -22,6 +21,7 @@ class CListener;
 class CUser;
 class CConnectUserTimer;
 class CConfig;
+class CFile;
 
 class CZNC {
 public:
@@ -95,13 +95,13 @@ public:
 	size_t FilterUncommonModules(set<CModInfo>& ssModules);
 	CString GetSkinName() const { return m_sSkinName; }
 	const CString& GetStatusPrefix() const { return m_sStatusPrefix; }
-	const CString& GetCurPath() const { if (!CFile::Exists(m_sCurPath)) { CDir::MakeDir(m_sCurPath); } return m_sCurPath; }
-	const CString& GetHomePath() const { return CFile::GetHomePath(); }
-	const CString& GetZNCPath() const { if (!CFile::Exists(m_sZNCPath)) { CDir::MakeDir(m_sZNCPath); } return m_sZNCPath; }
+	const CString& GetCurPath() const;
+	const CString& GetHomePath() const;
+	const CString& GetZNCPath() const;
 	CString GetConfPath(bool bAllowMkDir = true) const;
 	CString GetUserPath() const;
 	CString GetModPath() const;
-	CString GetPemLocation() const { return CDir::ChangeDir("", m_sSSLCertFile); }
+	CString GetPemLocation() const;
 	const CString& GetConfigFile() const { return m_sConfigFile; }
 	bool WritePemFile();
 	const VCString& GetBindHosts() const { return m_vsBindHosts; }

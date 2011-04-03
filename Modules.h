@@ -11,7 +11,6 @@
 
 #include "zncconfig.h"
 #include "WebModules.h"
-#include "FileUtils.h"
 #include "Utils.h"
 #include <set>
 #include <queue>
@@ -825,7 +824,7 @@ public:
 	void DelNV(MCString::iterator it) { m_mssRegistry.erase(it); }
 	bool ClearNV(bool bWriteToDisk = true);
 
-	const CString& GetSavePath() const { if (!CFile::Exists(m_sSavePath)) { CDir::MakeDir(m_sSavePath); } return m_sSavePath; }
+	const CString& GetSavePath() const;
 
 	// Setters
 	void SetGlobal(bool b) { m_bGlobal = b; }
