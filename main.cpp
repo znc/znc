@@ -7,6 +7,7 @@
  */
 
 #include "znc.h"
+#include "FileUtils.h"
 #include <sys/wait.h>
 
 #ifdef HAVE_GETOPT_LONG
