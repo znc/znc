@@ -1027,23 +1027,7 @@ bool CZNC::DoRehash(CString& sError)
 
 	MCString msModules;          // Modules are queued for later loading
 
-	const char *szListenerEntries[] = {
-		"listen", "listen6", "listen4",
-		"listener", "listener6", "listener4"
-	};
-	const size_t numListenerEntries = sizeof(szListenerEntries) / sizeof(szListenerEntries[0]);
 	VCString vsList;
-
-	for (size_t i = 0; i < numListenerEntries; i++) {
-		config.FindStringVector(szListenerEntries[i], vsList);
-		VCString::const_iterator it = vsList.begin();
-
-		for (; it != vsList.end(); ++it) {
-			if (!AddListener(szListenerEntries[i] + CString(" ") + *it, sError))
-				return false;
-		}
-	}
-
 	VCString::const_iterator vit;
 	config.FindStringVector("loadmodule", vsList);
 	for (vit = vsList.begin(); vit != vsList.end(); ++vit) {
@@ -1142,6 +1126,23 @@ bool CZNC::DoRehash(CString& sError)
 		m_uiAnonIPLimit = sVal.ToUInt();
 	if (config.FindStringEntry("maxbuffersize", sVal))
 		m_uiMaxBufferSize = sVal.ToUInt();
+
+	// This has to be after SSLCertFile is handled since it uses that value
+	const char *szListenerEntries[] = {
+		"listen", "listen6", "listen4",
+		"listener", "listener6", "listener4"
+	};
+	const size_t numListenerEntries = sizeof(szListenerEntries) / sizeof(szListenerEntries[0]);
+
+	for (size_t i = 0; i < numListenerEntries; i++) {
+		config.FindStringVector(szListenerEntries[i], vsList);
+		vit = vsList.begin();
+
+		for (; vit != vsList.end(); ++vit) {
+			if (!AddListener(szListenerEntries[i] + CString(" ") + *vit, sError))
+				return false;
+		}
+	}
 
 	CConfig::SubConfig subConf;
 	CConfig::SubConfig::const_iterator subIt;
