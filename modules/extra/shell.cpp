@@ -8,6 +8,7 @@
 
 #include "User.h"
 #include "znc.h"
+#include "ExecSock.h"
 
 // Forward Declaration
 class CShellMod;

@@ -11,6 +11,7 @@
 
 #include "zncconfig.h"
 #include "FileUtils.h"
+#include "Socket.h"
 
 // Forward Declarations
 class CUser;
