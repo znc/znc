@@ -9,6 +9,7 @@
 #include "znc.h"
 #include "FileUtils.h"
 #include <sys/wait.h>
+#include <signal.h>
 
 #ifdef HAVE_GETOPT_LONG
 #include <getopt.h>
