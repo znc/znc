@@ -26,6 +26,8 @@
 #include "../DCCBounce.h"
 #include "../DCCSock.h"
 #include "../FileUtils.h"
+#include "../ZNCDebug.h"
+#include "../ExecSock.h"
 #include "modpython/module.h"
 
 #include "modpython/retstring.h"
@@ -96,6 +98,8 @@ namespace std {
 %include "../WebModules.h"
 %include "../znc.h"
 %include "../Server.h"
+%include "../ZNCDebug.h"
+%include "../ExecSock.h"
 
 %include "modpython/module.h"
 
