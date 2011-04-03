@@ -7,6 +7,7 @@
  */
 
 #include "WebModules.h"
+#include "FileUtils.h"
 #include "User.h"
 #include "znc.h"
 #include <sstream>

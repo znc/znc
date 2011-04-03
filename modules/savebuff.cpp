@@ -16,6 +16,7 @@
 
 #include "Chan.h"
 #include "User.h"
+#include "FileUtils.h"
 #include <sys/stat.h>
 
 #define CRYPT_VERIFICATION_TOKEN "::__:SAVEBUFF:__::"

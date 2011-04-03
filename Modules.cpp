@@ -7,11 +7,12 @@
  */
 
 #include "Modules.h"
+#include "FileUtils.h"
+#include "Template.h"
 #include "User.h"
+#include "WebModules.h"
 #include "znc.h"
 #include <dlfcn.h>
-#include "WebModules.h"
-#include "Template.h"
 
 #ifndef RTLD_LOCAL
 # define RTLD_LOCAL 0

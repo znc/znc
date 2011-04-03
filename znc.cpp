@@ -8,6 +8,7 @@
 
 #include "znc.h"
 #include "Chan.h"
+#include "FileUtils.h"
 #include "IRCSock.h"
 #include "Server.h"
 #include "User.h"

@@ -10,7 +10,8 @@
 #define CONFIG_H
 
 #include "ZNCString.h"
-#include "FileUtils.h"
+
+class CFile;
 
 class CConfig {
 public:

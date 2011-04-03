@@ -10,11 +10,12 @@
 #include "Chan.h"
 #include "DCCBounce.h"
 #include "DCCSock.h"
+#include "FileUtils.h"
 #include "IRCSock.h"
+#include "Listener.h"
 #include "Server.h"
 #include "User.h"
 #include "znc.h"
-#include "Listener.h"
 
 void CClient::UserCommand(CString& sLine) {
 	if (!m_pUser) {

@@ -10,6 +10,7 @@
 #include "Chan.h"
 #include "Config.h"
 #include "DCCSock.h"
+#include "FileUtils.h"
 #include "IRCSock.h"
 #include "Server.h"
 #include "znc.h"
@@ -1514,4 +1515,6 @@ unsigned int CUser::GetBufferCount() const { return m_uBufferCount; }
 bool CUser::KeepBuffer() const { return m_bKeepBuffer; }
 //CString CUser::GetSkinName() const { return (!m_sSkinName.empty()) ? m_sSkinName : CZNC::Get().GetSkinName(); }
 CString CUser::GetSkinName() const { return m_sSkinName; }
+const CString& CUser::GetUserPath() const { if (!CFile::Exists(m_sUserPath)) { CDir::MakeDir(m_sUserPath); } return m_sUserPath; }
+const CString& CUser::GetDLPath() const { if (!CFile::Exists(m_sDLPath)) { CDir::MakeDir(m_sDLPath); } return m_sDLPath; }
 // !Getters

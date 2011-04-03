@@ -7,6 +7,7 @@
  */
 
 #include "DCCSock.h"
+#include "FileUtils.h"
 #include "User.h"
 #include "Utils.h"
 
@@ -236,3 +237,13 @@ CFile* CDCCSock::OpenFile(bool bWrite) {
 	return m_pFile;
 }
 
+bool CDCCSock::Seek(unsigned int uPos) {
+	if (m_pFile) {
+		if (m_pFile->Seek(uPos)) {
+			m_uBytesSoFar = uPos;
+			return true;
+		}
+	}
+
+	return false;
+}

@@ -6,6 +6,7 @@
  * by the Free Software Foundation.
  */
 
+#include "FileUtils.h"
 #include "User.h"
 #include "znc.h"
 #include "ExecSock.h"

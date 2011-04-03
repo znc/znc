@@ -7,6 +7,7 @@
  * by the Free Software Foundation.
  */
 
+#include "FileUtils.h"
 #include "User.h"
 #include "Chan.h"
 #include "Server.h"

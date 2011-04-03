@@ -7,6 +7,7 @@
  */
 
 #include "Chan.h"
+#include "FileUtils.h"
 #include "IRCSock.h"
 #include "User.h"
 #include "znc.h"

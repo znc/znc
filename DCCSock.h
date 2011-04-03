@@ -10,11 +10,11 @@
 #define _DCCSOCK_H
 
 #include "zncconfig.h"
-#include "FileUtils.h"
 #include "Socket.h"
 
 // Forward Declarations
 class CUser;
+class CFile;
 // !Forward Declarations
 
 class CDCCSock : public CZNCSock {
@@ -32,16 +32,7 @@ public:
 	void SendPacket();
 	virtual Csock* GetSockObj(const CString& sHost, unsigned short uPort);
 	CFile* OpenFile(bool bWrite = true);
-	bool Seek(unsigned int uPos) {
-		if (m_pFile) {
-			if (m_pFile->Seek(uPos)) {
-				m_uBytesSoFar = uPos;
-				return true;
-			}
-		}
-
-		return false;
-	}
+	bool Seek(unsigned int uPos);
 
 	// Setters
 	void SetRemoteIP(const CString& s) { m_sRemoteIP = s; }

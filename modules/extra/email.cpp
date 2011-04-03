@@ -9,6 +9,7 @@
  * Author: imaginos <imaginos@imaginos.net>
  */
 
+#include "FileUtils.h"
 #include "MD5.h"
 #include "User.h"
 #include "znc.h"

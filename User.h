@@ -11,7 +11,6 @@
 
 #include "zncconfig.h"
 #include "Buffer.h"
-#include "FileUtils.h"
 #include "Modules.h"
 #include "Nick.h"
 #include <set>
@@ -23,6 +22,7 @@ using std::vector;
 class CChan;
 class CClient;
 class CConfig;
+class CFile;
 class CIRCSock;
 class CUserTimer;
 class CServer;
@@ -198,8 +198,8 @@ public:
 	const CString& GetChanPrefixes() const { return m_sChanPrefixes; }
 	bool IsChan(const CString& sChan) const;
 
-	const CString& GetUserPath() const { if (!CFile::Exists(m_sUserPath)) { CDir::MakeDir(m_sUserPath); } return m_sUserPath; }
-	const CString& GetDLPath() const { if (!CFile::Exists(m_sDLPath)) { CDir::MakeDir(m_sDLPath); } return m_sDLPath; }
+	const CString& GetUserPath() const;
+	const CString& GetDLPath() const;
 
 	bool UseClientIP() const;
 	bool DenyLoadMod() const;

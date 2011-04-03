@@ -7,6 +7,7 @@
  */
 
 #include "Config.h"
+#include "FileUtils.h"
 #include <stack>
 #include <sstream>
 

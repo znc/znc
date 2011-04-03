@@ -8,12 +8,13 @@
 
 #include <Python.h>
 
-#include "Modules.h"
-#include "User.h"
 #include "Chan.h"
-#include "Nick.h"
-#include "znc.h"
+#include "FileUtils.h"
 #include "IRCSock.h"
+#include "Modules.h"
+#include "Nick.h"
+#include "User.h"
+#include "znc.h"
 
 #include "modpython/swigpyrun.h"
 #include "modpython/module.h"

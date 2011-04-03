@@ -9,6 +9,7 @@
 #include "Client.h"
 #include "Chan.h"
 #include "DCCBounce.h"
+#include "FileUtils.h"
 #include "IRCSock.h"
 #include "User.h"
 #include "znc.h"

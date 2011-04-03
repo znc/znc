@@ -10,7 +10,6 @@
 #define _CHAN_H
 
 #include "zncconfig.h"
-#include "FileUtils.h"
 #include "Nick.h"
 #include "ZNCString.h"
 #include <map>
@@ -25,6 +24,7 @@ using std::set;
 class CUser;
 class CClient;
 class CConfig;
+class CFile;
 // !Forward Declarations
 
 class CChan {

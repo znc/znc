@@ -6,12 +6,13 @@
  * by the Free Software Foundation.
  */
 
-#include "Modules.h"
-#include "User.h"
 #include "Chan.h"
-#include "Nick.h"
-#include "znc.h"
+#include "FileUtils.h"
 #include "IRCSock.h"
+#include "Modules.h"
+#include "Nick.h"
+#include "User.h"
+#include "znc.h"
 
 #include "modperl/module.h"
 #include "modperl/swigperlrun.h"
