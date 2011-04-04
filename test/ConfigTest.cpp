@@ -6,6 +6,8 @@
  * by the Free Software Foundation.
  */
 
+#include "ZNCDebug.h"
+#include "FileUtils.h"
 #include "Config.h"
 #include <cstdlib>
 

@@ -11,7 +11,7 @@ LIBS     := @LIBS@
 
 TARGETS  := ConfigTest
 OBJS     := $(addsuffix .o, $(TARGETS))
-ZNC_OBJS := Config.o FileUtils.o Utils.o ZNCString.o MD5.o SHA256.o
+ZNC_OBJS := Config.o ZNCDebug.o FileUtils.o Utils.o ZNCString.o MD5.o SHA256.o
 ZNC_OBJS := $(addprefix ../, $(ZNC_OBJS))
 
 ifneq "$(V)" ""

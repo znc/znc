@@ -8,6 +8,7 @@
 
 #define REQUIRESSL
 
+#include "FileUtils.h"
 #include "User.h"
 #include "Modules.h"
 #include "IRCSock.h"
