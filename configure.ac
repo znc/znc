@@ -66,7 +66,7 @@ case "${host_os}" in
 		appendMod -L/usr/local/lib
 	;;
 	solaris*)
-		appendLib -lsocket -lnsl
+		appendLib -lsocket -lnsl -lresolv
 		ISSUN=1
 	;;
 	cygwin)
@@ -181,7 +181,7 @@ if test "$POLL" = "yes"; then
 fi
 
 AC_CHECK_LIB( gnugetopt, getopt_long,)
-AC_CHECK_FUNCS([lstat getopt_long])
+AC_CHECK_FUNCS([lstat getopt_long getphassphrase])
 PKG_PROG_PKG_CONFIG()
 
 # ----- Check for dlopen

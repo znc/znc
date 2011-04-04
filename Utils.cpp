@@ -177,7 +177,11 @@ CString CUtils::SaltedSHA256Hash(const CString& sPass, const CString& sSalt) {
 
 CString CUtils::GetPass(const CString& sPrompt) {
 	PrintPrompt(sPrompt);
+#ifdef HAVE_GETPASSPHRASE
+	return getpassphrase("");
+#else
 	return getpass("");
+#endif
 }
 
 bool CUtils::GetBoolInput(const CString& sPrompt, bool bDefault) {
