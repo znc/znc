@@ -533,7 +533,7 @@ void CWebSock::OnPageRequest(const CString& sURI) {
 }
 
 CWebSock::EPageReqResult CWebSock::OnPageRequestInternal(const CString& sURI, CString& sPageRet) {
-	if (GetSession()->GetIP() != GetRemoteIP()) {
+	if (CZNC::Get().GetProtectWebSessions() && GetSession()->GetIP() != GetRemoteIP()) {
 		PrintErrorPage(403, "Access denied", "This session does not belong to your IP.");
 		return PAGE_DONE;
 	}

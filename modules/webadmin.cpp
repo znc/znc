@@ -971,6 +971,7 @@ public:
 			Tmpl["ConnectDelay"] = CString(CZNC::Get().GetConnectDelay());
 			Tmpl["ServerThrottle"] = CString(CZNC::Get().GetServerThrottle());
 			Tmpl["AnonIPLimit"] = CString(CZNC::Get().GetAnonIPLimit());
+			Tmpl["ProtectWebSessions"] = CString(CZNC::Get().GetProtectWebSessions());
 
 			const VCString& vsBindHosts = CZNC::Get().GetBindHosts();
 			for (unsigned int a = 0; a < vsBindHosts.size(); a++) {
@@ -1061,6 +1062,7 @@ public:
 		sArg = WebSock.GetParam("connectdelay"); CZNC::Get().SetConnectDelay(sArg.ToUInt());
 		sArg = WebSock.GetParam("serverthrottle"); CZNC::Get().SetServerThrottle(sArg.ToUInt());
 		sArg = WebSock.GetParam("anoniplimit"); CZNC::Get().SetAnonIPLimit(sArg.ToUInt());
+		sArg = WebSock.GetParam("protectwebsessions"); CZNC::Get().SetProtectWebSessions(sArg.ToBool());
 
 		VCString vsArgs;
 		WebSock.GetRawParam("motd").Split("\n", vsArgs);

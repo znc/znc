@@ -84,6 +84,7 @@ public:
 	void SetMaxBufferSize(unsigned int i) { m_uiMaxBufferSize = i; }
 	void SetAnonIPLimit(unsigned int i) { m_uiAnonIPLimit = i; }
 	void SetServerThrottle(unsigned int i) { m_sConnectThrottle.SetTTL(i*1000); }
+	void SetProtectWebSessions(bool b) { m_bProtectWebSessions = b; }
 	void SetConnectDelay(unsigned int i);
 	// !Setters
 
@@ -111,6 +112,7 @@ public:
 	unsigned int GetAnonIPLimit() const { return m_uiAnonIPLimit; }
 	unsigned int GetServerThrottle() const { return m_sConnectThrottle.GetTTL() / 1000; }
 	unsigned int GetConnectDelay() const { return m_uiConnectDelay; }
+	bool GetProtectWebSessions() const { return m_bProtectWebSessions; }
 	// !Getters
 
 	// Static allocator
@@ -181,6 +183,7 @@ protected:
 	unsigned long long     m_uBytesWritten;
 	CConnectUserTimer     *m_pConnectUserTimer;
 	TCacheMap<CString>     m_sConnectThrottle;
+	bool                   m_bProtectWebSessions;
 };
 
 #endif // !_ZNC_H

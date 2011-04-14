@@ -38,6 +38,7 @@ CZNC::CZNC() {
 	m_TimeStarted = time(NULL);
 	m_sConnectThrottle.SetTTL(30000);
 	m_pLockFile = NULL;
+	m_bProtectWebSessions = true;
 }
 
 CZNC::~CZNC() {
@@ -452,6 +453,7 @@ bool CZNC::WriteConfig() {
 	pFile->Write("AnonIPLimit  = " + CString(m_uiAnonIPLimit) + "\n");
 	pFile->Write("MaxBufferSize= " + CString(m_uiMaxBufferSize) + "\n");
 	pFile->Write("SSLCertFile  = " + CString(m_sSSLCertFile) + "\n");
+	pFile->Write("ProtectWebSessions = " + CString(m_bProtectWebSessions) + "\n");
 
 	for (size_t l = 0; l < m_vpListeners.size(); l++) {
 		CListener* pListener = m_vpListeners[l];
@@ -1148,6 +1150,8 @@ bool CZNC::DoRehash(CString& sError)
 		m_uiAnonIPLimit = sVal.ToUInt();
 	if (config.FindStringEntry("maxbuffersize", sVal))
 		m_uiMaxBufferSize = sVal.ToUInt();
+	if (config.FindStringEntry("protectwebsessions", sVal))
+  		m_bProtectWebSessions = sVal.ToBool();
 
 	// This has to be after SSLCertFile is handled since it uses that value
 	const char *szListenerEntries[] = {
