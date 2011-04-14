@@ -90,9 +90,10 @@
 				</div>
 				<div style="clear: both;"></div>
 				
-				<div class="subsection half">
+				<div class="subsection">
 					<div class="inputlabel">Protect Web Sessions:</div>
-					<div><input type="text" name="protectwebsessions" value="<? VAR ProtectWebSessions ?>" /></div>
+					<div class="checkbox"><input type="checkbox" name="protectwebsessions" id="protectwebsessions_checkbox"<? IF ProtectWebSessions ?> checked="checked"<? ENDIF ?> />
+						<label for="protectwebsessions_checkbox">Disallow IP changing during each web session</label></div>
 				</div>
 				<div style="clear: both;"></div>
 
