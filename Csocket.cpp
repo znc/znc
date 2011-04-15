@@ -1109,15 +1109,6 @@ bool Csock::SSLClientSetup()
 
 	switch( m_iMethod )
 	{
-		case SSL2:
-			m_ssl_ctx = SSL_CTX_new ( SSLv2_client_method() );
-			if ( !m_ssl_ctx )
-			{
-				CS_DEBUG( "WARNING: MakeConnection .... SSLv2_client_method failed!" );
-				return( false );
-			}
-			break;
-
 		case SSL3:
 			m_ssl_ctx = SSL_CTX_new ( SSLv3_client_method() );
 			if ( !m_ssl_ctx )
@@ -1134,6 +1125,17 @@ bool Csock::SSLClientSetup()
 				return( false );
 			}
 			break;
+		case SSL2:
+#ifndef OPENSSL_NO_SSL2
+			m_ssl_ctx = SSL_CTX_new ( SSLv2_client_method() );
+			if ( !m_ssl_ctx )
+			{
+				CS_DEBUG( "WARNING: MakeConnection .... SSLv2_client_method failed!" );
+				return( false );
+			}
+			break;
+#endif
+			/* Fall through if SSL2 is disabled */
 		case SSL23:
 		default:
 			m_ssl_ctx = SSL_CTX_new ( SSLv23_client_method() );
@@ -1204,15 +1206,6 @@ bool Csock::SSLServerSetup()
 
 	switch( m_iMethod )
 	{
-		case SSL2:
-			m_ssl_ctx = SSL_CTX_new ( SSLv2_server_method() );
-			if ( !m_ssl_ctx )
-			{
-				CS_DEBUG( "WARNING: MakeConnection .... SSLv2_server_method failed!" );
-				return( false );
-			}
-			break;
-
 		case SSL3:
 			m_ssl_ctx = SSL_CTX_new ( SSLv3_server_method() );
 			if ( !m_ssl_ctx )
@@ -1230,7 +1223,17 @@ bool Csock::SSLServerSetup()
 				return( false );
 			}
 			break;
-
+#ifndef OPENSSL_NO_SSL2
+		case SSL2:
+			m_ssl_ctx = SSL_CTX_new ( SSLv2_server_method() );
+			if ( !m_ssl_ctx )
+			{
+				CS_DEBUG( "WARNING: MakeConnection .... SSLv2_server_method failed!" );
+				return( false );
+			}
+			break;
+#endif
+			/* Fall through if SSL2 is disabled */
 		case SSL23:
 		default:
 			m_ssl_ctx = SSL_CTX_new ( SSLv23_server_method() );
