@@ -308,6 +308,13 @@ CString CWebSock::FindTmpl(CModule* pModule, const CString& sName) {
 	return sName;
 }
 
+CString CWebSock::GetEffectiveIP() {
+	if (GetRemoteIP().Equals("127.0.0.1") && GetLocalIP().Equals("127.0.0.1") && !GetRemoteXIP().empty()) {
+		return GetRemoteXIP();
+	}	
+	return GetRemoteIP();
+}	
+
 void CWebSock::SetPaths(CModule* pModule, bool bIsTemplate) {
 	m_Template.ClearPaths();
 
@@ -321,7 +328,7 @@ void CWebSock::SetPaths(CModule* pModule, bool bIsTemplate) {
 
 void CWebSock::SetVars() {
 	m_Template["SessionUser"] = GetUser();
-	m_Template["SessionIP"] = GetRemoteIP();
+	m_Template["SessionIP"] = GetEffectiveIP();
 	m_Template["Tag"] = CZNC::GetTag(GetSession()->GetUser() != NULL);
 	m_Template["SkinName"] = GetSkinName();
 	m_Template["_CSRF_Check"] = GetCSRFCheck();
@@ -533,7 +540,7 @@ void CWebSock::OnPageRequest(const CString& sURI) {
 }
 
 CWebSock::EPageReqResult CWebSock::OnPageRequestInternal(const CString& sURI, CString& sPageRet) {
-	if (CZNC::Get().GetProtectWebSessions() && GetSession()->GetIP() != GetRemoteIP()) {
+	if (CZNC::Get().GetProtectWebSessions() && GetSession()->GetIP() != GetEffectiveIP()) {
 		PrintErrorPage(403, "Access denied", "This session does not belong to your IP.");
 		return PAGE_DONE;
 	}
@@ -722,15 +729,15 @@ CSmartPtr<CWebSession> CWebSock::GetSession() {
 		return *pSession;
 	}
 
-	if (Sessions.m_mIPSessions.count(GetRemoteIP()) > m_uiMaxSessions) {
-		mIPSessionsIterator it = Sessions.m_mIPSessions.find(GetRemoteIP());
+	if (Sessions.m_mIPSessions.count(GetEffectiveIP()) > m_uiMaxSessions) {
+		mIPSessionsIterator it = Sessions.m_mIPSessions.find(GetEffectiveIP());
 		Sessions.m_mIPSessions.erase(it);
 	}
 
 	CString sSessionID;
 	do {
 		sSessionID = CString::RandomString(32);
-		sSessionID += ":" + GetRemoteIP() + ":" + CString(GetRemotePort());
+		sSessionID += ":" + GetEffectiveIP() + ":" + CString(GetRemotePort());
 		sSessionID += ":" + GetLocalIP()  + ":" + CString(GetLocalPort());
 		sSessionID += ":" + CString(time(NULL));
 		sSessionID = sSessionID.SHA256();
@@ -738,7 +745,7 @@ CSmartPtr<CWebSession> CWebSock::GetSession() {
 		DEBUG("Auto generated session: [" + sSessionID + "]");
 	} while (Sessions.m_mspSessions.HasItem(sSessionID));
 
-	CSmartPtr<CWebSession> spSession(new CWebSession(sSessionID, GetRemoteIP()));
+	CSmartPtr<CWebSession> spSession(new CWebSession(sSessionID, GetEffectiveIP()));
 	Sessions.m_mspSessions.AddItem(spSession->GetId(), spSession);
 
 	m_spSession = spSession;

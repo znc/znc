@@ -32,6 +32,7 @@ void CHTTPSock::Init() {
 	m_bDone = false;
 	m_bHTTP10Client = false;
 	m_uPostLen = 0;
+	m_sRemoteXIp = "";
 	EnableReadLine();
 	SetMaxBufferThreshold(10240);
 }
@@ -110,6 +111,8 @@ void CHTTPSock::ReadLine(const CString& sData) {
 		m_sUser = sUnhashed.Token(0, false, ":");
 		m_sPass = sUnhashed.Token(1, true, ":");
 		m_bLoggedIn = OnLogin(m_sUser, m_sPass);
+	} else if (sName.Equals("X-Forwarded-For:")) {
+		m_sRemoteXIp = sLine.Token(1);	
 	} else if (sName.Equals("Content-Length:")) {
 		m_uPostLen = sLine.Token(1).ToULong();
 		if (m_uPostLen > MAX_POST_SIZE)
@@ -130,6 +133,7 @@ void CHTTPSock::ReadLine(const CString& sData) {
 		DisableReadLine();
 	}
 }
+
 
 CString CHTTPSock::GetDate(time_t stamp) {
 	struct tm tm;
@@ -308,6 +312,10 @@ const CString& CHTTPSock::GetUser() const {
 
 const CString& CHTTPSock::GetPass() const {
 	return m_sPass;
+}
+
+const CString& CHTTPSock::GetRemoteXIP() const {
+	return m_sRemoteXIp;
 }
 
 const CString& CHTTPSock::GetContentType() const {

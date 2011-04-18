@@ -68,6 +68,7 @@ public:
 	const CString& GetDocRoot() const;
 	const CString& GetUser() const;
 	const CString& GetPass() const;
+	const CString& GetRemoteXIP() const;
 	const CString& GetParamString() const;
 	const CString& GetContentType() const;
 	bool IsPost() const;
@@ -110,6 +111,7 @@ protected:
 	CString                  m_sIfNoneMatch;
 	MCString                 m_msRequestCookies;
 	MCString                 m_msResponseCookies;
+	CString                  m_sRemoteXIp;
 };
 
 #endif // !_HTTPSOCK_H
