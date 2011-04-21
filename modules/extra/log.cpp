@@ -128,7 +128,10 @@ bool CLogMod::OnLoad(const CString& sArgs, CString& sMessage)
 	// Add default filename to path if it's a folder
 	if (m_sLogPath.Right(1) == "/" || m_sLogPath.find("$WINDOW")==string::npos)
 	{
-		m_sLogPath += "/$WINDOW_%Y%m%d.log";
+		if (!m_sLogPath.empty()) {
+			m_sLogPath += "/";
+		}
+		m_sLogPath += "$WINDOW_%Y%m%d.log";
 	}
 
 	// Check if it's allowed to write in this path in general
