@@ -40,9 +40,7 @@ static const struct option g_LongOpts[] = {
 	{ "allow-root",  no_argument,       0, 'r' },
 	{ "makeconf",    no_argument,       0, 'c' },
 	{ "makepass",    no_argument,       0, 's' },
-#ifdef HAVE_LIBSSL
 	{ "makepem",     no_argument,       0, 'p' },
-#endif /* HAVE_LIBSSL */
 	{ "datadir",     required_argument, 0, 'd' },
 	{ 0, 0, 0, 0 }
 };
@@ -131,11 +129,9 @@ int main(int argc, char** argv) {
 #endif
 #ifdef HAVE_LIBSSL
 	bool bMakePem = false;
+#endif
 
 	while ((iArg = getopt_long(argc, argv, "hvnrcspd:Df", g_LongOpts, &iOptIndex)) != -1) {
-#else
-	while ((iArg = getopt_long(argc, argv, "hvnrcsd:Df", g_LongOpts, &iOptIndex)) != -1) {
-#endif /* HAVE_LIBSSL */
 		switch (iArg) {
 		case 'h':
 			GenerateHelp(argv[0]);
@@ -155,10 +151,13 @@ int main(int argc, char** argv) {
 		case 's':
 			bMakePass = true;
 			break;
-#ifdef HAVE_LIBSSL
 		case 'p':
+#ifdef HAVE_LIBSSL
 			bMakePem = true;
 			break;
+#else
+			CUtils::PrintError("ZNC is compiled without SSL support.");
+			return 1;
 #endif /* HAVE_LIBSSL */
 		case 'd':
 			sDataDir = CString(optarg);
