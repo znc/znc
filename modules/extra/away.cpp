@@ -463,5 +463,5 @@ void CAwayJob::RunJob()
 	}
 }
 
-MODULEDEFS(CAway, "Stores messages while away, also auto away")
+MODULEDEFS(CAway, "You don't need this module, ZNC works ok without it")
 
