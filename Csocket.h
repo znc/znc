@@ -918,6 +918,23 @@ public:
 	}
 	time_t GetLastCheckTimeout() { return( m_iLastCheckTimeoutTime ); }
 
+	//! Returns the time when CheckTimeout() should be called next
+	time_t GetNextCheckTimeout( time_t iNow = 0 ) 
+	{
+		if( iNow == 0 )
+			iNow = time( NULL );
+		time_t itimeout = m_itimeout;
+		time_t iDiff = iNow - m_iLastCheckTimeoutTime;
+		/* CheckTimeout() wants to be called after half the timeout */
+		if( m_iTcount == 0 )
+			itimeout /= 2;
+		if( iDiff > itimeout )
+			itimeout = 0;
+		else
+			itimeout -= iDiff;
+		return( iNow + itimeout );
+	}
+
 	//! return the data imediatly ready for read
 	virtual int GetPending();
 
@@ -2279,7 +2296,6 @@ private:
 	time_t GetDynamicSleepTime( time_t iNow, time_t iMaxResolution = 3600 ) const
 	{
 		time_t iNextRunTime = iNow + iMaxResolution;
-		time_t iMinTimeout = iMaxResolution;
 		typename std::vector<T *>::const_iterator it;
 		// This is safe, because we don't modify the vector.
 		typename std::vector<T *>::const_iterator it_end = this->end();
@@ -2289,19 +2305,13 @@ private:
 			T* pSock = *it;
 
 			if( pSock->GetConState() != T::CST_OK )
-				iMinTimeout = 0; // this is in a nebulous state, need to let it proceed like normal
+				iNextRunTime = iNow; // this is in a nebulous state, need to let it proceed like normal
 
 			time_t iTimeoutInSeconds = pSock->GetTimeout();
 			if( iTimeoutInSeconds > 0 )
 			{
-				time_t iLastTimeData = pSock->GetLastCheckTimeout();
-				time_t iDiff = iNow - iLastTimeData;
-				if( iDiff > iTimeoutInSeconds )
-					iTimeoutInSeconds = 0;
-				else
-					iTimeoutInSeconds -= iDiff;
-
-				iMinTimeout = std::min( iMinTimeout, iTimeoutInSeconds );
+				time_t iNextTimeout = pSock->GetNextCheckTimeout( iNow );
+				iNextRunTime = std::min( iNextRunTime, iNextTimeout );
 			}
 
 			const std::vector<CCron *> & vCrons = pSock->GetCrons();
@@ -2317,7 +2327,7 @@ private:
 
 		if( iNextRunTime < iNow )
 			return( 0 ); // smallest unit possible
-		return( std::min( iNextRunTime - iNow, iMinTimeout ) );
+		return( std::min( iNextRunTime - iNow, iMaxResolution ) );
 	}
 
 	//! internal use only
