@@ -181,7 +181,7 @@ public:
 
 	virtual void OnQuit(const CNick& Nick, const CString& sMessage, const vector<CChan*>& vChans) {
 		Process(Nick, "* Quits: " + Nick.GetNick() + " (" + Nick.GetIdent() + "@" + Nick.GetHost() + ") "
-			"(" + sMessage + ")", "");
+			"(" + sMessage + ")");
 	}
 
 	virtual void OnJoin(const CNick& Nick, CChan& Channel) {
@@ -195,7 +195,7 @@ public:
 	}
 
 	virtual void OnNick(const CNick& OldNick, const CString& sNewNick, const vector<CChan*>& vChans) {
-		Process(OldNick, "* " + OldNick.GetNick() + " is now known as " + sNewNick, "");
+		Process(OldNick, "* " + OldNick.GetNick() + " is now known as " + sNewNick);
 	}
 
 	virtual EModRet OnCTCPReply(CNick& Nick, CString& sMessage) {
@@ -282,7 +282,20 @@ public:
 	}
 
 private:
-	void Process(const CNick& Nick, const CString& sMessage, const CString& sSource) {
+	void Process(const CNick& Nick, const CString& sMessage) {
+		// "Broadcast" this to all channels
+		const vector<CChan*>& vChans = m_pUser->GetChans();
+		vector<CChan*>::const_iterator it;
+
+		for (it = vChans.begin(); it != vChans.end(); ++it) {
+			if (Process(Nick, sMessage, (*it)->GetName()))
+				break;
+		}
+	}
+
+	bool Process(const CNick& Nick, const CString& sMessage, const CString& sSource) {
+		bool bRes = false;
+
 		for (list<CWatchEntry>::iterator it = m_lsWatchers.begin(); it != m_lsWatchers.end(); ++it) {
 			CWatchEntry& WatchEntry = *it;
 
@@ -294,8 +307,11 @@ private:
 					m_Buffer.AddLine(":" + WatchEntry.GetTarget() + "!watch@znc.in PRIVMSG ",
 							" :" + m_pUser->AddTimestamp(sMessage));
 				}
+				bRes = true;
 			}
 		}
+
+		return bRes;
 	}
 
 	void SetDisabled(unsigned int uIdx, bool bDisabled) {
