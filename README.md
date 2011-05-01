@@ -1,7 +1,7 @@
-ZNC - An advanced IRC bouncer
-=============================
 
-Table of contents:
+#[![ZNC](http://wiki.znc.in/skins/common/images/wiki.png)](http://znc.in) - An advanced IRC bouncer
+
+## Table of contents
 
 - Minimal Requirements
 - Optional Requirements
@@ -14,16 +14,14 @@ Table of contents:
 - Writing own modules
 - Further infos
 
-Minimal Requirements
---------------------
+## Minimal Requirements
 
 Core:
 
  - GNU make (try gmake if make fails)
  - GCC 3 or later
 
-Optional Requirements
----------------------
+## Optional Requirements
 
 SSL support:
 
@@ -37,8 +35,7 @@ modperl:
 saslauth:
  - This module needs cyrus-sasl2
 
-Installing ZNC
---------------
+## Installing ZNC
 
 Installation is done with the `./configure ; make ; make install` commands.
 
@@ -50,8 +47,7 @@ can install it with
 	make install
 though you don't need to as ZNC supports in-place execution.
 
-Setting up znc.conf
--------------------
+## Setting up znc.conf
 
 For setting up a configuration file in `~/.znc` you can simply do
 	znc --makeconf
@@ -62,8 +58,7 @@ for in-place execution.
 If you are using SSL you should do
 	znc --makepem
 
-Special config options
-----------------------
+## Special config options
 
 When you create your ZNC configuration file via --makeconf, you are asked two
 questions which might not be easy to understand.
@@ -82,8 +77,7 @@ If this is disabled, you get the buffer playback only once and then it is
 deleted. If this is enabled, the buffer is not deleted. This may be useful if
 you regularly use more than one client to connect to ZNC.
 
-Using ZNC
----------
+## Using ZNC
 
 Once you have started ZNC you can connect with your favorite IRC-client to ZNC.
 You should use `username:password` as the server password (e.g. `/pass user:pass`).
@@ -92,8 +86,7 @@ Once you are connected you can do `/msg *status help` for some commands.
 Every module you have loaded (`/msg *status listmods`) should additionally provide
 	/msg *modulename help
 
-File Locations
---------------
+## File Locations
 
 In its data dir (`~/.znc` is default) ZNC saves most of its data. The only
 exception are modules and module data, which are saved in `<prefix>/lib/znc`
@@ -115,11 +108,10 @@ These directories are also in there:
   (e.g. webadmin saves the current skin name in here)
 - users   - This is per-user data and mainly contains just a moddata directory.
 
-ZNC's config file
------------------
+## ZNC's config file
 
 This file shouldn't be too hard too understand. An explanation of all the
-items can be found here: http://en.znc.in/wiki/index.php/Configuration
+items can be found on the [Configuration](http://wiki.znc.in/Configuration)-Page.
 
 To rehash the config file, you can send ZNC SIGHUP via
 	pkill -SIGHUP znc
@@ -131,23 +123,24 @@ If you changed some settings while znc is running, a simple
 will make ZNC rewrite its config file. Alternatively you can use this:
 	/msg *status saveconfig
 
-Writing own modules
--------------------
+## Writing own modules
 
 You can write your own modules in either C++ or perl.
 
 C++ modules are compiled by either saving them in the modules source dir and
 running make or with the znc-buildmod shell script.
 
-For additional info look in the wiki:
-http://en.znc.in/wiki/index.php/WritingModules
-http://en.znc.in/wiki/index.php/ModuleHooks
+For additional info look in the wiki:  
+ [Writing Modules](http://wiki.znc.in/WritingModules)  
+ [Module Hooks](http://wiki.znc.in/ModuleHooks)  
 
-Perl modules are loaded through the global module modperl.
-See http://en.znc.in/wiki/index.php/Modperl
+Perl modules are loaded through the global module modperl.  
+ Details: [ModPerl](http://wiki.znc.in/Modperl)
 
-Further infos
--------------
+Python modules are loaded throug the global module modpython.  
+ Details: [ModPython](http://wiki.znc.in/Modpython)
+
+## Further infos
 
 Please visit http://znc.in/ or #znc on EFNet if you still have questions.
 
