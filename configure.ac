@@ -1,5 +1,6 @@
 dnl Keep the version number in sync with main.h!
 AC_INIT([znc], [0.099])
+AC_CONFIG_MACRO_DIR([m4])
 AC_CONFIG_SRCDIR([znc.cpp])
 AC_LANG([C++])
 AC_CONFIG_HEADERS([zncconfig.h])
@@ -111,8 +112,8 @@ AC_ARG_ENABLE( [swig],
 			This value is ignored if perl and python are disabled. If you disable swig,
 			but still want to use these modules, please download the necessary files to modules/modperl and/or to modules/modpython.
 			Check http://en.znc.in/wiki/Modperl and http://en.znc.in/wiki/Modpython for details.]),
-	[SWIG="$enableval"],
-	[SWIG="auto"])
+	[USESWIG="$enableval"],
+	[USESWIG="auto"])
 AC_ARG_ENABLE( [sasl],
 	AS_HELP_STRING([--enable-sasl], [enable sasl]),
 	[if test "$enableval" = "yes" ; then SASL=1; fi],)
@@ -291,15 +292,16 @@ else
 fi
 
 if test "x$PERL" != xno -o "x$PYTHON" != xno; then
-	old_SWIG="$SWIG"
-	if test "x$SWIG" != "xno"; then
-		AC_PATH_PROG([SWIG_BINARY], [swig])
-		test -z "$SWIG_BINARY" && SWIG=no
+	old_USESWIG="$USESWIG"
+	if test "x$USESWIG" != "xno"; then
+		AC_PROG_SWIG([1.3.40])
+		test -z "$SWIG" && USESWIG=no
 	fi
-	if test "x$SWIG" = xno; then
-		SWIG_BINARY=""
-		if test "x$old_SWIG" = xno; then
-			SWIG="no, need manual download for perl/python bindings"
+	if test "x$USESWIG" = xno; then
+		SWIG=""
+		AC_MSG_WARN([$SWIG_ERROR])
+		if test "x$old_USESWIG" = xno; then
+			USESWIG="no, need manual download for perl/python bindings"
 			AC_MSG_WARN([swig was disabled, so you should put needed sources to modules/
 Please check http://en.znc.in/wiki/Modperl or http://en.znc.in/wiki/Modpython for details.])
 		else
@@ -307,13 +309,13 @@ Please check http://en.znc.in/wiki/Modperl or http://en.znc.in/wiki/Modpython fo
 Please check http://en.znc.in/wiki/Modperl or http://en.znc.in/wiki/Modpython for details.])
 		fi
 	else
-		SWIG=yes
+		USESWIG=yes
 	fi
 else
-	if test "x$SWIG" = "xyes"; then
+	if test "x$USESWIG" = "xyes"; then
 		AC_MSG_WARN([swig is needed only for perl and python, but both are disabled. Disabling swig.])
 	fi
-	SWIG=no
+	USESWIG=no
 fi
 
 if test "x$PERL" != "xno"; then
@@ -349,6 +351,16 @@ if test "x$PYTHON" != "xno"; then
 		AC_MSG_ERROR([pkg-config is required for modpython.])
 	fi
 	PKG_CHECK_MODULES([python], [$PYTHON >= 3.0],, AC_MSG_ERROR([$PYTHON.pc not found or is wrong. Try --disable-python or install python3.]))
+	if test "x$USESWIG" = xyes; then :
+		PKG_CHECK_MODULES([python32], [$PYTHON >= 3.2], [PYTHON_32=yes], [PYTHON_32=no])
+		if test "x$PYTHON_32" = xyes; then
+			AC_MSG_NOTICE([python 3.2+ found, requiring newer swig.])
+			AC_PROG_SWIG([2.0.4])
+			if test -z "$SWIG"; then
+				AC_MSG_ERROR([$SWIG_ERROR])
+			fi
+		fi
+	fi
 	my_saved_LIBS="$LIBS"
 	my_saved_CXXFLAGS="$CXXFLAGS"
 	appendLib $python_LIBS
@@ -482,6 +494,7 @@ AC_SUBST([MODDIR])
 AC_SUBST([DATADIR])
 AC_SUBST([PERL])
 AC_SUBST([PYTHON])
+AC_SUBST([SWIG])
 AC_SUBST([python_CFLAGS])
 AC_SUBST([python_LIBS])
 AC_CONFIG_FILES([Makefile])
@@ -504,7 +517,7 @@ echo "openssl:      $SSL"
 echo "c-ares:       $ARES"
 echo "perl:         $PERL"
 echo "python:       $PYTHON"
-echo "swig:         $SWIG"
+echo "swig:         $USESWIG"
 if test x"$SASL" = "x" ; then
 	echo "sasl:         no"
 else
