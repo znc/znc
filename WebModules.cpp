@@ -534,6 +534,8 @@ void CWebSock::OnPageRequest(const CString& sURI) {
 
 CWebSock::EPageReqResult CWebSock::OnPageRequestInternal(const CString& sURI, CString& sPageRet) {
 	if (CZNC::Get().GetProtectWebSessions() && GetSession()->GetIP() != GetRemoteIP()) {
+		DEBUG("Expected IP: " << GetSession()->GetIP());
+		DEBUG("Remote IP:   " << GetRemoteIP());
 		PrintErrorPage(403, "Access denied", "This session does not belong to your IP.");
 		return PAGE_DONE;
 	}
@@ -543,6 +545,8 @@ CWebSock::EPageReqResult CWebSock::OnPageRequestInternal(const CString& sURI, CS
 	// CSRF against the login form makes no sense and the login form does a
 	// cookies-enabled check which would break otherwise.
 	if (IsPost() && GetParam("_CSRF_Check") != GetCSRFCheck() && sURI != "/login") {
+		DEBUG("Expected _CSRF_Check: " << GetCSRFCheck());
+		DEBUG("Actual _CSRF_Check:   " << GetParam("_CSRF_Check"));
 		PrintErrorPage(403, "Access denied", "POST requests need to send "
 				"a secret token to prevent cross-site request forgery attacks.");
 		return PAGE_DONE;
@@ -724,6 +728,7 @@ CSmartPtr<CWebSession> CWebSock::GetSession() {
 
 	if (Sessions.m_mIPSessions.count(GetRemoteIP()) > m_uiMaxSessions) {
 		mIPSessionsIterator it = Sessions.m_mIPSessions.find(GetRemoteIP());
+		DEBUG("Remote IP:   " << GetRemoteIP() << "; discarding session [" << it->second->GetId() << "]");
 		Sessions.m_mIPSessions.erase(it);
 	}
 
