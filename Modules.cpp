@@ -493,7 +493,12 @@ void CModule::OnModCommand(const CString& sCommand) {
 	HandleCommand(sCommand);
 }
 void CModule::OnUnknownModCommand(const CString& sLine) {
-	if (!m_mCommands.empty())
+	if (m_mCommands.empty())
+		// This function is only called if OnModCommand wasn't
+		// overriden, so no false warnings for modules which don't use
+		// CModCommand for command handling.
+		PutModule("This module doesn't implement any commands.");
+	else
 		PutModule("Unknown command!");
 }
 
