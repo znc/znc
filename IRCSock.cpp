@@ -76,8 +76,11 @@ void CIRCSock::Quit(const CString& sQuitMsg) {
 		Close(CLT_NOW);
 		return;
 	}
-	CString sMsg = (!sQuitMsg.empty()) ? sQuitMsg : m_pUser->GetQuitMsg();
-	PutIRC("QUIT :" + sMsg);
+	if (!sQuitMsg.empty()) {
+		PutIRC("QUIT :" + sQuitMsg);
+	} else {
+		PutIRC("QUIT :" + m_pUser->ExpandString(m_pUser->GetQuitMsg()));
+	}
 	Close(CLT_AFTERWRITE);
 }
 
