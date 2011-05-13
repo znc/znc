@@ -729,7 +729,7 @@ CSmartPtr<CWebSession> CWebSock::GetSession() {
 	if (Sessions.m_mIPSessions.count(GetRemoteIP()) > m_uiMaxSessions) {
 		mIPSessionsIterator it = Sessions.m_mIPSessions.find(GetRemoteIP());
 		DEBUG("Remote IP:   " << GetRemoteIP() << "; discarding session [" << it->second->GetId() << "]");
-		Sessions.m_mIPSessions.erase(it);
+		Sessions.m_mspSessions.RemItem(it->second->GetId());
 	}
 
 	CString sSessionID;
