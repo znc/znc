@@ -36,6 +36,7 @@
 #endif /* __NetBSD__ */
 
 #ifdef HAVE_LIBSSL
+#include <stdio.h>
 #include <openssl/conf.h>
 #include <openssl/engine.h>
 #endif /* HAVE_LIBSSL */
@@ -1271,6 +1272,35 @@ bool Csock::SSLServerSetup()
 		CS_DEBUG( "Error with PEM file [" << m_sPemFile << "]" );
 		SSLErrors( __FILE__, __LINE__ );
 		return( false );
+	}
+
+	FILE *dhParamsFile = 0;
+	if ( ! ( dhParamsFile = fopen( m_sPemFile.c_str(), "r" ) ) )
+	{
+		CS_DEBUG( "There is a problem with [" << m_sPemFile << "]" );
+		return( false );
+	}
+
+	DH *dhParams = PEM_read_DHparams( dhParamsFile, 0, 0, 0 );
+	fclose( dhParamsFile );
+	dhParamsFile = 0;
+	if ( dhParams )
+	{
+		SSL_CTX_set_options( m_ssl_ctx, SSL_OP_SINGLE_DH_USE );
+		if ( ! SSL_CTX_set_tmp_dh( m_ssl_ctx, dhParams ) )
+		{
+			CS_DEBUG( "Error setting ephemeral DH parameters from [" << m_sPemFile << "]" );
+			SSLErrors( __FILE__, __LINE__ );
+			DH_free( dhParams );
+			dhParams = 0;
+			return( false );
+		}
+		DH_free( dhParams );
+		dhParams = 0;
+	}
+	else
+	{
+		ERR_clear_error();
 	}
 
 	if ( SSL_CTX_set_cipher_list( m_ssl_ctx, m_sCipherType.c_str() ) <= 0 )
