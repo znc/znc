@@ -11,6 +11,7 @@
 
 #define REQUIRESSL
 
+#include "Client.h"
 #include "User.h"
 #include "FileUtils.h"
 #include <sys/stat.h>
@@ -55,6 +56,15 @@ class CAway : public CModule
 	void MessagesCommand(const CString& sCommand) {
 		for (u_int a = 0; a < m_vMessages.size(); a++)
 			PutModule(m_vMessages[a]);
+	}
+
+	void ReplayCommand(const CString& sCommand) {
+		CString nick = GetClient()->GetNick();
+		for (u_int a = 0; a < m_vMessages.size(); a++) {
+			CString sWhom = m_vMessages[a].Token(1, false, ":");
+			CString sMessage = m_vMessages[a].Token(2, true, ":");
+			PutUser(":" + sWhom + " PRIVMSG " + nick + " :" + sMessage);
+		}
 	}
 
 	void DeleteCommand(const CString& sCommand) {
@@ -188,6 +198,7 @@ public:
 		AddCommand("Ping",         static_cast<CModCommand::ModCmdFunc>(&CAway::PingCommand));
 		AddCommand("Pass",         static_cast<CModCommand::ModCmdFunc>(&CAway::PassCommand));
 		AddCommand("Show",         static_cast<CModCommand::ModCmdFunc>(&CAway::ShowCommand));
+		AddCommand("Replay",       static_cast<CModCommand::ModCmdFunc>(&CAway::ReplayCommand));
 		AddCommand("EnableTimer",  static_cast<CModCommand::ModCmdFunc>(&CAway::EnableTimerCommand));
 		AddCommand("DisableTimer", static_cast<CModCommand::ModCmdFunc>(&CAway::DisableTimerCommand));
 		AddCommand("SetTimer",     static_cast<CModCommand::ModCmdFunc>(&CAway::SetTimerCommand),
