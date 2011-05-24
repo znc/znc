@@ -17,7 +17,8 @@ class CSSLClientCertMod : public CGlobalModule {
 public:
 	GLOBALMODCONSTRUCTOR(CSSLClientCertMod) {
 		AddHelpCommand();
-		AddCommand("Add",  static_cast<CModCommand::ModCmdFunc>(&CSSLClientCertMod::HandleAddCommand));
+		AddCommand("Add",  static_cast<CModCommand::ModCmdFunc>(&CSSLClientCertMod::HandleAddCommand),
+			"[pubkey]", "If pubkey is not provided will use the current key");
 		AddCommand("Del",  static_cast<CModCommand::ModCmdFunc>(&CSSLClientCertMod::HandleDelCommand),
 			"id");
 		AddCommand("List", static_cast<CModCommand::ModCmdFunc>(&CSSLClientCertMod::HandleListCommand));
@@ -129,17 +130,21 @@ public:
 	}
 
 	void HandleAddCommand(const CString& sLine) {
-		CString sPubKey = GetKey(m_pClient);
+		CString sPubKey = sLine.Token(1);
 
 		if (sPubKey.empty()) {
-			PutModule("You are not connected with any valid public key");
+			sPubKey = GetKey(m_pClient);
+		}
+
+		if (sPubKey.empty()) {
+			PutModule("You did not supply a public key or connect with one.");
 		} else {
 			pair<SCString::iterator, bool> res = m_PubKeys[m_pUser->GetUserName()].insert(sPubKey);
 			if (res.second) {
-				PutModule("Added your current public key to the list");
+				PutModule("'" + sPubKey + "' added.");
 				Save();
 			} else {
-				PutModule("Your key was already added");
+				PutModule("The key '" + sPubKey + "' is already added.");
 			}
 		}
 	}
