@@ -15,7 +15,16 @@
 
 class CSSLClientCertMod : public CGlobalModule {
 public:
-	GLOBALMODCONSTRUCTOR(CSSLClientCertMod) {}
+	GLOBALMODCONSTRUCTOR(CSSLClientCertMod) {
+		AddHelpCommand();
+		AddCommand("Add",  static_cast<CModCommand::ModCmdFunc>(&CSSLClientCertMod::HandleAddCommand));
+		AddCommand("Del",  static_cast<CModCommand::ModCmdFunc>(&CSSLClientCertMod::HandleDelCommand),
+			"id");
+		AddCommand("List", static_cast<CModCommand::ModCmdFunc>(&CSSLClientCertMod::HandleListCommand));
+		AddCommand("Show", static_cast<CModCommand::ModCmdFunc>(&CSSLClientCertMod::HandleShowCommand),
+			"", "Print your current key");
+	}
+
 	virtual ~CSSLClientCertMod() {}
 
 	virtual bool OnBoot() {
@@ -109,80 +118,85 @@ public:
 		return HALT;
 	}
 
-	virtual void OnModCommand(const CString& sCommand) {
-		CString sCmd = sCommand.Token(0);
+	void HandleShowCommand(const CString& sLine) {
+		CString sPubKey = GetKey(m_pClient);
 
-		if (sCmd.Equals("show")) {
-			CString sPubKey = GetKey(m_pClient);
-			if (sPubKey.empty())
-				PutModule("You are not connected with any valid public key");
-			else
-				PutModule("Your current public key is: " + sPubKey);
-		} else if (sCmd.Equals("add")) {
-			CString sPubKey = GetKey(m_pClient);
-			if (sPubKey.empty())
-				PutModule("You are not connected with any valid public key");
-			else {
-				pair<SCString::iterator, bool> res = m_PubKeys[m_pUser->GetUserName()].insert(sPubKey);
-				if (res.second) {
-					PutModule("Added your current public key to the list");
-					Save();
-				} else
-					PutModule("Your key was already added");
-			}
-		} else if (sCmd.Equals("list")) {
-			CTable Table;
-
-			Table.AddColumn("Id");
-			Table.AddColumn("Key");
-
-			MSCString::iterator it = m_PubKeys.find(m_pUser->GetUserName());
-			if (it == m_PubKeys.end()) {
-				PutModule("No keys set for your user");
-				return;
-			}
-
-			SCString::iterator it2;
-			unsigned int id = 1;
-			for (it2 = it->second.begin(); it2 != it->second.end(); it2++) {
-				Table.AddRow();
-				Table.SetCell("Id", CString(id++));
-				Table.SetCell("Key", *it2);
-			}
-
-			if (PutModule(Table) == 0)
-				// This double check is necessary, because the
-				// set could be empty.
-				PutModule("No keys set for your user");
-		} else if (sCmd.Equals("del") || sCmd.Equals("remove")) {
-			unsigned int id = sCommand.Token(1, true).ToUInt();
-			MSCString::iterator it = m_PubKeys.find(m_pUser->GetUserName());
-
-			if (it == m_PubKeys.end()) {
-				PutModule("No keys set for your user");
-				return;
-			}
-
-			if (id == 0 || id > it->second.size()) {
-				PutModule("Invalid #, check \"list\"");
-				return;
-			}
-
-			SCString::iterator it2 = it->second.begin();
-			while (id > 1) {
-				it2++;
-				id--;
-			}
-
-			it->second.erase(it2);
-			if (it->second.size() == 0)
-				m_PubKeys.erase(it);
-			PutModule("Removed");
-
-			Save();
+		if (sPubKey.empty()) {
+			PutModule("You are not connected with any valid public key");
 		} else {
-			PutModule("Commands: show, list, add, del [no]");
+			PutModule("Your current public key is: " + sPubKey);
 		}
+	}
+
+	void HandleAddCommand(const CString& sLine) {
+		CString sPubKey = GetKey(m_pClient);
+
+		if (sPubKey.empty()) {
+			PutModule("You are not connected with any valid public key");
+		} else {
+			pair<SCString::iterator, bool> res = m_PubKeys[m_pUser->GetUserName()].insert(sPubKey);
+			if (res.second) {
+				PutModule("Added your current public key to the list");
+				Save();
+			} else {
+				PutModule("Your key was already added");
+			}
+		}
+	}
+
+	void HandleListCommand(const CString& sLine) {
+		CTable Table;
+
+		Table.AddColumn("Id");
+		Table.AddColumn("Key");
+
+		MSCString::iterator it = m_PubKeys.find(m_pUser->GetUserName());
+		if (it == m_PubKeys.end()) {
+			PutModule("No keys set for your user");
+			return;
+		}
+
+		SCString::iterator it2;
+		unsigned int id = 1;
+		for (it2 = it->second.begin(); it2 != it->second.end(); it2++) {
+			Table.AddRow();
+			Table.SetCell("Id", CString(id++));
+			Table.SetCell("Key", *it2);
+		}
+
+		if (PutModule(Table) == 0) {
+			// This double check is necessary, because the
+			// set could be empty.
+			PutModule("No keys set for your user");
+		}
+	}
+
+	void HandleDelCommand(const CString& sLine) {
+		unsigned int id = sLine.Token(1, true).ToUInt();
+		MSCString::iterator it = m_PubKeys.find(m_pUser->GetUserName());
+
+		if (it == m_PubKeys.end()) {
+			PutModule("No keys set for your user");
+			return;
+		}
+
+		if (id == 0 || id > it->second.size()) {
+			PutModule("Invalid #, check \"list\"");
+			return;
+		}
+
+		SCString::iterator it2 = it->second.begin();
+		while (id > 1) {
+			it2++;
+			id--;
+		}
+
+		it->second.erase(it2);
+		if (it->second.size() == 0)
+			m_PubKeys.erase(it);
+		PutModule("Removed");
+
+		Save();
 	}
 
 	CString GetKey(Csock *pSock) {
