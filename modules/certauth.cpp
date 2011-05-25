@@ -84,6 +84,16 @@ public:
 		return SaveRegistry();
 	}
 
+	bool AddKey(CUser *pUser, CString sKey) {
+		pair<SCString::iterator, bool> pair = m_PubKeys[pUser->GetUserName()].insert(sKey);
+
+		if (pair.second) {
+			Save();
+		}
+
+		return pair.second;
+	}
+
 	virtual EModRet OnLoginAttempt(CSmartPtr<CAuthBase> Auth) {
 		CString sUser = Auth->GetUsername();
 		Csock *pSock = Auth->GetSocket();
@@ -139,10 +149,8 @@ public:
 		if (sPubKey.empty()) {
 			PutModule("You did not supply a public key or connect with one.");
 		} else {
-			pair<SCString::iterator, bool> res = m_PubKeys[m_pUser->GetUserName()].insert(sPubKey);
-			if (res.second) {
+			if (AddKey(m_pUser, sPubKey)) {
 				PutModule("'" + sPubKey + "' added.");
-				Save();
 			} else {
 				PutModule("The key '" + sPubKey + "' is already added.");
 			}
@@ -220,6 +228,46 @@ public:
 		default:
 			return "";
 		}
+	}
+
+	virtual CString GetWebMenuTitle() { return "certauth"; }
+
+	virtual bool OnWebRequest(CWebSock& WebSock, const CString& sPageName, CTemplate& Tmpl) {
+		CUser *pUser = WebSock.GetSession()->GetUser();
+
+		if (sPageName == "index") {
+			MSCString::iterator it = m_PubKeys.find(pUser->GetUserName());
+			if (it != m_PubKeys.end()) {
+				SCString::iterator it2;
+
+				for (it2 = it->second.begin(); it2 != it->second.end(); it2++) {
+					CTemplate& row = Tmpl.AddRow("KeyLoop");
+					row["Key"] = *it2;
+				}
+			}
+
+			return true;
+		} else if (sPageName == "add") {
+			AddKey(pUser, WebSock.GetParam("key"));
+			WebSock.Redirect("/mods/certauth/");
+			return true;
+		} else if (sPageName == "delete") {
+			MSCString::iterator it = m_PubKeys.find(pUser->GetUserName());
+			if (it != m_PubKeys.end()) {
+				if (it->second.erase(WebSock.GetParam("key", false))) {
+					if (it->second.size() == 0) {
+						m_PubKeys.erase(it);
+					}
+
+					Save();
+				}
+			}
+
+			WebSock.Redirect("/mods/certauth/");
+			return true;
+		}
+
+		return false;
 	}
 
 private:

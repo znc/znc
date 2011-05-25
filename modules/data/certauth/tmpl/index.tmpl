@@ -1,0 +1,43 @@
+<? INC Header.tmpl ?>
+
+<form method="post" action="/mods/certauth/add">
+	<? INC _csrf_check.tmpl ?>
+	<div class="section">
+		<h3>Add A Note</h3>
+		<div class="sectionbg">
+			<div class="sectionbody">
+				<div class="subsection full">
+					<div class="inputlabel">Key:</div>
+					<div><input type="text" name="key" size="40" /></div>
+				</div>
+				<div class="subsection submitline">
+					<input type="submit" name="add" value="Add Key" />
+				</div>
+			</div>
+		</div>
+	</div>
+</form>
+
+<? IF !KeyLoop ?>
+<p>You have no keys.</p>
+<? ELSE ?>
+
+<table class="data">
+	<thead>
+		<tr>
+			<td style="width: 10px;">&nbsp;</td>
+			<td>Key</td>
+		</tr>
+	</thead>
+	<tbody>
+		<? LOOP KeyLoop ?>
+		<tr class="<? IF __EVEN__ ?>evenrow<? ELSE ?>oddrow<? ENDIF ?>">
+			<td>[<a href="/mods/certauth/delete?key=<? VAR Key ESC=URL,HTML ?>">del</a>]</td>
+			<td><? VAR Key ?></td>
+		</tr>
+		<? ENDLOOP ?>
+	</tbody>
+</table>
+<? ENDIF ?>
+
+<? INC Footer.tmpl ?>
