@@ -38,35 +38,35 @@ class CAdminMod : public CModule {
 		CTable VarTable;
 		VarTable.AddColumn("Variable");
 		VarTable.AddColumn("Type");
-		static const char* string = "String";
+		static const char* str = "str";
 		static const char* boolean = "Boolean (true/false)";
 		static const char* integer = "Integer";
 		static const char* doublenum = "Double";
 		static const char* vars[][2] = {
-			{"Nick",             string},
-			{"Altnick",          string},
-			{"Ident",            string},
-			{"RealName",         string},
-			{"BindHost",         string},
+			{"Nick",             str},
+			{"Altnick",          str},
+			{"Ident",            str},
+			{"RealName",         str},
+			{"BindHost",         str},
 			{"MultiClients",     boolean},
 			{"BounceDCCs",       boolean},
 			{"UseClientIP",      boolean},
 			{"DenyLoadMod",      boolean},
 			{"DenySetBindHost",  boolean},
-			{"DefaultChanModes", string},
-			{"QuitMsg",          string},
+			{"DefaultChanModes", str},
+			{"QuitMsg",          str},
 			{"BufferCount",      integer},
 			{"KeepBuffer",       boolean},
-			{"Password",         string},
+			{"Password",         str},
 			{"JoinTries",        integer},
 			{"MaxJoins",         integer},
 			{"TimezoneOffset",   doublenum},
 			{"Admin",            boolean},
 			{"AppendTimestamp",  boolean},
 			{"PrependTimestamp", boolean},
-			{"TimestampFormat",  string},
+			{"TimestampFormat",  str},
 			{"DCCBindHost",      boolean},
-			{"StatusPrefix",     string}
+			{"StatusPrefix",     str}
 		};
 		for (unsigned int i = 0; i != ARRAY_SIZE(vars); ++i) {
 			VarTable.AddRow();
@@ -80,8 +80,8 @@ class CAdminMod : public CModule {
 		CVarTable.AddColumn("Variable");
 		CVarTable.AddColumn("Type");
 		static const char* cvars[][2] = {
-			{"DefModes",         string},
-			{"Key",              string},
+			{"DefModes",         str},
+			{"Key",              str},
 			{"Buffer",           integer},
 			{"InConfig",         boolean},
 			{"KeepBuffer",       boolean},
