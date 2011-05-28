@@ -16,9 +16,9 @@ class CSendRaw_Mod: public CModule {
 		
 		if (pUser) {
 			pUser->PutUser(sLine.Token(2, true));
-			PutModule("Sent [" + sLine.Token(2, true) + "] to " + sLine.Token(1));
+			PutModule("Sent [" + sLine.Token(2, true) + "] to " + pUser->GetUserName());
 		} else {
-			PutModule("User [" + sLine.Token(1) + "] does not exist");
+			PutModule("User [" + sLine.Token(1) + "] not found");
 		}
 	}
 	
@@ -27,9 +27,9 @@ class CSendRaw_Mod: public CModule {
 		
 		if (pUser) {
 			pUser->PutIRC(sLine.Token(2, true));
-			PutModule("Sent [" + sLine.Token(2, true) + "] to IRC Server of " + sLine.Token(1)+);
+			PutModule("Sent [" + sLine.Token(2, true) + "] to IRC Server of " + pUser->GetUserName());
 		} else {
-			PutModule("User [" + sLine.Token(1) + "] does not exist");
+			PutModule("User [" + sLine.Token(1) + "] not found");
 		}
 	}
 
@@ -57,14 +57,15 @@ public:
 				const CString sLine = WebSock.GetParam("line");
 
 				if (!pUser) {
-					Tmpl["user"] = WebSock.GetParam("user");
-					Tmpl[bToServer ? "to_server" : "to_client"] = "true";
-					Tmpl["line"] = sLine;
 					WebSock.GetSession()->AddError("User not found");
 					return true;
 				}
+				
+				Tmpl["user"] = pUser->GetUserName();
+				Tmpl[bToServer ? "to_server" : "to_client"] = "true";
+				Tmpl["line"] = sLine;
 
-				if (bOutgoing) {
+				if (bToServer) {
 					pUser->PutIRC(sLine);
 				} else {
 					pUser->PutUser(sLine);
