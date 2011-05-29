@@ -13,7 +13,7 @@ class CSendRaw_Mod: public CModule {
 
 	void SendClient(const CString& sLine) {
 		CUser *pUser = CZNC::Get().FindUser(sLine.Token(1));
-		
+
 		if (pUser) {
 			pUser->PutUser(sLine.Token(2, true));
 			PutModule("Sent [" + sLine.Token(2, true) + "] to " + pUser->GetUserName());
@@ -24,7 +24,7 @@ class CSendRaw_Mod: public CModule {
 	
 	void SendServer(const CString& sLine) {
 		CUser *pUser = CZNC::Get().FindUser(sLine.Token(1));
-		
+
 		if (pUser) {
 			pUser->PutIRC(sLine.Token(2, true));
 			PutModule("Sent [" + sLine.Token(2, true) + "] to IRC Server of " + pUser->GetUserName());
@@ -60,7 +60,7 @@ public:
 					WebSock.GetSession()->AddError("User not found");
 					return true;
 				}
-				
+
 				Tmpl["user"] = pUser->GetUserName();
 				Tmpl[bToServer ? "to_server" : "to_client"] = "true";
 				Tmpl["line"] = sLine;
@@ -108,7 +108,7 @@ public:
 			SendServer("Server " + sUser + " " + sLine.Token(1, true));
 		}
 	}
-	
+
 	MODCONSTRUCTOR(CSendRaw_Mod) {
 		AddHelpCommand();
 		AddCommand("Client",          static_cast<CModCommand::ModCmdFunc>(&CSendRaw_Mod::SendClient),
