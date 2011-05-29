@@ -170,7 +170,7 @@ public:
 			pSock->SetPemLocation(m_sPemFile);
 
 			u_short iPort = m_pManager->ListenRand(pSock->GetSockName() + "::LISTENER",
-					m_pUser->GetLocalIP(), true, SOMAXCONN, pSock, 60);
+					m_pUser->GetLocalDCCIP(), true, SOMAXCONN, pSock, 60);
 
 			if (iPort == 0) {
 				PutModule("Failed to start chat!");
@@ -180,7 +180,7 @@ public:
 			stringstream s;
 			s << "PRIVMSG " << sArgs << " :\001";
 			s << "DCC SCHAT chat ";
-			s << CUtils::GetLongIP(m_pUser->GetLocalIP());
+			s << CUtils::GetLongIP(m_pUser->GetLocalDCCIP());
 			s << " " << iPort << "\001";
 
 			PutIRC(s.str());
@@ -341,7 +341,7 @@ public:
 	{
 		CSChatSock *p = new CSChatSock(this, sNick, CUtils::GetIP(iIP), iPort, 60);
 		m_pManager->Connect(CUtils::GetIP(iIP), iPort, p->GetSockName(), 60,
-				true, m_pUser->GetLocalIP(), p);
+				true, m_pUser->GetLocalDCCIP(), p);
 		RemTimer("Remove " + sNick); // delete any associated timer to this nick
 	}
 
