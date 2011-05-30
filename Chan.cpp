@@ -112,6 +112,7 @@ bool CChan::SetBufferCount(unsigned int u, bool bForce) {
 	if (!bForce && u > CZNC::Get().GetMaxBufferSize())
 		return false;
 	m_uBufferCount = u;
+	TrimBuffer(m_uBufferCount);
 	return true;
 }
 
@@ -532,6 +533,12 @@ int CChan::AddBuffer(const CString& sLine) {
 
 void CChan::ClearBuffer() {
 	m_vsBuffer.clear();
+}
+
+void CChan::TrimBuffer(const unsigned int uMax) {
+	if (m_vsBuffer.size() > uMax) {
+		m_vsBuffer.erase(m_vsBuffer.begin(), m_vsBuffer.begin() + (uMax - m_vsBuffer.size())); 
+	}
 }
 
 void CChan::SendBuffer(CClient* pClient) {
