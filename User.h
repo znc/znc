@@ -26,7 +26,6 @@ class CFile;
 class CIRCSock;
 class CUserTimer;
 class CServer;
-class CDCCSock;
 
 class CUser {
 public:
@@ -115,9 +114,6 @@ public:
 	void SetIRCSocket(CIRCSock* pIRCSock);
 	void IRCDisconnected();
 	void CheckIRCConnect();
-
-	void AddDCCSock(CDCCSock* p) { m_sDCCSocks.insert(p); }
-	void DelDCCSock(CDCCSock* p) { m_sDCCSocks.erase(p); }
 
 	CString ExpandString(const CString& sStr) const;
 	CString& ExpandString(const CString& sStr, CString& sRet) const;
@@ -271,7 +267,6 @@ protected:
 	vector<CServer*>      m_vServers;
 	vector<CChan*>        m_vChans;
 	vector<CClient*>      m_vClients;
-	set<CDCCSock*>        m_sDCCSocks;
 	set<CString>          m_ssAllowedHosts;
 	unsigned int          m_uServerIdx; ///< Index in m_vServers of our current server + 1
 	unsigned int          m_uBufferCount;

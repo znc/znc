@@ -9,7 +9,6 @@
 #include "User.h"
 #include "Chan.h"
 #include "Config.h"
-#include "DCCSock.h"
 #include "FileUtils.h"
 #include "IRCSock.h"
 #include "Server.h"
@@ -100,11 +99,6 @@ CUser::~CUser() {
 	for (unsigned int b = 0; b < m_vChans.size(); b++) {
 		delete m_vChans[b];
 	}
-
-	// This will cause an endless loop if the destructor doesn't remove the
-	// socket from this list / if the socket doesn't exist any more.
-	while (!m_sDCCSocks.empty())
-		CZNC::Get().GetManager().DelSockByAddr((CZNCSock*) *m_sDCCSocks.begin());
 
 	CZNC::Get().GetManager().DelCronByAddr(m_pUserTimer);
 }
@@ -1325,74 +1319,6 @@ bool CUser::PutModNotice(const CString& sModule, const CString& sLine, CClient* 
 	}
 
 	return (pClient == NULL);
-}
-
-bool CUser::ResumeFile(unsigned short uPort, unsigned long uFileSize) {
-	CSockManager& Manager = CZNC::Get().GetManager();
-
-	for (unsigned int a = 0; a < Manager.size(); a++) {
-		if (Manager[a]->GetSockName().Equals("DCC::LISTEN::", false, 13)) {
-			CDCCSock* pSock = (CDCCSock*) Manager[a];
-
-			if (pSock->GetLocalPort() == uPort) {
-				if (pSock->Seek(uFileSize)) {
-					PutModule(pSock->GetModuleName(), "DCC -> [" + pSock->GetRemoteNick() + "][" + pSock->GetFileName() + "] - Attempting to resume from file position [" + CString(uFileSize) + "]");
-					return true;
-				} else {
-					return false;
-				}
-			}
-		}
-	}
-
-	return false;
-}
-
-bool CUser::SendFile(const CString& sRemoteNick, const CString& sFileName, const CString& sModuleName) {
-	CString sFullPath = CDir::ChangeDir(GetDLPath(), sFileName, CZNC::Get().GetHomePath());
-	CDCCSock* pSock = new CDCCSock(this, sRemoteNick, sFullPath, sModuleName);
-
-	CFile* pFile = pSock->OpenFile(false);
-
-	if (!pFile) {
-		delete pSock;
-		return false;
-	}
-
-	unsigned short uPort = CZNC::Get().GetManager().ListenRand("DCC::LISTEN::" + sRemoteNick, GetLocalDCCIP(), false, SOMAXCONN, pSock, 120);
-
-	if (GetNick().Equals(sRemoteNick)) {
-		PutUser(":" + GetStatusPrefix() + "status!znc@znc.in PRIVMSG " + sRemoteNick + " :\001DCC SEND " + pFile->GetShortName() + " " + CString(CUtils::GetLongIP(GetLocalDCCIP())) + " "
-				+ CString(uPort) + " " + CString(pFile->GetSize()) + "\001");
-	} else {
-		PutIRC("PRIVMSG " + sRemoteNick + " :\001DCC SEND " + pFile->GetShortName() + " " + CString(CUtils::GetLongIP(GetLocalDCCIP())) + " "
-			    + CString(uPort) + " " + CString(pFile->GetSize()) + "\001");
-	}
-
-	PutModule(sModuleName, "DCC -> [" + sRemoteNick + "][" + pFile->GetShortName() + "] - Attempting Send.");
-	return true;
-}
-
-bool CUser::GetFile(const CString& sRemoteNick, const CString& sRemoteIP, unsigned short uRemotePort, const CString& sFileName, unsigned long uFileSize, const CString& sModuleName) {
-	if (CFile::Exists(sFileName)) {
-		PutModule(sModuleName, "DCC <- [" + sRemoteNick + "][" + sFileName + "] - File already exists.");
-		return false;
-	}
-
-	CDCCSock* pSock = new CDCCSock(this, sRemoteNick, sRemoteIP, uRemotePort, sFileName, uFileSize, sModuleName);
-
-	if (!pSock->OpenFile()) {
-		delete pSock;
-		return false;
-	}
-
-	if (!CZNC::Get().GetManager().Connect(sRemoteIP, uRemotePort, "DCC::GET::" + sRemoteNick, 60, false, GetLocalDCCIP(), pSock)) {
-		PutModule(sModuleName, "DCC <- [" + sRemoteNick + "][" + sFileName + "] - Unable to connect.");
-		return false;
-	}
-
-	PutModule(sModuleName, "DCC <- [" + sRemoteNick + "][" + sFileName + "] - Attempting to connect to [" + sRemoteIP + "]");
-	return true;
 }
 
 CString CUser::GetCurNick() const {

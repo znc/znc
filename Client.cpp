@@ -369,18 +369,6 @@ void CClient::ReadLine(const CString& sData) {
 			sCTCP.RightChomp();
 
 			if (sTarget.TrimPrefix(m_pUser->GetStatusPrefix())) {
-				if (sCTCP.Equals("DCC RESUME ", false, 11)) {
-					CString sFile = sCTCP.Token(2);
-					unsigned short uResumePort = sCTCP.Token(3).ToUShort();
-					unsigned long uResumeSize = sCTCP.Token(4).ToULong();
-
-					if (m_pUser->ResumeFile(uResumePort, uResumeSize)) {
-						PutClient(":" + sTarget + "!znc@znc.in PRIVMSG " + GetNick() + " :\001DCC ACCEPT " + sFile + " " + CString(uResumePort) + " " + CString(uResumeSize) + "\001");
-					} else {
-						PutStatus("DCC -> [" + GetNick() + "][" + sFile + "] Unable to find send to initiate resume.");
-					}
-				}
-
 				if (sTarget.Equals("status")) {
 					StatusCTCP(sCTCP);
 				} else {
