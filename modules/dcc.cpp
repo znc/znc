@@ -78,7 +78,7 @@ public:
 	virtual ~CDCCMod() {}
 
 	bool SendFile(const CString& sRemoteNick, const CString& sFileName) {
-		CString sFullPath = CDir::ChangeDir(m_pUser->GetDLPath(), sFileName, CZNC::Get().GetHomePath());
+		CString sFullPath = CDir::ChangeDir(GetSavePath(), sFileName, CZNC::Get().GetHomePath());
 		CDCCSock* pSock = new CDCCSock(this, sRemoteNick, sFullPath);
 
 		CFile* pFile = pSock->OpenFile(false);
@@ -127,7 +127,7 @@ public:
 	void SendCommand(const CString& sLine) {
 		CString sToNick = sLine.Token(1);
 		CString sFile = sLine.Token(2);
-		CString sAllowedPath = m_pUser->GetDLPath();
+		CString sAllowedPath = GetSavePath();
 		CString sAbsolutePath;
 
 		if ((sToNick.empty()) || (sFile.empty())) {
@@ -147,7 +147,7 @@ public:
 
 	void GetCommand(const CString& sLine) {
 		CString sFile = sLine.Token(1);
-		CString sAllowedPath = m_pUser->GetDLPath();
+		CString sAllowedPath = GetSavePath();
 		CString sAbsolutePath;
 
 		if (sFile.empty()) {
@@ -223,7 +223,7 @@ public:
 
 			}
 		} else if (sMessage.Equals("DCC SEND ", false, 9)) {
-			CString sLocalFile = CDir::ChangeDir(m_pUser->GetDLPath(), sMessage.Token(2), CZNC::Get().GetHomePath());
+			CString sLocalFile = CDir::ChangeDir(GetSavePath(), sMessage.Token(2), CZNC::Get().GetHomePath());
 			unsigned long uLongIP = sMessage.Token(3).ToULong();
 			unsigned short uPort = sMessage.Token(4).ToUShort();
 			unsigned long uFileSize = sMessage.Token(5).ToULong();

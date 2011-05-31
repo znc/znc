@@ -191,7 +191,6 @@ public:
 	bool IsChan(const CString& sChan) const;
 
 	const CString& GetUserPath() const;
-	const CString& GetDLPath() const;
 
 	bool UseClientIP() const;
 	bool DenyLoadMod() const;
@@ -247,7 +246,6 @@ protected:
 
 	// Paths
 	CString               m_sUserPath;
-	CString               m_sDLPath;
 	// !Paths
 
 	CBuffer               m_RawBuffer;
