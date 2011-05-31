@@ -140,7 +140,6 @@ public:
 	void SetDCCBindHost(const CString& s);
 	void SetPass(const CString& s, eHashType eHash, const CString& sSalt = "");
 	void SetMultiClients(bool b);
-	void SetUseClientIP(bool b);
 	void SetDenyLoadMod(bool b);
 	void SetAdmin(bool b);
 	void SetDenySetBindHost(bool b);
@@ -192,7 +191,6 @@ public:
 
 	const CString& GetUserPath() const;
 
-	bool UseClientIP() const;
 	bool DenyLoadMod() const;
 	bool IsAdmin() const;
 	bool DenySetBindHost() const;
@@ -252,7 +250,6 @@ protected:
 	CBuffer               m_MotdBuffer;
 	CBuffer               m_QueryBuffer;
 	bool                  m_bMultiClients;
-	bool                  m_bUseClientIP;
 	bool                  m_bDenyLoadMod;
 	bool                  m_bAdmin;
 	bool                  m_bDenySetBindHost;

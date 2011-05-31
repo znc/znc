@@ -69,7 +69,6 @@ CUser::CUser(const CString& sUserName)
 	m_QueryBuffer.SetLineCount(250);
 	m_bMultiClients = true;
 	m_eHashType = HASH_NONE;
-	m_bUseClientIP = false;
 	m_bDenyLoadMod = false;
 	m_bAdmin= false;
 	m_bIRCAway = false;
@@ -181,7 +180,7 @@ bool CUser::ParseConfig(CConfig* pConfig, CString& sError) {
 	}
 
 	CString sValue;
-	if (pConfig->FindStringEntry("bouncedccs", sValue)) {
+	if (pConfig->FindStringEntry("bouncedccs", sValue) || pConfig->FindStringEntry("dcclookupmethod", sValue)) {
 		CUtils::PrintMessage("WARNING: Bouncedccs has been moved to its own module, please try -> LoadModule = bouncedcc");
 	}
 	if (pConfig->FindStringEntry("buffer", sValue))
@@ -223,8 +222,6 @@ bool CUser::ParseConfig(CConfig* pConfig, CString& sError) {
 			}
 		}
 	}
-	if (pConfig->FindStringEntry("dcclookupmethod", sValue))
-		SetUseClientIP(sValue.Equals("Client"));
 	pConfig->FindStringEntry("pass", sValue);
 	// There are different formats for this available:
 	// Pass = <plain text>
@@ -656,7 +653,6 @@ bool CUser::Clone(const CUser& User, CString& sErrorRet, bool bCloneChans) {
 	SetIRCConnectEnabled(User.GetIRCConnectEnabled());
 	SetKeepBuffer(User.KeepBuffer());
 	SetMultiClients(User.MultiClients());
-	SetUseClientIP(User.UseClientIP());
 	SetDenyLoadMod(User.DenyLoadMod());
 	SetAdmin(User.IsAdmin());
 	SetDenySetBindHost(User.DenySetBindHost());
@@ -857,7 +853,6 @@ bool CUser::WriteConfig(CFile& File) {
 	PrintLine(File, "DenyLoadMod", CString(DenyLoadMod()));
 	PrintLine(File, "Admin", CString(IsAdmin()));
 	PrintLine(File, "DenySetBindHost", CString(DenySetBindHost()));
-	PrintLine(File, "DCCLookupMethod", CString((UseClientIP()) ? "client" : "default"));
 	PrintLine(File, "TimestampFormat", GetTimestampFormat());
 	PrintLine(File, "AppendTimestamp", CString(GetTimestampAppend()));
 	PrintLine(File, "PrependTimestamp", CString(GetTimestampPrepend()));
@@ -1348,7 +1343,6 @@ void CUser::SetPass(const CString& s, eHashType eHash, const CString& sSalt) {
 	m_sPassSalt = sSalt;
 }
 void CUser::SetMultiClients(bool b) { m_bMultiClients = b; }
-void CUser::SetUseClientIP(bool b) { m_bUseClientIP = b; }
 void CUser::SetDenyLoadMod(bool b) { m_bDenyLoadMod = b; }
 void CUser::SetAdmin(bool b) { m_bAdmin = b; }
 void CUser::SetDenySetBindHost(bool b) { m_bDenySetBindHost = b; }
@@ -1418,7 +1412,6 @@ const CString& CUser::GetPass() const { return m_sPass; }
 CUser::eHashType CUser::GetPassHashType() const { return m_eHashType; }
 const CString& CUser::GetPassSalt() const { return m_sPassSalt; }
 
-bool CUser::UseClientIP() const { return m_bUseClientIP; }
 bool CUser::DenyLoadMod() const { return m_bDenyLoadMod; }
 bool CUser::IsAdmin() const { return m_bAdmin; }
 bool CUser::DenySetBindHost() const { return m_bDenySetBindHost; }
