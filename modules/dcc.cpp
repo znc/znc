@@ -223,7 +223,10 @@ public:
 
 			}
 		} else if (sMessage.Equals("DCC SEND ", false, 9)) {
-			CString sLocalFile = CDir::ChangeDir(GetSavePath(), sMessage.Token(2), CZNC::Get().GetHomePath());
+			CString sLocalFile = CDir::CheckPathPrefix(GetSavePath(), sMessage.Token(2));
+			if (sLocalFile.empty()) {
+				PutModule("Bad DCC file: " + sMessage.Token(2));
+			}
 			unsigned long uLongIP = sMessage.Token(3).ToULong();
 			unsigned short uPort = sMessage.Token(4).ToUShort();
 			unsigned long uFileSize = sMessage.Token(5).ToULong();
