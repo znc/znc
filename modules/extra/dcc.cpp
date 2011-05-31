@@ -77,6 +77,17 @@ public:
 
 	virtual ~CDCCMod() {}
 
+#ifndef MOD_DCC_ALLOW_EVERYONE
+	virtual bool OnLoad(const CString& sArgs, CString& sMessage) {
+		if (!m_pUser->IsAdmin()) {
+			sMessage = "You must be admin to use the DCC module";
+			return false;
+		}
+
+		return true;
+	}
+#endif
+
 	bool SendFile(const CString& sRemoteNick, const CString& sFileName) {
 		CString sFullPath = CDir::ChangeDir(GetSavePath(), sFileName, CZNC::Get().GetHomePath());
 		CDCCSock* pSock = new CDCCSock(this, sRemoteNick, sFullPath);
