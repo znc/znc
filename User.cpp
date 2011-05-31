@@ -52,9 +52,8 @@ protected:
 CUser::CUser(const CString& sUserName)
 		: m_sUserName(sUserName), m_sCleanUserName(MakeCleanUserName(sUserName))
 {
-	// set paths that depend on the user name:
+	// set path that depends on the user name:
 	m_sUserPath = CZNC::Get().GetUserPath() + "/" + m_sUserName;
-	m_sDLPath = m_sUserPath + "/downloads";
 
 	m_pIRCSock = NULL;
 	m_fTimezoneOffset = 0;
@@ -1447,5 +1446,4 @@ bool CUser::KeepBuffer() const { return m_bKeepBuffer; }
 //CString CUser::GetSkinName() const { return (!m_sSkinName.empty()) ? m_sSkinName : CZNC::Get().GetSkinName(); }
 CString CUser::GetSkinName() const { return m_sSkinName; }
 const CString& CUser::GetUserPath() const { if (!CFile::Exists(m_sUserPath)) { CDir::MakeDir(m_sUserPath); } return m_sUserPath; }
-const CString& CUser::GetDLPath() const { if (!CFile::Exists(m_sDLPath)) { CDir::MakeDir(m_sDLPath); } return m_sDLPath; }
 // !Getters
