@@ -38,7 +38,7 @@ class CAdminMod : public CModule {
 		CTable VarTable;
 		VarTable.AddColumn("Variable");
 		VarTable.AddColumn("Type");
-		static const char* str = "str";
+		static const char* str = "String";
 		static const char* boolean = "Boolean (true/false)";
 		static const char* integer = "Integer";
 		static const char* doublenum = "Double";
