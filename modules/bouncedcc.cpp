@@ -321,7 +321,7 @@ void CDCCBounce::ReachedMaxBuffer() {
 
 	CString sType = (m_bIsChat) ? "Chat" : "Xfer";
 
-	m_pModule->GetUser()->PutStatus("DCC " + sType + " Bounce (" + m_sRemoteNick + "): Too long line received");
+	m_pModule->PutModule("DCC " + sType + " Bounce (" + m_sRemoteNick + "): Too long line received");
 	Close();
 }
 
@@ -356,9 +356,9 @@ void CDCCBounce::Timeout() {
 			sHost = ".";
 		}
 
-		m_pModule->GetUser()->PutStatus("DCC " + sType + " Bounce (" + m_sRemoteNick + "): Timeout while connecting" + sHost);
+		m_pModule->PutModule("DCC " + sType + " Bounce (" + m_sRemoteNick + "): Timeout while connecting" + sHost);
 	} else {
-		m_pModule->GetUser()->PutStatus("DCC " + sType + " Bounce (" + m_sRemoteNick + "): Timeout waiting for incoming connection [" + Csock::GetLocalIP() + ":" + CString(Csock::GetLocalPort()) + "]");
+		m_pModule->PutModule("DCC " + sType + " Bounce (" + m_sRemoteNick + "): Timeout waiting for incoming connection [" + Csock::GetLocalIP() + ":" + CString(Csock::GetLocalPort()) + "]");
 	}
 }
 
@@ -373,7 +373,7 @@ void CDCCBounce::ConnectionRefused() {
 		sHost = ".";
 	}
 
-	m_pModule->GetUser()->PutStatus("DCC " + sType + " Bounce (" + m_sRemoteNick + "): Connection Refused while connecting" + sHost);
+	m_pModule->PutModule("DCC " + sType + " Bounce (" + m_sRemoteNick + "): Connection Refused while connecting" + sHost);
 }
 
 void CDCCBounce::SockError(int iErrno) {
@@ -386,15 +386,14 @@ void CDCCBounce::SockError(int iErrno) {
 			sHost = "[" + sHost + " " + CString(Csock::GetPort()) + "]";
 		}
 
-		m_pModule->GetUser()->PutStatus("DCC " + sType + " Bounce (" + m_sRemoteNick + "): Socket error [" + CString(strerror(iErrno)) + "]" + sHost);
+		m_pModule->PutModule("DCC " + sType + " Bounce (" + m_sRemoteNick + "): Socket error [" + CString(strerror(iErrno)) + "]" + sHost);
 	} else {
-		m_pModule->GetUser()->PutStatus("DCC " + sType + " Bounce (" + m_sRemoteNick + "): Socket error [" + CString(strerror(iErrno)) + "] [" + Csock::GetLocalIP() + ":" + CString(Csock::GetLocalPort()) + "]");
+		m_pModule->PutModule("DCC " + sType + " Bounce (" + m_sRemoteNick + "): Socket error [" + CString(strerror(iErrno)) + "] [" + Csock::GetLocalIP() + ":" + CString(Csock::GetLocalPort()) + "]");
 	}
 }
 
 void CDCCBounce::Connected() {
 	DEBUG(GetSockName() << " == Connected()");
-	SetTimeout(0);
 }
 
 void CDCCBounce::Disconnected() {
@@ -426,7 +425,6 @@ Csock* CDCCBounce::GetSockObj(const CString& sHost, unsigned short uPort) {
 	}
 
 	pSock->SetSockName(GetSockName());
-	pSock->SetTimeout(0);
 	return pSock;
 }
 
