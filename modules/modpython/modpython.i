@@ -23,7 +23,6 @@
 #include "../znc.h"
 #include "../Server.h"
 #include "../ZNCString.h"
-#include "../DCCSock.h"
 #include "../FileUtils.h"
 #include "../ZNCDebug.h"
 #include "../ExecSock.h"
@@ -82,7 +81,6 @@ namespace std {
 %include "../Csocket.h"
 %template(ZNCSocketManager) TSocketManager<CZNCSock>;
 %include "../Socket.h"
-%include "../DCCSock.h"
 %include "../FileUtils.h"
 %include "../Modules.h"
 %include "../Nick.h"
