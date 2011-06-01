@@ -221,9 +221,6 @@ class Module:
     def OnBroadcast(self, sMessage):
         pass
 
-    def OnDCCUserSend(self, RemoteNick, uLongIP, uPort, sFile, uFileSize):
-        pass
-
     def OnChanPermission(self, OpNick, Nick, Channel, uMode, bAdded,
         bNoChange):
         pass
@@ -365,7 +362,6 @@ class Module:
 
     def OnEmbeddedWebRequest(self, WebSock, sPageName, Tmpl):
         pass
-
 
 def make_inherit(cl, parent, attr):
     def make_caller(parent, name, attr):

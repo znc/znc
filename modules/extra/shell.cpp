@@ -85,54 +85,9 @@ public:
 			}
 
 			PutShell("znc$");
-		} else if (sCommand.Equals("SEND")) {
-			CString sToNick = sLine.Token(1);
-			CString sFile = sLine.Token(2);
-
-			if ((sToNick.empty()) || (sFile.empty())) {
-				PutShell("usage: Send <nick> <file>");
-			} else {
-				sFile = CDir::ChangeDir(m_sPath, sFile, CZNC::Get().GetHomePath());
-
-				if (!CFile::Exists(sFile)) {
-					PutShell("get: no such file [" + sFile + "]");
-				} else if (!CFile::IsReg(sFile)) {
-					PutShell("get: not a file [" + sFile + "]");
-				} else {
-					m_pUser->SendFile(sToNick, sFile, GetModName());
-				}
-			}
-		} else if (sCommand.Equals("GET")) {
-			CString sFile = sLine.Token(1);
-
-			if (sFile.empty()) {
-				PutShell("usage: Get <file>");
-			} else {
-				sFile = CDir::ChangeDir(m_sPath, sFile, CZNC::Get().GetHomePath());
-
-				if (!CFile::Exists(sFile)) {
-					PutShell("get: no such file [" + sFile + "]");
-				} else if (!CFile::IsReg(sFile)) {
-					PutShell("get: not a file [" + sFile + "]");
-				} else {
-					m_pUser->SendFile(m_pUser->GetCurNick(), sFile, GetModName());
-				}
-			}
 		} else {
 			RunCommand(sLine);
 		}
-	}
-
-	virtual EModRet OnDCCUserSend(const CNick& RemoteNick, unsigned long uLongIP, unsigned short uPort, const CString& sFile, unsigned long uFileSize) {
-		if (RemoteNick.GetNick().Equals(GetModNick())) {
-			CString sLocalFile = CDir::ChangeDir(m_sPath, sFile, CZNC::Get().GetHomePath());
-
-			m_pUser->GetFile(m_pUser->GetCurNick(), CUtils::GetIP(uLongIP), uPort, sLocalFile, uFileSize, GetModName());
-
-			return HALT;
-		}
-
-		return CONTINUE;
 	}
 
 	void PutShell(const CString& sMsg) {

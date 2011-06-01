@@ -49,8 +49,6 @@ class CAdminMod : public CModule {
 			{"RealName",         str},
 			{"BindHost",         str},
 			{"MultiClients",     boolean},
-			{"BounceDCCs",       boolean},
-			{"UseClientIP",      boolean},
 			{"DenyLoadMod",      boolean},
 			{"DenySetBindHost",  boolean},
 			{"DefaultChanModes", str},
@@ -143,10 +141,6 @@ class CAdminMod : public CModule {
 			PutModule("BindHost = " + pUser->GetBindHost());
 		else if (sVar == "multiclients")
 			PutModule("MultiClients = " + CString(pUser->MultiClients()));
-		else if (sVar == "bouncedccs")
-			PutModule("BounceDCCs = " + CString(pUser->BounceDCCs()));
-		else if (sVar == "useclientip")
-			PutModule("UseClientIP = " + CString(pUser->UseClientIP()));
 		else if (sVar == "denyloadmod")
 			PutModule("DenyLoadMod = " + CString(pUser->DenyLoadMod()));
 		else if (sVar == "denysetbindhost")
@@ -223,16 +217,6 @@ class CAdminMod : public CModule {
 			bool b = sValue.ToBool();
 			pUser->SetMultiClients(b);
 			PutModule("MultiClients = " + CString(b));
-		}
-		else if (sVar == "bouncedccs") {
-			bool b = sValue.ToBool();
-			pUser->SetBounceDCCs(b);
-			PutModule("BounceDCCs = " + CString(b));
-		}
-		else if (sVar == "useclientip") {
-			bool b = sValue.ToBool();
-			pUser->SetUseClientIP(b);
-			PutModule("UseClientIP = " + CString(b));
 		}
 		else if (sVar == "denyloadmod") {
 			if(m_pUser->IsAdmin()) {

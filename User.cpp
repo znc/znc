@@ -9,7 +9,6 @@
 #include "User.h"
 #include "Chan.h"
 #include "Config.h"
-#include "DCCSock.h"
 #include "FileUtils.h"
 #include "IRCSock.h"
 #include "Server.h"
@@ -53,9 +52,8 @@ protected:
 CUser::CUser(const CString& sUserName)
 		: m_sUserName(sUserName), m_sCleanUserName(MakeCleanUserName(sUserName))
 {
-	// set paths that depend on the user name:
+	// set path that depends on the user name:
 	m_sUserPath = CZNC::Get().GetUserPath() + "/" + m_sUserName;
-	m_sDLPath = m_sUserPath + "/downloads";
 
 	m_pIRCSock = NULL;
 	m_fTimezoneOffset = 0;
@@ -70,9 +68,7 @@ CUser::CUser(const CString& sUserName)
 	m_MotdBuffer.SetLineCount(200);  // This should be more than enough motd lines
 	m_QueryBuffer.SetLineCount(250);
 	m_bMultiClients = true;
-	m_bBounceDCCs = true;
 	m_eHashType = HASH_NONE;
-	m_bUseClientIP = false;
 	m_bDenyLoadMod = false;
 	m_bAdmin= false;
 	m_bIRCAway = false;
@@ -102,13 +98,6 @@ CUser::~CUser() {
 	for (unsigned int b = 0; b < m_vChans.size(); b++) {
 		delete m_vChans[b];
 	}
-
-	// This will cause an endless loop if the destructor doesn't remove the
-	// socket from this list / if the socket doesn't exist any more.
-	while (!m_sDCCBounces.empty())
-		CZNC::Get().GetManager().DelSockByAddr((CZNCSock*) *m_sDCCBounces.begin());
-	while (!m_sDCCSocks.empty())
-		CZNC::Get().GetManager().DelSockByAddr((CZNCSock*) *m_sDCCSocks.begin());
 
 	CZNC::Get().GetManager().DelCronByAddr(m_pUserTimer);
 }
@@ -143,7 +132,6 @@ bool CUser::ParseConfig(CConfig* pConfig, CString& sError) {
 	TOption<bool> BoolOptions[] = {
 		{ "keepbuffer", &CUser::SetKeepBuffer },
 		{ "multiclients", &CUser::SetMultiClients },
-		{ "bouncedccs", &CUser::SetBounceDCCs },
 		{ "denyloadmod", &CUser::SetDenyLoadMod },
 		{ "admin", &CUser::SetAdmin },
 		{ "denysetbindhost", &CUser::SetDenySetBindHost },
@@ -192,6 +180,9 @@ bool CUser::ParseConfig(CConfig* pConfig, CString& sError) {
 	}
 
 	CString sValue;
+	if (pConfig->FindStringEntry("bouncedccs", sValue) || pConfig->FindStringEntry("dcclookupmethod", sValue)) {
+		CUtils::PrintMessage("WARNING: Bouncedccs has been moved to its own module, please try -> LoadModule = bouncedcc");
+	}
 	if (pConfig->FindStringEntry("buffer", sValue))
 		SetBufferCount(sValue.ToUInt(), true);
 	if (pConfig->FindStringEntry("awaysuffix", sValue)) {
@@ -231,8 +222,6 @@ bool CUser::ParseConfig(CConfig* pConfig, CString& sError) {
 			}
 		}
 	}
-	if (pConfig->FindStringEntry("dcclookupmethod", sValue))
-		SetUseClientIP(sValue.Equals("Client"));
 	pConfig->FindStringEntry("pass", sValue);
 	// There are different formats for this available:
 	// Pass = <plain text>
@@ -664,8 +653,6 @@ bool CUser::Clone(const CUser& User, CString& sErrorRet, bool bCloneChans) {
 	SetIRCConnectEnabled(User.GetIRCConnectEnabled());
 	SetKeepBuffer(User.KeepBuffer());
 	SetMultiClients(User.MultiClients());
-	SetBounceDCCs(User.BounceDCCs());
-	SetUseClientIP(User.UseClientIP());
 	SetDenyLoadMod(User.DenyLoadMod());
 	SetAdmin(User.IsAdmin());
 	SetDenySetBindHost(User.DenySetBindHost());
@@ -863,11 +850,9 @@ bool CUser::WriteConfig(CFile& File) {
 	PrintLine(File, "Buffer", CString(GetBufferCount()));
 	PrintLine(File, "KeepBuffer", CString(KeepBuffer()));
 	PrintLine(File, "MultiClients", CString(MultiClients()));
-	PrintLine(File, "BounceDCCs", CString(BounceDCCs()));
 	PrintLine(File, "DenyLoadMod", CString(DenyLoadMod()));
 	PrintLine(File, "Admin", CString(IsAdmin()));
 	PrintLine(File, "DenySetBindHost", CString(DenySetBindHost()));
-	PrintLine(File, "DCCLookupMethod", CString((UseClientIP()) ? "client" : "default"));
 	PrintLine(File, "TimestampFormat", GetTimestampFormat());
 	PrintLine(File, "AppendTimestamp", CString(GetTimestampAppend()));
 	PrintLine(File, "PrependTimestamp", CString(GetTimestampPrepend()));
@@ -1318,74 +1303,6 @@ bool CUser::PutModNotice(const CString& sModule, const CString& sLine, CClient* 
 	return (pClient == NULL);
 }
 
-bool CUser::ResumeFile(unsigned short uPort, unsigned long uFileSize) {
-	CSockManager& Manager = CZNC::Get().GetManager();
-
-	for (unsigned int a = 0; a < Manager.size(); a++) {
-		if (Manager[a]->GetSockName().Equals("DCC::LISTEN::", false, 13)) {
-			CDCCSock* pSock = (CDCCSock*) Manager[a];
-
-			if (pSock->GetLocalPort() == uPort) {
-				if (pSock->Seek(uFileSize)) {
-					PutModule(pSock->GetModuleName(), "DCC -> [" + pSock->GetRemoteNick() + "][" + pSock->GetFileName() + "] - Attempting to resume from file position [" + CString(uFileSize) + "]");
-					return true;
-				} else {
-					return false;
-				}
-			}
-		}
-	}
-
-	return false;
-}
-
-bool CUser::SendFile(const CString& sRemoteNick, const CString& sFileName, const CString& sModuleName) {
-	CString sFullPath = CDir::ChangeDir(GetDLPath(), sFileName, CZNC::Get().GetHomePath());
-	CDCCSock* pSock = new CDCCSock(this, sRemoteNick, sFullPath, sModuleName);
-
-	CFile* pFile = pSock->OpenFile(false);
-
-	if (!pFile) {
-		delete pSock;
-		return false;
-	}
-
-	unsigned short uPort = CZNC::Get().GetManager().ListenRand("DCC::LISTEN::" + sRemoteNick, GetLocalDCCIP(), false, SOMAXCONN, pSock, 120);
-
-	if (GetNick().Equals(sRemoteNick)) {
-		PutUser(":" + GetStatusPrefix() + "status!znc@znc.in PRIVMSG " + sRemoteNick + " :\001DCC SEND " + pFile->GetShortName() + " " + CString(CUtils::GetLongIP(GetLocalDCCIP())) + " "
-				+ CString(uPort) + " " + CString(pFile->GetSize()) + "\001");
-	} else {
-		PutIRC("PRIVMSG " + sRemoteNick + " :\001DCC SEND " + pFile->GetShortName() + " " + CString(CUtils::GetLongIP(GetLocalDCCIP())) + " "
-			    + CString(uPort) + " " + CString(pFile->GetSize()) + "\001");
-	}
-
-	PutModule(sModuleName, "DCC -> [" + sRemoteNick + "][" + pFile->GetShortName() + "] - Attempting Send.");
-	return true;
-}
-
-bool CUser::GetFile(const CString& sRemoteNick, const CString& sRemoteIP, unsigned short uRemotePort, const CString& sFileName, unsigned long uFileSize, const CString& sModuleName) {
-	if (CFile::Exists(sFileName)) {
-		PutModule(sModuleName, "DCC <- [" + sRemoteNick + "][" + sFileName + "] - File already exists.");
-		return false;
-	}
-
-	CDCCSock* pSock = new CDCCSock(this, sRemoteNick, sRemoteIP, uRemotePort, sFileName, uFileSize, sModuleName);
-
-	if (!pSock->OpenFile()) {
-		delete pSock;
-		return false;
-	}
-
-	if (!CZNC::Get().GetManager().Connect(sRemoteIP, uRemotePort, "DCC::GET::" + sRemoteNick, 60, false, GetLocalDCCIP(), pSock)) {
-		PutModule(sModuleName, "DCC <- [" + sRemoteNick + "][" + sFileName + "] - Unable to connect.");
-		return false;
-	}
-
-	PutModule(sModuleName, "DCC <- [" + sRemoteNick + "][" + sFileName + "] - Attempting to connect to [" + sRemoteIP + "]");
-	return true;
-}
-
 CString CUser::GetCurNick() const {
 	const CIRCSock* pIRCSock = GetIRCSock();
 
@@ -1426,8 +1343,6 @@ void CUser::SetPass(const CString& s, eHashType eHash, const CString& sSalt) {
 	m_sPassSalt = sSalt;
 }
 void CUser::SetMultiClients(bool b) { m_bMultiClients = b; }
-void CUser::SetBounceDCCs(bool b) { m_bBounceDCCs = b; }
-void CUser::SetUseClientIP(bool b) { m_bUseClientIP = b; }
 void CUser::SetDenyLoadMod(bool b) { m_bDenyLoadMod = b; }
 void CUser::SetAdmin(bool b) { m_bAdmin = b; }
 void CUser::SetDenySetBindHost(bool b) { m_bDenySetBindHost = b; }
@@ -1497,12 +1412,10 @@ const CString& CUser::GetPass() const { return m_sPass; }
 CUser::eHashType CUser::GetPassHashType() const { return m_eHashType; }
 const CString& CUser::GetPassSalt() const { return m_sPassSalt; }
 
-bool CUser::UseClientIP() const { return m_bUseClientIP; }
 bool CUser::DenyLoadMod() const { return m_bDenyLoadMod; }
 bool CUser::IsAdmin() const { return m_bAdmin; }
 bool CUser::DenySetBindHost() const { return m_bDenySetBindHost; }
 bool CUser::MultiClients() const { return m_bMultiClients; }
-bool CUser::BounceDCCs() const { return m_bBounceDCCs; }
 const CString& CUser::GetStatusPrefix() const { return m_sStatusPrefix; }
 const CString& CUser::GetDefaultChanModes() const { return m_sDefaultChanModes; }
 const vector<CChan*>& CUser::GetChans() const { return m_vChans; }
@@ -1516,5 +1429,4 @@ bool CUser::KeepBuffer() const { return m_bKeepBuffer; }
 //CString CUser::GetSkinName() const { return (!m_sSkinName.empty()) ? m_sSkinName : CZNC::Get().GetSkinName(); }
 CString CUser::GetSkinName() const { return m_sSkinName; }
 const CString& CUser::GetUserPath() const { if (!CFile::Exists(m_sUserPath)) { CDir::MakeDir(m_sUserPath); } return m_sUserPath; }
-const CString& CUser::GetDLPath() const { if (!CFile::Exists(m_sDLPath)) { CDir::MakeDir(m_sDLPath); } return m_sDLPath; }
 // !Getters

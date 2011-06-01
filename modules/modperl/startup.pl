@@ -298,7 +298,6 @@ sub OnIRCConnecting {}
 sub OnIRCConnectionError {}
 sub OnIRCRegistration {}
 sub OnBroadcast {}
-sub OnDCCUserSend {}
 sub OnChanPermission {}
 sub OnOp {}
 sub OnDeop {}

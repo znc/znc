@@ -8,7 +8,6 @@
 
 #include "Client.h"
 #include "Chan.h"
-#include "DCCBounce.h"
 #include "FileUtils.h"
 #include "IRCSock.h"
 #include "User.h"
@@ -315,14 +314,6 @@ void CClient::ReadLine(const CString& sData) {
 			return;
 		}
 
-		// No idea what this is supposed to do, but it doesn't seem to
-		// make sense. Comment this out and wait for complaints.
-#if 0
-		if (sMsg.WildCmp("DCC * (*)")) {
-			sMsg = "DCC " + sLine.Token(3) + " (" + ((GetIRCSock()) ? GetIRCSock()->GetLocalIP() : GetLocalIP()) + ")";
-		}
-#endif
-
 		if (sMsg.WildCmp("\001*\001")) {
 			CString sCTCP = sMsg;
 			sCTCP.LeftChomp();
@@ -376,96 +367,6 @@ void CClient::ReadLine(const CString& sData) {
 			CString sCTCP = sMsg;
 			sCTCP.LeftChomp();
 			sCTCP.RightChomp();
-
-			if (sCTCP.Equals("DCC ", false, 4) && m_pUser->BounceDCCs()) {
-				CString sType = sCTCP.Token(1);
-				CString sFile = sCTCP.Token(2);
-				unsigned long uLongIP = sCTCP.Token(3).ToULong();
-				unsigned short uPort = sCTCP.Token(4).ToUShort();
-				unsigned long uFileSize = sCTCP.Token(5).ToULong();
-				CString sIP = m_pUser->GetLocalDCCIP();
-
-				if (!m_pUser->UseClientIP()) {
-					uLongIP = CUtils::GetLongIP(GetRemoteIP());
-				}
-
-				if (sType.Equals("CHAT")) {
-					if (!sTarget.TrimPrefix(m_pUser->GetStatusPrefix())) {
-						unsigned short uBNCPort = CDCCBounce::DCCRequest(sTarget, uLongIP, uPort, "", true, m_pUser, "");
-						if (uBNCPort) {
-							PutIRC("PRIVMSG " + sTarget + " :\001DCC CHAT chat " + CString(CUtils::GetLongIP(sIP)) + " " + CString(uBNCPort) + "\001");
-						}
-					}
-				} else if (sType.Equals("SEND")) {
-					// DCC SEND readme.txt 403120438 5550 1104
-
-					if (sTarget.TrimPrefix(m_pUser->GetStatusPrefix())) {
-						if (sTarget.Equals("status")) {
-							CString sPath = m_pUser->GetDLPath();
-							if (!CFile::Exists(sPath)) {
-								PutStatus("Could not create [" + sPath + "] directory.");
-								return;
-							} else if (!CFile::IsDir(sPath)) {
-								PutStatus("Error: [" + sPath + "] is not a directory.");
-								return;
-							}
-
-							CString sAbsolutePath = CDir::CheckPathPrefix(sPath, sFile);
-
-							if (sAbsolutePath.empty()) {
-								PutStatus("Illegal path.");
-								return;
-							}
-
-							m_pUser->GetFile(GetNick(), CUtils::GetIP(uLongIP), uPort, sAbsolutePath, uFileSize);
-						} else {
-							MODULECALL(OnDCCUserSend(CString(m_pUser->GetStatusPrefix() + sTarget), uLongIP, uPort, sFile, uFileSize), m_pUser, this, return);
-						}
-					} else {
-						unsigned short uBNCPort = CDCCBounce::DCCRequest(sTarget, uLongIP, uPort, sFile, false, m_pUser, "");
-						if (uBNCPort) {
-							PutIRC("PRIVMSG " + sTarget + " :\001DCC SEND " + sFile + " " + CString(CUtils::GetLongIP(sIP)) + " " + CString(uBNCPort) + " " + CString(uFileSize) + "\001");
-						}
-					}
-				} else if (sType.Equals("RESUME")) {
-					// PRIVMSG user :DCC RESUME "znc.o" 58810 151552
-					unsigned short uResumePort = sCTCP.Token(3).ToUShort();
-					unsigned long uResumeSize = sCTCP.Token(4).ToULong();
-
-					// Need to lookup the connection by port, filter the port, and forward to the user
-					CString sStatusPrefix = m_pUser->GetStatusPrefix();
-					if (sTarget.Equals(sStatusPrefix, false, sStatusPrefix.length())) {
-						if (m_pUser->ResumeFile(uResumePort, uResumeSize)) {
-							PutClient(":" + sTarget + "!znc@znc.in PRIVMSG " + GetNick() + " :\001DCC ACCEPT " + sFile + " " + CString(uResumePort) + " " + CString(uResumeSize) + "\001");
-						} else {
-							PutStatus("DCC -> [" + GetNick() + "][" + sFile + "] Unable to find send to initiate resume.");
-						}
-					} else {
-						CDCCBounce* pSock = (CDCCBounce*) CZNC::Get().GetManager().FindSockByLocalPort(uResumePort);
-						if (pSock && pSock->GetSockName().Equals("DCC::", false, 5)) {
-							PutIRC("PRIVMSG " + sTarget + " :\001DCC " + sType + " " + sFile + " " + CString(pSock->GetUserPort()) + " " + sCTCP.Token(4) + "\001");
-						}
-					}
-				} else if (sType.Equals("ACCEPT")) {
-					CString sStatusPrefix = m_pUser->GetStatusPrefix();
-					if (!sTarget.Equals(sStatusPrefix, false, sStatusPrefix.length())) {
-						// Need to lookup the connection by port, filter the port, and forward to the user
-						CSockManager& Manager = CZNC::Get().GetManager();
-
-						for (unsigned int a = 0; a < Manager.size(); a++) {
-							CDCCBounce* pSock = (CDCCBounce*) Manager[a];
-
-							if (pSock && pSock->GetSockName().Equals("DCC::", false, 5)) {
-								if (pSock->GetUserPort() == sCTCP.Token(3).ToUShort()) {
-									PutIRC("PRIVMSG " + sTarget + " :\001DCC " + sType + " " + sFile + " " + CString(pSock->GetLocalPort()) + " " + sCTCP.Token(4) + "\001");
-								}
-							}
-						}
-					}
-				}
-
-				return;
-			}
 
 			if (sTarget.TrimPrefix(m_pUser->GetStatusPrefix())) {
 				if (sTarget.Equals("status")) {
