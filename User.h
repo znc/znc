@@ -23,6 +23,7 @@ class CChan;
 class CClient;
 class CConfig;
 class CFile;
+class CIRCNetwork;
 class CIRCSock;
 class CUserTimer;
 class CServer;
@@ -81,6 +82,15 @@ public:
 	CModules& GetModules() { return *m_pModules; }
 	const CModules& GetModules() const { return *m_pModules; }
 	// !Modules
+
+	// Networks
+	bool AddNetwork(const CString &sNetwork);
+	bool DeleteNetwork(CString &sNetwork);
+	bool AddNetwork(CIRCNetwork *pNetwork);
+	void RemoveNetwork(CIRCNetwork *pNetwork);
+	CIRCNetwork* FindNetwork(const CString& sNetwork);
+	const vector<CIRCNetwork*>& GetNetworks() const;
+	// !Networks
 
 	// Buffers
 	void AddRawBuffer(const CString& sPre, const CString& sPost, bool bIncNick = true) { m_RawBuffer.AddLine(sPre, sPost, bIncNick); }
@@ -262,6 +272,7 @@ protected:
 
 	CUserTimer*           m_pUserTimer;
 
+	vector<CIRCNetwork*>  m_vIRCNetworks;
 	vector<CServer*>      m_vServers;
 	vector<CChan*>        m_vChans;
 	vector<CClient*>      m_vClients;

@@ -9,6 +9,7 @@
 #include "Client.h"
 #include "Chan.h"
 #include "FileUtils.h"
+#include "IRCNetwork.h"
 #include "IRCSock.h"
 #include "Listener.h"
 #include "Server.h"
@@ -395,6 +396,117 @@ void CClient::UserCommand(CString& sLine) {
 		PutStatus(Table);
 		PutStatus("Total: " + CString(vChans.size()) + " - Joined: " + CString(uNumJoined) +
 			" - Detached: " + CString(uNumDetached) + " - Disabled: " + CString(uNumDisabled));
+	} else if (sCommand.Equals("ADDNETWORK")) {
+		CString sNetwork = sLine.Token(1);
+
+		if (sNetwork.empty()) {
+			PutStatus("Usage: AddNetwork <name>");
+			return;
+		}
+
+		if (m_pUser->AddNetwork(sNetwork)) {
+			PutStatus("Network added");
+		} else {
+			PutStatus("Unable to add that network");
+			PutStatus("Perhaps that network is already added");
+		}
+	} else if (sCommand.Equals("DELNETWORK")) {
+		CString sNetwork = sLine.Token(1);
+
+		if (sNetwork.empty()) {
+			PutStatus("Usage: DelNetwork <name>");
+			return;
+		}
+
+		if (m_pUser->DeleteNetwork(sNetwork)) {
+			PutStatus("Network deleted");
+		} else {
+			PutStatus("Failed to delete network");
+			PutStatus("Perhaps this network doesn't exist");
+		}
+	} else if (sCommand.Equals("RENAMENETWORK")) {
+		CString sNetwork = sLine.Token(1);
+		CString sNewNetwork = sLine.Token(2);
+
+		if (sNewNetwork.empty()) {
+			PutStatus("Usage: RenameNetwork <old> <new>");
+			return;
+		}
+
+		CIRCNetwork *pNetwork = m_pUser->FindNetwork(sNetwork);
+		if (pNetwork) {
+			pNetwork->SetName(sNewNetwork);
+			PutStatus("Network " + sNetwork + " has been renamed to " + sNewNetwork);
+		} else {
+			PutStatus("No network named " + sNetwork);
+		}
+	} else if (sCommand.Equals("LISTNETWORKS")) {
+		CUser *pUser = m_pUser;
+
+		if (m_pUser->IsAdmin() && !sLine.Token(1).empty()) {
+			pUser = CZNC::Get().FindUser(sLine.Token(1));
+
+			if (!pUser) {
+				PutStatus("User not found " + sLine.Token(1));
+				return;
+			}
+		}
+
+		const vector<CIRCNetwork*>& vNetworks = pUser->GetNetworks();
+
+		CTable Table;
+		Table.AddColumn("Network");
+
+		for (unsigned int a = 0; a < vNetworks.size(); a++) {
+			CIRCNetwork* pNetwork = vNetworks[a];
+			Table.AddRow();
+			Table.SetCell("Network", pNetwork->GetName());
+		}
+
+		if (PutStatus(Table) == 0) {
+			PutStatus("No networks");
+		}
+	} else if (sCommand.Equals("MOVENETWORK") && m_pUser->IsAdmin()) {
+		CString sUser = sLine.Token(1);
+		CString sNetwork = sLine.Token(2);
+		CString sNewUser = sLine.Token(3);
+		CString sNewNetwork = sLine.Token(4);
+
+		if (sNewUser.empty()) {
+			PutStatus("Usage: MoveNetwork <user> <network> <new-user> [new-network-name]");
+			return;
+		}
+
+		CUser *pUser = CZNC::Get().FindUser(sUser);
+		if (!pUser) {
+			PutStatus("User not found: " + sUser);
+			return;
+		}
+
+		CUser *pNewUser = CZNC::Get().FindUser(sNewUser);
+		if (!pNewUser) {
+			PutStatus("User not found: " + sNewUser);
+			return;
+		}
+
+		CIRCNetwork *pNetwork = pUser->FindNetwork(sNetwork);
+		if (!pNetwork) {
+			PutStatus(sUser + " does not have a network named " + sNetwork);
+			return;
+		}
+
+		if (sNewNetwork.empty()) {
+			sNewNetwork = sNetwork;
+		}
+
+		if (pNewUser->FindNetwork(sNewNetwork)) {
+			PutStatus(sNewUser + " already has a network named " + sNewNetwork);
+			return;
+		}
+
+		pNetwork->SetUser(pNewUser);
+		pNetwork->SetName(sNewNetwork);
+		PutStatus(sUser + "/" + sNetwork + " has been moved to " + sNewUser + "/" + sNewNetwork);
 	} else if (sCommand.Equals("ADDSERVER")) {
 		CString sServer = sLine.Token(1);
 
@@ -1046,6 +1158,35 @@ void CClient::HelpUser() {
 	Table.AddRow();
 	Table.SetCell("Command", "ListServers");
 	Table.SetCell("Description", "List all servers");
+
+	Table.AddRow();
+	Table.SetCell("Command", "AddNetwork");
+	Table.SetCell("Arguments", "<name>");
+	Table.SetCell("Description", "Add a network to your user");
+
+	Table.AddRow();
+	Table.SetCell("Command", "DelNetwork");
+	Table.SetCell("Arguments", "<name>");
+	Table.SetCell("Description", "Delete a network from your user");
+
+	Table.AddRow();
+	Table.SetCell("Command", "ListNetworks");
+	if (m_pUser->IsAdmin()) {
+		Table.SetCell("Arguments", "[user]");
+	}
+	Table.SetCell("Description", "List all networks");
+
+	Table.AddRow();
+	Table.SetCell("Command", "RenameNetwork");
+	Table.SetCell("Arguments", "<old> <new>");
+	Table.SetCell("Description", "Rename a network");
+
+	if (m_pUser->IsAdmin()) {
+		Table.AddRow();
+		Table.SetCell("Command", "MoveNetwork");
+		Table.SetCell("Arguments", "<user> <network> <new-user> [new-network-name]");
+		Table.SetCell("Description", "Move a network to another user");
+	}
 
 	Table.AddRow();
 	Table.SetCell("Command", "AddServer");
