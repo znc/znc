@@ -742,6 +742,7 @@ bool CUser::GetTimestampAppend() const { return m_bAppendTimestamp; }
 bool CUser::GetTimestampPrepend() const { return m_bPrependTimestamp; }
 
 bool CUser::IsValidUserName(const CString& sUserName) {
+	// /^[a-zA-Z][a-zA-Z@._\-]*$/
 	const char* p = sUserName.c_str();
 
 	if (sUserName.empty()) {
