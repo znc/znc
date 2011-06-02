@@ -10,6 +10,7 @@
 #include "Chan.h"
 #include "Config.h"
 #include "FileUtils.h"
+#include "IRCNetwork.h"
 #include "IRCSock.h"
 #include "Server.h"
 #include "znc.h"
@@ -272,6 +273,21 @@ bool CUser::ParseConfig(CConfig* pConfig, CString& sError) {
 
 	CConfig::SubConfig subConf;
 	CConfig::SubConfig::const_iterator subIt;
+	pConfig->FindSubConfig("network", subConf);
+	for (subIt = subConf.begin(); subIt != subConf.end(); ++subIt) {
+		const CString& sNetworkName = subIt->first;
+
+		CIRCNetwork *pNetwork = FindNetwork(sNetworkName);
+
+		if (!pNetwork) {
+			pNetwork = new CIRCNetwork(this, sNetworkName);
+		}
+
+		if (!pNetwork->ParseConfig(subIt->second.m_pSubConfig, sError)) {
+			return false;
+		}
+	}
+
 	pConfig->FindSubConfig("chan", subConf);
 	for (subIt = subConf.begin(); subIt != subConf.end(); ++subIt) {
 		const CString& sChanName = subIt->first;
@@ -373,6 +389,61 @@ void CUser::DelServers()
 	}
 
 	m_vServers.clear();
+}
+
+bool CUser::AddNetwork(const CString &sNetwork) {
+	if (FindNetwork(sNetwork)) {
+		return false;
+	}
+
+	new CIRCNetwork(this, sNetwork);
+
+	return true;
+}
+
+bool CUser::AddNetwork(CIRCNetwork *pNetwork) {
+	if (FindNetwork(pNetwork->GetName())) {
+		return false;
+	}
+
+	m_vIRCNetworks.push_back(pNetwork);
+
+	return true;
+}
+
+void CUser::RemoveNetwork(CIRCNetwork *pNetwork) {
+	for (vector<CIRCNetwork*>::iterator it = m_vIRCNetworks.begin(); it != m_vIRCNetworks.end(); ++it) {
+		if (pNetwork == *it) {
+			m_vIRCNetworks.erase(it);
+			return;
+		}
+	}
+}
+
+bool CUser::DeleteNetwork(CString& sNetwork) {
+	CIRCNetwork *pNetwork = FindNetwork(sNetwork);
+
+	if (pNetwork) {
+		delete pNetwork;
+		return true;
+	}
+
+	return false;
+}
+
+CIRCNetwork* CUser::FindNetwork(const CString& sNetwork) {
+	for (vector<CIRCNetwork*>::iterator it = m_vIRCNetworks.begin(); it != m_vIRCNetworks.end(); ++it) {
+		CIRCNetwork *pNetwork = *it;
+		if (pNetwork->GetName().Equals(sNetwork)) {
+			return pNetwork;
+		}
+	}
+
+	return NULL;
+}
+
+const vector<CIRCNetwork*>& CUser::GetNetworks() const {
+	return m_vIRCNetworks;
 }
 
 void CUser::SetIRCSocket(CIRCSock* pIRCSock) {
@@ -597,6 +668,13 @@ bool CUser::Clone(const CUser& User, CString& sErrorRet, bool bCloneChans) {
 	}
 
 	// !Allowed Hosts
+
+	// Networks
+	const vector<CIRCNetwork*>& vNetworks = User.GetNetworks();
+	for (a = 0; a < vNetworks.size(); a++) {
+		new CIRCNetwork(this, vNetworks[a]);
+	}
+	// !Networks
 
 	// Servers
 	const vector<CServer*>& vServers = User.GetServers();
@@ -928,6 +1006,15 @@ bool CUser::WriteConfig(CFile& File) {
 			if (!pChan->WriteConfig(File)) {
 				return false;
 			}
+		}
+	}
+
+	// Networks
+	for (unsigned int d = 0; d < m_vIRCNetworks.size(); d++) {
+		CIRCNetwork *pNetwork = m_vIRCNetworks[d];
+		File.Write("\n");
+		if (!pNetwork->WriteConfig(File)) {
+			return false;
 		}
 	}
 
@@ -1418,6 +1505,22 @@ bool CUser::SetStatusPrefix(const CString& s) {
 // !Setters
 
 // Getters
+vector<CClient*> CUser::GetAllClients() {
+	vector<CClient*> vClients;
+
+	for (unsigned int a = 0; a < m_vIRCNetworks.size(); a++) {
+		for (unsigned int b = 0; b < m_vIRCNetworks[a]->GetClients().size(); b++) {
+			vClients.push_back(m_vIRCNetworks[a]->GetClients()[b]);
+		}
+	}
+
+	for (unsigned int a = 0; a < m_vClients.size(); a++) {
+		vClients.push_back(m_vClients[a]);
+	}
+
+	return vClients;
+}
+
 const CString& CUser::GetUserName() const { return m_sUserName; }
 const CString& CUser::GetCleanUserName() const { return m_sCleanUserName; }
 const CString& CUser::GetNick(bool bAllowDefault) const { return (bAllowDefault && m_sNick.empty()) ? GetCleanUserName() : m_sNick; }

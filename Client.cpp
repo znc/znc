@@ -11,6 +11,7 @@
 #include "FileUtils.h"
 #include "IRCSock.h"
 #include "User.h"
+#include "IRCNetwork.h"
 #include "znc.h"
 #include "WebModules.h"
 
@@ -88,6 +89,11 @@ void CClient::ReadLine(const CString& sData) {
 			if (m_sPass.find(":") != CString::npos) {
 				m_sUser = m_sPass.Token(0, false, ":");
 				m_sPass = m_sPass.Token(1, true, ":");
+
+				if (m_sUser.find("/") != CString::npos) {
+					m_sNetwork = m_sUser.Token(1, true, "/");
+					m_sUser = m_sUser.Token(0, false, "/");
+				}
 			}
 
 			AuthUser();
@@ -110,6 +116,11 @@ void CClient::ReadLine(const CString& sData) {
 		if (!IsAttached()) {
 			if (m_sUser.empty()) {
 				m_sUser = sLine.Token(1);
+
+				if (m_sUser.find("/") != CString::npos) {
+					m_sNetwork = m_sUser.Token(1, true, "/");
+					m_sUser = m_sUser.Token(0, false, "/");
+				}
 			}
 
 			m_bGotUser = true;
@@ -342,7 +353,7 @@ void CClient::ReadLine(const CString& sData) {
 
 		// Relay to the rest of the clients that may be connected to this user
 		if (m_pUser->IsChan(sTarget)) {
-			vector<CClient*>& vClients = m_pUser->GetClients();
+			vector<CClient*>& vClients = GetClients();
 
 			for (unsigned int a = 0; a < vClients.size(); a++) {
 				CClient* pClient = vClients[a];
@@ -390,7 +401,7 @@ void CClient::ReadLine(const CString& sData) {
 
 				// Relay to the rest of the clients that may be connected to this user
 				if (m_pUser->IsChan(sTarget)) {
-					vector<CClient*>& vClients = m_pUser->GetClients();
+					vector<CClient*>& vClients = GetClients();
 
 					for (unsigned int a = 0; a < vClients.size(); a++) {
 						CClient* pClient = vClients[a];
@@ -438,7 +449,7 @@ void CClient::ReadLine(const CString& sData) {
 		// Relay to the rest of the clients that may be connected to this user
 
 		if (m_pUser->IsChan(sTarget)) {
-			vector<CClient*>& vClients = m_pUser->GetClients();
+			vector<CClient*>& vClients = GetClients();
 
 			for (unsigned int a = 0; a < vClients.size(); a++) {
 				CClient* pClient = vClients[a];
@@ -457,6 +468,31 @@ void CClient::ReadLine(const CString& sData) {
 
 void CClient::SetNick(const CString& s) {
 	m_sNick = s;
+}
+
+void CClient::SetNetwork(CIRCNetwork* pNetwork, bool bDisconnect) {
+	if (bDisconnect) {
+		if (m_pNetwork) {
+			m_pNetwork->ClientDisconnected(this);
+		} else if (m_pUser) {
+			m_pUser->UserDisconnected(this);
+		}
+	}
+
+	m_pNetwork = pNetwork;
+	if (m_pNetwork) {
+		m_pNetwork->ClientConnected(this);
+	} else if (m_pUser) {
+		m_pUser->UserConnected(this);
+	}
+}
+
+vector<CClient*>& CClient::GetClients() {
+	if (m_pNetwork) {
+		return m_pNetwork->GetClients();
+	}
+
+	return m_pUser->GetClients();
 }
 
 const CIRCSock* CClient::GetIRCSock() const {
@@ -569,7 +605,14 @@ void CClient::AcceptLogin(CUser& User) {
 
 	SetSockName("USR::" + m_pUser->GetUserName());
 
-	m_pUser->UserConnected(this);
+	if (!m_sNetwork.empty()) {
+		m_pNetwork = m_pUser->FindNetwork(m_sNetwork);
+		if (!m_pNetwork) {
+			PutStatus("Network (" + m_sNetwork + ") doesn't exist.");
+		}
+	}
+
+	SetNetwork(m_pNetwork, false);
 
 	SendMotd();
 
@@ -590,9 +633,7 @@ void CClient::ConnectionRefused() {
 
 void CClient::Disconnected() {
 	DEBUG(GetSockName() << " == Disconnected()");
-	if (m_pUser) {
-		m_pUser->UserDisconnected(this);
-	}
+	SetNetwork(NULL);
 
 	MODULECALL(OnClientDisconnect(), m_pUser, this, NOTHING);
 }
