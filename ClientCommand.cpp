@@ -170,7 +170,7 @@ void CClient::UserCommand(CString& sLine) {
 			}
 		}
 
-		vector<CClient*>& vClients = pUser->GetClients();
+		vector<CClient*> vClients = pUser->GetAllClients();
 
 		if (vClients.empty()) {
 			PutStatus("No clients are connected");
@@ -179,10 +179,14 @@ void CClient::UserCommand(CString& sLine) {
 
 		CTable Table;
 		Table.AddColumn("Host");
+		Table.AddColumn("Network");
 
 		for (unsigned int a = 0; a < vClients.size(); a++) {
 			Table.AddRow();
 			Table.SetCell("Host", vClients[a]->GetRemoteIP());
+			if (vClients[a]->GetNetwork()) {
+				Table.SetCell("Network", vClients[a]->GetNetwork()->GetName());
+			}
 		}
 
 		PutStatus(Table);
@@ -470,10 +474,10 @@ void CClient::UserCommand(CString& sLine) {
 		CString sUser = sLine.Token(1);
 		CString sNetwork = sLine.Token(2);
 		CString sNewUser = sLine.Token(3);
-		CString sNewNetwork = sLine.Token(4);
+		CString sNewNetwork = sLine.Token(3);
 
 		if (sNewUser.empty()) {
-			PutStatus("Usage: MoveNetwork <user> <network> <new-user> [new-network-name]");
+			PutStatus("Usage: MoveNetwork <user> <network> <new-user> [<new-network-name>]");
 			return;
 		}
 
@@ -507,6 +511,26 @@ void CClient::UserCommand(CString& sLine) {
 		pNetwork->SetUser(pNewUser);
 		pNetwork->SetName(sNewNetwork);
 		PutStatus(sUser + "/" + sNetwork + " has been moved to " + sNewUser + "/" + sNewNetwork);
+	} else if (sCommand.Equals("JUMPNETWORK")) {
+		CString sNetwork = sLine.Token(1);
+
+		if (sNetwork.empty()) {
+			PutStatus("No network supplied.");
+			return;
+		}
+
+		if (m_pNetwork && (m_pNetwork->GetName() == sNetwork)) {
+			PutStatus("You are already connected with this network.");
+			return;
+		}
+
+		CIRCNetwork *pNetwork = m_pUser->FindNetwork(sNetwork);
+		if (pNetwork) {
+			SetNetwork(pNetwork);
+			PutStatus("Switched to " + sNetwork);
+		} else {
+			PutStatus("You don't have a network named " + sNetwork);
+		}
 	} else if (sCommand.Equals("ADDSERVER")) {
 		CString sServer = sLine.Token(1);
 
@@ -1171,9 +1195,6 @@ void CClient::HelpUser() {
 
 	Table.AddRow();
 	Table.SetCell("Command", "ListNetworks");
-	if (m_pUser->IsAdmin()) {
-		Table.SetCell("Arguments", "[user]");
-	}
 	Table.SetCell("Description", "List all networks");
 
 	Table.AddRow();
@@ -1184,9 +1205,14 @@ void CClient::HelpUser() {
 	if (m_pUser->IsAdmin()) {
 		Table.AddRow();
 		Table.SetCell("Command", "MoveNetwork");
-		Table.SetCell("Arguments", "<user> <network> <new-user> [new-network-name]");
+		Table.SetCell("Arguments", "<user> <network> <new-user> [<new-network-name>]");
 		Table.SetCell("Description", "Move a network to another user");
 	}
+
+	Table.AddRow();
+	Table.SetCell("Command", "JumpNetwork");
+	Table.SetCell("Arguments", "<network>");
+	Table.Setcell("Description", "Jump to another network");
 
 	Table.AddRow();
 	Table.SetCell("Command", "AddServer");

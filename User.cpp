@@ -1504,6 +1504,22 @@ bool CUser::SetStatusPrefix(const CString& s) {
 // !Setters
 
 // Getters
+vector<CClient*> CUser::GetAllClients() {
+	vector<CClient*> vClients;
+
+	for (unsigned int a = 0; a < m_vIRCNetworks.size(); a++) {
+		for (unsigned int b = 0; b < m_vIRCNetworks[a]->GetClients().size(); b++) {
+			vClients.push_back(m_vIRCNetworks[a]->GetClients()[b]);
+		}
+	}
+
+	for (unsigned int a = 0; a < m_vClients.size(); a++) {
+		vClients.push_back(m_vClients[a]);
+	}
+
+	return vClients;
+}
+
 const CString& CUser::GetUserName() const { return m_sUserName; }
 const CString& CUser::GetCleanUserName() const { return m_sCleanUserName; }
 const CString& CUser::GetNick(bool bAllowDefault) const { return (bAllowDefault && m_sNick.empty()) ? GetCleanUserName() : m_sNick; }

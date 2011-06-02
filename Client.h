@@ -17,6 +17,7 @@
 // Forward Declarations
 class CZNC;
 class CUser;
+class CIRCNetwork;
 class CIRCSock;
 class CClient;
 // !Forward Declarations
@@ -76,6 +77,7 @@ class CClient : public CZNCSock {
 public:
 	CClient() : CZNCSock() {
 		m_pUser = NULL;
+		m_pNetwork = NULL;
 		m_bGotPass = false;
 		m_bGotNick = false;
 		m_bGotUser = false;
@@ -128,6 +130,9 @@ public:
 
 	void SetNick(const CString& s);
 	CUser* GetUser() const { return m_pUser; }
+	void SetNetwork(CIRCNetwork* pNetwork, bool bDisconnect=true);
+	CIRCNetwork* GetNetwork() const { return m_pNetwork; }
+	vector<CClient*>& GetClients();
 	const CIRCSock* GetIRCSock() const;
 	CIRCSock* GetIRCSock();
 private:
@@ -142,9 +147,11 @@ protected:
 	bool                 m_bNamesx;
 	bool                 m_bUHNames;
 	CUser*               m_pUser;
+	CIRCNetwork*         m_pNetwork;
 	CString              m_sNick;
 	CString              m_sPass;
 	CString              m_sUser;
+	CString              m_sNetwork;
 	CSmartPtr<CAuthBase> m_spAuth;
 	SCString             m_ssAcceptedCaps;
 };

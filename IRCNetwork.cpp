@@ -9,6 +9,7 @@
 #include "IRCNetwork.h"
 #include "User.h"
 #include "FileUtils.h"
+#include "Client.h"
 
 CIRCNetwork::CIRCNetwork(CUser *pUser, const CString& sName) {
 	m_pUser = NULL;
@@ -36,6 +37,31 @@ bool CIRCNetwork::WriteConfig(CFile& File) {
 	return true;
 }
 
+void CIRCNetwork::BounceAllClients() {
+	for (unsigned int a = 0; a < m_vClients.size(); a++) {
+		m_vClients[a]->BouncedOff();
+	}
+
+	m_vClients.clear();
+}
+
+void CIRCNetwork::ClientConnected(CClient *pClient) {
+	if (!m_pUser->MultiClients()) {
+		BounceAllClients();
+	}
+
+	m_vClients.push_back(pClient);
+}
+
+void CIRCNetwork::ClientDisconnected(CClient *pClient) {
+	for (unsigned int a = 0; a < m_vClients.size(); a++) {
+		if (m_vClients[a] == pClient) {
+			m_vClients.erase(m_vClients.begin() + a);
+			break;
+		}
+	}
+}
+
 CUser* CIRCNetwork::GetUser() {
 	return m_pUser;
 }
@@ -45,6 +71,13 @@ const CString& CIRCNetwork::GetName() const {
 }
 
 void CIRCNetwork::SetUser(CUser *pUser) {
+	for (unsigned int a = 0; a < m_vClients.size(); a++) {
+		m_vClients[a]->PutStatusNotice("This network is being deleted or moved to another user.");
+		m_vClients[a]->Close(Csock::CLT_AFTERWRITE);
+	}
+
+	m_vClients.clear();
+
 	if (m_pUser) {
 		m_pUser->RemoveNetwork(this);
 	}

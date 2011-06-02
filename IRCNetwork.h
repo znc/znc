@@ -15,6 +15,7 @@
 class CUser;
 class CFile;
 class CConfig;
+class CClient;
 
 class CIRCNetwork {
 public:
@@ -24,16 +25,24 @@ public:
 	~CIRCNetwork();
 
 	bool ParseConfig(CConfig *pConfig, CString& sError);
-	bool WriteConfig(CFile& File); 
+	bool WriteConfig(CFile& File);
+
+	void BounceAllClients();
+
+	void ClientConnected(CClient *pClient);
+	void ClientDisconnected(CClient *pClient);
 
 	CUser* GetUser();
 	const CString& GetName() const;
+	vector<CClient*>& GetClients() { return m_vClients; }
 
 	void SetUser(CUser *pUser);
 	void SetName(const CString& sName);
 protected:
-	CString  m_sName;
-	CUser*   m_pUser;
+	CString            m_sName;
+	CUser*             m_pUser;
+
+	vector<CClient*>   m_vClients;
 };
 
 #endif // !_IRCNETWORK_H

@@ -177,6 +177,7 @@ public:
 
 	// Getters
 	vector<CClient*>& GetClients() { return m_vClients; }
+	vector<CClient*> GetAllClients();
 	CIRCSock* GetIRCSock() { return m_pIRCSock; }
 	const CIRCSock* GetIRCSock() const { return m_pIRCSock; }
 	const CString& GetUserName() const;
