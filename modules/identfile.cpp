@@ -90,7 +90,7 @@ public:
 			sData.Replace("%", m_pUser->GetIdent());
 		}
 
-		DEBUG("Writing [" + sData + "] to ISpoofFile [" + m_pISpoofLockFile->GetLongName() + "]");
+		DEBUG("Writing [" + sData + "] to ident spoof file [" + m_pISpoofLockFile->GetLongName() + "] for user [" + m_pUser->GetUserName() + "]");
 
 		m_pISpoofLockFile->Write(sData + "\n");
 
@@ -125,14 +125,14 @@ public:
 
 	virtual EModRet OnIRCConnecting(CIRCSock *pIRCSock) {
 		if (m_pISpoofLockFile != NULL) {
-			DEBUG("Aborting connection, ISpoofLockFile exists");
-			PutModule("Aborting connection, ISpoofLockFile exists");
+			DEBUG("Aborting connection, ident spoof lock file exists");
+			PutModule("Aborting connection, another user is currently connecting and using the ident spoof file");
 			return HALTCORE;
 		}
 
 		if (!WriteISpoof()) {
-			DEBUG("ISpoof [" + GetNV("File") + "] could not be written");
-			PutModule("ISpoof [" + GetNV("File") + "] could not be written, retrying...");
+			DEBUG("identfile [" + GetNV("File") + "] could not be written");
+			PutModule("[" + GetNV("File") + "] could not be written, retrying...");
 			return HALTCORE;
 		}
 
