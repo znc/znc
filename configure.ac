@@ -22,6 +22,8 @@ AC_DEFUN([ZNC_AUTO_FAIL], [
 CXXFLAGS="$CXXFLAGS "
 AC_PROG_CXX
 AC_PROG_INSTALL
+AC_PROG_GREP
+AC_PROG_SED
 AC_CANONICAL_HOST
 AC_SYS_LARGEFILE
 
@@ -476,6 +478,18 @@ then
 	fi
 fi
 
+AC_CACHE_CHECK([for GNU make], [ac_cv_path_GNUMAKE], [
+	AC_PATH_PROGS_FEATURE_CHECK([GNUMAKE], [make gmake], [[
+			if $ac_path_GNUMAKE --version | $GREP GNU > /dev/null; then
+				ac_cv_path_GNUMAKE=$ac_path_GNUMAKE
+				ac_path_GNUMAKE_found=:
+			fi
+		]], [AC_MSG_ERROR([could not find GNU make])]
+	)
+])
+GNUMAKE_DIRNAME=`AS_DIRNAME(["$ac_cv_path_GNUMAKE"])`
+GNUMAKE=`echo $ac_cv_path_GNUMAKE | $SED "s%$GNUMAKE_DIRNAME/%%"`
+
 AC_SUBST([CXXFLAGS])
 AC_SUBST([CPPFLAGS])
 AC_SUBST([MODFLAGS])
@@ -535,4 +549,6 @@ else
 	echo "charset:      yes"
 fi
 echo "run from src: $RUNFROMSOURCE"
+echo
+echo "Now you can run \"$GNUMAKE\" to compile ZNC"
 
