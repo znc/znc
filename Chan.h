@@ -88,6 +88,7 @@ public:
 	// Buffer
 	int AddBuffer(const CString& sLine);
 	void ClearBuffer();
+	void TrimBuffer(const unsigned int uMax);
 	void SendBuffer(CClient* pClient);
 	// !Buffer
 
