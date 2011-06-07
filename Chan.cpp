@@ -537,7 +537,7 @@ void CChan::ClearBuffer() {
 
 void CChan::TrimBuffer(const unsigned int uMax) {
 	if (m_vsBuffer.size() > uMax) {
-		m_vsBuffer.erase(m_vsBuffer.begin(), m_vsBuffer.begin() + (uMax - m_vsBuffer.size())); 
+		m_vsBuffer.erase(m_vsBuffer.begin(), m_vsBuffer.begin() + (uMax - m_vsBuffer.size()));
 	}
 }
 
