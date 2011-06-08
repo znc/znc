@@ -121,9 +121,6 @@ public:
 	CString AddTimestamp(const CString& sStr) const;
 	CString& AddTimestamp(const CString& sStr, CString& sRet) const;
 
-	bool SendFile(const CString& sRemoteNick, const CString& sFileName, const CString& sModuleName = "");
-	bool GetFile(const CString& sRemoteNick, const CString& sRemoteIP, unsigned short uRemotePort, const CString& sFileName, unsigned long uFileSize, const CString& sModuleName = "");
-	bool ResumeFile(unsigned short uPort, unsigned long uFileSize);
 	CString GetCurNick() const;
 	bool Clone(const CUser& User, CString& sErrorRet, bool bCloneChans = true);
 	void BounceAllClients();
