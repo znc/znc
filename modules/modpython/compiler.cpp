@@ -7,6 +7,7 @@
  */
 
 #include <Python.h>
+#include <string>
 
 void fail(PyObject* py, int n) {
 	// Doesn't clear any variables, but meh, finalize anyway...
@@ -27,7 +28,11 @@ int main(int argc, char** argv) {
 	PyObject* pyFunc = PyObject_GetAttrString(pyModule, "compile");
 	fail(pyFunc, 2);
 	
-	PyObject* pyKW = Py_BuildValue("{sssN}", "cfile", argv[2], "doraise", Py_True);
+	std::string cfile = argv[2];
+	if (cfile.find('/') == std::string::npos) {
+		cfile = "./" + cfile;
+	}
+	PyObject* pyKW = Py_BuildValue("{sssN}", "cfile", cfile.c_str(), "doraise", Py_True);
 	fail(pyKW, 3);
 
 	PyObject* pyArg = Py_BuildValue("(s)", argv[1]);
