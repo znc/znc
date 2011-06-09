@@ -27,7 +27,7 @@ int main(int argc, char** argv) {
 
 	PyObject* pyFunc = PyObject_GetAttrString(pyModule, "compile");
 	fail(pyFunc, 2);
-	
+
 	std::string cfile = argv[2];
 	if (cfile.find('/') == std::string::npos) {
 		cfile = "./" + cfile;

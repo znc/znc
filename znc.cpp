@@ -579,7 +579,7 @@ CString CZNC::MakeConfigHeader() {
 bool CZNC::WriteNewConfig(const CString& sConfigFile) {
 	CString sAnswer, sUser;
 	VCString vsLines;
-	
+
 	vsLines.push_back(MakeConfigHeader());
 
 	m_sConfigFile = ExpandConfigPath(sConfigFile);
