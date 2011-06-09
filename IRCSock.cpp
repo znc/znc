@@ -709,7 +709,7 @@ void CIRCSock::ReadLine(const CString& sData) {
 					sArgs.Trim();
 					MODULECALL(OnServerCapResult(sArgs, false), m_pUser, NULL, NOTHING);
 				}
-				
+
 				SendNextCap();
 			}
 			// Don't forward any CAP stuff to the client

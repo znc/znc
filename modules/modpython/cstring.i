@@ -9,7 +9,7 @@
 %{
 #include <string>
 %}
-  
+
 %feature("naturalvar") CString;
 class CString;
 
@@ -18,7 +18,7 @@ class CString;
 /*@SWIG:/usr/share/swig1.3/typemaps/std_strings.swg,4,%std_string_asptr@*/
 %fragment("SWIG_" "AsPtr" "_" {CString},"header",fragment="SWIG_AsCharPtrAndSize") {
 SWIGINTERN int
-SWIG_AsPtr_std_string (PyObject * obj, CString **val) 
+SWIG_AsPtr_std_string (PyObject * obj, CString **val)
 {
   char* buf = 0 ; size_t size = 0; int alloc = SWIG_OLDOBJ;
   if (SWIG_IsOK((SWIG_AsCharPtrAndSize(obj, &buf, &size, &alloc)))) {
@@ -107,8 +107,8 @@ SWIG_From_std_string  (const CString& s)
   %typemap(in,fragment="SWIG_" "AsPtr" "_" {CString}) CString {
     CString *ptr = (CString *)0;
     int res = SWIG_AsPtr_std_string($input, &ptr);
-    if (!SWIG_IsOK(res) || !ptr) { 
-      SWIG_exception_fail(SWIG_ArgError((ptr ? res : SWIG_TypeError)), "in method '" "$symname" "', argument " "$argnum"" of type '" "$type""'"); 
+    if (!SWIG_IsOK(res) || !ptr) {
+      SWIG_exception_fail(SWIG_ArgError((ptr ? res : SWIG_TypeError)), "in method '" "$symname" "', argument " "$argnum"" of type '" "$type""'");
     }
     $1 = *ptr;
     if (SWIG_IsNewObj(res)) free((char*)ptr);
@@ -129,8 +129,8 @@ SWIG_From_std_string  (const CString& s)
   %typemap(varin,fragment="SWIG_" "AsPtr" "_" {CString}) CString {
     CString *ptr = (CString *)0;
     int res = SWIG_AsPtr_std_string($input, &ptr);
-    if (!SWIG_IsOK(res) || !ptr) { 
-      SWIG_exception_fail(SWIG_ArgError((ptr ? res : SWIG_TypeError)), "in variable '""$name""' of type '""$type""'"); 
+    if (!SWIG_IsOK(res) || !ptr) {
+      SWIG_exception_fail(SWIG_ArgError((ptr ? res : SWIG_TypeError)), "in variable '""$name""' of type '""$type""'");
     }
     $1 = *ptr;
     if (SWIG_IsNewObj(res)) free((char*)ptr);
@@ -140,7 +140,7 @@ SWIG_From_std_string  (const CString& s)
   %typemap(directorargout,noblock=1,fragment="SWIG_" "AsPtr" "_" {CString}) CString *DIRECTOROUT ($*ltype temp) {
     CString *swig_optr = 0;
     int swig_ores = $input ? SWIG_AsPtr_std_string($input, &swig_optr) : 0;
-    if (!SWIG_IsOK(swig_ores) || !swig_optr) { 
+    if (!SWIG_IsOK(swig_ores) || !swig_optr) {
       Swig::DirectorTypeMismatchException::raise(SWIG_ErrorType(SWIG_ArgError((swig_optr ? swig_ores : SWIG_TypeError))), "in output value of type '""$type""'");
     }
     temp = *swig_optr;
@@ -151,7 +151,7 @@ SWIG_From_std_string  (const CString& s)
   %typemap(directorout,noblock=1,fragment="SWIG_" "AsPtr" "_" {CString}) CString {
     CString *swig_optr = 0;
     int swig_ores = SWIG_AsPtr_std_string($input, &swig_optr);
-    if (!SWIG_IsOK(swig_ores) || !swig_optr) { 
+    if (!SWIG_IsOK(swig_ores) || !swig_optr) {
       Swig::DirectorTypeMismatchException::raise(SWIG_ErrorType(SWIG_ArgError((swig_optr ? swig_ores : SWIG_TypeError))), "in output value of type '""$type""'");
     }
     $result = *swig_optr;
@@ -161,9 +161,9 @@ SWIG_From_std_string  (const CString& s)
   %typemap(directorout,noblock=1,fragment="SWIG_" "AsPtr" "_" {CString},warning= "473:Returning a pointer or reference in a director method is not recommended." ) CString* {
     CString *swig_optr = 0;
     int swig_ores = SWIG_AsPtr_std_string($input, &swig_optr);
-    if (!SWIG_IsOK(swig_ores)) { 
+    if (!SWIG_IsOK(swig_ores)) {
       Swig::DirectorTypeMismatchException::raise(SWIG_ErrorType(SWIG_ArgError(swig_ores)), "in output value of type '""$type""'");
-    }    
+    }
     $result = swig_optr;
     if (SWIG_IsNewObj(swig_ores)) {
       swig_acquire_ownership(swig_optr);
@@ -179,13 +179,13 @@ SWIG_From_std_string  (const CString& s)
   %typemap(directorout,noblock=1,fragment="SWIG_" "AsPtr" "_" {CString},warning= "473:Returning a pointer or reference in a director method is not recommended." ) CString& {
     CString *swig_optr = 0;
     int swig_ores = SWIG_AsPtr_std_string($input, &swig_optr);
-    if (!SWIG_IsOK(swig_ores)) { 
+    if (!SWIG_IsOK(swig_ores)) {
       Swig::DirectorTypeMismatchException::raise(SWIG_ErrorType(SWIG_ArgError(swig_ores)), "in output value of type '""$type""'");
     } else {
-      if (!swig_optr) { 
+      if (!swig_optr) {
 	Swig::DirectorTypeMismatchException::raise(SWIG_ErrorType(SWIG_ValueError), "invalid null reference " "in output value of type '""$type""'");
-      } 
-    }    
+      }
+    }
     $result = swig_optr;
     if (SWIG_IsNewObj(swig_ores)) {
       swig_acquire_ownership(swig_optr);
@@ -208,26 +208,26 @@ SWIG_From_std_string  (const CString& s)
   $1 = SWIG_CheckState(res);
 }
 
-%typemap(typecheck,noblock=1,precedence=135,fragment="SWIG_" "AsPtr" "_" {CString}) CString, const CString& {  
+%typemap(typecheck,noblock=1,precedence=135,fragment="SWIG_" "AsPtr" "_" {CString}) CString, const CString& {
   int res = SWIG_AsPtr_std_string($input, (CString**)(0));
   $1 = SWIG_CheckState(res);
 }
 /*@SWIG@*/;
-  /*@SWIG:/usr/share/swig1.3/typemaps/inoutlist.swg,254,%ptr_input_typemap@*/		
+  /*@SWIG:/usr/share/swig1.3/typemaps/inoutlist.swg,254,%ptr_input_typemap@*/
   /*@SWIG:/usr/share/swig1.3/typemaps/inoutlist.swg,117,%_ptr_input_typemap@*/
-  %typemap(in,noblock=1,fragment="SWIG_" "AsPtr" "_" {CString}) CString *INPUT(int res = 0) {  
+  %typemap(in,noblock=1,fragment="SWIG_" "AsPtr" "_" {CString}) CString *INPUT(int res = 0) {
     res = SWIG_AsPtr_std_string($input, &$1);
     if (!SWIG_IsOK(res)) {
       SWIG_exception_fail(SWIG_ArgError(res), "in method '" "$symname" "', argument " "$argnum"" of type '" "$type""'");
     }
     res = SWIG_AddTmpMask(res);
   }
-  %typemap(in,noblock=1,fragment="SWIG_" "AsPtr" "_" {CString}) CString &INPUT(int res = 0) {  
+  %typemap(in,noblock=1,fragment="SWIG_" "AsPtr" "_" {CString}) CString &INPUT(int res = 0) {
     res = SWIG_AsPtr_std_string($input, &$1);
-    if (!SWIG_IsOK(res)) { 
+    if (!SWIG_IsOK(res)) {
       SWIG_exception_fail(SWIG_ArgError(res), "in method '" "$symname" "', argument " "$argnum"" of type '" "$type""'");
-    }     
-    if (!$1) { 
+    }
+    if (!$1) {
       SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "$symname" "', argument " "$argnum"" of type '" "$type""'");
     }
     res = SWIG_AddTmpMask(res);
@@ -245,10 +245,10 @@ SWIG_From_std_string  (const CString& s)
   /*@SWIG:/usr/share/swig1.3/typemaps/valtypes.swg,184,%typemaps_from@*/
   /*@SWIG:/usr/share/swig1.3/typemaps/valtypes.swg,55,%value_out_typemap@*/
   %typemap(out,noblock=1,fragment="SWIG_" "From" "_" {CString}) CString, const CString {
-    $result = SWIG_From_std_string((CString)($1)); 
+    $result = SWIG_From_std_string((CString)($1));
   }
   %typemap(out,noblock=1,fragment="SWIG_" "From" "_" {CString}) const CString& {
-    $result = SWIG_From_std_string((CString)(*$1)); 
+    $result = SWIG_From_std_string((CString)(*$1));
   }
 /*@SWIG@*/;
   /*@SWIG:/usr/share/swig1.3/typemaps/valtypes.swg,79,%value_varout_typemap@*/
@@ -263,10 +263,10 @@ SWIG_From_std_string  (const CString& s)
 /*@SWIG@*/;
   /*@SWIG:/usr/share/swig1.3/typemaps/valtypes.swg,98,%value_directorin_typemap@*/
   %typemap(directorin,noblock=1,fragment="SWIG_" "From" "_" {CString}) CString *DIRECTORIN {
-    $input = SWIG_From_std_string((CString)(*$1_name)); 
+    $input = SWIG_From_std_string((CString)(*$1_name));
   }
   %typemap(directorin,noblock=1,fragment="SWIG_" "From" "_" {CString}) CString, const CString& {
-    $input = SWIG_From_std_string((CString)($1_name)); 
+    $input = SWIG_From_std_string((CString)($1_name));
   }
 /*@SWIG@*/;
   /*@SWIG:/usr/share/swig1.3/typemaps/valtypes.swg,154,%value_throws_typemap@*/
@@ -274,10 +274,10 @@ SWIG_From_std_string  (const CString& s)
     SWIG_Python_Raise(SWIG_From_std_string((CString)($1)), "$type", 0); SWIG_fail;
   }
 /*@SWIG@*/;
-  /*@SWIG:/usr/share/swig1.3/typemaps/inoutlist.swg,258,%value_output_typemap@*/		
+  /*@SWIG:/usr/share/swig1.3/typemaps/inoutlist.swg,258,%value_output_typemap@*/
   /*@SWIG:/usr/share/swig1.3/typemaps/inoutlist.swg,175,%_value_output_typemap@*/
- %typemap(in,numinputs=0,noblock=1) 
-   CString *OUTPUT ($*1_ltype temp, int res = SWIG_TMPOBJ), 
+ %typemap(in,numinputs=0,noblock=1)
+   CString *OUTPUT ($*1_ltype temp, int res = SWIG_TMPOBJ),
    CString &OUTPUT ($*1_ltype temp, int res = SWIG_TMPOBJ) {
    $1 = &temp;
  }
@@ -292,10 +292,10 @@ SWIG_From_std_string  (const CString& s)
 /*@SWIG@*/
 /*@SWIG@*/;
 /*@SWIG@*/;
-  /*@SWIG:/usr/share/swig1.3/typemaps/inoutlist.swg,258,%value_output_typemap@*/		
+  /*@SWIG:/usr/share/swig1.3/typemaps/inoutlist.swg,258,%value_output_typemap@*/
   /*@SWIG:/usr/share/swig1.3/typemaps/inoutlist.swg,175,%_value_output_typemap@*/
- %typemap(in,numinputs=0,noblock=1) 
-   CString *OUTPUT ($*1_ltype temp, int res = SWIG_TMPOBJ), 
+ %typemap(in,numinputs=0,noblock=1)
+   CString *OUTPUT ($*1_ltype temp, int res = SWIG_TMPOBJ),
    CString &OUTPUT ($*1_ltype temp, int res = SWIG_TMPOBJ) {
    $1 = &temp;
  }

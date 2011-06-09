@@ -21,7 +21,7 @@ class CSendRaw_Mod: public CModule {
 			PutModule("User [" + sLine.Token(1) + "] not found");
 		}
 	}
-	
+
 	void SendServer(const CString& sLine) {
 		CUser *pUser = CZNC::Get().FindUser(sLine.Token(1));
 
@@ -115,7 +115,6 @@ public:
 			"[user] [data to send]",  "The data will be sent to the user's IRC client(s)");
 		AddCommand("Server",            static_cast<CModCommand::ModCmdFunc>(&CSendRaw_Mod::SendServer),
 			"[user] [data to send]",  "The data will be sent to the IRC server the user is connected to");
-		
 	}
 };
 

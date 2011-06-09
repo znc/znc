@@ -175,7 +175,7 @@ public:
 	}
 
 	virtual void OnKick(const CNick& OpNick, const CString& sKickedNick, CChan& Channel, const CString& sMessage) {
-		Process(OpNick, "* " + OpNick.GetNick() + " kicked " + sKickedNick + " from " + 
+		Process(OpNick, "* " + OpNick.GetNick() + " kicked " + sKickedNick + " from " +
 			Channel.GetName() + " because [" + sMessage + "]", Channel.GetName());
 	}
 

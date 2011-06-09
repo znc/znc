@@ -69,7 +69,7 @@ namespace {
 	inline int SWIG_AsCharPtrAndSize(PyObject *obj, char** cptr, size_t* psize, int *alloc) {
 #if PY_VERSION_HEX>=0x03000000
 		if (PyUnicode_Check(obj))
-#else  
+#else
 			if (PyString_Check(obj))
 #endif
 			{
@@ -90,7 +90,7 @@ namespace {
 #endif
 				if (cptr) {
 					if (alloc) {
-						/* 
+						/*
 						   In python the user should not be able to modify the inner
 						   string representation. To warranty that, if you define
 						   SWIG_PYTHON_SAFE_CSTRINGS, a new/copy of the python string
@@ -98,11 +98,11 @@ namespace {
 
 						   The default behavior is just to return the pointer value,
 						   so, be careful.
-						 */ 
+						 */
 #if defined(SWIG_PYTHON_SAFE_CSTRINGS)
-						if (*alloc != SWIG_OLDOBJ) 
+						if (*alloc != SWIG_OLDOBJ)
 #else
-							if (*alloc == SWIG_NEWOBJ) 
+							if (*alloc == SWIG_NEWOBJ)
 #endif
 							{
 								*cptr = (char *)memcpy((char *)malloc((len + 1)*sizeof(char)), cstr, sizeof(char)*(len + 1));
