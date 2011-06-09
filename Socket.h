@@ -115,7 +115,7 @@ protected:
  * @brief Base Csock implementation to be used by modules
  *
  * By all means, this class should be used as a base for sockets originating from modules. It handles removing instances of itself
- * from the module as it unloads, and simplifies use in general. 
+ * from the module as it unloads, and simplifies use in general.
  * - EnableReadLine is default to true in this class
  * - MaxBuffer for readline is set to 10240, in the event this is reached the socket is closed (@see ReachedMaxBuffer)
  */

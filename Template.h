@@ -137,7 +137,7 @@ public:
 
 		return m_vspTagHandlers;
 	}
- 
+
 	CString ResolveLiteral(const CString& sString);
 
 	void Init();

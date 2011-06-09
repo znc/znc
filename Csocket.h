@@ -775,7 +775,7 @@ public:
 	unsigned int GetRequireClientCertFlags();
 	//! legacy, deprecated @see SetRequireClientCertFlags
 	void SetRequiresClientCert( bool bRequiresCert );
-	//! bitwise flags, 0 means don't require cert, SSL_VERIFY_PEER verifies peers, SSL_VERIFY_FAIL_IF_NO_PEER_CERT will cause the connection to fail if no cert 
+	//! bitwise flags, 0 means don't require cert, SSL_VERIFY_PEER verifies peers, SSL_VERIFY_FAIL_IF_NO_PEER_CERT will cause the connection to fail if no cert
 	void SetRequireClientCertFlags( unsigned int iRequireClientCertFlags ) { m_iRequireClientCertFlags = iRequireClientCertFlags; }
 
 #endif /* HAVE_LIBSSL */
@@ -919,7 +919,7 @@ public:
 	time_t GetLastCheckTimeout() { return( m_iLastCheckTimeoutTime ); }
 
 	//! Returns the time when CheckTimeout() should be called next
-	time_t GetNextCheckTimeout( time_t iNow = 0 ) 
+	time_t GetNextCheckTimeout( time_t iNow = 0 )
 	{
 		if( iNow == 0 )
 			iNow = time( NULL );
@@ -1222,7 +1222,7 @@ public:
 	void SetPemPass( const CS_STRING & s ) { m_sPemPass = s; }
 	//! set to true if require a client certificate (deprecated @see SetRequireClientCertFlags)
 	void SetRequiresClientCert( bool b ) { m_iRequireCertFlags = ( b ? SSL_VERIFY_PEER|SSL_VERIFY_FAIL_IF_NO_PEER_CERT : 0 ); }
-	//! bitwise flags, 0 means don't require cert, SSL_VERIFY_PEER verifies peers, SSL_VERIFY_FAIL_IF_NO_PEER_CERT will cause the connection to fail if no cert 
+	//! bitwise flags, 0 means don't require cert, SSL_VERIFY_PEER verifies peers, SSL_VERIFY_FAIL_IF_NO_PEER_CERT will cause the connection to fail if no cert
 	void SetRequireClientCertFlags( unsigned int iRequireCertFlags ) { m_iRequireCertFlags = iRequireCertFlags; }
 #endif /* HAVE_LIBSSL */
 private:
@@ -2029,7 +2029,7 @@ private:
 				continue;
 			}
 #endif /* CSOCK_USE_POLL */
-		
+
 #ifdef HAVE_C_ARES
 			ares_channel pChannel = pcSock->GetAresChannel();
 			if( pChannel )
@@ -2096,12 +2096,12 @@ private:
 					}
 				}
 
-			} 
+			}
 			else
 			{
 				FDSetCheck( iRSock, miiReadyFds, eCheckRead );
 			}
-			
+
 			if( pcSock->GetSSL() && pcSock->GetType() != Csock::LISTENER )
 			{
 				if ( ( pcSock->GetPending() > 0 ) && ( !pcSock->IsReadPaused() ) )
@@ -2152,7 +2152,7 @@ private:
 				m_errno = SUCCESS;
 
 			return;
-		} 
+		}
 		else if ( iSel == -1 )
 		{
 			if ( mpeSocks.empty() )
@@ -2161,7 +2161,7 @@ private:
 				m_errno = SUCCESS;
 
 			return;
-		} 
+		}
 		else
 		{
 			m_errno = SUCCESS;
@@ -2217,7 +2217,7 @@ private:
 
 				SelectSock( mpeSocks, iErrno, pcSock );
 
-			} 
+			}
 			else if ( FDHasCheck( iRSock, miiReadyFds, eCheckRead ) )
 			{
 				if ( iSel > 0 )

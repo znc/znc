@@ -69,7 +69,7 @@ public:
 			}
 		}
 		else if( sArgs.empty() )
-			m_sPassword = CBlowfish::MD5( CRYPT_LAME_PASS ); 
+			m_sPassword = CBlowfish::MD5( CRYPT_LAME_PASS );
 		else
 			m_sPassword = CBlowfish::MD5(sArgs);
 

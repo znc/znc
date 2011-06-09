@@ -301,7 +301,7 @@ int GetAddrInfo( const CS_STRING & sHostname, Csock *pSock, CSSockAddr & csSockA
 	if( iRet == EAI_AGAIN )
 		return( EAGAIN ); // need to return telling the user to try again
 	else if( ( iRet == 0 ) && ( res ) )
-	{ 
+	{
 		std::list<struct addrinfo *> lpTryAddrs;
 		bool bFound = false;
 		for( struct addrinfo *pRes = res; pRes; pRes = pRes->ai_next )
@@ -312,7 +312,7 @@ int GetAddrInfo( const CS_STRING & sHostname, Csock *pSock, CSSockAddr & csSockA
 			if( ( pRes->ai_socktype != SOCK_STREAM ) || ( pRes->ai_protocol != IPPROTO_TCP ) )
 #endif /* __sun work around broken impl of getaddrinfo */
 				continue;
-			
+
 			if( ( csSockAddr.GetAFRequire() != CSSockAddr::RAF_ANY ) && ( pRes->ai_family != csSockAddr.GetAFRequire() ) )
 				continue; // they requested a special type, so be certain we woop past anything unwanted
 			lpTryAddrs.push_back( pRes );
@@ -1050,7 +1050,7 @@ cs_sock_t Csock::Accept( CS_STRING & sHost, u_short & iRPort )
 
 		if ( !m_bBLOCK )
 		{
-			// make it none blocking 
+			// make it none blocking
 			set_non_blocking( iSock );
 		}
 
@@ -1328,7 +1328,7 @@ bool Csock::ConnectSSL( const CS_STRING & sBindhost )
 			bPass = true;
 #ifdef _WIN32
 		else if( sslErr == SSL_ERROR_SYSCALL && iErr < 0 && GetLastError() == WSAENOTCONN )
-		{ 
+		{
 			// this seems to be an issue with win32 only. I've seen it happen on slow connections
 			// the issue is calling this before select(), which isn't a problem on unix. Allowing this
 			// to pass in this case is fine because subsequent ssl transactions will occur and the handshake
@@ -1657,12 +1657,12 @@ CS_STRING Csock::ConvertAddress( void *addr, bool bIPv6 )
 {
 	CS_STRING sRet;
 
-	if( !bIPv6 ) 
+	if( !bIPv6 )
 	{
 		in_addr *p = (in_addr*) addr;
 		sRet = inet_ntoa(*p);
-	} 
-	else 
+	}
+	else
 	{
 		char straddr[INET6_ADDRSTRLEN];
 		if( inet_ntop( AF_INET6, addr, straddr, sizeof(straddr) ) > 0 )
@@ -2180,7 +2180,7 @@ int Csock::GetPending()
 		int iBytes = SSL_pending( m_ssl );
 		ERR_pop_to_mark();
 		return( iBytes );
-#else 
+#else
 		int iBytes = SSL_pending( m_ssl );
 		ERR_clear_error(); // to get safer handling, upgrade your openssl version!
 		return( iBytes );
@@ -2394,18 +2394,18 @@ cs_sock_t Csock::CreateSocket( bool bListen )
 	cs_sock_t iRet = socket( PF_INET, SOCK_STREAM, IPPROTO_TCP );
 #endif /* HAVE_IPV6 */
 
-	if ( iRet != CS_INVALID_SOCK ) 
+	if ( iRet != CS_INVALID_SOCK )
 	{
 		set_close_on_exec( iRet );
 
-		if ( bListen ) 
+		if ( bListen )
 		{
 			const int on = 1;
 
 			if ( setsockopt( iRet, SOL_SOCKET, SO_REUSEADDR, (char *)&on, sizeof( on ) ) != 0 )
 				PERROR( "SO_REUSEADDR" );
 		}
-	} 
+	}
 	else
 		PERROR( "socket" );
 

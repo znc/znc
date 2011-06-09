@@ -100,7 +100,7 @@ public:
 			// We don't track detached channels
 			if (Channel.IsDetached())
 				return;
-		
+
 			// This is the first message for this channel, start a
 			// new timeout.
 			std::pair<time_t, unsigned int> tmp(now, 1);

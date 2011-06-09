@@ -580,7 +580,7 @@ public:
 		FOR_EACH_MODULE(it, pUser) {
 			(*it)->OnEmbeddedWebRequest(WebSock, "webadmin/channel", TmplMod);
 		}
-	
+
 		if (!CZNC::Get().WriteConfig()) {
 			WebSock.PrintErrorPage("Channel added/modified, but config was not written");
 			return true;
@@ -852,7 +852,7 @@ public:
 		FOR_EACH_MODULE(it, pUser) {
 			(*it)->OnEmbeddedWebRequest(WebSock, "webadmin/user", TmplMod);
 		}
-	
+
 		if (!CZNC::Get().WriteConfig()) {
 			WebSock.PrintErrorPage("User " + sAction + ", but config was not written");
 			return true;
