@@ -1,3 +1,5 @@
+dnl Needed for AC_PATH_PROGS_FEATURE_CHECK which was added in 2.62
+AC_PREREQ([2.62])
 dnl Keep the version number in sync with main.h!
 AC_INIT([znc], [0.099])
 AC_CONFIG_MACRO_DIR([m4])
