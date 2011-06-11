@@ -154,7 +154,7 @@ sub GetModInfo {
 	return ($ZNC::Perl_LoadError, "Incorrect perl module.") unless IsModule $modpath, $modname;
 	require $modpath;
 	my $pmod = bless {}, $modname;
-	return ($ZNC::Perl_Loaded, $modpath, $pmod->description)
+	return ($ZNC::Perl_Loaded, $modpath, $pmod->description, $pmod->wiki_page)
 }
 
 sub ModInfoByPath {
@@ -162,7 +162,7 @@ sub ModInfoByPath {
 	die "Incorrect perl module." unless IsModule $modpath, $modname;
 	require $modpath;
 	my $pmod = bless {}, $modname;
-	return ($pmod->description)
+	return ($pmod->description, $pmod->wiki_page)
 }
 
 sub CallModFunc {
@@ -277,6 +277,10 @@ package ZNC::Module;
 
 sub description {
 	"< Placeholder for a description >"
+}
+
+sub wiki_page {
+	''
 }
 
 # Default implementations for module hooks. They can be overriden in derived modules.
