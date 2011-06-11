@@ -42,6 +42,8 @@ class CModInfo;
 
 typedef void* ModHandle;
 
+template<class M> void TModInfo(CModInfo& Info) {}
+
 template<class M> CModule* TModLoad(ModHandle p, CUser* pUser,
 		const CString& sModName, const CString& sModPath) {
 	return new M(p, pUser, sModName, sModPath);
@@ -61,6 +63,7 @@ template<class M> CGlobalModule* TModLoadGlobal(ModHandle p,
 			Info->SetDescription(DESCRIPTION); \
 			Info->SetGlobal(GLOBAL); \
 			LOADER; \
+			TModInfo<CLASS>(*Info); \
 			return Info; \
 		} \
 	}
