@@ -24,6 +24,9 @@ class CClient;
 class CWebSock;
 class CTemplate;
 class CIRCSock;
+class CModule;
+class CGlobalModule;
+class CModInfo;
 // !Forward Declarations
 
 // User Module Macros
@@ -39,13 +42,28 @@ class CIRCSock;
 
 typedef void* ModHandle;
 
-#define MODCOMMONDEFS(DESCRIPTION, GLOBAL) \
-	const char *ZNCModDescription(); \
-	bool ZNCModGlobal(); \
-	double ZNCModVersion(); \
-	const char *ZNCModDescription() { return DESCRIPTION; } \
-	double ZNCModVersion() { return VERSION; } \
-	bool ZNCModGlobal() { return GLOBAL; } \
+template<class M> CModule* TModLoad(ModHandle p, CUser* pUser,
+		const CString& sModName, const CString& sModPath) {
+	return new M(p, pUser, sModName, sModPath);
+}
+template<class M> CGlobalModule* TModLoadGlobal(ModHandle p,
+		const CString& sModName, const CString& sModPath) {
+	return new M(p, sModName, sModPath);
+}
+
+#define MODCOMMONDEFS(CLASS, DESCRIPTION, GLOBAL, LOADER) \
+	extern "C" { \
+		double ZNCModVersion(); \
+		double ZNCModVersion() { return VERSION; } \
+		CModInfo* ZNCModInfo(); \
+		CModInfo* ZNCModInfo() { \
+			CModInfo* Info = new CModInfo(); \
+			Info->SetDescription(DESCRIPTION); \
+			Info->SetGlobal(GLOBAL); \
+			LOADER; \
+			return Info; \
+		} \
+	}
 
 /** Instead of writing a constructor, you should call this macro. It accepts all
  *  the necessary arguments and passes them on to CModule's constructor. You
@@ -75,17 +93,7 @@ typedef void* ModHandle;
  *  @see For global modules you need GLOBALMODULEDEFS.
  */
 #define MODULEDEFS(CLASS, DESCRIPTION) \
-	extern "C" { \
-		MODCOMMONDEFS(DESCRIPTION, false) \
-		/* First the definitions to shut up some compiler warnings */ \
-		CModule* ZNCModLoad(ModHandle p, CUser* pUser, const CString& sModName, \
-				const CString& sModPath); \
-		void ZNCModUnload(CModule* pMod); \
-		CModule* ZNCModLoad(ModHandle p, CUser* pUser, const CString& sModName, \
-				const CString& sModPath) \
-		{ return new CLASS(p, pUser, sModName, sModPath); } \
-		void ZNCModUnload(CModule* pMod) { if (pMod) { delete pMod; } } \
-	}
+	MODCOMMONDEFS(CLASS, DESCRIPTION, false, Info->SetLoader(TModLoad<CLASS>))
 // !User Module Macros
 
 // Global Module Macros
@@ -96,17 +104,7 @@ typedef void* ModHandle;
 
 /** This works exactly like MODULEDEFS, but for global modules. */
 #define GLOBALMODULEDEFS(CLASS, DESCRIPTION) \
-	extern "C" { \
-		MODCOMMONDEFS(DESCRIPTION, true) \
-		/* First the definitions to shut up some compiler warnings */ \
-		CGlobalModule* ZNCModLoad(ModHandle p, const CString& sModName, \
-				const CString& sModPath); \
-		void ZNCModUnload(CGlobalModule* pMod); \
-		CGlobalModule* ZNCModLoad(ModHandle p, const CString& sModName, \
-				const CString& sModPath) \
-		{ return new CLASS(p, sModName, sModPath); } \
-		void ZNCModUnload(CGlobalModule* pMod) { if (pMod) { delete pMod; } } \
-	}
+	MODCOMMONDEFS(CLASS, DESCRIPTION, true, Info->SetGlobalLoader(TModLoadGlobal<CLASS>))
 // !Global Module Macros
 
 // Forward Declarations
@@ -166,11 +164,19 @@ private:
 
 class CModInfo {
 public:
-	CModInfo() {}
+	typedef CModule* (*ModLoader)(ModHandle p, CUser* pUser, const CString& sModName, const CString& sModPath);
+	typedef CGlobalModule* (*GlobalModLoader)(ModHandle p, const CString& sModName, const CString& sModPath);
+
+	CModInfo() {
+		m_fGlobalLoader = NULL;
+		m_fLoader = NULL;
+	}
 	CModInfo(const CString& sName, const CString& sPath, bool bGlobal) {
 		m_bGlobal = bGlobal;
 		m_sName = sName;
 		m_sPath = sPath;
+		m_fGlobalLoader = NULL;
+		m_fLoader = NULL;
 	}
 	~CModInfo() {}
 
@@ -183,6 +189,8 @@ public:
 	const CString& GetPath() const { return m_sPath; }
 	const CString& GetDescription() const { return m_sDescription; }
 	bool IsGlobal() const { return m_bGlobal; }
+	ModLoader GetLoader() const { return m_fLoader; }
+	GlobalModLoader GetGlobalLoader() const { return m_fGlobalLoader; }
 	// !Getters
 
 	// Setters
@@ -190,13 +198,17 @@ public:
 	void SetPath(const CString& s) { m_sPath = s; }
 	void SetDescription(const CString& s) { m_sDescription = s; }
 	void SetGlobal(bool b) { m_bGlobal = b; }
+	void SetLoader(ModLoader fLoader) { m_fLoader = fLoader; }
+	void SetGlobalLoader(GlobalModLoader fGlobalLoader) { m_fGlobalLoader = fGlobalLoader; }
 	// !Setters
 private:
 protected:
-	bool     m_bGlobal;
-	CString  m_sName;
-	CString  m_sPath;
-	CString  m_sDescription;
+	bool            m_bGlobal;
+	CString         m_sName;
+	CString         m_sPath;
+	CString         m_sDescription;
+	ModLoader       m_fLoader;
+	GlobalModLoader m_fGlobalLoader;
 };
 
 /** A helper class for handling commands in modules. */
@@ -964,7 +976,7 @@ public:
 
 private:
 	static ModHandle OpenModule(const CString& sModule, const CString& sModPath,
-			bool &bVersionMismatch, bool &bIsGlobal, CString& sDesc, CString& sRetMsg);
+			bool &bVersionMismatch, CModInfo*& Info, CString& sRetMsg);
 
 protected:
 	CUser*    m_pUser;
