@@ -463,5 +463,10 @@ void CRemMarkerJob::RunJob()
 
 	// store buffer
 }
+
+template<> void TModInfo<CSChat>(CModInfo& Info) {
+	Info.SetWikiPage("schat");
+}
+
 MODULEDEFS(CSChat, "Secure cross platform (:P) chat system")
 

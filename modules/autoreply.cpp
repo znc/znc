@@ -88,5 +88,9 @@ private:
 	TCacheMap<CString> m_Messaged;
 };
 
+template<> void TModInfo<CAutoReplyMod>(CModInfo& Info) {
+	Info.SetWikiPage("autoreply");
+}
+
 MODULEDEFS(CAutoReplyMod, "Reply to queries when you are away")
 

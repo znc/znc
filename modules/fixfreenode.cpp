@@ -22,4 +22,8 @@ public:
 	}
 };
 
+template<> void TModInfo<CPreventIdMsgMod>(CModInfo& Info) {
+	Info.SetWikiPage("fixfreenode");
+}
+
 MODULEDEFS(CPreventIdMsgMod, "Prevent client from sending IDENTIFY-MSG to server")

@@ -316,4 +316,8 @@ CPerlSocket::~CPerlSocket() {
 	}
 }
 
+template<> void TModInfo<CModPerl>(CModInfo& Info) {
+	Info.SetWikiPage("modperl");
+}
+
 GLOBALMODULEDEFS(CModPerl, "Loads perl scripts as ZNC modules")

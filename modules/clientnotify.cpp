@@ -102,5 +102,9 @@ public:
 	}
 };
 
+template<> void TModInfo<CClientNotifyMod>(CModInfo& Info) {
+	Info.SetWikiPage("clientnotify");
+}
+
 MODULEDEFS(CClientNotifyMod, "Notifies you when another IRC client logs into or out of your account. Configurable.")
 

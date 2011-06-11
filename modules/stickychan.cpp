@@ -187,4 +187,8 @@ bool CStickyChan::OnLoad(const CString& sArgs, CString& sMessage)
 	return(true);
 }
 
+template<> void TModInfo<CStickyChan>(CModInfo& Info) {
+	Info.SetWikiPage("stickychan");
+}
+
 MODULEDEFS(CStickyChan, "configless sticky chans, keeps you there very stickily even")

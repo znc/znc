@@ -162,4 +162,8 @@ public:
 	}
 };
 
+template<> void TModInfo<CIdentFileModule>(CModInfo& Info) {
+	Info.SetWikiPage("identfile");
+}
+
 GLOBALMODULEDEFS(CIdentFileModule, "Write the ident of a user to a file when they are trying to connect")

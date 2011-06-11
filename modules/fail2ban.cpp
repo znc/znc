@@ -95,4 +95,8 @@ private:
 	unsigned int                     m_uiAllowedFailed;
 };
 
+template<> void TModInfo<CFailToBanMod>(CModInfo& Info) {
+	Info.SetWikiPage("fail2ban");
+}
+
 GLOBALMODULEDEFS(CFailToBanMod, "Block IPs for some time after a failed login")

@@ -230,5 +230,9 @@ public:
 	}
 };
 
+template<> void TModInfo<CSampleMod>(CModInfo& Info) {
+	Info.SetWikiPage("sample");
+}
+
 MODULEDEFS(CSampleMod, "To be used as a sample for writing modules")
 

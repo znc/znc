@@ -224,4 +224,8 @@ private:
 	vector<CString> m_vsNegChans;
 };
 
+template<> void TModInfo<CAutoCycleMod>(CModInfo& Info) {
+	Info.SetWikiPage("autocycle");
+}
+
 MODULEDEFS(CAutoCycleMod, "Rejoins channels to gain Op if you're the only user left")
