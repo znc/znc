@@ -57,14 +57,12 @@ template<class M> CGlobalModule* TModLoadGlobal(ModHandle p,
 	extern "C" { \
 		double ZNCModVersion(); \
 		double ZNCModVersion() { return VERSION; } \
-		CModInfo* ZNCModInfo(); \
-		CModInfo* ZNCModInfo() { \
-			CModInfo* Info = new CModInfo(); \
-			Info->SetDescription(DESCRIPTION); \
-			Info->SetGlobal(GLOBAL); \
+		void ZNCModInfo(CModInfo& Info); \
+		void ZNCModInfo(CModInfo& Info) { \
+			Info.SetDescription(DESCRIPTION); \
+			Info.SetGlobal(GLOBAL); \
 			LOADER; \
-			TModInfo<CLASS>(*Info); \
-			return Info; \
+			TModInfo<CLASS>(Info); \
 		} \
 	}
 
@@ -96,7 +94,7 @@ template<class M> CGlobalModule* TModLoadGlobal(ModHandle p,
  *  @see For global modules you need GLOBALMODULEDEFS.
  */
 #define MODULEDEFS(CLASS, DESCRIPTION) \
-	MODCOMMONDEFS(CLASS, DESCRIPTION, false, Info->SetLoader(TModLoad<CLASS>))
+	MODCOMMONDEFS(CLASS, DESCRIPTION, false, Info.SetLoader(TModLoad<CLASS>))
 // !User Module Macros
 
 // Global Module Macros
@@ -107,7 +105,7 @@ template<class M> CGlobalModule* TModLoadGlobal(ModHandle p,
 
 /** This works exactly like MODULEDEFS, but for global modules. */
 #define GLOBALMODULEDEFS(CLASS, DESCRIPTION) \
-	MODCOMMONDEFS(CLASS, DESCRIPTION, true, Info->SetGlobalLoader(TModLoadGlobal<CLASS>))
+	MODCOMMONDEFS(CLASS, DESCRIPTION, true, Info.SetGlobalLoader(TModLoadGlobal<CLASS>))
 // !Global Module Macros
 
 // Forward Declarations
@@ -982,7 +980,7 @@ public:
 
 private:
 	static ModHandle OpenModule(const CString& sModule, const CString& sModPath,
-			bool &bVersionMismatch, CModInfo*& Info, CString& sRetMsg);
+			bool &bVersionMismatch, CModInfo& Info, CString& sRetMsg);
 
 protected:
 	CUser*    m_pUser;

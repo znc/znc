@@ -817,7 +817,7 @@ bool CModules::LoadModule(const CString& sModule, const CString& sArgs, CUser* p
 
 	CString sModPath, sDataPath;
 	bool bVersionMismatch;
-	CModInfo* Info;
+	CModInfo Info;
 
 	if (!FindModPath(sModule, sModPath, sDataPath)) {
 		sRetMsg = "Unable to find module [" + sModule + "]";
@@ -835,11 +835,10 @@ bool CModules::LoadModule(const CString& sModule, const CString& sArgs, CUser* p
 		return false;
 	}
 
-	if ((pUser == NULL) != Info->IsGlobal()) {
-		delete Info;
+	if ((pUser == NULL) != Info.IsGlobal()) {
 		dlclose(p);
 		sRetMsg = "Module [" + sModule + "] is ";
-		sRetMsg += Info->IsGlobal() ? "" : "not ";
+		sRetMsg += Info.IsGlobal() ? "" : "not ";
 		sRetMsg += "a global module.";
 		return false;
 	}
@@ -847,18 +846,16 @@ bool CModules::LoadModule(const CString& sModule, const CString& sArgs, CUser* p
 	CModule* pModule = NULL;
 
 	if (pUser) {
-		pModule = Info->GetLoader()(p, pUser, sModule, sDataPath);
+		pModule = Info.GetLoader()(p, pUser, sModule, sDataPath);
 	} else {
-		pModule = Info->GetGlobalLoader()(p, sModule, sDataPath);
+		pModule = Info.GetGlobalLoader()(p, sModule, sDataPath);
 	}
 
-	pModule->SetDescription(Info->GetDescription());
-	pModule->SetGlobal(Info->IsGlobal());
+	pModule->SetDescription(Info.GetDescription());
+	pModule->SetGlobal(Info.IsGlobal());
 	pModule->SetArgs(sArgs);
 	pModule->SetModPath(CDir::ChangeDir(CZNC::Get().GetCurPath(), sModPath));
 	push_back(pModule);
-
-	delete Info;
 
 	bool bLoaded;
 	try {
@@ -955,16 +952,12 @@ bool CModules::GetModInfo(CModInfo& ModInfo, const CString& sModule, CString& sR
 
 bool CModules::GetModPathInfo(CModInfo& ModInfo, const CString& sModule, const CString& sModPath, CString& sRetMsg) {
 	bool bVersionMismatch;
-	CModInfo* Info;
 
-	ModHandle p = OpenModule(sModule, sModPath, bVersionMismatch, Info, sRetMsg);
+	ModHandle p = OpenModule(sModule, sModPath, bVersionMismatch, ModInfo, sRetMsg);
 
 	if (!p)
 		return false;
 
-	if (Info) {
-		ModInfo = *Info;
-	}
 	ModInfo.SetName(sModule);
 	ModInfo.SetPath(sModPath);
 
@@ -972,7 +965,6 @@ bool CModules::GetModPathInfo(CModInfo& ModInfo, const CString& sModule, const C
 		ModInfo.SetDescription("--- Version mismatch, recompile this module. ---");
 	}
 
-	delete Info;
 	dlclose(p);
 
 	return true;
@@ -1057,10 +1049,9 @@ CModules::ModDirList CModules::GetModDirs() {
 }
 
 ModHandle CModules::OpenModule(const CString& sModule, const CString& sModPath, bool &bVersionMismatch,
-		CModInfo*& Info, CString& sRetMsg) {
+		CModInfo& Info, CString& sRetMsg) {
 	// Some sane defaults in case anything errors out below
 	bVersionMismatch = false;
-	Info = NULL;
 	sRetMsg.clear();
 
 	for (unsigned int a = 0; a < sModule.length(); a++) {
@@ -1098,7 +1089,7 @@ ModHandle CModules::OpenModule(const CString& sModule, const CString& sModPath, 
 		return NULL;
 	}
 
-	typedef CModInfo* (*InfoFP)();
+	typedef void (*InfoFP)(CModInfo&);
 	InfoFP ZNCModInfo = (InfoFP) dlsym(p, "ZNCModInfo");
 
 	if (!ZNCModInfo) {
@@ -1111,7 +1102,7 @@ ModHandle CModules::OpenModule(const CString& sModule, const CString& sModPath, 
 		bVersionMismatch = true;
 		sRetMsg = "Version mismatch, recompile this module.";
 	} else {
-		Info = ZNCModInfo();
+		ZNCModInfo(Info);
 		sRetMsg = "";
 		bVersionMismatch = false;
 	}
