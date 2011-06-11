@@ -1080,16 +1080,7 @@ ModHandle CModules::OpenModule(const CString& sModule, const CString& sModPath, 
 		return NULL;
 	}
 
-	typedef double (*dFP)();
-	dFP Version = (dFP) dlsym(p, "ZNCModVersion");
-
-	if (!Version) {
-		dlclose(p);
-		sRetMsg = "Could not find ZNCModVersion() in module [" + sModule + "]";
-		return NULL;
-	}
-
-	typedef void (*InfoFP)(CModInfo&);
+	typedef bool (*InfoFP)(double, CModInfo&);
 	InfoFP ZNCModInfo = (InfoFP) dlsym(p, "ZNCModInfo");
 
 	if (!ZNCModInfo) {
@@ -1098,13 +1089,12 @@ ModHandle CModules::OpenModule(const CString& sModule, const CString& sModPath, 
 		return NULL;
 	}
 
-	if (CModule::GetCoreVersion() != Version()) {
-		bVersionMismatch = true;
-		sRetMsg = "Version mismatch, recompile this module.";
-	} else {
-		ZNCModInfo(Info);
+	if (ZNCModInfo(CModule::GetCoreVersion(), Info)) {
 		sRetMsg = "";
 		bVersionMismatch = false;
+	} else {
+		bVersionMismatch = true;
+		sRetMsg = "Version mismatch, recompile this module.";
 	}
 
 	return p;

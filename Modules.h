@@ -55,14 +55,15 @@ template<class M> CGlobalModule* TModLoadGlobal(ModHandle p,
 
 #define MODCOMMONDEFS(CLASS, DESCRIPTION, GLOBAL, LOADER) \
 	extern "C" { \
-		double ZNCModVersion(); \
-		double ZNCModVersion() { return VERSION; } \
-		void ZNCModInfo(CModInfo& Info); \
-		void ZNCModInfo(CModInfo& Info) { \
+		bool ZNCModInfo(double dCoreVersion, CModInfo& Info); \
+		bool ZNCModInfo(double dCoreVersion, CModInfo& Info) { \
+			if (dCoreVersion != VERSION) \
+				return false; \
 			Info.SetDescription(DESCRIPTION); \
 			Info.SetGlobal(GLOBAL); \
 			LOADER; \
 			TModInfo<CLASS>(Info); \
+			return true; \
 		} \
 	}
 
