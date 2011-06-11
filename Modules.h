@@ -191,6 +191,7 @@ public:
 	const CString& GetName() const { return m_sName; }
 	const CString& GetPath() const { return m_sPath; }
 	const CString& GetDescription() const { return m_sDescription; }
+	const CString& GetWikiPage() const { return m_sWikiPage; }
 	bool IsGlobal() const { return m_bGlobal; }
 	ModLoader GetLoader() const { return m_fLoader; }
 	GlobalModLoader GetGlobalLoader() const { return m_fGlobalLoader; }
@@ -200,6 +201,7 @@ public:
 	void SetName(const CString& s) { m_sName = s; }
 	void SetPath(const CString& s) { m_sPath = s; }
 	void SetDescription(const CString& s) { m_sDescription = s; }
+	void SetWikiPage(const CString& s) { m_sWikiPage = s; }
 	void SetGlobal(bool b) { m_bGlobal = b; }
 	void SetLoader(ModLoader fLoader) { m_fLoader = fLoader; }
 	void SetGlobalLoader(GlobalModLoader fGlobalLoader) { m_fGlobalLoader = fGlobalLoader; }
@@ -210,6 +212,7 @@ protected:
 	CString         m_sName;
 	CString         m_sPath;
 	CString         m_sDescription;
+	CString         m_sWikiPage;
 	ModLoader       m_fLoader;
 	GlobalModLoader m_fGlobalLoader;
 };

@@ -963,8 +963,7 @@ bool CModules::GetModPathInfo(CModInfo& ModInfo, const CString& sModule, const C
 		return false;
 
 	if (Info) {
-		ModInfo.SetGlobal(Info->IsGlobal());
-		ModInfo.SetDescription(Info->GetDescription());
+		ModInfo = *Info;
 	}
 	ModInfo.SetName(sModule);
 	ModInfo.SetPath(sModPath);
