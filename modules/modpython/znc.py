@@ -151,6 +151,8 @@ class ModuleNV(collections.MutableMapping):
 class Module:
     description = '< Placeholder for a description >'
 
+    wiki_page = ''
+
     def __str__(self):
         return self.GetModName()
 
@@ -498,6 +500,7 @@ def get_mod_info(modname, retmsg, modinfo):
     cl = pymodule.__dict__[modname]
     modinfo.SetGlobal(False)
     modinfo.SetDescription(cl.description)
+    modinfo.SetWikiPage(cl.wiki_page)
     modinfo.SetName(modname)
     modinfo.SetPath(pymodule.__file__)
     return 2
@@ -524,7 +527,8 @@ def get_mod_info_path(path, modname, modinfo):
         return 0
     cl = pymodule.__dict__[modname]
     modinfo.SetGlobal(False)
-    modinfo.SetDescription(get_descr(cl))
+    modinfo.SetDescription(cl.description)
+    modinfo.SetWikiPage(cl.wiki_page)
     modinfo.SetName(modname)
     modinfo.SetPath(pymodule.__file__)
     return 1
