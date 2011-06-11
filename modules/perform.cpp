@@ -166,4 +166,8 @@ private:
 	VCString m_vPerform;
 };
 
+template<> void TModInfo<CPerform>(CModInfo& Info) {
+	Info.SetWikiPage("perform");
+}
+
 MODULEDEFS(CPerform, "Keeps a list of commands to be executed when ZNC connects to IRC.")

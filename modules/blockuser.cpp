@@ -168,4 +168,8 @@ private:
 	}
 };
 
+template<> void TModInfo<CBlockUser>(CModInfo& Info) {
+	Info.SetWikiPage("blockuser");
+}
+
 GLOBALMODULEDEFS(CBlockUser, "Block certain users from logging in")

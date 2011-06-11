@@ -108,4 +108,8 @@ public:
 	}
 };
 
+template<> void TModInfo<CRejoinMod>(CModInfo& Info) {
+	Info.SetWikiPage("kickrejoin");
+}
+
 MODULEDEFS(CRejoinMod, "Autorejoin on kick")

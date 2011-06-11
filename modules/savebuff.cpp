@@ -335,5 +335,9 @@ void CSaveBuffJob::RunJob()
 	p->SaveBufferToDisk();
 }
 
+template<> void TModInfo<CSaveBuff>(CModInfo& Info) {
+	Info.SetWikiPage("savebuff");
+}
+
 MODULEDEFS(CSaveBuff, "Stores channel buffers to disk, encrypted")
 

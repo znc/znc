@@ -8,6 +8,10 @@ sub description {
 	'Evaluates perl code'
 }
 
+sub wiki_page {
+	'perleval'
+}
+
 sub OnLoad {
 	my $self = shift;
 	if (!$self->GetUser->IsAdmin) {

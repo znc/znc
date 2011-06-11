@@ -715,4 +715,8 @@ private:
 	set<CString>            m_ssDefaultChans;
 };
 
+template<> void TModInfo<CPartylineMod>(CModInfo& Info) {
+	Info.SetWikiPage("partyline");
+}
+
 GLOBALMODULEDEFS(CPartylineMod, "Internal channels and queries for users connected to znc")

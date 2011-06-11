@@ -72,4 +72,8 @@ private:
 	bool m_bWriteConf;
 };
 
+template<> void TModInfo<CChanSaverMod>(CModInfo& Info) {
+	Info.SetWikiPage("chansaver");
+}
+
 MODULEDEFS(CChanSaverMod, "Keep config up-to-date when user joins/parts")

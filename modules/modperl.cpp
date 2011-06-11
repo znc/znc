@@ -147,11 +147,12 @@ public:
 					break;
 				case Perl_Loaded:
 					result = HALT;
-					if (3 == ret) {
+					if (4 == ret) {
 						ModInfo.SetGlobal(false);
 						ModInfo.SetDescription(PString(ST(2)));
 						ModInfo.SetName(sModule);
 						ModInfo.SetPath(PString(ST(1)));
+						ModInfo.SetWikiPage(PString(ST(3)));
 						bSuccess = true;
 					} else {
 						bSuccess = false;
@@ -201,11 +202,12 @@ public:
 				PUSH_STR(sPath);
 				PUSH_STR(sName);
 				PCALL("ZNC::Core::ModInfoByPath");
-				if (!SvTRUE(ERRSV) && ret == 1) {
+				if (!SvTRUE(ERRSV) && ret == 2) {
 					ModInfo.SetGlobal(false);
 					ModInfo.SetDescription(PString(ST(0)));
 					ModInfo.SetName(sName);
 					ModInfo.SetPath(sPath);
+					ModInfo.SetWikiPage(PString(ST(1)));
 					ssMods.insert(ModInfo);
 				}
 				PEND;
@@ -314,6 +316,10 @@ CPerlSocket::~CPerlSocket() {
 		PCALL("ZNC::Core::RemoveSocket");
 		PEND;
 	}
+}
+
+template<> void TModInfo<CModPerl>(CModInfo& Info) {
+	Info.SetWikiPage("modperl");
 }
 
 GLOBALMODULEDEFS(CModPerl, "Loads perl scripts as ZNC modules")

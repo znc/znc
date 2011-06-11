@@ -494,4 +494,8 @@ void CModTclStartTimer::RunJob() {
 		p->Start();
 }
 
+template<> void TModInfo<CModTcl>(CModInfo& Info) {
+	Info.SetWikiPage("modtcl");
+}
+
 MODULEDEFS(CModTcl, "Loads Tcl scripts as ZNC modules")

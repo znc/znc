@@ -192,4 +192,8 @@ void CKeepNickTimer::RunJob() {
 	m_pMod->KeepNick();
 }
 
+template<> void TModInfo<CKeepNickMod>(CModInfo& Info) {
+	Info.SetWikiPage("keepnick");
+}
+
 MODULEDEFS(CKeepNickMod, "Keep trying for your primary nick")

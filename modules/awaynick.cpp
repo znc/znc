@@ -186,4 +186,8 @@ void CAwayNickTimer::RunJob() {
 	}
 }
 
+template<> void TModInfo<CAwayNickMod>(CModInfo& Info) {
+	Info.SetWikiPage("awaynick");
+}
+
 MODULEDEFS(CAwayNickMod, "Change your nick while you are away")

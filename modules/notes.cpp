@@ -212,4 +212,8 @@ public:
 	}
 };
 
+template<> void TModInfo<CNotesMod>(CModInfo& Info) {
+	Info.SetWikiPage("notes");
+}
+
 MODULEDEFS(CNotesMod, "Keep and replay notes")

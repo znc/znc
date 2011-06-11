@@ -85,4 +85,8 @@ public:
 	}
 };
 
+template<> void TModInfo<CCertMod>(CModInfo& Info) {
+	Info.SetWikiPage("cert");
+}
+
 MODULEDEFS(CCertMod, "Use a ssl certificate to connect to a server")

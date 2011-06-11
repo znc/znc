@@ -76,4 +76,8 @@ private:
 	CString m_sPass;
 };
 
+template<> void TModInfo<CNickServ>(CModInfo& Info) {
+	Info.SetWikiPage("nickserv");
+}
+
 MODULEDEFS(CNickServ, "Auths you with NickServ")

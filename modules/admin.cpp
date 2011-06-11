@@ -857,4 +857,8 @@ public:
 	virtual ~CAdminMod() {}
 };
 
+template<> void TModInfo<CAdminMod>(CModInfo& Info) {
+	Info.SetWikiPage("admin");
+}
+
 MODULEDEFS(CAdminMod, "Dynamic configuration of users/settings through IRC")

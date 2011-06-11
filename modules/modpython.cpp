@@ -478,4 +478,8 @@ PyObject* CPySocket::WriteBytes(PyObject* data) {
 	}
 }
 
+template<> void TModInfo<CModPython>(CModInfo& Info) {
+	Info.SetWikiPage("modpython");
+}
+
 GLOBALMODULEDEFS(CModPython, "Loads python scripts as ZNC modules")

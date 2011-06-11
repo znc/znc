@@ -745,6 +745,7 @@ public:
 				l["Name"] = Info.GetName();
 				l["Description"] = Info.GetDescription();
 				l["Args"] = GetModArgs(pUser, Info.GetName());
+				l["Wiki"] = Info.GetWikiPage();
 
 				if (pUser && pUser->GetModules().FindModule(Info.GetName())) {
 					l["Checked"] = "true";
@@ -1039,6 +1040,7 @@ public:
 				l["Name"] = Info.GetName();
 				l["Description"] = Info.GetDescription();
 				l["Args"] = GetModArgs(NULL, Info.GetName(), true);
+				l["Wiki"] = Info.GetWikiPage();
 			}
 
 			return true;
@@ -1123,5 +1125,9 @@ public:
 		return false;
 	}
 };
+
+template<> void TModInfo<CWebAdminMod>(CModInfo& Info) {
+	Info.SetWikiPage("webadmin");
+}
 
 GLOBALMODULEDEFS(CWebAdminMod, "Web based administration module")

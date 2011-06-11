@@ -28,5 +28,9 @@ public:
 	}
 };
 
+template<> void TModInfo<CRawMod>(CModInfo& Info) {
+	Info.SetWikiPage("raw");
+}
+
 MODULEDEFS(CRawMod, "View all of the raw traffic")
 
