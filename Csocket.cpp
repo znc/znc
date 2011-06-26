@@ -36,6 +36,7 @@
 #endif /* __NetBSD__ */
 
 #ifdef HAVE_LIBSSL
+#include <stdio.h>
 #include <openssl/conf.h>
 #include <openssl/engine.h>
 #endif /* HAVE_LIBSSL */
@@ -241,7 +242,7 @@ void Csock::FreeAres()
 static void AresHostCallback( void *pArg, int status, int timeouts, struct hostent *hent )
 {
 	Csock *pSock = (Csock *)pArg;
-	if( status == ARES_SUCCESS && hent )
+	if( status == ARES_SUCCESS && hent && hent->h_addr_list[0] != NULL )
 	{
 		CSSockAddr *pSockAddr = pSock->GetCurrentAddr();
 		if( hent->h_addrtype == AF_INET )
@@ -264,6 +265,11 @@ static void AresHostCallback( void *pArg, int status, int timeouts, struct hoste
 	else
 	{
 		CS_DEBUG( ares_strerror( status ) );
+		if( status == ARES_SUCCESS )
+		{
+			CS_DEBUG("Received ARES_SUCCESS without any useful reply, using NODATA instead");
+			status = ARES_ENODATA;
+		}
 	}
 	pSock->SetAresFinished( status );
 }
@@ -301,7 +307,7 @@ int GetAddrInfo( const CS_STRING & sHostname, Csock *pSock, CSSockAddr & csSockA
 	if( iRet == EAI_AGAIN )
 		return( EAGAIN ); // need to return telling the user to try again
 	else if( ( iRet == 0 ) && ( res ) )
-	{
+	{ 
 		std::list<struct addrinfo *> lpTryAddrs;
 		bool bFound = false;
 		for( struct addrinfo *pRes = res; pRes; pRes = pRes->ai_next )
@@ -312,7 +318,7 @@ int GetAddrInfo( const CS_STRING & sHostname, Csock *pSock, CSSockAddr & csSockA
 			if( ( pRes->ai_socktype != SOCK_STREAM ) || ( pRes->ai_protocol != IPPROTO_TCP ) )
 #endif /* __sun work around broken impl of getaddrinfo */
 				continue;
-
+			
 			if( ( csSockAddr.GetAFRequire() != CSSockAddr::RAF_ANY ) && ( pRes->ai_family != csSockAddr.GetAFRequire() ) )
 				continue; // they requested a special type, so be certain we woop past anything unwanted
 			lpTryAddrs.push_back( pRes );
@@ -486,7 +492,7 @@ void SSLErrors( const char *filename, u_int iLineNum )
 
 void __Perror( const CS_STRING & s, const char *pszFile, unsigned int iLineNo )
 {
-#if defined(__sun) || defined(_WIN32) || (defined(__NetBSD_Version__) && __NetBSD_Version__ < 4000000000)
+#if defined( sgi ) || defined(__sun) || defined(_WIN32) || (defined(__NetBSD_Version__) && __NetBSD_Version__ < 4000000000)
 	std::cerr << s << "(" << pszFile << ":" << iLineNo << "): " << strerror( GetSockError() ) << endl;
 #else
 	char buff[512];
@@ -1050,7 +1056,7 @@ cs_sock_t Csock::Accept( CS_STRING & sHost, u_short & iRPort )
 
 		if ( !m_bBLOCK )
 		{
-			// make it none blocking
+			// make it none blocking 
 			set_non_blocking( iSock );
 		}
 
@@ -1259,21 +1265,49 @@ bool Csock::SSLServerSetup()
 
 	//
 	// set up the CTX
-	if ( SSL_CTX_use_certificate_chain_file( m_ssl_ctx, m_sPemFile.c_str() ) <= 0 )
+	if( SSL_CTX_use_certificate_chain_file( m_ssl_ctx, m_sPemFile.c_str() ) <= 0 )
 	{
 		CS_DEBUG( "Error with PEM file [" << m_sPemFile << "]" );
 		SSLErrors( __FILE__, __LINE__ );
 		return( false );
 	}
 
-	if ( SSL_CTX_use_PrivateKey_file( m_ssl_ctx, m_sPemFile.c_str(), SSL_FILETYPE_PEM ) <= 0 )
+	if( SSL_CTX_use_PrivateKey_file( m_ssl_ctx, m_sPemFile.c_str(), SSL_FILETYPE_PEM ) <= 0 )
 	{
 		CS_DEBUG( "Error with PEM file [" << m_sPemFile << "]" );
 		SSLErrors( __FILE__, __LINE__ );
 		return( false );
 	}
 
-	if ( SSL_CTX_set_cipher_list( m_ssl_ctx, m_sCipherType.c_str() ) <= 0 )
+	// check to see if this pem file contains a DH structure for use with DH key exchange
+	// https://github.com/znc/znc/pull/46
+	FILE *dhParamsFile = fopen( m_sPemFile.c_str(), "r" );
+	if( !dhParamsFile )
+	{
+		CS_DEBUG( "There is a problem with [" << m_sPemFile << "]" );
+		return( false );
+	}
+
+	DH * dhParams = PEM_read_DHparams( dhParamsFile, NULL, NULL, NULL );
+	fclose( dhParamsFile );
+	if( dhParams )
+	{
+		SSL_CTX_set_options( m_ssl_ctx, SSL_OP_SINGLE_DH_USE );
+		if( !SSL_CTX_set_tmp_dh( m_ssl_ctx, dhParams ) )
+		{
+			CS_DEBUG( "Error setting ephemeral DH parameters from [" << m_sPemFile << "]" );
+			SSLErrors( __FILE__, __LINE__ );
+			DH_free( dhParams );
+			return( false );
+		}
+		DH_free( dhParams );
+	}
+	else
+	{ // Presumably PEM_read_DHparams failed, as there was no DH structure. Clearing those errors here so they are removed off the stack
+		ERR_clear_error();
+	}
+
+	if( SSL_CTX_set_cipher_list( m_ssl_ctx, m_sCipherType.c_str() ) <= 0 )
 	{
 		CS_DEBUG( "Could not assign cipher [" << m_sCipherType << "]" );
 		return( false );
@@ -1281,7 +1315,7 @@ bool Csock::SSLServerSetup()
 
 	//
 	// setup the SSL
-	m_ssl = SSL_new ( m_ssl_ctx );
+	m_ssl = SSL_new( m_ssl_ctx );
 	if ( !m_ssl )
 		return( false );
 
@@ -1328,7 +1362,7 @@ bool Csock::ConnectSSL( const CS_STRING & sBindhost )
 			bPass = true;
 #ifdef _WIN32
 		else if( sslErr == SSL_ERROR_SYSCALL && iErr < 0 && GetLastError() == WSAENOTCONN )
-		{
+		{ 
 			// this seems to be an issue with win32 only. I've seen it happen on slow connections
 			// the issue is calling this before select(), which isn't a problem on unix. Allowing this
 			// to pass in this case is fine because subsequent ssl transactions will occur and the handshake
@@ -1523,7 +1557,7 @@ cs_ssize_t Csock::Read( char *data, size_t len )
 {
 	cs_ssize_t bytes = 0;
 
-	if ( ( IsReadPaused() ) && ( SslIsEstablished() ) )
+	if ( IsReadPaused() && SslIsEstablished() )
 		return( READ_EAGAIN ); // allow the handshake to complete first
 
 	if ( m_bBLOCK )
@@ -1541,7 +1575,11 @@ cs_ssize_t Csock::Read( char *data, size_t len )
 
 #ifdef HAVE_LIBSSL
 	if ( m_bssl )
+	{
 		bytes = SSL_read( m_ssl, data, (int)len );
+		if( bytes >= 0 )
+			m_bsslEstablished = true; // this means all is good in the realm of ssl
+	}
 	else
 #endif /* HAVE_LIBSSL */
 #ifdef _WIN32
@@ -1657,12 +1695,12 @@ CS_STRING Csock::ConvertAddress( void *addr, bool bIPv6 )
 {
 	CS_STRING sRet;
 
-	if( !bIPv6 )
+	if( !bIPv6 ) 
 	{
 		in_addr *p = (in_addr*) addr;
 		sRet = inet_ntoa(*p);
-	}
-	else
+	} 
+	else 
 	{
 		char straddr[INET6_ADDRSTRLEN];
 		if( inet_ntop( AF_INET6, addr, straddr, sizeof(straddr) ) > 0 )
@@ -2180,7 +2218,7 @@ int Csock::GetPending()
 		int iBytes = SSL_pending( m_ssl );
 		ERR_pop_to_mark();
 		return( iBytes );
-#else
+#else 
 		int iBytes = SSL_pending( m_ssl );
 		ERR_clear_error(); // to get safer handling, upgrade your openssl version!
 		return( iBytes );
@@ -2394,18 +2432,18 @@ cs_sock_t Csock::CreateSocket( bool bListen )
 	cs_sock_t iRet = socket( PF_INET, SOCK_STREAM, IPPROTO_TCP );
 #endif /* HAVE_IPV6 */
 
-	if ( iRet != CS_INVALID_SOCK )
+	if ( iRet != CS_INVALID_SOCK ) 
 	{
 		set_close_on_exec( iRet );
 
-		if ( bListen )
+		if ( bListen ) 
 		{
 			const int on = 1;
 
 			if ( setsockopt( iRet, SOL_SOCKET, SO_REUSEADDR, (char *)&on, sizeof( on ) ) != 0 )
 				PERROR( "SO_REUSEADDR" );
 		}
-	}
+	} 
 	else
 		PERROR( "socket" );
 
