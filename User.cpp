@@ -308,6 +308,12 @@ bool CUser::ParseConfig(CConfig* pConfig, CString& sError) {
 			sModName = "disconkick";
 		}
 
+		// XXX Legacy crap, added in znc 0.099
+		if (sModName == "fixfreenode") {
+			CUtils::PrintMessage("NOTICE: [fixfreenode] doesn't do anything useful anymore, ignoring it");
+			continue;
+		}
+
 		CUtils::PrintAction("Loading Module [" + sModName + "]");
 		CString sModRet;
 		CString sArgs = sValue.Token(1, true);
