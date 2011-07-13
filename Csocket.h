@@ -1991,7 +1991,7 @@ private:
 		std::map< int, short > miiReadyFds;
 		tv.tv_sec = m_iSelectWait / 1000000;
 		tv.tv_usec = m_iSelectWait % 1000000;
-		u_int iQuickReset = 100;
+		u_int iQuickReset = 1000;
 		if ( m_iSelectWait == 0 )
 			iQuickReset = 0;
 
