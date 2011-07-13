@@ -44,6 +44,7 @@ CXXFLAGS="`${ZNC_CONFIG} --cflags` $CXXFLAGS"
 LIBS="`${ZNC_CONFIG} --libs` $LIBS"
 LDFLAGS="`${ZNC_CONFIG} --libznc` $LDFLAGS"
 MODLINK="`${ZNC_CONFIG} --modlink` $MODLINK"
+VERSION="`${ZNC_CONFIG} --version`"
 
 while test ! -z "$1"
 do
@@ -54,9 +55,9 @@ do
 	MOD="${MOD%.cc}"
 
 	if test ! -f "${FILE}"; then
-		echo "${ERROR} Building \"${MOD}.so\"... File not found"
+		echo "${ERROR} Building \"${MOD}.so\" for znc $VERSION... File not found"
 	else
-		printf "Building \"${MOD}.so\"... "
+		printf "Building \"${MOD}.so\" for znc $VERSION... "
 		if ${CXX} ${CXXFLAGS} ${INCLUDES} ${LDFLAGS} ${LIBS} ${MODLINK} -o "${MOD}.so" "${FILE}" ; then
 			echo "${OK}"
 		else
