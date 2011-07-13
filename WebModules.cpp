@@ -533,9 +533,16 @@ void CWebSock::OnPageRequest(const CString& sURI) {
 }
 
 CWebSock::EPageReqResult CWebSock::OnPageRequestInternal(const CString& sURI, CString& sPageRet) {
+	// Check that their session really belongs to their IP address. IP-based
+	// authentication is bad, but here it's just an extra layer that makes
+	// stealing cookies harder to pull off.
+	//
+	// When their IP is wrong, we give them an invalid cookie. This makes
+	// sure that they will get a new cookie on their next request.
 	if (CZNC::Get().GetProtectWebSessions() && GetSession()->GetIP() != GetRemoteIP()) {
 		DEBUG("Expected IP: " << GetSession()->GetIP());
 		DEBUG("Remote IP:   " << GetRemoteIP());
+		SendCookie("SessionId", "WRONG_IP_FOR_SESSION");
 		PrintErrorPage(403, "Access denied", "This session does not belong to your IP.");
 		return PAGE_DONE;
 	}
