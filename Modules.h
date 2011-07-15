@@ -53,9 +53,15 @@ template<class M> CGlobalModule* TModLoadGlobal(ModHandle p,
 	return new M(p, sModName, sModPath);
 }
 
+#if HAVE_VISIBILITY
+# define MODULE_EXPORT __attribute__((__visibility__("default")))
+#else
+# define MODULE_EXPORT
+#endif
+
 #define MODCOMMONDEFS(CLASS, DESCRIPTION, GLOBAL, LOADER) \
 	extern "C" { \
-		bool ZNCModInfo(double dCoreVersion, CModInfo& Info); \
+		MODULE_EXPORT bool ZNCModInfo(double dCoreVersion, CModInfo& Info); \
 		bool ZNCModInfo(double dCoreVersion, CModInfo& Info) { \
 			if (dCoreVersion != VERSION) \
 				return false; \

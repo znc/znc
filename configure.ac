@@ -28,6 +28,7 @@ AC_PROG_GREP
 AC_PROG_SED
 AC_CANONICAL_HOST
 AC_SYS_LARGEFILE
+gl_VISIBILITY
 
 appendLib () {
 	if test "$LIBS" != ""; then
@@ -268,6 +269,7 @@ AC_ARG_WITH( [module-data-prefix],
 	[DATADIR="${datadir}/znc"] )
 
 appendMod "$CXXFLAGS"
+appendMod "$CFLAG_VISIBILITY"
 
 if test -z "$ISSUN" -a -z "$ISDARWIN" -a -z "$ISCYGWIN"; then
 	# This is an unknown compiler flag on some OS

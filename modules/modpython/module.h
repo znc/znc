@@ -15,6 +15,9 @@ public:
 
 class CModPython;
 
+#if HAVE_VISIBILITY
+#pragma GCC visibility push(default)
+#endif
 class CPyModule : public CModule {
 	PyObject* m_pyObj;
 	CModPython* m_pModPython;
@@ -224,3 +227,6 @@ public:
 	}
 };
 
+#if HAVE_VISIBILITY
+#pragma GCC visibility pop
+#endif

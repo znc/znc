@@ -10,6 +10,9 @@
 
 #include "Modules.h"
 
+#if HAVE_VISIBILITY
+#pragma GCC visibility push(default)
+#endif
 class CPerlModule : public CModule {
 	CString m_sPerlID;
 	VWebSubPages* _GetSubPages();
@@ -171,3 +174,6 @@ inline double GetVersion() {
 inline CString GetVersionExtra() {
 	return VERSION_EXTRA;
 }
+#if HAVE_VISIBILITY
+#pragma GCC visibility pop
+#endif
