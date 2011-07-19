@@ -590,7 +590,11 @@ bool CZNC::WriteNewConfig(const CString& sConfigFile) {
 	CUtils::PrintMessage("");
 
 	// Listen
-	CString s6;
+#ifdef HAVE_IPV6
+	bool b6 = true;
+#else
+	bool b6 = false;
+#endif
 	CString sListenHost;
 	CString sSSL;
 	unsigned int uListenPort = 0;
@@ -617,18 +621,14 @@ bool CZNC::WriteNewConfig(const CString& sConfigFile) {
 #endif
 
 #ifdef HAVE_IPV6
-		if (CUtils::GetBoolInput("Would you like ZNC to listen using ipv6?", s6 == " ")) {
-			s6 = " ";
-		} else {
-			s6 = "4";
-		}
+		b6 = CUtils::GetBoolInput("Would you like ZNC to listen using ipv6?", b6);
 #endif
 
 		CUtils::GetInput("Listen Host", sListenHost, sListenHost, "Blank for all ips");
 
 		CUtils::PrintAction("Verifying the listener");
 		CListener* pListener = new CListener(uListenPort, sListenHost, !sSSL.empty(),
-				s6.empty() ? ADDR_IPV4ONLY : ADDR_ALL, CListener::ACCEPT_ALL);
+				b6 ? ADDR_ALL : ADDR_IPV4ONLY, CListener::ACCEPT_ALL);
 		if (!pListener->Listen()) {
 			CUtils::PrintStatus(false, FormatBindError());
 			bSuccess = false;
@@ -641,7 +641,7 @@ bool CZNC::WriteNewConfig(const CString& sConfigFile) {
 		sListenHost += " ";
 	}
 
-	vsLines.push_back("Listener" + s6 + "  = " + sListenHost + sSSL + CString(uListenPort));
+	vsLines.push_back("Listener" + CString(b6 ? " " : "4") + "  = " + sListenHost + sSSL + CString(uListenPort));
 	// !Listen
 
 	set<CModInfo> ssGlobalMods;
