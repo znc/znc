@@ -69,6 +69,9 @@ void CRealListener::SockError(int iErrno) {
 	if (iErrno == EMFILE) {
 		// We have too many open fds, let's close this listening port to be able to continue
 		// to work, next rehash will (try to) reopen it.
+		CZNC::Get().Broadcast("We hit the FD limit, closing listening socket on ["
+				+ GetLocalIP() + " : " + CString(GetLocalPort()) + "]");
+		CZNC::Get().Broadcast("An admin has to rehash to reopen the listening port");
 		Close();
 	}
 }
