@@ -444,8 +444,6 @@ void CIRCSock::ReadLine(const CString& sData) {
 					pChan->ResetJoinTries();
 					pChan->Enable();
 					pChan->SetIsOn(true);
-					PutIRC("MODE " + pChan->GetName());
-
 				}
 			} else {
 				pChan = m_pUser->FindChan(sChan);
