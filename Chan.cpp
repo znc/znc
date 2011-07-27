@@ -435,9 +435,10 @@ bool CChan::AddNick(const CString& sNick) {
 	// Get the nick
 	sTmp   = sTmp.Token(0, false, "!");
 
+	CNick tmpNick(sTmp);
 	CNick* pNick = FindNick(sTmp);
 	if (!pNick) {
-		pNick = new CNick(sTmp);
+		pNick = &tmpNick;
 		pNick->SetUser(m_pUser);
 	}
 
