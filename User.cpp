@@ -388,7 +388,7 @@ void CUser::SetIRCSocket(CIRCSock* pIRCSock) {
 bool CUser::IsIRCConnected() const
 {
 	const CIRCSock* pSock = GetIRCSock();
-	return (pSock && pSock->IsConnected());
+	return (pSock && pSock->IsAuthed());
 }
 
 void CUser::IRCDisconnected() {

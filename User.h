@@ -110,6 +110,9 @@ public:
 
 	CString GetLocalIP();
 	CString GetLocalDCCIP();
+
+	/** This method will return whether the user is connected and authenticated to an IRC server.
+	 */
 	bool IsIRCConnected() const;
 	void SetIRCSocket(CIRCSock* pIRCSock);
 	void IRCDisconnected();
