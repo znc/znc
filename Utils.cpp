@@ -76,7 +76,7 @@ void CUtils::GenerateCert(FILE *pOut, const CString& sHost) {
 		}
 
 		if (!pHostName) {
-			pHostName = "unknown.com";
+			pHostName = "host.unknown";
 		}
 
 		CString sEmailAddr = pLogName;

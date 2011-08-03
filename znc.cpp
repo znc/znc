@@ -282,19 +282,6 @@ bool CZNC::WritePemFile() {
 	return false;
 #else
 	CString sPemFile = GetPemLocation();
-	const char* pHostName = getenv("HOSTNAME");
-	CString sHost;
-
-	if (pHostName) {
-		sHost = pHostName;
-	}
-
-	if (CFile::Exists(sPemFile)) {
-		CUtils::PrintError("Pem file [" + sPemFile + "] already exists");
-		return false;
-	}
-
-	while (!CUtils::GetInput("hostname of your shell", sHost, sHost, "including the '.com' portion")) ;
 
 	CUtils::PrintAction("Writing Pem file [" + sPemFile + "]");
 	FILE *f = fopen(sPemFile.c_str(), "w");
@@ -304,7 +291,7 @@ bool CZNC::WritePemFile() {
 		return false;
 	}
 
-	CUtils::GenerateCert(f, sHost);
+	CUtils::GenerateCert(f, "");
 	fclose(f);
 
 	CUtils::PrintStatus(true);
