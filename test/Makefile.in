@@ -9,7 +9,7 @@ CXXFLAGS := @DEFS@ @CPPFLAGS@ @CXXFLAGS@ -I..
 LDFLAGS  := @LDFLAGS@
 LIBS     := @LIBS@
 
-TARGETS  := ConfigTest
+TARGETS  := ConfigTest EscapeTest
 OBJS     := $(addsuffix .o, $(TARGETS))
 ZNC_OBJS := Config.o ZNCDebug.o FileUtils.o Utils.o ZNCString.o MD5.o SHA256.o
 ZNC_OBJS := $(addprefix ../, $(ZNC_OBJS))
@@ -35,6 +35,10 @@ ConfigTest: ConfigTest.o
 	$(E) Linking $@...
 	$(Q)$(CXX) $(LDFLAGS) -o $@ $< $(ZNC_OBJS) $(LIBS)
 
+EscapeTest: EscapeTest.o
+	$(E) Linking $@...
+	$(Q)$(CXX) $(LDFLAGS) -o $@ $< $(ZNC_OBJS) $(LIBS)
+
 %.o: %.cpp Makefile
 	@mkdir -p .depend
 	$(E) Building $@...
@@ -42,5 +46,5 @@ ConfigTest: ConfigTest.o
 
 test: $(TARGETS)
 	for test in $(TARGETS) ; do \
-		$$test || exit 1 ; \
+		./$$test || exit 1 ; \
 	done

@@ -31,6 +31,7 @@ Makefile
 /modules/*.pyc
 
 /test/ConfigTest
+/test/EscapeTest
 
 # Compiled Object files
 *.o
