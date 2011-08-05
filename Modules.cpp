@@ -1035,7 +1035,7 @@ CModules::ModDirList CModules::GetModDirs() {
 
 	// ./modules/extra
 	sDir = CZNC::Get().GetCurPath() + "/modules/extra/";
-	ret.push(std::make_pair(sDir, sDir));
+	ret.push(std::make_pair(sDir, sDir + "data/"));
 #endif
 
 	// ~/.znc/modules
