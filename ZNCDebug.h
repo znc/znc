@@ -9,6 +9,7 @@
 #ifndef ZNCDEBUG_H
 #define ZNCDEBUG_H
 
+#include "zncconfig.h"
 #include <iostream>
 
 using std::cout;
