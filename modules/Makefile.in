@@ -92,23 +92,23 @@ TARGETS  := $(addsuffix .so, $(FILES))
 
 CLEAN    += *.so extra/*.so
 
-.PHONY: all clean install install_datadir create_install_dir uninstall
+.PHONY: all clean install install_datadir uninstall
 
 all: $(TARGETS)
 
-install: all create_install_dir install_datadir
+install: all install_datadir
 	$(INSTALL_PROGRAM) $(TARGETS) $(DESTDIR)$(MODDIR)
 
-create_install_dir:
-	mkdir -p $(DESTDIR)$(MODDIR)
-	mkdir -p $(DESTDIR)$(DATADIR)
-	rm -rf $(DESTDIR)$(MODDIR)/*.so
+install_datadir:
 	rm -rf $(DESTDIR)$(DATADIR)/modules
-
-install_datadir: create_install_dir
-	cp -R $(srcdir)/data $(DESTDIR)$(DATADIR)/modules
-	# Disabled for now since no module in extra has some data files
-	#cp -R $(srcdir)/extra/data $(DESTDIR)$(DATADIR)/modules
+	mkdir -p $(DESTDIR)$(MODDIR)
+	mkdir -p $(DESTDIR)$(DATADIR)/modules
+	rm -rf $(DESTDIR)$(MODDIR)/*.so
+	mkdir -p $(DESTDIR)$(DATADIR)/modules
+	cp -R $(srcdir)/data/* $(DESTDIR)$(DATADIR)/modules
+	if test "@EXTRA@" = "yes" ; then \
+		cp -R $(srcdir)/extra/data/* $(DESTDIR)$(DATADIR)/modules ; \
+	fi
 	find $(DESTDIR)$(DATADIR)/modules -type d -exec chmod 0755 '{}' \;
 	find $(DESTDIR)$(DATADIR)/modules -type f -exec chmod 0644 '{}' \;
 
