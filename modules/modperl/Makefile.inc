@@ -43,7 +43,7 @@ modperl/functions.cpp: modperl/functions.in
 	@mkdir -p modperl
 	$(Q)$(PERL) $(srcdir)/modperl/codegen.pl $< $@
 
-modperl_install: create_install_dir modperl.so
+modperl_install: install_datadir modperl.so
 	for i in $(wildcard $(srcdir)/*.pm); do \
 		$(INSTALL_DATA) $$i $(DESTDIR)$(MODDIR); \
 	done

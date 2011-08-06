@@ -58,7 +58,7 @@ modpython/compiler: modpython/compiler.cpp Makefile
 	$(E) Building optimizer for python files...
 	$(Q)$(CXX) $(PYTHONCOMMON) -o $@ $< $(PY_LDFLAGS)
 
-modpython_install: create_install_dir modpython_all
+modpython_install: install_datadir modpython_all
 	-for i in *.pyc; do \
 		$(INSTALL_DATA) $$i $(DESTDIR)$(MODDIR); \
 	done
