@@ -632,7 +632,7 @@ bool CZNC::WriteNewConfig(const CString& sConfigFile) {
 	// !Listen
 
 	set<CModInfo> ssGlobalMods;
-	GetModules().GetAvailableMods(ssGlobalMods, true);
+	GetModules().GetAvailableMods(ssGlobalMods, ModuleTypeGlobal);
 	size_t uNrOtherGlobalMods = FilterUncommonModules(ssGlobalMods);
 
 	if (!ssGlobalMods.empty()) {

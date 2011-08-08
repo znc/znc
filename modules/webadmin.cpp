@@ -143,24 +143,6 @@ public:
 		return true;
 	}
 
-	CString GetModArgs(CUser* pUser, const CString& sModName, bool bGlobal = false) {
-		if (!bGlobal && !pUser) {
-			return "";
-		}
-
-		CModules& Modules = (bGlobal) ? CZNC::Get().GetModules() : pUser->GetModules();
-
-		for (unsigned int a = 0; a < Modules.size(); a++) {
-			CModule* pModule = Modules[a];
-
-			if (pModule->GetModName() == sModName) {
-				return pModule->GetArgs();
-			}
-		}
-
-		return "";
-	}
-
 	CUser* GetNewUser(CWebSock& WebSock, CUser* pUser) {
 		CSmartPtr<CWebSession> spSession = WebSock.GetSession();
 		CString sUsername = WebSock.GetParam("newuser");
@@ -744,11 +726,14 @@ public:
 
 				l["Name"] = Info.GetName();
 				l["Description"] = Info.GetDescription();
-				l["Args"] = GetModArgs(pUser, Info.GetName());
 				l["Wiki"] = Info.GetWikiPage();
 
 				if (pUser && pUser->GetModules().FindModule(Info.GetName())) {
-					l["Checked"] = "true";
+					CModule *pModule = pUser->GetModules().FindModule(Info.GetName());
+					if (pModule) {
+						l["Checked"] = "true";
+						l["Args"] = pModule->GetArgs();
+					}
 				}
 
 				if (!spSession->IsAdmin() && pUser && pUser->DenyLoadMod()) {
@@ -1023,14 +1008,16 @@ public:
 			}
 
 			set<CModInfo> ssGlobalMods;
-			CZNC::Get().GetModules().GetAvailableMods(ssGlobalMods, true);
+			CZNC::Get().GetModules().GetAvailableMods(ssGlobalMods, ModuleTypeGlobal);
 
 			for (set<CModInfo>::iterator it = ssGlobalMods.begin(); it != ssGlobalMods.end(); ++it) {
 				const CModInfo& Info = *it;
 				CTemplate& l = Tmpl.AddRow("ModuleLoop");
 
-				if (CZNC::Get().GetModules().FindModule(Info.GetName())) {
+				CModule *pModule = CZNC::Get().GetModules().FindModule(Info.GetName());
+				if (pModule) {
 					l["Checked"] = "true";
+					l["Args"] = pModule->GetArgs();
 				}
 
 				if (Info.GetName() == GetModName()) {
@@ -1039,7 +1026,6 @@ public:
 
 				l["Name"] = Info.GetName();
 				l["Description"] = Info.GetDescription();
-				l["Args"] = GetModArgs(NULL, Info.GetName(), true);
 				l["Wiki"] = Info.GetWikiPage();
 			}
 

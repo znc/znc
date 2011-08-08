@@ -128,9 +128,6 @@ public:
 
 	virtual EModRet OnModuleLoading(const CString& sModName, const CString& sArgs,
 			bool& bSuccess, CString& sRetMsg) {
-		if (!GetUser()) {
-			return CONTINUE;
-		}
 		PyObject* pyFunc = PyObject_GetAttrString(m_PyZNCModule, "load_module");
 		if (!pyFunc) {
 			sRetMsg = GetPyExceptionStr();
@@ -252,7 +249,7 @@ public:
 		return HALT;
 	}
 
-	void TryAddModInfo(const CString& sPath, const CString& sName, set<CModInfo>& ssMods, set<CString>& ssAlready) {
+	void TryAddModInfo(const CString& sPath, const CString& sName, set<CModInfo>& ssMods, set<CString>& ssAlready, EModuleType eType) {
 		if (ssAlready.count(sName)) {
 			return;
 		}
@@ -282,17 +279,13 @@ public:
 			return;
 		}
 		Py_CLEAR(pyRes);
-		if (x) {
+		if (x && ModInfo.GetType() == eType) {
 			ssMods.insert(ModInfo);
 			ssAlready.insert(sName);
 		}
 	}
 
-	virtual void OnGetAvailableMods(set<CModInfo>& ssMods, bool bGlobal) {
-		if (bGlobal) {
-			return;
-		}
-
+	virtual void OnGetAvailableMods(set<CModInfo>& ssMods, EModuleType eType) {
 		CDir Dir;
 		CModules::ModDirList dirs = CModules::GetModDirs();
 
@@ -306,7 +299,7 @@ public:
 				CString sPath = File.GetLongName();
 				sPath.TrimSuffix(sName);
 				sName.RightChomp(3);
-				TryAddModInfo(sPath, sName, ssMods, already);
+				TryAddModInfo(sPath, sName, ssMods, already, eType);
 			}
 
 			Dir.FillByWildcard(dirs.front().first, "*.pyc");
@@ -316,7 +309,7 @@ public:
 				CString sPath = File.GetLongName();
 				sPath.TrimSuffix(sName);
 				sName.RightChomp(4);
-				TryAddModInfo(sPath, sName, ssMods, already);
+				TryAddModInfo(sPath, sName, ssMods, already, eType);
 			}
 
 			Dir.FillByWildcard(dirs.front().first, "*.so");
@@ -326,7 +319,7 @@ public:
 				CString sPath = File.GetLongName();
 				sPath.TrimSuffix(sName);
 				sName.RightChomp(3);
-				TryAddModInfo(sPath, sName, ssMods, already);
+				TryAddModInfo(sPath, sName, ssMods, already, eType);
 			}
 
 			dirs.pop();

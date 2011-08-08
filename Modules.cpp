@@ -105,7 +105,7 @@ const CString& CTimer::GetDescription() const { return m_sDescription; }
 
 
 CModule::CModule(ModHandle pDLL, CUser* pUser, const CString& sModName, const CString& sDataDir) {
-	m_bGlobal = false;
+	m_eType = ModuleTypeUser;
 	m_pDLL = pDLL;
 	m_pManager = &(CZNC::Get().GetManager());;
 	m_pUser = pUser;
@@ -588,7 +588,7 @@ CModule::EModRet CGlobalModule::OnModuleUnloading(CModule* pModule, bool& bSucce
 }
 CModule::EModRet CGlobalModule::OnGetModInfo(CModInfo& ModInfo, const CString& sModule,
 		bool& bSuccess, CString& sRetMsg) { return CONTINUE; }
-void CGlobalModule::OnGetAvailableMods(set<CModInfo>& ssMods, bool bGlobal) {}
+void CGlobalModule::OnGetAvailableMods(set<CModInfo>& ssMods, EModuleType eType) {}
 
 
 CModules::CModules() {
@@ -788,8 +788,8 @@ bool CGlobalModules::OnGetModInfo(CModInfo& ModInfo, const CString& sModule,
 	GLOBALMODHALTCHK(OnGetModInfo(ModInfo, sModule, bSuccess, sRetMsg));
 }
 
-bool CGlobalModules::OnGetAvailableMods(set<CModInfo>& ssMods, bool bGlobal) {
-	GLOBALMODCALL(OnGetAvailableMods(ssMods, bGlobal));
+bool CGlobalModules::OnGetAvailableMods(set<CModInfo>& ssMods, EModuleType eType) {
+	GLOBALMODCALL(OnGetAvailableMods(ssMods, eType));
 	return false;
 }
 
@@ -835,10 +835,10 @@ bool CModules::LoadModule(const CString& sModule, const CString& sArgs, CUser* p
 		return false;
 	}
 
-	if ((pUser == NULL) != Info.IsGlobal()) {
+	if ((pUser == NULL) != (Info.GetType() == ModuleTypeGlobal)) {
 		dlclose(p);
 		sRetMsg = "Module [" + sModule + "] is ";
-		sRetMsg += Info.IsGlobal() ? "" : "not ";
+		sRetMsg += (Info.GetType() == ModuleTypeGlobal) ? "" : "not ";
 		sRetMsg += "a global module.";
 		return false;
 	}
@@ -852,7 +852,7 @@ bool CModules::LoadModule(const CString& sModule, const CString& sArgs, CUser* p
 	}
 
 	pModule->SetDescription(Info.GetDescription());
-	pModule->SetGlobal(Info.IsGlobal());
+	pModule->SetType(Info.GetType());
 	pModule->SetArgs(sArgs);
 	pModule->SetModPath(CDir::ChangeDir(CZNC::Get().GetCurPath(), sModPath));
 	push_back(pModule);
@@ -970,7 +970,7 @@ bool CModules::GetModPathInfo(CModInfo& ModInfo, const CString& sModule, const C
 	return true;
 }
 
-void CModules::GetAvailableMods(set<CModInfo>& ssMods, bool bGlobal) {
+void CModules::GetAvailableMods(set<CModInfo>& ssMods, EModuleType eType) {
 	ssMods.clear();
 
 	unsigned int a = 0;
@@ -991,14 +991,14 @@ void CModules::GetAvailableMods(set<CModInfo>& ssMods, bool bGlobal) {
 
 			CString sIgnoreRetMsg;
 			if (GetModPathInfo(ModInfo, sName, sPath, sIgnoreRetMsg)) {
-				if (ModInfo.IsGlobal() == bGlobal) {
+				if (ModInfo.GetType() == eType) {
 					ssMods.insert(ModInfo);
 				}
 			}
 		}
 	}
 
-	GLOBALMODULECALL(OnGetAvailableMods(ssMods, bGlobal), NULL, NULL, NOTHING);
+	GLOBALMODULECALL(OnGetAvailableMods(ssMods, eType), NULL, NULL, NOTHING);
 }
 
 bool CModules::FindModPath(const CString& sModule, CString& sModPath,

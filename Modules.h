@@ -40,6 +40,11 @@ class CModInfo;
 #endif
 #endif
 
+typedef enum {
+	ModuleTypeGlobal,
+	ModuleTypeUser
+} EModuleType;
+
 typedef void* ModHandle;
 
 template<class M> void TModInfo(CModInfo& Info) {}
@@ -59,14 +64,14 @@ template<class M> CGlobalModule* TModLoadGlobal(ModHandle p,
 # define MODULE_EXPORT
 #endif
 
-#define MODCOMMONDEFS(CLASS, DESCRIPTION, GLOBAL, LOADER) \
+#define MODCOMMONDEFS(CLASS, DESCRIPTION, TYPE, LOADER) \
 	extern "C" { \
 		MODULE_EXPORT bool ZNCModInfo(double dCoreVersion, CModInfo& Info); \
 		bool ZNCModInfo(double dCoreVersion, CModInfo& Info) { \
 			if (dCoreVersion != VERSION) \
 				return false; \
 			Info.SetDescription(DESCRIPTION); \
-			Info.SetGlobal(GLOBAL); \
+			Info.SetType(TYPE); \
 			LOADER; \
 			TModInfo<CLASS>(Info); \
 			return true; \
@@ -101,7 +106,7 @@ template<class M> CGlobalModule* TModLoadGlobal(ModHandle p,
  *  @see For global modules you need GLOBALMODULEDEFS.
  */
 #define MODULEDEFS(CLASS, DESCRIPTION) \
-	MODCOMMONDEFS(CLASS, DESCRIPTION, false, Info.SetLoader(TModLoad<CLASS>))
+	MODCOMMONDEFS(CLASS, DESCRIPTION, ModuleTypeUser, Info.SetLoader(TModLoad<CLASS>))
 // !User Module Macros
 
 // Global Module Macros
@@ -112,7 +117,7 @@ template<class M> CGlobalModule* TModLoadGlobal(ModHandle p,
 
 /** This works exactly like MODULEDEFS, but for global modules. */
 #define GLOBALMODULEDEFS(CLASS, DESCRIPTION) \
-	MODCOMMONDEFS(CLASS, DESCRIPTION, true, Info.SetGlobalLoader(TModLoadGlobal<CLASS>))
+	MODCOMMONDEFS(CLASS, DESCRIPTION, ModuleTypeGlobal, Info.SetGlobalLoader(TModLoadGlobal<CLASS>))
 // !Global Module Macros
 
 // Forward Declarations
@@ -179,8 +184,7 @@ public:
 		m_fGlobalLoader = NULL;
 		m_fLoader = NULL;
 	}
-	CModInfo(const CString& sName, const CString& sPath, bool bGlobal) {
-		m_bGlobal = bGlobal;
+	CModInfo(const CString& sName, const CString& sPath, EModuleType eType) {
 		m_sName = sName;
 		m_sPath = sPath;
 		m_fGlobalLoader = NULL;
@@ -197,7 +201,7 @@ public:
 	const CString& GetPath() const { return m_sPath; }
 	const CString& GetDescription() const { return m_sDescription; }
 	const CString& GetWikiPage() const { return m_sWikiPage; }
-	bool IsGlobal() const { return m_bGlobal; }
+	EModuleType GetType() const { return m_eType; }
 	ModLoader GetLoader() const { return m_fLoader; }
 	GlobalModLoader GetGlobalLoader() const { return m_fGlobalLoader; }
 	// !Getters
@@ -207,13 +211,13 @@ public:
 	void SetPath(const CString& s) { m_sPath = s; }
 	void SetDescription(const CString& s) { m_sDescription = s; }
 	void SetWikiPage(const CString& s) { m_sWikiPage = s; }
-	void SetGlobal(bool b) { m_bGlobal = b; }
+	void SetType(EModuleType eType) { m_eType = eType; }
 	void SetLoader(ModLoader fLoader) { m_fLoader = fLoader; }
 	void SetGlobalLoader(GlobalModLoader fGlobalLoader) { m_fGlobalLoader = fGlobalLoader; }
 	// !Setters
 private:
 protected:
-	bool            m_bGlobal;
+	EModuleType     m_eType;
 	CString         m_sName;
 	CString         m_sPath;
 	CString         m_sDescription;
@@ -845,14 +849,14 @@ public:
 	const CString& GetSavePath() const;
 
 	// Setters
-	void SetGlobal(bool b) { m_bGlobal = b; }
+	void SetType(EModuleType eType) { m_eType = eType; }
 	void SetDescription(const CString& s) { m_sDescription = s; }
 	void SetModPath(const CString& s) { m_sModPath = s; }
 	void SetArgs(const CString& s) { m_sArgs = s; }
 	// !Setters
 
 	// Getters
-	bool IsGlobal() const { return m_bGlobal; }
+	EModuleType GetType() const { return m_eType; }
 	const CString& GetDescription() const { return m_sDescription; }
 	const CString& GetArgs() const { return m_sArgs; }
 	const CString& GetModPath() const { return m_sModPath; }
@@ -871,7 +875,7 @@ public:
 	// !Getters
 
 protected:
-	bool               m_bGlobal;
+	EModuleType        m_eType;
 	CString            m_sDescription;
 	set<CTimer*>       m_sTimers;
 	set<CSocket*>      m_sSockets;
@@ -974,7 +978,7 @@ public:
 
 	static bool GetModInfo(CModInfo& ModInfo, const CString& sModule, CString &sRetMsg);
 	static bool GetModPathInfo(CModInfo& ModInfo, const CString& sModule, const CString& sModPath, CString &sRetMsg);
-	static void GetAvailableMods(set<CModInfo>& ssMods, bool bGlobal = false);
+	static void GetAvailableMods(set<CModInfo>& ssMods, EModuleType eType = ModuleTypeUser);
 
 	// This returns the path to the .so and to the data dir
 	// which is where static data (webadmin skins) are saved
@@ -1097,7 +1101,7 @@ public:
 	 *  @param ssMods put new modules here.
 	 *  @param bGlobal true if global modules are needed.
 	 */
-	virtual void OnGetAvailableMods(set<CModInfo>& ssMods, bool bGlobal);
+	virtual void OnGetAvailableMods(set<CModInfo>& ssMods, EModuleType eType);
 private:
 };
 
@@ -1120,7 +1124,7 @@ public:
 	bool OnModuleUnloading(CModule* pModule, bool& bSuccess, CString& sRetMsg);
 	bool OnGetModInfo(CModInfo& ModInfo, const CString& sModule,
 			bool& bSuccess, CString& sRetMsg);
-	bool OnGetAvailableMods(set<CModInfo>& ssMods, bool bGlobal);
+	bool OnGetAvailableMods(set<CModInfo>& ssMods, EModuleType eType);
 private:
 };
 

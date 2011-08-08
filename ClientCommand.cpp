@@ -517,7 +517,7 @@ void CClient::UserCommand(CString& sLine) {
 
 		if (m_pUser->IsAdmin()) {
 			set<CModInfo> ssGlobalMods;
-			CZNC::Get().GetModules().GetAvailableMods(ssGlobalMods, true);
+			CZNC::Get().GetModules().GetAvailableMods(ssGlobalMods, ModuleTypeGlobal);
 
 			if (ssGlobalMods.empty()) {
 				PutStatus("No global modules available.");
@@ -585,20 +585,23 @@ void CClient::UserCommand(CString& sLine) {
 			return;
 		}
 
-		bool bGlobal = ModInfo.IsGlobal();
-
-		if (bGlobal && !m_pUser->IsAdmin()) {
-			PutStatus("Unable to load global module [" + sMod + "] Access Denied.");
-			return;
-		}
-
 		CString sModRet;
-		bool b;
+		bool b = false;
 
-		if (bGlobal) {
-			b = CZNC::Get().GetModules().LoadModule(sMod, sArgs, NULL, sModRet);
-		} else {
-			b = m_pUser->GetModules().LoadModule(sMod, sArgs, m_pUser, sModRet);
+		switch (ModInfo.GetType()) {
+			case ModuleTypeGlobal:
+				if (m_pUser->IsAdmin()) {
+					b = CZNC::Get().GetModules().LoadModule(sMod, sArgs, NULL, sModRet);
+				} else {
+					sModRet = "Unable to load global module [" + sMod + "] Access Denied.";
+				}
+				break;
+			case ModuleTypeUser:
+				b = m_pUser->GetModules().LoadModule(sMod, sArgs, m_pUser, sModRet);
+				break;
+			default:
+				sModRet = "Unable to load module [" + sMod + "] Unknown module type";
+				break;
 		}
 
 		if (b)
@@ -655,19 +658,22 @@ void CClient::UserCommand(CString& sLine) {
 			return;
 		}
 
-		bool bGlobal = ModInfo.IsGlobal();
-
-		if (bGlobal && !m_pUser->IsAdmin()) {
-			PutStatus("Unable to reload global module [" + sMod + "] Access Denied.");
-			return;
-		}
-
 		CString sModRet;
 
-		if (bGlobal) {
-			CZNC::Get().GetModules().ReloadModule(sMod, sArgs, NULL, sModRet);
-		} else {
-			m_pUser->GetModules().ReloadModule(sMod, sArgs, m_pUser, sModRet);
+		switch (ModInfo.GetType()) {
+			case ModuleTypeGlobal:
+				if (!m_pUser->IsAdmin()) {
+					PutStatus("Unable to reload modules. Access Denied.");
+					return;
+				}
+				CZNC::Get().GetModules().ReloadModule(sMod, sArgs, NULL, sModRet);
+				break;
+			case ModuleTypeUser:
+				m_pUser->GetModules().ReloadModule(sMod, sArgs, m_pUser, sModRet);
+				break;
+			default:
+				sModRet = "Unable to reload module [" + sMod + "] Unknown module type";
+				break;
 		}
 
 		PutStatus(sModRet);

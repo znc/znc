@@ -148,7 +148,7 @@ public:
 				case Perl_Loaded:
 					result = HALT;
 					if (4 == ret) {
-						ModInfo.SetGlobal(false);
+						ModInfo.SetType(ModuleTypeUser);
 						ModInfo.SetDescription(PString(ST(2)));
 						ModInfo.SetName(sModule);
 						ModInfo.SetPath(PString(ST(1)));
@@ -178,8 +178,8 @@ public:
 		return result;
 	}
 
-	virtual void OnGetAvailableMods(set<CModInfo>& ssMods, bool bGlobal) {
-		if (bGlobal) {
+	virtual void OnGetAvailableMods(set<CModInfo>& ssMods, EModuleType eType) {
+		if (eType != ModuleTypeUser) {
 			return;
 		}
 
@@ -203,7 +203,7 @@ public:
 				PUSH_STR(sName);
 				PCALL("ZNC::Core::ModInfoByPath");
 				if (!SvTRUE(ERRSV) && ret == 2) {
-					ModInfo.SetGlobal(false);
+					ModInfo.SetType(ModuleTypeUser);
 					ModInfo.SetDescription(PString(ST(0)));
 					ModInfo.SetName(sName);
 					ModInfo.SetPath(sPath);
