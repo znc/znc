@@ -8,7 +8,7 @@
 
 #include "znc.h"
 
-class CFailToBanMod : public CGlobalModule {
+class CFailToBanMod : public CModule {
 public:
 	GLOBALMODCONSTRUCTOR(CFailToBanMod) {}
 	virtual ~CFailToBanMod() {}

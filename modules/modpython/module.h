@@ -24,7 +24,7 @@ class CPyModule : public CModule {
 	VWebSubPages* _GetSubPages();
 public:
 	CPyModule(CUser* pUser, const CString& sModName, const CString& sDataPath,
-			PyObject* pyObj, CGlobalModule* pModPython)
+			PyObject* pyObj, CModule* pModPython)
 			: CModule(NULL, pUser, sModName, sDataPath) {
 		m_pyObj = pyObj;
 		Py_INCREF(pyObj);
@@ -114,7 +114,7 @@ static inline CPyModule* AsPyModule(CModule* p) {
 	return dynamic_cast<CPyModule*>(p);
 }
 
-inline CPyModule* CreatePyModule(CUser* pUser, const CString& sModName, const CString& sDataPath, PyObject* pyObj, CGlobalModule* pModPython) {
+inline CPyModule* CreatePyModule(CUser* pUser, const CString& sModName, const CString& sDataPath, PyObject* pyObj, CModule* pModPython) {
 	return new CPyModule(pUser, sModName, sDataPath, pyObj, pModPython);
 }
 

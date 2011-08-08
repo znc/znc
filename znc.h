@@ -92,7 +92,7 @@ public:
 	enum ConfigState GetConfigState() const { return m_eConfigState; }
 	CSockManager& GetManager() { return m_Manager; }
 	const CSockManager& GetManager() const { return m_Manager; }
-	CGlobalModules& GetModules() { return *m_pModules; }
+	CModules& GetModules() { return *m_pModules; }
 	size_t FilterUncommonModules(set<CModInfo>& ssModules);
 	CString GetSkinName() const { return m_sSkinName; }
 	const CString& GetStatusPrefix() const { return m_sStatusPrefix; }
@@ -178,7 +178,7 @@ protected:
 	unsigned int           m_uiConnectDelay;
 	unsigned int           m_uiAnonIPLimit;
 	unsigned int           m_uiMaxBufferSize;
-	CGlobalModules*        m_pModules;
+	CModules*              m_pModules;
 	unsigned long long     m_uBytesRead;
 	unsigned long long     m_uBytesWritten;
 	CConnectUserTimer     *m_pConnectUserTimer;

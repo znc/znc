@@ -41,7 +41,7 @@ protected:
 	set<CString> m_ssFixedNicks;
 };
 
-class CPartylineMod : public CGlobalModule {
+class CPartylineMod : public CModule {
 public:
 	GLOBALMODCONSTRUCTOR(CPartylineMod) {}
 

@@ -27,7 +27,7 @@ CZNC::CZNC() {
 		exit(-1);
 	}
 
-	m_pModules = new CGlobalModules();
+	m_pModules = new CModules();
 	m_uiConnectDelay = 5;
 	m_uiAnonIPLimit = 10;
 	m_uBytesRead = 0;
@@ -496,7 +496,7 @@ bool CZNC::WriteConfig() {
 		pFile->Write("BindHost     = " + m_vsBindHosts[v].FirstLine() + "\n");
 	}
 
-	CGlobalModules& Mods = GetModules();
+	CModules& Mods = GetModules();
 
 	for (unsigned int a = 0; a < Mods.size(); a++) {
 		CString sName = Mods[a]->GetModName();

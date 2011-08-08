@@ -9,7 +9,7 @@
 #include "znc.h"
 #include "User.h"
 
-class CNotifyConnectMod : public CGlobalModule {
+class CNotifyConnectMod : public CModule {
 public:
 	GLOBALMODCONSTRUCTOR(CNotifyConnectMod) {}
 

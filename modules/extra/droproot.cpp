@@ -18,7 +18,7 @@
 #include <pwd.h>
 #include <grp.h>
 
-class CDroproot : public CGlobalModule {
+class CDroproot : public CModule {
 
 public:
 	GLOBALMODCONSTRUCTOR(CDroproot) {

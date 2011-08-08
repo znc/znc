@@ -15,7 +15,7 @@
 #include "znc.h"
 #include <sasl/sasl.h>
 
-class CSASLAuthMod : public CGlobalModule {
+class CSASLAuthMod : public CModule {
 public:
 	GLOBALMODCONSTRUCTOR(CSASLAuthMod) {
 		m_Cache.SetTTL(60000/*ms*/);

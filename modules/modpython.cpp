@@ -20,7 +20,7 @@
 #include "modpython/module.h"
 #include "modpython/retstring.h"
 
-class CModPython: public CGlobalModule {
+class CModPython: public CModule {
 
 	PyObject* m_PyZNCModule;
 	PyObject* m_PyFormatException;
@@ -140,7 +140,7 @@ public:
 				sArgs.c_str(),
 				SWIG_NewInstanceObj(GetUser(), SWIG_TypeQuery("CUser*"), 0),
 				CPyRetString::wrap(sRetMsg),
-				SWIG_NewInstanceObj(reinterpret_cast<CGlobalModule*>(this), SWIG_TypeQuery("CGlobalModule*"), 0));
+				SWIG_NewInstanceObj(reinterpret_cast<CModule*>(this), SWIG_TypeQuery("CModule*"), 0));
 		if (!pyRes) {
 			sRetMsg = GetPyExceptionStr();
 			DEBUG("modpython: " << sRetMsg);

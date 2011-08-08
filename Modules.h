@@ -25,7 +25,6 @@ class CWebSock;
 class CTemplate;
 class CIRCSock;
 class CModule;
-class CGlobalModule;
 class CModInfo;
 // !Forward Declarations
 
@@ -53,7 +52,7 @@ template<class M> CModule* TModLoad(ModHandle p, CUser* pUser,
 		const CString& sModName, const CString& sModPath) {
 	return new M(p, pUser, sModName, sModPath);
 }
-template<class M> CGlobalModule* TModLoadGlobal(ModHandle p,
+template<class M> CModule* TModLoadGlobal(ModHandle p,
 		const CString& sModName, const CString& sModPath) {
 	return new M(p, sModName, sModPath);
 }
@@ -113,7 +112,7 @@ template<class M> CGlobalModule* TModLoadGlobal(ModHandle p,
 /** This works exactly like MODCONSTRUCTOR, but for global modules. */
 #define GLOBALMODCONSTRUCTOR(CLASS) \
 	CLASS(ModHandle pDLL, const CString& sModName, const CString& sModPath) \
-			: CGlobalModule(pDLL, sModName, sModPath)
+			: CModule(pDLL, sModName, sModPath)
 
 /** This works exactly like MODULEDEFS, but for global modules. */
 #define GLOBALMODULEDEFS(CLASS, DESCRIPTION) \
@@ -178,7 +177,7 @@ private:
 class CModInfo {
 public:
 	typedef CModule* (*ModLoader)(ModHandle p, CUser* pUser, const CString& sModName, const CString& sModPath);
-	typedef CGlobalModule* (*GlobalModLoader)(ModHandle p, const CString& sModName, const CString& sModPath);
+	typedef CModule* (*GlobalModLoader)(ModHandle p, const CString& sModName, const CString& sModPath);
 
 	CModInfo() {
 		m_fGlobalLoader = NULL;
@@ -874,6 +873,98 @@ public:
 	CSockManager* GetManager() { return m_pManager; }
 	// !Getters
 
+	// Global Modules
+	/** This module hook is called when a user is being added.
+	 * @param User The user which will be added.
+	 * @param sErrorRet A message that may be displayed to the user if
+	 *                  the module stops adding the user.
+	 * @return See CModule::EModRet.
+	 */
+	virtual EModRet OnAddUser(CUser& User, CString& sErrorRet);
+	/** This module hook is called when a user is deleted.
+	 *  @param User The user which will be deleted.
+	 *  @return See CModule::EModRet.
+	 */
+	virtual EModRet OnDeleteUser(CUser& User);
+	/** This module hook is called when there is an incoming connection on
+	 *  any of ZNC's listening sockets.
+	 *  @param pSock The incoming client socket.
+	 *  @param sHost The IP the client is connecting from.
+	 *  @param uPort The port the client is connecting from.
+	 */
+	virtual void OnClientConnect(CZNCSock* pSock, const CString& sHost, unsigned short uPort);
+	/** This module hook is called when a client tries to login. If your
+	 *  module wants to handle the login attempt, it must return
+	 *  CModule::EModRet::HALT;
+	 *  @param Auth The necessary authentication info for this login attempt.
+	 *  @return See CModule::EModRet.
+	 */
+	virtual EModRet OnLoginAttempt(CSmartPtr<CAuthBase> Auth);
+	/** Called after a client login was rejected.
+	 *  @param sUsername The username that tried to log in.
+	 *  @param sRemoteIP The IP address from which the client tried to login.
+	 */
+	virtual void OnFailedLogin(const CString& sUsername, const CString& sRemoteIP);
+	/** This function behaves like CModule::OnRaw(), but is also called
+	 *  before the client successfully logged in to ZNC. You should always
+	 *  prefer to use CModule::OnRaw() if possible.
+	 *  @param sLine The raw traffic line which the client sent.
+	 *  @todo Why doesn't this use m_pUser and m_pClient?
+	 *        (Well, ok, m_pUser isn't known yet...)
+	 */
+	virtual EModRet OnUnknownUserRaw(CString& sLine);
+
+	/** Called when a client told us CAP LS. Use ssCaps.insert("cap-name")
+	 *  for announcing capabilities which your module supports.
+	 *  @param ssCaps set of caps which will be sent to client.
+	 */
+	virtual void OnClientCapLs(SCString& ssCaps);
+	/** Called only to check if your module supports turning on/off named capability.
+	 *  @param sCap name of capability.
+	 *  @param bState On or off, depending on which case is interesting for client.
+	 *  @return true if your module supports this capability in the specified state.
+	 */
+	virtual bool IsClientCapSupported(const CString& sCap, bool bState);
+	/** Called when we actually need to turn a capability on or off for a client.
+	 *  @param sCap name of wanted capability.
+	 *  @param bState On or off, depending on which case client needs.
+	 */
+	virtual void OnClientCapRequest(const CString& sCap, bool bState);
+
+	/** Called when a module is going to be loaded.
+	 *  @param sModName name of the module.
+	 *  @param sArgs arguments of the module.
+	 *  @param[out] bSuccess the module was loaded successfully
+	 *                       as result of this module hook?
+	 *  @param[out] sRetMsg text about loading of the module.
+	 *  @return See CModule::EModRet.
+	 */
+	virtual EModRet OnModuleLoading(const CString& sModName, const CString& sArgs,
+			bool& bSuccess, CString& sRetMsg);
+	/** Called when a module is going to be unloaded.
+	 *  @param pModule the module.
+	 *  @param[out] bSuccess the module was unloaded successfully
+	 *                       as result of this module hook?
+	 *  @param[out] sRetMsg text about unloading of the module.
+	 *  @return See CModule::EModRet.
+	 */
+	virtual EModRet OnModuleUnloading(CModule* pModule, bool& bSuccess, CString& sRetMsg);
+	/** Called when info about a module is needed.
+	 *  @param[out] ModInfo put result here, if your module knows it.
+	 *  @param sModule name of the module.
+	 *  @param bSuccess this module provided info about the module.
+	 *  @param sRetMsg text describing possible issues.
+	 *  @return See CModule::EModRet.
+	 */
+	virtual EModRet OnGetModInfo(CModInfo& ModInfo, const CString& sModule,
+			bool& bSuccess, CString& sRetMsg);
+	/** Called when list of available mods is requested.
+	 *  @param ssMods put new modules here.
+	 *  @param bGlobal true if global modules are needed.
+	 */
+	virtual void OnGetAvailableMods(set<CModInfo>& ssMods, EModuleType eType);
+	// !Global Modules
+
 protected:
 	EModuleType        m_eType;
 	CString            m_sDescription;
@@ -989,127 +1080,7 @@ public:
 	typedef std::queue<std::pair<CString, CString> > ModDirList;
 	static ModDirList GetModDirs();
 
-private:
-	static ModHandle OpenModule(const CString& sModule, const CString& sModPath,
-			bool &bVersionMismatch, CModInfo& Info, CString& sRetMsg);
-
-protected:
-	CUser*    m_pUser;
-	CClient*  m_pClient;
-};
-
-/** Base class for global modules. If you want to write a global module, your
- *  module class has to derive from CGlobalModule instead of CModule.
- *
- *  All the module hooks from CModule work here, too. The difference is that
- *  they are now called for all users instead of just a specific one.
- *
- *  Instead of MODCONSTRUCTOR and MODULEDEFS, you will have to use
- *  GLOBALMODCONSTRUCTOR and GLOBALMODULEDEFS.
- */
-class CGlobalModule : public CModule {
-public:
-	CGlobalModule(ModHandle pDLL, const CString& sModName,
-			const CString &sDataDir) : CModule(pDLL, sModName, sDataDir) {}
-	virtual ~CGlobalModule() {}
-
-	/** This module hook is called when a user is being added.
-	 * @param User The user which will be added.
-	 * @param sErrorRet A message that may be displayed to the user if
-	 *                  the module stops adding the user.
-	 * @return See CModule::EModRet.
-	 */
-	virtual EModRet OnAddUser(CUser& User, CString& sErrorRet);
-	/** This module hook is called when a user is deleted.
-	 *  @param User The user which will be deleted.
-	 *  @return See CModule::EModRet.
-	 */
-	virtual EModRet OnDeleteUser(CUser& User);
-	/** This module hook is called when there is an incoming connection on
-	 *  any of ZNC's listening sockets.
-	 *  @param pSock The incoming client socket.
-	 *  @param sHost The IP the client is connecting from.
-	 *  @param uPort The port the client is connecting from.
-	 */
-	virtual void OnClientConnect(CZNCSock* pSock, const CString& sHost, unsigned short uPort);
-	/** This module hook is called when a client tries to login. If your
-	 *  module wants to handle the login attempt, it must return
-	 *  CModule::EModRet::HALT;
-	 *  @param Auth The necessary authentication info for this login attempt.
-	 *  @return See CModule::EModRet.
-	 */
-	virtual EModRet OnLoginAttempt(CSmartPtr<CAuthBase> Auth);
-	/** Called after a client login was rejected.
-	 *  @param sUsername The username that tried to log in.
-	 *  @param sRemoteIP The IP address from which the client tried to login.
-	 */
-	virtual void OnFailedLogin(const CString& sUsername, const CString& sRemoteIP);
-	/** This function behaves like CModule::OnRaw(), but is also called
-	 *  before the client successfully logged in to ZNC. You should always
-	 *  prefer to use CModule::OnRaw() if possible.
-	 *  @param sLine The raw traffic line which the client sent.
-	 *  @todo Why doesn't this use m_pUser and m_pClient?
-	 *        (Well, ok, m_pUser isn't known yet...)
-	 */
-	virtual EModRet OnUnknownUserRaw(CString& sLine);
-
-	/** Called when a client told us CAP LS. Use ssCaps.insert("cap-name")
-	 *  for announcing capabilities which your module supports.
-	 *  @param ssCaps set of caps which will be sent to client.
-	 */
-	virtual void OnClientCapLs(SCString& ssCaps);
-	/** Called only to check if your module supports turning on/off named capability.
-	 *  @param sCap name of capability.
-	 *  @param bState On or off, depending on which case is interesting for client.
-	 *  @return true if your module supports this capability in the specified state.
-	 */
-	virtual bool IsClientCapSupported(const CString& sCap, bool bState);
-	/** Called when we actually need to turn a capability on or off for a client.
-	 *  @param sCap name of wanted capability.
-	 *  @param bState On or off, depending on which case client needs.
-	 */
-	virtual void OnClientCapRequest(const CString& sCap, bool bState);
-
-	/** Called when a module is going to be loaded.
-	 *  @param sModName name of the module.
-	 *  @param sArgs arguments of the module.
-	 *  @param[out] bSuccess the module was loaded successfully
-	 *                       as result of this module hook?
-	 *  @param[out] sRetMsg text about loading of the module.
-	 *  @return See CModule::EModRet.
-	 */
-	virtual EModRet OnModuleLoading(const CString& sModName, const CString& sArgs,
-			bool& bSuccess, CString& sRetMsg);
-	/** Called when a module is going to be unloaded.
-	 *  @param pModule the module.
-	 *  @param[out] bSuccess the module was unloaded successfully
-	 *                       as result of this module hook?
-	 *  @param[out] sRetMsg text about unloading of the module.
-	 *  @return See CModule::EModRet.
-	 */
-	virtual EModRet OnModuleUnloading(CModule* pModule, bool& bSuccess, CString& sRetMsg);
-	/** Called when info about a module is needed.
-	 *  @param[out] ModInfo put result here, if your module knows it.
-	 *  @param sModule name of the module.
-	 *  @param bSuccess this module provided info about the module.
-	 *  @param sRetMsg text describing possible issues.
-	 *  @return See CModule::EModRet.
-	 */
-	virtual EModRet OnGetModInfo(CModInfo& ModInfo, const CString& sModule,
-			bool& bSuccess, CString& sRetMsg);
-	/** Called when list of available mods is requested.
-	 *  @param ssMods put new modules here.
-	 *  @param bGlobal true if global modules are needed.
-	 */
-	virtual void OnGetAvailableMods(set<CModInfo>& ssMods, EModuleType eType);
-private:
-};
-
-class CGlobalModules : public CModules {
-public:
-	CGlobalModules() : CModules() {}
-	~CGlobalModules() {}
-
+	// Global Modules
 	bool OnAddUser(CUser& User, CString& sErrorRet);
 	bool OnDeleteUser(CUser& User);
 	bool OnClientConnect(CZNCSock* pSock, const CString& sHost, unsigned short uPort);
@@ -1125,7 +1096,15 @@ public:
 	bool OnGetModInfo(CModInfo& ModInfo, const CString& sModule,
 			bool& bSuccess, CString& sRetMsg);
 	bool OnGetAvailableMods(set<CModInfo>& ssMods, EModuleType eType);
+	// !Global Modules
+
 private:
+	static ModHandle OpenModule(const CString& sModule, const CString& sModPath,
+			bool &bVersionMismatch, CModInfo& Info, CString& sRetMsg);
+
+protected:
+	CUser*    m_pUser;
+	CClient*  m_pClient;
 };
 
 #endif // !_MODULES_H

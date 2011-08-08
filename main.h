@@ -26,7 +26,7 @@
 
 #define ALLMODULECALL(macFUNC, macEXITER)                                     \
 	do {                                                                  \
-		CGlobalModules& GMods = CZNC::Get().GetModules();             \
+		CModules& GMods = CZNC::Get().GetModules();             \
 		if (GMods.macFUNC) {                                          \
 			macEXITER;                                            \
 		} else {                                                      \
@@ -44,7 +44,7 @@
 
 #define GLOBALMODULECALL(macFUNC, macUSER, macCLIENT, macEXITER)   \
 	do {                                                       \
-		CGlobalModules& GMods = CZNC::Get().GetModules();  \
+		CModules& GMods = CZNC::Get().GetModules();  \
 		CUser* pOldGUser = GMods.GetUser();                \
 		CClient* pOldGClient = GMods.GetClient();          \
 		GMods.SetUser(macUSER);                            \
@@ -79,7 +79,7 @@
  *  call #MODULEDEFS at the end of your source file.
  *  Congratulations, you just wrote your first module. <br>
  *  For global modules, the procedure is similar. Instead of CModule you inherit
- *  from CGlobalModule. The two macros are replaced by #GLOBALMODCONSTRUCTOR and
+ *  from CModule. The two macros are replaced by #GLOBALMODCONSTRUCTOR and
  *  #GLOBALMODULEDEFS.
  *
  *  If you want your module to actually do something, you should override some

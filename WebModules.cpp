@@ -334,7 +334,7 @@ void CWebSock::SetVars() {
 	GetSession()->ClearMessageLoops();
 
 	// Global Mods
-	CGlobalModules& vgMods = CZNC::Get().GetModules();
+	CModules& vgMods = CZNC::Get().GetModules();
 	for (unsigned int a = 0; a < vgMods.size(); a++) {
 		AddModLoop("GlobalModLoop", *vgMods[a]);
 	}

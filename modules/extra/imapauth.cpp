@@ -39,7 +39,7 @@ protected:
 };
 
 
-class CIMAPAuthMod : public CGlobalModule {
+class CIMAPAuthMod : public CModule {
 public:
 	GLOBALMODCONSTRUCTOR(CIMAPAuthMod) {
 		m_Cache.SetTTL(60000);

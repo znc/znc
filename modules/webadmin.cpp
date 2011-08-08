@@ -51,7 +51,7 @@ inline bool FOR_EACH_MODULE_CanContinue(FOR_EACH_MODULE_Type& state, CModules::i
 	if (FOR_EACH_MODULE_Type FOR_EACH_MODULE_Var = pUser) {} else\
 	for (CModules::iterator I = CZNC::Get().GetModules().begin(); FOR_EACH_MODULE_CanContinue(FOR_EACH_MODULE_Var, I); ++I)
 
-class CWebAdminMod : public CGlobalModule {
+class CWebAdminMod : public CModule {
 public:
 	GLOBALMODCONSTRUCTOR(CWebAdminMod) {
 		VPair vParams;

@@ -31,7 +31,7 @@ extern "C" {
 	}
 }
 
-class CModPerl: public CGlobalModule {
+class CModPerl: public CModule {
 	PerlInterpreter *m_pPerl;
 public:
 	GLOBALMODCONSTRUCTOR(CModPerl) {

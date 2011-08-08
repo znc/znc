@@ -443,7 +443,12 @@ def load_module(modname, args, user, retmsg, modpython):
     module.SetDescription(cl.description)
     module.SetArgs(args)
     module.SetModPath(pymodule.__file__)
-    user.GetModules().push_back(module._cmod)
+
+    if user:
+        user.GetModules().push_back(module._cmod)
+    else:
+        CZNC.Get().GetModules().push_back(module._cmod)
+
     try:
         loaded = True
         if not module.OnLoad(args, retmsg):

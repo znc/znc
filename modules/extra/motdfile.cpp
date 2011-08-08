@@ -10,7 +10,7 @@
 #include "Client.h"
 #include "FileUtils.h"
 
-class CMotdFileMod : public CGlobalModule {
+class CMotdFileMod : public CModule {
 public:
 	GLOBALMODCONSTRUCTOR(CMotdFileMod) {}
 	virtual ~CMotdFileMod() {}

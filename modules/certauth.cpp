@@ -13,7 +13,7 @@
 #include "Listener.h"
 #include "znc.h"
 
-class CSSLClientCertMod : public CGlobalModule {
+class CSSLClientCertMod : public CModule {
 public:
 	GLOBALMODCONSTRUCTOR(CSSLClientCertMod) {
 		AddHelpCommand();

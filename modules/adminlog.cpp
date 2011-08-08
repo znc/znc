@@ -13,7 +13,7 @@
 
 #include <syslog.h>
 
-class CAdminLogMod : public CGlobalModule {
+class CAdminLogMod : public CModule {
 public:
 	GLOBALMODCONSTRUCTOR(CAdminLogMod) {
 		openlog("znc", LOG_PID, LOG_DAEMON);
