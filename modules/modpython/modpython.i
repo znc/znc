@@ -73,6 +73,15 @@ namespace std {
 	}
 }
 
+%typemap(out) CString&, CString* {
+	if ($1) {
+		$result = CPyRetString::wrap(*$1);
+	} else {
+		$result = Py_None;
+		Py_INCREF(Py_None);
+	}
+}
+
 #define u_short unsigned short
 #define u_int unsigned int
 #include "../ZNCString.h"

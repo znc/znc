@@ -438,11 +438,15 @@ def load_module(modname, args, user, retmsg, modpython):
         return 1
     cl = pymodule.__dict__[modname]
     module = cl()
-    module._cmod = CreatePyModule(user, modname, datapath, module, modpython)
+    if user:
+        module._cmod = CreateUserPyModule(user, modname, datapath, module, modpython)
+    else:
+        module._cmod = CreateGlobalPyModule(modname, datapath, module, modpython)
     module.nv = ModuleNV(module._cmod)
     module.SetDescription(cl.description)
     module.SetArgs(args)
     module.SetModPath(pymodule.__file__)
+    module.SetType(cl.module_type)
 
     if user:
         user.GetModules().push_back(module._cmod)
@@ -488,8 +492,11 @@ def load_module(modname, args, user, retmsg, modpython):
 def unload_module(module):
     module.OnShutdown()
     cmod = module._cmod
+    if module.GetType() == ModuleTypeUser:
+        cmod.GetUser().GetModules().removeModule(cmod)
+    elif module.GetType() == ModuleTypeGlobal:
+        CZNC.Get().GetModules().removeModule(cmod)
     del module._cmod
-    cmod.GetUser().GetModules().removeModule(cmod)
     cmod.DeletePyModule()
     del cmod
 

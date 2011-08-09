@@ -61,3 +61,4 @@ void OnServerCapResult(const CString& sCap, bool bSuccess)
 EModRet OnTimerAutoJoin(CChan& Channel)
 bool OnEmbeddedWebRequest(CWebSock& WebSock, const CString& sPageName, CTemplate& Tmpl)=false
 
+EModRet OnModuleLoading(const CString& sModName, const CString& sArgs, bool& bSuccess, CString& sRetMsg)
