@@ -598,7 +598,7 @@ CModules::~CModules() {
 void CModules::UnloadAll() {
 	while (size()) {
 		CString sRetMsg;
-		CString sModName = (*this)[0]->GetModName();
+		CString sModName = back()->GetModName();
 		UnloadModule(sModName, sRetMsg);
 	}
 }
