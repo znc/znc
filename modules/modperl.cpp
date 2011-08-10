@@ -75,8 +75,8 @@ public:
 	}
 
 	virtual EModRet OnModuleLoading(const CString& sModName, const CString& sArgs,
-			bool& bSuccess, CString& sRetMsg) {
-		if (!GetUser()) {
+			EModuleType eType, bool& bSuccess, CString& sRetMsg) {
+		if (!GetUser() || eType != ModuleTypeUser) {
 			return CONTINUE;
 		}
 		EModRet result = HALT;

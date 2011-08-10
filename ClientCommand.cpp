@@ -591,13 +591,13 @@ void CClient::UserCommand(CString& sLine) {
 		switch (ModInfo.GetType()) {
 			case ModuleTypeGlobal:
 				if (m_pUser->IsAdmin()) {
-					b = CZNC::Get().GetModules().LoadModule(sMod, sArgs, NULL, sModRet);
+					b = CZNC::Get().GetModules().LoadModule(sMod, sArgs, ModuleTypeGlobal, NULL, sModRet);
 				} else {
 					sModRet = "Unable to load global module [" + sMod + "] Access Denied.";
 				}
 				break;
 			case ModuleTypeUser:
-				b = m_pUser->GetModules().LoadModule(sMod, sArgs, m_pUser, sModRet);
+				b = m_pUser->GetModules().LoadModule(sMod, sArgs, ModuleTypeUser, m_pUser, sModRet);
 				break;
 			default:
 				sModRet = "Unable to load module [" + sMod + "] Unknown module type";

@@ -577,7 +577,7 @@ void CModule::OnClientCapLs(SCString& ssCaps) {}
 bool CModule::IsClientCapSupported(const CString& sCap, bool bState) { return false; }
 void CModule::OnClientCapRequest(const CString& sCap, bool bState) {}
 CModule::EModRet CModule::OnModuleLoading(const CString& sModName, const CString& sArgs,
-		bool& bSuccess, CString& sRetMsg) { return CONTINUE; }
+		EModuleType eType, bool& bSuccess, CString& sRetMsg) { return CONTINUE; }
 CModule::EModRet CModule::OnModuleUnloading(CModule* pModule, bool& bSuccess, CString& sRetMsg) {
 	return CONTINUE;
 }
@@ -770,8 +770,8 @@ bool CModules::OnClientCapRequest(const CString& sCap, bool bState) {
 }
 
 bool CModules::OnModuleLoading(const CString& sModName, const CString& sArgs,
-		bool& bSuccess, CString& sRetMsg) {
-	MODHALTCHK(OnModuleLoading(sModName, sArgs, bSuccess, sRetMsg));
+		EModuleType eType, bool& bSuccess, CString& sRetMsg) {
+	MODHALTCHK(OnModuleLoading(sModName, sArgs, eType, bSuccess, sRetMsg));
 }
 
 bool CModules::OnModuleUnloading(CModule* pModule, bool& bSuccess, CString& sRetMsg) {
@@ -799,7 +799,7 @@ CModule* CModules::FindModule(const CString& sModule) const {
 	return NULL;
 }
 
-bool CModules::LoadModule(const CString& sModule, const CString& sArgs, CUser* pUser, CString& sRetMsg) {
+bool CModules::LoadModule(const CString& sModule, const CString& sArgs, EModuleType eType, CUser* pUser, CString& sRetMsg) {
 	sRetMsg = "";
 
 	if (FindModule(sModule) != NULL) {
@@ -808,7 +808,7 @@ bool CModules::LoadModule(const CString& sModule, const CString& sArgs, CUser* p
 	}
 
 	bool bSuccess;
-	GLOBALMODULECALL(OnModuleLoading(sModule, sArgs, bSuccess, sRetMsg), pUser, NULL, return bSuccess);
+	GLOBALMODULECALL(OnModuleLoading(sModule, sArgs, eType, bSuccess, sRetMsg), pUser, NULL, return bSuccess);
 
 	CString sModPath, sDataPath;
 	bool bVersionMismatch;
@@ -830,20 +830,31 @@ bool CModules::LoadModule(const CString& sModule, const CString& sArgs, CUser* p
 		return false;
 	}
 
-	if ((pUser == NULL) != (Info.GetType() == ModuleTypeGlobal)) {
+	if (!Info.SupportsModule(eType)) {
 		dlclose(p);
-		sRetMsg = "Module [" + sModule + "] is ";
-		sRetMsg += (Info.GetType() == ModuleTypeGlobal) ? "" : "not ";
-		sRetMsg += "a global module.";
+		sRetMsg = "Module [ + sModule + ] does not support module type.";
+		return false;
+	}
+
+	if (!pUser && eType == ModuleTypeUser) {
+		dlclose(p);
+		sRetMsg = "Module [" + sModule + "] require a user.";
 		return false;
 	}
 
 	CModule* pModule = NULL;
 
-	if (pUser) {
-		pModule = Info.GetLoader()(p, pUser, sModule, sDataPath);
-	} else {
-		pModule = Info.GetGlobalLoader()(p, sModule, sDataPath);
+	switch (eType) {
+		case ModuleTypeUser:
+			pModule = Info.GetLoader()(p, pUser, sModule, sDataPath);
+			break;
+		case ModuleTypeGlobal:
+			pModule = Info.GetGlobalLoader()(p, sModule, sDataPath);
+			break;
+		default:
+			dlclose(p);
+			sRetMsg = "Unsupported module type";
+			return false;
 	}
 
 	pModule->SetDescription(Info.GetDescription());
@@ -918,12 +929,22 @@ bool CModules::UnloadModule(const CString& sModule, CString& sRetMsg) {
 
 bool CModules::ReloadModule(const CString& sModule, const CString& sArgs, CUser* pUser, CString& sRetMsg) {
 	CString sMod = sModule;  // Make a copy incase the reference passed in is from CModule::GetModName()
+	CModule *pModule = FindModule(sMod);
+
+	if (!pModule) {
+		sRetMsg = "Module [" + sMod + "] not loaded";
+		return false;
+	}
+
+	EModuleType eType = pModule->GetType();
+	pModule = NULL;
+
 	sRetMsg = "";
 	if (!UnloadModule(sMod, sRetMsg)) {
 		return false;
 	}
 
-	if (!LoadModule(sMod, sArgs, pUser, sRetMsg)) {
+	if (!LoadModule(sMod, sArgs, eType, pUser, sRetMsg)) {
 		return false;
 	}
 

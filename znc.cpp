@@ -1058,7 +1058,7 @@ bool CZNC::DoRehash(CString& sError)
 		if (!pOldMod) {
 			CUtils::PrintAction("Loading Global Module [" + sModName + "]");
 
-			bool bModRet = GetModules().LoadModule(sModName, sArgs, NULL, sModRet);
+			bool bModRet = GetModules().LoadModule(sModName, sArgs, ModuleTypeGlobal, NULL, sModRet);
 
 			CUtils::PrintStatus(bModRet, sModRet);
 			if (!bModRet) {
@@ -1090,7 +1090,7 @@ bool CZNC::DoRehash(CString& sError)
 			CUtils::PrintAction("Loading Global Module [identfile]");
 
 			CString sModRet;
-			bool bModRet = GetModules().LoadModule("identfile", "", NULL, sModRet);
+			bool bModRet = GetModules().LoadModule("identfile", "", ModuleTypeGlobal, NULL, sModRet);
 
 			CUtils::PrintStatus(bModRet, sModRet);
 			if (!bModRet) {

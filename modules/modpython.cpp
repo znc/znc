@@ -127,7 +127,7 @@ public:
 	}
 
 	virtual EModRet OnModuleLoading(const CString& sModName, const CString& sArgs,
-			bool& bSuccess, CString& sRetMsg) {
+			EModuleType eType, bool& bSuccess, CString& sRetMsg) {
 		PyObject* pyFunc = PyObject_GetAttrString(m_PyZNCModule, "load_module");
 		if (!pyFunc) {
 			sRetMsg = GetPyExceptionStr();
@@ -138,7 +138,7 @@ public:
 		PyObject* pyRes = PyObject_CallFunction(pyFunc, const_cast<char*>("ssNNN"),
 				sModName.c_str(),
 				sArgs.c_str(),
-				SWIG_NewInstanceObj(GetUser(), SWIG_TypeQuery("CUser*"), 0),
+				(eType == ModuleTypeUser ? SWIG_NewInstanceObj(GetUser(), SWIG_TypeQuery("CUser*"), 0) : NULL),
 				CPyRetString::wrap(sRetMsg),
 				SWIG_NewInstanceObj(reinterpret_cast<CModule*>(this), SWIG_TypeQuery("CModule*"), 0));
 		if (!pyRes) {

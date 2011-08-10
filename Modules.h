@@ -195,6 +195,10 @@ public:
 		return (GetName() < Info.GetName());
 	}
 
+	bool SupportsModule(EModuleType eType) {
+		return eType == m_eType;
+	}
+
 	// Getters
 	const CString& GetName() const { return m_sName; }
 	const CString& GetPath() const { return m_sPath; }
@@ -940,7 +944,7 @@ public:
 	 *  @return See CModule::EModRet.
 	 */
 	virtual EModRet OnModuleLoading(const CString& sModName, const CString& sArgs,
-			bool& bSuccess, CString& sRetMsg);
+			EModuleType eType, bool& bSuccess, CString& sRetMsg);
 	/** Called when a module is going to be unloaded.
 	 *  @param pModule the module.
 	 *  @param[out] bSuccess the module was unloaded successfully
@@ -1062,7 +1066,7 @@ public:
 	bool OnServerCapResult(const CString& sCap, bool bSuccess);
 
 	CModule* FindModule(const CString& sModule) const;
-	bool LoadModule(const CString& sModule, const CString& sArgs, CUser* pUser, CString& sRetMsg);
+	bool LoadModule(const CString& sModule, const CString& sArgs, EModuleType eType, CUser* pUser, CString& sRetMsg);
 	bool UnloadModule(const CString& sModule);
 	bool UnloadModule(const CString& sModule, CString& sRetMsg);
 	bool ReloadModule(const CString& sModule, const CString& sArgs, CUser* pUser, CString& sRetMsg);
@@ -1091,7 +1095,7 @@ public:
 	bool IsClientCapSupported(const CString& sCap, bool bState);
 	bool OnClientCapRequest(const CString& sCap, bool bState);
 	bool OnModuleLoading(const CString& sModName, const CString& sArgs,
-			bool& bSuccess, CString& sRetMsg);
+			EModuleType eType, bool& bSuccess, CString& sRetMsg);
 	bool OnModuleUnloading(CModule* pModule, bool& bSuccess, CString& sRetMsg);
 	bool OnGetModInfo(CModInfo& ModInfo, const CString& sModule,
 			bool& bSuccess, CString& sRetMsg);

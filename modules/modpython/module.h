@@ -115,7 +115,7 @@ public:
 	virtual void OnServerCapResult(const CString& sCap, bool bSuccess);
 	virtual EModRet OnTimerAutoJoin(CChan& Channel);
 	bool OnEmbeddedWebRequest(CWebSock&, const CString&, CTemplate&);
-EModRet OnModuleLoading(const CString& sModName, const CString& sArgs, bool& bSuccess, CString& sRetMsg);
+EModRet OnModuleLoading(const CString& sModName, const CString& sArgs, EModuleType eType, bool& bSuccess, CString& sRetMsg);
 };
 
 static inline CPyModule* AsPyModule(CModule* p) {
