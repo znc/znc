@@ -279,6 +279,9 @@ while (<$in>) {
 			when ('bool') {
 				say $out "Py_BuildValue(\"l\", (long int)$a->{var});";
 			}
+			when (/^E/) {
+				say $out "Py_BuildValue(\"i\", (int)$a->{var});";
+			}
 			default {
 				my %letter = (
 						'int' => 'i',
