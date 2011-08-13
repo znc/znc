@@ -562,11 +562,20 @@ void CClient::UserCommand(CString& sLine) {
 		}
 		return;
 	} else if (sCommand.Equals("LOADMOD") || sCommand.Equals("LOADMODULE")) {
-		CString sMod;
-		CString sArgs;
+		EModuleType eType;
+		CString sType = sLine.Token(1);
+		CString sMod = sLine.Token(2);
+		CString sArgs = sLine.Token(3, true);
 
-		sMod = sLine.Token(1);
-		sArgs = sLine.Token(2, true);
+		if (sType.Equals("global")) {
+			eType = ModuleTypeGlobal;
+		} else if (sType.Equals("user")) {
+			eType = ModuleTypeUser;
+		} else {
+			sMod = sType;
+			sArgs = sLine.Token(2, true);
+			sType = "default";
+		}
 
 		if (m_pUser->DenyLoadMod()) {
 			PutStatus("Unable to load [" + sMod + "] Access Denied.");
@@ -574,7 +583,7 @@ void CClient::UserCommand(CString& sLine) {
 		}
 
 		if (sMod.empty()) {
-			PutStatus("Usage: LoadMod <module> [args]");
+			PutStatus("Usage: LoadMod [type] <module> [args]");
 			return;
 		}
 
@@ -585,23 +594,28 @@ void CClient::UserCommand(CString& sLine) {
 			return;
 		}
 
+		if (sType.Equals("default")) {
+			eType = ModInfo.DefaultType();
+		}
+
+		if (eType == ModuleTypeGlobal && !m_pUser->IsAdmin()) {
+			PutStatus("Unable to load global module [" + sMod + "] Access Denied.");
+			return;
+		}
+
 		CString sModRet;
 		bool b = false;
 
-		switch (ModInfo.GetType()) {
+		switch (eType) {
 			case ModuleTypeGlobal:
-				if (m_pUser->IsAdmin()) {
-					b = CZNC::Get().GetModules().LoadModule(sMod, sArgs, ModuleTypeGlobal, NULL, sModRet);
-				} else {
-					sModRet = "Unable to load global module [" + sMod + "] Access Denied.";
-				}
+				b = CZNC::Get().GetModules().LoadModule(sMod, sArgs, eType, NULL, sModRet);
 				break;
 			case ModuleTypeUser:
-				b = m_pUser->GetModules().LoadModule(sMod, sArgs, ModuleTypeUser, m_pUser, sModRet);
+				b = m_pUser->GetModules().LoadModule(sMod, sArgs, eType, m_pUser, sModRet);
 				break;
 			default:
 				sModRet = "Unable to load module [" + sMod + "] Unknown module type";
-				break;
+
 		}
 
 		if (b)
@@ -610,44 +624,84 @@ void CClient::UserCommand(CString& sLine) {
 		PutStatus(sModRet);
 		return;
 	} else if (sCommand.Equals("UNLOADMOD") || sCommand.Equals("UNLOADMODULE")) {
-		CString sMod;
-		sMod = sLine.Token(1);
+		EModuleType eType = ModuleTypeUser;
+		CString sType = sLine.Token(1);
+		CString sMod = sLine.Token(2);
+
+		if (sType.Equals("global")) {
+			eType = ModuleTypeGlobal;
+		} else if (sType.Equals("user")) {
+			eType = ModuleTypeUser;
+		} else {
+			sMod = sType;
+			sType = "default";
+		}
 
 		if (m_pUser->DenyLoadMod()) {
 			PutStatus("Unable to unload [" + sMod + "] Access Denied.");
 			return;
 		}
+
 		if (sMod.empty()) {
-			PutStatus("Usage: UnloadMod <module>");
+			PutStatus("Usage: UnloadMod [type] <module>");
+			return;
+		}
+
+		CModInfo ModInfo;
+		CString sRetMsg;
+		if (!CZNC::Get().GetModules().GetModInfo(ModInfo, sMod, sRetMsg)) {
+			PutStatus("Unable to find modinfo [" + sMod + "] [" + sRetMsg + "]");
+			return;
+		}
+
+		if (sType.Equals("default")) {
+			eType = ModInfo.DefaultType();
+		}
+
+		if (eType == ModuleTypeGlobal && !m_pUser->IsAdmin()) {
+			PutStatus("Unable to unload global module [" + sMod + "] Access Denied.");
 			return;
 		}
 
 		CString sModRet;
-		bool b;
 
-		// First, try to unload the user module
-		b = m_pUser->GetModules().UnloadModule(sMod, sModRet);
-		if (!b && m_pUser->IsAdmin()) {
-			// If that failed and the user is an admin, try to unload a global module
-			b = CZNC::Get().GetModules().UnloadModule(sMod, sModRet);
+		switch (eType) {
+			case ModuleTypeGlobal:
+				CZNC::Get().GetModules().UnloadModule(sMod, sModRet);
+				break;
+			case ModuleTypeUser:
+				m_pUser->GetModules().UnloadModule(sMod, sModRet);
+				break;
+			default:
+				sModRet = "Unable to unload module [" + sMod + "] Unknown module type";
+
 		}
 
 		PutStatus(sModRet);
 		return;
 	} else if (sCommand.Equals("RELOADMOD") || sCommand.Equals("RELOADMODULE")) {
-		CString sMod;
-		CString sArgs;
-
-		sMod = sLine.Token(1);
-		sArgs = sLine.Token(2, true);
+		EModuleType eType;
+		CString sType = sLine.Token(1);
+		CString sMod = sLine.Token(2);
+		CString sArgs = sLine.Token(3, true);
 
 		if (m_pUser->DenyLoadMod()) {
 			PutStatus("Unable to reload modules. Access Denied.");
 			return;
 		}
 
+		if (sType.Equals("global")) {
+			eType = ModuleTypeGlobal;
+		} else if (sType.Equals("user")) {
+			eType = ModuleTypeUser;
+		} else {
+			sMod = sType;
+			sArgs = sLine.Token(2, true);
+			sType = "default";
+		}
+
 		if (sMod.empty()) {
-			PutStatus("Usage: ReloadMod <module> [args]");
+			PutStatus("Usage: ReloadMod [type] <module> [args]");
 			return;
 		}
 
@@ -658,14 +712,19 @@ void CClient::UserCommand(CString& sLine) {
 			return;
 		}
 
+		if (sType.Equals("default")) {
+			eType = ModInfo.DefaultType();
+		}
+
+		if (eType == ModuleTypeGlobal && !m_pUser->IsAdmin()) {
+			PutStatus("Unable to reload global module [" + sMod + "] Access Denied.");
+			return;
+		}
+
 		CString sModRet;
 
-		switch (ModInfo.GetType()) {
+		switch (eType) {
 			case ModuleTypeGlobal:
-				if (!m_pUser->IsAdmin()) {
-					PutStatus("Unable to reload modules. Access Denied.");
-					return;
-				}
 				CZNC::Get().GetModules().ReloadModule(sMod, sArgs, NULL, sModRet);
 				break;
 			case ModuleTypeUser:
@@ -673,7 +732,7 @@ void CClient::UserCommand(CString& sLine) {
 				break;
 			default:
 				sModRet = "Unable to reload module [" + sMod + "] Unknown module type";
-				break;
+
 		}
 
 		PutStatus(sModRet);
@@ -1143,17 +1202,17 @@ void CClient::HelpUser() {
 	if (!m_pUser->DenyLoadMod()) {
 		Table.AddRow();
 		Table.SetCell("Command", "LoadMod");
-		Table.SetCell("Arguments", "<module>");
+		Table.SetCell("Arguments", "[type] <module>");
 		Table.SetCell("Description", "Load a module");
 
 		Table.AddRow();
 		Table.SetCell("Command", "UnloadMod");
-		Table.SetCell("Arguments", "<module>");
+		Table.SetCell("Arguments", "[type] <module>");
 		Table.SetCell("Description", "Unload a module");
 
 		Table.AddRow();
 		Table.SetCell("Command", "ReloadMod");
-		Table.SetCell("Arguments", "<module>");
+		Table.SetCell("Arguments", "[type] <module>");
 		Table.SetCell("Description", "Reload a module");
 
 		if (m_pUser->IsAdmin()) {

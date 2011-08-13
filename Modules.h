@@ -70,7 +70,7 @@ template<class M> CModule* TModLoadGlobal(ModHandle p,
 			if (dCoreVersion != VERSION) \
 				return false; \
 			Info.SetDescription(DESCRIPTION); \
-			Info.SetType(TYPE); \
+			Info.AddType(TYPE); \
 			LOADER; \
 			TModInfo<CLASS>(Info); \
 			return true; \
@@ -195,8 +195,16 @@ public:
 		return (GetName() < Info.GetName());
 	}
 
-	bool SupportsModule(EModuleType eType) {
-		return eType == m_eType;
+	bool SupportsType(EModuleType eType) {
+		return m_seType.find(eType) != m_seType.end();
+	}
+
+	void AddType(EModuleType eType) {
+		m_seType.insert(eType);
+	}
+
+	EModuleType DefaultType() {
+		return *m_seType.begin();
 	}
 
 	// Getters
@@ -204,7 +212,6 @@ public:
 	const CString& GetPath() const { return m_sPath; }
 	const CString& GetDescription() const { return m_sDescription; }
 	const CString& GetWikiPage() const { return m_sWikiPage; }
-	EModuleType GetType() const { return m_eType; }
 	ModLoader GetLoader() const { return m_fLoader; }
 	GlobalModLoader GetGlobalLoader() const { return m_fGlobalLoader; }
 	// !Getters
@@ -214,13 +221,12 @@ public:
 	void SetPath(const CString& s) { m_sPath = s; }
 	void SetDescription(const CString& s) { m_sDescription = s; }
 	void SetWikiPage(const CString& s) { m_sWikiPage = s; }
-	void SetType(EModuleType eType) { m_eType = eType; }
 	void SetLoader(ModLoader fLoader) { m_fLoader = fLoader; }
 	void SetGlobalLoader(GlobalModLoader fGlobalLoader) { m_fGlobalLoader = fGlobalLoader; }
 	// !Setters
 private:
 protected:
-	EModuleType     m_eType;
+	set<EModuleType> m_seType;
 	CString         m_sName;
 	CString         m_sPath;
 	CString         m_sDescription;

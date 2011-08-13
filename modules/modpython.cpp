@@ -135,10 +135,11 @@ public:
 			bSuccess = false;
 			return HALT;
 		}
-		PyObject* pyRes = PyObject_CallFunction(pyFunc, const_cast<char*>("ssNNN"),
+		PyObject* pyRes = PyObject_CallFunction(pyFunc, const_cast<char*>("ssiNNN"),
 				sModName.c_str(),
 				sArgs.c_str(),
-				(eType == ModuleTypeUser ? SWIG_NewInstanceObj(GetUser(), SWIG_TypeQuery("CUser*"), 0) : NULL),
+				(int)eType,
+				(eType == ModuleTypeUser ? SWIG_NewInstanceObj(GetUser(), SWIG_TypeQuery("CUser*"), 0) : Py_None),
 				CPyRetString::wrap(sRetMsg),
 				SWIG_NewInstanceObj(reinterpret_cast<CModule*>(this), SWIG_TypeQuery("CModule*"), 0));
 		if (!pyRes) {
@@ -279,7 +280,7 @@ public:
 			return;
 		}
 		Py_CLEAR(pyRes);
-		if (x && ModInfo.GetType() == eType) {
+		if (x && ModInfo.SupportsType(eType)) {
 			ssMods.insert(ModInfo);
 			ssAlready.insert(sName);
 		}

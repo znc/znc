@@ -830,9 +830,9 @@ bool CModules::LoadModule(const CString& sModule, const CString& sArgs, EModuleT
 		return false;
 	}
 
-	if (!Info.SupportsModule(eType)) {
+	if (!Info.SupportsType(eType)) {
 		dlclose(p);
-		sRetMsg = "Module [ + sModule + ] does not support module type.";
+		sRetMsg = "Module [" + sModule + "] does not support module type.";
 		return false;
 	}
 
@@ -858,7 +858,7 @@ bool CModules::LoadModule(const CString& sModule, const CString& sArgs, EModuleT
 	}
 
 	pModule->SetDescription(Info.GetDescription());
-	pModule->SetType(Info.GetType());
+	pModule->SetType(eType);
 	pModule->SetArgs(sArgs);
 	pModule->SetModPath(CDir::ChangeDir(CZNC::Get().GetCurPath(), sModPath));
 	push_back(pModule);
@@ -1007,7 +1007,7 @@ void CModules::GetAvailableMods(set<CModInfo>& ssMods, EModuleType eType) {
 
 			CString sIgnoreRetMsg;
 			if (GetModPathInfo(ModInfo, sName, sPath, sIgnoreRetMsg)) {
-				if (ModInfo.GetType() == eType) {
+				if (ModInfo.SupportsType(eType)) {
 					ssMods.insert(ModInfo);
 				}
 			}
