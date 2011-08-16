@@ -1,7 +1,7 @@
 <? INC Header.tmpl ?>
 
 <? IF Cert ?>
-<p>You already have a certificate set, use the form below to overrite the current certificate. Alternatively click <a href="/mods/cert/delete">here</a> to <a href="/mods/cert/delete">delete</a> your certificate.</p>
+<p>You already have a certificate set, use the form below to overwrite the current certificate. Alternatively click <a href="/mods/cert/delete">here</a> to <a href="/mods/cert/delete">delete</a> your certificate.</p>
 <? ELSE ?>
 <p>You do not have a cert.</p>
 <? ENDIF ?>
@@ -14,7 +14,7 @@
 			<div class="sectionbody">
 				<div class="subsection full">
 					<div class="inputlabel">PEM File:</div>
-					<div><textarea style="height: 300px;"></textarea></div>
+					<div><textarea name="cert" style="height: 300px;"></textarea></div>
 				</div>
 				<div class="subsection submitline">
 					<input type="submit" name="add" value="Update" />
