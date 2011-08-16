@@ -69,7 +69,7 @@ public:
 			CFile fPemFile(PemFile());
 
 			if (fPemFile.Open(O_WRONLY | O_TRUNC | O_CREAT)) {
-				fPemFile.Write(WebSock.GetParam("cert"));
+				fPemFile.Write(WebSock.GetParam("cert", true, ""));
 				fPemFile.Close();
 			}
 
