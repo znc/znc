@@ -445,33 +445,20 @@ bool CZNC::WriteConfig() {
 
 	for (size_t l = 0; l < m_vpListeners.size(); l++) {
 		CListener* pListener = m_vpListeners[l];
-		CString sHostPortion = pListener->GetBindHost();
+		CConfig listenerConfig;
 
-		if (!sHostPortion.empty()) {
-			sHostPortion = sHostPortion.FirstLine() + " ";
-		}
+		listenerConfig.AddKeyValuePair("Host", pListener->GetBindHost());
+		listenerConfig.AddKeyValuePair("Port", CString(pListener->GetPort()));
 
-		CString sAcceptProtocol;
-		if(pListener->GetAcceptType() == CListener::ACCEPT_IRC)
-			sAcceptProtocol = "irc_only ";
-		else if(pListener->GetAcceptType() == CListener::ACCEPT_HTTP)
-			sAcceptProtocol = "web_only ";
+		listenerConfig.AddKeyValuePair("IPv4", CString(pListener->GetAddrType() != ADDR_IPV6ONLY));
+		listenerConfig.AddKeyValuePair("IPv6", CString(pListener->GetAddrType() != ADDR_IPV4ONLY));
 
-		CString s6;
-		switch (pListener->GetAddrType()) {
-			case ADDR_IPV4ONLY:
-				s6 = "4";
-				break;
-			case ADDR_IPV6ONLY:
-				s6 = "6";
-				break;
-			case ADDR_ALL:
-				s6 = " ";
-				break;
-		}
+		listenerConfig.AddKeyValuePair("SSL", CString(pListener->IsSSL()));
 
-		config.AddKeyValuePair("Listener" + s6, sAcceptProtocol + sHostPortion +
-			CString((pListener->IsSSL()) ? "+" : "") + CString(pListener->GetPort()));
+		listenerConfig.AddKeyValuePair("AllowIRC", CString(pListener->GetAcceptType() != CListener::ACCEPT_HTTP));
+		listenerConfig.AddKeyValuePair("AllowWeb", CString(pListener->GetAcceptType() != CListener::ACCEPT_IRC));
+
+		config.AddSubConfig("Listener", "listener" + CString(l), listenerConfig);
 	}
 
 	config.AddKeyValuePair("ConnectDelay", CString(m_uiConnectDelay));
@@ -582,7 +569,7 @@ bool CZNC::WriteNewConfig(const CString& sConfigFile) {
 	bool b6 = false;
 #endif
 	CString sListenHost;
-	CString sSSL;
+	bool bListenSSL = false;
 	unsigned int uListenPort = 0;
 	bool bSuccess;
 
@@ -591,8 +578,8 @@ bool CZNC::WriteNewConfig(const CString& sConfigFile) {
 		while (!CUtils::GetNumInput("What port would you like ZNC to listen on?", uListenPort, 1, 65535)) ;
 
 #ifdef HAVE_LIBSSL
-		if (CUtils::GetBoolInput("Would you like ZNC to listen using SSL?", !sSSL.empty())) {
-			sSSL = "+";
+		if (CUtils::GetBoolInput("Would you like ZNC to listen using SSL?", bListenSSL)) {
+			bListenSSL = true;
 
 			CString sPemFile = GetPemLocation();
 			if (!CFile::Exists(sPemFile)) {
@@ -603,7 +590,7 @@ bool CZNC::WriteNewConfig(const CString& sConfigFile) {
 				}
 			}
 		} else
-			sSSL = "";
+			bListenSSL = false;
 #endif
 
 #ifdef HAVE_IPV6
@@ -613,7 +600,7 @@ bool CZNC::WriteNewConfig(const CString& sConfigFile) {
 		CUtils::GetInput("Listen Host", sListenHost, sListenHost, "Blank for all ips");
 
 		CUtils::PrintAction("Verifying the listener");
-		CListener* pListener = new CListener(uListenPort, sListenHost, !sSSL.empty(),
+		CListener* pListener = new CListener(uListenPort, sListenHost, bListenSSL,
 				b6 ? ADDR_ALL : ADDR_IPV4ONLY, CListener::ACCEPT_ALL);
 		if (!pListener->Listen()) {
 			CUtils::PrintStatus(false, FormatBindError());
@@ -623,11 +610,15 @@ bool CZNC::WriteNewConfig(const CString& sConfigFile) {
 		delete pListener;
 	} while (!bSuccess);
 
+	vsLines.push_back("<Listener l>");
+	vsLines.push_back("\tPort = " + CString(uListenPort));
+	vsLines.push_back("\tIPv4 = true");
+	vsLines.push_back("\tIPv6 = " + CString(b6));
+	vsLines.push_back("\tSSL = " + CString(bListenSSL));
 	if (!sListenHost.empty()) {
-		sListenHost += " ";
+		vsLines.push_back("\tHost = " + sListenHost);
 	}
-
-	vsLines.push_back("Listener" + CString(b6 ? " " : "4") + "  = " + sListenHost + sSSL + CString(uListenPort));
+	vsLines.push_back("</Listener>");
 	// !Listen
 
 	set<CModInfo> ssGlobalMods;
@@ -905,7 +896,8 @@ bool CZNC::WriteNewConfig(const CString& sConfigFile) {
 		cout << endl << "----------------------------------------------------------------------------" << endl << endl;
 	}
 
-	const CString sProtocol(sSSL.empty() ? "http" : "https");
+	const CString sProtocol(bListenSSL ? "https" : "http");
+	const CString sSSL(bListenSSL ? "+" : "");
 	CUtils::PrintMessage("");
 	CUtils::PrintMessage("To connect to this ZNC you need to connect to it as your IRC server", true);
 	CUtils::PrintMessage("using the port that you supplied.  You have to supply your login info", true);
@@ -1158,6 +1150,21 @@ bool CZNC::DoRehash(CString& sError)
 
 	CConfig::SubConfig subConf;
 	CConfig::SubConfig::const_iterator subIt;
+
+	config.FindSubConfig("listener", subConf);
+	for (subIt = subConf.begin(); subIt != subConf.end(); ++subIt) {
+		CConfig* pSubConf = subIt->second.m_pSubConfig;
+		if (!AddListener(pSubConf, sError))
+			return false;
+		if (!pSubConf->empty()) {
+			sError = "Unhandled lines in Listener config!";
+			CUtils::PrintError(sError);
+
+			CZNC::DumpConfig(pSubConf);
+			return false;
+		}
+	}
+
 	config.FindSubConfig("user", subConf);
 	for (subIt = subConf.begin(); subIt != subConf.end(); ++subIt) {
 		const CString& sUserName = subIt->first;
@@ -1454,6 +1461,12 @@ bool CZNC::AddListener(const CString& sLine, CString& sError) {
 		bSSL = true;
 	}
 
+	unsigned short uPort = sPort.ToUShort();
+	return AddListener(uPort, sBindHost, bSSL, eAddr, eAccept, sError);
+}
+
+bool CZNC::AddListener(unsigned int uPort, const CString& sBindHost, bool bSSL,
+			EAddrType eAddr, CListener::EAcceptType eAccept, CString& sError) {
 	CString sHostComment;
 
 	if (!sBindHost.empty()) {
@@ -1473,7 +1486,6 @@ bool CZNC::AddListener(const CString& sLine, CString& sError) {
 			sIPV6Comment = " using ipv6";
 	}
 
-	unsigned short uPort = sPort.ToUShort();
 	CUtils::PrintAction("Binding to port [" + CString((bSSL) ? "+" : "") + CString(uPort) + "]" + sHostComment + sIPV6Comment);
 
 #ifndef HAVE_IPV6
@@ -1528,6 +1540,59 @@ bool CZNC::AddListener(const CString& sLine, CString& sError) {
 	CUtils::PrintStatus(true);
 
 	return true;
+}
+
+bool CZNC::AddListener(CConfig* pConfig, CString& sError) {
+	CString sBindHost;
+	bool bSSL;
+	bool b4;
+#ifdef HAVE_IPV6
+	bool b6 = true;
+#else
+	bool b6 = false;
+#endif
+	bool bIRC;
+	bool bWeb;
+	unsigned int uPort;
+	if (!pConfig->FindUIntEntry("port", uPort)) {
+		sError = "No port given";
+		CUtils::PrintError(sError);
+		return false;
+	}
+	pConfig->FindStringEntry("host", sBindHost);
+	pConfig->FindBoolEntry("ssl", bSSL, false);
+	pConfig->FindBoolEntry("ipv4", b4, true);
+	pConfig->FindBoolEntry("ipv6", b6, b6);
+	pConfig->FindBoolEntry("allowirc", bIRC, true);
+	pConfig->FindBoolEntry("allowweb", bWeb, true);
+
+	EAddrType eAddr;
+	if (b4 && b6) {
+		eAddr = ADDR_ALL;
+	} else if (b4 && !b6) {
+		eAddr = ADDR_IPV4ONLY;
+	} else if (!b4 && b6) {
+		eAddr = ADDR_IPV6ONLY;
+	} else {
+		sError = "No address family given";
+		CUtils::PrintError(sError);
+		return false;
+	}
+
+	CListener::EAcceptType eAccept;
+	if (bIRC && bWeb) {
+		eAccept = CListener::ACCEPT_ALL;
+	} else if (bIRC && !bWeb) {
+		eAccept = CListener::ACCEPT_IRC;
+	} else if (!bIRC && bWeb) {
+		eAccept = CListener::ACCEPT_HTTP;
+	} else {
+		sError = "Either Web or IRC or both should be selected";
+		CUtils::PrintError(sError);
+		return false;
+	}
+
+	return AddListener(uPort, sBindHost, bSSL, eAddr, eAccept, sError);
 }
 
 bool CZNC::AddListener(CListener* pListener) {

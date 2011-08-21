@@ -13,6 +13,7 @@
 #include "Client.h"
 #include "Modules.h"
 #include "Socket.h"
+#include "Listener.h"
 #include <map>
 
 using std::map;
@@ -154,6 +155,9 @@ private:
 	bool HandleUserDeletion();
 	CString MakeConfigHeader();
 	bool AddListener(const CString& sLine, CString& sError);
+	bool AddListener(CConfig* pConfig, CString& sError);
+	bool AddListener(unsigned int uPort, const CString& sBindHost, bool bSSL,
+			EAddrType eAddr, CListener::EAcceptType eAccept, CString& sError);
 
 protected:
 	time_t                 m_TimeStarted;
