@@ -150,7 +150,7 @@ class ModuleNV(collections.MutableMapping):
 
 class Module:
     description = '< Placeholder for a description >'
-    module_types = [ModuleTypeUser]
+    module_types = [CModInfo.UserModule]
 
     wiki_page = ''
 
@@ -443,9 +443,9 @@ def load_module(modname, args, module_type, user, retmsg, modpython):
         return 1
 
     module = cl()
-    if module_type == ModuleTypeUser:
+    if module_type == CModInfo.UserModule:
         module._cmod = CreateUserPyModule(user, modname, datapath, module, modpython)
-    elif module_type == ModuleTypeGlobal:
+    elif module_type == CModInfo.GlobalModule:
         module._cmod = CreateGlobalPyModule(modname, datapath, module, modpython)
     else:
         retmsg.s = "Module [modpython] doesn't support module type."
@@ -457,13 +457,13 @@ def load_module(modname, args, module_type, user, retmsg, modpython):
     module.SetModPath(pymodule.__file__)
     module.SetType(module_type)
 
-    if module_type == ModuleTypeUser:
+    if module_type == CModInfo.UserModule:
         if not user:
-            retmsg.s = "Module [modpython] needs user for for ModuleTypeUser."
+            retmsg.s = "Module [modpython] needs user for for UserModule."
             unload_module(module)
             return 1
         user.GetModules().push_back(module._cmod)
-    elif module_type == ModuleTypeGlobal:
+    elif module_type == CModInfo.GlobalModule:
         CZNC.Get().GetModules().push_back(module._cmod)
     else:
         retmsg.s = "Module [modpython] doesn't support module type."
@@ -509,9 +509,9 @@ def load_module(modname, args, module_type, user, retmsg, modpython):
 def unload_module(module):
     module.OnShutdown()
     cmod = module._cmod
-    if module.GetType() == ModuleTypeUser:
+    if module.GetType() == CModInfo.UserModule:
         cmod.GetUser().GetModules().removeModule(cmod)
-    elif module.GetType() == ModuleTypeGlobal:
+    elif module.GetType() == CModInfo.GlobalModule:
         CZNC.Get().GetModules().removeModule(cmod)
     del module._cmod
     cmod.DeletePyModule()
