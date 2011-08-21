@@ -79,8 +79,7 @@
  *  call #MODULEDEFS at the end of your source file.
  *  Congratulations, you just wrote your first module. <br>
  *  For global modules, the procedure is similar. Instead of CModule you inherit
- *  from CModule. The two macros are replaced by #GLOBALMODCONSTRUCTOR and
- *  #GLOBALMODULEDEFS.
+ *  from CModule.
  *
  *  If you want your module to actually do something, you should override some
  *  of the hooks from CModule. These are the functions whose names start with

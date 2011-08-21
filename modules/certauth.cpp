@@ -15,7 +15,7 @@
 
 class CSSLClientCertMod : public CModule {
 public:
-	GLOBALMODCONSTRUCTOR(CSSLClientCertMod) {
+	MODCONSTRUCTOR(CSSLClientCertMod) {
 		AddHelpCommand();
 		AddCommand("Add",  static_cast<CModCommand::ModCmdFunc>(&CSSLClientCertMod::HandleAddCommand),
 			"[pubkey]", "If pubkey is not provided will use the current key");

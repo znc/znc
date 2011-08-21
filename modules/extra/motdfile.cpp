@@ -12,7 +12,7 @@
 
 class CMotdFileMod : public CModule {
 public:
-	GLOBALMODCONSTRUCTOR(CMotdFileMod) {}
+	MODCONSTRUCTOR(CMotdFileMod) {}
 	virtual ~CMotdFileMod() {}
 
 	virtual bool OnLoad(const CString& sArgs, CString& sMessage) {

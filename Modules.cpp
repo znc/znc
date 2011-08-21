@@ -100,7 +100,6 @@ const CString& CTimer::GetDescription() const { return m_sDescription; }
 
 
 CModule::CModule(ModHandle pDLL, CUser* pUser, const CString& sModName, const CString& sDataDir) {
-	m_eType = CModInfo::UserModule;
 	m_pDLL = pDLL;
 	m_pManager = &(CZNC::Get().GetManager());;
 	m_pUser = pUser;
@@ -110,19 +109,9 @@ CModule::CModule(ModHandle pDLL, CUser* pUser, const CString& sModName, const CS
 
 	if (m_pUser) {
 		m_sSavePath = m_pUser->GetUserPath() + "/moddata/" + m_sModName;
-		LoadRegistry();
+	} else {
+		m_sSavePath = CZNC::Get().GetZNCPath() + "/moddata/" + m_sModName;
 	}
-}
-
-CModule::CModule(ModHandle pDLL, const CString& sModName, const CString& sDataDir) {
-	m_pDLL = pDLL;
-	m_pManager = &(CZNC::Get().GetManager());
-	m_pUser = NULL;
-	m_pClient = NULL;
-	m_sModName = sModName;
-	m_sDataDir = sDataDir;
-
-	m_sSavePath = CZNC::Get().GetZNCPath() + "/moddata/" + m_sModName;
 	LoadRegistry();
 }
 

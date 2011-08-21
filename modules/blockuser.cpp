@@ -14,7 +14,7 @@
 
 class CBlockUser : public CModule {
 public:
-	GLOBALMODCONSTRUCTOR(CBlockUser) {}
+	MODCONSTRUCTOR(CBlockUser) {}
 
 	virtual ~CBlockUser() {}
 

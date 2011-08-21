@@ -41,7 +41,7 @@ protected:
 
 class CIMAPAuthMod : public CModule {
 public:
-	GLOBALMODCONSTRUCTOR(CIMAPAuthMod) {
+	MODCONSTRUCTOR(CIMAPAuthMod) {
 		m_Cache.SetTTL(60000);
 		m_sServer = "localhost";
 		m_uPort = 143;

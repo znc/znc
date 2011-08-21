@@ -17,7 +17,7 @@
 
 class CSASLAuthMod : public CModule {
 public:
-	GLOBALMODCONSTRUCTOR(CSASLAuthMod) {
+	MODCONSTRUCTOR(CSASLAuthMod) {
 		m_Cache.SetTTL(60000/*ms*/);
 	}
 	virtual ~CSASLAuthMod() {}

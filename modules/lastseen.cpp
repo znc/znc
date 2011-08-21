@@ -61,7 +61,7 @@ private:
 	}
 
 public:
-	GLOBALMODCONSTRUCTOR(CLastSeenMod) {
+	MODCONSTRUCTOR(CLastSeenMod) {
 		AddHelpCommand();
 		AddCommand("Show", static_cast<CModCommand::ModCmdFunc>(&CLastSeenMod::ShowCommand));
 	}

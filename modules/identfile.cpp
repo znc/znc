@@ -17,7 +17,7 @@ class CIdentFileModule : public CModule {
 	CIRCSock *m_pIRCSock;
 
 public:
-	GLOBALMODCONSTRUCTOR(CIdentFileModule) {
+	MODCONSTRUCTOR(CIdentFileModule) {
 		AddHelpCommand();
 		AddCommand("GetFile",   static_cast<CModCommand::ModCmdFunc>(&CIdentFileModule::GetFile));
 		AddCommand("SetFile",   static_cast<CModCommand::ModCmdFunc>(&CIdentFileModule::SetFile),

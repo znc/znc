@@ -34,7 +34,7 @@ extern "C" {
 class CModPerl: public CModule {
 	PerlInterpreter *m_pPerl;
 public:
-	GLOBALMODCONSTRUCTOR(CModPerl) {
+	MODCONSTRUCTOR(CModPerl) {
 		m_pPerl = NULL;
 	}
 

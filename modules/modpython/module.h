@@ -25,7 +25,7 @@ class CPyModule : public CModule {
 public:
 	CPyModule(const CString& sModName, const CString& sDataPath,
 			PyObject* pyObj, CModule* pModPython)
-			: CModule(NULL, sModName, sDataPath) {
+			: CModule(NULL, NULL, sModName, sDataPath) {
 		m_pyObj = pyObj;
 		Py_INCREF(pyObj);
 		m_pModPython = reinterpret_cast<CModPython*>(pModPython);

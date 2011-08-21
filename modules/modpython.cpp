@@ -69,7 +69,7 @@ public:
 			return result;
 	}
 
-	GLOBALMODCONSTRUCTOR(CModPython) {
+	MODCONSTRUCTOR(CModPython) {
 		Py_Initialize();
 		m_PyFormatException = NULL;
 		m_PyZNCModule = NULL;

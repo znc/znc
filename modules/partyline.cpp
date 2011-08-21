@@ -43,7 +43,7 @@ protected:
 
 class CPartylineMod : public CModule {
 public:
-	GLOBALMODCONSTRUCTOR(CPartylineMod) {}
+	MODCONSTRUCTOR(CPartylineMod) {}
 
 	virtual ~CPartylineMod() {
 		while (m_ssChannels.size()) {

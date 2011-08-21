@@ -49,7 +49,7 @@ template<class M> CModule* TModLoad(ModHandle p, CUser* pUser,
 }
 template<class M> CModule* TModLoadGlobal(ModHandle p,
 		const CString& sModName, const CString& sModPath) {
-	return new M(p, sModName, sModPath);
+	return new M(p, NULL, sModName, sModPath);
 }
 
 #if HAVE_VISIBILITY
@@ -86,7 +86,6 @@ template<class M> CModule* TModLoadGlobal(ModHandle p,
  *  \endcode
  *
  *  @param CLASS The name of your module's class.
- *  @see For global modules you need GLOBALMODCONSTRUCTOR.
  */
 #define MODCONSTRUCTOR(CLASS) \
 	CLASS(ModHandle pDLL, CUser* pUser, const CString& sModName, \
@@ -104,11 +103,6 @@ template<class M> CModule* TModLoadGlobal(ModHandle p,
 // !User Module Macros
 
 // Global Module Macros
-/** This works exactly like MODCONSTRUCTOR, but for global modules. */
-#define GLOBALMODCONSTRUCTOR(CLASS) \
-	CLASS(ModHandle pDLL, const CString& sModName, const CString& sModPath) \
-			: CModule(pDLL, sModName, sModPath)
-
 /** This works exactly like MODULEDEFS, but for global modules. */
 #define GLOBALMODULEDEFS(CLASS, DESCRIPTION) \
 	MODCOMMONDEFS(CLASS, DESCRIPTION, CModInfo::GlobalModule, Info.SetGlobalLoader(TModLoadGlobal<CLASS>))
@@ -312,7 +306,6 @@ class CModule {
 public:
 	CModule(ModHandle pDLL, CUser* pUser, const CString& sModName,
 			const CString& sDataDir);
-	CModule(ModHandle pDLL, const CString& sModName, const CString& sDataDir);
 	virtual ~CModule();
 
 	/** This enum is just used for return from module hooks. Based on this

@@ -11,7 +11,7 @@
 
 class CNotifyConnectMod : public CModule {
 public:
-	GLOBALMODCONSTRUCTOR(CNotifyConnectMod) {}
+	MODCONSTRUCTOR(CNotifyConnectMod) {}
 
 	virtual void OnClientLogin() {
 		SendAdmins(m_pUser->GetUserName() + " attached (from " + m_pClient->GetRemoteIP() + ")");

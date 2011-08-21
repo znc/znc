@@ -53,7 +53,7 @@ inline bool FOR_EACH_MODULE_CanContinue(FOR_EACH_MODULE_Type& state, CModules::i
 
 class CWebAdminMod : public CModule {
 public:
-	GLOBALMODCONSTRUCTOR(CWebAdminMod) {
+	MODCONSTRUCTOR(CWebAdminMod) {
 		VPair vParams;
 		vParams.push_back(make_pair("user", ""));
 		AddSubPage(new CWebSubPage("settings", "Global Settings", CWebSubPage::F_ADMIN));

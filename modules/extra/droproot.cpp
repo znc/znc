@@ -21,7 +21,7 @@
 class CDroproot : public CModule {
 
 public:
-	GLOBALMODCONSTRUCTOR(CDroproot) {
+	MODCONSTRUCTOR(CDroproot) {
 	}
 
 	virtual ~CDroproot() {
