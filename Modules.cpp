@@ -839,7 +839,7 @@ bool CModules::LoadModule(const CString& sModule, const CString& sArgs, CModInfo
 		pModule = Info.GetLoader()(p, pUser, sModule, sDataPath);
 		break;
 	case CModInfo::GlobalModule:
-		pModule = Info.GetGlobalLoader()(p, sModule, sDataPath);
+		pModule = Info.GetLoader()(p, NULL, sModule, sDataPath);
 		break;
 	default:
 		dlclose(p);

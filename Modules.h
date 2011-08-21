@@ -47,10 +47,6 @@ template<class M> CModule* TModLoad(ModHandle p, CUser* pUser,
 		const CString& sModName, const CString& sModPath) {
 	return new M(p, pUser, sModName, sModPath);
 }
-template<class M> CModule* TModLoadGlobal(ModHandle p,
-		const CString& sModName, const CString& sModPath) {
-	return new M(p, NULL, sModName, sModPath);
-}
 
 #if HAVE_VISIBILITY
 # define MODULE_EXPORT __attribute__((__visibility__("default")))
@@ -58,7 +54,7 @@ template<class M> CModule* TModLoadGlobal(ModHandle p,
 # define MODULE_EXPORT
 #endif
 
-#define MODCOMMONDEFS(CLASS, DESCRIPTION, TYPE, LOADER) \
+#define MODCOMMONDEFS(CLASS, DESCRIPTION, TYPE) \
 	extern "C" { \
 		MODULE_EXPORT bool ZNCModInfo(double dCoreVersion, CModInfo& Info); \
 		bool ZNCModInfo(double dCoreVersion, CModInfo& Info) { \
@@ -66,7 +62,7 @@ template<class M> CModule* TModLoadGlobal(ModHandle p,
 				return false; \
 			Info.SetDescription(DESCRIPTION); \
 			Info.AddType(TYPE); \
-			LOADER; \
+			Info.SetLoader(TModLoad<CLASS>); \
 			TModInfo<CLASS>(Info); \
 			return true; \
 		} \
@@ -99,13 +95,13 @@ template<class M> CModule* TModLoadGlobal(ModHandle p,
  *  @see For global modules you need GLOBALMODULEDEFS.
  */
 #define MODULEDEFS(CLASS, DESCRIPTION) \
-	MODCOMMONDEFS(CLASS, DESCRIPTION, CModInfo::UserModule, Info.SetLoader(TModLoad<CLASS>))
+	MODCOMMONDEFS(CLASS, DESCRIPTION, CModInfo::UserModule)
 // !User Module Macros
 
 // Global Module Macros
 /** This works exactly like MODULEDEFS, but for global modules. */
 #define GLOBALMODULEDEFS(CLASS, DESCRIPTION) \
-	MODCOMMONDEFS(CLASS, DESCRIPTION, CModInfo::GlobalModule, Info.SetGlobalLoader(TModLoadGlobal<CLASS>))
+	MODCOMMONDEFS(CLASS, DESCRIPTION, CModInfo::GlobalModule)
 // !Global Module Macros
 
 // Forward Declarations
@@ -166,7 +162,6 @@ private:
 class CModInfo {
 public:
 	typedef CModule* (*ModLoader)(ModHandle p, CUser* pUser, const CString& sModName, const CString& sModPath);
-	typedef CModule* (*GlobalModLoader)(ModHandle p, const CString& sModName, const CString& sModPath);
 
 	typedef enum {
 		GlobalModule,
@@ -174,13 +169,11 @@ public:
 	} EModuleType;
 
 	CModInfo() {
-		m_fGlobalLoader = NULL;
 		m_fLoader = NULL;
 	}
 	CModInfo(const CString& sName, const CString& sPath, EModuleType eType) {
 		m_sName = sName;
 		m_sPath = sPath;
-		m_fGlobalLoader = NULL;
 		m_fLoader = NULL;
 	}
 	~CModInfo() {}
@@ -215,7 +208,6 @@ public:
 	const CString& GetDescription() const { return m_sDescription; }
 	const CString& GetWikiPage() const { return m_sWikiPage; }
 	ModLoader GetLoader() const { return m_fLoader; }
-	GlobalModLoader GetGlobalLoader() const { return m_fGlobalLoader; }
 	// !Getters
 
 	// Setters
@@ -224,7 +216,6 @@ public:
 	void SetDescription(const CString& s) { m_sDescription = s; }
 	void SetWikiPage(const CString& s) { m_sWikiPage = s; }
 	void SetLoader(ModLoader fLoader) { m_fLoader = fLoader; }
-	void SetGlobalLoader(GlobalModLoader fGlobalLoader) { m_fGlobalLoader = fGlobalLoader; }
 	// !Setters
 private:
 protected:
@@ -234,7 +225,6 @@ protected:
 	CString         m_sDescription;
 	CString         m_sWikiPage;
 	ModLoader       m_fLoader;
-	GlobalModLoader m_fGlobalLoader;
 };
 
 /** A helper class for handling commands in modules. */
