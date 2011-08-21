@@ -39,11 +39,6 @@ class CModInfo;
 #endif
 #endif
 
-typedef enum {
-	ModuleTypeGlobal,
-	ModuleTypeUser
-} EModuleType;
-
 typedef void* ModHandle;
 
 template<class M> void TModInfo(CModInfo& Info) {}
@@ -105,7 +100,7 @@ template<class M> CModule* TModLoadGlobal(ModHandle p,
  *  @see For global modules you need GLOBALMODULEDEFS.
  */
 #define MODULEDEFS(CLASS, DESCRIPTION) \
-	MODCOMMONDEFS(CLASS, DESCRIPTION, ModuleTypeUser, Info.SetLoader(TModLoad<CLASS>))
+	MODCOMMONDEFS(CLASS, DESCRIPTION, CModInfo::UserModule, Info.SetLoader(TModLoad<CLASS>))
 // !User Module Macros
 
 // Global Module Macros
@@ -116,7 +111,7 @@ template<class M> CModule* TModLoadGlobal(ModHandle p,
 
 /** This works exactly like MODULEDEFS, but for global modules. */
 #define GLOBALMODULEDEFS(CLASS, DESCRIPTION) \
-	MODCOMMONDEFS(CLASS, DESCRIPTION, ModuleTypeGlobal, Info.SetGlobalLoader(TModLoadGlobal<CLASS>))
+	MODCOMMONDEFS(CLASS, DESCRIPTION, CModInfo::GlobalModule, Info.SetGlobalLoader(TModLoadGlobal<CLASS>))
 // !Global Module Macros
 
 // Forward Declarations
@@ -179,6 +174,11 @@ public:
 	typedef CModule* (*ModLoader)(ModHandle p, CUser* pUser, const CString& sModName, const CString& sModPath);
 	typedef CModule* (*GlobalModLoader)(ModHandle p, const CString& sModName, const CString& sModPath);
 
+	typedef enum {
+		GlobalModule,
+		UserModule
+	} EModuleType;
+
 	CModInfo() {
 		m_fGlobalLoader = NULL;
 		m_fLoader = NULL;
@@ -209,8 +209,8 @@ public:
 
 	static CString ModuleTypeToString(EModuleType eType) {
 		switch (eType) {
-		case ModuleTypeGlobal: return "Global";
-		case ModuleTypeUser: return "User";
+		case GlobalModule: return "Global";
+		case UserModule: return "User";
 		default: return "UNKNOWN";
 		}
 	}
@@ -866,14 +866,14 @@ public:
 	const CString& GetSavePath() const;
 
 	// Setters
-	void SetType(EModuleType eType) { m_eType = eType; }
+	void SetType(CModInfo::EModuleType eType) { m_eType = eType; }
 	void SetDescription(const CString& s) { m_sDescription = s; }
 	void SetModPath(const CString& s) { m_sModPath = s; }
 	void SetArgs(const CString& s) { m_sArgs = s; }
 	// !Setters
 
 	// Getters
-	EModuleType GetType() const { return m_eType; }
+	CModInfo::EModuleType GetType() const { return m_eType; }
 	const CString& GetDescription() const { return m_sDescription; }
 	const CString& GetArgs() const { return m_sArgs; }
 	const CString& GetModPath() const { return m_sModPath; }
@@ -958,7 +958,7 @@ public:
 	 *  @return See CModule::EModRet.
 	 */
 	virtual EModRet OnModuleLoading(const CString& sModName, const CString& sArgs,
-			EModuleType eType, bool& bSuccess, CString& sRetMsg);
+			CModInfo::EModuleType eType, bool& bSuccess, CString& sRetMsg);
 	/** Called when a module is going to be unloaded.
 	 *  @param pModule the module.
 	 *  @param[out] bSuccess the module was unloaded successfully
@@ -980,11 +980,11 @@ public:
 	 *  @param ssMods put new modules here.
 	 *  @param bGlobal true if global modules are needed.
 	 */
-	virtual void OnGetAvailableMods(set<CModInfo>& ssMods, EModuleType eType);
+	virtual void OnGetAvailableMods(set<CModInfo>& ssMods, CModInfo::EModuleType eType);
 	// !Global Modules
 
 protected:
-	EModuleType        m_eType;
+	CModInfo::EModuleType m_eType;
 	CString            m_sDescription;
 	set<CTimer*>       m_sTimers;
 	set<CSocket*>      m_sSockets;
@@ -1080,14 +1080,14 @@ public:
 	bool OnServerCapResult(const CString& sCap, bool bSuccess);
 
 	CModule* FindModule(const CString& sModule) const;
-	bool LoadModule(const CString& sModule, const CString& sArgs, EModuleType eType, CUser* pUser, CString& sRetMsg);
+	bool LoadModule(const CString& sModule, const CString& sArgs, CModInfo::EModuleType eType, CUser* pUser, CString& sRetMsg);
 	bool UnloadModule(const CString& sModule);
 	bool UnloadModule(const CString& sModule, CString& sRetMsg);
 	bool ReloadModule(const CString& sModule, const CString& sArgs, CUser* pUser, CString& sRetMsg);
 
 	static bool GetModInfo(CModInfo& ModInfo, const CString& sModule, CString &sRetMsg);
 	static bool GetModPathInfo(CModInfo& ModInfo, const CString& sModule, const CString& sModPath, CString &sRetMsg);
-	static void GetAvailableMods(set<CModInfo>& ssMods, EModuleType eType = ModuleTypeUser);
+	static void GetAvailableMods(set<CModInfo>& ssMods, CModInfo::EModuleType eType = CModInfo::UserModule);
 
 	// This returns the path to the .so and to the data dir
 	// which is where static data (webadmin skins) are saved
@@ -1109,11 +1109,11 @@ public:
 	bool IsClientCapSupported(const CString& sCap, bool bState);
 	bool OnClientCapRequest(const CString& sCap, bool bState);
 	bool OnModuleLoading(const CString& sModName, const CString& sArgs,
-			EModuleType eType, bool& bSuccess, CString& sRetMsg);
+			CModInfo::EModuleType eType, bool& bSuccess, CString& sRetMsg);
 	bool OnModuleUnloading(CModule* pModule, bool& bSuccess, CString& sRetMsg);
 	bool OnGetModInfo(CModInfo& ModInfo, const CString& sModule,
 			bool& bSuccess, CString& sRetMsg);
-	bool OnGetAvailableMods(set<CModInfo>& ssMods, EModuleType eType);
+	bool OnGetAvailableMods(set<CModInfo>& ssMods, CModInfo::EModuleType eType);
 	// !Global Modules
 
 private:

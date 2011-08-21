@@ -127,7 +127,7 @@ public:
 	}
 
 	virtual EModRet OnModuleLoading(const CString& sModName, const CString& sArgs,
-			EModuleType eType, bool& bSuccess, CString& sRetMsg) {
+			CModInfo::EModuleType eType, bool& bSuccess, CString& sRetMsg) {
 		PyObject* pyFunc = PyObject_GetAttrString(m_PyZNCModule, "load_module");
 		if (!pyFunc) {
 			sRetMsg = GetPyExceptionStr();
@@ -139,7 +139,7 @@ public:
 				sModName.c_str(),
 				sArgs.c_str(),
 				(int)eType,
-				(eType == ModuleTypeUser ? SWIG_NewInstanceObj(GetUser(), SWIG_TypeQuery("CUser*"), 0) : Py_None),
+				(eType == CModInfo::UserModule ? SWIG_NewInstanceObj(GetUser(), SWIG_TypeQuery("CUser*"), 0) : Py_None),
 				CPyRetString::wrap(sRetMsg),
 				SWIG_NewInstanceObj(reinterpret_cast<CModule*>(this), SWIG_TypeQuery("CModule*"), 0));
 		if (!pyRes) {
@@ -250,7 +250,7 @@ public:
 		return HALT;
 	}
 
-	void TryAddModInfo(const CString& sPath, const CString& sName, set<CModInfo>& ssMods, set<CString>& ssAlready, EModuleType eType) {
+	void TryAddModInfo(const CString& sPath, const CString& sName, set<CModInfo>& ssMods, set<CString>& ssAlready, CModInfo::EModuleType eType) {
 		if (ssAlready.count(sName)) {
 			return;
 		}
@@ -286,7 +286,7 @@ public:
 		}
 	}
 
-	virtual void OnGetAvailableMods(set<CModInfo>& ssMods, EModuleType eType) {
+	virtual void OnGetAvailableMods(set<CModInfo>& ssMods, CModInfo::EModuleType eType) {
 		CDir Dir;
 		CModules::ModDirList dirs = CModules::GetModDirs();
 

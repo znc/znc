@@ -272,7 +272,7 @@ public:
 					CString sArgs = WebSock.GetParam("modargs_" + sModName);
 
 					try {
-						if (!pNewUser->GetModules().LoadModule(sModName, sArgs, ModuleTypeUser, pNewUser, sModRet)) {
+						if (!pNewUser->GetModules().LoadModule(sModName, sArgs, CModInfo::UserModule, pNewUser, sModRet)) {
 							sModLoadError = "Unable to load module [" + sModName + "] [" + sModRet + "]";
 						}
 					} catch (...) {
@@ -295,7 +295,7 @@ public:
 				CString sModLoadError;
 
 				try {
-					if (!pNewUser->GetModules().LoadModule(sModName, sArgs, ModuleTypeUser, pNewUser, sModRet)) {
+					if (!pNewUser->GetModules().LoadModule(sModName, sArgs, CModInfo::UserModule, pNewUser, sModRet)) {
 						sModLoadError = "Unable to load module [" + sModName + "] [" + sModRet + "]";
 					}
 				} catch (...) {
@@ -1008,7 +1008,7 @@ public:
 			}
 
 			set<CModInfo> ssGlobalMods;
-			CZNC::Get().GetModules().GetAvailableMods(ssGlobalMods, ModuleTypeGlobal);
+			CZNC::Get().GetModules().GetAvailableMods(ssGlobalMods, CModInfo::GlobalModule);
 
 			for (set<CModInfo>::iterator it = ssGlobalMods.begin(); it != ssGlobalMods.end(); ++it) {
 				const CModInfo& Info = *it;
@@ -1071,7 +1071,7 @@ public:
 
 				CModule *pMod = CZNC::Get().GetModules().FindModule(sModName);
 				if (!pMod) {
-					if (!CZNC::Get().GetModules().LoadModule(sModName, sArgs, ModuleTypeGlobal, NULL, sModRet)) {
+					if (!CZNC::Get().GetModules().LoadModule(sModName, sArgs, CModInfo::GlobalModule, NULL, sModRet)) {
 						sModLoadError = "Unable to load module [" + sModName + "] [" + sModRet + "]";
 					}
 				} else if (pMod->GetArgs() != sArgs) {

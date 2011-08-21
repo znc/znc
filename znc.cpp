@@ -631,7 +631,7 @@ bool CZNC::WriteNewConfig(const CString& sConfigFile) {
 	// !Listen
 
 	set<CModInfo> ssGlobalMods;
-	GetModules().GetAvailableMods(ssGlobalMods, ModuleTypeGlobal);
+	GetModules().GetAvailableMods(ssGlobalMods, CModInfo::GlobalModule);
 	size_t uNrOtherGlobalMods = FilterUncommonModules(ssGlobalMods);
 
 	if (!ssGlobalMods.empty()) {
@@ -1057,7 +1057,7 @@ bool CZNC::DoRehash(CString& sError)
 		if (!pOldMod) {
 			CUtils::PrintAction("Loading Global Module [" + sModName + "]");
 
-			bool bModRet = GetModules().LoadModule(sModName, sArgs, ModuleTypeGlobal, NULL, sModRet);
+			bool bModRet = GetModules().LoadModule(sModName, sArgs, CModInfo::GlobalModule, NULL, sModRet);
 
 			CUtils::PrintStatus(bModRet, sModRet);
 			if (!bModRet) {
@@ -1089,7 +1089,7 @@ bool CZNC::DoRehash(CString& sError)
 			CUtils::PrintAction("Loading Global Module [identfile]");
 
 			CString sModRet;
-			bool bModRet = GetModules().LoadModule("identfile", "", ModuleTypeGlobal, NULL, sModRet);
+			bool bModRet = GetModules().LoadModule("identfile", "", CModInfo::GlobalModule, NULL, sModRet);
 
 			CUtils::PrintStatus(bModRet, sModRet);
 			if (!bModRet) {

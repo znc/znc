@@ -75,8 +75,8 @@ public:
 	}
 
 	virtual EModRet OnModuleLoading(const CString& sModName, const CString& sArgs,
-			EModuleType eType, bool& bSuccess, CString& sRetMsg) {
-		if (!GetUser() || eType != ModuleTypeUser) {
+			CModInfo::EModuleType eType, bool& bSuccess, CString& sRetMsg) {
+		if (!GetUser() || eType != CModInfo::UserModule) {
 			return CONTINUE;
 		}
 		EModRet result = HALT;
@@ -148,7 +148,7 @@ public:
 				case Perl_Loaded:
 					result = HALT;
 					if (4 == ret) {
-						ModInfo.AddType(ModuleTypeUser);
+						ModInfo.AddType(CModInfo::UserModule);
 						ModInfo.SetDescription(PString(ST(2)));
 						ModInfo.SetName(sModule);
 						ModInfo.SetPath(PString(ST(1)));
@@ -178,8 +178,8 @@ public:
 		return result;
 	}
 
-	virtual void OnGetAvailableMods(set<CModInfo>& ssMods, EModuleType eType) {
-		if (eType != ModuleTypeUser) {
+	virtual void OnGetAvailableMods(set<CModInfo>& ssMods, CModInfo::EModuleType eType) {
+		if (eType != CModInfo::UserModule) {
 			return;
 		}
 
@@ -203,7 +203,7 @@ public:
 				PUSH_STR(sName);
 				PCALL("ZNC::Core::ModInfoByPath");
 				if (!SvTRUE(ERRSV) && ret == 2) {
-					ModInfo.AddType(ModuleTypeUser);
+					ModInfo.AddType(CModInfo::UserModule);
 					ModInfo.SetDescription(PString(ST(0)));
 					ModInfo.SetName(sName);
 					ModInfo.SetPath(sPath);

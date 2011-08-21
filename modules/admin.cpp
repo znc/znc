@@ -741,7 +741,7 @@ class CAdminMod : public CModule {
 
 		CModule *pMod = (pUser)->GetModules().FindModule(sModName);
 		if (!pMod) {
-			if (!(pUser)->GetModules().LoadModule(sModName, sArgs, ModuleTypeUser, pUser, sModRet)) {
+			if (!(pUser)->GetModules().LoadModule(sModName, sArgs, CModInfo::UserModule, pUser, sModRet)) {
 				PutModule("Unable to load module [" + sModName + "] [" + sModRet + "]");
 			} else {
 				PutModule("Loaded module [" + sModName + "]");

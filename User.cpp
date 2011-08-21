@@ -187,7 +187,7 @@ bool CUser::ParseConfig(CConfig* pConfig, CString& sError) {
 		if (sValue.ToBool()) {
 			CUtils::PrintAction("Loading Module [bouncedcc]");
 			CString sModRet;
-			bool bModRet = GetModules().LoadModule("bouncedcc", "", ModuleTypeUser, this, sModRet);
+			bool bModRet = GetModules().LoadModule("bouncedcc", "", CModInfo::UserModule, this, sModRet);
 
 			CUtils::PrintStatus(bModRet, sModRet);
 			if (!bModRet) {
@@ -318,7 +318,7 @@ bool CUser::ParseConfig(CConfig* pConfig, CString& sError) {
 		CString sModRet;
 		CString sArgs = sValue.Token(1, true);
 
-		bool bModRet = GetModules().LoadModule(sModName, sArgs, ModuleTypeUser, this, sModRet);
+		bool bModRet = GetModules().LoadModule(sModName, sArgs, CModInfo::UserModule, this, sModRet);
 
 		CUtils::PrintStatus(bModRet, sModRet);
 		if (!bModRet) {
@@ -353,7 +353,7 @@ bool CUser::UpdateModule(const CString &sModule) {
 
 	CString sErr;
 	for (it2 = Affected.begin(); it2 != Affected.end(); ++it2) {
-		if (!it2->first->GetModules().LoadModule(sModule, it2->second, ModuleTypeUser, it2->first, sErr)) {
+		if (!it2->first->GetModules().LoadModule(sModule, it2->second, CModInfo::UserModule, it2->first, sErr)) {
 			error = true;
 			DEBUG("Failed to reload [" << sModule << "] for [" << it2->first->GetUserName()
 					<< "]: " << sErr);
@@ -696,7 +696,7 @@ bool CUser::Clone(const CUser& User, CString& sErrorRet, bool bCloneChans) {
 		CModule* pCurMod = vCurMods.FindModule(pNewMod->GetModName());
 
 		if (!pCurMod) {
-			vCurMods.LoadModule(pNewMod->GetModName(), pNewMod->GetArgs(), ModuleTypeUser, this, sModRet);
+			vCurMods.LoadModule(pNewMod->GetModName(), pNewMod->GetArgs(), CModInfo::UserModule, this, sModRet);
 		} else if (pNewMod->GetArgs() != pCurMod->GetArgs()) {
 			vCurMods.ReloadModule(pNewMod->GetModName(), pNewMod->GetArgs(), this, sModRet);
 		}

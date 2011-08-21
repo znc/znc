@@ -59,7 +59,7 @@ CSocket::~CSocket() {
 		m_pModule->UnlinkSocket(this);
 	}
 
-	if (pUser && m_pModule && (m_pModule->GetType() != ModuleTypeGlobal)) {
+	if (pUser && m_pModule && (m_pModule->GetType() != CModInfo::GlobalModule)) {
 		pUser->AddBytesWritten(GetBytesWritten());
 		pUser->AddBytesRead(GetBytesRead());
 	} else {

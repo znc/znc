@@ -100,7 +100,7 @@ const CString& CTimer::GetDescription() const { return m_sDescription; }
 
 
 CModule::CModule(ModHandle pDLL, CUser* pUser, const CString& sModName, const CString& sDataDir) {
-	m_eType = ModuleTypeUser;
+	m_eType = CModInfo::UserModule;
 	m_pDLL = pDLL;
 	m_pManager = &(CZNC::Get().GetManager());;
 	m_pUser = pUser;
@@ -577,13 +577,13 @@ void CModule::OnClientCapLs(SCString& ssCaps) {}
 bool CModule::IsClientCapSupported(const CString& sCap, bool bState) { return false; }
 void CModule::OnClientCapRequest(const CString& sCap, bool bState) {}
 CModule::EModRet CModule::OnModuleLoading(const CString& sModName, const CString& sArgs,
-		EModuleType eType, bool& bSuccess, CString& sRetMsg) { return CONTINUE; }
+		CModInfo::EModuleType eType, bool& bSuccess, CString& sRetMsg) { return CONTINUE; }
 CModule::EModRet CModule::OnModuleUnloading(CModule* pModule, bool& bSuccess, CString& sRetMsg) {
 	return CONTINUE;
 }
 CModule::EModRet CModule::OnGetModInfo(CModInfo& ModInfo, const CString& sModule,
 		bool& bSuccess, CString& sRetMsg) { return CONTINUE; }
-void CModule::OnGetAvailableMods(set<CModInfo>& ssMods, EModuleType eType) {}
+void CModule::OnGetAvailableMods(set<CModInfo>& ssMods, CModInfo::EModuleType eType) {}
 
 
 CModules::CModules() {
@@ -770,7 +770,7 @@ bool CModules::OnClientCapRequest(const CString& sCap, bool bState) {
 }
 
 bool CModules::OnModuleLoading(const CString& sModName, const CString& sArgs,
-		EModuleType eType, bool& bSuccess, CString& sRetMsg) {
+		CModInfo::EModuleType eType, bool& bSuccess, CString& sRetMsg) {
 	MODHALTCHK(OnModuleLoading(sModName, sArgs, eType, bSuccess, sRetMsg));
 }
 
@@ -783,7 +783,7 @@ bool CModules::OnGetModInfo(CModInfo& ModInfo, const CString& sModule,
 	MODHALTCHK(OnGetModInfo(ModInfo, sModule, bSuccess, sRetMsg));
 }
 
-bool CModules::OnGetAvailableMods(set<CModInfo>& ssMods, EModuleType eType) {
+bool CModules::OnGetAvailableMods(set<CModInfo>& ssMods, CModInfo::EModuleType eType) {
 	MODUNLOADCHK(OnGetAvailableMods(ssMods, eType));
 	return false;
 }
@@ -799,7 +799,7 @@ CModule* CModules::FindModule(const CString& sModule) const {
 	return NULL;
 }
 
-bool CModules::LoadModule(const CString& sModule, const CString& sArgs, EModuleType eType, CUser* pUser, CString& sRetMsg) {
+bool CModules::LoadModule(const CString& sModule, const CString& sArgs, CModInfo::EModuleType eType, CUser* pUser, CString& sRetMsg) {
 	sRetMsg = "";
 
 	if (FindModule(sModule) != NULL) {
@@ -837,7 +837,7 @@ bool CModules::LoadModule(const CString& sModule, const CString& sArgs, EModuleT
 		return false;
 	}
 
-	if (!pUser && eType == ModuleTypeUser) {
+	if (!pUser && eType == CModInfo::UserModule) {
 		dlclose(p);
 		sRetMsg = "Module [" + sModule + "] requires a user.";
 		return false;
@@ -846,10 +846,10 @@ bool CModules::LoadModule(const CString& sModule, const CString& sArgs, EModuleT
 	CModule* pModule = NULL;
 
 	switch (eType) {
-	case ModuleTypeUser:
+	case CModInfo::UserModule:
 		pModule = Info.GetLoader()(p, pUser, sModule, sDataPath);
 		break;
-	case ModuleTypeGlobal:
+	case CModInfo::GlobalModule:
 		pModule = Info.GetGlobalLoader()(p, sModule, sDataPath);
 		break;
 	default:
@@ -937,7 +937,7 @@ bool CModules::ReloadModule(const CString& sModule, const CString& sArgs, CUser*
 		return false;
 	}
 
-	EModuleType eType = pModule->GetType();
+	CModInfo::EModuleType eType = pModule->GetType();
 	pModule = NULL;
 
 	sRetMsg = "";
@@ -987,7 +987,7 @@ bool CModules::GetModPathInfo(CModInfo& ModInfo, const CString& sModule, const C
 	return true;
 }
 
-void CModules::GetAvailableMods(set<CModInfo>& ssMods, EModuleType eType) {
+void CModules::GetAvailableMods(set<CModInfo>& ssMods, CModInfo::EModuleType eType) {
 	ssMods.clear();
 
 	unsigned int a = 0;
