@@ -575,10 +575,12 @@ void CClient::UserCommand(CString& sLine) {
 			sMod = sType;
 			sArgs = sLine.Token(2, true);
 			sType = "default";
+			// Will be set correctly later
+			eType = ModuleTypeUser;
 		}
 
 		if (m_pUser->DenyLoadMod()) {
-			PutStatus("Unable to load [" + sMod + "] Access Denied.");
+			PutStatus("Unable to load [" + sMod + "]: Access Denied.");
 			return;
 		}
 
@@ -599,7 +601,7 @@ void CClient::UserCommand(CString& sLine) {
 		}
 
 		if (eType == ModuleTypeGlobal && !m_pUser->IsAdmin()) {
-			PutStatus("Unable to load global module [" + sMod + "] Access Denied.");
+			PutStatus("Unable to load global module [" + sMod + "]: Access Denied.");
 			return;
 		}
 
@@ -607,15 +609,14 @@ void CClient::UserCommand(CString& sLine) {
 		bool b = false;
 
 		switch (eType) {
-			case ModuleTypeGlobal:
-				b = CZNC::Get().GetModules().LoadModule(sMod, sArgs, eType, NULL, sModRet);
-				break;
-			case ModuleTypeUser:
-				b = m_pUser->GetModules().LoadModule(sMod, sArgs, eType, m_pUser, sModRet);
-				break;
-			default:
-				sModRet = "Unable to load module [" + sMod + "] Unknown module type";
-
+		case ModuleTypeGlobal:
+			b = CZNC::Get().GetModules().LoadModule(sMod, sArgs, eType, NULL, sModRet);
+			break;
+		case ModuleTypeUser:
+			b = m_pUser->GetModules().LoadModule(sMod, sArgs, eType, m_pUser, sModRet);
+			break;
+		default:
+			sModRet = "Unable to load module [" + sMod + "]: Unknown module type";
 		}
 
 		if (b)
@@ -659,22 +660,21 @@ void CClient::UserCommand(CString& sLine) {
 		}
 
 		if (eType == ModuleTypeGlobal && !m_pUser->IsAdmin()) {
-			PutStatus("Unable to unload global module [" + sMod + "] Access Denied.");
+			PutStatus("Unable to unload global module [" + sMod + "]: Access Denied.");
 			return;
 		}
 
 		CString sModRet;
 
 		switch (eType) {
-			case ModuleTypeGlobal:
-				CZNC::Get().GetModules().UnloadModule(sMod, sModRet);
-				break;
-			case ModuleTypeUser:
-				m_pUser->GetModules().UnloadModule(sMod, sModRet);
-				break;
-			default:
-				sModRet = "Unable to unload module [" + sMod + "] Unknown module type";
-
+		case ModuleTypeGlobal:
+			CZNC::Get().GetModules().UnloadModule(sMod, sModRet);
+			break;
+		case ModuleTypeUser:
+			m_pUser->GetModules().UnloadModule(sMod, sModRet);
+			break;
+		default:
+			sModRet = "Unable to unload module [" + sMod + "]: Unknown module type";
 		}
 
 		PutStatus(sModRet);
@@ -698,6 +698,8 @@ void CClient::UserCommand(CString& sLine) {
 			sMod = sType;
 			sArgs = sLine.Token(2, true);
 			sType = "default";
+			// Will be set correctly later
+			eType = ModuleTypeUser;
 		}
 
 		if (sMod.empty()) {
@@ -717,22 +719,21 @@ void CClient::UserCommand(CString& sLine) {
 		}
 
 		if (eType == ModuleTypeGlobal && !m_pUser->IsAdmin()) {
-			PutStatus("Unable to reload global module [" + sMod + "] Access Denied.");
+			PutStatus("Unable to reload global module [" + sMod + "]: Access Denied.");
 			return;
 		}
 
 		CString sModRet;
 
 		switch (eType) {
-			case ModuleTypeGlobal:
-				CZNC::Get().GetModules().ReloadModule(sMod, sArgs, NULL, sModRet);
-				break;
-			case ModuleTypeUser:
-				m_pUser->GetModules().ReloadModule(sMod, sArgs, m_pUser, sModRet);
-				break;
-			default:
-				sModRet = "Unable to reload module [" + sMod + "] Unknown module type";
-
+		case ModuleTypeGlobal:
+			CZNC::Get().GetModules().ReloadModule(sMod, sArgs, NULL, sModRet);
+			break;
+		case ModuleTypeUser:
+			m_pUser->GetModules().ReloadModule(sMod, sArgs, m_pUser, sModRet);
+			break;
+		default:
+			sModRet = "Unable to reload module [" + sMod + "]: Unknown module type";
 		}
 
 		PutStatus(sModRet);

@@ -207,6 +207,14 @@ public:
 		return *m_seType.begin();
 	}
 
+	static CString ModuleTypeToString(EModuleType eType) {
+		switch (eType) {
+		case ModuleTypeGlobal: return "Global";
+		case ModuleTypeUser: return "User";
+		default: return "UNKNOWN";
+		}
+	}
+
 	// Getters
 	const CString& GetName() const { return m_sName; }
 	const CString& GetPath() const { return m_sPath; }

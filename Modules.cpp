@@ -832,29 +832,30 @@ bool CModules::LoadModule(const CString& sModule, const CString& sArgs, EModuleT
 
 	if (!Info.SupportsType(eType)) {
 		dlclose(p);
-		sRetMsg = "Module [" + sModule + "] does not support module type.";
+		sRetMsg = "Module [" + sModule + "] does not support module type ["
+			+ CModInfo::ModuleTypeToString(eType) + "].";
 		return false;
 	}
 
 	if (!pUser && eType == ModuleTypeUser) {
 		dlclose(p);
-		sRetMsg = "Module [" + sModule + "] require a user.";
+		sRetMsg = "Module [" + sModule + "] requires a user.";
 		return false;
 	}
 
 	CModule* pModule = NULL;
 
 	switch (eType) {
-		case ModuleTypeUser:
-			pModule = Info.GetLoader()(p, pUser, sModule, sDataPath);
-			break;
-		case ModuleTypeGlobal:
-			pModule = Info.GetGlobalLoader()(p, sModule, sDataPath);
-			break;
-		default:
-			dlclose(p);
-			sRetMsg = "Unsupported module type";
-			return false;
+	case ModuleTypeUser:
+		pModule = Info.GetLoader()(p, pUser, sModule, sDataPath);
+		break;
+	case ModuleTypeGlobal:
+		pModule = Info.GetGlobalLoader()(p, sModule, sDataPath);
+		break;
+	default:
+		dlclose(p);
+		sRetMsg = "Unsupported module type";
+		return false;
 	}
 
 	pModule->SetDescription(Info.GetDescription());

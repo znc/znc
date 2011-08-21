@@ -728,12 +728,12 @@ public:
 				l["Description"] = Info.GetDescription();
 				l["Wiki"] = Info.GetWikiPage();
 
-				if (pUser && pUser->GetModules().FindModule(Info.GetName())) {
-					CModule *pModule = pUser->GetModules().FindModule(Info.GetName());
-					if (pModule) {
-						l["Checked"] = "true";
-						l["Args"] = pModule->GetArgs();
-					}
+				CModule *pModule = NULL;
+				if (pUser)
+					pModule = pUser->GetModules().FindModule(Info.GetName());
+				if (pModule) {
+					l["Checked"] = "true";
+					l["Args"] = pModule->GetArgs();
 				}
 
 				if (!spSession->IsAdmin() && pUser && pUser->DenyLoadMod()) {
