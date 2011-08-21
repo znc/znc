@@ -269,9 +269,52 @@ bool CUser::ParseConfig(CConfig* pConfig, CString& sError) {
 			SetPass(sValue, CUser::HASH_NONE);
 		}
 	}
-
 	CConfig::SubConfig subConf;
 	CConfig::SubConfig::const_iterator subIt;
+	pConfig->FindSubConfig("pass", subConf);
+	if (!sValue.empty() && !subConf.empty()) {
+		sError = "Password defined more than once";
+		CUtils::PrintError(sError);
+		return false;
+	}
+	subIt = subConf.begin();
+	if (subIt != subConf.end()) {
+		CConfig* pSubConf = subIt->second.m_pSubConfig;
+		CString sHash;
+		CString sMethod;
+		CString sSalt;
+		CUser::eHashType method;
+		pSubConf->FindStringEntry("hash", sHash);
+		pSubConf->FindStringEntry("method", sMethod);
+		pSubConf->FindStringEntry("salt", sSalt);
+		if (sMethod.empty() || sMethod.Equals("plain"))
+			method = CUser::HASH_NONE;
+		else if (sMethod.Equals("md5"))
+			method = CUser::HASH_MD5;
+		else if (sMethod.Equals("sha256"))
+			method = CUser::HASH_SHA256;
+		else {
+			sError = "Invalid hash method";
+			CUtils::PrintError(sError);
+			return false;
+		}
+
+		SetPass(sHash, method, sSalt);
+		if (!pSubConf->empty()) {
+			sError = "Unhandled lines in config!";
+			CUtils::PrintError(sError);
+
+			CZNC::DumpConfig(pSubConf);
+			return false;
+		}
+		subIt++;
+	}
+	if (subIt != subConf.end()) {
+		sError = "Password defined more than once";
+		CUtils::PrintError(sError);
+		return false;
+	}
+
 	pConfig->FindSubConfig("chan", subConf);
 	for (subIt = subConf.begin(); subIt != subConf.end(); ++subIt) {
 		const CString& sChanName = subIt->first;
@@ -831,19 +874,25 @@ bool CUser::DelChan(const CString& sName) {
 
 CConfig CUser::ToConfig() {
 	CConfig config;
+	CConfig passConfig;
 
-	if (m_eHashType != HASH_NONE) {
-		CString sHash = "md5";
-		if (m_eHashType == HASH_SHA256)
-			sHash = "sha256";
-		if (m_sPassSalt.empty()) {
-			config.AddKeyValuePair("Pass", sHash + "#" + GetPass());
-		} else {
-			config.AddKeyValuePair("Pass", sHash + "#" + GetPass() + "#" + m_sPassSalt + "#");
-		}
-	} else {
-		config.AddKeyValuePair("Pass", "plain#" + GetPass());
+	CString sHash;
+	switch (m_eHashType) {
+	case HASH_NONE:
+		sHash = "Plain";
+		break;
+	case HASH_MD5:
+		sHash = "MD5";
+		break;
+	case HASH_SHA256:
+		sHash = "SHA256";
+		break;
 	}
+	passConfig.AddKeyValuePair("Salt", m_sPassSalt);
+	passConfig.AddKeyValuePair("Method", sHash);
+	passConfig.AddKeyValuePair("Hash", GetPass());
+	config.AddSubConfig("Pass", "password", passConfig);
+
 	config.AddKeyValuePair("Nick", GetNick());
 	config.AddKeyValuePair("AltNick", GetAltNick());
 	config.AddKeyValuePair("Ident", GetIdent());
