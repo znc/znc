@@ -171,7 +171,7 @@ bool CConfig::Parse(CFile& file, CString& sErrorMsg)
 }
 
 void CConfig::Write(CFile *pFile, unsigned int iIndentation) {
-	CString sIndentation = CString("	", iIndentation);
+	CString sIndentation = CString(iIndentation, '\t');
 
 	for (EntryMapIterator it = m_ConfigEntries.begin(); it != m_ConfigEntries.end(); ++it) {
 		for (VCString::const_iterator it2 = it->second.begin(); it2 != it->second.end(); ++it2) {

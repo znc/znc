@@ -89,6 +89,7 @@ public:
 	CString(const char* c) : string(c) {}
 	CString(const char* c, size_t l) : string(c, l) {}
 	CString(const string& s) : string(s) {}
+	CString(size_t n, char c) : string(n, c) {}
 	~CString() {}
 
 	/**
