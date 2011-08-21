@@ -951,6 +951,7 @@ public:
 
 	/** Called when a module is going to be loaded.
 	 *  @param sModName name of the module.
+	 *  @param eType wanted type of the module (user/global).
 	 *  @param sArgs arguments of the module.
 	 *  @param[out] bSuccess the module was loaded successfully
 	 *                       as result of this module hook?
