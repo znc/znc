@@ -169,3 +169,23 @@ bool CConfig::Parse(CFile& file, CString& sErrorMsg)
 
 	return true;
 }
+
+void CConfig::Write(CFile *pFile, unsigned int iIndentation) {
+	CString sIndentation = CString("	", iIndentation);
+
+	for (EntryMapIterator it = m_ConfigEntries.begin(); it != m_ConfigEntries.end(); ++it) {
+		for (VCString::const_iterator it2 = it->second.begin(); it2 != it->second.end(); ++it2) {
+			pFile->Write(sIndentation + it->first + " = " + *it2 + "\n");
+		}
+	}
+
+	for (SubConfigMapIterator it = m_SubConfigs.begin(); it != m_SubConfigs.end(); ++it) {
+		for (SubConfig::const_iterator it2 = it->second.begin(); it2 != it->second.end(); ++it2) {
+			pFile->Write("\n");
+
+			pFile->Write(sIndentation + "<" + it->first + " " + it2->first + ">\n");
+			it2->second.m_pSubConfig->Write(pFile, iIndentation + 1);
+			pFile->Write(sIndentation + "</" + it->first + ">\n");
+		}
+	}
+}

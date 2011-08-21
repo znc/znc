@@ -829,79 +829,58 @@ bool CUser::DelChan(const CString& sName) {
 	return false;
 }
 
-bool CUser::PrintLine(CFile& File, CString sName, CString sValue) const {
-	sName.Trim();
-	sValue.Trim();
-
-	if (sName.empty() || sValue.empty()) {
-		DEBUG("Refused writing an invalid line to a user config. ["
-			<< sName << "] [" << sValue << "]");
-		return false;
-	}
-
-	// FirstLine() so that no one can inject new lines to the config if he
-	// manages to add "\n" to e.g. sValue.
-	CString sLine = "\t" + sName.FirstLine() + " = " + sValue.FirstLine() + "\n";
-	return (File.Write(sLine) > 0);
-}
-
-bool CUser::WriteConfig(CFile& File) {
-	File.Write("<User " + GetUserName().FirstLine() + ">\n");
+CConfig CUser::ToConfig() {
+	CConfig config;
 
 	if (m_eHashType != HASH_NONE) {
 		CString sHash = "md5";
 		if (m_eHashType == HASH_SHA256)
 			sHash = "sha256";
 		if (m_sPassSalt.empty()) {
-			PrintLine(File, "Pass", sHash + "#" + GetPass());
+			config.AddKeyValuePair("Pass", sHash + "#" + GetPass());
 		} else {
-			PrintLine(File, "Pass", sHash + "#" + GetPass() + "#" + m_sPassSalt + "#");
+			config.AddKeyValuePair("Pass", sHash + "#" + GetPass() + "#" + m_sPassSalt + "#");
 		}
 	} else {
-		PrintLine(File, "Pass", "plain#" + GetPass());
+		config.AddKeyValuePair("Pass", "plain#" + GetPass());
 	}
-	PrintLine(File, "Nick", GetNick());
-	PrintLine(File, "AltNick", GetAltNick());
-	PrintLine(File, "Ident", GetIdent());
-	PrintLine(File, "RealName", GetRealName());
-	PrintLine(File, "BindHost", GetBindHost());
-	PrintLine(File, "DCCBindHost", GetDCCBindHost());
-	PrintLine(File, "QuitMsg", GetQuitMsg());
+	config.AddKeyValuePair("Nick", GetNick());
+	config.AddKeyValuePair("AltNick", GetAltNick());
+	config.AddKeyValuePair("Ident", GetIdent());
+	config.AddKeyValuePair("RealName", GetRealName());
+	config.AddKeyValuePair("BindHost", GetBindHost());
+	config.AddKeyValuePair("DCCBindHost", GetDCCBindHost());
+	config.AddKeyValuePair("QuitMsg", GetQuitMsg());
 	if (CZNC::Get().GetStatusPrefix() != GetStatusPrefix())
-		PrintLine(File, "StatusPrefix", GetStatusPrefix());
-	PrintLine(File, "Skin", GetSkinName());
-	PrintLine(File, "ChanModes", GetDefaultChanModes());
-	PrintLine(File, "Buffer", CString(GetBufferCount()));
-	PrintLine(File, "KeepBuffer", CString(KeepBuffer()));
-	PrintLine(File, "MultiClients", CString(MultiClients()));
-	PrintLine(File, "DenyLoadMod", CString(DenyLoadMod()));
-	PrintLine(File, "Admin", CString(IsAdmin()));
-	PrintLine(File, "DenySetBindHost", CString(DenySetBindHost()));
-	PrintLine(File, "TimestampFormat", GetTimestampFormat());
-	PrintLine(File, "AppendTimestamp", CString(GetTimestampAppend()));
-	PrintLine(File, "PrependTimestamp", CString(GetTimestampPrepend()));
-	PrintLine(File, "TimezoneOffset", CString(m_fTimezoneOffset));
-	PrintLine(File, "JoinTries", CString(m_uMaxJoinTries));
-	PrintLine(File, "MaxJoins", CString(m_uMaxJoins));
-	PrintLine(File, "IRCConnectEnabled", CString(GetIRCConnectEnabled()));
-	File.Write("\n");
+		config.AddKeyValuePair("StatusPrefix", GetStatusPrefix());
+	config.AddKeyValuePair("Skin", GetSkinName());
+	config.AddKeyValuePair("ChanModes", GetDefaultChanModes());
+	config.AddKeyValuePair("Buffer", CString(GetBufferCount()));
+	config.AddKeyValuePair("KeepBuffer", CString(KeepBuffer()));
+	config.AddKeyValuePair("MultiClients", CString(MultiClients()));
+	config.AddKeyValuePair("DenyLoadMod", CString(DenyLoadMod()));
+	config.AddKeyValuePair("Admin", CString(IsAdmin()));
+	config.AddKeyValuePair("DenySetBindHost", CString(DenySetBindHost()));
+	config.AddKeyValuePair("TimestampFormat", GetTimestampFormat());
+	config.AddKeyValuePair("AppendTimestamp", CString(GetTimestampAppend()));
+	config.AddKeyValuePair("PrependTimestamp", CString(GetTimestampPrepend()));
+	config.AddKeyValuePair("TimezoneOffset", CString(m_fTimezoneOffset));
+	config.AddKeyValuePair("JoinTries", CString(m_uMaxJoinTries));
+	config.AddKeyValuePair("MaxJoins", CString(m_uMaxJoins));
+	config.AddKeyValuePair("IRCConnectEnabled", CString(GetIRCConnectEnabled()));
 
 	// Allow Hosts
 	if (!m_ssAllowedHosts.empty()) {
 		for (set<CString>::iterator it = m_ssAllowedHosts.begin(); it != m_ssAllowedHosts.end(); ++it) {
-			PrintLine(File, "Allow", *it);
+			config.AddKeyValuePair("Allow", *it);
 		}
-
-		File.Write("\n");
 	}
 
 	// CTCP Replies
 	if (!m_mssCTCPReplies.empty()) {
 		for (MCString::const_iterator itb = m_mssCTCPReplies.begin(); itb != m_mssCTCPReplies.end(); ++itb) {
-			PrintLine(File, "CTCPReply", itb->first.AsUpper() + " " + itb->second);
+			config.AddKeyValuePair("CTCPReply", itb->first.AsUpper() + " " + itb->second);
 		}
-
-		File.Write("\n");
 	}
 
 	// Modules
@@ -915,31 +894,24 @@ bool CUser::WriteConfig(CFile& File) {
 				sArgs = " " + sArgs;
 			}
 
-			PrintLine(File, "LoadModule", Mods[a]->GetModName() + sArgs);
+			config.AddKeyValuePair("LoadModule", Mods[a]->GetModName() + sArgs);
 		}
-
-		File.Write("\n");
 	}
 
 	// Servers
 	for (unsigned int b = 0; b < m_vServers.size(); b++) {
-		PrintLine(File, "Server", m_vServers[b]->GetString());
+		config.AddKeyValuePair("Server", m_vServers[b]->GetString());
 	}
 
 	// Chans
 	for (unsigned int c = 0; c < m_vChans.size(); c++) {
 		CChan* pChan = m_vChans[c];
 		if (pChan->InConfig()) {
-			File.Write("\n");
-			if (!pChan->WriteConfig(File)) {
-				return false;
-			}
+			config.AddSubConfig("Chan", pChan->GetName(), pChan->ToConfig());
 		}
 	}
 
-	File.Write("</User>\n");
-
-	return true;
+	return config;
 }
 
 CChan* CUser::FindChan(const CString& sName) const {

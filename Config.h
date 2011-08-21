@@ -47,6 +47,26 @@ public:
 		return m_SubConfigs.end();
 	}
 
+	void AddKeyValuePair(const CString& sName, const CString& sValue) {
+		if (sName.empty() || sValue.empty()) {
+			return;
+		}
+
+		m_ConfigEntries[sName].push_back(sValue);
+	}
+
+	bool AddSubConfig(const CString& sTag, const CString& sName, CConfig Config) {
+		SubConfig &conf = m_SubConfigs[sTag];
+		SubConfig::const_iterator it = conf.find(sName);
+
+		if (it != conf.end()) {
+			return false;
+		}
+
+		conf[sName] = Config;
+		return true;
+	}
+
 	bool FindStringVector(const CString& sName, VCString& vsList) {
 		EntryMap::iterator it = m_ConfigEntries.find(sName);
 		vsList.clear();
@@ -85,6 +105,7 @@ public:
 	}
 
 	bool Parse(CFile& file, CString& sErrorMsg);
+	void Write(CFile *pFile, unsigned int iIndentation = 0);
 
 private:
 	EntryMap m_ConfigEntries;

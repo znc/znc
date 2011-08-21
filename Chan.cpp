@@ -64,26 +64,21 @@ void CChan::Reset() {
 	ResetJoinTries();
 }
 
-bool CChan::WriteConfig(CFile& File) {
-	if (!InConfig()) {
-		return false;
-	}
-
-	File.Write("\t<Chan " + GetName().FirstLine() + ">\n");
+CConfig CChan::ToConfig() {
+	CConfig config;
 
 	if (m_pUser->GetBufferCount() != GetBufferCount())
-		m_pUser->PrintLine(File, "\tBuffer", CString(GetBufferCount()));
+		config.AddKeyValuePair("Buffer", CString(GetBufferCount()));
 	if (m_pUser->KeepBuffer() != KeepBuffer())
-		m_pUser->PrintLine(File, "\tKeepBuffer", CString(KeepBuffer()));
+		config.AddKeyValuePair("KeepBuffer", CString(KeepBuffer()));
 	if (IsDetached())
-		m_pUser->PrintLine(File, "\tDetached", "true");
+		config.AddKeyValuePair("Detached", "true");
 	if (!GetKey().empty())
-		m_pUser->PrintLine(File, "\tKey", GetKey());
+		config.AddKeyValuePair("Key", GetKey());
 	if (!GetDefaultModes().empty())
-		m_pUser->PrintLine(File, "\tModes", GetDefaultModes());
+		config.AddKeyValuePair("Modes", GetDefaultModes());
 
-	File.Write("\t</Chan>\n");
-	return true;
+	return config;
 }
 
 void CChan::Clone(CChan& chan) {

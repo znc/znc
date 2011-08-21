@@ -437,10 +437,11 @@ bool CZNC::WriteConfig() {
 
 	pFile->Write(MakeConfigHeader() + "\n");
 
-	pFile->Write("AnonIPLimit  = " + CString(m_uiAnonIPLimit) + "\n");
-	pFile->Write("MaxBufferSize= " + CString(m_uiMaxBufferSize) + "\n");
-	pFile->Write("SSLCertFile  = " + CString(m_sSSLCertFile) + "\n");
-	pFile->Write("ProtectWebSessions = " + CString(m_bProtectWebSessions) + "\n");
+	CConfig config;
+	config.AddKeyValuePair("AnonIPLimit", CString(m_uiAnonIPLimit));
+	config.AddKeyValuePair("MaxBufferSize", CString(m_uiMaxBufferSize));
+	config.AddKeyValuePair("SSLCertFile", CString(m_sSSLCertFile));
+	config.AddKeyValuePair("ProtectWebSessions", CString(m_bProtectWebSessions));
 
 	for (size_t l = 0; l < m_vpListeners.size(); l++) {
 		CListener* pListener = m_vpListeners[l];
@@ -469,31 +470,31 @@ bool CZNC::WriteConfig() {
 				break;
 		}
 
-		pFile->Write("Listener" + s6 + "    = " + sAcceptProtocol + sHostPortion +
-			CString((pListener->IsSSL()) ? "+" : "") + CString(pListener->GetPort()) + "\n");
+		config.AddKeyValuePair("Listener" + s6, sAcceptProtocol + sHostPortion +
+			CString((pListener->IsSSL()) ? "+" : "") + CString(pListener->GetPort()));
 	}
 
-	pFile->Write("ConnectDelay = " + CString(m_uiConnectDelay) + "\n");
-	pFile->Write("ServerThrottle = " + CString(m_sConnectThrottle.GetTTL()/1000) + "\n");
+	config.AddKeyValuePair("ConnectDelay", CString(m_uiConnectDelay));
+	config.AddKeyValuePair("ServerThrottle", CString(m_sConnectThrottle.GetTTL()/1000));
 
 	if (!m_sPidFile.empty()) {
-		pFile->Write("PidFile      = " + m_sPidFile.FirstLine() + "\n");
+		config.AddKeyValuePair("PidFile", m_sPidFile.FirstLine());
 	}
 
 	if (!m_sSkinName.empty()) {
-		pFile->Write("Skin         = " + m_sSkinName.FirstLine() + "\n");
+		config.AddKeyValuePair("Skin", m_sSkinName.FirstLine());
 	}
 
 	if (!m_sStatusPrefix.empty()) {
-		pFile->Write("StatusPrefix = " + m_sStatusPrefix.FirstLine() + "\n");
+		config.AddKeyValuePair("StatusPrefix", m_sStatusPrefix.FirstLine());
 	}
 
 	for (unsigned int m = 0; m < m_vsMotd.size(); m++) {
-		pFile->Write("Motd         = " + m_vsMotd[m].FirstLine() + "\n");
+		config.AddKeyValuePair("Motd", m_vsMotd[m].FirstLine());
 	}
 
 	for (unsigned int v = 0; v < m_vsBindHosts.size(); v++) {
-		pFile->Write("BindHost     = " + m_vsBindHosts[v].FirstLine() + "\n");
+		config.AddKeyValuePair("BindHost", m_vsBindHosts[v].FirstLine());
 	}
 
 	CModules& Mods = GetModules();
@@ -506,7 +507,7 @@ bool CZNC::WriteConfig() {
 			sArgs = " " + sArgs.FirstLine();
 		}
 
-		pFile->Write("LoadModule   = " + sName.FirstLine() + sArgs + "\n");
+		config.AddKeyValuePair("LoadModule", sName.FirstLine() + sArgs);
 	}
 
 	for (map<CString,CUser*>::iterator it = m_msUsers.begin(); it != m_msUsers.end(); ++it) {
@@ -517,12 +518,10 @@ bool CZNC::WriteConfig() {
 			continue;
 		}
 
-		pFile->Write("\n");
-
-		if (!it->second->WriteConfig(*pFile)) {
-			DEBUG("** Error writing config for user [" << it->first << "]");
-		}
+		config.AddSubConfig("User", it->second->GetUserName(), it->second->ToConfig());
 	}
+
+	config.Write(pFile);
 
 	// If Sync() fails... well, let's hope nothing important breaks..
 	pFile->Sync();

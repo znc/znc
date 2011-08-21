@@ -15,6 +15,7 @@
 #endif
 #include <utility>
 #include "../Utils.h"
+#include "../Config.h"
 #include "../Socket.h"
 #include "../Modules.h"
 #include "../Nick.h"
@@ -74,6 +75,7 @@ namespace std {
 #include "../ZNCString.h"
 %include "../defines.h"
 %include "../Utils.h"
+%include "../Config.h"
 %include "../Csocket.h"
 %template(ZNCSocketManager) TSocketManager<CZNCSock>;
 %include "../Socket.h"

@@ -56,7 +56,7 @@ public:
 	~CChan();
 
 	void Reset();
-	bool WriteConfig(CFile& File);
+	CConfig ToConfig();
 	void Clone(CChan& chan);
 	void Cycle() const;
 	void JoinUser(bool bForce = false, const CString& sKey = "", CClient* pClient = NULL);
