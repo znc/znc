@@ -15,55 +15,47 @@
 #include "znc.h"
 #include "WebModules.h"
 
-#define CALLMOD(MOD, CLIENT, USER, NETWORK, FUNC) {                         \
-	CModule* pModule = CZNC::Get().GetModules().FindModule(MOD);            \
-	if (pModule) {                                                          \
-		try {                                                           \
-			pModule->SetClient(CLIENT);                             \
-			pModule->SetNetwork(NETWORK);                           \
-			pModule->SetUser(USER);                                 \
-			pModule->FUNC;                                          \
-			pModule->SetClient(NULL);                               \
-			pModule->SetNetwork(NULL);                              \
-			pModule->SetUser(NULL);                                 \
-		} catch (CModule::EModException e) {                            \
-			if (e == CModule::UNLOAD) {                             \
-				CZNC::Get().GetModules().UnloadModule(MOD);     \
-			}                                                       \
-		}                                                               \
-	} else {                                                                \
-		pModule = (USER)->GetModules().FindModule(MOD);                 \
-		if (pModule) {                                                  \
-			try {                                                   \
-				pModule->SetClient(CLIENT);                     \
-				pModule->SetNetwork(NETWORK);                   \
-				pModule->FUNC;                                  \
-				pModule->SetClient(NULL);                       \
-				pModule->SetNetwork(NULL);                      \
-			} catch (CModule::EModException e) {                    \
-				if (e == CModule::UNLOAD) {                     \
-					(USER)->GetModules().UnloadModule(MOD); \
-				}                                               \
-			}                                                       \
-		} else if (NETWORK) { \
-			pModule = (NETWORK)->GetModules().FindModule(MOD); \
-			if (pModule) { \
-				try { \
-					pModule->SetClient(CLIENT); \
-					pModule->FUNC; \
-					pModule->SetClient(NULL); \
-				} catch (CModule::EModException e) { \
-					if (e == CModule::UNLOAD) { \
-						(NETWORK)->GetModules().UnloadModule(MOD); \
-					} \
-				} \
-			} else { \
-				PutStatus("No such module [" + MOD + "]"); \
-			} \
-		} else {                                                        \
-			PutStatus("No such module [" + MOD + "]");              \
-		}                                                               \
-	}                                                                       \
+#define CALLMOD(MOD, CLIENT, USER, NETWORK, FUNC) {  \
+	CModule *pModule = (NETWORK)->GetModules().FindModule(MOD);  \
+	if (pModule) {  \
+		try {  \
+			pModule->SetClient(CLIENT);  \
+			pModule->FUNC;  \
+			pModule->SetClient(NULL);  \
+		} catch (CModule::EModException e) {  \
+			if (e == CModule::UNLOAD) {  \
+				(NETWORK)->GetModules().UnloadModule(MOD);  \
+			}  \
+		}  \
+	} else if ((pModule = (USER)->GetModules().FindModule(MOD))) {  \
+		try {  \
+			pModule->SetClient(CLIENT);  \
+			pModule->SetNetwork(NETWORK);  \
+			pModule->FUNC;  \
+			pModule->SetClient(NULL);  \
+			pModule->SetNetwork(NULL);  \
+		} catch (CModule::EModException e) {  \
+			if (e == CModule::UNLOAD) {  \
+				(USER)->GetModules().UnloadModule(MOD);  \
+			}  \
+		}  \
+	} else if ((pModule = CZNC::Get().GetModules().FindModule(MOD))) {  \
+		try {  \
+			pModule->SetClient(CLIENT);  \
+			pModule->SetNetwork(NETWORK);  \
+			pModule->SetUser(USER);  \
+			pModule->FUNC;  \
+			pModule->SetClient(NULL);  \
+			pModule->SetNetwork(NULL);  \
+			pModule->SetUser(NULL);  \
+		} catch (CModule::EModException e) {  \
+			if (e == CModule::UNLOAD) {  \
+					CZNC::Get().GetModules().UnloadModule(MOD);  \
+			}  \
+		}  \
+	} else {  \
+		PutStatus("No such module [" + MOD + "]");  \
+	}  \
 }
 
 CClient::~CClient() {
