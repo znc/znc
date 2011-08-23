@@ -15,6 +15,7 @@
 #include "../Nick.h"
 #include "../Chan.h"
 #include "../User.h"
+#include "../IRCNetwork.h"
 #include "../Client.h"
 #include "../IRCSock.h"
 #include "../Listener.h"
@@ -97,6 +98,7 @@ namespace std {
 %include "../Nick.h"
 %include "../Chan.h"
 %include "../User.h"
+%include "../IRCNetwork.h"
 %include "../Client.h"
 %include "../IRCSock.h"
 %include "../Listener.h"
@@ -164,6 +166,15 @@ public:
 		return "<CUser " + $self->GetUserName() + ">";
 	}
 };
+
+%extend CIRCNetwork {
+	CString __str__() {
+		return $self->GetName();
+	}
+	CString __repr__() {
+		return "<CIRCNetwork " + $self->GetName() + ">";
+	}
+}
 
 %extend CChan {
 	CString __str__() {

@@ -423,7 +423,7 @@ def find_open(modname):
         return (None, None)
 
 
-def load_module(modname, args, module_type, user, retmsg, modpython):
+def load_module(modname, args, module_type, user, network, retmsg, modpython):
     '''Returns 0 if not found, 1 on loading error, 2 on success'''
     if re.search(r'[^a-zA-Z0-9_]', modname) is not None:
         retmsg.s = 'Module names can only contain letters, numbers and ' \
@@ -443,14 +443,7 @@ def load_module(modname, args, module_type, user, retmsg, modpython):
         return 1
 
     module = cl()
-    if module_type == CModInfo.UserModule:
-        module._cmod = CreateUserPyModule(user, modname, datapath, module, modpython)
-    elif module_type == CModInfo.GlobalModule:
-        module._cmod = CreateGlobalPyModule(modname, datapath, module, modpython)
-    else:
-        retmsg.s = "Module [modpython] doesn't support module type."
-        return 1
-
+    module._cmod = CreatePyModule(user, network, modname, datapath, module, modpython)
     module.nv = ModuleNV(module._cmod)
     module.SetDescription(cl.description)
     module.SetArgs(args)
@@ -463,6 +456,12 @@ def load_module(modname, args, module_type, user, retmsg, modpython):
             unload_module(module)
             return 1
         user.GetModules().push_back(module._cmod)
+    elif module_type == CModInfo.NetworkModule:
+        if not network:
+            retmsg.s = "Module [modpython] needs a network for for NetworkModule."
+            unload_module(module)
+            return 1
+        network.GetModules().push_back(module._cmod)
     elif module_type == CModInfo.GlobalModule:
         CZNC.Get().GetModules().push_back(module._cmod)
     else:
@@ -511,6 +510,8 @@ def unload_module(module):
     cmod = module._cmod
     if module.GetType() == CModInfo.UserModule:
         cmod.GetUser().GetModules().removeModule(cmod)
+    elif module.GetType() == CModInfo.NetworkModule:
+        cmod.GetNetwork().GetModules().removeModule(cmod)
     elif module.GetType() == CModInfo.GlobalModule:
         CZNC.Get().GetModules().removeModule(cmod)
     del module._cmod
