@@ -9,7 +9,7 @@
 #include "Nick.h"
 #include "Chan.h"
 #include "IRCSock.h"
-#include "User.h"
+#include "IRCNetwork.h"
 
 CNick::CNick() {
 	Reset();
@@ -24,7 +24,7 @@ CNick::~CNick() {}
 
 void CNick::Reset() {
 	m_sChanPerms.clear();
-	m_pUser = NULL;
+	m_pNetwork = NULL;
 }
 
 void CNick::Parse(const CString& sNickMask) {
@@ -48,10 +48,10 @@ void CNick::Parse(const CString& sNickMask) {
 	}
 }
 
-unsigned int CNick::GetCommonChans(vector<CChan*>& vRetChans, CUser* pUser) const {
+unsigned int CNick::GetCommonChans(vector<CChan*>& vRetChans, CIRCNetwork* pNetwork) const {
 	vRetChans.clear();
 
-	const vector<CChan*>& vChans = pUser->GetChans();
+	const vector<CChan*>& vChans = pNetwork->GetChans();
 
 	for (unsigned int a = 0; a < vChans.size(); a++) {
 		CChan* pChan = vChans[a];
@@ -68,7 +68,7 @@ unsigned int CNick::GetCommonChans(vector<CChan*>& vRetChans, CUser* pUser) cons
 	return vRetChans.size();
 }
 
-void CNick::SetUser(CUser* pUser) { m_pUser = pUser; }
+void CNick::SetNetwork(CIRCNetwork* pNetwork) { m_pNetwork = pNetwork; }
 void CNick::SetNick(const CString& s) { m_sNick = s; }
 void CNick::SetIdent(const CString& s) { m_sIdent = s; }
 void CNick::SetHost(const CString& s) { m_sHost = s; }
@@ -99,7 +99,7 @@ bool CNick::RemPerm(unsigned char uPerm) {
 }
 
 unsigned char CNick::GetPermChar() const {
-	CIRCSock* pIRCSock = (!m_pUser) ? NULL : m_pUser->GetIRCSock();
+	CIRCSock* pIRCSock = (!m_pNetwork) ? NULL : m_pNetwork->GetIRCSock();
 	const CString& sChanPerms = (!pIRCSock) ? "@+" : pIRCSock->GetPerms();
 
 	for (unsigned int a = 0; a < sChanPerms.size(); a++) {
@@ -113,7 +113,7 @@ unsigned char CNick::GetPermChar() const {
 }
 
 CString CNick::GetPermStr() const {
-	CIRCSock* pIRCSock = (!m_pUser) ? NULL : m_pUser->GetIRCSock();
+	CIRCSock* pIRCSock = (!m_pNetwork) ? NULL : m_pNetwork->GetIRCSock();
 	const CString& sChanPerms = (!pIRCSock) ? "@+" : pIRCSock->GetPerms();
 	CString sRet;
 
@@ -162,5 +162,5 @@ void CNick::Clone(const CNick& SourceNick) {
 	SetHost(SourceNick.GetHost());
 
 	m_sChanPerms = SourceNick.m_sChanPerms;
-	m_pUser = SourceNick.m_pUser;
+	m_pNetwork = SourceNick.m_pNetwork;
 }
