@@ -14,7 +14,7 @@
  */
 
 #include "Chan.h"
-#include "User.h"
+#include "IRCNetwork.h"
 
 class CRejoinJob: public CTimer {
 public:
@@ -26,8 +26,8 @@ public:
 
 protected:
 	virtual void RunJob() {
-		CUser* user = m_pModule->GetUser();
-		CChan* pChan = user->FindChan(GetName().Token(1, true));
+		CIRCNetwork* pNetwork = m_pModule->GetNetwork();
+		CChan* pChan = pNetwork->FindChan(GetName().Token(1, true));
 
 		if (pChan) {
 			pChan->Enable();
@@ -96,7 +96,7 @@ public:
 	}
 
 	virtual void OnKick(const CNick& OpNick, const CString& sKickedNick, CChan& pChan, const CString& sMessage) {
-		if (m_pUser->GetCurNick().Equals(sKickedNick)) {
+		if (m_pNetwork->GetCurNick().Equals(sKickedNick)) {
 			if (!delay) {
 				PutIRC("JOIN " + pChan.GetName() + " " + pChan.GetKey());
 				pChan.Enable();
@@ -112,4 +112,4 @@ template<> void TModInfo<CRejoinMod>(CModInfo& Info) {
 	Info.SetWikiPage("kickrejoin");
 }
 
-MODULEDEFS(CRejoinMod, "Autorejoin on kick")
+NETWORKMODULEDEFS(CRejoinMod, "Autorejoin on kick")

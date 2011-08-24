@@ -13,6 +13,7 @@
 
 #include "FileUtils.h"
 #include "User.h"
+#include "IRCNetwork.h"
 #include "znc.h"
 #include <sstream>
 
@@ -384,13 +385,13 @@ public:
 	void SendToUser(const CString & sFrom, const CString & sText)
 	{
 		//:*schat!znc@znc.in PRIVMSG Jim :
-		CString sSend = ":" + sFrom + " PRIVMSG " + m_pUser->GetCurNick() + " :" + sText;
+		CString sSend = ":" + sFrom + " PRIVMSG " + m_pNetwork->GetCurNick() + " :" + sText;
 		PutUser(sSend);
 	}
 
 	bool IsAttached()
 	{
-		return(m_pUser->IsUserAttached());
+		return(m_pNetwork->IsUserAttached());
 	}
 
 private:
@@ -468,5 +469,5 @@ template<> void TModInfo<CSChat>(CModInfo& Info) {
 	Info.SetWikiPage("schat");
 }
 
-MODULEDEFS(CSChat, "Secure cross platform (:P) chat system")
+NETWORKMODULEDEFS(CSChat, "Secure cross platform (:P) chat system")
 

@@ -7,7 +7,7 @@
  */
 
 #include "Nick.h"
-#include "User.h"
+#include "IRCNetwork.h"
 
 class CAntiIdle;
 
@@ -65,7 +65,7 @@ public:
 
 	virtual EModRet OnPrivMsg(CNick &Nick, CString &sMessage)
 	{
-		if(Nick.GetNick() == GetUser()->GetIRCNick().GetNick()
+		if(Nick.GetNick() == m_pNetwork->GetIRCNick().GetNick()
 				&& sMessage == "\xAE")
 			return HALT;
 
@@ -94,8 +94,8 @@ private:
 
 //! This function sends a query with (r) back to the user
 void CAntiIdleJob::RunJob() {
-	CString sNick = GetModule()->GetUser()->GetIRCNick().GetNick();
+	CString sNick = GetModule()->GetNetwork()->GetIRCNick().GetNick();
 	GetModule()->PutIRC("PRIVMSG " + sNick + " :\xAE");
 }
 
-MODULEDEFS(CAntiIdle, "Hides your real idle time")
+NETWORKMODULEDEFS(CAntiIdle, "Hides your real idle time")

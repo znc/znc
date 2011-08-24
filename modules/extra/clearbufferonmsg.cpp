@@ -6,29 +6,30 @@
  * by the Free Software Foundation.
  */
 
+#include "IRCNetwork.h"
 #include "Chan.h"
 #include "Modules.h"
-#include "User.h"
 
 class CClearBufferOnMsgMod : public CModule {
 public:
 	MODCONSTRUCTOR(CClearBufferOnMsgMod) {}
 
 	void ClearAllBuffers() {
-		const vector<CChan*>& vChans = GetUser()->GetChans();
-		vector<CChan*>::const_iterator it;
+		if (m_pNetwork) {
+			const vector<CChan*>& vChans = m_pNetwork->GetChans();
+			vector<CChan*>::const_iterator it;
 
-		for (it = vChans.begin(); it != vChans.end(); ++it) {
-			// Skip detached channels, they weren't read yet
-			if ((*it)->IsDetached())
-				continue;
+			for (it = vChans.begin(); it != vChans.end(); ++it) {
+				// Skip detached channels, they weren't read yet
+				if ((*it)->IsDetached())
+					continue;
 
-			(*it)->ClearBuffer();
-			// We force KeepBuffer on all channels since this module
-			// doesnt make any sense without
-			(*it)->SetKeepBuffer(true);
+				(*it)->ClearBuffer();
+				// We force KeepBuffer on all channels since this module
+				// doesnt make any sense without
+				(*it)->SetKeepBuffer(true);
+			}
 		}
-
 	}
 
 	virtual EModRet OnUserMsg(CString& sTarget, CString& sMessage) {

@@ -16,6 +16,7 @@
 
 #include "Chan.h"
 #include "User.h"
+#include "IRCNetwork.h"
 #include "FileUtils.h"
 #include <sys/stat.h>
 
@@ -84,7 +85,7 @@ public:
 		{
 			m_bFirstLoad = true;
 			AddTimer(new CSaveBuffJob(this, 60, 0, "SaveBuff", "Saves the current buffer to disk every 1 minute"));
-			const vector<CChan *>& vChans = m_pUser->GetChans();
+			const vector<CChan *>& vChans = m_pNetwork->GetChans();
 			for (u_int a = 0; a < vChans.size(); a++)
 			{
 				if (!vChans[a]->KeepBuffer())
@@ -130,7 +131,7 @@ public:
 	{
 		if (!m_sPassword.empty())
 		{
-			const vector<CChan *>& vChans = m_pUser->GetChans();
+			const vector<CChan *>& vChans = m_pNetwork->GetChans();
 			for (u_int a = 0; a < vChans.size(); a++)
 			{
 				CString sPath = GetPath(vChans[a]->GetName());
@@ -246,7 +247,7 @@ public:
 	void AddBuffer(CChan& chan, const CString &sLine)
 	{
 		// If they have keep buffer disabled, only add messages if no client is connected
-		if (!chan.KeepBuffer() && m_pUser->IsUserAttached())
+		if (!chan.KeepBuffer() && m_pNetwork->IsUserAttached())
 			return;
 		chan.AddBuffer(sLine);
 	}
@@ -339,5 +340,5 @@ template<> void TModInfo<CSaveBuff>(CModInfo& Info) {
 	Info.SetWikiPage("savebuff");
 }
 
-MODULEDEFS(CSaveBuff, "Stores channel buffers to disk, encrypted")
+NETWORKMODULEDEFS(CSaveBuff, "Stores channel buffers to disk, encrypted")
 

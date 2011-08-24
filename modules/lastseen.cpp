@@ -107,25 +107,6 @@ public:
 				Row["Username"] = pUser->GetUserName();
 				Row["IsSelf"] = CString(pUser == WebSock.GetSession()->GetUser());
 				Row["LastSeen"] = FormatLastSeen(pUser, "never");
-
-				Row["Info"] = CString(pUser->GetClients().size()) +
-					" client" + CString(pUser->GetClients().size() == 1 ? "" : "s");
-				if (!pUser->IsIRCConnected()) {
-					Row["Info"] += ", not connected to IRC";
-				} else {
-					unsigned int uChans = 0;
-					const vector<CChan*>& vChans = pUser->GetChans();
-					for (unsigned int a = 0; a < vChans.size(); ++a) {
-						if (vChans[a]->IsOn()) ++uChans;
-					}
-					unsigned int n = uChans;
-					Row["Info"] += ", joined to " + CString(uChans);
-					if(uChans != vChans.size()) {
-						Row["Info"] += " out of " + CString(vChans.size()) + " configured";
-						n = vChans.size();
-					}
-					Row["Info"] += " channel" + CString(n == 1 ? "" : "s");
-				}
 			}
 
 			return true;

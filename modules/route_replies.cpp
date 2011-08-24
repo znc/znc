@@ -7,7 +7,7 @@
  */
 
 #include "znc.h"
-#include "User.h"
+#include "IRCNetwork.h"
 #include "IRCSock.h"
 
 struct reply {
@@ -249,7 +249,7 @@ public:
 	{
 		CString sCmd = sLine.Token(0).AsUpper();
 
-		if (!m_pUser->GetIRCSock())
+		if (!m_pNetwork->GetIRCSock())
 			return CONTINUE;
 
 		if (sCmd.Equals("MODE")) {
@@ -334,7 +334,7 @@ private:
 
 		// 353 needs special treatment due to NAMESX and UHNAMES
 		if (bIsRaw353)
-			GetUser()->GetIRCSock()->ForwardRaw353(sLine, m_pDoing);
+			m_pNetwork->GetIRCSock()->ForwardRaw353(sLine, m_pDoing);
 		else
 			m_pDoing->PutClient(sLine);
 
@@ -426,4 +426,4 @@ template<> void TModInfo<CRouteRepliesMod>(CModInfo& Info) {
 	Info.SetWikiPage("route_replies");
 }
 
-MODULEDEFS(CRouteRepliesMod, "Send replies (e.g. to /who) to the right client only")
+NETWORKMODULEDEFS(CRouteRepliesMod, "Send replies (e.g. to /who) to the right client only")

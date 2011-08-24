@@ -8,6 +8,7 @@
 
 #include "Chan.h"
 #include "User.h"
+#include "IRCNetwork.h"
 #include <list>
 
 using std::list;
@@ -167,7 +168,7 @@ public:
 
 	virtual void OnClientLogin() {
 		CString sBufLine;
-		while (m_Buffer.GetNextLine(m_pUser->GetCurNick(), sBufLine)) {
+		while (m_Buffer.GetNextLine(m_pNetwork->GetCurNick(), sBufLine)) {
 			PutUser(sBufLine);
 		}
 
@@ -287,9 +288,9 @@ private:
 			CWatchEntry& WatchEntry = *it;
 
 			if (WatchEntry.IsMatch(Nick, sMessage, sSource, m_pUser)) {
-				if (m_pUser->IsUserAttached()) {
-					m_pUser->PutUser(":" + WatchEntry.GetTarget() + "!watch@znc.in PRIVMSG " +
-							m_pUser->GetCurNick() + " :" + sMessage);
+				if (m_pNetwork->IsUserAttached()) {
+					m_pNetwork->PutUser(":" + WatchEntry.GetTarget() + "!watch@znc.in PRIVMSG " +
+							m_pNetwork->GetCurNick() + " :" + sMessage);
 				} else {
 					m_Buffer.AddLine(":" + WatchEntry.GetTarget() + "!watch@znc.in PRIVMSG ",
 							" :" + m_pUser->AddTimestamp(sMessage));
@@ -554,4 +555,4 @@ template<> void TModInfo<CWatcherMod>(CModInfo& Info) {
 	Info.SetWikiPage("watch");
 }
 
-MODULEDEFS(CWatcherMod, "Copy activity from a specific user into a separate window")
+NETWORKMODULEDEFS(CWatcherMod, "Copy activity from a specific user into a separate window")

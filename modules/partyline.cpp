@@ -655,7 +655,7 @@ public:
 			return;
 		}
 
-		const vector<CClient*>& vClients = pUser->GetClients();
+		const vector<CClient*>& vClients = pUser->GetAllClients();
 		vector<CClient*>::const_iterator it;
 		for (it = vClients.begin(); it != vClients.end(); ++it) {
 			(*it)->PutClient(sPre + (*it)->GetNick() + sPost);

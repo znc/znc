@@ -7,6 +7,7 @@
  */
 
 #include "User.h"
+#include "IRCNetwork.h"
 #include "znc.h"
 
 class CFOModule : public CModule {
@@ -45,10 +46,10 @@ public:
 			// Remove the leading space
 			sBNCNicks.LeftChomp();
 
-			if (!m_pUser->GetIRCSock()) {
+			if (!m_pNetwork->GetIRCSock()) {
 				// if we are not connected to any IRC server, send
 				// an empty or module-nick filled response.
-				PutUser(":irc.znc.in 303 " + m_pUser->GetNick() + " :" + sBNCNicks);
+				PutUser(":irc.znc.in 303 " + m_pClient->GetNick() + " :" + sBNCNicks);
 			} else {
 				// We let the server handle this request and then act on
 				// the 303 response from the IRC server.
@@ -61,9 +62,9 @@ public:
 			CString sNick = sLine.Token(1);
 
 			if (IsOnlineModNick(sNick)) {
-				PutUser(":znc.in 311 " + m_pUser->GetCurNick() + " " + sNick + " " + sNick + " znc.in * :" + sNick);
-				PutUser(":znc.in 312 " + m_pUser->GetCurNick() + " " + sNick + " *.znc.in :Bouncer");
-				PutUser(":znc.in 318 " + m_pUser->GetCurNick() + " " + sNick + " :End of /WHOIS list.");
+				PutUser(":znc.in 311 " + m_pNetwork->GetCurNick() + " " + sNick + " " + sNick + " znc.in * :" + sNick);
+				PutUser(":znc.in 312 " + m_pNetwork->GetCurNick() + " " + sNick + " *.znc.in :Bouncer");
+				PutUser(":znc.in 318 " + m_pNetwork->GetCurNick() + " " + sNick + " :End of /WHOIS list.");
 
 				return HALT;
 			}
@@ -96,4 +97,4 @@ private:
 	VCString m_ISONRequests;
 };
 
-MODULEDEFS(CFOModule, "Fakes online status of ZNC *-users.")
+NETWORKMODULEDEFS(CFOModule, "Fakes online status of ZNC *-users.")

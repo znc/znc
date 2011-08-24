@@ -6,6 +6,7 @@
  * by the Free Software Foundation.
  */
 
+#include "Client.h"
 #include "Chan.h"
 #include "User.h"
 #include "Modules.h"
@@ -183,7 +184,7 @@ public:
 	}
 
 	virtual EModRet OnUserTopic(CString& sTarget, CString& sTopic) {
-		PutModule("* " + m_pUser->GetCurNick() + " changed topic on " + sTarget + " to '" + sTopic + "'");
+		PutModule("* " + m_pClient->GetNick() + " changed topic on " + sTarget + " to '" + sTopic + "'");
 
 		return CONTINUE;
 	}

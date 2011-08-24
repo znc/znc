@@ -9,6 +9,7 @@
 #include "Client.h"
 #include "FileUtils.h"
 #include "Server.h"
+#include "IRCNetwork.h"
 #include "User.h"
 
 #include <syslog.h>
@@ -42,11 +43,11 @@ public:
 	}
 
 	virtual void OnIRCConnected() {
-		Log("[" + m_pUser->GetUserName() + "] connected to IRC: " + m_pUser->GetCurrentServer()->GetName());
+		Log("[" + m_pUser->GetUserName() + "/" + m_pNetwork->GetName() + "] connected to IRC: " + m_pNetwork->GetCurrentServer()->GetName());
 	}
 
 	virtual void OnIRCDisconnected() {
-		Log("[" + m_pUser->GetUserName() + "] disconnected from IRC");
+		Log("[" + m_pUser->GetUserName() + "/" + m_pNetwork->GetName() + "] disconnected from IRC");
 	}
 
 	virtual EModRet OnRaw(CString& sLine) {
@@ -56,8 +57,8 @@ public:
 			CString sError(sLine.substr(6));
 			if (sError.Left(1) == ":")
 				sError.LeftChomp();
-			Log("[" + m_pUser->GetUserName() + "] disconnected from IRC: " +
-			    m_pUser->GetCurrentServer()->GetName() + " [" + sError + "]", LOG_NOTICE);
+			Log("[" + m_pUser->GetUserName() + "/" + m_pNetwork->GetName() + "] disconnected from IRC: " +
+			    m_pNetwork->GetCurrentServer()->GetName() + " [" + sError + "]", LOG_NOTICE);
 		}
 		return CONTINUE;
         }

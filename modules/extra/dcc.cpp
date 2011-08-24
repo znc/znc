@@ -241,7 +241,7 @@ public:
 			unsigned long uLongIP = sMessage.Token(3).ToULong();
 			unsigned short uPort = sMessage.Token(4).ToUShort();
 			unsigned long uFileSize = sMessage.Token(5).ToULong();
-			GetFile(m_pUser->GetCurNick(), CUtils::GetIP(uLongIP), uPort, sLocalFile, uFileSize);
+			GetFile(m_pClient->GetNick(), CUtils::GetIP(uLongIP), uPort, sLocalFile, uFileSize);
 		}
 	}
 };

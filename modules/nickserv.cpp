@@ -80,4 +80,4 @@ template<> void TModInfo<CNickServ>(CModInfo& Info) {
 	Info.SetWikiPage("nickserv");
 }
 
-MODULEDEFS(CNickServ, "Auths you with NickServ")
+NETWORKMODULEDEFS(CNickServ, "Auths you with NickServ")

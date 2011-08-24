@@ -8,6 +8,7 @@
 
 #include "Chan.h"
 #include "User.h"
+#include "IRCNetwork.h"
 
 class CAutoCycleMod : public CModule {
 public:
@@ -125,7 +126,7 @@ protected:
 
 		// Is that person us and we don't have op?
 		const CNick& pNick = Channel.GetNicks().begin()->second;
-		if (!pNick.HasPerm(CChan::Op) && pNick.GetNick().Equals(m_pUser->GetCurNick()))
+		if (!pNick.HasPerm(CChan::Op) && pNick.GetNick().Equals(m_pNetwork->GetCurNick()))
 			Channel.Cycle();
 	}
 

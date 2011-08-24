@@ -13,6 +13,7 @@
 
 #include "Client.h"
 #include "User.h"
+#include "IRCNetwork.h"
 #include "FileUtils.h"
 #include <sys/stat.h>
 
@@ -438,7 +439,7 @@ private:
 
 	void AddMessage(time_t iTime, const CNick & Nick, CString & sMessage)
 	{
-		if (m_pUser && Nick.GetNick() == m_pUser->GetIRCNick().GetNick())
+		if (Nick.GetNick() == m_pNetwork->GetIRCNick().GetNick())
 			return; // ignore messages from self
 		AddMessage(CString(iTime) + ":" + Nick.GetNickMask() + ":" + sMessage);
 	}
@@ -474,5 +475,5 @@ void CAwayJob::RunJob()
 	}
 }
 
-MODULEDEFS(CAway, "You don't need this module, ZNC works ok without it")
+NETWORKMODULEDEFS(CAway, "You don't need this module, ZNC works ok without it")
 
