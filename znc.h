@@ -20,6 +20,7 @@ using std::map;
 
 class CListener;
 class CUser;
+class CIRCNetwork;
 class CConnectUserTimer;
 class CConfig;
 class CFile;
@@ -138,7 +139,7 @@ public:
 	// !MOTD
 
 	// Create a CIRCSocket. Return false if user cant connect
-	bool ConnectUser(CUser *pUser);
+	bool ConnectNetwork(CIRCNetwork *pNetwork);
 	// This creates a CConnectUserTimer if we haven't got one yet
 	void EnableConnectUser();
 	void DisableConnectUser();

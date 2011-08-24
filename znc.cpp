@@ -12,6 +12,7 @@
 #include "IRCSock.h"
 #include "Server.h"
 #include "User.h"
+#include "IRCNetwork.h"
 #include "Listener.h"
 #include "Config.h"
 #include <list>
@@ -102,17 +103,18 @@ bool CZNC::OnBoot() {
 	return true;
 }
 
-bool CZNC::ConnectUser(CUser *pUser) {
-	CString sSockName = "IRC::" + pUser->GetUserName();
-	CIRCSock* pIRCSock = pUser->GetIRCSock();
+bool CZNC::ConnectNetwork(CIRCNetwork *pNetwork) {
+	CUser *pUser = pNetwork->GetUser();
+	CString sSockName = "IRC::" + pUser->GetUserName() + "::" + pNetwork->GetName();
+	CIRCSock* pIRCSock = pNetwork->GetIRCSock();
 
 	if (!pUser->GetIRCConnectEnabled())
 		return false;
 
-	if (pIRCSock || !pUser->HasServers())
+	if (pIRCSock || !pNetwork->HasServers())
 		return false;
 
-	CServer* pServer = pUser->GetNextServer();
+	CServer* pServer = pNetwork->GetNextServer();
 
 	if (!pServer)
 		return false;
@@ -122,10 +124,10 @@ bool CZNC::ConnectUser(CUser *pUser) {
 
 	m_sConnectThrottle.AddItem(pServer->GetName());
 
-	DEBUG("User [" << pUser->GetUserName() << "] is connecting to [" << pServer->GetString(false) << "] ...");
-	pUser->PutStatus("Attempting to connect to [" + pServer->GetString(false) + "] ...");
+	DEBUG("User [" << pUser->GetUserName() << "] is connecting to [" << pServer->GetString(false) << "] on network [" << pNetwork->GetName() << "]");
+	pNetwork->PutStatus("Attempting to connect to [" + pServer->GetString(false) + "] ...");
 
-	pIRCSock = new CIRCSock(pUser);
+	pIRCSock = new CIRCSock(pNetwork);
 	pIRCSock->SetPass(pServer->GetPass());
 
 	bool bSSL = false;
@@ -135,7 +137,7 @@ bool CZNC::ConnectUser(CUser *pUser) {
 	}
 #endif
 
-	MODULECALL(OnIRCConnecting(pIRCSock), pUser, NULL,
+	MODULECALL(OnIRCConnecting(pIRCSock), pUser, pNetwork, NULL,
 		DEBUG("Some module aborted the connection attempt");
 		pUser->PutStatus("Some module aborted the connection attempt");
 		delete pIRCSock;
@@ -143,7 +145,7 @@ bool CZNC::ConnectUser(CUser *pUser) {
 	);
 
 	if (!m_Manager.Connect(pServer->GetName(), pServer->GetPort(), sSockName, 120, bSSL, pUser->GetBindHost(), pIRCSock)) {
-		pUser->PutStatus("Unable to connect. (Bad host?)");
+		pNetwork->PutStatus("Unable to connect. (Bad host?)");
 	}
 
 	return true;
@@ -168,12 +170,17 @@ bool CZNC::HandleUserDeletion()
 		}
 		m_msUsers.erase(pUser->GetUserName());
 
-		CIRCSock* pIRCSock = pUser->GetIRCSock();
+		vector<CIRCNetwork*> vNetworks;
+		for (vector<CIRCNetwork*>::iterator it2 = vNetworks.begin(); it2 != vNetworks.end(); ++it2) {
+			CIRCNetwork *pNetwork = *it2;
+			CIRCSock* pIRCSock = pNetwork->GetIRCSock();
 
-		if (pIRCSock) {
-			m_Manager.DelSockByAddr(pIRCSock);
+			if (pIRCSock) {
+				m_Manager.DelSockByAddr(pIRCSock);
+			}
 		}
 
+		pUser->DelNetworks();
 		pUser->DelClients();
 		pUser->DelModules();
 		CWebSock::FinishUserSessions(*pUser);
@@ -1739,26 +1746,32 @@ protected:
 			it++;
 			m_uiPosNextUser = (m_uiPosNextUser + 1) % uiUserCount;
 
-			// Is this user disconnected?
-			if (pUser->GetIRCSock() != NULL)
-				continue;
-
 			// Does this user want to connect?
 			if (!pUser->GetIRCConnectEnabled())
 				continue;
 
-			// Does this user have any servers?
-			if (!pUser->HasServers())
-				continue;
+			vector<CIRCNetwork*> vNetworks = pUser->GetNetworks();
+			for (vector<CIRCNetwork*>::iterator it2 = vNetworks.begin(); it2 != vNetworks.end(); ++it2) {
+				CIRCNetwork* pNetwork = *it2;
 
-			// The timer runs until it once didn't find any users to connect
-			bUsersLeft = true;
+				// Is this network disconnected?
+				if (pNetwork->GetIRCSock() != NULL)
+					continue;
 
-			DEBUG("Connecting user [" << pUser->GetUserName() << "]");
+				// Does this user have any servers?
+				if (!pNetwork->HasServers())
+					continue;
 
-			if (CZNC::Get().ConnectUser(pUser))
-				// User connecting, wait until next time timer fires
-				return;
+				// The timer runs until it once didn't find any users to connect
+				bUsersLeft = true;
+
+				DEBUG("Connecting user [" << pUser->GetUserName() << "/" << pNetwork->GetName() << "]");
+
+				if (CZNC::Get().ConnectNetwork(pNetwork)) {
+					// User connecting, wait until next time timer fires
+					return;
+				}
+			}
 		}
 
 		if (bUsersLeft == false) {

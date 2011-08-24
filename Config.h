@@ -67,13 +67,17 @@ public:
 		return true;
 	}
 
-	bool FindStringVector(const CString& sName, VCString& vsList) {
+	bool FindStringVector(const CString& sName, VCString& vsList, bool bErase = true) {
 		EntryMap::iterator it = m_ConfigEntries.find(sName);
 		vsList.clear();
 		if (it == m_ConfigEntries.end())
 			return false;
 		vsList = it->second;
-		m_ConfigEntries.erase(it);
+
+		if (bErase) {
+			m_ConfigEntries.erase(it);
+		}
+
 		return true;
 	}
 
@@ -109,14 +113,18 @@ public:
 		return false;
 	}
 
-	bool FindSubConfig(const CString& sName, SubConfig& Config) {
+	bool FindSubConfig(const CString& sName, SubConfig& Config, bool bErase = true) {
 		SubConfigMap::iterator it = m_SubConfigs.find(sName);
 		if (it == m_SubConfigs.end()) {
 			Config.clear();
 			return false;
 		}
 		Config = it->second;
-		m_SubConfigs.erase(it);
+
+		if (bErase) {
+			m_SubConfigs.erase(it);
+		}
+
 		return true;
 	}
 
