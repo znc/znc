@@ -86,6 +86,7 @@ public:
 };
 
 template<> void TModInfo<CCertMod>(CModInfo& Info) {
+	Info.AddType(CModInfo::NetworkModule);
 	Info.SetWikiPage("cert");
 }
 
