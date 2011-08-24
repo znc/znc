@@ -502,6 +502,14 @@ void CClient::SetNetwork(CIRCNetwork* pNetwork, bool bDisconnect, bool bReconnec
 	if (bDisconnect) {
 		if (m_pNetwork) {
 			m_pNetwork->ClientDisconnected(this);
+
+			// Tell the client they are no longer in these channels.
+			const vector<CChan*>& vChans = m_pNetwork->GetChans();
+			for (vector<CChan*>::const_iterator it = vChans.begin(); it != vChans.end(); ++it) {
+				if (!((*it)->IsDetached())) {
+					PutClient(":" + m_pNetwork->GetIRCNick().GetNickMask() + " PART " + (*it)->GetName());
+				}
+			}
 		} else if (m_pUser) {
 			m_pUser->UserDisconnected(this);
 		}
