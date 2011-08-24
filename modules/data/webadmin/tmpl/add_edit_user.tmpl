@@ -99,15 +99,6 @@
 				</div>
 				<div style="clear: both;"></div>
 
-				<div class="subsection half">
-					<div class="inputlabel">Servers:</div>
-					<div><textarea name="servers" cols="70" rows="5"><? LOOP ServerLoop ?><? VAR Server ?>
-<? ENDLOOP ?>
-</textarea></div>
-					<br /><span class="info">One server per line, host [[+]port] [password]</span>
-				</div>
-				<div style="clear: both;"></div>
-
 				<div class="subsection">
 					<div class="inputlabel">Active:</div>
 					<div class="checkbox"><input type="checkbox" name="doconnect" id="doconnect_checkbox"<? IF IRCConnectEnabled ?> checked="checked"<? ENDIF ?> />
@@ -117,6 +108,42 @@
 
 			</div>
 		</div>
+	</div>
+
+	<div class="section">
+		<h3>Networks</h3>
+		<? IF !Edit ?>
+		<span class="info">You will be able to add + modify networks here after you created the user.</span><br />
+		<? ELSE ?>
+		<div class="sectionbg">
+			<div class="sectionbody">
+				<table>
+					<thead>
+					<tr>
+						<td>[<a href="addnetwork?user=<? VAR Username ESC=URL ?>">Add</a>]</td>
+				<? IF NetworkLoop ?>
+						<td>Name</td>
+					<? ELSE ?>
+						<td>&nbsp;&nbsp;&lt;- Add a network (opens in same page)&nbsp;&nbsp;</td>
+				<? ENDIF ?>
+					</tr>
+					</thead>
+
+					<tbody>
+			<? LOOP NetworkLoop SORTASC=Name ?>
+					<tr class="<? IF __EVEN__ ?>evenrow<? ELSE ?>oddrow<? ENDIF ?>">
+						<td>
+							<input type="hidden" name="network" value="<? VAR Name ?>" />
+							[<a href="editnetwork?user=<? VAR Username ESC=URL ?>&amp;network=<? VAR Name ESC=URL ?>">Edit</a>] [<a href="delnetwork?user=<? VAR Username ESC=URL ?>&amp;name=<? VAR Name ESC=URL ?>">Del</a>]
+						</td>
+						<td><? VAR Name ?></td>
+					</tr>
+			<? ENDLOOP ?>
+					</tbody>
+				</table>
+			</div>
+		</div>
+		<? ENDIF ?>
 	</div>
 
 	<div class="section">
@@ -149,52 +176,6 @@
 				</table>
 			</div>
 		</div>
-	</div>
-
-	<div class="section">
-		<h3>Channels</h3>
-		<? IF !Edit ?>
-		<span class="info">You will be able to add + modify channels here after you created the user.</span><br />
-		<? ELSE ?>
-		<div class="sectionbg">
-			<div class="sectionbody">
-				<table>
-					<thead>
-					<tr>
-						<td>[<a href="addchan?user=<? VAR Username ESC=URL ?>">Add</a>]</td>
-				<? IF ChannelLoop ?>
-						<td>Save</td>
-						<td>Name</td>
-						<td>CurModes</td>
-						<td>DefModes</td>
-						<td>BufferCount</td>
-						<td>Options</td>
-				<? ELSE ?>
-						<td>&nbsp;&nbsp;&lt;- Add a channel (opens in same page)&nbsp;&nbsp;</td>
-				<? ENDIF ?>
-					</tr>
-					</thead>
-
-					<tbody>
-			<? LOOP ChannelLoop SORTASC=Name ?>
-					<tr class="<? IF __EVEN__ ?>evenrow<? ELSE ?>oddrow<? ENDIF ?>">
-						<td>
-							<input type="hidden" name="channel" value="<? VAR Name ?>" />
-							[<a href="editchan?user=<? VAR Username ESC=URL ?>&amp;name=<? VAR Name ESC=URL ?>">Edit</a>] [<a href="delchan?user=<? VAR Username ESC=URL ?>&amp;name=<? VAR Name ESC=URL ?>">Del</a>]
-						</td>
-						<td><input type="checkbox" name="save_<? VAR Name ?>"<? IF InConfig ?> checked="checked"<? ENDIF ?> /></td>
-						<td><? VAR Name ?></td>
-						<td><? VAR CurModes ?></td>
-						<td><? VAR DefModes ?></td>
-						<td><? VAR BufferCount ?></td>
-						<td><? VAR Options ?></td>
-					</tr>
-			<? ENDLOOP ?>
-					</tbody>
-				</table>
-			</div>
-		</div>
-		<? ENDIF ?>
 	</div>
 
 	<div class="section">
