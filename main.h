@@ -42,15 +42,18 @@
 		}                                                             \
 	} while (false)
 
-#define GLOBALMODULECALL(macFUNC, macUSER, macCLIENT, macEXITER)   \
+#define GLOBALMODULECALL(macFUNC, macUSER, macNETWORK, macCLIENT, macEXITER)   \
 	do {                                                       \
 		CModules& GMods = CZNC::Get().GetModules();  \
 		CUser* pOldGUser = GMods.GetUser();                \
+		CIRCNetwork* pOldGNetwork = GMods.GetNetwork();    \
 		CClient* pOldGClient = GMods.GetClient();          \
 		GMods.SetUser(macUSER);                            \
+		GMods.SetNetwork(macNETWORK);                      \
 		GMods.SetClient(macCLIENT);                        \
 		if (GMods.macFUNC) {                               \
 			GMods.SetUser(pOldGUser);                  \
+			GMods.SetNetwork(pOldGNetwork);            \
 			GMods.SetClient(pOldGClient);              \
 			macEXITER;                                 \
 		}                                                  \
@@ -58,18 +61,38 @@
 		GMods.SetClient(pOldGClient);                      \
 	} while (false)
 
-#define MODULECALL(macFUNC, macUSER, macCLIENT, macEXITER)                \
+#define USERMODULECALL(macFUNC, macUSER, macNETWORK, macCLIENT, macEXITER)  \
 	if (macUSER) {                                                    \
-		GLOBALMODULECALL(macFUNC, macUSER, macCLIENT, macEXITER); \
 		CModules& UMods = macUSER->GetModules();                  \
+		CIRCNetwork* pOldUNetwork = UMods.GetNetwork();           \
 		CClient* pOldUClient = UMods.GetClient();                 \
+		UMods.SetNetwork(macNETWORK);                             \
 		UMods.SetClient(macCLIENT);                               \
 		if (UMods.macFUNC) {                                      \
+			UMods.SetNetwork(pOldUNetwork);                   \
 			UMods.SetClient(pOldUClient);                     \
 			macEXITER;                                        \
 		}                                                         \
+		UMods.SetNetwork(pOldUNetwork);                           \
 		UMods.SetClient(pOldUClient);                             \
 	}
+
+#define NETWORKMODULECALL(macFUNC, macUSER, macNETWORK, macCLIENT, macEXITER)  \
+	if (macNETWORK) {  \
+		CModules& NMods = ((CIRCNetwork*)macNETWORK)->GetModules();  \
+		CClient* pOldNClient = NMods.GetClient();  \
+		NMods.SetClient(macCLIENT);  \
+		if (NMods.macFUNC) {  \
+			NMods.SetClient(pOldNClient);  \
+			macEXITER;  \
+		}  \
+		NMods.SetClient(pOldNClient); \
+	}
+
+#define MODULECALL(macFUNC, macUSER, macNETWORK, macCLIENT, macEXITER)  \
+	GLOBALMODULECALL(macFUNC, macUSER, macNETWORK, macCLIENT, macEXITER);  \
+	USERMODULECALL(macFUNC, macUSER, macNETWORK, macCLIENT, macEXITER);  \
+	NETWORKMODULECALL(macFUNC, macUSER, macNETWORK, macCLIENT, macEXITER);
 
 /** @mainpage
  *  Welcome to the API documentation for ZNC.

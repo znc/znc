@@ -10,6 +10,7 @@
 #include "FileUtils.h"
 #include "Template.h"
 #include "User.h"
+#include "IRCNetwork.h"
 #include "WebModules.h"
 #include "znc.h"
 #include <dlfcn.h>
@@ -25,14 +26,21 @@
 			CModule* pMod = (CModule *) (*this)[a];                \
 			CClient* pOldClient = pMod->GetClient();         \
 			pMod->SetClient(m_pClient);                      \
-			if (m_pUser) {                                   \
-				CUser* pOldUser = pMod->GetUser();       \
+			CUser* pOldUser;                             \
+			if (m_pUser) {                               \
+				pOldUser = pMod->GetUser();              \
 				pMod->SetUser(m_pUser);                  \
-				pMod->func;                              \
+			}                                            \
+			CIRCNetwork* pNetwork;                       \
+			if (m_pNetwork) {                            \
+				pNetwork = pMod->GetNetwork();           \
+				pMod->SetNetwork(m_pNetwork);            \
+			}                                            \
+			pMod->func;                                  \
+			if (m_pUser)                                 \
 				pMod->SetUser(pOldUser);                 \
-			} else {                                         \
-				pMod->func;                              \
-			}                                                \
+			if (m_pNetwork)                              \
+				pMod->SetNetwork(pNetwork);              \
 			pMod->SetClient(pOldClient);                     \
 		} catch (CModule::EModException e) {                     \
 			if (e == CModule::UNLOAD) {                      \
@@ -50,14 +58,21 @@
 			CModule::EModRet e = CModule::CONTINUE;          \
 			CClient* pOldClient = pMod->GetClient();         \
 			pMod->SetClient(m_pClient);                      \
-			if (m_pUser) {                                   \
-				CUser* pOldUser = pMod->GetUser();       \
+			CUser* pOldUser;                             \
+			if (m_pUser) {                               \
+				pOldUser = pMod->GetUser();              \
 				pMod->SetUser(m_pUser);                  \
-				e = pMod->func;                          \
+			}                                            \
+			CIRCNetwork* pNetwork;                       \
+			if (m_pNetwork) {                            \
+				pNetwork = pMod->GetNetwork();           \
+				pMod->SetNetwork(m_pNetwork);            \
+			}                                            \
+			e = pMod->func;                              \
+			if (m_pUser)                                 \
 				pMod->SetUser(pOldUser);                 \
-			} else {                                         \
-				e = pMod->func;                          \
-			}                                                \
+			if (m_pNetwork)                              \
+				pMod->SetNetwork(pNetwork);              \
 			pMod->SetClient(pOldClient);                     \
 			if (e == CModule::HALTMODS) {                    \
 				break;                                   \
@@ -99,15 +114,18 @@ const CString& CTimer::GetDescription() const { return m_sDescription; }
 /////////////////// !Timer ///////////////////
 
 
-CModule::CModule(ModHandle pDLL, CUser* pUser, const CString& sModName, const CString& sDataDir) {
+CModule::CModule(ModHandle pDLL, CUser* pUser, CIRCNetwork* pNetwork, const CString& sModName, const CString& sDataDir) {
 	m_pDLL = pDLL;
 	m_pManager = &(CZNC::Get().GetManager());;
 	m_pUser = pUser;
+	m_pNetwork = pNetwork;
 	m_pClient = NULL;
 	m_sModName = sModName;
 	m_sDataDir = sDataDir;
 
-	if (m_pUser) {
+	if (m_pNetwork) {
+		m_sSavePath = m_pNetwork->GetNetworkPath() + "/moddata/" + m_sModName;
+	} else if (m_pUser) {
 		m_sSavePath = m_pUser->GetUserPath() + "/moddata/" + m_sModName;
 	} else {
 		m_sSavePath = CZNC::Get().GetZNCPath() + "/moddata/" + m_sModName;
@@ -128,6 +146,7 @@ CModule::~CModule() {
 }
 
 void CModule::SetUser(CUser* pUser) { m_pUser = pUser; }
+void CModule::SetNetwork(CIRCNetwork* pNetwork) { m_pNetwork = pNetwork; }
 void CModule::SetClient(CClient* pClient) { m_pClient = pClient; }
 
 const CString& CModule::GetSavePath() const {
@@ -524,13 +543,13 @@ bool CModule::OnServerCapAvailable(const CString& sCap) { return false; }
 void CModule::OnServerCapResult(const CString& sCap, bool bSuccess) {}
 
 bool CModule::PutIRC(const CString& sLine) {
-	return (m_pUser) ? m_pUser->PutIRC(sLine) : false;
+	return (m_pNetwork) ? m_pNetwork->PutIRC(sLine) : false;
 }
 bool CModule::PutUser(const CString& sLine) {
-	return (m_pUser) ? m_pUser->PutUser(sLine, m_pClient) : false;
+	return (m_pNetwork) ? m_pNetwork->PutUser(sLine, m_pClient) : false;
 }
 bool CModule::PutStatus(const CString& sLine) {
-	return (m_pUser) ? m_pUser->PutStatus(sLine, m_pClient) : false;
+	return (m_pNetwork) ? m_pNetwork->PutStatus(sLine, m_pClient) : false;
 }
 unsigned int CModule::PutModule(const CTable& table) {
 	if (!m_pUser)
@@ -545,12 +564,24 @@ unsigned int CModule::PutModule(const CTable& table) {
 bool CModule::PutModule(const CString& sLine) {
 	if (!m_pUser)
 		return false;
-	return m_pUser->PutModule(GetModName(), sLine, m_pClient);
+
+	if (m_pClient) {
+		m_pClient->PutModule(GetModName(), sLine);
+		return true;
+	}
+
+	return m_pUser->PutModule(GetModName(), sLine);
 }
 bool CModule::PutModNotice(const CString& sLine) {
 	if (!m_pUser)
 		return false;
-	return m_pUser->PutModNotice(GetModName(), sLine, m_pClient);
+
+	if (m_pClient) {
+		m_pClient->PutModNotice(GetModName(), sLine);
+		return true;
+	}
+
+	return m_pUser->PutModNotice(GetModName(), sLine);
 }
 
 ///////////////////
@@ -577,6 +608,7 @@ void CModule::OnGetAvailableMods(set<CModInfo>& ssMods, CModInfo::EModuleType eT
 
 CModules::CModules() {
 	m_pUser = NULL;
+	m_pNetwork = NULL;
 	m_pClient = NULL;
 }
 
@@ -788,7 +820,7 @@ CModule* CModules::FindModule(const CString& sModule) const {
 	return NULL;
 }
 
-bool CModules::LoadModule(const CString& sModule, const CString& sArgs, CModInfo::EModuleType eType, CUser* pUser, CString& sRetMsg) {
+bool CModules::LoadModule(const CString& sModule, const CString& sArgs, CModInfo::EModuleType eType, CUser* pUser, CIRCNetwork *pNetwork, CString& sRetMsg) {
 	sRetMsg = "";
 
 	if (FindModule(sModule) != NULL) {
@@ -797,7 +829,7 @@ bool CModules::LoadModule(const CString& sModule, const CString& sArgs, CModInfo
 	}
 
 	bool bSuccess;
-	GLOBALMODULECALL(OnModuleLoading(sModule, sArgs, eType, bSuccess, sRetMsg), pUser, NULL, return bSuccess);
+	GLOBALMODULECALL(OnModuleLoading(sModule, sArgs, eType, bSuccess, sRetMsg), pUser, pNetwork, NULL, return bSuccess);
 
 	CString sModPath, sDataPath;
 	bool bVersionMismatch;
@@ -832,21 +864,13 @@ bool CModules::LoadModule(const CString& sModule, const CString& sArgs, CModInfo
 		return false;
 	}
 
-	CModule* pModule = NULL;
-
-	switch (eType) {
-	case CModInfo::UserModule:
-		pModule = Info.GetLoader()(p, pUser, sModule, sDataPath);
-		break;
-	case CModInfo::GlobalModule:
-		pModule = Info.GetLoader()(p, NULL, sModule, sDataPath);
-		break;
-	default:
+	if (!pNetwork && eType == CModInfo::NetworkModule) {
 		dlclose(p);
-		sRetMsg = "Unsupported module type";
+		sRetMsg = "Module [" + sModule + "] requires a network.";
 		return false;
 	}
 
+	CModule* pModule = Info.GetLoader()(p, pUser, pNetwork, sModule, sDataPath);
 	pModule->SetDescription(Info.GetDescription());
 	pModule->SetType(eType);
 	pModule->SetArgs(sArgs);
@@ -893,7 +917,7 @@ bool CModules::UnloadModule(const CString& sModule, CString& sRetMsg) {
 	}
 
 	bool bSuccess;
-	GLOBALMODULECALL(OnModuleUnloading(pModule, bSuccess, sRetMsg), pModule->GetUser(), NULL, return bSuccess);
+	GLOBALMODULECALL(OnModuleUnloading(pModule, bSuccess, sRetMsg), pModule->GetUser(), pModule->GetNetwork(), NULL, return bSuccess);
 
 	ModHandle p = pModule->GetDLL();
 
@@ -917,7 +941,7 @@ bool CModules::UnloadModule(const CString& sModule, CString& sRetMsg) {
 	return false;
 }
 
-bool CModules::ReloadModule(const CString& sModule, const CString& sArgs, CUser* pUser, CString& sRetMsg) {
+bool CModules::ReloadModule(const CString& sModule, const CString& sArgs, CUser* pUser, CIRCNetwork* pNetwork, CString& sRetMsg) {
 	CString sMod = sModule;  // Make a copy incase the reference passed in is from CModule::GetModName()
 	CModule *pModule = FindModule(sMod);
 
@@ -934,7 +958,7 @@ bool CModules::ReloadModule(const CString& sModule, const CString& sArgs, CUser*
 		return false;
 	}
 
-	if (!LoadModule(sMod, sArgs, eType, pUser, sRetMsg)) {
+	if (!LoadModule(sMod, sArgs, eType, pUser, pNetwork, sRetMsg)) {
 		return false;
 	}
 
@@ -946,7 +970,7 @@ bool CModules::GetModInfo(CModInfo& ModInfo, const CString& sModule, CString& sR
 	CString sModPath, sTmp;
 
 	bool bSuccess;
-	GLOBALMODULECALL(OnGetModInfo(ModInfo, sModule, bSuccess, sRetMsg), NULL, NULL, return bSuccess);
+	GLOBALMODULECALL(OnGetModInfo(ModInfo, sModule, bSuccess, sRetMsg), NULL, NULL, NULL, return bSuccess);
 
 	if (!FindModPath(sModule, sModPath, sTmp)) {
 		sRetMsg = "Unable to find module [" + sModule + "]";
@@ -1004,7 +1028,7 @@ void CModules::GetAvailableMods(set<CModInfo>& ssMods, CModInfo::EModuleType eTy
 		}
 	}
 
-	GLOBALMODULECALL(OnGetAvailableMods(ssMods, eType), NULL, NULL, NOTHING);
+	GLOBALMODULECALL(OnGetAvailableMods(ssMods, eType), NULL, NULL, NULL, NOTHING);
 }
 
 bool CModules::FindModPath(const CString& sModule, CString& sModPath,
