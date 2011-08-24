@@ -557,7 +557,7 @@ CString CZNC::MakeConfigHeader() {
 }
 
 bool CZNC::WriteNewConfig(const CString& sConfigFile) {
-	CString sAnswer, sUser;
+	CString sAnswer, sUser, sNetwork;
 	VCString vsLines;
 
 	vsLines.push_back(MakeConfigHeader());
@@ -677,7 +677,6 @@ bool CZNC::WriteNewConfig(const CString& sConfigFile) {
 	// User
 	CUtils::PrintMessage("");
 	CUtils::PrintMessage("Now we need to set up a user...");
-	CUtils::PrintMessage("ZNC needs one user per IRC network.");
 	CUtils::PrintMessage("");
 
 	bool bFirstUser = true;
@@ -780,54 +779,115 @@ bool CZNC::WriteNewConfig(const CString& sConfigFile) {
 			}
 		}
 
-		vsLines.push_back("");
 		CUtils::PrintMessage("");
-		CUtils::PrintMessage("-- IRC Servers --");
-		CUtils::PrintMessage("Only add servers from the same IRC network.");
-		CUtils::PrintMessage("If a server from the list can't be reached, another server will be used.");
-		CUtils::PrintMessage("");
+		CString sAAnother = "a";
+		while (CUtils::GetBoolInput("Would you like to set up " + sAAnother + " network?", false)) {
+			sAAnother = "another";
+			vsLines.push_back("");
 
-		do {
-			CString sHost, sPass;
-			bool bSSL = false;
-			unsigned int uServerPort = 0;
+			do {
+				CUtils::GetInput("Network", sNetwork, "");
+			} while (!CIRCNetwork::IsValidNetwork(sNetwork));
 
-			while (!CUtils::GetInput("IRC server", sHost, "", "host only") || !CServer::IsValidHostName(sHost)) ;
-			while (!CUtils::GetNumInput("[" + sHost + "] Port", uServerPort, 1, 65535, 6667)) ;
-			CUtils::GetInput("[" + sHost + "] Password (probably empty)", sPass);
+			vsLines.push_back("\t<Network " + sNetwork + ">");
+
+			set<CModInfo> ssNetworkMods;
+			GetModules().GetAvailableMods(ssNetworkMods, CModInfo::NetworkModule);
+			size_t uNrOtherNetworkMods = FilterUncommonModules(ssNetworkMods);
+
+			if (ssNetworkMods.size()) {
+				CUtils::PrintMessage("");
+				CUtils::PrintMessage("-- Network Modules --");
+				CUtils::PrintMessage("");
+
+				CTable Table;
+				Table.AddColumn("Name");
+				Table.AddColumn("Description");
+				set<CModInfo>::iterator it;
+
+				for (it = ssNetworkMods.begin(); it != ssNetworkMods.end(); ++it) {
+					const CModInfo& Info = *it;
+					Table.AddRow();
+					Table.SetCell("Name", Info.GetName());
+					Table.SetCell("Description", Info.GetDescription().Ellipsize(128));
+				}
+
+				unsigned int uTableIdx = 0; CString sLine;
+				while (Table.GetLine(uTableIdx++, sLine)) {
+					CUtils::PrintMessage(sLine);
+				}
+
+				if (uNrOtherNetworkMods > 0) {
+					CUtils::PrintMessage("And " + CString(uNrOtherNetworkMods) + " other (uncommon) modules. You can enable those later.");
+				}
+
+				CUtils::PrintMessage("");
+
+				for (it = ssNetworkMods.begin(); it != ssNetworkMods.end(); ++it) {
+					const CModInfo& Info = *it;
+					CString sName = Info.GetName();
+
+					if (CDebug::StdoutIsTTY()) {
+						if (CUtils::GetBoolInput("Load module <\033[1m" + sName + "\033[22m>?", false))
+							vsLines.push_back("\t\tLoadModule = " + sName);
+					} else {
+						if (CUtils::GetBoolInput("Load module <" + sName + ">?", false))
+							vsLines.push_back("\t\tLoadModule = " + sName);
+					}
+				}
+			}
+
+			vsLines.push_back("");
+			CUtils::PrintMessage("");
+			CUtils::PrintMessage("-- IRC Servers --");
+			CUtils::PrintMessage("Only add servers from the same IRC network.");
+			CUtils::PrintMessage("If a server from the list can't be reached, another server will be used.");
+			CUtils::PrintMessage("");
+
+			do {
+				CString sHost, sPass;
+				bool bSSL = false;
+				unsigned int uServerPort = 0;
+
+				while (!CUtils::GetInput("IRC server", sHost, "", "host only") || !CServer::IsValidHostName(sHost)) ;
+				while (!CUtils::GetNumInput("[" + sHost + "] Port", uServerPort, 1, 65535, 6667)) ;
+				CUtils::GetInput("[" + sHost + "] Password (probably empty)", sPass);
 
 #ifdef HAVE_LIBSSL
-			bSSL = CUtils::GetBoolInput("Does this server use SSL?", false);
+				bSSL = CUtils::GetBoolInput("Does this server use SSL?", false);
 #endif
 
-			vsLines.push_back("\tServer     = " + sHost + ((bSSL) ? " +" : " ") + CString(uServerPort) + " " + sPass);
+				vsLines.push_back("\t\tServer     = " + sHost + ((bSSL) ? " +" : " ") + CString(uServerPort) + " " + sPass);
 
+				CUtils::PrintMessage("");
+			} while (CUtils::GetBoolInput("Would you like to add another server for this IRC network?", false));
+
+			vsLines.push_back("");
 			CUtils::PrintMessage("");
-		} while (CUtils::GetBoolInput("Would you like to add another server for this IRC network?", false));
+			CUtils::PrintMessage("-- Channels --");
+			CUtils::PrintMessage("");
 
-		vsLines.push_back("");
-		CUtils::PrintMessage("");
-		CUtils::PrintMessage("-- Channels --");
-		CUtils::PrintMessage("");
+			CString sArg = "a";
+			CString sPost = " for ZNC to automatically join?";
+			bool bDefault = true;
 
-		CString sArg = "a";
-		CString sPost = " for ZNC to automatically join?";
-		bool bDefault = true;
+			while (CUtils::GetBoolInput("Would you like to add " + sArg + " channel" + sPost, bDefault)) {
+				while (!CUtils::GetInput("Channel name", sAnswer)) ;
+				vsLines.push_back("\t\t<Chan " + sAnswer + ">");
+				vsLines.push_back("\t\t</Chan>");
+				sArg = "another";
+				sPost = "?";
+				bDefault = false;
+			}
 
-		while (CUtils::GetBoolInput("Would you like to add " + sArg + " channel" + sPost, bDefault)) {
-			while (!CUtils::GetInput("Channel name", sAnswer)) ;
-			vsLines.push_back("\t<Chan " + sAnswer + ">");
-			vsLines.push_back("\t</Chan>");
-			sArg = "another";
-			sPost = "?";
-			bDefault = false;
+			vsLines.push_back("\t</Network>");
 		}
 
 		vsLines.push_back("</User>");
 
 		CUtils::PrintMessage("");
 		bFirstUser = false;
-	} while (CUtils::GetBoolInput("Would you like to set up another user (e.g. for connecting to another network)?", false));
+	} while (CUtils::GetBoolInput("Would you like to set up another user?", false));
 	// !User
 
 	CFile File;
@@ -1056,7 +1116,7 @@ bool CZNC::DoRehash(CString& sError)
 		if (!pOldMod) {
 			CUtils::PrintAction("Loading Global Module [" + sModName + "]");
 
-			bool bModRet = GetModules().LoadModule(sModName, sArgs, CModInfo::GlobalModule, NULL, sModRet);
+			bool bModRet = GetModules().LoadModule(sModName, sArgs, CModInfo::GlobalModule, NULL, NULL, sModRet);
 
 			CUtils::PrintStatus(bModRet, sModRet);
 			if (!bModRet) {
@@ -1066,7 +1126,7 @@ bool CZNC::DoRehash(CString& sError)
 		} else if (pOldMod->GetArgs() != sArgs) {
 			CUtils::PrintAction("Reloading Global Module [" + sModName + "]");
 
-			bool bModRet = GetModules().ReloadModule(sModName, sArgs, NULL, sModRet);
+			bool bModRet = GetModules().ReloadModule(sModName, sArgs, NULL, NULL, sModRet);
 
 			CUtils::PrintStatus(bModRet, sModRet);
 			if (!bModRet) {
@@ -1088,7 +1148,7 @@ bool CZNC::DoRehash(CString& sError)
 			CUtils::PrintAction("Loading Global Module [identfile]");
 
 			CString sModRet;
-			bool bModRet = GetModules().LoadModule("identfile", "", CModInfo::GlobalModule, NULL, sModRet);
+			bool bModRet = GetModules().LoadModule("identfile", "", CModInfo::GlobalModule, NULL, NULL, sModRet);
 
 			CUtils::PrintStatus(bModRet, sModRet);
 			if (!bModRet) {
@@ -1350,7 +1410,7 @@ void CZNC::Broadcast(const CString& sMessage, bool bAdminOnly,
 		if (a->second != pSkipUser) {
 			CString sMsg = sMessage;
 
-			MODULECALL(OnBroadcast(sMsg), a->second, NULL, continue);
+			MODULECALL(OnBroadcast(sMsg), a->second, NULL, NULL, continue);
 			a->second->PutStatusNotice("*** " + sMsg, NULL, pSkipClient);
 		}
 	}
@@ -1406,7 +1466,7 @@ bool CZNC::AddUser(CUser* pUser, CString& sErrorRet) {
 				<< sErrorRet << "]");
 		return false;
 	}
-	GLOBALMODULECALL(OnAddUser(*pUser, sErrorRet), pUser, NULL,
+	GLOBALMODULECALL(OnAddUser(*pUser, sErrorRet), pUser, NULL, NULL,
 		DEBUG("AddUser [" << pUser->GetUserName() << "] aborted by a module ["
 			<< sErrorRet << "]");
 		return false;
@@ -1654,7 +1714,7 @@ CZNC::TrafficStatsMap CZNC::GetTrafficStats(TrafficStatsPair &Users,
 	for (CSockManager::const_iterator it = m_Manager.begin(); it != m_Manager.end(); ++it) {
 		CUser *pUser = NULL;
 		if ((*it)->GetSockName().Left(5) == "IRC::") {
-			pUser = ((CIRCSock *) *it)->GetUser();
+			pUser = ((CIRCSock *) *it)->GetNetwork()->GetUser();
 		} else if ((*it)->GetSockName().Left(5) == "USR::") {
 			pUser = ((CClient*) *it)->GetUser();
 		}
@@ -1679,7 +1739,7 @@ CZNC::TrafficStatsMap CZNC::GetTrafficStats(TrafficStatsPair &Users,
 
 void CZNC::AuthUser(CSmartPtr<CAuthBase> AuthClass) {
 	// TODO unless the auth module calls it, CUser::IsHostAllowed() is not honoured
-	GLOBALMODULECALL(OnLoginAttempt(AuthClass), NULL, NULL, return);
+	GLOBALMODULECALL(OnLoginAttempt(AuthClass), NULL, NULL, NULL, return);
 
 	CUser* pUser = FindUser(AuthClass->GetUsername());
 
