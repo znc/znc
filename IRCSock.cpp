@@ -121,6 +121,8 @@ void CIRCSock::ReadLine(const CString& sData) {
 		CString sRest = sLine.Token(3, true);
 
 		switch (uRaw) {
+			case 10: // Don't send server redirects to the client
+				break;
 			case 1: { // :irc.server.com 001 nick :Welcome to the Internet Relay Network nick
 				if (m_bAuthed && sServer == "irc.znc.in") {
 					// m_bAuthed == true => we already received another 001 => we might be in a traffic loop
