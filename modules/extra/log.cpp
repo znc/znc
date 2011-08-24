@@ -77,6 +77,7 @@ void CLogMod::PutLog(const CString& sLine, const CString& sWindow /*= "Status"*/
 	// $WINDOW has to be handled last, since it can contain %
 	sPath.Replace("$NETWORK", (m_pNetwork ? m_pNetwork->GetName() : "znc"));
 	sPath.Replace("$WINDOW", sWindow.Replace_n("/", "?"));
+	sPath.Replace("$USER", (m_pUser ? m_pUser->GetUserName() : "UNKNOWN"));
 
 	// Check if it's allowed to write in this specific path
 	sPath = CDir::CheckPathPrefix(GetSavePath(), sPath);
@@ -128,12 +129,27 @@ bool CLogMod::OnLoad(const CString& sArgs, CString& sMessage)
 	m_sLogPath = sArgs;
 
 	// Add default filename to path if it's a folder
-	if (m_sLogPath.Right(1) == "/" || m_sLogPath.find("$WINDOW") == string::npos || m_sLogPath.find("$NETWORK") == string::npos)
-	{
-		if (!m_sLogPath.empty()) {
-			m_sLogPath += "/";
+	if (GetType() == CModInfo::UserModule) {
+		if (m_sLogPath.Right(1) == "/" || m_sLogPath.find("$WINDOW") == string::npos || m_sLogPath.find("$NETWORK") == string::npos) {
+			if (!m_sLogPath.empty()) {
+				m_sLogPath += "/";
+			}
+			m_sLogPath += "$NETWORK_$WINDOW_%Y%m%d.log";
 		}
-		m_sLogPath += "$NETWORK_$WINDOW_%Y%m%d.log";
+	} else if (GetType() == CModInfo::NetworkModule) {
+		if (m_sLogPath.Right(1) == "/" || m_sLogPath.find("$WINDOW") == string::npos) {
+			if (!m_sLogPath.empty()) {
+				m_sLogPath += "/";
+			}
+			m_sLogPath += "$WINDOW_%Y%m%d.log";
+		}
+	} else {
+		if (m_sLogPath.Right(1) == "/" || m_sLogPath.find("$USER") == string::npos || m_sLogPath.find("$WINDOW") == string::npos || m_sLogPath.find("$NETWORK") == string::npos) {
+			if (!m_sLogPath.empty()) {
+				m_sLogPath += "/";
+			}
+			m_sLogPath += "$USER_$NETWORK_$WINDOW_%Y%m%d.log";
+		}
 	}
 
 	// Check if it's allowed to write in this path in general
@@ -269,4 +285,9 @@ CModule::EModRet CLogMod::OnChanMsg(CNick& Nick, CChan& Channel, CString& sMessa
 	return CONTINUE;
 }
 
-MODULEDEFS(CLogMod, "Write IRC logs")
+template<> void TModInfo<CLogMod>(CModInfo& Info) {
+	Info.AddType(CModInfo::UserModule);
+	Info.AddType(CModInfo::GlobalModule);
+}
+
+NETWORKMODULEDEFS(CLogMod, "Write IRC logs")
