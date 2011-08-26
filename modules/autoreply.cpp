@@ -8,6 +8,7 @@
  */
 
 #include "Modules.h"
+#include "IRCNetwork.h"
 #include "IRCSock.h"
 #include "User.h"
 
@@ -42,7 +43,7 @@ public:
 	}
 
 	void Handle(const CString& sNick) {
-		CIRCSock *pIRCSock = GetUser()->GetIRCSock();
+		CIRCSock *pIRCSock = m_pNetwork->GetIRCSock();
 		if (!pIRCSock)
 			// WTF?
 			return;

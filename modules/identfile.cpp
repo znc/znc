@@ -9,6 +9,7 @@
 #include "FileUtils.h"
 #include "IRCSock.h"
 #include "User.h"
+#include "IRCNetwork.h"
 #include "znc.h"
 
 class CIdentFileModule : public CModule {
@@ -141,7 +142,7 @@ public:
 	}
 
 	virtual void OnIRCConnected() {
-		if (m_pIRCSock == m_pUser->GetIRCSock()) {
+		if (m_pIRCSock == m_pNetwork->GetIRCSock()) {
 			m_pIRCSock = NULL;
 			ReleaseISpoof();
 		}
@@ -155,7 +156,7 @@ public:
 	}
 
 	virtual void OnIRCDisconnected() {
-		if (m_pIRCSock == m_pUser->GetIRCSock()) {
+		if (m_pIRCSock == m_pNetwork->GetIRCSock()) {
 			m_pIRCSock = NULL;
 			ReleaseISpoof();
 		}

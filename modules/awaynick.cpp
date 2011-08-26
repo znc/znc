@@ -9,6 +9,7 @@
 // @todo handle raw 433 (nick in use)
 #include "IRCSock.h"
 #include "User.h"
+#include "IRCNetwork.h"
 
 class CAwayNickMod;
 
@@ -31,10 +32,10 @@ public:
 
 private:
 	virtual void RunJob() {
-		CUser* pUser = m_Module.GetUser();
+		CIRCNetwork* pNetwork = m_Module.GetNetwork();
 
-		if (pUser->IsUserAttached() && pUser->IsIRCConnected()) {
-			CString sConfNick = pUser->GetNick();
+		if (pNetwork->IsUserAttached() && pNetwork->IsIRCConnected()) {
+			CString sConfNick = pNetwork->GetUser()->GetNick();
 			m_Module.PutIRC("NICK " + sConfNick);
 		}
 	}
@@ -76,7 +77,7 @@ public:
 	}
 
 	void StartBackNickTimer() {
-		CIRCSock* pIRCSock = m_pUser->GetIRCSock();
+		CIRCSock* pIRCSock = m_pNetwork->GetIRCSock();
 
 		if (pIRCSock) {
 			CString sConfNick = m_pUser->GetNick();
@@ -159,7 +160,7 @@ public:
 
 	CString GetAwayNick() {
 		unsigned int uLen = 9;
-		CIRCSock* pIRCSock = m_pUser->GetIRCSock();
+		CIRCSock* pIRCSock = m_pNetwork->GetIRCSock();
 
 		if (pIRCSock) {
 			uLen = pIRCSock->GetMaxNickLen();
@@ -179,9 +180,9 @@ CAwayNickTimer::CAwayNickTimer(CAwayNickMod& Module)
 	  m_Module(Module) {}
 
 void CAwayNickTimer::RunJob() {
-	CUser* pUser = m_Module.GetUser();
+	CIRCNetwork* pNetwork = m_Module.GetNetwork();
 
-	if (!pUser->IsUserAttached() && pUser->IsIRCConnected()) {
+	if (!pNetwork->IsUserAttached() && pNetwork->IsIRCConnected()) {
 		m_Module.PutIRC("NICK " + m_Module.GetAwayNick());
 	}
 }
@@ -190,4 +191,4 @@ template<> void TModInfo<CAwayNickMod>(CModInfo& Info) {
 	Info.SetWikiPage("awaynick");
 }
 
-MODULEDEFS(CAwayNickMod, "Change your nick while you are away")
+NETWORKMODULEDEFS(CAwayNickMod, "Change your nick while you are away")

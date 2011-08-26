@@ -7,7 +7,7 @@
  */
 
 #include "Chan.h"
-#include "User.h"
+#include "IRCNetwork.h"
 
 class CStickyChan : public CModule
 {
@@ -25,7 +25,7 @@ public:
 		{
 			if (sChannel.Equals(it->first))
 			{
-				CChan* pChan = m_pUser->FindChan(sChannel);
+				CChan* pChan = m_pNetwork->FindChan(sChannel);
 
 				if (pChan)
 				{
@@ -76,17 +76,17 @@ public:
 
 	virtual void RunJob()
 	{
-		if (!m_pUser->GetIRCSock())
+		if (!m_pNetwork->GetIRCSock())
 			return;
 
 		for (MCString::iterator it = BeginNV(); it != EndNV(); ++it)
 		{
-			CChan *pChan = m_pUser->FindChan(it->first);
+			CChan *pChan = m_pNetwork->FindChan(it->first);
 			if (!pChan) {
-				pChan = new CChan(it->first, m_pUser, true);
+				pChan = new CChan(it->first, m_pNetwork, true);
 				if (!it->second.empty())
 					pChan->SetKey(it->second);
-				if (!m_pUser->AddChan(pChan)) {
+				if (!m_pNetwork->AddChan(pChan)) {
 					/* AddChan() deleted that channel */
 					PutModule("Could not join [" + it->first
 							+ "] (# prefix missing?)");
@@ -107,7 +107,7 @@ public:
 		if (sPageName == "index") {
 			bool bSubmitted = (WebSock.GetParam("submitted").ToInt() != 0);
 
-			const vector<CChan*>& Channels = m_pUser->GetChans();
+			const vector<CChan*>& Channels = m_pNetwork->GetChans();
 			for (unsigned int c = 0; c < Channels.size(); c++) {
 				const CString sChan = Channels[c]->GetName();
 				bool bStick = FindNV(sChan) != EndNV();

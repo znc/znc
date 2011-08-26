@@ -167,6 +167,7 @@ private:
 };
 
 template<> void TModInfo<CPerform>(CModInfo& Info) {
+	Info.AddType(CModInfo::NetworkModule);
 	Info.SetWikiPage("perform");
 }
 

@@ -8,25 +8,27 @@
 
 #include "Chan.h"
 #include "User.h"
+#include "IRCNetwork.h"
 #include "znc.h"
 
 class CChanSaverMod : public CModule {
 public:
 	MODCONSTRUCTOR(CChanSaverMod) {
-		const vector<CChan*>& vChans = m_pUser->GetChans();
-		vector<CChan*>::const_iterator it = vChans.begin();
-		vector<CChan*>::const_iterator end = vChans.end();
-
 		m_bWriteConf = false;
 
-		for (; it != end; ++it) {
-			CChan *pChan = *it;
+		vector<CIRCNetwork*> vNetworks = pUser->GetNetworks();
+		for (vector<CIRCNetwork*>::iterator it = vNetworks.begin(); it != vNetworks.end(); ++it) {
+			const vector<CChan*>& vChans = (*it)->GetChans();
 
-			// If that channel isn't yet in the config,
-			// we'll have to add it...
-			if (!pChan->InConfig()) {
-				pChan->SetInConfig(true);
-				m_bWriteConf = true;
+			for (vector<CChan*>::const_iterator it2 = vChans.begin(); it2 != vChans.end(); ++it2) {
+				CChan *pChan = *it2;
+
+				// If that channel isn't yet in the config,
+				// we'll have to add it...
+				if (!pChan->InConfig()) {
+					pChan->SetInConfig(true);
+					m_bWriteConf = true;
+				}
 			}
 		}
 	}
@@ -55,14 +57,14 @@ public:
 	}
 
 	virtual void OnJoin(const CNick& Nick, CChan& Channel) {
-		if (Nick.GetNick() == m_pUser->GetIRCNick().GetNick()) {
+		if (Nick.GetNick() == m_pNetwork->GetIRCNick().GetNick()) {
 			Channel.SetInConfig(true);
 			CZNC::Get().WriteConfig();
 		}
 	}
 
 	virtual void OnPart(const CNick& Nick, CChan& Channel, const CString& sMessage) {
-		if (Nick.GetNick() == m_pUser->GetIRCNick().GetNick()) {
+		if (Nick.GetNick() == m_pNetwork->GetIRCNick().GetNick()) {
 			Channel.SetInConfig(false);
 			CZNC::Get().WriteConfig();
 		}

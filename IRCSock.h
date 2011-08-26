@@ -16,12 +16,13 @@
 // Forward Declarations
 class CChan;
 class CUser;
+class CIRCNetwork;
 class CClient;
 // !Forward Declarations
 
 class CIRCSock : public CZNCSock {
 public:
-	CIRCSock(CUser* pUser);
+	CIRCSock(CIRCNetwork* pNetwork);
 	virtual ~CIRCSock();
 
 	typedef enum {
@@ -82,7 +83,7 @@ public:
 	CString GetNickMask() const { return m_Nick.GetNickMask(); }
 	const CString& GetNick() const { return m_Nick.GetNick(); }
 	const CString& GetPass() const { return m_sPass; }
-	CUser* GetUser() const { return m_pUser; }
+	CIRCNetwork* GetNetwork() const { return m_pNetwork; }
 	bool HasNamesx() const { return m_bNamesx; }
 	bool HasUHNames() const { return m_bUHNames; }
 	const set<unsigned char>& GetUserModes() const { return m_scUserModes; }
@@ -108,7 +109,7 @@ protected:
 	CString                             m_sPermModes;
 	set<unsigned char>                  m_scUserModes;
 	map<unsigned char, EChanModeArgs>   m_mueChanModes;
-	CUser*                              m_pUser;
+	CIRCNetwork*                        m_pNetwork;
 	CNick                               m_Nick;
 	CString                             m_sPass;
 	map<CString, CChan*>                m_msChans;

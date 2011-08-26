@@ -6,8 +6,8 @@
  * by the Free Software Foundation.
  */
 
+#include "IRCNetwork.h"
 #include "Chan.h"
-#include "User.h"
 
 class CAutoOpMod;
 
@@ -345,7 +345,7 @@ public:
 
 			// First verify that the guy who challenged us matches a user's host
 			if (pUser->HostMatches(Nick.GetHostMask())) {
-				const vector<CChan*>& Chans = m_pUser->GetChans();
+				const vector<CChan*>& Chans = m_pNetwork->GetChans();
 				bMatchedHost = true;
 
 				// Also verify that they are opped in at least one of the user's chans
@@ -440,7 +440,7 @@ public:
 	}
 
 	void OpUser(const CNick& Nick, const CAutoOpUser& User) {
-		const vector<CChan*>& Chans = m_pUser->GetChans();
+		const vector<CChan*>& Chans = m_pNetwork->GetChans();
 
 		for (size_t a = 0; a < Chans.size(); a++) {
 			const CChan& Chan = *Chans[a];
@@ -467,4 +467,4 @@ template<> void TModInfo<CAutoOpMod>(CModInfo& Info) {
 	Info.SetWikiPage("autoop");
 }
 
-MODULEDEFS(CAutoOpMod, "Auto op the good guys")
+NETWORKMODULEDEFS(CAutoOpMod, "Auto op the good guys")

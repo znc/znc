@@ -7,6 +7,7 @@
  */
 
 #include "User.h"
+#include "IRCNetwork.h"
 #include "IRCSock.h"
 #include "znc.h"
 
@@ -147,17 +148,21 @@ private:
 			return false;
 
 		// Disconnect all clients
-		vector<CClient*>& vpClients = pUser->GetClients();
+		vector<CClient*> vpClients = pUser->GetAllClients();
 		vector<CClient*>::iterator it;
 		for (it = vpClients.begin(); it != vpClients.end(); ++it) {
 			(*it)->PutStatusNotice(MESSAGE);
 			(*it)->Close(Csock::CLT_AFTERWRITE);
 		}
 
-		// Disconnect from IRC...
-		CIRCSock *pIRCSock = pUser->GetIRCSock();
-		if (pIRCSock) {
-			pIRCSock->Quit();
+		// Disconnect all networks from irc
+		vector<CIRCNetwork*> vNetworks = pUser->GetNetworks();
+		for (vector<CIRCNetwork*>::iterator it2 = vNetworks.begin(); it2 != vNetworks.end(); ++it2) {
+			CIRCNetwork *pNetwork = *it2;
+			CIRCSock *pIRCSock = pNetwork->GetIRCSock();
+			if (pIRCSock) {
+				pIRCSock->Quit();
+			}
 		}
 
 		// ...and don't reconnect

@@ -8,7 +8,7 @@
 
 
 #include "Modules.h"
-#include "User.h"
+#include "IRCNetwork.h"
 #include "Chan.h"
 
 class CKickClientOnIRCDisconnect: public CModule {
@@ -17,12 +17,12 @@ public:
 
 	void OnIRCDisconnected()
 	{
-		const vector<CChan*>& vChans = m_pUser->GetChans();
+		const vector<CChan*>& vChans = m_pNetwork->GetChans();
 
 		for(vector<CChan*>::const_iterator it = vChans.begin(); it != vChans.end(); ++it)
 		{
 			if((*it)->IsOn()) {
-				PutUser(":ZNC!znc@znc.in KICK " + (*it)->GetName() + " " + m_pUser->GetIRCNick().GetNick()
+				PutUser(":ZNC!znc@znc.in KICK " + (*it)->GetName() + " " + m_pNetwork->GetIRCNick().GetNick()
 					+ " :You have been disconnected from the IRC server");
 			}
 		}

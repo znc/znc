@@ -24,6 +24,7 @@
 
 #include "Chan.h"
 #include "User.h"
+#include "IRCNetwork.h"
 
 #define REQUIRESSL	1
 
@@ -43,11 +44,11 @@ public:
 		MCString::iterator it = FindNV(sTarget.AsLower());
 
 		if (it != EndNV()) {
-			CChan* pChan = m_pUser->FindChan(sTarget);
+			CChan* pChan = m_pNetwork->FindChan(sTarget);
 			if (pChan) {
 				if (pChan->KeepBuffer())
-					pChan->AddBuffer(":\244" + m_pUser->GetIRCNick().GetNickMask() + " PRIVMSG " + sTarget + " :" + sMessage);
-				m_pUser->PutUser(":\244" + m_pUser->GetIRCNick().GetNickMask() + " PRIVMSG " + sTarget + " :" + sMessage, NULL, m_pClient);
+					pChan->AddBuffer(":\244" + m_pNetwork->GetIRCNick().GetNickMask() + " PRIVMSG " + sTarget + " :" + sMessage);
+				m_pUser->PutUser(":\244" + m_pNetwork->GetIRCNick().GetNickMask() + " PRIVMSG " + sTarget + " :" + sMessage, NULL, m_pClient);
 			}
 
 			CString sMsg = MakeIvec() + sMessage;
@@ -155,4 +156,4 @@ template<> void TModInfo<CCryptMod>(CModInfo& Info) {
 	Info.SetWikiPage("crypt");
 }
 
-MODULEDEFS(CCryptMod, "Encryption for channel/private messages")
+NETWORKMODULEDEFS(CCryptMod, "Encryption for channel/private messages")

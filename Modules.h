@@ -20,6 +20,7 @@ using std::set;
 // Forward Declarations
 class CAuthBase;
 class CChan;
+class CIRCNetwork;
 class CClient;
 class CWebSock;
 class CTemplate;
@@ -44,8 +45,9 @@ typedef void* ModHandle;
 template<class M> void TModInfo(CModInfo& Info) {}
 
 template<class M> CModule* TModLoad(ModHandle p, CUser* pUser,
-		const CString& sModName, const CString& sModPath) {
-	return new M(p, pUser, sModName, sModPath);
+		CIRCNetwork* pNetwork, const CString& sModName,
+		const CString& sModPath) {
+	return new M(p, pUser, pNetwork, sModName, sModPath);
 }
 
 #if HAVE_VISIBILITY
@@ -84,9 +86,9 @@ template<class M> CModule* TModLoad(ModHandle p, CUser* pUser,
  *  @param CLASS The name of your module's class.
  */
 #define MODCONSTRUCTOR(CLASS) \
-	CLASS(ModHandle pDLL, CUser* pUser, const CString& sModName, \
+	CLASS(ModHandle pDLL, CUser* pUser, CIRCNetwork* pNetwork, const CString& sModName, \
 			const CString& sModPath) \
-			: CModule(pDLL, pUser, sModName, sModPath)
+			: CModule(pDLL, pUser, pNetwork, sModName, sModPath)
 
 /** At the end of your source file, you must call this macro in global context.
  *  It defines some static functions which ZNC needs to load this module.
@@ -103,6 +105,12 @@ template<class M> CModule* TModLoad(ModHandle p, CUser* pUser,
 #define GLOBALMODULEDEFS(CLASS, DESCRIPTION) \
 	MODCOMMONDEFS(CLASS, DESCRIPTION, CModInfo::GlobalModule)
 // !Global Module Macros
+
+// Network Module Macros
+/** This works exactly like MODULEDEFS, but for network modules. */
+#define NETWORKMODULEDEFS(CLASS, DESCRIPTION) \
+	MODCOMMONDEFS(CLASS, DESCRIPTION, CModInfo::NetworkModule)
+// !Network Module Macros
 
 // Forward Declarations
 class CZNC;
@@ -161,11 +169,12 @@ private:
 
 class CModInfo {
 public:
-	typedef CModule* (*ModLoader)(ModHandle p, CUser* pUser, const CString& sModName, const CString& sModPath);
+	typedef CModule* (*ModLoader)(ModHandle p, CUser* pUser, CIRCNetwork* pNetwork, const CString& sModName, const CString& sModPath);
 
 	typedef enum {
 		GlobalModule,
-		UserModule
+		UserModule,
+		NetworkModule
 	} EModuleType;
 
 	CModInfo() {
@@ -198,6 +207,7 @@ public:
 		switch (eType) {
 		case GlobalModule: return "Global";
 		case UserModule: return "User";
+		case NetworkModule: return "Network";
 		default: return "UNKNOWN";
 		}
 	}
@@ -294,7 +304,7 @@ private:
  */
 class CModule {
 public:
-	CModule(ModHandle pDLL, CUser* pUser, const CString& sModName,
+	CModule(ModHandle pDLL, CUser* pUser, CIRCNetwork* pNetwork, const CString& sModName,
 			const CString& sDataDir);
 	virtual ~CModule();
 
@@ -330,6 +340,7 @@ public:
 	} EModException;
 
 	void SetUser(CUser* pUser);
+	void SetNetwork(CIRCNetwork* pNetwork);
 	void SetClient(CClient* pClient);
 
 	/** This function throws CModule::UNLOAD which causes this module to be unloaded.
@@ -870,6 +881,7 @@ public:
 	/** @returns NULL except when we are in a client-specific module hook in
 	 *           which case this is the client for which the hook is called.
 	 */
+	CIRCNetwork* GetNetwork() { return m_pNetwork; }
 	CClient* GetClient() { return m_pClient; }
 	CSockManager* GetManager() { return m_pManager; }
 	// !Getters
@@ -975,6 +987,7 @@ protected:
 	ModHandle          m_pDLL;
 	CSockManager*      m_pManager;
 	CUser*             m_pUser;
+	CIRCNetwork*       m_pNetwork;
 	CClient*           m_pClient;
 	CString            m_sModName;
 	CString            m_sDataDir;
@@ -993,8 +1006,10 @@ public:
 	~CModules();
 
 	void SetUser(CUser* pUser) { m_pUser = pUser; }
+	void SetNetwork(CIRCNetwork* pNetwork) { m_pNetwork = pNetwork; }
 	void SetClient(CClient* pClient) { m_pClient = pClient; }
 	CUser* GetUser() { return m_pUser; }
+	CIRCNetwork* GetNetwork() { return m_pNetwork; }
 	CClient* GetClient() { return m_pClient; }
 
 	void UnloadAll();
@@ -1064,10 +1079,10 @@ public:
 	bool OnServerCapResult(const CString& sCap, bool bSuccess);
 
 	CModule* FindModule(const CString& sModule) const;
-	bool LoadModule(const CString& sModule, const CString& sArgs, CModInfo::EModuleType eType, CUser* pUser, CString& sRetMsg);
+	bool LoadModule(const CString& sModule, const CString& sArgs, CModInfo::EModuleType eType, CUser* pUser, CIRCNetwork* pNetwork, CString& sRetMsg);
 	bool UnloadModule(const CString& sModule);
 	bool UnloadModule(const CString& sModule, CString& sRetMsg);
-	bool ReloadModule(const CString& sModule, const CString& sArgs, CUser* pUser, CString& sRetMsg);
+	bool ReloadModule(const CString& sModule, const CString& sArgs, CUser* pUser, CIRCNetwork* pNetwork, CString& sRetMsg);
 
 	static bool GetModInfo(CModInfo& ModInfo, const CString& sModule, CString &sRetMsg);
 	static bool GetModPathInfo(CModInfo& ModInfo, const CString& sModule, const CString& sModPath, CString &sRetMsg);
@@ -1105,8 +1120,9 @@ private:
 			bool &bVersionMismatch, CModInfo& Info, CString& sRetMsg);
 
 protected:
-	CUser*    m_pUser;
-	CClient*  m_pClient;
+	CUser*        m_pUser;
+	CIRCNetwork*  m_pNetwork;
+	CClient*      m_pClient;
 };
 
 #endif // !_MODULES_H

@@ -17,9 +17,9 @@ class CPerlModule : public CModule {
 	CString m_sPerlID;
 	VWebSubPages* _GetSubPages();
 public:
-	CPerlModule(CUser* pUser, const CString& sModName, const CString& sDataPath,
+	CPerlModule(CUser* pUser, CIRCNetwork* pNetwork, const CString& sModName, const CString& sDataPath,
 			const CString& sPerlID)
-			: CModule(NULL, pUser, sModName, sDataPath) {
+			: CModule(NULL, pUser, pNetwork, sModName, sDataPath) {
 		m_sPerlID = sPerlID;
 	}
 	CString GetPerlID() { return m_sPerlID; }

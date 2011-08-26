@@ -11,6 +11,7 @@
 
 #include "znc.h"
 #include "User.h"
+#include "IRCNetwork.h"
 #include "Modules.h"
 #include "Chan.h"
 #include "IRCSock.h"
@@ -326,25 +327,25 @@ class CAdminMod : public CModule {
 	void GetChan(const CString& sLine) {
 		const CString sVar  = sLine.Token(1).AsLower();
 		CString sUsername   = sLine.Token(2);
-		CString sChan = sLine.Token(3, true);
+		CString sNetwork    = sLine.Token(3);
+		CString sChan = sLine.Token(4, true);
 
-		if (sVar.empty()) {
-			PutModule("Usage: getchan <variable> [username] <chan>");
-			return;
-		}
 		if (sChan.empty()) {
-			sChan = sUsername;
-			sUsername = "";
-		}
-		if (sUsername.empty()) {
-			sUsername = m_pUser->GetUserName();
+			PutModule("Usage: getchan <variable> <username> <network> <chan>");
+			return;
 		}
 
 		CUser* pUser = GetUser(sUsername);
 		if (!pUser)
 			return;
 
-		CChan* pChan = pUser->FindChan(sChan);
+		CIRCNetwork* pNetwork = pUser->FindNetwork(sNetwork);
+		if (!pNetwork) {
+			PutModule("[" + sUsername + "] does not have a network [" + sNetwork + "]");
+			return;
+		}
+
+		CChan* pChan = pNetwork->FindChan(sChan);
 		if (!pChan) {
 			PutModule("Error: Channel not found: " + sChan);
 			return;
@@ -369,8 +370,9 @@ class CAdminMod : public CModule {
 	void SetChan(const CString& sLine) {
 		const CString sVar = sLine.Token(1).AsLower();
 		CString sUsername  = sLine.Token(2);
-		CString sChan      = sLine.Token(3);
-		CString sValue     = sLine.Token(4, true);
+		CString sNetwork   = sLine.Token(3);
+		CString sChan      = sLine.Token(4);
+		CString sValue     = sLine.Token(5, true);
 
 		if (sValue.empty()) {
 			PutModule("Usage: setchan <variable> <username> <chan> <value>");
@@ -381,7 +383,13 @@ class CAdminMod : public CModule {
 		if (!pUser)
 			return;
 
-		CChan* pChan = pUser->FindChan(sChan);
+		CIRCNetwork* pNetwork = pUser->FindNetwork(sNetwork);
+		if (!pNetwork) {
+			PutModule("[" + sUsername + "] does not have a network [" + sNetwork + "]");
+			return;
+		}
+
+		CChan* pChan = pNetwork->FindChan(sChan);
 		if (!pChan) {
 			PutModule("Error: Channel not found: " + sChan);
 			return;
@@ -462,10 +470,9 @@ class CAdminMod : public CModule {
 
 		const CString
 			sUsername  = sLine.Token(1),
-			sPassword  = sLine.Token(2),
-			sIRCServer = sLine.Token(3, true);
-		if (sUsername.empty() || sPassword.empty()) {
-			PutModule("Usage: adduser <username> <password> [ircserver]");
+			sPassword  = sLine.Token(2);
+		if (sPassword.empty()) {
+			PutModule("Usage: adduser <username> <password>");
 			return;
 		}
 
@@ -477,8 +484,6 @@ class CAdminMod : public CModule {
 		CUser* pNewUser = new CUser(sUsername);
 		CString sSalt = CUtils::GetSalt();
 		pNewUser->SetPass(CUser::SaltedHash(sPassword, sSalt), CUser::HASH_DEFAULT, sSalt);
-		if (sIRCServer.size())
-			pNewUser->AddServer(sIRCServer);
 
 		CString sErr;
 		if (!CZNC::Get().AddUser(pNewUser, sErr)) {
@@ -568,14 +573,11 @@ class CAdminMod : public CModule {
 
 	void AddServer(const CString& sLine) {
 		CString sUsername = sLine.Token(1);
-		CString sServer = sLine.Token(2, true);
+		CString sNetwork = sLine.Token(2);
+		CString sServer = sLine.Token(3, true);
 
 		if (sServer.empty()) {
-			sServer = sUsername;
-			sUsername = m_pUser->GetUserName();
-		}
-		if (sServer.empty()) {
-			PutModule("Usage: addserver <username> <server>");
+			PutModule("Usage: addserver <username> <network> <server>");
 			return;
 		}
 
@@ -583,25 +585,40 @@ class CAdminMod : public CModule {
 		if (!pUser)
 			return;
 
-		if (pUser->AddServer(sServer))
+		CIRCNetwork* pNetwork = pUser->FindNetwork(sNetwork);
+		if (!pNetwork) {
+			PutModule("[" + sUsername + "] does not have a network [" + sNetwork + "]");
+			return;
+		}
+
+		if (pNetwork->AddServer(sServer))
 			PutModule("Added IRC Server: " + sServer);
 		else
 			PutModule("Could not add IRC server");
 	}
 
 	void ReconnectUser(const CString& sLine) {
-		CString sUserName = sLine.Token(1, true);
+		CString sUserName = sLine.Token(1);
+		CString sNetwork = sLine.Token(2);
 
-		if (sUserName.empty()) {
-			sUserName = m_pUser->GetUserName();
+		if (sNetwork.empty()) {
+			PutModule("Usage: Reconnect <username> <network>");
+			return;
 		}
+
 		CUser* pUser = GetUser(sUserName);
 		if (!pUser) {
 			PutModule("User not found.");
 			return;
 		}
 
-		CIRCSock *pIRCSock = pUser->GetIRCSock();
+		CIRCNetwork* pNetwork = pUser->FindNetwork(sNetwork);
+		if (!pNetwork) {
+			PutModule("[" + sUserName + "] does not have a network [" + sNetwork + "]");
+			return;
+		}
+
+		CIRCSock *pIRCSock = pNetwork->GetIRCSock();
 		// cancel connection attempt:
 		if (pIRCSock && !pIRCSock->IsConnected()) {
 			pIRCSock->Close();
@@ -613,24 +630,33 @@ class CAdminMod : public CModule {
 
 		// then reconnect
 		pUser->SetIRCConnectEnabled(true);
-		pUser->CheckIRCConnect();
+		pNetwork->CheckIRCConnect();
 
 		PutModule("Queued user for a reconnect.");
 	}
 
 	void DisconnectUser(const CString& sLine) {
-		CString sUserName = sLine.Token(1, true);
+		CString sUserName = sLine.Token(1);
+		CString sNetwork = sLine.Token(2);
 
-		if (sUserName.empty()) {
-			sUserName = m_pUser->GetUserName();
+		if (sNetwork.empty()) {
+			PutModule("Usage: Reconnect <username> <network>");
+			return;
 		}
+
 		CUser* pUser = GetUser(sUserName);
 		if (!pUser) {
 			PutModule("User not found.");
 			return;
 		}
 
-		CIRCSock *pIRCSock = pUser->GetIRCSock();
+		CIRCNetwork* pNetwork = pUser->FindNetwork(sNetwork);
+		if (!pNetwork) {
+			PutModule("[" + sUserName + "] does not have a network [" + sNetwork + "]");
+			return;
+		}
+
+		CIRCSock *pIRCSock = pNetwork->GetIRCSock();
 		if (pIRCSock && !pIRCSock->IsConnected())
 			pIRCSock->Close();
 		else if(pIRCSock)
@@ -741,13 +767,13 @@ class CAdminMod : public CModule {
 
 		CModule *pMod = (pUser)->GetModules().FindModule(sModName);
 		if (!pMod) {
-			if (!(pUser)->GetModules().LoadModule(sModName, sArgs, CModInfo::UserModule, pUser, sModRet)) {
+			if (!(pUser)->GetModules().LoadModule(sModName, sArgs, CModInfo::UserModule, pUser, NULL, sModRet)) {
 				PutModule("Unable to load module [" + sModName + "] [" + sModRet + "]");
 			} else {
 				PutModule("Loaded module [" + sModName + "]");
 			}
 		} else if (pMod->GetArgs() != sArgs) {
-			if (!(pUser)->GetModules().ReloadModule(sModName, sArgs, pUser, sModRet)) {
+			if (!(pUser)->GetModules().ReloadModule(sModName, sArgs, pUser, NULL, sModRet)) {
 				PutModule("Unable to reload module [" + sModName + "] [" + sModRet + "]");
 			} else {
 				PutModule("Reloaded module [" + sModName + "]");
@@ -817,41 +843,41 @@ class CAdminMod : public CModule {
 public:
 	MODCONSTRUCTOR(CAdminMod) {
 		AddCommand("Help",         static_cast<CModCommand::ModCmdFunc>(&CAdminMod::PrintHelp),
-			"",                              "Generates this output");
+			"",                                     "Generates this output");
 		AddCommand("Get",          static_cast<CModCommand::ModCmdFunc>(&CAdminMod::Get),
-			"variable [username]",           "Prints the variable's value for the given or current user");
+			"variable [username]",                  "Prints the variable's value for the given or current user");
 		AddCommand("Set",          static_cast<CModCommand::ModCmdFunc>(&CAdminMod::Set),
-			"variable username value",       "Sets the variable's value for the given user (use $me for the current user)");
+			"variable username value",              "Sets the variable's value for the given user (use $me for the current user)");
 		AddCommand("GetChan",      static_cast<CModCommand::ModCmdFunc>(&CAdminMod::GetChan),
-			"variable [username] chan",      "Prints the variable's value for the given channel");
+			"variable [username] network chan",     "Prints the variable's value for the given channel");
 		AddCommand("SetChan",      static_cast<CModCommand::ModCmdFunc>(&CAdminMod::SetChan),
-			"variable username chan value",  "Sets the variable's value for the given channel");
+			"variable username network chan value", "Sets the variable's value for the given channel");
 		AddCommand("ListUsers",    static_cast<CModCommand::ModCmdFunc>(&CAdminMod::ListUsers),
-			"",                              "Lists users");
+			"",                                     "Lists users");
 		AddCommand("AddUser",      static_cast<CModCommand::ModCmdFunc>(&CAdminMod::AddUser),
-			"username password [ircserver]", "Adds a new user");
+			"username password",                    "Adds a new user");
 		AddCommand("DelUser",      static_cast<CModCommand::ModCmdFunc>(&CAdminMod::DelUser),
-			"username",                      "Deletes a user");
+			"username",                             "Deletes a user");
 		AddCommand("CloneUser",    static_cast<CModCommand::ModCmdFunc>(&CAdminMod::CloneUser),
-			"oldusername newusername",       "Clones a user");
+			"oldusername newusername",              "Clones a user");
 		AddCommand("AddServer",    static_cast<CModCommand::ModCmdFunc>(&CAdminMod::AddServer),
-			"[username] server",             "Adds a new IRC server for the given or current user");
+			"username network server",              "Adds a new IRC server for the given or current user");
 		AddCommand("Reconnect",    static_cast<CModCommand::ModCmdFunc>(&CAdminMod::ReconnectUser),
-			"username",                      "Cycles the user's IRC server connection");
+			"username network",                     "Cycles the user's IRC server connection");
 		AddCommand("Disconnect",   static_cast<CModCommand::ModCmdFunc>(&CAdminMod::DisconnectUser),
-			"username",                      "Disconnects the user from their IRC server");
+			"username network",                     "Disconnects the user from their IRC server");
 		AddCommand("LoadModule",   static_cast<CModCommand::ModCmdFunc>(&CAdminMod::LoadModuleForUser),
-			"username modulename",           "Loads a Module for a user");
+			"username modulename",                  "Loads a Module for a user");
 		AddCommand("UnLoadModule", static_cast<CModCommand::ModCmdFunc>(&CAdminMod::UnLoadModuleForUser),
-			"username modulename",           "Removes a Module of a user");
+			"username modulename",                  "Removes a Module of a user");
 		AddCommand("ListMods",     static_cast<CModCommand::ModCmdFunc>(&CAdminMod::ListModuleForUser),
-			"username",                      "Get the list of modules for a user");
+			"username",                             "Get the list of modules for a user");
 		AddCommand("ListCTCPs",    static_cast<CModCommand::ModCmdFunc>(&CAdminMod::ListCTCP),
-			"username",                      "List the configured CTCP replies");
+			"username",                             "List the configured CTCP replies");
 		AddCommand("AddCTCP",      static_cast<CModCommand::ModCmdFunc>(&CAdminMod::AddCTCP),
-			"username ctcp [reply]",         "Configure a new CTCP reply");
+			"username ctcp [reply]",                "Configure a new CTCP reply");
 		AddCommand("DelCTCP",      static_cast<CModCommand::ModCmdFunc>(&CAdminMod::DelCTCP),
-			"username ctcp",                 "Remove a CTCP reply");
+			"username ctcp",                        "Remove a CTCP reply");
 	}
 
 	virtual ~CAdminMod() {}

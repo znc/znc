@@ -9,6 +9,7 @@
 #include "Chan.h"
 #include "Modules.h"
 #include "User.h"
+#include "IRCNetwork.h"
 
 class CFloodDetachMod : public CModule {
 public:
@@ -62,7 +63,7 @@ public:
 			if (it->second.first + (time_t)m_iThresholdSecs >= now)
 				continue;
 
-			CChan *pChan = m_pUser->FindChan(it->first);
+			CChan *pChan = m_pNetwork->FindChan(it->first);
 			if (it->second.second >= m_iThresholdMsgs
 					&& pChan && pChan->IsDetached()) {
 				// The channel is detached and it is over the

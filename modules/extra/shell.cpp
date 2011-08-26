@@ -93,7 +93,7 @@ public:
 	void PutShell(const CString& sMsg) {
 		CString sPath = m_sPath.Replace_n(" ", "_");
 		CString sSource = ":" + GetModNick() + "!shell@" + sPath;
-		CString sLine = sSource + " PRIVMSG " + m_pUser->GetCurNick() + " :" + sMsg;
+		CString sLine = sSource + " PRIVMSG " + m_pClient->GetNick() + " :" + sMsg;
 		PutUser(sLine);
 	}
 

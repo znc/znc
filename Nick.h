@@ -18,7 +18,7 @@ using std::vector;
 using std::set;
 
 // Forward Decl
-class CUser;
+class CIRCNetwork;
 class CChan;
 // !Forward Decl
 
@@ -32,10 +32,10 @@ public:
 	void Reset();
 	void Parse(const CString& sNickMask);
 	CString GetHostMask() const;
-	unsigned int GetCommonChans(vector<CChan*>& vChans, CUser* pUser) const;
+	unsigned int GetCommonChans(vector<CChan*>& vChans, CIRCNetwork* pNetwork) const;
 
 	// Setters
-	void SetUser(CUser* pUser);
+	void SetNetwork(CIRCNetwork* pNetwork);
 	void SetNick(const CString& s);
 	void SetIdent(const CString& s);
 	void SetHost(const CString& s);
@@ -56,11 +56,11 @@ public:
 	void Clone(const CNick& SourceNick);
 private:
 protected:
-	CString    m_sChanPerms;
-	CUser*     m_pUser;
-	CString    m_sNick;
-	CString    m_sIdent;
-	CString    m_sHost;
+	CString      m_sChanPerms;
+	CIRCNetwork* m_pNetwork;
+	CString      m_sNick;
+	CString      m_sIdent;
+	CString      m_sHost;
 };
 
 #endif // !_NICK_H

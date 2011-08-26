@@ -22,6 +22,7 @@ using std::set;
 
 // Forward Declarations
 class CUser;
+class CIRCNetwork;
 class CClient;
 class CConfig;
 class CFile;
@@ -52,7 +53,7 @@ public:
 		M_Except     = 'e'
 	} EModes;
 
-	CChan(const CString& sName, CUser* pUser, bool bInConfig, CConfig *pConfig = NULL);
+	CChan(const CString& sName, CIRCNetwork* pNetwork, bool bInConfig, CConfig *pConfig = NULL);
 	~CChan();
 
 	void Reset();
@@ -154,7 +155,7 @@ protected:
 	CString                      m_sTopicOwner;
 	unsigned long                m_ulTopicDate;
 	unsigned long                m_ulCreationDate;
-	CUser*                       m_pUser;
+	CIRCNetwork*                 m_pNetwork;
 	CNick                        m_Nick;
 	unsigned int                 m_uJoinTries;
 	CString                      m_sDefaultModes;
