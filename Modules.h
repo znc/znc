@@ -63,6 +63,7 @@ template<class M> CModule* TModLoad(ModHandle p, CUser* pUser,
 			if (dCoreVersion != VERSION) \
 				return false; \
 			Info.SetDescription(DESCRIPTION); \
+			Info.SetDefaultType(TYPE); \
 			Info.AddType(TYPE); \
 			Info.SetLoader(TModLoad<CLASS>); \
 			TModInfo<CLASS>(Info); \
@@ -199,10 +200,6 @@ public:
 		m_seType.insert(eType);
 	}
 
-	EModuleType DefaultType() {
-		return *m_seType.begin();
-	}
-
 	static CString ModuleTypeToString(EModuleType eType) {
 		switch (eType) {
 		case GlobalModule: return "Global";
@@ -218,6 +215,7 @@ public:
 	const CString& GetDescription() const { return m_sDescription; }
 	const CString& GetWikiPage() const { return m_sWikiPage; }
 	ModLoader GetLoader() const { return m_fLoader; }
+	EModuleType GetDefaultType() const { return m_eDefaultType; }
 	// !Getters
 
 	// Setters
@@ -226,10 +224,12 @@ public:
 	void SetDescription(const CString& s) { m_sDescription = s; }
 	void SetWikiPage(const CString& s) { m_sWikiPage = s; }
 	void SetLoader(ModLoader fLoader) { m_fLoader = fLoader; }
+	void SetDefaultType(EModuleType eType) { m_eDefaultType = eType; }
 	// !Setters
 private:
 protected:
 	set<EModuleType> m_seType;
+	EModuleType     m_eDefaultType;
 	CString         m_sName;
 	CString         m_sPath;
 	CString         m_sDescription;

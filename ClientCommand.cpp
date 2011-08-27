@@ -786,7 +786,7 @@ void CClient::UserCommand(CString& sLine) {
 		}
 
 		if (sType.Equals("default")) {
-			eType = ModInfo.DefaultType();
+			eType = ModInfo.GetDefaultType();
 		}
 
 		if (eType == CModInfo::GlobalModule && !m_pUser->IsAdmin()) {
@@ -855,7 +855,7 @@ void CClient::UserCommand(CString& sLine) {
 		}
 
 		if (sType.Equals("default")) {
-			eType = ModInfo.DefaultType();
+			eType = ModInfo.GetDefaultType();
 		}
 
 		if (eType == CModInfo::GlobalModule && !m_pUser->IsAdmin()) {
@@ -924,7 +924,7 @@ void CClient::UserCommand(CString& sLine) {
 		}
 
 		if (sType.Equals("default")) {
-			eType = ModInfo.DefaultType();
+			eType = ModInfo.GetDefaultType();
 		}
 
 		if (eType == CModInfo::GlobalModule && !m_pUser->IsAdmin()) {
