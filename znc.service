@@ -1,0 +1,11 @@
+[Unit]
+Description=An advanced IRC bouncer
+After=network.target
+
+[Service]
+ExecStart=/usr/bin/znc
+User=znc
+Type=forking
+
+[Install]
+WantedBy=multi-user.target
