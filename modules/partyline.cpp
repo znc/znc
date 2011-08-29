@@ -28,17 +28,12 @@ public:
 	void AddNick(const CString& s) { m_ssNicks.insert(s); }
 	void DelNick(const CString& s) { m_ssNicks.erase(s); }
 
-	void AddFixedNick(const CString& s) { m_ssFixedNicks.insert(s); }
-	void DelFixedNick(const CString& s) { m_ssFixedNicks.erase(s); }
-
 	bool IsInChannel(const CString& s) { return m_ssNicks.find(s) != m_ssNicks.end(); }
-	bool IsFixedChan(const CString& s) { return m_ssFixedNicks.find(s) != m_ssFixedNicks.end(); }
 
 protected:
 	CString      m_sTopic;
 	CString      m_sName;
 	set<CString> m_ssNicks;
-	set<CString> m_ssFixedNicks;
 };
 
 class CPartylineMod : public CModule {
@@ -100,21 +95,7 @@ public:
 			}
 
 			if (sAction == "fixedchan") {
-				CUser* pUser = CZNC::Get().FindUser(sKey);
-				if (!pUser) {
-					// TODO: give some useful message?
-					continue;
-				}
-
-				VCString vsChannels;
-				it->second.Split(",", vsChannels, false);
-				for (VCString::iterator i = vsChannels.begin(); i != vsChannels.end(); ++i) {
-					if (i->Trim_n().empty())
-						continue;
-					pChannel = GetChannel(*i);
-					JoinUser(pUser, pChannel);
-					pChannel->AddFixedNick(sKey);
-				}
+				// Sorry, this was removed
 			}
 
 			if (sAction == "topic") {
@@ -129,23 +110,6 @@ public:
 		return;
 	}
 
-	void SaveFixedChans(CUser* pUser) {
-		CString sChans;
-		const CString &sUser = pUser->GetUserName();
-
-		for (set<CPartylineChannel*>::iterator it = m_ssChannels.begin();
-				it != m_ssChannels.end(); ++it) {
-			if ((*it)->IsFixedChan(sUser)) {
-				sChans += "," + (*it)->GetName();
-			}
-		}
-
-		if (!sChans.empty())
-			SetNV("fixedchan:" + sUser, sChans.substr(1)); // Strip away the first ,
-		else
-			DelNV("fixedchan:" + sUser);
-	}
-
 	void SaveTopic(CPartylineChannel* pChannel) {
 		if (!pChannel->GetTopic().empty())
 			SetNV("topic:" + pChannel->GetName(), pChannel->GetTopic());
@@ -156,7 +120,7 @@ public:
 	virtual EModRet OnDeleteUser(CUser& User) {
 		// Loop through each chan
 		for (set<CPartylineChannel*>::iterator it = m_ssChannels.begin(); it != m_ssChannels.end(); ++it) {
-			RemoveUser(&User, *it, "KICK", true, "User deleted", true);
+			RemoveUser(&User, *it, "KICK", "User deleted", true);
 		}
 
 		return CONTINUE;
@@ -298,13 +262,13 @@ public:
 		return HALT;
 	}
 
-	void PartUser(CUser* pUser, CPartylineChannel* pChannel, bool bForce = false,
+	void PartUser(CUser* pUser, CPartylineChannel* pChannel,
 			const CString& sMessage = "") {
-		RemoveUser(pUser, pChannel, "PART", bForce, sMessage);
+		RemoveUser(pUser, pChannel, "PART", sMessage);
 	}
 
 	void RemoveUser(CUser* pUser, CPartylineChannel* pChannel, const CString& sCommand,
-			bool bForce = false, const CString& sMessage = "", bool bNickAsTarget = false) {
+			const CString& sMessage = "", bool bNickAsTarget = false) {
 		if (!pChannel || !pChannel->IsInChannel(pUser->GetUserName())) {
 			return;
 		}
@@ -314,42 +278,31 @@ public:
 		if (!sMsg.empty())
 			sMsg = " :" + sMsg;
 
-		if (!pChannel->IsFixedChan(pUser->GetUserName()) || bForce) {
-			pChannel->DelNick(pUser->GetUserName());
-			pChannel->DelFixedNick(pUser->GetUserName());
+		pChannel->DelNick(pUser->GetUserName());
 
-			const set<CString>& ssNicks = pChannel->GetNicks();
-			CString sHost = pUser->GetBindHost();
+		const set<CString>& ssNicks = pChannel->GetNicks();
+		CString sHost = pUser->GetBindHost();
 
-			if (sHost.empty()) {
-				sHost = pUser->GetIRCNick().GetHost();
-			}
+		if (sHost.empty()) {
+			sHost = pUser->GetIRCNick().GetHost();
+		}
 
-			if (bNickAsTarget) {
-				pUser->PutUser(":" + pUser->GetIRCNick().GetNickMask() + sCmd
-						+ pChannel->GetName() + " " + pUser->GetIRCNick().GetNick() + sMsg);
-				PutChan(ssNicks, ":?" + pUser->GetUserName() + "!" + pUser->GetIdent() + "@" + sHost
-						+ sCmd + pChannel->GetName() + " ?" + pUser->GetUserName() + sMsg,
-						false, true, pUser);
-			} else {
-				pUser->PutUser(":" + pUser->GetIRCNick().GetNickMask() + sCmd
-						+ pChannel->GetName() + sMsg);
-				PutChan(ssNicks, ":?" + pUser->GetUserName() + "!" + pUser->GetIdent() + "@" + sHost
-						+ sCmd + pChannel->GetName() + sMsg, false, true, pUser);
-			}
-
-			if (ssNicks.empty()) {
-				delete pChannel;
-				m_ssChannels.erase(pChannel);
-			}
+		if (bNickAsTarget) {
+			pUser->PutUser(":" + pUser->GetIRCNick().GetNickMask() + sCmd
+					+ pChannel->GetName() + " " + pUser->GetIRCNick().GetNick() + sMsg);
+			PutChan(ssNicks, ":?" + pUser->GetUserName() + "!" + pUser->GetIdent() + "@" + sHost
+					+ sCmd + pChannel->GetName() + " ?" + pUser->GetUserName() + sMsg,
+					false, true, pUser);
 		} else {
-			// some clients dont wait for the server to send an answer to a part, so we need to make them join again
-			pUser->PutUser(":" + pUser->GetIRCNick().GetNickMask() + " JOIN " + pChannel->GetName());
-			if (!pChannel->GetTopic().empty()) {
-				pUser->PutUser(":" + GetIRCServer(pUser) + " 332 " + pUser->GetIRCNick().GetNickMask() + " " + pChannel->GetName() + " :" + pChannel->GetTopic());
-			}
-			const set<CString>& ssNicks = pChannel->GetNicks();
-			SendNickList(pUser, ssNicks, pChannel->GetName());
+			pUser->PutUser(":" + pUser->GetIRCNick().GetNickMask() + sCmd
+					+ pChannel->GetName() + sMsg);
+			PutChan(ssNicks, ":?" + pUser->GetUserName() + "!" + pUser->GetIdent() + "@" + sHost
+					+ sCmd + pChannel->GetName() + sMsg, false, true, pUser);
+		}
+
+		if (ssNicks.empty()) {
+			delete pChannel;
+			m_ssChannels.erase(pChannel);
 		}
 	}
 
@@ -474,26 +427,6 @@ public:
 			Table.SetCell("Arguments", "");
 			Table.SetCell("Description", "List all open channels");
 
-			Table.AddRow();
-			Table.SetCell("Command", "AddFixChan");
-			Table.SetCell("Arguments", "<user> <channel>");
-			Table.SetCell("Description", "Force a user into a channel which he cant part");
-
-			Table.AddRow();
-			Table.SetCell("Command", "DelFixChan");
-			Table.SetCell("Arguments", "<user> <channel>");
-			Table.SetCell("Description", "Remove a user from such a channel");
-
-			Table.AddRow();
-			Table.SetCell("Command", "ListFixChans");
-			Table.SetCell("Arguments", "<user>");
-			Table.SetCell("Description", "Show which channels a user can not part");
-
-			Table.AddRow();
-			Table.SetCell("Command", "ListFixUsers");
-			Table.SetCell("Arguments", "<channel>");
-			Table.SetCell("Description", "Show which users can not part this channel");
-
 			PutModule(Table);
 		} else if (sCommand.Equals("LIST")) {
 			if (!m_ssChannels.size()) {
@@ -515,94 +448,13 @@ public:
 
 			PutModule(Table);
 		} else if (sCommand.Equals("ADDFIXCHAN")) {
-			if (!m_pUser->IsAdmin()) {
-				PutModule("Access denied");
-				return;
-			}
-			CString sUser = sLine.Token(1);
-			CString sChan = sLine.Token(2).Left(32);
-			CUser* pUser = CZNC::Get().FindUser(sUser);
-			CPartylineChannel* pChan;
-
-			if (sChan.Left(2) != CHAN_PREFIX) {
-				PutModule("Invalid channel name");
-				return;
-			}
-
-			if (pUser == NULL) {
-				PutModule("Unknown User '" + sUser + "'");
-				return;
-			}
-
-			pChan = GetChannel(sChan);
-			JoinUser(pUser, pChan);
-			pChan->AddFixedNick(sUser);
-
-			SaveFixedChans(pUser);
-
-			PutModule("Fixed " + sUser + " to channel " + sChan);
+			PutModule("Sorry, support for fixed channels was dropped");
 		} else if (sCommand.Equals("DELFIXCHAN")) {
-			if (!m_pUser->IsAdmin()) {
-				PutModule("Access denied");
-				return;
-			}
-			CString sUser = sLine.Token(1);
-			CString sChan = sLine.Token(2).Left(32);
-			CUser* pUser = CZNC::Get().FindUser(sUser);
-			CPartylineChannel* pChan = FindChannel(sChan);
-
-			if (pUser == NULL) {
-				PutModule("Unknown User '" + sUser + "'");
-				return;
-			}
-
-			if (!pChan || !pChan->IsFixedChan(sUser)) {
-				PutModule(sUser + " is not in " + sChan + " or isnt fixed to it");
-				return;
-			}
-
-			PartUser(pUser, pChan, true);
-
-			SaveFixedChans(pUser);
-
-			PutModule("Removed " + sUser + " from " + sChan);
+			PutModule("Sorry, support for fixed channels was dropped");
 		} else if (sCommand.Equals("LISTFIXCHANS")) {
-			if (!m_pUser->IsAdmin()) {
-				PutModule("Access denied");
-				return;
-			}
-			CString sUser = sLine.Token(1);
-			CUser* pUser = CZNC::Get().FindUser(sUser);
-			if (!pUser) {
-				PutModule("User not found!");
-				return;
-			}
-
-			for (set<CPartylineChannel*>::const_iterator a = m_ssChannels.begin(); a != m_ssChannels.end(); ++a) {
-				if ((*a)->IsFixedChan(sUser)) {
-					PutModule((*a)->GetName());
-				}
-			}
-			PutModule("--- End of list");
+			PutModule("Sorry, support for fixed channels was dropped");
 		} else if (sCommand.Equals("LISTFIXUSERS")) {
-			if (!m_pUser->IsAdmin()) {
-				PutModule("Access denied");
-				return;
-			}
-			CString sChan = sLine.Token(1).Left(32);
-			CPartylineChannel* pChan = FindChannel(sChan);
-
-			if (!pChan) {
-				PutModule("Channel does not exist!");
-				return;
-			}
-			const set<CString>& sNicks = pChan->GetNicks();
-			for (set<CString>::const_iterator it = sNicks.begin(); it != sNicks.end(); ++it) {
-				if (pChan->IsFixedChan(*it)) {
-					PutModule(*it);
-				}
-			}
-			PutModule("--- End of list");
+			PutModule("Sorry, support for fixed channels was dropped");
 	} else {
 			PutModule("Unknown command, try 'HELP'");
 		}
