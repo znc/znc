@@ -35,7 +35,6 @@ public:
 
 	CString GetNetworkPath();
 
-	void DelClients();
 	void DelServers();
 
 	bool ParseConfig(CConfig *pConfig, CString& sError, bool bUpgrade = false);
@@ -56,7 +55,6 @@ public:
 	bool SetName(const CString& sName);
 
 	// Modules
-	void DelModules();
 	CModules& GetModules() { return *m_pModules; }
 	const CModules& GetModules() const { return *m_pModules; }
 	// !Modules

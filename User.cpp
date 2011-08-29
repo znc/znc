@@ -88,13 +88,28 @@ CUser::CUser(const CString& sUserName)
 }
 
 CUser::~CUser() {
-	DelNetworks();
+	// Delete modules (unloads all modules!)
+	delete m_pModules;
+	m_pModules = NULL;
 
-	DelClients();
+	// Delete networks
+	for (unsigned int c = 0; c < m_vIRCNetworks.size(); c++) {
+		CIRCNetwork* pNetwork = m_vIRCNetworks[c];
+		delete pNetwork;
+	}
+	m_vIRCNetworks.clear();
 
-	DelModules();
+	// Delete clients
+	for (unsigned int c = 0; c < m_vClients.size(); c++) {
+		CClient* pClient = m_vClients[c];
+		CZNC::Get().GetManager().DelSockByAddr(pClient);
+	}
+	m_vClients.clear();
 
 	CZNC::Get().GetManager().DelCronByAddr(m_pUserTimer);
+
+	CZNC::Get().AddBytesRead(BytesRead());
+	CZNC::Get().AddBytesWritten(BytesWritten());
 }
 
 template<class T>
@@ -395,11 +410,6 @@ bool CUser::ParseConfig(CConfig* pConfig, CString& sError) {
 	return true;
 }
 
-void CUser::DelModules() {
-	delete m_pModules;
-	m_pModules = NULL;
-}
-
 bool CUser::UpdateModule(const CString &sModule) {
 	const map<CString,CUser*>& Users = CZNC::Get().GetUserMap();
 	map<CString,CUser*>::const_iterator it;
@@ -425,24 +435,6 @@ bool CUser::UpdateModule(const CString &sModule) {
 	}
 
 	return !error;
-}
-
-void CUser::DelNetworks() {
-	for (unsigned int c = 0; c < m_vIRCNetworks.size(); c++) {
-		CIRCNetwork* pNetwork = m_vIRCNetworks[c];
-		delete pNetwork;
-	}
-
-	m_vIRCNetworks.clear();
-}
-
-void CUser::DelClients() {
-	for (unsigned int c = 0; c < m_vClients.size(); c++) {
-		CClient* pClient = m_vClients[c];
-		CZNC::Get().GetManager().DelSockByAddr(pClient);
-	}
-
-	m_vClients.clear();
 }
 
 CIRCNetwork* CUser::AddNetwork(const CString &sNetwork) {

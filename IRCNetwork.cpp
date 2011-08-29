@@ -134,15 +134,33 @@ CIRCNetwork::CIRCNetwork(CUser *pUser, const CIRCNetwork *pNetwork, bool bCloneC
 }
 
 CIRCNetwork::~CIRCNetwork() {
-	DelClients();
+	// Delete modules (this unloads all modules)
+	delete m_pModules;
+	m_pModules = NULL;
+
+	// Delete clients
+	for (vector<CClient*>::const_iterator it = m_vClients.begin(); it != m_vClients.end(); ++it) {
+		CZNC::Get().GetManager().DelSockByAddr(*it);
+	}
+	m_vClients.clear();
+
+	// Delete servers
 	DelServers();
-	DelModules();
+
+	// Delete Channels
+	for (vector<CChan*>::const_iterator it = m_vChans.begin(); it != m_vChans.end(); ++it) {
+		delete *it;
+	}
+	m_vChans.clear();
 
 	SetUser(NULL);
+}
 
-	for (unsigned int b = 0; b < m_vChans.size(); b++) {
-		delete m_vChans[b];
+void CIRCNetwork::DelServers() {
+	for (vector<CServer*>::const_iterator it = m_vServers.begin(); it != m_vServers.end(); ++it) {
+		delete *it;
 	}
+	m_vServers.clear();
 }
 
 CString CIRCNetwork::GetNetworkPath() {
@@ -153,28 +171,6 @@ CString CIRCNetwork::GetNetworkPath() {
 	}
 
 	return sNetworkPath;
-}
-
-void CIRCNetwork::DelClients() {
-	for (unsigned int c = 0; c < m_vClients.size(); c++) {
-		CClient* pClient = m_vClients[c];
-		CZNC::Get().GetManager().DelSockByAddr(pClient);
-	}
-
-	m_vClients.clear();
-}
-
-void CIRCNetwork::DelServers() {
-	for (unsigned int a = 0; a < m_vServers.size(); a++) {
-		delete m_vServers[a];
-	}
-
-	m_vServers.clear();
-}
-
-void CIRCNetwork::DelModules() {
-	delete m_pModules;
-	m_pModules = NULL;
 }
 
 bool CIRCNetwork::ParseConfig(CConfig *pConfig, CString& sError, bool bUpgrade) {

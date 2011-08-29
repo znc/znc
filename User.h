@@ -57,10 +57,6 @@ public:
 	static bool IsValidUserName(const CString& sUserName);
 	static CString MakeCleanUserName(const CString& sUserName);
 
-	void DelNetworks();
-	void DelClients();
-	void DelModules();
-
 	// Unloads a module on all users who have it loaded and loads it again.
 	static bool UpdateModule(const CString &sModule);
 
