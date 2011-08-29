@@ -26,12 +26,12 @@
 			CModule* pMod = (CModule *) (*this)[a];                \
 			CClient* pOldClient = pMod->GetClient();         \
 			pMod->SetClient(m_pClient);                      \
-			CUser* pOldUser;                             \
+			CUser* pOldUser = NULL;                      \
 			if (m_pUser) {                               \
 				pOldUser = pMod->GetUser();              \
 				pMod->SetUser(m_pUser);                  \
 			}                                            \
-			CIRCNetwork* pNetwork;                       \
+			CIRCNetwork* pNetwork = NULL;                \
 			if (m_pNetwork) {                            \
 				pNetwork = pMod->GetNetwork();           \
 				pMod->SetNetwork(m_pNetwork);            \
@@ -58,12 +58,12 @@
 			CModule::EModRet e = CModule::CONTINUE;          \
 			CClient* pOldClient = pMod->GetClient();         \
 			pMod->SetClient(m_pClient);                      \
-			CUser* pOldUser;                             \
+			CUser* pOldUser = NULL;                      \
 			if (m_pUser) {                               \
 				pOldUser = pMod->GetUser();              \
 				pMod->SetUser(m_pUser);                  \
 			}                                            \
-			CIRCNetwork* pNetwork;                       \
+			CIRCNetwork* pNetwork = NULL;                \
 			if (m_pNetwork) {                            \
 				pNetwork = pMod->GetNetwork();           \
 				pMod->SetNetwork(m_pNetwork);            \
