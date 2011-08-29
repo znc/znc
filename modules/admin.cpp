@@ -356,11 +356,11 @@ class CAdminMod : public CModule {
 		else if (sVar == "buffer")
 			PutModule("Buffer = " + CString(pChan->GetBufferCount()));
 		else if (sVar == "inconfig")
-			PutModule("InConfig = " + pChan->InConfig());
+			PutModule("InConfig = " + CString(pChan->InConfig()));
 		else if (sVar == "keepbuffer")
-			PutModule("KeepBuffer = " + pChan->KeepBuffer());
+			PutModule("KeepBuffer = " + CString(pChan->KeepBuffer()));
 		else if (sVar == "detached")
-			PutModule("Detached = " + pChan->IsDetached());
+			PutModule("Detached = " + CString(pChan->IsDetached()));
 		else if (sVar == "key")
 			PutModule("Key = " + pChan->GetKey());
 		else
