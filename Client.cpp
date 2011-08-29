@@ -69,25 +69,6 @@ CClient::~CClient() {
 	}
 }
 
-void CClient::ParseAuthLine(CString sLine, bool bPassword) {
-	// bPassword ? [user[/network]:]password : user[/network]
-
-	if (bPassword) {
-		if (sLine.find(":") == CString::npos) {
-			m_sPass = sLine;
-			sLine = "";
-		} else {
-			m_sPass = sLine.Token(1, true, ":");
-			sLine = sLine.Token(0, false, ":");
-		}
-	}
-
-	if (m_sUser.empty() && !sLine.empty()) {
-		m_sUser = sLine.Token(0, false, "/");
-		m_sNetwork = sLine.Token(1, true, "/");
-	}
-}
-
 void CClient::ReadLine(const CString& sData) {
 	CString sLine = sData;
 
@@ -118,7 +99,20 @@ void CClient::ReadLine(const CString& sData) {
 				sAuthLine.LeftChomp();
 			}
 
-			ParseAuthLine(sAuthLine, true);
+			// [user[/network]:]password
+			if (sAuthLine.find(":") == CString::npos) {
+				m_sPass = sAuthLine;
+				sAuthLine = "";
+			} else {
+				m_sPass = sAuthLine.Token(1, true, ":");
+				sAuthLine = sAuthLine.Token(0, false, ":");
+			}
+
+			if (!sAuthLine.empty()) {
+				m_sUser = sAuthLine.Token(0, false, "/");
+				m_sNetwork = sAuthLine.Token(1, true, "/");
+			}
+
 			AuthUser();
 			return;  // Don't forward this msg.  ZNC has already registered us.
 		}
@@ -137,9 +131,15 @@ void CClient::ReadLine(const CString& sData) {
 		}
 	} else if (sCommand.Equals("USER")) {
 		if (!IsAttached()) {
-			ParseAuthLine(sLine.Token(1));
-			m_bGotUser = true;
+			// user[/network]
+			CString sAuthLine = sLine.Token(1);
 
+			if (m_sUser.empty() && !sAuthLine.empty()) {
+				m_sUser = sAuthLine.Token(0, false, "/");
+				m_sNetwork = sAuthLine.Token(1, true, "/");
+			}
+
+			m_bGotUser = true;
 			if (m_bGotPass) {
 				AuthUser();
 			} else {

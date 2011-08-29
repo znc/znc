@@ -122,7 +122,6 @@ public:
 	bool SendMotd();
 	void HelpUser();
 	void AuthUser();
-	void ParseAuthLine(CString sLine, bool bPassword = false);
 	virtual void Connected();
 	virtual void Timeout();
 	virtual void Disconnected();
