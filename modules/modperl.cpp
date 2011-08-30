@@ -148,6 +148,7 @@ public:
 				case Perl_Loaded:
 					result = HALT;
 					if (4 == ret) {
+						ModInfo.SetDefaultType(CModInfo::UserModule);
 						ModInfo.AddType(CModInfo::UserModule);
 						ModInfo.SetDescription(PString(ST(2)));
 						ModInfo.SetName(sModule);

@@ -529,6 +529,7 @@ def get_mod_info(modname, retmsg, modinfo):
             pymodule.__file__, modname)
         return 1
     cl = pymodule.__dict__[modname]
+    modinfo.SetDefaultType(cl.module_types[0])
     for module_type in cl.module_types:
         modinfo.AddType(module_type)
     modinfo.SetDescription(cl.description)
@@ -562,6 +563,7 @@ def get_mod_info_path(path, modname, modinfo):
     modinfo.SetWikiPage(cl.wiki_page)
     modinfo.SetName(modname)
     modinfo.SetPath(pymodule.__file__)
+    modinfo.SetDefaultType(cl.module_types[0])
     for module_type in cl.module_types:
         modinfo.AddType(module_type)
 
