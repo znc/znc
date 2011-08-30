@@ -191,4 +191,4 @@ template<> void TModInfo<CStickyChan>(CModInfo& Info) {
 	Info.SetWikiPage("stickychan");
 }
 
-MODULEDEFS(CStickyChan, "configless sticky chans, keeps you there very stickily even")
+NETWORKMODULEDEFS(CStickyChan, "configless sticky chans, keeps you there very stickily even")
