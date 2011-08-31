@@ -12,6 +12,7 @@
 #include <znc/zncconfig.h>
 #include <znc/Socket.h>
 #include <znc/Nick.h>
+#include <znc/Buffer.h>
 
 // Forward Declarations
 class CChan;
@@ -95,6 +96,19 @@ public:
 	// This handles NAMESX and UHNAMES in a raw 353 reply
 	void ForwardRaw353(const CString& sLine) const;
 	void ForwardRaw353(const CString& sLine, CClient* pClient) const;
+
+	// Buffers
+	void AddRawBuffer(const CString& sPre, const CString& sPost, bool bIncNick = true) { m_RawBuffer.AddLine(sPre, sPost, bIncNick); }
+	void UpdateRawBuffer(const CString& sPre, const CString& sPost, bool bIncNick = true) { m_RawBuffer.UpdateLine(sPre, sPost, bIncNick); }
+	void UpdateExactRawBuffer(const CString& sPre, const CString& sPost, bool bIncNick = true) { m_RawBuffer.UpdateExactLine(sPre, sPost, bIncNick); }
+	void ClearRawBuffer() { m_RawBuffer.Clear(); }
+	CBuffer& GetRawBuffer() { return m_RawBuffer; }
+
+	void AddMotdBuffer(const CString& sPre, const CString& sPost, bool bIncNick = true) { m_MotdBuffer.AddLine(sPre, sPost, bIncNick); }
+	void UpdateMotdBuffer(const CString& sPre, const CString& sPost, bool bIncNick = true) { m_MotdBuffer.UpdateLine(sPre, sPost, bIncNick); }
+	void ClearMotdBuffer() { m_MotdBuffer.Clear(); }
+	CBuffer& GetMotdBuffer() { return m_MotdBuffer; }
+	// !Buffers
 private:
 	void SetNick(const CString& sNick);
 	void ParseISupport(const CString& sLine);
@@ -121,6 +135,9 @@ protected:
 	unsigned int                        m_uNumCTCP;
 	static const time_t                 m_uCTCPFloodTime;
 	static const unsigned int           m_uCTCPFloodCount;
+
+	CBuffer m_RawBuffer;
+	CBuffer m_MotdBuffer;
 };
 
 #endif // !_IRCSOCK_H

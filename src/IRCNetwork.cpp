@@ -49,8 +49,6 @@ CIRCNetwork::CIRCNetwork(CUser *pUser, const CString& sName) {
 	m_sChanPrefixes = "";
 	m_bIRCAway = false;
 
-	m_RawBuffer.SetLineCount(100);   // This should be more than enough raws, especially since we are buffering the MOTD separately
-	m_MotdBuffer.SetLineCount(200);  // This should be more than enough motd lines
 	m_QueryBuffer.SetLineCount(250);
 }
 
@@ -67,8 +65,6 @@ CIRCNetwork::CIRCNetwork(CUser *pUser, const CIRCNetwork *pNetwork, bool bCloneC
 	m_sChanPrefixes = "";
 	m_bIRCAway = false;
 
-	m_RawBuffer.SetLineCount(100);   // This should be more than enough raws, especially since we are buffering the MOTD separately
-	m_MotdBuffer.SetLineCount(200);  // This should be more than enough motd lines
 	m_QueryBuffer.SetLineCount(250);
 
 	// Servers
@@ -344,29 +340,31 @@ void CIRCNetwork::ClientConnected(CClient *pClient) {
 
 	m_vClients.push_back(pClient);
 
-	if (m_RawBuffer.IsEmpty()) {
-		pClient->PutClient(":irc.znc.in 001 " + pClient->GetNick() + " :- Welcome to ZNC -");
-	} else {
+	if (m_pIRCSock && !m_pIRCSock->GetRawBuffer().IsEmpty()) {
+		CBuffer& RawBuffer = m_pIRCSock->GetRawBuffer();
 		unsigned int uIdx = 0;
 		CString sLine;
 
-		while (m_RawBuffer.GetLine(GetIRCNick().GetNick(), sLine, uIdx++)) {
+		while (RawBuffer.GetLine(GetIRCNick().GetNick(), sLine, uIdx++)) {
 			pClient->PutClient(sLine);
 		}
 
 		// The assumption is that the client got this nick from the 001 reply
 		pClient->SetNick(GetIRCNick().GetNick());
-	}
-
-	// Send the cached MOTD
-	unsigned int uIdx = 0;
-	CString sLine;
-
-	while (m_MotdBuffer.GetLine(GetIRCNick().GetNick(), sLine, uIdx++)) {
-		pClient->PutClient(sLine);
+	} else {
+		pClient->PutClient(":irc.znc.in 001 " + pClient->GetNick() + " :- Welcome to ZNC -");
 	}
 
 	if (GetIRCSock() != NULL) {
+		// Send the cached MOTD
+		unsigned int uIdx = 0;
+		CString sLine;
+
+		CBuffer& MotdBuffer = m_pIRCSock->GetMotdBuffer();
+		while (MotdBuffer.GetLine(GetIRCNick().GetNick(), sLine, uIdx++)) {
+			pClient->PutClient(sLine);
+		}
+
 		CString sUserMode("");
 		const set<unsigned char>& scUserModes = GetIRCSock()->GetUserModes();
 		for (set<unsigned char>::const_iterator it = scUserModes.begin();
