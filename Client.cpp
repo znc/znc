@@ -16,8 +16,8 @@
 #include "WebModules.h"
 
 #define CALLMOD(MOD, CLIENT, USER, NETWORK, FUNC) {  \
-	CModule *pModule = (NETWORK)->GetModules().FindModule(MOD);  \
-	if (pModule) {  \
+	CModule *pModule = NULL;  \
+	if (NETWORK && (pModule = (NETWORK)->GetModules().FindModule(MOD))) {  \
 		try {  \
 			pModule->SetClient(CLIENT);  \
 			pModule->FUNC;  \
