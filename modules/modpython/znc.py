@@ -396,7 +396,7 @@ def find_open(modname):
         #       './modules/admin.so', ('.so', 'rb', 3))
         # x == (<open file './modules/pythontest.py', mode 'U' at
         #       0x7fa2dc748d20>, './modules/pythontest.py', ('.py', 'U', 1))
-        if x[0] is None:
+        if x[0] is None and x[2][2] != imp.PKG_DIRECTORY:
             # the same
             continue
         if x[2][0] == '.so':
@@ -416,7 +416,8 @@ def find_open(modname):
             try:
                 pymodule = imp.load_module(modname, *x)
             finally:
-                x[0].close()
+                if x[0]:
+                    x[0].close()
         return (pymodule, d[1])
     else:
         # nothing found
@@ -548,7 +549,7 @@ def get_mod_info_path(path, modname, modinfo):
     #       './modules/admin.so', ('.so', 'rb', 3))
     # x == (<open file './modules/pythontest.py', mode 'U' at 0x7fa2dc748d20>,
     #       './modules/pythontest.py', ('.py', 'U', 1))
-    if x[0] is None:
+    if x[0] is None and x[2][2] != imp.PKG_DIRECTORY:
         return 0
     try:
         pymodule = imp.load_module(modname, *x)
