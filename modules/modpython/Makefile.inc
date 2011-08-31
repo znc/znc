@@ -60,10 +60,15 @@ modpython/compiler: modpython/compiler.cpp Makefile
 	$(Q)$(CXX) $(PYTHONCOMMON) -o $@ $< $(PY_LDFLAGS)
 
 modpython_install: install_datadir modpython_all
-	-for i in *.pyc; do \
+	-for i in *.pyc $(srcdir)/*.py; do \
 		$(INSTALL_DATA) $$i $(DESTDIR)$(MODDIR); \
 	done
 	mkdir -p $(DESTDIR)$(MODDIR)/modpython
 	$(INSTALL_PROGRAM) modpython/_znc_core.so $(DESTDIR)$(MODDIR)/modpython
 	$(INSTALL_DATA) modpython/znc_core.pyc $(DESTDIR)$(MODDIR)/modpython
+	if test -r modpython/znc_core.py;\
+		then $(INSTALL_DATA) modpython/znc_core.py $(DESTDIR)$(MODDIR)/modpython;\
+		else $(INSTALL_DATA) $(srcdir)/modpython/znc_core.py $(DESTDIR)$(MODDIR)/modpython;\
+	fi
 	$(INSTALL_DATA) modpython/znc.pyc $(DESTDIR)$(MODDIR)/modpython
+	$(INSTALL_DATA) $(srcdir)/modpython/znc.py $(DESTDIR)$(MODDIR)/modpython
