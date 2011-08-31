@@ -11,6 +11,7 @@
 #include "Client.h"
 #include "User.h"
 #include "znc.h"
+#include "Server.h"
 
 // These are used in OnGeneralCTCP()
 const time_t CIRCSock::m_uCTCPFloodTime = 5;
@@ -121,8 +122,6 @@ void CIRCSock::ReadLine(const CString& sData) {
 		CString sRest = sLine.Token(3, true);
 
 		switch (uRaw) {
-			case 10: // Don't send server redirects to the client
-				return;
 			case 1: { // :irc.server.com 001 nick :Welcome to the Internet Relay Network nick
 				if (m_bAuthed && sServer == "irc.znc.in") {
 					// m_bAuthed == true => we already received another 001 => we might be in a traffic loop
@@ -163,6 +162,16 @@ void CIRCSock::ReadLine(const CString& sData) {
 				ParseISupport(sRest);
 				m_pUser->UpdateExactRawBuffer(":" + sServer + " " + sCmd + " ", " " + sRest);
 				break;
+			case 10: { // :irc.server.com 010 nick <hostname> <port> :<info>
+				CString sHost = sRest.Token(0);
+				CString sPort = sRest.Token(1);
+				CString sInfo = sRest.Token(2, true).TrimPrefix_n(":");
+				m_pUser->PutStatus("Server [" + m_pUser->GetCurrentServer()->GetString(false) +
+						"] redirects us to [" + sHost + ":" + sPort + "] with reason [" + sInfo + "]");
+				m_pUser->PutStatus("Perhaps you want to add it as a new server.");
+				// Don't send server redirects to the client
+				return;
+			}
 			case 2:
 			case 3:
 			case 4:
