@@ -393,6 +393,7 @@ void CDCCBounce::SockError(int iErrno) {
 }
 
 void CDCCBounce::Connected() {
+	SetTimeout(0);
 	DEBUG(GetSockName() << " == Connected()");
 }
 
