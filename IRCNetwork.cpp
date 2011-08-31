@@ -134,10 +134,6 @@ CIRCNetwork::CIRCNetwork(CUser *pUser, const CIRCNetwork *pNetwork, bool bCloneC
 }
 
 CIRCNetwork::~CIRCNetwork() {
-	// Delete modules (this unloads all modules)
-	delete m_pModules;
-	m_pModules = NULL;
-
 	// Delete clients
 	for (vector<CClient*>::const_iterator it = m_vClients.begin(); it != m_vClients.end(); ++it) {
 		CZNC::Get().GetManager().DelSockByAddr(*it);
@@ -146,6 +142,10 @@ CIRCNetwork::~CIRCNetwork() {
 
 	// Delete servers
 	DelServers();
+
+	// Delete modules (this unloads all modules)
+	delete m_pModules;
+	m_pModules = NULL;
 
 	// Delete Channels
 	for (vector<CChan*>::const_iterator it = m_vChans.begin(); it != m_vChans.end(); ++it) {

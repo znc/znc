@@ -88,10 +88,6 @@ CUser::CUser(const CString& sUserName)
 }
 
 CUser::~CUser() {
-	// Delete modules (unloads all modules!)
-	delete m_pModules;
-	m_pModules = NULL;
-
 	// Delete networks
 	for (unsigned int c = 0; c < m_vIRCNetworks.size(); c++) {
 		CIRCNetwork* pNetwork = m_vIRCNetworks[c];
@@ -105,6 +101,10 @@ CUser::~CUser() {
 		CZNC::Get().GetManager().DelSockByAddr(pClient);
 	}
 	m_vClients.clear();
+
+	// Delete modules (unloads all modules!)
+	delete m_pModules;
+	m_pModules = NULL;
 
 	CZNC::Get().GetManager().DelCronByAddr(m_pUserTimer);
 
