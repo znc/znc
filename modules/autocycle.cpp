@@ -11,7 +11,10 @@
 
 class CAutoCycleMod : public CModule {
 public:
-	MODCONSTRUCTOR(CAutoCycleMod) {}
+	MODCONSTRUCTOR(CAutoCycleMod) {
+		m_recentlyCycled.SetTTL(15 * 1000);
+	}
+
 	virtual ~CAutoCycleMod() {}
 
 	virtual bool OnLoad(const CString& sArgs, CString& sMessage) {
@@ -119,14 +122,20 @@ protected:
 		if (!IsAutoCycle(Channel.GetName()))
 			return;
 
+		// Did we recently annoy opers via cycling of an empty channel?
+		if (m_recentlyCycled.HasItem(Channel.GetName()))
+			return;
+
 		// Is there only one person left in the channel?
 		if (Channel.GetNickCount() != 1)
 			return;
 
 		// Is that person us and we don't have op?
 		const CNick& pNick = Channel.GetNicks().begin()->second;
-		if (!pNick.HasPerm(CChan::Op) && pNick.GetNick().Equals(m_pUser->GetCurNick()))
+		if (!pNick.HasPerm(CChan::Op) && pNick.GetNick().Equals(m_pUser->GetCurNick())) {
 			Channel.Cycle();
+			m_recentlyCycled.AddItem(Channel.GetName());
+		}
 	}
 
 	bool AlreadyAdded(const CString& sInput) {
@@ -222,6 +231,7 @@ protected:
 private:
 	vector<CString> m_vsChans;
 	vector<CString> m_vsNegChans;
+	TCacheMap<CString> m_recentlyCycled;
 };
 
 template<> void TModInfo<CAutoCycleMod>(CModInfo& Info) {
