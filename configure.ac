@@ -132,7 +132,7 @@ AC_ARG_ENABLE( [c-ares],
 	[ARES="$enableval"],
 	[ARES="auto"])
 AC_ARG_ENABLE( [run-from-source],
-	AS_HELP_STRING([--enable-run-from-source], [znc will be runnable without installation]),
+	AS_HELP_STRING([--enable-run-from-source], [ZNC will be runnable without installation]),
 	[if test "x$enableval" = "xyes" ; then
 		AC_DEFINE([RUN_FROM_SOURCE], [1],
 			  [Define if ZNC should be runnable without installation])
@@ -281,7 +281,7 @@ if test -z "$ISCYGWIN" ; then
 	# warning: -fPIC ignored for target (all code is position independent)
 	appendMod -fPIC
 else
-	# But cygwin does want most of znc in a shared lib
+	# But cygwin does want most of ZNC in a shared lib
 	LIBZNC="libznc.dll"
 	LIBZNCDIR="$bindir"
 fi
@@ -526,7 +526,7 @@ AC_CONFIG_FILES([test/Makefile])
 AC_OUTPUT
 
 echo
-echo znc AC_PACKAGE_VERSION configured
+echo ZNC AC_PACKAGE_VERSION configured
 echo
 echo "prefix:       $prefix"
 echo "debug:        $DEBUG"

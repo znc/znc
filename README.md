@@ -122,13 +122,14 @@ These directories are also in there:
 
 This file shouldn't be too hard too understand. An explanation of all the
 items can be found on the [Configuration](http://wiki.znc.in/Configuration)-Page.
+Warning: better not to edit config, while ZNC is running.
 
 To rehash the config file, you can send ZNC SIGHUP via
 	pkill -SIGHUP znc
-or you can login to znc and use
+or you can login to ZNC and use
 	/msg *status rehash
 
-If you changed some settings while znc is running, a simple
+If you changed some settings while ZNC is running, a simple
 	pkill -SIGUSR1 znc
 will make ZNC rewrite its config file. Alternatively you can use this:
 	/msg *status saveconfig

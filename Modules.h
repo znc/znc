@@ -34,7 +34,7 @@ class CModInfo;
 #ifndef HAVE_LIBSSL
 #error -
 #error -
-#error This module only works when znc is compiled with OpenSSL support
+#error This module only works when ZNC is compiled with OpenSSL support
 #error -
 #error -
 #endif
@@ -291,7 +291,7 @@ private:
 
 /** The base class for your own ZNC modules.
  *
- *  If you want to write a module for znc, you will have to implement a class
+ *  If you want to write a module for ZNC, you will have to implement a class
  *  which inherits from this class. You should override some of the "On*"
  *  functions in this class. These function will then be called by ZNC when the
  *  associated event happens.

@@ -56,7 +56,7 @@ static const unsigned char base64_table[256] = {
 };
 
 /**
- * @brief String class that is used inside znc.
+ * @brief String class that is used inside ZNC.
  *
  * All strings that are used in ZNC and its modules should use instances of this
  * class. It provides helpful functions for parsing input like Token() and

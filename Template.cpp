@@ -82,7 +82,8 @@ CTemplate::~CTemplate() {
 }
 
 void CTemplate::Init() {
-	/* We have no CConfig in znc land
+	/* We have no CConfig in ZNC land
+	 * Hmm... Actually, we do have it now.
 	CString sPath(CConfig::GetValue("WebFilesPath"));
 
 	if (!sPath.empty()) {
@@ -789,7 +790,8 @@ CString CTemplate::GetValue(const CString& sArgs, bool bFromIf) {
 		msArgs[sArg.Token(0, false, "=").AsUpper()] = sArg.Token(1, true, "=");
 	}
 
-	/* We have no CConfig in znc land
+	/* We have no CConfig in ZNC land
+	 * Hmm... Actually, we do have it now.
 	if (msArgs.find("CONFIG") != msArgs.end()) {
 		sRet = CConfig::GetValue(sName);
 	} else*/ if (msArgs.find("ROWS") != msArgs.end()) {
