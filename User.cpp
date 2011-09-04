@@ -338,7 +338,7 @@ bool CUser::ParseConfig(CConfig* pConfig, CString& sError) {
 		}
 
 		if (pNetwork) {
-			CUtils::PrintMessage("NOTICE: Found deprecated config, upgrading to a network named [user]");
+			CUtils::PrintMessage("NOTICE: Found deprecated config, upgrading to a network");
 
 			if (!pNetwork->ParseConfig(pConfig, sError, true)) {
 				return false;
