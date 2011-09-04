@@ -167,9 +167,9 @@ void CIRCSock::ReadLine(const CString& sData) {
 				CString sHost = sRest.Token(0);
 				CString sPort = sRest.Token(1);
 				CString sInfo = sRest.Token(2, true).TrimPrefix_n(":");
-				m_pUser->PutStatus("Server [" + m_pUser->GetCurrentServer()->GetString(false) +
+				m_pNetwork->PutStatus("Server [" + m_pNetwork->GetCurrentServer()->GetString(false) +
 						"] redirects us to [" + sHost + ":" + sPort + "] with reason [" + sInfo + "]");
-				m_pUser->PutStatus("Perhaps you want to add it as a new server.");
+				m_pNetwork->PutStatus("Perhaps you want to add it as a new server.");
 				// Don't send server redirects to the client
 				return;
 			}
