@@ -134,6 +134,11 @@ CIRCNetwork::CIRCNetwork(CUser *pUser, const CIRCNetwork *pNetwork, bool bCloneC
 }
 
 CIRCNetwork::~CIRCNetwork() {
+	if (m_pIRCSock) {
+		CZNC::Get().GetManager().DelSockByAddr(m_pIRCSock);
+		m_pIRCSock = NULL;
+	}
+
 	// Delete clients
 	for (vector<CClient*>::const_iterator it = m_vClients.begin(); it != m_vClients.end(); ++it) {
 		CZNC::Get().GetManager().DelSockByAddr(*it);

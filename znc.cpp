@@ -169,17 +169,6 @@ bool CZNC::HandleUserDeletion()
 			continue;
 		}
 		m_msUsers.erase(pUser->GetUserName());
-
-		vector<CIRCNetwork*> vNetworks;
-		for (vector<CIRCNetwork*>::iterator it2 = vNetworks.begin(); it2 != vNetworks.end(); ++it2) {
-			CIRCNetwork *pNetwork = *it2;
-			CIRCSock* pIRCSock = pNetwork->GetIRCSock();
-
-			if (pIRCSock) {
-				m_Manager.DelSockByAddr(pIRCSock);
-			}
-		}
-
 		CWebSock::FinishUserSessions(*pUser);
 		delete pUser;
 	}
