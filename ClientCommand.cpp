@@ -741,7 +741,7 @@ void CClient::UserCommand(CString& sLine) {
 			for (it = ssNetworkMods.begin(); it != ssNetworkMods.end(); ++it) {
 				const CModInfo& Info = *it;
 				Table.AddRow();
-				Table.SetCell("Name", (m_pNetwork->GetModules().FindModule(Info.GetName()) ? "*" : " ") + Info.GetName());
+				Table.SetCell("Name", ((m_pNetwork && m_pNetwork->GetModules().FindModule(Info.GetName())) ? "*" : " ") + Info.GetName());
 				Table.SetCell("Description", Info.GetDescription().Ellipsize(128));
 			}
 
