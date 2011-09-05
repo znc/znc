@@ -140,7 +140,7 @@ public:
 				sArgs.c_str(),
 				(int)eType,
 				(eType == CModInfo::GlobalModule ? Py_None : SWIG_NewInstanceObj(GetUser(), SWIG_TypeQuery("CUser*"), 0)),
-				(eType == CModInfo::NetworkModule ? SWIG_NewInstanceObj(GetNetwork(), SWIG_TypeQuery("CNetwork*"), 0) : Py_None),
+				(eType == CModInfo::NetworkModule ? SWIG_NewInstanceObj(GetNetwork(), SWIG_TypeQuery("CIRCNetwork*"), 0) : Py_None),
 				CPyRetString::wrap(sRetMsg),
 				SWIG_NewInstanceObj(reinterpret_cast<CModule*>(this), SWIG_TypeQuery("CModule*"), 0));
 		if (!pyRes) {
