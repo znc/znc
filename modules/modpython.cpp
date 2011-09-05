@@ -24,6 +24,7 @@ class CModPython: public CModule {
 
 	PyObject* m_PyZNCModule;
 	PyObject* m_PyFormatException;
+	vector<PyObject*> m_vpObject;
 
 public:
 
@@ -173,7 +174,7 @@ public:
 				return HALT;
 		}
 		bSuccess = false;
-		sRetMsg += " unknown value returned by modperl.load_module";
+		sRetMsg += " unknown value returned by modpython.load_module";
 		return HALT;
 	}
 
