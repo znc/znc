@@ -294,33 +294,23 @@ public:
 		while (!dirs.empty()) {
 			set<CString> already;
 
-			Dir.FillByWildcard(dirs.front().first, "*.py");
+			Dir.Fill(dirs.front().first);
 			for (unsigned int a = 0; a < Dir.size(); a++) {
 				CFile& File = *Dir[a];
 				CString sName = File.GetShortName();
 				CString sPath = File.GetLongName();
 				sPath.TrimSuffix(sName);
-				sName.RightChomp(3);
-				TryAddModInfo(sPath, sName, ssMods, already, eType);
-			}
 
-			Dir.FillByWildcard(dirs.front().first, "*.pyc");
-			for (unsigned int a = 0; a < Dir.size(); a++) {
-				CFile& File = *Dir[a];
-				CString sName = File.GetShortName();
-				CString sPath = File.GetLongName();
-				sPath.TrimSuffix(sName);
-				sName.RightChomp(4);
-				TryAddModInfo(sPath, sName, ssMods, already, eType);
-			}
+				if (!File.IsDir()) {
+					if (sName.WildCmp("*.pyc")) {
+						sName.RightChomp(4);
+					} else if (sName.WildCmp("*.py") || sName.WildCmp("*.so")) {
+						sName.RightChomp(3);
+					} else {
+						continue;
+					}
+				}
 
-			Dir.FillByWildcard(dirs.front().first, "*.so");
-			for (unsigned int a = 0; a < Dir.size(); a++) {
-				CFile& File = *Dir[a];
-				CString sName = File.GetShortName();
-				CString sPath = File.GetLongName();
-				sPath.TrimSuffix(sName);
-				sName.RightChomp(3);
 				TryAddModInfo(sPath, sName, ssMods, already, eType);
 			}
 

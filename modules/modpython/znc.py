@@ -556,7 +556,8 @@ def get_mod_info_path(path, modname, modinfo):
     except ImportError:
         return 0
     finally:
-        x[0].close()
+        if x[0]:
+            x[0].close()
     if modname not in pymodule.__dict__:
         return 0
     cl = pymodule.__dict__[modname]
