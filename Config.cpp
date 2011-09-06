@@ -22,26 +22,26 @@ struct ConfigStackEntry {
 	}
 };
 
-CConfig::CConfigEntry::CConfigEntry()
+CConfigEntry::CConfigEntry()
 	: m_pSubConfig(NULL) {
 }
 
-CConfig::CConfigEntry::CConfigEntry(const CConfig& Config)
+CConfigEntry::CConfigEntry(const CConfig& Config)
 	: m_pSubConfig(new CConfig(Config)) {
 }
 
-CConfig::CConfigEntry::CConfigEntry(const CConfigEntry& other)
+CConfigEntry::CConfigEntry(const CConfigEntry& other)
 	: m_pSubConfig(NULL) {
 	if (other.m_pSubConfig)
 		m_pSubConfig = new CConfig(*other.m_pSubConfig);
 }
 
-CConfig::CConfigEntry::~CConfigEntry()
+CConfigEntry::~CConfigEntry()
 {
 	delete m_pSubConfig;
 }
 
-CConfig::CConfigEntry& CConfig::CConfigEntry::operator=(const CConfigEntry& other) {
+CConfigEntry& CConfigEntry::operator=(const CConfigEntry& other) {
 	delete m_pSubConfig;
 	if (other.m_pSubConfig)
 		m_pSubConfig = new CConfig(*other.m_pSubConfig);

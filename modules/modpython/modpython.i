@@ -6,9 +6,6 @@
  * by the Free Software Foundation.
  */
 
-// Supress "Nested struct not currently supported (ignored)."
-#pragma SWIG nowarn=325
-
 %module znc_core %{
 #include <utility>
 #include "../Utils.h"

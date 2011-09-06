@@ -13,19 +13,20 @@
 #include "ZNCString.h"
 
 class CFile;
+class CConfig;
+
+struct CConfigEntry {
+	CConfigEntry();
+	CConfigEntry(const CConfig& Config);
+	CConfigEntry(const CConfigEntry& other);
+	~CConfigEntry();
+	CConfigEntry& operator=(const CConfigEntry& other);
+
+	CConfig* m_pSubConfig;
+};
 
 class CConfig {
 public:
-	struct CConfigEntry {
-		CConfigEntry();
-		CConfigEntry(const CConfig& Config);
-		CConfigEntry(const CConfigEntry& other);
-		~CConfigEntry();
-		CConfigEntry& operator=(const CConfigEntry& other);
-
-		CConfig* m_pSubConfig;
-	};
-
 	typedef map<CString, VCString> EntryMap;
 	typedef map<CString, CConfigEntry> SubConfig;
 	typedef map<CString, SubConfig> SubConfigMap;
