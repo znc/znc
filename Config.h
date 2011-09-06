@@ -134,7 +134,7 @@ public:
 	}
 
 	bool Parse(CFile& file, CString& sErrorMsg);
-	void Write(CFile *pFile, unsigned int iIndentation = 0);
+	void Write(CFile& file, unsigned int iIndentation = 0);
 
 private:
 	EntryMap m_ConfigEntries;

@@ -499,7 +499,7 @@ bool CZNC::WriteConfig() {
 		config.AddSubConfig("User", it->second->GetUserName(), it->second->ToConfig());
 	}
 
-	config.Write(pFile);
+	config.Write(*pFile);
 
 	// If Sync() fails... well, let's hope nothing important breaks..
 	pFile->Sync();
