@@ -74,7 +74,7 @@ void CClient::ReadLine(const CString& sData) {
 
 	sLine.TrimRight("\n\r");
 
-	DEBUG("(" << ((m_pUser) ? m_pUser->GetUserName() : GetRemoteIP()) << ((m_pNetwork) ? ("/" + m_pNetwork->GetName()) : "") << ") CLI -> ZNC [" << sLine << "]");
+	DEBUG("(" << GetFullName() << ") CLI -> ZNC [" << sLine << "]");
 
 	if (IsAttached()) {
 		MODULECALL(OnUserRaw(sLine), m_pUser, m_pNetwork, this, return);
@@ -707,8 +707,16 @@ void CClient::PutIRC(const CString& sLine) {
 	}
 }
 
+CString CClient::GetFullName() {
+	if (!m_pUser)
+		return GetRemoteIP();
+	if (!m_pNetwork)
+		return m_pUser->GetUserName();
+	return m_pUser->GetUserName() + "/" + m_pNetwork->GetName();
+}
+
 void CClient::PutClient(const CString& sLine) {
-	DEBUG("(" << ((m_pUser) ? m_pUser->GetUserName() : GetRemoteIP()) << ") ZNC -> CLI [" << sLine << "]");
+	DEBUG("(" << GetFullName() << ") ZNC -> CLI [" << sLine << "]");
 	Write(sLine + "\r\n");
 }
 
@@ -733,7 +741,7 @@ void CClient::PutModNotice(const CString& sModule, const CString& sLine) {
 		return;
 	}
 
-	DEBUG("(" << m_pUser->GetUserName() << ") ZNC -> CLI [:" + m_pUser->GetStatusPrefix() + ((sModule.empty()) ? "status" : sModule) + "!znc@znc.in NOTICE " << GetNick() << " :" << sLine << "]");
+	DEBUG("(" << GetFullName() << ") ZNC -> CLI [:" + m_pUser->GetStatusPrefix() + ((sModule.empty()) ? "status" : sModule) + "!znc@znc.in NOTICE " << GetNick() << " :" << sLine << "]");
 	Write(":" + m_pUser->GetStatusPrefix() + ((sModule.empty()) ? "status" : sModule) + "!znc@znc.in NOTICE " + GetNick() + " :" + sLine + "\r\n");
 }
 
@@ -742,7 +750,7 @@ void CClient::PutModule(const CString& sModule, const CString& sLine) {
 		return;
 	}
 
-	DEBUG("(" << m_pUser->GetUserName() << ") ZNC -> CLI [:" + m_pUser->GetStatusPrefix() + ((sModule.empty()) ? "status" : sModule) + "!znc@znc.in PRIVMSG " << GetNick() << " :" << sLine << "]");
+	DEBUG("(" << GetFullName() << ") ZNC -> CLI [:" + m_pUser->GetStatusPrefix() + ((sModule.empty()) ? "status" : sModule) + "!znc@znc.in PRIVMSG " << GetNick() << " :" << sLine << "]");
 	Write(":" + m_pUser->GetStatusPrefix() + ((sModule.empty()) ? "status" : sModule) + "!znc@znc.in PRIVMSG " + GetNick() + " :" + sLine + "\r\n");
 }
 

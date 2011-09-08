@@ -135,6 +135,7 @@ public:
 	vector<CClient*>& GetClients();
 	const CIRCSock* GetIRCSock() const;
 	CIRCSock* GetIRCSock();
+	CString GetFullName();
 private:
 	void HandleCap(const CString& sLine);
 	void RespondCap(const CString& sResponse);
