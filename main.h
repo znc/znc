@@ -62,8 +62,8 @@
 	} while (false)
 
 #define USERMODULECALL(macFUNC, macUSER, macNETWORK, macCLIENT, macEXITER)  \
-	assert(macUSER != NULL);                                          \
-	if (macUSER) {                                                    \
+	do {                                                              \
+		assert(macUSER != NULL);                                  \
 		CModules& UMods = macUSER->GetModules();                  \
 		CIRCNetwork* pOldUNetwork = UMods.GetNetwork();           \
 		CClient* pOldUClient = UMods.GetClient();                 \
@@ -76,12 +76,12 @@
 		}                                                         \
 		UMods.SetNetwork(pOldUNetwork);                           \
 		UMods.SetClient(pOldUClient);                             \
-	}
+	} while (false)
 
 #define NETWORKMODULECALL(macFUNC, macUSER, macNETWORK, macCLIENT, macEXITER)  \
-	assert(macUSER != NULL);                                               \
-	assert(macNETWORK != NULL);                                            \
-	if (macNETWORK) {  \
+	do {                                                                   \
+		assert(macUSER != NULL);                                       \
+		assert(macNETWORK != NULL);                                    \
 		CModules& NMods = ((CIRCNetwork*)macNETWORK)->GetModules();  \
 		CClient* pOldNClient = NMods.GetClient();  \
 		NMods.SetClient(macCLIENT);  \
@@ -90,12 +90,14 @@
 			macEXITER;  \
 		}  \
 		NMods.SetClient(pOldNClient); \
-	}
+	} while (false)
 
 #define MODULECALL(macFUNC, macUSER, macNETWORK, macCLIENT, macEXITER)  \
-	GLOBALMODULECALL(macFUNC, macUSER, macNETWORK, macCLIENT, macEXITER);  \
-	USERMODULECALL(macFUNC, macUSER, macNETWORK, macCLIENT, macEXITER);  \
-	NETWORKMODULECALL(macFUNC, macUSER, macNETWORK, macCLIENT, macEXITER);
+	do {                                                                           \
+		GLOBALMODULECALL(macFUNC, macUSER, macNETWORK, macCLIENT, macEXITER);  \
+		USERMODULECALL(macFUNC, macUSER, macNETWORK, macCLIENT, macEXITER);    \
+		NETWORKMODULECALL(macFUNC, macUSER, macNETWORK, macCLIENT, macEXITER); \
+	} while (false)
 
 /** @mainpage
  *  Welcome to the API documentation for ZNC.
