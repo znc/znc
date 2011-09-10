@@ -606,7 +606,7 @@ void CIRCSock::ReadLine(const CString& sData) {
 				CString sTopic = sLine.Token(3, true);
 				sTopic.LeftChomp();
 
-				MODULECALL(OnTopic(Nick, *pChan, sTopic), m_pNetwork->GetUser(), m_pNetwork, NULL, return)
+				MODULECALL(OnTopic(Nick, *pChan, sTopic), m_pNetwork->GetUser(), m_pNetwork, NULL, return);
 
 				pChan->SetTopicOwner(Nick.GetNick());
 				pChan->SetTopicDate((unsigned long) time(NULL));
