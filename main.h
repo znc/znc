@@ -62,6 +62,7 @@
 	} while (false)
 
 #define USERMODULECALL(macFUNC, macUSER, macNETWORK, macCLIENT, macEXITER)  \
+	assert(macUSER != NULL);                                          \
 	if (macUSER) {                                                    \
 		CModules& UMods = macUSER->GetModules();                  \
 		CIRCNetwork* pOldUNetwork = UMods.GetNetwork();           \
@@ -78,6 +79,8 @@
 	}
 
 #define NETWORKMODULECALL(macFUNC, macUSER, macNETWORK, macCLIENT, macEXITER)  \
+	assert(macUSER != NULL);                                               \
+	assert(macNETWORK != NULL);                                            \
 	if (macNETWORK) {  \
 		CModules& NMods = ((CIRCNetwork*)macNETWORK)->GetModules();  \
 		CClient* pOldNClient = NMods.GetClient();  \
