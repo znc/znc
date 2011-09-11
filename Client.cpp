@@ -685,7 +685,9 @@ void CClient::Disconnected() {
 	DEBUG(GetSockName() << " == Disconnected()");
 	SetNetwork(NULL, true, false);
 
-	MODULECALL(OnClientDisconnect(), m_pUser, m_pNetwork, this, NOTHING);
+	if (m_pUser) {
+		MODULECALL(OnClientDisconnect(), m_pUser, m_pNetwork, this, NOTHING);
+	}
 }
 
 void CClient::ReachedMaxBuffer() {
