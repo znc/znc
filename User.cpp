@@ -464,7 +464,7 @@ void CUser::RemoveNetwork(CIRCNetwork *pNetwork) {
 	}
 }
 
-bool CUser::DeleteNetwork(CString sNetwork) {
+bool CUser::DeleteNetwork(const CString& sNetwork) {
 	CIRCNetwork *pNetwork = FindNetwork(sNetwork);
 
 	if (pNetwork) {

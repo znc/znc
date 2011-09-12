@@ -67,7 +67,7 @@ public:
 
 	// Networks
 	CIRCNetwork* AddNetwork(const CString &sNetwork);
-	bool DeleteNetwork(CString sNetwork);
+	bool DeleteNetwork(const CString& sNetwork);
 	bool AddNetwork(CIRCNetwork *pNetwork);
 	void RemoveNetwork(CIRCNetwork *pNetwork);
 	CIRCNetwork* FindNetwork(const CString& sNetwork);
