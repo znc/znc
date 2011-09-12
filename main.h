@@ -42,7 +42,7 @@
 		}                                                             \
 	} while (false)
 
-#define GLOBALMODULECALL(macFUNC, macUSER, macNETWORK, macCLIENT, macEXITER)   \
+#define _GLOBALMODULECALL(macFUNC, macUSER, macNETWORK, macCLIENT, macEXITER)   \
 	do {                                                       \
 		CModules& GMods = CZNC::Get().GetModules();  \
 		CUser* pOldGUser = GMods.GetUser();                \
@@ -61,9 +61,10 @@
 		GMods.SetClient(pOldGClient);                      \
 	} while (false)
 
-#define USERMODULECALL(macFUNC, macUSER, macNETWORK, macCLIENT, macEXITER)  \
+#define _USERMODULECALL(macFUNC, macUSER, macNETWORK, macCLIENT, macEXITER)  \
 	do {                                                              \
 		assert(macUSER != NULL);                                  \
+		_GLOBALMODULECALL(macFUNC, macUSER, macNETWORK, macCLIENT, macEXITER); \
 		CModules& UMods = macUSER->GetModules();                  \
 		CIRCNetwork* pOldUNetwork = UMods.GetNetwork();           \
 		CClient* pOldUClient = UMods.GetClient();                 \
@@ -82,6 +83,7 @@
 	do {                                                                   \
 		assert(macUSER != NULL);                                       \
 		assert(macNETWORK != NULL);                                    \
+		_USERMODULECALL(macFUNC, macUSER, macNETWORK, macCLIENT, macEXITER); \
 		CModules& NMods = ((CIRCNetwork*)macNETWORK)->GetModules();  \
 		CClient* pOldNClient = NMods.GetClient();  \
 		NMods.SetClient(macCLIENT);  \
@@ -92,14 +94,11 @@
 		NMods.SetClient(pOldNClient); \
 	} while (false)
 
-#define MODULECALL(macFUNC, macUSER, macNETWORK, macCLIENT, macEXITER)  \
-	do {                                                                           \
-		GLOBALMODULECALL(macFUNC, macUSER, macNETWORK, macCLIENT, macEXITER);  \
-		USERMODULECALL(macFUNC, macUSER, macNETWORK, macCLIENT, macEXITER);    \
-		if (macNETWORK) { \
-			NETWORKMODULECALL(macFUNC, macUSER, macNETWORK, macCLIENT, macEXITER); \
-		} \
-	} while (false)
+#define GLOBALMODULECALL(macFUNC, macEXITER) \
+	_GLOBALMODULECALL(macFUNC, NULL, NULL, NULL, macEXITER)
+
+#define USERMODULECALL(macFUNC, macUSER, macCLIENT, macEXITER) \
+	_USERMODULECALL(macFUNC, macUSER, NULL, macCLIENT, macEXITER)
 
 /** @mainpage
  *  Welcome to the API documentation for ZNC.

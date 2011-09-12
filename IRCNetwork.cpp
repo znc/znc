@@ -342,7 +342,7 @@ void CIRCNetwork::ClientConnected(CClient *pClient) {
 
 	CString sBufLine;
 	while (m_QueryBuffer.GetNextLine(GetIRCNick().GetNick(), sBufLine)) {
-		MODULECALL(OnPrivBufferPlayLine(*pClient, sBufLine), m_pUser, this, NULL, continue);
+		NETWORKMODULECALL(OnPrivBufferPlayLine(*pClient, sBufLine), m_pUser, this, NULL, continue);
 		pClient->PutClient(sBufLine);
 	}
 
@@ -547,7 +547,7 @@ bool CIRCNetwork::JoinChan(CChan* pChan) {
 		pChan->Disable();
 	} else {
 		pChan->IncJoinTries();
-		MODULECALL(OnTimerAutoJoin(*pChan), m_pUser, this, NULL, return false);
+		NETWORKMODULECALL(OnTimerAutoJoin(*pChan), m_pUser, this, NULL, return false);
 		return true;
 	}
 	return false;

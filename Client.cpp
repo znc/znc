@@ -77,9 +77,9 @@ void CClient::ReadLine(const CString& sData) {
 	DEBUG("(" << GetFullName() << ") CLI -> ZNC [" << sLine << "]");
 
 	if (IsAttached()) {
-		MODULECALL(OnUserRaw(sLine), m_pUser, m_pNetwork, this, return);
+		NETWORKMODULECALL(OnUserRaw(sLine), m_pUser, m_pNetwork, this, return);
 	} else {
-		GLOBALMODULECALL(OnUnknownUserRaw(sLine), m_pUser, m_pNetwork, this, return);
+		GLOBALMODULECALL(OnUnknownUserRaw(this, sLine), return);
 	}
 
 	CString sCommand = sLine.Token(0);
@@ -233,11 +233,11 @@ void CClient::ReadLine(const CString& sData) {
 			sCTCP.LeftChomp();
 			sCTCP.RightChomp();
 
-			MODULECALL(OnUserCTCPReply(sTarget, sCTCP), m_pUser, m_pNetwork, this, return);
+			NETWORKMODULECALL(OnUserCTCPReply(sTarget, sCTCP), m_pUser, m_pNetwork, this, return);
 
 			sMsg = "\001" + sCTCP + "\001";
 		} else {
-			MODULECALL(OnUserNotice(sTarget, sMsg), m_pUser, m_pNetwork, this, return);
+			NETWORKMODULECALL(OnUserNotice(sTarget, sMsg), m_pUser, m_pNetwork, this, return);
 		}
 
 		if (!GetIRCSock()) {
@@ -298,7 +298,7 @@ void CClient::ReadLine(const CString& sData) {
 
 				if (sCTCP.Token(0).Equals("ACTION")) {
 					CString sMessage = sCTCP.Token(1, true);
-					MODULECALL(OnUserAction(sTarget, sMessage), m_pUser, m_pNetwork, this, return);
+					NETWORKMODULECALL(OnUserAction(sTarget, sMessage), m_pUser, m_pNetwork, this, return);
 					sCTCP = "ACTION " + sMessage;
 
 					if (pChan && pChan->KeepBuffer()) {
@@ -319,7 +319,7 @@ void CClient::ReadLine(const CString& sData) {
 					}
 				}
 			} else {
-				MODULECALL(OnUserCTCP(sTarget, sCTCP), m_pUser, m_pNetwork, this, return);
+				NETWORKMODULECALL(OnUserCTCP(sTarget, sCTCP), m_pUser, m_pNetwork, this, return);
 			}
 
 			if (m_pNetwork) {
@@ -338,7 +338,7 @@ void CClient::ReadLine(const CString& sData) {
 			return;
 		}
 
-		MODULECALL(OnUserMsg(sTarget, sMsg), m_pUser, m_pNetwork, this, return);
+		NETWORKMODULECALL(OnUserMsg(sTarget, sMsg), m_pUser, m_pNetwork, this, return);
 
 		if (!GetIRCSock()) {
 			// Some lagmeters do a PRIVMSG to their own nick, ignore those.
@@ -410,7 +410,7 @@ void CClient::ReadLine(const CString& sData) {
 
 		for (unsigned int a = 0; a < vChans.size(); a++) {
 			CString sChannel = vChans[a];
-			MODULECALL(OnUserJoin(sChannel, sKey), m_pUser, m_pNetwork, this, continue);
+			NETWORKMODULECALL(OnUserJoin(sChannel, sKey), m_pUser, m_pNetwork, this, continue);
 
 			CChan* pChan = m_pNetwork->FindChan(sChannel);
 			if (pChan) {
@@ -444,7 +444,7 @@ void CClient::ReadLine(const CString& sData) {
 			sMessage.LeftChomp();
 		}
 
-		MODULECALL(OnUserPart(sChan, sMessage), m_pUser, m_pNetwork, this, return);
+		NETWORKMODULECALL(OnUserPart(sChan, sMessage), m_pUser, m_pNetwork, this, return);
 
 		CChan* pChan = m_pNetwork->FindChan(sChan);
 
@@ -466,10 +466,10 @@ void CClient::ReadLine(const CString& sData) {
 		if (!sTopic.empty()) {
 			if (sTopic.Left(1) == ":")
 				sTopic.LeftChomp();
-			MODULECALL(OnUserTopic(sChan, sTopic), m_pUser, m_pNetwork, this, return);
+			NETWORKMODULECALL(OnUserTopic(sChan, sTopic), m_pUser, m_pNetwork, this, return);
 			sLine = "TOPIC " + sChan + " :" + sTopic;
 		} else {
-			MODULECALL(OnUserTopicRequest(sChan), m_pUser, m_pNetwork, this, return);
+			NETWORKMODULECALL(OnUserTopicRequest(sChan), m_pUser, m_pNetwork, this, return);
 		}
 	} else if (m_pNetwork && sCommand.Equals("MODE")) {
 		CString sTarget = sLine.Token(1);
@@ -625,7 +625,7 @@ void CAuthBase::RefuseLogin(const CString& sReason) {
 				"to login as you, but was rejected [" + sReason + "].");
 	}
 
-	GLOBALMODULECALL(OnFailedLogin(GetUsername(), GetRemoteIP()), NULL, NULL, NULL, NOTHING);
+	GLOBALMODULECALL(OnFailedLogin(GetUsername(), GetRemoteIP()), NOTHING);
 	RefusedLogin(sReason);
 	Invalidate();
 }
@@ -666,7 +666,7 @@ void CClient::AcceptLogin(CUser& User) {
 
 	SendMotd();
 
-	MODULECALL(OnClientLogin(), m_pUser, m_pNetwork, this, NOTHING);
+	NETWORKMODULECALL(OnClientLogin(), m_pUser, m_pNetwork, this, NOTHING);
 }
 
 void CClient::Timeout() {
@@ -686,7 +686,7 @@ void CClient::Disconnected() {
 	SetNetwork(NULL, true, false);
 
 	if (m_pUser) {
-		MODULECALL(OnClientDisconnect(), m_pUser, m_pNetwork, this, NOTHING);
+		NETWORKMODULECALL(OnClientDisconnect(), m_pUser, m_pNetwork, this, NOTHING);
 	}
 }
 
@@ -790,7 +790,7 @@ void CClient::HandleCap(const CString& sLine)
 
 	if (sSubCmd.Equals("LS")) {
 		SCString ssOfferCaps;
-		GLOBALMODULECALL(OnClientCapLs(ssOfferCaps), m_pUser, m_pNetwork, this, NOTHING);
+		GLOBALMODULECALL(OnClientCapLs(this, ssOfferCaps), NOTHING);
 		CString sRes;
 		for (SCString::iterator i = ssOfferCaps.begin(); i != ssOfferCaps.end(); ++i) {
 			sRes += *i + " ";
@@ -812,7 +812,7 @@ void CClient::HandleCap(const CString& sLine)
 				bVal = false;
 
 			bool bAccepted = ("multi-prefix" == sCap) || ("userhost-in-names" == sCap);
-			GLOBALMODULECALL(IsClientCapSupported(sCap, bVal), m_pUser, m_pNetwork, this, bAccepted = true);
+			GLOBALMODULECALL(IsClientCapSupported(this, sCap, bVal), bAccepted = true);
 
 			if (!bAccepted) {
 				// Some unsupported capability is requested
@@ -832,7 +832,7 @@ void CClient::HandleCap(const CString& sLine)
 			} else if ("userhost-in-names" == *it) {
 				m_bUHNames = bVal;
 			}
-			GLOBALMODULECALL(OnClientCapRequest(*it, bVal), m_pUser, m_pNetwork, this, NOTHING);
+			GLOBALMODULECALL(OnClientCapRequest(this, *it, bVal), NOTHING);
 
 			if (bVal) {
 				m_ssAcceptedCaps.insert(*it);
@@ -852,9 +852,9 @@ void CClient::HandleCap(const CString& sLine)
 		SCString ssRemoved;
 		for (SCString::iterator i = m_ssAcceptedCaps.begin(); i != m_ssAcceptedCaps.end(); ++i) {
 			bool bRemoving = false;
-			GLOBALMODULECALL(IsClientCapSupported(*i, false), m_pUser, m_pNetwork, this, bRemoving = true);
+			GLOBALMODULECALL(IsClientCapSupported(this, *i, false), bRemoving = true);
 			if (bRemoving) {
-				GLOBALMODULECALL(OnClientCapRequest(*i, false), m_pUser, m_pNetwork, this, NOTHING);
+				GLOBALMODULECALL(OnClientCapRequest(this, *i, false), NOTHING);
 				ssRemoved.insert(*i);
 			}
 		}

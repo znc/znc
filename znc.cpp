@@ -137,7 +137,7 @@ bool CZNC::ConnectNetwork(CIRCNetwork *pNetwork) {
 	}
 #endif
 
-	MODULECALL(OnIRCConnecting(pIRCSock), pUser, pNetwork, NULL,
+	NETWORKMODULECALL(OnIRCConnecting(pIRCSock), pUser, pNetwork, NULL,
 		DEBUG("Some module aborted the connection attempt");
 		pUser->PutStatus("Some module aborted the connection attempt");
 		delete pIRCSock;
@@ -1394,7 +1394,7 @@ void CZNC::Broadcast(const CString& sMessage, bool bAdminOnly,
 		if (a->second != pSkipUser) {
 			CString sMsg = sMessage;
 
-			MODULECALL(OnBroadcast(sMsg), a->second, NULL, NULL, continue);
+			USERMODULECALL(OnBroadcast(sMsg), a->second, NULL, continue);
 			a->second->PutStatusNotice("*** " + sMsg, NULL, pSkipClient);
 		}
 	}
@@ -1450,7 +1450,7 @@ bool CZNC::AddUser(CUser* pUser, CString& sErrorRet) {
 				<< sErrorRet << "]");
 		return false;
 	}
-	GLOBALMODULECALL(OnAddUser(*pUser, sErrorRet), pUser, NULL, NULL,
+	GLOBALMODULECALL(OnAddUser(*pUser, sErrorRet),
 		DEBUG("AddUser [" << pUser->GetUserName() << "] aborted by a module ["
 			<< sErrorRet << "]");
 		return false;
@@ -1723,7 +1723,7 @@ CZNC::TrafficStatsMap CZNC::GetTrafficStats(TrafficStatsPair &Users,
 
 void CZNC::AuthUser(CSmartPtr<CAuthBase> AuthClass) {
 	// TODO unless the auth module calls it, CUser::IsHostAllowed() is not honoured
-	GLOBALMODULECALL(OnLoginAttempt(AuthClass), NULL, NULL, NULL, return);
+	GLOBALMODULECALL(OnLoginAttempt(AuthClass), return);
 
 	CUser* pUser = FindUser(AuthClass->GetUsername());
 

@@ -25,7 +25,7 @@ void CClient::UserCommand(CString& sLine) {
 		return;
 	}
 
-	MODULECALL(OnStatusCommand(sLine), m_pUser, m_pNetwork, this, return);
+	NETWORKMODULECALL(OnStatusCommand(sLine), m_pUser, m_pNetwork, this, return);
 
 	const CString sCommand = sLine.Token(0);
 

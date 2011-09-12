@@ -597,10 +597,10 @@ CModule::EModRet CModule::OnDeleteUser(CUser& User) { return CONTINUE; }
 void CModule::OnClientConnect(CZNCSock* pClient, const CString& sHost, unsigned short uPort) {}
 CModule::EModRet CModule::OnLoginAttempt(CSmartPtr<CAuthBase> Auth) { return CONTINUE; }
 void CModule::OnFailedLogin(const CString& sUsername, const CString& sRemoteIP) {}
-CModule::EModRet CModule::OnUnknownUserRaw(CString& sLine) { return CONTINUE; }
-void CModule::OnClientCapLs(SCString& ssCaps) {}
-bool CModule::IsClientCapSupported(const CString& sCap, bool bState) { return false; }
-void CModule::OnClientCapRequest(const CString& sCap, bool bState) {}
+CModule::EModRet CModule::OnUnknownUserRaw(CClient* pClient, CString& sLine) { return CONTINUE; }
+void CModule::OnClientCapLs(CClient* pClient, SCString& ssCaps) {}
+bool CModule::IsClientCapSupported(CClient* pClient, const CString& sCap, bool bState) { return false; }
+void CModule::OnClientCapRequest(CClient* pClient, const CString& sCap, bool bState) {}
 CModule::EModRet CModule::OnModuleLoading(const CString& sModName, const CString& sArgs,
 		CModInfo::EModuleType eType, bool& bSuccess, CString& sRetMsg) { return CONTINUE; }
 CModule::EModRet CModule::OnModuleUnloading(CModule* pModule, bool& bSuccess, CString& sRetMsg) {
@@ -754,17 +754,17 @@ bool CModules::OnFailedLogin(const CString& sUsername, const CString& sRemoteIP)
 	return false;
 }
 
-bool CModules::OnUnknownUserRaw(CString& sLine) {
-	MODHALTCHK(OnUnknownUserRaw(sLine));
+bool CModules::OnUnknownUserRaw(CClient* pClient, CString& sLine) {
+	MODHALTCHK(OnUnknownUserRaw(pClient, sLine));
 }
 
-bool CModules::OnClientCapLs(SCString& ssCaps) {
-	MODUNLOADCHK(OnClientCapLs(ssCaps));
+bool CModules::OnClientCapLs(CClient* pClient, SCString& ssCaps) {
+	MODUNLOADCHK(OnClientCapLs(pClient, ssCaps));
 	return false;
 }
 
 // Maybe create new macro for this?
-bool CModules::IsClientCapSupported(const CString& sCap, bool bState) {
+bool CModules::IsClientCapSupported(CClient* pClient, const CString& sCap, bool bState) {
 	bool bResult = false;
 	for (unsigned int a = 0; a < size(); ++a) {
 		try {
@@ -774,11 +774,11 @@ bool CModules::IsClientCapSupported(const CString& sCap, bool bState) {
 			if (m_pUser) {
 				CUser* pOldUser = pMod->GetUser();
 				pMod->SetUser(m_pUser);
-				bResult |= pMod->IsClientCapSupported(sCap, bState);
+				bResult |= pMod->IsClientCapSupported(pClient, sCap, bState);
 				pMod->SetUser(pOldUser);
 			} else {
 				// WTF? Is that possible?
-				bResult |= pMod->IsClientCapSupported(sCap, bState);
+				bResult |= pMod->IsClientCapSupported(pClient, sCap, bState);
 			}
 			pMod->SetClient(pOldClient);
 		} catch (CModule::EModException e) {
@@ -790,8 +790,8 @@ bool CModules::IsClientCapSupported(const CString& sCap, bool bState) {
 	return bResult;
 }
 
-bool CModules::OnClientCapRequest(const CString& sCap, bool bState) {
-	MODUNLOADCHK(OnClientCapRequest(sCap, bState));
+bool CModules::OnClientCapRequest(CClient* pClient, const CString& sCap, bool bState) {
+	MODUNLOADCHK(OnClientCapRequest(pClient, sCap, bState));
 	return false;
 }
 
@@ -834,7 +834,7 @@ bool CModules::LoadModule(const CString& sModule, const CString& sArgs, CModInfo
 	}
 
 	bool bSuccess;
-	GLOBALMODULECALL(OnModuleLoading(sModule, sArgs, eType, bSuccess, sRetMsg), pUser, pNetwork, NULL, return bSuccess);
+	_GLOBALMODULECALL(OnModuleLoading(sModule, sArgs, eType, bSuccess, sRetMsg), pUser, pNetwork, NULL, return bSuccess);
 
 	CString sModPath, sDataPath;
 	bool bVersionMismatch;
@@ -922,7 +922,7 @@ bool CModules::UnloadModule(const CString& sModule, CString& sRetMsg) {
 	}
 
 	bool bSuccess;
-	GLOBALMODULECALL(OnModuleUnloading(pModule, bSuccess, sRetMsg), pModule->GetUser(), pModule->GetNetwork(), NULL, return bSuccess);
+	_GLOBALMODULECALL(OnModuleUnloading(pModule, bSuccess, sRetMsg), pModule->GetUser(), pModule->GetNetwork(), NULL, return bSuccess);
 
 	ModHandle p = pModule->GetDLL();
 
@@ -975,7 +975,7 @@ bool CModules::GetModInfo(CModInfo& ModInfo, const CString& sModule, CString& sR
 	CString sModPath, sTmp;
 
 	bool bSuccess;
-	GLOBALMODULECALL(OnGetModInfo(ModInfo, sModule, bSuccess, sRetMsg), NULL, NULL, NULL, return bSuccess);
+	GLOBALMODULECALL(OnGetModInfo(ModInfo, sModule, bSuccess, sRetMsg), return bSuccess);
 
 	if (!FindModPath(sModule, sModPath, sTmp)) {
 		sRetMsg = "Unable to find module [" + sModule + "]";
@@ -1033,7 +1033,7 @@ void CModules::GetAvailableMods(set<CModInfo>& ssMods, CModInfo::EModuleType eTy
 		}
 	}
 
-	GLOBALMODULECALL(OnGetAvailableMods(ssMods, eType), NULL, NULL, NULL, NOTHING);
+	GLOBALMODULECALL(OnGetAvailableMods(ssMods, eType), NOTHING);
 }
 
 bool CModules::FindModPath(const CString& sModule, CString& sModPath,

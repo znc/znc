@@ -921,28 +921,30 @@ public:
 	/** This function behaves like CModule::OnRaw(), but is also called
 	 *  before the client successfully logged in to ZNC. You should always
 	 *  prefer to use CModule::OnRaw() if possible.
+	 *  @param pClient The client which send this line.
 	 *  @param sLine The raw traffic line which the client sent.
-	 *  @todo Why doesn't this use m_pUser and m_pClient?
-	 *        (Well, ok, m_pUser isn't known yet...)
 	 */
-	virtual EModRet OnUnknownUserRaw(CString& sLine);
+	virtual EModRet OnUnknownUserRaw(CClient* pClient, CString& sLine);
 
 	/** Called when a client told us CAP LS. Use ssCaps.insert("cap-name")
 	 *  for announcing capabilities which your module supports.
+	 *  @param pClient The client which requested the list.
 	 *  @param ssCaps set of caps which will be sent to client.
 	 */
-	virtual void OnClientCapLs(SCString& ssCaps);
+	virtual void OnClientCapLs(CClient* pClient, SCString& ssCaps);
 	/** Called only to check if your module supports turning on/off named capability.
+	 *  @param pClient The client which wants to enable/disable a capability.
 	 *  @param sCap name of capability.
 	 *  @param bState On or off, depending on which case is interesting for client.
 	 *  @return true if your module supports this capability in the specified state.
 	 */
-	virtual bool IsClientCapSupported(const CString& sCap, bool bState);
+	virtual bool IsClientCapSupported(CClient* pClient, const CString& sCap, bool bState);
 	/** Called when we actually need to turn a capability on or off for a client.
+	 *  @param pClient The client which requested the capability.
 	 *  @param sCap name of wanted capability.
 	 *  @param bState On or off, depending on which case client needs.
 	 */
-	virtual void OnClientCapRequest(const CString& sCap, bool bState);
+	virtual void OnClientCapRequest(CClient* pClient, const CString& sCap, bool bState);
 
 	/** Called when a module is going to be loaded.
 	 *  @param sModName name of the module.
@@ -1103,10 +1105,10 @@ public:
 	bool OnClientConnect(CZNCSock* pSock, const CString& sHost, unsigned short uPort);
 	bool OnLoginAttempt(CSmartPtr<CAuthBase> Auth);
 	bool OnFailedLogin(const CString& sUsername, const CString& sRemoteIP);
-	bool OnUnknownUserRaw(CString& sLine);
-	bool OnClientCapLs(SCString& ssCaps);
-	bool IsClientCapSupported(const CString& sCap, bool bState);
-	bool OnClientCapRequest(const CString& sCap, bool bState);
+	bool OnUnknownUserRaw(CClient* pClient, CString& sLine);
+	bool OnClientCapLs(CClient* pClient, SCString& ssCaps);
+	bool IsClientCapSupported(CClient* pClient, const CString& sCap, bool bState);
+	bool OnClientCapRequest(CClient* pClient, const CString& sCap, bool bState);
 	bool OnModuleLoading(const CString& sModName, const CString& sArgs,
 			CModInfo::EModuleType eType, bool& bSuccess, CString& sRetMsg);
 	bool OnModuleUnloading(CModule* pModule, bool& bSuccess, CString& sRetMsg);
