@@ -233,11 +233,11 @@ void CClient::ReadLine(const CString& sData) {
 			sCTCP.LeftChomp();
 			sCTCP.RightChomp();
 
-			NETWORKMODULECALL(OnUserCTCPReply(sTarget, sCTCP), m_pUser, m_pNetwork, this, return);
+			USERMODULECALL(OnUserCTCPReply(sTarget, sCTCP), m_pUser, this, return);
 
 			sMsg = "\001" + sCTCP + "\001";
 		} else {
-			NETWORKMODULECALL(OnUserNotice(sTarget, sMsg), m_pUser, m_pNetwork, this, return);
+			USERMODULECALL(OnUserNotice(sTarget, sMsg), m_pUser, this, return);
 		}
 
 		if (!GetIRCSock()) {
@@ -298,7 +298,7 @@ void CClient::ReadLine(const CString& sData) {
 
 				if (sCTCP.Token(0).Equals("ACTION")) {
 					CString sMessage = sCTCP.Token(1, true);
-					NETWORKMODULECALL(OnUserAction(sTarget, sMessage), m_pUser, m_pNetwork, this, return);
+					USERMODULECALL(OnUserAction(sTarget, sMessage), m_pUser, this, return);
 					sCTCP = "ACTION " + sMessage;
 
 					if (pChan && pChan->KeepBuffer()) {
@@ -319,7 +319,7 @@ void CClient::ReadLine(const CString& sData) {
 					}
 				}
 			} else {
-				NETWORKMODULECALL(OnUserCTCP(sTarget, sCTCP), m_pUser, m_pNetwork, this, return);
+				USERMODULECALL(OnUserCTCP(sTarget, sCTCP), m_pUser, this, return);
 			}
 
 			if (m_pNetwork) {
@@ -338,7 +338,7 @@ void CClient::ReadLine(const CString& sData) {
 			return;
 		}
 
-		NETWORKMODULECALL(OnUserMsg(sTarget, sMsg), m_pUser, m_pNetwork, this, return);
+		USERMODULECALL(OnUserMsg(sTarget, sMsg), m_pUser, this, return);
 
 		if (!GetIRCSock()) {
 			// Some lagmeters do a PRIVMSG to their own nick, ignore those.
@@ -410,7 +410,7 @@ void CClient::ReadLine(const CString& sData) {
 
 		for (unsigned int a = 0; a < vChans.size(); a++) {
 			CString sChannel = vChans[a];
-			NETWORKMODULECALL(OnUserJoin(sChannel, sKey), m_pUser, m_pNetwork, this, continue);
+			USERMODULECALL(OnUserJoin(sChannel, sKey), m_pUser, this, continue);
 
 			CChan* pChan = m_pNetwork->FindChan(sChannel);
 			if (pChan) {
@@ -444,7 +444,7 @@ void CClient::ReadLine(const CString& sData) {
 			sMessage.LeftChomp();
 		}
 
-		NETWORKMODULECALL(OnUserPart(sChan, sMessage), m_pUser, m_pNetwork, this, return);
+		USERMODULECALL(OnUserPart(sChan, sMessage), m_pUser, this, return);
 
 		CChan* pChan = m_pNetwork->FindChan(sChan);
 
@@ -466,10 +466,10 @@ void CClient::ReadLine(const CString& sData) {
 		if (!sTopic.empty()) {
 			if (sTopic.Left(1) == ":")
 				sTopic.LeftChomp();
-			NETWORKMODULECALL(OnUserTopic(sChan, sTopic), m_pUser, m_pNetwork, this, return);
+			USERMODULECALL(OnUserTopic(sChan, sTopic), m_pUser, this, return);
 			sLine = "TOPIC " + sChan + " :" + sTopic;
 		} else {
-			NETWORKMODULECALL(OnUserTopicRequest(sChan), m_pUser, m_pNetwork, this, return);
+			USERMODULECALL(OnUserTopicRequest(sChan), m_pUser, this, return);
 		}
 	} else if (m_pNetwork && sCommand.Equals("MODE")) {
 		CString sTarget = sLine.Token(1);
@@ -670,11 +670,7 @@ void CClient::AcceptLogin(CUser& User) {
 
 	SendMotd();
 
-	if (m_pNetwork) {
-		NETWORKMODULECALL(OnClientLogin(), m_pUser, m_pNetwork, this, NOTHING);
-	} else {
-		USERMODULECALL(OnClientLogin(), m_pUser, this, NOTHING);
-	}
+	USERMODULECALL(OnClientLogin(), m_pUser, this, NOTHING);
 }
 
 void CClient::Timeout() {
@@ -694,7 +690,7 @@ void CClient::Disconnected() {
 	SetNetwork(NULL, true, false);
 
 	if (m_pUser) {
-		NETWORKMODULECALL(OnClientDisconnect(), m_pUser, m_pNetwork, this, NOTHING);
+		USERMODULECALL(OnClientDisconnect(), m_pUser, this, NOTHING);
 	}
 }
 
