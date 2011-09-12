@@ -10,6 +10,15 @@
 		<h3>Network Info</h3>
 		<div class="sectionbg">
 			<div class="sectionbody">
+				<? IF !Edit ?>
+				<div class="subsection">
+					<div class="inputlabel">Name:</div>
+					<div>
+						<input type="text" name="network" value="<? VAR Name ?>" class="half" maxlength="128" />
+					</div>
+				</div>
+				<? ENDIF ?>
+
 				<div class="subsection half">
 					<div class="inputlabel">Servers:</div>
 					<div><textarea name="servers" cols="70" rows="5"><? LOOP ServerLoop ?><? VAR Server ?>
