@@ -96,7 +96,9 @@
 	do {                                                                           \
 		GLOBALMODULECALL(macFUNC, macUSER, macNETWORK, macCLIENT, macEXITER);  \
 		USERMODULECALL(macFUNC, macUSER, macNETWORK, macCLIENT, macEXITER);    \
-		NETWORKMODULECALL(macFUNC, macUSER, macNETWORK, macCLIENT, macEXITER); \
+		if (macNETWORK) { \
+			NETWORKMODULECALL(macFUNC, macUSER, macNETWORK, macCLIENT, macEXITER); \
+		} \
 	} while (false)
 
 /** @mainpage
