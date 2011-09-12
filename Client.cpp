@@ -338,7 +338,7 @@ void CClient::ReadLine(const CString& sData) {
 			return;
 		}
 
-		USERMODULECALL(OnUserMsg(sTarget, sMsg), m_pUser, NULL, this, return);
+		USERMODULECALL(OnUserMsg(sTarget, sMsg), m_pUser, this, return);
 
 		if (!GetIRCSock()) {
 			// Some lagmeters do a PRIVMSG to their own nick, ignore those.
