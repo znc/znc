@@ -118,6 +118,16 @@ public:
 	void ClearQueryBuffer() { m_QueryBuffer.Clear(); }
 	// !Buffers
 
+	// la
+	const CString& GetNick(const bool bAllowDefault = true) const;
+	const CString& GetAltNick(const bool bAllowDefault = true) const;
+	const CString& GetIdent(const bool bAllowDefault = true) const;
+	const CString& GetRealName() const;
+
+	void SetNick(const CString& s);
+	void SetAltNick(const CString& s);
+	void SetIdent(const CString& s);
+	void SetRealName(const CString& s);
 private:
 	bool JoinChan(CChan* pChan);
 	void JoinChans(set<CChan*>& sChans);
@@ -125,6 +135,11 @@ private:
 protected:
 	CString            m_sName;
 	CUser*             m_pUser;
+
+	CString            m_sNick;
+	CString            m_sAltNick;
+	CString            m_sIdent;
+	CString            m_sRealName;
 
 	CModules*          m_pModules;
 

@@ -8,6 +8,7 @@
 		<? IF Edit ?><input type="hidden" name="network" value="<? VAR Name ?>" /><? ENDIF ?>
 
 		<h3>Network Info</h3>
+        <span class="info">Nick, AltNick, Ident, RealName can be left empty to use the value from the user.</span>
 		<div class="sectionbg">
 			<div class="sectionbody">
 				<? IF !Edit ?>
@@ -18,6 +19,24 @@
 					</div>
 				</div>
 				<? ENDIF ?>
+
+            	<div class="subsection">
+					<div class="inputlabel">Nickname:</div>
+					<div><input type="text" name="nick" value="<? VAR Nick ?>" class="half" maxlength="128" /></div>
+				</div>
+				<div class="subsection">
+					<div class="inputlabel">Alt. Nickname:</div>
+					<div><input type="text" name="altnick" value="<? VAR AltNick ?>" class="half" maxlength="128" /></div>
+				</div>
+				<div style="clear: both;"></div>
+				<div class="subsection">
+					<div class="inputlabel">Ident:</div>
+					<div><input type="text" name="ident" value="<? VAR Ident ?>" class="half" maxlength="128" /></div>
+				</div>
+                <div class="subsection">
+					<div class="inputlabel">Realname:</div>
+					<div><input type="text" name="realname" value="<? VAR RealName ?>" class="full" maxlength="256" /></div>
+				</div>
 
 				<div class="subsection half">
 					<div class="inputlabel">Servers:</div>

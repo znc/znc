@@ -178,11 +178,31 @@ CString CIRCNetwork::GetNetworkPath() {
 	return sNetworkPath;
 }
 
+template<class T>
+struct TOption {
+	const char *name;
+	void (CIRCNetwork::*pSetter)(T);
+};
+
 bool CIRCNetwork::ParseConfig(CConfig *pConfig, CString& sError, bool bUpgrade) {
 	VCString vsList;
 	VCString::const_iterator vit;
 
 	if (!bUpgrade) {
+		TOption<const CString&> StringOptions[] = {
+			{ "nick", &CIRCNetwork::SetNick },
+			{ "altnick", &CIRCNetwork::SetAltNick },
+			{ "ident", &CIRCNetwork::SetIdent },
+			{ "realname", &CIRCNetwork::SetRealName }
+		};
+		size_t numStringOptions = sizeof(StringOptions) / sizeof(StringOptions[0]);
+
+		for (size_t i = 0; i < numStringOptions; i++) {
+			CString sValue;
+			if (pConfig->FindStringEntry(StringOptions[i].name, sValue))
+				(this->*StringOptions[i].pSetter)(sValue);
+		}
+
 		pConfig->FindStringVector("loadmodule", vsList);
 		for (vit = vsList.begin(); vit != vsList.end(); ++vit) {
 			CString sValue = *vit;
@@ -246,6 +266,22 @@ bool CIRCNetwork::ParseConfig(CConfig *pConfig, CString& sError, bool bUpgrade) 
 
 CConfig CIRCNetwork::ToConfig() {
 	CConfig config;
+
+	if (!m_sNick.empty()) {
+		config.AddKeyValuePair("Nick", m_sNick);
+	}
+
+	if (!m_sAltNick.empty()) {
+		config.AddKeyValuePair("AltNick", m_sAltNick);
+	}
+
+	if (!m_sIdent.empty()) {
+		config.AddKeyValuePair("Ident", m_sIdent);
+	}
+
+	if (!m_sRealName.empty()) {
+		config.AddKeyValuePair("RealName", m_sRealName);
+	}
 
 	// Modules
 	CModules& Mods = GetModules();
@@ -795,3 +831,68 @@ bool CIRCNetwork::PutIRC(const CString& sLine) {
 	pIRCSock->PutIRC(sLine);
 	return true;
 }
+
+const CString& CIRCNetwork::GetNick(const bool bAllowDefault) const {
+	if (m_sNick.empty()) {
+		return m_pUser->GetNick(bAllowDefault);
+	}
+
+	return m_sNick;
+}
+
+const CString& CIRCNetwork::GetAltNick(const bool bAllowDefault) const {
+	if (m_sAltNick.empty()) {
+		return m_pUser->GetAltNick(bAllowDefault);
+	}
+
+	return m_sAltNick;
+}
+
+const CString& CIRCNetwork::GetIdent(const bool bAllowDefault) const {
+	if (m_sIdent.empty()) {
+		return m_pUser->GetIdent(bAllowDefault);
+	}
+
+	return m_sIdent;
+}
+
+const CString& CIRCNetwork::GetRealName() const {
+	if (m_sRealName.empty()) {
+		return m_pUser->GetRealName();
+	}
+
+	return m_sRealName;
+}
+
+void CIRCNetwork::SetNick(const CString& s) {
+	if (m_pUser->GetNick().Equals(s)) {
+		m_sNick = "";
+	} else {
+		m_sNick = s;
+	}
+}
+
+void CIRCNetwork::SetAltNick(const CString& s) {
+	if (m_pUser->GetAltNick().Equals(s)) {
+		m_sAltNick = "";
+	} else {
+		m_sAltNick = s;
+	}
+}
+
+void CIRCNetwork::SetIdent(const CString& s) {
+		if (m_pUser->GetIdent().Equals(s)) {
+		m_sIdent = "";
+	} else {
+		m_sIdent = s;
+	}
+}
+
+void CIRCNetwork::SetRealName(const CString& s) {
+	if (m_pUser->GetRealName().Equals(s)) {
+		m_sRealName = "";
+	} else {
+		m_sRealName = s;
+	}
+}
+

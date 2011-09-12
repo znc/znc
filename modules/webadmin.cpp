@@ -659,6 +659,11 @@ public:
 				Tmpl["Title"] = "Edit Network" + CString(" [" + pNetwork->GetName() + "]");
 				Tmpl["Name"] = pNetwork->GetName();
 
+				Tmpl["Nick"] = pNetwork->GetNick();
+				Tmpl["AltNick"] = pNetwork->GetAltNick();
+				Tmpl["Ident"] = pNetwork->GetIdent();
+				Tmpl["RealName"] = pNetwork->GetRealName();
+
 				const vector<CServer*>& vServers = pNetwork->GetServers();
 				for (unsigned int a = 0; a < vServers.size(); a++) {
 					CTemplate& l = Tmpl.AddRow("ServerLoop");
@@ -703,6 +708,28 @@ public:
 				WebSock.PrintErrorPage("Network [" + sName.Token(0) + "] already exists");
 				return true;
 			}
+		}
+
+		CString sArg;
+
+		sArg = WebSock.GetParam("nick");
+		if (!sArg.Equals(pUser->GetNick())) {
+			pNetwork->SetNick(sArg);
+		}
+
+		sArg = WebSock.GetParam("altnick");
+		if (!sArg.Equals(pUser->GetAltNick())) {
+			pNetwork->SetAltNick(sArg);
+		}
+
+		sArg = WebSock.GetParam("ident");
+		if (!sArg.Equals(pUser->GetIdent())) {
+			pNetwork->SetIdent(sArg);
+		}
+
+		sArg = WebSock.GetParam("realname");
+		if (!sArg.Equals(pUser->GetRealName())) {
+			pNetwork->SetRealName(sArg);
 		}
 
 		VCString vsArgs;

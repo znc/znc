@@ -24,7 +24,7 @@ CIRCSock::CIRCSock(CIRCNetwork* pNetwork) : CZNCSock() {
 	m_bNamesx = false;
 	m_bUHNames = false;
 	EnableReadLine();
-	m_Nick.SetIdent(m_pNetwork->GetUser()->GetIdent());
+	m_Nick.SetIdent(m_pNetwork->GetIdent());
 	m_Nick.SetHost(m_pNetwork->GetUser()->GetBindHost());
 
 	m_uMaxNickLen = 9;
@@ -904,9 +904,9 @@ void CIRCSock::Connected() {
 	DEBUG(GetSockName() << " == Connected()");
 
 	CString sPass = m_sPass;
-	CString sNick = m_pNetwork->GetUser()->GetNick();
-	CString sIdent = m_pNetwork->GetUser()->GetIdent();
-	CString sRealName = m_pNetwork->GetUser()->GetRealName();
+	CString sNick = m_pNetwork->GetNick();
+	CString sIdent = m_pNetwork->GetIdent();
+	CString sRealName = m_pNetwork->GetRealName();
 
 	NETWORKMODULECALL(OnIRCRegistration(sPass, sNick, sIdent, sRealName), m_pNetwork->GetUser(), m_pNetwork, NULL, return);
 
@@ -1128,8 +1128,8 @@ void CIRCSock::SendAltNick(const CString& sBadNick) {
 
 	unsigned int uMax = m_uMaxNickLen;
 
-	const CString& sConfNick = m_pNetwork->GetUser()->GetNick();
-	const CString& sAltNick  = m_pNetwork->GetUser()->GetAltNick();
+	const CString& sConfNick = m_pNetwork->GetNick();
+	const CString& sAltNick  = m_pNetwork->GetAltNick();
 	CString sNewNick;
 
 	if (sLastNick.Equals(sConfNick)) {
