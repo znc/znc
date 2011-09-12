@@ -38,6 +38,15 @@
 				if (UMods.macFUNC) {                          \
 					macEXITER;                            \
 				}                                             \
+				const vector<CIRCNetwork*>& mNets =           \
+					it->second->GetNetworks();            \
+				vector<CIRCNetwork*>::const_iterator it2;     \
+				for (it2 = mNets.begin(); it2 != mNets.end(); ++it2) { \
+					CModules& NMods = (*it2)->GetModules(); \
+					if (NMods.macFUNC) {                  \
+						macEXITER;                    \
+					}                                     \
+				}                                             \
 			}                                                     \
 		}                                                             \
 	} while (false)
