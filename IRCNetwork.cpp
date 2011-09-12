@@ -896,3 +896,17 @@ void CIRCNetwork::SetRealName(const CString& s) {
 	}
 }
 
+CString CIRCNetwork::ExpandString(const CString& sStr) const {
+	CString sRet;
+	return ExpandString(sStr, sRet);
+}
+
+CString& CIRCNetwork::ExpandString(const CString& sStr, CString& sRet) const {
+	sRet.Replace("%defnick%", GetNick());
+	sRet.Replace("%nick%", GetCurNick());
+	sRet.Replace("%altnick%", GetAltNick());
+	sRet.Replace("%ident%", GetIdent());
+	sRet.Replace("%realname%", GetRealName());
+
+	return m_pUser->ExpandString(sRet, sRet);
+}

@@ -568,7 +568,11 @@ bool CClient::SendMotd() {
 	}
 
 	for (unsigned int a = 0; a < vsMotd.size(); a++) {
-		PutStatusNotice(m_pUser->ExpandString(vsMotd[a]));
+		if (m_pNetwork) {
+			PutStatusNotice(m_pNetwork->ExpandString(vsMotd[a]));
+		} else {
+			PutStatusNotice(m_pUser->ExpandString(vsMotd[a]));
+		}
 	}
 
 	return true;

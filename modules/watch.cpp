@@ -58,7 +58,7 @@ public:
 	}
 	virtual ~CWatchEntry() {}
 
-	bool IsMatch(const CNick& Nick, const CString& sText, const CString& sSource, const CUser* pUser) {
+	bool IsMatch(const CNick& Nick, const CString& sText, const CString& sSource, const CIRCNetwork* pNetwork) {
 		if (IsDisabled()) {
 			return false;
 		}
@@ -85,7 +85,7 @@ public:
 			return false;
 		if (!Nick.GetHostMask().AsLower().WildCmp(m_sHostMask.AsLower()))
 			return false;
-		return (sText.AsLower().WildCmp(pUser->ExpandString(m_sPattern).AsLower()));
+		return (sText.AsLower().WildCmp(pNetwork->ExpandString(m_sPattern).AsLower()));
 	}
 
 	bool operator ==(const CWatchEntry& WatchEntry) {
@@ -287,7 +287,7 @@ private:
 		for (list<CWatchEntry>::iterator it = m_lsWatchers.begin(); it != m_lsWatchers.end(); ++it) {
 			CWatchEntry& WatchEntry = *it;
 
-			if (WatchEntry.IsMatch(Nick, sMessage, sSource, m_pUser)) {
+			if (WatchEntry.IsMatch(Nick, sMessage, sSource, m_pNetwork)) {
 				if (m_pNetwork->IsUserAttached()) {
 					m_pNetwork->PutUser(":" + WatchEntry.GetTarget() + "!watch@znc.in PRIVMSG " +
 							m_pNetwork->GetCurNick() + " :" + sMessage);

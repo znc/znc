@@ -128,6 +128,9 @@ public:
 	void SetAltNick(const CString& s);
 	void SetIdent(const CString& s);
 	void SetRealName(const CString& s);
+
+	CString ExpandString(const CString& sStr) const;
+	CString& ExpandString(const CString& sStr, CString& sRet) const;
 private:
 	bool JoinChan(CChan* pChan);
 	void JoinChans(set<CChan*>& sChans);

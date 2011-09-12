@@ -7,6 +7,7 @@
  */
 
 #include "User.h"
+#include "IRCNetwork.h"
 #include <algorithm>
 
 class CPerform : public CModule {
@@ -50,7 +51,12 @@ class CPerform : public CModule {
 			Table.SetCell("Id", CString(index));
 			Table.SetCell("Perform", *it);
 
-			sExpanded = GetUser()->ExpandString(*it);
+			if (m_pNetwork) {
+				sExpanded = m_pNetwork->ExpandString(*it);
+			} else {
+				sExpanded = GetUser()->ExpandString(*it);
+			}
+
 			if (sExpanded != *it) {
 				Table.SetCell("Expanded", sExpanded);
 			}
@@ -122,7 +128,7 @@ public:
 
 	virtual void OnIRCConnected() {
 		for (VCString::const_iterator it = m_vPerform.begin(); it != m_vPerform.end(); ++it) {
-			PutIRC(GetUser()->ExpandString(*it));
+			PutIRC(m_pNetwork->ExpandString(*it));
 		}
 	}
 

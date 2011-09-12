@@ -83,7 +83,7 @@ public:
 			return false;
 		}
 
-		CString sData = m_pUser->ExpandString(GetNV("Format"));
+		CString sData = m_pNetwork->ExpandString(GetNV("Format"));
 
 		// If the format doesn't contain anything expandable, we'll
 		// assume this is an "old"-style format string.

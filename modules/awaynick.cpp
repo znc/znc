@@ -99,7 +99,7 @@ public:
 
 			// We don't limit this to NICKLEN, because we dont know
 			// NICKLEN yet.
-			sNick = m_sAwayNick = m_pUser->ExpandString(m_sAwayNick);
+			sNick = m_sAwayNick = m_pNetwork->ExpandString(m_sAwayNick);
 		}
 		return CONTINUE;
 	}
@@ -166,7 +166,7 @@ public:
 			uLen = pIRCSock->GetMaxNickLen();
 		}
 
-		m_sAwayNick = m_pUser->ExpandString(m_sFormat).Left(uLen);
+		m_sAwayNick = m_pNetwork->ExpandString(m_sFormat).Left(uLen);
 		return m_sAwayNick;
 	}
 

@@ -39,6 +39,10 @@ public:
 			SetReply(sReply);
 		}
 
+		if (m_pNetwork) {
+			return m_pNetwork->ExpandString(sReply);
+		}
+
 		return m_pUser->ExpandString(sReply);
 	}
 

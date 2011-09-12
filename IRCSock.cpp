@@ -80,7 +80,7 @@ void CIRCSock::Quit(const CString& sQuitMsg) {
 	if (!sQuitMsg.empty()) {
 		PutIRC("QUIT :" + sQuitMsg);
 	} else {
-		PutIRC("QUIT :" + m_pNetwork->GetUser()->ExpandString(m_pNetwork->GetUser()->GetQuitMsg()));
+		PutIRC("QUIT :" + m_pNetwork->ExpandString(m_pNetwork->GetUser()->GetQuitMsg()));
 	}
 	Close(CLT_AFTERWRITE);
 }
@@ -789,7 +789,7 @@ bool CIRCSock::OnGeneralCTCP(CNick& Nick, CString& sMessage) {
 	CString sReply;
 
 	if (it != mssCTCPReplies.end()) {
-		sReply = m_pNetwork->GetUser()->ExpandString(it->second);
+		sReply = m_pNetwork->ExpandString(it->second);
 		bHaveReply = true;
 	}
 
