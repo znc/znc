@@ -666,7 +666,11 @@ void CClient::AcceptLogin(CUser& User) {
 
 	SendMotd();
 
-	NETWORKMODULECALL(OnClientLogin(), m_pUser, m_pNetwork, this, NOTHING);
+	if (m_pNetwork) {
+		NETWORKMODULECALL(OnClientLogin(), m_pUser, m_pNetwork, this, NOTHING);
+	} else {
+		USERMODULECALL(OnClientLogin(), m_pUser, this, NOTHING);
+	}
 }
 
 void CClient::Timeout() {
