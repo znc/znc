@@ -546,12 +546,23 @@ void CChan::SendBuffer(CClient* pClient) {
 	if (m_pUser && m_pUser->IsUserAttached()) {
 		const vector<CString>& vsBuffer = GetBuffer();
 
+		// in the event that pClient is NULL, need to send this to all clients for the user
+		// I'm presuming here that pClient is listed inside vClients thus vClients at this
+		// point can't be empty. 
+		//
+		// This loop has to be cycled twice to maintain the existing behavior which is 
+		// 1. OnChanBufferStarting
+		// 2. OnChanBufferPlayLine
+		// 3. ClearBuffer() if not keeping the buffer
+		// 4. OnChanBufferEnding
+		//
+		// With the exception of ClearBuffer(), this needs to happen per client, and
+		// if pClient is not NULL, the loops break after the first iteration.
+		//
+		// Rework this if you like ...
 		if (vsBuffer.size()) {
 			const vector<CClient*> & vClients = m_pUser->GetClients();
 			for( size_t uClient = 0; uClient < vClients.size(); ++uClient ) {
-				// in the event that pClient is NULL, need to send this to all clients for the user
-				// I'm presuming here that pClient is listed inside vClients so thus vClients at this
-				// point can't be empty. Rework this if you like ...
 
 				CClient * pUseClient = ( pClient ? pClient : vClients[uClient] );
 				bool bSkipStatusMsg = false;
@@ -567,20 +578,29 @@ void CChan::SendBuffer(CClient* pClient) {
 					m_pUser->PutUser(sLine, pUseClient);
 				}
 
-				if (!KeepBuffer()) {
-					ClearBuffer();
-				}
+				if( pClient ) 
+					break;
 
-				bSkipStatusMsg = false;
+			}
+
+			if (!KeepBuffer()) {
+				ClearBuffer();
+			}
+
+			for( size_t uClient = 0; uClient < vClients.size(); ++uClient ) {
+
+				CClient * pUseClient = ( pClient ? pClient : vClients[uClient] );
+				bool bSkipStatusMsg = false;
 				MODULECALL(OnChanBufferEnding(*this, *pUseClient), m_pUser, NULL, bSkipStatusMsg = true);
 
 				if (!bSkipStatusMsg) {
 					m_pUser->PutUser(":***!znc@znc.in PRIVMSG " + GetName() + " :Playback Complete.", pUseClient);
 				}
 
-				if( pClient )
+				if( pClient ) 
 					break;
 			}
+
 		}
 	}
 }
