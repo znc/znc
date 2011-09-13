@@ -545,9 +545,9 @@ void CChan::SendBuffer(CClient* pClient) {
 
 		// in the event that pClient is NULL, need to send this to all clients for the user
 		// I'm presuming here that pClient is listed inside vClients thus vClients at this
-		// point can't be empty. 
+		// point can't be empty.
 		//
-		// This loop has to be cycled twice to maintain the existing behavior which is 
+		// This loop has to be cycled twice to maintain the existing behavior which is
 		// 1. OnChanBufferStarting
 		// 2. OnChanBufferPlayLine
 		// 3. ClearBuffer() if not keeping the buffer
@@ -559,7 +559,7 @@ void CChan::SendBuffer(CClient* pClient) {
 		// Rework this if you like ...
 		if (vsBuffer.size()) {
 			const vector<CClient*> & vClients = m_pNetwork->GetClients();
-			for( size_t uClient = 0; uClient < vClients.size(); ++uClient ) {
+			for (size_t uClient = 0; uClient < vClients.size(); ++uClient) {
 
 				CClient * pUseClient = ( pClient ? pClient : vClients[uClient] );
 				bool bSkipStatusMsg = false;
@@ -575,7 +575,7 @@ void CChan::SendBuffer(CClient* pClient) {
 					m_pNetwork->PutUser(sLine, pUseClient);
 				}
 
-				if( pClient ) 
+				if (pClient)
 					break;
 
 			}
@@ -584,7 +584,7 @@ void CChan::SendBuffer(CClient* pClient) {
 				ClearBuffer();
 			}
 
-			for( size_t uClient = 0; uClient < vClients.size(); ++uClient ) {
+			for ( size_t uClient = 0; uClient < vClients.size(); ++uClient) {
 
 				CClient * pUseClient = ( pClient ? pClient : vClients[uClient] );
 				bool bSkipStatusMsg = false;
@@ -594,7 +594,7 @@ void CChan::SendBuffer(CClient* pClient) {
 					m_pNetwork->PutUser(":***!znc@znc.in PRIVMSG " + GetName() + " :Playback Complete.", pUseClient);
 				}
 
-				if( pClient ) 
+				if (pClient)
 					break;
 			}
 
