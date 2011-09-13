@@ -216,7 +216,7 @@ CString CChan::GetModeForNames() const {
 	for (map<unsigned char, CString>::const_iterator it = m_musModes.begin(); it != m_musModes.end(); ++it) {
 		if (it->first == 's') {
 			sMode = "@";
-		} else if ((it->first == 'p') && sMode.empty()){
+		} else if ((it->first == 'p') && sMode.empty()) {
 			sMode = "*";
 		}
 	}
@@ -310,21 +310,21 @@ void CChan::ModeChange(const CString& sModes, const CNick* pOpNick) {
 			CString sArg;
 
 			switch (m_pUser->GetIRCSock()->GetModeType(uMode)) {
-				case CIRCSock::ListArg:
-					bList = true;
+			case CIRCSock::ListArg:
+				bList = true;
+				sArg = GetModeArg(sArgs);
+				break;
+			case CIRCSock::HasArg:
+				sArg = GetModeArg(sArgs);
+				break;
+			case CIRCSock::NoArg:
+				break;
+			case CIRCSock::ArgWhenSet:
+				if (bAdd) {
 					sArg = GetModeArg(sArgs);
-					break;
-				case CIRCSock::HasArg:
-					sArg = GetModeArg(sArgs);
-					break;
-				case CIRCSock::NoArg:
-					break;
-				case CIRCSock::ArgWhenSet:
-					if (bAdd) {
-						sArg = GetModeArg(sArgs);
-					}
+				}
 
-					break;
+				break;
 			}
 
 			bool bNoChange;
@@ -548,9 +548,9 @@ void CChan::SendBuffer(CClient* pClient) {
 
 		// in the event that pClient is NULL, need to send this to all clients for the user
 		// I'm presuming here that pClient is listed inside vClients thus vClients at this
-		// point can't be empty. 
+		// point can't be empty.
 		//
-		// This loop has to be cycled twice to maintain the existing behavior which is 
+		// This loop has to be cycled twice to maintain the existing behavior which is
 		// 1. OnChanBufferStarting
 		// 2. OnChanBufferPlayLine
 		// 3. ClearBuffer() if not keeping the buffer
@@ -578,7 +578,7 @@ void CChan::SendBuffer(CClient* pClient) {
 					m_pUser->PutUser(sLine, pUseClient);
 				}
 
-				if( pClient ) 
+				if( pClient )
 					break;
 
 			}
@@ -597,7 +597,7 @@ void CChan::SendBuffer(CClient* pClient) {
 					m_pUser->PutUser(":***!znc@znc.in PRIVMSG " + GetName() + " :Playback Complete.", pUseClient);
 				}
 
-				if( pClient ) 
+				if( pClient )
 					break;
 			}
 
