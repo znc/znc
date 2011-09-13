@@ -480,5 +480,5 @@ void CAwayJob::RunJob()
 	}
 }
 
-NETWORKMODULEDEFS(CAway, "Adds auto-away functionality with logging, and subsequent notification of messages when reconnecting" );
+NETWORKMODULEDEFS(CAway, "Adds auto-away with logging, useful when you use ZNC from different places");
 
