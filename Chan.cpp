@@ -547,28 +547,39 @@ void CChan::SendBuffer(CClient* pClient) {
 		const vector<CString>& vsBuffer = GetBuffer();
 
 		if (vsBuffer.size()) {
-			bool bSkipStatusMsg = false;
-			MODULECALL(OnChanBufferStarting(*this, *pClient), m_pUser, NULL, bSkipStatusMsg = true);
+			const vector<CClient*> & vClients = m_pUser->GetClients();
+			for( size_t uClient = 0; uClient < vClients.size(); ++uClient ) {
+				// in the event that pClient is NULL, need to send this to all clients for the user
+				// I'm presuming here that pClient is listed inside vClients so thus vClients at this
+				// point can't be empty. Rework this if you like ...
 
-			if (!bSkipStatusMsg) {
-				m_pUser->PutUser(":***!znc@znc.in PRIVMSG " + GetName() + " :Buffer Playback...", pClient);
-			}
+				CClient * pUseClient = ( pClient ? pClient : vClients[uClient] );
+				bool bSkipStatusMsg = false;
+				MODULECALL(OnChanBufferStarting(*this, *pUseClient), m_pUser, NULL, bSkipStatusMsg = true);
 
-			for (unsigned int a = 0; a < vsBuffer.size(); a++) {
-				CString sLine(vsBuffer[a]);
-				MODULECALL(OnChanBufferPlayLine(*this, *pClient, sLine), m_pUser, NULL, continue);
-				m_pUser->PutUser(sLine, pClient);
-			}
+				if (!bSkipStatusMsg) {
+					m_pUser->PutUser(":***!znc@znc.in PRIVMSG " + GetName() + " :Buffer Playback...", pUseClient);
+				}
 
-			if (!KeepBuffer()) {
-				ClearBuffer();
-			}
+				for (unsigned int a = 0; a < vsBuffer.size(); a++) {
+					CString sLine(vsBuffer[a]);
+					MODULECALL(OnChanBufferPlayLine(*this, *pUseClient, sLine), m_pUser, NULL, continue);
+					m_pUser->PutUser(sLine, pUseClient);
+				}
 
-			bSkipStatusMsg = false;
-			MODULECALL(OnChanBufferEnding(*this, *pClient), m_pUser, NULL, bSkipStatusMsg = true);
+				if (!KeepBuffer()) {
+					ClearBuffer();
+				}
 
-			if (!bSkipStatusMsg) {
-				m_pUser->PutUser(":***!znc@znc.in PRIVMSG " + GetName() + " :Playback Complete.", pClient);
+				bSkipStatusMsg = false;
+				MODULECALL(OnChanBufferEnding(*this, *pUseClient), m_pUser, NULL, bSkipStatusMsg = true);
+
+				if (!bSkipStatusMsg) {
+					m_pUser->PutUser(":***!znc@znc.in PRIVMSG " + GetName() + " :Playback Complete.", pUseClient);
+				}
+
+				if( pClient )
+					break;
 			}
 		}
 	}
