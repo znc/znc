@@ -544,28 +544,40 @@ void CChan::SendBuffer(CClient* pClient) {
 		const vector<CString>& vsBuffer = GetBuffer();
 
 		if (vsBuffer.size()) {
-			bool bSkipStatusMsg = false;
-			NETWORKMODULECALL(OnChanBufferStarting(*this, *pClient), m_pNetwork->GetUser(), m_pNetwork, NULL, bSkipStatusMsg = true);
+			const vector<CClient*> & vClients = m_pNetwork->GetClients();
+			for( size_t uClient = 0; uClient < vClients.size(); ++uClient ) {
+				// in the event that pClient is NULL, need to send this to all clients for the user
+				// I'm presuming here that pClient is listed inside vClients so thus vClients at this
+				// point can't be empty. Rework this if you like ...
 
-			if (!bSkipStatusMsg) {
-				m_pNetwork->PutUser(":***!znc@znc.in PRIVMSG " + GetName() + " :Buffer Playback...", pClient);
-			}
+				CClient * pUseClient = ( pClient ? pClient : vClients[uClient] );
+				bool bSkipStatusMsg = false;
+				NETWORKMODULECALL(OnChanBufferStarting(*this, *pUseClient), m_pNetwork->GetUser(), m_pNetwork, NULL, bSkipStatusMsg = true);
 
-			for (unsigned int a = 0; a < vsBuffer.size(); a++) {
-				CString sLine(vsBuffer[a]);
-				NETWORKMODULECALL(OnChanBufferPlayLine(*this, *pClient, sLine), m_pNetwork->GetUser(), m_pNetwork, NULL, continue);
-				m_pNetwork->PutUser(sLine, pClient);
-			}
+				if (!bSkipStatusMsg) {
+					m_pNetwork->PutUser(":***!znc@znc.in PRIVMSG " + GetName() + " :Buffer Playback...", pUseClient);
+				}
 
-			if (!KeepBuffer()) {
-				ClearBuffer();
-			}
+				for (unsigned int a = 0; a < vsBuffer.size(); a++) {
+					CString sLine(vsBuffer[a]);
+					NETWORKMODULECALL(OnChanBufferPlayLine(*this, *pUseClient, sLine), m_pNetwork->GetUser(), m_pNetwork, NULL, continue);
+					m_pNetwork->PutUser(sLine, pUseClient);
+				}
 
-			bSkipStatusMsg = false;
-			NETWORKMODULECALL(OnChanBufferEnding(*this, *pClient), m_pNetwork->GetUser(), m_pNetwork, NULL, bSkipStatusMsg = true);
+				if (!KeepBuffer()) {
+					ClearBuffer();
+				}
 
-			if (!bSkipStatusMsg) {
-				m_pNetwork->PutUser(":***!znc@znc.in PRIVMSG " + GetName() + " :Playback Complete.", pClient);
+				bSkipStatusMsg = false;
+				NETWORKMODULECALL(OnChanBufferEnding(*this, *pUseClient), m_pNetwork->GetUser(), m_pNetwork, NULL, bSkipStatusMsg = true);
+
+				if (!bSkipStatusMsg) {
+					m_pNetwork->PutUser(":***!znc@znc.in PRIVMSG " + GetName() + " :Playback Complete.", pUseClient);
+				}
+
+				if( pClient )
+					break;
+
 			}
 		}
 	}
