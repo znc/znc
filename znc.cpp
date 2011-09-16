@@ -1094,6 +1094,8 @@ bool CZNC::DoRehash(CString& sError)
 		}
 		CUtils::PrintMessage("Found old config from ZNC " + sSavedVersion + ". Saving a backup of it.");
 		BackupConfigOnce("pre-" + CString(VERSION, 3));
+	} else if (fSavedVersion > VERSION) {
+		CUtils::PrintError("Config was saved from ZNC " + sSavedVersion + ". It may or may not work with current ZNC " + GetVersion());
 	}
 
 	m_vsBindHosts.clear();
