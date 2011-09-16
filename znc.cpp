@@ -984,6 +984,22 @@ size_t CZNC::FilterUncommonModules(set<CModInfo>& ssModules) {
 	return uNrRemoved;
 }
 
+void CZNC::BackupConfigOnce()
+{
+	static bool didBackup = false;
+	if (didBackup)
+		return;
+	didBackup = true;
+
+	CUtils::PrintAction("Creating a config backup");
+
+	CString sBackup = CDir::ChangeDir(m_sConfigFile, "../znc.conf.backup");
+	if (CFile::Copy(m_sConfigFile, sBackup))
+		CUtils::PrintStatus(true, sBackup);
+	else
+		CUtils::PrintStatus(false, strerror(errno));
+}
+
 bool CZNC::ParseConfig(const CString& sConfig)
 {
 	CString s;
