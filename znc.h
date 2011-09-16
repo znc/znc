@@ -51,7 +51,7 @@ public:
 	bool WriteConfig();
 	bool ParseConfig(const CString& sConfig);
 	bool RehashConfig(CString& sError);
-	void BackupConfigOnce();
+	void BackupConfigOnce(const CString& sSuffix);
 	static CString GetVersion();
 	static CString GetTag(bool bIncludeVersion = true);
 	CString GetUptime() const;

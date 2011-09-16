@@ -433,6 +433,7 @@ bool CZNC::WriteConfig() {
 	config.AddKeyValuePair("MaxBufferSize", CString(m_uiMaxBufferSize));
 	config.AddKeyValuePair("SSLCertFile", CString(m_sSSLCertFile));
 	config.AddKeyValuePair("ProtectWebSessions", CString(m_bProtectWebSessions));
+	config.AddKeyValuePair("Version", CString(VERSION, 3));
 
 	for (size_t l = 0; l < m_vpListeners.size(); l++) {
 		CListener* pListener = m_vpListeners[l];
@@ -984,8 +985,7 @@ size_t CZNC::FilterUncommonModules(set<CModInfo>& ssModules) {
 	return uNrRemoved;
 }
 
-void CZNC::BackupConfigOnce()
-{
+void CZNC::BackupConfigOnce(const CString& sSuffix) {
 	static bool didBackup = false;
 	if (didBackup)
 		return;
@@ -993,7 +993,7 @@ void CZNC::BackupConfigOnce()
 
 	CUtils::PrintAction("Creating a config backup");
 
-	CString sBackup = CDir::ChangeDir(m_sConfigFile, "../znc.conf.backup");
+	CString sBackup = CDir::ChangeDir(m_sConfigFile, "../znc.conf." + sSuffix);
 	if (CFile::Copy(m_sConfigFile, sBackup))
 		CUtils::PrintStatus(true, sBackup);
 	else
@@ -1084,6 +1084,17 @@ bool CZNC::DoRehash(CString& sError)
 		return false;
 	}
 	CUtils::PrintStatus(true);
+
+	CString sSavedVersion;
+	config.FindStringEntry("version", sSavedVersion);
+	double fSavedVersion = sSavedVersion.ToDouble();
+	if (fSavedVersion < VERSION) {
+		if (sSavedVersion.empty()) {
+			sSavedVersion = "< 0.203";
+		}
+		CUtils::PrintMessage("Found old config from ZNC " + sSavedVersion + ". Saving a backup of it.");
+		BackupConfigOnce("pre-" + CString(VERSION, 3));
+	}
 
 	m_vsBindHosts.clear();
 	m_vsMotd.clear();

@@ -338,7 +338,6 @@ bool CUser::ParseConfig(CConfig* pConfig, CString& sError) {
 		}
 
 		if (pNetwork) {
-			CZNC::Get().BackupConfigOnce();
 			CUtils::PrintMessage("NOTICE: Found deprecated config, upgrading to a network");
 
 			if (!pNetwork->ParseConfig(pConfig, sError, true)) {
