@@ -902,6 +902,7 @@ CString CIRCNetwork::ExpandString(const CString& sStr) const {
 }
 
 CString& CIRCNetwork::ExpandString(const CString& sStr, CString& sRet) const {
+	sRet = sStr;
 	sRet.Replace("%defnick%", GetNick());
 	sRet.Replace("%nick%", GetCurNick());
 	sRet.Replace("%altnick%", GetAltNick());
