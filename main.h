@@ -91,16 +91,17 @@
 #define NETWORKMODULECALL(macFUNC, macUSER, macNETWORK, macCLIENT, macEXITER)  \
 	do {                                                                   \
 		assert(macUSER != NULL);                                       \
-		assert(macNETWORK != NULL);                                    \
 		_USERMODULECALL(macFUNC, macUSER, macNETWORK, macCLIENT, macEXITER); \
-		CModules& NMods = ((CIRCNetwork*)macNETWORK)->GetModules();  \
-		CClient* pOldNClient = NMods.GetClient();  \
-		NMods.SetClient(macCLIENT);  \
-		if (NMods.macFUNC) {  \
-			NMods.SetClient(pOldNClient);  \
-			macEXITER;  \
-		}  \
-		NMods.SetClient(pOldNClient); \
+		if (macNETWORK != NULL) {                                      \
+			CModules& NMods = macNETWORK->GetModules();            \
+			CClient* pOldNClient = NMods.GetClient();              \
+			NMods.SetClient(macCLIENT);                            \
+			if (NMods.macFUNC) {                                   \
+				NMods.SetClient(pOldNClient);                  \
+				macEXITER;                                     \
+			}                                                      \
+			NMods.SetClient(pOldNClient);                          \
+		}                                                              \
 	} while (false)
 
 #define GLOBALMODULECALL(macFUNC, macEXITER) \
