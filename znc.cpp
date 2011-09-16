@@ -1088,13 +1088,13 @@ bool CZNC::DoRehash(CString& sError)
 	CString sSavedVersion;
 	config.FindStringEntry("version", sSavedVersion);
 	double fSavedVersion = sSavedVersion.ToDouble();
-	if (fSavedVersion < VERSION) {
+	if (fSavedVersion < VERSION - 0.000001) {
 		if (sSavedVersion.empty()) {
 			sSavedVersion = "< 0.203";
 		}
 		CUtils::PrintMessage("Found old config from ZNC " + sSavedVersion + ". Saving a backup of it.");
 		BackupConfigOnce("pre-" + CString(VERSION, 3));
-	} else if (fSavedVersion > VERSION) {
+	} else if (fSavedVersion > VERSION + 0.000001) {
 		CUtils::PrintError("Config was saved from ZNC " + sSavedVersion + ". It may or may not work with current ZNC " + GetVersion());
 	}
 
