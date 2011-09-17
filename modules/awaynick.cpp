@@ -35,7 +35,7 @@ private:
 		CIRCNetwork* pNetwork = m_Module.GetNetwork();
 
 		if (pNetwork->IsUserAttached() && pNetwork->IsIRCConnected()) {
-			CString sConfNick = pNetwork->GetUser()->GetNick();
+			CString sConfNick = pNetwork->GetNick();
 			m_Module.PutIRC("NICK " + sConfNick);
 		}
 	}
@@ -80,7 +80,7 @@ public:
 		CIRCSock* pIRCSock = m_pNetwork->GetIRCSock();
 
 		if (pIRCSock) {
-			CString sConfNick = m_pUser->GetNick();
+			CString sConfNick = m_pNetwork->GetNick();
 
 			if (pIRCSock->GetNick().Equals(m_sAwayNick.Left(pIRCSock->GetNick().length()))) {
 				RemTimer("BackNickTimer");
@@ -91,7 +91,7 @@ public:
 
 	virtual EModRet OnIRCRegistration(CString& sPass, CString& sNick,
 			CString& sIdent, CString& sRealName) {
-		if (m_pUser && !m_pUser->IsUserAttached()) {
+		if (m_pNetwork && !m_pNetwork->IsUserAttached()) {
 			m_sAwayNick = m_sFormat;
 
 			// ExpandString doesn't know our nick yet, so do it by hand.
@@ -114,7 +114,7 @@ public:
 	}
 
 	virtual void OnClientDisconnect() {
-		if (!m_pUser->IsUserAttached()) {
+		if (!m_pNetwork->IsUserAttached()) {
 			StartAwayNickTimer();
 		}
 	}
@@ -132,7 +132,7 @@ public:
 				SetNV("nick", m_sFormat);
 			}
 
-			if (m_pUser) {
+			if (m_pNetwork) {
 				CString sExpanded = GetAwayNick();
 				CString sMsg = "AwayNick is set to [" + m_sFormat + "]";
 
@@ -143,7 +143,7 @@ public:
 				PutModule(sMsg);
 			}
 		} else if (sCommand.Equals("SHOW")) {
-			if (m_pUser) {
+			if (m_pNetwork) {
 				CString sExpanded = GetAwayNick();
 				CString sMsg = "AwayNick is set to [" + m_sFormat + "]";
 

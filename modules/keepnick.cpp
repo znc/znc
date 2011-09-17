@@ -58,7 +58,7 @@ public:
 	}
 
 	CString GetNick() {
-		CString sConfNick = m_pUser->GetNick();
+		CString sConfNick = m_pNetwork->GetNick();
 		CIRCSock* pIRCSock = m_pNetwork->GetIRCSock();
 
 		if (pIRCSock)
