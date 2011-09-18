@@ -460,6 +460,20 @@ bool CIRCNetwork::PutStatus(const CString& sLine, CClient* pClient, CClient* pSk
 	return (pClient == NULL);
 }
 
+bool CIRCNetwork::PutModule(const CString& sModule, const CString& sLine, CClient* pClient, CClient* pSkipClient) {
+	for (unsigned int a = 0; a < m_vClients.size(); a++) {
+		if ((!pClient || pClient == m_vClients[a]) && pSkipClient != m_vClients[a]) {
+			m_vClients[a]->PutModule(sModule, sLine);
+
+			if (pClient) {
+				return true;
+			}
+		}
+	}
+
+	return (pClient == NULL);
+}
+
 // Channels
 
 const vector<CChan*>& CIRCNetwork::GetChans() const { return m_vChans; }

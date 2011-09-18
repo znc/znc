@@ -567,15 +567,20 @@ unsigned int CModule::PutModule(const CTable& table) {
 	return idx - 1;
 }
 bool CModule::PutModule(const CString& sLine) {
-	if (!m_pUser)
-		return false;
-
 	if (m_pClient) {
 		m_pClient->PutModule(GetModName(), sLine);
 		return true;
 	}
 
-	return m_pUser->PutModule(GetModName(), sLine);
+	if (m_pNetwork) {
+		return m_pNetwork->PutModule(GetModName(), sLine);
+	}
+
+	if (m_pUser) {
+		return m_pUser->PutModule(GetModName(), sLine);
+	}
+
+	return false;
 }
 bool CModule::PutModNotice(const CString& sLine) {
 	if (!m_pUser)

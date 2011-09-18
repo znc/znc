@@ -61,6 +61,7 @@ public:
 
 	bool PutUser(const CString& sLine, CClient* pClient = NULL, CClient* pSkipClient = NULL);
 	bool PutStatus(const CString& sLine, CClient* pClient = NULL, CClient* pSkipClient = NULL);
+	bool PutModule(const CString& sModule, const CString& sLine, CClient* pClient = NULL, CClient* pSkipClient = NULL);
 
 	const vector<CChan*>& GetChans() const;
 	CChan* FindChan(const CString& sName) const;
