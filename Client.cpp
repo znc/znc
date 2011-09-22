@@ -90,8 +90,8 @@ void CClient::ReadLine(const CString& sData) {
 		sCommand = sLine.Token(0);
 	}
 
-	if (sCommand.Equals("PASS")) {
-		if (!IsAttached()) {
+	if (!IsAttached()) { // The following commands happen before authentication with ZNC
+		if (sCommand.Equals("PASS")) {
 			m_bGotPass = true;
 
 			CString sAuthLine = sLine.Token(1, true);
@@ -115,22 +115,18 @@ void CClient::ReadLine(const CString& sData) {
 
 			AuthUser();
 			return;  // Don't forward this msg.  ZNC has already registered us.
-		}
-	} else if (sCommand.Equals("NICK")) {
-		CString sNick = sLine.Token(1);
-		if (sNick.Left(1) == ":") {
-			sNick.LeftChomp();
-		}
+		} else if (sCommand.Equals("NICK")) {
+			CString sNick = sLine.Token(1);
+			if (sNick.Left(1) == ":") {
+				sNick.LeftChomp();
+			}
 
-		if (!IsAttached()) {
 			m_sNick = sNick;
 			m_bGotNick = true;
 
 			AuthUser();
 			return;  // Don't forward this msg.  ZNC will handle nick changes until auth is complete
-		}
-	} else if (sCommand.Equals("USER")) {
-		if (!IsAttached()) {
+		} else if (sCommand.Equals("USER")) {
 			// user[/network]
 			CString sAuthLine = sLine.Token(1);
 
@@ -150,7 +146,9 @@ void CClient::ReadLine(const CString& sData) {
 
 			return;  // Don't forward this msg.  ZNC has already registered us.
 		}
-	} else if (sCommand.Equals("CAP")) {
+	}
+
+	if (sCommand.Equals("CAP")) {
 		HandleCap(sLine);
 
 		// Don't let the client talk to the server directly about CAP,
@@ -471,17 +469,17 @@ void CClient::ReadLine(const CString& sData) {
 		} else {
 			NETWORKMODULECALL(OnUserTopicRequest(sChan), m_pUser, m_pNetwork, this, return);
 		}
-	} else if (m_pNetwork && sCommand.Equals("MODE")) {
+	} else if (sCommand.Equals("MODE")) {
 		CString sTarget = sLine.Token(1);
 		CString sModes = sLine.Token(2, true);
 
-		if (m_pNetwork->IsChan(sTarget)) {
-			CChan *pChan = m_pNetwork->FindChan(sTarget);
-
+		if (m_pNetwork->IsChan(sTarget) && sModes.empty()) {
 			// If we are on that channel and already received a
 			// /mode reply from the server, we can answer this
 			// request ourself.
-			if (pChan && pChan->IsOn() && sModes.empty() && !pChan->GetModeString().empty()) {
+
+			CChan *pChan = m_pNetwork->FindChan(sTarget);
+			if (pChan && pChan->IsOn() && !pChan->GetModeString().empty()) {
 				PutClient(":" + m_pNetwork->GetIRCServer() + " 324 " + GetNick() + " " + sTarget + " " + pChan->GetModeString());
 				if (pChan->GetCreationDate() > 0) {
 					PutClient(":" + m_pNetwork->GetIRCServer() + " 329 " + GetNick() + " " + sTarget + " " + CString(pChan->GetCreationDate()));
