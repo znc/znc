@@ -101,6 +101,7 @@ public:
 	// !wrappers
 
 	// Setters
+	void SetModeKnown(bool b) { m_bModeKnown = b; }
 	void SetIsOn(bool b) { m_bIsOn = b; if (!b) { Reset(); } }
 	void SetKey(const CString& s) { m_sKey = s; }
 	void SetTopic(const CString& s) { m_sTopic = s; }
@@ -119,6 +120,7 @@ public:
 	// !Setters
 
 	// Getters
+	bool IsModeKnown() const { return m_bModeKnown; }
 	bool HasMode(unsigned char uMode) const;
 	CString GetOptions() const;
 	CString GetModeArg(unsigned char uMode) const;
@@ -163,6 +165,7 @@ protected:
 	unsigned int                 m_uBufferCount;
 	vector<CString>              m_vsBuffer;
 
+	bool                         m_bModeKnown;
 	map<unsigned char, CString>  m_musModes;
 };
 

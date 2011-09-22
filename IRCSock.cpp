@@ -193,6 +193,15 @@ void CIRCSock::ReadLine(const CString& sData) {
 
 				if (pChan) {
 					pChan->SetModes(sRest.Token(1, true));
+
+					// We don't SetModeKnown(true) here,
+					// because a 329 will follow
+					if (!pChan->IsModeKnown()) {
+						// When we JOIN, we send a MODE
+						// request. This makes sure the
+						// reply isn't forwarded.
+						return;
+					}
 				}
 			}
 				break;
@@ -203,6 +212,14 @@ void CIRCSock::ReadLine(const CString& sData) {
 				if (pChan) {
 					unsigned long ulDate = sLine.Token(4).ToULong();
 					pChan->SetCreationDate(ulDate);
+
+					if (!pChan->IsModeKnown()) {
+						pChan->SetModeKnown(true);
+						// When we JOIN, we send a MODE
+						// request. This makes sure the
+						// reply isn't forwarded.
+						return;
+					}
 				}
 			}
 				break;
@@ -436,6 +453,7 @@ void CIRCSock::ReadLine(const CString& sData) {
 					pChan->ResetJoinTries();
 					pChan->Enable();
 					pChan->SetIsOn(true);
+					PutIRC("MODE " + sChan);
 				}
 			} else {
 				pChan = m_pNetwork->FindChan(sChan);
