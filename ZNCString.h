@@ -413,7 +413,7 @@ public:
 	 * @param sPrefix The prefix that should be removed.
 	 * @return True if this string was modified.
 	 */
-	bool TrimPrefix(const CString& sPrefix);
+	bool TrimPrefix(const CString& sPrefix = ":");
 	/** Trim a given suffix.
 	 * @param sSuffix The suffix that should be removed.
 	 * @return True if this string was modified.
@@ -423,7 +423,7 @@ public:
 	 * @param sPrefix The prefix that should be removed.
 	 * @return A copy of this string without the prefix.
 	 */
-	CString TrimPrefix_n(const CString& sPrefix) const;
+	CString TrimPrefix_n(const CString& sPrefix = ":") const;
 	/** Trim a given suffix.
 	 * @param sSuffix The suffix that should be removed.
 	 * @return A copy of this string without the prefix.

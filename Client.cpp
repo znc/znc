@@ -94,10 +94,7 @@ void CClient::ReadLine(const CString& sData) {
 		if (sCommand.Equals("PASS")) {
 			m_bGotPass = true;
 
-			CString sAuthLine = sLine.Token(1, true);
-			if (sAuthLine.Left(1) == ":") {
-				sAuthLine.LeftChomp();
-			}
+			CString sAuthLine = sLine.Token(1, true).TrimPrefix_n();
 
 			// [user[/network]:]password
 			if (sAuthLine.find(":") == CString::npos) {
@@ -116,10 +113,7 @@ void CClient::ReadLine(const CString& sData) {
 			AuthUser();
 			return;  // Don't forward this msg.  ZNC has already registered us.
 		} else if (sCommand.Equals("NICK")) {
-			CString sNick = sLine.Token(1);
-			if (sNick.Left(1) == ":") {
-				sNick.LeftChomp();
-			}
+			CString sNick = sLine.Token(1).TrimPrefix_n();
 
 			m_sNick = sNick;
 			m_bGotNick = true;
@@ -213,11 +207,7 @@ void CClient::ReadLine(const CString& sData) {
 		return;  // If the server understands it, we already enabled namesx / uhnames
 	} else if (sCommand.Equals("NOTICE")) {
 		CString sTarget = sLine.Token(1);
-		CString sMsg = sLine.Token(2, true);
-
-		if (sMsg.Left(1) == ":") {
-			sMsg.LeftChomp();
-		}
+		CString sMsg = sLine.Token(2, true).TrimPrefix_n();
 
 		if (sTarget.TrimPrefix(m_pUser->GetStatusPrefix())) {
 			if (!sTarget.Equals("status")) {
@@ -271,11 +261,7 @@ void CClient::ReadLine(const CString& sData) {
 		}
 	} else if (sCommand.Equals("PRIVMSG")) {
 		CString sTarget = sLine.Token(1);
-		CString sMsg = sLine.Token(2, true);
-
-		if (sMsg.Left(1) == ":") {
-			sMsg.LeftChomp();
-		}
+		CString sMsg = sLine.Token(2, true).TrimPrefix_n();
 
 		if (sMsg.WildCmp("\001*\001")) {
 			CString sCTCP = sMsg;
@@ -395,12 +381,8 @@ void CClient::ReadLine(const CString& sData) {
 		PutStatusNotice("Detached from [" + sChan + "]");
 		return;
 	} else if (sCommand.Equals("JOIN")) {
-		CString sChans = sLine.Token(1);
+		CString sChans = sLine.Token(1).TrimPrefix_n();
 		CString sKey = sLine.Token(2);
-
-		if (sChans.Left(1) == ":") {
-			sChans.LeftChomp();
-		}
 
 		VCString vChans;
 		sChans.Split(",", vChans, false);
@@ -431,16 +413,8 @@ void CClient::ReadLine(const CString& sData) {
 			sLine += " " + sKey;
 		}
 	} else if (sCommand.Equals("PART")) {
-		CString sChan = sLine.Token(1);
-		CString sMessage = sLine.Token(2, true);
-
-		if (sChan.Left(1) == ":") {
-			// I hate those broken clients, I hate them so much, I really hate them...
-			sChan.LeftChomp();
-		}
-		if (sMessage.Left(1) == ":") {
-			sMessage.LeftChomp();
-		}
+		CString sChan = sLine.Token(1).TrimPrefix_n();
+		CString sMessage = sLine.Token(2, true).TrimPrefix_n();
 
 		NETWORKMODULECALL(OnUserPart(sChan, sMessage), m_pUser, m_pNetwork, this, return);
 
@@ -459,11 +433,9 @@ void CClient::ReadLine(const CString& sData) {
 		}
 	} else if (sCommand.Equals("TOPIC")) {
 		CString sChan = sLine.Token(1);
-		CString sTopic = sLine.Token(2, true);
+		CString sTopic = sLine.Token(2, true).TrimPrefix_n();
 
 		if (!sTopic.empty()) {
-			if (sTopic.Left(1) == ":")
-				sTopic.LeftChomp();
 			NETWORKMODULECALL(OnUserTopic(sChan, sTopic), m_pUser, m_pNetwork, this, return);
 			sLine = "TOPIC " + sChan + " :" + sTopic;
 		} else {
