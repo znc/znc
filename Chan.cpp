@@ -54,6 +54,7 @@ CChan::~CChan() {
 
 void CChan::Reset() {
 	m_bIsOn = false;
+	m_bModeKnown = false;
 	m_musModes.clear();
 	m_sTopic = "";
 	m_sTopicOwner = "";
