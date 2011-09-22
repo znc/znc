@@ -31,9 +31,9 @@
  * SUCH DAMAGE.
  */
 
-#include <string.h>
-
 #include "SHA256.h"
+
+#include <string.h>
 
 #define SHFR(x, n)    (x >> n)
 #define ROTR(x, n)   ((x >> n) | (x << ((sizeof(x) << 3) - n)))
