@@ -6,7 +6,7 @@
  * by the Free Software Foundation.
  */
 
-#include "User.h"
+#include <znc/User.h>
 
 #define SIMPLE_AWAY_DEFAULT_REASON "Auto away at %s"
 #define SIMPLE_AWAY_DEFAULT_TIME   60

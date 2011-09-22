@@ -6,7 +6,7 @@
  * by the Free Software Foundation.
  */
 
-#include "Buffer.h"
+#include <znc/Buffer.h>
 
 CBufLine::CBufLine(const CString& sPre, const CString& sPost, bool bIncNick=true) {
 	m_sPre = sPre;

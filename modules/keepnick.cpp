@@ -6,10 +6,10 @@
  * by the Free Software Foundation.
  */
 
-#include "Modules.h"
-#include "User.h"
-#include "IRCNetwork.h"
-#include "IRCSock.h"
+#include <znc/Modules.h>
+#include <znc/User.h>
+#include <znc/IRCNetwork.h>
+#include <znc/IRCSock.h>
 
 class CKeepNickMod;
 

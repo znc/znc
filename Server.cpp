@@ -6,7 +6,7 @@
  * by the Free Software Foundation.
  */
 
-#include "Server.h"
+#include <znc/Server.h>
 
 CServer::CServer(const CString& sName, unsigned short uPort, const CString& sPass, bool bSSL) {
 	m_sName = sName;

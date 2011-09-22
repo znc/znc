@@ -6,9 +6,9 @@
  * by the Free Software Foundation.
  */
 
-#include "Modules.h"
-#include "User.h"
-#include "znc.h"
+#include <znc/Modules.h>
+#include <znc/User.h>
+#include <znc/znc.h>
 #include <queue>
 
 class CSocketSorter {

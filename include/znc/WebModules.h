@@ -9,9 +9,9 @@
 #ifndef _WEBMODULES_H
 #define _WEBMODULES_H
 
-#include "zncconfig.h"
-#include "Template.h"
-#include "HTTPSock.h"
+#include <znc/zncconfig.h>
+#include <znc/Template.h>
+#include <znc/HTTPSock.h>
 
 class CAuthBase;
 class CUser;

@@ -13,8 +13,8 @@
  *
  */
 
-#include "Chan.h"
-#include "IRCNetwork.h"
+#include <znc/Chan.h>
+#include <znc/IRCNetwork.h>
 
 class CRejoinJob: public CTimer {
 public:

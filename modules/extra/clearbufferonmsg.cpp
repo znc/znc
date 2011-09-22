@@ -6,9 +6,9 @@
  * by the Free Software Foundation.
  */
 
-#include "IRCNetwork.h"
-#include "Chan.h"
-#include "Modules.h"
+#include <znc/IRCNetwork.h>
+#include <znc/Chan.h>
+#include <znc/Modules.h>
 
 class CClearBufferOnMsgMod : public CModule {
 public:

@@ -9,8 +9,8 @@
 #ifndef _NICK_H
 #define _NICK_H
 
-#include "zncconfig.h"
-#include "ZNCString.h"
+#include <znc/zncconfig.h>
+#include <znc/ZNCString.h>
 #include <set>
 #include <vector>
 

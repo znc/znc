@@ -6,11 +6,11 @@
  * by the Free Software Foundation.
  */
 
-#include "FileUtils.h"
-#include "IRCSock.h"
-#include "User.h"
-#include "IRCNetwork.h"
-#include "znc.h"
+#include <znc/FileUtils.h>
+#include <znc/IRCSock.h>
+#include <znc/User.h>
+#include <znc/IRCNetwork.h>
+#include <znc/znc.h>
 
 class CIdentFileModule : public CModule {
 	CString m_sOrigISpoof;

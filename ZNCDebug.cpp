@@ -6,7 +6,7 @@
  * by the Free Software Foundation.
  */
 
-#include "ZNCDebug.h"
+#include <znc/ZNCDebug.h>
 
 bool CDebug::stdoutIsTTY = true;
 bool CDebug::debug =

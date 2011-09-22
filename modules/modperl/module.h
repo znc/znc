@@ -8,7 +8,7 @@
 
 #pragma once
 
-#include "Modules.h"
+#include <znc/Modules.h>
 
 #if HAVE_VISIBILITY
 #pragma GCC visibility push(default)

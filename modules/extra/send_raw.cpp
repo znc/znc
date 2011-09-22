@@ -6,9 +6,9 @@
  * by the Free Software Foundation.
  */
 
-#include "User.h"
-#include "IRCNetwork.h"
-#include "znc.h"
+#include <znc/User.h>
+#include <znc/IRCNetwork.h>
+#include <znc/znc.h>
 
 class CSendRaw_Mod: public CModule {
 	void SendClient(const CString& sLine) {

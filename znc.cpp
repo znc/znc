@@ -6,15 +6,15 @@
  * by the Free Software Foundation.
  */
 
-#include "znc.h"
-#include "Chan.h"
-#include "FileUtils.h"
-#include "IRCSock.h"
-#include "Server.h"
-#include "User.h"
-#include "IRCNetwork.h"
-#include "Listener.h"
-#include "Config.h"
+#include <znc/znc.h>
+#include <znc/Chan.h>
+#include <znc/FileUtils.h>
+#include <znc/IRCSock.h>
+#include <znc/Server.h>
+#include <znc/User.h>
+#include <znc/IRCNetwork.h>
+#include <znc/Listener.h>
+#include <znc/Config.h>
 #include <list>
 
 static inline CString FormatBindError() {

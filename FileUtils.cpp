@@ -6,10 +6,10 @@
  * by the Free Software Foundation.
  */
 
-#include "FileUtils.h"
-#include "ExecSock.h"
-#include "Utils.h"
-#include "ZNCDebug.h"
+#include <znc/FileUtils.h>
+#include <znc/ExecSock.h>
+#include <znc/Utils.h>
+#include <znc/ZNCDebug.h>
 #include <errno.h>
 #include <fcntl.h>
 #include <pwd.h>

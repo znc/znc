@@ -8,10 +8,10 @@
 
 #define REQUIRESSL
 
-#include "Modules.h"
-#include "User.h"
-#include "Listener.h"
-#include "znc.h"
+#include <znc/Modules.h>
+#include <znc/User.h>
+#include <znc/Listener.h>
+#include <znc/znc.h>
 
 class CSSLClientCertMod : public CModule {
 public:

@@ -9,9 +9,9 @@
 #ifndef _MODULES_H
 #define _MODULES_H
 
-#include "zncconfig.h"
-#include "WebModules.h"
-#include "main.h"
+#include <znc/zncconfig.h>
+#include <znc/WebModules.h>
+#include <znc/main.h>
 #include <set>
 #include <queue>
 

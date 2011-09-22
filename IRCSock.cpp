@@ -6,13 +6,13 @@
  * by the Free Software Foundation.
  */
 
-#include "IRCSock.h"
-#include "Chan.h"
-#include "Client.h"
-#include "User.h"
-#include "IRCNetwork.h"
-#include "znc.h"
-#include "Server.h"
+#include <znc/IRCSock.h>
+#include <znc/Chan.h>
+#include <znc/Client.h>
+#include <znc/User.h>
+#include <znc/IRCNetwork.h>
+#include <znc/znc.h>
+#include <znc/Server.h>
 
 // These are used in OnGeneralCTCP()
 const time_t CIRCSock::m_uCTCPFloodTime = 5;

@@ -9,9 +9,9 @@
 #ifndef _IRCSOCK_H
 #define _IRCSOCK_H
 
-#include "zncconfig.h"
-#include "Socket.h"
-#include "Nick.h"
+#include <znc/zncconfig.h>
+#include <znc/Socket.h>
+#include <znc/Nick.h>
 
 // Forward Declarations
 class CChan;

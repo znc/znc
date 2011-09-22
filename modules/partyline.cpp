@@ -6,9 +6,9 @@
  * by the Free Software Foundation.
  */
 
-#include "User.h"
-#include "znc.h"
-#include "IRCNetwork.h"
+#include <znc/User.h>
+#include <znc/znc.h>
+#include <znc/IRCNetwork.h>
 
 // If you change these and it breaks, you get to keep the pieces
 #define CHAN_PREFIX_1   "~"

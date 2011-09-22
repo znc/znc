@@ -6,8 +6,8 @@
  * by the Free Software Foundation.
  */
 
-#include "IRCNetwork.h"
-#include "Chan.h"
+#include <znc/IRCNetwork.h>
+#include <znc/Chan.h>
 
 class CAutoOpMod;
 

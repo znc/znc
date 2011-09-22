@@ -11,8 +11,8 @@
  * @brief SASL authentication module for znc.
  */
 
-#include "Modules.h"
-#include "znc.h"
+#include <znc/Modules.h>
+#include <znc/znc.h>
 #include <sasl/sasl.h>
 
 class CSASLAuthMod : public CModule {

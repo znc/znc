@@ -6,11 +6,11 @@
  * by the Free Software Foundation.
  */
 
-#include "znc.h"
-#include "Chan.h"
-#include "User.h"
-#include "Modules.h"
-#include "FileUtils.h"
+#include <znc/znc.h>
+#include <znc/Chan.h>
+#include <znc/User.h>
+#include <znc/Modules.h>
+#include <znc/FileUtils.h>
 
 class CDCCMod;
 

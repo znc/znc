@@ -9,8 +9,8 @@
 #ifndef CONFIG_H
 #define CONFIG_H
 
-#include "zncconfig.h"
-#include "ZNCString.h"
+#include <znc/zncconfig.h>
+#include <znc/ZNCString.h>
 
 class CFile;
 class CConfig;

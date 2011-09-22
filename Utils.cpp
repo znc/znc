@@ -6,10 +6,10 @@
  * by the Free Software Foundation.
  */
 
-#include "Utils.h"
-#include "MD5.h"
-#include "main.h"
-#include "ZNCDebug.h"
+#include <znc/Utils.h>
+#include <znc/MD5.h>
+#include <znc/main.h>
+#include <znc/ZNCDebug.h>
 #include <errno.h>
 #ifdef HAVE_LIBSSL
 #include <openssl/ssl.h>

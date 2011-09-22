@@ -6,9 +6,9 @@
  * by the Free Software Foundation.
  */
 
-#include "Modules.h"
-#include "Client.h"
-#include "FileUtils.h"
+#include <znc/Modules.h>
+#include <znc/Client.h>
+#include <znc/FileUtils.h>
 
 class CMotdFileMod : public CModule {
 public:

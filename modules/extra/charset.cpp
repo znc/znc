@@ -6,7 +6,7 @@
  * by the Free Software Foundation.
  */
 
-#include "Modules.h"
+#include <znc/Modules.h>
 #include <iconv.h>
 
 #ifndef ICONV_CONST

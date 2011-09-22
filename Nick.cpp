@@ -6,10 +6,10 @@
  * by the Free Software Foundation.
  */
 
-#include "Nick.h"
-#include "Chan.h"
-#include "IRCSock.h"
-#include "IRCNetwork.h"
+#include <znc/Nick.h>
+#include <znc/Chan.h>
+#include <znc/IRCSock.h>
+#include <znc/IRCNetwork.h>
 
 CNick::CNick() {
 	Reset();

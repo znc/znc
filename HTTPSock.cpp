@@ -6,10 +6,10 @@
  * by the Free Software Foundation.
  */
 
-#include "HTTPSock.h"
-#include "FileUtils.h"
-#include "Modules.h"
-#include "znc.h"
+#include <znc/HTTPSock.h>
+#include <znc/FileUtils.h>
+#include <znc/Modules.h>
+#include <znc/znc.h>
 
 #include <sstream>
 #include <iomanip>

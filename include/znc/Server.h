@@ -9,8 +9,8 @@
 #ifndef _SERVER_H
 #define _SERVER_H
 
-#include "zncconfig.h"
-#include "ZNCString.h"
+#include <znc/zncconfig.h>
+#include <znc/ZNCString.h>
 
 class CServer {
 public:

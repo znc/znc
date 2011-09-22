@@ -3,7 +3,7 @@
 #ifndef _MD5_H
 #define _MD5_H
 
-#include "zncconfig.h"
+#include <znc/zncconfig.h>
 #include <string>
 using std::string;
 

@@ -34,7 +34,7 @@
 
 #ifndef _HAS_CSOCKET_
 #define _HAS_CSOCKET_
-#include "defines.h" // require this as a general rule, most projects have a defines.h or the like
+#include <znc/defines.h> // require this as a general rule, most projects have a defines.h or the like
 
 #include <stdio.h>
 #include <unistd.h>

@@ -6,13 +6,13 @@
  * by the Free Software Foundation.
  */
 
-#include "Modules.h"
-#include "FileUtils.h"
-#include "Template.h"
-#include "User.h"
-#include "IRCNetwork.h"
-#include "WebModules.h"
-#include "znc.h"
+#include <znc/Modules.h>
+#include <znc/FileUtils.h>
+#include <znc/Template.h>
+#include <znc/User.h>
+#include <znc/IRCNetwork.h>
+#include <znc/WebModules.h>
+#include <znc/znc.h>
 #include <dlfcn.h>
 
 #ifndef RTLD_LOCAL

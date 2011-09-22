@@ -9,10 +9,10 @@
 #ifndef _CLIENT_H
 #define _CLIENT_H
 
-#include "zncconfig.h"
-#include "Socket.h"
-#include "Utils.h"
-#include "main.h"
+#include <znc/zncconfig.h>
+#include <znc/Socket.h>
+#include <znc/Utils.h>
+#include <znc/main.h>
 
 // Forward Declarations
 class CZNC;

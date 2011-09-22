@@ -9,10 +9,10 @@
 #ifndef _USER_H
 #define _USER_H
 
-#include "zncconfig.h"
-#include "Buffer.h"
-#include "Modules.h"
-#include "Nick.h"
+#include <znc/zncconfig.h>
+#include <znc/Buffer.h>
+#include <znc/Modules.h>
+#include <znc/Nick.h>
 #include <set>
 #include <vector>
 

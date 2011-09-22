@@ -11,10 +11,10 @@
 
 #define REQUIRESSL
 
-#include "FileUtils.h"
-#include "User.h"
-#include "IRCNetwork.h"
-#include "znc.h"
+#include <znc/FileUtils.h>
+#include <znc/User.h>
+#include <znc/IRCNetwork.h>
+#include <znc/znc.h>
 #include <sstream>
 
 using std::pair;

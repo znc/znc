@@ -6,8 +6,8 @@
  * by the Free Software Foundation.
  */
 
-#include "Listener.h"
-#include "znc.h"
+#include <znc/Listener.h>
+#include <znc/znc.h>
 
 CListener::~CListener() {
 	if (m_pListener)

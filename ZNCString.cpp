@@ -6,11 +6,11 @@
  * by the Free Software Foundation.
  */
 
-#include "ZNCString.h"
-#include "FileUtils.h"
-#include "Utils.h"
-#include "MD5.h"
-#include "SHA256.h"
+#include <znc/ZNCString.h>
+#include <znc/FileUtils.h>
+#include <znc/Utils.h>
+#include <znc/MD5.h>
+#include <znc/SHA256.h>
 #include <sstream>
 
 using std::stringstream;

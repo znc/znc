@@ -6,7 +6,7 @@
  * by the Free Software Foundation.
  */
 
-#include "User.h"
+#include <znc/User.h>
 
 class CNickServ : public CModule
 {

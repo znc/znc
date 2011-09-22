@@ -9,7 +9,7 @@
 #ifndef ZNCSTRING_H
 #define ZNCSTRING_H
 
-#include "zncconfig.h"
+#include <znc/zncconfig.h>
 #include <map>
 #include <set>
 #include <string>

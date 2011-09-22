@@ -6,10 +6,10 @@
  * by the Free Software Foundation.
  */
 
-#include "Chan.h"
-#include "User.h"
-#include "IRCNetwork.h"
-#include "znc.h"
+#include <znc/Chan.h>
+#include <znc/User.h>
+#include <znc/IRCNetwork.h>
+#include <znc/znc.h>
 
 class CChanSaverMod : public CModule {
 public:

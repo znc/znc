@@ -30,7 +30,7 @@
 *
 */
 
-#include "Csocket.h"
+#include <znc/Csocket.h>
 #ifdef __NetBSD__
 #include <sys/param.h>
 #endif /* __NetBSD__ */

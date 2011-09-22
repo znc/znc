@@ -9,9 +9,9 @@
 #ifndef _CHAN_H
 #define _CHAN_H
 
-#include "zncconfig.h"
-#include "Nick.h"
-#include "ZNCString.h"
+#include <znc/zncconfig.h>
+#include <znc/Nick.h>
+#include <znc/ZNCString.h>
 #include <map>
 #include <set>
 #include <vector>

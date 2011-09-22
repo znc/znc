@@ -6,14 +6,14 @@
  * by the Free Software Foundation.
  */
 
-#include "User.h"
-#include "Chan.h"
-#include "Config.h"
-#include "FileUtils.h"
-#include "IRCNetwork.h"
-#include "IRCSock.h"
-#include "Server.h"
-#include "znc.h"
+#include <znc/User.h>
+#include <znc/Chan.h>
+#include <znc/Config.h>
+#include <znc/FileUtils.h>
+#include <znc/IRCNetwork.h>
+#include <znc/IRCSock.h>
+#include <znc/Server.h>
+#include <znc/znc.h>
 
 class CUserTimer : public CCron {
 public:

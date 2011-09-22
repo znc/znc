@@ -6,10 +6,10 @@
  * by the Free Software Foundation.
  */
 
-#include "WebModules.h"
-#include "FileUtils.h"
-#include "User.h"
-#include "znc.h"
+#include <znc/WebModules.h>
+#include <znc/FileUtils.h>
+#include <znc/User.h>
+#include <znc/znc.h>
 #include <sstream>
 
 /// @todo Do we want to make this a configure option?

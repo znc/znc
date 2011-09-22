@@ -6,16 +6,16 @@
  * by the Free Software Foundation.
  */
 
-#include "IRCNetwork.h"
-#include "Modules.h"
-#include "User.h"
-#include "FileUtils.h"
-#include "Config.h"
-#include "Client.h"
-#include "IRCSock.h"
-#include "Server.h"
-#include "Chan.h"
-#include "znc.h"
+#include <znc/IRCNetwork.h>
+#include <znc/Modules.h>
+#include <znc/User.h>
+#include <znc/FileUtils.h>
+#include <znc/Config.h>
+#include <znc/Client.h>
+#include <znc/IRCSock.h>
+#include <znc/Server.h>
+#include <znc/Chan.h>
+#include <znc/znc.h>
 
 bool CIRCNetwork::IsValidNetwork(const CString& sNetwork) {
 	// ^[-\w]+$

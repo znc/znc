@@ -6,11 +6,11 @@
  * by the Free Software Foundation.
  */
 
-#include "Client.h"
-#include "FileUtils.h"
-#include "Server.h"
-#include "IRCNetwork.h"
-#include "User.h"
+#include <znc/Client.h>
+#include <znc/FileUtils.h>
+#include <znc/Server.h>
+#include <znc/IRCNetwork.h>
+#include <znc/User.h>
 
 #include <syslog.h>
 

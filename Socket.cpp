@@ -6,10 +6,10 @@
  * by the Free Software Foundation.
  */
 
-#include "Socket.h"
-#include "Modules.h"
-#include "User.h"
-#include "znc.h"
+#include <znc/Socket.h>
+#include <znc/Modules.h>
+#include <znc/User.h>
+#include <znc/znc.h>
 
 unsigned int CSockManager::GetAnonConnectionCount(const CString &sIP) const {
 	const_iterator it;

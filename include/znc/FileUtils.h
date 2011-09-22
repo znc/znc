@@ -9,8 +9,8 @@
 #ifndef _FILEUTILS_H
 #define _FILEUTILS_H
 
-#include "zncconfig.h"
-#include "ZNCString.h"
+#include <znc/zncconfig.h>
+#include <znc/ZNCString.h>
 #include <dirent.h>
 #include <map>
 #include <stdlib.h>

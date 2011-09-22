@@ -6,8 +6,8 @@
  * by the Free Software Foundation.
  */
 
-#include "Chan.h"
-#include "User.h"
+#include <znc/Chan.h>
+#include <znc/User.h>
 
 class CAutoVoiceUser {
 public:

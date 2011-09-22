@@ -6,8 +6,8 @@
  * by the Free Software Foundation.
  */
 
-#include "znc.h"
-#include "FileUtils.h"
+#include <znc/znc.h>
+#include <znc/FileUtils.h>
 #include <sys/wait.h>
 #include <signal.h>
 

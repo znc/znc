@@ -16,10 +16,10 @@
 
 #define REQUIRESSL
 
-#include "Client.h"
-#include "User.h"
-#include "IRCNetwork.h"
-#include "FileUtils.h"
+#include <znc/Client.h>
+#include <znc/User.h>
+#include <znc/IRCNetwork.h>
+#include <znc/FileUtils.h>
 #include <sys/stat.h>
 
 #define CRYPT_VERIFICATION_TOKEN "::__:AWAY:__::"

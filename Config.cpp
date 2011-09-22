@@ -6,8 +6,8 @@
  * by the Free Software Foundation.
  */
 
-#include "Config.h"
-#include "FileUtils.h"
+#include <znc/Config.h>
+#include <znc/FileUtils.h>
 #include <stack>
 #include <sstream>
 

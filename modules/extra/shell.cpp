@@ -6,10 +6,10 @@
  * by the Free Software Foundation.
  */
 
-#include "FileUtils.h"
-#include "User.h"
-#include "znc.h"
-#include "ExecSock.h"
+#include <znc/FileUtils.h>
+#include <znc/User.h>
+#include <znc/znc.h>
+#include <znc/ExecSock.h>
 
 // Forward Declaration
 class CShellMod;

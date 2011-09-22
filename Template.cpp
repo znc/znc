@@ -6,9 +6,9 @@
  * by the Free Software Foundation.
  */
 
-#include "Template.h"
-#include "FileUtils.h"
-#include "ZNCDebug.h"
+#include <znc/Template.h>
+#include <znc/FileUtils.h>
+#include <znc/ZNCDebug.h>
 #include <sstream>
 #include <algorithm>
 

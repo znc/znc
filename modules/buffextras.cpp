@@ -6,9 +6,9 @@
  * by the Free Software Foundation.
  */
 
-#include "Chan.h"
-#include "User.h"
-#include "Modules.h"
+#include <znc/Chan.h>
+#include <znc/User.h>
+#include <znc/Modules.h>
 
 class CBuffExtras : public CModule {
 public:

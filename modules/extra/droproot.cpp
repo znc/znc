@@ -13,8 +13,8 @@
  * by the Free Software Foundation.
  */
 
-#include "znc.h"
-#include "User.h"
+#include <znc/znc.h>
+#include <znc/User.h>
 #include <pwd.h>
 #include <grp.h>
 

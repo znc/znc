@@ -9,11 +9,11 @@
 #ifndef _ZNC_H
 #define _ZNC_H
 
-#include "zncconfig.h"
-#include "Client.h"
-#include "Modules.h"
-#include "Socket.h"
-#include "Listener.h"
+#include <znc/zncconfig.h>
+#include <znc/Client.h>
+#include <znc/Modules.h>
+#include <znc/Socket.h>
+#include <znc/Listener.h>
 #include <map>
 
 using std::map;

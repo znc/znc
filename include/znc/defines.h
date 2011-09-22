@@ -9,12 +9,12 @@
 #ifndef _DEFINES_H
 #define _DEFINES_H
 
-#include "zncconfig.h"
+#include <znc/zncconfig.h>
 
 // This header file is just for Csocket
 
-#include "ZNCDebug.h"
-#include "ZNCString.h"
+#include <znc/ZNCDebug.h>
+#include <znc/ZNCString.h>
 
 #define CS_STRING CString
 #define _NO_CSOCKET_NS

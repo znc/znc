@@ -11,7 +11,7 @@ AC_INIT([znc], [0.203])
 AC_CONFIG_MACRO_DIR([m4])
 AC_CONFIG_SRCDIR([znc.cpp])
 AC_LANG([C++])
-AC_CONFIG_HEADERS([zncconfig.h])
+AC_CONFIG_HEADERS([headers/znc/zncconfig.h])
 AH_TOP([#ifndef ZNCCONFIG_H
 #define ZNCCONFIG_H])
 AH_BOTTOM([#endif /* ZNCCONFIG_H */])

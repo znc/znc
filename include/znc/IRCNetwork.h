@@ -9,11 +9,11 @@
 #ifndef _IRCNETWORK_H
 #define _IRCNETWORK_H
 
-#include "zncconfig.h"
-#include "ZNCString.h"
-#include "Buffer.h"
-#include "Nick.h"
-#include "znc.h"
+#include <znc/zncconfig.h>
+#include <znc/ZNCString.h>
+#include <znc/Buffer.h>
+#include <znc/Nick.h>
+#include <znc/znc.h>
 
 class CModules;
 class CUser;

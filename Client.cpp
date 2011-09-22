@@ -6,14 +6,14 @@
  * by the Free Software Foundation.
  */
 
-#include "Client.h"
-#include "Chan.h"
-#include "FileUtils.h"
-#include "IRCSock.h"
-#include "User.h"
-#include "IRCNetwork.h"
-#include "znc.h"
-#include "WebModules.h"
+#include <znc/Client.h>
+#include <znc/Chan.h>
+#include <znc/FileUtils.h>
+#include <znc/IRCSock.h>
+#include <znc/User.h>
+#include <znc/IRCNetwork.h>
+#include <znc/znc.h>
+#include <znc/WebModules.h>
 
 #define CALLMOD(MOD, CLIENT, USER, NETWORK, FUNC) {  \
 	CModule *pModule = NULL;  \

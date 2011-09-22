@@ -9,8 +9,8 @@
 #ifndef EXEC_SOCK_H
 #define EXEC_SOCK_H
 
-#include "zncconfig.h"
-#include "Socket.h"
+#include <znc/zncconfig.h>
+#include <znc/Socket.h>
 #include <signal.h>
 
 //! @author imaginos@imaginos.net
