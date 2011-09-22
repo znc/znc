@@ -1,3 +1,9 @@
+dnl This redefines AC_PROG_CC to a version which errors out instead. This is
+dnl because all our tests should be done with the C++ compiler. This should
+dnl catch stuff which accidentally uses the C compiler.
+AC_DEFUN([AC_PROG_CC], [m4_errprint(__file__:__line__[: Something is trying to use the C compiler. Since this is a C++ project, this should not happen!
+])m4_exit(1)])
+
 dnl Needed for AC_PATH_PROGS_FEATURE_CHECK which was added in 2.62
 AC_PREREQ([2.62])
 dnl Keep the version number in sync with main.h!
