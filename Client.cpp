@@ -189,7 +189,6 @@ void CClient::ReadLine(const CString& sData) {
 		// Block PONGs, we already responded to the pings
 		return;
 	} else if (sCommand.Equals("QUIT")) {
-		SetNetwork(NULL, true, false);
 		Close(Csock::CLT_AFTERWRITE); // Treat a client quit as a detach
 		return;                       // Don't forward this msg.  We don't want the client getting us disconnected.
 	} else if (sCommand.Equals("PROTOCTL")) {
@@ -657,10 +656,11 @@ void CClient::ConnectionRefused() {
 
 void CClient::Disconnected() {
 	DEBUG(GetSockName() << " == Disconnected()");
+	CIRCNetwork* pNetwork = m_pNetwork;
 	SetNetwork(NULL, true, false);
 
 	if (m_pUser) {
-		NETWORKMODULECALL(OnClientDisconnect(), m_pUser, m_pNetwork, this, NOTHING);
+		NETWORKMODULECALL(OnClientDisconnect(), m_pUser, pNetwork, this, NOTHING);
 	}
 }
 
