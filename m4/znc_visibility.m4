@@ -68,6 +68,7 @@ AC_DEFUN([ZNC_VISIBILITY],
          extern __attribute__((__visibility__("default"))) int exportedvar;
          extern __attribute__((__visibility__("hidden"))) int hiddenfunc (void);
          extern __attribute__((__visibility__("default"))) int exportedfunc (void);
+         void dummyfunc (void);
          void dummyfunc (void) {}]],
         [])],
         [znc_cv_cc_visibility=yes],
