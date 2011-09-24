@@ -991,6 +991,20 @@ CString CUser::MakeCleanUserName(const CString& sUserName) {
 	return sUserName.Token(0, false, "@").Replace_n(".", "");
 }
 
+bool CUser::IsUserAttached() const {
+	if (!m_vClients.empty()) {
+		return true;
+	}
+
+	for (vector<CIRCNetwork*>::const_iterator i = m_vIRCNetworks.begin(); i != m_vIRCNetworks.end(); ++i) {
+		if ((*i)->IsUserAttached()) {
+			return true;
+		}
+	}
+
+	return false;
+}
+
 // Setters
 void CUser::SetNick(const CString& s) { m_sNick = s; }
 void CUser::SetAltNick(const CString& s) { m_sAltNick = s; }
