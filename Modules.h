@@ -552,6 +552,10 @@ public:
 	 *  @param sMessage The part message.
 	 */
 	virtual void OnPart(const CNick& Nick, CChan& Channel, const CString& sMessage);
+	/** Called when user is invited into a channel
+	 *  @param sChan The channel the user got invited into
+	 */
+	virtual void OnInvite(const CString& sChan);
 
 	/** Called before a channel buffer is played back to a client.
 	 *  @param Chan The channel which will be played back.
@@ -1046,6 +1050,7 @@ public:
 	bool OnKick(const CNick& Nick, const CString& sOpNick, CChan& Channel, const CString& sMessage);
 	bool OnJoin(const CNick& Nick, CChan& Channel);
 	bool OnPart(const CNick& Nick, CChan& Channel, const CString& sMessage);
+	bool OnInvite(const CString& sChan);
 
 	bool OnChanBufferStarting(CChan& Chan, CClient& Client);
 	bool OnChanBufferEnding(CChan& Chan, CClient& Client);
