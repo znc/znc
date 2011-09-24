@@ -72,6 +72,18 @@ public:
 		return CONTINUE;
 	}
 
+	virtual EModRet OnRaw(CString &sLine) {
+		/* If we send a message to ourselfs while we are away, this
+		 * will result in the server sending a 301 which we shouldn't
+		 * forward to the client */
+
+		if (sLine.Token(1).Equals("301") && sLine.Token(3).Equals(m_pUser->GetIRCNick().GetNick())) {
+			return HALT;
+		}
+
+		return CONTINUE;
+	}
+
 private:
 	void SetInterval(int i)
 	{
