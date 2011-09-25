@@ -76,7 +76,7 @@ public:
 	{
 		VCString splitted;
 		sLine.Split(" ",splitted);
-		if(splitted[1] == "301" && splitted[2].Equals(m_pNetwork->GetIRCNick().GetNick()))
+		if(splitted[1] == "301" && splitted[2].TrimPrefix_n(":").Equals(m_pNetwork->GetIRCNick().GetNick()))
 			return HALT;
 		return CONTINUE;
 	}
