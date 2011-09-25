@@ -2261,11 +2261,16 @@ int Csock::GetAddrInfo( const CS_STRING & sHostname, CSSockAddr & csSockAddr )
 			}
 			m_pCurrAddr = &csSockAddr; // flag its starting
 
-			int iFamily = AF_INET;
+			// jfroy: ares will only attempt a A lookup after a failed AAAA lookup if the family is AF_UNSPEC
+			// jfroy: see ares_gethostbyname.c:149 and ares_gethostbyname.c:213
 #ifdef HAVE_IPV6
-			// as of ares 1.6.0 if it fails on af_inet6, it falls back to af_inet, this code was here in the previous Csocket version, just adding the comment as a reminder
-			iFamily = csSockAddr.GetAFRequire() == CSSockAddr::RAF_ANY ? AF_INET6 : csSockAddr.GetAFRequire();
+			// jfroy: use whatever has been specified in the socket address
+			int iFamily = csSockAddr.GetAFRequire();
+#else
+			// jfroy: no IPv6 in znc, force AF_INET
+			int iFamily = AF_INET;
 #endif /* HAVE_IPV6 */
+
 			ares_gethostbyname( m_pARESChannel, sHostname.c_str(), iFamily, AresHostCallback, this );
 		}
 		if( !m_pCurrAddr )
