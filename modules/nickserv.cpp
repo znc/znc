@@ -43,9 +43,27 @@ public:
 		} else if (sCmdName == "clear") {
 			m_sPass = "";
 			DelNV("Password");
-		} else {
-			PutModule("Commands: set <password>, clear");
-		}
+		} else if (sCmdName == "ghost") {
+			if(sCommand.Token(1).empty()) {
+				PutModule("Syntax: ghost <nickname>");
+			} else {
+				PutIRC("PRIVMSG NickServ :GHOST " + sCommand.Token(1) + " " + m_sPass);
+			}
+		} else if (sCmdName == "group") {
+			CString sConfNick = m_pUser->GetNick();
+			PutIRC("PRIVMSG NickServ :GROUP " + sConfNick + " " + m_sPass);
+		} else if (sCmdName == "recover") {
+			if(sCommand.Token(1).empty())
+				PutModule("Syntax: recover <nickname>");
+			else
+				PutIRC("PRIVMSG NickServ :RECOVER " + sCommand.Token(1) + " " + m_sPass);
+		} else if (sCmdName == "release") {
+			if(sCommand.Token(1).empty())
+				PutModule("Syntax: release <nickname>");
+			else
+				PutIRC("PRIVMSG NickServ :RELEASE " + sCommand.Token(1) + " " + m_sPass);
+		} else
+			PutModule("Commands: set <password>, clear, ghost <nickname>, group, release <nickname>, recover <nickname>");
 	}
 
 	void HandleMessage(CNick& Nick, const CString& sMessage)
