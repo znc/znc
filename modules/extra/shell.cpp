@@ -50,7 +50,7 @@ public:
 	}
 
 	virtual ~CShellMod() {
-		vector<CZNCSock*> vSocks = m_pManager->FindSocksByName("SHELL");
+		vector<Csock*> vSocks = m_pManager->FindSocksByName("SHELL");
 
 		for (unsigned int a = 0; a < vSocks.size(); a++) {
 			m_pManager->DelSockByAddr(vSocks[a]);
