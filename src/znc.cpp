@@ -953,7 +953,7 @@ bool CZNC::WriteNewConfig(const CString& sConfigFile) {
 	CUtils::PrintMessage("");
 	CUtils::PrintMessage("To connect to this ZNC you need to connect to it as your IRC server", true);
 	CUtils::PrintMessage("using the port that you supplied.  You have to supply your login info", true);
-	CUtils::PrintMessage("as the IRC server password like this: user:pass.", true);
+	CUtils::PrintMessage("as the IRC server password like this: user/network:pass.", true);
 	CUtils::PrintMessage("");
 	CUtils::PrintMessage("Try something like this in your IRC client...", true);
 	CUtils::PrintMessage("/server <znc_server_ip> " + sSSL + CString(uListenPort) + " " + sUser + ":<pass>", true);
