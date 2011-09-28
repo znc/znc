@@ -6,7 +6,7 @@
  * by the Free Software Foundation.
  */
 
-#include "User.h"
+#include <znc/User.h>
 
 class CRawMod : public CModule {
 public:

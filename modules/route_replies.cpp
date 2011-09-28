@@ -6,9 +6,9 @@
  * by the Free Software Foundation.
  */
 
-#include "znc.h"
-#include "IRCNetwork.h"
-#include "IRCSock.h"
+#include <znc/znc.h>
+#include <znc/IRCNetwork.h>
+#include <znc/IRCSock.h>
 
 struct reply {
 	const char *szReply;

@@ -9,12 +9,12 @@
  * by the Free Software Foundation.
  */
 
-#include "znc.h"
-#include "User.h"
-#include "IRCNetwork.h"
-#include "Modules.h"
-#include "Chan.h"
-#include "IRCSock.h"
+#include <znc/znc.h>
+#include <znc/User.h>
+#include <znc/IRCNetwork.h>
+#include <znc/Modules.h>
+#include <znc/Chan.h>
+#include <znc/IRCSock.h>
 
 template<std::size_t N>
 struct array_size_helper {

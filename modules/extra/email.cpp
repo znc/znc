@@ -9,10 +9,10 @@
  * Author: imaginos <imaginos@imaginos.net>
  */
 
-#include "FileUtils.h"
-#include "MD5.h"
-#include "User.h"
-#include "znc.h"
+#include <znc/FileUtils.h>
+#include <znc/MD5.h>
+#include <znc/User.h>
+#include <znc/znc.h>
 #include <sstream>
 
 using std::stringstream;

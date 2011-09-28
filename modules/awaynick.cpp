@@ -7,9 +7,9 @@
  */
 
 // @todo handle raw 433 (nick in use)
-#include "IRCSock.h"
-#include "User.h"
-#include "IRCNetwork.h"
+#include <znc/IRCSock.h>
+#include <znc/User.h>
+#include <znc/IRCNetwork.h>
 
 class CAwayNickMod;
 

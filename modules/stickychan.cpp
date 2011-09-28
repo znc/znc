@@ -6,8 +6,8 @@
  * by the Free Software Foundation.
  */
 
-#include "Chan.h"
-#include "IRCNetwork.h"
+#include <znc/Chan.h>
+#include <znc/IRCNetwork.h>
 
 class CStickyChan : public CModule
 {

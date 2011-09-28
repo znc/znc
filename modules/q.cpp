@@ -6,12 +6,12 @@
  * by the Free Software Foundation.
  */
 
-#include "Modules.h"
-#include "User.h"
-#include "IRCNetwork.h"
-#include "IRCSock.h"
-#include "Nick.h"
-#include "Chan.h"
+#include <znc/Modules.h>
+#include <znc/User.h>
+#include <znc/IRCNetwork.h>
+#include <znc/IRCSock.h>
+#include <znc/Nick.h>
+#include <znc/Chan.h>
 
 #ifndef Q_DEBUG_COMMUNICATION
 	#define Q_DEBUG_COMMUNICATION 0

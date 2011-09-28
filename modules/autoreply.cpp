@@ -7,10 +7,10 @@
  * by the Free Software Foundation.
  */
 
-#include "Modules.h"
-#include "IRCNetwork.h"
-#include "IRCSock.h"
-#include "User.h"
+#include <znc/Modules.h>
+#include <znc/IRCNetwork.h>
+#include <znc/IRCSock.h>
+#include <znc/User.h>
 
 class CAutoReplyMod : public CModule {
 public:

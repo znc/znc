@@ -6,10 +6,10 @@
  * by the Free Software Foundation.
  */
 
-#include "Client.h"
-#include "Chan.h"
-#include "User.h"
-#include "Modules.h"
+#include <znc/Client.h>
+#include <znc/Chan.h>
+#include <znc/User.h>
+#include <znc/Modules.h>
 
 class CSampleTimer : public CTimer {
 public:

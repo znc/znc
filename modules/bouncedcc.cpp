@@ -6,12 +6,12 @@
  * by the Free Software Foundation.
  */
 
-#include "zncconfig.h"
-#include "znc.h"
-#include "User.h"
-#include "Modules.h"
-#include "Socket.h"
-#include "FileUtils.h"
+#include <znc/zncconfig.h>
+#include <znc/znc.h>
+#include <znc/User.h>
+#include <znc/Modules.h>
+#include <znc/Socket.h>
+#include <znc/FileUtils.h>
 
 class CBounceDCCMod;
 

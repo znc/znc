@@ -6,9 +6,9 @@
  * by the Free Software Foundation.
  */
 
-#include "User.h"
-#include "Chan.h"
-#include "znc.h"
+#include <znc/User.h>
+#include <znc/Chan.h>
+#include <znc/znc.h>
 
 using std::map;
 using std::pair;

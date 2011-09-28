@@ -6,8 +6,8 @@
  * by the Free Software Foundation.
  */
 
-#include "Nick.h"
-#include "IRCNetwork.h"
+#include <znc/Nick.h>
+#include <znc/IRCNetwork.h>
 
 class CAntiIdle;
 

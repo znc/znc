@@ -6,10 +6,10 @@
  * by the Free Software Foundation.
  */
 
-#include "Chan.h"
-#include "Modules.h"
-#include "User.h"
-#include "IRCNetwork.h"
+#include <znc/Chan.h>
+#include <znc/Modules.h>
+#include <znc/User.h>
+#include <znc/IRCNetwork.h>
 
 class CFloodDetachMod : public CModule {
 public:

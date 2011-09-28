@@ -7,11 +7,11 @@
  * by the Free Software Foundation.
  */
 
-#include "FileUtils.h"
-#include "User.h"
-#include "IRCNetwork.h"
-#include "Chan.h"
-#include "Server.h"
+#include <znc/FileUtils.h>
+#include <znc/User.h>
+#include <znc/IRCNetwork.h>
+#include <znc/Chan.h>
+#include <znc/Server.h>
 
 class CLogMod: public CModule {
 public:

@@ -8,10 +8,10 @@
 
 #define REQUIRESSL
 
-#include "FileUtils.h"
-#include "User.h"
-#include "Modules.h"
-#include "IRCSock.h"
+#include <znc/FileUtils.h>
+#include <znc/User.h>
+#include <znc/Modules.h>
+#include <znc/IRCSock.h>
 
 class CCertMod : public CModule {
 public:

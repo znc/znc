@@ -6,8 +6,8 @@
  * by the Free Software Foundation.
  */
 
-#include "Modules.h"
-#include "Chan.h"
+#include <znc/Modules.h>
+#include <znc/Chan.h>
 
 class CCtcpFloodMod : public CModule {
 public:

@@ -6,7 +6,7 @@
  * by the Free Software Foundation.
  */
 
-#include "znc.h"
+#include <znc/znc.h>
 
 class CFailToBanMod : public CModule {
 public:

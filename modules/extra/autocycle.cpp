@@ -6,9 +6,9 @@
  * by the Free Software Foundation.
  */
 
-#include "Chan.h"
-#include "User.h"
-#include "IRCNetwork.h"
+#include <znc/Chan.h>
+#include <znc/User.h>
+#include <znc/IRCNetwork.h>
 
 class CAutoCycleMod : public CModule {
 public:

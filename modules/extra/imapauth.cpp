@@ -6,8 +6,8 @@
  * by the Free Software Foundation.
  */
 
-#include "Modules.h"
-#include "znc.h"
+#include <znc/Modules.h>
+#include <znc/znc.h>
 
 using std::map;
 

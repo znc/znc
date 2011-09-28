@@ -6,7 +6,7 @@
  * by the Free Software Foundation.
  */
 
-#include "Modules.h"
+#include <znc/Modules.h>
 
 class CBlockMotd : public CModule {
 public:
