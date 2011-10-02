@@ -84,6 +84,7 @@ public:
 		m_bInCap = false;
 		m_bNamesx = false;
 		m_bUHNames = false;
+		m_bAway = false;
 		EnableReadLine();
 		// RFC says a line can have 512 chars max, but we are
 		// a little more gentle ;)
@@ -101,6 +102,7 @@ public:
 	CString GetNickMask() const;
 	bool HasNamesx() const { return m_bNamesx; }
 	bool HasUHNames() const { return m_bUHNames; }
+	bool IsAway() const { return m_bAway; }
 
 	void UserCommand(CString& sLine);
 	void UserPortCommand(CString& sLine);
@@ -129,6 +131,7 @@ public:
 	virtual void ReachedMaxBuffer();
 
 	void SetNick(const CString& s);
+	void SetAway(bool bAway) { m_bAway = bAway; }
 	CUser* GetUser() const { return m_pUser; }
 	void SetNetwork(CIRCNetwork* pNetwork, bool bDisconnect=true, bool bReconnect=true);
 	CIRCNetwork* GetNetwork() const { return m_pNetwork; }
@@ -147,6 +150,7 @@ protected:
 	bool                 m_bInCap;
 	bool                 m_bNamesx;
 	bool                 m_bUHNames;
+	bool                 m_bAway;
 	CUser*               m_pUser;
 	CIRCNetwork*         m_pNetwork;
 	CString              m_sNick;

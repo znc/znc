@@ -43,6 +43,7 @@ public:
 	void BounceAllClients();
 
 	bool IsUserAttached() const { return !m_vClients.empty(); }
+	bool IsUserOnline() const;
 	void ClientConnected(CClient *pClient);
 	void ClientDisconnected(CClient *pClient);
 

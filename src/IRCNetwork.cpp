@@ -325,6 +325,18 @@ void CIRCNetwork::BounceAllClients() {
 	m_vClients.clear();
 }
 
+bool CIRCNetwork::IsUserOnline() const {
+	vector<CClient*>::const_iterator it;
+	for (it = m_vClients.begin(); it != m_vClients.end(); ++it) {
+		CClient *pClient = *it;
+		if (!pClient->IsAway()) {
+			return true;
+		}
+	}
+
+	return false;
+}
+
 void CIRCNetwork::ClientConnected(CClient *pClient) {
 	if (!m_pUser->MultiClients()) {
 		BounceAllClients();
