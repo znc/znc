@@ -70,7 +70,7 @@ private:
 		bool bHelp = false;
 		bool bNegated = sMsg.TrimPrefix("!");
 		CString sChan = sMsg.Token(0);
-		CString sHost = sMsg.Token(1, true);
+		CString sHost = sMsg.Token(1);
 
 		if (sChan.empty()) {
 			bHelp = true;
@@ -90,7 +90,7 @@ private:
 		CString sMsg  = sLine.Token(1, true);
 		bool bNegated = sMsg.TrimPrefix("!");
 		CString sChan = sMsg.Token(0);
-		CString sHost = sMsg.Token(1, true);
+		CString sHost = sMsg.Token(1);
 
 		if (Del(bNegated, sChan, sHost)) {
 			PutModule("Removed " + sChan + " from list");
