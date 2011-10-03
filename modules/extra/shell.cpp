@@ -94,7 +94,7 @@ public:
 		CString sPath = m_sPath.Replace_n(" ", "_");
 		CString sSource = ":" + GetModNick() + "!shell@" + sPath;
 		CString sLine = sSource + " PRIVMSG " + m_pClient->GetNick() + " :" + sMsg;
-		PutUser(sLine);
+		m_pClient->PutClient(sLine);
 	}
 
 	void RunCommand(const CString& sCommand) {
