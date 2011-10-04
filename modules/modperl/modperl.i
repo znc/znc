@@ -13,6 +13,9 @@
 #ifdef Pause
 # undef Pause
 #endif
+#ifdef seed
+# undef seed
+#endif
 #include <utility>
 #include "../Utils.h"
 #include "../Socket.h"
