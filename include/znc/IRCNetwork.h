@@ -95,6 +95,7 @@ public:
 	bool IsIRCAway() const { return m_bIRCAway; }
 	void SetIRCAway(bool b) { m_bIRCAway = b; }
 
+	bool Connect();
 	/** This method will return whether the user is connected and authenticated to an IRC server.
 	 */
 	bool IsIRCConnected() const;
