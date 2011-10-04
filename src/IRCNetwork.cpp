@@ -828,15 +828,17 @@ bool CIRCNetwork::Connect() {
 
 	CZNC::Get().AddServerThrottle(pServer->GetName());
 
-	CIRCSock *pIRCSock = new CIRCSock(this);
-	pIRCSock->SetPass(pServer->GetPass());
-
-	bool bSSL = false;
-#ifdef HAVE_LIBSSL
-	if (pServer->IsSSL()) {
-		bSSL = true;
+	bool bSSL = pServer->IsSSL();
+#ifndef HAVE_LIBSSL
+	if (bSSL) {
+		PutStatus("Cannot connect to [" + pServer->GetString(false) + "], ZNC is not compiled with SSL.");
+		CZNC::Get().AddNetworkToQueue(this);
+		return false;
 	}
 #endif
+
+	CIRCSock *pIRCSock = new CIRCSock(this);
+	pIRCSock->SetPass(pServer->GetPass());
 
 	DEBUG("Connecting user/network [" << m_sName << "/" << m_sName << "]");
 
