@@ -13,6 +13,9 @@
 #ifdef Pause
 # undef Pause
 #endif
+#ifdef seed
+# undef seed
+#endif
 #include <utility>
 #include "../include/znc/Utils.h"
 #include "../include/znc/Config.h"
