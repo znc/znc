@@ -15,7 +15,6 @@
 #include <znc/IRCNetwork.h>
 #include <znc/Listener.h>
 #include <znc/Config.h>
-#include <list>
 
 static inline CString FormatBindError() {
 	CString sError = (errno == 0 ? CString("unknown error, check the host name") : CString(strerror(errno)));
@@ -34,7 +33,7 @@ CZNC::CZNC() {
 	m_uBytesRead = 0;
 	m_uBytesWritten = 0;
 	m_uiMaxBufferSize = 500;
-	m_pConnectUserTimer = NULL;
+	m_pConnectQueueTimer = NULL;
 	m_eConfigState = ECONFIG_NOTHING;
 	m_TimeStarted = time(NULL);
 	m_sConnectThrottle.SetTTL(30000);
@@ -57,8 +56,8 @@ CZNC::~CZNC() {
 		a->second->SetBeingDeleted(true);
 	}
 
-	m_pConnectUserTimer = NULL;
-	// This deletes m_pConnectUserTimer
+	m_pConnectQueueTimer = NULL;
+	// This deletes m_pConnectQueueTimer
 	m_Manager.Cleanup();
 	DeleteUsers();
 
@@ -99,54 +98,6 @@ CString CZNC::GetUptime() const {
 
 bool CZNC::OnBoot() {
 	ALLMODULECALL(OnBoot(), return false);
-
-	return true;
-}
-
-bool CZNC::ConnectNetwork(CIRCNetwork *pNetwork) {
-	CUser *pUser = pNetwork->GetUser();
-	CString sSockName = "IRC::" + pUser->GetUserName() + "::" + pNetwork->GetName();
-	CIRCSock* pIRCSock = pNetwork->GetIRCSock();
-
-	if (!pUser->GetIRCConnectEnabled())
-		return false;
-
-	if (pIRCSock || !pNetwork->HasServers())
-		return false;
-
-	CServer* pServer = pNetwork->GetNextServer();
-
-	if (!pServer)
-		return false;
-
-	if (m_sConnectThrottle.GetItem(pServer->GetName()))
-		return false;
-
-	m_sConnectThrottle.AddItem(pServer->GetName());
-
-	DEBUG("User [" << pUser->GetUserName() << "] is connecting to [" << pServer->GetString(false) << "] on network [" << pNetwork->GetName() << "]");
-	pNetwork->PutStatus("Attempting to connect to [" + pServer->GetString(false) + "] ...");
-
-	pIRCSock = new CIRCSock(pNetwork);
-	pIRCSock->SetPass(pServer->GetPass());
-
-	bool bSSL = false;
-#ifdef HAVE_LIBSSL
-	if (pServer->IsSSL()) {
-		bSSL = true;
-	}
-#endif
-
-	NETWORKMODULECALL(OnIRCConnecting(pIRCSock), pUser, pNetwork, NULL,
-		DEBUG("Some module aborted the connection attempt");
-		pUser->PutStatus("Some module aborted the connection attempt");
-		delete pIRCSock;
-		return false;
-	);
-
-	if (!m_Manager.Connect(pServer->GetName(), pServer->GetPort(), sSockName, 120, bSSL, pUser->GetBindHost(), pIRCSock)) {
-		pNetwork->PutStatus("Unable to connect. (Bad host?)");
-	}
 
 	return true;
 }
@@ -297,7 +248,7 @@ void CZNC::DeleteUsers() {
 	}
 
 	m_msUsers.clear();
-	DisableConnectUser();
+	DisableConnectQueue();
 }
 
 bool CZNC::IsHostAllowed(const CString& sHostMask) const {
@@ -1201,7 +1152,7 @@ bool CZNC::DoRehash(CString& sError)
 	if (config.FindStringEntry("skin", sVal))
 		SetSkinName(sVal);
 	if (config.FindStringEntry("connectdelay", sVal))
-		m_uiConnectDelay = sVal.ToUInt();
+		SetConnectDelay(sVal.ToUInt());
 	if (config.FindStringEntry("serverthrottle", sVal))
 		m_sConnectThrottle.SetTTL(sVal.ToUInt() * 1000);
 	if (config.FindStringEntry("anoniplimit", sVal))
@@ -1350,11 +1301,6 @@ bool CZNC::DoRehash(CString& sError)
 		CUtils::PrintError(sError);
 		return false;
 	}
-
-	// Make sure that users that want to connect do so and also make sure a
-	// new ConnectDelay setting is applied.
-	DisableConnectUser();
-	EnableConnectUser();
 
 	return true;
 }
@@ -1771,119 +1717,94 @@ void CZNC::AuthUser(CSmartPtr<CAuthBase> AuthClass) {
 	AuthClass->AcceptLogin(*pUser);
 }
 
-class CConnectUserTimer : public CCron {
+class CConnectQueueTimer : public CCron {
 public:
-	CConnectUserTimer(int iSecs) : CCron() {
+	CConnectQueueTimer(int iSecs) : CCron() {
 		SetName("Connect users");
 		Start(iSecs);
-		m_uiPosNextUser = 0;
 		// Don't wait iSecs seconds for first timer run
 		m_bRunOnNextCall = true;
 	}
-	virtual ~CConnectUserTimer() {
+	virtual ~CConnectQueueTimer() {
 		// This is only needed when ZNC shuts down:
-		// CZNC::~CZNC() sets its CConnectUserTimer pointer to NULL and
+		// CZNC::~CZNC() sets its CConnectQueueTimer pointer to NULL and
 		// calls the manager's Cleanup() which destroys all sockets and
-		// timers. If something calls CZNC::EnableConnectUser() here
+		// timers. If something calls CZNC::EnableConnectQueue() here
 		// (e.g. because a CIRCSock is destroyed), the socket manager
 		// deletes that timer almost immediately, but CZNC now got a
 		// dangling pointer to this timer which can crash later on.
 		//
 		// Unlikely but possible ;)
-		CZNC::Get().LeakConnectUser(this);
+		CZNC::Get().LeakConnectQueueTimer(this);
 	}
 
 protected:
 	virtual void RunJob() {
-		unsigned int uiUserCount;
-		bool bUsersLeft = false;
-		const map<CString,CUser*>& mUsers = CZNC::Get().GetUserMap();
-		map<CString,CUser*>::const_iterator it = mUsers.begin();
+		list<CIRCNetwork*>& ConnectionQueue = CZNC::Get().GetConnectionQueue();
 
-		uiUserCount = CZNC::Get().GetUserMap().size();
+		/* We store the end of the queue, so CIRCNetwork::Connect() can add
+		 * itself back to the queue and we wont end up in an infinite loop. */
+		list<CIRCNetwork*>::iterator end = ConnectionQueue.end();
+		list<CIRCNetwork*>::iterator it;
 
-		if (m_uiPosNextUser >= uiUserCount) {
-			m_uiPosNextUser = 0;
-		}
+		for (it = ConnectionQueue.begin(); it != end;) {
+			CIRCNetwork *pNetwork = *it;
 
-		for (unsigned int i = 0; i < m_uiPosNextUser; i++) {
-			it++;
-		}
+			/* We must erase the network from the queue before we try to connect
+			 * because it may try to add the network to the queue (which would
+			 * fail if we were already in the queue) */
+			it = ConnectionQueue.erase(it);
 
-		// Try to connect each user, if this doesnt work, abort
-		for (unsigned int i = 0; i < uiUserCount; i++) {
-			if (it == mUsers.end())
-				it = mUsers.begin();
-
-			CUser* pUser = it->second;
-			it++;
-			m_uiPosNextUser = (m_uiPosNextUser + 1) % uiUserCount;
-
-			// Does this user want to connect?
-			if (!pUser->GetIRCConnectEnabled())
-				continue;
-
-			vector<CIRCNetwork*> vNetworks = pUser->GetNetworks();
-			for (vector<CIRCNetwork*>::iterator it2 = vNetworks.begin(); it2 != vNetworks.end(); ++it2) {
-				CIRCNetwork* pNetwork = *it2;
-
-				// Is this network disconnected?
-				if (pNetwork->GetIRCSock() != NULL)
-					continue;
-
-				// Does this user have any servers?
-				if (!pNetwork->HasServers())
-					continue;
-
-				// The timer runs until it once didn't find any users to connect
-				bUsersLeft = true;
-
-				DEBUG("Connecting user [" << pUser->GetUserName() << "/" << pNetwork->GetName() << "]");
-
-				if (CZNC::Get().ConnectNetwork(pNetwork)) {
-					// User connecting, wait until next time timer fires
-					return;
-				}
+			if (pNetwork->Connect()) {
+				break;
 			}
 		}
 
-		if (bUsersLeft == false) {
-			DEBUG("ConnectUserTimer done");
-			CZNC::Get().DisableConnectUser();
+		if (ConnectionQueue.empty()) {
+			DEBUG("ConnectQueueTimer done");
+			CZNC::Get().DisableConnectQueue();
 		}
 	}
-
-private:
-	size_t m_uiPosNextUser;
 };
 
 void CZNC::SetConnectDelay(unsigned int i) {
-	if (m_uiConnectDelay != i && m_pConnectUserTimer != NULL) {
-		m_pConnectUserTimer->Start(i);
+	if (m_uiConnectDelay != i && m_pConnectQueueTimer != NULL) {
+		m_pConnectQueueTimer->Start(i);
 	}
 	m_uiConnectDelay = i;
 }
 
-void CZNC::EnableConnectUser() {
-	if (m_pConnectUserTimer != NULL)
-		return;
-
-	m_pConnectUserTimer = new CConnectUserTimer(m_uiConnectDelay);
-	GetManager().AddCron(m_pConnectUserTimer);
+void CZNC::EnableConnectQueue() {
+	if (!m_pConnectQueueTimer) {
+		m_pConnectQueueTimer = new CConnectQueueTimer(m_uiConnectDelay);
+		GetManager().AddCron(m_pConnectQueueTimer);
+	}
 }
 
-void CZNC::DisableConnectUser() {
-	if (m_pConnectUserTimer == NULL)
-		return;
-
-	// This will kill the cron
-	m_pConnectUserTimer->Stop();
-	m_pConnectUserTimer = NULL;
+void CZNC::DisableConnectQueue() {
+	if (m_pConnectQueueTimer) {
+		// This will kill the cron
+		m_pConnectQueueTimer->Stop();
+		m_pConnectQueueTimer = NULL;
+	}
 }
 
-void CZNC::LeakConnectUser(CConnectUserTimer *pTimer) {
-	if (m_pConnectUserTimer == pTimer)
-		m_pConnectUserTimer = NULL;
+void CZNC::AddNetworkToQueue(CIRCNetwork *pNetwork) {
+	// Make sure we are not already in the queue
+	for (list<CIRCNetwork*>::const_iterator it = m_lpConnectQueue.begin(); it != m_lpConnectQueue.end(); ++it) {
+		if (*it == pNetwork) {
+			return;
+		}
+	}
+
+
+	m_lpConnectQueue.push_back(pNetwork);
+	EnableConnectQueue();
+}
+
+void CZNC::LeakConnectQueueTimer(CConnectQueueTimer *pTimer) {
+	if (m_pConnectQueueTimer == pTimer)
+		m_pConnectQueueTimer = NULL;
 }
 
 bool CZNC::WaitForChildLock() {

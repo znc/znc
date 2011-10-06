@@ -15,13 +15,15 @@
 #include <znc/Socket.h>
 #include <znc/Listener.h>
 #include <map>
+#include <list>
 
 using std::map;
+using std::list;
 
 class CListener;
 class CUser;
 class CIRCNetwork;
-class CConnectUserTimer;
+class CConnectQueueTimer;
 class CConfig;
 class CFile;
 
@@ -139,14 +141,18 @@ public:
 	const VCString& GetMotd() const { return m_vsMotd; }
 	// !MOTD
 
-	// Create a CIRCSocket. Return false if user cant connect
-	bool ConnectNetwork(CIRCNetwork *pNetwork);
-	// This creates a CConnectUserTimer if we haven't got one yet
-	void EnableConnectUser();
-	void DisableConnectUser();
+	void AddServerThrottle(CString sName) { m_sConnectThrottle.AddItem(sName); }
+	bool GetServerThrottle(CString sName) { return m_sConnectThrottle.GetItem(sName); }
 
-	// Never call this unless you are CConnectUserTimer::~CConnectUserTimer()
-	void LeakConnectUser(CConnectUserTimer *pTimer);
+	void AddNetworkToQueue(CIRCNetwork *pNetwork);
+	list<CIRCNetwork*>& GetConnectionQueue() { return m_lpConnectQueue; }
+
+	// This creates a CConnectQueueTimer if we haven't got one yet
+	void EnableConnectQueue();
+	void DisableConnectQueue();
+
+	// Never call this unless you are CConnectQueueTimer::~CConnectQueueTimer()
+	void LeakConnectQueueTimer(CConnectQueueTimer *pTimer);
 
 	static void DumpConfig(const CConfig* Config);
 
@@ -187,7 +193,8 @@ protected:
 	CModules*              m_pModules;
 	unsigned long long     m_uBytesRead;
 	unsigned long long     m_uBytesWritten;
-	CConnectUserTimer     *m_pConnectUserTimer;
+	list<CIRCNetwork*>     m_lpConnectQueue;
+	CConnectQueueTimer    *m_pConnectQueueTimer;
 	TCacheMap<CString>     m_sConnectThrottle;
 	bool                   m_bProtectWebSessions;
 };

@@ -159,6 +159,9 @@ CIRCNetwork::~CIRCNetwork() {
 	m_vChans.clear();
 
 	SetUser(NULL);
+
+	// Make sure we are not in the connection queue
+	CZNC::Get().GetConnectionQueue().remove(this);
 }
 
 void CIRCNetwork::DelServers() {
@@ -810,6 +813,53 @@ CString CIRCNetwork::GetCurNick() const {
 	return "";
 }
 
+bool CIRCNetwork::Connect() {
+	if (!m_pUser->GetIRCConnectEnabled() || m_pIRCSock || !HasServers())
+		return false;
+
+	CServer *pServer = GetNextServer();
+	if (!pServer)
+		return false;
+
+	if (CZNC::Get().GetServerThrottle(pServer->GetName())) {
+		CZNC::Get().AddNetworkToQueue(this);
+		return false;
+	}
+
+	CZNC::Get().AddServerThrottle(pServer->GetName());
+
+	bool bSSL = pServer->IsSSL();
+#ifndef HAVE_LIBSSL
+	if (bSSL) {
+		PutStatus("Cannot connect to [" + pServer->GetString(false) + "], ZNC is not compiled with SSL.");
+		CZNC::Get().AddNetworkToQueue(this);
+		return false;
+	}
+#endif
+
+	CIRCSock *pIRCSock = new CIRCSock(this);
+	pIRCSock->SetPass(pServer->GetPass());
+
+	DEBUG("Connecting user/network [" << m_sName << "/" << m_sName << "]");
+
+	NETWORKMODULECALL(OnIRCConnecting(pIRCSock), m_pUser, this, NULL,
+		DEBUG("Some module aborted the connection attempt");
+		PutStatus("Some module aborted the connection attempt");
+		delete pIRCSock;
+		CZNC::Get().AddNetworkToQueue(this);
+		return false;
+	);
+
+	CString sSockName = "IRC::" + m_pUser->GetUserName() + "::" + m_sName;
+	if (!CZNC::Get().GetManager().Connect(pServer->GetName(), pServer->GetPort(), sSockName, 120, bSSL, m_pUser->GetBindHost(), pIRCSock)) {
+		PutStatus("Unable to connect. (Bad host?)");
+		CZNC::Get().AddNetworkToQueue(this);
+		return false;
+	}
+
+	return true;
+}
+
 bool CIRCNetwork::IsIRCConnected() const {
 	const CIRCSock* pSock = GetIRCSock();
 	return (pSock && pSock->IsAuthed());
@@ -832,7 +882,7 @@ void CIRCNetwork::IRCDisconnected() {
 void CIRCNetwork::CheckIRCConnect() {
 	// Do we want to connect?
 	if (m_pUser->GetIRCConnectEnabled() && GetIRCSock() == NULL)
-		CZNC::Get().EnableConnectUser();
+		CZNC::Get().AddNetworkToQueue(this);
 }
 
 bool CIRCNetwork::PutIRC(const CString& sLine) {
