@@ -887,4 +887,4 @@ template<> void TModInfo<CAdminMod>(CModInfo& Info) {
 	Info.SetWikiPage("admin");
 }
 
-MODULEDEFS(CAdminMod, "Dynamic configuration of users/settings through IRC")
+MODULEDEFS(CAdminMod, "Dynamic configuration of users/settings through IRC. Allows editing only yourself if you're not ZNC admin.")
