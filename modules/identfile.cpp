@@ -98,6 +98,10 @@ public:
 	}
 
 	void ReleaseISpoof() {
+		DEBUG("Releasing ident spoof for user [" + m_pUser->GetUserName() + "]");
+
+		m_pIRCSock = NULL;
+
 		if (m_pISpoofLockFile != NULL) {
 			if (m_pISpoofLockFile->Seek(0) && m_pISpoofLockFile->Truncate()) {
 				m_pISpoofLockFile->Write(m_sOrigISpoof);
@@ -142,21 +146,18 @@ public:
 
 	virtual void OnIRCConnected() {
 		if (m_pIRCSock == m_pUser->GetIRCSock()) {
-			m_pIRCSock = NULL;
 			ReleaseISpoof();
 		}
 	}
 
 	virtual void OnIRCConnectionError(CIRCSock *pIRCSock) {
 		if (m_pIRCSock == pIRCSock) {
-			m_pIRCSock = NULL;
 			ReleaseISpoof();
 		}
 	}
 
 	virtual void OnIRCDisconnected() {
 		if (m_pIRCSock == m_pUser->GetIRCSock()) {
-			m_pIRCSock = NULL;
 			ReleaseISpoof();
 		}
 	}
