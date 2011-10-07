@@ -91,7 +91,7 @@ public:
 			sData.Replace("%", m_pUser->GetIdent());
 		}
 
-		DEBUG("Writing [" + sData + "] to ident spoof file [" + m_pISpoofLockFile->GetLongName() + "] for user [" + m_pUser->GetUserName() + "]");
+		DEBUG("Writing [" + sData + "] to ident spoof file [" + m_pISpoofLockFile->GetLongName() + "] for user/network [" + m_pUser->GetUserName() + "/" + m_pNetwork->GetName() + "]");
 
 		m_pISpoofLockFile->Write(sData + "\n");
 
@@ -99,6 +99,10 @@ public:
 	}
 
 	void ReleaseISpoof() {
+		DEBUG("Releasing ident spoof for user/network [" + m_pUser->GetUserName() + "/" + m_pNetwork->GetName() + "]");
+
+		m_pIRCSock = NULL;
+
 		if (m_pISpoofLockFile != NULL) {
 			if (m_pISpoofLockFile->Seek(0) && m_pISpoofLockFile->Truncate()) {
 				m_pISpoofLockFile->Write(m_sOrigISpoof);
@@ -127,7 +131,7 @@ public:
 	virtual EModRet OnIRCConnecting(CIRCSock *pIRCSock) {
 		if (m_pISpoofLockFile != NULL) {
 			DEBUG("Aborting connection, ident spoof lock file exists");
-			PutModule("Aborting connection, another user is currently connecting and using the ident spoof file");
+			PutModule("Aborting connection, another user or network is currently connecting and using the ident spoof file");
 			return HALTCORE;
 		}
 
@@ -143,21 +147,18 @@ public:
 
 	virtual void OnIRCConnected() {
 		if (m_pIRCSock == m_pNetwork->GetIRCSock()) {
-			m_pIRCSock = NULL;
 			ReleaseISpoof();
 		}
 	}
 
 	virtual void OnIRCConnectionError(CIRCSock *pIRCSock) {
 		if (m_pIRCSock == pIRCSock) {
-			m_pIRCSock = NULL;
 			ReleaseISpoof();
 		}
 	}
 
 	virtual void OnIRCDisconnected() {
 		if (m_pIRCSock == m_pNetwork->GetIRCSock()) {
-			m_pIRCSock = NULL;
 			ReleaseISpoof();
 		}
 	}
