@@ -61,6 +61,7 @@ CUser::CUser(const CString& sUserName)
 	// set path that depends on the user name:
 	m_sUserPath = CZNC::Get().GetUserPath() + "/" + m_sUserName;
 
+	m_sTimezone = "GMT";
 	m_fTimezoneOffset = 0;
 	m_sNick = m_sCleanUserName;
 	m_sIdent = m_sCleanUserName;
@@ -220,6 +221,9 @@ bool CUser::ParseConfig(CConfig* pConfig, CString& sError) {
 			CUtils::PrintError(sError);
 			return false;
 		}
+	}
+	if (pConfig->FindStringEntry("timezone", sValue)) {
+		SetTimezone(sValue);
 	}
 	if (pConfig->FindStringEntry("timezoneoffset", sValue)) {
 		SetTimezoneOffset(sValue.ToDouble());
@@ -662,6 +666,7 @@ bool CUser::Clone(const CUser& User, CString& sErrorRet, bool bCloneChans) {
 	SetTimestampAppend(User.GetTimestampAppend());
 	SetTimestampPrepend(User.GetTimestampPrepend());
 	SetTimestampFormat(User.GetTimestampFormat());
+	SetTimezone(User.GetTimezone());
 	SetTimezoneOffset(User.GetTimezoneOffset());
 	// !Flags
 
@@ -812,6 +817,7 @@ CConfig CUser::ToConfig() {
 	config.AddKeyValuePair("TimestampFormat", GetTimestampFormat());
 	config.AddKeyValuePair("AppendTimestamp", CString(GetTimestampAppend()));
 	config.AddKeyValuePair("PrependTimestamp", CString(GetTimestampPrepend()));
+	config.AddKeyValuePair("Timezone", m_sTimezone);
 	config.AddKeyValuePair("TimezoneOffset", CString(m_fTimezoneOffset));
 	config.AddKeyValuePair("JoinTries", CString(m_uMaxJoinTries));
 	config.AddKeyValuePair("MaxJoins", CString(m_uMaxJoins));
