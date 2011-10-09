@@ -500,8 +500,8 @@ CString CUser::ExpandString(const CString& sStr) const {
 }
 
 CString& CUser::ExpandString(const CString& sStr, CString& sRet) const {
-	// offset is in hours, so * 60 * 60 gets us seconds
-	time_t iUserTime = time(NULL) + (time_t)(m_fTimezoneOffset * 60 * 60);
+	time_t iUserTime = time(NULL);
+	setenv("TZ", m_sTimezone.c_str(), 1);
 	char *szTime = ctime(&iUserTime);
 	CString sTime;
 
@@ -543,7 +543,7 @@ CString& CUser::AddTimestamp(const CString& sStr, CString& sRet) const {
 
 	if (!GetTimestampFormat().empty() && (m_bAppendTimestamp || m_bPrependTimestamp)) {
 		time(&tm);
-		tm += (time_t)(m_fTimezoneOffset * 60 * 60); // offset is in hours
+		setenv("TZ", m_sTimezone.c_str(), 1);
 		size_t i = strftime(szTimestamp, sizeof(szTimestamp), GetTimestampFormat().c_str(), localtime(&tm));
 		// If strftime returns 0, an error occured in format, or result is empty
 		// In both cases just don't prepend/append anything to our string

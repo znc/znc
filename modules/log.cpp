@@ -62,8 +62,8 @@ void CLogMod::PutLog(const CString& sLine, const CString& sWindow /*= "Status"*/
 	char buffer[1024];
 
 	time(&curtime);
-	// Don't forget the user's timezone offset (which is in hours and we want seconds)
-	curtime += (time_t) (m_pUser->GetTimezoneOffset() * 60 * 60);
+	// Don't forget the user's timezone offset
+	setenv("TZ", m_pUser->GetTimezone().c_str(), 1);
 	timeinfo = localtime(&curtime);
 
 	// Generate file name

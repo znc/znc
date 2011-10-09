@@ -248,8 +248,7 @@ public:
 			tm = time(NULL);
 		}
 
-		// offset is in hours
-		tm += (time_t)(m_pUser->GetTimezoneOffset() * 60 * 60);
+		setenv("TZ", m_pUser->GetTimezone().c_str(), 1);
 		strftime(szTimestamp, sizeof(szTimestamp) / sizeof(char),
 				sFormat.c_str(), localtime(&tm));
 
