@@ -840,7 +840,7 @@ bool CIRCNetwork::Connect() {
 	CIRCSock *pIRCSock = new CIRCSock(this);
 	pIRCSock->SetPass(pServer->GetPass());
 
-	DEBUG("Connecting user/network [" << m_sName << "/" << m_sName << "]");
+	DEBUG("Connecting user/network [" << m_pUser->GetUserName() << "/" << m_sName << "]");
 
 	NETWORKMODULECALL(OnIRCConnecting(pIRCSock), m_pUser, this, NULL,
 		DEBUG("Some module aborted the connection attempt");
