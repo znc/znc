@@ -21,7 +21,7 @@ public:
 	~CBufLine();
 	const CString& GetFormat() const { return m_sFormat; }
 	void SetFormat(const CString& sFormat) { m_sFormat = sFormat; }
-	void GetLine(CString& sRet, const MCString& msParams) const;
+	CString GetLine(const MCString& msParams) const;
 
 private:
 protected:
@@ -38,9 +38,9 @@ public:
 	int UpdateLine(const CString& sMatch, const CString& sFormat);
 	/// Same as UpdateLine, but does nothing if this exact line already exists.
 	int UpdateExactLine(const CString& sFormat);
-	bool GetNextLine(CString& sRet, const MCString& msParams = MCString::EmptyMap);
-	bool GetLineFormat(unsigned int uIdx, CString& sRet) const;
-	bool GetLine(unsigned int uIdx, CString& sRet, const MCString& msParams = MCString::EmptyMap) const;
+	const CBufLine& GetBufLine(unsigned int uIdx) const;
+	CString GetLine(unsigned int uIdx, const MCString& msParams = MCString::EmptyMap) const;
+	unsigned int Size() const { return size(); }
 	bool IsEmpty() const { return empty(); }
 	void Clear() { clear(); }
 

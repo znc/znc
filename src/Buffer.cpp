@@ -15,8 +15,8 @@ CBufLine::CBufLine(const CString& sFormat) {
 
 CBufLine::~CBufLine() {}
 
-void CBufLine::GetLine(CString& sRet, const MCString& msParams) const {
-	sRet = CString::NamedFormat(m_sFormat, msParams);
+CString CBufLine::GetLine(const MCString& msParams) const {
+	return CString::NamedFormat(m_sFormat, msParams);
 }
 
 CBuffer::CBuffer(unsigned int uLineCount) {
@@ -59,34 +59,12 @@ int CBuffer::UpdateExactLine(const CString& sFormat) {
 	return AddLine(sFormat);
 }
 
-bool CBuffer::GetLineFormat(unsigned int uIdx, CString& sRet) const {
-	if (uIdx >= size()) {
-		return false;
-	}
-
-	sRet = (*this)[uIdx].GetFormat();
-	return true;
+const CBufLine& CBuffer::GetBufLine(unsigned int uIdx) const {
+	return (*this)[uIdx];
 }
 
-bool CBuffer::GetLine(unsigned int uIdx, CString& sRet, const MCString& msParams) const {
-	if (uIdx >= size()) {
-		return false;
-	}
-
-	(*this)[uIdx].GetLine(sRet, msParams);
-	return true;
-}
-
-bool CBuffer::GetNextLine(CString& sRet, const MCString& msParams) {
-	sRet = "";
-
-	if (!size()) {
-		return false;
-	}
-
-	begin()->GetLine(sRet, msParams);
-	erase(begin());
-	return true;
+CString CBuffer::GetLine(unsigned int uIdx, const MCString& msParams) const {
+	return (*this)[uIdx].GetLine(msParams);
 }
 
 bool CBuffer::SetLineCount(unsigned int u, bool bForce) {

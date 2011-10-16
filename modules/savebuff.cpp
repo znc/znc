@@ -148,9 +148,10 @@ public:
 
 				CString sFile = CRYPT_VERIFICATION_TOKEN;
 
-				unsigned int uIdx = 0;
-				while (Buffer.GetLineFormat(uIdx++, sLine)) {
-					sFile += sLine + "\n";
+				unsigned int uSize = Buffer.Size();
+				for (unsigned int uIdx = 0; uIdx < uSize; uIdx++) {
+					const CBufLine& Line = Buffer.GetBufLine(uIdx);
+					sFile += Line.GetFormat() + "\n";
 				}
 
 				CBlowfish c(m_sPassword, BF_ENCRYPT);

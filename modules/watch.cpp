@@ -170,11 +170,10 @@ public:
 		MCString msParams;
 		msParams["target"] = m_pNetwork->GetCurNick();
 
-		CString sBufLine;
-		while (m_Buffer.GetNextLine(sBufLine, msParams)) {
-			PutUser(sBufLine);
+		unsigned int uSize = m_Buffer.Size();
+		for (unsigned int uIdx = 0; uIdx < uSize; uIdx++) {
+			PutUser(m_Buffer.GetLine(uIdx, msParams));
 		}
-
 		m_Buffer.Clear();
 	}
 

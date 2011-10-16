@@ -536,9 +536,9 @@ void CChan::SendBuffer(CClient* pClient) {
 					m_pNetwork->PutUser(":***!znc@znc.in PRIVMSG " + GetName() + " :Buffer Playback...", pUseClient);
 				}
 
-				CString sLine;
-				unsigned int uIdx = 0;
-				while (m_Buffer.GetLine(uIdx++, sLine)) {
+				unsigned int uSize = m_Buffer.Size();
+				for (unsigned int uIdx = 0; uIdx < uSize; uIdx++) {
+					CString sLine = m_Buffer.GetLine(uIdx);
 					NETWORKMODULECALL(OnChanBufferPlayLine(*this, *pUseClient, sLine), m_pNetwork->GetUser(), m_pNetwork, NULL, continue);
 					m_pNetwork->PutUser(sLine, pUseClient);
 				}

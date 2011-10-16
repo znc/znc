@@ -344,17 +344,16 @@ void CIRCNetwork::ClientConnected(CClient *pClient) {
 
 	m_vClients.push_back(pClient);
 
-	unsigned int uIdx;
-	CString sLine;
+	unsigned int uIdx, uSize;
 	MCString msParams;
 	msParams["target"] = GetIRCNick().GetNick();
 
 	if (m_RawBuffer.IsEmpty()) {
 		pClient->PutClient(":irc.znc.in 001 " + pClient->GetNick() + " :- Welcome to ZNC -");
 	} else {
-		uIdx = 0;
-		while (m_RawBuffer.GetLine(uIdx++, sLine, msParams)) {
-			pClient->PutClient(sLine);
+		uSize = m_RawBuffer.Size();
+		for (uIdx = 0; uIdx < uSize; uIdx++) {
+			pClient->PutClient(m_RawBuffer.GetLine(uIdx, msParams));
 		}
 
 		// The assumption is that the client got this nick from the 001 reply
@@ -362,9 +361,9 @@ void CIRCNetwork::ClientConnected(CClient *pClient) {
 	}
 
 	// Send the cached MOTD
-	uIdx = 0;
-	while (m_MotdBuffer.GetLine(uIdx++, sLine, msParams)) {
-		pClient->PutClient(sLine);
+	uSize = m_MotdBuffer.Size();
+	for (uIdx = 0; uIdx < uSize; uIdx++) {
+		pClient->PutClient(m_MotdBuffer.GetLine(uIdx, msParams));
 	}
 
 	if (GetIRCSock() != NULL) {
@@ -392,10 +391,13 @@ void CIRCNetwork::ClientConnected(CClient *pClient) {
 		}
 	}
 
-	while (m_QueryBuffer.GetNextLine(sLine, msParams)) {
+	uSize = m_QueryBuffer.Size();
+	for (uIdx = 0; uIdx < uSize; uIdx++) {
+		CString sLine = m_QueryBuffer.GetLine(uIdx, msParams);
 		NETWORKMODULECALL(OnPrivBufferPlayLine(*pClient, sLine), m_pUser, this, NULL, continue);
 		pClient->PutClient(sLine);
 	}
+	m_QueryBuffer.Clear();
 
 	// Tell them why they won't connect
 	if (!m_pUser->GetIRCConnectEnabled())
