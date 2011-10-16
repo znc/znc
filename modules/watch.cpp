@@ -167,8 +167,11 @@ public:
 	}
 
 	virtual void OnClientLogin() {
+		MCString msParams;
+		msParams["target"] = m_pNetwork->GetCurNick();
+
 		CString sBufLine;
-		while (m_Buffer.GetNextLine(m_pNetwork->GetCurNick(), sBufLine)) {
+		while (m_Buffer.GetNextLine(sBufLine, msParams)) {
 			PutUser(sBufLine);
 		}
 
@@ -289,11 +292,9 @@ private:
 
 			if (WatchEntry.IsMatch(Nick, sMessage, sSource, m_pNetwork)) {
 				if (m_pNetwork->IsUserAttached()) {
-					m_pNetwork->PutUser(":" + WatchEntry.GetTarget() + "!watch@znc.in PRIVMSG " +
-							m_pNetwork->GetCurNick() + " :" + sMessage);
+					m_pNetwork->PutUser(":" + WatchEntry.GetTarget() + "!watch@znc.in PRIVMSG " + m_pNetwork->GetCurNick() + " :" + sMessage);
 				} else {
-					m_Buffer.AddLine(":" + WatchEntry.GetTarget() + "!watch@znc.in PRIVMSG ",
-							" :" + m_pUser->AddTimestamp(sMessage));
+					m_Buffer.AddLine(":" + _NAMEDFMT(WatchEntry.GetTarget()) + "!watch@znc.in PRIVMSG {target} :" + _NAMEDFMT(m_pUser->AddTimestamp(sMessage)));
 				}
 			}
 		}

@@ -8,19 +8,14 @@
 
 #include <znc/Buffer.h>
 
-CBufLine::CBufLine(const CString& sPre, const CString& sPost, bool bIncNick=true) {
-	m_sPre = sPre;
-	m_sPost = sPost;
-	m_bIncNick = bIncNick;
+CBufLine::CBufLine(const CString& sFormat) {
+	m_sFormat = sFormat;
 }
 
 CBufLine::~CBufLine() {}
 
-void CBufLine::GetLine(const CString& sTarget, CString& sRet) const {
-	if (m_bIncNick)
-		sRet = m_sPre + sTarget + m_sPost;
-	else
-		sRet = m_sPre + m_sPost;
+void CBufLine::GetLine(CString& sRet, const MCString& msParams) const {
+	sRet = CString::NamedFormat(m_sFormat, msParams);
 }
 
 CBuffer::CBuffer(unsigned int uLineCount) {
@@ -29,7 +24,7 @@ CBuffer::CBuffer(unsigned int uLineCount) {
 
 CBuffer::~CBuffer() {}
 
-int CBuffer::AddLine(const CString& sPre, const CString& sPost, bool bIncNick) {
+int CBuffer::AddLine(const CString& sFormat) {
 	if (!m_uLineCount) {
 		return 0;
 	}
@@ -38,48 +33,48 @@ int CBuffer::AddLine(const CString& sPre, const CString& sPost, bool bIncNick) {
 		erase(begin());
 	}
 
-	push_back(CBufLine(sPre, sPost, bIncNick));
+	push_back(CBufLine(sFormat));
 	return size();
 }
 
-int CBuffer::UpdateLine(const CString& sPre, const CString& sPost, bool bIncNick) {
+int CBuffer::UpdateLine(const CString& sMatch, const CString& sFormat) {
 	for (iterator it = begin(); it != end(); ++it) {
-		if (it->GetPre() == sPre) {
-			it->SetPost(sPost);
-			it->SetIncNick(bIncNick);
+		if (it->GetFormat().compare(0, sMatch.length(), sMatch) == 0) {
+			it->SetFormat(sFormat);
 			return size();
 		}
 	}
 
-	return AddLine(sPre, sPost, bIncNick);
+	return AddLine(sFormat);
 }
 
-int CBuffer::UpdateExactLine(const CString& sPre, const CString& sPost, bool bIncNick) {
+int CBuffer::UpdateExactLine(const CString& sFormat) {
 	for (iterator it = begin(); it != end(); ++it) {
-		if (it->GetPre() == sPre && it->GetPost() == sPost)
+		if (it->GetFormat() == sFormat) {
 			return size();
+		}
 	}
 
-	return AddLine(sPre, sPost, bIncNick);
+	return AddLine(sFormat);
 }
 
-bool CBuffer::GetLine(const CString& sTarget, CString& sRet, unsigned int uIdx) const {
+bool CBuffer::GetLine(unsigned int uIdx, CString& sRet, const MCString& msParams) const {
 	if (uIdx >= size()) {
 		return false;
 	}
 
-	(*this)[uIdx].GetLine(sTarget, sRet);
+	(*this)[uIdx].GetLine(sRet, msParams);
 	return true;
 }
 
-bool CBuffer::GetNextLine(const CString& sTarget, CString& sRet) {
+bool CBuffer::GetNextLine(CString& sRet, const MCString& msParams) {
 	sRet = "";
 
 	if (!size()) {
 		return false;
 	}
 
-	begin()->GetLine(sTarget, sRet);
+	begin()->GetLine(sRet, msParams);
 	erase(begin());
 	return true;
 }

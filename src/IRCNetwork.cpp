@@ -344,13 +344,16 @@ void CIRCNetwork::ClientConnected(CClient *pClient) {
 
 	m_vClients.push_back(pClient);
 
+	unsigned int uIdx;
+	CString sLine;
+	MCString msParams;
+	msParams["target"] = GetIRCNick().GetNick();
+
 	if (m_RawBuffer.IsEmpty()) {
 		pClient->PutClient(":irc.znc.in 001 " + pClient->GetNick() + " :- Welcome to ZNC -");
 	} else {
-		unsigned int uIdx = 0;
-		CString sLine;
-
-		while (m_RawBuffer.GetLine(GetIRCNick().GetNick(), sLine, uIdx++)) {
+		uIdx = 0;
+		while (m_RawBuffer.GetLine(uIdx++, sLine, msParams)) {
 			pClient->PutClient(sLine);
 		}
 
@@ -359,10 +362,8 @@ void CIRCNetwork::ClientConnected(CClient *pClient) {
 	}
 
 	// Send the cached MOTD
-	unsigned int uIdx = 0;
-	CString sLine;
-
-	while (m_MotdBuffer.GetLine(GetIRCNick().GetNick(), sLine, uIdx++)) {
+	uIdx = 0;
+	while (m_MotdBuffer.GetLine(uIdx++, sLine, msParams)) {
 		pClient->PutClient(sLine);
 	}
 
@@ -391,10 +392,9 @@ void CIRCNetwork::ClientConnected(CClient *pClient) {
 		}
 	}
 
-	CString sBufLine;
-	while (m_QueryBuffer.GetNextLine(GetIRCNick().GetNick(), sBufLine)) {
-		NETWORKMODULECALL(OnPrivBufferPlayLine(*pClient, sBufLine), m_pUser, this, NULL, continue);
-		pClient->PutClient(sBufLine);
+	while (m_QueryBuffer.GetNextLine(sLine, msParams)) {
+		NETWORKMODULECALL(OnPrivBufferPlayLine(*pClient, sLine), m_pUser, this, NULL, continue);
+		pClient->PutClient(sLine);
 	}
 
 	// Tell them why they won't connect

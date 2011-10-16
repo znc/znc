@@ -482,6 +482,9 @@ public:
 	/** Destruct this MCString. */
 	virtual ~MCString() { clear(); }
 
+	/** A static instance of an empty map. */
+	static const MCString EmptyMap;
+
 	/** Status codes that can be returned by WriteToDisk() and
 	 * ReadFromDisk(). */
 	enum status_t

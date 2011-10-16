@@ -17,23 +17,15 @@ using std::deque;
 
 class CBufLine {
 public:
-	CBufLine(const CString& sPre, const CString& sPost, bool bIncNick);
+	CBufLine(const CString& sFormat);
 	~CBufLine();
-	void GetLine(const CString& sTarget, CString& sRet) const;
-
-	const CString& GetPre() const { return m_sPre; }
-	const CString& GetPost() const { return m_sPost; }
-	bool GetIncNick() const { return m_bIncNick; }
-
-	void SetPre(const CString& s) { m_sPre = s; }
-	void SetPost(const CString& s) { m_sPost = s; }
-	void SetIncNick(bool b) { m_bIncNick = b; }
+	const CString& GetFormat() const { return m_sFormat; }
+	void SetFormat(const CString& sFormat) { m_sFormat = sFormat; }
+	void GetLine(CString& sRet, const MCString& msParams) const;
 
 private:
 protected:
-	CString m_sPre;
-	CString m_sPost;
-	bool    m_bIncNick;
+	CString m_sFormat;
 };
 
 class CBuffer : private deque<CBufLine> {
@@ -41,13 +33,13 @@ public:
 	CBuffer(unsigned int uLineCount = 100);
 	~CBuffer();
 
-	int AddLine(const CString& sPre, const CString& sPost, bool bIncNick = true);
-	/// Same as AddLine, but if there is already a line with sPre it is replaced.
-	int UpdateLine(const CString& sPre, const CString& sPost, bool bIncNick = true);
-	/// Same as UpdateLine, but does nothing if this exact line already exists
-	int UpdateExactLine(const CString& sPre, const CString& sPost, bool bIncNick = true);
-	bool GetNextLine(const CString& sTarget, CString& sRet);
-	bool GetLine(const CString& sTarget, CString& sRet, unsigned int uIdx) const;
+	int AddLine(const CString& sFormat);
+	/// Same as AddLine, but replaces a line that starts with sMatch if there is one.
+	int UpdateLine(const CString& sMatch, const CString& sFormat);
+	/// Same as UpdateLine, but does nothing if this exact line already exists.
+	int UpdateExactLine(const CString& sFormat);
+	bool GetNextLine(CString& sRet, const MCString& msParams = MCString::EmptyMap);
+	bool GetLine(unsigned int uIdx, CString& sRet, const MCString& msParams = MCString::EmptyMap) const;
 	bool IsEmpty() const { return empty(); }
 	void Clear() { clear(); }
 

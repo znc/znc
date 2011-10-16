@@ -1095,6 +1095,8 @@ bool CString::RightChomp(unsigned int uLen) {
 }
 
 //////////////// MCString ////////////////
+const MCString MCString::EmptyMap;
+
 MCString::status_t MCString::WriteToDisk(const CString& sPath, mode_t iMode) const {
 	CFile cFile(sPath);
 
