@@ -22,9 +22,7 @@ public:
 		if (!Channel.KeepBuffer() && m_pNetwork->IsUserOnline())
 			return;
 
-		CString s = ":" + GetModNick() + "!" + GetModName() + "@znc.in PRIVMSG "
-			+ Channel.GetName() + " :" + m_pUser->AddTimestamp(sMessage);
-		Channel.AddBuffer(s);
+		Channel.AddBuffer(":" + GetModNick() + "!" + GetModName() + "@znc.in PRIVMSG " + _NAMEDFMT(Channel.GetName()) + " :" + _NAMEDFMT(m_pUser->AddTimestamp(sMessage)));
 	}
 
 	virtual void OnRawMode(const CNick& OpNick, CChan& Channel, const CString& sModes, const CString& sArgs) {
@@ -32,8 +30,7 @@ public:
 	}
 
 	virtual void OnKick(const CNick& OpNick, const CString& sKickedNick, CChan& Channel, const CString& sMessage) {
-		AddBuffer(Channel, OpNick.GetNickMask() + " kicked " + sKickedNick
-					+ " Reason: [" + sMessage + "]");
+		AddBuffer(Channel, OpNick.GetNickMask() + " kicked " + sKickedNick + " Reason: [" + sMessage + "]");
 	}
 
 	virtual void OnQuit(const CNick& Nick, const CString& sMessage, const vector<CChan*>& vChans) {

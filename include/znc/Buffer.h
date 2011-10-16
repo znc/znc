@@ -39,12 +39,13 @@ public:
 	/// Same as UpdateLine, but does nothing if this exact line already exists.
 	int UpdateExactLine(const CString& sFormat);
 	bool GetNextLine(CString& sRet, const MCString& msParams = MCString::EmptyMap);
+	bool GetLineFormat(unsigned int uIdx, CString& sRet) const;
 	bool GetLine(unsigned int uIdx, CString& sRet, const MCString& msParams = MCString::EmptyMap) const;
 	bool IsEmpty() const { return empty(); }
 	void Clear() { clear(); }
 
 	// Setters
-	void SetLineCount(unsigned int u);
+	bool SetLineCount(unsigned int u, bool bForce = false);
 	// !Setters
 
 	// Getters

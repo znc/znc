@@ -1073,7 +1073,7 @@ void CClient::UserCommand(CString& sLine) {
 			return;
 		}
 
-		if (pChan->GetBuffer().empty()) {
+		if (pChan->GetBuffer().IsEmpty()) {
 			PutStatus("The buffer for [" + sChan + "] is empty");
 			return;
 		}

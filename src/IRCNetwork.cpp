@@ -49,9 +49,9 @@ CIRCNetwork::CIRCNetwork(CUser *pUser, const CString& sName) {
 	m_sChanPrefixes = "";
 	m_bIRCAway = false;
 
-	m_RawBuffer.SetLineCount(100);   // This should be more than enough raws, especially since we are buffering the MOTD separately
-	m_MotdBuffer.SetLineCount(200);  // This should be more than enough motd lines
-	m_QueryBuffer.SetLineCount(250);
+	m_RawBuffer.SetLineCount(100, true);   // This should be more than enough raws, especially since we are buffering the MOTD separately
+	m_MotdBuffer.SetLineCount(200, true);  // This should be more than enough motd lines
+	m_QueryBuffer.SetLineCount(250, true);
 }
 
 CIRCNetwork::CIRCNetwork(CUser *pUser, const CIRCNetwork *pNetwork, bool bCloneChans) {
@@ -67,9 +67,9 @@ CIRCNetwork::CIRCNetwork(CUser *pUser, const CIRCNetwork *pNetwork, bool bCloneC
 	m_sChanPrefixes = "";
 	m_bIRCAway = false;
 
-	m_RawBuffer.SetLineCount(100);   // This should be more than enough raws, especially since we are buffering the MOTD separately
-	m_MotdBuffer.SetLineCount(200);  // This should be more than enough motd lines
-	m_QueryBuffer.SetLineCount(250);
+	m_RawBuffer.SetLineCount(100, true);   // This should be more than enough raws, especially since we are buffering the MOTD separately
+	m_MotdBuffer.SetLineCount(200, true);  // This should be more than enough motd lines
+	m_QueryBuffer.SetLineCount(250, true);
 
 	// Servers
 	const vector<CServer*>& vServers = pNetwork->GetServers();

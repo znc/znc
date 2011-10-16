@@ -239,7 +239,7 @@ void CClient::ReadLine(const CString& sData) {
 			CChan* pChan = m_pNetwork->FindChan(sTarget);
 
 			if ((pChan) && (pChan->KeepBuffer())) {
-				pChan->AddBuffer(":" + GetNickMask() + " NOTICE " + sTarget + " :" + m_pUser->AddTimestamp(sMsg));
+				pChan->AddBuffer(":" + _NAMEDFMT(GetNickMask()) + " NOTICE " + _NAMEDFMT(sTarget) + " :" + _NAMEDFMT(m_pUser->AddTimestamp(sMsg)));
 			}
 
 			// Relay to the rest of the clients that may be connected to this user
@@ -285,7 +285,7 @@ void CClient::ReadLine(const CString& sData) {
 					sCTCP = "ACTION " + sMessage;
 
 					if (pChan && pChan->KeepBuffer()) {
-						pChan->AddBuffer(":" + GetNickMask() + " PRIVMSG " + sTarget + " :\001ACTION " + m_pUser->AddTimestamp(sMessage) + "\001");
+						pChan->AddBuffer(":" + _NAMEDFMT(GetNickMask()) + " PRIVMSG " + _NAMEDFMT(sTarget) + " :\001ACTION " + _NAMEDFMT(m_pUser->AddTimestamp(sMessage)) + "\001");
 					}
 
 					// Relay to the rest of the clients that may be connected to this user
@@ -333,7 +333,7 @@ void CClient::ReadLine(const CString& sData) {
 			CChan* pChan = m_pNetwork->FindChan(sTarget);
 
 			if ((pChan) && (pChan->KeepBuffer())) {
-				pChan->AddBuffer(":" + GetNickMask() + " PRIVMSG " + sTarget + " :" + m_pUser->AddTimestamp(sMsg));
+				pChan->AddBuffer(":" + _NAMEDFMT(GetNickMask()) + " PRIVMSG " + _NAMEDFMT(sTarget) + " :" + _NAMEDFMT(m_pUser->AddTimestamp(sMsg)));
 			}
 
 			PutIRC("PRIVMSG " + sTarget + " :" + sMsg);

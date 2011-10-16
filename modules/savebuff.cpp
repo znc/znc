@@ -16,6 +16,7 @@
 
 #include <znc/Chan.h>
 #include <znc/User.h>
+#include <znc/Buffer.h>
 #include <znc/IRCNetwork.h>
 #include <znc/FileUtils.h>
 #include <sys/stat.h>
@@ -104,7 +105,7 @@ public:
 		CString sFile;
 		if (DecryptChannel(pChan->GetName(), sFile))
 		{
-			if (!pChan->GetBuffer().empty())
+			if (!pChan->GetBuffer().IsEmpty())
 				return(true); // reloaded a module probably in this case, so just verify we can decrypt the file
 
 			VCString vsLines;
@@ -142,13 +143,14 @@ public:
 					continue;
 				}
 
-				const vector<CString> & vBuffer = vChans[a]->GetBuffer();
+				const CBuffer& Buffer = vChans[a]->GetBuffer();
+				CString sLine;
 
 				CString sFile = CRYPT_VERIFICATION_TOKEN;
 
-				for (u_int b = 0; b < vBuffer.size(); b++)
-				{
-						sFile += vBuffer[b] + "\n";
+				unsigned int uIdx = 0;
+				while (Buffer.GetLineFormat(uIdx++, sLine)) {
+					sFile += sLine + "\n";
 				}
 
 				CBlowfish c(m_sPassword, BF_ENCRYPT);

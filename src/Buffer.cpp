@@ -7,6 +7,7 @@
  */
 
 #include <znc/Buffer.h>
+#include <znc/znc.h>
 
 CBufLine::CBufLine(const CString& sFormat) {
 	m_sFormat = sFormat;
@@ -58,6 +59,15 @@ int CBuffer::UpdateExactLine(const CString& sFormat) {
 	return AddLine(sFormat);
 }
 
+bool CBuffer::GetLineFormat(unsigned int uIdx, CString& sRet) const {
+	if (uIdx >= size()) {
+		return false;
+	}
+
+	sRet = (*this)[uIdx].GetFormat();
+	return true;
+}
+
 bool CBuffer::GetLine(unsigned int uIdx, CString& sRet, const MCString& msParams) const {
 	if (uIdx >= size()) {
 		return false;
@@ -79,11 +89,17 @@ bool CBuffer::GetNextLine(CString& sRet, const MCString& msParams) {
 	return true;
 }
 
-void CBuffer::SetLineCount(unsigned int u) {
+bool CBuffer::SetLineCount(unsigned int u, bool bForce) {
+	if (!bForce && u > CZNC::Get().GetMaxBufferSize()) {
+		return false;
+	}
+
 	m_uLineCount = u;
 
 	// We may need to shrink the buffer if the allowed size got smaller
 	while (size() > m_uLineCount) {
 		erase(begin());
 	}
+
+	return true;
 }
