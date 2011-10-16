@@ -300,12 +300,10 @@ void CClient::ReadLine(const CString& sData) {
 							}
 						}
 					}
+				} else {
+					NETWORKMODULECALL(OnUserCTCP(sTarget, sCTCP), m_pUser, m_pNetwork, this, return);
 				}
-			} else {
-				NETWORKMODULECALL(OnUserCTCP(sTarget, sCTCP), m_pUser, m_pNetwork, this, return);
-			}
 
-			if (m_pNetwork) {
 				PutIRC("PRIVMSG " + sTarget + " :\001" + sCTCP + "\001");
 			}
 
