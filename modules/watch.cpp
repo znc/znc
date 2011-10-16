@@ -172,7 +172,7 @@ public:
 
 		unsigned int uSize = m_Buffer.Size();
 		for (unsigned int uIdx = 0; uIdx < uSize; uIdx++) {
-			PutUser(m_Buffer.GetLine(uIdx, msParams));
+			PutUser(m_Buffer.GetLine(uIdx, *GetClient(), msParams));
 		}
 		m_Buffer.Clear();
 	}
@@ -293,7 +293,7 @@ private:
 				if (m_pNetwork->IsUserAttached()) {
 					m_pNetwork->PutUser(":" + WatchEntry.GetTarget() + "!watch@znc.in PRIVMSG " + m_pNetwork->GetCurNick() + " :" + sMessage);
 				} else {
-					m_Buffer.AddLine(":" + _NAMEDFMT(WatchEntry.GetTarget()) + "!watch@znc.in PRIVMSG {target} :" + _NAMEDFMT(m_pUser->AddTimestamp(sMessage)));
+					m_Buffer.AddLine(":" + _NAMEDFMT(WatchEntry.GetTarget()) + "!watch@znc.in PRIVMSG {target} :{text}", sMessage);
 				}
 			}
 		}

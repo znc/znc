@@ -665,7 +665,7 @@ void CIRCSock::ReadLine(const CString& sData) {
 			CString sMsg = sRest.Token(0, true).TrimPrefix_n();
 
 			if (!m_pNetwork->IsUserOnline()) {
-				m_pNetwork->AddQueryBuffer(":" + _NAMEDFMT(Nick.GetNickMask()) + " WALLOPS :" + _NAMEDFMT(m_pNetwork->GetUser()->AddTimestamp(sMsg)));
+				m_pNetwork->AddQueryBuffer(":" + _NAMEDFMT(Nick.GetNickMask()) + " WALLOPS :{text}", sMsg);
 			}
 		} else if (sCmd.Equals("CAP")) {
 			// CAPs are supported only before authorization.
@@ -772,7 +772,7 @@ bool CIRCSock::OnPrivCTCP(CNick& Nick, CString& sMessage) {
 
 		if (!m_pNetwork->IsUserOnline()) {
 			// If the user is detached, add to the buffer
-			m_pNetwork->AddQueryBuffer(":" + _NAMEDFMT(Nick.GetNickMask()) + " PRIVMSG {target} :\001ACTION " + _NAMEDFMT(m_pNetwork->GetUser()->AddTimestamp(sMessage)) + "\001");
+			m_pNetwork->AddQueryBuffer(":" + _NAMEDFMT(Nick.GetNickMask()) + " PRIVMSG {target} :\001ACTION {text}\001", sMessage);
 		}
 
 		sMessage = "ACTION " + sMessage;
@@ -827,7 +827,7 @@ bool CIRCSock::OnPrivNotice(CNick& Nick, CString& sMessage) {
 
 	if (!m_pNetwork->IsUserOnline()) {
 		// If the user is detached, add to the buffer
-		m_pNetwork->AddQueryBuffer(":" + _NAMEDFMT(Nick.GetNickMask()) + " NOTICE {target} :" + _NAMEDFMT(m_pNetwork->GetUser()->AddTimestamp(sMessage)));
+		m_pNetwork->AddQueryBuffer(":" + _NAMEDFMT(Nick.GetNickMask()) + " NOTICE {target} :{text}", sMessage);
 	}
 
 	return false;
@@ -838,7 +838,7 @@ bool CIRCSock::OnPrivMsg(CNick& Nick, CString& sMessage) {
 
 	if (!m_pNetwork->IsUserOnline()) {
 		// If the user is detached, add to the buffer
-		m_pNetwork->AddQueryBuffer(":" + _NAMEDFMT(Nick.GetNickMask()) + " PRIVMSG {target} :" + _NAMEDFMT(m_pNetwork->GetUser()->AddTimestamp(sMessage)));
+		m_pNetwork->AddQueryBuffer(":" + _NAMEDFMT(Nick.GetNickMask()) + " PRIVMSG {target} :{text}", sMessage);
 	}
 
 	return false;
@@ -853,7 +853,7 @@ bool CIRCSock::OnChanCTCP(CNick& Nick, const CString& sChan, CString& sMessage) 
 		if (sMessage.TrimPrefix("ACTION ")) {
 			IRCSOCKMODULECALL(OnChanAction(Nick, *pChan, sMessage), return true);
 			if (pChan->KeepBuffer() || !m_pNetwork->IsUserOnline() || pChan->IsDetached()) {
-				pChan->AddBuffer(":" + _NAMEDFMT(Nick.GetNickMask()) + " PRIVMSG " + _NAMEDFMT(sChan) + " :\001ACTION " + _NAMEDFMT(m_pNetwork->GetUser()->AddTimestamp(sMessage)) + "\001");
+				pChan->AddBuffer(":" + _NAMEDFMT(Nick.GetNickMask()) + " PRIVMSG " + _NAMEDFMT(sChan) + " :\001ACTION {text}\001", sMessage);
 			}
 			sMessage = "ACTION " + sMessage;
 		}
@@ -871,7 +871,7 @@ bool CIRCSock::OnChanNotice(CNick& Nick, const CString& sChan, CString& sMessage
 		IRCSOCKMODULECALL(OnChanNotice(Nick, *pChan, sMessage), return true);
 
 		if (pChan->KeepBuffer() || !m_pNetwork->IsUserOnline() || pChan->IsDetached()) {
-			pChan->AddBuffer(":" + _NAMEDFMT(Nick.GetNickMask()) + " NOTICE " + _NAMEDFMT(sChan) + " :" + _NAMEDFMT(m_pNetwork->GetUser()->AddTimestamp(sMessage)));
+			pChan->AddBuffer(":" + _NAMEDFMT(Nick.GetNickMask()) + " NOTICE " + _NAMEDFMT(sChan) + " :{text}", sMessage);
 		}
 	}
 
@@ -884,7 +884,7 @@ bool CIRCSock::OnChanMsg(CNick& Nick, const CString& sChan, CString& sMessage) {
 		IRCSOCKMODULECALL(OnChanMsg(Nick, *pChan, sMessage), return true);
 
 		if (pChan->KeepBuffer() || !m_pNetwork->IsUserOnline() || pChan->IsDetached()) {
-			pChan->AddBuffer(":" + _NAMEDFMT(Nick.GetNickMask()) + " PRIVMSG " + _NAMEDFMT(sChan) + " :" + _NAMEDFMT(m_pNetwork->GetUser()->AddTimestamp(sMessage)));
+			pChan->AddBuffer(":" + _NAMEDFMT(Nick.GetNickMask()) + " PRIVMSG " + _NAMEDFMT(sChan) + " :{text}", sMessage);
 		}
 	}
 

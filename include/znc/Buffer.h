@@ -15,17 +15,34 @@
 
 using std::deque;
 
+// Forward Declarations
+class CClient;
+// !Forward Declarations
+
 class CBufLine {
 public:
-	CBufLine(const CString& sFormat);
+	CBufLine(const CString& sFormat, const CString& sText = "", time_t tm = 0);
 	~CBufLine();
-	const CString& GetFormat() const { return m_sFormat; }
+	CString GetLine(const CClient& Client, const MCString& msParams) const;
+	void UpdateTime() { time(&m_tm); }
+
+	// Setters
 	void SetFormat(const CString& sFormat) { m_sFormat = sFormat; }
-	CString GetLine(const MCString& msParams) const;
+	void SetText(const CString& sText) { m_sText = sText; }
+	void SetTime(time_t tm) { m_tm = tm; }
+	// !Setters
+
+	// Getters
+	const CString& GetFormat() const { return m_sFormat; }
+	const CString& GetText() const { return m_sText; }
+	time_t GetTime() const { return m_tm; }
+	// !Getters
 
 private:
 protected:
 	CString m_sFormat;
+	CString m_sText;
+	time_t m_tm;
 };
 
 class CBuffer : private deque<CBufLine> {
@@ -33,13 +50,13 @@ public:
 	CBuffer(unsigned int uLineCount = 100);
 	~CBuffer();
 
-	int AddLine(const CString& sFormat);
-	/// Same as AddLine, but replaces a line that starts with sMatch if there is one.
-	int UpdateLine(const CString& sMatch, const CString& sFormat);
+	int AddLine(const CString& sFormat, const CString& sText = "", time_t tm = 0);
+	/// Same as AddLine, but replaces a line whose format string starts with sMatch if there is one.
+	int UpdateLine(const CString& sMatch, const CString& sFormat, const CString& sText = "");
 	/// Same as UpdateLine, but does nothing if this exact line already exists.
-	int UpdateExactLine(const CString& sFormat);
+	int UpdateExactLine(const CString& sFormat, const CString& sText = "");
 	const CBufLine& GetBufLine(unsigned int uIdx) const;
-	CString GetLine(unsigned int uIdx, const MCString& msParams = MCString::EmptyMap) const;
+	CString GetLine(unsigned int uIdx, const CClient& Client, const MCString& msParams = MCString::EmptyMap) const;
 	unsigned int Size() const { return size(); }
 	bool IsEmpty() const { return empty(); }
 	void Clear() { clear(); }

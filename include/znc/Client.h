@@ -104,6 +104,7 @@ public:
 	bool HasNamesx() const { return m_bNamesx; }
 	bool HasUHNames() const { return m_bUHNames; }
 	bool IsAway() const { return m_bAway; }
+	bool HasServerTime() const { return m_bServerTime; }
 
 	void UserCommand(CString& sLine);
 	void UserPortCommand(CString& sLine);

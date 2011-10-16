@@ -107,17 +107,17 @@ public:
 	bool PutIRC(const CString& sLine);
 
 	// Buffers
-	void AddRawBuffer(const CString& sFormat) { m_RawBuffer.AddLine(sFormat); }
-	void UpdateRawBuffer(const CString& sMatch, const CString& sFormat) { m_RawBuffer.UpdateLine(sMatch, sFormat); }
-	void UpdateExactRawBuffer(const CString& sFormat) { m_RawBuffer.UpdateExactLine(sFormat); }
+	void AddRawBuffer(const CString& sFormat, const CString& sText = "") { m_RawBuffer.AddLine(sFormat, sText); }
+	void UpdateRawBuffer(const CString& sMatch, const CString& sFormat, const CString& sText = "") { m_RawBuffer.UpdateLine(sMatch, sFormat, sText); }
+	void UpdateExactRawBuffer(const CString& sFormat, const CString& sText = "") { m_RawBuffer.UpdateExactLine(sFormat, sText); }
 	void ClearRawBuffer() { m_RawBuffer.Clear(); }
 
-	void AddMotdBuffer(const CString& sFormat) { m_MotdBuffer.AddLine(sFormat); }
-	void UpdateMotdBuffer(const CString& sMatch, const CString& sFormat) { m_MotdBuffer.UpdateLine(sMatch, sFormat); }
+	void AddMotdBuffer(const CString& sFormat, const CString& sText = "") { m_MotdBuffer.AddLine(sFormat, sText); }
+	void UpdateMotdBuffer(const CString& sMatch, const CString& sFormat, const CString& sText = "") { m_MotdBuffer.UpdateLine(sMatch, sFormat, sText); }
 	void ClearMotdBuffer() { m_MotdBuffer.Clear(); }
 
-	void AddQueryBuffer(const CString& sFormat) { m_QueryBuffer.AddLine(sFormat); }
-	void UpdateQueryBuffer(const CString& sMatch, const CString& sFormat) { m_QueryBuffer.UpdateLine(sMatch, sFormat); }
+	void AddQueryBuffer(const CString& sFormat, const CString& sText = "") { m_QueryBuffer.AddLine(sFormat, sText); }
+	void UpdateQueryBuffer(const CString& sMatch, const CString& sFormat, const CString& sText = "") { m_QueryBuffer.UpdateLine(sMatch, sFormat, sText); }
 	void ClearQueryBuffer() { m_QueryBuffer.Clear(); }
 	// !Buffers
 

@@ -91,7 +91,7 @@ public:
 	const CBuffer& GetBuffer() const { return m_Buffer; }
 	unsigned int GetBufferCount() const { return m_Buffer.GetLineCount(); }
 	bool SetBufferCount(unsigned int u, bool bForce = false) { return m_Buffer.SetLineCount(u, bForce); };
-	int AddBuffer(const CString& sFormat) { return m_Buffer.AddLine(sFormat); }
+	int AddBuffer(const CString& sFormat, const CString& sText = "") { return m_Buffer.AddLine(sFormat, sText); }
 	void ClearBuffer() { m_Buffer.Clear(); }
 	void SendBuffer(CClient* pClient);
 	// !Buffer

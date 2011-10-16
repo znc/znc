@@ -353,7 +353,7 @@ void CIRCNetwork::ClientConnected(CClient *pClient) {
 	} else {
 		uSize = m_RawBuffer.Size();
 		for (uIdx = 0; uIdx < uSize; uIdx++) {
-			pClient->PutClient(m_RawBuffer.GetLine(uIdx, msParams));
+			pClient->PutClient(m_RawBuffer.GetLine(uIdx, *pClient, msParams));
 		}
 
 		// The assumption is that the client got this nick from the 001 reply
@@ -363,7 +363,7 @@ void CIRCNetwork::ClientConnected(CClient *pClient) {
 	// Send the cached MOTD
 	uSize = m_MotdBuffer.Size();
 	for (uIdx = 0; uIdx < uSize; uIdx++) {
-		pClient->PutClient(m_MotdBuffer.GetLine(uIdx, msParams));
+		pClient->PutClient(m_MotdBuffer.GetLine(uIdx, *pClient, msParams));
 	}
 
 	if (GetIRCSock() != NULL) {
@@ -393,7 +393,7 @@ void CIRCNetwork::ClientConnected(CClient *pClient) {
 
 	uSize = m_QueryBuffer.Size();
 	for (uIdx = 0; uIdx < uSize; uIdx++) {
-		CString sLine = m_QueryBuffer.GetLine(uIdx, msParams);
+		CString sLine = m_QueryBuffer.GetLine(uIdx, *pClient, msParams);
 		NETWORKMODULECALL(OnPrivBufferPlayLine(*pClient, sLine), m_pUser, this, NULL, continue);
 		pClient->PutClient(sLine);
 	}

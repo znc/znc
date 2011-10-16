@@ -89,7 +89,7 @@ public:
 	CString& ExpandString(const CString& sStr, CString& sRet) const;
 
 	CString AddTimestamp(const CString& sStr) const;
-	CString& AddTimestamp(const CString& sStr, CString& sRet) const;
+	CString AddTimestamp(time_t tm, const CString& sStr) const;
 
 	bool Clone(const CUser& User, CString& sErrorRet, bool bCloneChans = true);
 	void BounceAllClients();

@@ -22,7 +22,7 @@ public:
 		if (!Channel.KeepBuffer() && m_pNetwork->IsUserOnline())
 			return;
 
-		Channel.AddBuffer(":" + GetModNick() + "!" + GetModName() + "@znc.in PRIVMSG " + _NAMEDFMT(Channel.GetName()) + " :" + _NAMEDFMT(m_pUser->AddTimestamp(sMessage)));
+		Channel.AddBuffer(":" + GetModNick() + "!" + GetModName() + "@znc.in PRIVMSG " + _NAMEDFMT(Channel.GetName()) + " :{text}", sMessage);
 	}
 
 	virtual void OnRawMode(const CNick& OpNick, CChan& Channel, const CString& sModes, const CString& sArgs) {
