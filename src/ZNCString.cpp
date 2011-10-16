@@ -171,6 +171,8 @@ CString::EEscape CString::ToEscape(const CString& sEsc) {
 		return EURL;
 	} else if (sEsc.Equals("SQL")) {
 		return ESQL;
+	} else if (sEsc.Equals("NAMEDFMT")) {
+		return ENAMEDFMT;
 	}
 
 	return EASCII;
@@ -277,6 +279,16 @@ CString CString::Escape_n(EEscape eFrom, EEscape eTo) const {
 				}
 
 				break;
+			case ENAMEDFMT:
+				if (*p != '\\' || iLength < (a +1)) {
+					ch = *p;
+				} else {
+					a++;
+					p++;
+					ch = *p;
+				}
+
+				break;
 		}
 
 		switch (eTo) {
@@ -314,6 +326,13 @@ CString CString::Escape_n(EEscape eFrom, EEscape eTo) const {
 				} else if (ch == '\"') { sRet += '\\'; sRet += '\"';
 				} else if (ch == '\'') { sRet += '\\'; sRet += '\'';
 				} else if (ch == '\\') { sRet += '\\'; sRet += '\\';
+				} else { sRet += ch; }
+
+				break;
+			case ENAMEDFMT:
+				if (ch == '\\') { sRet += '\\'; sRet += '\\';
+				} else if (ch == '{') { sRet += '\\'; sRet += '{';
+				} else if (ch == '}') { sRet += '\\'; sRet += '}';
 				} else { sRet += ch; }
 
 				break;
@@ -637,6 +656,51 @@ unsigned int CString::Split(const CString& sDelim, SCString& ssRet, bool bAllowE
 	}
 
 	return ssRet.size();
+}
+
+CString CString::NamedFormat(const CString& sFormat, const MCString& msValues) {
+	CString sRet;
+
+	CString sKey;
+	bool bEscape = false;
+	bool bParam = false;
+	const char* p = sFormat.c_str();
+
+	while (*p) {
+		if (!bParam) {
+			if (bEscape) {
+				sRet += *p;
+				bEscape = false;
+			} else if (*p == '\\') {
+				bEscape = true;
+			} else if (*p == '{') {
+				bParam = true;
+				sKey.clear();
+			} else {
+				sRet += *p;
+			}
+
+		} else {
+			if (bEscape) {
+				sKey += *p;
+				bEscape = false;
+			} else if (*p == '\\') {
+				bEscape = true;
+			} else if (*p == '}') {
+				bParam = false;
+				MCString::const_iterator it = msValues.find(sKey);
+				if (it != msValues.end()) {
+					sRet += (*it).second;
+				}
+			} else {
+				sKey += *p;
+			}
+		}
+
+		p++;
+	}
+
+	return sRet;
 }
 
 CString CString::RandomString(unsigned int uLength) {
