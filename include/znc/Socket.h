@@ -95,14 +95,14 @@ public:
 		return(ListenRand(sSockName, "", bSSL, iMaxConns, pcSock, iTimeout, eAddr));
 	}
 
-	bool Connect(const CString& sHostname, u_short iPort , const CString& sSockName, int iTimeout = 60, bool bSSL = false, const CString& sBindHost = "", CZNCSock *pcSock = NULL) {
+	void Connect(const CString& sHostname, u_short iPort , const CString& sSockName, int iTimeout = 60, bool bSSL = false, const CString& sBindHost = "", CZNCSock *pcSock = NULL) {
 		CSConnection C(sHostname, iPort, iTimeout);
 
 		C.SetSockName(sSockName);
 		C.SetIsSSL(bSSL);
 		C.SetBindHost(sBindHost);
 
-		return TSocketManager<CZNCSock>::Connect(C, pcSock);
+		TSocketManager<CZNCSock>::Connect(C, pcSock);
 	}
 
 	unsigned int GetAnonConnectionCount(const CString &sIP) const;

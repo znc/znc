@@ -863,11 +863,7 @@ bool CIRCNetwork::Connect() {
 	);
 
 	CString sSockName = "IRC::" + m_pUser->GetUserName() + "::" + m_sName;
-	if (!CZNC::Get().GetManager().Connect(pServer->GetName(), pServer->GetPort(), sSockName, 120, bSSL, m_pUser->GetBindHost(), pIRCSock)) {
-		PutStatus("Unable to connect. (Bad host?)");
-		CZNC::Get().AddNetworkToQueue(this);
-		return false;
-	}
+	CZNC::Get().GetManager().Connect(pServer->GetName(), pServer->GetPort(), sSockName, 120, bSSL, m_pUser->GetBindHost(), pIRCSock);
 
 	return true;
 }

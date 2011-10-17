@@ -126,10 +126,7 @@ public:
 			return false;
 		}
 
-		if (!CZNC::Get().GetManager().Connect(sRemoteIP, uRemotePort, "DCC::GET::" + sRemoteNick, 60, false, m_pUser->GetLocalDCCIP(), pSock)) {
-			PutModule("DCC <- [" + sRemoteNick + "][" + sFileName + "] - Unable to connect.");
-			return false;
-		}
+		CZNC::Get().GetManager().Connect(sRemoteIP, uRemotePort, "DCC::GET::" + sRemoteNick, 60, false, m_pUser->GetLocalDCCIP(), pSock);
 
 		PutModule("DCC <- [" + sRemoteNick + "][" + sFileName + "] - Attempting to connect to [" + sRemoteIP + "]");
 		return true;

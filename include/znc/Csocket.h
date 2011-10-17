@@ -185,34 +185,9 @@ public:
 		RAF_INET	= AF_INET
 	};
 
-	void SinFamily()
-	{
-#ifdef HAVE_IPV6
-		m_saddr6.sin6_family = PF_INET6;
-#endif /* HAVE_IPV6 */
-		m_saddr.sin_family = PF_INET;
-	}
-	void SinPort( u_short iPort )
-	{
-#ifdef HAVE_IPV6
-		m_saddr6.sin6_port = htons( iPort );
-#endif /* HAVE_IPV6 */
-		m_saddr.sin_port = htons( iPort );
-	}
-
-	void SetIPv6( bool b )
-	{
-#ifndef HAVE_IPV6
-		if( b )
-		{
-			CS_DEBUG( "-DHAVE_IPV6 must be set during compile time to enable this feature" );
-			m_bIsIPv6 = false;
-			return;
-		}
-#endif /* HAVE_IPV6 */
-		m_bIsIPv6 = b;
-		SinFamily();
-	}
+	void SinFamily();
+	void SinPort( u_short iPort );
+	void SetIPv6( bool b );
 	bool GetIPv6() const { return( m_bIsIPv6 ); }
 
 
@@ -514,15 +489,15 @@ class Csock : public CSockCommon
 {
 public:
 	//! default constructor, sets a timeout of 60 seconds
-	Csock( int itimeout = 60 );
+	Csock( int iTimeout = 60 );
 	/**
 	* Advanced constructor, for creating a simple connection
 	*
 	* @param sHostname the hostname your are connecting to
 	* @param uPort the port you are connectint to
-	* @param itimeout how long to wait before ditching the connection, default is 60 seconds
+	* @param iTimeout how long to wait before ditching the connection, default is 60 seconds
 	*/
-	Csock( const CS_STRING & sHostname, u_short uPort, int itimeout = 60 );
+	Csock( const CS_STRING & sHostname, u_short uPort, int iTimeout = 60 );
 
 	//! override this for accept sockets
 	virtual Csock *GetSockObj( const CS_STRING & sHostname, u_short iPort );
@@ -601,25 +576,11 @@ public:
 	Csock & operator<<( double i );
 
 	/**
-	* Create the connection
+	* Create the connection, this is used by the socket manager, and shouldn't be called directly by the user
 	*
-	* @param sBindHost the ip you want to bind to locally
-	* @param bSkipSetup if true, setting up the vhost etc is skipped
 	* @return true on success
 	*/
-	virtual bool Connect( const CS_STRING & sBindHost = "", bool bSkipSetup = false );
-
-	/**
-	* WriteSelect on this socket
-	* Only good if JUST using this socket, otherwise use the CSocketManager
-	*/
-	virtual int WriteSelect();
-
-	/**
-	* ReadSelect on this socket
-	* Only good if JUST using this socket, otherwise use the CSocketManager
-	*/
-	virtual int ReadSelect();
+	virtual bool Connect();
 
 	/**
 	* Listens for connections
@@ -644,13 +605,14 @@ public:
 	virtual bool SSLServerSetup();
 
 	/**
-	* Create the SSL connection
+	* Create the SSL connection, this is used by the socket manager, and shouldn't be called directly by the user
 	*
-	* @param sBindhost the ip you want to bind to locally
 	* @return true on success
 	*/
-	virtual bool ConnectSSL( const CS_STRING & sBindhost = "" );
+	virtual bool ConnectSSL();
 
+	//! start a TLS connection on an existing plain connection
+	bool StartTLS();
 
 	/**
 	* Write data to the socket
@@ -803,13 +765,10 @@ public:
 	ECloseType GetCloseType() { return( m_eCloseType ); }
 	bool IsClosed() { return( GetCloseType() != CLT_DONT ); }
 
-	//! Set rather to NON Blocking IO on this socket, default is true
-	void BlockIO( bool bBLOCK );
-
 	//! Use this to change your fd's to blocking or none blocking
 	void NonBlockingIO();
 
-	//! if this connection type is ssl or not
+	//! Return true if this socket is using ssl. Note this does not mean the SSL state is finished, but simply that its configured to use ssl
 	bool GetSSL();
 	void SetSSL( bool b );
 
@@ -853,12 +812,12 @@ public:
 
 	//! Get the peer's X509 cert
 #ifdef HAVE_LIBSSL
-	X509 *getX509();
+	X509 *GetX509();
 
 	//! Returns the peer's public key
 	CS_STRING GetPeerPubKey();
 	//! Returns the peer's certificate finger print
-	int GetPeerFingerprint( CS_STRING & sFP);
+	long GetPeerFingerprint( CS_STRING & sFP);
 
 	unsigned int GetRequireClientCertFlags();
 	//! legacy, deprecated @see SetRequireClientCertFlags
@@ -982,30 +941,12 @@ public:
 
 
 	//! return how long it has been (in seconds) since the last read or successful write
-	time_t GetTimeSinceLastDataTransaction( time_t iNow = 0 )
-	{
-		if( m_iLastCheckTimeoutTime == 0 )
-			return( 0 );
-		return( ( iNow > 0 ? iNow : time( NULL ) ) - m_iLastCheckTimeoutTime );
-	}
+	time_t GetTimeSinceLastDataTransaction( time_t iNow = 0 );
+
 	time_t GetLastCheckTimeout() { return( m_iLastCheckTimeoutTime ); }
 
 	//! Returns the time when CheckTimeout() should be called next
-	time_t GetNextCheckTimeout( time_t iNow = 0 ) 
-	{
-		if( iNow == 0 )
-			iNow = time( NULL );
-		time_t itimeout = m_itimeout;
-		time_t iDiff = iNow - m_iLastCheckTimeoutTime;
-		/* CheckTimeout() wants to be called after half the timeout */
-		if( m_iTcount == 0 )
-			itimeout /= 2;
-		if( iDiff > itimeout )
-			itimeout = 0;
-		else
-			itimeout -= iDiff;
-		return( iNow + itimeout );
-	}
+	time_t GetNextCheckTimeout( time_t iNow = 0 );
 
 	//! return the data imediatly ready for read
 	virtual int GetPending();
@@ -1018,20 +959,7 @@ public:
 	void SetConState( ECONState eState ) { m_eConState = eState; }
 
 	//! grabs fd's for the sockets
-	bool CreateSocksFD()
-	{
-		if( m_iReadSock != CS_INVALID_SOCK )
-			return( true );
-
-		m_iReadSock = m_iWriteSock = CreateSocket();
-		if ( m_iReadSock == CS_INVALID_SOCK )
-			return( false );
-
-		m_address.SinFamily();
-		m_address.SinPort( m_uPort );
-
-		return( true );
-	}
+	bool CreateSocksFD();
 
 	//! puts the socks back to the state they were prior to calling CreateSocksFD
 	void CloseSocksFD();
@@ -1090,13 +1018,13 @@ public:
 
 private:
 	//! making private for safety
-	Csock( const Csock & cCopy ) {}
+	Csock( const Csock & cCopy ) : CSockCommon() {}
 
 	// NOTE! if you add any new members, be sure to add them to Copy()
 	u_short		m_uPort, m_iRemotePort, m_iLocalPort;
 	cs_sock_t	m_iReadSock, m_iWriteSock;
-	int m_itimeout, m_iConnType, m_iMethod, m_iTcount;
-	bool		m_bssl, m_bIsConnected, m_bBLOCK;
+	int m_iTimeout, m_iConnType, m_iMethod, m_iTcount;
+	bool		m_bUseSSL, m_bIsConnected, m_bBLOCK;
 	bool		m_bsslEstablished, m_bEnableReadLine, m_bPauseRead;
 	CS_STRING	m_shostname, m_sbuffer, m_sSockName, m_sPemFile, m_sCipherType, m_sParentName;
 	CS_STRING	m_sSend, m_sPemPass, m_sLocalIP, m_sRemoteIP;
@@ -1126,7 +1054,7 @@ private:
 
 	//! Create the socket
 	cs_sock_t CreateSocket( bool bListen = false );
-	void Init( const CS_STRING & sHostname, u_short uPort, int itimeout = 60 );
+	void Init( const CS_STRING & sHostname, u_short uPort, int iTimeout = 60 );
 
 
 	// Connection State Info
@@ -1366,9 +1294,8 @@ public:
 	*
 	* @param cCon the connection which should be established
 	* @param pcSock the socket used for the connectiong, can be NULL
-	* @return true on success
 	*/
-	bool Connect( const CSConnection & cCon, Csock * pcSock = NULL );
+	void Connect( const CSConnection & cCon, Csock * pcSock = NULL );
 
 	virtual bool Listen( const CSListener & cListen, Csock * pcSock = NULL, u_short *piRandPort = NULL );
 

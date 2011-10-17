@@ -106,7 +106,8 @@ bool CSocket::Connect(const CString& sHostname, unsigned short uPort, bool bSSL,
 		sSockName = GetSockName();
 	}
 
-	return m_pModule->GetManager()->Connect(sHostname, uPort, sSockName, uTimeout, bSSL, sBindHost, this);
+	m_pModule->GetManager()->Connect(sHostname, uPort, sSockName, uTimeout, bSSL, sBindHost, this);
+	return true;
 }
 
 bool CSocket::Listen(unsigned short uPort, bool bSSL, unsigned int uTimeout) {

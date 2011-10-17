@@ -422,9 +422,7 @@ Csock* CDCCBounce::GetSockObj(const CString& sHost, unsigned short uPort) {
 	pRemoteSock->SetRemote(true);
 	pSock->SetRemote(false);
 
-	if (!CZNC::Get().GetManager().Connect(m_sConnectIP, m_uRemotePort, "DCC::" + CString((m_bIsChat) ? "Chat" : "XFER") + "::Remote::" + m_sRemoteNick, 60, false, m_sLocalIP, pRemoteSock)) {
-		pRemoteSock->Close();
-	}
+	CZNC::Get().GetManager().Connect(m_sConnectIP, m_uRemotePort, "DCC::" + CString((m_bIsChat) ? "Chat" : "XFER") + "::Remote::" + m_sRemoteNick, 60, false, m_sLocalIP, pRemoteSock);
 
 	pSock->SetSockName(GetSockName());
 	return pSock;

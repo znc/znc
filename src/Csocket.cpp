@@ -41,6 +41,20 @@
 #include <openssl/engine.h>
 #endif /* HAVE_LIBSSL */
 
+/***
+ * doing this because there seems to be a bug that is losing the "short" on htons when in optimize mode turns into a macro
+ * gcc 4.3.4
+ */
+#ifdef __OPTIMIZE__
+#ifdef htons
+#undef htons
+#endif /* htons */
+#ifdef ntohs
+#undef ntohs
+#endif /* ntohs */
+#endif /* __OPTIMIZE__ */
+
+
 #include <list>
 
 #define CS_SRANDBUFFER 128
@@ -114,11 +128,14 @@ static inline void set_non_blocking(cs_sock_t fd)
 	ioctlsocket( fd, FIONBIO, &iOpts );
 }
 
+/*
+ * not used by anything anymore
 static inline void set_blocking(cs_sock_t fd)
 {
 	u_long iOpts = 0;
 	ioctlsocket( fd, FIONBIO, &iOpts );
 }
+*/
 
 static inline void set_close_on_exec(cs_sock_t fd)
 {
@@ -135,6 +152,8 @@ static inline void set_non_blocking(cs_sock_t fd)
 	fcntl( fd, F_SETFL, fdflags|O_NONBLOCK );
 }
 
+/*
+ * not used by anything anymore
 static inline void set_blocking(cs_sock_t fd)
 {
 	int fdflags = fcntl(fd, F_GETFL, 0);
@@ -143,6 +162,7 @@ static inline void set_blocking(cs_sock_t fd)
 	fdflags &= ~O_NONBLOCK;
 	fcntl( fd, F_SETFL, fdflags );
 }
+*/
 
 static inline void set_close_on_exec(cs_sock_t fd)
 {
@@ -152,6 +172,35 @@ static inline void set_close_on_exec(cs_sock_t fd)
 	fcntl( fd, F_SETFD, fdflags|FD_CLOEXEC);
 }
 #endif /* _WIN32 */
+
+void CSSockAddr::SinFamily()
+{
+#ifdef HAVE_IPV6
+	m_saddr6.sin6_family = PF_INET6;
+#endif /* HAVE_IPV6 */
+	m_saddr.sin_family = PF_INET;
+}
+void CSSockAddr::SinPort( u_short iPort )
+{
+#ifdef HAVE_IPV6
+	m_saddr6.sin6_port = htons( iPort );
+#endif /* HAVE_IPV6 */
+	m_saddr.sin_port = htons( iPort );
+}
+
+void CSSockAddr::SetIPv6( bool b )
+{
+#ifndef HAVE_IPV6
+	if( b )
+	{
+		CS_DEBUG( "-DHAVE_IPV6 must be set during compile time to enable this feature" );
+		m_bIsIPv6 = false;
+		return;
+	}
+#endif /* HAVE_IPV6 */
+	m_bIsIPv6 = b;
+	SinFamily();
+}
 
 #ifdef HAVE_LIBSSL
 Csock *GetCsockFromCTX( X509_STORE_CTX *pCTX )
@@ -366,7 +415,7 @@ int GetAddrInfo( const CS_STRING & sHostname, Csock *pSock, CSSockAddr & csSockA
 
 			if( bTryConnect && it != lpTryAddrs.end() )
 			{ // save the last attempt for the outer loop, the issue then becomes that the error is thrown on the last failure
-				if( pSock->CreateSocksFD() && pSock->Connect( pSock->GetBindHost(), true ) )
+				if( pSock->CreateSocksFD() && pSock->Connect() )
 				{
 					pSock->SetSkipConnect( true ); // this tells the socket that the connection state has been started
 					bFound = true;
@@ -743,20 +792,20 @@ void CSockCommon::DelCronByAddr( CCron *pcCron )
 	}
 }
 
-Csock::Csock( int itimeout ) : CSockCommon()
+Csock::Csock( int iTimeout ) : CSockCommon()
 {
 #ifdef HAVE_LIBSSL
 	m_pCerVerifyCB = NULL;
 #endif /* HAVE_LIBSSL */
-	Init( "", 0, itimeout );
+	Init( "", 0, iTimeout );
 }
 
-Csock::Csock( const CS_STRING & sHostname, u_short iport, int itimeout ) : CSockCommon()
+Csock::Csock( const CS_STRING & sHostname, u_short iport, int iTimeout ) : CSockCommon()
 {
 #ifdef HAVE_LIBSSL
 	m_pCerVerifyCB = NULL;
 #endif /* HAVE_LIBSSL */
-	Init( sHostname, iport, itimeout );
+	Init( sHostname, iport, iTimeout );
 }
 
 // override this for accept sockets
@@ -828,12 +877,11 @@ void Csock::Copy( const Csock & cCopy )
 	m_iLocalPort	= cCopy.m_iLocalPort;
 	m_iReadSock		= cCopy.m_iReadSock;
 	m_iWriteSock	= cCopy.m_iWriteSock;
-	m_itimeout		= cCopy.m_itimeout;
+	m_iTimeout		= cCopy.m_iTimeout;
 	m_iConnType		= cCopy.m_iConnType;
 	m_iMethod		= cCopy.m_iMethod;
-	m_bssl			= cCopy.m_bssl;
+	m_bUseSSL			= cCopy.m_bUseSSL;
 	m_bIsConnected	= cCopy.m_bIsConnected;
-	m_bBLOCK		= cCopy.m_bBLOCK;
 	m_bsslEstablished	= cCopy.m_bsslEstablished;
 	m_bEnableReadLine	= cCopy.m_bEnableReadLine;
 	m_bPauseRead		= cCopy.m_bPauseRead;
@@ -956,7 +1004,7 @@ Csock & Csock::operator<<( double i )
 	return( *this );
 }
 
-bool Csock::Connect( const CS_STRING & sBindHost, bool bSkipSetup )
+bool Csock::Connect()
 {
 	if( m_bSkipConnect )
 	{ // this was already called, so skipping now. this is to allow easy pass through
@@ -965,45 +1013,6 @@ bool Csock::Connect( const CS_STRING & sBindHost, bool bSkipSetup )
 			m_eConState = ( GetSSL() ? CST_CONNECTSSL : CST_OK );
 		}
 		return( true );
-	}
-	// bind to a hostname if requested
-	m_sBindHost = sBindHost;
-	if ( !bSkipSetup )
-	{
-		if ( !sBindHost.empty() )
-		{
-			// try to bind 3 times, otherwise exit failure
-			bool bBound = false;
-			for( int a = 0; a < 3 && !bBound; a++ )
-			{
-				if ( SetupVHost() )
-					bBound = true;
-#ifdef _WIN32
-				Sleep( 5000 );
-#else
-				usleep( 5000 );	// quick pause, common lets BIND!)(!*!
-#endif /* _WIN32 */
-			}
-
-			if ( !bBound )
-			{
-				CS_DEBUG( "Failure to bind to " << sBindHost );
-				return( false );
-			}
-		}
-
-		int iDNSRet = ETIMEDOUT;
-		while( true )
-		{
-			iDNSRet = DNSLookup( DNS_VHOST );
-			if ( iDNSRet == EAGAIN )
-				continue;
-
-			break;
-		}
-		if ( iDNSRet != 0 )
-			return( false );
-
 	}
 
 	// set it none blocking
@@ -1029,11 +1038,6 @@ bool Csock::Connect( const CS_STRING & sBindHost, bool bSkipSetup )
 		return( false );
 	}
 
-	if ( m_bBLOCK )
-	{
-		set_blocking( m_iReadSock );
-	}
-
 	if ( m_eConState != CST_OK )
 	{
 		m_eConState = ( GetSSL() ? CST_CONNECTSSL : CST_OK );
@@ -1042,70 +1046,11 @@ bool Csock::Connect( const CS_STRING & sBindHost, bool bSkipSetup )
 	return( true );
 }
 
-int Csock::WriteSelect()
-{
-	if ( m_iWriteSock == CS_INVALID_SOCK )
-		return( SEL_ERR );
-
-	struct timeval tv;
-	fd_set wfds;
-
-	TFD_ZERO( &wfds );
-	TFD_SET( m_iWriteSock, &wfds );
-
-	tv.tv_sec = m_itimeout;
-	tv.tv_usec = 0;
-
-	int ret = select( FD_SETSIZE, NULL, &wfds, NULL, &tv );
-
-	if ( ret == 0 )
-		return( SEL_TIMEOUT );
-
-	if ( ret == -1 )
-	{
-		if ( GetSockError() == EINTR )
-			return( SEL_EAGAIN );
-		else
-			return( SEL_ERR );
-	}
-
-	return( SEL_OK );
-}
-
-int Csock::ReadSelect()
-{
-	if ( m_iReadSock == CS_INVALID_SOCK )
-		return( SEL_ERR );
-
-	struct timeval tv;
-	fd_set rfds;
-
-	TFD_ZERO( &rfds );
-	TFD_SET( m_iReadSock, &rfds );
-
-	tv.tv_sec = m_itimeout;
-	tv.tv_usec = 0;
-
-	int ret = select( FD_SETSIZE, &rfds, NULL, NULL, &tv );
-
-	if ( ret == 0 )
-		return( SEL_TIMEOUT );
-
-	if ( ret == -1 )
-	{
-		if ( GetSockError() == EINTR )
-			return( SEL_EAGAIN );
-		else
-			return( SEL_ERR );
-	}
-
-	return( SEL_OK );
-}
 
 bool Csock::Listen( u_short iPort, int iMaxConns, const CS_STRING & sBindHost, u_int iTimeout )
 {
 	m_iConnType = LISTENER;
-	m_itimeout = iTimeout;
+	m_iTimeout = iTimeout;
 
 	m_sBindHost = sBindHost;
 	if ( !sBindHost.empty() )
@@ -1152,11 +1097,8 @@ bool Csock::Listen( u_short iPort, int iMaxConns, const CS_STRING & sBindHost, u
 	if ( listen( m_iReadSock, iMaxConns ) == -1 )
 		return( false );
 
-	if ( !m_bBLOCK )
-	{
-		// set it none blocking
-		set_non_blocking( m_iReadSock );
-	}
+	// set it none blocking
+	set_non_blocking( m_iReadSock );
 
 	return( true );
 }
@@ -1196,11 +1138,8 @@ cs_sock_t Csock::Accept( CS_STRING & sHost, u_short & iRPort )
 		// Make it close-on-exec
 		set_close_on_exec( iSock );
 
-		if ( !m_bBLOCK )
-		{
-			// make it none blocking 
-			set_non_blocking( iSock );
-		}
+		// make it none blocking 
+		set_non_blocking( iSock );
 
 		if ( !ConnectionFrom( sHost, iRPort ) )
 		{
@@ -1242,7 +1181,7 @@ bool Csock::AcceptSSL()
 bool Csock::SSLClientSetup()
 {
 #ifdef HAVE_LIBSSL
-	m_bssl = true;
+	m_bUseSSL = true;
 	FREE_SSL();
 	FREE_CTX();
 
@@ -1318,7 +1257,7 @@ bool Csock::SSLClientSetup()
 		}
 	}
 
-	m_ssl = SSL_new ( m_ssl_ctx );
+	m_ssl = SSL_new( m_ssl_ctx );
 	if ( !m_ssl )
 		return( false );
 
@@ -1338,7 +1277,7 @@ bool Csock::SSLClientSetup()
 bool Csock::SSLServerSetup()
 {
 #ifdef HAVE_LIBSSL
-	m_bssl = true;
+	m_bUseSSL = true;
 	FREE_SSL();
 	FREE_CTX();
 
@@ -1478,22 +1417,25 @@ bool Csock::SSLServerSetup()
 #endif /* HAVE_LIBSSL */
 }
 
-bool Csock::ConnectSSL( const CS_STRING & sBindhost )
+bool Csock::StartTLS()
+{
+	if( m_iConnType == INBOUND )
+		return( AcceptSSL() );
+	if( m_iConnType == OUTBOUND )
+		return( ConnectSSL() );
+	CS_DEBUG( "Invalid connection type with StartTLS" );
+	return( false );
+}
+
+bool Csock::ConnectSSL()
 {
 #ifdef HAVE_LIBSSL
-	if ( m_iReadSock == CS_INVALID_SOCK )
-		if ( !Connect( sBindhost ) )
-			return( false );
-	if ( !m_ssl )
-		if ( !SSLClientSetup() )
-			return( false );
+	if( m_iReadSock == CS_INVALID_SOCK )
+		return( false ); // this should be long passed at this point
+	if( !m_ssl && !SSLClientSetup() )
+		return( false );
 
 	bool bPass = true;
-
-	if ( m_bBLOCK )
-	{
-		set_non_blocking( m_iReadSock );
-	}
 
 	int iErr = SSL_connect( m_ssl );
 	if ( iErr != 1 )
@@ -1514,12 +1456,6 @@ bool Csock::ConnectSSL( const CS_STRING & sBindhost )
 #endif /* _WIN32 */
 	} else
 		bPass = true;
-
-	if ( m_bBLOCK )
-	{
-		// unset the flags afterwords, rather then have connect block
-		set_blocking( m_iReadSock );
-	}
 
 	if ( m_eConState != CST_OK )
 		m_eConState = CST_OK;
@@ -1554,17 +1490,11 @@ bool Csock::Write( const char *data, size_t len )
 	if ( m_eConState != CST_OK )
 		return( true );
 
-	if ( m_bBLOCK )
-	{
-		if ( WriteSelect() != SEL_OK )
-			return( false );
-
-	}
 	// rate shaping
 	u_long iBytesToSend = 0;
 
 #ifdef HAVE_LIBSSL
-	if( m_bssl && m_sSSLBuffer.empty() && !m_bsslEstablished )
+	if( m_bUseSSL && m_sSSLBuffer.empty() && !m_bsslEstablished )
 	{
 		// to keep openssl from spinning, just initiate the connection with 1 byte so the connection establishes faster
 		iBytesToSend = 1;
@@ -1600,8 +1530,13 @@ bool Csock::Write( const char *data, size_t len )
 		iBytesToSend = m_sSend.length();
 
 #ifdef HAVE_LIBSSL
-	if ( m_bssl )
+	if ( m_bUseSSL )
 	{
+		if( !m_ssl )
+		{
+			CS_DEBUG( "SSL object is NULL but m_bUseSSL is true" );
+			return( false );
+		}
 
 		if ( m_sSSLBuffer.empty() ) // on retrying to write data, ssl wants the data in the SAME spot and the SAME size
 			m_sSSLBuffer.append( m_sSend.data(), iBytesToSend );
@@ -1702,22 +1637,15 @@ cs_ssize_t Csock::Read( char *data, size_t len )
 	if ( IsReadPaused() && SslIsEstablished() )
 		return( READ_EAGAIN ); // allow the handshake to complete first
 
-	if ( m_bBLOCK )
-	{
-		switch( ReadSelect() )
-		{
-			case SEL_OK:
-				break;
-			case SEL_TIMEOUT:
-				return( READ_TIMEDOUT );
-			default:
-				return( READ_ERR );
-		}
-	}
-
 #ifdef HAVE_LIBSSL
-	if ( m_bssl )
+	if( m_bUseSSL )
 	{
+		if( !m_ssl )
+		{
+			CS_DEBUG( "SSL object is NULL but m_bUseSSL is true" );
+			return( READ_ERR );
+		}
+
 		bytes = SSL_read( m_ssl, data, (int)len );
 		if( bytes >= 0 )
 			m_bsslEstablished = true; // this means all is good in the realm of ssl
@@ -1746,7 +1674,7 @@ cs_ssize_t Csock::Read( char *data, size_t len )
 #endif /* _WIN32 */
 
 #ifdef HAVE_LIBSSL
-		if ( m_bssl )
+		if ( m_ssl )
 		{
 			int iErr = SSL_get_error( m_ssl, (int)bytes );
 			if ( ( iErr != SSL_ERROR_WANT_READ ) && ( iErr != SSL_ERROR_WANT_WRITE ) )
@@ -1875,11 +1803,11 @@ void Csock::UnPauseRead()
 void Csock::SetTimeout( int iTimeout, u_int iTimeoutType )
 {
 	m_iTimeoutType = iTimeoutType;
-	m_itimeout = iTimeout;
+	m_iTimeout = iTimeout;
 }
 
 void Csock::SetTimeoutType( u_int iTimeoutType ) { m_iTimeoutType = iTimeoutType; }
-int Csock::GetTimeout() const { return m_itimeout; }
+int Csock::GetTimeout() const { return m_iTimeout; }
 u_int Csock::GetTimeoutType() const { return( m_iTimeoutType ); }
 
 bool Csock::CheckTimeout( time_t iNow )
@@ -1904,11 +1832,11 @@ bool Csock::CheckTimeout( time_t iNow )
 		m_iLastCheckTimeoutTime = iNow;
 	}
 
-	if ( m_itimeout > 0 )
+	if ( m_iTimeout > 0 )
 	{
 		// this is basically to help stop a clock adjust ahead, stuff could reset immediatly on a clock jump
 		// otherwise
-		time_t iRealTimeout = m_itimeout;
+		time_t iRealTimeout = m_iTimeout;
 		if( iRealTimeout <= 1 )
 			m_iTcount++;
 		else if( m_iTcount == 0 )
@@ -2060,7 +1988,6 @@ void Csock::Close( ECloseType eCloseType )
 {
 	m_eCloseType = eCloseType;
 }
-void Csock::BlockIO( bool bBLOCK ) { m_bBLOCK = bBLOCK; }
 
 void Csock::NonBlockingIO()
 {
@@ -2070,12 +1997,10 @@ void Csock::NonBlockingIO()
 	{
 		set_non_blocking( m_iWriteSock );
 	}
-
-	BlockIO( false );
 }
 
-bool Csock::GetSSL() { return( m_bssl ); }
-void Csock::SetSSL( bool b ) { m_bssl = b; }
+bool Csock::GetSSL() { return( m_bUseSSL ); }
+void Csock::SetSSL( bool b ) { m_bUseSSL = b; }
 
 #ifdef HAVE_LIBSSL
 void Csock::SetCipher( const CS_STRING & sCipher ) { m_sCipherType = sCipher; }
@@ -2172,9 +2097,9 @@ bool Csock::ConnectFD( int iReadFD, int iWriteFD, const CS_STRING & sName, bool 
 
 	if ( bIsSSL )
 	{
-		if ( ( eDirection == INBOUND ) && ( !AcceptSSL() ) )
+		if( eDirection == INBOUND && !AcceptSSL() )
 			return( false );
-		else if ( ( eDirection == OUTBOUND ) && ( !ConnectSSL() ) )
+		else if( eDirection == OUTBOUND && !ConnectSSL() )
 			return( false );
 	}
 
@@ -2182,7 +2107,7 @@ bool Csock::ConnectFD( int iReadFD, int iWriteFD, const CS_STRING & sName, bool 
 }
 
 #ifdef HAVE_LIBSSL
-X509 *Csock::getX509()
+X509 *Csock::GetX509()
 {
 	if ( m_ssl )
 		return( SSL_get_peer_certificate( m_ssl ) );
@@ -2230,14 +2155,14 @@ CS_STRING Csock::GetPeerPubKey()
 	}
 	return( sKey );
 }
-int Csock::GetPeerFingerprint( CS_STRING & sFP )
+long Csock::GetPeerFingerprint( CS_STRING & sFP )
 {
 	sFP.clear();
 
-	if ( !GetSSL() )
-		return 0;
+	if ( !m_ssl )
+		return( 0 );
 
-	X509* pCert = getX509();
+	X509* pCert = GetX509();
 
 	// Inspired by charybdis
 	if ( pCert )
@@ -2251,7 +2176,7 @@ int Csock::GetPeerFingerprint( CS_STRING & sFP )
 		X509_free(pCert);
 	}
 
-	return SSL_get_verify_result(m_ssl);
+	return( SSL_get_verify_result( m_ssl ) );
 }
 unsigned int Csock::GetRequireClientCertFlags() { return( m_iRequireClientCertFlags ); }
 void Csock::SetRequiresClientCert( bool bRequiresCert ) { m_iRequireClientCertFlags = ( bRequiresCert ? SSL_VERIFY_FAIL_IF_NO_PEER_CERT|SSL_VERIFY_PEER : 0 ); }
@@ -2283,6 +2208,29 @@ void Csock::ReachedMaxBuffer()
 	std::cerr << "If you don't care, then set SetMaxBufferThreshold to 0" << endl;
 }
 
+time_t Csock::GetTimeSinceLastDataTransaction( time_t iNow )
+{
+	if( m_iLastCheckTimeoutTime == 0 )
+		return( 0 );
+	return( ( iNow > 0 ? iNow : time( NULL ) ) - m_iLastCheckTimeoutTime );
+}
+
+time_t Csock::GetNextCheckTimeout( time_t iNow ) 
+{
+	if( iNow == 0 )
+		iNow = time( NULL );
+	time_t iTimeout = m_iTimeout;
+	time_t iDiff = iNow - m_iLastCheckTimeoutTime;
+	/* CheckTimeout() wants to be called after half the timeout */
+	if( m_iTcount == 0 )
+		iTimeout /= 2;
+	if( iDiff > iTimeout )
+		iTimeout = 0;
+	else
+		iTimeout -= iDiff;
+	return( iNow + iTimeout );
+}
+
 int Csock::GetPending()
 {
 #ifdef HAVE_LIBSSL
@@ -2310,6 +2258,21 @@ int Csock::GetPending()
 #else
 	return( 0 );
 #endif /* HAVE_LIBSSL */
+}
+
+bool Csock::CreateSocksFD()
+{
+	if( m_iReadSock != CS_INVALID_SOCK )
+		return( true );
+
+	m_iReadSock = m_iWriteSock = CreateSocket();
+	if ( m_iReadSock == CS_INVALID_SOCK )
+		return( false );
+
+	m_address.SinFamily();
+	m_address.SinPort( m_uPort );
+
+	return( true );
 }
 
 int Csock::GetAddrInfo( const CS_STRING & sHostname, CSSockAddr & csSockAddr )
@@ -2363,7 +2326,7 @@ int Csock::GetAddrInfo( const CS_STRING & sHostname, CSSockAddr & csSockAddr )
 			if( m_iARESStatus == ARES_SUCCESS && csSockAddr.GetAFRequire() == CSSockAddr::RAF_ANY && GetIPv6() )
 			{
 				// this means that ares_host returned an ipv6 host, so try a connect right away
-				if( CreateSocksFD() && Connect( GetBindHost(), true ) )
+				if( CreateSocksFD() && Connect() )
 				{
 					SetSkipConnect( true );
 				}
@@ -2538,7 +2501,7 @@ cs_sock_t Csock::CreateSocket( bool bListen )
 	return( iRet );
 }
 
-void Csock::Init( const CS_STRING & sHostname, u_short uPort, int itimeout )
+void Csock::Init( const CS_STRING & sHostname, u_short uPort, int iTimeout )
 {
 #ifdef HAVE_LIBSSL
 	m_ssl = NULL;
@@ -2548,14 +2511,13 @@ void Csock::Init( const CS_STRING & sHostname, u_short uPort, int itimeout )
 	m_iTcount = 0;
 	m_iReadSock = CS_INVALID_SOCK;
 	m_iWriteSock = CS_INVALID_SOCK;
-	m_itimeout = itimeout;
-	m_bssl = false;
+	m_iTimeout = iTimeout;
+	m_bUseSSL = false;
 	m_bIsConnected = false;
 	m_uPort = uPort;
 	m_shostname = sHostname;
 	m_sbuffer.clear();
 	m_eCloseType = CLT_DONT;
-	m_bBLOCK = true;
 	m_iMethod = SSL23;
 	m_sCipherType = "ALL";
 	m_iMaxBytes = 0;
@@ -2619,7 +2581,7 @@ Csock * CSocketManager::GetSockObj( const CS_STRING & sHostname, u_short uPort, 
 	return( new Csock( sHostname, uPort, iTimeout ) );
 }
 
-bool CSocketManager::Connect( const CSConnection & cCon, Csock * pcSock )
+void CSocketManager::Connect( const CSConnection & cCon, Csock * pcSock )
 {
 	// create the new object
 	if ( !pcSock )
@@ -2633,9 +2595,6 @@ bool CSocketManager::Connect( const CSConnection & cCon, Csock * pcSock )
 
 	if( cCon.GetAFRequire() != CSSockAddr::RAF_ANY )
 		pcSock->SetAFRequire( cCon.GetAFRequire() );
-
-	// make it NON-Blocking IO
-	pcSock->BlockIO( false );
 
 	// bind the vhost
 	pcSock->SetBindHost( cCon.GetBindHost() );
@@ -2658,7 +2617,6 @@ bool CSocketManager::Connect( const CSConnection & cCon, Csock * pcSock )
 
 	pcSock->SetConState( Csock::CST_START );
 	AddSock( pcSock, cCon.GetSockName() );
-	return( true );
 }
 
 bool CSocketManager::Listen( const CSListener & cListen, Csock * pcSock, u_short *piRandPort )
@@ -2666,7 +2624,6 @@ bool CSocketManager::Listen( const CSListener & cListen, Csock * pcSock, u_short
 	if ( !pcSock )
 		pcSock = GetSockObj( "", 0 );
 
-	pcSock->BlockIO( false );
 	if( cListen.GetAFRequire() != CSSockAddr::RAF_ANY )
 	{
 		pcSock->SetAFRequire( cListen.GetAFRequire() );
@@ -2765,7 +2722,7 @@ void CSocketManager::Loop()
 		}
 		if ( pcSock->GetConState() == Csock::CST_CONNECT )
 		{
-			if ( !pcSock->Connect( pcSock->GetBindHost(), true ) )
+			if ( !pcSock->Connect() )
 			{
 				if ( GetSockError() == ECONNREFUSED )
 					pcSock->ConnectionRefused();
@@ -3429,7 +3386,6 @@ void CSocketManager::Select( std::map<Csock *, EMessages> & mpeSocks )
 					if ( !NewpcSock )
 						NewpcSock = GetSockObj( sHost, port );
 
-					NewpcSock->BlockIO( false );
 					NewpcSock->SetType( Csock::INBOUND );
 					NewpcSock->SetRSock( inSock );
 					NewpcSock->SetWSock( inSock );
