@@ -8,6 +8,7 @@
 
 #include <znc/Chan.h>
 #include <znc/User.h>
+#include <znc/IRCNetwork.h>
 #include <znc/Modules.h>
 
 class CBuffExtras : public CModule {
@@ -18,7 +19,7 @@ public:
 
 	void AddBuffer(CChan& Channel, const CString& sMessage) {
 		// If they have keep buffer disabled, only add messages if no client is connected
-		if (!Channel.KeepBuffer() && m_pUser->IsUserOnline())
+		if (!Channel.KeepBuffer() && m_pNetwork->IsUserOnline())
 			return;
 
 		CString s = ":" + GetModNick() + "!" + GetModName() + "@znc.in PRIVMSG "
