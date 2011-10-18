@@ -371,6 +371,15 @@ void CIRCSock::ReadLine(const CString& sData) {
 				}
 				break;
 			}
+			case 670:
+				// :hydra.sector5d.org 670 kylef :STARTTLS successful, go ahead with TLS handshake
+				// 670 is a responce to `STARTTLS` telling the client to switch to TLS
+
+				if (!GetSSL()) {
+					StartTLS();
+				}
+
+				break;
 		}
 	} else {
 		CNick Nick(sLine.Token(0).TrimPrefix_n());
