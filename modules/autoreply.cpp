@@ -56,7 +56,7 @@ public:
 		if (m_Messaged.HasItem(sNick))
 			return;
 
-		if (m_pUser->IsUserAttached())
+		if (m_pNetwork->IsUserAttached())
 			return;
 
 		m_Messaged.AddItem(sNick);
@@ -95,6 +95,7 @@ private:
 
 template<> void TModInfo<CAutoReplyMod>(CModInfo& Info) {
 	Info.SetWikiPage("autoreply");
+	Info.AddType(CModInfo::NetworkModule);
 }
 
 MODULEDEFS(CAutoReplyMod, "Reply to queries when you are away")
