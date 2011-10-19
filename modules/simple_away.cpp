@@ -7,6 +7,7 @@
  */
 
 #include <znc/User.h>
+#include <znc/IRCNetwork.h>
 
 #define SIMPLE_AWAY_DEFAULT_REASON "Auto away at %s"
 #define SIMPLE_AWAY_DEFAULT_TIME   60
@@ -73,7 +74,7 @@ public:
 	}
 
 	virtual void OnIRCConnected() {
-		if (m_pUser->IsUserAttached())
+		if (m_pNetwork->IsUserAttached())
 			SetBack();
 		else
 			SetAway(false);
@@ -85,7 +86,7 @@ public:
 
 	virtual void OnClientDisconnect() {
 		/* There might still be other clients */
-		if (!m_pUser->IsUserAttached())
+		if (!m_pNetwork->IsUserAttached())
 			SetAway();
 	}
 
@@ -220,4 +221,4 @@ template<> void TModInfo<CSimpleAway>(CModInfo& Info) {
 	Info.SetWikiPage("simple_away");
 }
 
-MODULEDEFS(CSimpleAway, "Auto away when last client disconnects")
+NETWORKMODULEDEFS(CSimpleAway, "Auto away when last client disconnects")
