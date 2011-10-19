@@ -731,8 +731,9 @@ void CClient::PutModule(const CString& sModule, const CString& sLine) {
 CString CClient::GetNick(bool bAllowIRCNick) const {
 	CString sRet;
 
-	if ((bAllowIRCNick) && (IsAttached()) && (GetIRCSock())) {
-		sRet = GetIRCSock()->GetNick();
+	const CIRCSock *pSock = GetIRCSock();
+	if (bAllowIRCNick && pSock && pSock->IsAuthed()) {
+		sRet = pSock->GetNick();
 	}
 
 	return (sRet.empty()) ? m_sNick : sRet;
