@@ -963,17 +963,11 @@ void CClient::UserCommand(CString& sLine) {
 			return;
 		}
 
-		if (m_pUser->DenyLoadMod() || !m_pUser->IsAdmin()) {
-			PutStatus("Unable to reload [" + sMod + "] Access Denied.");
-			return;
-		}
-
-		PutStatus("Reloading [" + sMod + "] on all users...");
-		if (CUser::UpdateModule(sMod)) {
+		PutStatus("Reloading [" + sMod + "] everywhere");
+		if (CZNC::Get().UpdateModule(sMod)) {
 			PutStatus("Done");
 		} else {
-			PutStatus("Done, but there were errors, some users no longer have ["
-					+ sMod + "] loaded");
+			PutStatus("Done, but there were errors, [" + sMod + "] could not be loaded everywhere.");
 		}
 	} else if ((sCommand.Equals("ADDBINDHOST") || sCommand.Equals("ADDVHOST")) && m_pUser->IsAdmin()) {
 		CString sHost = sLine.Token(1);
@@ -1476,7 +1470,7 @@ void CClient::HelpUser() {
 			Table.AddRow();
 			Table.SetCell("Command", "UpdateMod");
 			Table.SetCell("Arguments", "<module>");
-			Table.SetCell("Description", "Reload a module on all users");
+			Table.SetCell("Description", "Reload a module everywhere");
 		}
 	}
 

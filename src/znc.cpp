@@ -1393,6 +1393,90 @@ CModule* CZNC::FindModule(const CString& sModName, CUser* pUser) {
 	return CZNC::Get().GetModules().FindModule(sModName);
 }
 
+bool CZNC::UpdateModule(const CString &sModule) {
+	CModule *pModule;
+
+	map<CString,CUser*>::const_iterator it;
+	map<CUser*, CString> musLoaded;
+	map<CUser*, CString>::iterator musIt;
+	map<CIRCNetwork*, CString> mnsLoaded;
+	map<CIRCNetwork*, CString>::iterator mnsIt;
+
+	// Unload the module for every user and network
+	for (it = m_msUsers.begin(); it != m_msUsers.end(); ++it) {
+		CUser *pUser = it->second;
+
+		pModule = pUser->GetModules().FindModule(sModule);
+		if (pModule) {
+			musLoaded[pUser] = pModule->GetArgs();
+			pUser->GetModules().UnloadModule(sModule);
+		}
+
+		// See if the user has this module loaded to a network
+		vector<CIRCNetwork*> vNetworks = pUser->GetNetworks();
+		vector<CIRCNetwork*>::iterator it2;
+		for (it2 = vNetworks.begin(); it2 != vNetworks.end(); ++it2) {
+			CIRCNetwork *pNetwork = *it2;
+
+			pModule = pNetwork->GetModules().FindModule(sModule);
+			if (pModule) {
+				mnsLoaded[pNetwork] = pModule->GetArgs();
+				pNetwork->GetModules().UnloadModule(sModule);
+			}
+		}
+	}
+
+	// Unload the global module
+	bool bGlobal = false;
+	CString sGlobalArgs;
+
+	pModule = GetModules().FindModule(sModule);
+	if (pModule) {
+		bGlobal = true;
+		sGlobalArgs = pModule->GetArgs();
+		GetModules().UnloadModule(sModule);
+	}
+
+	// Lets reload everything
+	bool bError = false;
+	CString sErr;
+
+	// Reload the global module
+	if (bGlobal) {
+		if (!GetModules().LoadModule(sModule, sGlobalArgs, CModInfo::GlobalModule, NULL, NULL, sErr)) {
+			DEBUG("Failed to reload [" <<  sModule << "] globally [" << sErr << "]");
+			bError = true;
+		}
+	}
+
+	// Reload the module for all users
+	for (musIt = musLoaded.begin(); musIt != musLoaded.end(); ++musIt) {
+		CUser *pUser = musIt->first;
+		CString& sArgs = musIt->second;
+
+		if (!pUser->GetModules().LoadModule(sModule, sArgs, CModInfo::UserModule, pUser, NULL, sErr)) {
+			DEBUG("Failed to reload [" <<  sModule << "] for ["
+					<< pUser->GetUserName() << "] [" << sErr << "]");
+			bError = true;
+		}
+	}
+
+	// Reload the module for all networks
+	for (mnsIt = mnsLoaded.begin(); mnsIt != mnsLoaded.end(); ++mnsIt) {
+		CIRCNetwork *pNetwork = mnsIt->first;
+		CString& sArgs = mnsIt->second;
+
+		if (!pNetwork->GetModules().LoadModule(sModule, sArgs, CModInfo::NetworkModule, pNetwork->GetUser(), pNetwork, sErr)) {
+			DEBUG("Failed to reload [" <<  sModule << "] for ["
+					<< pNetwork->GetUser()->GetUserName() << "/"
+					<< pNetwork->GetName() << "] [" << sErr << "]");
+			bError = true;
+		}
+	}
+
+	return !bError;
+}
+
 CUser* CZNC::FindUser(const CString& sUsername) {
 	map<CString,CUser*>::iterator it = m_msUsers.find(sUsername);
 

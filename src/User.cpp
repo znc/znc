@@ -411,33 +411,6 @@ bool CUser::ParseConfig(CConfig* pConfig, CString& sError) {
 	return true;
 }
 
-bool CUser::UpdateModule(const CString &sModule) {
-	const map<CString,CUser*>& Users = CZNC::Get().GetUserMap();
-	map<CString,CUser*>::const_iterator it;
-	map<CUser*, CString> Affected;
-	map<CUser*, CString>::iterator it2;
-	bool error = false;
-
-	for (it = Users.begin(); it != Users.end(); ++it) {
-		CModule *pMod = it->second->GetModules().FindModule(sModule);
-		if (pMod) {
-			Affected[it->second] = pMod->GetArgs();
-			it->second->GetModules().UnloadModule(pMod->GetModName());
-		}
-	}
-
-	CString sErr;
-	for (it2 = Affected.begin(); it2 != Affected.end(); ++it2) {
-		if (!it2->first->GetModules().LoadModule(sModule, it2->second, CModInfo::UserModule, it2->first, NULL, sErr)) {
-			error = true;
-			DEBUG("Failed to reload [" << sModule << "] for [" << it2->first->GetUserName()
-					<< "]: " << sErr);
-		}
-	}
-
-	return !error;
-}
-
 CIRCNetwork* CUser::AddNetwork(const CString &sNetwork) {
 	if (!CIRCNetwork::IsValidNetwork(sNetwork) || FindNetwork(sNetwork)) {
 		return NULL;
