@@ -14,6 +14,7 @@
 #include <znc/IRCSock.h>
 #include <znc/Server.h>
 #include <znc/znc.h>
+#include <znc/Modules.h>
 
 class CUserTimer : public CCron {
 public:

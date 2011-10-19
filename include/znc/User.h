@@ -10,8 +10,8 @@
 #define _USER_H
 
 #include <znc/zncconfig.h>
+#include <znc/Utils.h>
 #include <znc/Buffer.h>
-#include <znc/Modules.h>
 #include <znc/Nick.h>
 #include <set>
 #include <vector>
@@ -19,6 +19,7 @@
 using std::set;
 using std::vector;
 
+class CModules;
 class CChan;
 class CClient;
 class CConfig;
