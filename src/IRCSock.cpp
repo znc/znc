@@ -712,7 +712,7 @@ void CIRCSock::ReadLine(const CString& sData) {
 			// Don't forward any CAP stuff to the client
 			return;
 		} else if (sCmd.Equals("INVITE")) {
-			NETWORKMODULECALL(OnInvite(sLine.Token(3).TrimPrefix_n(":")), m_pNetwork->GetUser(), m_pNetwork, NULL, NOTHING);
+			NETWORKMODULECALL(OnInvite(Nick, sLine.Token(3).TrimPrefix_n(":")), m_pNetwork->GetUser(), m_pNetwork, NULL, NOTHING);
 		}
 	}
 
