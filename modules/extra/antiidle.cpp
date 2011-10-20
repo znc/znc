@@ -72,12 +72,15 @@ public:
 		return CONTINUE;
 	}
 
-	virtual EModRet OnRaw(CString &sLine)
-	{
-		VCString splitted;
-		sLine.Split(" ",splitted);
-		if(splitted[1] == "301" && splitted[2].TrimPrefix_n(":").Equals(m_pNetwork->GetIRCNick().GetNick()))
+	virtual EModRet OnRaw(CString &sLine) {
+		/* If we send a message to ourselfs while we are away, this
+		 * will result in the server sending a 301 which we shouldn't
+		 * forward to the client */
+
+		if (sLine.Token(1).Equals("301") && sLine.Token(3).Equals(m_pNetwork->GetIRCNick().GetNick())) {
 			return HALT;
+		}
+
 		return CONTINUE;
 	}
 
