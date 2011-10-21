@@ -14,6 +14,7 @@
 #include <znc/znc.h>
 #include <znc/Server.h>
 
+#define IRCSOCKMODULECALL(macFUNC, macEXITER) NETWORKMODULECALL(macFUNC, m_pNetwork->GetUser(), m_pNetwork, NULL, macEXITER)
 // These are used in OnGeneralCTCP()
 const time_t CIRCSock::m_uCTCPFloodTime = 5;
 const unsigned int CIRCSock::m_uCTCPFloodCount = 5;
@@ -52,7 +53,7 @@ CIRCSock::CIRCSock(CIRCNetwork* pNetwork) : CZNCSock() {
 
 CIRCSock::~CIRCSock() {
 	if (!m_bAuthed) {
-		NETWORKMODULECALL(OnIRCConnectionError(this), m_pNetwork->GetUser(), m_pNetwork, NULL, NOTHING);
+		IRCSOCKMODULECALL(OnIRCConnectionError(this), NOTHING);
 	}
 
 	const vector<CChan*>& vChans = m_pNetwork->GetChans();
@@ -92,7 +93,7 @@ void CIRCSock::ReadLine(const CString& sData) {
 
 	DEBUG("(" << m_pNetwork->GetUser()->GetUserName() << "/" << m_pNetwork->GetName() << ") IRC -> ZNC [" << sLine << "]");
 
-	NETWORKMODULECALL(OnRaw(sLine), m_pNetwork->GetUser(), m_pNetwork, NULL, return);
+	IRCSOCKMODULECALL(OnRaw(sLine), return);
 
 	if (sLine.Equals("PING ", false, 5)) {
 		// Generate a reply and don't forward this to any user,
@@ -148,7 +149,7 @@ void CIRCSock::ReadLine(const CString& sData) {
 
 				SetNick(sNick);
 
-				NETWORKMODULECALL(OnIRCConnected(), m_pNetwork->GetUser(), m_pNetwork, NULL, NOTHING);
+				IRCSOCKMODULECALL(OnIRCConnected(), NOTHING);
 
 				m_pNetwork->ClearRawBuffer();
 				m_pNetwork->AddRawBuffer(":" + sServer + " " + sCmd + " ", " " + sRest);
@@ -402,7 +403,7 @@ void CIRCSock::ReadLine(const CString& sData) {
 				SetNick(sNewNick);
 			}
 
-			NETWORKMODULECALL(OnNick(Nick, sNewNick, vFoundChans), m_pNetwork->GetUser(), m_pNetwork, NULL, NOTHING);
+			IRCSOCKMODULECALL(OnNick(Nick, sNewNick, vFoundChans), NOTHING);
 
 			if (!bIsVisible) {
 				return;
@@ -436,7 +437,7 @@ void CIRCSock::ReadLine(const CString& sData) {
 				}
 			}
 
-			NETWORKMODULECALL(OnQuit(Nick, sMessage, vFoundChans), m_pNetwork->GetUser(), m_pNetwork, NULL, NOTHING);
+			IRCSOCKMODULECALL(OnQuit(Nick, sMessage, vFoundChans), NOTHING);
 
 			if (!bIsVisible) {
 				return;
@@ -461,7 +462,7 @@ void CIRCSock::ReadLine(const CString& sData) {
 
 			if (pChan) {
 				pChan->AddNick(Nick.GetNickMask());
-				NETWORKMODULECALL(OnJoin(Nick.GetNickMask(), *pChan), m_pNetwork->GetUser(), m_pNetwork, NULL, NOTHING);
+				IRCSOCKMODULECALL(OnJoin(Nick.GetNickMask(), *pChan), NOTHING);
 
 				if (pChan->IsDetached()) {
 					return;
@@ -475,7 +476,7 @@ void CIRCSock::ReadLine(const CString& sData) {
 			bool bDetached = false;
 			if (pChan) {
 				pChan->RemNick(Nick.GetNick());
-				NETWORKMODULECALL(OnPart(Nick.GetNickMask(), *pChan, sMsg), m_pNetwork->GetUser(), m_pNetwork, NULL, NOTHING);
+				IRCSOCKMODULECALL(OnPart(Nick.GetNickMask(), *pChan, sMsg), NOTHING);
 
 				if (pChan->IsDetached())
 					bDetached = true;
@@ -540,7 +541,7 @@ void CIRCSock::ReadLine(const CString& sData) {
 			CChan* pChan = m_pNetwork->FindChan(sChan);
 
 			if (pChan) {
-				NETWORKMODULECALL(OnKick(Nick, sKickedNick, *pChan, sMsg), m_pNetwork->GetUser(), m_pNetwork, NULL, NOTHING);
+				IRCSOCKMODULECALL(OnKick(Nick, sKickedNick, *pChan, sMsg), NOTHING);
 				// do not remove the nick till after the OnKick call, so modules
 				// can do Chan.FindNick or something to get more info.
 				pChan->RemNick(sKickedNick);
@@ -601,7 +602,7 @@ void CIRCSock::ReadLine(const CString& sData) {
 				CString sTopic = sLine.Token(3, true);
 				sTopic.LeftChomp();
 
-				NETWORKMODULECALL(OnTopic(Nick, *pChan, sTopic), m_pNetwork->GetUser(), m_pNetwork, NULL, return);
+				IRCSOCKMODULECALL(OnTopic(Nick, *pChan, sTopic), return);
 
 				pChan->SetTopicOwner(Nick.GetNick());
 				pChan->SetTopicDate((unsigned long) time(NULL));
@@ -693,7 +694,7 @@ void CIRCSock::ReadLine(const CString& sData) {
 					}
 				} else if (sSubCmd == "ACK") {
 					sArgs.Trim();
-					NETWORKMODULECALL(OnServerCapResult(sArgs, true), m_pNetwork->GetUser(), m_pNetwork, NULL, NOTHING);
+					IRCSOCKMODULECALL(OnServerCapResult(sArgs, true), NOTHING);
 					if ("multi-prefix" == sArgs) {
 						m_bNamesx = true;
 					} else if ("userhost-in-names" == sArgs) {
@@ -704,7 +705,7 @@ void CIRCSock::ReadLine(const CString& sData) {
 					// This should work because there's no [known]
 					// capability with length of name more than 100 characters.
 					sArgs.Trim();
-					NETWORKMODULECALL(OnServerCapResult(sArgs, false), m_pNetwork->GetUser(), m_pNetwork, NULL, NOTHING);
+					IRCSOCKMODULECALL(OnServerCapResult(sArgs, false), NOTHING);
 				}
 
 				SendNextCap();
@@ -712,7 +713,7 @@ void CIRCSock::ReadLine(const CString& sData) {
 			// Don't forward any CAP stuff to the client
 			return;
 		} else if (sCmd.Equals("INVITE")) {
-			NETWORKMODULECALL(OnInvite(Nick, sLine.Token(3).TrimPrefix_n(":")), m_pNetwork->GetUser(), m_pNetwork, NULL, return);
+			IRCSOCKMODULECALL(OnInvite(Nick, sLine.Token(3).TrimPrefix_n(":")), return);
 		}
 	}
 
@@ -742,21 +743,21 @@ void CIRCSock::ResumeCap() {
 }
 
 bool CIRCSock::OnServerCapAvailable(const CString& sCap) {
-	NETWORKMODULECALL(OnServerCapAvailable(sCap), m_pNetwork->GetUser(), m_pNetwork, NULL, return true);
+	IRCSOCKMODULECALL(OnServerCapAvailable(sCap), return true);
 	return false;
 }
 
 bool CIRCSock::OnCTCPReply(CNick& Nick, CString& sMessage) {
-	NETWORKMODULECALL(OnCTCPReply(Nick, sMessage), m_pNetwork->GetUser(), m_pNetwork, NULL, return true);
+	IRCSOCKMODULECALL(OnCTCPReply(Nick, sMessage), return true);
 
 	return false;
 }
 
 bool CIRCSock::OnPrivCTCP(CNick& Nick, CString& sMessage) {
-	NETWORKMODULECALL(OnPrivCTCP(Nick, sMessage), m_pNetwork->GetUser(), m_pNetwork, NULL, return true);
+	IRCSOCKMODULECALL(OnPrivCTCP(Nick, sMessage), return true);
 
 	if (sMessage.TrimPrefix("ACTION ")) {
-		NETWORKMODULECALL(OnPrivAction(Nick, sMessage), m_pNetwork->GetUser(), m_pNetwork, NULL, return true);
+		IRCSOCKMODULECALL(OnPrivAction(Nick, sMessage), return true);
 
 		if (!m_pNetwork->IsUserOnline()) {
 			// If the user is detached, add to the buffer
@@ -811,7 +812,7 @@ bool CIRCSock::OnGeneralCTCP(CNick& Nick, CString& sMessage) {
 }
 
 bool CIRCSock::OnPrivNotice(CNick& Nick, CString& sMessage) {
-	NETWORKMODULECALL(OnPrivNotice(Nick, sMessage), m_pNetwork->GetUser(), m_pNetwork, NULL, return true);
+	IRCSOCKMODULECALL(OnPrivNotice(Nick, sMessage), return true);
 
 	if (!m_pNetwork->IsUserOnline()) {
 		// If the user is detached, add to the buffer
@@ -822,7 +823,7 @@ bool CIRCSock::OnPrivNotice(CNick& Nick, CString& sMessage) {
 }
 
 bool CIRCSock::OnPrivMsg(CNick& Nick, CString& sMessage) {
-	NETWORKMODULECALL(OnPrivMsg(Nick, sMessage), m_pNetwork->GetUser(), m_pNetwork, NULL, return true);
+	IRCSOCKMODULECALL(OnPrivMsg(Nick, sMessage), return true);
 
 	if (!m_pNetwork->IsUserOnline()) {
 		// If the user is detached, add to the buffer
@@ -835,11 +836,11 @@ bool CIRCSock::OnPrivMsg(CNick& Nick, CString& sMessage) {
 bool CIRCSock::OnChanCTCP(CNick& Nick, const CString& sChan, CString& sMessage) {
 	CChan* pChan = m_pNetwork->FindChan(sChan);
 	if (pChan) {
-		NETWORKMODULECALL(OnChanCTCP(Nick, *pChan, sMessage), m_pNetwork->GetUser(), m_pNetwork, NULL, return true);
+		IRCSOCKMODULECALL(OnChanCTCP(Nick, *pChan, sMessage), return true);
 
 		// Record a /me
 		if (sMessage.TrimPrefix("ACTION ")) {
-			NETWORKMODULECALL(OnChanAction(Nick, *pChan, sMessage), m_pNetwork->GetUser(), m_pNetwork, NULL, return true);
+			IRCSOCKMODULECALL(OnChanAction(Nick, *pChan, sMessage), return true);
 			if (pChan->KeepBuffer() || !m_pNetwork->IsUserOnline() || pChan->IsDetached()) {
 				pChan->AddBuffer(":" + Nick.GetNickMask() + " PRIVMSG " + sChan + " :\001ACTION " + m_pNetwork->GetUser()->AddTimestamp(sMessage) + "\001");
 			}
@@ -856,7 +857,7 @@ bool CIRCSock::OnChanCTCP(CNick& Nick, const CString& sChan, CString& sMessage) 
 bool CIRCSock::OnChanNotice(CNick& Nick, const CString& sChan, CString& sMessage) {
 	CChan* pChan = m_pNetwork->FindChan(sChan);
 	if (pChan) {
-		NETWORKMODULECALL(OnChanNotice(Nick, *pChan, sMessage), m_pNetwork->GetUser(), m_pNetwork, NULL, return true);
+		IRCSOCKMODULECALL(OnChanNotice(Nick, *pChan, sMessage), return true);
 
 		if (pChan->KeepBuffer() || !m_pNetwork->IsUserOnline() || pChan->IsDetached()) {
 			pChan->AddBuffer(":" + Nick.GetNickMask() + " NOTICE " + sChan + " :" + m_pNetwork->GetUser()->AddTimestamp(sMessage));
@@ -869,7 +870,7 @@ bool CIRCSock::OnChanNotice(CNick& Nick, const CString& sChan, CString& sMessage
 bool CIRCSock::OnChanMsg(CNick& Nick, const CString& sChan, CString& sMessage) {
 	CChan* pChan = m_pNetwork->FindChan(sChan);
 	if (pChan) {
-		NETWORKMODULECALL(OnChanMsg(Nick, *pChan, sMessage), m_pNetwork->GetUser(), m_pNetwork, NULL, return true);
+		IRCSOCKMODULECALL(OnChanMsg(Nick, *pChan, sMessage), return true);
 
 		if (pChan->KeepBuffer() || !m_pNetwork->IsUserOnline() || pChan->IsDetached()) {
 			pChan->AddBuffer(":" + Nick.GetNickMask() + " PRIVMSG " + sChan + " :" + m_pNetwork->GetUser()->AddTimestamp(sMessage));
@@ -897,7 +898,7 @@ void CIRCSock::Connected() {
 	CString sIdent = m_pNetwork->GetIdent();
 	CString sRealName = m_pNetwork->GetRealName();
 
-	NETWORKMODULECALL(OnIRCRegistration(sPass, sNick, sIdent, sRealName), m_pNetwork->GetUser(), m_pNetwork, NULL, return);
+	IRCSOCKMODULECALL(OnIRCRegistration(sPass, sNick, sIdent, sRealName), return);
 
 	PutIRC("CAP LS");
 
@@ -913,7 +914,7 @@ void CIRCSock::Connected() {
 }
 
 void CIRCSock::Disconnected() {
-	NETWORKMODULECALL(OnIRCDisconnected(), m_pNetwork->GetUser(), m_pNetwork, NULL, NOTHING);
+	IRCSOCKMODULECALL(OnIRCDisconnected(), NOTHING);
 
 	DEBUG(GetSockName() << " == Disconnected()");
 	if (!m_pNetwork->GetUser()->IsBeingDeleted() && m_pNetwork->GetUser()->GetIRCConnectEnabled() &&
