@@ -62,6 +62,7 @@ CUser::CUser(const CString& sUserName)
 	// set path that depends on the user name:
 	m_sUserPath = CZNC::Get().GetUserPath() + "/" + m_sUserName;
 
+	m_sTimezone = "GMT";
 	m_fTimezoneOffset = 0;
 	m_sNick = m_sCleanUserName;
 	m_sIdent = m_sCleanUserName;
@@ -221,6 +222,9 @@ bool CUser::ParseConfig(CConfig* pConfig, CString& sError) {
 			CUtils::PrintError(sError);
 			return false;
 		}
+	}
+	if (pConfig->FindStringEntry("timezone", sValue)) {
+		SetTimezone(sValue);
 	}
 	if (pConfig->FindStringEntry("timezoneoffset", sValue)) {
 		SetTimezoneOffset(sValue.ToDouble());
@@ -470,8 +474,8 @@ CString CUser::ExpandString(const CString& sStr) const {
 }
 
 CString& CUser::ExpandString(const CString& sStr, CString& sRet) const {
-	// offset is in hours, so * 60 * 60 gets us seconds
-	time_t iUserTime = time(NULL) + (time_t)(m_fTimezoneOffset * 60 * 60);
+	time_t iUserTime = time(NULL);
+	setenv("TZ", m_sTimezone.c_str(), 1);
 	char *szTime = ctime(&iUserTime);
 	CString sTime;
 
@@ -513,7 +517,7 @@ CString& CUser::AddTimestamp(const CString& sStr, CString& sRet) const {
 
 	if (!GetTimestampFormat().empty() && (m_bAppendTimestamp || m_bPrependTimestamp)) {
 		time(&tm);
-		tm += (time_t)(m_fTimezoneOffset * 60 * 60); // offset is in hours
+		setenv("TZ", m_sTimezone.c_str(), 1);
 		size_t i = strftime(szTimestamp, sizeof(szTimestamp), GetTimestampFormat().c_str(), localtime(&tm));
 		// If strftime returns 0, an error occured in format, or result is empty
 		// In both cases just don't prepend/append anything to our string
@@ -636,6 +640,7 @@ bool CUser::Clone(const CUser& User, CString& sErrorRet, bool bCloneChans) {
 	SetTimestampAppend(User.GetTimestampAppend());
 	SetTimestampPrepend(User.GetTimestampPrepend());
 	SetTimestampFormat(User.GetTimestampFormat());
+	SetTimezone(User.GetTimezone());
 	SetTimezoneOffset(User.GetTimezoneOffset());
 	// !Flags
 
@@ -786,6 +791,7 @@ CConfig CUser::ToConfig() {
 	config.AddKeyValuePair("TimestampFormat", GetTimestampFormat());
 	config.AddKeyValuePair("AppendTimestamp", CString(GetTimestampAppend()));
 	config.AddKeyValuePair("PrependTimestamp", CString(GetTimestampPrepend()));
+	config.AddKeyValuePair("Timezone", m_sTimezone);
 	config.AddKeyValuePair("TimezoneOffset", CString(m_fTimezoneOffset));
 	config.AddKeyValuePair("JoinTries", CString(m_uMaxJoinTries));
 	config.AddKeyValuePair("MaxJoins", CString(m_uMaxJoins));

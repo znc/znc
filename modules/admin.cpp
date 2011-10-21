@@ -59,6 +59,7 @@ class CAdminMod : public CModule {
 			{"Password",         str},
 			{"JoinTries",        integer},
 			{"MaxJoins",         integer},
+			{"Timezone",         str},
 			{"TimezoneOffset",   doublenum},
 			{"Admin",            boolean},
 			{"AppendTimestamp",  boolean},
@@ -158,6 +159,8 @@ class CAdminMod : public CModule {
 			PutModule("MaxJoins = " + CString(pUser->MaxJoins()));
 		else if (sVar == "jointries")
 			PutModule("JoinTries = " + CString(pUser->JoinTries()));
+		else if (sVar == "timezone")
+			PutModule("Timezone = " + pUser->GetTimezone());
 		else if (sVar == "timezoneoffset")
 			PutModule("TimezoneOffset = " + CString(pUser->GetTimezoneOffset()));
 		else if (sVar == "appendtimestamp")
@@ -275,6 +278,10 @@ class CAdminMod : public CModule {
 			unsigned int i = sValue.ToUInt();
 			pUser->SetJoinTries(i);
 			PutModule("JoinTries = " + CString(pUser->JoinTries()));
+		}
+		else if (sVar == "timezone") {
+			pUser->SetTimezone(sValue);
+			PutModule("Timezone = " + pUser->GetTimezone());
 		}
 		else if (sVar == "timezoneoffset") {
 			double d = sValue.ToDouble();
