@@ -10,7 +10,7 @@
  *
  * I originally wrote this module for when I had multiple clients connected to ZNC. I would leave work and forget to close my client, arriving at home
  * and re-attaching there someone may have messaged me in commute and I wouldn't know it until I would arrive back at work the next day. I wrote it such that
- * my xchat client would monitor desktop activity and ping the module to let it know I was active. Within a few minutes of inactivity the pinging stops and 
+ * my xchat client would monitor desktop activity and ping the module to let it know I was active. Within a few minutes of inactivity the pinging stops and
  * the away module sets the user as away and logging commences.
  */
 
