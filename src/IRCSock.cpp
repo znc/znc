@@ -47,6 +47,9 @@ CIRCSock::CIRCSock(CIRCNetwork* pNetwork) : CZNCSock() {
 
 	pNetwork->SetIRCSocket(this);
 
+	m_RawBuffer.SetLineCount(100);   // This should be more than enough raws, especially since we are buffering the MOTD separately
+	m_MotdBuffer.SetLineCount(200);  // This should be more than enough motd lines
+
 	// RFC says a line can have 512 chars max, but we don't care ;)
 	SetMaxBufferThreshold(1024);
 }
@@ -151,14 +154,13 @@ void CIRCSock::ReadLine(const CString& sData) {
 
 				IRCSOCKMODULECALL(OnIRCConnected(), NOTHING);
 
-				m_pNetwork->ClearRawBuffer();
-				m_pNetwork->AddRawBuffer(":" + sServer + " " + sCmd + " ", " " + sRest);
+				AddRawBuffer(":" + sServer + " " + sCmd + " ", " " + sRest);
 
 				break;
 			}
 			case 5:
 				ParseISupport(sRest);
-				m_pNetwork->UpdateExactRawBuffer(":" + sServer + " " + sCmd + " ", " " + sRest);
+				UpdateExactRawBuffer(":" + sServer + " " + sCmd + " ", " " + sRest);
 				break;
 			case 10: { // :irc.server.com 010 nick <hostname> <port> :<info>
 				CString sHost = sRest.Token(0);
@@ -180,7 +182,7 @@ void CIRCSock::ReadLine(const CString& sData) {
 			case 255:  // client count
 			case 265:  // local users
 			case 266:  // global users
-				m_pNetwork->UpdateRawBuffer(":" + sServer + " " + sCmd + " ", " " + sRest);
+				UpdateRawBuffer(":" + sServer + " " + sCmd + " ", " " + sRest);
 				break;
 			case 305:
 				m_pNetwork->SetIRCAway(false);
@@ -328,10 +330,10 @@ void CIRCSock::ReadLine(const CString& sData) {
 			}
 			case 375:  // begin motd
 			case 422:  // MOTD File is missing
-				m_pNetwork->ClearMotdBuffer();
+				ClearMotdBuffer();
 			case 372:  // motd
 			case 376:  // end motd
-				m_pNetwork->AddMotdBuffer(":" + sServer + " " + sCmd + " ", " " + sRest);
+				AddMotdBuffer(":" + sServer + " " + sCmd + " ", " " + sRest);
 				break;
 			case 437:
 				// :irc.server.net 437 * badnick :Nick/channel is temporarily unavailable
@@ -930,8 +932,6 @@ void CIRCSock::Disconnected() {
 			m_pNetwork->GetServers().size() != 0) {
 		m_pNetwork->PutStatus("Disconnected from IRC. Reconnecting...");
 	}
-	m_pNetwork->ClearRawBuffer();
-	m_pNetwork->ClearMotdBuffer();
 
 	ResetChans();
 
@@ -976,8 +976,6 @@ void CIRCSock::SockError(int iErrno) {
 			m_pNetwork->PutStatus("Disconnected from IRC (" + sError + ").  Reconnecting...");
 		}
 	}
-	m_pNetwork->ClearRawBuffer();
-	m_pNetwork->ClearMotdBuffer();
 
 	ResetChans();
 	m_scUserModes.clear();
@@ -988,8 +986,6 @@ void CIRCSock::Timeout() {
 	if (!m_pNetwork->GetUser()->IsBeingDeleted()) {
 		m_pNetwork->PutStatus("IRC connection timed out.  Reconnecting...");
 	}
-	m_pNetwork->ClearRawBuffer();
-	m_pNetwork->ClearMotdBuffer();
 
 	ResetChans();
 	m_scUserModes.empty();
@@ -1000,8 +996,6 @@ void CIRCSock::ConnectionRefused() {
 	if (!m_pNetwork->GetUser()->IsBeingDeleted()) {
 		m_pNetwork->PutStatus("Connection Refused.  Reconnecting...");
 	}
-	m_pNetwork->ClearRawBuffer();
-	m_pNetwork->ClearMotdBuffer();
 }
 
 void CIRCSock::ReachedMaxBuffer() {
