@@ -555,8 +555,9 @@ public:
 	/** Called when user is invited into a channel
 	 *  @param Nick The nick who invited you.
 	 *  @param sChan The channel the user got invited into
+	 *  @return See CModule::EModRet.
 	 */
-	virtual void OnInvite(const CNick& Nick, const CString& sChan);
+	virtual EModRet OnInvite(const CNick& Nick, const CString& sChan);
 
 	/** Called before a channel buffer is played back to a client.
 	 *  @param Chan The channel which will be played back.

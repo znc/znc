@@ -119,6 +119,16 @@ public:
 		PutModule("* Parts: " + Nick.GetNick() + " (" + Nick.GetIdent() + "!" + Nick.GetHost() + ")");
 	}
 
+	virtual EModRet OnInvite(const CNick& Nick, const CString& sChan) {
+		if (sChan.Equals("#test")) {
+			PutModule(Nick.GetNick() + " invited us to " + sChan + ", ignoring invites to " + sChan);
+			return HALT;
+		}
+
+		PutModule(Nick.GetNick() + " invited us to " + sChan);
+		return CONTINUE;
+	}
+
 	virtual void OnNick(const CNick& OldNick, const CString& sNewNick, const vector<CChan*>& vChans) {
 		PutModule("* " + OldNick.GetNick() + " is now known as " + sNewNick);
 	}
