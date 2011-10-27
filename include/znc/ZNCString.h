@@ -27,6 +27,7 @@ using std::pair;
 #define _SQL(s) CString("'" + CString(s).Escape_n(CString::ESQL) + "'")
 #define _URL(s) CString(s).Escape_n(CString::EURL)
 #define _HTML(s) CString(s).Escape_n(CString::EHTML)
+#define _NAMEDFMT(s) CString(s).Escape_n(CString::ENAMEDFMT)
 
 class CString;
 class MCString;
@@ -68,7 +69,8 @@ public:
 		EASCII,
 		EURL,
 		EHTML,
-		ESQL
+		ESQL,
+		ENAMEDFMT
 	} EEscape;
 
 	explicit CString(bool b) : string(b ? "true" : "false") {}
@@ -282,6 +284,16 @@ public:
 					   const CString& sLeft = "", const CString& sRight = "", bool bTrimQuotes = true,
 					   bool bTrimWhiteSpace = false) const;
 
+	/** Build a string from a format string, replacing values from a map.
+	 * The format specification can contain simple named parameters that match
+	 * keys in the given map. For example in the string "a {b} c", the key "b"
+	 * is looked up in the map, and inserted for "{b}".
+	 * @param sFormat The format specification.
+	 * @param msValues A map of named parameters to their values.
+	 * @return The string with named parameters replaced.
+	 */
+	static CString NamedFormat(const CString& sFormat, const MCString& msValues);
+
 	/** Produces a random string.
 	 * @param uLength The length of the resulting string.
 	 * @return A random string.
@@ -469,6 +481,9 @@ public:
 	MCString() : map<CString, CString>() {}
 	/** Destruct this MCString. */
 	virtual ~MCString() { clear(); }
+
+	/** A static instance of an empty map. */
+	static const MCString EmptyMap;
 
 	/** Status codes that can be returned by WriteToDisk() and
 	 * ReadFromDisk(). */

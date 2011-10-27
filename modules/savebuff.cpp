@@ -16,6 +16,7 @@
 
 #include <znc/Chan.h>
 #include <znc/User.h>
+#include <znc/Buffer.h>
 #include <znc/IRCNetwork.h>
 #include <znc/FileUtils.h>
 #include <sys/stat.h>
@@ -104,7 +105,7 @@ public:
 		CString sFile;
 		if (DecryptChannel(pChan->GetName(), sFile))
 		{
-			if (!pChan->GetBuffer().empty())
+			if (!pChan->GetBuffer().IsEmpty())
 				return(true); // reloaded a module probably in this case, so just verify we can decrypt the file
 
 			VCString vsLines;
@@ -115,7 +116,23 @@ public:
 			for (it = vsLines.begin(); it != vsLines.end(); ++it) {
 				CString sLine(*it);
 				sLine.Trim();
-				pChan->AddBuffer(sLine);
+				if (sLine[0] == '@' && it+1 != vsLines.end())
+				{
+					CString sTimestamp = sLine.Token(0);
+					sTimestamp.TrimLeft("@");
+					time_t tm = sTimestamp.ToLongLong();
+
+					CString sFormat = sLine.Token(1, true);
+
+					CString sText(*++it);
+					sText.Trim();
+
+					pChan->AddBuffer(sFormat, sText, tm);
+				} else
+				{
+					// Old format, escape the line and use as is.
+					pChan->AddBuffer(_NAMEDFMT(sLine));
+				}
 			}
 		} else
 		{
@@ -142,13 +159,18 @@ public:
 					continue;
 				}
 
-				const vector<CString> & vBuffer = vChans[a]->GetBuffer();
+				const CBuffer& Buffer = vChans[a]->GetBuffer();
+				CString sLine;
 
 				CString sFile = CRYPT_VERIFICATION_TOKEN;
 
-				for (u_int b = 0; b < vBuffer.size(); b++)
-				{
-						sFile += vBuffer[b] + "\n";
+				unsigned int uSize = Buffer.Size();
+				for (unsigned int uIdx = 0; uIdx < uSize; uIdx++) {
+					const CBufLine& Line = Buffer.GetBufLine(uIdx);
+					sFile +=
+						"@" + CString(Line.GetTime()) + " " +
+						Line.GetFormat() + "\n" +
+						Line.GetText() + "\n";
 				}
 
 				CBlowfish c(m_sPassword, BF_ENCRYPT);

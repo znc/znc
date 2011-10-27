@@ -502,17 +502,15 @@ CString& CUser::ExpandString(const CString& sStr, CString& sRet) const {
 }
 
 CString CUser::AddTimestamp(const CString& sStr) const {
-	CString sRet;
-	return AddTimestamp(sStr, sRet);
+	time_t tm;
+	return AddTimestamp(time(&tm), sStr);
 }
 
-CString& CUser::AddTimestamp(const CString& sStr, CString& sRet) const {
+CString CUser::AddTimestamp(time_t tm, const CString& sStr) const {
 	char szTimestamp[1024];
-	time_t tm;
-	sRet = sStr;
+	CString sRet = sStr;
 
 	if (!GetTimestampFormat().empty() && (m_bAppendTimestamp || m_bPrependTimestamp)) {
-		time(&tm);
 		tm += (time_t)(m_fTimezoneOffset * 60 * 60); // offset is in hours
 		size_t i = strftime(szTimestamp, sizeof(szTimestamp), GetTimestampFormat().c_str(), localtime(&tm));
 		// If strftime returns 0, an error occured in format, or result is empty
@@ -530,6 +528,7 @@ CString& CUser::AddTimestamp(const CString& sStr, CString& sRet) const {
 			sRet += szTimestamp;
 		}
 	}
+
 	return sRet;
 }
 

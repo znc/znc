@@ -7,20 +7,32 @@
  */
 
 #include <znc/Buffer.h>
+#include <znc/znc.h>
+#include <znc/Client.h>
+#include <znc/User.h>
 
-CBufLine::CBufLine(const CString& sPre, const CString& sPost, bool bIncNick=true) {
-	m_sPre = sPre;
-	m_sPost = sPost;
-	m_bIncNick = bIncNick;
+CBufLine::CBufLine(const CString& sFormat, const CString& sText, time_t tm) {
+	m_sFormat = sFormat;
+	m_sText = sText;
+	if (tm == 0)
+		UpdateTime();
+	else
+		m_tm = tm;
 }
 
 CBufLine::~CBufLine() {}
 
-void CBufLine::GetLine(const CString& sTarget, CString& sRet) const {
-	if (m_bIncNick)
-		sRet = m_sPre + sTarget + m_sPost;
-	else
-		sRet = m_sPre + m_sPost;
+CString CBufLine::GetLine(const CClient& Client, const MCString& msParams) const {
+	MCString msThisParams = msParams;
+
+	if (Client.HasServerTime()) {
+		msThisParams["text"] = m_sText;
+		CString sStr = CString::NamedFormat(m_sFormat, msThisParams);
+		return "@" + CString(m_tm) + " " + sStr;
+	} else {
+		msThisParams["text"] = Client.GetUser()->AddTimestamp(m_tm, m_sText);
+		return CString::NamedFormat(m_sFormat, msThisParams);
+	}
 }
 
 CBuffer::CBuffer(unsigned int uLineCount) {
@@ -29,7 +41,7 @@ CBuffer::CBuffer(unsigned int uLineCount) {
 
 CBuffer::~CBuffer() {}
 
-int CBuffer::AddLine(const CString& sPre, const CString& sPost, bool bIncNick) {
+int CBuffer::AddLine(const CString& sFormat, const CString& sText, time_t tm) {
 	if (!m_uLineCount) {
 		return 0;
 	}
@@ -38,57 +50,52 @@ int CBuffer::AddLine(const CString& sPre, const CString& sPost, bool bIncNick) {
 		erase(begin());
 	}
 
-	push_back(CBufLine(sPre, sPost, bIncNick));
+	push_back(CBufLine(sFormat, sText, tm));
 	return size();
 }
 
-int CBuffer::UpdateLine(const CString& sPre, const CString& sPost, bool bIncNick) {
+int CBuffer::UpdateLine(const CString& sMatch, const CString& sFormat, const CString& sText) {
 	for (iterator it = begin(); it != end(); ++it) {
-		if (it->GetPre() == sPre) {
-			it->SetPost(sPost);
-			it->SetIncNick(bIncNick);
+		if (it->GetFormat().compare(0, sMatch.length(), sMatch) == 0) {
+			it->SetFormat(sFormat);
+			it->SetText(sText);
+			it->UpdateTime();
 			return size();
 		}
 	}
 
-	return AddLine(sPre, sPost, bIncNick);
+	return AddLine(sFormat, sText);
 }
 
-int CBuffer::UpdateExactLine(const CString& sPre, const CString& sPost, bool bIncNick) {
+int CBuffer::UpdateExactLine(const CString& sFormat, const CString& sText) {
 	for (iterator it = begin(); it != end(); ++it) {
-		if (it->GetPre() == sPre && it->GetPost() == sPost)
+		if (it->GetFormat() == sFormat && it->GetText() == sText) {
 			return size();
+		}
 	}
 
-	return AddLine(sPre, sPost, bIncNick);
+	return AddLine(sFormat, sText);
 }
 
-bool CBuffer::GetLine(const CString& sTarget, CString& sRet, unsigned int uIdx) const {
-	if (uIdx >= size()) {
+const CBufLine& CBuffer::GetBufLine(unsigned int uIdx) const {
+	return (*this)[uIdx];
+}
+
+CString CBuffer::GetLine(unsigned int uIdx, const CClient& Client, const MCString& msParams) const {
+	return (*this)[uIdx].GetLine(Client, msParams);
+}
+
+bool CBuffer::SetLineCount(unsigned int u, bool bForce) {
+	if (!bForce && u > CZNC::Get().GetMaxBufferSize()) {
 		return false;
 	}
 
-	(*this)[uIdx].GetLine(sTarget, sRet);
-	return true;
-}
-
-bool CBuffer::GetNextLine(const CString& sTarget, CString& sRet) {
-	sRet = "";
-
-	if (!size()) {
-		return false;
-	}
-
-	begin()->GetLine(sTarget, sRet);
-	erase(begin());
-	return true;
-}
-
-void CBuffer::SetLineCount(unsigned int u) {
 	m_uLineCount = u;
 
 	// We may need to shrink the buffer if the allowed size got smaller
 	while (size() > m_uLineCount) {
 		erase(begin());
 	}
+
+	return true;
 }

@@ -15,25 +15,34 @@
 
 using std::deque;
 
+// Forward Declarations
+class CClient;
+// !Forward Declarations
+
 class CBufLine {
 public:
-	CBufLine(const CString& sPre, const CString& sPost, bool bIncNick);
+	CBufLine(const CString& sFormat, const CString& sText = "", time_t tm = 0);
 	~CBufLine();
-	void GetLine(const CString& sTarget, CString& sRet) const;
+	CString GetLine(const CClient& Client, const MCString& msParams) const;
+	void UpdateTime() { time(&m_tm); }
 
-	const CString& GetPre() const { return m_sPre; }
-	const CString& GetPost() const { return m_sPost; }
-	bool GetIncNick() const { return m_bIncNick; }
+	// Setters
+	void SetFormat(const CString& sFormat) { m_sFormat = sFormat; }
+	void SetText(const CString& sText) { m_sText = sText; }
+	void SetTime(time_t tm) { m_tm = tm; }
+	// !Setters
 
-	void SetPre(const CString& s) { m_sPre = s; }
-	void SetPost(const CString& s) { m_sPost = s; }
-	void SetIncNick(bool b) { m_bIncNick = b; }
+	// Getters
+	const CString& GetFormat() const { return m_sFormat; }
+	const CString& GetText() const { return m_sText; }
+	time_t GetTime() const { return m_tm; }
+	// !Getters
 
 private:
 protected:
-	CString m_sPre;
-	CString m_sPost;
-	bool    m_bIncNick;
+	CString m_sFormat;
+	CString m_sText;
+	time_t m_tm;
 };
 
 class CBuffer : private deque<CBufLine> {
@@ -41,18 +50,19 @@ public:
 	CBuffer(unsigned int uLineCount = 100);
 	~CBuffer();
 
-	int AddLine(const CString& sPre, const CString& sPost, bool bIncNick = true);
-	/// Same as AddLine, but if there is already a line with sPre it is replaced.
-	int UpdateLine(const CString& sPre, const CString& sPost, bool bIncNick = true);
-	/// Same as UpdateLine, but does nothing if this exact line already exists
-	int UpdateExactLine(const CString& sPre, const CString& sPost, bool bIncNick = true);
-	bool GetNextLine(const CString& sTarget, CString& sRet);
-	bool GetLine(const CString& sTarget, CString& sRet, unsigned int uIdx) const;
+	int AddLine(const CString& sFormat, const CString& sText = "", time_t tm = 0);
+	/// Same as AddLine, but replaces a line whose format string starts with sMatch if there is one.
+	int UpdateLine(const CString& sMatch, const CString& sFormat, const CString& sText = "");
+	/// Same as UpdateLine, but does nothing if this exact line already exists.
+	int UpdateExactLine(const CString& sFormat, const CString& sText = "");
+	const CBufLine& GetBufLine(unsigned int uIdx) const;
+	CString GetLine(unsigned int uIdx, const CClient& Client, const MCString& msParams = MCString::EmptyMap) const;
+	unsigned int Size() const { return size(); }
 	bool IsEmpty() const { return empty(); }
 	void Clear() { clear(); }
 
 	// Setters
-	void SetLineCount(unsigned int u);
+	bool SetLineCount(unsigned int u, bool bForce = false);
 	// !Setters
 
 	// Getters

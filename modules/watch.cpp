@@ -167,11 +167,13 @@ public:
 	}
 
 	virtual void OnClientLogin() {
-		CString sBufLine;
-		while (m_Buffer.GetNextLine(m_pNetwork->GetCurNick(), sBufLine)) {
-			PutUser(sBufLine);
-		}
+		MCString msParams;
+		msParams["target"] = m_pNetwork->GetCurNick();
 
+		unsigned int uSize = m_Buffer.Size();
+		for (unsigned int uIdx = 0; uIdx < uSize; uIdx++) {
+			PutUser(m_Buffer.GetLine(uIdx, *GetClient(), msParams));
+		}
 		m_Buffer.Clear();
 	}
 
@@ -289,11 +291,9 @@ private:
 
 			if (WatchEntry.IsMatch(Nick, sMessage, sSource, m_pNetwork)) {
 				if (m_pNetwork->IsUserAttached()) {
-					m_pNetwork->PutUser(":" + WatchEntry.GetTarget() + "!watch@znc.in PRIVMSG " +
-							m_pNetwork->GetCurNick() + " :" + sMessage);
+					m_pNetwork->PutUser(":" + WatchEntry.GetTarget() + "!watch@znc.in PRIVMSG " + m_pNetwork->GetCurNick() + " :" + sMessage);
 				} else {
-					m_Buffer.AddLine(":" + WatchEntry.GetTarget() + "!watch@znc.in PRIVMSG ",
-							" :" + m_pUser->AddTimestamp(sMessage));
+					m_Buffer.AddLine(":" + _NAMEDFMT(WatchEntry.GetTarget()) + "!watch@znc.in PRIVMSG {target} :{text}", sMessage);
 				}
 			}
 		}

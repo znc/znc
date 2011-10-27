@@ -49,9 +49,9 @@ CIRCNetwork::CIRCNetwork(CUser *pUser, const CString& sName) {
 	m_sChanPrefixes = "";
 	m_bIRCAway = false;
 
-	m_RawBuffer.SetLineCount(100);   // This should be more than enough raws, especially since we are buffering the MOTD separately
-	m_MotdBuffer.SetLineCount(200);  // This should be more than enough motd lines
-	m_QueryBuffer.SetLineCount(250);
+	m_RawBuffer.SetLineCount(100, true);   // This should be more than enough raws, especially since we are buffering the MOTD separately
+	m_MotdBuffer.SetLineCount(200, true);  // This should be more than enough motd lines
+	m_QueryBuffer.SetLineCount(250, true);
 }
 
 CIRCNetwork::CIRCNetwork(CUser *pUser, const CIRCNetwork *pNetwork, bool bCloneChans) {
@@ -67,9 +67,9 @@ CIRCNetwork::CIRCNetwork(CUser *pUser, const CIRCNetwork *pNetwork, bool bCloneC
 	m_sChanPrefixes = "";
 	m_bIRCAway = false;
 
-	m_RawBuffer.SetLineCount(100);   // This should be more than enough raws, especially since we are buffering the MOTD separately
-	m_MotdBuffer.SetLineCount(200);  // This should be more than enough motd lines
-	m_QueryBuffer.SetLineCount(250);
+	m_RawBuffer.SetLineCount(100, true);   // This should be more than enough raws, especially since we are buffering the MOTD separately
+	m_MotdBuffer.SetLineCount(200, true);  // This should be more than enough motd lines
+	m_QueryBuffer.SetLineCount(250, true);
 
 	// Servers
 	const vector<CServer*>& vServers = pNetwork->GetServers();
@@ -344,14 +344,16 @@ void CIRCNetwork::ClientConnected(CClient *pClient) {
 
 	m_vClients.push_back(pClient);
 
+	unsigned int uIdx, uSize;
+	MCString msParams;
+	msParams["target"] = GetIRCNick().GetNick();
+
 	if (m_RawBuffer.IsEmpty()) {
 		pClient->PutClient(":irc.znc.in 001 " + pClient->GetNick() + " :- Welcome to ZNC -");
 	} else {
-		unsigned int uIdx = 0;
-		CString sLine;
-
-		while (m_RawBuffer.GetLine(GetIRCNick().GetNick(), sLine, uIdx++)) {
-			pClient->PutClient(sLine);
+		uSize = m_RawBuffer.Size();
+		for (uIdx = 0; uIdx < uSize; uIdx++) {
+			pClient->PutClient(m_RawBuffer.GetLine(uIdx, *pClient, msParams));
 		}
 
 		// The assumption is that the client got this nick from the 001 reply
@@ -359,11 +361,9 @@ void CIRCNetwork::ClientConnected(CClient *pClient) {
 	}
 
 	// Send the cached MOTD
-	unsigned int uIdx = 0;
-	CString sLine;
-
-	while (m_MotdBuffer.GetLine(GetIRCNick().GetNick(), sLine, uIdx++)) {
-		pClient->PutClient(sLine);
+	uSize = m_MotdBuffer.Size();
+	for (uIdx = 0; uIdx < uSize; uIdx++) {
+		pClient->PutClient(m_MotdBuffer.GetLine(uIdx, *pClient, msParams));
 	}
 
 	if (GetIRCSock() != NULL) {
@@ -391,11 +391,13 @@ void CIRCNetwork::ClientConnected(CClient *pClient) {
 		}
 	}
 
-	CString sBufLine;
-	while (m_QueryBuffer.GetNextLine(GetIRCNick().GetNick(), sBufLine)) {
-		NETWORKMODULECALL(OnPrivBufferPlayLine(*pClient, sBufLine), m_pUser, this, NULL, continue);
-		pClient->PutClient(sBufLine);
+	uSize = m_QueryBuffer.Size();
+	for (uIdx = 0; uIdx < uSize; uIdx++) {
+		CString sLine = m_QueryBuffer.GetLine(uIdx, *pClient, msParams);
+		NETWORKMODULECALL(OnPrivBufferPlayLine(*pClient, sLine), m_pUser, this, NULL, continue);
+		pClient->PutClient(sLine);
 	}
+	m_QueryBuffer.Clear();
 
 	// Tell them why they won't connect
 	if (!m_pUser->GetIRCConnectEnabled())

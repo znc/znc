@@ -239,7 +239,7 @@ void CClient::ReadLine(const CString& sData) {
 			CChan* pChan = m_pNetwork->FindChan(sTarget);
 
 			if ((pChan) && (pChan->KeepBuffer())) {
-				pChan->AddBuffer(":" + GetNickMask() + " NOTICE " + sTarget + " :" + m_pUser->AddTimestamp(sMsg));
+				pChan->AddBuffer(":" + _NAMEDFMT(GetNickMask()) + " NOTICE " + _NAMEDFMT(sTarget) + " :{text}", sMsg);
 			}
 
 			// Relay to the rest of the clients that may be connected to this user
@@ -285,7 +285,7 @@ void CClient::ReadLine(const CString& sData) {
 					sCTCP = "ACTION " + sMessage;
 
 					if (pChan && pChan->KeepBuffer()) {
-						pChan->AddBuffer(":" + GetNickMask() + " PRIVMSG " + sTarget + " :\001ACTION " + m_pUser->AddTimestamp(sMessage) + "\001");
+						pChan->AddBuffer(":" + _NAMEDFMT(GetNickMask()) + " PRIVMSG " + _NAMEDFMT(sTarget) + " :\001ACTION {text}\001", sMessage);
 					}
 
 					// Relay to the rest of the clients that may be connected to this user
@@ -333,7 +333,7 @@ void CClient::ReadLine(const CString& sData) {
 			CChan* pChan = m_pNetwork->FindChan(sTarget);
 
 			if ((pChan) && (pChan->KeepBuffer())) {
-				pChan->AddBuffer(":" + GetNickMask() + " PRIVMSG " + sTarget + " :" + m_pUser->AddTimestamp(sMsg));
+				pChan->AddBuffer(":" + _NAMEDFMT(GetNickMask()) + " PRIVMSG " + _NAMEDFMT(sTarget) + " :{text}", sMsg);
 			}
 
 			PutIRC("PRIVMSG " + sTarget + " :" + sMsg);
@@ -768,7 +768,7 @@ void CClient::HandleCap(const CString& sLine)
 		for (SCString::iterator i = ssOfferCaps.begin(); i != ssOfferCaps.end(); ++i) {
 			sRes += *i + " ";
 		}
-		RespondCap("LS :" + sRes + "userhost-in-names multi-prefix");
+		RespondCap("LS :" + sRes + "userhost-in-names multi-prefix znc.in/server-time");
 		m_bInCap = true;
 	} else if (sSubCmd.Equals("END")) {
 		m_bInCap = false;
@@ -784,7 +784,7 @@ void CClient::HandleCap(const CString& sLine)
 			if (sCap.TrimPrefix("-"))
 				bVal = false;
 
-			bool bAccepted = ("multi-prefix" == sCap) || ("userhost-in-names" == sCap);
+			bool bAccepted = ("multi-prefix" == sCap) || ("userhost-in-names" == sCap) || ("znc.in/server-time" == sCap);
 			GLOBALMODULECALL(IsClientCapSupported(this, sCap, bVal), bAccepted = true);
 
 			if (!bAccepted) {
@@ -804,6 +804,8 @@ void CClient::HandleCap(const CString& sLine)
 				m_bNamesx = bVal;
 			} else if ("userhost-in-names" == *it) {
 				m_bUHNames = bVal;
+			} else if ("znc.in/server-time" == *it) {
+				m_bServerTime = bVal;
 			}
 			GLOBALMODULECALL(OnClientCapRequest(this, *it, bVal), NOTHING);
 
@@ -838,6 +840,10 @@ void CClient::HandleCap(const CString& sLine)
 		if (m_bUHNames) {
 			m_bUHNames = false;
 			ssRemoved.insert("userhost-in-names");
+		}
+		if (m_bServerTime) {
+			m_bServerTime = false;
+			ssRemoved.insert("znc.in/server-time");
 		}
 		CString sList = "";
 		for (SCString::iterator i = ssRemoved.begin(); i != ssRemoved.end(); ++i) {

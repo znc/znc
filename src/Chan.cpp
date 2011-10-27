@@ -26,9 +26,9 @@ CChan::CChan(const CString& sName, CIRCNetwork* pNetwork, bool bInConfig, CConfi
 	m_bInConfig = bInConfig;
 	m_Nick.SetNetwork(m_pNetwork);
 	m_bDetached = false;
-	m_uBufferCount = m_pNetwork->GetUser()->GetBufferCount();
-	m_bKeepBuffer = m_pNetwork->GetUser()->KeepBuffer();
 	m_bDisabled = false;
+	SetBufferCount(m_pNetwork->GetUser()->GetBufferCount(), true);
+	SetKeepBuffer(m_pNetwork->GetUser()->KeepBuffer());
 	Reset();
 
 	if (pConfig) {
@@ -104,14 +104,6 @@ void CChan::Clone(CChan& chan) {
 		}
 		SetDetached(chan.IsDetached());
 	}
-}
-
-bool CChan::SetBufferCount(unsigned int u, bool bForce) {
-	if (!bForce && u > CZNC::Get().GetMaxBufferSize())
-		return false;
-	m_uBufferCount = u;
-	TrimBuffer(m_uBufferCount);
-	return true;
 }
 
 void CChan::Cycle() const {
@@ -516,34 +508,8 @@ CNick* CChan::FindNick(const CString& sNick) {
 	return (it != m_msNicks.end()) ? &it->second : NULL;
 }
 
-int CChan::AddBuffer(const CString& sLine) {
-	// Todo: revisit the buffering
-	if (!m_uBufferCount) {
-		return 0;
-	}
-
-	if (m_vsBuffer.size() >= m_uBufferCount) {
-		m_vsBuffer.erase(m_vsBuffer.begin());
-	}
-
-	m_vsBuffer.push_back(sLine);
-	return m_vsBuffer.size();
-}
-
-void CChan::ClearBuffer() {
-	m_vsBuffer.clear();
-}
-
-void CChan::TrimBuffer(const unsigned int uMax) {
-	if (m_vsBuffer.size() > uMax) {
-		m_vsBuffer.erase(m_vsBuffer.begin(), m_vsBuffer.begin() + (m_vsBuffer.size() - uMax));
-	}
-}
-
 void CChan::SendBuffer(CClient* pClient) {
 	if (m_pNetwork && m_pNetwork->IsUserAttached()) {
-		const vector<CString>& vsBuffer = GetBuffer();
-
 		// in the event that pClient is NULL, need to send this to all clients for the user
 		// I'm presuming here that pClient is listed inside vClients thus vClients at this
 		// point can't be empty.
@@ -558,7 +524,7 @@ void CChan::SendBuffer(CClient* pClient) {
 		// if pClient is not NULL, the loops break after the first iteration.
 		//
 		// Rework this if you like ...
-		if (vsBuffer.size()) {
+		if (!m_Buffer.IsEmpty()) {
 			const vector<CClient*> & vClients = m_pNetwork->GetClients();
 			for (size_t uClient = 0; uClient < vClients.size(); ++uClient) {
 
@@ -570,8 +536,9 @@ void CChan::SendBuffer(CClient* pClient) {
 					m_pNetwork->PutUser(":***!znc@znc.in PRIVMSG " + GetName() + " :Buffer Playback...", pUseClient);
 				}
 
-				for (unsigned int a = 0; a < vsBuffer.size(); a++) {
-					CString sLine(vsBuffer[a]);
+				unsigned int uSize = m_Buffer.Size();
+				for (unsigned int uIdx = 0; uIdx < uSize; uIdx++) {
+					CString sLine = m_Buffer.GetLine(uIdx, *pClient);
 					NETWORKMODULECALL(OnChanBufferPlayLine(*this, *pUseClient, sLine), m_pNetwork->GetUser(), m_pNetwork, NULL, continue);
 					m_pNetwork->PutUser(sLine, pUseClient);
 				}
