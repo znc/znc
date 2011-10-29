@@ -734,6 +734,7 @@ public:
 
 		VCString vsArgs;
 
+		pNetwork->DelServers();
 		WebSock.GetRawParam("servers").Split("\n", vsArgs);
 		for (unsigned int a = 0; a < vsArgs.size(); a++) {
 			pNetwork->AddServer(vsArgs[a].Trim_n());
