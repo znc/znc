@@ -2,17 +2,19 @@
 
 ifeq "$(PERL_ON)" "yes"
 # We execute this now so that we see the 'beauty' of these flags in make's output
-PERLCOMMON   := $(shell $(PERL) -MExtUtils::Embed -e perl_inc -e ldopts)
+PERL_CXX   := $(shell $(PERL) -MExtUtils::Embed -e perl_inc)
+PERL_LD    := $(shell $(PERL) -MExtUtils::Embed -e ldopts)
 # Perl API is ugly, casting string literals to char* and redeclaring functions :(
-PERLCOMMON   += -Wno-write-strings -Wno-redundant-decls -Wno-missing-declarations
+PERL_CXX   += -Wno-write-strings -Wno-redundant-decls -Wno-missing-declarations
 # This is for SWIG
-PERLCOMMON   += -DSWIG_TYPE_TABLE=znc
-modperlFLAGS := $(PERLCOMMON)
+PERL_CXX   += -DSWIG_TYPE_TABLE=znc
+modperlCXXFLAGS := $(PERL_CXX)
+modperlLDFLAGS  := $(PERL_LD)
 # Find additional headers for out-of-tree build
-modperlFLAGS += -I.
+modperlCXXFLAGS += -I.
 
 PERLHOOK     := modperl_install
-CLEAN    += modperl/ZNC.so modperl/ZNC.pm
+CLEAN    += modperl/ZNC.so modperl/ZNC.pm modperl/ZNC.o
 CLEAN    += modperl/swigperlrun.h modperl/ZNC.cpp modperl/functions.cpp
 
 else
@@ -23,12 +25,15 @@ endif
 
 install: $(PERLHOOK)
 
-modperl.so: modperl/ZNC.so modperl/swigperlrun.h
-modperl/ZNC.so: modperl/ZNC.cpp Makefile modperl/functions.cpp
+modperl.so: modperl/ZNC.so modperl/swigperlrun.h modperl/functions.cpp
+modperl/ZNC.so: modperl/ZNC.o Makefile
+	$(E) Linking ZNC Perl bindings library...
+	$(Q)$(CXX) $(MODFLAGS) $(LDFLAGS) $(MODLINK) $(PERL_LD) -o $@ $<
+modperl/ZNC.o: modperl/ZNC.cpp Makefile
 	@mkdir -p modperl
 	@mkdir -p .depend
 	$(E) Building ZNC Perl bindings library...
-	$(Q)$(CXX) $(MODFLAGS) $(LDFLAGS) $(MODLINK) -I$(srcdir) -MMD -MF .depend/modperl.library.dep $(PERLCOMMON) -Wno-unused-variable -o $@ $<
+	$(Q)$(CXX) $(MODFLAGS) -I$(srcdir) -MMD -MF .depend/modperl.library.dep $(PERL_CXX) -Wno-unused-variable -o $@ $< -c
 ifneq "$(SWIG)" ""
 modperl/swigperlrun.h:
 	@mkdir -p modperl

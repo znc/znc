@@ -3,7 +3,8 @@ FILES       := $(shell echo $(FILES) | sed -e "s:modtcl::")
 else
 TCLHOOK     := modtcl_install
 endif
-modtclFLAGS := $(TCL_FLAGS)
+modtclCXXFLAGS := $(TCL_FLAGS)
+modtclLDFLAGS := $(TCL_FLAGS)
 
 .PHONY: modtcl_install
 

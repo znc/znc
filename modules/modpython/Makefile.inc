@@ -5,11 +5,13 @@ PYTHONCOMMON := $(PY_CFLAGS)
 PYTHONCOMMON += -DSWIG_TYPE_TABLE=znc
 PYTHONCOMMON += -Wno-missing-field-initializers -Wno-unused -Wno-shadow
 PYTHONCOMMON += -Wno-missing-declarations -Wno-uninitialized
-modpythonFLAGS := $(PYTHONCOMMON) -I. $(PY_LDFLAGS)
+modpythonCXXFLAGS := $(PYTHONCOMMON) -I.
+modpythonLDFLAGS  := $(PY_LDFLAGS)
 
 PYTHONHOOK   := modpython_install
 CLEAN    += modpython/_znc_core.so modpython/_znc_core.cpp modpython/znc_core.py modpython/znc_core.pyc
 CLEAN    += modpython/swigpyrun.h modpython/znc.pyc modpython/functions.cpp modpython/compiler *.pyc
+CLEAN    += modpython/_znc_core.o modpython/compiler.o
 ifneq "$(srcdir)" "."
 # Copied from source for out-of-tree builds
 CLEAN    += modpython/znc.py
@@ -35,11 +37,14 @@ modpython_all: modpython/_znc_core.so modpython/swigpyrun.h modpython/znc.pyc mo
 modpython_all: $(addsuffix c, $(notdir $(wildcard $(srcdir)/*.py)))
 
 modpython/znc_core.py: modpython/_znc_core.so
-modpython/_znc_core.so: modpython/_znc_core.cpp Makefile
+modpython/_znc_core.o: modpython/_znc_core.cpp Makefile
 	@mkdir -p modpython
 	@mkdir -p .depend
 	$(E) Building ZNC python bindings library...
-	$(Q)$(CXX) $(MODFLAGS) $(LDFLAGS) $(MODLINK) -I$(srcdir) -MMD -MF .depend/modpython.library.dep $(PYTHONCOMMON) -o $@ $< $(PY_LDFLAGS)
+	$(Q)$(CXX) $(MODFLAGS) -I$(srcdir) -MMD -MF .depend/modpython.library.dep $(PYTHONCOMMON) -o $@ $< -c
+modpython/_znc_core.so: modpython/_znc_core.o Makefile
+	$(E) Linking ZNC python bindings library...
+	$(Q)$(CXX) $(MODFLAGS) $(LDFLAGS) $(MODLINK) -o $@ $< $(PY_LDFLAGS)
 ifneq "$(SWIG)" ""
 modpython/swigpyrun.h:
 	@mkdir -p modpython
@@ -50,14 +55,17 @@ modpython/_znc_core.cpp: modpython/modpython.i Makefile
 	@mkdir -p .depend
 	$(Q)$(SWIG) -python -py3 -c++ -shadow -outdir modpython -I$(srcdir) -MMD -MF .depend/modpython.swig.dep -w362,315,401 -o $@ $<
 endif
-modpython.so: modpython/functions.cpp
+modpython.o: modpython/functions.cpp
 modpython/functions.cpp: modpython/functions.in modpython/codegen.pl
 	@mkdir -p modpython
 	$(Q)$(PERL) $(srcdir)/modpython/codegen.pl $< $@
 
-modpython/compiler: modpython/compiler.cpp Makefile
+modpython/compiler.o: modpython/compiler.cpp Makefile
 	$(E) Building optimizer for python files...
-	$(Q)$(CXX) $(PYTHONCOMMON) -o $@ $< $(PY_LDFLAGS)
+	$(Q)$(CXX) $(PYTHONCOMMON) -o $@ $< -c -MMD -MF .depend/modpython.compiler.dep
+modpython/compiler: modpython/compiler.o Makefile
+	$(E) Building optimizer for python files...
+	$(Q)$(CXX) -o $@ $< $(PY_LDFLAGS)
 
 modpython_install: install_datadir modpython_all
 	-for i in *.pyc $(srcdir)/*.py; do \

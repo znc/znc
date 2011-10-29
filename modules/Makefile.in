@@ -81,16 +81,16 @@ endif
 ifeq "@SASL@" ""
 FILES    := $(shell echo $(FILES) | sed -e "s:extra/saslauth::")
 endif
-saslauthFLAGS := -lsasl2
+saslauthLDFLAGS := -lsasl2
 
 ifeq "@CHARSET@" ""
 FILES    := $(shell echo $(FILES) | sed -e "s:extra/charset::")
 endif
-charsetFLAGS := @LIBICONV@
+charsetLDFLAGS := @LIBICONV@
 
 TARGETS  := $(addsuffix .so, $(FILES))
 
-CLEAN    += *.so extra/*.so
+CLEAN    += *.so extra/*.so *.o extra/*.o
 
 .PHONY: all clean install install_datadir uninstall
 
@@ -115,11 +115,15 @@ install_datadir:
 clean:
 	rm -rf $(CLEAN)
 
-%.so: %.cpp Makefile
+%.o: %.cpp Makefile
 	@mkdir -p .depend
 	@mkdir -p extra
 	$(E) Building $(if $(filter %extra/,$(dir $<)),extra )module $(notdir $(basename $@))...
-	$(Q)$(CXX) $(MODFLAGS) $(LDFLAGS) $(MODLINK) -o $@ $< $($(notdir $(basename $@))FLAGS) -MMD -MF .depend/$(notdir $@).dep
+	$(Q)$(CXX) $(MODFLAGS) -c -o $@ $< $($(notdir $(basename $@))CXXFLAGS) -MMD -MF .depend/$(notdir $@).dep
+
+%.so: %.o Makefile
+	$(E) Linking $(if $(filter %extra/,$(dir $<)),extra )module $(notdir $(basename $@))...
+	$(Q)$(CXX) $(MODFLAGS) $(LDFLAGS) $(MODLINK) -o $@ $< $($(notdir $(basename $@))LDFLAGS)
 
 uninstall:
 	# Yes, we are lazy, just remove everything in there
