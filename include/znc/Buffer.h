@@ -54,6 +54,7 @@ public:
 	/// Same as AddLine, but replaces a line whose format string starts with sMatch if there is one.
 	int UpdateLine(const CString& sMatch, const CString& sFormat, const CString& sText = "");
 	/// Same as UpdateLine, but does nothing if this exact line already exists.
+	/// We need this because "/version" sends us the 005 raws again
 	int UpdateExactLine(const CString& sFormat, const CString& sText = "");
 	const CBufLine& GetBufLine(unsigned int uIdx) const;
 	CString GetLine(unsigned int uIdx, const CClient& Client, const MCString& msParams = MCString::EmptyMap) const;
