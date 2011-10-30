@@ -560,6 +560,11 @@ public:
 			o3["DisplayName"] = "Detached";
 			if (pChan && pChan->IsDetached()) { o3["Checked"] = "true"; }
 
+			CTemplate& o4 = Tmpl.AddRow("OptionLoop");
+			o4["Name"] = "disabled";
+			o4["DisplayName"] = "Disabled";
+			if (pChan && pChan->IsDisabled()) { o4["Checked"] = "true"; }
+
 			FOR_EACH_MODULE(i, pUser) {
 				CTemplate& mod = Tmpl.AddRow("EmbeddedModuleLoop");
 				mod.insert(Tmpl.begin(), Tmpl.end());
@@ -597,7 +602,6 @@ public:
 		pChan->SetKey(WebSock.GetParam("key"));
 
 		bool bDetached = WebSock.GetParam("detached").ToBool();
-
 		if (pChan->IsDetached() != bDetached) {
 			if (bDetached) {
 				pChan->DetachUser();
@@ -605,6 +609,12 @@ public:
 				pChan->AttachUser();
 			}
 		}
+
+		bool bDisabled = WebSock.GetParam("disabled").ToBool();
+		if (bDisabled)
+			pChan->Disable();
+		else
+			pChan->Enable();
 
 		CTemplate TmplMod;
 		TmplMod["User"] = pUser->GetUserName();
