@@ -357,6 +357,7 @@ CString CZNC::ExpandConfigPath(const CString& sConfigFile, bool bAllowMkDir) {
 
 bool CZNC::WriteConfig() {
 	if (GetConfigFile().empty()) {
+		DEBUG("Config file name is empty?!");
 		return false;
 	}
 
@@ -364,6 +365,7 @@ bool CZNC::WriteConfig() {
 	CFile *pFile = new CFile(GetConfigFile() + "~");
 
 	if (!pFile->Open(O_WRONLY | O_CREAT | O_TRUNC, 0600)) {
+		DEBUG("Could not write config to " + GetConfigFile() + "~: " + CString(strerror(errno)));
 		delete pFile;
 		return false;
 	}
@@ -372,6 +374,7 @@ bool CZNC::WriteConfig() {
 	// The old file (= inode) is going away and thus a lock on it would be
 	// useless. These lock should always succeed (races, anyone?).
 	if (!pFile->TryExLock()) {
+		DEBUG("Error while locking the new config file, errno says: " + CString(strerror(errno)));
 		pFile->Delete();
 		delete pFile;
 		return false;
@@ -465,7 +468,7 @@ bool CZNC::WriteConfig() {
 
 	// We wrote to a temporary name, move it to the right place
 	if (!pFile->Move(GetConfigFile(), true)) {
-		DEBUG("Error while replacing the config file with a new version");
+		DEBUG("Error while replacing the config file with a new version, errno says " << strerror(errno));
 		pFile->Delete();
 		delete pFile;
 		return false;
