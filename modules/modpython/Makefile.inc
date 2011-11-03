@@ -3,8 +3,10 @@
 ifeq "$(PYTHON_ON)" "yes"
 PYTHONCOMMON := $(PY_CFLAGS)
 PYTHONCOMMON += -DSWIG_TYPE_TABLE=znc
+# Could someone fix all of these in swig / python, please?
 PYTHONCOMMON += -Wno-missing-field-initializers -Wno-unused -Wno-shadow
-PYTHONCOMMON += -Wno-missing-declarations -Wno-uninitialized
+PYTHONCOMMON += -Wno-missing-declarations -Wno-uninitialized -Wno-switch-enum
+PYTHONCOMMON += -Wno-redundant-decls
 modpythonCXXFLAGS := $(PYTHONCOMMON) -I.
 modpythonLDFLAGS  := $(PY_LDFLAGS)
 
