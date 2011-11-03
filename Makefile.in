@@ -102,11 +102,11 @@ distclean: clean
 	$(Q)$(CXX) $(CXXFLAGS) -c -o $@ $< -MMD -MF .depend/$@.dep
 
 install: znc $(LIBZNC)
-	mkdir -p $(DESTDIR)$(bindir)
-	mkdir -p $(DESTDIR)$(includedir)/znc
-	mkdir -p $(DESTDIR)$(PKGCONFIGDIR)
-	mkdir -p $(DESTDIR)$(MODDIR)
-	mkdir -p $(DESTDIR)$(DATADIR)
+	test -d $(DESTDIR)$(bindir) || $(INSTALL) -d $(DESTDIR)$(bindir)
+	test -d $(DESTDIR)$(includedir)/znc || $(INSTALL) -d $(DESTDIR)$(includedir)/znc
+	test -d $(DESTDIR)$(PKGCONFIGDIR) || $(INSTALL) -d $(DESTDIR)$(PKGCONFIGDIR)
+	test -d $(DESTDIR)$(MODDIR) || $(INSTALL) -d $(DESTDIR)$(MODDIR)
+	test -d $(DESTDIR)$(DATADIR) || $(INSTALL) -d $(DESTDIR)$(DATADIR)
 	cp -R $(srcdir)/webskins $(DESTDIR)$(DATADIR)
 	find $(DESTDIR)$(DATADIR)/webskins -type d -exec chmod 0755 '{}' \;
 	find $(DESTDIR)$(DATADIR)/webskins -type f -exec chmod 0644 '{}' \;
@@ -118,7 +118,7 @@ install: znc $(LIBZNC)
 	$(INSTALL_DATA) znc.pc $(DESTDIR)$(PKGCONFIGDIR)
 	@$(MAKE) -C modules install DESTDIR=$(DESTDIR);
 	if test -n "$(LIBZNC)"; then \
-		mkdir -p $(DESTDIR)$(LIBZNCDIR) || exit 1 ; \
+		test -d $(DESTDIR)$(LIBZNCDIR) || $(INSTALL) -d $(DESTDIR)$(LIBZNCDIR) || exit 1 ; \
 		$(INSTALL_PROGRAM) $(LIBZNC) $(DESTDIR)$(LIBZNCDIR) || exit 1 ; \
 	fi
 	@$(MAKE) -C man install DESTDIR=$(DESTDIR)

@@ -101,10 +101,9 @@ install: all install_datadir
 
 install_datadir:
 	rm -rf $(DESTDIR)$(DATADIR)/modules
-	mkdir -p $(DESTDIR)$(MODDIR)
-	mkdir -p $(DESTDIR)$(DATADIR)/modules
+	test -d $(DESTDIR)$(MODDIR) || $(INSTALL) -d $(DESTDIR)$(MODDIR)
+	test -d $(DESTDIR)$(DATADIR)/modules || $(INSTALL) -d $(DESTDIR)$(DATADIR)/modules
 	rm -rf $(DESTDIR)$(MODDIR)/*.so
-	mkdir -p $(DESTDIR)$(DATADIR)/modules
 	cp -R $(srcdir)/data/* $(DESTDIR)$(DATADIR)/modules
 	if test "@EXTRA@" = "yes" ; then \
 		cp -R $(srcdir)/extra/data/* $(DESTDIR)$(DATADIR)/modules ; \
