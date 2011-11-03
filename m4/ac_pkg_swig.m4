@@ -1,5 +1,7 @@
 dnl @synopsis AC_PROG_SWIG([major.minor.micro])
 dnl
+dnl NOTICE: for new code, use http://www.gnu.org/s/autoconf-archive/ax_pkg_swig.html instead.
+dnl
 dnl This macro searches for a SWIG installation on your system. If
 dnl found you should call SWIG via $(SWIG). You can use the optional
 dnl first argument to check if the version of the available SWIG is
@@ -26,10 +28,12 @@ dnl @version 2004-09-20
 dnl
 dnl Modified by Alexey Sokolov <alexey@alexeysokolov.co.cc> on 2011-05-06
 dnl @license GPLWithACException
+dnl
+dnl NOTICE: for new code, use http://www.gnu.org/s/autoconf-archive/ax_pkg_swig.html instead.
 
 AC_DEFUN([AC_PROG_SWIG],[
 	SWIG_ERROR=""
-	AC_PATH_PROG([SWIG],[swig])
+	AC_PATH_PROGS([SWIG],[swig swig2.0])
 	if test -z "$SWIG" ; then
 dnl		AC_MSG_WARN([cannot find 'swig' program. You should look at http://www.swig.org])
 		SWIG_ERROR='SWIG is not installed. You should look at http://www.swig.org'
