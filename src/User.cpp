@@ -905,9 +905,10 @@ bool CUser::PutAllUser(const CString& sLine, CClient* pClient, CClient* pSkipCli
 }
 
 bool CUser::PutStatus(const CString& sLine, CClient* pClient, CClient* pSkipClient) {
-	for (unsigned int a = 0; a < m_vClients.size(); a++) {
-		if ((!pClient || pClient == m_vClients[a]) && pSkipClient != m_vClients[a]) {
-			m_vClients[a]->PutStatus(sLine);
+	vector<CClient*> vClients = GetAllClients();
+	for (unsigned int a = 0; a < vClients.size(); a++) {
+		if ((!pClient || pClient == vClients[a]) && pSkipClient != vClients[a]) {
+			vClients[a]->PutStatus(sLine);
 
 			if (pClient) {
 				return true;
@@ -919,9 +920,10 @@ bool CUser::PutStatus(const CString& sLine, CClient* pClient, CClient* pSkipClie
 }
 
 bool CUser::PutStatusNotice(const CString& sLine, CClient* pClient, CClient* pSkipClient) {
-	for (unsigned int a = 0; a < m_vClients.size(); a++) {
-		if ((!pClient || pClient == m_vClients[a]) && pSkipClient != m_vClients[a]) {
-			m_vClients[a]->PutStatusNotice(sLine);
+	vector<CClient*> vClients = GetAllClients();
+	for (unsigned int a = 0; a < vClients.size(); a++) {
+		if ((!pClient || pClient == vClients[a]) && pSkipClient != vClients[a]) {
+			vClients[a]->PutStatusNotice(sLine);
 
 			if (pClient) {
 				return true;
