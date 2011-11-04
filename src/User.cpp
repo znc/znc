@@ -524,7 +524,11 @@ CString CUser::AddTimestamp(time_t tm, const CString& sStr) const {
 			sRet += " " + sStr;
 		}
 		if (m_bAppendTimestamp) {
-			sRet += " ";
+			// From http://www.mirc.com/colors.html
+			// The Control+O key combination in mIRC inserts ascii character 15,
+			// which turns off all previous attributes, including color, bold, underline, and italics.
+			sRet += "\x0F ";
+			
 			sRet += szTimestamp;
 		}
 	}
