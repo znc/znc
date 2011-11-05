@@ -117,6 +117,8 @@ static const struct {
 	// Since there should never be more than one of these going on, this
 	// should work fine and makes the code simpler.
 	{"MODE", {
+		// "You're not a channel operator"
+		{"482", true},
 		// MODE I
 		{"346", false},
 		{"347", true},
