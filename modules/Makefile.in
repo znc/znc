@@ -17,7 +17,7 @@ sbindir     := @sbindir@
 localstatedir := @localstatedir@
 CXX      := @CXX@
 # CXXFLAGS are for the main binary, so don't use them here, use MODFLAGS instead
-MODFLAGS := @CPPFLAGS@ @MODFLAGS@ -I$(srcdir)/../include -I../include
+MODFLAGS := -I$(srcdir)/../include -I../include @CPPFLAGS@ @MODFLAGS@
 MODLINK  := @MODLINK@
 LDFLAGS  := @LDFLAGS@
 # LIBS are not and should not be used in here.
