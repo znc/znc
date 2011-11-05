@@ -571,6 +571,107 @@ class CAdminMod : public CModule {
 		return;
 	}
 
+	void AddNetwork(const CString& sLine) {
+		CString sUser = sLine.Token(1);
+		CString sNetwork = sLine.Token(2);
+		CUser *pUser = m_pUser;
+
+		if (sNetwork.empty()) {
+			sNetwork = sUser;
+		} else {
+			pUser = GetUser(sUser);
+			if (!pUser) {
+				return;
+			}
+		}
+
+		if (sNetwork.empty()) {
+			PutModule("Usage: " + sLine.Token(0) + " [user] network");
+			return;
+		}
+
+		if (pUser->FindNetwork(sNetwork)) {
+			PutModule(pUser->GetUserName() + " already has a network named [" + sNetwork + "]");
+			return;
+		}
+
+		if (pUser->AddNetwork(sNetwork)) {
+			PutModule("Network added [" + sNetwork + "]");
+		} else {
+			PutModule("Network could not be added.");
+		}
+	}
+
+	void DelNetwork(const CString& sLine) {
+		CString sUser = sLine.Token(1);
+		CString sNetwork = sLine.Token(2);
+		CUser *pUser = m_pUser;
+
+		if (sNetwork.empty()) {
+			sNetwork = sUser;
+		} else {
+			pUser = GetUser(sUser);
+			if (!pUser) {
+				return;
+			}
+		}
+
+		if (sNetwork.empty()) {
+			PutModule("Usage: " + sLine.Token(0) + " [user] network");
+			return;
+		}
+
+		if (!(pUser->FindNetwork(sNetwork))) {
+			PutModule(pUser->GetUserName() + " does not have a network named [" + sNetwork + "]");
+			return;
+		}
+
+		if (pUser->DeleteNetwork(sNetwork)) {
+			PutModule("Network deleted [" + sNetwork + "]");
+		} else {
+			PutModule("Network could not be deleted.");
+		}
+	}
+
+	void ListNetworks(const CString& sLine) {
+		CString sUser = sLine.Token(1);
+		CUser *pUser = m_pUser;
+
+		if (!sUser.empty()) {
+			pUser = GetUser(sUser);
+			if (!pUser) {
+				return;
+			}
+		}
+
+		const vector<CIRCNetwork*>& vNetworks = pUser->GetNetworks();
+
+		CTable Table;
+		Table.AddColumn("Network");
+		Table.AddColumn("OnIRC");
+		Table.AddColumn("IRC Server");
+		Table.AddColumn("IRC User");
+		Table.AddColumn("Channels");
+
+		for (unsigned int a = 0; a < vNetworks.size(); a++) {
+			CIRCNetwork* pNetwork = vNetworks[a];
+			Table.AddRow();
+			Table.SetCell("Network", pNetwork->GetName());
+			if (pNetwork->IsIRCConnected()) {
+				Table.SetCell("OnIRC", "Yes");
+				Table.SetCell("IRC Server", pNetwork->GetIRCServer());
+				Table.SetCell("IRC User", pNetwork->GetIRCNick().GetNickMask());
+				Table.SetCell("Channels", CString(pNetwork->GetChans().size()));
+			} else {
+				Table.SetCell("OnIRC", "No");
+			}
+		}
+
+		if (PutModule(Table) == 0) {
+			PutModule("No networks");
+		}
+	}
+
 	void AddServer(const CString& sLine) {
 		CString sUsername = sLine.Token(1);
 		CString sNetwork = sLine.Token(2);
@@ -878,6 +979,14 @@ public:
 			"username ctcp [reply]",                "Configure a new CTCP reply");
 		AddCommand("DelCTCP",      static_cast<CModCommand::ModCmdFunc>(&CAdminMod::DelCTCP),
 			"username ctcp",                        "Remove a CTCP reply");
+
+		// Network commands
+		AddCommand("AddNetwork", static_cast<CModCommand::ModCmdFunc>(&CAdminMod::AddNetwork),
+			"[username] network",                   "Add a network for a user");
+		AddCommand("DelNetwork", static_cast<CModCommand::ModCmdFunc>(&CAdminMod::DelNetwork),
+			"[username] network",                   "Delete a network for a user");
+		AddCommand("ListNetworks", static_cast<CModCommand::ModCmdFunc>(&CAdminMod::ListNetworks),
+			"[username]",                           "List all networks for a user");
 	}
 
 	virtual ~CAdminMod() {}
