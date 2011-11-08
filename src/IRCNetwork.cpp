@@ -54,10 +54,9 @@ CIRCNetwork::CIRCNetwork(CUser *pUser, const CString& sName) {
 	m_QueryBuffer.SetLineCount(250, true);
 }
 
-CIRCNetwork::CIRCNetwork(CUser *pUser, const CIRCNetwork *pNetwork, bool bCloneChans) {
+CIRCNetwork::CIRCNetwork(CUser *pUser, const CIRCNetwork &Network, bool bCloneChans) {
 	m_pUser = NULL;
 	SetUser(pUser);
-	m_sName = pNetwork->GetName();
 
 	m_pModules = new CModules;
 
@@ -71,8 +70,19 @@ CIRCNetwork::CIRCNetwork(CUser *pUser, const CIRCNetwork *pNetwork, bool bCloneC
 	m_MotdBuffer.SetLineCount(200, true);  // This should be more than enough motd lines
 	m_QueryBuffer.SetLineCount(250, true);
 
+	Clone(Network, bCloneChans);
+}
+
+void CIRCNetwork::Clone(const CIRCNetwork& Network, bool bCloneChans) {
+	m_sName = Network.GetName();
+
+	SetNick(Network.GetNick());
+	SetAltNick(Network.GetAltNick());
+	SetIdent(Network.GetIdent());
+	SetRealName(Network.GetRealName());
+
 	// Servers
-	const vector<CServer*>& vServers = pNetwork->GetServers();
+	const vector<CServer*>& vServers = Network.GetServers();
 	CString sServer;
 	CServer* pCurServ = GetCurrentServer();
 
@@ -107,7 +117,7 @@ CIRCNetwork::CIRCNetwork(CUser *pUser, const CIRCNetwork *pNetwork, bool bCloneC
 	// !Servers
 
 	// Chans
-	const vector<CChan*>& vChans = pNetwork->GetChans();
+	const vector<CChan*>& vChans = Network.GetChans();
 	for (a = 0; a < vChans.size(); a++) {
 		CChan* pNewChan = vChans[a];
 		CChan* pChan = FindChan(pNewChan->GetName());
@@ -121,7 +131,7 @@ CIRCNetwork::CIRCNetwork(CUser *pUser, const CIRCNetwork *pNetwork, bool bCloneC
 
 	for (a = 0; a < m_vChans.size(); a++) {
 		CChan* pChan = m_vChans[a];
-		CChan* pNewChan = pNetwork->FindChan(pChan->GetName());
+		CChan* pNewChan = Network.FindChan(pChan->GetName());
 
 		if (!pNewChan) {
 			pChan->SetInConfig(false);
@@ -131,6 +141,38 @@ CIRCNetwork::CIRCNetwork(CUser *pUser, const CIRCNetwork *pNetwork, bool bCloneC
 		}
 	}
 	// !Chans
+
+	// Modules
+	set<CString> ssUnloadMods;
+	CModules& vCurMods = GetModules();
+	const CModules& vNewMods = Network.GetModules();
+
+	for (a = 0; a < vNewMods.size(); a++) {
+		CString sModRet;
+		CModule* pNewMod = vNewMods[a];
+		CModule* pCurMod = vCurMods.FindModule(pNewMod->GetModName());
+
+		if (!pCurMod) {
+			vCurMods.LoadModule(pNewMod->GetModName(), pNewMod->GetArgs(), CModInfo::NetworkModule, m_pUser, this, sModRet);
+		} else if (pNewMod->GetArgs() != pCurMod->GetArgs()) {
+			vCurMods.ReloadModule(pNewMod->GetModName(), pNewMod->GetArgs(), m_pUser, this, sModRet);
+		}
+	}
+
+	for (a = 0; a < vCurMods.size(); a++) {
+		CModule* pCurMod = vCurMods[a];
+		CModule* pNewMod = vNewMods.FindModule(pCurMod->GetModName());
+
+		if (!pNewMod) {
+			ssUnloadMods.insert(pCurMod->GetModName());
+		}
+	}
+
+	for (set<CString>::iterator it = ssUnloadMods.begin(); it != ssUnloadMods.end(); ++it) {
+		vCurMods.UnloadModule(*it);
+	}
+	// !Modules
+
 }
 
 CIRCNetwork::~CIRCNetwork() {

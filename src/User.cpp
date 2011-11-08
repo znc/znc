@@ -449,8 +449,8 @@ bool CUser::DeleteNetwork(const CString& sNetwork) {
 	return false;
 }
 
-CIRCNetwork* CUser::FindNetwork(const CString& sNetwork) {
-	for (vector<CIRCNetwork*>::iterator it = m_vIRCNetworks.begin(); it != m_vIRCNetworks.end(); ++it) {
+CIRCNetwork* CUser::FindNetwork(const CString& sNetwork) const {
+	for (vector<CIRCNetwork*>::const_iterator it = m_vIRCNetworks.begin(); it != m_vIRCNetworks.end(); ++it) {
 		CIRCNetwork *pNetwork = *it;
 		if (pNetwork->GetName().Equals(sNetwork)) {
 			return pNetwork;
@@ -528,7 +528,7 @@ CString CUser::AddTimestamp(time_t tm, const CString& sStr) const {
 			// The Control+O key combination in mIRC inserts ascii character 15,
 			// which turns off all previous attributes, including color, bold, underline, and italics.
 			sRet += "\x0F ";
-			
+
 			sRet += szTimestamp;
 		}
 	}
@@ -616,8 +616,37 @@ bool CUser::Clone(const CUser& User, CString& sErrorRet, bool bCloneChans) {
 
 	// Networks
 	const vector<CIRCNetwork*>& vNetworks = User.GetNetworks();
-	for (a = 0; a < vNetworks.size(); a++) {
-		new CIRCNetwork(this, vNetworks[a], bCloneChans);
+	for (vector<CIRCNetwork*>::const_iterator it = vNetworks.begin(); it != vNetworks.end(); ++it) {
+		CIRCNetwork *pNetwork = FindNetwork((*it)->GetName());
+
+		if (pNetwork) {
+			pNetwork->Clone(*(*it), bCloneChans);
+		} else {
+			new CIRCNetwork(this, *(*it), bCloneChans);
+		}
+	}
+
+	set<CString> ssDeleteNetworks;
+	for (vector<CIRCNetwork*>::const_iterator it = m_vIRCNetworks.begin(); it != m_vIRCNetworks.end(); ++it) {
+		if (!(User.FindNetwork((*it)->GetName()))) {
+			ssDeleteNetworks.insert((*it)->GetName());
+		}
+	}
+
+	for (set<CString>::const_iterator it = ssDeleteNetworks.begin(); it != ssDeleteNetworks.end(); ++it) {
+		// The following will move all the clients to the user.
+		// So the clients are not disconnected. The client could
+		// have requested the rehash. Then when we do
+		// client->PutStatus("Rehashing succeeded!") we would
+		// crash if there was no client anymore.
+		vector<CClient*>& vClients = FindNetwork(*it)->GetClients();
+
+		while (vClients.begin() != vClients.end()) {
+			CClient *pClient = vClients.front();
+			pClient->SetNetwork(NULL);
+		}
+
+		DeleteNetwork(*it);
 	}
 	// !Networks
 
