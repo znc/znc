@@ -527,8 +527,8 @@ void CChan::SendBuffer(CClient* pClient) {
 		if (!m_Buffer.IsEmpty()) {
 			const vector<CClient*> & vClients = m_pNetwork->GetClients();
 			for (size_t uClient = 0; uClient < vClients.size(); ++uClient) {
+				CClient * pUseClient = (pClient ? pClient : vClients[uClient]);
 
-				CClient * pUseClient = ( pClient ? pClient : vClients[uClient] );
 				bool bSkipStatusMsg = false;
 				NETWORKMODULECALL(OnChanBufferStarting(*this, *pUseClient), m_pNetwork->GetUser(), m_pNetwork, NULL, bSkipStatusMsg = true);
 
@@ -538,26 +538,13 @@ void CChan::SendBuffer(CClient* pClient) {
 
 				unsigned int uSize = m_Buffer.Size();
 				for (unsigned int uIdx = 0; uIdx < uSize; uIdx++) {
-					CString sLine = m_Buffer.GetLine(uIdx, *pClient);
+					CString sLine = m_Buffer.GetLine(uIdx, *pUseClient);
 					NETWORKMODULECALL(OnChanBufferPlayLine(*this, *pUseClient, sLine), m_pNetwork->GetUser(), m_pNetwork, NULL, continue);
 					m_pNetwork->PutUser(sLine, pUseClient);
 				}
 
-				if (pClient)
-					break;
-
-			}
-
-			if (!KeepBuffer()) {
-				ClearBuffer();
-			}
-
-			for ( size_t uClient = 0; uClient < vClients.size(); ++uClient) {
-
-				CClient * pUseClient = ( pClient ? pClient : vClients[uClient] );
-				bool bSkipStatusMsg = false;
+				bSkipStatusMsg = false;
 				NETWORKMODULECALL(OnChanBufferEnding(*this, *pUseClient), m_pNetwork->GetUser(), m_pNetwork, NULL, bSkipStatusMsg = true);
-
 				if (!bSkipStatusMsg) {
 					m_pNetwork->PutUser(":***!znc@znc.in PRIVMSG " + GetName() + " :Playback Complete.", pUseClient);
 				}
@@ -566,6 +553,9 @@ void CChan::SendBuffer(CClient* pClient) {
 					break;
 			}
 
+			if (!KeepBuffer()) {
+ 				ClearBuffer();
+			}
 		}
 	}
 }
