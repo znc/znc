@@ -643,6 +643,8 @@ bool CUser::Clone(const CUser& User, CString& sErrorRet, bool bCloneChans) {
 
 		while (vClients.begin() != vClients.end()) {
 			CClient *pClient = vClients.front();
+			// This line will remove pClient from vClients,
+			// because it's a reference to the internal Network's vector.
 			pClient->SetNetwork(NULL);
 		}
 
