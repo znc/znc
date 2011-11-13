@@ -30,10 +30,10 @@ public:
 	static bool IsValidNetwork(const CString& sNetwork);
 
 	CIRCNetwork(CUser *pUser, const CString& sName);
-	CIRCNetwork(CUser *pUser, const CIRCNetwork& Network, bool bCloneChans = true);
+	CIRCNetwork(CUser *pUser, const CIRCNetwork& Network);
 	~CIRCNetwork();
 
-	void Clone(const CIRCNetwork& Network, bool bCloneChans = true);
+	void Clone(const CIRCNetwork& Network);
 
 	CString GetNetworkPath();
 

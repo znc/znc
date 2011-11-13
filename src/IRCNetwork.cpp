@@ -54,7 +54,7 @@ CIRCNetwork::CIRCNetwork(CUser *pUser, const CString& sName) {
 	m_QueryBuffer.SetLineCount(250, true);
 }
 
-CIRCNetwork::CIRCNetwork(CUser *pUser, const CIRCNetwork &Network, bool bCloneChans) {
+CIRCNetwork::CIRCNetwork(CUser *pUser, const CIRCNetwork &Network) {
 	m_pUser = NULL;
 	SetUser(pUser);
 
@@ -70,10 +70,10 @@ CIRCNetwork::CIRCNetwork(CUser *pUser, const CIRCNetwork &Network, bool bCloneCh
 	m_MotdBuffer.SetLineCount(200, true);  // This should be more than enough motd lines
 	m_QueryBuffer.SetLineCount(250, true);
 
-	Clone(Network, bCloneChans);
+	Clone(Network);
 }
 
-void CIRCNetwork::Clone(const CIRCNetwork& Network, bool bCloneChans) {
+void CIRCNetwork::Clone(const CIRCNetwork& Network) {
 	m_sName = Network.GetName();
 
 	SetNick(Network.GetNick());
@@ -136,8 +136,7 @@ void CIRCNetwork::Clone(const CIRCNetwork& Network, bool bCloneChans) {
 		if (!pNewChan) {
 			pChan->SetInConfig(false);
 		} else {
-			if (bCloneChans)
-				pChan->Clone(*pNewChan);
+			pChan->Clone(*pNewChan);
 		}
 	}
 	// !Chans
