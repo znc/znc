@@ -163,7 +163,7 @@ class Module:
     def _GetSubPages(self):
         return self.GetSubPages()
 
-    def CreateSocket(self, socketclass, *the, **rest):
+    def CreateSocket(self, socketclass=Socket, *the, **rest):
         socket = socketclass()
         socket._csock = CreatePySocket(self._cmod, socket)
         socket.Init(*the, **rest)
