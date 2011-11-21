@@ -715,8 +715,13 @@ void CClient::PutModNotice(const CString& sModule, const CString& sLine) {
 		return;
 	}
 
-	DEBUG("(" << GetFullName() << ") ZNC -> CLI [:" + m_pUser->GetStatusPrefix() + ((sModule.empty()) ? "status" : sModule) + "!znc@znc.in NOTICE " << GetNick() << " :" << sLine << "]");
-	Write(":" + m_pUser->GetStatusPrefix() + ((sModule.empty()) ? "status" : sModule) + "!znc@znc.in NOTICE " + GetNick() + " :" + sLine + "\r\n");
+	VCString vsLines;
+	sLine.Split("\n", vsLines, false);
+	VCString::const_iterator it;
+	for (it = vsLines.begin(); it != vsLines.end(); ++it) {
+		DEBUG("(" << GetFullName() << ") ZNC -> CLI [:" + m_pUser->GetStatusPrefix() + ((sModule.empty()) ? "status" : sModule) + "!znc@znc.in NOTICE " << GetNick() << " :" << *it << "]");
+		Write(":" + m_pUser->GetStatusPrefix() + ((sModule.empty()) ? "status" : sModule) + "!znc@znc.in NOTICE " + GetNick() + " :" + *it + "\r\n");
+	}
 }
 
 void CClient::PutModule(const CString& sModule, const CString& sLine) {
@@ -724,8 +729,13 @@ void CClient::PutModule(const CString& sModule, const CString& sLine) {
 		return;
 	}
 
-	DEBUG("(" << GetFullName() << ") ZNC -> CLI [:" + m_pUser->GetStatusPrefix() + ((sModule.empty()) ? "status" : sModule) + "!znc@znc.in PRIVMSG " << GetNick() << " :" << sLine << "]");
-	Write(":" + m_pUser->GetStatusPrefix() + ((sModule.empty()) ? "status" : sModule) + "!znc@znc.in PRIVMSG " + GetNick() + " :" + sLine + "\r\n");
+	VCString vsLines;
+	sLine.Split("\n", vsLines, false);
+	VCString::const_iterator it;
+	for (it = vsLines.begin(); it != vsLines.end(); ++it) {
+		DEBUG("(" << GetFullName() << ") ZNC -> CLI [:" + m_pUser->GetStatusPrefix() + ((sModule.empty()) ? "status" : sModule) + "!znc@znc.in PRIVMSG " << GetNick() << " :" << *it << "]");
+		Write(":" + m_pUser->GetStatusPrefix() + ((sModule.empty()) ? "status" : sModule) + "!znc@znc.in PRIVMSG " + GetNick() + " :" + *it + "\r\n");
+	}
 }
 
 CString CClient::GetNick(bool bAllowIRCNick) const {
