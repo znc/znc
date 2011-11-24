@@ -233,7 +233,7 @@ bool CModule::ClearNV(bool bWriteToDisk) {
 }
 
 bool CModule::AddTimer(CTimer* pTimer) {
-	if ((!pTimer) || (FindTimer(pTimer->GetName()))) {
+	if ((!pTimer) || (!pTimer->GetName().empty() && FindTimer(pTimer->GetName()))) {
 		delete pTimer;
 		return false;
 	}
@@ -280,6 +280,10 @@ bool CModule::UnlinkTimer(CTimer* pTimer) {
 }
 
 CTimer* CModule::FindTimer(const CString& sLabel) {
+	if (sLabel.empty()) {
+		return NULL;
+	}
+
 	set<CTimer*>::iterator it;
 	for (it = m_sTimers.begin(); it != m_sTimers.end(); ++it) {
 		CTimer* pTimer = *it;
