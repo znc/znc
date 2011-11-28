@@ -29,7 +29,7 @@ public:
 		} else {
 			PutModule("You do not have a certificate. Please use the web interface to add a certificate");
 			if (m_pUser->IsAdmin()) {
-				PutModule("Alternatively you can either place one at " + PemFile() + " or use the GENERATE command to generate a new certificate");
+				PutModule("Alternatively you can either place one at " + PemFile());
 			}
 		}
 	}
