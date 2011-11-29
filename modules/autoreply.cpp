@@ -58,11 +58,6 @@ public:
 		PutIRC("PRIVMSG " + sNick + " :" + GetReply());
 	}
 
-	virtual EModRet OnPrivNotice(CNick& Nick, CString& sMessage) {
-		Handle(Nick.GetNick());
-		return CONTINUE;
-	}
-
 	virtual EModRet OnPrivMsg(CNick& Nick, CString& sMessage) {
 		Handle(Nick.GetNick());
 		return CONTINUE;
