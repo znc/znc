@@ -1023,6 +1023,12 @@ void CIRCSock::ParseISupport(const CString& sLine) {
 		CString sName = it->Token(0, false, "=");
 		CString sValue = it->Token(1, true, "=");
 
+		if (0 < sName.length() && ':' == sName[0]) {
+			break;
+		}
+
+		m_mISupport[sName] = sValue;
+
 		if (sName.Equals("PREFIX")) {
 			CString sPrefixes = sValue.Token(1, false, ")");
 			CString sPermModes = sValue.Token(0, false, ")");

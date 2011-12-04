@@ -90,6 +90,7 @@ public:
 	// This is true if we are past raw 001
 	bool IsAuthed() const { return m_bAuthed; }
 	bool IsCapAccepted(const CString& sCap) { return 1 == m_ssAcceptedCaps.count(sCap); }
+	const MCString& GetISupport() const { return m_mISupport; }
 	// !Getters
 
 	// This handles NAMESX and UHNAMES in a raw 353 reply
@@ -121,6 +122,7 @@ protected:
 	unsigned int                        m_uNumCTCP;
 	static const time_t                 m_uCTCPFloodTime;
 	static const unsigned int           m_uCTCPFloodCount;
+	MCString                            m_mISupport;
 };
 
 #endif // !_IRCSOCK_H
