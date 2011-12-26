@@ -910,6 +910,14 @@ public:
 	* Don't bother using these callbacks if you are using this class directly (without Socket Manager)
 	* as the Socket Manager calls most of these callbacks
 	*
+	* A sock error occured event
+	*/
+	virtual void SockTextError( const CS_STRING & sError ) { SockError(-1); }
+	/**
+	* Override these functions for an easy interface when using the Socket Manager
+	* Don't bother using these callbacks if you are using this class directly (without Socket Manager)
+	* as the Socket Manager calls most of these callbacks
+	*
 	*
 	* Incoming Connection Event
 	* return false and the connection will fail

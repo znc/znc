@@ -50,6 +50,7 @@ public:
 	virtual void Disconnected();
 	virtual void ConnectionRefused();
 	virtual void SockError(int iErrno);
+	virtual void SockTextError(const CString& sError);
 	virtual void Timeout();
 	virtual void ReachedMaxBuffer();
 

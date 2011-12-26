@@ -31,8 +31,8 @@ enum EAddrType {
 
 class CSockManager : public TSocketManager<CZNCSock> {
 public:
-	CSockManager() {}
-	virtual ~CSockManager() {}
+	CSockManager();
+	virtual ~CSockManager();
 
 	bool ListenHost(u_short iPort, const CString& sSockName, const CString& sBindHost, bool bSSL = false, int iMaxConns = SOMAXCONN, CZNCSock *pcSock = NULL, u_int iTimeout = 0, EAddrType eAddr = ADDR_ALL) {
 		CSListener L(iPort, sBindHost);
@@ -95,18 +95,48 @@ public:
 		return(ListenRand(sSockName, "", bSSL, iMaxConns, pcSock, iTimeout, eAddr));
 	}
 
-	void Connect(const CString& sHostname, u_short iPort , const CString& sSockName, int iTimeout = 60, bool bSSL = false, const CString& sBindHost = "", CZNCSock *pcSock = NULL) {
-		CSConnection C(sHostname, iPort, iTimeout);
-
-		C.SetSockName(sSockName);
-		C.SetIsSSL(bSSL);
-		C.SetBindHost(sBindHost);
-
-		TSocketManager<CZNCSock>::Connect(C, pcSock);
-	}
+	void Connect(const CString& sHostname, u_short iPort, const CString& sSockName, int iTimeout = 60, bool bSSL = false, const CString& sBindHost = "", CZNCSock *pcSock = NULL);
 
 	unsigned int GetAnonConnectionCount(const CString &sIP) const;
 private:
+	void FinishConnect(const CString& sHostname, u_short iPort, const CString& sSockName, int iTimeout, bool bSSL, const CString& sBindHost, CZNCSock *pcSock);
+
+#ifdef HAVE_THREADED_DNS
+	int              m_iTDNSpipe[2];
+	pthread_mutex_t* m_mTDNSmutex;
+
+	class CTDNSMonitorFD;
+	friend class CTDNSMonitorFD;
+	struct TDNSTask {
+		CString   sHostname;
+		u_short   iPort;
+		CString   sSockName;
+		int       iTimeout;
+		bool      bSSL;
+		CString   sBindhost;
+		CZNCSock* pcSock;
+
+		bool      bDoneTarget;
+		bool      bDoneBind;
+		addrinfo* aiTarget;
+		addrinfo* aiBind;
+	};
+	struct TDNSArg {
+		CString          sHostname;
+		TDNSTask*        task;
+		pthread_mutex_t* mutex;
+		int              fd;
+		bool             bBind;
+
+		int              iRes;
+		addrinfo*        aiResult;
+	};
+	void StartTDNSThread(TDNSTask* task, bool bBind);
+	void SetTDNSThreadFinished(TDNSTask* task, bool bBind, addrinfo* aiResult);
+	void TryToFinishTDNSTask(TDNSTask* task);
+	void RetrieveTDNSResult();
+	static void* TDNSThread(void* argument);
+#endif
 protected:
 };
 

@@ -972,6 +972,11 @@ void CIRCSock::SockError(int iErrno) {
 
 	DEBUG(GetSockName() << " == SockError(" << iErrno << " "
 			<< sError << ")");
+	SockTextError(sError);
+}
+
+void CIRCSock::SockTextError(const CString& sError) {
+	DEBUG(GetSockName() << " == SockError(" << sError << ")");
 	if (!m_pNetwork->GetUser()->IsBeingDeleted()) {
 		if (GetConState() != CST_OK) {
 			m_pNetwork->PutStatus("Cannot connect to IRC (" + sError + "). Retrying...");

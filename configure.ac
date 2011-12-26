@@ -133,10 +133,10 @@ AC_ARG_ENABLE( [optimization],
 			decrease memory usage while compiling]),
 	[OPTIMIZE="$enableval"],
 	[OPTIMIZE="yes"])
-AC_ARG_ENABLE( [c-ares],
-	AS_HELP_STRING([--disable-c-ares], [disable c-ares usage]),
-	[ARES="$enableval"],
-	[ARES="auto"])
+AC_ARG_ENABLE( [tdns],
+	AS_HELP_STRING([--disable-tdns], [disable threads usage for DNS resolving]),
+	[TDNS="$enableval"],
+	[TDNS="auto"])
 AC_ARG_ENABLE( [run-from-source],
 	AS_HELP_STRING([--enable-run-from-source], [ZNC will be runnable without installation]),
 	[if test "x$enableval" = "xyes" ; then
@@ -201,32 +201,24 @@ PKG_PROG_PKG_CONFIG()
 AC_SEARCH_LIBS([dlopen], [dl], [],
 		[AC_MSG_ERROR([Could not find dlopen. ZNC will not work on this box until you upgrade this ancient system or at least install the necessary system libraries.])])
 
-# ----- Check for c-ares
+# ----- Check for pthreads
 
-if test "x$ARES" != "xno"; then
-	old_ARES=$ARES
-	if test -z "$PKG_CONFIG"
-	then
-		ARES=no
-		ZNC_AUTO_FAIL([ARES],
-			[pkg-config not found. Try --disable-c-ares.
-Disabling c-ares may result in a slight performance decrease but will not have any other side-effects],
-			[pkg-config was not found and thus c-ares was disabled])
-	else
-		PKG_CHECK_MODULES([c_ares], [libcares >= 1.5.0],, ARES=no)
-
-		if test "x$ARES" = "xno" ; then
-			ZNC_AUTO_FAIL([ARES],
-				[c-ares not found. Try --disable-c-ares.
-Disabling c-ares may result in a slight performance decrease but will not have any other side-effects],
-				[c-ares was not found and thus disabled])
-		else
-			AC_DEFINE([HAVE_C_ARES], [1], [Define if c-ares is enabled])
-			appendCXX $c_ares_CFLAGS
-			appendLib $c_ares_LIBS
-			ARES=yes
-		fi
-	fi
+if test "x$TDNS" != "xno"; then
+	old_TDNS=$TDNS
+	AX_PTHREAD([
+		TDNS=yes
+		DNS_TEXT=threads
+		AC_DEFINE([HAVE_THREADED_DNS], [1], [Define if threaded DNS is enabled])
+		appendCXX "$PTHREAD_CFLAGS"
+		appendLib "$PTHREAD_LIBS"
+	], [
+		TDNS=no
+		DNS_TEXT=blocking
+		ZNC_AUTO_FAIL([TDNS],
+			[threads not found. Try --disable-tdns.
+Disabling threads may result in a slight performance decrease but will not have any other side-effects],
+			[threads not found, so DNS resolving will be blocking])
+	])
 fi
 
 # ----- Check for openssl
@@ -538,7 +530,7 @@ echo "prefix:       $prefix"
 echo "debug:        $DEBUG"
 echo "ipv6:         $IPV6"
 echo "openssl:      $SSL"
-echo "c-ares:       $ARES"
+echo "dns:          $DNS_TEXT"
 echo "perl:         $PERL"
 echo "python:       $PYTHON"
 echo "swig:         $USESWIG"

@@ -35,6 +35,267 @@ CS_STRING CZNCSock::ConvertAddress(void *addr, bool ipv6) {
 	return sRet;
 }
 
+#ifdef HAVE_THREADED_DNS
+class CSockManager::CTDNSMonitorFD : public CSMonitorFD {
+	CSockManager* m_Manager;
+public:
+	CTDNSMonitorFD(CSockManager* mgr) {
+		m_Manager = mgr;
+		Add(mgr->m_iTDNSpipe[0], ECT_Read);
+	}
+
+	virtual bool FDsThatTriggered(const std::map<int, short>& miiReadyFds) {
+		if (miiReadyFds.find(m_Manager->m_iTDNSpipe[0])->second) {
+			m_Manager->RetrieveTDNSResult();
+		}
+		return true;
+	}
+};
+
+void* CSockManager::TDNSThread(void* argument) {
+	TDNSArg* a = (TDNSArg*)argument;
+	int iCount = 0;
+	while (true) {
+		addrinfo hints;
+		memset(&hints, 0, sizeof(hints));
+		hints.ai_family = AF_UNSPEC;
+		hints.ai_socktype = SOCK_STREAM;
+		hints.ai_protocol = IPPROTO_TCP;
+		hints.ai_flags = AI_ADDRCONFIG;
+		a->iRes = getaddrinfo(a->sHostname.c_str(), NULL, &hints, &a->aiResult);
+		if (EAGAIN != a->iRes) {
+			break;
+		}
+
+		iCount++;
+		if (iCount > 5) {
+			a->iRes = ETIMEDOUT;
+			break;
+		}
+		sleep(5); // wait 5 seconds before next try
+	}
+
+	pthread_mutex_lock(a->mutex);
+	int wrote = 0;
+	int need = sizeof(TDNSArg*);
+	char* x = (char*)&a;
+	while (wrote < need) {
+		int w = write(a->fd, x, need - wrote);
+		if (-1 == w) {
+			DEBUG("Something bad happened during write() to a pipe from TDNSThread: " << strerror(errno));
+			exit(1);
+		}
+		wrote += w;
+		x += w;
+	}
+	pthread_mutex_unlock(a->mutex);
+	return NULL;
+}
+
+void CSockManager::StartTDNSThread(TDNSTask* task, bool bBind) {
+	CString sHostname = bBind ? task->sBindhost : task->sHostname;
+	TDNSArg* arg = new TDNSArg;
+	arg->sHostname = sHostname;
+	arg->task      = task;
+	arg->mutex     = m_mTDNSmutex;
+	arg->fd        = m_iTDNSpipe[1];
+	arg->bBind     = bBind;
+	arg->iRes      = 0;
+	arg->aiResult  = NULL;
+
+	pthread_attr_t attr;
+	if (pthread_attr_init(&attr)) {
+		CString sError = "Couldn't init pthread_attr for " + sHostname;
+		DEBUG(sError);
+		CZNC::Get().Broadcast(sError, /* bAdminOnly = */ true);
+		SetTDNSThreadFinished(task, bBind, NULL);
+		return;
+	}
+	pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_DETACHED);
+
+	pthread_t thr;
+	if (pthread_create(&thr, &attr, TDNSThread, arg)) {
+		CString sError = "Couldn't create thread for " + sHostname;
+		DEBUG(sError);
+		CZNC::Get().Broadcast(sError, /* bAdminOnly = */ true);
+		delete arg;
+		pthread_attr_destroy(&attr);
+		SetTDNSThreadFinished(task, bBind, NULL);
+		return;
+	}
+	pthread_attr_destroy(&attr);
+}
+
+void CSockManager::SetTDNSThreadFinished(TDNSTask* task, bool bBind, addrinfo* aiResult) {
+	if (bBind) {
+		task->aiBind = aiResult;
+		task->bDoneBind = true;
+	} else {
+		task->aiTarget = aiResult;
+		task->bDoneTarget = true;
+	}
+	TryToFinishTDNSTask(task);
+}
+
+void CSockManager::TryToFinishTDNSTask(TDNSTask* task) {
+	if (!task->bDoneBind || !task->bDoneTarget) {
+		return;
+	}
+	addrinfo* aiTarget = NULL;
+	addrinfo* aiBind = NULL;
+
+	try {
+		addrinfo* aiTarget4 = task->aiTarget;
+		addrinfo* aiBind4 = task->aiBind;
+		while (aiTarget4 && aiTarget4->ai_family != AF_INET) aiTarget4 = aiTarget4->ai_next;
+		while (aiBind4 && aiBind4->ai_family != AF_INET) aiBind4 = aiBind4->ai_next;
+
+		addrinfo* aiTarget6 = NULL;
+		addrinfo* aiBind6 = NULL;
+#ifdef HAVE_IPV6
+		aiTarget6 = task->aiTarget;
+		aiBind6 = task->aiBind;
+		while (aiTarget6 && aiTarget6->ai_family != AF_INET6) aiTarget6 = aiTarget6->ai_next;
+		while (aiBind6 && aiBind6->ai_family != AF_INET6) aiBind6 = aiBind6->ai_next;
+#endif
+
+		if (!aiTarget4 && !aiTarget6) {
+			throw "Can't resolve server hostname";
+		} else if (task->sBindhost.empty()) {
+#ifdef HAVE_IPV6
+			aiTarget = task->aiTarget;
+#else
+			aiTarget = aiTarget4;
+#endif
+		} else if (!aiBind4 && !aiBind6) {
+			throw "Can't resolve bind hostname. Try /znc clearbindhost";
+		} else if (aiBind6 && aiTarget6) {
+			aiTarget = aiTarget6;
+			aiBind = aiBind6;
+		} else if (aiBind4 && aiTarget4) {
+			aiTarget = aiTarget4;
+			aiBind = aiBind4;
+		} else {
+			throw "Address family of bindhost doesn't match address family of server";
+		}
+
+		CString sBindhost;
+		CString sTargetHost;
+		if (!task->sBindhost.empty()) {
+			char s[40] = {}; // 40 is enough for both ipv4 and ipv6 addresses, including 0 terminator.
+			getnameinfo(aiBind->ai_addr, aiBind->ai_addrlen, s, sizeof(s), NULL, 0, NI_NUMERICHOST);
+			sBindhost = s;
+		}
+		char s[40] = {};
+		getnameinfo(aiTarget->ai_addr, aiTarget->ai_addrlen, s, sizeof(s), NULL, 0, NI_NUMERICHOST);
+		sTargetHost = s;
+
+		DEBUG("TDNS: " << task->sSockName << ", connecting to [" << sTargetHost << "] using bindhost [" << sBindhost << "]");
+
+		FinishConnect(sTargetHost, task->iPort, task->sSockName, task->iTimeout, task->bSSL, sBindhost, task->pcSock);
+	} catch (const char* s) {
+		DEBUG(task->sSockName << ", dns resolving error: " << s);
+		task->pcSock->SetSockName(task->sSockName);
+		task->pcSock->SockTextError(s);
+		delete task->pcSock;
+	}
+
+	if (task->aiTarget) freeaddrinfo(task->aiTarget);
+	if (task->aiBind) freeaddrinfo(task->aiBind);
+
+	delete task;
+}
+
+void CSockManager::RetrieveTDNSResult() {
+	TDNSArg* a = NULL;
+	int readed = 0;
+	int need = sizeof(TDNSArg*);
+	char* x = (char*)&a;
+	while (readed < need) {
+		int r = read(m_iTDNSpipe[0], x, need - readed);
+		if (-1 == r) {
+			DEBUG("Something bad happened during read() from a pipe when getting result of TDNSThread: " << strerror(errno));
+			exit(1);
+		}
+		readed += r;
+		x += r;
+	}
+	TDNSTask* task = a->task;
+	if (0 != a->iRes) {
+		DEBUG("Error in threaded DNS: " << gai_strerror(a->iRes));
+		if (a->aiResult) {
+			DEBUG("And aiResult is not NULL...");
+		}
+		a->aiResult = NULL; // just for case. Maybe to call freeaddrinfo()?
+	}
+	SetTDNSThreadFinished(task, a->bBind, a->aiResult);
+	delete a;
+}
+#endif /* HAVE_THREADED_DNS */
+
+CSockManager::CSockManager() {
+#ifdef HAVE_THREADED_DNS
+	m_mTDNSmutex = new pthread_mutex_t;
+	int m = pthread_mutex_init(m_mTDNSmutex, NULL);
+	if (m) {
+		DEBUG("Ouch, can't init mutex for threaded DNS resolving: " << strerror(m));
+		exit(1);
+	}
+	if (pipe(m_iTDNSpipe)) {
+		DEBUG("Ouch, can't open pipe for threaded DNS resolving: " << strerror(errno));
+		exit(1);
+	}
+
+	MonitorFD(new CTDNSMonitorFD(this));
+#endif
+}
+
+CSockManager::~CSockManager() {
+#ifdef HAVE_THREADED_DNS
+	// Here pthread_mutex_destroy(m_mTDNSmutex); and delete m_mTDNSmutex; should be called...
+	// But lifetime of CSockManager is the same of CZNC, and if to destroy the mutex now,
+	// lock() from inside TDNSThread will fail.
+	// So here is a resource and memory leak, but this znc process will die in few moments anyway.
+#endif
+}
+
+void CSockManager::Connect(const CString& sHostname, u_short iPort, const CString& sSockName, int iTimeout, bool bSSL, const CString& sBindHost, CZNCSock *pcSock) {
+#ifdef HAVE_THREADED_DNS
+	TDNSTask* task = new TDNSTask;
+	task->sHostname   = sHostname;
+	task->iPort       = iPort;
+	task->sSockName   = sSockName;
+	task->iTimeout    = iTimeout;
+	task->bSSL        = bSSL;
+	task->sBindhost   = sBindHost;
+	task->pcSock      = pcSock;
+	task->aiTarget    = NULL;
+	task->aiBind      = NULL;
+	task->bDoneTarget = false;
+	if (sBindHost.empty()) {
+		task->bDoneBind = true;
+	} else {
+		task->bDoneBind = false;
+		StartTDNSThread(task, true);
+	}
+	StartTDNSThread(task, false);
+#else /* HAVE_THREADED_DNS */
+	// Just let Csocket handle DNS itself
+	FinishConnect(sHostname, iPort, sSockName, iTimeout, bSSL, sBindHost, pcSock);
+#endif
+}
+
+void CSockManager::FinishConnect(const CString& sHostname, u_short iPort, const CString& sSockName, int iTimeout, bool bSSL, const CString& sBindHost, CZNCSock *pcSock) {
+	CSConnection C(sHostname, iPort, iTimeout);
+
+	C.SetSockName(sSockName);
+	C.SetIsSSL(bSSL);
+	C.SetBindHost(sBindHost);
+
+	TSocketManager<CZNCSock>::Connect(C, pcSock);
+}
+
+
 /////////////////// CSocket ///////////////////
 CSocket::CSocket(CModule* pModule) : CZNCSock() {
 	m_pModule = pModule;
