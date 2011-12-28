@@ -136,11 +136,11 @@ void CClient::UserCommand(CString& sLine) {
 #else
 			"no"
 #endif
-			", c-ares: "
-#ifdef HAVE_C_ARES
-			"yes";
+			", dns: "
+#ifdef HAVE_THREADED_DNS
+			"threads";
 #else
-			"no";
+			"blocking";
 #endif
 		PutStatus(CZNC::GetTag());
 		PutStatus(features);
