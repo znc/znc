@@ -407,9 +407,8 @@ void CIRCNetwork::ClientConnected(CClient *pClient) {
 		for (uIdx = 0; uIdx < uSize; uIdx++) {
 			pClient->PutClient(m_MotdBuffer.GetLine(uIdx, *pClient, msParams));
 		}
- 	}
-  else {
-		pClient->PutClient(":irc.znc.in 422 :MOTD File is missing");
+	} else {
+		pClient->PutClient(":irc.znc.in 422 :MOTD Cache is missing");
  	}
 
 	if (GetIRCSock() != NULL) {
