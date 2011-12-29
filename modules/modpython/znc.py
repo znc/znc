@@ -150,7 +150,7 @@ class ModuleNV(collections.MutableMapping):
 
 class Module:
     description = '< Placeholder for a description >'
-    module_types = [CModInfo.UserModule]
+    module_types = [CModInfo.NetworkModule]
 
     wiki_page = ''
 
