@@ -181,8 +181,8 @@ CIRCNetwork::~CIRCNetwork() {
 	}
 
 	// Delete clients
-	for (vector<CClient*>::const_iterator it = m_vClients.begin(); it != m_vClients.end(); ++it) {
-		CZNC::Get().GetManager().DelSockByAddr(*it);
+	while (!m_vClients.empty()) {
+		CZNC::Get().GetManager().DelSockByAddr(m_vClients[0]);
 	}
 	m_vClients.clear();
 

@@ -123,8 +123,12 @@ public:
 
 	virtual EModRet OnDeleteUser(CUser& User) {
 		// Loop through each chan
-		for (set<CPartylineChannel*>::iterator it = m_ssChannels.begin(); it != m_ssChannels.end(); ++it) {
-			RemoveUser(&User, *it, "KICK", "User deleted", true);
+		for (set<CPartylineChannel*>::iterator it = m_ssChannels.begin(); it != m_ssChannels.end();) {
+			CPartylineChannel *pChan = *it;
+			// RemoveUser() might delete channels, so make sure our
+			// iterator doesn't break.
+			it++;
+			RemoveUser(&User, pChan, "KICK", "User deleted", true);
 		}
 
 		return CONTINUE;
