@@ -252,6 +252,13 @@ bool CIRCNetwork::ParseConfig(CConfig *pConfig, CString& sError, bool bUpgrade) 
 			CString sValue = *vit;
 			CString sModName = sValue.Token(0);
 
+			// XXX Legacy crap, added in ZNC 0.203
+			if (sModName == "away") {
+				CUtils::PrintMessage("NOTICE: [away] was renamed, "
+						"loading [autoaway] instead");
+				sModName = "autoaway";
+			}
+
 			CUtils::PrintAction("Loading Module [" + sModName + "]");
 			CString sModRet;
 			CString sArgs = sValue.Token(1, true);
