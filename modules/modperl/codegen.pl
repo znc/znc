@@ -64,7 +64,7 @@ namespace {
 #define PUSH_STR(s) XPUSHs(PString(s).GetSV())
 #define PUSH_PTR(type, p) XPUSHs(SWIG_NewInstanceObj(const_cast<type>(p), SWIG_TypeQuery(#type), SWIG_SHADOW))
 */
-#define PSTART_IDF(Func) PSTART; PUSH_STR(GetPerlID()); PUSH_STR(#Func)
+#define PSTART_IDF(Func) PSTART; XPUSHs(GetPerlObj()); PUSH_STR(#Func)
 #define PCALLMOD(Error, Success) PCALL("ZNC::Core::CallModFunc"); if (SvTRUE(ERRSV)) { DEBUG("Perl hook died with: " + PString(ERRSV)); Error; } else { Success; } PEND
 
 EOF

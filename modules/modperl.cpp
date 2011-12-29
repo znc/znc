@@ -76,14 +76,13 @@ public:
 
 	virtual EModRet OnModuleLoading(const CString& sModName, const CString& sArgs,
 			CModInfo::EModuleType eType, bool& bSuccess, CString& sRetMsg) {
-		if (!GetUser() || eType != CModInfo::UserModule) {
-			return CONTINUE;
-		}
 		EModRet result = HALT;
 		PSTART;
 		PUSH_STR(sModName);
 		PUSH_STR(sArgs);
+		mXPUSHi(eType);
 		PUSH_PTR(CUser*, GetUser());
+		PUSH_PTR(CIRCNetwork*, GetNetwork());
 		PCALL("ZNC::Core::LoadModule");
 
 		if (SvTRUE(ERRSV)) {
@@ -115,7 +114,7 @@ public:
 		if (pMod) {
 			CString sModName = pMod->GetModName();
 			PSTART;
-			PUSH_PTR(CPerlModule*, pMod);
+			XPUSHs(pMod->GetPerlObj());
 			PCALL("ZNC::Core::UnloadModule");
 			if (SvTRUE(ERRSV)) {
 				bSuccess = false;
@@ -135,6 +134,7 @@ public:
 			bool& bSuccess, CString& sRetMsg) {
 		PSTART;
 		PUSH_STR(sModule);
+		PUSH_PTR(CModInfo*, &ModInfo);
 		PCALL("ZNC::Core::GetModInfo");
 		EModRet result = CONTINUE;
 		if (SvTRUE(ERRSV)) {
@@ -147,13 +147,7 @@ public:
 					break;
 				case Perl_Loaded:
 					result = HALT;
-					if (4 == ret) {
-						ModInfo.SetDefaultType(CModInfo::UserModule);
-						ModInfo.AddType(CModInfo::UserModule);
-						ModInfo.SetDescription(PString(ST(2)));
-						ModInfo.SetName(sModule);
-						ModInfo.SetPath(PString(ST(1)));
-						ModInfo.SetWikiPage(PString(ST(3)));
+					if (1 == ret) {
 						bSuccess = true;
 					} else {
 						bSuccess = false;
@@ -175,14 +169,10 @@ public:
 			sRetMsg = "Something weird happened";
 		}
 		PEND;
-		DEBUG(__PRETTY_FUNCTION__ << " " << sRetMsg);
 		return result;
 	}
 
 	virtual void OnGetAvailableMods(set<CModInfo>& ssMods, CModInfo::EModuleType eType) {
-		if (eType != CModInfo::UserModule) {
-			return;
-		}
 
 		unsigned int a = 0;
 		CDir Dir;
@@ -202,13 +192,9 @@ public:
 				PSTART;
 				PUSH_STR(sPath);
 				PUSH_STR(sName);
+				PUSH_PTR(CModInfo*, &ModInfo);
 				PCALL("ZNC::Core::ModInfoByPath");
 				if (!SvTRUE(ERRSV) && ret == 2) {
-					ModInfo.AddType(CModInfo::UserModule);
-					ModInfo.SetDescription(PString(ST(0)));
-					ModInfo.SetName(sName);
-					ModInfo.SetPath(sPath);
-					ModInfo.SetWikiPage(PString(ST(1)));
 					ssMods.insert(ModInfo);
 				}
 				PEND;
@@ -243,8 +229,7 @@ void CPerlTimer::RunJob() {
 	CPerlModule* pMod = AsPerlModule(GetModule());
 	if (pMod) {
 		PSTART;
-		PUSH_STR(pMod->GetPerlID());
-		PUSH_STR(GetPerlID());
+		XPUSHs(GetPerlObj());
 		PCALL("ZNC::Core::CallTimer");
 		PEND;
 	}
@@ -254,14 +239,13 @@ CPerlTimer::~CPerlTimer() {
 	CPerlModule* pMod = AsPerlModule(GetModule());
 	if (pMod) {
 		PSTART;
-		PUSH_STR(pMod->GetPerlID());
-		PUSH_STR(GetPerlID());
+		XPUSHs(sv_2mortal(m_perlObj));
 		PCALL("ZNC::Core::RemoveTimer");
 		PEND;
 	}
 }
 
-#define SOCKSTART PSTART; PUSH_STR(pMod->GetPerlID()); PUSH_STR(GetPerlID())
+#define SOCKSTART PSTART; XPUSHs(GetPerlObj())
 #define SOCKCBCHECK(OnSuccess) PCALL("ZNC::Core::CallSocket"); if (SvTRUE(ERRSV)) { Close(); DEBUG("Perl socket hook died with: " + PString(ERRSV)); } else { OnSuccess; } PEND
 #define CBSOCK(Func) void CPerlSocket::Func() {\
 	CPerlModule* pMod = AsPerlModule(GetModule());\
@@ -313,7 +297,8 @@ Csock* CPerlSocket::GetSockObj(const CString& sHost, unsigned short uPort) {
 CPerlSocket::~CPerlSocket() {
 	CPerlModule* pMod = AsPerlModule(GetModule());
 	if (pMod) {
-		SOCKSTART;
+		PSTART;
+		XPUSHs(sv_2mortal(m_perlObj));
 		PCALL("ZNC::Core::RemoveSocket");
 		PEND;
 	}

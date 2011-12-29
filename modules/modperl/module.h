@@ -8,21 +8,27 @@
 
 #pragma once
 
+#include <EXTERN.h>
+#include <perl.h>
+#include <XSUB.h>
+
 #include <znc/Modules.h>
 
 #if HAVE_VISIBILITY
 #pragma GCC visibility push(default)
 #endif
 class CPerlModule : public CModule {
-	CString m_sPerlID;
+	SV* m_perlObj;
 	VWebSubPages* _GetSubPages();
 public:
 	CPerlModule(CUser* pUser, CIRCNetwork* pNetwork, const CString& sModName, const CString& sDataPath,
-			const CString& sPerlID)
+			SV* perlObj)
 			: CModule(NULL, pUser, pNetwork, sModName, sDataPath) {
-		m_sPerlID = sPerlID;
+		m_perlObj = newSVsv(perlObj);
 	}
-	CString GetPerlID() { return m_sPerlID; }
+	SV* GetPerlObj() {
+		return sv_2mortal(newSVsv(m_perlObj));
+	}
 
 	virtual bool OnBoot();
 	virtual bool WebRequiresLogin();
@@ -99,27 +105,31 @@ enum ELoadPerlMod {
 };
 
 class CPerlTimer : public CTimer {
-	CString m_sPerlID;
+	SV* m_perlObj;
 public:
-	CPerlTimer(CPerlModule* pModule, unsigned int uInterval, unsigned int uCycles, const CString& sLabel, const CString& sDescription, const CString& sPerlID)
-					: CTimer (pModule, uInterval, uCycles, sLabel, sDescription), m_sPerlID(sPerlID) {
+	CPerlTimer(CPerlModule* pModule, unsigned int uInterval, unsigned int uCycles, const CString& sLabel, const CString& sDescription, SV* perlObj)
+					: CTimer (pModule, uInterval, uCycles, sLabel, sDescription), m_perlObj(newSVsv(perlObj)) {
 		pModule->AddTimer(this);
 	}
 	virtual void RunJob();
-	CString GetPerlID() { return m_sPerlID; }
+	SV* GetPerlObj() {
+		return sv_2mortal(newSVsv(m_perlObj));
+	}
 	~CPerlTimer();
 };
 
 inline CPerlTimer* CreatePerlTimer(CPerlModule* pModule, unsigned int uInterval, unsigned int uCycles,
-		const CString& sLabel, const CString& sDescription, const CString& sPerlID) {
-	return new CPerlTimer(pModule, uInterval, uCycles, sLabel, sDescription, sPerlID);
+		const CString& sLabel, const CString& sDescription, SV* perlObj) {
+	return new CPerlTimer(pModule, uInterval, uCycles, sLabel, sDescription, perlObj);
 }
 
 class CPerlSocket : public CSocket {
-	CString m_sPerlID;
+	SV* m_perlObj;
 public:
-	CPerlSocket(CPerlModule* pModule, const CString& sPerlID) : CSocket(pModule), m_sPerlID(sPerlID) {}
-	CString GetPerlID() { return m_sPerlID; }
+	CPerlSocket(CPerlModule* pModule, SV* perlObj) : CSocket(pModule), m_perlObj(newSVsv(perlObj)) {}
+	SV* GetPerlObj() {
+		return sv_2mortal(newSVsv(m_perlObj));
+	}
 	~CPerlSocket();
 	virtual void Connected();
 	virtual void Disconnected();
@@ -130,8 +140,8 @@ public:
 	virtual Csock* GetSockObj(const CString& sHost, unsigned short uPort);
 };
 
-inline CPerlSocket* CreatePerlSocket(CPerlModule* pModule, const CString& sPerlID) {
-	return new CPerlSocket(pModule, sPerlID);
+inline CPerlSocket* CreatePerlSocket(CPerlModule* pModule, SV* perlObj) {
+	return new CPerlSocket(pModule, perlObj);
 }
 
 inline bool HaveIPv6() {
