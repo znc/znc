@@ -418,7 +418,7 @@ def find_open(modname):
             finally:
                 if x[0]:
                     x[0].close()
-        return (pymodule, d[1])
+        return (pymodule, d[1]+modname)
     else:
         # nothing found
         return (None, None)
