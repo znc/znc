@@ -423,6 +423,7 @@ def find_open(modname):
         # nothing found
         return (None, None)
 
+_py_modules = set()
 
 def load_module(modname, args, module_type, user, network, retmsg, modpython):
     '''Returns 0 if not found, 1 on loading error, 2 on success'''
@@ -450,23 +451,24 @@ def load_module(modname, args, module_type, user, network, retmsg, modpython):
     module.SetArgs(args)
     module.SetModPath(pymodule.__file__)
     module.SetType(module_type)
+    _py_modules.add(module)
 
     if module_type == CModInfo.UserModule:
         if not user:
-            retmsg.s = "Module [modpython] needs user for for UserModule."
+            retmsg.s = "Module [{}] is UserModule and needs user.".format(modname)
             unload_module(module)
             return 1
         user.GetModules().push_back(module._cmod)
     elif module_type == CModInfo.NetworkModule:
         if not network:
-            retmsg.s = "Module [modpython] needs a network for for NetworkModule."
+            retmsg.s = "Module [{}] is Network module and needs a network.".format(modname)
             unload_module(module)
             return 1
         network.GetModules().push_back(module._cmod)
     elif module_type == CModInfo.GlobalModule:
         CZNC.Get().GetModules().push_back(module._cmod)
     else:
-        retmsg.s = "Module [modpython] doesn't support module type."
+        retmsg.s = "Module [{}] doesn't support that module type.".format(modname)
         unload_module(module)
         return 1
 
@@ -508,6 +510,7 @@ def load_module(modname, args, module_type, user, network, retmsg, modpython):
 
 def unload_module(module):
     module.OnShutdown()
+    _py_modules.discard(module)
     cmod = module._cmod
     if module.GetType() == CModInfo.UserModule:
         cmod.GetUser().GetModules().removeModule(cmod)
@@ -518,6 +521,12 @@ def unload_module(module):
     del module._cmod
     cmod.DeletePyModule()
     del cmod
+
+
+def unload_all():
+    while len(_py_modules) > 0:
+        mod = _py_modules.pop()
+        unload_module(mod)
 
 
 def get_mod_info(modname, retmsg, modinfo):
