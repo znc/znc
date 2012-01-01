@@ -45,7 +45,7 @@ modperl/ZNC.cpp: modperl/modperl.i Makefile modperl/module.h modperl/CString.i
 	@mkdir -p .depend
 	$(Q)$(SWIG) -perl5 -c++ -shadow -outdir modperl -I$(srcdir) -MMD -MF .depend/modperl.swig.dep -w362,315,401,402 -o $@ $<
 endif
-modperl/functions.cpp: modperl/functions.in
+modperl/functions.cpp: modperl/functions.in modperl/codegen.pl
 	@mkdir -p modperl
 	$(Q)$(PERL) $(srcdir)/modperl/codegen.pl $< $@
 
