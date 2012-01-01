@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004-2011  See the AUTHORS file for details.
+ * Copyright (C) 2004-2012  See the AUTHORS file for details.
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License version 2 as published
@@ -181,8 +181,8 @@ CIRCNetwork::~CIRCNetwork() {
 	}
 
 	// Delete clients
-	for (vector<CClient*>::const_iterator it = m_vClients.begin(); it != m_vClients.end(); ++it) {
-		CZNC::Get().GetManager().DelSockByAddr(*it);
+	while (!m_vClients.empty()) {
+		CZNC::Get().GetManager().DelSockByAddr(m_vClients[0]);
 	}
 	m_vClients.clear();
 
@@ -251,6 +251,13 @@ bool CIRCNetwork::ParseConfig(CConfig *pConfig, CString& sError, bool bUpgrade) 
 		for (vit = vsList.begin(); vit != vsList.end(); ++vit) {
 			CString sValue = *vit;
 			CString sModName = sValue.Token(0);
+
+			// XXX Legacy crap, added in ZNC 0.203
+			if (sModName == "away") {
+				CUtils::PrintMessage("NOTICE: [away] was renamed, "
+						"loading [autoaway] instead");
+				sModName = "autoaway";
+			}
 
 			CUtils::PrintAction("Loading Module [" + sModName + "]");
 			CString sModRet;

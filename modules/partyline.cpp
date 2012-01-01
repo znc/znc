@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004-2011  See the AUTHORS file for details.
+ * Copyright (C) 2004-2012  See the AUTHORS file for details.
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License version 2 as published
@@ -123,8 +123,12 @@ public:
 
 	virtual EModRet OnDeleteUser(CUser& User) {
 		// Loop through each chan
-		for (set<CPartylineChannel*>::iterator it = m_ssChannels.begin(); it != m_ssChannels.end(); ++it) {
-			RemoveUser(&User, *it, "KICK", "User deleted", true);
+		for (set<CPartylineChannel*>::iterator it = m_ssChannels.begin(); it != m_ssChannels.end();) {
+			CPartylineChannel *pChan = *it;
+			// RemoveUser() might delete channels, so make sure our
+			// iterator doesn't break.
+			it++;
+			RemoveUser(&User, pChan, "KICK", "User deleted", true);
 		}
 
 		return CONTINUE;
