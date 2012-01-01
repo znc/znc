@@ -41,6 +41,8 @@
 #define stat struct stat
 %}
 
+%apply long { off_t };
+
 %begin %{
 #include "znc/zncconfig.h"
 %}
