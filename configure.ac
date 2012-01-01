@@ -151,7 +151,7 @@ AC_ARG_ENABLE( [poll],
 	[POLL="yes"])
 
 if test "$DEBUG" != "no"; then
-	appendCXX -ggdb
+	appendCXX -ggdb3
 	AC_DEFINE([_DEBUG], [1], [Define for debugging])
 	# These enable some debug options in g++'s STL, e.g. invalid use of iterators
 	AC_DEFINE([_GLIBCXX_DEBUG], [1], [Enable extra debugging checks in libstdc++])
