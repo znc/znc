@@ -275,4 +275,4 @@ private:
 	map<CString, CAutoVoiceUser*> m_msUsers;
 };
 
-MODULEDEFS(CAutoVoiceMod, "Auto voice the good guys")
+NETWORKMODULEDEFS(CAutoVoiceMod, "Auto voice the good guys")
