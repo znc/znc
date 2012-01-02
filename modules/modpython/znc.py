@@ -604,3 +604,7 @@ def CreateWebSubPage(name, title='', params=dict(), admin=False):
     if admin:
         flags |= CWebSubPage.F_ADMIN
     return CreateWebSubPage_(name, title, vpair, flags)
+
+CUser.GetNetworks = CUser.GetNetworks_
+CIRCNetwork.GetChans = CIRCNetwork.GetChans_
+CChan.GetNicks = CChan.GetNicks_
