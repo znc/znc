@@ -139,7 +139,8 @@ public:
 				&& (sMessage.find("msg") != CString::npos
 				 || sMessage.find("authenticate") != CString::npos
 				 || sMessage.find("choose a different nickname") != CString::npos
-				 || sMessage.find("If this is your nick, type") != CString::npos)
+				 || sMessage.find("If this is your nick, type") != CString::npos
+				 || sMessage.find("type /NickServ IDENTIFY password") != CString::npos)
 				&& sMessage.AsUpper().find("IDENTIFY") != CString::npos
 				&& sMessage.find("help") == CString::npos) {
 			MCString msValues;
