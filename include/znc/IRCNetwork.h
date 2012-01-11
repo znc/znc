@@ -89,6 +89,9 @@ public:
 	bool SetNextServer(const CServer* pServer);
 	bool IsLastServer() const;
 
+	void SetIRCConnectEnabled(bool b);
+	bool GetIRCConnectEnabled() const { return m_bIRCConnectEnabled; }
+
 	CIRCSock* GetIRCSock() { return m_pIRCSock; }
 	const CIRCSock* GetIRCSock() const { return m_pIRCSock; }
 	const CString& GetIRCServer() const;
@@ -159,6 +162,7 @@ protected:
 
 	CString            m_sChanPrefixes;
 
+	bool               m_bIRCConnectEnabled;
 	CString            m_sIRCServer;
 	vector<CServer*>   m_vServers;
 	unsigned int       m_uServerIdx; ///< Index in m_vServers of our current server + 1

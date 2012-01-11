@@ -38,6 +38,12 @@
 					<div><input type="text" name="realname" value="<? VAR RealName ?>" class="full" maxlength="256" /></div>
 				</div>
 
+				<div class="subsection">
+					<div class="inputlabel">Active:</div>
+					<div class="checkbox"><input type="checkbox" name="doconnect" id="doconnect_checkbox"<? IF IRCConnectEnabled ?> checked="checked"<? ENDIF ?> />
+						<label for="doconnect_checkbox">Connect to IRC &amp; automatically re-connect</label></div>
+				</div>
+
 				<div class="subsection half">
 					<div class="inputlabel">Servers:</div>
 					<div><textarea name="servers" cols="70" rows="5"><? LOOP ServerLoop ?><? VAR Server ?>

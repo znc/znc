@@ -929,7 +929,7 @@ void CIRCSock::Disconnected() {
 	IRCSOCKMODULECALL(OnIRCDisconnected(), NOTHING);
 
 	DEBUG(GetSockName() << " == Disconnected()");
-	if (!m_pNetwork->GetUser()->IsBeingDeleted() && m_pNetwork->GetUser()->GetIRCConnectEnabled() &&
+	if (!m_pNetwork->GetUser()->IsBeingDeleted() && m_pNetwork->GetIRCConnectEnabled() &&
 			m_pNetwork->GetServers().size() != 0) {
 		m_pNetwork->PutStatus("Disconnected from IRC. Reconnecting...");
 	}

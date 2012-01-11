@@ -52,6 +52,8 @@ CIRCNetwork::CIRCNetwork(CUser *pUser, const CString& sName) {
 	m_RawBuffer.SetLineCount(100, true);   // This should be more than enough raws, especially since we are buffering the MOTD separately
 	m_MotdBuffer.SetLineCount(200, true);  // This should be more than enough motd lines
 	m_QueryBuffer.SetLineCount(250, true);
+
+	SetIRCConnectEnabled(true);
 }
 
 CIRCNetwork::CIRCNetwork(CUser *pUser, const CIRCNetwork &Network) {
@@ -172,6 +174,7 @@ void CIRCNetwork::Clone(const CIRCNetwork& Network) {
 	}
 	// !Modules
 
+	SetIRCConnectEnabled(Network.GetIRCConnectEnabled());
 }
 
 CIRCNetwork::~CIRCNetwork() {
@@ -240,11 +243,21 @@ bool CIRCNetwork::ParseConfig(CConfig *pConfig, CString& sError, bool bUpgrade) 
 			{ "realname", &CIRCNetwork::SetRealName }
 		};
 		size_t numStringOptions = sizeof(StringOptions) / sizeof(StringOptions[0]);
+		TOption<bool> BoolOptions[] = {
+			{ "ircconnectenabled", &CIRCNetwork::SetIRCConnectEnabled },
+		};
+		size_t numBoolOptions = sizeof(BoolOptions) / sizeof(BoolOptions[0]);
 
 		for (size_t i = 0; i < numStringOptions; i++) {
 			CString sValue;
 			if (pConfig->FindStringEntry(StringOptions[i].name, sValue))
 				(this->*StringOptions[i].pSetter)(sValue);
+		}
+
+		for (size_t i = 0; i < numBoolOptions; i++) {
+			CString sValue;
+			if (pConfig->FindStringEntry(BoolOptions[i].name, sValue))
+				(this->*BoolOptions[i].pSetter)(sValue.ToBool());
 		}
 
 		pConfig->FindStringVector("loadmodule", vsList);
@@ -333,6 +346,8 @@ CConfig CIRCNetwork::ToConfig() {
 	if (!m_sRealName.empty()) {
 		config.AddKeyValuePair("RealName", m_sRealName);
 	}
+
+	config.AddKeyValuePair("IRCConnectEnabled", CString(GetIRCConnectEnabled()));
 
 	// Modules
 	CModules& Mods = GetModules();
@@ -452,7 +467,7 @@ void CIRCNetwork::ClientConnected(CClient *pClient) {
 	m_QueryBuffer.Clear();
 
 	// Tell them why they won't connect
-	if (!m_pUser->GetIRCConnectEnabled())
+	if (!GetIRCConnectEnabled())
 		pClient->PutStatus("You are currently disconnected from IRC. "
 				"Use 'connect' to reconnect.");
 }
@@ -880,7 +895,7 @@ CString CIRCNetwork::GetCurNick() const {
 }
 
 bool CIRCNetwork::Connect() {
-	if (!m_pUser->GetIRCConnectEnabled() || m_pIRCSock || !HasServers())
+	if (!GetIRCConnectEnabled() || m_pIRCSock || !HasServers())
 		return false;
 
 	CServer *pServer = GetNextServer();
@@ -941,9 +956,23 @@ void CIRCNetwork::IRCDisconnected() {
 	CheckIRCConnect();
 }
 
+void CIRCNetwork::SetIRCConnectEnabled(bool b) {
+	m_bIRCConnectEnabled = b;
+
+	if (m_bIRCConnectEnabled) {
+		CheckIRCConnect();
+	} else if (GetIRCSock()) {
+		if (GetIRCSock()->IsConnected()) {
+			GetIRCSock()->Quit();
+		} else {
+			GetIRCSock()->Close();
+		}
+	}
+}
+
 void CIRCNetwork::CheckIRCConnect() {
 	// Do we want to connect?
-	if (m_pUser->GetIRCConnectEnabled() && GetIRCSock() == NULL)
+	if (GetIRCConnectEnabled() && GetIRCSock() == NULL)
 		CZNC::Get().AddNetworkToQueue(this);
 }
 
