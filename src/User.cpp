@@ -386,7 +386,7 @@ bool CUser::ParseConfig(CConfig* pConfig, CString& sError) {
 					CString sNetworkModPath = (*it)->GetNetworkPath() + "/moddata/" + sModName;
 					if (!CFile::Exists(sNetworkModPath)) {
 						CDir::MakeDir(sNetworkModPath);
-					}	
+					}
 
 					fNVFile.Copy(sNetworkModPath + "/.registry");
 				}
