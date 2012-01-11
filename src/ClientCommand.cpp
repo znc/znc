@@ -513,8 +513,8 @@ void CClient::UserCommand(CString& sLine) {
 
 		CIRCNetwork *pNetwork = m_pUser->FindNetwork(sNetwork);
 		if (pNetwork) {
-			SetNetwork(pNetwork);
 			PutStatus("Switched to " + sNetwork);
+			SetNetwork(pNetwork);
 		} else {
 			PutStatus("You don't have a network named " + sNetwork);
 		}
