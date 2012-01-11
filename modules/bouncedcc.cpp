@@ -451,5 +451,5 @@ unsigned short CDCCBounce::DCCRequest(const CString& sNick, unsigned long uLongI
 
 
 
-MODULEDEFS(CBounceDCCMod, "Bounce DCC module")
+MODULEDEFS(CBounceDCCMod, "This module bounces DCC transfers through the ZNC server instead of sending them directly to the user. ")
 
