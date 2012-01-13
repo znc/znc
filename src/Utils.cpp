@@ -34,6 +34,7 @@ void CUtils::GenerateCert(FILE *pOut, const CString& sHost) {
 	X509 *pCert = NULL;
 	X509_NAME *pName = NULL;
 	const int days = 365;
+	const int years = 10;
 
 	u_int iSeed = time(NULL);
 	int serial = (rand_r(&iSeed) % 9999);
@@ -55,7 +56,7 @@ void CUtils::GenerateCert(FILE *pOut, const CString& sHost) {
 		X509_set_version(pCert, 2);
 		ASN1_INTEGER_set(X509_get_serialNumber(pCert), serial);
 		X509_gmtime_adj(X509_get_notBefore(pCert), 0);
-		X509_gmtime_adj(X509_get_notAfter(pCert), (long)60*60*24*days);
+		X509_gmtime_adj(X509_get_notAfter(pCert), (long)60*60*24*days*years);
 		X509_set_pubkey(pCert, pKey);
 
 		pName = X509_get_subject_name(pCert);
