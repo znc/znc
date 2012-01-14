@@ -23,11 +23,7 @@ public:
 	// Csocket derived members
 	virtual void ReadData(const char* data, size_t len);
 	virtual void ReadLine(const CString& sData);
-	virtual void ReachedMaxBuffer();
-	virtual void SockError(int iErrno, const CString& sDescription);
-	virtual void Timeout();
 	virtual void Connected();
-	virtual void Disconnected();
 	virtual Csock* GetSockObj(const CString& sHost, unsigned short uPort) = 0;
 	// !Csocket derived members
 

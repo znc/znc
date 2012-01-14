@@ -533,20 +533,6 @@ bool CHTTPSock::Redirect(const CString& sURL) {
 	return true;
 }
 
-void CHTTPSock::Timeout() {
-}
-
-void CHTTPSock::SockError(int iErrno, const CString& sDescription) {
-}
-
 void CHTTPSock::Connected() {
 	SetTimeout(120);
-}
-
-void CHTTPSock::Disconnected() {
-}
-
-void CHTTPSock::ReachedMaxBuffer() {
-	DEBUG(GetSockName() << " == ReachedMaxBuffer()");
-	Close();
 }
