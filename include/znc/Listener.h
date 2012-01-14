@@ -68,7 +68,7 @@ public:
 
 	virtual bool ConnectionFrom(const CString& sHost, unsigned short uPort);
 	virtual Csock* GetSockObj(const CString& sHost, unsigned short uPort);
-	virtual void SockError(int iErrno);
+	virtual void SockError(int iErrno, const CString& sDescription);
 
 private:
 	CListener* m_pParent;

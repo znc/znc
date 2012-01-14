@@ -64,8 +64,8 @@ Csock* CRealListener::GetSockObj(const CString& sHost, unsigned short uPort) {
 	return pClient;
 }
 
-void CRealListener::SockError(int iErrno) {
-	DEBUG(GetSockName() << " == SockError(" << strerror(iErrno) << ")");
+void CRealListener::SockError(int iErrno, const CString& sDescription) {
+	DEBUG(GetSockName() << " == SockError(" << sDescription << ", " << strerror(iErrno) << ")");
 	if (iErrno == EMFILE) {
 		// We have too many open fds, let's close this listening port to be able to continue
 		// to work, next rehash will (try to) reopen it.

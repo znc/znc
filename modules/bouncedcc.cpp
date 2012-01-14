@@ -34,7 +34,7 @@ public:
 	virtual void Timeout();
 	virtual void ConnectionRefused();
 	virtual void ReachedMaxBuffer();
-	virtual void SockError(int iErrno);
+	virtual void SockError(int iErrno, const CString& sDescription);
 	virtual void Connected();
 	virtual void Disconnected();
 	virtual Csock* GetSockObj(const CString& sHost, unsigned short uPort);
@@ -377,7 +377,7 @@ void CDCCBounce::ConnectionRefused() {
 	m_pModule->PutModule("DCC " + sType + " Bounce (" + m_sRemoteNick + "): Connection Refused while connecting" + sHost);
 }
 
-void CDCCBounce::SockError(int iErrno) {
+void CDCCBounce::SockError(int iErrno, const CString& sDescription) {
 	DEBUG(GetSockName() << " == SockError(" << iErrno << ")");
 	CString sType = (m_bIsChat) ? "Chat" : "Xfer";
 
@@ -387,9 +387,9 @@ void CDCCBounce::SockError(int iErrno) {
 			sHost = "[" + sHost + " " + CString(Csock::GetPort()) + "]";
 		}
 
-		m_pModule->PutModule("DCC " + sType + " Bounce (" + m_sRemoteNick + "): Socket error [" + CString(strerror(iErrno)) + "]" + sHost);
+		m_pModule->PutModule("DCC " + sType + " Bounce (" + m_sRemoteNick + "): Socket error [" + sDescription + "]" + sHost);
 	} else {
-		m_pModule->PutModule("DCC " + sType + " Bounce (" + m_sRemoteNick + "): Socket error [" + CString(strerror(iErrno)) + "] [" + Csock::GetLocalIP() + ":" + CString(Csock::GetLocalPort()) + "]");
+		m_pModule->PutModule("DCC " + sType + " Bounce (" + m_sRemoteNick + "): Socket error [" + sDescription + "] [" + Csock::GetLocalIP() + ":" + CString(Csock::GetLocalPort()) + "]");
 	}
 }
 

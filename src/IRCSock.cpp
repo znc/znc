@@ -953,22 +953,8 @@ void CIRCSock::Disconnected() {
 	m_scUserModes.clear();
 }
 
-void CIRCSock::SockError(int iErrno) {
-	CString sError;
-
-	if (iErrno == EDOM) {
-		sError = "Your bind host could not be resolved";
-	} else if (iErrno == EADDRNOTAVAIL) {
-		// Csocket uses this if it can't resolve the dest host name
-		// ...but it also does generate this if bind() fails -.-
-		sError = strerror(iErrno);
-		if (GetBindHost().empty())
-			sError += " (Is your IRC server's host name valid?)";
-		else
-			sError += " (Is your IRC server's host name and ZNC bind host valid?)";
-	} else {
-		sError = strerror(iErrno);
-	}
+void CIRCSock::SockError(int iErrno, const CString& sDescription) {
+	CString sError = sDescription;
 
 	DEBUG(GetSockName() << " == SockError(" << iErrno << " "
 			<< sError << ")");
@@ -976,7 +962,7 @@ void CIRCSock::SockError(int iErrno) {
 		if (GetConState() != CST_OK) {
 			m_pNetwork->PutStatus("Cannot connect to IRC (" + sError + "). Retrying...");
 		} else {
-			m_pNetwork->PutStatus("Disconnected from IRC (" + sError + ").  Reconnecting...");
+			m_pNetwork->PutStatus("Disconnected from IRC (" + sError + "). Reconnecting...");
 		}
 	}
 	m_pNetwork->ClearRawBuffer();

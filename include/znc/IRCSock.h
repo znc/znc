@@ -49,7 +49,7 @@ public:
 	virtual void Connected();
 	virtual void Disconnected();
 	virtual void ConnectionRefused();
-	virtual void SockError(int iErrno);
+	virtual void SockError(int iErrno, const CString& sDescription);
 	virtual void Timeout();
 	virtual void ReachedMaxBuffer();
 

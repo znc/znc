@@ -29,10 +29,11 @@ unsigned int CSockManager::GetAnonConnectionCount(const CString &sIP) const {
 	return ret;
 }
 
-CS_STRING CZNCSock::ConvertAddress(void *addr, bool ipv6) {
-	CString sRet = Csock::ConvertAddress(addr, ipv6);
-	sRet.TrimPrefix("::ffff:");
-	return sRet;
+int CZNCSock::ConvertAddress(const struct sockaddr_storage * pAddr, socklen_t iAddrLen, CS_STRING & sIP, u_short * piPort) {
+	int ret = Csock::ConvertAddress(pAddr, iAddrLen, sIP, piPort);
+	if (ret == 0)
+		sIP.TrimPrefix("::ffff:");
+	return ret;
 }
 
 /////////////////// CSocket ///////////////////
@@ -74,8 +75,8 @@ void CSocket::ReachedMaxBuffer() {
 	Close();
 }
 
-void CSocket::SockError(int iErrno) {
-	DEBUG(GetSockName() << " == SockError(" << strerror(iErrno) << ")");
+void CSocket::SockError(int iErrno, const CString& sDescription) {
+	DEBUG(GetSockName() << " == SockError(" << sDescription << ", " << strerror(iErrno) << ")");
 	if (iErrno == EMFILE) {
 		// We have too many open fds, this can cause a busy loop.
 		Close();

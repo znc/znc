@@ -22,7 +22,7 @@ public:
 
 	virtual void ReadData(const char* data, size_t len);
 	virtual void ConnectionRefused();
-	virtual void SockError(int iErrno);
+	virtual void SockError(int iErrno, const CString& sDescription);
 	virtual void Timeout();
 	virtual void Connected();
 	virtual void Disconnected();
@@ -326,9 +326,9 @@ void CDCCSock::Timeout() {
 	m_pModule->PutModule(((m_bSend) ? "DCC -> [" : "DCC <- [") + m_sRemoteNick + "][" + m_sFileName + "] - Timed Out.");
 }
 
-void CDCCSock::SockError(int iErrno) {
-	DEBUG(GetSockName() << " == SockError(" << iErrno << ")");
-	m_pModule->PutModule(((m_bSend) ? "DCC -> [" : "DCC <- [") + m_sRemoteNick + "][" + m_sFileName + "] - Socket Error [" + CString(iErrno) + "]");
+void CDCCSock::SockError(int iErrno, const CString& sDescription) {
+	DEBUG(GetSockName() << " == SockError(" << iErrno << ", " << sDescription << ")");
+	m_pModule->PutModule(((m_bSend) ? "DCC -> [" : "DCC <- [") + m_sRemoteNick + "][" + m_sFileName + "] - Socket Error [" + sDescription + "]");
 }
 
 void CDCCSock::Connected() {

@@ -24,7 +24,7 @@ public:
 	virtual void ReadData(const char* data, size_t len);
 	virtual void ReadLine(const CString& sData);
 	virtual void ReachedMaxBuffer();
-	virtual void SockError(int iErrno);
+	virtual void SockError(int iErrno, const CString& sDescription);
 	virtual void Timeout();
 	virtual void Connected();
 	virtual void Disconnected();

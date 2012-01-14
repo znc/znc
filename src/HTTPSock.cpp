@@ -536,7 +536,7 @@ bool CHTTPSock::Redirect(const CString& sURL) {
 void CHTTPSock::Timeout() {
 }
 
-void CHTTPSock::SockError(int iErrno) {
+void CHTTPSock::SockError(int iErrno, const CString& sDescription) {
 }
 
 void CHTTPSock::Connected() {
