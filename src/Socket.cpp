@@ -196,7 +196,7 @@ void CSockManager::TryToFinishTDNSTask(TDNSTask* task) {
 	} catch (const char* s) {
 		DEBUG(task->sSockName << ", dns resolving error: " << s);
 		task->pcSock->SetSockName(task->sSockName);
-		task->pcSock->SockTextError(s);
+		task->pcSock->SockError(-1, s);
 		delete task->pcSock;
 	}
 
