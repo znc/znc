@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004-2011  See the AUTHORS file for details.
+ * Copyright (C) 2004-2012  See the AUTHORS file for details.
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License version 2 as published
@@ -24,6 +24,7 @@
 #include "../include/znc/Nick.h"
 #include "../include/znc/Chan.h"
 #include "../include/znc/User.h"
+#include "../include/znc/IRCNetwork.h"
 #include "../include/znc/Client.h"
 #include "../include/znc/IRCSock.h"
 #include "../include/znc/Listener.h"
@@ -39,6 +40,8 @@
 #include "modperl/module.h"
 #define stat struct stat
 %}
+
+%apply long { off_t };
 
 %begin %{
 #include "znc/zncconfig.h"
@@ -87,6 +90,7 @@ namespace std {
 %include "../include/znc/Nick.h"
 %include "../include/znc/Chan.h"
 %include "../include/znc/User.h"
+%include "../include/znc/IRCNetwork.h"
 %include "../include/znc/Client.h"
 %include "../include/znc/IRCSock.h"
 %include "../include/znc/Listener.h"

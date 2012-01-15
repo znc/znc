@@ -69,7 +69,7 @@ SWIG_AsVal_std_string (PyObject * obj, CString *val)
 }
 /*@SWIG@*/
 /*@SWIG:/usr/share/swig1.3/typemaps/std_strings.swg,38,%std_string_from@*/
-%fragment("SWIG_" "From" "_" {CString},"header",fragment="SWIG_FromCharPtrAndSize") {
+%fragment("SWIG_" "From" "_" {CString},"header",fragment="SWIG_FromCharPtrAndSize",fragment="StdTraits") {
 SWIGINTERNINLINE PyObject *
 SWIG_From_std_string  (const CString& s)
 {
@@ -81,6 +81,17 @@ SWIG_From_std_string  (const CString& s)
 }
 }
 /*@SWIG@*/
+
+%fragment("StdTraitsCString","header",fragment="SWIG_From_CString") {
+    namespace swig {
+       template<> struct traits_from<CString> {
+           static PyObject *from(const CString& s) {
+               return SWIG_From_std_string(s);
+           }
+       };
+    }
+}
+
 
 /*@SWIG:/usr/share/swig1.3/typemaps/ptrtypes.swg,204,%typemaps_asptrfromn@*/
 /*@SWIG:/usr/share/swig1.3/typemaps/ptrtypes.swg,193,%typemaps_asptrfrom@*/
@@ -104,7 +115,7 @@ SWIG_From_std_string  (const CString& s)
     }
   }
   /*@SWIG:/usr/share/swig1.3/typemaps/ptrtypes.swg,31,%ptr_in_typemap@*/
-  %typemap(in,fragment="SWIG_" "AsPtr" "_" {CString}) CString {
+  %typemap(in,fragment="SWIG_" "AsPtr" "_" {CString},fragment="StdTraitsCString") CString {
     CString *ptr = (CString *)0;
     int res = SWIG_AsPtr_std_string($input, &ptr);
     if (!SWIG_IsOK(res) || !ptr) {
@@ -327,6 +338,5 @@ SWIG_From_std_string  (const CString& s)
 /*@SWIG@*/;
 
 /*@SWIG@*/;
-
 
 

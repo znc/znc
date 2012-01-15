@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004-2011  See the AUTHORS file for details.
+ * Copyright (C) 2004-2012  See the AUTHORS file for details.
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License version 2 as published
@@ -49,7 +49,7 @@ public:
 	virtual void Connected();
 	virtual void Disconnected();
 	virtual void ConnectionRefused();
-	virtual void SockError(int iErrno);
+	virtual void SockError(int iErrno, const CString& sDescription);
 	virtual void Timeout();
 	virtual void ReachedMaxBuffer();
 

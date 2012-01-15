@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004-2011  See the AUTHORS file for details.
+ * Copyright (C) 2004-2012  See the AUTHORS file for details.
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License version 2 as published
@@ -533,20 +533,6 @@ bool CHTTPSock::Redirect(const CString& sURL) {
 	return true;
 }
 
-void CHTTPSock::Timeout() {
-}
-
-void CHTTPSock::SockError(int iErrno) {
-}
-
 void CHTTPSock::Connected() {
 	SetTimeout(120);
-}
-
-void CHTTPSock::Disconnected() {
-}
-
-void CHTTPSock::ReachedMaxBuffer() {
-	DEBUG(GetSockName() << " == ReachedMaxBuffer()");
-	Close();
 }

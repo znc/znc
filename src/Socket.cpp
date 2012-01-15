@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004-2011  See the AUTHORS file for details.
+ * Copyright (C) 2004-2012  See the AUTHORS file for details.
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License version 2 as published
@@ -29,10 +29,11 @@ unsigned int CSockManager::GetAnonConnectionCount(const CString &sIP) const {
 	return ret;
 }
 
-CS_STRING CZNCSock::ConvertAddress(void *addr, bool ipv6) {
-	CString sRet = Csock::ConvertAddress(addr, ipv6);
-	sRet.TrimPrefix("::ffff:");
-	return sRet;
+int CZNCSock::ConvertAddress(const struct sockaddr_storage * pAddr, socklen_t iAddrLen, CS_STRING & sIP, u_short * piPort) {
+	int ret = Csock::ConvertAddress(pAddr, iAddrLen, sIP, piPort);
+	if (ret == 0)
+		sIP.TrimPrefix("::ffff:");
+	return ret;
 }
 
 #ifdef HAVE_THREADED_DNS
@@ -335,8 +336,8 @@ void CSocket::ReachedMaxBuffer() {
 	Close();
 }
 
-void CSocket::SockError(int iErrno) {
-	DEBUG(GetSockName() << " == SockError(" << strerror(iErrno) << ")");
+void CSocket::SockError(int iErrno, const CString& sDescription) {
+	DEBUG(GetSockName() << " == SockError(" << sDescription << ", " << strerror(iErrno) << ")");
 	if (iErrno == EMFILE) {
 		// We have too many open fds, this can cause a busy loop.
 		Close();

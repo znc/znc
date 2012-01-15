@@ -7,7 +7,7 @@ AC_DEFUN([AC_PROG_CC], [m4_errprint(__file__:__line__[: Something is trying to u
 dnl Needed for AC_PATH_PROGS_FEATURE_CHECK which was added in 2.62
 AC_PREREQ([2.62])
 dnl Keep the version number in sync with main.h!
-AC_INIT([znc], [0.203])
+AC_INIT([znc], [0.205])
 AC_CONFIG_MACRO_DIR([m4])
 AC_CONFIG_SRCDIR([src/znc.cpp])
 AC_LANG([C++])
@@ -151,7 +151,7 @@ AC_ARG_ENABLE( [poll],
 	[POLL="yes"])
 
 if test "$DEBUG" != "no"; then
-	appendCXX -ggdb
+	appendCXX -ggdb3
 	AC_DEFINE([_DEBUG], [1], [Define for debugging])
 	# These enable some debug options in g++'s STL, e.g. invalid use of iterators
 	AC_DEFINE([_GLIBCXX_DEBUG], [1], [Enable extra debugging checks in libstdc++])

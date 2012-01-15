@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004-2011  See the AUTHORS file for details.
+ * Copyright (C) 2004-2012  See the AUTHORS file for details.
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License version 2 as published
@@ -52,6 +52,8 @@ CIRCNetwork::CIRCNetwork(CUser *pUser, const CString& sName) {
 	m_RawBuffer.SetLineCount(100, true);   // This should be more than enough raws, especially since we are buffering the MOTD separately
 	m_MotdBuffer.SetLineCount(200, true);  // This should be more than enough motd lines
 	m_QueryBuffer.SetLineCount(250, true);
+
+	SetIRCConnectEnabled(true);
 }
 
 CIRCNetwork::CIRCNetwork(CUser *pUser, const CIRCNetwork &Network) {
@@ -172,6 +174,7 @@ void CIRCNetwork::Clone(const CIRCNetwork& Network) {
 	}
 	// !Modules
 
+	SetIRCConnectEnabled(Network.GetIRCConnectEnabled());
 }
 
 CIRCNetwork::~CIRCNetwork() {
@@ -181,8 +184,8 @@ CIRCNetwork::~CIRCNetwork() {
 	}
 
 	// Delete clients
-	for (vector<CClient*>::const_iterator it = m_vClients.begin(); it != m_vClients.end(); ++it) {
-		CZNC::Get().GetManager().DelSockByAddr(*it);
+	while (!m_vClients.empty()) {
+		CZNC::Get().GetManager().DelSockByAddr(m_vClients[0]);
 	}
 	m_vClients.clear();
 
@@ -240,6 +243,10 @@ bool CIRCNetwork::ParseConfig(CConfig *pConfig, CString& sError, bool bUpgrade) 
 			{ "realname", &CIRCNetwork::SetRealName }
 		};
 		size_t numStringOptions = sizeof(StringOptions) / sizeof(StringOptions[0]);
+		TOption<bool> BoolOptions[] = {
+			{ "ircconnectenabled", &CIRCNetwork::SetIRCConnectEnabled },
+		};
+		size_t numBoolOptions = sizeof(BoolOptions) / sizeof(BoolOptions[0]);
 
 		for (size_t i = 0; i < numStringOptions; i++) {
 			CString sValue;
@@ -247,10 +254,23 @@ bool CIRCNetwork::ParseConfig(CConfig *pConfig, CString& sError, bool bUpgrade) 
 				(this->*StringOptions[i].pSetter)(sValue);
 		}
 
+		for (size_t i = 0; i < numBoolOptions; i++) {
+			CString sValue;
+			if (pConfig->FindStringEntry(BoolOptions[i].name, sValue))
+				(this->*BoolOptions[i].pSetter)(sValue.ToBool());
+		}
+
 		pConfig->FindStringVector("loadmodule", vsList);
 		for (vit = vsList.begin(); vit != vsList.end(); ++vit) {
 			CString sValue = *vit;
 			CString sModName = sValue.Token(0);
+
+			// XXX Legacy crap, added in ZNC 0.203
+			if (sModName == "away") {
+				CUtils::PrintMessage("NOTICE: [away] was renamed, "
+						"loading [autoaway] instead");
+				sModName = "autoaway";
+			}
 
 			CUtils::PrintAction("Loading Module [" + sModName + "]");
 			CString sModRet;
@@ -326,6 +346,8 @@ CConfig CIRCNetwork::ToConfig() {
 	if (!m_sRealName.empty()) {
 		config.AddKeyValuePair("RealName", m_sRealName);
 	}
+
+	config.AddKeyValuePair("IRCConnectEnabled", CString(GetIRCConnectEnabled()));
 
 	// Modules
 	CModules& Mods = GetModules();
@@ -403,9 +425,13 @@ void CIRCNetwork::ClientConnected(CClient *pClient) {
 
 	// Send the cached MOTD
 	uSize = m_MotdBuffer.Size();
-	for (uIdx = 0; uIdx < uSize; uIdx++) {
-		pClient->PutClient(m_MotdBuffer.GetLine(uIdx, *pClient, msParams));
-	}
+	if (uSize > 0) {
+		for (uIdx = 0; uIdx < uSize; uIdx++) {
+			pClient->PutClient(m_MotdBuffer.GetLine(uIdx, *pClient, msParams));
+		}
+	} else {
+		pClient->PutClient(":irc.znc.in 422 :MOTD Cache is missing");
+ 	}
 
 	if (GetIRCSock() != NULL) {
 		CString sUserMode("");
@@ -441,7 +467,7 @@ void CIRCNetwork::ClientConnected(CClient *pClient) {
 	m_QueryBuffer.Clear();
 
 	// Tell them why they won't connect
-	if (!m_pUser->GetIRCConnectEnabled())
+	if (!GetIRCConnectEnabled())
 		pClient->PutStatus("You are currently disconnected from IRC. "
 				"Use 'connect' to reconnect.");
 }
@@ -869,7 +895,7 @@ CString CIRCNetwork::GetCurNick() const {
 }
 
 bool CIRCNetwork::Connect() {
-	if (!m_pUser->GetIRCConnectEnabled() || m_pIRCSock || !HasServers())
+	if (!GetIRCConnectEnabled() || m_pIRCSock || !HasServers())
 		return false;
 
 	CServer *pServer = GetNextServer();
@@ -930,9 +956,23 @@ void CIRCNetwork::IRCDisconnected() {
 	CheckIRCConnect();
 }
 
+void CIRCNetwork::SetIRCConnectEnabled(bool b) {
+	m_bIRCConnectEnabled = b;
+
+	if (m_bIRCConnectEnabled) {
+		CheckIRCConnect();
+	} else if (GetIRCSock()) {
+		if (GetIRCSock()->IsConnected()) {
+			GetIRCSock()->Quit();
+		} else {
+			GetIRCSock()->Close();
+		}
+	}
+}
+
 void CIRCNetwork::CheckIRCConnect() {
 	// Do we want to connect?
-	if (m_pUser->GetIRCConnectEnabled() && GetIRCSock() == NULL)
+	if (GetIRCConnectEnabled() && GetIRCSock() == NULL)
 		CZNC::Get().AddNetworkToQueue(this);
 }
 

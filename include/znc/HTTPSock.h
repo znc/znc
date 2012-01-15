@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004-2011  See the AUTHORS file for details.
+ * Copyright (C) 2004-2012  See the AUTHORS file for details.
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License version 2 as published
@@ -23,11 +23,7 @@ public:
 	// Csocket derived members
 	virtual void ReadData(const char* data, size_t len);
 	virtual void ReadLine(const CString& sData);
-	virtual void ReachedMaxBuffer();
-	virtual void SockError(int iErrno);
-	virtual void Timeout();
 	virtual void Connected();
-	virtual void Disconnected();
 	virtual Csock* GetSockObj(const CString& sHost, unsigned short uPort) = 0;
 	// !Csocket derived members
 

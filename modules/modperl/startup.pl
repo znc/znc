@@ -1,5 +1,5 @@
 #
-# Copyright (C) 2004-2011  See the AUTHORS file for details.
+# Copyright (C) 2004-2012  See the AUTHORS file for details.
 #
 # This program is free software; you can redistribute it and/or modify it
 # under the terms of the GNU General Public License version 2 as published
@@ -15,69 +15,40 @@ use feature 'switch', 'say';
 
 package ZNC::Core;
 
-my $uuidtype;
-my $uuidgen;
-our %pmods;
 my %modrefcount;
+my @allmods;
 
-sub Init {
-	if (eval { require Data::UUID }) {
-		$uuidtype = 'Data::UUID';
-		$uuidgen = new Data::UUID;
-	} elsif (eval { require UUID }) {
-		$uuidtype = 'UUID';
-	} else {
-		$uuidtype = 'int';
-		$uuidgen = 0;
-	}
-}
-
-sub CreateUUID {
-	my $res;
-	given ($uuidtype) {
-		when ('Data::UUID') {
-			$res = $uuidgen->create_str;
+sub UnloadModule {
+	my ($pmod) = @_;
+	$pmod->OnShutdown;
+	@allmods = grep {$pmod != $_} @allmods;
+	my $cmod = $pmod->{_cmod};
+	my $modpath = $cmod->GetModPath;
+	my $modname = $cmod->GetModName;
+	given ($cmod->GetType()) {
+		when ($ZNC::CModInfo::NetworkModule) {
+			$cmod->GetNetwork->GetModules->removeModule($cmod);
 		}
-		when ('UUID') {
-			my ($uuid, $str);
-			UUID::generate($uuid);
-			UUID::unparse($uuid, $res);
+		when ($ZNC::CModInfo::UserModule) {
+			$cmod->GetUser->GetModules->removeModule($cmod);
 		}
-		when ('int') {
-			$uuidgen++;
-			$res = "$uuidgen";
+		when ($ZNC::CModInfo::GlobalModule) {
+			ZNC::CZNC::Get()->GetModules->removeModule($cmod);
 		}
 	}
-	say "Created new UUID for modperl with '$uuidtype': $res";
-	return $res;
-}
-
-sub unloadByIDUser {
-	my ($id, $user) = @_;
-	my $modpath = $pmods{$id}{_cmod}->GetModPath;
-	my $modname = $pmods{$id}{_cmod}->GetModName;
-	$pmods{$id}->OnShutdown;
-	$user->GetModules->removeModule($pmods{$id}{_cmod});
-	delete $pmods{$id}{_cmod};# Just for the case
-	delete $pmods{$id}{_nv};
-	delete $pmods{$id}{_ptimers};
-	delete $pmods{$id}{_sockets};
-	delete $pmods{$id};
+	delete $pmod->{_cmod};
+	delete $pmod->{_nv};
 	unless (--$modrefcount{$modname}) {
 		say "Unloading $modpath from perl";
 		ZNC::_CleanupStash($modname);
 		delete $INC{$modpath};
 	}
-}
-
-sub UnloadModule {
-	my ($cmod) = @_;
-	unloadByIDUser($cmod->GetPerlID, $cmod->GetUser);
+	# here $cmod is deleted by perl (using DESTROY)
 }
 
 sub UnloadAll {
-	while (my ($id, $pmod) = each %pmods) {
-		unloadByIDUser($id, $pmod->{_cmod}->GetUser);
+	while (@allmods) {
+		UnloadModule($allmods[0]);
 	}
 }
 
@@ -89,39 +60,55 @@ sub IsModule {
 }
 
 sub LoadModule {
-	my ($modname, $args, $user) = @_;
+	my ($modname, $args, $type, $user, $network) = @_;
 	$modname =~ /^\w+$/ or return ($ZNC::Perl_LoadError, "Module names can only contain letters, numbers and underscores, [$modname] is invalid.");
-	return ($ZNC::Perl_LoadError, "Module [$modname] already loaded.") if defined $user->GetModules->FindModule($modname);
+	my $container;
+	given ($type) {
+		when ($ZNC::CModInfo::NetworkModule) {
+			$container = $network;
+		}
+		when ($ZNC::CModInfo::UserModule) {
+			$container = $user;
+		}
+		when ($ZNC::CModInfo::GlobalModule) {
+			$container = ZNC::CZNC::Get();
+		}
+	}
+	return ($ZNC::Perl_LoadError, "Uhm? No container for the module? Wtf?") unless $container;
+	$container = $container->GetModules;
+	return ($ZNC::Perl_LoadError, "Module [$modname] already loaded.") if defined $container->FindModule($modname);
 	my $modpath = ZNC::String->new;
 	my $datapath = ZNC::String->new;
 	ZNC::CModules::FindModPath("$modname.pm", $modpath, $datapath) or return ($ZNC::Perl_NotFound);
 	$modpath = $modpath->GetPerlStr;
 	return ($ZNC::Perl_LoadError, "Incorrect perl module [$modpath]") unless IsModule $modpath, $modname;
-	eval {
+	my $pmod;
+	my @types = eval {
 		require $modpath;
+		$pmod = bless {}, $modname;
+		$pmod->module_types();
 	};
 	if ($@) {
-		# modrefcount was 0 before this, otherwise it couldn't die.
+		# modrefcount was 0 before this, otherwise it couldn't die in the previous time.
 		# so can safely remove module from %INC
 		delete $INC{$modpath};
 		die $@;
 	}
+	return ($ZNC::Perl_LoadError, "Module [$modname] doesn't support the specified type.") unless $type ~~ @types;
 	$modrefcount{$modname}++;
-	my $id = CreateUUID;
 	$datapath = $datapath->GetPerlStr;
 	$datapath =~ s/\.pm$//;
-	my $cmod = ZNC::CPerlModule->new($user, $modname, $datapath, $id);
+	my $cmod = ZNC::CPerlModule->new($user, $network, $modname, $datapath, $pmod);
 	my %nv;
 	tie %nv, 'ZNC::ModuleNV', $cmod;
-	my $pmod = bless {
-		_cmod=>$cmod,
-		_nv=>\%nv
-	}, $modname;
+	$pmod->{_cmod} = $cmod;
+	$pmod->{_nv} = \%nv;
 	$cmod->SetDescription($pmod->description);
 	$cmod->SetArgs($args);
 	$cmod->SetModPath($modpath);
-	$pmods{$id} = $pmod;
-	$user->GetModules->push_back($cmod);
+	$cmod->SetType($type);
+	push @allmods, $pmod;
+	$container->push_back($cmod);
 	my $x = '';
 	my $loaded = 0;
 	eval {
@@ -132,7 +119,7 @@ sub LoadModule {
 		$x .= $@;
 	}
 	if (!$loaded) {
-		unloadByIDUser($id, $user);
+		UnloadModule $pmod;
 		if ($x) {
 			return ($ZNC::Perl_LoadError, "Module [$modname] aborted: $x");
 		}
@@ -145,7 +132,7 @@ sub LoadModule {
 }
 
 sub GetModInfo {
-	my ($modname) = @_;
+	my ($modname, $modinfo) = @_;
 	$modname =~ /^\w+$/ or return ($ZNC::Perl_LoadError, "Module names can only contain letters, numbers and underscores, [$modname] is invalid.");
 	my $modpath = ZNC::String->new;
 	my $datapath = ZNC::String->new;
@@ -154,23 +141,36 @@ sub GetModInfo {
 	return ($ZNC::Perl_LoadError, "Incorrect perl module.") unless IsModule $modpath, $modname;
 	require $modpath;
 	my $pmod = bless {}, $modname;
-	return ($ZNC::Perl_Loaded, $modpath, $pmod->description, $pmod->wiki_page)
+	my @types = $pmod->module_types;
+	$modinfo->SetDefaultType($types[0]);
+	$modinfo->SetDescription($pmod->description);
+	$modinfo->SetWikiPage($pmod->wiki_page);
+	$modinfo->SetName($modname);
+	$modinfo->SetPath($modpath);
+	$modinfo->AddType($_) for @types;
+	return ($ZNC::Perl_Loaded)
 }
 
 sub ModInfoByPath {
-	my ($modpath, $modname) = @_;
+	my ($modpath, $modname, $modinfo) = @_;
 	die "Incorrect perl module." unless IsModule $modpath, $modname;
 	require $modpath;
 	my $pmod = bless {}, $modname;
-	return ($pmod->description, $pmod->wiki_page)
+	my @types = $pmod->module_types;
+	$modinfo->SetDefaultType($types[0]);
+	$modinfo->SetDescription($pmod->description);
+	$modinfo->SetWikiPage($pmod->wiki_page);
+	$modinfo->SetName($modname);
+	$modinfo->SetPath($modpath);
+	$modinfo->AddType($_) for @types;
 }
 
 sub CallModFunc {
-	my $id = shift;
+	my $pmod = shift;
 	my $func = shift;
 	my $default = shift;
 	my @arg = @_;
-	my $res = $pmods{$id}->$func(@arg);
+	my $res = $pmod->$func(@arg);
 #	print "Returned from $func(@_): $res, (@arg)\n";
 	unless (defined $res) {
 		$res = $default if defined $default;
@@ -179,26 +179,25 @@ sub CallModFunc {
 }
 
 sub CallTimer {
-	my $modid = shift;
-	my $timerid = shift;
-	$pmods{$modid}->_CallTimer($timerid)
+	my $timer = shift;
+	$timer->RunJob;
 }
 
 sub CallSocket {
-	my $modid = shift;
-	$pmods{$modid}->_CallSocket(@_)
+	my $socket = shift;
+	my $func = shift;
+	say "Calling socket $func";
+	$socket->$func(@_)
 }
 
 sub RemoveTimer {
-	my $modid = shift;
-	my $timerid = shift;
-	$pmods{$modid}->_RemoveTimer($timerid)
+	my $timer = shift;
+	$timer->OnShutdown;
 }
 
 sub RemoveSocket {
-	my $modid = shift;
-	my $sockid = shift;
-	$pmods{$modid}->_RemoveSocket($sockid)
+	my $socket = shift;
+	$socket->OnShutdown;
 }
 
 package ZNC::ModuleNV;
@@ -281,6 +280,10 @@ sub description {
 
 sub wiki_page {
 	''
+}
+
+sub module_types {
+	$ZNC::CModInfo::NetworkModule
 }
 
 # Default implementations for module hooks. They can be overriden in derived modules.
@@ -386,20 +389,16 @@ sub NV {
 
 sub CreateTimer {
 	my $self = shift;
-	my $id = ZNC::Core::CreateUUID;
 	my %a = @_;
+	my $ptimer = {};
 	my $ctimer = ZNC::CreatePerlTimer(
 			$self->{_cmod},
 			$a{interval}//10,
 			$a{cycles}//1,
-			"perl-timer-$id",
+			"perl-timer",
 			$a{description}//'Just Another Perl Timer',
-			$id);
-	my $ptimer = {
-		_ctimer=>$ctimer,
-		_modid=>$self->GetPerlID
-	};
-	$self->{_ptimers}{$id} = $ptimer;
+			$ptimer);
+	$ptimer->{_ctimer} = $ctimer;
 	if (ref($a{task}) eq 'CODE') {
 		bless $ptimer, 'ZNC::Timer';
 		$ptimer->{job} = $a{task};
@@ -410,55 +409,21 @@ sub CreateTimer {
 	$ptimer;
 }
 
-sub _CallTimer {
-	my $self = shift;
-	my $id = shift;
-	my $t = $self->{_ptimers}{$id};
-	$t->RunJob;
-}
-
-sub _RemoveTimer {
-	my $self = shift;
-	my $id = shift;
-	say "Removing perl timer $id";
-	$self->{_ptimers}{$id}->OnShutdown;
-	delete $self->{_ptimers}{$id}
-}
-
 sub CreateSocket {
 	my $self = shift;
 	my $class = shift;
-	my $id = ZNC::Core::CreateUUID;
-	my $csock = ZNC::CreatePerlSocket($self->{_cmod}, $id);
-	my $psock = bless {
-		_csock=>$csock,
-		_modid=>$self->GetPerlID
-	}, $class;
-	$self->{_sockets}{$id} = $psock;
+	my $psock = bless {}, $class;
+	my $csock = ZNC::CreatePerlSocket($self->{_cmod}, $psock);
+	$psock->{_csock} = $csock;
 	$psock->Init(@_);
 	$psock;
-}
-
-sub _CallSocket {
-	my $self = shift;
-	my $id = shift;
-	my $func = shift;
-	$self->{_sockets}{$id}->$func(@_)
-}
-
-sub _RemoveSocket {
-	my $self = shift;
-	my $id = shift;
-	say "Removing perl socket $id";
-	$self->{_sockets}{$id}->OnShutdown;
-	delete $self->{_sockets}{$id}
 }
 
 package ZNC::Timer;
 
 sub GetModule {
 	my $self = shift;
-	$ZNC::Core::pmods{$self->{_modid}};
+	ZNC::AsPerlModule($self->{_ctimer}->GetModule)->GetPerlObj()
 }
 
 sub RunJob {
@@ -492,7 +457,7 @@ package ZNC::Socket;
 
 sub GetModule {
 	my $self = shift;
-	$ZNC::Core::pmods{$self->{_modid}};
+	ZNC::AsPerlModule($self->{_csock}->GetModule)->GetPerlObj()
 }
 
 sub Init {}
@@ -537,7 +502,7 @@ sub Connect {
 	$self->GetModule->GetManager->Connect(
 			$host,
 			$port,
-			"perl-socket-".$self->GetPerlID,
+			"perl-socket",
 			$arg{timeout}//60,
 			$arg{ssl}//0,
 			$arg{bindhost}//'',
@@ -560,7 +525,7 @@ sub Listen {
 	if (defined $arg{port}) {
 		return $arg{port} if $self->GetModule->GetManager->ListenHost(
 				$arg{port},
-				"perl-socket-".$self->GetPerlID,
+				"perl-socket",
 				$arg{bindhost}//'',
 				$arg{ssl}//0,
 				$arg{maxconns}//ZNC::_GetSOMAXCONN,
@@ -571,7 +536,7 @@ sub Listen {
 		return 0;
 	}
 	$self->GetModule->GetManager->ListenRand(
-			"perl-socket-".$self->GetPerlID,
+			"perl-socket",
 			$arg{bindhost}//'',
 			$arg{ssl}//0,
 			$arg{maxconns}//ZNC::_GetSOMAXCONN,

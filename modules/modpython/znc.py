@@ -1,5 +1,5 @@
 #
-# Copyright (C) 2004-2011  See the AUTHORS file for details.
+# Copyright (C) 2004-2012  See the AUTHORS file for details.
 #
 # This program is free software; you can redistribute it and/or modify it
 # under the terms of the GNU General Public License version 2 as published
@@ -150,7 +150,7 @@ class ModuleNV(collections.MutableMapping):
 
 class Module:
     description = '< Placeholder for a description >'
-    module_types = [CModInfo.UserModule]
+    module_types = [CModInfo.NetworkModule]
 
     wiki_page = ''
 
@@ -418,11 +418,12 @@ def find_open(modname):
             finally:
                 if x[0]:
                     x[0].close()
-        return (pymodule, d[1])
+        return (pymodule, d[1]+modname)
     else:
         # nothing found
         return (None, None)
 
+_py_modules = set()
 
 def load_module(modname, args, module_type, user, network, retmsg, modpython):
     '''Returns 0 if not found, 1 on loading error, 2 on success'''
@@ -450,23 +451,24 @@ def load_module(modname, args, module_type, user, network, retmsg, modpython):
     module.SetArgs(args)
     module.SetModPath(pymodule.__file__)
     module.SetType(module_type)
+    _py_modules.add(module)
 
     if module_type == CModInfo.UserModule:
         if not user:
-            retmsg.s = "Module [modpython] needs user for for UserModule."
+            retmsg.s = "Module [{}] is UserModule and needs user.".format(modname)
             unload_module(module)
             return 1
         user.GetModules().push_back(module._cmod)
     elif module_type == CModInfo.NetworkModule:
         if not network:
-            retmsg.s = "Module [modpython] needs a network for for NetworkModule."
+            retmsg.s = "Module [{}] is Network module and needs a network.".format(modname)
             unload_module(module)
             return 1
         network.GetModules().push_back(module._cmod)
     elif module_type == CModInfo.GlobalModule:
         CZNC.Get().GetModules().push_back(module._cmod)
     else:
-        retmsg.s = "Module [modpython] doesn't support module type."
+        retmsg.s = "Module [{}] doesn't support that module type.".format(modname)
         unload_module(module)
         return 1
 
@@ -508,6 +510,7 @@ def load_module(modname, args, module_type, user, network, retmsg, modpython):
 
 def unload_module(module):
     module.OnShutdown()
+    _py_modules.discard(module)
     cmod = module._cmod
     if module.GetType() == CModInfo.UserModule:
         cmod.GetUser().GetModules().removeModule(cmod)
@@ -518,6 +521,12 @@ def unload_module(module):
     del module._cmod
     cmod.DeletePyModule()
     del cmod
+
+
+def unload_all():
+    while len(_py_modules) > 0:
+        mod = _py_modules.pop()
+        unload_module(mod)
 
 
 def get_mod_info(modname, retmsg, modinfo):
@@ -595,3 +604,7 @@ def CreateWebSubPage(name, title='', params=dict(), admin=False):
     if admin:
         flags |= CWebSubPage.F_ADMIN
     return CreateWebSubPage_(name, title, vpair, flags)
+
+CUser.GetNetworks = CUser.GetNetworks_
+CIRCNetwork.GetChans = CIRCNetwork.GetChans_
+CChan.GetNicks = CChan.GetNicks_

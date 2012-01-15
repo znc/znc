@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004-2011  See the AUTHORS file for details.
+ * Copyright (C) 2004-2012  See the AUTHORS file for details.
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License version 2 as published
@@ -158,15 +158,8 @@ private:
 		// Disconnect all networks from irc
 		vector<CIRCNetwork*> vNetworks = pUser->GetNetworks();
 		for (vector<CIRCNetwork*>::iterator it2 = vNetworks.begin(); it2 != vNetworks.end(); ++it2) {
-			CIRCNetwork *pNetwork = *it2;
-			CIRCSock *pIRCSock = pNetwork->GetIRCSock();
-			if (pIRCSock) {
-				pIRCSock->Quit();
-			}
+			(*it2)->SetIRCConnectEnabled(false);
 		}
-
-		// ...and don't reconnect
-		pUser->SetIRCConnectEnabled(false);
 
 		SetNV(pUser->GetUserName(), "");
 		return true;

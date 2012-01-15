@@ -1,6 +1,6 @@
 /**
 *
-*    Copyright (c) 1999-2011 Jim Hull <imaginos@imaginos.net>
+*    Copyright (c) 1999-2012 Jim Hull <csocket@jimloco.com>
 *    All rights reserved
 *
 * Redistribution and use in source and binary forms, with or without modification,
@@ -30,7 +30,13 @@
 *
 */
 
-// note to compile with win32 need to link to winsock2, using gcc its -lws2_32
+/***
+ * NOTES ...
+ * - You should always compile with -Woverloaded-virtual to detect callbacks that may have been redefined since your last update
+ * - If you want to use gethostbyname instead of getaddrinfo, the use -DUSE_GETHOSTBYNAME when compiling
+ * - To compile with win32 need to link to winsock2, using gcc its -lws2_32
+ * - Code is formated with 'astyle --style=ansi -t4 --unpad-paren --pad-paren-in --keep-one-line-blocks'
+ ***/
 
 #ifndef _HAS_CSOCKET_
 #define _HAS_CSOCKET_
@@ -149,7 +155,7 @@ class CSCharBuffer
 public:
 	CSCharBuffer( size_t iSize )
 	{
-		m_pBuffer = (char *)malloc( iSize );
+		m_pBuffer = ( char * )malloc( iSize );
 	}
 	~CSCharBuffer()
 	{
@@ -167,9 +173,9 @@ public:
 	CSSockAddr()
 	{
 		m_bIsIPv6 = false;
-		memset( (struct sockaddr_in *)&m_saddr, '\0', sizeof( m_saddr ) );
+		memset(( struct sockaddr_in * )&m_saddr, '\0', sizeof( m_saddr ) );
 #ifdef HAVE_IPV6
-		memset( (struct sockaddr_in6 *)&m_saddr6, '\0', sizeof( m_saddr6 ) );
+		memset(( struct sockaddr_in6 * )&m_saddr6, '\0', sizeof( m_saddr6 ) );
 #endif /* HAVE_IPV6 */
 		m_iAFRequire = RAF_ANY;
 	}
@@ -193,11 +199,11 @@ public:
 
 	socklen_t GetSockAddrLen() { return( sizeof( m_saddr ) ); }
 	sockaddr_in * GetSockAddr() { return( &m_saddr ); }
-	in_addr * GetAddr() { return( &(m_saddr.sin_addr) ); }
+	in_addr * GetAddr() { return( &( m_saddr.sin_addr ) ); }
 #ifdef HAVE_IPV6
 	socklen_t GetSockAddrLen6() { return( sizeof( m_saddr6 ) ); }
 	sockaddr_in6 * GetSockAddr6() { return( &m_saddr6 ); }
-	in6_addr * GetAddr6() { return( &(m_saddr6.sin6_addr) ); }
+	in6_addr * GetAddr6() { return( &( m_saddr6.sin6_addr ) ); }
 #endif /* HAVE_IPV6 */
 
 	void SetAFRequire( EAFRequire iWhich ) { m_iAFRequire = iWhich; }
@@ -215,7 +221,8 @@ private:
 class Csock;
 
 /**
- * @brief this function is a wrapper around gethostbyname and getaddrinfo (for ipv6)
+ * @class CGetAddrInfo
+ * @brief this function is a wrapper around getaddrinfo (for ipv6)
  *
  * in the event this code is using ipv6, it calls getaddrinfo, and it tries to start the connection on each iteration
  * in the linked list returned by getaddrinfo. if pSock is not NULL the following behavior happens.
@@ -224,13 +231,38 @@ class Csock;
  * getaddrinfo might return multiple (possibly invalid depending on system configuration) ip addresses, so connect needs to try them all.
  * A classic example of this is a hostname that resolves to both ipv4 and ipv6 ip's. You still need to call Connect (and ConnectSSL) to finish
  * up the connection state
- * - NOTE ... Once threading is reimplemented, this function will spin off a thread to resolve and return EAGAIN until its done.
  *
- * @param sHostname the host to resolve
- * @param pSock the sock being setup, this option can be NULL, if it is null csSockAddr is only setup
- * @param csSockAddr the struct that sockaddr data is being copied to
- * @return 0 on success, otherwise an error. EAGAIN if this needs to be called again at a later time, ETIMEDOUT if no host is found
+ * Process can be called in a thread, but Init and Finish must only be called from the parent once the thread is complete
  */
+class CGetAddrInfo
+{
+public:
+	/**
+	 * @brief ctor
+	 * @param sHostname the host to resolve
+	 * @param pSock the sock being setup, this option can be NULL, if it is null csSockAddr is only setup
+	 * @param csSockAddr the struct that sockaddr data is being copied to
+	 */
+	CGetAddrInfo( const CS_STRING & sHostname, Csock *pSock, CSSockAddr & csSockAddr );
+	~CGetAddrInfo();
+
+	//! simply sets up m_cHints for use in process
+	void Init();
+	//! the simplest part of the function, only calls getaddrinfo and uses only m_sHostname, m_pAddrRes, and m_cHints.
+	int Process();
+	//! finalizes and sets up csSockAddr (and pSock if not NULL), only needs to be called if Process returns 0, but can be called anyways if flow demands it
+	int Finish();
+
+private:
+	CS_STRING m_sHostname;
+	Csock * m_pSock;
+	CSSockAddr & m_csSockAddr;
+	struct addrinfo * m_pAddrRes;
+	struct addrinfo m_cHints;
+	int m_iRet;
+};
+
+//! backwards compatible wrapper around CGetAddrInfo and gethostbyname
 int GetAddrInfo( const CS_STRING & sHostname, Csock *pSock, CSSockAddr & csSockAddr );
 
 //! used to retrieve the context position of the socket to its associated ssl connection. Setup once in InitSSL() via SSL_get_ex_new_index
@@ -300,7 +332,7 @@ inline void TFD_SET( cs_sock_t iSock, fd_set *set )
 
 inline bool TFD_ISSET( cs_sock_t iSock, fd_set *set )
 {
-	if ( FD_ISSET( iSock, set ) )
+	if( FD_ISSET( iSock, set ) )
 		return( true );
 
 	return( false );
@@ -320,7 +352,7 @@ unsigned long long millitime();
 * @brief this is the main cron job class
 *
 * You should derive from this class, and override RunJob() with your code
-* @author Jim Hull <imaginos@imaginos.net>
+* @author Jim Hull <csocket@jimloco.com>
 */
 
 class CCron
@@ -421,7 +453,7 @@ public:
 	void Remove( int iFD ) { m_miiMonitorFDs.erase( iFD ); }
 	//! causes this monitor to be removed
 	void DisableMonitor() { m_bEnabled = false; }
-	
+
 	bool IsEnabled() const { return( m_bEnabled ); }
 
 protected:
@@ -441,7 +473,7 @@ public:
 
 	void CleanupCrons();
 	void CleanupFDMonitors();
-	
+
 	//! returns a const reference to the crons associated to this socket
 	const std::vector<CCron *> & GetCrons() const { return( m_vcCrons ); }
 	//! This has a garbage collecter, and is used internall to call the jobs
@@ -473,7 +505,7 @@ protected:
 };
 
 #ifdef HAVE_LIBSSL
-typedef int (*FPCertVerifyCB)( int, X509_STORE_CTX * );
+typedef int ( *FPCertVerifyCB )( int, X509_STORE_CTX * );
 #endif /* HAVE_LIBSSL */
 
 /**
@@ -483,7 +515,7 @@ typedef int (*FPCertVerifyCB)( int, X509_STORE_CTX * );
 * You can use this class directly for quick things
 * or use the socket manager
 * @see TSocketManager
-* @author Jim Hull <imaginos@imaginos.net>
+* @author Jim Hull <csocket@jimloco.com>
 */
 class Csock : public CSockCommon
 {
@@ -586,11 +618,12 @@ public:
 	* Listens for connections
 	*
 	* @param iPort the port to listen on
-	* @param iMaxConns the maximum amount of connections to allow
+	* @param iMaxConns the maximum amount of pending connections to allow
 	* @param sBindHost the vhost on which to listen
-	* @param iTimeout i dont know what this does :(
+	* @param iTimeout if no connections come in by this timeout, the listener is closed
+	* @param bDetach don't block waiting for port to come up, instead detach and return immediately
 	*/
-	virtual bool Listen( u_short iPort, int iMaxConns = SOMAXCONN, const CS_STRING & sBindHost = "", u_int iTimeout = 0 );
+	virtual bool Listen( u_short iPort, int iMaxConns = SOMAXCONN, const CS_STRING & sBindHost = "", u_int iTimeout = 0, bool bDetach = false );
 
 	//! Accept an inbound connection, this is used internally
 	virtual cs_sock_t Accept( CS_STRING & sHost, u_short & iRPort );
@@ -651,8 +684,6 @@ public:
 	CS_STRING GetLocalIP();
 	CS_STRING GetRemoteIP();
 
-	virtual CS_STRING ConvertAddress( void *addr, bool bIPv6 = false );
-
 	//! Tells you if the socket is connected
 	virtual bool IsConnected() const;
 	//! Sets the sock, telling it its connected (internal use only)
@@ -667,6 +698,12 @@ public:
 	void SetSock( cs_sock_t iSock );
 	cs_sock_t & GetSock();
 
+	/**
+	 * @brief calls SockError, if sDescription is not set, then strerror is used to pull out a default description
+	 * @param iErrno the errno to send
+	 * @param sDescription the description of the error that occurred
+	 */
+	void CallSockError( int iErrno, const CS_STRING & sDescription = "" );
 	//! resets the time counter, this is virtual in the event you need an event on the timer being Reset
 	virtual void ResetTimer();
 
@@ -817,12 +854,12 @@ public:
 	//! Returns the peer's public key
 	CS_STRING GetPeerPubKey();
 	//! Returns the peer's certificate finger print
-	long GetPeerFingerprint( CS_STRING & sFP);
+	long GetPeerFingerprint( CS_STRING & sFP );
 
 	unsigned int GetRequireClientCertFlags();
 	//! legacy, deprecated @see SetRequireClientCertFlags
 	void SetRequiresClientCert( bool bRequiresCert );
-	//! bitwise flags, 0 means don't require cert, SSL_VERIFY_PEER verifies peers, SSL_VERIFY_FAIL_IF_NO_PEER_CERT will cause the connection to fail if no cert 
+	//! bitwise flags, 0 means don't require cert, SSL_VERIFY_PEER verifies peers, SSL_VERIFY_FAIL_IF_NO_PEER_CERT will cause the connection to fail if no cert
 	void SetRequireClientCertFlags( unsigned int iRequireClientCertFlags ) { m_iRequireClientCertFlags = iRequireClientCertFlags; }
 
 #endif /* HAVE_LIBSSL */
@@ -904,7 +941,7 @@ public:
 	*
 	* A sock error occured event
 	*/
-	virtual void SockError( int iErrno ) {}
+	virtual void SockError( int iErrno, const CS_STRING & sDescription ) {}
 	/**
 	* Override these functions for an easy interface when using the Socket Manager
 	* Don't bother using these callbacks if you are using this class directly (without Socket Manager)
@@ -916,6 +953,13 @@ public:
 	* default returns true
 	*/
 	virtual bool ConnectionFrom( const CS_STRING & sHost, u_short iPort ) { return( true ); }
+
+	/**
+	 * @brief called when type is LISTENER and the listening port is up and running
+	 * @param sBindIP the IP that is being bound to. Empty if no bind restriction
+	 * @param uPort the listening port
+	 */
+	virtual void Listening( const CS_STRING & sBindIP, u_short uPort ) {}
 
 	/**
 	 * Override these functions for an easy interface when using the Socket Manager
@@ -1010,11 +1054,28 @@ public:
 	 */
 	virtual int GetAddrInfo( const CS_STRING & sHostname, CSSockAddr & csSockAddr );
 
+	/**
+	 * @brief retrieve name info (numeric only) for a given sockaddr_storage
+	 * @param pAddr the sockaddr_storage
+	 * @param iAddrLen the length
+	 * @param sHostname filled with the IP from getnameinfo
+	 * @param piPort if not null, filled with the port
+	 * @return 0 on success.
+	 *
+	 * In the event you want to do additional work before or after getnameinfo is called, you can override this and do just that.
+	 * One example is in the event that an ipv6 ip is a mapped ipv4 mapped, you can check like so.
+	 * - if( pAddr->ss_family == AF_INET6 && IN6_IS_ADDR_V4MAPPED( &(((const struct sockaddr_in6 *)pAddr)->sin6_addr ) )
+	 */
+	virtual int ConvertAddress( const struct sockaddr_storage * pAddr, socklen_t iAddrLen, CS_STRING & sIP, u_short * piPort );
+
 #ifdef HAVE_C_ARES
 	CSSockAddr * GetCurrentAddr() const { return( m_pCurrAddr ); }
 	void SetAresFinished( int status ) { m_pCurrAddr = NULL; m_iARESStatus = status; }
 	ares_channel GetAresChannel() { return( m_pARESChannel ); }
 #endif /* HAVE_C_ARES */
+
+	//! returns the number of max pending connections when type is LISTENER
+	int GetMaxConns() const { return( m_iMaxConns ); }
 
 private:
 	//! making private for safety
@@ -1023,7 +1084,7 @@ private:
 	// NOTE! if you add any new members, be sure to add them to Copy()
 	u_short		m_uPort, m_iRemotePort, m_iLocalPort;
 	cs_sock_t	m_iReadSock, m_iWriteSock;
-	int m_iTimeout, m_iConnType, m_iMethod, m_iTcount;
+	int m_iTimeout, m_iConnType, m_iMethod, m_iTcount, m_iMaxConns;
 	bool		m_bUseSSL, m_bIsConnected, m_bBLOCK;
 	bool		m_bsslEstablished, m_bEnableReadLine, m_bPauseRead;
 	CS_STRING	m_shostname, m_sbuffer, m_sSockName, m_sPemFile, m_sCipherType, m_sParentName;
@@ -1165,8 +1226,9 @@ public:
 	/**
 	 * @param iPort port to listen on. Set to 0 to listen on a random port
 	 * @param sBindHost host to bind to
+	 * @param bDetach don't block while waiting for the port to come up, instead detach and return immediately
 	 */
-	CSListener( u_short iPort, const CS_STRING & sBindHost = "" )
+	CSListener( u_short iPort, const CS_STRING & sBindHost = "", bool bDetach = false )
 	{
 		m_iPort = iPort;
 		m_sBindHost = sBindHost;
@@ -1174,6 +1236,7 @@ public:
 		m_iMaxConns = SOMAXCONN;
 		m_iTimeout = 0;
 		m_iAFrequire = CSSockAddr::RAF_ANY;
+		m_bDetach = bDetach;
 #ifdef HAVE_LIBSSL
 		m_sCipher = "HIGH";
 		m_iRequireCertFlags = 0;
@@ -1181,6 +1244,8 @@ public:
 	}
 	virtual ~CSListener() {}
 
+	void SetDetach( bool b ) { m_bDetach = b; }
+	bool GetDetach() const { return( m_bDetach ); }
 	u_short GetPort() const { return( m_iPort ); }
 	const CS_STRING & GetSockName() const { return( m_sSockName ); }
 	const CS_STRING & GetBindHost() const { return( m_sBindHost ); }
@@ -1219,13 +1284,14 @@ public:
 	void SetPemPass( const CS_STRING & s ) { m_sPemPass = s; }
 	//! set to true if require a client certificate (deprecated @see SetRequireClientCertFlags)
 	void SetRequiresClientCert( bool b ) { m_iRequireCertFlags = ( b ? SSL_VERIFY_PEER|SSL_VERIFY_FAIL_IF_NO_PEER_CERT : 0 ); }
-	//! bitwise flags, 0 means don't require cert, SSL_VERIFY_PEER verifies peers, SSL_VERIFY_FAIL_IF_NO_PEER_CERT will cause the connection to fail if no cert 
+	//! bitwise flags, 0 means don't require cert, SSL_VERIFY_PEER verifies peers, SSL_VERIFY_FAIL_IF_NO_PEER_CERT will cause the connection to fail if no cert
 	void SetRequireClientCertFlags( unsigned int iRequireCertFlags ) { m_iRequireCertFlags = iRequireCertFlags; }
 #endif /* HAVE_LIBSSL */
 private:
 	u_short		m_iPort;
 	CS_STRING	m_sSockName, m_sBindHost;
 	bool		m_bIsSSL;
+	bool		m_bDetach;
 	int			m_iMaxConns;
 	u_int		m_iTimeout;
 	CSSockAddr::EAFRequire	m_iAFrequire;
@@ -1268,7 +1334,7 @@ public:
 *
 * class CBlahSock : public TSocketManager<SomeSock>
 *
-* @author Jim Hull <imaginos@imaginos.net>
+* @author Jim Hull <csocket@jimloco.com>
 */
 
 class CSocketManager : public std::vector<Csock *>, public CSockCommon
@@ -1297,6 +1363,15 @@ public:
 	*/
 	void Connect( const CSConnection & cCon, Csock * pcSock = NULL );
 
+	/**
+	 * @brief Sets up a listening socket
+	 * @param cListen the listener configuration
+	 * @param pcSock preconfigured sock to use
+	 * @param piRandPort if listener is set to port 0, then a random port is used and this is assigned.
+	 *
+	 * IF you provide piRandPort to be assigned, AND you set bDetach to true, then Listen() still blocks. If you don't want this
+	 * behavior, then look for the port assignment to be called in Csock::Listening
+	 */
 	virtual bool Listen( const CSListener & cListen, Csock * pcSock = NULL, u_short *piRandPort = NULL );
 
 
@@ -1408,7 +1483,7 @@ public:
 
 protected:
 
-	virtual int Select( std::map< int, short > & miiReadyFds, struct timeval *tvtimeout);
+	virtual int Select( std::map< int, short > & miiReadyFds, struct timeval *tvtimeout );
 
 private:
 	/**

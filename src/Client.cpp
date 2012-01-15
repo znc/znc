@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004-2011  See the AUTHORS file for details.
+ * Copyright (C) 2004-2012  See the AUTHORS file for details.
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License version 2 as published
@@ -284,7 +284,7 @@ void CClient::ReadLine(const CString& sData) {
 					NETWORKMODULECALL(OnUserAction(sTarget, sMessage), m_pUser, m_pNetwork, this, return);
 					sCTCP = "ACTION " + sMessage;
 
-					if (pChan && pChan->KeepBuffer()) {
+					if (pChan && (pChan->KeepBuffer() || !m_pNetwork->IsUserOnline())) {
 						pChan->AddBuffer(":" + _NAMEDFMT(GetNickMask()) + " PRIVMSG " + _NAMEDFMT(sTarget) + " :\001ACTION {text}\001", sMessage);
 					}
 
@@ -332,7 +332,7 @@ void CClient::ReadLine(const CString& sData) {
 		if (m_pNetwork) {
 			CChan* pChan = m_pNetwork->FindChan(sTarget);
 
-			if ((pChan) && (pChan->KeepBuffer())) {
+			if ((pChan) && (pChan->KeepBuffer() || !m_pNetwork->IsUserOnline())) {
 				pChan->AddBuffer(":" + _NAMEDFMT(GetNickMask()) + " PRIVMSG " + _NAMEDFMT(sTarget) + " :{text}", sMsg);
 			}
 

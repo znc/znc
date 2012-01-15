@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004-2011  See the AUTHORS file for details.
+ * Copyright (C) 2004-2012  See the AUTHORS file for details.
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License version 2 as published
@@ -10,6 +10,12 @@
 #include <znc/User.h>
 
 class CNickServ : public CModule {
+	void DoNickCommand(const CString& sCmd, const CString& sNick) {
+		MCString msValues;
+		msValues["nickname"] = sNick;
+		msValues["password"] = GetNV("Password");
+		PutIRC(CString::NamedFormat(GetNV(sCmd), msValues));
+	}
 public:
 	void SetCommand(const CString& sLine) {
 		SetNV("Password", sLine.Token(1, true));
@@ -24,7 +30,7 @@ public:
 		if (sLine.Token(1).empty()) {
 			PutModule("Syntax: ghost <nickname>");
 		} else {
-			PutIRC("PRIVMSG NickServ :GHOST " + sLine.Token(1) + " " + GetNV("Password"));
+			DoNickCommand("GhostCmd", sLine.Token(1));
 		}
 	}
 
@@ -32,7 +38,7 @@ public:
 		if (sLine.Token(1).empty()) {
 			PutModule("Syntax: recover <nickname>");
 		} else {
-			PutIRC("PRIVMSG NickServ :RECOVER " + sLine.Token(1) + " " + GetNV("Password"));
+			DoNickCommand("RecoverCmd", sLine.Token(1));
 		}
 	}
 
@@ -40,7 +46,7 @@ public:
 		if (sLine.Token(1).empty()) {
 			PutModule("Syntax: release <nickname>");
 		} else {
-			PutIRC("PRIVMSG NickServ :RELEASE " + sLine.Token(1) + " " + GetNV("Password"));
+			DoNickCommand("ReleaseCmd", sLine.Token(1));
 		}
 	}
 
@@ -48,8 +54,36 @@ public:
 		if (sLine.Token(1).empty()) {
 			PutModule("Syntax: group <nickname>");
 		} else {
-			PutIRC("PRIVMSG NickServ :GROUP " + sLine.Token(1) + " " + GetNV("Password"));
+			DoNickCommand("GroupCmd", sLine.Token(1));
 		}
+	}
+
+	void ViewCommandsCommand(const CString& sLine) {
+		PutModule("IDENTIFY=" + GetNV("IdentifyCmd"));
+		PutModule("GHOST=" + GetNV("GhostCmd"));
+		PutModule("RECOVER=" + GetNV("RecoverCmd"));
+		PutModule("RELEASE=" + GetNV("ReleaseCmd"));
+		PutModule("GROUP=" + GetNV("GroupCmd"));
+	}
+
+	void SetCommandCommand(const CString& sLine) {
+		CString sCmd = sLine.Token(1);
+		CString sNewCmd = sLine.Token(2, true);
+		if (sCmd.Equals("IDENTIFY")) {
+			SetNV("IdentifyCmd", sNewCmd);
+		} else if (sCmd.Equals("GHOST")) {
+			SetNV("GhostCmd", sNewCmd);
+		} else if (sCmd.Equals("RECOVER")) {
+			SetNV("RecoverCmd", sNewCmd);
+		} else if (sCmd.Equals("RELEASE")) {
+			SetNV("ReleaseCmd", sNewCmd);
+		} else if (sCmd.Equals("GROUP")) {
+			SetNV("GroupCmd", sNewCmd);
+		} else {
+			PutModule("No such editable command. See ViewCommands for list.");
+			return;
+		}
+		PutModule("Ok");
 	}
 
 	MODCONSTRUCTOR(CNickServ) {
@@ -66,7 +100,10 @@ public:
 			"nickname");
 		AddCommand("Group", static_cast<CModCommand::ModCmdFunc>(&CNickServ::GroupCommand),
 			"nickname");
-
+		AddCommand("ViewCommands", static_cast<CModCommand::ModCmdFunc>(&CNickServ::ViewCommandsCommand),
+			"", "Show patterns for lines, which are being sent to NickServ");
+		AddCommand("SetCommand", static_cast<CModCommand::ModCmdFunc>(&CNickServ::SetCommandCommand),
+			"cmd new-pattern", "Set pattern for commands");
 	}
 
 	virtual ~CNickServ() {}
@@ -77,6 +114,22 @@ public:
 			SetArgs("");
 		}
 
+		if (GetNV("IdentifyCmd").empty()) {
+			SetNV("IdentifyCmd", "PRIVMSG NickServ :IDENTIFY {password}");
+		}
+		if (GetNV("GhostCmd").empty()) {
+			SetNV("GhostCmd", "PRIVMSG NickServ :GHOST {nickname} {password}");
+		}
+		if (GetNV("RecoverCmd").empty()) {
+			SetNV("RecoverCmd", "PRIVMSG NickServ :RECOVER {nickname} {password}");
+		}
+		if (GetNV("ReleaseCmd").empty()) {
+			SetNV("ReleaseCmd", "PRIVMSG NickServ :RELEASE {nickname} {password}");
+		}
+		if (GetNV("GroupCmd").empty()) {
+			SetNV("GroupCmd", "PRIVMSG NickServ :GROUP {nickname} {password}");
+		}
+
 		return true;
 	}
 
@@ -84,10 +137,15 @@ public:
 		if (!GetNV("Password").empty()
 				&& Nick.GetNick().Equals("NickServ")
 				&& (sMessage.find("msg") != CString::npos
-				 || sMessage.find("authenticate") != CString::npos)
+				 || sMessage.find("authenticate") != CString::npos
+				 || sMessage.find("choose a different nickname") != CString::npos
+				 || sMessage.find("If this is your nick, type") != CString::npos
+				 || sMessage.find("type /NickServ IDENTIFY password") != CString::npos)
 				&& sMessage.AsUpper().find("IDENTIFY") != CString::npos
 				&& sMessage.find("help") == CString::npos) {
-			PutIRC("PRIVMSG NickServ :IDENTIFY " + GetNV("Password"));
+			MCString msValues;
+			msValues["password"] = GetNV("Password");
+			PutIRC(CString::NamedFormat(GetNV("IdentifyCmd"), msValues));
 		}
 	}
 

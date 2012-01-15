@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004-2011  See the AUTHORS file for details.
+ * Copyright (C) 2004-2012  See the AUTHORS file for details.
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License version 2 as published
@@ -64,8 +64,8 @@ Csock* CRealListener::GetSockObj(const CString& sHost, unsigned short uPort) {
 	return pClient;
 }
 
-void CRealListener::SockError(int iErrno) {
-	DEBUG(GetSockName() << " == SockError(" << strerror(iErrno) << ")");
+void CRealListener::SockError(int iErrno, const CString& sDescription) {
+	DEBUG(GetSockName() << " == SockError(" << sDescription << ", " << strerror(iErrno) << ")");
 	if (iErrno == EMFILE) {
 		// We have too many open fds, let's close this listening port to be able to continue
 		// to work, next rehash will (try to) reopen it.

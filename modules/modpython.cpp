@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004-2011  See the AUTHORS file for details.
+ * Copyright (C) 2004-2012  See the AUTHORS file for details.
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License version 2 as published
@@ -320,28 +320,15 @@ public:
 	}
 
 	virtual ~CModPython() {
-		const map<CString, CUser*>& users = CZNC::Get().GetUserMap();
-		for (map<CString, CUser*>::const_iterator i = users.begin(); i != users.end(); ++i) {
-			CModules& M = i->second->GetModules();
-			bool cont;
-			do {
-				cont = false;
-				for (CModules::iterator it = M.begin(); it != M.end(); ++it) {
-					CModule* m = *it;
-					CPyModule* mod = AsPyModule(m);
-					if (mod) {
-						cont = true;
-						bool bSuccess = false;
-						CString sRetMsg;
-						OnModuleUnloading(mod, bSuccess, sRetMsg);
-						if (!bSuccess) {
-							DEBUG("Error unloading python module in ~CModPython: " << sRetMsg);
-						}
-						break;
-					}
-				}
-			} while (cont);
-		}
+		PyObject* pyFunc = PyObject_GetAttrString(m_PyZNCModule, "unload_all");
+        PyObject* pyRes = PyObject_CallFunctionObjArgs(pyFunc, NULL);
+        if (!pyRes) {
+            CString sRetMsg = GetPyExceptionStr();
+            DEBUG("modpython tried to unload all modules in its destructor, but: " << sRetMsg);
+        }
+        Py_CLEAR(pyRes);
+        Py_CLEAR(pyFunc);
+
 		Py_CLEAR(m_PyFormatException);
 		Py_CLEAR(m_PyZNCModule);
 		Py_Finalize();

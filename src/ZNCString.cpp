@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004-2011  See the AUTHORS file for details.
+ * Copyright (C) 2004-2012  See the AUTHORS file for details.
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License version 2 as published
@@ -966,7 +966,14 @@ CString CString::ToTimeStr(unsigned long s) {
 	return sRet.RightChomp_n();
 }
 
-bool CString::ToBool() const { return (!Trim_n().Trim_n("0").empty() && !Trim_n().Equals("false")); }
+bool CString::ToBool() const {
+	CString sTrimmed = Trim_n();
+	return (!sTrimmed.Trim_n("0").empty() &&
+			!sTrimmed.Equals("false") &&
+			!sTrimmed.Equals("no") &&
+			!sTrimmed.Equals("n"));
+}
+
 short CString::ToShort() const { return strtoul(this->c_str(), (char**) NULL, 10); }
 unsigned short CString::ToUShort() const { return strtoul(this->c_str(), (char**) NULL, 10); }
 unsigned int CString::ToUInt() const { return strtoul(this->c_str(), (char**) NULL, 10); }

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004-2011  See the AUTHORS file for details.
+ * Copyright (C) 2004-2012  See the AUTHORS file for details.
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License version 2 as published
@@ -28,7 +28,7 @@ CString CBufLine::GetLine(const CClient& Client, const MCString& msParams) const
 	if (Client.HasServerTime()) {
 		msThisParams["text"] = m_sText;
 		CString sStr = CString::NamedFormat(m_sFormat, msThisParams);
-		return "@" + CString(m_tm) + " " + sStr;
+		return "@t=" + CString(m_tm) + " " + sStr;
 	} else {
 		msThisParams["text"] = Client.GetUser()->AddTimestamp(m_tm, m_sText);
 		return CString::NamedFormat(m_sFormat, msThisParams);

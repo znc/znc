@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004-2011  See the AUTHORS file for details.
+ * Copyright (C) 2004-2012  See the AUTHORS file for details.
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License version 2 as published
@@ -13,7 +13,7 @@
 
 // The following defines are for #if comparison (preprocessor only likes ints)
 #define VERSION_MAJOR  0
-#define VERSION_MINOR  203
+#define VERSION_MINOR  205
 // This one is for display purpose
 #define VERSION        (VERSION_MAJOR + VERSION_MINOR / 1000.0)
 

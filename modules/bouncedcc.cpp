@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004-2011  See the AUTHORS file for details.
+ * Copyright (C) 2004-2012  See the AUTHORS file for details.
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License version 2 as published
@@ -34,7 +34,7 @@ public:
 	virtual void Timeout();
 	virtual void ConnectionRefused();
 	virtual void ReachedMaxBuffer();
-	virtual void SockError(int iErrno);
+	virtual void SockError(int iErrno, const CString& sDescription);
 	virtual void Connected();
 	virtual void Disconnected();
 	virtual Csock* GetSockObj(const CString& sHost, unsigned short uPort);
@@ -377,7 +377,7 @@ void CDCCBounce::ConnectionRefused() {
 	m_pModule->PutModule("DCC " + sType + " Bounce (" + m_sRemoteNick + "): Connection Refused while connecting" + sHost);
 }
 
-void CDCCBounce::SockError(int iErrno) {
+void CDCCBounce::SockError(int iErrno, const CString& sDescription) {
 	DEBUG(GetSockName() << " == SockError(" << iErrno << ")");
 	CString sType = (m_bIsChat) ? "Chat" : "Xfer";
 
@@ -387,9 +387,9 @@ void CDCCBounce::SockError(int iErrno) {
 			sHost = "[" + sHost + " " + CString(Csock::GetPort()) + "]";
 		}
 
-		m_pModule->PutModule("DCC " + sType + " Bounce (" + m_sRemoteNick + "): Socket error [" + CString(strerror(iErrno)) + "]" + sHost);
+		m_pModule->PutModule("DCC " + sType + " Bounce (" + m_sRemoteNick + "): Socket error [" + sDescription + "]" + sHost);
 	} else {
-		m_pModule->PutModule("DCC " + sType + " Bounce (" + m_sRemoteNick + "): Socket error [" + CString(strerror(iErrno)) + "] [" + Csock::GetLocalIP() + ":" + CString(Csock::GetLocalPort()) + "]");
+		m_pModule->PutModule("DCC " + sType + " Bounce (" + m_sRemoteNick + "): Socket error [" + sDescription + "] [" + Csock::GetLocalIP() + ":" + CString(Csock::GetLocalPort()) + "]");
 	}
 }
 
@@ -451,5 +451,5 @@ unsigned short CDCCBounce::DCCRequest(const CString& sNick, unsigned long uLongI
 
 
 
-MODULEDEFS(CBounceDCCMod, "Bounce DCC module")
+MODULEDEFS(CBounceDCCMod, "Bounces DCC transfers through ZNC instead of sending them directly to the user. ")
 

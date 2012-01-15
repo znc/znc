@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004-2011  See the AUTHORS file for details.
+ * Copyright (C) 2004-2012  See the AUTHORS file for details.
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License version 2 as published
@@ -125,7 +125,6 @@ public:
 	void SetJoinTries(unsigned int i) { m_uMaxJoinTries = i; }
 	void SetMaxJoins(unsigned int i) { m_uMaxJoins = i; }
 	void SetSkinName(const CString& s) { m_sSkinName = s; }
-	void SetIRCConnectEnabled(bool b) { m_bIRCConnectEnabled = b; }
 	// !Setters
 
 	// Getters
@@ -146,7 +145,6 @@ public:
 	const CString& GetTimestampFormat() const;
 	bool GetTimestampAppend() const;
 	bool GetTimestampPrepend() const;
-	bool GetIRCConnectEnabled() const { return m_bIRCConnectEnabled; }
 
 	const CString& GetUserPath() const;
 
@@ -202,7 +200,6 @@ protected:
 	bool                  m_bBeingDeleted;
 	bool                  m_bAppendTimestamp;
 	bool                  m_bPrependTimestamp;
-	bool                  m_bIRCConnectEnabled;
 
 	CUserTimer*           m_pUserTimer;
 

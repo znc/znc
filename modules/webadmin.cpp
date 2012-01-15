@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004-2011  See the AUTHORS file for details.
+ * Copyright (C) 2004-2012  See the AUTHORS file for details.
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License version 2 as published
@@ -232,7 +232,6 @@ public:
 		pNewUser->SetTimezoneOffset(WebSock.GetParam("timezoneoffset").ToDouble());
 		pNewUser->SetJoinTries(WebSock.GetParam("jointries").ToUInt());
 		pNewUser->SetMaxJoins(WebSock.GetParam("maxjoins").ToUInt());
-		pNewUser->SetIRCConnectEnabled(WebSock.GetParam("doconnect").ToBool());
 
 		if (spSession->IsAdmin()) {
 			pNewUser->SetDenyLoadMod(WebSock.GetParam("denyloadmod").ToBool());
@@ -674,6 +673,8 @@ public:
 				Tmpl["Ident"] = pNetwork->GetIdent();
 				Tmpl["RealName"] = pNetwork->GetRealName();
 
+				Tmpl["IRCConnectEnabled"] = CString(pNetwork->GetIRCConnectEnabled());
+
 				const vector<CServer*>& vServers = pNetwork->GetServers();
 				for (unsigned int a = 0; a < vServers.size(); a++) {
 					CTemplate& l = Tmpl.AddRow("ServerLoop");
@@ -701,6 +702,7 @@ public:
 			} else {
 				Tmpl["Action"] = "addnetwork";
 				Tmpl["Title"] = "Add Network for User [" + pUser->GetUserName() + "]";
+				Tmpl["IRCConnectEnabled"] = "true";
 			}
 
 			return true;
@@ -741,6 +743,8 @@ public:
 		if (!sArg.Equals(pUser->GetRealName())) {
 			pNetwork->SetRealName(sArg);
 		}
+
+		pNetwork->SetIRCConnectEnabled(WebSock.GetParam("doconnect").ToBool());
 
 		VCString vsArgs;
 
@@ -882,7 +886,6 @@ public:
 				Tmpl["TimezoneOffset"] = CString(pUser->GetTimezoneOffset());
 				Tmpl["JoinTries"] = CString(pUser->JoinTries());
 				Tmpl["MaxJoins"] = CString(pUser->MaxJoins());
-				Tmpl["IRCConnectEnabled"] = CString(pUser->GetIRCConnectEnabled());
 
 				const set<CString>& ssAllowedHosts = pUser->GetAllowedHosts();
 				for (set<CString>::const_iterator it = ssAllowedHosts.begin(); it != ssAllowedHosts.end(); ++it) {
@@ -906,7 +909,6 @@ public:
 				Tmpl["Action"] = "adduser";
 				Tmpl["Title"] = "Add User";
 				Tmpl["StatusPrefix"] = "*";
-				Tmpl["IRCConnectEnabled"] = "true";
 			}
 
 			// To change BindHosts be admin or don't have DenySetBindHost

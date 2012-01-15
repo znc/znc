@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004-2011  See the AUTHORS file for details.
+ * Copyright (C) 2004-2012  See the AUTHORS file for details.
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License version 2 as published
@@ -28,6 +28,7 @@
 #include "../include/znc/FileUtils.h"
 #include "../include/znc/ZNCDebug.h"
 #include "../include/znc/ExecSock.h"
+#include "../include/znc/Buffer.h"
 #include "modpython/module.h"
 
 #include "modpython/retstring.h"
@@ -35,6 +36,8 @@
 #define stat struct stat
 using std::allocator;
 %}
+
+%apply long { off_t };
 
 %begin %{
 #include "znc/zncconfig.h"
@@ -64,6 +67,10 @@ namespace std {
 		}
 	}
 %}
+
+%template(VIRCNetworks) std::vector<CIRCNetwork*>;
+%template(VChannels) std::vector<CChan*>;
+%template(MNicks) std::map<CString, CNick>;
 
 %typemap(in) CString& {
 	String* p;
@@ -109,6 +116,7 @@ namespace std {
 %include "../include/znc/Server.h"
 %include "../include/znc/ZNCDebug.h"
 %include "../include/znc/ExecSock.h"
+%include "../include/znc/Buffer.h"
 
 %include "modpython/module.h"
 
@@ -165,6 +173,9 @@ public:
 	CString __repr__() {
 		return "<CUser " + $self->GetUserName() + ">";
 	}
+	std::vector<CIRCNetwork*> GetNetworks_() {
+		return $self->GetNetworks();
+	}
 };
 
 %extend CIRCNetwork {
@@ -174,6 +185,9 @@ public:
 	CString __repr__() {
 		return "<CIRCNetwork " + $self->GetName() + ">";
 	}
+	std::vector<CChan*> GetChans_() {
+		return $self->GetChans();
+	}
 }
 
 %extend CChan {
@@ -182,6 +196,9 @@ public:
 	}
 	CString __repr__() {
 		return "<CChan " + $self->GetName() + ">";
+	}
+	std::map<CString, CNick> GetNicks_() {
+		return $self->GetNicks();
 	}
 };
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004-2011  See the AUTHORS file for details.
+ * Copyright (C) 2004-2012  See the AUTHORS file for details.
  * Copyright (C) 2008 by Stefan Rado
  * based on admin.cpp by Sebastian Ramacher
  * based on admin.cpp in crox branch
@@ -375,7 +375,7 @@ class CAdminMod : public CModule {
 		CString sValue     = sLine.Token(5, true);
 
 		if (sValue.empty()) {
-			PutModule("Usage: setchan <variable> <username> <chan> <value>");
+			PutModule("Usage: setchan <variable> <username> <network> <chan> <value>");
 			return;
 		}
 
@@ -559,7 +559,6 @@ class CAdminMod : public CModule {
 			PutModule("Error: Cloning failed! [" + sError + "]");
 			return;
 		}
-		pNewUser->SetIRCConnectEnabled(false);
 
 		if (!CZNC::Get().AddUser(pNewUser, sError)) {
 			delete pNewUser;
@@ -730,8 +729,7 @@ class CAdminMod : public CModule {
 		}
 
 		// then reconnect
-		pUser->SetIRCConnectEnabled(true);
-		pNetwork->CheckIRCConnect();
+		pNetwork->SetIRCConnectEnabled(true);
 
 		PutModule("Queued user for a reconnect.");
 	}
@@ -757,14 +755,7 @@ class CAdminMod : public CModule {
 			return;
 		}
 
-		CIRCSock *pIRCSock = pNetwork->GetIRCSock();
-		if (pIRCSock && !pIRCSock->IsConnected())
-			pIRCSock->Close();
-		else if(pIRCSock)
-			pIRCSock->Quit();
-
-		pUser->SetIRCConnectEnabled(false);
-
+		pNetwork->SetIRCConnectEnabled(false);
 		PutModule("Closed user's IRC connection.");
 	}
 

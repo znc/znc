@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004-2011  See the AUTHORS file for details.
+ * Copyright (C) 2004-2012  See the AUTHORS file for details.
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License version 2 as published
@@ -83,7 +83,6 @@ CUser::CUser(const CString& sUserName)
 	m_sTimestampFormat = "[%H:%M:%S]";
 	m_bAppendTimestamp = false;
 	m_bPrependTimestamp = true;
-	m_bIRCConnectEnabled = true;
 	m_pUserTimer = new CUserTimer(this);
 	CZNC::Get().GetManager().AddCron(m_pUserTimer);
 }
@@ -149,7 +148,6 @@ bool CUser::ParseConfig(CConfig* pConfig, CString& sError) {
 		{ "denysetvhost", &CUser::SetDenySetBindHost },
 		{ "appendtimestamp", &CUser::SetTimestampAppend },
 		{ "prependtimestamp", &CUser::SetTimestampPrepend },
-		{ "ircconnectenabled", &CUser::SetIRCConnectEnabled },
 	};
 	size_t numBoolOptions = sizeof(BoolOptions) / sizeof(BoolOptions[0]);
 
@@ -386,7 +384,7 @@ bool CUser::ParseConfig(CConfig* pConfig, CString& sError) {
 					CString sNetworkModPath = (*it)->GetNetworkPath() + "/moddata/" + sModName;
 					if (!CFile::Exists(sNetworkModPath)) {
 						CDir::MakeDir(sNetworkModPath);
-					}	
+					}
 
 					fNVFile.Copy(sNetworkModPath + "/.registry");
 				}
@@ -406,6 +404,13 @@ bool CUser::ParseConfig(CConfig* pConfig, CString& sError) {
 			return false;
 		}
 		continue;
+	}
+
+	// Move ircconnectenabled to the networks
+	if (pConfig->FindStringEntry("ircconnectenabled", sValue)) {
+		for (vector<CIRCNetwork*>::iterator it = m_vIRCNetworks.begin(); it != m_vIRCNetworks.end(); ++it) {
+			(*it)->SetIRCConnectEnabled(sValue.ToBool());
+		}
 	}
 
 	return true;
@@ -663,7 +668,6 @@ bool CUser::Clone(const CUser& User, CString& sErrorRet, bool bCloneNetworks) {
 	// !CTCP Replies
 
 	// Flags
-	SetIRCConnectEnabled(User.GetIRCConnectEnabled());
 	SetKeepBuffer(User.KeepBuffer());
 	SetMultiClients(User.MultiClients());
 	SetDenyLoadMod(User.DenyLoadMod());
@@ -825,7 +829,6 @@ CConfig CUser::ToConfig() {
 	config.AddKeyValuePair("TimezoneOffset", CString(m_fTimezoneOffset));
 	config.AddKeyValuePair("JoinTries", CString(m_uMaxJoinTries));
 	config.AddKeyValuePair("MaxJoins", CString(m_uMaxJoins));
-	config.AddKeyValuePair("IRCConnectEnabled", CString(GetIRCConnectEnabled()));
 
 	// Allow Hosts
 	if (!m_ssAllowedHosts.empty()) {

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004-2011  See the AUTHORS file for details.
+ * Copyright (C) 2004-2012  See the AUTHORS file for details.
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License version 2 as published
@@ -20,7 +20,7 @@ public:
 	CZNCSock(const CString& sHost, u_short port, int timeout = 60) : Csock(sHost, port, timeout) {}
 	~CZNCSock() {}
 
-	virtual CS_STRING ConvertAddress(void *addr, bool ipv6 = false);
+	virtual int ConvertAddress(const struct sockaddr_storage * pAddr, socklen_t iAddrLen, CS_STRING & sIP, u_short * piPort);
 };
 
 enum EAddrType {
@@ -171,7 +171,7 @@ public:
 
 	//! This defaults to closing the socket, feel free to override
 	virtual void ReachedMaxBuffer();
-	virtual void SockError(int iErrno);
+	virtual void SockError(int iErrno, const CString& sDescription);
 
 	//! This limits the global connections from this IP to defeat DoS attacks, feel free to override. The ACL used is provided by the main interface @see CZNC::AllowConnectionFrom
 	virtual bool ConnectionFrom(const CString& sHost, unsigned short uPort);

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004-2011  See the AUTHORS file for details.
+ * Copyright (C) 2004-2012  See the AUTHORS file for details.
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License version 2 as published
@@ -302,8 +302,7 @@ void CClient::UserCommand(CString& sLine) {
 				PutStatus("Connecting...");
 		}
 
-		m_pUser->SetIRCConnectEnabled(true);
-		m_pNetwork->CheckIRCConnect();
+		m_pNetwork->SetIRCConnectEnabled(true);
 		return;
 	} else if (sCommand.Equals("DISCONNECT")) {
 		if (!m_pNetwork) {
@@ -316,7 +315,7 @@ void CClient::UserCommand(CString& sLine) {
 			GetIRCSock()->Quit(sQuitMsg);
 		}
 
-		m_pUser->SetIRCConnectEnabled(false);
+		m_pNetwork->SetIRCConnectEnabled(false);
 		PutStatus("Disconnected from IRC. Use 'connect' to reconnect.");
 		return;
 	} else if (sCommand.Equals("ENABLECHAN")) {
@@ -514,8 +513,8 @@ void CClient::UserCommand(CString& sLine) {
 
 		CIRCNetwork *pNetwork = m_pUser->FindNetwork(sNetwork);
 		if (pNetwork) {
-			SetNetwork(pNetwork);
 			PutStatus("Switched to " + sNetwork);
+			SetNetwork(pNetwork);
 		} else {
 			PutStatus("You don't have a network named " + sNetwork);
 		}

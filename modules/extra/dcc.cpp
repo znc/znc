@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004-2011  See the AUTHORS file for details.
+ * Copyright (C) 2004-2012  See the AUTHORS file for details.
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License version 2 as published
@@ -22,7 +22,7 @@ public:
 
 	virtual void ReadData(const char* data, size_t len);
 	virtual void ConnectionRefused();
-	virtual void SockError(int iErrno);
+	virtual void SockError(int iErrno, const CString& sDescription);
 	virtual void Timeout();
 	virtual void Connected();
 	virtual void Disconnected();
@@ -326,9 +326,9 @@ void CDCCSock::Timeout() {
 	m_pModule->PutModule(((m_bSend) ? "DCC -> [" : "DCC <- [") + m_sRemoteNick + "][" + m_sFileName + "] - Timed Out.");
 }
 
-void CDCCSock::SockError(int iErrno) {
-	DEBUG(GetSockName() << " == SockError(" << iErrno << ")");
-	m_pModule->PutModule(((m_bSend) ? "DCC -> [" : "DCC <- [") + m_sRemoteNick + "][" + m_sFileName + "] - Socket Error [" + CString(iErrno) + "]");
+void CDCCSock::SockError(int iErrno, const CString& sDescription) {
+	DEBUG(GetSockName() << " == SockError(" << iErrno << ", " << sDescription << ")");
+	m_pModule->PutModule(((m_bSend) ? "DCC -> [" : "DCC <- [") + m_sRemoteNick + "][" + m_sFileName + "] - Socket Error [" + sDescription + "]");
 }
 
 void CDCCSock::Connected() {

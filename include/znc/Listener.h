@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004-2011  See the AUTHORS file for details.
+ * Copyright (C) 2004-2012  See the AUTHORS file for details.
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License version 2 as published
@@ -68,7 +68,7 @@ public:
 
 	virtual bool ConnectionFrom(const CString& sHost, unsigned short uPort);
 	virtual Csock* GetSockObj(const CString& sHost, unsigned short uPort);
-	virtual void SockError(int iErrno);
+	virtual void SockError(int iErrno, const CString& sDescription);
 
 private:
 	CListener* m_pParent;
