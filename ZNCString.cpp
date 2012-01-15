@@ -902,7 +902,14 @@ CString CString::ToTimeStr(unsigned long s) {
 	return sRet.RightChomp_n();
 }
 
-bool CString::ToBool() const { return (!Trim_n().Trim_n("0").empty() && !Trim_n().Equals("false")); }
+bool CString::ToBool() const {
+	CString sTrimmed = Trim_n();
+	return (!sTrimmed.Trim_n("0").empty() &&
+			!sTrimmed.Equals("false") &&
+			!sTrimmed.Equals("no") &&
+			!sTrimmed.Equals("n"));
+}
+
 short CString::ToShort() const { return strtoul(this->c_str(), (char**) NULL, 10); }
 unsigned short CString::ToUShort() const { return strtoul(this->c_str(), (char**) NULL, 10); }
 unsigned int CString::ToUInt() const { return strtoul(this->c_str(), (char**) NULL, 10); }
