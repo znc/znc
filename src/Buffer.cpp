@@ -28,7 +28,7 @@ CString CBufLine::GetLine(const CClient& Client, const MCString& msParams) const
 	if (Client.HasServerTime()) {
 		msThisParams["text"] = m_sText;
 		CString sStr = CString::NamedFormat(m_sFormat, msThisParams);
-		return "@" + CString(m_tm) + " " + sStr;
+		return "@t=" + CString(m_tm) + " " + sStr;
 	} else {
 		msThisParams["text"] = Client.GetUser()->AddTimestamp(m_tm, m_sText);
 		return CString::NamedFormat(m_sFormat, msThisParams);
