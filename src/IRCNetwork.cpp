@@ -1036,7 +1036,7 @@ void CIRCNetwork::SetAltNick(const CString& s) {
 }
 
 void CIRCNetwork::SetIdent(const CString& s) {
-		if (m_pUser->GetIdent().Equals(s)) {
+	if (m_pUser->GetIdent().Equals(s)) {
 		m_sIdent = "";
 	} else {
 		m_sIdent = s;

@@ -724,25 +724,10 @@ public:
 
 		CString sArg;
 
-		sArg = WebSock.GetParam("nick");
-		if (!sArg.Equals(pUser->GetNick())) {
-			pNetwork->SetNick(sArg);
-		}
-
-		sArg = WebSock.GetParam("altnick");
-		if (!sArg.Equals(pUser->GetAltNick())) {
-			pNetwork->SetAltNick(sArg);
-		}
-
-		sArg = WebSock.GetParam("ident");
-		if (!sArg.Equals(pUser->GetIdent())) {
-			pNetwork->SetIdent(sArg);
-		}
-
-		sArg = WebSock.GetParam("realname");
-		if (!sArg.Equals(pUser->GetRealName())) {
-			pNetwork->SetRealName(sArg);
-		}
+		pNetwork->SetNick(WebSock.GetParam("nick"));
+		pNetwork->SetAltNick(WebSock.GetParam("altnick"));
+		pNetwork->SetIdent(WebSock.GetParam("ident"));
+		pNetwork->SetRealName(WebSock.GetParam("realname"));
 
 		pNetwork->SetIRCConnectEnabled(WebSock.GetParam("doconnect").ToBool());
 
