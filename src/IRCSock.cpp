@@ -793,6 +793,10 @@ bool CIRCSock::OnGeneralCTCP(CNick& Nick, CString& sMessage) {
 	if (it != mssCTCPReplies.end()) {
 		sReply = m_pNetwork->ExpandString(it->second);
 		bHaveReply = true;
+
+		if (sReply.empty()) {
+			return true;
+		}
 	}
 
 	if (!bHaveReply && !m_pNetwork->IsUserAttached()) {
