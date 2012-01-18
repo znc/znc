@@ -31,7 +31,8 @@ public:
 
 template<> void TModInfo<CRawMod>(CModInfo& Info) {
 	Info.SetWikiPage("raw");
+	Info.AddType(CModInfo::UserModule);
 }
 
-MODULEDEFS(CRawMod, "View all of the raw traffic")
+NETWORKMODULEDEFS(CRawMod, "View all of the raw traffic")
 
