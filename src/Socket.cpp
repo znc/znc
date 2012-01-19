@@ -76,7 +76,8 @@ void* CSockManager::TDNSThread(void* argument) {
 		sleep(5); // wait 5 seconds before next try
 	}
 
-	pthread_mutex_lock(a->mutex);
+	pthread_mutex_t* mutex = a->mutex;
+	pthread_mutex_lock(mutex);
 	int wrote = 0;
 	int need = sizeof(TDNSArg*);
 	char* x = (char*)&a;
@@ -89,7 +90,7 @@ void* CSockManager::TDNSThread(void* argument) {
 		wrote += w;
 		x += w;
 	}
-	pthread_mutex_unlock(a->mutex);
+	pthread_mutex_unlock(mutex);
 	return NULL;
 }
 
