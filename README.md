@@ -142,14 +142,13 @@ C++ modules are compiled by either saving them in the modules source dir and
 running make or with the znc-buildmod shell script.
 
 For additional info look in the wiki:
- [Writing Modules](http://wiki.znc.in/WritingModules)
- [Module Hooks](http://wiki.znc.in/ModuleHooks)
 
-Perl modules are loaded through the global module modperl.
- Details: [ModPerl](http://wiki.znc.in/Modperl)
+- [Writing Modules](http://wiki.znc.in/WritingModules)
+- [Module Hooks](http://wiki.znc.in/ModuleHooks)
 
-Python modules are loaded through the global module modpython.
- Details: [ModPython](http://wiki.znc.in/Modpython)
+Perl modules are loaded through the global module [ModPerl](http://wiki.znc.in/Modperl).
+
+Python modules are loaded through the global module [ModPython](http://wiki.znc.in/Modpython).
 
 ## Further infos
 
