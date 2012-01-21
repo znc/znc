@@ -428,7 +428,7 @@ protected:
 	{
 		if(m_pTimer)
 		{
-			PutModule("["+GetModName()+".so] timer is already in action.]");
+			CUtils::PrintMessage("["+GetModName()+".so] timer is already in action.]");
 			return true;
 		}
 
@@ -505,7 +505,7 @@ protected:
 			CUtils::PrintMessage("["+GetModName()+".so] KeepBuffer is not enabled"
 					+" for this channel, deleting the channel buffer for "
 					+cChan.GetName());
-			if(File.Delete())
+			if(!File.Delete())
 				CUtils::PrintMessage("["+GetModName()+".so] failed to delete ["+ePath+"]");
 			return false;
 		}
