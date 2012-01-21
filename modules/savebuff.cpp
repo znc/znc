@@ -214,7 +214,7 @@ public:
 		{
 			CUtils::PrintError("["+GetModName()+".so] not associated with any IRC network, "+
 					"and it can't save any channel buffer.");
-			return false;
+			return 0;
 		}
 
 		const vector<CChan *>& vChans = pNetwork->GetChans();
