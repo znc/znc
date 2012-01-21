@@ -175,7 +175,7 @@ public:
 			if(sChan != m_sSavedChannel)
 			{
 				CUtils::PrintError("["+GetModName()+".so] 366 was received for ["
-						+sChan+"] while savebuff was expecting it from ["
+						+sChan+"] while "+GetModName()+" was expecting it from ["
 						+ m_sSavedChannel+"]");
 				return CONTINUE;
 			}
@@ -240,7 +240,7 @@ protected:
 	{
 		CTable Table;
 
-		PutModule("savebuff Argument [Argument ...]");
+		PutModule(GetModName()+" Argument [Argument ...]");
 		Table.AddColumn("Argument");
 		Table.AddColumn("Default");
 		Table.AddColumn("Description");
