@@ -52,7 +52,7 @@ public:
 		AddCommand("dump", static_cast<CModCommand::ModCmdFunc>(&CSaveBuff::Dump),
 				"<channel>", "Dumps a channel buffer in " + GetModName() + " module.");
 		AddCommand("del", static_cast<CModCommand::ModCmdFunc>(&CSaveBuff::Del),
-				"<channel>", "Delete channel(s) with wildcards as * and ?");
+				"<channel>", "Delete channel(s) with wildcards * and ?");
 		AddCommand("count", static_cast<CModCommand::ModCmdFunc>(&CSaveBuff::Count),
 				"<channel> [<channel> ...]", "Counts the number of lines in channels with wildcards * and ?");
 		AddCommand("save", static_cast<CModCommand::ModCmdFunc>(&CSaveBuff::Save),
