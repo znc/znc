@@ -250,7 +250,10 @@ protected:
 		Table.SetCell("Default", "1000");
 		Table.SetCell("Description", "The mamximum number of lines saved in a channel buffer.");
 
-		PutModule(Table);
+		if(!table.empty())
+			PutModule(table);
+		else
+			PutModule("No channel buffer is saved yet...");
 	}
 
 	void Save(const CString &sArgs)
