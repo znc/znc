@@ -547,7 +547,7 @@ private:
 
 	// Fills a map with channel buffers matching sWild.
 	// key : decoded filename
-	// value : URL-encoded filename
+	// value : URL-encoded filepath
 	bool GetBufferList(const CString &sWild, MCString &mcString)
 	{
 		CDir dir(GetSavePath());
