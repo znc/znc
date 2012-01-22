@@ -58,7 +58,7 @@ public:
 	virtual ~CReplayBuffer()
 	{
 		if (!m_bBootError)
-			SaveBufferToDisk();
+			SaveBuffer();
 	}
 
 	virtual bool OnLoad(const CString& sArgs, CString& sMessage)
@@ -86,7 +86,7 @@ public:
 	virtual void OnIRCDisconnected()
 	{
 		StopTimer();
-		SaveBufferToDisk();
+		SaveBuffer();
 	}
 
 	// It outputs the refilled channel buffer 
@@ -160,10 +160,10 @@ public:
 	virtual void OnPart(const CNick& cNick, CChan &cChan, const CString &sMsg)
 	{
 		if(cNick.GetNick().Equals(GetNetwork()->GetCurNick()))
-			SaveBufferToDisk();
+			SaveBuffer();
 	}
 
-	unsigned int SaveBufferToDisk()
+	unsigned int SaveBuffer()
 	{
 		unsigned int count=0;
 
@@ -181,7 +181,7 @@ public:
 		for (it=vChans.begin(); it != vChans.end(); ++it)
 		{
 			CChan &cChan=**it;
-			if(!SaveChannelToDisk(cChan))
+			if(!SaveChannel(cChan))
 				CUtils::PrintMessage("["+GetModName()+".so] failed to save the channel buffer for ["
 						+cChan.GetName()+"]");
 			else
@@ -192,10 +192,21 @@ public:
 	}
 
 protected:
+private:
+	bool	m_bSeenJoin;
+	CString	m_sSavedChannel;
+	bool    m_bBootError;
+	CTimer *m_pTimer;
+	// Start of command functions.
 	void Save(const CString &sArgs)
 	{
-		unsigned int count=SaveBufferToDisk();
-		PutModule(CString(count)+" channel buffer(s) saved in "+GetSavePath());
+		unsigned int count=SaveBuffer();
+		PutModule(CString(count)+" channel buffer(s) saved.");
+	}
+
+	void Timers(const CString &sArgs)
+	{
+		ListTimers();
 	}
 
 	void List(const CString &sArgs)
@@ -204,7 +215,8 @@ protected:
 		MCString::iterator it;
 
 		// Fill the map with channel buffers.
-		if(!GetBufferList("*", mcString) || mcString.empty())
+		GetBufferList("*", mcString);
+		if(mcString.empty())
 		{
 			PutModule("No channel buffer is saved yet...");
 			return;
@@ -237,8 +249,7 @@ protected:
 			return;
 		}
 		// Fill the map with channel buffers
-		if(!GetBufferList(sArgs, mcChans))
-			return;
+		GetBufferList(sArgs, mcChans);
 		// Delete channel buffers.
 		unsigned int count=0;
 		for(it=mcChans.begin(); it != mcChans.end(); ++it)
@@ -251,7 +262,6 @@ protected:
 		}
 		PutModule(CString(count)+" channel buffers deleted.");
 	}
-
 	// Count the number of lines in channel buffers.
 	void Count(const CString &sLine)
 	{
@@ -271,8 +281,7 @@ protected:
 		table.AddColumn("Channel");
 		table.AddColumn("Lines");
 
-		if(!GetBufferList(sArgs, msChan))
-			return;
+		GetBufferList(sArgs, msChan);
 
 		// Fill the table using the map entries.
 		for(it=msChan.begin(); it != msChan.end(); ++it)
@@ -300,85 +309,6 @@ protected:
 			table.SetCell("Lines", CString(count/2)); // each line consumes two lines in a saved buffer.
 		}
 		PutModule(table);
-	}
-
-	void ReplayChannel(CChan *pChan)
-	{
-		if(pChan == NULL)
-		{
-			CUtils::PrintError("["+GetModName()+".so] pChan was given NULL in ReplayChannel");
-			return;
-		}
-
-		const CBuffer &Buffer=pChan->GetBuffer();
-		unsigned int size=Buffer.Size();
-		time_t logtime=0;
-		struct tm t;
-		char timeStr[1024];
-
-		PutUser(":***!znc@znc.in PRIVMSG "+pChan->GetName()+" :"+GetModName()+" Buffer Playback...");
-		for(unsigned int i=0; i<size; ++i)
-		{
-			const CBufLine &bufLine = Buffer.GetBufLine(i);
-			// Format time.
-			logtime=bufLine.GetTime();
-			localtime_r(&logtime, &t);
-			// Time formatted as Year/Month/Date [hour:minute:second am/pm]
-			if(!strftime(timeStr, sizeof(timeStr), "%Y/%b/%d [%I:%M:%S %P] ", &t))
-			{
-				CUtils::PrintError("["+GetModName()+".so] couldn't format a time log with strftime.]");
-				break;
-			}
-			// Replace {text} with the real text.
-			CString chanBuf=bufLine.GetFormat().Replace_n("{text}", timeStr+bufLine.GetText());
-			PutUser(chanBuf);
-		}
-		PutUser(":***!znc@znc.in PRIVMSG "+pChan->GetName()+" :"+GetModName()+" Playback Complete.");
-	}
-
-	void Timers(const CString &sArgs)
-	{
-		ListTimers();
-	}
-
-	bool StartTimer()
-	{
-		if(m_pTimer)
-		{
-			CUtils::PrintMessage("["+GetModName()+".so] timer is already in action.]");
-			return true;
-		}
-
-		m_pTimer=new CReplayBufferJob(this, 60, 0, "SaveBuffer", "Saves the current buffer to disk every 1 minute");
-		if(!AddTimer(m_pTimer))
-		{
-			CUtils::PrintError("["+GetModName()+".so] failed to start timer.");
-			delete m_pTimer;
-			m_pTimer=NULL;
-
-			return false;
-		}
-
-		return true;
-	}
-
-	bool StopTimer()
-	{
-		bool bRet=true;
-
-		if(m_pTimer == NULL)
-		{
-			CUtils::PrintError("["+GetModName()+".so] timer is not existent.]");
-			return false;
-		}
-
-		bRet=RemTimer(m_pTimer);
-		m_pTimer = NULL;
-
-		if(!bRet)
-			CUtils::PrintError("["+GetModName()+".so] there was a problem deleting a timer.");
-
-		return bRet;		
 	}
 
 	void Dump(const CString& sLine)
@@ -411,50 +341,7 @@ protected:
 		}
 		PutModule("//!-- EOF "+sChan);
 	}
-
-	bool SaveChannelToDisk(CChan& cChan)
-	{
-		// Use URL encoding.
-		CString ePath = GetPath(cChan.GetName().Escape_n(CString::EURL));
-		CFile File(ePath);
-
-		if (!cChan.KeepBuffer()) {
-			CUtils::PrintMessage("["+GetModName()+".so] KeepBuffer is not enabled"
-					+" for this channel, deleting the channel buffer for "
-					+cChan.GetName());
-			if(!File.Delete())
-				CUtils::PrintMessage("["+GetModName()+".so] failed to delete ["+ePath+"]");
-			return false;
-		}
-		// Rearrange the channel buffer so as to save it.
-		const CBuffer &Buffer = cChan.GetBuffer();
-		unsigned int bufSize=Buffer.Size();
-		CString sFile;
-		for (unsigned int i=0; i<bufSize ; ++i)
-		{
-			const CBufLine &Line = Buffer.GetBufLine(i);
-			sFile+= "@"+CString(Line.GetTime())+" "+Line.GetFormat()+"\n"+Line.GetText()+"\n";
-		}
-
-		if (File.Open(O_WRONLY | O_CREAT | O_TRUNC, 0600)) {
-			File.Chmod(0600);
-			File.Write(sFile);
-		}
-		else
-		{
-			CUtils::PrintError("["+GetModName()+".so] failed to open file ["+ePath+"]");
-			return false;
-		}
-		File.Close();
-
-		return true;
-	}
-private:
-	bool	m_bSeenJoin;
-	CString	m_sSavedChannel;
-	bool    m_bBootError;
-	CTimer *m_pTimer;
-
+	// End of command functions.
 	CString GetPath(const CString & sFile)
 	{
 		return GetSavePath()+"/"+sFile;
@@ -463,7 +350,7 @@ private:
 	// Fills a map with channel buffers matching sWild.
 	// key : decoded filename
 	// value : URL-encoded filepath
-	bool GetBufferList(const CString &sWild, MCString &mcString)
+	void GetBufferList(const CString &sWild, MCString &mcString)
 	{
 		CDir dir(GetSavePath());
 		CDir::iterator dit;
@@ -481,8 +368,6 @@ private:
 			if(sFile.WildCmp(sWild))
 				mcString.insert(pair<CString,CString>(sFile, ePath));
 		}
-
-		return true;
 	}
 
 	bool ReadChan(const CString & sChan, CString & sBuffer)
@@ -559,13 +444,125 @@ private:
 
 		return true;
 	}
+
+	void ReplayChannel(CChan *pChan)
+	{
+		if(pChan == NULL)
+		{
+			CUtils::PrintError("["+GetModName()+".so] pChan was given NULL in ReplayChannel");
+			return;
+		}
+
+		const CBuffer &Buffer=pChan->GetBuffer();
+		unsigned int size=Buffer.Size();
+		time_t logtime=0;
+		struct tm t;
+		char timeStr[1024];
+
+		PutUser(":***!znc@znc.in PRIVMSG "+pChan->GetName()+" :"+GetModName()+" Buffer Playback...");
+		for(unsigned int i=0; i<size; ++i)
+		{
+			const CBufLine &bufLine = Buffer.GetBufLine(i);
+			// Format time.
+			logtime=bufLine.GetTime();
+			localtime_r(&logtime, &t);
+			// Time formatted as Year/Month/Date [hour:minute:second am/pm]
+			if(!strftime(timeStr, sizeof(timeStr), "%Y/%b/%d [%I:%M:%S %P] ", &t))
+			{
+				CUtils::PrintError("["+GetModName()+".so] couldn't format a time log with strftime.]");
+				break;
+			}
+			// Replace {text} with the real text.
+			CString chanBuf=bufLine.GetFormat().Replace_n("{text}", timeStr+bufLine.GetText());
+			PutUser(chanBuf);
+		}
+		PutUser(":***!znc@znc.in PRIVMSG "+pChan->GetName()+" :"+GetModName()+" Playback Complete.");
+	}
+
+	bool StartTimer()
+	{
+		if(m_pTimer)
+		{
+			CUtils::PrintMessage("["+GetModName()+".so] timer is already in action.]");
+			return true;
+		}
+
+		m_pTimer=new CReplayBufferJob(this, 60, 0, "SaveBuffer", "Saves the current buffer to disk every 1 minute");
+		if(!AddTimer(m_pTimer))
+		{
+			CUtils::PrintError("["+GetModName()+".so] failed to start timer.");
+			delete m_pTimer;
+			m_pTimer=NULL;
+
+			return false;
+		}
+
+		return true;
+	}
+
+	bool StopTimer()
+	{
+		bool bRet=true;
+
+		if(m_pTimer == NULL)
+		{
+			CUtils::PrintError("["+GetModName()+".so] timer is not existent.]");
+			return false;
+		}
+
+		bRet=RemTimer(m_pTimer);
+		m_pTimer = NULL;
+
+		if(!bRet)
+			CUtils::PrintError("["+GetModName()+".so] there was a problem deleting a timer.");
+
+		return bRet;		
+	}
+
+	bool SaveChannel(CChan& cChan)
+	{
+		// Use URL encoding.
+		CString ePath = GetPath(cChan.GetName().Escape_n(CString::EURL));
+		CFile File(ePath);
+
+		if (!cChan.KeepBuffer()) {
+			CUtils::PrintMessage("["+GetModName()+".so] KeepBuffer is not enabled"
+					+" for this channel, deleting the channel buffer for "
+					+cChan.GetName());
+			if(!File.Delete())
+				CUtils::PrintMessage("["+GetModName()+".so] failed to delete ["+ePath+"]");
+			return false;
+		}
+		// Rearrange the channel buffer so as to save it.
+		const CBuffer &Buffer = cChan.GetBuffer();
+		unsigned int bufSize=Buffer.Size();
+		CString sFile;
+		for (unsigned int i=0; i<bufSize ; ++i)
+		{
+			const CBufLine &Line = Buffer.GetBufLine(i);
+			sFile+= "@"+CString(Line.GetTime())+" "+Line.GetFormat()+"\n"+Line.GetText()+"\n";
+		}
+
+		if (File.Open(O_WRONLY | O_CREAT | O_TRUNC, 0600)) {
+			File.Chmod(0600);
+			File.Write(sFile);
+		}
+		else
+		{
+			CUtils::PrintError("["+GetModName()+".so] failed to open file ["+ePath+"]");
+			return false;
+		}
+		File.Close();
+
+		return true;
+	}
 };
 
 
 void CReplayBufferJob::RunJob()
 {
 	CReplayBuffer *p = (CReplayBuffer *)m_pModule;
-	p->SaveBufferToDisk();
+	p->SaveBuffer();
 }
 
 template<> void TModInfo<CReplayBuffer>(CModInfo& Info) {
