@@ -194,15 +194,12 @@ bool CFile::Copy(const CString& sNewFileName, bool bOverwrite) {
 }
 
 bool CFile::Delete(const CString& sFileName) {
-	if (!CFile::Exists(sFileName)) {
-		return false;
-	}
-
 	return (unlink(sFileName.c_str()) == 0) ? true : false;
 }
 
 bool CFile::Move(const CString& sOldFileName, const CString& sNewFileName, bool bOverwrite) {
 	if ((!bOverwrite) && (CFile::Exists(sNewFileName))) {
+		errno = EEXIST;
 		return false;
 	}
 
@@ -211,6 +208,7 @@ bool CFile::Move(const CString& sOldFileName, const CString& sNewFileName, bool 
 
 bool CFile::Copy(const CString& sOldFileName, const CString& sNewFileName, bool bOverwrite) {
 	if ((!bOverwrite) && (CFile::Exists(sNewFileName))) {
+		errno = EEXIST;
 		return false;
 	}
 
@@ -250,6 +248,7 @@ bool CFile::Copy(const CString& sOldFileName, const CString& sNewFileName, bool 
 
 bool CFile::Chmod(mode_t mode) {
 	if (m_iFD == -1) {
+		errno = EBADF;
 		return false;
 	}
 	if (fchmod(m_iFD, mode) != 0) {
@@ -264,17 +263,22 @@ bool CFile::Chmod(const CString& sFile, mode_t mode) {
 }
 
 bool CFile::Seek(off_t uPos) {
+	/* This sets errno in case m_iFD == -1 */
+	errno = EBADF;
+
 	if (m_iFD != -1 && lseek(m_iFD, uPos, SEEK_SET) == uPos) {
 		ClearBuffer();
 		return true;
 	}
-
 	m_bHadError = true;
 
 	return false;
 }
 
 bool CFile::Truncate() {
+	/* This sets errno in case m_iFD == -1 */
+	errno = EBADF;
+
 	if (m_iFD != -1 && ftruncate(m_iFD, 0) == 0) {
 		ClearBuffer();
 		return true;
@@ -286,6 +290,9 @@ bool CFile::Truncate() {
 }
 
 bool CFile::Sync() {
+	/* This sets errno in case m_iFD == -1 */
+	errno = EBADF;
+
 	if (m_iFD != -1 && fsync(m_iFD) == 0)
 		return true;
 	m_bHadError = true;
@@ -299,6 +306,7 @@ bool CFile::Open(const CString& sFileName, int iFlags, mode_t iMode) {
 
 bool CFile::Open(int iFlags, mode_t iMode) {
 	if (m_iFD != -1) {
+		errno = EEXIST;
 		m_bHadError = true;
 		return false;
 	}
@@ -324,6 +332,7 @@ bool CFile::Open(int iFlags, mode_t iMode) {
 
 int CFile::Read(char *pszBuffer, int iBytes) {
 	if (m_iFD == -1) {
+		errno = EBADF;
 		return -1;
 	}
 
@@ -338,6 +347,7 @@ bool CFile::ReadLine(CString& sData, const CString & sDelimiter) {
 	int iBytes;
 
 	if (m_iFD == -1) {
+		errno = EBADF;
 		return false;
 	}
 
@@ -397,6 +407,7 @@ bool CFile::ReadFile(CString& sData, size_t iMaxSize) {
 
 int CFile::Write(const char *pszBuffer, u_int iBytes) {
 	if (m_iFD == -1) {
+		errno = EBADF;
 		return -1;
 	}
 
@@ -548,8 +559,10 @@ bool CDir::MakeDir(const CString& sPath, mode_t iMode) {
 	VCString::iterator it;
 
 	// Just in case someone tries this...
-	if (sPath.empty())
+	if (sPath.empty()) {
+		errno = ENOENT;
 		return false;
+	}
 
 	// If this is an absolute path, we need to handle this now!
 	if (sPath.Left(1) == "/")
