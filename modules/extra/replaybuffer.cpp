@@ -42,17 +42,17 @@ public:
 
 		AddHelpCommand();
 		AddCommand("dump", static_cast<CModCommand::ModCmdFunc>(&CReplayBuffer::Dump),
-				"<channel>", "Dumps a channel buffer in " + GetModName() + " module.");
+				"<channel>", "Dump a channel buffer in " + GetModName() + " module.");
 		AddCommand("del", static_cast<CModCommand::ModCmdFunc>(&CReplayBuffer::Del),
 				"<channel>", "Delete channel(s). Supported wildcards : * and ?");
 		AddCommand("count", static_cast<CModCommand::ModCmdFunc>(&CReplayBuffer::Count),
-				"<channel>[ <channel>]*", "The line counts for channels. Wildcards * and ? supported");
+				"<channel>", "Count lines in channels. Wildcards * and ? supported");
 		AddCommand("save", static_cast<CModCommand::ModCmdFunc>(&CReplayBuffer::Save),
-				"", "Saves all channel buffers.");
+				"", "Save all channel buffers.");
 		AddCommand("list", static_cast<CModCommand::ModCmdFunc>(&CReplayBuffer::List),
-				"", "Lists all of saved channel buffers.");
+				"", "List all of saved channel buffers.");
 		AddCommand("timers", static_cast<CModCommand::ModCmdFunc>(&CReplayBuffer::Timers),
-				"", "Lists the timers associated with " + GetModName());
+				"", "List the timers associated with " + GetModName());
 	}
 
 	virtual ~CReplayBuffer()
@@ -261,7 +261,7 @@ protected:
 		CString sCmd=sLine.Token(0);
 		CString sArgs=sLine.Token(1, true);
 
-		if(sArgs.empty())
+		if(sArgs.empty() || sArgs.find(" ") != CString::npos)
 		{
 			HandleHelpCommand("help count");
 			return;
@@ -271,13 +271,8 @@ protected:
 		table.AddColumn("Channel");
 		table.AddColumn("Lines");
 
-		VCString vcString;
-		VCString::iterator vcit;
-		// Each argument fills the map with channel buffers. 
-		sArgs.Split(" ", vcString);
-		for(vcit=vcString.begin(); vcit != vcString.end(); ++vcit)
-			if(!GetBufferList(*vcit, msChan))
-				return;
+		if(!GetBufferList(sArgs, msChan))
+			return;
 
 		// Fill the table using the map entries.
 		for(it=msChan.begin(); it != msChan.end(); ++it)
@@ -354,7 +349,7 @@ protected:
 			return true;
 		}
 
-		m_pTimer=new CReplayBufferJob(this, 60, 0, "ReplayBuffer", "Saves the current buffer to disk every 1 minute");
+		m_pTimer=new CReplayBufferJob(this, 60, 0, "SaveBuffer", "Saves the current buffer to disk every 1 minute");
 		if(!AddTimer(m_pTimer))
 		{
 			CUtils::PrintError("["+GetModName()+".so] failed to start timer.");
