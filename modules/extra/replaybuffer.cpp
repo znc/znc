@@ -46,7 +46,7 @@ public:
 		AddCommand("del", static_cast<CModCommand::ModCmdFunc>(&CReplayBuffer::Del),
 				"<channel>", "Delete channel(s). Supported wildcards : * and ?");
 		AddCommand("count", static_cast<CModCommand::ModCmdFunc>(&CReplayBuffer::Count),
-				"<channel>[ <channel>]*", "Shows the line count for channels. Supported wildcards : * and ?");
+				"<channel>[ <channel>]*", "The line counts for channels. Wildcards * and ? supported");
 		AddCommand("save", static_cast<CModCommand::ModCmdFunc>(&CReplayBuffer::Save),
 				"", "Saves all channel buffers.");
 		AddCommand("list", static_cast<CModCommand::ModCmdFunc>(&CReplayBuffer::List),
