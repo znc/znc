@@ -6,7 +6,7 @@
  * by the Free Software Foundation.
  *
  * Buffer Saving thing, incase your shit goes out while your out
- * Author: imaginos <imaginos@imaginos.net>
+ * Author: crocket <crockabiscuit@gmail.com>
  */
 
 #include <znc/Chan.h>
@@ -46,7 +46,7 @@ public:
 		AddCommand("del", static_cast<CModCommand::ModCmdFunc>(&CReplayBuffer::Del),
 				"<channel>", "Delete channel(s). Supported wildcards : * and ?");
 		AddCommand("count", static_cast<CModCommand::ModCmdFunc>(&CReplayBuffer::Count),
-				"<channel> [<channel> ...]", "Counts the number of lines in channels. Supported wildcards : * and ?");
+				"<channel>[ <channel>]*", "Shows the line count for channels. Supported wildcards : * and ?");
 		AddCommand("save", static_cast<CModCommand::ModCmdFunc>(&CReplayBuffer::Save),
 				"", "Saves all channel buffers.");
 		AddCommand("list", static_cast<CModCommand::ModCmdFunc>(&CReplayBuffer::List),
