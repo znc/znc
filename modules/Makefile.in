@@ -93,6 +93,7 @@ TARGETS  := $(addsuffix .so, $(FILES))
 CLEAN    += *.so extra/*.so *.o extra/*.o
 
 .PHONY: all clean install install_datadir uninstall
+.SECONDARY:
 
 all: $(TARGETS)
 
