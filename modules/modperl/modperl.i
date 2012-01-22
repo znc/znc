@@ -76,6 +76,22 @@ namespace std {
 	argvi++;
 }
 
+%template(VIRCNetworks) std::vector<CIRCNetwork*>;
+%template(VChannels) std::vector<CChan*>;
+/*%template(MNicks) std::map<CString, CNick>;*/
+
+%typemap(out) std::map<CString, CNick> {
+	HV* myhv = newHV();
+	for (std::map<CString, CNick>::const_iterator i = $1.begin(); i != $1.end(); ++i) {
+		SV* val = SWIG_NewInstanceObj(const_cast<CNick*>(&i->second), SWIG_TypeQuery("CNick*"), SWIG_SHADOW);
+		SvREFCNT_inc(val);// it was created mortal
+		hv_store(myhv, i->first.c_str(), i->first.length(), val, 0);
+	}
+	$result = newRV_noinc((SV*)myhv);
+	sv_2mortal($result);
+	argvi++;
+}
+
 #define u_short unsigned short
 #define u_int unsigned int
 #include "../include/znc/ZNCString.h"
@@ -162,6 +178,24 @@ namespace std {
 	}
 }
 
+%extend CUser {
+	std::vector<CIRCNetwork*> GetNetworks_() {
+		return $self->GetNetworks();
+	}
+}
+
+%extend CIRCNetwork {
+	std::vector<CChan*> GetChans_() {
+		return $self->GetChans();
+	}
+}
+
+%extend CChan {
+	std::map<CString, CNick> GetNicks_() {
+		return $self->GetNicks();
+	}
+}
+
 /* Web */
 
 %template(StrPair) pair<CString, CString>;
@@ -215,6 +249,19 @@ typedef vector<pair<CString, CString> > VPair;
 	*HALTMODS = *ZNC::CModule::HALTMODS;
 	*HALTCORE = *ZNC::CModule::HALTCORE;
 	*UNLOAD = *ZNC::CModule::UNLOAD;
+
+	package ZNC::CIRCNetwork;
+	*GetChans = *GetChans_;
+
+	package ZNC::CUser;
+	*GetNetworks = *GetNetworks_;
+
+	package ZNC::CChan;
+	sub _GetNicks_ {
+		my $result = GetNicks_(@_);
+		return %$result;
+	}
+	*GetNicks = *_GetNicks_;
 %}
 
 /* vim: set filetype=cpp noexpandtab: */
