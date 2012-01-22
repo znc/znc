@@ -44,9 +44,9 @@ public:
 		AddCommand("dump", static_cast<CModCommand::ModCmdFunc>(&CReplayBuffer::Dump),
 				"<channel>", "Dumps a channel buffer in " + GetModName() + " module.");
 		AddCommand("del", static_cast<CModCommand::ModCmdFunc>(&CReplayBuffer::Del),
-				"<channel>", "Delete channel(s) with wildcards * and ?");
+				"<channel>", "Delete channel(s). Supported wildcards : * and ?");
 		AddCommand("count", static_cast<CModCommand::ModCmdFunc>(&CReplayBuffer::Count),
-				"<channel> [<channel> ...]", "Counts the number of lines in channels with wildcards * and ?");
+				"<channel> [<channel> ...]", "Counts the number of lines in channels. Supported wildcards : * and ?");
 		AddCommand("save", static_cast<CModCommand::ModCmdFunc>(&CReplayBuffer::Save),
 				"", "Saves all channel buffers.");
 		AddCommand("list", static_cast<CModCommand::ModCmdFunc>(&CReplayBuffer::List),
