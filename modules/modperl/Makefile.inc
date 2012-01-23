@@ -26,7 +26,7 @@ endif
 
 install: $(PERLHOOK)
 
-modperl.so: modperl/ZNC.so modperl/swigperlrun.h modperl/functions.cpp
+modperl.o: modperl/ZNC.so modperl/swigperlrun.h modperl/functions.cpp
 modperl/ZNC.so: modperl/ZNC.o Makefile
 	$(E) Linking ZNC Perl bindings library...
 	$(Q)$(CXX) $(MODFLAGS) $(LDFLAGS) $(MODLINK) $(PERL_LD) -o $@ $<
