@@ -34,7 +34,7 @@ modperl/ZNC.o: modperl/ZNC.cpp Makefile
 	@mkdir -p modperl
 	@mkdir -p .depend
 	$(E) Building ZNC Perl bindings library...
-	$(Q)$(CXX) $(MODFLAGS) -I$(srcdir) -MMD -MF .depend/modperl.library.dep $(PERL_CXX) -Wno-unused-variable -o $@ $< -c
+	$(Q)$(CXX) $(MODFLAGS) -I$(srcdir) -MMD -MF .depend/modperl.library.dep $(PERL_CXX) -Wno-unused-variable -Wno-shadow -o $@ $< -c
 ifneq "$(SWIG)" ""
 modperl/swigperlrun.h:
 	@mkdir -p modperl
