@@ -172,13 +172,16 @@ void CTemplate::AppendPath(const CString& sPath, bool bIncludesOnly) {
 void CTemplate::RemovePath(const CString& sPath) {
 	DEBUG("CTemplate::RemovePath(" + sPath + ") == [" + CDir::ChangeDir("./", sPath + "/") + "]");
 
-	for (list<pair<CString, bool> >::iterator it = m_lsbPaths.begin(); it != m_lsbPaths.end(); ++it) {
-		if (it->first == sPath) {
+	list<pair<CString, bool> >::iterator it = m_lsbPaths.begin();
+	do {
+		if(it->first == sPath) {
 			m_lsbPaths.remove(*it);
-			RemovePath(sPath); // @todo probably shouldn't use recursion, being lazy
-			return;
+			it=m_lsbPaths.begin(); // Start from the beginning after removing sPath.
 		}
-	}
+		else {
+			++it;
+		}
+	} while(it != m_lsbPaths.end());
 }
 
 void CTemplate::ClearPaths() {
