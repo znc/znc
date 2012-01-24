@@ -175,8 +175,9 @@ void CTemplate::RemovePath(const CString& sPath) {
 	list<pair<CString, bool> >::iterator it = m_lsbPaths.begin();
 	while(it != m_lsbPaths.end()) {
 		if(it->first == sPath) {
-			m_lsbPaths.remove(*it);
-			it=m_lsbPaths.begin(); // Start from the beginning after removing sPath.
+			m_lsbPaths.remove(pair<CString,bool>(sPath,true));
+			m_lsbPaths.remove(pair<CString,bool>(sPath,false));
+			return;
 		}
 		else {
 			++it;
