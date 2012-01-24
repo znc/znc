@@ -288,7 +288,7 @@ private:
 		{
 			const CString &sChan=it->first;
 			const CString &sChanPath=it->second;
-			if(!ReadChanPath(sChanPath, sBuf))
+			if(!ReadChanFile(sChanPath, sBuf))
 			{
 				CUtils::PrintMessage("["+GetModName()+".so] "
 						+"failed to read the channel buffer for ["+sChan+"]");
@@ -374,10 +374,10 @@ private:
 	{
 		// Use URL encoding.
 		CString eChan=sChan.Escape_n(CString::EURL);
-		return ReadChanPath(GetPath(eChan), sBuffer);
+		return ReadChanFile(GetPath(eChan), sBuffer);
 	}
 
-	bool ReadChanPath(const CString & sPath, CString & sBuffer)
+	bool ReadChanFile(const CString & sPath, CString & sBuffer)
 	{
 		sBuffer = "";
 
@@ -388,7 +388,7 @@ private:
 		if (sPath.empty() || !File.Open() || !File.ReadFile(sFile))
 		{
 			CUtils::PrintMessage("["+GetModName()+".so] failed to read "
-					+sPath+" in ReadChanPath.");
+					+sPath+" in ReadChanFile.");
 			File.Close();
 			return false;
 		}
