@@ -170,8 +170,12 @@ void CTemplate::AppendPath(const CString& sPath, bool bIncludesOnly) {
 }
 
 void CTemplate::RemovePath(const CString& sPath) {
-	DEBUG("CTemplate::RemovePath(" + sPath + ") == [" + CDir::ChangeDir("./", sPath + "/") + "]");
+	if(m_lsbPaths.empty()) {
+		DEBUG("CTemplate::RemovePath("+sPath+") m_lsbPaths is empty.");
+		return;
+	}
 
+	DEBUG("CTemplate::RemovePath(" + sPath + ") == [" + CDir::ChangeDir("./", sPath + "/") + "]");
 	list<pair<CString, bool> >::iterator it = m_lsbPaths.begin();
 	do {
 		if(it->first == sPath) {
