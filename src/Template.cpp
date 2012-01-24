@@ -173,11 +173,8 @@ void CTemplate::RemovePath(const CString& sPath) {
 	DEBUG("CTemplate::RemovePath(" + sPath + ") == [" + CDir::ChangeDir("./", sPath + "/") + "]");
 
 	for (list<pair<CString, bool> >::iterator it = m_lsbPaths.begin(); it != m_lsbPaths.end(); ++it) {
-		if (it->first == sPath) {
+		if (it->first == sPath)
 			m_lsbPaths.remove(*it);
-			RemovePath(sPath); // @todo probably shouldn't use recursion, being lazy
-			return;
-		}
 	}
 }
 
