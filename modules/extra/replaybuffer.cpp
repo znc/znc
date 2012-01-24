@@ -133,7 +133,7 @@ public:
 			CString sChan=sLine.Token(3);
 			if(sChan != m_sSavedChannel)
 			{
-				CUtils::PrintError("["+GetModName()+".so] 366 was received for ["
+				CUtils::PrintMessage("["+GetModName()+".so] 366 was received for ["
 						+sChan+"] while "+GetModName()+" was expecting it from ["
 						+ m_sSavedChannel+"]");
 				return CONTINUE;
@@ -151,13 +151,16 @@ public:
 	{
 		if(cNick.GetNick().Equals(GetNetwork()->GetCurNick()) && cChan.GetBuffer().IsEmpty())
 			if(!BootStrap(cChan))
-				CUtils::PrintMessage("["+GetModName()+".so] BootStrap not successfull in OnJoin.");
+				DEBUG("["+GetModName()+".so] BootStrap not successfull in OnJoin.");
 	}
 
 	virtual void OnPart(const CNick& cNick, CChan &cChan, const CString &sMsg)
 	{
-		if(cNick.GetNick().Equals(GetNetwork()->GetCurNick()))
-			SaveBuffer();
+		if(cNick.GetNick().Equals(GetNetwork()->GetCurNick())) {
+			if(!SaveChannel(cChan))
+				CUtils::PrintError("["+GetModName()+".so] failed to save the channel buffer for ["
+						+cChan.GetName()+"]");
+		}
 	}
 
 	unsigned int SaveBuffer()
@@ -179,7 +182,7 @@ public:
 		{
 			CChan &cChan=**it;
 			if(!SaveChannel(cChan))
-				CUtils::PrintMessage("["+GetModName()+".so] failed to save the channel buffer for ["
+				CUtils::PrintError("["+GetModName()+".so] failed to save the channel buffer for ["
 						+cChan.GetName()+"]");
 			else
 				count+=1;
@@ -252,7 +255,7 @@ private:
 		{
 			const CString &ePath=it->second;
 			if(!CFile::Delete(ePath))
-				CUtils::PrintMessage("["+GetModName()+".so] failed to delete "+ePath);
+				CUtils::PrintError("["+GetModName()+".so] failed to delete "+ePath);
 			else
 				count+=1;
 		}
@@ -286,7 +289,7 @@ private:
 			const CString &sChanPath=it->second;
 			if(!ReadChanFile(sChanPath, sBuf))
 			{
-				CUtils::PrintMessage("["+GetModName()+".so] "
+				CUtils::PrintError("["+GetModName()+".so] "
 						+"failed to read the channel buffer for ["+sChan+"]");
 				continue;
 			}
@@ -332,7 +335,7 @@ private:
 		}
 		else
 		{
-			CUtils::PrintMessage("["+GetModName()+".so] failed to read a channel buffer for ["
+			DEBUG("["+GetModName()+".so] failed to read a channel buffer for ["
 					+sChan+"]");
 		}
 		PutModule("//!-- EOF "+sChan);
@@ -383,7 +386,7 @@ private:
 
 		if (sPath.empty() || !File.Open() || !File.ReadFile(sFile))
 		{
-			CUtils::PrintMessage("["+GetModName()+".so] failed to read "
+			DEBUG("["+GetModName()+".so] failed to read "
 					+sPath+" in ReadChanFile.");
 			File.Close();
 			return false;
@@ -441,7 +444,7 @@ private:
 		}
 		else
 		{
-			CUtils::PrintMessage("["+GetModName()+".so] failed to read a channel buffer for ["
+			DEBUG("["+GetModName()+".so] failed to read a channel buffer for ["
 					+cChan.GetName()+"]");
 			return false;
 		}
@@ -532,7 +535,7 @@ private:
 					+" for this channel, deleting the channel buffer for "
 					+cChan.GetName());
 			if(!CFile::Delete(sPath))
-				CUtils::PrintMessage("["+GetModName()+".so] failed to delete ["+sPath+"]");
+				DEBUG("["+GetModName()+".so] failed to delete ["+sPath+"]");
 			return false;
 		}
 		// Rearrange the channel buffer so as to save it.
