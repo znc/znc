@@ -42,11 +42,11 @@ public:
 
 		AddHelpCommand();
 		AddCommand("dump", static_cast<CModCommand::ModCmdFunc>(&CReplayBuffer::Dump),
-				"<channel>", "Dump a channel buffer in " + GetModName() + " module.");
+				"<channel>", "Dump a saved channel buffer in " + GetModName() + " module.");
 		AddCommand("del", static_cast<CModCommand::ModCmdFunc>(&CReplayBuffer::Del),
-				"<channel>", "Delete channel(s). Supported wildcards : * and ?");
+				"<channel>", "Delete channels. Supported wildcards : * and ?");
 		AddCommand("count", static_cast<CModCommand::ModCmdFunc>(&CReplayBuffer::Count),
-				"<channel>", "Count lines in channels. Wildcards * and ? supported");
+				"<channel>", "Count lines in saved channel buffers. Wildcards * and ? supported");
 		AddCommand("save", static_cast<CModCommand::ModCmdFunc>(&CReplayBuffer::Save),
 				"", "Save all channel buffers.");
 		AddCommand("list", static_cast<CModCommand::ModCmdFunc>(&CReplayBuffer::List),
@@ -287,8 +287,8 @@ private:
 		for(it=msChan.begin(); it != msChan.end(); ++it)
 		{
 			const CString &sChan=it->first;
-			const CString &eChanPath=it->second;
-			if(!ReadChanPath(eChanPath, sBuf))
+			const CString &sChanPath=it->second;
+			if(!ReadChanPath(sChanPath, sBuf))
 			{
 				CUtils::PrintMessage("["+GetModName()+".so] "
 						+"failed to read the channel buffer for ["+sChan+"]");
@@ -382,9 +382,10 @@ private:
 		sBuffer = "";
 
 		CFile File(sPath);
+		CString sFile;
 		CString sTempBuf;
 
-		if (sPath.empty() || !File.Open() || !File.ReadFile(sTempBuf))
+		if (sPath.empty() || !File.Open() || !File.ReadFile(sFile))
 		{
 			CUtils::PrintMessage("["+GetModName()+".so] failed to read "
 					+sPath+" in ReadChanPath.");
@@ -393,6 +394,13 @@ private:
 		}
 
 		File.Close();
+
+		if(!sFile.empty() && !sFile.Base64Decode(sTempBuf))
+		{
+			CUtils::PrintError("["+GetModName()+".so] failed to decode base64-encoded file "
+					+ sPath);
+			return false;
+		}
 
 		sBuffer=sTempBuf;
 
@@ -521,26 +529,34 @@ private:
 
 	bool SaveChannel(CChan& cChan)
 	{
-		// Use URL encoding.
-		CString ePath = GetPath(cChan.GetName().Escape_n(CString::EURL));
-		CFile File(ePath);
+		// encode the filename in URL encoding since the encoding avoides "/".
+		CString sPath = GetPath(cChan.GetName().Escape_n(CString::EURL));
+		CFile File(sPath);
 
 		if (!cChan.KeepBuffer()) {
 			CUtils::PrintMessage("["+GetModName()+".so] KeepBuffer is not enabled"
 					+" for this channel, deleting the channel buffer for "
 					+cChan.GetName());
 			if(!File.Delete())
-				CUtils::PrintMessage("["+GetModName()+".so] failed to delete ["+ePath+"]");
+				CUtils::PrintMessage("["+GetModName()+".so] failed to delete ["+sPath+"]");
 			return false;
 		}
 		// Rearrange the channel buffer so as to save it.
 		const CBuffer &Buffer = cChan.GetBuffer();
 		unsigned int bufSize=Buffer.Size();
+		CString sBuf;
 		CString sFile;
 		for (unsigned int i=0; i<bufSize ; ++i)
 		{
 			const CBufLine &Line = Buffer.GetBufLine(i);
-			sFile+= "@"+CString(Line.GetTime())+" "+Line.GetFormat()+"\n"+Line.GetText()+"\n";
+			sBuf+= "@"+CString(Line.GetTime())+" "+Line.GetFormat()+"\n"+Line.GetText()+"\n";
+		}
+		// Use base64 encoding to encode the channel buffer.
+		if(!sBuf.empty() && !sBuf.Base64Encode(sFile))
+		{
+			CUtils::PrintError("["+GetModName()+".so] failed to encode the channel buffer for "
+					+cChan.GetName()+" in base64 encoding.");
+			return false;
 		}
 
 		if (File.Open(O_WRONLY | O_CREAT | O_TRUNC, 0600)) {
@@ -549,7 +565,7 @@ private:
 		}
 		else
 		{
-			CUtils::PrintError("["+GetModName()+".so] failed to open file ["+ePath+"]");
+			CUtils::PrintError("["+GetModName()+".so] failed to open file ["+sPath+"]");
 			return false;
 		}
 		File.Close();
