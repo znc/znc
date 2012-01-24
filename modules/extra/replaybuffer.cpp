@@ -37,7 +37,6 @@ public:
 	MODCONSTRUCTOR(CReplayBuffer)
 	{
 		m_bSeenJoin=false;
-		m_bBootError = false;
 		m_pTimer = NULL;
 
 		AddHelpCommand();
@@ -57,8 +56,7 @@ public:
 
 	virtual ~CReplayBuffer()
 	{
-		if (!m_bBootError)
-			SaveBuffer();
+		SaveBuffer();
 	}
 
 	virtual bool OnLoad(const CString& sArgs, CString& sMessage)
@@ -69,7 +67,6 @@ public:
 		{
 			if(!StartTimer())
 			{
-				m_bBootError=true;
 				sMessage=GetModName()+" failed to start a timer in OnLoad.";
 				return false;
 			}
@@ -195,7 +192,6 @@ protected:
 private:
 	bool	m_bSeenJoin;
 	CString	m_sSavedChannel;
-	bool    m_bBootError;
 	CTimer *m_pTimer;
 	// Start of command functions.
 	void Save(const CString &sArgs)
