@@ -531,13 +531,11 @@ private:
 	{
 		// encode the filename in URL encoding since the encoding avoides "/".
 		CString sPath = GetPath(cChan.GetName().Escape_n(CString::EURL));
-		CFile File(sPath);
-
 		if (!cChan.KeepBuffer()) {
 			CUtils::PrintMessage("["+GetModName()+".so] KeepBuffer is not enabled"
 					+" for this channel, deleting the channel buffer for "
 					+cChan.GetName());
-			if(!File.Delete())
+			if(!CFile::Delete(sPath))
 				CUtils::PrintMessage("["+GetModName()+".so] failed to delete ["+sPath+"]");
 			return false;
 		}
@@ -559,6 +557,7 @@ private:
 			return false;
 		}
 
+		CFile File(sPath);
 		if (File.Open(O_WRONLY | O_CREAT | O_TRUNC, 0600)) {
 			File.Chmod(0600);
 			File.Write(sFile);
