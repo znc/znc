@@ -176,7 +176,7 @@ void CTemplate::RemovePath(const CString& sPath) {
 	do {
 		if(it->first == sPath) {
 			m_lsbPaths.remove(*it);
-			it=m_lsbPaths.begin();
+			it=m_lsbPaths.begin(); // Start from the beginning after removing sPath.
 		}
 		else {
 			++it;
