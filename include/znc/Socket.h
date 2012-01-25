@@ -103,7 +103,6 @@ private:
 
 #ifdef HAVE_THREADED_DNS
 	int              m_iTDNSpipe[2];
-	pthread_mutex_t* m_mTDNSmutex;
 
 	class CTDNSMonitorFD;
 	friend class CTDNSMonitorFD;
@@ -124,7 +123,6 @@ private:
 	struct TDNSArg {
 		CString          sHostname;
 		TDNSTask*        task;
-		pthread_mutex_t* mutex;
 		int              fd;
 		bool             bBind;
 

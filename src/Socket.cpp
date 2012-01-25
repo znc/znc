@@ -76,21 +76,15 @@ void* CSockManager::TDNSThread(void* argument) {
 		sleep(5); // wait 5 seconds before next try
 	}
 
-	pthread_mutex_t* mutex = a->mutex;
-	pthread_mutex_lock(mutex);
-	int wrote = 0;
 	int need = sizeof(TDNSArg*);
 	char* x = (char*)&a;
-	while (wrote < need) {
-		int w = write(a->fd, x, need - wrote);
-		if (-1 == w) {
-			DEBUG("Something bad happened during write() to a pipe from TDNSThread: " << strerror(errno));
-			exit(1);
-		}
-		wrote += w;
-		x += w;
+	// This write() must succeed because POSIX guarantees that writes of
+	// less than PIPE_BUF are atomic (and PIPE_BUF is at least 512).
+	int w = write(a->fd, x, need);
+	if (w != need) {
+		DEBUG("Something bad happened during write() to a pipe from TDNSThread, wrote " << w << " bytes: " << strerror(errno));
+		exit(1);
 	}
-	pthread_mutex_unlock(mutex);
 	return NULL;
 }
 
@@ -99,7 +93,6 @@ void CSockManager::StartTDNSThread(TDNSTask* task, bool bBind) {
 	TDNSArg* arg = new TDNSArg;
 	arg->sHostname = sHostname;
 	arg->task      = task;
-	arg->mutex     = m_mTDNSmutex;
 	arg->fd        = m_iTDNSpipe[1];
 	arg->bBind     = bBind;
 	arg->iRes      = 0;
@@ -237,12 +230,6 @@ void CSockManager::RetrieveTDNSResult() {
 
 CSockManager::CSockManager() {
 #ifdef HAVE_THREADED_DNS
-	m_mTDNSmutex = new pthread_mutex_t;
-	int m = pthread_mutex_init(m_mTDNSmutex, NULL);
-	if (m) {
-		DEBUG("Ouch, can't init mutex for threaded DNS resolving: " << strerror(m));
-		exit(1);
-	}
 	if (pipe(m_iTDNSpipe)) {
 		DEBUG("Ouch, can't open pipe for threaded DNS resolving: " << strerror(errno));
 		exit(1);
@@ -253,12 +240,6 @@ CSockManager::CSockManager() {
 }
 
 CSockManager::~CSockManager() {
-#ifdef HAVE_THREADED_DNS
-	// Here pthread_mutex_destroy(m_mTDNSmutex); and delete m_mTDNSmutex; should be called...
-	// But lifetime of CSockManager is the same of CZNC, and if to destroy the mutex now,
-	// lock() from inside TDNSThread will fail.
-	// So here is a resource and memory leak, but this znc process will die in few moments anyway.
-#endif
 }
 
 void CSockManager::Connect(const CString& sHostname, u_short iPort, const CString& sSockName, int iTimeout, bool bSSL, const CString& sBindHost, CZNCSock *pcSock) {
