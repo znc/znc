@@ -382,7 +382,6 @@ private:
 
 		CFile File(sPath);
 		CString sFile;
-		CString sTempBuf;
 
 		if (sPath.empty() || !File.Open() || !File.ReadFile(sFile))
 		{
@@ -394,14 +393,7 @@ private:
 
 		File.Close();
 
-		if(!sFile.empty() && !sFile.Base64Decode(sTempBuf))
-		{
-			CUtils::PrintError("["+GetModName()+".so] failed to decode base64-encoded file "
-					+ sPath);
-			return false;
-		}
-
-		sBuffer=sTempBuf;
+		sBuffer=sFile;
 
 		return true;
 	}
@@ -542,24 +534,16 @@ private:
 		const CBuffer &Buffer = cChan.GetBuffer();
 		unsigned int bufSize=Buffer.Size();
 		CString sBuf;
-		CString sFile;
 		for (unsigned int i=0; i<bufSize ; ++i)
 		{
 			const CBufLine &Line = Buffer.GetBufLine(i);
 			sBuf+= "@"+CString(Line.GetTime())+" "+Line.GetFormat()+"\n"+Line.GetText()+"\n";
 		}
-		// Use base64 encoding to encode the channel buffer.
-		if(!sBuf.empty() && !sBuf.Base64Encode(sFile))
-		{
-			CUtils::PrintError("["+GetModName()+".so] failed to encode the channel buffer for "
-					+cChan.GetName()+" in base64 encoding.");
-			return false;
-		}
 
 		CFile File(sPath);
 		if (File.Open(O_WRONLY | O_CREAT | O_TRUNC, 0600)) {
 			File.Chmod(0600);
-			File.Write(sFile);
+			File.Write(sBuf);
 		}
 		else
 		{
