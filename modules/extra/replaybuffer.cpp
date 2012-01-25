@@ -312,6 +312,7 @@ private:
 
 	void Dump(const CString& sLine)
 	{
+		// Channel names are case-insensitive.
 		CString sChan=sLine.Token(1, true);
 		if(sChan.empty() || sChan.find(" ") != CString::npos)
 		{
@@ -356,6 +357,7 @@ private:
 		CString eFile;
 		CString ePath;
 		CString sFile;
+		CString slWild=sWild.AsLower(); // channel names are case-insensitive.
 		// Iterate through all of channel buffers.
 		for(dit=dir.begin(); dit != dir.end(); ++dit)
 		{
@@ -364,7 +366,7 @@ private:
 			// Decode URL encoded file names
 			sFile=eFile.Escape_n(CString::EURL,CString::EASCII);
 
-			if(sFile.WildCmp(sWild))
+			if(sFile.WildCmp(slWild))
 				mcString.insert(pair<CString,CString>(sFile, ePath));
 		}
 	}
@@ -372,7 +374,8 @@ private:
 	bool ReadChan(const CString & sChan, CString & sBuffer)
 	{
 		// Use URL encoding.
-		CString eChan=sChan.Escape_n(CString::EURL);
+		// Channel names are case-insensitive.
+		CString eChan=sChan.AsLower().Escape_n(CString::EURL);
 		return ReadChanFile(GetPath(eChan), sBuffer);
 	}
 
@@ -520,8 +523,9 @@ private:
 
 	bool SaveChannel(CChan& cChan)
 	{
-		// encode the filename in URL encoding since the encoding avoides "/".
-		CString sPath = GetPath(cChan.GetName().Escape_n(CString::EURL));
+		// Set filenames to lower-case channel names in URL encoding to avoid "/"
+		// Since channel names are case-insensitive, lower-case names are used in filenames.
+		CString sPath = GetPath(cChan.GetName().AsLower().Escape_n(CString::EURL));
 		if (!cChan.KeepBuffer()) {
 			CUtils::PrintMessage("["+GetModName()+".so] KeepBuffer is not enabled"
 					+" for this channel, deleting the channel buffer for "
