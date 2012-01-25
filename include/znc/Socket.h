@@ -131,7 +131,6 @@ private:
 	};
 	void StartTDNSThread(TDNSTask* task, bool bBind);
 	void SetTDNSThreadFinished(TDNSTask* task, bool bBind, addrinfo* aiResult);
-	void TryToFinishTDNSTask(TDNSTask* task);
 	void RetrieveTDNSResult();
 	static void* TDNSThread(void* argument);
 #endif

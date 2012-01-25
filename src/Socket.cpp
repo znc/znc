@@ -129,13 +129,13 @@ void CSockManager::SetTDNSThreadFinished(TDNSTask* task, bool bBind, addrinfo* a
 		task->aiTarget = aiResult;
 		task->bDoneTarget = true;
 	}
-	TryToFinishTDNSTask(task);
-}
 
-void CSockManager::TryToFinishTDNSTask(TDNSTask* task) {
+	// Now that something is done, check if everything we needed is done
 	if (!task->bDoneBind || !task->bDoneTarget) {
 		return;
 	}
+
+	// All needed DNS is done, now collect the results
 	addrinfo* aiTarget = NULL;
 	addrinfo* aiBind = NULL;
 
