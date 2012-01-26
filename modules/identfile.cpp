@@ -98,7 +98,7 @@ public:
 	}
 
 	void ReleaseISpoof() {
-		DEBUG("Releasing ident spoof for user [" + m_pUser->GetUserName() + "]");
+		DEBUG("Releasing ident spoof for user [" + (m_pUser ? m_pUser->GetUserName() : "<no user>") + "]");
 
 		m_pIRCSock = NULL;
 
