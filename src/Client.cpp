@@ -628,9 +628,13 @@ void CClient::AcceptLogin(CUser& User) {
 		if (!m_pNetwork) {
 			PutStatus("Network (" + m_sNetwork + ") doesn't exist.");
 		}
-	} else {
-		// If a user didn't supply a network, and they have a network called "user" then automatically use this network.
-		m_pNetwork = m_pUser->FindNetwork("user");
+	} else if (!m_pUser->GetNetworks().empty()) {
+		// If a user didn't supply a network, and they have a network called "default" then automatically use this network.
+		m_pNetwork = m_pUser->FindNetwork("default");
+		// If no "default" network, try "user" network. It's for compatibility with early network stuff in ZNC, which converted old configs to "user" network.
+		if (!m_pNetwork) m_pNetwork = m_pUser->FindNetwork("user");
+		// Otherwise, just try any network of the user.
+		if (!m_pNetwork) m_pNetwork = *m_pUser->GetNetworks().begin();
 	}
 
 	SetNetwork(m_pNetwork, false);

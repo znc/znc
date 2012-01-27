@@ -331,9 +331,9 @@ bool CUser::ParseConfig(CConfig* pConfig, CString& sError) {
 	}
 
 	if (pConfig->FindStringVector("server", vsList, false) || pConfig->FindStringVector("chan", vsList, false) || pConfig->FindSubConfig("chan", subConf, false)) {
-		CIRCNetwork *pNetwork = FindNetwork("user");
+		CIRCNetwork *pNetwork = FindNetwork("default");
 		if (!pNetwork) {
-			pNetwork = AddNetwork("user");
+			pNetwork = AddNetwork("default");
 		}
 
 		if (pNetwork) {
