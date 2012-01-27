@@ -49,6 +49,8 @@ saslauth:
 
 Installation is done with the `./configure ; make ; make install` commands.
 
+If you are building from git, you will need to run `./autogen.sh` first to produce the `configure` script.
+
 You can use
 	./configure --help
 if you want to get a list of options, though the defaults should be suiting
