@@ -21,14 +21,26 @@ public:
 
 	virtual bool OnBoot() {
 		const map<CString,CUser*> &msUsers=CZNC::Get().GetUserMap();
-		map<CString,CUser*>::const_iterator uEnd;
 		// Iterator through all users.
+		map<CString,CUser*>::const_iterator uEnd=msUsers.end();
 		for(map<CString,CUser*>::const_iterator uIt=msUsers.begin(); uIt != uEnd; ++uIt) {
-			const vector<CIRCNetwork*>& vNet=uIt->second->GetNetworks();
-			vector<CIRCNetwork*>::const_iterator nEnd=vNet.end();
+			CUser *pUser=uIt->second;
+			if(pUser == NULL) {
+				CUtils::PrintError("znc has NULL CUser pointer in its user map.");
+				return false;
+			}
+
+			const vector<CIRCNetwork*>& vNet=pUser->GetNetworks();
 			// Set IRCConnectEnabled to false for all networks in each user.
-			for(vector<CIRCNetwork*>::const_iterator nIt=vNet.begin(); nIt != nEnd; ++nIt)
-				(*nIt)->SetIRCConnectEnabled(false);
+			vector<CIRCNetwork*>::const_iterator nEnd=vNet.end();
+			for(vector<CIRCNetwork*>::const_iterator nIt=vNet.begin(); nIt != nEnd; ++nIt) {
+				CIRCNetwork* pNet=*nIt;
+				if(pNet == NULL) {
+					CUtils::PrintError("User "+pUser->GetUserName()+" has NULL in GetNetworks()");
+					return false;
+				}
+				pNet->SetIRCConnectEnabled(false);
+			}
 		}
 
 		return true;
