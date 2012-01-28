@@ -52,5 +52,5 @@ template<> void TModInfo<CManualConnect>(CModInfo& Info) {
 	Info.SetWikiPage("manualconnect");
 }
 
-GLOBALMODULEDEFS(CManualConnect, "While znc is tarted, it prevents znc from connecting to networks with IRCConnectEnabled=yes in znc.conf")
+GLOBALMODULEDEFS(CManualConnect, "While znc is tarted, it prevents znc from connecting to networks with IRCConnectEnabled=true in znc.conf")
 
