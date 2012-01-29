@@ -437,7 +437,7 @@ void CClient::UserCommand(CString& sLine) {
 		}
 
 		if (m_pUser->AddNetwork(sNetwork)) {
-			PutStatus("Network added");
+			PutStatus("Network added. Use /znc JumpNetwork " + sNetwork + ", or connect to ZNC with username " + m_pUser->GetUserName() + "/" + sNetwork + " (instead of just " + m_pUser->GetUserName() + ") to connect to it.");
 		} else {
 			PutStatus("Unable to add that network");
 			PutStatus("Perhaps that network is already added");
