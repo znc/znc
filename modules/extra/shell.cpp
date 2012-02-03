@@ -127,5 +127,5 @@ void CShellSock::Disconnected() {
 	m_pParent->SetClient(NULL);
 }
 
-MODULEDEFS(CShellMod, "Gives shell access")
+USERMODULEDEFS(CShellMod, "Gives shell access")
 

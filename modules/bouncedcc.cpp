@@ -451,5 +451,5 @@ unsigned short CDCCBounce::DCCRequest(const CString& sNick, unsigned long uLongI
 
 
 
-MODULEDEFS(CBounceDCCMod, "Bounces DCC transfers through ZNC instead of sending them directly to the user. ")
+USERMODULEDEFS(CBounceDCCMod, "Bounces DCC transfers through ZNC instead of sending them directly to the user. ")
 

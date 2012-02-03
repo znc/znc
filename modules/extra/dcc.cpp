@@ -471,5 +471,5 @@ bool CDCCSock::Seek(unsigned int uPos) {
 	return false;
 }
 
-MODULEDEFS(CDCCMod, "This module allows you to transfer files to and from ZNC")
+USERMODULEDEFS(CDCCMod, "This module allows you to transfer files to and from ZNC")
 

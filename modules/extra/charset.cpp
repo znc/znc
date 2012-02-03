@@ -244,4 +244,4 @@ public:
 	}
 };
 
-MODULEDEFS(CCharsetMod, "Normalizes character encodings.")
+USERMODULEDEFS(CCharsetMod, "Normalizes character encodings.")

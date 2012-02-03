@@ -113,4 +113,4 @@ private:
 	unsigned int m_iThresholdMsgs;
 };
 
-MODULEDEFS(CCtcpFloodMod, "Don't forward CTCP floods to clients")
+USERMODULEDEFS(CCtcpFloodMod, "Don't forward CTCP floods to clients")

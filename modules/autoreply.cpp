@@ -93,5 +93,5 @@ template<> void TModInfo<CAutoReplyMod>(CModInfo& Info) {
 	Info.AddType(CModInfo::NetworkModule);
 }
 
-MODULEDEFS(CAutoReplyMod, "Reply to queries when you are away")
+USERMODULEDEFS(CAutoReplyMod, "Reply to queries when you are away")
 

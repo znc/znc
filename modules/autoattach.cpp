@@ -250,4 +250,4 @@ template<> void TModInfo<CChanAttach>(CModInfo& Info) {
 	Info.SetWikiPage("autoattach");
 }
 
-MODULEDEFS(CChanAttach, "Reattaches you to channels on activity.")
+USERMODULEDEFS(CChanAttach, "Reattaches you to channels on activity.")

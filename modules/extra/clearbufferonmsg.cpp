@@ -63,4 +63,4 @@ public:
 	}
 };
 
-MODULEDEFS(CClearBufferOnMsgMod, "Clear all channel buffers whenever the user does something")
+USERMODULEDEFS(CClearBufferOnMsgMod, "Clear all channel buffers whenever the user does something")

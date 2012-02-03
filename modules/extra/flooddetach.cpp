@@ -187,4 +187,4 @@ private:
 	unsigned int m_iThresholdMsgs;
 };
 
-MODULEDEFS(CFloodDetachMod, "Detach channels when flooded")
+USERMODULEDEFS(CFloodDetachMod, "Detach channels when flooded")

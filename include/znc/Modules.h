@@ -29,7 +29,6 @@ class CModule;
 class CModInfo;
 // !Forward Declarations
 
-// User Module Macros
 #ifdef REQUIRESSL
 #ifndef HAVE_LIBSSL
 #error -
@@ -91,13 +90,9 @@ template<class M> CModule* TModLoad(ModHandle p, CUser* pUser,
 			const CString& sModPath) \
 			: CModule(pDLL, pUser, pNetwork, sModName, sModPath)
 
-/** At the end of your source file, you must call this macro in global context.
- *  It defines some static functions which ZNC needs to load this module.
- *  @param CLASS The name of your module's class.
- *  @param DESCRIPTION A short description of your module.
- *  @see For global modules you need GLOBALMODULEDEFS.
- */
-#define MODULEDEFS(CLASS, DESCRIPTION) \
+// User Module Macros
+/** This works exactly like MODULEDEFS, but for user modules. */
+#define USERMODULEDEFS(CLASS, DESCRIPTION) \
 	MODCOMMONDEFS(CLASS, DESCRIPTION, CModInfo::UserModule)
 // !User Module Macros
 
@@ -112,6 +107,14 @@ template<class M> CModule* TModLoad(ModHandle p, CUser* pUser,
 #define NETWORKMODULEDEFS(CLASS, DESCRIPTION) \
 	MODCOMMONDEFS(CLASS, DESCRIPTION, CModInfo::NetworkModule)
 // !Network Module Macros
+
+/** At the end of your source file, you must call this macro in global context.
+ *  It defines some static functions which ZNC needs to load this module.
+ *  By default the module will be a network module.
+ *  @param CLASS The name of your module's class.
+ *  @param DESCRIPTION A short description of your module.
+ */
+#define MODULEDEFS(CLASS, DESCRIPTION) NETWORKMODULEDEFS(CLASS, DESCRIPTION)
 
 // Forward Declarations
 class CZNC;

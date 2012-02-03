@@ -68,5 +68,5 @@ template<> void TModInfo<CBuffExtras>(CModInfo& Info) {
 	Info.SetWikiPage("buffextras");
 }
 
-MODULEDEFS(CBuffExtras, "Add joins, parts etc. to the playback buffer")
+USERMODULEDEFS(CBuffExtras, "Add joins, parts etc. to the playback buffer")
 

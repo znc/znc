@@ -257,5 +257,5 @@ public:
 	}
 };
 
-MODULEDEFS(CListSockets, "List active sockets")
+USERMODULEDEFS(CListSockets, "List active sockets")
 

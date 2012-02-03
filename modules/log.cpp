@@ -290,4 +290,4 @@ template<> void TModInfo<CLogMod>(CModInfo& Info) {
 	Info.AddType(CModInfo::GlobalModule);
 }
 
-MODULEDEFS(CLogMod, "Write IRC logs")
+USERMODULEDEFS(CLogMod, "Write IRC logs")

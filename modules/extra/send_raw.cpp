@@ -119,4 +119,4 @@ public:
 	}
 };
 
-MODULEDEFS(CSendRaw_Mod, "Lets you send some raw IRC lines as/to someone else")
+USERMODULEDEFS(CSendRaw_Mod, "Lets you send some raw IRC lines as/to someone else")

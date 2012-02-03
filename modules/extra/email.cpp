@@ -249,5 +249,5 @@ void CEmailJob::RunJob()
 	CEmail *p = (CEmail *)m_pModule;
 	p->StartParser();
 }
-MODULEDEFS(CEmail, "Monitors Email activity on local disk /var/mail/user")
+USERMODULEDEFS(CEmail, "Monitors Email activity on local disk /var/mail/user")
 

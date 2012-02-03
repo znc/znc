@@ -30,4 +30,4 @@ public:
 	}
 };
 
-MODULEDEFS(CBlockMotd, "Block the MOTD from IRC so it's not sent to your client(s).")
+USERMODULEDEFS(CBlockMotd, "Block the MOTD from IRC so it's not sent to your client(s).")
