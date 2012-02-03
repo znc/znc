@@ -64,7 +64,7 @@ class CAdminMod : public CModule {
 			{"AppendTimestamp",  boolean},
 			{"PrependTimestamp", boolean},
 			{"TimestampFormat",  str},
-			{"DCCBindHost",      boolean},
+			{"DCCBindHost",      str},
 			{"StatusPrefix",     str}
 		};
 		for (unsigned int i = 0; i != ARRAY_SIZE(vars); ++i) {
