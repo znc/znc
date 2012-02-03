@@ -38,4 +38,11 @@ test -f config.guess -a -f config.sub -a -f install-sh ||
 
 echo "(Yes, automake is supposed to fail, ignore that)"
 echo
+
+if grep PKG_CHECK_MODULES configure > /dev/null
+then
+	rm configure
+	die "ERROR: pkg-config not found. Install pkg-config and run $0 again"
+fi
+
 echo "You may now run ./configure."
