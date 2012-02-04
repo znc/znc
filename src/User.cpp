@@ -89,11 +89,9 @@ CUser::CUser(const CString& sUserName)
 
 CUser::~CUser() {
 	// Delete networks
-	for (unsigned int c = 0; c < m_vIRCNetworks.size(); c++) {
-		CIRCNetwork* pNetwork = m_vIRCNetworks[c];
-		delete pNetwork;
+	while (!m_vIRCNetworks.empty()) {
+		delete *m_vIRCNetworks.begin();
 	}
-	m_vIRCNetworks.clear();
 
 	// Delete clients
 	for (unsigned int c = 0; c < m_vClients.size(); c++) {
