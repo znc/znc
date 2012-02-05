@@ -204,12 +204,18 @@ int main(int argc, char** argv) {
 		return 0;
 	}
 
-#ifndef RUN_FROM_SOURCE
-	if (CFile::Exists(pZNC->GetCurPath() + "/znc-uninstalled.pc")) {
-		CUtils::PrintError("It looks like you are running ZNC without installing it first.");
-		CUtils::PrintError("Recompile with --enable-run-from-source if you intend to do that.");
+	{
+		set<CModInfo> ssGlobalMods;
+		pZNC->GetModules().GetAvailableMods(ssGlobalMods, CModInfo::GlobalModule);
+		if (ssGlobalMods.empty()) {
+			CUtils::PrintError("No modules found. Perhaps you didn't install ZNC properly?");
+			CUtils::PrintError("Read http://wiki.znc.in/Installation for instructions.");
+			if (!CUtils::GetBoolInput("Do you really want to run ZNC without any modules?", false)) {
+				delete pZNC;
+				return 1;
+			}
+		}
 	}
-#endif
 
 	if (isRoot()) {
 		CUtils::PrintError("You are running ZNC as root! Don't do that! There are not many valid");
