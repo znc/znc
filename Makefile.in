@@ -101,7 +101,7 @@ distclean: clean
 src/%.o: src/%.cpp Makefile
 	@mkdir -p .depend src
 	$(E) Building core object $*...
-	$(Q)$(CXX) $(CXXFLAGS) -c -o $@ $< -MMD -MF .depend/$*.dep
+	$(Q)$(CXX) $(CXXFLAGS) -c -o $@ $< -MD -MF .depend/$*.dep
 
 install: znc $(LIBZNC)
 	test -d $(DESTDIR)$(bindir) || $(INSTALL) -d $(DESTDIR)$(bindir)

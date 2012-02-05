@@ -118,7 +118,7 @@ clean:
 %.o: %.cpp Makefile
 	@mkdir -p .depend extra
 	$(E) Building $(if $(filter %extra/,$(dir $<)),extra )module $(notdir $(basename $@))...
-	$(Q)$(CXX) $(MODFLAGS) -c -o $@ $< $($(notdir $(basename $@))CXXFLAGS) -MMD -MF .depend/$(notdir $@).dep
+	$(Q)$(CXX) $(MODFLAGS) -c -o $@ $< $($(notdir $(basename $@))CXXFLAGS) -MD -MF .depend/$(notdir $@).dep
 
 %.so: %.o Makefile
 	$(E) Linking $(if $(filter %extra/,$(dir $<)),extra )module $(notdir $(basename $@))...

@@ -34,7 +34,7 @@ modperl/ZNC.o: modperl/ZNC.cpp Makefile
 	@mkdir -p modperl
 	@mkdir -p .depend
 	$(E) Building ZNC Perl bindings library...
-	$(Q)$(CXX) $(MODFLAGS) -I$(srcdir) -MMD -MF .depend/modperl.library.dep $(PERL_CXX) -Wno-unused-variable -Wno-shadow -o $@ $< -c
+	$(Q)$(CXX) $(MODFLAGS) -I$(srcdir) -MD -MF .depend/modperl.library.dep $(PERL_CXX) -Wno-unused-variable -Wno-shadow -o $@ $< -c
 ifneq "$(SWIG)" ""
 modperl/swigperlrun.h:
 	@mkdir -p modperl
@@ -43,7 +43,7 @@ modperl/ZNC.cpp: modperl/modperl.i Makefile modperl/module.h modperl/CString.i
 	$(E) Generating ZNC API for Perl...
 	@mkdir -p modperl
 	@mkdir -p .depend
-	$(Q)$(SWIG) -perl5 -c++ -shadow -outdir modperl -I$(srcdir) -MMD -MF .depend/modperl.swig.dep -w362,315,401,402 -o $@ $<
+	$(Q)$(SWIG) -perl5 -c++ -shadow -outdir modperl -I$(srcdir) -MD -MF .depend/modperl.swig.dep -w362,315,401,402 -o $@ $<
 endif
 modperl/functions.cpp: modperl/functions.in modperl/codegen.pl
 	@mkdir -p modperl

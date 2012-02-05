@@ -43,7 +43,7 @@ modpython/_znc_core.o: modpython/_znc_core.cpp Makefile
 	@mkdir -p modpython
 	@mkdir -p .depend
 	$(E) Building ZNC python bindings library...
-	$(Q)$(CXX) $(MODFLAGS) -I$(srcdir) -MMD -MF .depend/modpython.library.dep $(PYTHONCOMMON) -o $@ $< -c
+	$(Q)$(CXX) $(MODFLAGS) -I$(srcdir) -MD -MF .depend/modpython.library.dep $(PYTHONCOMMON) -o $@ $< -c
 modpython/_znc_core.so: modpython/_znc_core.o Makefile
 	$(E) Linking ZNC python bindings library...
 	$(Q)$(CXX) $(MODFLAGS) $(LDFLAGS) $(MODLINK) -o $@ $< $(PY_LDFLAGS)
@@ -55,7 +55,7 @@ modpython/_znc_core.cpp: modpython/modpython.i Makefile
 	$(E) Generating ZNC API for python...
 	@mkdir -p modpython
 	@mkdir -p .depend
-	$(Q)$(SWIG) -python -py3 -c++ -shadow -outdir modpython -I$(srcdir) -MMD -MF .depend/modpython.swig.dep -w362,315,401 -o $@ $<
+	$(Q)$(SWIG) -python -py3 -c++ -shadow -outdir modpython -I$(srcdir) -MD -MF .depend/modpython.swig.dep -w362,315,401 -o $@ $<
 endif
 modpython.o: modpython/functions.cpp
 modpython/functions.cpp: modpython/functions.in modpython/codegen.pl
@@ -64,7 +64,7 @@ modpython/functions.cpp: modpython/functions.in modpython/codegen.pl
 
 modpython/compiler.o: modpython/compiler.cpp Makefile
 	$(E) Building optimizer for python files...
-	$(Q)$(CXX) $(PYTHONCOMMON) -o $@ $< -c -MMD -MF .depend/modpython.compiler.dep
+	$(Q)$(CXX) $(PYTHONCOMMON) -o $@ $< -c -MD -MF .depend/modpython.compiler.dep
 modpython/compiler: modpython/compiler.o Makefile
 	$(E) Linking optimizer for python files...
 	$(Q)$(CXX) -o $@ $< $(PY_LDFLAGS)
