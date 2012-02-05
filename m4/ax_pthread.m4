@@ -98,11 +98,11 @@ ax_pthread_ok=no
 # etcetera environment variables, and if threads linking works using
 # them:
 if test x"$PTHREAD_LIBS$PTHREAD_CFLAGS" != x; then
-        save_CFLAGS="$CFLAGS"
-        CFLAGS="$CFLAGS $PTHREAD_CFLAGS"
+        save_CXXFLAGS="$CXXFLAGS"
+        CXXFLAGS="$CXXFLAGS $PTHREAD_CFLAGS"
         save_LIBS="$LIBS"
         LIBS="$PTHREAD_LIBS $LIBS"
-        AC_MSG_CHECKING([for pthread_join in LIBS=$PTHREAD_LIBS with CFLAGS=$PTHREAD_CFLAGS])
+        AC_MSG_CHECKING([for pthread_join in LIBS=$PTHREAD_LIBS with CXXFLAGS=$PTHREAD_CFLAGS])
         AC_TRY_LINK_FUNC(pthread_join, ax_pthread_ok=yes)
         AC_MSG_RESULT($ax_pthread_ok)
         if test x"$ax_pthread_ok" = xno; then
@@ -110,7 +110,7 @@ if test x"$PTHREAD_LIBS$PTHREAD_CFLAGS" != x; then
                 PTHREAD_CFLAGS=""
         fi
         LIBS="$save_LIBS"
-        CFLAGS="$save_CFLAGS"
+        CXXFLAGS="$save_CXXFLAGS"
 fi
 
 # We must check for the threads library under a number of different
@@ -175,6 +175,7 @@ for flag in $ax_pthread_flags; do
                 -*)
                 AC_MSG_CHECKING([whether pthreads work with $flag])
                 PTHREAD_CFLAGS="$flag"
+                PTHREAD_LIBS="$flag"
                 ;;
 
                 pthread-config)
@@ -191,9 +192,9 @@ for flag in $ax_pthread_flags; do
         esac
 
         save_LIBS="$LIBS"
-        save_CFLAGS="$CFLAGS"
+        save_CXXFLAGS="$CXXFLAGS"
         LIBS="$PTHREAD_LIBS $LIBS"
-        CFLAGS="$CFLAGS $PTHREAD_CFLAGS"
+        CXXFLAGS="$CXXFLAGS $PTHREAD_CFLAGS"
 
         # Check for various functions.  We must include pthread.h,
         # since some functions may be macros.  (On the Sequent, we
@@ -205,7 +206,7 @@ for flag in $ax_pthread_flags; do
         # functions on Solaris that doesn't have a non-functional libc stub.
         # We try pthread_create on general principles.
         AC_LINK_IFELSE([AC_LANG_PROGRAM([#include <pthread.h>
-                        static void routine(void *a) { a = 0; }
+                        static void routine(void *a) { *((int*)a) = 42; }
                         static void *start_routine(void *a) { return a; }],
                        [pthread_t th; pthread_attr_t attr;
                         pthread_create(&th, 0, start_routine, 0);
@@ -217,7 +218,7 @@ for flag in $ax_pthread_flags; do
                 [])
 
         LIBS="$save_LIBS"
-        CFLAGS="$save_CFLAGS"
+        CXXFLAGS="$save_CXXFLAGS"
 
         AC_MSG_RESULT($ax_pthread_ok)
         if test "x$ax_pthread_ok" = xyes; then
@@ -233,8 +234,8 @@ fi
 if test "x$ax_pthread_ok" = xyes; then
         save_LIBS="$LIBS"
         LIBS="$PTHREAD_LIBS $LIBS"
-        save_CFLAGS="$CFLAGS"
-        CFLAGS="$CFLAGS $PTHREAD_CFLAGS"
+        save_CXXFLAGS="$CXXFLAGS"
+        CXXFLAGS="$CXXFLAGS $PTHREAD_CFLAGS"
 
         # Detect AIX lossage: JOINABLE attribute is called UNDETACHED.
         AC_MSG_CHECKING([for joinable pthread attribute])
@@ -281,7 +282,7 @@ if test "x$ax_pthread_ok" = xyes; then
             AC_DEFINE([HAVE_PTHREAD_PRIO_INHERIT], 1, [Have PTHREAD_PRIO_INHERIT.]))
 
         LIBS="$save_LIBS"
-        CFLAGS="$save_CFLAGS"
+        CXXFLAGS="$save_CXXFLAGS"
 
         # More AIX lossage: must compile with xlc_r or cc_r
         if test x"$GCC" != xyes; then

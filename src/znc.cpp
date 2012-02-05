@@ -1827,27 +1827,33 @@ public:
 
 protected:
 	virtual void RunJob() {
-		list<CIRCNetwork*>& ConnectionQueue = CZNC::Get().GetConnectionQueue();
+		list<CIRCNetwork*> ConnectionQueue;
+		list<CIRCNetwork*>& RealConnectionQueue = CZNC::Get().GetConnectionQueue();
 
-		/* We store the end of the queue, so CIRCNetwork::Connect() can add
-		 * itself back to the queue and we wont end up in an infinite loop. */
-		list<CIRCNetwork*>::iterator end = ConnectionQueue.end();
-		list<CIRCNetwork*>::iterator it;
+		// Problem: If a network can't connect right now because e.g. it
+		// is throttled, it will re-insert itself into the connection
+		// queue. However, we must only give each network a single
+		// chance during this timer run.
+		//
+		// Solution: We move the connection queue to our local list at
+		// the beginning and work from that.
+		ConnectionQueue.swap(RealConnectionQueue);
 
-		for (it = ConnectionQueue.begin(); it != end;) {
-			CIRCNetwork *pNetwork = *it;
-
-			/* We must erase the network from the queue before we try to connect
-			 * because it may try to add the network to the queue (which would
-			 * fail if we were already in the queue) */
-			it = ConnectionQueue.erase(it);
+		while (!ConnectionQueue.empty()) {
+			CIRCNetwork *pNetwork = ConnectionQueue.front();
+			ConnectionQueue.pop_front();
 
 			if (pNetwork->Connect()) {
 				break;
 			}
 		}
 
-		if (ConnectionQueue.empty()) {
+		/* Now re-insert anything that is left in our local list into
+		 * the real connection queue.
+		 */
+		RealConnectionQueue.splice(RealConnectionQueue.begin(), ConnectionQueue);
+
+		if (RealConnectionQueue.empty()) {
 			DEBUG("ConnectQueueTimer done");
 			CZNC::Get().DisableConnectQueue();
 		}
