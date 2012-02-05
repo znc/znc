@@ -363,7 +363,7 @@ bool CUser::ParseConfig(CConfig* pConfig, CString& sError) {
 		CUtils::PrintAction("Loading Module [" + sModName + "]");
 		CString sModRet;
 		CString sArgs = sValue.Token(1, true);
-		bool bModRet;
+		bool bModRet = true;
 
 		CModInfo ModInfo;
 		if (!CZNC::Get().GetModules().GetModInfo(ModInfo, sModName, sModRet)) {
