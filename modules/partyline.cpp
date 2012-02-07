@@ -73,9 +73,11 @@ public:
 		// Kick all clients who are in partyline channels
 		for (set<CPartylineChannel*>::iterator it = m_ssChannels.begin(); it != m_ssChannels.end(); ++it) {
 			set<CString> ssNicks = (*it)->GetNicks();
+
 			for (set<CString>::const_iterator it2 = ssNicks.begin(); it2 != ssNicks.end(); ++it2) {
 				CUser* pUser = CZNC::Get().FindUser(*it2);
 				vector<CClient*> vClients = pUser->GetAllClients();
+
 				for (vector<CClient*>::const_iterator it3 = vClients.begin(); it3 != vClients.end(); ++it3) {
 					CClient* pClient = *it3;
 					pClient->PutClient( ":*" + GetModName() + "!znc@znc.in KICK " + (*it)->GetName() + " " + pClient->GetNick() + " :" + GetModName() + " unloaded");
@@ -233,7 +235,7 @@ public:
 				}
 
 				SendNickList(m_pUser, m_pNetwork, ssNicks, (*it)->GetName());
-				PutChan(ssNicks, ":*" + GetModName() + "!znc@znc.in MODE " + (*it)->GetName() + " +" + CString(m_pUser->IsAdmin() ? "o" : "v") + " " + NICK_PREFIX + m_pUser->GetUserName(), true);
+				PutChan(ssNicks, ":*" + GetModName() + "!znc@znc.in MODE " + (*it)->GetName() + " +" + CString(m_pUser->IsAdmin() ? "o" : "v") + " " + NICK_PREFIX + m_pUser->GetUserName(), false);
 			}
 		}
 	}
@@ -244,7 +246,7 @@ public:
 				const set<CString>& ssNicks = (*it)->GetNicks();
 
 				if (ssNicks.find(m_pUser->GetUserName()) != ssNicks.end()) {
-					PutChan(ssNicks, ":*" + GetModName() + "!znc@znc.in MODE " + (*it)->GetName() + " -ov " + NICK_PREFIX + m_pUser->GetUserName() + " " + NICK_PREFIX + m_pUser->GetUserName(), true);
+					PutChan(ssNicks, ":*" + GetModName() + "!znc@znc.in MODE " + (*it)->GetName() + " -ov " + NICK_PREFIX + m_pUser->GetUserName() + " " + NICK_PREFIX + m_pUser->GetUserName(), false);
 				}
 			}
 		}
@@ -339,7 +341,7 @@ public:
 			for (vector<CClient*>::const_iterator it = vClients.begin(); it != vClients.end(); ++it) {
 				CClient* pClient = *it;
 
-				pClient->PutClient(":" + pClient->GetNickMask() + sCmd + pChannel->GetName() + sMsg);
+				pClient->PutClient(":" + pClient->GetNickMask() + sCmd + pChannel->GetName() + " " + pClient->GetNick() + sMsg);
 			}
 
 			PutChan(ssNicks, ":" + NICK_PREFIX + pUser->GetUserName() + "!" + pUser->GetIdent() + "@" + sHost
@@ -410,9 +412,13 @@ public:
 
 			SendNickList(pUser, NULL, ssNicks, pChannel->GetName());
 
+			/* Tell the other clients we have op or voice, the current user's clients already know from NAMES list */
+
 			if (pUser->IsAdmin()) {
-				PutChan(ssNicks, ":*" + GetModName() + "!znc@znc.in MODE " + pChannel->GetName() + " +o " + NICK_PREFIX + pUser->GetUserName(), false, true, pUser);
+				PutChan(ssNicks, ":*" + GetModName() + "!znc@znc.in MODE " + pChannel->GetName() + " +o " + NICK_PREFIX + pUser->GetUserName(), false, false, pUser);
 			}
+
+			PutChan(ssNicks, ":*" + GetModName() + "!znc@znc.in MODE " + pChannel->GetName() + " +v " + NICK_PREFIX + pUser->GetUserName(), false, false, pUser);
 		}
 	}
 
@@ -542,6 +548,10 @@ public:
 		for (set<CString>::const_iterator it = ssNicks.begin(); it != ssNicks.end(); ++it) {
 			CUser* pChanUser = CZNC::Get().FindUser(*it);
 
+			if (pChanUser == pUser) {
+				continue;
+			}
+
 			if (pChanUser && pChanUser->IsUserAttached()) {
 				sNickList += (pChanUser->IsAdmin()) ? "@" : "+";
 			}
@@ -556,6 +566,12 @@ public:
 
 		if (sNickList.size()) {
 			PutUserIRCNick(pUser, ":" + GetIRCServer(pNetwork) + " 353 ", " @ " + sChan + " :" + sNickList);
+		}
+
+		vector<CClient*> vClients = pUser->GetAllClients();
+		for (vector<CClient*>::const_iterator it = vClients.begin(); it != vClients.end(); ++it) {
+			CClient* pClient = *it;
+			pClient->PutClient(":" + GetIRCServer(pNetwork) + " 353 " +  pClient->GetNick() + " @ " + sChan + " :" + ((pUser->IsAdmin()) ? "@" : "+") + pClient->GetNick());
 		}
 
 		PutUserIRCNick(pUser, ":" + GetIRCServer(pNetwork) + " 366 ", " " + sChan + " :End of /NAMES list.");
