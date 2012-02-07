@@ -374,6 +374,8 @@ public:
 
 	void JoinUser(CUser* pUser, CPartylineChannel* pChannel) {
 		if (pChannel && !pChannel->IsInChannel(pUser->GetUserName())) {
+			vector<CClient*> vClients = pUser->GetAllClients();
+
 			const set<CString>& ssNicks = pChannel->GetNicks();
 			const CString& sNick = pUser->GetUserName();
 			pChannel->AddNick(sNick);
@@ -384,26 +386,20 @@ public:
 				sHost = "znc.in";
 			}
 
-			for (vector<CIRCNetwork*>::const_iterator i = pUser->GetNetworks().begin(); i != pUser->GetNetworks().end(); ++i) {
-				CIRCNetwork* pNetwork = *i;
-				pNetwork->PutUser(":" + pNetwork->GetIRCNick().GetNickMask() + " JOIN " + pChannel->GetName());
-			}
-			for (vector<CClient*>::const_iterator i = pUser->GetUserClients().begin(); i != pUser->GetUserClients().end(); ++i) {
-				CClient* pClient = *i;
+			for (vector<CClient*>::const_iterator it = vClients.begin(); it != vClients.end(); ++it) {
+				CClient* pClient = *it;
 				pClient->PutClient(":" + pClient->GetNickMask() + " JOIN " + pChannel->GetName());
 			}
+
 			PutChan(ssNicks, ":" + NICK_PREFIX + sNick + "!" + pUser->GetIdent() + "@" + sHost + " JOIN " + pChannel->GetName(), false, true, pUser);
 
 			if (!pChannel->GetTopic().empty()) {
-				for (vector<CIRCNetwork*>::const_iterator i = pUser->GetNetworks().begin(); i != pUser->GetNetworks().end(); ++i) {
-					CIRCNetwork* pNetwork = *i;
-					pNetwork->PutUser(":" + GetIRCServer(pNetwork) + " 332 " + pNetwork->GetIRCNick().GetNickMask() + " " + pChannel->GetName() + " :" + pChannel->GetTopic());
-				}
-				for (vector<CClient*>::const_iterator i = pUser->GetUserClients().begin(); i != pUser->GetUserClients().end(); ++i) {
-					CClient* pClient = *i;
-					pClient->PutClient(":irc.znc.in 332 " + pClient->GetNickMask() + " " + pChannel->GetName() + " :" + pChannel->GetTopic());
+				for (vector<CClient*>::const_iterator it = vClients.begin(); it != vClients.end(); ++it) {
+					CClient* pClient = *it;
+					pClient->PutClient(":" + GetIRCServer(pClient->GetNetwork()) + " 332 " + pClient->GetNickMask() + " " + pChannel->GetName() + " :" + pChannel->GetTopic());
 				}
 			}
+
 			SendNickList(pUser, NULL, ssNicks, pChannel->GetName());
 
 			if (pUser->IsAdmin()) {
@@ -571,7 +567,7 @@ public:
 	CPartylineChannel* GetChannel(const CString& sChannel) {
 		CPartylineChannel* pChannel = FindChannel(sChannel);
 
-		if (pChannel == NULL) {
+		if (!pChannel) {
 			pChannel = new CPartylineChannel(sChannel.AsLower());
 			m_ssChannels.insert(pChannel);
 		}
