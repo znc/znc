@@ -306,6 +306,8 @@ public:
 			return;
 		}
 
+		vector<CClient*> vClients = pUser->GetAllClients();
+
 		CString sCmd = " " + sCommand + " ";
 		CString sMsg = sMessage;
 		if (!sMsg.empty())
@@ -321,29 +323,22 @@ public:
 		}
 
 		if (bNickAsTarget) {
-			for (vector<CIRCNetwork*>::const_iterator i = pUser->GetNetworks().begin(); i != pUser->GetNetworks().end(); ++i) {
-				CIRCNetwork* pNetwork = *i;
-				pNetwork->PutUser(":" + pNetwork->GetIRCNick().GetNickMask() + sCmd
-						+ pChannel->GetName() + " " + pNetwork->GetIRCNick().GetNick() + sMsg);
+			for (vector<CClient*>::const_iterator it = vClients.begin(); it != vClients.end(); ++it) {
+				CClient* pClient = *it;
+
+				pClient->PutClient(":" + pClient->GetNickMask() + sCmd + pChannel->GetName() + sMsg);
 			}
-			for (vector<CClient*>::const_iterator i = pUser->GetUserClients().begin(); i != pUser->GetUserClients().end(); ++i) {
-				CClient* pClient = *i;
-				pClient->PutClient(":" + pClient->GetNickMask() + sCmd
-						+ pChannel->GetName() + " " + pClient->GetNick() + sMsg);
-			}
+
 			PutChan(ssNicks, ":" + NICK_PREFIX + pUser->GetUserName() + "!" + pUser->GetIdent() + "@" + sHost
 					+ sCmd + pChannel->GetName() + " " + NICK_PREFIX + pUser->GetUserName() + sMsg,
 					false, true, pUser);
 		} else {
-			for (vector<CIRCNetwork*>::const_iterator i = pUser->GetNetworks().begin(); i != pUser->GetNetworks().end(); ++i) {
-				CIRCNetwork* pNetwork = *i;
-				pNetwork->PutUser(":" + pNetwork->GetIRCNick().GetNickMask() + sCmd
-						+ pChannel->GetName() + sMsg);
-			}
-			for (vector<CClient*>::const_iterator i = pUser->GetUserClients().begin(); i != pUser->GetUserClients().end(); ++i) {
-				CClient* pClient = *i;
+			for (vector<CClient*>::const_iterator it = vClients.begin(); it != vClients.end(); ++it) {
+				CClient* pClient = *it;
+
 				pClient->PutClient(":" + pClient->GetNickMask() + sCmd + pChannel->GetName() + sMsg);
 			}
+
 			PutChan(ssNicks, ":" + NICK_PREFIX + pUser->GetUserName() + "!" + pUser->GetIdent() + "@" + sHost
 					+ sCmd + pChannel->GetName() + sMsg, false, true, pUser);
 		}
