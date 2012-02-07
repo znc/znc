@@ -42,7 +42,32 @@ protected:
 
 class CPartylineMod : public CModule {
 public:
-	MODCONSTRUCTOR(CPartylineMod) {}
+	void ListChannelsCommand(const CString& sLine) {
+		if (!m_ssChannels.size()) {
+			PutModule("There are no open channels.");
+			return;
+		}
+
+		CTable Table;
+
+		Table.AddColumn("Channel");
+		Table.AddColumn("Users");
+
+		for (set<CPartylineChannel*>::const_iterator a = m_ssChannels.begin(); a != m_ssChannels.end(); ++a) {
+			Table.AddRow();
+
+			Table.SetCell("Channel", (*a)->GetName());
+			Table.SetCell("Users", CString((*a)->GetNicks().size()));
+		}
+
+		PutModule(Table);
+	}
+
+	MODCONSTRUCTOR(CPartylineMod) {
+		AddHelpCommand();
+		AddCommand("List", static_cast<CModCommand::ModCmdFunc>(&CPartylineMod::ListChannelsCommand),
+			"", "List all open channels");
+	}
 
 	virtual ~CPartylineMod() {
 		while (m_ssChannels.size()) {
@@ -454,58 +479,6 @@ public:
 
 	virtual EModRet OnUserCTCPReply(CString& sTarget, CString& sMessage) {
 		return HandleMessage("NOTICE", sTarget, "\001" + sMessage + "\001");
-	}
-
-	virtual void OnModCommand(const CString& sLine) {
-		CString sCommand = sLine.Token(0);
-
-		if (sCommand.Equals("HELP")) {
-			CTable Table;
-			Table.AddColumn("Command");
-			Table.AddColumn("Arguments");
-			Table.AddColumn("Description");
-
-			Table.AddRow();
-			Table.SetCell("Command", "Help");
-			Table.SetCell("Arguments", "");
-			Table.SetCell("Description", "List all partyline commands");
-
-			Table.AddRow();
-			Table.SetCell("Command", "List");
-			Table.SetCell("Arguments", "");
-			Table.SetCell("Description", "List all open channels");
-
-			PutModule(Table);
-		} else if (sCommand.Equals("LIST")) {
-			if (!m_ssChannels.size()) {
-				PutModule("There are no open channels.");
-				return;
-			}
-
-			CTable Table;
-
-			Table.AddColumn("Channel");
-			Table.AddColumn("Users");
-
-			for (set<CPartylineChannel*>::const_iterator a = m_ssChannels.begin(); a != m_ssChannels.end(); ++a) {
-				Table.AddRow();
-
-				Table.SetCell("Channel", (*a)->GetName());
-				Table.SetCell("Users", CString((*a)->GetNicks().size()));
-			}
-
-			PutModule(Table);
-		} else if (sCommand.Equals("ADDFIXCHAN")) {
-			PutModule("Sorry, support for fixed channels was dropped");
-		} else if (sCommand.Equals("DELFIXCHAN")) {
-			PutModule("Sorry, support for fixed channels was dropped");
-		} else if (sCommand.Equals("LISTFIXCHANS")) {
-			PutModule("Sorry, support for fixed channels was dropped");
-		} else if (sCommand.Equals("LISTFIXUSERS")) {
-			PutModule("Sorry, support for fixed channels was dropped");
-	} else {
-			PutModule("Unknown command, try 'HELP'");
-		}
 	}
 
 	const CString GetIRCServer(CIRCNetwork *pNetwork) {
