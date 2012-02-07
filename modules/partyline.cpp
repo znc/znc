@@ -70,6 +70,19 @@ public:
 	}
 
 	virtual ~CPartylineMod() {
+		// Kick all clients who are in partyline channels
+		for (set<CPartylineChannel*>::iterator it = m_ssChannels.begin(); it != m_ssChannels.end(); ++it) {
+			set<CString> ssNicks = (*it)->GetNicks();
+			for (set<CString>::const_iterator it2 = ssNicks.begin(); it2 != ssNicks.end(); ++it2) {
+				CUser* pUser = CZNC::Get().FindUser(*it2);
+				vector<CClient*> vClients = pUser->GetAllClients();
+				for (vector<CClient*>::const_iterator it3 = vClients.begin(); it3 != vClients.end(); ++it3) {
+					CClient* pClient = *it3;
+					pClient->PutClient( ":*" + GetModName() + "!znc@znc.in KICK " + (*it)->GetName() + " " + pClient->GetNick() + " :" + GetModName() + " unloaded");
+				}
+			}
+		}
+
 		while (m_ssChannels.size()) {
 			delete *m_ssChannels.begin();
 			m_ssChannels.erase(m_ssChannels.begin());
