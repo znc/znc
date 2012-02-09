@@ -9,6 +9,7 @@
 #include <znc/WebModules.h>
 #include <znc/FileUtils.h>
 #include <znc/User.h>
+#include <znc/IRCNetwork.h>
 #include <znc/znc.h>
 #include <sstream>
 
@@ -192,25 +193,6 @@ CWebSock::~CWebSock() {
 	// bytes have been accounted for, so make sure they don't get again:
 	ResetBytesWritten();
 	ResetBytesRead();
-}
-
-void CWebSock::ParsePath() {
-	// The URI looks like:
-	//         /[module][/page][?arg1=val1&arg2=val2...]
-
-	m_sPath = GetPath().TrimLeft_n("/");
-
-	m_sPath.TrimPrefix("mods/");
-	m_sPath.TrimPrefix("modfiles/");
-
-	m_sModName = m_sPath.Token(0, false, "/");
-	m_sPage = m_sPath.Token(1, true, "/");
-
-	if (m_sPage.empty()) {
-		m_sPage = "index";
-	}
-
-	DEBUG("Path [" + m_sPath + "], Module [" + m_sModName + "], Page [" + m_sPage + "]");
 }
 
 void CWebSock::GetAvailSkins(VCString& vRet) const {
@@ -615,21 +597,74 @@ CWebSock::EPageReqResult CWebSock::OnPageRequestInternal(const CString& sURI, CS
 		}
 		return PAGE_NOTFOUND;
 	} else if (sURI.Left(6) == "/mods/" || sURI.Left(10) == "/modfiles/") {
-		ParsePath();
 		// Make sure modules are treated as directories
 		if (sURI.Right(1) != "/" && sURI.find(".") == CString::npos && sURI.TrimLeft_n("/mods/").TrimLeft_n("/").find("/") == CString::npos) {
 			Redirect(sURI + "/");
 			return PAGE_DONE;
 		}
 
-		CModule *pModule = CZNC::Get().GetModules().FindModule(m_sModName);
-		if (!pModule) {
-			// Check if GetSession()->GetUser() is NULL and display
-			// an error in that case
-			if (!ForceLogin())
-				return PAGE_DONE;
+		// The URI looks like:
+		// /mods/[type]/([network]/)?[module][/page][?arg1=val1&arg2=val2...]
 
-			pModule = GetSession()->GetUser()->GetModules().FindModule(m_sModName);
+		m_sPath = GetPath().TrimLeft_n("/");
+
+		m_sPath.TrimPrefix("mods/");
+		m_sPath.TrimPrefix("modfiles/");
+
+		CString sType = m_sPath.Token(0, false, "/");
+		m_sPath = m_sPath.Token(1, true, "/");
+
+		CModInfo::EModuleType eModType;
+		if (sType.Equals("global")) {
+			eModType = CModInfo::GlobalModule;
+		} else if (sType.Equals("user")) {
+			eModType = CModInfo::UserModule;
+		} else if (sType.Equals("network")) {
+			eModType = CModInfo::NetworkModule;
+		} else {
+			PrintErrorPage(403, "Forbidden", "Unknown module type [" + sType + "]");
+			return PAGE_DONE;
+		}
+
+		if ((eModType != CModInfo::GlobalModule) && !ForceLogin()) {
+			// Make sure we have a valid user
+			return PAGE_DONE;
+		}
+
+		CIRCNetwork *pNetwork = NULL;
+		if (eModType == CModInfo::NetworkModule) {
+			CString sNetwork = m_sPath.Token(0, false, "/");
+			m_sPath = m_sPath.Token(1, true, "/");
+
+			pNetwork = GetSession()->GetUser()->FindNetwork(sNetwork);
+
+			if (!pNetwork) {
+				PrintErrorPage(404, "Not Found", "Network [" + sNetwork + "] not found.");
+				return PAGE_DONE;
+			}
+		}
+
+		m_sModName = m_sPath.Token(0, false, "/");
+		m_sPage = m_sPath.Token(1, true, "/");
+
+		if (m_sPage.empty()) {
+			m_sPage = "index";
+		}
+
+		DEBUG("Path [" + m_sPath + "], Module [" + m_sModName + "], Page [" + m_sPage + "]");
+
+		CModule *pModule = NULL;
+
+		switch (eModType) {
+			case CModInfo::GlobalModule:
+				pModule = CZNC::Get().GetModules().FindModule(m_sModName);
+				break;
+			case CModInfo::UserModule:
+				pModule = GetSession()->GetUser()->GetModules().FindModule(m_sModName);
+				break;
+			case CModInfo::NetworkModule:
+				pModule = pNetwork->GetModules().FindModule(m_sModName);
+				break;
 		}
 
 		if (!pModule) {

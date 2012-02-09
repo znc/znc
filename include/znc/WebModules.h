@@ -113,8 +113,6 @@ public:
 	virtual bool OnLogin(const CString& sUser, const CString& sPass);
 	virtual void OnPageRequest(const CString& sURI);
 
-	void ParsePath();   // This parses the path portion of the url into some member vars
-
 	EPageReqResult PrintTemplate(const CString& sPageName, CString& sPageRet, CModule* pModule = NULL);
 	EPageReqResult PrintStaticFile(const CString& sPath, CString& sPageRet, CModule* pModule = NULL);
 
@@ -150,9 +148,9 @@ private:
 	bool                    m_bPathsSet;
 	CTemplate               m_Template;
 	CSmartPtr<CAuthBase>    m_spAuth;
-	CString                 m_sModName;     // Gets filled by ParsePath()
-	CString                 m_sPath;        // Gets filled by ParsePath()
-	CString                 m_sPage;        // Gets filled by ParsePath()
+	CString                 m_sModName;
+	CString                 m_sPath;
+	CString                 m_sPage;
 	CSmartPtr<CWebSession>  m_spSession;
 
 	static const unsigned int m_uiMaxSessions;
