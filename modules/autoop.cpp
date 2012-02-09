@@ -160,22 +160,7 @@ public:
 	virtual void OnJoin(const CNick& Nick, CChan& Channel) {
 		// If we have ops in this chan
 		if (Channel.HasPerm(CChan::Op)) {
-			for (map<CString, CAutoOpUser*>::iterator it = m_msUsers.begin(); it != m_msUsers.end(); ++it) {
-				// and the nick who joined is a valid user
-				if (it->second->HostMatches(Nick.GetHostMask()) && it->second->ChannelMatches(Channel.GetName())) {
-					if (it->second->GetUserKey().Equals("__NOKEY__")) {
-						PutIRC("MODE " + Channel.GetName() + " +o " + Nick.GetNick());
-					} else {
-						// then insert this nick into the queue, the timer does the rest
-						CString sNick = Nick.GetNick().AsLower();
-						if (m_msQueue.find(sNick) == m_msQueue.end()) {
-							m_msQueue[sNick] = "";
-						}
-					}
-
-					break;
-				}
-			}
+			CheckAutoOp(Nick, Channel);
 		}
 	}
 
@@ -211,6 +196,18 @@ public:
 		}
 
 		return HALTCORE;
+	}
+
+	virtual void OnOp(const CNick& OpNick, const CNick& Nick, CChan& Channel, bool bNoChange) {
+		if (Nick.GetNick() == m_pNetwork->GetIRCNick().GetNick()) {
+			const map<CString,CNick>& msNicks = Channel.GetNicks();
+
+			for (map<CString,CNick>::const_iterator it = msNicks.begin(); it != msNicks.end(); ++it) {
+				if (!it->second.HasPerm(CChan::Op)) {
+					CheckAutoOp(it->second, Channel);
+				}
+			}
+		}
 	}
 
 	virtual void OnModCommand(const CString& sLine) {
@@ -307,6 +304,24 @@ public:
 		}
 
 		return NULL;
+	}
+
+	bool CheckAutoOp(const CNick& Nick, CChan& Channel) {
+		CAutoOpUser *pUser = FindUserByHost(Nick.GetHostMask(), Channel.GetName());
+
+		if (pUser) {
+			if (pUser->GetUserKey().Equals("__NOKEY__")) {
+				PutIRC("MODE " + Channel.GetName() + " +o " + Nick.GetNick());
+			} else {
+				// then insert this nick into the queue, the timer does the rest
+				CString sNick = Nick.GetNick().AsLower();
+				if (m_msQueue.find(sNick) == m_msQueue.end()) {
+					m_msQueue[sNick] = "";
+				}
+			}
+		}
+
+		return pUser;
 	}
 
 	void DelUser(const CString& sUser) {
