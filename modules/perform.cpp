@@ -136,7 +136,7 @@ public:
 
 	virtual bool OnWebRequest(CWebSock& WebSock, const CString& sPageName, CTemplate& Tmpl) {
 		if (sPageName != "index") {
-			// only accept requests to /mods/perform/
+			// only accept requests to index
 			return false;
 		}
 

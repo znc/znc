@@ -73,11 +73,11 @@ public:
 				fPemFile.Close();
 			}
 
-			WebSock.Redirect("/mods/cert/");
+			WebSock.Redirect(GetWebPath());
 			return true;
 		} else if (sPageName == "delete") {
 			CFile::Delete(PemFile());
-			WebSock.Redirect("/mods/cert/");
+			WebSock.Redirect(GetWebPath());
 			return true;
 		}
 

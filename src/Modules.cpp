@@ -156,6 +156,24 @@ const CString& CModule::GetSavePath() const {
 	return m_sSavePath;
 }
 
+CString CModule::GetWebPath() {
+	switch (m_eType) {
+		case CModInfo::GlobalModule: return "/mods/global/" + GetModName() + "/";
+		case CModInfo::UserModule: return "/mods/user/" + GetModName() + "/";
+		case CModInfo::NetworkModule: return "/mods/network/" + m_pNetwork->GetName() + "/" + GetModName() + "/";
+		default: return "/";
+	}
+}
+
+CString CModule::GetWebFilesPath() {
+	switch (m_eType) {
+		case CModInfo::GlobalModule: return "/modfiles/global/" + GetModName() + "/";
+		case CModInfo::UserModule: return "/modfiles/user/" + GetModName() + "/";
+		case CModInfo::NetworkModule: return "/modfiles/network/" + m_pNetwork->GetName() + "/" + GetModName() + "/";
+		default: return "/";
+	}
+}
+
 bool CModule::LoadRegistry() {
 	//CString sPrefix = (m_pUser) ? m_pUser->GetUserName() : ".global";
 	return (m_mssRegistry.ReadFromDisk(GetSavePath() + "/.registry") == MCString::MCS_SUCCESS);

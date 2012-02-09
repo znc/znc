@@ -249,7 +249,7 @@ public:
 			return true;
 		} else if (sPageName == "add") {
 			AddKey(pUser, WebSock.GetParam("key"));
-			WebSock.Redirect("/mods/certauth/");
+			WebSock.Redirect(GetWebPath());
 			return true;
 		} else if (sPageName == "delete") {
 			MSCString::iterator it = m_PubKeys.find(pUser->GetUserName());
@@ -263,7 +263,7 @@ public:
 				}
 			}
 
-			WebSock.Redirect("/mods/certauth/");
+			WebSock.Redirect(GetWebPath());
 			return true;
 		}
 

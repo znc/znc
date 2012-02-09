@@ -342,6 +342,7 @@ bool CWebSock::AddModLoop(const CString& sLoopName, CModule& Module) {
 		CTemplate& Row = m_Template.AddRow(sLoopName);
 
 		Row["ModName"] = Module.GetModName();
+		Row["ModPath"] = Module.GetWebPath();
 		Row["Title"] = sTitle;
 
 		if (m_sModName == Module.GetModName()) {
@@ -367,6 +368,7 @@ bool CWebSock::AddModLoop(const CString& sLoopName, CModule& Module) {
 			CTemplate& SubRow = Row.AddRow("SubPageLoop");
 
 			SubRow["ModName"] = Module.GetModName();
+			SubRow["ModPath"] = Module.GetWebPath();
 			SubRow["PageName"] = SubPage->GetName();
 			SubRow["Title"] = SubPage->GetTitle().empty() ? SubPage->GetName() : SubPage->GetTitle();
 
@@ -666,6 +668,9 @@ CWebSock::EPageReqResult CWebSock::OnPageRequestInternal(const CString& sURI, CS
 				pModule = pNetwork->GetModules().FindModule(m_sModName);
 				break;
 		}
+
+		m_Template["ModPath"] = pModule->GetWebPath();
+		m_Template["ModFilesPath"] = pModule->GetWebFilesPath();
 
 		if (!pModule) {
 			return PAGE_NOTFOUND;

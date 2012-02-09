@@ -200,11 +200,11 @@ public:
 			return true;
 		} else if (sPageName == "delnote") {
 			DelNote(WebSock.GetParam("key", false));
-			WebSock.Redirect("/mods/notes/");
+			WebSock.Redirect(GetWebPath());
 			return true;
 		} else if (sPageName == "addnote") {
 			AddNote(WebSock.GetParam("key"), WebSock.GetParam("note"));
-			WebSock.Redirect("/mods/notes/");
+			WebSock.Redirect(GetWebPath());
 			return true;
 		}
 

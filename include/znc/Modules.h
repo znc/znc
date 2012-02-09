@@ -376,6 +376,8 @@ public:
 	 *  @return The Title.
 	 */
 	virtual CString GetWebMenuTitle() { return ""; }
+	virtual CString GetWebPath();
+	virtual CString GetWebFilesPath();
 	/** For WebMods: Called before the list of registered SubPages will be checked.
 	 *  Important: If you return true, you need to take care of calling WebSock.Close!
 	 *  This allows for stuff like returning non-templated data, long-polling and other fun.
