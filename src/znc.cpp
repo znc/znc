@@ -1885,13 +1885,20 @@ void CZNC::DisableConnectQueue() {
 void CZNC::PauseConnectQueue() {
 	DEBUG("Connection queue paused");
 	m_uiConnectPaused++;
-	DisableConnectQueue();
+
+	if (m_pConnectQueueTimer) {
+		m_pConnectQueueTimer->Pause();
+	}
 }
 
 void CZNC::ResumeConnectQueue() {
 	DEBUG("Connection queue resumed");
 	m_uiConnectPaused--;
+
 	EnableConnectQueue();
+	if (m_pConnectQueueTimer) {
+		m_pConnectQueueTimer->UnPause();
+	}
 }
 
 void CZNC::AddNetworkToQueue(CIRCNetwork *pNetwork) {
