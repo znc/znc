@@ -60,6 +60,18 @@ public:
 		}
 	}
 
+	void SetIRCSock(CIRCSock *pIRCSock) {
+		if (m_pIRCSock) {
+			CZNC::Get().ResumeConnectQueue();
+		}
+
+		m_pIRCSock = pIRCSock;
+
+		if (m_pIRCSock) {
+			CZNC::Get().PauseConnectQueue();
+		}
+	}
+
 	bool WriteISpoof() {
 		if (m_pISpoofLockFile != NULL) {
 			return false;
@@ -102,7 +114,7 @@ public:
 		DEBUG("Releasing ident spoof for user/network [" + (m_pUser ? m_pUser->GetUserName() : "<no user>") + "/" +
 				(m_pNetwork ? m_pNetwork->GetName() : "<no network>") + "]");
 
-		m_pIRCSock = NULL;
+		SetIRCSock(NULL);
 
 		if (m_pISpoofLockFile != NULL) {
 			if (m_pISpoofLockFile->Seek(0) && m_pISpoofLockFile->Truncate()) {
@@ -142,7 +154,7 @@ public:
 			return HALTCORE;
 		}
 
-		m_pIRCSock = pIRCSock;
+		SetIRCSock(pIRCSock);
 		return CONTINUE;
 	}
 
