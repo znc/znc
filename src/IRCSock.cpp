@@ -411,8 +411,9 @@ void CIRCSock::ReadLine(const CString& sData) {
 			// Todo: use nick compare function here
 			if (Nick.GetNick().Equals(GetNick())) {
 				// We are changing our own nick, the clients always must see this!
-				bIsVisible = true;
+				bIsVisible = false;
 				SetNick(sNewNick);
+				m_pNetwork->PutUser(sLine);
 			}
 
 			IRCSOCKMODULECALL(OnNick(Nick, sNewNick, vFoundChans), NOTHING);
