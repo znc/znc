@@ -328,6 +328,19 @@ void CWebSock::SetVars() {
 		for (unsigned int a = 0; a < vMods.size(); a++) {
 			AddModLoop("UserModLoop", *vMods[a]);
 		}
+
+		vector<CIRCNetwork*> vNetworks = GetSession()->GetUser()->GetNetworks();
+		vector<CIRCNetwork*>::iterator it;
+		for (it = vNetworks.begin(); it != vNetworks.end(); ++it) {
+			CModules& vnMods = (*it)->GetModules();
+
+			CTemplate& Row = m_Template.AddRow("NetworkModLoop");
+			Row["NetworkName"] = (*it)->GetName();
+
+			for (unsigned int a = 0; a < vnMods.size(); a++) {
+				AddModLoop("ModLoop", *vnMods[a], &Row);
+			}
+		}
 	}
 
 	if (IsLoggedIn()) {
@@ -335,11 +348,15 @@ void CWebSock::SetVars() {
 	}
 }
 
-bool CWebSock::AddModLoop(const CString& sLoopName, CModule& Module) {
+bool CWebSock::AddModLoop(const CString& sLoopName, CModule& Module, CTemplate *pTemplate) {
+	if (!pTemplate) {
+		pTemplate = &m_Template;
+	}
+
 	CString sTitle(Module.GetWebMenuTitle());
 
 	if (!sTitle.empty() && (IsLoggedIn() || (!Module.WebRequiresLogin() && !Module.WebRequiresAdmin())) && (GetSession()->IsAdmin() || !Module.WebRequiresAdmin())) {
-		CTemplate& Row = m_Template.AddRow(sLoopName);
+		CTemplate& Row = pTemplate->AddRow(sLoopName);
 
 		Row["ModName"] = Module.GetModName();
 		Row["ModPath"] = Module.GetWebPath();

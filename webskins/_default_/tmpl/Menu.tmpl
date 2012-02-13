@@ -27,5 +27,20 @@
 				</ul>
 			</li>
 		<? ENDIF ?>
+
+		<? IF NetworkModLoop ?>
+			<? LOOP NetworkModLoop SORTASC=NetworkName ?>
+				<li class="topitem parent"><span class="title">Network Modules (<? VAR NetworkName ?>)</span>
+					<ul>
+					<? LOOP ModLoop SORTASC=ModName ?>
+						<li class="modtitle<? IF Active ?> active<? ENDIF ?>"><a href="<? VAR ModPath ?>"><? VAR Title ?></a></li>
+						<? LOOP SubPageLoop ?>
+							<li class="subitem<? IF Active ?> active<? ENDIF ?>"><a href="<? VAR ModPath ?>/<? VAR PageName ?><? IF Params ?>?<? VAR Params ?><? ENDIF ?>"><? VAR Title ?></a></li>
+						<? ENDLOOP ?>
+					<? ENDLOOP ?>
+					</ul>
+				</li>
+			<? ENDLOOP ?>
+		<? ENDIF ?>
 	</ul>
 </div>

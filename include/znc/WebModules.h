@@ -136,7 +136,7 @@ public:
 protected:
 	using CHTTPSock::PrintErrorPage;
 
-	bool AddModLoop(const CString& sLoopName, CModule& Module);
+	bool AddModLoop(const CString& sLoopName, CModule& Module, CTemplate *pTemplate = NULL);
 	VCString GetDirs(CModule* pModule, bool bIsTemplate);
 	void SetPaths(CModule* pModule, bool bIsTemplate = false);
 	void SetVars();
