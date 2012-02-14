@@ -11,6 +11,9 @@
 #include <znc/User.h>
 #include <znc/znc.h>
 
+/* We should need 2 DNS threads (host, bindhost) per IRC connection */
+static const size_t MAX_IDLE_THREADS = 2;
+
 unsigned int CSockManager::GetAnonConnectionCount(const CString &sIP) const {
 	const_iterator it;
 	unsigned int ret = 0;
@@ -54,7 +57,44 @@ public:
 };
 
 void* CSockManager::TDNSThread(void* argument) {
-	TDNSArg* a = (TDNSArg*)argument;
+	TDNSStatus *threadStatus = (TDNSStatus *) argument;
+
+	pthread_mutex_lock(&threadStatus->mutex);
+	threadStatus->num_threads++;
+	threadStatus->num_idle++;
+	while (true) {
+		/* Wait for a DNS job for us to do */
+		if (threadStatus->jobs.empty()) {
+			if (threadStatus->num_idle > MAX_IDLE_THREADS)
+				break;
+			pthread_cond_wait(&threadStatus->cond, &threadStatus->mutex);
+		}
+
+		if (threadStatus->done)
+			break;
+
+		/* Figure out a DNS job to do */
+		assert(!threadStatus->jobs.empty());
+		assert(threadStatus->num_idle > 0);
+		TDNSArg *job = threadStatus->jobs.front();
+		threadStatus->jobs.pop_front();
+		threadStatus->num_idle--;
+		pthread_mutex_unlock(&threadStatus->mutex);
+
+		/* Now do the actual work */
+		DoDNS(job);
+
+		pthread_mutex_lock(&threadStatus->mutex);
+		threadStatus->num_idle++;
+	}
+	assert(threadStatus->num_threads > 0 && threadStatus->num_idle > 0);
+	threadStatus->num_threads--;
+	threadStatus->num_idle--;
+	pthread_mutex_unlock(&threadStatus->mutex);
+	return NULL;
+}
+
+void CSockManager::DoDNS(TDNSArg *arg) {
 	int iCount = 0;
 	while (true) {
 		addrinfo hints;
@@ -63,29 +103,28 @@ void* CSockManager::TDNSThread(void* argument) {
 		hints.ai_socktype = SOCK_STREAM;
 		hints.ai_protocol = IPPROTO_TCP;
 		hints.ai_flags = AI_ADDRCONFIG;
-		a->iRes = getaddrinfo(a->sHostname.c_str(), NULL, &hints, &a->aiResult);
-		if (EAGAIN != a->iRes) {
+		arg->iRes = getaddrinfo(arg->sHostname.c_str(), NULL, &hints, &arg->aiResult);
+		if (EAGAIN != arg->iRes) {
 			break;
 		}
 
 		iCount++;
 		if (iCount > 5) {
-			a->iRes = ETIMEDOUT;
+			arg->iRes = ETIMEDOUT;
 			break;
 		}
 		sleep(5); // wait 5 seconds before next try
 	}
 
 	int need = sizeof(TDNSArg*);
-	char* x = (char*)&a;
+	char* x = (char*)&arg;
 	// This write() must succeed because POSIX guarantees that writes of
 	// less than PIPE_BUF are atomic (and PIPE_BUF is at least 512).
-	int w = write(a->fd, x, need);
+	int w = write(arg->fd, x, need);
 	if (w != need) {
 		DEBUG("Something bad happened during write() to a pipe from TDNSThread, wrote " << w << " bytes: " << strerror(errno));
 		exit(1);
 	}
-	return NULL;
 }
 
 void CSockManager::StartTDNSThread(TDNSTask* task, bool bBind) {
@@ -98,6 +137,17 @@ void CSockManager::StartTDNSThread(TDNSTask* task, bool bBind) {
 	arg->iRes      = 0;
 	arg->aiResult  = NULL;
 
+	pthread_mutex_lock(&m_threadStatus.mutex);
+	m_threadStatus.jobs.push_back(arg);
+	/* Do we need a new DNS thread? */
+	if (m_threadStatus.num_idle > 0) {
+		/* Nope, there is one waiting for a job */
+		pthread_cond_signal(&m_threadStatus.cond);
+		pthread_mutex_unlock(&m_threadStatus.mutex);
+		return;
+	}
+	pthread_mutex_unlock(&m_threadStatus.mutex);
+
 	pthread_attr_t attr;
 	if (pthread_attr_init(&attr)) {
 		CString sError = "Couldn't init pthread_attr for " + sHostname;
@@ -109,7 +159,7 @@ void CSockManager::StartTDNSThread(TDNSTask* task, bool bBind) {
 	pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_DETACHED);
 
 	pthread_t thr;
-	if (pthread_create(&thr, &attr, TDNSThread, arg)) {
+	if (pthread_create(&thr, &attr, TDNSThread, &m_threadStatus)) {
 		CString sError = "Couldn't create thread for " + sHostname;
 		DEBUG(sError);
 		CZNC::Get().Broadcast(sError, /* bAdminOnly = */ true);
@@ -230,6 +280,21 @@ void CSockManager::RetrieveTDNSResult() {
 
 CSockManager::CSockManager() {
 #ifdef HAVE_THREADED_DNS
+	int m = pthread_mutex_init(&m_threadStatus.mutex, NULL);
+	if (m) {
+		CUtils::PrintError("Can't initialize mutex: " + CString(strerror(errno)));
+		exit(1);
+	}
+	m = pthread_cond_init(&m_threadStatus.cond, NULL);
+	if (m) {
+		CUtils::PrintError("Can't initialize condition variable: " + CString(strerror(errno)));
+		exit(1);
+	}
+
+	m_threadStatus.num_threads = 0;
+	m_threadStatus.num_idle = 0;
+	m_threadStatus.done = false;
+
 	if (pipe(m_iTDNSpipe)) {
 		DEBUG("Ouch, can't open pipe for threaded DNS resolving: " << strerror(errno));
 		exit(1);
@@ -240,6 +305,20 @@ CSockManager::CSockManager() {
 }
 
 CSockManager::~CSockManager() {
+#ifdef HAVE_THREADED_DNS
+	/* Anyone has an idea how this can be done less ugly? */
+	pthread_mutex_lock(&m_threadStatus.mutex);
+	m_threadStatus.done = true;
+	while (m_threadStatus.num_threads > 0) {
+		pthread_cond_broadcast(&m_threadStatus.cond);
+		pthread_mutex_unlock(&m_threadStatus.mutex);
+		usleep(100);
+		pthread_mutex_lock(&m_threadStatus.mutex);
+	}
+	pthread_mutex_unlock(&m_threadStatus.mutex);
+	pthread_cond_destroy(&m_threadStatus.cond);
+	pthread_mutex_destroy(&m_threadStatus.mutex);
+#endif
 }
 
 void CSockManager::Connect(const CString& sHostname, u_short iPort, const CString& sSockName, int iTimeout, bool bSSL, const CString& sBindHost, CZNCSock *pcSock) {

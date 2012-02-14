@@ -129,10 +129,27 @@ private:
 		int              iRes;
 		addrinfo*        aiResult;
 	};
+	struct TDNSStatus {
+		/* mutex which protects this whole struct */
+		pthread_mutex_t mutex;
+		/* condition variable for idle threads */
+		pthread_cond_t cond;
+		/* When this is true, all threads should exit */
+		bool done;
+		/* Total number of running DNS threads */
+		size_t num_threads;
+		/* Number of DNS threads which don't have any work */
+		size_t num_idle;
+		/* List of pending DNS jobs */
+		std::list<TDNSArg *> jobs;
+	};
 	void StartTDNSThread(TDNSTask* task, bool bBind);
 	void SetTDNSThreadFinished(TDNSTask* task, bool bBind, addrinfo* aiResult);
 	void RetrieveTDNSResult();
 	static void* TDNSThread(void* argument);
+	static void DoDNS(TDNSArg *arg);
+
+	TDNSStatus m_threadStatus;
 #endif
 protected:
 };
