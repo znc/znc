@@ -161,6 +161,9 @@ public:
 	void EnableConnectQueue();
 	void DisableConnectQueue();
 
+	void PauseConnectQueue();
+	void ResumeConnectQueue();
+
 	// Never call this unless you are CConnectQueueTimer::~CConnectQueueTimer()
 	void LeakConnectQueueTimer(CConnectQueueTimer *pTimer);
 
@@ -205,6 +208,7 @@ protected:
 	unsigned long long     m_uBytesWritten;
 	list<CIRCNetwork*>     m_lpConnectQueue;
 	CConnectQueueTimer    *m_pConnectQueueTimer;
+	unsigned int           m_uiConnectPaused;
 	TCacheMap<CString>     m_sConnectThrottle;
 	bool                   m_bProtectWebSessions;
 };

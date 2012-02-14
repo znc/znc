@@ -1868,7 +1868,7 @@ void CZNC::SetConnectDelay(unsigned int i) {
 }
 
 void CZNC::EnableConnectQueue() {
-	if (!m_pConnectQueueTimer) {
+	if (!m_pConnectQueueTimer && !m_uiConnectPaused && !m_lpConnectQueue.empty()) {
 		m_pConnectQueueTimer = new CConnectQueueTimer(m_uiConnectDelay);
 		GetManager().AddCron(m_pConnectQueueTimer);
 	}
@@ -1879,6 +1879,25 @@ void CZNC::DisableConnectQueue() {
 		// This will kill the cron
 		m_pConnectQueueTimer->Stop();
 		m_pConnectQueueTimer = NULL;
+	}
+}
+
+void CZNC::PauseConnectQueue() {
+	DEBUG("Connection queue paused");
+	m_uiConnectPaused++;
+
+	if (m_pConnectQueueTimer) {
+		m_pConnectQueueTimer->Pause();
+	}
+}
+
+void CZNC::ResumeConnectQueue() {
+	DEBUG("Connection queue resumed");
+	m_uiConnectPaused--;
+
+	EnableConnectQueue();
+	if (m_pConnectQueueTimer) {
+		m_pConnectQueueTimer->UnPause();
 	}
 }
 
