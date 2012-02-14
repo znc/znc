@@ -846,14 +846,14 @@ void CClient::UserCommand(CString& sLine) {
 			return;
 		}
 
-		CModInfo ModInfo;
-		CString sRetMsg;
-		if (!CZNC::Get().GetModules().GetModInfo(ModInfo, sMod, sRetMsg)) {
-			PutStatus("Unable to find modinfo [" + sMod + "] [" + sRetMsg + "]");
-			return;
-		}
-
 		if (sType.Equals("default")) {
+			CModInfo ModInfo;
+			CString sRetMsg;
+			if (!CZNC::Get().GetModules().GetModInfo(ModInfo, sMod, sRetMsg)) {
+				PutStatus("Unable to find modinfo [" + sMod + "] [" + sRetMsg + "]");
+				return;
+			}
+
 			eType = ModInfo.GetDefaultType();
 		}
 
@@ -915,14 +915,14 @@ void CClient::UserCommand(CString& sLine) {
 			return;
 		}
 
-		CModInfo ModInfo;
-		CString sRetMsg;
-		if (!CZNC::Get().GetModules().GetModInfo(ModInfo, sMod, sRetMsg)) {
-			PutStatus("Unable to find modinfo for [" + sMod + "] [" + sRetMsg + "]");
-			return;
-		}
-
 		if (sType.Equals("default")) {
+			CModInfo ModInfo;
+			CString sRetMsg;
+			if (!CZNC::Get().GetModules().GetModInfo(ModInfo, sMod, sRetMsg)) {
+				PutStatus("Unable to find modinfo for [" + sMod + "] [" + sRetMsg + "]");
+				return;
+			}
+
 			eType = ModInfo.GetDefaultType();
 		}
 
