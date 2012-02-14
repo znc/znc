@@ -34,6 +34,7 @@ CZNC::CZNC() {
 	m_uBytesWritten = 0;
 	m_uiMaxBufferSize = 500;
 	m_pConnectQueueTimer = NULL;
+	m_uiConnectPaused = 0;
 	m_eConfigState = ECONFIG_NOTHING;
 	m_TimeStarted = time(NULL);
 	m_sConnectThrottle.SetTTL(30000);
