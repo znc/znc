@@ -429,6 +429,13 @@ void CClient::UserCommand(CString& sLine) {
 		PutStatus("Total: " + CString(vChans.size()) + " - Joined: " + CString(uNumJoined) +
 			" - Detached: " + CString(uNumDetached) + " - Disabled: " + CString(uNumDisabled));
 	} else if (sCommand.Equals("ADDNETWORK")) {
+#ifndef ENABLE_ADD_NETWORK
+		if (!m_pUser->IsAdmin()) {
+			PutStatus("Permission denied");
+			return;
+		}
+#endif
+
 		CString sNetwork = sLine.Token(1);
 
 		if (sNetwork.empty()) {

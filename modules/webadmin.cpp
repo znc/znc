@@ -700,6 +700,13 @@ public:
 					}
 				}
 			} else {
+#ifndef ENABLE_ADD_NETWORK
+				if (!spSession->IsAdmin()) {
+					WebSock.PrintErrorPage("Permission denied");
+					return true;
+				}
+#endif
+
 				Tmpl["Action"] = "addnetwork";
 				Tmpl["Title"] = "Add Network for User [" + pUser->GetUserName() + "]";
 				Tmpl["IRCConnectEnabled"] = "true";

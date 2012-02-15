@@ -571,6 +571,13 @@ class CAdminMod : public CModule {
 	}
 
 	void AddNetwork(const CString& sLine) {
+#ifndef ENABLE_ADD_NETWORK
+		if (!m_pUser->IsAdmin()) {
+			PutModule("Permission denied");
+			return;
+		}
+#endif
+
 		CString sUser = sLine.Token(1);
 		CString sNetwork = sLine.Token(2);
 		CUser *pUser = m_pUser;
