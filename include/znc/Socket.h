@@ -149,6 +149,11 @@ private:
 	static void* TDNSThread(void* argument);
 	static void DoDNS(TDNSArg *arg);
 
+	/** Must be called with threadStatus->mutex held.
+	 * @returns false when the calling DNS thread should exit.
+	 */
+	static bool ThreadNeeded(struct TDNSStatus* status);
+
 	TDNSStatus m_threadStatus;
 #endif
 protected:

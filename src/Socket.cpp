@@ -56,6 +56,15 @@ public:
 	}
 };
 
+bool CSockManager::ThreadNeeded(struct TDNSStatus* threadStatus)
+{
+	// We should keep a number of idle threads alive
+	if (threadStatus->num_idle > MAX_IDLE_THREADS)
+		return false;
+	// If ZNC is shutting down, all threads should exit
+	return !threadStatus->done;
+}
+
 void* CSockManager::TDNSThread(void* argument) {
 	TDNSStatus *threadStatus = (TDNSStatus *) argument;
 
@@ -63,18 +72,19 @@ void* CSockManager::TDNSThread(void* argument) {
 	threadStatus->num_threads++;
 	threadStatus->num_idle++;
 	while (true) {
-		/* Wait for a DNS job for us to do */
-		if (threadStatus->jobs.empty()) {
-			if (threadStatus->num_idle > MAX_IDLE_THREADS)
+		/* Wait for a DNS job for us to do. This is a while()-loop
+		 * because POSIX allows spurious wakeups from pthread_cond_wait.
+		 */
+		while (threadStatus->jobs.empty()) {
+			if (!ThreadNeeded(threadStatus))
 				break;
 			pthread_cond_wait(&threadStatus->cond, &threadStatus->mutex);
 		}
 
-		if (threadStatus->done)
+		if (!ThreadNeeded(threadStatus))
 			break;
 
 		/* Figure out a DNS job to do */
-		assert(!threadStatus->jobs.empty());
 		assert(threadStatus->num_idle > 0);
 		TDNSArg *job = threadStatus->jobs.front();
 		threadStatus->jobs.pop_front();
