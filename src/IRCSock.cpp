@@ -328,6 +328,9 @@ void CIRCSock::ReadLine(const CString& sData) {
 
 				return;  // return so we don't send them the raw twice
 			}
+			case 381:  // You are now an IRC Operator
+				m_pNetwork->AddRawBuffer(":" + _NAMEDFMT(sServer) + " " + sCmd + " {target} " + _NAMEDFMT(sRest));
+				break;
 			case 375:  // begin motd
 			case 422:  // MOTD File is missing
 				m_pNetwork->ClearMotdBuffer();
