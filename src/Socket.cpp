@@ -10,6 +10,7 @@
 #include <znc/Modules.h>
 #include <znc/User.h>
 #include <znc/znc.h>
+#include <signal.h>
 
 /* We should need 2 DNS threads (host, bindhost) per IRC connection */
 static const size_t MAX_IDLE_THREADS = 2;
@@ -169,8 +170,32 @@ void CSockManager::StartTDNSThread(TDNSTask* task, bool bBind) {
 	pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_DETACHED);
 
 	pthread_t thr;
+	sigset_t old_sigmask;
+	sigset_t sigmask;
+	sigfillset(&sigmask);
+	/* Block all signals. The thread will inherit our signal mask and thus
+	 * won't ever try to handle any signals.
+	 */
+	if (pthread_sigmask(SIG_SETMASK, &sigmask, &old_sigmask)) {
+		CString sError = "Couldn't block signals";
+		DEBUG(sError);
+		CZNC::Get().Broadcast(sError, /* bAdminOnly = */ true);
+		delete arg;
+		pthread_attr_destroy(&attr);
+		SetTDNSThreadFinished(task, bBind, NULL);
+		return;
+	}
 	if (pthread_create(&thr, &attr, TDNSThread, &m_threadStatus)) {
 		CString sError = "Couldn't create thread for " + sHostname;
+		DEBUG(sError);
+		CZNC::Get().Broadcast(sError, /* bAdminOnly = */ true);
+		delete arg;
+		pthread_attr_destroy(&attr);
+		SetTDNSThreadFinished(task, bBind, NULL);
+		return;
+	}
+	if (pthread_sigmask(SIG_SETMASK, &old_sigmask, NULL)) {
+		CString sError = "Couldn't unblock signals";
 		DEBUG(sError);
 		CZNC::Get().Broadcast(sError, /* bAdminOnly = */ true);
 		delete arg;
