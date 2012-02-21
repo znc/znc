@@ -92,10 +92,6 @@ esac
 AC_ARG_WITH( [openssl],
 	AS_HELP_STRING([--with-openssl=DIR], [openssl installation prefix]),
 	[OPENSSL=$withval],)
-AC_ARG_ENABLE( [extra],
-	AS_HELP_STRING([--enable-extra], [enable some extra modules]),
-	[EXTRA="$enableval"],
-	[EXTRA="no"])
 AC_ARG_ENABLE( [debug],
 	AS_HELP_STRING([--enable-debug], [enable debugging]),
 	[DEBUG="$enableval"],
@@ -456,31 +452,28 @@ then
 	LIBS="$my_saved_LIBS"
 fi
 
-if test x"$EXTRA" = "xyes"
+AC_CHECK_FUNC( iconv, CHARSET=1 )
+AC_CHECK_LIB( iconv, iconv_open, LIBICONV=-liconv ; CHARSET=1 )
+if test "x$CHARSET" = "x1"
 then
-	AC_CHECK_FUNC( iconv, CHARSET=1 )
-	AC_CHECK_LIB( iconv, iconv_open, LIBICONV=-liconv ; CHARSET=1 )
-	if test "x$CHARSET" = "x1"
-	then
-		AC_MSG_CHECKING([whether iconv expects a const second argument])
-		AC_COMPILE_IFELSE([
-			AC_LANG_PROGRAM([[
-		#include <iconv.h>
-		]], [[
-			const char input[] = "X"; const char *inptr = input; size_t inbytes = 1;
-			char buf[1]; char *outptr = buf; size_t outbytes = 1;
-			iconv_t ic = iconv_open("ISO8859-1", "UTF8");
-			iconv(ic, (char**)&inptr, &inbytes, &outptr, &outbytes);
-		]])], [
-			AC_MSG_RESULT([no])
-			appendMod -DICONV_CONST=
-		], [
-			AC_MSG_RESULT([yes])
-			appendMod -DICONV_CONST=const
-		])
-	else
-		AC_MSG_WARN([libiconv was not found, disabling the charset module])
-	fi
+	AC_MSG_CHECKING([whether iconv expects a const second argument])
+	AC_COMPILE_IFELSE([
+		AC_LANG_PROGRAM([[
+	#include <iconv.h>
+	]], [[
+		const char input[] = "X"; const char *inptr = input; size_t inbytes = 1;
+		char buf[1]; char *outptr = buf; size_t outbytes = 1;
+		iconv_t ic = iconv_open("ISO8859-1", "UTF8");
+		iconv(ic, (char**)&inptr, &inbytes, &outptr, &outbytes);
+	]])], [
+		AC_MSG_RESULT([no])
+		appendMod -DICONV_CONST=
+	], [
+		AC_MSG_RESULT([yes])
+		appendMod -DICONV_CONST=const
+	])
+else
+	AC_MSG_WARN([libiconv was not found, disabling the charset module])
 fi
 
 AC_CACHE_CHECK([for GNU make], [ac_cv_path_GNUMAKE], [
@@ -504,7 +497,6 @@ AC_SUBST([LIBZNC])
 AC_SUBST([LIBZNCDIR])
 AC_SUBST([MODLINK])
 AC_SUBST([NOSSL])
-AC_SUBST([EXTRA])
 AC_SUBST([TCL_FLAGS])
 AC_SUBST([SASL])
 AC_SUBST([CHARSET])
@@ -542,7 +534,6 @@ if test x"$SASL" = "x" ; then
 else
 	echo "sasl:         yes"
 fi
-echo "extra:        $EXTRA"
 if test x"$TCL_FLAGS" = "x" ; then
 	echo "tcl:          no"
 else

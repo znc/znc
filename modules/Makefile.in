@@ -59,10 +59,6 @@ endif
 CLEAN    :=
 
 FILES    := $(notdir $(wildcard $(srcdir)/*.cpp))
-# If extra is enabled
-ifeq "@EXTRA@" "yes"
-FILES    += $(addprefix extra/, $(notdir $(wildcard $(srcdir)/extra/*.cpp)))
-endif
 
 include $(srcdir)/modperl/Makefile.inc
 include $(srcdir)/modpython/Makefile.inc
@@ -79,18 +75,18 @@ FILES    := $(foreach file, $(FILES), \
 endif
 
 ifeq "@SASL@" ""
-FILES    := $(shell echo $(FILES) | sed -e "s:extra/saslauth::")
+FILES    := $(shell echo $(FILES) | sed -e "s:saslauth::")
 endif
 saslauthLDFLAGS := -lsasl2
 
 ifeq "@CHARSET@" ""
-FILES    := $(shell echo $(FILES) | sed -e "s:extra/charset::")
+FILES    := $(shell echo $(FILES) | sed -e "s:charset::")
 endif
 charsetLDFLAGS := @LIBICONV@
 
 TARGETS  := $(addsuffix .so, $(FILES))
 
-CLEAN    += *.so extra/*.so *.o extra/*.o
+CLEAN    += *.so *.o
 
 .PHONY: all clean install install_datadir uninstall
 .SECONDARY:
@@ -106,9 +102,6 @@ install_datadir:
 	test -d $(DESTDIR)$(DATADIR)/modules || $(INSTALL) -d $(DESTDIR)$(DATADIR)/modules
 	rm -rf $(DESTDIR)$(MODDIR)/*.so
 	cp -R $(srcdir)/data/* $(DESTDIR)$(DATADIR)/modules
-	if test "@EXTRA@" = "yes" ; then \
-		cp -R $(srcdir)/extra/data/* $(DESTDIR)$(DATADIR)/modules ; \
-	fi
 	find $(DESTDIR)$(DATADIR)/modules -type d -exec chmod 0755 '{}' \;
 	find $(DESTDIR)$(DATADIR)/modules -type f -exec chmod 0644 '{}' \;
 
@@ -116,12 +109,12 @@ clean:
 	rm -rf $(CLEAN)
 
 %.o: %.cpp Makefile
-	@mkdir -p .depend extra
-	$(E) Building $(if $(filter %extra/,$(dir $<)),extra )module $(notdir $(basename $@))...
+	@mkdir -p .depend
+	$(E) Building module $(notdir $(basename $@))...
 	$(Q)$(CXX) $(MODFLAGS) -c -o $@ $< $($(notdir $(basename $@))CXXFLAGS) -MD -MF .depend/$(notdir $@).dep
 
 %.so: %.o Makefile
-	$(E) Linking $(if $(filter %extra/,$(dir $<)),extra )module $(notdir $(basename $@))...
+	$(E) Linking module $(notdir $(basename $@))...
 	$(Q)$(CXX) $(MODFLAGS) $(LDFLAGS) $(MODLINK) -o $@ $< $($(notdir $(basename $@))LDFLAGS)
 
 uninstall:
