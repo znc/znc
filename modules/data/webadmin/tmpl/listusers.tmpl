@@ -22,6 +22,7 @@
 						<td>
 							<span class="nowrap">
 								[<a href="edituser?user=<?VAR Username ESC=URL?>">Edit</a>]
+								[<a href="adduser?clone=<? VAR Username ESC=URL ?>" alt="Clone <? VAR Username ESC=URL ?>">Clone</a>]
 								<? IF !IsSelf ?>[<a href="deluser?user=<?VAR Username ESC=URL?>">Delete</a>]<? ENDIF ?>
 							</span>
 						</td>

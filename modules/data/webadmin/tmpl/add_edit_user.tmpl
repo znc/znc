@@ -11,6 +11,9 @@
 				<div class="subsection">
 					<div class="inputlabel">Username:</div>
 					<div>
+						<? IF Clone ?>
+						<input type="hidden" name="clone" value="<? VAR CloneUsername ?>" />
+						<? ENDIF ?>
 						<? IF Edit ?>
 						<input type="hidden" name="user" value="<? VAR Username ?>" />
 						<input type="text" name="newuser" value="<? VAR Username ?>" class="half" maxlength="128" disabled="disabled" />
@@ -104,9 +107,7 @@
 
 	<div class="section">
 		<h3>Networks</h3>
-		<? IF !Edit ?>
-		<span class="info">You will be able to add + modify networks here after you created the user.</span><br />
-		<? ELSE ?>
+		<? IF Edit ?>
 		<div class="sectionbg">
 			<div class="sectionbody">
 				<table>
@@ -135,6 +136,8 @@
 				</table>
 			</div>
 		</div>
+		<? ELSE ?>
+		<span class="info">You will be able to add + modify networks here after you <? IF Clone ?>have cloned<? ELSE ?>created<? ENDIF ?> the user.</span><br />
 		<? ENDIF ?>
 	</div>
 
@@ -261,7 +264,7 @@
 	<? ENDLOOP ?>
 
 	<div class="submitline">
-		<input type="submit" value="<? IF Edit ?>Save<? ELSE ?>Create<? ENDIF ?>" />
+		<input type="submit" value="<? IF Edit ?>Save<? ELSE ?><? IF Clone ?>Clone<? ELSE ?>Create<? ENDIF ?><? ENDIF ?>" />
 	</div>
 </form>
 

@@ -865,6 +865,18 @@ public:
 				Tmpl["Action"] = "edituser";
 				Tmpl["Title"] = "Edit User [" + pUser->GetUserName() + "]";
 				Tmpl["Edit"] = "true";
+			} else {
+				CString sUsername = WebSock.GetParam("clone", false);
+				pUser = CZNC::Get().FindUser(sUsername);
+
+				if (pUser) {
+					Tmpl["Title"] = "Clone User [" + pUser->GetUserName() + "]";
+					Tmpl["Clone"] = "true";
+					Tmpl["CloneUsername"] = pUser->GetUserName();
+				}
+			}
+
+			if (pUser) {
 				Tmpl["Username"] = pUser->GetUserName();
 				Tmpl["Nick"] = pUser->GetNick();
 				Tmpl["AltNick"] = pUser->GetAltNick();
@@ -1049,6 +1061,11 @@ public:
 		CString sAction;
 
 		if (!pUser) {
+			CString sClone = WebSock.GetParam("clone");
+			if (CUser *pCloneUser = CZNC::Get().FindUser(sClone)) {
+				pNewUser->CloneNetworks(*pCloneUser);
+			}
+
 			// Add User Submission
 			if (!CZNC::Get().AddUser(pNewUser, sErr)) {
 				delete pNewUser;

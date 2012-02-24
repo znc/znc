@@ -566,6 +566,44 @@ void CUser::UserDisconnected(CClient* pClient) {
 	}
 }
 
+void CUser::CloneNetworks(const CUser& User) {
+	const vector<CIRCNetwork*>& vNetworks = User.GetNetworks();
+	for (vector<CIRCNetwork*>::const_iterator it = vNetworks.begin(); it != vNetworks.end(); ++it) {
+		CIRCNetwork *pNetwork = FindNetwork((*it)->GetName());
+
+		if (pNetwork) {
+			pNetwork->Clone(*(*it));
+		} else {
+			new CIRCNetwork(this, *(*it));
+		}
+	}
+
+	set<CString> ssDeleteNetworks;
+	for (vector<CIRCNetwork*>::const_iterator it = m_vIRCNetworks.begin(); it != m_vIRCNetworks.end(); ++it) {
+		if (!(User.FindNetwork((*it)->GetName()))) {
+			ssDeleteNetworks.insert((*it)->GetName());
+		}
+	}
+
+	for (set<CString>::const_iterator it = ssDeleteNetworks.begin(); it != ssDeleteNetworks.end(); ++it) {
+		// The following will move all the clients to the user.
+		// So the clients are not disconnected. The client could
+		// have requested the rehash. Then when we do
+		// client->PutStatus("Rehashing succeeded!") we would
+		// crash if there was no client anymore.
+		vector<CClient*>& vClients = FindNetwork(*it)->GetClients();
+
+		while (vClients.begin() != vClients.end()) {
+			CClient *pClient = vClients.front();
+			// This line will remove pClient from vClients,
+			// because it's a reference to the internal Network's vector.
+			pClient->SetNetwork(NULL);
+		}
+
+		DeleteNetwork(*it);
+	}
+}
+
 bool CUser::Clone(const CUser& User, CString& sErrorRet, bool bCloneNetworks) {
 	unsigned int a = 0;
 	sErrorRet.clear();
@@ -619,41 +657,7 @@ bool CUser::Clone(const CUser& User, CString& sErrorRet, bool bCloneNetworks) {
 
 	// Networks
 	if (bCloneNetworks) {
-		const vector<CIRCNetwork*>& vNetworks = User.GetNetworks();
-		for (vector<CIRCNetwork*>::const_iterator it = vNetworks.begin(); it != vNetworks.end(); ++it) {
-			CIRCNetwork *pNetwork = FindNetwork((*it)->GetName());
-
-			if (pNetwork) {
-				pNetwork->Clone(*(*it));
-			} else {
-				new CIRCNetwork(this, *(*it));
-			}
-		}
-
-		set<CString> ssDeleteNetworks;
-		for (vector<CIRCNetwork*>::const_iterator it = m_vIRCNetworks.begin(); it != m_vIRCNetworks.end(); ++it) {
-			if (!(User.FindNetwork((*it)->GetName()))) {
-				ssDeleteNetworks.insert((*it)->GetName());
-			}
-		}
-
-		for (set<CString>::const_iterator it = ssDeleteNetworks.begin(); it != ssDeleteNetworks.end(); ++it) {
-			// The following will move all the clients to the user.
-			// So the clients are not disconnected. The client could
-			// have requested the rehash. Then when we do
-			// client->PutStatus("Rehashing succeeded!") we would
-			// crash if there was no client anymore.
-			vector<CClient*>& vClients = FindNetwork(*it)->GetClients();
-
-			while (vClients.begin() != vClients.end()) {
-				CClient *pClient = vClients.front();
-				// This line will remove pClient from vClients,
-				// because it's a reference to the internal Network's vector.
-				pClient->SetNetwork(NULL);
-			}
-
-			DeleteNetwork(*it);
-		}
+		CloneNetworks(User);
 	}
 	// !Networks
 

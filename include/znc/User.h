@@ -91,6 +91,7 @@ public:
 	CString AddTimestamp(const CString& sStr) const;
 	CString AddTimestamp(time_t tm, const CString& sStr) const;
 
+	void CloneNetworks(const CUser& User);
 	bool Clone(const CUser& User, CString& sErrorRet, bool bCloneNetworks = true);
 	void BounceAllClients();
 
