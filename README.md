@@ -28,11 +28,6 @@ SSL support:
  - openssl 0.9.7d or later (try installing openssl-dev, openssl-devel or
    libssl-dev)
 
-Asynchronous DNS lookup:
-
- - c-ares 1.5.3 or later, older releases don't provide a pkg-config file
-   (try installing libc-ares-dev or c-ares)
-
 modperl:
 
  - This needs perl and its bundled libperl
