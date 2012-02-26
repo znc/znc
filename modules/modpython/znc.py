@@ -366,6 +366,46 @@ class Module:
     def OnEmbeddedWebRequest(self, WebSock, sPageName, Tmpl):
         pass
 
+    # Global modules
+    def OnAddUser(self, User, sErrorRet):
+        pass
+
+    def OnDeleteUser(self, User):
+        pass
+
+    def OnClientConnect(self, pSock, sHost, uPort):
+        pass
+
+    def OnLoginAttempt(self, Auth):
+        pass
+
+    def OnFailedLogin(self, sUsername, sRemoteIP):
+        pass
+
+    def OnUnknownUserRaw(self, pClient, sLine):
+        pass
+
+    def OnClientCapLs(self, pClient, ssCaps):
+        pass
+
+    def IsClientCapSupported(self, pClient, sCap, bState):
+        pass
+
+    def OnClientCapRequest(self, pClient, sCap, bState):
+        pass
+
+    def OnModuleLoading(self, sModName, sArgs, eType, bSuccess, sRetMsg):
+        pass
+
+    def OnModuleUnloading(self, pModule, bSuccess, sRetMsg):
+        pass
+
+    def OnGetModInfo(self, ModInfo, sModule, bSuccess, sRetMsg):
+        pass
+
+    def OnGetAvailableMods(self, ssMods, eType):
+        pass
+
 def make_inherit(cl, parent, attr):
     def make_caller(parent, name, attr):
         return lambda self, *a: parent.__dict__[name](self.__dict__[attr], *a)

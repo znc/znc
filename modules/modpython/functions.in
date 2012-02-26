@@ -61,4 +61,16 @@ void OnServerCapResult(const CString& sCap, bool bSuccess)
 EModRet OnTimerAutoJoin(CChan& Channel)
 bool OnEmbeddedWebRequest(CWebSock& WebSock, const CString& sPageName, CTemplate& Tmpl)=false
 
+EModRet OnAddUser(CUser& User, CString& sErrorRet)
+EModRet OnDeleteUser(CUser& User)
+void OnClientConnect(CZNCSock* pSock, const CString& sHost, unsigned short uPort)
+EModRet OnLoginAttempt(CSmartPtr<CAuthBase> Auth)
+void OnFailedLogin(const CString& sUsername, const CString& sRemoteIP)
+EModRet OnUnknownUserRaw(CClient* pClient, CString& sLine)
+void OnClientCapLs(CClient* pClient, SCString& ssCaps)
+bool IsClientCapSupported(CClient* pClient, const CString& sCap, bool bState)=false
+void OnClientCapRequest(CClient* pClient, const CString& sCap, bool bState)
 EModRet OnModuleLoading(const CString& sModName, const CString& sArgs, CModInfo::EModuleType eType, bool& bSuccess, CString& sRetMsg)
+EModRet OnModuleUnloading(CModule* pModule, bool& bSuccess, CString& sRetMsg)
+EModRet OnGetModInfo(CModInfo& ModInfo, const CString& sModule, bool& bSuccess, CString& sRetMsg)
+void OnGetAvailableMods(set<CModInfo>& ssMods, CModInfo::EModuleType eType)
