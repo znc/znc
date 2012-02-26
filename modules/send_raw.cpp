@@ -45,6 +45,11 @@ class CSendRaw_Mod: public CModule {
 		}
 	}
 
+	void CurrentClient(const CString& sLine) {
+		CString sData = sLine.Token(1, true);
+		m_pClient->PutClient(sData);
+	}
+
 public:
 	virtual ~CSendRaw_Mod() {}
 
@@ -114,8 +119,10 @@ public:
 		AddHelpCommand();
 		AddCommand("Client",          static_cast<CModCommand::ModCmdFunc>(&CSendRaw_Mod::SendClient),
 			"[user] [network] [data to send]",  "The data will be sent to the user's IRC client(s)");
-		AddCommand("Server",            static_cast<CModCommand::ModCmdFunc>(&CSendRaw_Mod::SendServer),
+		AddCommand("Server",          static_cast<CModCommand::ModCmdFunc>(&CSendRaw_Mod::SendServer),
 			"[user] [network] [data to send]",  "The data will be sent to the IRC server the user is connected to");
+		AddCommand("Current",         static_cast<CModCommand::ModCmdFunc>(&CSendRaw_Mod::CurrentClient),
+			"[data to send]",                   "The data will be sent to your current client");
 	}
 };
 
