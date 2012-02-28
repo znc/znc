@@ -647,3 +647,17 @@ def CreateWebSubPage(name, title='', params=dict(), admin=False):
 CUser.GetNetworks = CUser.GetNetworks_
 CIRCNetwork.GetChans = CIRCNetwork.GetChans_
 CChan.GetNicks = CChan.GetNicks_
+
+
+class ModulesIter(collections.Iterator):
+    def __init__(self, cmod):
+        self._cmod = cmod
+
+    def __next__(self):
+        if self._cmod.is_end():
+            raise StopIteration
+
+        module = self._cmod.get()
+        self._cmod.plusplus()
+        return module
+CModules.__iter__ = lambda cmod: ModulesIter(CModulesIter(cmod))

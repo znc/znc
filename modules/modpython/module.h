@@ -234,6 +234,29 @@ public:
 	}
 };
 
+class CModulesIter {
+public:
+	CModulesIter(CModules *pModules) {
+		m_pModules = pModules;
+		m_it = pModules->begin();
+	}
+
+	void plusplus() {
+		++m_it;
+	}
+
+	const CModule* get() const {
+		return *m_it;
+	}
+
+	bool is_end() const {
+		return m_pModules->end() == m_it;
+	}
+
+	CModules *m_pModules;
+	CModules::const_iterator m_it;
+};
+
 #if HAVE_VISIBILITY
 #pragma GCC visibility pop
 #endif
