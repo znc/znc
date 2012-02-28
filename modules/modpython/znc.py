@@ -661,3 +661,16 @@ class ModulesIter(collections.Iterator):
         self._cmod.plusplus()
         return module
 CModules.__iter__ = lambda cmod: ModulesIter(CModulesIter(cmod))
+
+
+def str_eq(self, other):
+    if str(other) == str(self):
+        return True
+
+    return id(self) == id(other)
+
+CChan.__eq__ = str_eq
+CNick.__eq__ = str_eq
+CUser.__eq__ = str_eq
+CIRCNetwork.__eq__ = str_eq
+CPyRetString.__eq__ = str_eq
