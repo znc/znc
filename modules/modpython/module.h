@@ -113,10 +113,8 @@ public:
 	virtual EModRet OnAddUser(CUser& User, CString& sErrorRet);
 	virtual EModRet OnDeleteUser(CUser& User);
 	virtual void OnClientConnect(CZNCSock* pSock, const CString& sHost, unsigned short uPort);
-	virtual EModRet OnLoginAttempt(CSmartPtr<CAuthBase> Auth);
 	virtual void OnFailedLogin(const CString& sUsername, const CString& sRemoteIP);
 	virtual EModRet OnUnknownUserRaw(CClient* pClient, CString& sLine);
-	virtual void OnClientCapLs(CClient* pClient, SCString& ssCaps);
 	virtual bool IsClientCapSupported(CClient* pClient, const CString& sCap, bool bState);
 	virtual void OnClientCapRequest(CClient* pClient, const CString& sCap, bool bState);
 	virtual EModRet OnModuleLoading(const CString& sModName, const CString& sArgs,
@@ -124,7 +122,6 @@ public:
 	virtual EModRet OnModuleUnloading(CModule* pModule, bool& bSuccess, CString& sRetMsg);
 	virtual EModRet OnGetModInfo(CModInfo& ModInfo, const CString& sModule,
 			bool& bSuccess, CString& sRetMsg);
-	virtual void OnGetAvailableMods(set<CModInfo>& ssMods, CModInfo::EModuleType eType);
 };
 
 static inline CPyModule* AsPyModule(CModule* p) {
