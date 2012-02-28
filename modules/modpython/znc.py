@@ -628,7 +628,6 @@ HALTCORE = CModule.HALTCORE
 UNLOAD = CModule.UNLOAD
 
 HaveSSL = HaveSSL_()
-HaveCAres = HaveCAres_()
 HaveIPv6 = HaveIPv6_()
 Version = GetVersion()
 VersionMajor = GetVersionMajor()

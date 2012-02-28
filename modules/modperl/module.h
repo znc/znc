@@ -158,13 +158,6 @@ inline bool HaveSSL() {
 	return false;
 }
 
-inline bool HaveCAres() {
-#ifdef HAVE_C_ARES
-	return true;
-#endif
-	return false;
-}
-
 inline int _GetSOMAXCONN() {
 	return SOMAXCONN;
 }
