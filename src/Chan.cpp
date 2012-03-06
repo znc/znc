@@ -219,6 +219,14 @@ void CChan::SetModes(const CString& sModes) {
 	ModeChange(sModes);
 }
 
+void CChan::SetKeepBuffer(bool b) {
+	m_bKeepBuffer = b;
+
+	if (!m_bKeepBuffer && !IsDetached() && m_pNetwork->IsUserOnline()) {
+		ClearBuffer();
+	}
+}
+
 void CChan::OnWho(const CString& sNick, const CString& sIdent, const CString& sHost) {
 	CNick* pNick = FindNick(sNick);
 

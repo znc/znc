@@ -111,7 +111,7 @@ public:
 	void SetTopicOwner(const CString& s) { m_sTopicOwner = s; }
 	void SetTopicDate(unsigned long u) { m_ulTopicDate = u; }
 	void SetDefaultModes(const CString& s) { m_sDefaultModes = s; }
-	void SetKeepBuffer(bool b) { m_bKeepBuffer = b; }
+	void SetKeepBuffer(bool b);
 	void SetDetached(bool b = true) { m_bDetached = b; }
 	void SetInConfig(bool b) { m_bInConfig = b; }
 	void SetCreationDate(unsigned long u) { m_ulCreationDate = u; }
