@@ -970,6 +970,7 @@ bool CString::ToBool() const {
 	CString sTrimmed = Trim_n();
 	return (!sTrimmed.Trim_n("0").empty() &&
 			!sTrimmed.Equals("false") &&
+			!sTrimmed.Equals("off") &&
 			!sTrimmed.Equals("no") &&
 			!sTrimmed.Equals("n"));
 }
