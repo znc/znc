@@ -589,7 +589,7 @@ bool CZNC::WriteNewConfig(const CString& sConfigFile) {
 
 	do {
 		bSuccess = true;
-		while (!CUtils::GetNumInput("What port would you like ZNC to listen on?", uListenPort, 1, 65535)) ;
+		while (!CUtils::GetNumInput("What port would you like ZNC to listen on?", uListenPort, 1025, 65535)) ;
 
 #ifdef HAVE_LIBSSL
 		if (CUtils::GetBoolInput("Would you like ZNC to listen using SSL?", !sSSL.empty())) {
