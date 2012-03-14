@@ -92,6 +92,29 @@ CString CZNC::GetTag(bool bIncludeVersion) {
 	return szBuf;
 }
 
+CString CZNC::GetCompileOptionsString() {
+	return
+		"IPv6: "
+#ifdef HAVE_IPV6
+		"yes"
+#else
+		"no"
+#endif
+		", SSL: "
+#ifdef HAVE_LIBSSL
+		"yes"
+#else
+		"no"
+#endif
+		", DNS: "
+#ifdef HAVE_THREADED_DNS
+		"threads"
+#else
+		"blocking"
+#endif
+	;
+}
+
 CString CZNC::GetUptime() const {
 	time_t now = time(NULL);
 	return CString::ToTimeStr(now - TimeStarted());

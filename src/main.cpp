@@ -138,6 +138,7 @@ int main(int argc, char** argv) {
 			return 0;
 		case 'v':
 			cout << CZNC::GetTag() << endl;
+			cout << CZNC::GetCompileOptionsString() << endl;
 			return 0;
 		case 'n':
 			CDebug::SetStdoutIsTTY(false);

@@ -56,6 +56,7 @@ public:
 	void BackupConfigOnce(const CString& sSuffix);
 	static CString GetVersion();
 	static CString GetTag(bool bIncludeVersion = true);
+	static CString GetCompileOptionsString();
 	CString GetUptime() const;
 	void ClearBindHosts();
 	bool AddBindHost(const CString& sHost);

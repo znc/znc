@@ -124,26 +124,8 @@ void CClient::UserCommand(CString& sLine) {
 		PutStatus("There were [" + CString(uMatches) + "] channels matching [" + sChan + "]");
 		PutStatus("Detached [" + CString(uDetached) + "] channels");
 	} else if (sCommand.Equals("VERSION")) {
-		const char *features = "IPv6: "
-#ifdef HAVE_IPV6
-			"yes"
-#else
-			"no"
-#endif
-			", SSL: "
-#ifdef HAVE_LIBSSL
-			"yes"
-#else
-			"no"
-#endif
-			", dns: "
-#ifdef HAVE_THREADED_DNS
-			"threads";
-#else
-			"blocking";
-#endif
 		PutStatus(CZNC::GetTag());
-		PutStatus(features);
+		PutStatus(CZNC::GetCompileOptionsString());
 	} else if (sCommand.Equals("MOTD") || sCommand.Equals("ShowMOTD")) {
 		if (!SendMotd()) {
 			PutStatus("There is no MOTD set.");
