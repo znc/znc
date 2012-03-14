@@ -127,5 +127,8 @@ void CShellSock::Disconnected() {
 	m_pParent->SetClient(NULL);
 }
 
+#ifdef MOD_SHELL_ALLOW_EVERYONE
 USERMODULEDEFS(CShellMod, "Gives shell access")
-
+#else
+USERMODULEDEFS(CShellMod, "Gives shell access. Only ZNC admins can use it.")
+#endif
