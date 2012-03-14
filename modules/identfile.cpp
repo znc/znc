@@ -26,6 +26,7 @@ public:
 		AddCommand("GetFormat", static_cast<CModCommand::ModCmdFunc>(&CIdentFileModule::GetFormat));
 		AddCommand("SetFormat", static_cast<CModCommand::ModCmdFunc>(&CIdentFileModule::SetFormat),
 			"<format>");
+		AddCommand("Show",      static_cast<CModCommand::ModCmdFunc>(&CIdentFileModule::Show));
 	}
 
 	virtual ~CIdentFileModule() {
@@ -50,6 +51,14 @@ public:
 	void GetFormat(const CString& sLine) {
 		PutModule("Format is set to: " + GetNV("Format"));
 		PutModule("Format would be expanded to: " + m_pUser->ExpandString(GetNV("Format")));
+	}
+
+	void Show(const CString& sLine) {
+		PutModule("m_pISpoofLockFile = " + CString((long long)m_pISpoofLockFile));
+		PutModule("m_pIRCSock = " + CString((long long)m_pIRCSock));
+		if (m_pIRCSock) {
+			PutModule("user/network - " + m_pIRCSock->GetNetwork()->GetUser()->GetUserName() + "/" + m_pIRCSock->GetNetwork()->GetName());
+		}
 	}
 
 	void OnModCommand(const CString& sCommand) {
