@@ -1,0 +1,23 @@
+<? INC Header.tmpl ?>
+
+<div class="section">
+	<h3>Confirm Network Deletion</h3>
+	<div class="sectionbg">
+		<div class="sectionbody">
+			<div class="subsection">
+				Are you sure you want to delete "<? VAR Username ?>/<? VAR Network ?>"?
+				<form action="delnetwork" method="post">
+					<? INC _csrf_check.tmpl ?>
+		   			<input type="hidden" name="user" value="<? VAR Username ?>" />
+                    <input type="hidden" name="name" value="<? VAR Network ?>" />
+					<div class="yesnobutton"><input type="submit" value="Yes" /></div>
+				</form>
+				<form action="listusers" method="get">
+					<div class="yesnobutton"><input type="submit" value="No" /></div>
+				</form>
+			</div>
+		</div>
+	</div>
+</div>
+
+<? INC Footer.tmpl ?>

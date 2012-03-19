@@ -384,14 +384,19 @@ public:
 			return NetworkPage(WebSock, Tmpl, pNetwork->GetUser(), pNetwork);
 
 		} else if (sPageName == "delnetwork") {
-			CUser* pUser = CZNC::Get().FindUser(WebSock.GetParam("user", false));
+			CString sUser = WebSock.GetParam("user");
+			if (sUser.empty() && !WebSock.IsPost()) {
+				sUser = WebSock.GetParam("user", false);
+			}
+
+			CUser* pUser = CZNC::Get().FindUser(sUser);
 
 			// Admin||Self Check
 			if (!spSession->IsAdmin() && (!spSession->GetUser() || spSession->GetUser() != pUser)) {
 				return false;
 			}
 
-			return DelNetwork(WebSock, pUser);
+			return DelNetwork(WebSock, pUser, Tmpl);
 		} else if (sPageName == "editchan") {
 			CIRCNetwork* pNetwork = SafeGetNetworkFromParam(WebSock);
 
@@ -810,8 +815,11 @@ public:
 		return true;
 	}
 
-	bool DelNetwork(CWebSock& WebSock, CUser* pUser) {
-		CString sNetwork = WebSock.GetParam("name", false);
+	bool DelNetwork(CWebSock& WebSock, CUser* pUser, CTemplate& Tmpl) {
+		CString sNetwork = WebSock.GetParam("name");
+		if (sNetwork.empty() && !WebSock.IsPost()) {
+			sNetwork = WebSock.GetParam("name", false);
+		}
 
 		if (!pUser) {
 			WebSock.PrintErrorPage("That user doesn't exist");
@@ -820,6 +828,15 @@ public:
 
 		if (sNetwork.empty()) {
 			WebSock.PrintErrorPage("That network doesn't exist for this user");
+			return true;
+		}
+
+		if (!WebSock.IsPost()) {
+			// Show the "Are you sure?" page:
+
+			Tmpl.SetFile("del_network.tmpl");
+			Tmpl["Username"] = pUser->GetUserName();
+			Tmpl["Network"] = sNetwork;
 			return true;
 		}
 
