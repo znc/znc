@@ -303,10 +303,11 @@ void CModule::ListTimers() {
 	for (it = m_sTimers.begin(); it != m_sTimers.end(); ++it) {
 		CTimer* pTimer = *it;
 		unsigned int uCycles = pTimer->GetCyclesLeft();
+		timeval Interval = pTimer->GetInterval();
 
 		Table.AddRow();
 		Table.SetCell("Name", pTimer->GetName());
-		Table.SetCell("Secs", CString(pTimer->GetInterval()));
+		Table.SetCell("Secs", CString(Interval.tv_sec) + "seconds" + (Interval.tv_usec ? " " + CString(Interval.tv_usec) + " microseconds" : ""));
 		Table.SetCell("Cycles", ((uCycles) ? CString(uCycles) : "INF"));
 		Table.SetCell("Description", pTimer->GetDescription());
 	}

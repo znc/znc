@@ -627,21 +627,22 @@ CCron::CCron()
 	m_iCycles = 0;
 	m_iMaxCycles = 0;
 	m_bActive = true;
-	m_iTime	= 0;
-	m_iTimeSequence = 60;
+	timerclear( &m_tTime );
+	m_tTimeSequence.tv_sec = 60;
+	m_tTimeSequence.tv_usec = 0;
 	m_bPause = false;
 	m_bRunOnNextCall = false;
 }
 
-void CCron::run( time_t & iNow )
+void CCron::run( timeval & tNow )
 {
 	if( m_bPause )
 		return;
 
-	if( iNow == 0 )
-		iNow = time( NULL );
+	if( !timerisset( &tNow ) )
+		gettimeofday( &tNow, NULL );
 
-	if(( m_bActive ) && ( iNow >= m_iTime || m_bRunOnNextCall ) )
+	if(( m_bActive ) && ( !timercmp( &tNow, &m_tTime, < ) || m_bRunOnNextCall ) )
 	{
 		m_bRunOnNextCall = false; // Setting this here because RunJob() could set it back to true
 		RunJob();
@@ -649,22 +650,37 @@ void CCron::run( time_t & iNow )
 		if(( m_iMaxCycles > 0 ) && ( ++m_iCycles >= m_iMaxCycles ) )
 			m_bActive = false;
 		else
-			m_iTime = iNow + m_iTimeSequence;
+			timeradd( &tNow, &m_tTimeSequence, &m_tTime );
 	}
 }
 
-void CCron::StartMaxCycles( int TimeSequence, u_int iMaxCycles )
+void CCron::StartMaxCycles( double fTimeSequence, u_int iMaxCycles )
 {
-	m_iTimeSequence = TimeSequence;
-	m_iTime = time( NULL ) + m_iTimeSequence;
+	timeval tNow;
+	m_tTimeSequence.tv_sec = (time_t) fTimeSequence;
+	m_tTimeSequence.tv_usec = (suseconds_t) ((fTimeSequence - (time_t) fTimeSequence) * 1000000);
+	gettimeofday( &tNow, NULL );
+	timeradd( &tNow, &m_tTimeSequence, &m_tTime );
 	m_iMaxCycles = iMaxCycles;
 }
 
-void CCron::Start( int TimeSequence )
+void CCron::StartMaxCycles( const timeval& tTimeSequence, u_int iMaxCycles )
 {
-	m_iTimeSequence = TimeSequence;
-	m_iTime = time( NULL ) + m_iTimeSequence;
-	m_iMaxCycles = 0;
+	timeval tNow;
+	m_tTimeSequence = tTimeSequence;
+	gettimeofday( &tNow, NULL );
+	timeradd( &tNow, &m_tTimeSequence, &m_tTime );
+	m_iMaxCycles = iMaxCycles;
+}
+
+void CCron::Start( double fTimeSequence )
+{
+	StartMaxCycles( fTimeSequence, 0 );
+}
+
+void CCron::Start( const timeval& tTimeSequence )
+{
+	StartMaxCycles( tTimeSequence, 0 );
 }
 
 void CCron::Stop()
@@ -682,7 +698,7 @@ void CCron::UnPause()
 	m_bPause = false;
 }
 
-int CCron::GetInterval() const { return( m_iTimeSequence ); }
+timeval CCron::GetInterval() const { return( m_tTimeSequence ); }
 u_int CCron::GetMaxCycles() const { return( m_iMaxCycles ); }
 u_int CCron::GetCyclesLeft() const { return(( m_iMaxCycles > m_iCycles ? ( m_iMaxCycles - m_iCycles ) : 0 ) ); }
 
@@ -765,7 +781,8 @@ void CSockCommon::AssignFDs( std::map< int, short > & miiReadyFds, struct timeva
 
 void CSockCommon::Cron()
 {
-	time_t iNow = 0;
+	timeval tNow;
+	timerclear( &tNow );
 
 	for( vector<CCron *>::size_type a = 0; a < m_vcCrons.size(); a++ )
 	{
@@ -777,7 +794,7 @@ void CSockCommon::Cron()
 			m_vcCrons.erase( m_vcCrons.begin() + a-- );
 		}
 		else
-			pcCron->run( iNow );
+			pcCron->run( tNow );
 	}
 }
 
@@ -2893,9 +2910,13 @@ void CSocketManager::DynamicSelectLoop( u_long iLowerBounds, u_long iUpperBounds
 	if( m_errno == SELECT_TIMEOUT )
 	{
 		// only do this if the previous call to select was a timeout
-		time_t iNow = time( NULL );
-		u_long iSelectTimeout = GetDynamicSleepTime( iNow, iMaxResolution );
-		iSelectTimeout *= 1000000;
+		timeval tMaxResolution;
+		timeval tNow;
+		tMaxResolution.tv_sec = iMaxResolution;
+		tMaxResolution.tv_usec = 0;
+		gettimeofday( &tNow, NULL );
+		timeval tSelectTimeout = GetDynamicSleepTime( tNow, tMaxResolution );
+		u_long iSelectTimeout = tSelectTimeout.tv_sec * 1000000 + tSelectTimeout.tv_usec;
 		iSelectTimeout = std::max( iLowerBounds, iSelectTimeout );
 		iSelectTimeout = std::min( iSelectTimeout, iUpperBounds );
 		if( iLowerBounds != iSelectTimeout )
@@ -3478,9 +3499,18 @@ void CSocketManager::Select( std::map<Csock *, EMessages> & mpeSocks )
 	}
 }
 
-time_t CSocketManager::GetDynamicSleepTime( time_t iNow, time_t iMaxResolution ) const
+inline void MinimizeTime( timeval& min, const timeval& another )
 {
-	time_t iNextRunTime = iNow + iMaxResolution;
+	if( timercmp( &min, &another, > ) )
+	{
+		min = another;
+	}
+}
+
+timeval CSocketManager::GetDynamicSleepTime( const timeval& tNow, const timeval& tMaxResolution ) const
+{
+	timeval tNextRunTime;
+	timeradd( &tNow, &tMaxResolution, &tNextRunTime );
 	std::vector<Csock *>::const_iterator it;
 	// This is safe, because we don't modify the vector.
 	std::vector<Csock *>::const_iterator it_end = this->end();
@@ -3490,29 +3520,37 @@ time_t CSocketManager::GetDynamicSleepTime( time_t iNow, time_t iMaxResolution )
 		Csock* pSock = *it;
 
 		if( pSock->GetConState() != Csock::CST_OK )
-			iNextRunTime = iNow; // this is in a nebulous state, need to let it proceed like normal
+			tNextRunTime = tNow; // this is in a nebulous state, need to let it proceed like normal
 
 		time_t iTimeoutInSeconds = pSock->GetTimeout();
 		if( iTimeoutInSeconds > 0 )
 		{
-			time_t iNextTimeout = pSock->GetNextCheckTimeout( iNow );
-			iNextRunTime = std::min( iNextRunTime, iNextTimeout );
+			timeval tNextTimeout;
+			tNextTimeout.tv_sec = pSock->GetNextCheckTimeout( 0 ); // TODO convert socket timeouts to timeval too?
+			tNextTimeout.tv_usec = 0;
+			MinimizeTime( tNextRunTime, tNextTimeout );
 		}
 
 		const std::vector<CCron *> & vCrons = pSock->GetCrons();
 		std::vector<CCron *>::const_iterator cit;
 		std::vector<CCron *>::const_iterator cit_end = vCrons.end();
 		for( cit = vCrons.begin(); cit != cit_end; cit++ )
-			iNextRunTime = std::min( iNextRunTime, ( *cit )->GetNextRun() );
+			MinimizeTime( tNextRunTime, ( *cit )->GetNextRun() );
 	}
 	std::vector<CCron *>::const_iterator cit;
 	std::vector<CCron *>::const_iterator cit_end = m_vcCrons.end();
 	for( cit = m_vcCrons.begin(); cit != cit_end; cit++ )
-		iNextRunTime = std::min( iNextRunTime, ( *cit )->GetNextRun() );
+		MinimizeTime( tNextRunTime, ( *cit )->GetNextRun() );
 
-	if( iNextRunTime < iNow )
-		return( 0 ); // smallest unit possible
-	return( std::min( iNextRunTime - iNow, iMaxResolution ) );
+	timeval tReturnValue;
+	if( timercmp( &tNextRunTime, &tNow, < ) )
+	{
+		timerclear( &tReturnValue );
+		return( tReturnValue ); // smallest unit possible
+	}
+	timersub( &tNextRunTime, &tNow, &tReturnValue );
+	MinimizeTime( tReturnValue, tMaxResolution );
+	return( tReturnValue );
 }
 
 void CSocketManager::SelectSock( std::map<Csock *, EMessages> & mpeSocks, EMessages eErrno, Csock * pcSock )

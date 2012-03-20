@@ -362,16 +362,18 @@ public:
 	virtual ~CCron() {}
 
 	//! This is used by the Job Manager, and not you directly
-	void run( time_t & iNow );
+	void run( timeval & tNow );
 
 	/**
 	 * @param TimeSequence	how often to run in seconds
 	 * @param iMaxCycles		how many times to run, 0 makes it run forever
 	 */
-	void StartMaxCycles( int TimeSequence, u_int iMaxCycles );
+	void StartMaxCycles( double fTimeSequence, u_int iMaxCycles );
+	void StartMaxCycles( const timeval& tTimeSequence, u_int iMaxCycles );
 
 	//! starts and runs infinity amount of times
-	void Start( int TimeSequence );
+	void Start( double fTimeSequence );
+	void Start( const timeval& TimeSequence );
 
 	//! call this to turn off your cron, it will be removed
 	void Stop();
@@ -382,7 +384,7 @@ public:
 	//! removes the pause on RunJon
 	void UnPause();
 
-	int GetInterval() const;
+	timeval GetInterval() const;
 	u_int GetMaxCycles() const;
 	u_int GetCyclesLeft() const;
 
@@ -393,7 +395,7 @@ public:
 	void SetName( const CS_STRING & sName );
 
 	//! returns the timestamp of the next estimated run time. Note that it may not run at this EXACT time, but it will run at least at this time or after
-	time_t GetNextRun() const { return( m_iTime ); }
+	timeval GetNextRun() const { return( m_tTime ); }
 
 public:
 
@@ -404,9 +406,9 @@ protected:
 	bool		m_bRunOnNextCall; //!< if set to true, RunJob() gets called on next invocation of run() despite the timeout
 
 private:
-	time_t		m_iTime;
+	timeval		m_tTime;
 	bool		m_bActive, m_bPause;
-	int			m_iTimeSequence;
+	timeval		m_tTimeSequence;
 	u_int		m_iMaxCycles, m_iCycles;
 	CS_STRING	m_sName;
 };
@@ -1494,7 +1496,7 @@ private:
 	*/
 	void Select( std::map<Csock *, EMessages> & mpeSocks );
 
-	time_t GetDynamicSleepTime( time_t iNow, time_t iMaxResolution = 3600 ) const;
+	timeval GetDynamicSleepTime( const timeval& tNow, const timeval& tMaxResolution ) const;
 
 	//! internal use only
 	virtual void SelectSock( std::map<Csock *, EMessages> & mpeSocks, EMessages eErrno, Csock * pcSock );
