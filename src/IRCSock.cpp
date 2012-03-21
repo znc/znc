@@ -289,7 +289,7 @@ void CIRCSock::ReadLine(const CString& sData) {
 
 				break;
 			}
-			case 352: {
+			case 352: {  // WHO
 				// :irc.yourserver.com 352 yournick #chan ident theirhost.com irc.theirserver.com theirnick H :0 Real Name
 				sServer = sLine.Token(0);
 				sNick = sLine.Token(7);
@@ -310,6 +310,32 @@ void CIRCSock::ReadLine(const CString& sData) {
 
 				for (unsigned int a = 0; a < vChans.size(); a++) {
 					vChans[a]->OnWho(sNick, sIdent, sHost);
+				}
+
+				if (m_bNamesx && (sNick.size() > 1) && IsPermChar(sNick[1])) {
+					// sLine uses multi-prefix
+
+					vector<CClient*>& vClients = m_pNetwork->GetClients();
+					vector<CClient*>::iterator it;
+					for (it = vClients.begin(); it != vClients.end(); ++it) {
+						CClient *pClient = *it;
+
+						if (pClient->HasNamesx()) {
+							m_pNetwork->PutUser(sLine, pClient);
+						} else {
+							// The client doesn't support multi-prefix so we need to remove
+							// the other prefixes.
+
+							CString sNewLine = sServer + " 352 " + sLine.Token(2) + " " + \
+								sLine.Token(3) + " " + sIdent + " " + sHost + " " + \
+								sLine.Token(6)  + " " + sNick[0] + \
+								sNick.substr(sNick.find_first_not_of(GetPerms())) + " " + \
+								sLine.Token(8, true);
+							m_pNetwork->PutUser(sNewLine, pClient);
+						}
+					}
+
+					return;
 				}
 
 				break;
