@@ -673,6 +673,9 @@ public:
 				Tmpl["Ident"] = pNetwork->GetIdent();
 				Tmpl["RealName"] = pNetwork->GetRealName();
 
+				Tmpl["FloodRate"] = CString(pNetwork->GetFloodRate());
+				Tmpl["FloodBurst"] = CString(pNetwork->GetFloodBurst());
+
 				Tmpl["IRCConnectEnabled"] = CString(pNetwork->GetIRCConnectEnabled());
 
 				const vector<CServer*>& vServers = pNetwork->GetServers();
@@ -710,6 +713,8 @@ public:
 				Tmpl["Action"] = "addnetwork";
 				Tmpl["Title"] = "Add Network for User [" + pUser->GetUserName() + "]";
 				Tmpl["IRCConnectEnabled"] = "true";
+				Tmpl["FloodRate"] = "1.0";
+				Tmpl["FloodBurst"] = "4";
 			}
 
 			return true;
@@ -737,6 +742,9 @@ public:
 		pNetwork->SetRealName(WebSock.GetParam("realname"));
 
 		pNetwork->SetIRCConnectEnabled(WebSock.GetParam("doconnect").ToBool());
+
+		pNetwork->SetFloodRate(WebSock.GetParam("floodrate").ToDouble());
+		pNetwork->SetFloodBurst(WebSock.GetParam("floodburst").ToUInt());
 
 		VCString vsArgs;
 
