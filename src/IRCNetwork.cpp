@@ -49,6 +49,9 @@ CIRCNetwork::CIRCNetwork(CUser *pUser, const CString& sName) {
 	m_sChanPrefixes = "";
 	m_bIRCAway = false;
 
+	m_fFloodRate = 1;
+	m_uFloodBurst = 4;
+
 	m_RawBuffer.SetLineCount(100, true);   // This should be more than enough raws, especially since we are buffering the MOTD separately
 	m_MotdBuffer.SetLineCount(200, true);  // This should be more than enough motd lines
 	m_QueryBuffer.SetLineCount(250, true);
@@ -77,6 +80,9 @@ CIRCNetwork::CIRCNetwork(CUser *pUser, const CIRCNetwork &Network) {
 
 void CIRCNetwork::Clone(const CIRCNetwork& Network) {
 	m_sName = Network.GetName();
+
+	m_fFloodRate = Network.GetFloodRate();
+	m_uFloodBurst = Network.GetFloodBurst();
 
 	SetNick(Network.GetNick());
 	SetAltNick(Network.GetAltNick());
@@ -247,6 +253,14 @@ bool CIRCNetwork::ParseConfig(CConfig *pConfig, CString& sError, bool bUpgrade) 
 			{ "ircconnectenabled", &CIRCNetwork::SetIRCConnectEnabled },
 		};
 		size_t numBoolOptions = sizeof(BoolOptions) / sizeof(BoolOptions[0]);
+		TOption<double> DoubleOptions[] = {
+			{ "floodrate", &CIRCNetwork::SetFloodRate },
+		};
+		size_t numDoubleOptions = sizeof(DoubleOptions) / sizeof(DoubleOptions[0]);
+		TOption<short unsigned int> SUIntOptions[] = {
+			{ "floodburst", &CIRCNetwork::SetFloodBurst },
+		};
+		size_t numSUIntOptions = sizeof(SUIntOptions) / sizeof(SUIntOptions[0]);
 
 		for (size_t i = 0; i < numStringOptions; i++) {
 			CString sValue;
@@ -258,6 +272,18 @@ bool CIRCNetwork::ParseConfig(CConfig *pConfig, CString& sError, bool bUpgrade) 
 			CString sValue;
 			if (pConfig->FindStringEntry(BoolOptions[i].name, sValue))
 				(this->*BoolOptions[i].pSetter)(sValue.ToBool());
+		}
+
+		for (size_t i = 0; i < numDoubleOptions; ++i) {
+			double fValue;
+			if (pConfig->FindDoubleEntry(DoubleOptions[i].name, fValue))
+				(this->*DoubleOptions[i].pSetter)(fValue);
+		}
+
+		for (size_t i = 0; i < numSUIntOptions; ++i) {
+			unsigned int value;
+			if (pConfig->FindUIntEntry(SUIntOptions[i].name, value))
+				(this->*SUIntOptions[i].pSetter)(value);
 		}
 
 		pConfig->FindStringVector("loadmodule", vsList);
@@ -348,6 +374,8 @@ CConfig CIRCNetwork::ToConfig() {
 	}
 
 	config.AddKeyValuePair("IRCConnectEnabled", CString(GetIRCConnectEnabled()));
+	config.AddKeyValuePair("FloodRate", CString(GetFloodRate()));
+	config.AddKeyValuePair("FloodBurst", CString(GetFloodBurst()));
 
 	// Modules
 	CModules& Mods = GetModules();

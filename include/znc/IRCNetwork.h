@@ -137,6 +137,11 @@ public:
 	void SetIdent(const CString& s);
 	void SetRealName(const CString& s);
 
+	double GetFloodRate() const { return m_fFloodRate; }
+	unsigned short int GetFloodBurst() const { return m_uFloodBurst; }
+	void SetFloodRate(double fFloodRate) { m_fFloodRate = fFloodRate; }
+	void SetFloodBurst(unsigned short int uFloodBurst) { m_uFloodBurst = uFloodBurst; }
+
 	CString ExpandString(const CString& sStr) const;
 	CString& ExpandString(const CString& sStr, CString& sRet) const;
 private:
@@ -169,6 +174,9 @@ protected:
 
 	CNick              m_IRCNick;
 	bool               m_bIRCAway;
+
+	double             m_fFloodRate; ///< Set to -1 to disable protection.
+	unsigned short int m_uFloodBurst;
 
 	CBuffer            m_RawBuffer;
 	CBuffer            m_MotdBuffer;

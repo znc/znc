@@ -19,11 +19,35 @@
 const time_t CIRCSock::m_uCTCPFloodTime = 5;
 const unsigned int CIRCSock::m_uCTCPFloodCount = 5;
 
+// It will be bad if user sets it to 0.00000000000001
+// If you want no flood protection, set network's flood rate to -1
+static const double FLOOD_MINIMAL_RATE = 0.3;
+
+class CIRCFloodTimer : public CCron {
+		CIRCSock* m_pSock;
+	public:
+		CIRCFloodTimer(CIRCSock* pSock) {
+			m_pSock = pSock;
+			StartMaxCycles(m_pSock->m_fFloodRate, 0);
+		}
+		virtual void RunJob() {
+			if (m_pSock->m_iSendsAllowed < m_pSock->m_uFloodBurst) {
+				m_pSock->m_iSendsAllowed++;
+			}
+			m_pSock->TrySend();
+		}
+};
+
+
 CIRCSock::CIRCSock(CIRCNetwork* pNetwork) : CZNCSock() {
 	m_pNetwork = pNetwork;
 	m_bAuthed = false;
 	m_bNamesx = false;
 	m_bUHNames = false;
+	m_fFloodRate = m_pNetwork->GetFloodRate();
+	m_uFloodBurst = m_pNetwork->GetFloodBurst();
+	m_bFloodProtection = m_fFloodRate > FLOOD_MINIMAL_RATE;
+	m_iSendsAllowed = m_uFloodBurst;
 	EnableReadLine();
 	m_Nick.SetIdent(m_pNetwork->GetIdent());
 	m_Nick.SetHost(m_pNetwork->GetUser()->GetBindHost());
@@ -49,6 +73,9 @@ CIRCSock::CIRCSock(CIRCNetwork* pNetwork) : CZNCSock() {
 
 	// RFC says a line can have 512 chars max, but we don't care ;)
 	SetMaxBufferThreshold(1024);
+	if (m_bFloodProtection) {
+		AddCron(new CIRCFloodTimer(this));
+	}
 }
 
 CIRCSock::~CIRCSock() {
@@ -98,7 +125,7 @@ void CIRCSock::ReadLine(const CString& sData) {
 	if (sLine.Equals("PING ", false, 5)) {
 		// Generate a reply and don't forward this to any user,
 		// we don't want any PING forwarded
-		PutIRC("PONG " + sLine.substr(5));
+		PutIRCQuick("PONG " + sLine.substr(5));
 		return;
 	} else if (sLine.Token(1).Equals("PONG")) {
 		// Block PONGs, we already responded to the pings
@@ -901,8 +928,24 @@ bool CIRCSock::OnChanMsg(CNick& Nick, const CString& sChan, CString& sMessage) {
 }
 
 void CIRCSock::PutIRC(const CString& sLine) {
-	DEBUG("(" << m_pNetwork->GetUser()->GetUserName() << "/" << m_pNetwork->GetName() << ") ZNC -> IRC [" << sLine << "]");
-	Write(sLine + "\r\n");
+	DEBUG("(" << m_pNetwork->GetUser()->GetUserName() << "/" << m_pNetwork->GetName() << ") ZNC -> IRC [" << sLine << "] (queued)");
+	m_vsSendQueue.push_back(sLine);
+	TrySend();
+}
+
+void CIRCSock::PutIRCQuick(const CString& sLine) {
+	DEBUG("(" << m_pNetwork->GetUser()->GetUserName() << "/" << m_pNetwork->GetName() << ") ZNC -> IRC [" << sLine << "] (queued to front)");
+	m_vsSendQueue.push_front(sLine);
+	TrySend();
+}
+
+void CIRCSock::TrySend() {
+	while (!m_vsSendQueue.empty() && (m_iSendsAllowed > 0 || !m_bFloodProtection)) {
+		m_iSendsAllowed--;
+		DEBUG("(" << m_pNetwork->GetUser()->GetUserName() << "/" << m_pNetwork->GetName() << ") ZNC -> IRC [" << m_vsSendQueue.front() << "]");
+		Write(m_vsSendQueue.front() + "\r\n");
+		m_vsSendQueue.pop_front();
+	}
 }
 
 void CIRCSock::SetNick(const CString& sNick) {

@@ -114,6 +114,16 @@ public:
 		return false;
 	}
 
+	bool FindDoubleEntry(const CString& sName, double& fRes, double fDefault = 0) {
+		CString s;
+		if (FindStringEntry(sName, s)) {
+			fRes = s.ToDouble();
+			return true;
+		}
+		fRes = fDefault;
+		return false;
+	}
+
 	bool FindSubConfig(const CString& sName, SubConfig& Config, bool bErase = true) {
 		SubConfigMap::iterator it = m_SubConfigs.find(sName);
 		if (it == m_SubConfigs.end()) {

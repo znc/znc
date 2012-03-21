@@ -13,6 +13,9 @@
 #include <znc/Socket.h>
 #include <znc/Nick.h>
 
+#include <deque>
+using std::deque;
+
 // Forward Declarations
 class CChan;
 class CUser;
@@ -54,6 +57,7 @@ public:
 	virtual void ReachedMaxBuffer();
 
 	void PutIRC(const CString& sLine);
+	void PutIRCQuick(const CString& sLine); //!< Should be used for PONG only
 	void ResetChans();
 	void Quit(const CString& sQuitMsg = "");
 
@@ -102,6 +106,7 @@ private:
 	// This is called when we connect and the nick we want is already taken
 	void SendAltNick(const CString& sBadNick);
 	void SendNextCap();
+	void TrySend();
 protected:
 	bool                                m_bAuthed;
 	bool                                m_bNamesx;
@@ -123,6 +128,13 @@ protected:
 	static const time_t                 m_uCTCPFloodTime;
 	static const unsigned int           m_uCTCPFloodCount;
 	MCString                            m_mISupport;
+	deque<CString>                      m_vsSendQueue;
+	short int                           m_iSendsAllowed;
+	unsigned short int                  m_uFloodBurst;
+	double                              m_fFloodRate;
+	bool                                m_bFloodProtection;
+
+	friend class CIRCFloodTimer;
 };
 
 #endif // !_IRCSOCK_H
