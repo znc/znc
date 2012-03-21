@@ -79,17 +79,19 @@ CString CZNC::GetVersion() {
 	return szBuf;
 }
 
-CString CZNC::GetTag(bool bIncludeVersion) {
+CString CZNC::GetTag(bool bIncludeVersion, bool bHTML) {
+	CString sAddress = bHTML ? "<a href=\"http://znc.in\">http://znc.in</a>" : "http://znc.in";
+
 	if (!bIncludeVersion) {
-		return "ZNC - http://znc.in";
+		return "ZNC - " + sAddress;
 	}
 
 	char szBuf[128];
-	snprintf(szBuf, sizeof(szBuf), "ZNC %1.3f"VERSION_EXTRA" - http://znc.in", VERSION);
+	snprintf(szBuf, sizeof(szBuf), "ZNC %1.3f"VERSION_EXTRA" - ", VERSION);
 	// If snprintf overflows (which I doubt), we want to be on the safe side
 	szBuf[sizeof(szBuf) - 1] = '\0';
 
-	return szBuf;
+	return szBuf + sAddress;
 }
 
 CString CZNC::GetCompileOptionsString() {

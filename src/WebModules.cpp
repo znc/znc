@@ -304,7 +304,7 @@ void CWebSock::SetPaths(CModule* pModule, bool bIsTemplate) {
 void CWebSock::SetVars() {
 	m_Template["SessionUser"] = GetUser();
 	m_Template["SessionIP"] = GetRemoteIP();
-	m_Template["Tag"] = CZNC::GetTag(GetSession()->GetUser() != NULL);
+	m_Template["Tag"] = CZNC::GetTag(GetSession()->GetUser() != NULL, true);
 	m_Template["SkinName"] = GetSkinName();
 	m_Template["_CSRF_Check"] = GetCSRFCheck();
 

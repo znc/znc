@@ -432,12 +432,22 @@ bool CHTTPSock::PrintErrorPage(unsigned int uStatusId, const CString& sStatusMsg
 	}
 
 	CString sPage =
-		"<!DOCTYPE HTML PUBLIC \"-//IETF//DTD HTML 2.0//EN\">\r\n"
-		"<html><head>\r\n<title>" + CString(uStatusId) + " " + sStatusMsg.Escape_n(CString::EHTML) + "</title>\r\n"
-		"</head><body>\r\n<h1>" + sStatusMsg.Escape_n(CString::EHTML) + "</h1>\r\n"
-		"<p>" + sMessage.Escape_n(CString::EHTML) + "</p>\r\n"
-		"<hr />\r\n<address>" + CZNC::GetTag(false).Escape_n(CString::EHTML) + " at " + GetLocalIP().Escape_n(CString::EHTML) + " Port " + CString(GetLocalPort()) + "</address>\r\n"
-		"</body></html>\r\n";
+		"<!DOCTYPE HTML>\r\n"
+		"<html>\r\n"
+			"<head>\r\n"
+				"<meta charset=\"utf-8\"/>\r\n"
+				"<title>" + CString(uStatusId) + " " + sStatusMsg.Escape_n(CString::EHTML) + "</title>\r\n"
+			"</head>\r\n"
+			"<body>\r\n"
+				"<h1>" + sStatusMsg.Escape_n(CString::EHTML) + "</h1>\r\n"
+				"<p>" + sMessage.Escape_n(CString::EHTML) + "</p>\r\n"
+				"<hr/>\r\n"
+				"<address>" +
+					CZNC::GetTag(false, /* bHTML = */ true) +
+					" at " + GetLocalIP().Escape_n(CString::EHTML) + " Port " + CString(GetLocalPort()) +
+				"</address>\r\n"
+			"</body>\r\n"
+		"</html>\r\n";
 
 	PrintHeader(sPage.length(), "text/html", uStatusId, sStatusMsg);
 	Write(sPage);

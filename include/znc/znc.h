@@ -55,7 +55,7 @@ public:
 	bool RehashConfig(CString& sError);
 	void BackupConfigOnce(const CString& sSuffix);
 	static CString GetVersion();
-	static CString GetTag(bool bIncludeVersion = true);
+	static CString GetTag(bool bIncludeVersion = true, bool bHTML = false);
 	static CString GetCompileOptionsString();
 	CString GetUptime() const;
 	void ClearBindHosts();
