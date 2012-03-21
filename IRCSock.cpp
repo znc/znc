@@ -469,7 +469,6 @@ void CIRCSock::ReadLine(const CString& sData) {
 				m_pUser->AddChan(sChan, false);
 				pChan = m_pUser->FindChan(sChan);
 				if (pChan) {
-					pChan->ResetJoinTries();
 					pChan->Enable();
 					pChan->SetIsOn(true);
 					PutIRC("MODE " + sChan);

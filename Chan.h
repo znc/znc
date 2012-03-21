@@ -113,7 +113,7 @@ public:
 	void SetInConfig(bool b) { m_bInConfig = b; }
 	void SetCreationDate(unsigned long u) { m_ulCreationDate = u; }
 	void Disable() { m_bDisabled = true; }
-	void Enable() { m_bDisabled = false; }
+	void Enable();
 	void IncJoinTries() { m_uJoinTries++; }
 	void ResetJoinTries() { m_uJoinTries = 0; }
 	// !Setters
