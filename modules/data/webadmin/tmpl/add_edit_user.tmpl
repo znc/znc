@@ -184,7 +184,7 @@
 				</div>
 				<div class="subsection third">
 					<div class="inputlabel">Buffer Size:</div>
-					<div><input type="text" name="bufsize" value="<? VAR BufferCount ?>" maxlength="9" /></div>
+					<div><input type="number" name="bufsize" value="<? VAR BufferCount ?>" maxlength="9" min="0" /></div>
 					<br /><span class="info">Empty = use standard value</span>
 				</div>
 			</div>
@@ -221,11 +221,11 @@
 				</div>
 				<div class="subsection">
 					<div class="inputlabel">Join Tries:</div>
-					<div><input type="text" name="jointries" value="<? VAR JoinTries ?>" class="third" /></div>
+					<div><input type="number" name="jointries" value="<? VAR JoinTries ?>" class="third" min="0" /></div>
 				</div>
 				<div class="subsection">
 					<div class="inputlabel">Max Joins:</div>
-					<div><input type="text" name="maxjoins" value="<? VAR MaxJoins ?>" class="third" /></div>
+					<div><input type="number" name="maxjoins" value="<? VAR MaxJoins ?>" class="third" min="0" /></div>
 				</div>
 				<div class="subsection half">
 					<div class="inputlabel">CTCP Replies:</div>
