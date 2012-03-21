@@ -159,6 +159,10 @@ public:
 	{
 		m_pDoing = NULL;
 		m_pReplies = NULL;
+
+		AddHelpCommand();
+		AddCommand("Silent", static_cast<CModCommand::ModCmdFunc>(&CRouteRepliesMod::SilentCommand),
+			"[yes|no]");
 	}
 
 	virtual ~CRouteRepliesMod() {
@@ -308,7 +312,7 @@ public:
 	{
 		// The timer will be deleted after this by the event loop
 
-		if (GetNV("silent_timeouts") != "yes") {
+		if (!GetNV("silent_timeouts").ToBool()) {
 			PutModule("This module hit a timeout which is possibly a bug.");
 			PutModule("To disable this message, do \"/msg " + GetModNick()
 					+ " silent yes\"");
@@ -389,27 +393,15 @@ private:
 		it->second.erase(it->second.begin());
 	}
 
-	virtual void OnModCommand(const CString& sCommand) {
-		const CString sCmd = sCommand.Token(0);
-		const CString sArgs = sCommand.Token(1, true);
+	void SilentCommand(const CString& sLine) {
+		const CString sValue = sLine.Token(1);
 
-		if (sCmd.Equals("silent")) {
-			if (sArgs.Equals("yes")) {
-				SetNV("silent_timeouts", "yes");
-				PutModule("Disabled timeout messages");
-			} else if (sArgs.Equals("no")) {
-				DelNV("silent_timeouts");
-				PutModule("Enabled timeout messages");
-			} else if (sArgs.empty()) {
-				if (GetNV("silent_timeouts") == "yes")
-					PutModule("Timeout messages are disabled");
-				else
-					PutModule("Timeout message are enabled");
-			} else
-				PutModule("Invalid argument");
-		} else {
-			PutModule("Available commands: silent [yes/no], silent");
+		if (!sValue.empty()) {
+			SetNV("silent_timeouts", sValue);
 		}
+
+		CString sPrefix = GetNV("silent_timeouts").ToBool() ? "dis" : "en";
+		PutModule("Timeout messages are " + sPrefix + "abled.");
 	}
 
 	CClient            *m_pDoing;
