@@ -567,3 +567,8 @@ void CChan::SendBuffer(CClient* pClient) {
 		}
 	}
 }
+
+void CChan::Enable() {
+	ResetJoinTries();
+	m_bDisabled = false;
+}

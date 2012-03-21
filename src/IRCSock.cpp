@@ -520,7 +520,6 @@ void CIRCSock::ReadLine(const CString& sData) {
 				m_pNetwork->AddChan(sChan, false);
 				pChan = m_pNetwork->FindChan(sChan);
 				if (pChan) {
-					pChan->ResetJoinTries();
 					pChan->Enable();
 					pChan->SetIsOn(true);
 					PutIRC("MODE " + sChan);
