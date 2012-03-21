@@ -124,7 +124,6 @@ public:
 	void SetTimestampPrepend(bool b) { m_bPrependTimestamp = b; }
 	void SetTimezoneOffset(float b) { m_fTimezoneOffset = b; }
 	void SetJoinTries(unsigned int i) { m_uMaxJoinTries = i; }
-	void SetMaxJoins(unsigned int i) { m_uMaxJoins = i; }
 	void SetSkinName(const CString& s) { m_sSkinName = s; }
 	// !Setters
 
@@ -165,7 +164,6 @@ public:
 	unsigned long long BytesRead() const { return m_uBytesRead; }
 	unsigned long long BytesWritten() const { return m_uBytesWritten; }
 	unsigned int JoinTries() const { return m_uMaxJoinTries; }
-	unsigned int MaxJoins() const { return m_uMaxJoins; }
 	CString GetSkinName() const;
 	// !Getters
 
@@ -211,7 +209,6 @@ protected:
 	unsigned long long    m_uBytesRead;
 	unsigned long long    m_uBytesWritten;
 	unsigned int          m_uMaxJoinTries;
-	unsigned int          m_uMaxJoins;
 	CString               m_sSkinName;
 
 	CModules*             m_pModules;

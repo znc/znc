@@ -77,7 +77,6 @@ CUser::CUser(const CString& sUserName)
 	m_sStatusPrefix = "*";
 	m_uBufferCount = 50;
 	m_uMaxJoinTries = 10;
-	m_uMaxJoins = 5;
 	m_bKeepBuffer = false;
 	m_bBeingDeleted = false;
 	m_sTimestampFormat = "[%H:%M:%S]";
@@ -134,7 +133,6 @@ bool CUser::ParseConfig(CConfig* pConfig, CString& sError) {
 	size_t numStringOptions = sizeof(StringOptions) / sizeof(StringOptions[0]);
 	TOption<unsigned int> UIntOptions[] = {
 		{ "jointries", &CUser::SetJoinTries },
-		{ "maxjoins", &CUser::SetMaxJoins },
 	};
 	size_t numUIntOptions = sizeof(UIntOptions) / sizeof(UIntOptions[0]);
 	TOption<bool> BoolOptions[] = {
@@ -178,6 +176,9 @@ bool CUser::ParseConfig(CConfig* pConfig, CString& sError) {
 	}
 
 	CString sValue;
+
+	// MaxJoins has been removed
+	pConfig->FindStringEntry("maxjoins", sValue);
 
 	CString sDCCLookupValue;
 	pConfig->FindStringEntry("dcclookupmethod", sDCCLookupValue);
@@ -635,7 +636,6 @@ bool CUser::Clone(const CUser& User, CString& sErrorRet, bool bCloneNetworks) {
 	SetDefaultChanModes(User.GetDefaultChanModes());
 	SetBufferCount(User.GetBufferCount(), true);
 	SetJoinTries(User.JoinTries());
-	SetMaxJoins(User.MaxJoins());
 
 	// Allowed Hosts
 	m_ssAllowedHosts.clear();
@@ -830,7 +830,6 @@ CConfig CUser::ToConfig() {
 	config.AddKeyValuePair("PrependTimestamp", CString(GetTimestampPrepend()));
 	config.AddKeyValuePair("TimezoneOffset", CString(m_fTimezoneOffset));
 	config.AddKeyValuePair("JoinTries", CString(m_uMaxJoinTries));
-	config.AddKeyValuePair("MaxJoins", CString(m_uMaxJoins));
 
 	// Allow Hosts
 	if (!m_ssAllowedHosts.empty()) {

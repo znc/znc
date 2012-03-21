@@ -58,7 +58,6 @@ class CAdminMod : public CModule {
 			{"KeepBuffer",       boolean},
 			{"Password",         str},
 			{"JoinTries",        integer},
-			{"MaxJoins",         integer},
 			{"TimezoneOffset",   doublenum},
 			{"Admin",            boolean},
 			{"AppendTimestamp",  boolean},
@@ -154,8 +153,6 @@ class CAdminMod : public CModule {
 			PutModule("BufferCount = " + CString(pUser->GetBufferCount()));
 		else if (sVar == "keepbuffer")
 			PutModule("KeepBuffer = " + CString(pUser->KeepBuffer()));
-		else if (sVar == "maxjoins")
-			PutModule("MaxJoins = " + CString(pUser->MaxJoins()));
 		else if (sVar == "jointries")
 			PutModule("JoinTries = " + CString(pUser->JoinTries()));
 		else if (sVar == "timezoneoffset")
@@ -265,11 +262,6 @@ class CAdminMod : public CModule {
 			const CString sHash = CUser::SaltedHash(sValue, sSalt);
 			pUser->SetPass(sHash, CUser::HASH_DEFAULT, sSalt);
 			PutModule("Password has been changed!");
-		}
-		else if (sVar == "maxjoins") {
-			unsigned int i = sValue.ToUInt();
-			pUser->SetMaxJoins(i);
-			PutModule("MaxJoins = " + CString(pUser->MaxJoins()));
 		}
 		else if (sVar == "jointries") {
 			unsigned int i = sValue.ToUInt();

@@ -231,7 +231,6 @@ public:
 		pNewUser->SetTimestampPrepend(WebSock.GetParam("prependtimestamp").ToBool());
 		pNewUser->SetTimezoneOffset(WebSock.GetParam("timezoneoffset").ToDouble());
 		pNewUser->SetJoinTries(WebSock.GetParam("jointries").ToUInt());
-		pNewUser->SetMaxJoins(WebSock.GetParam("maxjoins").ToUInt());
 
 		if (spSession->IsAdmin()) {
 			pNewUser->SetDenyLoadMod(WebSock.GetParam("denyloadmod").ToBool());
@@ -914,7 +913,6 @@ public:
 				Tmpl["TimestampFormat"] = pUser->GetTimestampFormat();
 				Tmpl["TimezoneOffset"] = CString(pUser->GetTimezoneOffset());
 				Tmpl["JoinTries"] = CString(pUser->JoinTries());
-				Tmpl["MaxJoins"] = CString(pUser->MaxJoins());
 
 				const set<CString>& ssAllowedHosts = pUser->GetAllowedHosts();
 				for (set<CString>::const_iterator it = ssAllowedHosts.begin(); it != ssAllowedHosts.end(); ++it) {
