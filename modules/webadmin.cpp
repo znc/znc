@@ -231,7 +231,6 @@ public:
 		pNewUser->SetTimestampAppend(WebSock.GetParam("appendtimestamp").ToBool());
 		pNewUser->SetTimestampPrepend(WebSock.GetParam("prependtimestamp").ToBool());
 		pNewUser->SetTimezone(WebSock.GetParam("timezone"));
-		pNewUser->SetTimezoneOffset(WebSock.GetParam("timezoneoffset").ToDouble());
 		pNewUser->SetJoinTries(WebSock.GetParam("jointries").ToUInt());
 
 		if (spSession->IsAdmin()) {
@@ -920,7 +919,6 @@ public:
 				Tmpl["BufferCount"] = CString(pUser->GetBufferCount());
 				Tmpl["TimestampFormat"] = pUser->GetTimestampFormat();
 				Tmpl["Timezone"] = pUser->GetTimezone();
-				Tmpl["TimezoneOffset"] = CString(pUser->GetTimezoneOffset());
 				Tmpl["JoinTries"] = CString(pUser->JoinTries());
 
 				const set<CString>& ssAllowedHosts = pUser->GetAllowedHosts();

@@ -63,7 +63,6 @@ CUser::CUser(const CString& sUserName)
 	m_sUserPath = CZNC::Get().GetUserPath() + "/" + m_sUserName;
 
 	m_sTimezone = "";
-	m_fTimezoneOffset = 0;
 	m_sNick = m_sCleanUserName;
 	m_sIdent = m_sCleanUserName;
 	m_sRealName = sUserName;
@@ -224,7 +223,9 @@ bool CUser::ParseConfig(CConfig* pConfig, CString& sError) {
 		SetTimezone(sValue);
 	}
 	if (pConfig->FindStringEntry("timezoneoffset", sValue)) {
-		SetTimezoneOffset(sValue.ToDouble());
+		if (abs(sValue.ToDouble()) > 0.1) {
+			CUtils::PrintError("WARNING: TimezoneOffset has been deprecated, now you can set your timezone by name");
+		}
 	}
 	if (pConfig->FindStringEntry("timestamp", sValue)) {
 		if (!sValue.Trim_n().Equals("true")) {
@@ -670,7 +671,6 @@ bool CUser::Clone(const CUser& User, CString& sErrorRet, bool bCloneNetworks) {
 	SetTimestampPrepend(User.GetTimestampPrepend());
 	SetTimestampFormat(User.GetTimestampFormat());
 	SetTimezone(User.GetTimezone());
-	SetTimezoneOffset(User.GetTimezoneOffset());
 	// !Flags
 
 	// Modules
@@ -821,7 +821,6 @@ CConfig CUser::ToConfig() {
 	config.AddKeyValuePair("AppendTimestamp", CString(GetTimestampAppend()));
 	config.AddKeyValuePair("PrependTimestamp", CString(GetTimestampPrepend()));
 	config.AddKeyValuePair("Timezone", m_sTimezone);
-	config.AddKeyValuePair("TimezoneOffset", CString(m_fTimezoneOffset));
 	config.AddKeyValuePair("JoinTries", CString(m_uMaxJoinTries));
 
 	// Allow Hosts
