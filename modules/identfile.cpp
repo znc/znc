@@ -26,6 +26,9 @@ public:
 		AddCommand("SetFormat", static_cast<CModCommand::ModCmdFunc>(&CIdentFileModule::SetFormat),
 			"<format>");
 		AddCommand("Show",      static_cast<CModCommand::ModCmdFunc>(&CIdentFileModule::Show));
+
+		m_pISpoofLockFile = NULL;
+		m_pIRCSock = NULL;
 	}
 
 	virtual ~CIdentFileModule() {
