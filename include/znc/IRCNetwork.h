@@ -146,7 +146,6 @@ public:
 	CString& ExpandString(const CString& sStr, CString& sRet) const;
 private:
 	bool JoinChan(CChan* pChan);
-	void JoinChans(set<CChan*>& sChans);
 
 protected:
 	CString            m_sName;
