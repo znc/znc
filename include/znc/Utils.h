@@ -75,6 +75,7 @@ public:
 
 	static CString CTime(time_t t, const CString& sTZ);
 	static CString FormatTime(time_t t, const CString& sFormat, const CString& sTZ);
+	static SCString GetTimezones();
 
 private:
 protected:

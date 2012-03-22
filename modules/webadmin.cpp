@@ -945,6 +945,12 @@ public:
 				Tmpl["StatusPrefix"] = "*";
 			}
 
+			SCString ssTimezones = CUtils::GetTimezones();
+			for (SCString::iterator i = ssTimezones.begin(); i != ssTimezones.end(); ++i) {
+				CTemplate& l = Tmpl.AddRow("TZLoop");
+				l["TZ"] = *i;
+			}
+
 			// To change BindHosts be admin or don't have DenySetBindHost
 			if (spSession->IsAdmin() || !spSession->GetUser()->DenySetBindHost()) {
 				const VCString& vsBindHosts = CZNC::Get().GetBindHosts();

@@ -213,11 +213,18 @@
 			<div class="sectionbody">
 				<div class="subsection">
 					<div class="inputlabel">Timestamp Format:</div>
-					<div><input type="text" name="timestampformat" value="<? VAR TimestampFormat ?>" class="half" /></div>
+					<div><input type="text" name="timestampformat" value="<? VAR TimestampFormat ?>" class="full" /></div>
 				</div>
 				<div class="subsection">
 					<div class="inputlabel">Timezone:</div>
-					<div><input type="text" name="timezone" value="<? VAR Timezone ?>" class="half" /></div>
+					<div>
+						<input type="text" name="timezone" value="<? VAR Timezone ?>" class="half" list="timezone_list" />
+						<datalist id="timezone_list">
+							<? LOOP TZLoop ?>
+							<option value="<? VAR TZ ?>"/>
+							<? ENDLOOP ?>
+						</datalist>
+					</div>
 				</div>
 				<div class="subsection">
 					<div class="inputlabel">Join Tries:</div>

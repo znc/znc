@@ -10,6 +10,7 @@
 #include <znc/MD5.h>
 #include <znc/main.h>
 #include <znc/ZNCDebug.h>
+#include <znc/FileUtils.h>
 #include <errno.h>
 #ifdef HAVE_LIBSSL
 #include <openssl/ssl.h>
@@ -395,6 +396,35 @@ CString CUtils::FormatTime(time_t t, const CString& sFormat, const CString& sTZ)
 	tzset();
 
 	return s;
+}
+
+namespace {
+	void FillTimezones(const CString& sPath, SCString& result, const CString& sPrefix) {
+		CDir Dir;
+		Dir.Fill(sPath);
+		for (unsigned int a = 0; a < Dir.size(); ++a) {
+			CFile& File = *Dir[a];
+			CString sName = File.GetShortName();
+			CString sFile = File.GetLongName();
+			if (sName == "posix" || sName == "right") continue; // these 2 dirs contain the same filenames
+			if (sName.Right(4) == ".tab" || sName == "posixrules" || sName == "localtime") continue;
+			if (File.IsDir()) {
+				if (sName == "Etc") {
+					FillTimezones(sFile, result, sPrefix);
+				} else {
+					FillTimezones(sFile, result, sPrefix + sName + "/");
+				}
+			} else {
+				result.insert(sPrefix + sName);
+			}
+		}
+	}
+}
+
+SCString CUtils::GetTimezones() {
+	SCString result;
+	FillTimezones("/usr/share/zoneinfo", result, "");
+	return result;
 }
 
 bool CTable::AddColumn(const CString& sName) {
