@@ -230,6 +230,7 @@ public:
 		pNewUser->SetMultiClients(WebSock.GetParam("multiclients").ToBool());
 		pNewUser->SetTimestampAppend(WebSock.GetParam("appendtimestamp").ToBool());
 		pNewUser->SetTimestampPrepend(WebSock.GetParam("prependtimestamp").ToBool());
+		pNewUser->SetTimezone(WebSock.GetParam("timezone"));
 		pNewUser->SetTimezoneOffset(WebSock.GetParam("timezoneoffset").ToDouble());
 		pNewUser->SetJoinTries(WebSock.GetParam("jointries").ToUInt());
 
@@ -918,6 +919,7 @@ public:
 				Tmpl["DefaultChanModes"] = pUser->GetDefaultChanModes();
 				Tmpl["BufferCount"] = CString(pUser->GetBufferCount());
 				Tmpl["TimestampFormat"] = pUser->GetTimestampFormat();
+				Tmpl["Timezone"] = pUser->GetTimezone();
 				Tmpl["TimezoneOffset"] = CString(pUser->GetTimezoneOffset());
 				Tmpl["JoinTries"] = CString(pUser->JoinTries());
 

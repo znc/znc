@@ -122,6 +122,7 @@ public:
 	void SetTimestampFormat(const CString& s) { m_sTimestampFormat = s; }
 	void SetTimestampAppend(bool b) { m_bAppendTimestamp = b; }
 	void SetTimestampPrepend(bool b) { m_bPrependTimestamp = b; }
+	void SetTimezone(const CString& s) { m_sTimezone = s; }
 	void SetTimezoneOffset(float b) { m_fTimezoneOffset = b; }
 	void SetJoinTries(unsigned int i) { m_uMaxJoinTries = i; }
 	void SetSkinName(const CString& s) { m_sSkinName = s; }
@@ -160,6 +161,7 @@ public:
 	unsigned int GetBufferCount() const;
 	bool KeepBuffer() const;
 	bool IsBeingDeleted() const { return m_bBeingDeleted; }
+	CString GetTimezone() const { return m_sTimezone; }
 	float GetTimezoneOffset() const { return m_fTimezoneOffset; }
 	unsigned long long BytesRead() const { return m_uBytesRead; }
 	unsigned long long BytesWritten() const { return m_uBytesWritten; }
@@ -184,6 +186,7 @@ protected:
 	CString               m_sQuitMsg;
 	MCString              m_mssCTCPReplies;
 	CString               m_sTimestampFormat;
+	CString               m_sTimezone;
 	float                 m_fTimezoneOffset;
 	eHashType             m_eHashType;
 

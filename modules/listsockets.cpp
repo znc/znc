@@ -155,7 +155,7 @@ public:
 	CString GetCreatedTime(Csock* pSocket) {
 		unsigned long long iStartTime = pSocket->GetStartTime();
 		time_t iTime = iStartTime / 1000;
-		return FormatTime("%Y-%m-%d %H:%M:%S", iTime);
+		return CUtils::FormatTime(iTime, "%Y-%m-%d %H:%M:%S", m_pUser->GetTimezone());
 	}
 
 	CString GetLocalHost(Csock* pSocket, bool bShowHosts) {
@@ -241,20 +241,6 @@ public:
 	virtual ~CListSockets() {
 	}
 
-	CString FormatTime(const CString& sFormat, time_t tm = 0) const {
-		char szTimestamp[1024];
-
-		if (tm == 0) {
-			tm = time(NULL);
-		}
-
-		// offset is in hours
-		tm += (time_t)(m_pUser->GetTimezoneOffset() * 60 * 60);
-		strftime(szTimestamp, sizeof(szTimestamp) / sizeof(char),
-				sFormat.c_str(), localtime(&tm));
-
-		return szTimestamp;
-	}
 };
 
 USERMODULEDEFS(CListSockets, "List active sockets")

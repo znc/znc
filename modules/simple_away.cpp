@@ -190,9 +190,7 @@ private:
 			sReason = SIMPLE_AWAY_DEFAULT_REASON;
 
 		time_t iTime = time(NULL);
-		iTime += (time_t)(m_pUser->GetTimezoneOffset() * 60 * 60); // offset is in hours
-		CString sTime = ctime(&iTime);
-		sTime.Trim();
+		CString sTime = CUtils::CTime(iTime, m_pUser->GetTimezone());
 		sReason.Replace("%s", sTime);
 
 		return sReason;

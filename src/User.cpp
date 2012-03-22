@@ -62,6 +62,7 @@ CUser::CUser(const CString& sUserName)
 	// set path that depends on the user name:
 	m_sUserPath = CZNC::Get().GetUserPath() + "/" + m_sUserName;
 
+	m_sTimezone = "";
 	m_fTimezoneOffset = 0;
 	m_sNick = m_sCleanUserName;
 	m_sIdent = m_sCleanUserName;
@@ -218,6 +219,9 @@ bool CUser::ParseConfig(CConfig* pConfig, CString& sError) {
 			CUtils::PrintError(sError);
 			return false;
 		}
+	}
+	if (pConfig->FindStringEntry("timezone", sValue)) {
+		SetTimezone(sValue);
 	}
 	if (pConfig->FindStringEntry("timezoneoffset", sValue)) {
 		SetTimezoneOffset(sValue.ToDouble());
@@ -474,16 +478,7 @@ CString CUser::ExpandString(const CString& sStr) const {
 }
 
 CString& CUser::ExpandString(const CString& sStr, CString& sRet) const {
-	// offset is in hours, so * 60 * 60 gets us seconds
-	time_t iUserTime = time(NULL) + (time_t)(m_fTimezoneOffset * 60 * 60);
-	char *szTime = ctime(&iUserTime);
-	CString sTime;
-
-	if (szTime) {
-		sTime = szTime;
-		// ctime() adds a trailing newline
-		sTime.Trim();
-	}
+	CString sTime = CUtils::CTime(time(NULL), m_sTimezone);
 
 	sRet = sStr;
 	sRet.Replace("%user%", GetUserName());
@@ -511,20 +506,16 @@ CString CUser::AddTimestamp(const CString& sStr) const {
 }
 
 CString CUser::AddTimestamp(time_t tm, const CString& sStr) const {
-	char szTimestamp[1024];
 	CString sRet = sStr;
 
 	if (!GetTimestampFormat().empty() && (m_bAppendTimestamp || m_bPrependTimestamp)) {
-		tm += (time_t)(m_fTimezoneOffset * 60 * 60); // offset is in hours
-		size_t i = strftime(szTimestamp, sizeof(szTimestamp), GetTimestampFormat().c_str(), localtime(&tm));
-		// If strftime returns 0, an error occured in format, or result is empty
-		// In both cases just don't prepend/append anything to our string
-		if (0 == i) {
+		CString sTimestamp = CUtils::FormatTime(tm, GetTimestampFormat(), m_sTimezone);
+		if (sTimestamp.empty()) {
 			return sRet;
 		}
 
 		if (m_bPrependTimestamp) {
-			sRet = szTimestamp;
+			sRet = sTimestamp;
 			sRet += " " + sStr;
 		}
 		if (m_bAppendTimestamp) {
@@ -533,7 +524,7 @@ CString CUser::AddTimestamp(time_t tm, const CString& sStr) const {
 			// which turns off all previous attributes, including color, bold, underline, and italics.
 			sRet += "\x0F ";
 
-			sRet += szTimestamp;
+			sRet += sTimestamp;
 		}
 	}
 
@@ -678,6 +669,7 @@ bool CUser::Clone(const CUser& User, CString& sErrorRet, bool bCloneNetworks) {
 	SetTimestampAppend(User.GetTimestampAppend());
 	SetTimestampPrepend(User.GetTimestampPrepend());
 	SetTimestampFormat(User.GetTimestampFormat());
+	SetTimezone(User.GetTimezone());
 	SetTimezoneOffset(User.GetTimezoneOffset());
 	// !Flags
 
@@ -828,6 +820,7 @@ CConfig CUser::ToConfig() {
 	config.AddKeyValuePair("TimestampFormat", GetTimestampFormat());
 	config.AddKeyValuePair("AppendTimestamp", CString(GetTimestampAppend()));
 	config.AddKeyValuePair("PrependTimestamp", CString(GetTimestampPrepend()));
+	config.AddKeyValuePair("Timezone", m_sTimezone);
 	config.AddKeyValuePair("TimezoneOffset", CString(m_fTimezoneOffset));
 	config.AddKeyValuePair("JoinTries", CString(m_uMaxJoinTries));
 

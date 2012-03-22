@@ -58,21 +58,15 @@ void CLogMod::PutLog(const CString& sLine, const CString& sWindow /*= "Status"*/
 {
 	CString sPath;
 	time_t curtime;
-	tm* timeinfo;
-	char buffer[1024];
 
 	time(&curtime);
-	// Don't forget the user's timezone offset (which is in hours and we want seconds)
-	curtime += (time_t) (m_pUser->GetTimezoneOffset() * 60 * 60);
-	timeinfo = localtime(&curtime);
-
 	// Generate file name
-	if (!strftime(buffer, sizeof(buffer), m_sLogPath.c_str(), timeinfo))
+	sPath = CUtils::FormatTime(curtime, m_sLogPath, m_pUser->GetTimezone());
+	if (sPath.empty())
 	{
 		DEBUG("Could not format log path [" << sPath << "]");
 		return;
 	}
-	sPath = buffer;
 
 	// $WINDOW has to be handled last, since it can contain %
 	sPath.Replace("$NETWORK", (m_pNetwork ? m_pNetwork->GetName() : "znc"));
@@ -92,10 +86,7 @@ void CLogMod::PutLog(const CString& sLine, const CString& sWindow /*= "Status"*/
 	if (!CFile::Exists(sLogDir)) CDir::MakeDir(sLogDir);
 	if (LogFile.Open(O_WRONLY | O_APPEND | O_CREAT))
 	{
-		snprintf(buffer, sizeof(buffer), "[%02d:%02d:%02d] ",
-				timeinfo->tm_hour, timeinfo->tm_min, timeinfo->tm_sec);
-
-		LogFile.Write(buffer + sLine + "\n");
+		LogFile.Write(CUtils::FormatTime(curtime, "[%H:%M:%S] ", m_pUser->GetTimezone()) + sLine + "\n");
 	} else
 		DEBUG("Could not open log file [" << sPath << "]: " << strerror(errno));
 }

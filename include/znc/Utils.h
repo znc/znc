@@ -73,6 +73,9 @@ public:
 	static void GenerateCert(FILE *pOut, const CString& sHost = "");
 #endif /* HAVE_LIBSSL */
 
+	static CString CTime(time_t t, const CString& sTZ);
+	static CString FormatTime(time_t t, const CString& sFormat, const CString& sTZ);
+
 private:
 protected:
 };

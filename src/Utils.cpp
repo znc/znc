@@ -339,6 +339,64 @@ void CUtils::PrintStatus(bool bSuccess, const CString& sMessage) {
 	fflush(stdout);
 }
 
+CString CUtils::CTime(time_t t, const CString& sTZ) {
+	char s[30] = {}; // should have at least 26 bytes
+	if (sTZ.empty()) {
+		ctime_r(&t, s);
+		// ctime() adds a trailing newline
+		return CString(s).Trim_n();
+	}
+
+	// backup old value
+	char* oldTZ = getenv("TZ");
+	if (oldTZ) oldTZ = strdup(oldTZ);
+	setenv("TZ", sTZ.c_str(), 1);
+	tzset();
+
+	ctime_r(&t, s);
+
+	// restore old value
+	if (oldTZ) {
+		setenv("TZ", oldTZ, 1);
+		free(oldTZ);
+	} else {
+		unsetenv("TZ");
+	}
+	tzset();
+
+	return CString(s).Trim_n();
+}
+
+CString CUtils::FormatTime(time_t t, const CString& sFormat, const CString& sTZ) {
+	char s[1024] = {};
+	tm m;
+	if (sTZ.empty()) {
+		localtime_r(&t, &m);
+		strftime(s, sizeof(s), sFormat.c_str(), &m);
+		return s;
+	}
+
+	// backup old value
+	char* oldTZ = getenv("TZ");
+	if (oldTZ) oldTZ = strdup(oldTZ);
+	setenv("TZ", sTZ.c_str(), 1);
+	tzset();
+
+	localtime_r(&t, &m);
+	strftime(s, sizeof(s), sFormat.c_str(), &m);
+
+	// restore old value
+	if (oldTZ) {
+		setenv("TZ", oldTZ, 1);
+		free(oldTZ);
+	} else {
+		unsetenv("TZ");
+	}
+	tzset();
+
+	return s;
+}
+
 bool CTable::AddColumn(const CString& sName) {
 	for (unsigned int a = 0; a < m_vsHeaders.size(); a++) {
 		if (m_vsHeaders[a].Equals(sName)) {
