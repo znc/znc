@@ -58,14 +58,39 @@
 					<br /><span class="info">One server per line, host [[+]port] [password]</span>
 				</div>
 
+				<script type="text/javascript">
+					function floodprotection_change() {
+						var protection = document.getElementById('floodprotection_checkbox');
+						var rate = document.getElementById('floodrate');
+						var burst = document.getElementById('floodburst');
+						if (protection.checked) {
+							rate.removeAttribute('disabled');
+							burst.removeAttribute('disabled');
+						} else {
+							rate.disabled = 'disabled';
+							burst.disabled = 'disabled';
+						}
+					}
+				</script>
+				<div class="subsection">
+					<div class="inputlabel">Flood protection:</div>
+					<div class="checkbox">
+						<input type="checkbox" name="floodprotection" id="floodprotection_checkbox"
+							onchange="floodprotection_change();"
+							<? IF FloodProtection ?>checked="checked"<? ENDIF ?> />
+						<label for="floodprotection_checkbox">Enabled</label>
+					</div>
+				</div>
 				<div class="subsection">
 					<div class="inputlabel">Flood protection rate:</div>
-					<div><input type="text" name="floodrate" value="<? VAR FloodRate ?>" />Set to -1 to disable flood protection</div>
+					<div><input type="number" name="floodrate" min="0.3" step="0.05" id="floodrate"
+						<? IF FloodProtection ?> value="<? VAR FloodRate ?>" <? ELSE ?> value="1.00" disabled="disabled" <? ENDIF ?> /> seconds per line</div>
 				</div>
 
 				<div class="subsection">
 					<div class="inputlabel">Flood protection burst:</div>
-					<div><input type="number" name="floodburst" value="<? VAR FloodBurst ?>" min="0" /></div>
+					<div><input type="number" name="floodburst" value="<? VAR FloodBurst ?>" min="1" id="floodburst"
+						<? IF FloodProtection ?> value="<? VAR FloodBurst ?>" <? ELSE ?> value="4" disabled="disabled" <? ENDIF ?> /> lines can be send immediately</div>
 				</div>
 				<div style="clear: both;"></div>
 			</div>

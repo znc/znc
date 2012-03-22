@@ -21,6 +21,7 @@ const unsigned int CIRCSock::m_uCTCPFloodCount = 5;
 
 // It will be bad if user sets it to 0.00000000000001
 // If you want no flood protection, set network's flood rate to -1
+// TODO move this constant to CIRCNetwork?
 static const double FLOOD_MINIMAL_RATE = 0.3;
 
 class CIRCFloodTimer : public CCron {
@@ -38,6 +39,9 @@ class CIRCFloodTimer : public CCron {
 		}
 };
 
+bool CIRCSock::IsFloodProtected(double fRate) {
+	return fRate > FLOOD_MINIMAL_RATE;
+}
 
 CIRCSock::CIRCSock(CIRCNetwork* pNetwork) : CZNCSock() {
 	m_pNetwork = pNetwork;
@@ -46,7 +50,7 @@ CIRCSock::CIRCSock(CIRCNetwork* pNetwork) : CZNCSock() {
 	m_bUHNames = false;
 	m_fFloodRate = m_pNetwork->GetFloodRate();
 	m_uFloodBurst = m_pNetwork->GetFloodBurst();
-	m_bFloodProtection = m_fFloodRate > FLOOD_MINIMAL_RATE;
+	m_bFloodProtection = IsFloodProtected(m_fFloodRate);
 	m_iSendsAllowed = m_uFloodBurst;
 	EnableReadLine();
 	m_Nick.SetIdent(m_pNetwork->GetIdent());

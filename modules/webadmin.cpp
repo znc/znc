@@ -16,6 +16,7 @@
 #include <znc/ZNCString.h>
 #include <znc/Listener.h>
 #include <znc/IRCNetwork.h>
+#include <znc/IRCSock.h>
 #include <sstream>
 #include <utility>
 
@@ -677,6 +678,7 @@ public:
 				Tmpl["Ident"] = pNetwork->GetIdent();
 				Tmpl["RealName"] = pNetwork->GetRealName();
 
+				Tmpl["FloodProtection"] = CString(CIRCSock::IsFloodProtected(pNetwork->GetFloodRate()));
 				Tmpl["FloodRate"] = CString(pNetwork->GetFloodRate());
 				Tmpl["FloodBurst"] = CString(pNetwork->GetFloodBurst());
 
@@ -717,6 +719,7 @@ public:
 				Tmpl["Action"] = "addnetwork";
 				Tmpl["Title"] = "Add Network for User [" + pUser->GetUserName() + "]";
 				Tmpl["IRCConnectEnabled"] = "true";
+				Tmpl["FloodProtection"] = "true";
 				Tmpl["FloodRate"] = "1.0";
 				Tmpl["FloodBurst"] = "4";
 			}
@@ -747,8 +750,12 @@ public:
 
 		pNetwork->SetIRCConnectEnabled(WebSock.GetParam("doconnect").ToBool());
 
-		pNetwork->SetFloodRate(WebSock.GetParam("floodrate").ToDouble());
-		pNetwork->SetFloodBurst(WebSock.GetParam("floodburst").ToUInt());
+		if (WebSock.GetParam("floodprotection").ToBool()) {
+			pNetwork->SetFloodRate(WebSock.GetParam("floodrate").ToDouble());
+			pNetwork->SetFloodBurst(WebSock.GetParam("floodburst").ToUInt());
+		} else {
+			pNetwork->SetFloodRate(-1);
+		}
 
 		VCString vsArgs;
 

@@ -100,6 +100,9 @@ public:
 	// This handles NAMESX and UHNAMES in a raw 353 reply
 	void ForwardRaw353(const CString& sLine) const;
 	void ForwardRaw353(const CString& sLine, CClient* pClient) const;
+
+	// TODO move this function to CIRCNetwork and make it non-static?
+	static bool IsFloodProtected(double fRate);
 private:
 	void SetNick(const CString& sNick);
 	void ParseISupport(const CString& sLine);
