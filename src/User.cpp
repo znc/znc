@@ -61,7 +61,7 @@ CUser::CUser(const CString& sUserName)
 	// set path that depends on the user name:
 	m_sUserPath = CZNC::Get().GetUserPath() + "/" + m_sUserName;
 
-	m_sTimezone = "GMT";
+	m_sTimezone = "";
 	m_fTimezoneOffset = 0;
 	m_sNick = m_sCleanUserName;
 	m_sIdent = m_sCleanUserName;
@@ -500,16 +500,7 @@ CString CUser::ExpandString(const CString& sStr) const {
 }
 
 CString& CUser::ExpandString(const CString& sStr, CString& sRet) const {
-	time_t iUserTime = time(NULL);
-	setenv("TZ", m_sTimezone.c_str(), 1);
-	char *szTime = ctime(&iUserTime);
-	CString sTime;
-
-	if (szTime) {
-		sTime = szTime;
-		// ctime() adds a trailing newline
-		sTime.Trim();
-	}
+	CString sTime = CUtils::CTime(time(NULL), m_sTimezone);
 
 	sRet = sStr;
 	sRet.Replace("%user%", GetUserName());
@@ -537,27 +528,21 @@ CString CUser::AddTimestamp(const CString& sStr) const {
 }
 
 CString& CUser::AddTimestamp(const CString& sStr, CString& sRet) const {
-	char szTimestamp[1024];
-	time_t tm;
 	sRet = sStr;
 
 	if (!GetTimestampFormat().empty() && (m_bAppendTimestamp || m_bPrependTimestamp)) {
-		time(&tm);
-		setenv("TZ", m_sTimezone.c_str(), 1);
-		size_t i = strftime(szTimestamp, sizeof(szTimestamp), GetTimestampFormat().c_str(), localtime(&tm));
-		// If strftime returns 0, an error occured in format, or result is empty
-		// In both cases just don't prepend/append anything to our string
-		if (0 == i) {
+		CString sTimestamp = CUtils::FormatTime(time(NULL), GetTimestampFormat(), m_sTimezone);
+		if (sTimestamp.empty()) {
 			return sRet;
 		}
 
 		if (m_bPrependTimestamp) {
-			sRet = szTimestamp;
+			sRet = sTimestamp;
 			sRet += " " + sStr;
 		}
 		if (m_bAppendTimestamp) {
 			sRet += " ";
-			sRet += szTimestamp;
+			sRet += sTimestamp;
 		}
 	}
 	return sRet;
