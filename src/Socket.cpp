@@ -358,6 +358,7 @@ CSockManager::~CSockManager() {
 
 void CSockManager::Connect(const CString& sHostname, u_short iPort, const CString& sSockName, int iTimeout, bool bSSL, const CString& sBindHost, CZNCSock *pcSock) {
 #ifdef HAVE_THREADED_DNS
+	DEBUG("TDNS: initiating resolving of [" << sHostname << "] and bindhost [" << sBindHost << "]");
 	TDNSTask* task = new TDNSTask;
 	task->sHostname   = sHostname;
 	task->iPort       = iPort;
