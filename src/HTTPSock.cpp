@@ -195,11 +195,11 @@ bool CHTTPSock::PrintFile(const CString& sFileName, CString sContentType) {
 
 	if (sContentType.empty()) {
 		if (sFileName.Right(5).Equals(".html") || sFileName.Right(4).Equals(".htm")) {
-			sContentType = "text/html";
+			sContentType = "text/html; charset=utf-8";
 		} else if (sFileName.Right(4).Equals(".css")) {
-			sContentType = "text/css";
+			sContentType = "text/css; charset=utf-8";
 		} else if (sFileName.Right(3).Equals(".js")) {
-			sContentType = "application/x-javascript";
+			sContentType = "application/x-javascript; charset=utf-8";
 		} else if (sFileName.Right(4).Equals(".jpg")) {
 			sContentType = "image/jpeg";
 		} else if (sFileName.Right(4).Equals(".gif")) {
@@ -211,7 +211,7 @@ bool CHTTPSock::PrintFile(const CString& sFileName, CString sContentType) {
 		} else if (sFileName.Right(4).Equals(".bmp")) {
 			sContentType = "image/bmp";
 		} else {
-			sContentType = "text/plain";
+			sContentType = "text/plain; charset=utf-8";
 		}
 	}
 
@@ -450,7 +450,7 @@ bool CHTTPSock::PrintErrorPage(unsigned int uStatusId, const CString& sStatusMsg
 			"</body>\r\n"
 		"</html>\r\n";
 
-	PrintHeader(sPage.length(), "application/xhtml+xml", uStatusId, sStatusMsg);
+	PrintHeader(sPage.length(), "application/xhtml+xml; charset=utf-8", uStatusId, sStatusMsg);
 	Write(sPage);
 	Close(Csock::CLT_AFTERWRITE);
 
@@ -492,7 +492,7 @@ bool CHTTPSock::PrintHeader(off_t uContentLength, const CString& sContentType, u
 	}
 
 	if (m_sContentType.empty()) {
-		m_sContentType = "application/xhtml+xml";
+		m_sContentType = "application/xhtml+xml; charset=utf-8";
 	}
 
 	DEBUG("- " << uStatusId << " (" << sStatusMsg << ") [" << m_sContentType << "]");
