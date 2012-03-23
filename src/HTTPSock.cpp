@@ -432,10 +432,11 @@ bool CHTTPSock::PrintErrorPage(unsigned int uStatusId, const CString& sStatusMsg
 	}
 
 	CString sPage =
-		"<!DOCTYPE HTML>\r\n"
-		"<html>\r\n"
+		"<?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n"
+		"<!DOCTYPE html>\r\n"
+		"<html xmlns=\"http://www.w3.org/1999/xhtml\" lang=\"en\" xml:lang=\"en\">\r\n"
 			"<head>\r\n"
-				"<meta charset=\"utf-8\"/>\r\n"
+				"<meta charset=\"UTF-8\"/>\r\n"
 				"<title>" + CString(uStatusId) + " " + sStatusMsg.Escape_n(CString::EHTML) + "</title>\r\n"
 			"</head>\r\n"
 			"<body>\r\n"
@@ -449,7 +450,7 @@ bool CHTTPSock::PrintErrorPage(unsigned int uStatusId, const CString& sStatusMsg
 			"</body>\r\n"
 		"</html>\r\n";
 
-	PrintHeader(sPage.length(), "text/html", uStatusId, sStatusMsg);
+	PrintHeader(sPage.length(), "application/xhtml+xml", uStatusId, sStatusMsg);
 	Write(sPage);
 	Close(Csock::CLT_AFTERWRITE);
 
@@ -491,7 +492,7 @@ bool CHTTPSock::PrintHeader(off_t uContentLength, const CString& sContentType, u
 	}
 
 	if (m_sContentType.empty()) {
-		m_sContentType = "text/html";
+		m_sContentType = "application/xhtml+xml";
 	}
 
 	DEBUG("- " << uStatusId << " (" << sStatusMsg << ") [" << m_sContentType << "]");
