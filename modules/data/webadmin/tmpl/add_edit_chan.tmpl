@@ -14,23 +14,27 @@
 				<? IF !Edit ?>
 				<div class="subsection half">
 					<div class="inputlabel">Channel Name:</div>
-					<div><input type="text" name="name" value="" /></div>
+					<input type="text" name="name" value=""
+						   title="The channel name." />
 				</div>
 				<? ENDIF ?>
 
 				<div class="subsection">
 					<div class="inputlabel">Key:</div>
-					<div><input type="text" name="key" value="<? VAR Key ?>" size="10" /></div>
+					<input type="text" name="key" value="<? VAR Key ?>" size="10"
+						   title="The password of the channel, if there is one." />
 				</div>
 
 				<div class="subsection">
 					<div class="inputlabel">Buffer Count:</div>
-					<div><input type="number" name="buffercount" value="<? VAR BufferCount ?>" size="10" min="0" /></div>
+					<input type="number" name="buffercount" value="<? VAR BufferCount ?>" size="10" min="0"
+						   title="The buffer count." />
 				</div>
 
 				<div class="subsection">
 					<div class="inputlabel">Default Modes:</div>
-					<div><input type="text" name="defmodes" value="<? VAR DefModes ?>" size="10" /></div>
+					<input type="text" name="defmodes" value="<? VAR DefModes ?>" size="10"
+						   title="The default modes of the channel." />
 				</div>
 
 			</div>

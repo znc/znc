@@ -472,6 +472,8 @@ void CModTclStartTimer::RunJob() {
 
 template<> void TModInfo<CModTcl>(CModInfo& Info) {
 	Info.SetWikiPage("modtcl");
+	Info.SetHasArgs(true);
+	Info.SetArgsHelpText("The argument is the number of seconds to wait before rejoining.");
 }
 
 NETWORKMODULEDEFS(CModTcl, "Loads Tcl scripts as ZNC modules")

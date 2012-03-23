@@ -486,6 +486,8 @@ private:
 
 template<> void TModInfo<CQModule>(CModInfo& Info) {
 	Info.SetWikiPage("Q");
+	Info.SetHasArgs(true);
+	Info.SetArgsHelpText("Please provide your username and password for Q.");
 }
 
 NETWORKMODULEDEFS(CQModule, "Auths you with QuakeNet's Q bot.")

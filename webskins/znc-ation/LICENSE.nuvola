@@ -1,0 +1,35 @@
+The Theme "ZNC-ATION" for "ZNC - Advanced IRC Bouncer"
+uses icons from the Nuvola Icons Set by David Vignoni (http://icon-king.com).
+
+Nuvola Icons Set License - GNU LGPL v2.1 and v3
+-------------------------------------------------
+This library is free software; you can redistribute it and/or modify 
+it under the terms of the GNU Lesser General Public License as 
+published by the Free Software Foundation; either version 2.1 of 
+the License, or (at your option) any later version. 
+This library is distributed in the hope that it will be useful, 
+but without any warranty; without even the implied warranty of 
+merchantability or fitness for a particular purpose. 
+See version 2.1 and version 3 of the GNU Lesser General Public 
+License for more details. 
+
+Only a selected set of icons is used.
+Files are renamed, due to the length of original filenames.
+
+Our Filename    | Original Nuvola Icon Set Filename
+----------------|----------------------------------
+key.png         | Nuvola_apps_password
+gears.png       | Nuvola_apps_kcmsystem
+error.png       | Nuvola_apps_error
+user.png        | Nuvola_apps_personal
+
+Icon Set Overview
+-----------------
+http://commons.wikimedia.org/wiki/Nuvola/all
+
+How to get more icons
+---------------------
+
+Use the following link and save the image.
+http://upload.wikimedia.org/wikipedia/commons/thumb/f/f1/Nuvola_devices_blockdevice.png/32px-Nuvola_devices_blockdevice.png
+You might adjust the pixel size in the link to 24px.

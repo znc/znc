@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<? INC Options.tmpl ?>
+<? ADDROW CSSLoop HREF=/pub/css/znc-ation.css ?>
+<? ADDROW CSSLoop HREF=/pub/css/tip-yellowsimple.css ?>
+<? ADDROW CSSLoop HREF=/pub/css/jquery.checkbox.css ?>
+<? ADDROW JSLoop HREF=/pub/js/jquery-1.7.1.min.js ?>
+<? ADDROW JSLoop HREF=/pub/js/jquery.poshytip.min.js ?>
+<? ADDROW JSLoop HREF=/pub/js/jquery.checkbox.min.js ?>
+<? ADDROW JSLoop HREF=/pub/js/znc.js ?>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+	<title>ZNC - <? VAR Title DEFAULT="Web Frontend" ?></title>
+	<? LOOP CSSLoop ?>
+	<?IF HREF?><link rel="stylesheet" href="<? VAR HREF ?>" /><?ENDIF?>
+	<?ENDLOOP?>
+	<link rel="shortcut icon" href="/pub/img/favicon.ico" />
+
+	<? LOOP JSLoop ?>
+	<?IF HREF?><script type="text/javascript" src="<? VAR HREF ?>"></script><?ENDIF?>
+	<?ENDLOOP?>
+
+		<? INC ExtraHeader.tmpl ?>
+</head>
+<body>
+
+	<!-- Banner -->
+	<? INC Banner.tmpl ?>
+	<!-- !Banner -->
+
+	<!-- Wrapper -->
+	<div id="wrapper">
+
+		<!-- MessageBar -->
+		<? INC MessageBar.tmpl ?>
+		<!-- !MessageBar -->
+
+		<!-- InfoBar -->
+		<? INC InfoBar.tmpl ?>
+		<!-- !InfoBar -->
+
+		<? IF LoggedIn ?>
+		<? INC Menu.tmpl ?>
+		<? ENDIF ?>
+
+		<!-- Main -->
+		<div id="main">
+
+			<!-- Content -->
+			<div id="content">
+
+				<!-- BreadCrumbs -->
+				<? INC BreadCrumbs.tmpl ?>
+				<!-- !BreadCrumbs -->
+
+				<div id="subpage">
+
+					<? REM ?>
+						In your subpage (module page or static page) you'll probably want to do something like this...
+
+							<? INC Header.tmpl ?>
+							This is my <b>super</b> cool sub page!
+							<? INC Footer.tmpl ?>
+
+						If you'd like to add your own local css file to be included after the global main.css,
+						you can make your own Header.tmpl like so...
+
+							<? ADDROW CSSLoop HREF=/pub/your_local.css ?>
+							<? ADDROW JSLoop HREF=/pub/your_local.js ?>
+							<? INC BaseHeader.tmpl ?>
+
+					<? ENDREM ?>

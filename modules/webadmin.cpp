@@ -654,6 +654,17 @@ public:
 				l["Description"] = Info.GetDescription();
 				l["Wiki"] = Info.GetWikiPage();
 
+				if(Info.GetHasArgs())
+				{
+					l["HasArgs"] = "true";
+				}
+				else
+				{
+					l["HasArgs"] = "false";
+				}
+
+				l["ArgsHelpText"] = Info.GetArgsHelpText();
+
 				if (pNetwork) {
 					CModule *pModule = pNetwork->GetModules().FindModule(Info.GetName());
 					if (pModule) {
@@ -1014,6 +1025,17 @@ public:
 				l["Description"] = Info.GetDescription();
 				l["Wiki"] = Info.GetWikiPage();
 
+				if(Info.GetHasArgs())
+				{
+					l["HasArgs"] = "true";
+				}
+				else
+				{
+					l["HasArgs"] = "false";
+				}
+
+				l["ArgsHelpText"] = Info.GetArgsHelpText();
+
 				CModule *pModule = NULL;
 				if (pUser)
 					pModule = pUser->GetModules().FindModule(Info.GetName());
@@ -1325,6 +1347,17 @@ public:
 				l["Name"] = Info.GetName();
 				l["Description"] = Info.GetDescription();
 				l["Wiki"] = Info.GetWikiPage();
+
+				if(Info.GetHasArgs())
+				{
+					l["HasArgs"] = "true";
+				}
+				else
+				{
+					l["HasArgs"] = "false";
+				}
+
+				l["ArgsHelpText"] = Info.GetArgsHelpText();
 			}
 
 			return true;

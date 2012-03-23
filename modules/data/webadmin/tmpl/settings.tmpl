@@ -9,7 +9,7 @@
 		<div class="sectionbg">
 			<div class="sectionbody">
 				<div class="subsection">
-					<div>
+
 						<table>
 							<thead>
 								<tr>
@@ -36,9 +36,9 @@
 							<? ENDLOOP ?>
 							</tbody>
 						</table>
-					</div>
+
 				</div>
-				<div style="clear: both;"></div>
+
 			</div>
 		</div>
 	</div>
@@ -49,70 +49,78 @@
 			<div class="sectionbody">
 				<div class="subsection">
 					<div class="inputlabel">Skin:</div>
-					<div>
+
 						<select name="skin">
 							<? LOOP SkinLoop ?>
 							<option value="<? VAR Name ?>"<? IF Checked ?> selected="selected"<? ENDIF ?>><? IF Name == "_default_" ?>Default<? ELSE ?><? VAR Name ?><? ENDIF ?></option>
 							<? ENDLOOP ?>
 						</select>
-					</div>
+
 				</div>
-				<div style="clear: both;"></div>
+
 
 				<div class="subsection third">
 					<div class="inputlabel">Status Prefix:</div>
-					<div><input type="text" name="statusprefix" value="<? VAR StatusPrefix ?>" /></div>
+					<input type="text" name="statusprefix" value="<? VAR StatusPrefix ?>"
+						   title="The prefix for the status and module queries."/>
 					<br /><span class="info">Default for new users only.</span>
 				</div>
-				<div style="clear: both;"></div>
+
 
 				<div class="subsection half">
 					<div class="inputlabel">Maximum Buffer Size:</div>
-					<div><input type="text" name="maxbufsize" value="<? VAR MaxBufferSize ?>" /></div>
+					<input type="text" name="maxbufsize" value="<? VAR MaxBufferSize ?>"
+						   title="Sets the global Max Buffer Size a user can have."/>
 				</div>
-				<div style="clear: both;"></div>
+
 
 				<div class="subsection half">
 					<div class="inputlabel">Connect Delay:</div>
-					<div><input type="text" name="connectdelay" value="<? VAR ConnectDelay ?>" /></div>
+					<input type="text" name="connectdelay" value="<? VAR ConnectDelay ?>"
+						   title="The time every connection will be delayed, in seconds.
+								  Some servers refuse your connection if you reconnect too fast.
+								  This affects the connection between ZNC and the IRC server;
+								  not the connection between your IRC client and ZNC. "/>
 				</div>
-				<div style="clear: both;"></div>
+
 
 				<div class="subsection half">
 					<div class="inputlabel">Server Throttle:</div>
-					<div><input type="text" name="serverthrottle" value="<? VAR ServerThrottle ?>" /></div>
+					<input type="text" name="serverthrottle" value="<? VAR ServerThrottle ?>"
+						   title="The time between two connect attempts to the same hostname." />
 				</div>
-				<div style="clear: both;"></div>
+
 
 				<div class="subsection half">
 					<div class="inputlabel">Anonymous IP Limit:</div>
-					<div><input type="text" name="anoniplimit" value="<? VAR AnonIPLimit ?>" /></div>
+					<input type="text" name="anoniplimit" value="<? VAR AnonIPLimit ?>"
+						   title="Limits the number of unidentified connections per IP." />
 				</div>
-				<div style="clear: both;"></div>
+
 
 				<div class="subsection">
 					<div class="inputlabel">Protect Web Sessions:</div>
 					<div class="checkbox"><input type="checkbox" name="protectwebsessions" id="protectwebsessions_checkbox"<? IF ProtectWebSessions ?> checked="checked"<? ENDIF ?> />
 						<label for="protectwebsessions_checkbox">Disallow IP changing during each web session</label></div>
 				</div>
-				<div style="clear: both;"></div>
+
 
 				<div class="subsection twothird">
 					<div class="inputlabel">MOTD:</div>
-					<div><textarea name="motd" cols="70" rows="5" class="monospace"><? LOOP MOTDLoop ?><? VAR Line ?>
+					<textarea name="motd" cols="70" rows="5" class="monospace"><? LOOP MOTDLoop ?><? VAR Line ?>
 <? ENDLOOP ?>
-</textarea></div>
+</textarea>
 					<br /><span class="info">"Message of the Day", sent to all ZNC users on connect.</span>
 				</div>
 
 				<div class="subsection twothird">
 					<div class="inputlabel">BindHosts:</div>
-					<div><textarea name="bindhosts" cols="70" rows="8"><? LOOP BindHostLoop ?><? VAR BindHost ?>
+					<textarea name="bindhosts" cols="70" rows="8"><? LOOP BindHostLoop ?><? VAR BindHost ?>
 <? ENDLOOP ?>
-</textarea></div>
+</textarea>
 					<br /><span class="info">One host name or IP entry per line.</span>
 				</div>
-				<div style="clear: both;"></div>
+
 			</div>
 		</div>
 	</div>
@@ -132,8 +140,19 @@
 					<tbody>
 					<? LOOP ModuleLoop ?>
 					<tr class="<? IF __EVEN__ ?>evenrow<? ELSE ?>oddrow<? ENDIF ?>">
-						<td class="mod_name"><input type="checkbox" name="loadmod" id="lm_<? VAR Name ?>" value="<? VAR Name ?>"<? IF Checked ?> checked="checked"<? ENDIF ?><? IF Disabled ?> disabled="disabled"<? ENDIF ?> /><label for="lm_<? VAR Name ?>"> <? IF Wiki ?> <a href="http://wiki.znc.in/<? VAR Wiki ?>"><? VAR Name ?></a> <? ELSE ?> <? VAR Name ?> <? ENDIF ?></label></td>
-						<td class="mod_args"><input type="text" name="modargs_<? VAR Name ?>" value="<? VAR Args ?>" /></td>
+						<td class="mod_name">
+							<input type="checkbox" name="loadmod" id="lm_<? VAR Name ?>" value="<? VAR Name ?>"
+							<? IF Checked ?> checked="checked"<? ENDIF ?>
+							<? IF Disabled ?> disabled="disabled"<? ENDIF ?> />
+							<label for="lm_<? VAR Name ?>">
+							<? IF Wiki ?><a href="http://wiki.znc.in/<? VAR Wiki ?>"><? VAR Name ?></a>
+							<? ELSE ?> <? VAR Name ?> <? ENDIF ?></label>
+						</td>
+						<td class="mod_args">
+							<input type="text" name="modargs_<? VAR Name ?>" value="<? VAR Args ?>"
+							<? IF !HasArgs ?> disabled="disabled"<? ENDIF ?>
+							<? IF ArgsHelpText ?> title="<? VAR ArgsHelpText ?>"<? ENDIF ?> />
+						</td>
 						<td class="mod_descr"><? VAR Description ?></td>
 					</tr>
 					<? ENDLOOP ?>

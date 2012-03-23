@@ -91,6 +91,8 @@ private:
 template<> void TModInfo<CAutoReplyMod>(CModInfo& Info) {
 	Info.SetWikiPage("autoreply");
 	Info.AddType(CModInfo::NetworkModule);
+	Info.SetHasArgs(true);
+	Info.SetArgsHelpText("You might specify a reply text. It is used when automatically answering queries, if you are not connected to ZNC.");
 }
 
 USERMODULEDEFS(CAutoReplyMod, "Reply to queries when you are away")

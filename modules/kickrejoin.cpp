@@ -110,6 +110,8 @@ public:
 
 template<> void TModInfo<CRejoinMod>(CModInfo& Info) {
 	Info.SetWikiPage("kickrejoin");
+	Info.SetHasArgs(true);
+	Info.SetArgsHelpText("Please enter the number of seconds to wait before rejoining.");
 }
 
 NETWORKMODULEDEFS(CRejoinMod, "Autorejoin on kick")

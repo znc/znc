@@ -162,6 +162,8 @@ public:
 
 template<> void TModInfo<CNickServ>(CModInfo& Info) {
 	Info.SetWikiPage("nickserv");
+	Info.SetHasArgs(true);
+	Info.SetArgsHelpText("Please enter your nickserv password.");
 }
 
 NETWORKMODULEDEFS(CNickServ, "Auths you with NickServ")
