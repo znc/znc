@@ -84,14 +84,15 @@
 				<div class="subsection">
 					<div class="inputlabel">Flood protection rate:</div>
 					<div><input type="number" name="floodrate" min="0.3" step="0.05" id="floodrate"
-						<? IF FloodProtection ?> value="<? VAR FloodRate ?>" <? ELSE ?> value="1.00" disabled="disabled" <? ENDIF ?> /> seconds per line</div>
+						<? IF FloodProtection ?> value="<? VAR FloodRate ?>" <? ELSE ?> value="1.00" <? ENDIF ?> /> seconds per line</div>
 				</div>
 
 				<div class="subsection">
 					<div class="inputlabel">Flood protection burst:</div>
 					<div><input type="number" name="floodburst" min="1" id="floodburst"
-						<? IF FloodProtection ?> value="<? VAR FloodBurst ?>" <? ELSE ?> value="4" disabled="disabled" <? ENDIF ?> /> lines can be send immediately</div>
+						<? IF FloodProtection ?> value="<? VAR FloodBurst ?>" <? ELSE ?> value="4" <? ENDIF ?> /> lines can be send immediately</div>
 				</div>
+				<script type="text/javascript">floodprotection_change();</script>
 				<div style="clear: both;"></div>
 			</div>
 		</div>
