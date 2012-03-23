@@ -9,7 +9,7 @@
 		<div class="sectionbg">
 			<div class="sectionbody">
 				<div class="subsection">
-					<div>
+
 						<form action="add_listener" method="post">
 							<table>
 								<thead>
@@ -29,11 +29,11 @@
 									<tr class="<? IF __EVEN__ ?>evenrow<? ELSE ?>oddrow<? ENDIF ?>">
 										<td><? VAR Port ?></td>
 										<td><? VAR BindHost DEFAULT=** ?></td>
-										<td><div class="checkbox"><input type="checkbox" disabled="disabled" <? IF IsSSL ?>checked="checked"<? ENDIF ?>/></div></td>
-										<td><div class="checkbox"><input type="checkbox" disabled="disabled" <? IF IsIPV4 ?>checked="checked"<? ENDIF ?>/></div></td>
-										<td><div class="checkbox"><input type="checkbox" disabled="disabled" <? IF IsIPV6 ?>checked="checked"<? ENDIF ?>/></div></td>
-										<td><div class="checkbox"><input type="checkbox" disabled="disabled" <? IF IsIRC ?>checked="checked"<? ENDIF ?>/></div></td>
-										<td><div class="checkbox"><input type="checkbox" disabled="disabled" <? IF IsWeb ?>checked="checked"<? ENDIF ?>/></div></td>
+										<td><input type="checkbox" disabled="disabled" <? IF IsSSL ?>checked="checked"<? ENDIF ?>/></td>
+										<td><input type="checkbox" disabled="disabled" <? IF IsIPV4 ?>checked="checked"<? ENDIF ?>/></td>
+										<td><input type="checkbox" disabled="disabled" <? IF IsIPV6 ?>checked="checked"<? ENDIF ?>/></td>
+										<td><input type="checkbox" disabled="disabled" <? IF IsIRC ?>checked="checked"<? ENDIF ?>/></td>
+										<td><input type="checkbox" disabled="disabled" <? IF IsWeb ?>checked="checked"<? ENDIF ?>/></td>
 										<td>
 											<? IF SuggestDeletion ?>
 											<form action="del_listener" method="post">
@@ -51,19 +51,19 @@
 									<tr>
 										<? INC _csrf_check.tmpl ?>
 										<td><input name="port" type="number" min="1" max="65535" class="number"/></td>
-										<td><input name="host" type="text" value="*" class="third"/></td>
-										<td><div class="checkbox"><input name="ssl" type="checkbox"/></div></td>
-										<td><div class="checkbox"><input name="ipv4" type="checkbox" checked="checked"/></div></td>
-										<td><div class="checkbox"><input name="ipv6" type="checkbox" checked="checked"/></div></td>
-										<td><div class="checkbox"><input name="irc" type="checkbox" checked="checked"/></div></td>
-										<td><div class="checkbox"><input name="web" type="checkbox" checked="checked"/></div></td>
+										<td><input name="host" type="text" value="*" /></td>
+										<td><input name="ssl" type="checkbox"/></td>
+										<td><input name="ipv4" type="checkbox" checked="checked"/></td>
+										<td><input name="ipv6" type="checkbox" checked="checked"/></td>
+										<td><input name="irc" type="checkbox" checked="checked"/></td>
+										<td><input name="web" type="checkbox" checked="checked"/></td>
 										<td><input type="submit" value="Add"/></td>
 									</tr>
 								</tbody>
 							</table>
 						</form>
 					</div>
-				</div>
+
 			</div>
 		</div>
 	</div>
