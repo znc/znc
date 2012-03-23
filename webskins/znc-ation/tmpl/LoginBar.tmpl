@@ -1,0 +1,24 @@
+								<? IF LoggedIn ?>
+								<span class="logoutbox">
+									<a href="/logout">Logout</a>
+								</span>
+								<? ELSE IF !ModName && PageName == "login" ?>
+								<span class="logoutbox">&nbsp;</span>
+								<? ELSE ?>
+								<form action="/login" method="post">
+									<input type="hidden" name="submitted" value="1" />
+									<div class="loginbox">
+									<p>
+										<label for="user">Username</label>
+										<input name="user" id="user" type="text"
+										       title="Please enter your username." />
+									</p>
+									<p>
+										<label for="password">Password</label>
+										<input name="pass" id="password" type="password"
+										       title="Enter the password for the username." />
+									</p>
+									<input type="submit" class="submit" value="Login" />
+									</div>
+								</form>
+								<? ENDIF ?>
