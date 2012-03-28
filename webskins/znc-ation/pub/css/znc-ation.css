@@ -5,7 +5,7 @@
 }
 
 body {
-	background-color: #F8F8F8;
+	background-color: #DDDDDD;
 	color: #333333;
 	font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
 	font-size: 13px;
@@ -48,6 +48,7 @@ a:hover {color: red}  /* mouse over link */
 }
 
 #main {
+	background-color: #F8F8F8;
 	padding: 20px;
 }
 
@@ -442,6 +443,7 @@ header {
 
 /* fake content box above the ribbon */
 .content-above-ribbon {
+	background-color: #F8F8F8;
 	border: 1px solid #BABABA;
 	margin: 0 auto;
 	position: relative;
