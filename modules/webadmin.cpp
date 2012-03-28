@@ -653,16 +653,7 @@ public:
 				l["Name"] = Info.GetName();
 				l["Description"] = Info.GetDescription();
 				l["Wiki"] = Info.GetWikiPage();
-
-				if(Info.GetHasArgs())
-				{
-					l["HasArgs"] = "true";
-				}
-				else
-				{
-					l["HasArgs"] = "false";
-				}
-
+				l["HasArgs"] = CString(Info.GetHasArgs());
 				l["ArgsHelpText"] = Info.GetArgsHelpText();
 
 				if (pNetwork) {
@@ -1024,16 +1015,7 @@ public:
 				l["Name"] = Info.GetName();
 				l["Description"] = Info.GetDescription();
 				l["Wiki"] = Info.GetWikiPage();
-
-				if(Info.GetHasArgs())
-				{
-					l["HasArgs"] = "true";
-				}
-				else
-				{
-					l["HasArgs"] = "false";
-				}
-
+				l["HasArgs"] = CString(Info.GetHasArgs());
 				l["ArgsHelpText"] = Info.GetArgsHelpText();
 
 				CModule *pModule = NULL;
@@ -1347,16 +1329,7 @@ public:
 				l["Name"] = Info.GetName();
 				l["Description"] = Info.GetDescription();
 				l["Wiki"] = Info.GetWikiPage();
-
-				if(Info.GetHasArgs())
-				{
-					l["HasArgs"] = "true";
-				}
-				else
-				{
-					l["HasArgs"] = "false";
-				}
-
+				l["HasArgs"] = CString(Info.GetHasArgs());
 				l["ArgsHelpText"] = Info.GetArgsHelpText();
 			}
 
