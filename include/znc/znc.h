@@ -116,6 +116,7 @@ public:
 	unsigned int GetServerThrottle() const { return m_sConnectThrottle.GetTTL() / 1000; }
 	unsigned int GetConnectDelay() const { return m_uiConnectDelay; }
 	bool GetProtectWebSessions() const { return m_bProtectWebSessions; }
+	const CString& GetURLPrefix() const { return m_sURLPrefix; }
 	// !Getters
 
 	// Static allocator
@@ -209,6 +210,7 @@ protected:
 	unsigned int           m_uiConnectPaused;
 	TCacheMap<CString>     m_sConnectThrottle;
 	bool                   m_bProtectWebSessions;
+	CString                m_sURLPrefix;
 };
 
 #endif // !_ZNC_H

@@ -362,6 +362,7 @@ bool CWebSock::AddModLoop(const CString& sLoopName, CModule& Module, CTemplate *
 	if (!sTitle.empty() && (IsLoggedIn() || (!Module.WebRequiresLogin() && !Module.WebRequiresAdmin())) && (GetSession()->IsAdmin() || !Module.WebRequiresAdmin())) {
 		CTemplate& Row = pTemplate->AddRow(sLoopName);
 
+		Row["URLPrefix"] = CZNC::Get().GetURLPrefix();
 		Row["ModName"] = Module.GetModName();
 		Row["ModPath"] = Module.GetWebPath();
 		Row["Title"] = sTitle;
