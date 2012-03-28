@@ -76,6 +76,7 @@ private:
 
 template<> void TModInfo<CChanSaverMod>(CModInfo& Info) {
 	Info.SetWikiPage("chansaver");
+	Info.AddType(CModInfo::NetworkModule);
 }
 
 USERMODULEDEFS(CChanSaverMod, "Keep config up-to-date when user joins/parts")
