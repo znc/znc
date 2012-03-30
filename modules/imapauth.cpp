@@ -134,7 +134,7 @@ void CIMAPSock::ReadLine(const CString& sLine) {
 		}
 
 		Write("AUTH LOGIN " + sUsername + " " + m_spAuth->GetPassword() + "\r\n");
-	} else {
+	} else if (sLine.Left(5) == "AUTH ") {
 		CUser* pUser = CZNC::Get().FindUser(m_spAuth->GetUsername());
 
 		if (pUser && sLine.Equals("AUTH OK", false, 7)) {
