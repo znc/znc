@@ -143,6 +143,8 @@ public:
 	// Listener yummy
 	CListener* FindListener(u_short uPort, const CString& BindHost, EAddrType eAddr);
 	bool AddListener(CListener*);
+	bool AddListener(unsigned int uPort, const CString& sBindHost, bool bSSL,
+			EAddrType eAddr, CListener::EAcceptType eAccept, CString& sError);
 	bool DelListener(CListener*);
 
 	// Message of the Day
@@ -178,8 +180,6 @@ private:
 	CString MakeConfigHeader();
 	bool AddListener(const CString& sLine, CString& sError);
 	bool AddListener(CConfig* pConfig, CString& sError);
-	bool AddListener(unsigned int uPort, const CString& sBindHost, bool bSSL,
-			EAddrType eAddr, CListener::EAcceptType eAccept, CString& sError);
 
 protected:
 	time_t                 m_TimeStarted;

@@ -10,35 +10,60 @@
 			<div class="sectionbody">
 				<div class="subsection">
 					<div>
-						<table>
-							<thead>
-								<tr>
-									<td>Port</td>
-									<td>BindHost</td>
-									<td>SSL</td>
-									<td>IPv4</td>
-									<td>IPv6</td>
-									<td>IRC</td>
-									<td>Web</td>
-								</tr>
-							</thead>
-							<tbody>
-							<? LOOP ListenLoop ?>
-								<tr class="<? IF __EVEN__ ?>evenrow<? ELSE ?>oddrow<? ENDIF ?>">
-									<td><? VAR Port ?></td>
-									<td><? VAR BindHost DEFAULT=** ?></td>
-									<td><? IF IsSSL ?>Yes<? ELSE ?>No<? ENDIF ?></td>
-									<td><? IF IsIPV4 ?>Yes<? ELSE ?>No<? ENDIF ?></td>
-									<td><? IF IsIPV6 ?>Yes<? ELSE ?>No<? ENDIF ?></td>
-									<td><? IF IsIRC ?>Yes<? ELSE ?>No<? ENDIF ?></td>
-									<td><? IF IsWeb ?>Yes<? ELSE ?>No<? ENDIF ?></td>
-								</tr>
-							<? ENDLOOP ?>
-							</tbody>
-						</table>
+						<form action="add_listener" method="post">
+							<table>
+								<thead>
+									<tr>
+										<td>Port</td>
+										<td>BindHost</td>
+										<td>SSL</td>
+										<td>IPv4</td>
+										<td>IPv6</td>
+										<td>IRC</td>
+										<td>Web</td>
+										<td/>
+									</tr>
+								</thead>
+								<tbody>
+								<? LOOP ListenLoop ?>
+									<tr class="<? IF __EVEN__ ?>evenrow<? ELSE ?>oddrow<? ENDIF ?>">
+										<td><? VAR Port ?></td>
+										<td><? VAR BindHost DEFAULT=** ?></td>
+										<td><div class="checkbox"><input type="checkbox" disabled="disabled" <? IF IsSSL ?>checked="checked"<? ENDIF ?>/></div></td>
+										<td><div class="checkbox"><input type="checkbox" disabled="disabled" <? IF IsIPV4 ?>checked="checked"<? ENDIF ?>/></div></td>
+										<td><div class="checkbox"><input type="checkbox" disabled="disabled" <? IF IsIPV6 ?>checked="checked"<? ENDIF ?>/></div></td>
+										<td><div class="checkbox"><input type="checkbox" disabled="disabled" <? IF IsIRC ?>checked="checked"<? ENDIF ?>/></div></td>
+										<td><div class="checkbox"><input type="checkbox" disabled="disabled" <? IF IsWeb ?>checked="checked"<? ENDIF ?>/></div></td>
+										<td>
+											<? IF SuggestDeletion ?>
+											<form action="del_listener" method="post">
+												<? INC _csrf_check.tmpl ?>
+												<input name="host" type="hidden" value="<? VAR BindHost ?>"/>
+												<input name="port" type="hidden" value="<? VAR Port ?>"/>
+												<input name="ipv4" type="hidden" value="<? VAR IsIPV4 ?>"/>
+												<input name="ipv6" type="hidden" value="<? VAR IsIPV6 ?>"/>
+												<input type="submit" value="Del"/>
+											</form>
+											<? ENDIF ?>
+										</td>
+									</tr>
+								<? ENDLOOP ?>
+									<tr>
+										<? INC _csrf_check.tmpl ?>
+										<td><input name="port" type="number" min="1" max="65535" class="number"/></td>
+										<td><input name="host" type="text" value="*" class="third"/></td>
+										<td><div class="checkbox"><input name="ssl" type="checkbox"/></div></td>
+										<td><div class="checkbox"><input name="ipv4" type="checkbox" checked="checked"/></div></td>
+										<td><div class="checkbox"><input name="ipv6" type="checkbox" checked="checked"/></div></td>
+										<td><div class="checkbox"><input name="irc" type="checkbox" checked="checked"/></div></td>
+										<td><div class="checkbox"><input name="web" type="checkbox" checked="checked"/></div></td>
+										<td><input type="submit" value="Add"/></td>
+									</tr>
+								</tbody>
+							</table>
+						</form>
 					</div>
 				</div>
-				<div style="clear: both;"></div>
 			</div>
 		</div>
 	</div>

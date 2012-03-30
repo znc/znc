@@ -247,14 +247,18 @@ input.third, textarea.third,
 	width: 150px;
 }
 
+input.number {
+	width: 40px;
+}
+
 table {
 	border: 1px solid #ccc;
 	border-spacing: 1px;
 }
 
 td, th {
-	padding: 5px 10px;
-	min-width: 50px;
+	padding: 5px 7px;
+	min-width: 35px;
 }
 
 thead td, th {
