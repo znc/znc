@@ -13,16 +13,33 @@
 
 #include <znc/Modules.h>
 #include <znc/znc.h>
+#include <znc/User.h>
+
 #include <sasl/sasl.h>
 
 class CSASLAuthMod : public CModule {
 public:
 	MODCONSTRUCTOR(CSASLAuthMod) {
 		m_Cache.SetTTL(60000/*ms*/);
+
+		AddHelpCommand();
+		AddCommand("CreateUser",       static_cast<CModCommand::ModCmdFunc>(&CSASLAuthMod::CreateUser),
+			"[yes|no]");
+		AddCommand("CloneUser",        static_cast<CModCommand::ModCmdFunc>(&CSASLAuthMod::CloneUser),
+			"[username]");
+		AddCommand("DisableCloneUser", static_cast<CModCommand::ModCmdFunc>(&CSASLAuthMod::DisableCloneUser));
 	}
 
 	virtual ~CSASLAuthMod() {
 		sasl_done();
+	}
+
+	void OnModCommand(const CString& sCommand) {
+		if (m_pUser->IsAdmin()) {
+			HandleCommand(sCommand);
+		} else {
+			PutModule("Access denied");
+		}
 	}
 
 	virtual bool OnLoad(const CString& sArgs, CString& sMessage) {
@@ -66,38 +83,114 @@ public:
 		const CString& sPassword = Auth->GetPassword();
 		CUser *pUser(CZNC::Get().FindUser(sUsername));
 		sasl_conn_t *sasl_conn(NULL);
+		bool bSuccess = false;
 
-		if (!pUser) {
-			/* @todo Will want to do some sort of &&
-			 * !m_bAllowCreate in the future */
+		if (!pUser && !CreateUser()) {
 			return CONTINUE;
 		}
 
 		const CString sCacheKey(CString(sUsername + ":" + sPassword).MD5());
 		if (m_Cache.HasItem(sCacheKey)) {
+			bSuccess = true;
 			DEBUG("saslauth: Found [" + sUsername + "] in cache");
-
-			Auth->AcceptLogin(*pUser);
-			return HALT;
-		}
-
-		if (sasl_server_new("znc", NULL, NULL, NULL, NULL, m_cbs, 0, &sasl_conn) == SASL_OK &&
+		} else if (sasl_server_new("znc", NULL, NULL, NULL, NULL, m_cbs, 0, &sasl_conn) == SASL_OK &&
 				sasl_checkpass(sasl_conn, sUsername.c_str(), sUsername.size(), sPassword.c_str(), sPassword.size()) == SASL_OK) {
 			m_Cache.AddItem(sCacheKey);
 
 			DEBUG("saslauth: Successful SASL authentication [" + sUsername + "]");
-			sasl_dispose(&sasl_conn);
 
-			Auth->AcceptLogin(*pUser);
-			return HALT;
+			bSuccess = true;
 		}
 
 		sasl_dispose(&sasl_conn);
+
+		if (bSuccess) {
+			if (!pUser) {
+				CString sErr;
+				pUser = new CUser(sUsername);
+
+				if (ShouldCloneUser()) {
+					CUser *pBaseUser = CZNC::Get().FindUser(CloneUser());
+
+					if (!pBaseUser) {
+						DEBUG("saslauth: Clone User [" << CloneUser() << "] User not found");
+						delete pUser;
+						pUser = NULL;
+					}
+
+					if (pUser && !pUser->Clone(*pBaseUser, sErr)) {
+						DEBUG("saslauth: Clone User [" << CloneUser() << "] " << sErr);
+						delete pUser;
+						pUser = NULL;
+					}
+				}
+
+				if (pUser && !CZNC::Get().AddUser(pUser, sErr)) {
+					DEBUG("saslauth: Add user [" << sUsername << "] " << sErr);
+					delete pUser;
+					pUser = NULL;
+				}
+
+				if (pUser) {
+					pUser->SetPass("::", CUser::HASH_MD5, "::");
+				}
+			}
+
+			if (pUser) {
+				Auth->AcceptLogin(*pUser);
+				return HALT;
+			}
+		}
 
 		return CONTINUE;
 	}
 
 	const CString& GetMethod() const { return m_sMethod; }
+
+	void CreateUser(const CString &sLine) {
+		CString sCreate = sLine.Token(1);
+
+		if (!sCreate.empty()) {
+			SetNV("CreateUser", sCreate);
+		}
+
+		if (CreateUser()) {
+			PutModule("We will create users on their first login");
+		} else {
+			PutModule("We will not create users on their first login");
+		}
+	}
+
+	void CloneUser(const CString &sLine) {
+		CString sUsername = sLine.Token(1);
+
+		if (!sUsername.empty()) {
+			SetNV("CloneUser", sUsername);
+		}
+
+		if (ShouldCloneUser()) {
+			PutModule("We will clone [" + CloneUser() + "]");
+		} else {
+			PutModule("We will not clone a user");
+		}
+	}
+
+	void DisableCloneUser(const CString &sLine) {
+		DelNV("CloneUser");
+		PutModule("Clone user disabled");
+	}
+
+	bool CreateUser() const {
+		return GetNV("CreateUser").ToBool();
+	}
+
+	CString CloneUser() const {
+		return GetNV("CloneUser");
+	}
+
+	bool ShouldCloneUser() {
+		return !GetNV("CloneUser").empty();
+	}
 
 protected:
 	TCacheMap<CString>     m_Cache;
