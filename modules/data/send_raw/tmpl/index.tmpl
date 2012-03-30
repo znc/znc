@@ -10,26 +10,24 @@
 			<div class="sectionbody">
 				<div class="subsection third">
 					<div class="inputlabel">User:</div>
-					<div><select name="user">
+					<select name="user">
 						<? LOOP UserLoop?>
 							<option value="<? VAR Username ESC=HTML ?>"><? VAR Username ESC=HTML ?></option>
 						<? ENDLOOP ?>
-					</select></div>
+					</select>
 				</div>
 
 				<div class="subsection third">
 					<div class="inputlabel">Send to:</div>
-					<div>
-						<select name="send_to">
-							<option value="client"<? IF to_client ?> selected="yes"<? ENDIF ?>>Client</option>
-							<option value="server"<? IF to_server ?> selected="yes"<? ENDIF ?>>Server</option>
-						</select>
-					</div>
+					<select name="send_to">
+						<option value="client"<? IF to_client ?> selected="yes"<? ENDIF ?>>Client</option>
+						<option value="server"<? IF to_server ?> selected="yes"<? ENDIF ?>>Server</option>
+					</select>
 				</div>
 
 				<div class="subsection full">
 					<div class="inputlabel">Line:</div>
-					<div><input type="text" name="line" value="<? VAR line ?>" /></div>
+					<input type="text" name="line" value="<? VAR line ?>" />
 				</div>
 
 				<div class="subsection submitline">

@@ -10,7 +10,7 @@
 			<div class="sectionbody">
 				<div class="subsection">
 					<div class="inputlabel">Username:</div>
-					<div>
+
 						<? IF Clone ?>
 						<input type="hidden" name="clone" value="<? VAR CloneUsername ?>" />
 						<? ENDIF ?>
@@ -18,23 +18,26 @@
 						<input type="hidden" name="user" value="<? VAR Username ?>" />
 						<input type="text" name="newuser" value="<? VAR Username ?>" class="half" maxlength="128" disabled="disabled" />
 						<? ELSE ?>
-						<input type="text" name="user" value="<? VAR Username ?>" class="half" maxlength="128" />
+						<input type="text" name="user" value="<? VAR Username ?>" class="half" maxlength="128"
+							   title="Please enter a username." />
 						<? ENDIF ?>
-					</div>
+
 				</div>
 				<div class="subsection">
 					<div class="inputlabel">Password:</div>
-					<div><input type="password" name="password" class="half" /></div>
+					<input type="password" name="password" class="half"
+						   title="Please enter a password." />
 				</div>
 				<div class="subsection">
 					<div class="inputlabel">Confirm password:</div>
-					<div><input type="password" name="password2" class="half" /></div>
+					<input type="password" name="password2" class="half"
+						   title="Please re-type the above password." />
 				</div>
 				<div class="subsection half">
 					<div class="inputlabel">Allowed IPs:</div>
-					<div><textarea name="allowedips" cols="70" rows="5"><? LOOP AllowedHostLoop ?><? VAR Host ?>
+					<textarea name="allowedips" cols="70" rows="5"><? LOOP AllowedHostLoop ?><? VAR Host ?>
 <? ENDLOOP ?>
-</textarea></div>
+</textarea>
 					<br /><span class="info">Leave empty to allow connections from all IPs.<br />
 					Otherwise, one entry per line, wildcards * and ? are available.</span>
 				</div>
@@ -52,25 +55,30 @@
 			<div class="sectionbody">
 				<div class="subsection">
 					<div class="inputlabel">Nickname:</div>
-					<div><input type="text" name="nick" value="<? VAR Nick ?>" class="half" maxlength="128" /></div>
+					<input type="text" name="nick" value="<? VAR Nick ?>" class="half" maxlength="128"
+						   title="This will be your nickname on IRC." />
 				</div>
 				<div class="subsection">
 					<div class="inputlabel">Alt. Nickname:</div>
-					<div><input type="text" name="altnick" value="<? VAR AltNick ?>" class="half" maxlength="128" /></div>
+					<input type="text" name="altnick" value="<? VAR AltNick ?>" class="half" maxlength="128"
+						   title="If the nickname above is not available anymore, then this will be your nickname on IRC." />
 				</div>
 				<div style="clear: both;"></div>
 				<div class="subsection">
 					<div class="inputlabel">Ident:</div>
-					<div><input type="text" name="ident" value="<? VAR Ident ?>" class="half" maxlength="128" /></div>
+					<input type="text" name="ident" value="<? VAR Ident ?>" class="half" maxlength="128"
+						   title="The Ident identifies you as one specific user of your host." />
 				</div>
 				<div class="subsection">
 					<div class="inputlabel">StatusPrefix:</div>
-					<div><input type="text" name="statusprefix" value="<? VAR StatusPrefix ?>" class="half" maxlength="5" /></div>
+					<input type="text" name="statusprefix" value="<? VAR StatusPrefix ?>" class="half" maxlength="5"
+						   title="This defines the prefix for the status and module queries." />
 				</div>
 				<div style="clear: both;"></div>
 				<div class="subsection">
 					<div class="inputlabel">Realname:</div>
-					<div><input type="text" name="realname" value="<? VAR RealName ?>" class="full" maxlength="256" /></div>
+					<input type="text" name="realname" value="<? VAR RealName ?>" class="full" maxlength="256"
+						   title="The real name of the user." />
 				</div>
 				<div style="clear: both;"></div>
 
@@ -98,7 +106,8 @@
 
 				<div class="subsection">
 					<div class="inputlabel">Quit Message:</div>
-					<div><input type="text" name="quitmsg" value="<? VAR QuitMsg ?>" class="full" maxlength="256" /></div>
+					<input type="text" name="quitmsg" value="<? VAR QuitMsg ?>" class="full" maxlength="256"
+						   title="You may define a Message shown, when you quit IRC." />
 				</div>
 				<div style="clear: both;"></div>
 			</div>
@@ -161,7 +170,13 @@
 							<input type="checkbox" name="loadmod" id="lm_<? VAR Name ?>" value="<? VAR Name ?>"<? IF Checked ?> checked="checked"<? ENDIF ?><? IF Disabled ?> disabled="disabled"<? ENDIF ?> /><label for="lm_<? VAR Name ?>"> <? IF Wiki ?><a href="http://wiki.znc.in/<? VAR Wiki ?>"><? VAR Name ?></a> <? ELSE ?> <? VAR Name ?> <? ENDIF ?></label>
 						</td>
 						<td class="mod_args">
-							<? IF Disabled ?><? VAR Args ?><? ELSE ?><input class="third" type="text" name="modargs_<? VAR Name ?>" value="<? VAR Args ?>" /><? ENDIF ?>
+							<? IF Disabled ?>
+							<? VAR Args ?>
+							<? ELSE ?>
+							<input class="third" type="text" name="modargs_<? VAR Name ?>" value="<? VAR Args ?>"
+							<? IF !HasArgs ?> disabled="disabled"<? ENDIF ?>
+							<? IF ArgsHelpText ?> title="<? VAR ArgsHelpText ?>"<? ENDIF ?> />
+							<? ENDIF ?>
 						</td>
 						<td class="mod_descr"><? VAR Description ?></td>
 					</tr>
@@ -179,12 +194,15 @@
 			<div class="sectionbody">
 				<div class="subsection third">
 					<div class="inputlabel">Modes:</div>
-					<div><input type="text" name="chanmodes" value="<? VAR DefaultChanModes ?>" maxlength="32" /></div>
+					<input type="text" name="chanmodes" value="<? VAR DefaultChanModes ?>" maxlength="32"
+						   title="These are the default modes ZNC will set when you join an empty channel." />
 					<br /><span class="info">Empty = use standard value</span>
 				</div>
 				<div class="subsection third">
 					<div class="inputlabel">Buffer Size:</div>
-					<div><input type="number" name="bufsize" value="<? VAR BufferCount ?>" min="0" /></div>
+					<input type="number" name="bufsize" value="<? VAR BufferCount ?>" min="0"
+						   title="This is the amount of lines that the playback buffer will store before dropping off the oldest line.
+								  The buffers are stored in the memory by default." />
 					<br /><span class="info">Empty = use standard value</span>
 				</div>
 			</div>
@@ -213,22 +231,24 @@
 			<div class="sectionbody">
 				<div class="subsection">
 					<div class="inputlabel">Timestamp Format:</div>
-					<div><input type="text" name="timestampformat" value="<? VAR TimestampFormat ?>" class="full" /></div>
+					<input type="text" name="timestampformat" value="<? VAR TimestampFormat ?>" class="full"
+						   title="The format for the timestamps used in buffers, for example [%H:%M:%S]." />
 				</div>
 				<div class="subsection">
 					<div class="inputlabel">Timezone:</div>
-					<div>
-						<input type="text" name="timezone" value="<? VAR Timezone ?>" class="half" list="timezone_list" />
-						<datalist id="timezone_list">
-							<? LOOP TZLoop ?>
-							<option value="<? VAR TZ ?>"/>
-							<? ENDLOOP ?>
-						</datalist>
-					</div>
+					<input type="text" name="timezone" value="<? VAR Timezone ?>" class="half" list="timezone_list"
+						   title="Select your timezone." />
+					<datalist id="timezone_list">
+						<? LOOP TZLoop ?>
+						<option value="<? VAR TZ ?>"/>
+						<? ENDLOOP ?>
+					</datalist>
 				</div>
 				<div class="subsection">
 					<div class="inputlabel">Join Tries:</div>
-					<div><input type="number" name="jointries" value="<? VAR JoinTries ?>" class="third" min="0" /></div>
+					<input type="number" name="jointries" value="<? VAR JoinTries ?>" class="third" min="0"
+						   title="This defines how often ZNC tries to join, if the first join failed,
+								  e.g. due to channel mode +i/+k or if you're banned." />
 				</div>
 				<div class="subsection half">
 					<div class="inputlabel">CTCP Replies:</div>
@@ -239,7 +259,7 @@
 				</div>
 				<div class="subsection">
 					<div class="inputlabel">Skin:</div>
-					<div>
+
 						<? IF SkinLoop ROWS > 1 ?>
 						<select name="skin">
 							<option value="">- Global -</option>
@@ -250,7 +270,7 @@
 						<? ELSE ?>
 						No other skins found
 						<? ENDIF ?>
-					</div>
+
 				</div>
 				<div style="clear: both;"></div>
 			</div>

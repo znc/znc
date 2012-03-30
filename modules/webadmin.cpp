@@ -653,6 +653,8 @@ public:
 				l["Name"] = Info.GetName();
 				l["Description"] = Info.GetDescription();
 				l["Wiki"] = Info.GetWikiPage();
+				l["HasArgs"] = CString(Info.GetHasArgs());
+				l["ArgsHelpText"] = Info.GetArgsHelpText();
 
 				if (pNetwork) {
 					CModule *pModule = pNetwork->GetModules().FindModule(Info.GetName());
@@ -1013,6 +1015,8 @@ public:
 				l["Name"] = Info.GetName();
 				l["Description"] = Info.GetDescription();
 				l["Wiki"] = Info.GetWikiPage();
+				l["HasArgs"] = CString(Info.GetHasArgs());
+				l["ArgsHelpText"] = Info.GetArgsHelpText();
 
 				CModule *pModule = NULL;
 				if (pUser)
@@ -1325,6 +1329,8 @@ public:
 				l["Name"] = Info.GetName();
 				l["Description"] = Info.GetDescription();
 				l["Wiki"] = Info.GetWikiPage();
+				l["HasArgs"] = CString(Info.GetHasArgs());
+				l["ArgsHelpText"] = Info.GetArgsHelpText();
 			}
 
 			return true;

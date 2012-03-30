@@ -97,6 +97,8 @@ private:
 
 template<> void TModInfo<CFailToBanMod>(CModInfo& Info) {
 	Info.SetWikiPage("fail2ban");
+	Info.SetHasArgs(true);
+	Info.SetArgsHelpText("Please enter the time in minutes for the IP banning and the number of failed logins before any action is taken.");
 }
 
 GLOBALMODULEDEFS(CFailToBanMod, "Block IPs for some time after a failed login")

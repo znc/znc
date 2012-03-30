@@ -243,6 +243,8 @@ public:
 
 template<> void TModInfo<CSampleMod>(CModInfo& Info) {
 	Info.SetWikiPage("sample");
+	Info.SetHasArgs(true);
+	Info.SetArgsHelpText("Please describe the arguments used by your module in one or two sentences.");
 }
 
 USERMODULEDEFS(CSampleMod, "To be used as a sample for writing modules")

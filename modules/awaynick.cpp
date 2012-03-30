@@ -189,6 +189,8 @@ void CAwayNickTimer::RunJob() {
 
 template<> void TModInfo<CAwayNickMod>(CModInfo& Info) {
 	Info.SetWikiPage("awaynick");
+	Info.SetHasArgs(true);
+	Info.SetArgsHelpText("This will be your nickname while you are away. Examples: nick_off or zzz_nick.");
 }
 
 NETWORKMODULEDEFS(CAwayNickMod, "Change your nick while you are away")

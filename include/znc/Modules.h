@@ -217,6 +217,8 @@ public:
 	const CString& GetPath() const { return m_sPath; }
 	const CString& GetDescription() const { return m_sDescription; }
 	const CString& GetWikiPage() const { return m_sWikiPage; }
+	const CString& GetArgsHelpText() const { return m_sArgsHelpText; }
+	bool GetHasArgs() const { return m_bHasArgs; }
 	ModLoader GetLoader() const { return m_fLoader; }
 	EModuleType GetDefaultType() const { return m_eDefaultType; }
 	// !Getters
@@ -226,6 +228,8 @@ public:
 	void SetPath(const CString& s) { m_sPath = s; }
 	void SetDescription(const CString& s) { m_sDescription = s; }
 	void SetWikiPage(const CString& s) { m_sWikiPage = s; }
+	void SetArgsHelpText(const CString& s) { m_sArgsHelpText = s; }
+	void SetHasArgs(bool b = false) { m_bHasArgs = b; }
 	void SetLoader(ModLoader fLoader) { m_fLoader = fLoader; }
 	void SetDefaultType(EModuleType eType) { m_eDefaultType = eType; }
 	// !Setters
@@ -237,6 +241,8 @@ protected:
 	CString         m_sPath;
 	CString         m_sDescription;
 	CString         m_sWikiPage;
+	CString         m_sArgsHelpText;
+	bool            m_bHasArgs;
 	ModLoader       m_fLoader;
 };
 
