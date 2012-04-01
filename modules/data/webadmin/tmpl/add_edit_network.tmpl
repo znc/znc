@@ -1,3 +1,4 @@
+<? AddRow JSLoop HREF=/modfiles/global/webadmin/webadmin.js ?>
 <? INC Header.tmpl ?>
 
 <? IF Edit ?>
@@ -58,20 +59,6 @@
 					<br /><span class="info">One server per line, host [[+]port] [password]</span>
 				</div>
 
-				<script type="text/javascript">
-					function floodprotection_change() {
-						var protection = document.getElementById('floodprotection_checkbox');
-						var rate = document.getElementById('floodrate');
-						var burst = document.getElementById('floodburst');
-						if (protection.checked) {
-							rate.removeAttribute('disabled');
-							burst.removeAttribute('disabled');
-						} else {
-							rate.disabled = 'disabled';
-							burst.disabled = 'disabled';
-						}
-					}
-				</script>
 				<div class="subsection">
 					<div class="inputlabel">Flood protection:</div>
 					<div class="checkbox">
