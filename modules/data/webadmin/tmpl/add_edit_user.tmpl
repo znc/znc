@@ -74,27 +74,33 @@
 				</div>
 				<div style="clear: both;"></div>
 
-			<? IF BindHostLoop ?>
+				<? IF BindHostEdit ?>
 				<div class="subsection">
 					<div class="inputlabel">BindHost:</div>
-					<select name="bindhost">
-						<option value="">- Default -</option>
-						<? LOOP BindHostLoop ?><option value="<? VAR BindHost ?>"<? IF Checked ?> selected="selected"<? ENDIF ?>><? VAR BindHost ?></option><? ENDLOOP ?>
-					</select>
+					<? IF BindHostLoop ?>
+						<select name="bindhost">
+							<option value="">- Default -</option>
+							<? LOOP BindHostLoop ?><option value="<? VAR BindHost ?>"<? IF Checked ?> selected="selected"<? ENDIF ?>><? VAR BindHost ?></option><? ENDLOOP ?>
+						</select>
+					<? ELSE ?>
+						<input type="text" name="bindhost" value="<? VAR BindHost ?>"/>
+					<? ENDIF ?>
 				</div>
 				<div style="clear: both;"></div>
-			<? ENDIF ?>
 
-			<? IF DCCBindHostLoop ?>
 				<div class="subsection">
 					<div class="inputlabel">DCCBindHost:</div>
-					<select name="dccbindhost">
-						<option value="">- Default -</option>
-						<? LOOP DCCBindHostLoop ?><option value="<? VAR BindHost ?>"<? IF Checked ?> selected="selected"<? ENDIF ?>><? VAR BindHost ?></option><? ENDLOOP ?>
-					</select>
+					<? IF DCCBindHostLoop ?>
+						<select name="dccbindhost">
+							<option value="">- Default -</option>
+							<? LOOP DCCBindHostLoop ?><option value="<? VAR BindHost ?>"<? IF Checked ?> selected="selected"<? ENDIF ?>><? VAR BindHost ?></option><? ENDLOOP ?>
+						</select>
+					<? ELSE ?>
+						<input type="text" name="dccbindhost" value="<? VAR DCCBindHost ?>"/>
+					<? ENDIF ?>
 				</div>
 				<div style="clear: both;"></div>
-			<? ENDIF ?>
+				<? ENDIF ?>
 
 				<div class="subsection">
 					<div class="inputlabel">Quit Message:</div>

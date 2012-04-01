@@ -967,40 +967,46 @@ public:
 
 			// To change BindHosts be admin or don't have DenySetBindHost
 			if (spSession->IsAdmin() || !spSession->GetUser()->DenySetBindHost()) {
+				Tmpl["BindHostEdit"] = "true";
 				const VCString& vsBindHosts = CZNC::Get().GetBindHosts();
-				bool bFoundBindHost = false;
-				bool bFoundDCCBindHost = false;
-				for (unsigned int b = 0; b < vsBindHosts.size(); b++) {
-					const CString& sBindHost = vsBindHosts[b];
-					CTemplate& l = Tmpl.AddRow("BindHostLoop");
-					CTemplate& k = Tmpl.AddRow("DCCBindHostLoop");
+				if (vsBindHosts.empty()) {
+					Tmpl["BindHost"] = pUser->GetBindHost();
+					Tmpl["DCCBindHost"] = pUser->GetDCCBindHost();
+				} else {
+					bool bFoundBindHost = false;
+					bool bFoundDCCBindHost = false;
+					for (unsigned int b = 0; b < vsBindHosts.size(); b++) {
+						const CString& sBindHost = vsBindHosts[b];
+						CTemplate& l = Tmpl.AddRow("BindHostLoop");
+						CTemplate& k = Tmpl.AddRow("DCCBindHostLoop");
 
-					l["BindHost"] = sBindHost;
-					k["BindHost"] = sBindHost;
+						l["BindHost"] = sBindHost;
+						k["BindHost"] = sBindHost;
 
-					if (pUser && pUser->GetBindHost() == sBindHost) {
+						if (pUser && pUser->GetBindHost() == sBindHost) {
+							l["Checked"] = "true";
+							bFoundBindHost = true;
+						}
+
+						if (pUser && pUser->GetDCCBindHost() == sBindHost) {
+							k["Checked"] = "true";
+							bFoundDCCBindHost = true;
+						}
+					}
+
+					// If our current bindhost is not in the global list...
+					if (pUser && !bFoundBindHost && !pUser->GetBindHost().empty()) {
+						CTemplate& l = Tmpl.AddRow("BindHostLoop");
+
+						l["BindHost"] = pUser->GetBindHost();
 						l["Checked"] = "true";
-						bFoundBindHost = true;
 					}
+					if (pUser && !bFoundDCCBindHost && !pUser->GetDCCBindHost().empty()) {
+						CTemplate& l = Tmpl.AddRow("DCCBindHostLoop");
 
-					if (pUser && pUser->GetDCCBindHost() == sBindHost) {
-						k["Checked"] = "true";
-						bFoundDCCBindHost = true;
+						l["BindHost"] = pUser->GetDCCBindHost();
+						l["Checked"] = "true";
 					}
-				}
-
-				// If our current bindhost is not in the global list...
-				if (pUser && !bFoundBindHost && !pUser->GetBindHost().empty()) {
-					CTemplate& l = Tmpl.AddRow("BindHostLoop");
-
-					l["BindHost"] = pUser->GetBindHost();
-					l["Checked"] = "true";
-				}
-				if (pUser && !bFoundDCCBindHost && !pUser->GetDCCBindHost().empty()) {
-					CTemplate& l = Tmpl.AddRow("DCCBindHostLoop");
-
-					l["BindHost"] = pUser->GetDCCBindHost();
-					l["Checked"] = "true";
 				}
 			}
 
