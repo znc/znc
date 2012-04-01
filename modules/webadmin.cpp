@@ -1311,20 +1311,10 @@ public:
 	}
 
 	bool DelListener(CWebSock& WebSock, CTemplate& Tmpl) {
-		map<CString, VCString> m = WebSock.GetParams();
-		DEBUG("zzz");
-		for (map<CString, VCString>::iterator i = m.begin(); i != m.end(); ++i) {
-			DEBUG("xxxxxxxxxxxxxxxxxxx[" << i->first << "]");
-			for (VCString::iterator it = i->second.begin(); it != i->second.end(); ++it) {
-				DEBUG("yyyyyyyy[" << *it << "]");
-			}
-		}
 		unsigned int uPort = WebSock.GetParam("port").ToUInt();
 		CString sHost = WebSock.GetParam("host");
 		bool bIPv4 = WebSock.GetParam("ipv4").ToBool();
 		bool bIPv6 = WebSock.GetParam("ipv6").ToBool();
-
-		DEBUG("Port [" << WebSock.GetParam("port") << "]");
 
 		EAddrType eAddr = ADDR_ALL;
 		if (bIPv4) {
