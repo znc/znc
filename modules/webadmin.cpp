@@ -970,8 +970,10 @@ public:
 				Tmpl["BindHostEdit"] = "true";
 				const VCString& vsBindHosts = CZNC::Get().GetBindHosts();
 				if (vsBindHosts.empty()) {
-					Tmpl["BindHost"] = pUser->GetBindHost();
-					Tmpl["DCCBindHost"] = pUser->GetDCCBindHost();
+					if (pUser) {
+						Tmpl["BindHost"] = pUser->GetBindHost();
+						Tmpl["DCCBindHost"] = pUser->GetDCCBindHost();
+					}
 				} else {
 					bool bFoundBindHost = false;
 					bool bFoundDCCBindHost = false;
