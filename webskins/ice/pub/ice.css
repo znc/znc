@@ -92,7 +92,7 @@ table thead {
 thead td {
 	font-size: 13px;
 	border-bottom: 1px solid #000;
-	min-width: 50px;
+	min-width: 35px;
 }
 
 th {

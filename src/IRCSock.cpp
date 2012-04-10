@@ -330,10 +330,14 @@ void CIRCSock::ReadLine(const CString& sData) {
 							// The client doesn't support multi-prefix so we need to remove
 							// the other prefixes.
 
-							CString sNewLine = sServer + " 352 " + sLine.Token(2) + " " + \
-								sLine.Token(3) + " " + sIdent + " " + sHost + " " + \
-								sLine.Token(6)  + " " + sNick[0] + \
-								sNick.substr(sNick.find_first_not_of(GetPerms())) + " " + \
+							CString sNewNick = sNick;
+							size_t pos = sNick.find_first_not_of(GetPerms());
+							if (pos >= 2 && pos != CString::npos) {
+								sNewNick = sNick[0] + sNick.substr(pos);
+							}
+							CString sNewLine = sServer + " 352 " + sLine.Token(2) + " " +
+								sLine.Token(3) + " " + sIdent + " " + sHost + " " +
+								sLine.Token(6)  + " " + sNewNick + " " +
 								sLine.Token(8, true);
 							m_pNetwork->PutUser(sNewLine, pClient);
 						}

@@ -1,3 +1,4 @@
+<? AddRow JSLoop HREF=/modfiles/global/webadmin/webadmin.js ?>
 <? INC Header.tmpl ?>
 
 <? IF Edit ?>
@@ -61,20 +62,6 @@
 					<br /><span class="info">One server per line, host [[+]port] [password]</span>
 				</div>
 
-				<script type="text/javascript">
-					function floodprotection_change() {
-						var protection = document.getElementById('floodprotection_checkbox');
-						var rate = document.getElementById('floodrate');
-						var burst = document.getElementById('floodburst');
-						if (protection.checked) {
-							rate.removeAttribute('disabled');
-							burst.removeAttribute('disabled');
-						} else {
-							rate.disabled = 'disabled';
-							burst.disabled = 'disabled';
-						}
-					}
-				</script>
 				<div class="subsection">
 					<div class="inputlabel">Flood protection:</div>
 					<div class="checkbox">
@@ -126,7 +113,7 @@
 						<td>BufferCount</td>
 						<td>Options</td>
 				<? ELSE ?>
-						<td>&nbsp;&nbsp;&lt;- Add a channel (opens in same page)&nbsp;&nbsp;</td>
+						<td>&lt;- Add a channel (opens in same page)</td>
 				<? ENDIF ?>
 					</tr>
 					</thead>
@@ -173,7 +160,13 @@
 							<input type="checkbox" name="loadmod" id="lm_<? VAR Name ?>" value="<? VAR Name ?>"<? IF Checked ?> checked="checked"<? ENDIF ?><? IF Disabled ?> disabled="disabled"<? ENDIF ?> /><label for="lm_<? VAR Name ?>"> <? IF Wiki ?><a href="http://wiki.znc.in/<? VAR Wiki ?>"><? VAR Name ?></a> <? ELSE ?> <? VAR Name ?> <? ENDIF ?></label>
 						</td>
 						<td class="mod_args">
-							<? IF Disabled ?><? VAR Args ?><? ELSE ?><input class="third" type="text" name="modargs_<? VAR Name ?>" value="<? VAR Args ?>" /><? ENDIF ?>
+							<? IF Disabled ?>
+							<? VAR Args ?>
+							<? ELSE ?>
+							<input class="third" type="text" name="modargs_<? VAR Name ?>" value="<? VAR Args ?>"
+							<? IF !HasArgs ?> disabled="disabled"<? ENDIF ?>
+							<? IF ArgsHelpText ?> title="<? VAR ArgsHelpText ?>"<? ENDIF ?> />
+							<? ENDIF ?>
 						</td>
 						<td class="mod_descr"><? VAR Description ?></td>
 					</tr>

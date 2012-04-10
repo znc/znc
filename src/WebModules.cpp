@@ -687,12 +687,13 @@ CWebSock::EPageReqResult CWebSock::OnPageRequestInternal(const CString& sURI, CS
 				break;
 		}
 
+		if (!pModule)
+			return PAGE_NOTFOUND;
+
 		m_Template["ModPath"] = pModule->GetWebPath();
 		m_Template["ModFilesPath"] = pModule->GetWebFilesPath();
 
-		if (!pModule) {
-			return PAGE_NOTFOUND;
-		} else if (pModule->WebRequiresLogin() && !ForceLogin()) {
+		if (pModule->WebRequiresLogin() && !ForceLogin()) {
 			return PAGE_PRINT;
 		} else if (pModule->WebRequiresAdmin() && !GetSession()->IsAdmin()) {
 			PrintErrorPage(403, "Forbidden", "You need to be an admin to access this module");

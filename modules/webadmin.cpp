@@ -513,6 +513,20 @@ public:
 			return TrafficPage(WebSock, Tmpl);
 		} else if (sPageName == "index") {
 			return true;
+		} else if (sPageName == "add_listener") {
+			// Admin Check
+			if (!spSession->IsAdmin()) {
+				return false;
+			}
+
+			return AddListener(WebSock, Tmpl);
+		} else if (sPageName == "del_listener") {
+			// Admin Check
+			if (!spSession->IsAdmin()) {
+				return false;
+			}
+
+			return DelListener(WebSock, Tmpl);
 		}
 
 		return false;
@@ -955,40 +969,48 @@ public:
 
 			// To change BindHosts be admin or don't have DenySetBindHost
 			if (spSession->IsAdmin() || !spSession->GetUser()->DenySetBindHost()) {
+				Tmpl["BindHostEdit"] = "true";
 				const VCString& vsBindHosts = CZNC::Get().GetBindHosts();
-				bool bFoundBindHost = false;
-				bool bFoundDCCBindHost = false;
-				for (unsigned int b = 0; b < vsBindHosts.size(); b++) {
-					const CString& sBindHost = vsBindHosts[b];
-					CTemplate& l = Tmpl.AddRow("BindHostLoop");
-					CTemplate& k = Tmpl.AddRow("DCCBindHostLoop");
+				if (vsBindHosts.empty()) {
+					if (pUser) {
+						Tmpl["BindHost"] = pUser->GetBindHost();
+						Tmpl["DCCBindHost"] = pUser->GetDCCBindHost();
+					}
+				} else {
+					bool bFoundBindHost = false;
+					bool bFoundDCCBindHost = false;
+					for (unsigned int b = 0; b < vsBindHosts.size(); b++) {
+						const CString& sBindHost = vsBindHosts[b];
+						CTemplate& l = Tmpl.AddRow("BindHostLoop");
+						CTemplate& k = Tmpl.AddRow("DCCBindHostLoop");
 
-					l["BindHost"] = sBindHost;
-					k["BindHost"] = sBindHost;
+						l["BindHost"] = sBindHost;
+						k["BindHost"] = sBindHost;
 
-					if (pUser && pUser->GetBindHost() == sBindHost) {
+						if (pUser && pUser->GetBindHost() == sBindHost) {
+							l["Checked"] = "true";
+							bFoundBindHost = true;
+						}
+
+						if (pUser && pUser->GetDCCBindHost() == sBindHost) {
+							k["Checked"] = "true";
+							bFoundDCCBindHost = true;
+						}
+					}
+
+					// If our current bindhost is not in the global list...
+					if (pUser && !bFoundBindHost && !pUser->GetBindHost().empty()) {
+						CTemplate& l = Tmpl.AddRow("BindHostLoop");
+
+						l["BindHost"] = pUser->GetBindHost();
 						l["Checked"] = "true";
-						bFoundBindHost = true;
 					}
+					if (pUser && !bFoundDCCBindHost && !pUser->GetDCCBindHost().empty()) {
+						CTemplate& l = Tmpl.AddRow("DCCBindHostLoop");
 
-					if (pUser && pUser->GetDCCBindHost() == sBindHost) {
-						k["Checked"] = "true";
-						bFoundDCCBindHost = true;
+						l["BindHost"] = pUser->GetDCCBindHost();
+						l["Checked"] = "true";
 					}
-				}
-
-				// If our current bindhost is not in the global list...
-				if (pUser && !bFoundBindHost && !pUser->GetBindHost().empty()) {
-					CTemplate& l = Tmpl.AddRow("BindHostLoop");
-
-					l["BindHost"] = pUser->GetBindHost();
-					l["Checked"] = "true";
-				}
-				if (pUser && !bFoundDCCBindHost && !pUser->GetDCCBindHost().empty()) {
-					CTemplate& l = Tmpl.AddRow("DCCBindHostLoop");
-
-					l["BindHost"] = pUser->GetDCCBindHost();
-					l["Checked"] = "true";
 				}
 			}
 
@@ -1237,7 +1259,100 @@ public:
 		return true;
 	}
 
+	bool AddListener(CWebSock& WebSock, CTemplate& Tmpl) {
+		unsigned int uPort = WebSock.GetParam("port").ToUInt();
+		CString sHost = WebSock.GetParam("host");
+		if (sHost == "*") sHost = "";
+		bool bSSL = WebSock.GetParam("ssl").ToBool();
+		bool bIPv4 = WebSock.GetParam("ipv4").ToBool();
+		bool bIPv6 = WebSock.GetParam("ipv6").ToBool();
+		bool bIRC = WebSock.GetParam("irc").ToBool();
+		bool bWeb = WebSock.GetParam("web").ToBool();
+
+		EAddrType eAddr = ADDR_ALL;
+		if (bIPv4) {
+			if (bIPv6) {
+				eAddr = ADDR_ALL;
+			} else {
+				eAddr = ADDR_IPV4ONLY;
+			}
+		} else {
+			if (bIPv6) {
+				eAddr = ADDR_IPV6ONLY;
+			} else {
+				WebSock.GetSession()->AddError("Choose either IPv4 or IPv6 or both.");
+				return SettingsPage(WebSock, Tmpl);
+			}
+		}
+
+		CListener::EAcceptType eAccept;
+		if (bIRC) {
+			if (bWeb) {
+				eAccept = CListener::ACCEPT_ALL;
+			} else {
+				eAccept = CListener::ACCEPT_IRC;
+			}
+		} else {
+			if (bWeb) {
+				eAccept = CListener::ACCEPT_HTTP;
+			} else {
+				WebSock.GetSession()->AddError("Choose either IRC or Web or both.");
+				return SettingsPage(WebSock, Tmpl);
+			}
+		}
+
+		CString sMessage;
+		if (CZNC::Get().AddListener(uPort, sHost, bSSL, eAddr, eAccept, sMessage)) {
+			if (!sMessage.empty()) {
+				WebSock.GetSession()->AddSuccess(sMessage);
+			}
+			if (!CZNC::Get().WriteConfig()) {
+				WebSock.GetSession()->AddError("Port changed, but config was not written");
+			}
+		} else {
+			WebSock.GetSession()->AddError(sMessage);
+		}
+
+		return SettingsPage(WebSock, Tmpl);
+	}
+
+	bool DelListener(CWebSock& WebSock, CTemplate& Tmpl) {
+		unsigned int uPort = WebSock.GetParam("port").ToUInt();
+		CString sHost = WebSock.GetParam("host");
+		bool bIPv4 = WebSock.GetParam("ipv4").ToBool();
+		bool bIPv6 = WebSock.GetParam("ipv6").ToBool();
+
+		EAddrType eAddr = ADDR_ALL;
+		if (bIPv4) {
+			if (bIPv6) {
+				eAddr = ADDR_ALL;
+			} else {
+				eAddr = ADDR_IPV4ONLY;
+			}
+		} else {
+			if (bIPv6) {
+				eAddr = ADDR_IPV6ONLY;
+			} else {
+				WebSock.GetSession()->AddError("Invalid request.");
+				return SettingsPage(WebSock, Tmpl);
+			}
+		}
+
+		CListener* pListener = CZNC::Get().FindListener(uPort, sHost, eAddr);
+		if (pListener) {
+			CZNC::Get().DelListener(pListener);
+			if (!CZNC::Get().WriteConfig()) {
+				WebSock.GetSession()->AddError("Port changed, but config was not written");
+			}
+		} else {
+			WebSock.GetSession()->AddError("The specified listener was not found.");
+		}
+
+		return SettingsPage(WebSock, Tmpl);
+	}
+
 	bool SettingsPage(CWebSock& WebSock, CTemplate& Tmpl) {
+		Tmpl.SetFile("settings.tmpl");
 		if (!WebSock.GetParam("submitted").ToUInt()) {
 			CString sBindHosts, sMotd;
 			Tmpl["Action"] = "settings";
@@ -1271,6 +1386,11 @@ public:
 
 				l["IsWeb"] = CString(pListener->GetAcceptType() != CListener::ACCEPT_IRC);
 				l["IsIRC"] = CString(pListener->GetAcceptType() != CListener::ACCEPT_HTTP);
+
+				// simple protection for user from shooting his own foot
+				// TODO check also for hosts/families
+				// such check is only here, user still can forge HTTP request to delete web port
+				l["SuggestDeletion"] = CString(pListener->GetPort() != WebSock.GetLocalPort());
 
 #ifdef HAVE_LIBSSL
 				if (pListener->IsSSL()) {
