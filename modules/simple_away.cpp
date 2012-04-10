@@ -218,7 +218,7 @@ void CSimpleAwayJob::RunJob() {
 template<> void TModInfo<CSimpleAway>(CModInfo& Info) {
 	Info.SetWikiPage("simple_away");
 	Info.SetHasArgs(true);
-	Info.SetArgsHelpText("Please enter 2 or 3 arguments, like -notimer awaymessage or -timer 5 awaymessage.");
+	Info.SetArgsHelpText("You might enter up to 3 arguments, like -notimer awaymessage or -timer 5 awaymessage.");
 }
 
 NETWORKMODULEDEFS(CSimpleAway, "This module will automatically set you away on IRC while you are disconnected from the bouncer.")
