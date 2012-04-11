@@ -513,6 +513,7 @@ li {
 ul.nav li.active:before {
 	color: red;
 	content: "» ";
+	font-size: 14px;
 	font-weight: bold;
 	/* element is indented by size of content, so subtract width of content */
 	/* add width of padding-right */
