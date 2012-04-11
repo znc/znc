@@ -29,6 +29,7 @@ a:hover {color: red}  /* mouse over link */
 	min-height: 450px;
 	/* box-shadow */
 	-webkit-box-shadow: 1px 1px 2px #ccc;
+	-khtml-box-shadow: 1px 1px 2px #ccc;
 	-moz-box-shadow: 1px 1px 2px #ccc;
 	box-shadow: 1px 1px 2px #ccc;
 	background-color: #F8F8F8; /* just in case, this colors the gap between main min-height and the footer */
@@ -55,8 +56,6 @@ a:hover {color: red}  /* mouse over link */
 }
 
 footer {
-	min-height: 100%;
-	height: auto;
 	clear: both; /* stop the footer from floating. it will be under all the content. */
 	background-color: #F8F8F8; /* same bgcolor as main */
 }
@@ -142,9 +141,10 @@ tr.evenrow td {
 	background-color: #EDEDED;
 	width: 100%; /* of main content */
 	/* box-shadow */
-	-webkit-box-shadow: 1px 1px px #fff; /* inset */
-	-moz-box-shadow: 1px 1px px #fff;
-	box-shadow: 1px 1px px #fff;
+	-webkit-box-shadow: 1px 1px 0px #fff; /* inset */
+	-khtml-box-shadow: 1px 1px 0px #fff;
+	-moz-box-shadow: 1px 1px 0px #fff;
+	box-shadow: 1px 1px 0px #fff;
 }
 
 /* formelements */
@@ -202,6 +202,7 @@ input:focus, textarea:focus, select:focus {
 	/* the shadow color used is the tooltip border color */
 	/* box-shadow */
 	-webkit-box-shadow: 0px 0px 2px #C7BF93;
+	-khtml-box-shadow: 0px 0px 2px #C7BF93;
 	-moz-box-shadow: 0px 0px 2px #C7BF93;
 	box-shadow: 0px 0px 2px #C7BF93;
 }
@@ -359,6 +360,7 @@ input[type="submit"] {
 	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#e1001a', endColorstr='#c50a1f',GradientType=0 ); /* IE6-9 */
 	/* box-shadow */
 	-webkit-box-shadow: 1px 0 0 #C50A1F, -1px 0 0 #C50A1F, 0 1px 0 #C50A1F, 0 -1px 0 #C50A1F, 0 5px 10px -5px #666666;
+	-khtml-box-shadow: 1px 0 0 #C50A1F, -1px 0 0 #C50A1F, 0 1px 0 #C50A1F, 0 -1px 0 #C50A1F, 0 5px 10px -5px #666666;
 	-moz-box-shadow: 1px 0 0 #C50A1F, -1px 0 0 #C50A1F, 0 1px 0 #C50A1F, 0 -1px 0 #C50A1F, 0 5px 10px -5px #666666;
 	box-shadow: 1px 0 0 #C50A1F, -1px 0 0 #C50A1F, 0 1px 0 #C50A1F, 0 -1px 0 #C50A1F, 0 5px 10px -5px #666666;
 	/* text-shadow */
@@ -408,6 +410,7 @@ header {
 	background: linear-gradient(top,  #ca1c21 0%,#b50a0a 100%); /* W3C */
 	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ca1c21', endColorstr='#b50a0a',GradientType=0 ); /* IE6-9 */
 	/* box shadow */
+	box-shadow: 0px 0px 4px rgba(0,0,0,0.55);
 	-moz-box-shadow: 0px 0px 4px rgba(0,0,0,0.55);
 	-khtml-box-shadow: 0px 0px 4px rgba(0,0,0,0.55);
 	-webkit-box-shadow: 0px 0px 4px rgba(0,0,0,0.55);
@@ -466,6 +469,7 @@ header {
 	height: 20px;
 	/* box-shadow */
 	-webkit-box-shadow: 1px 1px 2px #ccc;
+	-khtml-box-shadow: 1px 1px 2px #ccc;
 	-moz-box-shadow: 1px 1px 2px #ccc;
 	box-shadow: 1px 1px 2px #ccc;
 }
