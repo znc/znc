@@ -31,6 +31,7 @@ a:hover {color: red}  /* mouse over link */
 	-webkit-box-shadow: 1px 1px 2px #ccc;
 	-moz-box-shadow: 1px 1px 2px #ccc;
 	box-shadow: 1px 1px 2px #ccc;
+	background-color: #F8F8F8; /* just in case, this colors the gap between main min-height and the footer */
 }
 
 .errorbar {
@@ -51,6 +52,13 @@ a:hover {color: red}  /* mouse over link */
 	background-color: #F8F8F8;
 	padding: 20px;
 	min-height: 450px;
+}
+
+footer {
+	min-height: 100%;
+	height: auto;
+	clear: both; /* stop the footer from floating. it will be under all the content. */
+	background-color: #F8F8F8; /* same bgcolor as main */
 }
 
 aside {
