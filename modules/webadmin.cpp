@@ -53,6 +53,26 @@ inline bool FOR_EACH_MODULE_CanContinue(FOR_EACH_MODULE_Type& state, CModules::i
 	if (FOR_EACH_MODULE_Type FOR_EACH_MODULE_Var = pUser) {} else\
 	for (CModules::iterator I = CZNC::Get().GetModules().begin(); FOR_EACH_MODULE_CanContinue(FOR_EACH_MODULE_Var, I); ++I)
 
+inline CString EscapeColors(const CString& s) {
+	CString result = _NAMEDFMT(s);
+	result.Replace("\x02", "{bold}");
+	result.Replace("\x03", "{color}");
+	result.Replace("\x0f", "{clear}");
+	result.Replace("\x16", "{reverse}");
+	result.Replace("\x1f", "{underline}");
+	return result;
+}
+
+inline CString UnescapeColors(const CString& s) {
+	MCString codes;
+	codes["bold"]      = "\x02";
+	codes["color"]     = "\x03";
+	codes["clear"]     = "\x0f";
+	codes["reverse"]   = "\x16";
+	codes["underline"] = "\x1f";
+	return CString::NamedFormat(s, codes);
+}
+
 class CWebAdminMod : public CModule {
 public:
 	MODCONSTRUCTOR(CWebAdminMod) {
@@ -201,8 +221,8 @@ public:
 		sArg = WebSock.GetParam("statusprefix"); if (!sArg.empty()) { pNewUser->SetStatusPrefix(sArg); }
 		sArg = WebSock.GetParam("ident"); if (!sArg.empty()) { pNewUser->SetIdent(sArg); }
 		sArg = WebSock.GetParam("skin"); if (!sArg.empty()) { pNewUser->SetSkinName(sArg); }
-		sArg = WebSock.GetParam("realname"); if (!sArg.empty()) { pNewUser->SetRealName(sArg); }
-		sArg = WebSock.GetParam("quitmsg"); if (!sArg.empty()) { pNewUser->SetQuitMsg(sArg); }
+		sArg = WebSock.GetParam("realname"); if (!sArg.empty()) { pNewUser->SetRealName(UnescapeColors(sArg)); }
+		sArg = WebSock.GetParam("quitmsg"); if (!sArg.empty()) { pNewUser->SetQuitMsg(UnescapeColors(sArg)); }
 		sArg = WebSock.GetParam("chanmodes"); if (!sArg.empty()) { pNewUser->SetDefaultChanModes(sArg); }
 		sArg = WebSock.GetParam("timestampformat"); if (!sArg.empty()) { pNewUser->SetTimestampFormat(sArg); }
 
@@ -692,7 +712,7 @@ public:
 				Tmpl["Nick"] = pNetwork->GetNick();
 				Tmpl["AltNick"] = pNetwork->GetAltNick();
 				Tmpl["Ident"] = pNetwork->GetIdent();
-				Tmpl["RealName"] = pNetwork->GetRealName();
+				Tmpl["RealName"] = EscapeColors(pNetwork->GetRealName());
 
 				Tmpl["FloodProtection"] = CString(CIRCSock::IsFloodProtected(pNetwork->GetFloodRate()));
 				Tmpl["FloodRate"] = CString(pNetwork->GetFloodRate());
@@ -762,7 +782,7 @@ public:
 		pNetwork->SetNick(WebSock.GetParam("nick"));
 		pNetwork->SetAltNick(WebSock.GetParam("altnick"));
 		pNetwork->SetIdent(WebSock.GetParam("ident"));
-		pNetwork->SetRealName(WebSock.GetParam("realname"));
+		pNetwork->SetRealName(UnescapeColors(WebSock.GetParam("realname")));
 
 		pNetwork->SetIRCConnectEnabled(WebSock.GetParam("doconnect").ToBool());
 
@@ -929,8 +949,8 @@ public:
 				Tmpl["AltNick"] = pUser->GetAltNick();
 				Tmpl["StatusPrefix"] = pUser->GetStatusPrefix();
 				Tmpl["Ident"] = pUser->GetIdent();
-				Tmpl["RealName"] = pUser->GetRealName();
-				Tmpl["QuitMsg"] = pUser->GetQuitMsg();
+				Tmpl["RealName"] = EscapeColors(pUser->GetRealName());
+				Tmpl["QuitMsg"] = EscapeColors(pUser->GetQuitMsg());
 				Tmpl["DefaultChanModes"] = pUser->GetDefaultChanModes();
 				Tmpl["BufferCount"] = CString(pUser->GetBufferCount());
 				Tmpl["TimestampFormat"] = pUser->GetTimestampFormat();
