@@ -220,7 +220,6 @@ h1 {
 	font-size: 20px;
 	font-style: normal;
 	font-weight: bold;
-	text-shadow: 0 1px 0 rgba(255, 255, 255, 0.1), 0 0 30px rgba(255, 255, 255, 0.125);
 }
 
 h3 {
@@ -425,7 +424,7 @@ header {
 	/* black text 1px inset, kind of a relief look */
 	/*text-shadow: 1px 1px 0 #E1001A, -1px -1px 0 #C50A1F;*/
 	/* white inset, on request */
-	text-shadow: 1px 1px 0 #111111, -1px -1px 0 #777777;
+	text-shadow: 1px 1px 0 #444444;
 	width: auto;
 	line-height: 37px;
 }
