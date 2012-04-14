@@ -49,7 +49,7 @@ public:
 		tm* time_info = localtime(&time_now.tv_sec);
 		strftime(buf, sizeof(buf), "[%Y-%m-%d %H:%M:%S.", time_info);
 		std::ostringstream buffer;
-		buffer << buf << std::setw(6) << std::setfill('0') << (time_now.tv_usec) << "]: ";
+		buffer << buf << std::setw(6) << std::setfill('0') << (time_now.tv_usec) << "] ";
 		return buffer.str();
 	}
 
