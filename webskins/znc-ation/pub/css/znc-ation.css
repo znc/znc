@@ -130,6 +130,8 @@ aside {
 /* tables */
 table {
 	font-size: 14px;
+	border: 1px solid #CCCCCC;
+    border-spacing: 1px;
 }
 thead td, th {
 	background-color: #CECECE;
