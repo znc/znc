@@ -65,9 +65,9 @@ a:hover {color: red}  /* mouse over link */
 }
 
 .warning {
-    border-color: #ee9800;
-    background-color: #ffffcc;
-    background-image: url('/pub/img/info.png');
+    color: #00529B;
+    background-color: #BDE5F8;
+    background-image: url('/pub/img/warning.png');
 }
 
 #main {
@@ -118,7 +118,7 @@ aside {
 }
 
 #content {
-	width: 67%;
+	width: 68%;
 }
 
 /* raquo vertical alignment in breadcrumb */
@@ -161,7 +161,6 @@ tr.evenrow td {
 	margin-bottom: 10px;
 	padding-top: 5px;
 	background-color: #EDEDED;
-	width: 100%; /* of main content */
 	/* box-shadow */
 	-webkit-box-shadow: 1px 1px 0px #fff; /* inset */
 	-khtml-box-shadow: 1px 1px 0px #fff;
