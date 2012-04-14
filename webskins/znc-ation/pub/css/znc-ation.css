@@ -67,7 +67,7 @@ a:hover {color: red}  /* mouse over link */
 .warning {
     border-color: #ee9800;
     background-color: #ffffcc;
-    background-image: url('/pub/img/warning.png');
+    background-image: url('/pub/img/info.png');
 }
 
 #main {
