@@ -49,7 +49,7 @@ a:hover {color: red}  /* mouse over link */
 	background-image: url('/pub/img/error.png');
 }
 
-.hint, .warning {
+.hint {
     background-repeat: no-repeat;
     background-position: 10px center;
     border: 1px solid;
@@ -62,12 +62,6 @@ a:hover {color: red}  /* mouse over link */
     color: #00529B;
     background-color: #BDE5F8;
     background-image: url('/pub/img/info.png');
-}
-
-.warning {
-    color: #00529B;
-    background-color: #BDE5F8;
-    background-image: url('/pub/img/warning.png');
 }
 
 #main {
