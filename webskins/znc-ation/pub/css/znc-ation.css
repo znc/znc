@@ -49,6 +49,27 @@ a:hover {color: red}  /* mouse over link */
 	background-image: url('/pub/img/error.png');
 }
 
+.info, .warning {
+    background-repeat: no-repeat;
+    background-position: 10px center;
+    border: 1px solid;
+    border-radius: 5px 5px 5px 5px;
+    margin: 15px 0;
+    padding: 10px 10px 10px 30px;
+}
+
+.info {
+    color: #00529B;
+    background-color: #BDE5F8;
+    background-image: url('/pub/img/info.png');
+}
+
+.warning {
+    border-color: #ee9800;
+    background-color: #ffffcc;
+    background-image: url('/pub/img/warning.png');
+}
+
 #main {
 	background-color: #F8F8F8;
 	padding: 20px;
@@ -424,7 +445,7 @@ header {
 	/* black text 1px inset, kind of a relief look */
 	/*text-shadow: 1px 1px 0 #E1001A, -1px -1px 0 #C50A1F;*/
 	/* white inset, on request */
-	text-shadow: 1px 1px 0 #444444;
+	text-shadow: -1px 0 0 #444444, 0 1px 1px #770000
 	width: auto;
 	line-height: 37px;
 }

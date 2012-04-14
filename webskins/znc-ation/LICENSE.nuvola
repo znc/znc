@@ -24,6 +24,8 @@ key.png         | Nuvola_apps_password
 gears.png       | Nuvola_apps_kcmsystem
 error.png       | Nuvola_apps_error
 user.png        | Nuvola_apps_personal
+warning.png     | Nuvola_apps_important
+info.png        | Info_icon_002
 
 Icon Set Overview
 -----------------
@@ -32,6 +34,6 @@ http://commons.wikimedia.org/wiki/Nuvola/all
 How to get more icons
 ---------------------
 
-Use the following link and save the image.
-http://upload.wikimedia.org/wikipedia/commons/thumb/f/f1/Nuvola_devices_blockdevice.png/32px-Nuvola_devices_blockdevice.png
+Right click on the desired icon and then select "View image".
+Notice, that the URL contains a pixel size. 
 You might adjust the pixel size in the link to 24px.
