@@ -114,6 +114,7 @@ aside {
 	width: 67%;
 	margin-bottom: 15px;
 	padding: 0 0 3px 1px;
+	text-transform: capitalize; /* ucfirst the module name */
 }
 
 #content {
@@ -545,9 +546,10 @@ ul.nav li.active:before {
 }
 
 ul.nav li .title {
- font-weight: bold;
+ 	font-weight: bold;
 }
 ul.nav li .modtitle { /* title of a module */
+	text-transform: capitalize; /* ucfirst the module name */
 }
 
 ul.nav li .subitem  {
