@@ -59,11 +59,11 @@ public:
 	}
 
 	void ViewCommandsCommand(const CString& sLine) {
-		PutModule("IDENTIFY=" + GetNV("IdentifyCmd"));
-		PutModule("GHOST=" + GetNV("GhostCmd"));
-		PutModule("RECOVER=" + GetNV("RecoverCmd"));
-		PutModule("RELEASE=" + GetNV("ReleaseCmd"));
-		PutModule("GROUP=" + GetNV("GroupCmd"));
+		PutModule("IDENTIFY " + GetNV("IdentifyCmd"));
+		PutModule("GHOST " + GetNV("GhostCmd"));
+		PutModule("RECOVER " + GetNV("RecoverCmd"));
+		PutModule("RELEASE " + GetNV("ReleaseCmd"));
+		PutModule("GROUP " + GetNV("GroupCmd"));
 	}
 
 	void SetCommandCommand(const CString& sLine) {
