@@ -526,6 +526,7 @@ bool CZNC::WriteNewConfig(const CString& sConfigFile) {
 	VCString vsLines;
 
 	vsLines.push_back(MakeConfigHeader());
+	vsLines.push_back("Version = " + CString(VERSION, 3));
 
 	m_sConfigFile = ExpandConfigPath(sConfigFile);
 	CUtils::PrintMessage("Building new config");
