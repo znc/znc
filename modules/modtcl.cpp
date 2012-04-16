@@ -1,17 +1,18 @@
 /*
- * Copyright (C) 2004-2011  See the AUTHORS file for details.
+ * Copyright (C) 2004-2012  See the AUTHORS file for details.
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License version 2 as published
  * by the Free Software Foundation.
  */
 
-#include "Chan.h"
-#include "IRCSock.h"
-#include "Modules.h"
-#include "Server.h"
-#include "User.h"
-#include "znc.h"
+#include <znc/Chan.h>
+#include <znc/IRCSock.h>
+#include <znc/Modules.h>
+#include <znc/Server.h>
+#include <znc/User.h>
+#include <znc/IRCNetwork.h>
+#include <znc/znc.h>
 
 #include <tcl.h>
 
@@ -84,13 +85,11 @@ public:
 		Tcl_CreateCommand(interp, "Binds::ProcessNick", tcl_Bind, this, NULL);
 		Tcl_CreateCommand(interp, "Binds::ProcessKick", tcl_Bind, this, NULL);
 		Tcl_CreateCommand(interp, "PutIRC", tcl_PutIRC, this, NULL);
-		Tcl_CreateCommand(interp, "PutIRCAs", tcl_PutIRCAs, this, NULL);
 		Tcl_CreateCommand(interp, "PutModule", tcl_PutModule, this, NULL);
 		Tcl_CreateCommand(interp, "PutStatus", tcl_PutStatus, this, NULL);
 		Tcl_CreateCommand(interp, "PutStatusNotice", tcl_PutStatusNotice, this, NULL);
 		Tcl_CreateCommand(interp, "PutUser", tcl_PutUser, this, NULL);
 
-		Tcl_CreateCommand(interp, "GetLocalIP", tcl_GetLocalIP, this, NULL);
 		Tcl_CreateCommand(interp, "GetCurNick", tcl_GetCurNick, this, NULL);
 		Tcl_CreateCommand(interp, "GetUsername", tcl_GetUsername, this, NULL);
 		Tcl_CreateCommand(interp, "GetRealName", tcl_GetRealName, this, NULL);
@@ -252,15 +251,9 @@ private:
 	// Placeholder for binds incase binds.tcl isn't used
 	static int tcl_Bind STDVAR {return TCL_OK;}
 
-	static int tcl_GetLocalIP STDVAR {
-		CModTcl *mod = static_cast<CModTcl *>(cd);
-		Tcl_SetResult(irp, (char *)mod->m_pUser->GetLocalIP().c_str(), TCL_VOLATILE);
-		return TCL_OK;
-	}
-
 	static int tcl_GetCurNick STDVAR {
 		CModTcl *mod = static_cast<CModTcl *>(cd);
-		Tcl_SetResult(irp, (char *)mod->m_pUser->GetCurNick().c_str(), TCL_VOLATILE);
+		Tcl_SetResult(irp, (char *)mod->m_pNetwork->GetCurNick().c_str(), TCL_VOLATILE);
 		return TCL_OK;
 	}
 
@@ -289,7 +282,7 @@ private:
 
 		BADARGS(1, 1, "");
 
-		const vector<CChan*>& Channels = mod->m_pUser->GetChans();
+		const vector<CChan*>& Channels = mod->m_pNetwork->GetChans();
 		for (unsigned int c = 0; c < Channels.size(); c++) {
 			CChan* pChan = Channels[c];
 			l[0] = pChan->GetName().c_str();
@@ -309,7 +302,7 @@ private:
 		BADARGS(2, 999, " channel");
 
 		CString sChannel = argvit(argv, argc, 1, " ");
-		CChan *pChannel = mod->m_pUser->FindChan(sChannel);
+		CChan *pChannel = mod->m_pNetwork->FindChan(sChannel);
 
 		if (!pChannel) {
 			CString sMsg = "invalid channel: " + sChannel;
@@ -338,7 +331,7 @@ private:
 		BADARGS(2, 999, " channel");
 
 		CString sChannel = argvit(argv, argc, 1, " ");
-		CChan *pChannel = mod->m_pUser->FindChan(sChannel);
+		CChan *pChannel = mod->m_pNetwork->FindChan(sChannel);
 		CString sMsg;
 
 		if (!pChannel) {
@@ -354,7 +347,7 @@ private:
 
 	static int tcl_GetServer STDVAR {
 		CModTcl *mod = static_cast<CModTcl *>(cd);
-		CServer* pServer = mod->m_pUser->GetCurrentServer();
+		CServer* pServer = mod->m_pNetwork->GetCurrentServer();
 		CString sMsg;
 		if (pServer)
 			sMsg = pServer->GetName() + ":" + CString(pServer->GetPort());
@@ -364,7 +357,7 @@ private:
 
 	static int tcl_GetServerOnline STDVAR {
 		CModTcl *mod = static_cast<CModTcl *>(cd);
-		CIRCSock* pIRCSock = mod->m_pUser->GetIRCSock();
+		CIRCSock* pIRCSock = mod->m_pNetwork->GetIRCSock();
 		CString sMsg = "0";
 		if (pIRCSock)
 			sMsg = CString(pIRCSock->GetStartTime());
@@ -414,24 +407,7 @@ private:
 
 		BADARGS(2, 999, " string");
 		sMsg = argvit(argv, argc, 1, " ");
-		mod->m_pUser->PutIRC(sMsg);
-		return TCL_OK;
-	}
-
-	static int tcl_PutIRCAs STDVAR {
-		CString sMsg;
-
-		BADARGS(3, 999, " user string");
-
-		CUser *pUser = CZNC::Get().FindUser(argv[1]);
-		if (!pUser) {
-			sMsg = "invalid user " + CString(argv[1]);
-			Tcl_SetResult(irp, (char*)sMsg.c_str(), TCL_VOLATILE);
-			return TCL_ERROR;
-		}
-
-		sMsg = argvit(argv, argc, 2, " ");
-		pUser->PutIRC(sMsg);
+		mod->m_pNetwork->PutIRC(sMsg);
 		return TCL_OK;
 	}
 
@@ -517,6 +493,8 @@ void CModTclStartTimer::RunJob() {
 
 template<> void TModInfo<CModTcl>(CModInfo& Info) {
 	Info.SetWikiPage("modtcl");
+	Info.SetHasArgs(true);
+	Info.SetArgsHelpText("The argument is the number of seconds to wait before rejoining.");
 }
 
-MODULEDEFS(CModTcl, "Loads Tcl scripts as ZNC modules")
+NETWORKMODULEDEFS(CModTcl, "Loads Tcl scripts as ZNC modules")
