@@ -83,7 +83,7 @@ proc botisvoice {{channel ""}} {return [isvoice $::botnick $channel]}
 
 proc PermCheck {nick perm channel} {
 	if {$channel == ""} {set channel [channels]}
-	if {[ModuleLoaded crypt]} {regsub {^�} $nick {} nick}
+	if {[ModuleLoaded crypt]} {regsub {^\244} $nick {} nick}
 	foreach c $channel {
 		foreach u [GetChannelUsers $c] {
 			if {[string match -nocase $nick [lindex $u 0]] && [string match *$perm* [lindex $u 3]]} {
