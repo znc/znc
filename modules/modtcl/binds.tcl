@@ -6,7 +6,7 @@
 #
 # Binds module to process incoming messages with ZNC modtcl
 #
-# Supported bind types: pubm/pub, time, evnt, nick, bot, dcc, kick
+# Supported bind types: pub/pubm, msg/msgm, time, evnt, nick, bot, dcc, kick
 #  evnt: prerehash,rehash,init-server,disconnect-server
 #
 
@@ -19,7 +19,7 @@ namespace eval Binds {
 
 # procs
 	proc Add {type flags cmd {procname ""}} {
-		if {![regexp {^(pub|pubm|nick|mode|raw|bot|time|evnt|dcc|kick)$} $type]} {
+		if {![regexp {^(pub|pubm|msg|msgm|nick|mode|raw|bot|time|evnt|dcc|kick)$} $type]} {
 			PutModule "Tcl error: Bind type: $type not supported"
 			return
 		}
@@ -53,9 +53,25 @@ namespace eval Binds {
 		}
 		foreach {type flags mask hits proc} [join [binds pubm]] {
 			regsub {^%} $mask {*} mask
-			if {[ModuleLoaded crypt]} {regsub {^¤} $nick {} nick}
+			if {[ModuleLoaded crypt]} {regsub {^\244} $nick {} nick}
 			if {[string match -nocase $mask "$channel $text"]} {
 				$proc $nick $user $handle $channel $text
+			}
+		}
+	}
+
+	proc ProcessMsgm {nick user handle text} {
+		# Loop bind list and execute
+		foreach n [binds msg] {
+			if {[string match [lindex $n 2] [lindex [split $text] 0]]} {
+				[lindex $n 4] $nick $user $handle [lrange [join $text] 1 end]
+			}
+		}
+		foreach {type flags mask hits proc} [join [binds msgm]] {
+			regsub {^%} $mask {*} mask
+			if {[ModuleLoaded crypt]} {regsub {^\244} $nick {} nick}
+			if {[string match -nocase $mask "$text"]} {
+				$proc $nick $user $handle $text
 			}
 		}
 	}
@@ -137,4 +153,4 @@ proc ::unbind {type flags cmd procname} {Binds::Del $type $flags $cmd $procname}
 proc ::binds {{type ""}} {if {$type != ""} {set type "$type "};return [lsearch -all -inline $Binds::List "$type*"]}
 proc ::bindlist {{type ""}} {foreach bind $Binds::List {PutModule "$bind"}}
 
-PutModule "modtcl script loaded: Binds v0.1"
+PutModule "modtcl script loaded: Binds v0.2"
