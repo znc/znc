@@ -262,11 +262,11 @@ void CSockManager::SetTDNSThreadFinished(TDNSTask* task, bool bBind, addrinfo* a
 		CString sBindhost;
 		CString sTargetHost;
 		if (!task->sBindhost.empty()) {
-			char s[40] = {}; // 40 is enough for both ipv4 and ipv6 addresses, including 0 terminator.
+			char s[INET6_ADDRSTRLEN] = {};
 			getnameinfo(aiBind->ai_addr, aiBind->ai_addrlen, s, sizeof(s), NULL, 0, NI_NUMERICHOST);
 			sBindhost = s;
 		}
-		char s[40] = {};
+		char s[INET6_ADDRSTRLEN] = {};
 		getnameinfo(aiTarget->ai_addr, aiTarget->ai_addrlen, s, sizeof(s), NULL, 0, NI_NUMERICHOST);
 		sTargetHost = s;
 
