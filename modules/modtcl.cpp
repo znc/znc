@@ -397,7 +397,7 @@ private:
 
 	static int tcl_GetClientCount STDVAR {
 		CModTcl *mod = static_cast<CModTcl *>(cd);
-		Tcl_SetResult(irp, (char *)CString(mod->m_pUser->GetClients().size()).c_str(), TCL_VOLATILE);
+		Tcl_SetResult(irp, (char *)CString(mod->m_pNetwork->GetClients().size()).c_str(), TCL_VOLATILE);
 		return TCL_OK;
 	}
 
