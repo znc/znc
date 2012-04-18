@@ -6,7 +6,7 @@
 #
 # Binds module to process incoming messages with ZNC modtcl
 #
-# Supported bind types: pubm/pub, time, evnt, nick, bot, dcc, kick
+# Supported bind types: bot, dcc, evnt, kick, msg, msgm, nick, pub, pubm, time
 #  evnt: prerehash,rehash,init-server,disconnect-server
 #
 
@@ -19,15 +19,11 @@ namespace eval Binds {
 
 # procs
 	proc Add {type flags cmd {procname ""}} {
-		if {![regexp {^(pub|pubm|nick|mode|raw|bot|time|evnt|dcc|kick)$} $type]} {
+		if {![regexp {^(bot|dcc|evnt|kick|msg|msgm|nick|pub|pubm|time)$} $type]} {
 			PutModule "Tcl error: Bind type: $type not supported"
 			return
 		}
 		# ToDo: Flags check from user info (IsAdmin, etc)
-		if {$procname == ""} {
-			PutModule "Tcl error: Without a proc binds are useless"
-			return
-		}
 		# ToDo: bind hit counter
 		if {[lsearch $Binds::List "$type $flags [list $cmd] 0 [list $procname]"] == -1} {
 			lappend Binds::List "$type $flags [list $cmd] 0 [list $procname]"
@@ -53,9 +49,25 @@ namespace eval Binds {
 		}
 		foreach {type flags mask hits proc} [join [binds pubm]] {
 			regsub {^%} $mask {*} mask
-			if {[ModuleLoaded crypt]} {regsub {^¤} $nick {} nick}
+			if {[ModuleLoaded crypt]} {regsub {^\244} $nick {} nick}
 			if {[string match -nocase $mask "$channel $text"]} {
 				$proc $nick $user $handle $channel $text
+			}
+		}
+	}
+
+	proc ProcessMsgm {nick user handle text} {
+		# Loop bind list and execute
+		foreach n [binds msg] {
+			if {[string match [lindex $n 2] [lindex [split $text] 0]]} {
+				[lindex $n 4] $nick $user $handle [lrange [join $text] 1 end]
+			}
+		}
+		foreach {type flags mask hits proc} [join [binds msgm]] {
+			regsub {^%} $mask {*} mask
+			if {[ModuleLoaded crypt]} {regsub {^\244} $nick {} nick}
+			if {[string match -nocase $mask "$text"]} {
+				$proc $nick $user $handle $text
 			}
 		}
 	}
@@ -111,8 +123,12 @@ namespace eval Binds {
 
 	proc ProcessKick {nick user handle channel target reason} {
 		foreach n [binds kick] {
-			if {[string match [lindex $n 2 0] $channel] && [string match [lindex $n 2 1] $target]} {
-				[lindex $n 4] $nick $user $handle $channel $target $reason
+			if {[string match [lindex $n 2 0] $channel]} {
+				if {[llength [lindex $n 2]] <= 1 || [string match [lindex $n 2 1] $target]} {
+					if {[llength [lindex $n 2]] <= 2 || [string match [lindex $n 2 2] $reason]} {
+						[lindex $n 4] $nick $user $handle $channel $target $reason
+					}
+				}
 			}
 		}
 	}
@@ -132,9 +148,9 @@ namespace eval Binds {
 }
 
 # Provide aliases according to eggdrop specs
-proc ::bind {type flags cmd {procname ""}} {Binds::Add $type $flags $cmd $procname}
+proc ::bind {type flags cmd procname} {Binds::Add $type $flags $cmd $procname}
 proc ::unbind {type flags cmd procname} {Binds::Del $type $flags $cmd $procname}
 proc ::binds {{type ""}} {if {$type != ""} {set type "$type "};return [lsearch -all -inline $Binds::List "$type*"]}
 proc ::bindlist {{type ""}} {foreach bind $Binds::List {PutModule "$bind"}}
 
-PutModule "modtcl script loaded: Binds v0.1"
+PutModule "modtcl script loaded: Binds v0.2"

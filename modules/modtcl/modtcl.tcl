@@ -32,7 +32,7 @@ proc puthelp {text {option ""}} {
 	if {[regexp -nocase {^(?:privmsg|notice) (\S+) :(.*)} $text . target line]} {
 		if {$target == "*modtcl"} {PutModule $line; return}
 		if {$target == "*status"} {PutStatus $line; return}
-		if {[botonchan $target]} {PutUser ":$::botnick![getchanhost $::botnick] $text"}
+		if {[string index $target 0] != "#" || [botonchan $target]} {PutUser ":$::botnick![getchanhost $::botnick] $text"}
 	}
 	PutIRC $text
 }
@@ -83,7 +83,7 @@ proc botisvoice {{channel ""}} {return [isvoice $::botnick $channel]}
 
 proc PermCheck {nick perm channel} {
 	if {$channel == ""} {set channel [channels]}
-	if {[ModuleLoaded crypt]} {regsub {^¤} $nick {} nick}
+	if {[ModuleLoaded crypt]} {regsub {^\244} $nick {} nick}
 	foreach c $channel {
 		foreach u [GetChannelUsers $c] {
 			if {[string match -nocase $nick [lindex $u 0]] && [string match *$perm* [lindex $u 3]]} {
