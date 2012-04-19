@@ -450,7 +450,7 @@ bool CHTTPSock::PrintErrorPage(unsigned int uStatusId, const CString& sStatusMsg
 			"</body>\r\n"
 		"</html>\r\n";
 
-	PrintHeader(sPage.length(), "application/xhtml+xml; charset=utf-8", uStatusId, sStatusMsg);
+	PrintHeader(sPage.length(), "text/html; charset=utf-8", uStatusId, sStatusMsg);
 	Write(sPage);
 	Close(Csock::CLT_AFTERWRITE);
 
@@ -492,7 +492,7 @@ bool CHTTPSock::PrintHeader(off_t uContentLength, const CString& sContentType, u
 	}
 
 	if (m_sContentType.empty()) {
-		m_sContentType = "application/xhtml+xml; charset=utf-8";
+		m_sContentType = "text/html; charset=utf-8";
 	}
 
 	DEBUG("- " << uStatusId << " (" << sStatusMsg << ") [" << m_sContentType << "]");
