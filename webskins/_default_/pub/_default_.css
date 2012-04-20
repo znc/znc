@@ -364,3 +364,124 @@ td {
 .textsection p {
 	margin-bottom: 0.7em;
 }
+
+.listeners {
+	display: table
+}
+
+.listeners_header {
+	display: table-row
+}
+
+.listeners_header1 {
+	display: table-cell
+}
+
+.listener_show {
+	display: table-row
+}
+
+.listener_show_port {
+	display: table-cell
+}
+
+.listener_show_host {
+	display: table-cell
+}
+
+.listener_show_ssl {
+	display: table-cell
+}
+
+.listener_show_ipv4 {
+	display: table-cell
+}
+
+.listener_show_ipv6 {
+	display: table-cell
+}
+
+.listener_show_irc {
+	display: table-cell
+}
+
+.listener_show_web {
+	display: table-cell
+}
+
+.listener_show_delete {
+	display: table-cell
+}
+
+.listener_add {
+	display: table-row
+}
+
+.listener_add_port {
+	display: table-cell
+}
+
+.listener_add_host {
+	display: table-cell
+}
+
+.listener_add_ssl {
+	display: table-cell
+}
+
+.listener_add_ipv4 {
+	display: table-cell
+}
+
+.listener_add_ipv6 {
+	display: table-cell
+}
+
+.listener_add_irc {
+	display: table-cell
+}
+
+.listener_add_web {
+	display: table-cell
+}
+
+.listener_add_submit {
+	display: table-cell
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
