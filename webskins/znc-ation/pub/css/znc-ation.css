@@ -47,6 +47,8 @@ a:hover {color: red}  /* mouse over link */
 	width: 64%;
 	margin-left: 10px;
 	background-image: url('/pub/img/error.png');
+	text-shadow: 1px 1px 1px #FFFFFF;
+	border-radius: 5px;
 }
 
 .hint {
@@ -56,7 +58,7 @@ a:hover {color: red}  /* mouse over link */
     border-radius: 5px 5px 5px 5px;
     margin: 15px 0;
     padding: 10px 10px 10px 50px;
-    text-shadow: 1px 1px 0 #FFFFFF;
+    text-shadow: 1px 1px 1px #FFFFFF;
 }
 
 .hint {
@@ -299,6 +301,12 @@ td.mod_name {
 }
 .rounded-bottom-right {
 	border-radius: 0 0 20px 0;
+}
+.rounded-edges-5 {
+	border-radius: 5px;
+}
+.rounded-edges-10 {
+	border-radius: 10px;
 }
 /* universal background-colors, they are used on the box headings */
 .blue {
