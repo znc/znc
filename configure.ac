@@ -357,7 +357,7 @@ if test "x$PYTHON" != "xno"; then
 	if test "x$USESWIG" = xyes; then :
 		PKG_CHECK_MODULES([python32], [$PYTHON >= 3.2], [PYTHON_32=yes], [PYTHON_32=no])
 		if test "x$PYTHON_32" = xyes; then
-			AC_MSG_NOTICE([python 3.2+ found, requiring newer swig.])
+			AC_MSG_NOTICE([python 3.2+ found, requiring swig 2.0.4+])
 			AC_PROG_SWIG([2.0.4])
 			if test -z "$SWIG"; then
 				AC_MSG_ERROR([$SWIG_ERROR])
