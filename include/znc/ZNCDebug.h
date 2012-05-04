@@ -10,6 +10,7 @@
 #define ZNCDEBUG_H
 
 #include <znc/zncconfig.h>
+#include <znc/ZNCString.h>
 #include <iostream>
 #include <ctime>
 #include <sys/time.h>
@@ -42,11 +43,12 @@ public:
 	static bool StdoutIsTTY() { return stdoutIsTTY; }
 	static void SetDebug(bool b) { debug = b; }
 	static bool Debug() { return debug; }
-	static std::string GetTimestamp() {
+	static CString GetTimestamp() {
 		char buf[64];
 		timeval time_now;
 		gettimeofday(&time_now, NULL);
-		tm* time_info = localtime(&time_now.tv_sec);
+		time_t currentSec = (time_t) time_now.tv_sec; // cast from long int
+		tm* time_info = localtime(&currentSec);
 		strftime(buf, sizeof(buf), "[%Y-%m-%d %H:%M:%S.", time_info);
 		std::ostringstream buffer;
 		buffer << buf << std::setw(6) << std::setfill('0') << (time_now.tv_usec) << "] ";
