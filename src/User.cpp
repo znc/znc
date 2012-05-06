@@ -15,6 +15,7 @@
 #include <znc/Server.h>
 #include <znc/znc.h>
 #include <znc/Modules.h>
+#include <math.h>
 
 class CUserTimer : public CCron {
 public:
@@ -223,7 +224,7 @@ bool CUser::ParseConfig(CConfig* pConfig, CString& sError) {
 		SetTimezone(sValue);
 	}
 	if (pConfig->FindStringEntry("timezoneoffset", sValue)) {
-		if (abs(sValue.ToDouble()) > 0.1) {
+		if (fabs(sValue.ToDouble()) > 0.1) {
 			CUtils::PrintError("WARNING: TimezoneOffset has been deprecated, now you can set your timezone by name");
 		}
 	}
