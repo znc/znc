@@ -202,22 +202,42 @@ AC_SEARCH_LIBS([dlopen], [dl], [],
 
 # ----- Check for pthreads
 
+DNS_TEXT=blocking
 if test "x$TDNS" != "xno"; then
 	old_TDNS=$TDNS
 	AX_PTHREAD([
-		TDNS=yes
+		AC_MSG_CHECKING([whether getaddrinfo() supports AI_ADDRCONFIG])
+		AC_COMPILE_IFELSE([
+			AC_LANG_PROGRAM([[
+				#include <sys/types.h>
+				#include <sys/socket.h>
+				#include <netdb.h>
+			]], [[
+				int x = AI_ADDRCONFIG;
+			]])
+		], [
+			AC_MSG_RESULT([yes])
+			TDNS=yes
+		], [
+			AC_MSG_RESULT([no])
+			TDNS=no
+			# Note that broken systems, such as OpenBSD, NetBSD, which don't support AI_ADDRCONFIG,
+			# also have thread-unsafe getaddrinfo().
+		])
+	], [
+		TDNS=no
+	])
+	if test "x$TDNS" = "xyes"; then
 		DNS_TEXT=threads
 		AC_DEFINE([HAVE_THREADED_DNS], [1], [Define if threaded DNS is enabled])
 		appendCXX "$PTHREAD_CFLAGS"
 		appendLib "$PTHREAD_LIBS"
-	], [
-		TDNS=no
-		DNS_TEXT=blocking
+	else
 		ZNC_AUTO_FAIL([TDNS],
-			[threads not found. Try --disable-tdns.
-Disabling threads may result in a slight performance decrease but will not have any other side-effects],
-			[threads not found, so DNS resolving will be blocking])
-	])
+			[support for threaded DNS not found. Try --disable-tdns.
+Disabling it may result in a slight performance decrease but will not have any other side-effects],
+			[support for threaded DNS not found, so DNS resolving will be blocking])
+	fi
 fi
 
 # ----- Check for openssl
