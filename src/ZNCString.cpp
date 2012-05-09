@@ -855,7 +855,7 @@ CString CString::SHA256() const {
 
 	sha256(message, length(), digest);
 
-	sprintf(digest_hex,
+	snprintf(digest_hex, sizeof(digest_hex),
 			"%02x%02x%02x%02x%02x%02x%02x%02x"
 			"%02x%02x%02x%02x%02x%02x%02x%02x"
 			"%02x%02x%02x%02x%02x%02x%02x%02x"
