@@ -89,7 +89,7 @@ public:
 			const vector<CChan *>& vChans = m_pNetwork->GetChans();
 			for (u_int a = 0; a < vChans.size(); a++)
 			{
-				if (!vChans[a]->KeepBuffer())
+				if (vChans[a]->AutoClearChanBuffer())
 					continue;
 
 				if (!BootStrap(vChans[a]))
@@ -154,7 +154,7 @@ public:
 				CString sPath = GetPath(vChans[a]->GetName());
 				CFile File(sPath);
 
-				if (!vChans[a]->KeepBuffer()) {
+				if (vChans[a]->AutoClearChanBuffer()) {
 					File.Delete();
 					continue;
 				}
@@ -268,8 +268,8 @@ public:
 
 	void AddBuffer(CChan& chan, const CString &sLine)
 	{
-		// If they have keep buffer disabled, only add messages if no client is connected
-		if (!chan.KeepBuffer() && m_pNetwork->IsUserAttached())
+		// If they have AutoClearChanBuffer enabled, only add messages if no client is connected
+		if (chan.AutoClearChanBuffer() && m_pNetwork->IsUserAttached())
 			return;
 		chan.AddBuffer(sLine);
 	}

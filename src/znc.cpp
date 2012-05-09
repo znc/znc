@@ -687,10 +687,10 @@ bool CZNC::WriteNewConfig(const CString& sConfigFile) {
 		if (uBufferCount) {
 			vsLines.push_back("\tBuffer     = " + CString(uBufferCount));
 		}
-		if (CUtils::GetBoolInput("Would you like to keep buffers after replay?", false)) {
-			vsLines.push_back("\tKeepBuffer = true");
+		if (CUtils::GetBoolInput("Would you like to clear channel buffers after replay?", true)) {
+			vsLines.push_back("\tAutoClearChanBuffer = true");
 		} else {
-			vsLines.push_back("\tKeepBuffer = false");
+			vsLines.push_back("\tAutoClearChanBuffer = false");
 		}
 
 		CUtils::GetInput("Default channel modes", sAnswer, "+stn");

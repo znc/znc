@@ -25,9 +25,9 @@ public:
 					continue;
 
 				(*it)->ClearBuffer();
-				// We force KeepBuffer on all channels since this module
-				// doesnt make any sense without
-				(*it)->SetKeepBuffer(true);
+				// We deny AutoClearChanBuffer on all channels since this module
+				// doesn't make any sense with it
+				(*it)->SetAutoClearChanBuffer(false);
 			}
 		}
 	}

@@ -116,7 +116,7 @@ public:
 	bool AddCTCPReply(const CString& sCTCP, const CString& sReply);
 	bool DelCTCPReply(const CString& sCTCP);
 	bool SetBufferCount(unsigned int u, bool bForce = false);
-	void SetKeepBuffer(bool b);
+	void SetAutoClearChanBuffer(bool b);
 
 	void SetBeingDeleted(bool b) { m_bBeingDeleted = b; }
 	void SetTimestampFormat(const CString& s) { m_sTimestampFormat = s; }
@@ -158,7 +158,7 @@ public:
 	CString GetQuitMsg() const;
 	const MCString& GetCTCPReplies() const;
 	unsigned int GetBufferCount() const;
-	bool KeepBuffer() const;
+	bool AutoClearChanBuffer() const;
 	bool IsBeingDeleted() const { return m_bBeingDeleted; }
 	CString GetTimezone() const { return m_sTimezone; }
 	unsigned long long BytesRead() const { return m_uBytesRead; }
@@ -195,7 +195,7 @@ protected:
 	bool                  m_bDenyLoadMod;
 	bool                  m_bAdmin;
 	bool                  m_bDenySetBindHost;
-	bool                  m_bKeepBuffer;
+	bool                  m_bAutoClearChanBuffer;
 	bool                  m_bBeingDeleted;
 	bool                  m_bAppendTimestamp;
 	bool                  m_bPrependTimestamp;
@@ -212,6 +212,9 @@ protected:
 	CString               m_sSkinName;
 
 	CModules*             m_pModules;
+
+private:
+	void SetKeepBuffer(bool b) { SetAutoClearChanBuffer(!b); } // XXX compatibility crap, added in 0.207
 };
 
 #endif // !_USER_H

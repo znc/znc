@@ -111,7 +111,7 @@ public:
 	void SetTopicOwner(const CString& s) { m_sTopicOwner = s; }
 	void SetTopicDate(unsigned long u) { m_ulTopicDate = u; }
 	void SetDefaultModes(const CString& s) { m_sDefaultModes = s; }
-	void SetKeepBuffer(bool b);
+	void SetAutoClearChanBuffer(bool b);
 	void SetDetached(bool b = true) { m_bDetached = b; }
 	void SetInConfig(bool b) { m_bInConfig = b; }
 	void SetCreationDate(unsigned long u) { m_ulCreationDate = u; }
@@ -137,7 +137,7 @@ public:
 	const CString& GetDefaultModes() const { return m_sDefaultModes; }
 	const map<CString,CNick>& GetNicks() const { return m_msNicks; }
 	unsigned int GetNickCount() const { return m_msNicks.size(); }
-	bool KeepBuffer() const { return m_bKeepBuffer; }
+	bool AutoClearChanBuffer() const { return m_bAutoClearChanBuffer; }
 	bool IsDetached() const { return m_bDetached; }
 	bool InConfig() const { return m_bInConfig; }
 	unsigned long GetCreationDate() const { return m_ulCreationDate; }
@@ -148,7 +148,7 @@ private:
 protected:
 	bool                         m_bDetached;
 	bool                         m_bIsOn;
-	bool                         m_bKeepBuffer;
+	bool                         m_bAutoClearChanBuffer;
 	bool                         m_bInConfig;
 	bool                         m_bDisabled;
 	CString                      m_sName;

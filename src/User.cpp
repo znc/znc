@@ -78,7 +78,7 @@ CUser::CUser(const CString& sUserName)
 	m_sStatusPrefix = "*";
 	m_uBufferCount = 50;
 	m_uMaxJoinTries = 10;
-	m_bKeepBuffer = false;
+	m_bAutoClearChanBuffer = true;
 	m_bBeingDeleted = false;
 	m_sTimestampFormat = "[%H:%M:%S]";
 	m_bAppendTimestamp = false;
@@ -137,7 +137,8 @@ bool CUser::ParseConfig(CConfig* pConfig, CString& sError) {
 	};
 	size_t numUIntOptions = sizeof(UIntOptions) / sizeof(UIntOptions[0]);
 	TOption<bool> BoolOptions[] = {
-		{ "keepbuffer", &CUser::SetKeepBuffer },
+		{ "keepbuffer", &CUser::SetKeepBuffer }, // XXX compatibility crap from pre-0.207
+		{ "autoclearchanbuffer", &CUser::SetAutoClearChanBuffer },
 		{ "multiclients", &CUser::SetMultiClients },
 		{ "denyloadmod", &CUser::SetDenyLoadMod },
 		{ "admin", &CUser::SetAdmin },
@@ -663,7 +664,7 @@ bool CUser::Clone(const CUser& User, CString& sErrorRet, bool bCloneNetworks) {
 	// !CTCP Replies
 
 	// Flags
-	SetKeepBuffer(User.KeepBuffer());
+	SetAutoClearChanBuffer(User.AutoClearChanBuffer());
 	SetMultiClients(User.MultiClients());
 	SetDenyLoadMod(User.DenyLoadMod());
 	SetAdmin(User.IsAdmin());
@@ -813,7 +814,7 @@ CConfig CUser::ToConfig() {
 	config.AddKeyValuePair("Skin", GetSkinName());
 	config.AddKeyValuePair("ChanModes", GetDefaultChanModes());
 	config.AddKeyValuePair("Buffer", CString(GetBufferCount()));
-	config.AddKeyValuePair("KeepBuffer", CString(KeepBuffer()));
+	config.AddKeyValuePair("AutoClearChanBuffer", CString(AutoClearChanBuffer()));
 	config.AddKeyValuePair("MultiClients", CString(MultiClients()));
 	config.AddKeyValuePair("DenyLoadMod", CString(DenyLoadMod()));
 	config.AddKeyValuePair("Admin", CString(IsAdmin()));
@@ -1032,7 +1033,7 @@ void CUser::SetAdmin(bool b) { m_bAdmin = b; }
 void CUser::SetDenySetBindHost(bool b) { m_bDenySetBindHost = b; }
 void CUser::SetDefaultChanModes(const CString& s) { m_sDefaultChanModes = s; }
 void CUser::SetQuitMsg(const CString& s) { m_sQuitMsg = s; }
-void CUser::SetKeepBuffer(bool b) { m_bKeepBuffer = b; }
+void CUser::SetAutoClearChanBuffer(bool b) { m_bAutoClearChanBuffer = b; }
 
 bool CUser::SetBufferCount(unsigned int u, bool bForce) {
 	if (!bForce && u > CZNC::Get().GetMaxBufferSize())
@@ -1107,7 +1108,7 @@ const CString& CUser::GetDefaultChanModes() const { return m_sDefaultChanModes; 
 CString CUser::GetQuitMsg() const { return (!m_sQuitMsg.Trim_n().empty()) ? m_sQuitMsg : CZNC::GetTag(false); }
 const MCString& CUser::GetCTCPReplies() const { return m_mssCTCPReplies; }
 unsigned int CUser::GetBufferCount() const { return m_uBufferCount; }
-bool CUser::KeepBuffer() const { return m_bKeepBuffer; }
+bool CUser::AutoClearChanBuffer() const { return m_bAutoClearChanBuffer; }
 //CString CUser::GetSkinName() const { return (!m_sSkinName.empty()) ? m_sSkinName : CZNC::Get().GetSkinName(); }
 CString CUser::GetSkinName() const { return m_sSkinName; }
 const CString& CUser::GetUserPath() const { if (!CFile::Exists(m_sUserPath)) { CDir::MakeDir(m_sUserPath); } return m_sUserPath; }

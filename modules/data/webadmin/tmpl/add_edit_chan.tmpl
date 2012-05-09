@@ -50,7 +50,7 @@
 					<label for="save">Save to config</label>
 				</span>
 				<? LOOP OptionLoop ?>
-				<span class="checkboxandlabel">
+				<span class="checkboxandlabel" title="<? VAR Tooltip ?>">
 					<input type="checkbox" name="<? VAR Name ?>" id="opt_<? VAR Name ?>" value="true"<? IF Checked ?> checked="checked"<? ENDIF ?><? IF Disabled ?> disabled="disabled"<? ENDIF ?> />
 					<label for="opt_<? VAR Name ?>"><? VAR DisplayName ?></label>
 				</span>

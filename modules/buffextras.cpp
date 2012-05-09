@@ -18,8 +18,8 @@ public:
 	virtual ~CBuffExtras() {}
 
 	void AddBuffer(CChan& Channel, const CString& sMessage) {
-		// If they have keep buffer disabled, only add messages if no client is connected
-		if (!Channel.KeepBuffer() && m_pNetwork->IsUserOnline())
+		// If they have AutoClearChanBuffer enabled, only add messages if no client is connected
+		if (Channel.AutoClearChanBuffer() && m_pNetwork->IsUserOnline())
 			return;
 
 		Channel.AddBuffer(":" + GetModNick() + "!" + GetModName() + "@znc.in PRIVMSG " + _NAMEDFMT(Channel.GetName()) + " :{text}", sMessage);

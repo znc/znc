@@ -226,7 +226,7 @@ public:
 			pNewUser->SetBufferCount(pUser->GetBufferCount(), true);
 		pNewUser->SetBufferCount(WebSock.GetParam("bufsize").ToUInt(), spSession->IsAdmin());
 		pNewUser->SetSkinName(WebSock.GetParam("skin"));
-		pNewUser->SetKeepBuffer(WebSock.GetParam("keepbuffer").ToBool());
+		pNewUser->SetAutoClearChanBuffer(WebSock.GetParam("autoclearchanbuffer").ToBool());
 		pNewUser->SetMultiClients(WebSock.GetParam("multiclients").ToBool());
 		pNewUser->SetTimestampAppend(WebSock.GetParam("appendtimestamp").ToBool());
 		pNewUser->SetTimestampPrepend(WebSock.GetParam("prependtimestamp").ToBool());
@@ -569,9 +569,10 @@ public:
 			// o1 used to be AutoCycle which was removed
 
 			CTemplate& o2 = Tmpl.AddRow("OptionLoop");
-			o2["Name"] = "keepbuffer";
-			o2["DisplayName"] = "Keep Buffer";
-			if ((pChan && pChan->KeepBuffer()) || (!pChan && pUser->KeepBuffer())) { o2["Checked"] = "true"; }
+			o2["Name"] = "autoclearchanbuffer";
+			o2["DisplayName"] = "Auto Clear Chan Buffer";
+			o2["Tooltip"] = "Automatically Clear Channel Buffer After Playback";
+			if ((pChan && pChan->AutoClearChanBuffer()) || (!pChan && pUser->AutoClearChanBuffer())) { o2["Checked"] = "true"; }
 
 			CTemplate& o3 = Tmpl.AddRow("OptionLoop");
 			o3["Name"] = "detached";
@@ -616,7 +617,7 @@ public:
 		pChan->SetBufferCount(WebSock.GetParam("buffercount").ToUInt(), spSession->IsAdmin());
 		pChan->SetDefaultModes(WebSock.GetParam("defmodes"));
 		pChan->SetInConfig(WebSock.GetParam("save").ToBool());
-		pChan->SetKeepBuffer(WebSock.GetParam("keepbuffer").ToBool());
+		pChan->SetAutoClearChanBuffer(WebSock.GetParam("autoclearchanbuffer").ToBool());
 		pChan->SetKey(WebSock.GetParam("key"));
 
 		bool bDetached = WebSock.GetParam("detached").ToBool();
@@ -1054,9 +1055,10 @@ public:
 			}
 
 			CTemplate& o1 = Tmpl.AddRow("OptionLoop");
-			o1["Name"] = "keepbuffer";
-			o1["DisplayName"] = "Keep Buffer";
-			if (!pUser || pUser->KeepBuffer()) { o1["Checked"] = "true"; }
+			o1["Name"] = "autoclearchanbuffer";
+			o1["DisplayName"] = "Auto Clear Chan Buffer";
+			o1["Tooltip"] = "Automatically Clear Channel Buffer After Playback (the default value for new channels)";
+			if (!pUser || pUser->AutoClearChanBuffer()) { o1["Checked"] = "true"; }
 
 			/* o2 used to be auto cycle which was removed */
 

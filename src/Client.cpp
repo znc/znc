@@ -238,7 +238,7 @@ void CClient::ReadLine(const CString& sData) {
 		if (m_pNetwork) {
 			CChan* pChan = m_pNetwork->FindChan(sTarget);
 
-			if ((pChan) && (pChan->KeepBuffer())) {
+			if ((pChan) && (!pChan->AutoClearChanBuffer())) {
 				pChan->AddBuffer(":" + _NAMEDFMT(GetNickMask()) + " NOTICE " + _NAMEDFMT(sTarget) + " :{text}", sMsg);
 			}
 
@@ -284,7 +284,7 @@ void CClient::ReadLine(const CString& sData) {
 					NETWORKMODULECALL(OnUserAction(sTarget, sMessage), m_pUser, m_pNetwork, this, return);
 					sCTCP = "ACTION " + sMessage;
 
-					if (pChan && (pChan->KeepBuffer() || !m_pNetwork->IsUserOnline())) {
+					if (pChan && (!pChan->AutoClearChanBuffer() || !m_pNetwork->IsUserOnline())) {
 						pChan->AddBuffer(":" + _NAMEDFMT(GetNickMask()) + " PRIVMSG " + _NAMEDFMT(sTarget) + " :\001ACTION {text}\001", sMessage);
 					}
 
@@ -332,7 +332,7 @@ void CClient::ReadLine(const CString& sData) {
 		if (m_pNetwork) {
 			CChan* pChan = m_pNetwork->FindChan(sTarget);
 
-			if ((pChan) && (pChan->KeepBuffer() || !m_pNetwork->IsUserOnline())) {
+			if ((pChan) && (!pChan->AutoClearChanBuffer() || !m_pNetwork->IsUserOnline())) {
 				pChan->AddBuffer(":" + _NAMEDFMT(GetNickMask()) + " PRIVMSG " + _NAMEDFMT(sTarget) + " :{text}", sMsg);
 			}
 

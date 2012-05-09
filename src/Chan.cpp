@@ -28,15 +28,17 @@ CChan::CChan(const CString& sName, CIRCNetwork* pNetwork, bool bInConfig, CConfi
 	m_bDetached = false;
 	m_bDisabled = false;
 	SetBufferCount(m_pNetwork->GetUser()->GetBufferCount(), true);
-	SetKeepBuffer(m_pNetwork->GetUser()->KeepBuffer());
+	SetAutoClearChanBuffer(m_pNetwork->GetUser()->AutoClearChanBuffer());
 	Reset();
 
 	if (pConfig) {
 		CString sValue;
 		if (pConfig->FindStringEntry("buffer", sValue))
 			SetBufferCount(sValue.ToUInt(), true);
+		if (pConfig->FindStringEntry("autoclearchanbuffer", sValue))
+			SetAutoClearChanBuffer(sValue.ToBool());
 		if (pConfig->FindStringEntry("keepbuffer", sValue))
-			SetKeepBuffer(sValue.ToBool());
+			SetAutoClearChanBuffer(!sValue.ToBool()); // XXX Compatibility crap, added in 0.207
 		if (pConfig->FindStringEntry("detached", sValue))
 			SetDetached(sValue.ToBool());
 		if (pConfig->FindStringEntry("autocycle", sValue))
@@ -72,8 +74,8 @@ CConfig CChan::ToConfig() {
 
 	if (pUser->GetBufferCount() != GetBufferCount())
 		config.AddKeyValuePair("Buffer", CString(GetBufferCount()));
-	if (pUser->KeepBuffer() != KeepBuffer())
-		config.AddKeyValuePair("KeepBuffer", CString(KeepBuffer()));
+	if (pUser->AutoClearChanBuffer() != AutoClearChanBuffer())
+		config.AddKeyValuePair("AutoClearChanBuffer", CString(AutoClearChanBuffer()));
 	if (IsDetached())
 		config.AddKeyValuePair("Detached", "true");
 	if (!GetKey().empty())
@@ -87,7 +89,7 @@ CConfig CChan::ToConfig() {
 void CChan::Clone(CChan& chan) {
 	// We assume that m_sName and m_pNetwork are equal
 	SetBufferCount(chan.GetBufferCount(), true);
-	SetKeepBuffer(chan.KeepBuffer());
+	SetAutoClearChanBuffer(chan.AutoClearChanBuffer());
 	SetKey(chan.GetKey());
 	SetDefaultModes(chan.GetDefaultModes());
 
@@ -219,10 +221,10 @@ void CChan::SetModes(const CString& sModes) {
 	ModeChange(sModes);
 }
 
-void CChan::SetKeepBuffer(bool b) {
-	m_bKeepBuffer = b;
+void CChan::SetAutoClearChanBuffer(bool b) {
+	m_bAutoClearChanBuffer = b;
 
-	if (!m_bKeepBuffer && !IsDetached() && m_pNetwork->IsUserOnline()) {
+	if (m_bAutoClearChanBuffer && !IsDetached() && m_pNetwork->IsUserOnline()) {
 		ClearBuffer();
 	}
 }
@@ -349,8 +351,8 @@ CString CChan::GetOptions() const {
 		sRet += (sRet.empty()) ? "Detached" : ", Detached";
 	}
 
-	if (KeepBuffer()) {
-		sRet += (sRet.empty()) ? "KeepBuffer" : ", KeepBuffer";
+	if (AutoClearChanBuffer()) {
+		sRet += (sRet.empty()) ? "AutoClearChanBuffer" : ", AutoClearChanBuffer";
 	}
 
 	return sRet;
@@ -561,7 +563,7 @@ void CChan::SendBuffer(CClient* pClient) {
 					break;
 			}
 
-			if (!KeepBuffer()) {
+			if (AutoClearChanBuffer()) {
  				ClearBuffer();
 			}
 		}

@@ -44,27 +44,27 @@ class CAdminMod : public CModule {
 		static const char* integer = "Integer";
 		//static const char* doublenum = "Double";
 		static const char* vars[][2] = {
-			{"Nick",             str},
-			{"Altnick",          str},
-			{"Ident",            str},
-			{"RealName",         str},
-			{"BindHost",         str},
-			{"MultiClients",     boolean},
-			{"DenyLoadMod",      boolean},
-			{"DenySetBindHost",  boolean},
-			{"DefaultChanModes", str},
-			{"QuitMsg",          str},
-			{"BufferCount",      integer},
-			{"KeepBuffer",       boolean},
-			{"Password",         str},
-			{"JoinTries",        integer},
-			{"Timezone",         str},
-			{"Admin",            boolean},
-			{"AppendTimestamp",  boolean},
-			{"PrependTimestamp", boolean},
-			{"TimestampFormat",  str},
-			{"DCCBindHost",      str},
-			{"StatusPrefix",     str}
+			{"Nick",                str},
+			{"Altnick",             str},
+			{"Ident",               str},
+			{"RealName",            str},
+			{"BindHost",            str},
+			{"MultiClients",        boolean},
+			{"DenyLoadMod",         boolean},
+			{"DenySetBindHost",     boolean},
+			{"DefaultChanModes",    str},
+			{"QuitMsg",             str},
+			{"BufferCount",         integer},
+			{"AutoClearChanBuffer", boolean},
+			{"Password",            str},
+			{"JoinTries",           integer},
+			{"Timezone",            str},
+			{"Admin",               boolean},
+			{"AppendTimestamp",     boolean},
+			{"PrependTimestamp",    boolean},
+			{"TimestampFormat",     str},
+			{"DCCBindHost",         str},
+			{"StatusPrefix",        str}
 		};
 		for (unsigned int i = 0; i != ARRAY_SIZE(vars); ++i) {
 			VarTable.AddRow();
@@ -78,12 +78,12 @@ class CAdminMod : public CModule {
 		CVarTable.AddColumn("Variable");
 		CVarTable.AddColumn("Type");
 		static const char* cvars[][2] = {
-			{"DefModes",         str},
-			{"Key",              str},
-			{"Buffer",           integer},
-			{"InConfig",         boolean},
-			{"KeepBuffer",       boolean},
-			{"Detached",         boolean}
+			{"DefModes",            str},
+			{"Key",                 str},
+			{"Buffer",              integer},
+			{"InConfig",            boolean},
+			{"AutoClearChanBuffer", boolean},
+			{"Detached",            boolean}
 		};
 		for (unsigned int i = 0; i != ARRAY_SIZE(cvars); ++i) {
 			CVarTable.AddRow();
@@ -152,7 +152,9 @@ class CAdminMod : public CModule {
 		else if (sVar == "buffercount")
 			PutModule("BufferCount = " + CString(pUser->GetBufferCount()));
 		else if (sVar == "keepbuffer")
-			PutModule("KeepBuffer = " + CString(pUser->KeepBuffer()));
+			PutModule("KeepBuffer = " + CString(!pUser->AutoClearChanBuffer())); // XXX compatibility crap, added in 0.207
+		else if (sVar == "autoclearchanbuffer")
+			PutModule("AutoClearChanBuffer = " + CString(pUser->AutoClearChanBuffer()));
 		else if (sVar == "jointries")
 			PutModule("JoinTries = " + CString(pUser->JoinTries()));
 		else if (sVar == "timezone")
@@ -252,10 +254,15 @@ class CAdminMod : public CModule {
 						CString(CZNC::Get().GetMaxBufferSize()));
 			}
 		}
-		else if (sVar == "keepbuffer") {
+		else if (sVar == "keepbuffer") { // XXX compatibility crap, added in 0.207
+			bool b = !sValue.ToBool();
+			pUser->SetAutoClearChanBuffer(b);
+			PutModule("AutoClearChanBuffer = " + CString(b));
+		}
+		else if (sVar == "autoclearchanbuffer") {
 			bool b = sValue.ToBool();
-			pUser->SetKeepBuffer(b);
-			PutModule("KeepBuffer = " + CString(b));
+			pUser->SetAutoClearChanBuffer(b);
+			PutModule("AutoClearChanBuffer = " + CString(b));
 		}
 		else if (sVar == "password") {
 			const CString sSalt = CUtils::GetSalt();
@@ -349,7 +356,9 @@ class CAdminMod : public CModule {
 		else if (sVar == "inconfig")
 			PutModule("InConfig = " + CString(pChan->InConfig()));
 		else if (sVar == "keepbuffer")
-			PutModule("KeepBuffer = " + CString(pChan->KeepBuffer()));
+			PutModule("KeepBuffer = " + CString(!pChan->AutoClearChanBuffer()));// XXX compatibility crap, added in 0.207
+		else if (sVar == "autoclearchanbuffer")
+			PutModule("AutoClearChanBuffer = " + CString(pChan->AutoClearChanBuffer()));
 		else if (sVar == "detached")
 			PutModule("Detached = " + CString(pChan->IsDetached()));
 		else if (sVar == "key")
@@ -402,10 +411,14 @@ class CAdminMod : public CModule {
 			bool b = sValue.ToBool();
 			pChan->SetInConfig(b);
 			PutModule("InConfig = " + CString(b));
-		} else if (sVar == "keepbuffer") {
+		} else if (sVar == "keepbuffer") { // XXX compatibility crap, added in 0.207
+			bool b = !sValue.ToBool();
+			pChan->SetAutoClearChanBuffer(b);
+			PutModule("AutoClearChanBuffer = " + CString(b));
+		} else if (sVar == "autoclearchanbuffer") {
 			bool b = sValue.ToBool();
-			pChan->SetKeepBuffer(b);
-			PutModule("KeepBuffer = " + CString(b));
+			pChan->SetAutoClearChanBuffer(b);
+			PutModule("AutoClearChanBuffer = " + CString(b));
 		} else if (sVar == "detached") {
 			bool b = sValue.ToBool();
 			if (pChan->IsDetached() != b) {
