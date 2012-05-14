@@ -410,20 +410,32 @@ void CClient::ReadLine(const CString& sData) {
 			sLine += " " + sKey;
 		}
 	} else if (sCommand.Equals("PART")) {
-		CString sChan = sLine.Token(1).TrimPrefix_n();
+		CString sChans = sLine.Token(1).TrimPrefix_n();
 		CString sMessage = sLine.Token(2, true).TrimPrefix_n();
 
-		NETWORKMODULECALL(OnUserPart(sChan, sMessage), m_pUser, m_pNetwork, this, return);
+		VCString vChans;
+		sChans.Split(",", vChans, false);
+		sChans.clear();
 
-		CChan* pChan = m_pNetwork->FindChan(sChan);
+		for (VCString::const_iterator it = vChans.begin(); it != vChans.end(); ++it) {
+			CString sChan = *it;
+			NETWORKMODULECALL(OnUserPart(sChan, sMessage), m_pUser, m_pNetwork, this, continue);
 
-		if (pChan && !pChan->IsOn()) {
-			PutStatusNotice("Removing channel [" + sChan + "]");
-			m_pNetwork->DelChan(sChan);
+			CChan* pChan = m_pNetwork->FindChan(sChan);
+
+			if (pChan && !pChan->IsOn()) {
+				PutStatusNotice("Removing channel [" + sChan + "]");
+				m_pNetwork->DelChan(sChan);
+			} else {
+				sChans += (sChans.empty()) ? sChan : CString("," + sChan); 
+			}
+		}
+
+		if (sChans.empty()) {
 			return;
 		}
 
-		sLine = "PART " + sChan;
+		sLine = "PART " + sChans;
 
 		if (!sMessage.empty()) {
 			sLine += " :" + sMessage;
