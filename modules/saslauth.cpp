@@ -23,11 +23,11 @@ public:
 		m_Cache.SetTTL(60000/*ms*/);
 
 		AddHelpCommand();
-		AddCommand("CreateUser",       static_cast<CModCommand::ModCmdFunc>(&CSASLAuthMod::CreateUser),
+		AddCommand("CreateUser",       static_cast<CModCommand::ModCmdFunc>(&CSASLAuthMod::CreateUserCommand),
 			"[yes|no]");
-		AddCommand("CloneUser",        static_cast<CModCommand::ModCmdFunc>(&CSASLAuthMod::CloneUser),
+		AddCommand("CloneUser",        static_cast<CModCommand::ModCmdFunc>(&CSASLAuthMod::CloneUserCommand),
 			"[username]");
-		AddCommand("DisableCloneUser", static_cast<CModCommand::ModCmdFunc>(&CSASLAuthMod::DisableCloneUser));
+		AddCommand("DisableCloneUser", static_cast<CModCommand::ModCmdFunc>(&CSASLAuthMod::DisableCloneUserCommand));
 	}
 
 	virtual ~CSASLAuthMod() {
@@ -147,7 +147,7 @@ public:
 
 	const CString& GetMethod() const { return m_sMethod; }
 
-	void CreateUser(const CString &sLine) {
+	void CreateUserCommand(const CString &sLine) {
 		CString sCreate = sLine.Token(1);
 
 		if (!sCreate.empty()) {
@@ -161,7 +161,7 @@ public:
 		}
 	}
 
-	void CloneUser(const CString &sLine) {
+	void CloneUserCommand(const CString &sLine) {
 		CString sUsername = sLine.Token(1);
 
 		if (!sUsername.empty()) {
@@ -175,7 +175,7 @@ public:
 		}
 	}
 
-	void DisableCloneUser(const CString &sLine) {
+	void DisableCloneUserCommand(const CString &sLine) {
 		DelNV("CloneUser");
 		PutModule("Clone user disabled");
 	}
