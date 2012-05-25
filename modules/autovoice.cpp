@@ -157,7 +157,6 @@ public:
 	}
 
 	virtual void OnChanPermission(const CNick& OpNick, const CNick& Nick, CChan& Channel, unsigned char uMode, bool bAdded, bool bNoChange) {
-		//PutModule(((bNoChange) ? "[0] [" : "[1] [") + OpNick.GetNick() + "] set mode [" + Channel.GetName() + ((bAdded) ? "] +" : "] -") + CString(uMode) + " " + Nick.GetNick());
 		if ((Nick.GetNick() == m_pNetwork->GetIRCNick().GetNick()) && (bAdded) && (uMode = 'h')){
 			VoiceNicks(Channel);
 		}
