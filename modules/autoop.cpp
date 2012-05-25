@@ -287,6 +287,52 @@ public:
 			PutModule("Unknown command, try HELP");
 		}
 	}
+	
+	virtual EModRet OnRaw(CString& sLine) {
+		CString sCmd = sLine.Token(1);
+		unsigned int uRaw = sCmd.ToUInt();;
+		CString sRest = sLine.Token(3, true);
+		sRest.Trim();
+		
+		switch(uRaw) {
+			case 352: {	// WHO reply
+				CString sIdent = sLine.Token(4);
+				CString sHost = sLine.Token(5);					
+				CString sNick = sLine.Token(7);			
+				const vector<CChan*>& vChans = m_pNetwork->GetChans();
+	
+				for (unsigned int a = 0; a < vChans.size(); a++) {
+					CChan *pChan = vChans[a];
+					CNick *pNick = pChan->FindNick(sNick);
+					if (pNick) {
+						// Let the channel know about the full who details or FindUserByHost
+						// will fail in CheckAutoOp
+						vChans[a]->OnWho(sNick, sIdent, sHost);
+						CheckAutoOp(*pNick, *pChan);
+					}	
+				}
+				break;
+			}
+				
+			case 353:  { // NAMES reply
+				CString sNicks = sRest.Token(2, true).TrimPrefix_n();
+				VCString vsNicks;
+				VCString::iterator it;
+	
+				sNicks.Split(" ", vsNicks, false);
+	
+				for (it = vsNicks.begin(); it != vsNicks.end(); ++it) {
+					CString sNick = *it;
+					if (CString::npos == sNick.find('!')) {
+						// We weren't given any hostmask info for the nick so let's ask for it.
+						PutIRC("WHO " + sNick);	
+					}
+				}
+				break;
+			}
+		}
+		return CONTINUE;
+	}	
 
 	CAutoOpUser* FindUser(const CString& sUser) {
 		map<CString, CAutoOpUser*>::iterator it = m_msUsers.find(sUser.AsLower());
