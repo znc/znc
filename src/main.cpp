@@ -207,8 +207,10 @@ int main(int argc, char** argv) {
 
 	{
 		set<CModInfo> ssGlobalMods;
+		CUtils::PrintAction("Checking for list of available modules");
 		pZNC->GetModules().GetAvailableMods(ssGlobalMods, CModInfo::GlobalModule);
 		if (ssGlobalMods.empty()) {
+			CUtils::PrintStatus(false, "");
 			CUtils::PrintError("No modules found. Perhaps you didn't install ZNC properly?");
 			CUtils::PrintError("Read http://wiki.znc.in/Installation for instructions.");
 			if (!CUtils::GetBoolInput("Do you really want to run ZNC without any modules?", false)) {
@@ -216,6 +218,7 @@ int main(int argc, char** argv) {
 				return 1;
 			}
 		}
+		CUtils::PrintStatus(true, "");
 	}
 
 	if (isRoot()) {
