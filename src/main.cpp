@@ -207,9 +207,13 @@ int main(int argc, char** argv) {
 
 	{
 		set<CModInfo> ssGlobalMods;
+		set<CModInfo> ssUserMods;
+		set<CModInfo> ssNetworkMods;
 		CUtils::PrintAction("Checking for list of available modules");
 		pZNC->GetModules().GetAvailableMods(ssGlobalMods, CModInfo::GlobalModule);
-		if (ssGlobalMods.empty()) {
+		pZNC->GetModules().GetAvailableMods(ssUserMods, CModInfo::UserModule);
+		pZNC->GetModules().GetAvailableMods(ssNetworkMods, CModInfo::NetworkModule);
+		if (ssGlobalMods.empty() && ssUserMods.empty() && ssNetworkMods.empty()) {
 			CUtils::PrintStatus(false, "");
 			CUtils::PrintError("No modules found. Perhaps you didn't install ZNC properly?");
 			CUtils::PrintError("Read http://wiki.znc.in/Installation for instructions.");
