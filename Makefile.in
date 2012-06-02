@@ -14,6 +14,7 @@ libdir      := @libdir@
 includedir  := @includedir@
 sbindir     := @sbindir@
 localstatedir := @localstatedir@
+systemdsystemunitdir := @systemdsystemunitdir@
 CXX      := @CXX@
 CXXFLAGS := -I$(srcdir)/include -Iinclude @CPPFLAGS@ @CXXFLAGS@
 LDFLAGS  := @LDFLAGS@
@@ -124,6 +125,9 @@ install: znc $(LIBZNC)
 		$(INSTALL_PROGRAM) $(LIBZNC) $(DESTDIR)$(LIBZNCDIR) || exit 1 ; \
 	fi
 	@$(MAKE) -C man install DESTDIR=$(DESTDIR)
+
+	@HAVE_SYSTEMD_TRUE@test -d $(DESTDIR)$(systemdsystemunitdir) || $(INSTALL) -d $(DESTDIR)$(systemdsystemunitdir)
+	@HAVE_SYSTEMD_TRUE@$(INSTALL_DATA) znc.service $(DESTDIR)$(systemdsystemunitdir)
 
 uninstall:
 	rm $(DESTDIR)$(bindir)/znc

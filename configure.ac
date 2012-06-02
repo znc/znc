@@ -149,6 +149,14 @@ AC_ARG_ENABLE([add-networks],
 	AS_HELP_STRING([--enable-add-networks], [allow non-admins to add networks]),
 	[ if test x"$enableval" = "xyes" ; then appendCXX "-DENABLE_ADD_NETWORK" ; fi ])
 
+AC_ARG_WITH([systemdsystemunitdir],
+	AS_HELP_STRING([--with-systemdsystemunitdir=DIR], [Directory for systemd service files]),
+	[], [with_systemdsystemunitdir=$($PKG_CONFIG --variable=systemdsystemunitdir systemd)])
+if test "x$with_systemdsystemunitdir" != xno; then
+	AC_SUBST([systemdsystemunitdir], [$with_systemdsystemunitdir])
+fi
+AM_CONDITIONAL(HAVE_SYSTEMD, [test -n "$with_systemdsystemunitdir" -a "x$with_systemdsystemunitdir" != xno ])
+
 if test "$DEBUG" != "no"; then
 	appendCXX -ggdb3
 	AC_DEFINE([_DEBUG], [1], [Define for debugging])
