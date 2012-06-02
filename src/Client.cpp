@@ -133,6 +133,7 @@ void CClient::ReadLine(const CString& sData) {
 			if (m_bGotPass) {
 				AuthUser();
 			} else {
+				PutClient(":irc.znc.in 464 " + GetNick() + " :Password required");
 				PutClient(":irc.znc.in NOTICE AUTH :*** "
 					"You need to send your password. "
 					"Try /quote PASS <username>:<password>");
