@@ -6,64 +6,66 @@
 	<div class="sectionbg">
 		<div class="sectionbody">
 			<div class="subsection">
-				<div class="listeners">
-					<div class="listeners_header">
-						<div class="listeners_header1">Port</div>
-						<div class="listeners_header1">BindHost</div>
-						<div class="listeners_header1">SSL</div>
-						<div class="listeners_header1">IPv4</div>
-						<div class="listeners_header1">IPv6</div>
-						<div class="listeners_header1">IRC</div>
-						<div class="listeners_header1">Web</div>
-						<!--<td/>-->
-					</div>
-					<? LOOP ListenLoop ?>
-						<div class="listener_show <? IF __EVEN__ ?>evenrow<? ELSE ?>oddrow<? ENDIF ?>">
-							<div class="listener_show_port"><? VAR Port ?></div>
-							<div class="listener_show_host"><? VAR BindHost DEFAULT=** ?></div>
-							<div class="listener_show_ssl">
-								<div class="checkbox"><input type="checkbox" disabled="disabled" <? IF IsSSL ?>checked="checked"<? ENDIF ?>/></div>
-							</div>
-							<div class="listener_show_ipv4">
-								<div class="checkbox"><input type="checkbox" disabled="disabled" <? IF IsIPV4 ?>checked="checked"<? ENDIF ?>/></div>
-							</div>
-							<div class="listener_show_ipv6">
-								<div class="checkbox"><input type="checkbox" disabled="disabled" <? IF IsIPV6 ?>checked="checked"<? ENDIF ?>/></div>
-							</div>
-							<div class="listener_show_irc">
-								<div class="checkbox"><input type="checkbox" disabled="disabled" <? IF IsIRC ?>checked="checked"<? ENDIF ?>/></div>
-							</div>
-							<div class="listener_show_web">
-								<div class="checkbox"><input type="checkbox" disabled="disabled" <? IF IsWeb ?>checked="checked"<? ENDIF ?>/></div>
-							</div>
-							<div class="listener_show_delete">
-								<? IF SuggestDeletion ?>
-								<form action="del_listener" method="post">
-									<? INC _csrf_check.tmpl ?>
-									<input name="host" type="hidden" value="<? VAR BindHost ?>"/>
-									<input name="port" type="hidden" value="<? VAR Port ?>"/>
-									<input name="ipv4" type="hidden" value="<? VAR IsIPV4 ?>"/>
-									<input name="ipv6" type="hidden" value="<? VAR IsIPV6 ?>"/>
-									<input type="submit" value="Del"/>
-								</form>
-								<? ENDIF ?>
-							</div>
-						</div>
-					<? ENDLOOP ?>
-					<div class="listener_add">
+				<table>
+					<thead>
+						<tr>
+						    <td>Port</td>
+						    <td>BindHost</td>
+						    <td>SSL</td>
+						    <td>IPv4</td>
+						    <td>IPv6</td>
+						    <td>IRC</td>
+						    <td>Web</td>
+						</tr>
+					</thead>
+
+				<? LOOP ListenLoop ?>
+					<tr class="<? IF __EVEN__ ?>evenrow<? ELSE ?>oddrow<? ENDIF ?>">
+						<td><? VAR Port ?></td>
+						<td><? VAR BindHost DEFAULT=** ?></td>
+						<td class="listener_show_ssl">
+							<div class="checkbox"><input type="checkbox" disabled="disabled" <? IF IsSSL ?>checked="checked"<? ENDIF ?>/></div>
+						</td>
+						<td>
+							<div class="checkbox"><input type="checkbox" disabled="disabled" <? IF IsIPV4 ?>checked="checked"<? ENDIF ?>/></div>
+						</td>
+						<td>
+							<div class="checkbox"><input type="checkbox" disabled="disabled" <? IF IsIPV6 ?>checked="checked"<? ENDIF ?>/></div>
+						</td>
+						<td>
+							<div class="checkbox"><input type="checkbox" disabled="disabled" <? IF IsIRC ?>checked="checked"<? ENDIF ?>/></div>
+						</td>
+						<td>
+							<div class="checkbox"><input type="checkbox" disabled="disabled" <? IF IsWeb ?>checked="checked"<? ENDIF ?>/></div>
+						</td>
+						<td>
+							<? IF SuggestDeletion ?>
+							<form action="del_listener" method="post">
+								<? INC _csrf_check.tmpl ?>
+								<input name="host" type="hidden" value="<? VAR BindHost ?>"/>
+								<input name="port" type="hidden" value="<? VAR Port ?>"/>
+								<input name="ipv4" type="hidden" value="<? VAR IsIPV4 ?>"/>
+								<input name="ipv6" type="hidden" value="<? VAR IsIPV6 ?>"/>
+								<input type="submit" value="Del"/>
+							</form>
+							<? ENDIF ?>
+						</td>
+					</tr>
+				<? ENDLOOP ?>
+					<tr>
 						<form action="add_listener" method="post">
 							<? INC _csrf_check.tmpl ?>
-							<div class="listener_add_port"><input name="port" type="number" min="1" max="65535" class="number"/></div>
-							<div class="listener_add_host"><input name="host" type="text" value="*" class="third"/></div>
-							<div class="listener_add_ssl"><div class="checkbox"><input name="ssl" type="checkbox"/></div></div>
-							<div class="listener_add_ipv4"><div class="checkbox"><input name="ipv4" type="checkbox" checked="checked"/></div></div>
-							<div class="listener_add_ipv6"><div class="checkbox"><input name="ipv6" type="checkbox" checked="checked"/></div></div>
-							<div class="listener_add_irc"><div class="checkbox"><input name="irc" type="checkbox" checked="checked"/></div></div>
-							<div class="listener_add_web"><div class="checkbox"><input name="web" type="checkbox" checked="checked"/></div></div>
-							<div class="listener_add_submit"><input type="submit" value="Add"/></div>
+							<td><input name="port" type="number" min="1" max="65535" class="number"/></td>
+							<td><input name="host" type="text" value="*" class="third"/></td>
+							<td><div class="checkbox"><input name="ssl" type="checkbox"/></div></td>
+							<td><div class="checkbox"><input name="ipv4" type="checkbox" checked="checked"/></div></td>
+							<td><div class="checkbox"><input name="ipv6" type="checkbox" checked="checked"/></div></td>
+							<td><div class="checkbox"><input name="irc" type="checkbox" checked="checked"/></div></td>
+							<td><div class="checkbox"><input name="web" type="checkbox" checked="checked"/></div></td>
+							<td><input type="submit" value="Add"/></td>
 						</form>
-					</div>
-				</div>
+					</tr>
+				</table>
 			</div>
 		</div>
 	</div>
