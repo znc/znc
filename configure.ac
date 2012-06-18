@@ -121,9 +121,9 @@ AC_ARG_ENABLE( [swig],
 			Check http://en.znc.in/wiki/Modperl and http://en.znc.in/wiki/Modpython for details.]),
 	[USESWIG="$enableval"],
 	[USESWIG="auto"])
-AC_ARG_ENABLE( [sasl],
-	AS_HELP_STRING([--enable-sasl], [enable sasl]),
-	[if test "$enableval" = "yes" ; then SASL=1; fi],)
+AC_ARG_ENABLE( [cyrus],
+	AS_HELP_STRING([--enable-cyrus], [enable cyrus]),
+	[if test "$enableval" = "yes" ; then CYRUS=1; fi],)
 AC_ARG_ENABLE( [optimization],
 	AS_HELP_STRING([--disable-optimization], [Disable some compiler optimizations to
 			decrease memory usage while compiling]),
@@ -410,10 +410,10 @@ if test "x$PYTHON" != "xno"; then
 	fi
 fi
 
-if test -n "$SASL"; then
+if test -n "$CYRUS"; then
 	AC_CHECK_LIB( sasl2, sasl_server_init,
 		[: Dont let autoconf add -lsasl2, Makefile handles that],
-		AC_MSG_ERROR([could not find libsasl2. Try --disable-sasl.]))
+		AC_MSG_ERROR([could not find libsasl2. Try --disable-cyrus.]))
 fi
 
 # Check if we want modtcl
@@ -518,7 +518,7 @@ AC_SUBST([LIBZNCDIR])
 AC_SUBST([MODLINK])
 AC_SUBST([NOSSL])
 AC_SUBST([TCL_FLAGS])
-AC_SUBST([SASL])
+AC_SUBST([CYRUS])
 AC_SUBST([CHARSET])
 AC_SUBST([LIBICONV])
 AC_SUBST([MODDIR])
@@ -549,10 +549,10 @@ echo "dns:          $DNS_TEXT"
 echo "perl:         $PERL"
 echo "python:       $PYTHON"
 echo "swig:         $USESWIG"
-if test x"$SASL" = "x" ; then
-	echo "sasl:         no"
+if test x"$CYRUS" = "x" ; then
+	echo "cyrus:        no"
 else
-	echo "sasl:         yes"
+	echo "cyrus:        yes"
 fi
 if test x"$TCL_FLAGS" = "x" ; then
 	echo "tcl:          no"

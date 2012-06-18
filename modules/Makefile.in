@@ -74,7 +74,7 @@ FILES    := $(foreach file, $(FILES), \
 	))
 endif
 
-ifeq "@SASL@" ""
+ifeq "@CYRUS@" ""
 FILES    := $(shell echo $(FILES) | sed -e "s:saslauth::")
 endif
 saslauthLDFLAGS := -lsasl2
