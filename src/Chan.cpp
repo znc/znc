@@ -539,7 +539,7 @@ void CChan::SendBuffer(CClient* pClient) {
 			for (size_t uClient = 0; uClient < vClients.size(); ++uClient) {
 				CClient * pUseClient = (pClient ? pClient : vClients[uClient]);
 
-				bool bSkipStatusMsg = false;
+				bool bSkipStatusMsg = pUseClient->HasServerTime();
 				NETWORKMODULECALL(OnChanBufferStarting(*this, *pUseClient), m_pNetwork->GetUser(), m_pNetwork, NULL, bSkipStatusMsg = true);
 
 				if (!bSkipStatusMsg) {
@@ -553,7 +553,7 @@ void CChan::SendBuffer(CClient* pClient) {
 					m_pNetwork->PutUser(sLine, pUseClient);
 				}
 
-				bSkipStatusMsg = false;
+				bSkipStatusMsg = pUseClient->HasServerTime();
 				NETWORKMODULECALL(OnChanBufferEnding(*this, *pUseClient), m_pNetwork->GetUser(), m_pNetwork, NULL, bSkipStatusMsg = true);
 				if (!bSkipStatusMsg) {
 					m_pNetwork->PutUser(":***!znc@znc.in PRIVMSG " + GetName() + " :Playback Complete.", pUseClient);
