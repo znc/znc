@@ -69,6 +69,13 @@ CClient::~CClient() {
 	}
 }
 
+void CClient::SendRequiredPasswordNotice() {
+	PutClient(":irc.znc.in 464 " + GetNick() + " :Password required");
+	PutClient(":irc.znc.in NOTICE AUTH :*** "
+			  "You need to send your password. "
+			  "Try /quote PASS <username>:<password>");
+}
+
 void CClient::ReadLine(const CString& sData) {
 	CString sLine = sData;
 
@@ -132,11 +139,8 @@ void CClient::ReadLine(const CString& sData) {
 			m_bGotUser = true;
 			if (m_bGotPass) {
 				AuthUser();
-			} else {
-				PutClient(":irc.znc.in 464 " + GetNick() + " :Password required");
-				PutClient(":irc.znc.in NOTICE AUTH :*** "
-					"You need to send your password. "
-					"Try /quote PASS <username>:<password>");
+			} else if (!m_bInCap) {
+				SendRequiredPasswordNotice();
 			}
 
 			return;  // Don't forward this msg.  ZNC has already registered us.
@@ -808,7 +812,13 @@ void CClient::HandleCap(const CString& sLine)
 		m_bInCap = true;
 	} else if (sSubCmd.Equals("END")) {
 		m_bInCap = false;
-		AuthUser();
+		if (!IsAttached()) {
+			if (!m_pUser && m_bGotUser && !m_bGotPass) {
+				SendRequiredPasswordNotice();
+			} else {
+				AuthUser();
+			}
+		}
 	} else if (sSubCmd.Equals("REQ")) {
 		VCString vsTokens;
 		VCString::iterator it;
