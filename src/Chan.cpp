@@ -271,6 +271,8 @@ void CChan::ModeChange(const CString& sModes, const CNick* pOpNick) {
 				unsigned char uPerm = m_pNetwork->GetIRCSock()->GetPermFromMode(uMode);
 
 				if (uPerm) {
+					bool bNoChange = (pNick->HasPerm(uPerm) == bAdd);
+
 					if (bAdd) {
 						pNick->AddPerm(uPerm);
 
@@ -284,7 +286,6 @@ void CChan::ModeChange(const CString& sModes, const CNick* pOpNick) {
 							RemPerm(uPerm);
 						}
 					}
-					bool bNoChange = (pNick->HasPerm(uPerm) == bAdd);
 
 					if (uMode && pOpNick) {
 						NETWORKMODULECALL(OnChanPermission(*pOpNick, *pNick, *this, uMode, bAdd, bNoChange), m_pNetwork->GetUser(), m_pNetwork, NULL, NOTHING);
