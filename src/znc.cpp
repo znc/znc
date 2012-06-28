@@ -1097,6 +1097,12 @@ bool CZNC::DoRehash(CString& sError)
 		CString sModName = vit->Token(0);
 		CString sArgs = vit->Token(1, true);
 
+		if (sModName == "saslauth" && fSavedVersion < 0.207 + 0.000001) {
+			// XXX compatibility crap, added in 0.207
+			CUtils::PrintMessage("saslauth module was renamed to cyrusauth. Loading cyrusauth instead.");
+			sModName = "cyrusauth";
+		}
+
 		if (msModules.find(sModName) != msModules.end()) {
 			sError = "Module [" + sModName +
 				"] already loaded";
