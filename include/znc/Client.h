@@ -96,6 +96,7 @@ public:
 
 	virtual ~CClient();
 
+	void SendRequiredPasswordNotice();
 	void AcceptLogin(CUser& User);
 	void RefuseLogin(const CString& sReason);
 
