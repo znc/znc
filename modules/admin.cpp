@@ -42,7 +42,7 @@ class CAdminMod : public CModule {
 		static const char* str = "String";
 		static const char* boolean = "Boolean (true/false)";
 		static const char* integer = "Integer";
-		//static const char* doublenum = "Double";
+		static const char* doublenum = "Double";
 		static const char* vars[][2] = {
 			{"Nick",                str},
 			{"Altnick",             str},
@@ -83,6 +83,8 @@ class CAdminMod : public CModule {
 			{"Altnick",             str},
 			{"Ident",               str},
 			{"RealName",            str},
+			{"FloodRate",           doublenum},
+			{"FloodBurst",          integer},
 		};
 		for (unsigned int i = 0; i != ARRAY_SIZE(nvars); ++i) {
 			NVarTable.AddRow();
@@ -378,6 +380,10 @@ class CAdminMod : public CModule {
 			PutModule("Ident = " + pNetwork->GetIdent());
 		} else if (sVar.Equals("realname")) {
 			PutModule("RealName = " + pNetwork->GetRealName());
+		} else if (sVar.Equals("floodrate")) {
+			PutModule("FloodRate = " + CString(pNetwork->GetFloodRate()));
+		} else if (sVar.Equals("floodburst")) {
+			PutModule("FloodBurst = " + CString(pNetwork->GetFloodBurst()));
 		} else {
 			PutModule("Error: Unknown variable");
 		}
@@ -425,6 +431,12 @@ class CAdminMod : public CModule {
 		} else if (sVar.Equals("realname")) {
 			pNetwork->SetRealName(sValue);
 			PutModule("RealName = " + pNetwork->GetRealName());
+		} else if (sVar.Equals("floodrate")) {
+			pNetwork->SetFloodRate(sValue.ToDouble());
+			PutModule("FloodRate = " + CString(pNetwork->GetFloodRate()));
+		} else if (sVar.Equals("floodburst")) {
+			pNetwork->SetFloodBurst(sValue.ToUInt());
+			PutModule("FloodBurst = " + CString(pNetwork->GetFloodBurst()));
 		} else {
 			PutModule("Error: Unknown variable");
 		}
