@@ -73,6 +73,25 @@ class CAdminMod : public CModule {
 		}
 		PutModule(VarTable);
 
+		PutModule("The following variables are available when using the SetNetwork/GetNetwork commands:");
+
+		CTable NVarTable;
+		NVarTable.AddColumn("Variable");
+		NVarTable.AddColumn("Type");
+		static const char* nvars[][2] = {
+			{"Nick",                str},
+			{"Altnick",             str},
+			{"Ident",               str},
+			{"RealName",            str},
+		};
+		for (unsigned int i = 0; i != ARRAY_SIZE(nvars); ++i) {
+			NVarTable.AddRow();
+			NVarTable.SetCell("Variable", nvars[i][0]);
+			NVarTable.SetCell("Type",     nvars[i][1]);
+		}
+		PutModule(NVarTable);
+
+
 		PutModule("The following variables are available when using the SetChan/GetChan commands:");
 		CTable CVarTable;
 		CVarTable.AddColumn("Variable");
@@ -320,6 +339,95 @@ class CAdminMod : public CModule {
 		}
 		else
 			PutModule("Error: Unknown variable");
+	}
+
+	void GetNetwork(const CString& sLine) {
+		const CString sVar = sLine.Token(1).AsLower();
+		const CString sUsername = sLine.Token(2);
+		const CString sNetwork = sLine.Token(3);
+
+		CUser *pUser = NULL;
+		CIRCNetwork *pNetwork = NULL;
+
+		if (sUsername.empty()) {
+			pUser = m_pUser;
+			pNetwork = m_pNetwork;
+		} else {
+			pUser = GetUser(sUsername);
+			if (!pUser) {
+				return;
+			}
+
+			pNetwork = pUser->FindNetwork(sNetwork);
+			if (!pNetwork && !sNetwork.empty()) {
+				PutModule("Network not found.");
+				return;
+			}
+		}
+
+		if (!pNetwork) {
+			PutModule("Usage: GetNetwork <variable> <username> <network>");
+			return;
+		}
+
+		if (sVar.Equals("nick")) {
+			PutModule("Nick = " + pNetwork->GetNick());
+		} else if (sVar.Equals("altnick")) {
+			PutModule("AltNick = " + pNetwork->GetAltNick());
+		} else if (sVar.Equals("ident")) {
+			PutModule("Ident = " + pNetwork->GetIdent());
+		} else if (sVar.Equals("realname")) {
+			PutModule("RealName = " + pNetwork->GetRealName());
+		} else {
+			PutModule("Error: Unknown variable");
+		}
+	}
+
+	void SetNetwork(const CString& sLine) {
+		const CString sVar = sLine.Token(1).AsLower();
+		const CString sUsername = sLine.Token(2);
+		const CString sNetwork = sLine.Token(3);
+		const CString sValue = sLine.Token(4, true);
+
+		CUser *pUser = NULL;
+		CIRCNetwork *pNetwork = NULL;
+
+		if (sUsername.empty()) {
+			pUser = m_pUser;
+			pNetwork = m_pNetwork;
+		} else {
+			pUser = GetUser(sUsername);
+			if (!pUser) {
+				return;
+			}
+
+			pNetwork = pUser->FindNetwork(sNetwork);
+			if (!pNetwork && !sNetwork.empty()) {
+				PutModule("Network not found.");
+				return;
+			}
+		}
+
+		if (!pNetwork) {
+			PutModule("Usage: SetNetwork <variable> <username> <network> <value>");
+			return;
+		}
+
+		if (sVar.Equals("nick")) {
+			pNetwork->SetNick(sValue);
+			PutModule("Nick = " + pNetwork->GetNick());
+		} else if (sVar.Equals("altnick")) {
+			pNetwork->SetAltNick(sValue);
+			PutModule("AltNick = " + pNetwork->GetAltNick());
+		} else if (sVar.Equals("ident")) {
+			pNetwork->SetIdent(sValue);
+			PutModule("Ident = " + pNetwork->GetIdent());
+		} else if (sVar.Equals("realname")) {
+			pNetwork->SetRealName(sValue);
+			PutModule("RealName = " + pNetwork->GetRealName());
+		} else {
+			PutModule("Error: Unknown variable");
+		}
 	}
 
 	void GetChan(const CString& sLine) {
@@ -951,6 +1059,10 @@ public:
 			"variable [username]",                  "Prints the variable's value for the given or current user");
 		AddCommand("Set",          static_cast<CModCommand::ModCmdFunc>(&CAdminMod::Set),
 			"variable username value",              "Sets the variable's value for the given user (use $me for the current user)");
+		AddCommand("GetNetwork",   static_cast<CModCommand::ModCmdFunc>(&CAdminMod::GetNetwork),
+			"variable [username network]",          "Prints the variable's value for the given network");
+		AddCommand("SetNetwork",   static_cast<CModCommand::ModCmdFunc>(&CAdminMod::SetNetwork),
+			"variable username network value",      "Sets the variable's value for the given network");
 		AddCommand("GetChan",      static_cast<CModCommand::ModCmdFunc>(&CAdminMod::GetChan),
 			"variable [username] network chan",     "Prints the variable's value for the given channel");
 		AddCommand("SetChan",      static_cast<CModCommand::ModCmdFunc>(&CAdminMod::SetChan),
