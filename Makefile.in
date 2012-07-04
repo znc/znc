@@ -37,7 +37,7 @@ BIN_SRCS  := src/main.cpp
 LIB_OBJS  := $(patsubst %cpp,%o,$(LIB_SRCS))
 BIN_OBJS  := $(patsubst %cpp,%o,$(BIN_SRCS))
 CLEAN     := znc src/*.o core core.*
-DISTCLEAN := Makefile config.log config.status znc-config znc-buildmod .depend \
+DISTCLEAN := Makefile config.log config.status znc-buildmod .depend \
 	modules/.depend modules/Makefile man/Makefile znc.pc znc-uninstalled.pc
 
 CXXFLAGS += -D_MODDIR_=\"$(MODDIR)\" -D_DATADIR_=\"$(DATADIR)\"
@@ -108,7 +108,6 @@ install: znc $(LIBZNC)
 	find $(DESTDIR)$(DATADIR)/webskins -type d -exec chmod 0755 '{}' \;
 	find $(DESTDIR)$(DATADIR)/webskins -type f -exec chmod 0644 '{}' \;
 	$(INSTALL_PROGRAM) znc $(DESTDIR)$(bindir)
-	$(INSTALL_SCRIPT) znc-config $(DESTDIR)$(bindir)
 	$(INSTALL_SCRIPT) znc-buildmod $(DESTDIR)$(bindir)
 	$(INSTALL_DATA) $(srcdir)/include/znc/*.h $(DESTDIR)$(includedir)/znc
 	$(INSTALL_DATA) include/znc/zncconfig.h $(DESTDIR)$(includedir)/znc
@@ -129,7 +128,6 @@ install: znc $(LIBZNC)
 
 uninstall:
 	rm $(DESTDIR)$(bindir)/znc
-	rm $(DESTDIR)$(bindir)/znc-config
 	rm $(DESTDIR)$(bindir)/znc-buildmod
 	rm $(DESTDIR)$(includedir)/znc/*.h
 	rm $(DESTDIR)$(PKGCONFIGDIR)/znc.pc
