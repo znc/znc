@@ -380,7 +380,6 @@ void CClient::ReadLine(const CString& sData) {
 		}
 
 		pChan->DetachUser();
-		PutStatusNotice("Detached from [" + sChan + "]");
 		return;
 	} else if (sCommand.Equals("JOIN")) {
 		CString sChans = sLine.Token(1).TrimPrefix_n();
