@@ -78,6 +78,7 @@ static const struct {
 		{NULL, true}
 	}},
 	{"WHOWAS", {
+		{"406", false},  /* rfc1459 ERR_WASNOSUCHNICK */
 		{"312", false},
 		{"314", false},
 		{"369", true},
@@ -100,6 +101,7 @@ static const struct {
 		{"015", false},
 		{"017", true},
 		{"007", true},
+		{"481", true},  /* rfc1459 ERR_NOPRIVILEGES */
 		{NULL, true}
 	}},
 	{"TRACE", {
