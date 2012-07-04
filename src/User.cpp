@@ -525,7 +525,17 @@ CString CUser::AddTimestamp(time_t tm, const CString& sStr) const {
 			// From http://www.mirc.com/colors.html
 			// The Control+O key combination in mIRC inserts ascii character 15,
 			// which turns off all previous attributes, including color, bold, underline, and italics.
-			if (sRet.find_first_of("\x02\x03\x04\x0f\x12\x16\x1F")) {
+			//
+			// \x02 bold
+			// \x03 mIRC-compatible color
+			// \x04 RRGGBB color
+			// \x0F normal/reset (turn off bold, colors, etc.)
+			// \x12 reverse (weechat)
+			// \x16 reverse (mirc, kvirc)
+			// \x1D italic
+			// \x1F underline
+			// Also see http://www.visualirc.net/tech-attrs.php
+			if (CString::npos != sRet.find_first_of("\x02\x03\x04\x0F\x12\x16\x1D\x1F")) {
 				sRet += "\x0F ";
 			}
 
