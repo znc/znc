@@ -1026,6 +1026,11 @@ class CAdminMod : public CModule {
 			return;
 		}
 
+		if (pUser->GetModules().FindModule(sModName) == this) {
+			PutModule("Please use /znc unloadmod " + sModName);
+			return;
+		}
+
 		if (!(pUser)->GetModules().UnloadModule(sModName, sModRet)) {
 			PutModule("Unable to unload module [" + sModName + "] [" + sModRet + "]");
 		} else {
