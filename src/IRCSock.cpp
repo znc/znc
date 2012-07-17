@@ -935,11 +935,21 @@ bool CIRCSock::OnChanCTCP(CNick& Nick, const CString& sChan, CString& sMessage) 
 }
 
 bool CIRCSock::OnChanNotice(CNick& Nick, const CString& sChan, CString& sMessage) {
-	CChan* pChan = m_pNetwork->FindChan(sChan);
+	CString sRealChan = sChan;
+
+	// In case this was a channel operators notice,
+	// drop the @ before the channel name and send it
+	// to modules
+	if (*(sRealChan.begin()) == '@') {
+		sRealChan.erase(sRealChan.begin());
+	}
+
+	CChan* pChan = m_pNetwork->FindChan(sRealChan);
 	if (pChan) {
 		IRCSOCKMODULECALL(OnChanNotice(Nick, *pChan, sMessage), return true);
 
 		if (!pChan->AutoClearChanBuffer() || !m_pNetwork->IsUserOnline() || pChan->IsDetached()) {
+			// Keep using sChan here, to preserve the fact that this is an operators notices
 			pChan->AddBuffer(":" + _NAMEDFMT(Nick.GetNickMask()) + " NOTICE " + _NAMEDFMT(sChan) + " :{text}", sMessage);
 		}
 	}
