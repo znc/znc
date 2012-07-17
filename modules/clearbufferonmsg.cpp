@@ -63,4 +63,8 @@ public:
 	}
 };
 
+template<> void TModInfo<CClearBufferOnMsgMod>(CModInfo& Info) {
+	Info.SetWikiPage("clearbufferonmsg");
+}
+
 USERMODULEDEFS(CClearBufferOnMsgMod, "Clear all channel buffers whenever the user does something")

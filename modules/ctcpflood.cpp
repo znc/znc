@@ -113,4 +113,10 @@ private:
 	unsigned int m_iThresholdMsgs;
 };
 
+template<> void TModInfo<CCtcpFloodMod>(CModInfo& Info) {
+	Info.SetWikiPage("ctcpflood");
+	Info.SetHasArgs(true);
+	Info.SetArgsHelpText("This user module takes none to two arguments. The first argument is the number of lines after which the flood-protection is triggered. The second argument is the time (s) to in which the number of lines is reached. The default setting is 4 CTCPs in 2 seconds");
+}
+
 USERMODULEDEFS(CCtcpFloodMod, "Don't forward CTCP floods to clients")

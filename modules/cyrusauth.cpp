@@ -210,7 +210,9 @@ protected:
 };
 
 template<> void TModInfo<CSASLAuthMod>(CModInfo& Info) {
-	Info.SetWikiPage("saslauth");
+	Info.SetWikiPage("cyrusauth");
+	Info.SetHasArgs(true);
+	Info.SetArgsHelpText("This global module takes up to two arguments - the methods of authentication - auxprop and saslauthd");
 }
 
 GLOBALMODULEDEFS(CSASLAuthMod, "Allow users to authenticate via SASL password verification method")

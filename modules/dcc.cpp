@@ -471,5 +471,9 @@ bool CDCCSock::Seek(unsigned int uPos) {
 	return false;
 }
 
+template<> void TModInfo<CDCCMod>(CModInfo& Info) {
+	Info.SetWikiPage("dcc");
+}
+
 USERMODULEDEFS(CDCCMod, "This module allows you to transfer files to and from ZNC")
 

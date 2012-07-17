@@ -360,6 +360,8 @@ void CSaveBuffJob::RunJob()
 
 template<> void TModInfo<CSaveBuff>(CModInfo& Info) {
 	Info.SetWikiPage("savebuff");
+	Info.SetHasArgs(true);
+	Info.SetArgsHelpText("This user module takes up to one arguments. Either --ask-pass or the password itself (which may contain spaces) or nothing");
 }
 
 NETWORKMODULEDEFS(CSaveBuff, "Stores channel buffers to disk, encrypted")

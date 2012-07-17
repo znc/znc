@@ -467,6 +467,8 @@ void CRemMarkerJob::RunJob()
 
 template<> void TModInfo<CSChat>(CModInfo& Info) {
 	Info.SetWikiPage("schat");
+	Info.SetHasArgs(true);
+	Info.SetArgsHelpText("Path to .pem file, if differs from main ZNC's one");
 }
 
 NETWORKMODULEDEFS(CSChat, "Secure cross platform (:P) chat system")

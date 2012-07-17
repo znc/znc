@@ -425,4 +425,8 @@ private:
 	bool m_bAuthenticated;
 };
 
+template<> void TModInfo<CSASLMod>(CModInfo& Info) {
+	Info.SetWikiPage("sasl");
+}
+
 NETWORKMODULEDEFS(CSASLMod, "Adds support for sasl authentication capability to authenticate to an IRC server")

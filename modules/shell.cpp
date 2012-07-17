@@ -127,6 +127,10 @@ void CShellSock::Disconnected() {
 	m_pParent->SetClient(NULL);
 }
 
+template<> void TModInfo<CShellMod>(CModInfo& Info) {
+	Info.SetWikiPage("shell");
+}
+
 #ifdef MOD_SHELL_ALLOW_EVERYONE
 USERMODULEDEFS(CShellMod, "Gives shell access")
 #else

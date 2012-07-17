@@ -275,4 +275,10 @@ private:
 	map<CString, CAutoVoiceUser*> m_msUsers;
 };
 
+template<> void TModInfo<CAutoVoiceMod>(CModInfo& Info) {
+	Info.SetWikiPage("autovoice");
+	Info.SetHasArgs(true);
+	Info.SetArgsHelpText("Each argument is either a channel you want autovoice for (which can include wildcards) or, if it starts with !, it is an exception for autovoice.");
+}
+
 NETWORKMODULEDEFS(CAutoVoiceMod, "Auto voice the good guys")

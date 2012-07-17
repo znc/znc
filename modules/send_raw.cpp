@@ -126,4 +126,8 @@ public:
 	}
 };
 
+template<> void TModInfo<CSendRaw_Mod>(CModInfo& Info) {
+	Info.SetWikiPage("send_raw");
+}
+
 USERMODULEDEFS(CSendRaw_Mod, "Lets you send some raw IRC lines as/to someone else")
