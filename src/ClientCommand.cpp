@@ -742,11 +742,12 @@ void CClient::UserCommand(CString& sLine) {
 		CString sMod = sLine.Token(2);
 		CString sArgs = sLine.Token(3, true);
 
-		if (sType.Equals("global")) {
+		// TODO use proper library for parsing arguments
+		if (sType.Equals("--type=global")) {
 			eType = CModInfo::GlobalModule;
-		} else if (sType.Equals("user")) {
+		} else if (sType.Equals("--type=user")) {
 			eType = CModInfo::UserModule;
-		} else if (sType.Equals("network")) {
+		} else if (sType.Equals("--type=network")) {
 			eType = CModInfo::NetworkModule;
 		} else {
 			sMod = sType;
@@ -762,7 +763,7 @@ void CClient::UserCommand(CString& sLine) {
 		}
 
 		if (sMod.empty()) {
-			PutStatus("Usage: LoadMod [type] <module> [args]");
+			PutStatus("Usage: LoadMod [--type=global|user|network] <module> [args]");
 			return;
 		}
 
@@ -814,11 +815,12 @@ void CClient::UserCommand(CString& sLine) {
 		CString sType = sLine.Token(1);
 		CString sMod = sLine.Token(2);
 
-		if (sType.Equals("global")) {
+		// TODO use proper library for parsing arguments
+		if (sType.Equals("--type=global")) {
 			eType = CModInfo::GlobalModule;
-		} else if (sType.Equals("user")) {
+		} else if (sType.Equals("--type=user")) {
 			eType = CModInfo::UserModule;
-		} else if (sType.Equals("network")) {
+		} else if (sType.Equals("--type=network")) {
 			eType = CModInfo::NetworkModule;
 		} else {
 			sMod = sType;
@@ -831,7 +833,7 @@ void CClient::UserCommand(CString& sLine) {
 		}
 
 		if (sMod.empty()) {
-			PutStatus("Usage: UnloadMod [type] <module>");
+			PutStatus("Usage: UnloadMod [--type=global|user|network] <module>");
 			return;
 		}
 
@@ -885,11 +887,12 @@ void CClient::UserCommand(CString& sLine) {
 			return;
 		}
 
-		if (sType.Equals("global")) {
+		// TODO use proper library for parsing arguments
+		if (sType.Equals("--type=global")) {
 			eType = CModInfo::GlobalModule;
-		} else if (sType.Equals("user")) {
+		} else if (sType.Equals("--type=user")) {
 			eType = CModInfo::UserModule;
-		} else if (sType.Equals("network")) {
+		} else if (sType.Equals("--type=network")) {
 			eType = CModInfo::NetworkModule;
 		} else {
 			sMod = sType;
@@ -900,7 +903,7 @@ void CClient::UserCommand(CString& sLine) {
 		}
 
 		if (sMod.empty()) {
-			PutStatus("Usage: ReloadMod [type] <module> [args]");
+			PutStatus("Usage: ReloadMod [--type=global|user|network] <module> [args]");
 			return;
 		}
 
@@ -1441,17 +1444,17 @@ void CClient::HelpUser() {
 	if (!m_pUser->DenyLoadMod()) {
 		Table.AddRow();
 		Table.SetCell("Command", "LoadMod");
-		Table.SetCell("Arguments", "[type] <module>");
+		Table.SetCell("Arguments", "[--type=global|user|network] <module>");
 		Table.SetCell("Description", "Load a module");
 
 		Table.AddRow();
 		Table.SetCell("Command", "UnloadMod");
-		Table.SetCell("Arguments", "[type] <module>");
+		Table.SetCell("Arguments", "[--type=global|user|network] <module>");
 		Table.SetCell("Description", "Unload a module");
 
 		Table.AddRow();
 		Table.SetCell("Command", "ReloadMod");
-		Table.SetCell("Arguments", "[type] <module>");
+		Table.SetCell("Arguments", "[--type=global|user|network] <module>");
 		Table.SetCell("Description", "Reload a module");
 
 		if (m_pUser->IsAdmin()) {
