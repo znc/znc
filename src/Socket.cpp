@@ -9,6 +9,7 @@
 #include <znc/Socket.h>
 #include <znc/Modules.h>
 #include <znc/User.h>
+#include <znc/IRCNetwork.h>
 #include <znc/znc.h>
 #include <signal.h>
 
@@ -248,7 +249,7 @@ void CSockManager::SetTDNSThreadFinished(TDNSTask* task, bool bBind, addrinfo* a
 			aiTarget = aiTarget4;
 #endif
 		} else if (!aiBind4 && !aiBind6) {
-			throw "Can't resolve bind hostname. Try /znc clearbindhost";
+			throw "Can't resolve bind hostname. Try /znc clearbindhost and /znc clearuserbindhost";
 		} else if (aiBind6 && aiTarget6) {
 			aiTarget = aiTarget6;
 			aiBind = aiBind6;
@@ -457,7 +458,12 @@ bool CSocket::Connect(const CString& sHostname, unsigned short uPort, bool bSSL,
 
 	if (pUser) {
 		sSockName += "::" + pUser->GetUserName();
-		sBindHost = m_pModule->GetUser()->GetBindHost();
+		sBindHost = pUser->GetBindHost();
+		CIRCNetwork* pNetwork = m_pModule->GetNetwork();
+		if (pNetwork) {
+			sSockName += "::" + pNetwork->GetName();
+			sBindHost = pNetwork->GetBindHost();
+		}
 	}
 
 	// Don't overwrite the socket name if one is already set

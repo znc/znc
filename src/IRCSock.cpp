@@ -54,7 +54,7 @@ CIRCSock::CIRCSock(CIRCNetwork* pNetwork) : CZNCSock() {
 	m_iSendsAllowed = m_uFloodBurst;
 	EnableReadLine();
 	m_Nick.SetIdent(m_pNetwork->GetIdent());
-	m_Nick.SetHost(m_pNetwork->GetUser()->GetBindHost());
+	m_Nick.SetHost(m_pNetwork->GetBindHost());
 
 	m_uMaxNickLen = 9;
 	m_uCapPaused = 0;

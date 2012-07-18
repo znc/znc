@@ -1004,10 +1004,47 @@ void CClient::UserCommand(CString& sLine) {
 		}
 		PutStatus(Table);
 	} else if ((sCommand.Equals("SETBINDHOST") || sCommand.Equals("SETVHOST")) && (m_pUser->IsAdmin() || !m_pUser->DenySetBindHost())) {
+		if (!m_pNetwork) {
+			PutStatus("You must be connected with a network to use this command. Try SetUserBindHost instead");
+			return;
+		}
 		CString sHost = sLine.Token(1);
 
 		if (sHost.empty()) {
 			PutStatus("Usage: SetBindHost <host>");
+			return;
+		}
+
+		if (sHost.Equals(m_pNetwork->GetBindHost())) {
+			PutStatus("You already have this bind host!");
+			return;
+		}
+
+		const VCString& vsHosts = CZNC::Get().GetBindHosts();
+		if (!m_pUser->IsAdmin() && !vsHosts.empty()) {
+			VCString::const_iterator it;
+			bool bFound = false;
+
+			for (it = vsHosts.begin(); it != vsHosts.end(); ++it) {
+				if (sHost.Equals(*it)) {
+					bFound = true;
+					break;
+				}
+			}
+
+			if (!bFound) {
+				PutStatus("You may not use this bind host. See [ListBindHosts] for a list");
+				return;
+			}
+		}
+
+		m_pNetwork->SetBindHost(sHost);
+		PutStatus("Set bind host for network [" + m_pNetwork->GetName() + "] to [" + m_pNetwork->GetBindHost() + "]");
+	} else if (sCommand.Equals("SETUSERBINDHOST") && (m_pUser->IsAdmin() || !m_pUser->DenySetBindHost())) {
+		CString sHost = sLine.Token(1);
+
+		if (sHost.empty()) {
+			PutStatus("Usage: SetUserBindHost <host>");
 			return;
 		}
 
@@ -1037,8 +1074,15 @@ void CClient::UserCommand(CString& sLine) {
 		m_pUser->SetBindHost(sHost);
 		PutStatus("Set bind host to [" + m_pUser->GetBindHost() + "]");
 	} else if ((sCommand.Equals("CLEARBINDHOST") || sCommand.Equals("CLEARVHOST")) && (m_pUser->IsAdmin() || !m_pUser->DenySetBindHost())) {
+		if (!m_pNetwork) {
+			PutStatus("You must be connected with a network to use this command. Try ClearUserBindHost instead");
+			return;
+		}
+		m_pNetwork->SetBindHost("");
+		PutStatus("Bind host cleared");
+	} else if (sCommand.Equals("CLEARUSERBINDHOST") && (m_pUser->IsAdmin() || !m_pUser->DenySetBindHost())) {
 		m_pUser->SetBindHost("");
-		PutStatus("Bind Host Cleared");
+		PutStatus("Bind host cleared");
 	} else if (sCommand.Equals("PLAYBUFFER")) {
 		if (!m_pNetwork) {
 			PutStatus("You must be connected with a network to use this command");
@@ -1420,8 +1464,17 @@ void CClient::HelpUser() {
 		Table.SetCell("Description", "Set the bind host for this connection");
 
 		Table.AddRow();
+		Table.SetCell("Command", "SetUserBindHost");
+		Table.SetCell("Arguments", "<host (IP preferred)>");
+		Table.SetCell("Description", "Set the default bind host for this user");
+
+		Table.AddRow();
 		Table.SetCell("Command", "ClearBindHost");
 		Table.SetCell("Description", "Clear the bind host for this connection");
+
+		Table.AddRow();
+		Table.SetCell("Command", "ClearUserBindHost");
+		Table.SetCell("Description", "Clear the default bind host for this user");
 	}
 
 	Table.AddRow();

@@ -88,6 +88,7 @@ void CIRCNetwork::Clone(const CIRCNetwork& Network) {
 	SetAltNick(Network.GetAltNick());
 	SetIdent(Network.GetIdent());
 	SetRealName(Network.GetRealName());
+	SetBindHost(Network.GetBindHost());
 
 	// Servers
 	const vector<CServer*>& vServers = Network.GetServers();
@@ -246,7 +247,8 @@ bool CIRCNetwork::ParseConfig(CConfig *pConfig, CString& sError, bool bUpgrade) 
 			{ "nick", &CIRCNetwork::SetNick },
 			{ "altnick", &CIRCNetwork::SetAltNick },
 			{ "ident", &CIRCNetwork::SetIdent },
-			{ "realname", &CIRCNetwork::SetRealName }
+			{ "realname", &CIRCNetwork::SetRealName },
+			{ "bindhost", &CIRCNetwork::SetBindHost },
 		};
 		size_t numStringOptions = sizeof(StringOptions) / sizeof(StringOptions[0]);
 		TOption<bool> BoolOptions[] = {
@@ -379,6 +381,9 @@ CConfig CIRCNetwork::ToConfig() {
 
 	if (!m_sRealName.empty()) {
 		config.AddKeyValuePair("RealName", m_sRealName);
+	}
+	if (!m_sBindHost.empty()) {
+		config.AddKeyValuePair("BindHost", m_sBindHost);
 	}
 
 	config.AddKeyValuePair("IRCConnectEnabled", CString(GetIRCConnectEnabled()));
@@ -947,7 +952,7 @@ bool CIRCNetwork::Connect() {
 	);
 
 	CString sSockName = "IRC::" + m_pUser->GetUserName() + "::" + m_sName;
-	CZNC::Get().GetManager().Connect(pServer->GetName(), pServer->GetPort(), sSockName, 120, bSSL, m_pUser->GetBindHost(), pIRCSock);
+	CZNC::Get().GetManager().Connect(pServer->GetName(), pServer->GetPort(), sSockName, 120, bSSL, GetBindHost(), pIRCSock);
 
 	return true;
 }
@@ -1034,6 +1039,14 @@ const CString& CIRCNetwork::GetRealName() const {
 	return m_sRealName;
 }
 
+const CString& CIRCNetwork::GetBindHost() const {
+	if (m_sBindHost.empty()) {
+		return m_pUser->GetBindHost();
+	}
+
+	return m_sBindHost;
+}
+
 void CIRCNetwork::SetNick(const CString& s) {
 	if (m_pUser->GetNick().Equals(s)) {
 		m_sNick = "";
@@ -1066,6 +1079,14 @@ void CIRCNetwork::SetRealName(const CString& s) {
 	}
 }
 
+void CIRCNetwork::SetBindHost(const CString& s) {
+	if (m_pUser->GetBindHost().Equals(s)) {
+		m_sBindHost = "";
+	} else {
+		m_sBindHost = s;
+	}
+}
+
 CString CIRCNetwork::ExpandString(const CString& sStr) const {
 	CString sRet;
 	return ExpandString(sStr, sRet);
@@ -1078,6 +1099,7 @@ CString& CIRCNetwork::ExpandString(const CString& sStr, CString& sRet) const {
 	sRet.Replace("%altnick%", GetAltNick());
 	sRet.Replace("%ident%", GetIdent());
 	sRet.Replace("%realname%", GetRealName());
+	sRet.Replace("%bindhost%", GetBindHost());
 
 	return m_pUser->ExpandString(sRet, sRet);
 }

@@ -783,12 +783,12 @@ CString CClient::GetNickMask() const {
 		return GetIRCSock()->GetNickMask();
 	}
 
-	CString sHost = m_pUser->GetBindHost();
+	CString sHost = m_pNetwork ? m_pNetwork->GetBindHost() : m_pUser->GetBindHost();
 	if (sHost.empty()) {
 		sHost = "irc.znc.in";
 	}
 
-	return GetNick() + "!" + m_pUser->GetIdent() + "@" + sHost;
+	return GetNick() + "!" + (m_pNetwork ? m_pNetwork->GetBindHost() : m_pUser->GetIdent()) + "@" + sHost;
 }
 
 void CClient::RespondCap(const CString& sResponse)

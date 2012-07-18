@@ -684,6 +684,38 @@ public:
 				}
 			}
 
+			// To change BindHosts be admin or don't have DenySetBindHost
+			if (spSession->IsAdmin() || !spSession->GetUser()->DenySetBindHost()) {
+				Tmpl["BindHostEdit"] = "true";
+				const VCString& vsBindHosts = CZNC::Get().GetBindHosts();
+				if (vsBindHosts.empty()) {
+					if (pNetwork) {
+						Tmpl["BindHost"] = pNetwork->GetBindHost();
+					}
+				} else {
+					bool bFoundBindHost = false;
+					for (unsigned int b = 0; b < vsBindHosts.size(); b++) {
+						const CString& sBindHost = vsBindHosts[b];
+						CTemplate& l = Tmpl.AddRow("BindHostLoop");
+
+						l["BindHost"] = sBindHost;
+
+						if (pNetwork && pNetwork->GetBindHost() == sBindHost) {
+							l["Checked"] = "true";
+							bFoundBindHost = true;
+						}
+					}
+
+					// If our current bindhost is not in the global list...
+					if (pNetwork && !bFoundBindHost && !pNetwork->GetBindHost().empty()) {
+						CTemplate& l = Tmpl.AddRow("BindHostLoop");
+
+						l["BindHost"] = pNetwork->GetBindHost();
+						l["Checked"] = "true";
+					}
+				}
+			}
+
 			if (pNetwork) {
 				Tmpl["Action"] = "editnetwork";
 				Tmpl["Edit"] = "true";
@@ -766,6 +798,12 @@ public:
 		pNetwork->SetRealName(WebSock.GetParam("realname"));
 
 		pNetwork->SetIRCConnectEnabled(WebSock.GetParam("doconnect").ToBool());
+
+		sArg = WebSock.GetParam("bindhost");
+		// To change BindHosts be admin or don't have DenySetBindHost
+		if (spSession->IsAdmin() || !spSession->GetUser()->DenySetBindHost()) {
+			pNetwork->SetBindHost(WebSock.GetParam("bindhost"));
+		}
 
 		if (WebSock.GetParam("floodprotection").ToBool()) {
 			pNetwork->SetFloodRate(WebSock.GetParam("floodrate").ToDouble());
