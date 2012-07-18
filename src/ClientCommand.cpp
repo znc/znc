@@ -1083,6 +1083,11 @@ void CClient::UserCommand(CString& sLine) {
 	} else if (sCommand.Equals("CLEARUSERBINDHOST") && (m_pUser->IsAdmin() || !m_pUser->DenySetBindHost())) {
 		m_pUser->SetBindHost("");
 		PutStatus("Bind host cleared");
+	} else if (sCommand.Equals("SHOWBINDHOST")) {
+		PutStatus("This user's default bind host " + (m_pUser->GetBindHost().empty() ? "not set" : "is [" + m_pUser->GetBindHost() + "]"));
+		if (m_pNetwork) {
+			PutStatus("This network's bind host " + (m_pNetwork->GetBindHost().empty() ? "not set" : "is [" + m_pNetwork->GetBindHost() + "]"));
+		}
 	} else if (sCommand.Equals("PLAYBUFFER")) {
 		if (!m_pNetwork) {
 			PutStatus("You must be connected with a network to use this command");
@@ -1476,6 +1481,10 @@ void CClient::HelpUser() {
 		Table.SetCell("Command", "ClearUserBindHost");
 		Table.SetCell("Description", "Clear the default bind host for this user");
 	}
+
+	Table.AddRow();
+	Table.SetCell("Command", "ShowBindHost");
+	Table.SetCell("Description", "Show currently selected bind host");
 
 	Table.AddRow();
 	Table.SetCell("Command", "Jump [server]");
