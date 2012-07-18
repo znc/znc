@@ -216,6 +216,29 @@ public:
 			if (!sArg2.empty()) {
 				pNewUser->SetDCCBindHost(sArg2);
 			}
+
+			const VCString& vsHosts = CZNC::Get().GetBindHosts();
+			if (!spSession->IsAdmin() && !vsHosts.empty()) {
+				VCString::const_iterator it;
+				bool bFound = false;
+				bool bFoundDCC = false;
+
+				for (it = vsHosts.begin(); it != vsHosts.end(); ++it) {
+					if (sArg.Equals(*it)) {
+						bFound = true;
+					}
+					if (sArg2.Equals(*it)) {
+						bFoundDCC = true;
+					}
+				}
+
+				if (!bFound) {
+					pNewUser->SetBindHost(pUser ? pUser->GetBindHost() : "");
+				}
+				if (!bFoundDCC) {
+					pNewUser->SetDCCBindHost(pUser ? pUser->GetDCCBindHost() : "");
+				}
+			}
 		} else if (pUser){
 			pNewUser->SetBindHost(pUser->GetBindHost());
 			pNewUser->SetDCCBindHost(pUser->GetDCCBindHost());
@@ -802,7 +825,24 @@ public:
 		sArg = WebSock.GetParam("bindhost");
 		// To change BindHosts be admin or don't have DenySetBindHost
 		if (spSession->IsAdmin() || !spSession->GetUser()->DenySetBindHost()) {
-			pNetwork->SetBindHost(WebSock.GetParam("bindhost"));
+			CString sHost = WebSock.GetParam("bindhost");
+			const VCString& vsHosts = CZNC::Get().GetBindHosts();
+			if (!spSession->IsAdmin() && !vsHosts.empty()) {
+				VCString::const_iterator it;
+				bool bFound = false;
+
+				for (it = vsHosts.begin(); it != vsHosts.end(); ++it) {
+					if (sHost.Equals(*it)) {
+						bFound = true;
+						break;
+					}
+				}
+
+				if (!bFound) {
+					sHost = pNetwork->GetBindHost();
+				}
+			}
+			pNetwork->SetBindHost(sHost);
 		}
 
 		if (WebSock.GetParam("floodprotection").ToBool()) {
