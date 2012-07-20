@@ -175,7 +175,7 @@ inline double GetVersion() {
 }
 
 inline CString GetVersionExtra() {
-	return VERSION_EXTRA;
+	return ZNC_VERSION_EXTRA;
 }
 #if HAVE_VISIBILITY
 #pragma GCC visibility pop

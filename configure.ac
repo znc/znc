@@ -35,6 +35,7 @@ AC_PROG_SED
 AC_CANONICAL_HOST
 AC_SYS_LARGEFILE
 ZNC_VISIBILITY
+AC_PATH_PROG([GIT], [git])
 
 appendLib () {
 	if test "$LIBS" != ""; then

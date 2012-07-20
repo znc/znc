@@ -72,7 +72,7 @@ CZNC::~CZNC() {
 CString CZNC::GetVersion() {
 	char szBuf[128];
 
-	snprintf(szBuf, sizeof(szBuf), "%1.3f"VERSION_EXTRA, VERSION);
+	snprintf(szBuf, sizeof(szBuf), "%1.3f%s", VERSION, ZNC_VERSION_EXTRA);
 	// If snprintf overflows (which I doubt), we want to be on the safe side
 	szBuf[sizeof(szBuf) - 1] = '\0';
 
@@ -87,7 +87,7 @@ CString CZNC::GetTag(bool bIncludeVersion, bool bHTML) {
 	}
 
 	char szBuf[128];
-	snprintf(szBuf, sizeof(szBuf), "ZNC %1.3f"VERSION_EXTRA" - ", VERSION);
+	snprintf(szBuf, sizeof(szBuf), "ZNC %1.3f%s - ", VERSION, ZNC_VERSION_EXTRA);
 	// If snprintf overflows (which I doubt), we want to be on the safe side
 	szBuf[sizeof(szBuf) - 1] = '\0';
 

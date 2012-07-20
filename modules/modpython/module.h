@@ -215,7 +215,7 @@ inline double GetVersion() {
 }
 
 inline CString GetVersionExtra() {
-	return VERSION_EXTRA;
+	return ZNC_VERSION_EXTRA;
 }
 
 class MCString_iter {

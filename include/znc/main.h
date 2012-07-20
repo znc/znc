@@ -10,17 +10,7 @@
 #define _MAIN_H
 
 #include <znc/zncconfig.h>
-
-// The following defines are for #if comparison (preprocessor only likes ints)
-#define VERSION_MAJOR  0
-#define VERSION_MINOR  207
-// This one is for display purpose
-#define VERSION        (VERSION_MAJOR + VERSION_MINOR / 1000.0)
-
-// You can add -DVERSION_EXTRA="stuff" to your CXXFLAGS!
-#ifndef VERSION_EXTRA
-#define VERSION_EXTRA ""
-#endif
+#include <znc/version.h>
 
 #define NOTHING (void)0
 
