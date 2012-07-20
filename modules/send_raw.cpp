@@ -68,13 +68,13 @@ public:
 	virtual bool OnWebRequest(CWebSock& WebSock, const CString& sPageName, CTemplate& Tmpl) {
 		if (sPageName == "index") {
 			if (WebSock.IsPost()) {
-				CUser *pUser = CZNC::Get().FindUser(WebSock.GetParam("user").Token(0, false, "/"));
+				CUser *pUser = CZNC::Get().FindUser(WebSock.GetParam("network").Token(0, false, "/"));
 				if (!pUser) {
 					WebSock.GetSession()->AddError("User not found");
 					return true;
 				}
 
-				CIRCNetwork *pNetwork = pUser->FindNetwork(WebSock.GetParam("user").Token(1, false, "/"));
+				CIRCNetwork *pNetwork = pUser->FindNetwork(WebSock.GetParam("network").Token(1, false, "/"));
 				if (!pNetwork) {
 					WebSock.GetSession()->AddError("Network not found");
 					return true;

@@ -1,3 +1,4 @@
+<? ADDROW JSLoop HREF=/modfiles/user/send_raw/select.js ?>
 <? INC Header.tmpl ?>
 
 <form method="post" action="<? VAR ModPath ?>">
@@ -8,11 +9,20 @@
 
 		<div class="sectionbg">
 			<div class="sectionbody">
-				<div class="subsection third">
+				<div class="subsection third" id="userblock" style="display:none">
 					<div class="inputlabel">User:</div>
-					<select name="user">
-						<? LOOP UserLoop?>
-							<option value="<? VAR Username ESC=HTML ?>"><? VAR Username ESC=HTML ?></option>
+					<input id="user" type="text" disabled="disabled" title="To change user, click to Network selector"/>
+				</div>
+
+				<div class="subsection third">
+					<div class="inputlabel" id="networklabel">User/Network:</div>
+					<select name="network" id="selectnetwork" onchange="javascript:updateUser()">
+						<? LOOP UserLoop ?>
+							<optgroup label="<? VAR Username ?>">
+								<? LOOP NetworkLoop ?>
+									<option value="<? VAR Username ?>/<? VAR Network ?>"><? VAR Network ?></option>
+								<? ENDLOOP ?>
+							</optgroup>
 						<? ENDLOOP ?>
 					</select>
 				</div>
@@ -37,5 +47,7 @@
 		</div>
 	</div>
 </form>
+
+<script type="text/javascript">init();</script>
 
 <? INC Footer.tmpl ?>
