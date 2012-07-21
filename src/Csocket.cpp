@@ -658,7 +658,7 @@ void CCron::StartMaxCycles( double fTimeSequence, u_int iMaxCycles )
 {
 	timeval tNow;
 	m_tTimeSequence.tv_sec = (time_t) fTimeSequence;
-	m_tTimeSequence.tv_usec = (suseconds_t) ((fTimeSequence - (time_t) fTimeSequence) * 1000000);
+	m_tTimeSequence.tv_usec = (suseconds_t) ((fTimeSequence - (double) (time_t) fTimeSequence) * 1000000);
 	gettimeofday( &tNow, NULL );
 	timeradd( &tNow, &m_tTimeSequence, &m_tTime );
 	m_iMaxCycles = iMaxCycles;
