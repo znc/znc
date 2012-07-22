@@ -122,6 +122,7 @@ public:
 	virtual EModRet OnModuleUnloading(CModule* pModule, bool& bSuccess, CString& sRetMsg);
 	virtual EModRet OnGetModInfo(CModInfo& ModInfo, const CString& sModule,
 			bool& bSuccess, CString& sRetMsg);
+	virtual void OnGetAvailableMods(set<CModInfo>& ssMods, CModInfo::EModuleType eType);
 };
 
 static inline CPyModule* AsPyModule(CModule* p) {

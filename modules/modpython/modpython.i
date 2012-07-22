@@ -31,7 +31,7 @@
 #include "../include/znc/Buffer.h"
 #include "modpython/module.h"
 
-#include "modpython/retstring.h"
+#include "modpython/ret.h"
 
 #define stat struct stat
 using std::allocator;
@@ -91,6 +91,17 @@ namespace std {
 	}
 }
 
+/*TODO %typemap(in) bool& to be able to call from python functions which get bool& */
+
+%typemap(out) bool&, bool* {
+	if ($1) {
+		$result = CPyRetBool::wrap(*$1);
+	} else {
+		$result = Py_None;
+		Py_INCREF(Py_None);
+	}
+}
+
 #define u_short unsigned short
 #define u_int unsigned int
 #include "../include/znc/ZNCString.h"
@@ -138,6 +149,18 @@ public:
 		return $self->s;
 	}
 };
+
+class CPyRetBool {
+	CPyRetBool();
+	public:
+	bool b;
+};
+
+%extend CPyRetBool {
+	bool __bool__() {
+		return $self->b;
+	}
+}
 
 %extend CModule {
 	CString __str__() {
@@ -209,6 +232,18 @@ public:
 	CString __repr__() {
 		return "<CNick " + $self->GetHostMask() + ">";
 	}
+};
+
+/* To allow module-loaders to be written on python.
+ * They can call CreatePyModule() to create CModule* object, but one of arguments to CreatePyModule() is "CModule* pModPython"
+ * Pointer to modpython is already accessible to python modules as self.GetModPython(), but it's just a pointer to something, not to CModule*.
+ * So make it known that CModPython is really a CModule.
+ */
+class CModPython : public CModule {
+private:
+	CModPython();
+	CModPython(const CModPython&);
+	~CModPython();
 };
 
 /* Web */

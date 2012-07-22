@@ -268,6 +268,13 @@ while (<$in>) {
 					say $out "Py_BuildValue(\"s\", $a->{var}.c_str());";
 				}
 			}
+			when (/^bool/) {
+				if ($a->{mod} eq '&') {
+					say $out "CPyRetBool::wrap($a->{var});";
+				} else {
+					say $out "Py_BuildValue(\"l\", (long int)$a->{var});";
+				}
+			}
 			when (/\*$/) {
 				(my $t = $a->{type}) =~ s/^const//;
 				say $out "SWIG_NewInstanceObj(const_cast<$t>($a->{var}), SWIG_TypeQuery(\"$t\"), 0);";
@@ -275,9 +282,6 @@ while (<$in>) {
 			when (/&$/) {
 				(my $b = $a->{base}) =~ s/^const//;
 				say $out "SWIG_NewInstanceObj(const_cast<$b*>(&$a->{var}), SWIG_TypeQuery(\"$b*\"), 0);";
-			}
-			when ('bool') {
-				say $out "Py_BuildValue(\"l\", (long int)$a->{var});";
 			}
 			when (/(?:^|::)E/) {
 				say $out "Py_BuildValue(\"i\", (int)$a->{var});";

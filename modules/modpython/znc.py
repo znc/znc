@@ -549,6 +549,8 @@ def load_module(modname, args, module_type, user, network, retmsg, modpython):
 
 
 def unload_module(module):
+    if (module not in _py_modules):
+        return False
     module.OnShutdown()
     _py_modules.discard(module)
     cmod = module._cmod
@@ -561,6 +563,7 @@ def unload_module(module):
     del module._cmod
     cmod.DeletePyModule()
     del cmod
+    return True
 
 
 def unload_all():

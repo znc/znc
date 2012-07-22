@@ -18,4 +18,12 @@ public:
 	}
 };
 
-
+class CPyRetBool {
+public:
+	bool& b;
+	CPyRetBool(bool& B) : b(B) {}
+	static PyObject* wrap(bool& B) {
+		CPyRetBool* x = new CPyRetBool(B);
+		return SWIG_NewInstanceObj(x, SWIG_TypeQuery("CPyRetBool*"), SWIG_POINTER_OWN);
+	}
+};
