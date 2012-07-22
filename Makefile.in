@@ -107,7 +107,7 @@ src/version.o: src/version.cpp Makefile $(shell if [ x`cat .version_extra 2> /de
 	@mkdir -p .depend src
 	$(E) Building core object version...
 	$(Q)$(CXX) $(shell $(GIT) --git-dir=$(srcdir)/.git describe 2> /dev/null | $(SED) 's/.*-\([0123456789][0123456789]*\)-g\(.*\)/-DVERSION_EXTRA="\\"-git-\1-\2\\""/') $(CXXFLAGS) -c -o $@ $< -MD -MF .depend/version.dep -MT $@
-	-$(Q)$(GIT) --git-dir=$(srcdir)/.git describe > .version_extra 2> /dev/null
+	$(Q)$(GIT) --git-dir=$(srcdir)/.git describe > .version_extra 2> /dev/null || true
 endif
 
 install: znc $(LIBZNC)
