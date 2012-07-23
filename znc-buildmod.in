@@ -61,7 +61,7 @@ do
 		echo "${ERROR} Building \"${MOD}.so\" for ZNC $VERSION... File not found"
 	else
 		printf "Building \"${MOD}.so\" for ZNC $VERSION... "
-		if ${CXX} ${CXXFLAGS} ${INCLUDES} ${LDFLAGS} ${LIBS} ${MODLINK} -o "${MOD}.so" "${FILE}" ; then
+		if ${CXX} ${CXXFLAGS} ${INCLUDES} ${LDFLAGS} ${MODLINK} -o "${MOD}.so" "${FILE}" ${LIBS} ; then
 			echo "${OK}"
 		else
 			echo "${ERROR} Error while building \"${MOD}.so\""
