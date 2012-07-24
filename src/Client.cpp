@@ -798,6 +798,7 @@ void CClient::RespondCap(const CString& sResponse)
 
 void CClient::HandleCap(const CString& sLine)
 {
+	//TODO support ~ and = modifiers
 	CString sSubCmd = sLine.Token(1);
 
 	if (sSubCmd.Equals("LS")) {
@@ -896,5 +897,7 @@ void CClient::HandleCap(const CString& sLine)
 			sList += "-" + *i + " ";
 		}
 		RespondCap("ACK :" + sList.TrimSuffix_n(" "));
+	} else {
+		PutClient(":irc.znc.in 410 " + GetNick() + " :Invalid CAP subcommand");
 	}
 }
