@@ -131,6 +131,7 @@ install: znc $(LIBZNC)
 	fi
 	@$(MAKE) -C man install DESTDIR=$(DESTDIR)
 	@echo ""
+	@echo "******************************************************************"
 	@echo " ZNC was successfully installed."
 	@echo " You can use '$(bindir)/znc --makeconf'"
 	@echo " to generate a config file."
