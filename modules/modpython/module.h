@@ -24,11 +24,11 @@ class CPyModule : public CModule {
 	VWebSubPages* _GetSubPages();
 public:
 	CPyModule(CUser* pUser, CIRCNetwork* pNetwork, const CString& sModName, const CString& sDataPath,
-			PyObject* pyObj, CModule* pModPython)
+			PyObject* pyObj, CModPython* pModPython)
 			: CModule(NULL, pUser, pNetwork, sModName, sDataPath) {
 		m_pyObj = pyObj;
 		Py_INCREF(pyObj);
-		m_pModPython = reinterpret_cast<CModPython*>(pModPython);
+		m_pModPython = pModPython;
 	}
 	PyObject* GetPyObj() { // borrows
 		return m_pyObj;
@@ -128,7 +128,7 @@ static inline CPyModule* AsPyModule(CModule* p) {
 	return dynamic_cast<CPyModule*>(p);
 }
 
-inline CPyModule* CreatePyModule(CUser* pUser, CIRCNetwork* pNetwork, const CString& sModName, const CString& sDataPath, PyObject* pyObj, CModule* pModPython) {
+inline CPyModule* CreatePyModule(CUser* pUser, CIRCNetwork* pNetwork, const CString& sModName, const CString& sDataPath, PyObject* pyObj, CModPython* pModPython) {
 	return new CPyModule(pUser, pNetwork, sModName, sDataPath, pyObj, pModPython);
 }
 
