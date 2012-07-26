@@ -47,14 +47,7 @@ using std::allocator;
 %include <typemaps.i>
 %include <stl.i>
 %include <std_list.i>
-
-namespace std {
-	template<class K> class set {
-		public:
-		set();
-		set(const set<K>&);
-	};
-}
+%include <std_set.i>
 
 %include "modpython/cstring.i"
 %template(_stringlist) std::list<CString>;
@@ -71,6 +64,7 @@ namespace std {
 %template(VIRCNetworks) std::vector<CIRCNetwork*>;
 %template(VChannels) std::vector<CChan*>;
 %template(MNicks) std::map<CString, CNick>;
+%template(SModInfo) std::set<CModInfo>;
 
 %typemap(in) CString& {
 	String* p;
