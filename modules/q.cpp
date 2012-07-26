@@ -13,6 +13,8 @@
 #include <znc/Nick.h>
 #include <znc/Chan.h>
 
+using std::set;
+
 #ifndef Q_DEBUG_COMMUNICATION
 	#define Q_DEBUG_COMMUNICATION 0
 #endif

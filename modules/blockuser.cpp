@@ -11,6 +11,8 @@
 #include <znc/IRCSock.h>
 #include <znc/znc.h>
 
+using std::vector;
+
 #define MESSAGE "Your account has been disabled. Contact your administrator."
 
 class CBlockUser : public CModule {

@@ -11,6 +11,8 @@
 #include <znc/IRCNetwork.h>
 #include <znc/IRCSock.h>
 
+using std::vector;
+
 class CKeepNickMod;
 
 class CKeepNickTimer : public CTimer {

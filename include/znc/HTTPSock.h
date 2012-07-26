@@ -43,7 +43,7 @@ public:
 	bool PrintNotFound();
 	bool Redirect(const CString& sURL);
 	bool PrintErrorPage(unsigned int uStatusId, const CString& sStatusMsg, const CString& sMessage);
-	static void ParseParams(const CString& sParams, map<CString, VCString>& msvsParams);
+	static void ParseParams(const CString& sParams, std::map<CString, VCString>& msvsParams);
 	void ParseURI();
 	void GetPage();
 	static CString GetDate(time_t tm = 0);
@@ -73,15 +73,15 @@ public:
 	CString GetParam(const CString& sName, bool bPost = true, const CString& sFilter = "\r\n") const;
 	CString GetRawParam(const CString& sName, bool bPost = true) const;
 	bool HasParam(const CString& sName, bool bPost = true) const;
-	const map<CString, VCString>& GetParams(bool bPost = true) const;
+	const std::map<CString, VCString>& GetParams(bool bPost = true) const;
 	unsigned int GetParamValues(const CString& sName, VCString& vsRet, bool bPost = true, const CString& sFilter = "\r\n") const;
-	unsigned int GetParamValues(const CString& sName, set<CString>& ssRet, bool bPost = true, const CString& sFilter = "\r\n") const;
+	unsigned int GetParamValues(const CString& sName, std::set<CString>& ssRet, bool bPost = true, const CString& sFilter = "\r\n") const;
 	// !Parameter access
 private:
-	static CString GetRawParam(const CString& sName, const map<CString, VCString>& msvsParams);
-	static CString GetParam(const CString& sName, const map<CString, VCString>& msvsParams, const CString& sFilter);
-	static unsigned int GetParamValues(const CString& sName, VCString& vsRet, const map<CString, VCString>& msvsParams, const CString& sFilter);
-	static unsigned int GetParamValues(const CString& sName, set<CString>& ssRet, const map<CString, VCString>& msvsParams, const CString& sFilter);
+	static CString GetRawParam(const CString& sName, const std::map<CString, VCString>& msvsParams);
+	static CString GetParam(const CString& sName, const std::map<CString, VCString>& msvsParams, const CString& sFilter);
+	static unsigned int GetParamValues(const CString& sName, VCString& vsRet, const std::map<CString, VCString>& msvsParams, const CString& sFilter);
+	static unsigned int GetParamValues(const CString& sName, std::set<CString>& ssRet, const std::map<CString, VCString>& msvsParams, const CString& sFilter);
 
 protected:
 	void PrintPage(const CString& sPage);
@@ -99,8 +99,8 @@ protected:
 	CString                  m_sPass;
 	CString                  m_sContentType;
 	CString                  m_sDocRoot;
-	map<CString, VCString>   m_msvsPOSTParams;
-	map<CString, VCString>   m_msvsGETParams;
+	std::map<CString, VCString>   m_msvsPOSTParams;
+	std::map<CString, VCString>   m_msvsGETParams;
 	MCString                 m_msHeaders;
 	bool                     m_bHTTP10Client;
 	CString                  m_sIfNoneMatch;

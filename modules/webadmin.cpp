@@ -22,6 +22,9 @@
 
 using std::stringstream;
 using std::make_pair;
+using std::set;
+using std::vector;
+using std::map;
 
 /* Stuff to be able to write this:
    // i will be name of local variable, see below

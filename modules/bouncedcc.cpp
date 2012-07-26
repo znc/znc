@@ -14,6 +14,8 @@
 #include <znc/Socket.h>
 #include <znc/FileUtils.h>
 
+using std::set;
+
 class CBounceDCCMod;
 
 class CDCCBounce : public CSocket {

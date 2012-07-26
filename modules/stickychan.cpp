@@ -9,6 +9,8 @@
 #include <znc/Chan.h>
 #include <znc/IRCNetwork.h>
 
+using std::vector;
+
 class CStickyChan : public CModule
 {
 public:

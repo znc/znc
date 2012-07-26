@@ -10,6 +10,8 @@
 #include <znc/Chan.h>
 #include <znc/Modules.h>
 
+using std::vector;
+
 class CClearBufferOnMsgMod : public CModule {
 public:
 	MODCONSTRUCTOR(CClearBufferOnMsgMod) {}

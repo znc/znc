@@ -20,10 +20,6 @@
 #include <unistd.h>
 #include <vector>
 
-using std::map;
-using std::vector;
-using std::pair;
-
 static inline void SetFdCloseOnExec(int fd)
 {
 	int flags = fcntl(fd, F_GETFD, 0);
@@ -125,7 +121,7 @@ protected:
 | hello | world |
 +-------+-------+@endverbatim
  */
-class CTable : protected vector<vector<CString> > {
+class CTable : protected std::vector<std::vector<CString> > {
 public:
 	CTable() {}
 	virtual ~CTable() {}
@@ -172,16 +168,16 @@ public:
 	void Clear();
 
 	/// @return The number of rows in this table, not counting the header.
-	using vector<vector<CString> >::size;
+	using std::vector<std::vector<CString> >::size;
 
 	/// @return True if this table doesn't contain any rows.
-	using vector<vector<CString> >::empty;
+	using std::vector<std::vector<CString> >::empty;
 private:
 	unsigned int GetColumnIndex(const CString& sName) const;
 
 protected:
-	vector<CString>            m_vsHeaders;
-	map<CString, unsigned int> m_msuWidths;  // Used to cache the width of a column
+	std::vector<CString>            m_vsHeaders;
+	std::map<CString, unsigned int> m_msuWidths;  // Used to cache the width of a column
 };
 
 
@@ -336,10 +332,10 @@ public:
 	unsigned int GetTTL() const { return m_uTTL; }
 	// !Getters
 protected:
-	typedef pair<unsigned long long, V> value;
-	typedef typename map<K, value>::iterator iterator;
-	map<K, value>   m_mItems;   //!< Map of cached items.  The value portion of the map is for the expire time
-	unsigned int    m_uTTL;     //!< Default time-to-live duration
+	typedef std::pair<unsigned long long, V> value;
+	typedef typename std::map<K, value>::iterator iterator;
+	std::map<K, value>   m_mItems;   //!< Map of cached items.  The value portion of the map is for the expire time
+	unsigned int         m_uTTL;     //!< Default time-to-live duration
 };
 
 /**

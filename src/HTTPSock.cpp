@@ -14,6 +14,9 @@
 #include <sstream>
 #include <iomanip>
 
+using std::map;
+using std::set;
+
 #define MAX_POST_SIZE	1024 * 1024
 
 CHTTPSock::CHTTPSock(CModule *pMod) : CSocket(pMod) {

@@ -17,6 +17,9 @@
 #include <znc/Modules.h>
 #include <math.h>
 
+using std::vector;
+using std::set;
+
 class CUserTimer : public CCron {
 public:
 	CUserTimer(CUser* pUser) : CCron() {

@@ -20,6 +20,9 @@
 #include "modpython/module.h"
 #include "modpython/ret.h"
 
+using std::vector;
+using std::set;
+
 class CModPython: public CModule {
 
 	PyObject* m_PyZNCModule;

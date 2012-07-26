@@ -16,9 +16,6 @@
 #include <set>
 #include <vector>
 
-using std::set;
-using std::vector;
-
 class CModules;
 class CChan;
 class CClient;
@@ -69,7 +66,7 @@ public:
 	bool AddNetwork(CIRCNetwork *pNetwork);
 	void RemoveNetwork(CIRCNetwork *pNetwork);
 	CIRCNetwork* FindNetwork(const CString& sNetwork) const;
-	const vector<CIRCNetwork*>& GetNetworks() const;
+	const std::vector<CIRCNetwork*>& GetNetworks() const;
 	// !Networks
 
 	bool PutUser(const CString& sLine, CClient* pClient = NULL, CClient* pSkipClient = NULL);
@@ -128,8 +125,8 @@ public:
 	// !Setters
 
 	// Getters
-	vector<CClient*>& GetUserClients() { return m_vClients; }
-	vector<CClient*> GetAllClients();
+	std::vector<CClient*>& GetUserClients() { return m_vClients; }
+	std::vector<CClient*> GetAllClients();
 	const CString& GetUserName() const;
 	const CString& GetCleanUserName() const;
 	const CString& GetNick(bool bAllowDefault = true) const;
@@ -141,7 +138,7 @@ public:
 	const CString& GetPass() const;
 	eHashType GetPassHashType() const;
 	const CString& GetPassSalt() const;
-	const set<CString>& GetAllowedHosts() const;
+	const std::set<CString>& GetAllowedHosts() const;
 	const CString& GetTimestampFormat() const;
 	bool GetTimestampAppend() const;
 	bool GetTimestampPrepend() const;
@@ -202,9 +199,9 @@ protected:
 
 	CUserTimer*           m_pUserTimer;
 
-	vector<CIRCNetwork*>  m_vIRCNetworks;
-	vector<CClient*>      m_vClients;
-	set<CString>          m_ssAllowedHosts;
+	std::vector<CIRCNetwork*>  m_vIRCNetworks;
+	std::vector<CClient*>      m_vClients;
+	std::set<CString>     m_ssAllowedHosts;
 	unsigned int          m_uBufferCount;
 	unsigned long long    m_uBytesRead;
 	unsigned long long    m_uBytesWritten;

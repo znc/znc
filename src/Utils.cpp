@@ -24,6 +24,7 @@
 #include <cstring>
 #include <cstdlib>
 
+using std::map;
 using std::stringstream;
 
 CUtils::CUtils() {}

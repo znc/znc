@@ -10,6 +10,9 @@
 #include <znc/IRCNetwork.h>
 #include <znc/znc.h>
 
+using std::vector;
+using std::map;
+
 class CSendRaw_Mod: public CModule {
 	void SendClient(const CString& sLine) {
 		CUser *pUser = CZNC::Get().FindUser(sLine.Token(1));

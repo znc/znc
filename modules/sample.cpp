@@ -11,6 +11,8 @@
 #include <znc/User.h>
 #include <znc/Modules.h>
 
+using std::vector;
+
 class CSampleTimer : public CTimer {
 public:
 

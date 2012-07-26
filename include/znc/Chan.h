@@ -14,12 +14,6 @@
 #include <znc/ZNCString.h>
 #include <znc/Buffer.h>
 #include <map>
-#include <set>
-#include <vector>
-
-using std::vector;
-using std::map;
-using std::set;
 
 // Forward Declarations
 class CUser;
@@ -126,16 +120,16 @@ public:
 	bool HasMode(unsigned char uMode) const;
 	CString GetOptions() const;
 	CString GetModeArg(unsigned char uMode) const;
-	map<char, unsigned int> GetPermCounts() const;
+	std::map<char, unsigned int> GetPermCounts() const;
 	bool IsOn() const { return m_bIsOn; }
 	const CString& GetName() const { return m_sName; }
-	const map<unsigned char, CString>& GetModes() const { return m_musModes; }
+	const std::map<unsigned char, CString>& GetModes() const { return m_musModes; }
 	const CString& GetKey() const { return m_sKey; }
 	const CString& GetTopic() const { return m_sTopic; }
 	const CString& GetTopicOwner() const { return m_sTopicOwner; }
 	unsigned int GetTopicDate() const { return m_ulTopicDate; }
 	const CString& GetDefaultModes() const { return m_sDefaultModes; }
-	const map<CString,CNick>& GetNicks() const { return m_msNicks; }
+	const std::map<CString,CNick>& GetNicks() const { return m_msNicks; }
 	unsigned int GetNickCount() const { return m_msNicks.size(); }
 	bool AutoClearChanBuffer() const { return m_bAutoClearChanBuffer; }
 	bool IsDetached() const { return m_bDetached; }
@@ -161,11 +155,11 @@ protected:
 	CNick                        m_Nick;
 	unsigned int                 m_uJoinTries;
 	CString                      m_sDefaultModes;
-	map<CString,CNick>           m_msNicks;       // Todo: make this caseless (irc style)
+	std::map<CString,CNick>      m_msNicks;       // Todo: make this caseless (irc style)
 	CBuffer                      m_Buffer;
 
 	bool                         m_bModeKnown;
-	map<unsigned char, CString>  m_musModes;
+	std::map<unsigned char, CString> m_musModes;
 };
 
 #endif // !_CHAN_H

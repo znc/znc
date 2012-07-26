@@ -17,6 +17,9 @@
 #include <znc/Chan.h>
 #include <znc/znc.h>
 
+using std::vector;
+using std::set;
+
 bool CIRCNetwork::IsValidNetwork(const CString& sNetwork) {
 	// ^[-\w]+$
 

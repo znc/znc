@@ -17,9 +17,6 @@
 #include <sstream>
 #include <iomanip>
 
-using std::cout;
-using std::endl;
-
 /** Output a debug info if debugging is enabled.
  *  If ZNC was compiled with <code>--enable-debug</code> or was started with
  *  <code>--debug</code>, the given argument will be sent to stdout.
@@ -33,7 +30,7 @@ using std::endl;
  */
 #define DEBUG(f) do { \
 	if (CDebug::Debug()) { \
-		cout << CDebug::GetTimestamp() << f << endl; \
+		std::cout << CDebug::GetTimestamp() << f << std::endl; \
 	} \
 } while (0)
 

@@ -11,6 +11,10 @@
 #include <sys/wait.h>
 #include <signal.h>
 
+using std::cout;
+using std::endl;
+using std::set;
+
 #ifdef HAVE_GETOPT_LONG
 #include <getopt.h>
 #else

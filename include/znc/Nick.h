@@ -11,11 +11,7 @@
 
 #include <znc/zncconfig.h>
 #include <znc/ZNCString.h>
-#include <set>
 #include <vector>
-
-using std::vector;
-using std::set;
 
 // Forward Decl
 class CIRCNetwork;
@@ -32,7 +28,7 @@ public:
 	void Reset();
 	void Parse(const CString& sNickMask);
 	CString GetHostMask() const;
-	unsigned int GetCommonChans(vector<CChan*>& vChans, CIRCNetwork* pNetwork) const;
+	unsigned int GetCommonChans(std::vector<CChan*>& vChans, CIRCNetwork* pNetwork) const;
 
 	// Setters
 	void SetNetwork(CIRCNetwork* pNetwork);

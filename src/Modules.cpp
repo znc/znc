@@ -15,6 +15,10 @@
 #include <znc/znc.h>
 #include <dlfcn.h>
 
+using std::map;
+using std::set;
+using std::vector;
+
 #ifndef RTLD_LOCAL
 # define RTLD_LOCAL 0
 # warning "your crap box doesnt define RTLD_LOCAL !?"

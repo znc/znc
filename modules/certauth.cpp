@@ -13,6 +13,11 @@
 #include <znc/Listener.h>
 #include <znc/znc.h>
 
+using std::map;
+using std::vector;
+using std::set;
+using std::pair;
+
 class CSSLClientCertMod : public CModule {
 public:
 	MODCONSTRUCTOR(CSSLClientCertMod) {

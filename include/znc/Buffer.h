@@ -13,8 +13,6 @@
 #include <znc/ZNCString.h>
 #include <deque>
 
-using std::deque;
-
 // Forward Declarations
 class CClient;
 // !Forward Declarations
@@ -45,7 +43,7 @@ protected:
 	time_t m_tm;
 };
 
-class CBuffer : private deque<CBufLine> {
+class CBuffer : private std::deque<CBufLine> {
 public:
 	CBuffer(unsigned int uLineCount = 100);
 	~CBuffer();

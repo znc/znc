@@ -9,6 +9,8 @@
 #include <znc/Chan.h>
 #include <znc/Modules.h>
 
+using std::vector;
+
 class CAttachMatch {
 public:
 	CAttachMatch(const CString& sChannels, const CString& sHostmasks, bool bNegated)

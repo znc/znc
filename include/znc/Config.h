@@ -27,9 +27,9 @@ struct CConfigEntry {
 
 class CConfig {
 public:
-	typedef map<CString, VCString> EntryMap;
-	typedef map<CString, CConfigEntry> SubConfig;
-	typedef map<CString, SubConfig> SubConfigMap;
+	typedef std::map<CString, VCString> EntryMap;
+	typedef std::map<CString, CConfigEntry> SubConfig;
+	typedef std::map<CString, SubConfig> SubConfigMap;
 
 	typedef EntryMap::const_iterator EntryMapIterator;
 	typedef SubConfigMap::const_iterator SubConfigMapIterator;

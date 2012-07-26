@@ -14,6 +14,10 @@
 #include <znc/znc.h>
 #include <znc/Config.h>
 
+using std::set;
+using std::vector;
+using std::map;
+
 CChan::CChan(const CString& sName, CIRCNetwork* pNetwork, bool bInConfig, CConfig *pConfig) {
 	m_sName = sName.Token(0);
 	m_sKey = sName.Token(1);

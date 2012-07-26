@@ -16,6 +16,9 @@
 #include <znc/Chan.h>
 #include <znc/IRCSock.h>
 
+using std::map;
+using std::vector;
+
 template<std::size_t N>
 struct array_size_helper {
 	char __place_holder[N];

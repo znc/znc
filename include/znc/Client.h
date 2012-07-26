@@ -138,7 +138,7 @@ public:
 	CUser* GetUser() const { return m_pUser; }
 	void SetNetwork(CIRCNetwork* pNetwork, bool bDisconnect=true, bool bReconnect=true);
 	CIRCNetwork* GetNetwork() const { return m_pNetwork; }
-	vector<CClient*>& GetClients();
+	std::vector<CClient*>& GetClients();
 	const CIRCSock* GetIRCSock() const;
 	CIRCSock* GetIRCSock();
 	CString GetFullName();

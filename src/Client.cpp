@@ -15,6 +15,8 @@
 #include <znc/znc.h>
 #include <znc/WebModules.h>
 
+using std::vector;
+
 #define CALLMOD(MOD, CLIENT, USER, NETWORK, FUNC) {  \
 	CModule *pModule = NULL;  \
 	if (NETWORK && (pModule = (NETWORK)->GetModules().FindModule(MOD))) {  \

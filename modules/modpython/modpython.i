@@ -249,7 +249,7 @@ private:
 /* Web */
 
 %template(StrPair) std::pair<CString, CString>;
-%template(VPair) std::vector<pair<CString, CString> >;
+%template(VPair) std::vector<std::pair<CString, CString> >;
 typedef std::vector<std::pair<CString, CString> > VPair;
 %template(VWebSubPages) std::vector<TWebSubPage>;
 

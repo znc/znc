@@ -12,9 +12,7 @@
 #include <znc/zncconfig.h>
 #include <znc/Utils.h>
 #include <iostream>
-
-using std::ostream;
-using std::endl;
+#include <list>
 
 class CTemplate;
 
@@ -65,7 +63,7 @@ private:
 
 class CTemplateLoopContext {
 public:
-	CTemplateLoopContext(unsigned long uFilePos, const CString& sLoopName, bool bReverse, vector<CTemplate*>* pRows) {
+	CTemplateLoopContext(unsigned long uFilePos, const CString& sLoopName, bool bReverse, std::vector<CTemplate*>* pRows) {
 		m_uFilePosition = uFilePos;
 		m_sName = sLoopName;
 		m_uRowIndex = 0;
@@ -91,7 +89,7 @@ public:
 	unsigned long GetFilePosition() const { return m_uFilePosition; }
 	unsigned int GetRowIndex() const { return m_uRowIndex; }
 	unsigned int GetRowCount() { return m_pvRows->size(); }
-	vector<CTemplate*>* GetRows() { return m_pvRows; }
+	std::vector<CTemplate*>* GetRows() { return m_pvRows; }
 	CTemplate* GetNextRow() { return GetRow(IncRowIndex()); }
 	CTemplate* GetCurRow() { return GetRow(m_uRowIndex); }
 
@@ -104,7 +102,7 @@ private:
 	CString               m_sName;          //!< The name portion of the <?LOOP name?> tag
 	unsigned int          m_uRowIndex;      //!< The index of the current row we're on
 	unsigned long         m_uFilePosition;  //!< The file position of the opening <?LOOP?> tag
-	vector<CTemplate*>*   m_pvRows;         //!< This holds pointers to the templates associated with this loop
+	std::vector<CTemplate*>*   m_pvRows;         //!< This holds pointers to the templates associated with this loop
 };
 
 
@@ -130,7 +128,7 @@ public:
 		m_vspTagHandlers.push_back(spTagHandler);
 	}
 
-	vector<CSmartPtr<CTemplateTagHandler> >& GetTagHandlers() {
+	std::vector<CSmartPtr<CTemplateTagHandler> >& GetTagHandlers() {
 		if (m_pParent) {
 			return m_pParent->GetTagHandlers();
 		}
@@ -153,8 +151,8 @@ public:
 	void RemovePath(const CString& sPath);
 	void ClearPaths();
 	bool PrintString(CString& sRet);
-	bool Print(ostream& oOut);
-	bool Print(const CString& sFileName, ostream& oOut);
+	bool Print(std::ostream& oOut);
+	bool Print(const CString& sFileName, std::ostream& oOut);
 	bool ValidIf(const CString& sArgs);
 	bool ValidExpr(const CString& sExpr);
 	bool IsTrue(const CString& sName);
@@ -162,7 +160,7 @@ public:
 	CString GetValue(const CString& sName, bool bFromIf = false);
 	CTemplate& AddRow(const CString& sName);
 	CTemplate* GetRow(const CString& sName, unsigned int uIndex);
-	vector<CTemplate*>* GetLoop(const CString& sName);
+	std::vector<CTemplate*>* GetLoop(const CString& sName);
 	void DelCurLoopContext();
 	CTemplateLoopContext* GetCurLoopContext();
 	CTemplate* GetCurTemplate();
@@ -173,11 +171,11 @@ public:
 private:
 	CTemplate*                               m_pParent;
 	CString                                  m_sFileName;
-	list<pair<CString, bool> >               m_lsbPaths;
-	map<CString, vector<CTemplate*> >        m_mvLoops;
-	vector<CTemplateLoopContext*>            m_vLoopContexts;
+	std::list<std::pair<CString, bool> >               m_lsbPaths;
+	std::map<CString, std::vector<CTemplate*> >        m_mvLoops;
+	std::vector<CTemplateLoopContext*>            m_vLoopContexts;
 	CSmartPtr<CTemplateOptions>              m_spOptions;
-	vector<CSmartPtr<CTemplateTagHandler> >  m_vspTagHandlers;
+	std::vector<CSmartPtr<CTemplateTagHandler> >  m_vspTagHandlers;
 };
 
 #endif // !_TEMPLATE_H

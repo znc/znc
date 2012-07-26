@@ -12,6 +12,8 @@
 #include <znc/Modules.h>
 #include <znc/FileUtils.h>
 
+using std::set;
+
 class CDCCMod;
 
 class CDCCSock : public CSocket {

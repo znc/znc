@@ -14,15 +14,7 @@
 #include <set>
 #include <string>
 #include <vector>
-#include <list>
 #include <sys/types.h>
-
-using std::map;
-using std::set;
-using std::string;
-using std::vector;
-using std::list;
-using std::pair;
 
 #define _SQL(s) CString("'" + CString(s).Escape_n(CString::ESQL) + "'")
 #define _URL(s) CString(s).Escape_n(CString::EURL)
@@ -32,9 +24,9 @@ using std::pair;
 class CString;
 class MCString;
 
-typedef set<CString> SCString;
-typedef vector<CString>                 VCString;
-typedef vector<pair<CString, CString> > VPair;
+typedef std::set<CString> SCString;
+typedef std::vector<CString>                 VCString;
+typedef std::vector<std::pair<CString, CString> > VPair;
 
 static const unsigned char XX = 0xff;
 static const unsigned char base64_table[256] = {
@@ -63,7 +55,7 @@ static const unsigned char base64_table[256] = {
  * class. It provides helpful functions for parsing input like Token() and
  * Split().
  */
-class CString : public string {
+class CString : public std::string {
 public:
 	typedef enum {
 		EASCII,
@@ -73,7 +65,7 @@ public:
 		ENAMEDFMT
 	} EEscape;
 
-	explicit CString(bool b) : string(b ? "true" : "false") {}
+	explicit CString(bool b) : std::string(b ? "true" : "false") {}
 	explicit CString(char c);
 	explicit CString(unsigned char c);
 	explicit CString(short i);
@@ -87,11 +79,11 @@ public:
 	explicit CString(double i, int precision = 2);
 	explicit CString(float i, int precision = 2);
 
-	CString() : string() {}
-	CString(const char* c) : string(c) {}
-	CString(const char* c, size_t l) : string(c, l) {}
-	CString(const string& s) : string(s) {}
-	CString(size_t n, char c) : string(n, c) {}
+	CString() : std::string() {}
+	CString(const char* c) : std::string(c) {}
+	CString(const char* c, size_t l) : std::string(c, l) {}
+	CString(const std::string& s) : std::string(s) {}
+	CString(size_t n, char c) : std::string(n, c) {}
 	~CString() {}
 
 	/**
@@ -475,10 +467,10 @@ protected:
  *
  * This class maps strings to other strings.
  */
-class MCString : public map<CString, CString> {
+class MCString : public std::map<CString, CString> {
 public:
 	/** Construct an empty MCString. */
-	MCString() : map<CString, CString>() {}
+	MCString() : std::map<CString, CString>() {}
 	/** Destruct this MCString. */
 	virtual ~MCString() { clear(); }
 

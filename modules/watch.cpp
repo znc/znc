@@ -12,6 +12,7 @@
 #include <list>
 
 using std::list;
+using std::vector;
 
 class CWatchSource {
 public:

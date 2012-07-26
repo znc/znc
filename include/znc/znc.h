@@ -17,9 +17,6 @@
 #include <map>
 #include <list>
 
-using std::map;
-using std::list;
-
 class CListener;
 class CUser;
 class CIRCNetwork;
@@ -99,7 +96,7 @@ public:
 	CSockManager& GetManager() { return m_Manager; }
 	const CSockManager& GetManager() const { return m_Manager; }
 	CModules& GetModules() { return *m_pModules; }
-	size_t FilterUncommonModules(set<CModInfo>& ssModules);
+	size_t FilterUncommonModules(std::set<CModInfo>& ssModules);
 	CString GetSkinName() const { return m_sSkinName; }
 	const CString& GetStatusPrefix() const { return m_sStatusPrefix; }
 	const CString& GetCurPath() const;
@@ -112,7 +109,7 @@ public:
 	const CString& GetConfigFile() const { return m_sConfigFile; }
 	bool WritePemFile();
 	const VCString& GetBindHosts() const { return m_vsBindHosts; }
-	const vector<CListener*>& GetListeners() const { return m_vpListeners; }
+	const std::vector<CListener*>& GetListeners() const { return m_vpListeners; }
 	time_t TimeStarted() const { return m_TimeStarted; }
 	unsigned int GetMaxBufferSize() const { return m_uiMaxBufferSize; }
 	unsigned int GetAnonIPLimit() const { return m_uiAnonIPLimit; }
@@ -138,7 +135,7 @@ public:
 
 	bool DeleteUser(const CString& sUsername);
 	bool AddUser(CUser* pUser, CString& sErrorRet);
-	const map<CString,CUser*> & GetUserMap() const { return(m_msUsers); }
+	const std::map<CString,CUser*> & GetUserMap() const { return(m_msUsers); }
 
 	// Listener yummy
 	CListener* FindListener(u_short uPort, const CString& BindHost, EAddrType eAddr);
@@ -158,7 +155,7 @@ public:
 	bool GetServerThrottle(CString sName) { return m_sConnectThrottle.GetItem(sName); }
 
 	void AddNetworkToQueue(CIRCNetwork *pNetwork);
-	list<CIRCNetwork*>& GetConnectionQueue() { return m_lpConnectQueue; }
+	std::list<CIRCNetwork*>& GetConnectionQueue() { return m_lpConnectQueue; }
 
 	// This creates a CConnectQueueTimer if we haven't got one yet
 	void EnableConnectQueue();
@@ -185,9 +182,9 @@ protected:
 	time_t                 m_TimeStarted;
 
 	enum ConfigState       m_eConfigState;
-	vector<CListener*>     m_vpListeners;
-	map<CString,CUser*>    m_msUsers;
-	map<CString,CUser*>    m_msDelUsers;
+	std::vector<CListener*>     m_vpListeners;
+	std::map<CString,CUser*> m_msUsers;
+	std::map<CString,CUser*> m_msDelUsers;
 	CSockManager           m_Manager;
 
 	CString                m_sCurPath;
@@ -207,7 +204,7 @@ protected:
 	CModules*              m_pModules;
 	unsigned long long     m_uBytesRead;
 	unsigned long long     m_uBytesWritten;
-	list<CIRCNetwork*>     m_lpConnectQueue;
+	std::list<CIRCNetwork*>     m_lpConnectQueue;
 	CConnectQueueTimer    *m_pConnectQueueTimer;
 	unsigned int           m_uiConnectPaused;
 	TCacheMap<CString>     m_sConnectThrottle;

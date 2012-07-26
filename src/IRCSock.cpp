@@ -14,6 +14,10 @@
 #include <znc/znc.h>
 #include <znc/Server.h>
 
+using std::set;
+using std::vector;
+using std::map;
+
 #define IRCSOCKMODULECALL(macFUNC, macEXITER) NETWORKMODULECALL(macFUNC, m_pNetwork->GetUser(), m_pNetwork, NULL, macEXITER)
 // These are used in OnGeneralCTCP()
 const time_t CIRCSock::m_uCTCPFloodTime = 5;

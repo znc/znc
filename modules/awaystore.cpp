@@ -22,6 +22,9 @@
 #include <znc/FileUtils.h>
 #include <sys/stat.h>
 
+using std::vector;
+using std::map;
+
 #define CRYPT_VERIFICATION_TOKEN "::__:AWAY:__::"
 
 class CAway;

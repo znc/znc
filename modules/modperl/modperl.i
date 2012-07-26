@@ -198,10 +198,10 @@ namespace std {
 
 /* Web */
 
-%template(StrPair) pair<CString, CString>;
-%template(VPair) vector<pair<CString, CString> >;
-typedef vector<pair<CString, CString> > VPair;
-%template(VWebSubPages) vector<TWebSubPage>;
+%template(StrPair) std::pair<CString, CString>;
+%template(VPair) std::vector<std::pair<CString, CString> >;
+typedef std::vector<std::pair<CString, CString> > VPair;
+%template(VWebSubPages) std::vector<TWebSubPage>;
 
 %inline %{
 	void _VPair_Add2Str(VPair* self, const CString& a, const CString& b) {

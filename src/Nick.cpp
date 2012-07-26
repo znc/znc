@@ -11,6 +11,9 @@
 #include <znc/IRCSock.h>
 #include <znc/IRCNetwork.h>
 
+using std::vector;
+using std::map;
+
 CNick::CNick() {
 	Reset();
 }

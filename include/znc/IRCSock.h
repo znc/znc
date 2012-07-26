@@ -14,7 +14,6 @@
 #include <znc/Nick.h>
 
 #include <deque>
-using std::deque;
 
 // Forward Declarations
 class CChan;
@@ -79,7 +78,7 @@ public:
 	unsigned int GetMaxNickLen() const { return m_uMaxNickLen; }
 	EChanModeArgs GetModeType(unsigned char uMode) const;
 	unsigned char GetPermFromMode(unsigned char uMode) const;
-	const map<unsigned char, EChanModeArgs>& GetChanModes() const { return m_mueChanModes; }
+	const std::map<unsigned char, EChanModeArgs>& GetChanModes() const { return m_mueChanModes; }
 	bool IsPermChar(const char c) const { return (c != '\0' && GetPerms().find(c) != CString::npos); }
 	bool IsPermMode(const char c) const { return (c != '\0' && GetPermModes().find(c) != CString::npos); }
 	const CString& GetPerms() const { return m_sPerms; }
@@ -90,7 +89,7 @@ public:
 	CIRCNetwork* GetNetwork() const { return m_pNetwork; }
 	bool HasNamesx() const { return m_bNamesx; }
 	bool HasUHNames() const { return m_bUHNames; }
-	const set<unsigned char>& GetUserModes() const { return m_scUserModes; }
+	const std::set<unsigned char>& GetUserModes() const { return m_scUserModes; }
 	// This is true if we are past raw 001
 	bool IsAuthed() const { return m_bAuthed; }
 	bool IsCapAccepted(const CString& sCap) { return 1 == m_ssAcceptedCaps.count(sCap); }
@@ -116,12 +115,12 @@ protected:
 	bool                                m_bUHNames;
 	CString                             m_sPerms;
 	CString                             m_sPermModes;
-	set<unsigned char>                  m_scUserModes;
-	map<unsigned char, EChanModeArgs>   m_mueChanModes;
+	std::set<unsigned char>             m_scUserModes;
+	std::map<unsigned char, EChanModeArgs>   m_mueChanModes;
 	CIRCNetwork*                        m_pNetwork;
 	CNick                               m_Nick;
 	CString                             m_sPass;
-	map<CString, CChan*>                m_msChans;
+	std::map<CString, CChan*>           m_msChans;
 	unsigned int                        m_uMaxNickLen;
 	unsigned int                        m_uCapPaused;
 	SCString                            m_ssAcceptedCaps;
@@ -131,7 +130,7 @@ protected:
 	static const time_t                 m_uCTCPFloodTime;
 	static const unsigned int           m_uCTCPFloodCount;
 	MCString                            m_mISupport;
-	deque<CString>                      m_vsSendQueue;
+	std::deque<CString>                 m_vsSendQueue;
 	short int                           m_iSendsAllowed;
 	unsigned short int                  m_uFloodBurst;
 	double                              m_fFloodRate;

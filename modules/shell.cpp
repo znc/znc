@@ -11,6 +11,8 @@
 #include <znc/znc.h>
 #include <znc/ExecSock.h>
 
+using std::vector;
+
 // Forward Declaration
 class CShellMod;
 

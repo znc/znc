@@ -19,6 +19,9 @@
 
 using std::pair;
 using std::stringstream;
+using std::map;
+using std::set;
+using std::vector;
 
 class CSChat;
 

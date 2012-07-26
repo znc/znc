@@ -10,6 +10,9 @@
 #include <znc/User.h>
 #include <znc/Chan.h>
 
+using std::map;
+using std::set;
+
 class CAutoVoiceUser {
 public:
 	CAutoVoiceUser() {}

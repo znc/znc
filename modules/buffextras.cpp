@@ -11,6 +11,8 @@
 #include <znc/IRCNetwork.h>
 #include <znc/Modules.h>
 
+using std::vector;
+
 class CBuffExtras : public CModule {
 public:
 	MODCONSTRUCTOR(CBuffExtras) {}

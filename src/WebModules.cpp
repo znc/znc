@@ -13,6 +13,9 @@
 #include <znc/znc.h>
 #include <sstream>
 
+using std::pair;
+using std::vector;
+
 /// @todo Do we want to make this a configure option?
 #define _SKINDIR_ _DATADIR_ "/webskins"
 

@@ -12,15 +12,11 @@
 #include <znc/zncconfig.h>
 #include <znc/ZNCString.h>
 #include <dirent.h>
-#include <map>
 #include <stdlib.h>
 #include <string.h>
 #include <sys/fcntl.h>
 #include <unistd.h>
 #include <vector>
-
-using std::vector;
-using std::map;
 
 class CFile {
 public:
@@ -143,7 +139,7 @@ protected:
 	CString m_sShortName; //!< Filename alone, without path
 };
 
-class CDir : public vector<CFile*> {
+class CDir : public std::vector<CFile*> {
 public:
 
 	CDir(const CString& sDir) {

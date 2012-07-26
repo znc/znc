@@ -16,6 +16,13 @@
 #include <znc/Listener.h>
 #include <znc/Config.h>
 
+using std::endl;
+using std::cout;
+using std::map;
+using std::set;
+using std::vector;
+using std::list;
+
 static inline CString FormatBindError() {
 	CString sError = (errno == 0 ? CString("unknown error, check the host name") : CString(strerror(errno)));
 	return "Unable to bind [" + sError + "]";

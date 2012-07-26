@@ -22,6 +22,9 @@
 
 #include "modperl/pstring.h"
 
+using std::set;
+using std::vector;
+
 // Allows perl to load .so files when needed by .pm
 // For example, it needs to load ZNC.so
 extern "C" {

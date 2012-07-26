@@ -16,6 +16,10 @@
 #include <znc/User.h>
 #include <znc/znc.h>
 
+using std::vector;
+using std::set;
+using std::map;
+
 void CClient::UserCommand(CString& sLine) {
 	if (!m_pUser) {
 		return;

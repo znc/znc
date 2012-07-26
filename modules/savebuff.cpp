@@ -21,6 +21,8 @@
 #include <znc/FileUtils.h>
 #include <sys/stat.h>
 
+using std::vector;
+
 #define CRYPT_VERIFICATION_TOKEN "::__:SAVEBUFF:__::"
 // this is basically plain text, but so is having the pass in the command line so *shrug*
 // you could at least do something kind of cool like a bunch of unprintable text

@@ -9,6 +9,8 @@
 #include <znc/znc.h>
 #include <znc/User.h>
 
+using std::set;
+
 class CClientNotifyMod : public CModule {
 protected:
 	CString m_sMethod;

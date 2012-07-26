@@ -10,6 +10,8 @@
 #include <znc/User.h>
 #include <znc/IRCNetwork.h>
 
+using std::vector;
+
 class CAutoCycleMod : public CModule {
 public:
 	MODCONSTRUCTOR(CAutoCycleMod) {
