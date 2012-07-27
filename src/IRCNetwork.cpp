@@ -606,7 +606,11 @@ bool CIRCNetwork::PutModule(const CString& sModule, const CString& sLine, CClien
 
 const vector<CChan*>& CIRCNetwork::GetChans() const { return m_vChans; }
 
-CChan* CIRCNetwork::FindChan(const CString& sName) const {
+CChan* CIRCNetwork::FindChan(CString sName) const {
+	if (GetIRCSock()) {
+		sName.TrimLeft(GetIRCSock()->GetPerms());
+	}
+
 	for (unsigned int a = 0; a < m_vChans.size(); a++) {
 		CChan* pChan = m_vChans[a];
 		if (sName.Equals(pChan->GetName())) {

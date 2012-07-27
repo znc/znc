@@ -67,7 +67,7 @@ public:
 	bool PutModule(const CString& sModule, const CString& sLine, CClient* pClient = NULL, CClient* pSkipClient = NULL);
 
 	const std::vector<CChan*>& GetChans() const;
-	CChan* FindChan(const CString& sName) const;
+	CChan* FindChan(CString sName) const;
 	bool AddChan(CChan* pChan);
 	bool AddChan(const CString& sName, bool bInConfig);
 	bool DelChan(const CString& sName);
