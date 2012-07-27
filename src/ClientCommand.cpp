@@ -1386,7 +1386,7 @@ void CClient::HelpUser() {
 
 	Table.AddRow();
 	Table.SetCell("Command", "ListServers");
-	Table.SetCell("Description", "List all servers");
+	Table.SetCell("Description", "List all servers of current IRC network");
 
 	Table.AddRow();
 	Table.SetCell("Command", "AddNetwork");
@@ -1410,12 +1410,12 @@ void CClient::HelpUser() {
 	Table.AddRow();
 	Table.SetCell("Command", "AddServer");
 	Table.SetCell("Arguments", "<host> [[+]port] [pass]");
-	Table.SetCell("Description", "Add a server to the list");
+	Table.SetCell("Description", "Add a server to the list of alternate/backup servers of current IRC network.");
 
 	Table.AddRow();
 	Table.SetCell("Command", "RemServer");
 	Table.SetCell("Arguments", "<host> [port] [pass]");
-	Table.SetCell("Description", "Remove a server from the list");
+	Table.SetCell("Description", "Remove a server from the list of alternate/backup servers of current IRC network");
 
 	Table.AddRow();
 	Table.SetCell("Command", "Enablechan");
