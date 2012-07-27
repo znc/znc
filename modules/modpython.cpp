@@ -202,7 +202,7 @@ public:
 			}
 			if (!PyObject_IsTrue(pyRes)) {
 				// python module, but not handled by modpython itself.
-				// some module-loader written on python loaded it?
+				// some module-provider written on python loaded it?
 				return CONTINUE;
 			}
 			Py_CLEAR(pyFunc);

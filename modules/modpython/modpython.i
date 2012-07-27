@@ -67,6 +67,9 @@ using std::allocator;
 %template(SModInfo) std::set<CModInfo>;
 %template(SCString) std::set<CString>;
 typedef std::set<CString> SCString;
+%template(MPyCString) std::map<CString, CString>;
+class MCString : public std::map<CString, CString> {};
+%template(PyModules) std::vector<CModule*>;
 
 %typemap(in) CString& {
 	String* p;
@@ -171,9 +174,6 @@ class CPyRetBool {
 }
 
 %extend CModules {
-	void push_back(CModule* p) {
-		$self->push_back(p);
-	}
 	bool removeModule(CModule* p) {
 		for (CModules::iterator i = $self->begin(); $self->end() != i; ++i) {
 			if (*i == p) {
@@ -257,6 +257,7 @@ typedef std::vector<std::pair<CString, CString> > VPair;
 
 %extend CTemplate {
 	void set(const CString& key, const CString& value) {
+		DEBUG("WARNING: modpython's CTemplate.set is deprecated and will be removed. Use normal dict's operations like Tmpl['foo'] = 'bar'");
 		(*$self)[key] = value;
 	}
 }
