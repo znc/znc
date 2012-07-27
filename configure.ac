@@ -318,6 +318,7 @@ fi
 if test "x$PERL" != xno -o "x$PYTHON" != xno; then
 	old_USESWIG="$USESWIG"
 	if test "x$USESWIG" != "xno"; then
+		AC_MSG_ERROR([As of 2012-07-27 upstream SWIG crashes ZNC. Please check http://en.znc.in/wiki/Modperl or http://en.znc.in/wiki/Modpython for the second way of installing modperl/modpython.])
 		AC_PROG_SWIG([1.3.40])
 		test -z "$SWIG" && USESWIG=no
 	fi
