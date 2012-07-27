@@ -65,6 +65,8 @@ using std::allocator;
 %template(VChannels) std::vector<CChan*>;
 %template(MNicks) std::map<CString, CNick>;
 %template(SModInfo) std::set<CModInfo>;
+%template(SCString) std::set<CString>;
+typedef std::set<CString> SCString;
 
 %typemap(in) CString& {
 	String* p;

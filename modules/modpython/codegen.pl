@@ -261,7 +261,7 @@ while (<$in>) {
 			when (/vector\s*<\s*.*\*\s*>/) {
 				say $out "PyList_New(0);";
 			}
-			when (/CString/) {
+			when (/(?:^|\s)CString/) { # not SCString
 				if ($a->{base} eq 'CString' && $a->{mod} eq '&') {
 					say $out "CPyRetString::wrap($a->{var});";
 				} else {

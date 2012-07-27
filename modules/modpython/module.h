@@ -123,6 +123,7 @@ public:
 	virtual EModRet OnGetModInfo(CModInfo& ModInfo, const CString& sModule,
 			bool& bSuccess, CString& sRetMsg);
 	virtual void OnGetAvailableMods(std::set<CModInfo>& ssMods, CModInfo::EModuleType eType);
+	virtual void OnClientCapLs(CClient* pClient, SCString& ssCaps);
 };
 
 static inline CPyModule* AsPyModule(CModule* p) {
