@@ -67,9 +67,9 @@ using std::allocator;
 %template(SModInfo) std::set<CModInfo>;
 %template(SCString) std::set<CString>;
 typedef std::set<CString> SCString;
-%template(MPyCString) std::map<CString, CString>;
+%template(PyMCString) std::map<CString, CString>;
 class MCString : public std::map<CString, CString> {};
-%template(PyModules) std::vector<CModule*>;
+%template(PyModulesVector) std::vector<CModule*>;
 
 %typemap(in) CString& {
 	String* p;
@@ -269,4 +269,4 @@ typedef std::vector<std::pair<CString, CString> > VPair;
 	}
 %}
 
-/* vim: set filetype=cpp noexpandtab: */
+/* vim: set filetype=cpp: */
