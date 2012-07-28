@@ -79,6 +79,12 @@ namespace std {
 %template(VIRCNetworks) std::vector<CIRCNetwork*>;
 %template(VChannels) std::vector<CChan*>;
 /*%template(MNicks) std::map<CString, CNick>;*/
+/*%template(SModInfo) std::set<CModInfo>;
+%template(SCString) std::set<CString>;
+typedef std::set<CString> SCString;*/
+%template(PerlMCString) std::map<CString, CString>;
+class MCString : public std::map<CString, CString> {};
+/*%template(PerlModulesVector) std::vector<CModule*>;*/
 
 %typemap(out) std::map<CString, CNick> {
 	HV* myhv = newHV();
