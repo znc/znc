@@ -26,6 +26,7 @@
 
 using std::map;
 using std::stringstream;
+using std::vector;
 
 CUtils::CUtils() {}
 CUtils::~CUtils() {}
