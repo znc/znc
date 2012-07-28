@@ -17,6 +17,7 @@ using std::vector;
 using std::list;
 using std::ostream;
 using std::pair;
+using std::map;
 
 void CTemplateOptions::Parse(const CString& sLine) {
 	CString sName = sLine.Token(0, false, "=").Trim_n().AsUpper();
