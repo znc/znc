@@ -275,6 +275,9 @@ while (<$in>) {
 					say $out "Py_BuildValue(\"l\", (long int)$a->{var});";
 				}
 			}
+			when (/^CSmartPtr/) {
+				say $out "SWIG_NewInstanceObj(new $a->{type}($a->{var}), SWIG_TypeQuery(\"$a->{type}*\"), SWIG_POINTER_OWN);";
+			}
 			when (/\*$/) {
 				(my $t = $a->{type}) =~ s/^const//;
 				say $out "SWIG_NewInstanceObj(const_cast<$t>($a->{var}), SWIG_TypeQuery(\"$t\"), 0);";
@@ -283,7 +286,7 @@ while (<$in>) {
 				(my $b = $a->{base}) =~ s/^const//;
 				say $out "SWIG_NewInstanceObj(const_cast<$b*>(&$a->{var}), SWIG_TypeQuery(\"$b*\"), 0);";
 			}
-			when (/(?:^|::)E/) {
+			when (/(?:^|::)E/) { # Enumerations
 				say $out "Py_BuildValue(\"i\", (int)$a->{var});";
 			}
 			default {

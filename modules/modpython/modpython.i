@@ -106,6 +106,7 @@ class MCString : public std::map<CString, CString> {};
 #include "../include/znc/ZNCString.h"
 %include "../include/znc/defines.h"
 %include "../include/znc/Utils.h"
+%template(PAuthBase) CSmartPtr<CAuthBase>;
 %include "../include/znc/Config.h"
 %include "../include/znc/Csocket.h"
 %template(ZNCSocketManager) TSocketManager<CZNCSock>;
