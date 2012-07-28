@@ -20,8 +20,12 @@ my @allmods;
 
 sub UnloadModule {
 	my ($pmod) = @_;
+	my @newallmods = grep {$pmod != $_} @allmods;
+	if ($#allmods == $#newallmods) {
+		return 0
+	}
+	@allmods = @newallmods;
 	$pmod->OnShutdown;
-	@allmods = grep {$pmod != $_} @allmods;
 	my $cmod = $pmod->{_cmod};
 	my $modpath = $cmod->GetModPath;
 	my $modname = $cmod->GetModName;
@@ -43,6 +47,7 @@ sub UnloadModule {
 		ZNC::_CleanupStash($modname);
 		delete $INC{$modpath};
 	}
+	return 1
 	# here $cmod is deleted by perl (using DESTROY)
 }
 

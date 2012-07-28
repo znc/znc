@@ -264,4 +264,4 @@ typedef std::vector<std::pair<CString, CString> > VPair;
 	*GetNicks = *_GetNicks_;
 %}
 
-/* vim: set filetype=cpp noexpandtab: */
+/* vim: set filetype=cpp: */

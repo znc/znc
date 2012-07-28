@@ -115,6 +115,7 @@ public:
 	virtual EModRet OnModuleUnloading(CModule* pModule, bool& bSuccess, CString& sRetMsg) {
 		CPerlModule* pMod = AsPerlModule(pModule);
 		if (pMod) {
+			EModRet result = HALT;
 			CString sModName = pMod->GetModName();
 			PSTART;
 			XPUSHs(pMod->GetPerlObj());
@@ -122,13 +123,23 @@ public:
 			if (SvTRUE(ERRSV)) {
 				bSuccess = false;
 				sRetMsg = PString(ERRSV);
+			} else if (ret < 1 || 2 < ret) {
+				sRetMsg = "Error: Perl ZNC::Core::UnloadModule returned " + CString(ret) + " values.";
+				bSuccess = false;
+				result = HALT;
 			} else {
-				bSuccess = true;
-				sRetMsg = "Module [" + sModName + "] unloaded";
+				int bUnloaded = SvUV(ST(0));
+				if (bUnloaded) {
+					bSuccess = true;
+					sRetMsg = "Module [" + sModName + "] unloaded";
+					result = HALT;
+				} else {
+					result = CONTINUE; // module wasn't loaded by modperl. Perhaps a module-provider written in perl did that.
+				}
 			}
 			PEND;
 			DEBUG(__PRETTY_FUNCTION__ << " " << sRetMsg);
-			return HALT;
+			return result;
 		}
 		return CONTINUE;
 	}
