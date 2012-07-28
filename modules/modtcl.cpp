@@ -16,6 +16,9 @@
 
 #include <tcl.h>
 
+using std::vector;
+using std::map;
+
 #define STDVAR (ClientData cd, Tcl_Interp *irp, int argc, const char *argv[])
 
 #define BADARGS(nl, nh, example) do {                               \
