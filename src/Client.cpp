@@ -761,12 +761,18 @@ void CClient::PutModNotice(const CString& sModule, const CString& sLine) {
 }
 
 void CClient::PutModule(const CString& sModule, const CString& sLine) {
+	VCString vsLines;
+	VCString::iterator it;
 	if (!m_pUser) {
 		return;
 	}
 
 	DEBUG("(" << GetFullName() << ") ZNC -> CLI [:" + m_pUser->GetStatusPrefix() + ((sModule.empty()) ? "status" : sModule) + "!znc@znc.in PRIVMSG " << GetNick() << " :" << sLine << "]");
-	Write(":" + m_pUser->GetStatusPrefix() + ((sModule.empty()) ? "status" : sModule) + "!znc@znc.in PRIVMSG " + GetNick() + " :" + sLine + "\r\n");
+
+	sLine.Split("\n", vsLines);
+	for (it = vsLines.begin(); it != vsLines.end(); ++it) {
+		Write(":" + m_pUser->GetStatusPrefix() + ((sModule.empty()) ? "status" : sModule) + "!znc@znc.in PRIVMSG " + GetNick() + " :" + (*it) + "\r\n");
+	}
 }
 
 CString CClient::GetNick(bool bAllowIRCNick) const {
