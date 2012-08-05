@@ -11,16 +11,26 @@
 #include <znc/Client.h>
 #include <znc/User.h>
 
-CBufLine::CBufLine(const CString& sFormat, const CString& sText, time_t tm) {
+CBufLine::CBufLine(const CString& sFormat, const CString& sText, const timespec* ts) {
 	m_sFormat = sFormat;
 	m_sText = sText;
-	if (tm == 0)
+	if (ts == NULL)
 		UpdateTime();
 	else
-		m_tm = tm;
+		m_time = *ts;
 }
 
 CBufLine::~CBufLine() {}
+
+void CBufLine::UpdateTime() {
+#if _POSIX_TIMERS
+	if (0 == clock_gettime(CLOCK_REALTIME, &m_time)) {
+		return;
+	}
+#endif
+	time(&m_time.tv_sec);
+	m_time.tv_nsec = 0;
+}
 
 CString CBufLine::GetLine(const CClient& Client, const MCString& msParams) const {
 	MCString msThisParams = msParams;
@@ -28,9 +38,13 @@ CString CBufLine::GetLine(const CClient& Client, const MCString& msParams) const
 	if (Client.HasServerTime()) {
 		msThisParams["text"] = m_sText;
 		CString sStr = CString::NamedFormat(m_sFormat, msThisParams);
-		return "@t=" + CString(m_tm) + " " + sStr;
+		CString s_msec(m_time.tv_nsec / 1000000);
+		while (s_msec.length() < 3) {
+			s_msec = "0" + s_msec;
+		}
+		return "@time=" + CString(m_time.tv_sec) + "." + s_msec + " " + sStr;
 	} else {
-		msThisParams["text"] = Client.GetUser()->AddTimestamp(m_tm, m_sText);
+		msThisParams["text"] = Client.GetUser()->AddTimestamp(m_time.tv_sec, m_sText);
 		return CString::NamedFormat(m_sFormat, msThisParams);
 	}
 }
@@ -41,7 +55,7 @@ CBuffer::CBuffer(unsigned int uLineCount) {
 
 CBuffer::~CBuffer() {}
 
-int CBuffer::AddLine(const CString& sFormat, const CString& sText, time_t tm) {
+int CBuffer::AddLine(const CString& sFormat, const CString& sText, const timespec* ts) {
 	if (!m_uLineCount) {
 		return 0;
 	}
@@ -50,7 +64,7 @@ int CBuffer::AddLine(const CString& sFormat, const CString& sText, time_t tm) {
 		erase(begin());
 	}
 
-	push_back(CBufLine(sFormat, sText, tm));
+	push_back(CBufLine(sFormat, sText, ts));
 	return size();
 }
 

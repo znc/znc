@@ -122,14 +122,16 @@ public:
 				{
 					CString sTimestamp = sLine.Token(0);
 					sTimestamp.TrimLeft("@");
-					time_t tm = sTimestamp.ToLongLong();
+					timespec ts;
+					ts.tv_sec = sTimestamp.Token(0, false, ",").ToLongLong();
+					ts.tv_nsec = sTimestamp.Token(1, false, ",").ToLong();
 
 					CString sFormat = sLine.Token(1, true);
 
 					CString sText(*++it);
 					sText.Trim();
 
-					pChan->AddBuffer(sFormat, sText, tm);
+					pChan->AddBuffer(sFormat, sText, &ts);
 				} else
 				{
 					// Old format, escape the line and use as is.
@@ -169,8 +171,9 @@ public:
 				unsigned int uSize = Buffer.Size();
 				for (unsigned int uIdx = 0; uIdx < uSize; uIdx++) {
 					const CBufLine& Line = Buffer.GetBufLine(uIdx);
+					timespec ts = Line.GetTime();
 					sFile +=
-						"@" + CString(Line.GetTime()) + " " +
+						"@" + CString(ts.tv_sec) + "," + CString(ts.tv_nsec) + " " +
 						Line.GetFormat() + "\n" +
 						Line.GetText() + "\n";
 				}

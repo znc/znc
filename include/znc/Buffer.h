@@ -11,6 +11,7 @@
 
 #include <znc/zncconfig.h>
 #include <znc/ZNCString.h>
+#include <time.h>
 #include <deque>
 
 // Forward Declarations
@@ -19,28 +20,28 @@ class CClient;
 
 class CBufLine {
 public:
-	CBufLine(const CString& sFormat, const CString& sText = "", time_t tm = 0);
+	CBufLine(const CString& sFormat, const CString& sText = "", const timespec* ts = 0);
 	~CBufLine();
 	CString GetLine(const CClient& Client, const MCString& msParams) const;
-	void UpdateTime() { time(&m_tm); }
+	void UpdateTime();
 
 	// Setters
 	void SetFormat(const CString& sFormat) { m_sFormat = sFormat; }
 	void SetText(const CString& sText) { m_sText = sText; }
-	void SetTime(time_t tm) { m_tm = tm; }
+	void SetTime(const timespec& ts) { m_time = ts; }
 	// !Setters
 
 	// Getters
 	const CString& GetFormat() const { return m_sFormat; }
 	const CString& GetText() const { return m_sText; }
-	time_t GetTime() const { return m_tm; }
+	timespec GetTime() const { return m_time; }
 	// !Getters
 
 private:
 protected:
-	CString m_sFormat;
-	CString m_sText;
-	time_t m_tm;
+	CString  m_sFormat;
+	CString  m_sText;
+	timespec m_time;
 };
 
 class CBuffer : private std::deque<CBufLine> {
@@ -48,7 +49,7 @@ public:
 	CBuffer(unsigned int uLineCount = 100);
 	~CBuffer();
 
-	int AddLine(const CString& sFormat, const CString& sText = "", time_t tm = 0);
+	int AddLine(const CString& sFormat, const CString& sText = "", const timespec* ts = 0);
 	/// Same as AddLine, but replaces a line whose format string starts with sMatch if there is one.
 	int UpdateLine(const CString& sMatch, const CString& sFormat, const CString& sText = "");
 	/// Same as UpdateLine, but does nothing if this exact line already exists.

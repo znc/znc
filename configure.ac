@@ -201,6 +201,11 @@ PKG_PROG_PKG_CONFIG()
 AC_SEARCH_LIBS([dlopen], [dl], [],
 		[AC_MSG_ERROR([Could not find dlopen. ZNC will not work on this box until you upgrade this ancient system or at least install the necessary system libraries.])])
 
+# ----- librt is needed for clock_gettime
+# if it exists, _POSIX_TIMERS should be defined to a value > 0 (in unistd.h)
+
+AC_SEARCH_LIBS([clock_gettime], [rt])
+
 # ----- Check for pthreads
 
 DNS_TEXT=blocking
