@@ -38,6 +38,7 @@ INSTALL         := @INSTALL@
 INSTALL_PROGRAM := @INSTALL_PROGRAM@
 INSTALL_SCRIPT  := @INSTALL_SCRIPT@
 INSTALL_DATA    := @INSTALL_DATA@
+SED := @SED@
 
 TCL_FLAGS:= @TCL_FLAGS@
 
@@ -47,9 +48,11 @@ endif
 ifeq "$(VERBOSE)" ""
 Q=@
 E=@echo
+C=-s
 else
 Q=
 E=@\#
+C=
 endif
 
 ifneq "$(LIBZNC)" ""

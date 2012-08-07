@@ -1,0 +1,40 @@
+all:
+
+VPATH := $(srcdir)
+
+ifneq "$(V)" ""
+VERBOSE=1
+endif
+ifeq "$(VERBOSE)" ""
+Q=@
+E=@echo
+C=-s
+else
+Q=
+E=@\#
+C=
+endif
+
+modperl/modperl.tar.bz2: modperl/gen/ZNC.cpp modperl/gen/ZNC.pm modperl/gen/functions.cpp modperl/gen/swigperlrun.h
+	$(E) Packing modperl files...
+	$(Q)tar -cjf $@ -C modperl/gen ZNC.cpp ZNC.pm functions.cpp swigperlrun.h
+
+modperl/gen/swigperlrun.h:
+	@mkdir -p modperl/gen
+	$(Q)$(SWIG) -perl5 -c++ -shadow -external-runtime $@
+
+modperl/gen/ZNC.cpp: modperl/modperl.i modperl/module.h modperl/CString.i
+	$(E) Generating ZNC API for Perl...
+	@mkdir -p modperl/gen
+	$(Q)$(SWIG) -perl5 -c++ -shadow -outdir modperl/gen -I$(srcdir) -MD -MF .depend/modperl.swig.dep -w362,315,401,402 -o $@ $<
+	$(Q)$(SED) 's#^modperl/gen/ZNC.cpp:#modperl/modperl.tar.bz2:#' .depend/modperl.swig.dep > .depend/modperl.tar.dep
+
+modperl/gen/ZNC.pm: modperl/gen/ZNC.cpp
+
+modperl/gen/functions.cpp: modperl/codegen.pl modperl/functions.in
+	@mkdir -p modperl
+	$(Q)$(PERL) $^ $@
+
+all: modperl/modperl.tar.bz2
+
+-include .depend/modperl.swig.dep

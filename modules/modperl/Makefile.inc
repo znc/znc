@@ -17,6 +17,7 @@ modperlCXXFLAGS += -I.
 PERLHOOK     := modperl_install
 CLEAN    += modperl/ZNC.so modperl/ZNC.pm modperl/ZNC.o
 CLEAN    += modperl/swigperlrun.h modperl/ZNC.cpp modperl/functions.cpp
+CLEAN    += modperl/gen
 
 else
 FILES    := $(shell echo $(FILES) | sed -e "s/modperl//")
@@ -27,27 +28,28 @@ endif
 install: $(PERLHOOK)
 
 modperl.o: modperl/ZNC.so modperl/swigperlrun.h modperl/functions.cpp
+
 modperl/ZNC.so: modperl/ZNC.o Makefile
 	$(E) Linking ZNC Perl bindings library...
 	$(Q)$(CXX) $(MODFLAGS) $(LDFLAGS) $(MODLINK) $(PERL_LD) -o $@ $<
+
 modperl/ZNC.o: modperl/ZNC.cpp Makefile
 	@mkdir -p modperl
 	@mkdir -p .depend
 	$(E) Building ZNC Perl bindings library...
 	$(Q)$(CXX) $(MODFLAGS) -I$(srcdir) -MD -MF .depend/modperl.library.dep $(PERL_CXX) -Wno-unused-variable -Wno-shadow -o $@ $< -c
+
+modperl/swigperlrun.h modperl/functions.cpp modperl/ZNC.cpp modperl/ZNC.pm: modperl/modperl.tar.bz2
+	@mkdir -p modperl
+	$(E) Unpacking modperl files...
+	$(Q)tar -xf $^ -C modperl
+	$(Q)touch modperl/swigperlrun.h modperl/functions.cpp modperl/ZNC.cpp modperl/ZNC.pm
+
 ifneq "$(SWIG)" ""
-modperl/swigperlrun.h:
-	@mkdir -p modperl
-	$(Q)$(SWIG) -perl5 -c++ -shadow -external-runtime $@
-modperl/ZNC.cpp: modperl/modperl.i Makefile modperl/module.h modperl/CString.i
-	$(E) Generating ZNC API for Perl...
-	@mkdir -p modperl
-	@mkdir -p .depend
-	$(Q)$(SWIG) -perl5 -c++ -shadow -outdir modperl -I$(srcdir) -MD -MF .depend/modperl.swig.dep -w362,315,401,402 -o $@ $<
+modperl/modperl.tar.bz2: modperl/codegen.pl modperl/functions.in Makefile
+	@mkdir -p modperl .depend
+	$(Q)$(MAKE) -f $(srcdir)/modperl/Makefile.gen $(C) SWIG="$(SWIG)" srcdir="$(srcdir)" PERL="$(PERL)" VERBOSE="$(VERBOSE)" SED="$(SED)"
 endif
-modperl/functions.cpp: modperl/functions.in modperl/codegen.pl
-	@mkdir -p modperl
-	$(Q)$(PERL) $(srcdir)/modperl/codegen.pl $< $@
 
 modperl_install: install_datadir modperl.so
 	for i in $(wildcard $(srcdir)/*.pm); do \
