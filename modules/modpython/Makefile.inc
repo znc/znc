@@ -25,6 +25,9 @@ endif
 
 .PHONY: modpython_install modpython_all
 
+# otherwise make doesn't see it even when it exists and wants to create it several times
+.SECONDARY: modpython/znc_core.py
+
 install: $(PYTHONHOOK)
 
 # This will run: modpython/compiler blah.py blah.pyc
@@ -35,32 +38,32 @@ install: $(PYTHONHOOK)
 ifeq "$(PYTHON_ON)" "yes"
 all: modpython_all
 endif
-modpython_all: modpython/_znc_core.so modpython/swigpyrun.h modpython/znc.pyc modpython/znc_core.pyc
+modpython_all: modpython/_znc_core.so modpython/znc.pyc modpython/znc_core.pyc
 modpython_all: $(addsuffix c, $(notdir $(wildcard $(srcdir)/*.py)))
 
-modpython/znc_core.py: modpython/_znc_core.so
+modpython/znc_core.py modpython/_znc_core.cpp modpython/functions.cpp modpython/swigpyrun.h: modpython/modpython.tar.bz2
+	@mkdir -p modpython
+	$(E) Unpacking modpython files...
+	$(Q)tar -xf $^ -C modpython
+	$(Q)touch modpython/swigpyrun.h modpython/functions.cpp modpython/_znc_core.cpp modpython/znc_core.py
+
 modpython/_znc_core.o: modpython/_znc_core.cpp Makefile
 	@mkdir -p modpython
 	@mkdir -p .depend
 	$(E) Building ZNC python bindings library...
 	$(Q)$(CXX) $(MODFLAGS) -I$(srcdir) -MD -MF .depend/modpython.library.dep $(PYTHONCOMMON) -o $@ $< -c
+
 modpython/_znc_core.so: modpython/_znc_core.o Makefile
 	$(E) Linking ZNC python bindings library...
 	$(Q)$(CXX) $(MODFLAGS) $(LDFLAGS) $(MODLINK) -o $@ $< $(PY_LDFLAGS)
+
 ifneq "$(SWIG)" ""
-modpython/swigpyrun.h:
-	@mkdir -p modpython
-	$(Q)$(SWIG) -python -py3 -c++ -shadow -external-runtime $@
-modpython/_znc_core.cpp: modpython/modpython.i Makefile
-	$(E) Generating ZNC API for python...
-	@mkdir -p modpython
-	@mkdir -p .depend
-	$(Q)$(SWIG) -python -py3 -c++ -shadow -outdir modpython -I$(srcdir) -MD -MF .depend/modpython.swig.dep -w362,315,401 -o $@ $<
+modpython/modpython.tar.bz2: modpython/codegen.pl modpython/functions.in Makefile
+	@mkdir -p modpython .depend
+	$(Q)$(MAKE) -f $(srcdir)/modpython/Makefile.gen $(C) SWIG="$(SWIG)" srcdir="$(srcdir)" PERL="$(PERL)" VERBOSE="$(VERBOSE)" SED="$(SED)"
 endif
+
 modpython.o: modpython/functions.cpp
-modpython/functions.cpp: modpython/functions.in modpython/codegen.pl
-	@mkdir -p modpython
-	$(Q)$(PERL) $(srcdir)/modpython/codegen.pl $< $@
 
 modpython/compiler.o: modpython/compiler.cpp Makefile
 	@mkdir -p modpython
