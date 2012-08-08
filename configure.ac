@@ -343,7 +343,7 @@ else
 	if test "x$USESWIG" = "xyes"; then
 		AC_MSG_WARN([swig is used only for perl and python, but both are disabled. Disabling swig.])
 	fi
-	USESWIG=not needed
+	USESWIG='not needed'
 fi
 
 if test "x$PERL" != "xno"; then
