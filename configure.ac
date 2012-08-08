@@ -116,10 +116,10 @@ AC_ARG_ENABLE( [python],
 	[PYTHON="$enableval"],
 	[PYTHON="no"])
 AC_ARG_ENABLE( [swig],
-	AS_HELP_STRING([--disable-swig], [Disable automatic generation of source files needed for modperl/modpython.
-			This value is ignored if perl and python are disabled. If you disable swig,
-			but still want to use these modules, please download the necessary files to modules/modperl and/or to modules/modpython.
-			Check http://en.znc.in/wiki/Modperl and http://en.znc.in/wiki/Modpython for details.]),
+	AS_HELP_STRING([--enable-swig], [Enable automatic generation of source files needed for modperl/modpython.
+			This value is ignored if perl and python are disabled.
+			Usually no need to enable it.
+			]),
 	[USESWIG="$enableval"],
 	[USESWIG="auto"])
 AC_ARG_ENABLE( [cyrus],
@@ -323,29 +323,27 @@ fi
 if test "x$PERL" != xno -o "x$PYTHON" != xno; then
 	old_USESWIG="$USESWIG"
 	if test "x$USESWIG" != "xno"; then
-		AC_MSG_ERROR([As of 2012-07-27 upstream SWIG crashes ZNC. Please check http://en.znc.in/wiki/Modperl or http://en.znc.in/wiki/Modpython for the second way of installing modperl/modpython.])
-		AC_PROG_SWIG([1.3.40])
+		AC_PROG_SWIG([2.0.8])
 		test -z "$SWIG" && USESWIG=no
+		if test "x$USESWIG" = xno -a "x$old_USESWIG" = yes; then
+			AC_MSG_ERROR([Could not found appropriate SWIG installation])
+		fi
 	fi
 	if test "x$USESWIG" = xno; then
-		SWIG=""
-		AC_MSG_WARN([$SWIG_ERROR])
-		if test "x$old_USESWIG" = xno; then
-			USESWIG="no, need manual download for perl/python bindings"
-			AC_MSG_WARN([swig was disabled, so you should put needed sources to modules/
-Please check http://en.znc.in/wiki/Modperl or http://en.znc.in/wiki/Modpython for details.])
+		if test -r "$srcdir/modules/modperl/modperl.tar.bz2" -a -r "$srcdir/modules/modpython/modpython.tar.bz2"; then
+			AC_MSG_NOTICE([modperl and modpython files are found, no SWIG needed])
 		else
-			AC_MSG_ERROR([swig was not found. Try --disable-perl --disable-python, or download the necessary sources and use --disable-swig.
-Please check http://en.znc.in/wiki/Modperl or http://en.znc.in/wiki/Modpython for details.])
+			AC_MSG_ERROR([Can not build modperl/modpython. Either install SWIG, or build ZNC from a tarball, or disable modperl/modpython.])
 		fi
+		SWIG=""
 	else
 		USESWIG=yes
 	fi
 else
 	if test "x$USESWIG" = "xyes"; then
-		AC_MSG_WARN([swig is needed only for perl and python, but both are disabled. Disabling swig.])
+		AC_MSG_WARN([swig is used only for perl and python, but both are disabled. Disabling swig.])
 	fi
-	USESWIG=no
+	USESWIG=not needed
 fi
 
 if test "x$PERL" != "xno"; then
@@ -381,16 +379,6 @@ if test "x$PYTHON" != "xno"; then
 		AC_MSG_ERROR([pkg-config is required for modpython.])
 	fi
 	PKG_CHECK_MODULES([python], [$PYTHON >= 3.0],, AC_MSG_ERROR([$PYTHON.pc not found or is wrong. Try --disable-python or install python3.]))
-	if test "x$USESWIG" = xyes; then :
-		PKG_CHECK_MODULES([python32], [$PYTHON >= 3.2], [PYTHON_32=yes], [PYTHON_32=no])
-		if test "x$PYTHON_32" = xyes; then
-			AC_MSG_NOTICE([python 3.2+ found, requiring swig 2.0.4+])
-			AC_PROG_SWIG([2.0.4])
-			if test -z "$SWIG"; then
-				AC_MSG_ERROR([$SWIG_ERROR])
-			fi
-		fi
-	fi
 	my_saved_LIBS="$LIBS"
 	my_saved_CXXFLAGS="$CXXFLAGS"
 	appendLib $python_LIBS

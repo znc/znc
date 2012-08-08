@@ -26,76 +26,106 @@ dnl @author Rafael Laboissiere <rafael@laboissiere.net>
 dnl @author Andrew Collier <abcollier@yahoo.com>
 dnl @version 2004-09-20
 dnl
-dnl Modified by Alexey Sokolov <alexey@alexeysokolov.co.cc> on 2011-05-06
+dnl Modified by Alexey Sokolov <alexey@asokolov.org> on 2012-08-08
 dnl @license GPLWithACException
 dnl
 dnl NOTICE: for new code, use http://www.gnu.org/s/autoconf-archive/ax_pkg_swig.html instead.
 
 AC_DEFUN([AC_PROG_SWIG],[
 	SWIG_ERROR=""
-	AC_PATH_PROGS([SWIG],[swig swig2.0])
-	if test -z "$SWIG" ; then
-dnl		AC_MSG_WARN([cannot find 'swig' program. You should look at http://www.swig.org])
-		SWIG_ERROR='SWIG is not installed. You should look at http://www.swig.org'
-	elif test -n "$1" ; then
-		AC_MSG_CHECKING([for SWIG version])
-		[swig_version=`$SWIG -version 2>&1 | grep 'SWIG Version' | sed 's/.*\([0-9][0-9]*\.[0-9][0-9]*\.[0-9][0-9]*\).*/\1/g'`]
-		AC_MSG_RESULT([$swig_version])
-		if test -n "$swig_version" ; then
-			# Calculate the required version number components
-			[required=$1]
-			[required_major=`echo $required | sed 's/[^0-9].*//'`]
-			if test -z "$required_major" ; then
-				[required_major=0]
-			fi
-			[required=`echo $required | sed 's/[0-9]*[^0-9]//'`]
-			[required_minor=`echo $required | sed 's/[^0-9].*//'`]
-			if test -z "$required_minor" ; then
-				[required_minor=0]
-			fi
-			[required=`echo $required | sed 's/[0-9]*[^0-9]//'`]
-			[required_patch=`echo $required | sed 's/[^0-9].*//'`]
-			if test -z "$required_patch" ; then
-				[required_patch=0]
-			fi
-			# Calculate the available version number components
-			[available=$swig_version]
-			[available_major=`echo $available | sed 's/[^0-9].*//'`]
-			if test -z "$available_major" ; then
-				[available_major=0]
-			fi
-			[available=`echo $available | sed 's/[0-9]*[^0-9]//'`]
-			[available_minor=`echo $available | sed 's/[^0-9].*//'`]
-			if test -z "$available_minor" ; then
-				[available_minor=0]
-			fi
-			[available=`echo $available | sed 's/[0-9]*[^0-9]//'`]
-			[available_patch=`echo $available | sed 's/[^0-9].*//'`]
-			if test -z "$available_patch" ; then
-				[available_patch=0]
-			fi
-			if test $available_major -lt $required_major; then
-				SWIG_ERROR='SWIG version >= $1 is required.  You have '"$swig_version"'.  You should look at http://www.swig.org'
-			elif test $available_major -eq $required_major; then
-				if test $available_minor -lt $required_minor; then
-					SWIG_ERROR='SWIG version >= $1 is required.  You have '"$swig_version"'.  You should look at http://www.swig.org'
-				elif test $available_minor -eq $required_minor; then
-					if test $available_patch -lt $required_patch; then
-						SWIG_ERROR='SWIG version >= $1 is required.  You have '"$swig_version"'.  You should look at http://www.swig.org'
+
+	if test -n "$1"; then
+		# Calculate the required version number components
+		[required=$1]
+		[required_major=`echo $required | sed 's/[^0-9].*//'`]
+		if test -z "$required_major" ; then
+			[required_major=0]
+		fi
+		[required=`echo $required | sed 's/[0-9]*[^0-9]//'`]
+		[required_minor=`echo $required | sed 's/[^0-9].*//'`]
+		if test -z "$required_minor" ; then
+			[required_minor=0]
+		fi
+		[required=`echo $required | sed 's/[0-9]*[^0-9]//'`]
+		[required_patch=`echo $required | sed 's/[^0-9].*//'`]
+		if test -z "$required_patch" ; then
+			[required_patch=0]
+		fi
+	fi
+
+	# for "python 3 abc set" and "PyInt_FromSize_t in python3" checks
+
+	cat <<-END > conftest.i
+		%module conftest;
+		%include <pyabc.i>
+		%include <std_set.i>
+		%template(SInt) std::set<int>;
+	END
+	AC_CACHE_CHECK([for SWIG which produces working output], [znc_cv_path_SWIG], [
+		AC_PATH_PROGS_FEATURE_CHECK([SWIG], [swig swig2.0], [
+			echo trying $ac_path_SWIG >&AS_MESSAGE_LOG_FD
+			$ac_path_SWIG -version >&AS_MESSAGE_LOG_FD
+			[swig_version=`$ac_path_SWIG -version 2>&1 | grep 'SWIG Version' | sed 's/.*\([0-9][0-9]*\.[0-9][0-9]*\.[0-9][0-9]*\).*/\1/g'`]
+			if test -n "$swig_version"; then
+				swig_right_version=1
+
+				if test -n "$required"; then
+					# Calculate the available version number components
+					[available=$swig_version]
+
+					[available_major=`echo $available | sed 's/[^0-9].*//'`]
+					if test -z "$available_major" ; then
+						[available_major=0]
+					fi
+					[available=`echo $available | sed 's/[0-9]*[^0-9]//'`]
+					[available_minor=`echo $available | sed 's/[^0-9].*//'`]
+					if test -z "$available_minor" ; then
+						[available_minor=0]
+					fi
+					[available=`echo $available | sed 's/[0-9]*[^0-9]//'`]
+					[available_patch=`echo $available | sed 's/[^0-9].*//'`]
+					if test -z "$available_patch" ; then
+						[available_patch=0]
+					fi
+
+					if test $available_major -lt $required_major; then
+						swig_right_version=0
+					elif test $available_major -eq $required_major; then
+						if test $available_minor -lt $required_minor; then
+							swig_right_version=0
+						elif test $available_minor -eq $required_minor; then
+							if test $available_patch -lt $required_patch; then
+								swig_right_version=0
+							fi
+						fi
 					fi
 				fi
+				
+				if test $swig_right_version -eq 1; then
+					# "python 3 abc set" and "PyInt_FromSize_t in python3" checks
+					echo "checking behavior of SWIG" >&AS_MESSAGE_LOG_FD
+
+					$ac_path_SWIG -python -py3 -c++ -shadow conftest.i >&AS_MESSAGE_LOG_FD && \
+						echo "wrapper created" >&AS_MESSAGE_LOG_FD && \
+						grep SInt_discard conftest.py >& /dev/null && \
+						echo "std::set works" >&AS_MESSAGE_LOG_FD && \
+						grep '#define PyInt_FromSize_t' conftest_wrap.cxx >& /dev/null && \
+						echo "PyInt_FromSize_t is defined" >&AS_MESSAGE_LOG_FD && \
+						znc_cv_path_SWIG=$ac_path_SWIG \
+						ac_path_SWIG_found=:
+					rm -f conftest_wrap.cxx conftest.py
+				else
+					echo "SWIG version >= $1 is required.  You have '$swig_version'" >&AS_MESSAGE_LOG_FD
+				fi
 			fi
-			if test -z "$SWIG_ERROR"; then
-				AC_MSG_NOTICE([SWIG executable is '$SWIG'])
-				SWIG_LIB=`$SWIG -swiglib`
-				AC_MSG_NOTICE([SWIG library directory is '$SWIG_LIB'])
-			else
-				SWIG=""
-			fi
-		else
-			SWIG_ERROR='Cannot determine SWIG version.  You should look at http://www.swig.org'
-			SWIG=""
-		fi
+			echo end trying $ac_path_SWIG >&AS_MESSAGE_LOG_FD
+		])
+	])
+	rm -f conftest.i
+
+	AC_SUBST([SWIG], [$znc_cv_path_SWIG])
+	if test -n "$SWIG"; then
+		SWIG_LIB=`$SWIG -swiglib`
 	fi
 	AC_SUBST([SWIG_LIB])
 ])
