@@ -11,7 +11,7 @@
 #include <znc/Client.h>
 #include <znc/User.h>
 
-CBufLine::CBufLine(const CString& sFormat, const CString& sText, const timespec* ts) {
+CBufLine::CBufLine(const CString& sFormat, const CString& sText, const timeval* ts) {
 	m_sFormat = sFormat;
 	m_sText = sText;
 	if (ts == NULL)
@@ -23,13 +23,11 @@ CBufLine::CBufLine(const CString& sFormat, const CString& sText, const timespec*
 CBufLine::~CBufLine() {}
 
 void CBufLine::UpdateTime() {
-#if _POSIX_TIMERS
-	if (0 == clock_gettime(CLOCK_REALTIME, &m_time)) {
+	if (0 == gettimeofday(&m_time, NULL)) {
 		return;
 	}
-#endif
 	time(&m_time.tv_sec);
-	m_time.tv_nsec = 0;
+	m_time.tv_usec = 0;
 }
 
 CString CBufLine::GetLine(const CClient& Client, const MCString& msParams) const {
@@ -38,10 +36,11 @@ CString CBufLine::GetLine(const CClient& Client, const MCString& msParams) const
 	if (Client.HasServerTime()) {
 		msThisParams["text"] = m_sText;
 		CString sStr = CString::NamedFormat(m_sFormat, msThisParams);
-		CString s_msec(m_time.tv_nsec / 1000000);
+		CString s_msec(m_time.tv_usec / 1000);
 		while (s_msec.length() < 3) {
 			s_msec = "0" + s_msec;
 		}
+		// TODO support message-tags properly
 		return "@time=" + CString(m_time.tv_sec) + "." + s_msec + " " + sStr;
 	} else {
 		msThisParams["text"] = Client.GetUser()->AddTimestamp(m_time.tv_sec, m_sText);
@@ -55,7 +54,7 @@ CBuffer::CBuffer(unsigned int uLineCount) {
 
 CBuffer::~CBuffer() {}
 
-int CBuffer::AddLine(const CString& sFormat, const CString& sText, const timespec* ts) {
+int CBuffer::AddLine(const CString& sFormat, const CString& sText, const timeval* ts) {
 	if (!m_uLineCount) {
 		return 0;
 	}

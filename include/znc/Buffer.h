@@ -20,7 +20,7 @@ class CClient;
 
 class CBufLine {
 public:
-	CBufLine(const CString& sFormat, const CString& sText = "", const timespec* ts = 0);
+	CBufLine(const CString& sFormat, const CString& sText = "", const timeval* ts = 0);
 	~CBufLine();
 	CString GetLine(const CClient& Client, const MCString& msParams) const;
 	void UpdateTime();
@@ -28,20 +28,20 @@ public:
 	// Setters
 	void SetFormat(const CString& sFormat) { m_sFormat = sFormat; }
 	void SetText(const CString& sText) { m_sText = sText; }
-	void SetTime(const timespec& ts) { m_time = ts; }
+	void SetTime(const timeval& ts) { m_time = ts; }
 	// !Setters
 
 	// Getters
 	const CString& GetFormat() const { return m_sFormat; }
 	const CString& GetText() const { return m_sText; }
-	timespec GetTime() const { return m_time; }
+	timeval GetTime() const { return m_time; }
 	// !Getters
 
 private:
 protected:
 	CString  m_sFormat;
 	CString  m_sText;
-	timespec m_time;
+	timeval  m_time;
 };
 
 class CBuffer : private std::deque<CBufLine> {
@@ -49,7 +49,7 @@ public:
 	CBuffer(unsigned int uLineCount = 100);
 	~CBuffer();
 
-	int AddLine(const CString& sFormat, const CString& sText = "", const timespec* ts = 0);
+	int AddLine(const CString& sFormat, const CString& sText = "", const timeval* ts = 0);
 	/// Same as AddLine, but replaces a line whose format string starts with sMatch if there is one.
 	int UpdateLine(const CString& sMatch, const CString& sFormat, const CString& sText = "");
 	/// Same as UpdateLine, but does nothing if this exact line already exists.

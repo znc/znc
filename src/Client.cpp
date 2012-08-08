@@ -85,6 +85,11 @@ void CClient::ReadLine(const CString& sData) {
 
 	DEBUG("(" << GetFullName() << ") CLI -> ZNC [" << sLine << "]");
 
+	if (sLine.Left(1) == "@") {
+		// TODO support message-tags properly
+		sLine = sLine.Token(1, true);
+	}
+
 	if (IsAttached()) {
 		NETWORKMODULECALL(OnUserRaw(sLine), m_pUser, m_pNetwork, this, return);
 	} else {

@@ -122,9 +122,9 @@ public:
 				{
 					CString sTimestamp = sLine.Token(0);
 					sTimestamp.TrimLeft("@");
-					timespec ts;
+					timeval ts;
 					ts.tv_sec = sTimestamp.Token(0, false, ",").ToLongLong();
-					ts.tv_nsec = sTimestamp.Token(1, false, ",").ToLong();
+					ts.tv_usec = sTimestamp.Token(1, false, ",").ToLong();
 
 					CString sFormat = sLine.Token(1, true);
 
@@ -171,9 +171,9 @@ public:
 				unsigned int uSize = Buffer.Size();
 				for (unsigned int uIdx = 0; uIdx < uSize; uIdx++) {
 					const CBufLine& Line = Buffer.GetBufLine(uIdx);
-					timespec ts = Line.GetTime();
+					timeval ts = Line.GetTime();
 					sFile +=
-						"@" + CString(ts.tv_sec) + "," + CString(ts.tv_nsec) + " " +
+						"@" + CString(ts.tv_sec) + "," + CString(ts.tv_usec) + " " +
 						Line.GetFormat() + "\n" +
 						Line.GetText() + "\n";
 				}
