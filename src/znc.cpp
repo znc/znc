@@ -130,7 +130,9 @@ CString CZNC::GetUptime() const {
 }
 
 bool CZNC::OnBoot() {
-	ALLMODULECALL(OnBoot(), return false);
+	bool bFail = false;
+	ALLMODULECALL(OnBoot(), &bFail);
+	if (bFail) return false;
 
 	return true;
 }
@@ -1412,7 +1414,10 @@ void CZNC::Broadcast(const CString& sMessage, bool bAdminOnly,
 		if (a->second != pSkipUser) {
 			CString sMsg = sMessage;
 
-			USERMODULECALL(OnBroadcast(sMsg), a->second, NULL, continue);
+			bool bContinue = false;
+			USERMODULECALL(OnBroadcast(sMsg), a->second, NULL, &bContinue);
+			if (bContinue) continue;
+
 			a->second->PutStatusNotice("*** " + sMsg, NULL, pSkipClient);
 		}
 	}
@@ -1552,11 +1557,13 @@ bool CZNC::AddUser(CUser* pUser, CString& sErrorRet) {
 				<< sErrorRet << "]");
 		return false;
 	}
-	GLOBALMODULECALL(OnAddUser(*pUser, sErrorRet),
+	bool bFailed = false;
+	GLOBALMODULECALL(OnAddUser(*pUser, sErrorRet), &bFailed);
+	if (bFailed) {
 		DEBUG("AddUser [" << pUser->GetUserName() << "] aborted by a module ["
 			<< sErrorRet << "]");
 		return false;
-	);
+	}
 	m_msUsers[pUser->GetUserName()] = pUser;
 	return true;
 }
@@ -1825,7 +1832,9 @@ CZNC::TrafficStatsMap CZNC::GetTrafficStats(TrafficStatsPair &Users,
 
 void CZNC::AuthUser(CSmartPtr<CAuthBase> AuthClass) {
 	// TODO unless the auth module calls it, CUser::IsHostAllowed() is not honoured
-	GLOBALMODULECALL(OnLoginAttempt(AuthClass), return);
+	bool bReturn = false;
+	GLOBALMODULECALL(OnLoginAttempt(AuthClass), &bReturn);
+	if (bReturn) return;
 
 	CUser* pUser = FindUser(AuthClass->GetUsername());
 

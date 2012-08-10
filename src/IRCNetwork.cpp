@@ -503,7 +503,9 @@ void CIRCNetwork::ClientConnected(CClient *pClient) {
 	uSize = m_QueryBuffer.Size();
 	for (uIdx = 0; uIdx < uSize; uIdx++) {
 		CString sLine = m_QueryBuffer.GetLine(uIdx, *pClient, msParams);
-		NETWORKMODULECALL(OnPrivBufferPlayLine(*pClient, sLine), m_pUser, this, NULL, continue);
+		bool bContinue = false;
+		NETWORKMODULECALL(OnPrivBufferPlayLine(*pClient, sLine), m_pUser, this, NULL, &bContinue);
+		if (bContinue) continue;
 		pClient->PutClient(sLine);
 	}
 	m_QueryBuffer.Clear();
@@ -706,7 +708,9 @@ bool CIRCNetwork::JoinChan(CChan* pChan) {
 		pChan->Disable();
 	} else {
 		pChan->IncJoinTries();
-		NETWORKMODULECALL(OnTimerAutoJoin(*pChan), m_pUser, this, NULL, return false);
+		bool bFailed = false;
+		NETWORKMODULECALL(OnTimerAutoJoin(*pChan), m_pUser, this, NULL, &bFailed);
+		if (bFailed) return false;
 		return true;
 	}
 	return false;
@@ -948,13 +952,15 @@ bool CIRCNetwork::Connect() {
 
 	DEBUG("Connecting user/network [" << m_pUser->GetUserName() << "/" << m_sName << "]");
 
-	NETWORKMODULECALL(OnIRCConnecting(pIRCSock), m_pUser, this, NULL,
+	bool bAbort = false;
+	NETWORKMODULECALL(OnIRCConnecting(pIRCSock), m_pUser, this, NULL, &bAbort);
+	if (bAbort) {
 		DEBUG("Some module aborted the connection attempt");
 		PutStatus("Some module aborted the connection attempt");
 		delete pIRCSock;
 		CZNC::Get().AddNetworkToQueue(this);
 		return false;
-	);
+	}
 
 	CString sSockName = "IRC::" + m_pUser->GetUserName() + "::" + m_sName;
 	CZNC::Get().GetManager().Connect(pServer->GetName(), pServer->GetPort(), sSockName, 120, bSSL, GetBindHost(), pIRCSock);

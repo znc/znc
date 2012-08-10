@@ -868,7 +868,9 @@ bool CModules::LoadModule(const CString& sModule, const CString& sArgs, CModInfo
 	}
 
 	bool bSuccess;
-	_GLOBALMODULECALL(OnModuleLoading(sModule, sArgs, eType, bSuccess, sRetMsg), pUser, pNetwork, NULL, return bSuccess);
+	bool bHandled = false;
+	_GLOBALMODULECALL(OnModuleLoading(sModule, sArgs, eType, bSuccess, sRetMsg), pUser, pNetwork, NULL, &bHandled);
+	if (bHandled) return bSuccess;
 
 	CString sModPath, sDataPath;
 	bool bVersionMismatch;
@@ -956,7 +958,9 @@ bool CModules::UnloadModule(const CString& sModule, CString& sRetMsg) {
 	}
 
 	bool bSuccess;
-	_GLOBALMODULECALL(OnModuleUnloading(pModule, bSuccess, sRetMsg), pModule->GetUser(), pModule->GetNetwork(), NULL, return bSuccess);
+	bool bHandled = false;
+	_GLOBALMODULECALL(OnModuleUnloading(pModule, bSuccess, sRetMsg), pModule->GetUser(), pModule->GetNetwork(), NULL, &bHandled);
+	if (bHandled) return bSuccess;
 
 	ModHandle p = pModule->GetDLL();
 
@@ -1009,7 +1013,9 @@ bool CModules::GetModInfo(CModInfo& ModInfo, const CString& sModule, CString& sR
 	CString sModPath, sTmp;
 
 	bool bSuccess;
-	GLOBALMODULECALL(OnGetModInfo(ModInfo, sModule, bSuccess, sRetMsg), return bSuccess);
+	bool bHandled = false;
+	GLOBALMODULECALL(OnGetModInfo(ModInfo, sModule, bSuccess, sRetMsg), &bHandled);
+	if (bHandled) return bSuccess;
 
 	if (!FindModPath(sModule, sModPath, sTmp)) {
 		sRetMsg = "Unable to find module [" + sModule + "]";

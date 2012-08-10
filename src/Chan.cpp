@@ -545,7 +545,7 @@ void CChan::SendBuffer(CClient* pClient) {
 				CClient * pUseClient = (pClient ? pClient : vClients[uClient]);
 
 				bool bSkipStatusMsg = pUseClient->HasServerTime();
-				NETWORKMODULECALL(OnChanBufferStarting(*this, *pUseClient), m_pNetwork->GetUser(), m_pNetwork, NULL, bSkipStatusMsg = true);
+				NETWORKMODULECALL(OnChanBufferStarting(*this, *pUseClient), m_pNetwork->GetUser(), m_pNetwork, NULL, &bSkipStatusMsg);
 
 				if (!bSkipStatusMsg) {
 					m_pNetwork->PutUser(":***!znc@znc.in PRIVMSG " + GetName() + " :Buffer Playback...", pUseClient);
@@ -554,12 +554,14 @@ void CChan::SendBuffer(CClient* pClient) {
 				unsigned int uSize = m_Buffer.Size();
 				for (unsigned int uIdx = 0; uIdx < uSize; uIdx++) {
 					CString sLine = m_Buffer.GetLine(uIdx, *pUseClient);
-					NETWORKMODULECALL(OnChanBufferPlayLine(*this, *pUseClient, sLine), m_pNetwork->GetUser(), m_pNetwork, NULL, continue);
+					bool bNotShowThisLine = false;
+					NETWORKMODULECALL(OnChanBufferPlayLine(*this, *pUseClient, sLine), m_pNetwork->GetUser(), m_pNetwork, NULL, &bNotShowThisLine);
+					if (bNotShowThisLine) continue;
 					m_pNetwork->PutUser(sLine, pUseClient);
 				}
 
 				bSkipStatusMsg = pUseClient->HasServerTime();
-				NETWORKMODULECALL(OnChanBufferEnding(*this, *pUseClient), m_pNetwork->GetUser(), m_pNetwork, NULL, bSkipStatusMsg = true);
+				NETWORKMODULECALL(OnChanBufferEnding(*this, *pUseClient), m_pNetwork->GetUser(), m_pNetwork, NULL, &bSkipStatusMsg);
 				if (!bSkipStatusMsg) {
 					m_pNetwork->PutUser(":***!znc@znc.in PRIVMSG " + GetName() + " :Playback Complete.", pUseClient);
 				}

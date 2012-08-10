@@ -90,11 +90,13 @@ void CClient::ReadLine(const CString& sData) {
 		sLine = sLine.Token(1, true);
 	}
 
+	bool bReturn = false;
 	if (IsAttached()) {
-		NETWORKMODULECALL(OnUserRaw(sLine), m_pUser, m_pNetwork, this, return);
+		NETWORKMODULECALL(OnUserRaw(sLine), m_pUser, m_pNetwork, this, &bReturn);
 	} else {
-		GLOBALMODULECALL(OnUnknownUserRaw(this, sLine), return);
+		GLOBALMODULECALL(OnUnknownUserRaw(this, sLine), &bReturn);
 	}
+	if (bReturn) return;
 
 	CString sCommand = sLine.Token(0);
 	if (sCommand.Left(1) == ":") {
@@ -232,11 +234,13 @@ void CClient::ReadLine(const CString& sData) {
 			sCTCP.LeftChomp();
 			sCTCP.RightChomp();
 
-			NETWORKMODULECALL(OnUserCTCPReply(sTarget, sCTCP), m_pUser, m_pNetwork, this, return);
+			NETWORKMODULECALL(OnUserCTCPReply(sTarget, sCTCP), m_pUser, m_pNetwork, this, &bReturn);
+			if (bReturn) return;
 
 			sMsg = "\001" + sCTCP + "\001";
 		} else {
-			NETWORKMODULECALL(OnUserNotice(sTarget, sMsg), m_pUser, m_pNetwork, this, return);
+			NETWORKMODULECALL(OnUserNotice(sTarget, sMsg), m_pUser, m_pNetwork, this, &bReturn);
+			if (bReturn) return;
 		}
 
 		if (!GetIRCSock()) {
@@ -293,7 +297,8 @@ void CClient::ReadLine(const CString& sData) {
 
 				if (sCTCP.Token(0).Equals("ACTION")) {
 					CString sMessage = sCTCP.Token(1, true);
-					NETWORKMODULECALL(OnUserAction(sTarget, sMessage), m_pUser, m_pNetwork, this, return);
+					NETWORKMODULECALL(OnUserAction(sTarget, sMessage), m_pUser, m_pNetwork, this, &bReturn);
+					if (bReturn) return;
 					sCTCP = "ACTION " + sMessage;
 
 					if (pChan && (!pChan->AutoClearChanBuffer() || !m_pNetwork->IsUserOnline())) {
@@ -313,7 +318,8 @@ void CClient::ReadLine(const CString& sData) {
 						}
 					}
 				} else {
-					NETWORKMODULECALL(OnUserCTCP(sTarget, sCTCP), m_pUser, m_pNetwork, this, return);
+					NETWORKMODULECALL(OnUserCTCP(sTarget, sCTCP), m_pUser, m_pNetwork, this, &bReturn);
+					if (bReturn) return;
 				}
 
 				PutIRC("PRIVMSG " + sTarget + " :\001" + sCTCP + "\001");
@@ -331,7 +337,8 @@ void CClient::ReadLine(const CString& sData) {
 			return;
 		}
 
-		NETWORKMODULECALL(OnUserMsg(sTarget, sMsg), m_pUser, m_pNetwork, this, return);
+		NETWORKMODULECALL(OnUserMsg(sTarget, sMsg), m_pUser, m_pNetwork, this, &bReturn);
+		if (bReturn) return;
 
 		if (!GetIRCSock()) {
 			// Some lagmeters do a PRIVMSG to their own nick, ignore those.
@@ -398,7 +405,9 @@ void CClient::ReadLine(const CString& sData) {
 
 		for (unsigned int a = 0; a < vChans.size(); a++) {
 			CString sChannel = vChans[a];
-			NETWORKMODULECALL(OnUserJoin(sChannel, sKey), m_pUser, m_pNetwork, this, continue);
+			bool bContinue = false;
+			NETWORKMODULECALL(OnUserJoin(sChannel, sKey), m_pUser, m_pNetwork, this, &bContinue);
+			if (bContinue) continue;
 
 			CChan* pChan = m_pNetwork->FindChan(sChannel);
 			if (pChan) {
@@ -430,7 +439,9 @@ void CClient::ReadLine(const CString& sData) {
 
 		for (VCString::const_iterator it = vChans.begin(); it != vChans.end(); ++it) {
 			CString sChan = *it;
-			NETWORKMODULECALL(OnUserPart(sChan, sMessage), m_pUser, m_pNetwork, this, continue);
+			bool bContinue = false;
+			NETWORKMODULECALL(OnUserPart(sChan, sMessage), m_pUser, m_pNetwork, this, &bContinue);
+			if (bContinue) continue;
 
 			CChan* pChan = m_pNetwork->FindChan(sChan);
 
@@ -456,10 +467,12 @@ void CClient::ReadLine(const CString& sData) {
 		CString sTopic = sLine.Token(2, true).TrimPrefix_n();
 
 		if (!sTopic.empty()) {
-			NETWORKMODULECALL(OnUserTopic(sChan, sTopic), m_pUser, m_pNetwork, this, return);
+			NETWORKMODULECALL(OnUserTopic(sChan, sTopic), m_pUser, m_pNetwork, this, &bReturn);
+			if (bReturn) return;
 			sLine = "TOPIC " + sChan + " :" + sTopic;
 		} else {
-			NETWORKMODULECALL(OnUserTopicRequest(sChan), m_pUser, m_pNetwork, this, return);
+			NETWORKMODULECALL(OnUserTopicRequest(sChan), m_pUser, m_pNetwork, this, &bReturn);
+			if (bReturn) return;
 		}
 	} else if (sCommand.Equals("MODE")) {
 		CString sTarget = sLine.Token(1);
@@ -838,7 +851,7 @@ void CClient::HandleCap(const CString& sLine)
 				bVal = false;
 
 			bool bAccepted = ("multi-prefix" == sCap) || ("userhost-in-names" == sCap) || ("server-time" == sCap);
-			GLOBALMODULECALL(IsClientCapSupported(this, sCap, bVal), bAccepted = true);
+			GLOBALMODULECALL(IsClientCapSupported(this, sCap, bVal), &bAccepted);
 
 			if (!bAccepted) {
 				// Some unsupported capability is requested
@@ -880,7 +893,7 @@ void CClient::HandleCap(const CString& sLine)
 		SCString ssRemoved;
 		for (SCString::iterator i = m_ssAcceptedCaps.begin(); i != m_ssAcceptedCaps.end(); ++i) {
 			bool bRemoving = false;
-			GLOBALMODULECALL(IsClientCapSupported(this, *i, false), bRemoving = true);
+			GLOBALMODULECALL(IsClientCapSupported(this, *i, false), &bRemoving);
 			if (bRemoving) {
 				GLOBALMODULECALL(OnClientCapRequest(this, *i, false), NOTHING);
 				ssRemoved.insert(*i);

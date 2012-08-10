@@ -35,6 +35,8 @@ static inline int getopt_long(int argc, char * const argv[], const char *optstri
 }
 #endif
 
+bool ZNC_NO_NEED_TO_DO_ANYTHING_ON_MODULE_CALL_EXITER;
+
 static const struct option g_LongOpts[] = {
 	{ "help",        no_argument,       0, 'h' },
 	{ "version",     no_argument,       0, 'v' },
