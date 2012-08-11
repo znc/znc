@@ -17,7 +17,6 @@ extern bool ZNC_NO_NEED_TO_DO_ANYTHING_ON_MODULE_CALL_EXITER;
 
 #define ALLMODULECALL(macFUNC, macEXITER)                                     \
 	do {                                                                  \
-		*macEXITER = false;                                     \
 		CModules& GMods = CZNC::Get().GetModules();             \
 		bool bAllExit = false;                                       \
 		if (GMods.macFUNC) {                                          \
@@ -45,12 +44,11 @@ extern bool ZNC_NO_NEED_TO_DO_ANYTHING_ON_MODULE_CALL_EXITER;
 				if (bAllExit) break;                             \
 			}                                                     \
 		}                                                             \
-		*macEXITER = bAllExit;                                     \
+		if (bAllExit) *macEXITER = true;                                     \
 	} while (false)
 
 #define _GLOBALMODULECALL(macFUNC, macUSER, macNETWORK, macCLIENT, macEXITER)   \
 	do {                                                       \
-		*macEXITER = false;                                     \
 		CModules& GMods = CZNC::Get().GetModules();  \
 		CUser* pOldGUser = GMods.GetUser();                \
 		CIRCNetwork* pOldGNetwork = GMods.GetNetwork();    \
@@ -71,7 +69,6 @@ extern bool ZNC_NO_NEED_TO_DO_ANYTHING_ON_MODULE_CALL_EXITER;
 #define _USERMODULECALL(macFUNC, macUSER, macNETWORK, macCLIENT, macEXITER)  \
 	do {                                                              \
 		assert(macUSER != NULL);                                  \
-		*macEXITER = false;                                     \
 		bool bGlobalExited = false;                                \
 		_GLOBALMODULECALL(macFUNC, macUSER, macNETWORK, macCLIENT, &bGlobalExited); \
 		if (bGlobalExited) {                                       \
@@ -95,7 +92,6 @@ extern bool ZNC_NO_NEED_TO_DO_ANYTHING_ON_MODULE_CALL_EXITER;
 #define NETWORKMODULECALL(macFUNC, macUSER, macNETWORK, macCLIENT, macEXITER)  \
 	do {                                                                   \
 		assert(macUSER != NULL);                                       \
-		*macEXITER = false;                                     \
 		bool bUserExited = false;                                   \
 		_USERMODULECALL(macFUNC, macUSER, macNETWORK, macCLIENT, &bUserExited); \
 		if (bUserExited) {                                         \
