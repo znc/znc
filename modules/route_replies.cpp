@@ -18,34 +18,36 @@ struct reply {
 // TODO this list is far from complete, no errors are handled
 static const struct {
 	const char *szRequest;
-	struct reply vReplies[10];
+	struct reply vReplies[16];
 } vRouteReplies[] = {
 	{"WHO", {
-		{"352", false},
+		{"402", true},  /* rfc1459 ERR_NOSUCHSERVER */
+		{"352", false},  /* rfc1459 RPL_WHOREPLY */
+		{"315", true},  /* rfc1459 RPL_ENDOFWHO */
 		{"354", false}, // e.g. Quaknet uses this for WHO #chan %n
 		{"403", true}, // No such chan
-		{"315", true},
 		{NULL, true}
 	}},
 	{"LIST", {
-		{"321", false},
-		{"322", false},
-		{"323", true},
+		{"402", true},  /* rfc1459 ERR_NOSUCHSERVER */
+		{"321", false},  /* rfc1459 RPL_LISTSTART */
+		{"322", false},  /* rfc1459 RPL_LIST */
+		{"323", true},  /* rfc1459 RPL_LISTEND */
 		{NULL, true}
 	}},
 	{"NAMES", {
-		{"353", false},
-		{"366", true},
+		{"353", false},  /* rfc1459 RPL_NAMREPLY */
+		{"366", true},  /* rfc1459 RPL_ENDOFNAMES */
 		// No such nick/channel
 		{"401", true},
 		{NULL, true},
 	}},
 	{"LUSERS", {
-		{"251", false},
-		{"252", false},
-		{"253", false},
-		{"254", false},
-		{"255", false},
+		{"251", false},  /* rfc1459 RPL_LUSERCLIENT */
+		{"252", false},  /* rfc1459 RPL_LUSEROP */
+		{"253", false},  /* rfc1459 RPL_LUSERUNKNOWN */
+		{"254", false},  /* rfc1459 RPL_LUSERCHANNELS */
+		{"255", false},  /* rfc1459 RPL_LUSERME */
 		{"265", false},
 		{"266", true},
 		// We don't handle 250 here since some IRCds don't sent it
@@ -53,44 +55,53 @@ static const struct {
 		{NULL, true}
 	}},
 	{"WHOIS", {
-		{"311", false},
-		{"319", false},
-		{"312", false},
+		{"311", false},  /* rfc1459 RPL_WHOISUSER */
+		{"312", false},  /* rfc1459 RPL_WHOISSERVER */
+		{"313", false},  /* rfc1459 RPL_WHOISOPERATOR */
+		{"317", false},  /* rfc1459 RPL_WHOISIDLE */
+		{"319", false},  /* rfc1459 RPL_WHOISCHANNELS */
 		// "<ip> :actually using host"
 		{"338", false},
-		{"318", true},
-		// No such nick/channel
-		{"401", true},
-		// No such server
-		{"402", true},
+		{"301", false},  /* rfc1459 RPL_AWAY */
+		{"318", true},  /* rfc1459 RPL_ENDOFWHOIS */
+		{"401", true},  /* rfc1459 ERR_NOSUCHNICK */
+		{"402", true},  /* rfc1459 ERR_NOSUCHSERVER */
+		{"431", true},  /* rfc1459 ERR_NONICKNAMEGIVEN */
 		{NULL, true}
 	}},
 	{"PING", {
 		{"PONG", true},
+		{"402", true},  /* rfc1459 ERR_NOSUCHSERVER */
+		{"409", true},  /* rfc1459 ERR_NOORIGIN */
 		{NULL, true}
 	}},
 	{"USERHOST", {
 		{"302", true},
+		{"461", true},  /* rfc1459 ERR_NEEDMOREPARAMS */
 		{NULL, true}
 	}},
 	{"TIME", {
-		{"391", true},
+		{"391", true},  /* rfc1459 RPL_TIME */
+		{"402", true},  /* rfc1459 ERR_NOSUCHSERVER */
 		{NULL, true}
 	}},
 	{"WHOWAS", {
 		{"406", false},  /* rfc1459 ERR_WASNOSUCHNICK */
-		{"312", false},
-		{"314", false},
-		{"369", true},
+		{"312", false},  /* rfc1459 RPL_WHOISSERVER */
+		{"314", false},  /* rfc1459 RPL_WHOWASUSER */
+		{"369", true},  /* rfc1459 RPL_ENDOFWHOWAS */
+		{"431", true},  /* rfc1459 ERR_NONICKNAMEGIVEN */
 		{NULL, true}
 	}},
 	{"ISON", {
-		{"303", true},
+		{"303", true},  /* rfc1459 RPL_ISON */
+		{"461", true},  /* rfc1459 ERR_NEEDMOREPARAMS */
 		{NULL, true}
 	}},
 	{"LINKS", {
-		{"364", false},
-		{"365", true},
+		{"364", false},  /* rfc1459 RPL_LINKS */
+		{"365", true},  /* rfc1459 RPL_ENDOFLINKS */
+		{"402", true},  /* rfc1459 ERR_NOSUCHSERVER */
 		{NULL, true}
 	}},
 	{"MAP", {
@@ -105,14 +116,29 @@ static const struct {
 		{NULL, true}
 	}},
 	{"TRACE", {
-		{"200", false},
-		{"205", false},
+		{"200", false},  /* rfc1459 RPL_TRACELINK */
+		{"201", false},  /* rfc1459 RPL_TRACECONNECTING */
+		{"202", false},  /* rfc1459 RPL_TRACEHANDSHAKE */
+		{"203", false},  /* rfc1459 RPL_TRACEUNKNOWN */
+		{"204", false},  /* rfc1459 RPL_TRACEOPERATOR */
+		{"205", false},  /* rfc1459 RPL_TRACEUSER */
+		{"206", false},  /* rfc1459 RPL_TRACESERVER */
+		{"208", false},  /* rfc1459 RPL_TRACENEWTYPE */
+		{"261", false},  /* rfc1459 RPL_TRACELOG */
 		{"262", true},
+		{"402", true},  /* rfc1459 ERR_NOSUCHSERVER */
 		{NULL, true}
 	}},
 	{"USERS", {
 		{"265", false},
 		{"266", true},
+		{"392", false},  /* rfc1459 RPL_USERSSTART */
+		{"393", false},  /* rfc1459 RPL_USERS */
+		{"394", true},  /* rfc1459 RPL_ENDOFUSERS */
+		{"395", false},  /* rfc1459 RPL_NOUSERS */
+		{"402", true},  /* rfc1459 ERR_NOSUCHSERVER */
+		{"424", true},  /* rfc1459 ERR_FILEERROR */
+		{"446", true},  /* rfc1459 ERR_USERSDISABLED */
 		{NULL, true},
 	}},
 	// This is just a list of all possible /mode replies stuffed together.
@@ -130,6 +156,10 @@ static const struct {
 		// MODE e
 		{"348", false},
 		{"349", true},
+		{"467", true},  /* rfc1459 ERR_KEYSET */
+		{"472", true},  /* rfc1459 ERR_UNKNOWNMODE */
+		{"501", true},  /* rfc1459 ERR_UMODEUNKNOWNFLAG */
+		{"502", true},  /* rfc1459 ERR_USERSDONTMATCH */
 		{NULL, true},
 	 }},
 	// END (last item!)
