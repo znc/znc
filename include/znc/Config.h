@@ -114,6 +114,16 @@ public:
 		return false;
 	}
 
+	bool FindUShortEntry(const CString& sName, unsigned short& uRes, unsigned short uDefault = 0) {
+		CString s;
+		if (FindStringEntry(sName, s)) {
+			uRes = s.ToUShort();
+			return true;
+		}
+		uRes = uDefault;
+		return false;
+	}
+
 	bool FindDoubleEntry(const CString& sName, double& fRes, double fDefault = 0) {
 		CString s;
 		if (FindStringEntry(sName, s)) {

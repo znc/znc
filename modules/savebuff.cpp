@@ -168,7 +168,7 @@ public:
 
 				CString sFile = CRYPT_VERIFICATION_TOKEN;
 
-				unsigned int uSize = Buffer.Size();
+				size_t uSize = Buffer.Size();
 				for (unsigned int uIdx = 0; uIdx < uSize; uIdx++) {
 					const CBufLine& Line = Buffer.GetBufLine(uIdx);
 					timeval ts = Line.GetTime();
@@ -285,7 +285,7 @@ public:
 	}
 	virtual void OnQuit(const CNick& cNick, const CString& sMessage, const vector<CChan*>& vChans)
 	{
-		for (u_int a = 0; a < vChans.size(); a++)
+		for (size_t a = 0; a < vChans.size(); a++)
 		{
 			AddBuffer(*vChans[a], SpoofChanMsg(vChans[a]->GetName(), cNick.GetNickMask() + " QUIT " + sMessage));
 		}
@@ -295,7 +295,7 @@ public:
 
 	virtual void OnNick(const CNick& cNick, const CString& sNewNick, const vector<CChan*>& vChans)
 	{
-		for (u_int a = 0; a < vChans.size(); a++)
+		for (size_t a = 0; a < vChans.size(); a++)
 		{
 			AddBuffer(*vChans[a], SpoofChanMsg(vChans[a]->GetName(), cNick.GetNickMask() + " NICK " + sNewNick));
 		}
