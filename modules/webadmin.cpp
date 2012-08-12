@@ -850,7 +850,7 @@ public:
 
 		if (WebSock.GetParam("floodprotection").ToBool()) {
 			pNetwork->SetFloodRate(WebSock.GetParam("floodrate").ToDouble());
-			pNetwork->SetFloodBurst(WebSock.GetParam("floodburst").ToUInt());
+			pNetwork->SetFloodBurst(WebSock.GetParam("floodburst").ToUShort());
 		} else {
 			pNetwork->SetFloodRate(-1);
 		}
@@ -1285,7 +1285,7 @@ public:
 		const map<CString,CUser*>& msUsers = CZNC::Get().GetUserMap();
 		Tmpl["TotalUsers"] = CString(msUsers.size());
 
-		unsigned int uiNetworks = 0, uiAttached = 0, uiClients = 0, uiServers = 0;
+		size_t uiNetworks = 0, uiAttached = 0, uiClients = 0, uiServers = 0;
 
 		for (map<CString,CUser*>::const_iterator it = msUsers.begin(); it != msUsers.end(); ++it) {
 			CUser& User = *it->second;
@@ -1343,7 +1343,7 @@ public:
 	}
 
 	bool AddListener(CWebSock& WebSock, CTemplate& Tmpl) {
-		unsigned int uPort = WebSock.GetParam("port").ToUInt();
+		unsigned short uPort = WebSock.GetParam("port").ToUShort();
 		CString sHost = WebSock.GetParam("host");
 		if (sHost == "*") sHost = "";
 		bool bSSL = WebSock.GetParam("ssl").ToBool();
@@ -1400,7 +1400,7 @@ public:
 	}
 
 	bool DelListener(CWebSock& WebSock, CTemplate& Tmpl) {
-		unsigned int uPort = WebSock.GetParam("port").ToUInt();
+		unsigned short uPort = WebSock.GetParam("port").ToUShort();
 		CString sHost = WebSock.GetParam("host");
 		bool bIPv4 = WebSock.GetParam("ipv4").ToBool();
 		bool bIPv6 = WebSock.GetParam("ipv6").ToBool();

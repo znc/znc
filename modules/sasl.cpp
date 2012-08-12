@@ -211,7 +211,7 @@ public:
 		/* Decode base64 into (data, length) */
 		CString sData = sLine.Base64Decode_n();
 		const unsigned char *data = (const unsigned char*)sData.c_str();
-		unsigned int length = sLine.size();
+		CString::size_type length = sLine.size();
 
 		DH *dh = DH_new();
 
@@ -289,7 +289,7 @@ public:
 		}
 
 		/* Encrypt our sasl password with blowfish */
-		int password_length = GetNV("password").size() + (8 - (GetNV("password").size() % 8));
+		CString::size_type password_length = GetNV("password").size() + (8 - (GetNV("password").size() % 8));
 		unsigned char *encrypted_password = (unsigned char *)malloc(password_length);
 		char *plaintext_password = (char *)malloc(password_length);
 

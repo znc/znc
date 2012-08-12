@@ -54,7 +54,7 @@ CBuffer::CBuffer(unsigned int uLineCount) {
 
 CBuffer::~CBuffer() {}
 
-int CBuffer::AddLine(const CString& sFormat, const CString& sText, const timeval* ts) {
+CBuffer::size_type CBuffer::AddLine(const CString& sFormat, const CString& sText, const timeval* ts) {
 	if (!m_uLineCount) {
 		return 0;
 	}
@@ -67,7 +67,7 @@ int CBuffer::AddLine(const CString& sFormat, const CString& sText, const timeval
 	return size();
 }
 
-int CBuffer::UpdateLine(const CString& sMatch, const CString& sFormat, const CString& sText) {
+CBuffer::size_type CBuffer::UpdateLine(const CString& sMatch, const CString& sFormat, const CString& sText) {
 	for (iterator it = begin(); it != end(); ++it) {
 		if (it->GetFormat().compare(0, sMatch.length(), sMatch) == 0) {
 			it->SetFormat(sFormat);
@@ -80,7 +80,7 @@ int CBuffer::UpdateLine(const CString& sMatch, const CString& sFormat, const CSt
 	return AddLine(sFormat, sText);
 }
 
-int CBuffer::UpdateExactLine(const CString& sFormat, const CString& sText) {
+CBuffer::size_type CBuffer::UpdateExactLine(const CString& sFormat, const CString& sText) {
 	for (iterator it = begin(); it != end(); ++it) {
 		if (it->GetFormat() == sFormat && it->GetText() == sText) {
 			return size();
@@ -94,7 +94,7 @@ const CBufLine& CBuffer::GetBufLine(unsigned int uIdx) const {
 	return (*this)[uIdx];
 }
 
-CString CBuffer::GetLine(unsigned int uIdx, const CClient& Client, const MCString& msParams) const {
+CString CBuffer::GetLine(size_type uIdx, const CClient& Client, const MCString& msParams) const {
 	return (*this)[uIdx].GetLine(Client, msParams);
 }
 

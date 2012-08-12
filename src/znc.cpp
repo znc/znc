@@ -552,12 +552,12 @@ bool CZNC::WriteNewConfig(const CString& sConfigFile) {
 #endif
 	CString sListenHost;
 	bool bListenSSL = false;
-	unsigned int uListenPort = 0;
+	unsigned short uListenPort = 0;
 	bool bSuccess;
 
 	do {
 		bSuccess = true;
-		while (!CUtils::GetNumInput("What port would you like ZNC to listen on?", uListenPort, 1025, 65535)) ;
+		while (!CUtils::GetNumInput("What port would you like ZNC to listen on?", (unsigned int&)uListenPort, 1025, 65535)) ;
 
 #ifdef HAVE_LIBSSL
 		if (CUtils::GetBoolInput("Would you like ZNC to listen using SSL?", bListenSSL)) {
@@ -1625,7 +1625,7 @@ bool CZNC::AddListener(const CString& sLine, CString& sError) {
 	return AddListener(uPort, sBindHost, bSSL, eAddr, eAccept, sError);
 }
 
-bool CZNC::AddListener(unsigned int uPort, const CString& sBindHost, bool bSSL,
+bool CZNC::AddListener(unsigned short uPort, const CString& sBindHost, bool bSSL,
 			EAddrType eAddr, CListener::EAcceptType eAccept, CString& sError) {
 	CString sHostComment;
 
@@ -1713,8 +1713,8 @@ bool CZNC::AddListener(CConfig* pConfig, CString& sError) {
 #endif
 	bool bIRC;
 	bool bWeb;
-	unsigned int uPort;
-	if (!pConfig->FindUIntEntry("port", uPort)) {
+	unsigned short uPort;
+	if (!pConfig->FindUShortEntry("port", uPort)) {
 		sError = "No port given";
 		CUtils::PrintError(sError);
 		return false;

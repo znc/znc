@@ -104,13 +104,13 @@ static void seedPRNG() {
 	// Try to find a seed which can't be as easily guessed as only time()
 
 	if (gettimeofday(&tv, NULL) == 0) {
-		seed  = tv.tv_sec;
+		seed = (unsigned int)tv.tv_sec;
 
 		// This is in [0:1e6], which means that roughly 20 bits are
 		// actually used, let's try to shuffle the high bits.
 		seed ^= (tv.tv_usec << 10) | tv.tv_usec;
 	} else
-		seed = time(NULL);
+		seed = (unsigned int)time(NULL);
 
 	seed ^= rand();
 	seed ^= getpid();

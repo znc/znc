@@ -85,7 +85,7 @@ public:
 	const CBuffer& GetBuffer() const { return m_Buffer; }
 	unsigned int GetBufferCount() const { return m_Buffer.GetLineCount(); }
 	bool SetBufferCount(unsigned int u, bool bForce = false) { return m_Buffer.SetLineCount(u, bForce); };
-	int AddBuffer(const CString& sFormat, const CString& sText = "", const timeval* ts = NULL) { return m_Buffer.AddLine(sFormat, sText, ts); }
+	size_t AddBuffer(const CString& sFormat, const CString& sText = "", const timeval* ts = NULL) { return m_Buffer.AddLine(sFormat, sText, ts); }
 	void ClearBuffer() { m_Buffer.Clear(); }
 	void SendBuffer(CClient* pClient);
 	// !Buffer
@@ -127,10 +127,10 @@ public:
 	const CString& GetKey() const { return m_sKey; }
 	const CString& GetTopic() const { return m_sTopic; }
 	const CString& GetTopicOwner() const { return m_sTopicOwner; }
-	unsigned int GetTopicDate() const { return m_ulTopicDate; }
+	unsigned long GetTopicDate() const { return m_ulTopicDate; }
 	const CString& GetDefaultModes() const { return m_sDefaultModes; }
 	const std::map<CString,CNick>& GetNicks() const { return m_msNicks; }
-	unsigned int GetNickCount() const { return m_msNicks.size(); }
+	size_t GetNickCount() const { return m_msNicks.size(); }
 	bool AutoClearChanBuffer() const { return m_bAutoClearChanBuffer; }
 	bool IsDetached() const { return m_bDetached; }
 	bool InConfig() const { return m_bInConfig; }
