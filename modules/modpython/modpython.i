@@ -70,6 +70,7 @@ typedef std::set<CString> SCString;
 %template(PyMCString) std::map<CString, CString>;
 class MCString : public std::map<CString, CString> {};
 %template(PyModulesVector) std::vector<CModule*>;
+%template(VListeners) std::vector<CListener*>;
 
 %typemap(in) CString& {
 	String* p;

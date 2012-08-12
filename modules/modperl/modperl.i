@@ -85,6 +85,7 @@ typedef std::set<CString> SCString;*/
 %template(PerlMCString) std::map<CString, CString>;
 class MCString : public std::map<CString, CString> {};
 /*%template(PerlModulesVector) std::vector<CModule*>;*/
+%template(VListeners) std::vector<CListener*>;
 
 %typemap(out) std::map<CString, CNick> {
 	HV* myhv = newHV();
