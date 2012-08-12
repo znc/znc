@@ -400,10 +400,14 @@ void CIRCSock::ReadLine(const CString& sData) {
 				break;
 			case 375:  // begin motd
 			case 422:  // MOTD File is missing
-				m_pNetwork->ClearMotdBuffer();
+				if (m_pNetwork->GetIRCServer().Equals(sServer)) {
+					m_pNetwork->ClearMotdBuffer();
+				}
 			case 372:  // motd
 			case 376:  // end motd
-				m_pNetwork->AddMotdBuffer(":" + _NAMEDFMT(sServer) + " " + sCmd + " {target} " + _NAMEDFMT(sRest));
+				if (m_pNetwork->GetIRCServer().Equals(sServer)) {
+					m_pNetwork->AddMotdBuffer(":" + _NAMEDFMT(sServer) + " " + sCmd + " {target} " + _NAMEDFMT(sRest));
+				}
 				break;
 			case 437:
 				// :irc.server.net 437 * badnick :Nick/channel is temporarily unavailable
