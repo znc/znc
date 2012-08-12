@@ -1625,7 +1625,7 @@ bool CZNC::AddListener(const CString& sLine, CString& sError) {
 	return AddListener(uPort, sBindHost, bSSL, eAddr, eAccept, sError);
 }
 
-bool CZNC::AddListener(unsigned int uPort, const CString& sBindHost, bool bSSL,
+bool CZNC::AddListener(unsigned short uPort, const CString& sBindHost, bool bSSL,
 			EAddrType eAddr, CListener::EAcceptType eAccept, CString& sError) {
 	CString sHostComment;
 
@@ -1713,8 +1713,8 @@ bool CZNC::AddListener(CConfig* pConfig, CString& sError) {
 #endif
 	bool bIRC;
 	bool bWeb;
-	unsigned int uPort;
-	if (!pConfig->FindUIntEntry("port", uPort)) {
+	unsigned short uPort;
+	if (!pConfig->FindUShortEntry("port", uPort)) {
 		sError = "No port given";
 		CUtils::PrintError(sError);
 		return false;

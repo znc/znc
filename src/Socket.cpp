@@ -128,11 +128,11 @@ void CSockManager::DoDNS(TDNSArg *arg) {
 		sleep(5); // wait 5 seconds before next try
 	}
 
-	int need = sizeof(TDNSArg*);
+	size_t need = sizeof(TDNSArg*);
 	char* x = (char*)&arg;
 	// This write() must succeed because POSIX guarantees that writes of
 	// less than PIPE_BUF are atomic (and PIPE_BUF is at least 512).
-	int w = write(arg->fd, x, need);
+	size_t w = write(arg->fd, x, need);
 	if (w != need) {
 		DEBUG("Something bad happened during write() to a pipe from TDNSThread, wrote " << w << " bytes: " << strerror(errno));
 		exit(1);
@@ -289,11 +289,11 @@ void CSockManager::SetTDNSThreadFinished(TDNSTask* task, bool bBind, addrinfo* a
 
 void CSockManager::RetrieveTDNSResult() {
 	TDNSArg* a = NULL;
-	int readed = 0;
-	int need = sizeof(TDNSArg*);
+	size_t readed = 0;
+	size_t need = sizeof(TDNSArg*);
 	char* x = (char*)&a;
 	while (readed < need) {
-		int r = read(m_iTDNSpipe[0], x, need - readed);
+		ssize_t r = read(m_iTDNSpipe[0], x, need - readed);
 		if (-1 == r) {
 			DEBUG("Something bad happened during read() from a pipe when getting result of TDNSThread: " << strerror(errno));
 			exit(1);

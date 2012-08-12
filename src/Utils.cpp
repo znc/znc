@@ -39,8 +39,8 @@ void CUtils::GenerateCert(FILE *pOut, const CString& sHost) {
 	const int days = 365;
 	const int years = 10;
 
-	u_int iSeed = time(NULL);
-	int serial = (rand_r(&iSeed) % 9999);
+	unsigned int uSeed = (unsigned int)time(NULL);
+	int serial = (rand_r(&uSeed) % 9999);
 
 	RSA *pRSA = RSA_generate_key(2048, 0x10001, NULL, NULL);
 	if ((pKey = EVP_PKEY_new())) {
@@ -442,10 +442,10 @@ bool CTable::AddColumn(const CString& sName) {
 	return true;
 }
 
-unsigned int CTable::AddRow() {
+CTable::size_type CTable::AddRow() {
 	// Don't add a row if no headers are defined
 	if (m_vsHeaders.empty()) {
-		return (unsigned int) -1;
+		return (size_type) -1;
 	}
 
 	// Add a vector with enough space for each column
@@ -453,8 +453,8 @@ unsigned int CTable::AddRow() {
 	return size() - 1;
 }
 
-bool CTable::SetCell(const CString& sColumn, const CString& sValue, unsigned int uRowIdx) {
-	if (uRowIdx == (unsigned int) ~0) {
+bool CTable::SetCell(const CString& sColumn, const CString& sValue, size_type uRowIdx) {
+	if (uRowIdx == (size_type) ~0) {
 		if (!size()) {
 			return false;
 		}
@@ -539,13 +539,13 @@ unsigned int CTable::GetColumnIndex(const CString& sName) const {
 	return (unsigned int) -1;
 }
 
-unsigned int CTable::GetColumnWidth(unsigned int uIdx) const {
+CString::size_type CTable::GetColumnWidth(unsigned int uIdx) const {
 	if (uIdx >= m_vsHeaders.size()) {
 		return 0;
 	}
 
 	const CString& sColName = m_vsHeaders[uIdx];
-	map<CString, unsigned int>::const_iterator it = m_msuWidths.find(sColName);
+	map<CString, CString::size_type>::const_iterator it = m_msuWidths.find(sColName);
 
 	if (it == m_msuWidths.end()) {
 		// AddColumn() and SetCell() should make sure that we get a value :/
@@ -570,7 +570,7 @@ CBlowfish::CBlowfish(const CString & sPassword, int iEncrypt, const CString & sI
 		memcpy(m_ivec, sIvec.data(), 8);
 	}
 
-	BF_set_key(&m_bkey, sPassword.length(), (unsigned char *)sPassword.data());
+	BF_set_key(&m_bkey, (unsigned int)sPassword.length(), (unsigned char *)sPassword.data());
 }
 
 CBlowfish::~CBlowfish() {
@@ -587,7 +587,7 @@ unsigned char *CBlowfish::MD5(const unsigned char *input, u_int ilen) {
 //! returns an md5 of the CString (not hex encoded)
 CString CBlowfish::MD5(const CString & sInput, bool bHexEncode) {
 	CString sRet;
-	unsigned char *data = MD5((const unsigned char *)sInput.data(), sInput.length());
+	unsigned char *data = MD5((const unsigned char *)sInput.data(), (unsigned int)sInput.length());
 
 	if (!bHexEncode) {
 		sRet.append((const char *)data, MD5_DIGEST_LENGTH);
@@ -603,19 +603,19 @@ CString CBlowfish::MD5(const CString & sInput, bool bHexEncode) {
 }
 
 //! output must be the same size as input
-void CBlowfish::Crypt(unsigned char *input, unsigned char *output, u_int ibytes) {
-	BF_cfb64_encrypt(input, output, ibytes, &m_bkey, m_ivec, &m_num, m_iEncrypt);
+void CBlowfish::Crypt(unsigned char *input, unsigned char *output, u_int uBytes) {
+	BF_cfb64_encrypt(input, output, uBytes, &m_bkey, m_ivec, &m_num, m_iEncrypt);
 }
 
 //! must free result
-unsigned char * CBlowfish::Crypt(unsigned char *input, u_int ibytes) {
-	unsigned char *buff = (unsigned char *)malloc(ibytes);
-	Crypt(input, buff, ibytes);
+unsigned char * CBlowfish::Crypt(unsigned char *input, u_int uBytes) {
+	unsigned char *buff = (unsigned char *)malloc(uBytes);
+	Crypt(input, buff, uBytes);
 	return buff;
 }
 
 CString CBlowfish::Crypt(const CString & sData) {
-	unsigned char *buff = Crypt((unsigned char *)sData.data(), sData.length());
+	unsigned char *buff = Crypt((unsigned char *)sData.data(), (unsigned int)sData.length());
 	CString sOutput;
 	sOutput.append((const char *)buff, sData.length());
 	free(buff);

@@ -219,7 +219,7 @@ public:
 
 	CString GetKey(Csock *pSock) {
 		CString sRes;
-		int res = pSock->GetPeerFingerprint(sRes);
+		long int res = pSock->GetPeerFingerprint(sRes);
 
 		DEBUG("GetKey() returned status " << res << " with key " << sRes);
 

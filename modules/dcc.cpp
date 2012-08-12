@@ -380,7 +380,7 @@ void CDCCSock::SendPacket() {
 	}
 
 	char szBuf[4096];
-	int iLen = m_pFile->Read(szBuf, 4096);
+	ssize_t iLen = m_pFile->Read(szBuf, 4096);
 
 	if (iLen < 0) {
 		m_pModule->PutModule(((m_bSend) ? "DCC -> [" : "DCC <- [") + m_sRemoteNick + "][" + m_sFileName + "] - Error reading from file.");

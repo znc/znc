@@ -1232,7 +1232,7 @@ void CIRCSock::SendAltNick(const CString& sBadNick) {
 	// nick we sent last. If sBadNick is shorter than that, we assume the
 	// server truncated our nick.
 	if (sBadNick.length() < sLastNick.length())
-		m_uMaxNickLen = sBadNick.length();
+		m_uMaxNickLen = (unsigned int)sBadNick.length();
 
 	unsigned int uMax = m_uMaxNickLen;
 
