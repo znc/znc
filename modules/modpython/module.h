@@ -180,7 +180,6 @@ public:
 	virtual void ReadData(const char *data, size_t len);
 	virtual void ReadLine(const CString& sLine);
 	virtual Csock* GetSockObj(const CString& sHost, unsigned short uPort);
-	PyObject* WriteBytes(PyObject* data);
 };
 
 inline CPySocket* CreatePySocket(CPyModule* pModule, PyObject* pyObj) {

@@ -68,6 +68,7 @@ using std::allocator;
 %template(SCString) std::set<CString>;
 typedef std::set<CString> SCString;
 %template(PyMCString) std::map<CString, CString>;
+%template(PyMStringVString) std::map<CString, VCString>;
 class MCString : public std::map<CString, CString> {};
 %template(PyModulesVector) std::vector<CModule*>;
 %template(VListeners) std::vector<CListener*>;
@@ -108,6 +109,7 @@ class MCString : public std::map<CString, CString> {};
 %include "../include/znc/defines.h"
 %include "../include/znc/Utils.h"
 %template(PAuthBase) CSmartPtr<CAuthBase>;
+%template(WebSession) CSmartPtr<CWebSession>;
 %include "../include/znc/Config.h"
 %include "../include/znc/Csocket.h"
 %template(ZNCSocketManager) TSocketManager<CZNCSock>;
@@ -161,6 +163,25 @@ class CPyRetBool {
 	bool __bool__() {
 		return $self->b;
 	}
+}
+
+%extend Csock {
+    PyObject* WriteBytes(PyObject* data) {
+        if (!PyBytes_Check(data)) {
+            PyErr_SetString(PyExc_TypeError, "socket.WriteBytes needs bytes as argument");
+            return NULL;
+        }
+        char* buffer;
+        Py_ssize_t length;
+        if (-1 == PyBytes_AsStringAndSize(data, &buffer, &length)) {
+            return NULL;
+        }
+        if ($self->Write(buffer, length)) {
+            Py_RETURN_TRUE;
+        } else {
+            Py_RETURN_FALSE;
+        }
+    }
 }
 
 %extend CModule {

@@ -442,23 +442,6 @@ CPySocket::~CPySocket() {
 	Py_CLEAR(m_pyObj);
 }
 
-PyObject* CPySocket::WriteBytes(PyObject* data) {
-	if (!PyBytes_Check(data)) {
-		PyErr_SetString(PyExc_TypeError, "socket.WriteBytes needs bytes as argument");
-		return NULL;
-	}
-	char* buffer;
-	Py_ssize_t length;
-	if (-1 == PyBytes_AsStringAndSize(data, &buffer, &length)) {
-		return NULL;
-	}
-	if (Write(buffer, length)) {
-		Py_RETURN_TRUE;
-	} else {
-		Py_RETURN_FALSE;
-	}
-}
-
 template<> void TModInfo<CModPython>(CModInfo& Info) {
 	Info.SetWikiPage("modpython");
 }
