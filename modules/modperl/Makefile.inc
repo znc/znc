@@ -39,15 +39,9 @@ modperl/ZNC.o: modperl/ZNC.cpp Makefile
 	$(E) Building ZNC Perl bindings library...
 	$(Q)$(CXX) $(MODFLAGS) -I$(srcdir) -MD -MF .depend/modperl.library.dep $(PERL_CXX) -Wno-unused-variable -Wno-shadow -o $@ $< -c
 
-modperl/swigperlrun.h modperl/functions.cpp modperl/ZNC.cpp modperl/ZNC.pm: modperl/modperl.tar.bz2
-	@mkdir -p modperl
-	$(E) Unpacking modperl files...
-	$(Q)tar -xf $^ -C modperl
-	$(Q)touch modperl/swigperlrun.h modperl/functions.cpp modperl/ZNC.cpp modperl/ZNC.pm
-
 ifneq "$(SWIG)" ""
-modperl/modperl.tar.bz2: modperl/codegen.pl modperl/functions.in Makefile
-	@mkdir -p modperl .depend
+modperl/swigperlrun.h modperl/functions.cpp modperl/ZNC.cpp modperl/ZNC.pm: modperl/codegen.pl modperl/functions.in Makefile
+	@mkdir -p modperl
 	$(Q)$(MAKE) -f $(srcdir)/modperl/Makefile.gen $(C) SWIG="$(SWIG)" srcdir="$(srcdir)" PERL="$(PERL)" VERBOSE="$(VERBOSE)" SED="$(SED)"
 endif
 
