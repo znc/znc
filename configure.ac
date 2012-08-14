@@ -318,17 +318,17 @@ fi
 if test "x$PERL" != xno -o "x$PYTHON" != xno; then
 	old_USESWIG="$USESWIG"
 	if test "x$USESWIG" != "xno"; then
-		AC_PROG_SWIG([2.0.8])
+		AC_PROG_SWIG([2.0.4])
 		test -z "$SWIG" && USESWIG=no
 		if test "x$USESWIG" = xno -a "x$old_USESWIG" = yes; then
 			AC_MSG_ERROR([Could not found appropriate SWIG installation])
 		fi
 	fi
 	if test "x$USESWIG" = xno; then
-		if test -r "$srcdir/modules/modperl/modperl.tar.bz2" -a -r "$srcdir/modules/modpython/modpython.tar.bz2"; then
-			AC_MSG_NOTICE([modperl and modpython files are found, no SWIG needed])
+		if test "(" "x$PERL" != xno -a ! -r "$srcdir/modules/modperl/ZNC.cpp" ")" -o "(" "x$PYTHON" != xno -a ! -r "$srcdir/modules/modpython/_znc_core.cpp" ")"; then
+			AC_MSG_ERROR([Can not build modperl/modpython. Either install SWIG, or build ZNC from a tarball, or disable modperl/modpython. Check config.log for details.])
 		else
-			AC_MSG_ERROR([Can not build modperl/modpython. Either install SWIG, or build ZNC from a tarball, or disable modperl/modpython.])
+			AC_MSG_NOTICE([modperl/modpython files are found, no SWIG needed])
 		fi
 		SWIG=""
 	else
