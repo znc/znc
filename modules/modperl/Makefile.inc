@@ -18,6 +18,7 @@ PERLHOOK     := modperl_install
 CLEAN    += modperl/ZNC.so modperl/ZNC.pm modperl/ZNC.o
 CLEAN    += modperl/swigperlrun.h modperl/ZNC.cpp modperl/functions.cpp
 CLEAN    += modperl/gen
+all: modperl_all
 
 else
 FILES    := $(shell echo $(FILES) | sed -e "s/modperl//")
@@ -27,7 +28,7 @@ endif
 
 install: $(PERLHOOK)
 
-modperl.o: modperl/ZNC.so modperl/swigperlrun.h modperl/functions.cpp
+modperl_all: modperl/ZNC.so modperl/swigperlrun.h modperl/functions.cpp
 
 modperl/ZNC.so: modperl/ZNC.o Makefile
 	$(E) Linking ZNC Perl bindings library...
@@ -45,7 +46,7 @@ modperl/swigperlrun.h modperl/functions.cpp modperl/ZNC.cpp modperl/ZNC.pm: modp
 	$(Q)$(MAKE) -f $(srcdir)/modperl/Makefile.gen $(C) SWIG="$(SWIG)" srcdir="$(srcdir)" PERL="$(PERL)" VERBOSE="$(VERBOSE)" SED="$(SED)"
 endif
 
-modperl_install: install_datadir modperl.so
+modperl_install: install_datadir modperl_all
 	for i in $(wildcard $(srcdir)/*.pm); do \
 		$(INSTALL_DATA) $$i $(DESTDIR)$(MODDIR); \
 	done
