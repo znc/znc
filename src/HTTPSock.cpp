@@ -250,7 +250,7 @@ bool CHTTPSock::PrintFile(const CString& sFileName, CString sContentType) {
 
 		char szBuf[4096];
 		off_t iLen = 0;
-		int i = 0;
+		ssize_t i = 0;
 
 		PrintHeader(iSize, sContentType);
 
@@ -362,13 +362,13 @@ CString CHTTPSock::GetParam(const CString& sName, const map<CString, VCString>& 
 	return sRet;
 }
 
-unsigned int CHTTPSock::GetParamValues(const CString& sName, set<CString>& ssRet, bool bPost, const CString& sFilter) const {
+size_t CHTTPSock::GetParamValues(const CString& sName, set<CString>& ssRet, bool bPost, const CString& sFilter) const {
 	if (bPost)
 		return GetParamValues(sName, ssRet, m_msvsPOSTParams, sFilter);
 	return GetParamValues(sName, ssRet, m_msvsGETParams, sFilter);
 }
 
-unsigned int CHTTPSock::GetParamValues(const CString& sName, set<CString>& ssRet, const map<CString, VCString>& msvsParams, const CString& sFilter) {
+size_t CHTTPSock::GetParamValues(const CString& sName, set<CString>& ssRet, const map<CString, VCString>& msvsParams, const CString& sFilter) {
 	ssRet.clear();
 
 	map<CString, VCString>::const_iterator it = msvsParams.find(sName);
@@ -388,13 +388,13 @@ unsigned int CHTTPSock::GetParamValues(const CString& sName, set<CString>& ssRet
 	return ssRet.size();
 }
 
-unsigned int CHTTPSock::GetParamValues(const CString& sName, VCString& vsRet, bool bPost, const CString& sFilter) const {
+size_t CHTTPSock::GetParamValues(const CString& sName, VCString& vsRet, bool bPost, const CString& sFilter) const {
 	if (bPost)
 		return GetParamValues(sName, vsRet, m_msvsPOSTParams, sFilter);
 	return GetParamValues(sName, vsRet, m_msvsGETParams, sFilter);
 }
 
-unsigned int CHTTPSock::GetParamValues(const CString& sName, VCString& vsRet, const map<CString, VCString>& msvsParams, const CString& sFilter) {
+size_t CHTTPSock::GetParamValues(const CString& sName, VCString& vsRet, const map<CString, VCString>& msvsParams, const CString& sFilter) {
 	vsRet.clear();
 
 	map<CString, VCString>::const_iterator it = msvsParams.find(sName);

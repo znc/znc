@@ -44,19 +44,20 @@
 // just defines these in inttypes.h which is also part of C99 and is supposed to
 // include stdint.h. Solaris 9 is a weirdo. :(
 #include <inttypes.h>
+#include <cstddef>
 
 typedef struct {
-    unsigned int tot_len;
-    unsigned int len;
+    size_t tot_len;
+    size_t len;
     unsigned char block[2 * SHA256_BLOCK_SIZE];
     uint32_t h[8];
 } sha256_ctx;
 
 void sha256_init(sha256_ctx * ctx);
 void sha256_update(sha256_ctx *ctx, const unsigned char *message,
-                   unsigned int len);
+                   size_t len);
 void sha256_final(sha256_ctx *ctx, unsigned char *digest);
-void sha256(const unsigned char *message, unsigned int len,
+void sha256(const unsigned char *message, size_t len,
             unsigned char *digest);
 
 #endif /* !SHA2_H */

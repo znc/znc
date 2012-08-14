@@ -104,7 +104,7 @@ uint32_t sha256_k[64] =
 /* SHA-256 functions */
 
 static void sha256_transf(sha256_ctx *ctx, const unsigned char *message,
-                   unsigned int block_nb)
+                   size_t block_nb)
 {
     uint32_t w[64];
     uint32_t wv[8];
@@ -149,7 +149,7 @@ static void sha256_transf(sha256_ctx *ctx, const unsigned char *message,
     }
 }
 
-void sha256(const unsigned char *message, unsigned int len, unsigned char *digest)
+void sha256(const unsigned char *message, size_t len, unsigned char *digest)
 {
     sha256_ctx ctx;
 
@@ -170,10 +170,10 @@ void sha256_init(sha256_ctx *ctx)
 }
 
 void sha256_update(sha256_ctx *ctx, const unsigned char *message,
-                   unsigned int len)
+                   size_t len)
 {
-    unsigned int block_nb;
-    unsigned int new_len, rem_len, tmp_len;
+    size_t block_nb;
+    size_t new_len, rem_len, tmp_len;
     const unsigned char *shifted_message;
 
     tmp_len = SHA256_BLOCK_SIZE - ctx->len;
@@ -207,7 +207,7 @@ void sha256_final(sha256_ctx *ctx, unsigned char *digest)
 {
     unsigned int block_nb;
     unsigned int pm_len;
-    unsigned int len_b;
+    size_t len_b;
 
     int i;
 

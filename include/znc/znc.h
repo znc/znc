@@ -140,7 +140,7 @@ public:
 	// Listener yummy
 	CListener* FindListener(u_short uPort, const CString& BindHost, EAddrType eAddr);
 	bool AddListener(CListener*);
-	bool AddListener(unsigned int uPort, const CString& sBindHost, bool bSSL,
+	bool AddListener(unsigned short uPort, const CString& sBindHost, bool bSSL,
 			EAddrType eAddr, CListener::EAcceptType eAccept, CString& sError);
 	bool DelListener(CListener*);
 

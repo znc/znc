@@ -28,7 +28,7 @@ public:
 	void Reset();
 	void Parse(const CString& sNickMask);
 	CString GetHostMask() const;
-	unsigned int GetCommonChans(std::vector<CChan*>& vChans, CIRCNetwork* pNetwork) const;
+	size_t GetCommonChans(std::vector<CChan*>& vChans, CIRCNetwork* pNetwork) const;
 
 	// Setters
 	void SetNetwork(CIRCNetwork* pNetwork);

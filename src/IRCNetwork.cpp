@@ -104,7 +104,7 @@ void CIRCNetwork::Clone(const CIRCNetwork& Network) {
 
 	DelServers();
 
-	unsigned int a;
+	size_t a;
 	for (a = 0; a < vServers.size(); a++) {
 		CServer* pServer = vServers[a];
 		AddServer(pServer->GetName(), pServer->GetPort(), pServer->GetPass(), pServer->IsSSL());
@@ -286,8 +286,8 @@ bool CIRCNetwork::ParseConfig(CConfig *pConfig, CString& sError, bool bUpgrade) 
 		}
 
 		for (size_t i = 0; i < numSUIntOptions; ++i) {
-			unsigned int value;
-			if (pConfig->FindUIntEntry(SUIntOptions[i].name, value))
+			unsigned short value;
+			if (pConfig->FindUShortEntry(SUIntOptions[i].name, value))
 				(this->*SUIntOptions[i].pSetter)(value);
 		}
 
@@ -451,7 +451,9 @@ void CIRCNetwork::ClientConnected(CClient *pClient) {
 
 	m_vClients.push_back(pClient);
 
-	unsigned int uIdx, uSize;
+	size_t uIdx, uSize;
+	MCString msParams;
+	msParams["target"] = GetIRCNick().GetNick();
 
 	if (m_RawBuffer.IsEmpty()) {
 		pClient->PutClient(":irc.znc.in 001 " + pClient->GetNick() + " :- Welcome to ZNC -");
@@ -503,7 +505,7 @@ void CIRCNetwork::ClientConnected(CClient *pClient) {
 	}
 
 	const vector<CChan*>& vChans = GetChans();
-	for (unsigned int a = 0; a < vChans.size(); a++) {
+	for (size_t a = 0; a < vChans.size(); a++) {
 		if ((vChans[a]->IsOn()) && (!vChans[a]->IsDetached())) {
 			vChans[a]->JoinUser(true, "", pClient);
 		}
@@ -526,7 +528,7 @@ void CIRCNetwork::ClientConnected(CClient *pClient) {
 }
 
 void CIRCNetwork::ClientDisconnected(CClient *pClient) {
-	for (unsigned int a = 0; a < m_vClients.size(); a++) {
+	for (size_t a = 0; a < m_vClients.size(); a++) {
 		if (m_vClients[a] == pClient) {
 			m_vClients.erase(m_vClients.begin() + a);
 			break;
@@ -881,7 +883,7 @@ CServer* CIRCNetwork::GetNextServer() {
 }
 
 CServer* CIRCNetwork::GetCurrentServer() const {
-	unsigned int uIdx = (m_uServerIdx) ? m_uServerIdx -1 : 0;
+	size_t uIdx = (m_uServerIdx) ? m_uServerIdx -1 : 0;
 
 	if (uIdx >= m_vServers.size()) {
 		return NULL;

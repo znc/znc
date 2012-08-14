@@ -172,7 +172,7 @@ protected:
 	bool               m_bIRCConnectEnabled;
 	CString            m_sIRCServer;
 	std::vector<CServer*>   m_vServers;
-	unsigned int       m_uServerIdx; ///< Index in m_vServers of our current server + 1
+	size_t             m_uServerIdx; ///< Index in m_vServers of our current server + 1
 
 	CNick              m_IRCNick;
 	bool               m_bIRCAway;

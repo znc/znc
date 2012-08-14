@@ -438,7 +438,7 @@ class CAdminMod : public CModule {
 			pNetwork->SetFloodRate(sValue.ToDouble());
 			PutModule("FloodRate = " + CString(pNetwork->GetFloodRate()));
 		} else if (sVar.Equals("floodburst")) {
-			pNetwork->SetFloodBurst(sValue.ToUInt());
+			pNetwork->SetFloodBurst(sValue.ToUShort());
 			PutModule("FloodBurst = " + CString(pNetwork->GetFloodBurst()));
 		} else {
 			PutModule("Error: Unknown variable");

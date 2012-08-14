@@ -123,7 +123,7 @@ bool CString::WildCmp(const CString& sWild) const {
 }
 
 CString& CString::MakeUpper() {
-	for (unsigned int a = 0; a < length(); a++) {
+	for (size_type a = 0; a < length(); a++) {
 		char& c = (*this)[a];
 		c = toupper(c);
 	}
@@ -132,7 +132,7 @@ CString& CString::MakeUpper() {
 }
 
 CString& CString::MakeLower() {
-	for (unsigned int a = 0; a < length(); a++) {
+	for (size_type a = 0; a < length(); a++) {
 		char& c = (*this)[a];
 		c = tolower(c);
 	}
@@ -143,7 +143,7 @@ CString& CString::MakeLower() {
 CString CString::AsUpper() const {
 	CString sRet = *this;
 
-	for (unsigned int a = 0; a < length(); a++) {
+	for (size_type a = 0; a < length(); a++) {
 		char& c = sRet[a];
 		c = toupper(c);
 	}
@@ -154,7 +154,7 @@ CString CString::AsUpper() const {
 CString CString::AsLower() const {
 	CString sRet = *this;
 
-	for (unsigned int a = 0; a < length(); a++) {
+	for (size_type a = 0; a < length(); a++) {
 		char& c = sRet[a];
 		c = tolower(c);
 	}
@@ -183,7 +183,7 @@ CString CString::Escape_n(EEscape eFrom, EEscape eTo) const {
 	const char szHex[] = "0123456789ABCDEF";
 	const unsigned char *pStart = (const unsigned char*) data();
 	const unsigned char *p = (const unsigned char*) data();
-	unsigned int iLength = length();
+	size_type iLength = length();
 	sRet.reserve(iLength *3);
 	unsigned char pTmp[21];
 	unsigned int iCounted = 0;
@@ -370,9 +370,9 @@ unsigned int CString::Replace(CString& sStr, const CString& sReplace, const CStr
 	CString sCopy = sStr;
 	sStr.clear();
 
-	unsigned int uReplaceWidth = sReplace.length();
-	unsigned int uLeftWidth = sLeft.length();
-	unsigned int uRightWidth = sRight.length();
+	size_type uReplaceWidth = sReplace.length();
+	size_type uLeftWidth = sLeft.length();
+	size_type uRightWidth = sRight.length();
 	const char* p = sCopy.c_str();
 	bool bInside = false;
 
@@ -405,13 +405,13 @@ unsigned int CString::Replace(CString& sStr, const CString& sReplace, const CStr
 	return uRet;
 }
 
-CString CString::Token(unsigned int uPos, bool bRest, const CString& sSep, bool bAllowEmpty,
+CString CString::Token(size_t uPos, bool bRest, const CString& sSep, bool bAllowEmpty,
                        const CString& sLeft, const CString& sRight, bool bTrimQuotes) const {
 	VCString vsTokens;
 	if (Split(sSep, vsTokens, bAllowEmpty, sLeft, sRight, bTrimQuotes) > uPos) {
 		CString sRet;
 
-		for (unsigned int a = uPos; a < vsTokens.size(); a++) {
+		for (size_t a = uPos; a < vsTokens.size(); a++) {
 			if (a > uPos) {
 				sRet += sSep;
 			}
@@ -429,7 +429,7 @@ CString CString::Token(unsigned int uPos, bool bRest, const CString& sSep, bool 
 	return Token(uPos, bRest, sSep, bAllowEmpty);
 }
 
-CString CString::Token(unsigned int uPos, bool bRest, const CString& sSep, bool bAllowEmpty) const {
+CString CString::Token(size_t uPos, bool bRest, const CString& sSep, bool bAllowEmpty) const {
 	const char *sep_str = sSep.c_str();
 	size_t sep_len = sSep.length();
 	const char *str = c_str();
@@ -502,17 +502,17 @@ CString CString::Ellipsize(unsigned int uLen) const {
 	return sRet;
 }
 
-CString CString::Left(unsigned int uCount) const {
+CString CString::Left(size_type uCount) const {
 	uCount = (uCount > length()) ? length() : uCount;
 	return substr(0, uCount);
 }
 
-CString CString::Right(unsigned int uCount) const {
+CString CString::Right(size_type uCount) const {
 	uCount = (uCount > length()) ? length() : uCount;
 	return substr(length() - uCount, uCount);
 }
 
-unsigned int CString::URLSplit(MCString& msRet) const {
+CString::size_type CString::URLSplit(MCString& msRet) const {
 	msRet.clear();
 
 	VCString vsPairs;
@@ -527,7 +527,7 @@ unsigned int CString::URLSplit(MCString& msRet) const {
 	return msRet.size();
 }
 
-unsigned int CString::OptionSplit(MCString& msRet, bool bUpperKeys) const {
+CString::size_type CString::OptionSplit(MCString& msRet, bool bUpperKeys) const {
 	CString sName;
 	CString sCopy(*this);
 	msRet.clear();
@@ -562,12 +562,12 @@ unsigned int CString::OptionSplit(MCString& msRet, bool bUpperKeys) const {
 	return msRet.size();
 }
 
-unsigned int CString::QuoteSplit(VCString& vsRet) const {
+CString::size_type CString::QuoteSplit(VCString& vsRet) const {
 	vsRet.clear();
 	return Split(" ", vsRet, false, "\"", "\"", true);
 }
 
-unsigned int CString::Split(const CString& sDelim, VCString& vsRet, bool bAllowEmpty,
+CString::size_type CString::Split(const CString& sDelim, VCString& vsRet, bool bAllowEmpty,
 		const CString& sLeft, const CString& sRight, bool bTrimQuotes, bool bTrimWhiteSpace) const {
 	vsRet.clear();
 
@@ -577,9 +577,9 @@ unsigned int CString::Split(const CString& sDelim, VCString& vsRet, bool bAllowE
 
 	CString sTmp;
 	bool bInside = false;
-	unsigned int uDelimLen = sDelim.length();
-	unsigned int uLeftLen = sLeft.length();
-	unsigned int uRightLen = sRight.length();
+	size_type uDelimLen = sDelim.length();
+	size_type uLeftLen = sLeft.length();
+	size_type uRightLen = sRight.length();
 	const char* p = c_str();
 
 	if (!bAllowEmpty) {
@@ -644,7 +644,7 @@ unsigned int CString::Split(const CString& sDelim, VCString& vsRet, bool bAllowE
 	return vsRet.size();
 }
 
-unsigned int CString::Split(const CString& sDelim, SCString& ssRet, bool bAllowEmpty, const CString& sLeft, const CString& sRight, bool bTrimQuotes, bool bTrimWhiteSpace) const {
+CString::size_type CString::Split(const CString& sDelim, SCString& ssRet, bool bAllowEmpty, const CString& sLeft, const CString& sRight, bool bTrimQuotes, bool bTrimWhiteSpace) const {
 	VCString vsTokens;
 
 	Split(sDelim, vsTokens, bAllowEmpty, sLeft, sRight, bTrimQuotes, bTrimWhiteSpace);
@@ -897,7 +897,7 @@ void CString::Crypt(const CString& sPass, bool bEncrypt, const CString& sIvec) {
 		memcpy(szIvec, sIvec.data(), 8);
 	}
 
-	BF_set_key(&bKey, sPass.length(), (unsigned char*) sPass.data());
+	BF_set_key(&bKey, (unsigned int)sPass.length(), (unsigned char*) sPass.data());
 	unsigned int uPad = (length() % 8);
 
 	if (uPad) {
@@ -928,13 +928,13 @@ CString CString::ToByteStr(unsigned long long d) {
 	const unsigned long long TiB = GiB * 1024;
 
 	if (d > TiB) {
-		return CString(d / (double) TiB) + " TiB";
+		return CString(d / TiB) + " TiB";
 	} else if (d > GiB) {
-		return CString(d / (double) GiB) + " GiB";
+		return CString(d / GiB) + " GiB";
 	} else if (d > MiB) {
-		return CString(d / (double) MiB) + " MiB";
+		return CString(d / MiB) + " MiB";
 	} else if (d > KiB) {
-		return CString(d / (double) KiB) + " KiB";
+		return CString(d / KiB) + " KiB";
 	}
 
 	return CString(d) + " B";
@@ -1068,19 +1068,19 @@ CString CString::TrimSuffix_n(const CString& sSuffix) const {
 	return sRet;
 }
 
-CString CString::LeftChomp_n(unsigned int uLen) const {
+CString CString::LeftChomp_n(size_type uLen) const {
 	CString sRet = *this;
 	sRet.LeftChomp(uLen);
 	return sRet;
 }
 
-CString CString::RightChomp_n(unsigned int uLen) const {
+CString CString::RightChomp_n(size_type uLen) const {
 	CString sRet = *this;
 	sRet.RightChomp(uLen);
 	return sRet;
 }
 
-bool CString::LeftChomp(unsigned int uLen) {
+bool CString::LeftChomp(size_type uLen) {
 	bool bRet = false;
 
 	while ((uLen--) && (length())) {
@@ -1091,7 +1091,7 @@ bool CString::LeftChomp(unsigned int uLen) {
 	return bRet;
 }
 
-bool CString::RightChomp(unsigned int uLen) {
+bool CString::RightChomp(size_type uLen) {
 	bool bRet = false;
 
 	while ((uLen--) && (length())) {
