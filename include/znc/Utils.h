@@ -45,7 +45,10 @@ public:
 	static void PrintAction(const CString& sMessage);
 	static void PrintStatus(bool bSuccess, const CString& sMessage = "");
 
+#ifndef SWIGPERL
+	// TODO refactor this
 	static const CString sDefaultHash;
+#endif
 
 	static CString GetSaltedHashPass(CString& sSalt);
 	static CString GetSalt();

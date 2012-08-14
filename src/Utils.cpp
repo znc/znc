@@ -148,6 +148,7 @@ unsigned long CUtils::GetLongIP(const CString& sIP) {
 
 // If you change this here and in GetSaltedHashPass(),
 // don't forget CUser::HASH_DEFAULT!
+// TODO refactor this
 const CString CUtils::sDefaultHash = "sha256";
 CString CUtils::GetSaltedHashPass(CString& sSalt) {
 	sSalt = GetSalt();

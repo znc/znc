@@ -33,6 +33,7 @@ public:
 
 	bool ParseConfig(CConfig* Config, CString& sError);
 
+	// TODO refactor this
 	enum eHashType {
 		HASH_NONE,
 		HASH_MD5,
@@ -43,6 +44,7 @@ public:
 
 	// If you change the default hash here and in HASH_DEFAULT,
 	// don't forget CUtils::sDefaultHash!
+	// TODO refactor this
 	static CString SaltedHash(const CString& sPass, const CString& sSalt) {
 		return CUtils::SaltedSHA256Hash(sPass, sSalt);
 	}
