@@ -452,8 +452,6 @@ void CIRCNetwork::ClientConnected(CClient *pClient) {
 	m_vClients.push_back(pClient);
 
 	size_t uIdx, uSize;
-	MCString msParams;
-	msParams["target"] = GetIRCNick().GetNick();
 
 	if (m_RawBuffer.IsEmpty()) {
 		pClient->PutClient(":irc.znc.in 001 " + pClient->GetNick() + " :- Welcome to ZNC -");
