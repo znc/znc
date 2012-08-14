@@ -11,7 +11,10 @@
 %}
 
 %feature("naturalvar") CString;
-class CString;
+class CString {
+public:
+typedef size_t size_type;
+};
 
 /*@SWIG:/usr/share/swig1.3/typemaps/std_strings.swg,74,%typemaps_std_string@*/
 

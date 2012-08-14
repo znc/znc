@@ -48,6 +48,7 @@ using std::allocator;
 %include <stl.i>
 %include <std_list.i>
 %include <std_set.i>
+%include <std_deque.i>
 
 %include "modpython/cstring.i"
 %template(_stringlist) std::list<CString>;
@@ -67,11 +68,15 @@ using std::allocator;
 %template(SModInfo) std::set<CModInfo>;
 %template(SCString) std::set<CString>;
 typedef std::set<CString> SCString;
+%template(VCString) std::vector<CString>;
+typedef std::vector<CString> VCString;
 %template(PyMCString) std::map<CString, CString>;
 %template(PyMStringVString) std::map<CString, VCString>;
 class MCString : public std::map<CString, CString> {};
 %template(PyModulesVector) std::vector<CModule*>;
 %template(VListeners) std::vector<CListener*>;
+%template(BufLines) std::deque<CBufLine>;
+%template(VVString) std::vector<VCString>;
 
 %typemap(in) CString& {
 	String* p;

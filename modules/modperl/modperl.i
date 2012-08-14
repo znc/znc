@@ -37,6 +37,7 @@
 #include "../include/znc/FileUtils.h"
 #include "../include/znc/ZNCDebug.h"
 #include "../include/znc/ExecSock.h"
+#include "../include/znc/Buffer.h"
 #include "modperl/module.h"
 #define stat struct stat
 %}
@@ -50,6 +51,7 @@
 %include <typemaps.i>
 %include <stl.i>
 %include <std_list.i>
+%include <std_deque.i>
 
 namespace std {
 	template<class K> class set {
@@ -78,6 +80,8 @@ namespace std {
 
 %template(VIRCNetworks) std::vector<CIRCNetwork*>;
 %template(VChannels) std::vector<CChan*>;
+%template(VCString) std::vector<CString>;
+typedef std::vector<CString> VCString;
 /*%template(MNicks) std::map<CString, CNick>;*/
 /*%template(SModInfo) std::set<CModInfo>;
 %template(SCString) std::set<CString>;
@@ -86,6 +90,8 @@ typedef std::set<CString> SCString;*/
 class MCString : public std::map<CString, CString> {};
 /*%template(PerlModulesVector) std::vector<CModule*>;*/
 %template(VListeners) std::vector<CListener*>;
+%template(BufLines) std::deque<CBufLine>;
+%template(VVString) std::vector<VCString>;
 
 %typemap(out) std::map<CString, CNick> {
 	HV* myhv = newHV();
@@ -124,6 +130,7 @@ class MCString : public std::map<CString, CString> {};
 %include "../include/znc/Server.h"
 %include "../include/znc/ZNCDebug.h"
 %include "../include/znc/ExecSock.h"
+%include "../include/znc/Buffer.h"
 
 %include "modperl/module.h"
 

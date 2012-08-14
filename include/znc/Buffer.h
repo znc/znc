@@ -20,6 +20,7 @@ class CClient;
 
 class CBufLine {
 public:
+	CBufLine() { throw 0; } // shouldn't be called, but is needed for compilation
 	CBufLine(const CString& sFormat, const CString& sText = "", const timeval* ts = 0);
 	~CBufLine();
 	CString GetLine(const CClient& Client, const MCString& msParams) const;
@@ -46,6 +47,8 @@ protected:
 
 class CBuffer : private std::deque<CBufLine> {
 public:
+	typedef typename std::deque<CBufLine>::size_type size_type;
+
 	CBuffer(unsigned int uLineCount = 100);
 	~CBuffer();
 
