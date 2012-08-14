@@ -452,20 +452,29 @@ void CIRCNetwork::ClientConnected(CClient *pClient) {
 	m_vClients.push_back(pClient);
 
 	unsigned int uIdx, uSize;
-	MCString msParams;
-	msParams["target"] = GetIRCNick().GetNick();
 
 	if (m_RawBuffer.IsEmpty()) {
 		pClient->PutClient(":irc.znc.in 001 " + pClient->GetNick() + " :- Welcome to ZNC -");
 	} else {
+		const CString& sClientNick = pClient->GetNick(false);
+		MCString msParams;
+		msParams["target"] = sClientNick;
+
 		uSize = m_RawBuffer.Size();
 		for (uIdx = 0; uIdx < uSize; uIdx++) {
 			pClient->PutClient(m_RawBuffer.GetLine(uIdx, *pClient, msParams));
 		}
 
-		// The assumption is that the client got this nick from the 001 reply
-		pClient->SetNick(GetIRCNick().GetNick());
+		const CNick& Nick = GetIRCNick();
+		if (!sClientNick.Equals(Nick.GetNick())) {
+			pClient->PutClient(":" + sClientNick + "!" + Nick.GetIdent() +
+					"@" + Nick.GetHost() + " NICK :" + Nick.GetNick());
+			pClient->SetNick(Nick.GetNick());
+		}
 	}
+
+	MCString msParams;
+	msParams["target"] = GetIRCNick().GetNick();
 
 	// Send the cached MOTD
 	uSize = m_MotdBuffer.Size();
