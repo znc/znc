@@ -321,7 +321,7 @@ if test "x$PERL" != xno -o "x$PYTHON" != xno; then
 		AC_PROG_SWIG([2.0.4])
 		test -z "$SWIG" && USESWIG=no
 		if test "x$USESWIG" = xno -a "x$old_USESWIG" = yes; then
-			AC_MSG_ERROR([Could not found appropriate SWIG installation])
+			AC_MSG_ERROR([Could not found appropriate SWIG installation. Check config.log for details.])
 		fi
 	fi
 	if test "x$USESWIG" = xno; then

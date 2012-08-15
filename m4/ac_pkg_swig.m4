@@ -76,13 +76,16 @@ AC_DEFUN([AC_PROG_SWIG],[
 		std::list<int>::size_type checkList();
 		std::deque<int>::size_type checkDeque();
 	END
-	AC_CACHE_CHECK([for SWIG], [znc_cv_path_SWIG], [
+	SWIG_installed_versions=""
+	AC_CACHE_CHECK([for SWIG >= $1], [znc_cv_path_SWIG], [
 		AC_PATH_PROGS_FEATURE_CHECK([SWIG], [swig swig2.0], [
 			echo trying $ac_path_SWIG >&AS_MESSAGE_LOG_FD
 			$ac_path_SWIG -version >&AS_MESSAGE_LOG_FD
 			[swig_version=`$ac_path_SWIG -version 2>&1 | grep 'SWIG Version' | sed 's/.*\([0-9][0-9]*\.[0-9][0-9]*\.[0-9][0-9]*\).*/\1/g'`]
 			if test -n "$swig_version"; then
 				swig_right_version=1
+
+				SWIG_installed_versions="$SWIG_installed_versions $swig_version "
 
 				if test -n "$required"; then
 					# Calculate the available version number components
@@ -150,6 +153,9 @@ AC_DEFUN([AC_PROG_SWIG],[
 		])
 	])
 	rm -f conftest-python.i conftest-perl.i
+	if test -n "$SWIG_installed_versions"; then
+		AC_MSG_NOTICE([Following SWIG versions are found:$SWIG_installed_versions])
+	fi
 
 	AC_SUBST([SWIG], [$znc_cv_path_SWIG])
 	if test -n "$SWIG"; then
