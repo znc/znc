@@ -47,8 +47,6 @@ protected:
 
 class CBuffer : private std::deque<CBufLine> {
 public:
-	typedef typename std::deque<CBufLine>::size_type size_type;
-
 	CBuffer(unsigned int uLineCount = 100);
 	~CBuffer();
 

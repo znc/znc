@@ -126,8 +126,6 @@ protected:
  */
 class CTable : protected std::vector<std::vector<CString> > {
 public:
-	typedef typename std::vector<std::vector<CString> >::size_type size_type;
-
 	CTable() {}
 	virtual ~CTable() {}
 
