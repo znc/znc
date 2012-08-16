@@ -443,7 +443,7 @@ private:
 		CString sOuterKey, sInnerKey;
 		CString::size_type iKeyLength = sRealKey.length();
 		for (unsigned int i = 0; i < 64; i++) {
-			int r = (i < iKeyLength ? sRealKey[i] : 0);
+			char r = (i < iKeyLength ? sRealKey[i] : '\0');
 			sOuterKey += r ^ 0x5c;
 			sInnerKey += r ^ 0x36;
 		}

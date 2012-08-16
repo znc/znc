@@ -222,8 +222,7 @@ public:
 		}
 
 		/* Prime number */
-		unsigned int size = ntohs((((unsigned int)data[1]) << 8) | data[0]);
-		size = ntohs(*(unsigned int*)data);
+		unsigned int size = ntohs(*(uint16_t*)data);
 		data += 2;
 		length -= 2;
 
@@ -243,8 +242,7 @@ public:
 			return false;
 		}
 
-		size = ntohs((((unsigned int)data[1]) << 8) | data[0]);
-		size = ntohs(*(unsigned int*)data);
+		size = ntohs(*(uint16_t*)data);
 		data += 2;
 		length -= 2;
 
@@ -258,8 +256,7 @@ public:
 		data += size;
 
 		/* Server public key */
-		size = ntohs((((unsigned int)data[1]) << 8) | data[0]);
-		size = ntohs(*(unsigned int*)data);
+		size = ntohs(*(uint16_t*)data);
 		data += 2;
 		length -= 2;
 
@@ -289,6 +286,7 @@ public:
 		}
 
 		/* Encrypt our sasl password with blowfish */
+		// TODO for passwords with length 8, 16, 24, 32, etc. this will have 8 additional zero bytes at the end... But it works when treated as null-terminated string anyway, and if it works I don't want to touch it right now.
 		CString::size_type password_length = GetNV("password").size() + (8 - (GetNV("password").size() % 8));
 		unsigned char *encrypted_password = (unsigned char *)malloc(password_length);
 		char *plaintext_password = (char *)malloc(password_length);
@@ -315,7 +313,7 @@ public:
 		out_ptr = response;
 
 		/* Add our key to the response */
-		*((unsigned int *)out_ptr) = htons(BN_num_bytes(dh->pub_key));
+		*((uint16_t *)out_ptr) = htons((uint16_t)BN_num_bytes(dh->pub_key));
 		out_ptr += 2;
 		BN_bn2bin(dh->pub_key, (unsigned char *)out_ptr);
 		out_ptr += BN_num_bytes(dh->pub_key);

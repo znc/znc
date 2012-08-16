@@ -31,7 +31,7 @@ public:
 	void SendPacket();
 	virtual Csock* GetSockObj(const CString& sHost, unsigned short uPort);
 	CFile* OpenFile(bool bWrite = true);
-	bool Seek(unsigned int uPos);
+	bool Seek(unsigned long int uPos);
 
 	// Setters
 	void SetRemoteIP(const CString& s) { m_sRemoteIP = s; }
@@ -58,8 +58,8 @@ protected:
 	CString         m_sLocalFile;
 	CString         m_sSendBuf;
 	unsigned short  m_uRemotePort;
-	unsigned long   m_uFileSize;
-	unsigned long   m_uBytesSoFar;
+	unsigned long long  m_uFileSize;
+	unsigned long long  m_uBytesSoFar;
 	bool            m_bSend;
 	bool            m_bNoDelFile;
 	CFile*          m_pFile;
@@ -309,7 +309,7 @@ void CDCCSock::ReadData(const char* data, size_t len) {
 	} else {
 		m_pFile->Write(data, len);
 		m_uBytesSoFar += len;
-		uint32_t uSoFar = htonl(m_uBytesSoFar);
+		uint32_t uSoFar = htonl((uint32_t)m_uBytesSoFar);
 		Write((char*) &uSoFar, sizeof(uSoFar));
 
 		if (m_uBytesSoFar >= m_uFileSize) {
@@ -447,14 +447,14 @@ CFile* CDCCSock::OpenFile(bool bWrite) {
 		// The DCC specs only allow file transfers with files smaller
 		// than 4GiB (see ReadData()).
 		unsigned long long uFileSize = m_pFile->GetSize();
-		if (uFileSize > (unsigned long long) 0xffffffff) {
+		if (uFileSize > (unsigned long long) 0xffffffffULL) {
 			delete m_pFile;
 			m_pFile = NULL;
 			m_pModule->PutModule("DCC -> [" + m_sRemoteNick + "] - File too large (>4 GiB) [" + m_sLocalFile + "]");
 			return NULL;
 		}
 
-		m_uFileSize = (unsigned long) uFileSize;
+		m_uFileSize = uFileSize;
 	}
 
 	m_sFileName = m_pFile->GetShortName();
@@ -462,7 +462,7 @@ CFile* CDCCSock::OpenFile(bool bWrite) {
 	return m_pFile;
 }
 
-bool CDCCSock::Seek(unsigned int uPos) {
+bool CDCCSock::Seek(unsigned long int uPos) {
 	if (m_pFile) {
 		if (m_pFile->Seek(uPos)) {
 			m_uBytesSoFar = uPos;

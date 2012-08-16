@@ -412,7 +412,7 @@ ssize_t CFile::Write(const char *pszBuffer, size_t iBytes) {
 	}
 
 	ssize_t res = write(m_iFD, pszBuffer, iBytes);
-	if (res != iBytes)
+	if (-1 == res)
 		m_bHadError = true;
 	return res;
 }

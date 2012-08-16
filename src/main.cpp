@@ -108,7 +108,7 @@ static void seedPRNG() {
 
 		// This is in [0:1e6], which means that roughly 20 bits are
 		// actually used, let's try to shuffle the high bits.
-		seed ^= (tv.tv_usec << 10) | tv.tv_usec;
+		seed ^= uint32_t((tv.tv_usec << 10) | tv.tv_usec);
 	} else
 		seed = (unsigned int)time(NULL);
 

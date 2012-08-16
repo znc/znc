@@ -582,7 +582,7 @@ bool CZNC::WriteNewConfig(const CString& sConfigFile) {
 		CUtils::GetInput("Listen Host", sListenHost, sListenHost, "Blank for all ips");
 
 		CUtils::PrintAction("Verifying the listener");
-		CListener* pListener = new CListener(uListenPort, sListenHost, bListenSSL,
+		CListener* pListener = new CListener((unsigned short int)uListenPort, sListenHost, bListenSSL,
 				b6 ? ADDR_ALL : ADDR_IPV4ONLY, CListener::ACCEPT_ALL);
 		if (!pListener->Listen()) {
 			CUtils::PrintStatus(false, FormatBindError());
