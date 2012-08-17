@@ -4,11 +4,6 @@ ERROR="[ !! ]"
 WARNING="[ ** ]"
 OK="[ ok ]"
 
-# Update $PATH so that we will also find the znc binary if we were compiled
-# with  ./configure --prefix=/some/path
-bindir="@bindir@"
-PATH="$bindir:$PATH"
-
 # Check if we got everything we need
 
 check_binary()
