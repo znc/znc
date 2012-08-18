@@ -125,7 +125,8 @@ bool CString::WildCmp(const CString& sWild) const {
 CString& CString::MakeUpper() {
 	for (size_type a = 0; a < length(); a++) {
 		char& c = (*this)[a];
-		c = toupper(c);
+		//TODO use unicode
+		c = (char)toupper(c);
 	}
 
 	return *this;
@@ -134,7 +135,8 @@ CString& CString::MakeUpper() {
 CString& CString::MakeLower() {
 	for (size_type a = 0; a < length(); a++) {
 		char& c = (*this)[a];
-		c = tolower(c);
+		//TODO use unicode
+		c = (char)tolower(c);
 	}
 
 	return *this;
@@ -145,7 +147,8 @@ CString CString::AsUpper() const {
 
 	for (size_type a = 0; a < length(); a++) {
 		char& c = sRet[a];
-		c = toupper(c);
+		//TODO use unicode
+		c = (char)toupper(c);
 	}
 
 	return sRet;
@@ -156,7 +159,8 @@ CString CString::AsLower() const {
 
 	for (size_type a = 0; a < length(); a++) {
 		char& c = sRet[a];
-		c = tolower(c);
+		//TODO use unicode
+		c = (char)tolower(c);
 	}
 
 	return sRet;
@@ -204,10 +208,10 @@ CString CString::Escape_n(EEscape eFrom, EEscape eTo) const {
 						}
 
 						char* endptr = NULL;
-						unsigned int b = strtol((const char*) (pTmp +2 + (base == 16)), &endptr, base);
+						unsigned long int b = strtol((const char*) (pTmp +2 + (base == 16)), &endptr, base);
 
 						if ((*endptr == ';') && (b <= 255)) { // incase they do something like &#7777777777;
-							ch = b;
+							ch = (unsigned char)b;
 							a += iCounted;
 							break;
 						}
@@ -236,16 +240,16 @@ CString CString::Escape_n(EEscape eFrom, EEscape eTo) const {
 				if (*p == '%' && (a +2) < iLength && isxdigit(*(p +1)) && isxdigit(*(p +2))) {
 					p++;
 					if (isdigit(*p)) {
-						ch = (*p - '0') << 4;
+						ch = (unsigned char)((*p - '0') << 4);
 					} else {
-						ch = (tolower(*p) - 'a' +10) << 4;
+						ch = (unsigned char)((tolower(*p) - 'a' +10) << 4);
 					}
 
 					p++;
 					if (isdigit(*p)) {
-						ch |= (*p - '0');
+						ch |= (unsigned char)(*p - '0');
 					} else {
-						ch |= (tolower(*p) - 'a' +10);
+						ch |= (unsigned char)(tolower(*p) - 'a' +10);
 					}
 
 					a += 2;
@@ -817,21 +821,21 @@ unsigned long CString::Base64Decode(CString& sRet) const {
 	for (i = 0, p = out; i < uLen; i++) {
 		c = (char)base64_table[(unsigned char)in[i++]];
 		c1 = (char)base64_table[(unsigned char)in[i++]];
-		*p++ = (c << 2) | ((c1 >> 4) & 0x3);
+		*p++ = char((c << 2) | ((c1 >> 4) & 0x3));
 
 		if (i < uLen) {
 			if (in[i] == '=') {
 				break;
 			}
 			c = (char)base64_table[(unsigned char)in[i]];
-			*p++ = ((c1 << 4) & 0xf0) | ((c >> 2) & 0xf);
+			*p++ = char(((c1 << 4) & 0xf0) | ((c >> 2) & 0xf));
 		}
 
 		if (++i < uLen) {
 			if (in[i] == '=') {
 				break;
 			}
-			*p++ = ((c << 6) & 0xc0) | (char)base64_table[(unsigned char)in[i]];
+			*p++ = char(((c << 6) & 0xc0) | (char)base64_table[(unsigned char)in[i]]);
 		}
 	}
 
@@ -975,11 +979,11 @@ bool CString::ToBool() const {
 			!sTrimmed.Equals("n"));
 }
 
-short CString::ToShort() const { return strtoul(this->c_str(), (char**) NULL, 10); }
-unsigned short CString::ToUShort() const { return strtoul(this->c_str(), (char**) NULL, 10); }
-unsigned int CString::ToUInt() const { return strtoul(this->c_str(), (char**) NULL, 10); }
-int CString::ToInt() const { return strtoul(this->c_str(), (char**) NULL, 10); }
-long CString::ToLong() const { return strtoul(this->c_str(), (char**) NULL, 10); }
+short CString::ToShort() const { return (short int)strtol(this->c_str(), (char**) NULL, 10); }
+unsigned short CString::ToUShort() const { return (unsigned short int)strtoul(this->c_str(), (char**) NULL, 10); }
+unsigned int CString::ToUInt() const { return (unsigned int)strtoul(this->c_str(), (char**) NULL, 10); }
+int CString::ToInt() const { return (int)strtol(this->c_str(), (char**) NULL, 10); }
+long CString::ToLong() const { return strtol(this->c_str(), (char**) NULL, 10); }
 unsigned long CString::ToULong() const { return strtoul(c_str(), NULL, 10); }
 unsigned long long CString::ToULongLong() const { return strtoull(c_str(), NULL, 10); }
 long long CString::ToLongLong() const { return strtoll(c_str(), NULL, 10); }
