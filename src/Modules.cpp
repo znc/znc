@@ -19,6 +19,8 @@ using std::map;
 using std::set;
 using std::vector;
 
+bool ZNC_NO_NEED_TO_DO_ANYTHING_ON_MODULE_CALL_EXITER;
+
 #ifndef RTLD_LOCAL
 # define RTLD_LOCAL 0
 # warning "your crap box doesnt define RTLD_LOCAL !?"
