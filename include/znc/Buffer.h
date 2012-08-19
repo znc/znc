@@ -11,7 +11,7 @@
 
 #include <znc/zncconfig.h>
 #include <znc/ZNCString.h>
-#include <time.h>
+#include <sys/time.h>
 #include <deque>
 
 // Forward Declarations
