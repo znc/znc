@@ -262,6 +262,25 @@ if test "x$SSL" != "xno"; then
 		AC_CHECK_LIB( ssl, SSL_shutdown,, SSL=no )
 	])
 
+	if test "x$SSL" != "xno"; then
+		AC_MSG_CHECKING([whether openssl is usable])
+		AC_LINK_IFELSE([
+			AC_LANG_PROGRAM([[
+				#include <openssl/ssl.h>
+			]], [[
+				SSL_CTX* ctx = SSL_CTX_new(TLSv1_method());
+				SSL* ssl = SSL_new(ctx);
+				DH* dh = DH_new();
+			]])
+		], [
+			AC_MSG_RESULT([yes])
+		], [
+			AC_MSG_RESULT([no])
+			SSL=no
+		])
+		
+	fi
+
 	if test "x$SSL" = "xno" ; then
 		ZNC_AUTO_FAIL([SSL],
 			[OpenSSL not found. Try --disable-openssl.],
@@ -505,6 +524,7 @@ AC_SUBST([LDFLAGS])
 AC_SUBST([LIBS])
 AC_SUBST([LIBZNC])
 AC_SUBST([LIBZNCDIR])
+AC_SUBST([ISCYGWIN])
 AC_SUBST([MODLINK])
 AC_SUBST([NOSSL])
 AC_SUBST([TCL_FLAGS])
