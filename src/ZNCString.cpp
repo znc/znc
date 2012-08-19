@@ -144,25 +144,13 @@ CString& CString::MakeLower() {
 
 CString CString::AsUpper() const {
 	CString sRet = *this;
-
-	for (size_type a = 0; a < length(); a++) {
-		char& c = sRet[a];
-		//TODO use unicode
-		c = (char)toupper(c);
-	}
-
+	sRet.MakeUpper();
 	return sRet;
 }
 
 CString CString::AsLower() const {
 	CString sRet = *this;
-
-	for (size_type a = 0; a < length(); a++) {
-		char& c = sRet[a];
-		//TODO use unicode
-		c = (char)tolower(c);
-	}
-
+	sRet.MakeLower();
 	return sRet;
 }
 

@@ -32,7 +32,7 @@ modperl_all: modperl/ZNC.so modperl/swigperlrun.h modperl/functions.cpp
 
 modperl/ZNC.so: modperl/ZNC.o Makefile
 	$(E) Linking ZNC Perl bindings library...
-	$(Q)$(CXX) $(MODFLAGS) $(LDFLAGS) $(MODLINK) $(PERL_LD) -o $@ $<
+	$(Q)$(CXX) $(MODFLAGS) $(LDFLAGS) $(MODLINK) -o $@ $< $(PERL_LD) 
 
 modperl/ZNC.o: modperl/ZNC.cpp Makefile
 	@mkdir -p modperl
