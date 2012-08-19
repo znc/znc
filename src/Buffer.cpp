@@ -11,7 +11,7 @@
 #include <znc/Client.h>
 #include <znc/User.h>
 
-CBufLine::CBufLine(const CString& sFormat, const CString& sText, const timeval* ts) {
+CBufLine::CBufLine(const CString& sFormat, const CString& sText, const struct timeval* ts) {
 	m_sFormat = sFormat;
 	m_sText = sText;
 	if (ts == NULL)
@@ -54,7 +54,7 @@ CBuffer::CBuffer(unsigned int uLineCount) {
 
 CBuffer::~CBuffer() {}
 
-CBuffer::size_type CBuffer::AddLine(const CString& sFormat, const CString& sText, const timeval* ts) {
+CBuffer::size_type CBuffer::AddLine(const CString& sFormat, const CString& sText, const struct timeval* ts) {
 	if (!m_uLineCount) {
 		return 0;
 	}
