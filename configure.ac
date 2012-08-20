@@ -343,8 +343,12 @@ if test "x$PERL" != xno -o "x$PYTHON" != xno; then
 			AC_MSG_ERROR([Could not found appropriate SWIG installation. Check config.log for details.])
 		fi
 	fi
+	if test -r "$srcdir/modules/modperl/ZNC.cpp" -a -r "$srcdir/modules/modpython/_znc_core.cpp"; then
+		AC_MSG_NOTICE([modperl/modpython files are found, disabling SWIG])
+		USESWIG=no
+	fi
 	if test "x$USESWIG" = xno; then
-		if test "(" "x$PERL" != xno -a ! -r "$srcdir/modules/modperl/ZNC.cpp" ")" -o "(" "x$PYTHON" != xno -a ! -r "$srcdir/modules/modpython/_znc_core.cpp" ")"; then
+		if test ! -r "$srcdir/modules/modperl/ZNC.cpp" -o ! -r "$srcdir/modules/modpython/_znc_core.cpp"; then
 			AC_MSG_ERROR([Can not build modperl/modpython. Either install SWIG, or build ZNC from a tarball, or disable modperl/modpython. Check config.log for details.])
 		else
 			AC_MSG_NOTICE([modperl/modpython files are found, no SWIG needed])
