@@ -26,7 +26,7 @@ void CBufLine::UpdateTime() {
 	if (0 == gettimeofday(&m_time, NULL)) {
 		return;
 	}
-	time(&m_time.tv_sec);
+	m_time.tv_sec = time(NULL);
 	m_time.tv_usec = 0;
 }
 
