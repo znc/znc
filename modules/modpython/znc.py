@@ -154,6 +154,9 @@ class Module:
 
     wiki_page = ''
 
+    has_args = False
+    args_help_text = ''
+
     def __str__(self):
         return self.GetModName()
 
@@ -575,6 +578,14 @@ def unload_all():
         unload_module(mod)
 
 
+def gather_mod_info(cl, modinfo):
+    modinfo.SetDescription(cl.description)
+    modinfo.SetWikiPage(cl.wiki_page)
+    modinfo.SetDefaultType(cl.module_types[0])
+    for module_type in cl.module_types:
+        modinfo.AddType(module_type)
+
+
 def get_mod_info(modname, retmsg, modinfo):
     '''0-not found, 1-error, 2-success'''
     pymodule, datadir = find_open(modname)
@@ -585,13 +596,9 @@ def get_mod_info(modname, retmsg, modinfo):
             pymodule.__file__, modname)
         return 1
     cl = pymodule.__dict__[modname]
-    modinfo.SetDefaultType(cl.module_types[0])
-    for module_type in cl.module_types:
-        modinfo.AddType(module_type)
-    modinfo.SetDescription(cl.description)
-    modinfo.SetWikiPage(cl.wiki_page)
     modinfo.SetName(modname)
     modinfo.SetPath(pymodule.__file__)
+    gather_mod_info(cl, modinfo)
     return 2
 
 
@@ -616,14 +623,9 @@ def get_mod_info_path(path, modname, modinfo):
     if modname not in pymodule.__dict__:
         return 0
     cl = pymodule.__dict__[modname]
-    modinfo.SetDescription(cl.description)
-    modinfo.SetWikiPage(cl.wiki_page)
     modinfo.SetName(modname)
     modinfo.SetPath(pymodule.__file__)
-    modinfo.SetDefaultType(cl.module_types[0])
-    for module_type in cl.module_types:
-        modinfo.AddType(module_type)
-
+    gather_mod_info(cl, modinfo)
     return 1
 
 
