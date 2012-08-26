@@ -486,7 +486,7 @@ void CAwayJob::RunJob()
 template<> void TModInfo<CAway>(CModInfo& Info) {
 	Info.SetWikiPage("awaystore");
 	Info.SetHasArgs(true);
-	Info.SetArgsHelpText("[ -notimer | -timer N ] [ passw0rd ]. N is number of seconds, 600 by default.");
+	Info.SetArgsHelpText("[ -notimer | -timer N ]  passw0rd . N is number of seconds, 600 by default.");
 }
 
 NETWORKMODULEDEFS(CAway, "Adds auto-away with logging, useful when you use ZNC from different locations");
