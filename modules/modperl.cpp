@@ -208,7 +208,7 @@ public:
 				PUSH_STR(sName);
 				PUSH_PTR(CModInfo*, &ModInfo);
 				PCALL("ZNC::Core::ModInfoByPath");
-				if (!SvTRUE(ERRSV) && ret == 2) {
+				if (!SvTRUE(ERRSV)) {
 					ssMods.insert(ModInfo);
 				}
 				PEND;
