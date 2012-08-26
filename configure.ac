@@ -153,10 +153,13 @@ AC_ARG_ENABLE([add-networks],
 if test "$DEBUG" != "no"; then
 	appendCXX -ggdb3
 	AC_DEFINE([_DEBUG], [1], [Define for debugging])
-	# These enable some debug options in g++'s STL, e.g. invalid use of iterators
-	AC_DEFINE([_GLIBCXX_DEBUG], [1], [Enable extra debugging checks in libstdc++])
-	AC_DEFINE([_GLIBCXX_DEBUG_PEDANTIC], [1], [Enable extra debugging checks in libstdc++])
-	AC_DEFINE([_GLIBCXX_CONCEPT_CHECKS], [1], [Enable extra debugging checks in libstdc++])
+	if test "x$ISCYGWIN" != x1; then
+		# These enable some debug options in g++'s STL, e.g. invalid use of iterators
+		# But they cause crashes on cygwin while loading modules
+		AC_DEFINE([_GLIBCXX_DEBUG], [1], [Enable extra debugging checks in libstdc++])
+		AC_DEFINE([_GLIBCXX_DEBUG_PEDANTIC], [1], [Enable extra debugging checks in libstdc++])
+		AC_DEFINE([_GLIBCXX_CONCEPT_CHECKS], [1], [Enable extra debugging checks in libstdc++])
+	fi
 else
 	if test "x$OPTIMIZE" = "xyes"; then
 		appendCXX -O2
