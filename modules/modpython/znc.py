@@ -575,6 +575,8 @@ def unload_module(module):
 def unload_all():
     while len(_py_modules) > 0:
         mod = _py_modules.pop()
+        # add it back to set, otherwise unload_module will be sad
+        _py_modules.add(mod)
         unload_module(mod)
 
 

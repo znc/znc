@@ -10,8 +10,16 @@ PYTHONCOMMON += -Wno-redundant-decls
 modpythonCXXFLAGS := $(PYTHONCOMMON) -I.
 modpythonLDFLAGS  := $(PY_LDFLAGS)
 
+ifeq "${ISCYGWIN}" "1"
+PYCEXT_EXT := dll
+PYDEPONMOD := ./modpython.so
+else
+PYCEXT_EXT := so
+PYDEPONMOD :=
+endif
+
 PYTHONHOOK   := modpython_install
-CLEAN    += modpython/_znc_core.so modpython/_znc_core.cpp modpython/znc_core.py modpython/znc_core.pyc
+CLEAN    += modpython/_znc_core.$(PYCEXT_EXT) modpython/_znc_core.cpp modpython/znc_core.py modpython/znc_core.pyc
 CLEAN    += modpython/swigpyrun.h modpython/znc.pyc modpython/functions.cpp modpython/compiler *.pyc
 CLEAN    += modpython/_znc_core.o modpython/compiler.o
 ifneq "$(srcdir)" "."
@@ -35,7 +43,7 @@ install: $(PYTHONHOOK)
 ifeq "$(PYTHON_ON)" "yes"
 all: modpython_all
 endif
-modpython_all: modpython/_znc_core.so modpython/znc.pyc modpython/znc_core.pyc
+modpython_all: modpython/_znc_core.$(PYCEXT_EXT) modpython/znc.pyc modpython/znc_core.pyc
 modpython_all: $(addsuffix c, $(notdir $(wildcard $(srcdir)/*.py)))
 
 modpython/_znc_core.o: modpython/_znc_core.cpp Makefile
@@ -44,9 +52,9 @@ modpython/_znc_core.o: modpython/_znc_core.cpp Makefile
 	$(E) Building ZNC python bindings library...
 	$(Q)$(CXX) $(MODFLAGS) -I$(srcdir) -MD -MF .depend/modpython.library.dep $(PYTHONCOMMON) -o $@ $< -c
 
-modpython/_znc_core.so: modpython/_znc_core.o Makefile
+modpython/_znc_core.$(PYCEXT_EXT): modpython/_znc_core.o Makefile modpython.so
 	$(E) Linking ZNC python bindings library...
-	$(Q)$(CXX) $(MODFLAGS) $(LDFLAGS) $(MODLINK) -o $@ $< $(PY_LDFLAGS)
+	$(Q)$(CXX) $(MODFLAGS) $(LDFLAGS) $(MODLINK) -o $@ $< $(PY_LDFLAGS) $(PYDEPONMOD)
 
 ifneq "$(SWIG)" ""
 modpython/znc_core.py modpython/_znc_core.cpp modpython/functions.cpp modpython/swigpyrun.h: modpython/codegen.pl modpython/functions.in Makefile
@@ -70,7 +78,7 @@ modpython_install: install_datadir modpython_all
 		$(INSTALL_DATA) $$i $(DESTDIR)$(MODDIR); \
 	done
 	mkdir -p $(DESTDIR)$(MODDIR)/modpython
-	$(INSTALL_PROGRAM) modpython/_znc_core.so $(DESTDIR)$(MODDIR)/modpython
+	$(INSTALL_PROGRAM) modpython/_znc_core.$(PYCEXT_EXT) $(DESTDIR)$(MODDIR)/modpython
 	$(INSTALL_DATA) modpython/znc_core.pyc $(DESTDIR)$(MODDIR)/modpython
 	if test -r modpython/znc_core.py;\
 		then $(INSTALL_DATA) modpython/znc_core.py $(DESTDIR)$(MODDIR)/modpython;\

@@ -20,14 +20,14 @@ CXX      := @CXX@
 MODFLAGS := -I$(srcdir)/../include -I../include @CPPFLAGS@ @MODFLAGS@
 MODLINK  := @MODLINK@
 LDFLAGS  := @LDFLAGS@
+ISCYGWIN := @ISCYGWIN@
 
 # LIBS are not and should not be used in here.
 # The znc binary links already against those.
 # ...but not on cygwin!
 LIBS     :=
-ifeq "@ISCYGWIN@" "1"
+ifeq "$(ISCYGWIN)" "1"
 LIBS     += @LIBS@
-LDFLAGS  += ${LIBS}
 endif
 
 PERL_ON  := @PERL@

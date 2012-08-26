@@ -14,8 +14,16 @@ modperlLDFLAGS  := $(PERL_LD)
 # Find additional headers for out-of-tree build
 modperlCXXFLAGS += -I.
 
+ifeq "$(ISCYGWIN)" "1"
+PERLCEXT_EXT := "dll"
+PERLDEPONMOD := "modperl.so"
+else
+PERLCEXT_EXT := "so"
+PERLDEPONMOD :=
+endif
+
 PERLHOOK     := modperl_install
-CLEAN    += modperl/ZNC.so modperl/ZNC.pm modperl/ZNC.o
+CLEAN    += modperl/ZNC.$(PERLCEXT_EXT) modperl/ZNC.pm modperl/ZNC.o
 CLEAN    += modperl/swigperlrun.h modperl/ZNC.cpp modperl/functions.cpp
 CLEAN    += modperl/gen
 all: modperl_all
@@ -28,11 +36,11 @@ endif
 
 install: $(PERLHOOK)
 
-modperl_all: modperl/ZNC.so modperl/swigperlrun.h modperl/functions.cpp
+modperl_all: modperl/ZNC.$(PERLCEXT_EXT) modperl/swigperlrun.h modperl/functions.cpp
 
-modperl/ZNC.so: modperl/ZNC.o Makefile
+modperl/ZNC.$(PERLCEXT_EXT): modperl/ZNC.o Makefile modperl.so
 	$(E) Linking ZNC Perl bindings library...
-	$(Q)$(CXX) $(MODFLAGS) $(LDFLAGS) $(MODLINK) -o $@ $< $(PERL_LD) 
+	$(Q)$(CXX) $(MODFLAGS) $(LDFLAGS) $(MODLINK) -o $@ $< $(PERL_LD) $(PERLDEPONMOD)
 
 modperl/ZNC.o: modperl/ZNC.cpp Makefile
 	@mkdir -p modperl
@@ -51,6 +59,6 @@ modperl_install: install_datadir modperl_all
 		$(INSTALL_DATA) $$i $(DESTDIR)$(MODDIR); \
 	done
 	mkdir -p $(DESTDIR)$(MODDIR)/modperl
-	$(INSTALL_PROGRAM) modperl/ZNC.so $(DESTDIR)$(MODDIR)/modperl
+	$(INSTALL_PROGRAM) modperl/ZNC.$(PERLCEXT_EXT) $(DESTDIR)$(MODDIR)/modperl
 	$(INSTALL_DATA) modperl/ZNC.pm $(DESTDIR)$(MODDIR)/modperl
 	$(INSTALL_DATA) $(srcdir)/modperl/startup.pl $(DESTDIR)$(MODDIR)/modperl

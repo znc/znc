@@ -81,8 +81,13 @@ public:
 
 	bool OnLoad(const CString& sArgsi, CString& sMessage) {
 		CString sModPath, sTmp;
-		if (!CModules::FindModPath("modpython/_znc_core.so", sModPath, sTmp)) {
-			sMessage = "modpython/_znc_core.so not found.";
+#ifdef __CYGWIN__
+		CString sDllPath = "modpython/_znc_core.dll";
+#else
+		CString sDllPath = "modpython/_znc_core.so";
+#endif
+		if (!CModules::FindModPath(sDllPath, sModPath, sTmp)) {
+			sMessage = sDllPath + " not found.";
 			return false;
 		}
 		sTmp = CDir::ChangeDir(sModPath, "..");
@@ -328,14 +333,23 @@ public:
 	}
 
 	virtual ~CModPython() {
+		if (!m_PyZNCModule) {
+			DEBUG("~CModPython(): seems like CModPython::OnLoad() didn't initialize python");
+			return;
+		}
 		PyObject* pyFunc = PyObject_GetAttrString(m_PyZNCModule, "unload_all");
-        PyObject* pyRes = PyObject_CallFunctionObjArgs(pyFunc, NULL);
-        if (!pyRes) {
-            CString sRetMsg = GetPyExceptionStr();
-            DEBUG("modpython tried to unload all modules in its destructor, but: " << sRetMsg);
-        }
-        Py_CLEAR(pyRes);
-        Py_CLEAR(pyFunc);
+		if (!pyFunc) {
+			CString sRetMsg = GetPyExceptionStr();
+			DEBUG("~CModPython(): couldn't find unload_all: " << sRetMsg);
+			return;
+		}
+		PyObject* pyRes = PyObject_CallFunctionObjArgs(pyFunc, NULL);
+		if (!pyRes) {
+			CString sRetMsg = GetPyExceptionStr();
+			DEBUG("modpython tried to unload all modules in its destructor, but: " << sRetMsg);
+		}
+		Py_CLEAR(pyRes);
+		Py_CLEAR(pyFunc);
 
 		Py_CLEAR(m_PyFormatException);
 		Py_CLEAR(m_PyZNCModule);

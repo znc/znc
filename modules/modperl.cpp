@@ -63,10 +63,13 @@ public:
 		m_pPerl = perl_alloc();
 		perl_construct(m_pPerl);
 		if (perl_parse(m_pPerl, xs_init, argc, argv, environ)) {
+			sMessage = "Can't initialize perl. ";
+			if (SvTRUE(ERRSV)) {
+				sMessage += PString(ERRSV);
+			}
 			perl_free(m_pPerl);
 			PERL_SYS_TERM();
 			m_pPerl = NULL;
-			sMessage = "Can't initialize perl.";
 			DEBUG(__PRETTY_FUNCTION__ << " can't init perl");
 			return false;
 		}
