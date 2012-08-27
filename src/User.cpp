@@ -328,6 +328,8 @@ bool CUser::ParseConfig(CConfig* pConfig, CString& sError) {
 	for (subIt = subConf.begin(); subIt != subConf.end(); ++subIt) {
 		const CString& sNetworkName = subIt->first;
 
+		CUtils::PrintMessage("Loading network [" + sNetworkName + "]");
+
 		CIRCNetwork *pNetwork = FindNetwork(sNetworkName);
 
 		if (!pNetwork) {
