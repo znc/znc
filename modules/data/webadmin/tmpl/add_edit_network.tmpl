@@ -36,7 +36,6 @@
 					<input type="text" name="altnick" value="<? VAR AltNick ?>" class="half" maxlength="128"
 						   title="Your secondary nickname, if the first is not available on IRC." />
 				</div>
-				<div style="clear: both;"></div>
 				<div class="subsection">
 					<div class="inputlabel">Ident:</div>
 					<input type="text" name="ident" value="<? VAR Ident ?>" class="half" maxlength="128"
@@ -44,7 +43,7 @@
 				</div>
                 <div class="subsection">
 					<div class="inputlabel">Realname:</div>
-					<input type="text" name="realname" value="<? VAR RealName ?>" class="full" maxlength="256"
+					<input type="text" name="realname" value="<? VAR RealName ?>" class="half" maxlength="256"
 						   title="Your real name." />
 				</div>
 
@@ -81,7 +80,8 @@
 					<div class="inputlabel">Flood protection:</div>
 					<div class="checkbox">
 						<input type="checkbox" name="floodprotection" id="floodprotection_checkbox"
-							   title="You might enable the flood protection. This prevents `excess flood' errors, which occur, when your IRC bot is command flooded or spammed."
+							   title="You might enable the flood protection.
+									  This prevents excess flood errors, which occur, when your IRC bot is command flooded or spammed."
 							onchange="floodprotection_change();"
 							<? IF FloodProtection ?>checked="checked"<? ENDIF ?> />
 						<label for="floodprotection_checkbox">Enabled</label>
@@ -89,7 +89,7 @@
 				</div>
 				<div class="subsection">
 					<div class="inputlabel">Flood protection rate:</div>
-					<input type="number" name="floodrate" min="0.3" step="0.05" id="floodrate"
+					<input type="number" name="floodrate" min="0.3" step="0.05" id="floodrate" class="third"
 						   title="The number of seconds per line."
 						<? IF FloodProtection ?> value="<? VAR FloodRate ?>" <? ELSE ?> value="1.00" disabled="disabled" <? ENDIF ?>
 					/> seconds per line
@@ -97,13 +97,12 @@
 
 				<div class="subsection">
 					<div class="inputlabel">Flood protection burst:</div>
-					<input type="number" name="floodburst" min="1" id="floodburst"
+					<input type="number" name="floodburst" min="1" id="floodburst" class="third"
 						   title="Defines the number of lines, which can immediately be send."
 						<? IF FloodProtection ?> value="<? VAR FloodBurst ?>" <? ELSE ?> value="4" disabled="disabled" <? ENDIF ?>
 					/> lines can be send immediately
 				</div>
 				<script type="text/javascript">floodprotection_change();</script>
-				<div style="clear: both;"></div>
 			</div>
 		</div>
 	</div>
@@ -177,7 +176,7 @@
 							<? IF Disabled ?>
 							<? VAR Args ?>
 							<? ELSE ?>
-							<input class="third" type="text" name="modargs_<? VAR Name ?>" value="<? VAR Args ?>"
+							<input type="text" name="modargs_<? VAR Name ?>" value="<? VAR Args ?>"
 							<? IF !HasArgs ?> disabled="disabled"<? ENDIF ?>
 							<? IF ArgsHelpText ?> title="<? VAR ArgsHelpText ?>"<? ENDIF ?> />
 							<? ENDIF ?>

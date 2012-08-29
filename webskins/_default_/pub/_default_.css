@@ -299,7 +299,7 @@ tr.evenrow td {
 
 .subsection input, .subsection select, .subsection textarea {
 	margin: 5px 0 5px 0;
-	min-width: 100px;
+	min-width: 50px;
 	vertical-align: middle;
 }
 

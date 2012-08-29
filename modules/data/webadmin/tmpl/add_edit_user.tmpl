@@ -41,7 +41,6 @@
 					<br /><span class="info">Leave empty to allow connections from all IPs.<br />
 					Otherwise, one entry per line, wildcards * and ? are available.</span>
 				</div>
-				<div style="clear: both;"></div>
 			</div>
 		</div>
 	</div>
@@ -63,7 +62,6 @@
 					<input type="text" name="altnick" value="<? VAR AltNick ?>" class="half" maxlength="128"
 						   title="If the nickname above is not available anymore, then this will be your nickname on IRC." />
 				</div>
-				<div style="clear: both;"></div>
 				<div class="subsection">
 					<div class="inputlabel">Ident:</div>
 					<input type="text" name="ident" value="<? VAR Ident ?>" class="half" maxlength="128"
@@ -77,7 +75,7 @@
 				<div style="clear: both;"></div>
 				<div class="subsection">
 					<div class="inputlabel">Realname:</div>
-					<input type="text" name="realname" value="<? VAR RealName ?>" class="full" maxlength="256"
+					<input type="text" name="realname" value="<? VAR RealName ?>" class="half" maxlength="256"
 						   title="The real name of the user." />
 				</div>
 				<div style="clear: both;"></div>
@@ -91,7 +89,7 @@
 							<? LOOP BindHostLoop ?><option value="<? VAR BindHost ?>"<? IF Checked ?> selected="selected"<? ENDIF ?>><? VAR BindHost ?></option><? ENDLOOP ?>
 						</select>
 					<? ELSE ?>
-						<input type="text" name="bindhost" value="<? VAR BindHost ?>"/>
+						<input type="text" name="bindhost" value="<? VAR BindHost ?>" class="half" />
 					<? ENDIF ?>
 				</div>
 				<div style="clear: both;"></div>
@@ -104,7 +102,7 @@
 							<? LOOP DCCBindHostLoop ?><option value="<? VAR BindHost ?>"<? IF Checked ?> selected="selected"<? ENDIF ?>><? VAR BindHost ?></option><? ENDLOOP ?>
 						</select>
 					<? ELSE ?>
-						<input type="text" name="dccbindhost" value="<? VAR DCCBindHost ?>"/>
+						<input type="text" name="dccbindhost" value="<? VAR DCCBindHost ?>" class="half" />
 					<? ENDIF ?>
 				</div>
 				<div style="clear: both;"></div>
@@ -112,7 +110,7 @@
 
 				<div class="subsection">
 					<div class="inputlabel">Quit Message:</div>
-					<input type="text" name="quitmsg" value="<? VAR QuitMsg ?>" class="full" maxlength="256"
+					<input type="text" name="quitmsg" value="<? VAR QuitMsg ?>" class="half" maxlength="256"
 						   title="You may define a Message shown, when you quit IRC." />
 				</div>
 				<div style="clear: both;"></div>
@@ -152,7 +150,7 @@
 			</div>
 		</div>
 		<? ELSE ?>
-		<span class="info">You will be able to add + modify networks here after you <? IF Clone ?>have cloned<? ELSE ?>created<? ENDIF ?> the user.</span><br />
+		<span class="info">You will be able to add and modify networks here after you <? IF Clone ?>have cloned<? ELSE ?>created<? ENDIF ?> the user.</span><br />
 		<? ENDIF ?>
 	</div>
 
@@ -179,7 +177,7 @@
 							<? IF Disabled ?>
 							<? VAR Args ?>
 							<? ELSE ?>
-							<input class="third" type="text" name="modargs_<? VAR Name ?>" value="<? VAR Args ?>"
+							<input type="text" name="modargs_<? VAR Name ?>" value="<? VAR Args ?>"
 							<? IF !HasArgs ?> disabled="disabled"<? ENDIF ?>
 							<? IF ArgsHelpText ?> title="<? VAR ArgsHelpText ?>"<? ENDIF ?> />
 							<? ENDIF ?>
@@ -236,7 +234,7 @@
 			<div class="sectionbody">
 				<div class="subsection">
 					<div class="inputlabel">Timestamp Format:</div>
-					<input type="text" name="timestampformat" value="<? VAR TimestampFormat ?>" class="full"
+					<input type="text" name="timestampformat" value="<? VAR TimestampFormat ?>" class="half"
 						   title="The format for the timestamps used in buffers, for example [%H:%M:%S]." />
 				</div>
 				<div class="subsection">
@@ -251,14 +249,14 @@
 				</div>
 				<div class="subsection">
 					<div class="inputlabel">Join Tries:</div>
-					<input type="number" name="jointries" value="<? VAR JoinTries ?>" class="third" min="0"
+					<input type="number" name="jointries" value="<? VAR JoinTries ?>" class="half" min="0"
 						   title="This defines how often ZNC tries to join, if the first join failed, e.g. due to channel mode +i/+k or if you're banned." />
 				</div>
 				<div class="subsection half">
 					<div class="inputlabel">CTCP Replies:</div>
-					<div><textarea name="ctcpreplies" cols="70" rows="3"><? LOOP CTCPLoop ?><? VAR CTCP ?>
+					<textarea name="ctcpreplies" cols="70" rows="3"><? LOOP CTCPLoop ?><? VAR CTCP ?>
 <? ENDLOOP ?>
-</textarea></div>
+</textarea>
 					<br /><span class="info">One reply per line. Example: TIME Buy a watch!</span>
 				</div>
 				<div class="subsection">

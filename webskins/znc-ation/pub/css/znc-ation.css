@@ -1,0 +1,575 @@
+/* reset */
+* {
+	padding: 0;
+	margin: 0;
+}
+
+body {
+	background-color: #DDDDDD;
+	color: #333333;
+	font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
+	font-size: 13px;
+	font-weight: normal;
+	line-height: 18px;
+}
+
+/* anchors */
+a, a:link, a:active, a:visited, a:focus {
+	color: #00008B;
+	text-decoration: none;
+	outline: none;
+}
+
+a:hover {color: red}  /* mouse over link */
+
+#wrapper {
+	width: 960px;
+	margin: 20px auto;
+	border: 1px solid #BABABA;
+	min-height: 450px;
+	/* box-shadow */
+	-webkit-box-shadow: 1px 1px 2px #ccc;
+	-khtml-box-shadow: 1px 1px 2px #ccc;
+	-moz-box-shadow: 1px 1px 2px #ccc;
+	box-shadow: 1px 1px 2px #ccc;
+	background-color: #F8F8F8; /* just in case, this colors the gap between main min-height and the footer */
+}
+
+.errorbar {
+	background-color: #FFBABA;
+	background-position: 10px center;
+	background-repeat: no-repeat;
+	border: 2px double #C50A1F;
+	color: #D8000C;
+	float: left;
+	margin: 10px 0;
+	padding: 15px 10px 15px 50px;
+	width: 64%;
+	margin-left: 10px;
+	background-image: url('/pub/img/error.png');
+	text-shadow: 1px 1px 1px #FFFFFF;
+	border-radius: 5px;
+}
+
+.hint {
+    background-repeat: no-repeat;
+    background-position: 10px center;
+    border: 1px solid;
+    border-radius: 5px 5px 5px 5px;
+    margin: 15px 0;
+    padding: 10px 10px 10px 50px;
+    text-shadow: 1px 1px 1px #FFFFFF;
+}
+
+.hint {
+    color: #00529B;
+    background-color: #BDE5F8;
+    background-image: url('/pub/img/info.png');
+}
+
+#main {
+	background-color: #F8F8F8;
+	padding: 20px;
+	min-height: 450px;
+}
+
+footer {
+	clear: both; /* stop the footer from floating. it will be under all the content. */
+	background-color: #F8F8F8; /* same bgcolor as main */
+}
+
+aside {
+	margin-top: 5px;
+}
+
+#banner_top {
+	 background-color: #B8B8B8;
+}
+
+.zncversion
+{
+	padding-right: 30px;
+    padding-top: 5px;
+}
+
+.zncversion a:hover {
+
+	color: white;
+}
+
+.zncversion a, .zncversion a:link, .zncversion a:active, .zncversion a:visited, .zncversion a:focus {
+        color: white;
+        text-decoration: none;
+        outline: none;
+}
+
+#breadcrumb {
+	font-size: 14px;
+	font-weight: bold;
+	border-bottom: 1px solid #CCCCCC;
+	/* 2/3 of the main content width */
+	width: 67%;
+	margin-bottom: 15px;
+	padding: 0 0 3px 1px;
+	text-transform: capitalize; /* ucfirst the module name */
+}
+
+#content {
+	width: 68%;
+}
+
+/* raquo vertical alignment in breadcrumb */
+.raquo {
+	font-size: large;
+	font-weight: normal;
+	line-height: 18px;
+	margin-left: 3px;
+	margin-right: 3px;
+	position: relative;
+	top: -3px;
+	vertical-align: middle;
+}
+
+/* tables */
+table {
+	font-size: 14px;
+	border: 1px solid #CCCCCC;
+    border-spacing: 1px;
+}
+thead td, th {
+	background-color: #CECECE;
+	font-weight: bold;
+}
+
+tbody td {
+	background-color: #E0E0E0;
+}
+
+td, th {
+	padding: 4px 12px;
+}
+
+tr.evenrow td {
+    background-color: #D3D3D3;
+}
+/* sections */
+.section {
+	border: 1px solid #CCCCCC;
+	border-radius: 3px 3px 3px 3px;
+	padding: 10px;
+	margin-bottom: 10px;
+	padding-top: 5px;
+	background-color: #EDEDED;
+	/* box-shadow */
+	-webkit-box-shadow: 1px 1px 0px #fff; /* inset */
+	-khtml-box-shadow: 1px 1px 0px #fff;
+	-moz-box-shadow: 1px 1px 0px #fff;
+	box-shadow: 1px 1px 0px #fff;
+}
+
+/* formelements */
+.sectionbody input, textarea, select {
+	border: 1px solid #CCCCCC;
+	font-family: Tahoma,sans-serif;
+	font-size: 14px;
+	padding: 3px;
+}
+
+.subsection { /* groups a div inputlabel (label) and formelement */
+	display: table;
+	margin-top: 5px;
+	margin-bottom: 5px;
+	width: 100%;
+}
+
+.checkboxandlabel {
+	display: inline-block;
+	width: 150px;
+	margin-right: 50px;
+	padding: 5px;
+}
+
+.subsection .inputlabel {
+	text-align: left;
+	width: 150px; /* table cell size */
+	display: table-cell; /* input label is displayed as a table cell */
+	vertical-align: top;
+}
+
+input {
+	padding: 3px;
+	width: 80%;
+	border: 1px solid #999999;
+}
+
+input[type=checkbox],
+input[type=radio]
+{
+    margin: 2px 5px 2px 2px; /* 2nd value is distance between checkbox/radio and labeling text */
+    border: 0px;
+    width: 10%;
+    height: 16px;
+    width: 16px;
+    padding: 0;
+    margin: 0;
+    position: relative;
+    vertical-align: bottom;
+}
+
+/* formelement focus */
+input:focus, textarea:focus, select:focus {
+	border: 1px solid #333333;
+	/* the shadow color used is the tooltip border color */
+	/* box-shadow */
+	-webkit-box-shadow: 0px 0px 2px #C7BF93;
+	-khtml-box-shadow: 0px 0px 2px #C7BF93;
+	-moz-box-shadow: 0px 0px 2px #C7BF93;
+	box-shadow: 0px 0px 2px #C7BF93;
+}
+
+/* h */
+h1 {
+	/* transition */
+	-webkit-transition: all 0.2s linear;
+	-moz-transition: all 0.2s linear;
+	-ms-transition: all 0.2s linear;
+	-o-transition: all 0.2s linear;
+	transition: all 0.2s linear;
+	/* color: #000000; black znc branding inset */
+	color: #F8F8F8; /* remove black color, replaced with background col */
+	font-size: 20px;
+	font-style: normal;
+	font-weight: bold;
+}
+
+h3 {
+	margin: 0 -11px 10px;
+	padding-bottom: 4px;
+	padding-left: 11px;
+	border-bottom: 1px solid #DDDDDD;
+	/* text-shadow */
+	text-shadow: 1px 1px 0px #ffffff;
+	filter: dropshadow(color=#ffffff, offx=1, offy=1);
+}
+
+#banner-top {
+	background-color: #999999;
+}
+
+td.mod_name {
+	font-size: 13px;
+	width: 120px;
+}
+
+/* box */
+.box {
+	background: none repeat scroll 0 0 #ffffff;
+	border: 5px double #DDDDDD;
+	margin: 0 0 20px;
+	padding: 0;
+	width: 25%;
+}
+
+.heading {
+	font-size: 14px;
+	font-weight: bold;
+	height: 20px;
+	margin: 0;
+	padding: 5px 10px;
+	width: 50%;
+	/* text-shadow */
+	text-shadow: 1px 1px 1px #000000;
+	filter: dropshadow(color=#00000, offx=1, offy=1);
+}
+
+/* icon in box heading */
+.heading img {
+	position: relative;
+	top: -3px;
+	vertical-align: text-top;
+	padding-right: 3px;
+}
+
+.box-inner-content {
+	padding: 10px;
+	display: block;
+}
+
+/* rounded edges */
+.rounded-top-right {
+	border-radius: 0 20px 0 0;
+}
+.rounded-bottom-right {
+	border-radius: 0 0 20px 0;
+}
+.rounded-edges-5 {
+	border-radius: 5px;
+}
+.rounded-edges-10 {
+	border-radius: 10px;
+}
+/* universal background-colors, they are used on the box headings */
+.blue {
+	background-color: #00A6FC;
+	border: 1px inset #00A6FC;
+	color: #ffffff;
+}
+.red {
+	background-color: #E91C21;
+	border: 1px inset #E91C21;
+	color: #ffffff;
+}
+.#ffffff {
+	background-color: #E9E9E9;
+	border: 1px inset #E9E9E9;
+	color: #000000;
+}
+.black {
+	background-color: #141414;
+	border: 1px inset #141414;
+	color: #333333;
+}
+.green {
+	background-color: #7FAE00;
+	border: 1px inset #7FAE00;
+	color: #ffffff;
+}
+.yellow {
+	background-color: #fcd400;
+	border: 1px inset #fcd400;
+	color: #000000;
+}
+
+/* login + logout boxes */
+.infobar {
+	background-color: #CCCCCC;
+}
+
+#infobar_ident, .logoutbox, .loginbox {
+	font-size: 14px;
+	display: block;
+	padding: 4px;
+	margin-left: 20px;
+}
+
+.user_name {
+	color: #000000;
+	font-weight: bold;
+}
+
+input.full, textarea.full, .full input, .full textarea {
+	width: 90%;
+}
+
+input.half, textarea.half, .half input, .half textarea {
+	width: 50%;
+}
+
+input.third, textarea.third, .third input, .third textarea {
+	width: 33%;
+}
+
+input.twothird, textarea.twothird, .twothird input, .twothird textarea {
+	width: 80%; /* raised to 82 */
+}
+
+input[type="submit"] {
+	/* gradient */
+	background: #e1001a; /* Old browsers */
+	background: -moz-linear-gradient(top, #e1001a 0%, #c50a1f 100%); /* FF3.6+ */
+	background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#e1001a), color-stop(100%,#c50a1f)); /* Chrome,Safari4+ */
+	background: -webkit-linear-gradient(top, #e1001a 0%,#c50a1f 100%); /* Chrome10+,Safari5.1+ */
+	background: -o-linear-gradient(top, #e1001a 0%,#c50a1f 100%); /* Opera 11.10+ */
+	background: -ms-linear-gradient(top, #e1001a 0%,#c50a1f 100%); /* IE10+ */
+	background: linear-gradient(top, #e1001a 0%,#c50a1f 100%); /* W3C */
+	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#e1001a', endColorstr='#c50a1f',GradientType=0 ); /* IE6-9 */
+	/* box-shadow */
+	-webkit-box-shadow: 1px 0 0 #C50A1F, -1px 0 0 #C50A1F, 0 1px 0 #C50A1F, 0 -1px 0 #C50A1F, 0 5px 10px -5px #666666;
+	-khtml-box-shadow: 1px 0 0 #C50A1F, -1px 0 0 #C50A1F, 0 1px 0 #C50A1F, 0 -1px 0 #C50A1F, 0 5px 10px -5px #666666;
+	-moz-box-shadow: 1px 0 0 #C50A1F, -1px 0 0 #C50A1F, 0 1px 0 #C50A1F, 0 -1px 0 #C50A1F, 0 5px 10px -5px #666666;
+	box-shadow: 1px 0 0 #C50A1F, -1px 0 0 #C50A1F, 0 1px 0 #C50A1F, 0 -1px 0 #C50A1F, 0 5px 10px -5px #666666;
+	/* text-shadow */
+	text-shadow: 1px 1px 3px #E35061;
+	filter: dropshadow(color=#E35061, offx=1, offy=1);
+	border: 1px double #E35061;
+	border-radius: 0 0 0 0;
+	color: #FFFFFF;
+	cursor: pointer;
+	padding: 0px 25px;
+	width: auto;
+	heigth: 15px;
+	font-weight: bold;
+	margin-top: 10px;
+}
+
+input[type="submit"]:hover {
+	background: none repeat scroll 0 0 #C50A1F;
+	text-shadow: none;
+}
+
+div.submitline {
+	line-heigth: 15px;
+}
+
+/* header banner - 3d css ribbon */
+header {
+	margin: 0px auto;
+	width: 980px;
+}
+
+.ribbon {
+	float: left;
+	position: relative;
+	top: 30px;
+	width: 992px;
+	left: -6px;
+	height: 50px;
+	z-index: 100; /* the stack order: foreground */
+	/* gradient - colors used: red high contrast ( #E1001A, #C50A1F ) - bit darker: #BF3030, #B50A0A;  */
+    background: #ca1c21; /* Old browsers */
+	background: -moz-linear-gradient(top,  #ca1c21 0%, #b50a0a 100%); /* FF3.6+ */
+	background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#ca1c21), color-stop(100%,#b50a0a)); /* Chrome,Safari4+ */
+	background: -webkit-linear-gradient(top,  #ca1c21 0%,#b50a0a 100%); /* Chrome10+,Safari5.1+ */
+	background: -o-linear-gradient(top,  #ca1c21 0%,#b50a0a 100%); /* Opera 11.10+ */
+	background: -ms-linear-gradient(top,  #ca1c21 0%,#b50a0a 100%); /* IE10+ */
+	background: linear-gradient(top,  #ca1c21 0%,#b50a0a 100%); /* W3C */
+	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ca1c21', endColorstr='#b50a0a',GradientType=0 ); /* IE6-9 */
+	/* box shadow */
+	box-shadow: 0px 0px 4px rgba(0,0,0,0.55);
+	-moz-box-shadow: 0px 0px 4px rgba(0,0,0,0.55);
+	-khtml-box-shadow: 0px 0px 4px rgba(0,0,0,0.55);
+	-webkit-box-shadow: 0px 0px 4px rgba(0,0,0,0.55);
+}
+
+.ribbon h1 {
+	background: none repeat scroll 0 0 transparent;
+	font-size: 30px;
+	padding-left: 35px;
+	padding-top: 6px;
+	text-align: left;
+	/* black text 1px inset, kind of a relief look */
+	/*text-shadow: 1px 1px 0 #E1001A, -1px -1px 0 #C50A1F;*/
+	/* white inset, on request */
+	text-shadow: -1px 1px 0 #333333, 0 1px 1px #770000;
+	width: auto;
+	line-height: 37px;
+}
+
+.ribbon small {
+	font-size: 40%;
+}
+
+.triangle-left {
+	border-color: transparent #8B0000 transparent transparent;
+	border-style: solid;
+	border-width: 15px;
+	height: 0;
+	left: -21px;
+	position: relative;
+	top: 65px;
+	width: 0;
+	z-index: -1;
+}
+
+.triangle-right {
+	border-color: transparent transparent transparent #8B0000;
+	border-style: solid;
+	border-width: 15px;
+	height: 0;
+	left: 971px;
+	position: relative;
+	top: 35px;
+	width: 0;
+	z-index: -1;
+}
+
+/* fake content box above the ribbon */
+.content-above-ribbon {
+	background-color: #F8F8F8;
+	border: 1px solid #BABABA;
+	margin: 0 auto;
+	position: relative;
+	top: 31px;
+	width: 960px;
+	height: 20px;
+	/* box-shadow */
+	-webkit-box-shadow: 1px 1px 2px #ccc;
+	-khtml-box-shadow: 1px 1px 2px #ccc;
+	-moz-box-shadow: 1px 1px 2px #ccc;
+	box-shadow: 1px 1px 2px #ccc;
+}
+
+/* float left and right */
+.float-left {
+	float:left;
+}
+.float-right {
+	float:right;
+}
+/* paddings */
+.pad-5 {
+	padding: 5px;
+}
+.pad-10 {
+	padding: 10px;
+}
+/* margins */
+.marg-5 {
+	margin: 5px;
+}
+.marg-10 {
+	margin: 10px;
+}
+.clearfix {
+	clear: both;
+}
+
+/* ul/li - list styling */
+ul {
+	font-size: 14px;
+	list-style-type: none;  /* remove bullets */
+	margin-left: 20px; /* indention */
+}
+
+li {
+	margin: 3px 0; /* space around list items */
+}
+
+ul.nav li.active:before {
+	color: red;
+	content: "» ";
+	font-size: 14px;
+	font-weight: bold;
+	/* element is indented by size of content, so subtract width of content */
+	/* add width of padding-right */
+	margin-left: -16px;
+	padding-right: 4px; /* distance between raqou and element */
+	/* vertical-align: middle; didnt work exact (2px off :( ), workaround: */
+	top: -2px;
+	position: relative;
+}
+
+ul.nav li .title {
+ 	font-weight: bold;
+}
+ul.nav li .modtitle { /* title of a module */
+	text-transform: capitalize; /* ucfirst the module name */
+}
+
+ul.nav li .subitem  {
+	padding-left: 17px;
+}
+
+ul a:hover:before, ul a:focus:before {
+	content: "» ";
+	color: #000000;
+	font-size: 14px;
+	font-weight: bold;
+	/* element is indented by size of content, so subtract width of content */
+	/* add width of padding-right */
+	margin-left: -16px;
+	padding-right: 4px; /* distance between raqou and element */
+	/* vertical-align: middle; didnt work exact (2px off :( ), workaround: */
+	top: -2px;
+	position: relative;
+}
