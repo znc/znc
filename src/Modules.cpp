@@ -15,6 +15,12 @@
 #include <znc/znc.h>
 #include <dlfcn.h>
 
+using std::map;
+using std::set;
+using std::vector;
+
+bool ZNC_NO_NEED_TO_DO_ANYTHING_ON_MODULE_CALL_EXITER;
+
 #ifndef RTLD_LOCAL
 # define RTLD_LOCAL 0
 # warning "your crap box doesnt define RTLD_LOCAL !?"
@@ -229,7 +235,7 @@ bool CModule::ClearNV(bool bWriteToDisk) {
 }
 
 bool CModule::AddTimer(CTimer* pTimer) {
-	if ((!pTimer) || (FindTimer(pTimer->GetName()))) {
+	if ((!pTimer) || (!pTimer->GetName().empty() && FindTimer(pTimer->GetName()))) {
 		delete pTimer;
 		return false;
 	}
@@ -276,6 +282,10 @@ bool CModule::UnlinkTimer(CTimer* pTimer) {
 }
 
 CTimer* CModule::FindTimer(const CString& sLabel) {
+	if (sLabel.empty()) {
+		return NULL;
+	}
+
 	set<CTimer*>::iterator it;
 	for (it = m_sTimers.begin(); it != m_sTimers.end(); ++it) {
 		CTimer* pTimer = *it;
@@ -468,7 +478,7 @@ bool CModule::HandleCommand(const CString& sLine) {
 
 void CModule::HandleHelpCommand(const CString& sLine) {
 	CString sFilter = sLine.Token(1, true);
-	unsigned int iFilterLength = sFilter.size();
+	CString::size_type  iFilterLength = sFilter.size();
 	CTable Table;
 	map<CString, CModCommand>::const_iterator it;
 
@@ -860,7 +870,9 @@ bool CModules::LoadModule(const CString& sModule, const CString& sArgs, CModInfo
 	}
 
 	bool bSuccess;
-	_GLOBALMODULECALL(OnModuleLoading(sModule, sArgs, eType, bSuccess, sRetMsg), pUser, pNetwork, NULL, return bSuccess);
+	bool bHandled = false;
+	_GLOBALMODULECALL(OnModuleLoading(sModule, sArgs, eType, bSuccess, sRetMsg), pUser, pNetwork, NULL, &bHandled);
+	if (bHandled) return bSuccess;
 
 	CString sModPath, sDataPath;
 	bool bVersionMismatch;
@@ -948,7 +960,9 @@ bool CModules::UnloadModule(const CString& sModule, CString& sRetMsg) {
 	}
 
 	bool bSuccess;
-	_GLOBALMODULECALL(OnModuleUnloading(pModule, bSuccess, sRetMsg), pModule->GetUser(), pModule->GetNetwork(), NULL, return bSuccess);
+	bool bHandled = false;
+	_GLOBALMODULECALL(OnModuleUnloading(pModule, bSuccess, sRetMsg), pModule->GetUser(), pModule->GetNetwork(), NULL, &bHandled);
+	if (bHandled) return bSuccess;
 
 	ModHandle p = pModule->GetDLL();
 
@@ -1001,7 +1015,9 @@ bool CModules::GetModInfo(CModInfo& ModInfo, const CString& sModule, CString& sR
 	CString sModPath, sTmp;
 
 	bool bSuccess;
-	GLOBALMODULECALL(OnGetModInfo(ModInfo, sModule, bSuccess, sRetMsg), return bSuccess);
+	bool bHandled = false;
+	GLOBALMODULECALL(OnGetModInfo(ModInfo, sModule, bSuccess, sRetMsg), &bHandled);
+	if (bHandled) return bSuccess;
 
 	if (!FindModPath(sModule, sModPath, sTmp)) {
 		sRetMsg = "Unable to find module [" + sModule + "]";

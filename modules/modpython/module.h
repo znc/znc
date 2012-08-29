@@ -24,11 +24,11 @@ class CPyModule : public CModule {
 	VWebSubPages* _GetSubPages();
 public:
 	CPyModule(CUser* pUser, CIRCNetwork* pNetwork, const CString& sModName, const CString& sDataPath,
-			PyObject* pyObj, CModule* pModPython)
+			PyObject* pyObj, CModPython* pModPython)
 			: CModule(NULL, pUser, pNetwork, sModName, sDataPath) {
 		m_pyObj = pyObj;
 		Py_INCREF(pyObj);
-		m_pModPython = reinterpret_cast<CModPython*>(pModPython);
+		m_pModPython = pModPython;
 	}
 	PyObject* GetPyObj() { // borrows
 		return m_pyObj;
@@ -73,8 +73,8 @@ public:
 	virtual void OnModCommand(const CString& sCommand);
 	virtual void OnModNotice(const CString& sMessage);
 	virtual void OnModCTCP(const CString& sMessage);
-	virtual void OnQuit(const CNick& Nick, const CString& sMessage, const vector<CChan*>& vChans);
-	virtual void OnNick(const CNick& Nick, const CString& sNewNick, const vector<CChan*>& vChans);
+	virtual void OnQuit(const CNick& Nick, const CString& sMessage, const std::vector<CChan*>& vChans);
+	virtual void OnNick(const CNick& Nick, const CString& sNewNick, const std::vector<CChan*>& vChans);
 	virtual void OnKick(const CNick& OpNick, const CString& sKickedNick, CChan& Channel, const CString& sMessage);
 	virtual void OnJoin(const CNick& Nick, CChan& Channel);
 	virtual void OnPart(const CNick& Nick, CChan& Channel, const CString& sMessage);
@@ -122,13 +122,16 @@ public:
 	virtual EModRet OnModuleUnloading(CModule* pModule, bool& bSuccess, CString& sRetMsg);
 	virtual EModRet OnGetModInfo(CModInfo& ModInfo, const CString& sModule,
 			bool& bSuccess, CString& sRetMsg);
+	virtual void OnGetAvailableMods(std::set<CModInfo>& ssMods, CModInfo::EModuleType eType);
+	virtual void OnClientCapLs(CClient* pClient, SCString& ssCaps);
+	virtual EModRet OnLoginAttempt(CSmartPtr<CAuthBase> Auth);
 };
 
 static inline CPyModule* AsPyModule(CModule* p) {
 	return dynamic_cast<CPyModule*>(p);
 }
 
-inline CPyModule* CreatePyModule(CUser* pUser, CIRCNetwork* pNetwork, const CString& sModName, const CString& sDataPath, PyObject* pyObj, CModule* pModPython) {
+inline CPyModule* CreatePyModule(CUser* pUser, CIRCNetwork* pNetwork, const CString& sModName, const CString& sDataPath, PyObject* pyObj, CModPython* pModPython) {
 	return new CPyModule(pUser, pNetwork, sModName, sDataPath, pyObj, pModPython);
 }
 
@@ -177,7 +180,6 @@ public:
 	virtual void ReadData(const char *data, size_t len);
 	virtual void ReadLine(const CString& sLine);
 	virtual Csock* GetSockObj(const CString& sHost, unsigned short uPort);
-	PyObject* WriteBytes(PyObject* data);
 };
 
 inline CPySocket* CreatePySocket(CPyModule* pModule, PyObject* pyObj) {
@@ -215,7 +217,7 @@ inline double GetVersion() {
 }
 
 inline CString GetVersionExtra() {
-	return VERSION_EXTRA;
+	return ZNC_VERSION_EXTRA;
 }
 
 class MCString_iter {

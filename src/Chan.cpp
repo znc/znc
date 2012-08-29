@@ -14,6 +14,10 @@
 #include <znc/znc.h>
 #include <znc/Config.h>
 
+using std::set;
+using std::vector;
+using std::map;
+
 CChan::CChan(const CString& sName, CIRCNetwork* pNetwork, bool bInConfig, CConfig *pConfig) {
 	m_sName = sName.Token(0);
 	m_sKey = sName.Token(1);
@@ -28,15 +32,17 @@ CChan::CChan(const CString& sName, CIRCNetwork* pNetwork, bool bInConfig, CConfi
 	m_bDetached = false;
 	m_bDisabled = false;
 	SetBufferCount(m_pNetwork->GetUser()->GetBufferCount(), true);
-	SetKeepBuffer(m_pNetwork->GetUser()->KeepBuffer());
+	SetAutoClearChanBuffer(m_pNetwork->GetUser()->AutoClearChanBuffer());
 	Reset();
 
 	if (pConfig) {
 		CString sValue;
 		if (pConfig->FindStringEntry("buffer", sValue))
 			SetBufferCount(sValue.ToUInt(), true);
+		if (pConfig->FindStringEntry("autoclearchanbuffer", sValue))
+			SetAutoClearChanBuffer(sValue.ToBool());
 		if (pConfig->FindStringEntry("keepbuffer", sValue))
-			SetKeepBuffer(sValue.ToBool());
+			SetAutoClearChanBuffer(!sValue.ToBool()); // XXX Compatibility crap, added in 0.207
 		if (pConfig->FindStringEntry("detached", sValue))
 			SetDetached(sValue.ToBool());
 		if (pConfig->FindStringEntry("autocycle", sValue))
@@ -72,8 +78,8 @@ CConfig CChan::ToConfig() {
 
 	if (pUser->GetBufferCount() != GetBufferCount())
 		config.AddKeyValuePair("Buffer", CString(GetBufferCount()));
-	if (pUser->KeepBuffer() != KeepBuffer())
-		config.AddKeyValuePair("KeepBuffer", CString(KeepBuffer()));
+	if (pUser->AutoClearChanBuffer() != AutoClearChanBuffer())
+		config.AddKeyValuePair("AutoClearChanBuffer", CString(AutoClearChanBuffer()));
 	if (IsDetached())
 		config.AddKeyValuePair("Detached", "true");
 	if (!GetKey().empty())
@@ -87,7 +93,7 @@ CConfig CChan::ToConfig() {
 void CChan::Clone(CChan& chan) {
 	// We assume that m_sName and m_pNetwork are equal
 	SetBufferCount(chan.GetBufferCount(), true);
-	SetKeepBuffer(chan.KeepBuffer());
+	SetAutoClearChanBuffer(chan.AutoClearChanBuffer());
 	SetKey(chan.GetKey());
 	SetDefaultModes(chan.GetDefaultModes());
 
@@ -219,10 +225,10 @@ void CChan::SetModes(const CString& sModes) {
 	ModeChange(sModes);
 }
 
-void CChan::SetKeepBuffer(bool b) {
-	m_bKeepBuffer = b;
+void CChan::SetAutoClearChanBuffer(bool b) {
+	m_bAutoClearChanBuffer = b;
 
-	if (!m_bKeepBuffer && !IsDetached() && m_pNetwork->IsUserOnline()) {
+	if (m_bAutoClearChanBuffer && !IsDetached() && m_pNetwork->IsUserOnline()) {
 		ClearBuffer();
 	}
 }
@@ -269,6 +275,8 @@ void CChan::ModeChange(const CString& sModes, const CNick* pOpNick) {
 				unsigned char uPerm = m_pNetwork->GetIRCSock()->GetPermFromMode(uMode);
 
 				if (uPerm) {
+					bool bNoChange = (pNick->HasPerm(uPerm) == bAdd);
+
 					if (bAdd) {
 						pNick->AddPerm(uPerm);
 
@@ -282,7 +290,6 @@ void CChan::ModeChange(const CString& sModes, const CNick* pOpNick) {
 							RemPerm(uPerm);
 						}
 					}
-					bool bNoChange = (pNick->HasPerm(uPerm) == bAdd);
 
 					if (uMode && pOpNick) {
 						NETWORKMODULECALL(OnChanPermission(*pOpNick, *pNick, *this, uMode, bAdd, bNoChange), m_pNetwork->GetUser(), m_pNetwork, NULL, NOTHING);
@@ -349,8 +356,8 @@ CString CChan::GetOptions() const {
 		sRet += (sRet.empty()) ? "Detached" : ", Detached";
 	}
 
-	if (KeepBuffer()) {
-		sRet += (sRet.empty()) ? "KeepBuffer" : ", KeepBuffer";
+	if (AutoClearChanBuffer()) {
+		sRet += (sRet.empty()) ? "AutoClearChanBuffer" : ", AutoClearChanBuffer";
 	}
 
 	return sRet;
@@ -537,22 +544,24 @@ void CChan::SendBuffer(CClient* pClient) {
 			for (size_t uClient = 0; uClient < vClients.size(); ++uClient) {
 				CClient * pUseClient = (pClient ? pClient : vClients[uClient]);
 
-				bool bSkipStatusMsg = false;
-				NETWORKMODULECALL(OnChanBufferStarting(*this, *pUseClient), m_pNetwork->GetUser(), m_pNetwork, NULL, bSkipStatusMsg = true);
+				bool bSkipStatusMsg = pUseClient->HasServerTime();
+				NETWORKMODULECALL(OnChanBufferStarting(*this, *pUseClient), m_pNetwork->GetUser(), m_pNetwork, NULL, &bSkipStatusMsg);
 
 				if (!bSkipStatusMsg) {
 					m_pNetwork->PutUser(":***!znc@znc.in PRIVMSG " + GetName() + " :Buffer Playback...", pUseClient);
 				}
 
-				unsigned int uSize = m_Buffer.Size();
-				for (unsigned int uIdx = 0; uIdx < uSize; uIdx++) {
+				size_t uSize = m_Buffer.Size();
+				for (size_t uIdx = 0; uIdx < uSize; uIdx++) {
 					CString sLine = m_Buffer.GetLine(uIdx, *pUseClient);
-					NETWORKMODULECALL(OnChanBufferPlayLine(*this, *pUseClient, sLine), m_pNetwork->GetUser(), m_pNetwork, NULL, continue);
+					bool bNotShowThisLine = false;
+					NETWORKMODULECALL(OnChanBufferPlayLine(*this, *pUseClient, sLine), m_pNetwork->GetUser(), m_pNetwork, NULL, &bNotShowThisLine);
+					if (bNotShowThisLine) continue;
 					m_pNetwork->PutUser(sLine, pUseClient);
 				}
 
-				bSkipStatusMsg = false;
-				NETWORKMODULECALL(OnChanBufferEnding(*this, *pUseClient), m_pNetwork->GetUser(), m_pNetwork, NULL, bSkipStatusMsg = true);
+				bSkipStatusMsg = pUseClient->HasServerTime();
+				NETWORKMODULECALL(OnChanBufferEnding(*this, *pUseClient), m_pNetwork->GetUser(), m_pNetwork, NULL, &bSkipStatusMsg);
 				if (!bSkipStatusMsg) {
 					m_pNetwork->PutUser(":***!znc@znc.in PRIVMSG " + GetName() + " :Playback Complete.", pUseClient);
 				}
@@ -561,7 +570,7 @@ void CChan::SendBuffer(CClient* pClient) {
 					break;
 			}
 
-			if (!KeepBuffer()) {
+			if (AutoClearChanBuffer()) {
  				ClearBuffer();
 			}
 		}

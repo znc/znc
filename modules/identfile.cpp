@@ -61,6 +61,8 @@ public:
 		PutModule("m_pIRCSock = " + CString((long long)m_pIRCSock));
 		if (m_pIRCSock) {
 			PutModule("user/network - " + m_pIRCSock->GetNetwork()->GetUser()->GetUserName() + "/" + m_pIRCSock->GetNetwork()->GetName());
+		} else {
+			PutModule("identfile is free");
 		}
 	}
 
@@ -123,8 +125,8 @@ public:
 	}
 
 	void ReleaseISpoof() {
-		DEBUG("Releasing ident spoof for user/network [" + (m_pUser ? m_pUser->GetUserName() : "<no user>") + "/" +
-				(m_pNetwork ? m_pNetwork->GetName() : "<no network>") + "]");
+		DEBUG("Releasing ident spoof for user/network [" + (m_pIRCSock ? m_pIRCSock->GetNetwork()->GetUser()->GetUserName() + "/" +
+				m_pIRCSock->GetNetwork()->GetName() : "<no user/network>") + "]");
 
 		SetIRCSock(NULL);
 

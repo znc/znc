@@ -13,6 +13,8 @@
 #include <znc/Nick.h>
 #include <znc/Chan.h>
 
+using std::set;
+
 #ifndef Q_DEBUG_COMMUNICATION
 	#define Q_DEBUG_COMMUNICATION 0
 #endif
@@ -419,8 +421,8 @@ private:
 
 		sPackedHex.clear();
 
-		unsigned int len = sHex.length() / 2;
-		for (unsigned int i = 0; i < len; i++) {
+		CString::size_type len = sHex.length() / 2;
+		for (CString::size_type i = 0; i < len; i++) {
 			unsigned int value;
 			int n = sscanf(&sHex[i*2], "%02x", &value);
 			if (n != 1 || value > 0xff)
@@ -439,9 +441,9 @@ private:
 			sRealKey = sKey;
 
 		CString sOuterKey, sInnerKey;
-		unsigned int iKeyLength = sRealKey.length();
+		CString::size_type iKeyLength = sRealKey.length();
 		for (unsigned int i = 0; i < 64; i++) {
-			int r = (i < iKeyLength ? sRealKey[i] : 0);
+			char r = (i < iKeyLength ? sRealKey[i] : '\0');
 			sOuterKey += r ^ 0x5c;
 			sInnerKey += r ^ 0x36;
 		}

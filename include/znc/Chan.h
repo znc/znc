@@ -14,12 +14,6 @@
 #include <znc/ZNCString.h>
 #include <znc/Buffer.h>
 #include <map>
-#include <set>
-#include <vector>
-
-using std::vector;
-using std::map;
-using std::set;
 
 // Forward Declarations
 class CUser;
@@ -91,7 +85,7 @@ public:
 	const CBuffer& GetBuffer() const { return m_Buffer; }
 	unsigned int GetBufferCount() const { return m_Buffer.GetLineCount(); }
 	bool SetBufferCount(unsigned int u, bool bForce = false) { return m_Buffer.SetLineCount(u, bForce); };
-	int AddBuffer(const CString& sFormat, const CString& sText = "", time_t tm = 0) { return m_Buffer.AddLine(sFormat, sText, tm); }
+	size_t AddBuffer(const CString& sFormat, const CString& sText = "", const timeval* ts = NULL) { return m_Buffer.AddLine(sFormat, sText, ts); }
 	void ClearBuffer() { m_Buffer.Clear(); }
 	void SendBuffer(CClient* pClient);
 	// !Buffer
@@ -111,7 +105,7 @@ public:
 	void SetTopicOwner(const CString& s) { m_sTopicOwner = s; }
 	void SetTopicDate(unsigned long u) { m_ulTopicDate = u; }
 	void SetDefaultModes(const CString& s) { m_sDefaultModes = s; }
-	void SetKeepBuffer(bool b);
+	void SetAutoClearChanBuffer(bool b);
 	void SetDetached(bool b = true) { m_bDetached = b; }
 	void SetInConfig(bool b) { m_bInConfig = b; }
 	void SetCreationDate(unsigned long u) { m_ulCreationDate = u; }
@@ -126,18 +120,18 @@ public:
 	bool HasMode(unsigned char uMode) const;
 	CString GetOptions() const;
 	CString GetModeArg(unsigned char uMode) const;
-	map<char, unsigned int> GetPermCounts() const;
+	std::map<char, unsigned int> GetPermCounts() const;
 	bool IsOn() const { return m_bIsOn; }
 	const CString& GetName() const { return m_sName; }
-	const map<unsigned char, CString>& GetModes() const { return m_musModes; }
+	const std::map<unsigned char, CString>& GetModes() const { return m_musModes; }
 	const CString& GetKey() const { return m_sKey; }
 	const CString& GetTopic() const { return m_sTopic; }
 	const CString& GetTopicOwner() const { return m_sTopicOwner; }
-	unsigned int GetTopicDate() const { return m_ulTopicDate; }
+	unsigned long GetTopicDate() const { return m_ulTopicDate; }
 	const CString& GetDefaultModes() const { return m_sDefaultModes; }
-	const map<CString,CNick>& GetNicks() const { return m_msNicks; }
-	unsigned int GetNickCount() const { return m_msNicks.size(); }
-	bool KeepBuffer() const { return m_bKeepBuffer; }
+	const std::map<CString,CNick>& GetNicks() const { return m_msNicks; }
+	size_t GetNickCount() const { return m_msNicks.size(); }
+	bool AutoClearChanBuffer() const { return m_bAutoClearChanBuffer; }
 	bool IsDetached() const { return m_bDetached; }
 	bool InConfig() const { return m_bInConfig; }
 	unsigned long GetCreationDate() const { return m_ulCreationDate; }
@@ -148,7 +142,7 @@ private:
 protected:
 	bool                         m_bDetached;
 	bool                         m_bIsOn;
-	bool                         m_bKeepBuffer;
+	bool                         m_bAutoClearChanBuffer;
 	bool                         m_bInConfig;
 	bool                         m_bDisabled;
 	CString                      m_sName;
@@ -161,11 +155,11 @@ protected:
 	CNick                        m_Nick;
 	unsigned int                 m_uJoinTries;
 	CString                      m_sDefaultModes;
-	map<CString,CNick>           m_msNicks;       // Todo: make this caseless (irc style)
+	std::map<CString,CNick>      m_msNicks;       // Todo: make this caseless (irc style)
 	CBuffer                      m_Buffer;
 
 	bool                         m_bModeKnown;
-	map<unsigned char, CString>  m_musModes;
+	std::map<unsigned char, CString> m_musModes;
 };
 
 #endif // !_CHAN_H

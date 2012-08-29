@@ -11,6 +11,8 @@
 #include <znc/IRCNetwork.h>
 #include <znc/znc.h>
 
+using std::vector;
+
 class CChanSaverMod : public CModule {
 public:
 	MODCONSTRUCTOR(CChanSaverMod) {

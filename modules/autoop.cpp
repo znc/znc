@@ -9,6 +9,10 @@
 #include <znc/IRCNetwork.h>
 #include <znc/Chan.h>
 
+using std::map;
+using std::set;
+using std::vector;
+
 class CAutoOpMod;
 
 #define AUTOOP_CHALLENGE_LENGTH 32

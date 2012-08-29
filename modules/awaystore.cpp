@@ -22,6 +22,9 @@
 #include <znc/FileUtils.h>
 #include <sys/stat.h>
 
+using std::vector;
+using std::map;
+
 #define CRYPT_VERIFICATION_TOKEN "::__:AWAY:__::"
 
 class CAway;
@@ -478,6 +481,12 @@ void CAwayJob::RunJob()
 		if ((iNow - p->GetTimeStamp()) > p->GetAwayTime() && p->GetAwayTime() != 0)
 			p->Away();
 	}
+}
+
+template<> void TModInfo<CAway>(CModInfo& Info) {
+	Info.SetWikiPage("awaystore");
+	Info.SetHasArgs(true);
+	Info.SetArgsHelpText("[ -notimer | -timer N ]  passw0rd . N is number of seconds, 600 by default.");
 }
 
 NETWORKMODULEDEFS(CAway, "Adds auto-away with logging, useful when you use ZNC from different locations");

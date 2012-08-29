@@ -10,6 +10,8 @@
 #include <znc/User.h>
 #include <znc/IRCNetwork.h>
 
+using std::vector;
+
 class CAutoCycleMod : public CModule {
 public:
 	MODCONSTRUCTOR(CAutoCycleMod) {
@@ -237,6 +239,8 @@ private:
 
 template<> void TModInfo<CAutoCycleMod>(CModInfo& Info) {
 	Info.SetWikiPage("autocycle");
+	Info.SetHasArgs(true);
+	Info.SetArgsHelpText("List of channel masks and channel masks with ! before them.");
 }
 
 USERMODULEDEFS(CAutoCycleMod, "Rejoins channels to gain Op if you're the only user left")

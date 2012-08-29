@@ -214,6 +214,8 @@ public:
 
 template<> void TModInfo<CNotesMod>(CModInfo& Info) {
 	Info.SetWikiPage("notes");
+	Info.SetHasArgs(true);
+	Info.SetArgsHelpText("This user module takes up to one arguments. It can be -disableNotesOnLogin not to show notes upon client login");
 }
 
 USERMODULEDEFS(CNotesMod, "Keep and replay notes")

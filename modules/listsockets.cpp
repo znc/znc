@@ -243,5 +243,9 @@ public:
 
 };
 
+template<> void TModInfo<CListSockets>(CModInfo& Info) {
+	Info.SetWikiPage("listsockets");
+}
+
 USERMODULEDEFS(CListSockets, "List active sockets")
 

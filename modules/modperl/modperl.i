@@ -37,6 +37,7 @@
 #include "../include/znc/FileUtils.h"
 #include "../include/znc/ZNCDebug.h"
 #include "../include/znc/ExecSock.h"
+#include "../include/znc/Buffer.h"
 #include "modperl/module.h"
 #define stat struct stat
 %}
@@ -50,6 +51,7 @@
 %include <typemaps.i>
 %include <stl.i>
 %include <std_list.i>
+%include <std_deque.i>
 
 namespace std {
 	template<class K> class set {
@@ -78,7 +80,18 @@ namespace std {
 
 %template(VIRCNetworks) std::vector<CIRCNetwork*>;
 %template(VChannels) std::vector<CChan*>;
+%template(VCString) std::vector<CString>;
+typedef std::vector<CString> VCString;
 /*%template(MNicks) std::map<CString, CNick>;*/
+/*%template(SModInfo) std::set<CModInfo>;
+%template(SCString) std::set<CString>;
+typedef std::set<CString> SCString;*/
+%template(PerlMCString) std::map<CString, CString>;
+class MCString : public std::map<CString, CString> {};
+/*%template(PerlModulesVector) std::vector<CModule*>;*/
+%template(VListeners) std::vector<CListener*>;
+%template(BufLines) std::deque<CBufLine>;
+%template(VVString) std::vector<VCString>;
 
 %typemap(out) std::map<CString, CNick> {
 	HV* myhv = newHV();
@@ -117,6 +130,7 @@ namespace std {
 %include "../include/znc/Server.h"
 %include "../include/znc/ZNCDebug.h"
 %include "../include/znc/ExecSock.h"
+%include "../include/znc/Buffer.h"
 
 %include "modperl/module.h"
 
@@ -198,10 +212,10 @@ namespace std {
 
 /* Web */
 
-%template(StrPair) pair<CString, CString>;
-%template(VPair) vector<pair<CString, CString> >;
-typedef vector<pair<CString, CString> > VPair;
-%template(VWebSubPages) vector<TWebSubPage>;
+%template(StrPair) std::pair<CString, CString>;
+%template(VPair) std::vector<std::pair<CString, CString> >;
+typedef std::vector<std::pair<CString, CString> > VPair;
+%template(VWebSubPages) std::vector<TWebSubPage>;
 
 %inline %{
 	void _VPair_Add2Str(VPair* self, const CString& a, const CString& b) {
@@ -264,4 +278,4 @@ typedef vector<pair<CString, CString> > VPair;
 	*GetNicks = *_GetNicks_;
 %}
 
-/* vim: set filetype=cpp noexpandtab: */
+/* vim: set filetype=cpp: */

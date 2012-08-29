@@ -9,6 +9,7 @@
 #include <znc/Socket.h>
 #include <znc/Modules.h>
 #include <znc/User.h>
+#include <znc/IRCNetwork.h>
 #include <znc/znc.h>
 #include <signal.h>
 
@@ -127,11 +128,11 @@ void CSockManager::DoDNS(TDNSArg *arg) {
 		sleep(5); // wait 5 seconds before next try
 	}
 
-	int need = sizeof(TDNSArg*);
+	size_t need = sizeof(TDNSArg*);
 	char* x = (char*)&arg;
 	// This write() must succeed because POSIX guarantees that writes of
 	// less than PIPE_BUF are atomic (and PIPE_BUF is at least 512).
-	int w = write(arg->fd, x, need);
+	size_t w = write(arg->fd, x, need);
 	if (w != need) {
 		DEBUG("Something bad happened during write() to a pipe from TDNSThread, wrote " << w << " bytes: " << strerror(errno));
 		exit(1);
@@ -248,7 +249,7 @@ void CSockManager::SetTDNSThreadFinished(TDNSTask* task, bool bBind, addrinfo* a
 			aiTarget = aiTarget4;
 #endif
 		} else if (!aiBind4 && !aiBind6) {
-			throw "Can't resolve bind hostname. Try /znc clearbindhost";
+			throw "Can't resolve bind hostname. Try /znc clearbindhost and /znc clearuserbindhost";
 		} else if (aiBind6 && aiTarget6) {
 			aiTarget = aiTarget6;
 			aiBind = aiBind6;
@@ -262,11 +263,11 @@ void CSockManager::SetTDNSThreadFinished(TDNSTask* task, bool bBind, addrinfo* a
 		CString sBindhost;
 		CString sTargetHost;
 		if (!task->sBindhost.empty()) {
-			char s[40] = {}; // 40 is enough for both ipv4 and ipv6 addresses, including 0 terminator.
+			char s[INET6_ADDRSTRLEN] = {};
 			getnameinfo(aiBind->ai_addr, aiBind->ai_addrlen, s, sizeof(s), NULL, 0, NI_NUMERICHOST);
 			sBindhost = s;
 		}
-		char s[40] = {};
+		char s[INET6_ADDRSTRLEN] = {};
 		getnameinfo(aiTarget->ai_addr, aiTarget->ai_addrlen, s, sizeof(s), NULL, 0, NI_NUMERICHOST);
 		sTargetHost = s;
 
@@ -288,11 +289,11 @@ void CSockManager::SetTDNSThreadFinished(TDNSTask* task, bool bBind, addrinfo* a
 
 void CSockManager::RetrieveTDNSResult() {
 	TDNSArg* a = NULL;
-	int readed = 0;
-	int need = sizeof(TDNSArg*);
+	size_t readed = 0;
+	size_t need = sizeof(TDNSArg*);
 	char* x = (char*)&a;
 	while (readed < need) {
-		int r = read(m_iTDNSpipe[0], x, need - readed);
+		ssize_t r = read(m_iTDNSpipe[0], x, need - readed);
 		if (-1 == r) {
 			DEBUG("Something bad happened during read() from a pipe when getting result of TDNSThread: " << strerror(errno));
 			exit(1);
@@ -457,7 +458,12 @@ bool CSocket::Connect(const CString& sHostname, unsigned short uPort, bool bSSL,
 
 	if (pUser) {
 		sSockName += "::" + pUser->GetUserName();
-		sBindHost = m_pModule->GetUser()->GetBindHost();
+		sBindHost = pUser->GetBindHost();
+		CIRCNetwork* pNetwork = m_pModule->GetNetwork();
+		if (pNetwork) {
+			sSockName += "::" + pNetwork->GetName();
+			sBindHost = pNetwork->GetBindHost();
+		}
 	}
 
 	// Don't overwrite the socket name if one is already set

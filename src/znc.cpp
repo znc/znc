@@ -16,6 +16,13 @@
 #include <znc/Listener.h>
 #include <znc/Config.h>
 
+using std::endl;
+using std::cout;
+using std::map;
+using std::set;
+using std::vector;
+using std::list;
+
 static inline CString FormatBindError() {
 	CString sError = (errno == 0 ? CString("unknown error, check the host name") : CString(strerror(errno)));
 	return "Unable to bind [" + sError + "]";
@@ -72,7 +79,7 @@ CZNC::~CZNC() {
 CString CZNC::GetVersion() {
 	char szBuf[128];
 
-	snprintf(szBuf, sizeof(szBuf), "%1.3f"VERSION_EXTRA, VERSION);
+	snprintf(szBuf, sizeof(szBuf), "%1.3f%s", VERSION, ZNC_VERSION_EXTRA);
 	// If snprintf overflows (which I doubt), we want to be on the safe side
 	szBuf[sizeof(szBuf) - 1] = '\0';
 
@@ -87,7 +94,7 @@ CString CZNC::GetTag(bool bIncludeVersion, bool bHTML) {
 	}
 
 	char szBuf[128];
-	snprintf(szBuf, sizeof(szBuf), "ZNC %1.3f"VERSION_EXTRA" - ", VERSION);
+	snprintf(szBuf, sizeof(szBuf), "ZNC %1.3f%s - ", VERSION, ZNC_VERSION_EXTRA);
 	// If snprintf overflows (which I doubt), we want to be on the safe side
 	szBuf[sizeof(szBuf) - 1] = '\0';
 
@@ -123,7 +130,9 @@ CString CZNC::GetUptime() const {
 }
 
 bool CZNC::OnBoot() {
-	ALLMODULECALL(OnBoot(), return false);
+	bool bFail = false;
+	ALLMODULECALL(OnBoot(), &bFail);
+	if (bFail) return false;
 
 	return true;
 }
@@ -526,6 +535,7 @@ bool CZNC::WriteNewConfig(const CString& sConfigFile) {
 	VCString vsLines;
 
 	vsLines.push_back(MakeConfigHeader());
+	vsLines.push_back("Version = " + CString(VERSION, 3));
 
 	m_sConfigFile = ExpandConfigPath(sConfigFile);
 	CUtils::PrintMessage("Building new config");
@@ -572,7 +582,7 @@ bool CZNC::WriteNewConfig(const CString& sConfigFile) {
 		CUtils::GetInput("Listen Host", sListenHost, sListenHost, "Blank for all ips");
 
 		CUtils::PrintAction("Verifying the listener");
-		CListener* pListener = new CListener(uListenPort, sListenHost, bListenSSL,
+		CListener* pListener = new CListener((unsigned short int)uListenPort, sListenHost, bListenSSL,
 				b6 ? ADDR_ALL : ADDR_IPV4ONLY, CListener::ACCEPT_ALL);
 		if (!pListener->Listen()) {
 			CUtils::PrintStatus(false, FormatBindError());
@@ -686,10 +696,10 @@ bool CZNC::WriteNewConfig(const CString& sConfigFile) {
 		if (uBufferCount) {
 			vsLines.push_back("\tBuffer     = " + CString(uBufferCount));
 		}
-		if (CUtils::GetBoolInput("Would you like to keep buffers after replay?", false)) {
-			vsLines.push_back("\tKeepBuffer = true");
+		if (CUtils::GetBoolInput("Would you like to clear channel buffers after replay?", true)) {
+			vsLines.push_back("\tAutoClearChanBuffer = true");
 		} else {
-			vsLines.push_back("\tKeepBuffer = false");
+			vsLines.push_back("\tAutoClearChanBuffer = false");
 		}
 
 		CUtils::GetInput("Default channel modes", sAnswer, "+stn");
@@ -1096,6 +1106,12 @@ bool CZNC::DoRehash(CString& sError)
 		CString sModName = vit->Token(0);
 		CString sArgs = vit->Token(1, true);
 
+		if (sModName == "saslauth" && fSavedVersion < 0.207 + 0.000001) {
+			// XXX compatibility crap, added in 0.207
+			CUtils::PrintMessage("saslauth module was renamed to cyrusauth. Loading cyrusauth instead.");
+			sModName = "cyrusauth";
+		}
+
 		if (msModules.find(sModName) != msModules.end()) {
 			sError = "Module [" + sModName +
 				"] already loaded";
@@ -1398,7 +1414,10 @@ void CZNC::Broadcast(const CString& sMessage, bool bAdminOnly,
 		if (a->second != pSkipUser) {
 			CString sMsg = sMessage;
 
-			USERMODULECALL(OnBroadcast(sMsg), a->second, NULL, continue);
+			bool bContinue = false;
+			USERMODULECALL(OnBroadcast(sMsg), a->second, NULL, &bContinue);
+			if (bContinue) continue;
+
 			a->second->PutStatusNotice("*** " + sMsg, NULL, pSkipClient);
 		}
 	}
@@ -1538,11 +1557,13 @@ bool CZNC::AddUser(CUser* pUser, CString& sErrorRet) {
 				<< sErrorRet << "]");
 		return false;
 	}
-	GLOBALMODULECALL(OnAddUser(*pUser, sErrorRet),
+	bool bFailed = false;
+	GLOBALMODULECALL(OnAddUser(*pUser, sErrorRet), &bFailed);
+	if (bFailed) {
 		DEBUG("AddUser [" << pUser->GetUserName() << "] aborted by a module ["
 			<< sErrorRet << "]");
 		return false;
-	);
+	}
 	m_msUsers[pUser->GetUserName()] = pUser;
 	return true;
 }
@@ -1604,7 +1625,7 @@ bool CZNC::AddListener(const CString& sLine, CString& sError) {
 	return AddListener(uPort, sBindHost, bSSL, eAddr, eAccept, sError);
 }
 
-bool CZNC::AddListener(unsigned int uPort, const CString& sBindHost, bool bSSL,
+bool CZNC::AddListener(unsigned short uPort, const CString& sBindHost, bool bSSL,
 			EAddrType eAddr, CListener::EAcceptType eAccept, CString& sError) {
 	CString sHostComment;
 
@@ -1692,8 +1713,8 @@ bool CZNC::AddListener(CConfig* pConfig, CString& sError) {
 #endif
 	bool bIRC;
 	bool bWeb;
-	unsigned int uPort;
-	if (!pConfig->FindUIntEntry("port", uPort)) {
+	unsigned short uPort;
+	if (!pConfig->FindUShortEntry("port", uPort)) {
 		sError = "No port given";
 		CUtils::PrintError(sError);
 		return false;
@@ -1811,7 +1832,9 @@ CZNC::TrafficStatsMap CZNC::GetTrafficStats(TrafficStatsPair &Users,
 
 void CZNC::AuthUser(CSmartPtr<CAuthBase> AuthClass) {
 	// TODO unless the auth module calls it, CUser::IsHostAllowed() is not honoured
-	GLOBALMODULECALL(OnLoginAttempt(AuthClass), return);
+	bool bReturn = false;
+	GLOBALMODULECALL(OnLoginAttempt(AuthClass), &bReturn);
+	if (bReturn) return;
 
 	CUser* pUser = FindUser(AuthClass->GetUsername());
 

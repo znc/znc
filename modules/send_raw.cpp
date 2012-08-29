@@ -10,6 +10,9 @@
 #include <znc/IRCNetwork.h>
 #include <znc/znc.h>
 
+using std::vector;
+using std::map;
+
 class CSendRaw_Mod: public CModule {
 	void SendClient(const CString& sLine) {
 		CUser *pUser = CZNC::Get().FindUser(sLine.Token(1));
@@ -68,13 +71,13 @@ public:
 	virtual bool OnWebRequest(CWebSock& WebSock, const CString& sPageName, CTemplate& Tmpl) {
 		if (sPageName == "index") {
 			if (WebSock.IsPost()) {
-				CUser *pUser = CZNC::Get().FindUser(WebSock.GetParam("user").Token(0, false, "/"));
+				CUser *pUser = CZNC::Get().FindUser(WebSock.GetParam("network").Token(0, false, "/"));
 				if (!pUser) {
 					WebSock.GetSession()->AddError("User not found");
 					return true;
 				}
 
-				CIRCNetwork *pNetwork = pUser->FindNetwork(WebSock.GetParam("user").Token(1, false, "/"));
+				CIRCNetwork *pNetwork = pUser->FindNetwork(WebSock.GetParam("network").Token(1, false, "/"));
 				if (!pNetwork) {
 					WebSock.GetSession()->AddError("Network not found");
 					return true;
@@ -125,5 +128,9 @@ public:
 			"[data to send]",                   "The data will be sent to your current client");
 	}
 };
+
+template<> void TModInfo<CSendRaw_Mod>(CModInfo& Info) {
+	Info.SetWikiPage("send_raw");
+}
 
 USERMODULEDEFS(CSendRaw_Mod, "Lets you send some raw IRC lines as/to someone else")

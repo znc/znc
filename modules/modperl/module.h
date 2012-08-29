@@ -57,8 +57,8 @@ public:
 	virtual void OnModCommand(const CString& sCommand);
 	virtual void OnModNotice(const CString& sMessage);
 	virtual void OnModCTCP(const CString& sMessage);
-	virtual void OnQuit(const CNick& Nick, const CString& sMessage, const vector<CChan*>& vChans);
-	virtual void OnNick(const CNick& Nick, const CString& sNewNick, const vector<CChan*>& vChans);
+	virtual void OnQuit(const CNick& Nick, const CString& sMessage, const std::vector<CChan*>& vChans);
+	virtual void OnNick(const CNick& Nick, const CString& sNewNick, const std::vector<CChan*>& vChans);
 	virtual void OnKick(const CNick& OpNick, const CString& sKickedNick, CChan& Channel, const CString& sMessage);
 	virtual void OnJoin(const CNick& Nick, CChan& Channel);
 	virtual void OnPart(const CNick& Nick, CChan& Channel, const CString& sMessage);
@@ -175,7 +175,7 @@ inline double GetVersion() {
 }
 
 inline CString GetVersionExtra() {
-	return VERSION_EXTRA;
+	return ZNC_VERSION_EXTRA;
 }
 #if HAVE_VISIBILITY
 #pragma GCC visibility pop

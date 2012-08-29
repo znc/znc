@@ -17,6 +17,9 @@
 #include <znc/Chan.h>
 #include <znc/znc.h>
 
+using std::vector;
+using std::set;
+
 bool CIRCNetwork::IsValidNetwork(const CString& sNetwork) {
 	// ^[-\w]+$
 
@@ -88,6 +91,7 @@ void CIRCNetwork::Clone(const CIRCNetwork& Network) {
 	SetAltNick(Network.GetAltNick());
 	SetIdent(Network.GetIdent());
 	SetRealName(Network.GetRealName());
+	SetBindHost(Network.GetBindHost());
 
 	// Servers
 	const vector<CServer*>& vServers = Network.GetServers();
@@ -100,7 +104,7 @@ void CIRCNetwork::Clone(const CIRCNetwork& Network) {
 
 	DelServers();
 
-	unsigned int a;
+	size_t a;
 	for (a = 0; a < vServers.size(); a++) {
 		CServer* pServer = vServers[a];
 		AddServer(pServer->GetName(), pServer->GetPort(), pServer->GetPass(), pServer->IsSSL());
@@ -246,7 +250,8 @@ bool CIRCNetwork::ParseConfig(CConfig *pConfig, CString& sError, bool bUpgrade) 
 			{ "nick", &CIRCNetwork::SetNick },
 			{ "altnick", &CIRCNetwork::SetAltNick },
 			{ "ident", &CIRCNetwork::SetIdent },
-			{ "realname", &CIRCNetwork::SetRealName }
+			{ "realname", &CIRCNetwork::SetRealName },
+			{ "bindhost", &CIRCNetwork::SetBindHost },
 		};
 		size_t numStringOptions = sizeof(StringOptions) / sizeof(StringOptions[0]);
 		TOption<bool> BoolOptions[] = {
@@ -281,8 +286,8 @@ bool CIRCNetwork::ParseConfig(CConfig *pConfig, CString& sError, bool bUpgrade) 
 		}
 
 		for (size_t i = 0; i < numSUIntOptions; ++i) {
-			unsigned int value;
-			if (pConfig->FindUIntEntry(SUIntOptions[i].name, value))
+			unsigned short value;
+			if (pConfig->FindUShortEntry(SUIntOptions[i].name, value))
 				(this->*SUIntOptions[i].pSetter)(value);
 		}
 
@@ -291,11 +296,19 @@ bool CIRCNetwork::ParseConfig(CConfig *pConfig, CString& sError, bool bUpgrade) 
 			CString sValue = *vit;
 			CString sModName = sValue.Token(0);
 
-			// XXX Legacy crap, added in ZNC 0.203
+			// XXX Legacy crap, added in ZNC 0.203, modified in 0.207
+			// Note that 0.203 == 0.207
 			if (sModName == "away") {
 				CUtils::PrintMessage("NOTICE: [away] was renamed, "
-						"loading [autoaway] instead");
-				sModName = "autoaway";
+						"loading [awaystore] instead");
+				sModName = "awaystore";
+			}
+
+			// XXX Legacy crap, added in ZNC 0.207
+			if (sModName == "autoaway") {
+				CUtils::PrintMessage("NOTICE: [autoaway] was renamed, "
+						"loading [awaystore] instead");
+				sModName = "awaystore";
 			}
 
 			CUtils::PrintAction("Loading Module [" + sModName + "]");
@@ -372,6 +385,9 @@ CConfig CIRCNetwork::ToConfig() {
 	if (!m_sRealName.empty()) {
 		config.AddKeyValuePair("RealName", m_sRealName);
 	}
+	if (!m_sBindHost.empty()) {
+		config.AddKeyValuePair("BindHost", m_sBindHost);
+	}
 
 	config.AddKeyValuePair("IRCConnectEnabled", CString(GetIRCConnectEnabled()));
 	config.AddKeyValuePair("FloodRate", CString(GetFloodRate()));
@@ -435,21 +451,30 @@ void CIRCNetwork::ClientConnected(CClient *pClient) {
 
 	m_vClients.push_back(pClient);
 
-	unsigned int uIdx, uSize;
-	MCString msParams;
-	msParams["target"] = GetIRCNick().GetNick();
+	size_t uIdx, uSize;
 
 	if (m_RawBuffer.IsEmpty()) {
 		pClient->PutClient(":irc.znc.in 001 " + pClient->GetNick() + " :- Welcome to ZNC -");
 	} else {
+		const CString& sClientNick = pClient->GetNick(false);
+		MCString msParams;
+		msParams["target"] = sClientNick;
+
 		uSize = m_RawBuffer.Size();
 		for (uIdx = 0; uIdx < uSize; uIdx++) {
 			pClient->PutClient(m_RawBuffer.GetLine(uIdx, *pClient, msParams));
 		}
 
-		// The assumption is that the client got this nick from the 001 reply
-		pClient->SetNick(GetIRCNick().GetNick());
+		const CNick& Nick = GetIRCNick();
+		if (!sClientNick.Equals(Nick.GetNick())) {
+			pClient->PutClient(":" + sClientNick + "!" + Nick.GetIdent() +
+					"@" + Nick.GetHost() + " NICK :" + Nick.GetNick());
+			pClient->SetNick(Nick.GetNick());
+		}
 	}
+
+	MCString msParams;
+	msParams["target"] = GetIRCNick().GetNick();
 
 	// Send the cached MOTD
 	uSize = m_MotdBuffer.Size();
@@ -457,8 +482,6 @@ void CIRCNetwork::ClientConnected(CClient *pClient) {
 		for (uIdx = 0; uIdx < uSize; uIdx++) {
 			pClient->PutClient(m_MotdBuffer.GetLine(uIdx, *pClient, msParams));
 		}
-	} else {
-		pClient->PutClient(":irc.znc.in 422 :MOTD Cache is missing");
  	}
 
 	if (GetIRCSock() != NULL) {
@@ -480,7 +503,7 @@ void CIRCNetwork::ClientConnected(CClient *pClient) {
 	}
 
 	const vector<CChan*>& vChans = GetChans();
-	for (unsigned int a = 0; a < vChans.size(); a++) {
+	for (size_t a = 0; a < vChans.size(); a++) {
 		if ((vChans[a]->IsOn()) && (!vChans[a]->IsDetached())) {
 			vChans[a]->JoinUser(true, "", pClient);
 		}
@@ -489,7 +512,9 @@ void CIRCNetwork::ClientConnected(CClient *pClient) {
 	uSize = m_QueryBuffer.Size();
 	for (uIdx = 0; uIdx < uSize; uIdx++) {
 		CString sLine = m_QueryBuffer.GetLine(uIdx, *pClient, msParams);
-		NETWORKMODULECALL(OnPrivBufferPlayLine(*pClient, sLine), m_pUser, this, NULL, continue);
+		bool bContinue = false;
+		NETWORKMODULECALL(OnPrivBufferPlayLine(*pClient, sLine), m_pUser, this, NULL, &bContinue);
+		if (bContinue) continue;
 		pClient->PutClient(sLine);
 	}
 	m_QueryBuffer.Clear();
@@ -501,7 +526,7 @@ void CIRCNetwork::ClientConnected(CClient *pClient) {
 }
 
 void CIRCNetwork::ClientDisconnected(CClient *pClient) {
-	for (unsigned int a = 0; a < m_vClients.size(); a++) {
+	for (size_t a = 0; a < m_vClients.size(); a++) {
 		if (m_vClients[a] == pClient) {
 			m_vClients.erase(m_vClients.begin() + a);
 			break;
@@ -590,7 +615,11 @@ bool CIRCNetwork::PutModule(const CString& sModule, const CString& sLine, CClien
 
 const vector<CChan*>& CIRCNetwork::GetChans() const { return m_vChans; }
 
-CChan* CIRCNetwork::FindChan(const CString& sName) const {
+CChan* CIRCNetwork::FindChan(CString sName) const {
+	if (GetIRCSock()) {
+		sName.TrimLeft(GetIRCSock()->GetPerms());
+	}
+
 	for (unsigned int a = 0; a < m_vChans.size(); a++) {
 		CChan* pChan = m_vChans[a];
 		if (sName.Equals(pChan->GetName())) {
@@ -688,7 +717,9 @@ bool CIRCNetwork::JoinChan(CChan* pChan) {
 		pChan->Disable();
 	} else {
 		pChan->IncJoinTries();
-		NETWORKMODULECALL(OnTimerAutoJoin(*pChan), m_pUser, this, NULL, return false);
+		bool bFailed = false;
+		NETWORKMODULECALL(OnTimerAutoJoin(*pChan), m_pUser, this, NULL, &bFailed);
+		if (bFailed) return false;
 		return true;
 	}
 	return false;
@@ -850,7 +881,7 @@ CServer* CIRCNetwork::GetNextServer() {
 }
 
 CServer* CIRCNetwork::GetCurrentServer() const {
-	unsigned int uIdx = (m_uServerIdx) ? m_uServerIdx -1 : 0;
+	size_t uIdx = (m_uServerIdx) ? m_uServerIdx -1 : 0;
 
 	if (uIdx >= m_vServers.size()) {
 		return NULL;
@@ -930,16 +961,18 @@ bool CIRCNetwork::Connect() {
 
 	DEBUG("Connecting user/network [" << m_pUser->GetUserName() << "/" << m_sName << "]");
 
-	NETWORKMODULECALL(OnIRCConnecting(pIRCSock), m_pUser, this, NULL,
+	bool bAbort = false;
+	NETWORKMODULECALL(OnIRCConnecting(pIRCSock), m_pUser, this, NULL, &bAbort);
+	if (bAbort) {
 		DEBUG("Some module aborted the connection attempt");
 		PutStatus("Some module aborted the connection attempt");
 		delete pIRCSock;
 		CZNC::Get().AddNetworkToQueue(this);
 		return false;
-	);
+	}
 
 	CString sSockName = "IRC::" + m_pUser->GetUserName() + "::" + m_sName;
-	CZNC::Get().GetManager().Connect(pServer->GetName(), pServer->GetPort(), sSockName, 120, bSSL, m_pUser->GetBindHost(), pIRCSock);
+	CZNC::Get().GetManager().Connect(pServer->GetName(), pServer->GetPort(), sSockName, 120, bSSL, GetBindHost(), pIRCSock);
 
 	return true;
 }
@@ -1026,6 +1059,14 @@ const CString& CIRCNetwork::GetRealName() const {
 	return m_sRealName;
 }
 
+const CString& CIRCNetwork::GetBindHost() const {
+	if (m_sBindHost.empty()) {
+		return m_pUser->GetBindHost();
+	}
+
+	return m_sBindHost;
+}
+
 void CIRCNetwork::SetNick(const CString& s) {
 	if (m_pUser->GetNick().Equals(s)) {
 		m_sNick = "";
@@ -1058,6 +1099,14 @@ void CIRCNetwork::SetRealName(const CString& s) {
 	}
 }
 
+void CIRCNetwork::SetBindHost(const CString& s) {
+	if (m_pUser->GetBindHost().Equals(s)) {
+		m_sBindHost = "";
+	} else {
+		m_sBindHost = s;
+	}
+}
+
 CString CIRCNetwork::ExpandString(const CString& sStr) const {
 	CString sRet;
 	return ExpandString(sStr, sRet);
@@ -1070,6 +1119,7 @@ CString& CIRCNetwork::ExpandString(const CString& sStr, CString& sRet) const {
 	sRet.Replace("%altnick%", GetAltNick());
 	sRet.Replace("%ident%", GetIdent());
 	sRet.Replace("%realname%", GetRealName());
+	sRet.Replace("%bindhost%", GetBindHost());
 
 	return m_pUser->ExpandString(sRet, sRet);
 }

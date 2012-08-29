@@ -20,9 +20,16 @@ CXX      := @CXX@
 MODFLAGS := -I$(srcdir)/../include -I../include @CPPFLAGS@ @MODFLAGS@
 MODLINK  := @MODLINK@
 LDFLAGS  := @LDFLAGS@
+ISCYGWIN := @ISCYGWIN@
+
 # LIBS are not and should not be used in here.
 # The znc binary links already against those.
-# LIBS     := @LIBS@
+# ...but not on cygwin!
+LIBS     :=
+ifeq "$(ISCYGWIN)" "1"
+LIBS     += @LIBS@
+endif
+
 PERL_ON  := @PERL@
 PERL     := @PERL_BINARY@
 PYTHON_ON:= @PYTHON@
@@ -38,6 +45,7 @@ INSTALL         := @INSTALL@
 INSTALL_PROGRAM := @INSTALL_PROGRAM@
 INSTALL_SCRIPT  := @INSTALL_SCRIPT@
 INSTALL_DATA    := @INSTALL_DATA@
+SED := @SED@
 
 TCL_FLAGS:= @TCL_FLAGS@
 
@@ -47,9 +55,11 @@ endif
 ifeq "$(VERBOSE)" ""
 Q=@
 E=@echo
+C=-s
 else
 Q=
 E=@\#
+C=
 endif
 
 ifneq "$(LIBZNC)" ""
@@ -74,8 +84,8 @@ FILES    := $(foreach file, $(FILES), \
 	))
 endif
 
-ifeq "@SASL@" ""
-FILES    := $(shell echo $(FILES) | sed -e "s:saslauth::")
+ifeq "@CYRUS@" ""
+FILES    := $(shell echo $(FILES) | sed -e "s:cyrusauth::")
 endif
 saslauthLDFLAGS := -lsasl2
 
@@ -115,7 +125,7 @@ clean:
 
 %.so: %.o Makefile
 	$(E) Linking module $(notdir $(basename $@))...
-	$(Q)$(CXX) $(MODFLAGS) $(LDFLAGS) $(MODLINK) -o $@ $< $($(notdir $(basename $@))LDFLAGS)
+	$(Q)$(CXX) $(MODFLAGS) $(LDFLAGS) $(MODLINK) -o $@ $< $($(notdir $(basename $@))LDFLAGS) $(LIBS)
 
 uninstall:
 	# Yes, we are lazy, just remove everything in there

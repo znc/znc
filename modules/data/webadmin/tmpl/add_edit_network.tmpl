@@ -15,7 +15,7 @@
 		<? IF Edit ?><input type="hidden" name="network" value="<? VAR Name ?>" /><? ENDIF ?>
 
 		<h3>Network Info</h3>
-        <span class="info">Nick, AltNick, Ident, RealName can be left empty to use the value from the user.</span>
+        <span class="info">Nick, AltNick, Ident, RealName, BindHost can be left empty to use the value from the user.</span>
 		<div class="sectionbg">
 			<div class="sectionbody">
 				<? IF !Edit ?>
@@ -47,6 +47,21 @@
 						   title="Your real name." />
 				</div>
 
+				<? IF BindHostEdit ?>
+				<div class="subsection">
+					<div class="inputlabel">BindHost:</div>
+					<? IF BindHostLoop ?>
+						<select name="bindhost">
+							<option value="">- Default -</option>
+							<? LOOP BindHostLoop ?><option value="<? VAR BindHost ?>"<? IF Checked ?> selected="selected"<? ENDIF ?>><? VAR BindHost ?></option><? ENDLOOP ?>
+						</select>
+					<? ELSE ?>
+						<input type="text" name="bindhost" value="<? VAR BindHost ?>"/>
+					<? ENDIF ?>
+				</div>
+				<div style="clear: both;"></div>
+				<? ENDIF ?>
+
 				<div class="subsection">
 					<div class="inputlabel">Active:</div>
 					<div class="checkbox"><input type="checkbox" name="doconnect" id="doconnect_checkbox"<? IF IRCConnectEnabled ?> checked="checked"<? ENDIF ?> />
@@ -54,7 +69,7 @@
 				</div>
 
 				<div class="subsection half">
-					<div class="inputlabel">Servers:</div>
+					<div class="inputlabel">Servers of this IRC network:</div>
 					<div><textarea name="servers" cols="70" rows="5"><? LOOP ServerLoop ?><? VAR Server ?>
 <? ENDLOOP ?>
 </textarea></div>

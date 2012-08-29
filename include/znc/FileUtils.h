@@ -12,15 +12,11 @@
 #include <znc/zncconfig.h>
 #include <znc/ZNCString.h>
 #include <dirent.h>
-#include <map>
 #include <stdlib.h>
 #include <string.h>
 #include <sys/fcntl.h>
 #include <unistd.h>
 #include <vector>
-
-using std::vector;
-using std::map;
 
 class CFile {
 public:
@@ -104,11 +100,11 @@ public:
 	bool Sync();
 	bool Open(const CString& sFileName, int iFlags = O_RDONLY, mode_t iMode = 0644);
 	bool Open(int iFlags = O_RDONLY, mode_t iMode = 0644);
-	int Read(char *pszBuffer, int iBytes);
+	ssize_t Read(char *pszBuffer, int iBytes);
 	bool ReadLine(CString & sData, const CString & sDelimiter = "\n");
 	bool ReadFile(CString& sData, size_t iMaxSize = 512 * 1024);
-	int Write(const char *pszBuffer, u_int iBytes);
-	int Write(const CString & sData);
+	ssize_t Write(const char *pszBuffer, size_t iBytes);
+	ssize_t Write(const CString & sData);
 	void Close();
 	void ClearBuffer();
 
@@ -130,7 +126,7 @@ public:
 
 private:
 	// fcntl() locking wrapper
-	bool Lock(int iType, bool bBlocking);
+	bool Lock(short iType, bool bBlocking);
 
 	CString m_sBuffer;
 	int     m_iFD;
@@ -143,7 +139,7 @@ protected:
 	CString m_sShortName; //!< Filename alone, without path
 };
 
-class CDir : public vector<CFile*> {
+class CDir : public std::vector<CFile*> {
 public:
 
 	CDir(const CString& sDir) {
@@ -169,11 +165,11 @@ public:
 		clear();
 	}
 
-	int Fill(const CString& sDir) {
+	size_t Fill(const CString& sDir) {
 		return FillByWildcard(sDir, "*");
 	}
 
-	int FillByWildcard(const CString& sDir, const CString& sWildcard) {
+	size_t FillByWildcard(const CString& sDir, const CString& sWildcard) {
 		CleanUp();
 		DIR* dir = opendir((sDir.empty()) ? "." : sDir.c_str());
 

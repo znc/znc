@@ -224,7 +224,7 @@ bool CFile::Copy(const CString& sOldFileName, const CString& sNewFileName, bool 
 	}
 
 	char szBuf[8192];
-	int len = 0;
+	ssize_t len = 0;
 
 	while ((len = OldFile.Read(szBuf, 8192))) {
 		if (len < 0) {
@@ -330,13 +330,13 @@ bool CFile::Open(int iFlags, mode_t iMode) {
 	return true;
 }
 
-int CFile::Read(char *pszBuffer, int iBytes) {
+ssize_t CFile::Read(char *pszBuffer, int iBytes) {
 	if (m_iFD == -1) {
 		errno = EBADF;
 		return -1;
 	}
 
-	int res = read(m_iFD, pszBuffer, iBytes);
+	ssize_t res = read(m_iFD, pszBuffer, iBytes);
 	if (res != iBytes)
 		m_bHadError = true;
 	return res;
@@ -344,7 +344,7 @@ int CFile::Read(char *pszBuffer, int iBytes) {
 
 bool CFile::ReadLine(CString& sData, const CString & sDelimiter) {
 	char buff[4096];
-	int iBytes;
+	ssize_t iBytes;
 
 	if (m_iFD == -1) {
 		errno = EBADF;
@@ -387,7 +387,7 @@ bool CFile::ReadFile(CString& sData, size_t iMaxSize) {
 	sData.clear();
 
 	while (iBytesRead < iMaxSize) {
-		int iBytes = Read(buff, sizeof(buff));
+		ssize_t iBytes = Read(buff, sizeof(buff));
 
 		if (iBytes < 0)
 			// Error
@@ -405,19 +405,19 @@ bool CFile::ReadFile(CString& sData, size_t iMaxSize) {
 	return false;
 }
 
-int CFile::Write(const char *pszBuffer, u_int iBytes) {
+ssize_t CFile::Write(const char *pszBuffer, size_t iBytes) {
 	if (m_iFD == -1) {
 		errno = EBADF;
 		return -1;
 	}
 
-	u_int res = write(m_iFD, pszBuffer, iBytes);
-	if (res != iBytes)
+	ssize_t res = write(m_iFD, pszBuffer, iBytes);
+	if (-1 == res)
 		m_bHadError = true;
 	return res;
 }
 
-int CFile::Write(const CString & sData) {
+ssize_t CFile::Write(const CString & sData) {
 	return Write(sData.data(), sData.size());
 }
 void CFile::Close() {
@@ -450,7 +450,7 @@ bool CFile::UnLock() {
 	return Lock(F_UNLCK, true);
 }
 
-bool CFile::Lock(int iType, bool bBlocking) {
+bool CFile::Lock(short iType, bool bBlocking) {
 	struct flock fl;
 
 	if (m_iFD == -1) {
@@ -651,7 +651,7 @@ int CExecSock::popen2(int & iReadFD, int & iWriteFD, const CString & sCommand) {
 void CExecSock::close2(int iPid, int iReadFD, int iWriteFD) {
 	close(iReadFD);
 	close(iWriteFD);
-	u_int iNow = time(NULL);
+	time_t iNow = time(NULL);
 	while (waitpid(iPid, NULL, WNOHANG) == 0) {
 		if ((time(NULL) - iNow) > 5)
 			break;  // giveup

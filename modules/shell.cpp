@@ -11,6 +11,8 @@
 #include <znc/znc.h>
 #include <znc/ExecSock.h>
 
+using std::vector;
+
 // Forward Declaration
 class CShellMod;
 
@@ -125,6 +127,10 @@ void CShellSock::Disconnected() {
 	m_pParent->SetClient(m_pClient);
 	m_pParent->PutShell("znc$");
 	m_pParent->SetClient(NULL);
+}
+
+template<> void TModInfo<CShellMod>(CModInfo& Info) {
+	Info.SetWikiPage("shell");
 }
 
 #ifdef MOD_SHELL_ALLOW_EVERYONE

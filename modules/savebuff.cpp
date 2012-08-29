@@ -21,6 +21,8 @@
 #include <znc/FileUtils.h>
 #include <sys/stat.h>
 
+using std::vector;
+
 #define CRYPT_VERIFICATION_TOKEN "::__:SAVEBUFF:__::"
 // this is basically plain text, but so is having the pass in the command line so *shrug*
 // you could at least do something kind of cool like a bunch of unprintable text
@@ -89,7 +91,7 @@ public:
 			const vector<CChan *>& vChans = m_pNetwork->GetChans();
 			for (u_int a = 0; a < vChans.size(); a++)
 			{
-				if (!vChans[a]->KeepBuffer())
+				if (vChans[a]->AutoClearChanBuffer())
 					continue;
 
 				if (!BootStrap(vChans[a]))
@@ -120,14 +122,16 @@ public:
 				{
 					CString sTimestamp = sLine.Token(0);
 					sTimestamp.TrimLeft("@");
-					time_t tm = sTimestamp.ToLongLong();
+					timeval ts;
+					ts.tv_sec = sTimestamp.Token(0, false, ",").ToLongLong();
+					ts.tv_usec = sTimestamp.Token(1, false, ",").ToLong();
 
 					CString sFormat = sLine.Token(1, true);
 
 					CString sText(*++it);
 					sText.Trim();
 
-					pChan->AddBuffer(sFormat, sText, tm);
+					pChan->AddBuffer(sFormat, sText, &ts);
 				} else
 				{
 					// Old format, escape the line and use as is.
@@ -154,7 +158,7 @@ public:
 				CString sPath = GetPath(vChans[a]->GetName());
 				CFile File(sPath);
 
-				if (!vChans[a]->KeepBuffer()) {
+				if (vChans[a]->AutoClearChanBuffer()) {
 					File.Delete();
 					continue;
 				}
@@ -164,11 +168,12 @@ public:
 
 				CString sFile = CRYPT_VERIFICATION_TOKEN;
 
-				unsigned int uSize = Buffer.Size();
+				size_t uSize = Buffer.Size();
 				for (unsigned int uIdx = 0; uIdx < uSize; uIdx++) {
 					const CBufLine& Line = Buffer.GetBufLine(uIdx);
+					timeval ts = Line.GetTime();
 					sFile +=
-						"@" + CString(Line.GetTime()) + " " +
+						"@" + CString(ts.tv_sec) + "," + CString(ts.tv_usec) + " " +
 						Line.GetFormat() + "\n" +
 						Line.GetText() + "\n";
 				}
@@ -268,8 +273,8 @@ public:
 
 	void AddBuffer(CChan& chan, const CString &sLine)
 	{
-		// If they have keep buffer disabled, only add messages if no client is connected
-		if (!chan.KeepBuffer() && m_pNetwork->IsUserAttached())
+		// If they have AutoClearChanBuffer enabled, only add messages if no client is connected
+		if (chan.AutoClearChanBuffer() && m_pNetwork->IsUserAttached())
 			return;
 		chan.AddBuffer(sLine);
 	}
@@ -280,7 +285,7 @@ public:
 	}
 	virtual void OnQuit(const CNick& cNick, const CString& sMessage, const vector<CChan*>& vChans)
 	{
-		for (u_int a = 0; a < vChans.size(); a++)
+		for (size_t a = 0; a < vChans.size(); a++)
 		{
 			AddBuffer(*vChans[a], SpoofChanMsg(vChans[a]->GetName(), cNick.GetNickMask() + " QUIT " + sMessage));
 		}
@@ -290,7 +295,7 @@ public:
 
 	virtual void OnNick(const CNick& cNick, const CString& sNewNick, const vector<CChan*>& vChans)
 	{
-		for (u_int a = 0; a < vChans.size(); a++)
+		for (size_t a = 0; a < vChans.size(); a++)
 		{
 			AddBuffer(*vChans[a], SpoofChanMsg(vChans[a]->GetName(), cNick.GetNickMask() + " NICK " + sNewNick));
 		}
@@ -360,6 +365,8 @@ void CSaveBuffJob::RunJob()
 
 template<> void TModInfo<CSaveBuff>(CModInfo& Info) {
 	Info.SetWikiPage("savebuff");
+	Info.SetHasArgs(true);
+	Info.SetArgsHelpText("This user module takes up to one arguments. Either --ask-pass or the password itself (which may contain spaces) or nothing");
 }
 
 NETWORKMODULEDEFS(CSaveBuff, "Stores channel buffers to disk, encrypted")

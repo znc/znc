@@ -13,6 +13,8 @@
 #include <znc/Chan.h>
 #include <znc/Server.h>
 
+using std::vector;
+
 class CLogMod: public CModule {
 public:
 	MODCONSTRUCTOR(CLogMod) {}
@@ -121,21 +123,21 @@ bool CLogMod::OnLoad(const CString& sArgs, CString& sMessage)
 
 	// Add default filename to path if it's a folder
 	if (GetType() == CModInfo::UserModule) {
-		if (m_sLogPath.Right(1) == "/" || m_sLogPath.find("$WINDOW") == string::npos || m_sLogPath.find("$NETWORK") == string::npos) {
+		if (m_sLogPath.Right(1) == "/" || m_sLogPath.find("$WINDOW") == CString::npos || m_sLogPath.find("$NETWORK") == CString::npos) {
 			if (!m_sLogPath.empty()) {
 				m_sLogPath += "/";
 			}
 			m_sLogPath += "$NETWORK_$WINDOW_%Y%m%d.log";
 		}
 	} else if (GetType() == CModInfo::NetworkModule) {
-		if (m_sLogPath.Right(1) == "/" || m_sLogPath.find("$WINDOW") == string::npos) {
+		if (m_sLogPath.Right(1) == "/" || m_sLogPath.find("$WINDOW") == CString::npos) {
 			if (!m_sLogPath.empty()) {
 				m_sLogPath += "/";
 			}
 			m_sLogPath += "$WINDOW_%Y%m%d.log";
 		}
 	} else {
-		if (m_sLogPath.Right(1) == "/" || m_sLogPath.find("$USER") == string::npos || m_sLogPath.find("$WINDOW") == string::npos || m_sLogPath.find("$NETWORK") == string::npos) {
+		if (m_sLogPath.Right(1) == "/" || m_sLogPath.find("$USER") == CString::npos || m_sLogPath.find("$WINDOW") == CString::npos || m_sLogPath.find("$NETWORK") == CString::npos) {
 			if (!m_sLogPath.empty()) {
 				m_sLogPath += "/";
 			}
@@ -279,6 +281,8 @@ CModule::EModRet CLogMod::OnChanMsg(CNick& Nick, CChan& Channel, CString& sMessa
 template<> void TModInfo<CLogMod>(CModInfo& Info) {
 	Info.AddType(CModInfo::NetworkModule);
 	Info.AddType(CModInfo::GlobalModule);
+	Info.SetHasArgs(true);
+	Info.SetArgsHelpText("Optional path where to store logs.");
 }
 
 USERMODULEDEFS(CLogMod, "Write IRC logs")

@@ -4,16 +4,7 @@ ERROR="[ !! ]"
 WARNING="[ ** ]"
 OK="[ ok ]"
 
-# Update $PATH so that we will also find the znc binary if we were compiled
-# with  ./configure --prefix=/some/path
-prefix="@prefix@"
-exec_prefix="@exec_prefix@"
-bindir="@bindir@"
-PATH="$bindir:$PATH"
-
 # Check if we got everything we need
-
-ZNC_CONFIG=znc-config
 
 check_binary()
 {
@@ -24,10 +15,8 @@ check_binary()
 	fi
 }
 
-check_binary "${ZNC_CONFIG}" "Please (re)install ZNC."
-
 if test "x$CXX" = "x" ; then
-	CXX=`${ZNC_CONFIG} --cxx`
+	CXX="@CXX@"
 fi
 if test "x$CXX" = "x" ; then
 	CXX=g++
@@ -40,11 +29,20 @@ if test -z "$1"; then
 	exit 1
 fi
 
-CXXFLAGS="`${ZNC_CONFIG} --cflags` $CXXFLAGS"
-LIBS="`${ZNC_CONFIG} --libs` $LIBS"
-LDFLAGS="`${ZNC_CONFIG} --libznc` $LDFLAGS"
-MODLINK="`${ZNC_CONFIG} --modlink` $MODLINK"
-VERSION="`${ZNC_CONFIG} --version`"
+CXXFLAGS="@CPPFLAGS@ @MODFLAGS@ -I@prefix@/include $CXXFLAGS"
+MODLINK="@MODLINK@ $MODLINK"
+VERSION="@PACKAGE_VERSION@"
+
+# Ugly cygwin stuff :(
+LIBZNC="@LIBZNC@"
+LIBZNCDIR="@LIBZNCDIR@"
+if test "x" = "x$LIBZNC"; then
+    LIBZNCFLAGS=""
+else
+    LIBZNCFLAGS="-L\"$LIBZNCDIR\" -lznc"
+fi
+
+LDFLAGS="$LIBZNCFLAGS $LDFLAGS"
 
 while test ! -z "$1"
 do
@@ -58,7 +56,7 @@ do
 		echo "${ERROR} Building \"${MOD}.so\" for ZNC $VERSION... File not found"
 	else
 		printf "Building \"${MOD}.so\" for ZNC $VERSION... "
-		if ${CXX} ${CXXFLAGS} ${INCLUDES} ${LDFLAGS} ${LIBS} ${MODLINK} -o "${MOD}.so" "${FILE}" ; then
+		if ${CXX} ${CXXFLAGS} ${INCLUDES} ${LDFLAGS} ${MODLINK} -o "${MOD}.so" "${FILE}" ${LIBS} ; then
 			echo "${OK}"
 		else
 			echo "${ERROR} Error while building \"${MOD}.so\""

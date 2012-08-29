@@ -10,25 +10,17 @@
 #define _MAIN_H
 
 #include <znc/zncconfig.h>
+#include <znc/version.h>
 
-// The following defines are for #if comparison (preprocessor only likes ints)
-#define VERSION_MAJOR  0
-#define VERSION_MINOR  207
-// This one is for display purpose
-#define VERSION        (VERSION_MAJOR + VERSION_MINOR / 1000.0)
-
-// You can add -DVERSION_EXTRA="stuff" to your CXXFLAGS!
-#ifndef VERSION_EXTRA
-#define VERSION_EXTRA ""
-#endif
-
-#define NOTHING (void)0
+extern bool ZNC_NO_NEED_TO_DO_ANYTHING_ON_MODULE_CALL_EXITER;
+#define NOTHING &ZNC_NO_NEED_TO_DO_ANYTHING_ON_MODULE_CALL_EXITER
 
 #define ALLMODULECALL(macFUNC, macEXITER)                                     \
 	do {                                                                  \
 		CModules& GMods = CZNC::Get().GetModules();             \
+		bool bAllExit = false;                                       \
 		if (GMods.macFUNC) {                                          \
-			macEXITER;                                            \
+			bAllExit = true;                                            \
 		} else {                                                      \
 			const map<CString, CUser*>& mUsers =                  \
 				CZNC::Get().GetUserMap();                     \
@@ -36,7 +28,8 @@
 			for (it = mUsers.begin(); it != mUsers.end(); ++it) { \
 				CModules& UMods = it->second->GetModules();   \
 				if (UMods.macFUNC) {                          \
-					macEXITER;                            \
+					bAllExit = true;               \
+					break;                                     \
 				}                                             \
 				const vector<CIRCNetwork*>& mNets =           \
 					it->second->GetNetworks();            \
@@ -44,11 +37,14 @@
 				for (it2 = mNets.begin(); it2 != mNets.end(); ++it2) { \
 					CModules& NMods = (*it2)->GetModules(); \
 					if (NMods.macFUNC) {                  \
-						macEXITER;                    \
+						bAllExit = true;                    \
+						break;                            \
 					}                                     \
 				}                                             \
+				if (bAllExit) break;                             \
 			}                                                     \
 		}                                                             \
+		if (bAllExit) *macEXITER = true;                                     \
 	} while (false)
 
 #define _GLOBALMODULECALL(macFUNC, macUSER, macNETWORK, macCLIENT, macEXITER)   \
@@ -64,7 +60,7 @@
 			GMods.SetUser(pOldGUser);                  \
 			GMods.SetNetwork(pOldGNetwork);            \
 			GMods.SetClient(pOldGClient);              \
-			macEXITER;                                 \
+			*macEXITER = true;       \
 		}                                                  \
 		GMods.SetUser(pOldGUser);                          \
 		GMods.SetClient(pOldGClient);                      \
@@ -73,7 +69,12 @@
 #define _USERMODULECALL(macFUNC, macUSER, macNETWORK, macCLIENT, macEXITER)  \
 	do {                                                              \
 		assert(macUSER != NULL);                                  \
-		_GLOBALMODULECALL(macFUNC, macUSER, macNETWORK, macCLIENT, macEXITER); \
+		bool bGlobalExited = false;                                \
+		_GLOBALMODULECALL(macFUNC, macUSER, macNETWORK, macCLIENT, &bGlobalExited); \
+		if (bGlobalExited) {                                       \
+			*macEXITER = true;                \
+			break;                                             \
+		}                                                         \
 		CModules& UMods = macUSER->GetModules();                  \
 		CIRCNetwork* pOldUNetwork = UMods.GetNetwork();           \
 		CClient* pOldUClient = UMods.GetClient();                 \
@@ -82,7 +83,7 @@
 		if (UMods.macFUNC) {                                      \
 			UMods.SetNetwork(pOldUNetwork);                   \
 			UMods.SetClient(pOldUClient);                     \
-			macEXITER;                                        \
+			*macEXITER = true;                \
 		}                                                         \
 		UMods.SetNetwork(pOldUNetwork);                           \
 		UMods.SetClient(pOldUClient);                             \
@@ -91,14 +92,19 @@
 #define NETWORKMODULECALL(macFUNC, macUSER, macNETWORK, macCLIENT, macEXITER)  \
 	do {                                                                   \
 		assert(macUSER != NULL);                                       \
-		_USERMODULECALL(macFUNC, macUSER, macNETWORK, macCLIENT, macEXITER); \
+		bool bUserExited = false;                                   \
+		_USERMODULECALL(macFUNC, macUSER, macNETWORK, macCLIENT, &bUserExited); \
+		if (bUserExited) {                                         \
+			*macEXITER = true;                 \
+			break;                                                \
+		}                                                            \
 		if (macNETWORK != NULL) {                                      \
 			CModules& NMods = macNETWORK->GetModules();            \
 			CClient* pOldNClient = NMods.GetClient();              \
 			NMods.SetClient(macCLIENT);                            \
 			if (NMods.macFUNC) {                                   \
 				NMods.SetClient(pOldNClient);                  \
-				macEXITER;                                     \
+				*macEXITER = true;              \
 			}                                                      \
 			NMods.SetClient(pOldNClient);                          \
 		}                                                              \

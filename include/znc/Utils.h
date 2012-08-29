@@ -20,10 +20,6 @@
 #include <unistd.h>
 #include <vector>
 
-using std::map;
-using std::vector;
-using std::pair;
-
 static inline void SetFdCloseOnExec(int fd)
 {
 	int flags = fcntl(fd, F_GETFD, 0);
@@ -49,7 +45,10 @@ public:
 	static void PrintAction(const CString& sMessage);
 	static void PrintStatus(bool bSuccess, const CString& sMessage = "");
 
+#ifndef SWIGPERL
+	// TODO refactor this
 	static const CString sDefaultHash;
+#endif
 
 	static CString GetSaltedHashPass(CString& sSalt);
 	static CString GetSalt();
@@ -125,7 +124,7 @@ protected:
 | hello | world |
 +-------+-------+@endverbatim
  */
-class CTable : protected vector<vector<CString> > {
+class CTable : protected std::vector<std::vector<CString> > {
 public:
 	CTable() {}
 	virtual ~CTable() {}
@@ -142,7 +141,7 @@ public:
 	 *  After calling this you can fill the row with content.
 	 *  @return The index of this row
 	 */
-	unsigned int AddRow();
+	size_type AddRow();
 
 	/** Sets a given cell in the table to a value.
 	 *  @param sColumn The name of the column you want to fill.
@@ -151,7 +150,7 @@ public:
 	 *                 If this is not given, the last row will be used.
 	 *  @return True if setting the cell was successful.
 	 */
-	bool SetCell(const CString& sColumn, const CString& sValue, unsigned int uRowIdx = ~0);
+	bool SetCell(const CString& sColumn, const CString& sValue, size_type uRowIdx = ~0);
 
 	/** Get a line of the table's output
 	 *  @param uIdx The index of the line you want.
@@ -166,22 +165,22 @@ public:
 	 *  @param uIdx The index of the column you are interested in.
 	 *  @return The width of the column.
 	 */
-	unsigned int GetColumnWidth(unsigned int uIdx) const;
+	CString::size_type GetColumnWidth(unsigned int uIdx) const;
 
 	/// Completely clear the table.
 	void Clear();
 
 	/// @return The number of rows in this table, not counting the header.
-	using vector<vector<CString> >::size;
+	using std::vector<std::vector<CString> >::size;
 
 	/// @return True if this table doesn't contain any rows.
-	using vector<vector<CString> >::empty;
+	using std::vector<std::vector<CString> >::empty;
 private:
 	unsigned int GetColumnIndex(const CString& sName) const;
 
 protected:
-	vector<CString>            m_vsHeaders;
-	map<CString, unsigned int> m_msuWidths;  // Used to cache the width of a column
+	std::vector<CString>            m_vsHeaders;
+	std::map<CString, CString::size_type> m_msuWidths;  // Used to cache the width of a column
 };
 
 
@@ -336,10 +335,10 @@ public:
 	unsigned int GetTTL() const { return m_uTTL; }
 	// !Getters
 protected:
-	typedef pair<unsigned long long, V> value;
-	typedef typename map<K, value>::iterator iterator;
-	map<K, value>   m_mItems;   //!< Map of cached items.  The value portion of the map is for the expire time
-	unsigned int    m_uTTL;     //!< Default time-to-live duration
+	typedef std::pair<unsigned long long, V> value;
+	typedef typename std::map<K, value>::iterator iterator;
+	std::map<K, value>   m_mItems;   //!< Map of cached items.  The value portion of the map is for the expire time
+	unsigned int         m_uTTL;     //!< Default time-to-live duration
 };
 
 /**

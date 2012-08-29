@@ -27,9 +27,9 @@ struct CConfigEntry {
 
 class CConfig {
 public:
-	typedef map<CString, VCString> EntryMap;
-	typedef map<CString, CConfigEntry> SubConfig;
-	typedef map<CString, SubConfig> SubConfigMap;
+	typedef std::map<CString, VCString> EntryMap;
+	typedef std::map<CString, CConfigEntry> SubConfig;
+	typedef std::map<CString, SubConfig> SubConfigMap;
 
 	typedef EntryMap::const_iterator EntryMapIterator;
 	typedef SubConfigMap::const_iterator SubConfigMapIterator;
@@ -108,6 +108,16 @@ public:
 		CString s;
 		if (FindStringEntry(sName, s)) {
 			uRes = s.ToUInt();
+			return true;
+		}
+		uRes = uDefault;
+		return false;
+	}
+
+	bool FindUShortEntry(const CString& sName, unsigned short& uRes, unsigned short uDefault = 0) {
+		CString s;
+		if (FindStringEntry(sName, s)) {
+			uRes = s.ToUShort();
 			return true;
 		}
 		uRes = uDefault;

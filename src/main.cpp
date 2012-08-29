@@ -11,6 +11,10 @@
 #include <sys/wait.h>
 #include <signal.h>
 
+using std::cout;
+using std::endl;
+using std::set;
+
 #ifdef HAVE_GETOPT_LONG
 #include <getopt.h>
 #else
@@ -98,13 +102,13 @@ static void seedPRNG() {
 	// Try to find a seed which can't be as easily guessed as only time()
 
 	if (gettimeofday(&tv, NULL) == 0) {
-		seed  = tv.tv_sec;
+		seed = (unsigned int)tv.tv_sec;
 
 		// This is in [0:1e6], which means that roughly 20 bits are
 		// actually used, let's try to shuffle the high bits.
-		seed ^= (tv.tv_usec << 10) | tv.tv_usec;
+		seed ^= uint32_t((tv.tv_usec << 10) | tv.tv_usec);
 	} else
-		seed = time(NULL);
+		seed = (unsigned int)time(NULL);
 
 	seed ^= rand();
 	seed ^= getpid();
@@ -207,8 +211,14 @@ int main(int argc, char** argv) {
 
 	{
 		set<CModInfo> ssGlobalMods;
+		set<CModInfo> ssUserMods;
+		set<CModInfo> ssNetworkMods;
+		CUtils::PrintAction("Checking for list of available modules");
 		pZNC->GetModules().GetAvailableMods(ssGlobalMods, CModInfo::GlobalModule);
-		if (ssGlobalMods.empty()) {
+		pZNC->GetModules().GetAvailableMods(ssUserMods, CModInfo::UserModule);
+		pZNC->GetModules().GetAvailableMods(ssNetworkMods, CModInfo::NetworkModule);
+		if (ssGlobalMods.empty() && ssUserMods.empty() && ssNetworkMods.empty()) {
+			CUtils::PrintStatus(false, "");
 			CUtils::PrintError("No modules found. Perhaps you didn't install ZNC properly?");
 			CUtils::PrintError("Read http://wiki.znc.in/Installation for instructions.");
 			if (!CUtils::GetBoolInput("Do you really want to run ZNC without any modules?", false)) {
@@ -216,6 +226,7 @@ int main(int argc, char** argv) {
 				return 1;
 			}
 		}
+		CUtils::PrintStatus(true, "");
 	}
 
 	if (isRoot()) {

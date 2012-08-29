@@ -151,4 +151,10 @@ void CIMAPSock::ReadLine(const CString& sLine) {
 	}
 }
 
+template<> void TModInfo<CIMAPAuthMod>(CModInfo& Info) {
+	Info.SetWikiPage("imapauth");
+	Info.SetHasArgs(true);
+	Info.SetArgsHelpText("[ server [+]port [ UserFormatString ] ]");
+}
+
 GLOBALMODULEDEFS(CIMAPAuthMod, "Allow users to authenticate via imap")

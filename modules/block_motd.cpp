@@ -30,4 +30,8 @@ public:
 	}
 };
 
+template<> void TModInfo<CBlockMotd>(CModInfo& Info) {
+	Info.SetWikiPage("block_motd");
+}
+
 USERMODULEDEFS(CBlockMotd, "Block the MOTD from IRC so it's not sent to your client(s).")

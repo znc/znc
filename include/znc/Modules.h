@@ -15,8 +15,6 @@
 #include <set>
 #include <queue>
 
-using std::set;
-
 // Forward Declarations
 class CAuthBase;
 class CChan;
@@ -237,7 +235,7 @@ public:
 	// !Setters
 private:
 protected:
-	set<EModuleType> m_seType;
+	std::set<EModuleType> m_seType;
 	EModuleType     m_eDefaultType;
 	CString         m_sName;
 	CString         m_sPath;
@@ -539,14 +537,14 @@ public:
 	 *  @param sMessage The quit message.
 	 *  @param vChans List of channels which you and nick share.
 	 */
-	virtual void OnQuit(const CNick& Nick, const CString& sMessage, const vector<CChan*>& vChans);
+	virtual void OnQuit(const CNick& Nick, const CString& sMessage, const std::vector<CChan*>& vChans);
 	/** Called when a nickname change occurs. If we are changing our nick,
 	 *  sNewNick will equal m_pIRCSock->GetNick().
 	 *  @param Nick The nick which changed its nickname
 	 *  @param sNewNick The new nickname.
 	 *  @param vChans Channels which we and nick share.
 	 */
-	virtual void OnNick(const CNick& Nick, const CString& sNewNick, const vector<CChan*>& vChans);
+	virtual void OnNick(const CNick& Nick, const CString& sNewNick, const std::vector<CChan*>& vChans);
 	/** Called when a nick is kicked from a channel.
 	 *  @param OpNick The nick which generated the kick.
 	 *  @param sKickedNick The nick which was kicked.
@@ -824,8 +822,8 @@ public:
 	bool RemTimer(const CString& sLabel);
 	bool UnlinkTimer(CTimer* pTimer);
 	CTimer* FindTimer(const CString& sLabel);
-	set<CTimer*>::const_iterator BeginTimers() const { return m_sTimers.begin(); }
-	set<CTimer*>::const_iterator EndTimers() const { return m_sTimers.end(); }
+	std::set<CTimer*>::const_iterator BeginTimers() const { return m_sTimers.begin(); }
+	std::set<CTimer*>::const_iterator EndTimers() const { return m_sTimers.end(); }
 	virtual void ListTimers();
 	// !Timer stuff
 
@@ -835,8 +833,8 @@ public:
 	bool RemSocket(const CString& sSockName);
 	bool UnlinkSocket(CSocket* pSocket);
 	CSocket* FindSocket(const CString& sSockName);
-	set<CSocket*>::const_iterator BeginSockets() const { return m_sSockets.begin(); }
-	set<CSocket*>::const_iterator EndSockets() const { return m_sSockets.end(); }
+	std::set<CSocket*>::const_iterator BeginSockets() const { return m_sSockets.begin(); }
+	std::set<CSocket*>::const_iterator EndSockets() const { return m_sSockets.end(); }
 	virtual void ListSockets();
 	// !Socket stuff
 
@@ -997,14 +995,14 @@ public:
 	 *  @param ssMods put new modules here.
 	 *  @param bGlobal true if global modules are needed.
 	 */
-	virtual void OnGetAvailableMods(set<CModInfo>& ssMods, CModInfo::EModuleType eType);
+	virtual void OnGetAvailableMods(std::set<CModInfo>& ssMods, CModInfo::EModuleType eType);
 	// !Global Modules
 
 protected:
 	CModInfo::EModuleType m_eType;
 	CString            m_sDescription;
-	set<CTimer*>       m_sTimers;
-	set<CSocket*>      m_sSockets;
+	std::set<CTimer*>  m_sTimers;
+	std::set<CSocket*> m_sSockets;
 	ModHandle          m_pDLL;
 	CSockManager*      m_pManager;
 	CUser*             m_pUser;
@@ -1018,10 +1016,10 @@ protected:
 private:
 	MCString           m_mssRegistry; //!< way to save name/value pairs. Note there is no encryption involved in this
 	VWebSubPages       m_vSubPages;
-	map<CString, CModCommand> m_mCommands;
+	std::map<CString, CModCommand> m_mCommands;
 };
 
-class CModules : public vector<CModule*> {
+class CModules : public std::vector<CModule*> {
 public:
 	CModules();
 	~CModules();
@@ -1060,8 +1058,8 @@ public:
 	bool OnModNotice(const CString& sMessage);
 	bool OnModCTCP(const CString& sMessage);
 
-	bool OnQuit(const CNick& Nick, const CString& sMessage, const vector<CChan*>& vChans);
-	bool OnNick(const CNick& Nick, const CString& sNewNick, const vector<CChan*>& vChans);
+	bool OnQuit(const CNick& Nick, const CString& sMessage, const std::vector<CChan*>& vChans);
+	bool OnNick(const CNick& Nick, const CString& sNewNick, const std::vector<CChan*>& vChans);
 	bool OnKick(const CNick& Nick, const CString& sOpNick, CChan& Channel, const CString& sMessage);
 	bool OnJoin(const CNick& Nick, CChan& Channel);
 	bool OnPart(const CNick& Nick, CChan& Channel, const CString& sMessage);
@@ -1108,7 +1106,7 @@ public:
 
 	static bool GetModInfo(CModInfo& ModInfo, const CString& sModule, CString &sRetMsg);
 	static bool GetModPathInfo(CModInfo& ModInfo, const CString& sModule, const CString& sModPath, CString &sRetMsg);
-	static void GetAvailableMods(set<CModInfo>& ssMods, CModInfo::EModuleType eType = CModInfo::UserModule);
+	static void GetAvailableMods(std::set<CModInfo>& ssMods, CModInfo::EModuleType eType = CModInfo::UserModule);
 
 	// This returns the path to the .so and to the data dir
 	// which is where static data (webadmin skins) are saved
@@ -1134,7 +1132,7 @@ public:
 	bool OnModuleUnloading(CModule* pModule, bool& bSuccess, CString& sRetMsg);
 	bool OnGetModInfo(CModInfo& ModInfo, const CString& sModule,
 			bool& bSuccess, CString& sRetMsg);
-	bool OnGetAvailableMods(set<CModInfo>& ssMods, CModInfo::EModuleType eType);
+	bool OnGetAvailableMods(std::set<CModInfo>& ssMods, CModInfo::EModuleType eType);
 	// !Global Modules
 
 private:

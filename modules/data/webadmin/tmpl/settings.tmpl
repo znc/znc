@@ -1,72 +1,79 @@
 <? INC Header.tmpl ?>
 
-<form action="settings" method="post">
-	<? INC _csrf_check.tmpl ?>
-	<div class="section">
-		<input type="hidden" name="submitted" value="1" />
+<div class="section">
 
-		<h3>Listen Port(s)</h3>
-		<div class="sectionbg">
-			<div class="sectionbody">
-				<div class="subsection">
+	<h3>Listen Port(s)</h3>
+	<div class="sectionbg">
+		<div class="sectionbody">
+			<div class="subsection">
+				<table>
+					<thead>
+						<tr>
+						    <td>Port</td>
+						    <td>BindHost</td>
+						    <td>SSL</td>
+						    <td>IPv4</td>
+						    <td>IPv6</td>
+						    <td>IRC</td>
+						    <td>Web</td>
+						</tr>
+					</thead>
 
+				<? LOOP ListenLoop ?>
+					<tr class="<? IF __EVEN__ ?>evenrow<? ELSE ?>oddrow<? ENDIF ?>">
+						<td><? VAR Port ?></td>
+						<td><? VAR BindHost DEFAULT=** ?></td>
+						<td class="listener_show_ssl">
+							<div class="checkbox"><input type="checkbox" disabled="disabled" <? IF IsSSL ?>checked="checked"<? ENDIF ?>/></div>
+						</td>
+						<td>
+							<div class="checkbox"><input type="checkbox" disabled="disabled" <? IF IsIPV4 ?>checked="checked"<? ENDIF ?>/></div>
+						</td>
+						<td>
+							<div class="checkbox"><input type="checkbox" disabled="disabled" <? IF IsIPV6 ?>checked="checked"<? ENDIF ?>/></div>
+						</td>
+						<td>
+							<div class="checkbox"><input type="checkbox" disabled="disabled" <? IF IsIRC ?>checked="checked"<? ENDIF ?>/></div>
+						</td>
+						<td>
+							<div class="checkbox"><input type="checkbox" disabled="disabled" <? IF IsWeb ?>checked="checked"<? ENDIF ?>/></div>
+						</td>
+						<td>
+							<? IF SuggestDeletion ?>
+							<form action="del_listener" method="post">
+								<? INC _csrf_check.tmpl ?>
+								<input name="host" type="hidden" value="<? VAR BindHost ?>"/>
+								<input name="port" type="hidden" value="<? VAR Port ?>"/>
+								<input name="ipv4" type="hidden" value="<? VAR IsIPV4 ?>"/>
+								<input name="ipv6" type="hidden" value="<? VAR IsIPV6 ?>"/>
+								<input type="submit" value="Del"/>
+							</form>
+							<? ENDIF ?>
+						</td>
+					</tr>
+				<? ENDLOOP ?>
+					<tr>
 						<form action="add_listener" method="post">
-							<table>
-								<thead>
-									<tr>
-										<td>Port</td>
-										<td>BindHost</td>
-										<td>SSL</td>
-										<td>IPv4</td>
-										<td>IPv6</td>
-										<td>IRC</td>
-										<td>Web</td>
-										<td/>
-									</tr>
-								</thead>
-								<tbody>
-								<? LOOP ListenLoop ?>
-									<tr class="<? IF __EVEN__ ?>evenrow<? ELSE ?>oddrow<? ENDIF ?>">
-										<td><? VAR Port ?></td>
-										<td><? VAR BindHost DEFAULT=** ?></td>
-										<td><input type="checkbox" disabled="disabled" <? IF IsSSL ?>checked="checked"<? ENDIF ?>/></td>
-										<td><input type="checkbox" disabled="disabled" <? IF IsIPV4 ?>checked="checked"<? ENDIF ?>/></td>
-										<td><input type="checkbox" disabled="disabled" <? IF IsIPV6 ?>checked="checked"<? ENDIF ?>/></td>
-										<td><input type="checkbox" disabled="disabled" <? IF IsIRC ?>checked="checked"<? ENDIF ?>/></td>
-										<td><input type="checkbox" disabled="disabled" <? IF IsWeb ?>checked="checked"<? ENDIF ?>/></td>
-										<td>
-											<? IF SuggestDeletion ?>
-											<form action="del_listener" method="post">
-												<? INC _csrf_check.tmpl ?>
-												<input name="host" type="hidden" value="<? VAR BindHost ?>"/>
-												<input name="port" type="hidden" value="<? VAR Port ?>"/>
-												<input name="ipv4" type="hidden" value="<? VAR IsIPV4 ?>"/>
-												<input name="ipv6" type="hidden" value="<? VAR IsIPV6 ?>"/>
-												<input type="submit" value="Del"/>
-											</form>
-											<? ENDIF ?>
-										</td>
-									</tr>
-								<? ENDLOOP ?>
-									<tr>
-										<? INC _csrf_check.tmpl ?>
-										<td><input name="port" type="number" min="1" max="65535" class="number"/></td>
-										<td><input name="host" type="text" value="*" /></td>
-										<td><input name="ssl" type="checkbox"/></td>
-										<td><input name="ipv4" type="checkbox" checked="checked"/></td>
-										<td><input name="ipv6" type="checkbox" checked="checked"/></td>
-										<td><input name="irc" type="checkbox" checked="checked"/></td>
-										<td><input name="web" type="checkbox" checked="checked"/></td>
-										<td><input type="submit" value="Add"/></td>
-									</tr>
-								</tbody>
-							</table>
+							<? INC _csrf_check.tmpl ?>
+							<td><input name="port" type="number" min="1" max="65535" class="number"/></td>
+							<td><input name="host" type="text" value="*" class="third"/></td>
+							<td><div class="checkbox"><input name="ssl" type="checkbox"/></div></td>
+							<td><div class="checkbox"><input name="ipv4" type="checkbox" checked="checked"/></div></td>
+							<td><div class="checkbox"><input name="ipv6" type="checkbox" checked="checked"/></div></td>
+							<td><div class="checkbox"><input name="irc" type="checkbox" checked="checked"/></div></td>
+							<td><div class="checkbox"><input name="web" type="checkbox" checked="checked"/></div></td>
+							<td><input type="submit" value="Add"/></td>
 						</form>
-					</div>
-
+					</tr>
+				</table>
 			</div>
 		</div>
 	</div>
+</div>
+
+<form action="settings" method="post">
+	<? INC _csrf_check.tmpl ?>
+	<input type="hidden" name="submitted" value="1" />
 
 	<div class="section">
 		<h3>Settings</h3>
@@ -102,10 +109,7 @@
 				<div class="subsection half">
 					<div class="inputlabel">Connect Delay:</div>
 					<input type="text" name="connectdelay" value="<? VAR ConnectDelay ?>"
-						   title="The time every connection will be delayed, in seconds.
-								  Some servers refuse your connection if you reconnect too fast.
-								  This affects the connection between ZNC and the IRC server;
-								  not the connection between your IRC client and ZNC. "/>
+						   title="The time every connection will be delayed, in seconds. Some servers refuse your connection if you reconnect too fast. This affects the connection between ZNC and the IRC server; not the connection between your IRC client and ZNC. "/>
 				</div>
 
 
@@ -192,4 +196,3 @@
 	</div>
 </form>
 
-<? INC Footer.tmpl ?>

@@ -12,6 +12,7 @@
 #include <list>
 
 using std::list;
+using std::vector;
 
 class CWatchSource {
 public:
@@ -170,7 +171,7 @@ public:
 		MCString msParams;
 		msParams["target"] = m_pNetwork->GetCurNick();
 
-		unsigned int uSize = m_Buffer.Size();
+		size_t uSize = m_Buffer.Size();
 		for (unsigned int uIdx = 0; uIdx < uSize; uIdx++) {
 			PutUser(m_Buffer.GetLine(uIdx, *GetClient(), msParams));
 		}

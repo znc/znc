@@ -16,6 +16,9 @@
 
 #include <tcl.h>
 
+using std::vector;
+using std::map;
+
 #define STDVAR (ClientData cd, Tcl_Interp *irp, int argc, const char *argv[])
 
 #define BADARGS(nl, nh, example) do {                               \
@@ -79,6 +82,7 @@ public:
 		interp = Tcl_CreateInterp();
 		Tcl_Init(interp);
 		Tcl_CreateCommand(interp, "Binds::ProcessPubm", tcl_Bind, this, NULL);
+		Tcl_CreateCommand(interp, "Binds::ProcessMsgm", tcl_Bind, this, NULL);
 		Tcl_CreateCommand(interp, "Binds::ProcessTime", tcl_Bind, this, NULL);
 		Tcl_CreateCommand(interp, "Binds::ProcessEvnt", tcl_Bind, this, NULL);
 		Tcl_CreateCommand(interp, "Binds::ProcessNick", tcl_Bind, this, NULL);
@@ -100,6 +104,7 @@ public:
 		Tcl_CreateCommand(interp, "GetServer", tcl_GetServer, this, NULL);
 		Tcl_CreateCommand(interp, "GetServerOnline", tcl_GetServerOnline, this, NULL);
 		Tcl_CreateCommand(interp, "GetModules", tcl_GetModules, this, NULL);
+		Tcl_CreateCommand(interp, "GetClientCount", tcl_GetClientCount, this, NULL);
 
 		Tcl_CreateCommand(interp, "exit", tcl_exit, this, NULL);
 
@@ -179,6 +184,19 @@ public:
 		CString sChannel = TclEscape(CString(Channel.GetName()));
 
 		CString sCommand = "Binds::ProcessPubm {" + sNick + "} {" + sHost + "} - {" + sChannel + "} {" + sMes + "}";
+		i = Tcl_Eval(interp, sCommand.c_str());
+		if (i != TCL_OK) {
+			PutModule(Tcl_GetStringResult(interp));
+		}
+		return CONTINUE;
+	}
+
+	virtual EModRet OnPrivMsg(CNick& Nick, CString& sMessage) {
+		CString sMes = TclEscape(sMessage);
+		CString sNick = TclEscape(CString(Nick.GetNick()));
+		CString sHost = TclEscape(CString(Nick.GetIdent() + "@" + Nick.GetHost()));
+
+		CString sCommand = "Binds::ProcessMsgm {" + sNick + "} {" + sHost + "} - {" + sMes + "}";
 		i = Tcl_Eval(interp, sCommand.c_str());
 		if (i != TCL_OK) {
 			PutModule(Tcl_GetStringResult(interp));
@@ -380,6 +398,12 @@ private:
 		return TCL_OK;
 	}
 
+	static int tcl_GetClientCount STDVAR {
+		CModTcl *mod = static_cast<CModTcl *>(cd);
+		Tcl_SetResult(irp, (char *)CString(mod->m_pNetwork->GetClients().size()).c_str(), TCL_VOLATILE);
+		return TCL_OK;
+	}
+
 	static int tcl_PutIRC STDVAR {
 		CString sMsg;
 		CModTcl *mod = static_cast<CModTcl *>(cd);
@@ -473,7 +497,7 @@ void CModTclStartTimer::RunJob() {
 template<> void TModInfo<CModTcl>(CModInfo& Info) {
 	Info.SetWikiPage("modtcl");
 	Info.SetHasArgs(true);
-	Info.SetArgsHelpText("The argument is the number of seconds to wait before rejoining.");
+	Info.SetArgsHelpText("Absolute path to modtcl.tcl file");
 }
 
 NETWORKMODULEDEFS(CModTcl, "Loads Tcl scripts as ZNC modules")

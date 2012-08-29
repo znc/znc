@@ -11,6 +11,8 @@
 #include <znc/User.h>
 #include <znc/IRCNetwork.h>
 
+using std::map;
+
 class CFloodDetachMod : public CModule {
 public:
 	MODCONSTRUCTOR(CFloodDetachMod) {
@@ -186,5 +188,11 @@ private:
 	unsigned int m_iThresholdSecs;
 	unsigned int m_iThresholdMsgs;
 };
+
+template<> void TModInfo<CFloodDetachMod>(CModInfo& Info) {
+	Info.SetWikiPage("flooddetach");
+	Info.SetHasArgs(true);
+	Info.SetArgsHelpText("This user module takes up to two arguments. Arguments are msgs and secs numbers.");
+}
 
 USERMODULEDEFS(CFloodDetachMod, "Detach channels when flooded")

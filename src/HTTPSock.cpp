@@ -14,6 +14,9 @@
 #include <sstream>
 #include <iomanip>
 
+using std::map;
+using std::set;
+
 #define MAX_POST_SIZE	1024 * 1024
 
 CHTTPSock::CHTTPSock(CModule *pMod) : CSocket(pMod) {
@@ -247,7 +250,7 @@ bool CHTTPSock::PrintFile(const CString& sFileName, CString sContentType) {
 
 		char szBuf[4096];
 		off_t iLen = 0;
-		int i = 0;
+		ssize_t i = 0;
 
 		PrintHeader(iSize, sContentType);
 
@@ -359,13 +362,13 @@ CString CHTTPSock::GetParam(const CString& sName, const map<CString, VCString>& 
 	return sRet;
 }
 
-unsigned int CHTTPSock::GetParamValues(const CString& sName, set<CString>& ssRet, bool bPost, const CString& sFilter) const {
+size_t CHTTPSock::GetParamValues(const CString& sName, set<CString>& ssRet, bool bPost, const CString& sFilter) const {
 	if (bPost)
 		return GetParamValues(sName, ssRet, m_msvsPOSTParams, sFilter);
 	return GetParamValues(sName, ssRet, m_msvsGETParams, sFilter);
 }
 
-unsigned int CHTTPSock::GetParamValues(const CString& sName, set<CString>& ssRet, const map<CString, VCString>& msvsParams, const CString& sFilter) {
+size_t CHTTPSock::GetParamValues(const CString& sName, set<CString>& ssRet, const map<CString, VCString>& msvsParams, const CString& sFilter) {
 	ssRet.clear();
 
 	map<CString, VCString>::const_iterator it = msvsParams.find(sName);
@@ -385,13 +388,13 @@ unsigned int CHTTPSock::GetParamValues(const CString& sName, set<CString>& ssRet
 	return ssRet.size();
 }
 
-unsigned int CHTTPSock::GetParamValues(const CString& sName, VCString& vsRet, bool bPost, const CString& sFilter) const {
+size_t CHTTPSock::GetParamValues(const CString& sName, VCString& vsRet, bool bPost, const CString& sFilter) const {
 	if (bPost)
 		return GetParamValues(sName, vsRet, m_msvsPOSTParams, sFilter);
 	return GetParamValues(sName, vsRet, m_msvsGETParams, sFilter);
 }
 
-unsigned int CHTTPSock::GetParamValues(const CString& sName, VCString& vsRet, const map<CString, VCString>& msvsParams, const CString& sFilter) {
+size_t CHTTPSock::GetParamValues(const CString& sName, VCString& vsRet, const map<CString, VCString>& msvsParams, const CString& sFilter) {
 	vsRet.clear();
 
 	map<CString, VCString>::const_iterator it = msvsParams.find(sName);
@@ -450,7 +453,7 @@ bool CHTTPSock::PrintErrorPage(unsigned int uStatusId, const CString& sStatusMsg
 			"</body>\r\n"
 		"</html>\r\n";
 
-	PrintHeader(sPage.length(), "application/xhtml+xml; charset=utf-8", uStatusId, sStatusMsg);
+	PrintHeader(sPage.length(), "text/html; charset=utf-8", uStatusId, sStatusMsg);
 	Write(sPage);
 	Close(Csock::CLT_AFTERWRITE);
 
@@ -492,7 +495,7 @@ bool CHTTPSock::PrintHeader(off_t uContentLength, const CString& sContentType, u
 	}
 
 	if (m_sContentType.empty()) {
-		m_sContentType = "application/xhtml+xml; charset=utf-8";
+		m_sContentType = "text/html; charset=utf-8";
 	}
 
 	DEBUG("- " << uStatusId << " (" << sStatusMsg << ") [" << m_sContentType << "]");

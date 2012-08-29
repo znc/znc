@@ -20,7 +20,7 @@ class CModule;
 class CWebSubPage;
 
 typedef CSmartPtr<CWebSubPage> TWebSubPage;
-typedef vector<TWebSubPage> VWebSubPages;
+typedef std::vector<TWebSubPage> VWebSubPages;
 
 class CZNCTagHandler : public CTemplateTagHandler {
 public:

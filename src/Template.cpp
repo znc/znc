@@ -13,6 +13,11 @@
 #include <algorithm>
 
 using std::stringstream;
+using std::vector;
+using std::list;
+using std::ostream;
+using std::pair;
+using std::map;
 
 void CTemplateOptions::Parse(const CString& sLine) {
 	CString sName = sLine.Token(0, false, "=").Trim_n().AsUpper();
@@ -26,7 +31,7 @@ void CTemplateOptions::Parse(const CString& sLine) {
 }
 
 CTemplate* CTemplateLoopContext::GetRow(unsigned int uIndex) {
-	unsigned int uSize = m_pvRows->size();
+	size_t uSize = m_pvRows->size();
 
 	if (uIndex < uSize) {
 		if (m_bReverse) {
@@ -299,7 +304,7 @@ bool CTemplate::Print(const CString& sFileName, ostream& oOut) {
 		uLineNum++;
 		CString::size_type iPos = 0;
 		uCurPos = uFilePos;
-		unsigned int uLineSize = sLine.size();
+		CString::size_type uLineSize = sLine.size();
 		bool bBroke = false;
 
 		while (1) {

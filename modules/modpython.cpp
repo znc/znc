@@ -18,7 +18,10 @@
 
 #include "modpython/swigpyrun.h"
 #include "modpython/module.h"
-#include "modpython/retstring.h"
+#include "modpython/ret.h"
+
+using std::vector;
+using std::set;
 
 class CModPython: public CModule {
 
@@ -78,8 +81,13 @@ public:
 
 	bool OnLoad(const CString& sArgsi, CString& sMessage) {
 		CString sModPath, sTmp;
-		if (!CModules::FindModPath("modpython/_znc_core.so", sModPath, sTmp)) {
-			sMessage = "modpython/_znc_core.so not found.";
+#ifdef __CYGWIN__
+		CString sDllPath = "modpython/_znc_core.dll";
+#else
+		CString sDllPath = "modpython/_znc_core.so";
+#endif
+		if (!CModules::FindModPath(sDllPath, sModPath, sTmp)) {
+			sMessage = sDllPath + " not found.";
 			return false;
 		}
 		sTmp = CDir::ChangeDir(sModPath, "..");
@@ -143,7 +151,7 @@ public:
 				(eType == CModInfo::GlobalModule ? Py_None : SWIG_NewInstanceObj(GetUser(), SWIG_TypeQuery("CUser*"), 0)),
 				(eType == CModInfo::NetworkModule ? SWIG_NewInstanceObj(GetNetwork(), SWIG_TypeQuery("CIRCNetwork*"), 0) : Py_None),
 				CPyRetString::wrap(sRetMsg),
-				SWIG_NewInstanceObj(reinterpret_cast<CModule*>(this), SWIG_TypeQuery("CModule*"), 0));
+				SWIG_NewInstanceObj(reinterpret_cast<CModule*>(this), SWIG_TypeQuery("CModPython*"), 0));
 		if (!pyRes) {
 			sRetMsg = GetPyExceptionStr();
 			DEBUG("modpython: " << sRetMsg);
@@ -196,6 +204,11 @@ public:
 				bSuccess = false;
 				Py_CLEAR(pyFunc);
 				return HALT;
+			}
+			if (!PyObject_IsTrue(pyRes)) {
+				// python module, but not handled by modpython itself.
+				// some module-provider written on python loaded it?
+				return CONTINUE;
 			}
 			Py_CLEAR(pyFunc);
 			Py_CLEAR(pyRes);
@@ -320,14 +333,23 @@ public:
 	}
 
 	virtual ~CModPython() {
+		if (!m_PyZNCModule) {
+			DEBUG("~CModPython(): seems like CModPython::OnLoad() didn't initialize python");
+			return;
+		}
 		PyObject* pyFunc = PyObject_GetAttrString(m_PyZNCModule, "unload_all");
-        PyObject* pyRes = PyObject_CallFunctionObjArgs(pyFunc, NULL);
-        if (!pyRes) {
-            CString sRetMsg = GetPyExceptionStr();
-            DEBUG("modpython tried to unload all modules in its destructor, but: " << sRetMsg);
-        }
-        Py_CLEAR(pyRes);
-        Py_CLEAR(pyFunc);
+		if (!pyFunc) {
+			CString sRetMsg = GetPyExceptionStr();
+			DEBUG("~CModPython(): couldn't find unload_all: " << sRetMsg);
+			return;
+		}
+		PyObject* pyRes = PyObject_CallFunctionObjArgs(pyFunc, NULL);
+		if (!pyRes) {
+			CString sRetMsg = GetPyExceptionStr();
+			DEBUG("modpython tried to unload all modules in its destructor, but: " << sRetMsg);
+		}
+		Py_CLEAR(pyRes);
+		Py_CLEAR(pyFunc);
 
 		Py_CLEAR(m_PyFormatException);
 		Py_CLEAR(m_PyZNCModule);
@@ -432,23 +454,6 @@ CPySocket::~CPySocket() {
 	}
 	Py_CLEAR(pyRes);
 	Py_CLEAR(m_pyObj);
-}
-
-PyObject* CPySocket::WriteBytes(PyObject* data) {
-	if (!PyBytes_Check(data)) {
-		PyErr_SetString(PyExc_TypeError, "socket.WriteBytes needs bytes as argument");
-		return NULL;
-	}
-	char* buffer;
-	Py_ssize_t length;
-	if (-1 == PyBytes_AsStringAndSize(data, &buffer, &length)) {
-		return NULL;
-	}
-	if (Write(buffer, length)) {
-		Py_RETURN_TRUE;
-	} else {
-		Py_RETURN_FALSE;
-	}
 }
 
 template<> void TModInfo<CModPython>(CModInfo& Info) {

@@ -22,6 +22,9 @@
 
 #include "modperl/pstring.h"
 
+using std::set;
+using std::vector;
+
 // Allows perl to load .so files when needed by .pm
 // For example, it needs to load ZNC.so
 extern "C" {
@@ -60,10 +63,13 @@ public:
 		m_pPerl = perl_alloc();
 		perl_construct(m_pPerl);
 		if (perl_parse(m_pPerl, xs_init, argc, argv, environ)) {
+			sMessage = "Can't initialize perl. ";
+			if (SvTRUE(ERRSV)) {
+				sMessage += PString(ERRSV);
+			}
 			perl_free(m_pPerl);
 			PERL_SYS_TERM();
 			m_pPerl = NULL;
-			sMessage = "Can't initialize perl.";
 			DEBUG(__PRETTY_FUNCTION__ << " can't init perl");
 			return false;
 		}
@@ -112,6 +118,7 @@ public:
 	virtual EModRet OnModuleUnloading(CModule* pModule, bool& bSuccess, CString& sRetMsg) {
 		CPerlModule* pMod = AsPerlModule(pModule);
 		if (pMod) {
+			EModRet result = HALT;
 			CString sModName = pMod->GetModName();
 			PSTART;
 			XPUSHs(pMod->GetPerlObj());
@@ -119,13 +126,23 @@ public:
 			if (SvTRUE(ERRSV)) {
 				bSuccess = false;
 				sRetMsg = PString(ERRSV);
+			} else if (ret < 1 || 2 < ret) {
+				sRetMsg = "Error: Perl ZNC::Core::UnloadModule returned " + CString(ret) + " values.";
+				bSuccess = false;
+				result = HALT;
 			} else {
-				bSuccess = true;
-				sRetMsg = "Module [" + sModName + "] unloaded";
+				int bUnloaded = SvUV(ST(0));
+				if (bUnloaded) {
+					bSuccess = true;
+					sRetMsg = "Module [" + sModName + "] unloaded";
+					result = HALT;
+				} else {
+					result = CONTINUE; // module wasn't loaded by modperl. Perhaps a module-provider written in perl did that.
+				}
 			}
 			PEND;
 			DEBUG(__PRETTY_FUNCTION__ << " " << sRetMsg);
-			return HALT;
+			return result;
 		}
 		return CONTINUE;
 	}
@@ -194,7 +211,7 @@ public:
 				PUSH_STR(sName);
 				PUSH_PTR(CModInfo*, &ModInfo);
 				PCALL("ZNC::Core::ModInfoByPath");
-				if (!SvTRUE(ERRSV) && ret == 2) {
+				if (!SvTRUE(ERRSV)) {
 					ssMods.insert(ModInfo);
 				}
 				PEND;

@@ -16,9 +16,6 @@
 #include <set>
 #include <vector>
 
-using std::set;
-using std::vector;
-
 class CModules;
 class CChan;
 class CClient;
@@ -36,6 +33,7 @@ public:
 
 	bool ParseConfig(CConfig* Config, CString& sError);
 
+	// TODO refactor this
 	enum eHashType {
 		HASH_NONE,
 		HASH_MD5,
@@ -46,6 +44,7 @@ public:
 
 	// If you change the default hash here and in HASH_DEFAULT,
 	// don't forget CUtils::sDefaultHash!
+	// TODO refactor this
 	static CString SaltedHash(const CString& sPass, const CString& sSalt) {
 		return CUtils::SaltedSHA256Hash(sPass, sSalt);
 	}
@@ -69,7 +68,7 @@ public:
 	bool AddNetwork(CIRCNetwork *pNetwork);
 	void RemoveNetwork(CIRCNetwork *pNetwork);
 	CIRCNetwork* FindNetwork(const CString& sNetwork) const;
-	const vector<CIRCNetwork*>& GetNetworks() const;
+	const std::vector<CIRCNetwork*>& GetNetworks() const;
 	// !Networks
 
 	bool PutUser(const CString& sLine, CClient* pClient = NULL, CClient* pSkipClient = NULL);
@@ -116,7 +115,7 @@ public:
 	bool AddCTCPReply(const CString& sCTCP, const CString& sReply);
 	bool DelCTCPReply(const CString& sCTCP);
 	bool SetBufferCount(unsigned int u, bool bForce = false);
-	void SetKeepBuffer(bool b);
+	void SetAutoClearChanBuffer(bool b);
 
 	void SetBeingDeleted(bool b) { m_bBeingDeleted = b; }
 	void SetTimestampFormat(const CString& s) { m_sTimestampFormat = s; }
@@ -128,8 +127,8 @@ public:
 	// !Setters
 
 	// Getters
-	vector<CClient*>& GetUserClients() { return m_vClients; }
-	vector<CClient*> GetAllClients();
+	std::vector<CClient*>& GetUserClients() { return m_vClients; }
+	std::vector<CClient*> GetAllClients();
 	const CString& GetUserName() const;
 	const CString& GetCleanUserName() const;
 	const CString& GetNick(bool bAllowDefault = true) const;
@@ -141,7 +140,7 @@ public:
 	const CString& GetPass() const;
 	eHashType GetPassHashType() const;
 	const CString& GetPassSalt() const;
-	const set<CString>& GetAllowedHosts() const;
+	const std::set<CString>& GetAllowedHosts() const;
 	const CString& GetTimestampFormat() const;
 	bool GetTimestampAppend() const;
 	bool GetTimestampPrepend() const;
@@ -158,7 +157,7 @@ public:
 	CString GetQuitMsg() const;
 	const MCString& GetCTCPReplies() const;
 	unsigned int GetBufferCount() const;
-	bool KeepBuffer() const;
+	bool AutoClearChanBuffer() const;
 	bool IsBeingDeleted() const { return m_bBeingDeleted; }
 	CString GetTimezone() const { return m_sTimezone; }
 	unsigned long long BytesRead() const { return m_uBytesRead; }
@@ -195,16 +194,16 @@ protected:
 	bool                  m_bDenyLoadMod;
 	bool                  m_bAdmin;
 	bool                  m_bDenySetBindHost;
-	bool                  m_bKeepBuffer;
+	bool                  m_bAutoClearChanBuffer;
 	bool                  m_bBeingDeleted;
 	bool                  m_bAppendTimestamp;
 	bool                  m_bPrependTimestamp;
 
 	CUserTimer*           m_pUserTimer;
 
-	vector<CIRCNetwork*>  m_vIRCNetworks;
-	vector<CClient*>      m_vClients;
-	set<CString>          m_ssAllowedHosts;
+	std::vector<CIRCNetwork*>  m_vIRCNetworks;
+	std::vector<CClient*>      m_vClients;
+	std::set<CString>     m_ssAllowedHosts;
 	unsigned int          m_uBufferCount;
 	unsigned long long    m_uBytesRead;
 	unsigned long long    m_uBytesWritten;
@@ -212,6 +211,9 @@ protected:
 	CString               m_sSkinName;
 
 	CModules*             m_pModules;
+
+private:
+	void SetKeepBuffer(bool b) { SetAutoClearChanBuffer(!b); } // XXX compatibility crap, added in 0.207
 };
 
 #endif // !_USER_H

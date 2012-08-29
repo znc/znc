@@ -52,7 +52,7 @@ public:
 	CUser* GetUser();
 	const CString& GetName() const;
 	bool IsNetworkAttached() const { return !m_vClients.empty(); };
-	vector<CClient*>& GetClients() { return m_vClients; }
+	std::vector<CClient*>& GetClients() { return m_vClients; }
 
 	void SetUser(CUser *pUser);
 	bool SetName(const CString& sName);
@@ -66,8 +66,8 @@ public:
 	bool PutStatus(const CString& sLine, CClient* pClient = NULL, CClient* pSkipClient = NULL);
 	bool PutModule(const CString& sModule, const CString& sLine, CClient* pClient = NULL, CClient* pSkipClient = NULL);
 
-	const vector<CChan*>& GetChans() const;
-	CChan* FindChan(const CString& sName) const;
+	const std::vector<CChan*>& GetChans() const;
+	CChan* FindChan(CString sName) const;
 	bool AddChan(CChan* pChan);
 	bool AddChan(const CString& sName, bool bInConfig);
 	bool DelChan(const CString& sName);
@@ -77,7 +77,7 @@ public:
 	void SetChanPrefixes(const CString& s) { m_sChanPrefixes = s; };
 	bool IsChan(const CString& sChan) const;
 
-	const vector<CServer*>& GetServers() const;
+	const std::vector<CServer*>& GetServers() const;
 	bool HasServers() const { return !m_vServers.empty(); }
 	CServer* FindServer(const CString& sName) const;
 	bool DelServer(const CString& sName, unsigned short uPort, const CString& sPass);
@@ -131,11 +131,13 @@ public:
 	const CString& GetAltNick(const bool bAllowDefault = true) const;
 	const CString& GetIdent(const bool bAllowDefault = true) const;
 	const CString& GetRealName() const;
+	const CString& GetBindHost() const;
 
 	void SetNick(const CString& s);
 	void SetAltNick(const CString& s);
 	void SetIdent(const CString& s);
 	void SetRealName(const CString& s);
+	void SetBindHost(const CString& s);
 
 	double GetFloodRate() const { return m_fFloodRate; }
 	unsigned short int GetFloodBurst() const { return m_uFloodBurst; }
@@ -155,21 +157,22 @@ protected:
 	CString            m_sAltNick;
 	CString            m_sIdent;
 	CString            m_sRealName;
+	CString            m_sBindHost;
 
 	CModules*          m_pModules;
 
-	vector<CClient*>   m_vClients;
+	std::vector<CClient*>   m_vClients;
 
 	CIRCSock*          m_pIRCSock;
 
-	vector<CChan*>     m_vChans;
+	std::vector<CChan*>     m_vChans;
 
 	CString            m_sChanPrefixes;
 
 	bool               m_bIRCConnectEnabled;
 	CString            m_sIRCServer;
-	vector<CServer*>   m_vServers;
-	unsigned int       m_uServerIdx; ///< Index in m_vServers of our current server + 1
+	std::vector<CServer*>   m_vServers;
+	size_t             m_uServerIdx; ///< Index in m_vServers of our current server + 1
 
 	CNick              m_IRCNick;
 	bool               m_bIRCAway;

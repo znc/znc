@@ -35,6 +35,7 @@ AC_PROG_SED
 AC_CANONICAL_HOST
 AC_SYS_LARGEFILE
 ZNC_VISIBILITY
+AC_PATH_PROG([GIT], [git])
 
 appendLib () {
 	if test "$LIBS" != ""; then
@@ -115,15 +116,15 @@ AC_ARG_ENABLE( [python],
 	[PYTHON="$enableval"],
 	[PYTHON="no"])
 AC_ARG_ENABLE( [swig],
-	AS_HELP_STRING([--disable-swig], [Disable automatic generation of source files needed for modperl/modpython.
-			This value is ignored if perl and python are disabled. If you disable swig,
-			but still want to use these modules, please download the necessary files to modules/modperl and/or to modules/modpython.
-			Check http://en.znc.in/wiki/Modperl and http://en.znc.in/wiki/Modpython for details.]),
+	AS_HELP_STRING([--enable-swig], [Enable automatic generation of source files needed for modperl/modpython.
+			This value is ignored if perl and python are disabled.
+			Usually no need to enable it.
+			]),
 	[USESWIG="$enableval"],
 	[USESWIG="auto"])
-AC_ARG_ENABLE( [sasl],
-	AS_HELP_STRING([--enable-sasl], [enable sasl]),
-	[if test "$enableval" = "yes" ; then SASL=1; fi],)
+AC_ARG_ENABLE( [cyrus],
+	AS_HELP_STRING([--enable-cyrus], [enable cyrus]),
+	[if test "$enableval" = "yes" ; then CYRUS=1; fi],)
 AC_ARG_ENABLE( [optimization],
 	AS_HELP_STRING([--disable-optimization], [Disable some compiler optimizations to
 			decrease memory usage while compiling]),
@@ -152,10 +153,13 @@ AC_ARG_ENABLE([add-networks],
 if test "$DEBUG" != "no"; then
 	appendCXX -ggdb3
 	AC_DEFINE([_DEBUG], [1], [Define for debugging])
-	# These enable some debug options in g++'s STL, e.g. invalid use of iterators
-	AC_DEFINE([_GLIBCXX_DEBUG], [1], [Enable extra debugging checks in libstdc++])
-	AC_DEFINE([_GLIBCXX_DEBUG_PEDANTIC], [1], [Enable extra debugging checks in libstdc++])
-	AC_DEFINE([_GLIBCXX_CONCEPT_CHECKS], [1], [Enable extra debugging checks in libstdc++])
+	if test "x$ISCYGWIN" != x1; then
+		# These enable some debug options in g++'s STL, e.g. invalid use of iterators
+		# But they cause crashes on cygwin while loading modules
+		AC_DEFINE([_GLIBCXX_DEBUG], [1], [Enable extra debugging checks in libstdc++])
+		AC_DEFINE([_GLIBCXX_DEBUG_PEDANTIC], [1], [Enable extra debugging checks in libstdc++])
+		AC_DEFINE([_GLIBCXX_CONCEPT_CHECKS], [1], [Enable extra debugging checks in libstdc++])
+	fi
 else
 	if test "x$OPTIMIZE" = "xyes"; then
 		appendCXX -O2
@@ -202,22 +206,42 @@ AC_SEARCH_LIBS([dlopen], [dl], [],
 
 # ----- Check for pthreads
 
+DNS_TEXT=blocking
 if test "x$TDNS" != "xno"; then
 	old_TDNS=$TDNS
 	AX_PTHREAD([
-		TDNS=yes
+		AC_MSG_CHECKING([whether getaddrinfo() supports AI_ADDRCONFIG])
+		AC_COMPILE_IFELSE([
+			AC_LANG_PROGRAM([[
+				#include <sys/types.h>
+				#include <sys/socket.h>
+				#include <netdb.h>
+			]], [[
+				int x = AI_ADDRCONFIG;
+			]])
+		], [
+			AC_MSG_RESULT([yes])
+			TDNS=yes
+		], [
+			AC_MSG_RESULT([no])
+			TDNS=no
+			# Note that broken systems, such as OpenBSD, NetBSD, which don't support AI_ADDRCONFIG,
+			# also have thread-unsafe getaddrinfo().
+		])
+	], [
+		TDNS=no
+	])
+	if test "x$TDNS" = "xyes"; then
 		DNS_TEXT=threads
 		AC_DEFINE([HAVE_THREADED_DNS], [1], [Define if threaded DNS is enabled])
 		appendCXX "$PTHREAD_CFLAGS"
 		appendLib "$PTHREAD_LIBS"
-	], [
-		TDNS=no
-		DNS_TEXT=blocking
+	else
 		ZNC_AUTO_FAIL([TDNS],
-			[threads not found. Try --disable-tdns.
-Disabling threads may result in a slight performance decrease but will not have any other side-effects],
-			[threads not found, so DNS resolving will be blocking])
-	])
+			[support for threaded DNS not found. Try --disable-tdns.
+Disabling it may result in a slight performance decrease but will not have any other side-effects],
+			[support for threaded DNS not found, so DNS resolving will be blocking])
+	fi
 fi
 
 # ----- Check for openssl
@@ -240,6 +264,25 @@ if test "x$SSL" != "xno"; then
 		AC_CHECK_LIB( crypto, BIO_new,, SSL=no )
 		AC_CHECK_LIB( ssl, SSL_shutdown,, SSL=no )
 	])
+
+	if test "x$SSL" != "xno"; then
+		AC_MSG_CHECKING([whether openssl is usable])
+		AC_LINK_IFELSE([
+			AC_LANG_PROGRAM([[
+				#include <openssl/ssl.h>
+			]], [[
+				SSL_CTX* ctx = SSL_CTX_new(TLSv1_method());
+				SSL* ssl = SSL_new(ctx);
+				DH* dh = DH_new();
+			]])
+		], [
+			AC_MSG_RESULT([yes])
+		], [
+			AC_MSG_RESULT([no])
+			SSL=no
+		])
+		
+	fi
 
 	if test "x$SSL" = "xno" ; then
 		ZNC_AUTO_FAIL([SSL],
@@ -297,28 +340,31 @@ fi
 if test "x$PERL" != xno -o "x$PYTHON" != xno; then
 	old_USESWIG="$USESWIG"
 	if test "x$USESWIG" != "xno"; then
-		AC_PROG_SWIG([1.3.40])
+		AC_PROG_SWIG([2.0.4])
 		test -z "$SWIG" && USESWIG=no
+		if test "x$USESWIG" = xno -a "x$old_USESWIG" = yes; then
+			AC_MSG_ERROR([Could not found appropriate SWIG installation. Check config.log for details.])
+		fi
+	fi
+	if test -r "$srcdir/modules/modperl/ZNC.cpp" -a -r "$srcdir/modules/modpython/_znc_core.cpp"; then
+		AC_MSG_NOTICE([modperl/modpython files are found, disabling SWIG])
+		USESWIG=no
 	fi
 	if test "x$USESWIG" = xno; then
-		SWIG=""
-		AC_MSG_WARN([$SWIG_ERROR])
-		if test "x$old_USESWIG" = xno; then
-			USESWIG="no, need manual download for perl/python bindings"
-			AC_MSG_WARN([swig was disabled, so you should put needed sources to modules/
-Please check http://en.znc.in/wiki/Modperl or http://en.znc.in/wiki/Modpython for details.])
+		if test ! -r "$srcdir/modules/modperl/ZNC.cpp" -o ! -r "$srcdir/modules/modpython/_znc_core.cpp"; then
+			AC_MSG_ERROR([Can not build modperl/modpython. Either install SWIG, or build ZNC from a tarball, or disable modperl/modpython. Check config.log for details.])
 		else
-			AC_MSG_ERROR([swig was not found. Try --disable-perl --disable-python, or download the necessary sources and use --disable-swig.
-Please check http://en.znc.in/wiki/Modperl or http://en.znc.in/wiki/Modpython for details.])
+			AC_MSG_NOTICE([modperl/modpython files are found, no SWIG needed])
 		fi
+		SWIG=""
 	else
 		USESWIG=yes
 	fi
 else
 	if test "x$USESWIG" = "xyes"; then
-		AC_MSG_WARN([swig is needed only for perl and python, but both are disabled. Disabling swig.])
+		AC_MSG_WARN([swig is used only for perl and python, but both are disabled. Disabling swig.])
 	fi
-	USESWIG=no
+	USESWIG='not needed'
 fi
 
 if test "x$PERL" != "xno"; then
@@ -354,16 +400,6 @@ if test "x$PYTHON" != "xno"; then
 		AC_MSG_ERROR([pkg-config is required for modpython.])
 	fi
 	PKG_CHECK_MODULES([python], [$PYTHON >= 3.0],, AC_MSG_ERROR([$PYTHON.pc not found or is wrong. Try --disable-python or install python3.]))
-	if test "x$USESWIG" = xyes; then :
-		PKG_CHECK_MODULES([python32], [$PYTHON >= 3.2], [PYTHON_32=yes], [PYTHON_32=no])
-		if test "x$PYTHON_32" = xyes; then
-			AC_MSG_NOTICE([python 3.2+ found, requiring newer swig.])
-			AC_PROG_SWIG([2.0.4])
-			if test -z "$SWIG"; then
-				AC_MSG_ERROR([$SWIG_ERROR])
-			fi
-		fi
-	fi
 	my_saved_LIBS="$LIBS"
 	my_saved_CXXFLAGS="$CXXFLAGS"
 	appendLib $python_LIBS
@@ -390,10 +426,10 @@ if test "x$PYTHON" != "xno"; then
 	fi
 fi
 
-if test -n "$SASL"; then
+if test -n "$CYRUS"; then
 	AC_CHECK_LIB( sasl2, sasl_server_init,
 		[: Dont let autoconf add -lsasl2, Makefile handles that],
-		AC_MSG_ERROR([could not find libsasl2. Try --disable-sasl.]))
+		AC_MSG_ERROR([could not find libsasl2. Try --disable-cyrus.]))
 fi
 
 # Check if we want modtcl
@@ -495,10 +531,11 @@ AC_SUBST([LDFLAGS])
 AC_SUBST([LIBS])
 AC_SUBST([LIBZNC])
 AC_SUBST([LIBZNCDIR])
+AC_SUBST([ISCYGWIN])
 AC_SUBST([MODLINK])
 AC_SUBST([NOSSL])
 AC_SUBST([TCL_FLAGS])
-AC_SUBST([SASL])
+AC_SUBST([CYRUS])
 AC_SUBST([CHARSET])
 AC_SUBST([LIBICONV])
 AC_SUBST([MODDIR])
@@ -509,7 +546,6 @@ AC_SUBST([SWIG])
 AC_SUBST([python_CFLAGS])
 AC_SUBST([python_LIBS])
 AC_CONFIG_FILES([Makefile])
-AC_CONFIG_FILES([znc-config])
 AC_CONFIG_FILES([znc-buildmod])
 AC_CONFIG_FILES([man/Makefile])
 AC_CONFIG_FILES([znc.pc])
@@ -529,10 +565,10 @@ echo "dns:          $DNS_TEXT"
 echo "perl:         $PERL"
 echo "python:       $PYTHON"
 echo "swig:         $USESWIG"
-if test x"$SASL" = "x" ; then
-	echo "sasl:         no"
+if test x"$CYRUS" = "x" ; then
+	echo "cyrus:        no"
 else
-	echo "sasl:         yes"
+	echo "cyrus:        yes"
 fi
 if test x"$TCL_FLAGS" = "x" ; then
 	echo "tcl:          no"

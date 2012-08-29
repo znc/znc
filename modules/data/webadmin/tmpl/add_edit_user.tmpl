@@ -193,7 +193,7 @@
 	</div>
 
 	<div class="section">
-		<h3>Default Channel Settings</h3>
+		<h3>Default Settings For New Future Channels</h3>
 		<div class="sectionbg">
 			<div class="sectionbody">
 				<div class="subsection third">
@@ -217,7 +217,7 @@
 		<div class="sectionbg">
 			<div class="sectionbody lotsofcheckboxes">
 				<? LOOP OptionLoop ?>
-				<span class="checkboxandlabel">
+				<span class="checkboxandlabel" title="<? VAR Tooltip ?>">
 					<input type="checkbox" name="<? VAR Name ?>" id="opt_<? VAR Name ?>" value="1"<? IF Checked ?> checked="checked"<? ENDIF ?><? IF Disabled ?> disabled="disabled"<? ENDIF ?> />
 					<label for="opt_<? VAR Name ?>"><? VAR DisplayName ?></label>
 				</span>
@@ -250,8 +250,7 @@
 				<div class="subsection">
 					<div class="inputlabel">Join Tries:</div>
 					<input type="number" name="jointries" value="<? VAR JoinTries ?>" class="half" min="0"
-						   title="This defines how often ZNC tries to join, if the first join failed,
-								  e.g. due to channel mode +i/+k or if you're banned." />
+						   title="This defines how often ZNC tries to join, if the first join failed, e.g. due to channel mode +i/+k or if you're banned." />
 				</div>
 				<div class="subsection half">
 					<div class="inputlabel">CTCP Replies:</div>

@@ -27,17 +27,19 @@ INSTALL         := @INSTALL@
 INSTALL_PROGRAM := @INSTALL_PROGRAM@
 INSTALL_SCRIPT  := @INSTALL_SCRIPT@
 INSTALL_DATA    := @INSTALL_DATA@
+GIT := @GIT@
+SED := @SED@
 
 LIB_SRCS  := ZNCString.cpp Csocket.cpp znc.cpp IRCNetwork.cpp User.cpp IRCSock.cpp \
 	Client.cpp Chan.cpp Nick.cpp Server.cpp Modules.cpp MD5.cpp Buffer.cpp Utils.cpp \
 	FileUtils.cpp HTTPSock.cpp Template.cpp ClientCommand.cpp Socket.cpp SHA256.cpp \
-	WebModules.cpp Listener.cpp Config.cpp ZNCDebug.cpp
+	WebModules.cpp Listener.cpp Config.cpp ZNCDebug.cpp version.cpp
 LIB_SRCS  := $(addprefix src/,$(LIB_SRCS))
 BIN_SRCS  := src/main.cpp
 LIB_OBJS  := $(patsubst %cpp,%o,$(LIB_SRCS))
 BIN_OBJS  := $(patsubst %cpp,%o,$(BIN_SRCS))
-CLEAN     := znc src/*.o core core.*
-DISTCLEAN := Makefile config.log config.status znc-config znc-buildmod .depend \
+CLEAN     := znc src/*.o core core.* .version_extra
+DISTCLEAN := Makefile config.log config.status znc-buildmod .depend \
 	modules/.depend modules/Makefile man/Makefile znc.pc znc-uninstalled.pc
 
 CXXFLAGS += -D_MODDIR_=\"$(MODDIR)\" -D_DATADIR_=\"$(DATADIR)\"
@@ -55,18 +57,13 @@ E=@\#
 C=
 endif
 
-.PHONY: all man modules clean distclean install
+.PHONY: all man modules clean distclean install version_extra_recompile
 .SECONDARY:
 
 all: znc man modules $(LIBZNC)
 	@echo ""
-	@echo " ZNC was successfully compiled. You may use"
-	@echo " '$(MAKE) install' to install ZNC to '$(prefix)'."
-	@echo " You can then use '$(bindir)/znc --makeconf'"
-	@echo " to generate a config file."
-	@echo ""
-	@echo " If you need help with using ZNC, please visit our wiki at:"
-	@echo "   http://znc.in"
+	@echo " ZNC was successfully compiled."
+	@echo " Use '$(MAKE) install' to install ZNC to '$(prefix)'."
 
 ifeq "$(LIBZNC)" ""
 OBJS := $(BIN_OBJS) $(LIB_OBJS)
@@ -103,6 +100,16 @@ src/%.o: src/%.cpp Makefile
 	$(E) Building core object $*...
 	$(Q)$(CXX) $(CXXFLAGS) -c -o $@ $< -MD -MF .depend/$*.dep -MT $@
 
+ifneq "$(GIT)" ""
+# If git-describe differs from .version_extra, add a phony target to dependencies, forcing version.o to be recompiled
+# znc-0.200-430-g80acaa7 -> -DVERSION_EXTRA="\"-git-430-80acaa7\""
+src/version.o: src/version.cpp Makefile $(shell if [ x`cat .version_extra 2> /dev/null` != x`$(GIT) --git-dir=$(srcdir)/.git describe 2> /dev/null` ]; then echo version_extra_recompile; fi)
+	@mkdir -p .depend src
+	$(E) Building core object version...
+	$(Q)$(CXX) $(shell $(GIT) --git-dir=$(srcdir)/.git describe 2> /dev/null | $(SED) 's/.*-\([0123456789][0123456789]*\)-g\(.*\)/-DVERSION_EXTRA="\\"-git-\1-\2\\""/') $(CXXFLAGS) -c -o $@ $< -MD -MF .depend/version.dep -MT $@
+	$(Q)$(GIT) --git-dir=$(srcdir)/.git describe > .version_extra 2> /dev/null || true
+endif
+
 install: znc $(LIBZNC)
 	test -d $(DESTDIR)$(bindir) || $(INSTALL) -d $(DESTDIR)$(bindir)
 	test -d $(DESTDIR)$(includedir)/znc || $(INSTALL) -d $(DESTDIR)$(includedir)/znc
@@ -113,7 +120,6 @@ install: znc $(LIBZNC)
 	find $(DESTDIR)$(DATADIR)/webskins -type d -exec chmod 0755 '{}' \;
 	find $(DESTDIR)$(DATADIR)/webskins -type f -exec chmod 0644 '{}' \;
 	$(INSTALL_PROGRAM) znc $(DESTDIR)$(bindir)
-	$(INSTALL_SCRIPT) znc-config $(DESTDIR)$(bindir)
 	$(INSTALL_SCRIPT) znc-buildmod $(DESTDIR)$(bindir)
 	$(INSTALL_DATA) $(srcdir)/include/znc/*.h $(DESTDIR)$(includedir)/znc
 	$(INSTALL_DATA) include/znc/zncconfig.h $(DESTDIR)$(includedir)/znc
@@ -124,10 +130,17 @@ install: znc $(LIBZNC)
 		$(INSTALL_PROGRAM) $(LIBZNC) $(DESTDIR)$(LIBZNCDIR) || exit 1 ; \
 	fi
 	@$(MAKE) -C man install DESTDIR=$(DESTDIR)
+	@echo ""
+	@echo "******************************************************************"
+	@echo " ZNC was successfully installed."
+	@echo " You can use '$(bindir)/znc --makeconf'"
+	@echo " to generate a config file."
+	@echo ""
+	@echo " If you need help with using ZNC, please visit our wiki at:"
+	@echo "   http://znc.in"
 
 uninstall:
 	rm $(DESTDIR)$(bindir)/znc
-	rm $(DESTDIR)$(bindir)/znc-config
 	rm $(DESTDIR)$(bindir)/znc-buildmod
 	rm $(DESTDIR)$(includedir)/znc/*.h
 	rm $(DESTDIR)$(PKGCONFIGDIR)/znc.pc

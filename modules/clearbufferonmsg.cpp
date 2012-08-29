@@ -10,6 +10,8 @@
 #include <znc/Chan.h>
 #include <znc/Modules.h>
 
+using std::vector;
+
 class CClearBufferOnMsgMod : public CModule {
 public:
 	MODCONSTRUCTOR(CClearBufferOnMsgMod) {}
@@ -25,9 +27,9 @@ public:
 					continue;
 
 				(*it)->ClearBuffer();
-				// We force KeepBuffer on all channels since this module
-				// doesnt make any sense without
-				(*it)->SetKeepBuffer(true);
+				// We deny AutoClearChanBuffer on all channels since this module
+				// doesn't make any sense with it
+				(*it)->SetAutoClearChanBuffer(false);
 			}
 		}
 	}
@@ -62,5 +64,9 @@ public:
 		return CONTINUE;
 	}
 };
+
+template<> void TModInfo<CClearBufferOnMsgMod>(CModInfo& Info) {
+	Info.SetWikiPage("clearbufferonmsg");
+}
 
 USERMODULEDEFS(CClearBufferOnMsgMod, "Clear all channel buffers whenever the user does something")

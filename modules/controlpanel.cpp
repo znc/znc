@@ -16,6 +16,9 @@
 #include <znc/Chan.h>
 #include <znc/IRCSock.h>
 
+using std::map;
+using std::vector;
+
 template<std::size_t N>
 struct array_size_helper {
 	char __place_holder[N];
@@ -42,29 +45,29 @@ class CAdminMod : public CModule {
 		static const char* str = "String";
 		static const char* boolean = "Boolean (true/false)";
 		static const char* integer = "Integer";
-		//static const char* doublenum = "Double";
+		static const char* doublenum = "Double";
 		static const char* vars[][2] = {
-			{"Nick",             str},
-			{"Altnick",          str},
-			{"Ident",            str},
-			{"RealName",         str},
-			{"BindHost",         str},
-			{"MultiClients",     boolean},
-			{"DenyLoadMod",      boolean},
-			{"DenySetBindHost",  boolean},
-			{"DefaultChanModes", str},
-			{"QuitMsg",          str},
-			{"BufferCount",      integer},
-			{"KeepBuffer",       boolean},
-			{"Password",         str},
-			{"JoinTries",        integer},
-			{"Timezone",         str},
-			{"Admin",            boolean},
-			{"AppendTimestamp",  boolean},
-			{"PrependTimestamp", boolean},
-			{"TimestampFormat",  str},
-			{"DCCBindHost",      str},
-			{"StatusPrefix",     str}
+			{"Nick",                str},
+			{"Altnick",             str},
+			{"Ident",               str},
+			{"RealName",            str},
+			{"BindHost",            str},
+			{"MultiClients",        boolean},
+			{"DenyLoadMod",         boolean},
+			{"DenySetBindHost",     boolean},
+			{"DefaultChanModes",    str},
+			{"QuitMsg",             str},
+			{"BufferCount",         integer},
+			{"AutoClearChanBuffer", boolean},
+			{"Password",            str},
+			{"JoinTries",           integer},
+			{"Timezone",            str},
+			{"Admin",               boolean},
+			{"AppendTimestamp",     boolean},
+			{"PrependTimestamp",    boolean},
+			{"TimestampFormat",     str},
+			{"DCCBindHost",         str},
+			{"StatusPrefix",        str}
 		};
 		for (unsigned int i = 0; i != ARRAY_SIZE(vars); ++i) {
 			VarTable.AddRow();
@@ -73,17 +76,38 @@ class CAdminMod : public CModule {
 		}
 		PutModule(VarTable);
 
+		PutModule("The following variables are available when using the SetNetwork/GetNetwork commands:");
+
+		CTable NVarTable;
+		NVarTable.AddColumn("Variable");
+		NVarTable.AddColumn("Type");
+		static const char* nvars[][2] = {
+			{"Nick",                str},
+			{"Altnick",             str},
+			{"Ident",               str},
+			{"RealName",            str},
+			{"FloodRate",           doublenum},
+			{"FloodBurst",          integer},
+		};
+		for (unsigned int i = 0; i != ARRAY_SIZE(nvars); ++i) {
+			NVarTable.AddRow();
+			NVarTable.SetCell("Variable", nvars[i][0]);
+			NVarTable.SetCell("Type",     nvars[i][1]);
+		}
+		PutModule(NVarTable);
+
+
 		PutModule("The following variables are available when using the SetChan/GetChan commands:");
 		CTable CVarTable;
 		CVarTable.AddColumn("Variable");
 		CVarTable.AddColumn("Type");
 		static const char* cvars[][2] = {
-			{"DefModes",         str},
-			{"Key",              str},
-			{"Buffer",           integer},
-			{"InConfig",         boolean},
-			{"KeepBuffer",       boolean},
-			{"Detached",         boolean}
+			{"DefModes",            str},
+			{"Key",                 str},
+			{"Buffer",              integer},
+			{"InConfig",            boolean},
+			{"AutoClearChanBuffer", boolean},
+			{"Detached",            boolean}
 		};
 		for (unsigned int i = 0; i != ARRAY_SIZE(cvars); ++i) {
 			CVarTable.AddRow();
@@ -152,7 +176,9 @@ class CAdminMod : public CModule {
 		else if (sVar == "buffercount")
 			PutModule("BufferCount = " + CString(pUser->GetBufferCount()));
 		else if (sVar == "keepbuffer")
-			PutModule("KeepBuffer = " + CString(pUser->KeepBuffer()));
+			PutModule("KeepBuffer = " + CString(!pUser->AutoClearChanBuffer())); // XXX compatibility crap, added in 0.207
+		else if (sVar == "autoclearchanbuffer")
+			PutModule("AutoClearChanBuffer = " + CString(pUser->AutoClearChanBuffer()));
 		else if (sVar == "jointries")
 			PutModule("JoinTries = " + CString(pUser->JoinTries()));
 		else if (sVar == "timezone")
@@ -252,10 +278,15 @@ class CAdminMod : public CModule {
 						CString(CZNC::Get().GetMaxBufferSize()));
 			}
 		}
-		else if (sVar == "keepbuffer") {
+		else if (sVar == "keepbuffer") { // XXX compatibility crap, added in 0.207
+			bool b = !sValue.ToBool();
+			pUser->SetAutoClearChanBuffer(b);
+			PutModule("AutoClearChanBuffer = " + CString(b));
+		}
+		else if (sVar == "autoclearchanbuffer") {
 			bool b = sValue.ToBool();
-			pUser->SetKeepBuffer(b);
-			PutModule("KeepBuffer = " + CString(b));
+			pUser->SetAutoClearChanBuffer(b);
+			PutModule("AutoClearChanBuffer = " + CString(b));
 		}
 		else if (sVar == "password") {
 			const CString sSalt = CUtils::GetSalt();
@@ -315,6 +346,105 @@ class CAdminMod : public CModule {
 			PutModule("Error: Unknown variable");
 	}
 
+	void GetNetwork(const CString& sLine) {
+		const CString sVar = sLine.Token(1).AsLower();
+		const CString sUsername = sLine.Token(2);
+		const CString sNetwork = sLine.Token(3);
+
+		CUser *pUser = NULL;
+		CIRCNetwork *pNetwork = NULL;
+
+		if (sUsername.empty()) {
+			pUser = m_pUser;
+			pNetwork = m_pNetwork;
+		} else {
+			pUser = GetUser(sUsername);
+			if (!pUser) {
+				return;
+			}
+
+			pNetwork = pUser->FindNetwork(sNetwork);
+			if (!pNetwork && !sNetwork.empty()) {
+				PutModule("Network not found.");
+				return;
+			}
+		}
+
+		if (!pNetwork) {
+			PutModule("Usage: GetNetwork <variable> <username> <network>");
+			return;
+		}
+
+		if (sVar.Equals("nick")) {
+			PutModule("Nick = " + pNetwork->GetNick());
+		} else if (sVar.Equals("altnick")) {
+			PutModule("AltNick = " + pNetwork->GetAltNick());
+		} else if (sVar.Equals("ident")) {
+			PutModule("Ident = " + pNetwork->GetIdent());
+		} else if (sVar.Equals("realname")) {
+			PutModule("RealName = " + pNetwork->GetRealName());
+		} else if (sVar.Equals("floodrate")) {
+			PutModule("FloodRate = " + CString(pNetwork->GetFloodRate()));
+		} else if (sVar.Equals("floodburst")) {
+			PutModule("FloodBurst = " + CString(pNetwork->GetFloodBurst()));
+		} else {
+			PutModule("Error: Unknown variable");
+		}
+	}
+
+	void SetNetwork(const CString& sLine) {
+		const CString sVar = sLine.Token(1).AsLower();
+		const CString sUsername = sLine.Token(2);
+		const CString sNetwork = sLine.Token(3);
+		const CString sValue = sLine.Token(4, true);
+
+		CUser *pUser = NULL;
+		CIRCNetwork *pNetwork = NULL;
+
+		if (sUsername.empty()) {
+			pUser = m_pUser;
+			pNetwork = m_pNetwork;
+		} else {
+			pUser = GetUser(sUsername);
+			if (!pUser) {
+				return;
+			}
+
+			pNetwork = pUser->FindNetwork(sNetwork);
+			if (!pNetwork && !sNetwork.empty()) {
+				PutModule("Network not found.");
+				return;
+			}
+		}
+
+		if (!pNetwork) {
+			PutModule("Usage: SetNetwork <variable> <username> <network> <value>");
+			return;
+		}
+
+		if (sVar.Equals("nick")) {
+			pNetwork->SetNick(sValue);
+			PutModule("Nick = " + pNetwork->GetNick());
+		} else if (sVar.Equals("altnick")) {
+			pNetwork->SetAltNick(sValue);
+			PutModule("AltNick = " + pNetwork->GetAltNick());
+		} else if (sVar.Equals("ident")) {
+			pNetwork->SetIdent(sValue);
+			PutModule("Ident = " + pNetwork->GetIdent());
+		} else if (sVar.Equals("realname")) {
+			pNetwork->SetRealName(sValue);
+			PutModule("RealName = " + pNetwork->GetRealName());
+		} else if (sVar.Equals("floodrate")) {
+			pNetwork->SetFloodRate(sValue.ToDouble());
+			PutModule("FloodRate = " + CString(pNetwork->GetFloodRate()));
+		} else if (sVar.Equals("floodburst")) {
+			pNetwork->SetFloodBurst(sValue.ToUShort());
+			PutModule("FloodBurst = " + CString(pNetwork->GetFloodBurst()));
+		} else {
+			PutModule("Error: Unknown variable");
+		}
+	}
+
 	void GetChan(const CString& sLine) {
 		const CString sVar  = sLine.Token(1).AsLower();
 		CString sUsername   = sLine.Token(2);
@@ -349,7 +479,9 @@ class CAdminMod : public CModule {
 		else if (sVar == "inconfig")
 			PutModule("InConfig = " + CString(pChan->InConfig()));
 		else if (sVar == "keepbuffer")
-			PutModule("KeepBuffer = " + CString(pChan->KeepBuffer()));
+			PutModule("KeepBuffer = " + CString(!pChan->AutoClearChanBuffer()));// XXX compatibility crap, added in 0.207
+		else if (sVar == "autoclearchanbuffer")
+			PutModule("AutoClearChanBuffer = " + CString(pChan->AutoClearChanBuffer()));
 		else if (sVar == "detached")
 			PutModule("Detached = " + CString(pChan->IsDetached()));
 		else if (sVar == "key")
@@ -402,10 +534,14 @@ class CAdminMod : public CModule {
 			bool b = sValue.ToBool();
 			pChan->SetInConfig(b);
 			PutModule("InConfig = " + CString(b));
-		} else if (sVar == "keepbuffer") {
+		} else if (sVar == "keepbuffer") { // XXX compatibility crap, added in 0.207
+			bool b = !sValue.ToBool();
+			pChan->SetAutoClearChanBuffer(b);
+			PutModule("AutoClearChanBuffer = " + CString(b));
+		} else if (sVar == "autoclearchanbuffer") {
 			bool b = sValue.ToBool();
-			pChan->SetKeepBuffer(b);
-			PutModule("KeepBuffer = " + CString(b));
+			pChan->SetAutoClearChanBuffer(b);
+			PutModule("AutoClearChanBuffer = " + CString(b));
 		} else if (sVar == "detached") {
 			bool b = sValue.ToBool();
 			if (pChan->IsDetached() != b) {
@@ -893,6 +1029,11 @@ class CAdminMod : public CModule {
 			return;
 		}
 
+		if (pUser->GetModules().FindModule(sModName) == this) {
+			PutModule("Please use /znc unloadmod " + sModName);
+			return;
+		}
+
 		if (!(pUser)->GetModules().UnloadModule(sModName, sModRet)) {
 			PutModule("Unable to unload module [" + sModName + "] [" + sModRet + "]");
 		} else {
@@ -938,6 +1079,10 @@ public:
 			"variable [username]",                  "Prints the variable's value for the given or current user");
 		AddCommand("Set",          static_cast<CModCommand::ModCmdFunc>(&CAdminMod::Set),
 			"variable username value",              "Sets the variable's value for the given user (use $me for the current user)");
+		AddCommand("GetNetwork",   static_cast<CModCommand::ModCmdFunc>(&CAdminMod::GetNetwork),
+			"variable [username network]",          "Prints the variable's value for the given network");
+		AddCommand("SetNetwork",   static_cast<CModCommand::ModCmdFunc>(&CAdminMod::SetNetwork),
+			"variable username network value",      "Sets the variable's value for the given network");
 		AddCommand("GetChan",      static_cast<CModCommand::ModCmdFunc>(&CAdminMod::GetChan),
 			"variable [username] network chan",     "Prints the variable's value for the given channel");
 		AddCommand("SetChan",      static_cast<CModCommand::ModCmdFunc>(&CAdminMod::SetChan),
@@ -985,4 +1130,4 @@ template<> void TModInfo<CAdminMod>(CModInfo& Info) {
 	Info.SetWikiPage("admin");
 }
 
-USERMODULEDEFS(CAdminMod, "Dynamic configuration of users/settings through IRC. Allows editing only yourself if you're not ZNC admin.")
+USERMODULEDEFS(CAdminMod, "Dynamic configuration through IRC. Allows editing only yourself if you're not ZNC admin.")

@@ -14,15 +14,7 @@
 #include <set>
 #include <string>
 #include <vector>
-#include <list>
 #include <sys/types.h>
-
-using std::map;
-using std::set;
-using std::string;
-using std::vector;
-using std::list;
-using std::pair;
 
 #define _SQL(s) CString("'" + CString(s).Escape_n(CString::ESQL) + "'")
 #define _URL(s) CString(s).Escape_n(CString::EURL)
@@ -32,9 +24,9 @@ using std::pair;
 class CString;
 class MCString;
 
-typedef set<CString> SCString;
-typedef vector<CString>                 VCString;
-typedef vector<pair<CString, CString> > VPair;
+typedef std::set<CString> SCString;
+typedef std::vector<CString>                 VCString;
+typedef std::vector<std::pair<CString, CString> > VPair;
 
 static const unsigned char XX = 0xff;
 static const unsigned char base64_table[256] = {
@@ -63,7 +55,7 @@ static const unsigned char base64_table[256] = {
  * class. It provides helpful functions for parsing input like Token() and
  * Split().
  */
-class CString : public string {
+class CString : public std::string {
 public:
 	typedef enum {
 		EASCII,
@@ -73,7 +65,7 @@ public:
 		ENAMEDFMT
 	} EEscape;
 
-	explicit CString(bool b) : string(b ? "true" : "false") {}
+	explicit CString(bool b) : std::string(b ? "true" : "false") {}
 	explicit CString(char c);
 	explicit CString(unsigned char c);
 	explicit CString(short i);
@@ -87,11 +79,11 @@ public:
 	explicit CString(double i, int precision = 2);
 	explicit CString(float i, int precision = 2);
 
-	CString() : string() {}
-	CString(const char* c) : string(c) {}
-	CString(const char* c, size_t l) : string(c, l) {}
-	CString(const string& s) : string(s) {}
-	CString(size_t n, char c) : string(n, c) {}
+	CString() : std::string() {}
+	CString(const char* c) : std::string(c) {}
+	CString(const char* c, size_t l) : std::string(c, l) {}
+	CString(const std::string& s) : std::string(s) {}
+	CString(size_t n, char c) : std::string(n, c) {}
 	~CString() {}
 
 	/**
@@ -218,12 +210,12 @@ public:
 	 * @param uCount The number of characters to keep.
 	 * @return The resulting string.
 	 */
-	CString Left(unsigned int uCount) const;
+	CString Left(size_type uCount) const;
 	/** Return the right part of the string.
 	 * @param uCount The number of characters to keep.
 	 * @return The resulting string.
 	 */
-	CString Right(unsigned int uCount) const;
+	CString Right(size_type uCount) const;
 
 	/** Get the first line of this string.
 	 * @return The first line of text.
@@ -245,17 +237,17 @@ public:
 	 *         after it.
 	 * @see Split() if you need a string split into all of its tokens.
 	 */
-	CString Token(unsigned int uPos, bool bRest = false, const CString& sSep = " ", bool bAllowEmpty = false) const;
+	CString Token(size_t uPos, bool bRest = false, const CString& sSep = " ", bool bAllowEmpty = false) const;
 
 	/** Get a token out of this string. This function behaves much like the
 	 *  other Token() function in this class. The extra arguments are
 	 *  handled similarly to Split().
 	 */
-	CString Token(unsigned int uPos, bool bRest, const CString& sSep, bool bAllowEmpty, const CString& sLeft, const CString& sRight, bool bTrimQuotes = true) const;
+	CString Token(size_t uPos, bool bRest, const CString& sSep, bool bAllowEmpty, const CString& sLeft, const CString& sRight, bool bTrimQuotes = true) const;
 
-	unsigned int URLSplit(MCString& msRet) const;
-	unsigned int OptionSplit(MCString& msRet, bool bUpperKeys = false) const;
-	unsigned int QuoteSplit(VCString& vsRet) const;
+	size_type URLSplit(MCString& msRet) const;
+	size_type OptionSplit(MCString& msRet, bool bUpperKeys = false) const;
+	size_type QuoteSplit(VCString& vsRet) const;
 
 	/** Split up this string into tokens.
 	 * Via sLeft and sRight you can define "markers" like with Replace().
@@ -272,7 +264,7 @@ public:
 	 *                        each token.
 	 * @return The number of tokens found.
 	 */
-	unsigned int Split(const CString& sDelim, VCString& vsRet, bool bAllowEmpty = true,
+	size_type Split(const CString& sDelim, VCString& vsRet, bool bAllowEmpty = true,
 					   const CString& sLeft = "", const CString& sRight = "", bool bTrimQuotes = true,
 					   bool bTrimWhiteSpace = false) const;
 
@@ -280,7 +272,7 @@ public:
 	 * This function is identical to the other CString::Split(), except that
 	 * the result is returned as a SCString instead of a VCString.
 	 */
-	unsigned int Split(const CString& sDelim, SCString& ssRet, bool bAllowEmpty = true,
+	size_type Split(const CString& sDelim, SCString& ssRet, bool bAllowEmpty = true,
 					   const CString& sLeft = "", const CString& sRight = "", bool bTrimQuotes = true,
 					   bool bTrimWhiteSpace = false) const;
 
@@ -446,24 +438,24 @@ public:
 	 * @param uLen The number of characters to remove.
 	 * @return true if this string was modified.
 	 */
-	bool LeftChomp(unsigned int uLen = 1);
+	bool LeftChomp(size_type uLen = 1);
 	/** Remove characters from the end of this string.
 	 * @param uLen The number of characters to remove.
 	 * @return true if this string was modified.
 	 */
-	bool RightChomp(unsigned int uLen = 1);
+	bool RightChomp(size_type uLen = 1);
 	/** Remove characters from the beginning of this string.
 	 * This string object isn't modified.
 	 * @param uLen The number of characters to remove.
 	 * @return The result of the conversion.
 	 */
-	CString LeftChomp_n(unsigned int uLen = 1) const;
+	CString LeftChomp_n(size_type uLen = 1) const;
 	/** Remove characters from the end of this string.
 	 * This string object isn't modified.
 	 * @param uLen The number of characters to remove.
 	 * @return The result of the conversion.
 	 */
-	CString RightChomp_n(unsigned int uLen = 1) const;
+	CString RightChomp_n(size_type uLen = 1) const;
 
 private:
 protected:
@@ -475,10 +467,10 @@ protected:
  *
  * This class maps strings to other strings.
  */
-class MCString : public map<CString, CString> {
+class MCString : public std::map<CString, CString> {
 public:
 	/** Construct an empty MCString. */
-	MCString() : map<CString, CString>() {}
+	MCString() : std::map<CString, CString>() {}
 	/** Destruct this MCString. */
 	virtual ~MCString() { clear(); }
 

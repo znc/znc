@@ -13,6 +13,11 @@
 #include <znc/Listener.h>
 #include <znc/znc.h>
 
+using std::map;
+using std::vector;
+using std::set;
+using std::pair;
+
 class CSSLClientCertMod : public CModule {
 public:
 	MODCONSTRUCTOR(CSSLClientCertMod) {
@@ -214,7 +219,7 @@ public:
 
 	CString GetKey(Csock *pSock) {
 		CString sRes;
-		int res = pSock->GetPeerFingerprint(sRes);
+		long int res = pSock->GetPeerFingerprint(sRes);
 
 		DEBUG("GetKey() returned status " << res << " with key " << sRes);
 

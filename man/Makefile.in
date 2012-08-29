@@ -11,7 +11,7 @@ mandir      := @mandir@
 INSTALL      := @INSTALL@
 INSTALL_DATA := @INSTALL_DATA@
 
-MAN1        := znc.1.gz znc-buildmod.1.gz znc-config.1.gz
+MAN1        := znc.1.gz znc-buildmod.1.gz
 
 ifneq "$(V)" ""
 VERBOSE=1

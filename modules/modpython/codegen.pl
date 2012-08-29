@@ -261,12 +261,22 @@ while (<$in>) {
 			when (/vector\s*<\s*.*\*\s*>/) {
 				say $out "PyList_New(0);";
 			}
-			when (/CString/) {
+			when (/(?:^|\s)CString/) { # not SCString
 				if ($a->{base} eq 'CString' && $a->{mod} eq '&') {
 					say $out "CPyRetString::wrap($a->{var});";
 				} else {
 					say $out "Py_BuildValue(\"s\", $a->{var}.c_str());";
 				}
+			}
+			when (/^bool/) {
+				if ($a->{mod} eq '&') {
+					say $out "CPyRetBool::wrap($a->{var});";
+				} else {
+					say $out "Py_BuildValue(\"l\", (long int)$a->{var});";
+				}
+			}
+			when (/^CSmartPtr/) {
+				say $out "SWIG_NewInstanceObj(new $a->{type}($a->{var}), SWIG_TypeQuery(\"$a->{type}*\"), SWIG_POINTER_OWN);";
 			}
 			when (/\*$/) {
 				(my $t = $a->{type}) =~ s/^const//;
@@ -276,10 +286,7 @@ while (<$in>) {
 				(my $b = $a->{base}) =~ s/^const//;
 				say $out "SWIG_NewInstanceObj(const_cast<$b*>(&$a->{var}), SWIG_TypeQuery(\"$b*\"), 0);";
 			}
-			when ('bool') {
-				say $out "Py_BuildValue(\"l\", (long int)$a->{var});";
-			}
-			when (/(?:^|::)E/) {
+			when (/(?:^|::)E/) { # Enumerations
 				say $out "Py_BuildValue(\"i\", (int)$a->{var});";
 			}
 			default {

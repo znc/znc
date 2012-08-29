@@ -14,6 +14,8 @@
 #include <znc/Socket.h>
 #include <znc/FileUtils.h>
 
+using std::set;
+
 class CBounceDCCMod;
 
 class CDCCBounce : public CSocket {
@@ -449,7 +451,9 @@ unsigned short CDCCBounce::DCCRequest(const CString& sNick, unsigned long uLongI
 	return uListenPort;
 }
 
-
+template<> void TModInfo<CBounceDCCMod>(CModInfo& Info) {
+	Info.SetWikiPage("bouncedcc");
+}
 
 USERMODULEDEFS(CBounceDCCMod, "Bounces DCC transfers through ZNC instead of sending them directly to the user. ")
 
