@@ -283,6 +283,7 @@ template<> void TModInfo<CLogMod>(CModInfo& Info) {
 	Info.AddType(CModInfo::GlobalModule);
 	Info.SetHasArgs(true);
 	Info.SetArgsHelpText("Optional path where to store logs.");
+	Info.SetWikiPage("log");
 }
 
 USERMODULEDEFS(CLogMod, "Write IRC logs")
