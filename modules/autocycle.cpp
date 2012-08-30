@@ -82,7 +82,7 @@ public:
 			} else {
 				PutModule("You have no entries.");
 			}
-		} else if (sCommand.Equals("HELP")) {
+		} else {
 			CTable Table;
 			Table.AddColumn("Command");
 			Table.AddColumn("Description");
