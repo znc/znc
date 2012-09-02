@@ -58,8 +58,10 @@ bool CConfig::Parse(CFile& file, CString& sErrorMsg)
 	std::stack<ConfigStackEntry> ConfigStack;
 	bool bCommented = false;     // support for /**/ style comments
 
-	if (!file.Seek(0))
-		return "Could not seek to the beginning of the config.";
+	if (!file.Seek(0)) {
+		sErrorMsg = "Could not seek to the beginning of the config.";
+		return false;
+	}
 
 	while (file.ReadLine(sLine)) {
 		uLineNum++;
