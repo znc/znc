@@ -89,6 +89,8 @@ case "${host_os}" in
 	;;
 esac
 
+PKG_PROG_PKG_CONFIG()
+
 AC_ARG_WITH( [openssl],
 	AS_HELP_STRING([--with-openssl=DIR], [openssl installation prefix]),
 	[OPENSSL=$withval],)
@@ -201,7 +203,6 @@ fi
 
 AC_CHECK_LIB( gnugetopt, getopt_long,)
 AC_CHECK_FUNCS([lstat getopt_long getphassphrase])
-PKG_PROG_PKG_CONFIG()
 
 # ----- Check for dlopen
 
