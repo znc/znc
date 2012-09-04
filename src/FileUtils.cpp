@@ -342,28 +342,62 @@ ssize_t CFile::Read(char *pszBuffer, int iBytes) {
 	return res;
 }
 
-bool CFile::ReadLine(CString& sData, const CString & sDelimiter) {
-	char buff[4096];
+bool CFile::ReadLine(CString& sData, const CString & sDelimiter, bool bReadBackwards) {
+	char buff[4096]; // sizeof(buff) must not be larger than INT_MAX
 	ssize_t iBytes;
+	int iBytesToRead = sizeof(buff);
+	off_t curPos = 0; // only used if (bReadBackwards)
 
 	if (m_iFD == -1) {
 		errno = EBADF;
 		return false;
 	}
 
+	if (bReadBackwards) {
+		errno = 0;
+		// Need to rewind to the current perceived position indicator
+		curPos = lseek(m_iFD, -1 * m_sBuffer.length(), SEEK_CUR);
+		if (errno == ESPIPE || errno == EINVAL || errno == EOVERFLOW)
+			return false;
+		m_sBuffer.clear();
+	}
+
 	do {
-		CString::size_type iFind = m_sBuffer.find(sDelimiter);
+		CString::size_type iFind;
+		if (bReadBackwards)
+			iFind = m_sBuffer.length() > sDelimiter.length() + 1 ? m_sBuffer.rfind(sDelimiter, m_sBuffer.length() - sDelimiter.length() - 1) : CString::npos;
+		else
+			iFind = m_sBuffer.find(sDelimiter);
+
 		if (iFind != CString::npos) {
 			// We found a line, return it
-			sData = m_sBuffer.substr(0, iFind + sDelimiter.length());
-			m_sBuffer.erase(0, iFind + sDelimiter.length());
+			if (bReadBackwards) {
+				sData = m_sBuffer.substr(iFind + sDelimiter.length(), CString::npos);
+				m_sBuffer.clear();
+				lseek(m_iFD, iFind + sDelimiter.length(), SEEK_CUR);
+			} else {
+				sData = m_sBuffer.substr(0, iFind + sDelimiter.length());
+				m_sBuffer.erase(0, iFind + sDelimiter.length());
+			}
 			return true;
 		}
 
-		iBytes = read(m_iFD, buff, sizeof(buff));
+		if (bReadBackwards) {
+			iBytesToRead = curPos > (int)sizeof(buff) ? sizeof(buff) : curPos;
+			curPos = lseek(m_iFD, -1 * iBytesToRead, SEEK_CUR);
+		}
+
+		iBytes = read(m_iFD, buff, iBytesToRead);
+
+		if (bReadBackwards) {
+			curPos = lseek(m_iFD, -1 * iBytes, SEEK_CUR);
+		}
 
 		if (iBytes > 0) {
-			m_sBuffer.append(buff, iBytes);
+			if (bReadBackwards) {
+				m_sBuffer.insert(0, buff, iBytes);
+			} else
+				m_sBuffer.append(buff, iBytes);
 		}
 	} while (iBytes > 0);
 
