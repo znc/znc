@@ -131,6 +131,8 @@ install: znc $(LIBZNC)
 		$(INSTALL_PROGRAM) $(LIBZNC) $(DESTDIR)$(LIBZNCDIR) || exit 1 ; \
 	fi
 	@$(MAKE) -C man install DESTDIR=$(DESTDIR)
+	@HAVE_SYSTEMD_TRUE@test -d $(DESTDIR)$(systemdsystemunitdir) || $(INSTALL) -d $(DESTDIR)$(systemdsystemunitdir)
+	@HAVE_SYSTEMD_TRUE@$(INSTALL_DATA) $(srcdir)/znc.service $(DESTDIR)$(systemdsystemunitdir)
 	@echo ""
 	@echo "******************************************************************"
 	@echo " ZNC was successfully installed."
@@ -139,9 +141,6 @@ install: znc $(LIBZNC)
 	@echo ""
 	@echo " If you need help with using ZNC, please visit our wiki at:"
 	@echo "   http://znc.in"
-
-	@HAVE_SYSTEMD_TRUE@test -d $(DESTDIR)$(systemdsystemunitdir) || $(INSTALL) -d $(DESTDIR)$(systemdsystemunitdir)
-	@HAVE_SYSTEMD_TRUE@$(INSTALL_DATA) znc.service $(DESTDIR)$(systemdsystemunitdir)
 
 uninstall:
 	rm $(DESTDIR)$(bindir)/znc
