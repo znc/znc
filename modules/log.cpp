@@ -20,12 +20,18 @@ using std::list;
 class CLogMod: public CModule {
 public:
 	void HelpCommand(const CString& sLine);
+	void SearchCommand(const CString& sLine);
 	void ListCommand(const CString& sLine);
+	void SeenCommand(const CString& sLine);
 
 	MODCONSTRUCTOR(CLogMod) {
 		AddCommand("Help", static_cast<CModCommand::ModCmdFunc>(&CLogMod::HelpCommand));
+		AddCommand("Search", static_cast<CModCommand::ModCmdFunc>(&CLogMod::SearchCommand),
+			"<channel> <nick> <limit> <search terms>", "Lists up to <limit> lines from <channel>'s logs containing one of <search terms> said/done by <nick>");
 		AddCommand("List", static_cast<CModCommand::ModCmdFunc>(&CLogMod::ListCommand),
 			"<channel> <num> [date] [time]", "Lists the last <num> lines from <channel> on [date]");
+		AddCommand("Seen", static_cast<CModCommand::ModCmdFunc>(&CLogMod::SeenCommand),
+			"<nick> <channel> [ignore parts/joins]", "Lists the last time <nick> appeared in any log");
 	}
 
 	void PutLog(const CString& sLine, const CString& sWindow = "status");
@@ -65,6 +71,7 @@ private:
 	CString                 m_sLogPath;
 
 	CString FormatLogPath(const CString& sWindow);
+	bool LineMatches(const CString& line, const CString& sNick, const bool fAnyTerms, const VCString& vsSearch, bool fIgnoreJoinsParts = false);
 };
 
 CString CLogMod::FormatLogPath(const CString& sWindow)
@@ -304,13 +311,259 @@ template<> void TModInfo<CLogMod>(CModInfo& Info) {
 	Info.SetWikiPage("log");
 }
 
+// We assume nicks cannot contain spaces
+bool CLogMod::LineMatches(const CString& line, const CString& sNick, const bool fAnyTerms, const VCString& vsSearch, bool fIgnoreJoinsParts) {
+	CString first = line.Token(1);
+	// eg PutLog("<" + Nick.GetNick() + "> " + sMessage, Channel);
+	if (first.length() > 2 && first[0] == '<' && first[first.length() - 1] == '>') {
+		if (!first.WildCmp("<"+sNick+">"))
+			return false;
+	// eg PutLog("-" + Nick.GetNick() + "- " + sMessage, Channel);
+	}else if (first.length() > 2 && first[0] == '-' && first[first.length() - 1] == '-') {
+		if (!first.WildCmp("-"+sNick+"-"))
+			return false;
+	}else if (first == "***") {
+		CString second = line.Token(2);
+		// eg PutLog("*** Joins: " + Nick.GetNick() + " (" + Nick.GetIdent() + "@" + Nick.GetHost() + ")", Channel);
+		if (second == "Quits:" || second == "Joins:" || second == "Parts:") {
+			if (fIgnoreJoinsParts)
+				return false;
+			CString third = line.Token(3);
+			if (!third.WildCmp(sNick))
+				return false;
+		}else{
+			// PutLog("*** " + OldNick.GetNick() + " is now known as " + sNewNick, **pChan);
+			if (line.Token(3, true).StrCmp("is now known as ", 16)) {
+				if (!second.WildCmp(sNick) && !line.Token(7).WildCmp(sNick))
+					return false;
+			// PutLog("*** " + sKickedNick + " was kicked by " + OpNick.GetNick() + " (" + sMessage + ")", Channel);
+			} else if (line.Token(3, true).StrCmp("was kicked by ", 14)) {
+				if (!second.WildCmp(sNick) && !line.Token(6).WildCmp(sNick))
+					return false;
+			// eg PutLog("*** " + Nick.GetNick() + " changes topic to '" + sTopic + "'", Channel);
+			} else if (!second.WildCmp(sNick))
+				return false;
+		}
+	// eg PutLog("* " + Nick.GetNick() + " " + sMessage, Channel);
+	}else if (first == "*"){
+		CString second = line.Token(2);
+		if (!second.WildCmp(sNick))
+			return false;
+	}else if (sNick != "*") {
+		return false; // Broadcast/Connect/Disconnect
+	}
+	if (fAnyTerms)
+		return true;
+	else {
+		for (VCString::const_iterator it = vsSearch.begin(); it < vsSearch.end(); it++) {
+			if (line.WildCmp("*" + *it + "*"))
+				return true;
+		}
+	}
+	return false;
+}
+
 void CLogMod::HelpCommand(const CString& sLine) {
-	PutModule("Commands: list <channel> <num> [date] [time]");
+	PutModule("Commands: search <channel> <nick> <limit> <search terms>, list <channel> <num> [date] [time], seen <nick> <channel> [ignore parts/joins]");
+	PutModule("search returns up to <limit> lines matching the given criteria");
 	PutModule("list lists up the last <num> lines from <channel> on [date] if [time] isnt set");
 	PutModule("or the first <num> lines from <channel> on [date] after [time]");
-	PutModule("<channel> must be either an exact channel name (including #), an exact nick to search privmsg");
+	PutModule("seen shows the last line logged from <nick> on <channel>");
+	PutModule("search results are listed in chronological order for a given date, but dates are returned in reverse order");
+	PutModule("<channel> must be either an exact channel name (including #), an exact nick to search privmsg or *");
+	PutModule("<nick> must be either a nick or *");
+	PutModule("<search terms> may be any number of terms to be interpreted as or, or a single *");
+	PutModule("For <search terms> with multiple words, enclose the entire string in double quotes");
+	PutModule("<nick> and <search terms> may contain ? to match any single character, or * to match any number of characters");
 	PutModule("[date] must be in the form YYYYMMDD (defaults to today)");
 	PutModule("[time] must be in the form HH:MM:SS in 24-hour time");
+	PutModule("[ignore parts/joins] must be either \"true\" or \"false\" and tells seen to ignore <nick> joining/parting (default is false)");
+	PutModule("WARNING: A high <limit> or a search which does not return any valid lines can take a long time!");
+}
+
+static const int DATE_LENGTH = 8; // eg "20120404"
+
+struct fileNameOlderThan {
+	fileNameOlderThan(bool fStartFromBackIn, int nDateStartIn) {
+		fStartFromBack = fStartFromBackIn;
+		nDateStart = nDateStartIn;
+	}
+
+	bool operator() (const CFile* sOne, const CFile* sTwo) {
+		if (fStartFromBack)
+			return sOne->GetShortName().Right(nDateStart).StrCmp(sTwo->GetShortName().Right(nDateStart), DATE_LENGTH) > 0;
+		else
+			return sOne->GetShortName().StrCmp(sTwo->GetShortName(), DATE_LENGTH + nDateStart) > 0;
+	}
+
+private:
+	bool fStartFromBack;
+	int nDateStart;
+};
+
+// Log formats other than "%Y%m%d" fall under "undefined behavior" here
+void CLogMod::SearchCommand(const CString& sLine) {
+	// Would be better if we didn't use a ? as it doubles as a wildcard
+	CString sChan = sLine.Token(1).Replace_n("/", "?");
+	CString sNick = sLine.Token(2);
+	CString sLimit = sLine.Token(3);
+	CString sSearch = sLine.Token(4, true);
+
+	if (sChan.empty() || sLimit.empty() || sNick.empty() || sSearch.empty()) {
+		PutModule("Usage: search <channel> <nick> <limit> <search terms>");
+		return;
+	}
+
+	unsigned int nLimit = sLimit.ToUInt();
+	if (nLimit == 0) {
+		PutModule("Reached limit 0");
+		return;
+	}
+	VCString vsSearch;
+	sSearch.Split(" ", vsSearch, false, "\"", "\"");
+	bool fAnyTerms = false;
+	for (VCString::iterator it = vsSearch.begin(); it < vsSearch.end(); it++) {
+		if (*it == "*") {
+			fAnyTerms = true;
+			break;
+		}
+	}
+
+	unsigned int nLinesFound = 0;
+
+	if (sChan == "*") {
+		if (sNick == "*" && fAnyTerms) {
+			PutModule("Error: Must supply at least one non-* search parameter (keep in mind that <search terms> are evaluated as OR)");
+			return;
+		}
+
+		//Open all files
+		CString sPath = FormatLogPath("*");
+		CFile file(sPath);
+
+		CString sFile = file.GetShortName();
+		CString sFileWildcard = sFile.Replace_n("%Y%m%d", "*");
+
+		CString sDir = file.GetDir();
+		sDir.Replace("%Y%m%d", "*");
+		if (sDir != file.GetDir()) {
+			PutModule("Error: Cannot search with a date in the folder path.");
+			return;
+		}
+
+		CDir dir;
+		dir.FillByWildcard(sDir, sFileWildcard);
+
+		// Sort in reverse order (ie search more recent files first)
+		CString::size_type datePos = sFile.find("%Y%m%d");
+		bool fDateStartFromBack = false;
+		int nDateStart = 0;
+		if (datePos != CString::npos) {
+			if (sFile.find("*") < datePos) {
+				if(sFile.find_last_of("*") > datePos) {
+					PutModule("Error: Cannot search with a date in between two variables");
+					return;
+				} else {
+					fDateStartFromBack = true;
+					nDateStart = sFile.length() - datePos + 2;
+				}
+			} else {
+				fDateStartFromBack = false;
+				nDateStart = datePos;
+			}
+		}
+		fileNameOlderThan olderThan(fDateStartFromBack, nDateStart);
+		std::sort(dir.begin(), dir.end(), olderThan);
+
+		for (CDir::iterator it = dir.begin(); it < dir.end(); it++) {
+			if ((*it)->Open()) {
+				CString date;
+				if (fDateStartFromBack) {
+					date = (*it)->GetShortName().Right(nDateStart);
+					date.RightChomp(nDateStart - DATE_LENGTH);
+				} else {
+					date = (*it)->GetShortName().Left(nDateStart + DATE_LENGTH);
+					date.LeftChomp(nDateStart);
+				}
+				CString line;
+				while ((*it)->ReadLine(line)) {
+					line.Trim();
+					if (LineMatches(line, sNick, fAnyTerms, vsSearch)) {
+						PutModule(date.RightChomp_n(4) + "-" + date.RightChomp_n(2).LeftChomp_n(4) + "-" + date.LeftChomp_n(6) + ": " + line);
+						nLinesFound++;
+						if (nLinesFound >= nLimit) {
+							(*it)->Close();
+							PutModule("Reached limit.");
+							return;
+						}
+					}
+				}
+				(*it)->Close();
+			}else
+				DEBUG("Could not open log file [" << (*it)->GetLongName() << "]: " << strerror(errno));
+		}
+	}else{
+		//Open only chan
+		CString sPath = FormatLogPath(sChan);
+		CFile file(sPath);
+
+		CString sFile = file.GetShortName();
+		CString sFileWildcard = sFile.Replace_n("%Y%m%d", "*");
+
+		CDir dir;
+		dir.FillByWildcard(file.GetDir(), sFileWildcard);
+
+		// Sort in reverse order (ie search more recent files first)
+		CString::size_type datePos = sFile.find("%Y%m%d");
+		bool fDateStartFromBack = false;
+		int nDateStart = 0;
+		if (datePos != CString::npos) {
+			if (sFile.find("*") < datePos) {
+				if(sFile.find_last_of("*") > datePos) {
+					PutModule("Error: Cannot search with a date in between two variables");
+					return;
+				} else {
+					fDateStartFromBack = true;
+					nDateStart = sFile.length() - datePos + 2;
+				}
+			} else {
+				fDateStartFromBack = false;
+				nDateStart = datePos;
+			}
+		}
+		fileNameOlderThan olderThan(fDateStartFromBack, nDateStart);
+		std::sort(dir.begin(), dir.end(), olderThan);
+
+		for (CDir::iterator it = dir.begin(); it < dir.end(); it++) {
+			if ((*it)->Open()) {
+				CString date;
+				if (fDateStartFromBack) {
+					date = (*it)->GetShortName().Right(nDateStart);
+					date.RightChomp(nDateStart - DATE_LENGTH);
+				} else {
+					date = (*it)->GetShortName().Left(nDateStart + DATE_LENGTH);
+					date.LeftChomp(nDateStart);
+				}
+				CString line;
+				while ((*it)->ReadLine(line)) {
+					line.Trim();
+					if (LineMatches(line, sNick, fAnyTerms, vsSearch)) {
+						PutModule(date.RightChomp_n(4) + "-" + date.RightChomp_n(2).LeftChomp_n(4) + "-" + date.LeftChomp_n(6) + ": " + line);
+						nLinesFound++;
+						if (nLinesFound >= nLimit) {
+							(*it)->Close();
+							PutModule("Reached limit.");
+							return;
+						}
+					}
+				}
+				(*it)->Close();
+			}else
+				DEBUG("Could not open log file [" << (*it)->GetLongName() << "]: " << strerror(errno));
+		}
+	}
+	if (nLinesFound == 0)
+		PutModule("No matching lines found.");
 }
 
 static const int TIME_LENGTH = 9; // "[%H:%M:%S"
@@ -370,6 +623,100 @@ void CLogMod::ListCommand(const CString& sLine) {
 			PutModule(*it);
 	}else
 		PutModule("Error: could not find log for channel " + sChan + " on date " + sDate);
+}
+
+void CLogMod::SeenCommand(const CString& sLine) {
+	CString sNick = sLine.Token(1);
+	CString sChan = sLine.Token(2);
+	CString sIgnore = sLine.Token(3);
+
+	if (sNick.empty() || sChan.empty()) {
+		PutModule("Usage: seen <nick> <channel> [ignore parts/joins]");
+		return;
+	}
+
+	bool fIgnoreJoinsParts;
+	if (sIgnore.empty())
+		fIgnoreJoinsParts = false;
+	else if (sIgnore.Equals("true"))
+		fIgnoreJoinsParts = true;
+	else if (sIgnore.Equals("false"))
+		fIgnoreJoinsParts = false;
+	else {
+		PutModule("Error: second argument must be either \"true\" or \"false\"");
+		return;
+	}
+
+	//Open all files
+	CString sPath = FormatLogPath(sChan);
+	CFile file(sPath);
+
+	CString sFile = file.GetShortName();
+	CString sFileWildcard = sFile.Replace_n("%Y%m%d", "*");
+
+	CString sDir = file.GetDir();
+	sDir.Replace("%Y%m%d", "*");
+	if (sDir != file.GetDir()) {
+		PutModule("Error: Cannot search with a date in the folder path.");
+		return;
+	}
+
+	CDir dir;
+	dir.FillByWildcard(sDir, sFileWildcard);
+
+	// Sort in reverse order (ie search more recent files first)
+	CString::size_type datePos = sFile.find("%Y%m%d");
+	bool fDateStartFromBack = false;
+	int nDateStart = 0;
+	if (datePos != CString::npos) {
+		if (sFile.find("*") < datePos) {
+			if(sFile.find_last_of("*") > datePos) {
+				PutModule("Error: Cannot search with a date in between two variables");
+				return;
+			} else {
+				fDateStartFromBack = true;
+				nDateStart = sFile.length() - datePos + 2;
+			}
+		} else {
+			fDateStartFromBack = false;
+			nDateStart = datePos;
+		}
+	}
+	fileNameOlderThan olderThan(fDateStartFromBack, nDateStart);
+	std::sort(dir.begin(), dir.end(), olderThan);
+
+	VCString vsSearch;
+	CString sLineResult = CString("[99:99:99]");
+	CFile* newestFile = NULL;
+	for (CDir::iterator it = dir.begin(); it < dir.end(); it++) {
+		if (((newestFile && !olderThan(*it, newestFile)) || !newestFile) && (*it)->Open()) {
+			(*it)->Seek((*it)->GetSize());
+			CString date;
+			if (fDateStartFromBack) {
+				date = (*it)->GetShortName().Right(nDateStart);
+				date.RightChomp(nDateStart - DATE_LENGTH);
+			} else {
+				date = (*it)->GetShortName().Left(nDateStart + DATE_LENGTH);
+				date.LeftChomp(nDateStart);
+			}
+
+			CString line;
+			while ((*it)->ReadLine(line, "\n", true)) {
+				line.Trim();
+				if (LineMatches(line, sNick, true, vsSearch, fIgnoreJoinsParts) && lineOlderThan(sLineResult, line)) {
+					sLineResult = date.RightChomp_n(4) + "-" + date.RightChomp_n(2).LeftChomp_n(4) + "-" + date.LeftChomp_n(6) + ": " + line;
+					newestFile = *it;
+					break;
+				}
+			}
+			(*it)->Close();
+		}else
+			DEBUG("Could not open log file [" << (*it)->GetLongName() << "]: " << strerror(errno));
+	}
+	if (sLineResult != "[99:99:99]")
+		PutModule(sLineResult);
+	else
+		PutModule("Have not seen " + sNick);
 }
 
 USERMODULEDEFS(CLogMod, "Write IRC logs")
