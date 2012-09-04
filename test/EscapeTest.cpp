@@ -6,8 +6,8 @@
  * by the Free Software Foundation.
  */
 
-#include "ZNCString.h"
-#include "ZNCDebug.h"
+#include "znc/ZNCString.h"
+#include "znc/ZNCDebug.h"
 
 static int testEqual(const CString& a, const CString& b, const CString& what)
 {

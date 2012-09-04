@@ -6,9 +6,9 @@
  * by the Free Software Foundation.
  */
 
-#include "ZNCDebug.h"
-#include "FileUtils.h"
-#include "Config.h"
+#include "znc/ZNCDebug.h"
+#include "znc/FileUtils.h"
+#include "znc/Config.h"
 #include <cstdlib>
 
 class CConfigTest {
@@ -113,7 +113,7 @@ public:
 
 		CConfig::SubConfigMapIterator it2 = conf.BeginSubConfigs();
 		while (it2 != conf.EndSubConfigs()) {
-			map<CString, CConfig::CConfigEntry>::const_iterator it3 = it2->second.begin();
+			map<CString, CConfigEntry>::const_iterator it3 = it2->second.begin();
 
 			while (it3 != it2->second.end()) {
 				sRes += "->" + it2->first + "/" + it3->first + "\n";
