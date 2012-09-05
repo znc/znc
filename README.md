@@ -1,4 +1,3 @@
-
 #[![ZNC](http://wiki.znc.in/skins/common/images/wiki.png)](http://znc.in) - An advanced IRC bouncer
 
 ## Table of contents
@@ -45,6 +44,7 @@ saslauth:
 Installation is done with the `./configure ; make ; make install` commands.
 
 If you are building from git, you will need to run `./autogen.sh` first to produce the `configure` script.
+Note that this requires `automake` to be installed.
 
 You can use
 	./configure --help
