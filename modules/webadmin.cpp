@@ -749,7 +749,7 @@ public:
 			if (pNetwork) {
 				Tmpl["Action"] = "editnetwork";
 				Tmpl["Edit"] = "true";
-				Tmpl["Title"] = "Edit Network" + CString(" [" + pNetwork->GetName() + "]");
+				Tmpl["Title"] = "Edit Network" + CString(" [" + pNetwork->GetName() + "]") + " of User [" + pUser->GetUserName() + "]";
 				Tmpl["Name"] = pNetwork->GetName();
 
 				Tmpl["Nick"] = pNetwork->GetNick();
