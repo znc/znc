@@ -579,7 +579,7 @@ public:
 			if (pChan) {
 				Tmpl["Action"] = "editchan";
 				Tmpl["Edit"] = "true";
-				Tmpl["Title"] = "Edit Channel" + CString(" [" + pChan->GetName() + "]");
+				Tmpl["Title"] = "Edit Channel" + CString(" [" + pChan->GetName() + "]") + " of Network [" + pNetwork->GetName() + "] of User [" + pNetwork->GetUser()->GetUserName() + "]";
 				Tmpl["ChanName"] = pChan->GetName();
 				Tmpl["BufferCount"] = CString(pChan->GetBufferCount());
 				Tmpl["DefModes"] = pChan->GetDefaultModes();
