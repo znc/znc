@@ -131,6 +131,9 @@
 						<td>[<a href="addnetwork?user=<? VAR Username ESC=URL ?>">Add</a>]</td>
 				<? IF NetworkLoop ?>
 						<td>Name</td>
+						<td>Clients</td>
+						<td>Current Server</td>
+						<td>IRC Nick</td>
 					<? ELSE ?>
 						<td>&lt;- Add a network (opens in same page)</td>
 				<? ENDIF ?>
@@ -145,6 +148,9 @@
 							[<a href="editnetwork?user=<? VAR Username ESC=URL ?>&amp;network=<? VAR Name ESC=URL ?>">Edit</a>] [<a href="delnetwork?user=<? VAR Username ESC=URL ?>&amp;name=<? VAR Name ESC=URL ?>">Del</a>]
 						</td>
 						<td><? VAR Name ?></td>
+						<td><? VAR Clients ?></td>
+						<td><? VAR Server DEFAULT="-N/A-" ?></td>
+						<td><? VAR IRCNick ?></td>
 					</tr>
 			<? ENDLOOP ?>
 					</tbody>

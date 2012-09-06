@@ -1034,6 +1034,12 @@ public:
 					CTemplate& l = Tmpl.AddRow("NetworkLoop");
 					l["Name"] = vNetworks[a]->GetName();
 					l["Username"] = pUser->GetUserName();
+					l["Clients"] = CString(vNetworks[a]->GetClients().size());
+					l["IRCNick"] = vNetworks[a]->GetIRCNick().GetNick();
+					CServer* pServer = vNetworks[a]->GetCurrentServer();
+					if (pServer) {
+						l["Server"] = pServer->GetName();
+					}
 				}
 
 				const MCString& msCTCPReplies = pUser->GetCTCPReplies();
