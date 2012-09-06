@@ -247,10 +247,14 @@ public:
 			pNewUser->SetDCCBindHost(pUser->GetDCCBindHost());
 		}
 
-		// First apply the old limit in case the new one is too high
-		if (pUser)
-			pNewUser->SetBufferCount(pUser->GetBufferCount(), true);
-		pNewUser->SetBufferCount(WebSock.GetParam("bufsize").ToUInt(), spSession->IsAdmin());
+		sArg = WebSock.GetParam("bufsize"); if (!sArg.empty()) pNewUser->SetBufferCount(sArg.ToUInt(), spSession->IsAdmin());
+		if (!sArg.empty()) {
+			// First apply the old limit in case the new one is too high
+			if (pUser)
+				pNewUser->SetBufferCount(pUser->GetBufferCount(), true);
+			pNewUser->SetBufferCount(sArg.ToUInt(), spSession->IsAdmin());
+		}
+
 		pNewUser->SetSkinName(WebSock.GetParam("skin"));
 		pNewUser->SetAutoClearChanBuffer(WebSock.GetParam("autoclearchanbuffer").ToBool());
 		pNewUser->SetMultiClients(WebSock.GetParam("multiclients").ToBool());
