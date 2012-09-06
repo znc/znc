@@ -58,6 +58,12 @@ E=@\#
 C=
 endif
 
+ifeq "@PYTHON@" ""
+JOBHACK=
+else
+JOBHACK=-j1
+endif
+
 .PHONY: all man modules clean distclean install version_extra_recompile
 .SECONDARY:
 
@@ -86,7 +92,7 @@ man:
 	@$(MAKE) -C man $(C)
 
 modules: $(LIBZNC)
-	@$(MAKE) -C modules $(C)
+	@$(MAKE) -C modules $(C) $(JOBHACK)
 
 clean:
 	rm -rf $(CLEAN)
@@ -125,7 +131,7 @@ install: znc $(LIBZNC)
 	$(INSTALL_DATA) $(srcdir)/include/znc/*.h $(DESTDIR)$(includedir)/znc
 	$(INSTALL_DATA) include/znc/zncconfig.h $(DESTDIR)$(includedir)/znc
 	$(INSTALL_DATA) znc.pc $(DESTDIR)$(PKGCONFIGDIR)
-	@$(MAKE) -C modules install DESTDIR=$(DESTDIR);
+	@$(MAKE) -C modules $(JOBHACK) install DESTDIR=$(DESTDIR);
 	if test -n "$(LIBZNC)"; then \
 		test -d $(DESTDIR)$(LIBZNCDIR) || $(INSTALL) -d $(DESTDIR)$(LIBZNCDIR) || exit 1 ; \
 		$(INSTALL_PROGRAM) $(LIBZNC) $(DESTDIR)$(LIBZNCDIR) || exit 1 ; \

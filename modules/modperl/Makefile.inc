@@ -9,7 +9,7 @@ PERL_CXX   += -Wno-write-strings -Wno-redundant-decls -Wno-missing-declarations
 PERL_CXX   += -Wno-type-limits -Wno-sign-compare -Wno-strict-overflow
 # This is for SWIG
 PERL_CXX   += -DSWIG_TYPE_TABLE=znc
-modperlCXXFLAGS := $(PERL_CXX)
+modperlCXXFLAGS := $(PERL_CXX) -Wno-unused-function
 modperlLDFLAGS  := $(PERL_LD)
 # Find additional headers for out-of-tree build
 modperlCXXFLAGS += -I.
@@ -32,7 +32,7 @@ else
 FILES    := $(shell echo $(FILES) | sed -e "s/modperl//")
 endif
 
-.PHONY: modperl_install
+.PHONY: modperl_install modperl_all
 
 install: $(PERLHOOK)
 
