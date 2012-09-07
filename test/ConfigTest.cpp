@@ -113,7 +113,7 @@ public:
 
 		CConfig::SubConfigMapIterator it2 = conf.BeginSubConfigs();
 		while (it2 != conf.EndSubConfigs()) {
-			map<CString, CConfigEntry>::const_iterator it3 = it2->second.begin();
+			std::map<CString, CConfigEntry>::const_iterator it3 = it2->second.begin();
 
 			while (it3 != it2->second.end()) {
 				sRes += "->" + it2->first + "/" + it3->first + "\n";
