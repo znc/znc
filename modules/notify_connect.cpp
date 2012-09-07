@@ -27,4 +27,8 @@ private:
 	}
 };
 
+template<> void TModInfo<CNotifyConnectMod>(CModInfo& Info) {
+	Info.SetWikiPage("notify_connect");
+}
+
 GLOBALMODULEDEFS(CNotifyConnectMod, "Notifies all admin users when a client connects or disconnects.")
