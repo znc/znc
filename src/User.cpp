@@ -547,10 +547,10 @@ CString CUser::AddTimestamp(time_t tm, const CString& sStr) const {
 			// \x1F underline
 			// Also see http://www.visualirc.net/tech-attrs.php
 			if (CString::npos != sRet.find_first_of("\x02\x03\x04\x0F\x12\x16\x1D\x1F")) {
-				sRet += "\x0F ";
+				sRet += "\x0F";
 			}
 
-			sRet += sTimestamp;
+			sRet += " " + sTimestamp;
 		}
 	}
 
