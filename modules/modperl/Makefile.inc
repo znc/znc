@@ -50,7 +50,7 @@ modperl/ZNC.o: modperl/ZNC.cpp Makefile
 
 ifneq "$(SWIG)" ""
 modperl/swigperlrun.h modperl/functions.cpp modperl/ZNC.cpp modperl/ZNC.pm: modperl/codegen.pl modperl/functions.in Makefile
-	@mkdir -p modperl
+	@mkdir -p modperl .depend
 	$(Q)$(MAKE) -f $(srcdir)/modperl/Makefile.gen $(C) SWIG="$(SWIG)" srcdir="$(srcdir)" PERL="$(PERL)" VERBOSE="$(VERBOSE)" SED="$(SED)"
 endif
 
