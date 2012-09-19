@@ -320,8 +320,8 @@ public:
 		DH_free(dh);
 
 		/* Add sasl username to response */
-		memcpy(out_ptr, GetNV("username").c_str(), GetNV("username").size());
-		out_ptr += GetNV("username").size() + 1;
+		memcpy(out_ptr, GetNV("username").c_str(), GetNV("username").length() + 1); // +1 for zero byte in the end
+		out_ptr += GetNV("username").length() + 1;
 
 		/* Finally add the encrypted password to the response */
 		memcpy(out_ptr, encrypted_password, password_length);
