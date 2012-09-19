@@ -698,13 +698,6 @@ class CAdminMod : public CModule {
 	}
 
 	void AddNetwork(const CString& sLine) {
-#ifndef ENABLE_ADD_NETWORK
-		if (!m_pUser->IsAdmin()) {
-			PutModule("Permission denied");
-			return;
-		}
-#endif
-
 		CString sUser = sLine.Token(1);
 		CString sNetwork = sLine.Token(2);
 		CUser *pUser = m_pUser;
@@ -714,12 +707,18 @@ class CAdminMod : public CModule {
 		} else {
 			pUser = GetUser(sUser);
 			if (!pUser) {
+				PutModule("User not found");
 				return;
 			}
 		}
 
 		if (sNetwork.empty()) {
 			PutModule("Usage: " + sLine.Token(0) + " [user] network");
+			return;
+		}
+
+		if (!m_pUser->IsAdmin() && !pUser->HasSpaceForNewNetwork()) {
+			PutStatus("Network number limit reached. Ask an admin to increase the limit for you, or delete few old ones using /znc DelNetwork <name>");
 			return;
 		}
 

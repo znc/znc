@@ -86,6 +86,7 @@ CUser::CUser(const CString& sUserName)
 	m_sTimestampFormat = "[%H:%M:%S]";
 	m_bAppendTimestamp = false;
 	m_bPrependTimestamp = true;
+	m_uMaxNetworks = 1;
 	m_pUserTimer = new CUserTimer(this);
 	CZNC::Get().GetManager().AddCron(m_pUserTimer);
 }
@@ -137,6 +138,7 @@ bool CUser::ParseConfig(CConfig* pConfig, CString& sError) {
 	size_t numStringOptions = sizeof(StringOptions) / sizeof(StringOptions[0]);
 	TOption<unsigned int> UIntOptions[] = {
 		{ "jointries", &CUser::SetJoinTries },
+		{ "maxnetworks", &CUser::SetMaxNetworks },
 	};
 	size_t numUIntOptions = sizeof(UIntOptions) / sizeof(UIntOptions[0]);
 	TOption<bool> BoolOptions[] = {
@@ -653,6 +655,7 @@ bool CUser::Clone(const CUser& User, CString& sErrorRet, bool bCloneNetworks) {
 	SetDefaultChanModes(User.GetDefaultChanModes());
 	SetBufferCount(User.GetBufferCount(), true);
 	SetJoinTries(User.JoinTries());
+	SetMaxNetworks(User.MaxNetworks());
 
 	// Allowed Hosts
 	m_ssAllowedHosts.clear();
@@ -847,6 +850,7 @@ CConfig CUser::ToConfig() {
 	config.AddKeyValuePair("PrependTimestamp", CString(GetTimestampPrepend()));
 	config.AddKeyValuePair("Timezone", m_sTimezone);
 	config.AddKeyValuePair("JoinTries", CString(m_uMaxJoinTries));
+	config.AddKeyValuePair("MaxNetworks", CString(m_uMaxNetworks));
 
 	// Allow Hosts
 	if (!m_ssAllowedHosts.empty()) {
@@ -1126,7 +1130,7 @@ bool CUser::DenySetBindHost() const { return m_bDenySetBindHost; }
 bool CUser::MultiClients() const { return m_bMultiClients; }
 const CString& CUser::GetStatusPrefix() const { return m_sStatusPrefix; }
 const CString& CUser::GetDefaultChanModes() const { return m_sDefaultChanModes; }
-
+bool CUser::HasSpaceForNewNetwork() const { return GetNetworks().size() < MaxNetworks(); }
 
 CString CUser::GetQuitMsg() const { return (!m_sQuitMsg.Trim_n().empty()) ? m_sQuitMsg : CZNC::GetTag(false); }
 const MCString& CUser::GetCTCPReplies() const { return m_mssCTCPReplies; }

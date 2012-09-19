@@ -266,9 +266,11 @@ public:
 		if (spSession->IsAdmin()) {
 			pNewUser->SetDenyLoadMod(WebSock.GetParam("denyloadmod").ToBool());
 			pNewUser->SetDenySetBindHost(WebSock.GetParam("denysetbindhost").ToBool());
+			sArg = WebSock.GetParam("maxnetworks"); if (!sArg.empty()) pNewUser->SetMaxNetworks(sArg.ToUInt());
 		} else if (pUser) {
 			pNewUser->SetDenyLoadMod(pUser->DenyLoadMod());
 			pNewUser->SetDenySetBindHost(pUser->DenySetBindHost());
+			pNewUser->SetMaxNetworks(pUser->MaxNetworks());
 		}
 
 		// If pUser is not NULL, we are editing an existing user.
@@ -788,12 +790,10 @@ public:
 					}
 				}
 			} else {
-#ifndef ENABLE_ADD_NETWORK
-				if (!spSession->IsAdmin()) {
-					WebSock.PrintErrorPage("Permission denied");
+				if (!spSession->IsAdmin() && !pUser->HasSpaceForNewNetwork()) {
+					WebSock.PrintErrorPage("Network number limit reached. Ask an admin to increase the limit for you, or delete few old ones from Your Settings");
 					return true;
 				}
-#endif
 
 				Tmpl["Action"] = "addnetwork";
 				Tmpl["Title"] = "Add Network for User [" + pUser->GetUserName() + "]";
@@ -813,6 +813,10 @@ public:
 		}
 
 		if (!pNetwork) {
+			if (!spSession->IsAdmin() && !pUser->HasSpaceForNewNetwork()) {
+				WebSock.PrintErrorPage("Network number limit reached. Ask an admin to increase the limit for you, or delete few old ones from Your Settings");
+				return true;
+			}
 			pNetwork = pUser->AddNetwork(sName);
 			if (!pNetwork) {
 				WebSock.PrintErrorPage("Network [" + sName.Token(0) + "] already exists");
@@ -1009,6 +1013,8 @@ public:
 				}
 			}
 
+			Tmpl["ImAdmin"] = CString(spSession->IsAdmin());
+
 			if (pUser) {
 				Tmpl["Username"] = pUser->GetUserName();
 				Tmpl["Nick"] = pUser->GetNick();
@@ -1022,6 +1028,7 @@ public:
 				Tmpl["TimestampFormat"] = pUser->GetTimestampFormat();
 				Tmpl["Timezone"] = pUser->GetTimezone();
 				Tmpl["JoinTries"] = CString(pUser->JoinTries());
+				Tmpl["MaxNetworks"] = CString(pUser->MaxNetworks());
 
 				const set<CString>& ssAllowedHosts = pUser->GetAllowedHosts();
 				for (set<CString>::const_iterator it = ssAllowedHosts.begin(); it != ssAllowedHosts.end(); ++it) {

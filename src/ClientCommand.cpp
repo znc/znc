@@ -417,12 +417,10 @@ void CClient::UserCommand(CString& sLine) {
 		PutStatus("Total: " + CString(vChans.size()) + " - Joined: " + CString(uNumJoined) +
 			" - Detached: " + CString(uNumDetached) + " - Disabled: " + CString(uNumDisabled));
 	} else if (sCommand.Equals("ADDNETWORK")) {
-#ifndef ENABLE_ADD_NETWORK
-		if (!m_pUser->IsAdmin()) {
-			PutStatus("Permission denied");
+		if (!m_pUser->IsAdmin() && !m_pUser->HasSpaceForNewNetwork()) {
+			PutStatus("Network number limit reached. Ask an admin to increase the limit for you, or delete few old ones using /znc DelNetwork <name>");
 			return;
 		}
-#endif
 
 		CString sNetwork = sLine.Token(1);
 

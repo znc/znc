@@ -69,6 +69,7 @@ public:
 	void RemoveNetwork(CIRCNetwork *pNetwork);
 	CIRCNetwork* FindNetwork(const CString& sNetwork) const;
 	const std::vector<CIRCNetwork*>& GetNetworks() const;
+	bool HasSpaceForNewNetwork() const;
 	// !Networks
 
 	bool PutUser(const CString& sLine, CClient* pClient = NULL, CClient* pSkipClient = NULL);
@@ -124,6 +125,7 @@ public:
 	void SetTimezone(const CString& s) { m_sTimezone = s; }
 	void SetJoinTries(unsigned int i) { m_uMaxJoinTries = i; }
 	void SetSkinName(const CString& s) { m_sSkinName = s; }
+	void SetMaxNetworks(unsigned int i) { m_uMaxNetworks = i; }
 	// !Setters
 
 	// Getters
@@ -164,6 +166,7 @@ public:
 	unsigned long long BytesWritten() const { return m_uBytesWritten; }
 	unsigned int JoinTries() const { return m_uMaxJoinTries; }
 	CString GetSkinName() const;
+	unsigned int MaxNetworks() const { return m_uMaxNetworks; }
 	// !Getters
 
 protected:
@@ -208,6 +211,7 @@ protected:
 	unsigned long long    m_uBytesRead;
 	unsigned long long    m_uBytesWritten;
 	unsigned int          m_uMaxJoinTries;
+	unsigned int          m_uMaxNetworks;
 	CString               m_sSkinName;
 
 	CModules*             m_pModules;

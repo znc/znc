@@ -677,19 +677,7 @@ void CClient::AcceptLogin(CUser& User) {
 			PutStatusNotice("If you want to choose another network, use /znc JumpNetwork <network>, or connect to ZNC with username " + m_pUser->GetUserName() + "/<network> (instead of just " + m_pUser->GetUserName() + ")");
 		}
 	} else {
-#ifndef ENABLE_ADD_NETWORK
-		if (!m_pUser->IsAdmin()) {
-			/* Since this user cannot add his own network,
-			 * lets make them a default network */
-			m_pNetwork = m_pUser->AddNetwork("default");
-		} else {
-#endif
-
 		PutStatusNotice("You have no networks configured. Use /znc AddNetwork <network> to add one.");
-
-#ifndef ENABLE_ADD_NETWORK
-		}
-#endif
 	}
 
 	SetNetwork(m_pNetwork, false);

@@ -148,9 +148,6 @@ AC_ARG_ENABLE( [poll],
 	AS_HELP_STRING([--disable-poll], [use select() instead of poll()]),
 	[POLL="$enableval"],
 	[POLL="yes"])
-AC_ARG_ENABLE([add-networks],
-	AS_HELP_STRING([--enable-add-networks], [allow non-admins to add networks]),
-	[ if test x"$enableval" = "xyes" ; then appendCXX "-DENABLE_ADD_NETWORK" ; fi ])
 
 AC_ARG_WITH([systemdsystemunitdir],
 	AS_HELP_STRING([--with-systemdsystemunitdir=DIR], [Directory for systemd service files]),
