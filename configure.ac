@@ -224,6 +224,7 @@ if test "x$TDNS" != "xno"; then
 				#include <netdb.h>
 			]], [[
 				int x = AI_ADDRCONFIG;
+				(void) x;
 			]])
 		], [
 			AC_MSG_RESULT([yes])
@@ -280,6 +281,9 @@ if test "x$SSL" != "xno"; then
 				SSL_CTX* ctx = SSL_CTX_new(TLSv1_method());
 				SSL* ssl = SSL_new(ctx);
 				DH* dh = DH_new();
+				DH_free(dh);
+				SSL_free(ssl);
+				SSL_CTX_free(ctx);
 			]])
 		], [
 			AC_MSG_RESULT([yes])
