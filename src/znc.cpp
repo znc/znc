@@ -761,7 +761,7 @@ bool CZNC::WriteNewConfig(const CString& sConfigFile) {
 			vsLines.push_back("");
 
 			do {
-				CUtils::GetInput("Network", sNetwork, "");
+				CUtils::GetInput("Network", sNetwork, "", "e.g. `freenode' or `efnet'");
 			} while (!CIRCNetwork::IsValidNetwork(sNetwork));
 
 			vsLines.push_back("\t<Network " + sNetwork + ">");
