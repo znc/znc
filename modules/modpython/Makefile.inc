@@ -57,9 +57,7 @@ modpython/_znc_core.$(PYCEXT_EXT): modpython/_znc_core.o Makefile modpython.so
 	$(Q)$(CXX) $(MODFLAGS) $(LDFLAGS) $(MODLINK) -o $@ $< $(PY_LDFLAGS) $(PYDEPONMOD)
 
 ifneq "$(SWIG)" ""
-modpython/znc_core.py modpython/_znc_core.cpp modpython/functions.cpp modpython/swigpyrun.h: modpython/codegen.pl modpython/functions.in Makefile
-	@mkdir -p modpython .depend
-	$(Q)$(MAKE) -f $(srcdir)/modpython/Makefile.gen $(C) SWIG="$(SWIG)" srcdir="$(srcdir)" PERL="$(PERL)" VERBOSE="$(VERBOSE)" SED="$(SED)"
+include $(srcdir)/modpython/Makefile.gen
 endif
 
 modpython.o: modpython/functions.cpp

@@ -274,7 +274,7 @@ if test "x$ax_pthread_ok" = xyes; then
         AC_CACHE_CHECK([for PTHREAD_PRIO_INHERIT],
             ax_cv_PTHREAD_PRIO_INHERIT, [
                 AC_LINK_IFELSE([
-                    AC_LANG_PROGRAM([[#include <pthread.h>]], [[int i = PTHREAD_PRIO_INHERIT;]])],
+                    AC_LANG_PROGRAM([[#include <pthread.h>]], [[int i = PTHREAD_PRIO_INHERIT; (void) i;]])],
                     [ax_cv_PTHREAD_PRIO_INHERIT=yes],
                     [ax_cv_PTHREAD_PRIO_INHERIT=no])
             ])

@@ -15,10 +15,10 @@ modperlLDFLAGS  := $(PERL_LD)
 modperlCXXFLAGS += -I.
 
 ifeq "$(ISCYGWIN)" "1"
-PERLCEXT_EXT := "dll"
-PERLDEPONMOD := "modperl.so"
+PERLCEXT_EXT := dll
+PERLDEPONMOD := modperl.so
 else
-PERLCEXT_EXT := "so"
+PERLCEXT_EXT := so
 PERLDEPONMOD :=
 endif
 
