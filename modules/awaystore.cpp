@@ -189,6 +189,7 @@ public:
 		m_saveMessages = true;
 		m_bReplayOnConnect = false;
 		m_bAlwaysStore = false;
+		m_bUsePrivMessage = true;
 		SetAwayTime(300);
 		AddTimer(new CAwayJob(this, 60, 0, "AwayJob", "Checks for idle and saves messages every 1 minute"));
 
@@ -317,7 +318,7 @@ public:
 
 	virtual void OnClientLogin()
 	{
-		Back(true);
+		Back(m_bUsePrivMessage);
 		if (m_bReplayOnConnect)
 			Replay();
 	}
@@ -502,6 +503,7 @@ private:
 	bool            m_saveMessages;
 	bool		m_bReplayOnConnect;
 	bool		m_bAlwaysStore;
+	bool		m_bUsePrivMessage;
 };
 
 
