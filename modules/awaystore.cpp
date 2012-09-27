@@ -222,40 +222,38 @@ public:
 
 	virtual bool OnLoad(const CString& sArgs, CString& sMessage)
 	{
-		CString sMyArgs = sArgs;
+		VCString vMyArgs;
+		sArgs.Split(" ", vMyArgs, true, "", "", true, true);
+
+		VCString::iterator it;
 		size_t uIndex = 0;
-		bool gotPass = false; //Don't read trailing strings as password.
-		while (uIndex <= sizeof(sMyArgs)){
-			if (sMyArgs.Token(uIndex) == "-nopriv")
+
+		for (it = vMyArgs.begin(); it != vMyArgs.end(); ++it)
+		{
+			PutModule(vMyArgs[uIndex]);
+			if (vMyArgs[uIndex] == "-nopriv")
 			{
 				m_bUsePrivMessage = false;
-			} else if (sMyArgs.Token(uIndex) == "-alwaystore")
+			} else if (vMyArgs[uIndex] == "-alwaystore")
 			{
 				m_bAlwaysStore = true;
-			} else if (sMyArgs.Token(uIndex) == "-replay")
+			} else if (vMyArgs[uIndex] == "-replay")
 			{
 				m_bReplayOnConnect = true;
-			} else if (sMyArgs.Token(uIndex) == "-nostore")
+			} else if (vMyArgs[uIndex] == "-nostore")
 			{
 				m_saveMessages = false;
-			} else if (sMyArgs.Token(uIndex) == "-notimer")
+			} else if (vMyArgs[uIndex] == "-notimer")
 			{
 				SetAwayTime(0);
-			} else if (sMyArgs.Token(uIndex) == "-timer")
+			} else if (vMyArgs[uIndex] == "-timer")
 			{
-				SetAwayTime(sMyArgs.Token(uIndex + 1).ToInt());
+				SetAwayTime(vMyArgs[uIndex + 1].ToInt());
 				uIndex++;
-			} else if ((sMyArgs.Token(uIndex)[0] != '-') && (m_saveMessages) && !(gotPass))
+			} else if (m_saveMessages)
 			{
-				gotPass = true;
-				if (!sMyArgs.Token(uIndex).empty())
-				{
-					m_sPassword =
-						CBlowfish::MD5(sMyArgs.Token(uIndex));
-				} else {
-					sMessage = "This module needs as an argument a keyphrase used for encryption";
-					return false;
-				}
+				//Split() makes sure vMyArgs[uIndex] is not empty 
+				m_sPassword = CBlowfish::MD5(vMyArgs[uIndex]);
 
 				if (!BootStrap())
 				{
@@ -264,11 +262,13 @@ public:
 					m_bBootError = true;
 					return false;
 				}
+				return true;
 			}
 			uIndex++;
 		}
-
-		return true;
+		//No password given
+		sMessage = "This module needs as an argument a keyphrase used for encryption";
+		return false;
 	}
 
 	virtual void OnIRCConnected()
