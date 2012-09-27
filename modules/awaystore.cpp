@@ -188,6 +188,7 @@ public:
 		m_bBootError = false;
 		m_saveMessages = true;
 		m_bReplayOnConnect = false;
+		m_bAlwaysStore = false;
 		SetAwayTime(300);
 		AddTimer(new CAwayJob(this, 60, 0, "AwayJob", "Checks for idle and saves messages every 1 minute"));
 
@@ -414,7 +415,7 @@ public:
 
 	virtual EModRet OnPrivMsg(CNick& Nick, CString& sMessage)
 	{
-		if (m_bIsAway)
+		if (m_bIsAway || m_bAlwaysStore)
 			AddMessage(time(NULL), Nick, sMessage);
 		return(CONTINUE);
 	}
@@ -500,6 +501,7 @@ private:
 	CString         m_sReason;
 	bool            m_saveMessages;
 	bool		m_bReplayOnConnect;
+	bool		m_bAlwaysStore;
 };
 
 
