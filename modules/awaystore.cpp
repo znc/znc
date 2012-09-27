@@ -187,6 +187,7 @@ public:
 		m_bIsAway = false;
 		m_bBootError = false;
 		m_saveMessages = true;
+		m_bReplayOnConnect = false;
 		SetAwayTime(300);
 		AddTimer(new CAwayJob(this, 60, 0, "AwayJob", "Checks for idle and saves messages every 1 minute"));
 
@@ -316,6 +317,8 @@ public:
 	virtual void OnClientLogin()
 	{
 		Back(true);
+		if (m_bReplayOnConnect)
+			Replay();
 	}
 	virtual void OnClientDisconnect()
 	{
@@ -496,6 +499,7 @@ private:
 	vector<CString> m_vMessages;
 	CString         m_sReason;
 	bool            m_saveMessages;
+	bool		m_bReplayOnConnect;
 };
 
 
