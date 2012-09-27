@@ -224,37 +224,48 @@ public:
 	{
 		CString sMyArgs = sArgs;
 		size_t uIndex = 0;
-		if (sMyArgs.Token(0) == "-nostore")
-		{
-			uIndex++;
-			m_saveMessages = false;
-		}
-		if (sMyArgs.Token(uIndex) == "-notimer")
-		{
-			SetAwayTime(0);
-			sMyArgs = sMyArgs.Token(uIndex + 1, true);
-		} else if (sMyArgs.Token(uIndex) == "-timer")
-		{
-			SetAwayTime(sMyArgs.Token(uIndex + 1).ToInt());
-			sMyArgs = sMyArgs.Token(uIndex + 2, true);
-		}
-		if (m_saveMessages)
-		{
-			if (!sMyArgs.empty())
+		bool gotPass = false; //Don't read trailing strings as password.
+		while (uIndex <= sizeof(sMyArgs)){
+			if (sMyArgs.Token(uIndex) == "-nopriv")
 			{
-				m_sPassword = CBlowfish::MD5(sMyArgs);
-			} else {
-				sMessage = "This module needs as an argument a keyphrase used for encryption";
-				return false;
-			}
+				m_bUsePrivMessage = false;
+			} else if (sMyArgs.Token(uIndex) == "-alwaystore")
+			{
+				m_bAlwaysStore = true;
+			} else if (sMyArgs.Token(uIndex) == "-replay")
+			{
+				m_bReplayOnConnect = true;
+			} else if (sMyArgs.Token(uIndex) == "-nostore")
+			{
+				m_saveMessages = false;
+			} else if (sMyArgs.Token(uIndex) == "-notimer")
+			{
+				SetAwayTime(0);
+			} else if (sMyArgs.Token(uIndex) == "-timer")
+			{
+				SetAwayTime(sMyArgs.Token(uIndex + 1).ToInt());
+				uIndex++;
+			} else if ((sMyArgs.Token(uIndex)[0] != '-') && (m_saveMessages) && !(gotPass))
+			{
+				gotPass = true;
+				if (!sMyArgs.Token(uIndex).empty())
+				{
+					m_sPassword =
+						CBlowfish::MD5(sMyArgs.Token(uIndex));
+				} else {
+					sMessage = "This module needs as an argument a keyphrase used for encryption";
+					return false;
+				}
 
-			if (!BootStrap())
-			{
-				sMessage = "Failed to decrypt your saved messages - "
-					"Did you give the right encryption key as an argument to this module?";
-				m_bBootError = true;
-				return false;
+				if (!BootStrap())
+				{
+					sMessage = "Failed to decrypt your saved messages - "
+						"Did you give the right encryption key as an argument to this module?";
+					m_bBootError = true;
+					return false;
+				}
 			}
+			uIndex++;
 		}
 
 		return true;
@@ -524,7 +535,7 @@ void CAwayJob::RunJob()
 template<> void TModInfo<CAway>(CModInfo& Info) {
 	Info.SetWikiPage("awaystore");
 	Info.SetHasArgs(true);
-	Info.SetArgsHelpText("[ -notimer | -timer N ]  passw0rd . N is number of seconds, 600 by default.");
+	Info.SetArgsHelpText("[-nopriv] [-alwaystore] [-replay] [-nostore] [ -notimer | -timer N ]  passw0rd . N is number of seconds, 600 by default.");
 }
 
 NETWORKMODULEDEFS(CAway, "Adds auto-away with logging, useful when you use ZNC from different locations");
