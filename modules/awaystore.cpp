@@ -68,12 +68,7 @@ class CAway : public CModule
 	}
 
 	void ReplayCommand(const CString& sCommand) {
-		CString nick = GetClient()->GetNick();
-		for (u_int a = 0; a < m_vMessages.size(); a++) {
-			CString sWhom = m_vMessages[a].Token(1, false, ":");
-			CString sMessage = m_vMessages[a].Token(2, true, ":");
-			PutUser(":" + sWhom + " PRIVMSG " + nick + " :" + sMessage);
-		}
+		Replay();
 	}
 
 	void DeleteCommand(const CString& sCommand) {
@@ -333,6 +328,41 @@ public:
 		CString sRet = GetSavePath();
 		sRet += "/.znc-away-" + CBlowfish::MD5(sBuffer, true);
 		return(sRet);
+	}
+
+	virtual void Replay()
+	{
+		CString nick = GetClient()->GetNick();
+		for (u_int a = 0; a < m_vMessages.size(); a++) {
+			CString sTime = m_vMessages[a].Token(0, false, ":");
+			CString sWhom = m_vMessages[a].Token(1, false, ":");
+			CString sMessage = m_vMessages[a].Token(2, true, ":");
+
+			if ((sTime.empty()) || (sWhom.empty()) || (sMessage.empty())) {
+				// illegal format
+				PutModule("Corrupt message! [" + m_vMessages[a] + "]");
+				m_vMessages.erase(m_vMessages.begin() + a--);
+				continue;
+			}
+
+			time_t iTime = sTime.ToULong();
+			char szFormat[64];
+			struct tm t;
+			localtime_r(&iTime, &t);
+			size_t iCount = strftime(szFormat, 64, "%F %T", &t);
+
+			if (iCount <= 0) {
+				PutModule("Corrupt time stamp! [" + m_vMessages[a] + "]");
+				m_vMessages.erase(m_vMessages.begin() + a--);
+				continue;
+			}
+
+			CString sTmp = "[";
+			sTmp.append(szFormat, iCount);
+			sTmp += "] ";
+			sTmp += sMessage;
+			PutUser(":" + sWhom + " PRIVMSG " + nick + " :" + sTmp);
+		}
 	}
 
 	virtual void Away(bool bForce = false, const CString & sReason = "")
