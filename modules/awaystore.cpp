@@ -335,8 +335,7 @@ public:
 	}
 	virtual void OnClientDisconnect()
 	{
-		if (!m_pNetwork->IsUserAttached())
-			Away();
+		Away();
 	}
 
 	CString GetPath()
