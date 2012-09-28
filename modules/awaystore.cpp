@@ -230,7 +230,6 @@ public:
 
 		for (it = vMyArgs.begin(); it != vMyArgs.end(); ++it)
 		{
-			PutModule(vMyArgs[uIndex]);
 			if (vMyArgs[uIndex] == "-nopriv")
 			{
 				m_bUsePrivMessage = false;
