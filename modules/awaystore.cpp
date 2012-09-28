@@ -233,7 +233,7 @@ public:
 			if (vMyArgs[uIndex] == "-nopriv")
 			{
 				m_bUsePrivMessage = false;
-			} else if (vMyArgs[uIndex] == "-alwaystore")
+			} else if (vMyArgs[uIndex] == "-alwaysstore")
 			{
 				m_bAlwaysStore = true;
 			} else if (vMyArgs[uIndex] == "-replay")
@@ -534,7 +534,7 @@ void CAwayJob::RunJob()
 template<> void TModInfo<CAway>(CModInfo& Info) {
 	Info.SetWikiPage("awaystore");
 	Info.SetHasArgs(true);
-	Info.SetArgsHelpText("[-nopriv] [-alwaystore] [-replay] [-nostore] [ -notimer | -timer N ]  passw0rd . N is number of seconds, 600 by default.");
+	Info.SetArgsHelpText("[-nopriv] [-alwaysstore] [-replay] [-nostore] [ -notimer | -timer N ]  passw0rd . N is number of seconds, 600 by default.");
 }
 
 NETWORKMODULEDEFS(CAway, "Adds auto-away with logging, useful when you use ZNC from different locations");
