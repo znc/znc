@@ -33,7 +33,7 @@ public:
 	CIRCNetwork(CUser *pUser, const CIRCNetwork& Network);
 	~CIRCNetwork();
 
-	void Clone(const CIRCNetwork& Network);
+	void Clone(const CIRCNetwork& Network, bool bCloneName = true);
 
 	CString GetNetworkPath();
 

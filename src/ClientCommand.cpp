@@ -491,6 +491,84 @@ void CClient::UserCommand(CString& sLine) {
 		if (PutStatus(Table) == 0) {
 			PutStatus("No networks");
 		}
+	} else if (sCommand.Equals("MOVENETWORK")) {
+		if (!m_pUser->IsAdmin()) {
+			PutStatus("Access Denied.");
+			return;
+		}
+
+		CString sOldUser = sLine.Token(1);
+		CString sOldNetwork = sLine.Token(2);
+		CString sNewUser = sLine.Token(3);
+		CString sNewNetwork = sLine.Token(4);
+
+		if (sOldUser.empty() || sOldNetwork.empty() || sNewUser.empty()) {
+			PutStatus("Usage: MoveNetwork old-user old-network new-user [new-network]");
+			return;
+		}
+		if (sNewNetwork.empty()) {
+			sNewNetwork = sOldNetwork;
+		}
+
+		CUser* pOldUser = CZNC::Get().FindUser(sOldUser);
+		if (!pOldUser) {
+			PutStatus("Old user [" + sOldUser + "] not found.");
+			return;
+		}
+
+		CIRCNetwork* pOldNetwork = pOldUser->FindNetwork(sOldNetwork);
+		if (!pOldNetwork) {
+			PutStatus("Old network [" + sOldNetwork + "] not found.");
+			return;
+		}
+
+		CUser* pNewUser = CZNC::Get().FindUser(sNewUser);
+		if (!pNewUser) {
+			PutStatus("New user [" + sOldUser + "] not found.");
+			return;
+		}
+
+		if (pNewUser->FindNetwork(sNewNetwork)) {
+			PutStatus("User [" + sNewUser + "] already has network [" + sNewNetwork + "].");
+			return;
+		}
+
+		if (!CIRCNetwork::IsValidNetwork(sNewNetwork)) {
+			PutStatus("Invalid network name [" + sNewNetwork + "]");
+			return;
+		}
+
+		const CModules& vMods = pOldNetwork->GetModules();
+		for (CModules::const_iterator i = vMods.begin(); i != vMods.end(); ++i) {
+			CFile fOldNVFile = CFile(pOldNetwork->GetNetworkPath() + "/moddata/" + (*i)->GetModName() + "/.registry");
+			if (!fOldNVFile.Exists()) {
+				continue;
+			}
+			CString sNewModPath = pNewUser->GetUserPath() + "/networks/" + sNewNetwork + "/moddata/" + (*i)->GetModName();
+			if (!CFile::Exists(sNewModPath)) {
+				CDir::MakeDir(sNewModPath);
+			}
+			fOldNVFile.Copy(sNewModPath + "/.registry");
+		}
+
+		CIRCNetwork* pNewNetwork = pNewUser->AddNetwork(sNewNetwork);
+
+		if (!pNewNetwork) {
+			PutStatus("Error adding network.");
+			return;
+		}
+
+		pNewNetwork->Clone(*pOldNetwork, false);
+
+		if (m_pNetwork && m_pNetwork->GetName().Equals(sOldNetwork) && m_pUser == pOldUser) {
+			SetNetwork(NULL);
+		}
+
+		if (pOldUser->DeleteNetwork(sOldNetwork)) {
+			PutStatus("Success.");
+		} else {
+			PutStatus("Copied the network to new user, but failed to delete old network");
+		}
 	} else if (sCommand.Equals("JUMPNETWORK")) {
 		CString sNetwork = sLine.Token(1);
 
@@ -1401,6 +1479,13 @@ void CClient::HelpUser() {
 	Table.AddRow();
 	Table.SetCell("Command", "ListNetworks");
 	Table.SetCell("Description", "List all networks");
+
+	if (m_pUser->IsAdmin()) {
+		Table.AddRow();
+		Table.SetCell("Command", "MoveNetwork");
+		Table.SetCell("Arguments", "old-user old-net new-user [new-net]");
+		Table.SetCell("Description", "Move an IRC network from one user to another");
+	}
 
 	Table.AddRow();
 	Table.SetCell("Command", "JumpNetwork");

@@ -81,8 +81,10 @@ CIRCNetwork::CIRCNetwork(CUser *pUser, const CIRCNetwork &Network) {
 	Clone(Network);
 }
 
-void CIRCNetwork::Clone(const CIRCNetwork& Network) {
-	m_sName = Network.GetName();
+void CIRCNetwork::Clone(const CIRCNetwork& Network, bool bCloneName) {
+	if (bCloneName) {
+		m_sName = Network.GetName();
+	}
 
 	m_fFloodRate = Network.GetFloodRate();
 	m_uFloodBurst = Network.GetFloodBurst();
