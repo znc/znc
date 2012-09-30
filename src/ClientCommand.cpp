@@ -540,11 +540,21 @@ void CClient::UserCommand(CString& sLine) {
 
 		const CModules& vMods = pOldNetwork->GetModules();
 		for (CModules::const_iterator i = vMods.begin(); i != vMods.end(); ++i) {
-			CFile fOldNVFile = CFile(pOldNetwork->GetNetworkPath() + "/moddata/" + (*i)->GetModName() + "/.registry");
+			CString sOldModPath = pOldNetwork->GetNetworkPath() + "/moddata/" + (*i)->GetModName();
+			CString sNewModPath = pNewUser->GetUserPath() + "/networks/" + sNewNetwork + "/moddata/" + (*i)->GetModName();
+
+			CDir oldDir(sOldModPath);
+			for (CDir::iterator it = oldDir.begin(); it != oldDir.end(); ++it) {
+				if ((*it)->GetShortName() != ".registry") {
+					PutStatus("Some files seem to be in [" + sOldModPath + "]. You might want to move them to [" + sNewModPath + "]");
+					break;
+				}
+			}
+
+			CFile fOldNVFile = CFile(sOldModPath + "/.registry");
 			if (!fOldNVFile.Exists()) {
 				continue;
 			}
-			CString sNewModPath = pNewUser->GetUserPath() + "/networks/" + sNewNetwork + "/moddata/" + (*i)->GetModName();
 			if (!CFile::Exists(sNewModPath)) {
 				CDir::MakeDir(sNewModPath);
 			}
