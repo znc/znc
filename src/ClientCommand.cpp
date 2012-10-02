@@ -203,6 +203,47 @@ void CClient::UserCommand(CString& sLine) {
 		}
 
 		PutStatus(Table);
+	} else if (m_pUser->IsAdmin() && sCommand.Equals("LISTALLUSERNETWORKS")) {
+		const map<CString, CUser*>& msUsers = CZNC::Get().GetUserMap();
+		CTable Table;
+		Table.AddColumn("Username");
+		Table.AddColumn("Network");
+		Table.AddColumn("Clients");
+		Table.AddColumn("OnIRC");
+		Table.AddColumn("IRC Server");
+		Table.AddColumn("IRC User");
+		Table.AddColumn("Channels");
+
+		for (map<CString, CUser*>::const_iterator it = msUsers.begin(); it != msUsers.end(); ++it) {
+			Table.AddRow();
+			Table.SetCell("Username", it->first);
+			Table.SetCell("Network", "N/A");
+			Table.SetCell("Clients", CString(it->second->GetUserClients().size()));
+
+			const vector<CIRCNetwork*>& vNetworks = it->second->GetNetworks();
+
+			for (size_t a = 0; a < vNetworks.size(); ++a) {
+				CIRCNetwork* pNetwork = vNetworks[a];
+				Table.AddRow();
+				if (a == vNetworks.size() - 1) {
+					Table.SetCell("Username", "`-");
+				} else {
+					Table.SetCell("Username", "|-");
+				}
+				Table.SetCell("Network", pNetwork->GetName());
+				Table.SetCell("Clients", CString(pNetwork->GetClients().size()));
+				if (pNetwork->IsIRCConnected()) {
+					Table.SetCell("OnIRC", "Yes");
+					Table.SetCell("IRC Server", pNetwork->GetIRCServer());
+					Table.SetCell("IRC User", pNetwork->GetIRCNick().GetNickMask());
+					Table.SetCell("Channels", CString(pNetwork->GetChans().size()));
+				} else {
+					Table.SetCell("OnIRC", "No");
+				}
+			}
+		}
+
+		PutStatus(Table);
 	} else if (m_pUser->IsAdmin() && sCommand.Equals("SetMOTD")) {
 		CString sMessage = sLine.Token(1, true);
 
@@ -474,7 +515,7 @@ void CClient::UserCommand(CString& sLine) {
 		Table.AddColumn("IRC User");
 		Table.AddColumn("Channels");
 
-		for (unsigned int a = 0; a < vNetworks.size(); a++) {
+		for (size_t a = 0; a < vNetworks.size(); a++) {
 			CIRCNetwork* pNetwork = vNetworks[a];
 			Table.AddRow();
 			Table.SetCell("Network", pNetwork->GetName());
@@ -1670,6 +1711,10 @@ void CClient::HelpUser() {
 		Table.AddRow();
 		Table.SetCell("Command", "ListUsers");
 		Table.SetCell("Description", "List all ZNC users and their connection status");
+
+		Table.AddRow();
+		Table.SetCell("Command", "ListAllUserNetworks");
+		Table.SetCell("Description", "List all ZNC users and their networks");
 
 		Table.AddRow();
 		Table.SetCell("Command", "ListChans");
