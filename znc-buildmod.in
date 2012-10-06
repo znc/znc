@@ -29,7 +29,7 @@ if test -z "$1"; then
 	exit 1
 fi
 
-CXXFLAGS="@CPPFLAGS@ @MODFLAGS@ -I@prefix@/include $CXXFLAGS"
+CXXFLAGS="@CPPFLAGS@ @MODFLAGS@ -I@prefix@/include/znc $CXXFLAGS"
 MODLINK="@MODLINK@ $MODLINK"
 VERSION="@PACKAGE_VERSION@"
 
