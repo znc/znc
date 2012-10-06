@@ -25,7 +25,7 @@ modpython/swigpyrun.h:
 
 modpython/_znc_core.cpp: modpython/modpython.i modpython/module.h modpython/cstring.i
 	$(E) Generating ZNC API for python...
-	@mkdir -p modpython
+	@mkdir -p modpython .depend
 	$(Q)$(SWIG) -python -py3 -c++ -shadow -outdir modpython -I$(srcdir) -I$(srcdir)/../swig_lib/python -MD -MF .depend/modpython.swig.dep -w362,315,401 -o $@ $<
 
 modpython/znc_core.py: modpython/_znc_core.cpp
