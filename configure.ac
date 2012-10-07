@@ -366,6 +366,7 @@ if test "x$PERL" != xno -o "x$PYTHON" != xno; then
 		else
 			AC_MSG_NOTICE([modperl/modpython files are found, no SWIG needed])
 		fi
+		USESWIG="not needed"
 		SWIG=""
 	else
 		USESWIG=yes
