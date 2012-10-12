@@ -60,7 +60,7 @@ ifneq "$(SWIG)" ""
 include $(srcdir)/modpython/Makefile.gen
 endif
 
-modpython.o: modpython/functions.cpp
+modpython.o: modpython/functions.cpp modpython/swigpyrun.h
 
 modpython/compiler.o: modpython/compiler.cpp Makefile
 	@mkdir -p modpython
