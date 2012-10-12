@@ -17,6 +17,8 @@
 #include <znc/Chan.h>
 #include <znc/znc.h>
 
+#include <algorithm>
+
 using std::vector;
 using std::set;
 
@@ -645,6 +647,8 @@ bool CIRCNetwork::AddChan(CChan* pChan) {
 	}
 
 	m_vChans.push_back(pChan);
+	SortChans();
+
 	return true;
 }
 
@@ -655,6 +659,8 @@ bool CIRCNetwork::AddChan(const CString& sName, bool bInConfig) {
 
 	CChan* pChan = new CChan(sName, this, bInConfig);
 	m_vChans.push_back(pChan);
+	SortChans();
+
 	return true;
 }
 
@@ -713,6 +719,10 @@ void CIRCNetwork::JoinChans() {
 	}
 }
 
+bool CIRCNetwork::CompareChanPtrsLesserThan(CChan* a, CChan* b) {
+	return *a < *b;
+}
+
 bool CIRCNetwork::JoinChan(CChan* pChan) {
 	if (m_pUser->JoinTries() != 0 && pChan->GetJoinTries() >= m_pUser->JoinTries()) {
 		PutStatus("The channel " + pChan->GetName() + " could not be joined, disabling it.");
@@ -734,6 +744,11 @@ bool CIRCNetwork::IsChan(const CString& sChan) const {
 		return true; // We can't know, so we allow everything
 	// Thanks to the above if (empty), we can do sChan[0]
 	return GetChanPrefixes().find(sChan[0]) != CString::npos;
+}
+
+void CIRCNetwork::SortChans() {
+	// resort all channels
+	stable_sort(m_vChans.begin(), m_vChans.end(), CompareChanPtrsLesserThan);
 }
 
 // Server list
