@@ -242,6 +242,9 @@ void CIRCSock::ReadLine(const CString& sData) {
 						// reply isn't forwarded.
 						return;
 					}
+					if (pChan->IsDetached()) {
+						return;
+					}
 				}
 			}
 				break;
@@ -260,6 +263,9 @@ void CIRCSock::ReadLine(const CString& sData) {
 						// reply isn't forwarded.
 						return;
 					}
+					if (pChan->IsDetached()) {
+						return;
+					}
 				}
 			}
 				break;
@@ -269,6 +275,9 @@ void CIRCSock::ReadLine(const CString& sData) {
 
 				if (pChan) {
 					pChan->SetTopic("");
+					if (pChan->IsDetached()) {
+						return;
+					}
 				}
 
 				break;
@@ -281,6 +290,9 @@ void CIRCSock::ReadLine(const CString& sData) {
 					CString sTopic = sLine.Token(4, true);
 					sTopic.LeftChomp();
 					pChan->SetTopic(sTopic);
+					if (pChan->IsDetached()) {
+						return;
+					}
 				}
 
 				break;
@@ -295,6 +307,10 @@ void CIRCSock::ReadLine(const CString& sData) {
 
 					pChan->SetTopicOwner(sNick);
 					pChan->SetTopicDate(ulDate);
+
+					if (pChan->IsDetached()) {
+						return;
+					}
 				}
 
 				break;
@@ -303,6 +319,7 @@ void CIRCSock::ReadLine(const CString& sData) {
 				// :irc.yourserver.com 352 yournick #chan ident theirhost.com irc.theirserver.com theirnick H :0 Real Name
 				sServer = sLine.Token(0);
 				sNick = sLine.Token(7);
+				CString sChan = sLine.Token(3);
 				CString sIdent = sLine.Token(4);
 				CString sHost = sLine.Token(5);
 
@@ -342,13 +359,18 @@ void CIRCSock::ReadLine(const CString& sData) {
 								sNewNick = sNick[0] + sNick.substr(pos);
 							}
 							CString sNewLine = sServer + " 352 " + sLine.Token(2) + " " +
-								sLine.Token(3) + " " + sIdent + " " + sHost + " " +
+								sChan + " " + sIdent + " " + sHost + " " +
 								sLine.Token(6)  + " " + sNewNick + " " +
 								sLine.Token(8, true);
 							m_pNetwork->PutUser(sNewLine, pClient);
 						}
 					}
 
+					return;
+				}
+
+				CChan* pChan = m_pNetwork->FindChan(sChan);
+				if (pChan && pChan->IsDetached()) {
 					return;
 				}
 
@@ -363,6 +385,9 @@ void CIRCSock::ReadLine(const CString& sData) {
 				if (pChan) {
 					CString sNicks = sRest.Token(2, true).TrimPrefix_n();
 					pChan->AddNicks(sNicks);
+					if (pChan->IsDetached()) {
+						return;
+					}
 				}
 
 				ForwardRaw353(sLine);
@@ -371,10 +396,10 @@ void CIRCSock::ReadLine(const CString& sData) {
 				return;
 			}
 			case 366: {  // end of names list
-				m_pNetwork->PutUser(sLine);  // First send them the raw
-
 				// :irc.server.com 366 nick #chan :End of /NAMES list.
 				CChan* pChan = m_pNetwork->FindChan(sRest.Token(0));
+
+				m_pNetwork->PutUser(sLine);  // First send them the raw
 
 				if (pChan) {
 					if (pChan->IsOn()) {
@@ -391,9 +416,12 @@ void CIRCSock::ReadLine(const CString& sData) {
 							}
 						}
 					}
+					if (pChan->IsDetached()) {
+						return;
+					}
 				}
 
-				return;  // return so we don't send them the raw twice
+				break;
 			}
 			case 381:  // You are now an IRC Operator
 				m_pNetwork->AddRawBuffer(":" + _NAMEDFMT(sServer) + " " + sCmd + " {target} " + _NAMEDFMT(sRest));
