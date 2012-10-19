@@ -817,6 +817,10 @@ public:
 				WebSock.PrintErrorPage("Network number limit reached. Ask an admin to increase the limit for you, or delete few old ones from Your Settings");
 				return true;
 			}
+			if (!CIRCNetwork::IsValidNetwork(sName)) {
+				WebSock.PrintErrorPage("Network name should be alphanumeric");
+				return true;
+			}
 			pNetwork = pUser->AddNetwork(sName);
 			if (!pNetwork) {
 				WebSock.PrintErrorPage("Network [" + sName.Token(0) + "] already exists");
