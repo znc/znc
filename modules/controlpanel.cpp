@@ -1133,7 +1133,7 @@ public:
 };
 
 template<> void TModInfo<CAdminMod>(CModInfo& Info) {
-	Info.SetWikiPage("control");
+	Info.SetWikiPage("controlpanel");
 }
 
 USERMODULEDEFS(CAdminMod, "Dynamic configuration through IRC. Allows editing only yourself if you're not ZNC admin.")
