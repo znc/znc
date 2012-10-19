@@ -313,7 +313,7 @@ bool CIRCNetwork::ParseConfig(CConfig *pConfig, CString& sError, bool bUpgrade) 
 				sModName = "awaystore";
 			}
 
-			CUtils::PrintAction("Loading Module [" + sModName + "]");
+			CUtils::PrintAction("Loading network module [" + sModName + "]");
 			CString sModRet;
 			CString sArgs = sValue.Token(1, true);
 
@@ -329,7 +329,7 @@ bool CIRCNetwork::ParseConfig(CConfig *pConfig, CString& sError, bool bUpgrade) 
 
 	pConfig->FindStringVector("server", vsList);
 	for (vit = vsList.begin(); vit != vsList.end(); ++vit) {
-		CUtils::PrintAction("Adding Server [" + *vit + "]");
+		CUtils::PrintAction("Adding server [" + *vit + "]");
 		CUtils::PrintStatus(AddServer(*vit));
 	}
 

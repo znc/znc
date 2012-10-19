@@ -376,12 +376,12 @@ bool CUser::ParseConfig(CConfig* pConfig, CString& sError) {
 		}
 
 		// XXX Legacy crap, added in ZNC 0.207
-		if (sModName == "admin") {
-			CUtils::PrintMessage("NOTICE: [admin] module was renamed, loading [controlpanel] instead");
-			sModName = "controlpanel";
+		if (sModName == "admin" || sModName == "controlpanel") {
+			CUtils::PrintMessage("NOTICE: [admin] module was renamed, loading [control] instead");
+			sModName = "control";
 		}
 
-		CUtils::PrintAction("Loading Module [" + sModName + "]");
+		CUtils::PrintAction("Loading user module [" + sModName + "]");
 		CString sModRet;
 		CString sArgs = sValue.Token(1, true);
 		bool bModRet = true;

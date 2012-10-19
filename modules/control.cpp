@@ -753,8 +753,15 @@ class CAdminMod : public CModule {
 			return;
 		}
 
-		if (!(pUser->FindNetwork(sNetwork))) {
+		CIRCNetwork* pNetwork = pUser->FindNetwork(sNetwork);
+
+		if (!pNetwork) {
 			PutModule(pUser->GetUserName() + " does not have a network named [" + sNetwork + "]");
+			return;
+		}
+
+		if (pNetwork == m_pNetwork) {
+			PutModule("Currently active network can be deleted via *status");
 			return;
 		}
 
@@ -1126,7 +1133,7 @@ public:
 };
 
 template<> void TModInfo<CAdminMod>(CModInfo& Info) {
-	Info.SetWikiPage("controlpanel");
+	Info.SetWikiPage("control");
 }
 
 USERMODULEDEFS(CAdminMod, "Dynamic configuration through IRC. Allows editing only yourself if you're not ZNC admin.")
