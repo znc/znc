@@ -6,7 +6,7 @@ PERL_CXX   := $(shell $(PERL) -MExtUtils::Embed -e perl_inc)
 PERL_LD    := $(shell $(PERL) -MExtUtils::Embed -e ldopts)
 # Perl API is ugly, casting string literals to char* and redeclaring functions :(
 PERL_CXX   += -Wno-write-strings -Wno-redundant-decls -Wno-missing-declarations
-PERL_CXX   += -Wno-type-limits -Wno-sign-compare -Wno-strict-overflow
+PERL_CXX   += -Wno-type-limits -Wno-sign-compare -Wno-strict-overflow -Wno-unused-value
 # This is for SWIG
 PERL_CXX   += -DSWIG_TYPE_TABLE=znc
 modperlCXXFLAGS := $(PERL_CXX) -Wno-unused-function
