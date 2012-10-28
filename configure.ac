@@ -151,7 +151,11 @@ AC_ARG_ENABLE( [poll],
 
 AC_ARG_WITH([systemdsystemunitdir],
 	AS_HELP_STRING([--with-systemdsystemunitdir=DIR], [Directory for systemd service files]),
-	[], [with_systemdsystemunitdir=$($PKG_CONFIG --variable=systemdsystemunitdir systemd)])
+	[
+		if test x"$with_systemdsystemunitdir" = xyes; then
+			with_systemdsystemunitdir=$($PKG_CONFIG --variable=systemdsystemunitdir systemd)
+		fi
+	])
 if test "x$with_systemdsystemunitdir" != xno; then
 	AC_SUBST([systemdsystemunitdir], [$with_systemdsystemunitdir])
 fi
