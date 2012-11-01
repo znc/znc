@@ -87,7 +87,7 @@ endif
 ifeq "@CYRUS@" ""
 FILES    := $(shell echo $(FILES) | sed -e "s:cyrusauth::")
 endif
-saslauthLDFLAGS := -lsasl2
+cyrusauthLDFLAGS := -lsasl2
 
 ifeq "@CHARSET@" ""
 FILES    := $(shell echo $(FILES) | sed -e "s:charset::")
