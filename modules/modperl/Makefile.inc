@@ -52,7 +52,7 @@ ifneq "$(SWIG)" ""
 include $(srcdir)/modperl/Makefile.gen
 endif
 
-modperl.o: modperl/functions.cpp modperl/swigpyrun.h
+modperl.o: modperl/functions.cpp modperl/swigperlrun.h
 
 modperl_install: install_datadir modperl_all
 	for i in $(wildcard $(srcdir)/*.pm); do \
