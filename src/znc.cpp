@@ -79,7 +79,7 @@ CZNC::~CZNC() {
 CString CZNC::GetVersion() {
 	char szBuf[128];
 
-	snprintf(szBuf, sizeof(szBuf), "%1.3f%s", VERSION, ZNC_VERSION_EXTRA);
+	snprintf(szBuf, sizeof(szBuf), "%1.1f%s", VERSION, ZNC_VERSION_EXTRA);
 	// If snprintf overflows (which I doubt), we want to be on the safe side
 	szBuf[sizeof(szBuf) - 1] = '\0';
 
@@ -94,7 +94,7 @@ CString CZNC::GetTag(bool bIncludeVersion, bool bHTML) {
 	}
 
 	char szBuf[128];
-	snprintf(szBuf, sizeof(szBuf), "ZNC %1.3f%s - ", VERSION, ZNC_VERSION_EXTRA);
+	snprintf(szBuf, sizeof(szBuf), "ZNC %1.1f%s - ", VERSION, ZNC_VERSION_EXTRA);
 	// If snprintf overflows (which I doubt), we want to be on the safe side
 	szBuf[sizeof(szBuf) - 1] = '\0';
 
@@ -422,7 +422,7 @@ bool CZNC::WriteConfig() {
 	config.AddKeyValuePair("MaxBufferSize", CString(m_uiMaxBufferSize));
 	config.AddKeyValuePair("SSLCertFile", CString(m_sSSLCertFile));
 	config.AddKeyValuePair("ProtectWebSessions", CString(m_bProtectWebSessions));
-	config.AddKeyValuePair("Version", CString(VERSION, 3));
+	config.AddKeyValuePair("Version", CString(VERSION, 1));
 
 	for (size_t l = 0; l < m_vpListeners.size(); l++) {
 		CListener* pListener = m_vpListeners[l];
@@ -535,7 +535,7 @@ bool CZNC::WriteNewConfig(const CString& sConfigFile) {
 	VCString vsLines;
 
 	vsLines.push_back(MakeConfigHeader());
-	vsLines.push_back("Version = " + CString(VERSION, 3));
+	vsLines.push_back("Version = " + CString(VERSION, 1));
 
 	m_sConfigFile = ExpandConfigPath(sConfigFile);
 	CUtils::PrintMessage("Building new config");
@@ -1083,7 +1083,7 @@ bool CZNC::DoRehash(CString& sError)
 			sSavedVersion = "< 0.203";
 		}
 		CUtils::PrintMessage("Found old config from ZNC " + sSavedVersion + ". Saving a backup of it.");
-		BackupConfigOnce("pre-" + CString(VERSION, 3));
+		BackupConfigOnce("pre-" + CString(VERSION, 1));
 	} else if (fSavedVersion > VERSION + 0.000001) {
 		CUtils::PrintError("Config was saved from ZNC " + sSavedVersion + ". It may or may not work with current ZNC " + GetVersion());
 	}
