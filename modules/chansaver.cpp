@@ -59,14 +59,14 @@ public:
 	}
 
 	virtual void OnJoin(const CNick& Nick, CChan& Channel) {
-		if (Nick.GetNick() == m_pNetwork->GetIRCNick().GetNick()) {
+		if (Nick.GetNick() == m_pNetwork->GetIRCNick().GetNick() && !Channel.InConfig()) {
 			Channel.SetInConfig(true);
 			CZNC::Get().WriteConfig();
 		}
 	}
 
 	virtual void OnPart(const CNick& Nick, CChan& Channel, const CString& sMessage) {
-		if (Nick.GetNick() == m_pNetwork->GetIRCNick().GetNick()) {
+		if (Nick.GetNick() == m_pNetwork->GetIRCNick().GetNick() && Channel.InConfig()) {
 			Channel.SetInConfig(false);
 			CZNC::Get().WriteConfig();
 		}
