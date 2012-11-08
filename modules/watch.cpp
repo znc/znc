@@ -10,9 +10,11 @@
 #include <znc/User.h>
 #include <znc/IRCNetwork.h>
 #include <list>
+#include <set>
 
 using std::list;
 using std::vector;
+using std::set;
 
 class CWatchSource {
 public:
@@ -287,15 +289,19 @@ public:
 
 private:
 	void Process(const CNick& Nick, const CString& sMessage, const CString& sSource) {
+		set<CString> sHandledTargets;
+
 		for (list<CWatchEntry>::iterator it = m_lsWatchers.begin(); it != m_lsWatchers.end(); ++it) {
 			CWatchEntry& WatchEntry = *it;
 
-			if (WatchEntry.IsMatch(Nick, sMessage, sSource, m_pNetwork)) {
+			if (WatchEntry.IsMatch(Nick, sMessage, sSource, m_pNetwork) &&
+				sHandledTargets.count(WatchEntry.GetTarget()) < 1) {
 				if (m_pNetwork->IsUserAttached()) {
 					m_pNetwork->PutUser(":" + WatchEntry.GetTarget() + "!watch@znc.in PRIVMSG " + m_pNetwork->GetCurNick() + " :" + sMessage);
 				} else {
 					m_Buffer.AddLine(":" + _NAMEDFMT(WatchEntry.GetTarget()) + "!watch@znc.in PRIVMSG {target} :{text}", sMessage);
 				}
+				sHandledTargets.insert(WatchEntry.GetTarget());
 			}
 		}
 	}
