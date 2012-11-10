@@ -220,6 +220,7 @@ DNS_TEXT=blocking
 if test "x$TDNS" != "xno"; then
 	old_TDNS=$TDNS
 	AX_PTHREAD([
+        	AC_DEFINE([HAVE_PTHREAD], [1], [Define if you have POSIX threads libraries and header files.])
 		AC_MSG_CHECKING([whether getaddrinfo() supports AI_ADDRCONFIG])
 		AC_COMPILE_IFELSE([
 			AC_LANG_PROGRAM([[
