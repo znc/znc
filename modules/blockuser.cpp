@@ -171,7 +171,7 @@ private:
 template<> void TModInfo<CBlockUser>(CModInfo& Info) {
 	Info.SetWikiPage("blockuser");
 	Info.SetHasArgs(true);
-	Info.SetArgsHelpText("Enter one or more user names. Seperate them by spaces.");
+	Info.SetArgsHelpText("Enter one or more user names. Separate them by spaces.");
 }
 
 GLOBALMODULEDEFS(CBlockUser, "Block certain users from logging in")
