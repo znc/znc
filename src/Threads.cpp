@@ -7,6 +7,7 @@
  */
 
 #include <znc/Threads.h>
+#include <znc/ZNCDebug.h>
 
 #ifdef HAVE_PTHREAD
 
@@ -21,6 +22,36 @@ CThreadPool& CThreadPool::Get() {
 	// be called once any thread is started.
 	static CThreadPool pool;
 	return pool;
+}
+
+CThreadPool::CThreadPool() : m_done(false), m_num_threads(0), m_num_idle(0) {
+	if (pipe(m_iJobPipe)) {
+		DEBUG("Ouch, can't open pipe for thread pool: " << strerror(errno));
+		exit(1);
+	}
+}
+
+void CThreadPool::jobDone(const CJob* job) const {
+	// This write() must succeed because POSIX guarantees that writes of
+	// less than PIPE_BUF are atomic (and PIPE_BUF is at least 512).
+	// (Yes, this really wants to write a pointer(!) to the pipe.
+	size_t w = write(m_iJobPipe[1], &job, sizeof(job));
+	if (w != sizeof(job)) {
+		DEBUG("Something bad happened during write() to a pipe for thread pool, wrote " << w << " bytes: " << strerror(errno));
+		exit(1);
+	}
+}
+
+void CThreadPool::handlePipeReadable() const {
+	CJob* a = NULL;
+	ssize_t need = sizeof(a);
+	ssize_t r = read(m_iJobPipe[0], &a, need);
+	if (r != need) {
+		DEBUG("Something bad happened during read() from a pipe for thread pool: " << strerror(errno));
+		exit(1);
+	}
+	a->runMain();
+	delete a;
 }
 
 CThreadPool::~CThreadPool() {
@@ -64,7 +95,8 @@ void CThreadPool::threadFunc() {
 		m_num_idle--;
 		guard.unlock();
 
-		job->run();
+		job->runThread();
+		jobDone(job);
 
 		guard.lock();
 		m_num_idle++;

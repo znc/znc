@@ -182,14 +182,13 @@ public:
 class CJob {
 public:
 	virtual ~CJob() {}
-	virtual void run() = 0;
+	virtual void runThread() = 0;
+	virtual void runMain() = 0;
 };
 
 class CThreadPool {
 private:
-	CThreadPool() : m_done(false), m_num_threads(0), m_num_idle(0) {
-	}
-
+	CThreadPool();
 	~CThreadPool();
 
 public:
@@ -197,7 +196,15 @@ public:
 
 	void addJob(CJob *job);
 
+	int getReadFD() const {
+		return m_iJobPipe[0];
+	}
+
+	void handlePipeReadable() const;
+
 private:
+	void jobDone(const CJob* pJob) const;
+
 	// Check if the calling thread is still needed, must be called with m_mutex held
 	bool threadNeeded() const;
 
@@ -223,6 +230,10 @@ private:
 	// number of idle threads waiting on the condition variable
 	size_t m_num_idle;
 
+	// pipe for waking up the main thread
+	int m_iJobPipe[2];
+
+	// list of pending jobs
 	std::list<CJob *> m_jobs;
 };
 

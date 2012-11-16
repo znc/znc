@@ -35,24 +35,24 @@ int CZNCSock::ConvertAddress(const struct sockaddr_storage * pAddr, socklen_t iA
 	return ret;
 }
 
-#ifdef HAVE_THREADED_DNS
+#ifdef HAVE_PTHREAD
 class CSockManager::CTDNSMonitorFD : public CSMonitorFD {
-	CSockManager* m_Manager;
 public:
-	CTDNSMonitorFD(CSockManager* mgr) {
-		m_Manager = mgr;
-		Add(mgr->m_iTDNSpipe[0], ECT_Read);
+	CTDNSMonitorFD() {
+		Add(CThreadPool::Get().getReadFD(), ECT_Read);
 	}
 
 	virtual bool FDsThatTriggered(const std::map<int, short>& miiReadyFds) {
-		if (miiReadyFds.find(m_Manager->m_iTDNSpipe[0])->second) {
-			m_Manager->RetrieveTDNSResult();
+		if (miiReadyFds.find(CThreadPool::Get().getReadFD())->second) {
+			CThreadPool::Get().handlePipeReadable();
 		}
 		return true;
 	}
 };
+#endif
 
-void CSockManager::CDNSJob::run() {
+#ifdef HAVE_THREADED_DNS
+void CSockManager::CDNSJob::runThread() {
 	int iCount = 0;
 	while (true) {
 		addrinfo hints;
@@ -73,16 +73,17 @@ void CSockManager::CDNSJob::run() {
 		}
 		sleep(5); // wait 5 seconds before next try
 	}
+}
 
-	// This write() must succeed because POSIX guarantees that writes of
-	// less than PIPE_BUF are atomic (and PIPE_BUF is at least 512).
-	// (Yes, this really wants to write a pointer(!) to the pipe.
-	CDNSJob *job = this;
-	size_t w = write(fd, &job, sizeof(job));
-	if (w != sizeof(job)) {
-		DEBUG("Something bad happened during write() to a pipe from TDNSThread, wrote " << w << " bytes: " << strerror(errno));
-		exit(1);
+void CSockManager::CDNSJob::runMain() {
+	if (0 != this->iRes) {
+		DEBUG("Error in threaded DNS: " << gai_strerror(this->iRes));
+		if (this->aiResult) {
+			DEBUG("And aiResult is not NULL...");
+		}
+		this->aiResult = NULL; // just for case. Maybe to call freeaddrinfo()?
 	}
+	pManager->SetTDNSThreadFinished(this->task, this->bBind, this->aiResult);
 }
 
 void CSockManager::StartTDNSThread(TDNSTask* task, bool bBind) {
@@ -90,10 +91,10 @@ void CSockManager::StartTDNSThread(TDNSTask* task, bool bBind) {
 	CDNSJob* arg = new CDNSJob;
 	arg->sHostname = sHostname;
 	arg->task      = task;
-	arg->fd        = m_iTDNSpipe[1];
 	arg->bBind     = bBind;
 	arg->iRes      = 0;
 	arg->aiResult  = NULL;
+	arg->pManager  = this;
 
 	CThreadPool::Get().addJob(arg);
 }
@@ -177,36 +178,11 @@ void CSockManager::SetTDNSThreadFinished(TDNSTask* task, bool bBind, addrinfo* a
 
 	delete task;
 }
-
-void CSockManager::RetrieveTDNSResult() {
-	CDNSJob* a = NULL;
-	ssize_t need = sizeof(a);
-	ssize_t r = read(m_iTDNSpipe[0], &a, need);
-	if (r != need) {
-		DEBUG("Something bad happened during read() from a pipe when getting result of TDNSThread: " << strerror(errno));
-		exit(1);
-	}
-	TDNSTask* task = a->task;
-	if (0 != a->iRes) {
-		DEBUG("Error in threaded DNS: " << gai_strerror(a->iRes));
-		if (a->aiResult) {
-			DEBUG("And aiResult is not NULL...");
-		}
-		a->aiResult = NULL; // just for case. Maybe to call freeaddrinfo()?
-	}
-	SetTDNSThreadFinished(task, a->bBind, a->aiResult);
-	delete a;
-}
 #endif /* HAVE_THREADED_DNS */
 
 CSockManager::CSockManager() {
-#ifdef HAVE_THREADED_DNS
-	if (pipe(m_iTDNSpipe)) {
-		DEBUG("Ouch, can't open pipe for threaded DNS resolving: " << strerror(errno));
-		exit(1);
-	}
-
-	MonitorFD(new CTDNSMonitorFD(this));
+#ifdef HAVE_PTHREAD
+	MonitorFD(new CTDNSMonitorFD());
 #endif
 }
 

@@ -102,11 +102,9 @@ public:
 private:
 	void FinishConnect(const CString& sHostname, u_short iPort, const CString& sSockName, int iTimeout, bool bSSL, const CString& sBindHost, CZNCSock *pcSock);
 
-#ifdef HAVE_THREADED_DNS
-	int              m_iTDNSpipe[2];
-
 	class CTDNSMonitorFD;
 	friend class CTDNSMonitorFD;
+#ifdef HAVE_THREADED_DNS
 	struct TDNSTask {
 		CString   sHostname;
 		u_short   iPort;
@@ -123,19 +121,19 @@ private:
 	};
 	class CDNSJob : public CJob {
 	public:
-		CString          sHostname;
-		TDNSTask*        task;
-		int              fd;
-		bool             bBind;
+		CString       sHostname;
+		TDNSTask*     task;
+		CSockManager* pManager;
+		bool          bBind;
 
-		int              iRes;
-		addrinfo*        aiResult;
+		int           iRes;
+		addrinfo*     aiResult;
 
-		void run();
+		void runThread();
+		void runMain();
 	};
 	void StartTDNSThread(TDNSTask* task, bool bBind);
 	void SetTDNSThreadFinished(TDNSTask* task, bool bBind, addrinfo* aiResult);
-	void RetrieveTDNSResult();
 	static void* TDNSThread(void* argument);
 #endif
 protected:
