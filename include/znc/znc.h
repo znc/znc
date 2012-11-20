@@ -169,6 +169,8 @@ public:
 
 	static void DumpConfig(const CConfig* Config);
 
+	void SetDaemonMode(bool daemonMode);
+
 private:
 	CFile* InitPidFile();
 	bool DoRehash(CString& sError);
@@ -209,6 +211,7 @@ protected:
 	unsigned int           m_uiConnectPaused;
 	TCacheMap<CString>     m_sConnectThrottle;
 	bool                   m_bProtectWebSessions;
+	bool                   m_bDaemonMode;
 };
 
 #endif // !_ZNC_H
