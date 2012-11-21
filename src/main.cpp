@@ -198,43 +198,23 @@ int main(int argc, char** argv) {
 	}
 
 	if (bDaemonMode && getuid() == 0) {
-		struct passwd pwd;
-		struct passwd *result;
-		char *buf;
-		size_t bufsize;
-		int s;
+		struct passwd *pwd;
 
-		bufsize = sysconf(_SC_GETPW_R_SIZE_MAX);
-		if (!bufsize > 0)
-			bufsize = 16384;
-
-		buf = (char*)malloc(bufsize);
-		if (buf == NULL) {
-			CUtils::PrintError("Error in malloc.");
+		pwd = getpwnam(sDaemonUser.c_str());
+		if (pwd == NULL) {
+			CUtils::PrintError("Daemon user not found.");
 			return 1;
 		}
 
-		s = getpwnam_r(sDaemonUser.c_str(), &pwd, buf, bufsize, &result);
-		if (result == NULL) {
-			if (s == 0) {
-				CUtils::PrintError("Daemon user not found.");
-				return 1;
-			} else {
-				CUtils::PrintError("Error while searching for daemon user.");
-				return 1;
-			}
-			return 1;
-		}
-
-		if ((long) pwd.pw_uid == 0) {
+		if ((long) pwd->pw_uid == 0) {
 			CUtils::PrintError("Please define a daemon user other than root.");
 			return 1;
 		}
-		if (setgid((long) pwd.pw_gid) != 0) {
+		if (setgid((long) pwd->pw_gid) != 0) {
 			CUtils::PrintError("setgid: Unable to drop group privileges");
 			return 1;
 		}
-		if (setuid((long) pwd.pw_uid) != 0) {
+		if (setuid((long) pwd->pw_uid) != 0) {
 			CUtils::PrintError("setuid: Unable to drop user privileges");
 			return 1;
 		}
