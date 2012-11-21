@@ -1097,7 +1097,7 @@ void CIRCSock::Timeout() {
 	m_pNetwork->ClearMotdBuffer();
 
 	ResetChans();
-	m_scUserModes.empty();
+	m_scUserModes.clear();
 }
 
 void CIRCSock::ConnectionRefused() {
