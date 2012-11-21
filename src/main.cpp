@@ -48,6 +48,7 @@ static const struct option g_LongOpts[] = {
 	{ "makepass",    no_argument,       0, 's' },
 	{ "makepem",     no_argument,       0, 'p' },
 	{ "datadir",     required_argument, 0, 'd' },
+	{ "system-wide-config-as",      required_argument, 0, 'S' },
 	{ 0, 0, 0, 0 }
 };
 
@@ -129,8 +130,8 @@ int main(int argc, char** argv) {
 	bool bMakeConf = false;
 	bool bMakePass = false;
 	bool bAllowRoot = false;
-	bool bDaemonMode = false;
-	std::string sDaemonUser = "znc";
+	bool bSystemWideConfig = false;
+	CString sSystemWideConfigUser = "znc";
 	bool bForeground = false;
 #ifdef ALWAYS_RUN_IN_FOREGROUND
 	bForeground = true;
@@ -139,7 +140,7 @@ int main(int argc, char** argv) {
 	bool bMakePem = false;
 #endif
 
-	while ((iArg = getopt_long(argc, argv, "hvnrcspd:Dfzu:", g_LongOpts, &iOptIndex)) != -1) {
+	while ((iArg = getopt_long(argc, argv, "hvnrcspd:DfS:", g_LongOpts, &iOptIndex)) != -1) {
 		switch (iArg) {
 		case 'h':
 			GenerateHelp(argv[0]);
@@ -157,11 +158,9 @@ int main(int argc, char** argv) {
 		case 'c':
 			bMakeConf = true;
 			break;
-		case 'z':
-			bDaemonMode = true;
-			break;
-		case 'u':
-			sDaemonUser = optarg;
+		case 'S':
+			bSystemWideConfig = true;
+			sSystemWideConfigUser = optarg;
 			break;
 		case 's':
 			bMakePass = true;
@@ -197,10 +196,10 @@ int main(int argc, char** argv) {
 		return 1;
 	}
 
-	if (bDaemonMode && getuid() == 0) {
+	if (bSystemWideConfig && getuid() == 0) {
 		struct passwd *pwd;
 
-		pwd = getpwnam(sDaemonUser.c_str());
+		pwd = getpwnam(sSystemWideConfigUser.c_str());
 		if (pwd == NULL) {
 			CUtils::PrintError("Daemon user not found.");
 			return 1;
@@ -222,7 +221,7 @@ int main(int argc, char** argv) {
 
 	CZNC* pZNC = &CZNC::Get();
 	pZNC->InitDirs(((argc) ? argv[0] : ""), sDataDir);
-	pZNC->SetDaemonMode(bDaemonMode);
+	pZNC->SetSystemWideConfig(bSystemWideConfig);
 
 #ifdef HAVE_LIBSSL
 	if (bMakePem) {
@@ -263,7 +262,7 @@ int main(int argc, char** argv) {
 		CUtils::PrintStatus(true, "");
 	}
 
-	if (isRoot() && !bDaemonMode) {
+	if (isRoot() && !bSystemWideConfig) {
 		CUtils::PrintError("You are running ZNC as root! Don't do that! There are not many valid");
 		CUtils::PrintError("reasons for this and it can, in theory, cause great damage!");
 		if (!bAllowRoot) {

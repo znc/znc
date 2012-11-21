@@ -169,7 +169,7 @@ public:
 
 	static void DumpConfig(const CConfig* Config);
 
-	void SetDaemonMode(bool daemonMode);
+	void SetSystemWideConfig(bool systemWideConfig);
 
 private:
 	CFile* InitPidFile();
@@ -211,7 +211,7 @@ protected:
 	unsigned int           m_uiConnectPaused;
 	TCacheMap<CString>     m_sConnectThrottle;
 	bool                   m_bProtectWebSessions;
-	bool                   m_bDaemonMode;
+	bool                   m_bSystemWideConfig;
 };
 
 #endif // !_ZNC_H
