@@ -12,6 +12,7 @@
 #include <signal.h>
 #include <sys/types.h>
 #include <pwd.h>
+#include <grp.h>
 
 using std::cout;
 using std::endl;
@@ -207,6 +208,10 @@ int main(int argc, char** argv) {
 
 		if ((long) pwd->pw_uid == 0) {
 			CUtils::PrintError("Please define a daemon user other than root.");
+			return 1;
+		}
+		if (setgroups(0, NULL) != 0) {
+			CUtils::PrintError("setgroups: Unable to clear supplementary group IDs");
 			return 1;
 		}
 		if (setgid((long) pwd->pw_gid) != 0) {
