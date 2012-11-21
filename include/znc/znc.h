@@ -169,6 +169,8 @@ public:
 
 	static void DumpConfig(const CConfig* Config);
 
+	void SetSystemWideConfig(bool systemWideConfig);
+
 private:
 	CFile* InitPidFile();
 	bool DoRehash(CString& sError);
@@ -209,6 +211,7 @@ protected:
 	unsigned int           m_uiConnectPaused;
 	TCacheMap<CString>     m_sConnectThrottle;
 	bool                   m_bProtectWebSessions;
+	bool                   m_bSystemWideConfig;
 };
 
 #endif // !_ZNC_H
