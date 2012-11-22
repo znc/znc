@@ -14,8 +14,9 @@ using std::vector;
 
 class CAttachMatch {
 public:
-	CAttachMatch(const CString& sChannels, const CString& sSearch, const CString& sHostmasks, bool bNegated)
+	CAttachMatch(CModule *pModule, const CString& sChannels, const CString& sSearch, const CString& sHostmasks, bool bNegated)
 	{
+		m_pModule = pModule;
 		m_sChannelWildcard = sChannels;
 		m_sSearchWildcard = sSearch;
 		m_sHostmaskWildcard = sHostmasks;
@@ -29,7 +30,7 @@ public:
 			m_sHostmaskWildcard = "*!*@*";
 	}
 
-	bool IsMatch(const CString& sChan, const CString& sHost, const CString& sMessage) const {
+	bool IsMatch(const CString& sChan, const CString& sHost, const CString& sMessage, const CModule *pModule) const {
 		if (!sHost.WildCmp(m_sHostmaskWildcard))
 			return false;
 		if (!sChan.WildCmp(m_sChannelWildcard))
@@ -69,10 +70,10 @@ public:
 
 private:
 	bool m_bNegated;
+	CModule *m_pModule;
 	CString m_sChannelWildcard;
 	CString m_sSearchWildcard;
 	CString m_sHostmaskWildcard;
-	CModules* m_pModule;
 };
 
 class CChanAttach : public CModule {
@@ -189,6 +190,7 @@ public:
 		const CString& sChan = Channel.GetName();
 		const CString& sHost = Nick.GetHostMask();
 		const CString& sMessage = Message;
+		const CModule*   pModule = this;
 		VAttachIter it;
 
 		if (!Channel.IsDetached())
@@ -196,13 +198,13 @@ public:
 
 		// Any negated match?
 		for (it = m_vMatches.begin(); it != m_vMatches.end(); ++it) {
-			if (it->IsNegated() && it->IsMatch(sChan, sHost, sMessage))
+			if (it->IsNegated() && it->IsMatch(sChan, sHost, sMessage, pModule))
 				return;
 		}
 
 		// Now check for a positive match
 		for (it = m_vMatches.begin(); it != m_vMatches.end(); ++it) {
-			if (!it->IsNegated() && it->IsMatch(sChan, sHost, sMessage)) {
+			if (!it->IsNegated() && it->IsMatch(sChan, sHost, sMessage, pModule)) {
 				Channel.JoinUser();
 				return;
 			}
@@ -239,7 +241,7 @@ public:
 	}
 
 	bool Add(bool bNegated, const CString& sChan, const CString& sSearch, const CString& sHost) {
-		CAttachMatch attach(sChan, sSearch, sHost, bNegated);
+		CAttachMatch attach(this, sChan, sSearch, sHost, bNegated);
 
 		// Check for duplicates
 		VAttachIter it = m_vMatches.begin();
