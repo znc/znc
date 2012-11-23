@@ -40,8 +40,14 @@ CString CBufLine::GetLine(const CClient& Client, const MCString& msParams) const
 		while (s_msec.length() < 3) {
 			s_msec = "0" + s_msec;
 		}
+		// TODO support leap seconds properly
 		// TODO support message-tags properly
-		return "@time=" + CString(m_time.tv_sec) + "." + s_msec + " " + sStr;
+		struct tm stm;
+		memset(&stm, 0, sizeof(stm));
+		gmtime_r(&m_time.tv_sec, &stm);
+		char sTime[20] = {};
+		strftime(sTime, sizeof(sTime), "%Y-%m-%dT%H:%M:%S", &stm);
+		return "@time=" + CString(sTime) + "." + s_msec + "Z " + sStr;
 	} else {
 		msThisParams["text"] = Client.GetUser()->AddTimestamp(m_time.tv_sec, m_sText);
 		return CString::NamedFormat(m_sFormat, msThisParams);

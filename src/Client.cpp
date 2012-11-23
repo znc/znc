@@ -822,7 +822,7 @@ void CClient::HandleCap(const CString& sLine)
 		for (SCString::iterator i = ssOfferCaps.begin(); i != ssOfferCaps.end(); ++i) {
 			sRes += *i + " ";
 		}
-		RespondCap("LS :" + sRes + "userhost-in-names multi-prefix znc.in/server-time");
+		RespondCap("LS :" + sRes + "userhost-in-names multi-prefix znc.in/server-time-iso");
 		m_bInCap = true;
 	} else if (sSubCmd.Equals("END")) {
 		m_bInCap = false;
@@ -844,7 +844,7 @@ void CClient::HandleCap(const CString& sLine)
 			if (sCap.TrimPrefix("-"))
 				bVal = false;
 
-			bool bAccepted = ("multi-prefix" == sCap) || ("userhost-in-names" == sCap) || ("znc.in/server-time" == sCap);
+			bool bAccepted = ("multi-prefix" == sCap) || ("userhost-in-names" == sCap) || ("znc.in/server-time-iso" == sCap);
 			GLOBALMODULECALL(IsClientCapSupported(this, sCap, bVal), &bAccepted);
 
 			if (!bAccepted) {
@@ -864,7 +864,7 @@ void CClient::HandleCap(const CString& sLine)
 				m_bNamesx = bVal;
 			} else if ("userhost-in-names" == *it) {
 				m_bUHNames = bVal;
-			} else if ("znc.in/server-time" == *it) {
+			} else if ("znc.in/server-time-iso" == *it) {
 				m_bServerTime = bVal;
 			}
 			GLOBALMODULECALL(OnClientCapRequest(this, *it, bVal), NOTHING);
@@ -903,7 +903,7 @@ void CClient::HandleCap(const CString& sLine)
 		}
 		if (m_bServerTime) {
 			m_bServerTime = false;
-			ssRemoved.insert("znc.in/server-time");
+			ssRemoved.insert("znc.in/server-time-iso");
 		}
 		CString sList = "";
 		for (SCString::iterator i = ssRemoved.begin(); i != ssRemoved.end(); ++i) {
