@@ -30,7 +30,7 @@ public:
 			m_sHostmaskWildcard = "*!*@*";
 	}
 
-	bool IsMatch(const CString& sChan, const CString& sHost, const CString& sMessage, const CModule *pModule) const {
+	bool IsMatch(const CString& sChan, const CString& sHost, const CString& sMessage) const {
 		if (!sHost.WildCmp(m_sHostmaskWildcard))
 			return false;
 		if (!sChan.WildCmp(m_sChannelWildcard))
@@ -190,7 +190,6 @@ public:
 		const CString& sChan = Channel.GetName();
 		const CString& sHost = Nick.GetHostMask();
 		const CString& sMessage = Message;
-		const CModule*   pModule = this;
 		VAttachIter it;
 
 		if (!Channel.IsDetached())
@@ -198,13 +197,13 @@ public:
 
 		// Any negated match?
 		for (it = m_vMatches.begin(); it != m_vMatches.end(); ++it) {
-			if (it->IsNegated() && it->IsMatch(sChan, sHost, sMessage, pModule))
+			if (it->IsNegated() && it->IsMatch(sChan, sHost, sMessage))
 				return;
 		}
 
 		// Now check for a positive match
 		for (it = m_vMatches.begin(); it != m_vMatches.end(); ++it) {
-			if (!it->IsNegated() && it->IsMatch(sChan, sHost, sMessage, pModule)) {
+			if (!it->IsNegated() && it->IsMatch(sChan, sHost, sMessage)) {
 				Channel.JoinUser();
 				return;
 			}
