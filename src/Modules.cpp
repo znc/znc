@@ -155,6 +155,25 @@ void CModule::SetUser(CUser* pUser) { m_pUser = pUser; }
 void CModule::SetNetwork(CIRCNetwork* pNetwork) { m_pNetwork = pNetwork; }
 void CModule::SetClient(CClient* pClient) { m_pClient = pClient; }
 
+CString CModule::ExpandString(const CString& sStr) const {
+	CString sRet;
+	return ExpandString(sStr, sRet);
+}
+
+CString& CModule::ExpandString(const CString& sStr, CString& sRet) const {
+	sRet = sStr;
+
+	if (m_pNetwork) {
+		return m_pNetwork->ExpandString(sRet, sRet);
+	}
+
+	if (m_pUser) {
+		return m_pUser->ExpandString(sRet, sRet);
+	}
+
+	return sRet;
+}
+
 const CString& CModule::GetSavePath() const {
 	if (!CFile::Exists(m_sSavePath)) {
 		CDir::MakeDir(m_sSavePath);

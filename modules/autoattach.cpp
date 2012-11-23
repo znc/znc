@@ -35,7 +35,7 @@ public:
 			return false;
 		if (!sChan.WildCmp(m_sChannelWildcard))
 			return false;
-		if (!sMessage.WildCmp(m_pModule->GetUser()->ExpandString(m_sSearchWildcard)))
+		if (!sMessage.WildCmp(m_pModule->ExpandString(m_sSearchWildcard)))
 			return false;
 		return true;
 	}
@@ -246,7 +246,8 @@ public:
 		VAttachIter it = m_vMatches.begin();
 		for (; it != m_vMatches.end(); ++it) {
 			if (it->GetHostMask() == attach.GetHostMask()
-					&& it->GetChans() == attach.GetChans())
+					&& it->GetChans() == attach.GetChans()
+					&& it->GetSearch() == attach.GetSearch())
 				return false;
 		}
 
