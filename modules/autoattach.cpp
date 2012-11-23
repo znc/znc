@@ -8,27 +8,34 @@
 
 #include <znc/Chan.h>
 #include <znc/Modules.h>
+#include <znc/User.h>
 
 using std::vector;
 
 class CAttachMatch {
 public:
-	CAttachMatch(const CString& sChannels, const CString& sHostmasks, bool bNegated)
+	CAttachMatch(CModule *pModule, const CString& sChannels, const CString& sSearch, const CString& sHostmasks, bool bNegated)
 	{
+		m_pModule = pModule;
 		m_sChannelWildcard = sChannels;
+		m_sSearchWildcard = sSearch;
 		m_sHostmaskWildcard = sHostmasks;
 		m_bNegated = bNegated;
 
 		if (m_sChannelWildcard.empty())
 			m_sChannelWildcard = "*";
+		if (m_sSearchWildcard.empty())
+			m_sSearchWildcard = "*";
 		if (m_sHostmaskWildcard.empty())
 			m_sHostmaskWildcard = "*!*@*";
 	}
 
-	bool IsMatch(const CString& sChan, const CString& sHost) const {
+	bool IsMatch(const CString& sChan, const CString& sHost, const CString& sMessage) const {
 		if (!sHost.WildCmp(m_sHostmaskWildcard))
 			return false;
 		if (!sChan.WildCmp(m_sChannelWildcard))
+			return false;
+		if (!sMessage.WildCmp(m_pModule->GetUser()->ExpandString(m_sSearchWildcard)))
 			return false;
 		return true;
 	}
@@ -41,6 +48,10 @@ public:
 		return m_sHostmaskWildcard;
 	}
 
+	const CString& GetSearch() const {
+		return m_sSearchWildcard;
+	}
+
 	const CString& GetChans() const {
 		return m_sChannelWildcard;
 	}
@@ -51,13 +62,17 @@ public:
 			sRes += "!";
 		sRes += m_sChannelWildcard;
 		sRes += " ";
+		sRes += m_sSearchWildcard;
+		sRes += " ";
 		sRes += m_sHostmaskWildcard;
 		return sRes;
 	}
 
 private:
 	bool m_bNegated;
+	CModule *m_pModule;
 	CString m_sChannelWildcard;
+	CString m_sSearchWildcard;
 	CString m_sHostmaskWildcard;
 };
 
@@ -72,18 +87,19 @@ private:
 		bool bHelp = false;
 		bool bNegated = sMsg.TrimPrefix("!");
 		CString sChan = sMsg.Token(0);
-		CString sHost = sMsg.Token(1);
+		CString sSearch = sMsg.Token(1);
+		CString sHost = sMsg.Token(2);
 
 		if (sChan.empty()) {
 			bHelp = true;
-		} else if (Add(bNegated, sChan, sHost)) {
+		} else if (Add(bNegated, sChan, sSearch, sHost)) {
 			PutModule("Added to list");
 		} else {
 			PutModule(sLine.Token(1, true) + " is already added");
 			bHelp = true;
 		}
 		if (bHelp) {
-			PutModule("Usage: Add [!]<#chan> <host>");
+			PutModule("Usage: Add [!]<#chan> <search> <host>");
 			PutModule("Wildcards are allowed");
 		}
 	}
@@ -92,12 +108,13 @@ private:
 		CString sMsg  = sLine.Token(1, true);
 		bool bNegated = sMsg.TrimPrefix("!");
 		CString sChan = sMsg.Token(0);
-		CString sHost = sMsg.Token(1);
+		CString sSearch = sMsg.Token(1);
+		CString sHost = sMsg.Token(2);
 
-		if (Del(bNegated, sChan, sHost)) {
+		if (Del(bNegated, sChan, sSearch, sHost)) {
 			PutModule("Removed " + sChan + " from list");
 		} else {
-			PutModule("Usage: Del [!]<#chan> <host>");
+			PutModule("Usage: Del [!]<#chan> <search> <host>");
 		}
 	}
 
@@ -105,6 +122,7 @@ private:
 		CTable Table;
 		Table.AddColumn("Neg");
 		Table.AddColumn("Chan");
+		Table.AddColumn("Search");
 		Table.AddColumn("Host");
 
 		VAttachIter it = m_vMatches.begin();
@@ -112,6 +130,7 @@ private:
 			Table.AddRow();
 			Table.SetCell("Neg", it->IsNegated() ? "!" : "");
 			Table.SetCell("Chan", it->GetChans());
+			Table.SetCell("Search", it->GetSearch());
 			Table.SetCell("Host", it->GetHostMask());
 		}
 
@@ -126,9 +145,9 @@ public:
 	MODCONSTRUCTOR(CChanAttach) {
 		AddHelpCommand();
 		AddCommand("Add",    static_cast<CModCommand::ModCmdFunc>(&CChanAttach::HandleAdd),
-			"[!]<#chan> <host>", "Add an entry, use !#chan to negate and * for wildcards");
+			"[!]<#chan> <search> <host>", "Add an entry, use !#chan to negate and * for wildcards");
 		AddCommand("Del",    static_cast<CModCommand::ModCmdFunc>(&CChanAttach::HandleDel),
-			"[!]<#chan> <host>", "Remove an entry, needs to be an exact match");
+			"[!]<#chan> <search> <host>", "Remove an entry, needs to be an exact match");
 		AddCommand("List",    static_cast<CModCommand::ModCmdFunc>(&CChanAttach::HandleList),
 			"",           "List all entries");
 	}
@@ -144,9 +163,10 @@ public:
 			CString sAdd = *it;
 			bool bNegated = sAdd.TrimPrefix("!");
 			CString sChan = sAdd.Token(0);
-			CString sHost = sAdd.Token(1, true);
+			CString sSearch = sAdd.Token(1);
+			CString sHost = sAdd.Token(2, true);
 
-			if (!Add(bNegated, sChan, sHost)) {
+			if (!Add(bNegated, sChan, sSearch, sHost)) {
 				PutModule("Unable to add [" + *it + "]");
 			}
 		}
@@ -157,17 +177,19 @@ public:
 			CString sAdd = it->first;
 			bool bNegated = sAdd.TrimPrefix("!");
 			CString sChan = sAdd.Token(0);
-			CString sHost = sAdd.Token(1, true);
+			CString sSearch = sAdd.Token(1);
+			CString sHost = sAdd.Token(2, true);
 
-			Add(bNegated, sChan, sHost);
+			Add(bNegated, sChan, sSearch, sHost);
 		}
 
 		return true;
 	}
 
-	void TryAttach(const CNick& Nick, CChan& Channel) {
+	void TryAttach(const CNick& Nick, CChan& Channel, CString& Message) {
 		const CString& sChan = Channel.GetName();
 		const CString& sHost = Nick.GetHostMask();
+		const CString& sMessage = Message;
 		VAttachIter it;
 
 		if (!Channel.IsDetached())
@@ -175,13 +197,13 @@ public:
 
 		// Any negated match?
 		for (it = m_vMatches.begin(); it != m_vMatches.end(); ++it) {
-			if (it->IsNegated() && it->IsMatch(sChan, sHost))
+			if (it->IsNegated() && it->IsMatch(sChan, sHost, sMessage))
 				return;
 		}
 
 		// Now check for a positive match
 		for (it = m_vMatches.begin(); it != m_vMatches.end(); ++it) {
-			if (!it->IsNegated() && it->IsMatch(sChan, sHost)) {
+			if (!it->IsNegated() && it->IsMatch(sChan, sHost, sMessage)) {
 				Channel.JoinUser();
 				return;
 			}
@@ -189,24 +211,26 @@ public:
 	}
 
 	virtual EModRet OnChanNotice(CNick& Nick, CChan& Channel, CString& sMessage) {
-		TryAttach(Nick, Channel);
+		TryAttach(Nick, Channel, sMessage);
 		return CONTINUE;
 	}
 
 	virtual EModRet OnChanMsg(CNick& Nick, CChan& Channel, CString& sMessage) {
-		TryAttach(Nick, Channel);
+		TryAttach(Nick, Channel, sMessage);
 		return CONTINUE;
 	}
 
 	virtual EModRet OnChanAction(CNick& Nick, CChan& Channel, CString& sMessage) {
-		TryAttach(Nick, Channel);
+		TryAttach(Nick, Channel, sMessage);
 		return CONTINUE;
 	}
 
-	VAttachIter FindEntry(const CString& sChan, const CString& sHost) {
+	VAttachIter FindEntry(const CString& sChan, const CString& sSearch, const CString& sHost) {
 		VAttachIter it = m_vMatches.begin();
 		for (; it != m_vMatches.end(); ++it) {
 			if (sHost.empty() || it->GetHostMask() != sHost)
+				continue;
+			if (sSearch.empty() || it->GetSearch() != sSearch)
 				continue;
 			if (sChan.empty() || it->GetChans() != sChan)
 				continue;
@@ -215,8 +239,8 @@ public:
 		return m_vMatches.end();
 	}
 
-	bool Add(bool bNegated, const CString& sChan, const CString& sHost) {
-		CAttachMatch attach(sChan, sHost, bNegated);
+	bool Add(bool bNegated, const CString& sChan, const CString& sSearch, const CString& sHost) {
+		CAttachMatch attach(this, sChan, sSearch, sHost, bNegated);
 
 		// Check for duplicates
 		VAttachIter it = m_vMatches.begin();
@@ -234,8 +258,8 @@ public:
 		return true;
 	}
 
-	bool Del(bool bNegated, const CString& sChan, const CString& sHost) {
-		VAttachIter it = FindEntry(sChan, sHost);
+	bool Del(bool bNegated, const CString& sChan, const CString& sSearch, const CString& sHost) {
+		VAttachIter it = FindEntry(sChan, sSearch, sHost);
 		if (it == m_vMatches.end() || it->IsNegated() != bNegated)
 			return false;
 
