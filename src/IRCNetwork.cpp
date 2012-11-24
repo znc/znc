@@ -29,8 +29,15 @@ bool CIRCNetwork::IsValidNetwork(const CString& sNetwork) {
 
 	const char *p = sNetwork.c_str();
 	while (*p) {
-		if (*p != '_' && *p != '-' && !isalnum(*p)) {
+		if (*p != '_' && *p != '-' && *p != '.' && !isalnum(*p)) {
 			return false;
+		}
+
+		// . is not first, not last and no ".."
+		if (*p == '.') {
+			if (*(p+1) == '.' || !*(p+1) || p == sNetwork.c_str()) {
+				return false;
+			}
 		}
 
 		p++;
