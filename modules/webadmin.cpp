@@ -72,7 +72,7 @@ public:
 	}
 
 	virtual bool OnLoad(const CString& sArgStr, CString& sMessage) {
-		if (sArgStr.empty())
+		if (sArgStr.empty() || CModInfo::GlobalModule != GetType())
 			return true;
 
 		// We don't accept any arguments, but for backwards
