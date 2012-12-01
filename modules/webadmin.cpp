@@ -284,6 +284,21 @@ public:
 		if (spSession->IsAdmin() || (pUser && !pUser->DenyLoadMod())) {
 			WebSock.GetParamValues("loadmod", vsArgs);
 
+			// disallow unload webadmin from itself
+			if (CModInfo::UserModule == GetType() && pUser == CZNC::Get().FindUser(WebSock.GetUser())) {
+				bool bLoadedWebadmin = false;
+				for (a = 0; a < vsArgs.size(); ++a) {
+					CString sModName = vsArgs[a].TrimRight_n("\r");
+					if (sModName == GetModName()) {
+						bLoadedWebadmin = true;
+						break;
+					}
+				}
+				if (!bLoadedWebadmin) {
+					vsArgs.push_back(GetModName());
+				}
+			}
+
 			for (a = 0; a < vsArgs.size(); a++) {
 				CString sModRet;
 				CString sModName = vsArgs[a].TrimRight_n("\r");
@@ -1149,6 +1164,9 @@ public:
 				if (pModule) {
 					l["Checked"] = "true";
 					l["Args"] = pModule->GetArgs();
+					if (CModInfo::UserModule == GetType() && Info.GetName() == GetModName()) {
+						l["Disabled"] = "true";
+					}
 				}
 
 				if (!spSession->IsAdmin() && pUser && pUser->DenyLoadMod()) {
@@ -1220,6 +1238,7 @@ public:
 
 		CUser* pNewUser = GetNewUser(WebSock, pUser);
 		if (!pNewUser) {
+			WebSock.PrintErrorPage("Invalid user settings");
 			return true;
 		}
 
@@ -1544,10 +1563,9 @@ public:
 				if (pModule) {
 					l["Checked"] = "true";
 					l["Args"] = pModule->GetArgs();
-				}
-
-				if (Info.GetName() == GetModName()) {
-					l["Disabled"] = "true";
+					if (CModInfo::GlobalModule == GetType() && Info.GetName() == GetModName()) {
+						l["Disabled"] = "true";
+					}
 				}
 
 				l["Name"] = Info.GetName();
@@ -1621,7 +1639,8 @@ public:
 		for (a = 0; a < vCurMods.size(); a++) {
 			CModule* pCurMod = vCurMods[a];
 
-			if (ssArgs.find(pCurMod->GetModName()) == ssArgs.end() && pCurMod->GetModName() != GetModName()) {
+			if (ssArgs.find(pCurMod->GetModName()) == ssArgs.end() &&
+					(CModInfo::GlobalModule != GetType() || pCurMod->GetModName() != GetModName())) {
 				ssUnloadMods.insert(pCurMod->GetModName());
 			}
 		}
@@ -1641,6 +1660,7 @@ public:
 };
 
 template<> void TModInfo<CWebAdminMod>(CModInfo& Info) {
+	Info.AddType(CModInfo::UserModule);
 	Info.SetWikiPage("webadmin");
 }
 
