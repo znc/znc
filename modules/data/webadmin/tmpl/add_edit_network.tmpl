@@ -1,11 +1,9 @@
 <? AddRow JSLoop HREF=/modfiles/global/webadmin/webadmin.js ?>
 <? INC Header.tmpl ?>
 
-<? IF Edit ?>
 <div class="section">
-    <p>To connect to this network from your IRC client, you can set the server password field as follows: <code><? VAR Username ?>/<? VAR Name ?>:&lt;password&gt;</code> or username field as <code><? VAR Username ?>/<? VAR Name ?></code></p>
+    <p>To connect to this network from your IRC client, you can set the server password field as follows: <code><? VAR Username ?>/<? IF Edit ?><? VAR Name ?><? ELSE ?>&lt;network&gt;<? ENDIF ?>:&lt;password&gt;</code> or username field as <code><? VAR Username ?>/<? IF Edit ?><? VAR Name ?><? ELSE ?>&lt;network&gt;<? ENDIF ?></code></p>
 </div>
-<? ENDIF ?>
 
 <form action="<? IF Edit ?>editnetwork<? ELSE ?>addnetwork<? ENDIF ?>" method="post">
 	<? INC _csrf_check.tmpl ?>
