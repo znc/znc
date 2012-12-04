@@ -245,10 +245,11 @@
 					<input type="text" name="timestampformat" value="<? VAR TimestampFormat ?>" class="full"
 						   title="The format for the timestamps used in buffers, for example [%H:%M:%S]." />
 				</div>
-				<div class="subsection">
+				<div class="subsection half">
 					<div class="inputlabel">Timezone:</div>
-					<input type="text" name="timezone" value="<? VAR Timezone ?>" class="half" list="timezone_list"
+					<input type="text" name="timezone" value="<? VAR Timezone ?>" list="timezone_list"
 						   title="Select your timezone." />
+					<br /><span class="info">E.g. <code>Europe/Berlin</code>, or <code>GMT-6</code></span>
 					<datalist id="timezone_list">
 						<? LOOP TZLoop ?>
 						<option value="<? VAR TZ ?>"/>
