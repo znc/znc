@@ -332,15 +332,17 @@ void CChan::ModeChange(const CString& sModes, const CNick* pOpNick) {
 					break;
 			}
 
-			bool bNoChange;
-			if (bList) {
-				bNoChange = false;
-			} else if (bAdd) {
-				bNoChange = HasMode(uMode) && GetModeArg(uMode) == sArg;
-			} else {
-				bNoChange = !HasMode(uMode);
+			if (pOpNick) {
+				bool bNoChange;
+				if (bList) {
+					bNoChange = false;
+				} else if (bAdd) {
+					bNoChange = HasMode(uMode) && GetModeArg(uMode) == sArg;
+				} else {
+					bNoChange = !HasMode(uMode);
+				}
+				NETWORKMODULECALL(OnMode(*pOpNick, *this, uMode, sArg, bAdd, bNoChange), m_pNetwork->GetUser(), m_pNetwork, NULL, NOTHING);
 			}
-			NETWORKMODULECALL(OnMode(*pOpNick, *this, uMode, sArg, bAdd, bNoChange), m_pNetwork->GetUser(), m_pNetwork, NULL, NOTHING);
 
 			if (!bList) {
 				(bAdd) ? AddMode(uMode, sArg) : RemMode(uMode);
