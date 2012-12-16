@@ -140,8 +140,8 @@ running make or with the znc-buildmod shell script.
 
 For additional info look in the wiki:
 
-- [Writing Modules](http://wiki.znc.in/WritingModules)
-- [Module Hooks](http://wiki.znc.in/ModuleHooks)
+- [Writing Modules](http://wiki.znc.in/Writing_Modules)
+- [Module Hooks](http://wiki.znc.in/Module_Hooks)
 
 Perl modules are loaded through the global module [ModPerl](http://wiki.znc.in/Modperl).
 
