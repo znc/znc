@@ -86,8 +86,8 @@ public:
 };
 
 template<> void TModInfo<CCertMod>(CModInfo& Info) {
-	Info.AddType(CModInfo::NetworkModule);
+	Info.AddType(CModInfo::UserModule);
 	Info.SetWikiPage("cert");
 }
 
-USERMODULEDEFS(CCertMod, "Use a ssl certificate to connect to a server")
+NETWORKMODULEDEFS(CCertMod, "Use a ssl certificate to connect to a server")
