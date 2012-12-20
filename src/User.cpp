@@ -380,6 +380,13 @@ bool CUser::ParseConfig(CConfig* pConfig, CString& sError) {
 			CUtils::PrintMessage("NOTICE: [admin] module was renamed, loading [controlpanel] instead");
 			sModName = "controlpanel";
 		}
+		
+		// XXX Legacy crap, should have been added ZNC 0.207, but added only in 1.1 :(
+		if (sModName == "away") {
+			CUtils::PrintMessage("NOTICE: [away] was renamed, "
+					"loading [awaystore] instead");
+			sModName = "awaystore";
+		}
 
 		CUtils::PrintAction("Loading user module [" + sModName + "]");
 		CString sModRet;
