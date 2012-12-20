@@ -399,8 +399,6 @@ void CIRCSock::ReadLine(const CString& sData) {
 				// :irc.server.com 366 nick #chan :End of /NAMES list.
 				CChan* pChan = m_pNetwork->FindChan(sRest.Token(0));
 
-				m_pNetwork->PutUser(sLine);  // First send them the raw
-
 				if (pChan) {
 					if (pChan->IsOn()) {
 						// If we are the only one in the chan, set our default modes
@@ -420,6 +418,8 @@ void CIRCSock::ReadLine(const CString& sData) {
 						return;
 					}
 				}
+
+				m_pNetwork->PutUser(sLine);
 
 				break;
 			}
