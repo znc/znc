@@ -106,7 +106,7 @@ void CClient::UserCommand(CString& sLine) {
 			return;
 		}
 
-		CString sChan = sLine.Token(1);
+		CString sChan = sLine.Token(1).MakeLower();
 
 		if (sChan.empty()) {
 			PutStatus("Usage: Detach <#chan>");
@@ -117,7 +117,10 @@ void CClient::UserCommand(CString& sLine) {
 		vector<CChan*>::const_iterator it;
 		unsigned int uMatches = 0, uDetached = 0;
 		for (it = vChans.begin(); it != vChans.end(); ++it) {
-			if (!(*it)->GetName().WildCmp(sChan))
+			CChan *pChannel = *it;
+			CString channelName = pChannel->GetName().AsLower();
+
+			if (!channelName.WildCmp(sChan))
 				continue;
 			uMatches++;
 
