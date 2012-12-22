@@ -380,20 +380,31 @@ void CClient::ReadLine(const CString& sData) {
 	}
 
 	if (sCommand.Equals("DETACH")) {
-		CString sChan = sLine.Token(1);
+		CString sChannels = sLine.Token(1).TrimPrefix_n();
 
-		if (sChan.empty()) {
+		if (sChannels.empty()) {
 			PutStatusNotice("Usage: /detach <#chan>");
 			return;
 		}
 
-		CChan* pChan = m_pNetwork->FindChan(sChan);
-		if (!pChan) {
-			PutStatusNotice("You are not on [" + sChan + "]");
-			return;
+		VCString vChans;
+		sChannels.Split(",", vChans, false);
+		sChannels.clear();
+
+		for (VCString::const_iterator channelIterator = vChans.begin();
+				channelIterator != vChans.end();
+				++channelIterator)
+		{
+			CString sChannel = *channelIterator;
+
+			CChan *pChannel = m_pNetwork->FindChan(sChannel);
+			if (pChannel) {
+				pChannel->DetachUser();
+			} else {
+				PutStatusNotice("You are not on [" + sChannel + "]");
+			}
 		}
 
-		pChan->DetachUser();
 		return;
 	} else if (sCommand.Equals("JOIN")) {
 		CString sChans = sLine.Token(1).TrimPrefix_n();
