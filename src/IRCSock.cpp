@@ -415,11 +415,10 @@ void CIRCSock::ReadLine(const CString& sData) {
 						}
 					}
 					if (pChan->IsDetached()) {
+						// don't put it to clients
 						return;
 					}
 				}
-
-				m_pNetwork->PutUser(sLine);
 
 				break;
 			}
