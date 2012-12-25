@@ -468,7 +468,7 @@ void CIRCNetwork::ClientConnected(CClient *pClient) {
 		}
 
 		const CNick& Nick = GetIRCNick();
-		if (!sClientNick.Equals(Nick.GetNick())) {
+		if (sClientNick != Nick.GetNick()) { // case-sensitive match
 			pClient->PutClient(":" + sClientNick + "!" + Nick.GetIdent() +
 					"@" + Nick.GetHost() + " NICK :" + Nick.GetNick());
 			pClient->SetNick(Nick.GetNick());
