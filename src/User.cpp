@@ -55,6 +55,15 @@ protected:
 				}
 			}
 		}
+
+		vector<CClient*>& vUserClients = m_pUser->GetUserClients();
+		for (size_t c = 0; c < vUserClients.size(); ++c) {
+			CClient* pUserClient = vUserClients[c];
+
+			if (pUserClient->GetTimeSinceLastDataTransaction() >= 270) {
+				pUserClient->PutClient("PING :ZNC");
+			}
+		}
 	}
 
 	CUser* m_pUser;
