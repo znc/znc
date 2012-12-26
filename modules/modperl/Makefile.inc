@@ -60,5 +60,9 @@ modperl_install: install_datadir modperl_all
 	done
 	mkdir -p $(DESTDIR)$(MODDIR)/modperl
 	$(INSTALL_PROGRAM) modperl/ZNC.$(PERLCEXT_EXT) $(DESTDIR)$(MODDIR)/modperl
-	$(INSTALL_DATA) modperl/ZNC.pm $(DESTDIR)$(MODDIR)/modperl
+	if test -e modperl/ZNC.pm ; then \
+		$(INSTALL_DATA) modperl/ZNC.pm $(DESTDIR)$(MODDIR)/modperl || exit 1 ; \
+	else \
+		$(INSTALL_DATA) $(srcdir)/modperl/ZNC.pm $(DESTDIR)$(MODDIR)/modperl || exit 1 ; \
+	fi
 	$(INSTALL_DATA) $(srcdir)/modperl/startup.pl $(DESTDIR)$(MODDIR)/modperl
