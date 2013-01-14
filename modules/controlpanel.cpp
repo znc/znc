@@ -766,9 +766,9 @@ class CAdminMod : public CModule {
 		}
 
 		if (pUser->DeleteNetwork(sNetwork)) {
-			PutModule("Network deleted [" + sNetwork + "]");
+			PutModule("Network [" + sNetwork + "] deleted on user " + pUser->GetUserName() + ".");
 		} else {
-			PutModule("Network could not be deleted.");
+			PutModule("Requested network could not be deleted on user " + pUser->GetUserName() + ".");
 		}
 	}
 
