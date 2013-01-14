@@ -728,9 +728,9 @@ class CAdminMod : public CModule {
 		}
 
 		if (pUser->AddNetwork(sNetwork)) {
-			PutModule("Network added [" + sNetwork + "]");
+			PutModule("Network [" + sNetwork + "] added for user " + pUser->GetUserName() + ".");
 		} else {
-			PutModule("Network could not be added.");
+			PutModule("Network could not be added for user " + pUser->GetUserName() + ".");
 		}
 	}
 
@@ -766,9 +766,9 @@ class CAdminMod : public CModule {
 		}
 
 		if (pUser->DeleteNetwork(sNetwork)) {
-			PutModule("Network deleted [" + sNetwork + "]");
+			PutModule("Network [" + sNetwork + "] deleted for user " + pUser->GetUserName() + ".");
 		} else {
-			PutModule("Network could not be deleted.");
+			PutModule("Requested network could not be deleted for user " + pUser->GetUserName() + ".");
 		}
 	}
 
