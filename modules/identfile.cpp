@@ -48,12 +48,12 @@ public:
 	void SetFormat(const CString& sLine) {
 		SetNV("Format", sLine.Token(1, true));
 		PutModule("Format has been set to: " + GetNV("Format"));
-		PutModule("Format would be expanded to: " + m_pUser->ExpandString(GetNV("Format")));
+		PutModule("Format would be expanded to: " + ExpandString(GetNV("Format")));
 	}
 
 	void GetFormat(const CString& sLine) {
 		PutModule("Format is set to: " + GetNV("Format"));
-		PutModule("Format would be expanded to: " + m_pUser->ExpandString(GetNV("Format")));
+		PutModule("Format would be expanded to: " + ExpandString(GetNV("Format")));
 	}
 
 	void Show(const CString& sLine) {
@@ -109,7 +109,7 @@ public:
 			return false;
 		}
 
-		CString sData = m_pNetwork->ExpandString(GetNV("Format"));
+		CString sData = ExpandString(GetNV("Format"));
 
 		// If the format doesn't contain anything expandable, we'll
 		// assume this is an "old"-style format string.

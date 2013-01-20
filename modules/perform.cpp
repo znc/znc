@@ -40,7 +40,6 @@ class CPerform : public CModule {
 	void List(const CString& sCommand) {
 		CTable Table;
 		unsigned int index = 1;
-		CString sExpanded;
 
 		Table.AddColumn("Id");
 		Table.AddColumn("Perform");
@@ -51,11 +50,7 @@ class CPerform : public CModule {
 			Table.SetCell("Id", CString(index));
 			Table.SetCell("Perform", *it);
 
-			if (m_pNetwork) {
-				sExpanded = m_pNetwork->ExpandString(*it);
-			} else {
-				sExpanded = GetUser()->ExpandString(*it);
-			}
+			CString sExpanded = ExpandString(*it);
 
 			if (sExpanded != *it) {
 				Table.SetCell("Expanded", sExpanded);
@@ -128,7 +123,7 @@ public:
 
 	virtual void OnIRCConnected() {
 		for (VCString::const_iterator it = m_vPerform.begin(); it != m_vPerform.end(); ++it) {
-			PutIRC(m_pNetwork->ExpandString(*it));
+			PutIRC(ExpandString(*it));
 		}
 	}
 
