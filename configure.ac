@@ -503,6 +503,7 @@ then
 	LIBS="$my_saved_LIBS"
 fi
 
+CHARSET=""
 AC_CHECK_FUNC( iconv, CHARSET=1 )
 AC_CHECK_LIB( iconv, iconv_open, LIBICONV=-liconv ; CHARSET=1 )
 if test "x$CHARSET" = "x1"
