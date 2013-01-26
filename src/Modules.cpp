@@ -1168,7 +1168,9 @@ ModHandle CModules::OpenModule(const CString& sModule, const CString& sModPath, 
 	ModHandle p = dlopen((sModPath).c_str(), RTLD_NOW | RTLD_GLOBAL);
 
 	if (!p) {
-		sRetMsg = "Unable to open module [" + sModule + "] [" + dlerror() + "]";
+		// dlerror() returns pointer to static buffer, which may be overwritten very soon with another dl call
+		CString sDlError = dlerror();
+		sRetMsg = "Unable to open module [" + sModule + "] [" + sDlError + "]";
 		return NULL;
 	}
 
