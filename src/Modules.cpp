@@ -1169,7 +1169,9 @@ ModHandle CModules::OpenModule(const CString& sModule, const CString& sModPath, 
 
 	if (!p) {
 		// dlerror() returns pointer to static buffer, which may be overwritten very soon with another dl call
-		CString sDlError = dlerror();
+		// also it may just return null.
+		const char* cDlError = dlerror();
+		CString sDlError = cDlError ? cDlError : "Unknown error";
 		sRetMsg = "Unable to open module [" + sModule + "] [" + sDlError + "]";
 		return NULL;
 	}
