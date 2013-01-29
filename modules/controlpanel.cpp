@@ -879,7 +879,7 @@ class CAdminMod : public CModule {
 		CString sNetwork = sLine.Token(2);
 
 		if (sNetwork.empty()) {
-			PutModule("Usage: Reconnect <username> <network>");
+			PutModule("Usage: Disconnect <username> <network>");
 			return;
 		}
 
