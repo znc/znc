@@ -673,7 +673,7 @@ void CClient::UserCommand(CString& sLine) {
 		CString sPass = sLine.Token(3);
 
 		if (sServer.empty()) {
-			PutStatus("Usage: RemServer <host> [port] [pass]");
+			PutStatus("Usage: DelServer <host> [port] [pass]");
 			return;
 		}
 
@@ -1109,11 +1109,11 @@ void CClient::UserCommand(CString& sLine) {
 		} else {
 			PutStatus("The host [" + sHost + "] is already in the list");
 		}
-	} else if ((sCommand.Equals("REMBINDHOST") || sCommand.Equals("REMVHOST") || sCommand.Equals("DELVHOST")) && m_pUser->IsAdmin()) {
+	} else if ((sCommand.Equals("REMBINDHOST") || sCommand.Equals("DELBINDHOST") || sCommand.Equals("REMVHOST") || sCommand.Equals("DELVHOST")) && m_pUser->IsAdmin()) {
 		CString sHost = sLine.Token(1);
 
 		if (sHost.empty()) {
-			PutStatus("Usage: RemBindHost <host>");
+			PutStatus("Usage: DelBindHost <host>");
 			return;
 		}
 
@@ -1552,7 +1552,7 @@ void CClient::HelpUser() {
 	Table.SetCell("Description", "Add a server to the list of alternate/backup servers of current IRC network.");
 
 	Table.AddRow();
-	Table.SetCell("Command", "RemServer");
+	Table.SetCell("Command", "DelServer");
 	Table.SetCell("Arguments", "<host> [port] [pass]");
 	Table.SetCell("Description", "Remove a server from the list of alternate/backup servers of current IRC network");
 
@@ -1596,7 +1596,7 @@ void CClient::HelpUser() {
 		Table.SetCell("Description", "Adds a bind host for normal users to use");
 
 		Table.AddRow();
-		Table.SetCell("Command", "RemBindHost");
+		Table.SetCell("Command", "DelBindHost");
 		Table.SetCell("Arguments", "<host>");
 		Table.SetCell("Description", "Removes a bind host from the list");
 	}
