@@ -723,7 +723,7 @@ class CAdminMod : public CModule {
 		}
 
 		if (pUser->FindNetwork(sNetwork)) {
-			PutModule("[" + pUser->GetUserName() + "] already has a network named [" + sNetwork + "]");
+			PutModule("[" + pUser->GetUserName() + "] already has a network with the name [" + sNetwork + "]");
 			return;
 		}
 
@@ -756,7 +756,7 @@ class CAdminMod : public CModule {
 		CIRCNetwork* pNetwork = pUser->FindNetwork(sNetwork);
 
 		if (!pNetwork) {
-			PutModule("[" + pUser->GetUserName() + "] does not have a network named [" + sNetwork + "]");
+			PutModule("[" + pUser->GetUserName() + "] does not have a network with the name [" + sNetwork + "]");
 			return;
 		}
 
@@ -854,7 +854,7 @@ class CAdminMod : public CModule {
 
 		CIRCNetwork* pNetwork = pUser->FindNetwork(sNetwork);
 		if (!pNetwork) {
-			PutModule("[" + sUserName + "] does not have a network named [" + sNetwork + "]");
+			PutModule("[" + sUserName + "] does not have a network with the name [" + sNetwork + "]");
 			return;
 		}
 
@@ -891,7 +891,7 @@ class CAdminMod : public CModule {
 
 		CIRCNetwork* pNetwork = pUser->FindNetwork(sNetwork);
 		if (!pNetwork) {
-			PutModule("[" + sUserName + "] does not have a network [" + sNetwork + "]");
+			PutModule("[" + sUserName + "] does not have a network with the name [" + sNetwork + "]");
 			return;
 		}
 
