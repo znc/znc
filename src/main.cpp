@@ -201,9 +201,17 @@ int main(int argc, char** argv) {
 
 	if (bMakePass) {
 		CString sSalt;
+		CUtils::PrintMessage("Type your new password.");
 		CString sHash = CUtils::GetSaltedHashPass(sSalt);
-		CUtils::PrintMessage("Use this in the <User> section of your config:");
-		CUtils::PrintMessage("Pass = " + CUtils::sDefaultHash + "#" + sHash + "#" + sSalt + "#");
+		CUtils::PrintMessage("Kill ZNC process, if it's running.");
+		CUtils::PrintMessage("Then replace password in the <User> section of your config with this:");
+		// Not PrintMessage(), to remove [**] from the beginning, to ease copypasting
+		std::cout << "<Pass password>" << std::endl;
+		std::cout << "\tMethod = " << CUtils::sDefaultHash << std::endl;
+		std::cout << "\tHash = " << sHash << std::endl;
+		std::cout << "\tSalt = " << sSalt << std::endl;
+		std::cout << "</Pass>" << std::endl;
+		CUtils::PrintMessage("After that start ZNC again, and you should be able to login with the new password.");
 
 		delete pZNC;
 		return 0;
