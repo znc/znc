@@ -1059,7 +1059,7 @@ class CAdminMod : public CModule {
 		CModules& Modules = pUser->GetModules();
 
 		if (!Modules.size()) {
-			PutModule("User [" pUser->GetUserName() + "] has no modules loaded.");
+			PutModule("User [" + pUser->GetUserName() + "] has no modules loaded.");
 		} else {
 			PutModule("Modules loaded for user [" + pUser->GetUserName() + "]:");
 			CTable Table;
