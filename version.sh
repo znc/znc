@@ -12,7 +12,7 @@ then
 fi
 
 # Figure out the information we need
-LATEST_TAG=`${GIT} describe --abbrev=0 HEAD`
+LATEST_TAG=`${GIT} describe --always --abbrev=0 HEAD`
 COMMITS_SINCE=`${GIT} log --format=oneline ${LATEST_TAG}..HEAD | wc -l`
 SHORT_ID=`${GIT} rev-parse --short HEAD`
 
