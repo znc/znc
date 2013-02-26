@@ -124,7 +124,7 @@ class CAdminMod : public CModule {
 			return m_pUser;
 		CUser *pUser = CZNC::Get().FindUser(sUsername);
 		if (!pUser) {
-			PutModule("Error: User not found: " + sUsername);
+			PutModule("Error: User [" + sUsername + "] not found.");
 			return NULL;
 		}
 		if (pUser != m_pUser && !m_pUser->IsAdmin()) {
@@ -365,7 +365,7 @@ class CAdminMod : public CModule {
 
 			pNetwork = pUser->FindNetwork(sNetwork);
 			if (!pNetwork && !sNetwork.empty()) {
-				PutModule("Network not found.");
+				PutModule("Network [" + sNetwork + "] not found.");
 				return;
 			}
 		}
@@ -412,7 +412,7 @@ class CAdminMod : public CModule {
 
 			pNetwork = pUser->FindNetwork(sNetwork);
 			if (!pNetwork && !sNetwork.empty()) {
-				PutModule("Network not found.");
+				PutModule("Network [" + sNetwork + "] not found.");
 				return;
 			}
 		}
@@ -462,13 +462,13 @@ class CAdminMod : public CModule {
 
 		CIRCNetwork* pNetwork = pUser->FindNetwork(sNetwork);
 		if (!pNetwork) {
-			PutModule("[" + sUsername + "] does not have a network [" + sNetwork + "]");
+			PutModule("[" + sUsername + "] does not have a network named [" + sNetwork + "]");
 			return;
 		}
 
 		CChan* pChan = pNetwork->FindChan(sChan);
 		if (!pChan) {
-			PutModule("Error: Channel not found: " + sChan);
+			PutModule("Error: Channel [" + sChan + "] not found.");
 			return;
 		}
 
@@ -508,13 +508,13 @@ class CAdminMod : public CModule {
 
 		CIRCNetwork* pNetwork = pUser->FindNetwork(sNetwork);
 		if (!pNetwork) {
-			PutModule("[" + sUsername + "] does not have a network [" + sNetwork + "]");
+			PutModule("[" + sUsername + "] does not have a network named [" + sNetwork + "]");
 			return;
 		}
 
 		CChan* pChan = pNetwork->FindChan(sChan);
 		if (!pChan) {
-			PutModule("Error: Channel not found: " + sChan);
+			PutModule("Error: Channel [" + sChan + "] not found.");
 			return;
 		}
 
@@ -604,7 +604,7 @@ class CAdminMod : public CModule {
 		}
 
 		if (CZNC::Get().FindUser(sUsername)) {
-			PutModule("Error: User " + sUsername + " already exists!");
+			PutModule("Error: User [" + sUsername + "] already exists!");
 			return;
 		}
 
@@ -619,7 +619,7 @@ class CAdminMod : public CModule {
 			return;
 		}
 
-		PutModule("User " + sUsername + " added!");
+		PutModule("User [" + sUsername + "] added!");
 		return;
 	}
 
@@ -638,7 +638,7 @@ class CAdminMod : public CModule {
 		CUser *pUser = CZNC::Get().FindUser(sUsername);
 
 		if (!pUser) {
-			PutModule("Error: User " + sUsername + " does not exist!");
+			PutModule("Error: User [" + sUsername + "] does not exist!");
 			return;
 		}
 
@@ -707,7 +707,7 @@ class CAdminMod : public CModule {
 		} else {
 			pUser = GetUser(sUser);
 			if (!pUser) {
-				PutModule("User not found");
+				PutModule("User [" + sUser + "] not found");
 				return;
 			}
 		}
@@ -723,14 +723,14 @@ class CAdminMod : public CModule {
 		}
 
 		if (pUser->FindNetwork(sNetwork)) {
-			PutModule(pUser->GetUserName() + " already has a network named [" + sNetwork + "]");
+			PutModule("[" + pUser->GetUserName() + "] already has a network with the name [" + sNetwork + "]");
 			return;
 		}
 
 		if (pUser->AddNetwork(sNetwork)) {
-			PutModule("Network added [" + sNetwork + "]");
+			PutModule("Network [" + sNetwork + "] added for user [" + pUser->GetUserName() + "].");
 		} else {
-			PutModule("Network could not be added.");
+			PutModule("Network [" + sNetwork + "] could not be added for user [" + pUser->GetUserName() + "].");
 		}
 	}
 
@@ -756,7 +756,7 @@ class CAdminMod : public CModule {
 		CIRCNetwork* pNetwork = pUser->FindNetwork(sNetwork);
 
 		if (!pNetwork) {
-			PutModule(pUser->GetUserName() + " does not have a network named [" + sNetwork + "]");
+			PutModule("[" + pUser->GetUserName() + "] does not have a network with the name [" + sNetwork + "]");
 			return;
 		}
 
@@ -766,9 +766,9 @@ class CAdminMod : public CModule {
 		}
 
 		if (pUser->DeleteNetwork(sNetwork)) {
-			PutModule("Network deleted [" + sNetwork + "]");
+			PutModule("Network [" + sNetwork + "] deleted on user [" + pUser->GetUserName() + "].");
 		} else {
-			PutModule("Network could not be deleted.");
+			PutModule("Network [" + sNetwork + "] could not be deleted for user [" + pUser->GetUserName() + "].");
 		}
 	}
 
@@ -827,14 +827,14 @@ class CAdminMod : public CModule {
 
 		CIRCNetwork* pNetwork = pUser->FindNetwork(sNetwork);
 		if (!pNetwork) {
-			PutModule("[" + sUsername + "] does not have a network [" + sNetwork + "]");
+			PutModule("[" + sUsername + "] does not have a network with the name [" + sNetwork + "]");
 			return;
 		}
 
 		if (pNetwork->AddServer(sServer))
-			PutModule("Added IRC Server: " + sServer);
+			PutModule("Added IRC Server [" + sServer + "] for network [" + sNetwork + "] for user [" + pUser->GetUserName() + "].");
 		else
-			PutModule("Could not add IRC server");
+			PutModule("Could not add IRC server [" + sServer + "] for network [" + sNetwork + "] for user [" + pUser->GetUserName() + "].");
 	}
 
 	void ReconnectUser(const CString& sLine) {
@@ -848,13 +848,13 @@ class CAdminMod : public CModule {
 
 		CUser* pUser = GetUser(sUserName);
 		if (!pUser) {
-			PutModule("User not found.");
+			PutModule("User [" + sUserName + "] not found.");
 			return;
 		}
 
 		CIRCNetwork* pNetwork = pUser->FindNetwork(sNetwork);
 		if (!pNetwork) {
-			PutModule("[" + sUserName + "] does not have a network [" + sNetwork + "]");
+			PutModule("[" + sUserName + "] does not have a network with the name [" + sNetwork + "]");
 			return;
 		}
 
@@ -871,7 +871,7 @@ class CAdminMod : public CModule {
 		// then reconnect
 		pNetwork->SetIRCConnectEnabled(true);
 
-		PutModule("Queued user for a reconnect.");
+		PutModule("Queued network [" + sNetwork + "] for user [" + pUser->GetUserName() + "] for a reconnect.");
 	}
 
 	void DisconnectUser(const CString& sLine) {
@@ -885,13 +885,13 @@ class CAdminMod : public CModule {
 
 		CUser* pUser = GetUser(sUserName);
 		if (!pUser) {
-			PutModule("User not found.");
+			PutModule("User [" + sUserName + "] not found.");
 			return;
 		}
 
 		CIRCNetwork* pNetwork = pUser->FindNetwork(sNetwork);
 		if (!pNetwork) {
-			PutModule("[" + sUserName + "] does not have a network [" + sNetwork + "]");
+			PutModule("[" + sUserName + "] does not have a network with the name [" + sNetwork + "]");
 			return;
 		}
 
@@ -972,9 +972,9 @@ class CAdminMod : public CModule {
 		}
 
 		if (pUser->DelCTCPReply(sCTCPRequest))
-			PutModule("Successfully removed [" + sCTCPRequest + "]");
+			PutModule("Successfully removed [" + sCTCPRequest + "] for user [" + pUser->GetUserName() + "].");
 		else
-			PutModule("Error: [" + sCTCPRequest + "] not found!");
+			PutModule("Error: [" + sCTCPRequest + "] not found for user [" + pUser->GetUserName() + "]!");
 	}
 
 	void LoadModuleForUser(const CString& sLine) {
@@ -993,7 +993,7 @@ class CAdminMod : public CModule {
 			return;
 
 		if (pUser->DenyLoadMod() && !m_pUser->IsAdmin()) {
-			PutModule("Loading modules has been denied");
+			PutModule("Loading modules has been disabled.");
 			return;
 		}
 
@@ -1031,7 +1031,7 @@ class CAdminMod : public CModule {
 			return;
 
 		if (pUser->DenyLoadMod() && !m_pUser->IsAdmin()) {
-			PutModule("Loading modules has been denied");
+			PutModule("Loading modules has been disabled.");
 			return;
 		}
 
@@ -1059,9 +1059,9 @@ class CAdminMod : public CModule {
 		CModules& Modules = pUser->GetModules();
 
 		if (!Modules.size()) {
-			PutModule("This user has no modules loaded.");
+			PutModule("User [" + pUser->GetUserName() + "] has no modules loaded.");
 		} else {
-			PutModule("User modules:");
+			PutModule("Modules loaded for user [" + pUser->GetUserName() + "]:");
 			CTable Table;
 			Table.AddColumn("Name");
 			Table.AddColumn("Arguments");
