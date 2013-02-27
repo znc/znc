@@ -711,7 +711,7 @@ bool CZNC::WriteNewConfig(const CString& sConfigFile) {
 		GetModules().GetAvailableMods(ssUserMods);
 		size_t uNrOtherUserMods = FilterUncommonModules(ssUserMods);
 
-		if (ssUserMods.size()) {
+		if (!ssUserMods.empty()) {
 			vsLines.push_back("");
 			CUtils::PrintMessage("");
 			CUtils::PrintMessage("-- User Modules --");
@@ -770,7 +770,7 @@ bool CZNC::WriteNewConfig(const CString& sConfigFile) {
 			GetModules().GetAvailableMods(ssNetworkMods, CModInfo::NetworkModule);
 			size_t uNrOtherNetworkMods = FilterUncommonModules(ssNetworkMods);
 
-			if (ssNetworkMods.size()) {
+			if (!ssNetworkMods.empty()) {
 				CUtils::PrintMessage("");
 				CUtils::PrintMessage("-- Network Modules --");
 				CUtils::PrintMessage("");
@@ -964,7 +964,7 @@ size_t CZNC::FilterUncommonModules(set<CModInfo>& ssModules) {
 	size_t uNrRemoved = 0;
 	for(set<CModInfo>::iterator it = ssModules.begin(); it != ssModules.end(); ) {
 		if(ssNames.count(it->GetName()) > 0) {
-			it++;
+			++it;
 		} else {
 			set<CModInfo>::iterator it2 = it++;
 			ssModules.erase(it2);

@@ -48,7 +48,7 @@ bool ZNC_NO_NEED_TO_DO_ANYTHING_ON_MODULE_CALL_EXITER;
 			if (m_pNetwork)                              \
 				pMod->SetNetwork(pNetwork);              \
 			pMod->SetClient(pOldClient);                     \
-		} catch (CModule::EModException e) {                     \
+		} catch (const CModule::EModException& e) {                     \
 			if (e == CModule::UNLOAD) {                      \
 				UnloadModule((*this)[a]->GetModName());  \
 			}                                                \
@@ -88,7 +88,7 @@ bool ZNC_NO_NEED_TO_DO_ANYTHING_ON_MODULE_CALL_EXITER;
 				bHaltCore = true;                        \
 				break;                                   \
 			}                                                \
-		} catch (CModule::EModException e) {                     \
+		} catch (const CModule::EModException& e) {                     \
 			if (e == CModule::UNLOAD) {                      \
 				UnloadModule((*this)[a]->GetModName());  \
 			}                                                \
@@ -689,7 +689,7 @@ bool CModules::OnBoot() {
 			if (!(*this)[a]->OnBoot()) {
 				return true;
 			}
-		} catch (CModule::EModException e) {
+		} catch (const CModule::EModException& e) {
 			if (e == CModule::UNLOAD) {
 				UnloadModule((*this)[a]->GetModName());
 			}
@@ -773,7 +773,7 @@ bool CModules::OnServerCapAvailable(const CString& sCap) {
 				bResult |= pMod->OnServerCapAvailable(sCap);
 			}
 			pMod->SetClient(pOldClient);
-		} catch (CModule::EModException e) {
+		} catch (const CModule::EModException& e) {
 			if (CModule::UNLOAD == e) {
 				UnloadModule((*this)[a]->GetModName());
 			}
@@ -836,7 +836,7 @@ bool CModules::IsClientCapSupported(CClient* pClient, const CString& sCap, bool 
 				bResult |= pMod->IsClientCapSupported(pClient, sCap, bState);
 			}
 			pMod->SetClient(pOldClient);
-		} catch (CModule::EModException e) {
+		} catch (const CModule::EModException& e) {
 			if (CModule::UNLOAD == e) {
 				UnloadModule((*this)[a]->GetModName());
 			}
@@ -942,7 +942,7 @@ bool CModules::LoadModule(const CString& sModule, const CString& sArgs, CModInfo
 	bool bLoaded;
 	try {
 		bLoaded = pModule->OnLoad(sArgs, sRetMsg);
-	} catch (CModule::EModException) {
+	} catch (const CModule::EModException&) {
 		bLoaded = false;
 		sRetMsg = "Caught an exception";
 	}

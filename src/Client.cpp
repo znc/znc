@@ -24,7 +24,7 @@ using std::vector;
 			pModule->SetClient(CLIENT);  \
 			pModule->FUNC;  \
 			pModule->SetClient(NULL);  \
-		} catch (CModule::EModException e) {  \
+		} catch (const CModule::EModException& e) {  \
 			if (e == CModule::UNLOAD) {  \
 				(NETWORK)->GetModules().UnloadModule(MOD);  \
 			}  \
@@ -36,7 +36,7 @@ using std::vector;
 			pModule->FUNC;  \
 			pModule->SetClient(NULL);  \
 			pModule->SetNetwork(NULL);  \
-		} catch (CModule::EModException e) {  \
+		} catch (const CModule::EModException& e) {  \
 			if (e == CModule::UNLOAD) {  \
 				(USER)->GetModules().UnloadModule(MOD);  \
 			}  \
@@ -50,7 +50,7 @@ using std::vector;
 			pModule->SetClient(NULL);  \
 			pModule->SetNetwork(NULL);  \
 			pModule->SetUser(NULL);  \
-		} catch (CModule::EModException e) {  \
+		} catch (const CModule::EModException& e) {  \
 			if (e == CModule::UNLOAD) {  \
 					CZNC::Get().GetModules().UnloadModule(MOD);  \
 			}  \
