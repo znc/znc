@@ -327,7 +327,7 @@ bool CUser::ParseConfig(CConfig* pConfig, CString& sError) {
 			CZNC::DumpConfig(pSubConf);
 			return false;
 		}
-		subIt++;
+		++subIt;
 	}
 	if (subIt != subConf.end()) {
 		sError = "Password defined more than once";

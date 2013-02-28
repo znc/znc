@@ -66,7 +66,7 @@ void CClient::UserCommand(CString& sLine) {
 		CIRCSock* pIRCSock = m_pNetwork->GetIRCSock();
 		const CString& sPerms = (pIRCSock) ? pIRCSock->GetPerms() : "";
 
-		if (!msNicks.size()) {
+		if (msNicks.empty()) {
 			PutStatus("No nicks on [" + sChan + "]");
 			return;
 		}
@@ -414,7 +414,7 @@ void CClient::UserCommand(CString& sLine) {
 		CIRCSock* pIRCSock = pNetwork->GetIRCSock();
 		const CString& sPerms = (pIRCSock) ? pIRCSock->GetPerms() : "";
 
-		if (!vChans.size()) {
+		if (vChans.empty()) {
 			PutStatus("There are no channels defined.");
 			return;
 		}
@@ -831,7 +831,7 @@ void CClient::UserCommand(CString& sLine) {
 		set<CModInfo> ssUserMods;
 		CZNC::Get().GetModules().GetAvailableMods(ssUserMods);
 
-		if (!ssUserMods.size()) {
+		if (ssUserMods.empty()) {
 			PutStatus("No user modules available.");
 		} else {
 			PutStatus("User modules:");
@@ -853,7 +853,7 @@ void CClient::UserCommand(CString& sLine) {
 		set<CModInfo> ssNetworkMods;
 		CZNC::Get().GetModules().GetAvailableMods(ssNetworkMods, CModInfo::NetworkModule);
 
-		if (!ssNetworkMods.size()) {
+		if (ssNetworkMods.empty()) {
 			PutStatus("No network modules available.");
 		} else {
 			PutStatus("Network modules:");

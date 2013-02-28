@@ -106,7 +106,7 @@ public:
 			else
 				while (i != vsEntries.end()) {
 					sRes += sKey + "=" + *i + "\n";
-					i++;
+					++i;
 				}
 			++it;
 		}

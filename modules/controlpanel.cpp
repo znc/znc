@@ -913,7 +913,7 @@ class CAdminMod : public CModule {
 		CTable Table;
 		Table.AddColumn("Request");
 		Table.AddColumn("Reply");
-		for (MCString::const_iterator it = msCTCPReplies.begin(); it != msCTCPReplies.end(); it++) {
+		for (MCString::const_iterator it = msCTCPReplies.begin(); it != msCTCPReplies.end(); ++it) {
 			Table.AddRow();
 			Table.SetCell("Request", it->first);
 			Table.SetCell("Reply", it->second);

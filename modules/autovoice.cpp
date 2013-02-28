@@ -123,7 +123,7 @@ public:
 		}
 
 		// Load the saved users
-		for (MCString::iterator it = BeginNV(); it != EndNV(); it++) {
+		for (MCString::iterator it = BeginNV(); it != EndNV(); ++it) {
 			const CString& sLine = it->second;
 			CAutoVoiceUser* pUser = new CAutoVoiceUser;
 

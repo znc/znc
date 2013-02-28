@@ -34,7 +34,7 @@ class CModTcl;
 class CModTclTimer : public CTimer {
 public:
 
-	CModTclTimer(CModule* pModule, unsigned int uInterval, unsigned int uCycles, const CString& sLabel, const CString& sDescription) : CTimer(pModule, uInterval, uCycles, sLabel, sDescription) {}
+	CModTclTimer(CModule* pModule, unsigned int uInterval, unsigned int uCycles, const CString& sLabel, const CString& sDescription) : CTimer(pModule, uInterval, uCycles, sLabel, sDescription), mpParent(NULL) {}
 	virtual ~CModTclTimer() {}
 protected:
 	virtual void RunJob();
@@ -44,7 +44,7 @@ protected:
 class CModTclStartTimer : public CTimer {
 public:
 
-	CModTclStartTimer(CModule* pModule, unsigned int uInterval, unsigned int uCycles, const CString& sLabel, const CString& sDescription) : CTimer(pModule, uInterval, uCycles, sLabel, sDescription) {}
+	CModTclStartTimer(CModule* pModule, unsigned int uInterval, unsigned int uCycles, const CString& sLabel, const CString& sDescription) : CTimer(pModule, uInterval, uCycles, sLabel, sDescription), m_pParent(NULL) {}
 	virtual ~CModTclStartTimer() {}
 protected:
 	virtual void RunJob();

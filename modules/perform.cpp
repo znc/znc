@@ -45,7 +45,7 @@ class CPerform : public CModule {
 		Table.AddColumn("Perform");
 		Table.AddColumn("Expanded");
 
-		for (VCString::const_iterator it = m_vPerform.begin(); it != m_vPerform.end(); it++, index++) {
+		for (VCString::const_iterator it = m_vPerform.begin(); it != m_vPerform.end(); ++it, index++) {
 			Table.AddRow();
 			Table.SetCell("Id", CString(index));
 			Table.SetCell("Perform", *it);

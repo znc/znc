@@ -47,7 +47,7 @@ protected:
 class CPartylineMod : public CModule {
 public:
 	void ListChannelsCommand(const CString& sLine) {
-		if (!m_ssChannels.size()) {
+		if (m_ssChannels.empty()) {
 			PutModule("There are no open channels.");
 			return;
 		}
@@ -89,7 +89,7 @@ public:
 			}
 		}
 
-		while (m_ssChannels.size()) {
+		while (!m_ssChannels.empty()) {
 			delete *m_ssChannels.begin();
 			m_ssChannels.erase(m_ssChannels.begin());
 		}
@@ -174,7 +174,7 @@ public:
 			CPartylineChannel *pChan = *it;
 			// RemoveUser() might delete channels, so make sure our
 			// iterator doesn't break.
-			it++;
+			++it;
 			RemoveUser(&User, pChan, "KICK", "User deleted", true);
 		}
 
