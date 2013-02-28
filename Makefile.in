@@ -101,15 +101,12 @@ src/%.o: src/%.cpp Makefile
 	$(E) Building core object $*...
 	$(Q)$(CXX) $(CXXFLAGS) -c -o $@ $< -MD -MF .depend/$*.dep -MT $@
 
-ifneq "$(GIT)" ""
 # If git-describe differs from .version_extra, add a phony target to dependencies, forcing version.o to be recompiled
 # znc-0.200-430-g80acaa7 -> -DVERSION_EXTRA="\"-git-430-80acaa7\""
-src/version.o: src/version.cpp Makefile $(shell if [ x`cat .version_extra 2> /dev/null` != x`$(srcdir)/version.sh $(GIT) 2> /dev/null` ]; then echo version_extra_recompile; fi)
+src/version.cpp: Makefile version.sh $(shell if [ x`cat .version_extra 2> /dev/null` != x`$(srcdir)/version.sh '' $(GIT) 2> /dev/null` ]; then echo version_extra_recompile; fi)
 	@mkdir -p .depend src
-	$(E) Building core object version...
-	$(Q)$(CXX) "$(shell $(srcdir)/version.sh $(GIT))" $(CXXFLAGS) -c -o $@ $< -MD -MF .depend/version.dep -MT $@
-	-$(Q)$(srcdir)/version.sh $(GIT) > .version_extra 2> /dev/null
-endif
+	$(E) Building source file version.cpp...
+	$(Q)$(srcdir)/version.sh $(realpath $@) $(GIT) > .version_extra 2> /dev/null
 
 install: znc $(LIBZNC)
 	test -d $(DESTDIR)$(bindir) || $(INSTALL) -d $(DESTDIR)$(bindir)
