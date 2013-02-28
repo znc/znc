@@ -760,7 +760,7 @@ bool CIRCNetwork::DelServer(const CString& sName, unsigned short uPort, const CS
 	bool bSawCurrentServer = false;
 	CServer* pCurServer = GetCurrentServer();
 
-	for (vector<CServer*>::iterator it = m_vServers.begin(); it != m_vServers.end(); it++, a++) {
+	for (vector<CServer*>::iterator it = m_vServers.begin(); it != m_vServers.end(); ++it, a++) {
 		CServer* pServer = *it;
 
 		if (pServer == pCurServer)

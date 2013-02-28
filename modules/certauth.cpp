@@ -39,11 +39,11 @@ public:
 
 		// We need the SSL_VERIFY_PEER flag on all listeners, or else
 		// the client doesn't send a ssl cert
-		for (it = vListeners.begin(); it != vListeners.end(); it++)
+		for (it = vListeners.begin(); it != vListeners.end(); ++it)
 			(*it)->GetRealListener()->SetRequireClientCertFlags(SSL_VERIFY_PEER);
 
 		MCString::iterator it1;
-		for (it1 = BeginNV(); it1 != EndNV(); it1++) {
+		for (it1 = BeginNV(); it1 != EndNV(); ++it1) {
 			VCString vsKeys;
 			VCString::iterator it2;
 
@@ -53,7 +53,7 @@ public:
 			}
 
 			it1->second.Split(" ", vsKeys, false);
-			for (it2 = vsKeys.begin(); it2 != vsKeys.end(); it2++) {
+			for (it2 = vsKeys.begin(); it2 != vsKeys.end(); ++it2) {
 				m_PubKeys[it1->first].insert(*it2);
 			}
 		}
@@ -75,10 +75,10 @@ public:
 		MSCString::iterator it;
 
 		ClearNV(false);
-		for (it = m_PubKeys.begin(); it != m_PubKeys.end(); it++) {
+		for (it = m_PubKeys.begin(); it != m_PubKeys.end(); ++it) {
 			CString sVal;
 			SCString::iterator it2;
-			for (it2 = it->second.begin(); it2 != it->second.end(); it2++) {
+			for (it2 = it->second.begin(); it2 != it->second.end(); ++it2) {
 				sVal += *it2 + " ";
 			}
 
@@ -176,7 +176,7 @@ public:
 
 		SCString::iterator it2;
 		unsigned int id = 1;
-		for (it2 = it->second.begin(); it2 != it->second.end(); it2++) {
+		for (it2 = it->second.begin(); it2 != it->second.end(); ++it2) {
 			Table.AddRow();
 			Table.SetCell("Id", CString(id++));
 			Table.SetCell("Key", *it2);
@@ -205,7 +205,7 @@ public:
 
 		SCString::iterator it2 = it->second.begin();
 		while (id > 1) {
-			it2++;
+			++it2;
 			id--;
 		}
 
@@ -245,7 +245,7 @@ public:
 			if (it != m_PubKeys.end()) {
 				SCString::iterator it2;
 
-				for (it2 = it->second.begin(); it2 != it->second.end(); it2++) {
+				for (it2 = it->second.begin(); it2 != it->second.end(); ++it2) {
 					CTemplate& row = Tmpl.AddRow("KeyLoop");
 					row["Key"] = *it2;
 				}

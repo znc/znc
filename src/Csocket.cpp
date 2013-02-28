@@ -757,7 +757,7 @@ bool CSMonitorFD::CheckFDs( const std::map< int, short > & miiReadyFds )
 		if( itFD != miiReadyFds.end() )
 			miiTriggerdFds[itFD->first] = itFD->second;
 	}
-	if( miiTriggerdFds.size() )
+	if( !miiTriggerdFds.empty() )
 		return( FDsThatTriggered( miiTriggerdFds ) );
 	return( m_bEnabled );
 }
@@ -1269,10 +1269,9 @@ bool Csock::Listen( uint16_t iPort, int iMaxConns, const CS_STRING & sBindHost, 
 
 cs_sock_t Csock::Accept( CS_STRING & sHost, uint16_t & iRPort )
 {
-	cs_sock_t iSock = CS_INVALID_SOCK;
 	struct sockaddr_storage cAddr;
 	socklen_t iAddrLen = sizeof( cAddr );
-	iSock = accept( m_iReadSock, ( struct sockaddr * )&cAddr, &iAddrLen );
+	cs_sock_t iSock = accept( m_iReadSock, ( struct sockaddr * )&cAddr, &iAddrLen );
 	if( iSock != CS_INVALID_SOCK && getpeername( iSock, ( struct sockaddr * )&cAddr, &iAddrLen ) == 0 )
 	{
 		ConvertAddress( &cAddr, iAddrLen, sHost, &iRPort );
@@ -2816,7 +2815,7 @@ void CSocketManager::Loop()
 	{
 	case SUCCESS:
 	{
-		for( std::map<Csock *, EMessages>::iterator itSock = mpeSocks.begin(); itSock != mpeSocks.end(); itSock++ )
+		for( std::map<Csock *, EMessages>::iterator itSock = mpeSocks.begin(); itSock != mpeSocks.end(); ++itSock )
 		{
 			Csock * pcSock = itSock->first;
 			EMessages iErrno = itSock->second;
@@ -2968,7 +2967,7 @@ Csock * CSocketManager::FindSockByName( const CS_STRING & sName )
 {
 	std::vector<Csock *>::iterator it;
 	std::vector<Csock *>::iterator it_end = this->end();
-	for( it = this->begin(); it != it_end; it++ )
+	for( it = this->begin(); it != it_end; ++it )
 	{
 		if( (*it)->GetSockName() == sName )
 			return( *it );

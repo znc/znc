@@ -151,7 +151,7 @@ private:
 		bool bConverted = false;
 
 		// try all possible source charsets:
-		for(VCString::const_iterator itf = vsFrom.begin(); itf != vsFrom.end(); itf++)
+		for(VCString::const_iterator itf = vsFrom.begin(); itf != vsFrom.end(); ++itf)
 		{
 			if(ConvertCharset(*itf, sTo, sDataCopy))
 			{
@@ -201,9 +201,9 @@ public:
 		sArgs.Token(uIndex + 1).Split(",", vsTo);
 
 		// probe conversions:
-		for(VCString::const_iterator itf = vsFrom.begin(); itf != vsFrom.end(); itf++)
+		for(VCString::const_iterator itf = vsFrom.begin(); itf != vsFrom.end(); ++itf)
 		{
-			for(VCString::const_iterator itt = vsTo.begin(); itt != vsTo.end(); itt++)
+			for(VCString::const_iterator itt = vsTo.begin(); itt != vsTo.end(); ++itt)
 			{
 				iconv_t icTest = iconv_open(itt->c_str(), itf->c_str());
 				if(icTest == (iconv_t)-1)

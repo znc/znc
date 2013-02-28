@@ -344,7 +344,7 @@ int main(int argc, char** argv) {
 
 	try {
 		pZNC->Loop();
-	} catch (CException e) {
+	} catch (const CException& e) {
 		switch (e.GetType()) {
 			case CException::EX_Shutdown:
 				iRet = 0;
