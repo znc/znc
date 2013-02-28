@@ -68,7 +68,7 @@ public:
 
 		bool bGoodSource = true;
 
-		if (sSource.size() && m_vsSources.size()) {
+		if (!sSource.empty() && !m_vsSources.empty()) {
 			bGoodSource = false;
 
 			for (unsigned int a = 0; a < m_vsSources.size(); a++) {
@@ -325,7 +325,7 @@ private:
 
 		list<CWatchEntry>::iterator it = m_lsWatchers.begin();
 		for (unsigned int a = 0; a < uIdx; a++)
-			it++;
+			++it;
 
 		(*it).SetDisabled(bDisabled);
 		PutModule("Id " + CString(uIdx +1) + ((bDisabled) ? " Disabled" : " Enabled"));
@@ -343,7 +343,7 @@ private:
 
 		unsigned int uIdx = 1;
 
-		for (list<CWatchEntry>::iterator it = m_lsWatchers.begin(); it != m_lsWatchers.end(); it++, uIdx++) {
+		for (list<CWatchEntry>::iterator it = m_lsWatchers.begin(); it != m_lsWatchers.end(); ++it, uIdx++) {
 			CWatchEntry& WatchEntry = *it;
 
 			Table.AddRow();
@@ -373,7 +373,7 @@ private:
 
 		unsigned int uIdx = 1;
 
-		for (list<CWatchEntry>::iterator it = m_lsWatchers.begin(); it != m_lsWatchers.end(); it++, uIdx++) {
+		for (list<CWatchEntry>::iterator it = m_lsWatchers.begin(); it != m_lsWatchers.end(); ++it, uIdx++) {
 			CWatchEntry& WatchEntry = *it;
 
 			PutModule("/msg " + GetModNick() + " ADD " + WatchEntry.GetHostMask() + " " +
@@ -401,7 +401,7 @@ private:
 
 		list<CWatchEntry>::iterator it = m_lsWatchers.begin();
 		for (unsigned int a = 0; a < uIdx; a++)
-			it++;
+			++it;
 
 		(*it).SetSources(sSources);
 		PutModule("Sources set for Id " + CString(uIdx +1) + ".");
@@ -417,7 +417,7 @@ private:
 
 		list<CWatchEntry>::iterator it = m_lsWatchers.begin();
 		for (unsigned int a = 0; a < uIdx; a++)
-			it++;
+			++it;
 
 		m_lsWatchers.erase(it);
 		PutModule("Id " + CString(uIdx +1) + " Removed.");

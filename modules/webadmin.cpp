@@ -941,7 +941,7 @@ public:
 			}
 		}
 
-		for (set<CString>::iterator it2 = ssUnloadMods.begin(); it2 != ssUnloadMods.end(); it2++) {
+		for (set<CString>::iterator it2 = ssUnloadMods.begin(); it2 != ssUnloadMods.end(); ++it2) {
 			pNetwork->GetModules().UnloadModule(*it2);
 		}
 
@@ -1069,7 +1069,7 @@ public:
 				}
 
 				const MCString& msCTCPReplies = pUser->GetCTCPReplies();
-				for (MCString::const_iterator it2 = msCTCPReplies.begin(); it2 != msCTCPReplies.end(); it2++) {
+				for (MCString::const_iterator it2 = msCTCPReplies.begin(); it2 != msCTCPReplies.end(); ++it2) {
 					CTemplate& l = Tmpl.AddRow("CTCPLoop");
 					l["CTCP"] = it2->first + " " + it2->second;
 				}
@@ -1645,7 +1645,7 @@ public:
 			}
 		}
 
-		for (set<CString>::iterator it2 = ssUnloadMods.begin(); it2 != ssUnloadMods.end(); it2++) {
+		for (set<CString>::iterator it2 = ssUnloadMods.begin(); it2 != ssUnloadMods.end(); ++it2) {
 			CZNC::Get().GetModules().UnloadModule(*it2);
 		}
 

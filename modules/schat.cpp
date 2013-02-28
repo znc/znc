@@ -89,7 +89,7 @@ public:
 		} else {
 			// Buffer playback
 			vector<CS_STRING>::reverse_iterator it = m_vBuffer.rbegin();
-			for (; it != m_vBuffer.rend(); it++)
+			for (; it != m_vBuffer.rend(); ++it)
 				ReadLine(*it);
 
 			m_vBuffer.clear();
