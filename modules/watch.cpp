@@ -7,10 +7,7 @@
  */
 
 #include <znc/Chan.h>
-#include <znc/User.h>
 #include <znc/IRCNetwork.h>
-#include <list>
-#include <set>
 
 using std::list;
 using std::vector;

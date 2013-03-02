@@ -16,11 +16,9 @@
 
 #define REQUIRESSL
 
-#include <znc/Client.h>
 #include <znc/User.h>
 #include <znc/IRCNetwork.h>
 #include <znc/FileUtils.h>
-#include <sys/stat.h>
 
 using std::vector;
 using std::map;

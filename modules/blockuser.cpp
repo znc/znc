@@ -8,8 +8,6 @@
 
 #include <znc/User.h>
 #include <znc/IRCNetwork.h>
-#include <znc/IRCSock.h>
-#include <znc/znc.h>
 
 using std::vector;
 

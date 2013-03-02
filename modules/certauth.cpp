@@ -8,9 +8,7 @@
 
 #define REQUIRESSL
 
-#include <znc/Modules.h>
 #include <znc/User.h>
-#include <znc/Listener.h>
 #include <znc/znc.h>
 
 using std::map;

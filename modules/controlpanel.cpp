@@ -9,10 +9,8 @@
  * by the Free Software Foundation.
  */
 
-#include <znc/znc.h>
 #include <znc/User.h>
 #include <znc/IRCNetwork.h>
-#include <znc/Modules.h>
 #include <znc/Chan.h>
 #include <znc/IRCSock.h>
 

@@ -6,15 +6,12 @@
  * by the Free Software Foundation.
  */
 
-#include <znc/Client.h>
 #include <znc/Chan.h>
 #include <znc/FileUtils.h>
 #include <znc/IRCNetwork.h>
 #include <znc/IRCSock.h>
-#include <znc/Listener.h>
 #include <znc/Server.h>
 #include <znc/User.h>
-#include <znc/znc.h>
 
 using std::vector;
 using std::set;

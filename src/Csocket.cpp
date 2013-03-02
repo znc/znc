@@ -49,7 +49,6 @@
 #include <openssl/engine.h>
 #endif /* HAVE_LIBSSL */
 
-#include <list>
 
 #define CS_SRANDBUFFER 128
 

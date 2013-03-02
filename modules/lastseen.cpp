@@ -7,7 +7,6 @@
  */
 
 #include <znc/User.h>
-#include <znc/Chan.h>
 #include <znc/znc.h>
 
 using std::map;

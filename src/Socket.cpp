@@ -6,11 +6,8 @@
  * by the Free Software Foundation.
  */
 
-#include <znc/Socket.h>
-#include <znc/Modules.h>
 #include <znc/User.h>
 #include <znc/IRCNetwork.h>
-#include <znc/znc.h>
 #include <signal.h>
 
 /* We should need 2 DNS threads (host, bindhost) per IRC connection */

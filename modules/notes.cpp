@@ -6,14 +6,7 @@
  * by the Free Software Foundation.
  */
 
-#include <znc/Chan.h>
-#include <znc/HTTPSock.h>
-#include <znc/Server.h>
-#include <znc/Template.h>
-#include <znc/User.h>
 #include <znc/znc.h>
-#include <znc/WebModules.h>
-#include <sstream>
 
 using std::stringstream;
 

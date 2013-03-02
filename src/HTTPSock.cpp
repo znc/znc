@@ -6,13 +6,9 @@
  * by the Free Software Foundation.
  */
 
-#include <znc/HTTPSock.h>
 #include <znc/FileUtils.h>
-#include <znc/Modules.h>
 #include <znc/znc.h>
 
-#include <sstream>
-#include <iomanip>
 
 using std::map;
 using std::set;

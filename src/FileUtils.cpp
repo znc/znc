@@ -9,8 +9,6 @@
 #include <znc/FileUtils.h>
 #include <znc/ExecSock.h>
 #include <znc/Utils.h>
-#include <znc/ZNCDebug.h>
-#include <errno.h>
 #include <fcntl.h>
 #include <pwd.h>
 #include <sys/stat.h>

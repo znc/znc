@@ -6,7 +6,6 @@
  * by the Free Software Foundation.
  */
 
-#include <znc/ZNCString.h>
 #include <znc/FileUtils.h>
 #include <znc/Utils.h>
 #include <znc/MD5.h>

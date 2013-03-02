@@ -6,13 +6,8 @@
  * by the Free Software Foundation.
  */
 
-#include <znc/zncconfig.h>
-#include <znc/znc.h>
 #include <znc/User.h>
 #include <znc/IRCNetwork.h>
-#include <znc/Modules.h>
-#include <znc/Socket.h>
-#include <znc/FileUtils.h>
 
 using std::set;
 

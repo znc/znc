@@ -6,7 +6,6 @@
  * by the Free Software Foundation.
  */
 
-#include <znc/Modules.h>
 #include <znc/znc.h>
 
 using std::map;

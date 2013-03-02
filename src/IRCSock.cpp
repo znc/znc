@@ -8,10 +8,8 @@
 
 #include <znc/IRCSock.h>
 #include <znc/Chan.h>
-#include <znc/Client.h>
 #include <znc/User.h>
 #include <znc/IRCNetwork.h>
-#include <znc/znc.h>
 #include <znc/Server.h>
 
 using std::set;

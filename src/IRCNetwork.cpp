@@ -7,15 +7,12 @@
  */
 
 #include <znc/IRCNetwork.h>
-#include <znc/Modules.h>
 #include <znc/User.h>
 #include <znc/FileUtils.h>
 #include <znc/Config.h>
-#include <znc/Client.h>
 #include <znc/IRCSock.h>
 #include <znc/Server.h>
 #include <znc/Chan.h>
-#include <znc/znc.h>
 
 using std::vector;
 using std::set;

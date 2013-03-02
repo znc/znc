@@ -6,7 +6,6 @@
  * by the Free Software Foundation.
  */
 
-#include <znc/Modules.h>
 #include <znc/IRCNetwork.h>
 #include <znc/Chan.h>
 

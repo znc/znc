@@ -9,7 +9,6 @@
 #include "znc/ZNCDebug.h"
 #include "znc/FileUtils.h"
 #include "znc/Config.h"
-#include <cstdlib>
 
 class CConfigTest {
 public:

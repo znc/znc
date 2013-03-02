@@ -7,14 +7,10 @@
  */
 
 #include <znc/User.h>
-#include <znc/Chan.h>
 #include <znc/Config.h>
 #include <znc/FileUtils.h>
 #include <znc/IRCNetwork.h>
 #include <znc/IRCSock.h>
-#include <znc/Server.h>
-#include <znc/znc.h>
-#include <znc/Modules.h>
 #include <math.h>
 
 using std::vector;

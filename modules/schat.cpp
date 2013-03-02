@@ -14,8 +14,6 @@
 #include <znc/FileUtils.h>
 #include <znc/User.h>
 #include <znc/IRCNetwork.h>
-#include <znc/znc.h>
-#include <sstream>
 
 using std::pair;
 using std::stringstream;

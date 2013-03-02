@@ -7,7 +7,6 @@
  */
 
 #include <znc/Modules.h>
-#include <znc/User.h>
 
 class CRawMod : public CModule {
 public:

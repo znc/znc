@@ -10,7 +10,6 @@
 #include <znc/IRCSock.h>
 #include <znc/User.h>
 #include <znc/IRCNetwork.h>
-#include <znc/znc.h>
 
 class CIdentFileModule : public CModule {
 	CString m_sOrigISpoof;

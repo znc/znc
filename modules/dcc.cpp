@@ -7,9 +7,7 @@
  */
 
 #include <znc/znc.h>
-#include <znc/Chan.h>
 #include <znc/User.h>
-#include <znc/Modules.h>
 #include <znc/FileUtils.h>
 
 using std::set;

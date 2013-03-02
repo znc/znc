@@ -6,7 +6,6 @@
  * by the Free Software Foundation.
  */
 
-#include <znc/Client.h>
 #include <znc/FileUtils.h>
 #include <znc/Server.h>
 #include <znc/IRCNetwork.h>

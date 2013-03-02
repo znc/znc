@@ -7,18 +7,10 @@
  */
 
 #include <znc/Chan.h>
-#include <znc/HTTPSock.h>
 #include <znc/Server.h>
-#include <znc/Template.h>
 #include <znc/User.h>
-#include <znc/znc.h>
-#include <znc/WebModules.h>
-#include <znc/ZNCString.h>
-#include <znc/Listener.h>
 #include <znc/IRCNetwork.h>
 #include <znc/IRCSock.h>
-#include <sstream>
-#include <utility>
 
 using std::stringstream;
 using std::make_pair;

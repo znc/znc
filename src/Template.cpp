@@ -9,7 +9,6 @@
 #include <znc/Template.h>
 #include <znc/FileUtils.h>
 #include <znc/ZNCDebug.h>
-#include <sstream>
 #include <algorithm>
 
 using std::stringstream;

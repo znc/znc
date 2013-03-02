@@ -7,8 +7,6 @@
  */
 
 #include <znc/znc.h>
-#include <znc/FileUtils.h>
-#include <sys/wait.h>
 #include <signal.h>
 
 using std::cout;

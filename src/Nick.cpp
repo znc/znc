@@ -6,7 +6,6 @@
  * by the Free Software Foundation.
  */
 
-#include <znc/Nick.h>
 #include <znc/Chan.h>
 #include <znc/IRCSock.h>
 #include <znc/IRCNetwork.h>

@@ -8,11 +8,9 @@
 
 #include <znc/Chan.h>
 #include <znc/IRCSock.h>
-#include <znc/Modules.h>
 #include <znc/Server.h>
 #include <znc/User.h>
 #include <znc/IRCNetwork.h>
-#include <znc/znc.h>
 
 #include <tcl.h>
 

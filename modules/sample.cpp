@@ -8,7 +8,6 @@
 
 #include <znc/Client.h>
 #include <znc/Chan.h>
-#include <znc/User.h>
 #include <znc/Modules.h>
 
 using std::vector;

@@ -8,7 +8,6 @@
 
 #include <znc/Chan.h>
 #include <znc/Modules.h>
-#include <znc/User.h>
 
 using std::vector;
 

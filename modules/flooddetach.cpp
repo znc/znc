@@ -7,8 +7,6 @@
  */
 
 #include <znc/Chan.h>
-#include <znc/Modules.h>
-#include <znc/User.h>
 #include <znc/IRCNetwork.h>
 
 using std::map;

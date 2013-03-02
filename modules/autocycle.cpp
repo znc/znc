@@ -7,7 +7,6 @@
  */
 
 #include <znc/Chan.h>
-#include <znc/User.h>
 #include <znc/IRCNetwork.h>
 
 using std::vector;

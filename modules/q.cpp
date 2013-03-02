@@ -6,11 +6,9 @@
  * by the Free Software Foundation.
  */
 
-#include <znc/Modules.h>
 #include <znc/User.h>
 #include <znc/IRCNetwork.h>
 #include <znc/IRCSock.h>
-#include <znc/Nick.h>
 #include <znc/Chan.h>
 
 using std::set;

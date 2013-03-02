@@ -7,17 +7,11 @@
  */
 
 #include <znc/Utils.h>
-#include <znc/MD5.h>
-#include <znc/main.h>
 #include <znc/ZNCDebug.h>
 #include <znc/FileUtils.h>
-#include <errno.h>
 #ifdef HAVE_LIBSSL
 #include <openssl/ssl.h>
 #endif /* HAVE_LIBSSL */
-#include <sstream>
-#include <sys/stat.h>
-#include <sys/types.h>
 #include <unistd.h>
 
 // Required with GCC 4.3+ if openssl is disabled

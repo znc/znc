@@ -6,9 +6,7 @@
  * by the Free Software Foundation.
  */
 
-#include <znc/User.h>
 #include <znc/IRCNetwork.h>
-#include <algorithm>
 
 class CPerform : public CModule {
 	void Add(const CString& sCommand) {

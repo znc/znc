@@ -6,14 +6,11 @@
  * by the Free Software Foundation.
  */
 
-#include <znc/znc.h>
-#include <znc/Chan.h>
 #include <znc/FileUtils.h>
 #include <znc/IRCSock.h>
 #include <znc/Server.h>
 #include <znc/User.h>
 #include <znc/IRCNetwork.h>
-#include <znc/Listener.h>
 #include <znc/Config.h>
 
 using std::endl;

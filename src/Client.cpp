@@ -6,14 +6,10 @@
  * by the Free Software Foundation.
  */
 
-#include <znc/Client.h>
 #include <znc/Chan.h>
-#include <znc/FileUtils.h>
 #include <znc/IRCSock.h>
 #include <znc/User.h>
 #include <znc/IRCNetwork.h>
-#include <znc/znc.h>
-#include <znc/WebModules.h>
 
 using std::vector;
 

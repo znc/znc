@@ -6,9 +6,7 @@
  * by the Free Software Foundation.
  */
 
-#include <znc/Buffer.h>
 #include <znc/znc.h>
-#include <znc/Client.h>
 #include <znc/User.h>
 
 CBufLine::CBufLine(const CString& sFormat, const CString& sText, const timeval* ts) {
