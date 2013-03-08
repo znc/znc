@@ -14,6 +14,10 @@
 #include <sstream>
 #include <iomanip>
 
+#ifdef HAVE_ZLIB
+#include <zlib.h>
+#endif
+
 using std::map;
 using std::set;
 
@@ -34,6 +38,7 @@ void CHTTPSock::Init() {
 	m_bPost = false;
 	m_bDone = false;
 	m_bHTTP10Client = false;
+	m_bAcceptGzip = false;
 	m_uPostLen = 0;
 	EnableReadLine();
 	SetMaxBufferThreshold(10240);
@@ -120,6 +125,11 @@ void CHTTPSock::ReadLine(const CString& sData) {
 	} else if (sName.Equals("If-None-Match:")) {
 		// this is for proper client cache support (HTTP 304) on static files:
 		m_sIfNoneMatch = sLine.Token(1, true);
+	} else if (sName.Equals("Accept-Encoding:") && !m_bHTTP10Client) {
+		SCString ssEncodings;
+		// trimming whitespace from the tokens is important:
+		sLine.Token(1, true).Split(",", ssEncodings, false, "", "", false, true);
+		m_bAcceptGzip = (ssEncodings.find("gzip") != ssEncodings.end());
 	} else if (sLine.empty()) {
 		m_bGotHeader = true;
 
@@ -162,7 +172,55 @@ void CHTTPSock::GetPage() {
 	OnPageRequest(m_sURI);
 }
 
+#ifdef HAVE_ZLIB
+static bool InitZlibStream(z_stream *zStrm, const char* buf) {
+	memset(zStrm, 0, sizeof(z_stream));
+	zStrm->next_in = (Bytef*)buf;
+
+	// "15" is the default value for good compression,
+	// the weird "+ 16" means "please generate a gzip header and trailer".
+	const int WINDOW_BITS = 15 + 16;
+	const int MEMLEVEL = 8;
+
+	return (deflateInit2(zStrm, Z_DEFAULT_COMPRESSION, Z_DEFLATED,
+		WINDOW_BITS, MEMLEVEL, Z_DEFAULT_STRATEGY) == Z_OK);
+}
+#endif
+
 void CHTTPSock::PrintPage(const CString& sPage) {
+#ifdef HAVE_ZLIB
+	if (m_bAcceptGzip && !SentHeader()) {
+		char szBuf[4096];
+		z_stream zStrm;
+		int zStatus, zFlush = Z_NO_FLUSH;
+
+		if (InitZlibStream(&zStrm, sPage.c_str())) {
+			DEBUG("- Sending gzip-compressed.");
+			AddHeader("Content-Encoding", "gzip");
+			PrintHeader(0); // we do not know the compressed data's length
+
+			zStrm.avail_in = sPage.size();
+			do {
+				if (zStrm.avail_in == 0) {
+					zFlush = Z_FINISH;
+				}
+
+				zStrm.next_out = (Bytef*)szBuf;
+				zStrm.avail_out = sizeof(szBuf);
+
+				zStatus = deflate(&zStrm, zFlush);
+
+				if((zStatus == Z_OK || zStatus == Z_STREAM_END) && zStrm.avail_out < sizeof(szBuf)) {
+					Write(szBuf, sizeof(szBuf) - zStrm.avail_out);	
+				}
+			} while(zStatus == Z_OK);
+
+			Close(Csock::CLT_AFTERWRITE);
+			return;
+		}
+
+	} // else: fall through
+#endif
 	if (!SentHeader()) {
 		PrintHeader(sPage.length());
 	} else {
@@ -248,20 +306,19 @@ bool CHTTPSock::PrintFile(const CString& sFileName, CString sContentType) {
 			return true;
 		}
 
-		char szBuf[4096];
-		off_t iLen = 0;
-		ssize_t i = 0;
-
-		PrintHeader(iSize, sContentType);
-
-		// while we haven't reached iSize and read() succeeds...
-		while (iLen < iSize && (i = File.Read(szBuf, sizeof(szBuf))) > 0) {
-			Write(szBuf, i);
-			iLen += i;
-		}
-
-		if (i < 0) {
-			DEBUG("- Error while reading file: " << strerror(errno));
+#ifdef HAVE_ZLIB
+		bool bGzip = (sContentType.Left(5).Equals("text/") || sFileName.Right(3).Equals(".js"));
+#else
+		bool bGzip = false; // hello optimizer
+#endif
+		if (!bGzip || !m_bAcceptGzip) {
+			PrintHeader(iSize, sContentType);
+			WriteFileUncompressed(File);
+		} else {
+			DEBUG("- Sending gzip-compressed.");
+			AddHeader("Content-Encoding", "gzip");
+			PrintHeader(0, sContentType); // we do not know the compressed data's length
+			WriteFileGzipped(File);
 		}
 	}
 
@@ -270,6 +327,78 @@ bool CHTTPSock::PrintFile(const CString& sFileName, CString sContentType) {
 	Close(Csock::CLT_AFTERWRITE);
 
 	return true;
+}
+
+void CHTTPSock::WriteFileUncompressed(CFile& File) {
+	char szBuf[4096];
+	off_t iLen = 0;
+	ssize_t i = 0;
+	off_t iSize = File.GetSize();
+
+	// while we haven't reached iSize and read() succeeds...
+	while (iLen < iSize && (i = File.Read(szBuf, sizeof(szBuf))) > 0) {
+		Write(szBuf, i);
+		iLen += i;
+	}
+
+	if (i < 0) {
+		DEBUG("- Error while reading file: " << strerror(errno));
+	}
+}
+
+void CHTTPSock::WriteFileGzipped(CFile& File) {
+#ifdef HAVE_ZLIB
+	char szBufIn[8192];
+	char szBufOut[8192];
+	off_t iFileSize = File.GetSize(), iFileReadTotal = 0;
+	z_stream zStrm;
+	int zFlush = Z_NO_FLUSH;
+	int zStatus;
+
+	if (!InitZlibStream(&zStrm, szBufIn)) {
+		DEBUG("- Error initializing zlib!");
+		return;
+	}
+
+	do {
+		ssize_t iFileRead = 0;
+
+		if (zStrm.avail_in == 0) {
+			// input buffer is empty, try to read more data from file.
+			// if there is no more data, finish the stream.
+
+			if (iFileReadTotal < iFileSize) {
+				iFileRead = File.Read(szBufIn, sizeof(szBufIn));
+
+				if (iFileRead < 1) {
+					// wtf happened? better quit compressing.
+					iFileReadTotal = iFileSize;
+					zFlush = Z_FINISH;
+				} else {
+					iFileReadTotal += iFileRead;
+
+					zStrm.next_in = (Bytef*)szBufIn;
+					zStrm.avail_in = iFileRead;
+				}
+			} else {
+				zFlush = Z_FINISH;
+			}
+		}
+
+		zStrm.next_out = (Bytef*)szBufOut;
+		zStrm.avail_out = sizeof(szBufOut);
+
+		zStatus = deflate(&zStrm, zFlush);
+
+		if ((zStatus == Z_OK || zStatus == Z_STREAM_END) && zStrm.avail_out < sizeof(szBufOut)) {
+			// there's data in the buffer:
+			Write(szBufOut, sizeof(szBufOut) - zStrm.avail_out);
+		}
+
+	} while (zStatus == Z_OK);
+
+	deflateEnd(&zStrm);
+#endif
 }
 
 void CHTTPSock::ParseURI() {
