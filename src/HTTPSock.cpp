@@ -307,18 +307,18 @@ bool CHTTPSock::PrintFile(const CString& sFileName, CString sContentType) {
 		}
 
 #ifdef HAVE_ZLIB
-		bool bGzip = (sContentType.Left(5).Equals("text/") || sFileName.Right(3).Equals(".js"));
-#else
-		bool bGzip = false; // hello optimizer
-#endif
-		if (!bGzip || !m_bAcceptGzip) {
-			PrintHeader(iSize, sContentType);
-			WriteFileUncompressed(File);
-		} else {
+		bool bGzip = m_bAcceptGzip && (sContentType.Left(5).Equals("text/") || sFileName.Right(3).Equals(".js"));
+
+		if (bGzip) {
 			DEBUG("- Sending gzip-compressed.");
 			AddHeader("Content-Encoding", "gzip");
 			PrintHeader(0, sContentType); // we do not know the compressed data's length
 			WriteFileGzipped(File);
+		} else
+#endif
+		{
+			PrintHeader(iSize, sContentType);
+			WriteFileUncompressed(File);
 		}
 	}
 
@@ -346,8 +346,8 @@ void CHTTPSock::WriteFileUncompressed(CFile& File) {
 	}
 }
 
-void CHTTPSock::WriteFileGzipped(CFile& File) {
 #ifdef HAVE_ZLIB
+void CHTTPSock::WriteFileGzipped(CFile& File) {
 	char szBufIn[8192];
 	char szBufOut[8192];
 	off_t iFileSize = File.GetSize(), iFileReadTotal = 0;
@@ -398,8 +398,8 @@ void CHTTPSock::WriteFileGzipped(CFile& File) {
 	} while (zStatus == Z_OK);
 
 	deflateEnd(&zStrm);
-#endif
 }
+#endif
 
 void CHTTPSock::ParseURI() {
 	ParseParams(m_sURI.Token(1, true, "?"), m_msvsGETParams);
