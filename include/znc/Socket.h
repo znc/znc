@@ -11,6 +11,7 @@
 
 #include <znc/zncconfig.h>
 #include <znc/Csocket.h>
+#include <znc/Threads.h>
 
 class CModule;
 
@@ -101,11 +102,9 @@ public:
 private:
 	void FinishConnect(const CString& sHostname, u_short iPort, const CString& sSockName, int iTimeout, bool bSSL, const CString& sBindHost, CZNCSock *pcSock);
 
-#ifdef HAVE_THREADED_DNS
-	int              m_iTDNSpipe[2];
-
 	class CTDNSMonitorFD;
 	friend class CTDNSMonitorFD;
+#ifdef HAVE_THREADED_DNS
 	struct TDNSTask {
 		CString   sHostname;
 		u_short   iPort;
@@ -120,41 +119,22 @@ private:
 		addrinfo* aiTarget;
 		addrinfo* aiBind;
 	};
-	struct TDNSArg {
-		CString          sHostname;
-		TDNSTask*        task;
-		int              fd;
-		bool             bBind;
+	class CDNSJob : public CJob {
+	public:
+		CString       sHostname;
+		TDNSTask*     task;
+		CSockManager* pManager;
+		bool          bBind;
 
-		int              iRes;
-		addrinfo*        aiResult;
-	};
-	struct TDNSStatus {
-		/* mutex which protects this whole struct */
-		pthread_mutex_t mutex;
-		/* condition variable for idle threads */
-		pthread_cond_t cond;
-		/* When this is true, all threads should exit */
-		bool done;
-		/* Total number of running DNS threads */
-		size_t num_threads;
-		/* Number of DNS threads which don't have any work */
-		size_t num_idle;
-		/* List of pending DNS jobs */
-		std::list<TDNSArg *> jobs;
+		int           iRes;
+		addrinfo*     aiResult;
+
+		void runThread();
+		void runMain();
 	};
 	void StartTDNSThread(TDNSTask* task, bool bBind);
 	void SetTDNSThreadFinished(TDNSTask* task, bool bBind, addrinfo* aiResult);
-	void RetrieveTDNSResult();
 	static void* TDNSThread(void* argument);
-	static void DoDNS(TDNSArg *arg);
-
-	/** Must be called with threadStatus->mutex held.
-	 * @returns false when the calling DNS thread should exit.
-	 */
-	static bool ThreadNeeded(struct TDNSStatus* status);
-
-	TDNSStatus m_threadStatus;
 #endif
 protected:
 };
