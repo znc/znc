@@ -119,9 +119,9 @@ class CAway : public CModule
 	void ShowCommand(const CString& sCommand) {
 		map< CString, vector< CString> > msvOutput;
 		for (u_int a = 0; a < m_vMessages.size(); a++) {
-			CString sTime = m_vMessages[a].Token(0, false, ":");
-			CString sWhom = m_vMessages[a].Token(1, false, ":");
-			CString sMessage = m_vMessages[a].Token(2, true, ":");
+			CString sTime = m_vMessages[a].Token(0, false);
+			CString sWhom = m_vMessages[a].Token(1, false);
+			CString sMessage = m_vMessages[a].Token(2, true);
 
 			if ((sTime.empty()) || (sWhom.empty()) || (sMessage.empty())) {
 				// illegal format
@@ -447,7 +447,7 @@ private:
 	{
 		if (Nick.GetNick() == m_pNetwork->GetIRCNick().GetNick())
 			return; // ignore messages from self
-		AddMessage(CString(iTime) + ":" + Nick.GetNickMask() + ":" + sMessage);
+		AddMessage(CString(iTime) + " " + Nick.GetNickMask() + " " + sMessage);
 	}
 
 	void AddMessage(const CString & sText)
