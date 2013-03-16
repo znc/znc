@@ -211,7 +211,9 @@ public:
 				PUSH_STR(sName);
 				PUSH_PTR(CModInfo*, &ModInfo);
 				PCALL("ZNC::Core::ModInfoByPath");
-				if (!SvTRUE(ERRSV)) {
+				if (SvTRUE(ERRSV)) {
+					DEBUG(__PRETTY_FUNCTION__ << ": " << sPath << ": " << PString(ERRSV));
+				} else if (ModInfo.SupportsType(eType)) {
 					ssMods.insert(ModInfo);
 				}
 				PEND;

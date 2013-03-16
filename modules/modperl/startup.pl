@@ -162,6 +162,11 @@ sub ModInfoByPath {
 	$modinfo->SetName($modname);
 	$modinfo->SetPath($modpath);
 	$modinfo->AddType($_) for @types;
+	unless ($modrefcount{$modname}) {
+		say "Unloading $modpath from perl, because it's not loaded as a module";
+		ZNC::_CleanupStash($modname);
+		delete $INC{$modpath};
+	}
 }
 
 sub CallModFunc {

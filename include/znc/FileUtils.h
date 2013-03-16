@@ -187,7 +187,7 @@ public:
 				continue;
 			}
 
-			CFile *file = new CFile(sDir + "/" + de->d_name/*, this*/); // @todo need to pass pointer to 'this' if we want to do Sort()
+			CFile *file = new CFile(sDir.TrimSuffix_n("/") + "/" + de->d_name/*, this*/); // @todo need to pass pointer to 'this' if we want to do Sort()
 			push_back(file);
 		}
 
