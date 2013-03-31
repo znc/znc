@@ -51,6 +51,11 @@ CZNC::~CZNC() {
 
 	for (map<CString,CUser*>::iterator a = m_msUsers.begin(); a != m_msUsers.end(); ++a) {
 		a->second->GetModules().UnloadAll();
+
+		const vector<CIRCNetwork*>& networks = a->second->GetNetworks();
+		for (vector<CIRCNetwork*>::const_iterator b = networks.begin(); b != networks.end(); ++b) {
+			(*b)->GetModules().UnloadAll();
+		}
 	}
 
 	for (size_t b = 0; b < m_vpListeners.size(); b++) {

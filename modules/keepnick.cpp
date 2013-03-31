@@ -121,7 +121,7 @@ public:
 			return;
 
 		m_pTimer->Stop();
-		RemTimer(m_pTimer->GetName());
+		RemTimer(m_pTimer);
 		m_pTimer = NULL;
 	}
 
