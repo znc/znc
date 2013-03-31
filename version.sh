@@ -3,11 +3,8 @@
 # Get the path to the source directory
 GIT_DIR=`dirname $0`
 
-# Our first argument should be the file that we write to
-OUTPUT="$1"
-
-# Our second argument should be the path to git
-GIT="$2"
+# Our argument should be the path to git
+GIT="$1"
 if [ "x$GIT" = "x" ]
 then
 	EXTRA=""
@@ -30,10 +27,10 @@ else
 fi
 
 # Generate output file, if any
-if [ "x$OUTPUT" != "x" ]
+if [ "x$WRITE_OUTPUT" = "xyes" ]
 then
-	echo '#include <znc/version.h>' > $OUTPUT
-	echo "const char* ZNC_VERSION_EXTRA = \"$EXTRA\";" >> $OUTPUT
+	echo '#include <znc/version.h>' > src/version.cpp
+	echo "const char* ZNC_VERSION_EXTRA = \"$EXTRA\";" >> src/version.cpp
 fi
 
 echo "$EXTRA"
