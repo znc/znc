@@ -1,5 +1,7 @@
 #!/bin/sh
 
+# When changing this file, remember also about nightlies
+
 # Get the path to the source directory
 GIT_DIR=`dirname $0`
 
