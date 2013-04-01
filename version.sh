@@ -16,11 +16,21 @@ else
 	COMMITS_SINCE=`${GIT} log --format=oneline ${LATEST_TAG}..HEAD | wc -l`
 	SHORT_ID=`${GIT} rev-parse --short HEAD`
 
-	# If this commit is tagged, don't print anything
-	# (the assumption here is: this is a release)
 	if [ "x$COMMITS_SINCE" = "x0" ]
 	then
-		EXTRA=""
+		if [ "x$LATEST_TAG" = "x" ]
+		then
+			if [ "x$SHORT_ID" = "x" ]
+			then
+				EXTRA=""
+			else
+				EXTRA="-git-${SHORT_ID}"
+			fi
+		else
+			# If this commit is tagged, don't print anything
+			# (the assumption here is: this is a release)
+			EXTRA=""
+		fi
 	else
 		EXTRA="-git-${COMMITS_SINCE}-${SHORT_ID}"
 	fi
