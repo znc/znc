@@ -1,5 +1,7 @@
 #[![ZNC](http://wiki.znc.in/skins/common/images/wiki.png)](http://znc.in) - An advanced IRC bouncer
 
+[![Build Status](https://travis-ci.org/znc/znc.png?branch=master)](https://travis-ci.org/znc/znc)
+
 ## Table of contents
 
 - Minimal Requirements
