@@ -124,7 +124,7 @@ clean:
 	$(Q)$(CXX) $(MODFLAGS) -c -o $@ $< $($(notdir $(basename $@))CXXFLAGS) -MD -MF .depend/$(notdir $@).dep
 
 %.so: %.o Makefile
-	$(E) Linking module $(notdir $(basename $@))...
+	$(E) "Linking  module" $(notdir $(basename $@))...
 	$(Q)$(CXX) $(MODFLAGS) $(LDFLAGS) $(MODLINK) -o $@ $< $($(notdir $(basename $@))LDFLAGS) $(LIBS)
 
 uninstall:
