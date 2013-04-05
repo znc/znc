@@ -998,7 +998,7 @@ public:
 			return true;
 		}
 
-		WebSock.Redirect("edituser?user=" + pNetwork->GetUser()->GetUserName().Escape_n(CString::EURL) + "&network=" + pNetwork->GetName().Escape_n(CString::EURL));
+		WebSock.Redirect("editnetwork?user=" + pNetwork->GetUser()->GetUserName().Escape_n(CString::EURL) + "&network=" + pNetwork->GetName().Escape_n(CString::EURL));
 		return false;
 	}
 
