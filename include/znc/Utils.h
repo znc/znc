@@ -185,6 +185,7 @@ protected:
 
 
 #ifdef HAVE_LIBSSL
+#include <openssl/aes.h>
 #include <openssl/blowfish.h>
 #include <openssl/md5.h>
 //! does Blowfish w/64 bit feedback, no padding
