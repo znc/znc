@@ -315,6 +315,8 @@ public:
 			unsigned char randbytes[16];
 			if (!RAND_bytes(randbytes, padlen)) {
 				DEBUG("sasl: DH-AES: Unable to pad");
+				free(encrypted_userpass);
+				free(plaintext_userpass);
 				return false;
 			}
 			memcpy(ptr, randbytes, padlen);
@@ -326,6 +328,8 @@ public:
 		unsigned char iv[16], iv_copy[16];
 		if (!RAND_bytes(iv, sizeof (iv))) {
 			DEBUG("sasl: DH-AES: Unable to create IV");
+			free(encrypted_userpass);
+			free(plaintext_userpass);
 			return false;
 		}
 		memcpy(iv_copy, iv, sizeof(iv));
