@@ -101,7 +101,12 @@ public:
 	bool Open(const CString& sFileName, int iFlags = O_RDONLY, mode_t iMode = 0644);
 	bool Open(int iFlags = O_RDONLY, mode_t iMode = 0644);
 	ssize_t Read(char *pszBuffer, int iBytes);
-	bool ReadLine(CString & sData, const CString & sDelimiter = "\n");
+
+	// Notes on reading backwards:
+	//  * the first backwards read after a forwards read will return the same line
+	//  * keep in mind that you should Seek(GetSize()) first if you plan on reading a file in reverse order right after Open
+	//  * reading backwards from a position after 2 GB into a file will break
+	bool ReadLine(CString & sData, const CString & sDelimiter = "\n", bool bReadBackwards = false);
 	bool ReadFile(CString& sData, size_t iMaxSize = 512 * 1024);
 	ssize_t Write(const char *pszBuffer, size_t iBytes);
 	ssize_t Write(const CString & sData);
