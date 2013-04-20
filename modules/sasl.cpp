@@ -145,6 +145,11 @@ public:
 		data += size;
 
 		/* Server public key */
+		if (length < 2) {
+			DEBUG("sasl: No public key");
+			return false;
+		}
+
 		size = ntohs(*(uint16_t*)data);
 		data += 2;
 		length -= 2;
