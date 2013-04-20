@@ -228,7 +228,18 @@ bool CLogMod::OnWebRequest(CWebSock& WebSock, const CString& sPageName, CTemplat
     CString content;
 
     DisplayFile.Open();
-    DisplayFile.ReadFile(content);
+
+    int PageSize = 1024 * 1024;
+    int Page = 0;
+    if (WebSock.HasParam("page", false)) {
+      Page = WebSock.GetParam("page", false).ToInt();
+      DisplayFile.Seek(Page * PageSize);
+    }
+    Tmpl["Prev"] = CString(Page - 1);
+    Tmpl["Next"] = CString(Page + 1);
+    Tmpl["Curr"] = WebSock.GetParam("file", false);
+
+    DisplayFile.ReadFile(content, PageSize);
     DisplayFile.Close();
     
     Tmpl["Log"] = content;
