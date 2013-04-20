@@ -218,7 +218,13 @@ bool CLogMod::OnWebRequest(CWebSock& WebSock, const CString& sPageName, CTemplat
     Row["File"] = (**it).GetShortName();
   }
   if (WebSock.HasParam("file", false)) {
-    CFile DisplayFile(LogFile.GetDir() + WebSock.GetParam("file", false));
+    CString path = CDir::CheckPathPrefix(GetSavePath(), LogFile.GetDir() + WebSock.GetParam("file", false));
+    if (path.empty()) {
+      WebSock.PrintErrorPage("Invalid Path");
+      return true;
+    }
+
+    CFile DisplayFile(path);
     CString content;
 
     DisplayFile.Open();
