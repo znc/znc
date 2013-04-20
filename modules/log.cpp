@@ -52,6 +52,10 @@ public:
 	virtual EModRet OnPrivMsg(CNick& Nick, CString& sMessage);
 	virtual EModRet OnChanMsg(CNick& Nick, CChan& Channel, CString& sMessage);
 
+  /* web */
+	virtual CString GetWebMenuTitle() { return "Logs"; }
+	virtual bool OnWebRequest(CWebSock& WebSock, const CString& sPageName, CTemplate& Tmpl);
+
 private:
 	CString                 m_sLogPath;
 };
@@ -204,6 +208,26 @@ void CLogMod::OnNick(const CNick& OldNick, const CString& sNewNick, const vector
 {
 	for (std::vector<CChan*>::const_iterator pChan = vChans.begin(); pChan != vChans.end(); ++pChan)
 		PutLog("*** " + OldNick.GetNick() + " is now known as " + sNewNick, **pChan);
+}
+
+bool CLogMod::OnWebRequest(CWebSock& WebSock, const CString& sPageName, CTemplate& Tmpl) {
+	CFile LogFile(m_sLogPath);
+  CDir  LogDir (LogFile.GetDir());
+  for(std::vector<CFile*>::iterator it = LogDir.begin(); it != LogDir.end(); ++it) {
+    CTemplate& Row = Tmpl.AddRow("LogsLoop");
+    Row["File"] = (**it).GetShortName();
+  }
+  if (WebSock.HasParam("file", false)) {
+    CFile DisplayFile(LogFile.GetDir() + WebSock.GetParam("file", false));
+    CString content;
+
+    DisplayFile.Open();
+    DisplayFile.ReadFile(content);
+    DisplayFile.Close();
+    
+    Tmpl["Log"] = content;
+  }
+  return true;
 }
 
 CModule::EModRet CLogMod::OnTopic(CNick& Nick, CChan& Channel, CString& sTopic)
