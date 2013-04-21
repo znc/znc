@@ -15,12 +15,14 @@
 </ul>
 <? ENDIF ?>
 
+<? IF Log ?>
 <div>
+<? IF Prev > -1 ?>
 <a href="?file=<? VAR Curr ESC=URL,HTML ?>&page=<? VAR Prev ?>">Previous</a>
+<? ENDIF ?>
 <a href="?file=<? VAR Curr ESC=URL,HTML ?>&page=<? VAR Next ?>">Next</a>
 </div>
 
-<? IF Log ?>
 <pre>
 <? VAR Log ?>
 </pre>
