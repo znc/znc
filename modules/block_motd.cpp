@@ -31,6 +31,8 @@ public:
 };
 
 template<> void TModInfo<CBlockMotd>(CModInfo& Info) {
+	Info.AddType(CModInfo::NetworkModule);
+	Info.AddType(CModInfo::GlobalModule);
 	Info.SetWikiPage("block_motd");
 }
 
