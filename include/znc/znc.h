@@ -11,6 +11,7 @@
 
 #include <znc/zncconfig.h>
 #include <znc/Client.h>
+#include <znc/Config.h>
 #include <znc/Modules.h>
 #include <znc/Socket.h>
 #include <znc/Listener.h>
@@ -209,6 +210,7 @@ protected:
 	unsigned int           m_uiConnectPaused;
 	TCacheMap<CString>     m_sConnectThrottle;
 	bool                   m_bProtectWebSessions;
+	CConfig::SubConfig     m_pGlobalNetworks;
 };
 
 #endif // !_ZNC_H
