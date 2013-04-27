@@ -1230,6 +1230,8 @@ bool CZNC::DoRehash(CString& sError)
 
 	CConfig::SubConfig subConf;
 	CConfig::SubConfig::const_iterator subIt;
+	CConfig::SubConfig netConf;
+	CConfig::SubConfig::const_iterator netIt;
 
 	config.FindSubConfig("listener", subConf);
 	for (subIt = subConf.begin(); subIt != subConf.end(); ++subIt) {
@@ -1244,6 +1246,8 @@ bool CZNC::DoRehash(CString& sError)
 			return false;
 		}
 	}
+
+	config.FindSubConfig("network", netConf);
 
 	config.FindSubConfig("user", subConf);
 	for (subIt = subConf.begin(); subIt != subConf.end(); ++subIt) {
@@ -1262,6 +1266,23 @@ bool CZNC::DoRehash(CString& sError)
 		}
 
 		CUser* pUser = new CUser(sUserName);
+
+		//assert(netConf.begin() != netConf.end());
+		for (netIt = netConf.begin(); netIt != netConf.end(); ++netIt) {
+			const CString& sNetworkName = netIt->first;
+
+			CUtils::PrintMessage("Loading network [" + sNetworkName + "]");
+
+			CIRCNetwork *pNetwork = pUser->FindNetwork(sNetworkName);
+
+			if (!pNetwork) {
+				pNetwork = new CIRCNetwork(pUser, sNetworkName);
+			}
+
+			if (!pNetwork->ParseConfig(netIt->second.m_pSubConfig, sError)) {
+				return false;
+			}
+		}
 
 		if (!m_sStatusPrefix.empty()) {
 			if (!pUser->SetStatusPrefix(m_sStatusPrefix)) {
