@@ -59,9 +59,13 @@ static const struct {
 		{"313", false},  /* rfc1459 RPL_WHOISOPERATOR */
 		{"317", false},  /* rfc1459 RPL_WHOISIDLE */
 		{"319", false},  /* rfc1459 RPL_WHOISCHANNELS */
-		// "<ip> :actually using host"
-		{"338", false},
 		{"301", false},  /* rfc1459 RPL_AWAY */
+		{"276", false},  /* oftc-hybrid RPL_WHOISCERTFP */
+		{"330", false},  /* ratbox RPL_WHOISLOGGEDIN
+		                    aka ircu RPL_WHOISACCOUNT */
+		{"338", false},  /* RPL_WHOISACTUALLY -- "actually using host" */
+		{"378", false},  /* RPL_WHOISHOST -- real address of vhosts */
+		{"671", false},  /* RPL_WHOISSECURE */
 		{"318", true},  /* rfc1459 RPL_ENDOFWHOIS */
 		{"401", true},  /* rfc1459 ERR_NOSUCHNICK */
 		{"402", true},  /* rfc1459 ERR_NOSUCHSERVER */
