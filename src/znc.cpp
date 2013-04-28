@@ -444,6 +444,11 @@ bool CZNC::WriteConfig() {
 		config.AddSubConfig("Listener", "listener" + CString(l), listenerConfig);
 	}
 
+	CConfig::SubConfig::const_iterator netIt;
+	for (netIt = m_pGlobalNetworks.begin(); netIt != m_pGlobalNetworks.end(); ++netIt) {
+		config.AddSubConfig("Network", netIt->first, *(netIt->second.m_pSubConfig));
+	}
+
 	config.AddKeyValuePair("ConnectDelay", CString(m_uiConnectDelay));
 	config.AddKeyValuePair("ServerThrottle", CString(m_sConnectThrottle.GetTTL()/1000));
 
@@ -1230,6 +1235,7 @@ bool CZNC::DoRehash(CString& sError)
 
 	CConfig::SubConfig subConf;
 	CConfig::SubConfig::const_iterator subIt;
+	CConfig::SubConfig::const_iterator netIt;
 
 	config.FindSubConfig("listener", subConf);
 	for (subIt = subConf.begin(); subIt != subConf.end(); ++subIt) {
@@ -1244,6 +1250,8 @@ bool CZNC::DoRehash(CString& sError)
 			return false;
 		}
 	}
+
+	config.FindSubConfig("network", m_pGlobalNetworks);
 
 	config.FindSubConfig("user", subConf);
 	for (subIt = subConf.begin(); subIt != subConf.end(); ++subIt) {
@@ -1262,6 +1270,23 @@ bool CZNC::DoRehash(CString& sError)
 		}
 
 		CUser* pUser = new CUser(sUserName);
+
+		//assert(netConf.begin() != netConf.end());
+		for (netIt = m_pGlobalNetworks.begin(); netIt != m_pGlobalNetworks.end(); ++netIt) {
+			const CString& sNetworkName = netIt->first;
+
+			CUtils::PrintMessage("Loading network [" + sNetworkName + "]");
+
+			CIRCNetwork *pNetwork = pUser->FindNetwork(sNetworkName);
+
+			if (!pNetwork) {
+				pNetwork = new CIRCNetwork(pUser, sNetworkName);
+			}
+
+			if (!pNetwork->ParseConfig(netIt->second.m_pSubConfig, sError)) {
+				return false;
+			}
+		}
 
 		if (!m_sStatusPrefix.empty()) {
 			if (!pUser->SetStatusPrefix(m_sStatusPrefix)) {
