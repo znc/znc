@@ -140,7 +140,7 @@ public:
 
 template<> void TModInfo<CRegistrationMod>(CModInfo& Info) {
 	Info.SetHasArgs(true);
-	Info.SetArgsHelpText("If a salt is provided, a verification code weill be asked.");
+	Info.SetArgsHelpText("If a salt is provided, a verification code will be asked.");
 }
 
 GLOBALMODULEDEFS(CRegistrationMod, "User registration plugin")
