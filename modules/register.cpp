@@ -69,6 +69,14 @@ public:
 			pNewUser->SetPass(sHash, CUser::HASH_DEFAULT, sSalt);
 		}
 
+		#ifdef REGISTER_HOST
+		#define STR(x)   #x
+		#define XSTR(x)  STR(x)
+		#define STRING_REGISTER_HOST XSTR(REGISTER_HOST)
+		CIRCNetwork *pNet = new CIRCNetwork(pNewUser, "default");
+		pNet->AddServer(STRING_REGISTER_HOST);
+		#endif
+
 		return pNewUser;
 	}
 
