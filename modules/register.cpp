@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004-2013  See the AUTHORS file for details.
+ * Copyright (C) 2004-2013	See the AUTHORS file for details.
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License version 2 as published
@@ -18,15 +18,16 @@ using std::set;
 using std::vector;
 using std::map;
 
-class CRegistartionMod : public CModule {
+class CRegistrationMod : public CModule {
 public:
-	MODCONSTRUCTOR(CRegistartionMod) {
+	MODCONSTRUCTOR(CRegistrationMod) {
 	}
 
-	virtual ~CRegistartionMod() {
+	virtual ~CRegistrationMod() {
 	}
 
-	virtual bool OnLoad(const CString& sArgStr, CString& sMessage) {
+	virtual bool OnLoad(const CString& sArgs, CString& sMessage) {
+		m_sSalt = sArgs;
 		return true;
 	}
 
@@ -46,6 +47,16 @@ public:
 			return NULL;
 		}
 
+		if (!m_sSalt.empty()) {
+			CString sCode = WebSock.GetParam("code");
+			CString sHash = CString(m_sSalt + sUsername).MD5();
+
+			if (sCode != sHash) {
+				WebSock.PrintErrorPage("Invalid Submission [Invalid confirmation code]");
+				return NULL;
+			}
+		}
+
 		CUser* pNewUser = new CUser(sUsername);
 
 		if (!sArg.empty()) {
@@ -59,8 +70,15 @@ public:
 
 	virtual CString GetWebMenuTitle() { return "Register"; }
 	virtual bool WebRequiresLogin() { return false; }
+
 	virtual bool OnWebRequest(CWebSock& WebSock, const CString& sPageName, CTemplate& Tmpl) {
 		CSmartPtr<CWebSession> spSession = WebSock.GetSession();
+
+		if (!m_sSalt.empty()) {
+			Tmpl["Verify"] = "yes";
+			Tmpl["Code"] = WebSock.GetParam("code", false);
+			Tmpl["Username"] = WebSock.GetParam("user", false);
+		}
 
 		if (!WebSock.GetParam("submitted").ToUInt()) {
 			return true;
@@ -74,7 +92,6 @@ public:
 
 		CUser* pNewUser = GetNewUser(WebSock);
 		if (!pNewUser) {
-			WebSock.PrintErrorPage("Invalid user settings");
 			return true;
 		}
 
@@ -105,7 +122,13 @@ public:
 		WebSock.Redirect("/?cookie_check=true");
 		return false;
 	}
-
+	private:
+		CString m_sSalt;
 };
 
-GLOBALMODULEDEFS(CRegistartionMod, "Web based administration module")
+template<> void TModInfo<CRegistrationMod>(CModInfo& Info) {
+	Info.SetHasArgs(true);
+	Info.SetArgsHelpText("If a salt is provided, a verification code weill be asked.");
+}
+
+GLOBALMODULEDEFS(CRegistrationMod, "User registration plugin")
