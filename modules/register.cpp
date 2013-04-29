@@ -58,6 +58,10 @@ public:
 		}
 
 		CUser* pNewUser = new CUser(sUsername);
+		if (!pNewUser) {
+			WebSock.PrintErrorPage("Invalid Submission");
+			return NULL;
+		}
 
 		if (!sArg.empty()) {
 			CString sSalt = CUtils::GetSalt();
