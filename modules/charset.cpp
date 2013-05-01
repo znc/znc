@@ -244,4 +244,13 @@ public:
 	}
 };
 
+template<> void TModInfo<CCharsetMod>(CModInfo& Info)
+{
+	Info.SetWikiPage("charset");
+	Info.SetHasArgs(true);
+	Info.SetArgsHelpText("Two charset lists: [-force] "
+						 "<client_charset1[,client_charset2[,...]]> "
+						 "<server_charset1[,server_charset2[,...]]>");
+}
+
 USERMODULEDEFS(CCharsetMod, "Normalizes character encodings.")
