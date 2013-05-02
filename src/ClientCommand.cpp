@@ -375,6 +375,34 @@ void CClient::UserCommand(CString& sLine) {
 			PutStatus("There were [" + CString(uMatches) + "] channels matching [" + sChan + "]");
 			PutStatus("Enabled [" + CString(uEnabled) + "] channels");
 		}
+	} else if (sCommand.Equals("DISABLECHAN")) {
+		if (!m_pNetwork) {
+			PutStatus("You must be connected with a network to use this command");
+			return;
+		}
+
+		CString sChan = sLine.Token(1, true);
+
+		if (sChan.empty()) {
+			PutStatus("Usage: DisableChan <channel>");
+		} else {
+			const vector<CChan*>& vChans = m_pNetwork->GetChans();
+			vector<CChan*>::const_iterator it;
+			unsigned int uMatches = 0, uDisabled = 0;
+			for (it = vChans.begin(); it != vChans.end(); ++it) {
+				if (!(*it)->GetName().WildCmp(sChan))
+					continue;
+				uMatches++;
+
+				if ((*it)->IsDisabled())
+					continue;
+				uDisabled++;
+				(*it)->Disable();
+			}
+
+			PutStatus("There were [" + CString(uMatches) + "] channels matching [" + sChan + "]");
+			PutStatus("Disabled [" + CString(uDisabled) + "] channels");
+		}
 	} else if (sCommand.Equals("LISTCHANS")) {
 		if (!m_pNetwork) {
 			PutStatus("You must be connected with a network to use this command");
@@ -1557,6 +1585,11 @@ void CClient::HelpUser() {
 	Table.SetCell("Command", "Enablechan");
 	Table.SetCell("Arguments", "<#chan>");
 	Table.SetCell("Description", "Enable the channel");
+
+	Table.AddRow();
+	Table.SetCell("Command", "Disablechan");
+	Table.SetCell("Arguments", "<#chan>");
+	Table.SetCell("Description", "Disable the channel");
 
 	Table.AddRow();
 	Table.SetCell("Command", "Detach");
