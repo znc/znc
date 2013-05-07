@@ -23,9 +23,12 @@ PERLDEPONMOD :=
 endif
 
 PERLHOOK     := modperl_install
-CLEAN    += modperl/ZNC.$(PERLCEXT_EXT) modperl/ZNC.pm modperl/ZNC.o
-CLEAN    += modperl/swigperlrun.h modperl/ZNC.cpp modperl/functions.cpp
-CLEAN    += modperl/gen
+CLEAN    += modperl/ZNC.$(PERLCEXT_EXT) modperl/ZNC.o modperl/gen
+ifneq "$(SWIG)" ""
+# Only delete these files if we can regenerate them
+CLEAN    += modperl/ZNC.pm modperl/swigperlrun.h modperl/ZNC.cpp modperl/functions.cpp
+endif
+
 all: modperl_all
 
 else

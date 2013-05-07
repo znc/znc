@@ -19,9 +19,14 @@ PYDEPONMOD :=
 endif
 
 PYTHONHOOK   := modpython_install
-CLEAN    += modpython/_znc_core.$(PYCEXT_EXT) modpython/_znc_core.cpp modpython/znc_core.py modpython/znc_core.pyc
-CLEAN    += modpython/swigpyrun.h modpython/znc.pyc modpython/functions.cpp modpython/compiler *.pyc
+CLEAN    += modpython/_znc_core.$(PYCEXT_EXT) modpython/znc_core.pyc
+CLEAN    += modpython/znc.pyc modpython/compiler *.pyc
 CLEAN    += modpython/_znc_core.o modpython/compiler.o
+ifneq "$(SWIG)" ""
+# Only delete these files if we can regenerate them
+CLEAN    += modpython/_znc_core.cpp modpython/znc_core.py
+CLEAN    += modpython/swigpyrun.h modpython/functions.cpp
+endif
 ifneq "$(srcdir)" "."
 # Copied from source for out-of-tree builds
 CLEAN    += modpython/znc.py
