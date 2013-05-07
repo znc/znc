@@ -1016,19 +1016,26 @@ bool CIRCSock::OnChanMsg(CNick& Nick, const CString& sChan, CString& sMessage) {
 }
 
 void CIRCSock::PutIRC(const CString& sLine) {
-	DEBUG("(" << m_pNetwork->GetUser()->GetUserName() << "/" << m_pNetwork->GetName() << ") ZNC -> IRC [" << sLine << "] (queued)");
+	// Only print if the line won't get sent immediately (same condition as in TrySend()!)
+	if (m_bFloodProtection && m_iSendsAllowed <= 0) {
+		DEBUG("(" << m_pNetwork->GetUser()->GetUserName() << "/" << m_pNetwork->GetName() << ") ZNC -> IRC [" << sLine << "] (queued)");
+	}
 	m_vsSendQueue.push_back(sLine);
 	TrySend();
 }
 
 void CIRCSock::PutIRCQuick(const CString& sLine) {
-	DEBUG("(" << m_pNetwork->GetUser()->GetUserName() << "/" << m_pNetwork->GetName() << ") ZNC -> IRC [" << sLine << "] (queued to front)");
+	// Only print if the line won't get sent immediately (same condition as in TrySend()!)
+	if (m_bFloodProtection && m_iSendsAllowed <= 0) {
+		DEBUG("(" << m_pNetwork->GetUser()->GetUserName() << "/" << m_pNetwork->GetName() << ") ZNC -> IRC [" << sLine << "] (queued to front)");
+	}
 	m_vsSendQueue.push_front(sLine);
 	TrySend();
 }
 
 void CIRCSock::TrySend() {
-	while (!m_vsSendQueue.empty() && (m_iSendsAllowed > 0 || !m_bFloodProtection)) {
+	// This condition must be the same as in PutIRC() and PutIRCQuick()!
+	while (!m_vsSendQueue.empty() && (!m_bFloodProtection || m_iSendsAllowed > 0)) {
 		m_iSendsAllowed--;
 		DEBUG("(" << m_pNetwork->GetUser()->GetUserName() << "/" << m_pNetwork->GetName() << ") ZNC -> IRC [" << m_vsSendQueue.front() << "]");
 		Write(m_vsSendQueue.front() + "\r\n");
