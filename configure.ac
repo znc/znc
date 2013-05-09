@@ -529,6 +529,9 @@ else
 	AC_MSG_WARN([libiconv was not found, disabling the charset module])
 fi
 
+AX_BOOST_BASE([1.49.0], [BOOST=yes], [BOOST=no])
+AX_BOOST_REGEX
+
 AC_CACHE_CHECK([for GNU make], [ac_cv_path_GNUMAKE], [
 	AC_PATH_PROGS_FEATURE_CHECK([GNUMAKE], [make gmake], [[
 			if $ac_path_GNUMAKE --version | $GREP GNU > /dev/null; then
@@ -582,6 +585,7 @@ echo "dns:          $DNS_TEXT"
 echo "perl:         $PERL"
 echo "python:       $PYTHON"
 echo "swig:         $USESWIG"
+echo "boost:        $BOOST"
 if test x"$CYRUS" = "x" ; then
 	echo "cyrus:        no"
 else
