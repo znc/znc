@@ -114,8 +114,7 @@ void CHTTPSock::ReadLine(const CString& sData) {
 		if (m_uPostLen > MAX_POST_SIZE)
 			PrintErrorPage(413, "Request Entity Too Large", "The request you sent was too large.");
 	} else if (sName.Equals("X-Forwarded-For:")) {
-		CString sIP = sLine.Token(1, false);
-		m_sForwardedIP = sIP.TrimRight_n(", ");
+		m_sForwardedIP = sLine.Token(1).TrimRight_n(",");
 	} else if (sName.Equals("If-None-Match:")) {
 		// this is for proper client cache support (HTTP 304) on static files:
 		m_sIfNoneMatch = sLine.Token(1, true);
