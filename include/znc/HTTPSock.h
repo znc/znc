@@ -99,6 +99,7 @@ protected:
 	CString                  m_sPass;
 	CString                  m_sContentType;
 	CString                  m_sDocRoot;
+	CString                  m_sForwardedIP;
 	std::map<CString, VCString>   m_msvsPOSTParams;
 	std::map<CString, VCString>   m_msvsGETParams;
 	MCString                 m_msHeaders;

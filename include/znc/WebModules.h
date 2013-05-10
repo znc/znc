@@ -122,6 +122,7 @@ public:
 
 	CSmartPtr<CWebSession> GetSession();
 
+	virtual CString GetRemoteIP();
 	virtual Csock* GetSockObj(const CString& sHost, unsigned short uPort);
 	static CString GetSkinPath(const CString& sSkinName);
 	CModule* GetModule() const { return (CModule*) m_pModule; }
