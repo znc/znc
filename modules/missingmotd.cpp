@@ -17,5 +17,11 @@ public:
 	}
 };
 
+template<> void TModInfo<CMissingMotd>(CModInfo& Info)
+{
+    Info.SetWikiPage("missingmotd");
+    Info.SetHasArgs(false);
+}
+
 USERMODULEDEFS(CMissingMotd, "Sends 422 to clients when they login")
 
