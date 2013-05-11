@@ -894,7 +894,7 @@ class CAdminMod : public CModule {
 		}
 
 		pNetwork->SetIRCConnectEnabled(false);
-		PutModule("Closed user's IRC connection.");
+		PutModule("Closed IRC connection for network [" + sNetwork + "] on user [" + sUserName + "].");
 	}
 
 	void ListCTCP(const CString& sLine) {
