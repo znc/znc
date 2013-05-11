@@ -79,7 +79,7 @@ void CClient::ReadLine(const CString& sData) {
 
 	sLine.TrimRight("\n\r");
 
-	DEBUG("(" << GetFullName() << ") CLI -> ZNC [" << sLine << "]");
+	DEBUG("(" << GetFullName() << ") CLI -> ZNC [" << sLine.StripControls_n() << "]");
 
 	if (sLine.Left(1) == "@") {
 		// TODO support message-tags properly
@@ -744,7 +744,7 @@ CString CClient::GetFullName() {
 }
 
 void CClient::PutClient(const CString& sLine) {
-	DEBUG("(" << GetFullName() << ") ZNC -> CLI [" << sLine << "]");
+	DEBUG("(" << GetFullName() << ") ZNC -> CLI [" << sLine.StripControls_n() << "]");
 	Write(sLine + "\r\n");
 }
 
@@ -769,7 +769,7 @@ void CClient::PutModNotice(const CString& sModule, const CString& sLine) {
 		return;
 	}
 
-	DEBUG("(" << GetFullName() << ") ZNC -> CLI [:" + m_pUser->GetStatusPrefix() + ((sModule.empty()) ? "status" : sModule) + "!znc@znc.in NOTICE " << GetNick() << " :" << sLine << "]");
+	DEBUG("(" << GetFullName() << ") ZNC -> CLI [:" + m_pUser->GetStatusPrefix() + ((sModule.empty()) ? "status" : sModule) + "!znc@znc.in NOTICE " << GetNick() << " :" << sLine.StripControls_n() << "]");
 	Write(":" + m_pUser->GetStatusPrefix() + ((sModule.empty()) ? "status" : sModule) + "!znc@znc.in NOTICE " + GetNick() + " :" + sLine + "\r\n");
 }
 
@@ -780,7 +780,7 @@ void CClient::PutModule(const CString& sModule, const CString& sLine) {
 		return;
 	}
 
-	DEBUG("(" << GetFullName() << ") ZNC -> CLI [:" + m_pUser->GetStatusPrefix() + ((sModule.empty()) ? "status" : sModule) + "!znc@znc.in PRIVMSG " << GetNick() << " :" << sLine << "]");
+	DEBUG("(" << GetFullName() << ") ZNC -> CLI [:" + m_pUser->GetStatusPrefix() + ((sModule.empty()) ? "status" : sModule) + "!znc@znc.in PRIVMSG " << GetNick() << " :" << sLine.StripControls_n() << "]");
 
 	sLine.Split("\n", vsLines);
 	for (it = vsLines.begin(); it != vsLines.end(); ++it) {
