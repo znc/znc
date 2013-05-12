@@ -11,6 +11,7 @@
 
 #include <znc/zncconfig.h>
 #include <znc/Socket.h>
+#include <znc/FileUtils.h>
 
 class CModule;
 
@@ -83,6 +84,9 @@ private:
 	static size_t GetParamValues(const CString& sName, VCString& vsRet, const std::map<CString, VCString>& msvsParams, const CString& sFilter);
 	static size_t GetParamValues(const CString& sName, std::set<CString>& ssRet, const std::map<CString, VCString>& msvsParams, const CString& sFilter);
 
+	void WriteFileUncompressed(CFile& File);
+	void WriteFileGzipped(CFile& File);
+
 protected:
 	void PrintPage(const CString& sPage);
 	void Init();
@@ -104,6 +108,7 @@ protected:
 	MCString                 m_msHeaders;
 	bool                     m_bHTTP10Client;
 	CString                  m_sIfNoneMatch;
+	bool                     m_bAcceptGzip;
 	MCString                 m_msRequestCookies;
 	MCString                 m_msResponseCookies;
 };

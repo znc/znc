@@ -107,6 +107,10 @@ AC_ARG_ENABLE( [openssl],
 	AS_HELP_STRING([--disable-openssl], [disable openssl]),
 	[SSL="$enableval"],
 	[SSL="auto"])
+AC_ARG_ENABLE( [zlib],
+	AS_HELP_STRING([--disable-zlib], [disable zlib]),
+	[ZLIB="$enableval"],
+	[ZLIB="auto"])
 AC_ARG_ENABLE( [perl],
 	AS_HELP_STRING([--enable-perl], [enable perl]),
 	[PERL="$enableval"],
@@ -310,6 +314,37 @@ if test "x$SSL" != "xno"; then
 	fi
 else
 	NOSSL=1
+fi
+
+# ----- Check for zlib
+
+old_ZLIB="$ZLIB"
+if test "x$ZLIB" != "xno"; then
+	AC_MSG_CHECKING([whether zlib is usable])
+	my_saved_LIBS="$LIBS"
+	appendLib "-lz"
+	AC_LINK_IFELSE([AC_LANG_PROGRAM([[
+			#include "zlib.h"
+		]], [[
+			z_stream zs;
+			(void) deflateInit2(&zs, 0, 0, 0, 0, 0);
+			(void) deflate(&zs, 0);
+		]])
+		], [
+			AC_MSG_RESULT([yes])
+			ZLIB=yes
+		], [
+			AC_MSG_RESULT([no])
+			ZLIB=no
+	])
+	if test "x$ZLIB" = "xno"; then
+		ZNC_AUTO_FAIL([ZLIB],
+			[zlib was not found. Try --disable-zlib],
+			[zlib was not found and thus disabled])
+		LIBS="$my_saved_LIBS"
+	else
+		AC_DEFINE([HAVE_ZLIB], [1], [Define if zlib is available])
+	fi
 fi
 
 AC_ARG_WITH( [module-prefix],
@@ -597,6 +632,7 @@ if test x"$CHARSET" = "x" ; then
 else
 	echo "charset:      yes"
 fi
+echo "zlib:         $ZLIB"
 echo "run from src: $RUNFROMSOURCE"
 echo
 echo "Now you can run \"$GNUMAKE\" to compile ZNC"
