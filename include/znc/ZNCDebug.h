@@ -30,7 +30,9 @@
  */
 #define DEBUG(f) do { \
 	if (CDebug::Debug()) { \
-		std::cout << CDebug::GetTimestamp() << f << std::endl; \
+		std::stringstream sDebug;\
+		sDebug << f;\
+		std::cout << CDebug::GetTimestamp() << CString(sDebug.str()).Escape_n(CString::EDEBUG) << std::endl; \
 	} \
 } while (0)
 
