@@ -124,7 +124,7 @@ void CIRCSock::ReadLine(const CString& sData) {
 
 	sLine.TrimRight("\n\r");
 
-	DEBUG("(" << m_pNetwork->GetUser()->GetUserName() << "/" << m_pNetwork->GetName() << ") IRC -> ZNC [" << sLine << "]");
+	DEBUG("(" << m_pNetwork->GetUser()->GetUserName() << "/" << m_pNetwork->GetName() << ") IRC -> ZNC [" << sLine.StripControls_n() << "]");
 
 	bool bReturn = false;
 	IRCSOCKMODULECALL(OnRaw(sLine), &bReturn);
@@ -1018,7 +1018,7 @@ bool CIRCSock::OnChanMsg(CNick& Nick, const CString& sChan, CString& sMessage) {
 void CIRCSock::PutIRC(const CString& sLine) {
 	// Only print if the line won't get sent immediately (same condition as in TrySend()!)
 	if (m_bFloodProtection && m_iSendsAllowed <= 0) {
-		DEBUG("(" << m_pNetwork->GetUser()->GetUserName() << "/" << m_pNetwork->GetName() << ") ZNC -> IRC [" << sLine << "] (queued)");
+		DEBUG("(" << m_pNetwork->GetUser()->GetUserName() << "/" << m_pNetwork->GetName() << ") ZNC -> IRC [" << sLine.StripControls_n() << "] (queued)");
 	}
 	m_vsSendQueue.push_back(sLine);
 	TrySend();
@@ -1027,7 +1027,7 @@ void CIRCSock::PutIRC(const CString& sLine) {
 void CIRCSock::PutIRCQuick(const CString& sLine) {
 	// Only print if the line won't get sent immediately (same condition as in TrySend()!)
 	if (m_bFloodProtection && m_iSendsAllowed <= 0) {
-		DEBUG("(" << m_pNetwork->GetUser()->GetUserName() << "/" << m_pNetwork->GetName() << ") ZNC -> IRC [" << sLine << "] (queued to front)");
+		DEBUG("(" << m_pNetwork->GetUser()->GetUserName() << "/" << m_pNetwork->GetName() << ") ZNC -> IRC [" << sLine.StripControls_n() << "] (queued to front)");
 	}
 	m_vsSendQueue.push_front(sLine);
 	TrySend();
@@ -1037,7 +1037,7 @@ void CIRCSock::TrySend() {
 	// This condition must be the same as in PutIRC() and PutIRCQuick()!
 	while (!m_vsSendQueue.empty() && (!m_bFloodProtection || m_iSendsAllowed > 0)) {
 		m_iSendsAllowed--;
-		DEBUG("(" << m_pNetwork->GetUser()->GetUserName() << "/" << m_pNetwork->GetName() << ") ZNC -> IRC [" << m_vsSendQueue.front() << "]");
+		DEBUG("(" << m_pNetwork->GetUser()->GetUserName() << "/" << m_pNetwork->GetName() << ") ZNC -> IRC [" << m_vsSendQueue.front().StripControls_n() << "]");
 		Write(m_vsSendQueue.front() + "\r\n");
 		m_vsSendQueue.pop_front();
 	}

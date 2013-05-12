@@ -309,7 +309,7 @@ CDCCBounce::~CDCCBounce() {
 void CDCCBounce::ReadLine(const CString& sData) {
 	CString sLine = sData.TrimRight_n("\r\n");
 
-	DEBUG(GetSockName() << " <- [" << sLine << "]");
+	DEBUG(GetSockName() << " <- [" << sLine.StripControls_n() << "]");
 
 	PutPeer(sLine);
 }
@@ -426,7 +426,7 @@ Csock* CDCCBounce::GetSockObj(const CString& sHost, unsigned short uPort) {
 }
 
 void CDCCBounce::PutServ(const CString& sLine) {
-	DEBUG(GetSockName() << " -> [" << sLine << "]");
+	DEBUG(GetSockName() << " -> [" << sLine.StripControls_n() << "]");
 	Write(sLine + "\r\n");
 }
 
