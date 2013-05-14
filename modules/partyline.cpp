@@ -361,7 +361,7 @@ public:
 					+ sCmd + pChannel->GetName() + sMsg, false, true, pUser);
 		}
 
-		if (m_ssDefaultChans.find(pChannel->GetName()) != m_ssDefaultChans.end()) {
+		if (!pUser->IsBeingDeleted() && m_ssDefaultChans.find(pChannel->GetName()) != m_ssDefaultChans.end()) {
 			JoinUser(pUser, pChannel);
 		}
 
