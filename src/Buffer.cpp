@@ -42,7 +42,8 @@ CString CBufLine::GetLine(const CClient& Client, const MCString& msParams) const
 		// TODO support message-tags properly
 		struct tm stm;
 		memset(&stm, 0, sizeof(stm));
-		gmtime_r(&m_time.tv_sec, &stm);
+		const time_t secs = m_time.tv_sec; // OpenBSD has tv_sec as int, so explicitly convert it to time_t to make gmtime_r() happy
+		gmtime_r(&secs, &stm);
 		char sTime[20] = {};
 		strftime(sTime, sizeof(sTime), "%Y-%m-%dT%H:%M:%S", &stm);
 		return "@time=" + CString(sTime) + "." + s_msec + "Z " + sStr;
