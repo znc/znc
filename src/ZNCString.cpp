@@ -164,6 +164,8 @@ CString::EEscape CString::ToEscape(const CString& sEsc) {
 		return ESQL;
 	} else if (sEsc.Equals("NAMEDFMT")) {
 		return ENAMEDFMT;
+	} else if (sEsc.Equals("DEBUG")) {
+		return EDEBUG;
 	}
 
 	return EASCII;
@@ -280,6 +282,26 @@ CString CString::Escape_n(EEscape eFrom, EEscape eTo) const {
 				}
 
 				break;
+			case EDEBUG:
+				if (*p == '\\' && (a +3) < iLength && *(p +1) == 'x' && isxdigit(*(p +2)) && isxdigit(*(p +3))) {
+					p += 2;
+					if (isdigit(*p)) {
+						ch = (unsigned char)((*p - '0') << 4);
+					} else {
+						ch = (unsigned char)((tolower(*p) - 'a' +10) << 4);
+					}
+
+					p++;
+					if (isdigit(*p)) {
+						ch |= (unsigned char)(*p - '0');
+					} else {
+						ch |= (unsigned char)(tolower(*p) - 'a' +10);
+					}
+
+					a += 3;
+				} else {
+					ch = *p;
+				}
 		}
 
 		switch (eTo) {
@@ -325,6 +347,16 @@ CString CString::Escape_n(EEscape eFrom, EEscape eTo) const {
 				} else if (ch == '{') { sRet += '\\'; sRet += '{';
 				} else if (ch == '}') { sRet += '\\'; sRet += '}';
 				} else { sRet += ch; }
+
+				break;
+			case EDEBUG:
+				if (ch < 0x20 || ch == 0x7F) {
+					sRet += "\\x";
+					sRet += szHex[ch >> 4];
+					sRet += szHex[ch & 0xf];
+				} else {
+					sRet += ch;
+				}
 
 				break;
 		}
