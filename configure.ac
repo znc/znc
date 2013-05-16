@@ -225,6 +225,8 @@ if test "x$TDNS" != "xno"; then
 	old_TDNS=$TDNS
 	AX_PTHREAD([
         	AC_DEFINE([HAVE_PTHREAD], [1], [Define if you have POSIX threads libraries and header files.])
+		appendCXX "$PTHREAD_CFLAGS"
+		appendLib "$PTHREAD_LIBS"
 		AC_MSG_CHECKING([whether getaddrinfo() supports AI_ADDRCONFIG])
 		AC_COMPILE_IFELSE([
 			AC_LANG_PROGRAM([[
@@ -250,8 +252,6 @@ if test "x$TDNS" != "xno"; then
 	if test "x$TDNS" = "xyes"; then
 		DNS_TEXT=threads
 		AC_DEFINE([HAVE_THREADED_DNS], [1], [Define if threaded DNS is enabled])
-		appendCXX "$PTHREAD_CFLAGS"
-		appendLib "$PTHREAD_LIBS"
 	else
 		ZNC_AUTO_FAIL([TDNS],
 			[support for threaded DNS not found. Try --disable-tdns.
