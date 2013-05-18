@@ -299,6 +299,10 @@ CString CString::Escape_n(EEscape eFrom, EEscape eTo) const {
 					}
 
 					a += 3;
+				} else if (*p == '\\' && a+1 < iLength && *(p+1) == '.') {
+					a++;
+					p++;
+					ch = '\\';
 				} else {
 					ch = *p;
 				}
@@ -354,6 +358,8 @@ CString CString::Escape_n(EEscape eFrom, EEscape eTo) const {
 					sRet += "\\x";
 					sRet += szHex[ch >> 4];
 					sRet += szHex[ch & 0xf];
+				} else if (ch == '\\') {
+					sRet += "\\.";
 				} else {
 					sRet += ch;
 				}
