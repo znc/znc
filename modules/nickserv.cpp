@@ -122,9 +122,9 @@ public:
 	virtual ~CNickServ() {}
 
 	virtual bool OnLoad(const CString& sArgs, CString& sMessage) {
-		if (!sArgs.empty()) {
+		if (!sArgs.empty() && sArgs != "<hidden>") {
 			SetNV("Password", sArgs);
-			SetArgs("");
+			SetArgs("<hidden>");
 		}
 
 		if (GetNV("IdentifyCmd").empty()) {
