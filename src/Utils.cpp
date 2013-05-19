@@ -337,13 +337,37 @@ void CUtils::PrintStatus(bool bSuccess, const CString& sMessage) {
 	fflush(stdout);
 }
 
-CString CUtils::CTime(time_t t, const CString& sTZ) {
+namespace {
+	/* Switch GMT-X and GMT+X
+	 *
+	 * See https://en.wikipedia.org/wiki/Tz_database#Area
+	 *
+	 * "In order to conform with the POSIX style, those zone names beginning
+	 * with "Etc/GMT" have their sign reversed from what most people expect.
+	 * In this style, zones west of GMT have a positive sign and those east
+	 * have a negative sign in their name (e.g "Etc/GMT-14" is 14 hours
+	 * ahead/east of GMT.)"
+	 */
+	inline CString FixGMT(CString sTZ) {
+		if (sTZ.length() >= 4 && sTZ.Left(3) == "GMT") {
+			if (sTZ[3] == '+') {
+				sTZ[3] = '-';
+			} else if (sTZ[3] == '-') {
+				sTZ[3] = '+';
+			}
+		}
+		return sTZ;
+	}
+}
+
+CString CUtils::CTime(time_t t, const CString& sTimezone) {
 	char s[30] = {}; // should have at least 26 bytes
-	if (sTZ.empty()) {
+	if (sTimezone.empty()) {
 		ctime_r(&t, s);
 		// ctime() adds a trailing newline
 		return CString(s).Trim_n();
 	}
+	CString sTZ = FixGMT(sTimezone);
 
 	// backup old value
 	char* oldTZ = getenv("TZ");
@@ -365,14 +389,15 @@ CString CUtils::CTime(time_t t, const CString& sTZ) {
 	return CString(s).Trim_n();
 }
 
-CString CUtils::FormatTime(time_t t, const CString& sFormat, const CString& sTZ) {
+CString CUtils::FormatTime(time_t t, const CString& sFormat, const CString& sTimezone) {
 	char s[1024] = {};
 	tm m;
-	if (sTZ.empty()) {
+	if (sTimezone.empty()) {
 		localtime_r(&t, &m);
 		strftime(s, sizeof(s), sFormat.c_str(), &m);
 		return s;
 	}
+	CString sTZ = FixGMT(sTimezone);
 
 	// backup old value
 	char* oldTZ = getenv("TZ");
