@@ -242,4 +242,4 @@ template<> void TModInfo<CAutoCycleMod>(CModInfo& Info) {
 	Info.SetArgsHelpText("List of channel masks and channel masks with ! before them.");
 }
 
-USERMODULEDEFS(CAutoCycleMod, "Rejoins channels to gain Op if you're the only user left")
+NETWORKMODULEDEFS(CAutoCycleMod, "Rejoins channels to gain Op if you're the only user left")
