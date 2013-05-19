@@ -27,25 +27,40 @@ using std::map;
    }
 */
 struct FOR_EACH_MODULE_Type {
-	bool bOnCMuser;
+	enum {
+		AtGlobal,
+		AtUser,
+		AtNetwork,
+	} where;
 	CModules CMtemp;
 	CModules& CMuser;
-	FOR_EACH_MODULE_Type(CUser* pUser) : CMuser(pUser ? pUser->GetModules() : CMtemp) {
-		bOnCMuser = false;
+	CModules& CMnet;
+	FOR_EACH_MODULE_Type(CUser* pUser) : CMuser(pUser ? pUser->GetModules() : CMtemp), CMnet(CMtemp) {
+		where = AtGlobal;
+	}
+	FOR_EACH_MODULE_Type(CIRCNetwork* pNetwork) : CMuser(pNetwork ? pNetwork->GetUser()->GetModules() : CMtemp), CMnet(pNetwork ? pNetwork->GetModules() : CMtemp) {
+		where = AtGlobal;
+	}
+	FOR_EACH_MODULE_Type(std::pair<CUser*, CIRCNetwork*> arg) : CMuser(arg.first ? arg.first->GetModules() : CMtemp), CMnet(arg.second ? arg.second->GetModules() : CMtemp) {
+		where = AtGlobal;
 	}
 	operator bool() { return false; }
 };
 
 inline bool FOR_EACH_MODULE_CanContinue(FOR_EACH_MODULE_Type& state, CModules::iterator& i) {
-	if (!state.bOnCMuser && i == CZNC::Get().GetModules().end()) {
+	if (state.where == FOR_EACH_MODULE_Type::AtGlobal && i == CZNC::Get().GetModules().end()) {
 		i = state.CMuser.begin();
-		state.bOnCMuser = true;
+		state.where = FOR_EACH_MODULE_Type::AtUser;
 	}
-	return !(state.bOnCMuser && i == state.CMuser.end());
+	if (state.where == FOR_EACH_MODULE_Type::AtUser && i == state.CMuser.end()) {
+		i = state.CMnet.begin();
+		state.where = FOR_EACH_MODULE_Type::AtNetwork;
+	}
+	return !(state.where == FOR_EACH_MODULE_Type::AtNetwork && i == state.CMnet.end());
 }
 
-#define FOR_EACH_MODULE(I, pUser)\
-	if (FOR_EACH_MODULE_Type FOR_EACH_MODULE_Var = pUser) {} else\
+#define FOR_EACH_MODULE(I, pUserOrNetwork)\
+	if (FOR_EACH_MODULE_Type FOR_EACH_MODULE_Var = pUserOrNetwork) {} else\
 	for (CModules::iterator I = CZNC::Get().GetModules().begin(); FOR_EACH_MODULE_CanContinue(FOR_EACH_MODULE_Var, I); ++I)
 
 class CWebAdminMod : public CModule {
@@ -623,7 +638,7 @@ public:
 			o4["DisplayName"] = "Disabled";
 			if (pChan && pChan->IsDisabled()) { o4["Checked"] = "true"; }
 
-			FOR_EACH_MODULE(i, pUser) {
+			FOR_EACH_MODULE(i, pNetwork) {
 				CTemplate& mod = Tmpl.AddRow("EmbeddedModuleLoop");
 				mod.insert(Tmpl.begin(), Tmpl.end());
 				mod["WebadminAction"] = "display";
@@ -678,7 +693,7 @@ public:
 		TmplMod["User"] = pUser->GetUserName();
 		TmplMod["ChanName"] = sChanName;
 		TmplMod["WebadminAction"] = "change";
-		FOR_EACH_MODULE(it, pUser) {
+		FOR_EACH_MODULE(it, pNetwork) {
 			(*it)->OnEmbeddedWebRequest(WebSock, "webadmin/channel", TmplMod);
 		}
 
@@ -810,6 +825,16 @@ public:
 				Tmpl["FloodBurst"] = "4";
 			}
 
+			FOR_EACH_MODULE(i, make_pair(pUser, pNetwork)) {
+				CTemplate& mod = Tmpl.AddRow("EmbeddedModuleLoop");
+				mod.insert(Tmpl.begin(), Tmpl.end());
+				mod["WebadminAction"] = "display";
+				if ((*i)->OnEmbeddedWebRequest(WebSock, "webadmin/network", mod)) {
+					mod["Embed"] = WebSock.FindTmpl(*i, "WebadminNetwork.tmpl");
+					mod["ModName"] = (*i)->GetModName();
+				}
+			}
+
 			return true;
 		}
 
@@ -935,6 +960,14 @@ public:
 
 		for (set<CString>::iterator it2 = ssUnloadMods.begin(); it2 != ssUnloadMods.end(); ++it2) {
 			pNetwork->GetModules().UnloadModule(*it2);
+		}
+
+		CTemplate TmplMod;
+		TmplMod["Username"] = pUser->GetUserName();
+		TmplMod["Name"] = pNetwork->GetName();
+		TmplMod["WebadminAction"] = "change";
+		FOR_EACH_MODULE(it, make_pair(pUser, pNetwork)) {
+			(*it)->OnEmbeddedWebRequest(WebSock, "webadmin/network", TmplMod);
 		}
 
 		if (!CZNC::Get().WriteConfig()) {
