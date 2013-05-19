@@ -93,6 +93,8 @@ FILES    := $(shell echo $(FILES) | sed -e "s:charset::")
 endif
 charsetLDFLAGS := @LIBICONV@
 
+logLDFLAGS := @BOOST_REGEX_LIB@
+
 TARGETS  := $(addsuffix .so, $(FILES))
 
 CLEAN    += *.so *.o
