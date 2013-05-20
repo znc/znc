@@ -457,6 +457,19 @@ public:
 	 * @return The result of the conversion.
 	 */
 	CString RightChomp_n(size_type uLen = 1) const;
+	/** Remove controls characters from this string.
+	 * Controls characters are color codes, and those in C0 set
+	 * See https://en.wikipedia.org/wiki/C0_and_C1_control_codes
+	 * @return The result of the conversion.
+	 */
+	CString& StripControls();
+	/** Remove controls characters from this string.
+	 * Controls characters are color codes, and those in C0 set
+	 * See https://en.wikipedia.org/wiki/C0_and_C1_control_codes
+	 * This string object isn't modified.
+	 * @return The result of the conversion.
+	 */
+	CString StripControls_n() const;
 
 private:
 protected:

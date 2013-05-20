@@ -1131,6 +1131,58 @@ bool CString::RightChomp(size_type uLen) {
 	return bRet;
 }
 
+CString CString::StripControls_n() const {
+	CString sRet;
+	const unsigned char *pStart = (const unsigned char*) data();
+	unsigned char ch = *pStart;
+	size_type iLength = length();
+	sRet.reserve(iLength);
+	bool colorCode = false;
+	unsigned int digits = 0;
+	bool comma = false;
+
+	for (unsigned int a = 0; a < iLength; a++, ch = pStart[a]) {
+		// Color code. Format: \x03([0-9]{1,2}(,[0-9]{1,2})?)?
+		if (ch == 0x03) {
+			colorCode = true;
+			digits = 0;
+			comma = false;
+			continue;
+		}
+		if (colorCode) {
+			if (isdigit(ch) && digits < 2) {
+				digits++;
+				continue;
+			}
+			if (ch == ',' && !comma && digits > 0) {
+				comma = true;
+				digits = 0;
+				continue;
+			}
+
+			colorCode = false;
+
+			if (digits == 0 && comma) { // There was a ',' which wasn't followed by digits, we should print it.
+				sRet += ',';
+			}
+		}
+		// CO controls codes
+		if (ch < 0x20 || ch == 0x7F)
+			continue;
+		sRet += ch;
+	}
+	if (colorCode && digits == 0 && comma) {
+		sRet += ',';
+	}
+
+	sRet.reserve(0);
+	return sRet;
+}
+
+CString& CString::StripControls() {
+	return (*this = StripControls_n());
+}
+
 //////////////// MCString ////////////////
 const MCString MCString::EmptyMap;
 
