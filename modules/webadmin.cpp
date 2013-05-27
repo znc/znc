@@ -426,7 +426,7 @@ public:
 			CIRCNetwork* pNetwork = SafeGetNetworkFromParam(WebSock);
 
 			// Admin||Self Check
-			if (!spSession->IsAdmin() && (!spSession->GetUser() || spSession->GetUser() != pNetwork->GetUser())) {
+			if (!spSession->IsAdmin() && (!spSession->GetUser() || !pNetwork || spSession->GetUser() != pNetwork->GetUser())) {
 				return false;
 			}
 
@@ -455,7 +455,7 @@ public:
 			CIRCNetwork* pNetwork = SafeGetNetworkFromParam(WebSock);
 
 			// Admin||Self Check
-			if (!spSession->IsAdmin() && (!spSession->GetUser() || spSession->GetUser() != pNetwork->GetUser())) {
+			if (!spSession->IsAdmin() && (!spSession->GetUser() || !pNetwork || spSession->GetUser() != pNetwork->GetUser())) {
 				return false;
 			}
 
@@ -479,7 +479,7 @@ public:
 			CIRCNetwork* pNetwork = SafeGetNetworkFromParam(WebSock);
 
 			// Admin||Self Check
-			if (!spSession->IsAdmin() && (!spSession->GetUser() || spSession->GetUser() != pNetwork->GetUser())) {
+			if (!spSession->IsAdmin() && (!spSession->GetUser() || !pNetwork || spSession->GetUser() != pNetwork->GetUser())) {
 				return false;
 			}
 
@@ -493,7 +493,7 @@ public:
 			CIRCNetwork* pNetwork = SafeGetNetworkFromParam(WebSock);
 
 			// Admin||Self Check
-			if (!spSession->IsAdmin() && (!spSession->GetUser() || spSession->GetUser() != pNetwork->GetUser())) {
+			if (!spSession->IsAdmin() && (!spSession->GetUser() || !pNetwork || spSession->GetUser() != pNetwork->GetUser())) {
 				return false;
 			}
 
