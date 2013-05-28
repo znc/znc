@@ -58,17 +58,7 @@ public:
 			DoNickCommand("ReleaseCmd", sLine.Token(1));
 		}
 	}
-	
-	void RegainCommand(const CString& sLine) {
-		if (sLine.Token(1).empty()) {
-			PutModule("Syntax: regain <nickname>");
-		}
-		else
-		{
-			DoNickCommand("RegainCmd", sLine.Token(1));
-		}
-	}
-	
+
 	void GroupCommand(const CString& sLine) {
 		if (sLine.Token(1).empty()) {
 			PutModule("Syntax: group <nickname>");
@@ -82,7 +72,6 @@ public:
 		PutModule("GHOST " + GetNV("GhostCmd"));
 		PutModule("RECOVER " + GetNV("RecoverCmd"));
 		PutModule("RELEASE " + GetNV("ReleaseCmd"));
-		PutModule("REGAIN " + GetNV("RegainCmd"));
 		PutModule("GROUP " + GetNV("GroupCmd"));
 	}
 
@@ -97,8 +86,6 @@ public:
 			SetNV("RecoverCmd", sNewCmd);
 		} else if (sCmd.Equals("RELEASE")) {
 			SetNV("ReleaseCmd", sNewCmd);
-		} else if (sCmd.Equals("REGAIN")){
-			SetNV("RegainCmd", sNewCmd);
 		} else if (sCmd.Equals("GROUP")) {
 			SetNV("GroupCmd", sNewCmd);
 		} else {
@@ -124,8 +111,6 @@ public:
 			"nickname");
 		AddCommand("Release", static_cast<CModCommand::ModCmdFunc>(&CNickServ::ReleaseCommand),
 			"nickname");
-		AddCommand("Regain", static_cast<CModCommand::ModCmdFunc>(&CNickServ::RegainCommand),
-			"nickname", "REGAIN attempts to set the user of your nickname's nickname to a different nickname (Sometimes it GHOSTs that user instead), RELEASEs your nickname, and then sets your nickname to your registered nickname");
 		AddCommand("Group", static_cast<CModCommand::ModCmdFunc>(&CNickServ::GroupCommand),
 			"nickname");
 		AddCommand("ViewCommands", static_cast<CModCommand::ModCmdFunc>(&CNickServ::ViewCommandsCommand),
@@ -153,9 +138,6 @@ public:
 		}
 		if (GetNV("ReleaseCmd").empty()) {
 			SetNV("ReleaseCmd", "PRIVMSG NickServ :RELEASE {nickname} {password}");
-		}
-		if (GetNV("RegainCmd").empty()) {
-			SetNV("RegainCmd", "PRIVMSG NickServ :REGAIN {nickname} {password}");
 		}
 		if (GetNV("GroupCmd").empty()) {
 			SetNV("GroupCmd", "PRIVMSG NickServ :GROUP {nickname} {password}");
