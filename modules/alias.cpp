@@ -1,5 +1,4 @@
 #include <znc/Modules.h>
-#include <znc/user.h>
 
 using namespace std;
 
