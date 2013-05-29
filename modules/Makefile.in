@@ -88,7 +88,7 @@ FILES    := $(shell echo $(FILES) | sed -e "s:cyrusauth::")
 endif
 cyrusauthLDFLAGS := -lsasl2
 
-ifeq "@CHARSET@" ""
+ifeq "@HAVE_ICONV@" ""
 FILES    := $(shell echo $(FILES) | sed -e "s:charset::")
 endif
 charsetLDFLAGS := @LIBICONV@

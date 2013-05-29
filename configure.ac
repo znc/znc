@@ -539,30 +539,7 @@ then
 	LIBS="$my_saved_LIBS"
 fi
 
-CHARSET=""
-AC_CHECK_FUNC( iconv, CHARSET=1 )
-AC_CHECK_LIB( iconv, iconv_open, LIBICONV=-liconv ; CHARSET=1 )
-if test "x$CHARSET" = "x1"
-then
-	AC_MSG_CHECKING([whether iconv expects a const second argument])
-	AC_COMPILE_IFELSE([
-		AC_LANG_PROGRAM([[
-	#include <iconv.h>
-	]], [[
-		const char input[] = "X"; const char *inptr = input; size_t inbytes = 1;
-		char buf[1]; char *outptr = buf; size_t outbytes = 1;
-		iconv_t ic = iconv_open("ISO8859-1", "UTF8");
-		iconv(ic, (char**)&inptr, &inbytes, &outptr, &outbytes);
-	]])], [
-		AC_MSG_RESULT([no])
-		appendMod -DICONV_CONST=
-	], [
-		AC_MSG_RESULT([yes])
-		appendMod -DICONV_CONST=const
-	])
-else
-	AC_MSG_WARN([libiconv was not found, disabling the charset module])
-fi
+AM_ICONV
 
 AC_CACHE_CHECK([for GNU make], [ac_cv_path_GNUMAKE], [
 	AC_PATH_PROGS_FEATURE_CHECK([GNUMAKE], [make gmake], [[
@@ -627,7 +604,7 @@ if test x"$TCL_FLAGS" = "x" ; then
 else
 	echo "tcl:          yes"
 fi
-if test x"$CHARSET" = "x" ; then
+if test x"$HAVE_ICONV" = "x" ; then
 	echo "charset:      no"
 else
 	echo "charset:      yes"
