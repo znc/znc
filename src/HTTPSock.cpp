@@ -8,6 +8,7 @@
 
 #include <znc/FileUtils.h>
 #include <znc/znc.h>
+#include <iomanip>
 
 
 #ifdef HAVE_ZLIB

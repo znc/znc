@@ -11,11 +11,7 @@
 
 #include <znc/zncconfig.h>
 #include <znc/ZNCString.h>
-#include <iostream>
-#include <ctime>
-#include <sys/time.h>
 #include <sstream>
-#include <iomanip>
 
 /** Output a debug info if debugging is enabled.
  *  If ZNC was compiled with <code>--enable-debug</code> or was started with
@@ -30,9 +26,8 @@
  */
 #define DEBUG(f) do { \
 	if (CDebug::Debug()) { \
-		std::stringstream sDebug;\
+		CDebugStream sDebug;\
 		sDebug << f;\
-		std::cout << CDebug::GetTimestamp() << CString(sDebug.str()).Escape_n(CString::EDEBUG) << std::endl; \
 	} \
 } while (0)
 
@@ -42,21 +37,15 @@ public:
 	static bool StdoutIsTTY() { return stdoutIsTTY; }
 	static void SetDebug(bool b) { debug = b; }
 	static bool Debug() { return debug; }
-	static CString GetTimestamp() {
-		char buf[64];
-		timeval time_now;
-		gettimeofday(&time_now, NULL);
-		time_t currentSec = (time_t) time_now.tv_sec; // cast from long int
-		tm* time_info = localtime(&currentSec);
-		strftime(buf, sizeof(buf), "[%Y-%m-%d %H:%M:%S.", time_info);
-		std::ostringstream buffer;
-		buffer << buf << std::setw(6) << std::setfill('0') << (time_now.tv_usec) << "] ";
-		return buffer.str();
-	}
 
 protected:
 	static bool stdoutIsTTY;
 	static bool debug;
+};
+
+class CDebugStream : public std::ostringstream {
+public:
+	~CDebugStream();
 };
 
 #endif // !ZNCDEBUG_H
