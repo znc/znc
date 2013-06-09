@@ -668,46 +668,67 @@ bool CIRCNetwork::DelChan(const CString& sName) {
 }
 
 void CIRCNetwork::JoinChans() {
+	// Avoid divsion by zero, it's bad!
+	if (m_vChans.empty())
+		return;
+
+	// We start at a random offset into the channel list so that if your
+	// first 3 channels are invite-only and you got MaxJoins == 3, ZNC will
+	// still be able to join the rest of your channels.
+	unsigned int start = rand() % m_vChans.size();
+	unsigned int uJoins = m_pUser->MaxJoins();
+	set<CChan*> sChans;
+	for (unsigned int a = 0; a < m_vChans.size(); a++) {
+		unsigned int idx = (start + a) % m_vChans.size();
+		CChan* pChan = m_vChans[idx];
+		if (!pChan->IsOn() && !pChan->IsDisabled()) {
+			if (!JoinChan(pChan))
+				continue;
+
+			sChans.insert(pChan);
+
+			// Limit the number of joins
+			if (uJoins != 0 && --uJoins == 0)
+				break;
+		}
+	}
+
+	while (!sChans.empty())
+		JoinChans(sChans);
+}
+
+void CIRCNetwork::JoinChans(set<CChan*>& sChans) {
+	CString sKeys, sJoin;
 	bool bHaveKey = false;
-	size_t joinLength = 4;  // join
-	CString sChannels, sKeys;
+	size_t uiJoinLength = strlen("JOIN ");
 
-	for (vector<CChan*>::iterator it = m_vChans.begin(); it != m_vChans.end(); ++it) {
-		CChan *pChan = *it;
+	while (!sChans.empty()) {
+		set<CChan*>::iterator it = sChans.begin();
+		const CString& sName = (*it)->GetName();
+		const CString& sKey = (*it)->GetKey();
+		size_t len = sName.length() + sKey.length();
+		len += 2; // two comma
 
-		if (pChan->IsOn() || pChan->IsDisabled() || !JoinChan(pChan)) {
-			continue;
-		}
+		if (!sKeys.empty() && uiJoinLength + len >= 512)
+			break;
 
-		size_t length = pChan->GetName().length() + pChan->GetKey().length() + 2;  // +2 for either space or commas
-
-		if ((joinLength + length) >= 510) {
-			// Sent what we got, and cleanup
-			PutIRC("JOIN " + sChannels + (bHaveKey ? (" " + sKeys) : ""));
-
-			sChannels = "";
-			sKeys = "";
-			joinLength = 4;  // join
-			bHaveKey = false;
-		}
-
-		if (!sChannels.empty()) {
-			sChannels += ",";
+		if (!sJoin.empty()) {
+			sJoin += ",";
 			sKeys += ",";
 		}
-
-		if (!pChan->GetKey().empty()) {
+		uiJoinLength += len;
+		sJoin += sName;
+		if (!sKey.empty()) {
+			sKeys += sKey;
 			bHaveKey = true;
-			sKeys += pChan->GetKey();
 		}
-
-		sChannels += pChan->GetName();
-		joinLength += length;
+		sChans.erase(it);
 	}
 
-	if (!sChannels.empty()) {
-		PutIRC("JOIN " + sChannels + (bHaveKey ? (" " + sKeys) : ""));
-	}
+	if (bHaveKey)
+		PutIRC("JOIN " + sJoin + " " + sKeys);
+	else
+		PutIRC("JOIN " + sJoin);
 }
 
 bool CIRCNetwork::JoinChan(CChan* pChan) {

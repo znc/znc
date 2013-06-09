@@ -72,6 +72,7 @@ public:
 	bool AddChan(const CString& sName, bool bInConfig);
 	bool DelChan(const CString& sName);
 	void JoinChans();
+	void JoinChans(std::set<CChan*>& sChans);
 
 	const CString& GetChanPrefixes() const { return m_sChanPrefixes; };
 	void SetChanPrefixes(const CString& s) { m_sChanPrefixes = s; };

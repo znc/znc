@@ -87,6 +87,7 @@ CUser::CUser(const CString& sUserName)
 	m_uBufferCount = 50;
 	m_uMaxJoinTries = 10;
 	m_bAutoClearChanBuffer = true;
+	m_uMaxJoins = 0;
 	m_bBeingDeleted = false;
 	m_sTimestampFormat = "[%H:%M:%S]";
 	m_bAppendTimestamp = false;
@@ -144,6 +145,7 @@ bool CUser::ParseConfig(CConfig* pConfig, CString& sError) {
 	TOption<unsigned int> UIntOptions[] = {
 		{ "jointries", &CUser::SetJoinTries },
 		{ "maxnetworks", &CUser::SetMaxNetworks },
+		{ "maxjoins", &CUser::SetMaxJoins },
 	};
 	size_t numUIntOptions = sizeof(UIntOptions) / sizeof(UIntOptions[0]);
 	TOption<bool> BoolOptions[] = {
@@ -188,9 +190,6 @@ bool CUser::ParseConfig(CConfig* pConfig, CString& sError) {
 	}
 
 	CString sValue;
-
-	// MaxJoins has been removed
-	pConfig->FindStringEntry("maxjoins", sValue);
 
 	CString sDCCLookupValue;
 	pConfig->FindStringEntry("dcclookupmethod", sDCCLookupValue);
@@ -668,6 +667,7 @@ bool CUser::Clone(const CUser& User, CString& sErrorRet, bool bCloneNetworks) {
 	SetBufferCount(User.GetBufferCount(), true);
 	SetJoinTries(User.JoinTries());
 	SetMaxNetworks(User.MaxNetworks());
+	SetMaxJoins(User.MaxJoins());
 
 	// Allowed Hosts
 	m_ssAllowedHosts.clear();
@@ -863,6 +863,7 @@ CConfig CUser::ToConfig() {
 	config.AddKeyValuePair("Timezone", m_sTimezone);
 	config.AddKeyValuePair("JoinTries", CString(m_uMaxJoinTries));
 	config.AddKeyValuePair("MaxNetworks", CString(m_uMaxNetworks));
+	config.AddKeyValuePair("MaxJoins", CString(m_uMaxJoins));
 
 	// Allow Hosts
 	if (!m_ssAllowedHosts.empty()) {
