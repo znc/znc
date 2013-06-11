@@ -1,4 +1,4 @@
-.TH ZNC\-BUILDMOD 1 2008\-06\-01 ZNC
+.TH ZNC\-BUILDMOD 1 2013\-06\-12 ZNC
 .SH NAME
 znc\-buildmod \- compile ZNC modules
 .SH SYNOPSIS
@@ -13,11 +13,10 @@ into a module.
 Normally, exit status is 0 if everything went fine.
 In case the compiler errors when compiling some module, the exit status is 1.
 .SH ENVIRONMENT
-.TP
-.B PATH
-.br
-.I sed
-must be in PATH.
-.I znc-config
-should be found automatically.
-If not, you must add it to PATH yourself.
+Variables
+.SS CXXFLAGS
+.SS LDFLAGS
+.SS MODLINK
+.SS INCLUDES
+.SS LIBS
+may be used.
