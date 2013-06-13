@@ -263,7 +263,16 @@ bool CZNC::WritePemFile() {
 	CString sPemFile = GetPemLocation();
 
 	CUtils::PrintAction("Writing Pem file [" + sPemFile + "]");
+#ifndef _WIN32
+    int fd = creat(sPemFile.c_str(), 0600);
+	if (fd == -1) {
+		CUtils::PrintStatus(false, "Unable to open");
+		return false;
+	}
+    FILE *f = fdopen(fd, "w");
+#else
 	FILE *f = fopen(sPemFile.c_str(), "w");
+#endif
 
 	if (!f) {
 		CUtils::PrintStatus(false, "Unable to open");
