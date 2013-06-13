@@ -114,7 +114,9 @@ public:
 		}
 
 		/* Prime number */
-		unsigned int size = ntohs(*(uint16_t*)data);
+		uint16_t size16;
+		memcpy(&size16, data, sizeof(size16));
+		unsigned int size = ntohs(size16);
 		data += 2;
 		length -= 2;
 
@@ -132,7 +134,8 @@ public:
 			return false;
 		}
 
-		size = ntohs(*(uint16_t*)data);
+		memcpy(&size16, data, sizeof(size16));
+		size = ntohs(size16);
 		data += 2;
 		length -= 2;
 
@@ -150,7 +153,8 @@ public:
 			return false;
 		}
 
-		size = ntohs(*(uint16_t*)data);
+		memcpy(&size16, data, sizeof(size16));
+		size = ntohs(size16);
 		data += 2;
 		length -= 2;
 
@@ -353,7 +357,8 @@ public:
 		char *out_ptr = response;
 
 		/* Size of the key + key */
-		*((uint16_t *)out_ptr) = htons((uint16_t)dh.key_size);
+		uint16_t size16 = htons((uint16_t)dh.key_size);
+		memcpy(out_ptr, &size16, sizeof(size16));
 		out_ptr += 2;
 		BN_bn2bin(dh.dh->pub_key, (unsigned char *)out_ptr);
 		out_ptr += dh.key_size;
@@ -422,7 +427,8 @@ public:
 		out_ptr = response;
 
 		/* Add our key to the response */
-		*((uint16_t *)out_ptr) = htons((uint16_t)BN_num_bytes(dh.dh->pub_key));
+		uint16_t size16 = htons((uint16_t)BN_num_bytes(dh.dh->pub_key));
+		memcpy(out_ptr, &size16, sizeof(size16));
 		out_ptr += 2;
 		BN_bn2bin(dh.dh->pub_key, (unsigned char *)out_ptr);
 		out_ptr += BN_num_bytes(dh.dh->pub_key);
