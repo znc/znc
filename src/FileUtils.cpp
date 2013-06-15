@@ -249,6 +249,10 @@ bool CFile::Copy(const CString& sOldFileName, const CString& sNewFileName, bool 
 	OldFile.Close();
 	NewFile.Close();
 
+	struct stat st;
+	GetInfo(sOldFileName, st);
+	Chmod(sNewFileName, st.st_mode);
+
 	return true;
 }
 
