@@ -35,14 +35,20 @@
 #include <znc/IRCNetwork.h>
 
 #define REQUIRESSL	1
+#define NICK_PREFIX_KEY	"[nick-prefix]"
 
 class CCryptMod : public CModule {
+	CString NickPrefix() {
+		MCString::iterator it = FindNV(NICK_PREFIX_KEY);
+		return it != EndNV() ? it->second : "*";
+	}
+
 public:
 	MODCONSTRUCTOR(CCryptMod) {}
 	virtual ~CCryptMod() {}
 
 	virtual EModRet OnUserMsg(CString& sTarget, CString& sMessage) {
-		sTarget.TrimLeft("\244");
+		sTarget.TrimLeft(NickPrefix());
 
 		if (sMessage.Left(2) == "``") {
 			sMessage.LeftChomp(2);
@@ -55,8 +61,8 @@ public:
 			CChan* pChan = m_pNetwork->FindChan(sTarget);
 			if (pChan) {
 				if (!pChan->AutoClearChanBuffer())
-					pChan->AddBuffer(":\244" + _NAMEDFMT(m_pNetwork->GetIRCNick().GetNickMask()) + " PRIVMSG " + _NAMEDFMT(sTarget) + " :" + _NAMEDFMT(sMessage));
-				m_pUser->PutUser(":\244" + m_pNetwork->GetIRCNick().GetNickMask() + " PRIVMSG " + sTarget + " :" + sMessage, NULL, m_pClient);
+					pChan->AddBuffer(":" + NickPrefix() + _NAMEDFMT(m_pNetwork->GetIRCNick().GetNickMask()) + " PRIVMSG " + _NAMEDFMT(sTarget) + " :{text}", sMessage);
+				m_pUser->PutUser(":" + NickPrefix() + m_pNetwork->GetIRCNick().GetNickMask() + " PRIVMSG " + sTarget + " :" + sMessage, NULL, m_pClient);
 			}
 
 			CString sMsg = MakeIvec() + sMessage;
@@ -91,7 +97,7 @@ public:
 				sMessage.Decrypt(it->second);
 				sMessage.LeftChomp(8);
 				sMessage = sMessage.c_str();
-				Nick.SetNick("\244" + Nick.GetNick());
+				Nick.SetNick(NickPrefix() + Nick.GetNick());
 			}
 		}
 
@@ -137,6 +143,13 @@ public:
 					Table.AddRow();
 					Table.SetCell("Target", it->first);
 					Table.SetCell("Key", it->second);
+				}
+
+				MCString::iterator it = FindNV(NICK_PREFIX_KEY);
+				if (it == EndNV()) {
+					Table.AddRow();
+					Table.SetCell("Target", NICK_PREFIX_KEY);
+					Table.SetCell("Key", NickPrefix());
 				}
 
 				PutModule(Table);
