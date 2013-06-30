@@ -36,7 +36,7 @@
 						<? LOOP ModLoop SORTASC=ModName ?>
 							<li class="modtitle<? IF Active ?> active<? ENDIF ?>"><a href="<? VAR ModPath ?>"><? VAR Title ?></a></li>
 							<? LOOP SubPageLoop ?>
-								<li class="subitem<? IF Active ?> active<? ENDIF ?>"><a href="<? VAR ModPath ?>/<? VAR PageName ?><? IF Params ?>?<? VAR Params ?><? ENDIF ?>"><? VAR Title ?></a></li>
+								<li class="subitem<? IF Active ?> active<? ENDIF ?>"><a href="<? VAR ModPath ?><? VAR PageName ?><? IF Params ?>?<? VAR Params ?><? ENDIF ?>"><? VAR Title ?></a></li>
 							<? ENDLOOP ?>
 						<? ENDLOOP ?>
 						</ul>
