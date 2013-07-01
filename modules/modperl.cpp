@@ -165,6 +165,7 @@ public:
 		if (SvTRUE(ERRSV)) {
 			bSuccess = false;
 			sRetMsg = PString(ERRSV);
+			DEBUG("Perl ZNC::Core::GetModInfo died: " << sRetMsg);
 		} else if (0 < ret) {
 			switch(static_cast<ELoadPerlMod>(SvUV(ST(0)))) {
 				case Perl_NotFound:
