@@ -369,12 +369,32 @@ bool CWebSock::AddModLoop(const CString& sLoopName, CModule& Module, CTemplate *
 
 	if (!sTitle.empty() && (IsLoggedIn() || (!Module.WebRequiresLogin() && !Module.WebRequiresAdmin())) && (GetSession()->IsAdmin() || !Module.WebRequiresAdmin())) {
 		CTemplate& Row = pTemplate->AddRow(sLoopName);
+		bool bActiveModule = false;
 
 		Row["ModName"] = Module.GetModName();
 		Row["ModPath"] = Module.GetWebPath();
 		Row["Title"] = sTitle;
 
 		if (m_sModName == Module.GetModName()) {
+			CString sModuleType = GetPath().Token(1, false, "/");
+			if (sModuleType == "global" && Module.GetType() == CModInfo::GlobalModule) {
+				bActiveModule = true;
+			} else if (sModuleType == "user" && Module.GetType() == CModInfo::UserModule) {
+				bActiveModule = true;
+			} else if (sModuleType == "network" && Module.GetType() == CModInfo::NetworkModule) {
+				CIRCNetwork *Network = Module.GetNetwork();
+				if (Network) {
+					CString sNetworkName = GetPath().Token(2, false, "/");
+					if (sNetworkName == Network->GetName()) {
+						bActiveModule = true;
+					}
+				} else {
+					bActiveModule = true;
+				}
+			}
+		}
+
+		if (bActiveModule) {
 			Row["Active"] = "true";
 		}
 
@@ -388,7 +408,7 @@ bool CWebSock::AddModLoop(const CString& sLoopName, CModule& Module, CTemplate *
 			TWebSubPage& SubPage = vSubPages[a];
 
 			// bActive is whether or not the current url matches this subpage (params will be checked below)
-			bool bActive = (m_sModName == Module.GetModName() && m_sPage == SubPage->GetName());
+			bool bActive = (m_sModName == Module.GetModName() && m_sPage == SubPage->GetName() && bActiveModule);
 
 			if (SubPage->RequiresAdmin() && !GetSession()->IsAdmin()) {
 				continue;  // Don't add admin-only subpages to requests from non-admin users
