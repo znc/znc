@@ -645,7 +645,7 @@ bool CHTTPSock::PrintHeader(off_t uContentLength, const CString& sContentType, u
 	MCString::iterator it;
 
 	for (it = m_msResponseCookies.begin(); it != m_msResponseCookies.end(); ++it) {
-		Write("Set-Cookie: " + it->first.Escape_n(CString::EURL) + "=" + it->second.Escape_n(CString::EURL) + "; path=/;\r\n");
+		Write("Set-Cookie: " + it->first.Escape_n(CString::EURL) + "=" + it->second.Escape_n(CString::EURL) + "; path=/;" + (GetSSL() ? "Secure;" : "") + "\r\n");
 	}
 
 	for (it = m_msHeaders.begin(); it != m_msHeaders.end(); ++it) {
