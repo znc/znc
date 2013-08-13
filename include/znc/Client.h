@@ -128,7 +128,6 @@ public:
 	void PutStatusNotice(const CString& sLine);
 	void PutModule(const CString& sModule, const CString& sLine);
 	void PutModNotice(const CString& sModule, const CString& sLine);
-	void PutFakeServerNotice(const CString& sLine);
 
 	bool IsCapEnabled(const CString& sCap) { return 1 == m_ssAcceptedCaps.count(sCap); }
 
