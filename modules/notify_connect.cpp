@@ -26,7 +26,7 @@ public:
 	}
 
 	virtual void OnClientDisconnect() {
-		SendAdmins(m_pUser->GetUserName() + " detached (gone: " + m_pClient->GetRemoteIP() + ")");
+		SendAdmins(m_pUser->GetUserName() + " detached (from " + m_pClient->GetRemoteIP() + ")");
 	}
 
 private:
