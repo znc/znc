@@ -39,9 +39,9 @@ LIB_SRCS  := $(addprefix src/,$(LIB_SRCS))
 BIN_SRCS  := src/main.cpp
 LIB_OBJS  := $(patsubst %cpp,%o,$(LIB_SRCS))
 BIN_OBJS  := $(patsubst %cpp,%o,$(BIN_SRCS))
-CLEAN     := znc src/*.o core core.* .version_extra
-DISTCLEAN := Makefile config.log config.status znc-buildmod .depend \
-	modules/.depend modules/Makefile man/Makefile znc.pc znc-uninstalled.pc
+CLEAN     := znc src/*.o core core.* .version_extra .depend modules/.depend
+DISTCLEAN := Makefile config.log config.status znc-buildmod \
+	modules/Makefile man/Makefile znc.pc znc-uninstalled.pc
 
 CXXFLAGS += -D_MODDIR_=\"$(MODDIR)\" -D_DATADIR_=\"$(DATADIR)\"
 
