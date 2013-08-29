@@ -219,7 +219,7 @@ public:
 			Mechanisms.SetCell("Description", SupportedMechanisms[i].szDescription);
 		}
 
-		PutModule("The following mechanisms are availible:");
+		PutModule("The following mechanisms are available:");
 		PutModule(Mechanisms);
 	}
 
