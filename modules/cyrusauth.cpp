@@ -128,20 +128,21 @@ public:
 					}
 
 					if (pUser && !pUser->Clone(*pBaseUser, sErr)) {
-						DEBUG("saslauth: Clone User [" << CloneUser() << "] " << sErr);
+						DEBUG("saslauth: Clone User [" << CloneUser() << "] failed: " << sErr);
 						delete pUser;
 						pUser = NULL;
 					}
+				}
+
+				if (pUser) {
+					// "::" is an invalid MD5 hash, so user won't be able to login by usual method
+					pUser->SetPass("::", CUser::HASH_MD5, "::");
 				}
 
 				if (pUser && !CZNC::Get().AddUser(pUser, sErr)) {
 					DEBUG("saslauth: Add user [" << sUsername << "] failed: " << sErr);
 					delete pUser;
 					pUser = NULL;
-				}
-
-				if (pUser) {
-					pUser->SetPass("::", CUser::HASH_MD5, "::");
 				}
 			}
 
