@@ -135,7 +135,7 @@ public:
 				}
 
 				if (pUser && !CZNC::Get().AddUser(pUser, sErr)) {
-					DEBUG("saslauth: Add user [" << sUsername << "] " << sErr);
+					DEBUG("saslauth: Add user [" << sUsername << "] failed: " << sErr);
 					delete pUser;
 					pUser = NULL;
 				}
