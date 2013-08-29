@@ -624,7 +624,8 @@ const vector<CChan*>& CIRCNetwork::GetChans() const { return m_vChans; }
 
 CChan* CIRCNetwork::FindChan(CString sName) const {
 	if (GetIRCSock()) {
-		sName.TrimLeft(GetIRCSock()->GetPerms());
+		// See https://tools.ietf.org/html/draft-brocklesby-irc-isupport-03#section-3.16
+		sName.TrimLeft(GetIRCSock()->GetISupport("STATUSMSG", ""));
 	}
 
 	for (unsigned int a = 0; a < m_vChans.size(); a++) {

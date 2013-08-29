@@ -102,6 +102,7 @@ public:
 	bool IsAuthed() const { return m_bAuthed; }
 	bool IsCapAccepted(const CString& sCap) { return 1 == m_ssAcceptedCaps.count(sCap); }
 	const MCString& GetISupport() const { return m_mISupport; }
+	CString GetISupport(const CString& sKey, const CString& sDefault = "") const;
 	// !Getters
 
 	// This handles NAMESX and UHNAMES in a raw 353 reply

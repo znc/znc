@@ -1211,6 +1211,15 @@ void CIRCSock::ParseISupport(const CString& sLine) {
 	}
 }
 
+CString CIRCSock::GetISupport(const CString& sKey, const CString& sDefault) const {
+	MCString::const_iterator i = m_mISupport.find(sKey.AsUpper());
+	if (i == m_mISupport.end()) {
+		return sDefault;
+	} else {
+		return i->second;
+	}
+}
+
 void CIRCSock::ForwardRaw353(const CString& sLine) const {
 	vector<CClient*>& vClients = m_pNetwork->GetClients();
 	vector<CClient*>::iterator it;
