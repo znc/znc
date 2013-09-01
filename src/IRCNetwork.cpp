@@ -317,6 +317,12 @@ bool CIRCNetwork::ParseConfig(CConfig *pConfig, CString& sError, bool bUpgrade) 
 						"loading [awaystore] instead");
 				sModName = "awaystore";
 			}
+		
+			// XXX Legacy crap, added in 1.1; fakeonline module was dropped in 1.0 and returned in 1.1
+			if (sModName == "fakeonline") {
+				CUtils::PrintMessage("NOTICE: [fakeonline] was renamed, loading [modules_online] instead");
+				sModName = "modules_online";
+			}
 
 			CUtils::PrintAction("Loading network module [" + sModName + "]");
 			CString sModRet;
