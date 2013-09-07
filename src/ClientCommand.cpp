@@ -477,6 +477,10 @@ void CClient::UserCommand(CString& sLine) {
 			PutStatus("Usage: AddNetwork <name>");
 			return;
 		}
+		if (!CIRCNetwork::IsValidNetwork(sNetwork)) {
+			PutStatus("Network name should be alphanumeric");
+			return;
+		}
 
 		if (m_pUser->AddNetwork(sNetwork)) {
 			PutStatus("Network added. Use /znc JumpNetwork " + sNetwork + ", or connect to ZNC with username " + m_pUser->GetUserName() + "/" + sNetwork + " (instead of just " + m_pUser->GetUserName() + ") to connect to it.");
