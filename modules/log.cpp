@@ -97,7 +97,9 @@ void CLogMod::PutLog(const CString& sLine, const CString& sWindow /*= "Status"*/
 
 	CFile LogFile(sPath);
 	CString sLogDir = LogFile.GetDir();
-	if (!CFile::Exists(sLogDir)) CDir::MakeDir(sLogDir);
+	struct stat ModDirInfo;
+	CFile::GetInfo(GetSavePath(), ModDirInfo);
+	if (!CFile::Exists(sLogDir)) CDir::MakeDir(sLogDir, ModDirInfo.st_mode);
 	if (LogFile.Open(O_WRONLY | O_APPEND | O_CREAT))
 	{
 		LogFile.Write(CUtils::FormatTime(curtime, "[%H:%M:%S] ", m_pUser->GetTimezone()) + (m_bSanitize ? sLine.StripControls_n() : sLine) + "\n");
