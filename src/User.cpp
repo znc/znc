@@ -112,8 +112,9 @@ CUser::~CUser() {
 	}
 
 	// Delete clients
-	for (unsigned int c = 0; c < m_vClients.size(); c++) {
-		CClient* pClient = m_vClients[c];
+	// Deleting clients can remove them from this list, so iterate down
+	for (unsigned int c = m_vClients.size(); c > 0; --c) {
+		CClient* pClient = m_vClients[c - 1];
 		CZNC::Get().GetManager().DelSockByAddr(pClient);
 	}
 	m_vClients.clear();
