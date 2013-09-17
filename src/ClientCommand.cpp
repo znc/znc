@@ -1493,7 +1493,7 @@ void CClient::HelpUser() {
 	Table.AddColumn("Arguments");
 	Table.AddColumn("Description");
 
-	PutStatus("In the following list all occurences of <#chan> support wildcards (* and ?)");
+	PutStatus("In the following list all occurrences of <#chan> support wildcards (* and ?)");
 	PutStatus("(Except ListNicks)");
 
 	Table.AddRow();

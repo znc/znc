@@ -220,7 +220,7 @@ bool CUser::ParseConfig(CConfig* pConfig, CString& sError) {
 	if (pConfig->FindStringEntry("buffer", sValue))
 		SetBufferCount(sValue.ToUInt(), true);
 	if (pConfig->FindStringEntry("awaysuffix", sValue)) {
-		CUtils::PrintMessage("WARNING: AwaySuffix has been depricated, instead try -> LoadModule = awaynick %nick%_" + sValue);
+		CUtils::PrintMessage("WARNING: AwaySuffix has been deprecated, instead try -> LoadModule = awaynick %nick%_" + sValue);
 	}
 	if (pConfig->FindStringEntry("autocycle", sValue)) {
 		if (sValue.Equals("true"))
