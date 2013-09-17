@@ -112,9 +112,8 @@ CUser::~CUser() {
 	}
 
 	// Delete clients
-	for (unsigned int c = 0; c < m_vClients.size(); c++) {
-		CClient* pClient = m_vClients[c];
-		CZNC::Get().GetManager().DelSockByAddr(pClient);
+	while (!m_vClients.empty()) {
+		CZNC::Get().GetManager().DelSockByAddr(m_vClients[0]);
 	}
 	m_vClients.clear();
 
