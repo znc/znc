@@ -53,21 +53,21 @@ public:
 	}
 
 	// check registry if alias exists
-	static bool AliasExists(CModule *mod, CString n)
+	static bool AliasExists(CModule *module, CString alias_name)
 	{
-		n = n.Token(0, false, " ").MakeUpper();
-		return (mod->FindNV(n) != mod->EndNV());
+		alias_name = alias_name.Token(0, false, " ").MakeUpper();
+		return (module->FindNV(alias_name) != module->EndNV());
 	}
 
 	// populate alias from stored settings in registry, or return false if none exists
-	static bool AliasGet(CAlias &a, CModule *mod, CString line)
+	static bool AliasGet(CAlias &alias, CModule *module, CString line)
 	{
 		line = line.Token(0, false, " ").MakeUpper();
-		MCString::iterator i = mod->FindNV(line);
-		if (i == mod->EndNV()) return false;
-		a.parent = mod;
-		a.name = line;
-		i->second.Split("\n", a.alias_cmds, false);
+		MCString::iterator i = module->FindNV(line);
+		if (i == module->EndNV()) return false;
+		alias.parent = module;
+		alias.name = line;
+		i->second.Split("\n", alias.alias_cmds, false);
 		return true;
 	}
 
@@ -75,25 +75,17 @@ public:
 	// why the CString::To* functions don't work like this is anybody's guess.
 	// you can't use those to actually check of the conversion was successful,
 	// since strtol and friends return the parsed value, and 0 if they fail.
-	template <typename T> static bool ConvertString(const CString &s, T &t)
-	{
-		stringstream ss(s);
-		ss >> t;
-		return (bool) ss; // we don't care why it failed, only whether it failed
-	}
 
 	// constructors
 	CAlias() : parent(NULL) {}
-	CAlias(CModule *p, const CString &n) : parent(p) { SetName(n); }
+	CAlias(CModule *new_parent, const CString &new_name) : parent(new_parent) { SetName(new_name); }
 
 	// produce a command string from this alias' command list.  This should also have a function in CString:
 	// CString CString::Join(const VCString &strings), or even template <typename T> CString CString::Join(const T &strings)
 	// look at how python's string join works.
 	CString GetCommands() const
 	{
-		CString data = alias_cmds.size() > 0 ? alias_cmds[0] : "";
-		for (unsigned int i = 1; i < alias_cmds.size(); ++i) data.append("\n").append(alias_cmds[i]);
-		return data;
+		return CString("\n").Join(alias_cmds.begin(), alias_cmds.end());
 	}
 
 	// write this alias to registry
@@ -111,11 +103,12 @@ public:
 	}
 
 	// read an IRC line and do token substitution
+	// throws an exception if a required parameter is missing, and might also throw if you manage to make it bork
 	CString Imprint(CString line) const
 	{
 		CString output;
-		CString data = GetCommands();
-		data = parent->ExpandString(data);
+		CString alias_data = GetCommands();
+		alias_data = parent->ExpandString(alias_data);
 		int found = -1, dummy = 0, lastfound = 0;
 
 		// it would be very inefficient to attempt to blindly replace every possible token
@@ -127,30 +120,31 @@ public:
 		while (true)
 		{
 			lastfound = dummy;
-			if (found >= (int) data.length()) break;
-			found = data.find("%", found + 1);
-			if (found == (int) CString::npos) break;
+			// if (found >= (int) alias_data.length()) break; 							// shouldn't be possible.
+			found = alias_data.find("%", found + 1);
+			if (found == (int) CString::npos) break; 								// if we found nothing, break
 			dummy = found;
-			output.append(data.substr(lastfound, found - lastfound));
+			output.append(alias_data.substr(lastfound, found - lastfound));						// capture everything between the last stopping point and here
 			int index = found + 1;
 			bool optional = false;
 			bool subsequent = false;
 			int token = -1;
-			if ((int) data.length() > index && data[index] == '?') { optional = true; ++index; }
-			if (ConvertString<int>(data.c_str() + index, token)) { index += CString(token).length(); }
-			else continue;
-			if ((int) data.length() > index && data[index] == '+') { subsequent = true; ++index; }
-			if ((int) data.length() > index && data[index] == '%');
-			else continue;
+			if ((int) alias_data.length() > index && alias_data[index] == '?') { optional = true; ++index; }	// try to read optional flag
+			if (CString(alias_data.c_str() + index).Convert(token)) { index += CString(token).length(); }		// try to read integer
+			// ^ this is a hack to get around CString::substr returning std::string without copying twice
+			else continue;												// if there is no integer, this isn't a token, so process it as usual
+			if ((int) alias_data.length() > index && alias_data[index] == '+') { subsequent = true; ++index; }	// try to read subsequent flag
+			if ((int) alias_data.length() > index && alias_data[index] == '%');					// try to read end-of-substitution marker
+			else continue;												// if eos marker is missing, this isn't a token so process as usual
 			
-			CString stok = line.Token(token, subsequent, " ");
-			if (stok.empty() && !optional) throw std::invalid_argument(CString("missing required parameter: ") + CString(token));
-			output += stok;
-			dummy = index + 1;
+			CString stok = line.Token(token, subsequent, " ");							// if we get here, we're definitely dealing with a token, so get the token's value
+			if (stok.empty() && !optional) throw std::invalid_argument(CString("missing required parameter: ") + CString(token));	// blow up if token is required and also empty
+			output += stok;												// capture the token's value
+			dummy = index + 1;											// move found and lastfound after the substituted token, which we don't want to be consumed
 			found = index;
 		}
 
-		output += data.substr(lastfound);
+		output += alias_data.substr(lastfound); // append from the final 
 		return output;
 	}
 };
@@ -174,11 +168,11 @@ public:
 	void DeleteCommand(const CString& sLine)
 	{
 		CString name = sLine.Token(1, false, " ");
-		CAlias da;
-		if (CAlias::AliasGet(da, this, name))
+		CAlias delete_alias;
+		if (CAlias::AliasGet(delete_alias, this, name))
 		{
-			PutModule("Deleted alias: " + da.GetName());
-			da.Delete();
+			PutModule("Deleted alias: " + delete_alias.GetName());
+			delete_alias.Delete();
 		}
 		else PutModule("Alias does not exist.");
 	}
@@ -186,11 +180,11 @@ public:
 	void AddCommand(const CString& sLine)
 	{
 		CString name = sLine.Token(1, false, " ");
-		CAlias a;
-		if (CAlias::AliasGet(a, this, name))
+		CAlias add_alias;
+		if (CAlias::AliasGet(add_alias, this, name))
 		{
-			a.AliasCmds().push_back(sLine.Token(2, true, " "));
-			a.Commit();
+			add_alias.AliasCmds().push_back(sLine.Token(2, true, " "));
+			add_alias.Commit();
 			PutModule("Modified alias.");
 		}
 		else PutModule("Alias does not exist.");
@@ -199,18 +193,19 @@ public:
 	void InsertCommand(const CString& sLine)
 	{
 		CString name = sLine.Token(1, false, " ");
-		CAlias a;
-		int i;
-		if (CAlias::AliasGet(a, this, name))
+		CAlias insert_alias;
+		int index;
+		if (CAlias::AliasGet(insert_alias, this, name))
 		{	
-			if (!CAlias::ConvertString<int>(sLine.Token(2, false, " "), i) || i < 0 || i > (int) a.AliasCmds().size())
+			// if Convert succeeds, then i has been successfully read from user input
+			if (!sLine.Token(2, false, " ").Convert(index) || index < 0 || index > (int) insert_alias.AliasCmds().size())
 			{
 				PutModule("Invalid index.");
 				return;
 			}
 
-			a.AliasCmds().insert(a.AliasCmds().begin() + i, sLine.Token(3, true, " "));
-			a.Commit();
+			insert_alias.AliasCmds().insert(insert_alias.AliasCmds().begin() + index, sLine.Token(3, true, " "));
+			insert_alias.Commit();
 			PutModule("Modified alias.");
 		}
 		else PutModule("Alias does not exist.");
@@ -219,18 +214,18 @@ public:
 	void RemoveCommand(const CString& sLine)
 	{
 		CString name = sLine.Token(1, false, " ");
-		CAlias a;
-		int i;
-		if (CAlias::AliasGet(a, this, name))
+		CAlias remove_alias;
+		int index;
+		if (CAlias::AliasGet(remove_alias, this, name))
 		{	
-			if (!CAlias::ConvertString<int>(sLine.Token(2, false, " "), i) || i < 0 || i > (int) a.AliasCmds().size() - 1)
+			if (!sLine.Token(2, false, " ").Convert(index) || index < 0 || index > (int) remove_alias.AliasCmds().size() - 1)
 			{
 				PutModule("Invalid index.");
 				return;
 			}
 
-			a.AliasCmds().erase(a.AliasCmds().begin() + i);
-			a.Commit();
+			remove_alias.AliasCmds().erase(remove_alias.AliasCmds().begin() + index);
+			remove_alias.Commit();
 			PutModule("Modified alias.");
 		}
 		else PutModule("Alias does not exist.");
@@ -239,11 +234,11 @@ public:
 	void ClearCommand(const CString& sLine)
 	{
 		CString name = sLine.Token(1, false, " ");
-		CAlias a;
-		if (CAlias::AliasGet(a, this, name))
+		CAlias clear_alias;
+		if (CAlias::AliasGet(clear_alias, this, name))
 		{
-			a.AliasCmds().clear();
-			a.Commit();
+			clear_alias.AliasCmds().clear();
+			clear_alias.Commit();
 			PutModule("Modified alias.");
 		}
 		else PutModule("Alias does not exist.");
@@ -265,16 +260,16 @@ public:
 	void InfoCommand(const CString& sLine)
 	{
 		CString name = sLine.Token(1, false, " ");
-		CAlias a;
-		if (CAlias::AliasGet(a, this, name))
+		CAlias info_alias;
+		if (CAlias::AliasGet(info_alias, this, name))
 		{
-			PutModule("Actions for alias " + a.GetName() + ":");
-			for (int i = 0; i < (int) a.AliasCmds().size(); ++i)
+			PutModule("Actions for alias " + info_alias.GetName() + ":");
+			for (size_t i = 0; i < info_alias.AliasCmds().size(); ++i)
 			{
 				CString num(i);
-				PutModule(CString(i) + ("    " + ((num.length() > 3) ? 3 : num.length())) + a.AliasCmds()[i]);
+				PutModule(CString(i) + ("    " + ((num.length() > 3) ? 3 : num.length())) + info_alias.AliasCmds()[i]);
 			}
-			PutModule("End of actions for alias " + a.GetName() + ".");
+			PutModule("End of actions for alias " + info_alias.GetName() + ".");
 		}
 		else PutModule("Alias does not exist.");
 	}
@@ -294,7 +289,7 @@ public:
 
 	virtual EModRet OnUserRaw(CString& sLine)
 	{
-		CAlias a;
+		CAlias current_alias;
 		try
 		{
 			if (sLine.Equals("ZNC-CLEAR-ALL-ALIASES!"))
@@ -304,15 +299,21 @@ public:
 				ClearNV();
 				return HALT;
 			}
-			else if (CAlias::AliasGet(a, this, sLine))
+			else if (CAlias::AliasGet(current_alias, this, sLine))
 			{
-				PutIRC(a.Imprint(sLine));
+				VCString rawLines;
+				current_alias.Imprint(sLine).Split("\n", rawLines, false);
+				for (size_t i = 0; i < rawLines.size(); ++i)
+				{
+					rawLines[i].append("\r\n");
+					PutIRC(rawLines[i]);
+				}
 				return HALT;
 			}
 		}
 		catch (std::exception &e)
 		{
-			PutUser(CString(":znc.in 421 " + GetNetwork()->GetCurNick() + " " + a.GetName() + " :ZNC alias error: ") + e.what());
+			PutUser(CString(":znc.in 461 " + GetNetwork()->GetCurNick() + " " + current_alias.GetName() + " :ZNC alias error: ") + e.what());
 			return HALTCORE;
 		}
 
