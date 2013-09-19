@@ -20,14 +20,10 @@
 #include <znc/IRCNetwork.h>
 
 #include <sstream>
-#include <iostream>
 #include <stdexcept>
 
 using std::vector;
 using std::stringstream;
-
-using std::cout;
-using std::endl;
 
 class CAlias
 {
@@ -112,15 +108,14 @@ private:
 		
 		skip = 1;
 		
-		if (alias_data.length() > index && alias_data[index] == '?') { optional = true; ++index; cout << "got ?" << endl; }			// try to read optional flag
+		if (alias_data.length() > index && alias_data[index] == '?') { optional = true; ++index; }			// try to read optional flag
 		if (alias_data.length() > index && CString(alias_data.substr(index)).Convert(&token))				// try to read integer
 		{
-			cout << "got int" << endl;
 			while(alias_data.length() > index && alias_data[index] >= '0' && alias_data[index] <= '9') ++index;	// skip any numeric digits in string
 		}														// (supposed to fail if whitespace precedes integer)
 		else return;													// token was malformed. leave caret unchanged, and flag first character for skipping
-		if (alias_data.length() > index && alias_data[index] == '+') { subsequent = true; ++index; cout << "got +" << endl;}			// try to read subsequent flag
-		if (alias_data.length() > index && alias_data[index] == '%') { ++index; cout << "got end" << endl;}					// try to read end-of-substitution marker
+		if (alias_data.length() > index && alias_data[index] == '+') { subsequent = true; ++index; }			// try to read subsequent flag
+		if (alias_data.length() > index && alias_data[index] == '%') { ++index; }					// try to read end-of-substitution marker
 		else return;	
 		
 		CString stok = line.Token(token, subsequent, " ");								// if we get here, we're definitely dealing with a token, so get the token's value
@@ -151,7 +146,6 @@ public:
 		while (true)
 		{
 			// if (found >= (int) alias_data.length()) break; 		// shouldn't be possible.
-			cout << "looping..." << endl;
 			size_t found = alias_data.find("%", lastfound + skip);
 			if (found == CString::npos) break; 				// if we found nothing, break
 			output.append(alias_data.substr(lastfound, found - lastfound));	// capture everything between the last stopping point and here
