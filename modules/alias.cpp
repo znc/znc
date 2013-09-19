@@ -20,10 +20,14 @@
 #include <znc/IRCNetwork.h>
 
 #include <sstream>
+#include <iostream>
 #include <stdexcept>
 
 using std::vector;
 using std::stringstream;
+
+using std::cout;
+using std::endl;
 
 class CAlias
 {
@@ -34,7 +38,7 @@ private:
 
 public:	
 	// getters/setters
-	const CString &GetName()
+	const CString &GetName() const
 	{
 		return name;
 	}
@@ -71,18 +75,11 @@ public:
 		return true;
 	}
 
-	// string -> something else
-	// why the CString::To* functions don't work like this is anybody's guess.
-	// you can't use those to actually check of the conversion was successful,
-	// since strtol and friends return the parsed value, and 0 if they fail.
-
 	// constructors
 	CAlias() : parent(NULL) {}
 	CAlias(CModule *new_parent, const CString &new_name) : parent(new_parent) { SetName(new_name); }
 
-	// produce a command string from this alias' command list.  This should also have a function in CString:
-	// CString CString::Join(const VCString &strings), or even template <typename T> CString CString::Join(const T &strings)
-	// look at how python's string join works.
+	// produce a command string from this alias' command list
 	CString GetCommands() const
 	{
 		return CString("\n").Join(alias_cmds.begin(), alias_cmds.end());
@@ -102,6 +99,40 @@ public:
 		parent->DelNV(name);
 	}
 
+private:
+	// this function helps imprint out.  it checks if there is a substitution token at 'caret' in 'alias_data'
+	// and if it finds one, pulls the appropriate token out of 'line' and appends it to 'output', and updates 'caret'.
+	// 'skip' is updated based on the logic that we should skip the % at the caret if we fail to parse the token.
+	static void ParseToken(const CString &alias_data, const CString &line, CString &output, size_t &caret, size_t &skip)
+	{
+		bool optional = false;
+		bool subsequent = false;
+		size_t index = caret + 1;
+		int token = -1;
+		
+		skip = 1;
+		
+		if (alias_data.length() > index && alias_data[index] == '?') { optional = true; ++index; cout << "got ?" << endl; }			// try to read optional flag
+		if (alias_data.length() > index && CString(alias_data.substr(index)).Convert(&token))				// try to read integer
+		{
+			cout << "got int" << endl;
+			while(alias_data.length() > index && alias_data[index] >= '0' && alias_data[index] <= '9') ++index;	// skip any numeric digits in string
+		}														// (supposed to fail if whitespace precedes integer)
+		else return;													// token was malformed. leave caret unchanged, and flag first character for skipping
+		if (alias_data.length() > index && alias_data[index] == '+') { subsequent = true; ++index; cout << "got +" << endl;}			// try to read subsequent flag
+		if (alias_data.length() > index && alias_data[index] == '%') { ++index; cout << "got end" << endl;}					// try to read end-of-substitution marker
+		else return;	
+		
+		CString stok = line.Token(token, subsequent, " ");								// if we get here, we're definitely dealing with a token, so get the token's value
+		if (stok.empty() && !optional)
+			throw std::invalid_argument(CString("missing required parameter: ") + CString(token));			// blow up if token is required and also empty
+		output.append(stok);												// write token value to output
+		
+		skip = 0;													// since we're moving the cursor after the end of the token, skip no characters
+		caret = index;													// advance the cursor forward by the size of the token
+	}
+
+public:
 	// read an IRC line and do token substitution
 	// throws an exception if a required parameter is missing, and might also throw if you manage to make it bork
 	CString Imprint(CString line) const
@@ -109,7 +140,7 @@ public:
 		CString output;
 		CString alias_data = GetCommands();
 		alias_data = parent->ExpandString(alias_data);
-		int found = -1, dummy = 0, lastfound = 0;
+		size_t lastfound = 0, skip = 0;
 
 		// it would be very inefficient to attempt to blindly replace every possible token
 		// so let's just parse the line and replace when we find them
@@ -119,29 +150,13 @@ public:
 		// adding + makes the substitution contain all tokens from the nth to the end of the line
 		while (true)
 		{
-			lastfound = dummy;
-			// if (found >= (int) alias_data.length()) break; 							// shouldn't be possible.
-			found = alias_data.find("%", found + 1);
-			if (found == (int) CString::npos) break; 								// if we found nothing, break
-			dummy = found;
-			output.append(alias_data.substr(lastfound, found - lastfound));						// capture everything between the last stopping point and here
-			int index = found + 1;
-			bool optional = false;
-			bool subsequent = false;
-			int token = -1;
-			if ((int) alias_data.length() > index && alias_data[index] == '?') { optional = true; ++index; }	// try to read optional flag
-			if (CString(alias_data.c_str() + index).Convert(token)) { index += CString(token).length(); }		// try to read integer
-			// ^ this is a hack to get around CString::substr returning std::string without copying twice
-			else continue;												// if there is no integer, this isn't a token, so process it as usual
-			if ((int) alias_data.length() > index && alias_data[index] == '+') { subsequent = true; ++index; }	// try to read subsequent flag
-			if ((int) alias_data.length() > index && alias_data[index] == '%');					// try to read end-of-substitution marker
-			else continue;												// if eos marker is missing, this isn't a token so process as usual
-			
-			CString stok = line.Token(token, subsequent, " ");							// if we get here, we're definitely dealing with a token, so get the token's value
-			if (stok.empty() && !optional) throw std::invalid_argument(CString("missing required parameter: ") + CString(token));	// blow up if token is required and also empty
-			output += stok;												// capture the token's value
-			dummy = index + 1;											// move found and lastfound after the substituted token, which we don't want to be consumed
-			found = index;
+			// if (found >= (int) alias_data.length()) break; 		// shouldn't be possible.
+			cout << "looping..." << endl;
+			size_t found = alias_data.find("%", lastfound + skip);
+			if (found == CString::npos) break; 				// if we found nothing, break
+			output.append(alias_data.substr(lastfound, found - lastfound));	// capture everything between the last stopping point and here
+			ParseToken(alias_data, line, output, found, skip);				// attempt to read a token, updates indices based on success/failure
+			lastfound = found;
 		}
 
 		output += alias_data.substr(lastfound); // append from the final 
@@ -198,7 +213,7 @@ public:
 		if (CAlias::AliasGet(insert_alias, this, name))
 		{	
 			// if Convert succeeds, then i has been successfully read from user input
-			if (!sLine.Token(2, false, " ").Convert(index) || index < 0 || index > (int) insert_alias.AliasCmds().size())
+			if (!sLine.Token(2, false, " ").Convert(&index) || index < 0 || index > (int) insert_alias.AliasCmds().size())
 			{
 				PutModule("Invalid index.");
 				return;
@@ -218,7 +233,7 @@ public:
 		int index;
 		if (CAlias::AliasGet(remove_alias, this, name))
 		{	
-			if (!sLine.Token(2, false, " ").Convert(index) || index < 0 || index > (int) remove_alias.AliasCmds().size() - 1)
+			if (!sLine.Token(2, false, " ").Convert(&index) || index < 0 || index > (int) remove_alias.AliasCmds().size() - 1)
 			{
 				PutModule("Invalid index.");
 				return;
@@ -303,11 +318,7 @@ public:
 			{
 				VCString rawLines;
 				current_alias.Imprint(sLine).Split("\n", rawLines, false);
-				for (size_t i = 0; i < rawLines.size(); ++i)
-				{
-					rawLines[i].append("\r\n");
-					PutIRC(rawLines[i]);
-				}
+				for (size_t i = 0; i < rawLines.size(); ++i) PutIRC(rawLines[i]);
 				return HALT;
 			}
 		}

@@ -102,30 +102,30 @@ public:
 	 * @param target The object to cast into. If the cast fails, its state is unspecified.
 	 * @return True if the cast succeeds, and false if it fails.
 	 */
-	template <typename T> bool Convert(T &target) const
+	template <typename T> bool Convert(T *target) const
 	{
 		std::stringstream ss(*this);
-		ss >> target;
+		ss >> *target;
 		return (bool) ss; // we don't care why it failed, only whether it failed
 	}
 	
 	/**
-	 * Joins a collection of strings together, using 'this' as a delimiter.
-	 * You can pass either pointers to string arrays, or iterators to string collections.
-	 * @param i_begin An iterator pointing to the beginning of a group of strings.
-	 * @param i_end An iterator pointing past the end of a group of strings.
+	 * Joins a collection of objects together, using 'this' as a delimiter.
+	 * You can pass either pointers to arrays, or iterators to collections.
+	 * @param i_begin An iterator pointing to the beginning of a group of objects.
+	 * @param i_end An iterator pointing past the end of a group of objects.
 	 * @return The joined string
 	 */
 	template <typename Iterator> CString Join(Iterator i_start, const Iterator &i_end) const
 	{
 		if (i_start == i_end) return CString("");
-		CString output(*i_start);
+		std::ostringstream output(*i_start);
 		while (true)
 		{
 			++i_start;
-			if (i_start == i_end) return output;
-			output.append(*i_start);
-			output.append(*this);
+			if (i_start == i_end) return CString(output.str());
+			output << *i_start;
+			output << *this;
 		}
 	}
 	
