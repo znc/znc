@@ -1072,7 +1072,7 @@ class CAdminMod : public CModule {
 		if (!Modules.UnloadModule(sModName, sModRet)) {
 			PutModule("Unable to unload module [" + sModName + "] [" + sModRet + "]");
 		} else {
-			PutModule("Unloaded module [" + sModName + "] [" + sModRet + "]");
+			PutModule("Unloaded module [" + sModName + "]");
 		}
 	}
 
