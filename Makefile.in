@@ -132,12 +132,11 @@ test/gtest.zip:
 	$(E) Downloading GoogleTest $(GTEST_VER)
 	$(Q)wget http://googletest.googlecode.com/files/gtest-$(GTEST_VER).zip -O $@
 
-test/gtest-$(GTEST_VER)/fused-src/gtest/gtest-all.cc test/gtest-$(GTEST_VER)/fused-src/gtest/gtest_main.cc: test/gtest.zip
+test/gtest-$(GTEST_VER)/fused-src/gtest/gtest-all.cc test/gtest-$(GTEST_VER)/fused-src/gtest/gtest_main.cc test/gtest-$(GTEST_VER)/fused-src/gtest/gtest.h: test/gtest.zip
 	$(E) Unpacking GoogleTest $(GTEST_VER)
-	$(Q)unzip $^ -d test/
-	$(Q)test -r test/gtest-$(GTEST_VER)/fused-src/gtest/gtest-all.cc
-	$(Q)test -r test/gtest-$(GTEST_VER)/fused-src/gtest/gtest_main.cc
-	$(Q)touch -c test/gtest-$(GTEST_VER)/fused-src/gtest/gtest-all.cc test/gtest-$(GTEST_VER)/fused-src/gtest/gtest_main.cc
+	$(Q)test -r $@ || unzip $^ -d test/
+	$(Q)test -r $@
+	$(Q)touch -c $@
 
 ifneq "THIS_IS_NOT_NIGHTLY" ""
 # If git commit was changed since previous build, add a phony target to dependencies, forcing version.o to be recompiled

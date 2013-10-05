@@ -12,8 +12,8 @@ script:
     - mkdir build
     - cd build
     - ../configure --enable-perl --enable-python --enable-tcl --enable-cyrus
-    - make
-    - make test
+    - make V=1
+    - make V=1 test
     - sudo make install
 notifications:
     irc:
