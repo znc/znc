@@ -9,7 +9,7 @@ CXXFLAGS := -I$(srcdir)/../include -I../include @CPPFLAGS@ @CXXFLAGS@
 LDFLAGS  := @LDFLAGS@
 LIBS     := @LIBS@
 
-TARGETS  := ConfigTest EscapeTest
+TARGETS  := ConfigTest
 OBJS     := $(addsuffix .o, $(TARGETS))
 ZNC_OBJS := Config.o ZNCDebug.o FileUtils.o Utils.o ZNCString.o MD5.o SHA256.o
 ZNC_OBJS := $(addprefix ../src/, $(ZNC_OBJS))

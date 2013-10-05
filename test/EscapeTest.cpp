@@ -1,54 +1,51 @@
 /*
- * Copyright (C) 2004-2013  See the AUTHORS file for details.
+ * Copyright (C) 2004-2013 ZNC, see the NOTICE file for details.
  *
- * This program is free software; you can redistribute it and/or modify it
- * under the terms of the GNU General Public License version 2 as published
- * by the Free Software Foundation.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
-#include "znc/ZNCDebug.h"
+#include <gtest/gtest.h>
+#include <znc/ZNCString.h>
 
-static int testEqual(const CString& a, const CString& b, const CString& what)
-{
-	if (a == b)
-		return 0;
-	std::cout << what << " failed for '" << b << "', result is '" << a << "'\n";
-	return 1;
+class EscapeTest : public ::testing::Test {
+protected:
+	void testEncode(const CString& in, const CString& expectedOut, const CString& sformat, CString::EEscape format) {
+		CString out;
+
+		SCOPED_TRACE("Format: " + sformat);
+
+		// Encode, then decode again and check we still got the same string
+		out = in.Escape_n(CString::EASCII, format);
+		EXPECT_EQ(expectedOut, out);
+		out = out.Escape_n(format, CString::EASCII);
+		EXPECT_EQ(in, out);
+	}
+
+	void testString(const CString& in, const CString& url,
+			const CString& html, const CString& sql) {
+		SCOPED_TRACE("String: " + in);
+
+		testEncode(in, url,  "url",  CString::EURL);
+		testEncode(in, html, "html", CString::EHTML);
+		testEncode(in, sql,  "sql",  CString::ESQL);
+	}
+};
+
+TEST_F(EscapeTest, Test) {
+	//          input      url          html             sql
+	testString("abcdefg", "abcdefg",   "abcdefg",       "abcdefg");
+	testString("\n\t\r",  "%0A%09%0D", "\n\t\r",        "\\n\\t\\r");
+	testString("'\"",     "%27%22",    "'&quot;",       "\\'\\\"");
+	testString("&<>",     "%26%3C%3E", "&amp;&lt;&gt;", "&<>");
 }
 
-static int testString(const CString& in, const CString& url,
-		const CString& html, const CString& sql) {
-	CString out;
-	int errors = 0;
-
-	// Encode, then decode again and check we still got the same string
-
-	out = in.Escape_n(CString::EASCII, CString::EURL);
-	errors += testEqual(out, url, "EURL encode");
-	out = out.Escape_n(CString::EURL, CString::EASCII);
-	errors += testEqual(out, in, "EURL decode");
-
-	out = in.Escape_n(CString::EASCII, CString::EHTML);
-	errors += testEqual(out, html, "EHTML encode");
-	out = out.Escape_n(CString::EHTML, CString::EASCII);
-	errors += testEqual(out, in, "EHTML decode");
-
-	out = in.Escape_n(CString::EASCII, CString::ESQL);
-	errors += testEqual(out, sql, "ESQL encode");
-	out = out.Escape_n(CString::ESQL, CString::EASCII);
-	errors += testEqual(out, in, "ESQL decode");
-
-	return errors;
-}
-
-int main() {
-	unsigned int failed = 0;
-
-	//                    input      url          html             sql
-	failed += testString("abcdefg", "abcdefg",   "abcdefg",       "abcdefg");
-	failed += testString("\n\t\r",  "%0A%09%0D", "\n\t\r",        "\\n\\t\\r");
-	failed += testString("'\"",     "%27%22",    "'&quot;",       "\\'\\\"");
-	failed += testString("&<>",     "%26%3C%3E", "&amp;&lt;&gt;", "&<>");
-
-	return failed;
-}
