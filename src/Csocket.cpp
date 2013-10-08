@@ -2538,13 +2538,18 @@ cs_sock_t Csock::CreateSocket( bool bListen )
 
 	if( iRet != CS_INVALID_SOCK )
 	{
+		const int on = 1;
 		set_close_on_exec( iRet );
 
 		if( bListen )
 		{
-			const int on = 1;
 			if( setsockopt( iRet, SOL_SOCKET, SO_REUSEADDR, (char *) &on, sizeof( on ) ) != 0 )
 				PERROR( "SO_REUSEADDR" );
+		}
+		else
+		{
+			if ( setsockopt ( iRet, SOL_SOCKET, SO_KEEPALIVE, (char*)&on, sizeof( on ) ) != 0 )
+				PERROR( "SO_KEEPALIVE" );
 		}
 	}
 	else
