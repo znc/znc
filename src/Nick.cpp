@@ -78,6 +78,10 @@ size_t CNick::GetCommonChans(vector<CChan*>& vRetChans, CIRCNetwork* pNetwork) c
 	return vRetChans.size();
 }
 
+bool CNick::IsNick(const CString& nickname) const {
+	return m_sNick.Equals(nickname);
+}
+
 void CNick::SetNetwork(CIRCNetwork* pNetwork) { m_pNetwork = pNetwork; }
 void CNick::SetNick(const CString& s) { m_sNick = s; }
 void CNick::SetIdent(const CString& s) { m_sIdent = s; }

@@ -512,8 +512,7 @@ void CIRCSock::ReadLine(const CString& sData) {
 				}
 			}
 
-			// Todo: use nick compare function here
-			if (Nick.GetNick().Equals(GetNick())) {
+			if (Nick.IsNick(GetNick())) {
 				// We are changing our own nick, the clients always must see this!
 				bIsVisible = false;
 				SetNick(sNewNick);
@@ -563,8 +562,7 @@ void CIRCSock::ReadLine(const CString& sData) {
 			CString sChan = sRest.Token(0).TrimPrefix_n();
 			CChan* pChan;
 
-			// Todo: use nick compare function
-			if (Nick.GetNick().Equals(GetNick())) {
+			if (Nick.IsNick(GetNick())) {
 				m_pNetwork->AddChan(sChan, false);
 				pChan = m_pNetwork->FindChan(sChan);
 				if (pChan) {
@@ -598,8 +596,7 @@ void CIRCSock::ReadLine(const CString& sData) {
 					bDetached = true;
 			}
 
-			// Todo: use nick compare function
-			if (Nick.GetNick().Equals(GetNick())) {
+			if (Nick.IsNick(GetNick())) {
 				m_pNetwork->DelChan(sChan);
 			}
 
