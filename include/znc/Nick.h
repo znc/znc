@@ -37,7 +37,7 @@ public:
 	void Parse(const CString& sNickMask);
 	CString GetHostMask() const;
 	size_t GetCommonChans(std::vector<CChan*>& vChans, CIRCNetwork* pNetwork) const;
-	bool IsNick(const CString& nickname) const;
+	bool NickEquals(const CString& nickname) const;
 
 	// Setters
 	void SetNetwork(CIRCNetwork* pNetwork);

@@ -512,7 +512,7 @@ void CIRCSock::ReadLine(const CString& sData) {
 				}
 			}
 
-			if (Nick.IsNick(GetNick())) {
+			if (Nick.NickEquals(GetNick())) {
 				// We are changing our own nick, the clients always must see this!
 				bIsVisible = false;
 				SetNick(sNewNick);
@@ -562,7 +562,7 @@ void CIRCSock::ReadLine(const CString& sData) {
 			CString sChan = sRest.Token(0).TrimPrefix_n();
 			CChan* pChan;
 
-			if (Nick.IsNick(GetNick())) {
+			if (Nick.NickEquals(GetNick())) {
 				m_pNetwork->AddChan(sChan, false);
 				pChan = m_pNetwork->FindChan(sChan);
 				if (pChan) {
@@ -596,7 +596,7 @@ void CIRCSock::ReadLine(const CString& sData) {
 					bDetached = true;
 			}
 
-			if (Nick.IsNick(GetNick())) {
+			if (Nick.NickEquals(GetNick())) {
 				m_pNetwork->DelChan(sChan);
 			}
 
