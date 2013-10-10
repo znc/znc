@@ -297,7 +297,7 @@ public:
 		{
 			AddBuffer(*vChans[a], SpoofChanMsg(vChans[a]->GetName(), cNick.GetNickMask() + " QUIT " + sMessage));
 		}
-		if (cNick.GetNick().Equals(m_pUser->GetNick()))
+		if (cNick.NickEquals(m_pUser->GetNick()))
 			SaveBufferToDisk(); // need to force a save here to see this!
 	}
 
@@ -314,7 +314,7 @@ public:
 	}
 	virtual void OnJoin(const CNick& cNick, CChan& cChannel)
 	{
-		if (cNick.GetNick().Equals(m_pUser->GetNick()) && cChannel.GetBuffer().empty())
+		if (cNick.NickEquals(m_pUser->GetNick()) && cChannel.GetBuffer().empty())
 		{
 			BootStrap((CChan *)&cChannel);
 			if (!cChannel.GetBuffer().empty())
@@ -325,7 +325,7 @@ public:
 	virtual void OnPart(const CNick& cNick, CChan& cChannel)
 	{
 		AddBuffer(cChannel, SpoofChanMsg(cChannel.GetName(), cNick.GetNickMask() + " PART"));
-		if (cNick.GetNick().Equals(m_pUser->GetNick()))
+		if (cNick.NickEquals(m_pUser->GetNick()))
 			SaveBufferToDisk(); // need to force a save here to see this!
 	}
 #endif /* LEGACY_SAVEBUFF */

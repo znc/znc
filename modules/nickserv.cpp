@@ -157,7 +157,7 @@ public:
 	void HandleMessage(CNick& Nick, const CString& sMessage) {
 		CString sNickServName = (!GetNV("NickServName").empty()) ? GetNV("NickServName") : "NickServ";
 		if (!GetNV("Password").empty()
-				&& Nick.GetNick().Equals(sNickServName)
+				&& Nick.NickEquals(sNickServName)
 				&& (sMessage.find("msg") != CString::npos
 				 || sMessage.find("authenticate") != CString::npos
 				 || sMessage.find("choose a different nickname") != CString::npos

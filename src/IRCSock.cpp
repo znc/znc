@@ -530,7 +530,7 @@ void CIRCSock::ReadLine(const CString& sData) {
 
 			// :nick!ident@host.com QUIT :message
 
-			if (Nick.GetNick().Equals(GetNick())) {
+			if (Nick.NickEquals(GetNick())) {
 				m_pNetwork->PutStatus("You quit [" + sMessage + "]");
 				// We don't call module hooks and we don't
 				// forward this quit to clients (Some clients
@@ -700,7 +700,7 @@ void CIRCSock::ReadLine(const CString& sData) {
 				}
 			}
 
-			if (Nick.GetNick().Equals(m_pNetwork->GetIRCServer())) {
+			if (Nick.NickEquals(m_pNetwork->GetIRCServer())) {
 				m_pNetwork->PutUser(":" + Nick.GetNick() + " NOTICE " + sTarget + " :" + sMsg);
 			} else {
 				m_pNetwork->PutUser(":" + Nick.GetNickMask() + " NOTICE " + sTarget + " :" + sMsg);

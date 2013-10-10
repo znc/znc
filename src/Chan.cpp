@@ -286,13 +286,13 @@ void CChan::ModeChange(const CString& sModes, const CNick* pOpNick) {
 					if (bAdd) {
 						pNick->AddPerm(uPerm);
 
-						if (pNick->GetNick().Equals(m_pNetwork->GetCurNick())) {
+						if (pNick->NickEquals(m_pNetwork->GetCurNick())) {
 							AddPerm(uPerm);
 						}
 					} else {
 						pNick->RemPerm(uPerm);
 
-						if (pNick->GetNick().Equals(m_pNetwork->GetCurNick())) {
+						if (pNick->NickEquals(m_pNetwork->GetCurNick())) {
 							RemPerm(uPerm);
 						}
 					}
@@ -464,7 +464,7 @@ bool CChan::AddNick(const CString& sNick) {
 		pNick->AddPerm(sPrefix[i]);
 	}
 
-	if (pNick->GetNick().Equals(m_pNetwork->GetCurNick())) {
+	if (pNick->NickEquals(m_pNetwork->GetCurNick())) {
 		for (CString::size_type i = 0; i < sPrefix.length(); i++) {
 			AddPerm(sPrefix[i]);
 		}
