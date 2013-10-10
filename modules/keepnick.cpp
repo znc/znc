@@ -78,7 +78,7 @@ public:
 	void OnNick(const CNick& Nick, const CString& sNewNick, const vector<CChan*>& vChans) {
 		if (sNewNick == m_pNetwork->GetIRCSock()->GetNick()) {
 			// We are changing our own nick
-			if (Nick.GetNick().Equals(GetNick())) {
+			if (Nick.NickEquals(GetNick())) {
 				// We are changing our nick away from the conf setting.
 				// Let's assume the user wants this and disable
 				// this module (to avoid fighting nickserv).
@@ -92,14 +92,14 @@ public:
 		}
 
 		// If the nick we want is free now, be fast and get the nick
-		if (Nick.GetNick().Equals(GetNick())) {
+		if (Nick.NickEquals(GetNick())) {
 			KeepNick();
 		}
 	}
 
 	void OnQuit(const CNick& Nick, const CString& sMessage, const vector<CChan*>& vChans) {
 		// If someone with the nick we want quits, be fast and get the nick
-		if (Nick.GetNick().Equals(GetNick())) {
+		if (Nick.NickEquals(GetNick())) {
 			KeepNick();
 		}
 	}
