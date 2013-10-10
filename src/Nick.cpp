@@ -78,6 +78,12 @@ size_t CNick::GetCommonChans(vector<CChan*>& vRetChans, CIRCNetwork* pNetwork) c
 	return vRetChans.size();
 }
 
+bool CNick::NickEquals(const CString& nickname) const {
+	//TODO add proper IRC case mapping here
+	//https://tools.ietf.org/html/draft-brocklesby-irc-isupport-03#section-3.1
+	return m_sNick.Equals(nickname);
+}
+
 void CNick::SetNetwork(CIRCNetwork* pNetwork) { m_pNetwork = pNetwork; }
 void CNick::SetNick(const CString& s) { m_sNick = s; }
 void CNick::SetIdent(const CString& s) { m_sIdent = s; }

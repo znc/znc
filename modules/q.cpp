@@ -312,7 +312,7 @@ private:
 	}
 
 	EModRet HandleMessage(const CNick& Nick, CString sMessage) {
-		if (!Nick.GetNick().Equals("Q") || !Nick.GetHost().Equals("CServe.quakenet.org"))
+		if (!Nick.NickEquals("Q") || !Nick.GetHost().Equals("CServe.quakenet.org"))
 			return CONTINUE;
 
 		sMessage.Trim();
@@ -418,7 +418,7 @@ private:
 	}
 
 	bool IsSelf(const CNick& Nick) {
-		return Nick.GetNick().Equals(m_pNetwork->GetCurNick());
+		return Nick.NickEquals(m_pNetwork->GetCurNick());
 	}
 
 	bool PackHex(const CString& sHex, CString& sPackedHex) {
