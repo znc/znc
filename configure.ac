@@ -70,6 +70,7 @@ appendLD () {
 }
 
 appendCXX "-D_FORTIFY_SOURCE=2"
+appendCXX "-include znc/zncconfig.h"
 
 case "${host_os}" in
 	freebsd*)
