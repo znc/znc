@@ -775,7 +775,7 @@ class CAdminMod : public CModule {
 		}
 
 		if (pNetwork == m_pNetwork) {
-			PutModule("Currently active network can be deleted via *status");
+			PutModule("The currently active network can be deleted via " + m_pUser->GetStatusPrefix() + "status");
 			return;
 		}
 
