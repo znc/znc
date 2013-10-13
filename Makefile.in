@@ -39,7 +39,7 @@ LIB_SRCS  := $(addprefix src/,$(LIB_SRCS))
 BIN_SRCS  := src/main.cpp
 LIB_OBJS  := $(patsubst %cpp,%o,$(LIB_SRCS))
 BIN_OBJS  := $(patsubst %cpp,%o,$(BIN_SRCS))
-TESTS     := StringTest
+TESTS     := StringTest ConfigTest
 TESTS     := $(addprefix test/,$(addsuffix .o,$(TESTS)))
 GTEST_VER := 1.7.0
 CLEAN     := znc src/*.o core core.* .version_extra .depend modules/.depend
@@ -77,7 +77,7 @@ znc: $(OBJS)
 	$(Q)$(CXX) $(LDFLAGS) -o $@ $(OBJS) $(LIBS)
 
 unittest: $(LIB_OBJS) test/gtest-all.o test/gtest-main.o $(TESTS)
-	$(E) Linking testznc..
+	$(E) Linking unit test...
 	$(Q)$(CXX) $(LDFLAGS) -o $@ $(LIB_OBJS) test/gtest-all.o test/gtest-main.o $(TESTS) $(LIBS)
 
 else
@@ -86,7 +86,7 @@ znc: $(BIN_OBJS) $(LIBZNC)
 	$(Q)$(CXX) $(LDFLAGS) -o $@ $(BIN_OBJS) -L. -lznc -Wl,-rpath,$(LIBZNCDIR) $(LIBS)
 
 unittest: $(LIBZNC) test/gtest-all.o test/gtest-main.o $(TESTS)
-	$(E) Linking testznc...
+	$(E) Linking unit test...
 	$(Q)$(CXX) $(LDFLAGS) -o $@ $(BIN_OBJS) test/gtest-all.o test/gtest-main.o $(TESTS) -L. -lznc -Wl,-rpath,$(LIBZNCDIR) $(LIBS)
 
 $(LIBZNC): $(LIB_OBJS)
