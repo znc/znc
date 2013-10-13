@@ -70,7 +70,6 @@ appendLD () {
 }
 
 appendCXX "-D_FORTIFY_SOURCE=2"
-appendCXX "-include znc/zncconfig.h"
 
 case "${host_os}" in
 	freebsd*)
@@ -553,6 +552,9 @@ AC_CACHE_CHECK([for GNU make], [ac_cv_path_GNUMAKE], [
 ])
 GNUMAKE_DIRNAME=`AS_DIRNAME(["$ac_cv_path_GNUMAKE"])`
 GNUMAKE=`echo $ac_cv_path_GNUMAKE | $SED "s%$GNUMAKE_DIRNAME/%%"`
+
+# this is in the end, for not trying to include it when it doesn't exist yet
+appendCXX "-include znc/zncconfig.h"
 
 AC_SUBST([CXXFLAGS])
 AC_SUBST([CPPFLAGS])
