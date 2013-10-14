@@ -76,23 +76,19 @@ znc: $(OBJS)
 	$(E) Linking znc...
 	$(Q)$(CXX) $(LDFLAGS) -o $@ $(OBJS) $(LIBS)
 
-unittest: $(LIB_OBJS) test/gtest-all.o test/gtest-main.o $(TESTS)
-	$(E) Linking unit test...
-	$(Q)$(CXX) $(LDFLAGS) -o $@ $(LIB_OBJS) test/gtest-all.o test/gtest-main.o $(TESTS) $(LIBS)
-
 else
 znc: $(BIN_OBJS) $(LIBZNC)
 	$(E) Linking znc...
 	$(Q)$(CXX) $(LDFLAGS) -o $@ $(BIN_OBJS) -L. -lznc -Wl,-rpath,$(LIBZNCDIR) $(LIBS)
 
-unittest: $(LIBZNC) test/gtest-all.o test/gtest-main.o $(TESTS)
-	$(E) Linking unit test...
-	$(Q)$(CXX) $(LDFLAGS) -o $@ $(BIN_OBJS) test/gtest-all.o test/gtest-main.o $(TESTS) -L. -lznc -Wl,-rpath,$(LIBZNCDIR) $(LIBS)
-
 $(LIBZNC): $(LIB_OBJS)
 	$(E) Linking $(LIBZNC)...
 	$(Q)$(CXX) $(LDFLAGS) -shared -o $@ $(LIB_OBJS) $(LIBS)
 endif
+
+unittest: $(LIB_OBJS) test/gtest-all.o test/gtest-main.o $(TESTS)
+	$(E) Linking unit test...
+	$(Q)$(CXX) $(LDFLAGS) -o $@ $(LIB_OBJS) test/gtest-all.o test/gtest-main.o $(TESTS) $(LIBS)
 
 man:
 	@$(MAKE) -C man $(C)
