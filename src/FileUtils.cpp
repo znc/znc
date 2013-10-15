@@ -204,9 +204,22 @@ bool CFile::Delete(const CString& sFileName) {
 }
 
 bool CFile::Move(const CString& sOldFileName, const CString& sNewFileName, bool bOverwrite) {
-	if ((!bOverwrite) && (CFile::Exists(sNewFileName))) {
-		errno = EEXIST;
-		return false;
+	if (CFile::Exists(sNewFileName)) {
+		if (!bOverwrite) {
+			errno = EEXIST;
+			return false;
+		}
+#ifdef _WIN32
+		// Windows (or maybe cygwin?) sometimes fails to rename() file over an existing file
+		// We don't want to remove the old file before moving new file over, for the case if the following rename() will fail for any reason
+		CString sTempFile = sNewFileName
+			+ CUtils::FormatTime(time(NULL), "_%Y%m%d-%H%M%S_", "UTC")
+			+ CString::RandomString(10).MD5(); // this file shouldn't exist :)
+		bool result = rename(sNewFileName.c_str(), sTempFile.c_str()) == 0;
+		result &&= rename(sOldFileName.c_str(), sNewFileName.c_str()) == 0;
+		result &&= Delete(sTempFile); // ok, renamed the file successfully, it's safe to remove backup of old file now
+		return result;
+#endif
 	}
 
 	return (rename(sOldFileName.c_str(), sNewFileName.c_str()) == 0);
