@@ -1,3 +1,20 @@
+## Modifications of this fork
+
+- uses TCP feature keepalive
+- starts to ping IRC server after 30 seconds instead of 270 seconds
+
+This mod was done to solve my ping timeouts with the following setup:
+- Freenode IRC
+- Kabel Deutschland provider
+- IPv6 tunnel with sixxs
+- Fritz!Box 7270 router
+
+keepalive does not really help here, since by default gets only active after some hours.
+the pinging seems to work. unfortunately I do not really know why - just have some ideas in mind.
+
+the modification was done with the ubuntu source of znc. this I just put here as reference.
+
+
 #[![ZNC](http://wiki.znc.in/skins/common/images/wiki.png)](http://znc.in) - An advanced IRC bouncer
 
 ## Table of contents
