@@ -42,7 +42,7 @@ protected:
 			CIRCNetwork* pNetwork = vNetworks[a];
 			CIRCSock* pIRCSock = pNetwork->GetIRCSock();
 
-			if (pIRCSock && pIRCSock->GetTimeSinceLastDataTransaction() >= 270) {
+			if (pIRCSock && pIRCSock->GetTimeSinceLastDataTransaction() >= 30) {
 				pIRCSock->PutIRC("PING :ZNC");
 			}
 
