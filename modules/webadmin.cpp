@@ -861,9 +861,10 @@ public:
 				WebSock.PrintErrorPage("Network name should be alphanumeric");
 				return true;
 			}
-			pNetwork = pUser->AddNetwork(sName);
+			CString sNetworkAddError;
+			pNetwork = pUser->AddNetwork(sName, sNetworkAddError);
 			if (!pNetwork) {
-				WebSock.PrintErrorPage("Network [" + sName.Token(0) + "] already exists");
+				WebSock.PrintErrorPage(sNetworkAddError);
 				return true;
 			}
 		}

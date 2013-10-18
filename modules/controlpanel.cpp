@@ -741,10 +741,11 @@ class CAdminMod : public CModule {
 			return;
 		}
 
-		if (pUser->AddNetwork(sNetwork)) {
+		CString sNetworkAddError;
+		if (pUser->AddNetwork(sNetwork, sNetworkAddError)) {
 			PutModule("Network [" + sNetwork + "] added for user [" + pUser->GetUserName() + "].");
 		} else {
-			PutModule("Network [" + sNetwork + "] could not be added for user [" + pUser->GetUserName() + "].");
+			PutModule("Network [" + sNetwork + "] could not be added for user [" + pUser->GetUserName() + "]: " + sNetworkAddError);
 		}
 	}
 

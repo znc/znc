@@ -357,7 +357,8 @@ bool CUser::ParseConfig(CConfig* pConfig, CString& sError) {
 	if (pConfig->FindStringVector("server", vsList, false) || pConfig->FindStringVector("chan", vsList, false) || pConfig->FindSubConfig("chan", subConf, false)) {
 		CIRCNetwork *pNetwork = FindNetwork("default");
 		if (!pNetwork) {
-			pNetwork = AddNetwork("default");
+			CString sErrorDummy;
+			pNetwork = AddNetwork("default", sErrorDummy);
 		}
 
 		if (pNetwork) {
@@ -459,12 +460,23 @@ bool CUser::ParseConfig(CConfig* pConfig, CString& sError) {
 	return true;
 }
 
-CIRCNetwork* CUser::AddNetwork(const CString &sNetwork) {
+CIRCNetwork* CUser::AddNetwork(const CString &sNetwork, CString& sErrorRet) {
 	if (!CIRCNetwork::IsValidNetwork(sNetwork) || FindNetwork(sNetwork)) {
+		sErrorRet = "Network [" + sNetwork.Token(0) + "] already exists";
 		return NULL;
 	}
 
-	return new CIRCNetwork(this, sNetwork);
+	CIRCNetwork* pNetwork = new CIRCNetwork(this, sNetwork);
+
+	bool bCancel = false;
+	USERMODULECALL(OnAddNetwork(*pNetwork, sErrorRet), this, NULL, &bCancel);
+	if(bCancel) {
+		RemoveNetwork(pNetwork);
+		delete pNetwork;
+		return NULL;
+	}
+
+	return pNetwork;
 }
 
 bool CUser::AddNetwork(CIRCNetwork *pNetwork) {
@@ -490,8 +502,12 @@ bool CUser::DeleteNetwork(const CString& sNetwork) {
 	CIRCNetwork *pNetwork = FindNetwork(sNetwork);
 
 	if (pNetwork) {
-		delete pNetwork;
-		return true;
+                bool bCancel = false;
+                USERMODULECALL(OnDeleteNetwork(*pNetwork), this, NULL, &bCancel);
+                if (!bCancel) {
+			delete pNetwork;
+			return true;
+		}
 	}
 
 	return false;
