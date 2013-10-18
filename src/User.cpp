@@ -502,9 +502,9 @@ bool CUser::DeleteNetwork(const CString& sNetwork) {
 	CIRCNetwork *pNetwork = FindNetwork(sNetwork);
 
 	if (pNetwork) {
-                bool bCancel = false;
-                USERMODULECALL(OnDeleteNetwork(*pNetwork), this, NULL, &bCancel);
-                if (!bCancel) {
+		bool bCancel = false;
+		USERMODULECALL(OnDeleteNetwork(*pNetwork), this, NULL, &bCancel);
+		if (!bCancel) {
 			delete pNetwork;
 			return true;
 		}
