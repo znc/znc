@@ -71,7 +71,7 @@ public:
 	// !Modules
 
 	// Networks
-	CIRCNetwork* AddNetwork(const CString &sNetwork);
+	CIRCNetwork* AddNetwork(const CString &sNetwork, CString& sErrorRet);
 	bool DeleteNetwork(const CString& sNetwork);
 	bool AddNetwork(CIRCNetwork *pNetwork);
 	void RemoveNetwork(CIRCNetwork *pNetwork);

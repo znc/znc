@@ -482,11 +482,12 @@ void CClient::UserCommand(CString& sLine) {
 			return;
 		}
 
-		if (m_pUser->AddNetwork(sNetwork)) {
+		CString sNetworkAddError;
+		if (m_pUser->AddNetwork(sNetwork, sNetworkAddError)) {
 			PutStatus("Network added. Use /znc JumpNetwork " + sNetwork + ", or connect to ZNC with username " + m_pUser->GetUserName() + "/" + sNetwork + " (instead of just " + m_pUser->GetUserName() + ") to connect to it.");
 		} else {
 			PutStatus("Unable to add that network");
-			PutStatus("Perhaps that network is already added");
+			PutStatus(sNetworkAddError);
 		}
 	} else if (sCommand.Equals("DELNETWORK")) {
 		CString sNetwork = sLine.Token(1);
@@ -614,10 +615,11 @@ void CClient::UserCommand(CString& sLine) {
 			fOldNVFile.Copy(sNewModPath + "/.registry");
 		}
 
-		CIRCNetwork* pNewNetwork = pNewUser->AddNetwork(sNewNetwork);
+		CString sNetworkAddError;
+		CIRCNetwork* pNewNetwork = pNewUser->AddNetwork(sNewNetwork, sNetworkAddError);
 
 		if (!pNewNetwork) {
-			PutStatus("Error adding network.");
+			PutStatus("Error adding network:" + sNetworkAddError);
 			return;
 		}
 
