@@ -461,7 +461,10 @@ bool CUser::ParseConfig(CConfig* pConfig, CString& sError) {
 }
 
 CIRCNetwork* CUser::AddNetwork(const CString &sNetwork, CString& sErrorRet) {
-	if (!CIRCNetwork::IsValidNetwork(sNetwork) || FindNetwork(sNetwork)) {
+	if (!CIRCNetwork::IsValidNetwork(sNetwork)) {
+		sErrorRet = "Invalid network name. It should be alphanumeric. Not to be confused with server name";
+		return NULL;
+	} else if (FindNetwork(sNetwork)) {
 		sErrorRet = "Network [" + sNetwork.Token(0) + "] already exists";
 		return NULL;
 	}
