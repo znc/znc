@@ -38,6 +38,10 @@ git checkout-index --all --prefix=$TMPDIR/$ZNC/
     make -C modules -f modpython/Makefile.gen srcdir=. SWIG=/usr/bin/swig
     rm -fr modules/.depend
 	rm make-tarball.sh
+	sed -e "s/THIS_IS_NOT_NIGHTLY//" -i Makefile.in
+	echo '#include <znc/version.h>' > src/version.cpp
+	echo "const char* ZNC_VERSION_EXTRA = \"-rc1\";" >> src/version.cpp
+	# "rc1" part is to be fixed later
 )
 (
 	cd $TMPDIR

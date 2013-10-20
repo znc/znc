@@ -141,6 +141,8 @@ src/version.cpp: Makefile version.sh $(shell if [ x`cat .version_extra 2> /dev/n
 	@mkdir -p .depend src
 	$(E) Building source file version.cpp...
 	$(Q)WRITE_OUTPUT=yes $(srcdir)/version.sh "$(GIT)" > .version_extra 2> /dev/null
+
+CLEAN += src/version.cpp
 endif
 
 install: znc $(LIBZNC)
