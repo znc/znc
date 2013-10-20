@@ -71,6 +71,7 @@ extern bool ZNC_NO_NEED_TO_DO_ANYTHING_ON_MODULE_CALL_EXITER;
 			*macEXITER = true;       \
 		}                                                  \
 		GMods.SetUser(pOldGUser);                          \
+		GMods.SetNetwork(pOldGNetwork);            \
 		GMods.SetClient(pOldGClient);                      \
 	} while (false)
 
