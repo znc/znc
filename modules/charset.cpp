@@ -45,7 +45,7 @@ private:
 		do
 		{
 			char *pOut = tmpbuf;
-			size_t uBufSize = 1024;
+			size_t uBufSize = sizeof(tmpbuf);
 			bBreak = (uInLen < 1);
 
 			if(iconv(ic, // this is ugly, but keeps the code short:
@@ -67,7 +67,7 @@ private:
 				}
 			}
 
-			uLength += (pOut - tmpbuf);
+			uLength += sizeof(tmpbuf) - uBufSize;
 		} while(!bBreak);
 
 		return uLength;
@@ -120,7 +120,7 @@ private:
 
 			if(bResult)
 			{
-				sData.assign(pResult, uLength);
+				sData.assign(pResult, (uLength + 1) - uResultBufSize);
 
 				DEBUG("charset: Converted: [" + sData.Escape_n(CString::EURL) + "] from [" + sFrom + "] to [" + sTo + "]!");
 			}
