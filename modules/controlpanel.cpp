@@ -203,7 +203,7 @@ class CAdminMod : public CModule {
 		else if (sVar == "admin")
 			PutModule("Admin = " + CString(pUser->IsAdmin()));
 		else if (sVar == "statusprefix")
-			PutModule("StatuxPrefix = " + pUser->GetStatusPrefix());
+			PutModule("StatusPrefix = " + pUser->GetStatusPrefix());
 		else
 			PutModule("Error: Unknown variable");
 	}
