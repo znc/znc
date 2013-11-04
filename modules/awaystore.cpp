@@ -67,6 +67,7 @@ class CAway : public CModule
 	void BackCommand(const CString& sCommand) {
 		if ((m_vMessages.empty()) && (sCommand.Token(1) != "-quiet"))
 			PutModNotice("Welcome Back!");
+		Ping();
 		Back();
 	}
 
