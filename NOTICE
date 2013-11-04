@@ -45,5 +45,6 @@ Michael "adgar" Edgar <adgar@carboni.ca>
 Jens-Andre "vain" Koch <jakoch@web.de>
 Heiko Hund <heiko@ist.eigentlich.net> - cyrusauth module
 Philippe (http://sourceforge.net/users/cycomate) - kickrejoin module
+Jason Antman <jason@jasonantman.com> (http://www.jasonantman.com) - fail2ban logging and admin commands
 
 If you did something useful and want to be listed here too, add yourself and submit the patch.
