@@ -115,7 +115,9 @@ public:
 	virtual bool OnServerCapAvailable(const CString& sCap);
 	virtual void OnServerCapResult(const CString& sCap, bool bSuccess);
 	virtual EModRet OnTimerAutoJoin(CChan& Channel);
-	bool OnEmbeddedWebRequest(CWebSock&, const CString&, CTemplate&);
+	virtual bool OnEmbeddedWebRequest(CWebSock&, const CString&, CTemplate&);
+	virtual EModRet OnAddNetwork(CIRCNetwork& Network, CString& sErrorRet);
+	virtual EModRet OnDeleteNetwork(CIRCNetwork& Network);
 
 	// Global Modules
 	virtual EModRet OnAddUser(CUser& User, CString& sErrorRet);

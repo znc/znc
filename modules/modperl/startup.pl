@@ -369,6 +369,8 @@ sub OnServerCapAvailable {}
 sub OnServerCapResult {}
 sub OnTimerAutoJoin {}
 sub OnEmbeddedWebRequest {}
+sub OnAddNetwork {}
+sub OnDeleteNetwork {}
 
 
 # Functions of CModule will be usable from perl modules.
