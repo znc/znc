@@ -377,6 +377,12 @@ class Module:
     def OnEmbeddedWebRequest(self, WebSock, sPageName, Tmpl):
         pass
 
+    def OnAddNetwork(self, Network, sErrorRet):
+        pass
+
+    def OnDeleteNetwork(self, Network):
+        pass
+
     # Global modules
     def OnAddUser(self, User, sErrorRet):
         pass
