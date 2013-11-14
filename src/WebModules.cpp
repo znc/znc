@@ -866,6 +866,21 @@ bool CWebSock::OnLogin(const CString& sUser, const CString& sPass) {
 	return IsLoggedIn();
 }
 
+CString CWebSock::GetRemoteIP()
+{
+	const VCString& vsProxies = CZNC::Get().GetAllowProxies();
+	CString sIP = CHTTPSock::GetRemoteIP();
+
+	VCString::const_iterator it;
+	for (it = vsProxies.begin(); it != vsProxies.end(); ++it) {
+		if (sIP.WildCmp(*it)) {
+			return m_sForwardedIP;
+		}
+	}
+
+	return sIP;
+}
+
 Csock* CWebSock::GetSockObj(const CString& sHost, unsigned short uPort) {
 	// All listening is done by CListener, thus CWebSock should never have
 	// to listen, but since GetSockObj() is pure virtual...
