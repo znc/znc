@@ -261,7 +261,7 @@ public:
 			pNewUser->SetDCCBindHost(pUser->GetDCCBindHost());
 		}
 
-		sArg = WebSock.GetParam("bufsize"); if (!sArg.empty()) pNewUser->SetBufferCount(sArg.ToUInt(), spSession->IsAdmin());
+		sArg = WebSock.GetParam("buffercount"); if (!sArg.empty()) pNewUser->SetBufferCount(sArg.ToUInt(), spSession->IsAdmin());
 		if (!sArg.empty()) {
 			// First apply the old limit in case the new one is too high
 			if (pUser)
