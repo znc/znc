@@ -77,12 +77,7 @@ class CAway : public CModule
 	}
 
 	void ReplayCommand(const CString& sCommand) {
-		CString nick = GetClient()->GetNick();
-		for (u_int a = 0; a < m_vMessages.size(); a++) {
-			CString sWhom = m_vMessages[a].Token(1, false, ":");
-			CString sMessage = m_vMessages[a].Token(2, true, ":");
-			PutUser(":" + sWhom + " PRIVMSG " + nick + " :" + sMessage);
-		}
+		Replay();
 	}
 
 	void DeleteCommand(const CString& sCommand) {
@@ -201,6 +196,9 @@ public:
 		m_bIsAway = false;
 		m_bBootError = false;
 		m_saveMessages = true;
+		m_bReplayOnConnect = false;
+		m_bAlwaysStore = false;
+		m_bUsePrivMessage = true;
 		SetAwayTime(300);
 		AddTimer(new CAwayJob(this, 60, 0, "AwayJob", "Checks for idle and saves messages every 1 minute"));
 
@@ -233,42 +231,52 @@ public:
 
 	virtual bool OnLoad(const CString& sArgs, CString& sMessage)
 	{
-		CString sMyArgs = sArgs;
+		VCString vMyArgs;
+		sArgs.Split(" ", vMyArgs, true, "", "", true, true);
+
+		VCString::iterator it;
 		size_t uIndex = 0;
-		if (sMyArgs.Token(0) == "-nostore")
+
+		for (it = vMyArgs.begin(); it != vMyArgs.end(); ++it)
 		{
+			if (vMyArgs[uIndex] == "-nopriv")
+			{
+				m_bUsePrivMessage = false;
+			} else if (vMyArgs[uIndex] == "-alwaysstore")
+			{
+				m_bAlwaysStore = true;
+			} else if (vMyArgs[uIndex] == "-replay")
+			{
+				m_bReplayOnConnect = true;
+			} else if (vMyArgs[uIndex] == "-nostore")
+			{
+				m_saveMessages = false;
+			} else if (vMyArgs[uIndex] == "-notimer")
+			{
+				SetAwayTime(0);
+			} else if (vMyArgs[uIndex] == "-timer")
+			{
+				SetAwayTime(vMyArgs[uIndex + 1].ToInt());
+				uIndex++;
+			} else if (m_saveMessages)
+			{
+				//Split() makes sure vMyArgs[uIndex] is not empty 
+				m_sPassword = CBlowfish::MD5(vMyArgs[uIndex]);
+
+				if (!BootStrap())
+				{
+					sMessage = "Failed to decrypt your saved messages - "
+						"Did you give the right encryption key as an argument to this module?";
+					m_bBootError = true;
+					return false;
+				}
+				return true;
+			}
 			uIndex++;
-			m_saveMessages = false;
 		}
-		if (sMyArgs.Token(uIndex) == "-notimer")
-		{
-			SetAwayTime(0);
-			sMyArgs = sMyArgs.Token(uIndex + 1, true);
-		} else if (sMyArgs.Token(uIndex) == "-timer")
-		{
-			SetAwayTime(sMyArgs.Token(uIndex + 1).ToInt());
-			sMyArgs = sMyArgs.Token(uIndex + 2, true);
-		}
-		if (m_saveMessages)
-		{
-			if (!sMyArgs.empty())
-			{
-				m_sPassword = CBlowfish::MD5(sMyArgs);
-			} else {
-				sMessage = "This module needs as an argument a keyphrase used for encryption";
-				return false;
-			}
-
-			if (!BootStrap())
-			{
-				sMessage = "Failed to decrypt your saved messages - "
-					"Did you give the right encryption key as an argument to this module?";
-				m_bBootError = true;
-				return false;
-			}
-		}
-
-		return true;
+		//No password given
+		sMessage = "This module needs as an argument a keyphrase used for encryption";
+		return false;
 	}
 
 	virtual void OnIRCConnected()
@@ -329,7 +337,9 @@ public:
 
 	virtual void OnClientLogin()
 	{
-		Back(true);
+		Back(m_bUsePrivMessage);
+		if (m_bReplayOnConnect)
+			Replay();
 	}
 	virtual void OnClientDisconnect()
 	{
@@ -342,6 +352,41 @@ public:
 		CString sRet = GetSavePath();
 		sRet += "/.znc-away-" + CBlowfish::MD5(sBuffer, true);
 		return(sRet);
+	}
+
+	virtual void Replay()
+	{
+		CString nick = GetClient()->GetNick();
+		for (u_int a = 0; a < m_vMessages.size(); a++) {
+			CString sTime = m_vMessages[a].Token(0, false, ":");
+			CString sWhom = m_vMessages[a].Token(1, false, ":");
+			CString sMessage = m_vMessages[a].Token(2, true, ":");
+
+			if ((sTime.empty()) || (sWhom.empty()) || (sMessage.empty())) {
+				// illegal format
+				PutModule("Corrupt message! [" + m_vMessages[a] + "]");
+				m_vMessages.erase(m_vMessages.begin() + a--);
+				continue;
+			}
+
+			time_t iTime = sTime.ToULong();
+			char szFormat[64];
+			struct tm t;
+			localtime_r(&iTime, &t);
+			size_t iCount = strftime(szFormat, 64, "%F %T", &t);
+
+			if (iCount <= 0) {
+				PutModule("Corrupt time stamp! [" + m_vMessages[a] + "]");
+				m_vMessages.erase(m_vMessages.begin() + a--);
+				continue;
+			}
+
+			CString sTmp = "[";
+			sTmp.append(szFormat, iCount);
+			sTmp += "] ";
+			sTmp += sMessage;
+			PutUser(":" + sWhom + " PRIVMSG " + nick + " :" + sTmp);
+		}
 	}
 
 	virtual void Away(bool bForce = false, const CString & sReason = "")
@@ -390,7 +435,7 @@ public:
 
 	virtual EModRet OnPrivMsg(CNick& Nick, CString& sMessage)
 	{
-		if (m_bIsAway)
+		if (m_bIsAway || m_bAlwaysStore)
 			AddMessage(time(NULL), Nick, sMessage);
 		return(CONTINUE);
 	}
@@ -475,6 +520,9 @@ private:
 	vector<CString> m_vMessages;
 	CString         m_sReason;
 	bool            m_saveMessages;
+	bool		m_bReplayOnConnect;
+	bool		m_bAlwaysStore;
+	bool		m_bUsePrivMessage;
 };
 
 
@@ -495,7 +543,7 @@ void CAwayJob::RunJob()
 template<> void TModInfo<CAway>(CModInfo& Info) {
 	Info.SetWikiPage("awaystore");
 	Info.SetHasArgs(true);
-	Info.SetArgsHelpText("[ -notimer | -timer N ]  passw0rd . N is number of seconds, 600 by default.");
+	Info.SetArgsHelpText("[-nopriv] [-alwaysstore] [-replay] [-nostore] [ -notimer | -timer N ]  passw0rd . N is number of seconds, 600 by default.");
 }
 
 NETWORKMODULEDEFS(CAway, "Adds auto-away with logging, useful when you use ZNC from different locations");
