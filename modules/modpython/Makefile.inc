@@ -19,8 +19,7 @@ PYDEPONMOD :=
 endif
 
 PYTHONHOOK   := modpython_install
-CLEAN    += modpython/_znc_core.$(PYCEXT_EXT) modpython/znc_core.pyc
-CLEAN    += modpython/znc.pyc modpython/compiler *.pyc
+CLEAN    += modpython/_znc_core.$(PYCEXT_EXT)
 CLEAN    += modpython/_znc_core.o modpython/compiler.o
 ifneq "$(SWIG)" ""
 # Only delete these files if we can regenerate them
@@ -40,16 +39,10 @@ endif
 
 install: $(PYTHONHOOK)
 
-# This will run: modpython/compiler blah.py blah.pyc
-%.pyc: modpython/compiler %.py
-	$(E) Compiling $@...
-	$(Q)$^ $@
-
 ifeq "$(PYTHON_ON)" "yes"
 all: modpython_all
 endif
-modpython_all: modpython/_znc_core.$(PYCEXT_EXT) modpython/znc.pyc modpython/znc_core.pyc
-modpython_all: $(addsuffix c, $(notdir $(wildcard $(srcdir)/*.py)))
+modpython_all: modpython/_znc_core.$(PYCEXT_EXT)
 
 modpython/_znc_core.o: modpython/_znc_core.cpp Makefile
 	@mkdir -p modpython
@@ -77,15 +70,13 @@ modpython/compiler: modpython/compiler.o Makefile
 	$(Q)$(CXX) -o $@ $< $(PY_LDFLAGS)
 
 modpython_install: install_datadir modpython_all
-	-for i in *.pyc $(srcdir)/*.py; do \
+	-for i in $(srcdir)/*.py; do \
 		$(INSTALL_DATA) $$i $(DESTDIR)$(MODDIR); \
 	done
 	mkdir -p $(DESTDIR)$(MODDIR)/modpython
 	$(INSTALL_PROGRAM) modpython/_znc_core.$(PYCEXT_EXT) $(DESTDIR)$(MODDIR)/modpython
-	$(INSTALL_DATA) modpython/znc_core.pyc $(DESTDIR)$(MODDIR)/modpython
 	if test -r modpython/znc_core.py;\
 		then $(INSTALL_DATA) modpython/znc_core.py $(DESTDIR)$(MODDIR)/modpython;\
 		else $(INSTALL_DATA) $(srcdir)/modpython/znc_core.py $(DESTDIR)$(MODDIR)/modpython;\
 	fi
-	$(INSTALL_DATA) modpython/znc.pyc $(DESTDIR)$(MODDIR)/modpython
 	$(INSTALL_DATA) $(srcdir)/modpython/znc.py $(DESTDIR)$(MODDIR)/modpython
