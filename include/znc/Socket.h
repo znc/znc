@@ -30,6 +30,11 @@ public:
 	~CZNCSock() {}
 
 	virtual int ConvertAddress(const struct sockaddr_storage * pAddr, socklen_t iAddrLen, CS_STRING & sIP, u_short * piPort);
+
+#ifndef HAVE_ICU
+	// Don't fail to compile when ICU is not enabled
+	void SetEncoding(const CString&) {}
+#endif
 };
 
 enum EAddrType {

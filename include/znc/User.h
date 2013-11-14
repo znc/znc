@@ -120,6 +120,7 @@ public:
 	void SetDenySetBindHost(bool b);
 	bool SetStatusPrefix(const CString& s);
 	void SetDefaultChanModes(const CString& s);
+	void SetClientEncoding(const CString& s);
 	void SetQuitMsg(const CString& s);
 	bool AddCTCPReply(const CString& sCTCP, const CString& sReply);
 	bool DelCTCPReply(const CString& sCTCP);
@@ -153,6 +154,7 @@ public:
 	const CString& GetPassSalt() const;
 	const std::set<CString>& GetAllowedHosts() const;
 	const CString& GetTimestampFormat() const;
+	const CString& GetClientEncoding() const;
 	bool GetTimestampAppend() const;
 	bool GetTimestampPrepend() const;
 
@@ -192,6 +194,7 @@ protected:
 	CString               m_sPassSalt;
 	CString               m_sStatusPrefix;
 	CString               m_sDefaultChanModes;
+	CString               m_sClientEncoding;
 
 	CString               m_sQuitMsg;
 	MCString              m_mssCTCPReplies;

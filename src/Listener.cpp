@@ -89,6 +89,7 @@ CIncomingConnection::CIncomingConnection(const CString& sHostname, unsigned shor
 	// This has to be fixed up later, if desired.
 	SetTimeout(120, 0);
 
+	SetEncoding("UTF-8");
 	EnableReadLine();
 }
 

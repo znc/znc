@@ -101,6 +101,7 @@ CUser::CUser(const CString& sUserName)
 	m_bAppendTimestamp = false;
 	m_bPrependTimestamp = true;
 	m_uMaxNetworks = 1;
+	m_sClientEncoding = "";
 	m_pUserTimer = new CUserTimer(this);
 	CZNC::Get().GetManager().AddCron(m_pUserTimer);
 }
@@ -147,6 +148,7 @@ bool CUser::ParseConfig(CConfig* pConfig, CString& sError) {
 		{ "dccvhost", &CUser::SetDCCBindHost },
 		{ "timestampformat", &CUser::SetTimestampFormat },
 		{ "skin", &CUser::SetSkinName },
+		{ "clientencoding", &CUser::SetClientEncoding },
 	};
 	size_t numStringOptions = sizeof(StringOptions) / sizeof(StringOptions[0]);
 	TOption<unsigned int> UIntOptions[] = {
@@ -700,6 +702,7 @@ bool CUser::Clone(const CUser& User, CString& sErrorRet, bool bCloneNetworks) {
 	SetJoinTries(User.JoinTries());
 	SetMaxNetworks(User.MaxNetworks());
 	SetMaxJoins(User.MaxJoins());
+	SetClientEncoding(User.GetClientEncoding());
 
 	// Allowed Hosts
 	m_ssAllowedHosts.clear();
@@ -896,6 +899,7 @@ CConfig CUser::ToConfig() {
 	config.AddKeyValuePair("JoinTries", CString(m_uMaxJoinTries));
 	config.AddKeyValuePair("MaxNetworks", CString(m_uMaxNetworks));
 	config.AddKeyValuePair("MaxJoins", CString(m_uMaxJoins));
+	config.AddKeyValuePair("ClientEncoding", GetClientEncoding());
 
 	// Allow Hosts
 	if (!m_ssAllowedHosts.empty()) {
@@ -1104,6 +1108,7 @@ void CUser::SetDenyLoadMod(bool b) { m_bDenyLoadMod = b; }
 void CUser::SetAdmin(bool b) { m_bAdmin = b; }
 void CUser::SetDenySetBindHost(bool b) { m_bDenySetBindHost = b; }
 void CUser::SetDefaultChanModes(const CString& s) { m_sDefaultChanModes = s; }
+void CUser::SetClientEncoding(const CString& s) { m_sClientEncoding = s; }
 void CUser::SetQuitMsg(const CString& s) { m_sQuitMsg = s; }
 void CUser::SetAutoClearChanBuffer(bool b) { m_bAutoClearChanBuffer = b; }
 
@@ -1175,6 +1180,7 @@ bool CUser::DenySetBindHost() const { return m_bDenySetBindHost; }
 bool CUser::MultiClients() const { return m_bMultiClients; }
 const CString& CUser::GetStatusPrefix() const { return m_sStatusPrefix; }
 const CString& CUser::GetDefaultChanModes() const { return m_sDefaultChanModes; }
+const CString& CUser::GetClientEncoding() const { return m_sClientEncoding; }
 bool CUser::HasSpaceForNewNetwork() const { return GetNetworks().size() < MaxNetworks(); }
 
 CString CUser::GetQuitMsg() const { return (!m_sQuitMsg.Trim_n().empty()) ? m_sQuitMsg : CZNC::GetTag(false); }

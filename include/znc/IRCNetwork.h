@@ -141,12 +141,14 @@ public:
 	const CString& GetIdent(const bool bAllowDefault = true) const;
 	const CString& GetRealName() const;
 	const CString& GetBindHost() const;
+	const CString& GetEncoding() const;
 
 	void SetNick(const CString& s);
 	void SetAltNick(const CString& s);
 	void SetIdent(const CString& s);
 	void SetRealName(const CString& s);
 	void SetBindHost(const CString& s);
+	void SetEncoding(const CString& s);
 
 	double GetFloodRate() const { return m_fFloodRate; }
 	unsigned short int GetFloodBurst() const { return m_uFloodBurst; }
@@ -167,6 +169,7 @@ protected:
 	CString            m_sIdent;
 	CString            m_sRealName;
 	CString            m_sBindHost;
+	CString            m_sEncoding;
 
 	CModules*          m_pModules;
 
