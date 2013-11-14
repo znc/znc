@@ -56,6 +56,7 @@ public:
 	void ParseURI();
 	void GetPage();
 	static CString GetDate(time_t tm = 0);
+	virtual CString GetRemoteIP();
 
 	// Cookies
 	CString GetRequestCookie(const CString& sKey) const;

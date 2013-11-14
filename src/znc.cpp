@@ -484,8 +484,8 @@ bool CZNC::WriteConfig() {
 		config.AddKeyValuePair("BindHost", m_vsBindHosts[v].FirstLine());
 	}
 
-	for (unsigned int v = 0; v < m_vsAllowProxies.size(); v++) {
-		config.AddKeyValuePair("AllowProxy", m_vsAllowProxies[v].FirstLine());
+	for (unsigned int v = 0; v < m_vsTrustedProxies.size(); v++) {
+		config.AddKeyValuePair("TrustedProxy", m_vsTrustedProxies[v].FirstLine());
 	}
 
 	CModules& Mods = GetModules();
@@ -1114,7 +1114,7 @@ bool CZNC::DoRehash(CString& sError)
 	}
 
 	m_vsBindHosts.clear();
-	m_vsAllowProxies.clear();
+	m_vsTrustedProxies.clear();
 	m_vsMotd.clear();
 
 	// Delete all listeners
@@ -1209,9 +1209,9 @@ bool CZNC::DoRehash(CString& sError)
 		AddBindHost(*vit);
 	}
 
-	config.FindStringVector("allowproxy", vsList);
+	config.FindStringVector("trustedproxy", vsList);
 	for (vit = vsList.begin(); vit != vsList.end(); ++vit) {
-		AddAllowProxy(*vit);
+		AddTrustedProxy(*vit);
 	}
 
 	config.FindStringVector("vhost", vsList);
@@ -1437,30 +1437,30 @@ bool CZNC::RemBindHost(const CString& sHost) {
 	return false;
 }
 
-void CZNC::ClearAllowProxy() {
-	m_vsAllowProxies.clear();
+void CZNC::ClearTrustedProxies() {
+	m_vsTrustedProxies.clear();
 }
 
-bool CZNC::AddAllowProxy(const CString& sHost) {
+bool CZNC::AddTrustedProxy(const CString& sHost) {
 	if (sHost.empty()) {
 		return false;
 	}
 
-	for (unsigned int a = 0; a < m_vsAllowProxies.size(); a++) {
-		if (m_vsAllowProxies[a].Equals(sHost)) {
+	for (unsigned int a = 0; a < m_vsTrustedProxies.size(); a++) {
+		if (m_vsTrustedProxies[a].Equals(sHost)) {
 			return false;
 		}
 	}
 
-	m_vsAllowProxies.push_back(sHost);
+	m_vsTrustedProxies.push_back(sHost);
 	return true;
 }
 
-bool CZNC::RemAllowProxy(const CString& sHost) {
+bool CZNC::RemTrustedProxy(const CString& sHost) {
 	VCString::iterator it;
-	for (it = m_vsAllowProxies.begin(); it != m_vsAllowProxies.end(); ++it) {
+	for (it = m_vsTrustedProxies.begin(); it != m_vsTrustedProxies.end(); ++it) {
 		if (sHost.Equals(*it)) {
-			m_vsAllowProxies.erase(it);
+			m_vsTrustedProxies.erase(it);
 			return true;
 		}
 	}

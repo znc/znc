@@ -66,9 +66,9 @@ public:
 	void ClearBindHosts();
 	bool AddBindHost(const CString& sHost);
 	bool RemBindHost(const CString& sHost);
-	void ClearAllowProxy();
-	bool AddAllowProxy(const CString& sHost);
-	bool RemAllowProxy(const CString& sHost);
+	void ClearTrustedProxies();
+	bool AddTrustedProxy(const CString& sHost);
+	bool RemTrustedProxy(const CString& sHost);
 	void Broadcast(const CString& sMessage, bool bAdminOnly = false,
 			CUser* pSkipUser = NULL, CClient* pSkipClient = NULL);
 	void AddBytesRead(unsigned long long u) { m_uBytesRead += u; }
@@ -120,7 +120,7 @@ public:
 	const CString& GetConfigFile() const { return m_sConfigFile; }
 	bool WritePemFile();
 	const VCString& GetBindHosts() const { return m_vsBindHosts; }
-	const VCString& GetAllowProxies() const { return m_vsAllowProxies; }
+	const VCString& GetTrustedProxies() const { return m_vsTrustedProxies; }
 	const std::vector<CListener*>& GetListeners() const { return m_vpListeners; }
 	time_t TimeStarted() const { return m_TimeStarted; }
 	unsigned int GetMaxBufferSize() const { return m_uiMaxBufferSize; }
@@ -208,7 +208,7 @@ protected:
 	CString                m_sPidFile;
 	CString                m_sSSLCertFile;
 	VCString               m_vsBindHosts;
-	VCString               m_vsAllowProxies;
+	VCString               m_vsTrustedProxies;
 	VCString               m_vsMotd;
 	CFile*                 m_pLockFile;
 	unsigned int           m_uiConnectDelay;
