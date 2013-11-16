@@ -68,6 +68,7 @@ class CAdminMod : public CModule {
 			{"Password",            str},
 			{"JoinTries",           integer},
 			{"MaxJoins",            integer},
+			{"MaxNetworks",         integer},
 			{"Timezone",            str},
 			{"Admin",               boolean},
 			{"AppendTimestamp",     boolean},
@@ -188,6 +189,8 @@ class CAdminMod : public CModule {
 			PutModule("AutoClearChanBuffer = " + CString(pUser->AutoClearChanBuffer()));
 		else if (sVar == "maxjoins")
 			PutModule("MaxJoins = " + CString(pUser->MaxJoins()));
+		else if (sVar == "maxnetworks")
+			PutModule("MaxNetworks = " + CString(pUser->MaxNetworks()));
 		else if (sVar == "jointries")
 			PutModule("JoinTries = " + CString(pUser->JoinTries()));
 		else if (sVar == "timezone")
@@ -307,6 +310,15 @@ class CAdminMod : public CModule {
 			unsigned int i = sValue.ToUInt();
 			pUser->SetMaxJoins(i);
 			PutModule("MaxJoins = " + CString(pUser->MaxJoins()));
+		}
+		else if (sVar == "maxnetworks") {
+			if(m_pUser->IsAdmin()) {
+				unsigned int i = sValue.ToUInt();
+				pUser->SetMaxNetworks(i);
+				PutModule("MaxNetworks = " + sValue);
+			} else {
+				PutModule("Access denied!");
+			}
 		}
 		else if (sVar == "jointries") {
 			unsigned int i = sValue.ToUInt();
