@@ -152,6 +152,9 @@ AC_ARG_ENABLE( [poll],
 	AS_HELP_STRING([--disable-poll], [use select() instead of poll()]),
 	[POLL="$enableval"],
 	[POLL="yes"])
+AC_ARG_WITH( [gtest],
+	AS_HELP_STRING([--with-gtest=DIR], [Path to directory with src/gtest-all.cc and src/gtest_main.cc files.
+					If not specified, "make test" will download gtest tarball and use it.]))
 
 AC_ARG_WITH([systemdsystemunitdir],
 	AS_HELP_STRING([--with-systemdsystemunitdir=DIR], [Directory for systemd service files]),
@@ -160,6 +163,9 @@ AC_ARG_WITH([systemdsystemunitdir],
 			with_systemdsystemunitdir=$($PKG_CONFIG --variable=systemdsystemunitdir systemd)
 		fi
 	])
+if test "x$with_gtest" != xno; then
+	AC_SUBST([GTEST_DIR], [$with_gtest])
+fi
 if test "x$with_systemdsystemunitdir" != xno; then
 	AC_SUBST([systemdsystemunitdir], [$with_systemdsystemunitdir])
 fi
