@@ -1099,7 +1099,7 @@ public:
 					l["IRCNick"] = vNetworks[a]->GetIRCNick().GetNick();
 					CServer* pServer = vNetworks[a]->GetCurrentServer();
 					if (pServer) {
-						l["Server"] = pServer->GetName();
+						l["Server"] = pServer->GetName() + ":" + (pServer->IsSSL() ? "+" : "") + CString(pServer->GetPort());
 					}
 				}
 
