@@ -495,7 +495,7 @@ void CClient::UserCommand(CString& sLine) {
 			" - Detached: " + CString(uNumDetached) + " - Disabled: " + CString(uNumDisabled));
 	} else if (sCommand.Equals("ADDNETWORK")) {
 		if (!m_pUser->IsAdmin() && !m_pUser->HasSpaceForNewNetwork()) {
-			PutStatus("Network number limit reached. Ask an admin to increase the limit for you, or delete few old ones using /znc DelNetwork <name>");
+			PutStatus("Network number limit reached. Ask an admin to increase the limit for you, or delete unneeded networks using /znc DelNetwork <name>");
 			return;
 		}
 

@@ -744,7 +744,7 @@ class CAdminMod : public CModule {
 		}
 
 		if (!m_pUser->IsAdmin() && !pUser->HasSpaceForNewNetwork()) {
-			PutStatus("Network number limit reached. Ask an admin to increase the limit for you, or delete few old ones using /znc DelNetwork <name>");
+			PutStatus("Network number limit reached. Ask an admin to increase the limit for you, or delete unneeded networks using /znc DelNetwork <name>");
 			return;
 		}
 
