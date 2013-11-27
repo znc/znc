@@ -954,8 +954,8 @@ bool CIRCSock::OnPrivMsg(CNick& Nick, CString& sMessage) {
 	IRCSOCKMODULECALL(OnPrivMsg(Nick, sMessage), &bResult);
 	if (bResult) return true;
 
-	if (!m_pNetwork->IsUserOnline()) {
-		// If the user is detached, add to the buffer
+	if (!m_pNetwork->IsUserOnline() || m_pNetwork->IsIRCAway()) {
+		// If the user is detached or marked away, add to the buffer
 		m_pNetwork->AddQueryBuffer(":" + _NAMEDFMT(Nick.GetNickMask()) + " PRIVMSG {target} :{text}", sMessage);
 	}
 
