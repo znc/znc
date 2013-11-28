@@ -149,21 +149,21 @@ bool CLogMod::OnLoad(const CString& sArgs, CString& sMessage)
 			if (!m_sLogPath.empty()) {
 				m_sLogPath += "/";
 			}
-			m_sLogPath += "$NETWORK_$WINDOW_%Y%m%d.log";
+			m_sLogPath += "$NETWORK/$WINDOW/%Y%m%d.log";
 		}
 	} else if (GetType() == CModInfo::NetworkModule) {
 		if (m_sLogPath.Right(1) == "/" || m_sLogPath.find("$WINDOW") == CString::npos) {
 			if (!m_sLogPath.empty()) {
 				m_sLogPath += "/";
 			}
-			m_sLogPath += "$WINDOW_%Y%m%d.log";
+			m_sLogPath += "$WINDOW/%Y%m%d.log";
 		}
 	} else {
 		if (m_sLogPath.Right(1) == "/" || m_sLogPath.find("$USER") == CString::npos || m_sLogPath.find("$WINDOW") == CString::npos || m_sLogPath.find("$NETWORK") == CString::npos) {
 			if (!m_sLogPath.empty()) {
 				m_sLogPath += "/";
 			}
-			m_sLogPath += "$USER_$NETWORK_$WINDOW_%Y%m%d.log";
+			m_sLogPath += "$USER/$NETWORK/$WINDOW/%Y%m%d.log";
 		}
 	}
 
