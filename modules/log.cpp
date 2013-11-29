@@ -28,6 +28,7 @@ public:
 	MODCONSTRUCTOR(CLogMod)
 	{
 		m_bSanitize = false;
+        m_bUseDirectories = false;
 	}
 
 	void PutLog(const CString& sLine, const CString& sWindow = "status");
@@ -66,6 +67,7 @@ public:
 private:
 	CString                 m_sLogPath;
 	bool                    m_bSanitize;
+    bool                    m_bUseDirectories;
 };
 
 void CLogMod::PutLog(const CString& sLine, const CString& sWindow /*= "Status"*/)
@@ -134,11 +136,20 @@ CString CLogMod::GetServer()
 bool CLogMod::OnLoad(const CString& sArgs, CString& sMessage)
 {
 	size_t uIndex = 0;
-	if (sArgs.Token(0).Equals("-sanitize"))
-	{
-		m_bSanitize = true;
-		++uIndex;
-	}
+    for(int i = 0; i < 2; i++)
+    {
+        CString sCurrentArg = sArgs.Token(i)
+        if (sCurrentArg.Equals("-sanitize"))
+        {
+            m_bSanitize = true;
+            ++uIndex;
+        }
+        else if (sCurrentArg.Equals("-directories"))
+        {
+            m_bUseDirectories = true
+            ++uIndex;
+        }
+    }
 
 	// Use load parameter as save path
 	m_sLogPath = sArgs.Token(uIndex);
@@ -149,21 +160,21 @@ bool CLogMod::OnLoad(const CString& sArgs, CString& sMessage)
 			if (!m_sLogPath.empty()) {
 				m_sLogPath += "/";
 			}
-			m_sLogPath += "$NETWORK/$WINDOW/%Y%m%d.log";
+			m_sLogPath += m_bUseDirectories ? "$NETWORK/$WINDOW/%Y%m%d.log" : "$NETWORK_$WINDOW_%Y%m%d.log";
 		}
 	} else if (GetType() == CModInfo::NetworkModule) {
 		if (m_sLogPath.Right(1) == "/" || m_sLogPath.find("$WINDOW") == CString::npos) {
 			if (!m_sLogPath.empty()) {
 				m_sLogPath += "/";
 			}
-			m_sLogPath += "$WINDOW/%Y%m%d.log";
+			m_sLogPath += m_bUseDirectories ? "$WINDOW/%Y%m%d.log" : "$WINDOW_%Y%m%d.log";
 		}
 	} else {
 		if (m_sLogPath.Right(1) == "/" || m_sLogPath.find("$USER") == CString::npos || m_sLogPath.find("$WINDOW") == CString::npos || m_sLogPath.find("$NETWORK") == CString::npos) {
 			if (!m_sLogPath.empty()) {
 				m_sLogPath += "/";
 			}
-			m_sLogPath += "$USER/$NETWORK/$WINDOW/%Y%m%d.log";
+			m_sLogPath += m_bUseDirectories ? "$USER/$NETWORK/$WINDOW/%Y%m%d.log" : "$USER_$NETWORK_$WINDOW_%Y%m%d.log";
 		}
 	}
 
