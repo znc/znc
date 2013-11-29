@@ -138,7 +138,7 @@ bool CLogMod::OnLoad(const CString& sArgs, CString& sMessage)
 	size_t uIndex = 0;
     for(int i = 0; i < 2; i++)
     {
-        CString sCurrentArg = sArgs.Token(i)
+        CString sCurrentArg = sArgs.Token(i);
         if (sCurrentArg.Equals("-sanitize"))
         {
             m_bSanitize = true;
@@ -146,7 +146,7 @@ bool CLogMod::OnLoad(const CString& sArgs, CString& sMessage)
         }
         else if (sCurrentArg.Equals("-directories"))
         {
-            m_bUseDirectories = true
+            m_bUseDirectories = true;
             ++uIndex;
         }
     }
