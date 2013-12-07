@@ -49,8 +49,10 @@ public:
 	const CString& GetId() const { return m_sId; }
 	const CString& GetIP() const { return m_sIP; }
 	CUser* GetUser() const { return m_pUser; }
+	time_t GetLastActive() const { return m_tmLastActive; }
 	bool IsLoggedIn() const { return m_pUser != NULL; }
 	bool IsAdmin() const;
+	void UpdateLastActive();
 
 	CUser* SetUser(CUser* p) { m_pUser = p; return m_pUser; }
 
@@ -64,6 +66,7 @@ private:
 	CUser*          m_pUser;
 	VCString        m_vsErrorMsgs;
 	VCString        m_vsSuccessMsgs;
+	time_t          m_tmLastActive;
 };
 
 
