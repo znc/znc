@@ -81,11 +81,31 @@ void CLogMod::PutLog(const CString& sLine, const CString& sWindow /*= "Status"*/
 		DEBUG("Could not format log path [" << sPath << "]");
 		return;
 	}
-
+	
+	rNetwork = (m_pNetwork ? m_pNetwork->GetName() : "znc");
+	rWindow = sWindow.Replace_n("/", "-").Replace_n("\\", "-");
+	rUser = (m_pUser ? m_pUser->GetUserName() : "UNKNOWN");
+	
 	// $WINDOW has to be handled last, since it can contain %
-	sPath.Replace("$NETWORK", (m_pNetwork ? m_pNetwork->GetName() : "znc"));
-	sPath.Replace("$WINDOW", sWindow.Replace_n("/", "-").Replace_n("\\", "-"));
-	sPath.Replace("$USER", (m_pUser ? m_pUser->GetUserName() : "UNKNOWN"));
+	sPath.Replace("$NETWORK", rNetwork);
+	sPath.Replace("$WINDOW", rWindow);
+	sPath.Replace("$USER", rUser);
+	
+	for(int i = 0; rNetwork[i] != '\0'; i++){
+		rNetwork[i] = tolower(rNetwork[i]);
+	}
+	
+	for(int i = 0; rWindow[i] != '\0'; i++){
+		rWindow[i] = tolower(rWindow[i]);
+	}
+	
+	for(int i = 0; rUser[i] != '\0'; i++){
+		rUser[i] = tolower(rUser[i]);
+	}
+
+	sPath.Replace("$LNETWORK", rNetwork);
+	sPath.Replace("$LWINDOW", rWindow);
+	sPath.Replace("$LUSER", rUser);
 
 	// Check if it's allowed to write in this specific path
 	sPath = CDir::CheckPathPrefix(GetSavePath(), sPath);
