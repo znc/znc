@@ -86,6 +86,11 @@ void CLogMod::PutLog(const CString& sLine, const CString& sWindow /*= "Status"*/
 	rWindow = sWindow.Replace_n("/", "-").Replace_n("\\", "-");
 	rUser = (m_pUser ? m_pUser->GetUserName() : "UNKNOWN");
 	
+	// $WINDOW has to be handled last, since it can contain %
+	sPath.Replace("$NETWORK", rNetwork);
+	sPath.Replace("$WINDOW", rWindow);
+	sPath.Replace("$USER", rUser);
+	
 	for(int i = 0; rNetwork[i] != '\0'; i++){
 		rNetwork[i] = tolower(rNetwork[i]);
 	}
@@ -97,11 +102,10 @@ void CLogMod::PutLog(const CString& sLine, const CString& sWindow /*= "Status"*/
 	for(int i = 0; rUser[i] != '\0'; i++){
 		rUser[i] = tolower(rUser[i]);
 	}
-	
-	// $WINDOW has to be handled last, since it can contain %
-	sPath.Replace("$NETWORK", rNetwork);
-	sPath.Replace("$WINDOW", rWindow);
-	sPath.Replace("$USER", rUser);
+
+	sPath.Replace("$LNETWORK", rNetwork);
+	sPath.Replace("$LWINDOW", rWindow);
+	sPath.Replace("$LUSER", rUser);
 
 	// Check if it's allowed to write in this specific path
 	sPath = CDir::CheckPathPrefix(GetSavePath(), sPath);
