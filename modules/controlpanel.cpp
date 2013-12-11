@@ -470,6 +470,69 @@ class CAdminMod : public CModule {
 			PutModule("Error: Unknown variable");
 		}
 	}
+	
+	void AddChan(const CString& sLine) {
+		const CString sUsername   = sLine.Token(1);
+		const CString sNetwork    = sLine.Token(2);
+		const CString sChan       = sLine.Token(3, true);
+		
+		if (sChan.empty()) {
+			PutModule("Usage: addchan <username> <network> <channel>");
+			return;
+		}
+		
+		CUser* pUser = GetUser(sUsername);
+		if (!pUser)
+			return;
+				
+		CIRCNetwork* pNetwork = pUser->FindNetwork(sNetwork);
+		if (!pNetwork) {
+			PutModule("Error: [" + sUsername + "] does not have a network named [" + sNetwork + "].");
+			return;
+		}
+		
+		if (pNetwork->FindChan(sChan)) {
+			PutModule("Error: [" + sUsername + "] already has a channel named [" + sChan + "].");
+			return;
+		}
+		
+		CChan* pChan = new CChan(sChan, pNetwork, true);
+		pNetwork->AddChan(pChan);
+		
+		PutModule("Channel [" + sChan + "] for user [" + sUsername + "] added.");
+	}
+	
+	void DelChan(const CString& sLine) {
+		const CString sUsername   = sLine.Token(1);
+		const CString sNetwork    = sLine.Token(2);
+		const CString sChan       = sLine.Token(3, true);
+		
+		if (sChan.empty()) {
+			PutModule("Usage: delchan <username> <network> <channel>");
+			return;
+		}
+		
+		CUser* pUser = GetUser(sUsername);
+		if (!pUser)
+			return;
+		
+		CIRCNetwork* pNetwork = pUser->FindNetwork(sNetwork);
+		if (!pNetwork) {
+			PutModule("Error: [" + sUsername + "] does not have a network named [" + sNetwork + "].");
+			return;
+		}
+		
+		CChan* pChan = pNetwork->FindChan(sChan);
+		if (!pChan) {
+			PutModule("Error: User [" + sUsername + "] does not have a channel named [" + sChan + "].");
+			return;
+		}
+		
+		pNetwork->DelChan(sChan);
+		pNetwork->PutIRC("PART " + sChan);
+		
+		PutModule("Channel [" + sChan + "] for user [" + sUsername + "] deleted.");
+	}
 
 	void GetChan(const CString& sLine) {
 		const CString sVar  = sLine.Token(1).AsLower();
@@ -1200,6 +1263,10 @@ public:
 			"variable [username] network chan",     "Prints the variable's value for the given channel");
 		AddCommand("SetChan",      static_cast<CModCommand::ModCmdFunc>(&CAdminMod::SetChan),
 			"variable username network chan value", "Sets the variable's value for the given channel");
+		AddCommand("AddChan",      static_cast<CModCommand::ModCmdFunc>(&CAdminMod::AddChan),
+		    "username network channel",             "Adds a new channel");
+		AddCommand("DelChan",      static_cast<CModCommand::ModCmdFunc>(&CAdminMod::DelChan),
+		    "username network channel",             "Deletes a channel");
 		AddCommand("ListUsers",    static_cast<CModCommand::ModCmdFunc>(&CAdminMod::ListUsers),
 			"",                                     "Lists users");
 		AddCommand("AddUser",      static_cast<CModCommand::ModCmdFunc>(&CAdminMod::AddUser),
