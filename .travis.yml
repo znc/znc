@@ -23,4 +23,3 @@ notifications:
             - "irc.shoutcast.com#znc"
         on_success: always
         on_failure: always
-
