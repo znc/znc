@@ -163,6 +163,7 @@ public:
 				 || sMessage.find("choose a different nickname") != CString::npos
 				 || sMessage.find("If this is your nick, identify yourself with") != CString::npos
 				 || sMessage.find("If this is your nick, type") != CString::npos
+				 || sMessage.find("This is a registered nickname, please identify") != CString::npos
 				 || sMessage.StripControls_n().find("type /NickServ IDENTIFY password") != CString::npos)
 				&& sMessage.AsUpper().find("IDENTIFY") != CString::npos
 				&& sMessage.find("help") == CString::npos) {
