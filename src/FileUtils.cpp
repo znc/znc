@@ -671,6 +671,82 @@ int CExecSock::popen2(int & iReadFD, int & iWriteFD, const CString & sCommand) {
 	return iPid;
 }
 
+int CExecSock::popen4(int & iReadFD, int & iWriteFD, int & iExtraFD, int & iWExtraFD, const CString & sCommand)
+{
+	// read pipes
+	int rpipes[2] = { -1, -1 };
+	int xpipes[2] = { -1, -1 };
+	// write pipes
+	int wpipes[2] = { -1, -1 };
+	
+	iReadFD = -1;
+	iWriteFD = -1;
+	iExtraFD = -1;
+	iWExtraFD = -1;
+
+	if (pipe(rpipes) >= 0)
+	{
+		if (pipe(wpipes) >= 0)
+		{
+			if (pipe(xpipes) >= 0)
+			{
+				iWExtraFD = dup(wpipes[1]);
+				if (iWExtraFD >= 0)
+				{
+					int iPid = fork();
+					if (iPid == 0) // if we are the child
+					{
+						close(wpipes[1]);
+						close(rpipes[0]);
+						close(xpipes[0]);
+						dup2(wpipes[0], 0);
+						dup2(rpipes[1], 1);
+						dup2(rpipes[1], 2);
+						dup2(xpipes[1], 3);
+						close(wpipes[0]);
+						close(rpipes[1]);
+						close(xpipes[1]);
+						const char * pArgv[] =
+						{
+							"sh",
+							"-c",
+							sCommand.c_str(),
+							NULL
+						};
+						execvp("sh", (char * const *) pArgv);
+						// if execvp returns, there was an error
+						perror("execvp");
+						exit(1);
+					}
+					else if (iPid > 0) // if we are the parent
+					{
+						close(wpipes[0]);
+						close(rpipes[1]);
+						close(xpipes[1]);
+						iReadFD = rpipes[0];
+						iWriteFD = wpipes[1];
+						iExtraFD = xpipes[0];
+						return iPid;
+					}
+					// if we get here, fork failed
+					close(iWExtraFD);
+				}
+				// if we get here, dup failed
+				close(xpipes[0]);
+				close(xpipes[1]);
+			}
+			// if we get here, pipe(xpipes) failed
+			close(wpipes[0]);
+			close(wpipes[1]);
+		}
+		// if we get here, pipe(wpipes) failed
+		close(rpipes[0]);
+		close(rpipes[1]);
+	}
+	// if we get here, pipe(rpipes) failed
+	return -1;
+}
+
 void CExecSock::close2(int iPid, int iReadFD, int iWriteFD) {
 	close(iReadFD);
 	close(iWriteFD);

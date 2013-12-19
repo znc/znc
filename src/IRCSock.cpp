@@ -672,6 +672,8 @@ void CIRCSock::ReadLine(const CString& sData) {
 			}
 		} else if (sCmd.Equals("NOTICE")) {
 			// :nick!ident@host.com NOTICE #chan :Message
+			// :server.network.what NOTICE MyNick :Message
+			// :server.network.what NOTICE * :Message
 			CString sTarget = sRest.Token(0);
 			CString sMsg = sRest.Token(1, true);
 			sMsg.LeftChomp();
@@ -689,7 +691,11 @@ void CIRCSock::ReadLine(const CString& sData) {
 				m_pNetwork->PutUser(":" + Nick.GetNickMask() + " NOTICE " + sTarget + " :\001" + sMsg + "\001");
 				return;
 			} else {
-				if (sTarget.Equals(GetNick())) {
+				if (Nick.GetNick().find(".") != CString::npos && (sTarget == "*" || sTarget.Equals(GetNick()))) {
+					if (OnServerNotice(Nick, sMsg)) {
+						return;
+					}
+				} else if (sTarget.Equals(GetNick())) {
 					if (OnPrivNotice(Nick, sMsg)) {
 						return;
 					}
@@ -931,6 +937,19 @@ bool CIRCSock::OnGeneralCTCP(CNick& Nick, CString& sMessage) {
 
 		PutIRC("NOTICE " + Nick.GetNick() + " :\001" + sQuery + " " + sReply + "\001");
 		return true;
+	}
+
+	return false;
+}
+
+bool CIRCSock::OnServerNotice(CNick& Nick, CString& sMessage) {
+	bool bResult = false;
+	IRCSOCKMODULECALL(OnServerNotice(Nick, sMessage), &bResult);
+	if (bResult) return true;
+
+	if (!m_pNetwork->IsUserOnline()) {
+		// If the user is detached, add to the buffer
+		m_pNetwork->AddQueryBuffer(":" + _NAMEDFMT(Nick.GetNickMask()) + " NOTICE {target} :{text}", sMessage);
 	}
 
 	return false;

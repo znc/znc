@@ -28,19 +28,34 @@ public:
 		m_iPid = -1;
 	}
 
-	int Execute(const CString & sExec) {
-		int iReadFD, iWriteFD;
-		m_iPid = popen2(iReadFD, iWriteFD, sExec);
-		if (m_iPid != -1) {
-			ConnectFD(iReadFD, iWriteFD, "0.0.0.0:0");
+	int Execute(const CString & sExec, CZNCSock *extrasock = NULL) {
+		if (!extrasock)
+		{
+			int iReadFD, iWriteFD;
+			m_iPid = popen2(iReadFD, iWriteFD, sExec);
+			if (m_iPid != -1) {
+				ConnectFD(iReadFD, iWriteFD, "0.0.0.0:0");
+			}
+			return(m_iPid);
 		}
-		return(m_iPid);
+		else
+		{
+			int iReadFD, iWriteFD, iExtraFD, iWExtraFD;
+			m_iPid = popen4(iReadFD, iWriteFD, iExtraFD, iWExtraFD, sExec);
+			if (m_iPid != -1) {
+				ConnectFD(iReadFD, iWriteFD, "0.0.0.0:0");
+				extrasock->ConnectFD(iExtraFD, iWExtraFD, "0.0.0.0:0");
+			}
+			return(m_iPid);
+		}
 	}
+	
 	void Kill(int iSignal)
 	{
-		kill(m_iPid, iSignal);
+		if (m_iPid != -1) kill(m_iPid, iSignal);
 		Close();
 	}
+	
 	virtual ~CExecSock() {
 		close2(m_iPid, GetRSock(), GetWSock());
 		SetRSock(-1);
@@ -48,6 +63,7 @@ public:
 	}
 
 	int popen2(int & iReadFD, int & iWriteFD, const CString & sCommand);
+	int popen4(int & iReadFD, int & iWriteFD, int & iExtraFD, int & iWExtraFD, const CString & sCommand);
 	void close2(int iPid, int iReadFD, int iWriteFD);
 
 private:
