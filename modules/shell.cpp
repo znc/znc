@@ -26,22 +26,12 @@ class CShellMod;
 
 class CShellSock : public CExecSock {
 public:
-	CShellSock(CShellMod* pShellMod, CClient* pClient) : CExecSock()
-	{
-		m_pParent = pShellMod;
-		m_pClient = pClient;
-		m_bSendToIRCD = true;
-	}
-	
-	CShellSock(CShellMod* pShellMod, CClient* pClient, const CString& sExec, CShellSock *extrasock) : CExecSock()
-	{
-		m_bSendToIRCD = false;
+	CShellSock(CShellMod* pShellMod, CClient* pClient, const CString& sExec) : CExecSock() {
 		EnableReadLine();
-		extrasock->EnableReadLine();
 		m_pParent = pShellMod;
 		m_pClient = pClient;
 
-		if (Execute(sExec, extrasock) == -1) {
+		if (Execute(sExec) == -1) {
 			CString s = "Failed to execute: ";
 			s += strerror(errno);
 			ReadLine(s);
@@ -52,18 +42,7 @@ public:
 		// (And clients expecting input will fail this way).
 		close(GetWSock());
 		SetWSock(open("/dev/null", O_WRONLY));
-		close(extrasock->GetWSock());
-		extrasock->SetWSock(open("/dev/null", O_WRONLY));
-		
-		partner = extrasock;
-		extrasock->partner = this;
 	}
-	
-	virtual ~CShellSock()
-	{
-		if (partner) partner->partner = NULL;
-	}
-	
 	// These next two function's bodies are at the bottom of the file since they reference CShellMod
 	virtual void ReadLine(const CString& sData);
 	virtual void Disconnected();
@@ -72,8 +51,6 @@ public:
 
 private:
 	CClient*   m_pClient;
-	bool	   m_bSendToIRCD;
-	CShellSock *partner;
 };
 
 class CShellMod : public CModule {
@@ -83,7 +60,7 @@ public:
 	}
 
 	virtual ~CShellMod() {
-		vector<Csock*> vSocks = m_pManager->FindSocksByName(shellname);
+		vector<Csock*> vSocks = m_pManager->FindSocksByName("SHELL");
 
 		for (unsigned int a = 0; a < vSocks.size(); a++) {
 			m_pManager->DelSockByAddr(vSocks[a]);
@@ -129,39 +106,22 @@ public:
 		CString sLine = sSource + " PRIVMSG " + m_pClient->GetNick() + " :" + sMsg;
 		m_pClient->PutClient(sLine);
 	}
-	
+
 	void RunCommand(const CString& sCommand) {
-		CShellSock * css_server = new CShellSock(this, m_pClient);
-		CShellSock * css_client = new CShellSock(this, m_pClient, "cd " + m_sPath + " && " + sCommand, css_server);
-		m_pManager->AddSock(css_client, shellname);
-		m_pManager->AddSock(css_server, shellname);
+		m_pManager->AddSock(new CShellSock(this, m_pClient, "cd " + m_sPath + " && " + sCommand), "SHELL");
 	}
 private:
 	CString m_sPath;
-	static const char * const shellname;
 };
 
-const char * const CShellMod::shellname = "SHELL";
-
 void CShellSock::ReadLine(const CString& sData) {
-	DEBUG("ReadLine: (" << m_bSendToIRCD << ")" << sData);
 	CString sLine = sData;
 
 	sLine.TrimRight("\r\n");
-	sLine.Replace("\t", " ");
+	sLine.Replace("\t", "    ");
 
 	m_pParent->SetClient(m_pClient);
-	if (!m_bSendToIRCD)
-	{
-		m_pParent->PutShell(sLine);
-	}
-	else
-	{
-		m_pParent->SetNetwork(m_pClient->GetNetwork());
-		m_pParent->PutShell("IRC <== " + sLine);
-		m_pParent->PutIRC(sLine);
-		m_pParent->SetNetwork(NULL);
-	}
+	m_pParent->PutShell(sLine);
 	m_pParent->SetClient(NULL);
 }
 
@@ -172,12 +132,9 @@ void CShellSock::Disconnected() {
 	if (!sBuffer.empty())
 		ReadLine(sBuffer);
 
-	if (!partner) // the one that dies last reprints the prompt
-	{
-		m_pParent->SetClient(m_pClient);
-		m_pParent->PutShell("znc$");
-		m_pParent->SetClient(NULL);
-	}
+	m_pParent->SetClient(m_pClient);
+	m_pParent->PutShell("znc$");
+	m_pParent->SetClient(NULL);
 }
 
 template<> void TModInfo<CShellMod>(CModInfo& Info) {

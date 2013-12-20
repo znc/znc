@@ -51,7 +51,6 @@ public:
 	bool OnPrivMsg(CNick& Nick, CString& sMessage);
 	bool OnChanMsg(CNick& Nick, const CString& sChan, CString& sMessage);
 	bool OnPrivNotice(CNick& Nick, CString& sMessage);
-	bool OnServerNotice(CNick& Nick, CString& sMessage);
 	bool OnChanNotice(CNick& Nick, const CString& sChan, CString& sMessage);
 	bool OnServerCapAvailable(const CString& sCap);
 	// !Message Handlers

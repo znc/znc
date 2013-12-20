@@ -735,13 +735,7 @@ public:
 	 *  @param sMessage The notice message.
 	 *  @return See CModule::EModRet.
 	 */
-	virtual EModRet OnChanNotice(CNick& Server, CChan& Channel, CString& sMessage);
-	/** Called when we receive a server notice.
-	 *  @param Server The server which sent the notice.
-	 *  @param sMessage The notice message.
-	 *  @return See CModule::EModRet.
-	 */
-	virtual EModRet OnServerNotice(CNick& Nick, CString& sMessage);
+	virtual EModRet OnChanNotice(CNick& Nick, CChan& Channel, CString& sMessage);
 	/** Called when we receive a channel topic change <em>from IRC</em>.
 	 *  @param Nick The nick which changed the topic.
 	 *  @param Channel The channel whose topic was changed.
@@ -1107,7 +1101,6 @@ public:
 	bool OnPrivMsg(CNick& Nick, CString& sMessage);
 	bool OnChanMsg(CNick& Nick, CChan& Channel, CString& sMessage);
 	bool OnPrivNotice(CNick& Nick, CString& sMessage);
-	bool OnServerNotice(CNick& Nick, CString& sMessage);
 	bool OnChanNotice(CNick& Nick, CChan& Channel, CString& sMessage);
 	bool OnTopic(CNick& Nick, CChan& Channel, CString& sTopic);
 	bool OnTimerAutoJoin(CChan& Channel);
