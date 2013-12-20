@@ -62,6 +62,11 @@ public:
 		SetWSock(-1);
 	}
 
+	int GetPID()
+	{
+		return m_iPid;
+	}
+
 	int popen2(int & iReadFD, int & iWriteFD, const CString & sCommand);
 	int popen4(int & iReadFD, int & iWriteFD, int & iExtraFD, int & iWExtraFD, const CString & sCommand);
 	void close2(int iPid, int iReadFD, int iWriteFD);
