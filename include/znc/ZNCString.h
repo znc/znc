@@ -119,13 +119,14 @@ public:
 	template <typename Iterator> CString Join(Iterator i_start, const Iterator &i_end) const
 	{
 		if (i_start == i_end) return CString("");
-		std::ostringstream output(*i_start);
+		std::ostringstream output;
+		output << *i_start;
 		while (true)
 		{
 			++i_start;
 			if (i_start == i_end) return CString(output.str());
-			output << *i_start;
 			output << *this;
+			output << *i_start;
 		}
 	}
 	
