@@ -323,6 +323,11 @@ bool CIRCNetwork::ParseConfig(CConfig *pConfig, CString& sError, bool bUpgrade) 
 				CUtils::PrintMessage("NOTICE: [fakeonline] was renamed, loading [modules_online] instead");
 				sModName = "modules_online";
 			}
+			 // XXX Legacy crap, added in somewhere around ZNC 0.043
+			if (sModName == "awaynick") {
+				CUtils::PrintMessage("NOTICE: [awaynick] was removed.");
+				continue;
+			}
 
 			CUtils::PrintAction("Loading network module [" + sModName + "]");
 			CString sModRet;
