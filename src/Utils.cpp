@@ -314,22 +314,20 @@ void CUtils::PrintAction(const CString& sMessage) {
 
 void CUtils::PrintStatus(bool bSuccess, const CString& sMessage) {
 	if (CDebug::StdoutIsTTY()) {
+		if (bSuccess) {
+			fprintf(stdout, "\033[1m\033[34m[\033[32m ok \033[34m]\033[39m\033[22m");
+		} else {
+			fprintf(stdout, "\033[1m\033[34m[\033[31m !! \033[34m]\033[39m\033[22m");
+		}
 		if (!sMessage.empty()) {
 			if (bSuccess) {
-				fprintf(stdout, "%s", sMessage.c_str());
+				fprintf(stdout, " %s", sMessage.c_str());
 			} else {
 				fprintf(stdout, "\033[1m\033[34m[\033[31m %s \033[34m]"
 						"\033[39m\033[22m", sMessage.c_str());
 			}
 		}
-
-		fprintf(stdout, "\r");
-
-		if (bSuccess) {
-			fprintf(stdout, "\033[1m\033[34m[\033[32m ok \033[34m]\033[39m\033[22m\n");
-		} else {
-			fprintf(stdout, "\033[1m\033[34m[\033[31m !! \033[34m]\033[39m\033[22m\n");
-		}
+		fprintf(stdout, "\n");
 	} else {
 		if (bSuccess) {
 			fprintf(stdout, "%s\n", sMessage.c_str());
