@@ -314,6 +314,7 @@ void CUtils::PrintAction(const CString& sMessage) {
 
 void CUtils::PrintStatus(bool bSuccess, const CString& sMessage) {
 	if (CDebug::StdoutIsTTY()) {
+		fprintf(stdout, "\r");
 		if (bSuccess) {
 			fprintf(stdout, "\033[1m\033[34m[\033[32m ok \033[34m]\033[39m\033[22m");
 		} else {
