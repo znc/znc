@@ -306,7 +306,7 @@ void CUtils::PrintMessage(const CString& sMessage, bool bStrong) {
 
 void CUtils::PrintAction(const CString& sMessage) {
 	if (CDebug::StdoutIsTTY())
-		fprintf(stdout, "\033[1m\033[34m[\033[32m    \033[34m]\033[39m\033[22m %s... ", sMessage.c_str());
+		fprintf(stdout, "\033[1m\033[34m[ .. \033[34m]\033[39m\033[22m %s...\n", sMessage.c_str());
 	else
 		fprintf(stdout, "%s... ", sMessage.c_str());
 	fflush(stdout);
@@ -314,21 +314,12 @@ void CUtils::PrintAction(const CString& sMessage) {
 
 void CUtils::PrintStatus(bool bSuccess, const CString& sMessage) {
 	if (CDebug::StdoutIsTTY()) {
-		if (!sMessage.empty()) {
-			if (bSuccess) {
-				fprintf(stdout, "%s", sMessage.c_str());
-			} else {
-				fprintf(stdout, "\033[1m\033[34m[\033[31m %s \033[34m]"
-						"\033[39m\033[22m", sMessage.c_str());
-			}
-		}
-
-		fprintf(stdout, "\r");
-
 		if (bSuccess) {
-			fprintf(stdout, "\033[1m\033[34m[\033[32m ok \033[34m]\033[39m\033[22m\n");
+			fprintf(stdout, "\033[1m\033[34m[\033[32m ok \033[34m]\033[39m\033[22m");
+			fprintf(stdout, " %s\n", sMessage.empty() ? "ok" : sMessage.c_str());
 		} else {
-			fprintf(stdout, "\033[1m\033[34m[\033[31m !! \033[34m]\033[39m\033[22m\n");
+			fprintf(stdout, "\033[1m\033[34m[\033[31m !! \033[34m]\033[39m\033[22m");
+			fprintf(stdout, "\033[1m\033[31m %s\n", sMessage.empty() ? "failed" : sMessage.c_str());
 		}
 	} else {
 		if (bSuccess) {
