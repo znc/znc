@@ -308,6 +308,7 @@ void CClient::UserCommand(CString& sLine) {
 		}
 
 		CString sArgs = sLine.Token(1, true);
+		sArgs.Trim();
 		CServer *pServer = NULL;
 
 		if (!sArgs.empty()) {
