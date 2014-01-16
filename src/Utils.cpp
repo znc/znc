@@ -274,9 +274,18 @@ bool CUtils::GetInput(const CString& sPrompt, CString& sRet, const CString& sDef
 	return !sRet.empty();
 }
 
+#define BOLD "\033[1m"
+#define NORM "\033[22m"
+
+#define RED "\033[31m"
+#define GRN "\033[32m"
+#define YEL "\033[33m"
+#define BLU "\033[34m"
+#define DFL "\033[39m"
+
 void CUtils::PrintError(const CString& sMessage) {
 	if (CDebug::StdoutIsTTY())
-		fprintf(stdout, "\033[1m\033[34m[\033[31m ** \033[34m]\033[39m\033[22m %s\n", sMessage.c_str());
+		fprintf(stdout, BOLD BLU "[" RED " ** " BLU "]" DFL NORM" %s\n", sMessage.c_str());
 	else
 		fprintf(stdout, "%s\n", sMessage.c_str());
 	fflush(stdout);
@@ -284,7 +293,7 @@ void CUtils::PrintError(const CString& sMessage) {
 
 void CUtils::PrintPrompt(const CString& sMessage) {
 	if (CDebug::StdoutIsTTY())
-		fprintf(stdout, "\033[1m\033[34m[\033[33m ?? \033[34m]\033[39m\033[22m %s: ", sMessage.c_str());
+		fprintf(stdout, BOLD BLU "[" YEL " ?? " BLU "]" DFL NORM " %s: ", sMessage.c_str());
 	else
 		fprintf(stdout, "[ ?? ] %s: ", sMessage.c_str());
 	fflush(stdout);
@@ -293,10 +302,10 @@ void CUtils::PrintPrompt(const CString& sMessage) {
 void CUtils::PrintMessage(const CString& sMessage, bool bStrong) {
 	if (CDebug::StdoutIsTTY()) {
 		if (bStrong)
-			fprintf(stdout, "\033[1m\033[34m[\033[33m ** \033[34m]\033[39m\033[22m \033[1m%s\033[22m\n",
+			fprintf(stdout, BOLD BLU "[" YEL " ** " BLU "]" DFL BOLD "%s" NORM "\n",
 					sMessage.c_str());
 		else
-			fprintf(stdout, "\033[1m\033[34m[\033[33m ** \033[34m]\033[39m\033[22m %s\n",
+			fprintf(stdout, BOLD BLU "[" YEL " ** " BLU "]" DFL NORM " %s\n",
 					sMessage.c_str());
 	} else
 		fprintf(stdout, "%s\n", sMessage.c_str());
@@ -306,7 +315,7 @@ void CUtils::PrintMessage(const CString& sMessage, bool bStrong) {
 
 void CUtils::PrintAction(const CString& sMessage) {
 	if (CDebug::StdoutIsTTY())
-		fprintf(stdout, "\033[1m\033[34m[\033[32m    \033[34m]\033[39m\033[22m %s... ", sMessage.c_str());
+		fprintf(stdout, BOLD BLU "[ .. " BLU "]" DFL NORM " %s...\n", sMessage.c_str());
 	else
 		fprintf(stdout, "%s... ", sMessage.c_str());
 	fflush(stdout);
@@ -314,21 +323,12 @@ void CUtils::PrintAction(const CString& sMessage) {
 
 void CUtils::PrintStatus(bool bSuccess, const CString& sMessage) {
 	if (CDebug::StdoutIsTTY()) {
-		if (!sMessage.empty()) {
-			if (bSuccess) {
-				fprintf(stdout, "%s", sMessage.c_str());
-			} else {
-				fprintf(stdout, "\033[1m\033[34m[\033[31m %s \033[34m]"
-						"\033[39m\033[22m", sMessage.c_str());
-			}
-		}
-
-		fprintf(stdout, "\r");
-
 		if (bSuccess) {
-			fprintf(stdout, "\033[1m\033[34m[\033[32m ok \033[34m]\033[39m\033[22m\n");
+			fprintf(stdout,  BOLD BLU "[" GRN " >> " BLU "]" DFL NORM);
+			fprintf(stdout, " %s\n", sMessage.empty() ? "ok" : sMessage.c_str());
 		} else {
-			fprintf(stdout, "\033[1m\033[34m[\033[31m !! \033[34m]\033[39m\033[22m\n");
+			fprintf(stdout,  BOLD BLU "[" RED " !! " BLU "]" DFL NORM);
+			fprintf(stdout,  BOLD RED " %s" DFL NORM "\n", sMessage.empty() ? "failed" : sMessage.c_str());
 		}
 	} else {
 		if (bSuccess) {
