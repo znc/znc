@@ -126,10 +126,10 @@ AC_DEFUN([AC_PROG_SWIG],[
 					$ac_path_SWIG -python -py3 -c++ -shadow conftest-python.i >&AS_MESSAGE_LOG_FD && \
 						echo "python wrapper created" >&AS_MESSAGE_LOG_FD && \
 						echo "testing std::set... ">&AS_MESSAGE_LOG_FD && \
-						grep SInt_discard conftest.py >& /dev/null && \
+						grep SInt_discard conftest.py > /dev/null 2>&1 && \
 						echo "std::set works" >&AS_MESSAGE_LOG_FD && \
 						echo "testing PyInt_FromSize_t..." >&AS_MESSAGE_LOG_FD && \
-						grep '#define PyInt_FromSize_t' conftest-python_wrap.cxx >& /dev/null && \
+						grep '#define PyInt_FromSize_t' conftest-python_wrap.cxx > /dev/null 2>&1 && \
 						echo "PyInt_FromSize_t is defined" >&AS_MESSAGE_LOG_FD && \
 					$ac_path_SWIG -perl -c++ -shadow conftest-perl.i >&AS_MESSAGE_LOG_FD && \
 						echo "perl wrapper created" >&AS_MESSAGE_LOG_FD && \
