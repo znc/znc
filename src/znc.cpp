@@ -582,7 +582,16 @@ bool CZNC::WriteNewConfig(const CString& sConfigFile) {
 
 	do {
 		bSuccess = true;
-		while (!CUtils::GetNumInput("What port would you like ZNC to listen on?", uListenPort, 1025, 65535)) ;
+		while (true) {
+			if (!CUtils::GetNumInput("What port would you like ZNC to listen on?", uListenPort, 1025, 65535)) {
+				continue;
+			}
+			if (uListenPort == 6667 && !CUtils::GetBoolInput("Warning: Some web browsers reject port 6667. If you intend to use ZNC's web interface, you might want to use another port. Proceed with port 6667 anyway?", true)) {
+				continue;
+			}
+			break;
+		}
+
 
 #ifdef HAVE_LIBSSL
 		if (CUtils::GetBoolInput("Would you like ZNC to listen using SSL?", bListenSSL)) {
