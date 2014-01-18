@@ -474,7 +474,7 @@ class CAdminMod : public CModule {
 	void AddChan(const CString& sLine) {
 		const CString sUsername   = sLine.Token(1);
 		const CString sNetwork    = sLine.Token(2);
-		const CString sChan       = sLine.Token(3, true);
+		const CString sChan       = sLine.Token(3);
 		
 		if (sChan.empty()) {
 			PutModule("Usage: addchan <username> <network> <channel>");
@@ -505,7 +505,7 @@ class CAdminMod : public CModule {
 	void DelChan(const CString& sLine) {
 		const CString sUsername   = sLine.Token(1);
 		const CString sNetwork    = sLine.Token(2);
-		const CString sChan       = sLine.Token(3, true);
+		const CString sChan       = sLine.Token(3);
 		
 		if (sChan.empty()) {
 			PutModule("Usage: delchan <username> <network> <channel>");
