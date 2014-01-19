@@ -69,8 +69,6 @@ appendLD () {
 	fi
 }
 
-appendCXX "-D_FORTIFY_SOURCE=2"
-
 case "${host_os}" in
 	freebsd*)
 		# -D__GNU_LIBRARY__ makes this work on fbsd 4.11
@@ -170,6 +168,24 @@ if test "x$with_systemdsystemunitdir" != xno; then
 	AC_SUBST([systemdsystemunitdir], [$with_systemdsystemunitdir])
 fi
 AM_CONDITIONAL(HAVE_SYSTEMD, [test -n "$with_systemdsystemunitdir" -a "x$with_systemdsystemunitdir" != xno ])
+
+# In old times needed to define _FORTIFY_SOURCE to 2 ourself.
+# Then GCC started to define it itself to 2. It was ok.
+# But then GCC 4.7 started to define it to 0 or 2 depending on optimization level, and it started to conflict with our define.
+AC_MSG_CHECKING([whether compiler predefines _FORTIFY_SOURCE])
+AC_COMPILE_IFELSE([
+	AC_LANG_PROGRAM([[
+	]], [[
+		#ifndef _FORTIFY_SOURCE
+		#error "Just checking, nothing fatal here"
+		#endif
+	]])
+], [
+	AC_MSG_RESULT([yes])
+], [
+	AC_MSG_RESULT([no])
+	appendCXX "-D_FORTIFY_SOURCE=2"
+])
 
 if test "$DEBUG" != "no"; then
 	appendCXX -ggdb3
