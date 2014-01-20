@@ -24,7 +24,7 @@
 //! @author imaginos@imaginos.net
 class CExecSock : public CZNCSock {
 public:
-	CExecSock() : CZNCSock() {
+	CExecSock() : CZNCSock(0) {
 		m_iPid = -1;
 	}
 
