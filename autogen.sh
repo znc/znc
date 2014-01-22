@@ -30,6 +30,13 @@ do_cmd $ACLOCAL    $ACLOCAL_FLAGS
 do_cmd $AUTOHEADER $AUTOHEADER_FLAGS
 # Generate configure
 do_cmd $AUTOCONF   $AUTOCONF_FLAGS
+
+if grep PKG_CHECK_MODULES configure > /dev/null
+then
+	rm configure
+	die "ERROR: pkg-config not found. Install pkg-config and run $0 again"
+fi
+
 # Copy config.sub, config.guess, install.sh, ...
 # This will complain that we don't use automake, let's just ignore that
 do_cmd $AUTOMAKE   $AUTOMAKE_FLAGS || true
@@ -38,11 +45,5 @@ test -f config.guess -a -f config.sub -a -f install-sh ||
 
 echo "(Yes, automake is supposed to fail, ignore that)"
 echo
-
-if grep PKG_CHECK_MODULES configure > /dev/null
-then
-	rm configure
-	die "ERROR: pkg-config not found. Install pkg-config and run $0 again"
-fi
 
 echo "You may now run ./configure."
