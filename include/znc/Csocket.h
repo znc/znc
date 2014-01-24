@@ -61,18 +61,27 @@
 #include <winsock2.h>
 #include <ws2tcpip.h>
 #include <sys/timeb.h>
+
+#ifndef ECONNREFUSED
+// these aliases might or might not be defined in errno.h
+// already, depending on the WinSDK version.
 #define ECONNREFUSED WSAECONNREFUSED
 #define EINPROGRESS WSAEINPROGRESS
 #define ETIMEDOUT WSAETIMEDOUT
 #define EADDRNOTAVAIL WSAEADDRNOTAVAIL
 #define ECONNABORTED WSAECONNABORTED
 #define ENETUNREACH WSAENETUNREACH
+#endif /* ECONNREFUSED */
 
 #endif /* _WIN32 */
 
 #ifdef HAVE_C_ARES
 #include <ares.h>
 #endif /* HAVE_C_ARES */
+
+#ifdef HAVE_ICU
+# include <unicode/ucnv.h>
+#endif
 
 #include <stdlib.h>
 #include <errno.h>
@@ -179,9 +188,9 @@ public:
 	CSSockAddr()
 	{
 		m_bIsIPv6 = false;
-		memset( (struct sockaddr_in *) &m_saddr, '\0', sizeof( m_saddr ) );
+		memset( ( struct sockaddr_in * ) &m_saddr, '\0', sizeof( m_saddr ) );
 #ifdef HAVE_IPV6
-		memset( (struct sockaddr_in6 *) &m_saddr6, '\0', sizeof( m_saddr6 ) );
+		memset( ( struct sockaddr_in6 * ) &m_saddr6, '\0', sizeof( m_saddr6 ) );
 #endif /* HAVE_IPV6 */
 		m_iAFRequire = RAF_ANY;
 	}
@@ -190,11 +199,11 @@ public:
 
 	enum EAFRequire
 	{
-		RAF_ANY		= PF_UNSPEC,
+	    RAF_ANY		= PF_UNSPEC,
 #ifdef HAVE_IPV6
-		RAF_INET6	= AF_INET6,
+	    RAF_INET6	= AF_INET6,
 #endif /* HAVE_IPV6 */
-		RAF_INET	= AF_INET
+	    RAF_INET	= AF_INET
 	};
 
 	void SinFamily();
@@ -287,9 +296,9 @@ template <class T> inline void CS_Delete( T * & p ) { if( p ) { delete p; p = NU
 #ifdef HAVE_LIBSSL
 enum ECompType
 {
-	CT_NONE	= 0,
-	CT_ZLIB	= 1,
-	CT_RLE	= 2
+    CT_NONE	= 0,
+    CT_ZLIB	= 1,
+    CT_RLE	= 2
 };
 
 //! adjusts tv with a new timeout if iTimeoutMS is smaller
@@ -338,7 +347,7 @@ inline void TFD_SET( cs_sock_t iSock, fd_set *set )
 
 inline bool TFD_ISSET( cs_sock_t iSock, fd_set *set )
 {
-	return( FD_ISSET( iSock, set ) );
+	return( FD_ISSET( iSock, set ) != 0 );
 }
 
 inline void TFD_CLR( cs_sock_t iSock, fd_set *set )
@@ -431,37 +440,37 @@ public:
 	 * @param iTimeoutMS the timeout to change to, setting this to -1 (the default)
 	 * @return returning false will remove this from monitoring. The same effect can be had by setting m_bEnabled to false as it is returned from this
 	 */
-	virtual bool GatherFDsForSelect( std::map< int, short > & miiReadyFds, long & iTimeoutMS );
+	virtual bool GatherFDsForSelect( std::map< cs_sock_t, short > & miiReadyFds, long & iTimeoutMS );
 
 	/**
 	 * @brief called when there are fd's belonging to this class that have triggered
 	 * @param miiReadyFds the map of fd's with the bits that triggered them (@see CSockManager::ECheckType)
 	 * @return returning false will remove this from monitoring
 	 */
-	virtual bool FDsThatTriggered( const std::map< int, short > & miiReadyFds ) { return( true ); }
+	virtual bool FDsThatTriggered( const std::map< cs_sock_t, short > & miiReadyFds ) { return( true ); }
 
 	/**
 	 * @brief gets called to diff miiReadyFds with m_miiMonitorFDs, and calls FDsThatTriggered when appropriate. Typically you don't need to reimplement this.
 	 * @param miiReadyFds the map of all triggered fd's, not just the fd's from this class
 	 * @return returning false will remove this from monitoring
 	 */
-	virtual bool CheckFDs( const std::map< int, short > & miiReadyFds );
+	virtual bool CheckFDs( const std::map< cs_sock_t, short > & miiReadyFds );
 
 	/**
 	 * @brief adds a file descriptor to be monitored
 	 * @param iFD the file descriptor
 	 * @param iMonitorEvents bitset of events to monitor for (@see CSockManager::ECheckType)
 	 */
-	void Add( int iFD, short iMonitorEvents ) { m_miiMonitorFDs[iFD] = iMonitorEvents; }
+	void Add( cs_sock_t iFD, short iMonitorEvents ) { m_miiMonitorFDs[iFD] = iMonitorEvents; }
 	//! removes this fd from monitoring
-	void Remove( int iFD ) { m_miiMonitorFDs.erase( iFD ); }
+	void Remove( cs_sock_t iFD ) { m_miiMonitorFDs.erase( iFD ); }
 	//! causes this monitor to be removed
 	void DisableMonitor() { m_bEnabled = false; }
 
 	bool IsEnabled() const { return( m_bEnabled ); }
 
 protected:
-	std::map< int, short > m_miiMonitorFDs;
+	std::map< cs_sock_t, short > m_miiMonitorFDs;
 	bool m_bEnabled;
 };
 
@@ -498,8 +507,8 @@ public:
 	//! delete cron by address
 	virtual void DelCronByAddr( CCron * pcCron );
 
-	void CheckFDs( const std::map< int, short > & miiReadyFds );
-	void AssignFDs( std::map< int, short > & miiReadyFds, struct timeval * tvtimeout );
+	void CheckFDs( const std::map< cs_sock_t, short > & miiReadyFds );
+	void AssignFDs( std::map< cs_sock_t, short > & miiReadyFds, struct timeval * tvtimeout );
 
 	//! add an FD set to monitor
 	void MonitorFD( CSMonitorFD * pMonitorFD ) { m_vcMonitorFD.push_back( pMonitorFD ); }
@@ -555,53 +564,53 @@ public:
 
 	enum ETConn
 	{
-		OUTBOUND			= 0,		//!< outbound connection
-		LISTENER			= 1,		//!< a socket accepting connections
-		INBOUND				= 2			//!< an inbound connection, passed from LISTENER
+	    OUTBOUND			= 0,		//!< outbound connection
+	    LISTENER			= 1,		//!< a socket accepting connections
+	    INBOUND				= 2			//!< an inbound connection, passed from LISTENER
 	};
 
 	enum EFRead
 	{
-		READ_EOF			= 0,		//!< End Of File, done reading
-		READ_ERR			= -1,		//!< Error on the socket, socket closed, done reading
-		READ_EAGAIN			= -2,		//!< Try to get data again
-		READ_CONNREFUSED	= -3,		//!< Connection Refused
-		READ_TIMEDOUT		= -4		//!< Connection timed out
+	    READ_EOF			= 0,		//!< End Of File, done reading
+	    READ_ERR			= -1,		//!< Error on the socket, socket closed, done reading
+	    READ_EAGAIN			= -2,		//!< Try to get data again
+	    READ_CONNREFUSED	= -3,		//!< Connection Refused
+	    READ_TIMEDOUT		= -4		//!< Connection timed out
 	};
 
 	enum EFSelect
 	{
-		SEL_OK				= 0,		//!< Select passed ok
-		SEL_TIMEOUT			= -1,		//!< Select timed out
-		SEL_EAGAIN			= -2,		//!< Select wants you to try again
-		SEL_ERR				= -3		//!< Select recieved an error
+	    SEL_OK				= 0,		//!< Select passed ok
+	    SEL_TIMEOUT			= -1,		//!< Select timed out
+	    SEL_EAGAIN			= -2,		//!< Select wants you to try again
+	    SEL_ERR				= -3		//!< Select recieved an error
 	};
 
 	enum ESSLMethod
 	{
-		SSL23				= 0,
-		SSL2				= 2,
-		SSL3				= 3,
-		TLS1				= 4
+	    SSL23				= 0,
+	    SSL2				= 2,
+	    SSL3				= 3,
+	    TLS1				= 4
 	};
 
 	enum ECONState
 	{
-		CST_START		= 0,
-		CST_DNS			= CST_START,
-		CST_BINDVHOST	= 1,
-		CST_DESTDNS		= 2,
-		CST_CONNECT		= 3,
-		CST_CONNECTSSL	= 4,
-		CST_OK			= 5
+	    CST_START		= 0,
+	    CST_DNS			= CST_START,
+	    CST_BINDVHOST	= 1,
+	    CST_DESTDNS		= 2,
+	    CST_CONNECT		= 3,
+	    CST_CONNECTSSL	= 4,
+	    CST_OK			= 5
 	};
 
 	enum ECloseType
 	{
-		CLT_DONT			= 0, //!< don't close DER
-		CLT_NOW				= 1, //!< close immediatly
-		CLT_AFTERWRITE		= 2, //!< close after finishing writing the buffer
-		CLT_DEREFERENCE		= 3	 //!< used after copy in Csock::Dereference() to cleanup a sock thats being shutdown
+	    CLT_DONT			= 0, //!< don't close DER
+	    CLT_NOW				= 1, //!< close immediatly
+	    CLT_AFTERWRITE		= 2, //!< close after finishing writing the buffer
+	    CLT_DEREFERENCE		= 3	 //!< used after copy in Csock::Dereference() to cleanup a sock thats being shutdown
 	};
 
 	Csock & operator<<( const CS_STRING & s );
@@ -665,7 +674,11 @@ public:
 	virtual bool Write( const char *data, size_t len );
 
 	/**
-	 * convenience function
+	 * @brief Write a text string to the socket
+	 *
+	 * Encoding is used, if set
+	 *
+	 * @param sData the string to send; if encoding is provided, sData should be UTF-8 and will be encoded
 	 * @see Write( const char *, int )
 	 */
 	virtual bool Write( const CS_STRING & sData );
@@ -724,10 +737,10 @@ public:
 	 */
 	enum
 	{
-		TMO_READ	= 1,
-		TMO_WRITE	= 2,
-		TMO_ACCEPT	= 4,
-		TMO_ALL		= TMO_READ|TMO_WRITE|TMO_ACCEPT
+	    TMO_READ	= 1,
+	    TMO_WRITE	= 2,
+	    TMO_ACCEPT	= 4,
+	    TMO_ALL		= TMO_READ|TMO_WRITE|TMO_ACCEPT
 	};
 
 	//! Currently this uses the same value for all timeouts, and iTimeoutType merely states which event will be checked
@@ -837,7 +850,7 @@ public:
 #endif /* HAVE_LIBSSL */
 
 	//! Get the send buffer
-	const CS_STRING & GetWriteBuffer();
+	bool HasWriteBuffer() const;
 	void ClearWriteBuffer();
 
 	//! is SSL_accept finished ?
@@ -862,7 +875,7 @@ public:
 	uint32_t GetRequireClientCertFlags();
 	//! legacy, deprecated @see SetRequireClientCertFlags
 	void SetRequiresClientCert( bool bRequiresCert );
-	//! bitwise flags, 0 means don't require cert, SSL_VERIFY_PEER verifies peers, SSL_VERIFY_FAIL_IF_NO_PEER_CERT will cause the connection to fail if no cert 
+	//! bitwise flags, 0 means don't require cert, SSL_VERIFY_PEER verifies peers, SSL_VERIFY_FAIL_IF_NO_PEER_CERT will cause the connection to fail if no cert
 	void SetRequireClientCertFlags( uint32_t iRequireClientCertFlags ) { m_iRequireClientCertFlags = iRequireClientCertFlags; }
 #endif /* HAVE_LIBSSL */
 
@@ -918,7 +931,7 @@ public:
 	 * as the Socket Manager calls most of these callbacks.
 	 *  With ReadLine, if your not going to use it IE a data stream, @see EnableReadLine()
 	 *
-	 * Ready to Read a full line event
+	 * Ready to Read a full line event. If encoding is provided, this is guaranteed to be UTF-8
 	 */
 	virtual void ReadLine( const CS_STRING & sLine ) {}
 	//! set the value of m_bEnableReadLine to true, we don't want to store a buffer for ReadLine, unless we want it
@@ -1015,8 +1028,8 @@ public:
 
 	enum EDNSLType
 	{
-		DNS_VHOST, //!< this lookup is for the vhost bind
-		DNS_DEST //!< this lookup is for the destination address
+	    DNS_VHOST, //!< this lookup is for the vhost bind
+	    DNS_DEST //!< this lookup is for the destination address
 	};
 
 	/**
@@ -1079,9 +1092,16 @@ public:
 	//! returns the number of max pending connections when type is LISTENER
 	int GetMaxConns() const { return( m_iMaxConns ); }
 
+#ifdef HAVE_ICU
+	void SetEncoding( const CString& sEncoding );
+#endif /* HAVE_ICU */
+
 private:
 	//! making private for safety
 	Csock( const Csock & cCopy ) : CSockCommon() {}
+	//! shrink sendbuff by removing m_uSendBufferPos bytes from m_sSend
+	void ShrinkSendBuff();
+	void IncBuffPos( size_t uBytes );
 
 	// NOTE! if you add any new members, be sure to add them to Copy()
 	uint16_t	m_uPort, m_iRemotePort, m_iLocalPort;
@@ -1095,7 +1115,7 @@ private:
 
 	uint64_t	m_iMaxMilliSeconds, m_iLastSendTime, m_iBytesRead, m_iBytesWritten, m_iStartTime;
 	uint32_t	m_iMaxBytes, m_iMaxStoredBufferLength, m_iTimeoutType;
-	size_t		m_iLastSend;
+	size_t		m_iLastSend, m_uSendBufferPos;
 
 	CSSockAddr 	m_address, m_bindhost;
 	bool		m_bIsIPv6, m_bSkipConnect;
@@ -1129,6 +1149,10 @@ private:
 	int				m_iARESStatus;
 #endif /* HAVE_C_ARES */
 
+#ifdef HAVE_ICU
+	icu::LocalUConverterPointer m_cnvInt, m_cnvIntStrict, m_cnvExt;
+	bool m_cnvTryUTF8;
+#endif
 };
 
 /**
@@ -1347,10 +1371,10 @@ public:
 
 	enum EMessages
 	{
-		SUCCESS			= 0,	//!< Select returned at least 1 fd ready for action
-		SELECT_ERROR	= -1,	//!< An Error Happened, Probably dead socket. That socket is returned if available
-		SELECT_TIMEOUT	= -2,	//!< Select Timeout
-		SELECT_TRYAGAIN	= -3	//!< Select calls for you to try again
+	    SUCCESS			= 0,	//!< Select returned at least 1 fd ready for action
+	    SELECT_ERROR	= -1,	//!< An Error Happened, Probably dead socket. That socket is returned if available
+	    SELECT_TIMEOUT	= -2,	//!< Select Timeout
+	    SELECT_TRYAGAIN	= -3	//!< Select calls for you to try again
 	};
 
 	/**
@@ -1469,16 +1493,16 @@ public:
 	//! this is a strict wrapper around C-api select(). Added in the event you need to do special work here
 	enum ECheckType
 	{
-		ECT_Read = 1,
-		ECT_Write = 2
+	    ECT_Read = 1,
+	    ECT_Write = 2
 	};
 
-	void FDSetCheck( int iFd, std::map< int, short > & miiReadyFds, ECheckType eType );
-	bool FDHasCheck( int iFd, std::map< int, short > & miiReadyFds, ECheckType eType );
+	void FDSetCheck( cs_sock_t iFd, std::map< cs_sock_t, short > & miiReadyFds, ECheckType eType );
+	bool FDHasCheck( cs_sock_t iFd, std::map< cs_sock_t, short > & miiReadyFds, ECheckType eType );
 
 protected:
 
-	virtual int Select( std::map< int, short > & miiReadyFds, struct timeval *tvtimeout );
+	virtual int Select( std::map< cs_sock_t, short > & miiReadyFds, struct timeval *tvtimeout );
 
 private:
 	/**
