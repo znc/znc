@@ -131,6 +131,12 @@ CString CZNC::GetCompileOptionsString() {
 #else
 		"blocking"
 #endif
+		", charset: "
+#ifdef HAVE_ICU
+		"yes"
+#else
+		"no"
+#endif
 	;
 }
 

@@ -653,6 +653,7 @@ UNLOAD = CModule.UNLOAD
 
 HaveSSL = HaveSSL_()
 HaveIPv6 = HaveIPv6_()
+HaveCharset = HaveCharset_()
 Version = GetVersion()
 VersionMajor = GetVersionMajor()
 VersionMinor = GetVersionMinor()

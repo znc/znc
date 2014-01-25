@@ -210,6 +210,13 @@ inline bool HaveSSL_() {
 	return false;
 }
 
+inline bool HaveCharset_() {
+#ifdef HAVE_ICU
+	return true;
+#endif
+	return false;
+}
+
 inline int GetSOMAXCONN() {
 	return SOMAXCONN;
 }
