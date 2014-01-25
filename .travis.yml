@@ -4,7 +4,7 @@ compiler:
     - clang
 before_install:
     - sudo apt-get update -qq
-    - sudo apt-get install -qq libperl-dev python3-dev tcl-dev libsasl2-dev libgtest-dev
+    - sudo apt-get install -qq libperl-dev python3-dev tcl-dev libsasl2-dev libgtest-dev libicu-dev
     - apt-cache show swig
     - ( cd ~ && wget http://prdownloads.sourceforge.net/swig/swig-2.0.8.tar.gz && tar xvf swig-2.0.8.tar.gz && cd swig-2.0.8 && ./configure && make && sudo make install )
 script:
