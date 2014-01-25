@@ -561,7 +561,6 @@ then
 	LIBS="$my_saved_LIBS"
 fi
 
-AM_ICONV
 PKG_CHECK_MODULES([icu], [icu-uc], [
 	appendLib "$icu_LIBS"
 	appendCXX "$icu_CFLAGS"
@@ -599,8 +598,6 @@ AC_SUBST([MODLINK])
 AC_SUBST([NOSSL])
 AC_SUBST([TCL_FLAGS])
 AC_SUBST([CYRUS])
-AC_SUBST([CHARSET])
-AC_SUBST([LIBICONV])
 AC_SUBST([MODDIR])
 AC_SUBST([DATADIR])
 AC_SUBST([PERL])
@@ -638,13 +635,8 @@ if test x"$TCL_FLAGS" = "x" ; then
 else
 	echo "tcl:          yes"
 fi
-if test x"$HAVE_ICONV" = "x" ; then
-	echo "charset:      no"
-else
-	echo "charset:      yes"
-fi
+echo "charset:      $HAVE_ICU"
 echo "zlib:         $ZLIB"
-echo "icu:          $HAVE_ICU"
 echo "run from src: $RUNFROMSOURCE"
 echo
 echo "Now you can run \"$GNUMAKE\" to compile ZNC"

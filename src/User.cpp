@@ -408,6 +408,28 @@ bool CUser::ParseConfig(CConfig* pConfig, CString& sError) {
 			sModName = "modules_online";
 		}
 
+		// XXX Legacy crap, added in 1.3
+		if (sModName == "charset") {
+			CUtils::PrintAction("NOTICE: Charset support was moved to core, importing old charset module settings");
+			size_t uIndex = 1;
+			if (sValue.Token(uIndex).Equals("-force")) {
+				uIndex++;
+			}
+			VCString vsClient, vsServer;
+			sValue.Token(uIndex).Split(",", vsClient);
+			sValue.Token(uIndex + 1).Split(",", vsServer);
+			if (vsClient.empty() || vsServer.empty()) {
+				CUtils::PrintStatus(false, "charset module was loaded with wrong parameters.");
+				continue;
+			}
+			SetClientEncoding(vsClient[0]);
+			for (vector<CIRCNetwork*>::iterator it = m_vIRCNetworks.begin(); it != m_vIRCNetworks.end(); ++it) {
+				(*it)->SetEncoding(vsServer[0]);
+			}
+			CUtils::PrintStatus(true, "Using [" + vsClient[0] + "] for clients, and [" + vsServer[0] + "] for servers");
+			continue;
+		}
+
 		CUtils::PrintAction("Loading user module [" + sModName + "]");
 		CString sModRet;
 		CString sArgs = sValue.Token(1, true);
