@@ -362,10 +362,6 @@ CString CZNC::GetUserPath() const {
 CString CZNC::GetModPath() const {
 	CString sModPath = m_sZNCPath + "/modules";
 
-	if (!CFile::Exists(sModPath)) {
-		CDir::MakeDir(sModPath);
-	}
-
 	return sModPath;
 }
 
