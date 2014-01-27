@@ -207,6 +207,10 @@ class CAdminMod : public CModule {
 			PutModule("Admin = " + CString(pUser->IsAdmin()));
 		else if (sVar == "statusprefix")
 			PutModule("StatusPrefix = " + pUser->GetStatusPrefix());
+#ifdef HAVE_ICU
+		else if (sVar == "clientencoding")
+			PutModule("ClientEncoding = " + pUser->GetClientEncoding());
+#endif
 		else
 			PutModule("Error: Unknown variable");
 	}
@@ -368,6 +372,12 @@ class CAdminMod : public CModule {
 				PutModule("That would be a bad idea!");
 			}
 		}
+#ifdef HAVE_ICU
+		else if (sVar == "clientencoding") {
+			pUser->SetClientEncoding(sValue);
+			PutModule("ClientEncoding = " + sValue);
+		}
+#endif
 		else
 			PutModule("Error: Unknown variable");
 	}
@@ -413,6 +423,10 @@ class CAdminMod : public CModule {
 			PutModule("FloodRate = " + CString(pNetwork->GetFloodRate()));
 		} else if (sVar.Equals("floodburst")) {
 			PutModule("FloodBurst = " + CString(pNetwork->GetFloodBurst()));
+#ifdef HAVE_ICU
+		} else if (sVar.Equals("encoding")) {
+			PutModule("Encoding = " + pNetwork->GetEncoding());
+#endif
 		} else {
 			PutModule("Error: Unknown variable");
 		}
@@ -466,6 +480,11 @@ class CAdminMod : public CModule {
 		} else if (sVar.Equals("floodburst")) {
 			pNetwork->SetFloodBurst(sValue.ToUShort());
 			PutModule("FloodBurst = " + CString(pNetwork->GetFloodBurst()));
+#ifdef HAVE_ICU
+		} else if (sVar.Equals("encoding")) {
+			pNetwork->SetEncoding(sValue);
+			PutModule("Encoding = " + pNetwork->GetEncoding());
+#endif
 		} else {
 			PutModule("Error: Unknown variable");
 		}
