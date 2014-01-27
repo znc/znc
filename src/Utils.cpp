@@ -452,8 +452,10 @@ namespace {
 }
 
 SCString CUtils::GetTimezones() {
-	SCString result;
-	FillTimezones("/usr/share/zoneinfo", result, "");
+	static SCString result;
+	if (result.empty()) {
+		FillTimezones("/usr/share/zoneinfo", result, "");
+	}
 	return result;
 }
 
