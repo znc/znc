@@ -590,19 +590,7 @@ bool CZNC::WriteNewConfig(const CString& sConfigFile) {
 
 
 #ifdef HAVE_LIBSSL
-		if (CUtils::GetBoolInput("Would you like ZNC to listen using SSL?", bListenSSL)) {
-			bListenSSL = true;
-
-			CString sPemFile = GetPemLocation();
-			if (!CFile::Exists(sPemFile)) {
-				CUtils::PrintError("Unable to locate pem file: [" + sPemFile + "]");
-				if (CUtils::GetBoolInput("Would you like to create a new pem file now?",
-							true)) {
-					WritePemFile();
-				}
-			}
-		} else
-			bListenSSL = false;
+		bListenSSL = CUtils::GetBoolInput("Would you like ZNC to listen using SSL?", bListenSSL);
 #endif
 
 #ifdef HAVE_IPV6
@@ -621,6 +609,14 @@ bool CZNC::WriteNewConfig(const CString& sConfigFile) {
 			CUtils::PrintStatus(true);
 		delete pListener;
 	} while (!bSuccess);
+
+#ifdef HAVE_LIBSSL
+	CString sPemFile = GetPemLocation();
+	if (!CFile::Exists(sPemFile)) {
+		CUtils::PrintMessage("Unable to locate pem file: [" + sPemFile + "], creating it");
+		WritePemFile();
+	}
+#endif
 
 	vsLines.push_back("<Listener l>");
 	vsLines.push_back("\tPort = " + CString(uListenPort));
