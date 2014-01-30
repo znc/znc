@@ -20,6 +20,7 @@
 #include <znc/IRCNetwork.h>
 #include <znc/IRCSock.h>
 #include <math.h>
+#include <string.h>
 
 using std::vector;
 using std::set;
@@ -711,6 +712,7 @@ bool CUser::Clone(const CUser& User, CString& sErrorRet, bool bCloneNetworks) {
 	}
 
 	SetNick(GetUserName());
+	SetAltNick(GetUserName() + std::string("___"));
 	SetAltNick(User.GetAltNick(false));
 	SetIdent(User.GetIdent(false));
 	SetRealName(User.GetRealName());
