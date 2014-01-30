@@ -186,7 +186,7 @@ public:
 		else PutModule("Alias does not exist.");
 	}
 
-	void AddCommand(const CString& sLine)
+	void AddToCommand(const CString& sLine)
 	{
 		CString name = sLine.Token(1, false, " ");
 		CAlias add_alias;
@@ -276,7 +276,8 @@ public:
 			for (size_t i = 0; i < info_alias.AliasCmds().size(); ++i)
 			{
 				CString num(i);
-				PutModule(CString(i) + ("    " + ((num.length() > 3) ? 3 : num.length())) + info_alias.AliasCmds()[i]);
+				CString space_padding(4 - (num.length() > 3 ? 3 : num.length()), ' '); // pad num to 4 chars wide, but use at least 1 space
+				PutModule(num + space_padding + info_alias.AliasCmds()[i]);
 			}
 			PutModule("End of actions for alias " + info_alias.GetName() + ".");
 		}
@@ -288,7 +289,7 @@ public:
 		AddHelpCommand();
 		AddCommand("Create", static_cast<CModCommand::ModCmdFunc>(&CAliasMod::CreateCommand), "<name>", "Creates a new, blank alias called name.");
 		AddCommand("Delete", static_cast<CModCommand::ModCmdFunc>(&CAliasMod::DeleteCommand), "<name>", "Deletes an existing alias.");
-		AddCommand("Add", static_cast<CModCommand::ModCmdFunc>(&CAliasMod::AddCommand), "<name> <action ...>", "Adds a line to an existing alias.");
+		AddCommand("Add", static_cast<CModCommand::ModCmdFunc>(&CAliasMod::AddToCommand), "<name> <action ...>", "Adds a line to an existing alias.");
 		AddCommand("Insert", static_cast<CModCommand::ModCmdFunc>(&CAliasMod::InsertCommand), "<name> <pos> <action ...>", "Inserts a line into an existing alias.");
 		AddCommand("Remove", static_cast<CModCommand::ModCmdFunc>(&CAliasMod::RemoveCommand), "<name> <linenum>", "Removes a line from an existing alias.");
 		AddCommand("Clear", static_cast<CModCommand::ModCmdFunc>(&CAliasMod::ClearCommand), "<name>", "Removes all line from an existing alias.");
