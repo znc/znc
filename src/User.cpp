@@ -710,7 +710,7 @@ bool CUser::Clone(const CUser& User, CString& sErrorRet, bool bCloneNetworks) {
 		SetPass(User.GetPass(), User.GetPassHashType(), User.GetPassSalt());
 	}
 
-	SetNick(GetUserName();
+	SetNick(GetUserName());
 	SetAltNick(User.GetAltNick(false));
 	SetIdent(User.GetIdent(false));
 	SetRealName(User.GetRealName());
