@@ -32,7 +32,7 @@ private:
 	CString name;
 	VCString alias_cmds;
 
-public:	
+public:
 	// getters/setters
 	const CString &GetName() const
 	{
@@ -105,9 +105,9 @@ private:
 		bool subsequent = false;
 		size_t index = caret + 1;
 		int token = -1;
-		
+
 		skip = 1;
-		
+
 		if (alias_data.length() > index && alias_data[index] == '?') { optional = true; ++index; }			// try to read optional flag
 		if (alias_data.length() > index && CString(alias_data.substr(index)).Convert(&token))				// try to read integer
 		{
@@ -116,13 +116,13 @@ private:
 		else return;													// token was malformed. leave caret unchanged, and flag first character for skipping
 		if (alias_data.length() > index && alias_data[index] == '+') { subsequent = true; ++index; }			// try to read subsequent flag
 		if (alias_data.length() > index && alias_data[index] == '%') { ++index; }					// try to read end-of-substitution marker
-		else return;	
-		
+		else return;
+
 		CString stok = line.Token(token, subsequent, " ");								// if we get here, we're definitely dealing with a token, so get the token's value
 		if (stok.empty() && !optional)
 			throw std::invalid_argument(CString("missing required parameter: ") + CString(token));			// blow up if token is required and also empty
 		output.append(stok);												// write token value to output
-		
+
 		skip = 0;													// since we're moving the cursor after the end of the token, skip no characters
 		caret = index;													// advance the cursor forward by the size of the token
 	}
@@ -160,11 +160,6 @@ public:
 
 class CAliasMod : public CModule {
 public:
-<<<<<<< HEAD
-	using CModule::AddCommand;
-
-=======
->>>>>>> upstream/master
 	void CreateCommand(const CString& sLine)
 	{
 		CString name = sLine.Token(1, false, " ");
@@ -189,11 +184,7 @@ public:
 		else PutModule("Alias does not exist.");
 	}
 
-<<<<<<< HEAD
-	void AddToCommand(const CString& sLine)
-=======
 	void AddCmd(const CString& sLine)
->>>>>>> upstream/master
 	{
 		CString name = sLine.Token(1, false, " ");
 		CAlias add_alias;
@@ -212,7 +203,7 @@ public:
 		CAlias insert_alias;
 		int index;
 		if (CAlias::AliasGet(insert_alias, this, name))
-		{	
+		{
 			// if Convert succeeds, then i has been successfully read from user input
 			if (!sLine.Token(2, false, " ").Convert(&index) || index < 0 || index > (int) insert_alias.AliasCmds().size())
 			{
@@ -233,7 +224,7 @@ public:
 		CAlias remove_alias;
 		int index;
 		if (CAlias::AliasGet(remove_alias, this, name))
-		{	
+		{
 			if (!sLine.Token(2, false, " ").Convert(&index) || index < 0 || index > (int) remove_alias.AliasCmds().size() - 1)
 			{
 				PutModule("Invalid index.");
@@ -283,12 +274,8 @@ public:
 			for (size_t i = 0; i < info_alias.AliasCmds().size(); ++i)
 			{
 				CString num(i);
-<<<<<<< HEAD
 				CString space_padding(4 - (num.length() > 3 ? 3 : num.length()), ' '); // pad num to 4 chars wide, but use at least 1 space
 				PutModule(num + space_padding + info_alias.AliasCmds()[i]);
-=======
-				PutModule(CString(i) + ("    " + ((num.length() > 3) ? 3 : num.length())) + info_alias.AliasCmds()[i]);
->>>>>>> upstream/master
 			}
 			PutModule("End of actions for alias " + info_alias.GetName() + ".");
 		}
@@ -300,11 +287,7 @@ public:
 		AddHelpCommand();
 		AddCommand("Create", static_cast<CModCommand::ModCmdFunc>(&CAliasMod::CreateCommand), "<name>", "Creates a new, blank alias called name.");
 		AddCommand("Delete", static_cast<CModCommand::ModCmdFunc>(&CAliasMod::DeleteCommand), "<name>", "Deletes an existing alias.");
-<<<<<<< HEAD
-		AddCommand("Add", static_cast<CModCommand::ModCmdFunc>(&CAliasMod::AddToCommand), "<name> <action ...>", "Adds a line to an existing alias.");
-=======
 		AddCommand("Add", static_cast<CModCommand::ModCmdFunc>(&CAliasMod::AddCmd), "<name> <action ...>", "Adds a line to an existing alias.");
->>>>>>> upstream/master
 		AddCommand("Insert", static_cast<CModCommand::ModCmdFunc>(&CAliasMod::InsertCommand), "<name> <pos> <action ...>", "Inserts a line into an existing alias.");
 		AddCommand("Remove", static_cast<CModCommand::ModCmdFunc>(&CAliasMod::RemoveCommand), "<name> <linenum>", "Removes a line from an existing alias.");
 		AddCommand("Clear", static_cast<CModCommand::ModCmdFunc>(&CAliasMod::ClearCommand), "<name>", "Removes all line from an existing alias.");
