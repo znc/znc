@@ -32,7 +32,7 @@ private:
 	CString name;
 	VCString alias_cmds;
 
-public:	
+public:
 	// getters/setters
 	const CString &GetName() const
 	{
@@ -105,9 +105,9 @@ private:
 		bool subsequent = false;
 		size_t index = caret + 1;
 		int token = -1;
-		
+
 		skip = 1;
-		
+
 		if (alias_data.length() > index && alias_data[index] == '?') { optional = true; ++index; }			// try to read optional flag
 		if (alias_data.length() > index && CString(alias_data.substr(index)).Convert(&token))				// try to read integer
 		{
@@ -116,13 +116,13 @@ private:
 		else return;													// token was malformed. leave caret unchanged, and flag first character for skipping
 		if (alias_data.length() > index && alias_data[index] == '+') { subsequent = true; ++index; }			// try to read subsequent flag
 		if (alias_data.length() > index && alias_data[index] == '%') { ++index; }					// try to read end-of-substitution marker
-		else return;	
-		
+		else return;
+
 		CString stok = line.Token(token, subsequent, " ");								// if we get here, we're definitely dealing with a token, so get the token's value
 		if (stok.empty() && !optional)
 			throw std::invalid_argument(CString("missing required parameter: ") + CString(token));			// blow up if token is required and also empty
 		output.append(stok);												// write token value to output
-		
+
 		skip = 0;													// since we're moving the cursor after the end of the token, skip no characters
 		caret = index;													// advance the cursor forward by the size of the token
 	}
@@ -203,7 +203,7 @@ public:
 		CAlias insert_alias;
 		int index;
 		if (CAlias::AliasGet(insert_alias, this, name))
-		{	
+		{
 			// if Convert succeeds, then i has been successfully read from user input
 			if (!sLine.Token(2, false, " ").Convert(&index) || index < 0 || index > (int) insert_alias.AliasCmds().size())
 			{
@@ -224,7 +224,7 @@ public:
 		CAlias remove_alias;
 		int index;
 		if (CAlias::AliasGet(remove_alias, this, name))
-		{	
+		{
 			if (!sLine.Token(2, false, " ").Convert(&index) || index < 0 || index > (int) remove_alias.AliasCmds().size() - 1)
 			{
 				PutModule("Invalid index.");
@@ -274,7 +274,8 @@ public:
 			for (size_t i = 0; i < info_alias.AliasCmds().size(); ++i)
 			{
 				CString num(i);
-				PutModule(CString(i) + ("    " + ((num.length() > 3) ? 3 : num.length())) + info_alias.AliasCmds()[i]);
+				CString space_padding(4 - (num.length() > 3 ? 3 : num.length()), ' '); // pad num to 4 chars wide, but use at least 1 space
+				PutModule(num + space_padding + info_alias.AliasCmds()[i]);
 			}
 			PutModule("End of actions for alias " + info_alias.GetName() + ".");
 		}
@@ -316,7 +317,9 @@ public:
 		}
 		catch (std::exception &e)
 		{
-			PutUser(CString(":znc.in 461 " + GetNetwork()->GetCurNick() + " " + current_alias.GetName() + " :ZNC alias error: ") + e.what());
+			CString current_nick = (GetNetwork() == NULL ? "" : GetNetwork()->GetCurNick());
+			if (current_nick.empty()) current_nick = "*";
+			PutUser(CString(":znc.in 461 " + current_nick + " " + current_alias.GetName() + " :ZNC alias error: ") + e.what());
 			return HALTCORE;
 		}
 
