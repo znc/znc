@@ -1,5 +1,5 @@
 #
-# Copyright (C) 2004-2013 ZNC, see the NOTICE file for details.
+# Copyright (C) 2004-2014 ZNC, see the NOTICE file for details.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -377,6 +377,12 @@ class Module:
     def OnEmbeddedWebRequest(self, WebSock, sPageName, Tmpl):
         pass
 
+    def OnAddNetwork(self, Network, sErrorRet):
+        pass
+
+    def OnDeleteNetwork(self, Network):
+        pass
+
     # Global modules
     def OnAddUser(self, User, sErrorRet):
         pass
@@ -647,6 +653,7 @@ UNLOAD = CModule.UNLOAD
 
 HaveSSL = HaveSSL_()
 HaveIPv6 = HaveIPv6_()
+HaveCharset = HaveCharset_()
 Version = GetVersion()
 VersionMajor = GetVersionMajor()
 VersionMinor = GetVersionMinor()

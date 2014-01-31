@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004-2013 ZNC, see the NOTICE file for details.
+ * Copyright (C) 2004-2014 ZNC, see the NOTICE file for details.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -286,13 +286,13 @@ void CChan::ModeChange(const CString& sModes, const CNick* pOpNick) {
 					if (bAdd) {
 						pNick->AddPerm(uPerm);
 
-						if (pNick->GetNick().Equals(m_pNetwork->GetCurNick())) {
+						if (pNick->NickEquals(m_pNetwork->GetCurNick())) {
 							AddPerm(uPerm);
 						}
 					} else {
 						pNick->RemPerm(uPerm);
 
-						if (pNick->GetNick().Equals(m_pNetwork->GetCurNick())) {
+						if (pNick->NickEquals(m_pNetwork->GetCurNick())) {
 							RemPerm(uPerm);
 						}
 					}
@@ -464,7 +464,7 @@ bool CChan::AddNick(const CString& sNick) {
 		pNick->AddPerm(sPrefix[i]);
 	}
 
-	if (pNick->GetNick().Equals(m_pNetwork->GetCurNick())) {
+	if (pNick->NickEquals(m_pNetwork->GetCurNick())) {
 		for (CString::size_type i = 0; i < sPrefix.length(); i++) {
 			AddPerm(sPrefix[i]);
 		}

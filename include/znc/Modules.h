@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004-2013 ZNC, see the NOTICE file for details.
+ * Copyright (C) 2004-2014 ZNC, see the NOTICE file for details.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -764,6 +764,19 @@ public:
 	 */
 	virtual EModRet OnTimerAutoJoin(CChan& Channel);
 
+	/** This module hook is called when a network is being added.
+	 *  @param Network The new IRC network.
+	 *  @param sErrorRet A message that may be displayed to the user if
+	 *                  the module stops adding the network.
+	 *  @return See CModule::EModRet.
+	 */
+	virtual EModRet OnAddNetwork(CIRCNetwork& Network, CString& sErrorRet);
+	/** This module hook is called when a network is deleted.
+	 *  @param Network The IRC network which is going to be deleted.
+	 *  @return See CModule::EModRet.
+	 */
+	virtual EModRet OnDeleteNetwork(CIRCNetwork& Network);
+
 	ModHandle GetDLL() { return m_pDLL; }
 	static double GetCoreVersion() { return VERSION; }
 
@@ -1104,6 +1117,9 @@ public:
 	bool OnChanNotice(CNick& Nick, CChan& Channel, CString& sMessage);
 	bool OnTopic(CNick& Nick, CChan& Channel, CString& sTopic);
 	bool OnTimerAutoJoin(CChan& Channel);
+
+	bool OnAddNetwork(CIRCNetwork& Network, CString& sErrorRet);
+	bool OnDeleteNetwork(CIRCNetwork& Network);
 
 	bool OnServerCapAvailable(const CString& sCap);
 	bool OnServerCapResult(const CString& sCap, bool bSuccess);

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004-2013 ZNC, see the NOTICE file for details.
+ * Copyright (C) 2004-2014 ZNC, see the NOTICE file for details.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -102,6 +102,7 @@ public:
 	bool IsAuthed() const { return m_bAuthed; }
 	bool IsCapAccepted(const CString& sCap) { return 1 == m_ssAcceptedCaps.count(sCap); }
 	const MCString& GetISupport() const { return m_mISupport; }
+	CString GetISupport(const CString& sKey, const CString& sDefault = "") const;
 	// !Getters
 
 	// This handles NAMESX and UHNAMES in a raw 353 reply

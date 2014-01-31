@@ -31,6 +31,14 @@ INSTALL_DATA    := @INSTALL_DATA@
 GIT := @GIT@
 SED := @SED@
 
+GTEST_DOWNLOAD :=
+GTEST_DIR := @GTEST_DIR@
+ifeq "$(GTEST_DIR)" ""
+GTEST_VER := 1.7.0
+GTEST_DIR := test/gtest-$(GTEST_VER)
+GTEST_DOWNLOAD := 1
+endif
+
 LIB_SRCS  := ZNCString.cpp Csocket.cpp znc.cpp IRCNetwork.cpp User.cpp IRCSock.cpp \
 	Client.cpp Chan.cpp Nick.cpp Server.cpp Modules.cpp MD5.cpp Buffer.cpp Utils.cpp \
 	FileUtils.cpp HTTPSock.cpp Template.cpp ClientCommand.cpp Socket.cpp SHA256.cpp \
@@ -39,9 +47,11 @@ LIB_SRCS  := $(addprefix src/,$(LIB_SRCS))
 BIN_SRCS  := src/main.cpp
 LIB_OBJS  := $(patsubst %cpp,%o,$(LIB_SRCS))
 BIN_OBJS  := $(patsubst %cpp,%o,$(BIN_SRCS))
-CLEAN     := znc src/*.o core core.* .version_extra
-DISTCLEAN := Makefile config.log config.status znc-buildmod .depend \
-	modules/.depend modules/Makefile man/Makefile znc.pc znc-uninstalled.pc
+TESTS     := StringTest ConfigTest
+TESTS     := $(addprefix test/,$(addsuffix .o,$(TESTS)))
+CLEAN     := znc src/*.o test/*.o core core.* .version_extra .depend modules/.depend
+DISTCLEAN := Makefile config.log config.status znc-buildmod \
+	modules/Makefile man/Makefile znc.pc znc-uninstalled.pc test/Makefile
 
 CXXFLAGS += -D_MODDIR_=\"$(MODDIR)\" -D_DATADIR_=\"$(DATADIR)\"
 
@@ -58,7 +68,7 @@ E=@\#
 C=
 endif
 
-.PHONY: all man modules clean distclean install version_extra_recompile
+.PHONY: all man modules clean distclean install version_extra_recompile test
 .SECONDARY:
 
 all: znc man modules $(LIBZNC)
@@ -72,6 +82,7 @@ OBJS := $(BIN_OBJS) $(LIB_OBJS)
 znc: $(OBJS)
 	$(E) Linking znc...
 	$(Q)$(CXX) $(LDFLAGS) -o $@ $(OBJS) $(LIBS)
+
 else
 znc: $(BIN_OBJS) $(LIBZNC)
 	$(E) Linking znc...
@@ -81,6 +92,10 @@ $(LIBZNC): $(LIB_OBJS)
 	$(E) Linking $(LIBZNC)...
 	$(Q)$(CXX) $(LDFLAGS) -shared -o $@ $(LIB_OBJS) $(LIBS)
 endif
+
+unittest: $(LIB_OBJS) test/gtest-all.o test/gtest-main.o $(TESTS)
+	$(E) Linking unit test...
+	$(Q)$(CXX) $(LDFLAGS) -o $@ $(LIB_OBJS) test/gtest-all.o test/gtest-main.o $(TESTS) $(LIBS)
 
 man:
 	@$(MAKE) -C man $(C)
@@ -101,6 +116,34 @@ src/%.o: src/%.cpp Makefile
 	$(E) Building core object $*...
 	$(Q)$(CXX) $(CXXFLAGS) -c -o $@ $< -MD -MF .depend/$*.dep -MT $@
 
+test/%.o: test/%.cpp Makefile
+	@mkdir -p .depend test
+	$(E) Building test object $*...
+	$(Q)$(CXX) $(CXXFLAGS) -I$(GTEST_DIR)/include -c -o $@ $< -MD -MF .depend/$*.test.dep -MT $@
+
+test/gtest-all.o: $(GTEST_DIR)/src/gtest-all.cc Makefile
+	@mkdir -p .depend test
+	$(E) Building test object gtest-all...
+	$(Q)$(CXX) $(CXXFLAGS) -I$(GTEST_DIR)/include -I$(GTEST_DIR) -c -o $@ $< -MD -MF .depend/gtest-all.dep -MT $@
+
+test/gtest-main.o: $(GTEST_DIR)/src/gtest_main.cc Makefile
+	@mkdir -p .depend test
+	$(E) Building test object gtest-main...
+	$(Q)$(CXX) $(CXXFLAGS) -I$(GTEST_DIR)/include -c -o $@ $< -MD -MF .depend/gtest-main.dep -MT $@
+
+ifneq "$(GTEST_DOWNLOAD)" ""
+test/gtest.zip:
+	@mkdir -p .depend test
+	$(E) Downloading GoogleTest $(GTEST_VER)
+	$(Q)wget http://googletest.googlecode.com/files/gtest-$(GTEST_VER).zip -O $@
+
+$(GTEST_DIR)/src/gtest-all.cc $(GTEST_DIR)/src/gtest_main.cc $(GTEST_DIR)/include/gtest/gtest.h: test/gtest.zip
+	$(E) Unpacking GoogleTest $(GTEST_VER)
+	$(Q)test -r $@ || unzip $^ -d test/
+	$(Q)test -r $@
+	$(Q)touch -c $@
+endif
+
 ifneq "THIS_IS_NOT_NIGHTLY" ""
 # If git commit was changed since previous build, add a phony target to dependencies, forcing version.o to be recompiled
 # Nightlies have pregenerated version.cpp
@@ -108,6 +151,8 @@ src/version.cpp: Makefile version.sh $(shell if [ x`cat .version_extra 2> /dev/n
 	@mkdir -p .depend src
 	$(E) Building source file version.cpp...
 	$(Q)WRITE_OUTPUT=yes $(srcdir)/version.sh "$(GIT)" > .version_extra 2> /dev/null
+
+CLEAN += src/version.cpp
 endif
 
 install: znc $(LIBZNC)
@@ -159,5 +204,8 @@ uninstall:
 	rmdir $(DESTDIR)$(includedir)/znc
 	rmdir $(DESTDIR)$(PKGCONFIGDIR)
 	@echo "Successfully uninstalled, but empty directories were left behind"
+
+test: unittest
+	$(Q)./unittest
 
 -include $(wildcard .depend/*.dep)

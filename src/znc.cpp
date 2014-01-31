@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004-2013 ZNC, see the NOTICE file for details.
+ * Copyright (C) 2004-2014 ZNC, see the NOTICE file for details.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -130,6 +130,12 @@ CString CZNC::GetCompileOptionsString() {
 		"threads"
 #else
 		"blocking"
+#endif
+		", charset: "
+#ifdef HAVE_ICU
+		"yes"
+#else
+		"no"
 #endif
 	;
 }
@@ -484,6 +490,10 @@ bool CZNC::WriteConfig() {
 		config.AddKeyValuePair("BindHost", m_vsBindHosts[v].FirstLine());
 	}
 
+	for (unsigned int v = 0; v < m_vsTrustedProxies.size(); v++) {
+		config.AddKeyValuePair("TrustedProxy", m_vsTrustedProxies[v].FirstLine());
+	}
+
 	CModules& Mods = GetModules();
 
 	for (unsigned int a = 0; a < Mods.size(); a++) {
@@ -578,22 +588,19 @@ bool CZNC::WriteNewConfig(const CString& sConfigFile) {
 
 	do {
 		bSuccess = true;
-		while (!CUtils::GetNumInput("What port would you like ZNC to listen on?", uListenPort, 1025, 65535)) ;
+		while (true) {
+			if (!CUtils::GetNumInput("What port would you like ZNC to listen on?", uListenPort, 1025, 65535)) {
+				continue;
+			}
+			if (uListenPort == 6667 && !CUtils::GetBoolInput("Warning: Some web browsers reject port 6667. If you intend to use ZNC's web interface, you might want to use another port. Proceed with port 6667 anyway?", true)) {
+				continue;
+			}
+			break;
+		}
+
 
 #ifdef HAVE_LIBSSL
-		if (CUtils::GetBoolInput("Would you like ZNC to listen using SSL?", bListenSSL)) {
-			bListenSSL = true;
-
-			CString sPemFile = GetPemLocation();
-			if (!CFile::Exists(sPemFile)) {
-				CUtils::PrintError("Unable to locate pem file: [" + sPemFile + "]");
-				if (CUtils::GetBoolInput("Would you like to create a new pem file now?",
-							true)) {
-					WritePemFile();
-				}
-			}
-		} else
-			bListenSSL = false;
+		bListenSSL = CUtils::GetBoolInput("Would you like ZNC to listen using SSL?", bListenSSL);
 #endif
 
 #ifdef HAVE_IPV6
@@ -612,6 +619,14 @@ bool CZNC::WriteNewConfig(const CString& sConfigFile) {
 			CUtils::PrintStatus(true);
 		delete pListener;
 	} while (!bSuccess);
+
+#ifdef HAVE_LIBSSL
+	CString sPemFile = GetPemLocation();
+	if (!CFile::Exists(sPemFile)) {
+		CUtils::PrintMessage("Unable to locate pem file: [" + sPemFile + "], creating it");
+		WritePemFile();
+	}
+#endif
 
 	vsLines.push_back("<Listener l>");
 	vsLines.push_back("\tPort = " + CString(uListenPort));
@@ -1110,6 +1125,7 @@ bool CZNC::DoRehash(CString& sError)
 	}
 
 	m_vsBindHosts.clear();
+	m_vsTrustedProxies.clear();
 	m_vsMotd.clear();
 
 	// Delete all listeners
@@ -1203,6 +1219,12 @@ bool CZNC::DoRehash(CString& sError)
 	for (vit = vsList.begin(); vit != vsList.end(); ++vit) {
 		AddBindHost(*vit);
 	}
+
+	config.FindStringVector("trustedproxy", vsList);
+	for (vit = vsList.begin(); vit != vsList.end(); ++vit) {
+		AddTrustedProxy(*vit);
+	}
+
 	config.FindStringVector("vhost", vsList);
 	for (vit = vsList.begin(); vit != vsList.end(); ++vit) {
 		AddBindHost(*vit);
@@ -1419,6 +1441,37 @@ bool CZNC::RemBindHost(const CString& sHost) {
 	for (it = m_vsBindHosts.begin(); it != m_vsBindHosts.end(); ++it) {
 		if (sHost.Equals(*it)) {
 			m_vsBindHosts.erase(it);
+			return true;
+		}
+	}
+
+	return false;
+}
+
+void CZNC::ClearTrustedProxies() {
+	m_vsTrustedProxies.clear();
+}
+
+bool CZNC::AddTrustedProxy(const CString& sHost) {
+	if (sHost.empty()) {
+		return false;
+	}
+
+	for (unsigned int a = 0; a < m_vsTrustedProxies.size(); a++) {
+		if (m_vsTrustedProxies[a].Equals(sHost)) {
+			return false;
+		}
+	}
+
+	m_vsTrustedProxies.push_back(sHost);
+	return true;
+}
+
+bool CZNC::RemTrustedProxy(const CString& sHost) {
+	VCString::iterator it;
+	for (it = m_vsTrustedProxies.begin(); it != m_vsTrustedProxies.end(); ++it) {
+		if (sHost.Equals(*it)) {
+			m_vsTrustedProxies.erase(it);
 			return true;
 		}
 	}

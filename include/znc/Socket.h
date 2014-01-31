@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004-2013 ZNC, see the NOTICE file for details.
+ * Copyright (C) 2004-2014 ZNC, see the NOTICE file for details.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30,6 +30,11 @@ public:
 	~CZNCSock() {}
 
 	virtual int ConvertAddress(const struct sockaddr_storage * pAddr, socklen_t iAddrLen, CS_STRING & sIP, u_short * piPort);
+
+#ifndef HAVE_ICU
+	// Don't fail to compile when ICU is not enabled
+	void SetEncoding(const CString&) {}
+#endif
 };
 
 enum EAddrType {

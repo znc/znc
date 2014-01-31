@@ -160,8 +160,11 @@ public:
 
 class CAliasMod : public CModule {
 public:
+<<<<<<< HEAD
 	using CModule::AddCommand;
 
+=======
+>>>>>>> upstream/master
 	void CreateCommand(const CString& sLine)
 	{
 		CString name = sLine.Token(1, false, " ");
@@ -186,7 +189,11 @@ public:
 		else PutModule("Alias does not exist.");
 	}
 
+<<<<<<< HEAD
 	void AddToCommand(const CString& sLine)
+=======
+	void AddCmd(const CString& sLine)
+>>>>>>> upstream/master
 	{
 		CString name = sLine.Token(1, false, " ");
 		CAlias add_alias;
@@ -276,8 +283,12 @@ public:
 			for (size_t i = 0; i < info_alias.AliasCmds().size(); ++i)
 			{
 				CString num(i);
+<<<<<<< HEAD
 				CString space_padding(4 - (num.length() > 3 ? 3 : num.length()), ' '); // pad num to 4 chars wide, but use at least 1 space
 				PutModule(num + space_padding + info_alias.AliasCmds()[i]);
+=======
+				PutModule(CString(i) + ("    " + ((num.length() > 3) ? 3 : num.length())) + info_alias.AliasCmds()[i]);
+>>>>>>> upstream/master
 			}
 			PutModule("End of actions for alias " + info_alias.GetName() + ".");
 		}
@@ -289,7 +300,11 @@ public:
 		AddHelpCommand();
 		AddCommand("Create", static_cast<CModCommand::ModCmdFunc>(&CAliasMod::CreateCommand), "<name>", "Creates a new, blank alias called name.");
 		AddCommand("Delete", static_cast<CModCommand::ModCmdFunc>(&CAliasMod::DeleteCommand), "<name>", "Deletes an existing alias.");
+<<<<<<< HEAD
 		AddCommand("Add", static_cast<CModCommand::ModCmdFunc>(&CAliasMod::AddToCommand), "<name> <action ...>", "Adds a line to an existing alias.");
+=======
+		AddCommand("Add", static_cast<CModCommand::ModCmdFunc>(&CAliasMod::AddCmd), "<name> <action ...>", "Adds a line to an existing alias.");
+>>>>>>> upstream/master
 		AddCommand("Insert", static_cast<CModCommand::ModCmdFunc>(&CAliasMod::InsertCommand), "<name> <pos> <action ...>", "Inserts a line into an existing alias.");
 		AddCommand("Remove", static_cast<CModCommand::ModCmdFunc>(&CAliasMod::RemoveCommand), "<name> <linenum>", "Removes a line from an existing alias.");
 		AddCommand("Clear", static_cast<CModCommand::ModCmdFunc>(&CAliasMod::ClearCommand), "<name>", "Removes all line from an existing alias.");
@@ -319,7 +334,9 @@ public:
 		}
 		catch (std::exception &e)
 		{
-			PutUser(CString(":znc.in 461 " + GetNetwork()->GetCurNick() + " " + current_alias.GetName() + " :ZNC alias error: ") + e.what());
+			CString current_nick = (GetNetwork() == NULL ? "" : GetNetwork()->GetCurNick());
+			if (current_nick.empty()) current_nick = "*";
+			PutUser(CString(":znc.in 461 " + current_nick + " " + current_alias.GetName() + " :ZNC alias error: ") + e.what());
 			return HALTCORE;
 		}
 

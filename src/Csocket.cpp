@@ -1,4 +1,4 @@
-/** 
+/**
  * @file Csocket.cc
  * @author Jim Hull <csocket@jimloco.com>
  *
@@ -49,6 +49,11 @@
 #include <openssl/engine.h>
 #endif /* HAVE_LIBSSL */
 
+#ifdef HAVE_ICU
+#include <unicode/errorcode.h>
+#endif /* HAVE_ICU */
+
+#include <list>
 
 #define CS_SRANDBUFFER 128
 
@@ -84,9 +89,9 @@ static int inet_pton( int af, const char *src, void *dst )
 	if( iRet == 0 )
 	{
 		if( af == AF_INET6 )
-			memcpy( dst, &((sockaddr_in6 *) &aAddress )->sin6_addr, sizeof( in6_addr ) );
+			memcpy( dst, &( ( sockaddr_in6 * ) &aAddress )->sin6_addr, sizeof( in6_addr ) );
 		else
-			memcpy( dst, &((sockaddr_in *) &aAddress )->sin_addr, sizeof( in_addr ) );
+			memcpy( dst, &( ( sockaddr_in * ) &aAddress )->sin_addr, sizeof( in_addr ) );
 		return( 1 );
 	}
 	return( -1 );
@@ -187,7 +192,7 @@ static int _PemPassCB( char *pBuff, int iBuffLen, int rwflag, void * pcSocket )
 	memset( pBuff, '\0', iBuffLen );
 	if( sPassword.empty() )
 		return( 0 );
-	int iUseBytes = min( iBuffLen - 1, (int)sPassword.length() );
+	int iUseBytes = min( iBuffLen - 1, ( int )sPassword.length() );
 	memcpy( pBuff, sPassword.data(), iUseBytes );
 	return( iUseBytes );
 }
@@ -208,9 +213,9 @@ static int _CertVerifyCB( int preverify_ok, X509_STORE_CTX *x509_ctx )
 Csock * GetCsockFromCTX( X509_STORE_CTX * pCTX )
 {
 	Csock * pSock = NULL;
-	SSL * pSSL = (SSL *) X509_STORE_CTX_get_ex_data( pCTX, SSL_get_ex_data_X509_STORE_CTX_idx() );
+	SSL * pSSL = ( SSL * ) X509_STORE_CTX_get_ex_data( pCTX, SSL_get_ex_data_X509_STORE_CTX_idx() );
 	if( pSSL )
-		pSock = (Csock *) SSL_get_ex_data( pSSL, GetCsockClassIdx() );
+		pSock = ( Csock * ) SSL_get_ex_data( pSSL, GetCsockClassIdx() );
 	return( pSock );
 }
 #endif /* HAVE_LIBSSL */
@@ -232,7 +237,7 @@ static int __GetHostByName( const CS_STRING & sHostName, struct in_addr * paddr,
 	int err;
 	for( u_int a = 0; a < iNumRetries; ++a )
 	{
-		memset( (char *) hbuff, '\0', 2048 );
+		memset( ( char * ) hbuff, '\0', 2048 );
 		iReturn = gethostbyname_r( sHostName.c_str(), &hentbuff, hbuff, 2048, &hent, &err );
 
 		if( iReturn == 0 )
@@ -324,7 +329,7 @@ static void AresHostCallback( void * pArg, int status, int timeouts, struct host
 #endif /* HAVE_C_ARES */
 
 CGetAddrInfo::CGetAddrInfo( const CS_STRING & sHostname, Csock * pSock, CSSockAddr & csSockAddr )
-							: m_pSock( pSock ), m_csSockAddr( csSockAddr )
+	: m_pSock( pSock ), m_csSockAddr( csSockAddr )
 {
 	m_sHostname = sHostname;
 	m_pAddrRes = NULL;
@@ -340,7 +345,7 @@ CGetAddrInfo::~CGetAddrInfo()
 
 void CGetAddrInfo::Init()
 {
-	memset(( struct addrinfo * )&m_cHints, '\0', sizeof( m_cHints ) );
+	memset( ( struct addrinfo * )&m_cHints, '\0', sizeof( m_cHints ) );
 	m_cHints.ai_family = m_csSockAddr.GetAFRequire();
 
 	m_cHints.ai_socktype = SOCK_STREAM;
@@ -377,13 +382,13 @@ int CGetAddrInfo::Finish()
 		{
 			// pass through the list building out a lean list of candidates to try. AI_CONFIGADDR doesn't always seem to work
 #ifdef __sun
-			if( (pRes->ai_socktype != SOCK_STREAM) || (pRes->ai_protocol != IPPROTO_TCP && pRes->ai_protocol != IPPROTO_IP) )
+			if( ( pRes->ai_socktype != SOCK_STREAM ) || ( pRes->ai_protocol != IPPROTO_TCP && pRes->ai_protocol != IPPROTO_IP ) )
 #else
-			if( (pRes->ai_socktype != SOCK_STREAM) || (pRes->ai_protocol != IPPROTO_TCP) )
+			if( ( pRes->ai_socktype != SOCK_STREAM ) || ( pRes->ai_protocol != IPPROTO_TCP ) )
 #endif /* __sun work around broken impl of getaddrinfo */
 				continue;
 
-			if( (m_csSockAddr.GetAFRequire() != CSSockAddr::RAF_ANY) && (pRes->ai_family != m_csSockAddr.GetAFRequire()) )
+			if( ( m_csSockAddr.GetAFRequire() != CSSockAddr::RAF_ANY ) && ( pRes->ai_family != m_csSockAddr.GetAFRequire() ) )
 				continue; // they requested a special type, so be certain we woop past anything unwanted
 			lpTryAddrs.push_back( pRes );
 		}
@@ -478,12 +483,12 @@ int Csock::ConvertAddress( const struct sockaddr_storage * pAddr, socklen_t iAdd
 {
 	char szHostname[NI_MAXHOST];
 	char szServ[NI_MAXSERV];
-	int iRet = getnameinfo(( const struct sockaddr * )pAddr, iAddrLen, szHostname, NI_MAXHOST, szServ, NI_MAXSERV, NI_NUMERICHOST|NI_NUMERICSERV );
+	int iRet = getnameinfo( ( const struct sockaddr * )pAddr, iAddrLen, szHostname, NI_MAXHOST, szServ, NI_MAXSERV, NI_NUMERICHOST|NI_NUMERICSERV );
 	if( iRet == 0 )
 	{
 		sIP = szHostname;
 		if( piPort )
-			*piPort = (uint16_t)atoi( szServ );
+			*piPort = ( uint16_t )atoi( szServ );
 	}
 	return( iRet );
 }
@@ -580,11 +585,11 @@ bool InitSSL( ECompType eCompressionType )
 void SSLErrors( const char *filename, u_int iLineNum )
 {
 	unsigned long iSSLError = 0;
-	while(( iSSLError = ERR_get_error() ) != 0 )
+	while( ( iSSLError = ERR_get_error() ) != 0 )
 	{
 		CS_DEBUG( "at " << filename << ":" << iLineNum );
 		char szError[512];
-		memset(( char * ) szError, '\0', 512 );
+		memset( ( char * ) szError, '\0', 512 );
 		ERR_error_string_n( iSSLError, szError, 511 );
 		if( *szError )
 			CS_DEBUG( szError );
@@ -613,7 +618,7 @@ static const char * CS_StrError( int iErrno, char * pszBuff, size_t uBuffLen )
 	return( strerror( iErrno ) );
 #else
 	memset( pszBuff, '\0', uBuffLen );
-#if !defined( _GNU_SOURCE )
+#if !defined( _GNU_SOURCE ) || defined( __FreeBSD__ )
 	if( strerror_r( iErrno, pszBuff, uBuffLen ) == 0 )
 		return( pszBuff );
 #else
@@ -641,7 +646,7 @@ uint64_t millitime()
 	struct timeval tv;
 	gettimeofday( &tv, NULL );
 	iTime = ( uint64_t )tv.tv_sec * 1000;
-	iTime += (( uint64_t )tv.tv_usec / 1000 );
+	iTime += ( ( uint64_t )tv.tv_usec / 1000 );
 #endif /* _WIN32 */
 	return( iTime );
 }
@@ -671,7 +676,7 @@ void CCron::run( timeval & tNow )
 	if( !timerisset( &tNow ) )
 		gettimeofday( &tNow, NULL );
 
-	if( m_bActive && (!timercmp( &tNow, &m_tTime, < ) || m_bRunOnNextCall) )
+	if( m_bActive && ( !timercmp( &tNow, &m_tTime, < ) || m_bRunOnNextCall ) )
 	{
 		m_bRunOnNextCall = false; // Setting this here because RunJob() could set it back to true
 		RunJob();
@@ -686,9 +691,9 @@ void CCron::run( timeval & tNow )
 void CCron::StartMaxCycles( double dTimeSequence, u_int iMaxCycles )
 {
 	timeval tNow;
-	m_tTimeSequence.tv_sec = (time_t) dTimeSequence;
+	m_tTimeSequence.tv_sec = ( time_t ) dTimeSequence;
 	// this could be done with modf(), but we're avoiding bringing in libm just for the one function.
-	m_tTimeSequence.tv_usec = (suseconds_t) ((dTimeSequence - (double) ((time_t) dTimeSequence)) * 1000000);
+	m_tTimeSequence.tv_usec = ( suseconds_t )( ( dTimeSequence - ( double )( ( time_t ) dTimeSequence ) ) * 1000000 );
 	gettimeofday( &tNow, NULL );
 	timeradd( &tNow, &m_tTimeSequence, &m_tTime );
 	m_iMaxCycles = iMaxCycles;
@@ -730,29 +735,29 @@ void CCron::UnPause()
 
 timeval CCron::GetInterval() const { return( m_tTimeSequence ); }
 u_int CCron::GetMaxCycles() const { return( m_iMaxCycles ); }
-u_int CCron::GetCyclesLeft() const { return(( m_iMaxCycles > m_iCycles ? ( m_iMaxCycles - m_iCycles ) : 0 ) ); }
+u_int CCron::GetCyclesLeft() const { return( ( m_iMaxCycles > m_iCycles ? ( m_iMaxCycles - m_iCycles ) : 0 ) ); }
 
 bool CCron::isValid() { return( m_bActive ); }
 const CS_STRING & CCron::GetName() const { return( m_sName ); }
 void CCron::SetName( const CS_STRING & sName ) { m_sName = sName; }
 void CCron::RunJob() { CS_DEBUG( "This should be overridden" ); }
 
-bool CSMonitorFD::GatherFDsForSelect( std::map< int, short > & miiReadyFds, long & iTimeoutMS )
+bool CSMonitorFD::GatherFDsForSelect( std::map< cs_sock_t, short > & miiReadyFds, long & iTimeoutMS )
 {
 	iTimeoutMS = -1; // don't bother changing anything in the default implementation
-	for( std::map< int, short >::iterator it = m_miiMonitorFDs.begin(); it != m_miiMonitorFDs.end(); ++it )
+	for( std::map< cs_sock_t, short >::iterator it = m_miiMonitorFDs.begin(); it != m_miiMonitorFDs.end(); ++it )
 	{
 		miiReadyFds[it->first] = it->second;
 	}
 	return( m_bEnabled );
 }
 
-bool CSMonitorFD::CheckFDs( const std::map< int, short > & miiReadyFds )
+bool CSMonitorFD::CheckFDs( const std::map< cs_sock_t, short > & miiReadyFds )
 {
-	std::map< int, short > miiTriggerdFds;
-	for( std::map< int, short >::iterator it = m_miiMonitorFDs.begin(); it != m_miiMonitorFDs.end(); ++it )
+	std::map< cs_sock_t, short > miiTriggerdFds;
+	for( std::map< cs_sock_t, short >::iterator it = m_miiMonitorFDs.begin(); it != m_miiMonitorFDs.end(); ++it )
 	{
-		std::map< int, short >::const_iterator itFD = miiReadyFds.find( it->first );
+		std::map< cs_sock_t, short >::const_iterator itFD = miiReadyFds.find( it->first );
 		if( itFD != miiReadyFds.end() )
 			miiTriggerdFds[itFD->first] = itFD->second;
 	}
@@ -770,19 +775,19 @@ CSockCommon::~CSockCommon()
 
 void CSockCommon::CleanupCrons()
 {
-	for( size_t a = 0; a < m_vcCrons.size(); a++ )
+	for( size_t a = 0; a < m_vcCrons.size(); ++a )
 		CS_Delete( m_vcCrons[a] );
 	m_vcCrons.clear();
 }
 
 void CSockCommon::CleanupFDMonitors()
 {
-	for( size_t a = 0; a < m_vcMonitorFD.size(); a++ )
+	for( size_t a = 0; a < m_vcMonitorFD.size(); ++a )
 		CS_Delete( m_vcMonitorFD[a] );
 	m_vcMonitorFD.clear();
 }
 
-void CSockCommon::CheckFDs( const std::map< int, short > & miiReadyFds )
+void CSockCommon::CheckFDs( const std::map< cs_sock_t, short > & miiReadyFds )
 {
 	for( size_t uMon = 0; uMon < m_vcMonitorFD.size(); ++uMon )
 	{
@@ -791,7 +796,7 @@ void CSockCommon::CheckFDs( const std::map< int, short > & miiReadyFds )
 	}
 }
 
-void CSockCommon::AssignFDs( std::map< int, short > & miiReadyFds, struct timeval * tvtimeout )
+void CSockCommon::AssignFDs( std::map< cs_sock_t, short > & miiReadyFds, struct timeval * tvtimeout )
 {
 	for( size_t uMon = 0; uMon < m_vcMonitorFD.size(); ++uMon )
 	{
@@ -814,7 +819,7 @@ void CSockCommon::Cron()
 	timeval tNow;
 	timerclear( &tNow );
 
-	for( vector<CCron *>::size_type a = 0; a < m_vcCrons.size(); a++ )
+	for( vector<CCron *>::size_type a = 0; a < m_vcCrons.size(); ++a )
 	{
 		CCron * pcCron = m_vcCrons[a];
 
@@ -822,7 +827,7 @@ void CSockCommon::Cron()
 		{
 			CS_Delete( pcCron );
 			m_vcCrons.erase( m_vcCrons.begin() + a-- );
-		} 
+		}
 		else
 		{
 			pcCron->run( tNow );
@@ -839,7 +844,7 @@ void CSockCommon::DelCron( const CS_STRING & sName, bool bDeleteAll, bool bCaseS
 {
 	for( size_t a = 0; a < m_vcCrons.size(); ++a )
 	{
-		int (*Cmp)(const char *, const char *) = ( bCaseSensitive ? strcmp : strcasecmp );
+		int ( *Cmp )( const char *, const char * ) = ( bCaseSensitive ? strcmp : strcasecmp );
 		if( Cmp( m_vcCrons[a]->GetName().c_str(), sName.c_str() ) == 0 )
 		{
 			m_vcCrons[a]->Stop();
@@ -937,7 +942,7 @@ void Csock::CloseSocksFD()
 			CS_CLOSE( m_iReadSock );
 		if( m_iWriteSock != CS_INVALID_SOCK )
 			CS_CLOSE( m_iWriteSock );
-	} 
+	}
 	else if( m_iReadSock != CS_INVALID_SOCK )
 	{
 		CS_CLOSE( m_iReadSock );
@@ -1000,6 +1005,7 @@ void Csock::Copy( const Csock & cCopy )
 	m_iStartTime		= cCopy.m_iStartTime;
 	m_iMaxBytes			= cCopy.m_iMaxBytes;
 	m_iLastSend			= cCopy.m_iLastSend;
+	m_uSendBufferPos	= cCopy.m_uSendBufferPos;
 	m_iMaxStoredBufferLength	= cCopy.m_iMaxStoredBufferLength;
 	m_iTimeoutType		= cCopy.m_iTimeoutType;
 
@@ -1101,7 +1107,8 @@ Csock & Csock::operator<<( double i )
 bool Csock::Connect()
 {
 	if( m_bSkipConnect )
-	{ // this was already called, so skipping now. this is to allow easy pass through
+	{
+		// this was already called, so skipping now. this is to allow easy pass through
 		if( m_eConState != CST_OK )
 		{
 			m_eConState = ( GetSSL() ? CST_CONNECTSSL : CST_OK );
@@ -1227,7 +1234,7 @@ bool Csock::Listen( uint16_t iPort, int iMaxConns, const CS_STRING & sBindHost, 
 	m_address.SinPort( iPort );
 	if( !GetIPv6() )
 	{
-		if( bind( m_iReadSock, (struct sockaddr *) m_address.GetSockAddr(), m_address.GetSockAddrLen() ) == -1 )
+		if( bind( m_iReadSock, ( struct sockaddr * ) m_address.GetSockAddr(), m_address.GetSockAddrLen() ) == -1 )
 		{
 			CallSockError( GetSockError() );
 			return( false );
@@ -1236,7 +1243,7 @@ bool Csock::Listen( uint16_t iPort, int iMaxConns, const CS_STRING & sBindHost, 
 #ifdef HAVE_IPV6
 	else
 	{
-		if( bind( m_iReadSock, (struct sockaddr *) m_address.GetSockAddr6(), m_address.GetSockAddrLen6() ) == -1 )
+		if( bind( m_iReadSock, ( struct sockaddr * ) m_address.GetSockAddr6(), m_address.GetSockAddrLen6() ) == -1 )
 		{
 			CallSockError( GetSockError() );
 			return( false );
@@ -1252,7 +1259,7 @@ bool Csock::Listen( uint16_t iPort, int iMaxConns, const CS_STRING & sBindHost, 
 
 	// set it none blocking
 	set_non_blocking( m_iReadSock );
-	if( m_uPort == 0 || m_sBindHost.size() )
+	if( m_uPort == 0 || !m_sBindHost.empty() )
 	{
 		struct sockaddr_storage cAddr;
 		socklen_t iAddrLen = sizeof( cAddr );
@@ -1268,9 +1275,10 @@ bool Csock::Listen( uint16_t iPort, int iMaxConns, const CS_STRING & sBindHost, 
 
 cs_sock_t Csock::Accept( CS_STRING & sHost, uint16_t & iRPort )
 {
+	cs_sock_t iSock = CS_INVALID_SOCK;
 	struct sockaddr_storage cAddr;
 	socklen_t iAddrLen = sizeof( cAddr );
-	cs_sock_t iSock = accept( m_iReadSock, ( struct sockaddr * )&cAddr, &iAddrLen );
+	iSock = accept( m_iReadSock, ( struct sockaddr * )&cAddr, &iAddrLen );
 	if( iSock != CS_INVALID_SOCK && getpeername( iSock, ( struct sockaddr * )&cAddr, &iAddrLen ) == 0 )
 	{
 		ConvertAddress( &cAddr, iAddrLen, sHost, &iRPort );
@@ -1339,48 +1347,49 @@ bool Csock::SSLClientSetup()
 
 	switch( m_iMethod )
 	{
-		case SSL3:
-			m_ssl_ctx = SSL_CTX_new( SSLv3_client_method() );
-			if( !m_ssl_ctx )
-			{
-				CS_DEBUG( "WARNING: MakeConnection .... SSLv3_client_method failed!" );
-				return( false );
-			}
-			break;
-		case TLS1:
-			m_ssl_ctx = SSL_CTX_new( TLSv1_client_method() );
-			if( !m_ssl_ctx )
-			{
-				CS_DEBUG( "WARNING: MakeConnection .... TLSv1_client_method failed!" );
-				return( false );
-			}
-			break;
-		case SSL2:
+	case SSL3:
+		m_ssl_ctx = SSL_CTX_new( SSLv3_client_method() );
+		if( !m_ssl_ctx )
+		{
+			CS_DEBUG( "WARNING: MakeConnection .... SSLv3_client_method failed!" );
+			return( false );
+		}
+		break;
+	case TLS1:
+		m_ssl_ctx = SSL_CTX_new( TLSv1_client_method() );
+		if( !m_ssl_ctx )
+		{
+			CS_DEBUG( "WARNING: MakeConnection .... TLSv1_client_method failed!" );
+			return( false );
+		}
+		break;
+	case SSL2:
 #ifndef OPENSSL_NO_SSL2
-			m_ssl_ctx = SSL_CTX_new( SSLv2_client_method() );
-			if( !m_ssl_ctx )
-			{
-				CS_DEBUG( "WARNING: MakeConnection .... SSLv2_client_method failed!" );
-				return( false );
-			}
-			break;
+		m_ssl_ctx = SSL_CTX_new( SSLv2_client_method() );
+		if( !m_ssl_ctx )
+		{
+			CS_DEBUG( "WARNING: MakeConnection .... SSLv2_client_method failed!" );
+			return( false );
+		}
+		break;
 #endif
 		/* Fall through if SSL2 is disabled */
-		case SSL23:
-		default:
-			m_ssl_ctx = SSL_CTX_new( SSLv23_client_method() );
-			if( !m_ssl_ctx )
-			{
-				CS_DEBUG( "WARNING: MakeConnection .... SSLv23_client_method failed!" );
-				return( false );
-			}
-			break;
+	case SSL23:
+	default:
+		m_ssl_ctx = SSL_CTX_new( SSLv23_client_method() );
+		if( !m_ssl_ctx )
+		{
+			CS_DEBUG( "WARNING: MakeConnection .... SSLv23_client_method failed!" );
+			return( false );
+		}
+		break;
 	}
 
 	SSL_CTX_set_default_verify_paths( m_ssl_ctx );
 
 	if( !m_sPemFile.empty() )
-	{	// are we sending a client cerificate ?
+	{
+		// are we sending a client cerificate ?
 		SSL_CTX_set_default_passwd_cb( m_ssl_ctx, _PemPassCB );
 		SSL_CTX_set_default_passwd_cb_userdata( m_ssl_ctx, ( void * )this );
 
@@ -1435,42 +1444,42 @@ bool Csock::SSLServerSetup()
 
 	switch( m_iMethod )
 	{
-		case SSL3:
-			m_ssl_ctx = SSL_CTX_new( SSLv3_server_method() );
-			if( !m_ssl_ctx )
-			{
-				CS_DEBUG( "WARNING: MakeConnection .... SSLv3_server_method failed!" );
-				return( false );
-			}
-			break;
-		case TLS1:
-			m_ssl_ctx = SSL_CTX_new( TLSv1_server_method() );
-			if( !m_ssl_ctx )
-			{
-				CS_DEBUG( "WARNING: MakeConnection .... TLSv1_server_method failed!" );
-				return( false );
-			}
-			break;
+	case SSL3:
+		m_ssl_ctx = SSL_CTX_new( SSLv3_server_method() );
+		if( !m_ssl_ctx )
+		{
+			CS_DEBUG( "WARNING: MakeConnection .... SSLv3_server_method failed!" );
+			return( false );
+		}
+		break;
+	case TLS1:
+		m_ssl_ctx = SSL_CTX_new( TLSv1_server_method() );
+		if( !m_ssl_ctx )
+		{
+			CS_DEBUG( "WARNING: MakeConnection .... TLSv1_server_method failed!" );
+			return( false );
+		}
+		break;
 #ifndef OPENSSL_NO_SSL2
-		case SSL2:
-			m_ssl_ctx = SSL_CTX_new( SSLv2_server_method() );
-			if( !m_ssl_ctx )
-			{
-				CS_DEBUG( "WARNING: MakeConnection .... SSLv2_server_method failed!" );
-				return( false );
-			}
-			break;
+	case SSL2:
+		m_ssl_ctx = SSL_CTX_new( SSLv2_server_method() );
+		if( !m_ssl_ctx )
+		{
+			CS_DEBUG( "WARNING: MakeConnection .... SSLv2_server_method failed!" );
+			return( false );
+		}
+		break;
 #endif
 		/* Fall through if SSL2 is disabled */
-		case SSL23:
-		default:
-			m_ssl_ctx = SSL_CTX_new( SSLv23_server_method() );
-			if( !m_ssl_ctx )
-			{
-				CS_DEBUG( "WARNING: MakeConnection .... SSLv23_server_method failed!" );
-				return( false );
-			}
-			break;
+	case SSL23:
+	default:
+		m_ssl_ctx = SSL_CTX_new( SSLv23_server_method() );
+		if( !m_ssl_ctx )
+		{
+			CS_DEBUG( "WARNING: MakeConnection .... SSLv23_server_method failed!" );
+			return( false );
+		}
+		break;
 	}
 
 	SSL_CTX_set_default_verify_paths( m_ssl_ctx );
@@ -1596,7 +1605,7 @@ bool Csock::ConnectSSL()
 			bPass = true;
 		}
 #endif /* _WIN32 */
-	} 
+	}
 	else
 	{
 		bPass = true;
@@ -1610,6 +1619,46 @@ bool Csock::ConnectSSL()
 #endif /* HAVE_LIBSSL */
 }
 
+#ifdef HAVE_ICU
+inline bool icuConv( const CS_STRING& src, CS_STRING& tgt, UConverter* cnv_in, UConverter* cnv_out )
+{
+	const char* indata = src.c_str();
+	const char* indataend = indata + src.length();
+	tgt.clear();
+	char buf[100];
+	UChar pivotStart[100];
+	UChar* pivotSource = pivotStart;
+	UChar* pivotTarget = pivotStart;
+	UChar* pivotLimit = pivotStart + sizeof pivotStart / sizeof pivotStart[0];
+	const char* outdataend = buf + sizeof buf;
+	bool reset = true;
+	while( true )
+	{
+		char* outdata = buf;
+		icu::ErrorCode e;
+		ucnv_convertEx( cnv_out, cnv_in, &outdata, outdataend, &indata, indataend, pivotStart, &pivotSource, &pivotTarget, pivotLimit, reset, true, e );
+		reset = false;
+		if( e.isSuccess() )
+		{
+			if( e != U_ZERO_ERROR )
+			{
+				CS_DEBUG( "Warning during converting string encoding: " << e.errorName() );
+			}
+			tgt.append( buf, outdata - buf );
+			break;
+		}
+		if( e == U_BUFFER_OVERFLOW_ERROR )
+		{
+			tgt.append( buf, outdata - buf );
+			continue;
+		}
+		CS_DEBUG( "Error during converting string encoding: " << e.errorName() );
+		return false;
+	}
+	return true;
+}
+#endif /* HAVE_ICU */
+
 bool Csock::AllowWrite( uint64_t & iNOW ) const
 {
 	if( m_iMaxBytes > 0 && m_iMaxMilliSeconds > 0 )
@@ -1619,15 +1668,38 @@ bool Csock::AllowWrite( uint64_t & iNOW ) const
 
 		if( m_iLastSend <  m_iMaxBytes )
 			return( true ); // allow sending if our out buffer was less than what we can send
-		if( (iNOW - m_iLastSendTime) < m_iMaxMilliSeconds )
+		if( ( iNOW - m_iLastSendTime ) < m_iMaxMilliSeconds )
 			return( false );
 	}
 	return( true );
 }
 
+void Csock::ShrinkSendBuff()
+{
+	if( m_uSendBufferPos > 0 )
+	{
+		// just doing this to keep m_sSend from growing out of control
+		m_sSend.erase( 0, m_uSendBufferPos );
+		m_uSendBufferPos = 0;
+	}
+}
+void Csock::IncBuffPos( size_t uBytes )
+{
+	m_uSendBufferPos += uBytes;
+	if( m_uSendBufferPos >= m_sSend.size() )
+	{
+		m_uSendBufferPos = 0;
+		m_sSend.clear();
+	}
+}
+
 bool Csock::Write( const char *data, size_t len )
 {
-	m_sSend.append( data, len );
+	if( len > 0 )
+	{
+		ShrinkSendBuff();
+		m_sSend.append( data, len );
+	}
 
 	if( m_sSend.empty() )
 		return( true );
@@ -1637,6 +1709,8 @@ bool Csock::Write( const char *data, size_t len )
 
 	// rate shaping
 	size_t iBytesToSend = 0;
+
+	size_t uBytesInSend = m_sSend.size() - m_uSendBufferPos;
 
 #ifdef HAVE_LIBSSL
 	if( m_bUseSSL && m_sSSLBuffer.empty() && !m_bsslEstablished )
@@ -1651,7 +1725,7 @@ bool Csock::Write( const char *data, size_t len )
 			uint64_t iNOW = millitime();
 			// figure out the shaping here
 			// if NOW - m_iLastSendTime > m_iMaxMilliSeconds then send a full length of ( iBytesToSend )
-			if(( iNOW - m_iLastSendTime ) > m_iMaxMilliSeconds )
+			if( ( iNOW - m_iLastSendTime ) > m_iMaxMilliSeconds )
 			{
 				m_iLastSendTime = iNOW;
 				iBytesToSend = m_iMaxBytes;
@@ -1661,8 +1735,8 @@ bool Csock::Write( const char *data, size_t len )
 				iBytesToSend = m_iMaxBytes - m_iLastSend;
 
 			// take which ever is lesser
-			if( m_sSend.length() < iBytesToSend )
-				iBytesToSend = 	m_sSend.length();
+			if( uBytesInSend < iBytesToSend )
+				iBytesToSend = uBytesInSend;
 
 			// add up the bytes sent
 			m_iLastSend += iBytesToSend;
@@ -1673,7 +1747,7 @@ bool Csock::Write( const char *data, size_t len )
 		}
 		else
 		{
-			iBytesToSend = m_sSend.length();
+			iBytesToSend = uBytesInSend;
 		}
 
 #ifdef HAVE_LIBSSL
@@ -1686,7 +1760,7 @@ bool Csock::Write( const char *data, size_t len )
 		}
 
 		if( m_sSSLBuffer.empty() )  // on retrying to write data, ssl wants the data in the SAME spot and the SAME size
-			m_sSSLBuffer.append( m_sSend.data(), iBytesToSend );
+			m_sSSLBuffer.append( m_sSend.data() + m_uSendBufferPos, iBytesToSend );
 
 		int iErr = SSL_write( m_ssl, m_sSSLBuffer.data(), ( int )m_sSSLBuffer.length() );
 
@@ -1699,36 +1773,36 @@ bool Csock::Write( const char *data, size_t len )
 
 		switch( SSL_get_error( m_ssl, iErr ) )
 		{
-			case SSL_ERROR_NONE:
-				m_bsslEstablished = true;
-				// all ok
-				break;
+		case SSL_ERROR_NONE:
+			m_bsslEstablished = true;
+			// all ok
+			break;
 
-			case SSL_ERROR_ZERO_RETURN:
-			{
-				// weird closer alert
-				return( false );
-			}
+		case SSL_ERROR_ZERO_RETURN:
+		{
+			// weird closer alert
+			return( false );
+		}
 
-			case SSL_ERROR_WANT_READ:
-				// retry
-				break;
+		case SSL_ERROR_WANT_READ:
+			// retry
+			break;
 
-			case SSL_ERROR_WANT_WRITE:
-				// retry
-				break;
+		case SSL_ERROR_WANT_WRITE:
+			// retry
+			break;
 
-			case SSL_ERROR_SSL:
-			{
-				SSLErrors( __FILE__, __LINE__ );
-				return( false );
-			}
+		case SSL_ERROR_SSL:
+		{
+			SSLErrors( __FILE__, __LINE__ );
+			return( false );
+		}
 		}
 
 		if( iErr > 0 )
 		{
 			m_sSSLBuffer.clear();
-			m_sSend.erase( 0, iErr );
+			IncBuffPos( ( size_t )iErr );
 			// reset the timer on successful write (we have to set it here because the write
 			// bit might not always be set, so need to trigger)
 			if( TMO_WRITE & GetTimeoutType() )
@@ -1741,16 +1815,17 @@ bool Csock::Write( const char *data, size_t len )
 	}
 #endif /* HAVE_LIBSSL */
 #ifdef _WIN32
-	cs_ssize_t bytes = send( m_iWriteSock, m_sSend.data(), iBytesToSend, 0 );
+	cs_ssize_t bytes = send( m_iWriteSock, m_sSend.data() + m_uSendBufferPos, iBytesToSend, 0 );
 #else
-	cs_ssize_t bytes = write( m_iWriteSock, m_sSend.data(), iBytesToSend );
+	cs_ssize_t bytes = write( m_iWriteSock, m_sSend.data() + m_uSendBufferPos, iBytesToSend );
 #endif /* _WIN32 */
+	if( bytes > 0 )
 
-	if( bytes == -1 && GetSockError() == ECONNREFUSED )
-	{
-		ConnectionRefused();
-		return( false );
-	}
+		if( bytes == -1 && GetSockError() == ECONNREFUSED )
+		{
+			ConnectionRefused();
+			return( false );
+		}
 
 #ifdef _WIN32
 	if( bytes <= 0 && GetSockError() != WSAEWOULDBLOCK )
@@ -1763,7 +1838,7 @@ bool Csock::Write( const char *data, size_t len )
 	// delete the bytes we sent
 	if( bytes > 0 )
 	{
-		m_sSend.erase( 0, bytes );
+		IncBuffPos( ( size_t )bytes );
 		if( TMO_WRITE & GetTimeoutType() )
 			ResetTimer();	// reset the timer on successful write
 		m_iBytesWritten += ( uint64_t )bytes;
@@ -1774,6 +1849,17 @@ bool Csock::Write( const char *data, size_t len )
 
 bool Csock::Write( const CS_STRING & sData )
 {
+#ifdef HAVE_ICU
+	if( m_cnvExt.isValid() )
+	{
+		CS_STRING sBinary;
+		if( icuConv( sData, sBinary, m_cnvInt.getAlias(), m_cnvExt.getAlias() ) )
+		{
+			return( Write( sBinary.c_str(), sBinary.length() ) );
+		}
+	}
+	// can't convert our UTF-8 string to that encoding, just put it as is...
+#endif /* HAVE_ICU */
 	return( Write( sData.c_str(), sData.length() ) );
 }
 
@@ -1908,8 +1994,10 @@ void Csock::SetTimeout( int iTimeout, u_int iTimeoutType )
 
 void Csock::CallSockError( int iErrno, const CS_STRING & sDescription )
 {
-	if( sDescription.size() )
+	if( !sDescription.empty() )
+	{
 		SockError( iErrno, sDescription );
+	}
 	else
 	{
 		char szBuff[0xff];
@@ -1933,7 +2021,9 @@ bool Csock::CheckTimeout( time_t iNow )
 
 	time_t iDiff = 0;
 	if( iNow > m_iLastCheckTimeoutTime )
+	{
 		iDiff = iNow - m_iLastCheckTimeoutTime;
+	}
 	else
 	{
 		// this is weird, but its possible if someone changes a clock and it went back in time, this essentially has to reset the last check
@@ -1983,9 +2073,27 @@ void Csock::PushBuff( const char *data, size_t len, bool bStartAtZero )
 		{
 			CS_STRING sBuff = m_sbuffer.substr( 0, iFind + 1 );	// read up to(including) the newline
 			m_sbuffer.erase( 0, iFind + 1 );					// erase past the newline
-			ReadLine( sBuff );
+#ifdef HAVE_ICU
+			if( m_cnvExt.isValid() )
+			{
+				CS_STRING sUTF8;
+				if( ( m_cnvTryUTF8 && icuConv( sBuff, sUTF8, m_cnvIntStrict.getAlias(), m_cnvIntStrict.getAlias() ) ) // maybe it's already UTF-8?
+				        || icuConv( sBuff, sUTF8, m_cnvExt.getAlias(), m_cnvInt.getAlias() ) )
+				{
+					ReadLine( sUTF8 );
+				}
+				else
+				{
+					CS_DEBUG( "Can't convert received line to UTF-8" );
+				}
+			}
+			else
+#endif /* HAVE_ICU */
+			{
+				ReadLine( sBuff );
+			}
 			iStartPos = 0; // reset this back to 0, since we need to look for the next newline here.
-		} 
+		}
 		else
 		{
 			break;
@@ -1996,8 +2104,34 @@ void Csock::PushBuff( const char *data, size_t len, bool bStartAtZero )
 		ReachedMaxBuffer(); // call the max read buffer event
 }
 
+#ifdef HAVE_ICU
+void Csock::SetEncoding( const CS_STRING& sEncoding )
+{
+	if( sEncoding.empty() )
+	{
+		m_cnvExt.adoptInstead( NULL );
+	}
+	else
+	{
+		m_cnvTryUTF8 = sEncoding[0] == '*';
+		icu::ErrorCode e;
+		m_cnvExt.adoptInstead( ucnv_open( sEncoding.c_str(), e ) );
+		if( e.isFailure() )
+		{
+			CS_DEBUG( "Can't set encoding to " << sEncoding << ": " <<  e.errorName() );
+		}
+	}
+}
+#endif /* HAVE_ICU */
+
 CS_STRING & Csock::GetInternalReadBuffer() { return( m_sbuffer ); }
-CS_STRING & Csock::GetInternalWriteBuffer() { return( m_sSend ); }
+CS_STRING & Csock::GetInternalWriteBuffer()
+{
+	// in the event that some is grabbing this for some reason, we need to
+	// clean it up so it's what they are expecting.
+	ShrinkSendBuff();
+	return( m_sSend );
+}
 void Csock::SetMaxBufferThreshold( u_int iThreshold ) { m_iMaxStoredBufferLength = iThreshold; }
 u_int Csock::GetMaxBufferThreshold() const { return( m_iMaxStoredBufferLength ); }
 int Csock::GetType() const { return( m_iConnType ); }
@@ -2018,9 +2152,9 @@ double Csock::GetAvgRead( uint64_t iSample )
 	uint64_t iDifference = ( millitime() - m_iStartTime );
 
 	if( m_iBytesRead == 0 || iSample > iDifference )
-		return( (double)m_iBytesRead );
+		return( ( double )m_iBytesRead );
 
-	return( ((double)m_iBytesRead / ((double)iDifference / (double)iSample)) );
+	return( ( ( double )m_iBytesRead / ( ( double )iDifference / ( double )iSample ) ) );
 }
 
 double Csock::GetAvgWrite( uint64_t iSample )
@@ -2028,9 +2162,9 @@ double Csock::GetAvgWrite( uint64_t iSample )
 	uint64_t iDifference = ( millitime() - m_iStartTime );
 
 	if( m_iBytesWritten == 0 || iSample > iDifference )
-		return( (double)m_iBytesWritten );
+		return( ( double )m_iBytesWritten );
 
-	return( ((double)m_iBytesWritten / ((double)iDifference / (double)iSample)) );
+	return( ( ( double )m_iBytesWritten / ( ( double )iDifference / ( double )iSample ) ) );
 }
 
 uint16_t Csock::GetRemotePort()
@@ -2091,8 +2225,13 @@ SSL_SESSION * Csock::GetSSLSession()
 }
 #endif /* HAVE_LIBSSL */
 
-const CS_STRING & Csock::GetWriteBuffer() { return( m_sSend ); }
-void Csock::ClearWriteBuffer() { m_sSend.clear(); }
+bool Csock::HasWriteBuffer() const
+{
+	// the fact that this has data in it is good enough. Checking m_uSendBufferPos is a moot point
+	// since once m_uSendBufferPos is at the same position as m_sSend it's cleared (in Write)
+	return( !m_sSend.empty() );
+}
+void Csock::ClearWriteBuffer() { m_sSend.clear(); m_uSendBufferPos = 0; }
 bool Csock::SslIsEstablished() { return ( m_bsslEstablished ); }
 
 bool Csock::ConnectInetd( bool bIsSSL, const CS_STRING & sHostname )
@@ -2105,7 +2244,7 @@ bool Csock::ConnectInetd( bool bIsSSL, const CS_STRING & sHostname )
 	{
 		struct sockaddr_in client;
 		socklen_t clen = sizeof( client );
-		if( getpeername( 0, (struct sockaddr *)&client, &clen ) < 0 )
+		if( getpeername( 0, ( struct sockaddr * )&client, &clen ) < 0 )
 		{
 			m_sSockName = "0.0.0.0:0";
 		}
@@ -2260,7 +2399,7 @@ time_t Csock::GetTimeSinceLastDataTransaction( time_t iNow )
 {
 	if( m_iLastCheckTimeoutTime == 0 )
 		return( 0 );
-	return(( iNow > 0 ? iNow : time( NULL ) ) - m_iLastCheckTimeoutTime );
+	return( ( iNow > 0 ? iNow : time( NULL ) ) - m_iLastCheckTimeoutTime );
 }
 
 time_t Csock::GetNextCheckTimeout( time_t iNow )
@@ -2455,7 +2594,7 @@ int Csock::DNSLookup( EDNSLType eDNSLType )
 			return( ETIMEDOUT );
 		}
 		if( m_eConState != CST_OK )
-			m_eConState = ( (eDNSLType == DNS_VHOST) ? CST_BINDVHOST : CST_CONNECT );
+			m_eConState = ( ( eDNSLType == DNS_VHOST ) ? CST_BINDVHOST : CST_CONNECT );
 		m_iDNSTryCount = 0;
 		return( 0 );
 	}
@@ -2531,7 +2670,7 @@ void Csock::FREE_CTX()
 cs_sock_t Csock::CreateSocket( bool bListen )
 {
 #ifdef HAVE_IPV6
-	cs_sock_t iRet = socket(( GetIPv6() ? PF_INET6 : PF_INET ), SOCK_STREAM, IPPROTO_TCP );
+	cs_sock_t iRet = socket( ( GetIPv6() ? PF_INET6 : PF_INET ), SOCK_STREAM, IPPROTO_TCP );
 #else
 	cs_sock_t iRet = socket( PF_INET, SOCK_STREAM, IPPROTO_TCP );
 #endif /* HAVE_IPV6 */
@@ -2543,7 +2682,7 @@ cs_sock_t Csock::CreateSocket( bool bListen )
 		if( bListen )
 		{
 			const int on = 1;
-			if( setsockopt( iRet, SOL_SOCKET, SO_REUSEADDR, (char *) &on, sizeof( on ) ) != 0 )
+			if( setsockopt( iRet, SOL_SOCKET, SO_REUSEADDR, ( char * ) &on, sizeof( on ) ) != 0 )
 				PERROR( "SO_REUSEADDR" );
 		}
 	}
@@ -2578,6 +2717,7 @@ void Csock::Init( const CS_STRING & sHostname, uint16_t uPort, int iTimeout )
 	m_iMaxMilliSeconds = 0;
 	m_iLastSendTime = 0;
 	m_iLastSend = 0;
+	m_uSendBufferPos = 0;
 	m_bsslEstablished = false;
 	m_bEnableReadLine = false;
 	m_iMaxStoredBufferLength = 1024;
@@ -2600,6 +2740,14 @@ void Csock::Init( const CS_STRING & sHostname, uint16_t uPort, int iTimeout )
 	m_pCurrAddr = NULL;
 	m_iARESStatus = -1;
 #endif /* HAVE_C_ARES */
+#ifdef HAVE_ICU
+	m_cnvTryUTF8 = false;
+	icu::ErrorCode e;
+	m_cnvInt.adoptInstead( ucnv_open( "UTF-8", e ) );
+	m_cnvIntStrict.adoptInstead( ucnv_open( "UTF-8", e ) );
+	ucnv_setToUCallBack( m_cnvIntStrict.getAlias(), UCNV_TO_U_CALLBACK_STOP, NULL, NULL, NULL, e );
+	ucnv_setFromUCallBack( m_cnvIntStrict.getAlias(), UCNV_FROM_U_CALLBACK_STOP, NULL, NULL, NULL, e );
+#endif /* HAVE_ICU */
 }
 
 ////////////////////////// CSocketManager //////////////////////////
@@ -2619,7 +2767,7 @@ CSocketManager::~CSocketManager()
 
 void CSocketManager::clear()
 {
-	while( this->size() )
+	while( !this->empty() )
 		DelSock( 0 );
 }
 
@@ -2735,7 +2883,7 @@ bool CSocketManager::Listen( const CSListener & cListen, Csock * pcSock, uint16_
 
 bool CSocketManager::HasFDs() const
 {
-	return( this->size() || m_vcMonitorFD.size() );
+	return( !this->empty() || !m_vcMonitorFD.empty() );
 }
 
 void CSocketManager::Loop()
@@ -2814,7 +2962,7 @@ void CSocketManager::Loop()
 	{
 	case SUCCESS:
 	{
-		for( std::map<Csock *, EMessages>::iterator itSock = mpeSocks.begin(); itSock != mpeSocks.end(); ++itSock )
+		for( std::map<Csock *, EMessages>::iterator itSock = mpeSocks.begin(); itSock != mpeSocks.end(); itSock++ )
 		{
 			Csock * pcSock = itSock->first;
 			EMessages iErrno = itSock->second;
@@ -2843,57 +2991,58 @@ void CSocketManager::Loop()
 
 				switch( bytes )
 				{
-					case Csock::READ_EOF:
-					{
-						DelSockByAddr( pcSock );
-						break;
-					}
-	
-					case Csock::READ_ERR:
-					{
-						bool bHandled = false;
+				case Csock::READ_EOF:
+				{
+					DelSockByAddr( pcSock );
+					break;
+				}
+
+				case Csock::READ_ERR:
+				{
+					bool bHandled = false;
 #ifdef HAVE_LIBSSL
-						if (pcSock->GetSSL()) {
-							unsigned long iSSLError = ERR_peek_error();
-							if (iSSLError) {
-								char szError[512];
-								memset(( char * ) szError, '\0', 512 );
-								ERR_error_string_n( iSSLError, szError, 511 );
-								SSLErrors(__FILE__, __LINE__);
-								pcSock->CallSockError(GetSockError(), szError);
-								bHandled = true;
-							}
-						}
-#endif
-						if (!bHandled) {
-							pcSock->CallSockError( GetSockError() );
-						}
-						DelSockByAddr( pcSock );
-						break;
-					}
-	
-					case Csock::READ_EAGAIN:
-						break;
-	
-					case Csock::READ_CONNREFUSED:
-						pcSock->ConnectionRefused();
-						DelSockByAddr( pcSock );
-						break;
-	
-					case Csock::READ_TIMEDOUT:
-						pcSock->Timeout();
-						DelSockByAddr( pcSock );
-						break;
-	
-					default:
+					if( pcSock->GetSSL() )
 					{
-						if( Csock::TMO_READ & pcSock->GetTimeoutType() )
-							pcSock->ResetTimer();	// reset the timeout timer
-	
-						pcSock->ReadData( cBuff(), bytes );	// Call ReadData() before PushBuff() so that it is called before the ReadLine() event - LD  07/18/05
-						pcSock->PushBuff( cBuff(), bytes );
-						break;
+						unsigned long iSSLError = ERR_peek_error();
+						if( iSSLError )
+						{
+							char szError[512];
+							memset( ( char * ) szError, '\0', 512 );
+							ERR_error_string_n( iSSLError, szError, 511 );
+							SSLErrors( __FILE__, __LINE__ );
+							pcSock->CallSockError( GetSockError(), szError );
+							bHandled = true;
+						}
 					}
+#endif
+					if( !bHandled )
+						pcSock->CallSockError( GetSockError() );
+					DelSockByAddr( pcSock );
+					break;
+				}
+
+				case Csock::READ_EAGAIN:
+					break;
+
+				case Csock::READ_CONNREFUSED:
+					pcSock->ConnectionRefused();
+					DelSockByAddr( pcSock );
+					break;
+
+				case Csock::READ_TIMEDOUT:
+					pcSock->Timeout();
+					DelSockByAddr( pcSock );
+					break;
+
+				default:
+				{
+					if( Csock::TMO_READ & pcSock->GetTimeoutType() )
+						pcSock->ResetTimer();	// reset the timeout timer
+
+					pcSock->ReadData( cBuff(), bytes );	// Call ReadData() before PushBuff() so that it is called before the ReadLine() event - LD  07/18/05
+					pcSock->PushBuff( cBuff(), bytes );
+					break;
+				}
 				}
 			}
 			else if( iErrno == SELECT_ERROR )
@@ -2914,7 +3063,7 @@ void CSocketManager::Loop()
 	}
 
 	uint64_t iMilliNow = millitime();
-	if( (iMilliNow - m_iCallTimeouts) >= 1000 )
+	if( ( iMilliNow - m_iCallTimeouts ) >= 1000 )
 	{
 		m_iCallTimeouts = iMilliNow;
 		// call timeout on all the sockets that recieved no data
@@ -2923,7 +3072,7 @@ void CSocketManager::Loop()
 			if( this->at( i )->GetConState() != Csock::CST_OK )
 				continue;
 
-			if( this->at( i )->CheckTimeout( (time_t) (iMilliNow / 1000) ) )
+			if( this->at( i )->CheckTimeout( ( time_t )( iMilliNow / 1000 ) ) )
 				DelSock( i-- );
 		}
 	}
@@ -2982,9 +3131,9 @@ Csock * CSocketManager::FindSockByName( const CS_STRING & sName )
 {
 	std::vector<Csock *>::iterator it;
 	std::vector<Csock *>::iterator it_end = this->end();
-	for( it = this->begin(); it != it_end; ++it )
+	for( it = this->begin(); it != it_end; it++ )
 	{
-		if( (*it)->GetSockName() == sName )
+		if( ( *it )->GetSockName() == sName )
 			return( *it );
 	}
 	return( NULL );
@@ -3068,8 +3217,8 @@ bool CSocketManager::SwapSockByIdx( Csock * pNewSock, size_t iOrginalSockIdx )
 	Csock * pSock = this->at( iOrginalSockIdx );
 	pNewSock->Copy( *pSock );
 	pSock->Dereference();
-	this->at( iOrginalSockIdx ) = (Csock *)pNewSock;
-	this->push_back( (Csock *)pSock ); // this allows it to get cleaned up
+	this->at( iOrginalSockIdx ) = ( Csock * )pNewSock;
+	this->push_back( ( Csock * )pSock ); // this allows it to get cleaned up
 	return( true );
 }
 
@@ -3107,24 +3256,24 @@ uint64_t CSocketManager::GetBytesWritten() const
 	return( iRet );
 }
 
-void CSocketManager::FDSetCheck( int iFd, std::map< int, short > & miiReadyFds, ECheckType eType )
+void CSocketManager::FDSetCheck( cs_sock_t iFd, std::map< cs_sock_t, short > & miiReadyFds, ECheckType eType )
 {
-	std::map< int, short >::iterator it = miiReadyFds.find( iFd );
+	std::map< cs_sock_t, short >::iterator it = miiReadyFds.find( iFd );
 	if( it != miiReadyFds.end() )
 		it->second = ( short )( it->second | eType ); // TODO need to figure out why |= throws 'short int' from 'int' may alter its value
 	else
 		miiReadyFds[iFd] = eType;
 }
 
-bool CSocketManager::FDHasCheck( int iFd, std::map< int, short > & miiReadyFds, ECheckType eType )
+bool CSocketManager::FDHasCheck( cs_sock_t iFd, std::map< cs_sock_t, short > & miiReadyFds, ECheckType eType )
 {
-	std::map< int, short >::iterator it = miiReadyFds.find( iFd );
+	std::map< cs_sock_t, short >::iterator it = miiReadyFds.find( iFd );
 	if( it != miiReadyFds.end() )
-		return(( it->second & eType ) );
+		return( ( it->second & eType ) != 0 );
 	return( false );
 }
 
-int CSocketManager::Select( std::map< int, short > & miiReadyFds, struct timeval *tvtimeout )
+int CSocketManager::Select( std::map< cs_sock_t, short > & miiReadyFds, struct timeval *tvtimeout )
 {
 	AssignFDs( miiReadyFds, tvtimeout );
 #ifdef CSOCK_USE_POLL
@@ -3133,7 +3282,7 @@ int CSocketManager::Select( std::map< int, short > & miiReadyFds, struct timeval
 
 	struct pollfd * pFDs = ( struct pollfd * )malloc( sizeof( struct pollfd ) * miiReadyFds.size() );
 	size_t uCurrPoll = 0;
-	for( std::map< int, short >::iterator it = miiReadyFds.begin(); it != miiReadyFds.end(); ++it, ++uCurrPoll )
+	for( std::map< cs_sock_t, short >::iterator it = miiReadyFds.begin(); it != miiReadyFds.end(); ++it, ++uCurrPoll )
 	{
 		short iEvents = 0;
 		if( it->second & ECT_Read )
@@ -3152,11 +3301,11 @@ int CSocketManager::Select( std::map< int, short > & miiReadyFds, struct timeval
 	for( uCurrPoll = 0; uCurrPoll < uMaxFD; ++uCurrPoll )
 	{
 		short iEvents = 0;
-		if( pFDs[uCurrPoll].revents & (POLLIN|POLLERR|POLLHUP|POLLNVAL) )
+		if( pFDs[uCurrPoll].revents & ( POLLIN|POLLERR|POLLHUP|POLLNVAL ) )
 			iEvents |= ECT_Read;
 		if( pFDs[uCurrPoll].revents & POLLOUT )
 			iEvents |= ECT_Write;
-		std::map< int, short >::iterator it = miiReadyFds.find( pFDs[uCurrPoll].fd );
+		std::map< cs_sock_t, short >::iterator it = miiReadyFds.find( pFDs[uCurrPoll].fd );
 		if( it != miiReadyFds.end() )
 			it->second = ( short )( it->second | iEvents ); // TODO need to figure out why |= throws 'short int' from 'int' may alter its value
 		else
@@ -3169,9 +3318,12 @@ int CSocketManager::Select( std::map< int, short > & miiReadyFds, struct timeval
 	TFD_ZERO( &wfds );
 	bool bHasWrite = false;
 	int iHighestFD = 0;
-	for( std::map< int, short >::iterator it = miiReadyFds.begin(); it != miiReadyFds.end(); ++it )
+	for( std::map< cs_sock_t, short >::iterator it = miiReadyFds.begin(); it != miiReadyFds.end(); ++it )
 	{
+#ifndef _WIN32
+		// the first argument to select() is not used on Win32.
 		iHighestFD = std::max( it->first, iHighestFD );
+#endif /* _WIN32 */
 		if( it->second & ECT_Read )
 		{
 			TFD_SET( it->first, &rfds );
@@ -3190,11 +3342,11 @@ int CSocketManager::Select( std::map< int, short > & miiReadyFds, struct timeval
 	}
 	else
 	{
-		for( std::map< int, short >::iterator it = miiReadyFds.begin(); it != miiReadyFds.end(); ++it )
+		for( std::map< cs_sock_t, short >::iterator it = miiReadyFds.begin(); it != miiReadyFds.end(); ++it )
 		{
-			if(( it->second & ECT_Read ) && !TFD_ISSET( it->first, &rfds ) )
+			if( ( it->second & ECT_Read ) && !TFD_ISSET( it->first, &rfds ) )
 				it->second &= ~ECT_Read;
-			if(( it->second & ECT_Write ) && !TFD_ISSET( it->first, &wfds ) )
+			if( ( it->second & ECT_Write ) && !TFD_ISSET( it->first, &wfds ) )
 				it->second &= ~ECT_Write;
 		}
 	}
@@ -3208,9 +3360,9 @@ void CSocketManager::Select( std::map<Csock *, EMessages> & mpeSocks )
 	mpeSocks.clear();
 	struct timeval tv;
 
-	std::map< int, short > miiReadyFds;
-	tv.tv_sec = (time_t) (m_iSelectWait / 1000000);
-	tv.tv_usec = (time_t) (m_iSelectWait % 1000000);
+	std::map< cs_sock_t, short > miiReadyFds;
+	tv.tv_sec = ( time_t )( m_iSelectWait / 1000000 );
+	tv.tv_usec = ( time_t )( m_iSelectWait % 1000000 );
 	u_int iQuickReset = 1000;
 	if( m_iSelectWait == 0 )
 		iQuickReset = 0;
@@ -3223,7 +3375,7 @@ void CSocketManager::Select( std::map<Csock *, EMessages> & mpeSocks )
 
 		Csock::ECloseType eCloseType = pcSock->GetCloseType();
 
-		if( eCloseType == Csock::CLT_NOW || eCloseType == Csock::CLT_DEREFERENCE || ( eCloseType == Csock::CLT_AFTERWRITE && pcSock->GetWriteBuffer().empty() ) )
+		if( eCloseType == Csock::CLT_NOW || eCloseType == Csock::CLT_DEREFERENCE || ( eCloseType == Csock::CLT_AFTERWRITE && !pcSock->HasWriteBuffer() ) )
 		{
 			DelSock( i-- ); // close any socks that have requested it
 			continue;
@@ -3236,7 +3388,7 @@ void CSocketManager::Select( std::map<Csock *, EMessages> & mpeSocks )
 		cs_sock_t & iRSock = pcSock->GetRSock();
 		cs_sock_t & iWSock = pcSock->GetWSock();
 #if !defined(CSOCK_USE_POLL) && !defined(_WIN32)
-		if( iRSock > FD_SETSIZE || iWSock > FD_SETSIZE )
+		if( iRSock > ( cs_sock_t )FD_SETSIZE || iWSock > ( cs_sock_t )FD_SETSIZE )
 		{
 			CS_DEBUG( "FD is larger than select() can handle" );
 			DelSock( i-- );
@@ -3290,7 +3442,7 @@ void CSocketManager::Select( std::map<Csock *, EMessages> & mpeSocks )
 
 		if( pcSock->GetType() != Csock::LISTENER )
 		{
-			bool bHasWriteBuffer = !pcSock->GetWriteBuffer().empty();
+			bool bHasWriteBuffer = pcSock->HasWriteBuffer();
 
 			if( !bIsReadPaused )
 				FDSetCheck( iRSock, miiReadyFds, ECT_Read );
@@ -3387,7 +3539,7 @@ void CSocketManager::Select( std::map<Csock *, EMessages> & mpeSocks )
 			m_errno = SUCCESS;
 
 		return;
-	} 
+	}
 	else if( iSel == -1 )
 	{
 		if( mpeSocks.empty() )
@@ -3442,15 +3594,16 @@ void CSocketManager::Select( std::map<Csock *, EMessages> & mpeSocks )
 			if( iSel > 0 )
 			{
 				iErrno = SUCCESS;
-				if( !pcSock->GetWriteBuffer().empty() && pcSock->IsConnected() )
-				{ // write whats in the socks send buffer
+				if( pcSock->HasWriteBuffer() && pcSock->IsConnected() )
+				{
+					// write whats in the socks send buffer
 					if( !pcSock->Write( "" ) )
 					{
 						// write failed, sock died :(
 						iErrno = SELECT_ERROR;
 					}
 				}
-			} 
+			}
 			else
 			{
 				iErrno = SELECT_ERROR;
@@ -3458,7 +3611,7 @@ void CSocketManager::Select( std::map<Csock *, EMessages> & mpeSocks )
 
 			SelectSock( mpeSocks, iErrno, pcSock );
 
-		} 
+		}
 		else if( FDHasCheck( iRSock, miiReadyFds, ECT_Read ) )
 		{
 			if( iSel > 0 )
@@ -3516,12 +3669,12 @@ void CSocketManager::Select( std::map<Csock *, EMessages> & mpeSocks )
 							std::stringstream s;
 							s << sHost << ":" << port;
 							AddSock( NewpcSock,  s.str() );
-						} 
+						}
 						else
 						{
 							AddSock( NewpcSock, NewpcSock->GetSockName() );
 						}
-					} 
+					}
 					else
 					{
 						CS_Delete( NewpcSock );
@@ -3575,12 +3728,12 @@ timeval CSocketManager::GetDynamicSleepTime( const timeval& tNow, const timeval&
 		std::vector<CCron *>::const_iterator cit;
 		std::vector<CCron *>::const_iterator cit_end = vCrons.end();
 		for( cit = vCrons.begin(); cit != cit_end; ++cit )
-			MinimizeTime( tNextRunTime, (*cit)->GetNextRun() );
+			MinimizeTime( tNextRunTime, ( *cit )->GetNextRun() );
 	}
 	std::vector<CCron *>::const_iterator cit;
 	std::vector<CCron *>::const_iterator cit_end = m_vcCrons.end();
 	for( cit = m_vcCrons.begin(); cit != cit_end; ++cit )
-		MinimizeTime( tNextRunTime, (*cit)->GetNextRun() );
+		MinimizeTime( tNextRunTime, ( *cit )->GetNextRun() );
 
 	timeval tReturnValue;
 	if( timercmp( &tNextRunTime, &tNow, < ) )

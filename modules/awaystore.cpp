@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004-2013 ZNC, see the NOTICE file for details.
+ * Copyright (C) 2004-2014 ZNC, see the NOTICE file for details.
  * Author: imaginos <imaginos@imaginos.net>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -67,6 +67,7 @@ class CAway : public CModule
 	void BackCommand(const CString& sCommand) {
 		if ((m_vMessages.empty()) && (sCommand.Token(1) != "-quiet"))
 			PutModNotice("Welcome Back!");
+		Ping();
 		Back();
 	}
 

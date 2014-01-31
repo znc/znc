@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004-2013 ZNC, see the NOTICE file for details.
+ * Copyright (C) 2004-2014 ZNC, see the NOTICE file for details.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -142,7 +142,7 @@ protected:
 
 		// Is that person us and we don't have op?
 		const CNick& pNick = Channel.GetNicks().begin()->second;
-		if (!pNick.HasPerm(CChan::Op) && pNick.GetNick().Equals(m_pNetwork->GetCurNick())) {
+		if (!pNick.HasPerm(CChan::Op) && pNick.NickEquals(m_pNetwork->GetCurNick())) {
 			Channel.Cycle();
 			m_recentlyCycled.AddItem(Channel.GetName());
 		}

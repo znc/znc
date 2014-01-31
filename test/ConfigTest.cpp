@@ -1,97 +1,74 @@
 /*
- * Copyright (C) 2004-2013  See the AUTHORS file for details.
+ * Copyright (C) 2004-2014 ZNC, see the NOTICE file for details.
  *
- * This program is free software; you can redistribute it and/or modify it
- * under the terms of the GNU General Public License version 2 as published
- * by the Free Software Foundation.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
-#include "znc/ZNCDebug.h"
-#include "znc/FileUtils.h"
-#include "znc/Config.h"
+#include <gtest/gtest.h>
+#include <znc/FileUtils.h>
+#include <znc/Config.h>
 
-class CConfigTest {
+class CConfigTest : public ::testing::Test {
 public:
-	CConfigTest(const CString& sConfig) : m_sConfig(sConfig) { }
 	virtual ~CConfigTest() { m_File.Delete(); }
 
-	virtual bool Test() = 0;
-
 protected:
-	CFile& WriteFile() {
+	CFile& WriteFile(const CString& sConfig) {
 		char sName[] = "./temp-XXXXXX";
 		int fd = mkstemp(sName);
 		m_File.Open(sName, O_RDWR);
 		close(fd);
 
-		m_File.Write(m_sConfig);
+		m_File.Write(sConfig);
 
 		return m_File;
 	}
 
 private:
 	CFile   m_File;
-	CString m_sConfig;
 };
 
 class CConfigErrorTest : public CConfigTest {
 public:
-	CConfigErrorTest(const CString& sConfig, const CString& sError)
-		: CConfigTest(sConfig), m_sError(sError) { }
 
-	bool Test() {
-		CFile &File = WriteFile();
+	void TEST_ERROR(const CString& sConfig, const CString& sExpectError) {
+		CFile &File = WriteFile(sConfig);
 
 		CConfig conf;
 		CString sError;
-		bool res = conf.Parse(File, sError);
-		if (res) {
-			std::cout << "Didn't error out!\n";
-			return false;
-		}
+		EXPECT_FALSE(conf.Parse(File, sError));
 
-		if (sError != m_sError) {
-			std::cout << "Wrong error\n Expected: " << m_sError << "\n Got: " << sError << std::endl;
-			return false;
-		}
-
-		return true;
+		EXPECT_EQ(sExpectError, sError);
 	}
-private:
-	CString m_sError;
 };
 
 class CConfigSuccessTest : public CConfigTest {
 public:
-	CConfigSuccessTest(const CString& sConfig, const CString& sExpectedOutput)
-		: CConfigTest(sConfig), m_sOutput(sExpectedOutput) { }
 
-	bool Test() {
-		CFile &File = WriteFile();
+	void TEST_SUCCESS(const CString& sConfig, const CString& sExpectedOutput) {
+		CFile &File = WriteFile(sConfig);
 		// Verify that Parse() rewinds the file
 		File.Seek(12);
 
 		CConfig conf;
 		CString sError;
-		bool res = conf.Parse(File, sError);
-		if (!res) {
-			std::cout << "Error'd out! (" + sError + ")\n";
-			return false;
-		}
-		if (!sError.empty()) {
-			std::cout << "Non-empty error string!\n";
-			return false;
-		}
+		EXPECT_TRUE(conf.Parse(File, sError)) << sError;
+		EXPECT_TRUE(sError.empty()) << "Non-empty error string!";
 
 		CString sOutput;
 		ToString(sOutput, conf);
 
-		if (sOutput != m_sOutput) {
-			std::cout << "Wrong output\n Expected: " << m_sOutput << "\n Got: " << sOutput << std::endl;
-			return false;
-		}
-
-		return true;
+		EXPECT_EQ(sExpectedOutput, sOutput);
 	}
 
 	void ToString(CString& sRes, CConfig& conf) {
@@ -126,42 +103,61 @@ public:
 	}
 
 private:
-	CString m_sOutput;
 };
 
-int main() {
-#define TEST_ERROR(a, b) new CConfigErrorTest(a, b)
-#define TEST_SUCCESS(a, b) new CConfigSuccessTest(a, b)
-#define ARRAY_SIZE(a) (sizeof(a)/(sizeof((a)[0])))
-	CConfigTest *tests[] = {
-		TEST_SUCCESS("", ""),
-		/* duplicate entries */
-		TEST_SUCCESS("Foo = bar\nFoo = baz\n", "foo=bar\nfoo=baz\n"),
-		TEST_SUCCESS("Foo = baz\nFoo = bar\n", "foo=baz\nfoo=bar\n"),
-		/* sub configs */
-		TEST_ERROR("</foo>", "Error on line 1: Closing tag \"foo\" which is not open."),
-		TEST_ERROR("<foo a>\n</bar>\n", "Error on line 2: Closing tag \"bar\" which is not open."),
-		TEST_ERROR("<foo bar>", "Error on line 1: Not all tags are closed at the end of the file. Inner-most open tag is \"foo\"."),
-		TEST_ERROR("<foo>\n</foo>", "Error on line 1: Empty block name at begin of block."),
-		TEST_ERROR("<foo 1>\n</foo>\n<foo 1>\n</foo>", "Error on line 4: Duplicate entry for tag \"foo\" name \"1\"."),
-		TEST_SUCCESS("<foo a>\n</foo>", "->foo/a\n<-\n"),
-		TEST_SUCCESS("<a b>\n  <c d>\n </c>\n</a>", "->a/b\n->c/d\n<-\n<-\n"),
-		TEST_SUCCESS(" \t <A B>\nfoo = bar\n\tFooO = bar\n</a>", "->a/B\nfoo=bar\nfooo=bar\n<-\n"),
-		/* comments */
-		TEST_SUCCESS("Foo = bar // baz\n// Bar = baz", "foo=bar // baz\n"),
-		TEST_SUCCESS("Foo = bar /* baz */\n/*** Foo = baz ***/\n   /**** asdsdfdf \n Some quite invalid stuff ***/\n", "foo=bar /* baz */\n"),
-		TEST_ERROR("<foo foo>\n/* Just a comment\n</foo>", "Error on line 3: Comment not closed at end of file."),
-		TEST_SUCCESS("/* Foo\n/* Bar */", ""),
-		TEST_SUCCESS("/* Foo\n// */", ""),
-	};
-	unsigned int i;
-	unsigned int failed = 0;
-
-	for (i = 0; i < ARRAY_SIZE(tests); i++) {
-		if (!tests[i]->Test())
-			failed++;
-		delete tests[i];
-	}
-
-	return failed;
+TEST_F(CConfigSuccessTest, Empty) {
+	TEST_SUCCESS("", "");
 }
+
+/* duplicate entries */
+TEST_F(CConfigSuccessTest, Duble1) {
+	TEST_SUCCESS("Foo = bar\nFoo = baz\n", "foo=bar\nfoo=baz\n");
+}
+TEST_F(CConfigSuccessTest, Duble2) {
+	TEST_SUCCESS("Foo = baz\nFoo = bar\n", "foo=baz\nfoo=bar\n");
+}
+
+/* sub configs */
+TEST_F(CConfigErrorTest, SubConf1) {
+	TEST_ERROR("</foo>", "Error on line 1: Closing tag \"foo\" which is not open.");
+}
+TEST_F(CConfigErrorTest, SubConf2) {
+	TEST_ERROR("<foo a>\n</bar>\n", "Error on line 2: Closing tag \"bar\" which is not open.");
+}
+TEST_F(CConfigErrorTest, SubConf3) {
+	TEST_ERROR("<foo bar>", "Error on line 1: Not all tags are closed at the end of the file. Inner-most open tag is \"foo\".");
+}
+TEST_F(CConfigErrorTest, SubConf4) {
+	TEST_ERROR("<foo>\n</foo>", "Error on line 1: Empty block name at begin of block.");
+}
+TEST_F(CConfigErrorTest, SubConf5) {
+	TEST_ERROR("<foo 1>\n</foo>\n<foo 1>\n</foo>", "Error on line 4: Duplicate entry for tag \"foo\" name \"1\".");
+}
+TEST_F(CConfigSuccessTest, SubConf6) {
+	TEST_SUCCESS("<foo a>\n</foo>", "->foo/a\n<-\n");
+}
+TEST_F(CConfigSuccessTest, SubConf7) {
+	TEST_SUCCESS("<a b>\n  <c d>\n </c>\n</a>", "->a/b\n->c/d\n<-\n<-\n");
+}
+TEST_F(CConfigSuccessTest, SubConf8) {
+	TEST_SUCCESS(" \t <A B>\nfoo = bar\n\tFooO = bar\n</a>", "->a/B\nfoo=bar\nfooo=bar\n<-\n");
+}
+
+/* comments */
+TEST_F(CConfigSuccessTest, Comment1) {
+	TEST_SUCCESS("Foo = bar // baz\n// Bar = baz", "foo=bar // baz\n");
+}
+TEST_F(CConfigSuccessTest, Comment2) {
+	TEST_SUCCESS("Foo = bar /* baz */\n/*** Foo = baz ***/\n   /**** asdsdfdf \n Some quite invalid stuff ***/\n", "foo=bar /* baz */\n");
+}
+TEST_F(CConfigErrorTest, Comment3) {
+	TEST_ERROR("<foo foo>\n/* Just a comment\n</foo>", "Error on line 3: Comment not closed at end of file.");
+}
+TEST_F(CConfigSuccessTest, Comment4) {
+	TEST_SUCCESS("/* Foo\n/* Bar */", "");
+}
+TEST_F(CConfigSuccessTest, Comment5) {
+	TEST_SUCCESS("/* Foo\n// */", "");
+}
+
+

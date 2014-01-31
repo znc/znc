@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004-2013 ZNC, see the NOTICE file for details.
+ * Copyright (C) 2004-2014 ZNC, see the NOTICE file for details.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -99,7 +99,9 @@ public:
 	virtual bool OnServerCapAvailable(const CString& sCap);
 	virtual void OnServerCapResult(const CString& sCap, bool bSuccess);
 	virtual EModRet OnTimerAutoJoin(CChan& Channel);
-	bool OnEmbeddedWebRequest(CWebSock&, const CString&, CTemplate&);
+	virtual bool OnEmbeddedWebRequest(CWebSock&, const CString&, CTemplate&);
+	virtual EModRet OnAddNetwork(CIRCNetwork& Network, CString& sErrorRet);
+	virtual EModRet OnDeleteNetwork(CIRCNetwork& Network);
 };
 
 static inline CPerlModule* AsPerlModule(CModule* p) {
@@ -161,6 +163,13 @@ inline bool HaveIPv6() {
 
 inline bool HaveSSL() {
 #ifdef HAVE_LIBSSL
+	return true;
+#endif
+	return false;
+}
+
+inline bool HaveCharset() {
+#ifdef HAVE_ICU
 	return true;
 #endif
 	return false;

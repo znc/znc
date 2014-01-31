@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004-2013 ZNC, see the NOTICE file for details.
+ * Copyright (C) 2004-2014 ZNC, see the NOTICE file for details.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -673,6 +673,7 @@ void CClient::AcceptLogin(CUser& User) {
 	SetTimeout(540, TMO_READ);
 
 	SetSockName("USR::" + m_pUser->GetUserName());
+	SetEncoding(m_pUser->GetClientEncoding());
 
 	if (!m_sNetwork.empty()) {
 		m_pNetwork = m_pUser->FindNetwork(m_sNetwork);
@@ -927,6 +928,6 @@ void CClient::HandleCap(const CString& sLine)
 		}
 		RespondCap("ACK :" + sList.TrimSuffix_n(" "));
 	} else {
-		PutClient(":irc.znc.in 410 " + GetNick() + " :Invalid CAP subcommand");
+		PutClient(":irc.znc.in 410 " + GetNick() + " " + sSubCmd + " :Invalid CAP subcommand");
 	}
 }

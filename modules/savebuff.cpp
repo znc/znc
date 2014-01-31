@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004-2013 ZNC, see the NOTICE file for details.
+ * Copyright (C) 2004-2014 ZNC, see the NOTICE file for details.
  * Author: imaginos <imaginos@imaginos.net>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -297,7 +297,7 @@ public:
 		{
 			AddBuffer(*vChans[a], SpoofChanMsg(vChans[a]->GetName(), cNick.GetNickMask() + " QUIT " + sMessage));
 		}
-		if (cNick.GetNick().Equals(m_pUser->GetNick()))
+		if (cNick.NickEquals(m_pUser->GetNick()))
 			SaveBufferToDisk(); // need to force a save here to see this!
 	}
 
@@ -314,7 +314,7 @@ public:
 	}
 	virtual void OnJoin(const CNick& cNick, CChan& cChannel)
 	{
-		if (cNick.GetNick().Equals(m_pUser->GetNick()) && cChannel.GetBuffer().empty())
+		if (cNick.NickEquals(m_pUser->GetNick()) && cChannel.GetBuffer().empty())
 		{
 			BootStrap((CChan *)&cChannel);
 			if (!cChannel.GetBuffer().empty())
@@ -325,7 +325,7 @@ public:
 	virtual void OnPart(const CNick& cNick, CChan& cChannel)
 	{
 		AddBuffer(cChannel, SpoofChanMsg(cChannel.GetName(), cNick.GetNickMask() + " PART"));
-		if (cNick.GetNick().Equals(m_pUser->GetNick()))
+		if (cNick.NickEquals(m_pUser->GetNick()))
 			SaveBufferToDisk(); // need to force a save here to see this!
 	}
 #endif /* LEGACY_SAVEBUFF */

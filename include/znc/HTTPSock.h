@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004-2013 ZNC, see the NOTICE file for details.
+ * Copyright (C) 2004-2014 ZNC, see the NOTICE file for details.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -56,6 +56,7 @@ public:
 	void ParseURI();
 	void GetPage();
 	static CString GetDate(time_t tm = 0);
+	virtual CString GetRemoteIP();
 
 	// Cookies
 	CString GetRequestCookie(const CString& sKey) const;
@@ -111,6 +112,7 @@ protected:
 	CString                  m_sPass;
 	CString                  m_sContentType;
 	CString                  m_sDocRoot;
+	CString                  m_sForwardedIP;
 	std::map<CString, VCString>   m_msvsPOSTParams;
 	std::map<CString, VCString>   m_msvsGETParams;
 	MCString                 m_msHeaders;

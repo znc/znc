@@ -9,16 +9,15 @@ PERL_CXX   += -Wno-write-strings -Wno-redundant-decls -Wno-missing-declarations
 PERL_CXX   += -Wno-type-limits -Wno-sign-compare -Wno-strict-overflow -Wno-unused-value
 # This is for SWIG
 PERL_CXX   += -DSWIG_TYPE_TABLE=znc
+PERLCEXT_EXT    := $(shell $(PERL) -MConfig -e'print $$Config::Config{dlext}')
 modperlCXXFLAGS := $(PERL_CXX) -Wno-unused-function
 modperlLDFLAGS  := $(PERL_LD)
 # Find additional headers for out-of-tree build
 modperlCXXFLAGS += -I.
 
 ifeq "$(ISCYGWIN)" "1"
-PERLCEXT_EXT := dll
 PERLDEPONMOD := modperl.so
 else
-PERLCEXT_EXT := so
 PERLDEPONMOD :=
 endif
 

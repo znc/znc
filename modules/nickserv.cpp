@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004-2013 ZNC, see the NOTICE file for details.
+ * Copyright (C) 2004-2014 ZNC, see the NOTICE file for details.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -157,11 +157,14 @@ public:
 	void HandleMessage(CNick& Nick, const CString& sMessage) {
 		CString sNickServName = (!GetNV("NickServName").empty()) ? GetNV("NickServName") : "NickServ";
 		if (!GetNV("Password").empty()
-				&& Nick.GetNick().Equals(sNickServName)
+				&& Nick.NickEquals(sNickServName)
 				&& (sMessage.find("msg") != CString::npos
 				 || sMessage.find("authenticate") != CString::npos
 				 || sMessage.find("choose a different nickname") != CString::npos
+				 || sMessage.find("please choose a different nick") != CString::npos
+				 || sMessage.find("If this is your nick, identify yourself with") != CString::npos
 				 || sMessage.find("If this is your nick, type") != CString::npos
+				 || sMessage.find("This is a registered nickname, please identify") != CString::npos
 				 || sMessage.StripControls_n().find("type /NickServ IDENTIFY password") != CString::npos)
 				&& sMessage.AsUpper().find("IDENTIFY") != CString::npos
 				&& sMessage.find("help") == CString::npos) {

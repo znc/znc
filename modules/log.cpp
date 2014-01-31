@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004-2013 ZNC, see the NOTICE file for details.
+ * Copyright (C) 2004-2014 ZNC, see the NOTICE file for details.
  * Copyright (C) 2006-2007, CNU <bshalm@broadpark.no> (http://cnu.dieplz.net/znc)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -84,7 +84,7 @@ void CLogMod::PutLog(const CString& sLine, const CString& sWindow /*= "Status"*/
 
 	// $WINDOW has to be handled last, since it can contain %
 	sPath.Replace("$NETWORK", (m_pNetwork ? m_pNetwork->GetName() : "znc"));
-	sPath.Replace("$WINDOW", sWindow.Replace_n("/", "?"));
+	sPath.Replace("$WINDOW", sWindow.Replace_n("/", "-").Replace_n("\\", "-"));
 	sPath.Replace("$USER", (m_pUser ? m_pUser->GetUserName() : "UNKNOWN"));
 
 	// Check if it's allowed to write in this specific path
@@ -97,7 +97,9 @@ void CLogMod::PutLog(const CString& sLine, const CString& sWindow /*= "Status"*/
 
 	CFile LogFile(sPath);
 	CString sLogDir = LogFile.GetDir();
-	if (!CFile::Exists(sLogDir)) CDir::MakeDir(sLogDir);
+	struct stat ModDirInfo;
+	CFile::GetInfo(GetSavePath(), ModDirInfo);
+	if (!CFile::Exists(sLogDir)) CDir::MakeDir(sLogDir, ModDirInfo.st_mode);
 	if (LogFile.Open(O_WRONLY | O_APPEND | O_CREAT))
 	{
 		LogFile.Write(CUtils::FormatTime(curtime, "[%H:%M:%S] ", m_pUser->GetTimezone()) + (m_bSanitize ? sLine.StripControls_n() : sLine) + "\n");

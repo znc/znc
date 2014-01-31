@@ -60,6 +60,8 @@ bool OnServerCapAvailable(const CString& sCap)=false
 void OnServerCapResult(const CString& sCap, bool bSuccess)
 EModRet OnTimerAutoJoin(CChan& Channel)
 bool OnEmbeddedWebRequest(CWebSock& WebSock, const CString& sPageName, CTemplate& Tmpl)=false
+EModRet OnAddNetwork(CIRCNetwork& Network, CString& sErrorRet)
+EModRet OnDeleteNetwork(CIRCNetwork& Network)
 
 EModRet OnAddUser(CUser& User, CString& sErrorRet)
 EModRet OnDeleteUser(CUser& User)

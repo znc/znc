@@ -259,7 +259,7 @@ if test "x$ax_pthread_ok" = xyes; then
             *-aix* | *-freebsd* | *-darwin*) flag="-D_THREAD_SAFE";;
             *-osf* | *-hpux*) flag="-D_REENTRANT";;
             *solaris*)
-            if test "$GCC" = "yes"; then
+            if test "$GXX" = "yes"; then
                 flag="-D_REENTRANT"
             else
                 flag="-mt -D_REENTRANT"
@@ -285,7 +285,7 @@ if test "x$ax_pthread_ok" = xyes; then
         CXXFLAGS="$save_CXXFLAGS"
 
         # More AIX lossage: must compile with xlc_r or cc_r
-        if test x"$GCC" != xyes; then
+        if test x"$GXX" != xyes; then
           AC_CHECK_PROGS(PTHREAD_CC, xlc_r cc_r, ${CC})
         else
           PTHREAD_CC=$CC

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004-2013 ZNC, see the NOTICE file for details.
+ * Copyright (C) 2004-2014 ZNC, see the NOTICE file for details.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -65,6 +65,7 @@ CIRCSock::CIRCSock(CIRCNetwork* pNetwork) : CZNCSock() {
 	EnableReadLine();
 	m_Nick.SetIdent(m_pNetwork->GetIdent());
 	m_Nick.SetHost(m_pNetwork->GetBindHost());
+	SetEncoding(m_pNetwork->GetEncoding());
 
 	m_uMaxNickLen = 9;
 	m_uCapPaused = 0;
@@ -512,8 +513,7 @@ void CIRCSock::ReadLine(const CString& sData) {
 				}
 			}
 
-			// Todo: use nick compare function here
-			if (Nick.GetNick().Equals(GetNick())) {
+			if (Nick.NickEquals(GetNick())) {
 				// We are changing our own nick, the clients always must see this!
 				bIsVisible = false;
 				SetNick(sNewNick);
@@ -531,7 +531,7 @@ void CIRCSock::ReadLine(const CString& sData) {
 
 			// :nick!ident@host.com QUIT :message
 
-			if (Nick.GetNick().Equals(GetNick())) {
+			if (Nick.NickEquals(GetNick())) {
 				m_pNetwork->PutStatus("You quit [" + sMessage + "]");
 				// We don't call module hooks and we don't
 				// forward this quit to clients (Some clients
@@ -563,8 +563,7 @@ void CIRCSock::ReadLine(const CString& sData) {
 			CString sChan = sRest.Token(0).TrimPrefix_n();
 			CChan* pChan;
 
-			// Todo: use nick compare function
-			if (Nick.GetNick().Equals(GetNick())) {
+			if (Nick.NickEquals(GetNick())) {
 				m_pNetwork->AddChan(sChan, false);
 				pChan = m_pNetwork->FindChan(sChan);
 				if (pChan) {
@@ -598,8 +597,7 @@ void CIRCSock::ReadLine(const CString& sData) {
 					bDetached = true;
 			}
 
-			// Todo: use nick compare function
-			if (Nick.GetNick().Equals(GetNick())) {
+			if (Nick.NickEquals(GetNick())) {
 				m_pNetwork->DelChan(sChan);
 			}
 
@@ -703,7 +701,7 @@ void CIRCSock::ReadLine(const CString& sData) {
 				}
 			}
 
-			if (Nick.GetNick().Equals(m_pNetwork->GetIRCServer())) {
+			if (Nick.NickEquals(m_pNetwork->GetIRCServer())) {
 				m_pNetwork->PutUser(":" + Nick.GetNick() + " NOTICE " + sTarget + " :" + sMsg);
 			} else {
 				m_pNetwork->PutUser(":" + Nick.GetNickMask() + " NOTICE " + sTarget + " :" + sMsg);
@@ -1208,6 +1206,15 @@ void CIRCSock::ParseISupport(const CString& sLine) {
 			m_bUHNames = true;
 			PutIRC("PROTOCTL UHNAMES");
 		}
+	}
+}
+
+CString CIRCSock::GetISupport(const CString& sKey, const CString& sDefault) const {
+	MCString::const_iterator i = m_mISupport.find(sKey.AsUpper());
+	if (i == m_mISupport.end()) {
+		return sDefault;
+	} else {
+		return i->second;
 	}
 }
 

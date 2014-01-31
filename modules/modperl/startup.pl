@@ -1,5 +1,5 @@
 #
-# Copyright (C) 2004-2013 ZNC, see the NOTICE file for details.
+# Copyright (C) 2004-2014 ZNC, see the NOTICE file for details.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -369,6 +369,8 @@ sub OnServerCapAvailable {}
 sub OnServerCapResult {}
 sub OnTimerAutoJoin {}
 sub OnEmbeddedWebRequest {}
+sub OnAddNetwork {}
+sub OnDeleteNetwork {}
 
 
 # Functions of CModule will be usable from perl modules.

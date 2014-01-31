@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004-2013 ZNC, see the NOTICE file for details.
+ * Copyright (C) 2004-2014 ZNC, see the NOTICE file for details.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -89,6 +89,7 @@ CIncomingConnection::CIncomingConnection(const CString& sHostname, unsigned shor
 	// This has to be fixed up later, if desired.
 	SetTimeout(120, 0);
 
+	SetEncoding("UTF-8");
 	EnableReadLine();
 }
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004-2013 ZNC, see the NOTICE file for details.
+ * Copyright (C) 2004-2014 ZNC, see the NOTICE file for details.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -56,6 +56,7 @@ CIRCNetwork::CIRCNetwork(CUser *pUser, const CString& sName) {
 
 	m_sChanPrefixes = "";
 	m_bIRCAway = false;
+	m_sEncoding = "";
 
 	m_fFloodRate = 1;
 	m_uFloodBurst = 4;
@@ -78,6 +79,7 @@ CIRCNetwork::CIRCNetwork(CUser *pUser, const CIRCNetwork &Network) {
 
 	m_sChanPrefixes = "";
 	m_bIRCAway = false;
+	m_sEncoding = "";
 
 	m_RawBuffer.SetLineCount(100, true);   // This should be more than enough raws, especially since we are buffering the MOTD separately
 	m_MotdBuffer.SetLineCount(200, true);  // This should be more than enough motd lines
@@ -99,6 +101,7 @@ void CIRCNetwork::Clone(const CIRCNetwork& Network, bool bCloneName) {
 	SetIdent(Network.GetIdent());
 	SetRealName(Network.GetRealName());
 	SetBindHost(Network.GetBindHost());
+	SetEncoding(Network.GetEncoding());
 
 	// Servers
 	const vector<CServer*>& vServers = Network.GetServers();
@@ -259,6 +262,7 @@ bool CIRCNetwork::ParseConfig(CConfig *pConfig, CString& sError, bool bUpgrade) 
 			{ "ident", &CIRCNetwork::SetIdent },
 			{ "realname", &CIRCNetwork::SetRealName },
 			{ "bindhost", &CIRCNetwork::SetBindHost },
+			{ "encoding", &CIRCNetwork::SetEncoding },
 		};
 		size_t numStringOptions = sizeof(StringOptions) / sizeof(StringOptions[0]);
 		TOption<bool> BoolOptions[] = {
@@ -316,6 +320,12 @@ bool CIRCNetwork::ParseConfig(CConfig *pConfig, CString& sError, bool bUpgrade) 
 				CUtils::PrintMessage("NOTICE: [autoaway] was renamed, "
 						"loading [awaystore] instead");
 				sModName = "awaystore";
+			}
+		
+			// XXX Legacy crap, added in 1.1; fakeonline module was dropped in 1.0 and returned in 1.1
+			if (sModName == "fakeonline") {
+				CUtils::PrintMessage("NOTICE: [fakeonline] was renamed, loading [modules_online] instead");
+				sModName = "modules_online";
 			}
 
 			CUtils::PrintAction("Loading network module [" + sModName + "]");
@@ -399,6 +409,7 @@ CConfig CIRCNetwork::ToConfig() {
 	config.AddKeyValuePair("IRCConnectEnabled", CString(GetIRCConnectEnabled()));
 	config.AddKeyValuePair("FloodRate", CString(GetFloodRate()));
 	config.AddKeyValuePair("FloodBurst", CString(GetFloodBurst()));
+	config.AddKeyValuePair("Encoding", m_sEncoding);
 
 	// Modules
 	CModules& Mods = GetModules();
@@ -624,7 +635,8 @@ const vector<CChan*>& CIRCNetwork::GetChans() const { return m_vChans; }
 
 CChan* CIRCNetwork::FindChan(CString sName) const {
 	if (GetIRCSock()) {
-		sName.TrimLeft(GetIRCSock()->GetPerms());
+		// See https://tools.ietf.org/html/draft-brocklesby-irc-isupport-03#section-3.16
+		sName.TrimLeft(GetIRCSock()->GetISupport("STATUSMSG", ""));
 	}
 
 	for (unsigned int a = 0; a < m_vChans.size(); a++) {
@@ -1095,6 +1107,10 @@ const CString& CIRCNetwork::GetBindHost() const {
 	return m_sBindHost;
 }
 
+const CString& CIRCNetwork::GetEncoding() const {
+	return m_sEncoding;
+}
+
 void CIRCNetwork::SetNick(const CString& s) {
 	if (m_pUser->GetNick().Equals(s)) {
 		m_sNick = "";
@@ -1133,6 +1149,10 @@ void CIRCNetwork::SetBindHost(const CString& s) {
 	} else {
 		m_sBindHost = s;
 	}
+}
+
+void CIRCNetwork::SetEncoding(const CString& s) {
+	m_sEncoding = s;
 }
 
 CString CIRCNetwork::ExpandString(const CString& sStr) const {

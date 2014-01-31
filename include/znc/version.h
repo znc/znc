@@ -3,7 +3,7 @@
 
 // The following defines are for #if comparison (preprocessor only likes ints)
 #define VERSION_MAJOR  1
-#define VERSION_MINOR  1
+#define VERSION_MINOR  3
 // This one is for display purpose
 #define VERSION        (VERSION_MAJOR + VERSION_MINOR / 10.0)
 

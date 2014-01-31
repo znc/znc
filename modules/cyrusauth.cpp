@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004-2013 ZNC, see the NOTICE file for details.
+ * Copyright (C) 2004-2014 ZNC, see the NOTICE file for details.
  * Copyright (C) 2008 Heiko Hund <heiko@ist.eigentlich.net>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -128,20 +128,21 @@ public:
 					}
 
 					if (pUser && !pUser->Clone(*pBaseUser, sErr)) {
-						DEBUG("saslauth: Clone User [" << CloneUser() << "] " << sErr);
+						DEBUG("saslauth: Clone User [" << CloneUser() << "] failed: " << sErr);
 						delete pUser;
 						pUser = NULL;
 					}
 				}
 
-				if (pUser && !CZNC::Get().AddUser(pUser, sErr)) {
-					DEBUG("saslauth: Add user [" << sUsername << "] " << sErr);
-					delete pUser;
-					pUser = NULL;
+				if (pUser) {
+					// "::" is an invalid MD5 hash, so user won't be able to login by usual method
+					pUser->SetPass("::", CUser::HASH_MD5, "::");
 				}
 
-				if (pUser) {
-					pUser->SetPass("::", CUser::HASH_MD5, "::");
+				if (pUser && !CZNC::Get().AddUser(pUser, sErr)) {
+					DEBUG("saslauth: Add user [" << sUsername << "] failed: " << sErr);
+					delete pUser;
+					pUser = NULL;
 				}
 			}
 
