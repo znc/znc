@@ -28,6 +28,10 @@
 #include <perl.h>
 #include <XSUB.h>
 
+#if defined(__APPLE__) && defined(__MACH__)
+#include <crt_externs.h> // for _NSGetEnviron
+#endif
+
 #include "modperl/pstring.h"
 
 using std::set;
@@ -67,10 +71,16 @@ public:
 			"-I", const_cast<char*>(sTmp.c_str()),
 			const_cast<char*>(sModPath.c_str()), NULL};
 		char **argv = pArgv;
-		PERL_SYS_INIT3(&argc, &argv, &environ);
+		char *** const pEnviron =
+#if defined(__APPLE__) && defined(__MACH__)
+			_NSGetEnviron();
+#else
+			&environ;
+#endif
+		PERL_SYS_INIT3(&argc, &argv, pEnviron);
 		m_pPerl = perl_alloc();
 		perl_construct(m_pPerl);
-		if (perl_parse(m_pPerl, xs_init, argc, argv, environ)) {
+		if (perl_parse(m_pPerl, xs_init, argc, argv, *pEnviron)) {
 			sMessage = "Can't initialize perl. ";
 			if (SvTRUE(ERRSV)) {
 				sMessage += PString(ERRSV);
