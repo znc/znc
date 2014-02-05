@@ -52,6 +52,7 @@ CZNC::CZNC() {
 	m_sConnectThrottle.SetTTL(30000);
 	m_pLockFile = NULL;
 	m_bProtectWebSessions = true;
+	m_bSystemWideConfig = false;
 }
 
 CZNC::~CZNC() {
@@ -984,7 +985,7 @@ bool CZNC::WriteNewConfig(const CString& sConfigFile) {
 	CUtils::PrintMessage("");
 
 	File.UnLock();
-	return bFileOpen && CUtils::GetBoolInput("Launch ZNC now?", true);
+	return bFileOpen && !m_bSystemWideConfig && CUtils::GetBoolInput("Launch ZNC now?", true);
 }
 
 size_t CZNC::FilterUncommonModules(set<CModInfo>& ssModules) {
@@ -2040,4 +2041,8 @@ void CZNC::LeakConnectQueueTimer(CConnectQueueTimer *pTimer) {
 
 bool CZNC::WaitForChildLock() {
 	return m_pLockFile && m_pLockFile->ExLock();
+}
+
+void CZNC::SetSystemWideConfig(bool systemWideConfig) {
+	m_bSystemWideConfig = systemWideConfig;
 }
