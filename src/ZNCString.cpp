@@ -65,21 +65,21 @@ unsigned char* CString::strnchr(const unsigned char* src, unsigned char c, unsig
 	return NULL;
 }
 
-int CString::CaseCmp(const CString& s, unsigned long uLen) const {
+int CString::CaseCmp(const CString& s, CString::size_type uLen) const {
 	if (uLen != CString::npos) {
 		return strncasecmp(c_str(), s.c_str(), uLen);
 	}
 	return strcasecmp(c_str(), s.c_str());
 }
 
-int CString::StrCmp(const CString& s, unsigned long uLen) const {
+int CString::StrCmp(const CString& s, CString::size_type uLen) const {
 	if (uLen != CString::npos) {
 		return strncmp(c_str(), s.c_str(), uLen);
 	}
 	return strcmp(c_str(), s.c_str());
 }
 
-bool CString::Equals(const CString& s, bool bCaseSensitive, unsigned long uLen) const {
+bool CString::Equals(const CString& s, bool bCaseSensitive, CString::size_type uLen) const {
 	if (bCaseSensitive) {
 		return (StrCmp(s, uLen) == 0);
 	} else {

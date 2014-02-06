@@ -137,7 +137,7 @@ public:
 	 * @return An integer less than, equal to, or greater than zero if this
 	 *         string smaller, equal.... to the given string.
 	 */
-	int CaseCmp(const CString& s, unsigned long uLen = CString::npos) const;
+	int CaseCmp(const CString& s, CString::size_type uLen = CString::npos) const;
 	/**
 	 * Compare this string case sensitively to some other string.
 	 * @param s The string to compare to.
@@ -145,7 +145,7 @@ public:
 	 * @return An integer less than, equal to, or greater than zero if this
 	 *         string smaller, equal.... to the given string.
 	 */
-	int StrCmp(const CString& s, unsigned long uLen = CString::npos) const;
+	int StrCmp(const CString& s, CString::size_type uLen = CString::npos) const;
 	/**
 	 * Check if this string is equal to some other string.
 	 * @param s The string to compare to.
@@ -154,7 +154,7 @@ public:
 	 * @param uLen Number of characters to consider.
 	 * @return True if the strings are equal.
 	 */
-	bool Equals(const CString& s, bool bCaseSensitive = false, unsigned long uLen = CString::npos) const;
+	bool Equals(const CString& s, bool bCaseSensitive = false, CString::size_type uLen = CString::npos) const;
 	/**
 	 * Do a wildcard comparision between two strings.
 	 * For example, the following returns true:

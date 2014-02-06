@@ -321,19 +321,21 @@ public:
 	bool CheckAutoOp(const CNick& Nick, CChan& Channel) {
 		CAutoOpUser *pUser = FindUserByHost(Nick.GetHostMask(), Channel.GetName());
 
-		if (pUser) {
-			if (pUser->GetUserKey().Equals("__NOKEY__")) {
-				PutIRC("MODE " + Channel.GetName() + " +o " + Nick.GetNick());
-			} else {
-				// then insert this nick into the queue, the timer does the rest
-				CString sNick = Nick.GetNick().AsLower();
-				if (m_msQueue.find(sNick) == m_msQueue.end()) {
-					m_msQueue[sNick] = "";
-				}
+		if (!pUser) {
+			return false;
+		}
+
+		if (pUser->GetUserKey().Equals("__NOKEY__")) {
+			PutIRC("MODE " + Channel.GetName() + " +o " + Nick.GetNick());
+		} else {
+			// then insert this nick into the queue, the timer does the rest
+			CString sNick = Nick.GetNick().AsLower();
+			if (m_msQueue.find(sNick) == m_msQueue.end()) {
+				m_msQueue[sNick] = "";
 			}
 		}
 
-		return pUser;
+		return true;
 	}
 
 	void DelUser(const CString& sUser) {

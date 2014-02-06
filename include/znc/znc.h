@@ -164,7 +164,7 @@ public:
 	// !MOTD
 
 	void AddServerThrottle(CString sName) { m_sConnectThrottle.AddItem(sName); }
-	bool GetServerThrottle(CString sName) { return m_sConnectThrottle.GetItem(sName); }
+	bool GetServerThrottle(CString sName) { bool *b = m_sConnectThrottle.GetItem(sName); return (b && *b); }
 
 	void AddNetworkToQueue(CIRCNetwork *pNetwork);
 	std::list<CIRCNetwork*>& GetConnectionQueue() { return m_lpConnectQueue; }
