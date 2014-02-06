@@ -1022,13 +1022,11 @@ void CZNC::BackupConfigOnce(const CString& sSuffix) {
 		CUtils::PrintStatus(false, strerror(errno));
 }
 
-bool CZNC::ParseConfig(const CString& sConfig)
+bool CZNC::ParseConfig(const CString& sConfig, CString& sError)
 {
-	CString s;
-
 	m_sConfigFile = ExpandConfigPath(sConfig, false);
 
-	return DoRehash(s);
+	return DoRehash(sError);
 }
 
 bool CZNC::RehashConfig(CString& sError)
@@ -1853,9 +1851,22 @@ bool CZNC::DelListener(CListener* pListener) {
 	return false;
 }
 
+static CZNC* s_pZNC = NULL;
+
+void CZNC::CreateInstance() {
+	if (s_pZNC)
+		abort();
+
+	s_pZNC = new CZNC();
+}
+
 CZNC& CZNC::Get() {
-	static CZNC* pZNC = new CZNC;
-	return *pZNC;
+	return *s_pZNC;
+}
+
+void CZNC::DestroyInstance() {
+	delete s_pZNC;
+	s_pZNC = NULL;
 }
 
 CZNC::TrafficStatsMap CZNC::GetTrafficStats(TrafficStatsPair &Users,

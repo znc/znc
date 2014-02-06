@@ -193,6 +193,8 @@ int main(int argc, char** argv) {
 		return 1;
 	}
 
+	CZNC::CreateInstance();
+
 	CZNC* pZNC = &CZNC::Get();
 	pZNC->InitDirs(((argc) ? argv[0] : ""), sDataDir);
 
@@ -264,7 +266,8 @@ int main(int argc, char** argv) {
 		/* Fall through to normal bootup */
 	}
 
-	if (!pZNC->ParseConfig(sConfig)) {
+	CString sConfigError;
+	if (!pZNC->ParseConfig(sConfig, sConfigError)) {
 		CUtils::PrintError("Unrecoverable config error.");
 		delete pZNC;
 		return 1;
