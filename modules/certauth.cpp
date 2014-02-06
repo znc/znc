@@ -48,10 +48,8 @@ public:
 		for (it = vListeners.begin(); it != vListeners.end(); ++it)
 			(*it)->GetRealListener()->SetRequireClientCertFlags(SSL_VERIFY_PEER);
 
-		MCString::iterator it1;
-		for (it1 = BeginNV(); it1 != EndNV(); ++it1) {
+		for (MCString::const_iterator it1 = BeginNV(); it1 != EndNV(); ++it1) {
 			VCString vsKeys;
-			VCString::iterator it2;
 
 			if (CZNC::Get().FindUser(it1->first) == NULL) {
 				DEBUG("Unknown user in saved data [" + it1->first + "]");
@@ -59,8 +57,8 @@ public:
 			}
 
 			it1->second.Split(" ", vsKeys, false);
-			for (it2 = vsKeys.begin(); it2 != vsKeys.end(); ++it2) {
-				m_PubKeys[it1->first].insert(*it2);
+			for (VCString::const_iterator it2 = vsKeys.begin(); it2 != vsKeys.end(); ++it2) {
+				m_PubKeys[it1->first].insert(it2->AsLower());
 			}
 		}
 
@@ -78,13 +76,10 @@ public:
 	}
 
 	bool Save() {
-		MSCString::iterator it;
-
 		ClearNV(false);
-		for (it = m_PubKeys.begin(); it != m_PubKeys.end(); ++it) {
+		for (MSCString::const_iterator it = m_PubKeys.begin(); it != m_PubKeys.end(); ++it) {
 			CString sVal;
-			SCString::iterator it2;
-			for (it2 = it->second.begin(); it2 != it->second.end(); ++it2) {
+			for (SCString::const_iterator it2 = it->second.begin(); it2 != it->second.end(); ++it2) {
 				sVal += *it2 + " ";
 			}
 
@@ -95,8 +90,9 @@ public:
 		return SaveRegistry();
 	}
 
-	bool AddKey(CUser *pUser, CString sKey) {
-		pair<SCString::iterator, bool> pair = m_PubKeys[pUser->GetUserName()].insert(sKey);
+	bool AddKey(CUser *pUser, const CString& sKey) {
+		const pair<SCString::const_iterator, bool> pair
+			= m_PubKeys[pUser->GetUserName()].insert(sKey.AsLower());
 
 		if (pair.second) {
 			Save();
@@ -106,14 +102,14 @@ public:
 	}
 
 	virtual EModRet OnLoginAttempt(CSmartPtr<CAuthBase> Auth) {
-		CString sUser = Auth->GetUsername();
+		const CString sUser = Auth->GetUsername();
 		Csock *pSock = Auth->GetSocket();
 		CUser *pUser = CZNC::Get().FindUser(sUser);
 
 		if (pSock == NULL || pUser == NULL)
 			return CONTINUE;
 
-		CString sPubKey = GetKey(pSock);
+		const CString sPubKey = GetKey(pSock);
 		DEBUG("User: " << sUser << " Key: " << sPubKey);
 
 		if (sPubKey.empty()) {
@@ -121,13 +117,13 @@ public:
 			return CONTINUE;
 		}
 
-		MSCString::iterator it = m_PubKeys.find(sUser);
+		MSCString::const_iterator it = m_PubKeys.find(sUser);
 		if (it == m_PubKeys.end()) {
 			DEBUG("No saved pubkeys for this client");
 			return CONTINUE;
 		}
 
-		SCString::iterator it2 = it->second.find(sPubKey);
+		SCString::const_iterator it2 = it->second.find(sPubKey);
 		if (it2 == it->second.end()) {
 			DEBUG("Invalid pubkey");
 			return CONTINUE;
@@ -141,7 +137,7 @@ public:
 	}
 
 	void HandleShowCommand(const CString& sLine) {
-		CString sPubKey = GetKey(m_pClient);
+		const CString sPubKey = GetKey(m_pClient);
 
 		if (sPubKey.empty()) {
 			PutModule("You are not connected with any valid public key");
@@ -174,15 +170,14 @@ public:
 		Table.AddColumn("Id");
 		Table.AddColumn("Key");
 
-		MSCString::iterator it = m_PubKeys.find(m_pUser->GetUserName());
+		MSCString::const_iterator it = m_PubKeys.find(m_pUser->GetUserName());
 		if (it == m_PubKeys.end()) {
 			PutModule("No keys set for your user");
 			return;
 		}
 
-		SCString::iterator it2;
 		unsigned int id = 1;
-		for (it2 = it->second.begin(); it2 != it->second.end(); ++it2) {
+		for (SCString::const_iterator it2 = it->second.begin(); it2 != it->second.end(); ++it2) {
 			Table.AddRow();
 			Table.SetCell("Id", CString(id++));
 			Table.SetCell("Key", *it2);
@@ -209,7 +204,7 @@ public:
 			return;
 		}
 
-		SCString::iterator it2 = it->second.begin();
+		SCString::const_iterator it2 = it->second.begin();
 		while (id > 1) {
 			++it2;
 			id--;
@@ -235,7 +230,7 @@ public:
 		case X509_V_ERR_SELF_SIGNED_CERT_IN_CHAIN:
 		case X509_V_ERR_UNABLE_TO_VERIFY_LEAF_SIGNATURE:
 		case X509_V_ERR_DEPTH_ZERO_SELF_SIGNED_CERT:
-			return sRes;
+			return sRes.AsLower();
 		default:
 			return "";
 		}
@@ -247,11 +242,9 @@ public:
 		CUser *pUser = WebSock.GetSession()->GetUser();
 
 		if (sPageName == "index") {
-			MSCString::iterator it = m_PubKeys.find(pUser->GetUserName());
+			MSCString::const_iterator it = m_PubKeys.find(pUser->GetUserName());
 			if (it != m_PubKeys.end()) {
-				SCString::iterator it2;
-
-				for (it2 = it->second.begin(); it2 != it->second.end(); ++it2) {
+				for (SCString::const_iterator it2 = it->second.begin(); it2 != it->second.end(); ++it2) {
 					CTemplate& row = Tmpl.AddRow("KeyLoop");
 					row["Key"] = *it2;
 				}
