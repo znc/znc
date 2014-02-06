@@ -478,7 +478,7 @@ public:
 		return sCap.Equals("sasl");
 	}
 
-	virtual void OnServerCapResult(const CString& sCap, const bool bSuccess) {
+	virtual void OnServerCapResult(const CString& sCap, bool bSuccess) {
 		if (sCap.Equals("sasl")) {
 			if (bSuccess) {
 				GetMechanismsString().Split(" ", m_Mechanisms);
