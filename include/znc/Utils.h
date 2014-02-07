@@ -312,7 +312,7 @@ public:
 	 * @return true if item existed and was removed, false if it never existed
 	 */
 	bool RemItem(const K& Item) {
-		return m_mItems.erase(Item);
+		return (m_mItems.erase(Item) != 0);
 	}
 
 	/**
