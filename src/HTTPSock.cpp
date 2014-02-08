@@ -214,7 +214,16 @@ CString CHTTPSock::GetDate(time_t stamp) {
 void CHTTPSock::GetPage() {
 	DEBUG("Page Request [" << m_sURI << "] ");
 
-	OnPageRequest(m_sURI);
+	// Check that the requested path starts with the prefix. Strip it if so.
+        if (!m_sURI.TrimPrefix(m_sURIPrefix)) {
+		DEBUG("INVALID path => Does not start with prefix [" + m_sURIPrefix + "]");
+		DEBUG("Expected prefix:   " << m_sURIPrefix);
+		DEBUG("Requested path:    " << m_sURI);
+		PrintNotFound();
+	} else {
+		OnPageRequest(m_sURI);
+	}
+
 }
 
 #ifdef HAVE_ZLIB
@@ -718,9 +727,12 @@ bool CHTTPSock::Redirect(const CString& sURL) {
 		return false;
 	}
 
-	DEBUG("- Redirect to [" << sURL << "]");
-	AddHeader("Location", sURL);
-	PrintErrorPage(302, "Found", "The document has moved <a href=\"" + sURL.Escape_n(CString::EHTML) + "\">here</a>.");
+	// Prepend the URIPrefix to all redirects.
+	CString location = m_sURIPrefix + sURL;
+
+	DEBUG("- Redirect to [" << location << "] with prefix [" + m_sURIPrefix + "]");
+	AddHeader("Location", location);
+	PrintErrorPage(302, "Found", "The document has moved <a href=\"" + location.Escape_n(CString::EHTML) + "\">here</a>.");
 
 	return true;
 }
