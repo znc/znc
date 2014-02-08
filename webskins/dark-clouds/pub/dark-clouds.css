@@ -167,6 +167,11 @@ input.third, textarea.third,
 	width: 100px;
 }
 
+input.sixth, textarea.sixth,
+.sixth input, .sixth textarea {
+	width: 50px;
+}
+
 .checkboxandlabel {
 	white-space: nowrap;
 }

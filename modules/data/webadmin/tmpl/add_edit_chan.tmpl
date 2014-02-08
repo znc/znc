@@ -1,6 +1,6 @@
 <? INC Header.tmpl ?>
 
-<form action="<? IF Edit ?>editchan<? ELSE ?>addchan<? ENDIF ?>" method="post">
+<form action="<? VAR URIPrefix TOP ?><? VAR ModPath TOP ?><? IF Edit ?>editchan<? ELSE ?>addchan<? ENDIF ?>" method="post">
 	<? INC _csrf_check.tmpl ?>
 	<div class="section">
 		<input type="hidden" name="submitted" value="1" />

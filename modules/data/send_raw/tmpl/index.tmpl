@@ -1,7 +1,7 @@
 <? ADDROW JSLoop HREF=/modfiles/user/send_raw/select.js ?>
 <? INC Header.tmpl ?>
 
-<form method="post" action="<? VAR ModPath ?>">
+<form method="post" action="<? VAR URIPrefix TOP ?><? VAR ModPath ?>">
 	<? INC _csrf_check.tmpl ?>
 
 	<div class="section">

@@ -1,6 +1,6 @@
 <? INC Header.tmpl ?>
 
-<form method="post" action="<? VAR ModPath ?>addnote">
+<form method="post" action="<? VAR URIPrefix TOP ?><? VAR ModPath ?>addnote">
 	<? INC _csrf_check.tmpl ?>
 	<div class="section">
 		<h3>Add A Note</h3>
@@ -37,7 +37,7 @@
 	<tbody>
 		<? LOOP NotesLoop ?>
 		<tr class="<? IF __EVEN__ ?>evenrow<? ELSE ?>oddrow<? ENDIF ?>">
-			<td><a href="<? VAR ModPath TOP ?>delnote?key=<? VAR Key ESC=URL,HTML ?>"><img src="<? VAR ModFilesPath TOP ?>trash.gif" alt="[del]" /></a></td>
+			<td><a href="<? VAR URIPrefix TOP ?><? VAR ModPath TOP ?>delnote?key=<? VAR Key ESC=URL,HTML ?>"><img src="<? VAR URIPrefix TOP ?><? VAR ModFilesPath TOP ?>trash.gif" alt="[del]" /></a></td>
 			<td><? VAR Key ?></td>
 			<td><? VAR Note ?></td>
 		</tr>

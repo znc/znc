@@ -1,6 +1,6 @@
 <? INC Header.tmpl ?>
 
-<form action="<? IF Edit ?>edituser<? ELSE ?>adduser<? ENDIF ?>" method="post">
+<form action="<? VAR URIPrefix TOP ?><? VAR ModPath TOP ?><? IF Edit ?>edituser<? ELSE ?>adduser<? ENDIF ?>" method="post">
 	<? INC _csrf_check.tmpl ?>
 	<div class="section">
 		<input type="hidden" name="submitted" value="1" />
@@ -128,7 +128,7 @@
 				<table>
 					<thead>
 					<tr>
-						<td>[<a href="addnetwork?user=<? VAR Username ESC=URL ?>">Add</a>]</td>
+						<td>[<a href="<? VAR URIPrefix TOP ?><? VAR ModPath TOP ?>addnetwork?user=<? VAR Username ESC=URL ?>">Add</a>]</td>
 				<? IF NetworkLoop ?>
 						<td>Name</td>
 						<td>Clients</td>
@@ -145,7 +145,7 @@
 					<tr class="<? IF __EVEN__ ?>evenrow<? ELSE ?>oddrow<? ENDIF ?>">
 						<td>
 							<input type="hidden" name="network" value="<? VAR Name ?>" />
-							[<a href="editnetwork?user=<? VAR Username ESC=URL ?>&amp;network=<? VAR Name ESC=URL ?>">Edit</a>] [<a href="delnetwork?user=<? VAR Username ESC=URL ?>&amp;name=<? VAR Name ESC=URL ?>">Del</a>]
+							[<a href="<? VAR URIPrefix TOP ?><? VAR ModPath TOP ?>editnetwork?user=<? VAR Username ESC=URL ?>&amp;network=<? VAR Name ESC=URL ?>">Edit</a>] [<a href="<? VAR URIPrefix TOP ?><? VAR ModPath TOP ?>delnetwork?user=<? VAR Username ESC=URL ?>&amp;name=<? VAR Name ESC=URL ?>">Del</a>]
 						</td>
 						<td><? VAR Name ?></td>
 						<td><? VAR Clients ?></td>

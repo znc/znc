@@ -42,7 +42,7 @@
 						<td><? VAR URIPrefix ?></td>
 						<td>
 							<? IF SuggestDeletion ?>
-							<form action="del_listener" method="post">
+							<form action="<? VAR URIPrefix TOP ?><? VAR ModPath TOP ?>del_listener" method="post">
 								<? INC _csrf_check.tmpl ?>
 								<input name="host" type="hidden" value="<? VAR BindHost ?>"/>
 								<input name="port" type="hidden" value="<? VAR Port ?>"/>
@@ -55,7 +55,7 @@
 					</tr>
 				<? ENDLOOP ?>
 					<tr>
-						<form action="add_listener" method="post">
+						<form action="<? VAR URIPrefix TOP ?><? VAR ModPath TOP ?>add_listener" method="post">
 							<? INC _csrf_check.tmpl ?>
 							<td><input name="port" type="number" min="1" max="65535" class="number"/></td>
 							<td><input name="host" type="text" value="*" class="sixth"/></td>
@@ -74,7 +74,7 @@
 	</div>
 </div>
 
-<form action="settings" method="post">
+<form action="<? VAR URIPrefix TOP ?><? VAR ModPath TOP ?>settings" method="post">
 	<? INC _csrf_check.tmpl ?>
 	<input type="hidden" name="submitted" value="1" />
 

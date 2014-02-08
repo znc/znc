@@ -1,6 +1,6 @@
 <? INC Header.tmpl ?>
 
-<form method="post" action="<? VAR ModPath ?>">
+<form method="post" action="<? VAR URIPrefix TOP ?><? VAR ModPath ?>">
 	<? INC _csrf_check.tmpl ?>
 	<div class="section">
 		<h3>Perform</h3>
