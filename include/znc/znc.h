@@ -56,7 +56,7 @@ public:
 	CString ExpandConfigPath(const CString& sConfigFile, bool bAllowMkDir = true);
 	bool WriteNewConfig(const CString& sConfigFile);
 	bool WriteConfig();
-	bool ParseConfig(const CString& sConfig);
+	bool ParseConfig(const CString& sConfig, CString& sError);
 	bool RehashConfig(CString& sError);
 	void BackupConfigOnce(const CString& sSuffix);
 	static CString GetVersion();
@@ -131,7 +131,9 @@ public:
 	// !Getters
 
 	// Static allocator
+	static void CreateInstance();
 	static CZNC& Get();
+	static void DestroyInstance();
 	CUser* FindUser(const CString& sUsername);
 	CModule* FindModule(const CString& sModName, const CString& sUsername);
 	CModule* FindModule(const CString& sModName, CUser* pUser);

@@ -77,7 +77,7 @@ static void die(int sig) {
 
 	CUtils::PrintMessage("Exiting on SIG [" + CString(sig) + "]");
 
-	delete &CZNC::Get();
+	CZNC::DestroyInstance();
 	exit(sig);
 }
 
@@ -193,6 +193,8 @@ int main(int argc, char** argv) {
 		return 1;
 	}
 
+	CZNC::CreateInstance();
+
 	CZNC* pZNC = &CZNC::Get();
 	pZNC->InitDirs(((argc) ? argv[0] : ""), sDataDir);
 
@@ -200,7 +202,7 @@ int main(int argc, char** argv) {
 	if (bMakePem) {
 		pZNC->WritePemFile();
 
-		delete pZNC;
+		CZNC::DestroyInstance();
 		return 0;
 	}
 #endif /* HAVE_LIBSSL */
@@ -219,7 +221,7 @@ int main(int argc, char** argv) {
 		std::cout << "</Pass>" << std::endl;
 		CUtils::PrintMessage("After that start ZNC again, and you should be able to login with the new password.");
 
-		delete pZNC;
+		CZNC::DestroyInstance();
 		return 0;
 	}
 
@@ -236,7 +238,7 @@ int main(int argc, char** argv) {
 			CUtils::PrintError("No modules found. Perhaps you didn't install ZNC properly?");
 			CUtils::PrintError("Read http://wiki.znc.in/Installation for instructions.");
 			if (!CUtils::GetBoolInput("Do you really want to run ZNC without any modules?", false)) {
-				delete pZNC;
+				CZNC::DestroyInstance();
 				return 1;
 			}
 		}
@@ -247,7 +249,7 @@ int main(int argc, char** argv) {
 		CUtils::PrintError("You are running ZNC as root! Don't do that! There are not many valid");
 		CUtils::PrintError("reasons for this and it can, in theory, cause great damage!");
 		if (!bAllowRoot) {
-			delete pZNC;
+			CZNC::DestroyInstance();
 			return 1;
 		}
 		CUtils::PrintError("You have been warned.");
@@ -258,21 +260,22 @@ int main(int argc, char** argv) {
 
 	if (bMakeConf) {
 		if (!pZNC->WriteNewConfig(sConfig)) {
-			delete pZNC;
+			CZNC::DestroyInstance();
 			return 0;
 		}
 		/* Fall through to normal bootup */
 	}
 
-	if (!pZNC->ParseConfig(sConfig)) {
+	CString sConfigError;
+	if (!pZNC->ParseConfig(sConfig, sConfigError)) {
 		CUtils::PrintError("Unrecoverable config error.");
-		delete pZNC;
+		CZNC::DestroyInstance();
 		return 1;
 	}
 
 	if (!pZNC->OnBoot()) {
 		CUtils::PrintError("Exiting due to module boot errors.");
-		delete pZNC;
+		CZNC::DestroyInstance();
 		return 1;
 	}
 
@@ -289,7 +292,7 @@ int main(int argc, char** argv) {
 
 		if (iPid == -1) {
 			CUtils::PrintStatus(false, strerror(errno));
-			delete pZNC;
+			CZNC::DestroyInstance();
 			return 1;
 		}
 
@@ -309,7 +312,7 @@ int main(int argc, char** argv) {
 		 */
 		if (!pZNC->WaitForChildLock()) {
 			CUtils::PrintError("Child was unable to obtain lock on config file.");
-			delete pZNC;
+			CZNC::DestroyInstance();
 			return 1;
 		}
 
@@ -378,7 +381,7 @@ int main(int argc, char** argv) {
 				// The above code adds 3 entries to args tops
 				// which means the array should be big enough
 
-				delete pZNC;
+				CZNC::DestroyInstance();
 				execvp(args[0], args);
 				CUtils::PrintError("Unable to restart ZNC [" + CString(strerror(errno)) + "]");
 			} /* Fall through */
@@ -387,7 +390,7 @@ int main(int argc, char** argv) {
 		}
 	}
 
-	delete pZNC;
+	CZNC::DestroyInstance();
 
 	return iRet;
 }
