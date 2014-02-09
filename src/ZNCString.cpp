@@ -1092,6 +1092,14 @@ bool CString::TrimSuffix(const CString& sSuffix) {
 	}
 }
 
+bool CString::StartsWith(const CString& sPrefix) const {
+	return Left(sPrefix.length()).Equals(sPrefix);
+}
+
+bool CString::EndsWith(const CString& sSuffix) const {
+	return Right(sSuffix.length()).Equals(sSuffix);
+}
+
 
 CString CString::TrimPrefix_n(const CString& sPrefix) const {
 	CString sRet = *this;
