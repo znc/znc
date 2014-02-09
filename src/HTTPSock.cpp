@@ -725,16 +725,19 @@ bool CHTTPSock::Redirect(const CString& sURL) {
 	if (SentHeader()) {
 		DEBUG("Redirect() - Header was already sent");
 		return false;
+	} else if(!sURL.StartsWith("/")) {
+		// HTTP/1.1 only admits absolute URIs for the Location header.
+		DEBUG("Redirect to relative URI [" + sURL + "] is not allowed.");
+		return false;
+	} else {
+		CString location = m_sURIPrefix + sURL;
+
+		DEBUG("- Redirect to [" << location << "] with prefix [" + m_sURIPrefix + "]");
+		AddHeader("Location", location);
+		PrintErrorPage(302, "Found", "The document has moved <a href=\"" + location.Escape_n(CString::EHTML) + "\">here</a>.");
+
+		return true;
 	}
-
-	// Prepend the URIPrefix to all redirects.
-	CString location = m_sURIPrefix + sURL;
-
-	DEBUG("- Redirect to [" << location << "] with prefix [" + m_sURIPrefix + "]");
-	AddHeader("Location", location);
-	PrintErrorPage(302, "Found", "The document has moved <a href=\"" + location.Escape_n(CString::EHTML) + "\">here</a>.");
-
-	return true;
 }
 
 void CHTTPSock::Connected() {
