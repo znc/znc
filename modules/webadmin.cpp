@@ -543,7 +543,7 @@ public:
 				WebSock.PrintErrorPage("Please don't delete yourself, suicide is not the answer!");
 				return true;
 			} else if (CZNC::Get().DeleteUser(sUser)) {
-				WebSock.Redirect("listusers");
+				WebSock.Redirect(GetWebPath() + "listusers");
 				return true;
 			}
 
@@ -711,7 +711,7 @@ public:
 			return true;
 		}
 
-		WebSock.Redirect("editnetwork?user=" + pUser->GetUserName().Escape_n(CString::EURL) + "&network=" + pNetwork->GetName().Escape_n(CString::EURL));
+		WebSock.Redirect(GetWebPath() + "editnetwork?user=" + pUser->GetUserName().Escape_n(CString::EURL) + "&network=" + pNetwork->GetName().Escape_n(CString::EURL));
 		return true;
 	}
 
@@ -985,7 +985,7 @@ public:
 			return true;
 		}
 
-		WebSock.Redirect("edituser?user=" + pUser->GetUserName().Escape_n(CString::EURL));
+		WebSock.Redirect(GetWebPath() + "edituser?user=" + pUser->GetUserName().Escape_n(CString::EURL));
 		return true;
 	}
 
@@ -1021,7 +1021,7 @@ public:
 			return true;
 		}
 
-		WebSock.Redirect("edituser?user=" + pUser->GetUserName().Escape_n(CString::EURL));
+		WebSock.Redirect(GetWebPath() + "edituser?user=" + pUser->GetUserName().Escape_n(CString::EURL));
 		return false;
 	}
 
@@ -1041,7 +1041,7 @@ public:
 			return true;
 		}
 
-		WebSock.Redirect("editnetwork?user=" + pNetwork->GetUser()->GetUserName().Escape_n(CString::EURL) + "&network=" + pNetwork->GetName().Escape_n(CString::EURL));
+		WebSock.Redirect(GetWebPath() + "editnetwork?user=" + pNetwork->GetUser()->GetUserName().Escape_n(CString::EURL) + "&network=" + pNetwork->GetName().Escape_n(CString::EURL));
 		return false;
 	}
 
@@ -1321,9 +1321,9 @@ public:
 		}
 
 		if (!spSession->IsAdmin()) {
-			WebSock.Redirect("edituser");
+			WebSock.Redirect(GetWebPath() + "edituser");
 		} else {
-			WebSock.Redirect("listusers");
+			WebSock.Redirect(GetWebPath() + "listusers");
 		}
 
 		/* we don't want the template to be printed while we redirect */
@@ -1692,7 +1692,7 @@ public:
 			WebSock.GetSession()->AddError("Settings changed, but config was not written");
 		}
 
-		WebSock.Redirect("settings");
+		WebSock.Redirect(GetWebPath() + "settings");
 		/* we don't want the template to be printed while we redirect */
 		return false;
 	}
