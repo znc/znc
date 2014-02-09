@@ -219,7 +219,7 @@ void CHTTPSock::GetPage() {
 		DEBUG("INVALID path => Does not start with prefix [" + m_sURIPrefix + "]");
 		DEBUG("Expected prefix:   " << m_sURIPrefix);
 		DEBUG("Requested path:    " << m_sURI);
-		PrintNotFound();
+		Redirect(m_sURI);
 	} else {
 		OnPageRequest(m_sURI);
 	}
