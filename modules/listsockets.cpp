@@ -118,7 +118,8 @@ public:
 				Row["SSL"] = pSocket->GetSSL() ? "Yes" : "No";
 				Row["Local"] = GetLocalHost(pSocket, true);
 				Row["Remote"] = GetRemoteHost(pSocket, true);
-				// TODO: Traffic stats
+				Row["In"] = CString::ToByteStr(pSocket->GetBytesRead());
+				Row["Out"] = CString::ToByteStr(pSocket->GetBytesWritten());
 			}
 
 			return true;
