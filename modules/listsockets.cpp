@@ -118,6 +118,8 @@ public:
 				Row["SSL"] = pSocket->GetSSL() ? "Yes" : "No";
 				Row["Local"] = GetLocalHost(pSocket, true);
 				Row["Remote"] = GetRemoteHost(pSocket, true);
+				Row["In"] = CString::ToByteStr(pSocket->GetBytesRead());
+				Row["Out"] = CString::ToByteStr(pSocket->GetBytesWritten());
 			}
 
 			return true;
@@ -222,6 +224,8 @@ public:
 #endif
 		Table.AddColumn("Local");
 		Table.AddColumn("Remote");
+		Table.AddColumn("In");
+		Table.AddColumn("Out");
 
 		while (!socks.empty()) {
 			Csock* pSocket = socks.top().GetSock();
@@ -238,6 +242,8 @@ public:
 
 			Table.SetCell("Local", GetLocalHost(pSocket, bShowHosts));
 			Table.SetCell("Remote", GetRemoteHost(pSocket, bShowHosts));
+			Table.SetCell("In", CString::ToByteStr(pSocket->GetBytesRead()));
+			Table.SetCell("Out", CString::ToByteStr(pSocket->GetBytesWritten()));
 		}
 
 		PutModule(Table);
