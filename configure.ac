@@ -590,6 +590,7 @@ GNUMAKE=`echo $ac_cv_path_GNUMAKE | $SED "s%$GNUMAKE_DIRNAME/%%"`
 
 # this is in the end, for not trying to include it when it doesn't exist yet
 appendCXX "-include znc/zncconfig.h"
+appendMod "-include znc/zncconfig.h"
 
 AC_SUBST([CXXFLAGS])
 AC_SUBST([CPPFLAGS])
