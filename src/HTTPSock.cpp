@@ -28,11 +28,11 @@ using std::set;
 
 #define MAX_POST_SIZE	1024 * 1024
 
-CHTTPSock::CHTTPSock(CModule *pMod) : CSocket(pMod) {
+CHTTPSock::CHTTPSock(CModule *pMod, const CString& sURIPrefix) : CSocket(pMod), m_sURIPrefix(sURIPrefix) {
 	Init();
 }
 
-CHTTPSock::CHTTPSock(CModule *pMod, const CString& sHostname, unsigned short uPort, int iTimeout) : CSocket(pMod, sHostname, uPort, iTimeout) {
+CHTTPSock::CHTTPSock(CModule *pMod, const CString& sURIPrefix, const CString& sHostname, unsigned short uPort, int iTimeout) : CSocket(pMod, sHostname, uPort, iTimeout), m_sURIPrefix(sURIPrefix) {
 	Init();
 }
 
@@ -493,6 +493,10 @@ const CString& CHTTPSock::GetContentType() const {
 
 const CString& CHTTPSock::GetParamString() const {
 	return m_sPostData;
+}
+
+const CString& CHTTPSock::GetURIPrefix() const {
+	return m_sURIPrefix;
 }
 
 bool CHTTPSock::HasParam(const CString& sName, bool bPost) const {

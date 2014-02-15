@@ -32,11 +32,12 @@ public:
 		ACCEPT_ALL
 	} EAcceptType;
 
-	CListener(unsigned short uPort, const CString& sBindHost, bool bSSL, EAddrType eAddr, EAcceptType eAccept) {
+	CListener(unsigned short uPort, const CString& sBindHost, const CString& sURIPrefix, bool bSSL, EAddrType eAddr, EAcceptType eAccept) {
 		m_uPort = uPort;
 		m_sBindHost = sBindHost;
 		m_bSSL = bSSL;
 		m_eAddr = eAddr;
+		m_sURIPrefix = sURIPrefix;
 		m_pListener = NULL;
 		m_eAcceptType = eAccept;
 	}
@@ -49,6 +50,7 @@ public:
 	unsigned short GetPort() const { return m_uPort; }
 	const CString& GetBindHost() const { return m_sBindHost; }
 	CRealListener* GetRealListener() const { return m_pListener; }
+	const CString& GetURIPrefix() const { return m_sURIPrefix; }
 	EAcceptType GetAcceptType() const { return m_eAcceptType; }
 	// !Getters
 
@@ -65,6 +67,7 @@ protected:
 	EAddrType       m_eAddr;
 	unsigned short  m_uPort;
 	CString         m_sBindHost;
+	CString         m_sURIPrefix;
 	CRealListener*  m_pListener;
 	EAcceptType     m_eAcceptType;
 };
@@ -84,13 +87,14 @@ private:
 
 class CIncomingConnection : public CZNCSock {
 public:
-	CIncomingConnection(const CString& sHostname, unsigned short uPort, CListener::EAcceptType eAcceptType);
+	CIncomingConnection(const CString& sHostname, unsigned short uPort, CListener::EAcceptType eAcceptType, const CString& sURIPrefix);
 	virtual ~CIncomingConnection() {}
 	virtual void ReadLine(const CString& sData);
 	virtual void ReachedMaxBuffer();
 
 private:
 	CListener::EAcceptType m_eAcceptType;
+	const CString m_sURIPrefix;
 };
 
 #endif // !_LISTENER_H
