@@ -71,7 +71,7 @@ protected:
 
 class CRealListener : public CZNCSock {
 public:
-	CRealListener(CListener *pParent) : CZNCSock(), m_pParent(pParent) {}
+	CRealListener(CListener& listener) : CZNCSock(), m_Listener(listener) {}
 	virtual ~CRealListener();
 
 	virtual bool ConnectionFrom(const CString& sHost, unsigned short uPort);
@@ -79,7 +79,7 @@ public:
 	virtual void SockError(int iErrno, const CString& sDescription);
 
 private:
-	CListener* m_pParent;
+	CListener& m_Listener;
 };
 
 class CIncomingConnection : public CZNCSock {

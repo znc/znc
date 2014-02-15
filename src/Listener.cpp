@@ -27,7 +27,7 @@ bool CListener::Listen() {
 		return false;
 	}
 
-	m_pListener = new CRealListener(this);
+	m_pListener = new CRealListener(*this);
 
 	bool bSSL = false;
 #ifdef HAVE_LIBSSL
@@ -50,7 +50,7 @@ void CListener::ResetRealListener() {
 }
 
 CRealListener::~CRealListener() {
-	m_pParent->ResetRealListener();
+	m_Listener.ResetRealListener();
 }
 
 bool CRealListener::ConnectionFrom(const CString& sHost, unsigned short uPort) {
@@ -60,7 +60,7 @@ bool CRealListener::ConnectionFrom(const CString& sHost, unsigned short uPort) {
 }
 
 Csock* CRealListener::GetSockObj(const CString& sHost, unsigned short uPort) {
-	CIncomingConnection *pClient = new CIncomingConnection(sHost, uPort, m_pParent->GetAcceptType());
+	CIncomingConnection *pClient = new CIncomingConnection(sHost, uPort, m_Listener.GetAcceptType());
 	if (CZNC::Get().AllowConnectionFrom(sHost)) {
 		GLOBALMODULECALL(OnClientConnect(pClient, sHost, uPort), NOTHING);
 	} else {
