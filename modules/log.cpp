@@ -40,7 +40,7 @@ public:
 	virtual void OnIRCDisconnected();
 	virtual EModRet OnBroadcast(CString& sMessage);
 
-	virtual void OnRawMode(const CNick& OpNick, CChan& Channel, const CString& sModes, const CString& sArgs);
+	virtual void OnRawMode(const CNick* pOpNick, CChan& Channel, const CString& sModes, const CString& sArgs);
 	virtual void OnKick(const CNick& OpNick, const CString& sKickedNick, CChan& Channel, const CString& sMessage);
 	virtual void OnQuit(const CNick& Nick, const CString& sMessage, const vector<CChan*>& vChans);
 	virtual void OnJoin(const CNick& Nick, CChan& Channel);
@@ -195,9 +195,10 @@ CModule::EModRet CLogMod::OnBroadcast(CString& sMessage)
 	return CONTINUE;
 }
 
-void CLogMod::OnRawMode(const CNick& OpNick, CChan& Channel, const CString& sModes, const CString& sArgs)
+void CLogMod::OnRawMode(const CNick* pOpNick, CChan& Channel, const CString& sModes, const CString& sArgs)
 {
-	PutLog("*** " + OpNick.GetNick() + " sets mode: " + sModes + " " + sArgs, Channel);
+	const CString sNick = pOpNick ? pOpNick->GetNick() : "Server";
+	PutLog("*** " + sNick + " sets mode: " + sModes + " " + sArgs, Channel);
 }
 
 void CLogMod::OnKick(const CNick& OpNick, const CString& sKickedNick, CChan& Channel, const CString& sMessage)

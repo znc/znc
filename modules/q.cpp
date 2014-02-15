@@ -232,13 +232,13 @@ public:
 			HandleNeed(Channel, "ov");
 	}
 
-	virtual void OnDeop(const CNick& OpNick, const CNick& Nick, CChan& Channel, bool bNoChange) {
-		if (m_bRequestPerms && IsSelf(Nick) && !IsSelf(OpNick))
+	virtual void OnDeop(const CNick* pOpNick, const CNick& Nick, CChan& Channel, bool bNoChange) {
+		if (m_bRequestPerms && IsSelf(Nick) && (!pOpNick || !IsSelf(*pOpNick)))
 			HandleNeed(Channel, "o");
 	}
 
-	virtual void OnDevoice(const CNick& OpNick, const CNick& Nick, CChan& Channel, bool bNoChange) {
-		if (m_bRequestPerms && IsSelf(Nick) && !IsSelf(OpNick))
+	virtual void OnDevoice(const CNick* pOpNick, const CNick& Nick, CChan& Channel, bool bNoChange) {
+		if (m_bRequestPerms && IsSelf(Nick) && (!pOpNick || !IsSelf(*pOpNick)))
 			HandleNeed(Channel, "v");
 	}
 

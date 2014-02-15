@@ -471,7 +471,7 @@ public:
 	virtual EModRet OnBroadcast(CString& sMessage);
 
 	/** This module hook is called when a user mode on a channel changes.
-	 *  @param OpNick The nick who sent the mode change.
+	 *  @param pOpNick The nick who sent the mode change, or NULL if set by server.
 	 *  @param Nick The nick whose channel mode changes.
 	 *  @param Channel The channel on which the user mode is changed.
 	 *  @param uMode The mode character that is changed, e.g. '@' for op.
@@ -481,31 +481,38 @@ public:
 	 *  @see CIRCSock::GetModeType() for converting uMode into a mode (e.g.
 	 *       'o' for op).
 	 */
+	virtual void OnChanPermission(const CNick* pOpNick, const CNick& Nick, CChan& Channel, unsigned char uMode, bool bAdded, bool bNoChange);
 	virtual void OnChanPermission(const CNick& OpNick, const CNick& Nick, CChan& Channel, unsigned char uMode, bool bAdded, bool bNoChange);
 	/** Called when a nick is opped on a channel */
+	virtual void OnOp(const CNick* pOpNick, const CNick& Nick, CChan& Channel, bool bNoChange);
 	virtual void OnOp(const CNick& OpNick, const CNick& Nick, CChan& Channel, bool bNoChange);
 	/** Called when a nick is deopped on a channel */
+	virtual void OnDeop(const CNick* pOpNick, const CNick& Nick, CChan& Channel, bool bNoChange);
 	virtual void OnDeop(const CNick& OpNick, const CNick& Nick, CChan& Channel, bool bNoChange);
 	/** Called when a nick is voiced on a channel */
+	virtual void OnVoice(const CNick* pOpNick, const CNick& Nick, CChan& Channel, bool bNoChange);
 	virtual void OnVoice(const CNick& OpNick, const CNick& Nick, CChan& Channel, bool bNoChange);
 	/** Called when a nick is devoiced on a channel */
+	virtual void OnDevoice(const CNick* pOpNick, const CNick& Nick, CChan& Channel, bool bNoChange);
 	virtual void OnDevoice(const CNick& OpNick, const CNick& Nick, CChan& Channel, bool bNoChange);
 	/** Called on an individual channel mode change.
-	 *  @param OpNick The nick who changes the channel mode.
+	 *  @param pOpNick The nick who changes the channel mode, or NULL if set by server.
 	 *  @param Channel The channel whose mode is changed.
 	 *  @param uMode The mode character that is changed.
 	 *  @param sArg The argument to the mode character, if any.
 	 *  @param bAdded True if this mode is added ("+"), else false.
 	 *  @param bNoChange True if this mode was already effective before.
 	 */
+	virtual void OnMode(const CNick* pOpNick, CChan& Channel, char uMode, const CString& sArg, bool bAdded, bool bNoChange);
 	virtual void OnMode(const CNick& OpNick, CChan& Channel, char uMode, const CString& sArg, bool bAdded, bool bNoChange);
 	/** Called on any channel mode change. This is called before the more
 	 *  detailed mode hooks like e.g. OnOp() and OnMode().
-	 *  @param OpNick The nick who changes the channel mode.
+	 *  @param pOpNick The nick who changes the channel mode, or NULL if set by server.
 	 *  @param Channel The channel whose mode is changed.
 	 *  @param sModes The raw mode change, e.g. "+s-io".
 	 *  @param sArgs All arguments to the mode change from sModes.
 	 */
+	virtual void OnRawMode(const CNick* pOpNick, CChan& Channel, const CString& sModes, const CString& sArgs);
 	virtual void OnRawMode(const CNick& OpNick, CChan& Channel, const CString& sModes, const CString& sArgs);
 
 	/** Called on any raw IRC line received from the <em>IRC server</em>.
@@ -1066,12 +1073,19 @@ public:
 	bool OnIRCRegistration(CString& sPass, CString& sNick, CString& sIdent, CString& sRealName);
 	bool OnBroadcast(CString& sMessage);
 
+	bool OnChanPermission(const CNick* pOpNick, const CNick& Nick, CChan& Channel, unsigned char uMode, bool bAdded, bool bNoChange);
 	bool OnChanPermission(const CNick& OpNick, const CNick& Nick, CChan& Channel, unsigned char uMode, bool bAdded, bool bNoChange);
+	bool OnOp(const CNick* pOpNick, const CNick& Nick, CChan& Channel, bool bNoChange);
 	bool OnOp(const CNick& OpNick, const CNick& Nick, CChan& Channel, bool bNoChange);
+	bool OnDeop(const CNick* pOpNick, const CNick& Nick, CChan& Channel, bool bNoChange);
 	bool OnDeop(const CNick& OpNick, const CNick& Nick, CChan& Channel, bool bNoChange);
+	bool OnVoice(const CNick* pOpNick, const CNick& Nick, CChan& Channel, bool bNoChange);
 	bool OnVoice(const CNick& OpNick, const CNick& Nick, CChan& Channel, bool bNoChange);
+	bool OnDevoice(const CNick* pOpNick, const CNick& Nick, CChan& Channel, bool bNoChange);
 	bool OnDevoice(const CNick& OpNick, const CNick& Nick, CChan& Channel, bool bNoChange);
+	bool OnRawMode(const CNick* pOpNick, CChan& Channel, const CString& sModes, const CString& sArgs);
 	bool OnRawMode(const CNick& OpNick, CChan& Channel, const CString& sModes, const CString& sArgs);
+	bool OnMode(const CNick* pOpNick, CChan& Channel, char uMode, const CString& sArg, bool bAdded, bool bNoChange);
 	bool OnMode(const CNick& OpNick, CChan& Channel, char uMode, const CString& sArg, bool bAdded, bool bNoChange);
 
 	bool OnRaw(CString& sLine);
