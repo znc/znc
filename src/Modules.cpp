@@ -190,21 +190,39 @@ const CString& CModule::GetSavePath() const {
 }
 
 CString CModule::GetWebPath() {
+	CString sPath = CZNC::Get().GetURLPrefix();
+
 	switch (m_eType) {
-		case CModInfo::GlobalModule: return "/mods/global/" + GetModName() + "/";
-		case CModInfo::UserModule: return "/mods/user/" + GetModName() + "/";
-		case CModInfo::NetworkModule: return "/mods/network/" + m_pNetwork->GetName() + "/" + GetModName() + "/";
-		default: return "/";
+		case CModInfo::GlobalModule:
+			sPath += "mods/global/";
+			break;
+		case CModInfo::UserModule:
+			sPath += "mods/user/";
+			break;
+		case CModInfo::NetworkModule:
+			sPath += "mods/network/" + m_pNetwork->GetName() + "/";
+			break;
 	}
+
+	return sPath + GetModName() + "/";
 }
 
 CString CModule::GetWebFilesPath() {
+	CString sPath = CZNC::Get().GetURLPrefix();
+
 	switch (m_eType) {
-		case CModInfo::GlobalModule: return "/modfiles/global/" + GetModName() + "/";
-		case CModInfo::UserModule: return "/modfiles/user/" + GetModName() + "/";
-		case CModInfo::NetworkModule: return "/modfiles/network/" + m_pNetwork->GetName() + "/" + GetModName() + "/";
-		default: return "/";
+		case CModInfo::GlobalModule:
+			sPath += "modfiles/global/";
+			break;
+		case CModInfo::UserModule:
+			sPath += "modfiles/user/";
+			break;
+		case CModInfo::NetworkModule:
+			sPath += "modfiles/network/" + m_pNetwork->GetName() + "/";
+			break;
 	}
+
+	return sPath + GetModName() + "/";
 }
 
 bool CModule::LoadRegistry() {

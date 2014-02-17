@@ -377,6 +377,7 @@ bool CWebSock::AddModLoop(const CString& sLoopName, CModule& Module, CTemplate *
 		CTemplate& Row = pTemplate->AddRow(sLoopName);
 		bool bActiveModule = false;
 
+		Row["URLPrefix"] = CZNC::Get().GetURLPrefix();
 		Row["ModName"] = Module.GetModName();
 		Row["ModPath"] = Module.GetWebPath();
 		Row["Title"] = sTitle;

@@ -52,6 +52,8 @@ CZNC::CZNC() {
 	m_sConnectThrottle.SetTTL(30000);
 	m_pLockFile = NULL;
 	m_bProtectWebSessions = true;
+
+	m_sURLPrefix = "/";
 }
 
 CZNC::~CZNC() {
@@ -444,6 +446,7 @@ bool CZNC::WriteConfig() {
 	config.AddKeyValuePair("SSLCertFile", CString(m_sSSLCertFile));
 	config.AddKeyValuePair("ProtectWebSessions", CString(m_bProtectWebSessions));
 	config.AddKeyValuePair("Version", CString(VERSION, 1));
+	config.AddKeyValuePair("URLPrefix", m_sURLPrefix);
 
 	for (size_t l = 0; l < m_vpListeners.size(); l++) {
 		CListener* pListener = m_vpListeners[l];
@@ -1243,6 +1246,8 @@ bool CZNC::DoRehash(CString& sError)
 		m_uiMaxBufferSize = sVal.ToUInt();
 	if (config.FindStringEntry("protectwebsessions", sVal))
   		m_bProtectWebSessions = sVal.ToBool();
+	if (config.FindStringEntry("urlprefix", sVal))
+		m_sURLPrefix = sVal;
 
 	// This has to be after SSLCertFile is handled since it uses that value
 	const char *szListenerEntries[] = {
