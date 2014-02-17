@@ -1430,6 +1430,7 @@ void CClient::UserPortCommand(CString& sLine) {
 		Table.AddColumn("SSL");
 		Table.AddColumn("Proto");
 		Table.AddColumn("IRC/Web");
+		Table.AddColumn("URIPrefix");
 
 		vector<CListener*>::const_iterator it;
 		const vector<CListener*>& vpListeners = CZNC::Get().GetListeners();
@@ -1445,6 +1446,7 @@ void CClient::UserPortCommand(CString& sLine) {
 
 			CListener::EAcceptType eAccept = (*it)->GetAcceptType();
 			Table.SetCell("IRC/Web", (eAccept == CListener::ACCEPT_ALL ? "All" : (eAccept == CListener::ACCEPT_IRC ? "IRC" : "Web")));
+			Table.SetCell("URIPrefix", (*it)->GetURIPrefix() + "/");
 		}
 
 		PutStatus(Table);
@@ -1483,12 +1485,13 @@ void CClient::UserPortCommand(CString& sLine) {
 		}
 
 		if (sPort.empty() || sAddr.empty() || sAccept.empty()) {
-			PutStatus("Usage: AddPort <[+]port> <ipv4|ipv6|all> <web|irc|all> [bindhost]");
+			PutStatus("Usage: AddPort <[+]port> <ipv4|ipv6|all> <web|irc|all> [bindhost [uriprefix]]");
 		} else {
 			bool bSSL = (sPort.Left(1).Equals("+"));
 			const CString sBindHost = sLine.Token(4);
+			const CString sURIPrefix = sLine.Token(5);
 
-			CListener* pListener = new CListener(uPort, sBindHost, bSSL, eAddr, eAccept);
+			CListener* pListener = new CListener(uPort, sBindHost, sURIPrefix, bSSL, eAddr, eAccept);
 
 			if (!pListener->Listen()) {
 				delete pListener;

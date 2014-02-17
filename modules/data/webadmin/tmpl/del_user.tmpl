@@ -6,13 +6,13 @@
 		<div class="sectionbody">
 			<div class="subsection">
 				Are you sure you want to delete "<? VAR Username ?>"?
-				<form action="deluser" method="post">
+				<form action="<? VAR URIPrefix TOP ?><? VAR ModPath TOP ?>deluser" method="post">
 					<? INC _csrf_check.tmpl ?>
 					<input type="hidden" name="submitted" value="1" />
 					<input type="hidden" name="user" value="<? VAR Username ?>" />
 					<div class="yesnobutton"><input type="submit" value="Yes" /></div>
 				</form>
-				<form action="listusers" method="get">
+				<form action="<? VAR URIPrefix TOP ?><? VAR ModPath TOP ?>listusers" method="get">
 					<div class="yesnobutton"><input type="submit" value="No" /></div>
 				</form>
 			</div>

@@ -1,12 +1,12 @@
 <? INC Header.tmpl ?>
 
 <? IF Cert ?>
-<p>You already have a certificate set, use the form below to overwrite the current certificate. Alternatively click <a href="<? VAR ModPath ?>delete">here</a> to <a href="<? VAR ModPath ?>delete">delete</a> your certificate.</p>
+<p>You already have a certificate set, use the form below to overwrite the current certificate. Alternatively click <a href="<? VAR URIPrefix TOP ?><? VAR ModPath ?>delete">here</a> to <a href="<? VAR URIPrefix TOP ?><? VAR ModPath ?>delete">delete</a> your certificate.</p>
 <? ELSE ?>
 <p>You do not have a cert.</p>
 <? ENDIF ?>
 
-<form method="post" action="<? VAR ModPath ?>update">
+<form method="post" action="<? VAR URIPrefix TOP ?><? VAR ModPath ?>update">
 	<? INC _csrf_check.tmpl ?>
 	<div class="section">
 		<h3>Certificate</h3>

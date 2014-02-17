@@ -450,6 +450,7 @@ bool CZNC::WriteConfig() {
 		CConfig listenerConfig;
 
 		listenerConfig.AddKeyValuePair("Host", pListener->GetBindHost());
+		listenerConfig.AddKeyValuePair("URIPrefix", pListener->GetURIPrefix() + "/");
 		listenerConfig.AddKeyValuePair("Port", CString(pListener->GetPort()));
 
 		listenerConfig.AddKeyValuePair("IPv4", CString(pListener->GetAddrType() != ADDR_IPV6ONLY));
@@ -578,6 +579,7 @@ bool CZNC::WriteNewConfig(const CString& sConfigFile) {
 	bool b6 = false;
 #endif
 	CString sListenHost;
+	CString sURIPrefix;
 	bool bListenSSL = false;
 	unsigned int uListenPort = 0;
 	bool bSuccess;
@@ -606,7 +608,7 @@ bool CZNC::WriteNewConfig(const CString& sConfigFile) {
 		CUtils::GetInput("Listen Host", sListenHost, sListenHost, "Blank for all ips");
 
 		CUtils::PrintAction("Verifying the listener");
-		CListener* pListener = new CListener((unsigned short int)uListenPort, sListenHost, bListenSSL,
+		CListener* pListener = new CListener((unsigned short int)uListenPort, sListenHost, sURIPrefix, bListenSSL,
 				b6 ? ADDR_ALL : ADDR_IPV4ONLY, CListener::ACCEPT_ALL);
 		if (!pListener->Listen()) {
 			CUtils::PrintStatus(false, FormatBindError());
@@ -1689,12 +1691,15 @@ bool CZNC::AddListener(const CString& sLine, CString& sError) {
 		bSSL = true;
 	}
 
+	// No support for URIPrefix for old-style configs.
+	CString sURIPrefix;
 	unsigned short uPort = sPort.ToUShort();
-	return AddListener(uPort, sBindHost, bSSL, eAddr, eAccept, sError);
+	return AddListener(uPort, sBindHost, sURIPrefix, bSSL, eAddr, eAccept, sError);
 }
 
-bool CZNC::AddListener(unsigned short uPort, const CString& sBindHost, bool bSSL,
-			EAddrType eAddr, CListener::EAcceptType eAccept, CString& sError) {
+bool CZNC::AddListener(unsigned short uPort, const CString& sBindHost,
+		       const CString& sURIPrefixRaw, bool bSSL,
+		       EAddrType eAddr, CListener::EAcceptType eAccept, CString& sError) {
 	CString sHostComment;
 
 	if (!sBindHost.empty()) {
@@ -1755,7 +1760,18 @@ bool CZNC::AddListener(unsigned short uPort, const CString& sBindHost, bool bSSL
 		return false;
 	}
 
-	CListener* pListener = new CListener(uPort, sBindHost, bSSL, eAddr, eAccept);
+	// URIPrefix must start with a slash and end without one.
+	CString sURIPrefix = CString(sURIPrefixRaw);
+	if(!sURIPrefix.empty()) {
+		if (!sURIPrefix.StartsWith("/")) {
+			sURIPrefix = "/" + sURIPrefix;
+		}
+		if (sURIPrefix.EndsWith("/")) {
+			sURIPrefix.TrimRight("/");
+		}
+	}
+
+	CListener* pListener = new CListener(uPort, sBindHost, sURIPrefix, bSSL, eAddr, eAccept);
 
 	if (!pListener->Listen()) {
 		sError = FormatBindError();
@@ -1772,6 +1788,7 @@ bool CZNC::AddListener(unsigned short uPort, const CString& sBindHost, bool bSSL
 
 bool CZNC::AddListener(CConfig* pConfig, CString& sError) {
 	CString sBindHost;
+	CString sURIPrefix;
 	bool bSSL;
 	bool b4;
 #ifdef HAVE_IPV6
@@ -1793,6 +1810,7 @@ bool CZNC::AddListener(CConfig* pConfig, CString& sError) {
 	pConfig->FindBoolEntry("ipv6", b6, b6);
 	pConfig->FindBoolEntry("allowirc", bIRC, true);
 	pConfig->FindBoolEntry("allowweb", bWeb, true);
+	pConfig->FindStringEntry("uriprefix", sURIPrefix);
 
 	EAddrType eAddr;
 	if (b4 && b6) {
@@ -1820,7 +1838,7 @@ bool CZNC::AddListener(CConfig* pConfig, CString& sError) {
 		return false;
 	}
 
-	return AddListener(uPort, sBindHost, bSSL, eAddr, eAccept, sError);
+	return AddListener(uPort, sBindHost, sURIPrefix, bSSL, eAddr, eAccept, sError);
 }
 
 bool CZNC::AddListener(CListener* pListener) {

@@ -141,6 +141,11 @@ input.third, textarea.third,
 	width: 125px;
 }
 
+input.sixth, textarea.sixth,
+.sixth input, .sixth textarea {
+	width: 62px;
+}
+
 .subsection div.checkbox {
 	padding: 9px 0 0 3px;
 }

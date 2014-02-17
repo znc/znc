@@ -2,7 +2,7 @@
 
 		<?IF !UserLoop?>
 			<div class="textsection">
-				There are no users defined. Click <a href="adduser">here</a> if you would like to add one.
+				There are no users defined. Click <a href="<? VAR URIPrefix TOP ?><? VAR ModPath TOP ?>adduser">here</a> if you would like to add one.
 			</div>
 		<?ELSE?>
 			<div class="toptable">
@@ -21,9 +21,9 @@
 					<tr class="<?IF __EVEN__?>evenrow<?ELSE?>oddrow<?ENDIF?>">
 						<td>
 							<span class="nowrap">
-								[<a href="edituser?user=<?VAR Username ESC=URL?>">Edit</a>]
-								[<a href="adduser?clone=<? VAR Username ESC=URL ?>" alt="Clone <? VAR Username ESC=URL ?>">Clone</a>]
-								<? IF !IsSelf ?>[<a href="deluser?user=<?VAR Username ESC=URL?>">Delete</a>]<? ENDIF ?>
+								[<a href="<? VAR URIPrefix TOP ?><? VAR ModPath TOP ?>edituser?user=<?VAR Username ESC=URL?>">Edit</a>]
+								[<a href="<? VAR URIPrefix TOP ?><? VAR ModPath TOP ?>adduser?clone=<? VAR Username ESC=URL ?>" alt="Clone <? VAR Username ESC=URL ?>">Clone</a>]
+								<? IF !IsSelf ?>[<a href="<? VAR URIPrefix TOP ?><? VAR ModPath TOP ?>deluser?user=<?VAR Username ESC=URL?>">Delete</a>]<? ENDIF ?>
 							</span>
 						</td>
 						<td><? VAR Username ?></td>

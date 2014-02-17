@@ -1,6 +1,6 @@
 <? INC Header.tmpl ?>
 
-<form method="post" action="<? VAR ModPath ?>add">
+<form method="post" action="<? VAR URIPrefix TOP ?><? VAR ModPath ?>add">
 	<? INC _csrf_check.tmpl ?>
 	<div class="section">
 		<h3>Add A Note</h3>

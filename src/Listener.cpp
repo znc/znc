@@ -27,7 +27,7 @@ bool CListener::Listen() {
 		return false;
 	}
 
-	m_pListener = new CRealListener(this);
+	m_pListener = new CRealListener(*this);
 
 	bool bSSL = false;
 #ifdef HAVE_LIBSSL
@@ -50,7 +50,7 @@ void CListener::ResetRealListener() {
 }
 
 CRealListener::~CRealListener() {
-	m_pParent->ResetRealListener();
+	m_Listener.ResetRealListener();
 }
 
 bool CRealListener::ConnectionFrom(const CString& sHost, unsigned short uPort) {
@@ -60,7 +60,9 @@ bool CRealListener::ConnectionFrom(const CString& sHost, unsigned short uPort) {
 }
 
 Csock* CRealListener::GetSockObj(const CString& sHost, unsigned short uPort) {
-	CIncomingConnection *pClient = new CIncomingConnection(sHost, uPort, m_pParent->GetAcceptType());
+	CIncomingConnection *pClient = new CIncomingConnection(sHost, uPort,
+							       m_Listener.GetAcceptType(),
+							       m_Listener.GetURIPrefix());
 	if (CZNC::Get().AllowConnectionFrom(sHost)) {
 		GLOBALMODULECALL(OnClientConnect(pClient, sHost, uPort), NOTHING);
 	} else {
@@ -83,7 +85,7 @@ void CRealListener::SockError(int iErrno, const CString& sDescription) {
 	}
 }
 
-CIncomingConnection::CIncomingConnection(const CString& sHostname, unsigned short uPort, CListener::EAcceptType eAcceptType) : CZNCSock(sHostname, uPort) {
+CIncomingConnection::CIncomingConnection(const CString& sHostname, unsigned short uPort, CListener::EAcceptType eAcceptType, const CString& sURIPrefix) : CZNCSock(sHostname, uPort), m_sURIPrefix(sURIPrefix) {
 	m_eAcceptType = eAcceptType;
 	// The socket will time out in 120 secs, no matter what.
 	// This has to be fixed up later, if desired.
@@ -141,7 +143,7 @@ void CIncomingConnection::ReadLine(const CString& sLine) {
 			return;
 		}
 
-		pSock = new CWebSock();
+		pSock = new CWebSock(m_sURIPrefix);
 		CZNC::Get().GetManager().SwapSockByAddr(pSock, this);
 
 		// And don't forget to give it some sane name / timeout

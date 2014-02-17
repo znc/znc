@@ -28,11 +28,11 @@ using std::set;
 
 #define MAX_POST_SIZE	1024 * 1024
 
-CHTTPSock::CHTTPSock(CModule *pMod) : CSocket(pMod) {
+CHTTPSock::CHTTPSock(CModule *pMod, const CString& sURIPrefix) : CSocket(pMod), m_sURIPrefix(sURIPrefix) {
 	Init();
 }
 
-CHTTPSock::CHTTPSock(CModule *pMod, const CString& sHostname, unsigned short uPort, int iTimeout) : CSocket(pMod, sHostname, uPort, iTimeout) {
+CHTTPSock::CHTTPSock(CModule *pMod, const CString& sURIPrefix, const CString& sHostname, unsigned short uPort, int iTimeout) : CSocket(pMod, sHostname, uPort, iTimeout), m_sURIPrefix(sURIPrefix) {
 	Init();
 }
 
@@ -214,7 +214,16 @@ CString CHTTPSock::GetDate(time_t stamp) {
 void CHTTPSock::GetPage() {
 	DEBUG("Page Request [" << m_sURI << "] ");
 
-	OnPageRequest(m_sURI);
+	// Check that the requested path starts with the prefix. Strip it if so.
+        if (!m_sURI.TrimPrefix(m_sURIPrefix)) {
+		DEBUG("INVALID path => Does not start with prefix [" + m_sURIPrefix + "]");
+		DEBUG("Expected prefix:   " << m_sURIPrefix);
+		DEBUG("Requested path:    " << m_sURI);
+		Redirect(m_sURI);
+	} else {
+		OnPageRequest(m_sURI);
+	}
+
 }
 
 #ifdef HAVE_ZLIB
@@ -495,6 +504,10 @@ const CString& CHTTPSock::GetParamString() const {
 	return m_sPostData;
 }
 
+const CString& CHTTPSock::GetURIPrefix() const {
+	return m_sURIPrefix;
+}
+
 bool CHTTPSock::HasParam(const CString& sName, bool bPost) const {
 	if (bPost)
 		return (m_msvsPOSTParams.find(sName) != m_msvsPOSTParams.end());
@@ -712,13 +725,19 @@ bool CHTTPSock::Redirect(const CString& sURL) {
 	if (SentHeader()) {
 		DEBUG("Redirect() - Header was already sent");
 		return false;
+	} else if(!sURL.StartsWith("/")) {
+		// HTTP/1.1 only admits absolute URIs for the Location header.
+		DEBUG("Redirect to relative URI [" + sURL + "] is not allowed.");
+		return false;
+	} else {
+		CString location = m_sURIPrefix + sURL;
+
+		DEBUG("- Redirect to [" << location << "] with prefix [" + m_sURIPrefix + "]");
+		AddHeader("Location", location);
+		PrintErrorPage(302, "Found", "The document has moved <a href=\"" + location.Escape_n(CString::EHTML) + "\">here</a>.");
+
+		return true;
 	}
-
-	DEBUG("- Redirect to [" << sURL << "]");
-	AddHeader("Location", sURL);
-	PrintErrorPage(302, "Found", "The document has moved <a href=\"" + sURL.Escape_n(CString::EHTML) + "\">here</a>.");
-
-	return true;
 }
 
 void CHTTPSock::Connected() {

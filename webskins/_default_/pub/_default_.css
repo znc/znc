@@ -247,6 +247,11 @@ input.third, textarea.third,
 	width: 150px;
 }
 
+input.sixth, textarea.sixth,
+.sixth input, .sixth textarea {
+	width: 75px;
+}
+
 input.number {
 	width: 40px;
 }
@@ -299,7 +304,7 @@ tr.evenrow td {
 
 .subsection input, .subsection select, .subsection textarea {
 	margin: 5px 0 5px 0;
-	min-width: 100px;
+	min-width: 75px;
 	vertical-align: middle;
 }
 

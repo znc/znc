@@ -5,7 +5,7 @@
     <p>To connect to this network from your IRC client, you can set the server password field as follows: <code><? VAR Username ?>/<? IF Edit ?><? VAR Name ?><? ELSE ?>&lt;network&gt;<? ENDIF ?>:&lt;password&gt;</code> or username field as <code><? VAR Username ?>/<? IF Edit ?><? VAR Name ?><? ELSE ?>&lt;network&gt;<? ENDIF ?></code></p>
 </div>
 
-<form action="<? IF Edit ?>editnetwork<? ELSE ?>addnetwork<? ENDIF ?>" method="post">
+<form action="<? VAR URIPrefix TOP ?><? VAR ModPath TOP ?><? IF Edit ?>editnetwork<? ELSE ?>addnetwork<? ENDIF ?>" method="post">
 	<? INC _csrf_check.tmpl ?>
 	<div class="section">
 		<input type="hidden" name="submitted" value="1" />
@@ -116,7 +116,7 @@
 				<table>
 					<thead>
 					<tr>
-						<td>[<a href="addchan?user=<? VAR Username ESC=URL ?>&amp;network=<? VAR Name ESC=URL ?>">Add</a>]</td>
+						<td>[<a href="<? VAR URIPrefix TOP ?><? VAR ModPath TOP ?>addchan?user=<? VAR Username ESC=URL ?>&amp;network=<? VAR Name ESC=URL ?>">Add</a>]</td>
 				<? IF ChannelLoop ?>
 						<td>Save</td>
 						<td>Name</td>
@@ -135,7 +135,7 @@
 					<tr class="<? IF __EVEN__ ?>evenrow<? ELSE ?>oddrow<? ENDIF ?>">
 						<td>
 							<input type="hidden" name="channel" value="<? VAR Name ?>" />
-							[<a href="editchan?user=<? VAR Username ESC=URL ?>&amp;network=<? VAR Network ESC=URL ?>&amp;name=<? VAR Name ESC=URL ?>">Edit</a>] [<a href="delchan?user=<? VAR Username ESC=URL ?>&amp;network=<? VAR Network ESC=URL ?>&amp;name=<? VAR Name ESC=URL ?>">Del</a>]
+							[<a href="<? VAR URIPrefix TOP ?><? VAR ModPath TOP ?>editchan?user=<? VAR Username ESC=URL ?>&amp;network=<? VAR Network ESC=URL ?>&amp;name=<? VAR Name ESC=URL ?>">Edit</a>] [<a href="<? VAR URIPrefix TOP ?><? VAR ModPath TOP ?>delchan?user=<? VAR Username ESC=URL ?>&amp;network=<? VAR Network ESC=URL ?>&amp;name=<? VAR Name ESC=URL ?>">Del</a>]
 						</td>
 						<td><input type="checkbox" name="save_<? VAR Name ?>"<? IF InConfig ?> checked="checked"<? ENDIF ?> /></td>
 						<td><? VAR Name ?></td>
