@@ -371,6 +371,8 @@ sub OnTimerAutoJoin {}
 sub OnEmbeddedWebRequest {}
 sub OnAddNetwork {}
 sub OnDeleteNetwork {}
+sub OnSendToClient {}
+sub OnSendToIRC {}
 
 
 # Functions of CModule will be usable from perl modules.

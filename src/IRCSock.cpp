@@ -1040,8 +1040,13 @@ void CIRCSock::TrySend() {
 	// This condition must be the same as in PutIRC() and PutIRCQuick()!
 	while (!m_vsSendQueue.empty() && (!m_bFloodProtection || m_iSendsAllowed > 0)) {
 		m_iSendsAllowed--;
-		DEBUG("(" << m_pNetwork->GetUser()->GetUserName() << "/" << m_pNetwork->GetName() << ") ZNC -> IRC [" << m_vsSendQueue.front() << "]");
-		Write(m_vsSendQueue.front() + "\r\n");
+		bool bSkip = false;
+		CString& sLine = m_vsSendQueue.front();
+		ALLMODULECALL(OnSendToIRC(sLine), &bSkip);
+		if (!bSkip) {;
+			DEBUG("(" << m_pNetwork->GetUser()->GetUserName() << "/" << m_pNetwork->GetName() << ") ZNC -> IRC [" << sLine << "]");
+			Write(sLine + "\r\n");
+		}
 		m_vsSendQueue.pop_front();
 	}
 }
