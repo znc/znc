@@ -990,7 +990,7 @@ bool CZNC::WriteNewConfig(const CString& sConfigFile) {
 }
 
 size_t CZNC::FilterUncommonModules(set<CModInfo>& ssModules) {
-	const char* ns[] = { "webadmin", "controlpanel",
+	const CString ns[] = { "webadmin", "controlpanel",
 		"chansaver", "keepnick", "simple_away", "partyline",
 		"kickrejoin", "nickserv", "perform" };
 	const set<CString> ssNames(ns, ns + sizeof(ns) / sizeof(ns[0]));
