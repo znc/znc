@@ -42,7 +42,7 @@ private:
 		}
 	}
 
-	typedef multimap<time_t, CUser*> MTimeMulti;
+	typedef multimap<const time_t, CUser*> MTimeMulti;
 	typedef map<CString, CUser*> MUsers;
 
 	void ShowCommand(const CString &sLine) {
@@ -104,7 +104,7 @@ public:
 			const MUsers& mUsers = CZNC::Get().GetUserMap();
 
 			for (MUsers::const_iterator uit = mUsers.begin(); uit != mUsers.end(); ++uit) {
-				mmSorted.insert(pair<time_t, CUser*>(GetTime(uit->second), uit->second));
+				mmSorted.insert(pair<const time_t, CUser*>(GetTime(uit->second), uit->second));
 			}
 
 			for (MTimeMulti::const_iterator it = mmSorted.begin(); it != mmSorted.end(); ++it) {
