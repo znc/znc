@@ -75,7 +75,7 @@ class CWebAdminMod : public CModule {
 public:
 	MODCONSTRUCTOR(CWebAdminMod) {
 		VPair vParams;
-		vParams.push_back(make_pair("user", ""));
+		vParams.push_back(make_pair(CString("user"), CString("")));
 		AddSubPage(new CWebSubPage("settings", "Global Settings", CWebSubPage::F_ADMIN));
 		AddSubPage(new CWebSubPage("edituser", "Your Settings", vParams));
 		AddSubPage(new CWebSubPage("traffic", "Traffic Info", CWebSubPage::F_ADMIN));
