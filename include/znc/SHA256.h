@@ -44,6 +44,7 @@
 // just defines these in inttypes.h which is also part of C99 and is supposed to
 // include stdint.h. Solaris 9 is a weirdo. :(
 #include <inttypes.h>
+#include <sys/types.h>
 #include <cstddef>
 
 typedef struct {
