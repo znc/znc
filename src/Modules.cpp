@@ -1139,7 +1139,7 @@ CModules::ModDirList CModules::GetModDirs() {
 #ifdef RUN_FROM_SOURCE
 	// ./modules
 	sDir = CZNC::Get().GetCurPath() + "/modules/";
-	ret.push(std::make_pair(sDir, sDir + "data/"));
+	ret.push(std::pair<CString, CString>(sDir, sDir + "data/"));
 #endif
 
 	// ~/.znc/modules
@@ -1147,7 +1147,7 @@ CModules::ModDirList CModules::GetModDirs() {
 	ret.push(std::make_pair(sDir, sDir));
 
 	// <moduledir> and <datadir> (<prefix>/lib/znc)
-	ret.push(std::make_pair(_MODDIR_ + CString("/"), _DATADIR_ + CString("/modules/")));
+	ret.push(std::pair<CString, CString>(CString(_MODDIR_) + "/", CString(_DATADIR_) + "/modules/"));
 
 	return ret;
 }
