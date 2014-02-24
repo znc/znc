@@ -183,6 +183,11 @@ void CSSockAddr::SetIPv6( bool b )
 
 
 #ifdef HAVE_LIBSSL
+extern "C" {
+	static int _PemPassCB( char *, int, int, void * );
+	static int _CertVerifyCB( int, X509_STORE_CTX * );
+}
+
 static int _PemPassCB( char *pBuff, int iBuffLen, int rwflag, void * pcSocket )
 {
 	Csock * pSock = static_cast<Csock *>( pcSocket );
@@ -840,11 +845,13 @@ void CSockCommon::AddCron( CCron * pcCron )
 	m_vcCrons.push_back( pcCron );
 }
 
+extern "C" typedef int ( *cmpFunc )( const char *, const char * );
+
 void CSockCommon::DelCron( const CS_STRING & sName, bool bDeleteAll, bool bCaseSensitive )
 {
 	for( size_t a = 0; a < m_vcCrons.size(); ++a )
 	{
-		int ( *Cmp )( const char *, const char * ) = ( bCaseSensitive ? strcmp : strcasecmp );
+		cmpFunc Cmp = ( bCaseSensitive ? strcmp : strcasecmp );
 		if( Cmp( m_vcCrons[a]->GetName().c_str(), sName.c_str() ) == 0 )
 		{
 			m_vcCrons[a]->Stop();

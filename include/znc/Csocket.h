@@ -282,11 +282,11 @@ private:
 int GetAddrInfo( const CS_STRING & sHostname, Csock * pSock, CSSockAddr & csSockAddr );
 
 //! used to retrieve the context position of the socket to its associated ssl connection. Setup once in InitSSL() via SSL_get_ex_new_index
-int GetCsockClassIdx();
+extern "C" int GetCsockClassIdx();
 
 #ifdef HAVE_LIBSSL
 //! returns the sock object associated to the particular context. returns NULL on failure or if not available
-Csock * GetCsockFromCTX( X509_STORE_CTX * pCTX );
+extern "C" Csock * GetCsockFromCTX( X509_STORE_CTX * pCTX );
 #endif /* HAVE_LIBSSL */
 
 
@@ -520,7 +520,7 @@ protected:
 
 
 #ifdef HAVE_LIBSSL
-typedef int ( *FPCertVerifyCB )( int, X509_STORE_CTX * );
+extern "C" typedef int ( *FPCertVerifyCB )( int, X509_STORE_CTX * );
 #endif /* HAVE_LIBSSL */
 
 

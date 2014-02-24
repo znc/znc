@@ -72,6 +72,11 @@ static void GenerateHelp(const char *appname) {
 	CUtils::PrintMessage("\t-d, --datadir      Set a different ZNC repository (default is ~/.znc)");
 }
 
+extern "C" {
+	static void die(int);
+	static void signalHandler(int);
+}
+
 static void die(int sig) {
 	signal(SIGPIPE, SIG_DFL);
 
