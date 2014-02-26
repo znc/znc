@@ -102,7 +102,7 @@ void CLogMod::PutLog(const CString& sLine, const CString& sWindow /*= "Status"*/
 	if (!CFile::Exists(sLogDir)) CDir::MakeDir(sLogDir, ModDirInfo.st_mode);
 	if (LogFile.Open(O_WRONLY | O_APPEND | O_CREAT))
 	{
-		LogFile.Write(CUtils::FormatTime(curtime, "[%H:%M:%S] ", m_pUser->GetTimezone()) + (m_bSanitize ? sLine.StripControls_n() : sLine) + "\n");
+		LogFile.Write(CUtils::FormatTime(curtime, m_pUser->GetTimestampFormat() + " ", m_pUser->GetTimezone()) + (m_bSanitize ? sLine.StripControls_n() : sLine) + "\n");
 	} else
 		DEBUG("Could not open log file [" << sPath << "]: " << strerror(errno));
 }
