@@ -299,6 +299,28 @@ public:
 				m_pUser->PutUser(":irc.znc.in 442 " + m_pClient->GetNick() + " " + sChannel + " :You're not on that channel");
 			}
 			return HALT;
+		} else if (sLine.Equals("JOIN", false, 4)) {
+			CString sChans = sLine.Token(1).TrimPrefix_n();
+
+			VCString vChans;
+			sChans.Split(",", vChans, false);
+			sChans.clear();
+
+			for (unsigned int a = 0; a < vChans.size(); a++) {
+				CString sChannel = vChans[a];
+				if (sChannel.Left(1) == CHAN_PREFIX_1) {
+					if (sChannel.Left(2) != CHAN_PREFIX) {
+						m_pClient->PutClient(":" + GetIRCServer(m_pNetwork) + " 403 " + m_pClient->GetNick() + " " + sChannel + " :Channels look like " CHAN_PREFIX "znc");
+					} else {
+						sChannel = sChannel.Left(32);
+
+						CPartylineChannel* pChannel = GetChannel(sChannel);
+
+						JoinUser(m_pUser, pChannel);
+					}
+				}
+			}
+			return CONTINUE;
 		}
 
 		return CONTINUE;
@@ -379,22 +401,12 @@ public:
 		}
 	}
 
-	virtual EModRet OnUserJoin(CString& sChannel, CString& sKey) {
-		if (sChannel.Left(1) != CHAN_PREFIX_1) {
-			return CONTINUE;
-		}
-
-		if (sChannel.Left(2) != CHAN_PREFIX) {
-			m_pClient->PutClient(":" + GetIRCServer(m_pNetwork) + " 403 " + m_pClient->GetNick() + " " + sChannel + " :Channels look like " CHAN_PREFIX "znc");
+    	virtual EModRet OnUserJoin(CString& sChannel, CString& sKey) {
+   		if (sChannel.Left(1) != CHAN_PREFIX_1) {
+   			return CONTINUE;
+   		} else {
 			return HALT;
 		}
-
-		sChannel = sChannel.Left(32);
-		CPartylineChannel* pChannel = GetChannel(sChannel);
-
-		JoinUser(m_pUser, pChannel);
-
-		return HALT;
 	}
 
 	void JoinUser(CUser* pUser, CPartylineChannel* pChannel) {
