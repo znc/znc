@@ -84,6 +84,9 @@ public:
 	static CString FormatTime(time_t t, const CString& sFormat, const CString& sTZ);
 	static SCString GetTimezones();
 
+	static MCString GetMessageTags(const CString& sLine);
+	static void SetMessageTags(CString& sLine, const MCString& mssTags);
+
 private:
 protected:
 };
