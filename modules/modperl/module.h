@@ -102,6 +102,8 @@ public:
 	virtual bool OnEmbeddedWebRequest(CWebSock&, const CString&, CTemplate&);
 	virtual EModRet OnAddNetwork(CIRCNetwork& Network, CString& sErrorRet);
 	virtual EModRet OnDeleteNetwork(CIRCNetwork& Network);
+	virtual EModRet OnSendToClient(CString& sLine, CClient& Client);
+	virtual EModRet OnSendToIRC(CString& sLine);
 };
 
 static inline CPerlModule* AsPerlModule(CModule* p) {

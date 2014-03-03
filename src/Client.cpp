@@ -19,6 +19,7 @@
 #include <znc/User.h>
 #include <znc/IRCNetwork.h>
 
+using std::map;
 using std::vector;
 
 #define CALLMOD(MOD, CLIENT, USER, NETWORK, FUNC) {  \
@@ -753,8 +754,12 @@ CString CClient::GetFullName() {
 }
 
 void CClient::PutClient(const CString& sLine) {
-	DEBUG("(" << GetFullName() << ") ZNC -> CLI [" << sLine << "]");
-	Write(sLine + "\r\n");
+	bool bReturn = false;
+	CString sCopy = sLine;
+	ALLMODULECALL(OnSendToClient(sCopy, *this), &bReturn);
+	if (bReturn) return;
+	DEBUG("(" << GetFullName() << ") ZNC -> CLI [" << sCopy << "]");
+	Write(sCopy + "\r\n");
 }
 
 void CClient::PutStatusNotice(const CString& sLine) {

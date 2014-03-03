@@ -62,6 +62,8 @@ EModRet OnTimerAutoJoin(CChan& Channel)
 bool OnEmbeddedWebRequest(CWebSock& WebSock, const CString& sPageName, CTemplate& Tmpl)=false
 EModRet OnAddNetwork(CIRCNetwork& Network, CString& sErrorRet)
 EModRet OnDeleteNetwork(CIRCNetwork& Network)
+EModRet OnSendToClient(CString& sLine, CClient& Client)
+EModRet OnSendToIRC(CString& sLine)
 
 EModRet OnAddUser(CUser& User, CString& sErrorRet)
 EModRet OnDeleteUser(CUser& User)

@@ -784,6 +784,20 @@ public:
 	 */
 	virtual EModRet OnDeleteNetwork(CIRCNetwork& Network);
 
+	/** Called when ZNC sends a raw traffic line to a client.
+	 *  @param sLine The raw traffic line sent.
+	 *  @param Client The client this line is sent to.
+	 *  @warning Calling PutUser() from within this hook leads to infinite recursion.
+	 *  @return See CModule::EModRet.
+	 */
+	virtual EModRet OnSendToClient(CString& sLine, CClient& Client);
+	/** Called when ZNC sends a raw traffic line to the IRC server.
+	 *  @param sLine The raw traffic line sent.
+	 *  @warning Calling PutIRC() from within this hook leads to infinite recursion.
+	 *  @return See CModule::EModRet.
+	 */
+	virtual EModRet OnSendToIRC(CString& sLine);
+
 	ModHandle GetDLL() { return m_pDLL; }
 	static double GetCoreVersion() { return VERSION; }
 
@@ -1134,6 +1148,9 @@ public:
 
 	bool OnAddNetwork(CIRCNetwork& Network, CString& sErrorRet);
 	bool OnDeleteNetwork(CIRCNetwork& Network);
+
+	bool OnSendToClient(CString& sLine, CClient& Client);
+	bool OnSendToIRC(CString& sLine);
 
 	bool OnServerCapAvailable(const CString& sCap);
 	bool OnServerCapResult(const CString& sCap, bool bSuccess);

@@ -383,6 +383,12 @@ class Module:
     def OnDeleteNetwork(self, Network):
         pass
 
+    def OnSendToClient(self, sLine, Client):
+        pass
+
+    def OnSendToIRC(self, sLine):
+        pass
+
     # Global modules
     def OnAddUser(self, User, sErrorRet):
         pass
