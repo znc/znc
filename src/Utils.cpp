@@ -466,7 +466,7 @@ MCString CUtils::GetMessageTags(const CString& sLine) {
 
 		MCString mssTags;
 		for (VCString::const_iterator it = vsTags.begin(); it != vsTags.end(); ++it) {
-			mssTags[it->Token(0, false, "=")] = it->Token(1, true, "=");
+			mssTags[it->Token(0, false, "=", true)] = it->Token(1, true, "=", true);
 		}
 		return mssTags;
 	}
