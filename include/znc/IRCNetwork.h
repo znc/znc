@@ -76,6 +76,7 @@ public:
 
 	const std::vector<CChan*>& GetChans() const;
 	CChan* FindChan(CString sName) const;
+	std::vector<CChan*> FindChans(const CString& sWild) const;
 	bool AddChan(CChan* pChan);
 	bool AddChan(const CString& sName, bool bInConfig);
 	bool DelChan(const CString& sName);

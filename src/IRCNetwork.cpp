@@ -649,6 +649,16 @@ CChan* CIRCNetwork::FindChan(CString sName) const {
 	return NULL;
 }
 
+std::vector<CChan*> CIRCNetwork::FindChans(const CString& sWild) const {
+	std::vector<CChan*> vChans;
+	vChans.reserve(m_vChans.size());
+	for (std::vector<CChan*>::const_iterator it = m_vChans.begin(); it != m_vChans.end(); ++it) {
+		if ((*it)->GetName().WildCmp(sWild))
+			vChans.push_back(*it);
+	}
+	return vChans;
+}
+
 bool CIRCNetwork::AddChan(CChan* pChan) {
 	if (!pChan) {
 		return false;
