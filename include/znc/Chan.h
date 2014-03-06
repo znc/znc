@@ -96,6 +96,7 @@ public:
 	size_t AddBuffer(const CString& sFormat, const CString& sText = "", const timeval* ts = NULL) { return m_Buffer.AddLine(sFormat, sText, ts); }
 	void ClearBuffer() { m_Buffer.Clear(); }
 	void SendBuffer(CClient* pClient);
+	void SendBuffer(CClient* pClient, const CBuffer& Buffer);
 	// !Buffer
 
 	// m_Nick wrappers
