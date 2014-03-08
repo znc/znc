@@ -602,10 +602,10 @@ bool CZNC::WriteNewConfig(const CString& sConfigFile) {
 #endif
 
 #ifdef HAVE_IPV6
-		b6 = CUtils::GetBoolInput("Would you like ZNC to listen using ipv6?", b6);
+		b6 = CUtils::GetBoolInput("Would you like ZNC to listen using both IPv4 and IPv6?", b6);
 #endif
 
-		CUtils::GetInput("Listen Host", sListenHost, sListenHost, "Blank for all ips");
+		// Don't ask for listen host, it may be configured later if needed.
 
 		CUtils::PrintAction("Verifying the listener");
 		CListener* pListener = new CListener((unsigned short int)uListenPort, sListenHost, sURIPrefix, bListenSSL,
