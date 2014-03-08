@@ -20,6 +20,6 @@ notifications:
     irc:
         channels:
             - "irc.freenode.net#znc"
-            - "irc.shoutcast.com#znc"
+            - "irc.paraphysics.net#znc"
         on_success: always
         on_failure: always
