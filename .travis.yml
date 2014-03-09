@@ -2,6 +2,14 @@ language: cpp
 compiler:
     - gcc
     - clang
+env:
+    - CFGFLAGS= CXXFLAGS= LDFLAGS=
+matrix:
+    include:
+        - compiler: clang
+          env: CFGFLAGS=--enable-debug CXXFLAGS="-fsanitize=address -O1 -fno-omit-frame-pointer -fno-optimize-sibling-calls" LDFLAGS=-fsanitize=address
+        - compiler: clang
+          env: CFGFLAGS=--enable-debug CXXFLAGS="-fsanitize=thread -O1" LDFLAGS=-fsanitize=thread
 before_install:
     - sudo apt-get update -qq
     - sudo apt-get install -qq libperl-dev python3-dev tcl-dev libsasl2-dev libgtest-dev libicu-dev
@@ -11,7 +19,7 @@ script:
     - ./bootstrap.sh
     - mkdir build
     - cd build
-    - ../configure --enable-perl --enable-python --enable-tcl --enable-cyrus --with-gtest=/usr/src/gtest
+    - ../configure --enable-perl --enable-python --enable-tcl --enable-cyrus --with-gtest=/usr/src/gtest $CFGFLAGS
     - cat config.log
     - make V=1
     - make V=1 test
