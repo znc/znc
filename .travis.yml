@@ -3,13 +3,13 @@ compiler:
     - gcc
     - clang
 env:
-    - CFGFLAGS= CXXFLAGS= LDFLAGS=
+    - CFGFLAGS= MYCXXFLAGS= MYLDFLAGS=
 matrix:
     include:
         - compiler: clang
-          env: CFGFLAGS=--enable-debug CXXFLAGS="-fsanitize=address -O1 -fno-omit-frame-pointer -fno-optimize-sibling-calls" LDFLAGS=-fsanitize=address
+          env: CFGFLAGS=--enable-debug MYCXXFLAGS="-fsanitize=address -O1 -fno-omit-frame-pointer -fno-optimize-sibling-calls" MYLDFLAGS=-fsanitize=address
         - compiler: clang
-          env: CFGFLAGS=--enable-debug CXXFLAGS="-fsanitize=thread -O1" LDFLAGS=-fsanitize=thread
+          env: CFGFLAGS=--enable-debug MYCXXFLAGS="-fsanitize=thread -O1" MYLDFLAGS=-fsanitize=thread
 before_install:
     - sudo apt-get update -qq
     - sudo apt-get install -qq libperl-dev python3-dev tcl-dev libsasl2-dev libgtest-dev libicu-dev
@@ -19,7 +19,7 @@ script:
     - ./bootstrap.sh
     - mkdir build
     - cd build
-    - ../configure --enable-perl --enable-python --enable-tcl --enable-cyrus --with-gtest=/usr/src/gtest $CFGFLAGS
+    - ../configure --enable-perl --enable-python --enable-tcl --enable-cyrus --with-gtest=/usr/src/gtest $CFGFLAGS CXXFLAGS="$CXXFLAGS $MYCXXFLAGS" LDFLAGS="$LDFLAGS $MYLDFLAGS"
     - cat config.log
     - make V=1
     - make V=1 test
