@@ -94,6 +94,7 @@ class CAdminMod : public CModule {
 			{"Altnick",             str},
 			{"Ident",               str},
 			{"RealName",            str},
+			{"BindHost",            str},
 			{"FloodRate",           doublenum},
 			{"FloodBurst",          integer},
 		};
@@ -409,6 +410,8 @@ class CAdminMod : public CModule {
 			PutModule("Ident = " + pNetwork->GetIdent());
 		} else if (sVar.Equals("realname")) {
 			PutModule("RealName = " + pNetwork->GetRealName());
+		} else if (sVar.Equals("bindhost")) {
+			PutModule("BindHost = " + pNetwork->GetBindHost());
 		} else if (sVar.Equals("floodrate")) {
 			PutModule("FloodRate = " + CString(pNetwork->GetFloodRate()));
 		} else if (sVar.Equals("floodburst")) {
@@ -460,6 +463,9 @@ class CAdminMod : public CModule {
 		} else if (sVar.Equals("realname")) {
 			pNetwork->SetRealName(sValue);
 			PutModule("RealName = " + pNetwork->GetRealName());
+		} else if (sVar.Equals("bindhost")) {
+			pNetwork->SetBindHost(sValue);
+			PutModule("BindHost = " + pNetwork->GetBindHost());
 		} else if (sVar.Equals("floodrate")) {
 			pNetwork->SetFloodRate(sValue.ToDouble());
 			PutModule("FloodRate = " + CString(pNetwork->GetFloodRate()));
