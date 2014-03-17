@@ -464,8 +464,12 @@ class CAdminMod : public CModule {
 			pNetwork->SetRealName(sValue);
 			PutModule("RealName = " + pNetwork->GetRealName());
 		} else if (sVar.Equals("bindhost")) {
-			pNetwork->SetBindHost(sValue);
-			PutModule("BindHost = " + pNetwork->GetBindHost());
+			if(!pUser->DenySetBindHost() || m_pUser->IsAdmin()) {
+				pNetwork->SetBindHost(sValue);
+				PutModule("BindHost = " + sValue);
+			} else {
+				PutModule("Access denied!");
+			}
 		} else if (sVar.Equals("floodrate")) {
 			pNetwork->SetFloodRate(sValue.ToDouble());
 			PutModule("FloodRate = " + CString(pNetwork->GetFloodRate()));
