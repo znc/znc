@@ -248,6 +248,29 @@ class CAdminMod : public CModule {
 		}
 		else if (sVar == "bindhost") {
 			if(!pUser->DenySetBindHost() || m_pUser->IsAdmin()) {
+				if (sValue.Equals(m_pUser->GetBindHost())) {
+					PutModule("This bind host is already set!");
+					return;
+				}
+
+				const VCString& vsHosts = CZNC::Get().GetBindHosts();
+				if (!m_pUser->IsAdmin() && !vsHosts.empty()) {
+					VCString::const_iterator it;
+					bool bFound = false;
+
+					for (it = vsHosts.begin(); it != vsHosts.end(); ++it) {
+						if (sValue.Equals(*it)) {
+							bFound = true;
+							break;
+						}
+					}
+
+					if (!bFound) {
+						PutModule("You may not use this bind host. See /msg " + m_pUser->GetStatusPrefix() + "status ListBindHosts for a list");
+						return;
+					}
+				}
+
 				pUser->SetBindHost(sValue);
 				PutModule("BindHost = " + sValue);
 			} else {
@@ -479,6 +502,29 @@ class CAdminMod : public CModule {
 			PutModule("RealName = " + pNetwork->GetRealName());
 		} else if (sVar.Equals("bindhost")) {
 			if(!pUser->DenySetBindHost() || m_pUser->IsAdmin()) {
+				if (sValue.Equals(pNetwork->GetBindHost())) {
+					PutModule("This bind host is already set!");
+					return;
+				}
+
+				const VCString& vsHosts = CZNC::Get().GetBindHosts();
+				if (!m_pUser->IsAdmin() && !vsHosts.empty()) {
+					VCString::const_iterator it;
+					bool bFound = false;
+
+					for (it = vsHosts.begin(); it != vsHosts.end(); ++it) {
+						if (sValue.Equals(*it)) {
+							bFound = true;
+							break;
+						}
+					}
+
+					if (!bFound) {
+						PutModule("You may not use this bind host. See /msg " + m_pUser->GetStatusPrefix() + "status ListBindHosts for a list");
+						return;
+					}
+				}
+
 				pNetwork->SetBindHost(sValue);
 				PutModule("BindHost = " + sValue);
 			} else {
