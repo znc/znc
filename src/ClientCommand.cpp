@@ -1255,10 +1255,10 @@ void CClient::UserCommand(CString& sLine) {
 			return;
 		}
 		m_pNetwork->SetBindHost("");
-		PutStatus("Bind host cleared");
+		PutStatus("Bind host cleared for this network.");
 	} else if (sCommand.Equals("CLEARUSERBINDHOST") && (m_pUser->IsAdmin() || !m_pUser->DenySetBindHost())) {
 		m_pUser->SetBindHost("");
-		PutStatus("Bind host cleared");
+		PutStatus("Bind host cleared for your user.");
 	} else if (sCommand.Equals("SHOWBINDHOST")) {
 		PutStatus("This user's default bind host " + (m_pUser->GetBindHost().empty() ? "not set" : "is [" + m_pUser->GetBindHost() + "]"));
 		if (m_pNetwork) {
