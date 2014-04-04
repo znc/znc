@@ -25,6 +25,9 @@ public:
 
 	void ClearAllBuffers() {
 		if (m_pNetwork) {
+			// clear private messages
+			m_pNetwork->ClearQueryBuffer();
+
 			const vector<CChan*>& vChans = m_pNetwork->GetChans();
 			vector<CChan*>::const_iterator it;
 
