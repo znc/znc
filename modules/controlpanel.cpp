@@ -75,7 +75,10 @@ class CAdminMod : public CModule {
 			{"PrependTimestamp",    boolean},
 			{"TimestampFormat",     str},
 			{"DCCBindHost",         str},
-			{"StatusPrefix",        str}
+			{"StatusPrefix",        str},
+#ifdef HAVE_ICU
+			{"ClientEncoding",      str},
+#endif
 		};
 		for (unsigned int i = 0; i != ARRAY_SIZE(vars); ++i) {
 			VarTable.AddRow();
@@ -97,6 +100,9 @@ class CAdminMod : public CModule {
 			{"BindHost",            str},
 			{"FloodRate",           doublenum},
 			{"FloodBurst",          integer},
+#ifdef HAVE_ICU
+			{"Encoding",            str},
+#endif
 		};
 		for (unsigned int i = 0; i != ARRAY_SIZE(nvars); ++i) {
 			NVarTable.AddRow();
