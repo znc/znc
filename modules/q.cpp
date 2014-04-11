@@ -43,6 +43,7 @@ public:
 		m_bUseCloakedHost = (sTmp = GetNV("UseCloakedHost")).empty() ? true : sTmp.ToBool();
 		m_bUseChallenge   = (sTmp = GetNV("UseChallenge")).empty()  ? true : sTmp.ToBool();
 		m_bRequestPerms   = GetNV("RequestPerms").ToBool();
+		m_bJoinOnInvite   = (sTmp = GetNV("JoinOnInvite")).empty() ? true : sTmp.ToBool();
 
 		OnIRCDisconnected(); // reset module's state
 
@@ -125,6 +126,10 @@ public:
 			Table2.SetCell("Setting", "RequestPerms");
 			Table2.SetCell("Type", "Boolean");
 			Table2.SetCell("Description", "Whether to request voice/op from Q on join/devoice/deop.");
+			Table2.AddRow();
+			Table2.SetCell("Setting", "JoinOnInvite");
+			Table2.SetCell("Type", "Boolean");
+			Table2.SetCell("Description", "Whether to join channels when Q invites you.");
 			PutModule(Table2);
 
 			PutModule("This module takes 2 optional parameters: <username> <password>");
@@ -152,6 +157,9 @@ public:
 			} else if (sSetting == "requestperms") {
 				SetRequestPerms(sValue.ToBool());
 				PutModule("RequestPerms set");
+			} else if (sSetting == "joinoninvite") {
+				SetJoinOnInvite(sValue.ToBool());
+				PutModule("JoinOnInvite set");
 			} else
 				PutModule("Unknown setting: " + sSetting);
 
@@ -174,6 +182,9 @@ public:
 			Table.AddRow();
 			Table.SetCell("Setting", "RequestPerms");
 			Table.SetCell("Value", CString(m_bRequestPerms));
+			Table.AddRow();
+			Table.SetCell("Setting", "JoinOnInvite");
+			Table.SetCell("Value", CString(m_bJoinOnInvite));
 			PutModule(Table);
 
 		} else if (sCommand == "status") {
@@ -240,6 +251,14 @@ public:
 	virtual void OnDevoice(const CNick* pOpNick, const CNick& Nick, CChan& Channel, bool bNoChange) {
 		if (m_bRequestPerms && IsSelf(Nick) && (!pOpNick || !IsSelf(*pOpNick)))
 			HandleNeed(Channel, "v");
+	}
+
+	virtual EModRet OnInvite(const CNick& Nick, const CString& sChan) {
+		if (!Nick.NickEquals("Q") || !Nick.GetHost().Equals("CServe.quakenet.org"))
+			return CONTINUE;
+		if (m_bJoinOnInvite)
+			PutIRC("JOIN " + sChan);
+		return CONTINUE;
 	}
 
 
@@ -465,6 +484,7 @@ private:
 	bool    m_bUseCloakedHost;
 	bool    m_bUseChallenge;
 	bool    m_bRequestPerms;
+	bool    m_bJoinOnInvite;
 
 	void SetUsername(const CString& sUsername) {
 		m_sUsername = sUsername;
@@ -489,6 +509,11 @@ private:
 	void SetRequestPerms(const bool bRequestPerms) {
 		m_bRequestPerms = bRequestPerms;
 		SetNV("RequestPerms", CString(bRequestPerms));
+	}
+
+	void SetJoinOnInvite(const bool bJoinOnInvite) {
+		m_bJoinOnInvite = bJoinOnInvite;
+		SetNV("JoinOnInvite", CString(bJoinOnInvite));
 	}
 };
 
