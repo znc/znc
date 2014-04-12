@@ -40,7 +40,7 @@ public:
 		}
 
 		CString sTmp;
-		m_bUseCloakedHost = (sTmp = GetNV("UseCloakedHost")).empty() ? false : sTmp.ToBool();
+		m_bUseCloakedHost = (sTmp = GetNV("UseCloakedHost")).empty() ? true : sTmp.ToBool();
 		m_bUseChallenge   = (sTmp = GetNV("UseChallenge")).empty()  ? true : sTmp.ToBool();
 		m_bRequestPerms   = GetNV("RequestPerms").ToBool();
 		m_bJoinOnInvite   = (sTmp = GetNV("JoinOnInvite")).empty() ? true : sTmp.ToBool();
