@@ -45,8 +45,7 @@ public:
 		m_bRequestPerms   = GetNV("RequestPerms").ToBool();
 		m_bJoinOnInvite   = (sTmp = GetNV("JoinOnInvite")).empty() ? true : sTmp.ToBool();
 
-		// Make sure NVs are stored in config
-		SetUseCloakedHost(m_bUseCloakedHost);
+		// Make sure NVs are stored in config. Note: SetCloakedHost() is called further down.
 		SetUseChallenge(m_bUseChallenge);
 		SetRequestPerms(m_bRequestPerms);
 		SetJoinOnInvite(m_bJoinOnInvite);
@@ -59,7 +58,21 @@ public:
 			if (scUserModes.find('x') != scUserModes.end())
 				m_bCloaked = true;
 
-			OnIRCConnected();
+			// This will only happen once, and only if the user loads the module after connecting to IRC.
+			// Also don't notify the user in case he already had mode +x set.
+			if (GetNV("UseCloakedHost").empty()) {
+				if (!m_bCloaked)
+					PutModule("Notice: Your host will be cloaked the next time you reconnect to IRC. "
+						"If you want to cloak your host now, /msg *q Cloak. You can set your preference "
+						"with /msg *q Set UseCloakedHost true/false.");
+				m_bUseCloakedHost = true;
+				SetUseCloakedHost(m_bUseCloakedHost);
+			} else if (m_bUseChallenge) {
+				Cloak();
+			}
+			WhoAmI();
+		} else {
+			SetUseCloakedHost(m_bUseCloakedHost);
 		}
 
 		return true;
