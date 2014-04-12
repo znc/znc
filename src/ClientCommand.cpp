@@ -185,11 +185,14 @@ void CClient::UserCommand(CString& sLine) {
 
 		CTable Table;
 		Table.AddColumn("Host");
+		Table.AddColumn("Port");
 		Table.AddColumn("Network");
 
 		for (unsigned int a = 0; a < vClients.size(); a++) {
 			Table.AddRow();
 			Table.SetCell("Host", vClients[a]->GetRemoteIP());
+			Table.SetCell("Port", CString(vClients[a]->GetLocalPort()));
+
 			if (vClients[a]->GetNetwork()) {
 				Table.SetCell("Network", vClients[a]->GetNetwork()->GetName());
 			}
