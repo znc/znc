@@ -1,0 +1,45 @@
+<? INC Header.tmpl ?>
+
+<form action="<? VAR URIPrefix TOP ?><? VAR ModPath TOP ?>" method="post">
+	<? INC _csrf_check.tmpl ?>
+	<div class="section">
+		<h3>Q</h3>
+		<div class="sectionbg">
+			<div class="sectionbody">
+				<div class="subsection">
+					<div class="inputlabel">Username:</div>
+					<input type="text" name="user" value="<? VAR Username ?>" class="half" maxlength="128"
+							   title="Please enter a username." />
+				</div>
+				<div class="subsection">
+					<div class="inputlabel">Password:</div>
+					<input type="password" name="password" class="half"
+						   title="Please enter a password." autocomplete="off" />
+				</div>
+				<div style="clear: both;"></div>
+			</div>
+		</div>
+	</div>
+
+	<div class="section">
+		<h3>Options</h3>
+		<div class="sectionbg">
+			<div class="sectionbody lotsofcheckboxes">
+				<? LOOP OptionLoop ?>
+				<span class="checkboxandlabel" title="<? VAR Tooltip ?>">
+					<input type="checkbox" name="<? VAR Name ?>" id="opt_<? VAR Name ?>" value="1"<? IF Checked ?> checked="checked"<? ENDIF ?><? IF Disabled ?> disabled="disabled"<? ENDIF ?> />
+					<label for="opt_<? VAR Name ?>"><? VAR DisplayName ?></label>
+				</span>
+				<? ENDLOOP ?>
+				<div style="clear:both;"></div>
+			</div>
+		</div>
+	</div>
+
+	<div class="submitline">
+		<input type="hidden" name="submitted" value="1" />
+		<input type="submit" value="Save" />
+	</div>
+</form>
+
+<? INC Footer.tmpl ?>
