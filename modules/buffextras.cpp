@@ -33,7 +33,7 @@ public:
 		Channel.AddBuffer(":" + GetModNick() + "!" + GetModName() + "@znc.in PRIVMSG " + _NAMEDFMT(Channel.GetName()) + " :{text}", sMessage);
 	}
 
-	virtual void OnRawMode(const CNick* pOpNick, CChan& Channel, const CString& sModes, const CString& sArgs) {
+	virtual void OnRawMode2(const CNick* pOpNick, CChan& Channel, const CString& sModes, const CString& sArgs) {
 		const CString sNickMask = pOpNick ? pOpNick->GetNickMask() : "Server";
 		AddBuffer(Channel, sNickMask + " set mode: " + sModes + " " + sArgs);
 	}

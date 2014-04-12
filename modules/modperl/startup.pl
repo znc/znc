@@ -374,6 +374,15 @@ sub OnDeleteNetwork {}
 sub OnSendToClient {}
 sub OnSendToIRC {}
 
+# In Perl "undefined" is allowed value, so perl modules may continue using OnMode and not OnMode2
+sub OnChanPermission2 { my $self = shift; $self->OnChanPermission(@_) }
+sub OnOp2 { my $self = shift; $self->OnOp(@_) }
+sub OnDeop2 { my $self = shift; $self->OnDeop(@_) }
+sub OnVoice2 { my $self = shift; $self->OnVoice(@_) }
+sub OnDevoice2 { my $self = shift; $self->OnDevoice(@_) }
+sub OnMode2 { my $self = shift; $self->OnMode(@_) }
+sub OnRawMode2 { my $self = shift; $self->OnRawMode(@_) }
+
 
 # Functions of CModule will be usable from perl modules.
 our $AUTOLOAD;

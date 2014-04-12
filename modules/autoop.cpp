@@ -210,7 +210,7 @@ public:
 		return HALTCORE;
 	}
 
-	virtual void OnOp(const CNick* pOpNick, const CNick& Nick, CChan& Channel, bool bNoChange) {
+	virtual void OnOp2(const CNick* pOpNick, const CNick& Nick, CChan& Channel, bool bNoChange) {
 		if (Nick.GetNick() == m_pNetwork->GetIRCNick().GetNick()) {
 			const map<CString,CNick>& msNicks = Channel.GetNicks();
 

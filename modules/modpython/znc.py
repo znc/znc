@@ -429,6 +429,29 @@ class Module:
     def OnGetAvailableMods(self, ssMods, eType):
         pass
 
+    # In python None is allowed value, so python modules may continue using OnMode and not OnMode2
+    def OnChanPermission2(self, OpNick, Nick, Channel, uMode, bAdded, bNoChange):
+        return self.OnChanPermission(OpNick, Nick, Channel, uMode, bAdded, bNoChange)
+
+    def OnOp2(self, OpNick, Nick, Channel, bNoChange):
+        return self.OnOp(OpNick, Nick, Channel, bNoChange)
+
+    def OnDeop2(self, OpNick, Nick, Channel, bNoChange):
+        return self.OnDeop(OpNick, Nick, Channel, bNoChange)
+
+    def OnVoice2(self, OpNick, Nick, Channel, bNoChange):
+        return self.OnVoice(OpNick, Nick, Channel, bNoChange)
+
+    def OnDevoice2(self, OpNick, Nick, Channel, bNoChange):
+        return self.OnDevoice(OpNick, Nick, Channel, bNoChange)
+
+    def OnMode2(self, OpNick, Channel, uMode, sArg, bAdded, bNoChange):
+        return self.OnMode(OpNick, Channel, uMode, sArg, bAdded, bNoChange)
+
+    def OnRawMode2(self, OpNick, Channel, sModes, sArgs):
+        return self.OnRawMode(OpNick, Channel, sModes, sArgs)
+
+
 def make_inherit(cl, parent, attr):
     def make_caller(parent, name, attr):
         return lambda self, *a: parent.__dict__[name](self.__dict__[attr], *a)
