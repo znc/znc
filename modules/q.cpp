@@ -45,6 +45,12 @@ public:
 		m_bRequestPerms   = GetNV("RequestPerms").ToBool();
 		m_bJoinOnInvite   = (sTmp = GetNV("JoinOnInvite")).empty() ? true : sTmp.ToBool();
 
+		// Make sure NVs are stored in config
+		SetUseCloakedHost(m_bUseCloakedHost);
+		SetUseChallenge(m_bUseChallenge);
+		SetRequestPerms(m_bRequestPerms);
+		SetJoinOnInvite(m_bJoinOnInvite);
+
 		OnIRCDisconnected(); // reset module's state
 
 		if (IsIRCConnected()) {
