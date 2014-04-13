@@ -578,9 +578,10 @@ class CAdminMod : public CModule {
 		}
 		
 		CChan* pChan = new CChan(sChan, pNetwork, true);
-		pNetwork->AddChan(pChan);
-		
-		PutModule("Channel [" + sChan + "] for user [" + sUsername + "] added.");
+		if (pNetwork->AddChan(pChan))
+			PutModule("Channel [" + pChan->GetName() + "] for user [" + sUsername + "] added.");
+		else
+			PutModule("Could not add channel [" + sChan + "] for user [" + sUsername + "], does it already exist?");
 	}
 	
 	void DelChan(const CString& sLine) {
