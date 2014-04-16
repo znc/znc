@@ -25,24 +25,46 @@ public:
 	MODCONSTRUCTOR(CChanSaverMod) {
 		m_bWriteConf = false;
 
-		vector<CIRCNetwork*> vNetworks = pUser->GetNetworks();
-		for (vector<CIRCNetwork*>::iterator it = vNetworks.begin(); it != vNetworks.end(); ++it) {
-			const vector<CChan*>& vChans = (*it)->GetChans();
-
-			for (vector<CChan*>::const_iterator it2 = vChans.begin(); it2 != vChans.end(); ++it2) {
-				CChan *pChan = *it2;
-
-				// If that channel isn't yet in the config,
-				// we'll have to add it...
-				if (!pChan->InConfig()) {
-					pChan->SetInConfig(true);
-					m_bWriteConf = true;
-				}
-			}
+		if (GetNetwork()) {
+			LoadNetwork(*GetNetwork());
+		} else if (GetUser()) {
+			LoadUser(*GetUser());
+		} else {
+			LoadUsers();
 		}
 	}
 
 	virtual ~CChanSaverMod() {
+	}
+
+	void LoadUsers() {
+		std::map<CString, CUser *> vUsers = CZNC::Get().GetUserMap();
+		for (std::map<CString, CUser *>::iterator it = vUsers.begin(); it != vUsers.end(); ++it) {
+			LoadUser(*it->second);
+		}
+	}
+
+	void LoadUser(CUser &user) {
+		vector<CIRCNetwork*> vNetworks = user.GetNetworks();
+		for (vector<CIRCNetwork*>::iterator it = vNetworks.begin(); it != vNetworks.end(); ++it) {
+			CIRCNetwork &network = **it;
+			LoadNetwork(network);
+		}
+	}
+
+	void LoadNetwork(CIRCNetwork &network) {
+		const vector<CChan*>& vChans = network.GetChans();
+
+		for (vector<CChan*>::const_iterator it = vChans.begin(); it != vChans.end(); ++it) {
+			CChan &chan = **it;
+
+			// If that channel isn't yet in the config,
+			// we'll have to add it...
+			if (!chan.InConfig()) {
+				chan.SetInConfig(true);
+				m_bWriteConf = true;
+			}
+		}
 	}
 
 	virtual EModRet OnRaw(CString& sLine) {
@@ -86,6 +108,7 @@ private:
 template<> void TModInfo<CChanSaverMod>(CModInfo& Info) {
 	Info.SetWikiPage("chansaver");
 	Info.AddType(CModInfo::NetworkModule);
+	Info.AddType(CModInfo::UserModule);
 }
 
 USERMODULEDEFS(CChanSaverMod, "Keep config up-to-date when user joins/parts")
