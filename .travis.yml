@@ -28,6 +28,6 @@ notifications:
     irc:
         channels:
             - "irc.freenode.net#znc"
-            - "irc.paraphysics.net#znc"
+            - "irc.arcti.ca#znc"
         on_success: always
         on_failure: always
