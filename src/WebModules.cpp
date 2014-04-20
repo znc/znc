@@ -832,7 +832,7 @@ CSmartPtr<CWebSession> CWebSock::GetSession() {
 		Sessions.m_mspSessions.AddItem((*pSession)->GetId(), *pSession);
 		(*pSession)->UpdateLastActive();
 		m_spSession = *pSession;
-		DEBUG("Found existing session from cookie: [" + sCookieSessionId + "] IsLoggedIn(" + CString((*pSession)->IsLoggedIn() ? "true" : "false") + ")");
+		DEBUG("Found existing session from cookie: [" + sCookieSessionId + "] IsLoggedIn(" + CString((*pSession)->IsLoggedIn() ? "true, " + ((*pSession)->GetUser()->GetUserName()) : "false") + ")");
 		return *pSession;
 	}
 
