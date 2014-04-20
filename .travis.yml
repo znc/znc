@@ -3,7 +3,10 @@ compiler:
     - gcc
     - clang
 env:
-    - CFGFLAGS= MYCXXFLAGS= MYLDFLAGS=
+      matrix:
+          - CFGFLAGS= MYCXXFLAGS= MYLDFLAGS=
+      global:
+          secure: <<TOKEN>>
 matrix:
     include:
         - compiler: clang
@@ -15,7 +18,9 @@ before_install:
     - sudo apt-get install -qq libperl-dev python3-dev tcl-dev libsasl2-dev libgtest-dev libicu-dev
     - apt-cache show swig
     - ( cd ~ && wget http://prdownloads.sourceforge.net/swig/swig-2.0.8.tar.gz && tar xvf swig-2.0.8.tar.gz && cd swig-2.0.8 && ./configure && make && sudo make install )
+    - sudo apt-get install doxygen graphviz
 script:
+    - curl -o travis_after_all.py https://raw.github.com/dmakhno/travis_after_all/master/travis_after_all.py
     - ./bootstrap.sh
     - mkdir build
     - cd build
@@ -24,6 +29,16 @@ script:
     - make V=1
     - make V=1 test
     - sudo make install
+    - cd ..
+after_success:
+    - python travis_after_all.py
+    - cat .to_export_back
+    - export $(cat .to_export_back)
+    - |
+          if [ "$BUILD_LEADER" == "YES" ] && [ "$BUILD_AGGREGATE_STATUS" == "others_succeeded" ] && [ "$TRAVIS_REPO_SLUG" == "znc/znc" ] && [ "$TRAVIS_PULL_REQUEST" == "false" ] && [ "$TRAVIS_BRANCH" == "master" ]; then
+              echo "All builds passed!"
+              ./.travis-generate-docs.sh
+          fi
 notifications:
     irc:
         channels:
