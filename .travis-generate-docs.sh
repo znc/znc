@@ -5,6 +5,7 @@ echo "Generating docs with doxygen..."
 doxygen
 
 mkdir -p ~/.ssh
+chmod 0600 ~/znc-docs-key
 cat <<EOF >> ~/.ssh/config
 Host znc-docs
 HostName github.com
