@@ -10,6 +10,8 @@ Host znc-docs
 HostName github.com
 User git
 IdentityFile ~/znc-docs-key
+StrictHostKeyChecking no
+UserKnownHostsFile /dev/null
 EOF
 
 cd "$HOME"
