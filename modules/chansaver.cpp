@@ -25,12 +25,16 @@ public:
 	MODCONSTRUCTOR(CChanSaverMod) {
 		m_bWriteConf = false;
 
-		if (GetNetwork()) {
-			LoadNetwork(*GetNetwork());
-		} else if (GetUser()) {
-			LoadUser(*GetUser());
-		} else {
-			LoadUsers();
+		switch (GetType()) {
+			case CModInfo::GlobalModule:
+				LoadUsers();
+				break;
+			case CModInfo::UserModule:
+				LoadUser(*GetUser());
+				break;
+			case CModInfo::NetworkModule:
+				LoadNetwork(*GetNetwork());
+				break;
 		}
 	}
 
@@ -108,7 +112,7 @@ private:
 template<> void TModInfo<CChanSaverMod>(CModInfo& Info) {
 	Info.SetWikiPage("chansaver");
 	Info.AddType(CModInfo::NetworkModule);
-	Info.AddType(CModInfo::UserModule);
+	Info.AddType(CModInfo::GlobalModule);
 }
 
 USERMODULEDEFS(CChanSaverMod, "Keep config up-to-date when user joins/parts")

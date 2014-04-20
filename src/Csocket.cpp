@@ -1355,6 +1355,26 @@ bool Csock::SSLClientSetup()
 			return( false );
 		}
 		break;
+	case TLS1_2:
+#ifdef TLS1_2_VERSION
+		m_ssl_ctx = SSL_CTX_new( TLSv1_2_client_method() );
+		if( !m_ssl_ctx )
+		{
+			CS_DEBUG( "WARNING: MakeConnection .... TLSv1_2_client_method failed!" );
+			return( false );
+		}
+		break;
+#endif
+	case TLS1_1:
+#ifdef TLS1_1_VERSION
+		m_ssl_ctx = SSL_CTX_new( TLSv1_1_client_method() );
+		if( !m_ssl_ctx )
+		{
+			CS_DEBUG( "WARNING: MakeConnection .... TLSv1_1_client_method failed!" );
+			return( false );
+		}
+		break;
+#endif
 	case TLS1:
 		m_ssl_ctx = SSL_CTX_new( TLSv1_client_method() );
 		if( !m_ssl_ctx )
@@ -1452,6 +1472,26 @@ bool Csock::SSLServerSetup()
 			return( false );
 		}
 		break;
+	case TLS1_2:
+#ifdef TLS1_2_VERSION
+		m_ssl_ctx = SSL_CTX_new( TLSv1_2_server_method() );
+		if( !m_ssl_ctx )
+		{
+			CS_DEBUG( "WARNING: MakeConnection .... TLSv1_2_server_method failed!" );
+			return( false );
+		}
+		break;
+#endif
+	case TLS1_1:
+#ifdef TLS1_1_VERSION
+		m_ssl_ctx = SSL_CTX_new( TLSv1_1_server_method() );
+		if( !m_ssl_ctx )
+		{
+			CS_DEBUG( "WARNING: MakeConnection .... TLSv1_1_server_method failed!" );
+			return( false );
+		}
+		break;
+#endif
 	case TLS1:
 		m_ssl_ctx = SSL_CTX_new( TLSv1_server_method() );
 		if( !m_ssl_ctx )
@@ -2711,7 +2751,7 @@ void Csock::Init( const CS_STRING & sHostname, uint16_t uPort, int iTimeout )
 	m_shostname = sHostname;
 	m_sbuffer.clear();
 	m_eCloseType = CLT_DONT;
-	m_iMethod = SSL23;
+	m_iMethod = TLS1_2;  // Falls though TLSv1.1 and TLSv1 if not available
 	m_sCipherType = "ALL";
 	m_iMaxBytes = 0;
 	m_iMaxMilliSeconds = 0;
