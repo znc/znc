@@ -6,7 +6,7 @@ env:
       matrix:
           - CFGFLAGS= MYCXXFLAGS= MYLDFLAGS=
       global:
-          secure: <<TOKEN>>
+          - secure: "Rfoqtksz9rPuC2MszbwYRFarHGQuD2rrRV+cxNLwU9fBaWRfdhoJZKt+LqIUv/w84/Oz24gp1ulfW4jSwrfIjfG1ER/glkV5TcQOKjlhRVwjSFW8/9lZiZgqHVX5QiEqdrIeVOBLGQucQWcUb/vxxEZua4qIAiescBCi9s7AfkA="
 matrix:
     include:
         - compiler: clang
@@ -37,6 +37,7 @@ after_success:
     - |
           if [ "$BUILD_LEADER" == "YES" ] && [ "$BUILD_AGGREGATE_STATUS" == "others_succeeded" ] && [ "$TRAVIS_REPO_SLUG" == "znc/znc" ] && [ "$TRAVIS_PULL_REQUEST" == "false" ] && [ "$TRAVIS_BRANCH" == "master" ]; then
               echo "All builds passed!"
+              openssl aes-256-cbc -d -in .travis-github.enc -out ~/znc-docs-key -k ${SECRET_KEY}
               ./.travis-generate-docs.sh
           fi
 notifications:
