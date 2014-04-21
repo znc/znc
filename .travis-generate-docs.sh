@@ -24,7 +24,7 @@ cd gh-pages
 git rm -rf *
 cp -rf "$TRAVIS_BUILD_DIR"/doc/html/* ./ || exit 1
 git add .
-git commit -m "Latest docs on successful travis build $TRAVIS_BUILD_NUMBER (commit $TRAVIS_COMMIT) auto-pushed to gh-pages"
+git commit -m "Latest docs on successful travis build $TRAVIS_BUILD_NUMBER (commit $TRAVIS_REPO_SLUG/$TRAVIS_COMMIT) auto-pushed to gh-pages"
 git push origin gh-pages
 
 echo "Published docs to gh-pages."
