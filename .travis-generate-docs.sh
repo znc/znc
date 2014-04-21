@@ -30,7 +30,7 @@ git add .
 git commit -F- <<EOF
 Latest docs on successful travis build $TRAVIS_BUILD_NUMBER
 
-ZNC commit $TRAVIS_REPO_SLUG/$TRAVIS_COMMIT
+ZNC commit $TRAVIS_COMMIT
 EOF
 git push origin gh-pages
 
