@@ -21,10 +21,14 @@ git config --global user.name "travis-ci"
 git clone --branch=gh-pages znc-docs:znc/docs.git gh-pages || exit 1
 
 cd gh-pages
-git rm -rf *
+git rm -rf .
 cp -rf "$TRAVIS_BUILD_DIR"/doc/html/* ./ || exit 1
 git add .
-git commit -m "Latest docs on successful travis build $TRAVIS_BUILD_NUMBER (commit $TRAVIS_REPO_SLUG/$TRAVIS_COMMIT) auto-pushed to gh-pages"
+git commit -F- <<EOF
+Latest docs on successful travis build $TRAVIS_BUILD_NUMBER
+
+ZNC commit $TRAVIS_REPO_SLUG/$TRAVIS_COMMIT
+EOF
 git push origin gh-pages
 
 echo "Published docs to gh-pages."
