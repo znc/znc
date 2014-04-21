@@ -22,7 +22,10 @@ git clone --branch=gh-pages znc-docs:znc/docs.git gh-pages || exit 1
 
 cd gh-pages
 git rm -rf .
+
 cp -rf "$TRAVIS_BUILD_DIR"/doc/html/* ./ || exit 1
+echo docs.znc.in > CNAME
+
 git add .
 git commit -F- <<EOF
 Latest docs on successful travis build $TRAVIS_BUILD_NUMBER
