@@ -37,6 +37,7 @@ git checkout-index --all --prefix=$TMPDIR/$ZNC/
     make -C modules -f modperl/Makefile.gen srcdir=. SWIG=/usr/bin/swig
     make -C modules -f modpython/Makefile.gen srcdir=. SWIG=/usr/bin/swig
     rm -fr modules/.depend
+	rm .travis*
 	rm make-tarball.sh
 	sed -e "s/THIS_IS_NOT_NIGHTLY//" -i Makefile.in
 	echo '#include <znc/version.h>' > src/version.cpp
