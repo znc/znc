@@ -144,7 +144,7 @@ $(GTEST_DIR)/src/gtest-all.cc $(GTEST_DIR)/src/gtest_main.cc $(GTEST_DIR)/includ
 	$(Q)touch -c $@
 endif
 
-ifneq "THIS_IS_NOT_NIGHTLY" ""
+ifneq "THIS_IS_NOT_TARBALL" ""
 # If git commit was changed since previous build, add a phony target to dependencies, forcing version.o to be recompiled
 # Nightlies have pregenerated version.cpp
 src/version.cpp: Makefile version.sh $(shell if [ x`cat .version_extra 2> /dev/null` != x`$(srcdir)/version.sh $(GIT) 2> /dev/null` ]; then echo version_extra_recompile; fi)

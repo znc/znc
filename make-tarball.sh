@@ -2,8 +2,6 @@
 set -e
 
 TMPDIR=`mktemp -d`
-VERSION=$1
-
 trap 'rm -rf $TMPDIR' EXIT
 
 if [ ! -f include/znc/main.h ] ; then
@@ -11,47 +9,60 @@ if [ ! -f include/znc/main.h ] ; then
 	exit -1
 fi
 
-if [ "x$VERSION" = "x" ] ; then
-	AWK_ARG='/#define VERSION_MAJOR/ { maj = $3 }
-		/#define VERSION_MINOR/ { min = $3 }
-		END { printf "%.1f", (maj + min / 10) }'
-	VERSION=$(awk "$AWK_ARG" include/znc/main.h)
-fi
-if [ "x$VERSION" = "x" ] ; then
-	echo "Couldn't get version number"
-	exit -1
+if [ "x$1" = "x--nightly" ]; then
+	# e.g. ./make-tarball.sh --nightly znc-git-2014-04-21 path/to/output/znc-foo.tar.gz
+	ZNCDIR=$2
+	TARGZ=$3
+	SIGN=0
+	DESC=-nightly-`date +%Y%m%d`-`git $GITDIR rev-parse HEAD | cut -b-8`
+else
+	VERSION=$1
+	if [ "x$VERSION" = "x" ] ; then
+		AWK_ARG='/#define VERSION_MAJOR/ { maj = $3 }
+			/#define VERSION_MINOR/ { min = $3 }
+			END { printf "%.1f", (maj + min / 10) }'
+		VERSION=$(awk "$AWK_ARG" include/znc/main.h)
+	fi
+	if [ "x$VERSION" = "x" ] ; then
+		echo "Couldn't get version number"
+		exit -1
+	fi
+
+	ZNCDIR=znc-$VERSION
+	TARGZ=$ZNCDIR.tar.gz
+	SIGN=1
+	DESC=""
+	# DESC="-rc1"
 fi
 
-ZNC=znc-$VERSION
-TAR=$ZNC.tar
-TARGZ=$TAR.gz
+TARGZ=`realpath $TARGZ`
 
-echo "Exporting . to $TMPDIR/$ZNC..."
-git checkout-index --all --prefix=$TMPDIR/$ZNC/
+echo "Exporting . to $TMPDIR/$ZNCDIR..."
+git checkout-index --all --prefix=$TMPDIR/$ZNCDIR/
 (
-	cd $TMPDIR/$ZNC
+	cd $TMPDIR/$ZNCDIR
 	echo "Generating configure"
 	AUTOMAKE_FLAGS="--add-missing --copy" ./autogen.sh
 	rm -r autom4te.cache/
     mkdir -p modules/.depend
-    make -C modules -f modperl/Makefile.gen srcdir=. SWIG=/usr/bin/swig
-    make -C modules -f modpython/Makefile.gen srcdir=. SWIG=/usr/bin/swig
-    rm -fr modules/.depend
+    make -C modules -f modperl/Makefile.gen srcdir=. SWIG=/usr/bin/swig PERL=/usr/bin/perl
+    make -C modules -f modpython/Makefile.gen srcdir=. SWIG=/usr/bin/swig PERL=/usr/bin/perl
+    rm -f modules/.depend
 	rm .travis*
 	rm make-tarball.sh
-	sed -e "s/THIS_IS_NOT_NIGHTLY//" -i Makefile.in
+	sed -e "s/THIS_IS_NOT_TARBALL//" -i Makefile.in
 	echo '#include <znc/version.h>' > src/version.cpp
-	echo "const char* ZNC_VERSION_EXTRA = \"-rc1\";" >> src/version.cpp
-	# "rc1" part is to be fixed later
+	echo "const char* ZNC_VERSION_EXTRA = \"$DESC\";" >> src/version.cpp
 )
 (
 	cd $TMPDIR
 	echo "Creating tarball"
-	tar -cf $TAR $ZNC
-	gzip -9 $TAR
+	env GZIP=-9 tar -czf $TARGZ $ZNCDIR
 )
 echo "Done"
-mv $TMPDIR/$TARGZ .
-echo "Signing $TARGZ..."
-gpg --detach-sig $TARGZ
-echo "Created $TARGZ and $TARGZ.sig"
+
+if [ $SIGN = 1 ]; then
+	echo "Signing $TARGZ..."
+	gpg --detach-sig $TARGZ
+	echo "Created $TARGZ and $TARGZ.sig"
+fi
