@@ -274,7 +274,7 @@ public:
 		if (!Nick.NickEquals("Q") || !Nick.GetHost().Equals("CServe.quakenet.org"))
 			return CONTINUE;
 		if (m_bJoinOnInvite)
-			PutIRC("JOIN " + sChan);
+			m_pNetwork->AddChan(sChan, false);
 		return CONTINUE;
 	}
 
