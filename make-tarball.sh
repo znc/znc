@@ -47,7 +47,7 @@ git checkout-index --all --prefix=$TMPDIR/$ZNCDIR/
     mkdir -p modules/.depend
     make -C modules -f modperl/Makefile.gen srcdir=. SWIG=/usr/bin/swig PERL=/usr/bin/perl
     make -C modules -f modpython/Makefile.gen srcdir=. SWIG=/usr/bin/swig PERL=/usr/bin/perl
-    rm -f modules/.depend
+    rm -rf modules/.depend
 	rm .travis*
 	rm make-tarball.sh
 	sed -e "s/THIS_IS_NOT_TARBALL//" -i Makefile.in
