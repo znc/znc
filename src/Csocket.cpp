@@ -1355,7 +1355,7 @@ bool Csock::SSLClientSetup()
 			return( false );
 		}
 		break;
-	case TLS1_2:
+	case TLS12:
 #ifdef TLS1_2_VERSION
 		m_ssl_ctx = SSL_CTX_new( TLSv1_2_client_method() );
 		if( !m_ssl_ctx )
@@ -1364,8 +1364,8 @@ bool Csock::SSLClientSetup()
 			return( false );
 		}
 		break;
-#endif
-	case TLS1_1:
+#endif /* TLS1_2_VERSION */
+	case TLS11:
 #ifdef TLS1_1_VERSION
 		m_ssl_ctx = SSL_CTX_new( TLSv1_1_client_method() );
 		if( !m_ssl_ctx )
@@ -1374,7 +1374,7 @@ bool Csock::SSLClientSetup()
 			return( false );
 		}
 		break;
-#endif
+#endif /* TLS1_1_VERSION */
 	case TLS1:
 		m_ssl_ctx = SSL_CTX_new( TLSv1_client_method() );
 		if( !m_ssl_ctx )
@@ -1392,10 +1392,14 @@ bool Csock::SSLClientSetup()
 			return( false );
 		}
 		break;
-#endif
+#endif /* OPENSSL_NO_SSL2 */
 		/* Fall through if SSL2 is disabled */
 	case SSL23:
 	default:
+		if( m_iMethod != SSL23 )
+		{
+			CS_DEBUG( "WARNING: SSL Client Method other than SSLv23 specified, but has passed through" );
+		}
 		m_ssl_ctx = SSL_CTX_new( SSLv23_client_method() );
 		if( !m_ssl_ctx )
 		{
@@ -1472,7 +1476,7 @@ bool Csock::SSLServerSetup()
 			return( false );
 		}
 		break;
-	case TLS1_2:
+	case TLS12:
 #ifdef TLS1_2_VERSION
 		m_ssl_ctx = SSL_CTX_new( TLSv1_2_server_method() );
 		if( !m_ssl_ctx )
@@ -1481,8 +1485,8 @@ bool Csock::SSLServerSetup()
 			return( false );
 		}
 		break;
-#endif
-	case TLS1_1:
+#endif /* TLS1_2_VERSION */
+	case TLS11:
 #ifdef TLS1_1_VERSION
 		m_ssl_ctx = SSL_CTX_new( TLSv1_1_server_method() );
 		if( !m_ssl_ctx )
@@ -1491,8 +1495,8 @@ bool Csock::SSLServerSetup()
 			return( false );
 		}
 		break;
-#endif
 	case TLS1:
+#endif /* TLS1_1_VERSION */
 		m_ssl_ctx = SSL_CTX_new( TLSv1_server_method() );
 		if( !m_ssl_ctx )
 		{
@@ -1500,8 +1504,8 @@ bool Csock::SSLServerSetup()
 			return( false );
 		}
 		break;
-#ifndef OPENSSL_NO_SSL2
 	case SSL2:
+#ifndef OPENSSL_NO_SSL2
 		m_ssl_ctx = SSL_CTX_new( SSLv2_server_method() );
 		if( !m_ssl_ctx )
 		{
@@ -1509,10 +1513,14 @@ bool Csock::SSLServerSetup()
 			return( false );
 		}
 		break;
-#endif
+#endif /* OPENSSL_NO_SSL2 */
 		/* Fall through if SSL2 is disabled */
 	case SSL23:
 	default:
+		if( m_iMethod != SSL23 )
+		{
+			CS_DEBUG( "WARNING: SSL Server Method other than SSLv23 specified, but has passed through" );
+		}
 		m_ssl_ctx = SSL_CTX_new( SSLv23_server_method() );
 		if( !m_ssl_ctx )
 		{
@@ -2751,7 +2759,17 @@ void Csock::Init( const CS_STRING & sHostname, uint16_t uPort, int iTimeout )
 	m_shostname = sHostname;
 	m_sbuffer.clear();
 	m_eCloseType = CLT_DONT;
-	m_iMethod = TLS1_2;  // Falls though TLSv1.1 and TLSv1 if not available
+	/*
+	 * While I appreciate the line ...
+	 * "It's 2014, no idea how this made it as a default for the past 16 years..."
+	 * TLS 1.2 was introduced in 2008. That being said, it's still not widely supported so I'm not
+	 * ready to make it the default. SSL 3.0 is still the most widely supported standard and that's
+	 * what a sane default is supposed to be. Additionally, OpenSSL is smart with SSLv23_client_method
+	 * as it will check for TLS in addition to SSL (per the manual) which is the reason for its choice.
+	 *
+	 * https://www.openssl.org/docs/ssl/SSL_CTX_new.html
+	 */
+	m_iMethod = SSL23;
 	m_sCipherType = "ALL";
 	m_iMaxBytes = 0;
 	m_iMaxMilliSeconds = 0;

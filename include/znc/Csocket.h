@@ -592,8 +592,8 @@ public:
 	    SSL2				= 2,
 	    SSL3				= 3,
 	    TLS1				= 4,
-	    TLS1_1				= 5,
-	    TLS1_2				= 6
+	    TLS11				= 5,
+	    TLS12				= 6
 	};
 
 	enum ECONState
