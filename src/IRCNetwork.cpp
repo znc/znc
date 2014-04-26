@@ -991,6 +991,7 @@ bool CIRCNetwork::Connect() {
 		return false;
 
 	if (CZNC::Get().GetServerThrottle(pServer->GetName())) {
+		// Can't connect right now, schedule retry later
 		CZNC::Get().AddNetworkToQueue(this);
 		return false;
 	}

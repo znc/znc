@@ -2009,6 +2009,10 @@ protected:
 };
 
 void CZNC::SetConnectDelay(unsigned int i) {
+	if (i < 1) {
+		// Don't hammer server with our failed connects
+		i = 1;
+	}
 	if (m_uiConnectDelay != i && m_pConnectQueueTimer != NULL) {
 		m_pConnectQueueTimer->Start(i);
 	}
@@ -2056,7 +2060,6 @@ void CZNC::AddNetworkToQueue(CIRCNetwork *pNetwork) {
 			return;
 		}
 	}
-
 
 	m_lpConnectQueue.push_back(pNetwork);
 	EnableConnectQueue();
