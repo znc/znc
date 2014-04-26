@@ -717,7 +717,11 @@ public:
 			return true;
 		}
 
-		WebSock.Redirect(GetWebPath() + "editnetwork?user=" + pUser->GetUserName().Escape_n(CString::EURL) + "&network=" + pNetwork->GetName().Escape_n(CString::EURL));
+		if (WebSock.HasParam("submit_return")) {
+			WebSock.Redirect(GetWebPath() + "editnetwork?user=" + pUser->GetUserName().Escape_n(CString::EURL) + "&network=" + pNetwork->GetName().Escape_n(CString::EURL));
+		} else {
+			WebSock.Redirect(GetWebPath() + "editchan?user=" + pUser->GetUserName().Escape_n(CString::EURL) + "&network=" + pNetwork->GetName().Escape_n(CString::EURL) + "&name=" + pChan->GetName().Escape_n(CString::EURL));
+		}
 		return true;
 	}
 
@@ -991,7 +995,11 @@ public:
 			return true;
 		}
 
-		WebSock.Redirect(GetWebPath() + "edituser?user=" + pUser->GetUserName().Escape_n(CString::EURL));
+		if (WebSock.HasParam("submit_return")) {
+			WebSock.Redirect(GetWebPath() + "edituser?user=" + pUser->GetUserName().Escape_n(CString::EURL));
+		} else {
+			WebSock.Redirect(GetWebPath() + "editnetwork?user=" + pUser->GetUserName().Escape_n(CString::EURL) + "&network=" + pNetwork->GetName().Escape_n(CString::EURL));
+		}
 		return true;
 	}
 
@@ -1326,10 +1334,10 @@ public:
 			return true;
 		}
 
-		if (!spSession->IsAdmin()) {
-			WebSock.Redirect(GetWebPath() + "edituser");
-		} else {
+		if (spSession->IsAdmin() && WebSock.HasParam("submit_return")) {
 			WebSock.Redirect(GetWebPath() + "listusers");
+		} else {
+			WebSock.Redirect(GetWebPath() + "edituser?user=" + pUser->GetUserName());
 		}
 
 		/* we don't want the template to be printed while we redirect */

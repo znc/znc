@@ -70,7 +70,8 @@
 	<? ENDLOOP ?>
 
 	<div class="submitline">
-		<input type="submit" value="<? IF Edit ?>Save<? ELSE ?>Add Channel<? ENDIF ?>" />
+		<input type="submit" name="submit_return" value="<? IF Edit ?>Save<? ELSE ?>Add Channel<? ENDIF ?> and return" />
+		<input type="submit" name="submit_continue" value="<? IF Edit ?>Save<? ELSE ?>Add Channel<? ENDIF ?> and continue" />
 	</div>
 </form>
 

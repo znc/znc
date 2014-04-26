@@ -308,7 +308,12 @@
 	<? ENDLOOP ?>
 
 	<div class="submitline">
+		<? IF ImAdmin ?>
+		<input type="submit" name="submit_return" value="<? IF Edit ?>Save<? ELSE ?><? IF Clone ?>Clone<? ELSE ?>Create<? ENDIF ?><? ENDIF ?> and return" />
+		<input type="submit" name="submit_continue" value="<? IF Edit ?>Save<? ELSE ?><? IF Clone ?>Clone<? ELSE ?>Create<? ENDIF ?><? ENDIF ?> and continue" />
+		<? ELSE ?>
 		<input type="submit" value="<? IF Edit ?>Save<? ELSE ?><? IF Clone ?>Clone<? ELSE ?>Create<? ENDIF ?><? ENDIF ?>" />
+		<? ENDIF ?>
 	</div>
 </form>
 
