@@ -31,7 +31,7 @@ script:
     - cd ..
 after_success:
     - test -r .travis_after_all.py && python .travis_after_all.py || echo No .travis_after_all.py found
-    - test -r .to_export_back && cat .to_export_back || echo No .to_export_back found
+    - test -r .to_export_back && echo $(cat .to_export_back) || echo No .to_export_back found
     - export DUMMY_VAR=dummy-value $(cat .to_export_back)
     - |
           if [ "$BUILD_LEADER" == "YES" ] && [ "$BUILD_AGGREGATE_STATUS" == "others_succeeded" ] && [ "$TRAVIS_REPO_SLUG" == "znc/znc" ] && [ "$TRAVIS_PULL_REQUEST" == "false" ] && [ "$TRAVIS_BRANCH" == "master" ]; then
