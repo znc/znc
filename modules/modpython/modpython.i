@@ -105,6 +105,11 @@ class MCString : public std::map<CString, CString> {};
 	}
 }
 
+%typemap(typecheck) CString&, CString* {
+    String* p;
+    $1 = SWIG_IsOK(SWIG_ConvertPtr($input, (void**)&p, SWIG_TypeQuery("String*"), 0));
+}
+
 /*TODO %typemap(in) bool& to be able to call from python functions which get bool& */
 
 %typemap(out) bool&, bool* {
