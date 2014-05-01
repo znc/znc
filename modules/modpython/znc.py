@@ -14,6 +14,7 @@
 # limitations under the License.
 #
 
+from functools import partial, wraps
 import imp
 import re
 import traceback
@@ -701,6 +702,30 @@ def CreateWebSubPage(name, title='', params=dict(), admin=False):
 CUser.GetNetworks = CUser.GetNetworks_
 CIRCNetwork.GetChans = CIRCNetwork.GetChans_
 CChan.GetNicks = CChan.GetNicks_
+
+
+def FreeOwnership(func):
+    """
+        Force release of python ownership of user object when adding it to znc
+
+        This solves #462
+    """
+    @wraps(func)
+    def _wrap(self, obj, *args):
+        if func(self, obj, *args):
+            obj.thisown = 0
+            return True
+        else:
+            return False
+    return _wrap
+
+CZNC.AddListener = FreeOwnership(func=CZNC.AddListener)
+CZNC.AddUser = FreeOwnership(func=CZNC.AddUser)
+CZNC.AddNetworkToQueue = FreeOwnership(func=CZNC.AddNetworkToQueue)
+CUser.AddNetwork = FreeOwnership(func=CUser.AddNetwork)
+CIRCNetwork.AddChan = FreeOwnership(func=CIRCNetwork.AddChan)
+CModule.AddSocket = FreeOwnership(func=CModule.AddSocket)
+CModule.AddSubPage = FreeOwnership(func=CModule.AddSubPage)
 
 
 class ModulesIter(collections.Iterator):
