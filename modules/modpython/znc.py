@@ -14,7 +14,7 @@
 # limitations under the License.
 #
 
-from functools import partial, wraps
+from functools import wraps
 import imp
 import re
 import traceback
