@@ -712,6 +712,10 @@ def FreeOwnership(func):
     """
     @wraps(func)
     def _wrap(self, obj, *args):
+        # Bypass if first argument is not an SWIG object (like base type str)
+        if not hasattr(obj, 'thisown'):
+            return func(self, obj, *args)
+        # Move scope when function was successfully
         if func(self, obj, *args):
             obj.thisown = 0
             return True
