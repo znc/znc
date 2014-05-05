@@ -160,11 +160,11 @@ public:
 
 	virtual EModRet OnUserCTCP(CString& sTarget, CString& sMessage) {
 		if (sMessage.Equals("DCC ", false, 4)) {
-			CString sType = sMessage.Token(1);
-			CString sFile = sMessage.Token(2);
-			unsigned long uLongIP = sMessage.Token(3).ToULong();
-			unsigned short uPort = sMessage.Token(4).ToUShort();
-			unsigned long uFileSize = sMessage.Token(5).ToULong();
+			CString sType = sMessage.Token(1, false, " ", false, "\"", "\"", true);
+			CString sFile = sMessage.Token(2, false, " ", false, "\"", "\"", false);
+			unsigned long uLongIP = sMessage.Token(3, false, " ", false, "\"", "\"", true).ToULong();
+			unsigned short uPort = sMessage.Token(4, false, " ", false, "\"", "\"", true).ToUShort();
+			unsigned long uFileSize = sMessage.Token(5, false, " ", false, "\"", "\"", true).ToULong();
 			CString sIP = GetLocalDCCIP();
 
 			if (!UseClientIP()) {
@@ -215,11 +215,11 @@ public:
 	virtual EModRet OnPrivCTCP(CNick& Nick, CString& sMessage) {
 		if (sMessage.Equals("DCC ", false, 4) && m_pNetwork->IsUserAttached()) {
 			// DCC CHAT chat 2453612361 44592
-			CString sType = sMessage.Token(1);
-			CString sFile = sMessage.Token(2);
-			unsigned long uLongIP = sMessage.Token(3).ToULong();
-			unsigned short uPort = sMessage.Token(4).ToUShort();
-			unsigned long uFileSize = sMessage.Token(5).ToULong();
+			CString sType = sMessage.Token(1, false, " ", false, "\"", "\"", true);
+			CString sFile = sMessage.Token(2, false, " ", false, "\"", "\"", false);
+			unsigned long uLongIP = sMessage.Token(3, false, " ", false, "\"", "\"", true).ToULong();
+			unsigned short uPort = sMessage.Token(4, false, " ", false, "\"", "\"", true).ToUShort();
+			unsigned long uFileSize = sMessage.Token(5, false, " ", false, "\"", "\"", true).ToULong();
 
 			if (sType.Equals("CHAT")) {
 				CNick FromNick(Nick.GetNickMask());
