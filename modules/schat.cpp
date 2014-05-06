@@ -25,6 +25,8 @@
 #include <znc/User.h>
 #include <znc/IRCNetwork.h>
 
+#include <time.h>
+
 using std::pair;
 using std::stringstream;
 using std::map;

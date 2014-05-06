@@ -17,6 +17,8 @@
 #include <znc/User.h>
 #include <znc/znc.h>
 
+#include <time.h>
+
 using std::map;
 using std::pair;
 using std::multimap;

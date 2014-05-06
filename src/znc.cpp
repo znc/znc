@@ -21,6 +21,8 @@
 #include <znc/IRCNetwork.h>
 #include <znc/Config.h>
 
+#include <time.h>
+
 using std::endl;
 using std::cout;
 using std::map;

@@ -16,6 +16,7 @@
 
 #include <znc/znc.h>
 #include <signal.h>
+#include <time.h>
 
 using std::cout;
 using std::endl;

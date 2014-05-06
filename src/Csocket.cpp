@@ -53,6 +53,8 @@
 #include <unicode/errorcode.h>
 #endif /* HAVE_ICU */
 
+#include <time.h>
+
 #include <list>
 
 #define CS_SRANDBUFFER 128

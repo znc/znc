@@ -29,6 +29,8 @@
 #include <znc/IRCNetwork.h>
 #include <znc/FileUtils.h>
 
+#include <time.h>
+
 using std::vector;
 
 #define CRYPT_VERIFICATION_TOKEN "::__:SAVEBUFF:__::"

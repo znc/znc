@@ -17,6 +17,8 @@
 #include <znc/Chan.h>
 #include <znc/IRCNetwork.h>
 
+#include <time.h>
+
 using std::map;
 
 class CFloodDetachMod : public CModule {

@@ -20,6 +20,7 @@
 #include <znc/IRCNetwork.h>
 #include <znc/IRCSock.h>
 #include <math.h>
+#include <time.h>
 
 using std::vector;
 using std::set;
