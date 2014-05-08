@@ -1,0 +1,224 @@
+// TODO: how to format this file?
+
+ZNC 1.4
+=======
+
+This release is done to fix a denial of service attack through webadmin. After authentication, users can crash ZNC through a use-after-delete.
+Additionally, a number of fixes and nice, low-risk additions from our development branch is included.
+
+In detail, these are:
+
+
+New
+===
+
+* Reduce users' confusion during --makeconf.
+* Warn people that making ZNC listen on port 6667 might cause problems with some web browsers.
+* Always generate a SSL certificate during --makeconf.
+* Stop asking for a bind host / listen host in --makeconf. People who don't want wildcard binds can configure this later.
+* Don't create ~/.znc/modules if it doesn't exist yet.
+
+
+Fixes
+=====
+
+* Fix a use-after-delete in webadmin.
+* Honor the BindHost whitelist when configuring BindHosts in controlpanel module.
+* Ignore trailing whitespace in <code>/znc jump</code> arguments.
+* Change formatting of startup messages so that we never overwrite part of a message when printing the result of an action.
+* Fix configure on non-bash shells.
+* Send the correct error for invalid CAP subcommands.
+* Make sure znc-buildmod includes zncconfig.h at the beginning of module code.
+
+
+Modules
+=======
+
+* Make awaystore automatically call the Ping command when the Back command is used.
+* Add SSL information and port number to servers in network list in webadmin.
+* Disable password autocompletion when editing users in webadmin.
+* Make nickserv  module work on StarChat.net and ircline.org.
+* Remove accidental timeout for run commands in shell module.
+* certauth now uses a case insensitive comparison on hexadecimal fingerprints.
+
+controlpanel
+------------
+
+* Correct double output.
+* Add support for the MaxNetworks global setting.
+* Add support for the BindHost per-network setting.
+
+modperl and modpython
+---------------------
+
+* Make <code>OnAddNetwork</code> and <code>OnDeleteNetwork</code> module hooks work.
+* Don't create .pyc files during compilation.
+* Fix modperl on MacOS X. Twice.
+* Require at least SWIG 2.0.12 on MacOS X.
+
+
+Internal
+========
+
+* Don't redefine _FORTIFY_SOURCE if compiler already defines it.
+* Cache list of available timezones instead of re-reading it whenever it is needed.
+* Improve const-correctness.
+* Fix various low-priority compiler warnings.
+* Change in-memory storage format for ServerThrottle.
+* Use native API on Win32 to replace a file with another file.
+* Add src/version.cpp to .gitignore.
+
+
+
+ZNC 1.2
+=======
+
+New
+===
+
+* ZNC has been relicensed to Apache 2.0
+* Show password block in --makepass in new format
+* Return MaxJoins setting, it helps against server sending ZNC too many lines
+  at once and disconnecting with "Max SendQ exceeded"
+* Make /znc detach case insensitive, allow "/detach #chan1,#chan2" syntax
+* No longer store 381 in the buffer
+
+
+Fixes
+=====
+
+* CModule::OnMode(): Fix a stupid NULL pointer dereference
+* Fix NULL pointer dereference in webadmin.
+* Fix a crash when you delete a user with more than one attached client
+* Fix a random crash with module hooks
+* Revert "Rewrite the JOIN channel logic, dropping MaxJoins"
+* Fix build on some systems
+* Fix build of shallow git clone
+* Fix build of git tags
+* Fix OOT builds with swig files in source dir
+* Don't send NAMES and TOPIC for detached channels when a client connects
+* Fix memory leak
+* Consistency between Del* and Rem* in command names
+* Fix changing client nick when client connects.
+* Timezone GMT+N is really GMT+N now. It behaved like -N before.
+* Escape special characters in debug output (znc --debug)
+* Don't disconnect networkless users without PINGing them first.
+* Don't lose dlerror() message.
+* Fix use-after-free which may happen during shutdown
+* Fix "Error: Success" message in SSL
+* Fixed double forward slashes and incorrect active module highlighting.
+* make clean: Only delete files that can be regenerated
+* Don't make backup of znc.conf readable by everyone.
+* makepem: create pem only rw for the user, on non-win32
+* Don't ever try to overwrite /usr/bin/git
+* Fix user modes
+* Request secure cookie transmission for HTTPS
+* "make clean" removes .depend/
+* Fix support for /msg @#chan :hi
+* Fix saving config on some cygwin installations
+* Fix error message for invalid network name
+
+
+Modules
+=======
+
+* Return old fakeonline module (accidentally removed in 1.0) as modules_online
+* autoattach: add string searching
+* autocycle: Convert to a network module
+* chansaver: Fix chansaver to not rewrite the config each time a user joins a
+  channel on startup
+* cert: Make default type of cert mod to be network.
+* watch: Don't handle multiple matching patterns for each target
+* route_replies: Add some WHOIS numerics
+* block_motd: Allow block_motd to be loaded per-network and globally
+* notify_connect: Fixed syntax on attach/detach messages to be more consistent
+* cyrusauth: Fix user creation
+
+controlpanel
+------------
+* Support network module manipulation
+* Increases general verbosity of command results.
+* Fix bug for "Disconnect" help
+* Standardize error wordings
+
+webadmin
+--------
+
+* Allow loading webadmin as user module.
+* Show instructions on how to use networks in Add Network too
+* clarify that + is SSL
+* Show example timezone in webadmin
+* Enable embedding network modules.
+* Enable embedding modules to network pages.
+* Change save network to show the network and not redirect user
+
+sasl
+----
+
+* Implement DH-AES encrypted password scheme.
+* Add missing length check
+* Description line for DH-BLOWFISH
+* Fixing unaligned accesses
+
+awaystore
+---------
+
+* Fix loading old configs which refered to "away" module
+* Fix displaying IPv6 addresses
+
+crypt
+-----
+
+* Add time stamp to buffered messages
+* Use ASCII for nick prefix and make it configurable
+
+nickserv
+--------
+
+* Make NickServ nickname configurable.
+* Add support for NickServ on wenet.ru and Azzurra
+* nickserv: don't confuse people so much
+
+log
+---
+
+* Add -sanitize option to log module.
+* Convert / and \ character to - in nicks for filenames.
+* Create files with the same permissions as the whole log directory.
+
+charset
+-------
+
+* Don't try to build charset module if iconv is not found
+* Fix: Converted raw string include NULL character in charset module
+
+modperl
+-------
+
+* A bit more debug output on modperl
+* Fix perl modules being shown incorrectly in the webadmin
+
+partyline
+---------
+
+* Fix PartyLine so that forced channels may not be left at all - users will be
+rejoined at once.
+* Fix partyline rejoin on user deletion
+
+
+Internal
+========
+
+* Require SWIG 2.0.8 for modperl/modpython (removes hacks to make older SWIG
+  work)
+* Web interface now supports gzip compression
+* Update server-time to new specs with ISO 8601
+* Add a generic threads abstraction
+* Add CString::StripControls to strip controls (Colors, C0) from strings
+* Change PutModule to handle multiple lines
+* Debug output: Only print queued lines if they are really just queued
+* Add initial unit tests, runnable by "make test"
+* Add nick comparison function CNick::NickEquals
+* Force including zncconfig.h at the beginning of every .cpp
+* Add OnAddNetwork, OnDeleteNetwork module hooks
+
