@@ -175,7 +175,7 @@
 							<? IF Disabled ?>
 							<? VAR Args ?>
 							<? ELSE ?>
-							<input class="third" type="text" name="modargs_<? VAR Name ?>" value="<? VAR Args ?>"
+							<input class="third" type="text" autocomplete="off" name="modargs_<? VAR Name ?>" value="<? VAR Args ?>"
 							<? IF !HasArgs ?> disabled="disabled"<? ENDIF ?>
 							<? IF ArgsHelpText ?> title="<? VAR ArgsHelpText ?>"<? ENDIF ?> />
 							<? ENDIF ?>
