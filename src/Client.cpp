@@ -364,7 +364,7 @@ void CClient::ReadLine(const CString& sData) {
 
 			// Relay to the rest of the clients that may be connected to this user
 
-			if (m_pNetwork->IsChan(sTarget)) {
+			if (pChan != NULL) {
 				vector<CClient*>& vClients = GetClients();
 
 				for (unsigned int a = 0; a < vClients.size(); a++) {
