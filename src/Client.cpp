@@ -264,7 +264,7 @@ void CClient::ReadLine(const CString& sData) {
 			}
 
 			// Relay to the rest of the clients that may be connected to this user
-			if (m_pNetwork->IsChan(sTarget)) {
+			if (pChan != NULL || m_pNetwork->IsChan(sTarget)) {
 				vector<CClient*>& vClients = GetClients();
 
 				for (unsigned int a = 0; a < vClients.size(); a++) {
@@ -311,7 +311,7 @@ void CClient::ReadLine(const CString& sData) {
 					}
 
 					// Relay to the rest of the clients that may be connected to this user
-					if (m_pNetwork->IsChan(sTarget)) {
+					if (pChan != NULL || m_pNetwork->IsChan(sTarget)) {
 						vector<CClient*>& vClients = GetClients();
 
 						for (unsigned int a = 0; a < vClients.size(); a++) {
@@ -364,7 +364,7 @@ void CClient::ReadLine(const CString& sData) {
 
 			// Relay to the rest of the clients that may be connected to this user
 
-			if (pChan != NULL) {
+			if (pChan != NULL || m_pNetwork->IsChan(sTarget)) {
 				vector<CClient*>& vClients = GetClients();
 
 				for (unsigned int a = 0; a < vClients.size(); a++) {

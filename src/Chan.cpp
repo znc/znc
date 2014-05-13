@@ -29,7 +29,7 @@ CChan::CChan(const CString& sName, CIRCNetwork* pNetwork, bool bInConfig, CConfi
 	m_sKey = sName.Token(1);
 	m_pNetwork = pNetwork;
 
-	if (!m_pNetwork->IsChan(m_sName)) {
+	if (!m_pNetwork->IsChanStrict(m_sName)) {
 		m_sName = "#" + m_sName;
 	}
 
