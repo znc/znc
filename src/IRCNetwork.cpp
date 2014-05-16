@@ -535,7 +535,10 @@ void CIRCNetwork::ClientConnected(CClient *pClient) {
 		if (bContinue) continue;
 		pClient->PutClient(sLine);
 	}
-	m_QueryBuffer.Clear();
+
+	if (IsUserOnline()) {
+		m_QueryBuffer.Clear();
+	}
 
 	// Tell them why they won't connect
 	if (!GetIRCConnectEnabled())

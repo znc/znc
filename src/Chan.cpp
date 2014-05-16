@@ -576,7 +576,7 @@ void CChan::SendBuffer(CClient* pClient, const CBuffer& Buffer) {
 					break;
 			}
 
-			if (AutoClearChanBuffer()) {
+			if (AutoClearChanBuffer() && m_pNetwork->IsUserOnline()) {
  				ClearBuffer();
 			}
 		}
