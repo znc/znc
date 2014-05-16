@@ -159,6 +159,9 @@ public:
 };
 
 class CAliasMod : public CModule {
+private:
+	bool sending_lines;
+
 public:
 	void CreateCommand(const CString& sLine)
 	{
@@ -282,7 +285,8 @@ public:
 		else PutModule("Alias does not exist.");
 	}
 
-	MODCONSTRUCTOR(CAliasMod)
+	MODCONSTRUCTOR(CAliasMod),
+	sending_lines(false)
 	{
 		AddHelpCommand();
 		AddCommand("Create", static_cast<CModCommand::ModCmdFunc>(&CAliasMod::CreateCommand), "<name>", "Creates a new, blank alias called name.");
@@ -298,6 +302,9 @@ public:
 	virtual EModRet OnUserRaw(CString& sLine)
 	{
 		CAlias current_alias;
+
+		if (sending_lines) return CONTINUE;
+
 		try
 		{
 			if (sLine.Equals("ZNC-CLEAR-ALL-ALIASES!"))
@@ -311,7 +318,13 @@ public:
 			{
 				VCString rawLines;
 				current_alias.Imprint(sLine).Split("\n", rawLines, false);
-				for (size_t i = 0; i < rawLines.size(); ++i) PutIRC(rawLines[i]);
+				sending_lines = true;
+
+				for (size_t i = 0; i < rawLines.size(); ++i) {
+					m_pClient->ReadLine(rawLines[i]);
+				}
+
+				sending_lines = false;
 				return HALT;
 			}
 		}
