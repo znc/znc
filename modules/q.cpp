@@ -395,12 +395,12 @@ private:
 		                                   .Replace_n("[",  "{")
 		                                   .Replace_n("]",  "}")
 		                                   .Replace_n("\\", "|");
-		CString sPasswordHash = m_sPassword.Left(10).MD5();
-		CString sKey          = CString(sUsername + ":" + sPasswordHash).MD5();
-		CString sResponse     = HMAC_MD5(sKey, sChallenge);
+		CString sPasswordHash = m_sPassword.Left(10).SHA256();
+		CString sKey          = CString(sUsername + ":" + sPasswordHash).SHA256();
+		CString sResponse     = HMAC_SHA256(sKey, sChallenge);
 
 		PutModule("Auth: Received challenge, sending CHALLENGEAUTH request...");
-		PutQ("CHALLENGEAUTH " + m_sUsername + " " + sResponse + " HMAC-MD5");
+		PutQ("CHALLENGEAUTH " + m_sUsername + " " + sResponse + " HMAC-SHA-256");
 	}
 
 	EModRet HandleMessage(const CNick& Nick, CString sMessage) {
@@ -454,10 +454,10 @@ private:
 			if (sMessage.find("not available once you have authed") != CString::npos) {
 				m_bAuthed = true;
 			} else {
-				if (sMessage.find("HMAC-MD5") != CString::npos) {
+				if (sMessage.find("HMAC-SHA-256") != CString::npos) {
 					ChallengeAuth(sMessage.Token(1));
 				} else {
-					PutModule("Auth failed: Q does not support HMAC-MD5 for CHALLENGEAUTH, falling back to standard AUTH.");
+					PutModule("Auth failed: Q does not support HMAC-SHA-256 for CHALLENGEAUTH, falling back to standard AUTH.");
 					SetUseChallenge(false);
 					Auth();
 				}
@@ -531,10 +531,10 @@ private:
 		return true;
 	}
 
-	CString HMAC_MD5(const CString& sKey, const CString& sData) {
+	CString HMAC_SHA256(const CString& sKey, const CString& sData) {
 		CString sRealKey;
 		if (sKey.length() > 64)
-			PackHex(sKey.MD5(), sRealKey);
+			PackHex(sKey.SHA256(), sRealKey);
 		else
 			sRealKey = sKey;
 
@@ -547,8 +547,8 @@ private:
 		}
 
 		CString sInnerHash;
-		PackHex(CString(sInnerKey + sData).MD5(), sInnerHash);
-		return CString(sOuterKey + sInnerHash).MD5();
+		PackHex(CString(sInnerKey + sData).SHA256(), sInnerHash);
+		return CString(sOuterKey + sInnerHash).SHA256();
 	}
 
 /* Settings */
