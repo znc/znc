@@ -749,7 +749,7 @@ public:
 					if (pModule) {
 						l["Checked"] = "true";
 						l["Args"] = pModule->GetArgs();
-					}					
+					}
 				}
 
 				// Check if module is loaded globally
@@ -1215,8 +1215,21 @@ public:
 				l["ArgsHelpText"] = Info.GetArgsHelpText();
 
 				CModule *pModule = NULL;
-				if (pUser)
+				if (pUser) {
 					pModule = pUser->GetModules().FindModule(Info.GetName());
+					// Check if module is loaded by all or some networks
+					const vector<CIRCNetwork*>& userNetworks = pUser->GetNetworks();
+					unsigned int networksWithRenderedModuleCount = 0;
+					for (unsigned int networkIndex = 0; networkIndex < userNetworks.size(); ++networkIndex) {
+						const CIRCNetwork* pCurrentNetwork = userNetworks[networkIndex];
+						const CModules& networkModules = pCurrentNetwork->GetModules();
+						if (networkModules.FindModule(Info.GetName())) {
+							networksWithRenderedModuleCount++;
+						}
+					}
+					l["LoadedByAllNetworks"] = CString(networksWithRenderedModuleCount == userNetworks.size());
+					l["LoadedBySomeNetworks"] = CString(networksWithRenderedModuleCount != 0);
+				}
 				if (pModule) {
 					l["Checked"] = "true";
 					l["Args"] = pModule->GetArgs();
@@ -1227,23 +1240,6 @@ public:
 
 				// Check if module is loaded globally
 				l["LoadedGlobally"] = CString(CZNC::Get().GetModules().FindModule(Info.GetName()) != NULL);
-
-				// Check if module is loaded by all or some networks	
-				const vector<CIRCNetwork*>& userNetworks = pUser->GetNetworks();
-				unsigned int networksWithRenderedModuleCount = 0;				
-				for (unsigned int networkIndex = 0; networkIndex < userNetworks.size(); ++networkIndex) {
-					const CIRCNetwork* pCurrentNetwork = userNetworks[networkIndex];
-					const CModules& networkModules = pCurrentNetwork->GetModules();
-					for (unsigned int networkModuleIndex = 0; networkModuleIndex < networkModules.size(); ++networkModuleIndex) {
-						const CModule* pCurModule = networkModules[networkModuleIndex];						
-						if (Info.GetName() == pCurModule->GetModName()) {
-							networksWithRenderedModuleCount++;
-						}
-					}
-				}
-				l["LoadedByAllNetworks"] = CString(networksWithRenderedModuleCount == userNetworks.size());
-				const bool isLoadedBySomeNetworks = (networksWithRenderedModuleCount != 0) && (networksWithRenderedModuleCount < userNetworks.size());
-				l["LoadedBySomeNetworks"] = CString(isLoadedBySomeNetworks);
 
 				if (!spSession->IsAdmin() && pUser && pUser->DenyLoadMod()) {
 					l["Disabled"] = "true";
@@ -1653,42 +1649,34 @@ public:
 				l["HasArgs"] = CString(Info.GetHasArgs());
 				l["ArgsHelpText"] = Info.GetArgsHelpText();
 
-				// Check if the module is loaded by all or some users and collect all available networks for future processing
-				vector<CIRCNetwork*> allNetworks;
+				// Check if the module is loaded by all or some users, and/or by all or some networks
 				unsigned int usersWithRenderedModuleCount = 0;
-				const map<CString,CUser*>& allUsers = CZNC::Get().GetUserMap();
-				allNetworks.reserve(allUsers.size()); // Reserve for at least one network per scene
-				for (map<CString,CUser*>::const_iterator usersIt = allUsers.begin(); usersIt != allUsers.end(); ++usersIt) {					
-					const CUser& User = *usersIt->second;
-					const vector<CIRCNetwork*>& userNetworks = User.GetNetworks();
-					allNetworks.insert(allNetworks.end(), userNetworks.begin(), userNetworks.end());
-					const CModules& userModules = User.GetModules();
-					for (unsigned int userModuleIndex = 0; userModuleIndex < userModules.size(); ++userModuleIndex) {
-						const CModule* pCurModule = userModules[userModuleIndex];						
-						if (Info.GetName() == pCurModule->GetModName()) {
-							usersWithRenderedModuleCount++;
-						}
-					}
-				}
-				l["LoadedByAllUsers"] = CString(usersWithRenderedModuleCount == allUsers.size());
-				const bool isLoadedBySomeUsers = (usersWithRenderedModuleCount != 0) && (usersWithRenderedModuleCount < allUsers.size());
-				l["LoadedBySomeUsers"] = CString(isLoadedBySomeUsers);
-
-				// Check if module is loaded by all or some networks
 				unsigned int networksWithRenderedModuleCount = 0;
-				for (unsigned int networkIndex = 0; networkIndex < allNetworks.size(); ++networkIndex) {
-					const CIRCNetwork* pCurrentNetwork = allNetworks[networkIndex];
-					const CModules& networkModules = pCurrentNetwork->GetModules();
-					for (unsigned int networkModuleIndex = 0; networkModuleIndex < networkModules.size(); ++networkModuleIndex) {
-						const CModule* pCurModule = networkModules[networkModuleIndex];						
-						if (Info.GetName() == pCurModule->GetModName()) {
+				unsigned int networksCount = 0;
+				const map<CString,CUser*>& allUsers = CZNC::Get().GetUserMap();
+				for (map<CString,CUser*>::const_iterator usersIt = allUsers.begin(); usersIt != allUsers.end(); ++usersIt) {
+					const CUser& User = *usersIt->second;
+					
+					// Count users which has loaded a render module
+					const CModules& userModules = User.GetModules();
+					if (userModules.FindModule(Info.GetName())) {
+						usersWithRenderedModuleCount++;
+					}
+					// Count networks which has loaded a render module
+					const vector<CIRCNetwork*>& userNetworks = User.GetNetworks();
+					networksCount += userNetworks.size();
+					for (unsigned int networkIndex = 0; networkIndex < userNetworks.size(); ++networkIndex)
+					{
+						const CIRCNetwork *pCurrentNetwork = userNetworks[networkIndex];
+						if (pCurrentNetwork->GetModules().FindModule(Info.GetName())) {
 							networksWithRenderedModuleCount++;
 						}
 					}
 				}
-				l["LoadedByAllNetworks"] = CString(networksWithRenderedModuleCount == allNetworks.size());
-				const bool isLoadedBySomeNetworks = (networksWithRenderedModuleCount != 0) && (networksWithRenderedModuleCount < allNetworks.size());
-				l["LoadedBySomeNetworks"] = CString(isLoadedBySomeNetworks);
+				l["LoadedByAllUsers"] = CString(usersWithRenderedModuleCount == allUsers.size());
+				l["LoadedBySomeUsers"] = CString(usersWithRenderedModuleCount != 0);
+				l["LoadedByAllNetworks"] = CString(networksWithRenderedModuleCount == networksCount);
+				l["LoadedBySomeNetworks"] = CString(networksWithRenderedModuleCount != 0);
 			}
 
 			return true;

@@ -189,25 +189,25 @@
 						</td>
 						<td class="mod_descr"><? VAR Description ?></td>
 						<td align="center">
-							<? IF LoadedByAllNetworks ?>
+							<? IF LoadedBySomeNetworks ?>
 								<input type="checkbox" name="loaded_by_network" id="loaded_by_net_<? VAR Name ?>" checked="checked" disabled="disabled"/>
-							<? ELSE IF LoadedBySomeNetworks ?>
-								<input type="checkbox" name="loaded_by_network" id="loaded_by_net_<? VAR Name ?>" checked="checked" disabled="disabled"/>
-								<script type="text/javascript">
-									var checkbox = document.getElementById("loaded_by_net_<? VAR Name ?>");
-									checkbox.indeterminate = true;
-								</script>
+								<? IF !LoadedByAllNetworks ?>
+									<script type="text/javascript">
+										var checkbox = document.getElementById("loaded_by_net_<? VAR Name ?>");
+										checkbox.indeterminate = true;
+									</script>
+								<? ENDIF ?>
 							<? ENDIF ?>
 						</td>
 						<td align="center">
-							<? IF LoadedByAllUsers ?>
+							<? IF LoadedBySomeUsers ?>
 								<input type="checkbox" name="loaded_by_user" id="loaded_by_user_<? VAR Name ?>" checked="checked" disabled="disabled"/>
-							<? ELSE IF LoadedBySomeUsers ?>
-								<input type="checkbox" name="loaded_by_user" id="loaded_by_user_<? VAR Name ?>" checked="checked" disabled="disabled"/>
-								<script type="text/javascript">
-									var checkbox = document.getElementById("loaded_by_user_<? VAR Name ?>");
-									checkbox.indeterminate = true;
-								</script>								
+								<? IF !LoadedByAllUsers ?>
+									<script type="text/javascript">
+										var checkbox = document.getElementById("loaded_by_user_<? VAR Name ?>");
+										checkbox.indeterminate = true;
+									</script>
+								<? ENDIF ?>
 							<? ENDIF ?>
 						</td>
 					</tr>
