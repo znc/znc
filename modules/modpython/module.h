@@ -84,6 +84,7 @@ public:
 	virtual void OnQuit(const CNick& Nick, const CString& sMessage, const std::vector<CChan*>& vChans);
 	virtual void OnNick(const CNick& Nick, const CString& sNewNick, const std::vector<CChan*>& vChans);
 	virtual void OnKick(const CNick& OpNick, const CString& sKickedNick, CChan& Channel, const CString& sMessage);
+	virtual EModRet OnJoining(CChan& Channel);
 	virtual void OnJoin(const CNick& Nick, CChan& Channel);
 	virtual void OnPart(const CNick& Nick, CChan& Channel, const CString& sMessage);
 	virtual EModRet OnChanBufferStarting(CChan& Chan, CClient& Client);
