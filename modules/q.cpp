@@ -40,15 +40,17 @@ public:
 		}
 
 		CString sTmp;
-		m_bUseCloakedHost = (sTmp = GetNV("UseCloakedHost")).empty() ? true : sTmp.ToBool();
-		m_bUseChallenge   = (sTmp = GetNV("UseChallenge")).empty()  ? true : sTmp.ToBool();
-		m_bRequestPerms   = GetNV("RequestPerms").ToBool();
-		m_bJoinOnInvite   = (sTmp = GetNV("JoinOnInvite")).empty() ? true : sTmp.ToBool();
+		m_bUseCloakedHost   = (sTmp = GetNV("UseCloakedHost")).empty() ? true : sTmp.ToBool();
+		m_bUseChallenge     = (sTmp = GetNV("UseChallenge")).empty()  ? true : sTmp.ToBool();
+		m_bRequestPerms     = GetNV("RequestPerms").ToBool();
+		m_bJoinOnInvite     = (sTmp = GetNV("JoinOnInvite")).empty() ? true : sTmp.ToBool();
+		m_bJoinAfterCloaked = (sTmp = GetNV("JoinAfterCloaked")).empty() ? true : sTmp.ToBool();
 
 		// Make sure NVs are stored in config. Note: SetUseCloakedHost() is called further down.
 		SetUseChallenge(m_bUseChallenge);
 		SetRequestPerms(m_bRequestPerms);
 		SetJoinOnInvite(m_bJoinOnInvite);
+		SetJoinAfterCloaked(m_bJoinAfterCloaked);
 
 		OnIRCDisconnected(); // reset module's state
 
@@ -67,6 +69,8 @@ public:
 						"with /msg *q Set UseCloakedHost true/false.");
 				m_bUseCloakedHost = true;
 				SetUseCloakedHost(m_bUseCloakedHost);
+				m_bJoinAfterCloaked = true;
+				SetJoinAfterCloaked(m_bJoinAfterCloaked);
 			} else if (m_bUseChallenge) {
 				Cloak();
 			}
@@ -149,6 +153,10 @@ public:
 			Table2.SetCell("Setting", "JoinOnInvite");
 			Table2.SetCell("Type", "Boolean");
 			Table2.SetCell("Description", "Whether to join channels when Q invites you.");
+			Table2.AddRow();
+			Table2.SetCell("Setting", "JoinAfterCloaked");
+			Table2.SetCell("Type", "Boolean");
+			Table2.SetCell("Description", "Whether to delay joining channels until after you are cloaked.");
 			PutModule(Table2);
 
 			PutModule("This module takes 2 optional parameters: <username> <password>");
@@ -177,6 +185,9 @@ public:
 			} else if (sSetting == "joinoninvite") {
 				SetJoinOnInvite(sValue.ToBool());
 				PutModule("JoinOnInvite set");
+			} else if (sSetting == "joinaftercloaked") {
+				SetJoinAfterCloaked(sValue.ToBool());
+				PutModule("JoinAfterCloaked set");
 			} else
 				PutModule("Unknown setting: " + sSetting);
 
@@ -202,6 +213,9 @@ public:
 			Table.AddRow();
 			Table.SetCell("Setting", "JoinOnInvite");
 			Table.SetCell("Value", CString(m_bJoinOnInvite));
+			Table.AddRow();
+			Table.SetCell("Setting", "JoinAfterCloaked");
+			Table.SetCell("Value", CString(m_bJoinAfterCloaked));
 			PutModule(Table);
 
 		} else if (sCommand == "status") {
@@ -255,6 +269,13 @@ public:
 		return HandleMessage(Nick, sMessage);
 	}
 
+	virtual EModRet OnJoining(CChan& Channel) {
+		if (m_bJoinAfterCloaked && !m_bCloaked)
+			return HALT;
+
+		return CONTINUE;
+	}
+
 	virtual void OnJoin(const CNick& Nick, CChan& Channel) {
 		if (m_bRequestPerms && IsSelf(Nick))
 			HandleNeed(Channel, "ov");
@@ -297,6 +318,7 @@ public:
 				SetUseChallenge(WebSock.GetParam("usechallenge").ToBool());
 				SetRequestPerms(WebSock.GetParam("requestperms").ToBool());
 				SetJoinOnInvite(WebSock.GetParam("joinoninvite").ToBool());
+				SetJoinAfterCloaked(WebSock.GetParam("joinaftercloaked").ToBool());
 			}
 
 			Tmpl["Username"] = m_sUsername;
@@ -324,6 +346,12 @@ public:
 			o4["DisplayName"] = "JoinOnInvite";
 			o4["Tooltip"] = "Whether to join channels when Q invites you.";
 			o4["Checked"] = CString(m_bJoinOnInvite);
+
+			CTemplate& o5 = Tmpl.AddRow("OptionLoop");
+			o5["Name"] = "joinaftercloaked";
+			o5["DisplayName"] = "JoinAfterCloaked";
+			o5["Tooltip"] = "Whether to delay joining channels until after you are cloaked.";
+			o5["Checked"] = CString(m_bJoinAfterCloaked);
 
 			if (bSubmitted) {
 				WebSock.GetSession()->AddSuccess("Changes have been saved!");
@@ -558,6 +586,7 @@ private:
 	bool    m_bUseChallenge;
 	bool    m_bRequestPerms;
 	bool    m_bJoinOnInvite;
+	bool    m_bJoinAfterCloaked;
 
 	void SetUsername(const CString& sUsername) {
 		m_sUsername = sUsername;
@@ -590,6 +619,11 @@ private:
 	void SetJoinOnInvite(const bool bJoinOnInvite) {
 		m_bJoinOnInvite = bJoinOnInvite;
 		SetNV("JoinOnInvite", CString(bJoinOnInvite));
+	}
+
+	void SetJoinAfterCloaked(const bool bJoinAfterCloaked) {
+		m_bJoinAfterCloaked = bJoinAfterCloaked;
+		SetNV("JoinAfterCloaked", CString(bJoinAfterCloaked));
 	}
 };
 
