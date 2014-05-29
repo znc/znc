@@ -762,6 +762,12 @@ void CIRCNetwork::JoinChans(set<CChan*>& sChans) {
 }
 
 bool CIRCNetwork::JoinChan(CChan* pChan) {
+	bool bReturn = false;
+	NETWORKMODULECALL(OnJoining(*pChan), m_pUser, this, NULL, &bReturn);
+
+	if (bReturn)
+		return false;
+
 	if (m_pUser->JoinTries() != 0 && pChan->GetJoinTries() >= m_pUser->JoinTries()) {
 		PutStatus("The channel " + pChan->GetName() + " could not be joined, disabling it.");
 		pChan->Disable();

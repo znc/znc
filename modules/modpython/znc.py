@@ -281,6 +281,9 @@ class Module:
     def OnKick(self, OpNick, sKickedNick, Channel, sMessage):
         pass
 
+    def OnJoining(self, Channel):
+        pass
+
     def OnJoin(self, Nick, Channel):
         pass
 

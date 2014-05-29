@@ -589,6 +589,7 @@ void CModule::OnUnknownModCommand(const CString& sLine) {
 void CModule::OnQuit(const CNick& Nick, const CString& sMessage, const vector<CChan*>& vChans) {}
 void CModule::OnNick(const CNick& Nick, const CString& sNewNick, const vector<CChan*>& vChans) {}
 void CModule::OnKick(const CNick& Nick, const CString& sKickedNick, CChan& Channel, const CString& sMessage) {}
+CModule::EModRet CModule::OnJoining(CChan& Channel) { return CONTINUE; }
 void CModule::OnJoin(const CNick& Nick, CChan& Channel) {}
 void CModule::OnPart(const CNick& Nick, CChan& Channel, const CString& sMessage) {}
 CModule::EModRet CModule::OnInvite(const CNick& Nick, const CString& sChan) { return CONTINUE; }
@@ -775,6 +776,7 @@ bool CModules::OnUserTopicRequest(CString& sChannel) { MODHALTCHK(OnUserTopicReq
 bool CModules::OnQuit(const CNick& Nick, const CString& sMessage, const vector<CChan*>& vChans) { MODUNLOADCHK(OnQuit(Nick, sMessage, vChans)); return false; }
 bool CModules::OnNick(const CNick& Nick, const CString& sNewNick, const vector<CChan*>& vChans) { MODUNLOADCHK(OnNick(Nick, sNewNick, vChans)); return false; }
 bool CModules::OnKick(const CNick& Nick, const CString& sKickedNick, CChan& Channel, const CString& sMessage) { MODUNLOADCHK(OnKick(Nick, sKickedNick, Channel, sMessage)); return false; }
+bool CModules::OnJoining(CChan& Channel) { MODHALTCHK(OnJoining(Channel)); }
 bool CModules::OnJoin(const CNick& Nick, CChan& Channel) { MODUNLOADCHK(OnJoin(Nick, Channel)); return false; }
 bool CModules::OnPart(const CNick& Nick, CChan& Channel, const CString& sMessage) { MODUNLOADCHK(OnPart(Nick, Channel, sMessage)); return false; }
 bool CModules::OnInvite(const CNick& Nick, const CString& sChan) { MODHALTCHK(OnInvite(Nick, sChan)); }

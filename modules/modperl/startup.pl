@@ -337,6 +337,7 @@ sub OnModCTCP {}
 sub OnQuit {}
 sub OnNick {}
 sub OnKick {}
+sub OnJoining {}
 sub OnJoin {}
 sub OnPart {}
 sub OnChanBufferStarting {}
