@@ -32,6 +32,8 @@ class CConfig;
 class CChan;
 class CServer;
 class CIRCSock;
+class CIRCNetworkPingTimer;
+class CIRCNetworkJoinTimer;
 
 class CIRCNetwork {
 public:
@@ -196,6 +198,9 @@ protected:
 	CBuffer            m_RawBuffer;
 	CBuffer            m_MotdBuffer;
 	CBuffer            m_QueryBuffer;
+
+	CIRCNetworkPingTimer* m_pPingTimer;
+	CIRCNetworkJoinTimer* m_pJoinTimer;
 };
 
 #endif // !_IRCNETWORK_H

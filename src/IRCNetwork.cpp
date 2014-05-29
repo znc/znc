@@ -25,6 +25,59 @@
 using std::vector;
 using std::set;
 
+class CIRCNetworkPingTimer : public CCron {
+public:
+	CIRCNetworkPingTimer(CIRCNetwork *pNetwork) : CCron() {
+		m_pNetwork = pNetwork;
+		SetName("CIRCNetworkPingTimer::" + m_pNetwork->GetUser()->GetUserName() + "::" + m_pNetwork->GetName());
+		Start(30);
+	}
+
+	virtual ~CIRCNetworkPingTimer() {}
+
+protected:
+	virtual void RunJob() {
+		CIRCSock* pIRCSock = m_pNetwork->GetIRCSock();
+
+		if (pIRCSock && pIRCSock->GetTimeSinceLastDataTransaction() >= 270) {
+			pIRCSock->PutIRC("PING :ZNC");
+		}
+
+		vector<CClient*>& vClients = m_pNetwork->GetClients();
+		for (size_t b = 0; b < vClients.size(); b++) {
+			CClient* pClient = vClients[b];
+
+			if (pClient->GetTimeSinceLastDataTransaction() >= 270) {
+				pClient->PutClient("PING :ZNC");
+			}
+		}
+	}
+
+private:
+	CIRCNetwork* m_pNetwork;
+};
+
+class CIRCNetworkJoinTimer : public CCron {
+public:
+	CIRCNetworkJoinTimer(CIRCNetwork *pNetwork) : CCron() {
+		m_pNetwork = pNetwork;
+		SetName("CIRCNetworkJoinTimer::" + m_pNetwork->GetUser()->GetUserName() + "::" + m_pNetwork->GetName());
+		Start(30);
+	}
+
+	virtual ~CIRCNetworkJoinTimer() {}
+
+protected:
+	virtual void RunJob() {
+		if (m_pNetwork->IsIRCConnected()) {
+			m_pNetwork->JoinChans();
+		}
+	}
+
+private:
+	CIRCNetwork* m_pNetwork;
+};
+
 bool CIRCNetwork::IsValidNetwork(const CString& sNetwork) {
 	// ^[-\w]+$
 
@@ -64,6 +117,12 @@ CIRCNetwork::CIRCNetwork(CUser *pUser, const CString& sName) {
 	m_RawBuffer.SetLineCount(100, true);   // This should be more than enough raws, especially since we are buffering the MOTD separately
 	m_MotdBuffer.SetLineCount(200, true);  // This should be more than enough motd lines
 	m_QueryBuffer.SetLineCount(250, true);
+
+	m_pPingTimer = new CIRCNetworkPingTimer(this);
+	CZNC::Get().GetManager().AddCron(m_pPingTimer);
+
+	m_pJoinTimer = new CIRCNetworkJoinTimer(this);
+	CZNC::Get().GetManager().AddCron(m_pJoinTimer);
 
 	SetIRCConnectEnabled(true);
 }
@@ -226,6 +285,9 @@ CIRCNetwork::~CIRCNetwork() {
 
 	// Make sure we are not in the connection queue
 	CZNC::Get().GetConnectionQueue().remove(this);
+
+	CZNC::Get().GetManager().DelCronByAddr(m_pPingTimer);
+	CZNC::Get().GetManager().DelCronByAddr(m_pJoinTimer);
 }
 
 void CIRCNetwork::DelServers() {
@@ -718,8 +780,11 @@ void CIRCNetwork::JoinChans() {
 			sChans.insert(pChan);
 
 			// Limit the number of joins
-			if (uJoins != 0 && --uJoins == 0)
+			if (uJoins != 0 && --uJoins == 0) {
+				// Reset the timer.
+				m_pJoinTimer->Reset();
 				break;
+			}
 		}
 	}
 
