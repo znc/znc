@@ -749,8 +749,14 @@ public:
 					if (pModule) {
 						l["Checked"] = "true";
 						l["Args"] = pModule->GetArgs();
-					}
+					}					
 				}
+
+				// Check if module is loaded globally
+				l["LoadedGlobally"] = CString(CZNC::Get().GetModules().FindModule(Info.GetName()) != NULL);
+
+				// Check if module is loaded by user
+				l["LoadedByUser"] = CString(pUser->GetModules().FindModule(Info.GetName()) != NULL);
 
 				if (!spSession->IsAdmin() && pUser->DenyLoadMod()) {
 					l["Disabled"] = "true";
