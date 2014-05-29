@@ -1225,6 +1225,26 @@ public:
 					}
 				}
 
+				// Check if module is loaded globally
+				l["LoadedGlobally"] = CString(CZNC::Get().GetModules().FindModule(Info.GetName()) != NULL);
+
+				// Check if module is loaded by all or some networks	
+				const vector<CIRCNetwork*>& userNetworks = pUser->GetNetworks();
+				unsigned int networksWithRenderedModuleCount = 0;				
+				for (unsigned int networkIndex = 0; networkIndex < userNetworks.size(); ++networkIndex) {
+					const CIRCNetwork* pCurrentNetwork = userNetworks[networkIndex];
+					const CModules& networkModules = pCurrentNetwork->GetModules();
+					for (unsigned int networkModuleIndex = 0; networkModuleIndex < networkModules.size(); ++networkModuleIndex) {
+						const CModule* pCurModule = networkModules[networkModuleIndex];						
+						if (Info.GetName() == pCurModule->GetModName()) {
+							networksWithRenderedModuleCount++;
+						}
+					}
+				}
+				l["LoadedByAllNetworks"] = CString(networksWithRenderedModuleCount == userNetworks.size());
+				const bool isLoadedBySomeNetworks = (networksWithRenderedModuleCount != 0) && (networksWithRenderedModuleCount < userNetworks.size());
+				l["LoadedBySomeNetworks"] = CString(isLoadedBySomeNetworks);
+
 				if (!spSession->IsAdmin() && pUser && pUser->DenyLoadMod()) {
 					l["Disabled"] = "true";
 				}
