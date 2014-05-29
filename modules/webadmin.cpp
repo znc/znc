@@ -1626,6 +1626,43 @@ public:
 				l["Wiki"] = Info.GetWikiPage();
 				l["HasArgs"] = CString(Info.GetHasArgs());
 				l["ArgsHelpText"] = Info.GetArgsHelpText();
+
+				// Check if the module is loaded by all or some users and collect all available networks for future processing
+				vector<CIRCNetwork*> allNetworks;
+				unsigned int usersWithRenderedModuleCount = 0;
+				const map<CString,CUser*>& allUsers = CZNC::Get().GetUserMap();
+				allNetworks.reserve(allUsers.size()); // Reserve for at least one network per scene
+				for (map<CString,CUser*>::const_iterator usersIt = allUsers.begin(); usersIt != allUsers.end(); ++usersIt) {					
+					const CUser& User = *usersIt->second;
+					const vector<CIRCNetwork*>& userNetworks = User.GetNetworks();
+					allNetworks.insert(allNetworks.end(), userNetworks.begin(), userNetworks.end());
+					const CModules& userModules = User.GetModules();
+					for (unsigned int userModuleIndex = 0; userModuleIndex < userModules.size(); ++userModuleIndex) {
+						const CModule* pCurModule = userModules[userModuleIndex];						
+						if (Info.GetName() == pCurModule->GetModName()) {
+							usersWithRenderedModuleCount++;
+						}
+					}
+				}
+				l["LoadedByAllUsers"] = CString(usersWithRenderedModuleCount == allUsers.size());
+				const bool isLoadedBySomeUsers = (usersWithRenderedModuleCount != 0) && (usersWithRenderedModuleCount < allUsers.size());
+				l["LoadedBySomeUsers"] = CString(isLoadedBySomeUsers);
+
+				// Check if module is loaded by all or some networks
+				unsigned int networksWithRenderedModuleCount = 0;
+				for (unsigned int networkIndex = 0; networkIndex < allNetworks.size(); ++networkIndex) {
+					const CIRCNetwork* pCurrentNetwork = allNetworks[networkIndex];
+					const CModules& networkModules = pCurrentNetwork->GetModules();
+					for (unsigned int networkModuleIndex = 0; networkModuleIndex < networkModules.size(); ++networkModuleIndex) {
+						const CModule* pCurModule = networkModules[networkModuleIndex];						
+						if (Info.GetName() == pCurModule->GetModName()) {
+							networksWithRenderedModuleCount++;
+						}
+					}
+				}
+				l["LoadedByAllNetworks"] = CString(networksWithRenderedModuleCount == allNetworks.size());
+				const bool isLoadedBySomeNetworks = (networksWithRenderedModuleCount != 0) && (networksWithRenderedModuleCount < allNetworks.size());
+				l["LoadedBySomeNetworks"] = CString(isLoadedBySomeNetworks);
 			}
 
 			return true;
