@@ -40,7 +40,7 @@ protected:
 		for (size_t c = 0; c < vUserClients.size(); ++c) {
 			CClient* pUserClient = vUserClients[c];
 
-			if (pUserClient->GetTimeSinceLastDataTransaction() >= 270) {
+			if (pUserClient->GetTimeSinceLastDataTransaction() >= CIRCNetwork::PING_TIMEOUT) {
 				pUserClient->PutClient("PING :ZNC");
 			}
 		}

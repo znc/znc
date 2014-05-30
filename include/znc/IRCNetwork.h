@@ -43,6 +43,10 @@ public:
 	CIRCNetwork(CUser *pUser, const CIRCNetwork& Network);
 	~CIRCNetwork();
 
+	enum {
+		PING_TIMEOUT = 270
+	};
+
 	void Clone(const CIRCNetwork& Network, bool bCloneName = true);
 
 	CString GetNetworkPath();

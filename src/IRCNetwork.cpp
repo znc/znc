@@ -39,7 +39,7 @@ protected:
 	virtual void RunJob() {
 		CIRCSock* pIRCSock = m_pNetwork->GetIRCSock();
 
-		if (pIRCSock && pIRCSock->GetTimeSinceLastDataTransaction() >= 270) {
+		if (pIRCSock && pIRCSock->GetTimeSinceLastDataTransaction() >= CIRCNetwork::PING_TIMEOUT) {
 			pIRCSock->PutIRC("PING :ZNC");
 		}
 
@@ -47,7 +47,7 @@ protected:
 		for (size_t b = 0; b < vClients.size(); b++) {
 			CClient* pClient = vClients[b];
 
-			if (pClient->GetTimeSinceLastDataTransaction() >= 270) {
+			if (pClient->GetTimeSinceLastDataTransaction() >= CIRCNetwork::PING_TIMEOUT) {
 				pClient->PutClient("PING :ZNC");
 			}
 		}
