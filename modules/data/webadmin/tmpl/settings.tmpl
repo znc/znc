@@ -193,8 +193,7 @@
 								<input type="checkbox" name="loaded_by_network" id="loaded_by_net_<? VAR Name ?>" checked="checked" disabled="disabled"/>
 								<? IF !LoadedByAllNetworks ?>
 									<script type="text/javascript">
-										var checkbox = document.getElementById("loaded_by_net_<? VAR Name ?>");
-										checkbox.indeterminate = true;
+										document.getElementById("loaded_by_net_<? VAR Name ?>").indeterminate = true;
 									</script>
 								<? ENDIF ?>
 							<? ENDIF ?>
@@ -204,8 +203,7 @@
 								<input type="checkbox" name="loaded_by_user" id="loaded_by_user_<? VAR Name ?>" checked="checked" disabled="disabled"/>
 								<? IF !LoadedByAllUsers ?>
 									<script type="text/javascript">
-										var checkbox = document.getElementById("loaded_by_user_<? VAR Name ?>");
-										checkbox.indeterminate = true;
+										document.getElementById("loaded_by_user_<? VAR Name ?>").indeterminate = true;
 									</script>
 								<? ENDIF ?>
 							<? ENDIF ?>
