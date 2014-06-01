@@ -62,7 +62,7 @@ public:
 			return;
 
 		m_Messaged.AddItem(sNick);
-		PutIRC("PRIVMSG " + sNick + " :" + GetReply());
+		PutIRC("NOTICE " + sNick + " :" + GetReply());
 	}
 
 	virtual EModRet OnPrivMsg(CNick& Nick, CString& sMessage) {
