@@ -87,7 +87,7 @@ you regularly use more than one client to connect to ZNC.
 ## Using ZNC
 
 Once you have started ZNC you can connect with your favorite IRC-client to ZNC.
-You should use `username:password` as the server password (e.g. `/pass user:pass`).
+You should use `username/network:password` as the server password (e.g. `/pass user/network:pass`).
 
 Once you are connected you can do `/msg *status help` for some commands.
 Every module you have loaded (`/msg *status listmods`) should additionally provide
