@@ -162,6 +162,8 @@
 						<td>Name</td>
 						<td>Arguments</td>
 						<td>Description</td>
+						<td>Loaded globally</td>
+						<td>Loaded by user</td>
 					</tr>
 					</thead>
 					<tbody>
@@ -181,6 +183,24 @@
 							<? ENDIF ?>
 						</td>
 						<td class="mod_descr"><? VAR Description ?></td>
+						<td align="center">
+							<? IF CanBeLoadedGlobally ?>
+								<input type="checkbox" name="loaded_globally" id="loaded_globally_<? VAR Name ?>"
+								<? IF LoadedGlobally ?>
+									checked="checked"
+								<? ENDIF ?>
+								disabled="disabled"/>
+							<? ENDIF ?>
+						</td>
+						<td align="center">
+							<? IF CanBeLoadedByUser ?>
+								<input type="checkbox" name="loaded_by_user" id="loaded_by_user_<? VAR Name ?>"
+								<? IF LoadedByUser ?>
+									checked="checked"
+								<? ENDIF ?>
+								disabled="disabled"/>
+							<? ENDIF ?>
+						</td>
 					</tr>
 				<? ENDLOOP ?>
 

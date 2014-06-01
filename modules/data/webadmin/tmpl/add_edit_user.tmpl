@@ -172,6 +172,8 @@
 						<td>Name</td>
 						<td>Arguments</td>
 						<td>Description</td>
+						<td>Loaded globally</td>
+						<td>Loaded by networks</td>
 					</tr>
 					</thead>
 					<tbody>
@@ -191,6 +193,29 @@
 							<? ENDIF ?>
 						</td>
 						<td class="mod_descr"><? VAR Description ?></td>
+						<td align="center">
+							<? IF CanBeLoadedGlobally ?>
+								<input type="checkbox" name="loaded_globally" id="loaded_globally_<? VAR Name ?>"
+								<? IF LoadedGlobally ?>
+									checked="checked"
+								<? ENDIF ?>
+								disabled="disabled"/>
+							<? ENDIF ?>	
+						</td>
+						<td align="center">
+							<? IF CanBeLoadedByNetwork ?>
+								<input type="checkbox" name="loaded_by_network" id="loaded_by_net_<? VAR Name ?>"
+								<? IF LoadedByAllNetworks ?>
+									checked="checked"
+								<? ENDIF ?>
+								disabled="disabled"/>
+								<? IF LoadedBySomeNetworks && !LoadedByAllNetworks ?>
+									<script type="text/javascript">
+										document.getElementById("loaded_by_net_<? VAR Name ?>").indeterminate = true;
+									</script>
+								<? ENDIF ?>
+							<? ENDIF ?>
+						</td>
 					</tr>
 				<? ENDLOOP ?>
 

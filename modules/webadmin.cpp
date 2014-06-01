@@ -752,6 +752,14 @@ public:
 					}
 				}
 
+				// Check if module is loaded globally
+				l["CanBeLoadedGlobally"] = CString(Info.SupportsType(CModInfo::GlobalModule));
+				l["LoadedGlobally"] = CString(CZNC::Get().GetModules().FindModule(Info.GetName()) != NULL);
+
+				// Check if module is loaded by user
+				l["CanBeLoadedByUser"] = CString(Info.SupportsType(CModInfo::UserModule));
+				l["LoadedByUser"] = CString(pUser->GetModules().FindModule(Info.GetName()) != NULL);
+
 				if (!spSession->IsAdmin() && pUser->DenyLoadMod()) {
 					l["Disabled"] = "true";
 				}
@@ -1209,8 +1217,22 @@ public:
 				l["ArgsHelpText"] = Info.GetArgsHelpText();
 
 				CModule *pModule = NULL;
-				if (pUser)
+				if (pUser) {
 					pModule = pUser->GetModules().FindModule(Info.GetName());
+					// Check if module is loaded by all or some networks
+					const vector<CIRCNetwork*>& userNetworks = pUser->GetNetworks();
+					unsigned int networksWithRenderedModuleCount = 0;
+					for (unsigned int networkIndex = 0; networkIndex < userNetworks.size(); ++networkIndex) {
+						const CIRCNetwork* pCurrentNetwork = userNetworks[networkIndex];
+						const CModules& networkModules = pCurrentNetwork->GetModules();
+						if (networkModules.FindModule(Info.GetName())) {
+							networksWithRenderedModuleCount++;
+						}
+					}
+					l["CanBeLoadedByNetwork"] = CString(Info.SupportsType(CModInfo::NetworkModule));
+					l["LoadedByAllNetworks"] = CString(networksWithRenderedModuleCount == userNetworks.size());
+					l["LoadedBySomeNetworks"] = CString(networksWithRenderedModuleCount != 0);
+				}
 				if (pModule) {
 					l["Checked"] = "true";
 					l["Args"] = pModule->GetArgs();
@@ -1218,6 +1240,9 @@ public:
 						l["Disabled"] = "true";
 					}
 				}
+				l["CanBeLoadedGlobally"] = CString(Info.SupportsType(CModInfo::GlobalModule));
+				// Check if module is loaded globally
+				l["LoadedGlobally"] = CString(CZNC::Get().GetModules().FindModule(Info.GetName()) != NULL);
 
 				if (!spSession->IsAdmin() && pUser && pUser->DenyLoadMod()) {
 					l["Disabled"] = "true";
@@ -1626,6 +1651,38 @@ public:
 				l["Wiki"] = Info.GetWikiPage();
 				l["HasArgs"] = CString(Info.GetHasArgs());
 				l["ArgsHelpText"] = Info.GetArgsHelpText();
+
+				// Check if the module is loaded by all or some users, and/or by all or some networks
+				unsigned int usersWithRenderedModuleCount = 0;
+				unsigned int networksWithRenderedModuleCount = 0;
+				unsigned int networksCount = 0;
+				const map<CString,CUser*>& allUsers = CZNC::Get().GetUserMap();
+				for (map<CString,CUser*>::const_iterator usersIt = allUsers.begin(); usersIt != allUsers.end(); ++usersIt) {
+					const CUser& User = *usersIt->second;
+					
+					// Count users which has loaded a render module
+					const CModules& userModules = User.GetModules();
+					if (userModules.FindModule(Info.GetName())) {
+						usersWithRenderedModuleCount++;
+					}
+					// Count networks which has loaded a render module
+					const vector<CIRCNetwork*>& userNetworks = User.GetNetworks();
+					networksCount += userNetworks.size();
+					for (unsigned int networkIndex = 0; networkIndex < userNetworks.size(); ++networkIndex)
+					{
+						const CIRCNetwork *pCurrentNetwork = userNetworks[networkIndex];
+						if (pCurrentNetwork->GetModules().FindModule(Info.GetName())) {
+							networksWithRenderedModuleCount++;
+						}
+					}
+				}
+				l["CanBeLoadedByNetwork"] = CString(Info.SupportsType(CModInfo::NetworkModule));
+				l["LoadedByAllNetworks"] = CString(networksWithRenderedModuleCount == networksCount);
+				l["LoadedBySomeNetworks"] = CString(networksWithRenderedModuleCount != 0);
+
+				l["CanBeLoadedByUser"] = CString(Info.SupportsType(CModInfo::UserModule));
+				l["LoadedByAllUsers"] = CString(usersWithRenderedModuleCount == allUsers.size());
+				l["LoadedBySomeUsers"] = CString(usersWithRenderedModuleCount != 0);
 			}
 
 			return true;
