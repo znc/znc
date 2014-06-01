@@ -194,14 +194,22 @@
 						</td>
 						<td class="mod_descr"><? VAR Description ?></td>
 						<td align="center">
-							<? IF LoadedGlobally ?>
-								<input type="checkbox" name="loaded_globally" id="loaded_globally_<? VAR Name ?>" checked="checked" disabled="disabled"/>	
-							<? ENDIF ?>
+							<? IF CanBeLoadedGlobally ?>
+								<input type="checkbox" name="loaded_globally" id="loaded_globally_<? VAR Name ?>"
+								<? IF LoadedGlobally ?>
+									checked="checked"
+								<? ENDIF ?>
+								disabled="disabled"/>
+							<? ENDIF ?>	
 						</td>
 						<td align="center">
-							<? IF LoadedBySomeNetworks ?>
-								<input type="checkbox" name="loaded_by_network" id="loaded_by_net_<? VAR Name ?>" checked="checked" disabled="disabled"/>
-								<? IF !LoadedByAllNetworks ?>
+							<? IF CanBeLoadedByNetwork ?>
+								<input type="checkbox" name="loaded_by_network" id="loaded_by_net_<? VAR Name ?>"
+								<? IF LoadedByAllNetworks ?>
+									checked="checked"
+								<? ENDIF ?>
+								disabled="disabled"/>
+								<? IF LoadedBySomeNetworks && !LoadedByAllNetworks ?>
 									<script type="text/javascript">
 										document.getElementById("loaded_by_net_<? VAR Name ?>").indeterminate = true;
 									</script>

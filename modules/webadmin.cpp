@@ -753,9 +753,11 @@ public:
 				}
 
 				// Check if module is loaded globally
+				l["CanBeLoadedGlobally"] = CString(Info.SupportsType(CModInfo::GlobalModule));
 				l["LoadedGlobally"] = CString(CZNC::Get().GetModules().FindModule(Info.GetName()) != NULL);
 
 				// Check if module is loaded by user
+				l["CanBeLoadedByUser"] = CString(Info.SupportsType(CModInfo::UserModule));
 				l["LoadedByUser"] = CString(pUser->GetModules().FindModule(Info.GetName()) != NULL);
 
 				if (!spSession->IsAdmin() && pUser->DenyLoadMod()) {
@@ -1227,6 +1229,7 @@ public:
 							networksWithRenderedModuleCount++;
 						}
 					}
+					l["CanBeLoadedByNetwork"] = CString(Info.SupportsType(CModInfo::NetworkModule));
 					l["LoadedByAllNetworks"] = CString(networksWithRenderedModuleCount == userNetworks.size());
 					l["LoadedBySomeNetworks"] = CString(networksWithRenderedModuleCount != 0);
 				}
@@ -1237,7 +1240,7 @@ public:
 						l["Disabled"] = "true";
 					}
 				}
-
+				l["CanBeLoadedGlobally"] = CString(Info.SupportsType(CModInfo::GlobalModule));
 				// Check if module is loaded globally
 				l["LoadedGlobally"] = CString(CZNC::Get().GetModules().FindModule(Info.GetName()) != NULL);
 
@@ -1673,10 +1676,13 @@ public:
 						}
 					}
 				}
-				l["LoadedByAllUsers"] = CString(usersWithRenderedModuleCount == allUsers.size());
-				l["LoadedBySomeUsers"] = CString(usersWithRenderedModuleCount != 0);
+				l["CanBeLoadedByNetwork"] = CString(Info.SupportsType(CModInfo::NetworkModule));
 				l["LoadedByAllNetworks"] = CString(networksWithRenderedModuleCount == networksCount);
 				l["LoadedBySomeNetworks"] = CString(networksWithRenderedModuleCount != 0);
+
+				l["CanBeLoadedByUser"] = CString(Info.SupportsType(CModInfo::UserModule));
+				l["LoadedByAllUsers"] = CString(usersWithRenderedModuleCount == allUsers.size());
+				l["LoadedBySomeUsers"] = CString(usersWithRenderedModuleCount != 0);
 			}
 
 			return true;

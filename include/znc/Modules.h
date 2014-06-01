@@ -203,7 +203,7 @@ public:
 		return (GetName() < Info.GetName());
 	}
 
-	bool SupportsType(EModuleType eType) {
+	bool SupportsType(EModuleType eType) const {
 		return m_seType.find(eType) != m_seType.end();
 	}
 
