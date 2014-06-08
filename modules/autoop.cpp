@@ -282,7 +282,7 @@ public:
 					} else {
 						Table.SetCell("User", "|-");
 					}
-				Table.SetCell("Hostmasks", vsHostmasks[a]);
+					Table.SetCell("Hostmasks", vsHostmasks[a]);
 				}
 			}
 
@@ -333,11 +333,11 @@ public:
 				PutModule("Hostmasks(s) added to user [" + pUser->GetUsername() + "]");
 			} else {
 				if (pUser->DelHostmasks(sHostmasks)) {
-					PutModule("Removed user [" + pUser->GetUsername() + "]");
+					PutModule("Removed user [" + pUser->GetUsername() + "] with key [" + pUser->GetUserKey() + "] and channels [" + pUser->GetChannels() + "]");
 					DelUser(sUser);
 					DelNV(sUser);
 				} else {
-					PutModule("Hostmasks(s) Removed from user [" + pUser->GetUsername() + "] with key [" + pUser->GetUserKey() + "] and channels [" + pUser->GetChannels() + "]");
+					PutModule("Hostmasks(s) Removed from user [" + pUser->GetUsername() + "]");
 					SetNV(pUser->GetUsername(), pUser->ToString());
 				}
 			}
