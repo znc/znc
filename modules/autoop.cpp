@@ -53,7 +53,7 @@ public:
 	CAutoOpUser(const CString& sUsername, const CString& sUserKey, const CString& sHostmasks, const CString& sChannels) :
 			m_sUsername(sUsername),
 			m_sUserKey(sUserKey) {
-                AddHostmasks(sHostmasks);
+		AddHostmasks(sHostmasks);
 		AddChans(sChannels);
 	}
 
@@ -82,11 +82,11 @@ public:
 	}
 
 	CString GetHostmasks() const {
-          return CString(",").Join(m_ssHostmasks.begin(), m_ssHostmasks.end());
+		return CString(",").Join(m_ssHostmasks.begin(), m_ssHostmasks.end());
 	}
 
 	CString GetChannels() const {
-          return CString(" ").Join(m_ssChans.begin(), m_ssChans.end());
+		return CString(" ").Join(m_ssChans.begin(), m_ssChans.end());
 	}
 
 	void DelHostmasks(const CString& sHostmasks) {
@@ -126,13 +126,7 @@ public:
 	}
 
 	CString ToString() const {
-		CString sChans;
-		CString sHostmasks;
-
-		sHostmasks = CString(",").Join(m_ssHostmasks.begin(), m_ssHostmasks.end());
-		sChans = CString(" ").Join(m_ssChans.begin(), m_ssChans.end());
-
-		return m_sUsername + "\t" + sHostmasks + "\t" + m_sUserKey + "\t" + sChans;
+		return m_sUsername + "\t" + GetHostmasks() + "\t" + m_sUserKey + "\t" + GetChannels();
 	}
 
 	bool FromString(const CString& sLine) {
@@ -247,7 +241,7 @@ public:
 
 			if (sCommand.Equals("ADDUSER")) {
 				if (sHost.empty()) {
-					PutModule("Usage: " + sCommand + " <user> <hostmasks> <key> [channels]");
+					PutModule("Usage: " + sCommand + " <user> <hostmask>[,<hostmasks>...] <key> [channels]");
 				} else {
 					CAutoOpUser* pUser = AddUser(sUser, sKey, sHost, sLine.Token(4, true));
 
@@ -277,15 +271,13 @@ public:
 				it->second->GetHostmasks().Split(",", vsHostmasks);
 				for (unsigned int a = 0; a < vsHostmasks.size(); a++) {
 					Table.AddRow();
-					if(a == 0) {
+					if (a == 0) {
 						Table.SetCell("User", it->second->GetUsername());
 						Table.SetCell("Key", it->second->GetUserKey());
 						Table.SetCell("Channels", it->second->GetChannels());
-					}
-					else if(a == vsHostmasks.size()-1) {
+					} else if (a == vsHostmasks.size()-1) {
 						Table.SetCell("User", "`-");
-					}
-					else {
+					} else {
 						Table.SetCell("User", "|-");
 					}
 				Table.SetCell("Hostmasks", vsHostmasks[a]);
