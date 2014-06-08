@@ -337,7 +337,7 @@ public:
 					DelUser(sUser);
 					DelNV(sUser);
 				} else {
-				PutModule("Hostmasks(s) Removed from user [" + pUser->GetUsername() + "]");
+					PutModule("Hostmasks(s) Removed from user [" + pUser->GetUsername() + "] with key [" + pUser->GetUserKey() + "] and channels [" + pUser->GetChannels() + "]");
 					SetNV(pUser->GetUsername(), pUser->ToString());
 				}
 			}
