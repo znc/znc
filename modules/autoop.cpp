@@ -89,13 +89,15 @@ public:
 		return CString(" ").Join(m_ssChans.begin(), m_ssChans.end());
 	}
 
-	void DelHostmasks(const CString& sHostmasks) {
+	bool DelHostmasks(const CString& sHostmasks) {
 		VCString vsHostmasks;
 		sHostmasks.Split(",", vsHostmasks);
 
 		for (unsigned int a = 0; a < vsHostmasks.size(); a++) {
 			m_ssHostmasks.erase(vsHostmasks[a]);
 		}
+
+		return m_ssHostmasks.empty();
 	}
 
 	void AddHostmasks(const CString& sHostmasks) {
@@ -330,11 +332,15 @@ public:
 				pUser->AddHostmasks(sHostmasks);
 				PutModule("Hostmasks(s) added to user [" + pUser->GetUsername() + "]");
 			} else {
-				pUser->DelHostmasks(sHostmasks);
+				if (pUser->DelHostmasks(sHostmasks)) {
+					PutModule("Removed user [" + pUser->GetUsername() + "]");
+					DelUser(sUser);
+					DelNV(sUser);
+				} else {
 				PutModule("Hostmasks(s) Removed from user [" + pUser->GetUsername() + "]");
+					SetNV(pUser->GetUsername(), pUser->ToString());
+				}
 			}
-
-			SetNV(pUser->GetUsername(), pUser->ToString());
 		} else {
 			PutModule("Unknown command, try HELP");
 		}
