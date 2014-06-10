@@ -8,6 +8,7 @@ ZNC includes modified code of autoconf macro AC_PROG_SWIG, licensed by GPLv2+ wi
 ZNC includes modified code of autoconf macro AM_ICONV, licensed by FSF Unlimited License.
 ZNC includes modified code of autoconf macro gl_VISIBILITY, licensed by FSF Unlimited License.
 ZNC includes modified code of MD5 implementation by Christophe Devine, licensed by GPLv2+.
+ZNC includes resized External Wikipedia icon (https://commons.wikimedia.org/wiki/File:External.svg), licensed by public domain license.
 
 ZNC is developed by these people:
 
