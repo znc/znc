@@ -215,11 +215,11 @@ void CHTTPSock::GetPage() {
 	DEBUG("Page Request [" << m_sURI << "] ");
 
 	// Check that the requested path starts with the prefix. Strip it if so.
-        if (!m_sURI.TrimPrefix(m_sURIPrefix)) {
+	if (!m_sURI.TrimPrefix(m_sURIPrefix)) {
 		DEBUG("INVALID path => Does not start with prefix [" + m_sURIPrefix + "]");
 		DEBUG("Expected prefix:   " << m_sURIPrefix);
 		DEBUG("Requested path:    " << m_sURI);
-		Redirect(m_sURI);
+		Redirect("/");
 	} else {
 		OnPageRequest(m_sURI);
 	}
