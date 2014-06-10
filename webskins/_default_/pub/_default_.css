@@ -27,7 +27,7 @@ a:hover {
 }
 
 a.external {
-	background: url(/skinfiles/_default_/external-link-ltr-icon.png) center right no-repeat;
+	background: url(/skinfiles/_default_/External.png) center right no-repeat;
 	padding-right: 13px;
 }
 
