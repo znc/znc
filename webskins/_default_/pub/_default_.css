@@ -26,11 +26,6 @@ a:hover {
 	text-decoration: underline;
 }
 
-a.external {
-	background: url(/skinfiles/_default_/External.png) center right no-repeat;
-	padding-right: 13px;
-}
-
 #main a:visited {
 	color: #99008B;
 }
