@@ -195,26 +195,26 @@ public:
 
 	virtual void OnKick(const CNick& OpNick, const CString& sKickedNick, CChan& Channel, const CString& sMessage) {
 		Process(OpNick, "* " + OpNick.GetNick() + " kicked " + sKickedNick + " from " +
-			Channel.GetName() + " because [" + sMessage + "]", Channel.GetName());
+			Channel.GetName() + " because [" + sMessage + "]", "kick");
 	}
 
 	virtual void OnQuit(const CNick& Nick, const CString& sMessage, const vector<CChan*>& vChans) {
 		Process(Nick, "* Quits: " + Nick.GetNick() + " (" + Nick.GetIdent() + "@" + Nick.GetHost() + ") "
-			"(" + sMessage + ")", "");
+			"(" + sMessage + ")", "quit");
 	}
 
 	virtual void OnJoin(const CNick& Nick, CChan& Channel) {
 		Process(Nick, "* " + Nick.GetNick() + " (" + Nick.GetIdent() + "@" + Nick.GetHost() + ") joins " +
-			Channel.GetName(), Channel.GetName());
+			Channel.GetName(), "join");
 	}
 
 	virtual void OnPart(const CNick& Nick, CChan& Channel, const CString& sMessage) {
 		Process(Nick, "* " + Nick.GetNick() + " (" + Nick.GetIdent() + "@" + Nick.GetHost() + ") parts " +
-			Channel.GetName() + "(" + sMessage + ")", Channel.GetName());
+			Channel.GetName() + "(" + sMessage + ")", "part");
 	}
 
 	virtual void OnNick(const CNick& OldNick, const CString& sNewNick, const vector<CChan*>& vChans) {
-		Process(OldNick, "* " + OldNick.GetNick() + " is now known as " + sNewNick, "");
+		Process(OldNick, "* " + OldNick.GetNick() + " is now known as " + sNewNick, "nick");
 	}
 
 	virtual EModRet OnCTCPReply(CNick& Nick, CString& sMessage) {
