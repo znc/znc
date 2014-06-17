@@ -395,6 +395,9 @@ public:
 	//! removes the pause on RunJon
 	void UnPause();
 
+	//! reset the timer
+	void Reset();
+
 	timeval GetInterval() const;
 	uint32_t GetMaxCycles() const;
 	uint32_t GetCyclesLeft() const;
