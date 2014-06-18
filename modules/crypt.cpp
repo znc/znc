@@ -34,6 +34,8 @@
 #include <znc/User.h>
 #include <znc/IRCNetwork.h>
 
+using std::vector;
+
 #define REQUIRESSL	1
 #define NICK_PREFIX_KEY	"[nick-prefix]"
 
@@ -47,7 +49,90 @@ public:
 	MODCONSTRUCTOR(CCryptMod) {}
 	virtual ~CCryptMod() {}
 
+	// Outgoing
+
 	virtual EModRet OnUserMsg(CString& sTarget, CString& sMessage) {
+		return FilterOutgoing(sTarget, sMessage);
+	}
+
+	virtual EModRet OnUserAction(CString& sTarget, CString& sMessage) {
+		return FilterOutgoing(sTarget, sMessage);
+	}
+
+	virtual EModRet OnUserNotice(CString& sTarget, CString& sMessage) {
+		return FilterOutgoing(sTarget, sMessage);
+	}
+
+	virtual EModRet OnUserTopic(CString& sTarget, CString& sMessage) {
+		return FilterOutgoing(sTarget, sMessage);
+	}
+
+
+	// Incoming
+
+	virtual EModRet OnPrivMsg(CNick& Nick, CString& sMessage) {
+		FilterIncoming(Nick.GetNick(), Nick, sMessage);
+		return CONTINUE;
+	}
+
+	virtual EModRet OnPrivAction(CNick& Nick, CString& sMessage) {
+		FilterIncoming(Nick.GetNick(), Nick, sMessage);
+		return CONTINUE;
+	}
+
+	virtual EModRet OnPrivNotice(CNick& Nick, CString& sMessage) {
+		FilterIncoming(Nick.GetNick(), Nick, sMessage);
+		return CONTINUE;
+	}
+
+	virtual EModRet OnChanMsg(CNick& Nick, CChan& Channel, CString& sMessage) {
+		FilterIncoming(Channel.GetName(), Nick, sMessage);
+		return CONTINUE;
+	}
+
+	virtual EModRet OnChanAction(CNick& Nick, CChan& Channel, CString& sMessage) {
+		FilterIncoming(Channel.GetName(), Nick, sMessage);
+		return CONTINUE;
+	}
+
+	virtual EModRet OnChanNotice(CNick& Nick, CChan& Channel, CString& sMessage) {
+		FilterIncoming(Channel.GetName(), Nick, sMessage);
+		return CONTINUE;
+	}
+
+	virtual EModRet OnTopic(CNick& Nick, CChan& Channel, CString& sMessage) {
+		FilterIncoming(Channel.GetName(), Nick, sMessage);
+		return CONTINUE;
+	}
+
+	virtual EModRet OnRaw(CString& sLine) {
+		if (sLine.Token(1) != "332") {
+			return CONTINUE;
+		}
+
+		const CChan* pChannel = m_pNetwork->FindChan(sLine.Token(3));
+		if (!pChannel) {
+			return CONTINUE;
+		}
+
+		CNick Nick = *pChannel->FindNick(sLine.Token(2));
+
+		CString sTopic = sLine.Token(4, true);
+		sTopic.LeftChomp(1); // the topic token begins with a ":"
+		FilterIncoming(pChannel->GetName(), Nick, sTopic);
+		sLine = sLine.Token(0) + " " + sLine.Token(1) + " " + sLine.Token(2) + " " + pChannel->GetName() + " :" + sTopic;
+		return CONTINUE;
+	}
+
+
+	// Filters
+
+	virtual EModRet FilterOutgoing(const CString& csTarget, CString& sMessage) {
+		if (sMessage.empty()) {
+			return CONTINUE;
+		}
+
+		CString sTarget = csTarget.c_str();
 		sTarget.TrimLeft(NickPrefix());
 
 		if (sMessage.Left(2) == "``") {
@@ -65,25 +150,29 @@ public:
 				m_pUser->PutUser(":" + NickPrefix() + m_pNetwork->GetIRCNick().GetNickMask() + " PRIVMSG " + sTarget + " :" + sMessage, NULL, m_pClient);
 			}
 
+
 			CString sMsg = MakeIvec() + sMessage;
 			sMsg.Encrypt(it->second);
 			sMsg.Base64Encode();
 			sMsg = "+OK *" + sMsg;
 
 			PutIRC("PRIVMSG " + sTarget + " :" + sMsg);
+
+			if (m_pNetwork->IsChan(sTarget)) {
+				vector<CClient*>& vClients = m_pNetwork->GetClients();
+
+				for (unsigned int a = 0; a < vClients.size(); a++) {
+					CClient* pClient = vClients[a];
+
+					if (pClient != this->GetClient()) {
+						pClient->PutClient(":" + NickPrefix() + m_pNetwork->GetIRCNick().GetNickMask() + " PRIVMSG " + sTarget + " :" + sMessage);
+					}
+				}
+			}
+
 			return HALTCORE;
 		}
 
-		return CONTINUE;
-	}
-
-	virtual EModRet OnPrivMsg(CNick& Nick, CString& sMessage) {
-		FilterIncoming(Nick.GetNick(), Nick, sMessage);
-		return CONTINUE;
-	}
-
-	virtual EModRet OnChanMsg(CNick& Nick, CChan& Channel, CString& sMessage) {
-		FilterIncoming(Channel.GetName(), Nick, sMessage);
 		return CONTINUE;
 	}
 
@@ -97,11 +186,13 @@ public:
 				sMessage.Decrypt(it->second);
 				sMessage.LeftChomp(8);
 				sMessage = sMessage.c_str();
+
 				Nick.SetNick(NickPrefix() + Nick.GetNick());
 			}
 		}
-
 	}
+
+	// Config
 
 	virtual void OnModCommand(const CString& sCommand) {
 		CString sCmd = sCommand.Token(0);
@@ -160,6 +251,8 @@ public:
 			PutModule("Unknown command, try 'Help'");
 		}
 	}
+
+	// Utility
 
 	CString MakeIvec() {
 		CString sRet;
