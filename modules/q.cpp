@@ -257,6 +257,11 @@ public:
 		if (sLine.Token(1) == "396" && sLine.Token(3).find("users.quakenet.org") != CString::npos) {
 			m_bCloaked = true;
 			PutModule("Cloak successful: Your hostname is now cloaked.");
+
+			// Join channels immediately after our spoof is set.
+			if (m_bJoinAfterCloaked) {
+				m_pNetwork->JoinChans();
+			}
 		}
 		return CONTINUE;
 	}

@@ -32,6 +32,8 @@ class CConfig;
 class CChan;
 class CServer;
 class CIRCSock;
+class CIRCNetworkPingTimer;
+class CIRCNetworkJoinTimer;
 
 class CIRCNetwork {
 public:
@@ -40,6 +42,10 @@ public:
 	CIRCNetwork(CUser *pUser, const CString& sName);
 	CIRCNetwork(CUser *pUser, const CIRCNetwork& Network);
 	~CIRCNetwork();
+
+	enum {
+		PING_TIMEOUT = 270
+	};
 
 	void Clone(const CIRCNetwork& Network, bool bCloneName = true);
 
@@ -196,6 +202,9 @@ protected:
 	CBuffer            m_RawBuffer;
 	CBuffer            m_MotdBuffer;
 	CBuffer            m_QueryBuffer;
+
+	CIRCNetworkPingTimer* m_pPingTimer;
+	CIRCNetworkJoinTimer* m_pJoinTimer;
 };
 
 #endif // !_IRCNETWORK_H

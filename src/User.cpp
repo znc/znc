@@ -36,35 +36,11 @@ public:
 private:
 protected:
 	virtual void RunJob() {
-		vector<CIRCNetwork*> vNetworks = m_pUser->GetNetworks();
-
-		for (size_t a = 0; a < vNetworks.size(); a++) {
-			CIRCNetwork* pNetwork = vNetworks[a];
-			CIRCSock* pIRCSock = pNetwork->GetIRCSock();
-
-			if (pIRCSock && pIRCSock->GetTimeSinceLastDataTransaction() >= 270) {
-				pIRCSock->PutIRC("PING :ZNC");
-			}
-
-			if (pNetwork->IsIRCConnected()) {
-				pNetwork->JoinChans();
-			}
-
-			vector<CClient*>& vClients = pNetwork->GetClients();
-			for (size_t b = 0; b < vClients.size(); b++) {
-				CClient* pClient = vClients[b];
-
-				if (pClient->GetTimeSinceLastDataTransaction() >= 270) {
-					pClient->PutClient("PING :ZNC");
-				}
-			}
-		}
-
 		vector<CClient*>& vUserClients = m_pUser->GetUserClients();
 		for (size_t c = 0; c < vUserClients.size(); ++c) {
 			CClient* pUserClient = vUserClients[c];
 
-			if (pUserClient->GetTimeSinceLastDataTransaction() >= 270) {
+			if (pUserClient->GetTimeSinceLastDataTransaction() >= CIRCNetwork::PING_TIMEOUT) {
 				pUserClient->PutClient("PING :ZNC");
 			}
 		}
