@@ -18,7 +18,7 @@
 #define SOCKET_H
 
 #include <znc/zncconfig.h>
-#include <znc/Csocket.h>
+#include "../Csocket/Csocket.h"
 #include <znc/Threads.h>
 
 class CModule;
