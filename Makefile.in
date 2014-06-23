@@ -16,8 +16,8 @@ sbindir     := @sbindir@
 localstatedir := @localstatedir@
 systemdsystemunitdir := @systemdsystemunitdir@
 CXX      := @CXX@
-CXXFLAGS := -I$(srcdir)/include -Iinclude @CPPFLAGS@ @CXXFLAGS@
-LDFLAGS  := @LDFLAGS@
+CXXFLAGS := -I$(srcdir)/include -Iinclude -iquoteinclude/znc @CPPFLAGS@ @CXXFLAGS@
+LDFLAGS  := -I$(srcdir)/include -Iinclude -iquoteinclude/znc @LDFLAGS@
 LIBS     := @LIBS@
 LIBZNC   := @LIBZNC@
 LIBZNCDIR:= @LIBZNCDIR@
@@ -39,7 +39,7 @@ GTEST_DIR := test/gtest-$(GTEST_VER)
 GTEST_DOWNLOAD := 1
 endif
 
-LIB_SRCS  := ZNCString.cpp Csocket.cpp znc.cpp IRCNetwork.cpp User.cpp IRCSock.cpp \
+LIB_SRCS  := ZNCString.cpp ../Csocket/Csocket.cc znc.cpp IRCNetwork.cpp User.cpp IRCSock.cpp \
 	Client.cpp Chan.cpp Nick.cpp Server.cpp Modules.cpp MD5.cpp Buffer.cpp Utils.cpp \
 	FileUtils.cpp HTTPSock.cpp Template.cpp ClientCommand.cpp Socket.cpp SHA256.cpp \
 	WebModules.cpp Listener.cpp Config.cpp ZNCDebug.cpp Threads.cpp version.cpp

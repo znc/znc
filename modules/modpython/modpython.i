@@ -129,7 +129,7 @@ class MCString : public std::map<CString, CString> {};
 %template(PAuthBase) CSmartPtr<CAuthBase>;
 %template(WebSession) CSmartPtr<CWebSession>;
 %include "../include/znc/Config.h"
-%include "../include/znc/Csocket.h"
+%include "../Csocket/Csocket.h"
 %template(ZNCSocketManager) TSocketManager<CZNCSock>;
 %include "../include/znc/Socket.h"
 %include "../include/znc/FileUtils.h"

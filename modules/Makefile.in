@@ -17,7 +17,7 @@ sbindir     := @sbindir@
 localstatedir := @localstatedir@
 CXX      := @CXX@
 # CXXFLAGS are for the main binary, so don't use them here, use MODFLAGS instead
-MODFLAGS := -I$(srcdir)/../include -I../include @CPPFLAGS@ @MODFLAGS@
+MODFLAGS := -I$(srcdir)/../include -I../include -I../Csocket -iquote../include/znc @CPPFLAGS@ @MODFLAGS@
 MODLINK  := @MODLINK@
 LDFLAGS  := @LDFLAGS@
 ISCYGWIN := @ISCYGWIN@
