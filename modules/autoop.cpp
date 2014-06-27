@@ -418,7 +418,7 @@ public:
 		for (map<CString, CAutoOpUser*>::iterator it = m_msUsers.begin(); it != m_msUsers.end(); ++it) {
 			pUser = it->second;
 
-			// First verify that the guy who challenged us matches a user's host
+			// First verify that the person who challenged us matches a user's host
 			if (pUser->HostMatches(Nick.GetHostMask())) {
 				const vector<CChan*>& Chans = m_pNetwork->GetChans();
 				bMatchedHost = true;
@@ -542,4 +542,4 @@ template<> void TModInfo<CAutoOpMod>(CModInfo& Info) {
 	Info.SetWikiPage("autoop");
 }
 
-NETWORKMODULEDEFS(CAutoOpMod, "Auto op the good guys")
+NETWORKMODULEDEFS(CAutoOpMod, "Auto op the good people")
