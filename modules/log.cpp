@@ -82,10 +82,11 @@ void CLogMod::PutLog(const CString& sLine, const CString& sWindow /*= "Status"*/
 		return;
 	}
 
+	// TODO: Properly handle IRC case mapping
 	// $WINDOW has to be handled last, since it can contain %
-	sPath.Replace("$NETWORK", (m_pNetwork ? m_pNetwork->GetName() : "znc"));
-	sPath.Replace("$WINDOW", sWindow.Replace_n("/", "-").Replace_n("\\", "-"));
-	sPath.Replace("$USER", (m_pUser ? m_pUser->GetUserName() : "UNKNOWN"));
+	sPath.Replace("$NETWORK", CString((m_pNetwork ? m_pNetwork->GetName() : "znc")).AsLower());
+	sPath.Replace("$WINDOW", CString(sWindow.Replace_n("/", "-").Replace_n("\\", "-")).AsLower());
+	sPath.Replace("$USER", CString((m_pUser ? m_pUser->GetUserName() : "UNKNOWN")).AsLower());
 
 	// Check if it's allowed to write in this specific path
 	sPath = CDir::CheckPathPrefix(GetSavePath(), sPath);
