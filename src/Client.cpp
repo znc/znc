@@ -671,7 +671,7 @@ void CClient::AcceptLogin(CUser& User) {
 
 	// Set our proper timeout and set back our proper timeout mode
 	// (constructor set a different timeout and mode)
-	SetTimeout(540, TMO_READ);
+	SetTimeout(CIRCNetwork::NO_TRAFFIC_TIMEOUT, TMO_READ);
 
 	SetSockName("USR::" + m_pUser->GetUserName());
 	SetEncoding(m_pUser->GetClientEncoding());

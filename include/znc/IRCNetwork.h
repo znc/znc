@@ -44,7 +44,14 @@ public:
 	~CIRCNetwork();
 
 	enum {
-		PING_TIMEOUT = 270
+		/** How long must an IRC connection be idle before ZNC sends a ping */
+		PING_FREQUENCY = 270,
+		/** Time between checks if PINGs need to be sent */
+		PING_SLACK = 30,
+		/** Timeout after which IRC connections are closed. Must
+		 *  obviously be smaller than PING_FREQUENCY + PING_SLACK.
+		 */
+		NO_TRAFFIC_TIMEOUT = 540
 	};
 
 	void Clone(const CIRCNetwork& Network, bool bCloneName = true);

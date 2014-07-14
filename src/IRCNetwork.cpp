@@ -30,7 +30,7 @@ public:
 	CIRCNetworkPingTimer(CIRCNetwork *pNetwork) : CCron() {
 		m_pNetwork = pNetwork;
 		SetName("CIRCNetworkPingTimer::" + m_pNetwork->GetUser()->GetUserName() + "::" + m_pNetwork->GetName());
-		Start(30);
+		Start(CIRCNetwork::PING_SLACK);
 	}
 
 	virtual ~CIRCNetworkPingTimer() {}
@@ -39,7 +39,7 @@ protected:
 	virtual void RunJob() {
 		CIRCSock* pIRCSock = m_pNetwork->GetIRCSock();
 
-		if (pIRCSock && pIRCSock->GetTimeSinceLastDataTransaction() >= CIRCNetwork::PING_TIMEOUT) {
+		if (pIRCSock && pIRCSock->GetTimeSinceLastDataTransaction() >= CIRCNetwork::PING_FREQUENCY) {
 			pIRCSock->PutIRC("PING :ZNC");
 		}
 
@@ -47,7 +47,7 @@ protected:
 		for (size_t b = 0; b < vClients.size(); b++) {
 			CClient* pClient = vClients[b];
 
-			if (pClient->GetTimeSinceLastDataTransaction() >= CIRCNetwork::PING_TIMEOUT) {
+			if (pClient->GetTimeSinceLastDataTransaction() >= CIRCNetwork::PING_FREQUENCY) {
 				pClient->PutClient("PING :ZNC");
 			}
 		}

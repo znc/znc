@@ -29,7 +29,7 @@ public:
 	CUserTimer(CUser* pUser) : CCron() {
 		m_pUser = pUser;
 		SetName("CUserTimer::" + m_pUser->GetUserName());
-		Start(30);
+		Start(CIRCNetwork::PING_SLACK);
 	}
 	virtual ~CUserTimer() {}
 
@@ -40,7 +40,7 @@ protected:
 		for (size_t c = 0; c < vUserClients.size(); ++c) {
 			CClient* pUserClient = vUserClients[c];
 
-			if (pUserClient->GetTimeSinceLastDataTransaction() >= CIRCNetwork::PING_TIMEOUT) {
+			if (pUserClient->GetTimeSinceLastDataTransaction() >= CIRCNetwork::PING_FREQUENCY) {
 				pUserClient->PutClient("PING :ZNC");
 			}
 		}
