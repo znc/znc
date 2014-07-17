@@ -1332,6 +1332,9 @@ void CClient::UserCommand(CString& sLine) {
 			return;
 		}
 
+		// Clear the private messages
+		m_pNetwork->ClearQueryBuffer();
+
 		vector<CChan*>::const_iterator it;
 		const vector<CChan*>& vChans = m_pNetwork->GetChans();
 
