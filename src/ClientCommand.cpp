@@ -20,6 +20,7 @@
 #include <znc/IRCSock.h>
 #include <znc/Server.h>
 #include <znc/User.h>
+#include <znc/Query.h>
 
 using std::vector;
 using std::set;
@@ -1270,62 +1271,76 @@ void CClient::UserCommand(CString& sLine) {
 			return;
 		}
 
-		CString sChan = sLine.Token(1);
+		CString sBuffer = sLine.Token(1);
 
-		if (sChan.empty()) {
-			PutStatus("Usage: PlayBuffer <#chan>");
+		if (sBuffer.empty()) {
+			PutStatus("Usage: PlayBuffer <#chan|query>");
 			return;
 		}
 
-		CChan* pChan = m_pNetwork->FindChan(sChan);
+		if (m_pNetwork->IsChan(sBuffer)) {
+			CChan* pChan = m_pNetwork->FindChan(sBuffer);
 
-		if (!pChan) {
-			PutStatus("You are not on [" + sChan + "]");
-			return;
+			if (!pChan) {
+				PutStatus("You are not on [" + sBuffer + "]");
+				return;
+			}
+
+			if (!pChan->IsOn()) {
+				PutStatus("You are not on [" + sBuffer + "] [trying]");
+				return;
+			}
+
+			if (pChan->GetBuffer().IsEmpty()) {
+				PutStatus("The buffer for [" + sBuffer + "] is empty");
+				return;
+			}
+
+			pChan->SendBuffer(this);
+		} else {
+			CQuery* pQuery = m_pNetwork->FindQuery(sBuffer);
+
+			if (!pQuery) {
+				PutStatus("No active query with [" + sBuffer + "]");
+				return;
+			}
+
+			if (pQuery->GetBuffer().IsEmpty()) {
+				PutStatus("The buffer for [" + sBuffer + "] is empty");
+				return;
+			}
+
+			pQuery->SendBuffer(this);
 		}
-
-		if (!pChan->IsOn()) {
-			PutStatus("You are not on [" + sChan + "] [trying]");
-			return;
-		}
-
-		if (pChan->GetBuffer().IsEmpty()) {
-			PutStatus("The buffer for [" + sChan + "] is empty");
-			return;
-		}
-
-		pChan->SendBuffer(this);
 	} else if (sCommand.Equals("CLEARBUFFER")) {
 		if (!m_pNetwork) {
 			PutStatus("You must be connected with a network to use this command");
 			return;
 		}
 
-		CString sChan = sLine.Token(1);
+		CString sBuffer = sLine.Token(1);
 
-		if (sChan.empty()) {
-			PutStatus("Usage: ClearBuffer <#chan>");
+		if (sBuffer.empty()) {
+			PutStatus("Usage: ClearBuffer <#chan|query>");
 			return;
 		}
 
-		CChan* pChan = m_pNetwork->FindChan(sChan);
-
-		if (!pChan) {
-			PutStatus("You are not on [" + sChan + "]");
-			return;
-		}
-
-		const vector<CChan*>& vChans = m_pNetwork->GetChans();
-		vector<CChan*>::const_iterator it;
 		unsigned int uMatches = 0;
-		for (it = vChans.begin(); it != vChans.end(); ++it) {
-			if (!(*it)->GetName().WildCmp(sChan))
-				continue;
+		vector<CChan*> vChans = m_pNetwork->FindChans(sBuffer);
+		for (vector<CChan*>::const_iterator it = vChans.begin(); it != vChans.end(); ++it) {
 			uMatches++;
 
 			(*it)->ClearBuffer();
 		}
-		PutStatus("The buffer for [" + CString(uMatches) + "] channels matching [" + sChan + "] has been cleared");
+
+		vector<CQuery*> vQueries = m_pNetwork->FindQueries(sBuffer);
+		for (vector<CQuery*>::const_iterator it = vQueries.begin(); it != vQueries.end(); ++it) {
+			uMatches++;
+
+			m_pNetwork->DelQuery((*it)->GetName());
+		}
+
+		PutStatus("[" + CString(uMatches) + "] buffers matching [" + sBuffer + "] have been cleared");
 	} else if (sCommand.Equals("CLEARALLCHANNELBUFFERS")) {
 		if (!m_pNetwork) {
 			PutStatus("You must be connected with a network to use this command");
@@ -1339,27 +1354,44 @@ void CClient::UserCommand(CString& sLine) {
 			(*it)->ClearBuffer();
 		}
 		PutStatus("All channel buffers have been cleared");
+	} else if (sCommand.Equals("CLEARALLQUERYBUFFERS")) {
+		if (!m_pNetwork) {
+			PutStatus("You must be connected with a network to use this command");
+			return;
+		}
+
+		vector<CQuery*>::const_iterator it;
+		vector<CQuery*> VQueries = m_pNetwork->GetQueries();
+
+		for (it = VQueries.begin(); it != VQueries.end(); ++it) {
+			m_pNetwork->DelQuery((*it)->GetName());
+		}
+		PutStatus("All query buffers have been cleared");
 	} else if (sCommand.Equals("SETBUFFER")) {
 		if (!m_pNetwork) {
 			PutStatus("You must be connected with a network to use this command");
 			return;
 		}
 
-		CString sChan = sLine.Token(1);
+		CString sBuffer = sLine.Token(1);
 
-		if (sChan.empty()) {
-			PutStatus("Usage: SetBuffer <#chan> [linecount]");
+		if (sBuffer.empty()) {
+			PutStatus("Usage: SetBuffer <#chan|query> [linecount]");
 			return;
 		}
 
 		unsigned int uLineCount = sLine.Token(2).ToUInt();
-
-		const vector<CChan*>& vChans = m_pNetwork->GetChans();
-		vector<CChan*>::const_iterator it;
 		unsigned int uMatches = 0, uFail = 0;
-		for (it = vChans.begin(); it != vChans.end(); ++it) {
-			if (!(*it)->GetName().WildCmp(sChan))
-				continue;
+		vector<CChan*> vChans = m_pNetwork->FindChans(sBuffer);
+		for (vector<CChan*>::const_iterator it = vChans.begin(); it != vChans.end(); ++it) {
+			uMatches++;
+
+			if (!(*it)->SetBufferCount(uLineCount))
+				uFail++;
+		}
+
+		vector<CQuery*> vQueries = m_pNetwork->FindQueries(sBuffer);
+		for (vector<CQuery*>::const_iterator it = vQueries.begin(); it != vQueries.end(); ++it) {
 			uMatches++;
 
 			if (!(*it)->SetBufferCount(uLineCount))
@@ -1367,9 +1399,9 @@ void CClient::UserCommand(CString& sLine) {
 		}
 
 		PutStatus("BufferCount for [" + CString(uMatches - uFail) +
-				"] channels was set to [" + CString(uLineCount) + "]");
+				"] buffer was set to [" + CString(uLineCount) + "]");
 		if (uFail > 0) {
-			PutStatus("Setting BufferCount failed for [" + CString(uFail) + "] channels, "
+			PutStatus("Setting BufferCount failed for [" + CString(uFail) + "] buffers, "
 					"max buffer count is " + CString(CZNC::Get().GetMaxBufferSize()));
 		}
 	} else if (m_pUser->IsAdmin() && sCommand.Equals("TRAFFIC")) {
@@ -1620,22 +1652,26 @@ void CClient::HelpUser() {
 
 	Table.AddRow();
 	Table.SetCell("Command", "PlayBuffer");
-	Table.SetCell("Arguments", "<#chan>");
-	Table.SetCell("Description", "Play back the buffer for a given channel");
+	Table.SetCell("Arguments", "<#chan|query>");
+	Table.SetCell("Description", "Play back the specified buffer");
 
 	Table.AddRow();
 	Table.SetCell("Command", "ClearBuffer");
-	Table.SetCell("Arguments", "<#chan>");
-	Table.SetCell("Description", "Clear the buffer for a given channel");
+	Table.SetCell("Arguments", "<#chan|query>");
+	Table.SetCell("Description", "Clear the specified buffer");
 
 	Table.AddRow();
 	Table.SetCell("Command", "ClearAllChannelBuffers");
 	Table.SetCell("Description", "Clear the channel buffers");
 
 	Table.AddRow();
+	Table.SetCell("Command", "ClearAllQueryBuffers");
+	Table.SetCell("Description", "Clear the query buffers");
+
+	Table.AddRow();
 	Table.SetCell("Command", "SetBuffer");
-	Table.SetCell("Arguments", "<#chan> [linecount]");
-	Table.SetCell("Description", "Set the buffer count for a channel");
+	Table.SetCell("Arguments", "<#chan|query> [linecount]");
+	Table.SetCell("Description", "Set the buffer count");
 
 	if (m_pUser->IsAdmin()) {
 		Table.AddRow();

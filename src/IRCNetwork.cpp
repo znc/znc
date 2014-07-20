@@ -21,6 +21,7 @@
 #include <znc/IRCSock.h>
 #include <znc/Server.h>
 #include <znc/Chan.h>
+#include <znc/Query.h>
 
 using std::vector;
 using std::set;
@@ -116,7 +117,7 @@ CIRCNetwork::CIRCNetwork(CUser *pUser, const CString& sName) {
 
 	m_RawBuffer.SetLineCount(100, true);   // This should be more than enough raws, especially since we are buffering the MOTD separately
 	m_MotdBuffer.SetLineCount(200, true);  // This should be more than enough motd lines
-	m_QueryBuffer.SetLineCount(250, true);
+	m_NoticeBuffer.SetLineCount(250, true);
 
 	m_pPingTimer = new CIRCNetworkPingTimer(this);
 	CZNC::Get().GetManager().AddCron(m_pPingTimer);
@@ -142,7 +143,7 @@ CIRCNetwork::CIRCNetwork(CUser *pUser, const CIRCNetwork &Network) {
 
 	m_RawBuffer.SetLineCount(100, true);   // This should be more than enough raws, especially since we are buffering the MOTD separately
 	m_MotdBuffer.SetLineCount(200, true);  // This should be more than enough motd lines
-	m_QueryBuffer.SetLineCount(250, true);
+	m_NoticeBuffer.SetLineCount(250, true);
 
 	Clone(Network);
 }
@@ -280,6 +281,12 @@ CIRCNetwork::~CIRCNetwork() {
 		delete *it;
 	}
 	m_vChans.clear();
+
+	// Delete Queries
+	for (vector<CQuery*>::const_iterator it = m_vQueries.begin(); it != m_vQueries.end(); ++it) {
+		delete *it;
+	}
+	m_vQueries.clear();
 
 	SetUser(NULL);
 
@@ -589,15 +596,26 @@ void CIRCNetwork::ClientConnected(CClient *pClient) {
 		}
 	}
 
-	uSize = m_QueryBuffer.Size();
+	bool bClearQuery = m_pUser->AutoClearQueryBuffer();
+	for (vector<CQuery*>::const_iterator it = m_vQueries.begin(); it != m_vQueries.end(); ++it) {
+		(*it)->SendBuffer(pClient);
+		if (bClearQuery) {
+			delete *it;
+		}
+	}
+	if (bClearQuery) {
+		m_vQueries.clear();
+	}
+
+	uSize = m_NoticeBuffer.Size();
 	for (uIdx = 0; uIdx < uSize; uIdx++) {
-		CString sLine = m_QueryBuffer.GetLine(uIdx, *pClient, msParams);
+		CString sLine = m_NoticeBuffer.GetLine(uIdx, *pClient, msParams);
 		bool bContinue = false;
 		NETWORKMODULECALL(OnPrivBufferPlayLine(*pClient, sLine), m_pUser, this, NULL, &bContinue);
 		if (bContinue) continue;
 		pClient->PutClient(sLine);
 	}
-	m_QueryBuffer.Clear();
+	m_NoticeBuffer.Clear();
 
 	// Tell them why they won't connect
 	if (!GetIRCConnectEnabled())
@@ -853,6 +871,64 @@ bool CIRCNetwork::IsChan(const CString& sChan) const {
 		return true; // We can't know, so we allow everything
 	// Thanks to the above if (empty), we can do sChan[0]
 	return GetChanPrefixes().find(sChan[0]) != CString::npos;
+}
+
+// Queries
+
+const vector<CQuery*>& CIRCNetwork::GetQueries() const { return m_vQueries; }
+
+CQuery* CIRCNetwork::FindQuery(const CString& sName) const {
+	for (unsigned int a = 0; a < m_vQueries.size(); a++) {
+		CQuery* pQuery = m_vQueries[a];
+		if (sName.Equals(pQuery->GetName())) {
+			return pQuery;
+		}
+	}
+
+	return NULL;
+}
+
+std::vector<CQuery*> CIRCNetwork::FindQueries(const CString& sWild) const {
+	std::vector<CQuery*> vQueries;
+	vQueries.reserve(m_vQueries.size());
+	for (std::vector<CQuery*>::const_iterator it = m_vQueries.begin(); it != m_vQueries.end(); ++it) {
+		if ((*it)->GetName().WildCmp(sWild))
+			vQueries.push_back(*it);
+	}
+	return vQueries;
+}
+
+CQuery* CIRCNetwork::AddQuery(const CString& sName) {
+	if (sName.empty()) {
+		return NULL;
+	}
+
+	CQuery* pQuery = FindQuery(sName);
+	if (!pQuery) {
+		pQuery = new CQuery(sName, this);
+		m_vQueries.push_back(pQuery);
+
+		if (m_pUser->MaxQueryBuffers() > 0) {
+			while (m_vQueries.size() > m_pUser->MaxQueryBuffers()) {
+				delete *m_vQueries.begin();
+				m_vQueries.erase(m_vQueries.begin());
+			}
+		}
+	}
+
+	return pQuery;
+}
+
+bool CIRCNetwork::DelQuery(const CString& sName) {
+	for (vector<CQuery*>::iterator a = m_vQueries.begin(); a != m_vQueries.end(); ++a) {
+		if (sName.Equals((*a)->GetName())) {
+			delete *a;
+			m_vQueries.erase(a);
+			return true;
+		}
+	}
+
+	return false;
 }
 
 // Server list

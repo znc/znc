@@ -18,6 +18,7 @@
 #include <znc/IRCSock.h>
 #include <znc/User.h>
 #include <znc/IRCNetwork.h>
+#include <znc/Query.h>
 
 using std::map;
 using std::vector;
@@ -298,20 +299,20 @@ void CClient::ReadLine(const CString& sData) {
 			}
 
 			if (m_pNetwork) {
-				CChan* pChan = m_pNetwork->FindChan(sTarget);
-
 				if (sCTCP.Token(0).Equals("ACTION")) {
 					CString sMessage = sCTCP.Token(1, true);
 					NETWORKMODULECALL(OnUserAction(sTarget, sMessage), m_pUser, m_pNetwork, this, &bReturn);
 					if (bReturn) return;
 					sCTCP = "ACTION " + sMessage;
 
-					if (pChan && (!pChan->AutoClearChanBuffer() || !m_pNetwork->IsUserOnline())) {
-						pChan->AddBuffer(":" + _NAMEDFMT(GetNickMask()) + " PRIVMSG " + _NAMEDFMT(sTarget) + " :\001ACTION {text}\001", sMessage);
-					}
-
-					// Relay to the rest of the clients that may be connected to this user
 					if (m_pNetwork->IsChan(sTarget)) {
+						CChan* pChan = m_pNetwork->FindChan(sTarget);
+
+						if (pChan && (!pChan->AutoClearChanBuffer() || !m_pNetwork->IsUserOnline())) {
+							pChan->AddBuffer(":" + _NAMEDFMT(GetNickMask()) + " PRIVMSG " + _NAMEDFMT(sTarget) + " :\001ACTION {text}\001", sMessage);
+						}
+
+						// Relay to the rest of the clients that may be connected to this user
 						vector<CClient*>& vClients = GetClients();
 
 						for (unsigned int a = 0; a < vClients.size(); a++) {
@@ -319,6 +320,13 @@ void CClient::ReadLine(const CString& sData) {
 
 							if (pClient != this) {
 								pClient->PutClient(":" + GetNickMask() + " PRIVMSG " + sTarget + " :\001" + sCTCP + "\001");
+							}
+						}
+					} else {
+						if (!m_pUser->AutoClearQueryBuffer() || !m_pNetwork->IsUserOnline()) {
+							CQuery* pQuery = m_pNetwork->AddQuery(sTarget);
+							if (pQuery) {
+								pQuery->AddBuffer(":" + _NAMEDFMT(GetNickMask()) + " PRIVMSG " + _NAMEDFMT(sTarget) + " :\001ACTION {text}\001", sMessage);
 							}
 						}
 					}
@@ -354,10 +362,19 @@ void CClient::ReadLine(const CString& sData) {
 		}
 
 		if (m_pNetwork) {
-			CChan* pChan = m_pNetwork->FindChan(sTarget);
+			if (m_pNetwork->IsChan(sTarget)) {
+				CChan* pChan = m_pNetwork->FindChan(sTarget);
 
-			if ((pChan) && (!pChan->AutoClearChanBuffer() || !m_pNetwork->IsUserOnline())) {
-				pChan->AddBuffer(":" + _NAMEDFMT(GetNickMask()) + " PRIVMSG " + _NAMEDFMT(sTarget) + " :{text}", sMsg);
+				if ((pChan) && (!pChan->AutoClearChanBuffer() || !m_pNetwork->IsUserOnline())) {
+					pChan->AddBuffer(":" + _NAMEDFMT(GetNickMask()) + " PRIVMSG " + _NAMEDFMT(sTarget) + " :{text}", sMsg);
+				}
+			} else {
+				if (!m_pUser->AutoClearQueryBuffer() || !m_pNetwork->IsUserOnline()) {
+					CQuery* pQuery = m_pNetwork->AddQuery(sTarget);
+					if (pQuery) {
+						pQuery->AddBuffer(":" + _NAMEDFMT(GetNickMask()) + " PRIVMSG " + _NAMEDFMT(sTarget) + " :{text}", sMsg);
+					}
+				}
 			}
 
 			PutIRC("PRIVMSG " + sTarget + " :" + sMsg);
