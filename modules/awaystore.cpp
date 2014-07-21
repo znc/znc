@@ -395,6 +395,14 @@ public:
 		return(CONTINUE);
 	}
 
+	virtual EModRet OnPrivAction(CNick& Nick, CString& sMessage)
+	{
+		if (m_bIsAway) {
+			AddMessage(time(NULL), Nick, "* " + sMessage);
+		}
+		return(CONTINUE);
+	}
+
 	virtual EModRet OnUserNotice(CString& sTarget, CString& sMessage)
 	{
 		Ping();
@@ -454,7 +462,7 @@ private:
 		return(true);
 	}
 
-	void AddMessage(time_t iTime, const CNick & Nick, CString & sMessage)
+	void AddMessage(time_t iTime, const CNick & Nick, const CString & sMessage)
 	{
 		if (Nick.GetNick() == m_pNetwork->GetIRCNick().GetNick())
 			return; // ignore messages from self
