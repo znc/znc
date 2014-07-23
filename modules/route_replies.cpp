@@ -25,7 +25,7 @@ struct reply {
 // TODO this list is far from complete, no errors are handled
 static const struct {
 	const char *szRequest;
-	struct reply vReplies[16];
+	struct reply vReplies[18];
 } vRouteReplies[] = {
 	{"WHO", {
 		{"402", true},  /* rfc1459 ERR_NOSUCHSERVER */
@@ -74,6 +74,8 @@ static const struct {
 		{"338", false},  /* RPL_WHOISACTUALLY -- "actually using host" */
 		{"378", false},  /* RPL_WHOISHOST -- real address of vhosts */
 		{"671", false},  /* RPL_WHOISSECURE */
+		{"307", false},  /* RPL_WHOISREGNICK */
+		{"379", false},  /* RPL_WHOISMODES */
 		{"318", true},  /* rfc1459 RPL_ENDOFWHOIS */
 		{"401", true},  /* rfc1459 ERR_NOSUCHNICK */
 		{"402", true},  /* rfc1459 ERR_NOSUCHSERVER */
