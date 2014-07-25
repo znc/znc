@@ -278,6 +278,8 @@ public:
 		pNewUser->SetTimezone(WebSock.GetParam("timezone"));
 		pNewUser->SetJoinTries(WebSock.GetParam("jointries").ToUInt());
 		pNewUser->SetMaxJoins(WebSock.GetParam("maxjoins").ToUInt());
+		pNewUser->SetAutoClearQueryBuffer(WebSock.GetParam("autoclearquerybuffer").ToBool());
+		pNewUser->SetMaxQueryBuffers(WebSock.GetParam("maxquerybuffers").ToUInt());
 
 		if (spSession->IsAdmin()) {
 			pNewUser->SetDenyLoadMod(WebSock.GetParam("denyloadmod").ToBool());
@@ -1106,6 +1108,7 @@ public:
 				Tmpl["JoinTries"] = CString(pUser->JoinTries());
 				Tmpl["MaxNetworks"] = CString(pUser->MaxNetworks());
 				Tmpl["MaxJoins"] = CString(pUser->MaxJoins());
+				Tmpl["MaxQueryBuffers"] = CString(pUser->MaxQueryBuffers());
 
 				const set<CString>& ssAllowedHosts = pUser->GetAllowedHosts();
 				for (set<CString>::const_iterator it = ssAllowedHosts.begin(); it != ssAllowedHosts.end(); ++it) {
@@ -1289,6 +1292,12 @@ public:
 				o11["DisplayName"] = "Deny SetBindHost";
 				if (pUser && pUser->DenySetBindHost()) { o11["Checked"] = "true"; }
 			}
+
+			CTemplate& o12 = Tmpl.AddRow("OptionLoop");
+			o12["Name"] = "autoclearquerybuffer";
+			o12["DisplayName"] = "Auto Clear Query Buffer";
+			o12["Tooltip"] = "Automatically Clear Query Buffer After Playback";
+			if (!pUser || pUser->AutoClearQueryBuffer()) { o12["Checked"] = "true"; }
 
 			FOR_EACH_MODULE(i, pUser) {
 				CTemplate& mod = Tmpl.AddRow("EmbeddedModuleLoop");
