@@ -16,6 +16,7 @@
 
 #include <znc/IRCNetwork.h>
 #include <znc/Chan.h>
+#include <znc/Query.h>
 
 using std::vector;
 
@@ -26,9 +27,8 @@ public:
 	void ClearAllBuffers() {
 		if (m_pNetwork) {
 			const vector<CChan*>& vChans = m_pNetwork->GetChans();
-			vector<CChan*>::const_iterator it;
 
-			for (it = vChans.begin(); it != vChans.end(); ++it) {
+			for (vector<CChan*>::const_iterator it = vChans.begin(); it != vChans.end(); ++it) {
 				// Skip detached channels, they weren't read yet
 				if ((*it)->IsDetached())
 					continue;
@@ -37,6 +37,12 @@ public:
 				// We deny AutoClearChanBuffer on all channels since this module
 				// doesn't make any sense with it
 				(*it)->SetAutoClearChanBuffer(false);
+			}
+
+			vector<CQuery*> VQueries = m_pNetwork->GetQueries();
+
+			for (vector<CQuery*>::const_iterator it = VQueries.begin(); it != VQueries.end(); ++it) {
+				m_pNetwork->DelQuery((*it)->GetName());
 			}
 		}
 	}
@@ -76,4 +82,4 @@ template<> void TModInfo<CClearBufferOnMsgMod>(CModInfo& Info) {
 	Info.SetWikiPage("clearbufferonmsg");
 }
 
-USERMODULEDEFS(CClearBufferOnMsgMod, "Clear all channel buffers whenever the user does something")
+USERMODULEDEFS(CClearBufferOnMsgMod, "Clear all channel and query buffers whenever the user does something")
