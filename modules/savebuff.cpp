@@ -28,6 +28,7 @@
 #include <znc/User.h>
 #include <znc/IRCNetwork.h>
 #include <znc/FileUtils.h>
+#include <znc/Query.h>
 
 using std::vector;
 
@@ -107,15 +108,24 @@ public:
 					PutUser(":***!znc@znc.in PRIVMSG " + vChans[a]->GetName() + " :Failed to decrypt this channel, did you change the encryption pass?");
 				}
 			}
+			const vector<CQuery *>& vQueries = m_pNetwork->GetQueries();
+			for (u_int a = 0; a < vQueries.size(); a++)
+			{
+				if (!BootStrap(vQueries[a]))
+				{
+					PutUser(":***!znc@znc.in PRIVMSG " + vQueries[a]->GetName() + " :Failed to decrypt this query, did you change the encryption pass?");
+				}
+			}
 		}
 	}
 
-	bool BootStrap(CChan *pChan)
+	template<typename T>
+	bool BootStrap(T *pTarget)
 	{
 		CString sFile;
-		if (DecryptChannel(pChan->GetName(), sFile))
+		if (DecryptBuffer(pTarget->GetName(), sFile))
 		{
-			if (!pChan->GetBuffer().IsEmpty())
+			if (!pTarget->GetBuffer().IsEmpty())
 				return(true); // reloaded a module probably in this case, so just verify we can decrypt the file
 
 			VCString vsLines;
@@ -139,17 +149,17 @@ public:
 					CString sText(*++it);
 					sText.Trim();
 
-					pChan->AddBuffer(sFormat, sText, &ts);
+					pTarget->AddBuffer(sFormat, sText, &ts);
 				} else
 				{
 					// Old format, escape the line and use as is.
-					pChan->AddBuffer(_NAMEDFMT(sLine));
+					pTarget->AddBuffer(_NAMEDFMT(sLine));
 				}
 			}
 		} else
 		{
 			m_sPassword = "";
-			CUtils::PrintError("[" + GetModName() + ".so] Failed to Decrypt [" + pChan->GetName() + "]");
+			CUtils::PrintError("[" + GetModName() + ".so] Failed to Decrypt [" + pTarget->GetName() + "]");
 			return(false);
 		}
 
@@ -217,7 +227,7 @@ public:
 		} else if (sCommand.Equals("dumpbuff"))
 		{
 			CString sFile;
-			if (DecryptChannel(sArgs, sFile))
+			if (DecryptBuffer(sArgs, sFile))
 			{
 				VCString vsLines;
 				VCString::iterator it;
@@ -244,11 +254,11 @@ public:
 			PutModule("Unknown command [" + sCommand + "]");
 	}
 
-	void Replay(const CString & sChan)
+	void Replay(const CString & sBuffer)
 	{
 		CString sFile;
-		PutUser(":***!znc@znc.in PRIVMSG " + sChan + " :Buffer Playback...");
-		if (DecryptChannel(sChan, sFile))
+		PutUser(":***!znc@znc.in PRIVMSG " + sBuffer + " :Buffer Playback...");
+		if (DecryptBuffer(sBuffer, sFile))
 		{
 			VCString vsLines;
 			VCString::iterator it;
@@ -261,7 +271,7 @@ public:
 				PutUser(sLine);
 			}
 		}
-		PutUser(":***!znc@znc.in PRIVMSG " + sChan + " :Playback Complete.");
+		PutUser(":***!znc@znc.in PRIVMSG " + sBuffer + " :Playback Complete.");
 	}
 
 	CString GetPath(const CString & sChannel)
@@ -334,15 +344,15 @@ private:
 	bool    m_bBootError;
 	bool    m_bFirstLoad;
 	CString m_sPassword;
-	bool DecryptChannel(const CString & sChan, CString & sBuffer)
+	bool DecryptBuffer(const CString & sName, CString & sBuffer)
 	{
-		CString sChannel = GetPath(sChan);
+		CString sPath = GetPath(sName);
 		CString sFile;
 		sBuffer = "";
 
-		CFile File(sChannel);
+		CFile File(sPath);
 
-		if (sChannel.empty() || !File.Open() || !File.ReadFile(sFile))
+		if (sPath.empty() || !File.Open() || !File.ReadFile(sFile))
 			 return(true); // gonna be successful here
 
 		File.Close();
@@ -355,7 +365,7 @@ private:
 			if (sBuffer.Left(strlen(CRYPT_VERIFICATION_TOKEN)) != CRYPT_VERIFICATION_TOKEN)
 			{
 				// failed to decode :(
-				PutModule("Unable to decode Encrypted file [" + sChannel + "]");
+				PutModule("Unable to decode Encrypted file [" + sPath + "]");
 				return(false);
 			}
 			sBuffer.erase(0, strlen(CRYPT_VERIFICATION_TOKEN));
@@ -377,5 +387,5 @@ template<> void TModInfo<CSaveBuff>(CModInfo& Info) {
 	Info.SetArgsHelpText("This user module takes up to one arguments. Either --ask-pass or the password itself (which may contain spaces) or nothing");
 }
 
-NETWORKMODULEDEFS(CSaveBuff, "Stores channel buffers to disk, encrypted")
+NETWORKMODULEDEFS(CSaveBuff, "Stores channel and query buffers to disk, encrypted")
 
