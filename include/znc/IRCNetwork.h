@@ -98,7 +98,8 @@ public:
 
 	const CString& GetChanPrefixes() const { return m_sChanPrefixes; };
 	void SetChanPrefixes(const CString& s) { m_sChanPrefixes = s; };
-	bool IsChan(const CString& sChan) const;
+	bool IsChan(CString sChan) const;
+	bool IsChanStrict(const CString& sChan) const;
 
 	const std::vector<CServer*>& GetServers() const;
 	bool HasServers() const { return !m_vServers.empty(); }

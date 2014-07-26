@@ -846,7 +846,15 @@ bool CIRCNetwork::JoinChan(CChan* pChan) {
 	return false;
 }
 
-bool CIRCNetwork::IsChan(const CString& sChan) const {
+bool CIRCNetwork::IsChan(CString sChan) const {
+	if (GetIRCSock()) {
+		// See https://tools.ietf.org/html/draft-brocklesby-irc-isupport-03#section-3.16
+		sChan.TrimLeft(GetIRCSock()->GetISupport("STATUSMSG", ""));
+	}
+	return IsChanStrict(sChan);
+}
+
+bool CIRCNetwork::IsChanStrict(const CString& sChan) const {
 	if (sChan.empty())
 		return false; // There is no way this is a chan
 	if (GetChanPrefixes().empty())
