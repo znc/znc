@@ -24,9 +24,21 @@
 using std::vector;
 
 class CLogMod: public CModule {
+	void Set(const CString& sLine) {
+		const CString sVar  = sLine.Token(1).AsLower();
+		bool b              = sLine.Token(2).ToBool();
+
+		if (sVar == "nojoins" || sVar == "noquits") {
+			SetNV(sVar, CString(b));
+		}
+	}
 public:
 	MODCONSTRUCTOR(CLogMod)
 	{
+		AddCommand("Help",         static_cast<CModCommand::ModCmdFunc>(&CLogMod::HandleHelpCommand),
+			   "",                                     "Generates this output");
+		AddCommand("Set",          static_cast<CModCommand::ModCmdFunc>(&CLogMod::Set),
+			   "mode boolean", "Set one of the following booleans, nojoins, noquits");
 		m_bSanitize = false;
 	}
 
@@ -209,13 +221,16 @@ void CLogMod::OnKick(const CNick& OpNick, const CString& sKickedNick, CChan& Cha
 
 void CLogMod::OnQuit(const CNick& Nick, const CString& sMessage, const vector<CChan*>& vChans)
 {
-	for (std::vector<CChan*>::const_iterator pChan = vChans.begin(); pChan != vChans.end(); ++pChan)
-		PutLog("*** Quits: " + Nick.GetNick() + " (" + Nick.GetIdent() + "@" + Nick.GetHost() + ") (" + sMessage + ")", **pChan);
+	if (!GetNV("noquits").ToBool()) {
+		for (std::vector<CChan*>::const_iterator pChan = vChans.begin(); pChan != vChans.end(); ++pChan)
+			PutLog("*** Quits: " + Nick.GetNick() + " (" + Nick.GetIdent() + "@" + Nick.GetHost() + ") (" + sMessage + ")", **pChan);
+	}
 }
 
 void CLogMod::OnJoin(const CNick& Nick, CChan& Channel)
 {
-	PutLog("*** Joins: " + Nick.GetNick() + " (" + Nick.GetIdent() + "@" + Nick.GetHost() + ")", Channel);
+	if (!GetNV("nojoins").ToBool())
+		PutLog("*** Joins: " + Nick.GetNick() + " (" + Nick.GetIdent() + "@" + Nick.GetHost() + ")", Channel);
 }
 
 void CLogMod::OnPart(const CNick& Nick, CChan& Channel, const CString& sMessage)
