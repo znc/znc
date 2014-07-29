@@ -17,6 +17,63 @@
 #include <znc/znc.h>
 #include <signal.h>
 
+#if defined(HAVE_LIBSSL) && defined(HAVE_PTHREAD)
+#include <znc/Threads.h>
+#include <openssl/crypto.h>
+#include <memory>
+
+static std::vector<std::unique_ptr<CMutex> > lock_cs;
+
+static void locking_callback(int mode, int type, const char *file, int line) {
+	if(mode & CRYPTO_LOCK) {
+		lock_cs[type]->lock();
+	} else {
+		lock_cs[type]->unlock();
+	}
+}
+
+static unsigned long thread_id_callback() {
+	return (unsigned long)pthread_self();
+}
+
+static CRYPTO_dynlock_value *dyn_create_callback(const char *file, int line) {
+	return (CRYPTO_dynlock_value*)new CMutex;
+}
+
+static void dyn_lock_callback(int mode, CRYPTO_dynlock_value *dlock, const char *file, int line) {
+	CMutex *mtx = (CMutex*)dlock;
+
+	if(mode & CRYPTO_LOCK) {
+		mtx->lock();
+	} else {
+		mtx->unlock();
+	}
+}
+
+static void dyn_destroy_callback(CRYPTO_dynlock_value *dlock, const char *file, int line) {
+	CMutex *mtx = (CMutex*)dlock;
+
+	delete mtx;
+}
+
+static void thread_setup() {
+	lock_cs.resize(CRYPTO_num_locks());
+
+	for(std::unique_ptr<CMutex> &mtx: lock_cs)
+		mtx = std::unique_ptr<CMutex>(new CMutex());
+
+	CRYPTO_set_id_callback(&thread_id_callback);
+	CRYPTO_set_locking_callback(&locking_callback);
+
+	CRYPTO_set_dynlock_create_callback(&dyn_create_callback);
+	CRYPTO_set_dynlock_lock_callback(&dyn_lock_callback);
+	CRYPTO_set_dynlock_destroy_callback(&dyn_destroy_callback);
+}
+
+#else
+#define thread_setup()
+#endif
+
 using std::cout;
 using std::endl;
 using std::set;
@@ -125,6 +182,8 @@ static void seedPRNG() {
 int main(int argc, char** argv) {
 	CString sConfig;
 	CString sDataDir = "";
+
+	thread_setup();
 
 	seedPRNG();
 	CDebug::SetStdoutIsTTY(isatty(1));
