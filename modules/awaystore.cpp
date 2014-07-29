@@ -53,12 +53,14 @@ class CAway : public CModule
 {
 	void AwayCommand(const CString& sCommand) {
 		CString sReason;
+		time_t curtime;
+		time(&curtime);
 
 		if (sCommand.Token(1) != "-quiet") {
-			sReason = sCommand.Token(1, true);
+			sReason = CUtils::FormatTime(curtime, sCommand.Token(1, true), m_pUser->GetTimezone());
 			PutModNotice("You have been marked as away");
 		} else {
-			sReason = sCommand.Token(2, true);
+			sReason = CUtils::FormatTime(curtime, sCommand.Token(2, true), m_pUser->GetTimezone());
 		}
 
 		Away(false, sReason);
