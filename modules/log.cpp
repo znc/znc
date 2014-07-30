@@ -28,9 +28,8 @@ class CLogMod: public CModule {
 		const CString sVar  = sLine.Token(1).AsLower();
 		bool b              = sLine.Token(2).ToBool();
 
-		if (sVar == "nojoins" || sVar == "noquits") {
+		if (sVar == "nojoins" || sVar == "noquits" || sVar == "nonickchanges")
 			SetNV(sVar, CString(b));
-		}
 	}
 public:
 	MODCONSTRUCTOR(CLogMod)
@@ -38,7 +37,7 @@ public:
 		AddCommand("Help",         static_cast<CModCommand::ModCmdFunc>(&CLogMod::HandleHelpCommand),
 			   "",                                     "Generates this output");
 		AddCommand("Set",          static_cast<CModCommand::ModCmdFunc>(&CLogMod::Set),
-			   "mode boolean", "Set one of the following booleans, nojoins, noquits");
+			   "mode boolean", "Set one of the following booleans, nojoins, noquits, nonickchanges");
 		m_bSanitize = false;
 	}
 
@@ -240,8 +239,10 @@ void CLogMod::OnPart(const CNick& Nick, CChan& Channel, const CString& sMessage)
 
 void CLogMod::OnNick(const CNick& OldNick, const CString& sNewNick, const vector<CChan*>& vChans)
 {
-	for (std::vector<CChan*>::const_iterator pChan = vChans.begin(); pChan != vChans.end(); ++pChan)
-		PutLog("*** " + OldNick.GetNick() + " is now known as " + sNewNick, **pChan);
+	if (!GetNV("nonickchanges").ToBool()) {
+		for (std::vector<CChan*>::const_iterator pChan = vChans.begin(); pChan != vChans.end(); ++pChan)
+			PutLog("*** " + OldNick.GetNick() + " is now known as " + sNewNick, **pChan);
+	}
 }
 
 CModule::EModRet CLogMod::OnTopic(CNick& Nick, CChan& Channel, CString& sTopic)
