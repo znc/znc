@@ -28,8 +28,11 @@ class CLogMod: public CModule {
 		const CString sVar  = sLine.Token(1).AsLower();
 		bool b              = sLine.Token(2).ToBool();
 
-		if (sVar == "nojoins" || sVar == "noquits" || sVar == "nonickchanges")
+		if (sVar == "nojoins" || sVar == "noquits" || sVar == "nonickchanges") {
 			SetNV(sVar, CString(b));
+			PutModule("Set " + sVar + " to " + CString(b));
+		} else
+			PutModule(sVar + " is invalid.");
 	}
 public:
 	MODCONSTRUCTOR(CLogMod)
