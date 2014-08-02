@@ -36,6 +36,7 @@ CChan::CChan(const CString& sName, CIRCNetwork* pNetwork, bool bInConfig, CConfi
 	m_bInConfig = bInConfig;
 	m_Nick.SetNetwork(m_pNetwork);
 	m_bDetached = false;
+	m_uSortOrder = m_uDefaultSortOrder;
 	m_bDisabled = false;
 	SetBufferCount(m_pNetwork->GetUser()->GetBufferCount(), true);
 	SetAutoClearChanBuffer(m_pNetwork->GetUser()->AutoClearChanBuffer());
@@ -58,11 +59,17 @@ CChan::CChan(const CString& sName, CIRCNetwork* pNetwork, bool bInConfig, CConfi
 			SetKey(sValue);
 		if (pConfig->FindStringEntry("modes", sValue))
 			SetDefaultModes(sValue);
+		if (pConfig->FindStringEntry("sortorder", sValue))
+			SetSortOrder(sValue.ToUInt());
 	}
 }
 
 CChan::~CChan() {
 	ClearNicks();
+}
+
+bool CChan::operator<(const CChan& other) const {
+	return GetSortOrder() < other.GetSortOrder();
 }
 
 void CChan::Reset() {
@@ -92,6 +99,8 @@ CConfig CChan::ToConfig() {
 		config.AddKeyValuePair("Key", GetKey());
 	if (!GetDefaultModes().empty())
 		config.AddKeyValuePair("Modes", GetDefaultModes());
+	if (GetSortOrder() != m_uDefaultSortOrder)
+		config.AddKeyValuePair("SortOrder", CString(GetSortOrder()));
 
 	return config;
 }
@@ -587,3 +596,5 @@ void CChan::Enable() {
 	ResetJoinTries();
 	m_bDisabled = false;
 }
+
+const unsigned int CChan::m_uDefaultSortOrder = 9999;
