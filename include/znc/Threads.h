@@ -203,10 +203,28 @@ private:
 	CThread();
 };
 
+/**
+ * A job is a task which should run without blocking the main thread. You do
+ * this by inheriting from this class and implementing the pure virtual methods
+ * runThread(), which gets executed in a separate thread and does not block the
+ * main thread, and runMain() which gets automatically called from the main
+ * thread after runThread() finishes.
+ *
+ * After you create a new instance of your class, you can pass it to
+ * CThreadPool()::Get().addJob(job) to start it. The thread pool automatically
+ * deletes your class after it finished.
+ */
 class CJob {
 public:
+	/// Destructor, always called from the main thread.
 	virtual ~CJob() {}
+
+	/// This function is called in a separate thread and can do heavy, blocking work.
 	virtual void runThread() = 0;
+
+	/// This function is called from the main thread after runThread()
+	/// finishes. It can be used to handle the results from runThread()
+	///  without needing synchronization primitives.
 	virtual void runMain() = 0;
 
 private:
@@ -223,6 +241,7 @@ private:
 public:
 	static CThreadPool& Get();
 
+	/// Add a job to the thread pool and run it. The job will be deleted when done.
 	void addJob(CJob *job);
 
 	int getReadFD() const {
