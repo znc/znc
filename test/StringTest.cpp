@@ -18,7 +18,7 @@
 #include <znc/ZNCString.h>
 
 // GTest uses this function to output objects
-void PrintTo(const CString& s, std::ostream* o) {
+static void PrintTo(const CString& s, std::ostream* o) {
 	*o << '"' << s.Escape_n(CString::EASCII, CString::EDEBUG) << '"';
 }
 
