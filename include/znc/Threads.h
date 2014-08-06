@@ -213,6 +213,8 @@ private:
  * After you create a new instance of your class, you can pass it to
  * CThreadPool()::Get().addJob(job) to start it. The thread pool automatically
  * deletes your class after it finished.
+ *
+ * For modules you should use CModuleJob instead.
  */
 class CJob {
 public:

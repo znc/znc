@@ -157,6 +157,10 @@ CModule::~CModule() {
 	}
 
 	SaveRegistry();
+
+#ifdef HAVE_PTHREAD
+	CancelJobs(m_sJobs);
+#endif
 }
 
 void CModule::SetUser(CUser* pUser) { m_pUser = pUser; }
@@ -448,6 +452,52 @@ void CModule::ListSockets() {
 
 	PutModule(Table);
 }
+
+#ifdef HAVE_PTHREAD
+CModuleJob::~CModuleJob()
+{
+	m_pModule->UnlinkJob(this);
+}
+
+void CModule::AddJob(CModuleJob *pJob)
+{
+	CThreadPool::Get().addJob(pJob);
+	m_sJobs.insert(pJob);
+}
+
+void CModule::CancelJob(CModuleJob *pJob)
+{
+	if (pJob == NULL)
+		return;
+	// Destructor calls UnlinkJob and removes the job from m_sJobs
+	CThreadPool::Get().cancelJob(pJob);
+}
+
+bool CModule::CancelJob(const CString& sJobName)
+{
+	set<CModuleJob*>::iterator it;
+	for (it = m_sJobs.begin(); it != m_sJobs.end(); ++it) {
+		if ((*it)->GetName().Equals(sJobName)) {
+			CancelJob(*it);
+			return true;
+		}
+	}
+	return false;
+}
+
+void CModule::CancelJobs(const std::set<CModuleJob*>& sJobs)
+{
+	set<CJob*> sPlainJobs(sJobs.begin(), sJobs.end());
+
+	// Destructor calls UnlinkJob and removes the jobs from m_sJobs
+	CThreadPool::Get().cancelJobs(sPlainJobs);
+}
+
+bool CModule::UnlinkJob(CModuleJob *pJob)
+{
+	return 0 != m_sJobs.erase(pJob);
+}
+#endif
 
 bool CModule::AddCommand(const CModCommand& Command)
 {
