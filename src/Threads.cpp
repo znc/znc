@@ -104,7 +104,7 @@ bool CThreadPool::threadNeeded() const {
 
 void CThreadPool::threadFunc() {
 	CMutexLocker guard(m_mutex);
-	m_num_threads++;
+	// m_num_threads was already increased
 	m_num_idle++;
 
 	while (true) {
@@ -152,6 +152,7 @@ void CThreadPool::addJob(CJob *job) {
 		return;
 
 	// Start a new thread for our pool
+	m_num_threads++;
 	CThread::startThread(threadPoolFunc, this);
 }
 
