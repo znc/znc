@@ -27,6 +27,7 @@ public:
 	~CWaitingJob() {
 		EXPECT_TRUE(m_bThreadReady);
 		EXPECT_TRUE(m_bThreadDone);
+		EXPECT_FALSE(wasCancelled());
 		m_bDestroyed = true;
 	}
 
@@ -71,4 +72,114 @@ TEST(Thread, RunJob) {
 
 	while (!destroyed)
 		CThreadPool::Get().handlePipeReadable();
+}
+
+class CCancelJob : public CJob {
+public:
+	CCancelJob(bool& destroyed)
+		: m_bDestroyed(destroyed), m_Mutex(), m_CVThreadReady(), m_bThreadReady(false) {
+	}
+
+	~CCancelJob() {
+		EXPECT_TRUE(wasCancelled());
+		m_bDestroyed = true;
+	}
+
+	void wait() {
+		CMutexLocker locker(m_Mutex);
+		// Wait for the thread to run
+		while (!m_bThreadReady)
+			m_CVThreadReady.wait(m_Mutex);
+	}
+
+	virtual void runThread() {
+		m_Mutex.lock();
+		// We are running, tell the main thread
+		m_bThreadReady = true;
+		m_CVThreadReady.broadcast();
+		// Have to unlock here so that wait() can get the mutex
+		m_Mutex.unlock();
+
+		while (!wasCancelled()) {
+			// We can't do much besides busy-looping here. If the
+			// job really gets cancelled while it is already
+			// running, the main thread is stuck in cancelJob(), so
+			// it cannot signal us in any way. And signaling us
+			// before calling cancelJob() effictively is the same
+			// thing as busy looping anyway. So busy looping it is.
+			// (Yes, CJob shouldn't be used for anything that
+			// requires synchronisation between threads!)
+		}
+	}
+
+	virtual void runMain() { }
+
+private:
+	bool& m_bDestroyed;
+	CMutex m_Mutex;
+	CConditionVariable m_CVThreadReady;
+	bool m_bThreadReady;
+};
+
+TEST(Thread, CancelJobEarly) {
+	bool destroyed = false;
+	CCancelJob *pJob = new CCancelJob(destroyed);
+
+	CThreadPool::Get().addJob(pJob);
+	// Don't wait for the job to run. The idea here is that we are calling
+	// cancelJob() before pJob->runThread() runs, but this is a race.
+	CThreadPool::Get().cancelJob(pJob);
+
+	// cancelJob() should only return after successful cancellation
+	EXPECT_TRUE(destroyed);
+}
+
+TEST(Thread, CancelJobWhileRunning) {
+	bool destroyed = false;
+	CCancelJob *pJob = new CCancelJob(destroyed);
+
+	CThreadPool::Get().addJob(pJob);
+	// Wait for the job to run
+	pJob->wait();
+	CThreadPool::Get().cancelJob(pJob);
+
+	// cancelJob() should only return after successful cancellation
+	EXPECT_TRUE(destroyed);
+}
+
+class CEmptyJob : public CJob {
+public:
+	CEmptyJob(bool& destroyed)
+		: m_bDestroyed(destroyed) {
+	}
+
+	~CEmptyJob() {
+		EXPECT_FALSE(wasCancelled());
+		m_bDestroyed = true;
+	}
+
+	virtual void runThread() { }
+	virtual void runMain() { }
+
+private:
+	bool& m_bDestroyed;
+};
+
+TEST(Thread, CancelJobWhenDone) {
+	bool destroyed = false;
+	CEmptyJob *pJob = new CEmptyJob(destroyed);
+
+	CThreadPool::Get().addJob(pJob);
+
+	// Wait for the job to finish
+	fd_set fds;
+	FD_ZERO(&fds);
+	FD_SET(CThreadPool::Get().getReadFD(), &fds);
+	EXPECT_EQ(1, select(1 + CThreadPool::Get().getReadFD(), &fds, NULL, NULL, NULL));
+
+	// And only cancel it afterwards
+	CThreadPool::Get().cancelJob(pJob);
+
+	// cancelJob() should only return after successful cancellation
+	EXPECT_TRUE(destroyed);
 }
