@@ -71,6 +71,10 @@ public:
 	}
 
 private:
+	// Undefined copy constructor and assignment operator
+	CMutex(const CMutex&);
+	CMutex& operator=(const CMutex&);
+
 	pthread_mutex_t m_mutex;
 };
 
@@ -105,6 +109,10 @@ public:
 	}
 
 private:
+	// Undefined copy constructor and assignment operator
+	CMutexLocker(const CMutexLocker&);
+	CMutexLocker& operator=(const CMutexLocker&);
+
 	CMutex &m_mutex;
 	bool m_locked;
 };
@@ -161,6 +169,10 @@ public:
 	}
 
 private:
+	// Undefined copy constructor and assignment operator
+	CConditionVariable(const CConditionVariable&);
+	CConditionVariable& operator=(const CConditionVariable&);
+
 	pthread_cond_t m_cond;
 };
 
@@ -185,6 +197,10 @@ public:
 			exit(1);
 		}
 	}
+
+private:
+	// Undefined constructor
+	CThread();
 };
 
 class CJob {
@@ -192,6 +208,11 @@ public:
 	virtual ~CJob() {}
 	virtual void runThread() = 0;
 	virtual void runMain() = 0;
+
+private:
+	// Undefined copy constructor and assignment operator
+	CJob(const CJob&);
+	CJob& operator=(const CJob&);
 };
 
 class CThreadPool {
