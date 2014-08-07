@@ -187,6 +187,7 @@ void CThreadPool::cancelJobs(const std::set<CJob *> &jobs) {
 			continue;
 
 		case CJob::DONE:
+			(*it)->m_eState = CJob::CANCELLED;
 			finished.insert(*it);
 			continue;
 
@@ -226,8 +227,11 @@ void CThreadPool::cancelJobs(const std::set<CJob *> &jobs) {
 	// Handle finished jobs. They must already be in the pipe.
 	while (!finished.empty()) {
 		CJob *job = getJobFromPipe();
-		finishJob(job);
-		finished.erase(job);
+		if (finished.erase(job) > 0) {
+			assert(job->m_eState == CJob::CANCELLED);
+			delete job;
+		} else
+			finishJob(job);
 	}
 
 	// Delete things that still need to be deleted

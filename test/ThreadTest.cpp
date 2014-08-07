@@ -154,7 +154,7 @@ public:
 	}
 
 	~CEmptyJob() {
-		EXPECT_FALSE(wasCancelled());
+		EXPECT_TRUE(wasCancelled());
 		m_bDestroyed = true;
 	}
 
