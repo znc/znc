@@ -65,10 +65,12 @@ class CAdminMod : public CModule {
 			{"QuitMsg",             str},
 			{"BufferCount",         integer},
 			{"AutoClearChanBuffer", boolean},
+			{"AutoClearQueryBuffer",boolean},
 			{"Password",            str},
 			{"JoinTries",           integer},
 			{"MaxJoins",            integer},
 			{"MaxNetworks",         integer},
+			{"MaxQueryBuffers",     integer},
 			{"Timezone",            str},
 			{"Admin",               boolean},
 			{"AppendTimestamp",     boolean},
@@ -194,10 +196,14 @@ class CAdminMod : public CModule {
 			PutModule("KeepBuffer = " + CString(!pUser->AutoClearChanBuffer())); // XXX compatibility crap, added in 0.207
 		else if (sVar == "autoclearchanbuffer")
 			PutModule("AutoClearChanBuffer = " + CString(pUser->AutoClearChanBuffer()));
+		else if (sVar == "autoclearquerybuffer")
+			PutModule("AutoClearQueryBuffer = " + CString(pUser->AutoClearQueryBuffer()));
 		else if (sVar == "maxjoins")
 			PutModule("MaxJoins = " + CString(pUser->MaxJoins()));
 		else if (sVar == "maxnetworks")
 			PutModule("MaxNetworks = " + CString(pUser->MaxNetworks()));
+		else if (sVar == "maxquerybuffers")
+			PutModule("MaxQueryBuffers = " + CString(pUser->MaxQueryBuffers()));
 		else if (sVar == "jointries")
 			PutModule("JoinTries = " + CString(pUser->JoinTries()));
 		else if (sVar == "timezone")
@@ -334,6 +340,11 @@ class CAdminMod : public CModule {
 			pUser->SetAutoClearChanBuffer(b);
 			PutModule("AutoClearChanBuffer = " + CString(b));
 		}
+		else if (sVar == "autoclearquerybuffer") {
+			bool b = sValue.ToBool();
+			pUser->SetAutoClearQueryBuffer(b);
+			PutModule("AutoClearQueryBuffer = " + CString(b));
+		}
 		else if (sVar == "password") {
 			const CString sSalt = CUtils::GetSalt();
 			const CString sHash = CUser::SaltedHash(sValue, sSalt);
@@ -353,6 +364,11 @@ class CAdminMod : public CModule {
 			} else {
 				PutModule("Access denied!");
 			}
+		}
+		else if (sVar == "maxquerybuffers") {
+			unsigned int i = sValue.ToUInt();
+			pUser->SetMaxQueryBuffers(i);
+			PutModule("MaxQueryBuffers = " + sValue);
 		}
 		else if (sVar == "jointries") {
 			unsigned int i = sValue.ToUInt();

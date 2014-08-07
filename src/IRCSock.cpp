@@ -19,6 +19,7 @@
 #include <znc/User.h>
 #include <znc/IRCNetwork.h>
 #include <znc/Server.h>
+#include <znc/Query.h>
 
 using std::set;
 using std::vector;
@@ -773,7 +774,7 @@ void CIRCSock::ReadLine(const CString& sData) {
 			CString sMsg = sRest.Token(0, true).TrimPrefix_n();
 
 			if (!m_pNetwork->IsUserOnline()) {
-				m_pNetwork->AddQueryBuffer(":" + _NAMEDFMT(Nick.GetNickMask()) + " WALLOPS :{text}", sMsg);
+				m_pNetwork->AddNoticeBuffer(":" + _NAMEDFMT(Nick.GetNickMask()) + " WALLOPS :{text}", sMsg);
 			}
 		} else if (sCmd.Equals("CAP")) {
 			// CAPs are supported only before authorization.
@@ -885,9 +886,11 @@ bool CIRCSock::OnPrivCTCP(CNick& Nick, CString& sMessage) {
 		IRCSOCKMODULECALL(OnPrivAction(Nick, sMessage), &bResult);
 		if (bResult) return true;
 
-		if (!m_pNetwork->IsUserOnline()) {
-			// If the user is detached, add to the buffer
-			m_pNetwork->AddQueryBuffer(":" + _NAMEDFMT(Nick.GetNickMask()) + " PRIVMSG {target} :\001ACTION {text}\001", sMessage);
+		if (!m_pNetwork->IsUserOnline() || !m_pNetwork->GetUser()->AutoClearQueryBuffer()) {
+			CQuery* pQuery = m_pNetwork->AddQuery(Nick.GetNick());
+			if (pQuery) {
+				pQuery->AddBuffer(":" + _NAMEDFMT(Nick.GetNickMask()) + " PRIVMSG {target} :\001ACTION {text}\001", sMessage);
+			}
 		}
 
 		sMessage = "ACTION " + sMessage;
@@ -948,7 +951,7 @@ bool CIRCSock::OnPrivNotice(CNick& Nick, CString& sMessage) {
 
 	if (!m_pNetwork->IsUserOnline()) {
 		// If the user is detached, add to the buffer
-		m_pNetwork->AddQueryBuffer(":" + _NAMEDFMT(Nick.GetNickMask()) + " NOTICE {target} :{text}", sMessage);
+		m_pNetwork->AddNoticeBuffer(":" + _NAMEDFMT(Nick.GetNickMask()) + " NOTICE {target} :{text}", sMessage);
 	}
 
 	return false;
@@ -959,9 +962,11 @@ bool CIRCSock::OnPrivMsg(CNick& Nick, CString& sMessage) {
 	IRCSOCKMODULECALL(OnPrivMsg(Nick, sMessage), &bResult);
 	if (bResult) return true;
 
-	if (!m_pNetwork->IsUserOnline()) {
-		// If the user is detached, add to the buffer
-		m_pNetwork->AddQueryBuffer(":" + _NAMEDFMT(Nick.GetNickMask()) + " PRIVMSG {target} :{text}", sMessage);
+	if (!m_pNetwork->IsUserOnline() || !m_pNetwork->GetUser()->AutoClearQueryBuffer()) {
+		CQuery* pQuery = m_pNetwork->AddQuery(Nick.GetNick());
+		if (pQuery) {
+			pQuery->AddBuffer(":" + _NAMEDFMT(Nick.GetNickMask()) + " PRIVMSG {target} :{text}", sMessage);
+		}
 	}
 
 	return false;

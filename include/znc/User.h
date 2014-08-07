@@ -126,6 +126,7 @@ public:
 	bool DelCTCPReply(const CString& sCTCP);
 	bool SetBufferCount(unsigned int u, bool bForce = false);
 	void SetAutoClearChanBuffer(bool b);
+	void SetAutoClearQueryBuffer(bool b);
 
 	void SetBeingDeleted(bool b) { m_bBeingDeleted = b; }
 	void SetTimestampFormat(const CString& s) { m_sTimestampFormat = s; }
@@ -136,6 +137,7 @@ public:
 	void SetMaxJoins(unsigned int i) { m_uMaxJoins = i; }
 	void SetSkinName(const CString& s) { m_sSkinName = s; }
 	void SetMaxNetworks(unsigned int i) { m_uMaxNetworks = i; }
+	void SetMaxQueryBuffers(unsigned int i) { m_uMaxQueryBuffers = i; }
 	// !Setters
 
 	// Getters
@@ -171,6 +173,7 @@ public:
 	const MCString& GetCTCPReplies() const;
 	unsigned int GetBufferCount() const;
 	bool AutoClearChanBuffer() const;
+	bool AutoClearQueryBuffer() const;
 	bool IsBeingDeleted() const { return m_bBeingDeleted; }
 	CString GetTimezone() const { return m_sTimezone; }
 	unsigned long long BytesRead() const { return m_uBytesRead; }
@@ -179,6 +182,7 @@ public:
 	unsigned int MaxJoins() const { return m_uMaxJoins; }
 	CString GetSkinName() const;
 	unsigned int MaxNetworks() const { return m_uMaxNetworks; }
+	unsigned int MaxQueryBuffers() const { return m_uMaxQueryBuffers; }
 	// !Getters
 
 protected:
@@ -211,6 +215,7 @@ protected:
 	bool                  m_bAdmin;
 	bool                  m_bDenySetBindHost;
 	bool                  m_bAutoClearChanBuffer;
+	bool                  m_bAutoClearQueryBuffer;
 	bool                  m_bBeingDeleted;
 	bool                  m_bAppendTimestamp;
 	bool                  m_bPrependTimestamp;
@@ -225,6 +230,7 @@ protected:
 	unsigned long long    m_uBytesWritten;
 	unsigned int          m_uMaxJoinTries;
 	unsigned int          m_uMaxNetworks;
+	unsigned int          m_uMaxQueryBuffers;
 	unsigned int          m_uMaxJoins;
 	CString               m_sSkinName;
 

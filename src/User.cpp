@@ -71,6 +71,8 @@ CUser::CUser(const CString& sUserName)
 	m_uBufferCount = 50;
 	m_uMaxJoinTries = 10;
 	m_bAutoClearChanBuffer = true;
+	m_bAutoClearQueryBuffer = true;
+	m_uMaxQueryBuffers = 50;
 	m_uMaxJoins = 0;
 	m_bBeingDeleted = false;
 	m_sTimestampFormat = "[%H:%M:%S]";
@@ -130,12 +132,14 @@ bool CUser::ParseConfig(CConfig* pConfig, CString& sError) {
 	TOption<unsigned int> UIntOptions[] = {
 		{ "jointries", &CUser::SetJoinTries },
 		{ "maxnetworks", &CUser::SetMaxNetworks },
+		{ "maxquerybuffers", &CUser::SetMaxQueryBuffers },
 		{ "maxjoins", &CUser::SetMaxJoins },
 	};
 	size_t numUIntOptions = sizeof(UIntOptions) / sizeof(UIntOptions[0]);
 	TOption<bool> BoolOptions[] = {
 		{ "keepbuffer", &CUser::SetKeepBuffer }, // XXX compatibility crap from pre-0.207
 		{ "autoclearchanbuffer", &CUser::SetAutoClearChanBuffer },
+		{ "autoclearquerybuffer", &CUser::SetAutoClearQueryBuffer },
 		{ "multiclients", &CUser::SetMultiClients },
 		{ "denyloadmod", &CUser::SetDenyLoadMod },
 		{ "admin", &CUser::SetAdmin },
@@ -699,6 +703,7 @@ bool CUser::Clone(const CUser& User, CString& sErrorRet, bool bCloneNetworks) {
 	SetBufferCount(User.GetBufferCount(), true);
 	SetJoinTries(User.JoinTries());
 	SetMaxNetworks(User.MaxNetworks());
+	SetMaxQueryBuffers(User.MaxQueryBuffers());
 	SetMaxJoins(User.MaxJoins());
 	SetClientEncoding(User.GetClientEncoding());
 
@@ -736,6 +741,7 @@ bool CUser::Clone(const CUser& User, CString& sErrorRet, bool bCloneNetworks) {
 
 	// Flags
 	SetAutoClearChanBuffer(User.AutoClearChanBuffer());
+	SetAutoClearQueryBuffer(User.AutoClearQueryBuffer());
 	SetMultiClients(User.MultiClients());
 	SetDenyLoadMod(User.DenyLoadMod());
 	SetAdmin(User.IsAdmin());
@@ -886,6 +892,7 @@ CConfig CUser::ToConfig() {
 	config.AddKeyValuePair("ChanModes", GetDefaultChanModes());
 	config.AddKeyValuePair("Buffer", CString(GetBufferCount()));
 	config.AddKeyValuePair("AutoClearChanBuffer", CString(AutoClearChanBuffer()));
+	config.AddKeyValuePair("AutoClearQueryBuffer", CString(AutoClearQueryBuffer()));
 	config.AddKeyValuePair("MultiClients", CString(MultiClients()));
 	config.AddKeyValuePair("DenyLoadMod", CString(DenyLoadMod()));
 	config.AddKeyValuePair("Admin", CString(IsAdmin()));
@@ -896,6 +903,7 @@ CConfig CUser::ToConfig() {
 	config.AddKeyValuePair("Timezone", m_sTimezone);
 	config.AddKeyValuePair("JoinTries", CString(m_uMaxJoinTries));
 	config.AddKeyValuePair("MaxNetworks", CString(m_uMaxNetworks));
+	config.AddKeyValuePair("MaxQueryBuffers", CString(m_uMaxQueryBuffers));
 	config.AddKeyValuePair("MaxJoins", CString(m_uMaxJoins));
 	config.AddKeyValuePair("ClientEncoding", GetClientEncoding());
 
@@ -1109,6 +1117,7 @@ void CUser::SetDefaultChanModes(const CString& s) { m_sDefaultChanModes = s; }
 void CUser::SetClientEncoding(const CString& s) { m_sClientEncoding = s; }
 void CUser::SetQuitMsg(const CString& s) { m_sQuitMsg = s; }
 void CUser::SetAutoClearChanBuffer(bool b) { m_bAutoClearChanBuffer = b; }
+void CUser::SetAutoClearQueryBuffer(bool b) { m_bAutoClearQueryBuffer = b; }
 
 bool CUser::SetBufferCount(unsigned int u, bool bForce) {
 	if (!bForce && u > CZNC::Get().GetMaxBufferSize())
@@ -1185,6 +1194,7 @@ CString CUser::GetQuitMsg() const { return (!m_sQuitMsg.Trim_n().empty()) ? m_sQ
 const MCString& CUser::GetCTCPReplies() const { return m_mssCTCPReplies; }
 unsigned int CUser::GetBufferCount() const { return m_uBufferCount; }
 bool CUser::AutoClearChanBuffer() const { return m_bAutoClearChanBuffer; }
+bool CUser::AutoClearQueryBuffer() const { return m_bAutoClearQueryBuffer; }
 //CString CUser::GetSkinName() const { return (!m_sSkinName.empty()) ? m_sSkinName : CZNC::Get().GetSkinName(); }
 CString CUser::GetSkinName() const { return m_sSkinName; }
 const CString& CUser::GetUserPath() const { if (!CFile::Exists(m_sUserPath)) { CDir::MakeDir(m_sUserPath); } return m_sUserPath; }

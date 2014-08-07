@@ -30,6 +30,7 @@ class CConfig;
 class CClient;
 class CConfig;
 class CChan;
+class CQuery;
 class CServer;
 class CIRCSock;
 class CIRCNetworkPingTimer;
@@ -96,6 +97,12 @@ public:
 	void JoinChans();
 	void JoinChans(std::set<CChan*>& sChans);
 
+	const std::vector<CQuery*>& GetQueries() const;
+	CQuery* FindQuery(const CString& sName) const;
+	std::vector<CQuery*> FindQueries(const CString& sWild) const;
+	CQuery* AddQuery(const CString& sName);
+	bool DelQuery(const CString& sName);
+
 	const CString& GetChanPrefixes() const { return m_sChanPrefixes; };
 	void SetChanPrefixes(const CString& s) { m_sChanPrefixes = s; };
 	bool IsChan(const CString& sChan) const;
@@ -144,9 +151,9 @@ public:
 	void UpdateMotdBuffer(const CString& sMatch, const CString& sFormat, const CString& sText = "") { m_MotdBuffer.UpdateLine(sMatch, sFormat, sText); }
 	void ClearMotdBuffer() { m_MotdBuffer.Clear(); }
 
-	void AddQueryBuffer(const CString& sFormat, const CString& sText = "") { m_QueryBuffer.AddLine(sFormat, sText); }
-	void UpdateQueryBuffer(const CString& sMatch, const CString& sFormat, const CString& sText = "") { m_QueryBuffer.UpdateLine(sMatch, sFormat, sText); }
-	void ClearQueryBuffer() { m_QueryBuffer.Clear(); }
+	void AddNoticeBuffer(const CString& sFormat, const CString& sText = "") { m_NoticeBuffer.AddLine(sFormat, sText); }
+	void UpdateNoticeBuffer(const CString& sMatch, const CString& sFormat, const CString& sText = "") { m_NoticeBuffer.UpdateLine(sMatch, sFormat, sText); }
+	void ClearNoticeBuffer() { m_NoticeBuffer.Clear(); }
 	// !Buffers
 
 	// la
@@ -192,6 +199,7 @@ protected:
 	CIRCSock*          m_pIRCSock;
 
 	std::vector<CChan*>     m_vChans;
+	std::vector<CQuery*>    m_vQueries;
 
 	CString            m_sChanPrefixes;
 
@@ -208,7 +216,7 @@ protected:
 
 	CBuffer            m_RawBuffer;
 	CBuffer            m_MotdBuffer;
-	CBuffer            m_QueryBuffer;
+	CBuffer            m_NoticeBuffer;
 
 	CIRCNetworkPingTimer* m_pPingTimer;
 	CIRCNetworkJoinTimer* m_pJoinTimer;

@@ -726,7 +726,7 @@ bool CZNC::WriteNewConfig(const CString& sConfigFile) {
 
 		unsigned int uBufferCount = 0;
 
-		CUtils::GetNumInput("Number of lines to buffer per channel", uBufferCount, 0, ~0, 50);
+		CUtils::GetNumInput("Number of lines to buffer per channel or query", uBufferCount, 0, ~0, 50);
 		if (uBufferCount) {
 			vsLines.push_back("\tBuffer     = " + CString(uBufferCount));
 		}
@@ -734,6 +734,11 @@ bool CZNC::WriteNewConfig(const CString& sConfigFile) {
 			vsLines.push_back("\tAutoClearChanBuffer = true");
 		} else {
 			vsLines.push_back("\tAutoClearChanBuffer = false");
+		}
+		if (CUtils::GetBoolInput("Would you like to clear query buffers after replay?", true)) {
+			vsLines.push_back("\tAutoClearQueryBuffer = true");
+		} else {
+			vsLines.push_back("\tAutoClearQueryBuffer = false");
 		}
 
 		CUtils::GetInput("Default channel modes", sAnswer, "+stn");
