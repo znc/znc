@@ -7,6 +7,8 @@ PERL_LD    := $(shell $(PERL) -MExtUtils::Embed -e ldopts)
 # Perl API is ugly, casting string literals to char* and redeclaring functions :(
 PERL_CXX   += -Wno-write-strings -Wno-redundant-decls -Wno-missing-declarations
 PERL_CXX   += -Wno-type-limits -Wno-sign-compare -Wno-strict-overflow -Wno-unused-value
+# perl 5.20 will fix this warning: https://rt.perl.org/Public/Bug/Display.html?id=120670
+PERL_CXX   += -Wno-reserved-user-defined-literal
 # This is for SWIG
 PERL_CXX   += -DSWIG_TYPE_TABLE=znc
 PERLCEXT_EXT    := $(shell $(PERL) -MConfig -e'print $$Config::Config{dlext}')
