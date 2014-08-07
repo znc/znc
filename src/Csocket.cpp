@@ -2734,9 +2734,14 @@ cs_sock_t Csock::CreateSocket( bool bListen )
 	{
 		set_close_on_exec( iRet );
 
+        const int on = 1;
+        if( setsockopt( iRet, SOL_SOCKET, IP_FREEBIND, ( char * ) &on, sizeof( on ) ) != 0 )
+        {
+            PERROR( "IP_FREEBIND" );
+        }
+
 		if( bListen )
 		{
-			const int on = 1;
 			if( setsockopt( iRet, SOL_SOCKET, SO_REUSEADDR, ( char * ) &on, sizeof( on ) ) != 0 )
 				PERROR( "SO_REUSEADDR" );
 		}
