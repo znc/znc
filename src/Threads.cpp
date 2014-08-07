@@ -163,6 +163,23 @@ void CThreadPool::cancelJob(CJob *job) {
 }
 
 void CThreadPool::cancelJobs(const std::set<CJob *> &jobs) {
+	// Thanks to the mutex, jobs cannot change state anymore. There are
+	// three different states which can occur:
+	//
+	// READY: The job is still in our list of pending jobs and no threads
+	// got it yet. Just clean up.
+	//
+	// DONE: The job finished running and was already written to the pipe
+	// that is used for waking up finished jobs. We can just read from the
+	// pipe until we see this job.
+	//
+	// RUNNING: This is the complicated case. The job is currently being
+	// executed. We change its state to CANCELLED so that wasCancelled()
+	// returns true. Afterwards we wait on a CV for the job to have finished
+	// running. This CV is signaled by jobDone() which checks the job's
+	// status and sees that the job was cancelled. It signals to us that
+	// cancellation is done by changing the job's status to DONE.
+
 	CMutexLocker guard(m_mutex);
 	std::set<CJob *> wait, finished, deleteLater;
 	std::set<CJob *>::const_iterator it;
