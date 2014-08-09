@@ -527,6 +527,9 @@ CNick* CChan::FindNick(const CString& sNick) {
 
 void CChan::SendBuffer(CClient* pClient) {
 	SendBuffer(pClient, m_Buffer);
+	if (AutoClearChanBuffer()) {
+		ClearBuffer();
+	}
 }
 
 void CChan::SendBuffer(CClient* pClient, const CBuffer& Buffer) {
@@ -574,10 +577,6 @@ void CChan::SendBuffer(CClient* pClient, const CBuffer& Buffer) {
 
 				if (pClient)
 					break;
-			}
-
-			if (AutoClearChanBuffer()) {
- 				ClearBuffer();
 			}
 		}
 	}
