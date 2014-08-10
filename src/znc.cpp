@@ -645,50 +645,13 @@ bool CZNC::WriteNewConfig(const CString& sConfigFile) {
 	// !Listen
 
 	set<CModInfo> ssGlobalMods;
-	GetModules().GetAvailableMods(ssGlobalMods, CModInfo::GlobalModule);
-	size_t uNrOtherGlobalMods = FilterUncommonModules(ssGlobalMods);
-
-	if (!ssGlobalMods.empty()) {
-		CUtils::PrintMessage("");
-		CUtils::PrintMessage("-- Global Modules --");
-		CUtils::PrintMessage("");
-
-		CTable Table;
-		Table.AddColumn("Name");
-		Table.AddColumn("Description");
-		set<CModInfo>::iterator it;
-
-		for (it = ssGlobalMods.begin(); it != ssGlobalMods.end(); ++it) {
-			const CModInfo& Info = *it;
-			Table.AddRow();
-			Table.SetCell("Name", Info.GetName());
-			Table.SetCell("Description", Info.GetDescription().Ellipsize(128));
-		}
-
-		unsigned int uTableIdx = 0; CString sLine;
-		while (Table.GetLine(uTableIdx++, sLine)) {
-			CUtils::PrintMessage(sLine);
-		}
-
-		if (uNrOtherGlobalMods > 0) {
-			CUtils::PrintMessage("And " + CString(uNrOtherGlobalMods) + " other (uncommon) modules. You can enable those later.");
-		}
-
-		CUtils::PrintMessage("");
-
-		for (it = ssGlobalMods.begin(); it != ssGlobalMods.end(); ++it) {
-			const CModInfo& Info = *it;
-			CString sName = Info.GetName();
-
-			if (CDebug::StdoutIsTTY()) {
-				if (CUtils::GetBoolInput("Load global module <\033[1m" + sName + "\033[22m>?", false))
-					vsLines.push_back("LoadModule = " + sName);
-			} else {
-				if (CUtils::GetBoolInput("Load global module <" + sName + ">?", false))
-					vsLines.push_back("LoadModule = " + sName);
-			}
-		}
+	GetModules().GetDefaultMods(ssGlobalMods, CModInfo::GlobalModule);
+	vector<CString> vsGlobalModNames;
+	for (set<CModInfo>::const_iterator it = ssGlobalMods.begin(); it != ssGlobalMods.end(); ++it) {
+		vsGlobalModNames.push_back(it->GetName());
+		vsLines.push_back("LoadModule = " + it->GetName());
 	}
+	CUtils::PrintMessage("Enabled the default global modules [" + CString(", ").Join(vsGlobalModNames.begin(), vsGlobalModNames.end()) + "]");
 
 	// User
 	CUtils::PrintMessage("");
@@ -754,51 +717,13 @@ bool CZNC::WriteNewConfig(const CString& sConfigFile) {
 		}
 
 		set<CModInfo> ssUserMods;
-		GetModules().GetAvailableMods(ssUserMods);
-		size_t uNrOtherUserMods = FilterUncommonModules(ssUserMods);
-
-		if (!ssUserMods.empty()) {
-			vsLines.push_back("");
-			CUtils::PrintMessage("");
-			CUtils::PrintMessage("-- User Modules --");
-			CUtils::PrintMessage("");
-
-			CTable Table;
-			Table.AddColumn("Name");
-			Table.AddColumn("Description");
-			set<CModInfo>::iterator it;
-
-			for (it = ssUserMods.begin(); it != ssUserMods.end(); ++it) {
-				const CModInfo& Info = *it;
-				Table.AddRow();
-				Table.SetCell("Name", Info.GetName());
-				Table.SetCell("Description", Info.GetDescription().Ellipsize(128));
-			}
-
-			unsigned int uTableIdx = 0; CString sLine;
-			while (Table.GetLine(uTableIdx++, sLine)) {
-				CUtils::PrintMessage(sLine);
-			}
-
-			if (uNrOtherUserMods > 0) {
-				CUtils::PrintMessage("And " + CString(uNrOtherUserMods) + " other (uncommon) modules. You can enable those later.");
-			}
-
-			CUtils::PrintMessage("");
-
-			for (it = ssUserMods.begin(); it != ssUserMods.end(); ++it) {
-				const CModInfo& Info = *it;
-				CString sName = Info.GetName();
-
-				if (CDebug::StdoutIsTTY()) {
-					if (CUtils::GetBoolInput("Load module <\033[1m" + sName + "\033[22m>?", false))
-						vsLines.push_back("\tLoadModule = " + sName);
-				} else {
-					if (CUtils::GetBoolInput("Load module <" + sName + ">?", false))
-						vsLines.push_back("\tLoadModule = " + sName);
-				}
-			}
+		GetModules().GetDefaultMods(ssUserMods, CModInfo::UserModule);
+		vector<CString> vsUserModNames;
+		for (set<CModInfo>::const_iterator it = ssUserMods.begin(); it != ssUserMods.end(); ++it) {
+			vsUserModNames.push_back(it->GetName());
+			vsLines.push_back("LoadModule = " + it->GetName());
 		}
+		CUtils::PrintMessage("Enabled the default user modules [" + CString(", ").Join(vsUserModNames.begin(), vsUserModNames.end()) + "]");
 
 		CUtils::PrintMessage("");
 		CString sAAnother = "a";
@@ -813,50 +738,13 @@ bool CZNC::WriteNewConfig(const CString& sConfigFile) {
 			vsLines.push_back("\t<Network " + sNetwork + ">");
 
 			set<CModInfo> ssNetworkMods;
-			GetModules().GetAvailableMods(ssNetworkMods, CModInfo::NetworkModule);
-			size_t uNrOtherNetworkMods = FilterUncommonModules(ssNetworkMods);
-
-			if (!ssNetworkMods.empty()) {
-				CUtils::PrintMessage("");
-				CUtils::PrintMessage("-- Network Modules --");
-				CUtils::PrintMessage("");
-
-				CTable Table;
-				Table.AddColumn("Name");
-				Table.AddColumn("Description");
-				set<CModInfo>::iterator it;
-
-				for (it = ssNetworkMods.begin(); it != ssNetworkMods.end(); ++it) {
-					const CModInfo& Info = *it;
-					Table.AddRow();
-					Table.SetCell("Name", Info.GetName());
-					Table.SetCell("Description", Info.GetDescription().Ellipsize(128));
-				}
-
-				unsigned int uTableIdx = 0; CString sLine;
-				while (Table.GetLine(uTableIdx++, sLine)) {
-					CUtils::PrintMessage(sLine);
-				}
-
-				if (uNrOtherNetworkMods > 0) {
-					CUtils::PrintMessage("And " + CString(uNrOtherNetworkMods) + " other (uncommon) modules. You can enable those later.");
-				}
-
-				CUtils::PrintMessage("");
-
-				for (it = ssNetworkMods.begin(); it != ssNetworkMods.end(); ++it) {
-					const CModInfo& Info = *it;
-					CString sName = Info.GetName();
-
-					if (CDebug::StdoutIsTTY()) {
-						if (CUtils::GetBoolInput("Load module <\033[1m" + sName + "\033[22m>?", false))
-							vsLines.push_back("\t\tLoadModule = " + sName);
-					} else {
-						if (CUtils::GetBoolInput("Load module <" + sName + ">?", false))
-							vsLines.push_back("\t\tLoadModule = " + sName);
-					}
-				}
+			GetModules().GetDefaultMods(ssNetworkMods, CModInfo::NetworkModule);
+			vector<CString> vsNetworkModNames;
+			for (set<CModInfo>::const_iterator it = ssNetworkMods.begin(); it != ssNetworkMods.end(); ++it) {
+				vsNetworkModNames.push_back(it->GetName());
+				vsLines.push_back("LoadModule = " + it->GetName());
 			}
+			CUtils::PrintMessage("Enabled the default network modules [" + CString(", ").Join(vsNetworkModNames.begin(), vsNetworkModNames.end()) + "]");
 
 			vsLines.push_back("");
 			CUtils::PrintMessage("");
@@ -999,26 +887,6 @@ bool CZNC::WriteNewConfig(const CString& sConfigFile) {
 
 	File.UnLock();
 	return bFileOpen && CUtils::GetBoolInput("Launch ZNC now?", true);
-}
-
-size_t CZNC::FilterUncommonModules(set<CModInfo>& ssModules) {
-	const char* ns[] = { "webadmin", "controlpanel",
-		"chansaver", "keepnick", "simple_away", "partyline",
-		"kickrejoin", "nickserv", "perform" };
-	const set<CString> ssNames(ns, ns + sizeof(ns) / sizeof(ns[0]));
-
-	size_t uNrRemoved = 0;
-	for(set<CModInfo>::iterator it = ssModules.begin(); it != ssModules.end(); ) {
-		if(ssNames.count(it->GetName()) > 0) {
-			++it;
-		} else {
-			set<CModInfo>::iterator it2 = it++;
-			ssModules.erase(it2);
-			uNrRemoved++;
-		}
-	}
-
-	return uNrRemoved;
 }
 
 void CZNC::BackupConfigOnce(const CString& sSuffix) {
