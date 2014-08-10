@@ -144,6 +144,7 @@ protected:
 	unsigned short int                  m_uFloodBurst;
 	double                              m_fFloodRate;
 	bool                                m_bFloodProtection;
+	bool                                m_bPendingStatusPrefix;
 
 	friend class CIRCFloodTimer;
 };
