@@ -94,6 +94,7 @@ public:
 		m_bUHNames = false;
 		m_bAway = false;
 		m_bServerTime = false;
+		m_bQuiet = false;
 		EnableReadLine();
 		// RFC says a line can have 512 chars max, but we are
 		// a little more gentle ;)
@@ -128,6 +129,7 @@ public:
 	void PutStatusNotice(const CString& sLine);
 	void PutModule(const CString& sModule, const CString& sLine);
 	void PutModNotice(const CString& sModule, const CString& sLine);
+	void PutCommandInfo(const CString& sInfo);
 
 	bool IsCapEnabled(const CString& sCap) { return 1 == m_ssAcceptedCaps.count(sCap); }
 
@@ -153,6 +155,7 @@ public:
 private:
 	void HandleCap(const CString& sLine);
 	void RespondCap(const CString& sResponse);
+	void HandleCommandArgs(CString& sLine);
 
 protected:
 	bool                 m_bGotPass;
@@ -163,6 +166,7 @@ protected:
 	bool                 m_bUHNames;
 	bool                 m_bAway;
 	bool                 m_bServerTime;
+	bool                 m_bQuiet;
 	CUser*               m_pUser;
 	CIRCNetwork*         m_pNetwork;
 	CString              m_sNick;
