@@ -14,10 +14,11 @@ matrix:
         - compiler: clang
           env: CFGFLAGS=--enable-debug MYCXXFLAGS="-fsanitize=thread -O1" MYLDFLAGS=-fsanitize=thread
 before_install:
+    - cat /proc/cpuinfo /proc/meminfo
     - sudo apt-get update -qq
     - sudo apt-get install -qq libperl-dev python3-dev tcl-dev libsasl2-dev libgtest-dev libicu-dev
     - apt-cache show swig
-    - ( cd ~ && wget http://prdownloads.sourceforge.net/swig/swig-2.0.8.tar.gz && tar xvf swig-2.0.8.tar.gz && cd swig-2.0.8 && ./configure && make -j$(nproc) && sudo make install )
+    - ( cd ~ && wget http://prdownloads.sourceforge.net/swig/swig-2.0.8.tar.gz && tar xvf swig-2.0.8.tar.gz && cd swig-2.0.8 && ./configure && make -j3 && sudo make install )
     - sudo apt-get install doxygen graphviz
 script:
     - ./bootstrap.sh
@@ -25,8 +26,8 @@ script:
     - cd build
     - ../configure --enable-perl --enable-python --enable-tcl --enable-cyrus --with-gtest=/usr/src/gtest $CFGFLAGS CXXFLAGS="$CXXFLAGS $MYCXXFLAGS" LDFLAGS="$LDFLAGS $MYLDFLAGS"
     - cat config.log
-    - make V=1 -j$(nproc)
-    - make V=1 test -j$(nproc)
+    - make V=1 -j3
+    - make V=1 test -j3
     - sudo make install
     - cd ..
 after_success:
