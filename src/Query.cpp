@@ -53,7 +53,16 @@ void CQuery::SendBuffer(CClient* pClient, const CBuffer& Buffer) {
 
 				size_t uSize = Buffer.Size();
 				for (size_t uIdx = 0; uIdx < uSize; uIdx++) {
-					CString sLine = Buffer.GetLine(uIdx, *pUseClient, msParams);
+					const CBufLine& BufLine = Buffer.GetBufLine(uIdx);
+
+					if (!pUseClient->HasSelfMessage()) {
+						CNick Sender(BufLine.GetFormat().Token(0));
+						if (Sender.NickEquals(pUseClient->GetNick())) {
+							continue;
+						}
+					}
+
+					CString sLine = BufLine.GetLine(*pUseClient, msParams);
 					if (bBatch) {
 						MCString msBatchTags = CUtils::GetMessageTags(sLine);
 						msBatchTags["batch"] = sBatchName;

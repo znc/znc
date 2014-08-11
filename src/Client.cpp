@@ -271,15 +271,11 @@ void CClient::ReadLine(const CString& sData) {
 				}
 
 				// Relay to the rest of the clients that may be connected to this user
-				if (m_pNetwork->IsChan(sTarget)) {
-					const vector<CClient*>& vClients = GetClients();
+				const vector<CClient*>& vClients = GetClients();
 
-					for (unsigned int a = 0; a < vClients.size(); a++) {
-						CClient* pClient = vClients[a];
-
-						if (pClient != this) {
-							pClient->PutClient(":" + GetNickMask() + " NOTICE " + sTarget + " :" + sMsg);
-						}
+				for (CClient* pClient : vClients) {
+					if (pClient != this && (m_pNetwork->IsChan(sTarget) || pClient->HasSelfMessage())) {
+						pClient->PutClient(":" + GetNickMask() + " NOTICE " + sTarget + " :" + sMsg);
 					}
 				}
 
@@ -324,23 +320,21 @@ void CClient::ReadLine(const CString& sData) {
 							if (pChan && (!pChan->AutoClearChanBuffer() || !m_pNetwork->IsUserOnline())) {
 								pChan->AddBuffer(":" + _NAMEDFMT(GetNickMask()) + " PRIVMSG " + _NAMEDFMT(sTarget) + " :\001ACTION {text}\001", sMessage);
 							}
-
-							// Relay to the rest of the clients that may be connected to this user
-							const vector<CClient*>& vClients = GetClients();
-
-							for (unsigned int a = 0; a < vClients.size(); a++) {
-								CClient* pClient = vClients[a];
-
-								if (pClient != this) {
-									pClient->PutClient(":" + GetNickMask() + " PRIVMSG " + sTarget + " :\001" + sCTCP + "\001");
-								}
-							}
 						} else {
 							if (!m_pUser->AutoClearQueryBuffer() || !m_pNetwork->IsUserOnline()) {
 								CQuery* pQuery = m_pNetwork->AddQuery(sTarget);
 								if (pQuery) {
 									pQuery->AddBuffer(":" + _NAMEDFMT(GetNickMask()) + " PRIVMSG " + _NAMEDFMT(sTarget) + " :\001ACTION {text}\001", sMessage);
 								}
+							}
+						}
+
+						// Relay to the rest of the clients that may be connected to this user
+						const vector<CClient*>& vClients = GetClients();
+
+						for (CClient* pClient : vClients) {
+							if (pClient != this && (m_pNetwork->IsChan(sTarget) || pClient->HasSelfMessage())) {
+								pClient->PutClient(":" + GetNickMask() + " PRIVMSG " + sTarget + " :\001" + sCTCP + "\001");
 							}
 						}
 					} else {
@@ -393,16 +387,11 @@ void CClient::ReadLine(const CString& sData) {
 				PutIRC("PRIVMSG " + sTarget + " :" + sMsg);
 
 				// Relay to the rest of the clients that may be connected to this user
+				const vector<CClient*>& vClients = GetClients();
 
-				if (m_pNetwork->IsChan(sTarget)) {
-					const vector<CClient*>& vClients = GetClients();
-
-					for (unsigned int a = 0; a < vClients.size(); a++) {
-						CClient* pClient = vClients[a];
-
-						if (pClient != this) {
-							pClient->PutClient(":" + GetNickMask() + " PRIVMSG " + sTarget + " :" + sMsg);
-						}
+				for (CClient* pClient : vClients) {
+					if (pClient != this && (m_pNetwork->IsChan(sTarget) || pClient->HasSelfMessage())) {
+						pClient->PutClient(":" + GetNickMask() + " PRIVMSG " + sTarget + " :" + sMsg);
 					}
 				}
 			}
@@ -877,7 +866,7 @@ void CClient::HandleCap(const CString& sLine)
 		for (SCString::iterator i = ssOfferCaps.begin(); i != ssOfferCaps.end(); ++i) {
 			sRes += *i + " ";
 		}
-		RespondCap("LS :" + sRes + "userhost-in-names multi-prefix znc.in/server-time-iso znc.in/batch");
+		RespondCap("LS :" + sRes + "userhost-in-names multi-prefix znc.in/server-time-iso znc.in/batch znc.in/self-message");
 		m_bInCap = true;
 	} else if (sSubCmd.Equals("END")) {
 		m_bInCap = false;
@@ -899,7 +888,7 @@ void CClient::HandleCap(const CString& sLine)
 			if (sCap.TrimPrefix("-"))
 				bVal = false;
 
-			bool bAccepted = ("multi-prefix" == sCap) || ("userhost-in-names" == sCap) || ("znc.in/server-time-iso" == sCap) || ("znc.in/batch" == sCap);
+			bool bAccepted = ("multi-prefix" == sCap) || ("userhost-in-names" == sCap) || ("znc.in/server-time-iso" == sCap) || ("znc.in/batch" == sCap) || ("znc.in/self-message" == sCap);
 			GLOBALMODULECALL(IsClientCapSupported(this, sCap, bVal), &bAccepted);
 
 			if (!bAccepted) {
@@ -923,6 +912,8 @@ void CClient::HandleCap(const CString& sLine)
 				m_bServerTime = bVal;
 			} else if ("znc.in/batch" == *it) {
 				m_bBatch = bVal;
+			} else if ("znc.in/self-message" == *it) {
+				m_bSelfMessage = bVal;
 			}
 			GLOBALMODULECALL(OnClientCapRequest(this, *it, bVal), NOTHING);
 
@@ -965,6 +956,10 @@ void CClient::HandleCap(const CString& sLine)
 		if (m_bBatch) {
 			m_bBatch = false;
 			ssRemoved.insert("znc.in/batch");
+		}
+		if (m_bSelfMessage) {
+			m_bSelfMessage = false;
+			ssRemoved.insert("znc.in/self-message");
 		}
 		CString sList = "";
 		for (SCString::iterator i = ssRemoved.begin(); i != ssRemoved.end(); ++i) {
