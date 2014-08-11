@@ -20,6 +20,36 @@
 
 using std::vector;
 
+class CSampleJob : public CModuleJob {
+public:
+	CSampleJob(CModule *pModule) : CModuleJob(pModule, "sample", "Message the user after a delay") {}
+
+	~CSampleJob() {
+		if (wasCancelled()) {
+			m_pModule->PutModule("Sample job cancelled");
+		} else {
+			m_pModule->PutModule("Sample job destroyed");
+		}
+	}
+
+	virtual void runThread() {
+		// Cannot safely use m_pModule in here, because this runs in its
+		// own thread and such an access would require synchronisation
+		// between this thread and the main thread!
+
+		for (int i = 0; i < 10; i++) {
+			// Regularly check if we were cancelled
+			if (wasCancelled())
+				return;
+			sleep(1);
+		}
+	}
+
+	virtual void runMain() {
+		m_pModule->PutModule("Sample job done");
+	}
+};
+
 class CSampleTimer : public CTimer {
 public:
 
@@ -42,6 +72,7 @@ public:
 		//AddTimer(new CSampleTimer(this, 300, 0, "Sample", "Sample timer for sample things."));
 		//AddTimer(new CSampleTimer(this, 5, 20, "Another", "Another sample timer."));
 		//AddTimer(new CSampleTimer(this, 25000, 5, "Third", "A third sample timer."));
+		AddJob(new CSampleJob(this));
 		return true;
 	}
 
