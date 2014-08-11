@@ -57,7 +57,11 @@
 
 #define CS_SRANDBUFFER 128
 
-using namespace std;
+using std::stringstream;
+using std::ostream;
+using std::endl;
+using std::min;
+using std::vector;
 
 #define CREATE_ARES_VER( a, b, c ) ((a<<16)|(b<<8)|c)
 
