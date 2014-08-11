@@ -566,7 +566,14 @@ bool CZNC::WriteNewConfig(const CString& sConfigFile) {
 	vsLines.push_back("Version = " + CString(VERSION, 1));
 
 	m_sConfigFile = ExpandConfigPath(sConfigFile);
-	CUtils::PrintMessage("Building new config");
+
+	if (CFile::Exists(m_sConfigFile)) {
+		CUtils::PrintStatus(false, "The config file [" + m_sConfigFile + "] already exists.");
+		if (!CUtils::GetBoolInput("Would you like to overwrite it?", false))
+			return false;
+	} else {
+		CUtils::PrintMessage("Building new config");
+	}
 
 	CUtils::PrintMessage("");
 	CUtils::PrintMessage("First let's start with some global settings...");
@@ -917,7 +924,7 @@ bool CZNC::WriteNewConfig(const CString& sConfigFile) {
 			} else {
 				File.Close();
 				CUtils::PrintStatus(false, "This config already exists.");
-				if (CUtils::GetBoolInput("Would you like to overwrite it?", false))
+				if (CUtils::GetBoolInput("Are you sure you want to overwrite it?", false))
 					CUtils::PrintAction("Overwriting config [" + m_sConfigFile + "]");
 				else
 					bFileOK = false;
