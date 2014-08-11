@@ -29,6 +29,12 @@ AC_DEFUN([ZNC_AUTO_FAIL], [
 # AC_PROG_CXX sets CXXFLAGS to "-O2 -g" if it is unset which we don't want
 CXXFLAGS="$CXXFLAGS "
 AC_PROG_CXX
+# "Optional" because we want custom error message
+AX_CXX_COMPILE_STDCXX_11([noext], [optional])
+if test x"$HAVE_CXX11" != x1; then
+	AC_MSG_ERROR([Either upgrade your compiler, or use ZNC 1.4])
+fi
+
 AC_PROG_INSTALL
 AC_PROG_GREP
 AC_PROG_SED
@@ -419,12 +425,7 @@ fi
 if test "x$PERL" != xno -o "x$PYTHON" != xno; then
 	old_USESWIG="$USESWIG"
 	if test "x$USESWIG" != "xno"; then
-		if test -z "$ISDARWIN"; then
-			AC_PROG_SWIG([2.0.8])
-		else
-			# Old SWIG doesn't like libc++, see https://github.com/swig/swig/issues/73
-			AC_PROG_SWIG([2.0.12])
-		fi
+		AC_PROG_SWIG([3.0.0])
 		test -z "$SWIG" && USESWIG=no
 		if test "x$USESWIG" = xno -a "x$old_USESWIG" = yes; then
 			AC_MSG_ERROR([Could not found appropriate SWIG installation. Check config.log for details.])
