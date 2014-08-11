@@ -16,8 +16,8 @@ UserKnownHostsFile /dev/null
 EOF
 
 cd "$HOME"
-git config --global user.email "travis@travis-ci.org"
-git config --global user.name "travis-ci"
+git config --global user.email "travis-ci@znc.in"
+git config --global user.name "znc-travis"
 git clone --branch=gh-pages znc-docs:znc/docs.git gh-pages || exit 1
 
 cd gh-pages
