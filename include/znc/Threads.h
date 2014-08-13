@@ -29,6 +29,7 @@
 #include <cstring>
 #include <list>
 #include <pthread.h>
+#include <signal.h>
 
 /**
  * This class represents a non-recursive mutex. Only a single thread may own the
@@ -176,9 +177,10 @@ private:
 	pthread_cond_t m_cond;
 };
 
+extern "C" typedef void *threadRoutine(void *);
+
 class CThread {
 public:
-	typedef void *threadRoutine(void *);
 	static void startThread(threadRoutine *func, void *arg) {
 		pthread_t thr;
 		sigset_t old_sigmask, sigmask;

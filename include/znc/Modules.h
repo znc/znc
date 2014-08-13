@@ -321,7 +321,8 @@ public:
 	const CString& GetArgs() const { return m_sArgs; }
 	const CString& GetDescription() const { return m_sDesc; }
 
-	void Call(CModule *pMod, const CString& sLine) const { (pMod->*m_pFunc)(sLine); }
+	/* Inline definition occurs after declaration of CModule */
+	void Call(CModule *pMod, const CString& sLine) const;
 
 private:
 	CString m_sCmd;
@@ -1104,6 +1105,11 @@ private:
 	VWebSubPages       m_vSubPages;
 	std::map<CString, CModCommand> m_mCommands;
 };
+
+inline void CModCommand::Call(CModule *pMod, const CString& sLine) const
+{
+	(pMod->*m_pFunc)(sLine);
+}
 
 class CModules : public std::vector<CModule*> {
 public:
