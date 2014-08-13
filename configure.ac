@@ -87,6 +87,8 @@ case "${host_os}" in
 		ISSUN=1
 	;;
 	cygwin)
+		# We don't want to use -std=gnu++11 instead of -std=c++11, but among other things, -std=c++11 defines __STRICT_ANSI__ which makes cygwin not to compile: undefined references to strerror_r, to fdopen, to strcasecmp, etc (their declarations in system headers are between ifdef)
+		appendCXX -U__STRICT_ANSI__
 		ISCYGWIN=1
 	;;
 	darwin*)
@@ -640,6 +642,18 @@ AC_CONFIG_FILES([znc.pc])
 AC_CONFIG_FILES([znc-uninstalled.pc])
 AC_CONFIG_FILES([modules/Makefile])
 AC_OUTPUT
+
+if test "x$ISCYGWIN" = x1; then
+		# Side effect of undefining __STRICT_ANSI__
+		# http://llvm.org/bugs/show_bug.cgi?id=13530
+		echo                                 >> include/znc/zncconfig.h
+		echo '#ifndef ZNCCONFIG_H_ADDITIONS' >> include/znc/zncconfig.h
+		echo '#define ZNCCONFIG_H_ADDITIONS' >> include/znc/zncconfig.h
+		echo '#ifdef __clang__'              >> include/znc/zncconfig.h
+		echo 'struct __float128;'            >> include/znc/zncconfig.h
+		echo '#endif'                        >> include/znc/zncconfig.h
+		echo '#endif'                        >> include/znc/zncconfig.h
+fi
 
 echo
 echo ZNC AC_PACKAGE_VERSION configured
