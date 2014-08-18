@@ -133,7 +133,7 @@ public:
 
 	virtual void ReadLine(const CString& sData);
 	bool SendMotd();
-	void HelpUser();
+	void HelpUser(const CString& sFilter = "");
 	void AuthUser();
 	virtual void Connected();
 	virtual void Timeout();
