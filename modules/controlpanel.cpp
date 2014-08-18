@@ -620,16 +620,21 @@ class CAdminMod : public CModule {
 			return;
 		}
 		
-		CChan* pChan = pNetwork->FindChan(sChan);
-		if (!pChan) {
-			PutModule("Error: User [" + sUsername + "] does not have a channel named [" + sChan + "].");
+		std::vector<CChan*> vChans = pNetwork->FindChans(sChan);
+		if (vChans.empty()) {
+			PutModule("Error: User [" + sUsername + "] does not have any channel matching [" + sChan + "].");
 			return;
 		}
 		
-		pNetwork->DelChan(sChan);
-		pNetwork->PutIRC("PART " + sChan);
+		VCString vsNames;
+		for (const CChan* pChan : vChans) {
+			const CString& sName = pChan->GetName();
+			vsNames.push_back(sName);
+			pNetwork->PutIRC("PART " + sName);
+			pNetwork->DelChan(sName);
+		}
 		
-		PutModule("Channel [" + sChan + "] for user [" + sUsername + "] deleted.");
+		PutModule("Channel(s) [" + CString(",").Join(vsNames.begin(), vsNames.end()) + "] for user [" + sUsername + "] deleted.");
 	}
 
 	void GetChan(const CString& sLine) {
