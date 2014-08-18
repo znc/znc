@@ -1207,6 +1207,7 @@ public:
 	static bool GetModInfo(CModInfo& ModInfo, const CString& sModule, CString &sRetMsg);
 	static bool GetModPathInfo(CModInfo& ModInfo, const CString& sModule, const CString& sModPath, CString &sRetMsg);
 	static void GetAvailableMods(std::set<CModInfo>& ssMods, CModInfo::EModuleType eType = CModInfo::UserModule);
+	static void GetDefaultMods(std::set<CModInfo>& ssMods, CModInfo::EModuleType eType = CModInfo::UserModule);
 
 	// This returns the path to the .so and to the data dir
 	// which is where static data (webadmin skins) are saved

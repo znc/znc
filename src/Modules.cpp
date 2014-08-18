@@ -1196,6 +1196,28 @@ void CModules::GetAvailableMods(set<CModInfo>& ssMods, CModInfo::EModuleType eTy
 	GLOBALMODULECALL(OnGetAvailableMods(ssMods, eType), NOTHING);
 }
 
+void CModules::GetDefaultMods(set<CModInfo>& ssMods, CModInfo::EModuleType eType) {
+
+	GetAvailableMods(ssMods, eType);
+
+	const map<CString, CModInfo::EModuleType> ns = {
+		{ "chansaver", CModInfo::UserModule },
+		{ "controlpanel", CModInfo::UserModule },
+		{ "simple_away", CModInfo::NetworkModule },
+		{ "webadmin", CModInfo::GlobalModule }
+	};
+
+	auto it = ssMods.begin();
+	while (it != ssMods.end()) {
+		auto it2 = ns.find(it->GetName());
+		if (it2 != ns.end() && it2->second == eType) {
+			++it;
+		} else {
+			it = ssMods.erase(it);
+		}
+	}
+}
+
 bool CModules::FindModPath(const CString& sModule, CString& sModPath,
 		CString& sDataPath) {
 	CString sMod = sModule;
