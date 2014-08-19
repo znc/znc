@@ -29,6 +29,7 @@ public:
 		AddCommand("Show", static_cast<CModCommand::ModCmdFunc>(&CFloodDetachMod::ShowCommand), "");
 		AddCommand("Secs", static_cast<CModCommand::ModCmdFunc>(&CFloodDetachMod::SecsCommand), "[<limit>]");
 		AddCommand("Lines", static_cast<CModCommand::ModCmdFunc>(&CFloodDetachMod::LinesCommand), "[<limit>]");
+		AddCommand("Silent", static_cast<CModCommand::ModCmdFunc>(&CFloodDetachMod::SilentCommand), "[yes|no]");
 	}
 
 	~CFloodDetachMod() {
@@ -85,8 +86,10 @@ public:
 				// channels which we detached, this means that
 				// we detached because of a flood.
 
-				PutModule("Flood in [" + pChan->GetName() + "] is over, "
-						"re-attaching...");
+				if (!GetNV("silent").ToBool()) {
+					PutModule("Flood in [" + pChan->GetName() + "] is over, "
+							"re-attaching...");
+				}
 				// No buffer playback, makes sense, doesn't it?
 				pChan->ClearBuffer();
 				pChan->JoinUser();
@@ -143,8 +146,10 @@ public:
 		it->second.first = now;
 
 		Channel.DetachUser();
-		PutModule("Channel [" + Channel.GetName() + "] was "
-				"flooded, you've been detached");
+		if (!GetNV("silent").ToBool()) {
+			PutModule("Channel [" + Channel.GetName() + "] was "
+					"flooded, you've been detached");
+		}
 	}
 
 	EModRet OnChanMsg(CNick& Nick, CChan& Channel, CString& sMessage) {
@@ -200,6 +205,20 @@ public:
 
 			PutModule("Set lines limit to [" + CString(m_iThresholdMsgs) + "]");
 			Save();
+		}
+	}
+
+	void SilentCommand(const CString& sLine) {
+		const CString sArg = sLine.Token(1, true);
+
+		if (!sArg.empty()) {
+			SetNV("silent", CString(sArg.ToBool()));
+		}
+
+		if (GetNV("silent").ToBool()) {
+			PutModule("Module messages are disabled");
+		} else {
+			PutModule("Module messages are enabled");
 		}
 	}
 
