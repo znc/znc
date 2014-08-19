@@ -24,6 +24,11 @@ public:
 	MODCONSTRUCTOR(CFloodDetachMod) {
 		m_iThresholdSecs = 0;
 		m_iThresholdMsgs = 0;
+
+		AddHelpCommand();
+		AddCommand("Show", static_cast<CModCommand::ModCmdFunc>(&CFloodDetachMod::ShowCommand), "");
+		AddCommand("Secs", static_cast<CModCommand::ModCmdFunc>(&CFloodDetachMod::SecsCommand), "[<limit>]");
+		AddCommand("Lines", static_cast<CModCommand::ModCmdFunc>(&CFloodDetachMod::LinesCommand), "[<limit>]");
 	}
 
 	~CFloodDetachMod() {
@@ -163,31 +168,37 @@ public:
 		return CONTINUE;
 	}
 
-	void OnModCommand(const CString& sCommand) {
-		const CString& sCmd = sCommand.Token(0);
-		const CString& sArg = sCommand.Token(1, true);
+	void ShowCommand(const CString& sLine) {
+		PutModule("Current limit is " + CString(m_iThresholdMsgs) + " lines "
+				"in " + CString(m_iThresholdSecs) + " secs.");
+	}
 
-		if (sCmd.Equals("secs") && !sArg.empty()) {
+	void SecsCommand(const CString& sLine) {
+		const CString sArg = sLine.Token(1, true);
+
+		if (!sArg.empty()) {
 			m_iThresholdSecs = sArg.ToUInt();
 			if (m_iThresholdSecs == 0)
 				m_iThresholdSecs = 1;
 
 			PutModule("Set seconds limit to [" + CString(m_iThresholdSecs) + "]");
 			Save();
-		} else if (sCmd.Equals("lines") && !sArg.empty()) {
+		}
+	}
+
+	void LinesCommand(const CString& sLine) {
+		const CString sArg = sLine.Token(1, true);
+
+		if (!sArg.empty()) {
 			m_iThresholdMsgs = sArg.ToUInt();
 			if (m_iThresholdMsgs == 0)
 				m_iThresholdMsgs = 2;
 
 			PutModule("Set lines limit to [" + CString(m_iThresholdMsgs) + "]");
 			Save();
-		} else if (sCmd.Equals("show")) {
-			PutModule("Current limit is " + CString(m_iThresholdMsgs) + " lines "
-					"in " + CString(m_iThresholdSecs) + " secs.");
-		} else {
-			PutModule("Commands: show, secs <limit>, lines <limit>");
 		}
 	}
+
 private:
 	typedef map<CString, std::pair<time_t, unsigned int> > Limits;
 	Limits m_chans;
