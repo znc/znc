@@ -635,14 +635,7 @@ void CClient::UserCommand(CString& sLine) {
 				}
 			}
 
-			CFile fOldNVFile = CFile(sOldModPath + "/.registry");
-			if (!fOldNVFile.Exists()) {
-				continue;
-			}
-			if (!CFile::Exists(sNewModPath)) {
-				CDir::MakeDir(sNewModPath);
-			}
-			fOldNVFile.Copy(sNewModPath + "/.registry");
+			(*i)->MoveRegistry(sNewModPath);
 		}
 
 		CString sNetworkAddError;
