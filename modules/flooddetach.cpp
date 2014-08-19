@@ -176,7 +176,9 @@ public:
 	void SecsCommand(const CString& sLine) {
 		const CString sArg = sLine.Token(1, true);
 
-		if (!sArg.empty()) {
+		if (sArg.empty()) {
+			PutModule("Seconds limit is [" + CString(m_iThresholdSecs) + "]");
+		} else {
 			m_iThresholdSecs = sArg.ToUInt();
 			if (m_iThresholdSecs == 0)
 				m_iThresholdSecs = 1;
@@ -189,7 +191,9 @@ public:
 	void LinesCommand(const CString& sLine) {
 		const CString sArg = sLine.Token(1, true);
 
-		if (!sArg.empty()) {
+		if (sArg.empty()) {
+			PutModule("Lines limit is [" + CString(m_iThresholdMsgs) + "]");
+		} else {
 			m_iThresholdMsgs = sArg.ToUInt();
 			if (m_iThresholdMsgs == 0)
 				m_iThresholdMsgs = 2;
