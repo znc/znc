@@ -117,7 +117,7 @@ public:
 				CString sState = "Waiting";
 				if ((pSock->IsConnected()) || (pSock->IsPeerConnected())) {
 					sState = "Halfway";
-					if ((pSock->IsPeerConnected()) && (pSock->IsPeerConnected())) {
+					if ((pSock->IsConnected()) && (pSock->IsPeerConnected())) {
 						sState = "Connected";
 					}
 				}
