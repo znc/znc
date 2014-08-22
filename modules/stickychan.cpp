@@ -103,7 +103,7 @@ public:
 					continue;
 				}
 			}
-			if (!pChan->IsOn()) {
+			if (!pChan->IsOn() && m_pNetwork->IsIRCConnected()) {
 				PutModule("Joining [" + pChan->GetName() + "]");
 				PutIRC("JOIN " + pChan->GetName() + (pChan->GetKey().empty()
 							? "" : " " + pChan->GetKey()));
