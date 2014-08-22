@@ -627,8 +627,8 @@ class CAdminMod : public CModule {
 		}
 		
 		VCString vsNames;
-		for (const CChan* pChan : vChans) {
-			const CString& sName = pChan->GetName();
+		for (vector<CChan*>::const_iterator it = vChans.begin(); it != vChans.end(); ++it) {
+			const CString& sName = (*it)->GetName();
 			vsNames.push_back(sName);
 			pNetwork->PutIRC("PART " + sName);
 			pNetwork->DelChan(sName);
