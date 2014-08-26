@@ -316,7 +316,7 @@ template<> void TModInfo<CLogMod>(CModInfo& Info) {
 	Info.AddType(CModInfo::NetworkModule);
 	Info.AddType(CModInfo::GlobalModule);
 	Info.SetHasArgs(true);
-	Info.SetArgsHelpText("[-sanitize] Optional path where to store logs.");
+	Info.SetArgsHelpText("[-sanitize] [-directories] Optional path where to store logs.");
 	Info.SetWikiPage("log");
 }
 
