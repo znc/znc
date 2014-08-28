@@ -413,7 +413,17 @@ public:
 
 		return(CONTINUE);
 	}
+
 	virtual EModRet OnUserMsg(CString& sTarget, CString& sMessage)
+	{
+		Ping();
+		if (m_bIsAway)
+			Back();
+
+		return(CONTINUE);
+	}
+
+	virtual EModRet OnUserAction(CString& sTarget, CString& sMessage)
 	{
 		Ping();
 		if (m_bIsAway)
