@@ -16,14 +16,15 @@
 
 #include <znc/Chan.h>
 #include <znc/FileUtils.h>
+#include <znc/ZNCString.h>
 #include <znc/IRCSock.h>
 #include <znc/Modules.h>
 #include <znc/Nick.h>
 #include <znc/User.h>
 #include <znc/znc.h>
 
-#include "modperl/module.h"
-#include "modperl/swigperlrun.h"
+#include "module.h"
+#include "swigperlrun.h"
 #include <EXTERN.h>
 #include <perl.h>
 #include <XSUB.h>
@@ -32,7 +33,7 @@
 #include <crt_externs.h> // for _NSGetEnviron
 #endif
 
-#include "modperl/pstring.h"
+#include "pstring.h"
 
 using std::set;
 using std::vector;
@@ -253,7 +254,7 @@ public:
 
 };
 
-#include "modperl/functions.cpp"
+#include "functions.cpp"
 
 VWebSubPages& CPerlModule::GetSubPages() {
 	VWebSubPages* result = _GetSubPages();

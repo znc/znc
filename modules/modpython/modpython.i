@@ -38,9 +38,9 @@
 #include "../include/znc/ZNCDebug.h"
 #include "../include/znc/ExecSock.h"
 #include "../include/znc/Buffer.h"
-#include "modpython/module.h"
+#include "module.h"
 
-#include "modpython/ret.h"
+#include "ret.h"
 
 #define stat struct stat
 using std::allocator;
@@ -59,7 +59,7 @@ using std::allocator;
 %include <std_set.i>
 %include <std_deque.i>
 
-%include "modpython/cstring.i"
+%include "cstring.i"
 %template(_stringlist) std::list<CString>;
 
 %typemap(out) CModules::ModDirList %{
@@ -153,7 +153,7 @@ class MCString : public std::map<CString, CString> {};
 %include "../include/znc/ExecSock.h"
 %include "../include/znc/Buffer.h"
 
-%include "modpython/module.h"
+%include "module.h"
 
 /* Really it's CString& inside, but SWIG shouldn't know that :) */
 class CPyRetString {

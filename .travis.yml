@@ -24,13 +24,11 @@ before_install:
     - ( cd ~ && wget http://prdownloads.sourceforge.net/swig/swig-3.0.2.tar.gz && tar xvf swig-3.0.2.tar.gz && cd swig-3.0.2 && ./configure && make -j3 && sudo make install )
     - sudo apt-get install doxygen graphviz
 script:
-    - ./bootstrap.sh
     - mkdir build
     - cd build
-    - ../configure --enable-perl --enable-python --enable-tcl --enable-cyrus --with-gtest=/usr/src/gtest $CFGFLAGS CXXFLAGS="$CXXFLAGS $MYCXXFLAGS" LDFLAGS="$LDFLAGS $MYLDFLAGS"
-    - cat config.log
-    - make V=1 -j3
-    - make V=1 test -j3
+    - ../configure --enable-perl --enable-python --enable-tcl --enable-cyrus -DGTEST_DIR=/usr/src/gtest $CFGFLAGS CC="$CC" CXX="$CXX" CFLAGS="$CFLAGS $MYCXXFLAGS" CXXFLAGS="$CXXFLAGS $MYCXXFLAGS" LDFLAGS="$LDFLAGS $MYLDFLAGS"
+    - make VERBOSE=1 -j3
+    - make VERBOSE=1 test -j3
     - sudo make install
     - cd ..
 after_success:

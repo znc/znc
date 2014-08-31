@@ -2,8 +2,8 @@
 #define _VERSION_H
 
 // The following defines are for #if comparison (preprocessor only likes ints)
-#define VERSION_MAJOR  1
-#define VERSION_MINOR  5
+#define VERSION_MAJOR @ZNC_VERSION_MAJOR@
+#define VERSION_MINOR @ZNC_VERSION_MINOR@
 // This one is for display purpose
 #define VERSION        (VERSION_MAJOR + VERSION_MINOR / 10.0)
 

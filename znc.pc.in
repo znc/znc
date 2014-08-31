@@ -1,23 +1,22 @@
 # You can access these with e.g. pkg-config --variable=moddir znc
-prefix=@prefix@
-exec_prefix=@exec_prefix@
-datarootdir=@datarootdir@
-bindir=@bindir@
-datadir=@datadir@
-includedir=@includedir@
+prefix=@ZNC_PREFIX@
+exec_prefix=@ZNC_EXEC_PREFIX@
+includedir=@ZNC_INCLUDEDIR@
+libdir=@ZNC_LIBDIR@
+bindir=@ZNC_BINDIR@
+datarootdir=@ZNC_DATAROOTDIR@
+datadir=@ZNC_DATADIR@
+moddir=@ZNC_MODDIR@
+mandir=@ZNC_MANDIR@
 
-cxx=@CXX@
-CPPFLAGS=@CPPFLAGS@
-MODFLAGS=@MODFLAGS@
-version=@PACKAGE_VERSION@
-moddir=@MODDIR@
-moddatadir=@DATADIR@
-modlink=@MODLINK@
+cxx=@CMAKE_CXX_COMPILER@
+cxxflags=@ZNC_CXXFLAGS@
+ldflags=@ZNC_LDFLAGS@
 
-INC_PATH=-I${includedir}/znc
+version=@ZNC_VERSION@
 
 Name: ZNC
 Description: An advanced IRC proxy
 Version: ${version}
 URL: http://znc.in
-Cflags: ${CPPFLAGS} ${MODFLAGS} ${INC_PATH}
+Cflags: ${cxxflags}

@@ -1,0 +1,13 @@
+find_package(GZIP REQUIRED)
+if(GZIP_FOUND)
+    add_custom_target(man ALL)
+    file(GLOB MAN_PAGES ${CMAKE_CURRENT_SOURCE_DIR}/*.1)
+    foreach(MAN_PAGE ${MAN_PAGES})
+        get_filename_component(MAN_NAME ${MAN_PAGE} NAME_WE)
+        add_custom_command(TARGET man DEPENDS ${MAN_PAGE}
+                           COMMAND ${GZIP_EXECUTABLE} -9 -c ${MAN_PAGE} > ${CMAKE_CURRENT_BINARY_DIR}/${MAN_NAME}.1.gz)
+        if(NOT DEVELOPER_BUILD)
+            install(FILES ${CMAKE_CURRENT_BINARY_DIR}/${MAN_NAME}.1.gz DESTINATION ${INSTALL_MANDIR})
+        endif()
+    endforeach()
+endif()

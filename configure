@@ -1,0 +1,296 @@
+#!/bin/sh
+# Based on http://github.com/Richard-W/cmake-configure-wrapper
+#
+# Copyright (c) 2013-2014, Richard Wiedenhoeft <richard@wiedenhoeft.xyz>
+# All rights reserved.
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions are met:
+#
+# 1. Redistributions of source code must retain the above copyright notice, this
+#    list of conditions and the following disclaimer. 
+# 2. Redistributions in binary form must reproduce the above copyright notice,
+#    this list of conditions and the following disclaimer in the documentation
+#    and/or other materials provided with the distribution.
+#
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+# ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+# WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+# DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR
+# ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+# (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+# LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+# ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+# (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+# SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+
+cmake_args=""
+cmake_env=""
+
+error() {
+	echo "-- ERROR: $1"
+	exit $2;
+}
+
+warning() {
+	echo "-- WARNING: $1"
+}
+
+notify() {
+	echo "-- $1"
+}
+
+shift_twice=false
+ensure_value() {
+	if [ -z "$value" ]; then
+		value=$2
+
+		if [ "`echo $value | head -c 2`" = "--" ]; then
+			error "$key=$value seems to be invalid" 1
+		fi
+
+		shift_twice=true
+	fi
+}
+
+append_args() {
+	if [ -n "$cmake_args" ]; then
+		cmake_args="$cmake_args $1"
+	else
+		cmake_args="$1"
+	fi
+}
+
+append_env() {
+	if [ -n "$cmake_env" ]; then
+		cmake_env="$cmake_env $1=\"$2\""
+	else
+		cmake_env="$1=\"$2\""
+	fi
+}
+
+srcdir=`cd $(dirname $0) && pwd`
+builddir=`pwd`
+
+debug=false
+devel=false
+cmdline="$0 $@"
+
+while [ $# != 0 ]; do
+	#seperate key=value pairs
+	key=`echo $1 | cut -d'=' -f1`
+	value=`echo $1 | cut -s -d'=' -f2-`
+
+	case "$key" in
+	"--debug"|"--enable-debug")
+		debug=true
+		;;
+	"--release"|"--enable-release")
+		debug=false
+		;;
+	"--developer"|"--enable-developer")
+		devel=true
+		;;
+	"-D"*)
+		append_args "$1"
+		;;
+	"--enable-"*)
+		feature=`echo $key | tail -c+10`
+		uppercase_feature=`echo $feature | tr '[:lower:]' '[:upper:]' | sed 's/\-/_/g'`
+		append_args "-DFEATURE_$uppercase_feature=ON"
+		;;
+	"--disable-"*)
+		feature=`echo $key | tail -c+11`
+		uppercase_feature=`echo $feature | tr '[:lower:]' '[:upper:]' | sed 's/\-/_/g'`
+		append_args "-DFEATURE_$uppercase_feature=OFF"
+		;;
+	"--prefix")
+		ensure_value "$value" "$2"
+		prefix=$value
+		;;
+	"--exec-prefix")
+		ensure_value "$value" "$2"
+		exec_prefix=$value
+		;;
+	"--bindir")
+		ensure_value "$value" "$2"
+		bindir=$value
+		;;
+	"--libdir")
+		ensure_value "$value" "$2"
+		libdir=$value
+		;;
+	"--includedir")
+		ensure_value "$value" "$2"
+		includedir=$value
+		;;
+	"--datarootdir")
+		ensure_value "$value" "$2"
+		datarootdir=$value
+		;;
+	"--datadir")
+		ensure_value "$value" "$2"
+		datadir=$value
+		;;
+	"--moddir")
+		ensure_value "$value" "$2"
+		moddir=$value
+		;;
+	"--mandir")
+		ensure_value "$value" "$2"
+		mandir=$value
+		;;
+	"-h"|"--help")
+		if [ -f "$srcdir/config.help" ]; then
+			cat "$srcdir/config.help"
+		else
+			error "Missing help file"
+		fi
+		exit 0
+		;;
+	"-*")
+		error "Unknown option: $key"
+		;;
+	*)
+		append_env "$key" "$value"
+		;;
+	esac
+	shift
+	if $shift_twice; then
+		shift
+		shift_twice=false
+	fi
+done
+
+if ! which cmake > /dev/null; then
+	error "cmake not found" 1
+else
+	notify "Found `cmake --version`"
+fi
+cmake=`which cmake`
+
+notify "Source dir is $srcdir"
+notify "Build dir is $builddir"
+
+if $debug; then
+	append_args "-DCMAKE_BUILD_TYPE=Debug"
+else
+	append_args "-DCMAKE_BUILD_TYPE=Release"
+fi
+
+if $devel; then
+	append_args "-DDEVELOPER_BUILD=ON"
+fi
+
+cat > ./config.status << EOF
+#!/bin/sh
+
+# $cmdline
+
+EOF
+
+cat >> ./config.status << "EOF"
+error() {
+	echo "-- ERROR: $1"
+	exit $2;
+}
+
+warning() {
+	echo "-- WARNING: $1"
+}
+
+notify() {
+	echo "-- $1"
+}
+
+EOF
+
+if [ -n "$prefix" ]; then
+	echo "prefix=$prefix" >> ./config.status
+else
+	echo "prefix=/usr/local" >> ./config.status
+fi
+
+if [ -n "$exec_prefix" ]; then
+	echo "exec_prefix=$exec_prefix" >> ./config.status
+else
+	echo "exec_prefix=\$prefix" >> ./config.status
+fi
+
+if [ -n "$bindir" ]; then
+	echo "bindir=$bindir" >> ./config.status
+else
+	echo "bindir=\$exec_prefix/bin" >> ./config.status
+fi
+
+if [ -n "$libdir" ]; then
+	echo "libdir=$libdir" >> ./config.status
+else
+	echo "libdir=\$exec_prefix/lib" >> ./config.status
+fi
+
+if [ -n "$includedir" ]; then
+	echo "includedir=$includedir" >> ./config.status
+else
+	echo "includedir=\$prefix/include" >> ./config.status
+fi
+
+if [ -n "$datarootdir" ]; then
+	echo "datarootdir=$datarootdir" >> ./config.status
+else
+	echo "datarootdir=\$prefix/share" >> ./config.status
+fi
+
+if [ -n "$datadir" ]; then
+	echo "datadir=$datadir" >> ./config.status
+else
+	echo "datadir=\$datarootdir/znc" >> ./config.status
+fi
+
+if [ -n "$moddir" ]; then
+	echo "moddir=$moddir" >> ./config.status
+else
+	echo "moddir=\$libdir/znc" >> ./config.status
+fi
+
+if [ -n "$mandir" ]; then
+	echo "mandir=$mandir" >> ./config.status
+else
+	echo "mandir=\$datarootdir/man" >> ./config.status
+fi
+
+cat >> ./config.status << EOF
+$cmake_env $cmake \
+	-DCMAKE_INSTALL_PREFIX=\$prefix \
+	-DINSTALL_PREFIX=\$prefix \
+	-DINSTALL_EXEC_PREFIX=\$exec_prefix \
+	-DINSTALL_BINDIR=\$bindir \
+	-DINSTALL_LIBDIR=\$libdir \
+	-DINSTALL_INCLUDEDIR=\$includedir \
+	-DINSTALL_DATAROOTDIR=\$datarootdir \
+	-DINSTALL_DATADIR=\$datadir \
+	-DINSTALL_MODDIR=\$moddir \
+	-DINSTALL_MANDIR=\$mandir \
+	$cmake_args $srcdir
+
+cmake_exit_code=\$?
+
+if [ \$cmake_exit_code -ne 0 ]; then
+	error "CMake terminated with error code \$cmake_exit_code" \$cmake_exit_code
+	exit \$cmake_exit_code
+fi
+EOF
+
+# force re-configure
+rm -f CMakeCache.txt
+
+chmod +x config.status
+notify "Executing config.status"
+
+./config.status
+config_exit=$?
+
+if [ $config_exit -ne 0 ]; then
+	error "config.status terminated with error code $config_exit" $config_exit
+fi

@@ -1,0 +1,74 @@
+#ifndef ZNCCONFIG_H
+#define ZNCCONFIG_H
+
+/* Use poll() instead of select() */
+#cmakedefine CSOCK_USE_POLL
+
+/* Define to 1 if you have the `getopt_long' function. */
+#cmakedefine HAVE_GETOPT_LONG
+
+/* Define to 1 if you have the `getphassphrase' function. */
+#cmakedefine HAVE_GETPHASSPHRASE
+
+/* Enable ICU library for Unicode handling */
+#cmakedefine HAVE_ICU
+
+/* Define if IPv6 support is enabled */
+#cmakedefine HAVE_IPV6
+
+/* Define to 1 if you have the `crypto' library (-lcrypto). */
+#cmakedefine HAVE_LIBCRYPTO
+
+/* Define to 1 if you have the `gnugetopt' library (-lgnugetopt). */
+#cmakedefine HAVE_LIBGNUGETOPT
+
+/* Define if openssl is enabled */
+#cmakedefine HAVE_LIBSSL
+
+/* Define to 1 if you have the `lstat' function. */
+#cmakedefine HAVE_LSTAT
+
+/* Define if you have POSIX threads libraries and header files. */
+#cmakedefine HAVE_PTHREAD
+
+/* Have PTHREAD_PRIO_INHERIT. */
+#cmakedefine HAVE_PTHREAD_PRIO_INHERIT
+
+/* Define if threaded DNS support is enabled */
+#cmakedefine HAVE_THREADED_DNS
+
+/* Define to 1 or 0, depending whether the compiler supports simple visibility
+   declarations. */
+#cmakedefine HAVE_VISIBILITY @HAVE_VISIBILITY@
+
+/* Define if zlib is available */
+#cmakedefine HAVE_ZLIB
+
+/* Define to necessary symbol if this constant uses a non-standard name on
+   your system. */
+#cmakedefine PTHREAD_CREATE_JOINABLE @{PTHREAD_CREATE_JOINABLE}
+
+/* Do not clutter global namespace with ICU C++ stuff */
+#define U_USING_ICU_NAMESPACE 0
+
+/* Enable large inode numbers on Mac OS X 10.5.  */
+#ifndef _DARWIN_USE_64_BIT_INODE
+# define _DARWIN_USE_64_BIT_INODE 1
+#endif
+
+/* Number of bits in a file offset, on hosts where this is settable. */
+#cmakedefine _FILE_OFFSET_BITS
+
+/* Enable extra debugging checks in libstdc++ */
+#cmakedefine _GLIBCXX_CONCEPT_CHECKS
+
+/* Enable extra debugging checks in libstdc++ */
+#cmakedefine _GLIBCXX_DEBUG
+
+/* Enable extra debugging checks in libstdc++ */
+#cmakedefine _GLIBCXX_DEBUG_PEDANTIC
+
+/* Define for large files, on AIX-style hosts. */
+#cmakedefine _LARGE_FILES
+
+#endif /* ZNCCONFIG_H */

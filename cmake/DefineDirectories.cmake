@@ -1,0 +1,86 @@
+# Based on http://github.com/Richard-W/cmake-configure-wrapper
+#
+# Copyright (c) 2013-2014, Richard Wiedenhoeft <richard@wiedenhoeft.xyz>
+# All rights reserved.
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions are met:
+#
+# 1. Redistributions of source code must retain the above copyright notice, this
+#    list of conditions and the following disclaimer. 
+# 2. Redistributions in binary form must reproduce the above copyright notice,
+#    this list of conditions and the following disclaimer in the documentation
+#    and/or other materials provided with the distribution.
+#
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+# ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+# WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+# DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR
+# ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+# (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+# LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+# ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+# (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+# SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+if(NOT DEFINED INSTALL_PREFIX)
+    set(INSTALL_PREFIX "${CMAKE_INSTALL_PREFIX}")
+endif()
+
+if(NOT DEFINED INSTALL_EXEC_PREFIX)
+    set(INSTALL_EXEC_PREFIX "${INSTALL_PREFIX}")
+endif()
+
+if(NOT DEFINED INSTALL_BINDIR)
+    set(INSTALL_BINDIR "${INSTALL_EXEC_PREFIX}/bin")
+endif()
+
+if(NOT DEFINED INSTALL_LIBDIR)
+    set(INSTALL_LIBDIR "${INSTALL_EXEC_PREFIX}/lib")
+endif()
+
+if(NOT DEFINED INSTALL_MODDIR)
+    set(INSTALL_MODDIR "${INSTALL_LIBDIR}/znc")
+endif()
+
+if(NOT DEFINED INSTALL_INCLUDEDIR)
+    set(INSTALL_INCLUDEDIR "${INSTALL_PREFIX}/include")
+endif()
+
+if(NOT DEFINED INSTALL_DATAROOTDIR)
+    set(INSTALL_DATAROOTDIR "${INSTALL_PREFIX}/share")
+endif()
+
+if(NOT DEFINED INSTALL_DATADIR)
+    set(INSTALL_DATADIR "${INSTALL_DATAROOTDIR}/znc")
+endif()
+
+if(NOT DEFINED INSTALL_MANDIR)
+    set(INSTALL_MANDIR "${INSTALL_DATAROOTDIR}/man")
+endif()
+
+if(NOT DEVELOPER_BUILD)
+    set(ZNC_PREFIX "${INSTALL_PREFIX}")
+    set(ZNC_EXEC_PREFIX "${INSTALL_EXEC_PREFIX}")
+    set(ZNC_BINDIR "${INSTALL_BINDIR}")
+    set(ZNC_LIBDIR "${INSTALL_LIBDIR}")
+    set(ZNC_MODDIR "${INSTALL_MODDIR}")
+    set(ZNC_INCLUDEDIR "${INSTALL_INCLUDEDIR}")
+    set(ZNC_DATAROOTDIR "${INSTALL_DATAROOTDIR}")
+    set(ZNC_DATADIR "${INSTALL_DATADIR}")
+    set(ZNC_MANDIR "${INSTALL_MANDIR}")
+else()
+    set(ZNC_PREFIX "${PROJECT_SOURCE_DIR}")
+    set(ZNC_EXEC_PREFIX "${PROJECT_BINARY_DIR}")
+    set(ZNC_BINDIR "${PROJECT_BINARY_DIR}")
+    set(ZNC_LIBDIR "${PROJECT_BINARY_DIR}")
+    set(ZNC_MODDIR "${PROJECT_BINARY_DIR}/modules")
+    set(ZNC_INCLUDEDIR "${PROJECT_SOURCE_DIR}/include")
+    set(ZNC_DATAROOTDIR "${PROJECT_SOURCE_DIR}/share")
+    set(ZNC_DATADIR "${PROJECT_SOURCE_DIR}/share")
+    set(ZNC_MANDIR "${PROJECT_SOURCE_DIR}/share/man")
+endif()
+
+# Suppress unused-warning
+set(DUMMY "${INSTALL_PREFIX} ${INSTALL_EXEC_PREFIX} ${INSTALL_BINDIR} ${INSTALL_LIBDIR} ${INSTALL_MODDIR} ${INSTALL_INCLUDEDIR} ${INSTALL_DATAROOTDIR} ${INSTALL_DATADIR} ${INSTALL_MANDIR}")
+mark_as_advanced(DUMMY)

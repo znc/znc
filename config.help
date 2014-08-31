@@ -1,0 +1,52 @@
+Usage: configure [options]
+
+Installation directories:
+
+    --prefix <dir> ........ The installation prefix
+                            [/usr/local]
+    --exec-prefix <dir> ... The installation prefix for executables
+                            [PREFIX]
+    --bindir <dir> ........ The installation directory for binaries
+                            [EXEC-PREFIX/bin]
+    --libdir <dir> ........ The installation directory for libraries
+                            [EXEC-PREFIX/lib]
+    --includedir <dir> .... The installation directory for headers
+                            [PREFIX/include]
+    --datarootdir <dir> ... The installation root directory for data files
+                            [PREFIX/share]
+    --datadir <dir> ....... The installation directory for data files
+                            [DATAROOTDIR/znc]
+    --mandir <dir> ........ The installation directory for manuals
+                            [DATAROOTDIR]
+    --moddir <dir> ........ The installation directory for modules
+                            [LIBDIR/znc]
+
+Build options:
+
+ *  --release ............. Release build
+    --debug ............... Debug build
+    --developer ........... Developer build - run without installation
+                            (implies --debug and --prefix $PWD)
+
+    CXX=<value> ........... C++ compiler
+    CXXFLAGS=<value> ...... C++ compilation flags
+
+    --enable-<feature> .... Enable a feature
+    --disable-<feature> ... Disable a feature
+
+Available features:
+
+ *  IPv6 .................. Internet Protocol version 6
+ +  SSL ................... Secure Sockets Layer
+ +  ICU ................... International Components for Unicode
+ +  Zlib .................. Zlib compression library
+    Cyrus ................. Cyrus SASL
+ +  Threads ............... Threaded DNS
+    SWIG .................. Automatic code generation
+      Perl ................ Perl modules, requires SWIG
+      Python .............. Python modules, requires SWIG
+    TCL ................... TCL modules
+
+(*) denotes that the option or feature is enabled by default
+(+) denotes that the feature is enabled by default if found
+
