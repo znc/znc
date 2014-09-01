@@ -4,6 +4,7 @@ After=network.target
 
 [Service]
 ExecStart=/usr/bin/znc -f
+ExecReload=/bin/kill -HUP $MAINPID
 User=znc
 
 [Install]
