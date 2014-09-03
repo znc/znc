@@ -721,7 +721,7 @@ bool CZNC::WriteNewConfig(const CString& sConfigFile) {
 		vector<CString> vsUserModNames;
 		for (set<CModInfo>::const_iterator it = ssUserMods.begin(); it != ssUserMods.end(); ++it) {
 			vsUserModNames.push_back(it->GetName());
-			vsLines.push_back("LoadModule = " + it->GetName());
+			vsLines.push_back("\tLoadModule = " + it->GetName());
 		}
 		CUtils::PrintMessage("Enabled the default user modules [" + CString(", ").Join(vsUserModNames.begin(), vsUserModNames.end()) + "]");
 
@@ -742,7 +742,7 @@ bool CZNC::WriteNewConfig(const CString& sConfigFile) {
 			vector<CString> vsNetworkModNames;
 			for (set<CModInfo>::const_iterator it = ssNetworkMods.begin(); it != ssNetworkMods.end(); ++it) {
 				vsNetworkModNames.push_back(it->GetName());
-				vsLines.push_back("LoadModule = " + it->GetName());
+				vsLines.push_back("\t\tLoadModule = " + it->GetName());
 			}
 			CUtils::PrintMessage("Enabled the default network modules [" + CString(", ").Join(vsNetworkModNames.begin(), vsNetworkModNames.end()) + "]");
 
