@@ -1296,22 +1296,22 @@ void CIRCSock::SendAltNick(const CString& sBadNick) {
 
 	const CString& sConfNick = m_pNetwork->GetNick();
 	const CString& sAltNick  = m_pNetwork->GetAltNick();
-	CString sNewNick;
+	CString sNewNick = sConfNick.Left(uMax - 1);
 
 	if (sLastNick.Equals(sConfNick)) {
 		if ((!sAltNick.empty()) && (!sConfNick.Equals(sAltNick))) {
 			sNewNick = sAltNick;
 		} else {
-			sNewNick = sConfNick.Left(uMax - 1) + "-";
+			sNewNick += "-";
 		}
-	} else if (sLastNick.Equals(sAltNick)) {
-		sNewNick = sConfNick.Left(uMax -1) + "-";
-	} else if (sLastNick.Equals(CString(sConfNick.Left(uMax -1) + "-"))) {
-		sNewNick = sConfNick.Left(uMax -1) + "|";
-	} else if (sLastNick.Equals(CString(sConfNick.Left(uMax -1) + "|"))) {
-		sNewNick = sConfNick.Left(uMax -1) + "^";
-	} else if (sLastNick.Equals(CString(sConfNick.Left(uMax -1) + "^"))) {
-		sNewNick = sConfNick.Left(uMax -1) + "a";
+	} else if (sLastNick.Equals(sAltNick) && !sAltNick.Equals(sNewNick + "-")) {
+		sNewNick += "-";
+	} else if (sLastNick.Equals(sNewNick + "-") && !sAltNick.Equals(sNewNick + "|")) {
+		sNewNick += "|";
+	} else if (sLastNick.Equals(sNewNick + "|") && !sAltNick.Equals(sNewNick + "^")) {
+		sNewNick += "^";
+	} else if (sLastNick.Equals(sNewNick + "^") && !sAltNick.Equals(sNewNick + "a")) {
+		sNewNick += "a";
 	} else {
 		char cLetter = 0;
 		if (sBadNick.empty()) {
@@ -1329,6 +1329,8 @@ void CIRCSock::SendAltNick(const CString& sBadNick) {
 		}
 
 		sNewNick = sConfNick.Left(uMax -1) + ++cLetter;
+		if (sNewNick.Equals(sAltNick))
+			sNewNick = sConfNick.Left(uMax -1) + ++cLetter;
 	}
 	PutIRC("NICK " + sNewNick);
 	m_Nick.SetNick(sNewNick);
