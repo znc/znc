@@ -203,7 +203,6 @@ if test "$DEBUG" != "no"; then
 		# But they cause crashes on cygwin while loading modules
 		AC_DEFINE([_GLIBCXX_DEBUG], [1], [Enable extra debugging checks in libstdc++])
 		AC_DEFINE([_GLIBCXX_DEBUG_PEDANTIC], [1], [Enable extra debugging checks in libstdc++])
-		AC_DEFINE([_GLIBCXX_CONCEPT_CHECKS], [1], [Enable extra debugging checks in libstdc++])
 	fi
 else
 	if test "x$OPTIMIZE" = "xyes"; then
