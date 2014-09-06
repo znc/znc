@@ -819,6 +819,11 @@ void CClient::PutModule(const CString& sModule, const CString& sLine) {
 	}
 }
 
+void CClient::PutCommandInfo(const CString& sInfo) {
+	if (!m_bQuiet)
+		PutStatus(sInfo);
+}
+
 CString CClient::GetNick(bool bAllowIRCNick) const {
 	CString sRet;
 
