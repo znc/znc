@@ -867,26 +867,30 @@ public:
 			return true;
 		}
 
-		CString sName = WebSock.GetParam("network").Trim_n();
+		CString sName = WebSock.GetParam("name").Trim_n();
 		if (sName.empty()) {
 			WebSock.PrintErrorPage("Network name is a required argument");
 			return true;
 		}
-
-		if (!pNetwork) {
-			if (!spSession->IsAdmin() && !pUser->HasSpaceForNewNetwork()) {
-				WebSock.PrintErrorPage("Network number limit reached. Ask an admin to increase the limit for you, or delete few old ones from Your Settings");
-				return true;
-			}
-			if (!CIRCNetwork::IsValidNetwork(sName)) {
-				WebSock.PrintErrorPage("Network name should be alphanumeric");
-				return true;
-			}
+		if (!pNetwork && !spSession->IsAdmin() && !pUser->HasSpaceForNewNetwork()) {
+			WebSock.PrintErrorPage("Network number limit reached. Ask an admin to increase the limit for you, or delete few old ones from Your Settings");
+			return true;
+		}
+		if (!pNetwork || pNetwork->GetName() != sName) {
 			CString sNetworkAddError;
+			CIRCNetwork* pOldNetwork = pNetwork;
 			pNetwork = pUser->AddNetwork(sName, sNetworkAddError);
 			if (!pNetwork) {
 				WebSock.PrintErrorPage(sNetworkAddError);
 				return true;
+			}
+			if (pOldNetwork) {
+				for (CModule* pModule : pOldNetwork->GetModules()) {
+					CString sPath = pUser->GetUserPath() + "/networks/" + sName + "/moddata/" + pModule->GetModName();
+					pModule->MoveRegistry(sPath);
+				}
+				pNetwork->Clone(*pOldNetwork, false);
+				pUser->DeleteNetwork(pOldNetwork->GetName());
 			}
 		}
 

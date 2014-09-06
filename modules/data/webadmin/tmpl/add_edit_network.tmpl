@@ -10,19 +10,17 @@
 	<div class="section">
 		<input type="hidden" name="submitted" value="1" />
 		<input type="hidden" name="user" value="<? VAR Username ?>" />
-		<? IF Edit ?><input type="hidden" name="network" value="<? VAR Name ?>" /><? ENDIF ?>
+		<input type="hidden" name="network" value="<? VAR Name ?>" />
 
 		<h3>Network Info</h3>
         <span class="info">Nick, AltNick, Ident, RealName, BindHost can be left empty to use the value from the user.</span>
 		<div class="sectionbg">
 			<div class="sectionbody">
-				<? IF !Edit ?>
 				<div class="subsection">
 					<div class="inputlabel">Network Name:</div>
-					<input type="text" name="network" value="<? VAR Name ?>" class="half" maxlength="128"
+					<input type="text" name="name" value="<? VAR Name ?>" class="half" maxlength="128"
 						   title="The name of the IRC network." />
-					</div>
-				<? ENDIF ?>
+				</div>
 
             	<div class="subsection">
 					<div class="inputlabel">Nickname:</div>

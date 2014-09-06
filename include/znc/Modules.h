@@ -946,6 +946,7 @@ public:
 
 	bool LoadRegistry();
 	bool SaveRegistry() const;
+	bool MoveRegistry(const CString& sPath);
 	bool SetNV(const CString & sName, const CString & sValue, bool bWriteToDisk = true);
 	CString GetNV(const CString & sName) const;
 	bool DelNV(const CString & sName, bool bWriteToDisk = true);

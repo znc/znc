@@ -221,6 +221,22 @@ bool CModule::SaveRegistry() const {
 	return (m_mssRegistry.WriteToDisk(GetSavePath() + "/.registry", 0600) == MCString::MCS_SUCCESS);
 }
 
+bool CModule::MoveRegistry(const CString& sPath) {
+	if (m_sSavePath != sPath) {
+		CFile fOldNVFile = CFile(m_sSavePath + "/.registry");
+		if (!fOldNVFile.Exists()) {
+			return false;
+		}
+		if (!CFile::Exists(sPath) && !CDir::MakeDir(sPath)) {
+			return false;
+		}
+		fOldNVFile.Copy(sPath + "/.registry");
+		m_sSavePath = sPath;
+		return true;
+	}
+	return false;
+}
+
 bool CModule::SetNV(const CString & sName, const CString & sValue, bool bWriteToDisk) {
 	m_mssRegistry[sName] = sValue;
 	if (bWriteToDisk) {
