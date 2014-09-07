@@ -570,7 +570,7 @@ bool CModule::HandleCommand(const CString& sLine) {
 }
 
 void CModule::HandleHelpCommand(const CString& sLine) {
-	CString sFilter = sLine.Token(1, true);
+	CString sFilter = sLine.Token(1);
 	CString::size_type  iFilterLength = sFilter.size();
 	CTable Table;
 	map<CString, CModCommand>::const_iterator it;
