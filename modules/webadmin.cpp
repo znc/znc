@@ -1405,6 +1405,7 @@ public:
 	}
 
 	bool TrafficPage(CWebSock& WebSock, CTemplate& Tmpl) {
+		Tmpl["Title"] = "Traffic Info";
 		Tmpl["Uptime"] = CZNC::Get().GetUptime();
 
 		const map<CString,CUser*>& msUsers = CZNC::Get().GetUserMap();
