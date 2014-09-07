@@ -79,8 +79,7 @@ public:
 		AddSubPage(new CWebSubPage("settings", "Global Settings", CWebSubPage::F_ADMIN));
 		AddSubPage(new CWebSubPage("edituser", "Your Settings", vParams));
 		AddSubPage(new CWebSubPage("traffic", "Traffic Info", CWebSubPage::F_ADMIN));
-		AddSubPage(new CWebSubPage("listusers", "List Users", CWebSubPage::F_ADMIN));
-		AddSubPage(new CWebSubPage("adduser", "Add User", CWebSubPage::F_ADMIN));
+		AddSubPage(new CWebSubPage("listusers", "Manage Users", CWebSubPage::F_ADMIN));
 	}
 
 	virtual ~CWebAdminMod() {
@@ -1078,8 +1077,6 @@ public:
 		Tmpl.SetFile("add_edit_user.tmpl");
 
 		if (!WebSock.GetParam("submitted").ToUInt()) {
-			CString sAllowedHosts, sServers, sChans, sCTCPReplies;
-
 			if (pUser) {
 				Tmpl["Action"] = "edituser";
 				Tmpl["Title"] = "Edit User [" + pUser->GetUserName() + "]";
@@ -1385,7 +1382,7 @@ public:
 	bool ListUsersPage(CWebSock& WebSock, CTemplate& Tmpl) {
 		CSmartPtr<CWebSession> spSession = WebSock.GetSession();
 		const map<CString,CUser*>& msUsers = CZNC::Get().GetUserMap();
-		Tmpl["Title"] = "List Users";
+		Tmpl["Title"] = "Manage Users";
 		Tmpl["Action"] = "listusers";
 
 		unsigned int a = 0;
@@ -1407,7 +1404,7 @@ public:
 	}
 
 	bool TrafficPage(CWebSock& WebSock, CTemplate& Tmpl) {
-		CSmartPtr<CWebSession> spSession = WebSock.GetSession();
+		Tmpl["Title"] = "Traffic Info";
 		Tmpl["Uptime"] = CZNC::Get().GetUptime();
 
 		const map<CString,CUser*>& msUsers = CZNC::Get().GetUserMap();
@@ -1566,7 +1563,6 @@ public:
 	bool SettingsPage(CWebSock& WebSock, CTemplate& Tmpl) {
 		Tmpl.SetFile("settings.tmpl");
 		if (!WebSock.GetParam("submitted").ToUInt()) {
-			CString sBindHosts, sMotd;
 			Tmpl["Action"] = "settings";
 			Tmpl["Title"] = "Settings";
 			Tmpl["StatusPrefix"] = CZNC::Get().GetStatusPrefix();
