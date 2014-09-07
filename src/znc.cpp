@@ -684,7 +684,7 @@ bool CZNC::WriteNewConfig(const CString& sConfigFile) {
 		if (!sAnswer.empty()) {
 			vsLines.push_back("\tAltNick    = " + sAnswer);
 		}
-		CUtils::GetInput("Ident", sAnswer, sNick);
+		CUtils::GetInput("Ident", sAnswer, sUser);
 		vsLines.push_back("\tIdent      = " + sAnswer);
 		CUtils::GetInput("Real Name", sAnswer, "Got ZNC?");
 		vsLines.push_back("\tRealName   = " + sAnswer);
