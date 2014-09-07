@@ -568,11 +568,7 @@ bool CZNC::WriteNewConfig(const CString& sConfigFile) {
 	m_sConfigFile = ExpandConfigPath(sConfigFile);
 
 	if (CFile::Exists(m_sConfigFile)) {
-		CUtils::PrintStatus(false, "The config file [" + m_sConfigFile + "] already exists.");
-		if (!CUtils::GetBoolInput("Would you like to overwrite it?", false))
-			return false;
-	} else {
-		CUtils::PrintMessage("Building new config");
+		CUtils::PrintStatus(false, "WARNING: config [" + m_sConfigFile + "] already exists.");
 	}
 
 	CUtils::PrintMessage("");
