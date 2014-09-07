@@ -692,29 +692,6 @@ bool CZNC::WriteNewConfig(const CString& sConfigFile) {
 		if (!sAnswer.empty()) {
 			vsLines.push_back("\tBindHost   = " + sAnswer);
 		}
-		// todo: Possibly add motd
-
-		unsigned int uBufferCount = 0;
-
-		CUtils::GetNumInput("Number of lines to buffer per channel or query", uBufferCount, 0, ~0, 50);
-		if (uBufferCount) {
-			vsLines.push_back("\tBuffer     = " + CString(uBufferCount));
-		}
-		if (CUtils::GetBoolInput("Would you like to clear channel buffers after replay?", true)) {
-			vsLines.push_back("\tAutoClearChanBuffer = true");
-		} else {
-			vsLines.push_back("\tAutoClearChanBuffer = false");
-		}
-		if (CUtils::GetBoolInput("Would you like to clear query buffers after replay?", true)) {
-			vsLines.push_back("\tAutoClearQueryBuffer = true");
-		} else {
-			vsLines.push_back("\tAutoClearQueryBuffer = false");
-		}
-
-		CUtils::GetInput("Default channel modes", sAnswer, "+stn");
-		if (!sAnswer.empty()) {
-			vsLines.push_back("\tChanModes  = " + sAnswer);
-		}
 
 		set<CModInfo> ssUserMods;
 		GetModules().GetDefaultMods(ssUserMods, CModInfo::UserModule);
