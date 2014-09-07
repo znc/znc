@@ -721,28 +721,22 @@ bool CZNC::WriteNewConfig(const CString& sConfigFile) {
 
 			vsLines.push_back("");
 			CUtils::PrintMessage("");
-			CUtils::PrintMessage("-- IRC Servers --");
-			CUtils::PrintMessage("Only add servers from the same IRC network.");
-			CUtils::PrintMessage("If a server from the list can't be reached, another server will be used.");
+			CUtils::PrintMessage("-- IRC Server --");
 			CUtils::PrintMessage("");
 
-			do {
-				CString sHost, sPass;
-				bool bSSL = false;
-				unsigned int uServerPort = 0;
+			CString sHost, sPass;
+			bool bSSL = false;
+			unsigned int uServerPort = 0;
 
-				while (!CUtils::GetInput("IRC server", sHost, "", "host only") || !CServer::IsValidHostName(sHost)) ;
-				while (!CUtils::GetNumInput("[" + sHost + "] Port", uServerPort, 1, 65535, 6667)) ;
-				CUtils::GetInput("[" + sHost + "] Password (probably empty)", sPass);
+			while (!CUtils::GetInput("IRC server", sHost, "", "host only") || !CServer::IsValidHostName(sHost)) ;
+			while (!CUtils::GetNumInput("[" + sHost + "] Port", uServerPort, 1, 65535, 6667)) ;
+			CUtils::GetInput("[" + sHost + "] Password (probably empty)", sPass);
 
 #ifdef HAVE_LIBSSL
-				bSSL = CUtils::GetBoolInput("Does this server use SSL?", uServerPort == 6697);
+			bSSL = CUtils::GetBoolInput("Does this server use SSL?", uServerPort == 6697);
 #endif
 
-				vsLines.push_back("\t\tServer     = " + sHost + ((bSSL) ? " +" : " ") + CString(uServerPort) + " " + sPass);
-
-				CUtils::PrintMessage("");
-			} while (CUtils::GetBoolInput("Would you like to add another server for this IRC network?", false));
+			vsLines.push_back("\t\tServer     = " + sHost + ((bSSL) ? " +" : " ") + CString(uServerPort) + " " + sPass);
 
 			vsLines.push_back("");
 			CUtils::PrintMessage("");
