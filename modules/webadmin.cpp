@@ -79,8 +79,7 @@ public:
 		AddSubPage(new CWebSubPage("settings", "Global Settings", CWebSubPage::F_ADMIN));
 		AddSubPage(new CWebSubPage("edituser", "Your Settings", vParams));
 		AddSubPage(new CWebSubPage("traffic", "Traffic Info", CWebSubPage::F_ADMIN));
-		AddSubPage(new CWebSubPage("listusers", "List Users", CWebSubPage::F_ADMIN));
-		AddSubPage(new CWebSubPage("adduser", "Add User", CWebSubPage::F_ADMIN));
+		AddSubPage(new CWebSubPage("listusers", "Manage Users", CWebSubPage::F_ADMIN));
 	}
 
 	virtual ~CWebAdminMod() {
@@ -1383,7 +1382,7 @@ public:
 	bool ListUsersPage(CWebSock& WebSock, CTemplate& Tmpl) {
 		CSmartPtr<CWebSession> spSession = WebSock.GetSession();
 		const map<CString,CUser*>& msUsers = CZNC::Get().GetUserMap();
-		Tmpl["Title"] = "List Users";
+		Tmpl["Title"] = "Manage Users";
 		Tmpl["Action"] = "listusers";
 
 		unsigned int a = 0;
