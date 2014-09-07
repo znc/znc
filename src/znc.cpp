@@ -740,7 +740,7 @@ bool CZNC::WriteNewConfig(const CString& sConfigFile) {
 				CUtils::GetInput("[" + sHost + "] Password (probably empty)", sPass);
 
 #ifdef HAVE_LIBSSL
-				bSSL = CUtils::GetBoolInput("Does this server use SSL?", false);
+				bSSL = CUtils::GetBoolInput("Does this server use SSL?", uServerPort == 6697);
 #endif
 
 				vsLines.push_back("\t\tServer     = " + sHost + ((bSSL) ? " +" : " ") + CString(uServerPort) + " " + sPass);
