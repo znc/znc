@@ -802,7 +802,7 @@ bool CZNC::WriteNewConfig(const CString& sConfigFile) {
 			}
 		}
 		if (!bFileOK) {
-			CUtils::GetInput("Please specify an alternate location (or \"stdout\" for displaying the config)", m_sConfigFile, m_sConfigFile);
+			while (!CUtils::GetInput("Please specify an alternate location", m_sConfigFile, "",  "or \"stdout\" for displaying the config"));
 			if (m_sConfigFile.Equals("stdout"))
 				bFileOK = true;
 			else
