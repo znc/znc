@@ -651,117 +651,108 @@ bool CZNC::WriteNewConfig(const CString& sConfigFile) {
 
 	// User
 	CUtils::PrintMessage("");
-	CUtils::PrintMessage("Now we need to set up a user...");
+	CUtils::PrintMessage("Now we need to set up an admin user...");
 	CUtils::PrintMessage("");
 
-	bool bFirstUser = true;
-
+	vsLines.push_back("");
+	CString sNick;
 	do {
+		CUtils::GetInput("Username", sUser, "", "AlphaNumeric");
+	} while (!CUser::IsValidUserName(sUser));
+
+	vsLines.push_back("<User " + sUser + ">");
+	CString sSalt;
+	sAnswer = CUtils::GetSaltedHashPass(sSalt);
+	vsLines.push_back("\tPass       = " + CUtils::sDefaultHash + "#" + sAnswer + "#" + sSalt + "#");
+
+	vsLines.push_back("\tAdmin      = true");
+
+	CUtils::GetInput("Nick", sNick, CUser::MakeCleanUserName(sUser));
+	vsLines.push_back("\tNick       = " + sNick);
+	CUtils::GetInput("Alt Nick", sAnswer, sNick + "_");
+	if (!sAnswer.empty()) {
+		vsLines.push_back("\tAltNick    = " + sAnswer);
+	}
+	CUtils::GetInput("Ident", sAnswer, sUser);
+	vsLines.push_back("\tIdent      = " + sAnswer);
+	CUtils::GetInput("Real Name", sAnswer, "Got ZNC?");
+	vsLines.push_back("\tRealName   = " + sAnswer);
+	CUtils::GetInput("Bind Host", sAnswer, "", "optional");
+	if (!sAnswer.empty()) {
+		vsLines.push_back("\tBindHost   = " + sAnswer);
+	}
+
+	set<CModInfo> ssUserMods;
+	GetModules().GetDefaultMods(ssUserMods, CModInfo::UserModule);
+	vector<CString> vsUserModNames;
+	for (set<CModInfo>::const_iterator it = ssUserMods.begin(); it != ssUserMods.end(); ++it) {
+		vsUserModNames.push_back(it->GetName());
+		vsLines.push_back("\tLoadModule = " + it->GetName());
+	}
+	CUtils::PrintMessage("Enabled the default user modules [" + CString(", ").Join(vsUserModNames.begin(), vsUserModNames.end()) + "]");
+
+	CUtils::PrintMessage("");
+	if (CUtils::GetBoolInput("Would you like to set up a network?", true)) {
 		vsLines.push_back("");
-		CString sNick;
+
 		do {
-			CUtils::GetInput("Username", sUser, "", "AlphaNumeric");
-		} while (!CUser::IsValidUserName(sUser));
+			CUtils::GetInput("Network", sNetwork, "", "e.g. `freenode' or `efnet'");
+		} while (!CIRCNetwork::IsValidNetwork(sNetwork));
 
-		vsLines.push_back("<User " + sUser + ">");
-		CString sSalt;
-		sAnswer = CUtils::GetSaltedHashPass(sSalt);
-		vsLines.push_back("\tPass       = " + CUtils::sDefaultHash + "#" + sAnswer + "#" + sSalt + "#");
+		vsLines.push_back("\t<Network " + sNetwork + ">");
 
-		if (CUtils::GetBoolInput("Would you like this user to be an admin?", bFirstUser)) {
-			vsLines.push_back("\tAdmin      = true");
-		} else {
-			vsLines.push_back("\tAdmin      = false");
+		set<CModInfo> ssNetworkMods;
+		GetModules().GetDefaultMods(ssNetworkMods, CModInfo::NetworkModule);
+		vector<CString> vsNetworkModNames;
+		for (set<CModInfo>::const_iterator it = ssNetworkMods.begin(); it != ssNetworkMods.end(); ++it) {
+			vsNetworkModNames.push_back(it->GetName());
+			vsLines.push_back("\t\tLoadModule = " + it->GetName());
 		}
+		CUtils::PrintMessage("Enabled the default network modules [" + CString(", ").Join(vsNetworkModNames.begin(), vsNetworkModNames.end()) + "]");
 
-		CUtils::GetInput("Nick", sNick, CUser::MakeCleanUserName(sUser));
-		vsLines.push_back("\tNick       = " + sNick);
-		CUtils::GetInput("Alt Nick", sAnswer, sNick + "_");
-		if (!sAnswer.empty()) {
-			vsLines.push_back("\tAltNick    = " + sAnswer);
-		}
-		CUtils::GetInput("Ident", sAnswer, sUser);
-		vsLines.push_back("\tIdent      = " + sAnswer);
-		CUtils::GetInput("Real Name", sAnswer, "Got ZNC?");
-		vsLines.push_back("\tRealName   = " + sAnswer);
-		CUtils::GetInput("Bind Host", sAnswer, "", "optional");
-		if (!sAnswer.empty()) {
-			vsLines.push_back("\tBindHost   = " + sAnswer);
-		}
-
-		set<CModInfo> ssUserMods;
-		GetModules().GetDefaultMods(ssUserMods, CModInfo::UserModule);
-		vector<CString> vsUserModNames;
-		for (set<CModInfo>::const_iterator it = ssUserMods.begin(); it != ssUserMods.end(); ++it) {
-			vsUserModNames.push_back(it->GetName());
-			vsLines.push_back("\tLoadModule = " + it->GetName());
-		}
-		CUtils::PrintMessage("Enabled the default user modules [" + CString(", ").Join(vsUserModNames.begin(), vsUserModNames.end()) + "]");
-
+		vsLines.push_back("");
 		CUtils::PrintMessage("");
-		if (CUtils::GetBoolInput("Would you like to set up a network?", true)) {
-			vsLines.push_back("");
+		CUtils::PrintMessage("-- IRC Server --");
+		CUtils::PrintMessage("");
 
-			do {
-				CUtils::GetInput("Network", sNetwork, "", "e.g. `freenode' or `efnet'");
-			} while (!CIRCNetwork::IsValidNetwork(sNetwork));
+		CString sHost, sPass;
+		bool bSSL = false;
+		unsigned int uServerPort = 0;
 
-			vsLines.push_back("\t<Network " + sNetwork + ">");
-
-			set<CModInfo> ssNetworkMods;
-			GetModules().GetDefaultMods(ssNetworkMods, CModInfo::NetworkModule);
-			vector<CString> vsNetworkModNames;
-			for (set<CModInfo>::const_iterator it = ssNetworkMods.begin(); it != ssNetworkMods.end(); ++it) {
-				vsNetworkModNames.push_back(it->GetName());
-				vsLines.push_back("\t\tLoadModule = " + it->GetName());
-			}
-			CUtils::PrintMessage("Enabled the default network modules [" + CString(", ").Join(vsNetworkModNames.begin(), vsNetworkModNames.end()) + "]");
-
-			vsLines.push_back("");
-			CUtils::PrintMessage("");
-			CUtils::PrintMessage("-- IRC Server --");
-			CUtils::PrintMessage("");
-
-			CString sHost, sPass;
-			bool bSSL = false;
-			unsigned int uServerPort = 0;
-
-			while (!CUtils::GetInput("IRC server", sHost, "", "host only") || !CServer::IsValidHostName(sHost)) ;
-			while (!CUtils::GetNumInput("[" + sHost + "] Port", uServerPort, 1, 65535, 6667)) ;
-			CUtils::GetInput("[" + sHost + "] Password (probably empty)", sPass);
+		while (!CUtils::GetInput("IRC server", sHost, "", "host only") || !CServer::IsValidHostName(sHost)) ;
+		while (!CUtils::GetNumInput("[" + sHost + "] Port", uServerPort, 1, 65535, 6667)) ;
+		CUtils::GetInput("[" + sHost + "] Password (probably empty)", sPass);
 
 #ifdef HAVE_LIBSSL
-			bSSL = CUtils::GetBoolInput("Does this server use SSL?", uServerPort == 6697);
+		bSSL = CUtils::GetBoolInput("Does this server use SSL?", uServerPort == 6697);
 #endif
 
-			vsLines.push_back("\t\tServer     = " + sHost + ((bSSL) ? " +" : " ") + CString(uServerPort) + " " + sPass);
+		vsLines.push_back("\t\tServer     = " + sHost + ((bSSL) ? " +" : " ") + CString(uServerPort) + " " + sPass);
 
-			vsLines.push_back("");
-			CUtils::PrintMessage("");
-			CUtils::PrintMessage("-- Channels --");
-			CUtils::PrintMessage("");
+		vsLines.push_back("");
+		CUtils::PrintMessage("");
+		CUtils::PrintMessage("-- Channels --");
+		CUtils::PrintMessage("");
 
-			CString sArg = "a";
-			CString sPost = " for ZNC to automatically join?";
-			bool bDefault = true;
+		CString sArg = "a";
+		CString sPost = " for ZNC to automatically join?";
+		bool bDefault = true;
 
-			while (CUtils::GetBoolInput("Would you like to add " + sArg + " channel" + sPost, bDefault)) {
-				while (!CUtils::GetInput("Channel name", sAnswer)) ;
-				vsLines.push_back("\t\t<Chan " + sAnswer + ">");
-				vsLines.push_back("\t\t</Chan>");
-				sArg = "another";
-				sPost = "?";
-				bDefault = false;
-			}
-
-			vsLines.push_back("\t</Network>");
+		while (CUtils::GetBoolInput("Would you like to add " + sArg + " channel" + sPost, bDefault)) {
+			while (!CUtils::GetInput("Channel name", sAnswer)) ;
+			vsLines.push_back("\t\t<Chan " + sAnswer + ">");
+			vsLines.push_back("\t\t</Chan>");
+			sArg = "another";
+			sPost = "?";
+			bDefault = false;
 		}
 
-		vsLines.push_back("</User>");
+		vsLines.push_back("\t</Network>");
+	}
 
-		CUtils::PrintMessage("");
-		bFirstUser = false;
-	} while (CUtils::GetBoolInput("Would you like to set up another user?", false));
+	vsLines.push_back("</User>");
+
+	CUtils::PrintMessage("");
 	// !User
 
 	CFile File;
