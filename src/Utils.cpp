@@ -156,13 +156,15 @@ CString CUtils::GetSaltedHashPass(CString& sSalt) {
 	sSalt = GetSalt();
 
 	while (true) {
-		CString pass1 = CUtils::GetPass("Enter password");
+		CString pass1;
+		do {
+			pass1 = CUtils::GetPass("Enter password");
+		} while (pass1.empty());
+
 		CString pass2 = CUtils::GetPass("Confirm password");
 
 		if (!pass1.Equals(pass2, true)) {
 			CUtils::PrintError("The supplied passwords did not match");
-		} else if (pass1.empty()) {
-			CUtils::PrintError("You can not use an empty password");
 		} else {
 			// Construct the salted pass
 			return SaltedSHA256Hash(pass1, sSalt);
