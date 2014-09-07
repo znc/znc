@@ -699,9 +699,7 @@ bool CZNC::WriteNewConfig(const CString& sConfigFile) {
 		CUtils::PrintMessage("Enabled the default user modules [" + CString(", ").Join(vsUserModNames.begin(), vsUserModNames.end()) + "]");
 
 		CUtils::PrintMessage("");
-		CString sAAnother = "a";
-		while (CUtils::GetBoolInput("Would you like to set up " + sAAnother + " network?", false)) {
-			sAAnother = "another";
+		if (CUtils::GetBoolInput("Would you like to set up a network?", true)) {
 			vsLines.push_back("");
 
 			do {
