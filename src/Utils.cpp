@@ -156,8 +156,8 @@ CString CUtils::GetSaltedHashPass(CString& sSalt) {
 	sSalt = GetSalt();
 
 	while (true) {
-		CString pass1 = CUtils::GetPass("Enter Password");
-		CString pass2 = CUtils::GetPass("Confirm Password");
+		CString pass1 = CUtils::GetPass("Enter password");
+		CString pass2 = CUtils::GetPass("Confirm password");
 
 		if (!pass1.Equals(pass2, true)) {
 			CUtils::PrintError("The supplied passwords did not match");
