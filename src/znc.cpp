@@ -568,11 +568,7 @@ bool CZNC::WriteNewConfig(const CString& sConfigFile) {
 	m_sConfigFile = ExpandConfigPath(sConfigFile);
 
 	if (CFile::Exists(m_sConfigFile)) {
-		CUtils::PrintStatus(false, "The config file [" + m_sConfigFile + "] already exists.");
-		if (!CUtils::GetBoolInput("Would you like to overwrite it?", false))
-			return false;
-	} else {
-		CUtils::PrintMessage("Building new config");
+		CUtils::PrintStatus(false, "WARNING: config [" + m_sConfigFile + "] already exists.");
 	}
 
 	CUtils::PrintMessage("");
@@ -684,36 +680,13 @@ bool CZNC::WriteNewConfig(const CString& sConfigFile) {
 		if (!sAnswer.empty()) {
 			vsLines.push_back("\tAltNick    = " + sAnswer);
 		}
-		CUtils::GetInput("Ident", sAnswer, sNick);
+		CUtils::GetInput("Ident", sAnswer, sUser);
 		vsLines.push_back("\tIdent      = " + sAnswer);
 		CUtils::GetInput("Real Name", sAnswer, "Got ZNC?");
 		vsLines.push_back("\tRealName   = " + sAnswer);
 		CUtils::GetInput("Bind Host", sAnswer, "", "optional");
 		if (!sAnswer.empty()) {
 			vsLines.push_back("\tBindHost   = " + sAnswer);
-		}
-		// todo: Possibly add motd
-
-		unsigned int uBufferCount = 0;
-
-		CUtils::GetNumInput("Number of lines to buffer per channel or query", uBufferCount, 0, ~0, 50);
-		if (uBufferCount) {
-			vsLines.push_back("\tBuffer     = " + CString(uBufferCount));
-		}
-		if (CUtils::GetBoolInput("Would you like to clear channel buffers after replay?", true)) {
-			vsLines.push_back("\tAutoClearChanBuffer = true");
-		} else {
-			vsLines.push_back("\tAutoClearChanBuffer = false");
-		}
-		if (CUtils::GetBoolInput("Would you like to clear query buffers after replay?", true)) {
-			vsLines.push_back("\tAutoClearQueryBuffer = true");
-		} else {
-			vsLines.push_back("\tAutoClearQueryBuffer = false");
-		}
-
-		CUtils::GetInput("Default channel modes", sAnswer, "+stn");
-		if (!sAnswer.empty()) {
-			vsLines.push_back("\tChanModes  = " + sAnswer);
 		}
 
 		set<CModInfo> ssUserMods;
@@ -763,7 +736,7 @@ bool CZNC::WriteNewConfig(const CString& sConfigFile) {
 				CUtils::GetInput("[" + sHost + "] Password (probably empty)", sPass);
 
 #ifdef HAVE_LIBSSL
-				bSSL = CUtils::GetBoolInput("Does this server use SSL?", false);
+				bSSL = CUtils::GetBoolInput("Does this server use SSL?", uServerPort == 6697);
 #endif
 
 				vsLines.push_back("\t\tServer     = " + sHost + ((bSSL) ? " +" : " ") + CString(uServerPort) + " " + sPass);
@@ -829,7 +802,7 @@ bool CZNC::WriteNewConfig(const CString& sConfigFile) {
 			}
 		}
 		if (!bFileOK) {
-			CUtils::GetInput("Please specify an alternate location (or \"stdout\" for displaying the config)", m_sConfigFile, m_sConfigFile);
+			while (!CUtils::GetInput("Please specify an alternate location", m_sConfigFile, "",  "or \"stdout\" for displaying the config"));
 			if (m_sConfigFile.Equals("stdout"))
 				bFileOK = true;
 			else
@@ -881,7 +854,8 @@ bool CZNC::WriteNewConfig(const CString& sConfigFile) {
 	CUtils::PrintMessage("");
 	CUtils::PrintMessage("Try something like this in your IRC client...", true);
 	CUtils::PrintMessage("/server <znc_server_ip> " + sSSL + CString(uListenPort) + " " + sUser + ":<pass>", true);
-	CUtils::PrintMessage("And this in your browser...", true);
+	CUtils::PrintMessage("");
+	CUtils::PrintMessage("To manage settings, users and networks, point your web browser to", true);
 	CUtils::PrintMessage(sProtocol + "://<znc_server_ip>:" + CString(uListenPort) + "/", true);
 	CUtils::PrintMessage("");
 
