@@ -302,7 +302,7 @@ void CUtils::PrintPrompt(const CString& sMessage) {
 void CUtils::PrintMessage(const CString& sMessage, bool bStrong) {
 	if (CDebug::StdoutIsTTY()) {
 		if (bStrong)
-			fprintf(stdout, BOLD BLU "[" YEL " ** " BLU "]" DFL BOLD "%s" NORM "\n",
+			fprintf(stdout, BOLD BLU "[" YEL " ** " BLU "]" DFL BOLD " %s" NORM "\n",
 					sMessage.c_str());
 		else
 			fprintf(stdout, BOLD BLU "[" YEL " ** " BLU "]" DFL NORM " %s\n",
