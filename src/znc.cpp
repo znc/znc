@@ -731,20 +731,17 @@ bool CZNC::WriteNewConfig(const CString& sConfigFile) {
 
 		vsLines.push_back("");
 		CUtils::PrintMessage("");
-		CUtils::PrintMessage("-- Channels --");
-		CUtils::PrintMessage("");
 
-		CString sArg = "a";
-		CString sPost = " for ZNC to automatically join?";
-		bool bDefault = true;
-
-		while (CUtils::GetBoolInput("Would you like to add " + sArg + " channel" + sPost, bDefault)) {
-			while (!CUtils::GetInput("Channel name", sAnswer)) ;
-			vsLines.push_back("\t\t<Chan " + sAnswer + ">");
-			vsLines.push_back("\t\t</Chan>");
-			sArg = "another";
-			sPost = "?";
-			bDefault = false;
+		CString sChans;
+		if (CUtils::GetInput("Initial channels", sChans)) {
+			VCString vsChans;
+			sChans.Replace(",", " ");
+			sChans.Replace(";", " ");
+			sChans.Split(" ", vsChans, false, "", "", true, true);
+			for (const CString& sChan : vsChans) {
+				vsLines.push_back("\t\t<Chan " + sChan + ">");
+				vsLines.push_back("\t\t</Chan>");
+			}
 		}
 
 		vsLines.push_back("\t</Network>");
