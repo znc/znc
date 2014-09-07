@@ -103,7 +103,7 @@ void CLogMod::PutLog(const CString& sLine, const CString& sWindow /*= "Status"*/
 	if (!CFile::Exists(sLogDir)) CDir::MakeDir(sLogDir, ModDirInfo.st_mode);
 	if (LogFile.Open(O_WRONLY | O_APPEND | O_CREAT))
 	{
-		LogFile.Write(CUtils::FormatTime(curtime, "[%H:%M:%S] ", m_pUser->GetTimezone()) + (m_bSanitize ? sLine.StripControls_n() : sLine) + "\n");
+		LogFile.Write(CUtils::FormatTime(curtime, "%F [%H:%M:%S] ", m_pUser->GetTimezone()) + (m_bSanitize ? sLine.StripControls_n() : sLine) + "\n");
 	} else
 		DEBUG("Could not open log file [" << sPath << "]: " << strerror(errno));
 }
@@ -149,21 +149,21 @@ bool CLogMod::OnLoad(const CString& sArgs, CString& sMessage)
 			if (!m_sLogPath.empty()) {
 				m_sLogPath += "/";
 			}
-			m_sLogPath += "$NETWORK_$WINDOW_%Y%m%d.log";
+			m_sLogPath += "$NETWORK_$WINDOW.log";
 		}
 	} else if (GetType() == CModInfo::NetworkModule) {
 		if (m_sLogPath.Right(1) == "/" || m_sLogPath.find("$WINDOW") == CString::npos) {
 			if (!m_sLogPath.empty()) {
 				m_sLogPath += "/";
 			}
-			m_sLogPath += "$WINDOW_%Y%m%d.log";
+			m_sLogPath += "$WINDOW";
 		}
 	} else {
 		if (m_sLogPath.Right(1) == "/" || m_sLogPath.find("$USER") == CString::npos || m_sLogPath.find("$WINDOW") == CString::npos || m_sLogPath.find("$NETWORK") == CString::npos) {
 			if (!m_sLogPath.empty()) {
 				m_sLogPath += "/";
 			}
-			m_sLogPath += "$USER_$NETWORK_$WINDOW_%Y%m%d.log";
+			m_sLogPath += "$USER_$NETWORK_$WINDOW.log";
 		}
 	}
 
