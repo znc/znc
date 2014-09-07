@@ -572,7 +572,7 @@ bool CZNC::WriteNewConfig(const CString& sConfigFile) {
 	}
 
 	CUtils::PrintMessage("");
-	CUtils::PrintMessage("First let's start with some global settings...");
+	CUtils::PrintMessage("-- Global settings --");
 	CUtils::PrintMessage("");
 
 	// Listen
@@ -590,22 +590,26 @@ bool CZNC::WriteNewConfig(const CString& sConfigFile) {
 	do {
 		bSuccess = true;
 		while (true) {
-			if (!CUtils::GetNumInput("What port would you like ZNC to listen on?", uListenPort, 1025, 65535)) {
+			if (!CUtils::GetNumInput("Listen on port", uListenPort, 1025, 65535)) {
 				continue;
 			}
-			if (uListenPort == 6667 && !CUtils::GetBoolInput("Warning: Some web browsers reject port 6667. If you intend to use ZNC's web interface, you might want to use another port. Proceed with port 6667 anyway?", true)) {
-				continue;
+			if (uListenPort == 6667) {
+				CUtils::PrintStatus(false, "WARNING: Some web browsers reject port 6667. If you intend to");
+				CUtils::PrintStatus(false, "use ZNC's web interface, you might want to use another port.");
+				if (!CUtils::GetBoolInput("Proceed with port 6667 anyway?", true)) {
+					continue;
+				}
 			}
 			break;
 		}
 
 
 #ifdef HAVE_LIBSSL
-		bListenSSL = CUtils::GetBoolInput("Would you like ZNC to listen using SSL?", bListenSSL);
+		bListenSSL = CUtils::GetBoolInput("Listen using SSL", bListenSSL);
 #endif
 
 #ifdef HAVE_IPV6
-		b6 = CUtils::GetBoolInput("Would you like ZNC to listen using both IPv4 and IPv6?", b6);
+		b6 = CUtils::GetBoolInput("Listen using both IPv4 and IPv6", b6);
 #endif
 
 		// Don't ask for listen host, it may be configured later if needed.
@@ -647,17 +651,17 @@ bool CZNC::WriteNewConfig(const CString& sConfigFile) {
 		vsGlobalModNames.push_back(it->GetName());
 		vsLines.push_back("LoadModule = " + it->GetName());
 	}
-	CUtils::PrintMessage("Enabled the default global modules [" + CString(", ").Join(vsGlobalModNames.begin(), vsGlobalModNames.end()) + "]");
+	CUtils::PrintMessage("Enabled global modules [" + CString(", ").Join(vsGlobalModNames.begin(), vsGlobalModNames.end()) + "]");
 
 	// User
 	CUtils::PrintMessage("");
-	CUtils::PrintMessage("Now we need to set up an admin user...");
+	CUtils::PrintMessage("-- Admin user settings --");
 	CUtils::PrintMessage("");
 
 	vsLines.push_back("");
 	CString sNick;
 	do {
-		CUtils::GetInput("Username", sUser, "", "AlphaNumeric");
+		CUtils::GetInput("Username", sUser, "", "alphanumeric");
 	} while (!CUser::IsValidUserName(sUser));
 
 	vsLines.push_back("<User " + sUser + ">");
@@ -669,15 +673,15 @@ bool CZNC::WriteNewConfig(const CString& sConfigFile) {
 
 	CUtils::GetInput("Nick", sNick, CUser::MakeCleanUserName(sUser));
 	vsLines.push_back("\tNick       = " + sNick);
-	CUtils::GetInput("Alt Nick", sAnswer, sNick + "_");
+	CUtils::GetInput("Alternate nick", sAnswer, sNick + "_");
 	if (!sAnswer.empty()) {
 		vsLines.push_back("\tAltNick    = " + sAnswer);
 	}
 	CUtils::GetInput("Ident", sAnswer, sUser);
 	vsLines.push_back("\tIdent      = " + sAnswer);
-	CUtils::GetInput("Real Name", sAnswer, "Got ZNC?");
+	CUtils::GetInput("Real name", sAnswer, "Got ZNC?");
 	vsLines.push_back("\tRealName   = " + sAnswer);
-	CUtils::GetInput("Bind Host", sAnswer, "", "optional");
+	CUtils::GetInput("Bind host", sAnswer, "", "optional");
 	if (!sAnswer.empty()) {
 		vsLines.push_back("\tBindHost   = " + sAnswer);
 	}
@@ -689,11 +693,15 @@ bool CZNC::WriteNewConfig(const CString& sConfigFile) {
 		vsUserModNames.push_back(it->GetName());
 		vsLines.push_back("\tLoadModule = " + it->GetName());
 	}
-	CUtils::PrintMessage("Enabled the default user modules [" + CString(", ").Join(vsUserModNames.begin(), vsUserModNames.end()) + "]");
+	CUtils::PrintMessage("Enabled user modules [" + CString(", ").Join(vsUserModNames.begin(), vsUserModNames.end()) + "]");
 
 	CUtils::PrintMessage("");
-	if (CUtils::GetBoolInput("Would you like to set up a network?", true)) {
+	if (CUtils::GetBoolInput("Set up a network?", true)) {
 		vsLines.push_back("");
+
+		CUtils::PrintMessage("");
+		CUtils::PrintMessage("-- Network settings --");
+		CUtils::PrintMessage("");
 
 		do {
 			CUtils::GetInput("Name", sNetwork, "freenode");
@@ -708,12 +716,6 @@ bool CZNC::WriteNewConfig(const CString& sConfigFile) {
 			vsNetworkModNames.push_back(it->GetName());
 			vsLines.push_back("\t\tLoadModule = " + it->GetName());
 		}
-		CUtils::PrintMessage("Enabled the default network modules [" + CString(", ").Join(vsNetworkModNames.begin(), vsNetworkModNames.end()) + "]");
-
-		vsLines.push_back("");
-		CUtils::PrintMessage("");
-		CUtils::PrintMessage("-- IRC Server --");
-		CUtils::PrintMessage("");
 
 		CString sHost, sPass, sHint;
 		bool bSSL = false;
@@ -721,25 +723,25 @@ bool CZNC::WriteNewConfig(const CString& sConfigFile) {
 
 		if (sNetwork.Equals("freenode")) {
 			sHost = "chat.freenode.net";
+#ifdef HAVE_LIBSSL
+			bSSL = true;
+#endif
 		} else {
 			sHint = "host only";
 		}
 
-		while (!CUtils::GetInput("IRC server", sHost, sHost, sHint) || !CServer::IsValidHostName(sHost));
-		while (!CUtils::GetNumInput("[" + sHost + "] Port", uServerPort, 1, 65535, 6667));
-		CUtils::GetInput("[" + sHost + "] Password (probably empty)", sPass);
-
+		while (!CUtils::GetInput("Server host", sHost, sHost, sHint) || !CServer::IsValidHostName(sHost));
 #ifdef HAVE_LIBSSL
-		bSSL = CUtils::GetBoolInput("Does this server use SSL?", uServerPort == 6697);
+		bSSL = CUtils::GetBoolInput("Server uses SSL?", bSSL);
 #endif
+		while (!CUtils::GetNumInput("Server port", uServerPort, 1, 65535, bSSL ? 6697 : 6667));
+		CUtils::GetInput("Server password (probably empty)", sPass);
 
 		vsLines.push_back("\t\tServer     = " + sHost + ((bSSL) ? " +" : " ") + CString(uServerPort) + " " + sPass);
 
-		vsLines.push_back("");
-		CUtils::PrintMessage("");
-
 		CString sChans;
 		if (CUtils::GetInput("Initial channels", sChans)) {
+			vsLines.push_back("");
 			VCString vsChans;
 			sChans.Replace(",", " ");
 			sChans.Replace(";", " ");
@@ -749,6 +751,8 @@ bool CZNC::WriteNewConfig(const CString& sConfigFile) {
 				vsLines.push_back("\t\t</Chan>");
 			}
 		}
+
+		CUtils::PrintMessage("Enabled network modules [" + CString(", ").Join(vsNetworkModNames.begin(), vsNetworkModNames.end()) + "]");
 
 		vsLines.push_back("\t</Network>");
 	}
