@@ -1078,8 +1078,6 @@ public:
 		Tmpl.SetFile("add_edit_user.tmpl");
 
 		if (!WebSock.GetParam("submitted").ToUInt()) {
-			CString sAllowedHosts, sServers, sChans, sCTCPReplies;
-
 			if (pUser) {
 				Tmpl["Action"] = "edituser";
 				Tmpl["Title"] = "Edit User [" + pUser->GetUserName() + "]";
@@ -1407,7 +1405,6 @@ public:
 	}
 
 	bool TrafficPage(CWebSock& WebSock, CTemplate& Tmpl) {
-		CSmartPtr<CWebSession> spSession = WebSock.GetSession();
 		Tmpl["Uptime"] = CZNC::Get().GetUptime();
 
 		const map<CString,CUser*>& msUsers = CZNC::Get().GetUserMap();
@@ -1566,7 +1563,6 @@ public:
 	bool SettingsPage(CWebSock& WebSock, CTemplate& Tmpl) {
 		Tmpl.SetFile("settings.tmpl");
 		if (!WebSock.GetParam("submitted").ToUInt()) {
-			CString sBindHosts, sMotd;
 			Tmpl["Action"] = "settings";
 			Tmpl["Title"] = "Settings";
 			Tmpl["StatusPrefix"] = CZNC::Get().GetStatusPrefix();
