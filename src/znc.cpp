@@ -696,7 +696,7 @@ bool CZNC::WriteNewConfig(const CString& sConfigFile) {
 		vsLines.push_back("");
 
 		do {
-			CUtils::GetInput("Network", sNetwork, "", "e.g. `freenode' or `efnet'");
+			CUtils::GetInput("Name", sNetwork, "freenode");
 		} while (!CIRCNetwork::IsValidNetwork(sNetwork));
 
 		vsLines.push_back("\t<Network " + sNetwork + ">");
@@ -715,12 +715,18 @@ bool CZNC::WriteNewConfig(const CString& sConfigFile) {
 		CUtils::PrintMessage("-- IRC Server --");
 		CUtils::PrintMessage("");
 
-		CString sHost, sPass;
+		CString sHost, sPass, sHint;
 		bool bSSL = false;
 		unsigned int uServerPort = 0;
 
-		while (!CUtils::GetInput("IRC server", sHost, "", "host only") || !CServer::IsValidHostName(sHost)) ;
-		while (!CUtils::GetNumInput("[" + sHost + "] Port", uServerPort, 1, 65535, 6667)) ;
+		if (sNetwork.Equals("freenode")) {
+			sHost = "chat.freenode.net";
+		} else {
+			sHint = "host only";
+		}
+
+		while (!CUtils::GetInput("IRC server", sHost, sHost, sHint) || !CServer::IsValidHostName(sHost));
+		while (!CUtils::GetNumInput("[" + sHost + "] Port", uServerPort, 1, 65535, 6667));
 		CUtils::GetInput("[" + sHost + "] Password (probably empty)", sPass);
 
 #ifdef HAVE_LIBSSL
