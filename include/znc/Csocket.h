@@ -124,6 +124,10 @@
 #endif /* __DEBUG__ */
 #endif /* CS_DEBUG */
 
+#ifndef CS_EXPORT
+#define CS_EXPORT
+#endif /* CS_EXPORT */
+
 #ifndef PERROR
 #ifdef __DEBUG__
 #	define PERROR( f ) __Perror( f, __FILE__, __LINE__ )
@@ -160,7 +164,7 @@ namespace Csocket
  * @class CSCharBuffer
  * @brief Ease of use self deleting char * class.
  */
-class CSCharBuffer
+class CS_EXPORT CSCharBuffer
 {
 public:
 	CSCharBuffer( size_t iSize )
@@ -182,7 +186,7 @@ private:
  * @class CSSockAddr
  * @brief sockaddr wrapper.
  */
-class CSSockAddr
+class CS_EXPORT CSSockAddr
 {
 public:
 	CSSockAddr()
@@ -250,7 +254,7 @@ class Csock;
  *
  * Process can be called in a thread, but Init and Finish must only be called from the parent once the thread is complete
  */
-class CGetAddrInfo
+class CS_EXPORT CGetAddrInfo
 {
 public:
 	/**
@@ -366,7 +370,7 @@ uint64_t millitime();
  * You should derive from this class, and override RunJob() with your code
  * @author Jim Hull <csocket@jimloco.com>
  */
-class CCron
+class CS_EXPORT CCron
 {
 public:
 	CCron();
@@ -431,7 +435,7 @@ private:
  * @class CSMonitorFD
  * @brief Class to tie sockets to for monitoring by Csocket at either the Csock or TSockManager.
  */
-class CSMonitorFD
+class CS_EXPORT CSMonitorFD
 {
 public:
 	CSMonitorFD() { m_bEnabled = true; }
@@ -482,7 +486,7 @@ protected:
  * @class CSockCommon
  * @brief simple class to share common code to both TSockManager and Csock
  */
-class CSockCommon
+class CS_EXPORT CSockCommon
 {
 public:
 	CSockCommon() {}
@@ -537,7 +541,7 @@ typedef int ( *FPCertVerifyCB )( int, X509_STORE_CTX * );
  * @see TSocketManager
  * @author Jim Hull <csocket@jimloco.com>
  */
-class Csock : public CSockCommon
+class CS_EXPORT Csock : public CSockCommon
 {
 public:
 	//! default constructor, sets a timeout of 60 seconds
@@ -899,42 +903,22 @@ public:
 	uint64_t GetRateTime();
 
 	/**
-	 * Override these functions for an easy interface when using the Socket Manager
-	 * Don't bother using these callbacks if you are using this class directly (without Socket Manager)
-	 * as the Socket Manager calls most of these callbacks
-	 *
 	 * Connected event
 	 */
 	virtual void Connected() {}
 	/**
-	 * Override these functions for an easy interface when using the Socket Manager
-	 * Don't bother using these callbacks if you are using this class directly (without Socket Manager)
-	 * as the Socket Manager calls most of these callbacks
-	 *
 	 * Disconnected event
 	 */
 	virtual void Disconnected() {}
 	/**
-	 * Override these functions for an easy interface when using the Socket Manager
-	 * Don't bother using these callbacks if you are using this class directly (without Socket Manager)
-	 * as the Socket Manager calls most of these callbacks
-	 *
 	 * Sock Timed out event
 	 */
 	virtual void Timeout() {}
 	/**
-	 * Override these functions for an easy interface when using the Socket Manager
-	 * Don't bother using these callbacks if you are using this class directly (without Socket Manager)
-	 * as the Socket Manager calls most of these callbacks
-	 *
 	 * Ready to read data event
 	 */
 	virtual void ReadData( const char *data, size_t len ) {}
 	/**
-	 * Override these functions for an easy interface when using the Socket Manager
-	 * Don't bother using these callbacks if you are using this class directly (without Socket Manager)
-	 * as the Socket Manager calls most of these callbacks.
-	 *  With ReadLine, if your not going to use it IE a data stream, @see EnableReadLine()
 	 *
 	 * Ready to Read a full line event. If encoding is provided, this is guaranteed to be UTF-8
 	 */
@@ -946,9 +930,6 @@ public:
 	bool HasReadLine() const { return( m_bEnableReadLine ); }
 
 	/**
-	 * Override these functions for an easy interface when using the Socket Manager
-	 * Don't bother using these callbacks if you are using this class directly (without Socket Manager)
-	 * as the Socket Manager calls most of these callbacks
 	 * This WARNING event is called when your buffer for readline exceeds the warning threshold
 	 * and triggers this event. Either Override it and do nothing, or SetMaxBufferThreshold()
 	 * This event will only get called if m_bEnableReadLine is enabled
@@ -956,18 +937,9 @@ public:
 	virtual void ReachedMaxBuffer();
 	/**
 	 * @brief A sock error occured event
-	 *
-	 * Override these functions for an easy interface when using the Socket Manager
-	 * Don't bother using these callbacks if you are using this class directly (without Socket Manager)
-	 * as the Socket Manager calls most of these callbacks
 	 */
 	virtual void SockError( int iErrno, const CS_STRING & sDescription ) {}
 	/**
-	 * Override these functions for an easy interface when using the Socket Manager
-	 * Don't bother using these callbacks if you are using this class directly (without Socket Manager)
-	 * as the Socket Manager calls most of these callbacks
-	 *
-	 *
 	 * Incoming Connection Event
 	 * return false and the connection will fail
 	 * default returns true
@@ -982,10 +954,6 @@ public:
 	virtual void Listening( const CS_STRING & sBindIP, uint16_t uPort ) {}
 
 	/**
-	 * Override these functions for an easy interface when using the Socket Manager
-	 * Don't bother using these callbacks if you are using this class directly (without Socket Manager)
-	 * as the Socket Manager calls most of these callbacks
-	 *
 	 * Connection Refused Event
 	 *
 	 */
@@ -1112,7 +1080,7 @@ private:
 	uint16_t	m_uPort, m_iRemotePort, m_iLocalPort;
 	cs_sock_t	m_iReadSock, m_iWriteSock;
 	int 		m_iTimeout, m_iConnType, m_iMethod, m_iTcount, m_iMaxConns;
-	bool		m_bUseSSL, m_bIsConnected, m_bBLOCK;
+	bool		m_bUseSSL, m_bIsConnected;
 	bool		m_bsslEstablished, m_bEnableReadLine, m_bPauseRead;
 	CS_STRING	m_shostname, m_sbuffer, m_sSockName, m_sPemFile, m_sCipherType, m_sParentName;
 	CS_STRING	m_sSend, m_sPemPass, m_sLocalIP, m_sRemoteIP;
@@ -1164,7 +1132,7 @@ private:
  * @class CSConnection
  * @brief options for creating a connection
  */
-class CSConnection
+class CS_EXPORT CSConnection
 {
 public:
 	/**
@@ -1234,7 +1202,7 @@ protected:
 #endif /* HAVE_LIBSSL */
 };
 
-class CSSSLConnection : public CSConnection
+class CS_EXPORT CSSSLConnection : public CSConnection
 {
 public:
 	CSSSLConnection( const CS_STRING & sHostname, uint16_t iPort, int iTimeout = 60 ) :
@@ -1249,7 +1217,7 @@ public:
  * @class CSListener
  * @brief options container to create a listener
  */
-class CSListener
+class CS_EXPORT CSListener
 {
 public:
 	/**
@@ -1364,7 +1332,7 @@ public:
  * @see TSocketManager
  * @author Jim Hull <csocket@jimloco.com>
  */
-class CSocketManager : public std::vector<Csock *>, public CSockCommon
+class CS_EXPORT CSocketManager : public std::vector<Csock *>, public CSockCommon
 {
 public:
 	CSocketManager();
