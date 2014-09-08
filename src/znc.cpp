@@ -590,7 +590,7 @@ bool CZNC::WriteNewConfig(const CString& sConfigFile) {
 	do {
 		bSuccess = true;
 		while (true) {
-			if (!CUtils::GetNumInput("Listen on port", uListenPort, 1025, 65535)) {
+			if (!CUtils::GetNumInput("Listen on port", uListenPort, 1025, 65534)) {
 				continue;
 			}
 			if (uListenPort == 6667) {
