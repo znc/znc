@@ -176,7 +176,11 @@ public:
 				}
 			}
 
-			PutModule(table);
+			if (table.size() > 0) {
+				PutModule(table);
+			} else {
+				PutModule("Buddy list is empty");
+			}
 		} else {
 			PutModule("syntax: List search-string");
 		}
@@ -199,7 +203,11 @@ public:
 				}
 			}
 
-			PutModule(table);
+			if (table.size() > 0) {
+				PutModule(table);
+			} else {
+				PutModule("Buddy list is empty");
+			}
 		} else {
 			PutModule("syntax: ListAll");
 		}
