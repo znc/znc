@@ -42,6 +42,8 @@ public:
 		if (sParams.empty()) {
 			EnableTimer();
 			SetNV("State", "Enabled");
+
+			PutModule("Buddy list has been enabled");
 		} else {
 			PutModule("syntax: Enable");
 		}
@@ -53,8 +55,24 @@ public:
 		if (sParams.empty()) {
 			DisableTimer();
 			SetNV("State", "Disabled");
+
+			PutModule("Buddy list has been disabled");
 		} else {
 			PutModule("syntax: Disable");
+		}
+	}
+
+	void Check(const CString& sLine) {
+		CString sParams = sLine.Token(1, true);
+
+		if (sParams.empty()) {
+			if (GetNV("State").Equals("Enabled")) {
+				PutModule("Buddy list is enabled");
+			} else {
+				PutModule("Buddy list is disabled");
+			}
+		} else {
+			PutModule("syntax: Check");
 		}
 	}
 
@@ -265,6 +283,13 @@ public:
 			static_cast<CModCommand::ModCmdFunc>(&CBuddyListModule::Disable),
 			"",
 			"Disable the buddy list"
+		);
+		AddCommand
+		(
+			"Check",
+			static_cast<CModCommand::ModCmdFunc>(&CBuddyListModule::Check),
+			"",
+			"Check the buddy list state"
 		);
 	}
 
