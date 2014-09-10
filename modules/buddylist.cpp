@@ -23,7 +23,7 @@ using std::vector;
 
 class CBuddyListModule;
 
-class CBuddyListTimer : CTimer {
+class CBuddyListTimer : public CTimer {
 public:
 	CBuddyListTimer(CBuddyListModule *pModule);
 	~CBuddyListTimer() {}
