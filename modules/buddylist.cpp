@@ -138,7 +138,7 @@ public:
 		CString sParams = sLine.Token(2, true);
 
 		if (!sNick.empty() && sParams.empty()) {
-			if (FindNV("Buddy:" + sNick)) {
+			if (FindNV("Buddy:" + sNick) != EndNV()) {
 				DelNV("Buddy:" + sNick);
 
 				PutModule(sNick + " has been removed from your buddy list");
