@@ -1077,7 +1077,7 @@ bool CModules::LoadModule(const CString& sModule, const CString& sArgs, CModInfo
 	}
 
 	if (!sRetMsg.empty()) {
-		sRetMsg += "[" + sRetMsg + "] ";
+		sRetMsg += " ";
 	}
 	sRetMsg += "[" + sModPath + "]";
 	return true;
