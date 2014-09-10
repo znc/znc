@@ -234,13 +234,19 @@ public:
 	}
 
 	void PollServer() {
+		PutModule("Polling server");
+
 		if (!m_pTimer) {
+			PutModule("Could not poll server because timer does not exist");
+
 			return;
 		}
 
 		CIRCSock* pIRCSock = m_pNetwork->GetIRCSock();
 
 		if (!pIRCSock) {
+			PutModule("Could not poll server because IRC socket does not exist");
+
 			return;
 		}
 
