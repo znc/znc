@@ -179,7 +179,7 @@ public:
 			if (table.size() > 0) {
 				PutModule(table);
 			} else {
-				PutModule("Buddy list is empty");
+				PutModule("Buddy list is empty or no matching buddies were found");
 			}
 		} else {
 			PutModule("syntax: List search-string");
