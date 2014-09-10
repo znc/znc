@@ -103,13 +103,17 @@ public:
 		CString sInfo = sLine.Token(2, true);
 
 		if (!sNick.empty()) {
-			SetNV("Buddy:" + sNick, sInfo);
+			if (FindNV("Buddy:" + sNick) != EndNV()) {
+				SetNV("Buddy:" + sNick, sInfo);
 
-			if (sInfo.empty()) {
-				PutModule("Info on " + sNick + " has been cleared");
+				if (sInfo.empty()) {
+					PutModule("Info on " + sNick + " has been cleared");
+				} else {
+					PutModule("Info on " + sNick + " has been set to");
+					PutModule("\t" + sInfo);
+				}
 			} else {
-				PutModule("Info on " + sNick + " has been set to");
-				PutModule("\t" + sInfo);
+				PutModule(sNick + " is not in your buddy list");
 			}
 		} else {
 			PutModule("syntax: Redefine nick [info]");
@@ -122,12 +126,20 @@ public:
 		CString sParams = sLine.Token(3, true);
 
 		if (!sOldNick.empty() && !sNewNick.empty() && sParams.empty()) {
-			CString sInfo = GetNV("Buddy:" + sOldNick);
+			if (FindNV("Buddy:" + sOldNick) != EndNV()) {
+				if (FindNV("Buddy:" + sNewNick) == EndNV()) {
+					CString sInfo = GetNV("Buddy:" + sOldNick);
 
-			SetNV("Buddy:" + sNewNick, sInfo);
-			DelNV("Buddy:" + sOldNick);
+					SetNV("Buddy:" + sNewNick, sInfo);
+					DelNV("Buddy:" + sOldNick);
 
-			PutModule(sOldNick + " has been renamed to " + sNewNick + " in your buddy list");
+					PutModule(sOldNick + " has been renamed to " + sNewNick + " in your buddy list");
+				} else {
+					PutModule(sNewNick + " is already in your buddy list");
+				}
+			} else {
+				PutModule(sOldNick + " is not in your buddy list");
+			}
 		} else {
 			PutModule("syntax: Rename old_nick new_nick");
 		}
@@ -337,24 +349,42 @@ private:
 	CBuddyListTimer* m_pTimer;
 
 	void EnableTimer() {
-		if (m_bIsEnabled && m_pNetwork->IsIRCConnected()) {
-			if (m_pTimer) {
-				return;
-			}
+		PutModule("Creating timer");
+		
+		if (m_bIsEnabled) {
+			if (m_pNetwork->IsIRCConnected()) {
+				if (m_pTimer) {
+					PutModule("Could not create timer because timer is already created");
 
-			m_pTimer = new CBuddyListTimer(this);
-			AddTimer(m_pTimer);
+					return;
+				}
+
+				m_pTimer = new CBuddyListTimer(this);
+				AddTimer(m_pTimer);
+
+				PutModule("Created timer");
+			} else {
+				PutModule("Could not create timer because bouncer is not connected to IRC");
+			}
+		} else {
+			PutModule("Could not create timer because buddy list is disabled");
 		}
 	}
 
 	void DisableTimer() {
+		PutModule("Destroying timer");
+
 		if (!m_pTimer) {
+			PutModule("Could not destroy timer because timer is already destroyed");
+
 			return;
 		}
 
 		m_pTimer->Stop();
 		RemTimer(m_pTimer);
 		m_pTimer = NULL;
+
+		PutModule("Destroyed timer");
 	}
 };
 
