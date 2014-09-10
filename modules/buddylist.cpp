@@ -17,14 +17,49 @@
 #include <znc/Modules.h>
 #include <znc/User.h>
 
-class CBuddyList : public CModule {
+class CBuddyList;
+
+class CBuddyListTimer : CTimer {
 public:
+	CBuddyListTimer(CBuddyListModule *pModule);
+	~CBuddyListTimer() {}
+
+	void RunJob();
+
+private:
+	CBuddyListModule* m_pModule;
+};
+
+class CBuddyListModule : public CModule {
+public:
+	void Enable(const CString& sLine) {
+		CString sParams = sLine.Token(1, true);
+
+		if (sParams.empty()) {
+			EnableTimer();
+			SetNV("State", "Enabled");
+		} else {
+			PutModule("syntax: Enable");
+		}
+	}
+
+	void Disable(const CString& sLine) {
+		CString sParams = sLine.Token(1, true);
+
+		if (sParams.empty()) {
+			DisableTimer();
+			SetNV("State", "Disabled");
+		} else {
+			PutModule("syntax: Disable");
+		}
+	}
+
 	void AddBuddy(const CString& sLine) {
 		CString sNick = sLine.Token(1, false);
 		CString sInfo = sLine.Token(2, true);
 
 		if (!sNick.empty()) {
-			SetNV(sNick, sInfo);
+			SetNV("Buddy:" + sNick, sInfo);
 
 			if (sInfo.empty()) {
 				PutModule(sNick + " has been added to your buddy list");
@@ -42,7 +77,7 @@ public:
 		CString sInfo = sLine.Token(2, true);
 
 		if (!sNick.empty()) {
-			SetNV(sNick, sInfo);
+			SetNV("Buddy:" + sNick, sInfo);
 
 			if (sInfo.empty()) {
 				PutModule("Info on " + sNick + " has been cleared");
@@ -61,10 +96,10 @@ public:
 		CString sParams = sLine.Token(3, true);
 
 		if (!sOldNick.empty() && !sNewNick.empty() && sParams.empty()) {
-			CString sInfo = GetNV(sOldNick);
+			CString sInfo = GetNV("Buddy:" + sOldNick);
 
-			SetNV(sNewNick, sInfo);
-			DelNV(sOldNick);
+			SetNV("Buddy:" + sNewNick, sInfo);
+			DelNV("Buddy:" + sOldNick);
 
 			PutModule(sOldNick + " has been renamed to " + sNewNick + " in your buddy list");
 		} else {
@@ -77,7 +112,7 @@ public:
 		CString sParams = sLine.Token(2, true);
 
 		if (!sNick.empty() && sParams.empty()) {
-			DelNV(sNick);
+			DelNV("Buddy:" + sNick);
 
 			PutModule(sNick + " has been removed from your buddy list");
 		} else {
@@ -89,7 +124,12 @@ public:
 		CString sParams = sLine.Token(1, true);
 
 		if (sParams.empty()) {
-			ClearNV(true);
+			for (MCString::iterator it = BeginNV(); it != EndNV(); ++it) {
+				if (it->first.WildCmp("Buddy:*")) {
+					DelNV(it->first);
+				}
+			}
+
 			PutModule("All buddies have been removed from your buddy list");
 		} else {
 			PutModule("syntax: RemoveAll");
@@ -107,9 +147,9 @@ public:
 			table.AddColumn("Info");
 			
 			for (MCString::iterator it = BeginNV(); it != EndNV(); ++it) {
-				if (it->first.WildCmp(sSearchString)) {
+				if (it->first.WildCmp("Buddy:" + sSearchString)) {
 					table.AddRow();
-					table.SetCell("Nick", it->first);
+					table.SetCell("Nick", it->first.Token(1, true, ":"));
 					table.SetCell("Info", it->second);
 				}
 			}
@@ -130,9 +170,11 @@ public:
 			table.AddColumn("Info");
 
 			for (MCString::iterator it = BeginNV(); it != EndNV(); ++it) {
-				table.AddRow();
-				table.SetCell("Nick", it->first);
-				table.SetCell("Info", it->second);
+				if (it->first.WildCmp("Buddy:*")) {
+					table.AddRow();
+					table.SetCell("Nick", it->first.Token(1, true, ":"));
+					table.SetCell("Info", it->second);
+				}
 			}
 
 			PutModule(table);
@@ -141,69 +183,125 @@ public:
 		}
 	}
 
-	MODCONSTRUCTOR(CBuddyList) {
+	MODCONSTRUCTOR(CBuddyListModule) {
 		AddHelpCommand();
 		AddCommand
 		(
 			"Add",
-			static_cast<CModCommand::ModCmdFunc>(&CBuddyList::AddBuddy),
+			static_cast<CModCommand::ModCmdFunc>(&CBuddyListModule::AddBuddy),
 			"nick [info]",
 			"Add buddy"
 		);
 		AddCommand
 		(
 			"Rename",
-			static_cast<CModCommand::ModCmdFunc>(&CBuddyList::RenameBuddy),
+			static_cast<CModCommand::ModCmdFunc>(&CBuddyListModule::RenameBuddy),
 			"old_nick new_nick",
 			"Rename buddy"
 		);
 		AddCommand
 		(
 			"Redefine",
-			static_cast<CModCommand::ModCmdFunc>(&CBuddyList::RedefineBuddy),
+			static_cast<CModCommand::ModCmdFunc>(&CBuddyListModule::RedefineBuddy),
 			"nick [info]",
 			"Redefine info on buddy"
 		);
 		AddCommand
 		(
 			"Remove",
-			static_cast<CModCommand::ModCmdFunc>(&CBuddyList::RemoveBuddy),
+			static_cast<CModCommand::ModCmdFunc>(&CBuddyListModule::RemoveBuddy),
 			"nick",
 			"Remove buddy"
 		);
 		AddCommand
 		(
 			"RemoveAll",
-			static_cast<CModCommand::ModCmdFunc>(&CBuddyList::RemoveAllBuddies),
+			static_cast<CModCommand::ModCmdFunc>(&CBuddyListModule::RemoveAllBuddies),
 			"",
 			"Remove all buddies"
 		);
 		AddCommand
 		(
 			"List",
-			static_cast<CModCommand::ModCmdFunc>(&CBuddyList::ListBuddies),
+			static_cast<CModCommand::ModCmdFunc>(&CBuddyListModule::ListBuddies),
 			"search-string",
 			"List all matching buddies"
 		);
 		AddCommand
 		(
 			"ListAll",
-			static_cast<CModCommand::ModCmdFunc>(&CBuddyList::ListAllBuddies),
+			static_cast<CModCommand::ModCmdFunc>(&CBuddyListModule::ListAllBuddies),
 			"",
 			"List all buddies"
 		);
+		AddCommand
+		(
+			"Enable",
+			static_cast<CModCommand::ModCmdFunc>(&CBuddyListModule::Enable),
+			"",
+			"Enable the buddy list"
+		);
+		AddCommand
+		(
+			"Disable",
+			static_cast<CModCommand::ModCmdFunc>(&CBuddyListModule::Disable),
+			"",
+			"Disable the buddy list"
+		);
 	}
 
-	virtual ~CBuddyList() {}
+	virtual ~CBuddyListModule() {}
 
 	virtual bool OnLoad(const CString& sArgs, CString& sMessage) {
+		if (GetNV("State").empty()) {
+			SetNV("State", "Enabled");
+		}
+
+		m_bIsEnabled = GetNV("Status").Equals("Enabled");
+		m_pTimer = NULL;
+
+		EnableTimer();
+
 		return true;
+	}
+
+	void OnIRCDisconnected() {
+		DisableTimer();
+	}
+
+	void OnIRCConnected() {
+		EnableTimer();
+	}
+
+private:
+	bool m_bIsEnabled;
+	CBuddyListTimer* m_pTimer;
+
+	void EnableTimer() {
+		if (m_bIsEnabled && m_pNetwork->IsIRCConnected()) {
+			if (m_pTimer) {
+				return;
+			}
+
+			m_pTimer = new CBuddyListTimer(this);
+			AddTimer(m_pTimer);
+		}
+	}
+
+	void DisableTimer() {
+		if (!m_pTimer) {
+			return;
+		}
+
+		m_pTimer->Stop();
+		RemTimer(m_pTimer);
+		m_pTimer = NULL;
 	}
 };
 
-template<> void TModInfo<CBuddyList>(CModInfo& Info) {
-	Info.SetWikiPage("buddy_list");
+template<> void TModInfo<CBuddyListModule>(CModInfo& Info) {
+	Info.SetWikiPage("buddylist");
 	Info.SetHasArgs(false);
 }
 
-NETWORKMODULEDEFS(CBuddyList, "Tells you when your buddies come online or go offline")
+NETWORKMODULEDEFS(CBuddyListModule, "Tells you when your buddies come online or go offline")
