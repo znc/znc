@@ -16,8 +16,12 @@
 
 #include <znc/Modules.h>
 #include <znc/User.h>
+#include <znc/IRCNetwork.h>
+#include <znc/IRCSock.h>
 
-class CBuddyList;
+using std::vector;
+
+class CBuddyListModule;
 
 class CBuddyListTimer : CTimer {
 public:
