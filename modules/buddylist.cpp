@@ -81,13 +81,17 @@ public:
 		CString sInfo = sLine.Token(2, true);
 
 		if (!sNick.empty()) {
-			SetNV("Buddy:" + sNick, sInfo);
+			if (FindNV("Buddy:" + sNick) == EndNV()) {
+				SetNV("Buddy:" + sNick, sInfo);
 
-			if (sInfo.empty()) {
-				PutModule(sNick + " has been added to your buddy list");
+				if (sInfo.empty()) {
+					PutModule(sNick + " has been added to your buddy list");
+				} else {
+					PutModule(sNick + " has been added to your buddy list with info as follows:");
+					PutModule("\t" + sInfo);
+				}
 			} else {
-				PutModule(sNick + " has been added to your buddy list with info as follows:");
-				PutModule("\t" + sInfo);
+				PutModule(sNick + " is already in the list; please use Rename or Redefine");
 			}
 		} else {
 			PutModule("syntax: Add nick [info]");
@@ -134,9 +138,13 @@ public:
 		CString sParams = sLine.Token(2, true);
 
 		if (!sNick.empty() && sParams.empty()) {
-			DelNV("Buddy:" + sNick);
+			if (FindNV("Buddy:" + sNick)) {
+				DelNV("Buddy:" + sNick);
 
-			PutModule(sNick + " has been removed from your buddy list");
+				PutModule(sNick + " has been removed from your buddy list");
+			} else {
+				PutModule(sNick + " is not in your buddy list");
+			}
 		} else {
 			PutModule("syntax: Remove nick");
 		}
