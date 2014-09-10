@@ -183,6 +183,20 @@ public:
 		}
 	}
 
+	void PollServer() {
+		if (!m_pTimer) {
+			return;
+		}
+
+		CIRCSock* pIRCSock = m_pNetwork->GetIRCSock();
+
+		if (!pIRCSock) {
+			return;
+		}
+
+		PutModule("TODO : Poll server");
+	}
+
 	MODCONSTRUCTOR(CBuddyListModule) {
 		AddHelpCommand();
 		AddCommand
@@ -302,6 +316,15 @@ private:
 template<> void TModInfo<CBuddyListModule>(CModInfo& Info) {
 	Info.SetWikiPage("buddylist");
 	Info.SetHasArgs(false);
+}
+
+CBuddyListTimer::CBuddyListTimer(CBuddyListModule *pModule) : CTimer(pModule, 30, 0,
+		"BuddyListTimer", "Polls the server to find the status of buddies in the list") {
+	m_pModule = pModule;
+}
+
+void CBuddyListTimer::RunJob() {
+	m_pModule->PollServer();
 }
 
 NETWORKMODULEDEFS(CBuddyListModule, "Tells you when your buddies come online or go offline")
