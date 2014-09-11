@@ -234,10 +234,10 @@ public:
 	}
 
 	void PollServer() {
-		PutModule("Polling server");
+		PutStatus("Polling server");
 
 		if (!m_pTimer) {
-			PutModule("Could not poll server because timer does not exist");
+			PutStatus("Could not poll server because timer does not exist");
 
 			return;
 		}
@@ -245,12 +245,12 @@ public:
 		CIRCSock* pIRCSock = m_pNetwork->GetIRCSock();
 
 		if (!pIRCSock) {
-			PutModule("Could not poll server because IRC socket does not exist");
+			PutStatus("Could not poll server because IRC socket does not exist");
 
 			return;
 		}
 
-		PutModule("TODO : Poll server");
+		PutStatus("TODO : Poll server");
 	}
 
 	MODCONSTRUCTOR(CBuddyListModule) {
@@ -358,12 +358,12 @@ private:
 	CBuddyListTimer* m_pTimer;
 
 	void EnableTimer() {
-		PutModule("Creating timer");
+		PutStatus("Creating timer");
 
 		if (m_bIsEnabled) {
 			if (m_pNetwork->IsIRCConnected()) {
 				if (m_pTimer) {
-					PutModule("Could not create timer because timer is already created");
+					PutStatus("Could not create timer because timer is already created");
 
 					return;
 				}
@@ -371,20 +371,20 @@ private:
 				m_pTimer = new CBuddyListTimer(this);
 				AddTimer(m_pTimer);
 
-				PutModule("Created timer");
+				PutStatus("Created timer");
 			} else {
-				PutModule("Could not create timer because bouncer is not connected to IRC");
+				PutStatus("Could not create timer because bouncer is not connected to IRC");
 			}
 		} else {
-			PutModule("Could not create timer because buddy list is disabled");
+			PutStatus("Could not create timer because buddy list is disabled");
 		}
 	}
 
 	void DisableTimer() {
-		PutModule("Destroying timer");
+		PutStatus("Destroying timer");
 
 		if (!m_pTimer) {
-			PutModule("Could not destroy timer because timer is already destroyed");
+			PutStatus("Could not destroy timer because timer is already destroyed");
 
 			return;
 		}
@@ -393,7 +393,7 @@ private:
 		RemTimer(m_pTimer);
 		m_pTimer = NULL;
 
-		PutModule("Destroyed timer");
+		PutStatus("Destroyed timer");
 	}
 };
 
