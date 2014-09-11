@@ -327,7 +327,9 @@ public:
 		);
 	}
 
-	virtual ~CBuddyListModule() {}
+	virtual ~CBuddyListModule() {
+		DisableTimer();
+	}
 
 	virtual bool OnLoad(const CString& sArgs, CString& sMessage) {
 		
