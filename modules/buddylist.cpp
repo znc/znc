@@ -233,6 +233,45 @@ public:
 		}
 	}
 
+	void EnableTimer() {
+		PutModule("Creating timer");
+
+		if (m_bIsEnabled) {
+			if (m_pNetwork->IsIRCConnected()) {
+				if (m_pTimer) {
+					PutModule("Could not create timer because timer is already created");
+
+					return;
+				}
+
+				m_pTimer = new CBuddyListTimer(this);
+				AddTimer(m_pTimer);
+
+				PutModule("Created timer");
+			} else {
+				PutModule("Could not create timer because bouncer is not connected to IRC");
+			}
+		} else {
+			PutModule("Could not create timer because buddy list is disabled");
+		}
+	}
+
+	void DisableTimer() {
+		PutModule("Destroying timer");
+
+		if (!m_pTimer) {
+			PutModule("Could not destroy timer because timer is already destroyed");
+
+			return;
+		}
+
+		m_pTimer->Stop();
+		RemTimer(m_pTimer);
+		m_pTimer = NULL;
+
+		PutModule("Destroyed timer");
+	}
+
 	void PollServer() {
 		PutModule("Polling server");
 
@@ -353,45 +392,6 @@ public:
 private:
 	bool m_bIsEnabled;
 	CBuddyListTimer* m_pTimer;
-
-	void EnableTimer() {
-		PutModule("Creating timer");
-		
-		if (m_bIsEnabled) {
-			if (m_pNetwork->IsIRCConnected()) {
-				if (m_pTimer) {
-					PutModule("Could not create timer because timer is already created");
-
-					return;
-				}
-
-				m_pTimer = new CBuddyListTimer(this);
-				AddTimer(m_pTimer);
-
-				PutModule("Created timer");
-			} else {
-				PutModule("Could not create timer because bouncer is not connected to IRC");
-			}
-		} else {
-			PutModule("Could not create timer because buddy list is disabled");
-		}
-	}
-
-	void DisableTimer() {
-		PutModule("Destroying timer");
-
-		if (!m_pTimer) {
-			PutModule("Could not destroy timer because timer is already destroyed");
-
-			return;
-		}
-
-		m_pTimer->Stop();
-		RemTimer(m_pTimer);
-		m_pTimer = NULL;
-
-		PutModule("Destroyed timer");
-	}
 };
 
 template<> void TModInfo<CBuddyListModule>(CModInfo& Info) {
