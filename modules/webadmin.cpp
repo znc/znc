@@ -76,10 +76,10 @@ public:
 	MODCONSTRUCTOR(CWebAdminMod) {
 		VPair vParams;
 		vParams.push_back(make_pair("user", ""));
-		AddSubPage(new CWebSubPage("settings", "Global Settings", CWebSubPage::F_ADMIN));
-		AddSubPage(new CWebSubPage("edituser", "Your Settings", vParams));
-		AddSubPage(new CWebSubPage("traffic", "Traffic Info", CWebSubPage::F_ADMIN));
-		AddSubPage(new CWebSubPage("listusers", "Manage Users", CWebSubPage::F_ADMIN));
+		AddSubPage(std::make_shared<CWebSubPage>("settings", "Global Settings", CWebSubPage::F_ADMIN));
+		AddSubPage(std::make_shared<CWebSubPage>("edituser", "Your Settings", vParams));
+		AddSubPage(std::make_shared<CWebSubPage>("traffic", "Traffic Info", CWebSubPage::F_ADMIN));
+		AddSubPage(std::make_shared<CWebSubPage>("listusers", "Manage Users", CWebSubPage::F_ADMIN));
 	}
 
 	virtual ~CWebAdminMod() {
@@ -164,7 +164,7 @@ public:
 	}
 
 	CUser* GetNewUser(CWebSock& WebSock, CUser* pUser) {
-		CSmartPtr<CWebSession> spSession = WebSock.GetSession();
+		std::shared_ptr<CWebSession> spSession = WebSock.GetSession();
 		CString sUsername = WebSock.GetParam("newuser");
 
 		if (sUsername.empty()) {
@@ -402,7 +402,7 @@ public:
 
 	virtual CString GetWebMenuTitle() { return "webadmin"; }
 	virtual bool OnWebRequest(CWebSock& WebSock, const CString& sPageName, CTemplate& Tmpl) {
-		CSmartPtr<CWebSession> spSession = WebSock.GetSession();
+		std::shared_ptr<CWebSession> spSession = WebSock.GetSession();
 
 		if (sPageName == "settings") {
 			// Admin Check
@@ -597,7 +597,7 @@ public:
 	}
 
 	bool ChanPage(CWebSock& WebSock, CTemplate& Tmpl, CIRCNetwork* pNetwork, CChan* pChan = NULL) {
-		CSmartPtr<CWebSession> spSession = WebSock.GetSession();
+		std::shared_ptr<CWebSession> spSession = WebSock.GetSession();
 		Tmpl.SetFile("add_edit_chan.tmpl");
 		CUser* pUser = pNetwork->GetUser();
 
@@ -727,7 +727,7 @@ public:
 	}
 
 	bool NetworkPage(CWebSock& WebSock, CTemplate& Tmpl, CUser* pUser, CIRCNetwork* pNetwork = NULL) {
-		CSmartPtr<CWebSession> spSession = WebSock.GetSession();
+		std::shared_ptr<CWebSession> spSession = WebSock.GetSession();
 		Tmpl.SetFile("add_edit_network.tmpl");
 
 		if (!WebSock.GetParam("submitted").ToUInt()) {
@@ -1073,7 +1073,7 @@ public:
 	}
 
 	bool UserPage(CWebSock& WebSock, CTemplate& Tmpl, CUser* pUser = NULL) {
-		CSmartPtr<CWebSession> spSession = WebSock.GetSession();
+		std::shared_ptr<CWebSession> spSession = WebSock.GetSession();
 		Tmpl.SetFile("add_edit_user.tmpl");
 
 		if (!WebSock.GetParam("submitted").ToUInt()) {
@@ -1380,7 +1380,7 @@ public:
 	}
 
 	bool ListUsersPage(CWebSock& WebSock, CTemplate& Tmpl) {
-		CSmartPtr<CWebSession> spSession = WebSock.GetSession();
+		std::shared_ptr<CWebSession> spSession = WebSock.GetSession();
 		const map<CString,CUser*>& msUsers = CZNC::Get().GetUserMap();
 		Tmpl["Title"] = "Manage Users";
 		Tmpl["Action"] = "listusers";

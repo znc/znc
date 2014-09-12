@@ -153,7 +153,7 @@ void CWebSessionMap::FinishUserSessions(const CUser& User) {
 
 void CWebAuth::AcceptedLogin(CUser& User) {
 	if (m_pWebSock) {
-		CSmartPtr<CWebSession> spSession = m_pWebSock->GetSession();
+		std::shared_ptr<CWebSession> spSession = m_pWebSock->GetSession();
 
 		spSession->SetUser(&User);
 
@@ -167,7 +167,7 @@ void CWebAuth::AcceptedLogin(CUser& User) {
 
 void CWebAuth::RefusedLogin(const CString& sReason) {
 	if (m_pWebSock) {
-		CSmartPtr<CWebSession> spSession = m_pWebSock->GetSession();
+		std::shared_ptr<CWebSession> spSession = m_pWebSock->GetSession();
 
 		spSession->AddError("Invalid login!");
 		spSession->SetUser(NULL);
@@ -192,7 +192,7 @@ CWebSock::CWebSock(const CString& sURIPrefix) : CHTTPSock(NULL, sURIPrefix) {
 }
 
 CWebSock::~CWebSock() {
-	if (!m_spAuth.IsNull()) {
+	if (m_spAuth) {
 		m_spAuth->Invalidate();
 	}
 
@@ -819,13 +819,13 @@ static inline bool compareLastActive(const std::pair<const CString, CWebSession 
 	return first.second->GetLastActive() < second.second->GetLastActive();
 }
 
-CSmartPtr<CWebSession> CWebSock::GetSession() {
-	if (!m_spSession.IsNull()) {
+std::shared_ptr<CWebSession> CWebSock::GetSession() {
+	if (m_spSession) {
 		return m_spSession;
 	}
 
 	const CString sCookieSessionId = GetRequestCookie("SessionId");
-	CSmartPtr<CWebSession> *pSession = Sessions.m_mspSessions.GetItem(sCookieSessionId);
+	std::shared_ptr<CWebSession> *pSession = Sessions.m_mspSessions.GetItem(sCookieSessionId);
 
 	if (pSession != NULL) {
 		// Refresh the timeout
@@ -855,7 +855,7 @@ CSmartPtr<CWebSession> CWebSock::GetSession() {
 		DEBUG("Auto generated session: [" + sSessionID + "]");
 	} while (Sessions.m_mspSessions.HasItem(sSessionID));
 
-	CSmartPtr<CWebSession> spSession(new CWebSession(sSessionID, GetRemoteIP()));
+	std::shared_ptr<CWebSession> spSession(new CWebSession(sSessionID, GetRemoteIP()));
 	Sessions.m_mspSessions.AddItem(spSession->GetId(), spSession);
 
 	m_spSession = spSession;
@@ -864,7 +864,7 @@ CSmartPtr<CWebSession> CWebSock::GetSession() {
 }
 
 CString CWebSock::GetCSRFCheck() {
-	CSmartPtr<CWebSession> pSession = GetSession();
+	std::shared_ptr<CWebSession> pSession = GetSession();
 	return pSession->GetId().MD5();
 }
 
@@ -889,7 +889,7 @@ Csock* CWebSock::GetSockObj(const CString& sHost, unsigned short uPort) {
 }
 
 CString CWebSock::GetSkinName() {
-	CSmartPtr<CWebSession> spSession = GetSession();
+	std::shared_ptr<CWebSession> spSession = GetSession();
 
 	if (spSession->IsLoggedIn() && !spSession->GetUser()->GetSkinName().empty()) {
 		return spSession->GetUser()->GetSkinName();
