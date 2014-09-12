@@ -51,7 +51,7 @@ public:
 		return true;
 	}
 
-	virtual EModRet OnLoginAttempt(CSmartPtr<CAuthBase> Auth) {
+	virtual EModRet OnLoginAttempt(std::shared_ptr<CAuthBase> Auth) {
 		if (IsBlocked(Auth->GetUsername())) {
 			Auth->RefuseLogin(MESSAGE);
 			return HALT;

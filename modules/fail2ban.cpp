@@ -81,7 +81,7 @@ public:
 			Add(sRemoteIP, 1);
 	}
 
-	virtual EModRet OnLoginAttempt(CSmartPtr<CAuthBase> Auth) {
+	virtual EModRet OnLoginAttempt(std::shared_ptr<CAuthBase> Auth) {
 		// e.g. webadmin ends up here
 		const CString& sRemoteIP = Auth->GetRemoteIP();
 

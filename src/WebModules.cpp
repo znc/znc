@@ -870,7 +870,7 @@ CString CWebSock::GetCSRFCheck() {
 
 bool CWebSock::OnLogin(const CString& sUser, const CString& sPass) {
 	DEBUG("=================== CWebSock::OnLogin()");
-	m_spAuth = new CWebAuth(this, sUser, sPass);
+	m_spAuth = std::make_shared<CWebAuth>(this, sUser, sPass);
 
 	// Some authentication module could need some time, block this socket
 	// until then. CWebAuth will UnPauseRead().

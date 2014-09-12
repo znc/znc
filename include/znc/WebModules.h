@@ -158,7 +158,7 @@ private:
 
 	bool                    m_bPathsSet;
 	CTemplate               m_Template;
-	CSmartPtr<CAuthBase>    m_spAuth;
+	std::shared_ptr<CAuthBase> m_spAuth;
 	CString                 m_sModName;
 	CString                 m_sPath;
 	CString                 m_sPage;
