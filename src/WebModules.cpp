@@ -188,7 +188,7 @@ void CWebAuth::Invalidate() {
 CWebSock::CWebSock(const CString& sURIPrefix) : CHTTPSock(NULL, sURIPrefix) {
 	m_bPathsSet = false;
 
-	m_Template.AddTagHandler(new CZNCTagHandler(*this));
+	m_Template.AddTagHandler(std::make_shared<CZNCTagHandler>(*this));
 }
 
 CWebSock::~CWebSock() {

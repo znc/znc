@@ -18,9 +18,10 @@
 #define _TEMPLATE_H
 
 #include <znc/zncconfig.h>
-#include <znc/Utils.h>
+#include <znc/ZNCString.h>
 #include <iostream>
 #include <list>
+#include <memory>
 
 class CTemplate;
 
@@ -124,7 +125,7 @@ public:
 		Init();
 	}
 
-	CTemplate(const CSmartPtr<CTemplateOptions>& Options, CTemplate* pParent = NULL) : MCString(), m_spOptions(Options) {
+	CTemplate(const std::shared_ptr<CTemplateOptions>& Options, CTemplate* pParent = NULL) : MCString(), m_spOptions(Options) {
 		Init();
 		m_pParent = pParent;
 	}
@@ -132,11 +133,11 @@ public:
 	virtual ~CTemplate();
 
 	//! Class for implementing custom tags in subclasses
-	void AddTagHandler(CSmartPtr<CTemplateTagHandler> spTagHandler) {
+	void AddTagHandler(std::shared_ptr<CTemplateTagHandler> spTagHandler) {
 		m_vspTagHandlers.push_back(spTagHandler);
 	}
 
-	std::vector<CSmartPtr<CTemplateTagHandler> >& GetTagHandlers() {
+	std::vector<std::shared_ptr<CTemplateTagHandler> >& GetTagHandlers() {
 		if (m_pParent) {
 			return m_pParent->GetTagHandlers();
 		}
@@ -182,8 +183,8 @@ private:
 	std::list<std::pair<CString, bool> >               m_lsbPaths;
 	std::map<CString, std::vector<CTemplate*> >        m_mvLoops;
 	std::vector<CTemplateLoopContext*>            m_vLoopContexts;
-	CSmartPtr<CTemplateOptions>              m_spOptions;
-	std::vector<CSmartPtr<CTemplateTagHandler> >  m_vspTagHandlers;
+	std::shared_ptr<CTemplateOptions>              m_spOptions;
+	std::vector<std::shared_ptr<CTemplateTagHandler> >  m_vspTagHandlers;
 };
 
 #endif // !_TEMPLATE_H

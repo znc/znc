@@ -581,14 +581,14 @@ bool CTemplate::Print(const CString& sFileName, ostream& oOut) {
 					}
 				} else if (bNotFound) {
 					// Unknown tag that isn't being skipped...
-					vector<CSmartPtr<CTemplateTagHandler> >& vspTagHandlers = GetTagHandlers();
+					vector<std::shared_ptr<CTemplateTagHandler> >& vspTagHandlers = GetTagHandlers();
 
 					if (!vspTagHandlers.empty()) { // @todo this should go up to the top to grab handlers
 						CTemplate* pTmpl = GetCurTemplate();
 						CString sCustomOutput;
 
 						for (unsigned int j = 0; j < vspTagHandlers.size(); j++) {
-							CSmartPtr<CTemplateTagHandler> spTagHandler = vspTagHandlers[j];
+							std::shared_ptr<CTemplateTagHandler> spTagHandler = vspTagHandlers[j];
 
 							if (spTagHandler->HandleTag(*pTmpl, sAction, sArgs, sCustomOutput)) {
 								sOutput += sCustomOutput;
@@ -826,14 +826,14 @@ CString CTemplate::GetValue(const CString& sArgs, bool bFromIf) {
 		sRet = (it != end()) ? it->second : "";
 	}
 
-	vector<CSmartPtr<CTemplateTagHandler> >& vspTagHandlers = GetTagHandlers();
+	vector<std::shared_ptr<CTemplateTagHandler> >& vspTagHandlers = GetTagHandlers();
 
 	if (!vspTagHandlers.empty()) { // @todo this should go up to the top to grab handlers
 		CTemplate* pTmpl = GetCurTemplate();
 
 		if (sRet.empty()) {
 			for (unsigned int j = 0; j < vspTagHandlers.size(); j++) {
-				CSmartPtr<CTemplateTagHandler> spTagHandler = vspTagHandlers[j];
+				std::shared_ptr<CTemplateTagHandler> spTagHandler = vspTagHandlers[j];
 				CString sCustomOutput;
 
 				if (!bFromIf && spTagHandler->HandleVar(*pTmpl, sArgs.Token(0), sArgs.Token(1, true), sCustomOutput)) {
@@ -847,7 +847,7 @@ CString CTemplate::GetValue(const CString& sArgs, bool bFromIf) {
 		}
 
 		for (unsigned int j = 0; j < vspTagHandlers.size(); j++) {
-			CSmartPtr<CTemplateTagHandler> spTagHandler = vspTagHandlers[j];
+			std::shared_ptr<CTemplateTagHandler> spTagHandler = vspTagHandlers[j];
 
 			if (spTagHandler->HandleValue(*pTmpl, sRet, msArgs)) {
 				break;
