@@ -163,6 +163,7 @@ public:
 	const CString& GetRealName() const;
 	const CString& GetBindHost() const;
 	const CString& GetEncoding() const;
+	CString GetQuitMsg() const;
 
 	void SetNick(const CString& s);
 	void SetAltNick(const CString& s);
@@ -170,6 +171,7 @@ public:
 	void SetRealName(const CString& s);
 	void SetBindHost(const CString& s);
 	void SetEncoding(const CString& s);
+	void SetQuitMsg(const CString& s);
 
 	double GetFloodRate() const { return m_fFloodRate; }
 	unsigned short int GetFloodBurst() const { return m_uFloodBurst; }
@@ -191,6 +193,7 @@ protected:
 	CString            m_sRealName;
 	CString            m_sBindHost;
 	CString            m_sEncoding;
+	CString            m_sQuitMsg;
 
 	CModules*          m_pModules;
 

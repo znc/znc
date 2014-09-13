@@ -124,7 +124,7 @@ void CIRCSock::Quit(const CString& sQuitMsg) {
 	if (!sQuitMsg.empty()) {
 		PutIRC("QUIT :" + sQuitMsg);
 	} else {
-		PutIRC("QUIT :" + m_pNetwork->ExpandString(m_pNetwork->GetUser()->GetQuitMsg()));
+		PutIRC("QUIT :" + m_pNetwork->ExpandString(m_pNetwork->GetQuitMsg()));
 	}
 	Close(CLT_AFTERWRITE);
 }

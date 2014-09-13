@@ -116,6 +116,7 @@ class CAdminMod : public CModule {
 #ifdef HAVE_ICU
 				{"Encoding",            str},
 #endif
+				{"QuitMsg",             str},
 			};
 			for (unsigned int i = 0; i != ARRAY_SIZE(nvars); ++i) {
 				if (sVarFilter.empty() || sVarFilter.Equals(nvars[i][0], false, iVarLength)) {
@@ -498,6 +499,8 @@ class CAdminMod : public CModule {
 		} else if (sVar.Equals("encoding")) {
 			PutModule("Encoding = " + pNetwork->GetEncoding());
 #endif
+		} else if (sVar.Equals("quitmsg")) {
+			PutModule("QuitMsg = " + pNetwork->GetQuitMsg());
 		} else {
 			PutModule("Error: Unknown variable");
 		}
@@ -586,6 +589,9 @@ class CAdminMod : public CModule {
 			pNetwork->SetEncoding(sValue);
 			PutModule("Encoding = " + pNetwork->GetEncoding());
 #endif
+		} else if (sVar.Equals("quitmsg")) {
+			pNetwork->SetQuitMsg(sValue);
+			PutModule("QuitMsg = " + pNetwork->GetQuitMsg());
 		} else {
 			PutModule("Error: Unknown variable");
 		}
