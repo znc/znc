@@ -1652,5 +1652,9 @@ void CClient::HelpUser(const CString& sFilter) {
 		AddCommandHelp(Table, "Restart", "[message]", "Restart ZNC", sFilter);
 	}
 
-	PutStatus(Table);
+	if (Table.empty()) {
+		PutStatus("No matches for '" + sFilter + "'");
+	} else {
+		PutStatus(Table);
+	}
 }

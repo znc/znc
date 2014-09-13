@@ -582,7 +582,11 @@ void CModule::HandleHelpCommand(const CString& sLine) {
 			it->second.AddHelp(Table);
 		}
 	}
-	PutModule(Table);
+	if (Table.empty()) {
+		PutModule("No matches for '" + sFilter + "'");
+	} else {
+		PutModule(Table);
+	}
 }
 
 CString CModule::GetModNick() const { return ((m_pUser) ? m_pUser->GetStatusPrefix() : "*") + m_sModName; }
