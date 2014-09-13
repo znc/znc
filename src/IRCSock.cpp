@@ -933,7 +933,7 @@ bool CIRCSock::OnGeneralCTCP(CNick& Nick, CString& sMessage) {
 		// If we are over the limit, don't reply to this CTCP
 		if (m_uNumCTCP >= m_uCTCPFloodCount) {
 			DEBUG("CTCP flood detected - not replying to query");
-			return false;
+			return true;
 		}
 		m_uNumCTCP++;
 
