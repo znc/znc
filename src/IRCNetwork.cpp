@@ -162,6 +162,7 @@ void CIRCNetwork::Clone(const CIRCNetwork& Network, bool bCloneName) {
 	SetRealName(Network.GetRealName());
 	SetBindHost(Network.GetBindHost());
 	SetEncoding(Network.GetEncoding());
+	SetQuitMsg(Network.GetQuitMsg());
 
 	// Servers
 	const vector<CServer*>& vServers = Network.GetServers();
@@ -332,6 +333,7 @@ bool CIRCNetwork::ParseConfig(CConfig *pConfig, CString& sError, bool bUpgrade) 
 			{ "realname", &CIRCNetwork::SetRealName },
 			{ "bindhost", &CIRCNetwork::SetBindHost },
 			{ "encoding", &CIRCNetwork::SetEncoding },
+			{ "quitmsg", &CIRCNetwork::SetQuitMsg },
 		};
 		size_t numStringOptions = sizeof(StringOptions) / sizeof(StringOptions[0]);
 		TOption<bool> BoolOptions[] = {
@@ -479,6 +481,10 @@ CConfig CIRCNetwork::ToConfig() {
 	config.AddKeyValuePair("FloodRate", CString(GetFloodRate()));
 	config.AddKeyValuePair("FloodBurst", CString(GetFloodBurst()));
 	config.AddKeyValuePair("Encoding", m_sEncoding);
+
+	if (!m_sQuitMsg.empty()) {
+		config.AddKeyValuePair("QuitMsg", m_sQuitMsg);
+	}
 
 	// Modules
 	CModules& Mods = GetModules();
@@ -1269,6 +1275,14 @@ const CString& CIRCNetwork::GetEncoding() const {
 	return m_sEncoding;
 }
 
+CString CIRCNetwork::GetQuitMsg() const {
+	if (m_sQuitMsg.empty()) {
+		return m_pUser->GetQuitMsg();
+	}
+
+	return m_sQuitMsg;
+}
+
 void CIRCNetwork::SetNick(const CString& s) {
 	if (m_pUser->GetNick().Equals(s)) {
 		m_sNick = "";
@@ -1311,6 +1325,14 @@ void CIRCNetwork::SetBindHost(const CString& s) {
 
 void CIRCNetwork::SetEncoding(const CString& s) {
 	m_sEncoding = s;
+}
+
+void CIRCNetwork::SetQuitMsg(const CString& s) {
+	if (m_pUser->GetQuitMsg().Equals(s)) {
+		m_sQuitMsg = "";
+	} else {
+		m_sQuitMsg = s;
+	}
 }
 
 CString CIRCNetwork::ExpandString(const CString& sStr) const {
