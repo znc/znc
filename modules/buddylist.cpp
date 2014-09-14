@@ -21,61 +21,8 @@
 
 using std::vector;
 
-class CBuddyListModule;
-
-class CBuddyListTimer : public CTimer {
-public:
-	CBuddyListTimer(CBuddyListModule *pModule);
-	~CBuddyListTimer() {}
-
-	void RunJob();
-
-private:
-	CBuddyListModule* m_pModule;
-};
-
 class CBuddyListModule : public CModule {
 public:
-	void Enable(const CString& sLine) {
-		CString sParams = sLine.Token(1, true);
-
-		if (sParams.empty()) {
-			EnableTimer();
-			SetNV("State", "Enabled");
-
-			PutModule("Buddy list has been enabled");
-		} else {
-			PutModule("syntax: Enable");
-		}
-	}
-
-	void Disable(const CString& sLine) {
-		CString sParams = sLine.Token(1, true);
-
-		if (sParams.empty()) {
-			DisableTimer();
-			SetNV("State", "Disabled");
-
-			PutModule("Buddy list has been disabled");
-		} else {
-			PutModule("syntax: Disable");
-		}
-	}
-
-	void Check(const CString& sLine) {
-		CString sParams = sLine.Token(1, true);
-
-		if (sParams.empty()) {
-			if (GetNV("State").Equals("Enabled")) {
-				PutModule("Buddy list is enabled");
-			} else {
-				PutModule("Buddy list is disabled");
-			}
-		} else {
-			PutModule("syntax: Check");
-		}
-	}
-
 	void AddBuddy(const CString& sLine) {
 		CString sNick = sLine.Token(1, false);
 		CString sInfo = sLine.Token(2, true);
@@ -233,24 +180,49 @@ public:
 		}
 	}
 
-	void PollServer() {
-		PutModule("Polling server");
+	void CheckBuddies(const CString& sLine) {
+		CString sSearchString = sLine.Token(1, false);
+		CString sParams = sLine.Token(2, true);
 
-		if (!m_pTimer) {
-			PutModule("Could not poll server because timer does not exist");
+		if (!sSearchString.empty() && sParams.empty()) {
+			int nCount = 0;
 
-			return;
+			for (MCString::iterator it = BeginNV(); it != EndNV(); ++it) {
+				if (it->first.WildCmp("Buddy:" + sSearchString)) {
+					nCount++;
+				}
+			}
+
+			if (nCount > 0) {
+				PutModule("TODO: check " + nCount + " buddies");
+			} else {
+				PutModule("Buddy list is empty or no matching buddies were found");
+			}
+		} else {
+			PutModule("syntax: Check search-string");
 		}
+	}
 
-		CIRCSock* pIRCSock = m_pNetwork->GetIRCSock();
+	void CheckAllBuddies(const CString& sLine) {
+		CString sParams = sLine.Token(1, true);
 
-		if (!pIRCSock) {
-			PutModule("Could not poll server because IRC socket does not exist");
+		if (sParams.empty()) {
+			int nCount = 0;
 
-			return;
+			for (MCString::iterator it = BeginNV(); it != EndNV(); ++it) {
+				if (it->first.WildCmp("Buddy:*")) {
+					nCount++;
+				}
+			}
+
+			if (nCount > 0) {
+				PutModule("TODO: check " + nCount + " buddies");
+			} else {
+				PutModule("Buddy list is empty");
+			}
+		} else {
+			PutModule("syntax: CheckAll");
 		}
-
-		PutModule("TODO : Poll server");
 	}
 
 	MODCONSTRUCTOR(CBuddyListModule) {
@@ -306,109 +278,39 @@ public:
 		);
 		AddCommand
 		(
-			"Enable",
-			static_cast<CModCommand::ModCmdFunc>(&CBuddyListModule::Enable),
-			"",
-			"Enable the buddy list"
-		);
-		AddCommand
-		(
-			"Disable",
-			static_cast<CModCommand::ModCmdFunc>(&CBuddyListModule::Disable),
-			"",
-			"Disable the buddy list"
-		);
-		AddCommand
-		(
 			"Check",
-			static_cast<CModCommand::ModCmdFunc>(&CBuddyListModule::Check),
+			static_cast<CModCommand::ModCmdFunc>(&CBuddyListModule::CheckBuddies),
+			"search-string",
+			"Check all matching buddies if they are online"
+		);
+		AddCommand
+		(
+			"CheckAll",
+			static_cast<CModCommand::ModCmdFunc>(&CBuddyListModule::CheckAllBuddies),
 			"",
-			"Check the buddy list state"
+			"Check all buddies if they are online"
 		);
 	}
 
 	virtual ~CBuddyListModule() {
-		DisableTimer();
 	}
 
 	virtual bool OnLoad(const CString& sArgs, CString& sMessage) {
-		
-		if (GetNV("State").empty()) {
-			SetNV("State", "Enabled");
-		}
-
-		m_bIsEnabled = GetNV("State").Equals("Enabled");
-		m_pTimer = NULL;
-
-		EnableTimer();
-
 		return true;
 	}
 
 	void OnIRCDisconnected() {
-		DisableTimer();
 	}
 
 	void OnIRCConnected() {
-		EnableTimer();
 	}
 
 private:
-	bool m_bIsEnabled;
-	CBuddyListTimer* m_pTimer;
-
-	void EnableTimer() {
-		PutModule("Creating timer");
-
-		if (m_bIsEnabled) {
-			if (m_pNetwork->IsIRCConnected()) {
-				if (m_pTimer) {
-					PutModule("Could not create timer because timer is already created");
-
-					return;
-				}
-
-				m_pTimer = new CBuddyListTimer(this);
-				AddTimer(m_pTimer);
-
-				PutModule("Created timer");
-			} else {
-				PutModule("Could not create timer because bouncer is not connected to IRC");
-			}
-		} else {
-			PutModule("Could not create timer because buddy list is disabled");
-		}
-	}
-
-	void DisableTimer() {
-		PutModule("Destroying timer");
-
-		if (!m_pTimer) {
-			PutModule("Could not destroy timer because timer is already destroyed");
-
-			return;
-		}
-
-		m_pTimer->Stop();
-		RemTimer(m_pTimer);
-		m_pTimer = NULL;
-
-		PutModule("Destroyed timer");
-	}
 };
 
 template<> void TModInfo<CBuddyListModule>(CModInfo& Info) {
 	Info.SetWikiPage("buddylist");
 	Info.SetHasArgs(false);
-}
-
-CBuddyListTimer::CBuddyListTimer(CBuddyListModule *pModule) : CTimer(pModule, 30, 0,
-		"BuddyListTimer", "Polls the server to find the status of buddies in the list") {
-	m_pModule = pModule;
-}
-
-void CBuddyListTimer::RunJob() {
-	m_pModule->PollServer();
 }
 
 NETWORKMODULEDEFS(CBuddyListModule, "Tells you when your buddies come online or go offline")
