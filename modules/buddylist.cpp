@@ -293,7 +293,11 @@ public:
 					sOnlineBuddies += vsOnlineBuddies[nIndex];
 
 					if (nIndex < nCount - 1) {
-						sOnlineBuddies += ", ";
+						if (nIndex < nCount - 2) {
+							sOnlineBuddies += ", ";
+						} else {
+							sOnlineBuddies += ", and ";
+						}
 					}
 				}
 
