@@ -37,6 +37,8 @@ public:
 					PutModule(sNick + " has been added to your buddy list with info as follows:");
 					PutModule("\t" + sInfo);
 				}
+
+				PutIRC("WATCH +" + sNick);
 			} else {
 				PutModule(sNick + " is already in the list; please use Rename or Redefine");
 			}
@@ -81,6 +83,7 @@ public:
 					DelNV("Buddy:" + sOldNick);
 
 					PutModule(sOldNick + " has been renamed to " + sNewNick + " in your buddy list");
+					PutIRC("WATCH -" + sOldNick + " +" + sNewNick);
 				} else {
 					PutModule(sNewNick + " is already in your buddy list");
 				}
@@ -101,6 +104,7 @@ public:
 				DelNV("Buddy:" + sNick);
 
 				PutModule(sNick + " has been removed from your buddy list");
+				PutIRC("WATCH -" + sNick);
 			} else {
 				PutModule(sNick + " is not in your buddy list");
 			}
@@ -113,7 +117,11 @@ public:
 		CString sParams = sLine.Token(1, true);
 
 		if (sParams.empty()) {
-			RemoveBuddiesImpl("Buddy:*", "All buddies have been removed from your buddy list");
+			if (RemoveBuddiesImpl("Buddy:*")) {
+				PutModule("All buddies have been removed from your buddy list");
+			} else {
+				PutModule("Your buddy list was already empty");
+			}
 		} else {
 			PutModule("syntax: RemoveAll");
 		}
@@ -180,7 +188,12 @@ public:
 
 		if (!sSearchString.empty() && sParams.empty()) {
 			m_sMessage = "No matching buddies are online";
-			CheckBuddiesImpl("Buddy:" + sSearchString, "Buddy list is empty or no matching buddies were found");
+
+			if (!CheckBuddiesImpl("Buddy:" + sSearchString)) {
+				PutModule("Buddy list is empty or no matching buddies were found");
+
+				m_sMessage = "";
+			}
 		} else {
 			PutModule("syntax: Check search-string");
 		}
@@ -191,7 +204,12 @@ public:
 
 		if (sParams.empty()) {
 			m_sMessage = "No buddies are online";
-			CheckBuddiesImpl("Buddy:*", "Buddy list is empty");
+
+			if (!CheckBuddiesImpl("Buddy:*")) {
+				PutModule("Buddy list is empty");
+
+				m_sMessage = "";
+			}
 		} else {
 			PutModule("syntax: CheckAll");
 		}
@@ -268,6 +286,24 @@ public:
 	}
 
 	virtual bool OnLoad(const CString& sArgs, CString& sMessage) {
+		SCString ssBuddies;
+
+		for (MCString::iterator it = BeginNV(); it != EndNV(); ++it) {
+			if (it->first.WildCmp("Buddy:*")) {
+				ssBuddies.insert(it->first.Token(1, true, ":"));
+			}
+		}
+
+		if (ssBuddies.size() > 0) {
+			CString sBuddies = "";
+			CString sWatchCommand = "WATCH";
+
+			for (SCString::iterator it = ssBuddies.begin(); it != ssBuddies.end(); ++it) {
+				sBuddies += " +" + *it;
+			}
+
+			PutIRC("WATCH" + sBuddies);
+		}
 		return true;
 	}
 
@@ -314,17 +350,26 @@ public:
 private:
 	CString m_sMessage;
 
-	void RemoveBuddiesImpl(const CString& sMask, const CString& sError) {
+	bool RemoveBuddiesImpl(const CString& sMask) {
+		CString sCommand = "WATCH";
+
 		for (MCString::iterator it = BeginNV(); it != EndNV(); ++it) {
 			if (it->first.WildCmp(sMask)) {
 				DelNV(it->first);
+				sCommand += " -" + it->first.Token(1, false, ":");
 			}
 		}
 
-		PutModule(sError);
+		if (sCommand.Equals("WATCH")) {
+			return false;
+		} else {
+			PutIRC(sCommand);
+
+			return true;
+		}
 	}
 
-	void CheckBuddiesImpl(const CString& sMask, const CString& sError) {
+	bool CheckBuddiesImpl(const CString& sMask) {
 		SCString ssBuddies;
 
 		for (MCString::iterator it = BeginNV(); it != EndNV(); ++it) {
@@ -343,8 +388,10 @@ private:
 
 			PutModule("Checking" + sBuddies);
 			PutIRC(sIsOnCommand + sBuddies);
+
+			return true;
 		} else {
-			PutModule(sError);
+			return false;
 		}
 	}
 };
