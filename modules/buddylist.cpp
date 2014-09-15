@@ -315,6 +315,8 @@ public:
 
 	virtual EModRet OnRaw(CString &sLine) {
 		if (sLine.Token(1, false) == "303") {
+			PutModule(sLine);
+
 			VCString vsOnlineBuddies;
 			CString sOnlineBuddies = sLine.Token(3, true);
 
@@ -342,6 +344,14 @@ public:
 				PutModule(m_sMessage);
 				m_sMessage = "";
 			}
+		}
+
+		if (sLine.Token(1, false) == "604") {
+			PutModule(sLine);
+		}
+
+		if (sLine.Token(1, false) == "605") {
+			PutModule(sLine);
 		}
 
 		return CONTINUE;
