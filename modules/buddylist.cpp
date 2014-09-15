@@ -287,7 +287,17 @@ public:
 			std::size_t nCount = sOnlineBuddies.Split(" ", vsOnlineBuddies, false);
 
 			if (nCount > 0) {
-				PutModule(", ".Join(vsOnlineBuddies.begin(), vsOnlineBuddies.end()) + (nCount != 1 ? " is online" : " are online"));
+				sOnlineBuddies = "";
+
+				for (std::size_t nIndex = 0; nIndex < nCount; nIndex++) {
+					sOnlineBuddies += vsOnlineBuddies[nIndex];
+
+					if (nIndex < nCount - 1) {
+						sOnlineBuddies += ", ";
+					}
+				}
+
+				PutModule(sOnlineBuddies + (nCount == 1 ? " is online" : " are online"));
 			} else {
 				PutModule(m_sMessage);
 				m_sMessage = "";
