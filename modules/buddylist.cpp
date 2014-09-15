@@ -324,7 +324,7 @@ private:
 			CString sIsOnCommand = "ISON";
 
 			for (SCString::iterator it = ssBuddies.begin(); it != ssBuddies.end(); ++it) {
-				sBuddies += " " + it;
+				sBuddies += " " + *it;
 			}
 
 			PutModule("Checking" + sBuddies);
