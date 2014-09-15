@@ -570,18 +570,23 @@ bool CModule::HandleCommand(const CString& sLine) {
 }
 
 void CModule::HandleHelpCommand(const CString& sLine) {
-	CString sFilter = sLine.Token(1);
+	CString sFilter = sLine.Token(1).AsLower();
 	CString::size_type  iFilterLength = sFilter.size();
 	CTable Table;
 	map<CString, CModCommand>::const_iterator it;
 
 	CModCommand::InitHelp(Table);
 	for (it = m_mCommands.begin(); it != m_mCommands.end(); ++it) {
-		if (sFilter.empty() || (it->second.GetCommand().Equals(sFilter, false, iFilterLength))) {
+		CString sCmd = it->second.GetCommand().AsLower();
+		if (sFilter.empty() || (sCmd.Equals(sFilter, true, iFilterLength)) || sCmd.WildCmp(sFilter)) {
 			it->second.AddHelp(Table);
 		}
 	}
-	PutModule(Table);
+	if (Table.empty()) {
+		PutModule("No matches for '" + sFilter + "'");
+	} else {
+		PutModule(Table);
+	}
 }
 
 CString CModule::GetModNick() const { return ((m_pUser) ? m_pUser->GetStatusPrefix() : "*") + m_sModName; }

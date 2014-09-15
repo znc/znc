@@ -809,6 +809,8 @@ public:
 				Tmpl["Ident"] = pNetwork->GetIdent();
 				Tmpl["RealName"] = pNetwork->GetRealName();
 
+				Tmpl["QuitMsg"] = pNetwork->GetQuitMsg();
+
 				Tmpl["FloodProtection"] = CString(CIRCSock::IsFloodProtected(pNetwork->GetFloodRate()));
 				Tmpl["FloodRate"] = CString(pNetwork->GetFloodRate());
 				Tmpl["FloodBurst"] = CString(pNetwork->GetFloodBurst());
@@ -899,6 +901,8 @@ public:
 		pNetwork->SetAltNick(WebSock.GetParam("altnick"));
 		pNetwork->SetIdent(WebSock.GetParam("ident"));
 		pNetwork->SetRealName(WebSock.GetParam("realname"));
+
+		pNetwork->SetQuitMsg(WebSock.GetParam("quitmsg"));
 
 		pNetwork->SetIRCConnectEnabled(WebSock.GetParam("doconnect").ToBool());
 

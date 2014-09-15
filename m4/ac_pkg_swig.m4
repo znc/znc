@@ -78,7 +78,7 @@ AC_DEFUN([AC_PROG_SWIG],[
 	END
 	SWIG_installed_versions=""
 	AC_CACHE_CHECK([for SWIG >= $1], [znc_cv_path_SWIG], [
-		AC_PATH_PROGS_FEATURE_CHECK([SWIG], [swig swig2.0], [
+		AC_PATH_PROGS_FEATURE_CHECK([SWIG], [swig swig2.0 swig3.0], [
 			echo trying $ac_path_SWIG >&AS_MESSAGE_LOG_FD
 			$ac_path_SWIG -version >&AS_MESSAGE_LOG_FD
 			[swig_version=`$ac_path_SWIG -version 2>&1 | grep 'SWIG Version' | sed 's/.*\([0-9][0-9]*\.[0-9][0-9]*\.[0-9][0-9]*\).*/\1/g'`]

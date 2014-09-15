@@ -1549,7 +1549,7 @@ void CClient::UserPortCommand(CString& sLine) {
 static void AddCommandHelp(CTable& Table, const CString& sCmd, const CString& sArgs, const CString& sDesc, const CString& sFilter = "")
 {
 	const CString::size_type iFilterLength = sFilter.size();
-	if (sFilter.empty() || sCmd.Equals(sFilter, false, iFilterLength)) {
+	if (sFilter.empty() || sCmd.Equals(sFilter, false, iFilterLength) || sCmd.AsLower().WildCmp(sFilter.AsLower())) {
 		Table.AddRow();
 		Table.SetCell("Command", sCmd);
 		Table.SetCell("Arguments", sArgs);
@@ -1652,5 +1652,9 @@ void CClient::HelpUser(const CString& sFilter) {
 		AddCommandHelp(Table, "Restart", "[message]", "Restart ZNC", sFilter);
 	}
 
-	PutStatus(Table);
+	if (Table.empty()) {
+		PutStatus("No matches for '" + sFilter + "'");
+	} else {
+		PutStatus(Table);
+	}
 }

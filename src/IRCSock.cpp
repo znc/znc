@@ -124,7 +124,7 @@ void CIRCSock::Quit(const CString& sQuitMsg) {
 	if (!sQuitMsg.empty()) {
 		PutIRC("QUIT :" + sQuitMsg);
 	} else {
-		PutIRC("QUIT :" + m_pNetwork->ExpandString(m_pNetwork->GetUser()->GetQuitMsg()));
+		PutIRC("QUIT :" + m_pNetwork->ExpandString(m_pNetwork->GetQuitMsg()));
 	}
 	Close(CLT_AFTERWRITE);
 }
@@ -933,7 +933,7 @@ bool CIRCSock::OnGeneralCTCP(CNick& Nick, CString& sMessage) {
 		// If we are over the limit, don't reply to this CTCP
 		if (m_uNumCTCP >= m_uCTCPFloodCount) {
 			DEBUG("CTCP flood detected - not replying to query");
-			return false;
+			return true;
 		}
 		m_uNumCTCP++;
 

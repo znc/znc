@@ -51,7 +51,7 @@ class CAdminMod : public CModule {
 		const CString sCmdFilter = sLine.Token(1, false);
 		const CString::size_type iCmdLength = sCmdFilter.size();
 
-		const CString sVarFilter = sLine.Token(2, true);
+		const CString sVarFilter = sLine.Token(2, true).AsLower();
 		const CString::size_type iVarLength = sVarFilter.size();
 
 		if (sCmdFilter.empty() || sCmdFilter.Equals("Set", false, iCmdLength) || sCmdFilter.Equals("Get", false, iCmdLength)) {
@@ -89,7 +89,8 @@ class CAdminMod : public CModule {
 #endif
 			};
 			for (unsigned int i = 0; i != ARRAY_SIZE(vars); ++i) {
-				if (sVarFilter.empty() || sVarFilter.Equals(vars[i][0], false, iVarLength)) {
+				CString sVar = CString(vars[i][0]).AsLower();
+				if (sVarFilter.empty() || sVarFilter.Equals(sVar, true, iVarLength) || sVar.WildCmp(sVarFilter)) {
 					VarTable.AddRow();
 					VarTable.SetCell("Variable", vars[i][0]);
 					VarTable.SetCell("Type",     vars[i][1]);
@@ -116,9 +117,11 @@ class CAdminMod : public CModule {
 #ifdef HAVE_ICU
 				{"Encoding",            str},
 #endif
+				{"QuitMsg",             str},
 			};
 			for (unsigned int i = 0; i != ARRAY_SIZE(nvars); ++i) {
-				if (sVarFilter.empty() || sVarFilter.Equals(nvars[i][0], false, iVarLength)) {
+				CString sVar = CString(nvars[i][0]).AsLower();
+				if (sVarFilter.empty() || sVarFilter.Equals(sVar, true, iVarLength) || sVar.WildCmp(sVarFilter)) {
 					NVarTable.AddRow();
 					NVarTable.SetCell("Variable", nvars[i][0]);
 					NVarTable.SetCell("Type",     nvars[i][1]);
@@ -143,7 +146,8 @@ class CAdminMod : public CModule {
 				{"Detached",            boolean}
 			};
 			for (unsigned int i = 0; i != ARRAY_SIZE(cvars); ++i) {
-				if (sVarFilter.empty() || sVarFilter.Equals(cvars[i][0], false, iVarLength)) {
+				CString sVar = CString(cvars[i][0]).AsLower();
+				if (sVarFilter.empty() || sVarFilter.Equals(sVar, true, iVarLength) || sVar.WildCmp(sVarFilter)) {
 					CVarTable.AddRow();
 					CVarTable.SetCell("Variable", cvars[i][0]);
 					CVarTable.SetCell("Type",     cvars[i][1]);
@@ -498,6 +502,8 @@ class CAdminMod : public CModule {
 		} else if (sVar.Equals("encoding")) {
 			PutModule("Encoding = " + pNetwork->GetEncoding());
 #endif
+		} else if (sVar.Equals("quitmsg")) {
+			PutModule("QuitMsg = " + pNetwork->GetQuitMsg());
 		} else {
 			PutModule("Error: Unknown variable");
 		}
@@ -586,6 +592,9 @@ class CAdminMod : public CModule {
 			pNetwork->SetEncoding(sValue);
 			PutModule("Encoding = " + pNetwork->GetEncoding());
 #endif
+		} else if (sVar.Equals("quitmsg")) {
+			pNetwork->SetQuitMsg(sValue);
+			PutModule("QuitMsg = " + pNetwork->GetQuitMsg());
 		} else {
 			PutModule("Error: Unknown variable");
 		}
