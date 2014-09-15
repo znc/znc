@@ -185,19 +185,7 @@ public:
 		CString sParams = sLine.Token(2, true);
 
 		if (!sSearchString.empty() && sParams.empty()) {
-			int nCount = 0;
-
-			for (MCString::iterator it = BeginNV(); it != EndNV(); ++it) {
-				if (it->first.WildCmp("Buddy:" + sSearchString)) {
-					nCount++;
-				}
-			}
-
-			if (nCount > 0) {
-				PutModule("TODO: check " + nCount + " buddies");
-			} else {
-				PutModule("Buddy list is empty or no matching buddies were found");
-			}
+			CheckBuddiesImpl("Buddy:" + sSearchString, "Buddy list is empty or no matching buddies were found");
 		} else {
 			PutModule("syntax: Check search-string");
 		}
@@ -207,19 +195,7 @@ public:
 		CString sParams = sLine.Token(1, true);
 
 		if (sParams.empty()) {
-			int nCount = 0;
-
-			for (MCString::iterator it = BeginNV(); it != EndNV(); ++it) {
-				if (it->first.WildCmp("Buddy:*")) {
-					nCount++;
-				}
-			}
-
-			if (nCount > 0) {
-				PutModule("TODO: check " + nCount + " buddies");
-			} else {
-				PutModule("Buddy list is empty");
-			}
+			CheckBuddiesImpl("Buddy:*", "Buddy list is empty");
 		} else {
 			PutModule("syntax: CheckAll");
 		}
@@ -306,6 +282,29 @@ public:
 	}
 
 private:
+	void CheckBuddiesImpl(const CString& sMask, const CString& sError) {
+		SCString ssBuddies;
+
+		for (MCString::iterator it = BeginNV(); it != EndNV(); ++it) {
+			if (it->first.WildCmp(sMask)) {
+				ssBuddies.insert(it->first.Token(1, true, ":"));
+			}
+		}
+
+		if (ssBuddies.size() > 0) {
+			CString sBuddies = "";
+			CString sIsOnCommand = "ISON";
+
+			for (SCString::iterator it = ssBuddies.begin(); it != ssBuddies.end(); ++it) {
+				sBuddies += " " + it;
+			}
+
+			PutModule("Checking" + sBuddies);
+			PutIRC(sIsOnCommand + sBuddies);
+		} else {
+			PutModule(sError);
+		}
+	}
 };
 
 template<> void TModInfo<CBuddyListModule>(CModInfo& Info) {
