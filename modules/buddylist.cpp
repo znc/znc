@@ -113,13 +113,7 @@ public:
 		CString sParams = sLine.Token(1, true);
 
 		if (sParams.empty()) {
-			for (MCString::iterator it = BeginNV(); it != EndNV(); ++it) {
-				if (it->first.WildCmp("Buddy:*")) {
-					DelNV(it->first);
-				}
-			}
-
-			PutModule("All buddies have been removed from your buddy list");
+			RemoveBuddiesImpl("Buddy:*", "All buddies have been removed from your buddy list");
 		} else {
 			PutModule("syntax: RemoveAll");
 		}
@@ -185,6 +179,7 @@ public:
 		CString sParams = sLine.Token(2, true);
 
 		if (!sSearchString.empty() && sParams.empty()) {
+			m_sMessage = "No matching buddies are online";
 			CheckBuddiesImpl("Buddy:" + sSearchString, "Buddy list is empty or no matching buddies were found");
 		} else {
 			PutModule("syntax: Check search-string");
@@ -195,6 +190,7 @@ public:
 		CString sParams = sLine.Token(1, true);
 
 		if (sParams.empty()) {
+			m_sMessage = "No buddies are online";
 			CheckBuddiesImpl("Buddy:*", "Buddy list is empty");
 		} else {
 			PutModule("syntax: CheckAll");
@@ -281,7 +277,39 @@ public:
 	void OnIRCConnected() {
 	}
 
+	virtual EModRet OnRaw(CString &sLine) {
+		if (sLine.Token(1, false) == "303") {
+			VCString vsOnlineBuddies;
+			CString sOnlineBuddies = sLine.Token(3, true);
+
+			sOnlineBuddies.TrimPrefix();
+
+			std::size_t nCount = sOnlineBuddies.Split(" ", vsOnlineBuddies, false);
+
+			if (nCount > 0) {
+				PutModule(", ".Join(vsOnlineBuddies.begin(), vsOnlineBuddies.end()) + (nCount != 1 ? " is online" : " are online"));
+			} else {
+				PutModule(m_sMessage);
+				m_sMessage = "";
+			}
+		}
+
+		return CONTINUE;
+	}
+
 private:
+	CString m_sMessage;
+
+	void RemoveBuddiesImpl(const CString& sMask, const CString& sError) {
+		for (MCString::iterator it = BeginNV(); it != EndNV(); ++it) {
+			if (it->first.WildCmp(sMask)) {
+				DelNV(it->first);
+			}
+		}
+
+		PutModule(sError);
+	}
+
 	void CheckBuddiesImpl(const CString& sMask, const CString& sError) {
 		SCString ssBuddies;
 
