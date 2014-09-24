@@ -1266,12 +1266,6 @@ CModules::ModDirList CModules::GetModDirs() {
 	ModDirList ret;
 	CString sDir;
 
-#ifdef RUN_FROM_SOURCE
-	// ./modules
-	sDir = CZNC::Get().GetCurPath() + "/modules/";
-	ret.push(std::make_pair(sDir, sDir + "data/"));
-#endif
-
 	// ~/.znc/modules
 	sDir = CZNC::Get().GetModPath() + "/";
 	ret.push(std::make_pair(sDir, sDir));

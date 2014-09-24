@@ -1,0 +1,27 @@
+if(HAVE_PERL)
+    add_subdirectory(modperl)
+endif()
+
+if(HAVE_PYTHON)
+    add_subdirectory(modpython)
+endif()
+
+if(HAVE_TCL)
+    add_subdirectory(modtcl)
+endif()
+
+file(GLOB ZNC_MODULES RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} *.cpp)
+foreach(ZNC_MODULE ${ZNC_MODULES})
+    file(STRINGS ${ZNC_MODULE} REQUIRESSL REGEX "REQUIRESSL")
+    file(STRINGS ${ZNC_MODULE} REQUIRECYRUS REGEX "REQUIRECYRUS")
+    if((NOT REQUIRESSL OR HAVE_LIBSSL) AND (NOT REQUIRECYRUS OR HAVE_CYRUS))
+        get_filename_component(ZNC_MOD ${ZNC_MODULE} NAME_WE)
+        add_library(${ZNC_MOD} MODULE ${ZNC_MODULE})
+        target_link_libraries(${ZNC_MOD} ${ZNC_LIBRARIES} $ENV{${ZNC_MOD}_LDFLAGS})
+        set_target_properties(${ZNC_MOD} PROPERTIES PREFIX "" SUFFIX .so
+                                         COMPILE_FLAGS "$ENV{${ZNC_MOD}_CXXFLAGS}")
+        if(NOT DEVELOPER_BUILD)
+            install(TARGETS ${ZNC_MOD} LIBRARY DESTINATION ${INSTALL_MODDIR})
+        endif()
+    endif()
+endforeach()

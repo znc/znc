@@ -27,7 +27,7 @@
 #define CS_STRING CString
 #define _NO_CSOCKET_NS
 
-#ifdef _DEBUG
+#ifndef NDEBUG
 #define __DEBUG__
 #endif
 

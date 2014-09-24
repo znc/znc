@@ -24,9 +24,9 @@
 #include <znc/User.h>
 #include <znc/znc.h>
 
-#include "modpython/swigpyrun.h"
-#include "modpython/module.h"
-#include "modpython/ret.h"
+#include "swigpyrun.h"
+#include "module.h"
+#include "ret.h"
 
 using std::vector;
 using std::set;
@@ -370,7 +370,7 @@ CString CPyModule::GetPyExceptionStr() {
 	return m_pModPython->GetPyExceptionStr();
 }
 
-#include "modpython/functions.cpp"
+#include "functions.cpp"
 
 VWebSubPages& CPyModule::GetSubPages() {
 	VWebSubPages* result = _GetSubPages();

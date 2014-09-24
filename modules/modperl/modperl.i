@@ -47,7 +47,7 @@
 #include "../include/znc/ZNCDebug.h"
 #include "../include/znc/ExecSock.h"
 #include "../include/znc/Buffer.h"
-#include "modperl/module.h"
+#include "module.h"
 #define stat struct stat
 %}
 
@@ -69,7 +69,7 @@ namespace std {
 		set(const set<K>&);
 	};
 }
-%include "modperl/CString.i"
+%include "CString.i"
 %template(_stringlist) std::list<CString>;
 %typemap(out) std::list<CString> {
 	std::list<CString>::const_iterator i;
@@ -143,7 +143,7 @@ class MCString : public std::map<CString, CString> {};
 %include "../include/znc/ExecSock.h"
 %include "../include/znc/Buffer.h"
 
-%include "modperl/module.h"
+%include "module.h"
 
 %inline %{
 	class String : public CString {

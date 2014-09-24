@@ -16,7 +16,7 @@ check_binary()
 }
 
 if test "x$CXX" = "x" ; then
-	CXX="@CXX@"
+	CXX="@CMAKE_CXX_COMPILER@"
 fi
 if test "x$CXX" = "x" ; then
 	CXX=g++
@@ -29,20 +29,9 @@ if test -z "$1"; then
 	exit 1
 fi
 
-CXXFLAGS="@CPPFLAGS@ @MODFLAGS@ -I@prefix@/include $CXXFLAGS"
-MODLINK="@MODLINK@ $MODLINK"
-VERSION="@PACKAGE_VERSION@"
-
-# Ugly cygwin stuff :(
-LIBZNC="@LIBZNC@"
-LIBZNCDIR="@LIBZNCDIR@"
-if test "x" = "x$LIBZNC"; then
-    LIBZNCFLAGS=""
-else
-    LIBZNCFLAGS="-L\"$LIBZNCDIR\" -lznc"
-fi
-
-LDFLAGS="$LIBZNCFLAGS $LDFLAGS"
+CXXFLAGS="@ZNC_CXXFLAGS@ $CXXFLAGS"
+LDFLAGS="@ZNC_LDFLAGS@ $LDFLAGS"
+VERSION="@ZNC_VERSION@"
 
 while test ! -z "$1"
 do
@@ -56,7 +45,7 @@ do
 		echo "${ERROR} Building \"${MOD}.so\" for ZNC $VERSION... File not found"
 	else
 		printf "Building \"${MOD}.so\" for ZNC $VERSION... "
-		if ${CXX} ${CXXFLAGS} ${INCLUDES} ${LDFLAGS} ${MODLINK} -o "${MOD}.so" "${FILE}" ${LIBS} ; then
+		if ${CXX} ${CXXFLAGS} ${INCLUDES} ${LDFLAGS} -o "${MOD}.so" "${FILE}" ${LIBS} ; then
 			echo "${OK}"
 		else
 			echo "${ERROR} Error while building \"${MOD}.so\""

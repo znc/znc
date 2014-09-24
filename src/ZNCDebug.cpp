@@ -21,7 +21,7 @@
 
 bool CDebug::stdoutIsTTY = true;
 bool CDebug::debug =
-#ifdef _DEBUG
+#ifndef NDEBUG
 		true;
 #else
 		false;
