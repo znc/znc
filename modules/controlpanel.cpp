@@ -690,28 +690,32 @@ class CAdminMod : public CModule {
 			return;
 		}
 
-		CChan* pChan = pNetwork->FindChan(sChan);
-		if (!pChan) {
-			PutModule("Error: Channel [" + sChan + "] not found.");
+		std::vector<CChan*> vChans = pNetwork->FindChans(sChan);
+		if (vChans.empty()) {
+			PutModule("Error: No channel(s) matching [" + sChan + "] found.");
 			return;
 		}
 
-		if (sVar == "defmodes")
-			PutModule("DefModes = " + pChan->GetDefaultModes());
-		else if (sVar == "buffer")
-			PutModule("Buffer = " + CString(pChan->GetBufferCount()));
-		else if (sVar == "inconfig")
-			PutModule("InConfig = " + CString(pChan->InConfig()));
-		else if (sVar == "keepbuffer")
-			PutModule("KeepBuffer = " + CString(!pChan->AutoClearChanBuffer()));// XXX compatibility crap, added in 0.207
-		else if (sVar == "autoclearchanbuffer")
-			PutModule("AutoClearChanBuffer = " + CString(pChan->AutoClearChanBuffer()));
-		else if (sVar == "detached")
-			PutModule("Detached = " + CString(pChan->IsDetached()));
-		else if (sVar == "key")
-			PutModule("Key = " + pChan->GetKey());
-		else
-			PutModule("Error: Unknown variable");
+		for (CChan* pChan : vChans) {
+			if (sVar == "defmodes") {
+				PutModule(pChan->GetName() + ": DefModes = " + pChan->GetDefaultModes());
+			} else if (sVar == "buffer") {
+				PutModule(pChan->GetName() + ": Buffer = " + CString(pChan->GetBufferCount()));
+			} else if (sVar == "inconfig") {
+				PutModule(pChan->GetName() + ": InConfig = " + CString(pChan->InConfig()));
+			} else if (sVar == "keepbuffer") {
+				PutModule(pChan->GetName() + ": KeepBuffer = " + CString(!pChan->AutoClearChanBuffer()));// XXX compatibility crap, added in 0.207
+			} else if (sVar == "autoclearchanbuffer") {
+				PutModule(pChan->GetName() + ": AutoClearChanBuffer = " + CString(pChan->AutoClearChanBuffer()));
+			} else if (sVar == "detached") {
+				PutModule(pChan->GetName() + ": Detached = " + CString(pChan->IsDetached()));
+			} else if (sVar == "key") {
+				PutModule(pChan->GetName() + ": Key = " + pChan->GetKey());
+			} else {
+				PutModule("Error: Unknown variable");
+				return;
+			}
+		}
 	}
 
 	void SetChan(const CString& sLine) {
@@ -736,50 +740,55 @@ class CAdminMod : public CModule {
 			return;
 		}
 
-		CChan* pChan = pNetwork->FindChan(sChan);
-		if (!pChan) {
-			PutModule("Error: Channel [" + sChan + "] not found.");
+		std::vector<CChan*> vChans = pNetwork->FindChans(sChan);
+		if (vChans.empty()) {
+			PutModule("Error: No channel(s) matching [" + sChan + "] found.");
 			return;
 		}
 
-		if (sVar == "defmodes") {
-			pChan->SetDefaultModes(sValue);
-			PutModule("DefModes = " + sValue);
-		} else if (sVar == "buffer") {
-			unsigned int i = sValue.ToUInt();
-			// Admins don't have to honour the buffer limit
-			if (pChan->SetBufferCount(i, m_pUser->IsAdmin())) {
-				PutModule("Buffer = " + sValue);
+		for (CChan* pChan : vChans) {
+			if (sVar == "defmodes") {
+				pChan->SetDefaultModes(sValue);
+				PutModule(pChan->GetName() + ": DefModes = " + sValue);
+			} else if (sVar == "buffer") {
+				unsigned int i = sValue.ToUInt();
+				// Admins don't have to honour the buffer limit
+				if (pChan->SetBufferCount(i, m_pUser->IsAdmin())) {
+					PutModule(pChan->GetName() + ": Buffer = " + sValue);
+				} else {
+					PutModule("Setting failed, limit is " +
+							CString(CZNC::Get().GetMaxBufferSize()));
+					return;
+				}
+			} else if (sVar == "inconfig") {
+				bool b = sValue.ToBool();
+				pChan->SetInConfig(b);
+				PutModule(pChan->GetName() + ": InConfig = " + CString(b));
+			} else if (sVar == "keepbuffer") { // XXX compatibility crap, added in 0.207
+				bool b = !sValue.ToBool();
+				pChan->SetAutoClearChanBuffer(b);
+				PutModule(pChan->GetName() + ": AutoClearChanBuffer = " + CString(b));
+			} else if (sVar == "autoclearchanbuffer") {
+				bool b = sValue.ToBool();
+				pChan->SetAutoClearChanBuffer(b);
+				PutModule(pChan->GetName() + ": AutoClearChanBuffer = " + CString(b));
+			} else if (sVar == "detached") {
+				bool b = sValue.ToBool();
+				if (pChan->IsDetached() != b) {
+					if (b)
+						pChan->DetachUser();
+					else
+						pChan->AttachUser();
+				}
+				PutModule(pChan->GetName() + ": Detached = " + CString(b));
+			} else if (sVar == "key") {
+				pChan->SetKey(sValue);
+				PutModule(pChan->GetName() + ": Key = " + sValue);
 			} else {
-				PutModule("Setting failed, limit is " +
-						CString(CZNC::Get().GetMaxBufferSize()));
+				PutModule("Error: Unknown variable");
+				return;
 			}
-		} else if (sVar == "inconfig") {
-			bool b = sValue.ToBool();
-			pChan->SetInConfig(b);
-			PutModule("InConfig = " + CString(b));
-		} else if (sVar == "keepbuffer") { // XXX compatibility crap, added in 0.207
-			bool b = !sValue.ToBool();
-			pChan->SetAutoClearChanBuffer(b);
-			PutModule("AutoClearChanBuffer = " + CString(b));
-		} else if (sVar == "autoclearchanbuffer") {
-			bool b = sValue.ToBool();
-			pChan->SetAutoClearChanBuffer(b);
-			PutModule("AutoClearChanBuffer = " + CString(b));
-		} else if (sVar == "detached") {
-			bool b = sValue.ToBool();
-			if (pChan->IsDetached() != b) {
-				if (b)
-					pChan->DetachUser();
-				else
-					pChan->AttachUser();
-			}
-			PutModule("Detached = " + CString(b));
-		} else if (sVar == "key") {
-			pChan->SetKey(sValue);
-			PutModule("Key = " + sValue);
-		} else
-			PutModule("Error: Unknown variable");
+		}
 	}
 
 	void ListUsers(const CString&) {
