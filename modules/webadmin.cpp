@@ -684,10 +684,16 @@ public:
 			}
 		}
 
-		pChan->SetBufferCount(WebSock.GetParam("buffercount").ToUInt(), spSession->IsAdmin());
+		unsigned int uBufferCount = WebSock.GetParam("buffercount").ToUInt();
+		if (pChan->GetBufferCount() != uBufferCount) {
+			pChan->SetBufferCount(uBufferCount, spSession->IsAdmin());
+		}
 		pChan->SetDefaultModes(WebSock.GetParam("defmodes"));
 		pChan->SetInConfig(WebSock.GetParam("save").ToBool());
-		pChan->SetAutoClearChanBuffer(WebSock.GetParam("autoclearchanbuffer").ToBool());
+		bool bAutoClearChanBuffer = WebSock.GetParam("autoclearchanbuffer").ToBool();
+		if (pChan->AutoClearChanBuffer() != bAutoClearChanBuffer) {
+			pChan->SetAutoClearChanBuffer(WebSock.GetParam("autoclearchanbuffer").ToBool());
+		}
 		pChan->SetKey(WebSock.GetParam("key"));
 
 		bool bDetached = WebSock.GetParam("detached").ToBool();
@@ -834,7 +840,11 @@ public:
 					l["Perms"] = pChan->GetPermStr();
 					l["CurModes"] = pChan->GetModeString();
 					l["DefModes"] = pChan->GetDefaultModes();
-					l["BufferCount"] = CString(pChan->GetBufferCount());
+					if (pChan->HasBufferCountSet()) {
+						l["BufferCount"] = CString(pChan->GetBufferCount());
+					} else {
+						l["BufferCount"] = CString(pChan->GetBufferCount()) + " (default)";
+					}
 					l["Options"] = pChan->GetOptions();
 
 					if (pChan->InConfig()) {

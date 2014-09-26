@@ -459,6 +459,7 @@ void CClient::UserCommand(CString& sLine) {
 		Table.AddColumn("Status");
 		Table.AddColumn("Conf");
 		Table.AddColumn("Buf");
+		Table.AddColumn("Clear");
 		Table.AddColumn("Modes");
 		Table.AddColumn("Users");
 
@@ -477,7 +478,8 @@ void CClient::UserCommand(CString& sLine) {
 			Table.SetCell("Name", pChan->GetPermStr() + pChan->GetName());
 			Table.SetCell("Status", ((vChans[a]->IsOn()) ? ((vChans[a]->IsDetached()) ? "Detached" : "Joined") : ((vChans[a]->IsDisabled()) ? "Disabled" : "Trying")));
 			Table.SetCell("Conf", CString((pChan->InConfig()) ? "yes" : ""));
-			Table.SetCell("Buf", CString((pChan->AutoClearChanBuffer()) ? "*" : "") + CString(pChan->GetBufferCount()));
+			Table.SetCell("Buf", CString((pChan->HasBufferCountSet()) ? "*" : "") + CString(pChan->GetBufferCount()));
+			Table.SetCell("Clear", CString((pChan->HasAutoClearChanBufferSet()) ? "*" : "") + CString((pChan->AutoClearChanBuffer()) ? "yes" : ""));
 			Table.SetCell("Modes", pChan->GetModeString());
 			Table.SetCell("Users", CString(pChan->GetNickCount()));
 

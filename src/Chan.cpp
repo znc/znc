@@ -37,8 +37,10 @@ CChan::CChan(const CString& sName, CIRCNetwork* pNetwork, bool bInConfig, CConfi
 	m_Nick.SetNetwork(m_pNetwork);
 	m_bDetached = false;
 	m_bDisabled = false;
-	SetBufferCount(m_pNetwork->GetUser()->GetBufferCount(), true);
-	SetAutoClearChanBuffer(m_pNetwork->GetUser()->AutoClearChanBuffer());
+	m_bHasBufferCountSet = false;
+	m_bHasAutoClearChanBufferSet = false;
+	m_Buffer.SetLineCount(m_pNetwork->GetUser()->GetBufferCount(), true);
+	m_bAutoClearChanBuffer = m_pNetwork->GetUser()->AutoClearChanBuffer();
 	Reset();
 
 	if (pConfig) {
@@ -80,11 +82,10 @@ void CChan::Reset() {
 
 CConfig CChan::ToConfig() {
 	CConfig config;
-	CUser *pUser = m_pNetwork->GetUser();
 
-	if (pUser->GetBufferCount() != GetBufferCount())
+	if (m_bHasBufferCountSet)
 		config.AddKeyValuePair("Buffer", CString(GetBufferCount()));
-	if (pUser->AutoClearChanBuffer() != AutoClearChanBuffer())
+	if (m_bHasAutoClearChanBufferSet)
 		config.AddKeyValuePair("AutoClearChanBuffer", CString(AutoClearChanBuffer()));
 	if (IsDetached())
 		config.AddKeyValuePair("Detached", "true");
@@ -232,10 +233,21 @@ void CChan::SetModes(const CString& sModes) {
 }
 
 void CChan::SetAutoClearChanBuffer(bool b) {
+	m_bHasAutoClearChanBufferSet = true;
 	m_bAutoClearChanBuffer = b;
 
 	if (m_bAutoClearChanBuffer && !IsDetached() && m_pNetwork->IsUserOnline()) {
 		ClearBuffer();
+	}
+}
+
+void CChan::InheritAutoClearChanBuffer(bool b) {
+	if (!m_bHasAutoClearChanBufferSet) {
+		m_bAutoClearChanBuffer = b;
+
+		if (m_bAutoClearChanBuffer && !IsDetached() && m_pNetwork->IsUserOnline()) {
+			ClearBuffer();
+		}
 	}
 }
 
@@ -352,17 +364,21 @@ void CChan::ModeChange(const CString& sModes, const CNick* pOpNick) {
 }
 
 CString CChan::GetOptions() const {
-	CString sRet;
+	VCString vsRet;
 
 	if (IsDetached()) {
-		sRet += (sRet.empty()) ? "Detached" : ", Detached";
+		vsRet.push_back("Detached");
 	}
 
 	if (AutoClearChanBuffer()) {
-		sRet += (sRet.empty()) ? "AutoClearChanBuffer" : ", AutoClearChanBuffer";
+		if (HasAutoClearChanBufferSet()) {
+			vsRet.push_back("AutoClearChanBuffer");
+		} else {
+			vsRet.push_back("AutoClearChanBuffer (default)");
+		}
 	}
 
-	return sRet;
+	return CString(", ").Join(vsRet.begin(), vsRet.end());
 }
 
 CString CChan::GetModeArg(unsigned char uMode) const {
