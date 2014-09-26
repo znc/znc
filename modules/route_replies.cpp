@@ -25,7 +25,7 @@ struct reply {
 // TODO this list is far from complete, no errors are handled
 static const struct {
 	const char *szRequest;
-	struct reply vReplies[18];
+	struct reply vReplies[19];
 } vRouteReplies[] = {
 	{"WHO", {
 		{"402", true},  /* rfc1459 ERR_NOSUCHSERVER */
@@ -76,6 +76,7 @@ static const struct {
 		{"671", false},  /* RPL_WHOISSECURE */
 		{"307", false},  /* RPL_WHOISREGNICK */
 		{"379", false},  /* RPL_WHOISMODES */
+		{"760", false},  /* ircv3.2 RPL_WHOISKEYVALUE */
 		{"318", true},  /* rfc1459 RPL_ENDOFWHOIS */
 		{"401", true},  /* rfc1459 ERR_NOSUCHNICK */
 		{"402", true},  /* rfc1459 ERR_NOSUCHSERVER */
@@ -152,6 +153,16 @@ static const struct {
 		{"402", true},  /* rfc1459 ERR_NOSUCHSERVER */
 		{"424", true},  /* rfc1459 ERR_FILEERROR */
 		{"446", true},  /* rfc1459 ERR_USERSDISABLED */
+		{NULL, true},
+	}},
+	{"METADATA", {
+		{"761", false},  /* ircv3.2 RPL_KEYVALUE */
+		{"762", true},  /* ircv3.2 RPL_METADATAEND */
+		{"765", true},  /* ircv3.2 ERR_TARGETINVALID */
+		{"766", true},  /* ircv3.2 ERR_NOMATCHINGKEYS */
+		{"767", true},  /* ircv3.2 ERR_KEYINVALID */
+		{"768", true},  /* ircv3.2 ERR_KEYNOTSET */
+		{"769", true},  /* ircv3.2 ERR_KEYNOPERMISSION */
 		{NULL, true},
 	}},
 	// This is just a list of all possible /mode replies stuffed together.
