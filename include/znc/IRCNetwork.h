@@ -73,7 +73,7 @@ public:
 
 	CUser* GetUser();
 	const CString& GetName() const;
-	bool IsNetworkAttached() const { return !m_vClients.empty(); };
+	bool IsNetworkAttached() const { return !m_vClients.empty(); }
 	std::vector<CClient*>& GetClients() { return m_vClients; }
 
 	void SetUser(CUser *pUser);
@@ -103,8 +103,8 @@ public:
 	CQuery* AddQuery(const CString& sName);
 	bool DelQuery(const CString& sName);
 
-	const CString& GetChanPrefixes() const { return m_sChanPrefixes; };
-	void SetChanPrefixes(const CString& s) { m_sChanPrefixes = s; };
+	const CString& GetChanPrefixes() const { return m_sChanPrefixes; }
+	void SetChanPrefixes(const CString& s) { m_sChanPrefixes = s; }
 	bool IsChan(const CString& sChan) const;
 
 	const std::vector<CServer*>& GetServers() const;
