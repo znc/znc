@@ -19,6 +19,7 @@
 #include <znc/User.h>
 #include <znc/IRCNetwork.h>
 #include <znc/Query.h>
+#include <regex>
 
 using std::set;
 using std::map;
@@ -118,20 +119,7 @@ void CClient::ReadLine(const CString& sData) {
 			m_bGotPass = true;
 
 			CString sAuthLine = sLine.Token(1, true).TrimPrefix_n();
-
-			// [user[/network]:]password
-			if (sAuthLine.find(":") == CString::npos) {
-				m_sPass = sAuthLine;
-				sAuthLine = "";
-			} else {
-				m_sPass = sAuthLine.Token(1, true, ":");
-				sAuthLine = sAuthLine.Token(0, false, ":");
-			}
-
-			if (!sAuthLine.empty()) {
-				m_sUser = sAuthLine.Token(0, false, "/");
-				m_sNetwork = sAuthLine.Token(1, true, "/");
-			}
+			ParsePass(sAuthLine);
 
 			AuthUser();
 			return;  // Don't forward this msg.  ZNC has already registered us.
@@ -144,12 +132,10 @@ void CClient::ReadLine(const CString& sData) {
 			AuthUser();
 			return;  // Don't forward this msg.  ZNC will handle nick changes until auth is complete
 		} else if (sCommand.Equals("USER")) {
-			// user[/network]
 			CString sAuthLine = sLine.Token(1);
 
 			if (m_sUser.empty() && !sAuthLine.empty()) {
-				m_sUser = sAuthLine.Token(0, false, "/");
-				m_sNetwork = sAuthLine.Token(1, true, "/");
+				ParseUser(sAuthLine);
 			}
 
 			m_bGotUser = true;
@@ -782,9 +768,12 @@ void CClient::PutIRC(const CString& sLine) {
 CString CClient::GetFullName() const {
 	if (!m_pUser)
 		return GetRemoteIP();
-	if (!m_pNetwork)
-		return m_pUser->GetUserName();
-	return m_pUser->GetUserName() + "/" + m_pNetwork->GetName();
+	CString sFullName = m_pUser->GetUserName();
+	if (!m_sIdentifier.empty())
+		sFullName += "@" + m_sIdentifier;
+	if (m_pNetwork)
+		sFullName += "/" + m_pNetwork->GetName();
+	return sFullName;
 }
 
 void CClient::PutClient(const CString& sLine) {
@@ -975,4 +964,33 @@ void CClient::HandleCap(const CString& sLine)
 	} else {
 		PutClient(":irc.znc.in 410 " + GetNick() + " " + sSubCmd + " :Invalid CAP subcommand");
 	}
+}
+
+bool CClient::ParsePass(const CString& sAuthLine) {
+	// [user[@identifier][/network]:]password
+	std::regex rx("(?:(?:([a-zA-Z][a-zA-Z._\\-]+)(?:@([-\\w]+))?(?:/([-\\w]+))?):)?(.*)");
+
+	std::smatch match;
+	bool result = std::regex_match(sAuthLine, match, rx);
+	if (result) {
+		m_sUser = match[1].str();
+		m_sIdentifier = match[2].str();
+		m_sNetwork = match[3].str();
+		m_sPass = match[4].str();
+	}
+	return result;
+}
+
+bool CClient::ParseUser(const CString& sAuthLine) {
+	// user[@identifier][/network]
+	std::regex rx("([a-zA-Z][a-zA-Z._\\-]+)(?:@([-\\w]+))?(?:/([-\\w]+))?");
+
+	std::smatch match;
+	bool result = std::regex_match(sAuthLine, match, rx);
+	if (result) {
+		m_sUser = match[1].str();
+		m_sIdentifier = match[2].str();
+		m_sNetwork = match[3].str();
+	}
+	return result;
 }
