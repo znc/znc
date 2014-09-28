@@ -294,6 +294,7 @@ void CClient::ReadLine(const CString& sData) {
 	} else if (sCommand.Equals("PRIVMSG")) {
 		CString sTarget = sLine.Token(1);
 		CString sMsg = sLine.Token(2, true).TrimPrefix_n();
+		MCString msTagsCopy = msTags;
 
 		if (sMsg.WildCmp("\001*\001")) {
 			CString sCTCP = sMsg;
@@ -313,7 +314,8 @@ void CClient::ReadLine(const CString& sData) {
 				if (sCTCP.Token(0).Equals("ACTION")) {
 					CString sMessage = sCTCP.Token(1, true);
 					NETWORKMODULECALL(OnUserAction(sTarget, sMessage), m_pUser, m_pNetwork, this, &bReturn);
-					if (bReturn) return;
+					NETWORKMODULECALL(OnUserActionTags(sTarget, sMessage, msTagsCopy), m_pUser, m_pNetwork, this, &bReturnTags);
+					if (bReturn || bReturnTags) return;
 					sCTCP = "ACTION " + sMessage;
 
 					if (m_pNetwork->IsChan(sTarget)) {
@@ -343,7 +345,8 @@ void CClient::ReadLine(const CString& sData) {
 					}
 				} else {
 					NETWORKMODULECALL(OnUserCTCP(sTarget, sCTCP), m_pUser, m_pNetwork, this, &bReturn);
-					if (bReturn) return;
+					NETWORKMODULECALL(OnUserCTCPTags(sTarget, sCTCP, msTagsCopy), m_pUser, m_pNetwork, this, &bReturnTags);
+					if (bReturn || bReturnTags) return;
 				}
 
 				PutIRC("PRIVMSG " + sTarget + " :\001" + sCTCP + "\001");
@@ -362,7 +365,8 @@ void CClient::ReadLine(const CString& sData) {
 		}
 
 		NETWORKMODULECALL(OnUserMsg(sTarget, sMsg), m_pUser, m_pNetwork, this, &bReturn);
-		if (bReturn) return;
+		NETWORKMODULECALL(OnUserMsgTags(sTarget, sMsg, msTagsCopy), m_pUser, m_pNetwork, this, &bReturnTags);
+		if (bReturn || bReturnTags) return;
 
 		if (!GetIRCSock()) {
 			// Some lagmeters do a PRIVMSG to their own nick, ignore those.
