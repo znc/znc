@@ -92,6 +92,7 @@ public:
 	virtual EModRet OnUserJoin(CString& sChannel, CString& sKey);
 	virtual EModRet OnUserJoinTags(CString& sChannel, CString& sKey, MCString& msTags);
 	virtual EModRet OnUserPart(CString& sChannel, CString& sMessage);
+	virtual EModRet OnUserPartTags(CString& sChannel, CString& sMessage, MCString& msTags);
 	virtual EModRet OnUserTopic(CString& sChannel, CString& sTopic);
 	virtual EModRet OnUserTopicRequest(CString& sChannel);
 	virtual EModRet OnCTCPReply(CNick& Nick, CString& sMessage);

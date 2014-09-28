@@ -361,6 +361,7 @@ sub OnUserNoticeTags {}
 sub OnUserJoin {}
 sub OnUserJoinTags {}
 sub OnUserPart {}
+sub OnUserPartTags {}
 sub OnUserTopic {}
 sub OnUserTopicRequest {}
 sub OnCTCPReply {}

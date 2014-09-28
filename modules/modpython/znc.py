@@ -353,6 +353,9 @@ class Module:
     def OnUserPart(self, sChannel, sMessage):
         pass
 
+    def OnUserPartTags(self, sChannel, sMessage, msTags):
+        pass
+
     def OnUserTopic(self, sChannel, sTopic):
         pass
 

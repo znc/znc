@@ -756,6 +756,13 @@ public:
 	 *  @return See CModule::EModRet.
 	 */
 	virtual EModRet OnUserPart(CString& sChannel, CString& sMessage);
+	/** This hooks is called when a user sends a PART message.
+	 *  @param sChannel The channel name the part is for.
+	 *  @param sMessage The part message the client sent.
+	 *  @param msTags The message tags.
+	 *  @return See CModule::EModRet.
+	 */
+	virtual EModRet OnUserPartTags(CString& sChannel, CString& sMessage, MCString& msTags);
 	/** This module hook is called when a user wants to change a channel topic.
 	 *  @param sChannel The channel.
 	 *  @param sTopic The new topic which the user sent.
@@ -1246,6 +1253,7 @@ public:
 	bool OnUserJoin(CString& sChannel, CString& sKey);
 	bool OnUserJoinTags(CString& sChannel, CString& sKey, MCString& msTags);
 	bool OnUserPart(CString& sChannel, CString& sMessage);
+	bool OnUserPartTags(CString& sChannel, CString& sMessage, MCString& msTags);
 	bool OnUserTopic(CString& sChannel, CString& sTopic);
 	bool OnUserTopicRequest(CString& sChannel);
 
