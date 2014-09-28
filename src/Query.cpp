@@ -44,13 +44,29 @@ void CQuery::SendBuffer(CClient* pClient, const CBuffer& Buffer) {
 			for (size_t uClient = 0; uClient < vClients.size(); ++uClient) {
 				CClient * pUseClient = (pClient ? pClient : vClients[uClient]);
 
+				bool bBatch = pUseClient->HasBatch();
+				CString sBatchName = m_sName.MD5();
+
+				if (bBatch) {
+					m_pNetwork->PutUser(":znc.in BATCH +" + sBatchName + " znc.in/playback " + m_sName, pUseClient);
+				}
+
 				size_t uSize = Buffer.Size();
 				for (size_t uIdx = 0; uIdx < uSize; uIdx++) {
 					CString sLine = Buffer.GetLine(uIdx, *pUseClient, msParams);
+					if (bBatch) {
+						MCString msBatchTags = CUtils::GetMessageTags(sLine);
+						msBatchTags["batch"] = sBatchName;
+						CUtils::SetMessageTags(sLine, msBatchTags);
+					}
 					bool bContinue = false;
 					NETWORKMODULECALL(OnPrivBufferPlayLine(*pUseClient, sLine), m_pNetwork->GetUser(), m_pNetwork, NULL, &bContinue);
 					if (bContinue) continue;
 					m_pNetwork->PutUser(sLine, pUseClient);
+				}
+
+				if (bBatch) {
+					m_pNetwork->PutUser(":znc.in BATCH -" + sBatchName, pUseClient);
 				}
 
 				if (pClient)
