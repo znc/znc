@@ -347,6 +347,9 @@ class Module:
     def OnUserJoin(self, sChannel, sKey):
         pass
 
+    def OnUserJoinTags(self, sChannel, sKey, msTags):
+        pass
+
     def OnUserPart(self, sChannel, sMessage):
         pass
 

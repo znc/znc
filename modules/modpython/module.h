@@ -106,6 +106,7 @@ public:
 	virtual EModRet OnUserNotice(CString& sTarget, CString& sMessage);
 	virtual EModRet OnUserNoticeTags(CString& sTarget, CString& sMessage, MCString& msTags);
 	virtual EModRet OnUserJoin(CString& sChannel, CString& sKey);
+	virtual EModRet OnUserJoinTags(CString& sChannel, CString& sKey, MCString& msTags);
 	virtual EModRet OnUserPart(CString& sChannel, CString& sMessage);
 	virtual EModRet OnUserTopic(CString& sChannel, CString& sTopic);
 	virtual EModRet OnUserTopicRequest(CString& sChannel);
