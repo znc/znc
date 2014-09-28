@@ -94,6 +94,7 @@ public:
 		m_bUHNames = false;
 		m_bAway = false;
 		m_bServerTime = false;
+		m_bBatch = false;
 		EnableReadLine();
 		// RFC says a line can have 512 chars max, but we are
 		// a little more gentle ;)
@@ -114,6 +115,7 @@ public:
 	bool HasUHNames() const { return m_bUHNames; }
 	bool IsAway() const { return m_bAway; }
 	bool HasServerTime() const { return m_bServerTime; }
+	bool HasBatch() const { return m_bBatch; }
 
 	void UserCommand(CString& sLine);
 	void UserPortCommand(CString& sLine);
@@ -163,6 +165,7 @@ protected:
 	bool                 m_bUHNames;
 	bool                 m_bAway;
 	bool                 m_bServerTime;
+	bool                 m_bBatch;
 	CUser*               m_pUser;
 	CIRCNetwork*         m_pNetwork;
 	CString              m_sNick;

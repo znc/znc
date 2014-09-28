@@ -560,9 +560,21 @@ void CChan::SendBuffer(CClient* pClient, const CBuffer& Buffer) {
 					m_pNetwork->PutUser(":***!znc@znc.in PRIVMSG " + GetName() + " :Buffer Playback...", pUseClient);
 				}
 
+				bool bBatch = pUseClient->HasBatch();
+				CString sBatchName = GetName().MD5();
+
+				if (bBatch) {
+					m_pNetwork->PutUser(":znc.in BATCH +" + sBatchName + " znc.in/playback " + GetName(), pUseClient);
+				}
+
 				size_t uSize = Buffer.Size();
 				for (size_t uIdx = 0; uIdx < uSize; uIdx++) {
 					CString sLine = Buffer.GetLine(uIdx, *pUseClient);
+					if (bBatch) {
+						MCString msBatchTags = CUtils::GetMessageTags(sLine);
+						msBatchTags["batch"] = sBatchName;
+						CUtils::SetMessageTags(sLine, msBatchTags);
+					}
 					bool bNotShowThisLine = false;
 					NETWORKMODULECALL(OnChanBufferPlayLine(*this, *pUseClient, sLine), m_pNetwork->GetUser(), m_pNetwork, NULL, &bNotShowThisLine);
 					if (bNotShowThisLine) continue;
@@ -573,6 +585,10 @@ void CChan::SendBuffer(CClient* pClient, const CBuffer& Buffer) {
 				NETWORKMODULECALL(OnChanBufferEnding(*this, *pUseClient), m_pNetwork->GetUser(), m_pNetwork, NULL, &bSkipStatusMsg);
 				if (!bSkipStatusMsg) {
 					m_pNetwork->PutUser(":***!znc@znc.in PRIVMSG " + GetName() + " :Playback Complete.", pUseClient);
+				}
+
+				if (bBatch) {
+					m_pNetwork->PutUser(":znc.in BATCH -" + sBatchName, pUseClient);
 				}
 
 				if (pClient)
