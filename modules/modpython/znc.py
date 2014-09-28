@@ -323,6 +323,9 @@ class Module:
     def OnUserCTCP(self, sTarget, sMessage):
         pass
 
+    def OnUserCTCPTags(self, sTarget, sMessage, msTags):
+        pass
+
     def OnUserAction(self, sTarget, sMessage):
         pass
 

@@ -351,6 +351,7 @@ sub OnUserRawTags {}
 sub OnUserCTCPReply {}
 sub OnUserCTCPReplyTags {}
 sub OnUserCTCP {}
+sub OnUserCTCPTags {}
 sub OnUserAction {}
 sub OnUserMsg {}
 sub OnUserNotice {}

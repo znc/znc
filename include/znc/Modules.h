@@ -680,6 +680,16 @@ public:
 	 *        CModule::OnUserAction() instead.
 	 */
 	virtual EModRet OnUserCTCP(CString& sTarget, CString& sMessage);
+	/** This module hook is called when a client sends a CTCP request.
+	 *  @param sTarget The target for the CTCP request. Could be a channel
+	 *                 name or a nick name.
+	 *  @param sMessage The CTCP request message.
+	 *  @param msTags The message tags.
+	 *  @return See CModule::EModRet.
+	 *  @note This is not called for CTCP ACTION messages, use
+	 *        CModule::OnUserAction() instead.
+	 */
+	virtual EModRet OnUserCTCPTags(CString& sTarget, CString& sMessage, MCString& msTags);
 	/** Called when a client sends a CTCP ACTION request ("/me").
 	 *  @param sTarget The target for the CTCP ACTION. Could be a channel
 	 *                 name or a nick name.
@@ -1194,6 +1204,7 @@ public:
 	bool OnUserCTCPReply(CString& sTarget, CString& sMessage);
 	bool OnUserCTCPReplyTags(CString& sTarget, CString& sMessage, MCString& msTags);
 	bool OnUserCTCP(CString& sTarget, CString& sMessage);
+	bool OnUserCTCPTags(CString& sTarget, CString& sMessage, MCString& msTags);
 	bool OnUserAction(CString& sTarget, CString& sMessage);
 	bool OnUserMsg(CString& sTarget, CString& sMessage);
 	bool OnUserNotice(CString& sTarget, CString& sMessage);
