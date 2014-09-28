@@ -1103,9 +1103,9 @@ public:
 	 *  @param sLine The raw traffic line which the client sent.
 	 */
 	virtual EModRet OnUnknownUserRaw(CClient* pClient, CString& sLine);
-	/** This function behaves like CModule::OnRawTags(), but is also called
+	/** This function behaves like CModule::OnUserRawTags(), but is also called
 	 *  before the client successfully logged in to ZNC. You should always
-	 *  prefer to use CModule::OnRawTags() if possible.
+	 *  prefer to use CModule::OnUserRawTags() if possible.
 	 *  @param pClient The client which send this line.
 	 *  @param sLine The raw traffic line which the client sent.
 	 */
