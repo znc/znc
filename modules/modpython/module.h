@@ -96,6 +96,7 @@ public:
 	virtual EModRet OnUserRaw(CString& sLine);
 	virtual EModRet OnUserRawTags(CString& sLine);
 	virtual EModRet OnUserCTCPReply(CString& sTarget, CString& sMessage);
+	virtual EModRet OnUserCTCPReplyTags(CString& sTarget, CString& sMessage, MCString& msTags);
 	virtual EModRet OnUserCTCP(CString& sTarget, CString& sMessage);
 	virtual EModRet OnUserAction(CString& sTarget, CString& sMessage);
 	virtual EModRet OnUserMsg(CString& sTarget, CString& sMessage);

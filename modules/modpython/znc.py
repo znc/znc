@@ -317,6 +317,9 @@ class Module:
     def OnUserCTCPReply(self, sTarget, sMessage):
         pass
 
+    def OnUserCTCPReplyTags(self, sTarget, sMessage, msTags):
+        pass
+
     def OnUserCTCP(self, sTarget, sMessage):
         pass
 

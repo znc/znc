@@ -663,6 +663,14 @@ public:
 	 *  @return See CModule::EModRet.
 	 */
 	virtual EModRet OnUserCTCPReply(CString& sTarget, CString& sMessage);
+	/** This module hook is called when a client sends a CTCP reply.
+	 *  @param sTarget The target for the CTCP reply. Could be a channel
+	 *                 name or a nick name.
+	 *  @param sMessage The CTCP reply message.
+	 *  @param msTags The message tags.
+	 *  @return See CModule::EModRet.
+	 */
+	virtual EModRet OnUserCTCPReplyTags(CString& sTarget, CString& sMessage, MCString& msTags);
 	/** This module hook is called when a client sends a CTCP request.
 	 *  @param sTarget The target for the CTCP request. Could be a channel
 	 *                 name or a nick name.
@@ -1184,6 +1192,7 @@ public:
 	bool OnUserRaw(CString& sLine);
 	bool OnUserRawTags(CString& sLine);
 	bool OnUserCTCPReply(CString& sTarget, CString& sMessage);
+	bool OnUserCTCPReplyTags(CString& sTarget, CString& sMessage, MCString& msTags);
 	bool OnUserCTCP(CString& sTarget, CString& sMessage);
 	bool OnUserAction(CString& sTarget, CString& sMessage);
 	bool OnUserMsg(CString& sTarget, CString& sMessage);

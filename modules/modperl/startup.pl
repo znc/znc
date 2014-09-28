@@ -349,6 +349,7 @@ sub OnClientDisconnect {}
 sub OnUserRaw {}
 sub OnUserRawTags {}
 sub OnUserCTCPReply {}
+sub OnUserCTCPReplyTags {}
 sub OnUserCTCP {}
 sub OnUserAction {}
 sub OnUserMsg {}
