@@ -646,10 +646,16 @@ public:
 	/** Called when a client disconnected from ZNC. */
 	virtual void OnClientDisconnect();
 	/** This module hook is called when a client sends a raw traffic line to ZNC.
+	 *  It does not contain any message tags that may be present.
 	 *  @param sLine The raw traffic line sent.
 	 *  @return See CModule::EModRet.
 	 */
 	virtual EModRet OnUserRaw(CString& sLine);
+	/** This module hook is called when a client sends a raw traffic line to ZNC.
+	 *  @param sLine The raw traffic line sent.
+	 *  @return See CModule::EModRet.
+	 */
+	virtual EModRet OnUserRawTags(CString& sLine);
 	/** This module hook is called when a client sends a CTCP reply.
 	 *  @param sTarget The target for the CTCP reply. Could be a channel
 	 *                 name or a nick name.
@@ -657,6 +663,14 @@ public:
 	 *  @return See CModule::EModRet.
 	 */
 	virtual EModRet OnUserCTCPReply(CString& sTarget, CString& sMessage);
+	/** This module hook is called when a client sends a CTCP reply.
+	 *  @param sTarget The target for the CTCP reply. Could be a channel
+	 *                 name or a nick name.
+	 *  @param sMessage The CTCP reply message.
+	 *  @param msTags The message tags.
+	 *  @return See CModule::EModRet.
+	 */
+	virtual EModRet OnUserCTCPReplyTags(CString& sTarget, CString& sMessage, MCString& msTags);
 	/** This module hook is called when a client sends a CTCP request.
 	 *  @param sTarget The target for the CTCP request. Could be a channel
 	 *                 name or a nick name.
@@ -666,6 +680,16 @@ public:
 	 *        CModule::OnUserAction() instead.
 	 */
 	virtual EModRet OnUserCTCP(CString& sTarget, CString& sMessage);
+	/** This module hook is called when a client sends a CTCP request.
+	 *  @param sTarget The target for the CTCP request. Could be a channel
+	 *                 name or a nick name.
+	 *  @param sMessage The CTCP request message.
+	 *  @param msTags The message tags.
+	 *  @return See CModule::EModRet.
+	 *  @note This is not called for CTCP ACTION messages, use
+	 *        CModule::OnUserAction() instead.
+	 */
+	virtual EModRet OnUserCTCPTags(CString& sTarget, CString& sMessage, MCString& msTags);
 	/** Called when a client sends a CTCP ACTION request ("/me").
 	 *  @param sTarget The target for the CTCP ACTION. Could be a channel
 	 *                 name or a nick name.
@@ -674,6 +698,15 @@ public:
 	 *  @note CModule::OnUserCTCP() will not be called for this message.
 	 */
 	virtual EModRet OnUserAction(CString& sTarget, CString& sMessage);
+	/** Called when a client sends a CTCP ACTION request ("/me").
+	 *  @param sTarget The target for the CTCP ACTION. Could be a channel
+	 *                 name or a nick name.
+	 *  @param sMessage The action message.
+	 *  @param msTags The message tags.
+	 *  @return See CModule::EModRet.
+	 *  @note CModule::OnUserCTCP() will not be called for this message.
+	 */
+	virtual EModRet OnUserActionTags(CString& sTarget, CString& sMessage, MCString& msTags);
 	/** This module hook is called when a user sends a normal IRC message.
 	 *  @param sTarget The target of the message. Could be a channel name or
 	 *                 a nick name.
@@ -681,6 +714,14 @@ public:
 	 *  @return See CModule::EModRet.
 	 */
 	virtual EModRet OnUserMsg(CString& sTarget, CString& sMessage);
+	/** This module hook is called when a user sends a normal IRC message.
+	 *  @param sTarget The target of the message. Could be a channel name or
+	 *                 a nick name.
+	 *  @param sMessage The message which was sent.
+	 *  @param msTags The message tags.
+	 *  @return See CModule::EModRet.
+	 */
+	virtual EModRet OnUserMsgTags(CString& sTarget, CString& sMessage, MCString& msTags);
 	/** This module hook is called when a user sends a notice message.
 	 *  @param sTarget The target of the message. Could be a channel name or
 	 *                 a nick name.
@@ -688,29 +729,64 @@ public:
 	 *  @return See CModule::EModRet.
 	 */
 	virtual EModRet OnUserNotice(CString& sTarget, CString& sMessage);
+	/** This module hook is called when a user sends a notice message.
+	 *  @param sTarget The target of the message. Could be a channel name or
+	 *                 a nick name.
+	 *  @param sMessage The message which was sent.
+	 *  @param msTags The message tags.
+	 *  @return See CModule::EModRet.
+	 */
+	virtual EModRet OnUserNoticeTags(CString& sTarget, CString& sMessage, MCString& msTags);
 	/** This hooks is called when a user sends a JOIN message.
 	 *  @param sChannel The channel name the join is for.
 	 *  @param sKey The key for the channel.
 	 *  @return See CModule::EModRet.
 	 */
 	virtual EModRet OnUserJoin(CString& sChannel, CString& sKey);
+	/** This hooks is called when a user sends a JOIN message.
+	 *  @param sChannel The channel name the join is for.
+	 *  @param sKey The key for the channel.
+	 *  @param msTags The message tags.
+	 *  @return See CModule::EModRet.
+	 */
+	virtual EModRet OnUserJoinTags(CString& sChannel, CString& sKey, MCString& msTags);
 	/** This hooks is called when a user sends a PART message.
 	 *  @param sChannel The channel name the part is for.
 	 *  @param sMessage The part message the client sent.
 	 *  @return See CModule::EModRet.
 	 */
 	virtual EModRet OnUserPart(CString& sChannel, CString& sMessage);
+	/** This hooks is called when a user sends a PART message.
+	 *  @param sChannel The channel name the part is for.
+	 *  @param sMessage The part message the client sent.
+	 *  @param msTags The message tags.
+	 *  @return See CModule::EModRet.
+	 */
+	virtual EModRet OnUserPartTags(CString& sChannel, CString& sMessage, MCString& msTags);
 	/** This module hook is called when a user wants to change a channel topic.
 	 *  @param sChannel The channel.
 	 *  @param sTopic The new topic which the user sent.
 	 *  @return See CModule::EModRet.
 	 */
 	virtual EModRet OnUserTopic(CString& sChannel, CString& sTopic);
+	/** This module hook is called when a user wants to change a channel topic.
+	 *  @param sChannel The channel.
+	 *  @param sTopic The new topic which the user sent.x
+	 *  @param msTags The message tags.
+	 *  @return See CModule::EModRet.
+	 */
+	virtual EModRet OnUserTopicTags(CString& sChannel, CString& sTopic, MCString& msTags);
 	/** This hook is called when a user requests a channel's topic.
 	 *  @param sChannel The channel for which the request is.
 	 *  @return See CModule::EModRet.
 	 */
 	virtual EModRet OnUserTopicRequest(CString& sChannel);
+	/** This hook is called when a user requests a channel's topic.
+	 *  @param sChannel The channel for which the request is.
+	 *  @param msTags The message tags.
+	 *  @return See CModule::EModRet.
+	 */
+	virtual EModRet OnUserTopicRequestTags(CString& sChannel, MCString& msTags);
 
 	/** Called when we receive a CTCP reply <em>from IRC</em>.
 	 *  @param Nick The nick the CTCP reply is from.
@@ -1022,10 +1098,18 @@ public:
 	/** This function behaves like CModule::OnRaw(), but is also called
 	 *  before the client successfully logged in to ZNC. You should always
 	 *  prefer to use CModule::OnRaw() if possible.
+	 *  It does not contain any message tags that may be present.
 	 *  @param pClient The client which send this line.
 	 *  @param sLine The raw traffic line which the client sent.
 	 */
 	virtual EModRet OnUnknownUserRaw(CClient* pClient, CString& sLine);
+	/** This function behaves like CModule::OnUserRawTags(), but is also called
+	 *  before the client successfully logged in to ZNC. You should always
+	 *  prefer to use CModule::OnUserRawTags() if possible.
+	 *  @param pClient The client which send this line.
+	 *  @param sLine The raw traffic line which the client sent.
+	 */
+	virtual EModRet OnUnknownUserRawTags(CClient* pClient, CString& sLine);
 
 	/** Called when a client told us CAP LS. Use ssCaps.insert("cap-name")
 	 *  for announcing capabilities which your module supports.
@@ -1168,15 +1252,25 @@ public:
 	bool OnClientLogin();
 	bool OnClientDisconnect();
 	bool OnUserRaw(CString& sLine);
+	bool OnUserRawTags(CString& sLine);
 	bool OnUserCTCPReply(CString& sTarget, CString& sMessage);
+	bool OnUserCTCPReplyTags(CString& sTarget, CString& sMessage, MCString& msTags);
 	bool OnUserCTCP(CString& sTarget, CString& sMessage);
+	bool OnUserCTCPTags(CString& sTarget, CString& sMessage, MCString& msTags);
 	bool OnUserAction(CString& sTarget, CString& sMessage);
+	bool OnUserActionTags(CString& sTarget, CString& sMessage, MCString& msTags);
 	bool OnUserMsg(CString& sTarget, CString& sMessage);
+	bool OnUserMsgTags(CString& sTarget, CString& sMessage, MCString& msTags);
 	bool OnUserNotice(CString& sTarget, CString& sMessage);
+	bool OnUserNoticeTags(CString& sTarget, CString& sMessage, MCString& msTags);
 	bool OnUserJoin(CString& sChannel, CString& sKey);
+	bool OnUserJoinTags(CString& sChannel, CString& sKey, MCString& msTags);
 	bool OnUserPart(CString& sChannel, CString& sMessage);
+	bool OnUserPartTags(CString& sChannel, CString& sMessage, MCString& msTags);
 	bool OnUserTopic(CString& sChannel, CString& sTopic);
+	bool OnUserTopicTags(CString& sChannel, CString& sTopic, MCString& msTags);
 	bool OnUserTopicRequest(CString& sChannel);
+	bool OnUserTopicRequestTags(CString& sChannel, MCString& msTags);
 
 	bool OnCTCPReply(CNick& Nick, CString& sMessage);
 	bool OnPrivCTCP(CNick& Nick, CString& sMessage);
@@ -1226,6 +1320,7 @@ public:
 	bool OnLoginAttempt(CSmartPtr<CAuthBase> Auth);
 	bool OnFailedLogin(const CString& sUsername, const CString& sRemoteIP);
 	bool OnUnknownUserRaw(CClient* pClient, CString& sLine);
+	bool OnUnknownUserRawTags(CClient* pClient, CString& sLine);
 	bool OnClientCapLs(CClient* pClient, SCString& ssCaps);
 	bool IsClientCapSupported(CClient* pClient, const CString& sCap, bool bState);
 	bool OnClientCapRequest(CClient* pClient, const CString& sCap, bool bState);

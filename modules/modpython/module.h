@@ -94,15 +94,25 @@ public:
 	virtual void OnClientLogin();
 	virtual void OnClientDisconnect();
 	virtual EModRet OnUserRaw(CString& sLine);
+	virtual EModRet OnUserRawTags(CString& sLine);
 	virtual EModRet OnUserCTCPReply(CString& sTarget, CString& sMessage);
+	virtual EModRet OnUserCTCPReplyTags(CString& sTarget, CString& sMessage, MCString& msTags);
 	virtual EModRet OnUserCTCP(CString& sTarget, CString& sMessage);
+	virtual EModRet OnUserCTCPTags(CString& sTarget, CString& sMessage, MCString& msTags);
 	virtual EModRet OnUserAction(CString& sTarget, CString& sMessage);
+	virtual EModRet OnUserAction(CString& sTarget, CString& sMessage, MCString& msTags);
 	virtual EModRet OnUserMsg(CString& sTarget, CString& sMessage);
+	virtual EModRet OnUserMsgTags(CString& sTarget, CString& sMessage, MCString& msTags);
 	virtual EModRet OnUserNotice(CString& sTarget, CString& sMessage);
+	virtual EModRet OnUserNoticeTags(CString& sTarget, CString& sMessage, MCString& msTags);
 	virtual EModRet OnUserJoin(CString& sChannel, CString& sKey);
+	virtual EModRet OnUserJoinTags(CString& sChannel, CString& sKey, MCString& msTags);
 	virtual EModRet OnUserPart(CString& sChannel, CString& sMessage);
+	virtual EModRet OnUserPartTags(CString& sChannel, CString& sMessage, MCString& msTags);
 	virtual EModRet OnUserTopic(CString& sChannel, CString& sTopic);
+	virtual EModRet OnUserTopicTags(CString& sChannel, CString& sTopic, MCString& msTags);
 	virtual EModRet OnUserTopicRequest(CString& sChannel);
+	virtual EModRet OnUserTopicRequestTags(CString& sChannel, MCString& msTags);
 	virtual EModRet OnCTCPReply(CNick& Nick, CString& sMessage);
 	virtual EModRet OnPrivCTCP(CNick& Nick, CString& sMessage);
 	virtual EModRet OnChanCTCP(CNick& Nick, CChan& Channel, CString& sMessage);
@@ -128,6 +138,7 @@ public:
 	virtual void OnClientConnect(CZNCSock* pSock, const CString& sHost, unsigned short uPort);
 	virtual void OnFailedLogin(const CString& sUsername, const CString& sRemoteIP);
 	virtual EModRet OnUnknownUserRaw(CClient* pClient, CString& sLine);
+	virtual EModRet OnUnknownUserRawTags(CClient* pClient, CString& sLine);
 	virtual bool IsClientCapSupported(CClient* pClient, const CString& sCap, bool bState);
 	virtual void OnClientCapRequest(CClient* pClient, const CString& sCap, bool bState);
 	virtual EModRet OnModuleLoading(const CString& sModName, const CString& sArgs,

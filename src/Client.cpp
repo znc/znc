@@ -86,23 +86,31 @@ void CClient::SendRequiredPasswordNotice() {
 
 void CClient::ReadLine(const CString& sData) {
 	CString sLine = sData;
+	CString sLineTags = sData;
 
 	sLine.TrimRight("\n\r");
+	sLineTags.TrimRight("\n\r");
 
-	DEBUG("(" << GetFullName() << ") CLI -> ZNC [" << sLine << "]");
+	DEBUG("(" << GetFullName() << ") CLI -> ZNC [" << sLineTags << "]");
 
 	if (sLine.Left(1) == "@") {
-		// TODO support message-tags properly
 		sLine = sLine.Token(1, true);
 	}
 
+	MCString msTags = CUtils::GetMessageTags(sLineTags);
+
+	// Since we'll be calling *Tags methods after their normal counterparts,
+	// we return if either are true.
 	bool bReturn = false;
+	bool bReturnTags = false;
 	if (IsAttached()) {
 		NETWORKMODULECALL(OnUserRaw(sLine), m_pUser, m_pNetwork, this, &bReturn);
+		NETWORKMODULECALL(OnUserRawTags(sLineTags), m_pUser, m_pNetwork, this, &bReturnTags);
 	} else {
 		GLOBALMODULECALL(OnUnknownUserRaw(this, sLine), &bReturn);
+		GLOBALMODULECALL(OnUnknownUserRawTags(this, sLineTags), &bReturnTags);
 	}
-	if (bReturn) return;
+	if (bReturn || bReturnTags) return;
 
 	CString sCommand = sLine.Token(0);
 	if (sCommand.Left(1) == ":") {
@@ -227,6 +235,7 @@ void CClient::ReadLine(const CString& sData) {
 	} else if (sCommand.Equals("NOTICE")) {
 		CString sTarget = sLine.Token(1);
 		CString sMsg = sLine.Token(2, true).TrimPrefix_n();
+		MCString msTagsCopy = msTags;
 
 		if (sTarget.TrimPrefix(m_pUser->GetStatusPrefix())) {
 			if (!sTarget.Equals("status")) {
@@ -241,12 +250,14 @@ void CClient::ReadLine(const CString& sData) {
 			sCTCP.RightChomp();
 
 			NETWORKMODULECALL(OnUserCTCPReply(sTarget, sCTCP), m_pUser, m_pNetwork, this, &bReturn);
-			if (bReturn) return;
+			NETWORKMODULECALL(OnUserCTCPReplyTags(sTarget, sCTCP, msTagsCopy), m_pUser, m_pNetwork, this, &bReturnTags);
+			if (bReturn || bReturnTags) return;
 
 			sMsg = "\001" + sCTCP + "\001";
 		} else {
 			NETWORKMODULECALL(OnUserNotice(sTarget, sMsg), m_pUser, m_pNetwork, this, &bReturn);
-			if (bReturn) return;
+			NETWORKMODULECALL(OnUserNoticeTags(sTarget, sMsg, msTagsCopy), m_pUser, m_pNetwork, this, &bReturnTags);
+			if (bReturn || bReturnTags) return;
 		}
 
 		if (!GetIRCSock()) {
@@ -283,6 +294,7 @@ void CClient::ReadLine(const CString& sData) {
 	} else if (sCommand.Equals("PRIVMSG")) {
 		CString sTarget = sLine.Token(1);
 		CString sMsg = sLine.Token(2, true).TrimPrefix_n();
+		MCString msTagsCopy = msTags;
 
 		if (sMsg.WildCmp("\001*\001")) {
 			CString sCTCP = sMsg;
@@ -302,7 +314,8 @@ void CClient::ReadLine(const CString& sData) {
 				if (sCTCP.Token(0).Equals("ACTION")) {
 					CString sMessage = sCTCP.Token(1, true);
 					NETWORKMODULECALL(OnUserAction(sTarget, sMessage), m_pUser, m_pNetwork, this, &bReturn);
-					if (bReturn) return;
+					NETWORKMODULECALL(OnUserActionTags(sTarget, sMessage, msTagsCopy), m_pUser, m_pNetwork, this, &bReturnTags);
+					if (bReturn || bReturnTags) return;
 					sCTCP = "ACTION " + sMessage;
 
 					if (m_pNetwork->IsChan(sTarget)) {
@@ -332,7 +345,8 @@ void CClient::ReadLine(const CString& sData) {
 					}
 				} else {
 					NETWORKMODULECALL(OnUserCTCP(sTarget, sCTCP), m_pUser, m_pNetwork, this, &bReturn);
-					if (bReturn) return;
+					NETWORKMODULECALL(OnUserCTCPTags(sTarget, sCTCP, msTagsCopy), m_pUser, m_pNetwork, this, &bReturnTags);
+					if (bReturn || bReturnTags) return;
 				}
 
 				PutIRC("PRIVMSG " + sTarget + " :\001" + sCTCP + "\001");
@@ -351,7 +365,8 @@ void CClient::ReadLine(const CString& sData) {
 		}
 
 		NETWORKMODULECALL(OnUserMsg(sTarget, sMsg), m_pUser, m_pNetwork, this, &bReturn);
-		if (bReturn) return;
+		NETWORKMODULECALL(OnUserMsgTags(sTarget, sMsg, msTagsCopy), m_pUser, m_pNetwork, this, &bReturnTags);
+		if (bReturn || bReturnTags) return;
 
 		if (!GetIRCSock()) {
 			// Some lagmeters do a PRIVMSG to their own nick, ignore those.
@@ -439,8 +454,11 @@ void CClient::ReadLine(const CString& sData) {
 		for (unsigned int a = 0; a < vChans.size(); a++) {
 			CString sChannel = vChans[a];
 			bool bContinue = false;
+			bool bContinueTags = false;
+			MCString msTagsCopy = msTags;
 			NETWORKMODULECALL(OnUserJoin(sChannel, sKey), m_pUser, m_pNetwork, this, &bContinue);
-			if (bContinue) continue;
+			NETWORKMODULECALL(OnUserJoinTags(sChannel, sKey, msTagsCopy), m_pUser, m_pNetwork, this, &bContinueTags);
+			if (bContinue || bContinueTags) continue;
 
 			CChan* pChan = m_pNetwork->FindChan(sChannel);
 			if (pChan) {
@@ -473,8 +491,11 @@ void CClient::ReadLine(const CString& sData) {
 		for (VCString::const_iterator it = vChans.begin(); it != vChans.end(); ++it) {
 			CString sChan = *it;
 			bool bContinue = false;
+			bool bContinueTags = false;
+			MCString msTagsCopy = msTags;
 			NETWORKMODULECALL(OnUserPart(sChan, sMessage), m_pUser, m_pNetwork, this, &bContinue);
-			if (bContinue) continue;
+			NETWORKMODULECALL(OnUserPartTags(sChan, sMessage, msTagsCopy), m_pUser, m_pNetwork, this, &bContinueTags);
+			if (bContinue|| bContinueTags) continue;
 
 			CChan* pChan = m_pNetwork->FindChan(sChan);
 
@@ -498,14 +519,17 @@ void CClient::ReadLine(const CString& sData) {
 	} else if (sCommand.Equals("TOPIC")) {
 		CString sChan = sLine.Token(1);
 		CString sTopic = sLine.Token(2, true).TrimPrefix_n();
+		MCString msTagsCopy = msTags;
 
 		if (!sTopic.empty()) {
 			NETWORKMODULECALL(OnUserTopic(sChan, sTopic), m_pUser, m_pNetwork, this, &bReturn);
-			if (bReturn) return;
+			NETWORKMODULECALL(OnUserTopicTags(sChan, sTopic, msTagsCopy), m_pUser, m_pNetwork, this, &bReturnTags);
+			if (bReturn || bReturnTags) return;
 			sLine = "TOPIC " + sChan + " :" + sTopic;
 		} else {
 			NETWORKMODULECALL(OnUserTopicRequest(sChan), m_pUser, m_pNetwork, this, &bReturn);
-			if (bReturn) return;
+			NETWORKMODULECALL(OnUserTopicRequestTags(sChan, msTagsCopy), m_pUser, m_pNetwork, this, &bReturnTags);
+			if (bReturn || bReturnTags) return;
 		}
 	} else if (sCommand.Equals("MODE")) {
 		CString sTarget = sLine.Token(1);

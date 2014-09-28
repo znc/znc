@@ -311,31 +311,61 @@ class Module:
     def OnUserRaw(self, sLine):
         pass
 
+    def OnUserRawTags(self, sLine):
+        pass
+
     def OnUserCTCPReply(self, sTarget, sMessage):
+        pass
+
+    def OnUserCTCPReplyTags(self, sTarget, sMessage, msTags):
         pass
 
     def OnUserCTCP(self, sTarget, sMessage):
         pass
 
+    def OnUserCTCPTags(self, sTarget, sMessage, msTags):
+        pass
+
     def OnUserAction(self, sTarget, sMessage):
+        pass
+
+    def OnUserActionTags(self, sTarget, sMessage, msTags):
         pass
 
     def OnUserMsg(self, sTarget, sMessage):
         pass
 
+    def OnUserMsgTags(self, sTarget, sMessage, msTags):
+        pass
+
     def OnUserNotice(self, sTarget, sMessage):
+        pass
+
+    def OnUserNoticeTags(self, sTarget, sMessage, msTags):
         pass
 
     def OnUserJoin(self, sChannel, sKey):
         pass
 
+    def OnUserJoinTags(self, sChannel, sKey, msTags):
+        pass
+
     def OnUserPart(self, sChannel, sMessage):
+        pass
+
+    def OnUserPartTags(self, sChannel, sMessage, msTags):
         pass
 
     def OnUserTopic(self, sChannel, sTopic):
         pass
 
+    def OnUserTopicTags(self, sChannel, sTopic, msTags):
+        pass
+
     def OnUserTopicRequest(self, sChannel):
+        pass
+
+    def OnUserTopicRequestTags(self, sChannel, msTags):
         pass
 
     def OnCTCPReply(self, Nick, sMessage):
@@ -409,6 +439,9 @@ class Module:
         pass
 
     def OnUnknownUserRaw(self, pClient, sLine):
+        pass
+
+    def OnUnknownUserRawTags(self, pClient, sLine):
         pass
 
     def OnClientCapLs(self, pClient, ssCaps):
