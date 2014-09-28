@@ -97,6 +97,8 @@ void CClient::ReadLine(const CString& sData) {
 		sLine = sLine.Token(1, true);
 	}
 
+	MCString msTags = CUtils::GetMessageTags(sLineTags);
+
 	// Since we'll be calling *Tags methods after their normal counterparts,
 	// we return if either are true.
 	bool bReturn = false;
@@ -233,6 +235,7 @@ void CClient::ReadLine(const CString& sData) {
 	} else if (sCommand.Equals("NOTICE")) {
 		CString sTarget = sLine.Token(1);
 		CString sMsg = sLine.Token(2, true).TrimPrefix_n();
+		MCString msTagsCopy = msTags;
 
 		if (sTarget.TrimPrefix(m_pUser->GetStatusPrefix())) {
 			if (!sTarget.Equals("status")) {
@@ -247,12 +250,14 @@ void CClient::ReadLine(const CString& sData) {
 			sCTCP.RightChomp();
 
 			NETWORKMODULECALL(OnUserCTCPReply(sTarget, sCTCP), m_pUser, m_pNetwork, this, &bReturn);
-			if (bReturn) return;
+			NETWORKMODULECALL(OnUserCTCPReplyTags(sTarget, sCTCP, msTagsCopy), m_pUser, m_pNetwork, this, &bReturnTags);
+			if (bReturn || bReturnTags) return;
 
 			sMsg = "\001" + sCTCP + "\001";
 		} else {
 			NETWORKMODULECALL(OnUserNotice(sTarget, sMsg), m_pUser, m_pNetwork, this, &bReturn);
-			if (bReturn) return;
+			NETWORKMODULECALL(OnUserNoticeTags(sTarget, sMsg, msTagsCopy), m_pUser, m_pNetwork, this, &bReturnTags);
+			if (bReturn || bReturnTags) return;
 		}
 
 		if (!GetIRCSock()) {
