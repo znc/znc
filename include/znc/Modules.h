@@ -1019,9 +1019,9 @@ public:
 	 *  @param sRemoteIP The IP address from which the client tried to login.
 	 */
 	virtual void OnFailedLogin(const CString& sUsername, const CString& sRemoteIP);
-	/** This function behaves like CModule::OnRaw(), but is also called
+	/** This function behaves like CModule::OnUserRaw(), but is also called
 	 *  before the client successfully logged in to ZNC. You should always
-	 *  prefer to use CModule::OnRaw() if possible.
+	 *  prefer to use CModule::OnUserRaw() if possible.
 	 *  @param pClient The client which send this line.
 	 *  @param sLine The raw traffic line which the client sent.
 	 */
