@@ -781,6 +781,12 @@ public:
 	 *  @return See CModule::EModRet.
 	 */
 	virtual EModRet OnUserTopicRequest(CString& sChannel);
+	/** This hook is called when a user requests a channel's topic.
+	 *  @param sChannel The channel for which the request is.
+	 *  @param msTags The message tags.
+	 *  @return See CModule::EModRet.
+	 */
+	virtual EModRet OnUserTopicRequestTags(CString& sChannel, MCString& msTags);
 
 	/** Called when we receive a CTCP reply <em>from IRC</em>.
 	 *  @param Nick The nick the CTCP reply is from.
@@ -1264,6 +1270,7 @@ public:
 	bool OnUserTopic(CString& sChannel, CString& sTopic);
 	bool OnUserTopicTags(CString& sChannel, CString& sTopic, MCString& msTags);
 	bool OnUserTopicRequest(CString& sChannel);
+	bool OnUserTopicRequestTags(CString& sChannel, MCString& msTags);
 
 	bool OnCTCPReply(CNick& Nick, CString& sMessage);
 	bool OnPrivCTCP(CNick& Nick, CString& sMessage);

@@ -112,6 +112,7 @@ public:
 	virtual EModRet OnUserTopic(CString& sChannel, CString& sTopic);
 	virtual EModRet OnUserTopicTags(CString& sChannel, CString& sTopic, MCString& msTags);
 	virtual EModRet OnUserTopicRequest(CString& sChannel);
+	virtual EModRet OnUserTopicRequestTags(CString& sChannel, MCString& msTags);
 	virtual EModRet OnCTCPReply(CNick& Nick, CString& sMessage);
 	virtual EModRet OnPrivCTCP(CNick& Nick, CString& sMessage);
 	virtual EModRet OnChanCTCP(CNick& Nick, CChan& Channel, CString& sMessage);

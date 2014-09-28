@@ -365,6 +365,9 @@ class Module:
     def OnUserTopicRequest(self, sChannel):
         pass
 
+    def OnUserTopicRequestTags(self, sChannel, msTags):
+        pass
+
     def OnCTCPReply(self, Nick, sMessage):
         pass
 

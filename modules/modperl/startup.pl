@@ -365,6 +365,7 @@ sub OnUserPartTags {}
 sub OnUserTopic {}
 sub OnUserTopicTags {}
 sub OnUserTopicRequest {}
+sub OnUserTopicRequestTags {}
 sub OnCTCPReply {}
 sub OnPrivCTCP {}
 sub OnChanCTCP {}
