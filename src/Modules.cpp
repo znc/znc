@@ -759,6 +759,7 @@ void CModule::OnClientConnect(CZNCSock* pClient, const CString& sHost, unsigned 
 CModule::EModRet CModule::OnLoginAttempt(CSmartPtr<CAuthBase> Auth) { return CONTINUE; }
 void CModule::OnFailedLogin(const CString& sUsername, const CString& sRemoteIP) {}
 CModule::EModRet CModule::OnUnknownUserRaw(CClient* pClient, CString& sLine) { return CONTINUE; }
+CModule::EModRet CModule::OnUnknownUserRawTags(CClient* pClient, CString& sLine) { return CONTINUE; }
 void CModule::OnClientCapLs(CClient* pClient, SCString& ssCaps) {}
 bool CModule::IsClientCapSupported(CClient* pClient, const CString& sCap, bool bState) { return false; }
 void CModule::OnClientCapRequest(CClient* pClient, const CString& sCap, bool bState) {}
@@ -931,6 +932,10 @@ bool CModules::OnFailedLogin(const CString& sUsername, const CString& sRemoteIP)
 
 bool CModules::OnUnknownUserRaw(CClient* pClient, CString& sLine) {
 	MODHALTCHK(OnUnknownUserRaw(pClient, sLine));
+}
+
+bool CModules::OnUnknownUserRawTags(CClient* pClient, CString& sLine) {
+	MODHALTCHK(OnUnknownUserRawTags(pClient, sLine));
 }
 
 bool CModules::OnClientCapLs(CClient* pClient, SCString& ssCaps) {

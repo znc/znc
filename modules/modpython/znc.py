@@ -411,6 +411,9 @@ class Module:
     def OnUnknownUserRaw(self, pClient, sLine):
         pass
 
+    def OnUnknownUserRawTags(self, pClient, sLine):
+        pass
+
     def OnClientCapLs(self, pClient, ssCaps):
         pass
 

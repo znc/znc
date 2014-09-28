@@ -71,6 +71,7 @@ EModRet OnDeleteUser(CUser& User)
 void OnClientConnect(CZNCSock* pSock, const CString& sHost, unsigned short uPort)
 void OnFailedLogin(const CString& sUsername, const CString& sRemoteIP)
 EModRet OnUnknownUserRaw(CClient* pClient, CString& sLine)
+EModRet OnUnknownUserRawTags(CClient* pClient, CString& sLine)
 bool IsClientCapSupported(CClient* pClient, const CString& sCap, bool bState)=false
 void OnClientCapRequest(CClient* pClient, const CString& sCap, bool bState)
 EModRet OnModuleLoading(const CString& sModName, const CString& sArgs, CModInfo::EModuleType eType, bool& bSuccess, CString& sRetMsg)

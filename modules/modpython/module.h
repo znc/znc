@@ -128,6 +128,7 @@ public:
 	virtual void OnClientConnect(CZNCSock* pSock, const CString& sHost, unsigned short uPort);
 	virtual void OnFailedLogin(const CString& sUsername, const CString& sRemoteIP);
 	virtual EModRet OnUnknownUserRaw(CClient* pClient, CString& sLine);
+	virtual EModRet OnUnknownUserRawTags(CClient* pClient, CString& sLine);
 	virtual bool IsClientCapSupported(CClient* pClient, const CString& sCap, bool bState);
 	virtual void OnClientCapRequest(CClient* pClient, const CString& sCap, bool bState);
 	virtual EModRet OnModuleLoading(const CString& sModName, const CString& sArgs,

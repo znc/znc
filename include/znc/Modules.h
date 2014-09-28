@@ -1022,10 +1022,18 @@ public:
 	/** This function behaves like CModule::OnRaw(), but is also called
 	 *  before the client successfully logged in to ZNC. You should always
 	 *  prefer to use CModule::OnRaw() if possible.
+	 *  It does not contain any message tags that may be present.
 	 *  @param pClient The client which send this line.
 	 *  @param sLine The raw traffic line which the client sent.
 	 */
 	virtual EModRet OnUnknownUserRaw(CClient* pClient, CString& sLine);
+	/** This function behaves like CModule::OnRawTags(), but is also called
+	 *  before the client successfully logged in to ZNC. You should always
+	 *  prefer to use CModule::OnRawTags() if possible.
+	 *  @param pClient The client which send this line.
+	 *  @param sLine The raw traffic line which the client sent.
+	 */
+	virtual EModRet OnUnknownUserRawTags(CClient* pClient, CString& sLine);
 
 	/** Called when a client told us CAP LS. Use ssCaps.insert("cap-name")
 	 *  for announcing capabilities which your module supports.
@@ -1226,6 +1234,7 @@ public:
 	bool OnLoginAttempt(CSmartPtr<CAuthBase> Auth);
 	bool OnFailedLogin(const CString& sUsername, const CString& sRemoteIP);
 	bool OnUnknownUserRaw(CClient* pClient, CString& sLine);
+	bool OnUnknownUserRawTags(CClient* pClient, CString& sLine);
 	bool OnClientCapLs(CClient* pClient, SCString& ssCaps);
 	bool IsClientCapSupported(CClient* pClient, const CString& sCap, bool bState);
 	bool OnClientCapRequest(CClient* pClient, const CString& sCap, bool bState);
