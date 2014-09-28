@@ -454,8 +454,11 @@ void CClient::ReadLine(const CString& sData) {
 		for (unsigned int a = 0; a < vChans.size(); a++) {
 			CString sChannel = vChans[a];
 			bool bContinue = false;
+			bool bContinueTags = false;
+			MCString msTagsCopy = msTags;
 			NETWORKMODULECALL(OnUserJoin(sChannel, sKey), m_pUser, m_pNetwork, this, &bContinue);
-			if (bContinue) continue;
+			NETWORKMODULECALL(OnUserJoinTags(sChannel, sKey, msTagsCopy), m_pUser, m_pNetwork, this, &bContinueTags);
+			if (bContinue || bContinueTags) continue;
 
 			CChan* pChan = m_pNetwork->FindChan(sChannel);
 			if (pChan) {
@@ -488,8 +491,11 @@ void CClient::ReadLine(const CString& sData) {
 		for (VCString::const_iterator it = vChans.begin(); it != vChans.end(); ++it) {
 			CString sChan = *it;
 			bool bContinue = false;
+			bool bContinueTags = false;
+			MCString msTagsCopy = msTags;
 			NETWORKMODULECALL(OnUserPart(sChan, sMessage), m_pUser, m_pNetwork, this, &bContinue);
-			if (bContinue) continue;
+			NETWORKMODULECALL(OnUserPartTags(sChan, sMessage, msTagsCopy), m_pUser, m_pNetwork, this, &bContinueTags);
+			if (bContinue|| bContinueTags) continue;
 
 			CChan* pChan = m_pNetwork->FindChan(sChan);
 
@@ -513,14 +519,17 @@ void CClient::ReadLine(const CString& sData) {
 	} else if (sCommand.Equals("TOPIC")) {
 		CString sChan = sLine.Token(1);
 		CString sTopic = sLine.Token(2, true).TrimPrefix_n();
+		MCString msTagsCopy = msTags;
 
 		if (!sTopic.empty()) {
 			NETWORKMODULECALL(OnUserTopic(sChan, sTopic), m_pUser, m_pNetwork, this, &bReturn);
-			if (bReturn) return;
+			NETWORKMODULECALL(OnUserTopicTags(sChan, sTopic, msTagsCopy), m_pUser, m_pNetwork, this, &bReturnTags);
+			if (bReturn || bReturnTags) return;
 			sLine = "TOPIC " + sChan + " :" + sTopic;
 		} else {
 			NETWORKMODULECALL(OnUserTopicRequest(sChan), m_pUser, m_pNetwork, this, &bReturn);
-			if (bReturn) return;
+			NETWORKMODULECALL(OnUserTopicRequestTags(sChan, msTagsCopy), m_pUser, m_pNetwork, this, &bReturnTags);
+			if (bReturn || bReturnTags) return;
 		}
 	} else if (sCommand.Equals("MODE")) {
 		CString sTarget = sLine.Token(1);
