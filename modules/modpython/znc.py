@@ -359,6 +359,9 @@ class Module:
     def OnUserTopic(self, sChannel, sTopic):
         pass
 
+    def OnUserTopicTags(self, sChannel, sTopic, msTags):
+        pass
+
     def OnUserTopicRequest(self, sChannel):
         pass
 

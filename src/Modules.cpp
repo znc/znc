@@ -689,6 +689,7 @@ CModule::EModRet CModule::OnUserJoinTags(CString& sChannel, CString& sKey, MCStr
 CModule::EModRet CModule::OnUserPart(CString& sChannel, CString& sMessage) { return CONTINUE; }
 CModule::EModRet CModule::OnUserPartTags(CString& sChannel, CString& sMessage, MCString& msTags) { return CONTINUE; }
 CModule::EModRet CModule::OnUserTopic(CString& sChannel, CString& sTopic) { return CONTINUE; }
+CModule::EModRet CModule::OnUserTopicTags(CString& sChannel, CString& sTopic, MCString& msTags) { return CONTINUE; }
 CModule::EModRet CModule::OnUserTopicRequest(CString& sChannel) { return CONTINUE; }
 
 CModule::EModRet CModule::OnCTCPReply(CNick& Nick, CString& sMessage) { return CONTINUE; }
@@ -859,6 +860,7 @@ bool CModules::OnUserJoinTags(CString& sChannel, CString& sKey, MCString& msTags
 bool CModules::OnUserPart(CString& sChannel, CString& sMessage) { MODHALTCHK(OnUserPart(sChannel, sMessage)); }
 bool CModules::OnUserPartTags(CString& sChannel, CString& sMessage, MCString& msTags) { MODHALTCHK(OnUserPartTags(sChannel, sMessage, msTags)); }
 bool CModules::OnUserTopic(CString& sChannel, CString& sTopic) { MODHALTCHK(OnUserTopic(sChannel, sTopic)); }
+bool CModules::OnUserTopicTags(CString& sChannel, CString& sTopic, MCString& msTags) { MODHALTCHK(OnUserTopicTags(sChannel, sTopic, msTags)); }
 bool CModules::OnUserTopicRequest(CString& sChannel) { MODHALTCHK(OnUserTopicRequest(sChannel)); }
 
 bool CModules::OnQuit(const CNick& Nick, const CString& sMessage, const vector<CChan*>& vChans) { MODUNLOADCHK(OnQuit(Nick, sMessage, vChans)); return false; }

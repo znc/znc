@@ -363,6 +363,7 @@ sub OnUserJoinTags {}
 sub OnUserPart {}
 sub OnUserPartTags {}
 sub OnUserTopic {}
+sub OnUserTopicTags {}
 sub OnUserTopicRequest {}
 sub OnCTCPReply {}
 sub OnPrivCTCP {}

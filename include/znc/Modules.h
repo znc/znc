@@ -769,6 +769,13 @@ public:
 	 *  @return See CModule::EModRet.
 	 */
 	virtual EModRet OnUserTopic(CString& sChannel, CString& sTopic);
+	/** This module hook is called when a user wants to change a channel topic.
+	 *  @param sChannel The channel.
+	 *  @param sTopic The new topic which the user sent.x
+	 *  @param msTags The message tags.
+	 *  @return See CModule::EModRet.
+	 */
+	virtual EModRet OnUserTopicTags(CString& sChannel, CString& sTopic, MCString& msTags);
 	/** This hook is called when a user requests a channel's topic.
 	 *  @param sChannel The channel for which the request is.
 	 *  @return See CModule::EModRet.
@@ -1255,6 +1262,7 @@ public:
 	bool OnUserPart(CString& sChannel, CString& sMessage);
 	bool OnUserPartTags(CString& sChannel, CString& sMessage, MCString& msTags);
 	bool OnUserTopic(CString& sChannel, CString& sTopic);
+	bool OnUserTopicTags(CString& sChannel, CString& sTopic, MCString& msTags);
 	bool OnUserTopicRequest(CString& sChannel);
 
 	bool OnCTCPReply(CNick& Nick, CString& sMessage);
