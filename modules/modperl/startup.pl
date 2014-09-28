@@ -353,6 +353,7 @@ sub OnUserCTCPReplyTags {}
 sub OnUserCTCP {}
 sub OnUserCTCPTags {}
 sub OnUserAction {}
+sub OnUserActionTags {}
 sub OnUserMsg {}
 sub OnUserNotice {}
 sub OnUserJoin {}

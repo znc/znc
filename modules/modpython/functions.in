@@ -44,6 +44,7 @@ EModRet OnUserCTCPReplyTags(CString& sTarget, CString& sMessage, MCString& msTag
 EModRet OnUserCTCP(CString& sTarget, CString& sMessage)
 EModRet OnUserCTCPTags(CString& sTarget, CString& sMessage, MCString& msTags)
 EModRet OnUserAction(CString& sTarget, CString& sMessage)
+EModRet OnUserActionTags(CString& sTarget, CString& sMessage)
 EModRet OnUserMsg(CString& sTarget, CString& sMessage)
 EModRet OnUserNotice(CString& sTarget, CString& sMessage)
 EModRet OnUserJoin(CString& sChannel, CString& sKey)

@@ -698,6 +698,15 @@ public:
 	 *  @note CModule::OnUserCTCP() will not be called for this message.
 	 */
 	virtual EModRet OnUserAction(CString& sTarget, CString& sMessage);
+	/** Called when a client sends a CTCP ACTION request ("/me").
+	 *  @param sTarget The target for the CTCP ACTION. Could be a channel
+	 *                 name or a nick name.
+	 *  @param sMessage The action message.
+	 *  @param msTags The message tags.
+	 *  @return See CModule::EModRet.
+	 *  @note CModule::OnUserCTCP() will not be called for this message.
+	 */
+	virtual EModRet OnUserActionTags(CString& sTarget, CString& sMessage, MCString& msTags);
 	/** This module hook is called when a user sends a normal IRC message.
 	 *  @param sTarget The target of the message. Could be a channel name or
 	 *                 a nick name.
@@ -1206,6 +1215,7 @@ public:
 	bool OnUserCTCP(CString& sTarget, CString& sMessage);
 	bool OnUserCTCPTags(CString& sTarget, CString& sMessage, MCString& msTags);
 	bool OnUserAction(CString& sTarget, CString& sMessage);
+	bool OnUserActionTags(CString& sTarget, CString& sMessage, MCString& msTags);
 	bool OnUserMsg(CString& sTarget, CString& sMessage);
 	bool OnUserNotice(CString& sTarget, CString& sMessage);
 	bool OnUserJoin(CString& sChannel, CString& sKey);

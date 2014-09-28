@@ -100,6 +100,7 @@ public:
 	virtual EModRet OnUserCTCP(CString& sTarget, CString& sMessage);
 	virtual EModRet OnUserCTCPTags(CString& sTarget, CString& sMessage, MCString& msTags);
 	virtual EModRet OnUserAction(CString& sTarget, CString& sMessage);
+	virtual EModRet OnUserAction(CString& sTarget, CString& sMessage, MCString& msTags);
 	virtual EModRet OnUserMsg(CString& sTarget, CString& sMessage);
 	virtual EModRet OnUserNotice(CString& sTarget, CString& sMessage);
 	virtual EModRet OnUserJoin(CString& sChannel, CString& sKey);

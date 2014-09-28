@@ -679,6 +679,7 @@ CModule::EModRet CModule::OnUserCTCPReplyTags(CString& sTarget, CString& sMessag
 CModule::EModRet CModule::OnUserCTCP(CString& sTarget, CString& sMessage) { return CONTINUE; }
 CModule::EModRet CModule::OnUserCTCPTags(CString& sTarget, CString& sMessage, MCString& msTags) { return CONTINUE; }
 CModule::EModRet CModule::OnUserAction(CString& sTarget, CString& sMessage) { return CONTINUE; }
+CModule::EModRet CModule::OnUserActionTags(CString& sTarget, CString& sMessage, MCString& msTags) { return CONTINUE; }
 CModule::EModRet CModule::OnUserMsg(CString& sTarget, CString& sMessage) { return CONTINUE; }
 CModule::EModRet CModule::OnUserNotice(CString& sTarget, CString& sMessage) { return CONTINUE; }
 CModule::EModRet CModule::OnUserJoin(CString& sChannel, CString& sKey) { return CONTINUE; }
@@ -844,6 +845,7 @@ bool CModules::OnUserCTCPReplyTags(CString& sTarget, CString& sMessage, MCString
 bool CModules::OnUserCTCP(CString& sTarget, CString& sMessage) { MODHALTCHK(OnUserCTCP(sTarget, sMessage)); }
 bool CModules::OnUserCTCPTags(CString& sTarget, CString& sMessage, MCString& msTags) { MODHALTCHK(OnUserCTCPTags(sTarget, sMessage, msTags)); }
 bool CModules::OnUserAction(CString& sTarget, CString& sMessage) { MODHALTCHK(OnUserAction(sTarget, sMessage)); }
+bool CModules::OnUserActionTags(CString& sTarget, CString& sMessage, MCString& msTags) { MODHALTCHK(OnUserActionTags(sTarget, sMessage, msTags)); }
 bool CModules::OnUserMsg(CString& sTarget, CString& sMessage) { MODHALTCHK(OnUserMsg(sTarget, sMessage)); }
 bool CModules::OnUserNotice(CString& sTarget, CString& sMessage) { MODHALTCHK(OnUserNotice(sTarget, sMessage)); }
 bool CModules::OnUserJoin(CString& sChannel, CString& sKey) { MODHALTCHK(OnUserJoin(sChannel, sKey)); }

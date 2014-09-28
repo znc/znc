@@ -329,6 +329,9 @@ class Module:
     def OnUserAction(self, sTarget, sMessage):
         pass
 
+    def OnUserActionTags(self, sTarget, sMessage, msTags):
+        pass
+
     def OnUserMsg(self, sTarget, sMessage):
         pass
 
