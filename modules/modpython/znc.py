@@ -311,6 +311,9 @@ class Module:
     def OnUserRaw(self, sLine):
         pass
 
+    def OnUserRawTags(self, sLine):
+        pass
+
     def OnUserCTCPReply(self, sTarget, sMessage):
         pass
 

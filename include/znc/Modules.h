@@ -646,10 +646,16 @@ public:
 	/** Called when a client disconnected from ZNC. */
 	virtual void OnClientDisconnect();
 	/** This module hook is called when a client sends a raw traffic line to ZNC.
+	 *  It does not contain any message tags that may be present.
 	 *  @param sLine The raw traffic line sent.
 	 *  @return See CModule::EModRet.
 	 */
 	virtual EModRet OnUserRaw(CString& sLine);
+	/** This module hook is called when a client sends a raw traffic line to ZNC.
+	 *  @param sLine The raw traffic line sent.
+	 *  @return See CModule::EModRet.
+	 */
+	virtual EModRet OnUserRawTags(CString& sLine);
 	/** This module hook is called when a client sends a CTCP reply.
 	 *  @param sTarget The target for the CTCP reply. Could be a channel
 	 *                 name or a nick name.
@@ -1176,6 +1182,7 @@ public:
 	bool OnClientLogin();
 	bool OnClientDisconnect();
 	bool OnUserRaw(CString& sLine);
+	bool OnUserRawTags(CString& sLine);
 	bool OnUserCTCPReply(CString& sTarget, CString& sMessage);
 	bool OnUserCTCP(CString& sTarget, CString& sMessage);
 	bool OnUserAction(CString& sTarget, CString& sMessage);

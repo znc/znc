@@ -78,6 +78,7 @@ public:
 	virtual void OnClientLogin();
 	virtual void OnClientDisconnect();
 	virtual EModRet OnUserRaw(CString& sLine);
+	virtual EModRet OnUserRawTags(CString& sLine);
 	virtual EModRet OnUserCTCPReply(CString& sTarget, CString& sMessage);
 	virtual EModRet OnUserCTCP(CString& sTarget, CString& sMessage);
 	virtual EModRet OnUserAction(CString& sTarget, CString& sMessage);

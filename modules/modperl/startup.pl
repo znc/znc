@@ -347,6 +347,7 @@ sub OnPrivBufferPlayLine {}
 sub OnClientLogin {}
 sub OnClientDisconnect {}
 sub OnUserRaw {}
+sub OnUserRawTags {}
 sub OnUserCTCPReply {}
 sub OnUserCTCP {}
 sub OnUserAction {}
