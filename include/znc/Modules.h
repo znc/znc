@@ -729,6 +729,14 @@ public:
 	 *  @return See CModule::EModRet.
 	 */
 	virtual EModRet OnUserNotice(CString& sTarget, CString& sMessage);
+	/** This module hook is called when a user sends a notice message.
+	 *  @param sTarget The target of the message. Could be a channel name or
+	 *                 a nick name.
+	 *  @param sMessage The message which was sent.
+	 *  @param msTags The message tags.
+	 *  @return See CModule::EModRet.
+	 */
+	virtual EModRet OnUserNoticeTags(CString& sTarget, CString& sMessage, MCString& msTags);
 	/** This hooks is called when a user sends a JOIN message.
 	 *  @param sChannel The channel name the join is for.
 	 *  @param sKey The key for the channel.
@@ -1227,6 +1235,7 @@ public:
 	bool OnUserMsg(CString& sTarget, CString& sMessage);
 	bool OnUserMsgTags(CString& sTarget, CString& sMessage, MCString& msTags);
 	bool OnUserNotice(CString& sTarget, CString& sMessage);
+	bool OnUserNoticeTags(CString& sTarget, CString& sMessage, MCString& msTags);
 	bool OnUserJoin(CString& sChannel, CString& sKey);
 	bool OnUserPart(CString& sChannel, CString& sMessage);
 	bool OnUserTopic(CString& sChannel, CString& sTopic);

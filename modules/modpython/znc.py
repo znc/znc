@@ -341,6 +341,9 @@ class Module:
     def OnUserNotice(self, sTarget, sMessage):
         pass
 
+    def OnUserNoticeTags(self, sTarget, sMessage, msTags):
+        pass
+
     def OnUserJoin(self, sChannel, sKey):
         pass
 

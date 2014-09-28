@@ -357,6 +357,7 @@ sub OnUserActionTags {}
 sub OnUserMsg {}
 sub OnUserMsgTags {}
 sub OnUserNotice {}
+sub OnUserNoticeTags {}
 sub OnUserJoin {}
 sub OnUserPart {}
 sub OnUserTopic {}
