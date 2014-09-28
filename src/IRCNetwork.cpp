@@ -669,6 +669,16 @@ const CString& CIRCNetwork::GetName() const {
 	return m_sName;
 }
 
+CClient* CIRCNetwork::FindClient(const CString& sIdentifier) const {
+	for (CClient* pClient : m_vClients) {
+		if (pClient->GetIdentifier().Equals(sIdentifier)) {
+			return pClient;
+		}
+	}
+
+	return NULL;
+}
+
 void CIRCNetwork::SetUser(CUser *pUser) {
 	for (unsigned int a = 0; a < m_vClients.size(); a++) {
 		m_vClients[a]->PutStatus("This network is being deleted or moved to another user.");
