@@ -86,23 +86,29 @@ void CClient::SendRequiredPasswordNotice() {
 
 void CClient::ReadLine(const CString& sData) {
 	CString sLine = sData;
+	CString sLineTags = sData;
 
 	sLine.TrimRight("\n\r");
+	sLineTags.TrimRight("\n\r");
 
-	DEBUG("(" << GetFullName() << ") CLI -> ZNC [" << sLine << "]");
+	DEBUG("(" << GetFullName() << ") CLI -> ZNC [" << sLineTags << "]");
 
 	if (sLine.Left(1) == "@") {
-		// TODO support message-tags properly
 		sLine = sLine.Token(1, true);
 	}
 
+	// Since we'll be calling *Tags methods after their normal counterparts,
+	// we return if either are true.
 	bool bReturn = false;
+	bool bReturnTags = false;
 	if (IsAttached()) {
 		NETWORKMODULECALL(OnUserRaw(sLine), m_pUser, m_pNetwork, this, &bReturn);
+		NETWORKMODULECALL(OnUserRawTags(sLineTags), m_pUser, m_pNetwork, this, &bReturnTags);
 	} else {
 		GLOBALMODULECALL(OnUnknownUserRaw(this, sLine), &bReturn);
+		GLOBALMODULECALL(OnUnknownUserRawTags(this, sLineTags), &bReturnTags);
 	}
-	if (bReturn) return;
+	if (bReturn || bReturnTags) return;
 
 	CString sCommand = sLine.Token(0);
 	if (sCommand.Left(1) == ":") {
