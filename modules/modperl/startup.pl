@@ -355,6 +355,7 @@ sub OnUserCTCPTags {}
 sub OnUserAction {}
 sub OnUserActionTags {}
 sub OnUserMsg {}
+sub OnUserMsgTags {}
 sub OnUserNotice {}
 sub OnUserJoin {}
 sub OnUserPart {}

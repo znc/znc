@@ -714,6 +714,14 @@ public:
 	 *  @return See CModule::EModRet.
 	 */
 	virtual EModRet OnUserMsg(CString& sTarget, CString& sMessage);
+	/** This module hook is called when a user sends a normal IRC message.
+	 *  @param sTarget The target of the message. Could be a channel name or
+	 *                 a nick name.
+	 *  @param sMessage The message which was sent.
+	 *  @param msTags The message tags.
+	 *  @return See CModule::EModRet.
+	 */
+	virtual EModRet OnUserMsgTags(CString& sTarget, CString& sMessage, MCString& msTags);
 	/** This module hook is called when a user sends a notice message.
 	 *  @param sTarget The target of the message. Could be a channel name or
 	 *                 a nick name.
@@ -1217,6 +1225,7 @@ public:
 	bool OnUserAction(CString& sTarget, CString& sMessage);
 	bool OnUserActionTags(CString& sTarget, CString& sMessage, MCString& msTags);
 	bool OnUserMsg(CString& sTarget, CString& sMessage);
+	bool OnUserMsgTags(CString& sTarget, CString& sMessage, MCString& msTags);
 	bool OnUserNotice(CString& sTarget, CString& sMessage);
 	bool OnUserJoin(CString& sChannel, CString& sKey);
 	bool OnUserPart(CString& sChannel, CString& sMessage);
