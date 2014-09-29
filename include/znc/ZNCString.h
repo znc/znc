@@ -491,14 +491,18 @@ public:
 
 	/** Check whether the string starts with a given prefix.
 	 * @param sPrefix The prefix.
+	 * @param cs CaseSensitive if you want the comparision to be case
+	 *                       sensitive, CaseInsensitive (default) otherwise.
 	 * @return True if the string starts with prefix, false otherwise.
 	 */
-	bool StartsWith(const CString& sPrefix) const;
+	bool StartsWith(const CString& sPrefix, CaseSensitivity cs = CaseInsensitive) const;
 	/** Check whether the string ends with a given suffix.
 	 * @param sSuffix The suffix.
+	 * @param cs CaseSensitive if you want the comparision to be case
+	 *                       sensitive, CaseInsensitive (default) otherwise.
 	 * @return True if the string ends with suffix, false otherwise.
 	 */
-	bool EndsWith(const CString& sSuffix) const;
+	bool EndsWith(const CString& sSuffix, CaseSensitivity cs = CaseInsensitive) const;
 
 	/** Remove characters from the beginning of this string.
 	 * @param uLen The number of characters to remove.

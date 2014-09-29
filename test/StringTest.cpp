@@ -168,3 +168,23 @@ TEST(StringTest, Equals) {
 	EXPECT_TRUE(CS("ABC").Equals("abc", false)); // deprecated
 	EXPECT_FALSE(CS("ABC").Equals("abc", true)); // deprecated
 }
+
+TEST(StringTest, StartsWith) {
+	EXPECT_TRUE(CString("Hello, I'm Bob").StartsWith("Hello"));
+	EXPECT_TRUE(CString("Hello, I'm Bob").StartsWith("Hello", CString::CaseInsensitive));
+	EXPECT_TRUE(CString("Hello, I'm Bob").StartsWith("Hello", CString::CaseSensitive));
+
+	EXPECT_TRUE(CString("Hello, I'm Bob").StartsWith("hello"));
+	EXPECT_TRUE(CString("Hello, I'm Bob").StartsWith("hello", CString::CaseInsensitive));
+	EXPECT_FALSE(CString("Hello, I'm Bob").StartsWith("hello", CString::CaseSensitive));
+}
+
+TEST(StringTest, EndsWith) {
+	EXPECT_TRUE(CString("Hello, I'm Bob").EndsWith("Bob"));
+	EXPECT_TRUE(CString("Hello, I'm Bob").EndsWith("Bob", CString::CaseInsensitive));
+	EXPECT_TRUE(CString("Hello, I'm Bob").EndsWith("Bob", CString::CaseSensitive));
+
+	EXPECT_TRUE(CString("Hello, I'm Bob").EndsWith("bob"));
+	EXPECT_TRUE(CString("Hello, I'm Bob").EndsWith("bob", CString::CaseInsensitive));
+	EXPECT_FALSE(CString("Hello, I'm Bob").EndsWith("bob", CString::CaseSensitive));
+}

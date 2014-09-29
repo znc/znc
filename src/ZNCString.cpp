@@ -1100,12 +1100,12 @@ bool CString::TrimSuffix(const CString& sSuffix) {
 	}
 }
 
-bool CString::StartsWith(const CString& sPrefix) const {
-	return Left(sPrefix.length()).Equals(sPrefix);
+bool CString::StartsWith(const CString& sPrefix, CaseSensitivity cs) const {
+	return Left(sPrefix.length()).Equals(sPrefix, cs);
 }
 
-bool CString::EndsWith(const CString& sSuffix) const {
-	return Right(sSuffix.length()).Equals(sSuffix);
+bool CString::EndsWith(const CString& sSuffix, CaseSensitivity cs) const {
+	return Right(sSuffix.length()).Equals(sSuffix, cs);
 }
 
 
