@@ -19,6 +19,7 @@
 #include <znc/FileUtils.h>
 #include <znc/IRCNetwork.h>
 #include <znc/IRCSock.h>
+#include <znc/Chan.h>
 #include <math.h>
 
 using std::vector;
@@ -1116,12 +1117,24 @@ void CUser::SetDenySetBindHost(bool b) { m_bDenySetBindHost = b; }
 void CUser::SetDefaultChanModes(const CString& s) { m_sDefaultChanModes = s; }
 void CUser::SetClientEncoding(const CString& s) { m_sClientEncoding = s; }
 void CUser::SetQuitMsg(const CString& s) { m_sQuitMsg = s; }
-void CUser::SetAutoClearChanBuffer(bool b) { m_bAutoClearChanBuffer = b; }
+void CUser::SetAutoClearChanBuffer(bool b) {
+	for (CIRCNetwork* pNetwork : m_vIRCNetworks) {
+		for (CChan* pChan : pNetwork->GetChans()) {
+			pChan->InheritAutoClearChanBuffer(b);
+		}
+	}
+	m_bAutoClearChanBuffer = b;
+}
 void CUser::SetAutoClearQueryBuffer(bool b) { m_bAutoClearQueryBuffer = b; }
 
 bool CUser::SetBufferCount(unsigned int u, bool bForce) {
 	if (!bForce && u > CZNC::Get().GetMaxBufferSize())
 		return false;
+	for (CIRCNetwork* pNetwork : m_vIRCNetworks) {
+		for (CChan* pChan : pNetwork->GetChans()) {
+			pChan->InheritBufferCount(u, bForce);
+		}
+	}
 	m_uBufferCount = u;
 	return true;
 }

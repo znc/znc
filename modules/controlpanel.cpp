@@ -700,13 +700,21 @@ class CAdminMod : public CModule {
 			if (sVar == "defmodes") {
 				PutModule(pChan->GetName() + ": DefModes = " + pChan->GetDefaultModes());
 			} else if (sVar == "buffer") {
-				PutModule(pChan->GetName() + ": Buffer = " + CString(pChan->GetBufferCount()));
+				CString sValue(pChan->GetBufferCount());
+				if (!pChan->HasBufferCountSet()) {
+					sValue += " (default)";
+				}
+				PutModule(pChan->GetName() + ": Buffer = " + sValue);
 			} else if (sVar == "inconfig") {
 				PutModule(pChan->GetName() + ": InConfig = " + CString(pChan->InConfig()));
 			} else if (sVar == "keepbuffer") {
 				PutModule(pChan->GetName() + ": KeepBuffer = " + CString(!pChan->AutoClearChanBuffer()));// XXX compatibility crap, added in 0.207
 			} else if (sVar == "autoclearchanbuffer") {
-				PutModule(pChan->GetName() + ": AutoClearChanBuffer = " + CString(pChan->AutoClearChanBuffer()));
+				CString sValue(pChan->AutoClearChanBuffer());
+				if (!pChan->HasAutoClearChanBufferSet()) {
+					sValue += " (default)";
+				}
+				PutModule(pChan->GetName() + ": AutoClearChanBuffer = " + sValue);
 			} else if (sVar == "detached") {
 				PutModule(pChan->GetName() + ": Detached = " + CString(pChan->IsDetached()));
 			} else if (sVar == "key") {
