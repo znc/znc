@@ -77,7 +77,8 @@ public:
 		EHTML,
 		ESQL,
 		ENAMEDFMT,
-		EDEBUG
+		EDEBUG,
+		EMSGTAG
 	} EEscape;
 
 	static const CaseSensitivity CaseSensitive = CaseSensitivity::CaseSensitive;

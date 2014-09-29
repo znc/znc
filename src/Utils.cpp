@@ -484,7 +484,9 @@ MCString CUtils::GetMessageTags(const CString& sLine) {
 
 		MCString mssTags;
 		for (VCString::const_iterator it = vsTags.begin(); it != vsTags.end(); ++it) {
-			mssTags[it->Token(0, false, "=", true)] = it->Token(1, true, "=", true);
+			CString sKey = it->Token(0, false, "=", true);
+			CString sValue = it->Token(1, true, "=", true);
+			mssTags[sKey] = sValue.Escape(CString::EMSGTAG, CString::CString::EASCII);
 		}
 		return mssTags;
 	}
@@ -502,7 +504,9 @@ void CUtils::SetMessageTags(CString& sLine, const MCString& mssTags) {
 			if (!sTags.empty()) {
 				sTags += ";";
 			}
-			sTags += it->first + "=" + it->second;
+			sTags += it->first;
+			if (!it->second.empty())
+				sTags += "=" + it->second.Escape_n(CString::EMSGTAG);
 		}
 		sLine = "@" + sTags + " " + sLine;
 	}

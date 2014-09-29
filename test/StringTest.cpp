@@ -38,21 +38,23 @@ protected:
 	}
 
 	void testString(const CString& in, const CString& url,
-			const CString& html, const CString& sql) {
+			const CString& html, const CString& sql, const CString& tag) {
 		SCOPED_TRACE("String: " + in);
 
 		testEncode(in, url,  "URL");
 		testEncode(in, html, "HTML");
 		testEncode(in, sql,  "SQL");
+		testEncode(in, tag,  "MSGTAG");
 	}
 };
 
 TEST_F(EscapeTest, Test) {
-	//          input      url          html             sql
-	testString("abcdefg", "abcdefg",   "abcdefg",       "abcdefg");
-	testString("\n\t\r",  "%0A%09%0D", "\n\t\r",        "\\n\\t\\r");
-	testString("'\"",     "%27%22",    "'&quot;",       "\\'\\\"");
-	testString("&<>",     "%26%3C%3E", "&amp;&lt;&gt;", "&<>");
+	//          input     url          html             sql         msgtag
+	testString("abcdefg","abcdefg",   "abcdefg",       "abcdefg",   "abcdefg");
+	testString("\n\t\r", "%0A%09%0D", "\n\t\r",        "\\n\\t\\r", "\\n\t\\r");
+	testString("'\"",    "%27%22",    "'&quot;",       "\\'\\\"",   "'\"");
+	testString("&<>",    "%26%3C%3E", "&amp;&lt;&gt;", "&<>",       "&<>");
+	testString(" ;",     "+%3B",      " ;",            " ;",        "\\s\\:");
 }
 
 TEST(StringTest, Bool) {
