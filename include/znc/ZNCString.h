@@ -489,6 +489,13 @@ public:
 	 */
 	CString TrimSuffix_n(const CString& sSuffix) const;
 
+	/** Find the position of the given substring.
+	 * @param s The substring to search for.
+	 * @param cs CaseSensitive if you want the comparision to be case
+	 *                       sensitive, CaseInsensitive (default) otherwise.
+	 * @return The position of the substring if found, CString::npos otherwise.
+	 */
+	size_t Find(const CString& s, CaseSensitivity cs = CaseInsensitive) const;
 	/** Check whether the string starts with a given prefix.
 	 * @param sPrefix The prefix.
 	 * @param cs CaseSensitive if you want the comparision to be case

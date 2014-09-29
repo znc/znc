@@ -169,6 +169,16 @@ TEST(StringTest, Equals) {
 	EXPECT_FALSE(CS("ABC").Equals("abc", true)); // deprecated
 }
 
+TEST(StringTest, Find) {
+	EXPECT_EQ(CString("Hello, I'm Bob").Find("Hello"), 0u);
+	EXPECT_EQ(CString("Hello, I'm Bob").Find("Hello", CString::CaseInsensitive), 0u);
+	EXPECT_EQ(CString("Hello, I'm Bob").Find("Hello", CString::CaseSensitive), 0u);
+
+	EXPECT_EQ(CString("Hello, I'm Bob").Find("i'm"), 7u);
+	EXPECT_EQ(CString("Hello, I'm Bob").Find("i'm", CString::CaseInsensitive), 7u);
+	EXPECT_EQ(CString("Hello, I'm Bob").Find("i'm", CString::CaseSensitive), CString::npos);
+}
+
 TEST(StringTest, StartsWith) {
 	EXPECT_TRUE(CString("Hello, I'm Bob").StartsWith("Hello"));
 	EXPECT_TRUE(CString("Hello, I'm Bob").StartsWith("Hello", CString::CaseInsensitive));

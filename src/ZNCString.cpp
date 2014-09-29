@@ -1100,6 +1100,14 @@ bool CString::TrimSuffix(const CString& sSuffix) {
 	}
 }
 
+size_t CString::Find(const CString& s, CaseSensitivity cs) const {
+	if (cs == CaseSensitive) {
+		return find(s);
+	} else {
+		return AsLower().find(s.AsLower());
+	}
+}
+
 bool CString::StartsWith(const CString& sPrefix, CaseSensitivity cs) const {
 	return Left(sPrefix.length()).Equals(sPrefix, cs);
 }
