@@ -79,6 +79,14 @@ int CString::StrCmp(const CString& s, CString::size_type uLen) const {
 	return strcmp(c_str(), s.c_str());
 }
 
+bool CString::Equals(const CString& s, CaseSensitivity cs) const {
+	if (cs == CaseSensitive) {
+		return (StrCmp(s) == 0);
+	} else {
+		return (CaseCmp(s) == 0);
+	}
+}
+
 bool CString::Equals(const CString& s, bool bCaseSensitive, CString::size_type uLen) const {
 	if (bCaseSensitive) {
 		return (StrCmp(s, uLen) == 0);

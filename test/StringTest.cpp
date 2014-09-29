@@ -160,3 +160,11 @@ TEST(StringTest, Hash) {
 	EXPECT_EQ("e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855", CS("").SHA256());
 	EXPECT_EQ("ca978112ca1bbdcafac231b39a23dc4da786eff8147c4e72b9807785afee48bb", CS("a").SHA256());
 }
+
+TEST(StringTest, Equals) {
+	EXPECT_TRUE(CS("ABC").Equals("abc"));
+	EXPECT_TRUE(CS("ABC").Equals("abc", CString::CaseInsensitive));
+	EXPECT_FALSE(CS("ABC").Equals("abc", CString::CaseSensitive));
+	EXPECT_TRUE(CS("ABC").Equals("abc", false)); // deprecated
+	EXPECT_FALSE(CS("ABC").Equals("abc", true)); // deprecated
+}
