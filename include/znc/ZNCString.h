@@ -72,7 +72,8 @@ public:
 		EHTML,
 		ESQL,
 		ENAMEDFMT,
-		EDEBUG
+		EDEBUG,
+		EMSGTAG
 	} EEscape;
 
 	explicit CString(bool b) : std::string(b ? "true" : "false") {}
