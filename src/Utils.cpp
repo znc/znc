@@ -502,7 +502,9 @@ void CUtils::SetMessageTags(CString& sLine, const MCString& mssTags) {
 			if (!sTags.empty()) {
 				sTags += ";";
 			}
-			sTags += it->first + "=" + it->second;
+			sTags += it->first;
+			if (!it->second.empty())
+				sTags += "=" + it->second;
 		}
 		sLine = "@" + sTags + " " + sLine;
 	}

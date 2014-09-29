@@ -37,6 +37,12 @@ TEST(IRC32, GetMessageTags) {
 	exp["a"] = "==b==";
 	EXPECT_EQ(exp, CUtils::GetMessageTags("@a===b== :rest"));
 	exp.clear();
+
+	exp["a"] = "";
+	exp["b"] = "c";
+	exp["d"] = "";
+	EXPECT_EQ(exp, CUtils::GetMessageTags("@a;b=c;d :rest"));
+	exp.clear();
 }
 
 TEST(IRC32, SetMessageTags) {
@@ -54,5 +60,9 @@ TEST(IRC32, SetMessageTags) {
 	tags["c"] = "d";
 	CUtils::SetMessageTags(sLine, tags);
 	EXPECT_EQ("@a=b;c=d :rest", sLine);
+
+	tags["e"] = "";
+	CUtils::SetMessageTags(sLine, tags);
+	EXPECT_EQ("@a=b;c=d;e :rest", sLine);
 }
 
