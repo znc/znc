@@ -57,6 +57,11 @@ static const unsigned char base64_table[256] = {
 	XX,XX,XX,XX, XX,XX,XX,XX, XX,XX,XX,XX, XX,XX,XX,XX,
 };
 
+enum class CaseSensitivity {
+	CaseInsensitive,
+	CaseSensitive
+};
+
 /**
  * @brief String class that is used inside ZNC.
  *
@@ -74,6 +79,9 @@ public:
 		ENAMEDFMT,
 		EDEBUG
 	} EEscape;
+
+	static const CaseSensitivity CaseSensitive = CaseSensitivity::CaseSensitive;
+	static const CaseSensitivity CaseInsensitive = CaseSensitivity::CaseInsensitive;
 
 	explicit CString(bool b) : std::string(b ? "true" : "false") {}
 	explicit CString(char c);
@@ -149,12 +157,15 @@ public:
 	/**
 	 * Check if this string is equal to some other string.
 	 * @param s The string to compare to.
-	 * @param bCaseSensitive True if you want the comparision to be case
-	 *                       sensitive.
-	 * @param uLen Number of characters to consider.
+	 * @param cs CaseSensitive if you want the comparision to be case
+	 *                       sensitive, CaseInsensitive (default) otherwise.
 	 * @return True if the strings are equal.
 	 */
-	bool Equals(const CString& s, bool bCaseSensitive = false, CString::size_type uLen = CString::npos) const;
+	bool Equals(const CString& s, CaseSensitivity cs = CaseInsensitive) const;
+	/**
+	 * @deprecated
+	 */
+	bool Equals(const CString& s, bool bCaseSensitive, CString::size_type uLen = CString::npos) const;
 	/**
 	 * Do a wildcard comparision between two strings.
 	 * For example, the following returns true:
@@ -478,16 +489,34 @@ public:
 	 */
 	CString TrimSuffix_n(const CString& sSuffix) const;
 
+	/** Find the position of the given substring.
+	 * @param s The substring to search for.
+	 * @param cs CaseSensitive if you want the comparision to be case
+	 *                       sensitive, CaseInsensitive (default) otherwise.
+	 * @return The position of the substring if found, CString::npos otherwise.
+	 */
+	size_t Find(const CString& s, CaseSensitivity cs = CaseInsensitive) const;
 	/** Check whether the string starts with a given prefix.
 	 * @param sPrefix The prefix.
+	 * @param cs CaseSensitive if you want the comparision to be case
+	 *                       sensitive, CaseInsensitive (default) otherwise.
 	 * @return True if the string starts with prefix, false otherwise.
 	 */
-	bool StartsWith(const CString& sPrefix) const;
+	bool StartsWith(const CString& sPrefix, CaseSensitivity cs = CaseInsensitive) const;
 	/** Check whether the string ends with a given suffix.
 	 * @param sSuffix The suffix.
+	 * @param cs CaseSensitive if you want the comparision to be case
+	 *                       sensitive, CaseInsensitive (default) otherwise.
 	 * @return True if the string ends with suffix, false otherwise.
 	 */
-	bool EndsWith(const CString& sSuffix) const;
+	bool EndsWith(const CString& sSuffix, CaseSensitivity cs = CaseInsensitive) const;
+	/**
+	 * Check whether the string contains a given string.
+	 * @param s The string to search.
+	 * @param bCaseSensitive Whether the search is case sensitive.
+	 * @return True if this string contains the other string, falser otherwise.
+	 */
+	bool Contains(const CString& s, CaseSensitivity cs = CaseInsensitive) const;
 
 	/** Remove characters from the beginning of this string.
 	 * @param uLen The number of characters to remove.

@@ -79,6 +79,14 @@ int CString::StrCmp(const CString& s, CString::size_type uLen) const {
 	return strcmp(c_str(), s.c_str());
 }
 
+bool CString::Equals(const CString& s, CaseSensitivity cs) const {
+	if (cs == CaseSensitive) {
+		return (StrCmp(s) == 0);
+	} else {
+		return (CaseCmp(s) == 0);
+	}
+}
+
 bool CString::Equals(const CString& s, bool bCaseSensitive, CString::size_type uLen) const {
 	if (bCaseSensitive) {
 		return (StrCmp(s, uLen) == 0);
@@ -1092,12 +1100,24 @@ bool CString::TrimSuffix(const CString& sSuffix) {
 	}
 }
 
-bool CString::StartsWith(const CString& sPrefix) const {
-	return Left(sPrefix.length()).Equals(sPrefix);
+size_t CString::Find(const CString& s, CaseSensitivity cs) const {
+	if (cs == CaseSensitive) {
+		return find(s);
+	} else {
+		return AsLower().find(s.AsLower());
+	}
 }
 
-bool CString::EndsWith(const CString& sSuffix) const {
-	return Right(sSuffix.length()).Equals(sSuffix);
+bool CString::StartsWith(const CString& sPrefix, CaseSensitivity cs) const {
+	return Left(sPrefix.length()).Equals(sPrefix, cs);
+}
+
+bool CString::EndsWith(const CString& sSuffix, CaseSensitivity cs) const {
+	return Right(sSuffix.length()).Equals(sSuffix, cs);
+}
+
+bool CString::Contains(const CString& s, CaseSensitivity cs) const {
+	return Find(s, cs) != npos;
 }
 
 
