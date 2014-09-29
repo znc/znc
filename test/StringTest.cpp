@@ -198,3 +198,17 @@ TEST(StringTest, EndsWith) {
 	EXPECT_TRUE(CString("Hello, I'm Bob").EndsWith("bob", CString::CaseInsensitive));
 	EXPECT_FALSE(CString("Hello, I'm Bob").EndsWith("bob", CString::CaseSensitive));
 }
+
+TEST(StringTest, Contains) {
+	EXPECT_TRUE(CString("Hello, I'm Bob").Contains("Hello"));
+	EXPECT_TRUE(CString("Hello, I'm Bob").Contains("Hello", CString::CaseInsensitive));
+	EXPECT_TRUE(CString("Hello, I'm Bob").Contains("Hello", CString::CaseSensitive));
+
+	EXPECT_TRUE(CString("Hello, I'm Bob").Contains("i'm"));
+	EXPECT_TRUE(CString("Hello, I'm Bob").Contains("i'm", CString::CaseInsensitive));
+	EXPECT_FALSE(CString("Hello, I'm Bob").Contains("i'm", CString::CaseSensitive));
+
+	EXPECT_TRUE(CString("Hello, I'm Bob").Contains("i'm bob"));
+	EXPECT_TRUE(CString("Hello, I'm Bob").Contains("i'm bob", CString::CaseInsensitive));
+	EXPECT_FALSE(CString("Hello, I'm Bob").Contains("i'm bob", CString::CaseSensitive));
+}

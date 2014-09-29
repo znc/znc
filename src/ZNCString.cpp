@@ -1116,6 +1116,10 @@ bool CString::EndsWith(const CString& sSuffix, CaseSensitivity cs) const {
 	return Right(sSuffix.length()).Equals(sSuffix, cs);
 }
 
+bool CString::Contains(const CString& s, CaseSensitivity cs) const {
+	return Find(s, cs) != npos;
+}
+
 
 CString CString::TrimPrefix_n(const CString& sPrefix) const {
 	CString sRet = *this;

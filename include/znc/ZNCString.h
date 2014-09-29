@@ -510,6 +510,13 @@ public:
 	 * @return True if the string ends with suffix, false otherwise.
 	 */
 	bool EndsWith(const CString& sSuffix, CaseSensitivity cs = CaseInsensitive) const;
+	/**
+	 * Check whether the string contains a given string.
+	 * @param s The string to search.
+	 * @param bCaseSensitive Whether the search is case sensitive.
+	 * @return True if this string contains the other string, falser otherwise.
+	 */
+	bool Contains(const CString& s, CaseSensitivity cs = CaseInsensitive) const;
 
 	/** Remove characters from the beginning of this string.
 	 * @param uLen The number of characters to remove.
