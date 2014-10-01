@@ -181,7 +181,7 @@ void CIRCSock::ReadLine(const CString& sData) {
 				m_bAuthed = true;
 				m_pNetwork->PutStatus("Connected!");
 
-				vector<CClient*>& vClients = m_pNetwork->GetClients();
+				const vector<CClient*>& vClients = m_pNetwork->GetClients();
 
 				for (unsigned int a = 0; a < vClients.size(); a++) {
 					CClient* pClient = vClients[a];
@@ -354,8 +354,8 @@ void CIRCSock::ReadLine(const CString& sData) {
 				if (m_bNamesx && (sNick.size() > 1) && IsPermChar(sNick[1])) {
 					// sLine uses multi-prefix
 
-					vector<CClient*>& vClients = m_pNetwork->GetClients();
-					vector<CClient*>::iterator it;
+					const vector<CClient*>& vClients = m_pNetwork->GetClients();
+					vector<CClient*>::const_iterator it;
 					for (it = vClients.begin(); it != vClients.end(); ++it) {
 						CClient *pClient = *it;
 
@@ -1233,8 +1233,8 @@ CString CIRCSock::GetISupport(const CString& sKey, const CString& sDefault) cons
 }
 
 void CIRCSock::ForwardRaw353(const CString& sLine) const {
-	vector<CClient*>& vClients = m_pNetwork->GetClients();
-	vector<CClient*>::iterator it;
+	const vector<CClient*>& vClients = m_pNetwork->GetClients();
+	vector<CClient*>::const_iterator it;
 
 	for (it = vClients.begin(); it != vClients.end(); ++it) {
 		ForwardRaw353(sLine, *it);

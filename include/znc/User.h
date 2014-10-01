@@ -141,8 +141,8 @@ public:
 	// !Setters
 
 	// Getters
-	std::vector<CClient*>& GetUserClients() { return m_vClients; }
 	std::vector<CClient*> GetAllClients();
+	const std::vector<CClient*>& GetUserClients() const { return m_vClients; }
 	const CString& GetUserName() const;
 	const CString& GetCleanUserName() const;
 	const CString& GetNick(bool bAllowDefault = true) const;

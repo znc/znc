@@ -141,8 +141,8 @@ void CChan::JoinUser(bool bForce, const CString& sKey, CClient* pClient) {
 	CString sLine = sPre;
 	CString sPerm, sNick;
 
-	vector<CClient*>& vpClients = m_pNetwork->GetClients();
-	for (vector<CClient*>::iterator it = vpClients.begin(); it != vpClients.end(); ++it) {
+	const vector<CClient*>& vpClients = m_pNetwork->GetClients();
+	for (vector<CClient*>::const_iterator it = vpClients.begin(); it != vpClients.end(); ++it) {
 		CClient* pThisClient;
 		if (!pClient)
 			pThisClient = *it;

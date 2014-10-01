@@ -44,7 +44,7 @@ protected:
 			pIRCSock->PutIRC("PING :ZNC");
 		}
 
-		vector<CClient*>& vClients = m_pNetwork->GetClients();
+		const vector<CClient*>& vClients = m_pNetwork->GetClients();
 		for (size_t b = 0; b < vClients.size(); b++) {
 			CClient* pClient = vClients[b];
 

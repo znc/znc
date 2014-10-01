@@ -37,7 +37,7 @@ public:
 private:
 protected:
 	virtual void RunJob() {
-		vector<CClient*>& vUserClients = m_pUser->GetUserClients();
+		const vector<CClient*>& vUserClients = m_pUser->GetUserClients();
 		for (size_t c = 0; c < vUserClients.size(); ++c) {
 			CClient* pUserClient = vUserClients[c];
 
@@ -659,7 +659,7 @@ void CUser::CloneNetworks(const CUser& User) {
 		// have requested the rehash. Then when we do
 		// client->PutStatus("Rehashing succeeded!") we would
 		// crash if there was no client anymore.
-		vector<CClient*>& vClients = FindNetwork(*it)->GetClients();
+		const vector<CClient*>& vClients = FindNetwork(*it)->GetClients();
 
 		while (vClients.begin() != vClients.end()) {
 			CClient *pClient = vClients.front();

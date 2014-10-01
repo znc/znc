@@ -74,7 +74,7 @@ public:
 	CUser* GetUser();
 	const CString& GetName() const;
 	bool IsNetworkAttached() const { return !m_vClients.empty(); }
-	std::vector<CClient*>& GetClients() { return m_vClients; }
+	const std::vector<CClient*>& GetClients() const { return m_vClients; }
 
 	void SetUser(CUser *pUser);
 	bool SetName(const CString& sName);
