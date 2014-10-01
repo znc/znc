@@ -131,7 +131,7 @@ public:
 	void PutModule(const CString& sModule, const CString& sLine);
 	void PutModNotice(const CString& sModule, const CString& sLine);
 
-	bool IsCapEnabled(const CString& sCap) { return 1 == m_ssAcceptedCaps.count(sCap); }
+	bool IsCapEnabled(const CString& sCap) const { return 1 == m_ssAcceptedCaps.count(sCap); }
 
 	virtual void ReadLine(const CString& sData);
 	bool SendMotd();
@@ -151,7 +151,7 @@ public:
 	const std::vector<CClient*>& GetClients() const;
 	const CIRCSock* GetIRCSock() const;
 	CIRCSock* GetIRCSock();
-	CString GetFullName();
+	CString GetFullName() const;
 private:
 	void HandleCap(const CString& sLine);
 	void RespondCap(const CString& sResponse);

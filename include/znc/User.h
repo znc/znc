@@ -57,7 +57,7 @@ public:
 		return CUtils::SaltedSHA256Hash(sPass, sSalt);
 	}
 
-	CConfig ToConfig();
+	CConfig ToConfig() const;
 	bool CheckPass(const CString& sPass) const;
 	bool AddAllowedHost(const CString& sHostMask);
 	bool IsHostAllowed(const CString& sHostMask) const;
@@ -91,7 +91,7 @@ public:
 	void UserConnected(CClient* pClient);
 	void UserDisconnected(CClient* pClient);
 
-	CString GetLocalDCCIP();
+	CString GetLocalDCCIP() const;
 
 	CString ExpandString(const CString& sStr) const;
 	CString& ExpandString(const CString& sStr, CString& sRet) const;
@@ -141,8 +141,8 @@ public:
 	// !Setters
 
 	// Getters
-	std::vector<CClient*> GetAllClients();
 	const std::vector<CClient*>& GetUserClients() const { return m_vClients; }
+	std::vector<CClient*> GetAllClients() const;
 	const CString& GetUserName() const;
 	const CString& GetCleanUserName() const;
 	const CString& GetNick(bool bAllowDefault = true) const;

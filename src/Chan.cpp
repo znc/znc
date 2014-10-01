@@ -80,7 +80,7 @@ void CChan::Reset() {
 	ResetJoinTries();
 }
 
-CConfig CChan::ToConfig() {
+CConfig CChan::ToConfig() const {
 	CConfig config;
 
 	if (m_bHasBufferCountSet)

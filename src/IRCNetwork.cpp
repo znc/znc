@@ -305,7 +305,7 @@ void CIRCNetwork::DelServers() {
 	m_vServers.clear();
 }
 
-CString CIRCNetwork::GetNetworkPath() {
+CString CIRCNetwork::GetNetworkPath() const {
 	CString sNetworkPath = m_pUser->GetUserPath() + "/networks/" + m_sName;
 
 	if (!CFile::Exists(sNetworkPath)) {
@@ -455,7 +455,7 @@ bool CIRCNetwork::ParseConfig(CConfig *pConfig, CString& sError, bool bUpgrade) 
 	return true;
 }
 
-CConfig CIRCNetwork::ToConfig() {
+CConfig CIRCNetwork::ToConfig() const {
 	CConfig config;
 
 	if (!m_sNick.empty()) {
@@ -487,7 +487,7 @@ CConfig CIRCNetwork::ToConfig() {
 	}
 
 	// Modules
-	CModules& Mods = GetModules();
+	const CModules& Mods = GetModules();
 
 	if (!Mods.empty()) {
 		for (unsigned int a = 0; a < Mods.size(); a++) {
@@ -638,7 +638,7 @@ void CIRCNetwork::ClientDisconnected(CClient *pClient) {
 	}
 }
 
-CUser* CIRCNetwork::GetUser() {
+CUser* CIRCNetwork::GetUser() const {
 	return m_pUser;
 }
 

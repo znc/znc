@@ -60,7 +60,7 @@ public:
 	~CChan();
 
 	void Reset();
-	CConfig ToConfig();
+	CConfig ToConfig() const;
 	void Clone(CChan& chan);
 	void Cycle() const;
 	void JoinUser(bool bForce = false, const CString& sKey = "", CClient* pClient = NULL);

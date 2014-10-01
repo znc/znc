@@ -57,12 +57,12 @@ public:
 
 	void Clone(const CIRCNetwork& Network, bool bCloneName = true);
 
-	CString GetNetworkPath();
+	CString GetNetworkPath() const;
 
 	void DelServers();
 
 	bool ParseConfig(CConfig *pConfig, CString& sError, bool bUpgrade = false);
-	CConfig ToConfig();
+	CConfig ToConfig() const;
 
 	void BounceAllClients();
 
@@ -71,7 +71,7 @@ public:
 	void ClientConnected(CClient *pClient);
 	void ClientDisconnected(CClient *pClient);
 
-	CUser* GetUser();
+	CUser* GetUser() const;
 	const CString& GetName() const;
 	bool IsNetworkAttached() const { return !m_vClients.empty(); }
 	const std::vector<CClient*>& GetClients() const { return m_vClients; }

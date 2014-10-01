@@ -775,7 +775,7 @@ void CClient::PutIRC(const CString& sLine) {
 	}
 }
 
-CString CClient::GetFullName() {
+CString CClient::GetFullName() const {
 	if (!m_pUser)
 		return GetRemoteIP();
 	if (!m_pNetwork)
