@@ -483,7 +483,7 @@ int GetAddrInfo( const CS_STRING & sHostname, Csock * pSock, CSSockAddr & csSock
 #endif /* USE_GETHOSTBYNAME */
 }
 
-int Csock::ConvertAddress( const struct sockaddr_storage * pAddr, socklen_t iAddrLen, CS_STRING & sIP, uint16_t * piPort )
+int Csock::ConvertAddress( const struct sockaddr_storage * pAddr, socklen_t iAddrLen, CS_STRING & sIP, uint16_t * piPort ) const
 {
 	char szHostname[NI_MAXHOST];
 	char szServ[NI_MAXSERV];
@@ -749,7 +749,7 @@ timeval CCron::GetInterval() const { return( m_tTimeSequence ); }
 u_int CCron::GetMaxCycles() const { return( m_iMaxCycles ); }
 u_int CCron::GetCyclesLeft() const { return( ( m_iMaxCycles > m_iCycles ? ( m_iMaxCycles - m_iCycles ) : 0 ) ); }
 
-bool CCron::isValid() { return( m_bActive ); }
+bool CCron::isValid() const { return( m_bActive ); }
 const CS_STRING & CCron::GetName() const { return( m_sName ); }
 void CCron::SetName( const CS_STRING & sName ) { m_sName = sName; }
 void CCron::RunJob() { CS_DEBUG( "This should be overridden" ); }
@@ -1985,7 +1985,7 @@ cs_ssize_t Csock::Read( char *data, size_t len )
 	return( bytes );
 }
 
-CS_STRING Csock::GetLocalIP()
+CS_STRING Csock::GetLocalIP() const
 {
 	if( !m_sLocalIP.empty() )
 		return( m_sLocalIP );
@@ -2005,7 +2005,7 @@ CS_STRING Csock::GetLocalIP()
 	return( m_sLocalIP );
 }
 
-CS_STRING Csock::GetRemoteIP()
+CS_STRING Csock::GetRemoteIP() const
 {
 	if( !m_sRemoteIP.empty() )
 		return( m_sRemoteIP );
@@ -2029,14 +2029,17 @@ bool Csock::IsConnected() const { return( m_bIsConnected ); }
 void Csock::SetIsConnected( bool b ) { m_bIsConnected = b; }
 
 cs_sock_t & Csock::GetRSock() { return( m_iReadSock ); }
+const cs_sock_t & Csock::GetRSock() const { return( m_iReadSock ); }
 void Csock::SetRSock( cs_sock_t iSock ) { m_iReadSock = iSock; }
 cs_sock_t & Csock::GetWSock() { return( m_iWriteSock ); }
+const cs_sock_t & Csock::GetWSock() const { return( m_iWriteSock ); }
 void Csock::SetWSock( cs_sock_t iSock ) { m_iWriteSock = iSock; }
 void Csock::SetSock( cs_sock_t iSock ) { m_iWriteSock = iSock; m_iReadSock = iSock; }
 cs_sock_t & Csock::GetSock() { return( m_iReadSock ); }
+const cs_sock_t & Csock::GetSock() const { return( m_iReadSock ); }
 void Csock::ResetTimer() { m_iLastCheckTimeoutTime = 0; m_iTcount = 0; }
 void Csock::PauseRead() { m_bPauseRead = true; }
-bool Csock::IsReadPaused() { return( m_bPauseRead ); }
+bool Csock::IsReadPaused() const { return( m_bPauseRead ); }
 
 void Csock::UnPauseRead()
 {
@@ -2206,7 +2209,7 @@ void Csock::ResetBytesRead() { m_iBytesRead = 0; }
 uint64_t Csock::GetBytesWritten() const { return( m_iBytesWritten ); }
 void Csock::ResetBytesWritten() { m_iBytesWritten = 0; }
 
-double Csock::GetAvgRead( uint64_t iSample )
+double Csock::GetAvgRead( uint64_t iSample ) const
 {
 	uint64_t iDifference = ( millitime() - m_iStartTime );
 
@@ -2216,7 +2219,7 @@ double Csock::GetAvgRead( uint64_t iSample )
 	return( ( ( double )m_iBytesRead / ( ( double )iDifference / ( double )iSample ) ) );
 }
 
-double Csock::GetAvgWrite( uint64_t iSample )
+double Csock::GetAvgWrite( uint64_t iSample ) const
 {
 	uint64_t iDifference = ( millitime() - m_iStartTime );
 
@@ -2226,7 +2229,7 @@ double Csock::GetAvgWrite( uint64_t iSample )
 	return( ( ( double )m_iBytesWritten / ( ( double )iDifference / ( double )iSample ) ) );
 }
 
-uint16_t Csock::GetRemotePort()
+uint16_t Csock::GetRemotePort() const
 {
 	if( m_iRemotePort > 0 )
 		return( m_iRemotePort );
@@ -2234,7 +2237,7 @@ uint16_t Csock::GetRemotePort()
 	return( m_iRemotePort );
 }
 
-uint16_t Csock::GetLocalPort()
+uint16_t Csock::GetLocalPort() const
 {
 	if( m_iLocalPort > 0 )
 		return( m_iLocalPort );
@@ -2242,7 +2245,7 @@ uint16_t Csock::GetLocalPort()
 	return( m_iLocalPort );
 }
 
-uint16_t Csock::GetPort() { return( m_uPort ); }
+uint16_t Csock::GetPort() const { return( m_uPort ); }
 void Csock::SetPort( uint16_t iPort ) { m_uPort = iPort; }
 void Csock::Close( ECloseType eCloseType )
 {
@@ -2259,23 +2262,23 @@ void Csock::NonBlockingIO()
 	}
 }
 
-bool Csock::GetSSL() { return( m_bUseSSL ); }
+bool Csock::GetSSL() const { return( m_bUseSSL ); }
 void Csock::SetSSL( bool b ) { m_bUseSSL = b; }
 
 #ifdef HAVE_LIBSSL
 void Csock::SetCipher( const CS_STRING & sCipher ) { m_sCipherType = sCipher; }
-const CS_STRING & Csock::GetCipher() { return( m_sCipherType ); }
+const CS_STRING & Csock::GetCipher() const { return( m_sCipherType ); }
 void Csock::SetPemLocation( const CS_STRING & sPemFile ) { m_sPemFile = sPemFile; }
-const CS_STRING & Csock::GetPemLocation() { return( m_sPemFile ); }
+const CS_STRING & Csock::GetPemLocation() const { return( m_sPemFile ); }
 void Csock::SetPemPass( const CS_STRING & sPassword ) { m_sPemPass = sPassword; }
 const CS_STRING & Csock::GetPemPass() const { return( m_sPemPass ); }
 
 void Csock::SetSSLMethod( int iMethod ) { m_iMethod = iMethod; }
-int Csock::GetSSLMethod() { return( m_iMethod ); }
+int Csock::GetSSLMethod() const { return( m_iMethod ); }
 void Csock::SetSSLObject( SSL *ssl ) { m_ssl = ssl; }
 void Csock::SetCTXObject( SSL_CTX *sslCtx ) { m_ssl_ctx = sslCtx; }
 
-SSL_SESSION * Csock::GetSSLSession()
+SSL_SESSION * Csock::GetSSLSession() const
 {
 	if( m_ssl )
 		return( SSL_get_session( m_ssl ) );
@@ -2291,7 +2294,7 @@ bool Csock::HasWriteBuffer() const
 	return( !m_sSend.empty() );
 }
 void Csock::ClearWriteBuffer() { m_sSend.clear(); m_uSendBufferPos = 0; }
-bool Csock::SslIsEstablished() { return ( m_bsslEstablished ); }
+bool Csock::SslIsEstablished() const { return ( m_bsslEstablished ); }
 
 bool Csock::ConnectInetd( bool bIsSSL, const CS_STRING & sHostname )
 {
@@ -2351,7 +2354,7 @@ bool Csock::ConnectFD( int iReadFD, int iWriteFD, const CS_STRING & sName, bool 
 }
 
 #ifdef HAVE_LIBSSL
-X509 *Csock::GetX509()
+X509 *Csock::GetX509() const
 {
 	if( m_ssl )
 		return( SSL_get_peer_certificate( m_ssl ) );
@@ -2359,7 +2362,7 @@ X509 *Csock::GetX509()
 	return( NULL );
 }
 
-CS_STRING Csock::GetPeerPubKey()
+CS_STRING Csock::GetPeerPubKey() const
 {
 	CS_STRING sKey;
 
@@ -2400,7 +2403,7 @@ CS_STRING Csock::GetPeerPubKey()
 	return( sKey );
 }
 
-long Csock::GetPeerFingerprint( CS_STRING & sFP )
+long Csock::GetPeerFingerprint( CS_STRING & sFP ) const
 {
 	sFP.clear();
 
@@ -2423,13 +2426,13 @@ long Csock::GetPeerFingerprint( CS_STRING & sFP )
 
 	return( SSL_get_verify_result( m_ssl ) );
 }
-u_int Csock::GetRequireClientCertFlags() { return( m_iRequireClientCertFlags ); }
+u_int Csock::GetRequireClientCertFlags() const { return( m_iRequireClientCertFlags ); }
 void Csock::SetRequiresClientCert( bool bRequiresCert ) { m_iRequireClientCertFlags = ( bRequiresCert ? SSL_VERIFY_FAIL_IF_NO_PEER_CERT|SSL_VERIFY_PEER : 0 ); }
 
 #endif /* HAVE_LIBSSL */
 
 void Csock::SetParentSockName( const CS_STRING & sParentName ) { m_sParentName = sParentName; }
-const CS_STRING & Csock::GetParentSockName() { return( m_sParentName ); }
+const CS_STRING & Csock::GetParentSockName() const { return( m_sParentName ); }
 
 void Csock::SetRate( u_int iBytes, uint64_t iMilliseconds )
 {
@@ -2437,8 +2440,8 @@ void Csock::SetRate( u_int iBytes, uint64_t iMilliseconds )
 	m_iMaxMilliSeconds = iMilliseconds;
 }
 
-u_int Csock::GetRateBytes() { return( m_iMaxBytes ); }
-uint64_t Csock::GetRateTime() { return( m_iMaxMilliSeconds ); }
+u_int Csock::GetRateBytes() const { return( m_iMaxBytes ); }
+uint64_t Csock::GetRateTime() const { return( m_iMaxMilliSeconds ); }
 
 
 void Csock::EnableReadLine() { m_bEnableReadLine = true; }
@@ -2454,14 +2457,14 @@ void Csock::ReachedMaxBuffer()
 	std::cerr << "If you don't care, then set SetMaxBufferThreshold to 0" << endl;
 }
 
-time_t Csock::GetTimeSinceLastDataTransaction( time_t iNow )
+time_t Csock::GetTimeSinceLastDataTransaction( time_t iNow ) const
 {
 	if( m_iLastCheckTimeoutTime == 0 )
 		return( 0 );
 	return( ( iNow > 0 ? iNow : time( NULL ) ) - m_iLastCheckTimeoutTime );
 }
 
-time_t Csock::GetNextCheckTimeout( time_t iNow )
+time_t Csock::GetNextCheckTimeout( time_t iNow ) const
 {
 	if( iNow == 0 )
 		iNow = time( NULL );
@@ -2477,7 +2480,7 @@ time_t Csock::GetNextCheckTimeout( time_t iNow )
 	return( iNow + iTimeout );
 }
 
-int Csock::GetPending()
+int Csock::GetPending() const
 {
 #ifdef HAVE_LIBSSL
 	if( m_ssl )

@@ -36,7 +36,7 @@ unsigned int CSockManager::GetAnonConnectionCount(const CString &sIP) const {
 	return ret;
 }
 
-int CZNCSock::ConvertAddress(const struct sockaddr_storage * pAddr, socklen_t iAddrLen, CS_STRING & sIP, u_short * piPort) {
+int CZNCSock::ConvertAddress(const struct sockaddr_storage * pAddr, socklen_t iAddrLen, CS_STRING & sIP, u_short * piPort) const {
 	int ret = Csock::ConvertAddress(pAddr, iAddrLen, sIP, piPort);
 	if (ret == 0)
 		sIP.TrimPrefix("::ffff:");

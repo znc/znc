@@ -29,7 +29,7 @@ public:
 	CZNCSock(const CString& sHost, u_short port, int timeout = 60) : Csock(sHost, port, timeout) {}
 	~CZNCSock() {}
 
-	virtual int ConvertAddress(const struct sockaddr_storage * pAddr, socklen_t iAddrLen, CS_STRING & sIP, u_short * piPort);
+	virtual int ConvertAddress(const struct sockaddr_storage * pAddr, socklen_t iAddrLen, CS_STRING & sIP, u_short * piPort) const;
 
 #ifndef HAVE_ICU
 	// Don't fail to compile when ICU is not enabled
