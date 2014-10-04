@@ -21,6 +21,7 @@
 #include <znc/IRCSock.h>
 #include <znc/Chan.h>
 #include <math.h>
+#include <string.h>
 
 using std::vector;
 using std::set;
@@ -691,8 +692,8 @@ bool CUser::Clone(const CUser& User, CString& sErrorRet, bool bCloneNetworks) {
 		SetPass(User.GetPass(), User.GetPassHashType(), User.GetPassSalt());
 	}
 
-	SetNick(User.GetNick(false));
-	SetAltNick(User.GetAltNick(false));
+	SetNick(GetUserName());
+	SetAltNick(GetUserName() + std::string("___"));
 	SetIdent(User.GetIdent(false));
 	SetRealName(User.GetRealName());
 	SetStatusPrefix(User.GetStatusPrefix());
