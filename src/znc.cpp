@@ -1897,7 +1897,7 @@ void CZNC::ResumeConnectQueue() {
 	}
 }
 
-void CZNC::AddNetworkToQueue(CIRCNetwork *pNetwork) {
+void CZNC::AddNetworkToQueue(CIRCNetwork *pNetwork, bool bPriority) {
 	// Make sure we are not already in the queue
 	for (list<CIRCNetwork*>::const_iterator it = m_lpConnectQueue.begin(); it != m_lpConnectQueue.end(); ++it) {
 		if (*it == pNetwork) {
@@ -1905,7 +1905,11 @@ void CZNC::AddNetworkToQueue(CIRCNetwork *pNetwork) {
 		}
 	}
 
-	m_lpConnectQueue.push_back(pNetwork);
+	if (bPriority) {
+		m_lpConnectQueue.push_front(pNetwork);
+	} else {
+		m_lpConnectQueue.push_back(pNetwork);
+	}
 	EnableConnectQueue();
 }
 
