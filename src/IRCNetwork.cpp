@@ -1145,7 +1145,7 @@ bool CIRCNetwork::Connect() {
 
 	if (CZNC::Get().GetServerThrottle(pServer->GetName())) {
 		// Can't connect right now, schedule retry later
-		CZNC::Get().AddNetworkToQueue(this);
+		CZNC::Get().AddNetworkToQueue(this, m_pUser->IsAdmin());
 		return false;
 	}
 
@@ -1155,7 +1155,7 @@ bool CIRCNetwork::Connect() {
 #ifndef HAVE_LIBSSL
 	if (bSSL) {
 		PutStatus("Cannot connect to [" + pServer->GetString(false) + "], ZNC is not compiled with SSL.");
-		CZNC::Get().AddNetworkToQueue(this);
+		CZNC::Get().AddNetworkToQueue(this, m_pUser->IsAdmin());
 		return false;
 	}
 #endif
@@ -1171,7 +1171,7 @@ bool CIRCNetwork::Connect() {
 		DEBUG("Some module aborted the connection attempt");
 		PutStatus("Some module aborted the connection attempt");
 		delete pIRCSock;
-		CZNC::Get().AddNetworkToQueue(this);
+		CZNC::Get().AddNetworkToQueue(this, m_pUser->IsAdmin());
 		return false;
 	}
 
@@ -1217,7 +1217,7 @@ void CIRCNetwork::SetIRCConnectEnabled(bool b) {
 void CIRCNetwork::CheckIRCConnect() {
 	// Do we want to connect?
 	if (GetIRCConnectEnabled() && GetIRCSock() == NULL)
-		CZNC::Get().AddNetworkToQueue(this);
+		CZNC::Get().AddNetworkToQueue(this, m_pUser->IsAdmin());
 }
 
 bool CIRCNetwork::PutIRC(const CString& sLine) {

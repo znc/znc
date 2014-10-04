@@ -168,7 +168,7 @@ public:
 	void AddServerThrottle(CString sName) { m_sConnectThrottle.AddItem(sName, true); }
 	bool GetServerThrottle(CString sName) { bool *b = m_sConnectThrottle.GetItem(sName); return (b && *b); }
 
-	void AddNetworkToQueue(CIRCNetwork *pNetwork);
+	void AddNetworkToQueue(CIRCNetwork *pNetwork, bool bPriority);
 	std::list<CIRCNetwork*>& GetConnectionQueue() { return m_lpConnectQueue; }
 
 	// This creates a CConnectQueueTimer if we haven't got one yet
