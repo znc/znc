@@ -309,4 +309,4 @@ template<> void TModInfo<CLogMod>(CModInfo& Info) {
 	Info.SetWikiPage("log");
 }
 
-USERMODULEDEFS(CLogMod, "Write IRC logs")
+USERMODULEDEFS(CLogMod, "Write IRC logs.")

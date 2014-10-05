@@ -1797,4 +1797,4 @@ template<> void TModInfo<CWebAdminMod>(CModInfo& Info) {
 	Info.SetWikiPage("webadmin");
 }
 
-GLOBALMODULEDEFS(CWebAdminMod, "Web based administration module")
+GLOBALMODULEDEFS(CWebAdminMod, "Web based administration module.")

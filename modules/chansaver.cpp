@@ -115,4 +115,4 @@ template<> void TModInfo<CChanSaverMod>(CModInfo& Info) {
 	Info.AddType(CModInfo::GlobalModule);
 }
 
-USERMODULEDEFS(CChanSaverMod, "Keep config up-to-date when user joins/parts")
+USERMODULEDEFS(CChanSaverMod, "Keep config up-to-date when user joins/parts.")
