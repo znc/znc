@@ -180,4 +180,4 @@ template<> void TModInfo<CBlockUser>(CModInfo& Info) {
 	Info.SetArgsHelpText("Enter one or more user names. Separate them by spaces.");
 }
 
-GLOBALMODULEDEFS(CBlockUser, "Block certain users from logging in")
+GLOBALMODULEDEFS(CBlockUser, "Block certain users from logging in.")

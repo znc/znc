@@ -109,4 +109,4 @@ template<> void TModInfo<CFailToBanMod>(CModInfo& Info) {
 	Info.SetArgsHelpText("You might enter the time in minutes for the IP banning and the number of failed logins before any action is taken.");
 }
 
-GLOBALMODULEDEFS(CFailToBanMod, "Block IPs for some time after a failed login")
+GLOBALMODULEDEFS(CFailToBanMod, "Block IPs for some time after a failed login.")

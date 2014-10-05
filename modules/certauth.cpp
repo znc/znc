@@ -284,4 +284,4 @@ template<> void TModInfo<CSSLClientCertMod>(CModInfo& Info) {
 	Info.SetWikiPage("certauth");
 }
 
-GLOBALMODULEDEFS(CSSLClientCertMod, "Allow users to authenticate via SSL client certificates")
+GLOBALMODULEDEFS(CSSLClientCertMod, "Allow users to authenticate via SSL client certificates.")
