@@ -271,7 +271,7 @@ void CClient::ReadLine(const CString& sData) {
 
 				// Relay to the rest of the clients that may be connected to this user
 				if (m_pNetwork->IsChan(sTarget)) {
-					vector<CClient*>& vClients = GetClients();
+					const vector<CClient*>& vClients = GetClients();
 
 					for (unsigned int a = 0; a < vClients.size(); a++) {
 						CClient* pClient = vClients[a];
@@ -325,7 +325,7 @@ void CClient::ReadLine(const CString& sData) {
 							}
 
 							// Relay to the rest of the clients that may be connected to this user
-							vector<CClient*>& vClients = GetClients();
+							const vector<CClient*>& vClients = GetClients();
 
 							for (unsigned int a = 0; a < vClients.size(); a++) {
 								CClient* pClient = vClients[a];
@@ -394,7 +394,7 @@ void CClient::ReadLine(const CString& sData) {
 				// Relay to the rest of the clients that may be connected to this user
 
 				if (m_pNetwork->IsChan(sTarget)) {
-					vector<CClient*>& vClients = GetClients();
+					const vector<CClient*>& vClients = GetClients();
 
 					for (unsigned int a = 0; a < vClients.size(); a++) {
 						CClient* pClient = vClients[a];
@@ -575,7 +575,7 @@ void CClient::SetNetwork(CIRCNetwork* pNetwork, bool bDisconnect, bool bReconnec
 	}
 }
 
-vector<CClient*>& CClient::GetClients() {
+const vector<CClient*>& CClient::GetClients() const {
 	if (m_pNetwork) {
 		return m_pNetwork->GetClients();
 	}
@@ -775,7 +775,7 @@ void CClient::PutIRC(const CString& sLine) {
 	}
 }
 
-CString CClient::GetFullName() {
+CString CClient::GetFullName() const {
 	if (!m_pUser)
 		return GetRemoteIP();
 	if (!m_pNetwork)

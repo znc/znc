@@ -37,7 +37,7 @@ public:
 private:
 protected:
 	virtual void RunJob() {
-		vector<CClient*>& vUserClients = m_pUser->GetUserClients();
+		const vector<CClient*>& vUserClients = m_pUser->GetUserClients();
 		for (size_t c = 0; c < vUserClients.size(); ++c) {
 			CClient* pUserClient = vUserClients[c];
 
@@ -659,7 +659,7 @@ void CUser::CloneNetworks(const CUser& User) {
 		// have requested the rehash. Then when we do
 		// client->PutStatus("Rehashing succeeded!") we would
 		// crash if there was no client anymore.
-		vector<CClient*>& vClients = FindNetwork(*it)->GetClients();
+		const vector<CClient*>& vClients = FindNetwork(*it)->GetClients();
 
 		while (vClients.begin() != vClients.end()) {
 			CClient *pClient = vClients.front();
@@ -859,7 +859,7 @@ bool CUser::IsValid(CString& sErrMsg, bool bSkipPass) const {
 	return true;
 }
 
-CConfig CUser::ToConfig() {
+CConfig CUser::ToConfig() const {
 	CConfig config;
 	CConfig passConfig;
 
@@ -923,7 +923,7 @@ CConfig CUser::ToConfig() {
 	}
 
 	// Modules
-	CModules& Mods = GetModules();
+	const CModules& Mods = GetModules();
 
 	if (!Mods.empty()) {
 		for (unsigned int a = 0; a < Mods.size(); a++) {
@@ -976,11 +976,11 @@ bool CUser::CheckPass(const CString& sPass) const {
 	return (CClient*) CZNC::Get().GetManager().FindSockByName(sSockName);
 }*/
 
-CString CUser::GetLocalDCCIP() {
+CString CUser::GetLocalDCCIP() const {
 	if (!GetDCCBindHost().empty())
 		return GetDCCBindHost();
 
-	for (vector<CIRCNetwork*>::iterator it = m_vIRCNetworks.begin(); it != m_vIRCNetworks.end(); ++it) {
+	for (vector<CIRCNetwork*>::const_iterator it = m_vIRCNetworks.begin(); it != m_vIRCNetworks.end(); ++it) {
 		CIRCNetwork *pNetwork = *it;
 		CIRCSock* pIRCSock = pNetwork->GetIRCSock();
 		if (pIRCSock) {
@@ -1167,7 +1167,7 @@ bool CUser::SetStatusPrefix(const CString& s) {
 // !Setters
 
 // Getters
-vector<CClient*> CUser::GetAllClients() {
+vector<CClient*> CUser::GetAllClients() const {
 	vector<CClient*> vClients;
 
 	for (unsigned int a = 0; a < m_vIRCNetworks.size(); a++) {

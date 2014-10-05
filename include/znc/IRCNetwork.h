@@ -57,12 +57,12 @@ public:
 
 	void Clone(const CIRCNetwork& Network, bool bCloneName = true);
 
-	CString GetNetworkPath();
+	CString GetNetworkPath() const;
 
 	void DelServers();
 
 	bool ParseConfig(CConfig *pConfig, CString& sError, bool bUpgrade = false);
-	CConfig ToConfig();
+	CConfig ToConfig() const;
 
 	void BounceAllClients();
 
@@ -71,10 +71,10 @@ public:
 	void ClientConnected(CClient *pClient);
 	void ClientDisconnected(CClient *pClient);
 
-	CUser* GetUser();
+	CUser* GetUser() const;
 	const CString& GetName() const;
-	bool IsNetworkAttached() const { return !m_vClients.empty(); };
-	std::vector<CClient*>& GetClients() { return m_vClients; }
+	bool IsNetworkAttached() const { return !m_vClients.empty(); }
+	const std::vector<CClient*>& GetClients() const { return m_vClients; }
 
 	void SetUser(CUser *pUser);
 	bool SetName(const CString& sName);
@@ -103,8 +103,8 @@ public:
 	CQuery* AddQuery(const CString& sName);
 	bool DelQuery(const CString& sName);
 
-	const CString& GetChanPrefixes() const { return m_sChanPrefixes; };
-	void SetChanPrefixes(const CString& s) { m_sChanPrefixes = s; };
+	const CString& GetChanPrefixes() const { return m_sChanPrefixes; }
+	void SetChanPrefixes(const CString& s) { m_sChanPrefixes = s; }
 	bool IsChan(const CString& sChan) const;
 
 	const std::vector<CServer*>& GetServers() const;

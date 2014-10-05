@@ -238,8 +238,8 @@ public:
 		return uRet;
 	}
 
-	CFile::EFileAttr GetSortAttr() { return m_eSortAttr; }
-	bool IsDescending() { return m_bDesc; }
+	CFile::EFileAttr GetSortAttr() const { return m_eSortAttr; }
+	bool IsDescending() const { return m_bDesc; }
 
 	// Check if sPath + "/" + sAdd (~/ is handled) is an absolute path which
 	// resides under sPath. Returns absolute path on success, else "".

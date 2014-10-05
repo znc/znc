@@ -181,7 +181,7 @@ void CHTTPSock::ReadLine(const CString& sData) {
 	}
 }
 
-CString CHTTPSock::GetRemoteIP() {
+CString CHTTPSock::GetRemoteIP() const {
 	if (!m_sForwardedIP.empty()) {
 		return m_sForwardedIP;
 	}

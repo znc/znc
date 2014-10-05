@@ -978,13 +978,13 @@ public:
 	 *           except when we are in a user-specific module hook in which
 	 *           case this is the user pointer.
 	 */
-	CUser* GetUser() { return m_pUser; }
+	CUser* GetUser() const { return m_pUser; }
 	/** @returns NULL except when we are in a client-specific module hook in
 	 *           which case this is the client for which the hook is called.
 	 */
-	CIRCNetwork* GetNetwork() { return m_pNetwork; }
-	CClient* GetClient() { return m_pClient; }
-	CSockManager* GetManager() { return m_pManager; }
+	CIRCNetwork* GetNetwork() const { return m_pNetwork; }
+	CClient* GetClient() const { return m_pClient; }
+	CSockManager* GetManager() const { return m_pManager; }
 	// !Getters
 
 	// Global Modules
@@ -1114,9 +1114,9 @@ public:
 	void SetUser(CUser* pUser) { m_pUser = pUser; }
 	void SetNetwork(CIRCNetwork* pNetwork) { m_pNetwork = pNetwork; }
 	void SetClient(CClient* pClient) { m_pClient = pClient; }
-	CUser* GetUser() { return m_pUser; }
-	CIRCNetwork* GetNetwork() { return m_pNetwork; }
-	CClient* GetClient() { return m_pClient; }
+	CUser* GetUser() const { return m_pUser; }
+	CIRCNetwork* GetNetwork() const { return m_pNetwork; }
+	CClient* GetClient() const { return m_pClient; }
 
 	void UnloadAll();
 
