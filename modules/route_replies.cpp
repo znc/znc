@@ -255,7 +255,7 @@ public:
 	{
 		requestQueue::iterator it;
 
-		if (m_pClient == m_pDoing) {
+		if (GetClient() == m_pDoing) {
 			// The replies which aren't received yet will be
 			// broadcasted to everyone, but at least nothing breaks
 			RemTimer("RouteTimeout");
@@ -263,7 +263,7 @@ public:
 			m_pReplies = NULL;
 		}
 
-		it = m_vsPending.find(m_pClient);
+		it = m_vsPending.find(GetClient());
 
 		if (it != m_vsPending.end())
 			m_vsPending.erase(it);
@@ -311,7 +311,7 @@ public:
 	{
 		CString sCmd = sLine.Token(0).AsUpper();
 
-		if (!m_pNetwork->GetIRCSock())
+		if (!GetNetwork()->GetIRCSock())
 			return CONTINUE;
 
 		if (sCmd.Equals("MODE")) {
@@ -354,7 +354,7 @@ public:
 				struct queued_req req = {
 					sLine, vRouteReplies[i].vReplies
 				};
-				m_vsPending[m_pClient].push_back(req);
+				m_vsPending[GetClient()].push_back(req);
 				SendRequest();
 
 				return HALTCORE;
@@ -397,7 +397,7 @@ private:
 
 		// 353 needs special treatment due to NAMESX and UHNAMES
 		if (bIsRaw353)
-			m_pNetwork->GetIRCSock()->ForwardRaw353(sLine, m_pDoing);
+			GetNetwork()->GetIRCSock()->ForwardRaw353(sLine, m_pDoing);
 		else
 			m_pDoing->PutClient(sLine);
 
@@ -469,7 +469,7 @@ private:
 
 void CRouteTimeout::RunJob()
 {
-	CRouteRepliesMod *pMod = (CRouteRepliesMod *) m_pModule;
+	CRouteRepliesMod *pMod = (CRouteRepliesMod *) GetModule();
 	pMod->Timeout();
 }
 

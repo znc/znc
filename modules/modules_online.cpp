@@ -24,14 +24,14 @@ public:
 	virtual ~CFOModule() {}
 
 	bool IsOnlineModNick(const CString& sNick) {
-		const CString& sPrefix = m_pUser->GetStatusPrefix();
+		const CString& sPrefix = GetUser()->GetStatusPrefix();
 		if (!sNick.Equals(sPrefix, false, sPrefix.length()))
 			return false;
 
 		CString sModNick = sNick.substr(sPrefix.length());
 		if (sModNick.Equals("status") ||
-				m_pNetwork->GetModules().FindModule(sModNick) ||
-				m_pUser->GetModules().FindModule(sModNick) ||
+				GetNetwork()->GetModules().FindModule(sModNick) ||
+				GetUser()->GetModules().FindModule(sModNick) ||
 				CZNC::Get().GetModules().FindModule(sModNick))
 			return true;
 		return false;
@@ -55,10 +55,10 @@ public:
 			// Remove the leading space
 			sBNCNicks.LeftChomp();
 
-			if (!m_pNetwork->GetIRCSock()) {
+			if (!GetNetwork()->GetIRCSock()) {
 				// if we are not connected to any IRC server, send
 				// an empty or module-nick filled response.
-				PutUser(":irc.znc.in 303 " + m_pClient->GetNick() + " :" + sBNCNicks);
+				PutUser(":irc.znc.in 303 " + GetClient()->GetNick() + " :" + sBNCNicks);
 			} else {
 				// We let the server handle this request and then act on
 				// the 303 response from the IRC server.
@@ -71,9 +71,10 @@ public:
 			CString sNick = sLine.Token(1);
 
 			if (IsOnlineModNick(sNick)) {
-				PutUser(":znc.in 311 " + m_pNetwork->GetCurNick() + " " + sNick + " " + sNick + " znc.in * :" + sNick);
-				PutUser(":znc.in 312 " + m_pNetwork->GetCurNick() + " " + sNick + " *.znc.in :Bouncer");
-				PutUser(":znc.in 318 " + m_pNetwork->GetCurNick() + " " + sNick + " :End of /WHOIS list.");
+				CIRCNetwork* pNetwork = GetNetwork();
+				PutUser(":znc.in 311 " + pNetwork->GetCurNick() + " " + sNick + " " + sNick + " znc.in * :" + sNick);
+				PutUser(":znc.in 312 " + pNetwork->GetCurNick() + " " + sNick + " *.znc.in :Bouncer");
+				PutUser(":znc.in 318 " + pNetwork->GetCurNick() + " " + sNick + " :End of /WHOIS list.");
 
 				return HALT;
 			}

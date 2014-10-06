@@ -137,7 +137,7 @@ public:
 	}
 
 	void HandleShowCommand(const CString& sLine) {
-		const CString sPubKey = GetKey(m_pClient);
+		const CString sPubKey = GetKey(GetClient());
 
 		if (sPubKey.empty()) {
 			PutModule("You are not connected with any valid public key");
@@ -150,13 +150,13 @@ public:
 		CString sPubKey = sLine.Token(1);
 
 		if (sPubKey.empty()) {
-			sPubKey = GetKey(m_pClient);
+			sPubKey = GetKey(GetClient());
 		}
 
 		if (sPubKey.empty()) {
 			PutModule("You did not supply a public key or connect with one.");
 		} else {
-			if (AddKey(m_pUser, sPubKey)) {
+			if (AddKey(GetUser(), sPubKey)) {
 				PutModule("'" + sPubKey + "' added.");
 			} else {
 				PutModule("The key '" + sPubKey + "' is already added.");
@@ -170,7 +170,7 @@ public:
 		Table.AddColumn("Id");
 		Table.AddColumn("Key");
 
-		MSCString::const_iterator it = m_PubKeys.find(m_pUser->GetUserName());
+		MSCString::const_iterator it = m_PubKeys.find(GetUser()->GetUserName());
 		if (it == m_PubKeys.end()) {
 			PutModule("No keys set for your user");
 			return;
@@ -192,7 +192,7 @@ public:
 
 	void HandleDelCommand(const CString& sLine) {
 		unsigned int id = sLine.Token(1, true).ToUInt();
-		MSCString::iterator it = m_PubKeys.find(m_pUser->GetUserName());
+		MSCString::iterator it = m_PubKeys.find(GetUser()->GetUserName());
 
 		if (it == m_PubKeys.end()) {
 			PutModule("No keys set for your user");

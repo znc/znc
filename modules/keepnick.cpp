@@ -42,7 +42,7 @@ public:
 		m_pTimer = NULL;
 
 		// Check if we need to start the timer
-		if (m_pNetwork->IsIRCConnected())
+		if (GetNetwork()->IsIRCConnected())
 			OnIRCConnected();
 
 		return true;
@@ -53,7 +53,7 @@ public:
 			// No timer means we are turned off
 			return;
 
-		CIRCSock* pIRCSock = m_pNetwork->GetIRCSock();
+		CIRCSock* pIRCSock = GetNetwork()->GetIRCSock();
 
 		if (!pIRCSock)
 			return;
@@ -66,8 +66,8 @@ public:
 	}
 
 	CString GetNick() {
-		CString sConfNick = m_pNetwork->GetNick();
-		CIRCSock* pIRCSock = m_pNetwork->GetIRCSock();
+		CString sConfNick = GetNetwork()->GetNick();
+		CIRCSock* pIRCSock = GetNetwork()->GetIRCSock();
 
 		if (pIRCSock)
 			sConfNick = sConfNick.Left(pIRCSock->GetMaxNickLen());
@@ -76,7 +76,7 @@ public:
 	}
 
 	void OnNick(const CNick& Nick, const CString& sNewNick, const vector<CChan*>& vChans) {
-		if (sNewNick == m_pNetwork->GetIRCSock()->GetNick()) {
+		if (sNewNick == GetNetwork()->GetIRCSock()->GetNick()) {
 			// We are changing our own nick
 			if (Nick.NickEquals(GetNick())) {
 				// We are changing our nick away from the conf setting.
@@ -110,7 +110,7 @@ public:
 	}
 
 	void OnIRCConnected() {
-		if (!m_pNetwork->GetIRCSock()->GetNick().Equals(GetNick())) {
+		if (!GetNetwork()->GetIRCSock()->GetNick().Equals(GetNick())) {
 			// We don't have the nick we want, try to get it
 			Enable();
 		}
@@ -135,7 +135,7 @@ public:
 
 	virtual EModRet OnUserRaw(CString& sLine) {
 		// We dont care if we are not connected to IRC
-		if (!m_pNetwork->IsIRCConnected())
+		if (!GetNetwork()->IsIRCConnected())
 			return CONTINUE;
 
 		// We are trying to get the config nick and this is a /nick?
@@ -154,7 +154,7 @@ public:
 
 		// Indeed trying to change to this nick, generate a 433 for it.
 		// This way we can *always* block incoming 433s from the server.
-		PutUser(":" + m_pNetwork->GetIRCServer() + " 433 " + m_pNetwork->GetIRCNick().GetNick()
+		PutUser(":" + GetNetwork()->GetIRCServer() + " 433 " + GetNetwork()->GetIRCNick().GetNick()
 				+ " " + sNick + " :ZNC is already trying to get this nickname");
 		return CONTINUE;
 	}

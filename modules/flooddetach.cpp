@@ -77,7 +77,7 @@ public:
 			if (it->second.first + (time_t)m_iThresholdSecs >= now)
 				continue;
 
-			CChan *pChan = m_pNetwork->FindChan(it->first);
+			CChan *pChan = GetNetwork()->FindChan(it->first);
 			if (it->second.second >= m_iThresholdMsgs
 					&& pChan && pChan->IsDetached()) {
 				// The channel is detached and it is over the

@@ -57,10 +57,10 @@ class CAway : public CModule
 		time(&curtime);
 
 		if (sCommand.Token(1) != "-quiet") {
-			sReason = CUtils::FormatTime(curtime, sCommand.Token(1, true), m_pUser->GetTimezone());
+			sReason = CUtils::FormatTime(curtime, sCommand.Token(1, true), GetUser()->GetTimezone());
 			PutModNotice("You have been marked as away");
 		} else {
-			sReason = CUtils::FormatTime(curtime, sCommand.Token(2, true), m_pUser->GetTimezone());
+			sReason = CUtils::FormatTime(curtime, sCommand.Token(2, true), GetUser()->GetTimezone());
 		}
 
 		Away(false, sReason);
@@ -340,7 +340,7 @@ public:
 
 	CString GetPath()
 	{
-		CString sBuffer = m_pUser->GetUserName();
+		CString sBuffer = GetUser()->GetUserName();
 		CString sRet = GetSavePath();
 		sRet += "/.znc-away-" + CBlowfish::MD5(sBuffer, true);
 		return(sRet);
@@ -476,7 +476,7 @@ private:
 
 	void AddMessage(time_t iTime, const CNick & Nick, const CString & sMessage)
 	{
-		if (Nick.GetNick() == m_pNetwork->GetIRCNick().GetNick())
+		if (Nick.GetNick() == GetNetwork()->GetIRCNick().GetNick())
 			return; // ignore messages from self
 		AddMessage(CString(iTime) + " " + Nick.GetNickMask() + " " + sMessage);
 	}
@@ -500,7 +500,7 @@ private:
 
 void CAwayJob::RunJob()
 {
-	CAway *p = (CAway *)m_pModule;
+	CAway *p = (CAway *)GetModule();
 	p->SaveBufferToDisk();
 
 	if (!p->IsAway())

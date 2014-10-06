@@ -56,7 +56,7 @@ public:
 
 		if (IsIRCConnected()) {
 			// check for usermode +x if we are already connected
-			set<unsigned char> scUserModes = m_pNetwork->GetIRCSock()->GetUserModes();
+			set<unsigned char> scUserModes = GetNetwork()->GetIRCSock()->GetUserModes();
 			if (scUserModes.find('x') != scUserModes.end())
 				m_bCloaked = true;
 
@@ -260,7 +260,7 @@ public:
 
 			// Join channels immediately after our spoof is set.
 			if (m_bJoinAfterCloaked) {
-				m_pNetwork->JoinChans();
+				GetNetwork()->JoinChans();
 			}
 		}
 		return CONTINUE;
@@ -300,7 +300,7 @@ public:
 		if (!Nick.NickEquals("Q") || !Nick.GetHost().Equals("CServe.quakenet.org"))
 			return CONTINUE;
 		if (m_bJoinOnInvite)
-			m_pNetwork->AddChan(sChan, false);
+			GetNetwork()->AddChan(sChan, false);
 		return CONTINUE;
 	}
 
@@ -388,7 +388,7 @@ private:
 			return;
 
 		PutModule("Cloak: Trying to cloak your hostname, setting +x...");
-		PutIRC("MODE " + m_pNetwork->GetIRCSock()->GetNick() + " +x");
+		PutIRC("MODE " + GetNetwork()->GetIRCSock()->GetNick() + " +x");
 	}
 
 	void WhoAmI() {
@@ -538,12 +538,12 @@ private:
 
 /* Utility Functions */
 	bool IsIRCConnected() {
-		CIRCSock* pIRCSock = m_pNetwork->GetIRCSock();
+		CIRCSock* pIRCSock = GetNetwork()->GetIRCSock();
 		return pIRCSock && pIRCSock->IsAuthed();
 	}
 
 	bool IsSelf(const CNick& Nick) {
-		return Nick.NickEquals(m_pNetwork->GetCurNick());
+		return Nick.NickEquals(GetNetwork()->GetCurNick());
 	}
 
 	bool PackHex(const CString& sHex, CString& sPackedHex) {

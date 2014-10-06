@@ -35,10 +35,10 @@ protected:
 
 	void SendNotification(const CString& sMessage) {
 		if(m_sMethod == "message") {
-			m_pUser->PutStatus(sMessage, NULL, m_pClient);
+			GetUser()->PutStatus(sMessage, NULL, GetClient());
 		}
 		else if(m_sMethod == "notice") {
-			m_pUser->PutStatusNotice(sMessage, NULL, m_pClient);
+			GetUser()->PutStatusNotice(sMessage, NULL, GetClient());
 		}
 	}
 
@@ -62,13 +62,14 @@ public:
 	}
 
 	void OnClientLogin() {
-		if(!m_bNewOnly || m_sClientsSeen.find(m_pClient->GetRemoteIP()) == m_sClientsSeen.end()) {
+		CString sRemoteIP = GetClient()->GetRemoteIP();
+		if(!m_bNewOnly || m_sClientsSeen.find(sRemoteIP) == m_sClientsSeen.end()) {
 			SendNotification("Another client authenticated as your user. "
 				"Use the 'ListClients' command to see all " +
-				CString(m_pUser->GetAllClients().size())  + " clients.");
+				CString(GetUser()->GetAllClients().size())  + " clients.");
 
 			// the set<> will automatically disregard duplicates:
-			m_sClientsSeen.insert(m_pClient->GetRemoteIP());
+			m_sClientsSeen.insert(sRemoteIP);
 		}
 	}
 
@@ -76,7 +77,7 @@ public:
 		if(m_bOnDisconnect) {
 			SendNotification("A client disconnected from your user. "
 				"Use the 'ListClients' command to see the " +
-				CString(m_pUser->GetAllClients().size()) + " remaining client(s).");
+				CString(GetUser()->GetAllClients().size()) + " remaining client(s).");
 		}
 	}
 

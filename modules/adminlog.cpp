@@ -50,11 +50,11 @@ public:
 	}
 
 	virtual void OnIRCConnected() {
-		Log("[" + m_pUser->GetUserName() + "/" + m_pNetwork->GetName() + "] connected to IRC: " + m_pNetwork->GetCurrentServer()->GetName());
+		Log("[" + GetUser()->GetUserName() + "/" + GetNetwork()->GetName() + "] connected to IRC: " + GetNetwork()->GetCurrentServer()->GetName());
 	}
 
 	virtual void OnIRCDisconnected() {
-		Log("[" + m_pUser->GetUserName() + "/" + m_pNetwork->GetName() + "] disconnected from IRC");
+		Log("[" + GetUser()->GetUserName() + "/" + GetNetwork()->GetName() + "] disconnected from IRC");
 	}
 
 	virtual EModRet OnRaw(CString& sLine) {
@@ -64,18 +64,18 @@ public:
 			CString sError(sLine.substr(6));
 			if (sError.Left(1) == ":")
 				sError.LeftChomp();
-			Log("[" + m_pUser->GetUserName() + "/" + m_pNetwork->GetName() + "] disconnected from IRC: " +
-			    m_pNetwork->GetCurrentServer()->GetName() + " [" + sError + "]", LOG_NOTICE);
+			Log("[" + GetUser()->GetUserName() + "/" + GetNetwork()->GetName() + "] disconnected from IRC: " +
+			    GetNetwork()->GetCurrentServer()->GetName() + " [" + sError + "]", LOG_NOTICE);
 		}
 		return CONTINUE;
         }
 
 	virtual void OnClientLogin() {
-		Log("[" + m_pUser->GetUserName() + "] connected to ZNC from " + m_pClient->GetRemoteIP());
+		Log("[" + GetUser()->GetUserName() + "] connected to ZNC from " + GetClient()->GetRemoteIP());
 	}
 
 	virtual void OnClientDisconnect() {
-		Log("[" + m_pUser->GetUserName() + "] disconnected from ZNC from " + m_pClient->GetRemoteIP());
+		Log("[" + GetUser()->GetUserName() + "] disconnected from ZNC from " + GetClient()->GetRemoteIP());
 	}
 
 	virtual void OnFailedLogin(const CString& sUsername, const CString& sRemoteIP) {

@@ -49,7 +49,7 @@ public:
 	}
 
 	void Handle(const CString& sNick) {
-		CIRCSock *pIRCSock = m_pNetwork->GetIRCSock();
+		CIRCSock *pIRCSock = GetNetwork()->GetIRCSock();
 		if (!pIRCSock)
 			// WTF?
 			return;
@@ -58,7 +58,7 @@ public:
 		if (m_Messaged.HasItem(sNick))
 			return;
 
-		if (m_pNetwork->IsUserAttached())
+		if (GetNetwork()->IsUserAttached())
 			return;
 
 		m_Messaged.AddItem(sNick);

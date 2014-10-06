@@ -488,7 +488,7 @@ public:
 					return;
 				}
 
-				m_pNetwork->GetIRCSock()->PauseCap();
+				GetNetwork()->GetIRCSock()->PauseCap();
 
 				m_Mechanisms.SetIndex(0);
 				PutIRC("AUTHENTICATE " + m_Mechanisms.GetCurrent());
@@ -503,7 +503,7 @@ public:
 			Authenticate(sLine.Token(1, true));
 		} else if (sLine.Token(1).Equals("903")) {
 			/* SASL success! */
-			m_pNetwork->GetIRCSock()->ResumeCap();
+			GetNetwork()->GetIRCSock()->ResumeCap();
 			m_bAuthenticated = true;
 			DEBUG("sasl: Authenticated with mechanism [" << m_Mechanisms.GetCurrent() << "]");
 		} else if (sLine.Token(1).Equals("904") || sLine.Token(1).Equals("905")) {
@@ -515,7 +515,7 @@ public:
 				PutIRC("AUTHENTICATE " + m_Mechanisms.GetCurrent());
 			} else {
 				CheckRequireAuth();
-				m_pNetwork->GetIRCSock()->ResumeCap();
+				GetNetwork()->GetIRCSock()->ResumeCap();
 			}
 		} else if (sLine.Token(1).Equals("906")) {
 			/* CAP wasn't paused? */
@@ -523,7 +523,7 @@ public:
 			CheckRequireAuth();
 		} else if (sLine.Token(1).Equals("907")) {
 			m_bAuthenticated = true;
-			m_pNetwork->GetIRCSock()->ResumeCap();
+			GetNetwork()->GetIRCSock()->ResumeCap();
 			DEBUG("sasl: Received 907 -- We are already registered");
 		} else {
 			return CONTINUE;
