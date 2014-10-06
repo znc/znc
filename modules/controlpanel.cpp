@@ -163,7 +163,7 @@ class CAdminMod : public CModule {
 			PutModule("You can use $me as the user name for modifying your own user.");
 	}
 
-	CUser* GetUser(const CString& sUsername) {
+	CUser* FindUser(const CString& sUsername) {
 		if (sUsername.Equals("$me"))
 			return m_pUser;
 		CUser *pUser = CZNC::Get().FindUser(sUsername);
@@ -191,7 +191,7 @@ class CAdminMod : public CModule {
 		if (sUsername.empty()) {
 			pUser = m_pUser;
 		} else {
-			pUser = GetUser(sUsername);
+			pUser = FindUser(sUsername);
 		}
 
 		if (!pUser)
@@ -265,7 +265,7 @@ class CAdminMod : public CModule {
 			return;
 		}
 
-		CUser* pUser = GetUser(sUserName);
+		CUser* pUser = FindUser(sUserName);
 		if (!pUser)
 			return;
 
@@ -467,7 +467,7 @@ class CAdminMod : public CModule {
 			pUser = m_pUser;
 			pNetwork = m_pNetwork;
 		} else {
-			pUser = GetUser(sUsername);
+			pUser = FindUser(sUsername);
 			if (!pUser) {
 				return;
 			}
@@ -522,7 +522,7 @@ class CAdminMod : public CModule {
 			pUser = m_pUser;
 			pNetwork = m_pNetwork;
 		} else {
-			pUser = GetUser(sUsername);
+			pUser = FindUser(sUsername);
 			if (!pUser) {
 				return;
 			}
@@ -610,7 +610,7 @@ class CAdminMod : public CModule {
 			return;
 		}
 		
-		CUser* pUser = GetUser(sUsername);
+		CUser* pUser = FindUser(sUsername);
 		if (!pUser)
 			return;
 				
@@ -642,7 +642,7 @@ class CAdminMod : public CModule {
 			return;
 		}
 		
-		CUser* pUser = GetUser(sUsername);
+		CUser* pUser = FindUser(sUsername);
 		if (!pUser)
 			return;
 		
@@ -680,7 +680,7 @@ class CAdminMod : public CModule {
 			return;
 		}
 
-		CUser* pUser = GetUser(sUsername);
+		CUser* pUser = FindUser(sUsername);
 		if (!pUser)
 			return;
 
@@ -738,7 +738,7 @@ class CAdminMod : public CModule {
 			return;
 		}
 
-		CUser* pUser = GetUser(sUsername);
+		CUser* pUser = FindUser(sUsername);
 		if (!pUser)
 			return;
 
@@ -946,7 +946,7 @@ class CAdminMod : public CModule {
 		if (sNetwork.empty()) {
 			sNetwork = sUser;
 		} else {
-			pUser = GetUser(sUser);
+			pUser = FindUser(sUser);
 			if (!pUser) {
 				PutModule("User [" + sUser + "] not found");
 				return;
@@ -984,7 +984,7 @@ class CAdminMod : public CModule {
 		if (sNetwork.empty()) {
 			sNetwork = sUser;
 		} else {
-			pUser = GetUser(sUser);
+			pUser = FindUser(sUser);
 			if (!pUser) {
 				return;
 			}
@@ -1019,7 +1019,7 @@ class CAdminMod : public CModule {
 		CUser *pUser = m_pUser;
 
 		if (!sUser.empty()) {
-			pUser = GetUser(sUser);
+			pUser = FindUser(sUser);
 			if (!pUser) {
 				return;
 			}
@@ -1063,7 +1063,7 @@ class CAdminMod : public CModule {
 			return;
 		}
 
-		CUser* pUser = GetUser(sUsername);
+		CUser* pUser = FindUser(sUsername);
 		if (!pUser)
 			return;
 
@@ -1088,7 +1088,7 @@ class CAdminMod : public CModule {
 			return;
 		}
 
-		CUser* pUser = GetUser(sUserName);
+		CUser* pUser = FindUser(sUserName);
 		if (!pUser) {
 			PutModule("User [" + sUserName + "] not found.");
 			return;
@@ -1125,7 +1125,7 @@ class CAdminMod : public CModule {
 			return;
 		}
 
-		CUser* pUser = GetUser(sUserName);
+		CUser* pUser = FindUser(sUserName);
 		if (!pUser) {
 			PutModule("User [" + sUserName + "] not found.");
 			return;
@@ -1147,7 +1147,7 @@ class CAdminMod : public CModule {
 		if (sUserName.empty()) {
 			sUserName = m_pUser->GetUserName();
 		}
-		CUser* pUser = GetUser(sUserName);
+		CUser* pUser = FindUser(sUserName);
 		if (!pUser)
 			return;
 
@@ -1186,7 +1186,7 @@ class CAdminMod : public CModule {
 			return;
 		}
 
-		CUser* pUser = GetUser(sUserName);
+		CUser* pUser = FindUser(sUserName);
 		if (!pUser)
 			return;
 
@@ -1204,7 +1204,7 @@ class CAdminMod : public CModule {
 			sCTCPRequest = sUserName;
 			sUserName = m_pUser->GetUserName();
 		}
-		CUser* pUser = GetUser(sUserName);
+		CUser* pUser = FindUser(sUserName);
 		if (!pUser)
 			return;
 
@@ -1254,7 +1254,7 @@ class CAdminMod : public CModule {
 			return;
 		}
 
-		CUser* pUser = GetUser(sUsername);
+		CUser* pUser = FindUser(sUsername);
 		if (!pUser)
 			return;
 
@@ -1272,7 +1272,7 @@ class CAdminMod : public CModule {
 			return;
 		}
 
-		CUser* pUser = GetUser(sUsername);
+		CUser* pUser = FindUser(sUsername);
 		if (!pUser)
 			return;
 
@@ -1313,7 +1313,7 @@ class CAdminMod : public CModule {
 			return;
 		}
 
-		CUser* pUser = GetUser(sUsername);
+		CUser* pUser = FindUser(sUsername);
 		if (!pUser)
 			return;
 
@@ -1330,7 +1330,7 @@ class CAdminMod : public CModule {
 			return;
 		}
 
-		CUser* pUser = GetUser(sUsername);
+		CUser* pUser = FindUser(sUsername);
 		if (!pUser)
 			return;
 
@@ -1370,7 +1370,7 @@ class CAdminMod : public CModule {
 			return;
 		}
 
-		CUser* pUser = GetUser(sUsername);
+		CUser* pUser = FindUser(sUsername);
 		if (!pUser)
 			return;
 
@@ -1386,7 +1386,7 @@ class CAdminMod : public CModule {
 			return;
 		}
 
-		CUser* pUser = GetUser(sUsername);
+		CUser* pUser = FindUser(sUsername);
 		if (!pUser)
 			return;
 
