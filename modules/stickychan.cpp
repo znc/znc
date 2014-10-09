@@ -39,7 +39,7 @@ public:
 
 				if (pChan)
 				{
-					pChan->JoinUser(true, "", m_pClient);
+					pChan->DetachUser();
 					return HALT;
 				}
 			}
