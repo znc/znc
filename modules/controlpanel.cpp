@@ -114,6 +114,7 @@ class CAdminMod : public CModule {
 				{"BindHost",            str},
 				{"FloodRate",           doublenum},
 				{"FloodBurst",          integer},
+				{"JoinDelay",           integer},
 #ifdef HAVE_ICU
 				{"Encoding",            str},
 #endif
@@ -498,6 +499,8 @@ class CAdminMod : public CModule {
 			PutModule("FloodRate = " + CString(pNetwork->GetFloodRate()));
 		} else if (sVar.Equals("floodburst")) {
 			PutModule("FloodBurst = " + CString(pNetwork->GetFloodBurst()));
+		} else if (sVar.Equals("joindelay")) {
+			PutModule("JoinDelay = " + CString(pNetwork->GetJoinDelay()));
 #ifdef HAVE_ICU
 		} else if (sVar.Equals("encoding")) {
 			PutModule("Encoding = " + pNetwork->GetEncoding());
@@ -587,6 +590,9 @@ class CAdminMod : public CModule {
 		} else if (sVar.Equals("floodburst")) {
 			pNetwork->SetFloodBurst(sValue.ToUShort());
 			PutModule("FloodBurst = " + CString(pNetwork->GetFloodBurst()));
+		} else if (sVar.Equals("joindelay")) {
+			pNetwork->SetJoinDelay(sValue.ToUShort());
+			PutModule("JoinDelay = " + CString(pNetwork->GetJoinDelay()));
 #ifdef HAVE_ICU
 		} else if (sVar.Equals("encoding")) {
 			pNetwork->SetEncoding(sValue);
