@@ -60,22 +60,31 @@ private:
 
 class CIRCNetworkJoinTimer : public CCron {
 public:
-	CIRCNetworkJoinTimer(CIRCNetwork *pNetwork) : CCron() {
-		m_pNetwork = pNetwork;
+	CIRCNetworkJoinTimer(CIRCNetwork *pNetwork) : CCron(), m_bDelayed(false), m_pNetwork(pNetwork) {
 		SetName("CIRCNetworkJoinTimer::" + m_pNetwork->GetUser()->GetUserName() + "::" + m_pNetwork->GetName());
-		Start(30);
+		Start(CIRCNetwork::JOIN_FREQUENCY);
 	}
 
 	virtual ~CIRCNetworkJoinTimer() {}
 
+	void Delay(unsigned short int uDelay) {
+		m_bDelayed = true;
+		Start(uDelay);
+	}
+
 protected:
 	virtual void RunJob() {
+		if (m_bDelayed) {
+			m_bDelayed = false;
+			Start(CIRCNetwork::JOIN_FREQUENCY);
+		}
 		if (m_pNetwork->IsIRCConnected()) {
 			m_pNetwork->JoinChans();
 		}
 	}
 
 private:
+	bool         m_bDelayed;
 	CIRCNetwork* m_pNetwork;
 };
 
@@ -114,6 +123,8 @@ CIRCNetwork::CIRCNetwork(CUser *pUser, const CString& sName) {
 
 	m_fFloodRate = 1;
 	m_uFloodBurst = 4;
+
+	m_uJoinDelay = 0;
 
 	m_RawBuffer.SetLineCount(100, true);   // This should be more than enough raws, especially since we are buffering the MOTD separately
 	m_MotdBuffer.SetLineCount(200, true);  // This should be more than enough motd lines
@@ -155,6 +166,7 @@ void CIRCNetwork::Clone(const CIRCNetwork& Network, bool bCloneName) {
 
 	m_fFloodRate = Network.GetFloodRate();
 	m_uFloodBurst = Network.GetFloodBurst();
+	m_uJoinDelay = Network.GetJoinDelay();
 
 	SetNick(Network.GetNick());
 	SetAltNick(Network.GetAltNick());
@@ -346,6 +358,7 @@ bool CIRCNetwork::ParseConfig(CConfig *pConfig, CString& sError, bool bUpgrade) 
 		size_t numDoubleOptions = sizeof(DoubleOptions) / sizeof(DoubleOptions[0]);
 		TOption<short unsigned int> SUIntOptions[] = {
 			{ "floodburst", &CIRCNetwork::SetFloodBurst },
+			{ "joindelay", &CIRCNetwork::SetJoinDelay },
 		};
 		size_t numSUIntOptions = sizeof(SUIntOptions) / sizeof(SUIntOptions[0]);
 
@@ -480,6 +493,7 @@ CConfig CIRCNetwork::ToConfig() const {
 	config.AddKeyValuePair("IRCConnectEnabled", CString(GetIRCConnectEnabled()));
 	config.AddKeyValuePair("FloodRate", CString(GetFloodRate()));
 	config.AddKeyValuePair("FloodBurst", CString(GetFloodBurst()));
+	config.AddKeyValuePair("JoinDelay", CString(GetJoinDelay()));
 	config.AddKeyValuePair("Encoding", m_sEncoding);
 
 	if (!m_sQuitMsg.empty()) {
@@ -1188,6 +1202,14 @@ bool CIRCNetwork::IsIRCConnected() const {
 
 void CIRCNetwork::SetIRCSocket(CIRCSock* pIRCSock) {
 	m_pIRCSock = pIRCSock;
+}
+
+void CIRCNetwork::IRCConnected() {
+	if (m_uJoinDelay > 0) {
+		m_pJoinTimer->Delay(m_uJoinDelay);
+	} else {
+		JoinChans();
+	}
 }
 
 void CIRCNetwork::IRCDisconnected() {
