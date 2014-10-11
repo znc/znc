@@ -18,22 +18,18 @@
 #include <znc/User.h>
 #include <znc/IRCNetwork.h>
 
-using std::vector;
-
 class CChanSaverMod : public CModule {
 public:
 	MODCONSTRUCTOR(CChanSaverMod) {
-		m_bWriteConf = false;
-
 		switch (GetType()) {
 			case CModInfo::GlobalModule:
 				LoadUsers();
 				break;
 			case CModInfo::UserModule:
-				LoadUser(*GetUser());
+				LoadUser(GetUser());
 				break;
 			case CModInfo::NetworkModule:
-				LoadNetwork(*GetNetwork());
+				LoadNetwork(GetNetwork());
 				break;
 		}
 	}
@@ -42,71 +38,41 @@ public:
 	}
 
 	void LoadUsers() {
-		std::map<CString, CUser *> vUsers = CZNC::Get().GetUserMap();
-		for (std::map<CString, CUser *>::iterator it = vUsers.begin(); it != vUsers.end(); ++it) {
-			LoadUser(*it->second);
+		const std::map<CString, CUser*>& vUsers = CZNC::Get().GetUserMap();
+		for (const auto& user : vUsers) {
+			LoadUser(user.second);
 		}
 	}
 
-	void LoadUser(CUser &user) {
-		vector<CIRCNetwork*> vNetworks = user.GetNetworks();
-		for (vector<CIRCNetwork*>::iterator it = vNetworks.begin(); it != vNetworks.end(); ++it) {
-			CIRCNetwork &network = **it;
-			LoadNetwork(network);
+	void LoadUser(CUser* pUser) {
+		const std::vector<CIRCNetwork*>& vNetworks = pUser->GetNetworks();
+		for (const CIRCNetwork* pNetwork : vNetworks) {
+			LoadNetwork(pNetwork);
 		}
 	}
 
-	void LoadNetwork(CIRCNetwork &network) {
-		const vector<CChan*>& vChans = network.GetChans();
-
-		for (vector<CChan*>::const_iterator it = vChans.begin(); it != vChans.end(); ++it) {
-			CChan &chan = **it;
-
+	void LoadNetwork(const CIRCNetwork* pNetwork) {
+		const std::vector<CChan*>& vChans = pNetwork->GetChans();
+		for (CChan* pChan : vChans) {
 			// If that channel isn't yet in the config,
 			// we'll have to add it...
-			if (!chan.InConfig()) {
-				chan.SetInConfig(true);
-				m_bWriteConf = true;
+			if (!pChan->InConfig()) {
+				pChan->SetInConfig(true);
 			}
 		}
 	}
 
-	virtual EModRet OnRaw(CString& sLine) {
-		if (m_bWriteConf) {
-			CZNC::Get().WriteConfig();
-			m_bWriteConf = false;
-		}
-
-		return CONTINUE;
-	}
-
-	virtual void OnMode2(const CNick* pOpNick, CChan& Channel, char uMode, const CString& sArg, bool bAdded, bool bNoChange) {
-		// This is called when we join (ZNC requests the channel modes
-		// on join) *and* when someone changes the channel keys.
-		// We ignore channel key "*" because of some broken nets.
-		if (uMode != 'k' || bNoChange || !bAdded || sArg == "*")
-			return;
-
-		Channel.SetKey(sArg);
-		m_bWriteConf = true;
-	}
-
 	virtual void OnJoin(const CNick& Nick, CChan& Channel) {
-		if (Nick.GetNick() == GetNetwork()->GetIRCNick().GetNick() && !Channel.InConfig()) {
+		if (!Channel.InConfig() && GetNetwork()->GetIRCNick().NickEquals(Nick.GetNick())) {
 			Channel.SetInConfig(true);
-			CZNC::Get().WriteConfig();
 		}
 	}
 
 	virtual void OnPart(const CNick& Nick, CChan& Channel, const CString& sMessage) {
-		if (Nick.GetNick() == GetNetwork()->GetIRCNick().GetNick() && Channel.InConfig()) {
+		if (Channel.InConfig() && GetNetwork()->GetIRCNick().NickEquals(Nick.GetNick())) {
 			Channel.SetInConfig(false);
-			CZNC::Get().WriteConfig();
 		}
 	}
-
-private:
-	bool m_bWriteConf;
 };
 
 template<> void TModInfo<CChanSaverMod>(CModInfo& Info) {
