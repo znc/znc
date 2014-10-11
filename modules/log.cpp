@@ -134,6 +134,11 @@ CString CLogMod::GetServer()
 
 bool CLogMod::OnLoad(const CString& sArgs, CString& sMessage)
 {
+	if (GetType() == CModInfo::UserModule || GetType() == CModInfo::NetworkModule) {
+		sMessage = "YourBNC does not currently allow users to enable or disable this module.";
+		return false;
+	}
+
 	VCString vsArgs;
 	sArgs.Split(" ", vsArgs);
 

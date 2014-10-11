@@ -286,6 +286,12 @@ class CAdminMod : public CModule {
 			PutModule("RealName = " + sValue);
 		}
 		else if (sVar == "bindhost") {
+
+			if(!m_pUser->IsAdmin()) {
+				PutModule("You are not allowed to change your bindhost.");
+				return;
+			}
+
 			if(!pUser->DenySetBindHost() || m_pUser->IsAdmin()) {
 				if (sValue.Equals(m_pUser->GetBindHost())) {
 					PutModule("This bind host is already set!");
@@ -313,7 +319,7 @@ class CAdminMod : public CModule {
 				pUser->SetBindHost(sValue);
 				PutModule("BindHost = " + sValue);
 			} else {
-				PutModule("Access denied!");
+				PutModule("You are not allowed to change your bindhost.");
 			}
 		}
 		else if (sVar == "multiclients") {
@@ -552,6 +558,12 @@ class CAdminMod : public CModule {
 			pNetwork->SetRealName(sValue);
 			PutModule("RealName = " + pNetwork->GetRealName());
 		} else if (sVar.Equals("bindhost")) {
+
+			if(!m_pUser->IsAdmin()) {
+				PutModule("You are not allowed to change your bindhost.");
+				return;
+			}
+
 			if(!pUser->DenySetBindHost() || m_pUser->IsAdmin()) {
 				if (sValue.Equals(pNetwork->GetBindHost())) {
 					PutModule("This bind host is already set!");
@@ -579,7 +591,7 @@ class CAdminMod : public CModule {
 				pNetwork->SetBindHost(sValue);
 				PutModule("BindHost = " + sValue);
 			} else {
-				PutModule("Access denied!");
+				PutModule("You are not allowed to change your bindhost.");
 			}
 		} else if (sVar.Equals("floodrate")) {
 			pNetwork->SetFloodRate(sValue.ToDouble());
@@ -943,6 +955,12 @@ class CAdminMod : public CModule {
 		CString sNetwork = sLine.Token(2);
 		CUser *pUser = m_pUser;
 
+		if (!m_pUser->IsAdmin()) {
+			PutModule("You are not allowed to manually add networks.");
+			PutModule("Join #YourBNC over at irc.yourbnc.co.uk and run ?addnet to get information on how to add a network");
+			return;
+		}
+
 		if (sNetwork.empty()) {
 			sNetwork = sUser;
 		} else {
@@ -980,6 +998,12 @@ class CAdminMod : public CModule {
 		CString sUser = sLine.Token(1);
 		CString sNetwork = sLine.Token(2);
 		CUser *pUser = m_pUser;
+
+		if (!m_pUser->IsAdmin()) {
+			PutModule("You are not allowed to manually remove networks.");
+			PutModule("Join #YourBNC over at irc.yourbnc.co.uk and ask a staff member to remove the network.");
+			return;
+		}
 
 		if (sNetwork.empty()) {
 			sNetwork = sUser;
@@ -1057,6 +1081,11 @@ class CAdminMod : public CModule {
 		CString sUsername = sLine.Token(1);
 		CString sNetwork = sLine.Token(2);
 		CString sServer = sLine.Token(3, true);
+
+		if (!m_pUser->IsAdmin()) {
+			PutModule("You are not allowed to add servers.");
+			return;
+		}
 
 		if (sServer.empty()) {
 			PutModule("Usage: AddServer <username> <network> <server>");
@@ -1468,4 +1497,4 @@ template<> void TModInfo<CAdminMod>(CModInfo& Info) {
 	Info.SetWikiPage("controlpanel");
 }
 
-USERMODULEDEFS(CAdminMod, "Dynamic configuration through IRC. Allows editing only yourself if you're not ZNC admin.")
+USERMODULEDEFS(CAdminMod, "Dynamic configuration through IRC. Allows editing only yourself if you're not YourBNC staff member.")

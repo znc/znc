@@ -144,5 +144,5 @@ template<> void TModInfo<CShellMod>(CModInfo& Info) {
 #ifdef MOD_SHELL_ALLOW_EVERYONE
 USERMODULEDEFS(CShellMod, "Gives shell access")
 #else
-USERMODULEDEFS(CShellMod, "Gives shell access. Only ZNC admins can use it.")
+USERMODULEDEFS(CShellMod, "Gives shell access. Only YourBNC staff members can use it.")
 #endif

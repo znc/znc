@@ -178,4 +178,4 @@ template<> void TModInfo<CPerform>(CModInfo& Info) {
 	Info.SetWikiPage("perform");
 }
 
-NETWORKMODULEDEFS(CPerform, "Keeps a list of commands to be executed when ZNC connects to IRC.")
+NETWORKMODULEDEFS(CPerform, "Keeps a list of commands to be executed when the BNC connects to IRC.")

@@ -458,5 +458,5 @@ template<> void TModInfo<CBounceDCCMod>(CModInfo& Info) {
 	Info.SetWikiPage("bouncedcc");
 }
 
-USERMODULEDEFS(CBounceDCCMod, "Bounces DCC transfers through ZNC instead of sending them directly to the user. ")
+USERMODULEDEFS(CBounceDCCMod, "Bounces DCC transfers through the BNC instead of sending them directly to the user. ")
 

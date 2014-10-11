@@ -626,4 +626,4 @@ template<> void TModInfo<CPartylineMod>(CModInfo& Info) {
 	Info.SetArgsHelpText("You may enter a list of channels the user joins, when entering the internal partyline.");
 }
 
-GLOBALMODULEDEFS(CPartylineMod, "Internal channels and queries for users connected to znc")
+GLOBALMODULEDEFS(CPartylineMod, "Internal channels and queries for users connected to the BNC")

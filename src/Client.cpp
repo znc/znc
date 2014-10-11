@@ -175,7 +175,7 @@ void CClient::ReadLine(const CString& sData) {
 		return;
 	}
 
-	if (sCommand.Equals("ZNC")) {
+	if (sCommand.Equals("ZNC") || sCommand.Equals("BNC")) {
 		CString sTarget = sLine.Token(1);
 		CString sModCommand;
 
