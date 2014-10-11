@@ -281,9 +281,10 @@ private:
 };
 
 template<> void TModInfo<CChanAttach>(CModInfo& Info) {
+	Info.AddType(CModInfo::UserModule);
 	Info.SetWikiPage("autoattach");
 	Info.SetHasArgs(true);
 	Info.SetArgsHelpText("List of channel masks and channel masks with ! before them.");
 }
 
-USERMODULEDEFS(CChanAttach, "Reattaches you to channels on activity.")
+NETWORKMODULEDEFS(CChanAttach, "Reattaches you to channels on activity.")
