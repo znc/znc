@@ -146,7 +146,7 @@ static void signalHandler(int sig) {
 		break;
 	case SIGUSR1:
 		CUtils::PrintMessage("Caught SIGUSR1");
-		CZNC::Get().SetConfigState(CZNC::ECONFIG_NEED_WRITE);
+		CZNC::Get().SetConfigState(CZNC::ECONFIG_NEED_VERBOSE_WRITE);
 		break;
 	default:
 		CUtils::PrintMessage("WTF? Signal handler called for a signal it doesn't know?");

@@ -184,7 +184,8 @@ void CZNC::Loop() {
 	while (true) {
 		CString sError;
 
-		switch (GetConfigState()) {
+		ConfigState eState = GetConfigState();
+		switch (eState) {
 		case ECONFIG_NEED_REHASH:
 			SetConfigState(ECONFIG_NOTHING);
 
@@ -196,12 +197,13 @@ void CZNC::Loop() {
 			}
 			break;
 		case ECONFIG_NEED_WRITE:
+		case ECONFIG_NEED_VERBOSE_WRITE:
 			SetConfigState(ECONFIG_NOTHING);
 
-			if (WriteConfig()) {
-				Broadcast("Writing the config succeeded", true);
-			} else {
+			if (!WriteConfig()) {
 				Broadcast("Writing the config file failed", true);
+			} else if (eState == ECONFIG_NEED_VERBOSE_WRITE) {
+				Broadcast("Writing the config succeeded", true);
 			}
 			break;
 		case ECONFIG_NOTHING:
