@@ -19,6 +19,7 @@
 #include <znc/User.h>
 #include <znc/IRCNetwork.h>
 #include <znc/Config.h>
+#include <znc/znc.h>
 
 using std::set;
 using std::vector;
@@ -364,6 +365,13 @@ void CChan::ModeChange(const CString& sModes, const CNick* pOpNick) {
 			if (!bList) {
 				(bAdd) ? AddMode(uMode, sArg) : RemMode(uMode);
 			}
+
+			// This is called when we join (ZNC requests the channel modes
+			// on join) *and* when someone changes the channel keys.
+			// We ignore channel key "*" because of some broken nets.
+			if (uMode == 'k' && !bNoChange && bAdd && sArg != "*") {
+				SetKey(sArg);
+			}
 		}
 	}
 }
@@ -622,4 +630,22 @@ void CChan::SendBuffer(CClient* pClient, const CBuffer& Buffer) {
 void CChan::Enable() {
 	ResetJoinTries();
 	m_bDisabled = false;
+}
+
+void CChan::SetKey(const CString& s) {
+	if (m_sKey != s) {
+		m_sKey = s;
+		if (m_bInConfig) {
+			CZNC::Get().SetConfigState(CZNC::ECONFIG_NEED_WRITE);
+		}
+	}
+}
+
+void CChan::SetInConfig(bool b) {
+	if (m_bInConfig != b) {
+		m_bInConfig = b;
+		if (m_bInConfig) {
+			CZNC::Get().SetConfigState(CZNC::ECONFIG_NEED_WRITE);
+		}
+	}
 }
