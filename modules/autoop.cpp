@@ -331,6 +331,7 @@ public:
 			if (sCommand.Equals("ADDMASKS")) {
 				pUser->AddHostmasks(sHostmasks);
 				PutModule("Hostmasks(s) added to user [" + pUser->GetUsername() + "]");
+				SetNV(pUser->GetUsername(), pUser->ToString());
 			} else {
 				if (pUser->DelHostmasks(sHostmasks)) {
 					PutModule("Removed user [" + pUser->GetUsername() + "] with key [" + pUser->GetUserKey() + "] and channels [" + pUser->GetChannels() + "]");
