@@ -53,6 +53,9 @@ CChan::CChan(const CString& sName, CIRCNetwork* pNetwork, bool bInConfig, CConfi
 			SetAutoClearChanBuffer(!sValue.ToBool()); // XXX Compatibility crap, added in 0.207
 		if (pConfig->FindStringEntry("detached", sValue))
 			SetDetached(sValue.ToBool());
+		if (pConfig->FindStringEntry("disabled", sValue))
+			if (sValue.ToBool())
+				Disable();
 		if (pConfig->FindStringEntry("autocycle", sValue))
 			if (sValue.Equals("true"))
 				CUtils::PrintError("WARNING: AutoCycle has been removed, instead try -> LoadModule = autocycle " + sName);
@@ -89,6 +92,8 @@ CConfig CChan::ToConfig() const {
 		config.AddKeyValuePair("AutoClearChanBuffer", CString(AutoClearChanBuffer()));
 	if (IsDetached())
 		config.AddKeyValuePair("Detached", "true");
+	if (IsDisabled())
+		config.AddKeyValuePair("Disabled", "true");
 	if (!GetKey().empty())
 		config.AddKeyValuePair("Key", GetKey());
 	if (!GetDefaultModes().empty())
