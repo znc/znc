@@ -26,14 +26,14 @@ public:
 
 	~CSampleJob() {
 		if (wasCancelled()) {
-			m_pModule->PutModule("Sample job cancelled");
+			GetModule()->PutModule("Sample job cancelled");
 		} else {
-			m_pModule->PutModule("Sample job destroyed");
+			GetModule()->PutModule("Sample job destroyed");
 		}
 	}
 
 	virtual void runThread() {
-		// Cannot safely use m_pModule in here, because this runs in its
+		// Cannot safely use GetModule() in here, because this runs in its
 		// own thread and such an access would require synchronisation
 		// between this thread and the main thread!
 
@@ -46,7 +46,7 @@ public:
 	}
 
 	virtual void runMain() {
-		m_pModule->PutModule("Sample job done");
+		GetModule()->PutModule("Sample job done");
 	}
 };
 
@@ -59,7 +59,7 @@ public:
 private:
 protected:
 	virtual void RunJob() {
-		m_pModule->PutModule("TEST!!!!");
+		GetModule()->PutModule("TEST!!!!");
 	}
 };
 
@@ -234,7 +234,7 @@ public:
 	}
 
 	virtual EModRet OnUserTopic(CString& sTarget, CString& sTopic) {
-		PutModule("* " + m_pClient->GetNick() + " changed topic on " + sTarget + " to '" + sTopic + "'");
+		PutModule("* " + GetClient()->GetNick() + " changed topic on " + sTarget + " to '" + sTopic + "'");
 
 		return CONTINUE;
 	}

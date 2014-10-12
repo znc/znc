@@ -82,7 +82,7 @@ public:
 	}
 
 	virtual void OnIRCConnected() {
-		if (m_pNetwork->IsUserAttached())
+		if (GetNetwork()->IsUserAttached())
 			SetBack();
 		else
 			SetAway(false);
@@ -94,7 +94,7 @@ public:
 
 	virtual void OnClientDisconnect() {
 		/* There might still be other clients */
-		if (!m_pNetwork->IsUserAttached())
+		if (!GetNetwork()->IsUserAttached())
 			SetAway();
 	}
 
@@ -198,7 +198,7 @@ private:
 			sReason = SIMPLE_AWAY_DEFAULT_REASON;
 
 		time_t iTime = time(NULL);
-		CString sTime = CUtils::CTime(iTime, m_pUser->GetTimezone());
+		CString sTime = CUtils::CTime(iTime, GetUser()->GetTimezone());
 		sReason.Replace("%s", sTime);
 
 		return sReason;
@@ -220,7 +220,7 @@ private:
 };
 
 void CSimpleAwayJob::RunJob() {
-	((CSimpleAway*)m_pModule)->SetAway(false);
+	((CSimpleAway*)GetModule())->SetAway(false);
 }
 
 template<> void TModInfo<CSimpleAway>(CModInfo& Info) {

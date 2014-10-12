@@ -74,7 +74,7 @@ public:
 	}
 
 	void OnModCommand(const CString& sCommand) {
-		if (m_pUser->IsAdmin()) {
+		if (GetUser()->IsAdmin()) {
 			HandleCommand(sCommand);
 		} else {
 			PutModule("Access denied");
@@ -121,10 +121,10 @@ public:
 		// If the format doesn't contain anything expandable, we'll
 		// assume this is an "old"-style format string.
 		if (sData == GetNV("Format")) {
-			sData.Replace("%", m_pUser->GetIdent());
+			sData.Replace("%", GetUser()->GetIdent());
 		}
 
-		DEBUG("Writing [" + sData + "] to ident spoof file [" + m_pISpoofLockFile->GetLongName() + "] for user/network [" + m_pUser->GetUserName() + "/" + m_pNetwork->GetName() + "]");
+		DEBUG("Writing [" + sData + "] to ident spoof file [" + m_pISpoofLockFile->GetLongName() + "] for user/network [" + GetUser()->GetUserName() + "/" + GetNetwork()->GetName() + "]");
 
 		m_pISpoofLockFile->Write(sData + "\n");
 
@@ -180,7 +180,7 @@ public:
 	}
 
 	virtual void OnIRCConnected() {
-		if (m_pIRCSock == m_pNetwork->GetIRCSock()) {
+		if (m_pIRCSock == GetNetwork()->GetIRCSock()) {
 			ReleaseISpoof();
 		}
 	}
@@ -192,7 +192,7 @@ public:
 	}
 
 	virtual void OnIRCDisconnected() {
-		if (m_pIRCSock == m_pNetwork->GetIRCSock()) {
+		if (m_pIRCSock == GetNetwork()->GetIRCSock()) {
 			ReleaseISpoof();
 		}
 	}

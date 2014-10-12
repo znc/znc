@@ -58,11 +58,12 @@ public:
 		MCString::iterator it = FindNV(sTarget.AsLower());
 
 		if (it != EndNV()) {
-			CChan* pChan = m_pNetwork->FindChan(sTarget);
+			CChan* pChan = GetNetwork()->FindChan(sTarget);
+			CString sNickMask = GetNetwork()->GetIRCNick().GetNickMask();
 			if (pChan) {
 				if (!pChan->AutoClearChanBuffer())
-					pChan->AddBuffer(":" + NickPrefix() + _NAMEDFMT(m_pNetwork->GetIRCNick().GetNickMask()) + " PRIVMSG " + _NAMEDFMT(sTarget) + " :{text}", sMessage);
-				m_pUser->PutUser(":" + NickPrefix() + m_pNetwork->GetIRCNick().GetNickMask() + " PRIVMSG " + sTarget + " :" + sMessage, NULL, m_pClient);
+					pChan->AddBuffer(":" + NickPrefix() + _NAMEDFMT(sNickMask) + " PRIVMSG " + _NAMEDFMT(sTarget) + " :{text}", sMessage);
+				GetUser()->PutUser(":" + NickPrefix() + sNickMask + " PRIVMSG " + sTarget + " :" + sMessage, NULL, GetClient());
 			}
 
 			CString sMsg = MakeIvec() + sMessage;

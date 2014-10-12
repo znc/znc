@@ -35,7 +35,7 @@ public:
 
 protected:
 	virtual void RunJob() {
-		CIRCNetwork* pNetwork = m_pModule->GetNetwork();
+		CIRCNetwork* pNetwork = GetModule()->GetNetwork();
 		CChan* pChan = pNetwork->FindChan(GetName().Token(1, true));
 
 		if (pChan) {
@@ -105,7 +105,7 @@ public:
 	}
 
 	virtual void OnKick(const CNick& OpNick, const CString& sKickedNick, CChan& pChan, const CString& sMessage) {
-		if (m_pNetwork->GetCurNick().Equals(sKickedNick)) {
+		if (GetNetwork()->GetCurNick().Equals(sKickedNick)) {
 			if (!delay) {
 				PutIRC("JOIN " + pChan.GetName() + " " + pChan.GetKey());
 				pChan.Enable();

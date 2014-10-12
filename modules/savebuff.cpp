@@ -97,7 +97,7 @@ public:
 		{
 			m_bFirstLoad = true;
 			AddTimer(new CSaveBuffJob(this, 60, 0, "SaveBuff", "Saves the current buffer to disk every 1 minute"));
-			const vector<CChan *>& vChans = m_pNetwork->GetChans();
+			const vector<CChan *>& vChans = GetNetwork()->GetChans();
 			for (u_int a = 0; a < vChans.size(); a++)
 			{
 				if (vChans[a]->AutoClearChanBuffer())
@@ -108,7 +108,7 @@ public:
 					PutUser(":***!znc@znc.in PRIVMSG " + vChans[a]->GetName() + " :Failed to decrypt this channel, did you change the encryption pass?");
 				}
 			}
-			const vector<CQuery *>& vQueries = m_pNetwork->GetQueries();
+			const vector<CQuery *>& vQueries = GetNetwork()->GetQueries();
 			for (u_int a = 0; a < vQueries.size(); a++)
 			{
 				if (!BootStrap(vQueries[a]))
@@ -170,7 +170,7 @@ public:
 	{
 		if (!m_sPassword.empty())
 		{
-			const vector<CChan *>& vChans = m_pNetwork->GetChans();
+			const vector<CChan *>& vChans = GetNetwork()->GetChans();
 			for (u_int a = 0; a < vChans.size(); a++)
 			{
 				CString sPath = GetPath(vChans[a]->GetName());
@@ -276,7 +276,7 @@ public:
 
 	CString GetPath(const CString & sChannel)
 	{
-		CString sBuffer = m_pUser->GetUserName() + sChannel.AsLower();
+		CString sBuffer = GetUser()->GetUserName() + sChannel.AsLower();
 		CString sRet = GetSavePath();
 		sRet += "/" + CBlowfish::MD5(sBuffer, true);
 		return(sRet);
@@ -292,7 +292,7 @@ public:
 	void AddBuffer(CChan& chan, const CString &sLine)
 	{
 		// If they have AutoClearChanBuffer enabled, only add messages if no client is connected
-		if (chan.AutoClearChanBuffer() && m_pNetwork->IsUserAttached())
+		if (chan.AutoClearChanBuffer() && GetNetwork()->IsUserAttached())
 			return;
 		chan.AddBuffer(sLine);
 	}
@@ -307,7 +307,7 @@ public:
 		{
 			AddBuffer(*vChans[a], SpoofChanMsg(vChans[a]->GetName(), cNick.GetNickMask() + " QUIT " + sMessage));
 		}
-		if (cNick.NickEquals(m_pUser->GetNick()))
+		if (cNick.NickEquals(GetUser()->GetNick()))
 			SaveBufferToDisk(); // need to force a save here to see this!
 	}
 
@@ -324,7 +324,7 @@ public:
 	}
 	virtual void OnJoin(const CNick& cNick, CChan& cChannel)
 	{
-		if (cNick.NickEquals(m_pUser->GetNick()) && cChannel.GetBuffer().empty())
+		if (cNick.NickEquals(GetUser()->GetNick()) && cChannel.GetBuffer().empty())
 		{
 			BootStrap((CChan *)&cChannel);
 			if (!cChannel.GetBuffer().empty())
@@ -335,7 +335,7 @@ public:
 	virtual void OnPart(const CNick& cNick, CChan& cChannel)
 	{
 		AddBuffer(cChannel, SpoofChanMsg(cChannel.GetName(), cNick.GetNickMask() + " PART"));
-		if (cNick.NickEquals(m_pUser->GetNick()))
+		if (cNick.NickEquals(GetUser()->GetNick()))
 			SaveBufferToDisk(); // need to force a save here to see this!
 	}
 #endif /* LEGACY_SAVEBUFF */
@@ -377,7 +377,7 @@ private:
 
 void CSaveBuffJob::RunJob()
 {
-	CSaveBuff *p = (CSaveBuff *)m_pModule;
+	CSaveBuff *p = (CSaveBuff *)GetModule();
 	p->SaveBufferToDisk();
 }
 

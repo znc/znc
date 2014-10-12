@@ -75,7 +75,7 @@ void CLogMod::PutLog(const CString& sLine, const CString& sWindow /*= "Status"*/
 
 	time(&curtime);
 	// Generate file name
-	sPath = CUtils::FormatTime(curtime, m_sLogPath, m_pUser->GetTimezone());
+	sPath = CUtils::FormatTime(curtime, m_sLogPath, GetUser()->GetTimezone());
 	if (sPath.empty())
 	{
 		DEBUG("Could not format log path [" << sPath << "]");
@@ -84,8 +84,8 @@ void CLogMod::PutLog(const CString& sLine, const CString& sWindow /*= "Status"*/
 
 	// TODO: Properly handle IRC case mapping
 	// $WINDOW has to be handled last, since it can contain %
-	sPath.Replace("$USER", CString((m_pUser ? m_pUser->GetUserName() : "UNKNOWN")).AsLower());
-	sPath.Replace("$NETWORK", CString((m_pNetwork ? m_pNetwork->GetName() : "znc")).AsLower());
+	sPath.Replace("$USER", CString((GetUser() ? GetUser()->GetUserName() : "UNKNOWN")).AsLower());
+	sPath.Replace("$NETWORK", CString((GetNetwork() ? GetNetwork()->GetName() : "znc")).AsLower());
 	sPath.Replace("$WINDOW", CString(sWindow.Replace_n("/", "-").Replace_n("\\", "-")).AsLower());
 
 	// Check if it's allowed to write in this specific path
@@ -103,7 +103,7 @@ void CLogMod::PutLog(const CString& sLine, const CString& sWindow /*= "Status"*/
 	if (!CFile::Exists(sLogDir)) CDir::MakeDir(sLogDir, ModDirInfo.st_mode);
 	if (LogFile.Open(O_WRONLY | O_APPEND | O_CREAT))
 	{
-		LogFile.Write(CUtils::FormatTime(curtime, "[%H:%M:%S] ", m_pUser->GetTimezone()) + (m_bSanitize ? sLine.StripControls_n() : sLine) + "\n");
+		LogFile.Write(CUtils::FormatTime(curtime, "[%H:%M:%S] ", GetUser()->GetTimezone()) + (m_bSanitize ? sLine.StripControls_n() : sLine) + "\n");
 	} else
 		DEBUG("Could not open log file [" << sPath << "]: " << strerror(errno));
 }
@@ -120,7 +120,7 @@ void CLogMod::PutLog(const CString& sLine, const CNick& Nick)
 
 CString CLogMod::GetServer()
 {
-	CServer* pServer = m_pNetwork->GetCurrentServer();
+	CServer* pServer = GetNetwork()->GetCurrentServer();
 	CString sSSL;
 
 	if (!pServer)
@@ -238,8 +238,9 @@ CModule::EModRet CLogMod::OnTopic(CNick& Nick, CChan& Channel, CString& sTopic)
 /* notices */
 CModule::EModRet CLogMod::OnUserNotice(CString& sTarget, CString& sMessage)
 {
-	if (m_pNetwork) {
-		PutLog("-" + m_pNetwork->GetCurNick() + "- " + sMessage, sTarget);
+	CIRCNetwork* pNetwork = GetNetwork();
+	if (pNetwork) {
+		PutLog("-" + pNetwork->GetCurNick() + "- " + sMessage, sTarget);
 	}
 
 	return CONTINUE;
@@ -260,8 +261,9 @@ CModule::EModRet CLogMod::OnChanNotice(CNick& Nick, CChan& Channel, CString& sMe
 /* actions */
 CModule::EModRet CLogMod::OnUserAction(CString& sTarget, CString& sMessage)
 {
-	if (m_pNetwork) {
-		PutLog("* " + m_pNetwork->GetCurNick() + " " + sMessage, sTarget);
+	CIRCNetwork* pNetwork = GetNetwork();
+	if (pNetwork) {
+		PutLog("* " + pNetwork->GetCurNick() + " " + sMessage, sTarget);
 	}
 
 	return CONTINUE;
@@ -282,8 +284,9 @@ CModule::EModRet CLogMod::OnChanAction(CNick& Nick, CChan& Channel, CString& sMe
 /* msgs */
 CModule::EModRet CLogMod::OnUserMsg(CString& sTarget, CString& sMessage)
 {
-	if (m_pNetwork) {
-		PutLog("<" + m_pNetwork->GetCurNick() + "> " + sMessage, sTarget);
+	CIRCNetwork* pNetwork = GetNetwork();
+	if (pNetwork) {
+		PutLog("<" + pNetwork->GetCurNick() + "> " + sMessage, sTarget);
 	}
 
 	return CONTINUE;

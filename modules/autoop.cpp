@@ -218,7 +218,7 @@ public:
 	}
 
 	virtual void OnOp2(const CNick* pOpNick, const CNick& Nick, CChan& Channel, bool bNoChange) {
-		if (Nick.GetNick() == m_pNetwork->GetIRCNick().GetNick()) {
+		if (Nick.GetNick() == GetNetwork()->GetIRCNick().GetNick()) {
 			const map<CString,CNick>& msNicks = Channel.GetNicks();
 
 			for (map<CString,CNick>::const_iterator it = msNicks.begin(); it != msNicks.end(); ++it) {
@@ -420,7 +420,7 @@ public:
 
 			// First verify that the person who challenged us matches a user's host
 			if (pUser->HostMatches(Nick.GetHostMask())) {
-				const vector<CChan*>& Chans = m_pNetwork->GetChans();
+				const vector<CChan*>& Chans = GetNetwork()->GetChans();
 				bMatchedHost = true;
 
 				// Also verify that they are opped in at least one of the user's chans
@@ -515,7 +515,7 @@ public:
 	}
 
 	void OpUser(const CNick& Nick, const CAutoOpUser& User) {
-		const vector<CChan*>& Chans = m_pNetwork->GetChans();
+		const vector<CChan*>& Chans = GetNetwork()->GetChans();
 
 		for (size_t a = 0; a < Chans.size(); a++) {
 			const CChan& Chan = *Chans[a];

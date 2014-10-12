@@ -181,8 +181,8 @@ public:
 			pSock->SetCipher("HIGH");
 			pSock->SetPemLocation(m_sPemFile);
 
-			u_short iPort = m_pManager->ListenRand(pSock->GetSockName() + "::LISTENER",
-					m_pUser->GetLocalDCCIP(), true, SOMAXCONN, pSock, 60);
+			u_short iPort = GetManager()->ListenRand(pSock->GetSockName() + "::LISTENER",
+					GetUser()->GetLocalDCCIP(), true, SOMAXCONN, pSock, 60);
 
 			if (iPort == 0) {
 				PutModule("Failed to start chat!");
@@ -192,7 +192,7 @@ public:
 			stringstream s;
 			s << "PRIVMSG " << sArgs << " :\001";
 			s << "DCC SCHAT chat ";
-			s << CUtils::GetLongIP(m_pUser->GetLocalDCCIP());
+			s << CUtils::GetLongIP(GetUser()->GetLocalDCCIP());
 			s << " " << iPort << "\001";
 
 			PutIRC(s.str());
@@ -253,7 +253,7 @@ public:
 				}
 			}
 			PutModule("No Such Chat [" + sArgs + "]");
-		} else if (sCom.Equals("showsocks") && m_pUser->IsAdmin()) {
+		} else if (sCom.Equals("showsocks") && GetUser()->IsAdmin()) {
 			CTable Table;
 			Table.AddColumn("SockName");
 			Table.AddColumn("Created");
@@ -310,7 +310,7 @@ public:
 			PutModule("    list           - List current chats.");
 			PutModule("    close <nick>   - Close a chat to a nick.");
 			PutModule("    timers         - Shows related timers.");
-			if (m_pUser->IsAdmin()) {
+			if (GetUser()->IsAdmin()) {
 				PutModule("    showsocks      - Shows all socket connections.");
 			}
 		} else if (sCom.Equals("timers"))
@@ -352,8 +352,8 @@ public:
 	void AcceptSDCC(const CString & sNick, u_long iIP, u_short iPort)
 	{
 		CSChatSock *p = new CSChatSock(this, sNick, CUtils::GetIP(iIP), iPort, 60);
-		m_pManager->Connect(CUtils::GetIP(iIP), iPort, p->GetSockName(), 60,
-				true, m_pUser->GetLocalDCCIP(), p);
+		GetManager()->Connect(CUtils::GetIP(iIP), iPort, p->GetSockName(), 60,
+				true, GetUser()->GetLocalDCCIP(), p);
 		RemTimer("Remove " + sNick); // delete any associated timer to this nick
 	}
 
@@ -396,13 +396,13 @@ public:
 	void SendToUser(const CString & sFrom, const CString & sText)
 	{
 		//:*schat!znc@znc.in PRIVMSG Jim :
-		CString sSend = ":" + sFrom + " PRIVMSG " + m_pNetwork->GetCurNick() + " :" + sText;
+		CString sSend = ":" + sFrom + " PRIVMSG " + GetNetwork()->GetCurNick() + " :" + sText;
 		PutUser(sSend);
 	}
 
 	bool IsAttached()
 	{
-		return(m_pNetwork->IsUserAttached());
+		return(GetNetwork()->IsUserAttached());
 	}
 
 private:
@@ -470,7 +470,7 @@ void CSChatSock::Timeout()
 
 void CRemMarkerJob::RunJob()
 {
-	CSChat *p = (CSChat *)m_pModule;
+	CSChat *p = (CSChat *)GetModule();
 	p->RemoveMarker(m_sNick);
 
 	// store buffer

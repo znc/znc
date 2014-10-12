@@ -25,8 +25,9 @@ public:
 	MODCONSTRUCTOR(CClearBufferOnMsgMod) {}
 
 	void ClearAllBuffers() {
-		if (m_pNetwork) {
-			const vector<CChan*>& vChans = m_pNetwork->GetChans();
+		CIRCNetwork* pNetwork = GetNetwork();
+		if (pNetwork) {
+			const vector<CChan*>& vChans = pNetwork->GetChans();
 
 			for (vector<CChan*>::const_iterator it = vChans.begin(); it != vChans.end(); ++it) {
 				// Skip detached channels, they weren't read yet
@@ -39,10 +40,10 @@ public:
 				(*it)->SetAutoClearChanBuffer(false);
 			}
 
-			vector<CQuery*> VQueries = m_pNetwork->GetQueries();
+			vector<CQuery*> VQueries = pNetwork->GetQueries();
 
 			for (vector<CQuery*>::const_iterator it = VQueries.begin(); it != VQueries.end(); ++it) {
-				m_pNetwork->DelQuery((*it)->GetName());
+				pNetwork->DelQuery((*it)->GetName());
 			}
 		}
 	}

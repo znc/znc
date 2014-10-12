@@ -22,11 +22,11 @@ public:
 	MODCONSTRUCTOR(CNotifyConnectMod) {}
 
 	virtual void OnClientLogin() {
-		SendAdmins(m_pUser->GetUserName() + " attached (from " + m_pClient->GetRemoteIP() + ")");
+		SendAdmins(GetUser()->GetUserName() + " attached (from " + GetClient()->GetRemoteIP() + ")");
 	}
 
 	virtual void OnClientDisconnect() {
-		SendAdmins(m_pUser->GetUserName() + " detached (from " + m_pClient->GetRemoteIP() + ")");
+		SendAdmins(GetUser()->GetUserName() + " detached (from " + GetClient()->GetRemoteIP() + ")");
 	}
 
 private:
