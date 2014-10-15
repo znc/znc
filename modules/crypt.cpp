@@ -34,6 +34,8 @@
 #include <znc/User.h>
 #include <znc/IRCNetwork.h>
 
+#include <time.h>
+
 #define REQUIRESSL	1
 #define NICK_PREFIX_KEY	"[nick-prefix]"
 

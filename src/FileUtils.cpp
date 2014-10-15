@@ -23,6 +23,8 @@
 #include <sys/types.h>
 #include <sys/wait.h>
 
+#include <time.h>
+
 #ifndef HAVE_LSTAT
 #  define lstat(a, b)	stat(a, b)
 #endif

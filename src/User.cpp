@@ -21,6 +21,7 @@
 #include <znc/IRCSock.h>
 #include <znc/Chan.h>
 #include <math.h>
+#include <time.h>
 
 using std::vector;
 using std::set;

@@ -21,6 +21,8 @@
 #include <znc/Chan.h>
 #include <znc/Server.h>
 
+#include <time.h>
+
 using std::vector;
 
 class CLogMod: public CModule {

@@ -30,6 +30,8 @@
 #include <znc/FileUtils.h>
 #include <znc/Query.h>
 
+#include <time.h>
+
 using std::vector;
 
 #define CRYPT_VERIFICATION_TOKEN "::__:SAVEBUFF:__::"

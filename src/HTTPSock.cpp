@@ -18,6 +18,7 @@
 #include <znc/znc.h>
 #include <iomanip>
 
+#include <time.h>
 
 #ifdef HAVE_ZLIB
 #include <zlib.h>

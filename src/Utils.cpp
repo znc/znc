@@ -26,6 +26,8 @@
 #include <cstring>
 #include <cstdlib>
 
+#include <time.h>
+
 using std::map;
 using std::stringstream;
 using std::vector;

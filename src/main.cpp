@@ -16,6 +16,7 @@
 
 #include <znc/znc.h>
 #include <signal.h>
+#include <time.h>
 
 #if defined(HAVE_LIBSSL) && defined(HAVE_PTHREAD)
 #include <znc/Threads.h>

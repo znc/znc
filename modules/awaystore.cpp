@@ -30,6 +30,8 @@
 #include <znc/IRCNetwork.h>
 #include <znc/FileUtils.h>
 
+#include <time.h>
+
 using std::vector;
 using std::map;
 
