@@ -21,6 +21,7 @@
 #include <znc/IRCSock.h>
 #include <znc/Chan.h>
 #include <math.h>
+#include <algorithm>
 
 using std::vector;
 using std::set;
@@ -357,35 +358,35 @@ bool CUser::ParseConfig(CConfig* pConfig, CString& sError) {
 	for (vit = vsList.begin(); vit != vsList.end(); ++vit) {
 		sValue = *vit;
 		CString sModName = sValue.Token(0);
+		CString sNotice = "Loading user module [" + sModName + "]";
 
 		// XXX Legacy crap, added in ZNC 0.089
 		if (sModName == "discon_kick") {
-			CUtils::PrintMessage("NOTICE: [discon_kick] was renamed, loading [disconkick] instead");
+			sNotice = "NOTICE: [discon_kick] was renamed, loading [disconkick] instead";
 			sModName = "disconkick";
 		}
 
 		// XXX Legacy crap, added in ZNC 0.099
 		if (sModName == "fixfreenode") {
-			CUtils::PrintMessage("NOTICE: [fixfreenode] doesn't do anything useful anymore, ignoring it");
+			sNotice = "NOTICE: [fixfreenode] doesn't do anything useful anymore, ignoring it";
 			continue;
 		}
 
 		// XXX Legacy crap, added in ZNC 0.207
 		if (sModName == "admin") {
-			CUtils::PrintMessage("NOTICE: [admin] module was renamed, loading [controlpanel] instead");
+			sNotice = "NOTICE: [admin] module was renamed, loading [controlpanel] instead";
 			sModName = "controlpanel";
 		}
 		
 		// XXX Legacy crap, should have been added ZNC 0.207, but added only in 1.1 :(
 		if (sModName == "away") {
-			CUtils::PrintMessage("NOTICE: [away] was renamed, "
-					"loading [awaystore] instead");
+			sNotice = "NOTICE: [away] was renamed, loading [awaystore] instead";
 			sModName = "awaystore";
 		}
 
 		// XXX Legacy crap, added in 1.1; fakeonline module was dropped in 1.0 and returned in 1.1
 		if (sModName == "fakeonline") {
-			CUtils::PrintMessage("NOTICE: [fakeonline] was renamed, loading [modules_online] instead");
+			sNotice = "NOTICE: [fakeonline] was renamed, loading [modules_online] instead";
 			sModName = "modules_online";
 		}
 
@@ -411,46 +412,26 @@ bool CUser::ParseConfig(CConfig* pConfig, CString& sError) {
 			continue;
 		}
 
-		CUtils::PrintAction("Loading user module [" + sModName + "]");
 		CString sModRet;
 		CString sArgs = sValue.Token(1, true);
-		bool bModRet = true;
 
-		CModInfo ModInfo;
-		if (!CZNC::Get().GetModules().GetModInfo(ModInfo, sModName, sModRet)) {
-			sError = "Unable to find modinfo [" + sModName + "] [" + sModRet + "]";
-			return false;
-		}
-
-		if (!ModInfo.SupportsType(CModInfo::UserModule) && ModInfo.SupportsType(CModInfo::NetworkModule)) {
-			CUtils::PrintMessage("NOTICE: Module [" + sModName + "] is a network module, loading module for all networks in user.");
-
-			// Do they have old NV?
-			CFile fNVFile = CFile(GetUserPath() + "/moddata/" + sModName + "/.registry");
-
-			for (vector<CIRCNetwork*>::iterator it = m_vIRCNetworks.begin(); it != m_vIRCNetworks.end(); ++it) {
-				if (fNVFile.Exists()) {
-					CString sNetworkModPath = (*it)->GetNetworkPath() + "/moddata/" + sModName;
-					if (!CFile::Exists(sNetworkModPath)) {
-						CDir::MakeDir(sNetworkModPath);
-					}
-
-					fNVFile.Copy(sNetworkModPath + "/.registry");
-				}
-
-				bModRet = (*it)->GetModules().LoadModule(sModName, sArgs, CModInfo::NetworkModule, this, *it, sModRet);
-				if (!bModRet) {
-					break;
-				}
-			}
-		} else {
-			bModRet = GetModules().LoadModule(sModName, sArgs, CModInfo::UserModule, this, NULL, sModRet);
-		}
+		bool bModRet = LoadModule(sModName, sArgs, sNotice, sModRet);
 
 		CUtils::PrintStatus(bModRet, sModRet);
 		if (!bModRet) {
-			sError = sModRet;
-			return false;
+			// XXX The awaynick module was retired in 1.6 (still available as external module)
+			if (sModName == "awaynick") {
+				// load simple_away instead, unless it's already on the list
+				if (std::find(vsList.begin(), vsList.end(), "simple_away") == vsList.end()) {
+					sNotice = "Loading [simple_away] module instead";
+					sModName = "simple_away";
+					// not a fatal error if simple_away is not available
+					LoadModule(sModName, sArgs, sNotice, sModRet);
+				}
+			} else {
+				sError = sModRet;
+				return false;
+			}
 		}
 		continue;
 	}
@@ -1096,6 +1077,50 @@ bool CUser::IsUserAttached() const {
 	}
 
 	return false;
+}
+
+bool CUser::LoadModule(const CString& sModName, const CString& sArgs, const CString& sNotice, CString& sError)
+{
+	bool bModRet = true;
+	CString sModRet;
+
+	CModInfo ModInfo;
+	if (!CZNC::Get().GetModules().GetModInfo(ModInfo, sModName, sModRet)) {
+		sError = "Unable to find modinfo [" + sModName + "] [" + sModRet + "]";
+		return false;
+	}
+
+	CUtils::PrintAction(sNotice);
+
+	if (!ModInfo.SupportsType(CModInfo::UserModule) && ModInfo.SupportsType(CModInfo::NetworkModule)) {
+		CUtils::PrintMessage("NOTICE: Module [" + sModName + "] is a network module, loading module for all networks in user.");
+
+		// Do they have old NV?
+		CFile fNVFile = CFile(GetUserPath() + "/moddata/" + sModName + "/.registry");
+
+		for (vector<CIRCNetwork*>::iterator it = m_vIRCNetworks.begin(); it != m_vIRCNetworks.end(); ++it) {
+			if (fNVFile.Exists()) {
+				CString sNetworkModPath = (*it)->GetNetworkPath() + "/moddata/" + sModName;
+				if (!CFile::Exists(sNetworkModPath)) {
+					CDir::MakeDir(sNetworkModPath);
+				}
+
+				fNVFile.Copy(sNetworkModPath + "/.registry");
+			}
+
+			bModRet = (*it)->GetModules().LoadModule(sModName, sArgs, CModInfo::NetworkModule, this, *it, sModRet);
+			if (!bModRet) {
+				break;
+			}
+		}
+	} else {
+		bModRet = GetModules().LoadModule(sModName, sArgs, CModInfo::UserModule, this, NULL, sModRet);
+	}
+
+	if (!bModRet) {
+		sError = sModRet;
+	}
+	return bModRet;
 }
 
 // Setters

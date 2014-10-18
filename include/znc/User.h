@@ -238,6 +238,7 @@ protected:
 
 private:
 	void SetKeepBuffer(bool b) { SetAutoClearChanBuffer(!b); } // XXX compatibility crap, added in 0.207
+	bool LoadModule(const CString& sModName, const CString& sArgs, const CString& sNotice, CString& sError);
 };
 
 #endif // !_USER_H

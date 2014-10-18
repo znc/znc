@@ -22,6 +22,7 @@
 #include <znc/Server.h>
 #include <znc/Chan.h>
 #include <znc/Query.h>
+#include <algorithm>
 
 using std::vector;
 using std::set;
@@ -377,38 +378,46 @@ bool CIRCNetwork::ParseConfig(CConfig *pConfig, CString& sError, bool bUpgrade) 
 		for (vit = vsList.begin(); vit != vsList.end(); ++vit) {
 			CString sValue = *vit;
 			CString sModName = sValue.Token(0);
+			CString sNotice = "Loading network module [" + sModName + "]";
 
 			// XXX Legacy crap, added in ZNC 0.203, modified in 0.207
 			// Note that 0.203 == 0.207
 			if (sModName == "away") {
-				CUtils::PrintMessage("NOTICE: [away] was renamed, "
-						"loading [awaystore] instead");
+				sNotice = "NOTICE: [away] was renamed, loading [awaystore] instead";
 				sModName = "awaystore";
 			}
 
 			// XXX Legacy crap, added in ZNC 0.207
 			if (sModName == "autoaway") {
-				CUtils::PrintMessage("NOTICE: [autoaway] was renamed, "
-						"loading [awaystore] instead");
+				sNotice = "NOTICE: [autoaway] was renamed, loading [awaystore] instead";
 				sModName = "awaystore";
 			}
 		
 			// XXX Legacy crap, added in 1.1; fakeonline module was dropped in 1.0 and returned in 1.1
 			if (sModName == "fakeonline") {
-				CUtils::PrintMessage("NOTICE: [fakeonline] was renamed, loading [modules_online] instead");
+				sNotice = "NOTICE: [fakeonline] was renamed, loading [modules_online] instead";
 				sModName = "modules_online";
 			}
 
-			CUtils::PrintAction("Loading network module [" + sModName + "]");
 			CString sModRet;
 			CString sArgs = sValue.Token(1, true);
 
-			bool bModRet = GetModules().LoadModule(sModName, sArgs, CModInfo::NetworkModule, GetUser(), this, sModRet);
+			bool bModRet = LoadModule(sModName, sArgs, sNotice, sModRet);
 
-			CUtils::PrintStatus(bModRet, sModRet);
 			if (!bModRet) {
-				sError = sModRet;
-				return false;
+				// XXX The awaynick module was retired in 1.6 (still available as external module)
+				if (sModName == "awaynick") {
+					// load simple_away instead, unless it's already on the list
+					if (std::find(vsList.begin(), vsList.end(), "simple_away") == vsList.end()) {
+						sNotice = "Loading network module [simple_away] instead";
+						sModName = "simple_away";
+						// not a fatal error if simple_away is not available
+						LoadModule(sModName, sArgs, sNotice, sModRet);
+					}
+				} else {
+					sError = sModRet;
+					return false;
+				}
 			}
 		}
 	}
@@ -1350,4 +1359,18 @@ CString& CIRCNetwork::ExpandString(const CString& sStr, CString& sRet) const {
 	sRet.Replace("%bindhost%", GetBindHost());
 
 	return m_pUser->ExpandString(sRet, sRet);
+}
+
+bool CIRCNetwork::LoadModule(const CString& sModName, const CString& sArgs, const CString& sNotice, CString& sError)
+{
+	CUtils::PrintAction(sNotice);
+	CString sModRet;
+
+	bool bModRet = GetModules().LoadModule(sModName, sArgs, CModInfo::NetworkModule, GetUser(), this, sModRet);
+
+	CUtils::PrintStatus(bModRet, sModRet);
+	if (!bModRet) {
+		sError = sModRet;
+	}
+	return bModRet;
 }
