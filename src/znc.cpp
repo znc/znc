@@ -20,6 +20,7 @@
 #include <znc/User.h>
 #include <znc/IRCNetwork.h>
 #include <znc/Config.h>
+#include <tuple>
 
 using std::endl;
 using std::cout;
@@ -27,6 +28,8 @@ using std::map;
 using std::set;
 using std::vector;
 using std::list;
+using std::tuple;
+using std::make_tuple;
 
 static inline CString FormatBindError() {
 	CString sError = (errno == 0 ? CString("unknown error, check the host name") : CString(strerror(errno)));
@@ -87,13 +90,7 @@ CZNC::~CZNC() {
 }
 
 CString CZNC::GetVersion() {
-	char szBuf[128];
-
-	snprintf(szBuf, sizeof(szBuf), "%1.1f%s", VERSION, ZNC_VERSION_EXTRA);
-	// If snprintf overflows (which I doubt), we want to be on the safe side
-	szBuf[sizeof(szBuf) - 1] = '\0';
-
-	return szBuf;
+	return CString(VERSION_STR) + CString(ZNC_VERSION_EXTRA);
 }
 
 CString CZNC::GetTag(bool bIncludeVersion, bool bHTML) {
@@ -103,12 +100,9 @@ CString CZNC::GetTag(bool bIncludeVersion, bool bHTML) {
 		return "ZNC - " + sAddress;
 	}
 
-	char szBuf[128];
-	snprintf(szBuf, sizeof(szBuf), "ZNC %1.1f%s - ", VERSION, ZNC_VERSION_EXTRA);
-	// If snprintf overflows (which I doubt), we want to be on the safe side
-	szBuf[sizeof(szBuf) - 1] = '\0';
+	CString sVersion = GetVersion();
 
-	return szBuf + sAddress;
+	return "ZNC - " + sVersion + " - " + sAddress;
 }
 
 CString CZNC::GetCompileOptionsString() {
@@ -443,7 +437,7 @@ bool CZNC::WriteConfig() {
 	config.AddKeyValuePair("MaxBufferSize", CString(m_uiMaxBufferSize));
 	config.AddKeyValuePair("SSLCertFile", CString(m_sSSLCertFile));
 	config.AddKeyValuePair("ProtectWebSessions", CString(m_bProtectWebSessions));
-	config.AddKeyValuePair("Version", CString(VERSION, 1));
+	config.AddKeyValuePair("Version", CString(VERSION_STR));
 
 	for (size_t l = 0; l < m_vpListeners.size(); l++) {
 		CListener* pListener = m_vpListeners[l];
@@ -563,7 +557,7 @@ bool CZNC::WriteNewConfig(const CString& sConfigFile) {
 	VCString vsLines;
 
 	vsLines.push_back(MakeConfigHeader());
-	vsLines.push_back("Version = " + CString(VERSION, 1));
+	vsLines.push_back("Version = " + CString(VERSION_STR));
 
 	m_sConfigFile = ExpandConfigPath(sConfigFile);
 
@@ -953,14 +947,16 @@ bool CZNC::DoRehash(CString& sError)
 
 	CString sSavedVersion;
 	config.FindStringEntry("version", sSavedVersion);
-	double fSavedVersion = sSavedVersion.ToDouble();
-	if (fSavedVersion < VERSION - 0.000001) {
+	tuple<unsigned int, unsigned int> tSavedVersion = make_tuple(sSavedVersion.Token(0, false, ".").ToUInt(),
+																 sSavedVersion.Token(1, false, ".").ToUInt());
+	tuple<unsigned int, unsigned int> tCurrentVersion = make_tuple(VERSION_MAJOR, VERSION_MINOR);
+	if (tSavedVersion < tCurrentVersion) {
 		if (sSavedVersion.empty()) {
 			sSavedVersion = "< 0.203";
 		}
 		CUtils::PrintMessage("Found old config from ZNC " + sSavedVersion + ". Saving a backup of it.");
-		BackupConfigOnce("pre-" + CString(VERSION, 1));
-	} else if (fSavedVersion > VERSION + 0.000001) {
+		BackupConfigOnce("pre-" + CString(VERSION_STR));
+	} else if (tSavedVersion > tCurrentVersion) {
 		CUtils::PrintError("Config was saved from ZNC " + sSavedVersion + ". It may or may not work with current ZNC " + GetVersion());
 	}
 
@@ -983,7 +979,7 @@ bool CZNC::DoRehash(CString& sError)
 		CString sModName = vit->Token(0);
 		CString sArgs = vit->Token(1, true);
 
-		if (sModName == "saslauth" && fSavedVersion < 0.207 + 0.000001) {
+		if (sModName == "saslauth" && tSavedVersion < make_tuple(0, 207)) {
 			// XXX compatibility crap, added in 0.207
 			CUtils::PrintMessage("saslauth module was renamed to cyrusauth. Loading cyrusauth instead.");
 			sModName = "cyrusauth";
