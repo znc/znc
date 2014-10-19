@@ -104,6 +104,14 @@
 						<? IF FloodProtection ?> value="<? VAR FloodBurst ?>" <? ELSE ?> value="4" disabled="disabled" <? ENDIF ?>
 					/> lines can be sent immediately
 				</div>
+
+				<div class="subsection">
+					<div class="inputlabel">Channel join delay:</div>
+					<input type="number" name="joindelay" min="0" id="joindelay"
+						   title="Defines the delay in seconds, until channels are joined after getting connected."
+						value="<? VAR JoinDelay ?>"
+					/> seconds
+				</div>
 				<script type="text/javascript">floodprotection_change();</script>
 				<div style="clear: both;"></div>
 			</div>

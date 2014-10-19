@@ -200,9 +200,7 @@ void CIRCSock::ReadLine(const CString& sData) {
 				m_pNetwork->ClearRawBuffer();
 				m_pNetwork->AddRawBuffer(":" + _NAMEDFMT(sServer) + " " + sCmd + " {target} " + _NAMEDFMT(sRest));
 
-				// Join the first set of channels as soon as we are connected
-				// and let the CIRCNetworkJoinTimer join the rest.
-				m_pNetwork->JoinChans();
+				m_pNetwork->IRCConnected();
 
 				break;
 			}

@@ -821,6 +821,8 @@ public:
 				Tmpl["FloodRate"] = CString(pNetwork->GetFloodRate());
 				Tmpl["FloodBurst"] = CString(pNetwork->GetFloodBurst());
 
+				Tmpl["JoinDelay"] = CString(pNetwork->GetJoinDelay());
+
 				Tmpl["IRCConnectEnabled"] = CString(pNetwork->GetIRCConnectEnabled());
 
 				const vector<CServer*>& vServers = pNetwork->GetServers();
@@ -863,6 +865,7 @@ public:
 				Tmpl["FloodProtection"] = "true";
 				Tmpl["FloodRate"] = "1.0";
 				Tmpl["FloodBurst"] = "4";
+				Tmpl["JoinDelay"] = "0";
 			}
 
 			FOR_EACH_MODULE(i, make_pair(pUser, pNetwork)) {
@@ -945,6 +948,8 @@ public:
 		} else {
 			pNetwork->SetFloodRate(-1);
 		}
+
+		pNetwork->SetJoinDelay(WebSock.GetParam("joindelay").ToUShort());
 
 		VCString vsArgs;
 

@@ -45,6 +45,7 @@ public:
 	~CIRCNetwork();
 
 	enum {
+		JOIN_FREQUENCY = 30,
 		/** How long must an IRC connection be idle before ZNC sends a ping */
 		PING_FREQUENCY = 270,
 		/** Time between checks if PINGs need to be sent */
@@ -136,6 +137,7 @@ public:
 	 */
 	bool IsIRCConnected() const;
 	void SetIRCSocket(CIRCSock* pIRCSock);
+	void IRCConnected();
 	void IRCDisconnected();
 	void CheckIRCConnect();
 
@@ -177,6 +179,9 @@ public:
 	unsigned short int GetFloodBurst() const { return m_uFloodBurst; }
 	void SetFloodRate(double fFloodRate) { m_fFloodRate = fFloodRate; }
 	void SetFloodBurst(unsigned short int uFloodBurst) { m_uFloodBurst = uFloodBurst; }
+
+	unsigned short int GetJoinDelay() const { return m_uJoinDelay; }
+	void SetJoinDelay(unsigned short int uJoinDelay) { m_uJoinDelay = uJoinDelay; }
 
 	CString ExpandString(const CString& sStr) const;
 	CString& ExpandString(const CString& sStr, CString& sRet) const;
@@ -224,6 +229,8 @@ protected:
 
 	CIRCNetworkPingTimer* m_pPingTimer;
 	CIRCNetworkJoinTimer* m_pJoinTimer;
+
+	unsigned short int m_uJoinDelay;
 };
 
 #endif // !_IRCNETWORK_H
