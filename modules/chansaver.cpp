@@ -92,14 +92,14 @@ public:
 	}
 
 	virtual void OnJoin(const CNick& Nick, CChan& Channel) {
-		if (Nick.GetNick() == m_pNetwork->GetIRCNick().GetNick() && !Channel.InConfig()) {
+		if (Nick.GetNick() == GetNetwork()->GetIRCNick().GetNick() && !Channel.InConfig()) {
 			Channel.SetInConfig(true);
 			CZNC::Get().WriteConfig();
 		}
 	}
 
 	virtual void OnPart(const CNick& Nick, CChan& Channel, const CString& sMessage) {
-		if (Nick.GetNick() == m_pNetwork->GetIRCNick().GetNick() && Channel.InConfig()) {
+		if (Nick.GetNick() == GetNetwork()->GetIRCNick().GetNick() && Channel.InConfig()) {
 			Channel.SetInConfig(false);
 			CZNC::Get().WriteConfig();
 		}
@@ -115,4 +115,4 @@ template<> void TModInfo<CChanSaverMod>(CModInfo& Info) {
 	Info.AddType(CModInfo::GlobalModule);
 }
 
-USERMODULEDEFS(CChanSaverMod, "Keep config up-to-date when user joins/parts")
+USERMODULEDEFS(CChanSaverMod, "Keep config up-to-date when user joins/parts.")

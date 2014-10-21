@@ -157,6 +157,10 @@ CModule::~CModule() {
 	}
 
 	SaveRegistry();
+
+#ifdef HAVE_PTHREAD
+	CancelJobs(m_sJobs);
+#endif
 }
 
 void CModule::SetUser(CUser* pUser) { m_pUser = pUser; }
@@ -215,6 +219,22 @@ bool CModule::LoadRegistry() {
 bool CModule::SaveRegistry() const {
 	//CString sPrefix = (m_pUser) ? m_pUser->GetUserName() : ".global";
 	return (m_mssRegistry.WriteToDisk(GetSavePath() + "/.registry", 0600) == MCString::MCS_SUCCESS);
+}
+
+bool CModule::MoveRegistry(const CString& sPath) {
+	if (m_sSavePath != sPath) {
+		CFile fOldNVFile = CFile(m_sSavePath + "/.registry");
+		if (!fOldNVFile.Exists()) {
+			return false;
+		}
+		if (!CFile::Exists(sPath) && !CDir::MakeDir(sPath)) {
+			return false;
+		}
+		fOldNVFile.Copy(sPath + "/.registry");
+		m_sSavePath = sPath;
+		return true;
+	}
+	return false;
 }
 
 bool CModule::SetNV(const CString & sName, const CString & sValue, bool bWriteToDisk) {
@@ -449,6 +469,52 @@ void CModule::ListSockets() {
 	PutModule(Table);
 }
 
+#ifdef HAVE_PTHREAD
+CModuleJob::~CModuleJob()
+{
+	m_pModule->UnlinkJob(this);
+}
+
+void CModule::AddJob(CModuleJob *pJob)
+{
+	CThreadPool::Get().addJob(pJob);
+	m_sJobs.insert(pJob);
+}
+
+void CModule::CancelJob(CModuleJob *pJob)
+{
+	if (pJob == NULL)
+		return;
+	// Destructor calls UnlinkJob and removes the job from m_sJobs
+	CThreadPool::Get().cancelJob(pJob);
+}
+
+bool CModule::CancelJob(const CString& sJobName)
+{
+	set<CModuleJob*>::iterator it;
+	for (it = m_sJobs.begin(); it != m_sJobs.end(); ++it) {
+		if ((*it)->GetName().Equals(sJobName)) {
+			CancelJob(*it);
+			return true;
+		}
+	}
+	return false;
+}
+
+void CModule::CancelJobs(const std::set<CModuleJob*>& sJobs)
+{
+	set<CJob*> sPlainJobs(sJobs.begin(), sJobs.end());
+
+	// Destructor calls UnlinkJob and removes the jobs from m_sJobs
+	CThreadPool::Get().cancelJobs(sPlainJobs);
+}
+
+bool CModule::UnlinkJob(CModuleJob *pJob)
+{
+	return 0 != m_sJobs.erase(pJob);
+}
+#endif
+
 bool CModule::AddCommand(const CModCommand& Command)
 {
 	if (Command.GetFunction() == NULL)
@@ -504,18 +570,23 @@ bool CModule::HandleCommand(const CString& sLine) {
 }
 
 void CModule::HandleHelpCommand(const CString& sLine) {
-	CString sFilter = sLine.Token(1, true);
+	CString sFilter = sLine.Token(1).AsLower();
 	CString::size_type  iFilterLength = sFilter.size();
 	CTable Table;
 	map<CString, CModCommand>::const_iterator it;
 
 	CModCommand::InitHelp(Table);
 	for (it = m_mCommands.begin(); it != m_mCommands.end(); ++it) {
-		if (sFilter.empty() || (it->second.GetCommand().Equals(sFilter, false, iFilterLength))) {
+		CString sCmd = it->second.GetCommand().AsLower();
+		if (sFilter.empty() || (sCmd.Equals(sFilter, true, iFilterLength)) || sCmd.WildCmp(sFilter)) {
 			it->second.AddHelp(Table);
 		}
 	}
-	PutModule(Table);
+	if (Table.empty()) {
+		PutModule("No matches for '" + sFilter + "'");
+	} else {
+		PutModule(Table);
+	}
 }
 
 CString CModule::GetModNick() const { return ((m_pUser) ? m_pUser->GetStatusPrefix() : "*") + m_sModName; }
@@ -1006,7 +1077,7 @@ bool CModules::LoadModule(const CString& sModule, const CString& sArgs, CModInfo
 	}
 
 	if (!sRetMsg.empty()) {
-		sRetMsg += "[" + sRetMsg + "] ";
+		sRetMsg += " ";
 	}
 	sRetMsg += "[" + sModPath + "]";
 	return true;
@@ -1144,6 +1215,28 @@ void CModules::GetAvailableMods(set<CModInfo>& ssMods, CModInfo::EModuleType eTy
 	}
 
 	GLOBALMODULECALL(OnGetAvailableMods(ssMods, eType), NOTHING);
+}
+
+void CModules::GetDefaultMods(set<CModInfo>& ssMods, CModInfo::EModuleType eType) {
+
+	GetAvailableMods(ssMods, eType);
+
+	const map<CString, CModInfo::EModuleType> ns = {
+		{ "chansaver", CModInfo::UserModule },
+		{ "controlpanel", CModInfo::UserModule },
+		{ "simple_away", CModInfo::NetworkModule },
+		{ "webadmin", CModInfo::GlobalModule }
+	};
+
+	auto it = ssMods.begin();
+	while (it != ssMods.end()) {
+		auto it2 = ns.find(it->GetName());
+		if (it2 != ns.end() && it2->second == eType) {
+			++it;
+		} else {
+			it = ssMods.erase(it);
+		}
+	}
 }
 
 bool CModules::FindModPath(const CString& sModule, CString& sModPath,

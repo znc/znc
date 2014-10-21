@@ -37,6 +37,25 @@ TEST(IRC32, GetMessageTags) {
 	exp["a"] = "==b==";
 	EXPECT_EQ(exp, CUtils::GetMessageTags("@a===b== :rest"));
 	exp.clear();
+
+	exp["a"] = "";
+	exp["b"] = "c";
+	exp["d"] = "";
+	EXPECT_EQ(exp, CUtils::GetMessageTags("@a;b=c;d :rest"));
+	exp.clear();
+
+	exp["semi-colon"] += ';';
+	exp["space"] += ' ';
+	exp["NUL"] += '\0';
+	exp["backslash"] += '\\';
+	exp["CR"] += '\r';
+	exp["LF"] += '\n';
+	EXPECT_EQ(exp, CUtils::GetMessageTags(R"(@semi-colon=\:;space=\s;NUL=\0;backslash=\\;CR=\r;LF=\n :rest)"));
+	exp.clear();
+
+	exp["a"] = "; \\\r\n";
+	EXPECT_EQ(exp, CUtils::GetMessageTags(R"(@a=\:\s\\\r\n :rest)"));
+	exp.clear();
 }
 
 TEST(IRC32, SetMessageTags) {
@@ -54,5 +73,24 @@ TEST(IRC32, SetMessageTags) {
 	tags["c"] = "d";
 	CUtils::SetMessageTags(sLine, tags);
 	EXPECT_EQ("@a=b;c=d :rest", sLine);
+
+	tags["e"] = "";
+	CUtils::SetMessageTags(sLine, tags);
+	EXPECT_EQ("@a=b;c=d;e :rest", sLine);
+	tags.clear();
+
+	tags["semi-colon"] += ';';
+	tags["space"] += ' ';
+	tags["NUL"] += '\0';
+	tags["backslash"] += '\\';
+	tags["CR"] += '\r';
+	tags["LF"] += '\n';
+	CUtils::SetMessageTags(sLine, tags);
+	EXPECT_EQ(R"(@CR=\r;LF=\n;NUL=\0;backslash=\\;semi-colon=\:;space=\s :rest)", sLine);
+	tags.clear();
+
+	tags["a"] = "; \\\r\n";
+	CUtils::SetMessageTags(sLine, tags);
+	EXPECT_EQ(R"(@a=\:\s\\\r\n :rest)", sLine);
 }
 

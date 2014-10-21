@@ -69,7 +69,7 @@ public:
 	virtual bool OnLoad(const CString& sArgs, CString& sMessage)
 	{
 #ifndef MOD_LISTSOCKETS_ALLOW_EVERYONE
-		if (!m_pUser->IsAdmin()) {
+		if (!GetUser()->IsAdmin()) {
 			sMessage = "You must be admin to use this module";
 			return false;
 		}
@@ -163,7 +163,7 @@ public:
 	CString GetCreatedTime(Csock* pSocket) {
 		unsigned long long iStartTime = pSocket->GetStartTime();
 		time_t iTime = iStartTime / 1000;
-		return CUtils::FormatTime(iTime, "%Y-%m-%d %H:%M:%S", m_pUser->GetTimezone());
+		return CUtils::FormatTime(iTime, "%Y-%m-%d %H:%M:%S", GetUser()->GetTimezone());
 	}
 
 	CString GetLocalHost(Csock* pSocket, bool bShowHosts) {

@@ -28,6 +28,7 @@
 #include <znc/User.h>
 #include <znc/IRCNetwork.h>
 #include <znc/FileUtils.h>
+#include <znc/Query.h>
 
 using std::vector;
 
@@ -96,7 +97,7 @@ public:
 		{
 			m_bFirstLoad = true;
 			AddTimer(new CSaveBuffJob(this, 60, 0, "SaveBuff", "Saves the current buffer to disk every 1 minute"));
-			const vector<CChan *>& vChans = m_pNetwork->GetChans();
+			const vector<CChan *>& vChans = GetNetwork()->GetChans();
 			for (u_int a = 0; a < vChans.size(); a++)
 			{
 				if (vChans[a]->AutoClearChanBuffer())
@@ -107,15 +108,24 @@ public:
 					PutUser(":***!znc@znc.in PRIVMSG " + vChans[a]->GetName() + " :Failed to decrypt this channel, did you change the encryption pass?");
 				}
 			}
+			const vector<CQuery *>& vQueries = GetNetwork()->GetQueries();
+			for (u_int a = 0; a < vQueries.size(); a++)
+			{
+				if (!BootStrap(vQueries[a]))
+				{
+					PutUser(":***!znc@znc.in PRIVMSG " + vQueries[a]->GetName() + " :Failed to decrypt this query, did you change the encryption pass?");
+				}
+			}
 		}
 	}
 
-	bool BootStrap(CChan *pChan)
+	template<typename T>
+	bool BootStrap(T *pTarget)
 	{
 		CString sFile;
-		if (DecryptChannel(pChan->GetName(), sFile))
+		if (DecryptBuffer(pTarget->GetName(), sFile))
 		{
-			if (!pChan->GetBuffer().IsEmpty())
+			if (!pTarget->GetBuffer().IsEmpty())
 				return(true); // reloaded a module probably in this case, so just verify we can decrypt the file
 
 			VCString vsLines;
@@ -139,17 +149,17 @@ public:
 					CString sText(*++it);
 					sText.Trim();
 
-					pChan->AddBuffer(sFormat, sText, &ts);
+					pTarget->AddBuffer(sFormat, sText, &ts);
 				} else
 				{
 					// Old format, escape the line and use as is.
-					pChan->AddBuffer(_NAMEDFMT(sLine));
+					pTarget->AddBuffer(_NAMEDFMT(sLine));
 				}
 			}
 		} else
 		{
 			m_sPassword = "";
-			CUtils::PrintError("[" + GetModName() + ".so] Failed to Decrypt [" + pChan->GetName() + "]");
+			CUtils::PrintError("[" + GetModName() + ".so] Failed to Decrypt [" + pTarget->GetName() + "]");
 			return(false);
 		}
 
@@ -160,7 +170,7 @@ public:
 	{
 		if (!m_sPassword.empty())
 		{
-			const vector<CChan *>& vChans = m_pNetwork->GetChans();
+			const vector<CChan *>& vChans = GetNetwork()->GetChans();
 			for (u_int a = 0; a < vChans.size(); a++)
 			{
 				CString sPath = GetPath(vChans[a]->GetName());
@@ -217,7 +227,7 @@ public:
 		} else if (sCommand.Equals("dumpbuff"))
 		{
 			CString sFile;
-			if (DecryptChannel(sArgs, sFile))
+			if (DecryptBuffer(sArgs, sFile))
 			{
 				VCString vsLines;
 				VCString::iterator it;
@@ -244,11 +254,11 @@ public:
 			PutModule("Unknown command [" + sCommand + "]");
 	}
 
-	void Replay(const CString & sChan)
+	void Replay(const CString & sBuffer)
 	{
 		CString sFile;
-		PutUser(":***!znc@znc.in PRIVMSG " + sChan + " :Buffer Playback...");
-		if (DecryptChannel(sChan, sFile))
+		PutUser(":***!znc@znc.in PRIVMSG " + sBuffer + " :Buffer Playback...");
+		if (DecryptBuffer(sBuffer, sFile))
 		{
 			VCString vsLines;
 			VCString::iterator it;
@@ -261,12 +271,12 @@ public:
 				PutUser(sLine);
 			}
 		}
-		PutUser(":***!znc@znc.in PRIVMSG " + sChan + " :Playback Complete.");
+		PutUser(":***!znc@znc.in PRIVMSG " + sBuffer + " :Playback Complete.");
 	}
 
 	CString GetPath(const CString & sChannel)
 	{
-		CString sBuffer = m_pUser->GetUserName() + sChannel.AsLower();
+		CString sBuffer = GetUser()->GetUserName() + sChannel.AsLower();
 		CString sRet = GetSavePath();
 		sRet += "/" + CBlowfish::MD5(sBuffer, true);
 		return(sRet);
@@ -282,7 +292,7 @@ public:
 	void AddBuffer(CChan& chan, const CString &sLine)
 	{
 		// If they have AutoClearChanBuffer enabled, only add messages if no client is connected
-		if (chan.AutoClearChanBuffer() && m_pNetwork->IsUserAttached())
+		if (chan.AutoClearChanBuffer() && GetNetwork()->IsUserAttached())
 			return;
 		chan.AddBuffer(sLine);
 	}
@@ -297,7 +307,7 @@ public:
 		{
 			AddBuffer(*vChans[a], SpoofChanMsg(vChans[a]->GetName(), cNick.GetNickMask() + " QUIT " + sMessage));
 		}
-		if (cNick.NickEquals(m_pUser->GetNick()))
+		if (cNick.NickEquals(GetUser()->GetNick()))
 			SaveBufferToDisk(); // need to force a save here to see this!
 	}
 
@@ -314,7 +324,7 @@ public:
 	}
 	virtual void OnJoin(const CNick& cNick, CChan& cChannel)
 	{
-		if (cNick.NickEquals(m_pUser->GetNick()) && cChannel.GetBuffer().empty())
+		if (cNick.NickEquals(GetUser()->GetNick()) && cChannel.GetBuffer().empty())
 		{
 			BootStrap((CChan *)&cChannel);
 			if (!cChannel.GetBuffer().empty())
@@ -325,7 +335,7 @@ public:
 	virtual void OnPart(const CNick& cNick, CChan& cChannel)
 	{
 		AddBuffer(cChannel, SpoofChanMsg(cChannel.GetName(), cNick.GetNickMask() + " PART"));
-		if (cNick.NickEquals(m_pUser->GetNick()))
+		if (cNick.NickEquals(GetUser()->GetNick()))
 			SaveBufferToDisk(); // need to force a save here to see this!
 	}
 #endif /* LEGACY_SAVEBUFF */
@@ -334,15 +344,15 @@ private:
 	bool    m_bBootError;
 	bool    m_bFirstLoad;
 	CString m_sPassword;
-	bool DecryptChannel(const CString & sChan, CString & sBuffer)
+	bool DecryptBuffer(const CString & sName, CString & sBuffer)
 	{
-		CString sChannel = GetPath(sChan);
+		CString sPath = GetPath(sName);
 		CString sFile;
 		sBuffer = "";
 
-		CFile File(sChannel);
+		CFile File(sPath);
 
-		if (sChannel.empty() || !File.Open() || !File.ReadFile(sFile))
+		if (sPath.empty() || !File.Open() || !File.ReadFile(sFile))
 			 return(true); // gonna be successful here
 
 		File.Close();
@@ -355,7 +365,7 @@ private:
 			if (sBuffer.Left(strlen(CRYPT_VERIFICATION_TOKEN)) != CRYPT_VERIFICATION_TOKEN)
 			{
 				// failed to decode :(
-				PutModule("Unable to decode Encrypted file [" + sChannel + "]");
+				PutModule("Unable to decode Encrypted file [" + sPath + "]");
 				return(false);
 			}
 			sBuffer.erase(0, strlen(CRYPT_VERIFICATION_TOKEN));
@@ -367,7 +377,7 @@ private:
 
 void CSaveBuffJob::RunJob()
 {
-	CSaveBuff *p = (CSaveBuff *)m_pModule;
+	CSaveBuff *p = (CSaveBuff *)GetModule();
 	p->SaveBufferToDisk();
 }
 
@@ -377,5 +387,5 @@ template<> void TModInfo<CSaveBuff>(CModInfo& Info) {
 	Info.SetArgsHelpText("This user module takes up to one arguments. Either --ask-pass or the password itself (which may contain spaces) or nothing");
 }
 
-NETWORKMODULEDEFS(CSaveBuff, "Stores channel buffers to disk, encrypted")
+NETWORKMODULEDEFS(CSaveBuff, "Stores channel and query buffers to disk, encrypted")
 

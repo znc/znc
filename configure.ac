@@ -29,6 +29,12 @@ AC_DEFUN([ZNC_AUTO_FAIL], [
 # AC_PROG_CXX sets CXXFLAGS to "-O2 -g" if it is unset which we don't want
 CXXFLAGS="$CXXFLAGS "
 AC_PROG_CXX
+# "Optional" because we want custom error message
+AX_CXX_COMPILE_STDCXX_11([noext], [optional])
+if test x"$HAVE_CXX11" != x1; then
+	AC_MSG_ERROR([Either upgrade your compiler, or use ZNC 1.4])
+fi
+
 AC_PROG_INSTALL
 AC_PROG_GREP
 AC_PROG_SED
@@ -81,6 +87,8 @@ case "${host_os}" in
 		ISSUN=1
 	;;
 	cygwin)
+		# We don't want to use -std=gnu++11 instead of -std=c++11, but among other things, -std=c++11 defines __STRICT_ANSI__ which makes cygwin not to compile: undefined references to strerror_r, to fdopen, to strcasecmp, etc (their declarations in system headers are between ifdef)
+		appendCXX -U__STRICT_ANSI__
 		ISCYGWIN=1
 	;;
 	darwin*)
@@ -195,7 +203,6 @@ if test "$DEBUG" != "no"; then
 		# But they cause crashes on cygwin while loading modules
 		AC_DEFINE([_GLIBCXX_DEBUG], [1], [Enable extra debugging checks in libstdc++])
 		AC_DEFINE([_GLIBCXX_DEBUG_PEDANTIC], [1], [Enable extra debugging checks in libstdc++])
-		AC_DEFINE([_GLIBCXX_CONCEPT_CHECKS], [1], [Enable extra debugging checks in libstdc++])
 	fi
 else
 	if test "x$OPTIMIZE" = "xyes"; then
@@ -233,7 +240,7 @@ if test "$POLL" = "yes"; then
 fi
 
 AC_CHECK_LIB( gnugetopt, getopt_long,)
-AC_CHECK_FUNCS([lstat getopt_long getphassphrase])
+AC_CHECK_FUNCS([lstat getopt_long getpassphrase])
 
 # ----- Check for dlopen
 
@@ -419,12 +426,7 @@ fi
 if test "x$PERL" != xno -o "x$PYTHON" != xno; then
 	old_USESWIG="$USESWIG"
 	if test "x$USESWIG" != "xno"; then
-		if test -z "$ISDARWIN"; then
-			AC_PROG_SWIG([2.0.8])
-		else
-			# Old SWIG doesn't like libc++, see https://github.com/swig/swig/issues/73
-			AC_PROG_SWIG([2.0.12])
-		fi
+		AC_PROG_SWIG([3.0.0])
 		test -z "$SWIG" && USESWIG=no
 		if test "x$USESWIG" = xno -a "x$old_USESWIG" = yes; then
 			AC_MSG_ERROR([Could not found appropriate SWIG installation. Check config.log for details.])
@@ -639,6 +641,18 @@ AC_CONFIG_FILES([znc.pc])
 AC_CONFIG_FILES([znc-uninstalled.pc])
 AC_CONFIG_FILES([modules/Makefile])
 AC_OUTPUT
+
+if test "x$ISCYGWIN" = x1; then
+		# Side effect of undefining __STRICT_ANSI__
+		# http://llvm.org/bugs/show_bug.cgi?id=13530
+		echo                                 >> include/znc/zncconfig.h
+		echo '#ifndef ZNCCONFIG_H_ADDITIONS' >> include/znc/zncconfig.h
+		echo '#define ZNCCONFIG_H_ADDITIONS' >> include/znc/zncconfig.h
+		echo '#ifdef __clang__'              >> include/znc/zncconfig.h
+		echo 'struct __float128;'            >> include/znc/zncconfig.h
+		echo '#endif'                        >> include/znc/zncconfig.h
+		echo '#endif'                        >> include/znc/zncconfig.h
+fi
 
 echo
 echo ZNC AC_PACKAGE_VERSION configured

@@ -184,7 +184,7 @@ public:
 
 	virtual void OnClientLogin() {
 		MCString msParams;
-		msParams["target"] = m_pNetwork->GetCurNick();
+		msParams["target"] = GetNetwork()->GetCurNick();
 
 		size_t uSize = m_Buffer.Size();
 		for (unsigned int uIdx = 0; uIdx < uSize; uIdx++) {
@@ -321,12 +321,13 @@ public:
 private:
 	void Process(const CNick& Nick, const CString& sMessage, const CString& sSource) {
 		set<CString> sHandledTargets;
-		CChan* pChannel = m_pNetwork->FindChan(sSource);
+		CIRCNetwork* pNetwork = GetNetwork();
+		CChan* pChannel = pNetwork->FindChan(sSource);
 
 		for (list<CWatchEntry>::iterator it = m_lsWatchers.begin(); it != m_lsWatchers.end(); ++it) {
 			CWatchEntry& WatchEntry = *it;
 
-			if (m_pNetwork->IsUserAttached() && WatchEntry.IsDetachedClientOnly()) {
+			if (pNetwork->IsUserAttached() && WatchEntry.IsDetachedClientOnly()) {
 				continue;
 			}
 
@@ -334,10 +335,10 @@ private:
 				continue;
 			}
 
-			if (WatchEntry.IsMatch(Nick, sMessage, sSource, m_pNetwork) &&
+			if (WatchEntry.IsMatch(Nick, sMessage, sSource, pNetwork) &&
 				sHandledTargets.count(WatchEntry.GetTarget()) < 1) {
-				if (m_pNetwork->IsUserAttached()) {
-					m_pNetwork->PutUser(":" + WatchEntry.GetTarget() + "!watch@znc.in PRIVMSG " + m_pNetwork->GetCurNick() + " :" + sMessage);
+				if (pNetwork->IsUserAttached()) {
+					pNetwork->PutUser(":" + WatchEntry.GetTarget() + "!watch@znc.in PRIVMSG " + pNetwork->GetCurNick() + " :" + sMessage);
 				} else {
 					m_Buffer.AddLine(":" + _NAMEDFMT(WatchEntry.GetTarget()) + "!watch@znc.in PRIVMSG {target} :{text}", sMessage);
 				}

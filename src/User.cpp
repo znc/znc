@@ -19,7 +19,9 @@
 #include <znc/FileUtils.h>
 #include <znc/IRCNetwork.h>
 #include <znc/IRCSock.h>
+#include <znc/Chan.h>
 #include <math.h>
+#include <algorithm>
 
 using std::vector;
 using std::set;
@@ -36,7 +38,7 @@ public:
 private:
 protected:
 	virtual void RunJob() {
-		vector<CClient*>& vUserClients = m_pUser->GetUserClients();
+		const vector<CClient*>& vUserClients = m_pUser->GetUserClients();
 		for (size_t c = 0; c < vUserClients.size(); ++c) {
 			CClient* pUserClient = vUserClients[c];
 
@@ -71,6 +73,8 @@ CUser::CUser(const CString& sUserName)
 	m_uBufferCount = 50;
 	m_uMaxJoinTries = 10;
 	m_bAutoClearChanBuffer = true;
+	m_bAutoClearQueryBuffer = true;
+	m_uMaxQueryBuffers = 50;
 	m_uMaxJoins = 0;
 	m_bBeingDeleted = false;
 	m_sTimestampFormat = "[%H:%M:%S]";
@@ -130,12 +134,14 @@ bool CUser::ParseConfig(CConfig* pConfig, CString& sError) {
 	TOption<unsigned int> UIntOptions[] = {
 		{ "jointries", &CUser::SetJoinTries },
 		{ "maxnetworks", &CUser::SetMaxNetworks },
+		{ "maxquerybuffers", &CUser::SetMaxQueryBuffers },
 		{ "maxjoins", &CUser::SetMaxJoins },
 	};
 	size_t numUIntOptions = sizeof(UIntOptions) / sizeof(UIntOptions[0]);
 	TOption<bool> BoolOptions[] = {
 		{ "keepbuffer", &CUser::SetKeepBuffer }, // XXX compatibility crap from pre-0.207
 		{ "autoclearchanbuffer", &CUser::SetAutoClearChanBuffer },
+		{ "autoclearquerybuffer", &CUser::SetAutoClearQueryBuffer },
 		{ "multiclients", &CUser::SetMultiClients },
 		{ "denyloadmod", &CUser::SetDenyLoadMod },
 		{ "admin", &CUser::SetAdmin },
@@ -352,35 +358,35 @@ bool CUser::ParseConfig(CConfig* pConfig, CString& sError) {
 	for (vit = vsList.begin(); vit != vsList.end(); ++vit) {
 		sValue = *vit;
 		CString sModName = sValue.Token(0);
+		CString sNotice = "Loading user module [" + sModName + "]";
 
 		// XXX Legacy crap, added in ZNC 0.089
 		if (sModName == "discon_kick") {
-			CUtils::PrintMessage("NOTICE: [discon_kick] was renamed, loading [disconkick] instead");
+			sNotice = "NOTICE: [discon_kick] was renamed, loading [disconkick] instead";
 			sModName = "disconkick";
 		}
 
 		// XXX Legacy crap, added in ZNC 0.099
 		if (sModName == "fixfreenode") {
-			CUtils::PrintMessage("NOTICE: [fixfreenode] doesn't do anything useful anymore, ignoring it");
+			sNotice = "NOTICE: [fixfreenode] doesn't do anything useful anymore, ignoring it";
 			continue;
 		}
 
 		// XXX Legacy crap, added in ZNC 0.207
 		if (sModName == "admin") {
-			CUtils::PrintMessage("NOTICE: [admin] module was renamed, loading [controlpanel] instead");
+			sNotice = "NOTICE: [admin] module was renamed, loading [controlpanel] instead";
 			sModName = "controlpanel";
 		}
 		
 		// XXX Legacy crap, should have been added ZNC 0.207, but added only in 1.1 :(
 		if (sModName == "away") {
-			CUtils::PrintMessage("NOTICE: [away] was renamed, "
-					"loading [awaystore] instead");
+			sNotice = "NOTICE: [away] was renamed, loading [awaystore] instead";
 			sModName = "awaystore";
 		}
 
 		// XXX Legacy crap, added in 1.1; fakeonline module was dropped in 1.0 and returned in 1.1
 		if (sModName == "fakeonline") {
-			CUtils::PrintMessage("NOTICE: [fakeonline] was renamed, loading [modules_online] instead");
+			sNotice = "NOTICE: [fakeonline] was renamed, loading [modules_online] instead";
 			sModName = "modules_online";
 		}
 
@@ -406,46 +412,26 @@ bool CUser::ParseConfig(CConfig* pConfig, CString& sError) {
 			continue;
 		}
 
-		CUtils::PrintAction("Loading user module [" + sModName + "]");
 		CString sModRet;
 		CString sArgs = sValue.Token(1, true);
-		bool bModRet = true;
 
-		CModInfo ModInfo;
-		if (!CZNC::Get().GetModules().GetModInfo(ModInfo, sModName, sModRet)) {
-			sError = "Unable to find modinfo [" + sModName + "] [" + sModRet + "]";
-			return false;
-		}
-
-		if (!ModInfo.SupportsType(CModInfo::UserModule) && ModInfo.SupportsType(CModInfo::NetworkModule)) {
-			CUtils::PrintMessage("NOTICE: Module [" + sModName + "] is a network module, loading module for all networks in user.");
-
-			// Do they have old NV?
-			CFile fNVFile = CFile(GetUserPath() + "/moddata/" + sModName + "/.registry");
-
-			for (vector<CIRCNetwork*>::iterator it = m_vIRCNetworks.begin(); it != m_vIRCNetworks.end(); ++it) {
-				if (fNVFile.Exists()) {
-					CString sNetworkModPath = (*it)->GetNetworkPath() + "/moddata/" + sModName;
-					if (!CFile::Exists(sNetworkModPath)) {
-						CDir::MakeDir(sNetworkModPath);
-					}
-
-					fNVFile.Copy(sNetworkModPath + "/.registry");
-				}
-
-				bModRet = (*it)->GetModules().LoadModule(sModName, sArgs, CModInfo::NetworkModule, this, *it, sModRet);
-				if (!bModRet) {
-					break;
-				}
-			}
-		} else {
-			bModRet = GetModules().LoadModule(sModName, sArgs, CModInfo::UserModule, this, NULL, sModRet);
-		}
+		bool bModRet = LoadModule(sModName, sArgs, sNotice, sModRet);
 
 		CUtils::PrintStatus(bModRet, sModRet);
 		if (!bModRet) {
-			sError = sModRet;
-			return false;
+			// XXX The awaynick module was retired in 1.6 (still available as external module)
+			if (sModName == "awaynick") {
+				// load simple_away instead, unless it's already on the list
+				if (std::find(vsList.begin(), vsList.end(), "simple_away") == vsList.end()) {
+					sNotice = "Loading [simple_away] module instead";
+					sModName = "simple_away";
+					// not a fatal error if simple_away is not available
+					LoadModule(sModName, sArgs, sNotice, sModRet);
+				}
+			} else {
+				sError = sModRet;
+				return false;
+			}
 		}
 		continue;
 	}
@@ -654,7 +640,7 @@ void CUser::CloneNetworks(const CUser& User) {
 		// have requested the rehash. Then when we do
 		// client->PutStatus("Rehashing succeeded!") we would
 		// crash if there was no client anymore.
-		vector<CClient*>& vClients = FindNetwork(*it)->GetClients();
+		const vector<CClient*>& vClients = FindNetwork(*it)->GetClients();
 
 		while (vClients.begin() != vClients.end()) {
 			CClient *pClient = vClients.front();
@@ -699,6 +685,7 @@ bool CUser::Clone(const CUser& User, CString& sErrorRet, bool bCloneNetworks) {
 	SetBufferCount(User.GetBufferCount(), true);
 	SetJoinTries(User.JoinTries());
 	SetMaxNetworks(User.MaxNetworks());
+	SetMaxQueryBuffers(User.MaxQueryBuffers());
 	SetMaxJoins(User.MaxJoins());
 	SetClientEncoding(User.GetClientEncoding());
 
@@ -736,6 +723,7 @@ bool CUser::Clone(const CUser& User, CString& sErrorRet, bool bCloneNetworks) {
 
 	// Flags
 	SetAutoClearChanBuffer(User.AutoClearChanBuffer());
+	SetAutoClearQueryBuffer(User.AutoClearQueryBuffer());
 	SetMultiClients(User.MultiClients());
 	SetDenyLoadMod(User.DenyLoadMod());
 	SetAdmin(User.IsAdmin());
@@ -852,7 +840,7 @@ bool CUser::IsValid(CString& sErrMsg, bool bSkipPass) const {
 	return true;
 }
 
-CConfig CUser::ToConfig() {
+CConfig CUser::ToConfig() const {
 	CConfig config;
 	CConfig passConfig;
 
@@ -886,6 +874,7 @@ CConfig CUser::ToConfig() {
 	config.AddKeyValuePair("ChanModes", GetDefaultChanModes());
 	config.AddKeyValuePair("Buffer", CString(GetBufferCount()));
 	config.AddKeyValuePair("AutoClearChanBuffer", CString(AutoClearChanBuffer()));
+	config.AddKeyValuePair("AutoClearQueryBuffer", CString(AutoClearQueryBuffer()));
 	config.AddKeyValuePair("MultiClients", CString(MultiClients()));
 	config.AddKeyValuePair("DenyLoadMod", CString(DenyLoadMod()));
 	config.AddKeyValuePair("Admin", CString(IsAdmin()));
@@ -896,6 +885,7 @@ CConfig CUser::ToConfig() {
 	config.AddKeyValuePair("Timezone", m_sTimezone);
 	config.AddKeyValuePair("JoinTries", CString(m_uMaxJoinTries));
 	config.AddKeyValuePair("MaxNetworks", CString(m_uMaxNetworks));
+	config.AddKeyValuePair("MaxQueryBuffers", CString(m_uMaxQueryBuffers));
 	config.AddKeyValuePair("MaxJoins", CString(m_uMaxJoins));
 	config.AddKeyValuePair("ClientEncoding", GetClientEncoding());
 
@@ -914,7 +904,7 @@ CConfig CUser::ToConfig() {
 	}
 
 	// Modules
-	CModules& Mods = GetModules();
+	const CModules& Mods = GetModules();
 
 	if (!Mods.empty()) {
 		for (unsigned int a = 0; a < Mods.size(); a++) {
@@ -967,11 +957,11 @@ bool CUser::CheckPass(const CString& sPass) const {
 	return (CClient*) CZNC::Get().GetManager().FindSockByName(sSockName);
 }*/
 
-CString CUser::GetLocalDCCIP() {
+CString CUser::GetLocalDCCIP() const {
 	if (!GetDCCBindHost().empty())
 		return GetDCCBindHost();
 
-	for (vector<CIRCNetwork*>::iterator it = m_vIRCNetworks.begin(); it != m_vIRCNetworks.end(); ++it) {
+	for (vector<CIRCNetwork*>::const_iterator it = m_vIRCNetworks.begin(); it != m_vIRCNetworks.end(); ++it) {
 		CIRCNetwork *pNetwork = *it;
 		CIRCSock* pIRCSock = pNetwork->GetIRCSock();
 		if (pIRCSock) {
@@ -1089,6 +1079,50 @@ bool CUser::IsUserAttached() const {
 	return false;
 }
 
+bool CUser::LoadModule(const CString& sModName, const CString& sArgs, const CString& sNotice, CString& sError)
+{
+	bool bModRet = true;
+	CString sModRet;
+
+	CModInfo ModInfo;
+	if (!CZNC::Get().GetModules().GetModInfo(ModInfo, sModName, sModRet)) {
+		sError = "Unable to find modinfo [" + sModName + "] [" + sModRet + "]";
+		return false;
+	}
+
+	CUtils::PrintAction(sNotice);
+
+	if (!ModInfo.SupportsType(CModInfo::UserModule) && ModInfo.SupportsType(CModInfo::NetworkModule)) {
+		CUtils::PrintMessage("NOTICE: Module [" + sModName + "] is a network module, loading module for all networks in user.");
+
+		// Do they have old NV?
+		CFile fNVFile = CFile(GetUserPath() + "/moddata/" + sModName + "/.registry");
+
+		for (vector<CIRCNetwork*>::iterator it = m_vIRCNetworks.begin(); it != m_vIRCNetworks.end(); ++it) {
+			if (fNVFile.Exists()) {
+				CString sNetworkModPath = (*it)->GetNetworkPath() + "/moddata/" + sModName;
+				if (!CFile::Exists(sNetworkModPath)) {
+					CDir::MakeDir(sNetworkModPath);
+				}
+
+				fNVFile.Copy(sNetworkModPath + "/.registry");
+			}
+
+			bModRet = (*it)->GetModules().LoadModule(sModName, sArgs, CModInfo::NetworkModule, this, *it, sModRet);
+			if (!bModRet) {
+				break;
+			}
+		}
+	} else {
+		bModRet = GetModules().LoadModule(sModName, sArgs, CModInfo::UserModule, this, NULL, sModRet);
+	}
+
+	if (!bModRet) {
+		sError = sModRet;
+	}
+	return bModRet;
+}
+
 // Setters
 void CUser::SetNick(const CString& s) { m_sNick = s; }
 void CUser::SetAltNick(const CString& s) { m_sAltNick = s; }
@@ -1108,11 +1142,24 @@ void CUser::SetDenySetBindHost(bool b) { m_bDenySetBindHost = b; }
 void CUser::SetDefaultChanModes(const CString& s) { m_sDefaultChanModes = s; }
 void CUser::SetClientEncoding(const CString& s) { m_sClientEncoding = s; }
 void CUser::SetQuitMsg(const CString& s) { m_sQuitMsg = s; }
-void CUser::SetAutoClearChanBuffer(bool b) { m_bAutoClearChanBuffer = b; }
+void CUser::SetAutoClearChanBuffer(bool b) {
+	for (CIRCNetwork* pNetwork : m_vIRCNetworks) {
+		for (CChan* pChan : pNetwork->GetChans()) {
+			pChan->InheritAutoClearChanBuffer(b);
+		}
+	}
+	m_bAutoClearChanBuffer = b;
+}
+void CUser::SetAutoClearQueryBuffer(bool b) { m_bAutoClearQueryBuffer = b; }
 
 bool CUser::SetBufferCount(unsigned int u, bool bForce) {
 	if (!bForce && u > CZNC::Get().GetMaxBufferSize())
 		return false;
+	for (CIRCNetwork* pNetwork : m_vIRCNetworks) {
+		for (CChan* pChan : pNetwork->GetChans()) {
+			pChan->InheritBufferCount(u, bForce);
+		}
+	}
 	m_uBufferCount = u;
 	return true;
 }
@@ -1145,7 +1192,7 @@ bool CUser::SetStatusPrefix(const CString& s) {
 // !Setters
 
 // Getters
-vector<CClient*> CUser::GetAllClients() {
+vector<CClient*> CUser::GetAllClients() const {
 	vector<CClient*> vClients;
 
 	for (unsigned int a = 0; a < m_vIRCNetworks.size(); a++) {
@@ -1185,6 +1232,7 @@ CString CUser::GetQuitMsg() const { return (!m_sQuitMsg.Trim_n().empty()) ? m_sQ
 const MCString& CUser::GetCTCPReplies() const { return m_mssCTCPReplies; }
 unsigned int CUser::GetBufferCount() const { return m_uBufferCount; }
 bool CUser::AutoClearChanBuffer() const { return m_bAutoClearChanBuffer; }
+bool CUser::AutoClearQueryBuffer() const { return m_bAutoClearQueryBuffer; }
 //CString CUser::GetSkinName() const { return (!m_sSkinName.empty()) ? m_sSkinName : CZNC::Get().GetSkinName(); }
 CString CUser::GetSkinName() const { return m_sSkinName; }
 const CString& CUser::GetUserPath() const { if (!CFile::Exists(m_sUserPath)) { CDir::MakeDir(m_sUserPath); } return m_sUserPath; }

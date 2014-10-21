@@ -79,8 +79,7 @@ public:
 		AddSubPage(new CWebSubPage("settings", "Global Settings", CWebSubPage::F_ADMIN));
 		AddSubPage(new CWebSubPage("edituser", "Your Settings", vParams));
 		AddSubPage(new CWebSubPage("traffic", "Traffic Info", CWebSubPage::F_ADMIN));
-		AddSubPage(new CWebSubPage("listusers", "List Users", CWebSubPage::F_ADMIN));
-		AddSubPage(new CWebSubPage("adduser", "Add User", CWebSubPage::F_ADMIN));
+		AddSubPage(new CWebSubPage("listusers", "Manage Users", CWebSubPage::F_ADMIN));
 	}
 
 	virtual ~CWebAdminMod() {
@@ -278,6 +277,8 @@ public:
 		pNewUser->SetTimezone(WebSock.GetParam("timezone"));
 		pNewUser->SetJoinTries(WebSock.GetParam("jointries").ToUInt());
 		pNewUser->SetMaxJoins(WebSock.GetParam("maxjoins").ToUInt());
+		pNewUser->SetAutoClearQueryBuffer(WebSock.GetParam("autoclearquerybuffer").ToBool());
+		pNewUser->SetMaxQueryBuffers(WebSock.GetParam("maxquerybuffers").ToUInt());
 
 		if (spSession->IsAdmin()) {
 			pNewUser->SetDenyLoadMod(WebSock.GetParam("denyloadmod").ToBool());
@@ -683,10 +684,16 @@ public:
 			}
 		}
 
-		pChan->SetBufferCount(WebSock.GetParam("buffercount").ToUInt(), spSession->IsAdmin());
+		unsigned int uBufferCount = WebSock.GetParam("buffercount").ToUInt();
+		if (pChan->GetBufferCount() != uBufferCount) {
+			pChan->SetBufferCount(uBufferCount, spSession->IsAdmin());
+		}
 		pChan->SetDefaultModes(WebSock.GetParam("defmodes"));
 		pChan->SetInConfig(WebSock.GetParam("save").ToBool());
-		pChan->SetAutoClearChanBuffer(WebSock.GetParam("autoclearchanbuffer").ToBool());
+		bool bAutoClearChanBuffer = WebSock.GetParam("autoclearchanbuffer").ToBool();
+		if (pChan->AutoClearChanBuffer() != bAutoClearChanBuffer) {
+			pChan->SetAutoClearChanBuffer(WebSock.GetParam("autoclearchanbuffer").ToBool());
+		}
 		pChan->SetKey(WebSock.GetParam("key"));
 
 		bool bDetached = WebSock.GetParam("detached").ToBool();
@@ -808,9 +815,13 @@ public:
 				Tmpl["Ident"] = pNetwork->GetIdent();
 				Tmpl["RealName"] = pNetwork->GetRealName();
 
+				Tmpl["QuitMsg"] = pNetwork->GetQuitMsg();
+
 				Tmpl["FloodProtection"] = CString(CIRCSock::IsFloodProtected(pNetwork->GetFloodRate()));
 				Tmpl["FloodRate"] = CString(pNetwork->GetFloodRate());
 				Tmpl["FloodBurst"] = CString(pNetwork->GetFloodBurst());
+
+				Tmpl["JoinDelay"] = CString(pNetwork->GetJoinDelay());
 
 				Tmpl["IRCConnectEnabled"] = CString(pNetwork->GetIRCConnectEnabled());
 
@@ -831,7 +842,11 @@ public:
 					l["Perms"] = pChan->GetPermStr();
 					l["CurModes"] = pChan->GetModeString();
 					l["DefModes"] = pChan->GetDefaultModes();
-					l["BufferCount"] = CString(pChan->GetBufferCount());
+					if (pChan->HasBufferCountSet()) {
+						l["BufferCount"] = CString(pChan->GetBufferCount());
+					} else {
+						l["BufferCount"] = CString(pChan->GetBufferCount()) + " (default)";
+					}
 					l["Options"] = pChan->GetOptions();
 
 					if (pChan->InConfig()) {
@@ -850,6 +865,7 @@ public:
 				Tmpl["FloodProtection"] = "true";
 				Tmpl["FloodRate"] = "1.0";
 				Tmpl["FloodBurst"] = "4";
+				Tmpl["JoinDelay"] = "0";
 			}
 
 			FOR_EACH_MODULE(i, make_pair(pUser, pNetwork)) {
@@ -865,26 +881,30 @@ public:
 			return true;
 		}
 
-		CString sName = WebSock.GetParam("network").Trim_n();
+		CString sName = WebSock.GetParam("name").Trim_n();
 		if (sName.empty()) {
 			WebSock.PrintErrorPage("Network name is a required argument");
 			return true;
 		}
-
-		if (!pNetwork) {
-			if (!spSession->IsAdmin() && !pUser->HasSpaceForNewNetwork()) {
-				WebSock.PrintErrorPage("Network number limit reached. Ask an admin to increase the limit for you, or delete few old ones from Your Settings");
-				return true;
-			}
-			if (!CIRCNetwork::IsValidNetwork(sName)) {
-				WebSock.PrintErrorPage("Network name should be alphanumeric");
-				return true;
-			}
+		if (!pNetwork && !spSession->IsAdmin() && !pUser->HasSpaceForNewNetwork()) {
+			WebSock.PrintErrorPage("Network number limit reached. Ask an admin to increase the limit for you, or delete few old ones from Your Settings");
+			return true;
+		}
+		if (!pNetwork || pNetwork->GetName() != sName) {
 			CString sNetworkAddError;
+			CIRCNetwork* pOldNetwork = pNetwork;
 			pNetwork = pUser->AddNetwork(sName, sNetworkAddError);
 			if (!pNetwork) {
 				WebSock.PrintErrorPage(sNetworkAddError);
 				return true;
+			}
+			if (pOldNetwork) {
+				for (CModule* pModule : pOldNetwork->GetModules()) {
+					CString sPath = pUser->GetUserPath() + "/networks/" + sName + "/moddata/" + pModule->GetModName();
+					pModule->MoveRegistry(sPath);
+				}
+				pNetwork->Clone(*pOldNetwork, false);
+				pUser->DeleteNetwork(pOldNetwork->GetName());
 			}
 		}
 
@@ -894,6 +914,8 @@ public:
 		pNetwork->SetAltNick(WebSock.GetParam("altnick"));
 		pNetwork->SetIdent(WebSock.GetParam("ident"));
 		pNetwork->SetRealName(WebSock.GetParam("realname"));
+
+		pNetwork->SetQuitMsg(WebSock.GetParam("quitmsg"));
 
 		pNetwork->SetIRCConnectEnabled(WebSock.GetParam("doconnect").ToBool());
 
@@ -926,6 +948,8 @@ public:
 		} else {
 			pNetwork->SetFloodRate(-1);
 		}
+
+		pNetwork->SetJoinDelay(WebSock.GetParam("joindelay").ToUShort());
 
 		VCString vsArgs;
 
@@ -1072,8 +1096,6 @@ public:
 		Tmpl.SetFile("add_edit_user.tmpl");
 
 		if (!WebSock.GetParam("submitted").ToUInt()) {
-			CString sAllowedHosts, sServers, sChans, sCTCPReplies;
-
 			if (pUser) {
 				Tmpl["Action"] = "edituser";
 				Tmpl["Title"] = "Edit User [" + pUser->GetUserName() + "]";
@@ -1106,6 +1128,7 @@ public:
 				Tmpl["JoinTries"] = CString(pUser->JoinTries());
 				Tmpl["MaxNetworks"] = CString(pUser->MaxNetworks());
 				Tmpl["MaxJoins"] = CString(pUser->MaxJoins());
+				Tmpl["MaxQueryBuffers"] = CString(pUser->MaxQueryBuffers());
 
 				const set<CString>& ssAllowedHosts = pUser->GetAllowedHosts();
 				for (set<CString>::const_iterator it = ssAllowedHosts.begin(); it != ssAllowedHosts.end(); ++it) {
@@ -1290,6 +1313,12 @@ public:
 				if (pUser && pUser->DenySetBindHost()) { o11["Checked"] = "true"; }
 			}
 
+			CTemplate& o12 = Tmpl.AddRow("OptionLoop");
+			o12["Name"] = "autoclearquerybuffer";
+			o12["DisplayName"] = "Auto Clear Query Buffer";
+			o12["Tooltip"] = "Automatically Clear Query Buffer After Playback";
+			if (!pUser || pUser->AutoClearQueryBuffer()) { o12["Checked"] = "true"; }
+
 			FOR_EACH_MODULE(i, pUser) {
 				CTemplate& mod = Tmpl.AddRow("EmbeddedModuleLoop");
 				mod.insert(Tmpl.begin(), Tmpl.end());
@@ -1372,7 +1401,7 @@ public:
 	bool ListUsersPage(CWebSock& WebSock, CTemplate& Tmpl) {
 		CSmartPtr<CWebSession> spSession = WebSock.GetSession();
 		const map<CString,CUser*>& msUsers = CZNC::Get().GetUserMap();
-		Tmpl["Title"] = "List Users";
+		Tmpl["Title"] = "Manage Users";
 		Tmpl["Action"] = "listusers";
 
 		unsigned int a = 0;
@@ -1394,7 +1423,7 @@ public:
 	}
 
 	bool TrafficPage(CWebSock& WebSock, CTemplate& Tmpl) {
-		CSmartPtr<CWebSession> spSession = WebSock.GetSession();
+		Tmpl["Title"] = "Traffic Info";
 		Tmpl["Uptime"] = CZNC::Get().GetUptime();
 
 		const map<CString,CUser*>& msUsers = CZNC::Get().GetUserMap();
@@ -1553,7 +1582,6 @@ public:
 	bool SettingsPage(CWebSock& WebSock, CTemplate& Tmpl) {
 		Tmpl.SetFile("settings.tmpl");
 		if (!WebSock.GetParam("submitted").ToUInt()) {
-			CString sBindHosts, sMotd;
 			Tmpl["Action"] = "settings";
 			Tmpl["Title"] = "Settings";
 			Tmpl["StatusPrefix"] = CZNC::Get().GetStatusPrefix();
@@ -1774,4 +1802,4 @@ template<> void TModInfo<CWebAdminMod>(CModInfo& Info) {
 	Info.SetWikiPage("webadmin");
 }
 
-GLOBALMODULEDEFS(CWebAdminMod, "Web based administration module")
+GLOBALMODULEDEFS(CWebAdminMod, "Web based administration module.")

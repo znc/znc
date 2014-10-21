@@ -37,8 +37,10 @@ CChan::CChan(const CString& sName, CIRCNetwork* pNetwork, bool bInConfig, CConfi
 	m_Nick.SetNetwork(m_pNetwork);
 	m_bDetached = false;
 	m_bDisabled = false;
-	SetBufferCount(m_pNetwork->GetUser()->GetBufferCount(), true);
-	SetAutoClearChanBuffer(m_pNetwork->GetUser()->AutoClearChanBuffer());
+	m_bHasBufferCountSet = false;
+	m_bHasAutoClearChanBufferSet = false;
+	m_Buffer.SetLineCount(m_pNetwork->GetUser()->GetBufferCount(), true);
+	m_bAutoClearChanBuffer = m_pNetwork->GetUser()->AutoClearChanBuffer();
 	Reset();
 
 	if (pConfig) {
@@ -51,6 +53,9 @@ CChan::CChan(const CString& sName, CIRCNetwork* pNetwork, bool bInConfig, CConfi
 			SetAutoClearChanBuffer(!sValue.ToBool()); // XXX Compatibility crap, added in 0.207
 		if (pConfig->FindStringEntry("detached", sValue))
 			SetDetached(sValue.ToBool());
+		if (pConfig->FindStringEntry("disabled", sValue))
+			if (sValue.ToBool())
+				Disable();
 		if (pConfig->FindStringEntry("autocycle", sValue))
 			if (sValue.Equals("true"))
 				CUtils::PrintError("WARNING: AutoCycle has been removed, instead try -> LoadModule = autocycle " + sName);
@@ -78,16 +83,17 @@ void CChan::Reset() {
 	ResetJoinTries();
 }
 
-CConfig CChan::ToConfig() {
+CConfig CChan::ToConfig() const {
 	CConfig config;
-	CUser *pUser = m_pNetwork->GetUser();
 
-	if (pUser->GetBufferCount() != GetBufferCount())
+	if (m_bHasBufferCountSet)
 		config.AddKeyValuePair("Buffer", CString(GetBufferCount()));
-	if (pUser->AutoClearChanBuffer() != AutoClearChanBuffer())
+	if (m_bHasAutoClearChanBufferSet)
 		config.AddKeyValuePair("AutoClearChanBuffer", CString(AutoClearChanBuffer()));
 	if (IsDetached())
 		config.AddKeyValuePair("Detached", "true");
+	if (IsDisabled())
+		config.AddKeyValuePair("Disabled", "true");
 	if (!GetKey().empty())
 		config.AddKeyValuePair("Key", GetKey());
 	if (!GetDefaultModes().empty())
@@ -140,8 +146,8 @@ void CChan::JoinUser(bool bForce, const CString& sKey, CClient* pClient) {
 	CString sLine = sPre;
 	CString sPerm, sNick;
 
-	vector<CClient*>& vpClients = m_pNetwork->GetClients();
-	for (vector<CClient*>::iterator it = vpClients.begin(); it != vpClients.end(); ++it) {
+	const vector<CClient*>& vpClients = m_pNetwork->GetClients();
+	for (vector<CClient*>::const_iterator it = vpClients.begin(); it != vpClients.end(); ++it) {
 		CClient* pThisClient;
 		if (!pClient)
 			pThisClient = *it;
@@ -232,10 +238,21 @@ void CChan::SetModes(const CString& sModes) {
 }
 
 void CChan::SetAutoClearChanBuffer(bool b) {
+	m_bHasAutoClearChanBufferSet = true;
 	m_bAutoClearChanBuffer = b;
 
 	if (m_bAutoClearChanBuffer && !IsDetached() && m_pNetwork->IsUserOnline()) {
 		ClearBuffer();
+	}
+}
+
+void CChan::InheritAutoClearChanBuffer(bool b) {
+	if (!m_bHasAutoClearChanBufferSet) {
+		m_bAutoClearChanBuffer = b;
+
+		if (m_bAutoClearChanBuffer && !IsDetached() && m_pNetwork->IsUserOnline()) {
+			ClearBuffer();
+		}
 	}
 }
 
@@ -352,17 +369,21 @@ void CChan::ModeChange(const CString& sModes, const CNick* pOpNick) {
 }
 
 CString CChan::GetOptions() const {
-	CString sRet;
+	VCString vsRet;
 
 	if (IsDetached()) {
-		sRet += (sRet.empty()) ? "Detached" : ", Detached";
+		vsRet.push_back("Detached");
 	}
 
 	if (AutoClearChanBuffer()) {
-		sRet += (sRet.empty()) ? "AutoClearChanBuffer" : ", AutoClearChanBuffer";
+		if (HasAutoClearChanBufferSet()) {
+			vsRet.push_back("AutoClearChanBuffer");
+		} else {
+			vsRet.push_back("AutoClearChanBuffer (default)");
+		}
 	}
 
-	return sRet;
+	return CString(", ").Join(vsRet.begin(), vsRet.end());
 }
 
 CString CChan::GetModeArg(unsigned char uMode) const {
@@ -527,6 +548,9 @@ CNick* CChan::FindNick(const CString& sNick) {
 
 void CChan::SendBuffer(CClient* pClient) {
 	SendBuffer(pClient, m_Buffer);
+	if (AutoClearChanBuffer()) {
+		ClearBuffer();
+	}
 }
 
 void CChan::SendBuffer(CClient* pClient, const CBuffer& Buffer) {
@@ -557,9 +581,21 @@ void CChan::SendBuffer(CClient* pClient, const CBuffer& Buffer) {
 					m_pNetwork->PutUser(":***!znc@znc.in PRIVMSG " + GetName() + " :Buffer Playback...", pUseClient);
 				}
 
+				bool bBatch = pUseClient->HasBatch();
+				CString sBatchName = GetName().MD5();
+
+				if (bBatch) {
+					m_pNetwork->PutUser(":znc.in BATCH +" + sBatchName + " znc.in/playback " + GetName(), pUseClient);
+				}
+
 				size_t uSize = Buffer.Size();
 				for (size_t uIdx = 0; uIdx < uSize; uIdx++) {
 					CString sLine = Buffer.GetLine(uIdx, *pUseClient);
+					if (bBatch) {
+						MCString msBatchTags = CUtils::GetMessageTags(sLine);
+						msBatchTags["batch"] = sBatchName;
+						CUtils::SetMessageTags(sLine, msBatchTags);
+					}
 					bool bNotShowThisLine = false;
 					NETWORKMODULECALL(OnChanBufferPlayLine(*this, *pUseClient, sLine), m_pNetwork->GetUser(), m_pNetwork, NULL, &bNotShowThisLine);
 					if (bNotShowThisLine) continue;
@@ -572,12 +608,12 @@ void CChan::SendBuffer(CClient* pClient, const CBuffer& Buffer) {
 					m_pNetwork->PutUser(":***!znc@znc.in PRIVMSG " + GetName() + " :Playback Complete.", pUseClient);
 				}
 
+				if (bBatch) {
+					m_pNetwork->PutUser(":znc.in BATCH -" + sBatchName, pUseClient);
+				}
+
 				if (pClient)
 					break;
-			}
-
-			if (AutoClearChanBuffer()) {
- 				ClearBuffer();
 			}
 		}
 	}

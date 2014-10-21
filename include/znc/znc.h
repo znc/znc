@@ -107,7 +107,6 @@ public:
 	CSockManager& GetManager() { return m_Manager; }
 	const CSockManager& GetManager() const { return m_Manager; }
 	CModules& GetModules() { return *m_pModules; }
-	size_t FilterUncommonModules(std::set<CModInfo>& ssModules);
 	CString GetSkinName() const { return m_sSkinName; }
 	const CString& GetStatusPrefix() const { return m_sStatusPrefix; }
 	const CString& GetCurPath() const;

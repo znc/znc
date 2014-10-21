@@ -57,14 +57,14 @@ class CSendRaw_Mod: public CModule {
 
 	void CurrentClient(const CString& sLine) {
 		CString sData = sLine.Token(1, true);
-		m_pClient->PutClient(sData);
+		GetClient()->PutClient(sData);
 	}
 
 public:
 	virtual ~CSendRaw_Mod() {}
 
 	virtual bool OnLoad(const CString& sArgs, CString& sErrorMsg) {
-		if (!m_pUser->IsAdmin()) {
+		if (!GetUser()->IsAdmin()) {
 			sErrorMsg = "You must have admin privileges to load this module";
 			return false;
 		}

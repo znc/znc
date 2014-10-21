@@ -156,13 +156,15 @@ CString CUtils::GetSaltedHashPass(CString& sSalt) {
 	sSalt = GetSalt();
 
 	while (true) {
-		CString pass1 = CUtils::GetPass("Enter Password");
-		CString pass2 = CUtils::GetPass("Confirm Password");
+		CString pass1;
+		do {
+			pass1 = CUtils::GetPass("Enter password");
+		} while (pass1.empty());
+
+		CString pass2 = CUtils::GetPass("Confirm password");
 
 		if (!pass1.Equals(pass2, true)) {
 			CUtils::PrintError("The supplied passwords did not match");
-		} else if (pass1.empty()) {
-			CUtils::PrintError("You can not use an empty password");
 		} else {
 			// Construct the salted pass
 			return SaltedSHA256Hash(pass1, sSalt);
@@ -302,7 +304,7 @@ void CUtils::PrintPrompt(const CString& sMessage) {
 void CUtils::PrintMessage(const CString& sMessage, bool bStrong) {
 	if (CDebug::StdoutIsTTY()) {
 		if (bStrong)
-			fprintf(stdout, BOLD BLU "[" YEL " ** " BLU "]" DFL BOLD "%s" NORM "\n",
+			fprintf(stdout, BOLD BLU "[" YEL " ** " BLU "]" DFL BOLD " %s" NORM "\n",
 					sMessage.c_str());
 		else
 			fprintf(stdout, BOLD BLU "[" YEL " ** " BLU "]" DFL NORM " %s\n",
@@ -482,7 +484,9 @@ MCString CUtils::GetMessageTags(const CString& sLine) {
 
 		MCString mssTags;
 		for (VCString::const_iterator it = vsTags.begin(); it != vsTags.end(); ++it) {
-			mssTags[it->Token(0, false, "=", true)] = it->Token(1, true, "=", true);
+			CString sKey = it->Token(0, false, "=", true);
+			CString sValue = it->Token(1, true, "=", true);
+			mssTags[sKey] = sValue.Escape(CString::EMSGTAG, CString::CString::EASCII);
 		}
 		return mssTags;
 	}
@@ -500,7 +504,9 @@ void CUtils::SetMessageTags(CString& sLine, const MCString& mssTags) {
 			if (!sTags.empty()) {
 				sTags += ";";
 			}
-			sTags += it->first + "=" + it->second;
+			sTags += it->first;
+			if (!it->second.empty())
+				sTags += "=" + it->second.Escape_n(CString::EMSGTAG);
 		}
 		sLine = "@" + sTags + " " + sLine;
 	}

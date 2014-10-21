@@ -10,19 +10,17 @@
 	<div class="section">
 		<input type="hidden" name="submitted" value="1" />
 		<input type="hidden" name="user" value="<? VAR Username ?>" />
-		<? IF Edit ?><input type="hidden" name="network" value="<? VAR Name ?>" /><? ENDIF ?>
+		<input type="hidden" name="network" value="<? VAR Name ?>" />
 
 		<h3>Network Info</h3>
         <span class="info">Nick, AltNick, Ident, RealName, BindHost can be left empty to use the value from the user.</span>
 		<div class="sectionbg">
 			<div class="sectionbody">
-				<? IF !Edit ?>
 				<div class="subsection">
 					<div class="inputlabel">Network Name:</div>
-					<input type="text" name="network" value="<? VAR Name ?>" class="half" maxlength="128"
+					<input type="text" name="name" value="<? VAR Name ?>" class="half" maxlength="128"
 						   title="The name of the IRC network." />
-					</div>
-				<? ENDIF ?>
+				</div>
 
             	<div class="subsection">
 					<div class="inputlabel">Nickname:</div>
@@ -62,6 +60,12 @@
 				<? ENDIF ?>
 
 				<div class="subsection">
+					<div class="inputlabel">Quit Message:</div>
+					<input type="text" name="quitmsg" value="<? VAR QuitMsg ?>" class="full" maxlength="256"
+						   title="You may define a Message shown, when you quit IRC." />
+				</div>
+
+				<div class="subsection">
 					<div class="inputlabel">Active:</div>
 					<div class="checkbox"><input type="checkbox" name="doconnect" id="doconnect_checkbox"<? IF IRCConnectEnabled ?> checked="checked"<? ENDIF ?> />
 						<label for="doconnect_checkbox">Connect to IRC &amp; automatically re-connect</label></div>
@@ -99,6 +103,14 @@
 						   title="Defines the number of lines, which can be sent immediately."
 						<? IF FloodProtection ?> value="<? VAR FloodBurst ?>" <? ELSE ?> value="4" disabled="disabled" <? ENDIF ?>
 					/> lines can be sent immediately
+				</div>
+
+				<div class="subsection">
+					<div class="inputlabel">Channel join delay:</div>
+					<input type="number" name="joindelay" min="0" id="joindelay"
+						   title="Defines the delay in seconds, until channels are joined after getting connected."
+						value="<? VAR JoinDelay ?>"
+					/> seconds
 				</div>
 				<script type="text/javascript">floodprotection_change();</script>
 				<div style="clear: both;"></div>

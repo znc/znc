@@ -27,7 +27,7 @@ public:
 
 	void AddBuffer(CChan& Channel, const CString& sMessage) {
 		// If they have AutoClearChanBuffer enabled, only add messages if no client is connected
-		if (Channel.AutoClearChanBuffer() && m_pNetwork->IsUserOnline())
+		if (Channel.AutoClearChanBuffer() && GetNetwork()->IsUserOnline())
 			return;
 
 		Channel.AddBuffer(":" + GetModNick() + "!" + GetModName() + "@znc.in PRIVMSG " + _NAMEDFMT(Channel.GetName()) + " :{text}", sMessage);

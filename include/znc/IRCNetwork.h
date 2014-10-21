@@ -30,6 +30,7 @@ class CConfig;
 class CClient;
 class CConfig;
 class CChan;
+class CQuery;
 class CServer;
 class CIRCSock;
 class CIRCNetworkPingTimer;
@@ -44,6 +45,7 @@ public:
 	~CIRCNetwork();
 
 	enum {
+		JOIN_FREQUENCY = 30,
 		/** How long must an IRC connection be idle before ZNC sends a ping */
 		PING_FREQUENCY = 270,
 		/** Time between checks if PINGs need to be sent */
@@ -56,12 +58,12 @@ public:
 
 	void Clone(const CIRCNetwork& Network, bool bCloneName = true);
 
-	CString GetNetworkPath();
+	CString GetNetworkPath() const;
 
 	void DelServers();
 
 	bool ParseConfig(CConfig *pConfig, CString& sError, bool bUpgrade = false);
-	CConfig ToConfig();
+	CConfig ToConfig() const;
 
 	void BounceAllClients();
 
@@ -70,10 +72,10 @@ public:
 	void ClientConnected(CClient *pClient);
 	void ClientDisconnected(CClient *pClient);
 
-	CUser* GetUser();
+	CUser* GetUser() const;
 	const CString& GetName() const;
-	bool IsNetworkAttached() const { return !m_vClients.empty(); };
-	std::vector<CClient*>& GetClients() { return m_vClients; }
+	bool IsNetworkAttached() const { return !m_vClients.empty(); }
+	const std::vector<CClient*>& GetClients() const { return m_vClients; }
 
 	void SetUser(CUser *pUser);
 	bool SetName(const CString& sName);
@@ -96,8 +98,14 @@ public:
 	void JoinChans();
 	void JoinChans(std::set<CChan*>& sChans);
 
-	const CString& GetChanPrefixes() const { return m_sChanPrefixes; };
-	void SetChanPrefixes(const CString& s) { m_sChanPrefixes = s; };
+	const std::vector<CQuery*>& GetQueries() const;
+	CQuery* FindQuery(const CString& sName) const;
+	std::vector<CQuery*> FindQueries(const CString& sWild) const;
+	CQuery* AddQuery(const CString& sName);
+	bool DelQuery(const CString& sName);
+
+	const CString& GetChanPrefixes() const { return m_sChanPrefixes; }
+	void SetChanPrefixes(const CString& s) { m_sChanPrefixes = s; }
 	bool IsChan(const CString& sChan) const;
 
 	const std::vector<CServer*>& GetServers() const;
@@ -129,6 +137,7 @@ public:
 	 */
 	bool IsIRCConnected() const;
 	void SetIRCSocket(CIRCSock* pIRCSock);
+	void IRCConnected();
 	void IRCDisconnected();
 	void CheckIRCConnect();
 
@@ -144,9 +153,9 @@ public:
 	void UpdateMotdBuffer(const CString& sMatch, const CString& sFormat, const CString& sText = "") { m_MotdBuffer.UpdateLine(sMatch, sFormat, sText); }
 	void ClearMotdBuffer() { m_MotdBuffer.Clear(); }
 
-	void AddQueryBuffer(const CString& sFormat, const CString& sText = "") { m_QueryBuffer.AddLine(sFormat, sText); }
-	void UpdateQueryBuffer(const CString& sMatch, const CString& sFormat, const CString& sText = "") { m_QueryBuffer.UpdateLine(sMatch, sFormat, sText); }
-	void ClearQueryBuffer() { m_QueryBuffer.Clear(); }
+	void AddNoticeBuffer(const CString& sFormat, const CString& sText = "") { m_NoticeBuffer.AddLine(sFormat, sText); }
+	void UpdateNoticeBuffer(const CString& sMatch, const CString& sFormat, const CString& sText = "") { m_NoticeBuffer.UpdateLine(sMatch, sFormat, sText); }
+	void ClearNoticeBuffer() { m_NoticeBuffer.Clear(); }
 	// !Buffers
 
 	// la
@@ -156,6 +165,7 @@ public:
 	const CString& GetRealName() const;
 	const CString& GetBindHost() const;
 	const CString& GetEncoding() const;
+	CString GetQuitMsg() const;
 
 	void SetNick(const CString& s);
 	void SetAltNick(const CString& s);
@@ -163,16 +173,21 @@ public:
 	void SetRealName(const CString& s);
 	void SetBindHost(const CString& s);
 	void SetEncoding(const CString& s);
+	void SetQuitMsg(const CString& s);
 
 	double GetFloodRate() const { return m_fFloodRate; }
 	unsigned short int GetFloodBurst() const { return m_uFloodBurst; }
 	void SetFloodRate(double fFloodRate) { m_fFloodRate = fFloodRate; }
 	void SetFloodBurst(unsigned short int uFloodBurst) { m_uFloodBurst = uFloodBurst; }
 
+	unsigned short int GetJoinDelay() const { return m_uJoinDelay; }
+	void SetJoinDelay(unsigned short int uJoinDelay) { m_uJoinDelay = uJoinDelay; }
+
 	CString ExpandString(const CString& sStr) const;
 	CString& ExpandString(const CString& sStr, CString& sRet) const;
 private:
 	bool JoinChan(CChan* pChan);
+	bool LoadModule(const CString& sModName, const CString& sArgs, const CString& sNotice, CString& sError);
 
 protected:
 	CString            m_sName;
@@ -184,6 +199,7 @@ protected:
 	CString            m_sRealName;
 	CString            m_sBindHost;
 	CString            m_sEncoding;
+	CString            m_sQuitMsg;
 
 	CModules*          m_pModules;
 
@@ -192,6 +208,7 @@ protected:
 	CIRCSock*          m_pIRCSock;
 
 	std::vector<CChan*>     m_vChans;
+	std::vector<CQuery*>    m_vQueries;
 
 	CString            m_sChanPrefixes;
 
@@ -208,10 +225,12 @@ protected:
 
 	CBuffer            m_RawBuffer;
 	CBuffer            m_MotdBuffer;
-	CBuffer            m_QueryBuffer;
+	CBuffer            m_NoticeBuffer;
 
 	CIRCNetworkPingTimer* m_pPingTimer;
 	CIRCNetworkJoinTimer* m_pJoinTimer;
+
+	unsigned short int m_uJoinDelay;
 };
 
 #endif // !_IRCNETWORK_H

@@ -63,7 +63,7 @@ public:
 	void OnModCommand(const CString& sCommand) {
 		CString sCmd = sCommand.Token(0);
 
-		if (!m_pUser->IsAdmin()) {
+		if (!GetUser()->IsAdmin()) {
 			PutModule("Access denied");
 			return;
 		}
@@ -84,7 +84,7 @@ public:
 		} else if (sCmd.Equals("block")) {
 			CString sUser = sCommand.Token(1, true);
 
-			if (m_pUser->GetUserName().Equals(sUser)) {
+			if (GetUser()->GetUserName().Equals(sUser)) {
 				PutModule("You can't block yourself");
 				return;
 			}
@@ -180,4 +180,4 @@ template<> void TModInfo<CBlockUser>(CModInfo& Info) {
 	Info.SetArgsHelpText("Enter one or more user names. Separate them by spaces.");
 }
 
-GLOBALMODULEDEFS(CBlockUser, "Block certain users from logging in")
+GLOBALMODULEDEFS(CBlockUser, "Block certain users from logging in.")

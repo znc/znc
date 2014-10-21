@@ -94,6 +94,7 @@ public:
 		m_bUHNames = false;
 		m_bAway = false;
 		m_bServerTime = false;
+		m_bBatch = false;
 		EnableReadLine();
 		// RFC says a line can have 512 chars max, but we are
 		// a little more gentle ;)
@@ -114,6 +115,7 @@ public:
 	bool HasUHNames() const { return m_bUHNames; }
 	bool IsAway() const { return m_bAway; }
 	bool HasServerTime() const { return m_bServerTime; }
+	bool HasBatch() const { return m_bBatch; }
 
 	void UserCommand(CString& sLine);
 	void UserPortCommand(CString& sLine);
@@ -129,11 +131,11 @@ public:
 	void PutModule(const CString& sModule, const CString& sLine);
 	void PutModNotice(const CString& sModule, const CString& sLine);
 
-	bool IsCapEnabled(const CString& sCap) { return 1 == m_ssAcceptedCaps.count(sCap); }
+	bool IsCapEnabled(const CString& sCap) const { return 1 == m_ssAcceptedCaps.count(sCap); }
 
 	virtual void ReadLine(const CString& sData);
 	bool SendMotd();
-	void HelpUser();
+	void HelpUser(const CString& sFilter = "");
 	void AuthUser();
 	virtual void Connected();
 	virtual void Timeout();
@@ -146,10 +148,10 @@ public:
 	CUser* GetUser() const { return m_pUser; }
 	void SetNetwork(CIRCNetwork* pNetwork, bool bDisconnect=true, bool bReconnect=true);
 	CIRCNetwork* GetNetwork() const { return m_pNetwork; }
-	std::vector<CClient*>& GetClients();
+	const std::vector<CClient*>& GetClients() const;
 	const CIRCSock* GetIRCSock() const;
 	CIRCSock* GetIRCSock();
-	CString GetFullName();
+	CString GetFullName() const;
 private:
 	void HandleCap(const CString& sLine);
 	void RespondCap(const CString& sResponse);
@@ -163,6 +165,7 @@ protected:
 	bool                 m_bUHNames;
 	bool                 m_bAway;
 	bool                 m_bServerTime;
+	bool                 m_bBatch;
 	CUser*               m_pUser;
 	CIRCNetwork*         m_pNetwork;
 	CString              m_sNick;

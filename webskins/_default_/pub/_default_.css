@@ -48,6 +48,11 @@ a:hover {
 	background-color: #ccc;
 }
 
+#banner_top a {
+	color: #000;
+	text-decoration: none;
+}
+
 h1 {
 	line-height: 37px;
 	padding: 0 0.9em 0 0.6em;

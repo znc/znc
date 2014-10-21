@@ -124,6 +124,10 @@
 #endif /* __DEBUG__ */
 #endif /* CS_DEBUG */
 
+#ifndef CS_EXPORT
+#define CS_EXPORT
+#endif /* CS_EXPORT */
+
 #ifndef PERROR
 #ifdef __DEBUG__
 #	define PERROR( f ) __Perror( f, __FILE__, __LINE__ )
@@ -160,7 +164,7 @@ namespace Csocket
  * @class CSCharBuffer
  * @brief Ease of use self deleting char * class.
  */
-class CSCharBuffer
+class CS_EXPORT CSCharBuffer
 {
 public:
 	CSCharBuffer( size_t iSize )
@@ -182,7 +186,7 @@ private:
  * @class CSSockAddr
  * @brief sockaddr wrapper.
  */
-class CSSockAddr
+class CS_EXPORT CSSockAddr
 {
 public:
 	CSSockAddr()
@@ -250,7 +254,7 @@ class Csock;
  *
  * Process can be called in a thread, but Init and Finish must only be called from the parent once the thread is complete
  */
-class CGetAddrInfo
+class CS_EXPORT CGetAddrInfo
 {
 public:
 	/**
@@ -366,7 +370,7 @@ uint64_t millitime();
  * You should derive from this class, and override RunJob() with your code
  * @author Jim Hull <csocket@jimloco.com>
  */
-class CCron
+class CS_EXPORT CCron
 {
 public:
 	CCron();
@@ -403,7 +407,7 @@ public:
 	uint32_t GetCyclesLeft() const;
 
 	//! returns true if cron is active
-	bool isValid();
+	bool isValid() const;
 
 	const CS_STRING & GetName() const;
 	void SetName( const CS_STRING & sName );
@@ -431,7 +435,7 @@ private:
  * @class CSMonitorFD
  * @brief Class to tie sockets to for monitoring by Csocket at either the Csock or TSockManager.
  */
-class CSMonitorFD
+class CS_EXPORT CSMonitorFD
 {
 public:
 	CSMonitorFD() { m_bEnabled = true; }
@@ -482,7 +486,7 @@ protected:
  * @class CSockCommon
  * @brief simple class to share common code to both TSockManager and Csock
  */
-class CSockCommon
+class CS_EXPORT CSockCommon
 {
 public:
 	CSockCommon() {}
@@ -537,7 +541,7 @@ typedef int ( *FPCertVerifyCB )( int, X509_STORE_CTX * );
  * @see TSocketManager
  * @author Jim Hull <csocket@jimloco.com>
  */
-class Csock : public CSockCommon
+class CS_EXPORT Csock : public CSockCommon
 {
 public:
 	//! default constructor, sets a timeout of 60 seconds
@@ -704,8 +708,8 @@ public:
 	 * Otherwise returns the bytes read into data
 	 */
 	virtual cs_ssize_t Read( char *data, size_t len );
-	CS_STRING GetLocalIP();
-	CS_STRING GetRemoteIP();
+	CS_STRING GetLocalIP() const;
+	CS_STRING GetRemoteIP() const;
 
 	//! Tells you if the socket is connected
 	virtual bool IsConnected() const;
@@ -714,12 +718,15 @@ public:
 
 	//! returns a reference to the sock
 	cs_sock_t & GetRSock();
+	const cs_sock_t & GetRSock() const;
 	void SetRSock( cs_sock_t iSock );
 	cs_sock_t & GetWSock();
+	const cs_sock_t & GetWSock() const;
 	void SetWSock( cs_sock_t iSock );
 
 	void SetSock( cs_sock_t iSock );
 	cs_sock_t & GetSock();
+	const cs_sock_t & GetSock() const;
 
 	/**
 	 * @brief calls SockError, if sDescription is not set, then strerror is used to pull out a default description
@@ -733,7 +740,7 @@ public:
 	//! will pause/unpause reading on this socket
 	void PauseRead();
 	void UnPauseRead();
-	bool IsReadPaused();
+	bool IsReadPaused() const;
 	/**
 	 * this timeout isn't just connection timeout, but also timeout on
 	 * NOT recieving data, to disable this set it to 0
@@ -804,52 +811,52 @@ public:
 	void ResetBytesWritten();
 
 	//! Get Avg Read Speed in sample milliseconds (default is 1000 milliseconds or 1 second)
-	double GetAvgRead( uint64_t iSample = 1000 );
+	double GetAvgRead( uint64_t iSample = 1000 ) const;
 
 	//! Get Avg Write Speed in sample milliseconds (default is 1000 milliseconds or 1 second)
-	double GetAvgWrite( uint64_t iSample = 1000 );
+	double GetAvgWrite( uint64_t iSample = 1000 ) const;
 
 	//! Returns the remote port
-	uint16_t GetRemotePort();
+	uint16_t GetRemotePort() const;
 
 	//! Returns the local port
-	uint16_t GetLocalPort();
+	uint16_t GetLocalPort() const;
 
 	//! Returns the port
-	uint16_t GetPort();
+	uint16_t GetPort() const;
 	void SetPort( uint16_t iPort );
 
 	//! just mark us as closed, the parent can pick it up
 	void Close( ECloseType eCloseType = CLT_NOW );
 	//! returns int of type to close @see ECloseType
-	ECloseType GetCloseType() { return( m_eCloseType ); }
-	bool IsClosed() { return( GetCloseType() != CLT_DONT ); }
+	ECloseType GetCloseType() const { return( m_eCloseType ); }
+	bool IsClosed() const { return( GetCloseType() != CLT_DONT ); }
 
 	//! Use this to change your fd's to blocking or none blocking
 	void NonBlockingIO();
 
 	//! Return true if this socket is using ssl. Note this does not mean the SSL state is finished, but simply that its configured to use ssl
-	bool GetSSL();
+	bool GetSSL() const;
 	void SetSSL( bool b );
 
 #ifdef HAVE_LIBSSL
 	//! Set the cipher type ( openssl cipher [to see ciphers available] )
 	void SetCipher( const CS_STRING & sCipher );
-	const CS_STRING & GetCipher();
+	const CS_STRING & GetCipher() const;
 
 	//! Set the pem file location
 	void SetPemLocation( const CS_STRING & sPemFile );
-	const CS_STRING & GetPemLocation();
+	const CS_STRING & GetPemLocation() const;
 	void SetPemPass( const CS_STRING & sPassword );
 	const CS_STRING & GetPemPass() const;
 
 	//! Set the SSL method type
 	void SetSSLMethod( int iMethod );
-	int GetSSLMethod();
+	int GetSSLMethod() const;
 
 	void SetSSLObject( SSL *ssl );
 	void SetCTXObject( SSL_CTX *sslCtx );
-	SSL_SESSION * GetSSLSession();
+	SSL_SESSION * GetSSLSession() const;
 
 	void SetCertVerifyCB( FPCertVerifyCB pFP ) { m_pCerVerifyCB = pFP; }
 #endif /* HAVE_LIBSSL */
@@ -860,7 +867,7 @@ public:
 
 	//! is SSL_accept finished ?
 	//! is the ssl properly finished (from write no error)
-	bool SslIsEstablished();
+	bool SslIsEstablished() const;
 
 	//! Use this to bind this socket to inetd
 	bool ConnectInetd( bool bIsSSL = false, const CS_STRING & sHostname = "" );
@@ -870,14 +877,14 @@ public:
 
 	//! Get the peer's X509 cert
 #ifdef HAVE_LIBSSL
-	X509 *GetX509();
+	X509 *GetX509() const;
 
 	//! Returns the peer's public key
-	CS_STRING GetPeerPubKey();
+	CS_STRING GetPeerPubKey() const;
 	//! Returns the peer's certificate finger print
-	long GetPeerFingerprint( CS_STRING & sFP );
+	long GetPeerFingerprint( CS_STRING & sFP ) const;
 
-	uint32_t GetRequireClientCertFlags();
+	uint32_t GetRequireClientCertFlags() const;
 	//! legacy, deprecated @see SetRequireClientCertFlags
 	void SetRequiresClientCert( bool bRequiresCert );
 	//! bitwise flags, 0 means don't require cert, SSL_VERIFY_PEER verifies peers, SSL_VERIFY_FAIL_IF_NO_PEER_CERT will cause the connection to fail if no cert
@@ -886,7 +893,7 @@ public:
 
 	//! Set The INBOUND Parent sockname
 	virtual void SetParentSockName( const CS_STRING & sParentName );
-	const CS_STRING & GetParentSockName();
+	const CS_STRING & GetParentSockName() const;
 
 	/**
 	 * sets the rate at which we can send data
@@ -895,46 +902,26 @@ public:
 	 */
 	virtual void SetRate( uint32_t iBytes, uint64_t iMilliseconds );
 
-	uint32_t GetRateBytes();
-	uint64_t GetRateTime();
+	uint32_t GetRateBytes() const;
+	uint64_t GetRateTime() const;
 
 	/**
-	 * Override these functions for an easy interface when using the Socket Manager
-	 * Don't bother using these callbacks if you are using this class directly (without Socket Manager)
-	 * as the Socket Manager calls most of these callbacks
-	 *
 	 * Connected event
 	 */
 	virtual void Connected() {}
 	/**
-	 * Override these functions for an easy interface when using the Socket Manager
-	 * Don't bother using these callbacks if you are using this class directly (without Socket Manager)
-	 * as the Socket Manager calls most of these callbacks
-	 *
 	 * Disconnected event
 	 */
 	virtual void Disconnected() {}
 	/**
-	 * Override these functions for an easy interface when using the Socket Manager
-	 * Don't bother using these callbacks if you are using this class directly (without Socket Manager)
-	 * as the Socket Manager calls most of these callbacks
-	 *
 	 * Sock Timed out event
 	 */
 	virtual void Timeout() {}
 	/**
-	 * Override these functions for an easy interface when using the Socket Manager
-	 * Don't bother using these callbacks if you are using this class directly (without Socket Manager)
-	 * as the Socket Manager calls most of these callbacks
-	 *
 	 * Ready to read data event
 	 */
 	virtual void ReadData( const char *data, size_t len ) {}
 	/**
-	 * Override these functions for an easy interface when using the Socket Manager
-	 * Don't bother using these callbacks if you are using this class directly (without Socket Manager)
-	 * as the Socket Manager calls most of these callbacks.
-	 *  With ReadLine, if your not going to use it IE a data stream, @see EnableReadLine()
 	 *
 	 * Ready to Read a full line event. If encoding is provided, this is guaranteed to be UTF-8
 	 */
@@ -946,9 +933,6 @@ public:
 	bool HasReadLine() const { return( m_bEnableReadLine ); }
 
 	/**
-	 * Override these functions for an easy interface when using the Socket Manager
-	 * Don't bother using these callbacks if you are using this class directly (without Socket Manager)
-	 * as the Socket Manager calls most of these callbacks
 	 * This WARNING event is called when your buffer for readline exceeds the warning threshold
 	 * and triggers this event. Either Override it and do nothing, or SetMaxBufferThreshold()
 	 * This event will only get called if m_bEnableReadLine is enabled
@@ -956,18 +940,9 @@ public:
 	virtual void ReachedMaxBuffer();
 	/**
 	 * @brief A sock error occured event
-	 *
-	 * Override these functions for an easy interface when using the Socket Manager
-	 * Don't bother using these callbacks if you are using this class directly (without Socket Manager)
-	 * as the Socket Manager calls most of these callbacks
 	 */
 	virtual void SockError( int iErrno, const CS_STRING & sDescription ) {}
 	/**
-	 * Override these functions for an easy interface when using the Socket Manager
-	 * Don't bother using these callbacks if you are using this class directly (without Socket Manager)
-	 * as the Socket Manager calls most of these callbacks
-	 *
-	 *
 	 * Incoming Connection Event
 	 * return false and the connection will fail
 	 * default returns true
@@ -982,10 +957,6 @@ public:
 	virtual void Listening( const CS_STRING & sBindIP, uint16_t uPort ) {}
 
 	/**
-	 * Override these functions for an easy interface when using the Socket Manager
-	 * Don't bother using these callbacks if you are using this class directly (without Socket Manager)
-	 * as the Socket Manager calls most of these callbacks
-	 *
 	 * Connection Refused Event
 	 *
 	 */
@@ -1005,15 +976,15 @@ public:
 
 
 	//! return how long it has been (in seconds) since the last read or successful write
-	time_t GetTimeSinceLastDataTransaction( time_t iNow = 0 );
+	time_t GetTimeSinceLastDataTransaction( time_t iNow = 0 ) const;
 
-	time_t GetLastCheckTimeout() { return( m_iLastCheckTimeoutTime ); }
+	time_t GetLastCheckTimeout() const { return( m_iLastCheckTimeoutTime ); }
 
 	//! Returns the time when CheckTimeout() should be called next
-	time_t GetNextCheckTimeout( time_t iNow = 0 );
+	time_t GetNextCheckTimeout( time_t iNow = 0 ) const;
 
 	//! return the data imediatly ready for read
-	virtual int GetPending();
+	virtual int GetPending() const;
 
 	//////////////////////////
 	// Connection State Stuff
@@ -1086,12 +1057,12 @@ public:
 	 * One example is in the event that an ipv6 ip is a mapped ipv4 mapped, you can check like so.
 	 * - if( pAddr->ss_family == AF_INET6 && IN6_IS_ADDR_V4MAPPED( &(((const struct sockaddr_in6 *)pAddr)->sin6_addr ) )
 	 */
-	virtual int ConvertAddress( const struct sockaddr_storage * pAddr, socklen_t iAddrLen, CS_STRING & sIP, uint16_t * piPort );
+	virtual int ConvertAddress( const struct sockaddr_storage * pAddr, socklen_t iAddrLen, CS_STRING & sIP, uint16_t * piPort ) const;
 
 #ifdef HAVE_C_ARES
 	CSSockAddr * GetCurrentAddr() const { return( m_pCurrAddr ); }
 	void SetAresFinished( int status ) { m_pCurrAddr = NULL; m_iARESStatus = status; }
-	ares_channel GetAresChannel() { return( m_pARESChannel ); }
+	ares_channel GetAresChannel() const { return( m_pARESChannel ); }
 #endif /* HAVE_C_ARES */
 
 	//! returns the number of max pending connections when type is LISTENER
@@ -1109,14 +1080,18 @@ private:
 	void IncBuffPos( size_t uBytes );
 
 	// NOTE! if you add any new members, be sure to add them to Copy()
-	uint16_t	m_uPort, m_iRemotePort, m_iLocalPort;
+	uint16_t	m_uPort;
 	cs_sock_t	m_iReadSock, m_iWriteSock;
 	int 		m_iTimeout, m_iConnType, m_iMethod, m_iTcount, m_iMaxConns;
-	bool		m_bUseSSL, m_bIsConnected, m_bBLOCK;
+	bool		m_bUseSSL, m_bIsConnected;
 	bool		m_bsslEstablished, m_bEnableReadLine, m_bPauseRead;
 	CS_STRING	m_shostname, m_sbuffer, m_sSockName, m_sPemFile, m_sCipherType, m_sParentName;
-	CS_STRING	m_sSend, m_sPemPass, m_sLocalIP, m_sRemoteIP;
+	CS_STRING	m_sSend, m_sPemPass;
 	ECloseType	m_eCloseType;
+
+	// initialized lazily
+	mutable uint16_t	m_iRemotePort, m_iLocalPort;
+	mutable CS_STRING	m_sLocalIP, m_sRemoteIP;
 
 	uint64_t	m_iMaxMilliSeconds, m_iLastSendTime, m_iBytesRead, m_iBytesWritten, m_iStartTime;
 	uint32_t	m_iMaxBytes, m_iMaxStoredBufferLength, m_iTimeoutType;
@@ -1164,7 +1139,7 @@ private:
  * @class CSConnection
  * @brief options for creating a connection
  */
-class CSConnection
+class CS_EXPORT CSConnection
 {
 public:
 	/**
@@ -1234,7 +1209,7 @@ protected:
 #endif /* HAVE_LIBSSL */
 };
 
-class CSSSLConnection : public CSConnection
+class CS_EXPORT CSSSLConnection : public CSConnection
 {
 public:
 	CSSSLConnection( const CS_STRING & sHostname, uint16_t iPort, int iTimeout = 60 ) :
@@ -1249,7 +1224,7 @@ public:
  * @class CSListener
  * @brief options container to create a listener
  */
-class CSListener
+class CS_EXPORT CSListener
 {
 public:
 	/**
@@ -1364,7 +1339,7 @@ public:
  * @see TSocketManager
  * @author Jim Hull <csocket@jimloco.com>
  */
-class CSocketManager : public std::vector<Csock *>, public CSockCommon
+class CS_EXPORT CSocketManager : public std::vector<Csock *>, public CSockCommon
 {
 public:
 	CSocketManager();
@@ -1452,10 +1427,10 @@ public:
 	virtual std::vector<Csock *> FindSocksByRemoteHost( const CS_STRING & sHostname );
 
 	//! return the last known error as set by this class
-	int GetErrno() { return( m_errno ); }
+	int GetErrno() const { return( m_errno ); }
 
 	//! Get the Select Timeout in MICROSECONDS ( 1000 == 1 millisecond )
-	uint64_t GetSelectTimeout() { return( m_iSelectWait ); }
+	uint64_t GetSelectTimeout() const { return( m_iSelectWait ); }
 	//! Set the Select Timeout in MICROSECONDS ( 1000 == 1 millisecond )
 	//! Setting this to 0 will cause no timeout to happen, Select() will return instantly
 	void  SetSelectTimeout( uint64_t iTimeout ) { m_iSelectWait = iTimeout; }

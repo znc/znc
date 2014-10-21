@@ -44,7 +44,7 @@ public:
 	}
 
 	void OnModCommand(const CString& sCommand) {
-		if (m_pUser->IsAdmin()) {
+		if (GetUser()->IsAdmin()) {
 			HandleCommand(sCommand);
 		} else {
 			PutModule("Access denied");

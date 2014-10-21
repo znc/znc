@@ -18,7 +18,7 @@
 #include <znc/ZNCString.h>
 
 // GTest uses this function to output objects
-void PrintTo(const CString& s, std::ostream* o) {
+static void PrintTo(const CString& s, std::ostream* o) {
 	*o << '"' << s.Escape_n(CString::EASCII, CString::EDEBUG) << '"';
 }
 
@@ -38,21 +38,23 @@ protected:
 	}
 
 	void testString(const CString& in, const CString& url,
-			const CString& html, const CString& sql) {
+			const CString& html, const CString& sql, const CString& tag) {
 		SCOPED_TRACE("String: " + in);
 
 		testEncode(in, url,  "URL");
 		testEncode(in, html, "HTML");
 		testEncode(in, sql,  "SQL");
+		testEncode(in, tag,  "MSGTAG");
 	}
 };
 
 TEST_F(EscapeTest, Test) {
-	//          input      url          html             sql
-	testString("abcdefg", "abcdefg",   "abcdefg",       "abcdefg");
-	testString("\n\t\r",  "%0A%09%0D", "\n\t\r",        "\\n\\t\\r");
-	testString("'\"",     "%27%22",    "'&quot;",       "\\'\\\"");
-	testString("&<>",     "%26%3C%3E", "&amp;&lt;&gt;", "&<>");
+	//          input     url          html             sql         msgtag
+	testString("abcdefg","abcdefg",   "abcdefg",       "abcdefg",   "abcdefg");
+	testString("\n\t\r", "%0A%09%0D", "\n\t\r",        "\\n\\t\\r", "\\n\t\\r");
+	testString("'\"",    "%27%22",    "'&quot;",       "\\'\\\"",   "'\"");
+	testString("&<>",    "%26%3C%3E", "&amp;&lt;&gt;", "&<>",       "&<>");
+	testString(" ;",     "+%3B",      " ;",            " ;",        "\\s\\:");
 }
 
 TEST(StringTest, Bool) {
@@ -159,4 +161,56 @@ TEST(StringTest, Hash) {
 
 	EXPECT_EQ("e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855", CS("").SHA256());
 	EXPECT_EQ("ca978112ca1bbdcafac231b39a23dc4da786eff8147c4e72b9807785afee48bb", CS("a").SHA256());
+}
+
+TEST(StringTest, Equals) {
+	EXPECT_TRUE(CS("ABC").Equals("abc"));
+	EXPECT_TRUE(CS("ABC").Equals("abc", CString::CaseInsensitive));
+	EXPECT_FALSE(CS("ABC").Equals("abc", CString::CaseSensitive));
+	EXPECT_TRUE(CS("ABC").Equals("abc", false)); // deprecated
+	EXPECT_FALSE(CS("ABC").Equals("abc", true)); // deprecated
+}
+
+TEST(StringTest, Find) {
+	EXPECT_EQ(CString("Hello, I'm Bob").Find("Hello"), 0u);
+	EXPECT_EQ(CString("Hello, I'm Bob").Find("Hello", CString::CaseInsensitive), 0u);
+	EXPECT_EQ(CString("Hello, I'm Bob").Find("Hello", CString::CaseSensitive), 0u);
+
+	EXPECT_EQ(CString("Hello, I'm Bob").Find("i'm"), 7u);
+	EXPECT_EQ(CString("Hello, I'm Bob").Find("i'm", CString::CaseInsensitive), 7u);
+	EXPECT_EQ(CString("Hello, I'm Bob").Find("i'm", CString::CaseSensitive), CString::npos);
+}
+
+TEST(StringTest, StartsWith) {
+	EXPECT_TRUE(CString("Hello, I'm Bob").StartsWith("Hello"));
+	EXPECT_TRUE(CString("Hello, I'm Bob").StartsWith("Hello", CString::CaseInsensitive));
+	EXPECT_TRUE(CString("Hello, I'm Bob").StartsWith("Hello", CString::CaseSensitive));
+
+	EXPECT_TRUE(CString("Hello, I'm Bob").StartsWith("hello"));
+	EXPECT_TRUE(CString("Hello, I'm Bob").StartsWith("hello", CString::CaseInsensitive));
+	EXPECT_FALSE(CString("Hello, I'm Bob").StartsWith("hello", CString::CaseSensitive));
+}
+
+TEST(StringTest, EndsWith) {
+	EXPECT_TRUE(CString("Hello, I'm Bob").EndsWith("Bob"));
+	EXPECT_TRUE(CString("Hello, I'm Bob").EndsWith("Bob", CString::CaseInsensitive));
+	EXPECT_TRUE(CString("Hello, I'm Bob").EndsWith("Bob", CString::CaseSensitive));
+
+	EXPECT_TRUE(CString("Hello, I'm Bob").EndsWith("bob"));
+	EXPECT_TRUE(CString("Hello, I'm Bob").EndsWith("bob", CString::CaseInsensitive));
+	EXPECT_FALSE(CString("Hello, I'm Bob").EndsWith("bob", CString::CaseSensitive));
+}
+
+TEST(StringTest, Contains) {
+	EXPECT_TRUE(CString("Hello, I'm Bob").Contains("Hello"));
+	EXPECT_TRUE(CString("Hello, I'm Bob").Contains("Hello", CString::CaseInsensitive));
+	EXPECT_TRUE(CString("Hello, I'm Bob").Contains("Hello", CString::CaseSensitive));
+
+	EXPECT_TRUE(CString("Hello, I'm Bob").Contains("i'm"));
+	EXPECT_TRUE(CString("Hello, I'm Bob").Contains("i'm", CString::CaseInsensitive));
+	EXPECT_FALSE(CString("Hello, I'm Bob").Contains("i'm", CString::CaseSensitive));
+
+	EXPECT_TRUE(CString("Hello, I'm Bob").Contains("i'm bob"));
+	EXPECT_TRUE(CString("Hello, I'm Bob").Contains("i'm bob", CString::CaseInsensitive));
+	EXPECT_FALSE(CString("Hello, I'm Bob").Contains("i'm bob", CString::CaseSensitive));
 }

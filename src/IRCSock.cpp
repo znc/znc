@@ -19,6 +19,7 @@
 #include <znc/User.h>
 #include <znc/IRCNetwork.h>
 #include <znc/Server.h>
+#include <znc/Query.h>
 
 using std::set;
 using std::vector;
@@ -123,7 +124,7 @@ void CIRCSock::Quit(const CString& sQuitMsg) {
 	if (!sQuitMsg.empty()) {
 		PutIRC("QUIT :" + sQuitMsg);
 	} else {
-		PutIRC("QUIT :" + m_pNetwork->ExpandString(m_pNetwork->GetUser()->GetQuitMsg()));
+		PutIRC("QUIT :" + m_pNetwork->ExpandString(m_pNetwork->GetQuitMsg()));
 	}
 	Close(CLT_AFTERWRITE);
 }
@@ -180,7 +181,7 @@ void CIRCSock::ReadLine(const CString& sData) {
 				m_bAuthed = true;
 				m_pNetwork->PutStatus("Connected!");
 
-				vector<CClient*>& vClients = m_pNetwork->GetClients();
+				const vector<CClient*>& vClients = m_pNetwork->GetClients();
 
 				for (unsigned int a = 0; a < vClients.size(); a++) {
 					CClient* pClient = vClients[a];
@@ -199,9 +200,7 @@ void CIRCSock::ReadLine(const CString& sData) {
 				m_pNetwork->ClearRawBuffer();
 				m_pNetwork->AddRawBuffer(":" + _NAMEDFMT(sServer) + " " + sCmd + " {target} " + _NAMEDFMT(sRest));
 
-				// Join the first set of channels as soon as we are connected
-				// and let the CIRCNetworkJoinTimer join the rest.
-				m_pNetwork->JoinChans();
+				m_pNetwork->IRCConnected();
 
 				break;
 			}
@@ -353,8 +352,8 @@ void CIRCSock::ReadLine(const CString& sData) {
 				if (m_bNamesx && (sNick.size() > 1) && IsPermChar(sNick[1])) {
 					// sLine uses multi-prefix
 
-					vector<CClient*>& vClients = m_pNetwork->GetClients();
-					vector<CClient*>::iterator it;
+					const vector<CClient*>& vClients = m_pNetwork->GetClients();
+					vector<CClient*>::const_iterator it;
 					for (it = vClients.begin(); it != vClients.end(); ++it) {
 						CClient *pClient = *it;
 
@@ -773,7 +772,7 @@ void CIRCSock::ReadLine(const CString& sData) {
 			CString sMsg = sRest.Token(0, true).TrimPrefix_n();
 
 			if (!m_pNetwork->IsUserOnline()) {
-				m_pNetwork->AddQueryBuffer(":" + _NAMEDFMT(Nick.GetNickMask()) + " WALLOPS :{text}", sMsg);
+				m_pNetwork->AddNoticeBuffer(":" + _NAMEDFMT(Nick.GetNickMask()) + " WALLOPS :{text}", sMsg);
 			}
 		} else if (sCmd.Equals("CAP")) {
 			// CAPs are supported only before authorization.
@@ -885,9 +884,11 @@ bool CIRCSock::OnPrivCTCP(CNick& Nick, CString& sMessage) {
 		IRCSOCKMODULECALL(OnPrivAction(Nick, sMessage), &bResult);
 		if (bResult) return true;
 
-		if (!m_pNetwork->IsUserOnline()) {
-			// If the user is detached, add to the buffer
-			m_pNetwork->AddQueryBuffer(":" + _NAMEDFMT(Nick.GetNickMask()) + " PRIVMSG {target} :\001ACTION {text}\001", sMessage);
+		if (!m_pNetwork->IsUserOnline() || !m_pNetwork->GetUser()->AutoClearQueryBuffer()) {
+			CQuery* pQuery = m_pNetwork->AddQuery(Nick.GetNick());
+			if (pQuery) {
+				pQuery->AddBuffer(":" + _NAMEDFMT(Nick.GetNickMask()) + " PRIVMSG {target} :\001ACTION {text}\001", sMessage);
+			}
 		}
 
 		sMessage = "ACTION " + sMessage;
@@ -930,7 +931,7 @@ bool CIRCSock::OnGeneralCTCP(CNick& Nick, CString& sMessage) {
 		// If we are over the limit, don't reply to this CTCP
 		if (m_uNumCTCP >= m_uCTCPFloodCount) {
 			DEBUG("CTCP flood detected - not replying to query");
-			return false;
+			return true;
 		}
 		m_uNumCTCP++;
 
@@ -948,7 +949,7 @@ bool CIRCSock::OnPrivNotice(CNick& Nick, CString& sMessage) {
 
 	if (!m_pNetwork->IsUserOnline()) {
 		// If the user is detached, add to the buffer
-		m_pNetwork->AddQueryBuffer(":" + _NAMEDFMT(Nick.GetNickMask()) + " NOTICE {target} :{text}", sMessage);
+		m_pNetwork->AddNoticeBuffer(":" + _NAMEDFMT(Nick.GetNickMask()) + " NOTICE {target} :{text}", sMessage);
 	}
 
 	return false;
@@ -959,9 +960,11 @@ bool CIRCSock::OnPrivMsg(CNick& Nick, CString& sMessage) {
 	IRCSOCKMODULECALL(OnPrivMsg(Nick, sMessage), &bResult);
 	if (bResult) return true;
 
-	if (!m_pNetwork->IsUserOnline()) {
-		// If the user is detached, add to the buffer
-		m_pNetwork->AddQueryBuffer(":" + _NAMEDFMT(Nick.GetNickMask()) + " PRIVMSG {target} :{text}", sMessage);
+	if (!m_pNetwork->IsUserOnline() || !m_pNetwork->GetUser()->AutoClearQueryBuffer()) {
+		CQuery* pQuery = m_pNetwork->AddQuery(Nick.GetNick());
+		if (pQuery) {
+			pQuery->AddBuffer(":" + _NAMEDFMT(Nick.GetNickMask()) + " PRIVMSG {target} :{text}", sMessage);
+		}
 	}
 
 	return false;
@@ -1228,8 +1231,8 @@ CString CIRCSock::GetISupport(const CString& sKey, const CString& sDefault) cons
 }
 
 void CIRCSock::ForwardRaw353(const CString& sLine) const {
-	vector<CClient*>& vClients = m_pNetwork->GetClients();
-	vector<CClient*>::iterator it;
+	const vector<CClient*>& vClients = m_pNetwork->GetClients();
+	vector<CClient*>::const_iterator it;
 
 	for (it = vClients.begin(); it != vClients.end(); ++it) {
 		ForwardRaw353(sLine, *it);
@@ -1291,22 +1294,22 @@ void CIRCSock::SendAltNick(const CString& sBadNick) {
 
 	const CString& sConfNick = m_pNetwork->GetNick();
 	const CString& sAltNick  = m_pNetwork->GetAltNick();
-	CString sNewNick;
+	CString sNewNick = sConfNick.Left(uMax - 1);
 
 	if (sLastNick.Equals(sConfNick)) {
 		if ((!sAltNick.empty()) && (!sConfNick.Equals(sAltNick))) {
 			sNewNick = sAltNick;
 		} else {
-			sNewNick = sConfNick.Left(uMax - 1) + "-";
+			sNewNick += "-";
 		}
-	} else if (sLastNick.Equals(sAltNick)) {
-		sNewNick = sConfNick.Left(uMax -1) + "-";
-	} else if (sLastNick.Equals(CString(sConfNick.Left(uMax -1) + "-"))) {
-		sNewNick = sConfNick.Left(uMax -1) + "|";
-	} else if (sLastNick.Equals(CString(sConfNick.Left(uMax -1) + "|"))) {
-		sNewNick = sConfNick.Left(uMax -1) + "^";
-	} else if (sLastNick.Equals(CString(sConfNick.Left(uMax -1) + "^"))) {
-		sNewNick = sConfNick.Left(uMax -1) + "a";
+	} else if (sLastNick.Equals(sAltNick) && !sAltNick.Equals(sNewNick + "-")) {
+		sNewNick += "-";
+	} else if (sLastNick.Equals(sNewNick + "-") && !sAltNick.Equals(sNewNick + "|")) {
+		sNewNick += "|";
+	} else if (sLastNick.Equals(sNewNick + "|") && !sAltNick.Equals(sNewNick + "^")) {
+		sNewNick += "^";
+	} else if (sLastNick.Equals(sNewNick + "^") && !sAltNick.Equals(sNewNick + "a")) {
+		sNewNick += "a";
 	} else {
 		char cLetter = 0;
 		if (sBadNick.empty()) {
@@ -1324,6 +1327,8 @@ void CIRCSock::SendAltNick(const CString& sBadNick) {
 		}
 
 		sNewNick = sConfNick.Left(uMax -1) + ++cLetter;
+		if (sNewNick.Equals(sAltNick))
+			sNewNick = sConfNick.Left(uMax -1) + ++cLetter;
 	}
 	PutIRC("NICK " + sNewNick);
 	m_Nick.SetNick(sNewNick);

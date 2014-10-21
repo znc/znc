@@ -19,6 +19,7 @@
 
 #include <znc/zncconfig.h>
 #include <znc/WebModules.h>
+#include <znc/Threads.h>
 #include <znc/main.h>
 #include <set>
 #include <queue>
@@ -176,6 +177,29 @@ protected:
 private:
 	FPTimer_t  m_pFBCallback;
 };
+
+#ifdef HAVE_PTHREAD
+/// A CJob version which can be safely used in modules. The job will be
+/// cancelled when the module is unloaded.
+class CModuleJob : public CJob {
+public:
+	CModuleJob(CModule *pModule, const CString& sName, const CString& sDesc)
+		: CJob(), m_pModule(pModule), m_sName(sName), m_sDescription(sDesc) {
+	}
+	virtual ~CModuleJob();
+
+	// Getters
+	CModule* GetModule() const { return m_pModule; }
+	const CString& GetName() const { return m_sName; }
+	const CString& GetDescription() const { return m_sDescription; }
+	// !Getters
+
+protected:
+	CModule* m_pModule;
+	const CString  m_sName;
+	const CString  m_sDescription;
+};
+#endif
 
 class CModInfo {
 public:
@@ -885,6 +909,16 @@ public:
 	virtual void ListSockets();
 	// !Socket stuff
 
+#ifdef HAVE_PTHREAD
+	// Job stuff
+	void AddJob(CModuleJob *pJob);
+	void CancelJob(CModuleJob *pJob);
+	bool CancelJob(const CString& sJobName);
+	void CancelJobs(const std::set<CModuleJob*>& sJobs);
+	bool UnlinkJob(CModuleJob *pJob);
+	// !Job stuff
+#endif
+
 	// Command stuff
 	/// Register the "Help" command.
 	void AddHelpCommand();
@@ -912,6 +946,7 @@ public:
 
 	bool LoadRegistry();
 	bool SaveRegistry() const;
+	bool MoveRegistry(const CString& sPath);
 	bool SetNV(const CString & sName, const CString & sValue, bool bWriteToDisk = true);
 	CString GetNV(const CString & sName) const;
 	bool DelNV(const CString & sName, bool bWriteToDisk = true);
@@ -943,13 +978,13 @@ public:
 	 *           except when we are in a user-specific module hook in which
 	 *           case this is the user pointer.
 	 */
-	CUser* GetUser() { return m_pUser; }
+	CUser* GetUser() const { return m_pUser; }
 	/** @returns NULL except when we are in a client-specific module hook in
 	 *           which case this is the client for which the hook is called.
 	 */
-	CIRCNetwork* GetNetwork() { return m_pNetwork; }
-	CClient* GetClient() { return m_pClient; }
-	CSockManager* GetManager() { return m_pManager; }
+	CIRCNetwork* GetNetwork() const { return m_pNetwork; }
+	CClient* GetClient() const { return m_pClient; }
+	CSockManager* GetManager() const { return m_pManager; }
 	// !Getters
 
 	// Global Modules
@@ -984,9 +1019,9 @@ public:
 	 *  @param sRemoteIP The IP address from which the client tried to login.
 	 */
 	virtual void OnFailedLogin(const CString& sUsername, const CString& sRemoteIP);
-	/** This function behaves like CModule::OnRaw(), but is also called
+	/** This function behaves like CModule::OnUserRaw(), but is also called
 	 *  before the client successfully logged in to ZNC. You should always
-	 *  prefer to use CModule::OnRaw() if possible.
+	 *  prefer to use CModule::OnUserRaw() if possible.
 	 *  @param pClient The client which send this line.
 	 *  @param sLine The raw traffic line which the client sent.
 	 */
@@ -1052,6 +1087,9 @@ protected:
 	CString            m_sDescription;
 	std::set<CTimer*>  m_sTimers;
 	std::set<CSocket*> m_sSockets;
+#ifdef HAVE_PTHREAD
+	std::set<CModuleJob*> m_sJobs;
+#endif
 	ModHandle          m_pDLL;
 	CSockManager*      m_pManager;
 	CUser*             m_pUser;
@@ -1076,9 +1114,9 @@ public:
 	void SetUser(CUser* pUser) { m_pUser = pUser; }
 	void SetNetwork(CIRCNetwork* pNetwork) { m_pNetwork = pNetwork; }
 	void SetClient(CClient* pClient) { m_pClient = pClient; }
-	CUser* GetUser() { return m_pUser; }
-	CIRCNetwork* GetNetwork() { return m_pNetwork; }
-	CClient* GetClient() { return m_pClient; }
+	CUser* GetUser() const { return m_pUser; }
+	CIRCNetwork* GetNetwork() const { return m_pNetwork; }
+	CClient* GetClient() const { return m_pClient; }
 
 	void UnloadAll();
 
@@ -1170,6 +1208,7 @@ public:
 	static bool GetModInfo(CModInfo& ModInfo, const CString& sModule, CString &sRetMsg);
 	static bool GetModPathInfo(CModInfo& ModInfo, const CString& sModule, const CString& sModPath, CString &sRetMsg);
 	static void GetAvailableMods(std::set<CModInfo>& ssMods, CModInfo::EModuleType eType = CModInfo::UserModule);
+	static void GetDefaultMods(std::set<CModInfo>& ssMods, CModInfo::EModuleType eType = CModInfo::UserModule);
 
 	// This returns the path to the .so and to the data dir
 	// which is where static data (webadmin skins) are saved
