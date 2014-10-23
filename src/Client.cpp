@@ -20,6 +20,7 @@
 #include <znc/IRCNetwork.h>
 #include <znc/Query.h>
 
+using std::set;
 using std::map;
 using std::vector;
 
@@ -415,30 +416,33 @@ void CClient::ReadLine(const CString& sData) {
 	}
 
 	if (sCommand.Equals("DETACH")) {
-		CString sChannels = sLine.Token(1).TrimPrefix_n();
+		CString sPatterns = sLine.Token(1, true);
 
-		if (sChannels.empty()) {
-			PutStatusNotice("Usage: /detach <#chan>");
+		if (sPatterns.empty()) {
+			PutStatusNotice("Usage: /detach <#chans>");
 			return;
 		}
 
-		VCString vChans;
-		sChannels.Split(",", vChans, false);
-		sChannels.clear();
+		VCString vsChans;
+		sPatterns.Replace(",", " ");
+		sPatterns.Split(" ", vsChans, false, "", "", true, true);
 
-		for (VCString::const_iterator channelIterator = vChans.begin();
-				channelIterator != vChans.end();
-				++channelIterator)
-		{
-			CString sChannel = *channelIterator;
-
-			CChan *pChannel = m_pNetwork->FindChan(sChannel);
-			if (pChannel) {
-				pChannel->DetachUser();
-			} else {
-				PutStatusNotice("You are not on [" + sChannel + "]");
-			}
+		set<CChan*> sChans;
+		for (const CString& sChan : vsChans) {
+			vector<CChan*> vChans = m_pNetwork->FindChans(sChan);
+			sChans.insert(vChans.begin(), vChans.end());
 		}
+
+		unsigned int uDetached = 0;
+		for (CChan* pChan : sChans) {
+			if (pChan->IsDetached())
+				continue;
+			uDetached++;
+			pChan->DetachUser();
+		}
+
+		PutStatusNotice("There were [" + CString(sChans.size()) + "] channels matching [" + sPatterns + "]");
+		PutStatusNotice("Detached [" + CString(uDetached) + "] channels");
 
 		return;
 	} else if (sCommand.Equals("JOIN")) {
