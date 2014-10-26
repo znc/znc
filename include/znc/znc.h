@@ -127,6 +127,7 @@ public:
 	unsigned int GetServerThrottle() const { return m_sConnectThrottle.GetTTL() / 1000; }
 	unsigned int GetConnectDelay() const { return m_uiConnectDelay; }
 	bool GetProtectWebSessions() const { return m_bProtectWebSessions; }
+	CString GetSSLCiphers() const { return m_sSSLCiphers; }
 	// !Getters
 
 	// Static allocator
@@ -209,6 +210,7 @@ protected:
 	CString                m_sStatusPrefix;
 	CString                m_sPidFile;
 	CString                m_sSSLCertFile;
+	CString                m_sSSLCiphers;
 	VCString               m_vsBindHosts;
 	VCString               m_vsTrustedProxies;
 	VCString               m_vsMotd;

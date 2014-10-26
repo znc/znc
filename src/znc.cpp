@@ -475,6 +475,10 @@ bool CZNC::WriteConfig() {
 		config.AddKeyValuePair("StatusPrefix", m_sStatusPrefix.FirstLine());
 	}
 
+	if (!m_sSSLCiphers.empty()) {
+		config.AddKeyValuePair("SSLCiphers", CString(m_sSSLCiphers));
+	}
+
 	for (unsigned int m = 0; m < m_vsMotd.size(); m++) {
 		config.AddKeyValuePair("Motd", m_vsMotd[m].FirstLine());
 	}
@@ -1075,6 +1079,8 @@ bool CZNC::DoRehash(CString& sError)
 		m_sStatusPrefix = sVal;
 	if (config.FindStringEntry("sslcertfile", sVal))
 		m_sSSLCertFile = sVal;
+	if (config.FindStringEntry("sslciphers", sVal))
+		m_sSSLCiphers = sVal;
 	if (config.FindStringEntry("skin", sVal))
 		SetSkinName(sVal);
 	if (config.FindStringEntry("connectdelay", sVal))

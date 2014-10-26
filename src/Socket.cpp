@@ -16,14 +16,27 @@
 
 #include <znc/User.h>
 #include <znc/IRCNetwork.h>
+#include <znc/znc.h>
 #include <signal.h>
 
 CZNCSock::CZNCSock(int timeout) : Csock(timeout) {
 	DisableSSLProtocols(EDP_SSL);
+#ifdef HAVE_LIBSSL
+	CString sCipher = CZNC::Get().GetSSLCiphers();
+	if (!sCipher.empty()) {
+		SetCipher(sCipher);
+	}
+#endif
 }
 
 CZNCSock::CZNCSock(const CString& sHost, u_short port, int timeout) : Csock(sHost, port, timeout) {
 	DisableSSLProtocols(EDP_SSL);
+#ifdef HAVE_LIBSSL
+	CString sCipher = CZNC::Get().GetSSLCiphers();
+	if (!sCipher.empty()) {
+		SetCipher(sCipher);
+	}
+#endif
 }
 
 unsigned int CSockManager::GetAnonConnectionCount(const CString &sIP) const {
