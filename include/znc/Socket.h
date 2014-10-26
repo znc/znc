@@ -25,8 +25,8 @@ class CModule;
 
 class CZNCSock : public Csock {
 public:
-	CZNCSock(int timeout = 60) : Csock(timeout) {}
-	CZNCSock(const CString& sHost, u_short port, int timeout = 60) : Csock(sHost, port, timeout) {}
+	CZNCSock(int timeout = 60);
+	CZNCSock(const CString& sHost, u_short port, int timeout = 60);
 	~CZNCSock() {}
 
 	virtual int ConvertAddress(const struct sockaddr_storage * pAddr, socklen_t iAddrLen, CS_STRING & sIP, u_short * piPort) const;
