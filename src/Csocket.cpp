@@ -1341,6 +1341,24 @@ bool Csock::AcceptSSL()
 	return( false );
 }
 
+void Csock::CheckDisabledProtocols()
+{
+#ifdef HAVE_LIBSSL
+	if( m_ssl_ctx && m_uDisableProtocols > 0 )
+	{
+		long uCTXOptions = 0;
+		if( EDP_SSLv2 & m_uDisableProtocols )
+			uCTXOptions |= SSL_OP_NO_SSLv2;
+		if( EDP_SSLv3 & m_uDisableProtocols )
+			uCTXOptions |= SSL_OP_NO_SSLv3;
+		if( EDP_TLSv1 & m_uDisableProtocols )
+			uCTXOptions |= SSL_OP_NO_TLSv1;
+		if( uCTXOptions )
+			SSL_CTX_set_options( m_ssl_ctx, uCTXOptions );
+	}
+#endif /* HAVE_LIBSSL */
+}
+
 bool Csock::SSLClientSetup()
 {
 #ifdef HAVE_LIBSSL
@@ -1443,6 +1461,8 @@ bool Csock::SSLClientSetup()
 			SSLErrors( __FILE__, __LINE__ );
 		}
 	}
+
+	CheckDisabledProtocols();
 
 	m_ssl = SSL_new( m_ssl_ctx );
 	if( !m_ssl )
@@ -1599,17 +1619,42 @@ bool Csock::SSLServerSetup()
 		ERR_clear_error();
 	}
 
+	// Errors for the following block are non-fatal (ECDHE is nice to have
+	// but not a requirement)
+#if defined( SSL_CTX_set_ecdh_auto )
+	// Auto-select sensible curve
+	if( !SSL_CTX_set_ecdh_auto( m_ssl_ctx , 1 ) )
+		ERR_clear_error();
+#elif defined( SSL_CTX_set_tmp_ecdh )
+	// Use a standard, widely-supported curve
+	EC_KEY * ecdh = EC_KEY_new_by_curve_name( NID_X9_62_prime256v1 );
+	if( ecdh )
+	{
+		if( !SSL_CTX_set_tmp_ecdh( m_ssl_ctx, ecdh ) )
+			ERR_clear_error();
+		EC_KEY_free( ecdh );
+	}
+	else
+		ERR_clear_error();
+#endif
+
 	if( SSL_CTX_set_cipher_list( m_ssl_ctx, m_sCipherType.c_str() ) <= 0 )
 	{
 		CS_DEBUG( "Could not assign cipher [" << m_sCipherType << "]" );
 		return( false );
 	}
 
+	CheckDisabledProtocols();
+
 	//
 	// setup the SSL
 	m_ssl = SSL_new( m_ssl_ctx );
 	if( !m_ssl )
 		return( false );
+
+#if defined( SSL_MODE_SEND_FALLBACK_SCSV )
+    SSL_set_mode( m_ssl, SSL_MODE_SEND_FALLBACK_SCSV );
+#endif /* SSL_MODE_SEND_FALLBACK_SCSV */
 
 	// Call for client Verification
 	SSL_set_rfd( m_ssl, ( int )m_iReadSock );
@@ -2761,6 +2806,7 @@ void Csock::Init( const CS_STRING & sHostname, uint16_t uPort, int iTimeout )
 	m_ssl = NULL;
 	m_ssl_ctx = NULL;
 	m_iRequireClientCertFlags = 0;
+	m_uDisableProtocols = 0;
 #endif /* HAVE_LIBSSL */
 	m_iTcount = 0;
 	m_iReadSock = CS_INVALID_SOCK;
