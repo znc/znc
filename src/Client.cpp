@@ -67,7 +67,7 @@ using std::vector;
 }
 
 CClient::~CClient() {
-	if (!m_spAuth.IsNull()) {
+	if (m_spAuth) {
 		CClientAuth* pAuth = (CClientAuth*) &(*m_spAuth);
 		pAuth->Invalidate();
 	}
@@ -631,7 +631,7 @@ void CClient::AuthUser() {
 	if (!m_bGotNick || !m_bGotUser || !m_bGotPass || m_bInCap || IsAttached())
 		return;
 
-	m_spAuth = new CClientAuth(this, m_sUser, m_sPass);
+	m_spAuth = std::make_shared<CClientAuth>(this, m_sUser, m_sPass);
 
 	CZNC::Get().AuthUser(m_spAuth);
 }

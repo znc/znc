@@ -27,7 +27,7 @@ class CWebSock;
 class CModule;
 class CWebSubPage;
 
-typedef CSmartPtr<CWebSubPage> TWebSubPage;
+typedef std::shared_ptr<CWebSubPage> TWebSubPage;
 typedef std::vector<TWebSubPage> VWebSubPages;
 
 class CZNCTagHandler : public CTemplateTagHandler {
@@ -102,9 +102,9 @@ private:
 	VPair           m_vParams;
 };
 
-class CWebSessionMap : public TCacheMap<CString, CSmartPtr<CWebSession> > {
+class CWebSessionMap : public TCacheMap<CString, std::shared_ptr<CWebSession> > {
 	public:
-		CWebSessionMap(unsigned int uTTL = 5000) : TCacheMap<CString, CSmartPtr<CWebSession> >(uTTL) {}
+		CWebSessionMap(unsigned int uTTL = 5000) : TCacheMap<CString, std::shared_ptr<CWebSession> >(uTTL) {}
 		void FinishUserSessions(const CUser& User);
 };
 
@@ -131,7 +131,7 @@ public:
 
 	void PrintErrorPage(const CString& sMessage);
 
-	CSmartPtr<CWebSession> GetSession();
+	std::shared_ptr<CWebSession> GetSession();
 
 	virtual Csock* GetSockObj(const CString& sHost, unsigned short uPort);
 	static CString GetSkinPath(const CString& sSkinName);
@@ -157,11 +157,11 @@ private:
 
 	bool                    m_bPathsSet;
 	CTemplate               m_Template;
-	CSmartPtr<CAuthBase>    m_spAuth;
+	std::shared_ptr<CAuthBase> m_spAuth;
 	CString                 m_sModName;
 	CString                 m_sPath;
 	CString                 m_sPage;
-	CSmartPtr<CWebSession>  m_spSession;
+	std::shared_ptr<CWebSession> m_spSession;
 
 	static const unsigned int m_uiMaxSessions;
 };

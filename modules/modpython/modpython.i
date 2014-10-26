@@ -58,6 +58,7 @@ using std::allocator;
 %include <std_list.i>
 %include <std_set.i>
 %include <std_deque.i>
+%include <std_shared_ptr.i>
 
 %include "modpython/cstring.i"
 %template(_stringlist) std::list<CString>;
@@ -129,8 +130,8 @@ class MCString : public std::map<CString, CString> {};
 %include "../include/znc/defines.h"
 %include "../include/znc/Utils.h"
 %include "../include/znc/Threads.h"
-%template(PAuthBase) CSmartPtr<CAuthBase>;
-%template(WebSession) CSmartPtr<CWebSession>;
+%template(PAuthBase) std::shared_ptr<CAuthBase>;
+%template(WebSession) std::shared_ptr<CWebSession>;
 %include "../include/znc/Config.h"
 %include "../include/znc/Csocket.h"
 %template(ZNCSocketManager) TSocketManager<CZNCSock>;
@@ -308,7 +309,7 @@ typedef std::vector<std::pair<CString, CString> > VPair;
 
 %inline %{
 	TWebSubPage CreateWebSubPage_(const CString& sName, const CString& sTitle, const VPair& vParams, unsigned int uFlags) {
-		return new CWebSubPage(sName, sTitle, vParams, uFlags);
+		return std::make_shared<CWebSubPage>(sName, sTitle, vParams, uFlags);
 	}
 %}
 

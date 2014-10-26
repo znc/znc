@@ -22,7 +22,7 @@ class CIMAPAuthMod;
 
 class CIMAPSock : public CSocket {
 public:
-	CIMAPSock(CIMAPAuthMod* pModule, CSmartPtr<CAuthBase> Auth)
+	CIMAPSock(CIMAPAuthMod* pModule, std::shared_ptr<CAuthBase> Auth)
 		: CSocket((CModule*) pModule), m_spAuth(Auth) {
 			m_pIMAPMod = pModule;
 			m_bSentReply = false;
@@ -39,10 +39,10 @@ public:
 	virtual void ReadLine(const CString& sLine);
 private:
 protected:
-	CIMAPAuthMod*        m_pIMAPMod;
-	bool                 m_bSentLogin;
-	bool                 m_bSentReply;
-	CSmartPtr<CAuthBase> m_spAuth;
+	CIMAPAuthMod*              m_pIMAPMod;
+	bool                       m_bSentLogin;
+	bool                       m_bSentReply;
+	std::shared_ptr<CAuthBase> m_spAuth;
 };
 
 
@@ -84,7 +84,7 @@ public:
 		return true;
 	}
 
-	virtual EModRet OnLoginAttempt(CSmartPtr<CAuthBase> Auth) {
+	virtual EModRet OnLoginAttempt(std::shared_ptr<CAuthBase> Auth) {
 		CUser* pUser = CZNC::Get().FindUser(Auth->GetUsername());
 
 		if (!pUser) { // @todo Will want to do some sort of && !m_bAllowCreate in the future

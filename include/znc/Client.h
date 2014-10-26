@@ -19,8 +19,8 @@
 
 #include <znc/zncconfig.h>
 #include <znc/Socket.h>
-#include <znc/Utils.h>
 #include <znc/main.h>
+#include <memory>
 
 // Forward Declarations
 class CZNC;
@@ -172,7 +172,7 @@ protected:
 	CString              m_sPass;
 	CString              m_sUser;
 	CString              m_sNetwork;
-	CSmartPtr<CAuthBase> m_spAuth;
+	std::shared_ptr<CAuthBase> m_spAuth;
 	SCString             m_ssAcceptedCaps;
 };
 

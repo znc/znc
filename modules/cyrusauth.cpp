@@ -87,7 +87,7 @@ public:
 		return true;
 	}
 
-	virtual EModRet OnLoginAttempt(CSmartPtr<CAuthBase> Auth) {
+	virtual EModRet OnLoginAttempt(std::shared_ptr<CAuthBase> Auth) {
 		const CString& sUsername = Auth->GetUsername();
 		const CString& sPassword = Auth->GetPassword();
 		CUser *pUser(CZNC::Get().FindUser(sUsername));

@@ -1771,7 +1771,7 @@ CZNC::TrafficStatsMap CZNC::GetTrafficStats(TrafficStatsPair &Users,
 	return ret;
 }
 
-void CZNC::AuthUser(CSmartPtr<CAuthBase> AuthClass) {
+void CZNC::AuthUser(std::shared_ptr<CAuthBase> AuthClass) {
 	// TODO unless the auth module calls it, CUser::IsHostAllowed() is not honoured
 	bool bReturn = false;
 	GLOBALMODULECALL(OnLoginAttempt(AuthClass), &bReturn);

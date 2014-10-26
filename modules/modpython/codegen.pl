@@ -292,7 +292,7 @@ while (<$in>) {
 					say $out "Py_BuildValue(\"l\", (long int)$a->{var});";
 				}
 			}
-			when (/^CSmartPtr/) {
+			when (/^std::shared_ptr/) {
 				say $out "SWIG_NewInstanceObj(new $a->{type}($a->{var}), SWIG_TypeQuery(\"$a->{type}*\"), SWIG_POINTER_OWN);";
 			}
 			when (/\*$/) {

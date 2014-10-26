@@ -137,7 +137,7 @@ public:
 			bool& bSuccess, CString& sRetMsg);
 	virtual void OnGetAvailableMods(std::set<CModInfo>& ssMods, CModInfo::EModuleType eType);
 	virtual void OnClientCapLs(CClient* pClient, SCString& ssCaps);
-	virtual EModRet OnLoginAttempt(CSmartPtr<CAuthBase> Auth);
+	virtual EModRet OnLoginAttempt(std::shared_ptr<CAuthBase> Auth);
 };
 
 static inline CPyModule* AsPyModule(CModule* p) {

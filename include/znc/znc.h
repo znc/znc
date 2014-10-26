@@ -89,8 +89,7 @@ public:
 
 	// Authenticate a user.
 	// The result is passed back via callbacks to CAuthBase.
-	// CSmartPtr handles freeing this pointer!
-	void AuthUser(CSmartPtr<CAuthBase> AuthClass);
+	void AuthUser(std::shared_ptr<CAuthBase> AuthClass);
 
 	// Setters
 	void SetConfigState(enum ConfigState e) { m_eConfigState = e; }

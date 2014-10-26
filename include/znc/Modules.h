@@ -1013,7 +1013,7 @@ public:
 	 *  @param Auth The necessary authentication info for this login attempt.
 	 *  @return See CModule::EModRet.
 	 */
-	virtual EModRet OnLoginAttempt(CSmartPtr<CAuthBase> Auth);
+	virtual EModRet OnLoginAttempt(std::shared_ptr<CAuthBase> Auth);
 	/** Called after a client login was rejected.
 	 *  @param sUsername The username that tried to log in.
 	 *  @param sRemoteIP The IP address from which the client tried to login.
@@ -1223,7 +1223,7 @@ public:
 	bool OnAddUser(CUser& User, CString& sErrorRet);
 	bool OnDeleteUser(CUser& User);
 	bool OnClientConnect(CZNCSock* pSock, const CString& sHost, unsigned short uPort);
-	bool OnLoginAttempt(CSmartPtr<CAuthBase> Auth);
+	bool OnLoginAttempt(std::shared_ptr<CAuthBase> Auth);
 	bool OnFailedLogin(const CString& sUsername, const CString& sRemoteIP);
 	bool OnUnknownUserRaw(CClient* pClient, CString& sLine);
 	bool OnClientCapLs(CClient* pClient, SCString& ssCaps);

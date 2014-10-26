@@ -242,7 +242,7 @@ typedef std::vector<std::pair<CString, CString> > VPair;
 
 %inline %{
 	TWebSubPage _CreateWebSubPage(const CString& sName, const CString& sTitle, const VPair& vParams, unsigned int uFlags) {
-		return new CWebSubPage(sName, sTitle, vParams, uFlags);
+		return std::make_shared<CWebSubPage>(sName, sTitle, vParams, uFlags);
 	}
 %}
 

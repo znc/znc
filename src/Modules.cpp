@@ -756,7 +756,7 @@ bool CModule::PutModNotice(const CString& sLine) {
 CModule::EModRet CModule::OnAddUser(CUser& User, CString& sErrorRet) { return CONTINUE; }
 CModule::EModRet CModule::OnDeleteUser(CUser& User) { return CONTINUE; }
 void CModule::OnClientConnect(CZNCSock* pClient, const CString& sHost, unsigned short uPort) {}
-CModule::EModRet CModule::OnLoginAttempt(CSmartPtr<CAuthBase> Auth) { return CONTINUE; }
+CModule::EModRet CModule::OnLoginAttempt(std::shared_ptr<CAuthBase> Auth) { return CONTINUE; }
 void CModule::OnFailedLogin(const CString& sUsername, const CString& sRemoteIP) {}
 CModule::EModRet CModule::OnUnknownUserRaw(CClient* pClient, CString& sLine) { return CONTINUE; }
 void CModule::OnClientCapLs(CClient* pClient, SCString& ssCaps) {}
@@ -920,7 +920,7 @@ bool CModules::OnClientConnect(CZNCSock* pClient, const CString& sHost, unsigned
 	return false;
 }
 
-bool CModules::OnLoginAttempt(CSmartPtr<CAuthBase> Auth) {
+bool CModules::OnLoginAttempt(std::shared_ptr<CAuthBase> Auth) {
 	MODHALTCHK(OnLoginAttempt(Auth));
 }
 
