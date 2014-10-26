@@ -60,6 +60,10 @@ using std::allocator;
 %include <std_deque.i>
 %include <std_shared_ptr.i>
 
+%shared_ptr(CAuthBase);
+%shared_ptr(CWebSession);
+%shared_ptr(CClientAuth);
+
 %include "modpython/cstring.i"
 %template(_stringlist) std::list<CString>;
 
@@ -130,8 +134,6 @@ class MCString : public std::map<CString, CString> {};
 %include "../include/znc/defines.h"
 %include "../include/znc/Utils.h"
 %include "../include/znc/Threads.h"
-%template(PAuthBase) std::shared_ptr<CAuthBase>;
-%template(WebSession) std::shared_ptr<CWebSession>;
 %include "../include/znc/Config.h"
 %include "../include/znc/Csocket.h"
 %template(ZNCSocketManager) TSocketManager<CZNCSock>;
