@@ -20,15 +20,56 @@
 #include <znc/IRCNetwork.h>
 #include <znc/Chan.h>
 #include <znc/Server.h>
+#include <algorithm>
 
 using std::vector;
+
+class CLogRule {
+public:
+	CLogRule(const CString& sRule, bool bEnabled = true) : m_sRule(sRule), m_bEnabled(bEnabled) {}
+
+	const CString& GetRule() const { return m_sRule; }
+	bool IsEnabled() const { return m_bEnabled; }
+	void SetEnabled(bool bEnabled) { m_bEnabled = bEnabled; }
+
+	bool Compare(const CString& sTarget) const {
+		return sTarget.WildCmp(m_sRule);
+	}
+
+	bool operator==(const CLogRule& sOther) const {
+		return m_sRule == sOther.GetRule();
+	}
+
+	CString ToString() const {
+		return (m_bEnabled ? "" : "!") + m_sRule;
+	}
+
+private:
+	CString m_sRule;
+	bool m_bEnabled;
+};
 
 class CLogMod: public CModule {
 public:
 	MODCONSTRUCTOR(CLogMod)
 	{
 		m_bSanitize = false;
+		AddHelpCommand();
+		AddCommand("SetRules", static_cast<CModCommand::ModCmdFunc>(&CLogMod::SetRulesCmd),
+				   "<rules>", "Set logging rules, use !#chan or !query to negate and * for wildcards");
+		AddCommand("ClearRules", static_cast<CModCommand::ModCmdFunc>(&CLogMod::ClearRulesCmd),
+				   "", "Clear all logging rules");
+		AddCommand("ListRules", static_cast<CModCommand::ModCmdFunc>(&CLogMod::ListRulesCmd),
+				   "", "List all logging rules");
 	}
+
+	void SetRulesCmd(const CString& sLine);
+	void ClearRulesCmd(const CString& sLine);
+	void ListRulesCmd(const CString& sLine = "");
+	void SetRules(const VCString& vsRules);
+	VCString SplitRules(const CString& sRules) const;
+	CString JoinRules(const CString& sSeparator) const;
+	bool TestRules(const CString& sTarget) const;
 
 	void PutLog(const CString& sLine, const CString& sWindow = "status");
 	void PutLog(const CString& sLine, const CChan& Channel);
@@ -66,10 +107,104 @@ public:
 private:
 	CString                 m_sLogPath;
 	bool                    m_bSanitize;
+	vector<CLogRule>        m_vRules;
 };
+
+void CLogMod::SetRulesCmd(const CString& sLine)
+{
+	VCString vsRules = SplitRules(sLine.Token(1, true));
+
+	if (vsRules.empty()) {
+		PutModule("Usage: SetRules <rules>");
+		PutModule("Wildcards are allowed");
+	} else {
+		SetRules(vsRules);
+		SetNV("rules", JoinRules(","));
+		ListRulesCmd();
+	}
+}
+
+void CLogMod::ClearRulesCmd(const CString& sLine)
+{
+	size_t uCount = m_vRules.size();
+
+	if (uCount == 0) {
+		PutModule("No logging rules. Everything is logged.");
+	} else {
+		CString sRules = JoinRules(" ");
+		SetRules(VCString());
+		DelNV("rules");
+		PutModule(CString(uCount) + " rule(s) removed: " + sRules);
+	}
+}
+
+void CLogMod::ListRulesCmd(const CString& sLine)
+{
+	CTable Table;
+	Table.AddColumn("Rule");
+	Table.AddColumn("Logging enabled");
+
+	for (const CLogRule& Rule : m_vRules) {
+		Table.AddRow();
+		Table.SetCell("Rule", Rule.GetRule());
+		Table.SetCell("Logging enabled", CString(Rule.IsEnabled()));
+	}
+
+	if (Table.empty()) {
+		PutModule("No logging rules. Everything is logged.");
+	} else {
+		PutModule(Table);
+	}
+}
+
+void CLogMod::SetRules(const VCString& vsRules)
+{
+	m_vRules.clear();
+
+	for (CString sRule : vsRules) {
+		bool bEnabled = !sRule.TrimPrefix("!");
+		m_vRules.push_back(CLogRule(sRule, bEnabled));
+	}
+}
+
+VCString CLogMod::SplitRules(const CString& sRules) const
+{
+	CString sCopy = sRules;
+	sCopy.Replace(",", " ");
+
+	VCString vsRules;
+	sCopy.Split(" ", vsRules, false, "", "", true, true);
+
+	return vsRules;
+}
+
+CString CLogMod::JoinRules(const CString& sSeparator) const
+{
+	VCString vsRules;
+	for (const CLogRule& Rule : m_vRules) {
+		vsRules.push_back(Rule.ToString());
+	}
+
+	return sSeparator.Join(vsRules.begin(), vsRules.end());
+}
+
+bool CLogMod::TestRules(const CString& sTarget) const
+{
+	for (const CLogRule& Rule : m_vRules) {
+		if (Rule.Compare(sTarget)) {
+			return Rule.IsEnabled();
+		}
+	}
+
+	return true;
+}
 
 void CLogMod::PutLog(const CString& sLine, const CString& sWindow /*= "Status"*/)
 {
+	if (!TestRules(sWindow)) {
+		return;
+	}
+
 	CString sPath;
 	time_t curtime;
 
@@ -166,6 +301,10 @@ bool CLogMod::OnLoad(const CString& sArgs, CString& sMessage)
 			m_sLogPath += "$USER/$NETWORK/$WINDOW/%Y-%m-%d.log";
 		}
 	}
+
+	CString sRules = GetNV("rules");
+	VCString vsRules = SplitRules(sRules);
+	SetRules(vsRules);
 
 	// Check if it's allowed to write in this path in general
 	m_sLogPath = CDir::CheckPathPrefix(GetSavePath(), m_sLogPath);
