@@ -110,7 +110,7 @@ public:
 	// Setters
 	void SetModeKnown(bool b) { m_bModeKnown = b; }
 	void SetIsOn(bool b) { m_bIsOn = b; if (!b) { Reset(); } }
-	void SetKey(const CString& s) { m_sKey = s; }
+	void SetKey(const CString& s);
 	void SetTopic(const CString& s) { m_sTopic = s; }
 	void SetTopicOwner(const CString& s) { m_sTopicOwner = s; }
 	void SetTopicDate(unsigned long u) { m_ulTopicDate = u; }
@@ -118,7 +118,7 @@ public:
 	void SetAutoClearChanBuffer(bool b);
 	void InheritAutoClearChanBuffer(bool b);
 	void SetDetached(bool b = true) { m_bDetached = b; }
-	void SetInConfig(bool b) { m_bInConfig = b; }
+	void SetInConfig(bool b);
 	void SetCreationDate(unsigned long u) { m_ulCreationDate = u; }
 	void Disable() { m_bDisabled = true; }
 	void Enable();

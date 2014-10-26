@@ -40,7 +40,8 @@ public:
 	enum ConfigState {
 		ECONFIG_NOTHING,
 		ECONFIG_NEED_REHASH,
-		ECONFIG_NEED_WRITE
+		ECONFIG_NEED_WRITE,
+		ECONFIG_NEED_VERBOSE_WRITE
 	};
 
 	void DeleteUsers();
