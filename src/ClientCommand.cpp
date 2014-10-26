@@ -112,31 +112,32 @@ void CClient::UserCommand(CString& sLine) {
 			return;
 		}
 
-		CString sChan = sLine.Token(1).MakeLower();
+		CString sPatterns = sLine.Token(1, true);
 
-		if (sChan.empty()) {
-			PutStatus("Usage: Detach <#chan>");
+		if (sPatterns.empty()) {
+			PutStatus("Usage: Detach <#chans>");
 			return;
 		}
 
-		const vector<CChan*>& vChans = m_pNetwork->GetChans();
-		vector<CChan*>::const_iterator it;
-		unsigned int uMatches = 0, uDetached = 0;
-		for (it = vChans.begin(); it != vChans.end(); ++it) {
-			CChan *pChannel = *it;
-			CString channelName = pChannel->GetName().AsLower();
+		VCString vsChans;
+		sPatterns.Replace(",", " ");
+		sPatterns.Split(" ", vsChans, false, "", "", true, true);
 
-			if (!channelName.WildCmp(sChan))
-				continue;
-			uMatches++;
-
-			if ((*it)->IsDetached())
-				continue;
-			uDetached++;
-			(*it)->DetachUser();
+		set<CChan*> sChans;
+		for (const CString& sChan : vsChans) {
+			vector<CChan*> vChans = m_pNetwork->FindChans(sChan);
+			sChans.insert(vChans.begin(), vChans.end());
 		}
 
-		PutStatus("There were [" + CString(uMatches) + "] channels matching [" + sChan + "]");
+		unsigned int uDetached = 0;
+		for (CChan* pChan : sChans) {
+			if (pChan->IsDetached())
+				continue;
+			uDetached++;
+			pChan->DetachUser();
+		}
+
+		PutStatus("There were [" + CString(sChans.size()) + "] channels matching [" + sPatterns + "]");
 		PutStatus("Detached [" + CString(uDetached) + "] channels");
 	} else if (sCommand.Equals("VERSION")) {
 		PutStatus(CZNC::GetTag());
@@ -363,26 +364,30 @@ void CClient::UserCommand(CString& sLine) {
 			return;
 		}
 
-		CString sChan = sLine.Token(1, true);
+		CString sPatterns = sLine.Token(1, true);
 
-		if (sChan.empty()) {
-			PutStatus("Usage: EnableChan <channel>");
+		if (sPatterns.empty()) {
+			PutStatus("Usage: EnableChan <#chans>");
 		} else {
-			const vector<CChan*>& vChans = m_pNetwork->GetChans();
-			vector<CChan*>::const_iterator it;
-			unsigned int uMatches = 0, uEnabled = 0;
-			for (it = vChans.begin(); it != vChans.end(); ++it) {
-				if (!(*it)->GetName().WildCmp(sChan))
-					continue;
-				uMatches++;
+			VCString vsChans;
+			sPatterns.Replace(",", " ");
+			sPatterns.Split(" ", vsChans, false, "", "", true, true);
 
-				if (!(*it)->IsDisabled())
-					continue;
-				uEnabled++;
-				(*it)->Enable();
+			set<CChan*> sChans;
+			for (const CString& sChan : vsChans) {
+				vector<CChan*> vChans = m_pNetwork->FindChans(sChan);
+				sChans.insert(vChans.begin(), vChans.end());
 			}
 
-			PutStatus("There were [" + CString(uMatches) + "] channels matching [" + sChan + "]");
+			unsigned int uEnabled = 0;
+			for (CChan* pChan : sChans) {
+				if (!pChan->IsDisabled())
+					continue;
+				uEnabled++;
+				pChan->Enable();
+			}
+
+			PutStatus("There were [" + CString(sChans.size()) + "] channels matching [" + sPatterns + "]");
 			PutStatus("Enabled [" + CString(uEnabled) + "] channels");
 		}
 	} else if (sCommand.Equals("DISABLECHAN")) {
@@ -391,26 +396,30 @@ void CClient::UserCommand(CString& sLine) {
 			return;
 		}
 
-		CString sChan = sLine.Token(1, true);
+		CString sPatterns = sLine.Token(1, true);
 
-		if (sChan.empty()) {
-			PutStatus("Usage: DisableChan <channel>");
+		if (sPatterns.empty()) {
+			PutStatus("Usage: DisableChan <#chans>");
 		} else {
-			const vector<CChan*>& vChans = m_pNetwork->GetChans();
-			vector<CChan*>::const_iterator it;
-			unsigned int uMatches = 0, uDisabled = 0;
-			for (it = vChans.begin(); it != vChans.end(); ++it) {
-				if (!(*it)->GetName().WildCmp(sChan))
-					continue;
-				uMatches++;
+			VCString vsChans;
+			sPatterns.Replace(",", " ");
+			sPatterns.Split(" ", vsChans, false, "", "", true, true);
 
-				if ((*it)->IsDisabled())
-					continue;
-				uDisabled++;
-				(*it)->Disable();
+			set<CChan*> sChans;
+			for (const CString& sChan : vsChans) {
+				vector<CChan*> vChans = m_pNetwork->FindChans(sChan);
+				sChans.insert(vChans.begin(), vChans.end());
 			}
 
-			PutStatus("There were [" + CString(uMatches) + "] channels matching [" + sChan + "]");
+			unsigned int uDisabled = 0;
+			for (CChan* pChan : sChans) {
+				if (pChan->IsDisabled())
+					continue;
+				uDisabled++;
+				pChan->Disable();
+			}
+
+			PutStatus("There were [" + CString(sChans.size()) + "] channels matching [" + sPatterns + "]");
 			PutStatus("Disabled [" + CString(uDisabled) + "] channels");
 		}
 	} else if (sCommand.Equals("LISTCHANS")) {
@@ -1594,9 +1603,9 @@ void CClient::HelpUser(const CString& sFilter) {
 	AddCommandHelp(Table, "AddServer", "<host> [[+]port] [pass]", "Add a server to the list of alternate/backup servers of current IRC network.", sFilter);
 	AddCommandHelp(Table, "DelServer", "<host> [port] [pass]", "Remove a server from the list of alternate/backup servers of current IRC network", sFilter);
 
-	AddCommandHelp(Table, "EnableChan", "<#chan>", "Enable the channel", sFilter);
-	AddCommandHelp(Table, "DisableChan", "<#chan>", "Disable the channel", sFilter);
-	AddCommandHelp(Table, "Detach", "<#chan>", "Detach from the channel", sFilter);
+	AddCommandHelp(Table, "EnableChan", "<#chans>", "Enable channels", sFilter);
+	AddCommandHelp(Table, "DisableChan", "<#chans>", "Disable channels", sFilter);
+	AddCommandHelp(Table, "Detach", "<#chans>", "Detach from channels", sFilter);
 	AddCommandHelp(Table, "Topics", "", "Show topics in all your channels", sFilter);
 
 	AddCommandHelp(Table, "PlayBuffer", "<#chan|query>", "Play back the specified buffer", sFilter);
