@@ -111,6 +111,7 @@ public:
 
 	CString GetNick(bool bAllowIRCNick = true) const;
 	CString GetNickMask() const;
+	CString GetIdentifier() const { return m_sIdentifier; }
 	bool HasNamesx() const { return m_bNamesx; }
 	bool HasUHNames() const { return m_bUHNames; }
 	bool IsAway() const { return m_bAway; }
@@ -155,6 +156,8 @@ public:
 private:
 	void HandleCap(const CString& sLine);
 	void RespondCap(const CString& sResponse);
+	bool ParsePass(const CString& sAuthLine);
+	bool ParseUser(const CString& sAuthLine);
 
 protected:
 	bool                 m_bGotPass;
@@ -172,8 +175,11 @@ protected:
 	CString              m_sPass;
 	CString              m_sUser;
 	CString              m_sNetwork;
+	CString              m_sIdentifier;
 	std::shared_ptr<CAuthBase> m_spAuth;
 	SCString             m_ssAcceptedCaps;
+
+	friend class ClientTest;
 };
 
 #endif // !_CLIENT_H
