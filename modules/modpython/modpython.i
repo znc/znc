@@ -277,6 +277,19 @@ class CPyRetBool {
 	}
 };
 
+%extend CZNC {
+    PyObject* GetUserMap_() {
+        PyObject* result = PyDict_New();
+        auto user_type = SWIG_TypeQuery("CUser*");
+        for (const auto& p : $self->GetUserMap()) {
+            PyObject* user = SWIG_NewInstanceObj(p.second, user_type, 0);
+            PyDict_SetItemString(result, p.first.c_str(), user);
+            Py_CLEAR(user);
+        }
+        return result;
+    }
+};
+
 /* To allow module-loaders to be written on python.
  * They can call CreatePyModule() to create CModule* object, but one of arguments to CreatePyModule() is "CModule* pModPython"
  * Pointer to modpython is already accessible to python modules as self.GetModPython(), but it's just a pointer to something, not to CModule*.

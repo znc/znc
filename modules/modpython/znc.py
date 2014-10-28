@@ -704,6 +704,7 @@ def CreateWebSubPage(name, title='', params=dict(), admin=False):
 CUser.GetNetworks = CUser.GetNetworks_
 CIRCNetwork.GetChans = CIRCNetwork.GetChans_
 CChan.GetNicks = CChan.GetNicks_
+CZNC.GetUserMap = CZNC.GetUserMap_
 
 
 class ModulesIter(collections.Iterator):
