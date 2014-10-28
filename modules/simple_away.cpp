@@ -78,6 +78,10 @@ public:
 				SetReason(sSavedReason, false);
 		}
 
+		// Set away on load, required if loaded via webadmin
+		if (GetNetwork()->IsIRCConnected() && !GetNetwork()->IsUserAttached())
+			SetAway(false);
+
 		return true;
 	}
 
