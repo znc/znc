@@ -219,6 +219,10 @@ public:
 	void SetPassCmd(const CString& sCmdLine)
 	{
 		CString sArgs = sCmdLine.Token(1, true);
+		
+		if(sArgs.empty()) {
+			sArgs = CRYPT_LAME_PASS;
+		
 		PutModule("Password set to [" + sArgs + "]");
 		m_sPassword = CBlowfish::MD5(sArgs);
 	}
