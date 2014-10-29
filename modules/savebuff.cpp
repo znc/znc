@@ -100,9 +100,6 @@ public:
 			const vector<CChan *>& vChans = GetNetwork()->GetChans();
 			for (u_int a = 0; a < vChans.size(); a++)
 			{
-				if (vChans[a]->AutoClearChanBuffer())
-					continue;
-
 				if (!BootStrap(vChans[a]))
 				{
 					PutUser(":***!znc@znc.in PRIVMSG " + vChans[a]->GetName() + " :Failed to decrypt this channel, did you change the encryption pass?");
@@ -175,11 +172,6 @@ public:
 			{
 				CString sPath = GetPath(vChans[a]->GetName());
 				CFile File(sPath);
-
-				if (vChans[a]->AutoClearChanBuffer()) {
-					File.Delete();
-					continue;
-				}
 
 				const CBuffer& Buffer = vChans[a]->GetBuffer();
 				CString sLine;
