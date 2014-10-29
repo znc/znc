@@ -270,6 +270,7 @@ void CHTTPSock::PrintPage(const CString& sPage) {
 			} while(zStatus == Z_OK);
 
 			Close(Csock::CLT_AFTERWRITE);
+			deflateEnd(&zStrm);
 			return;
 		}
 
