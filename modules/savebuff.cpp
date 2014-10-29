@@ -220,7 +220,7 @@ public:
 	{
 		CString sArgs = sCmdLine.Token(1, true);
 		
-		if(sArgs.empty()) {
+		if(sArgs.empty())
 			sArgs = CRYPT_LAME_PASS;
 		
 		PutModule("Password set to [" + sArgs + "]");
