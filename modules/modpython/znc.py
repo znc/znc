@@ -630,6 +630,8 @@ def gather_mod_info(cl, modinfo):
     modinfo.SetDescription(cl.description)
     modinfo.SetWikiPage(cl.wiki_page)
     modinfo.SetDefaultType(cl.module_types[0])
+    modinfo.SetArgsHelpText(cl.args_help_text);
+    modinfo.SetHasArgs(cl.has_args);
     for module_type in cl.module_types:
         modinfo.AddType(module_type)
 
