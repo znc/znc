@@ -20,8 +20,8 @@
 #include <signal.h>
 
 CZNCSock::CZNCSock(int timeout) : Csock(timeout) {
-	DisableSSLProtocols(EDP_SSL);
 #ifdef HAVE_LIBSSL
+	DisableSSLProtocols(EDP_SSL);
 	CString sCipher = CZNC::Get().GetSSLCiphers();
 	if (!sCipher.empty()) {
 		SetCipher(sCipher);
@@ -30,8 +30,8 @@ CZNCSock::CZNCSock(int timeout) : Csock(timeout) {
 }
 
 CZNCSock::CZNCSock(const CString& sHost, u_short port, int timeout) : Csock(sHost, port, timeout) {
-	DisableSSLProtocols(EDP_SSL);
 #ifdef HAVE_LIBSSL
+	DisableSSLProtocols(EDP_SSL);
 	CString sCipher = CZNC::Get().GetSSLCiphers();
 	if (!sCipher.empty()) {
 		SetCipher(sCipher);
