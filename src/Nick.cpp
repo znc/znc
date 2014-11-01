@@ -49,7 +49,7 @@ void CNick::Parse(const CString& sNickMask) {
 		return;
 	}
 
-	m_sNick = sNickMask.substr((sNickMask[0] == ':'), uPos);
+	m_sNick = sNickMask.substr((sNickMask[0] == ':'), uPos - (sNickMask[0] == ':'));
 	m_sHost = sNickMask.substr(uPos +1);
 
 	if ((uPos = m_sHost.find('@')) != CString::npos) {
