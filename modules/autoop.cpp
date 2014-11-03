@@ -149,7 +149,16 @@ protected:
 
 class CAutoOpMod : public CModule {
 public:
-	MODCONSTRUCTOR(CAutoOpMod) {}
+	MODCONSTRUCTOR(CAutoOpMod) {
+		AddHelpCommand();
+		AddCommand("ListUsers", static_cast<CModCommand::ModCmdFunc>(&CAutoOpMod::OnListUsersCommand), "", "List all users");
+		AddCommand("AddChans", static_cast<CModCommand::ModCmdFunc>(&CAutoOpMod::OnAddChansCommand), "<user> <channel> [channel] ...", "Adds channels to a user");
+		AddCommand("DelChans", static_cast<CModCommand::ModCmdFunc>(&CAutoOpMod::OnDelChansCommand), "<user> <channel> [channel] ...", "Removes channels from a user");
+		AddCommand("AddMasks", static_cast<CModCommand::ModCmdFunc>(&CAutoOpMod::OnAddMasksCommand), "<user> <mask>,[mask] ...", "Adds masks to a user");
+		AddCommand("DelMasks", static_cast<CModCommand::ModCmdFunc>(&CAutoOpMod::OnDelMasksCommand), "<user> <mask>,[mask] ...", "Removes masks from a user");
+		AddCommand("AddUser", static_cast<CModCommand::ModCmdFunc>(&CAutoOpMod::OnAddUserCommand), "<user> <hostmask>[,<hostmasks>...] <key> [channels]", "Adds a user");
+		AddCommand("DelUser", static_cast<CModCommand::ModCmdFunc>(&CAutoOpMod::OnDelUserCommand), "<user>", "Removes a user");
+	}
 
 	virtual bool OnLoad(const CString& sArgs, CString& sMessage) {
 		AddTimer(new CAutoOpTimer(this));
@@ -229,121 +238,163 @@ public:
 		}
 	}
 
-	virtual void OnModCommand(const CString& sLine) {
+	void OnModCommand(const CString& sLine) {
 		CString sCommand = sLine.Token(0).AsUpper();
-
-		if (sCommand.Equals("HELP")) {
-			PutModule("Commands are: ListUsers, AddChans, DelChans, AddMasks, DelMasks, AddUser, DelUser");
-		} else if (sCommand.Equals("TIMERS")) {
+		if (sCommand.Equals("TIMERS")) {
+			// for testing purposes - hidden from help
 			ListTimers();
-		} else if (sCommand.Equals("ADDUSER") || sCommand.Equals("DELUSER")) {
-			CString sUser = sLine.Token(1);
-			CString sHost = sLine.Token(2);
-			CString sKey = sLine.Token(3);
-
-			if (sCommand.Equals("ADDUSER")) {
-				if (sHost.empty()) {
-					PutModule("Usage: " + sCommand + " <user> <hostmask>[,<hostmasks>...] <key> [channels]");
-				} else {
-					CAutoOpUser* pUser = AddUser(sUser, sKey, sHost, sLine.Token(4, true));
-
-					if (pUser) {
-						SetNV(sUser, pUser->ToString());
-					}
-				}
-			} else {
-				DelUser(sUser);
-				DelNV(sUser);
-			}
-		} else if (sCommand.Equals("LISTUSERS")) {
-			if (m_msUsers.empty()) {
-				PutModule("There are no users defined");
-				return;
-			}
-
-			CTable Table;
-
-			Table.AddColumn("User");
-			Table.AddColumn("Hostmasks");
-			Table.AddColumn("Key");
-			Table.AddColumn("Channels");
-
-			for (map<CString, CAutoOpUser*>::iterator it = m_msUsers.begin(); it != m_msUsers.end(); ++it) {
-				VCString vsHostmasks;
-				it->second->GetHostmasks().Split(",", vsHostmasks);
-				for (unsigned int a = 0; a < vsHostmasks.size(); a++) {
-					Table.AddRow();
-					if (a == 0) {
-						Table.SetCell("User", it->second->GetUsername());
-						Table.SetCell("Key", it->second->GetUserKey());
-						Table.SetCell("Channels", it->second->GetChannels());
-					} else if (a == vsHostmasks.size()-1) {
-						Table.SetCell("User", "`-");
-					} else {
-						Table.SetCell("User", "|-");
-					}
-					Table.SetCell("Hostmasks", vsHostmasks[a]);
-				}
-			}
-
-			PutModule(Table);
-		} else if (sCommand.Equals("ADDCHANS") || sCommand.Equals("DELCHANS")) {
-			CString sUser = sLine.Token(1);
-			CString sChans = sLine.Token(2, true);
-
-			if (sChans.empty()) {
-				PutModule("Usage: " + sCommand + " <user> <channel> [channel] ...");
-				return;
-			}
-
-			CAutoOpUser* pUser = FindUser(sUser);
-
-			if (!pUser) {
-				PutModule("No such user");
-				return;
-			}
-
-			if (sCommand.Equals("ADDCHANS")) {
-				pUser->AddChans(sChans);
-				PutModule("Channel(s) added to user [" + pUser->GetUsername() + "]");
-			} else {
-				pUser->DelChans(sChans);
-				PutModule("Channel(s) Removed from user [" + pUser->GetUsername() + "]");
-			}
-
-			SetNV(pUser->GetUsername(), pUser->ToString());
-		} else if (sCommand.Equals("ADDMASKS") || sCommand.Equals("DELMASKS")) {
-			CString sUser = sLine.Token(1);
-			CString sHostmasks = sLine.Token(2, true);
-
-			if (sHostmasks.empty()) {
-				PutModule("Usage: " + sCommand + " <user> <mask>,[mask] ...");
-				return;
-			}
-
-			CAutoOpUser* pUser = FindUser(sUser);
-
-			if (!pUser) {
-				PutModule("No such user");
-				return;
-			}
-
-			if (sCommand.Equals("ADDMASKS")) {
-				pUser->AddHostmasks(sHostmasks);
-				PutModule("Hostmasks(s) added to user [" + pUser->GetUsername() + "]");
-				SetNV(pUser->GetUsername(), pUser->ToString());
-			} else {
-				if (pUser->DelHostmasks(sHostmasks)) {
-					PutModule("Removed user [" + pUser->GetUsername() + "] with key [" + pUser->GetUserKey() + "] and channels [" + pUser->GetChannels() + "]");
-					DelUser(sUser);
-					DelNV(sUser);
-				} else {
-					PutModule("Hostmasks(s) Removed from user [" + pUser->GetUsername() + "]");
-					SetNV(pUser->GetUsername(), pUser->ToString());
-				}
-			}
 		} else {
-			PutModule("Unknown command, try HELP");
+			HandleCommand(sLine);
+		}
+	}
+
+	void OnAddUserCommand(const CString& sLine) {
+		CString sUser = sLine.Token(1);
+		CString sHost = sLine.Token(2);
+		CString sKey = sLine.Token(3);
+
+		if (sHost.empty()) {
+			PutModule("Usage: AddUser <user> <hostmask>[,<hostmasks>...] <key> [channels]");
+		} else {
+			CAutoOpUser* pUser = AddUser(sUser, sKey, sHost, sLine.Token(4, true));
+
+			if (pUser) {
+				SetNV(sUser, pUser->ToString());
+			}
+		}
+	}
+
+	void OnDelUserCommand(const CString& sLine) {
+		CString sUser = sLine.Token(1);
+
+		if (sUser.empty()) {
+			PutModule("Usage: DelUser <user>");
+		} else {
+			DelUser(sUser);
+			DelNV(sUser);
+		}
+	}
+
+	void OnListUsersCommand(const CString& sLine) {
+		if (m_msUsers.empty()) {
+			PutModule("There are no users defined");
+			return;
+		}
+
+		CTable Table;
+
+		Table.AddColumn("User");
+		Table.AddColumn("Hostmasks");
+		Table.AddColumn("Key");
+		Table.AddColumn("Channels");
+
+		for (map<CString, CAutoOpUser*>::iterator it = m_msUsers.begin(); it != m_msUsers.end(); ++it) {
+			VCString vsHostmasks;
+			it->second->GetHostmasks().Split(",", vsHostmasks);
+			for (unsigned int a = 0; a < vsHostmasks.size(); a++) {
+				Table.AddRow();
+				if (a == 0) {
+					Table.SetCell("User", it->second->GetUsername());
+					Table.SetCell("Key", it->second->GetUserKey());
+					Table.SetCell("Channels", it->second->GetChannels());
+				} else if (a == vsHostmasks.size()-1) {
+					Table.SetCell("User", "`-");
+				} else {
+					Table.SetCell("User", "|-");
+				}
+				Table.SetCell("Hostmasks", vsHostmasks[a]);
+			}
+		}
+
+		PutModule(Table);
+	}
+
+	void OnAddChansCommand(const CString& sLine) {
+		CString sUser = sLine.Token(1);
+		CString sChans = sLine.Token(2, true);
+
+		if (sChans.empty()) {
+			PutModule("Usage: AddChans <user> <channel> [channel] ...");
+			return;
+		}
+
+		CAutoOpUser* pUser = FindUser(sUser);
+
+		if (!pUser) {
+			PutModule("No such user");
+			return;
+		}
+
+		pUser->AddChans(sChans);
+		PutModule("Channel(s) added to user [" + pUser->GetUsername() + "]");
+		SetNV(pUser->GetUsername(), pUser->ToString());
+	}
+
+	void OnDelChansCommand(const CString& sLine) {
+		CString sUser = sLine.Token(1);
+		CString sChans = sLine.Token(2, true);
+
+		if (sChans.empty()) {
+			PutModule("Usage: DelChans <user> <channel> [channel] ...");
+			return;
+		}
+
+		CAutoOpUser* pUser = FindUser(sUser);
+
+		if (!pUser) {
+			PutModule("No such user");
+			return;
+		}
+
+		pUser->DelChans(sChans);
+		PutModule("Channel(s) Removed from user [" + pUser->GetUsername() + "]");
+		SetNV(pUser->GetUsername(), pUser->ToString());
+	}
+
+	void OnAddMasksCommand(const CString& sLine) {
+		CString sUser = sLine.Token(1);
+		CString sHostmasks = sLine.Token(2, true);
+
+		if (sHostmasks.empty()) {
+			PutModule("Usage: AddMasks <user> <mask>,[mask] ...");
+			return;
+		}
+
+		CAutoOpUser* pUser = FindUser(sUser);
+
+		if (!pUser) {
+			PutModule("No such user");
+			return;
+		}
+
+		pUser->AddHostmasks(sHostmasks);
+		PutModule("Hostmasks(s) added to user [" + pUser->GetUsername() + "]");
+		SetNV(pUser->GetUsername(), pUser->ToString());
+	}
+
+	void OnDelMasksCommand(const CString& sLine) {
+		CString sUser = sLine.Token(1);
+		CString sHostmasks = sLine.Token(2, true);
+
+		if (sHostmasks.empty()) {
+			PutModule("Usage: DelMasks <user> <mask>,[mask] ...");
+			return;
+		}
+
+		CAutoOpUser* pUser = FindUser(sUser);
+
+		if (!pUser) {
+			PutModule("No such user");
+			return;
+		}
+
+		if (pUser->DelHostmasks(sHostmasks)) {
+			PutModule("Removed user [" + pUser->GetUsername() + "] with key [" + pUser->GetUserKey() + "] and channels [" + pUser->GetChannels() + "]");
+			DelUser(sUser);
+			DelNV(sUser);
+		} else {
+			PutModule("Hostmasks(s) Removed from user [" + pUser->GetUsername() + "]");
+			SetNV(pUser->GetUsername(), pUser->ToString());
 		}
 	}
 
