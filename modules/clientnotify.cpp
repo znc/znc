@@ -44,6 +44,11 @@ protected:
 
 public:
 	MODCONSTRUCTOR(CClientNotifyMod) {
+		AddHelpCommand();
+		AddCommand("Method", static_cast<CModCommand::ModCmdFunc>(&CClientNotifyMod::OnMethodCommand), "<message|notice|off>", "Sets the notify method");
+		AddCommand("NewOnly", static_cast<CModCommand::ModCmdFunc>(&CClientNotifyMod::OnNewOnlyCommand), "<on|off>", "Turns notifies for unseen IP addresses only on or off");
+		AddCommand("OnDisconnect", static_cast<CModCommand::ModCmdFunc>(&CClientNotifyMod::OnDisconnectCommand), "<on|off>", "Turns notifies on disconnecting clients on or off");
+		AddCommand("Show", static_cast<CModCommand::ModCmdFunc>(&CClientNotifyMod::OnShowCommand), "", "Show the current settings");
 	}
 
 	bool OnLoad(const CString& sArgs, CString& sMessage) {
@@ -81,35 +86,48 @@ public:
 		}
 	}
 
-	void OnModCommand(const CString& sCommand) {
-		const CString& sCmd = sCommand.Token(0).AsLower();
+	void OnMethodCommand(const CString& sCommand) {
 		const CString& sArg = sCommand.Token(1, true).AsLower();
 
-		if (sCmd.Equals("method") && !sArg.empty()) {
-			if(sArg != "notice" && sArg != "message" && sArg != "off") {
-				PutModule("Unknown method. Use one of: message / notice / off");
-			}
-			else {
-				m_sMethod = sArg;
-				SaveSettings();
-				PutModule("Saved.");
-			}
+		if (sArg != "notice" && sArg != "message" && sArg != "off") {
+			PutModule("Usage: Method <message|notice|off>");
+			return;
 		}
-		else if (sCmd.Equals("newonly") && !sArg.empty()) {
-			m_bNewOnly = (sArg == "on" || sArg == "true");
-			SaveSettings();
-			PutModule("Saved.");
+
+		m_sMethod = sArg;
+		SaveSettings();
+		PutModule("Saved.");
+	}
+
+	void OnNewOnlyCommand(const CString& sCommand) {
+		const CString& sArg = sCommand.Token(1, true).AsLower();
+
+		if (sArg.empty()) {
+			PutModule("Usage: NewOnly <on|off>");
+			return;
 		}
-		else if (sCmd.Equals("ondisconnect") && !sArg.empty()) {
-			m_bOnDisconnect = (sArg == "on" || sArg == "true");
-			SaveSettings();
-			PutModule("Saved.");
+
+		m_bNewOnly = sArg.ToBool();
+		SaveSettings();
+		PutModule("Saved.");
+	}
+
+	void OnDisconnectCommand(const CString& sCommand) {
+		const CString& sArg = sCommand.Token(1, true).AsLower();
+
+		if (sArg.empty()) {
+			PutModule("Usage: OnDisconnect <on|off>");
+			return;
 		}
-		else {
-			PutModule("Current settings: Method: " + m_sMethod + ", for unseen IP addresses only: " + CString(m_bNewOnly) +
-				", notify on disconnecting clients: " + CString(m_bOnDisconnect));
-			PutModule("Commands: show, method <message|notice|off>, newonly <on|off>, ondisconnect <on|off>");
-		}
+
+		m_bOnDisconnect = sArg.ToBool();
+		SaveSettings();
+		PutModule("Saved.");
+	}
+
+	void OnShowCommand(const CString& sLine) {
+		PutModule("Current settings: Method: " + m_sMethod + ", for unseen IP addresses only: " + CString(m_bNewOnly) +
+			", notify on disconnecting clients: " + CString(m_bOnDisconnect));
 	}
 };
 
