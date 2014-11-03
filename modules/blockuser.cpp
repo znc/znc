@@ -23,7 +23,12 @@ using std::vector;
 
 class CBlockUser : public CModule {
 public:
-	MODCONSTRUCTOR(CBlockUser) {}
+	MODCONSTRUCTOR(CBlockUser) {
+		AddHelpCommand();
+		AddCommand("List", static_cast<CModCommand::ModCmdFunc>(&CBlockUser::OnListCommand), "", "List blocked users");
+		AddCommand("Block", static_cast<CModCommand::ModCmdFunc>(&CBlockUser::OnBlockCommand), "<user>", "Block a user");
+		AddCommand("Unblock", static_cast<CModCommand::ModCmdFunc>(&CBlockUser::OnUnblockCommand), "<user>", "Unblock a user");
+	}
 
 	virtual ~CBlockUser() {}
 
@@ -61,48 +66,59 @@ public:
 	}
 
 	void OnModCommand(const CString& sCommand) {
-		CString sCmd = sCommand.Token(0);
-
 		if (!GetUser()->IsAdmin()) {
 			PutModule("Access denied");
+		} else {
+			HandleCommand(sCommand);
+		}
+	}
+
+	void OnListCommand(const CString& sCommand) {
+		CTable Table;
+		MCString::iterator it;
+
+		Table.AddColumn("Blocked user");
+
+		for (it = BeginNV(); it != EndNV(); ++it) {
+			Table.AddRow();
+			Table.SetCell("Blocked user", it->first);
+		}
+
+		if (PutModule(Table) == 0)
+			PutModule("No users blocked");
+	}
+
+	void OnBlockCommand(const CString& sCommand) {
+		CString sUser = sCommand.Token(1, true);
+
+		if (sUser.empty()) {
+			PutModule("Usage: Block <user>");
 			return;
 		}
 
-		if (sCmd.Equals("list")) {
-			CTable Table;
-			MCString::iterator it;
-
-			Table.AddColumn("Blocked user");
-
-			for (it = BeginNV(); it != EndNV(); ++it) {
-				Table.AddRow();
-				Table.SetCell("Blocked user", it->first);
-			}
-
-			if (PutModule(Table) == 0)
-				PutModule("No users blocked");
-		} else if (sCmd.Equals("block")) {
-			CString sUser = sCommand.Token(1, true);
-
-			if (GetUser()->GetUserName().Equals(sUser)) {
-				PutModule("You can't block yourself");
-				return;
-			}
-
-			if (Block(sUser))
-				PutModule("Blocked [" + sUser + "]");
-			else
-				PutModule("Could not block [" + sUser + "] (misspelled?)");
-		} else if (sCmd.Equals("unblock")) {
-			CString sUser = sCommand.Token(1, true);
-
-			if (DelNV(sUser))
-				PutModule("Unblocked [" + sUser + "]");
-			else
-				PutModule("This user is not blocked");
-		} else {
-			PutModule("Commands: list, block [user], unblock [user]");
+		if (GetUser()->GetUserName().Equals(sUser)) {
+			PutModule("You can't block yourself");
+			return;
 		}
+
+		if (Block(sUser))
+			PutModule("Blocked [" + sUser + "]");
+		else
+			PutModule("Could not block [" + sUser + "] (misspelled?)");
+	}
+
+	void OnUnblockCommand(const CString& sCommand) {
+		CString sUser = sCommand.Token(1, true);
+
+		if (sUser.empty()) {
+			PutModule("Usage: Unblock <user>");
+			return;
+		}
+
+		if (DelNV(sUser))
+			PutModule("Unblocked [" + sUser + "]");
+		else
+			PutModule("This user is not blocked");
 	}
 
 	bool OnEmbeddedWebRequest(CWebSock& WebSock, const CString& sPageName, CTemplate& Tmpl) {
