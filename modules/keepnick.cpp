@@ -34,7 +34,12 @@ private:
 
 class CKeepNickMod : public CModule {
 public:
-	MODCONSTRUCTOR(CKeepNickMod) {}
+	MODCONSTRUCTOR(CKeepNickMod) {
+		AddHelpCommand();
+		AddCommand("Enable", static_cast<CModCommand::ModCmdFunc>(&CKeepNickMod::OnEnableCommand), "", "Try to get your primary nick");
+		AddCommand("Disable", static_cast<CModCommand::ModCmdFunc>(&CKeepNickMod::OnDisableCommand), "", "No longer trying to get your primary nick");
+		AddCommand("State", static_cast<CModCommand::ModCmdFunc>(&CKeepNickMod::OnStateCommand), "", "Show the current state");
+	}
 
 	~CKeepNickMod() {}
 
@@ -168,23 +173,21 @@ public:
 		return CONTINUE;
 	}
 
-	void OnModCommand(const CString& sCommand) {
-		CString sCmd = sCommand.AsUpper();
+	void OnEnableCommand(const CString& sCommand) {
+		Enable();
+		PutModule("Trying to get your primary nick");
+	}
 
-		if (sCmd == "ENABLE") {
-			Enable();
-			PutModule("Trying to get your primary nick");
-		} else if (sCmd == "DISABLE") {
-			Disable();
-			PutModule("No longer trying to get your primary nick");
-		} else if (sCmd == "STATE") {
-			if (m_pTimer)
-				PutModule("Currently trying to get your primary nick");
-			else
-				PutModule("Currently disabled, try 'enable'");
-		} else {
-			PutModule("Commands: Enable, Disable, State");
-		}
+	void OnDisableCommand(const CString& sCommand) {
+		Disable();
+		PutModule("No longer trying to get your primary nick");
+	}
+
+	void OnStateCommand(const CString& sCommand) {
+		if (m_pTimer)
+			PutModule("Currently trying to get your primary nick");
+		else
+			PutModule("Currently disabled, try 'enable'");
 	}
 
 private:

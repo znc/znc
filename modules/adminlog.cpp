@@ -24,6 +24,9 @@
 class CAdminLogMod : public CModule {
 public:
 	MODCONSTRUCTOR(CAdminLogMod) {
+		AddHelpCommand();
+		AddCommand("Show", static_cast<CModCommand::ModCmdFunc>(&CAdminLogMod::OnShowCommand), "", "Show the logging target");
+		AddCommand("Target", static_cast<CModCommand::ModCmdFunc>(&CAdminLogMod::OnTargetCommand), "<file|syslog|both>", "Set the logging target");
 		openlog("znc", LOG_PID, LOG_DAEMON);
 	}
 
@@ -107,59 +110,63 @@ public:
 	virtual void OnModCommand(const CString& sCommand) {
 		if (!GetUser()->IsAdmin()) {
 			PutModule("Access denied");
+		} else {
+			HandleCommand(sCommand);
+		}
+	}
+
+	void OnTargetCommand(const CString& sCommand) {
+		CString sArg = sCommand.Token(1, true);
+		CString sTarget;
+		CString sMessage;
+		LogMode mode;
+
+		if (sArg.Equals("file")) {
+			sTarget = "file";
+			sMessage = "Now only logging to file";
+			mode = LOG_TO_FILE;
+		} else if (sArg.Equals("syslog")) {
+			sTarget = "syslog";
+			sMessage = "Now only logging to syslog";
+			mode = LOG_TO_SYSLOG;
+		} else if (sArg.Equals("both")) {
+			sTarget = "both";
+			sMessage = "Now logging to file and syslog";
+			mode = LOG_TO_BOTH;
+		} else {
+			if (sArg.empty()) {
+				PutModule("Usage: Target <file|syslog|both>");
+			} else {
+				PutModule("Unknown target");
+			}
 			return;
 		}
 
-		CString sCmd = sCommand.Token(0);
+		Log(sMessage);
+		SetNV("target", sTarget);
+		m_eLogMode = mode;
+		PutModule(sMessage);
+	}
 
-		if (sCmd.Equals("target")) {
-			CString sArg = sCommand.Token(1, true);
-			CString sTarget;
-			CString sMessage;
-			LogMode mode;
+	void OnShowCommand(const CString& sCommand) {
+		CString sTarget;
 
-			if (sArg.Equals("file")) {
-				sTarget = "file";
-				sMessage = "Now only logging to file";
-				mode = LOG_TO_FILE;
-			} else if (sArg.Equals("syslog")) {
-				sTarget = "syslog";
-				sMessage = "Now only logging to syslog";
-				mode = LOG_TO_SYSLOG;
-			} else if (sArg.Equals("both")) {
-				sTarget = "both";
-				sMessage = "Now logging to file and syslog";
-				mode = LOG_TO_BOTH;
-			} else {
-				PutModule("Unknown target");
-				return;
-			}
+		switch (m_eLogMode)
+		{
+		case LOG_TO_FILE:
+			sTarget = "file";
+			break;
+		case LOG_TO_SYSLOG:
+			sTarget = "syslog";
+			break;
+		case LOG_TO_BOTH:
+			sTarget = "both, file and syslog";
+			break;
+		}
 
-			Log(sMessage);
-			SetNV("target", sTarget);
-			m_eLogMode = mode;
-			PutModule(sMessage);
-		} else if (sCmd.Equals("show")) {
-			CString sTarget;
-
-			switch (m_eLogMode)
-			{
-			case LOG_TO_FILE:
-				sTarget = "file";
-				break;
-			case LOG_TO_SYSLOG:
-				sTarget = "syslog";
-				break;
-			case LOG_TO_BOTH:
-				sTarget = "both, file and syslog";
-				break;
-			}
-
-			PutModule("Logging is enabled for " + sTarget);
-			if (m_eLogMode != LOG_TO_SYSLOG)
-				PutModule("Log file will be written to [" + m_sLogFile + "]");
-		} else
-			PutModule("Commands: show, target <file|syslog|both>");
+		PutModule("Logging is enabled for " + sTarget);
+		if (m_eLogMode != LOG_TO_SYSLOG)
+			PutModule("Log file will be written to [" + m_sLogFile + "]");
 	}
 private:
 	enum LogMode {

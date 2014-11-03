@@ -22,7 +22,12 @@ using std::vector;
 class CStickyChan : public CModule
 {
 public:
-	MODCONSTRUCTOR(CStickyChan) {}
+	MODCONSTRUCTOR(CStickyChan) {
+		AddHelpCommand();
+		AddCommand("Stick", static_cast<CModCommand::ModCmdFunc>(&CStickyChan::OnStickCommand), "<#channel> [key]", "Sticks a channel");
+		AddCommand("Unstick", static_cast<CModCommand::ModCmdFunc>(&CStickyChan::OnUnstickCommand), "<#channel>", "Unsticks a channel");
+		AddCommand("List", static_cast<CModCommand::ModCmdFunc>(&CStickyChan::OnListCommand), "", "Lists sticky channels");
+	}
 	virtual ~CStickyChan()
 	{
 	}
@@ -48,40 +53,39 @@ public:
 		return CONTINUE;
 	}
 
-	virtual void OnModCommand(const CString& sCommand)
+	void OnStickCommand(const CString& sCommand)
 	{
-		CString sCmdName = sCommand.Token(0);
-		CString sChannel = sCommand.Token(1);
-		sChannel.MakeLower();
-		if ((sCmdName == "stick") && (!sChannel.empty()))
-		{
-			SetNV(sChannel, sCommand.Token(2));
-			PutModule("Stuck " + sChannel);
+		CString sChannel = sCommand.Token(1).AsLower();
+		if (sChannel.empty()) {
+			PutModule("Usage: Stick <#channel> [key]");
+			return;
 		}
-		else if ((sCmdName == "unstick") && (!sChannel.empty()))
-		{
-			MCString::iterator it = FindNV(sChannel);
-			if (it != EndNV())
-				DelNV(it);
+		SetNV(sChannel, sCommand.Token(2));
+		PutModule("Stuck " + sChannel);
+	}
 
-			PutModule("UnStuck " + sChannel);
+	void OnUnstickCommand(const CString& sCommand) {
+		CString sChannel = sCommand.Token(1);
+		if (sChannel.empty()) {
+			PutModule("Usage: Unstick <#channel>");
+			return;
 		}
-		else if ((sCmdName == "list") && (sChannel.empty()))
+		MCString::iterator it = FindNV(sChannel);
+		if (it != EndNV())
+			DelNV(it);
+		PutModule("Unstuck " + sChannel);
+	}
+
+	void OnListCommand(const CString& sCommand) {
+		int i = 1;
+		for (MCString::iterator it = BeginNV(); it != EndNV(); ++it, i++)
 		{
-			int i = 1;
-			for (MCString::iterator it = BeginNV(); it != EndNV(); ++it, i++)
-			{
-				if (it->second.empty())
-					PutModule(CString(i) + ": " + it->first);
-				else
-					PutModule(CString(i) + ": " + it->first + " (" + it->second + ")");
-			}
-			PutModule(" -- End of List");
+			if (it->second.empty())
+				PutModule(CString(i) + ": " + it->first);
+			else
+				PutModule(CString(i) + ": " + it->first + " (" + it->second + ")");
 		}
-		else
-		{
-			PutModule("USAGE: [un]stick #channel [key], list");
-		}
+		PutModule(" -- End of List");
 	}
 
 	virtual void RunJob()

@@ -64,7 +64,10 @@ private:
 
 class CListSockets : public CModule {
 public:
-	MODCONSTRUCTOR(CListSockets) {}
+	MODCONSTRUCTOR(CListSockets) {
+		AddHelpCommand();
+		AddCommand("List", static_cast<CModCommand::ModCmdFunc>(&CListSockets::OnListCommand), "[-n]", "Show the list of active sockets. Pass -n to show IP addresses");
+	}
 
 	virtual bool OnLoad(const CString& sArgs, CString& sMessage)
 	{
@@ -128,20 +131,14 @@ public:
 		return false;
 	}
 
-	virtual void OnModCommand(const CString& sLine) {
-		CString sCommand = sLine.Token(0);
+	void OnListCommand(const CString& sLine) {
 		CString sArg = sLine.Token(1, true);
 
-		if (sCommand.Equals("LIST")) {
-			bool bShowHosts = true;
-			if (sArg.Equals("-n")) {
-				bShowHosts = false;
-			}
-			ShowSocks(bShowHosts);
-		} else {
-			PutModule("Use 'list' to view a list of active sockets");
-			PutModule("Use 'list -n' if you want IP addresses to be displayed");
+		bool bShowHosts = true;
+		if (sArg.Equals("-n")) {
+			bShowHosts = false;
 		}
+		ShowSocks(bShowHosts);
 	}
 
 	CString GetSocketState(Csock* pSocket) {

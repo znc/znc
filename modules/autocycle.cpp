@@ -22,6 +22,10 @@ using std::vector;
 class CAutoCycleMod : public CModule {
 public:
 	MODCONSTRUCTOR(CAutoCycleMod) {
+		AddHelpCommand();
+		AddCommand("Add", static_cast<CModCommand::ModCmdFunc>(&CAutoCycleMod::OnAddCommand), "[!]<#chan>", "Add an entry, use !#chan to negate and * for wildcards");
+		AddCommand("Del", static_cast<CModCommand::ModCmdFunc>(&CAutoCycleMod::OnDelCommand), "[!]<#chan>", "Remove an entry, needs to be an exact match");
+		AddCommand("List", static_cast<CModCommand::ModCmdFunc>(&CAutoCycleMod::OnListCommand), "", "List all entries");
 		m_recentlyCycled.SetTTL(15 * 1000);
 	}
 
@@ -50,67 +54,45 @@ public:
 		return true;
 	}
 
-	virtual void OnModCommand(const CString& sLine) {
-		CString sCommand = sLine.Token(0);
+	void OnAddCommand(const CString& sLine) {
+		CString sChan = sLine.Token(1);
 
-		if (sCommand.Equals("ADD")) {
-			CString sChan = sLine.Token(1);
-
-			if (AlreadyAdded(sChan)) {
-				PutModule(sChan + " is already added");
-			} else if (Add(sChan)) {
-				PutModule("Added " + sChan + " to list");
-			} else {
-				PutModule("Usage: Add [!]<#chan>");
-			}
-		} else if (sCommand.Equals("DEL")) {
-			CString sChan = sLine.Token(1);
-
-			if (Del(sChan))
-				PutModule("Removed " + sChan + " from list");
-			else
-				PutModule("Usage: Del [!]<#chan>");
-		} else if (sCommand.Equals("LIST")) {
-			CTable Table;
-			Table.AddColumn("Chan");
-
-			for (unsigned int a = 0; a < m_vsChans.size(); a++) {
-				Table.AddRow();
-				Table.SetCell("Chan", m_vsChans[a]);
-			}
-
-			for (unsigned int b = 0; b < m_vsNegChans.size(); b++) {
-				Table.AddRow();
-				Table.SetCell("Chan", "!" + m_vsNegChans[b]);
-			}
-
-			if (Table.size()) {
-				PutModule(Table);
-			} else {
-				PutModule("You have no entries.");
-			}
+		if (AlreadyAdded(sChan)) {
+			PutModule(sChan + " is already added");
+		} else if (Add(sChan)) {
+			PutModule("Added " + sChan + " to list");
 		} else {
-			CTable Table;
-			Table.AddColumn("Command");
-			Table.AddColumn("Description");
+			PutModule("Usage: Add [!]<#chan>");
+		}
+	}
 
+	void OnDelCommand(const CString& sLine) {
+		CString sChan = sLine.Token(1);
+
+		if (Del(sChan))
+			PutModule("Removed " + sChan + " from list");
+		else
+			PutModule("Usage: Del [!]<#chan>");
+	}
+
+	void OnListCommand(const CString& sLine) {
+		CTable Table;
+		Table.AddColumn("Chan");
+
+		for (unsigned int a = 0; a < m_vsChans.size(); a++) {
 			Table.AddRow();
-			Table.SetCell("Command", "Add");
-			Table.SetCell("Description", "Add an entry, use !#chan to negate and * for wildcards");
+			Table.SetCell("Chan", m_vsChans[a]);
+		}
 
+		for (unsigned int b = 0; b < m_vsNegChans.size(); b++) {
 			Table.AddRow();
-			Table.SetCell("Command", "Del");
-			Table.SetCell("Description", "Remove an entry, needs to be an exact match");
+			Table.SetCell("Chan", "!" + m_vsNegChans[b]);
+		}
 
-			Table.AddRow();
-			Table.SetCell("Command", "List");
-			Table.SetCell("Description", "List all entries");
-
-			if (Table.size()) {
-				PutModule(Table);
-			} else {
-				PutModule("You have no entries.");
-			}
+		if (Table.size()) {
+			PutModule(Table);
+		} else {
+			PutModule("You have no entries.");
 		}
 	}
 

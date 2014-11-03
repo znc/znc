@@ -21,6 +21,9 @@
 class CAutoReplyMod : public CModule {
 public:
 	MODCONSTRUCTOR(CAutoReplyMod) {
+		AddHelpCommand();
+		AddCommand("Set", static_cast<CModCommand::ModCmdFunc>(&CAutoReplyMod::OnSetCommand), "<reply>", "Sets a new reply");
+		AddCommand("Show", static_cast<CModCommand::ModCmdFunc>(&CAutoReplyMod::OnShowCommand), "", "Displays the current query reply");
 		m_Messaged.SetTTL(1000 * 120);
 	}
 
@@ -70,20 +73,14 @@ public:
 		return CONTINUE;
 	}
 
-	virtual void OnModCommand(const CString& sCommand) {
-		const CString& sCmd = sCommand.Token(0);
+	void OnShowCommand(const CString& sCommand) {
+		PutModule("Current reply is: " + GetNV("Reply")
+				+ " (" + GetReply() + ")");
+	}
 
-		if (sCmd.Equals("SHOW")) {
-			PutModule("Current reply is: " + GetNV("Reply")
-					+ " (" + GetReply() + ")");
-		} else if (sCmd.Equals("SET")) {
-			SetReply(sCommand.Token(1, true));
-			PutModule("New reply set");
-		} else {
-			PutModule("Available commands are:");
-			PutModule("Show        - Displays the current query reply");
-			PutModule("Set <reply> - Sets a new reply");
-		}
+	void OnSetCommand(const CString& sCommand) {
+		SetReply(sCommand.Token(1, true));
+		PutModule("New reply set");
 	}
 
 private:

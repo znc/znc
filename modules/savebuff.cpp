@@ -59,6 +59,11 @@ public:
 	{
 		m_bBootError = false;
 		m_bFirstLoad = false;
+
+		AddHelpCommand();
+		AddCommand("SetPass", static_cast<CModCommand::ModCmdFunc>(&CSaveBuff::OnSetPassCommand), "<password>", "Sets the password");
+		AddCommand("Replay", static_cast<CModCommand::ModCmdFunc>(&CSaveBuff::OnReplayCommand), "<buffer>", "Replays the buffer");
+		AddCommand("Save", static_cast<CModCommand::ModCmdFunc>(&CSaveBuff::OnSaveCommand), "", "Saves all buffers");
 	}
 	virtual ~CSaveBuff()
 	{
@@ -206,18 +211,21 @@ public:
 		}
 	}
 
-	virtual void OnModCommand(const CString& sCmdLine)
+	void OnSetPassCommand(const CString& sCmdLine)
+	{
+		CString sArgs = sCmdLine.Token(1, true);
+
+		PutModule("Password set to [" + sArgs + "]");
+		m_sPassword = CBlowfish::MD5(sArgs);
+	}
+
+	void OnModCommand(const CString& sCmdLine)
 	{
 		CString sCommand = sCmdLine.Token(0);
 		CString sArgs    = sCmdLine.Token(1, true);
 
-		if (sCommand.Equals("setpass"))
-		{
-			PutModule("Password set to [" + sArgs + "]");
-			m_sPassword = CBlowfish::MD5(sArgs);
-
-		} else if (sCommand.Equals("dumpbuff"))
-		{
+		if (sCommand.Equals("dumpbuff")) {
+			// for testing purposes - hidden from help
 			CString sFile;
 			if (DecryptBuffer(sArgs, sFile))
 			{
@@ -233,17 +241,23 @@ public:
 				}
 			}
 			PutModule("//!-- EOF " + sArgs);
-		} else if (sCommand.Equals("replay"))
-		{
-			Replay(sArgs);
-			PutModule("Replayed " + sArgs);
+		} else {
+			HandleCommand(sCmdLine);
+		}
+	}
 
-		} else if (sCommand.Equals("save"))
-		{
-			SaveBufferToDisk();
-			PutModule("Done.");
-		} else
-			PutModule("Unknown command [" + sCommand + "]");
+	void OnReplayCommand(const CString& sCmdLine)
+	{
+		CString sArgs = sCmdLine.Token(1, true);
+
+		Replay(sArgs);
+		PutModule("Replayed " + sArgs);
+	}
+
+	void OnSaveCommand(const CString& sCmdLine)
+	{
+		SaveBufferToDisk();
+		PutModule("Done.");
 	}
 
 	void Replay(const CString & sBuffer)
