@@ -30,8 +30,9 @@ Makefile
 *.pyc
 __pycache__
 
-/test/ConfigTest
-/test/EscapeTest
+/unittest
+/test/gtest.zip
+/test/gtest-*
 
 # Compiled Object files
 *.o
