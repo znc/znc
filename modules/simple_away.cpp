@@ -47,6 +47,12 @@ public:
 		m_iAwayWait      = SIMPLE_AWAY_DEFAULT_TIME;
 		m_bClientSetAway = false;
 		m_bWeSetAway     = false;
+
+		AddHelpCommand();
+		AddCommand("Reason", static_cast<CModCommand::ModCmdFunc>(&CSimpleAway::OnReasonCommand), "[<text>]", "Prints or sets the away reason (%s is replaced with the time you were set away)");
+		AddCommand("Timer", static_cast<CModCommand::ModCmdFunc>(&CSimpleAway::OnTimerCommand), "", "Prints the current time to wait before setting you away");
+		AddCommand("SetTimer", static_cast<CModCommand::ModCmdFunc>(&CSimpleAway::OnSetTimerCommand), "<seconds>", "Sets the time to wait before setting you away");
+		AddCommand("DisableTimer", static_cast<CModCommand::ModCmdFunc>(&CSimpleAway::OnDisableTimerCommand), "", "Disables the wait time before setting you away");
 	}
 
 	virtual ~CSimpleAway() {}
@@ -102,60 +108,36 @@ public:
 			SetAway();
 	}
 
-	virtual void OnModCommand(const CString& sLine) {
-		CString sCommand = sLine.Token(0);
+	void OnReasonCommand(const CString& sLine) {
+		CString sReason = sLine.Token(1, true);
 
-		if (sCommand.Equals("help")) {
-			CTable Table;
-			Table.AddColumn("Command");
-			Table.AddColumn("Description");
-			Table.AddRow();
-			Table.SetCell("Command", "Reason [<text>]");
-			Table.SetCell("Description", "Prints and optionally sets the away reason.");
-			Table.AddRow();
-			Table.SetCell("Command", "Timer");
-			Table.SetCell("Description", "Prints the current time to wait before setting you away.");
-			Table.AddRow();
-			Table.SetCell("Command", "SetTimer <time>");
-			Table.SetCell("Description", "Sets the time to wait before setting you away (in seconds).");
-			Table.AddRow();
-			Table.SetCell("Command", "DisableTimer");
-			Table.SetCell("Description", "Disables the wait time before setting you away.");
-			PutModule(Table);
-
-			PutModule("In the away reason, %s will be replaced with the time you were set away.");
-
-		} else if (sCommand.Equals("reason")) {
-			CString sReason = sLine.Token(1, true);
-
-			if (!sReason.empty()) {
-				SetReason(sReason);
-				PutModule("Away reason set");
-			} else {
-				PutModule("Away reason: " + m_sReason);
-				PutModule("Current away reason would be: " + ExpandReason());
-			}
-
-		} else if (sCommand.Equals("timer")) {
-			PutModule("Current timer setting: "
-					+ CString(m_iAwayWait) + " seconds");
-
-		} else if (sCommand.Equals("settimer")) {
-			SetAwayWait(sLine.Token(1).ToUInt());
-
-			if (m_iAwayWait == 0)
-				PutModule("Timer disabled");
-			else
-				PutModule("Timer set to "
-						+ CString(m_iAwayWait) + " seconds");
-
-		} else if (sCommand.Equals("disabletimer")) {
-			SetAwayWait(0);
-			PutModule("Timer disabled");
-
+		if (!sReason.empty()) {
+			SetReason(sReason);
+			PutModule("Away reason set");
 		} else {
-			PutModule("Unknown command. Try 'help'.");
+			PutModule("Away reason: " + m_sReason);
+			PutModule("Current away reason would be: " + ExpandReason());
 		}
+	}
+
+	void OnTimerCommand(const CString& sLine) {
+		PutModule("Current timer setting: "
+				+ CString(m_iAwayWait) + " seconds");
+	}
+
+	void OnSetTimerCommand(const CString& sLine) {
+		SetAwayWait(sLine.Token(1).ToUInt());
+
+		if (m_iAwayWait == 0)
+			PutModule("Timer disabled");
+		else
+			PutModule("Timer set to "
+					+ CString(m_iAwayWait) + " seconds");
+	}
+
+	void OnDisableTimerCommand(const CString& sLine) {
+		SetAwayWait(0);
+		PutModule("Timer disabled");
 	}
 
 	virtual EModRet OnUserRaw(CString &sLine) {
