@@ -57,6 +57,16 @@ class CSaveBuff : public CModule
 public:
 	MODCONSTRUCTOR(CSaveBuff)
 	{
+		AddHelpCommand();
+		AddCommand("Setpass", static_cast<CModCommand::ModCmdFunc>(&CSaveBuff::SetPassCmd),
+			"password", "Set the password used to encrypt the saved buffers");
+		AddCommand("Dumpbuff", static_cast<CModCommand::ModCmdFunc>(&CSaveBuff::DumpBuffCmd),
+			"buffer", "Dump the buffer as private message originated from this module");
+		AddCommand("Replay", static_cast<CModCommand::ModCmdFunc>(&CSaveBuff::ReplayCmd),
+			"buffer", "Replay the buffer");
+		AddCommand("Save", static_cast<CModCommand::ModCmdFunc>(&CSaveBuff::SaveCmd),
+			"", "Save all buffers to disk. This is normally done every 1 minute");
+		
 		m_bBootError = false;
 		m_bFirstLoad = false;
 	}
@@ -206,44 +216,48 @@ public:
 		}
 	}
 
-	virtual void OnModCommand(const CString& sCmdLine)
+	void SetPassCmd(const CString& sCmdLine)
 	{
-		CString sCommand = sCmdLine.Token(0);
-		CString sArgs    = sCmdLine.Token(1, true);
-
-		if (sCommand.Equals("setpass"))
+		CString sArgs = sCmdLine.Token(1, true);
+		
+		if(sArgs.empty())
+			sArgs = CRYPT_LAME_PASS;
+		
+		PutModule("Password set to [" + sArgs + "]");
+		m_sPassword = CBlowfish::MD5(sArgs);
+	}
+	
+	void DumpBuffCmd(const CString& sCmdLine)
+	{
+		CString sArgs = sCmdLine.Token(1, true);
+		CString sFile;
+		if (DecryptBuffer(sArgs, sFile))
 		{
-			PutModule("Password set to [" + sArgs + "]");
-			m_sPassword = CBlowfish::MD5(sArgs);
+			VCString vsLines;
+			VCString::iterator it;
 
-		} else if (sCommand.Equals("dumpbuff"))
-		{
-			CString sFile;
-			if (DecryptBuffer(sArgs, sFile))
-			{
-				VCString vsLines;
-				VCString::iterator it;
+			sFile.Split("\n", vsLines);
 
-				sFile.Split("\n", vsLines);
-
-				for (it = vsLines.begin(); it != vsLines.end(); ++it) {
-					CString sLine(*it);
-					sLine.Trim();
-					PutModule("[" + sLine + "]");
-				}
+			for (it = vsLines.begin(); it != vsLines.end(); ++it) {
+				CString sLine(*it);
+				sLine.Trim();
+				PutModule("[" + sLine + "]");
 			}
-			PutModule("//!-- EOF " + sArgs);
-		} else if (sCommand.Equals("replay"))
-		{
-			Replay(sArgs);
-			PutModule("Replayed " + sArgs);
+		}
+		PutModule("//!-- EOF " + sArgs);
+	}
+	
+	void ReplayCmd(const CString& sCmdLine)
+	{
+		CString sArgs = sCmdLine.Token(1, true);
+		Replay(sArgs);
+		PutModule("Replayed " + sArgs);
+	}
 
-		} else if (sCommand.Equals("save"))
-		{
-			SaveBufferToDisk();
-			PutModule("Done.");
-		} else
-			PutModule("Unknown command [" + sCommand + "]");
+	void SaveCmd(const CString& sCmdLine)
+	{
+		SaveBufferToDisk();
+		PutModule("Done.");
 	}
 
 	void Replay(const CString & sBuffer)
