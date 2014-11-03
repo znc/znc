@@ -44,7 +44,13 @@ class CCryptMod : public CModule {
 	}
 
 public:
-	MODCONSTRUCTOR(CCryptMod) {}
+	MODCONSTRUCTOR(CCryptMod) {
+		AddHelpCommand();
+		AddCommand("DelKey", static_cast<CModCommand::ModCmdFunc>(&CCryptMod::OnDelKeyCommand), "<#chan|Nick>", "Remove a key for nick or channel");
+		AddCommand("SetKey", static_cast<CModCommand::ModCmdFunc>(&CCryptMod::OnSetKeyCommand), "<#chan|Nick> <Key>", "Set a key for nick or channel");
+		AddCommand("ListKeys", static_cast<CModCommand::ModCmdFunc>(&CCryptMod::OnListKeysCommand), "", "List all keys");
+	}
+
 	virtual ~CCryptMod() {}
 
 	virtual EModRet OnUserMsg(CString& sTarget, CString& sMessage) {
@@ -104,61 +110,57 @@ public:
 
 	}
 
-	virtual void OnModCommand(const CString& sCommand) {
-		CString sCmd = sCommand.Token(0);
+	void OnDelKeyCommand(const CString& sCommand) {
+		CString sTarget = sCommand.Token(1);
 
-		if (sCmd.Equals("DELKEY")) {
-			CString sTarget = sCommand.Token(1);
-
-			if (!sTarget.empty()) {
-				if (DelNV(sTarget.AsLower())) {
-					PutModule("Target [" + sTarget + "] deleted");
-				} else {
-					PutModule("Target [" + sTarget + "] not found");
-				}
+		if (!sTarget.empty()) {
+			if (DelNV(sTarget.AsLower())) {
+				PutModule("Target [" + sTarget + "] deleted");
 			} else {
-				PutModule("Usage DelKey <#chan|Nick>");
+				PutModule("Target [" + sTarget + "] not found");
 			}
-		} else if (sCmd.Equals("SETKEY")) {
-			CString sTarget = sCommand.Token(1);
-			CString sKey = sCommand.Token(2, true);
-
-			// Strip "cbc:" from beginning of string incase someone pastes directly from mircryption
-			sKey.TrimPrefix("cbc:");
-
-			if (!sKey.empty()) {
-				SetNV(sTarget.AsLower(), sKey);
-				PutModule("Set encryption key for [" + sTarget + "] to [" + sKey + "]");
-			} else {
-				PutModule("Usage: SetKey <#chan|Nick> <Key>");
-			}
-		} else if (sCmd.Equals("LISTKEYS")) {
-			if (BeginNV() == EndNV()) {
-				PutModule("You have no encryption keys set.");
-			} else {
-				CTable Table;
-				Table.AddColumn("Target");
-				Table.AddColumn("Key");
-
-				for (MCString::iterator it = BeginNV(); it != EndNV(); ++it) {
-					Table.AddRow();
-					Table.SetCell("Target", it->first);
-					Table.SetCell("Key", it->second);
-				}
-
-				MCString::iterator it = FindNV(NICK_PREFIX_KEY);
-				if (it == EndNV()) {
-					Table.AddRow();
-					Table.SetCell("Target", NICK_PREFIX_KEY);
-					Table.SetCell("Key", NickPrefix());
-				}
-
-				PutModule(Table);
-			}
-		} else if (sCmd.Equals("HELP")) {
-			PutModule("Try: SetKey, DelKey, ListKeys");
 		} else {
-			PutModule("Unknown command, try 'Help'");
+			PutModule("Usage DelKey <#chan|Nick>");
+		}
+	}
+
+	void OnSetKeyCommand(const CString& sCommand) {
+		CString sTarget = sCommand.Token(1);
+		CString sKey = sCommand.Token(2, true);
+
+		// Strip "cbc:" from beginning of string incase someone pastes directly from mircryption
+		sKey.TrimPrefix("cbc:");
+
+		if (!sKey.empty()) {
+			SetNV(sTarget.AsLower(), sKey);
+			PutModule("Set encryption key for [" + sTarget + "] to [" + sKey + "]");
+		} else {
+			PutModule("Usage: SetKey <#chan|Nick> <Key>");
+		}
+	}
+
+	void OnListKeysCommand(const CString& sCommand) {
+		if (BeginNV() == EndNV()) {
+			PutModule("You have no encryption keys set.");
+		} else {
+			CTable Table;
+			Table.AddColumn("Target");
+			Table.AddColumn("Key");
+
+			for (MCString::iterator it = BeginNV(); it != EndNV(); ++it) {
+				Table.AddRow();
+				Table.SetCell("Target", it->first);
+				Table.SetCell("Key", it->second);
+			}
+
+			MCString::iterator it = FindNV(NICK_PREFIX_KEY);
+			if (it == EndNV()) {
+				Table.AddRow();
+				Table.SetCell("Target", NICK_PREFIX_KEY);
+				Table.SetCell("Key", NickPrefix());
+			}
+
+			PutModule(Table);
 		}
 	}
 
