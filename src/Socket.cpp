@@ -21,6 +21,7 @@
 
 CZNCSock::CZNCSock(int timeout) : Csock(timeout) {
 #ifdef HAVE_LIBSSL
+	DisableSSLCompression();
 	DisableSSLProtocols(EDP_SSL);
 	CString sCipher = CZNC::Get().GetSSLCiphers();
 	if (!sCipher.empty()) {
@@ -31,6 +32,7 @@ CZNCSock::CZNCSock(int timeout) : Csock(timeout) {
 
 CZNCSock::CZNCSock(const CString& sHost, u_short port, int timeout) : Csock(sHost, port, timeout) {
 #ifdef HAVE_LIBSSL
+	DisableSSLCompression();
 	DisableSSLProtocols(EDP_SSL);
 	CString sCipher = CZNC::Get().GetSSLCiphers();
 	if (!sCipher.empty()) {
