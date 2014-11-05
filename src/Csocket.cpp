@@ -70,10 +70,10 @@ namespace Csocket
 {
 #endif /* _NO_CSOCKET_NS */
 
-static int g_iCsockSSLIdx = 0; //!< this get setup once in InitSSL
-int GetCsockClassIdx()
+static int s_iCsockSSLIdx = 0; //!< this gets setup once in InitSSL
+int GetCsockSSLIdx()
 {
-	return( g_iCsockSSLIdx );
+	return( s_iCsockSSLIdx );
 }
 
 #ifdef _WIN32
@@ -203,23 +203,30 @@ static int _PemPassCB( char *pBuff, int iBuffLen, int rwflag, void * pcSocket )
 
 static int _CertVerifyCB( int preverify_ok, X509_STORE_CTX *x509_ctx )
 {
-	/*
-	 * A small quick example on how to get ahold of the Csock in the data portion of x509_ctx
 	Csock * pSock = GetCsockFromCTX( x509_ctx );
-	assert( pSock );
-	cerr << pSock->GetRemoteIP() << endl;
-	 */
+	if( pSock )
+		return( pSock->VerifyPeerCertificate( preverify_ok, x509_ctx ) );
 
-	/* return 1 always for now, probably want to add some code for cert verification */
-	return( 1 );
+   return( preverify_ok );
 }
+
+static void _InfoCallback( const SSL * pSSL, int where, int ret )
+{
+	if( ( where & SSL_CB_HANDSHAKE_DONE ) && ret != 0 )
+	{
+		Csock * pSock = static_cast<Csock *>( SSL_get_ex_data( pSSL, GetCsockSSLIdx() ) );
+		if( pSock )
+			pSock->SSLHandShakeFinished();
+	}
+}
+
 
 Csock * GetCsockFromCTX( X509_STORE_CTX * pCTX )
 {
 	Csock * pSock = NULL;
 	SSL * pSSL = ( SSL * ) X509_STORE_CTX_get_ex_data( pCTX, SSL_get_ex_data_X509_STORE_CTX_idx() );
 	if( pSSL )
-		pSock = ( Csock * ) SSL_get_ex_data( pSSL, GetCsockClassIdx() );
+		pSock = ( Csock * ) SSL_get_ex_data( pSSL, GetCsockSSLIdx() );
 	return( pSock );
 }
 #endif /* HAVE_LIBSSL */
@@ -581,7 +588,7 @@ bool InitSSL( ECompType eCompressionType )
 	}
 
 	// setting this up once in the begining
-	g_iCsockSSLIdx = SSL_get_ex_new_index( 0, ( void * )"CsockGlobalIndex", NULL, NULL, NULL );
+	s_iCsockSSLIdx = SSL_get_ex_new_index( 0, NULL, NULL, NULL, NULL );
 
 	return( true );
 }
@@ -895,7 +902,7 @@ void CSockCommon::DelCronByAddr( CCron * pcCron )
 Csock::Csock( int iTimeout ) : CSockCommon()
 {
 #ifdef HAVE_LIBSSL
-	m_pCerVerifyCB = NULL;
+	m_pCerVerifyCB = _CertVerifyCB;
 #endif /* HAVE_LIBSSL */
 	Init( "", 0, iTimeout );
 }
@@ -903,7 +910,7 @@ Csock::Csock( int iTimeout ) : CSockCommon()
 Csock::Csock( const CS_STRING & sHostname, uint16_t iport, int iTimeout ) : CSockCommon()
 {
 #ifdef HAVE_LIBSSL
-	m_pCerVerifyCB = NULL;
+	m_pCerVerifyCB = _CertVerifyCB;
 #endif /* HAVE_LIBSSL */
 	Init( sHostname, iport, iTimeout );
 }
@@ -1032,6 +1039,8 @@ void Csock::Copy( const Csock & cCopy )
 #endif /* HAVE_C_ARES */
 
 #ifdef HAVE_LIBSSL
+	m_bNoSSLCompression = cCopy.m_bNoSSLCompression;
+	m_uDisableProtocols = cCopy.m_uDisableProtocols;
 	m_iRequireClientCertFlags = cCopy.m_iRequireClientCertFlags;
 	m_sSSLBuffer	= cCopy.m_sSSLBuffer;
 
@@ -1315,12 +1324,43 @@ cs_sock_t Csock::Accept( CS_STRING & sHost, uint16_t & iRPort )
 	return( iSock );
 }
 
+#ifdef HAVE_LIBSSL
+static int __SNICallBack( SSL *pSSL, int *piAD, void *pData ) 
+{
+	if( !pSSL || !pData )
+		return( SSL_TLSEXT_ERR_NOACK );
+
+	const char * pServerName = SSL_get_servername( pSSL, TLSEXT_NAMETYPE_host_name );
+	if( !pServerName )
+		return( SSL_TLSEXT_ERR_NOACK );
+
+	Csock * pSock = static_cast<Csock *>( pData );
+
+	CS_STRING sPemFile, sPemPass;
+	if( !pSock->SNIConfigureServer( pServerName, sPemFile, sPemPass ) )
+		return( SSL_TLSEXT_ERR_NOACK );
+
+	pSock->SetPemLocation( sPemFile );
+	pSock->SetPemPass( sPemPass );
+	SSL_CTX * pCTX = pSock->SetupServerCTX();
+	SSL_set_SSL_CTX( pSSL, pCTX );
+	pSock->SetCTXObject( pCTX, true );
+	return( SSL_TLSEXT_ERR_OK );
+}
+
+#endif /* HAVE_LIBSSL */
+
 bool Csock::AcceptSSL()
 {
 #ifdef HAVE_LIBSSL
 	if( !m_ssl )
 		if( !SSLServerSetup() )
 			return( false );
+
+#if defined( SSL_CTX_set_tlsext_servername_callback )
+	SSL_CTX_set_tlsext_servername_callback( m_ssl_ctx, __SNICallBack );
+	SSL_CTX_set_tlsext_servername_arg( m_ssl_ctx, this );
+#endif /* SSL_CTX_set_tlsext_servername_callback */
 
 	int err = SSL_accept( m_ssl );
 
@@ -1341,23 +1381,28 @@ bool Csock::AcceptSSL()
 	return( false );
 }
 
-void Csock::CheckDisabledProtocols()
-{
 #ifdef HAVE_LIBSSL
-	if( m_ssl_ctx && m_uDisableProtocols > 0 )
+void Csock::ConfigureCTXOptions( SSL_CTX * pCTX )
+{
+	if( pCTX )
 	{
 		long uCTXOptions = 0;
-		if( EDP_SSLv2 & m_uDisableProtocols )
-			uCTXOptions |= SSL_OP_NO_SSLv2;
-		if( EDP_SSLv3 & m_uDisableProtocols )
-			uCTXOptions |= SSL_OP_NO_SSLv3;
-		if( EDP_TLSv1 & m_uDisableProtocols )
-			uCTXOptions |= SSL_OP_NO_TLSv1;
+		if( m_uDisableProtocols > 0 )
+		{
+			if( EDP_SSLv2 & m_uDisableProtocols )
+				uCTXOptions |= SSL_OP_NO_SSLv2;
+			if( EDP_SSLv3 & m_uDisableProtocols )
+				uCTXOptions |= SSL_OP_NO_SSLv3;
+			if( EDP_TLSv1 & m_uDisableProtocols )
+				uCTXOptions |= SSL_OP_NO_TLSv1;
+		}
+		if( m_bNoSSLCompression )
+			uCTXOptions |= SSL_OP_NO_COMPRESSION;
 		if( uCTXOptions )
-			SSL_CTX_set_options( m_ssl_ctx, uCTXOptions );
+			SSL_CTX_set_options( pCTX, uCTXOptions );
 	}
-#endif /* HAVE_LIBSSL */
 }
+#endif /* HAVE_LIBSSL */
 
 bool Csock::SSLClientSetup()
 {
@@ -1462,7 +1507,7 @@ bool Csock::SSLClientSetup()
 		}
 	}
 
-	CheckDisabledProtocols();
+	ConfigureCTXOptions( m_ssl_ctx );
 
 	m_ssl = SSL_new( m_ssl_ctx );
 	if( !m_ssl )
@@ -1470,8 +1515,15 @@ bool Csock::SSLClientSetup()
 
 	SSL_set_rfd( m_ssl, ( int )m_iReadSock );
 	SSL_set_wfd( m_ssl, ( int )m_iWriteSock );
-	SSL_set_verify( m_ssl, SSL_VERIFY_PEER, ( m_pCerVerifyCB ? m_pCerVerifyCB : _CertVerifyCB ) );
-	SSL_set_ex_data( m_ssl, GetCsockClassIdx(), this );
+	SSL_set_verify( m_ssl, SSL_VERIFY_PEER, m_pCerVerifyCB );
+	SSL_set_info_callback( m_ssl, _InfoCallback );
+	SSL_set_ex_data( m_ssl, GetCsockSSLIdx(), this );
+
+#if defined( SSL_set_tlsext_host_name )
+	CS_STRING sSNIHostname;
+	if( SNIConfigureClient( sSNIHostname ) )
+		SSL_set_tlsext_host_name( m_ssl, sSNIHostname.c_str() );
+#endif /* SSL_set_tlsext_host_name */
 
 	SSLFinishSetup( m_ssl );
 	return( true );
@@ -1480,6 +1532,171 @@ bool Csock::SSLClientSetup()
 
 #endif /* HAVE_LIBSSL */
 }
+
+#ifdef HAVE_LIBSSL
+SSL_CTX * Csock::SetupServerCTX()
+{
+	SSL_CTX * pCTX = NULL;
+	switch( m_iMethod )
+	{
+	case SSL3:
+		pCTX = SSL_CTX_new( SSLv3_server_method() );
+		if( !pCTX )
+		{
+			CS_DEBUG( "WARNING: MakeConnection .... SSLv3_server_method failed!" );
+			return( NULL );
+		}
+		break;
+	case TLS12:
+#ifdef TLS1_2_VERSION
+		pCTX = SSL_CTX_new( TLSv1_2_server_method() );
+		if( !pCTX )
+		{
+			CS_DEBUG( "WARNING: MakeConnection .... TLSv1_2_server_method failed!" );
+			return( NULL );
+		}
+		break;
+#endif /* TLS1_2_VERSION */
+	case TLS11:
+#ifdef TLS1_1_VERSION
+		pCTX = SSL_CTX_new( TLSv1_1_server_method() );
+		if( !pCTX )
+		{
+			CS_DEBUG( "WARNING: MakeConnection .... TLSv1_1_server_method failed!" );
+			return( NULL );
+		}
+		break;
+	case TLS1:
+#endif /* TLS1_1_VERSION */
+		pCTX = SSL_CTX_new( TLSv1_server_method() );
+		if( !pCTX )
+		{
+			CS_DEBUG( "WARNING: MakeConnection .... TLSv1_server_method failed!" );
+			return( NULL );
+		}
+		break;
+	case SSL2:
+#ifndef OPENSSL_NO_SSL2
+		pCTX = SSL_CTX_new( SSLv2_server_method() );
+		if( !pCTX )
+		{
+			CS_DEBUG( "WARNING: MakeConnection .... SSLv2_server_method failed!" );
+			return( NULL );
+		}
+		break;
+#endif /* OPENSSL_NO_SSL2 */
+		/* Fall through if SSL2 is disabled */
+	case SSL23:
+	default:
+		if( m_iMethod != SSL23 )
+		{
+			CS_DEBUG( "WARNING: SSL Server Method other than SSLv23 specified, but has passed through" );
+		}
+		pCTX = SSL_CTX_new( SSLv23_server_method() );
+		if( !pCTX )
+		{
+			CS_DEBUG( "WARNING: MakeConnection .... SSLv23_server_method failed!" );
+			return( NULL );
+		}
+		break;
+	}
+	if( !pCTX )
+	{
+		CS_DEBUG( "ERROR: NULL Ptr where there shouldn't be" );
+		return( NULL );
+	}
+
+	SSL_CTX_set_default_verify_paths( pCTX );
+
+	// set the pemfile password
+	SSL_CTX_set_default_passwd_cb( pCTX, _PemPassCB );
+	SSL_CTX_set_default_passwd_cb_userdata( pCTX, ( void * )this );
+
+	if( m_sPemFile.empty() || access( m_sPemFile.c_str(), R_OK ) != 0 )
+	{
+		CS_DEBUG( "Empty, missing, or bad pemfile ... [" << m_sPemFile << "]" );
+		SSL_CTX_free( pCTX );
+		return( NULL );
+	}
+
+	//
+	// set up the CTX
+	if( SSL_CTX_use_certificate_chain_file( pCTX, m_sPemFile.c_str() ) <= 0 )
+	{
+		CS_DEBUG( "Error with PEM file [" << m_sPemFile << "]" );
+		SSLErrors( __FILE__, __LINE__ );
+		SSL_CTX_free( pCTX );
+		return( NULL );
+	}
+
+	if( SSL_CTX_use_PrivateKey_file( pCTX, m_sPemFile.c_str(), SSL_FILETYPE_PEM ) <= 0 )
+	{
+		CS_DEBUG( "Error with PEM file [" << m_sPemFile << "]" );
+		SSLErrors( __FILE__, __LINE__ );
+		SSL_CTX_free( pCTX );
+		return( NULL );
+	}
+
+	// check to see if this pem file contains a DH structure for use with DH key exchange
+	// https://github.com/znc/znc/pull/46
+	FILE *dhParamsFile = fopen( m_sPemFile.c_str(), "r" );
+	if( !dhParamsFile )
+	{
+		CS_DEBUG( "There is a problem with [" << m_sPemFile << "]" );
+		SSL_CTX_free( pCTX );
+		return( NULL );
+	}
+
+	DH * dhParams = PEM_read_DHparams( dhParamsFile, NULL, NULL, NULL );
+	fclose( dhParamsFile );
+	if( dhParams )
+	{
+		SSL_CTX_set_options( pCTX, SSL_OP_SINGLE_DH_USE );
+		if( !SSL_CTX_set_tmp_dh( pCTX, dhParams ) )
+		{
+			CS_DEBUG( "Error setting ephemeral DH parameters from [" << m_sPemFile << "]" );
+			SSLErrors( __FILE__, __LINE__ );
+			DH_free( dhParams );
+			SSL_CTX_free( pCTX );
+			return( NULL );
+		}
+		DH_free( dhParams );
+	}
+	else
+	{
+		// Presumably PEM_read_DHparams failed, as there was no DH structure. Clearing those errors here so they are removed off the stack
+		ERR_clear_error();
+	}
+
+	// Errors for the following block are non-fatal (ECDHE is nice to have
+	// but not a requirement)
+#if defined( SSL_CTX_set_ecdh_auto )
+	// Auto-select sensible curve
+	if( !SSL_CTX_set_ecdh_auto( pCTX , 1 ) )
+		ERR_clear_error();
+#elif defined( SSL_CTX_set_tmp_ecdh )
+	// Use a standard, widely-supported curve
+	EC_KEY * ecdh = EC_KEY_new_by_curve_name( NID_X9_62_prime256v1 );
+	if( ecdh )
+	{
+		if( !SSL_CTX_set_tmp_ecdh( pCTX, ecdh ) )
+			ERR_clear_error();
+		EC_KEY_free( ecdh );
+	}
+	else
+		ERR_clear_error();
+#endif
+
+	if( SSL_CTX_set_cipher_list( pCTX, m_sCipherType.c_str() ) <= 0 )
+	{
+		CS_DEBUG( "Could not assign cipher [" << m_sCipherType << "]" );
+		SSL_CTX_free( pCTX );
+		return( NULL );
+	}
+	ConfigureCTXOptions( pCTX );
+	return( pCTX );
+}
+#endif /* HAVE_LIBSSL */
 
 bool Csock::SSLServerSetup()
 {
@@ -1497,154 +1714,7 @@ bool Csock::SSLServerSetup()
 	}
 #endif /* _WIN64 */
 
-
-	switch( m_iMethod )
-	{
-	case SSL3:
-		m_ssl_ctx = SSL_CTX_new( SSLv3_server_method() );
-		if( !m_ssl_ctx )
-		{
-			CS_DEBUG( "WARNING: MakeConnection .... SSLv3_server_method failed!" );
-			return( false );
-		}
-		break;
-	case TLS12:
-#ifdef TLS1_2_VERSION
-		m_ssl_ctx = SSL_CTX_new( TLSv1_2_server_method() );
-		if( !m_ssl_ctx )
-		{
-			CS_DEBUG( "WARNING: MakeConnection .... TLSv1_2_server_method failed!" );
-			return( false );
-		}
-		break;
-#endif /* TLS1_2_VERSION */
-	case TLS11:
-#ifdef TLS1_1_VERSION
-		m_ssl_ctx = SSL_CTX_new( TLSv1_1_server_method() );
-		if( !m_ssl_ctx )
-		{
-			CS_DEBUG( "WARNING: MakeConnection .... TLSv1_1_server_method failed!" );
-			return( false );
-		}
-		break;
-	case TLS1:
-#endif /* TLS1_1_VERSION */
-		m_ssl_ctx = SSL_CTX_new( TLSv1_server_method() );
-		if( !m_ssl_ctx )
-		{
-			CS_DEBUG( "WARNING: MakeConnection .... TLSv1_server_method failed!" );
-			return( false );
-		}
-		break;
-	case SSL2:
-#ifndef OPENSSL_NO_SSL2
-		m_ssl_ctx = SSL_CTX_new( SSLv2_server_method() );
-		if( !m_ssl_ctx )
-		{
-			CS_DEBUG( "WARNING: MakeConnection .... SSLv2_server_method failed!" );
-			return( false );
-		}
-		break;
-#endif /* OPENSSL_NO_SSL2 */
-		/* Fall through if SSL2 is disabled */
-	case SSL23:
-	default:
-		if( m_iMethod != SSL23 )
-		{
-			CS_DEBUG( "WARNING: SSL Server Method other than SSLv23 specified, but has passed through" );
-		}
-		m_ssl_ctx = SSL_CTX_new( SSLv23_server_method() );
-		if( !m_ssl_ctx )
-		{
-			CS_DEBUG( "WARNING: MakeConnection .... SSLv23_server_method failed!" );
-			return( false );
-		}
-		break;
-	}
-
-	SSL_CTX_set_default_verify_paths( m_ssl_ctx );
-
-	// set the pemfile password
-	SSL_CTX_set_default_passwd_cb( m_ssl_ctx, _PemPassCB );
-	SSL_CTX_set_default_passwd_cb_userdata( m_ssl_ctx, ( void * )this );
-
-	if( m_sPemFile.empty() || access( m_sPemFile.c_str(), R_OK ) != 0 )
-	{
-		CS_DEBUG( "There is a problem with [" << m_sPemFile << "]" );
-		return( false );
-	}
-
-	//
-	// set up the CTX
-	if( SSL_CTX_use_certificate_chain_file( m_ssl_ctx, m_sPemFile.c_str() ) <= 0 )
-	{
-		CS_DEBUG( "Error with PEM file [" << m_sPemFile << "]" );
-		SSLErrors( __FILE__, __LINE__ );
-		return( false );
-	}
-
-	if( SSL_CTX_use_PrivateKey_file( m_ssl_ctx, m_sPemFile.c_str(), SSL_FILETYPE_PEM ) <= 0 )
-	{
-		CS_DEBUG( "Error with PEM file [" << m_sPemFile << "]" );
-		SSLErrors( __FILE__, __LINE__ );
-		return( false );
-	}
-
-	// check to see if this pem file contains a DH structure for use with DH key exchange
-	// https://github.com/znc/znc/pull/46
-	FILE *dhParamsFile = fopen( m_sPemFile.c_str(), "r" );
-	if( !dhParamsFile )
-	{
-		CS_DEBUG( "There is a problem with [" << m_sPemFile << "]" );
-		return( false );
-	}
-
-	DH * dhParams = PEM_read_DHparams( dhParamsFile, NULL, NULL, NULL );
-	fclose( dhParamsFile );
-	if( dhParams )
-	{
-		SSL_CTX_set_options( m_ssl_ctx, SSL_OP_SINGLE_DH_USE );
-		if( !SSL_CTX_set_tmp_dh( m_ssl_ctx, dhParams ) )
-		{
-			CS_DEBUG( "Error setting ephemeral DH parameters from [" << m_sPemFile << "]" );
-			SSLErrors( __FILE__, __LINE__ );
-			DH_free( dhParams );
-			return( false );
-		}
-		DH_free( dhParams );
-	}
-	else
-	{
-		// Presumably PEM_read_DHparams failed, as there was no DH structure. Clearing those errors here so they are removed off the stack
-		ERR_clear_error();
-	}
-
-	// Errors for the following block are non-fatal (ECDHE is nice to have
-	// but not a requirement)
-#if defined( SSL_CTX_set_ecdh_auto )
-	// Auto-select sensible curve
-	if( !SSL_CTX_set_ecdh_auto( m_ssl_ctx , 1 ) )
-		ERR_clear_error();
-#elif defined( SSL_CTX_set_tmp_ecdh )
-	// Use a standard, widely-supported curve
-	EC_KEY * ecdh = EC_KEY_new_by_curve_name( NID_X9_62_prime256v1 );
-	if( ecdh )
-	{
-		if( !SSL_CTX_set_tmp_ecdh( m_ssl_ctx, ecdh ) )
-			ERR_clear_error();
-		EC_KEY_free( ecdh );
-	}
-	else
-		ERR_clear_error();
-#endif
-
-	if( SSL_CTX_set_cipher_list( m_ssl_ctx, m_sCipherType.c_str() ) <= 0 )
-	{
-		CS_DEBUG( "Could not assign cipher [" << m_sCipherType << "]" );
-		return( false );
-	}
-
-	CheckDisabledProtocols();
+	m_ssl_ctx = SetupServerCTX();
 
 	//
 	// setup the SSL
@@ -1662,9 +1732,10 @@ bool Csock::SSLServerSetup()
 	SSL_set_accept_state( m_ssl );
 	if( m_iRequireClientCertFlags )
 	{
-		SSL_set_verify( m_ssl, m_iRequireClientCertFlags, ( m_pCerVerifyCB ? m_pCerVerifyCB : _CertVerifyCB ) );
-		SSL_set_ex_data( m_ssl, GetCsockClassIdx(), this );
+		SSL_set_verify( m_ssl, m_iRequireClientCertFlags, m_pCerVerifyCB );
 	}
+	SSL_set_info_callback( m_ssl, _InfoCallback );
+	SSL_set_ex_data( m_ssl, GetCsockSSLIdx(), this );
 
 	SSLFinishSetup( m_ssl );
 	return( true );
@@ -1878,30 +1949,30 @@ bool Csock::Write( const char *data, size_t len )
 
 		switch( SSL_get_error( m_ssl, iErr ) )
 		{
-		case SSL_ERROR_NONE:
-			m_bsslEstablished = true;
-			// all ok
-			break;
+			case SSL_ERROR_NONE:
+				m_bsslEstablished = true;
+				// all ok
+				break;
 
-		case SSL_ERROR_ZERO_RETURN:
-		{
-			// weird closer alert
-			return( false );
-		}
+			case SSL_ERROR_ZERO_RETURN:
+			{
+				// weird closer alert
+				return( false );
+			}
 
-		case SSL_ERROR_WANT_READ:
-			// retry
-			break;
+			case SSL_ERROR_WANT_READ:
+				// retry
+				break;
 
-		case SSL_ERROR_WANT_WRITE:
-			// retry
-			break;
+			case SSL_ERROR_WANT_WRITE:
+				// retry
+				break;
 
-		case SSL_ERROR_SSL:
-		{
-			SSLErrors( __FILE__, __LINE__ );
-			return( false );
-		}
+			case SSL_ERROR_SSL:
+			{
+				SSLErrors( __FILE__, __LINE__ );
+				return( false );
+			}
 		}
 
 		if( iErr > 0 )
@@ -2320,8 +2391,18 @@ const CS_STRING & Csock::GetPemPass() const { return( m_sPemPass ); }
 
 void Csock::SetSSLMethod( int iMethod ) { m_iMethod = iMethod; }
 int Csock::GetSSLMethod() const { return( m_iMethod ); }
-void Csock::SetSSLObject( SSL *ssl ) { m_ssl = ssl; }
-void Csock::SetCTXObject( SSL_CTX *sslCtx ) { m_ssl_ctx = sslCtx; }
+void Csock::SetSSLObject( SSL *ssl, bool bDeleteExisting ) 
+{ 
+	if( bDeleteExisting )
+		FREE_SSL();
+	m_ssl = ssl; 
+}
+void Csock::SetCTXObject( SSL_CTX *sslCtx, bool bDeleteExisting ) 
+{
+	if( bDeleteExisting )
+		FREE_CTX();
+	m_ssl_ctx = sslCtx; 
+}
 
 SSL_SESSION * Csock::GetSSLSession() const
 {
@@ -2807,6 +2888,7 @@ void Csock::Init( const CS_STRING & sHostname, uint16_t uPort, int iTimeout )
 	m_ssl_ctx = NULL;
 	m_iRequireClientCertFlags = 0;
 	m_uDisableProtocols = 0;
+	m_bNoSSLCompression = false;
 #endif /* HAVE_LIBSSL */
 	m_iTcount = 0;
 	m_iReadSock = CS_INVALID_SOCK;
@@ -3109,58 +3191,58 @@ void CSocketManager::Loop()
 
 				switch( bytes )
 				{
-				case Csock::READ_EOF:
-				{
-					DelSockByAddr( pcSock );
-					break;
-				}
-
-				case Csock::READ_ERR:
-				{
-					bool bHandled = false;
-#ifdef HAVE_LIBSSL
-					if( pcSock->GetSSL() )
+					case Csock::READ_EOF:
 					{
-						unsigned long iSSLError = ERR_peek_error();
-						if( iSSLError )
-						{
-							char szError[512];
-							memset( ( char * ) szError, '\0', 512 );
-							ERR_error_string_n( iSSLError, szError, 511 );
-							SSLErrors( __FILE__, __LINE__ );
-							pcSock->CallSockError( GetSockError(), szError );
-							bHandled = true;
-						}
+						DelSockByAddr( pcSock );
+						break;
 					}
+
+					case Csock::READ_ERR:
+					{
+						bool bHandled = false;
+#ifdef HAVE_LIBSSL
+						if( pcSock->GetSSL() )
+						{
+							unsigned long iSSLError = ERR_peek_error();
+							if( iSSLError )
+							{
+								char szError[512];
+								memset( ( char * ) szError, '\0', 512 );
+								ERR_error_string_n( iSSLError, szError, 511 );
+								SSLErrors( __FILE__, __LINE__ );
+								pcSock->CallSockError( GetSockError(), szError );
+								bHandled = true;
+							}
+						}
 #endif
-					if( !bHandled )
-						pcSock->CallSockError( GetSockError() );
-					DelSockByAddr( pcSock );
-					break;
-				}
+						if( !bHandled )
+							pcSock->CallSockError( GetSockError() );
+						DelSockByAddr( pcSock );
+						break;
+					}
 
-				case Csock::READ_EAGAIN:
-					break;
+					case Csock::READ_EAGAIN:
+						break;
 
-				case Csock::READ_CONNREFUSED:
-					pcSock->ConnectionRefused();
-					DelSockByAddr( pcSock );
-					break;
+					case Csock::READ_CONNREFUSED:
+						pcSock->ConnectionRefused();
+						DelSockByAddr( pcSock );
+						break;
 
-				case Csock::READ_TIMEDOUT:
-					pcSock->Timeout();
-					DelSockByAddr( pcSock );
-					break;
+					case Csock::READ_TIMEDOUT:
+						pcSock->Timeout();
+						DelSockByAddr( pcSock );
+						break;
 
-				default:
-				{
-					if( Csock::TMO_READ & pcSock->GetTimeoutType() )
-						pcSock->ResetTimer();	// reset the timeout timer
+					default:
+					{
+						if( Csock::TMO_READ & pcSock->GetTimeoutType() )
+							pcSock->ResetTimer();	// reset the timeout timer
 
-					pcSock->ReadData( cBuff(), bytes );	// Call ReadData() before PushBuff() so that it is called before the ReadLine() event - LD  07/18/05
-					pcSock->PushBuff( cBuff(), bytes );
-					break;
-				}
+						pcSock->ReadData( cBuff(), bytes );	// Call ReadData() before PushBuff() so that it is called before the ReadLine() event - LD  07/18/05
+						pcSock->PushBuff( cBuff(), bytes );
+						break;
+					}
 				}
 			}
 			else if( iErrno == SELECT_ERROR )
