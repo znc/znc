@@ -85,20 +85,20 @@ public:
 
 	virtual ~CNotesMod() {}
 
-	virtual bool OnLoad(const CString& sArgs, CString& sMessage) {
+	virtual bool OnLoad(const CString& sArgs, CString& sMessage) override {
 		bShowNotesOnLogin = !sArgs.Equals("-disableNotesOnLogin");
 		return true;
 	}
 
-	virtual CString GetWebMenuTitle() { return "Notes"; }
+	virtual CString GetWebMenuTitle() override { return "Notes"; }
 
-	virtual void OnClientLogin() {
+	virtual void OnClientLogin() override {
 		if (bShowNotesOnLogin) {
 			ListNotes(true);
 		}
 	}
 
-	virtual EModRet OnUserRaw(CString& sLine) {
+	virtual EModRet OnUserRaw(CString& sLine) override {
 		if (sLine.Left(1) != "#") {
 			return CONTINUE;
 		}
@@ -189,7 +189,7 @@ public:
 		}
 	}
 
-	virtual bool OnWebRequest(CWebSock& WebSock, const CString& sPageName, CTemplate& Tmpl) {
+	virtual bool OnWebRequest(CWebSock& WebSock, const CString& sPageName, CTemplate& Tmpl) override {
 		if (sPageName == "index") {
 			for (MCString::iterator it = BeginNV(); it != EndNV(); ++it) {
 				CTemplate& Row = Tmpl.AddRow("NotesLoop");

@@ -43,7 +43,7 @@ public:
 
 	~CKeepNickMod() {}
 
-	bool OnLoad(const CString& sArgs, CString& sMessage) {
+	bool OnLoad(const CString& sArgs, CString& sMessage) override {
 		m_pTimer = NULL;
 
 		// Check if we need to start the timer
@@ -80,7 +80,7 @@ public:
 		return sConfNick;
 	}
 
-	void OnNick(const CNick& Nick, const CString& sNewNick, const vector<CChan*>& vChans) {
+	void OnNick(const CNick& Nick, const CString& sNewNick, const vector<CChan*>& vChans) override {
 		if (sNewNick == GetNetwork()->GetIRCSock()->GetNick()) {
 			// We are changing our own nick
 			if (Nick.NickEquals(GetNick())) {
@@ -102,19 +102,19 @@ public:
 		}
 	}
 
-	void OnQuit(const CNick& Nick, const CString& sMessage, const vector<CChan*>& vChans) {
+	void OnQuit(const CNick& Nick, const CString& sMessage, const vector<CChan*>& vChans) override {
 		// If someone with the nick we want quits, be fast and get the nick
 		if (Nick.NickEquals(GetNick())) {
 			KeepNick();
 		}
 	}
 
-	void OnIRCDisconnected() {
+	void OnIRCDisconnected() override {
 		// No way we can do something if we aren't connected to IRC.
 		Disable();
 	}
 
-	void OnIRCConnected() {
+	void OnIRCConnected() override {
 		if (!GetNetwork()->GetIRCSock()->GetNick().Equals(GetNick())) {
 			// We don't have the nick we want, try to get it
 			Enable();
@@ -138,7 +138,7 @@ public:
 		m_pTimer = NULL;
 	}
 
-	virtual EModRet OnUserRaw(CString& sLine) {
+	virtual EModRet OnUserRaw(CString& sLine) override {
 		// We dont care if we are not connected to IRC
 		if (!GetNetwork()->IsIRCConnected())
 			return CONTINUE;
@@ -164,7 +164,7 @@ public:
 		return CONTINUE;
 	}
 
-	virtual EModRet OnRaw(CString& sLine) {
+	virtual EModRet OnRaw(CString& sLine) override {
 		// Are we trying to get our primary nick and we caused this error?
 		// :irc.server.net 433 mynick badnick :Nickname is already in use.
 		if (m_pTimer && sLine.Token(1) == "433" && sLine.Token(3).Equals(GetNick()))

@@ -474,11 +474,11 @@ public:
 		}
 	}
 
-	virtual bool OnServerCapAvailable(const CString& sCap) {
+	virtual bool OnServerCapAvailable(const CString& sCap) override {
 		return sCap.Equals("sasl");
 	}
 
-	virtual void OnServerCapResult(const CString& sCap, bool bSuccess) {
+	virtual void OnServerCapResult(const CString& sCap, bool bSuccess) override {
 		if (sCap.Equals("sasl")) {
 			if (bSuccess) {
 				GetMechanismsString().Split(" ", m_Mechanisms);
@@ -498,7 +498,7 @@ public:
 		}
 	}
 
-	virtual EModRet OnRaw(CString &sLine) {
+	virtual EModRet OnRaw(CString &sLine) override {
 		if (sLine.Token(0).Equals("AUTHENTICATE")) {
 			Authenticate(sLine.Token(1, true));
 		} else if (sLine.Token(1).Equals("903")) {
@@ -532,14 +532,14 @@ public:
 		return HALT;
 	}
 
-	virtual void OnIRCConnected() {
+	virtual void OnIRCConnected() override {
 		/* Just incase something slipped through, perhaps the server doesn't
 		 * respond to our CAP negotiation. */
 
 		CheckRequireAuth();
 	}
 
-	virtual void OnIRCDisconnected() {
+	virtual void OnIRCDisconnected() override {
 		m_bAuthenticated = false;
 	}
 private:

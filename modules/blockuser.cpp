@@ -32,7 +32,7 @@ public:
 
 	virtual ~CBlockUser() {}
 
-	virtual bool OnLoad(const CString& sArgs, CString& sMessage) {
+	virtual bool OnLoad(const CString& sArgs, CString& sMessage) override {
 		VCString vArgs;
 		VCString::iterator it;
 		MCString::iterator it2;
@@ -56,7 +56,7 @@ public:
 		return true;
 	}
 
-	virtual EModRet OnLoginAttempt(std::shared_ptr<CAuthBase> Auth) {
+	virtual EModRet OnLoginAttempt(std::shared_ptr<CAuthBase> Auth) override {
 		if (IsBlocked(Auth->GetUsername())) {
 			Auth->RefuseLogin(MESSAGE);
 			return HALT;
@@ -65,7 +65,7 @@ public:
 		return CONTINUE;
 	}
 
-	void OnModCommand(const CString& sCommand) {
+	void OnModCommand(const CString& sCommand) override {
 		if (!GetUser()->IsAdmin()) {
 			PutModule("Access denied");
 		} else {
@@ -121,7 +121,7 @@ public:
 			PutModule("This user is not blocked");
 	}
 
-	bool OnEmbeddedWebRequest(CWebSock& WebSock, const CString& sPageName, CTemplate& Tmpl) {
+	bool OnEmbeddedWebRequest(CWebSock& WebSock, const CString& sPageName, CTemplate& Tmpl) override {
 		if (sPageName == "webadmin/user" && WebSock.GetSession()->IsAdmin()) {
 			CString sAction = Tmpl["WebadminAction"];
 			if (sAction == "display") {

@@ -53,7 +53,7 @@ public:
 
 	virtual ~CCryptMod() {}
 
-	virtual EModRet OnUserMsg(CString& sTarget, CString& sMessage) {
+	virtual EModRet OnUserMsg(CString& sTarget, CString& sMessage) override {
 		sTarget.TrimLeft(NickPrefix());
 
 		if (sMessage.Left(2) == "``") {
@@ -84,12 +84,12 @@ public:
 		return CONTINUE;
 	}
 
-	virtual EModRet OnPrivMsg(CNick& Nick, CString& sMessage) {
+	virtual EModRet OnPrivMsg(CNick& Nick, CString& sMessage) override {
 		FilterIncoming(Nick.GetNick(), Nick, sMessage);
 		return CONTINUE;
 	}
 
-	virtual EModRet OnChanMsg(CNick& Nick, CChan& Channel, CString& sMessage) {
+	virtual EModRet OnChanMsg(CNick& Nick, CChan& Channel, CString& sMessage) override {
 		FilterIncoming(Channel.GetName(), Nick, sMessage);
 		return CONTINUE;
 	}

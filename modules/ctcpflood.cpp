@@ -84,11 +84,11 @@ public:
 		return HALT;
 	}
 
-	EModRet OnPrivCTCP(CNick& Nick, CString& sMessage) {
+	EModRet OnPrivCTCP(CNick& Nick, CString& sMessage) override {
 		return Message(Nick, sMessage);
 	}
 
-	EModRet OnChanCTCP(CNick& Nick, CChan& Channel, CString& sMessage) {
+	EModRet OnChanCTCP(CNick& Nick, CChan& Channel, CString& sMessage) override {
 		return Message(Nick, sMessage);
 	}
 
