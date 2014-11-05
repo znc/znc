@@ -443,7 +443,7 @@ public:
 		}
 	}
 
-	virtual EModRet HandleMessage(const CString& sCmd, const CString& sTarget, const CString& sMessage) {
+	EModRet HandleMessage(const CString& sCmd, const CString& sTarget, const CString& sMessage) {
 		if (sTarget.empty()) {
 			return CONTINUE;
 		}

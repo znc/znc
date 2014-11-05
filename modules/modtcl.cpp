@@ -146,7 +146,7 @@ public:
 		}
 	}
 
-	virtual void TclUpdate() {
+	void TclUpdate() {
 		while (Tcl_DoOneEvent(TCL_DONT_WAIT)) {}
 		i = Tcl_Eval(interp,"Binds::ProcessTime");
 		if (i != TCL_OK) {

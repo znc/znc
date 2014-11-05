@@ -346,7 +346,7 @@ public:
 		return(sRet);
 	}
 
-	virtual void Away(bool bForce = false, const CString & sReason = "")
+	void Away(bool bForce = false, const CString & sReason = "")
 	{
 		if ((!m_bIsAway) || (bForce))
 		{
@@ -370,7 +370,7 @@ public:
 		}
 	}
 
-	virtual void Back(bool bUsePrivMessage = false)
+	void Back(bool bUsePrivMessage = false)
 	{
 		PutIRC("away");
 		m_bIsAway = false;

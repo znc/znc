@@ -88,7 +88,7 @@ public:
 		PutModule(" -- End of List");
 	}
 
-	virtual void RunJob()
+	void RunJob()
 	{
 		CIRCNetwork* pNetwork = GetNetwork();
 		if (!pNetwork->GetIRCSock())

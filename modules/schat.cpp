@@ -81,14 +81,14 @@ public:
 	virtual void ReadLine(const CS_STRING & sLine) override;
 	virtual void Disconnected() override;
 
-	virtual void AddLine(const CString & sLine)
+	void AddLine(const CString & sLine)
 	{
 		m_vBuffer.insert(m_vBuffer.begin(), sLine);
 		if (m_vBuffer.size() > 200)
 			m_vBuffer.pop_back();
 	}
 
-	virtual void DumpBuffer()
+	void DumpBuffer()
 	{
 		if (m_vBuffer.empty()) {
 			// Always show a message to the user, so he knows
@@ -386,7 +386,7 @@ public:
 		return(CONTINUE);
 	}
 
-	virtual void RemoveMarker(const CString & sNick)
+	void RemoveMarker(const CString & sNick)
 	{
 		map< CString,pair< u_long,u_short > >::iterator it = m_siiWaitingChats.find(sNick);
 		if (it != m_siiWaitingChats.end())
