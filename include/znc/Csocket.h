@@ -285,8 +285,12 @@ private:
 //! backwards compatible wrapper around CGetAddrInfo and gethostbyname
 int GetAddrInfo( const CS_STRING & sHostname, Csock * pSock, CSSockAddr & csSockAddr );
 
-//! used to retrieve the context position of the socket to its associated ssl connection. Setup once in InitSSL() via SSL_get_ex_new_index
-int GetCsockClassIdx();
+/**
+ * This returns the [ex_]data index position for SSL objects only. If you want to tie more data 
+ * to the SSL object, you should generate your own at application start so as to avoid collision
+ * with Csocket SSL_set_ex_data()
+ */
+int GetCsockSSLIdx();
 
 #ifdef HAVE_LIBSSL
 //! returns the sock object associated to the particular context. returns NULL on failure or if not available
@@ -606,9 +610,11 @@ public:
 	enum EDisableProtocol
 	{
 		EDP_None		= 0, //!< disable nothing
-		EDP_SSLv2		= 1, //!< disable SSL verion 2
-		EDP_SSLv3		= 2, //!< disable SSL verion 3
-		EDP_TLSv1		= 4, //!< disable TLS verion 1
+		EDP_SSLv2		= 1, //!< disable SSL version 2
+		EDP_SSLv3		= 2, //!< disable SSL version 3
+		EDP_TLSv1		= 4, //!< disable TLS version 1
+		EDP_TLSv1_1		= 8, //!< disable TLS version 1.1
+		EDP_TLSv1_2		= 16, //!< disable TLS version 1.2
 		EDP_SSL			= (EDP_SSLv2|EDP_SSLv3)
 	};
 
@@ -851,6 +857,8 @@ public:
 #ifdef HAVE_LIBSSL
 	//! bitwise setter, @see EDisableProtocol
 	void DisableSSLProtocols( u_int uDisableOpts ) { m_uDisableProtocols = uDisableOpts; }
+	//! allow disabling compression
+	void DisableSSLCompression() { m_bNoSSLCompression = true; }
 	//! Set the cipher type ( openssl cipher [to see ciphers available] )
 	void SetCipher( const CS_STRING & sCipher );
 	const CS_STRING & GetCipher() const;
@@ -865,10 +873,11 @@ public:
 	void SetSSLMethod( int iMethod );
 	int GetSSLMethod() const;
 
-	void SetSSLObject( SSL *ssl );
-	void SetCTXObject( SSL_CTX *sslCtx );
+	void SetSSLObject( SSL *ssl, bool bDeleteExisting = false );
+	void SetCTXObject( SSL_CTX *sslCtx, bool bDeleteExisting = false );
 	SSL_SESSION * GetSSLSession() const;
 
+	//! setting this to NULL will allow the default openssl verification process kick in
 	void SetCertVerifyCB( FPCertVerifyCB pFP ) { m_pCerVerifyCB = pFP; }
 #endif /* HAVE_LIBSSL */
 
@@ -888,6 +897,7 @@ public:
 
 	//! Get the peer's X509 cert
 #ifdef HAVE_LIBSSL
+	//! it is up to you, the caller to call X509_free() on this object
 	X509 *GetX509() const;
 
 	//! Returns the peer's public key
@@ -983,6 +993,49 @@ public:
 	 * to this ssl session via SSL_set_ex_data
 	 */
 	virtual void SSLFinishSetup( SSL * pSSL ) {}
+	/**
+	 * @brief gets called when a SNI request is sent, and used to configure a SNI session
+	 * @param sHostname the hostname sent from the client
+	 * @param sPemFile fill this with the location to the pemfile
+	 * @param sPemPass fill this with the pemfile password if there is one
+	 * @return return true to proceed with the SNI server configuration
+	 */
+	virtual bool SNIConfigureServer( const CS_STRING & sHostname, CS_STRING & sPemFile, CS_STRING & sPemPass ) { return( false ); }
+	/**
+	 * @brief called to configure the SNI client
+	 * @param sHostname, the hostname to configure SNI with, you can fill this with GetHostname() if its a valid hostname and not an OP
+	 * @return returning true causes a call to configure SNI with the hostname returned
+	 */
+	virtual bool SNIConfigureClient( CS_STRING & sHostname ) { return( false ); }
+	//! creates a new SSL_CTX based on the setup of this sock
+	SSL_CTX * SetupServerCTX();
+
+	/**
+	 * @brief called once the SSL handshake is complete, this is triggered via SSL_CB_HANDSHAKE_DONE in SSL_set_info_callback()
+	 *
+	 * This is a spot where you can look at the finished peer certifificate ... IE
+	 * <pre>
+	 * X509 * pCert = GetX509();
+	 * char szName[256];
+	 * memset( szName, '\0', 256 );
+	 * X509_NAME_get_text_by_NID ( X509_get_subject_name( pCert ), NID_commonName, szName, 255 );
+	 * cerr << "Name! " << szName << endl;
+	 * X509_free( pCert );
+	 * </pre>
+	 */
+	virtual void SSLHandShakeFinished() {}
+	/**
+	 * @brief this is hooked in via SSL_set_verify, and be default it just returns 1 meaning success
+	 * @param iPreVerify the pre-verification status as determined by openssl internally
+	 * @param pStoreCTX the X509_STORE_CTX containing the certificate
+	 * @return 1 to continue, 0 to abort
+	 *
+	 * This may get called multiple times, for example with a chain certificate which is fairly typical with
+	 * certificates from godaddy, freessl, etc. Additionally, openssl does not do any host verification, they
+	 * leave that up to the you. One easy way to deal with this is to wait for SSLHandShakeFinished() and examine
+	 * the peer certificate @see SSLHandShakeFinished
+	 */
+	virtual int VerifyPeerCertificate( int iPreVerify, X509_STORE_CTX * pStoreCTX ) { return( 1 ); }
 #endif /* HAVE_LIBSSL */
 
 
@@ -1090,7 +1143,6 @@ private:
 	void ShrinkSendBuff();
 	void IncBuffPos( size_t uBytes );
 	//! checks for configured protocol disabling
-	void CheckDisabledProtocols();
 
 	// NOTE! if you add any new members, be sure to add them to Copy()
 	uint16_t	m_uPort;
@@ -1120,11 +1172,13 @@ private:
 	SSL_CTX	*	m_ssl_ctx;
 	uint32_t	m_iRequireClientCertFlags;
 	u_int		m_uDisableProtocols;
+	bool		m_bNoSSLCompression;
 
 	FPCertVerifyCB		m_pCerVerifyCB;
 
 	void FREE_SSL();
 	void FREE_CTX();
+	void ConfigureCTXOptions( SSL_CTX * pCTX );
 
 #endif /* HAVE_LIBSSL */
 

@@ -128,6 +128,7 @@ public:
 	unsigned int GetConnectDelay() const { return m_uiConnectDelay; }
 	bool GetProtectWebSessions() const { return m_bProtectWebSessions; }
 	CString GetSSLCiphers() const { return m_sSSLCiphers; }
+	Csock::EDisableProtocol GetDisabledSSLProtocols() const { return static_cast<Csock::EDisableProtocol>(m_uDisabledSSLProtocols); }
 	// !Getters
 
 	// Static allocator
@@ -211,6 +212,7 @@ protected:
 	CString                m_sPidFile;
 	CString                m_sSSLCertFile;
 	CString                m_sSSLCiphers;
+	CString                m_sSSLProtocols;
 	VCString               m_vsBindHosts;
 	VCString               m_vsTrustedProxies;
 	VCString               m_vsMotd;
@@ -218,6 +220,7 @@ protected:
 	unsigned int           m_uiConnectDelay;
 	unsigned int           m_uiAnonIPLimit;
 	unsigned int           m_uiMaxBufferSize;
+	unsigned int           m_uDisabledSSLProtocols;
 	CModules*              m_pModules;
 	unsigned long long     m_uBytesRead;
 	unsigned long long     m_uBytesWritten;
