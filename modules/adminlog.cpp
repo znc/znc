@@ -35,7 +35,7 @@ public:
 		closelog();
 	}
 
-	virtual bool OnLoad(const CString & sArgs, CString & sMessage) {
+	virtual bool OnLoad(const CString & sArgs, CString & sMessage) override {
 		CString sTarget = GetNV("target");
 		if (sTarget.Equals("syslog"))
 			m_eLogMode = LOG_TO_SYSLOG;
@@ -52,15 +52,15 @@ public:
 		return true;
 	}
 
-	virtual void OnIRCConnected() {
+	virtual void OnIRCConnected() override {
 		Log("[" + GetUser()->GetUserName() + "/" + GetNetwork()->GetName() + "] connected to IRC: " + GetNetwork()->GetCurrentServer()->GetName());
 	}
 
-	virtual void OnIRCDisconnected() {
+	virtual void OnIRCDisconnected() override {
 		Log("[" + GetUser()->GetUserName() + "/" + GetNetwork()->GetName() + "] disconnected from IRC");
 	}
 
-	virtual EModRet OnRaw(CString& sLine) {
+	virtual EModRet OnRaw(CString& sLine) override {
 		if (sLine.Equals("ERROR ", false, 6)) {
 			//ERROR :Closing Link: nick[24.24.24.24] (Excess Flood)
 			//ERROR :Closing Link: nick[24.24.24.24] Killer (Local kill by Killer (reason))
@@ -73,15 +73,15 @@ public:
 		return CONTINUE;
         }
 
-	virtual void OnClientLogin() {
+	virtual void OnClientLogin() override {
 		Log("[" + GetUser()->GetUserName() + "] connected to ZNC from " + GetClient()->GetRemoteIP());
 	}
 
-	virtual void OnClientDisconnect() {
+	virtual void OnClientDisconnect() override {
 		Log("[" + GetUser()->GetUserName() + "] disconnected from ZNC from " + GetClient()->GetRemoteIP());
 	}
 
-	virtual void OnFailedLogin(const CString& sUsername, const CString& sRemoteIP) {
+	virtual void OnFailedLogin(const CString& sUsername, const CString& sRemoteIP) override {
 		Log("[" + sUsername + "] failed to login from " + sRemoteIP, LOG_WARNING);
 	}
 
@@ -107,7 +107,7 @@ public:
 		}
 	}
 
-	virtual void OnModCommand(const CString& sCommand) {
+	virtual void OnModCommand(const CString& sCommand) override {
 		if (!GetUser()->IsAdmin()) {
 			PutModule("Access denied");
 		} else {

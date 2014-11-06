@@ -31,7 +31,7 @@ public:
 	virtual ~CSimpleAwayJob() {}
 
 protected:
-	virtual void RunJob();
+	virtual void RunJob() override;
 };
 
 class CSimpleAway : public CModule {
@@ -57,7 +57,7 @@ public:
 
 	virtual ~CSimpleAway() {}
 
-	virtual bool OnLoad(const CString& sArgs, CString& sMessage) {
+	virtual bool OnLoad(const CString& sArgs, CString& sMessage) override {
 		CString sReasonArg;
 
 		// Load AwayWait
@@ -91,18 +91,18 @@ public:
 		return true;
 	}
 
-	virtual void OnIRCConnected() {
+	virtual void OnIRCConnected() override {
 		if (GetNetwork()->IsUserAttached())
 			SetBack();
 		else
 			SetAway(false);
 	}
 
-	virtual void OnClientLogin() {
+	virtual void OnClientLogin() override {
 		SetBack();
 	}
 
-	virtual void OnClientDisconnect() {
+	virtual void OnClientDisconnect() override {
 		/* There might still be other clients */
 		if (!GetNetwork()->IsUserAttached())
 			SetAway();
@@ -140,7 +140,7 @@ public:
 		PutModule("Timer disabled");
 	}
 
-	virtual EModRet OnUserRaw(CString &sLine) {
+	virtual EModRet OnUserRaw(CString &sLine) override {
 		if (!sLine.Token(0).Equals("AWAY"))
 			return CONTINUE;
 

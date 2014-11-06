@@ -48,32 +48,32 @@ public:
 		}
 	}
 
-	virtual EModRet OnUserMsg(CString& sTarget, CString& sMessage) {
+	virtual EModRet OnUserMsg(CString& sTarget, CString& sMessage) override {
 		ClearAllBuffers();
 		return CONTINUE;
 	}
 
-	virtual EModRet OnUserCTCP(CString& sTarget, CString& sMessage) {
+	virtual EModRet OnUserCTCP(CString& sTarget, CString& sMessage) override {
 		ClearAllBuffers();
 		return CONTINUE;
 	}
 
-	virtual EModRet OnUserAction(CString& sTarget, CString& sMessage) {
+	virtual EModRet OnUserAction(CString& sTarget, CString& sMessage) override {
 		ClearAllBuffers();
 		return CONTINUE;
 	}
 
-	virtual EModRet OnUserNotice(CString& sTarget, CString& sMessage) {
+	virtual EModRet OnUserNotice(CString& sTarget, CString& sMessage) override {
 		ClearAllBuffers();
 		return CONTINUE;
 	}
 
-	virtual EModRet OnUserPart(CString& sChannel, CString& sMessage) {
+	virtual EModRet OnUserPart(CString& sChannel, CString& sMessage) override {
 		ClearAllBuffers();
 		return CONTINUE;
 	}
 
-	virtual EModRet OnUserTopic(CString& sChannel, CString& sTopic) {
+	virtual EModRet OnUserTopic(CString& sChannel, CString& sTopic) override {
 		ClearAllBuffers();
 		return CONTINUE;
 	}

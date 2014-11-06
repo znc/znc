@@ -85,7 +85,7 @@ public:
 	virtual ~CWebAdminMod() {
 	}
 
-	virtual bool OnLoad(const CString& sArgStr, CString& sMessage) {
+	virtual bool OnLoad(const CString& sArgStr, CString& sMessage) override {
 		if (sArgStr.empty() || CModInfo::GlobalModule != GetType())
 			return true;
 
@@ -400,8 +400,8 @@ public:
 		return pNetwork;
 	}
 
-	virtual CString GetWebMenuTitle() { return "webadmin"; }
-	virtual bool OnWebRequest(CWebSock& WebSock, const CString& sPageName, CTemplate& Tmpl) {
+	virtual CString GetWebMenuTitle() override { return "webadmin"; }
+	virtual bool OnWebRequest(CWebSock& WebSock, const CString& sPageName, CTemplate& Tmpl) override {
 		std::shared_ptr<CWebSession> spSession = WebSock.GetSession();
 
 		if (sPageName == "settings") {

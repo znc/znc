@@ -87,7 +87,7 @@ public:
 		m_PyZNCModule = NULL;
 	}
 
-	bool OnLoad(const CString& sArgsi, CString& sMessage) {
+	bool OnLoad(const CString& sArgsi, CString& sMessage) override {
 		CString sModPath, sTmp;
 #ifdef __CYGWIN__
 		CString sDllPath = "modpython/_znc_core.dll";
@@ -144,7 +144,7 @@ public:
 	}
 
 	virtual EModRet OnModuleLoading(const CString& sModName, const CString& sArgs,
-			CModInfo::EModuleType eType, bool& bSuccess, CString& sRetMsg) {
+			CModInfo::EModuleType eType, bool& bSuccess, CString& sRetMsg) override {
 		PyObject* pyFunc = PyObject_GetAttrString(m_PyZNCModule, "load_module");
 		if (!pyFunc) {
 			sRetMsg = GetPyExceptionStr();
@@ -194,7 +194,7 @@ public:
 		return HALT;
 	}
 
-	virtual EModRet OnModuleUnloading(CModule* pModule, bool& bSuccess, CString& sRetMsg) {
+	virtual EModRet OnModuleUnloading(CModule* pModule, bool& bSuccess, CString& sRetMsg) override {
 		CPyModule* pMod = AsPyModule(pModule);
 		if (pMod) {
 			CString sModName = pMod->GetModName();
@@ -228,7 +228,7 @@ public:
 	}
 
 	virtual EModRet OnGetModInfo(CModInfo& ModInfo, const CString& sModule,
-			bool& bSuccess, CString& sRetMsg) {
+			bool& bSuccess, CString& sRetMsg) override {
 		PyObject* pyFunc = PyObject_GetAttrString(m_PyZNCModule, "get_mod_info");
 		if (!pyFunc) {
 			sRetMsg = GetPyExceptionStr();
@@ -309,7 +309,7 @@ public:
 		}
 	}
 
-	virtual void OnGetAvailableMods(set<CModInfo>& ssMods, CModInfo::EModuleType eType) {
+	virtual void OnGetAvailableMods(set<CModInfo>& ssMods, CModInfo::EModuleType eType) override {
 		CDir Dir;
 		CModules::ModDirList dirs = CModules::GetModDirs();
 

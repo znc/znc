@@ -59,7 +59,7 @@ public:
 		return (CFile::Exists(PemFile()));
 	}
 
-	virtual EModRet OnIRCConnecting(CIRCSock *pIRCSock) {
+	virtual EModRet OnIRCConnecting(CIRCSock *pIRCSock) override {
 		if (HasPemFile()) {
 			pIRCSock->SetPemLocation(PemFile());
 		}
@@ -67,9 +67,9 @@ public:
 		return CONTINUE;
 	}
 
-	virtual CString GetWebMenuTitle() { return "Certificate"; }
+	virtual CString GetWebMenuTitle() override { return "Certificate"; }
 
-	virtual bool OnWebRequest(CWebSock& WebSock, const CString& sPageName, CTemplate& Tmpl) {
+	virtual bool OnWebRequest(CWebSock& WebSock, const CString& sPageName, CTemplate& Tmpl) override {
 		if (sPageName == "index") {
 			Tmpl["Cert"] = CString(HasPemFile());
 			return true;

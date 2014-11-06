@@ -32,9 +32,9 @@ public:
 	{
 	}
 
-	virtual bool OnLoad(const CString& sArgs, CString& sMessage);
+	virtual bool OnLoad(const CString& sArgs, CString& sMessage) override;
 
-	virtual EModRet OnUserPart(CString& sChannel, CString& sMessage)
+	virtual EModRet OnUserPart(CString& sChannel, CString& sMessage) override
 	{
 		for (MCString::iterator it = BeginNV(); it != EndNV(); ++it)
 		{
@@ -88,7 +88,7 @@ public:
 		PutModule(" -- End of List");
 	}
 
-	virtual void RunJob()
+	void RunJob()
 	{
 		CIRCNetwork* pNetwork = GetNetwork();
 		if (!pNetwork->GetIRCSock())
@@ -116,9 +116,9 @@ public:
 		}
 	}
 
-	virtual CString GetWebMenuTitle() { return "Sticky Chans"; }
+	virtual CString GetWebMenuTitle() override { return "Sticky Chans"; }
 
-	virtual bool OnWebRequest(CWebSock& WebSock, const CString& sPageName, CTemplate& Tmpl) {
+	virtual bool OnWebRequest(CWebSock& WebSock, const CString& sPageName, CTemplate& Tmpl) override {
 		if (sPageName == "index") {
 			bool bSubmitted = (WebSock.GetParam("submitted").ToInt() != 0);
 
@@ -154,7 +154,7 @@ public:
 		return false;
 	}
 
-	virtual bool OnEmbeddedWebRequest(CWebSock& WebSock, const CString& sPageName, CTemplate& Tmpl) {
+	virtual bool OnEmbeddedWebRequest(CWebSock& WebSock, const CString& sPageName, CTemplate& Tmpl) override {
 		if (sPageName == "webadmin/channel") {
 			CString sChan = Tmpl["ChanName"];
 			bool bStick = FindNV(sChan) != EndNV();

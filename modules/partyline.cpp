@@ -102,14 +102,14 @@ public:
 		}
 	}
 
-	virtual bool OnBoot() {
+	virtual bool OnBoot() override {
 		// The config is now read completely, so all Users are set up
 		Load();
 
 		return true;
 	}
 
-	virtual bool OnLoad(const CString& sArgs, CString& sMessage) {
+	virtual bool OnLoad(const CString& sArgs, CString& sMessage) override {
 		const map<CString, CUser*>& msUsers = CZNC::Get().GetUserMap();
 
 		for (map<CString, CUser*>::const_iterator it = msUsers.begin(); it != msUsers.end(); ++it) {
@@ -175,7 +175,7 @@ public:
 			DelNV("topic:" + pChannel->GetName());
 	}
 
-	virtual EModRet OnDeleteUser(CUser& User) {
+	virtual EModRet OnDeleteUser(CUser& User) override {
 		// Loop through each chan
 		for (set<CPartylineChannel*>::iterator it = m_ssChannels.begin(); it != m_ssChannels.end();) {
 			CPartylineChannel *pChan = *it;
@@ -188,7 +188,7 @@ public:
 		return CONTINUE;
 	}
 
-	virtual EModRet OnRaw(CString& sLine) {
+	virtual EModRet OnRaw(CString& sLine) override {
 		if (sLine.Token(1) == "005") {
 			CString::size_type uPos = sLine.AsUpper().find("CHANTYPES=");
 			if (uPos != CString::npos) {
@@ -205,11 +205,11 @@ public:
 		return CONTINUE;
 	}
 
-	virtual void OnIRCDisconnected() {
+	virtual void OnIRCDisconnected() override {
 		m_spInjectedPrefixes.erase(GetNetwork());
 	}
 
-	virtual void OnClientLogin() {
+	virtual void OnClientLogin() override {
 		CUser* pUser = GetUser();
 		CClient* pClient = GetClient();
 		CIRCNetwork* pNetwork = GetNetwork();
@@ -254,7 +254,7 @@ public:
 		}
 	}
 
-	virtual void OnClientDisconnect() {
+	virtual void OnClientDisconnect() override {
 		CUser* pUser = GetUser();
 		if (!pUser->IsUserAttached() && !pUser->IsBeingDeleted()) {
 			for (set<CPartylineChannel*>::iterator it = m_ssChannels.begin(); it != m_ssChannels.end(); ++it) {
@@ -267,7 +267,7 @@ public:
 		}
 	}
 
-	virtual EModRet OnUserRaw(CString& sLine) {
+	virtual EModRet OnUserRaw(CString& sLine) override {
 		if (sLine.Equals("WHO " CHAN_PREFIX_1, false, 5)) {
 			return HALT;
 		} else if (sLine.Equals("MODE " CHAN_PREFIX_1, false, 6)) {
@@ -310,7 +310,7 @@ public:
 		return CONTINUE;
 	}
 
-	virtual EModRet OnUserPart(CString& sChannel, CString& sMessage) {
+	virtual EModRet OnUserPart(CString& sChannel, CString& sMessage) override {
 		if (sChannel.Left(1) != CHAN_PREFIX_1) {
 			return CONTINUE;
 		}
@@ -385,7 +385,7 @@ public:
 		}
 	}
 
-	virtual EModRet OnUserJoin(CString& sChannel, CString& sKey) {
+	virtual EModRet OnUserJoin(CString& sChannel, CString& sKey) override {
 		if (sChannel.Left(1) != CHAN_PREFIX_1) {
 			return CONTINUE;
 		}
@@ -443,7 +443,7 @@ public:
 		}
 	}
 
-	virtual EModRet HandleMessage(const CString& sCmd, const CString& sTarget, const CString& sMessage) {
+	EModRet HandleMessage(const CString& sCmd, const CString& sTarget, const CString& sMessage) {
 		if (sTarget.empty()) {
 			return CONTINUE;
 		}
@@ -495,23 +495,23 @@ public:
 		return HALT;
 	}
 
-	virtual EModRet OnUserMsg(CString& sTarget, CString& sMessage) {
+	virtual EModRet OnUserMsg(CString& sTarget, CString& sMessage) override {
 		return HandleMessage("PRIVMSG", sTarget, sMessage);
 	}
 
-	virtual EModRet OnUserNotice(CString& sTarget, CString& sMessage) {
+	virtual EModRet OnUserNotice(CString& sTarget, CString& sMessage) override {
 		return HandleMessage("NOTICE", sTarget, sMessage);
 	}
 
-	virtual EModRet OnUserAction(CString& sTarget, CString& sMessage) {
+	virtual EModRet OnUserAction(CString& sTarget, CString& sMessage) override {
 		return HandleMessage("PRIVMSG", sTarget, "\001ACTION " + sMessage + "\001");
 	}
 
-	virtual EModRet OnUserCTCP(CString& sTarget, CString& sMessage) {
+	virtual EModRet OnUserCTCP(CString& sTarget, CString& sMessage) override {
 		return HandleMessage("PRIVMSG", sTarget, "\001" + sMessage + "\001");
 	}
 
-	virtual EModRet OnUserCTCPReply(CString& sTarget, CString& sMessage) {
+	virtual EModRet OnUserCTCPReply(CString& sTarget, CString& sMessage) override {
 		return HandleMessage("NOTICE", sTarget, "\001" + sMessage + "\001");
 	}
 

@@ -51,7 +51,7 @@ public:
 		AddCommand("Show", static_cast<CModCommand::ModCmdFunc>(&CClientNotifyMod::OnShowCommand), "", "Show the current settings");
 	}
 
-	bool OnLoad(const CString& sArgs, CString& sMessage) {
+	bool OnLoad(const CString& sArgs, CString& sMessage) override {
 		m_sMethod = GetNV("method");
 
 		if(m_sMethod != "notice" && m_sMethod != "message" && m_sMethod != "off") {
@@ -66,7 +66,7 @@ public:
 		return true;
 	}
 
-	void OnClientLogin() {
+	void OnClientLogin() override {
 		CString sRemoteIP = GetClient()->GetRemoteIP();
 		if(!m_bNewOnly || m_sClientsSeen.find(sRemoteIP) == m_sClientsSeen.end()) {
 			SendNotification("Another client authenticated as your user. "
@@ -78,7 +78,7 @@ public:
 		}
 	}
 
-	void OnClientDisconnect() {
+	void OnClientDisconnect() override {
 		if(m_bOnDisconnect) {
 			SendNotification("A client disconnected from your user. "
 				"Use the 'ListClients' command to see the " +
