@@ -21,6 +21,7 @@
 #include <znc/WebModules.h>
 #include <znc/Threads.h>
 #include <znc/main.h>
+#include <functional>
 #include <set>
 #include <queue>
 
@@ -283,6 +284,7 @@ class CModCommand {
 public:
 	/// Type for the callback function that handles the actual command.
 	typedef void (CModule::*ModCmdFunc)(const CString& sLine);
+	typedef std::function<void(const CString& sLine)> CmdFunc;
 
 	/// Default constructor, needed so that this can be saved in a std::map.
 	CModCommand();
@@ -293,7 +295,8 @@ public:
 	 * @param sArgs Help text describing the arguments to this command.
 	 * @param sDesc Help text describing what this command does.
 	 */
-	CModCommand(const CString& sCmd, ModCmdFunc func, const CString& sArgs, const CString& sDesc);
+	CModCommand(const CString& sCmd, CModule* pMod, ModCmdFunc func, const CString& sArgs, const CString& sDesc);
+	CModCommand(const CString& sCmd, CmdFunc func, const CString& sArgs, const CString& sDesc);
 
 	/** Copy constructor, needed so that this can be saved in a std::map.
 	 * @param other Object to copy from.
@@ -317,15 +320,15 @@ public:
 	void AddHelp(CTable& Table) const;
 
 	const CString& GetCommand() const { return m_sCmd; }
-	ModCmdFunc GetFunction() const { return m_pFunc; }
+	CmdFunc GetFunction() const { return m_pFunc; }
 	const CString& GetArgs() const { return m_sArgs; }
 	const CString& GetDescription() const { return m_sDesc; }
 
-	void Call(CModule *pMod, const CString& sLine) const { (pMod->*m_pFunc)(sLine); }
+	void Call(const CString& sLine) const { m_pFunc(sLine); }
 
 private:
 	CString m_sCmd;
-	ModCmdFunc m_pFunc;
+	CmdFunc m_pFunc;
 	CString m_sArgs;
 	CString m_sDesc;
 };
@@ -926,6 +929,8 @@ public:
 	bool AddCommand(const CModCommand& Command);
 	/// @return True if the command was successfully added.
 	bool AddCommand(const CString& sCmd, CModCommand::ModCmdFunc func, const CString& sArgs = "", const CString& sDesc = "");
+	/// @return True if the command was successfully added.
+	bool AddCommand(const CString& sCmd, const CString& sArgs, const CString& sDesc, std::function<void(const CString& sLine)> func);
 	/// @return True if the command was successfully removed.
 	bool RemCommand(const CString& sCmd);
 	/// @return The CModCommand instance or NULL if none was found.

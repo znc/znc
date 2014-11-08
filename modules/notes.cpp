@@ -71,16 +71,15 @@ class CNotesMod : public CModule {
 
 public:
 	MODCONSTRUCTOR(CNotesMod) {
+		using std::placeholders::_1;
 		AddHelpCommand();
 		AddCommand("List",   static_cast<CModCommand::ModCmdFunc>(&CNotesMod::ListCommand));
 		AddCommand("Add",    static_cast<CModCommand::ModCmdFunc>(&CNotesMod::AddNoteCommand),
 			"<key> <note>");
 		AddCommand("Del",    static_cast<CModCommand::ModCmdFunc>(&CNotesMod::DelCommand),
 			"<key>",         "Delete a note");
-		AddCommand("Mod",    static_cast<CModCommand::ModCmdFunc>(&CNotesMod::ModCommand),
-			"<key> <note>",  "Modify a note");
-		AddCommand("Get",    static_cast<CModCommand::ModCmdFunc>(&CNotesMod::GetCommand),
-			"<key>");
+		AddCommand("Mod", "<key> <note>", "Modify a note", std::bind(&CNotesMod::ModCommand, this, _1));
+		AddCommand("Get", "<key>", "", [this](const CString& sLine){ GetCommand(sLine); });
 	}
 
 	virtual ~CNotesMod() {}

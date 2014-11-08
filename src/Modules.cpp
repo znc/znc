@@ -530,8 +530,13 @@ bool CModule::AddCommand(const CModCommand& Command)
 
 bool CModule::AddCommand(const CString& sCmd, CModCommand::ModCmdFunc func, const CString& sArgs, const CString& sDesc)
 {
-	CModCommand cmd(sCmd, func, sArgs, sDesc);
+	CModCommand cmd(sCmd, this, func, sArgs, sDesc);
 	return AddCommand(cmd);
+}
+
+bool CModule::AddCommand(const CString& sCmd, const CString& sArgs, const CString& sDesc, std::function<void(const CString& sLine)> func) {
+	CModCommand cmd(sCmd, std::move(func), sArgs, sDesc);
+	return AddCommand(std::move(cmd));
 }
 
 void CModule::AddHelpCommand()
@@ -560,7 +565,7 @@ bool CModule::HandleCommand(const CString& sLine) {
 	const CModCommand* pCmd = FindCommand(sCmd);
 
 	if (pCmd) {
-		pCmd->Call(this, sLine);
+		pCmd->Call(sLine);
 		return true;
 	}
 
@@ -1343,10 +1348,11 @@ CModCommand::CModCommand()
 {
 }
 
-CModCommand::CModCommand(const CString& sCmd, ModCmdFunc func, const CString& sArgs, const CString& sDesc)
-	: m_sCmd(sCmd), m_pFunc(func), m_sArgs(sArgs), m_sDesc(sDesc)
-{
-}
+CModCommand::CModCommand(const CString& sCmd, CModule* pMod, ModCmdFunc func, const CString& sArgs, const CString& sDesc)
+	: m_sCmd(sCmd), m_pFunc([pMod, func](const CString& sLine) { (pMod->*func)(sLine); }), m_sArgs(sArgs), m_sDesc(sDesc) {}
+
+CModCommand::CModCommand(const CString& sCmd, CmdFunc func, const CString& sArgs, const CString& sDesc)
+	: m_sCmd(sCmd), m_pFunc(std::move(func)), m_sArgs(sArgs), m_sDesc(sDesc) {}
 
 CModCommand::CModCommand(const CModCommand& other)
 	: m_sCmd(other.m_sCmd), m_pFunc(other.m_pFunc), m_sArgs(other.m_sArgs), m_sDesc(other.m_sDesc)
