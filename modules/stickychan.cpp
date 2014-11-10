@@ -44,7 +44,7 @@ public:
 
 				if (pChan)
 				{
-					pChan->JoinUser(true, "", GetClient());
+					pChan->JoinUser();
 					return HALT;
 				}
 			}

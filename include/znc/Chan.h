@@ -63,9 +63,9 @@ public:
 	CConfig ToConfig() const;
 	void Clone(CChan& chan);
 	void Cycle() const;
-	void JoinUser(bool bForce = false, const CString& sKey = "", CClient* pClient = NULL);
+	void JoinUser(const CString& sKey = "");
+	void AttachUser(CClient* pClient = NULL);
 	void DetachUser();
-	void AttachUser();
 
 	void OnWho(const CString& sNick, const CString& sIdent, const CString& sHost);
 

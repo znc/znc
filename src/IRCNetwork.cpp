@@ -621,7 +621,7 @@ void CIRCNetwork::ClientConnected(CClient *pClient) {
 	const vector<CChan*>& vChans = GetChans();
 	for (size_t a = 0; a < vChans.size(); a++) {
 		if ((vChans[a]->IsOn()) && (!vChans[a]->IsDetached())) {
-			vChans[a]->JoinUser(true, "", pClient);
+			vChans[a]->AttachUser(pClient);
 		}
 	}
 
