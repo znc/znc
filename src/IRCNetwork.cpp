@@ -679,6 +679,17 @@ CClient* CIRCNetwork::FindClient(const CString& sIdentifier) const {
 	return NULL;
 }
 
+std::vector<CClient*> CIRCNetwork::FindClients(const CString& sIdentifier) const {
+	std::vector<CClient*> vClients;
+	for (CClient* pClient : m_vClients) {
+		if (pClient->GetIdentifier().Equals(sIdentifier)) {
+			vClients.push_back(pClient);
+		}
+	}
+
+	return vClients;
+}
+
 void CIRCNetwork::SetUser(CUser *pUser) {
 	for (unsigned int a = 0; a < m_vClients.size(); a++) {
 		m_vClients[a]->PutStatus("This network is being deleted or moved to another user.");

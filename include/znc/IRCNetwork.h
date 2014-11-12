@@ -77,6 +77,7 @@ public:
 	bool IsNetworkAttached() const { return !m_vClients.empty(); }
 	const std::vector<CClient*>& GetClients() const { return m_vClients; }
 	CClient* FindClient(const CString& sIdentifier) const;
+	std::vector<CClient*> FindClients(const CString& sIdentifier) const;
 
 	void SetUser(CUser *pUser);
 	bool SetName(const CString& sName);
