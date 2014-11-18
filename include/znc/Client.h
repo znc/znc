@@ -96,6 +96,7 @@ public:
 		m_bServerTime = false;
 		m_bBatch = false;
 		m_bSelfMessage = false;
+		m_bReady = false;
 		EnableReadLine();
 		// RFC says a line can have 512 chars max, but we are
 		// a little more gentle ;)
@@ -127,6 +128,7 @@ public:
 	void StatusCTCP(const CString& sCommand);
 	void BouncedOff();
 	bool IsAttached() const { return m_pUser != NULL; }
+	bool IsReady() const { return m_bReady; }
 
 	void PutIRC(const CString& sLine);
 	void PutClient(const CString& sLine);
@@ -175,6 +177,7 @@ protected:
 	bool                 m_bServerTime;
 	bool                 m_bBatch;
 	bool                 m_bSelfMessage;
+	bool                 m_bReady;
 	CUser*               m_pUser;
 	CIRCNetwork*         m_pNetwork;
 	CString              m_sNick;

@@ -528,6 +528,7 @@ void CClient::SetNick(const CString& s) {
 void CClient::SetNetwork(CIRCNetwork* pNetwork, bool bDisconnect, bool bReconnect) {
 	if (bDisconnect) {
 		if (m_pNetwork) {
+			m_bReady = false;
 			m_pNetwork->ClientDisconnected(this);
 
 			// Tell the client they are no longer in these channels.
@@ -546,6 +547,7 @@ void CClient::SetNetwork(CIRCNetwork* pNetwork, bool bDisconnect, bool bReconnec
 
 	if (bReconnect) {
 		if (m_pNetwork) {
+			m_bReady = true;
 			m_pNetwork->ClientConnected(this);
 		} else if (m_pUser) {
 			m_pUser->UserConnected(this);
