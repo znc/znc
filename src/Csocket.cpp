@@ -3410,7 +3410,10 @@ void CSocketManager::DelSock( size_t iPos )
 	if( pSock->GetCloseType() != Csock::CLT_DEREFERENCE )
 	{
 		if( pSock->IsConnected() )
+		{
+			pSock->SetIsConnected( false );
 			pSock->Disconnected(); // only call disconnected event if connected event was called (IE IsConnected was set)
+		}
 
 		m_iBytesRead += pSock->GetBytesRead();
 		m_iBytesWritten += pSock->GetBytesWritten();
