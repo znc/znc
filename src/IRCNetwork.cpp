@@ -669,14 +669,15 @@ const CString& CIRCNetwork::GetName() const {
 	return m_sName;
 }
 
-CClient* CIRCNetwork::FindClient(const CString& sIdentifier) const {
+std::vector<CClient*> CIRCNetwork::FindClients(const CString& sIdentifier) const {
+	std::vector<CClient*> vClients;
 	for (CClient* pClient : m_vClients) {
 		if (pClient->GetIdentifier().Equals(sIdentifier)) {
-			return pClient;
+			vClients.push_back(pClient);
 		}
 	}
 
-	return NULL;
+	return vClients;
 }
 
 void CIRCNetwork::SetUser(CUser *pUser) {
