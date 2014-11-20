@@ -188,6 +188,7 @@ void CClient::UserCommand(CString& sLine) {
 		CTable Table;
 		Table.AddColumn("Host");
 		Table.AddColumn("Network");
+		Table.AddColumn("Identifier");
 
 		for (unsigned int a = 0; a < vClients.size(); a++) {
 			Table.AddRow();
@@ -195,6 +196,7 @@ void CClient::UserCommand(CString& sLine) {
 			if (vClients[a]->GetNetwork()) {
 				Table.SetCell("Network", vClients[a]->GetNetwork()->GetName());
 			}
+			Table.SetCell("Identifier", vClients[a]->GetIdentifier());
 		}
 
 		PutStatus(Table);
