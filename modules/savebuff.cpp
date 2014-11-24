@@ -49,7 +49,7 @@ public:
 	virtual ~CSaveBuffJob() {}
 
 protected:
-	virtual void RunJob();
+	virtual void RunJob() override;
 };
 
 class CSaveBuff : public CModule
@@ -73,7 +73,7 @@ public:
 		}
 	}
 
-	virtual bool OnLoad(const CString& sArgs, CString& sMessage)
+	virtual bool OnLoad(const CString& sArgs, CString& sMessage) override
 	{
 		if( sArgs == CRYPT_ASK_PASS )
 		{
@@ -94,7 +94,7 @@ public:
 		return( !m_bBootError );
 	}
 
-	virtual void OnIRCConnected()
+	virtual void OnIRCConnected() override
 	{
 		// dropped this into here because there seems to have been a changed where the module is loaded before the channels.
 		// this is a good trigger to tell it to backfill the channels
@@ -215,11 +215,14 @@ public:
 	{
 		CString sArgs = sCmdLine.Token(1, true);
 
+		if(sArgs.empty())
+			sArgs = CRYPT_LAME_PASS;
+
 		PutModule("Password set to [" + sArgs + "]");
 		m_sPassword = CBlowfish::MD5(sArgs);
 	}
 
-	void OnModCommand(const CString& sCmdLine)
+	void OnModCommand(const CString& sCmdLine) override
 	{
 		CString sCommand = sCmdLine.Token(0);
 		CString sArgs    = sCmdLine.Token(1, true);
@@ -303,11 +306,11 @@ public:
 		chan.AddBuffer(sLine);
 	}
 
-	virtual void OnRawMode(const CNick& cOpNick, CChan& cChannel, const CString& sModes, const CString& sArgs)
+	virtual void OnRawMode(const CNick& cOpNick, CChan& cChannel, const CString& sModes, const CString& sArgs) override
 	{
 		AddBuffer(cChannel, SpoofChanMsg(cChannel.GetName(), cOpNick.GetNickMask() + " MODE " + sModes + " " + sArgs));
 	}
-	virtual void OnQuit(const CNick& cNick, const CString& sMessage, const vector<CChan*>& vChans)
+	virtual void OnQuit(const CNick& cNick, const CString& sMessage, const vector<CChan*>& vChans) override
 	{
 		for (size_t a = 0; a < vChans.size(); a++)
 		{
@@ -317,18 +320,18 @@ public:
 			SaveBufferToDisk(); // need to force a save here to see this!
 	}
 
-	virtual void OnNick(const CNick& cNick, const CString& sNewNick, const vector<CChan*>& vChans)
+	virtual void OnNick(const CNick& cNick, const CString& sNewNick, const vector<CChan*>& vChans) override
 	{
 		for (size_t a = 0; a < vChans.size(); a++)
 		{
 			AddBuffer(*vChans[a], SpoofChanMsg(vChans[a]->GetName(), cNick.GetNickMask() + " NICK " + sNewNick));
 		}
 	}
-	virtual void OnKick(const CNick& cNick, const CString& sOpNick, CChan& cChannel, const CString& sMessage)
+	virtual void OnKick(const CNick& cNick, const CString& sOpNick, CChan& cChannel, const CString& sMessage) override
 	{
 		AddBuffer(cChannel, SpoofChanMsg(cChannel.GetName(), sOpNick + " KICK " + cNick.GetNickMask() + " " + sMessage));
 	}
-	virtual void OnJoin(const CNick& cNick, CChan& cChannel)
+	virtual void OnJoin(const CNick& cNick, CChan& cChannel) override
 	{
 		if (cNick.NickEquals(GetUser()->GetNick()) && cChannel.GetBuffer().empty())
 		{
@@ -338,7 +341,7 @@ public:
 		}
 		AddBuffer(cChannel, SpoofChanMsg(cChannel.GetName(), cNick.GetNickMask() + " JOIN"));
 	}
-	virtual void OnPart(const CNick& cNick, CChan& cChannel)
+	virtual void OnPart(const CNick& cNick, CChan& cChannel) override
 	{
 		AddBuffer(cChannel, SpoofChanMsg(cChannel.GetName(), cNick.GetNickMask() + " PART"));
 		if (cNick.NickEquals(GetUser()->GetNick()))

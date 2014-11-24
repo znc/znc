@@ -116,7 +116,7 @@ void CChan::Clone(CChan& chan) {
 		//    and only attach if we are on the channel)
 		if (IsOn()) {
 			if (IsDetached()) {
-				JoinUser(false, "");
+				AttachUser();
 			} else {
 				DetachUser();
 			}
@@ -129,13 +129,18 @@ void CChan::Cycle() const {
 	m_pNetwork->PutIRC("PART " + GetName() + "\r\nJOIN " + GetName() + " " + GetKey());
 }
 
-void CChan::JoinUser(bool bForce, const CString& sKey, CClient* pClient) {
-	if (!bForce && (!IsOn() || !IsDetached())) {
-		m_pNetwork->PutIRC("JOIN " + GetName() + " " + ((sKey.empty()) ? GetKey() : sKey));
+void CChan::JoinUser(const CString& sKey) {
+	if (!sKey.empty()) {
+		SetKey(sKey);
+	}
+	if (!IsOn() || !IsDetached()) {
+		m_pNetwork->PutIRC("JOIN " + GetName() + " " + GetKey());
 		SetDetached(false);
 		return;
 	}
+}
 
+void CChan::AttachUser(CClient* pClient) {
 	m_pNetwork->PutUser(":" + m_pNetwork->GetIRCNick().GetNickMask() + " JOIN :" + GetName(), pClient);
 
 	if (!GetTopic().empty()) {
@@ -196,13 +201,6 @@ void CChan::DetachUser() {
 	if (!m_bDetached) {
 		m_pNetwork->PutUser(":" + m_pNetwork->GetIRCNick().GetNickMask() + " PART " + GetName());
 		m_bDetached = true;
-	}
-}
-
-void CChan::AttachUser() {
-	if (m_bDetached) {
-		m_pNetwork->PutUser(":" + m_pNetwork->GetIRCNick().GetNickMask() + " JOIN " + GetName());
-		m_bDetached = false;
 	}
 }
 

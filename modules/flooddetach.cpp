@@ -45,7 +45,7 @@ public:
 		SetArgs(CString(m_iThresholdMsgs) + " " + CString(m_iThresholdSecs));
 	}
 
-	bool OnLoad(const CString& sArgs, CString& sMessage) {
+	bool OnLoad(const CString& sArgs, CString& sMessage) override {
 		m_iThresholdMsgs = sArgs.Token(0).ToUInt();
 		m_iThresholdSecs = sArgs.Token(1).ToUInt();
 
@@ -64,7 +64,7 @@ public:
 		return true;
 	}
 
-	void OnIRCDisconnected() {
+	void OnIRCDisconnected() override {
 		m_chans.clear();
 	}
 
@@ -152,23 +152,23 @@ public:
 		}
 	}
 
-	EModRet OnChanMsg(CNick& Nick, CChan& Channel, CString& sMessage) {
+	EModRet OnChanMsg(CNick& Nick, CChan& Channel, CString& sMessage) override {
 		Message(Channel);
 		return CONTINUE;
 	}
 
 	// This also catches OnChanAction()
-	EModRet OnChanCTCP(CNick& Nick, CChan& Channel, CString& sMessage) {
+	EModRet OnChanCTCP(CNick& Nick, CChan& Channel, CString& sMessage) override {
 		Message(Channel);
 		return CONTINUE;
 	}
 
-	EModRet OnChanNotice(CNick& Nick, CChan& Channel, CString& sMessage) {
+	EModRet OnChanNotice(CNick& Nick, CChan& Channel, CString& sMessage) override {
 		Message(Channel);
 		return CONTINUE;
 	}
 
-	EModRet OnTopic(CNick& Nick, CChan& Channel, CString& sTopic) {
+	EModRet OnTopic(CNick& Nick, CChan& Channel, CString& sTopic) override {
 		Message(Channel);
 		return CONTINUE;
 	}

@@ -23,7 +23,7 @@ class CKickClientOnIRCDisconnect: public CModule {
 public:
 	MODCONSTRUCTOR(CKickClientOnIRCDisconnect) {}
 
-	void OnIRCDisconnected()
+	void OnIRCDisconnected() override
 	{
 		const vector<CChan*>& vChans = GetNetwork()->GetChans();
 

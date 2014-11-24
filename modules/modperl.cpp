@@ -59,7 +59,7 @@ public:
 #define PUSH_STR(s) XPUSHs(PString(s).GetSV())
 #define PUSH_PTR(type, p) XPUSHs(SWIG_NewInstanceObj(const_cast<type>(p), SWIG_TypeQuery(#type), SWIG_SHADOW))
 
-	bool OnLoad(const CString& sArgsi, CString& sMessage) {
+	bool OnLoad(const CString& sArgsi, CString& sMessage) override {
 		CString sModPath, sTmp;
 		if (!CModules::FindModPath("modperl/startup.pl", sModPath, sTmp)) {
 			sMessage = "startup.pl not found.";
@@ -99,7 +99,7 @@ public:
 	}
 
 	virtual EModRet OnModuleLoading(const CString& sModName, const CString& sArgs,
-			CModInfo::EModuleType eType, bool& bSuccess, CString& sRetMsg) {
+			CModInfo::EModuleType eType, bool& bSuccess, CString& sRetMsg) override {
 		EModRet result = HALT;
 		PSTART;
 		PUSH_STR(sModName);
@@ -133,7 +133,7 @@ public:
 		return result;
 	}
 
-	virtual EModRet OnModuleUnloading(CModule* pModule, bool& bSuccess, CString& sRetMsg) {
+	virtual EModRet OnModuleUnloading(CModule* pModule, bool& bSuccess, CString& sRetMsg) override {
 		CPerlModule* pMod = AsPerlModule(pModule);
 		if (pMod) {
 			EModRet result = HALT;
@@ -166,7 +166,7 @@ public:
 	}
 
 	virtual EModRet OnGetModInfo(CModInfo& ModInfo, const CString& sModule,
-			bool& bSuccess, CString& sRetMsg) {
+			bool& bSuccess, CString& sRetMsg) override {
 		PSTART;
 		PUSH_STR(sModule);
 		PUSH_PTR(CModInfo*, &ModInfo);
@@ -208,7 +208,7 @@ public:
 		return result;
 	}
 
-	virtual void OnGetAvailableMods(set<CModInfo>& ssMods, CModInfo::EModuleType eType) {
+	virtual void OnGetAvailableMods(set<CModInfo>& ssMods, CModInfo::EModuleType eType) override {
 
 		unsigned int a = 0;
 		CDir Dir;

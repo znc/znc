@@ -435,7 +435,7 @@ void CClient::ReadLine(const CString& sData) {
 
 			CChan* pChan = m_pNetwork->FindChan(sChannel);
 			if (pChan) {
-				pChan->JoinUser(false, sKey);
+				pChan->JoinUser(sKey);
 				continue;
 			}
 

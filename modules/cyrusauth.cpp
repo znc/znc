@@ -43,7 +43,7 @@ public:
 		sasl_done();
 	}
 
-	void OnModCommand(const CString& sCommand) {
+	void OnModCommand(const CString& sCommand) override {
 		if (GetUser()->IsAdmin()) {
 			HandleCommand(sCommand);
 		} else {
@@ -51,7 +51,7 @@ public:
 		}
 	}
 
-	virtual bool OnLoad(const CString& sArgs, CString& sMessage) {
+	virtual bool OnLoad(const CString& sArgs, CString& sMessage) override {
 		VCString vsArgs;
 		VCString::const_iterator it;
 		sArgs.Split(" ", vsArgs, false);
@@ -87,7 +87,7 @@ public:
 		return true;
 	}
 
-	virtual EModRet OnLoginAttempt(std::shared_ptr<CAuthBase> Auth) {
+	virtual EModRet OnLoginAttempt(std::shared_ptr<CAuthBase> Auth) override {
 		const CString& sUsername = Auth->GetUsername();
 		const CString& sPassword = Auth->GetPassword();
 		CUser *pUser(CZNC::Get().FindUser(sUsername));

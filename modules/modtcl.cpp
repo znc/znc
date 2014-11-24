@@ -43,7 +43,7 @@ public:
 	CModTclTimer(CModule* pModule, unsigned int uInterval, unsigned int uCycles, const CString& sLabel, const CString& sDescription) : CTimer(pModule, uInterval, uCycles, sLabel, sDescription), m_pParent(NULL) {}
 	virtual ~CModTclTimer() {}
 protected:
-	virtual void RunJob();
+	virtual void RunJob() override;
 	CModTcl* m_pParent;
 };
 
@@ -53,7 +53,7 @@ public:
 	CModTclStartTimer(CModule* pModule, unsigned int uInterval, unsigned int uCycles, const CString& sLabel, const CString& sDescription) : CTimer(pModule, uInterval, uCycles, sLabel, sDescription), m_pParent(NULL) {}
 	virtual ~CModTclStartTimer() {}
 protected:
-	virtual void RunJob();
+	virtual void RunJob() override;
 	CModTcl* m_pParent;
 };
 
@@ -70,7 +70,7 @@ public:
 		}
 	}
 
-	virtual bool OnLoad(const CString& sArgs, CString& sErrorMsg) {
+	virtual bool OnLoad(const CString& sArgs, CString& sErrorMsg) override {
 #ifndef MOD_MODTCL_ALLOW_EVERYONE
 		if (!GetUser()->IsAdmin()) {
 			sErrorMsg = "You must be admin to use the modtcl module";
@@ -124,7 +124,7 @@ public:
 		AddTimer(new CModTclTimer(this, 1, 0, "ModTclUpdate", "Timer for modtcl to process pending events and idle callbacks."));
 	}
 
-	virtual void OnModCommand(const CString& sCommand) {
+	virtual void OnModCommand(const CString& sCommand) override {
 		CString sResult;
 		VCString vsResult;
 		CString sCmd = sCommand;
@@ -146,7 +146,7 @@ public:
 		}
 	}
 
-	virtual void TclUpdate() {
+	void TclUpdate() {
 		while (Tcl_DoOneEvent(TCL_DONT_WAIT)) {}
 		i = Tcl_Eval(interp,"Binds::ProcessTime");
 		if (i != TCL_OK) {
@@ -161,29 +161,29 @@ public:
 		return sLine;
 	}
 
-	virtual void OnPreRehash() {
+	virtual void OnPreRehash() override {
 		if (interp)
 			Tcl_Eval(interp,"Binds::ProcessEvnt prerehash");
 	}
 
-	virtual void OnPostRehash() {
+	virtual void OnPostRehash() override {
 		if (interp) {
 			Tcl_Eval(interp,"rehash");
 			Tcl_Eval(interp,"Binds::ProcessEvnt rehash");
 		}
 	}
 
-	virtual void OnIRCConnected() {
+	virtual void OnIRCConnected() override {
 		if (interp)
 			Tcl_Eval(interp, "Binds::ProcessEvnt init-server");
 	}
 
-	virtual void OnIRCDisconnected() {
+	virtual void OnIRCDisconnected() override {
 		if (interp)
 			Tcl_Eval(interp, "Binds::ProcessEvnt disconnect-server");
 	}
 
-	virtual EModRet OnChanMsg(CNick& Nick, CChan& Channel, CString& sMessage) {
+	virtual EModRet OnChanMsg(CNick& Nick, CChan& Channel, CString& sMessage) override {
 		CString sMes = TclEscape(sMessage);
 		CString sNick = TclEscape(CString(Nick.GetNick()));
 		CString sHost = TclEscape(CString(Nick.GetIdent() + "@" + Nick.GetHost()));
@@ -197,7 +197,7 @@ public:
 		return CONTINUE;
 	}
 
-	virtual EModRet OnPrivMsg(CNick& Nick, CString& sMessage) {
+	virtual EModRet OnPrivMsg(CNick& Nick, CString& sMessage) override {
 		CString sMes = TclEscape(sMessage);
 		CString sNick = TclEscape(CString(Nick.GetNick()));
 		CString sHost = TclEscape(CString(Nick.GetIdent() + "@" + Nick.GetHost()));
@@ -210,7 +210,7 @@ public:
 		return CONTINUE;
 	}
 
-	virtual void OnNick(const CNick& OldNick, const CString& sNewNick, const vector<CChan*>& vChans) {
+	virtual void OnNick(const CNick& OldNick, const CString& sNewNick, const vector<CChan*>& vChans) override {
 		CString sOldNick = TclEscape(CString(OldNick.GetNick()));
 		CString sNewNickTmp = TclEscape(sNewNick);
 		CString sHost = TclEscape(CString(OldNick.GetIdent() + "@" + OldNick.GetHost()));
@@ -227,7 +227,7 @@ public:
 		}
 	}
 
-	virtual void OnKick(const CNick& OpNick, const CString& sKickedNick, CChan& Channel, const CString& sMessage) {
+	virtual void OnKick(const CNick& OpNick, const CString& sKickedNick, CChan& Channel, const CString& sMessage) override {
 		CString sOpNick = TclEscape(CString(OpNick.GetNick()));
 		CString sNick = TclEscape(sKickedNick);
 		CString sOpHost = TclEscape(CString(OpNick.GetIdent() + "@" + OpNick.GetHost()));

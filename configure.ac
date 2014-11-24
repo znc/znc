@@ -383,6 +383,27 @@ if test "x$ZLIB" != "xno"; then
 	fi
 fi
 
+AC_ARG_ENABLE( [charset],
+	AS_HELP_STRING([--disable-charset], [disable ICU support]),
+	[HAVE_ICU="$enableval"],
+	[HAVE_ICU="auto"])
+if test "x$HAVE_ICU" != "xno"
+then
+	old_HAVE_ICU="$HAVE_ICU"
+	PKG_CHECK_MODULES([icu], [icu-uc], [
+		appendLib "$icu_LIBS"
+		appendCXX "$icu_CFLAGS"
+		HAVE_ICU=yes
+		AC_DEFINE([HAVE_ICU], [1], [Enable ICU library for Unicode handling])
+		AC_DEFINE([U_USING_ICU_NAMESPACE], [0], [Do not clutter global namespace with ICU C++ stuff])
+	], [
+		ZNC_AUTO_FAIL([HAVE_ICU],
+			      [support for charset conversion not found. Try --disable-charset.],
+			      [support for charset conversion not found and thus disabled])
+		HAVE_ICU="no (icu-uc not found via pkg-config)"
+	])
+fi
+
 AC_ARG_WITH( [module-prefix],
 	AS_HELP_STRING([--with-module-prefix], [module object code [LIBDIR/znc]]),
 	[MODDIR=$withval],
@@ -576,27 +597,6 @@ then
 		AC_MSG_ERROR([tcl not found, try --disable-tcl, or install tcl properly. If tcl is installed to a non-standard path, use --enable-tcl --with-tcl=/path])
 	fi
 	LIBS="$my_saved_LIBS"
-fi
-
-AC_ARG_ENABLE( [charset],
-	AS_HELP_STRING([--disable-charset], [disable ICU support]),
-	[HAVE_ICU="$enableval"],
-	[HAVE_ICU="auto"])
-if test "x$HAVE_ICU" != "xno"
-then
-	old_HAVE_ICU="$HAVE_ICU"
-	PKG_CHECK_MODULES([icu], [icu-uc], [
-		appendLib "$icu_LIBS"
-		appendCXX "$icu_CFLAGS"
-		HAVE_ICU=yes
-		AC_DEFINE([HAVE_ICU], [1], [Enable ICU library for Unicode handling])
-		AC_DEFINE([U_USING_ICU_NAMESPACE], [0], [Do not clutter global namespace with ICU C++ stuff])
-	], [
-		ZNC_AUTO_FAIL([HAVE_ICU],
-			      [support for charset conversion not found. Try --disable-charset.],
-			      [support for charset conversion not found and thus disabled])
-		HAVE_ICU="no (icu-uc not found via pkg-config)"
-	])
 fi
 
 AC_CACHE_CHECK([for GNU make], [ac_cv_path_GNUMAKE], [

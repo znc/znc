@@ -39,7 +39,7 @@ public:
 
 	virtual ~CSSLClientCertMod() {}
 
-	virtual bool OnBoot() {
+	virtual bool OnBoot() override {
 		const vector<CListener*>& vListeners = CZNC::Get().GetListeners();
 		vector<CListener*>::const_iterator it;
 
@@ -65,11 +65,11 @@ public:
 		return true;
 	}
 
-	virtual void OnPostRehash() {
+	virtual void OnPostRehash() override {
 		OnBoot();
 	}
 
-	virtual bool OnLoad(const CString& sArgs, CString& sMessage) {
+	virtual bool OnLoad(const CString& sArgs, CString& sMessage) override {
 		OnBoot();
 
 		return true;
@@ -101,7 +101,7 @@ public:
 		return pair.second;
 	}
 
-	virtual EModRet OnLoginAttempt(std::shared_ptr<CAuthBase> Auth) {
+	virtual EModRet OnLoginAttempt(std::shared_ptr<CAuthBase> Auth) override {
 		const CString sUser = Auth->GetUsername();
 		Csock *pSock = Auth->GetSocket();
 		CUser *pUser = CZNC::Get().FindUser(sUser);
@@ -236,9 +236,9 @@ public:
 		}
 	}
 
-	virtual CString GetWebMenuTitle() { return "certauth"; }
+	virtual CString GetWebMenuTitle() override { return "certauth"; }
 
-	virtual bool OnWebRequest(CWebSock& WebSock, const CString& sPageName, CTemplate& Tmpl) {
+	virtual bool OnWebRequest(CWebSock& WebSock, const CString& sPageName, CTemplate& Tmpl) override {
 		CUser *pUser = WebSock.GetSession()->GetUser();
 
 		if (sPageName == "index") {

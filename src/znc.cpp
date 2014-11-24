@@ -55,6 +55,8 @@ CZNC::CZNC() {
 	m_sConnectThrottle.SetTTL(30000);
 	m_pLockFile = NULL;
 	m_bProtectWebSessions = true;
+	m_uDisabledSSLProtocols = Csock::EDP_SSL;
+	m_sSSLProtocols = "";
 }
 
 CZNC::~CZNC() {
@@ -477,6 +479,10 @@ bool CZNC::WriteConfig() {
 
 	if (!m_sSSLCiphers.empty()) {
 		config.AddKeyValuePair("SSLCiphers", CString(m_sSSLCiphers));
+	}
+
+	if (!m_sSSLProtocols.empty()) {
+		config.AddKeyValuePair("SSLProtocols", m_sSSLProtocols);
 	}
 
 	for (unsigned int m = 0; m < m_vsMotd.size(); m++) {
@@ -1093,6 +1099,45 @@ bool CZNC::DoRehash(CString& sError)
 		m_uiMaxBufferSize = sVal.ToUInt();
 	if (config.FindStringEntry("protectwebsessions", sVal))
   		m_bProtectWebSessions = sVal.ToBool();
+
+	if (config.FindStringEntry("sslprotocols", m_sSSLProtocols)) {
+		VCString vsProtocols;
+		m_sSSLProtocols.Split(" ", vsProtocols, false, "", "", true, true);
+
+		for (CString& sProtocol : vsProtocols) {
+
+			unsigned int uFlag = 0;
+			bool bEnable = sProtocol.TrimPrefix("+");
+			bool bDisable = sProtocol.TrimPrefix("-");
+
+			if (sProtocol.Equals("All")) {
+				uFlag = ~0;
+			} else if (sProtocol.Equals("SSLv2")) {
+				uFlag = Csock::EDP_SSLv2;
+			} else if (sProtocol.Equals("SSLv3")) {
+				uFlag = Csock::EDP_SSLv3;
+			} else if (sProtocol.Equals("TLSv1")) {
+				uFlag = Csock::EDP_TLSv1;
+			} else if (sProtocol.Equals("TLSv1.1")) {
+				uFlag = Csock::EDP_TLSv1_1;
+			} else if (sProtocol.Equals("TLSv1.2")) {
+				uFlag = Csock::EDP_TLSv1_2;
+			} else {
+				CUtils::PrintError("Invalid SSLProtocols value [" + sProtocol + "]");
+				CUtils::PrintError("The syntax is [SSLProtocols = [+|-]<protocol> ...]");
+				CUtils::PrintError("Available protocols are [SSLv2, SSLv3, TLSv1, TLSv1.1, TLSv1.2]");
+				return false;
+			}
+
+			if (bEnable) {
+				m_uDisabledSSLProtocols &= ~uFlag;
+			} else if (bDisable) {
+				m_uDisabledSSLProtocols |= uFlag;
+			} else {
+				m_uDisabledSSLProtocols = ~uFlag;
+			}
+		}
+	}
 
 	// This has to be after SSLCertFile is handled since it uses that value
 	const char *szListenerEntries[] = {

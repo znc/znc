@@ -621,7 +621,7 @@ void CIRCNetwork::ClientConnected(CClient *pClient) {
 	const vector<CChan*>& vChans = GetChans();
 	for (size_t a = 0; a < vChans.size(); a++) {
 		if ((vChans[a]->IsOn()) && (!vChans[a]->IsDetached())) {
-			vChans[a]->JoinUser(true, "", pClient);
+			vChans[a]->AttachUser(pClient);
 		}
 	}
 
@@ -669,14 +669,15 @@ const CString& CIRCNetwork::GetName() const {
 	return m_sName;
 }
 
-CClient* CIRCNetwork::FindClient(const CString& sIdentifier) const {
+std::vector<CClient*> CIRCNetwork::FindClients(const CString& sIdentifier) const {
+	std::vector<CClient*> vClients;
 	for (CClient* pClient : m_vClients) {
 		if (pClient->GetIdentifier().Equals(sIdentifier)) {
-			return pClient;
+			vClients.push_back(pClient);
 		}
 	}
 
-	return NULL;
+	return vClients;
 }
 
 void CIRCNetwork::SetUser(CUser *pUser) {
