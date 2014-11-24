@@ -19,6 +19,7 @@
 
 #include <znc/zncconfig.h>
 #include <znc/WebModules.h>
+#include <znc/Utils.h>
 #include <znc/Threads.h>
 #include <znc/main.h>
 #include <functional>

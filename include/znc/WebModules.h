@@ -20,6 +20,7 @@
 #include <znc/zncconfig.h>
 #include <znc/Template.h>
 #include <znc/HTTPSock.h>
+#include <znc/Utils.h>
 
 class CAuthBase;
 class CUser;

@@ -20,6 +20,7 @@
 
 using std::vector;
 
+#ifdef HAVE_PTHREAD
 class CSampleJob : public CModuleJob {
 public:
 	CSampleJob(CModule *pModule) : CModuleJob(pModule, "sample", "Message the user after a delay") {}
@@ -49,6 +50,7 @@ public:
 		GetModule()->PutModule("Sample job done");
 	}
 };
+#endif
 
 class CSampleTimer : public CTimer {
 public:
@@ -72,7 +74,9 @@ public:
 		//AddTimer(new CSampleTimer(this, 300, 0, "Sample", "Sample timer for sample things."));
 		//AddTimer(new CSampleTimer(this, 5, 20, "Another", "Another sample timer."));
 		//AddTimer(new CSampleTimer(this, 25000, 5, "Third", "A third sample timer."));
+#ifdef HAVE_PTHREAD
 		AddJob(new CSampleJob(this));
+#endif
 		return true;
 	}
 

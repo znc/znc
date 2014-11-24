@@ -19,6 +19,7 @@
 
 #include <znc/zncconfig.h>
 #include <znc/Socket.h>
+#include <znc/Utils.h>
 #include <znc/main.h>
 #include <memory>
 
