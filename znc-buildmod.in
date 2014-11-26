@@ -51,9 +51,10 @@ do
 
 	MOD="${FILE%.cpp}"
 	MOD="${MOD%.cc}"
+	MOD="${MOD##*/}"
 
 	if test ! -f "${FILE}"; then
-		echo "${ERROR} Building \"${MOD}.so\" for ZNC $VERSION... File not found"
+		echo "${ERROR} Building \"${MOD}\" for ZNC $VERSION... File not found"
 	else
 		printf "Building \"${MOD}.so\" for ZNC $VERSION... "
 		if ${CXX} ${CXXFLAGS} ${INCLUDES} ${LDFLAGS} ${MODLINK} -o "${MOD}.so" "${FILE}" ${LIBS} ; then
