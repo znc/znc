@@ -1382,10 +1382,16 @@ bool Csock::AcceptSSL()
 }
 
 #ifdef HAVE_LIBSSL
-void Csock::ConfigureCTXOptions( SSL_CTX * pCTX )
+bool Csock::ConfigureCTXOptions( SSL_CTX * pCTX )
 {
 	if( pCTX )
 	{
+		if( SSL_CTX_set_cipher_list( pCTX, m_sCipherType.c_str() ) <= 0 )
+		{
+			CS_DEBUG( "Could not assign cipher [" << m_sCipherType << "]" );
+			return( false );
+		}
+
 		long uCTXOptions = 0;
 		if( m_uDisableProtocols > 0 )
 		{
@@ -1415,6 +1421,7 @@ void Csock::ConfigureCTXOptions( SSL_CTX * pCTX )
 		if( uCTXOptions )
 			SSL_CTX_set_options( pCTX, uCTXOptions );
 	}
+	return true;
 }
 #endif /* HAVE_LIBSSL */
 
@@ -1521,7 +1528,12 @@ bool Csock::SSLClientSetup()
 		}
 	}
 
-	ConfigureCTXOptions( m_ssl_ctx );
+	if( !ConfigureCTXOptions( m_ssl_ctx ) )
+	{
+		SSL_CTX_free( m_ssl_ctx );
+		m_ssl_ctx = NULL;
+		return( false );
+	}
 
 	m_ssl = SSL_new( m_ssl_ctx );
 	if( !m_ssl )
@@ -1701,13 +1713,11 @@ SSL_CTX * Csock::SetupServerCTX()
 		ERR_clear_error();
 #endif
 
-	if( SSL_CTX_set_cipher_list( pCTX, m_sCipherType.c_str() ) <= 0 )
+	if( !ConfigureCTXOptions( pCTX ) )
 	{
-		CS_DEBUG( "Could not assign cipher [" << m_sCipherType << "]" );
 		SSL_CTX_free( pCTX );
 		return( NULL );
 	}
-	ConfigureCTXOptions( pCTX );
 	return( pCTX );
 }
 #endif /* HAVE_LIBSSL */

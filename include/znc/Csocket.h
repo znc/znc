@@ -1178,7 +1178,7 @@ private:
 
 	void FREE_SSL();
 	void FREE_CTX();
-	void ConfigureCTXOptions( SSL_CTX * pCTX );
+	bool ConfigureCTXOptions( SSL_CTX * pCTX );
 
 #endif /* HAVE_LIBSSL */
 
