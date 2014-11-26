@@ -34,10 +34,6 @@ CZNCSock::CZNCSock(const CString& sHost, u_short port, int timeout) : Csock(sHos
 #ifdef HAVE_LIBSSL
 	DisableSSLCompression();
 	DisableSSLProtocols(CZNC::Get().GetDisabledSSLProtocols());
-	CString sCipher = CZNC::Get().GetSSLCiphers();
-	if (!sCipher.empty()) {
-		SetCipher(sCipher);
-	}
 #endif
 }
 
@@ -253,6 +249,12 @@ void CSockManager::FinishConnect(const CString& sHostname, u_short iPort, const 
 	C.SetSockName(sSockName);
 	C.SetIsSSL(bSSL);
 	C.SetBindHost(sBindHost);
+#ifdef HAVE_LIBSSL
+	CString sCipher = CZNC::Get().GetSSLCiphers();
+	if (!sCipher.empty()) {
+		C.SetCipher(sCipher);
+	}
+#endif
 
 	TSocketManager<CZNCSock>::Connect(C, pcSock);
 }
