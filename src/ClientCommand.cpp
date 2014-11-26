@@ -762,6 +762,44 @@ void CClient::UserCommand(CString& sLine) {
 		} else {
 			PutStatus("You don't have any servers added.");
 		}
+	} else if (sCommand.Equals("AddTrustedServerFingerprint")) {
+		if (!m_pNetwork) {
+			PutStatus("You must be connected with a network to use this command");
+			return;
+		}
+		CString sFP = sLine.Token(1);
+		if (sFP.empty()) {
+			PutStatus("Usage: AddTrustedServerFingerprint <fi:ng:er>");
+			return;
+		}
+		m_pNetwork->AddTrustedFingerprint(sFP);
+		PutStatus("Done.");
+	} else if (sCommand.Equals("DelTrustedServerFingerprint")) {
+		if (!m_pNetwork) {
+			PutStatus("You must be connected with a network to use this command");
+			return;
+		}
+		CString sFP = sLine.Token(1);
+		if (sFP.empty()) {
+			PutStatus("Usage: DelTrustedServerFingerprint <fi:ng:er>");
+			return;
+		}
+		m_pNetwork->DelTrustedFingerprint(sFP);
+		PutStatus("Done.");
+	} else if (sCommand.Equals("ListTrustedServerFingerprints")) {
+		if (!m_pNetwork) {
+			PutStatus("You must be connected with a network to use this command");
+			return;
+		}
+		const SCString& ssFPs = m_pNetwork->GetTrustedFingerprints();
+		if (ssFPs.empty()) {
+			PutStatus("No fingerprints added.");
+		} else {
+			int k = 0;
+			for (const CString& sFP : ssFPs) {
+				PutStatus(CString(++k) + ". " + sFP);
+			}
+		}
 	} else if (sCommand.Equals("TOPICS")) {
 		if (!m_pNetwork) {
 			PutStatus("You must be connected with a network to use this command");
@@ -1604,6 +1642,10 @@ void CClient::HelpUser(const CString& sFilter) {
 
 	AddCommandHelp(Table, "AddServer", "<host> [[+]port] [pass]", "Add a server to the list of alternate/backup servers of current IRC network.", sFilter);
 	AddCommandHelp(Table, "DelServer", "<host> [port] [pass]", "Remove a server from the list of alternate/backup servers of current IRC network", sFilter);
+
+	AddCommandHelp(Table, "AddTrustedServerFingerprint", "<fi:ng:er>", "Add a trusted server SSL certificate fingerprint (SHA-256) to current IRC network.", sFilter);
+	AddCommandHelp(Table, "DelTrustedServerFingerprint", "<fi:ng:er>", "Delete a trusted server SSL certificate from current IRC network.", sFilter);
+	AddCommandHelp(Table, "ListTrustedServerFingerprints", "", "List all trusted server SSL certificates of current IRC network.", sFilter);
 
 	AddCommandHelp(Table, "EnableChan", "<#chans>", "Enable channels", sFilter);
 	AddCommandHelp(Table, "DisableChan", "<#chans>", "Disable channels", sFilter);

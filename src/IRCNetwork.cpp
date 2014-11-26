@@ -176,6 +176,7 @@ void CIRCNetwork::Clone(const CIRCNetwork& Network, bool bCloneName) {
 	SetBindHost(Network.GetBindHost());
 	SetEncoding(Network.GetEncoding());
 	SetQuitMsg(Network.GetQuitMsg());
+	m_ssTrustedFingerprints = Network.m_ssTrustedFingerprints;
 
 	// Servers
 	const vector<CServer*>& vServers = Network.GetServers();
@@ -441,6 +442,11 @@ bool CIRCNetwork::ParseConfig(CConfig *pConfig, CString& sError, bool bUpgrade) 
 		CUtils::PrintStatus(AddServer(*vit));
 	}
 
+	pConfig->FindStringVector("trustedserverfingerprint", vsList);
+	for (const CString& sFP : vsList) {
+		m_ssTrustedFingerprints.insert(sFP);
+	}
+
 	pConfig->FindStringVector("chan", vsList);
 	for (vit = vsList.begin(); vit != vsList.end(); ++vit) {
 		AddChan(*vit, true);
@@ -527,6 +533,10 @@ CConfig CIRCNetwork::ToConfig() const {
 	// Servers
 	for (unsigned int b = 0; b < m_vServers.size(); b++) {
 		config.AddKeyValuePair("Server", m_vServers[b]->GetString());
+	}
+
+	for (const CString& sFP : m_ssTrustedFingerprints) {
+		config.AddKeyValuePair("TrustedServerFingerprint", sFP);
 	}
 
 	// Chans
@@ -1196,6 +1206,7 @@ bool CIRCNetwork::Connect() {
 
 	CIRCSock *pIRCSock = new CIRCSock(this);
 	pIRCSock->SetPass(pServer->GetPass());
+	pIRCSock->SetSSLTrustedPeerFingerprints(m_ssTrustedFingerprints);
 
 	DEBUG("Connecting user/network [" << m_pUser->GetUserName() << "/" << m_sName << "]");
 

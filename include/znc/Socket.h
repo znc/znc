@@ -29,12 +29,30 @@ public:
 	CZNCSock(const CString& sHost, u_short port, int timeout = 60);
 	~CZNCSock() {}
 
-	virtual int ConvertAddress(const struct sockaddr_storage * pAddr, socklen_t iAddrLen, CS_STRING & sIP, u_short * piPort) const;
+	int ConvertAddress(const struct sockaddr_storage * pAddr, socklen_t iAddrLen, CS_STRING & sIP, u_short * piPort) const override;
+#ifdef HAVE_LIBSSL
+	int VerifyPeerCertificate(int iPreVerify, X509_STORE_CTX * pStoreCTX) override;
+	void SSLHandShakeFinished() override;
+#endif
+	void SetHostToVerifySSL(const CString& sHost) { m_HostToVerifySSL = sHost; }
+	CString GetSSLPeerFingerprint() const;
+	void SetSSLTrustedPeerFingerprints(const SCString& ssFPs) { m_ssTrustedFingerprints = ssFPs; }
 
 #ifndef HAVE_ICU
 	// Don't fail to compile when ICU is not enabled
 	void SetEncoding(const CString&) {}
 #endif
+
+protected:
+	// All existing errno codes seem to be in range 1-300
+	enum {
+		errnoBadSSLCert = 12569,
+	};
+
+private:
+	CString m_HostToVerifySSL;
+	SCString m_ssTrustedFingerprints;
+	SCString m_ssCertVerificationErrors;
 };
 
 enum EAddrType {
