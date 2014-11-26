@@ -211,7 +211,7 @@ public:
 		// Now check for a positive match
 		for (it = m_vMatches.begin(); it != m_vMatches.end(); ++it) {
 			if (!it->IsNegated() && it->IsMatch(sChan, sHost, sMessage)) {
-				Channel.JoinUser();
+				Channel.AttachUser();
 				return;
 			}
 		}

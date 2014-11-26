@@ -435,7 +435,10 @@ void CClient::ReadLine(const CString& sData) {
 
 			CChan* pChan = m_pNetwork->FindChan(sChannel);
 			if (pChan) {
-				pChan->JoinUser(sKey);
+				if (pChan->IsDetached())
+					pChan->AttachUser(this);
+				else
+					pChan->JoinUser(sKey);
 				continue;
 			}
 

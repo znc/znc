@@ -92,7 +92,7 @@ public:
 				}
 				// No buffer playback, makes sense, doesn't it?
 				pChan->ClearBuffer();
-				pChan->JoinUser();
+				pChan->AttachUser();
 			}
 
 			Limits::iterator it2 = it++;
