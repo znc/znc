@@ -133,10 +133,8 @@ void CChan::JoinUser(const CString& sKey) {
 	if (!sKey.empty()) {
 		SetKey(sKey);
 	}
-	if (!IsOn() || !IsDetached()) {
+	if (!IsOn()) {
 		m_pNetwork->PutIRC("JOIN " + GetName() + " " + GetKey());
-		SetDetached(false);
-		return;
 	}
 }
 
