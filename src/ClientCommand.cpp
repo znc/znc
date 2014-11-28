@@ -1204,7 +1204,7 @@ void CClient::UserCommand(CString& sLine) {
 		}
 		CString sHost = sLine.Token(1);
 
-		if (m_pUser->IsAdmin()) {
+		if (!m_pUser->IsAdmin()) {
 			PutStatus("You are not allowed to change your bindhost.");
 			return;
 		}
@@ -1242,7 +1242,7 @@ void CClient::UserCommand(CString& sLine) {
 	} else if (sCommand.Equals("SETUSERBINDHOST") && (m_pUser->IsAdmin() || !m_pUser->DenySetBindHost())) {
 		CString sHost = sLine.Token(1);
 
-		if (m_pUser->IsAdmin()) {
+		if (!m_pUser->IsAdmin()) {
 			PutStatus("You are not allowed to change your bindhost.");
 			return;
 		}
