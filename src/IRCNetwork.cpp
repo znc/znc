@@ -638,9 +638,10 @@ void CIRCNetwork::ClientConnected(CClient *pClient) {
 
 	uSize = m_NoticeBuffer.Size();
 	for (uIdx = 0; uIdx < uSize; uIdx++) {
-		CString sLine = m_NoticeBuffer.GetLine(uIdx, *pClient, msParams);
+		const CBufLine& BufLine = m_NoticeBuffer.GetBufLine(uIdx);
+		CString sLine = BufLine.GetLine(*pClient, msParams);
 		bool bContinue = false;
-		NETWORKMODULECALL(OnPrivBufferPlayLine(*pClient, sLine), m_pUser, this, NULL, &bContinue);
+		NETWORKMODULECALL(OnPrivBufferPlayLine2(*pClient, sLine, BufLine.GetTime()), m_pUser, this, NULL, &bContinue);
 		if (bContinue) continue;
 		pClient->PutClient(sLine);
 	}

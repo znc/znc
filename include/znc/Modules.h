@@ -25,6 +25,7 @@
 #include <functional>
 #include <set>
 #include <queue>
+#include <sys/time.h>
 
 // Forward Declarations
 class CAuthBase;
@@ -635,14 +636,18 @@ public:
 	 *  @param Client The client the buffer is played back to.
 	 *  @param sLine The current line of buffer playback. This is a raw IRC
 	 *               traffic line!
+	 *  @param tv The timestamp of the message.
 	 *  @return See CModule::EModRet.
 	 */
+	virtual EModRet OnChanBufferPlayLine2(CChan& Chan, CClient& Client, CString& sLine, const timeval& tv);
 	virtual EModRet OnChanBufferPlayLine(CChan& Chan, CClient& Client, CString& sLine);
 	/** Called when a line from the query buffer is played back.
 	 *  @param Client The client this line will go to.
 	 *  @param sLine The raw IRC traffic line from the buffer.
+	 *  @param tv The timestamp of the message.
 	 *  @return See CModule::EModRet.
 	 */
+	virtual EModRet OnPrivBufferPlayLine2(CClient& Client, CString& sLine, const timeval& tv);
 	virtual EModRet OnPrivBufferPlayLine(CClient& Client, CString& sLine);
 
 	/** Called when a client successfully logged in to ZNC. */
@@ -1168,7 +1173,9 @@ public:
 
 	bool OnChanBufferStarting(CChan& Chan, CClient& Client);
 	bool OnChanBufferEnding(CChan& Chan, CClient& Client);
+	bool OnChanBufferPlayLine2(CChan& Chan, CClient& Client, CString& sLine, const timeval& tv);
 	bool OnChanBufferPlayLine(CChan& Chan, CClient& Client, CString& sLine);
+	bool OnPrivBufferPlayLine2(CClient& Client, CString& sLine, const timeval& tv);
 	bool OnPrivBufferPlayLine(CClient& Client, CString& sLine);
 
 	bool OnClientLogin();

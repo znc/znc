@@ -675,6 +675,13 @@ CModule::EModRet CModule::OnChanBufferEnding(CChan& Chan, CClient& Client) { ret
 CModule::EModRet CModule::OnChanBufferPlayLine(CChan& Chan, CClient& Client, CString& sLine) { return CONTINUE; }
 CModule::EModRet CModule::OnPrivBufferPlayLine(CClient& Client, CString& sLine) { return CONTINUE; }
 
+CModule::EModRet CModule::OnChanBufferPlayLine2(CChan& Chan, CClient& Client, CString& sLine, const timeval& tv) {
+	return OnChanBufferPlayLine(Chan, Client, sLine);
+}
+CModule::EModRet CModule::OnPrivBufferPlayLine2(CClient& Client, CString& sLine, const timeval& tv) {
+	return OnPrivBufferPlayLine(Client, sLine);
+}
+
 void CModule::OnClientLogin() {}
 void CModule::OnClientDisconnect() {}
 CModule::EModRet CModule::OnUserRaw(CString& sLine) { return CONTINUE; }
@@ -858,7 +865,9 @@ bool CModules::OnPart(const CNick& Nick, CChan& Channel, const CString& sMessage
 bool CModules::OnInvite(const CNick& Nick, const CString& sChan) { MODHALTCHK(OnInvite(Nick, sChan)); }
 bool CModules::OnChanBufferStarting(CChan& Chan, CClient& Client) { MODHALTCHK(OnChanBufferStarting(Chan, Client)); }
 bool CModules::OnChanBufferEnding(CChan& Chan, CClient& Client) { MODHALTCHK(OnChanBufferEnding(Chan, Client)); }
+bool CModules::OnChanBufferPlayLine2(CChan& Chan, CClient& Client, CString& sLine, const timeval& tv) { MODHALTCHK(OnChanBufferPlayLine2(Chan, Client, sLine, tv)); }
 bool CModules::OnChanBufferPlayLine(CChan& Chan, CClient& Client, CString& sLine) { MODHALTCHK(OnChanBufferPlayLine(Chan, Client, sLine)); }
+bool CModules::OnPrivBufferPlayLine2(CClient& Client, CString& sLine, const timeval& tv) { MODHALTCHK(OnPrivBufferPlayLine2(Client, sLine, tv)); }
 bool CModules::OnPrivBufferPlayLine(CClient& Client, CString& sLine) { MODHALTCHK(OnPrivBufferPlayLine(Client, sLine)); }
 bool CModules::OnCTCPReply(CNick& Nick, CString& sMessage) { MODHALTCHK(OnCTCPReply(Nick, sMessage)); }
 bool CModules::OnPrivCTCP(CNick& Nick, CString& sMessage) { MODHALTCHK(OnPrivCTCP(Nick, sMessage)); }

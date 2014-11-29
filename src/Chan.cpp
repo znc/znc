@@ -594,14 +594,15 @@ void CChan::SendBuffer(CClient* pClient, const CBuffer& Buffer) {
 
 				size_t uSize = Buffer.Size();
 				for (size_t uIdx = 0; uIdx < uSize; uIdx++) {
-					CString sLine = Buffer.GetLine(uIdx, *pUseClient);
+					const CBufLine& BufLine = Buffer.GetBufLine(uIdx);
+					CString sLine = BufLine.GetLine(*pUseClient, MCString::EmptyMap);
 					if (bBatch) {
 						MCString msBatchTags = CUtils::GetMessageTags(sLine);
 						msBatchTags["batch"] = sBatchName;
 						CUtils::SetMessageTags(sLine, msBatchTags);
 					}
 					bool bNotShowThisLine = false;
-					NETWORKMODULECALL(OnChanBufferPlayLine(*this, *pUseClient, sLine), m_pNetwork->GetUser(), m_pNetwork, NULL, &bNotShowThisLine);
+					NETWORKMODULECALL(OnChanBufferPlayLine2(*this, *pUseClient, sLine, BufLine.GetTime()), m_pNetwork->GetUser(), m_pNetwork, NULL, &bNotShowThisLine);
 					if (bNotShowThisLine) continue;
 					m_pNetwork->PutUser(sLine, pUseClient);
 				}
