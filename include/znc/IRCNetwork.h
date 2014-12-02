@@ -121,6 +121,10 @@ public:
 	bool SetNextServer(const CServer* pServer);
 	bool IsLastServer() const;
 
+	const SCString& GetTrustedFingerprints() const { return m_ssTrustedFingerprints; }
+	void AddTrustedFingerprint(const CString& sFP) { m_ssTrustedFingerprints.insert(sFP); }
+	void DelTrustedFingerprint(const CString& sFP) { m_ssTrustedFingerprints.erase(sFP); }
+
 	void SetIRCConnectEnabled(bool b);
 	bool GetIRCConnectEnabled() const { return m_bIRCConnectEnabled; }
 
@@ -201,6 +205,7 @@ protected:
 	CString            m_sBindHost;
 	CString            m_sEncoding;
 	CString            m_sQuitMsg;
+	SCString           m_ssTrustedFingerprints;
 
 	CModules*          m_pModules;
 

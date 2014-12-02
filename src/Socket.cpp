@@ -16,6 +16,7 @@
 
 #include <znc/User.h>
 #include <znc/IRCNetwork.h>
+#include <znc/SSLVerifyHost.h>
 #include <znc/znc.h>
 #include <signal.h>
 
@@ -60,6 +61,77 @@ int CZNCSock::ConvertAddress(const struct sockaddr_storage * pAddr, socklen_t iA
 	if (ret == 0)
 		sIP.TrimPrefix("::ffff:");
 	return ret;
+}
+
+#ifdef HAVE_LIBSSL
+int CZNCSock::VerifyPeerCertificate(int iPreVerify, X509_STORE_CTX * pStoreCTX) {
+	if (iPreVerify == 0) {
+		m_ssCertVerificationErrors.insert(X509_verify_cert_error_string(X509_STORE_CTX_get_error(pStoreCTX)));
+	}
+	return 1;
+}
+
+void CZNCSock::SSLHandShakeFinished() {
+	X509* pCert = GetX509();
+	if (!pCert) {
+		DEBUG(GetSockName() + ": No cert");
+		CallSockError(errnoBadSSLCert, "Anonymous SSL cert is not allowed");
+		Close();
+		return;
+	}
+	CString sHostVerifyError;
+	if (!ZNC_SSLVerifyHost(m_HostToVerifySSL, pCert, sHostVerifyError)) {
+		m_ssCertVerificationErrors.insert(sHostVerifyError);
+	}
+	X509_free(pCert);
+	if (m_ssCertVerificationErrors.empty()) {
+		DEBUG(GetSockName() + ": Good cert");
+		return;
+	}
+	CString sFP = GetSSLPeerFingerprint();
+	if (m_ssTrustedFingerprints.count(sFP) != 0) {
+		DEBUG(GetSockName() + ": Cert explicitly trusted by user: " << sFP);
+		return;
+	}
+	DEBUG(GetSockName() + ": Bad cert");
+	CString sErrorMsg = "Invalid SSL certificate: ";
+	sErrorMsg += CString(", ").Join(begin(m_ssCertVerificationErrors), end(m_ssCertVerificationErrors));
+	CallSockError(errnoBadSSLCert, sErrorMsg);
+	Close();
+}
+#endif
+
+CString CZNCSock::GetSSLPeerFingerprint() const {
+#ifdef HAVE_LIBSSL
+	// Csocket's version returns insecure SHA-1
+	// This one is SHA-256
+	const EVP_MD* evp = EVP_sha256();
+	X509* pCert = GetX509();
+	if (!pCert) {
+		DEBUG(GetSockName() + ": GetSSLPeerFingerprint: Anonymous cert");
+		return "";
+	}
+	unsigned char buf[256/8];
+	unsigned int _32 = 256/8;
+	int iSuccess = X509_digest(pCert, evp, buf, &_32);
+	X509_free(pCert);
+	if (!iSuccess) {
+		DEBUG(GetSockName() + ": GetSSLPeerFingerprint: Couldn't find digest");
+		return "";
+	}
+	CString sResult;
+	sResult.reserve(3*256/8);
+	for (char c : buf) {
+		char b[3];
+		snprintf(b, 3, "%02x", c);
+		sResult += b;
+		sResult += ":";
+	}
+	sResult.TrimRight(":");
+	return sResult;
+#else
+	return "";
+#endif
 }
 
 #ifdef HAVE_PTHREAD
@@ -217,6 +289,9 @@ CSockManager::~CSockManager() {
 }
 
 void CSockManager::Connect(const CString& sHostname, u_short iPort, const CString& sSockName, int iTimeout, bool bSSL, const CString& sBindHost, CZNCSock *pcSock) {
+	if (pcSock) {
+		pcSock->SetHostToVerifySSL(sHostname);
+	}
 #ifdef HAVE_THREADED_DNS
 	DEBUG("TDNS: initiating resolving of [" << sHostname << "] and bindhost [" << sBindHost << "]");
 	TDNSTask* task = new TDNSTask;

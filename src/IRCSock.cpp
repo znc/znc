@@ -1127,6 +1127,29 @@ void CIRCSock::SockError(int iErrno, const CString& sDescription) {
 		} else {
 			m_pNetwork->PutStatus("Disconnected from IRC (" + sError + "). Reconnecting...");
 		}
+#ifdef HAVE_LIBSSL
+		if (iErrno == errnoBadSSLCert) {
+			// Stringify bad cert
+			X509* pCert = GetX509();
+			if (pCert) {
+				BIO* mem = BIO_new(BIO_s_mem());
+				X509_print(mem, pCert);
+				X509_free(pCert);
+				char* pCertStr = nullptr;
+				long iLen = BIO_get_mem_data(mem, &pCertStr);
+				CString sCert(pCertStr, iLen);
+				BIO_free(mem);
+
+				VCString vsCert;
+				sCert.Split("\n", vsCert);
+				for (const CString& s : vsCert) {
+					// It shouldn't contain any bad characters, but let's be safe...
+					m_pNetwork->PutStatus("|" + s.Escape_n(CString::EDEBUG));
+				}
+				m_pNetwork->PutStatus("If you trust this certificate, do /znc AddTrustedServerFingerprint " + GetSSLPeerFingerprint());
+			}
+		}
+#endif
 	}
 	m_pNetwork->ClearRawBuffer();
 	m_pNetwork->ClearMotdBuffer();
