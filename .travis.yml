@@ -13,8 +13,9 @@ matrix:
           env: CFGFLAGS=--enable-debug MYCXXFLAGS="-fsanitize=address -O1 -fno-omit-frame-pointer -fno-optimize-sibling-calls -fPIE" MYLDFLAGS="-fsanitize=address -pie"
         - compiler: clang
           env: CFGFLAGS=--enable-debug MYCXXFLAGS="-fsanitize=thread -O1 -fPIE" MYLDFLAGS="-fsanitize=thread -pie"
-        - compiler: clang
-          env: CFGFLAGS=--enable-debug MYCXXFLAGS="-fsanitize=undefined -O1 -fPIE -fno-sanitize-recover" MYLDFLAGS="-fsanitize=undefined -pie -fno-sanitize-recover"
+        # UBSan randomly crashes clang, and very often :(
+        # - compiler: clang
+        #   env: CFGFLAGS=--enable-debug MYCXXFLAGS="-fsanitize=undefined -O1 -fPIE -fno-sanitize-recover" MYLDFLAGS="-fsanitize=undefined -pie -fno-sanitize-recover"
 before_install:
     - cat /proc/cpuinfo /proc/meminfo
     - if [[ "$CXX" == "g++" ]]; then sudo add-apt-repository ppa:ubuntu-toolchain-r/test -y; fi
