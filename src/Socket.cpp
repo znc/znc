@@ -72,6 +72,10 @@ int CZNCSock::VerifyPeerCertificate(int iPreVerify, X509_STORE_CTX * pStoreCTX) 
 }
 
 void CZNCSock::SSLHandShakeFinished() {
+	if (GetType() != ETConn::OUTBOUND) {
+		return;
+	}
+
 	X509* pCert = GetX509();
 	if (!pCert) {
 		DEBUG(GetSockName() + ": No cert");
