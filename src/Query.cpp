@@ -44,6 +44,9 @@ void CQuery::SendBuffer(CClient* pClient, const CBuffer& Buffer) {
 			for (size_t uClient = 0; uClient < vClients.size(); ++uClient) {
 				CClient * pUseClient = (pClient ? pClient : vClients[uClient]);
 
+				bool bWasPlaybackActive = pUseClient->IsPlaybackActive();
+				pUseClient->SetPlaybackActive(true);
+
 				bool bBatch = pUseClient->HasBatch();
 				CString sBatchName = m_sName.MD5();
 
@@ -77,6 +80,8 @@ void CQuery::SendBuffer(CClient* pClient, const CBuffer& Buffer) {
 				if (bBatch) {
 					m_pNetwork->PutUser(":znc.in BATCH -" + sBatchName, pUseClient);
 				}
+
+				pUseClient->SetPlaybackActive(bWasPlaybackActive);
 
 				if (pClient)
 					break;

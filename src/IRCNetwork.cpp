@@ -579,6 +579,8 @@ void CIRCNetwork::ClientConnected(CClient *pClient) {
 
 	size_t uIdx, uSize;
 
+	pClient->SetPlaybackActive(true);
+
 	if (m_RawBuffer.IsEmpty()) {
 		pClient->PutClient(":irc.znc.in 001 " + pClient->GetNick() + " :- Welcome to ZNC -");
 	} else {
@@ -656,6 +658,8 @@ void CIRCNetwork::ClientConnected(CClient *pClient) {
 		pClient->PutClient(sLine);
 	}
 	m_NoticeBuffer.Clear();
+
+	pClient->SetPlaybackActive(false);
 
 	// Tell them why they won't connect
 	if (!GetIRCConnectEnabled())

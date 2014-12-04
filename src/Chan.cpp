@@ -578,6 +578,9 @@ void CChan::SendBuffer(CClient* pClient, const CBuffer& Buffer) {
 			for (size_t uClient = 0; uClient < vClients.size(); ++uClient) {
 				CClient * pUseClient = (pClient ? pClient : vClients[uClient]);
 
+				bool bWasPlaybackActive = pUseClient->IsPlaybackActive();
+				pUseClient->SetPlaybackActive(true);
+
 				bool bSkipStatusMsg = pUseClient->HasServerTime();
 				NETWORKMODULECALL(OnChanBufferStarting(*this, *pUseClient), m_pNetwork->GetUser(), m_pNetwork, NULL, &bSkipStatusMsg);
 
@@ -616,6 +619,8 @@ void CChan::SendBuffer(CClient* pClient, const CBuffer& Buffer) {
 				if (bBatch) {
 					m_pNetwork->PutUser(":znc.in BATCH -" + sBatchName, pUseClient);
 				}
+
+				pUseClient->SetPlaybackActive(bWasPlaybackActive);
 
 				if (pClient)
 					break;
