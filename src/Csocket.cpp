@@ -1051,6 +1051,11 @@ void Csock::Copy( const Csock & cCopy )
 
 	m_pCerVerifyCB		= cCopy.m_pCerVerifyCB;
 
+	if( m_ssl )
+	{
+		SSL_set_ex_data( m_ssl, GetCsockSSLIdx(), this );
+	}
+
 #endif /* HAVE_LIBSSL */
 
 	CleanupCrons();
