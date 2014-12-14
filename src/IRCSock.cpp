@@ -1146,7 +1146,14 @@ void CIRCSock::SockError(int iErrno, const CString& sDescription) {
 					// It shouldn't contain any bad characters, but let's be safe...
 					m_pNetwork->PutStatus("|" + s.Escape_n(CString::EDEBUG));
 				}
-				m_pNetwork->PutStatus("If you trust this certificate, do /znc AddTrustedServerFingerprint " + GetSSLPeerFingerprint());
+				CString sSHA1;
+				if (GetPeerFingerprint(sSHA1))
+					m_pNetwork->PutStatus("SHA1: " + sSHA1);
+				CString sSHA256 = GetSSLPeerFingerprint();
+				m_pNetwork->PutStatus("SHA-256: " + sSHA256);
+				m_pNetwork->PutStatus("If you trust this certificate, do /znc AddTrustedServerFingerprint " + sSHA256);
+
+				m_pNetwork->PutStatus("Notice for early ZNC git/nightly adopters: if you previously added a fingerprint with lots of :ff: in it, please remove it. It was a bug, sorry. (This message will be removed before release)");
 			}
 		}
 #endif

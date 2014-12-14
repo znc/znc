@@ -125,7 +125,7 @@ CString CZNCSock::GetSSLPeerFingerprint() const {
 	}
 	CString sResult;
 	sResult.reserve(3*256/8);
-	for (char c : buf) {
+	for (unsigned char c : buf) {
 		char b[3];
 		snprintf(b, 3, "%02x", c);
 		sResult += b;
