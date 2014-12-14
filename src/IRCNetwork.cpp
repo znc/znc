@@ -444,7 +444,7 @@ bool CIRCNetwork::ParseConfig(CConfig *pConfig, CString& sError, bool bUpgrade) 
 
 	pConfig->FindStringVector("trustedserverfingerprint", vsList);
 	for (const CString& sFP : vsList) {
-		m_ssTrustedFingerprints.insert(sFP);
+		AddTrustedFingerprint(sFP);
 	}
 
 	pConfig->FindStringVector("chan", vsList);
