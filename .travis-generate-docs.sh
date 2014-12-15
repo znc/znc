@@ -18,7 +18,7 @@ EOF
 cd "$HOME"
 git config --global user.email "travis-ci@znc.in"
 git config --global user.name "znc-travis"
-git clone --branch=gh-pages znc-docs:znc/docs.git gh-pages || exit 1
+git clone --depth=1 --branch=gh-pages znc-docs:znc/docs.git gh-pages || exit 1
 
 cd gh-pages
 git rm -rf .
@@ -27,6 +27,21 @@ cp -rf "$TRAVIS_BUILD_DIR"/doc/html/* ./ || exit 1
 echo docs.znc.in > CNAME
 
 git add .
+
+need_commit=0
+git status | grep modified: | awk '{print $2}' | while read x; do
+	echo Checking for useful changes: $x
+	git diff --cached $x |
+		perl -ne '/^[-+]/ and !/^([-+])\1\1 / and !/^[-+]Generated.*ZNC.*doxygen/ and exit 1' &&
+		git reset -q $x ||
+		{ echo Useful change detected; need_commit=1 }
+done
+
+if [[ $need_commit == 1 ]]; then
+	echo "Docs at gh-pages are up to date."
+	exit
+fi
+
 git commit -F- <<EOF
 Latest docs on successful travis build $TRAVIS_BUILD_NUMBER
 
@@ -35,3 +50,4 @@ EOF
 git push origin gh-pages
 
 echo "Published docs to gh-pages."
+
