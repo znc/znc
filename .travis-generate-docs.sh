@@ -20,13 +20,10 @@ git config --global user.email "travis-ci@znc.in"
 git config --global user.name "znc-travis"
 git clone --depth=1 --branch=gh-pages znc-docs:znc/docs.git gh-pages || exit 1
 
-cd gh-pages
-git rm -rf .
-
-cp -rf "$TRAVIS_BUILD_DIR"/doc/html/* ./ || exit 1
+cd "$TRAVIS_BUILD_DIR/doc/html/"
+mv ~/gh-pages/.git ./
 echo docs.znc.in > CNAME
-
-git add .
+git add -A
 
 need_commit=0
 git status | grep modified: | awk '{print $2}' | while read x; do
@@ -37,7 +34,7 @@ git status | grep modified: | awk '{print $2}' | while read x; do
 		{ echo Useful change detected; need_commit=1; }
 done
 
-if [[ $need_commit == 1 ]]; then
+if [[ $need_commit == 0 ]]; then
 	echo "Docs at gh-pages are up to date."
 	exit
 fi
