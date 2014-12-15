@@ -44,6 +44,7 @@ after_success:
           if [ "$BUILD_LEADER" == "YES" ] && [ "$BUILD_AGGREGATE_STATUS" == "others_succeeded" ] && [ "$TRAVIS_REPO_SLUG" == "znc/znc" ] && [ "$TRAVIS_PULL_REQUEST" == "false" ] && [ "$TRAVIS_BRANCH" == "master" ]; then
               echo "All builds passed!"
               openssl aes-256-cbc -d -in .travis-github.enc -out ~/znc-docs-key -k ${SECRET_KEY}
+              export SECRET_KEY=no
               ./.travis-generate-docs.sh
           else
               echo "Not leader"
