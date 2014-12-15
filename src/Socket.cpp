@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+#include <random>
+
 #include <znc/User.h>
 #include <znc/IRCNetwork.h>
 #include <znc/SSLVerifyHost.h>
@@ -202,6 +204,30 @@ void CSockManager::StartTDNSThread(TDNSTask* task, bool bBind) {
 	CThreadPool::Get().addJob(arg);
 }
 
+static CString RandomFromSet(const SCString& sSet, std::default_random_engine& gen) {
+	std::uniform_int_distribution<> distr(0, sSet.size() - 1);
+	auto it = sSet.cbegin();
+	std::advance(it, distr(gen));
+	return *it;
+}
+
+static std::tuple<CString, bool> RandomFrom2SetsWithBias(const SCString& ss4, const SCString& ss6, std::default_random_engine& gen) {
+	// It's know quiet what RFC says how to choose between IPv4 and IPv6, but proper way is harder to implement.
+	// It would require to maintain some state between Csock objects.
+	bool bUseIPv6;
+	if (ss4.empty()) {
+		bUseIPv6 = true;
+	} else if (ss6.empty()) {
+		bUseIPv6 = false;
+	} else {
+		// Let's prefer IPv6 :)
+		std::discrete_distribution<> d({2, 3});
+		bUseIPv6 = d(gen);
+	}
+	const SCString& sSet = bUseIPv6 ? ss6 : ss4;
+	return std::make_tuple(RandomFromSet(sSet, gen), bUseIPv6);
+}
+
 void CSockManager::SetTDNSThreadFinished(TDNSTask* task, bool bBind, addrinfo* aiResult) {
 	if (bBind) {
 		task->aiBind = aiResult;
@@ -217,57 +243,80 @@ void CSockManager::SetTDNSThreadFinished(TDNSTask* task, bool bBind, addrinfo* a
 	}
 
 	// All needed DNS is done, now collect the results
-	addrinfo* aiTarget = NULL;
-	addrinfo* aiBind = NULL;
+	SCString ssTargets4;
+	SCString ssTargets6;
+	for (addrinfo* ai = task->aiTarget; ai; ai = ai->ai_next) {
+		char s[INET6_ADDRSTRLEN] = {};
+		getnameinfo(ai->ai_addr, ai->ai_addrlen, s, sizeof(s), NULL, 0, NI_NUMERICHOST);
+		switch (ai->ai_family) {
+			case AF_INET:
+				ssTargets4.insert(s);
+				break;
+#ifdef HAVE_IPV6
+			case AF_INET6:
+				ssTargets6.insert(s);
+				break;
+#endif
+		}
+	}
+	SCString ssBinds4;
+	SCString ssBinds6;
+	for (addrinfo* ai = task->aiBind; ai; ai = ai->ai_next) {
+		char s[INET6_ADDRSTRLEN] = {};
+		getnameinfo(ai->ai_addr, ai->ai_addrlen, s, sizeof(s), NULL, 0, NI_NUMERICHOST);
+		switch (ai->ai_family) {
+			case AF_INET:
+				ssBinds4.insert(s);
+				break;
+#ifdef HAVE_IPV6
+			case AF_INET6:
+				ssBinds6.insert(s);
+				break;
+#endif
+		}
+	}
+	if (task->aiTarget) freeaddrinfo(task->aiTarget);
+	if (task->aiBind) freeaddrinfo(task->aiBind);
+
+	CString sBindhost;
+	CString sTargetHost;
+	std::random_device rd;
+	std::default_random_engine gen(rd());
 
 	try {
-		addrinfo* aiTarget4 = task->aiTarget;
-		addrinfo* aiBind4 = task->aiBind;
-		while (aiTarget4 && aiTarget4->ai_family != AF_INET) aiTarget4 = aiTarget4->ai_next;
-		while (aiBind4 && aiBind4->ai_family != AF_INET) aiBind4 = aiBind4->ai_next;
-
-		addrinfo* aiTarget6 = NULL;
-		addrinfo* aiBind6 = NULL;
-#ifdef HAVE_IPV6
-		aiTarget6 = task->aiTarget;
-		aiBind6 = task->aiBind;
-		while (aiTarget6 && aiTarget6->ai_family != AF_INET6) aiTarget6 = aiTarget6->ai_next;
-		while (aiBind6 && aiBind6->ai_family != AF_INET6) aiBind6 = aiBind6->ai_next;
-#endif
-
-		if (!aiTarget4 && !aiTarget6) {
+		if (ssTargets4.empty() && ssTargets6.empty()) {
 			throw "Can't resolve server hostname";
 		} else if (task->sBindhost.empty()) {
-#ifdef HAVE_IPV6
-			aiTarget = task->aiTarget;
-#else
-			aiTarget = aiTarget4;
-#endif
-		} else if (!aiBind4 && !aiBind6) {
-			throw "Can't resolve bind hostname. Try /znc clearbindhost and /znc clearuserbindhost";
-		} else if (aiBind6 && aiTarget6) {
-			aiTarget = aiTarget6;
-			aiBind = aiBind6;
-		} else if (aiBind4 && aiTarget4) {
-			aiTarget = aiTarget4;
-			aiBind = aiBind4;
+			// Choose random target
+			std::tie(sTargetHost, std::ignore) = RandomFrom2SetsWithBias(ssTargets4, ssTargets6, gen);
+		} else if (ssBinds4.empty() && ssBinds6.empty()) {
+			throw "Can't resolve bind hostname. Try /znc ClearBindHost and /znc ClearUserBindHost";
+		} else if (ssBinds4.empty()) {
+			if (ssTargets6.empty()) {
+				throw "Server address is IPv4-only, but bindhost is IPv6-only";
+			} else {
+				// Choose random target and bindhost from IPv6-only sets
+				sTargetHost = RandomFromSet(ssTargets6, gen);
+				sBindhost = RandomFromSet(ssBinds6, gen);
+			}
+		} else if (ssBinds6.empty()) {
+			if (ssTargets4.empty()) {
+				throw "Server address is IPv6-only, but bindhost is IPv4-only";
+			} else {
+				// Choose random target and bindhost from IPv4-only sets
+				sTargetHost = RandomFromSet(ssTargets4, gen);
+				sBindhost = RandomFromSet(ssBinds4, gen);
+			}
 		} else {
-			throw "Address family of bindhost doesn't match address family of server";
+			// Choose random target
+			bool bUseIPv6;
+			std::tie(sTargetHost, bUseIPv6) = RandomFrom2SetsWithBias(ssTargets4, ssTargets6, gen);
+			// Choose random bindhost matching chosen target
+			const SCString& ssBinds = bUseIPv6 ? ssBinds6 : ssBinds4;
+			sBindhost = RandomFromSet(ssBinds, gen);
 		}
-
-		CString sBindhost;
-		CString sTargetHost;
-		if (!task->sBindhost.empty()) {
-			char s[INET6_ADDRSTRLEN] = {};
-			getnameinfo(aiBind->ai_addr, aiBind->ai_addrlen, s, sizeof(s), NULL, 0, NI_NUMERICHOST);
-			sBindhost = s;
-		}
-		char s[INET6_ADDRSTRLEN] = {};
-		getnameinfo(aiTarget->ai_addr, aiTarget->ai_addrlen, s, sizeof(s), NULL, 0, NI_NUMERICHOST);
-		sTargetHost = s;
 
 		DEBUG("TDNS: " << task->sSockName << ", connecting to [" << sTargetHost << "] using bindhost [" << sBindhost << "]");
-
 		FinishConnect(sTargetHost, task->iPort, task->sSockName, task->iTimeout, task->bSSL, sBindhost, task->pcSock);
 	} catch (const char* s) {
 		DEBUG(task->sSockName << ", dns resolving error: " << s);
@@ -275,9 +324,6 @@ void CSockManager::SetTDNSThreadFinished(TDNSTask* task, bool bBind, addrinfo* a
 		task->pcSock->SockError(-1, s);
 		delete task->pcSock;
 	}
-
-	if (task->aiTarget) freeaddrinfo(task->aiTarget);
-	if (task->aiBind) freeaddrinfo(task->aiBind);
 
 	delete task;
 }
