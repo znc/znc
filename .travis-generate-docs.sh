@@ -34,7 +34,7 @@ git status | grep modified: | awk '{print $2}' | while read x; do
 	git diff --cached $x |
 		perl -ne '/^[-+]/ and !/^([-+])\1\1 / and !/^[-+]Generated.*ZNC.*doxygen/ and exit 1' &&
 		git reset -q $x ||
-		{ echo Useful change detected; need_commit=1 }
+		{ echo Useful change detected; need_commit=1; }
 done
 
 if [[ $need_commit == 1 ]]; then
