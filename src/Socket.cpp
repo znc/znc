@@ -212,7 +212,7 @@ static CString RandomFromSet(const SCString& sSet, std::default_random_engine& g
 }
 
 static std::tuple<CString, bool> RandomFrom2SetsWithBias(const SCString& ss4, const SCString& ss6, std::default_random_engine& gen) {
-	// It's know quiet what RFC says how to choose between IPv4 and IPv6, but proper way is harder to implement.
+	// It's not quite what RFC says how to choose between IPv4 and IPv6, but proper way is harder to implement.
 	// It would require to maintain some state between Csock objects.
 	bool bUseIPv6;
 	if (ss4.empty()) {
