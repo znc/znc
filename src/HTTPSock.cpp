@@ -623,9 +623,8 @@ bool CHTTPSock::PrintErrorPage(unsigned int uStatusId, const CString& sStatusMsg
 	}
 
 	CString sPage =
-		"<?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n"
 		"<!DOCTYPE html>\r\n"
-		"<html xmlns=\"http://www.w3.org/1999/xhtml\" lang=\"en\" xml:lang=\"en\">\r\n"
+		"<html lang=\"en\>\r\n"
 			"<head>\r\n"
 				"<meta charset=\"UTF-8\"/>\r\n"
 				"<title>" + CString(uStatusId) + " " + sStatusMsg.Escape_n(CString::EHTML) + "</title>\r\n"
