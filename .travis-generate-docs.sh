@@ -26,7 +26,8 @@ echo docs.znc.in > CNAME
 git add -A
 
 need_commit=0
-git status | grep modified: | awk '{print $2}' | while read x; do
+git status
+git status | perl -ne '/modified:\s+(.*)/ and print "$1\n"' | while read x; do
 	echo Checking for useful changes: $x
 	git diff --cached $x |
 		perl -ne '/^[-+]/ and !/^([-+])\1\1 / and !/^[-+]Generated.*ZNC.*doxygen/ and exit 1' &&
