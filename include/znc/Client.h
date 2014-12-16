@@ -33,14 +33,14 @@ class CClient;
 
 class CAuthBase {
 public:
-	CAuthBase(const CString& sUsername, const CString& sPassword, Csock *pSock) {
+	CAuthBase(const CString& sUsername, const CString& sPassword, CZNCSock* pSock) {
 		SetLoginInfo(sUsername, sPassword, pSock);
 	}
 
 	virtual ~CAuthBase() {}
 
 	virtual void SetLoginInfo(const CString& sUsername, const CString& sPassword,
-			Csock *pSock) {
+			CZNCSock* pSock) {
 		m_sUsername = sUsername;
 		m_sPassword = sPassword;
 		m_pSock = pSock;
@@ -63,9 +63,9 @@ protected:
 	virtual void RefusedLogin(const CString& sReason) = 0;
 
 private:
-	CString  m_sUsername;
-	CString  m_sPassword;
-	Csock*   m_pSock;
+	CString   m_sUsername;
+	CString   m_sPassword;
+	CZNCSock* m_pSock;
 };
 
 

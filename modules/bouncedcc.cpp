@@ -57,7 +57,7 @@ public:
 
 	// Getters
 	unsigned short GetUserPort() const { return m_uRemotePort; }
-	const CString& GetRemoteIP() const { return m_sRemoteIP; }
+	const CString& GetRemoteAddr() const { return m_sRemoteIP; }
 	const CString& GetRemoteNick() const { return m_sRemoteNick; }
 	const CString& GetFileName() const { return m_sFileName; }
 	CDCCBounce* GetPeer() const { return m_pPeer; }
@@ -105,7 +105,7 @@ public:
 			if (!(pSock->IsRemote())) {
 				Table.AddRow();
 				Table.SetCell("Nick", pSock->GetRemoteNick());
-				Table.SetCell("IP", pSock->GetRemoteIP());
+				Table.SetCell("IP", pSock->GetRemoteAddr());
 
 				if (pSock->IsChat()) {
 					Table.SetCell("Type", "Chat");

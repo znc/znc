@@ -42,6 +42,7 @@ public:
 	// Don't fail to compile when ICU is not enabled
 	void SetEncoding(const CString&) {}
 #endif
+	virtual CString GetRemoteIP() const { return Csock::GetRemoteIP(); }
 
 protected:
 	// All existing errno codes seem to be in range 1-300
