@@ -1638,7 +1638,7 @@ void CClient::HelpUser(const CString& sFilter) {
 	if (m_pUser->IsAdmin()) {
 		AddCommandHelp(Table, "MoveNetwork", "<old user> <old network> <new user> [new network]", "Move an IRC network from one user to another", sFilter);
 	}
-	AddCommandHelp(Table, "JumpNetwork", "<network>", "Jump to another network", sFilter);
+	AddCommandHelp(Table, "JumpNetwork", "<network>", "Jump to another network (Alternatively, you can connect to ZNC several times, using `user/network` as username)", sFilter);
 
 	AddCommandHelp(Table, "AddServer", "<host> [[+]port] [pass]", "Add a server to the list of alternate/backup servers of current IRC network.", sFilter);
 	AddCommandHelp(Table, "DelServer", "<host> [port] [pass]", "Remove a server from the list of alternate/backup servers of current IRC network", sFilter);
