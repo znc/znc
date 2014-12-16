@@ -2906,9 +2906,9 @@ cs_sock_t Csock::CreateSocket( bool bListen )
 		}
 
 #ifdef TCP_DEFER_ACCEPT
-    int value = 0;
-    if( setsockopt( iRet, IPPROTO_TCP, TCP_DEFER_ACCEPT, &value, sizeof( int ) ) != 0 )
-      PERROR( "TCP_DEFER_ACCEPT" );
+		int value = 0;
+		if( setsockopt( iRet, IPPROTO_TCP, TCP_DEFER_ACCEPT, &value, sizeof( int ) ) != 0 )
+			PERROR( "TCP_DEFER_ACCEPT" );
 #endif
 
 	}
