@@ -25,17 +25,17 @@ mv ~/gh-pages/.git ./
 echo docs.znc.in > CNAME
 git add -A
 
-need_commit=0
+rm -f ~/docs_need_commit
 git status
 git status | perl -ne '/modified:\s+(.*)/ and print "$1\n"' | while read x; do
 	echo Checking for useful changes: $x
 	git diff --cached $x |
 		perl -ne '/^[-+]/ and !/^([-+])\1\1 / and !/^[-+]Generated.*ZNC.*doxygen/ and exit 1' &&
 		git reset -q $x ||
-		{ echo Useful change detected; need_commit=1; }
+		{ echo Useful change detected; touch ~/docs_need_commit; }
 done
 
-if [[ $need_commit == 0 ]]; then
+if [[ ! -f ~/docs_need_commit ]]; then
 	echo "Docs at gh-pages are up to date."
 	exit
 fi
