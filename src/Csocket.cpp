@@ -2904,6 +2904,13 @@ cs_sock_t Csock::CreateSocket( bool bListen )
 			if( setsockopt( iRet, SOL_SOCKET, SO_REUSEADDR, ( char * ) &on, sizeof( on ) ) != 0 )
 				PERROR( "SO_REUSEADDR" );
 		}
+
+#ifdef TCP_DEFER_ACCEPT
+    int value = 0;
+    if( setsockopt( iRet, IPPROTO_TCP, TCP_DEFER_ACCEPT, &value, sizeof( int ) ) != 0 )
+      PERROR( "TCP_DEFER_ACCEPT" );
+#endif
+
 	}
 	else
 	{
