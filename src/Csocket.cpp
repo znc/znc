@@ -629,7 +629,7 @@ static const char * CS_StrError( int iErrno, char * pszBuff, size_t uBuffLen )
 	return( strerror( iErrno ) );
 #else
 	memset( pszBuff, '\0', uBuffLen );
-#if !defined( _GNU_SOURCE ) || defined( __FreeBSD__ )
+#if !defined( _GNU_SOURCE ) || !defined(__GLIBC__) || defined( __FreeBSD__ )
 	if( strerror_r( iErrno, pszBuff, uBuffLen ) == 0 )
 		return( pszBuff );
 #else
