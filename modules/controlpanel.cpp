@@ -40,6 +40,28 @@ static array_size_helper<N> array_size(T (&)[N]) {
 class CAdminMod : public CModule {
 	using CModule::PutModule;
 
+	void PrintVarsHelp(const CString& sFilter, const char* vars[][2], unsigned int uSize, const CString& sDescription) {
+		CTable VarTable;
+		VarTable.AddColumn("Type");
+		VarTable.AddColumn("Variables");
+		std::map<const char*, VCString> mvsTypedVariables;
+		for (unsigned int i = 0; i != uSize; ++i) {
+			CString sVar = CString(vars[i][0]).AsLower();
+			if (sFilter.empty() || sVar.StartsWith(sFilter) || sVar.WildCmp(sFilter)) {
+				mvsTypedVariables[vars[i][1]].emplace_back(vars[i][0]);
+			}
+		}
+		for (const auto& i : mvsTypedVariables) {
+			VarTable.AddRow();
+			VarTable.SetCell("Type", i.first);
+			VarTable.SetCell("Variables", CString(", ").Join(i.second.cbegin(), i.second.cend()));
+		}
+		if (!VarTable.empty()) {
+			PutModule(sDescription);
+			PutModule(VarTable);
+		}
+	}
+
 	void PrintHelp(const CString& sLine) {
 		HandleHelpCommand(sLine);
 
@@ -52,12 +74,8 @@ class CAdminMod : public CModule {
 		const CString::size_type iCmdLength = sCmdFilter.size();
 
 		const CString sVarFilter = sLine.Token(2, true).AsLower();
-		const CString::size_type iVarLength = sVarFilter.size();
 
 		if (sCmdFilter.empty() || sCmdFilter.Equals("Set", false, iCmdLength) || sCmdFilter.Equals("Get", false, iCmdLength)) {
-			CTable VarTable;
-			VarTable.AddColumn("Variable");
-			VarTable.AddColumn("Type");
 			static const char* vars[][2] = {
 				{"Nick",                str},
 				{"Altnick",             str},
@@ -88,24 +106,10 @@ class CAdminMod : public CModule {
 				{"ClientEncoding",      str},
 #endif
 			};
-			for (unsigned int i = 0; i != ARRAY_SIZE(vars); ++i) {
-				CString sVar = CString(vars[i][0]).AsLower();
-				if (sVarFilter.empty() || sVarFilter.Equals(sVar, true, iVarLength) || sVar.WildCmp(sVarFilter)) {
-					VarTable.AddRow();
-					VarTable.SetCell("Variable", vars[i][0]);
-					VarTable.SetCell("Type",     vars[i][1]);
-				}
-			}
-			if (!VarTable.empty()) {
-				PutModule("The following variables are available when using the Set/Get commands:");
-				PutModule(VarTable);
-			}
+			PrintVarsHelp(sVarFilter, vars, ARRAY_SIZE(vars), "The following variables are available when using the Set/Get commands:");
 		}
 
 		if (sCmdFilter.empty() || sCmdFilter.Equals("SetNetwork", false, iCmdLength) || sCmdFilter.Equals("GetNetwork", false, iCmdLength)) {
-			CTable NVarTable;
-			NVarTable.AddColumn("Variable");
-			NVarTable.AddColumn("Type");
 			static const char* nvars[][2] = {
 				{"Nick",                str},
 				{"Altnick",             str},
@@ -120,24 +124,10 @@ class CAdminMod : public CModule {
 #endif
 				{"QuitMsg",             str},
 			};
-			for (unsigned int i = 0; i != ARRAY_SIZE(nvars); ++i) {
-				CString sVar = CString(nvars[i][0]).AsLower();
-				if (sVarFilter.empty() || sVarFilter.Equals(sVar, true, iVarLength) || sVar.WildCmp(sVarFilter)) {
-					NVarTable.AddRow();
-					NVarTable.SetCell("Variable", nvars[i][0]);
-					NVarTable.SetCell("Type",     nvars[i][1]);
-				}
-			}
-			if (!NVarTable.empty()) {
-				PutModule("The following variables are available when using the SetNetwork/GetNetwork commands:");
-				PutModule(NVarTable);
-			}
+			PrintVarsHelp(sVarFilter, nvars, ARRAY_SIZE(nvars), "The following variables are available when using the SetNetwork/GetNetwork commands:");
 		}
 
 		if (sCmdFilter.empty() || sCmdFilter.Equals("SetChan", false, iCmdLength) || sCmdFilter.Equals("GetChan", false, iCmdLength)) {
-			CTable CVarTable;
-			CVarTable.AddColumn("Variable");
-			CVarTable.AddColumn("Type");
 			static const char* cvars[][2] = {
 				{"DefModes",            str},
 				{"Key",                 str},
@@ -146,18 +136,7 @@ class CAdminMod : public CModule {
 				{"AutoClearChanBuffer", boolean},
 				{"Detached",            boolean}
 			};
-			for (unsigned int i = 0; i != ARRAY_SIZE(cvars); ++i) {
-				CString sVar = CString(cvars[i][0]).AsLower();
-				if (sVarFilter.empty() || sVarFilter.Equals(sVar, true, iVarLength) || sVar.WildCmp(sVarFilter)) {
-					CVarTable.AddRow();
-					CVarTable.SetCell("Variable", cvars[i][0]);
-					CVarTable.SetCell("Type",     cvars[i][1]);
-				}
-			}
-			if (!CVarTable.empty()) {
-				PutModule("The following variables are available when using the SetChan/GetChan commands:");
-				PutModule(CVarTable);
-			}
+			PrintVarsHelp(sVarFilter, cvars, ARRAY_SIZE(cvars), "The following variables are available when using the SetChan/GetChan commands:");
 		}
 
 		if (sCmdFilter.empty())
