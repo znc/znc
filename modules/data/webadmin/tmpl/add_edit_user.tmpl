@@ -1,3 +1,4 @@
+<? AddRow CSSLoop HREF=/modfiles/global/webadmin/webadmin.css ?>
 <? INC Header.tmpl ?>
 
 <form action="<? VAR URIPrefix TOP ?><? VAR ModPath TOP ?><? IF Edit ?>edituser<? ELSE ?>adduser<? ENDIF ?>" method="post">
@@ -281,6 +282,12 @@
 						<? ENDLOOP ?>
 					</datalist>
 				</div>
+				<div style="clear:both;"></div>
+				<div class="subsection" title="Character encoding used between IRC client and ZNC. After changing this, reconnect client to ZNC.">
+					<div class="inputlabel">Client encoding:</div>
+					<? INC encoding_settings.tmpl ?>
+				</div>
+				<div style="clear:both;"></div>
 				<div class="subsection">
 					<div class="inputlabel">Join Tries:</div>
 					<input type="number" name="jointries" value="<? VAR JoinTries ?>" class="third" min="0"

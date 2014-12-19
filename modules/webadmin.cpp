@@ -280,6 +280,24 @@ public:
 		pNewUser->SetAutoClearQueryBuffer(WebSock.GetParam("autoclearquerybuffer").ToBool());
 		pNewUser->SetMaxQueryBuffers(WebSock.GetParam("maxquerybuffers").ToUInt());
 
+#ifdef HAVE_ICU
+		CString sEncodingUtf = WebSock.GetParam("encoding_utf");
+		if (sEncodingUtf == "legacy") {
+			pNewUser->SetClientEncoding("");
+		}
+		CString sEncoding = WebSock.GetParam("encoding");
+		if (sEncoding.empty()) {
+			sEncoding = "UTF-8";
+		}
+		if (sEncodingUtf == "send") {
+			pNewUser->SetClientEncoding("^" + sEncoding);
+		} else if (sEncodingUtf == "receive") {
+			pNewUser->SetClientEncoding("*" + sEncoding);
+		} else if (sEncodingUtf == "simple") {
+			pNewUser->SetClientEncoding(sEncoding);
+		}
+#endif
+
 		if (spSession->IsAdmin()) {
 			pNewUser->SetDenyLoadMod(WebSock.GetParam("denyloadmod").ToBool());
 			pNewUser->SetDenySetBindHost(WebSock.GetParam("denysetbindhost").ToBool());
@@ -825,6 +843,29 @@ public:
 
 				Tmpl["IRCConnectEnabled"] = CString(pNetwork->GetIRCConnectEnabled());
 
+#ifdef HAVE_ICU
+				for (const CString& sEncoding : CUtils::GetEncodings()) {
+					CTemplate& l = Tmpl.AddRow("EncodingLoop");
+					l["Encoding"] = sEncoding;
+				}
+				const CString& sEncoding = pNetwork->GetEncoding();
+				if (sEncoding.empty()) {
+					Tmpl["EncodingUtf"] = "legacy";
+				} else if (sEncoding[0] == '*') {
+					Tmpl["EncodingUtf"] = "receive";
+					Tmpl["Encoding"] = sEncoding.substr(1);
+				} else if (sEncoding[0] == '^') {
+					Tmpl["EncodingUtf"] = "send";
+					Tmpl["Encoding"] = sEncoding.substr(1);
+				} else {
+					Tmpl["EncodingUtf"] = "simple";
+					Tmpl["Encoding"] = sEncoding;
+				}
+#else
+				Tmpl["EncodingDisabled"] = "true";
+				Tmpl["EncodingUtf"] = "legacy";
+#endif
+
 				const vector<CServer*>& vServers = pNetwork->GetServers();
 				for (unsigned int a = 0; a < vServers.size(); a++) {
 					CTemplate& l = Tmpl.AddRow("ServerLoop");
@@ -950,6 +991,24 @@ public:
 		}
 
 		pNetwork->SetJoinDelay(WebSock.GetParam("joindelay").ToUShort());
+
+#ifdef HAVE_ICU
+		CString sEncodingUtf = WebSock.GetParam("encoding_utf");
+		if (sEncodingUtf == "legacy") {
+			pNetwork->SetEncoding("");
+		}
+		CString sEncoding = WebSock.GetParam("encoding");
+		if (sEncoding.empty()) {
+			sEncoding = "UTF-8";
+		}
+		if (sEncodingUtf == "send") {
+			pNetwork->SetEncoding("^" + sEncoding);
+		} else if (sEncodingUtf == "receive") {
+			pNetwork->SetEncoding("*" + sEncoding);
+		} else if (sEncodingUtf == "simple") {
+			pNetwork->SetEncoding(sEncoding);
+		}
+#endif
 
 		VCString vsArgs;
 
@@ -1165,6 +1224,29 @@ public:
 				CTemplate& l = Tmpl.AddRow("TZLoop");
 				l["TZ"] = *i;
 			}
+
+#ifdef HAVE_ICU
+			for (const CString& sEncoding : CUtils::GetEncodings()) {
+				CTemplate& l = Tmpl.AddRow("EncodingLoop");
+				l["Encoding"] = sEncoding;
+			}
+			const CString& sEncoding = pUser->GetClientEncoding();
+			if (sEncoding.empty()) {
+				Tmpl["EncodingUtf"] = "legacy";
+			} else if (sEncoding[0] == '*') {
+				Tmpl["EncodingUtf"] = "receive";
+				Tmpl["Encoding"] = sEncoding.substr(1);
+			} else if (sEncoding[0] == '^') {
+				Tmpl["EncodingUtf"] = "send";
+				Tmpl["Encoding"] = sEncoding.substr(1);
+			} else {
+				Tmpl["EncodingUtf"] = "simple";
+				Tmpl["Encoding"] = sEncoding;
+			}
+#else
+			Tmpl["EncodingDisabled"] = "true";
+			Tmpl["EncodingUtf"] = "legacy";
+#endif
 
 			// To change BindHosts be admin or don't have DenySetBindHost
 			if (spSession->IsAdmin() || !spSession->GetUser()->DenySetBindHost()) {

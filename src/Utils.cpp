@@ -22,6 +22,11 @@
 #endif /* HAVE_LIBSSL */
 #include <unistd.h>
 
+#ifdef HAVE_ICU
+#include <unicode/ucnv.h>
+#include <unicode/errorcode.h>
+#endif
+
 // Required with GCC 4.3+ if openssl is disabled
 #include <cstring>
 #include <cstdlib>
@@ -475,6 +480,27 @@ SCString CUtils::GetTimezones() {
 		FillTimezones("/usr/share/zoneinfo", result, "");
 	}
 	return result;
+}
+
+SCString CUtils::GetEncodings() {
+	static SCString ssResult;
+#ifdef HAVE_ICU
+	if (ssResult.empty()) {
+		for (int i = 0; i < ucnv_countAvailable(); ++i) {
+			const char* pConvName = ucnv_getAvailableName(i);
+			ssResult.insert(pConvName);
+			icu::ErrorCode e;
+			for (int st = 0; st < ucnv_countStandards(); ++st) {
+				const char* pStdName = ucnv_getStandard(st, e);
+				icu::LocalUEnumerationPointer ue(ucnv_openStandardNames(pConvName, pStdName, e));
+				while (const char* pStdConvNameEnum = uenum_next(ue.getAlias(), NULL, e)) {
+					ssResult.insert(pStdConvNameEnum);
+				}
+			}
+		}
+	}
+#endif
+	return ssResult;
 }
 
 MCString CUtils::GetMessageTags(const CString& sLine) {
