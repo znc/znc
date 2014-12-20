@@ -28,10 +28,10 @@ static const struct {
 } SupportedMechanisms[] = {
 	{ "EXTERNAL",           "TLS certificate, for use with the *cert module", false },
 #ifdef HAVE_SASL_MECHANISM
-	{ "DH-BLOWFISH",        "Secure negotiation using the DH-BLOWFISH mechanism", false },
-	{ "DH-AES",		"More secure negotiation using the DH-AES mechanism", false },
+	{ "DH-BLOWFISH",        "Negotiation using the DH-BLOWFISH mechanism", false },
+	{ "DH-AES",		"Negotiation using the DH-AES mechanism", false },
 #endif
-	{ "PLAIN",              "Plain text negotiation", true },
+	{ "PLAIN",              "Plain text negotiation, this should work always if the network supports SASL", true },
 	{ NULL, NULL, false }
 };
 
