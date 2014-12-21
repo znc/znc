@@ -51,6 +51,7 @@
 
 #ifdef HAVE_ICU
 #include <unicode/errorcode.h>
+#include <unicode/ucnv_cb.h>
 #endif /* HAVE_ICU */
 
 #include <list>
@@ -1058,6 +1059,10 @@ void Csock::Copy( const Csock & cCopy )
 
 #endif /* HAVE_LIBSSL */
 
+#ifdef HAVE_ICU
+	SetEncoding(cCopy.m_sEncoding);
+#endif
+
 	CleanupCrons();
 	CleanupFDMonitors();
 	m_vcCrons			= cCopy.m_vcCrons;
@@ -2056,7 +2061,7 @@ bool Csock::Write( const char *data, size_t len )
 bool Csock::Write( const CS_STRING & sData )
 {
 #ifdef HAVE_ICU
-	if( m_cnvExt.isValid() )
+	if( m_cnvExt.isValid() && !m_cnvSendUTF8 )
 	{
 		CS_STRING sBinary;
 		if( icuConv( sData, sBinary, m_cnvInt.getAlias(), m_cnvExt.getAlias() ) )
@@ -2314,20 +2319,84 @@ void Csock::PushBuff( const char *data, size_t len, bool bStartAtZero )
 }
 
 #ifdef HAVE_ICU
+void Csock::IcuExtToUCallback(
+		UConverterToUnicodeArgs* toArgs,
+		const char* codeUnits,
+		int32_t length,
+		UConverterCallbackReason reason,
+		UErrorCode* err)
+{
+	if( reason <= UCNV_IRREGULAR )
+	{
+		*err = U_ZERO_ERROR;
+		ucnv_cbToUWriteSub( toArgs, 0, err );
+	}
+}
+
+void Csock::IcuExtFromUCallback(
+		UConverterFromUnicodeArgs* fromArgs,
+		const UChar* codeUnits,
+		int32_t length,
+		UChar32 codePoint,
+		UConverterCallbackReason reason,
+		UErrorCode * err)
+{
+	if( reason <= UCNV_IRREGULAR )
+	{
+		*err = U_ZERO_ERROR;
+		ucnv_cbFromUWriteSub( fromArgs, 0, err );
+	}
+}
+
+static void icuExtToUCallback(
+		const void* context,
+		UConverterToUnicodeArgs* toArgs,
+		const char* codeUnits,
+		int32_t length,
+		UConverterCallbackReason reason,
+		UErrorCode* err)
+{
+	Csock* pcSock = (Csock*)context;
+	pcSock->IcuExtToUCallback(toArgs, codeUnits, length, reason, err);
+}
+
+static void icuExtFromUCallback(
+		const void* context,
+		UConverterFromUnicodeArgs* fromArgs,
+		const UChar* codeUnits,
+		int32_t length,
+		UChar32 codePoint,
+		UConverterCallbackReason reason,
+		UErrorCode* err)
+{
+	Csock* pcSock = (Csock*)context;
+	pcSock->IcuExtFromUCallback(fromArgs, codeUnits, length, codePoint, reason, err);
+}
+
 void Csock::SetEncoding( const CS_STRING& sEncoding )
 {
+	m_sEncoding = sEncoding;
 	if( sEncoding.empty() )
 	{
 		m_cnvExt.adoptInstead( NULL );
 	}
 	else
 	{
-		m_cnvTryUTF8 = sEncoding[0] == '*';
+		m_cnvTryUTF8 = sEncoding[0] == '*' || sEncoding[0] == '^';
+		m_cnvSendUTF8 = sEncoding[0] == '^';
+		const char* sEncodingName = sEncoding.c_str();
+		if( m_cnvTryUTF8 )
+			sEncodingName++;
 		icu::ErrorCode e;
-		m_cnvExt.adoptInstead( ucnv_open( sEncoding.c_str(), e ) );
+		m_cnvExt.adoptInstead( ucnv_open( sEncodingName, e ) );
 		if( e.isFailure() )
 		{
 			CS_DEBUG( "Can't set encoding to " << sEncoding << ": " <<  e.errorName() );
+		}
+		if( m_cnvExt.isValid() )
+		{
+			ucnv_setToUCallBack( m_cnvExt.getAlias(), icuExtToUCallback, this, NULL, NULL, e );
+			ucnv_setFromUCallBack( m_cnvExt.getAlias(), icuExtFromUCallback, this, NULL, NULL, e );
 		}
 	}
 }
@@ -2973,6 +3042,7 @@ void Csock::Init( const CS_STRING & sHostname, uint16_t uPort, int iTimeout )
 #endif /* HAVE_C_ARES */
 #ifdef HAVE_ICU
 	m_cnvTryUTF8 = false;
+	m_cnvSendUTF8 = false;
 	icu::ErrorCode e;
 	m_cnvInt.adoptInstead( ucnv_open( "UTF-8", e ) );
 	m_cnvIntStrict.adoptInstead( ucnv_open( "UTF-8", e ) );
