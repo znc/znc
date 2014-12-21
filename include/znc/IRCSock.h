@@ -30,7 +30,8 @@ class CIRCNetwork;
 class CClient;
 // !Forward Declarations
 
-class CIRCSock : public CZNCSock {
+// TODO: This class needs new name
+class CIRCSock : public CIRCSocket {
 public:
 	CIRCSock(CIRCNetwork* pNetwork);
 	virtual ~CIRCSock();

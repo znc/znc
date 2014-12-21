@@ -82,9 +82,9 @@ protected:
 	CClient* m_pClient;
 };
 
-class CClient : public CZNCSock {
+class CClient : public CIRCSocket {
 public:
-	CClient() : CZNCSock() {
+	CClient() : CIRCSocket() {
 		m_pUser = NULL;
 		m_pNetwork = NULL;
 		m_bGotPass = false;

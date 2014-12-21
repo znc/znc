@@ -54,7 +54,7 @@ bool CIRCSock::IsFloodProtected(double fRate) {
 	return fRate > FLOOD_MINIMAL_RATE;
 }
 
-CIRCSock::CIRCSock(CIRCNetwork* pNetwork) : CZNCSock() {
+CIRCSock::CIRCSock(CIRCNetwork* pNetwork) : CIRCSocket() {
 	m_pNetwork = pNetwork;
 	m_bAuthed = false;
 	m_bNamesx = false;
