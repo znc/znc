@@ -139,16 +139,21 @@ protected:
  */
 class CTable : protected std::vector<std::vector<CString> > {
 public:
-	CTable() {}
+	/** Constructor
+	 *
+	 *  @param uPreferredWidth If width of table is bigger than this, text in cells will be wrapped to several lines, if possible
+	 */
+	explicit CTable(size_type uPreferredWidth = 110) : m_uPreferredWidth(uPreferredWidth) {}
 	virtual ~CTable() {}
 
 	/** Adds a new column to the table.
 	 *  Please note that you should add all columns before starting to fill
 	 *  the table!
 	 *  @param sName The name of the column.
+	 *  @param bWrappable True if long lines can be wrapped in the same cell.
 	 *  @return false if a column by that name already existed.
 	 */
-	bool AddColumn(const CString& sName);
+	bool AddColumn(const CString& sName, bool bWrappable = true);
 
 	/** Adds a new row to the table.
 	 *  After calling this you can fill the row with content.
@@ -190,10 +195,16 @@ public:
 	using std::vector<std::vector<CString> >::empty;
 private:
 	unsigned int GetColumnIndex(const CString& sName) const;
+	VCString Render() const;
+	static VCString WrapWords(const CString& s, size_type uWidth);
 
 protected:
-	std::vector<CString>            m_vsHeaders;
-	std::map<CString, CString::size_type> m_msuWidths;  // Used to cache the width of a column
+	VCString m_vsHeaders;
+	std::vector<CString::size_type> m_vuMaxWidths;  // Column don't need to be bigger than this
+	std::vector<CString::size_type> m_vuMinWidths;  // Column can't be thiner than this
+	std::vector<bool> m_vbWrappable;
+	size_type m_uPreferredWidth;
+	mutable VCString m_vsOutput;  // Rendered table
 };
 
 

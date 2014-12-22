@@ -30,9 +30,9 @@
 // Required with GCC 4.3+ if openssl is disabled
 #include <cstring>
 #include <cstdlib>
+#include <iomanip>
 
 using std::map;
-using std::stringstream;
 using std::vector;
 
 CUtils::CUtils() {}
@@ -538,7 +538,7 @@ void CUtils::SetMessageTags(CString& sLine, const MCString& mssTags) {
 	}
 }
 
-bool CTable::AddColumn(const CString& sName) {
+bool CTable::AddColumn(const CString& sName, bool bWrappable) {
 	for (unsigned int a = 0; a < m_vsHeaders.size(); a++) {
 		if (m_vsHeaders[a].Equals(sName)) {
 			return false;
@@ -546,7 +546,10 @@ bool CTable::AddColumn(const CString& sName) {
 	}
 
 	m_vsHeaders.push_back(sName);
-	m_msuWidths[sName] = sName.size();
+	m_vuMaxWidths.push_back(sName.size());
+	// TODO: Maybe headers can be wrapped too?
+	m_vuMinWidths.push_back(sName.size());
+	m_vbWrappable.push_back(bWrappable);
 
 	return true;
 }
@@ -564,7 +567,7 @@ CTable::size_type CTable::AddRow() {
 
 bool CTable::SetCell(const CString& sColumn, const CString& sValue, size_type uRowIdx) {
 	if (uRowIdx == (size_type) ~0) {
-		if (!size()) {
+		if (empty()) {
 			return false;
 		}
 
@@ -578,63 +581,161 @@ bool CTable::SetCell(const CString& sColumn, const CString& sValue, size_type uR
 
 	(*this)[uRowIdx][uColIdx] = sValue;
 
-	if (m_msuWidths[sColumn] < sValue.size())
-		m_msuWidths[sColumn] = sValue.size();
+	if (sValue.length() > m_vuMaxWidths[uColIdx]) {
+		m_vuMaxWidths[uColIdx] = sValue.length();
+	}
 
+	if (m_vbWrappable[uColIdx]) {
+		VCString vsWords;
+		sValue.Split(" ", vsWords);
+		size_type uMaxWord = 0;
+		for (const CString& sWord : vsWords) {
+			if (sWord.length() > uMaxWord) {
+				uMaxWord = sWord.length();
+			}
+		}
+		// We can't shrink column further than the longest word in it
+		if (uMaxWord > m_vuMinWidths[uColIdx]) {
+			m_vuMinWidths[uColIdx] = uMaxWord;
+		}
+	} else {
+		m_vuMinWidths[uColIdx] = m_vuMaxWidths[uColIdx];
+	}
+	
 	return true;
 }
 
 bool CTable::GetLine(unsigned int uIdx, CString& sLine) const {
-	stringstream ssRet;
-
 	if (empty()) {
 		return false;
 	}
+	if (m_vsOutput.empty()) {
+		m_vsOutput = Render();
+	}
+	if (uIdx >= m_vsOutput.size()) {
+		return false;
+	}
+	sLine = m_vsOutput[uIdx];
+	return true;
+}
 
-	if (uIdx == 1) {
-		ssRet.fill(' ');
-		ssRet << "| ";
+VCString CTable::Render() const {
+	size_type uTotalWidth = 1;  // '|'
+	for (size_type uWidth : m_vuMaxWidths) {
+		uTotalWidth += uWidth + 3;  // '|', ' 'x2
+	}
 
-		for (unsigned int a = 0; a < m_vsHeaders.size(); a++) {
-			ssRet.width(GetColumnWidth(a));
-			ssRet << std::left << m_vsHeaders[a];
-			ssRet << ((a == m_vsHeaders.size() -1) ? " |" : " | ");
-		}
+	std::vector<size_type> vuWidth = m_vuMaxWidths;
 
-		sLine = ssRet.str();
-		return true;
-	} else if ((uIdx == 0) || (uIdx == 2) || (uIdx == (size() +3))) {
-		ssRet.fill('-');
-		ssRet << "+-";
-
-		for (unsigned int a = 0; a < m_vsHeaders.size(); a++) {
-			ssRet.width(GetColumnWidth(a));
-			ssRet << std::left << "-";
-			ssRet << ((a == m_vsHeaders.size() -1) ? "-+" : "-+-");
-		}
-
-		sLine = ssRet.str();
-		return true;
-	} else {
-		uIdx -= 3;
-
-		if (uIdx < size()) {
-			const vector<CString>& mRow = (*this)[uIdx];
-			ssRet.fill(' ');
-			ssRet << "| ";
-
-			for (unsigned int c = 0; c < m_vsHeaders.size(); c++) {
-				ssRet.width(GetColumnWidth(c));
-				ssRet << std::left << mRow[c];
-				ssRet << ((c == m_vsHeaders.size() -1) ? " |" : " | ");
-			}
-
-			sLine = ssRet.str();
-			return true;
+	std::map<int, int> miColumnSpace;
+	for (unsigned int i = 0; i < m_vsHeaders.size(); ++i) {
+		int iSpace = m_vuMaxWidths[i] - m_vuMinWidths[i];
+		if (iSpace > 0) {
+			miColumnSpace[i] = iSpace;
 		}
 	}
 
-	return false;
+	// Not very efficient algorithm, and doesn't produce very good results...
+	while (uTotalWidth > m_uPreferredWidth) {
+		std::vector<int> viToErase;
+		for (auto& i : miColumnSpace) {
+			uTotalWidth--;
+			i.second--;
+			vuWidth[i.first]--;
+			if (i.second == 0) {
+				viToErase.push_back(i.first);
+			}
+			if (uTotalWidth == m_uPreferredWidth) {
+				break;
+			}
+		}
+		for (int iCol : viToErase) {
+			miColumnSpace.erase(iCol);
+		}
+		if (miColumnSpace.empty()) {
+			// Every column is at its minimum width now, but total width is still more than preferred width
+			break;
+		}
+	}
+
+	CString sHorizontal;
+	{
+		std::ostringstream ssLine;
+		ssLine << std::setfill('-');
+		ssLine << "+";
+		for (size_type uWidth : vuWidth) {
+			ssLine << std::setw(uWidth + 2) << std::left << "-";
+			ssLine << "+";
+		}
+		sHorizontal = ssLine.str();
+	}
+	VCString vsOutput;
+	vsOutput.emplace_back(sHorizontal.Replace_n("-", "="));
+	{
+		std::ostringstream ssLine;
+		ssLine << "|";
+		for (unsigned int iCol = 0; iCol < vuWidth.size(); ++iCol) {
+			ssLine << " ";
+			ssLine << std::setw(vuWidth[iCol]) << std::left;
+			ssLine << m_vsHeaders[iCol] << " |";
+		}
+		vsOutput.emplace_back(ssLine.str());
+	}
+	vsOutput.emplace_back(vsOutput[0]);
+	for (const VCString& vsRow : *this) {
+		// Wrap words
+		std::vector<VCString> vvsColumns;
+		vvsColumns.reserve(m_vsHeaders.size());
+		unsigned int uRowNum = 1;
+		for (unsigned int iCol = 0; iCol < vuWidth.size(); ++iCol) {
+			if (m_vbWrappable[iCol]) {
+				vvsColumns.emplace_back(WrapWords(vsRow[iCol], vuWidth[iCol]));
+			} else {
+				vvsColumns.push_back({vsRow[iCol]});
+			}
+			if (vvsColumns.back().size() > uRowNum) {
+				uRowNum = vvsColumns.back().size();
+			}
+		}
+		CString sEmpty;
+		for (size_type uCurrentLine = 0; uCurrentLine < uRowNum; ++uCurrentLine) {
+			std::ostringstream ssLine;
+			ssLine << "|";
+			for (unsigned int iCol = 0; iCol < vvsColumns.size(); ++iCol) {
+				const CString& sData = uCurrentLine < vvsColumns[iCol].size() ? vvsColumns[iCol][uCurrentLine] : sEmpty;
+				ssLine << " ";
+				ssLine << std::setw(vuWidth[iCol]) << std::left;
+				ssLine << sData << " |";
+			}
+			vsOutput.emplace_back(ssLine.str());
+		}
+		vsOutput.emplace_back(sHorizontal);
+	}
+	vsOutput.pop_back();
+	vsOutput.emplace_back(vsOutput[0]);
+	return vsOutput;
+}
+
+VCString CTable::WrapWords(const CString& s, size_type uWidth) {
+	VCString vsWords;
+	s.Split(" ", vsWords);
+	VCString vsResult;
+	vsResult.emplace_back("");
+	for (const CString& sWord : vsWords) {
+		size_type uOldLen = vsResult.back().length();
+		if (uOldLen != 0) {
+			uOldLen++;  // ' '
+		}
+		if (uOldLen + sWord.length() > uWidth) {
+			vsResult.emplace_back(sWord);
+		} else {
+			if (uOldLen != 0) {
+				vsResult.back() += " ";
+			}
+			vsResult.back() += sWord;
+		}
+	}
+	return vsResult;
 }
 
 unsigned int CTable::GetColumnIndex(const CString& sName) const {
@@ -652,21 +753,16 @@ CString::size_type CTable::GetColumnWidth(unsigned int uIdx) const {
 	if (uIdx >= m_vsHeaders.size()) {
 		return 0;
 	}
-
-	const CString& sColName = m_vsHeaders[uIdx];
-	map<CString, CString::size_type>::const_iterator it = m_msuWidths.find(sColName);
-
-	if (it == m_msuWidths.end()) {
-		// AddColumn() and SetCell() should make sure that we get a value :/
-		return 0;
-	}
-	return it->second;
+	return m_vuMaxWidths[uIdx];
 }
 
 void CTable::Clear() {
 	clear();
 	m_vsHeaders.clear();
-	m_msuWidths.clear();
+	m_vuMaxWidths.clear();
+	m_vuMinWidths.clear();
+	m_vbWrappable.clear();
+	m_vsOutput.clear();
 }
 
 #ifdef HAVE_LIBSSL
