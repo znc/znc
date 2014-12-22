@@ -18,6 +18,12 @@
 #include <znc/User.h>
 
 class CNickServ : public CModule {
+	void DoCommand(const CString& sCmd) {
+		MCString msValues;
+		msValues["password"] = GetNV("Password");
+		PutIRC(CString::NamedFormat(GetNV(sCmd), msValues));
+	}
+
 	void DoNickCommand(const CString& sCmd, const CString& sNick) {
 		MCString msValues;
 		msValues["nickname"] = sNick;
@@ -25,22 +31,100 @@ class CNickServ : public CModule {
 		PutIRC(CString::NamedFormat(GetNV(sCmd), msValues));
 	}
 public:
-	void SetCommand(const CString& sLine) {
+	void SetPasswordCommand(const CString& sLine) {
 		SetNV("Password", sLine.Token(1, true));
-		PutModule("Password set");
+		PutModule("Password has been set");
 	}
 
-	void ClearCommand(const CString& sLine) {
+	void ViewPasswordCommand(const CString& sLine) {
+		CString sPassword = GetNV("Password");
+
+		if (sPassword.empty()) {
+			PutModule("Password has not been set");
+		} else {
+			PutModule("Password is " + sPassword);
+		}
+	}
+
+	void ClearPasswordCommand(const CString& sLine) {
 		DelNV("Password");
+		PutModule("Password has been cleared");
 	}
 
-	void SetNSNameCommand(const CString& sLine) {
+	void SetNickServNameCommand(const CString& sLine) {
 		SetNV("NickServName", sLine.Token(1, true));
-		PutModule("NickServ name set");
+		PutModule("NickServ name has been set");
 	}
 
-	void ClearNSNameCommand(const CString& sLine) {
+	void ViewNickServNameCommand(const CString& sLine) {
+		CString sNickServName = GetNV("NickServName");
+
+		if (sNickServName.empty()) {
+			PutModule("NickServ name has not been set");
+		} else {
+			PutModule("NickServ name is " + sNickServName);
+		}
+	}
+
+	void ClearNickServNameCommand(const CString& sLine) {
 		DelNV("NickServName");
+		PutModule("NickServ name has been cleared");
+	}
+
+	void SetCommandCommand(const CString& sLine) {
+		CString sCmd = sLine.Token(1);
+		CString sNewCmd = sLine.Token(2, true);
+
+		if (sCmd.Equals("IDENTIFY")) {
+			SetNV("IdentifyCmd", sNewCmd);
+		} else if (sCmd.Equals("GHOST")) {
+			SetNV("GhostCmd", sNewCmd);
+		} else if (sCmd.Equals("RECOVER")) {
+			SetNV("RecoverCmd", sNewCmd);
+		} else if (sCmd.Equals("RELEASE")) {
+			SetNV("ReleaseCmd", sNewCmd);
+		} else if (sCmd.Equals("GROUP")) {
+			SetNV("GroupCmd", sNewCmd);
+		} else {
+			PutModule("No such editable command. See ViewCommands for list.");
+			return;
+		}
+
+		PutModule("Command " + sCmd + " has been set");
+	}
+
+	void SetCommandsForDALnetCommand(const CString& sLine) {
+		SetNV("IdentifyCmd", "PRIVMSG NickServ@services.dal.net :IDENTIFY {password}");
+		SetNV("GhostCmd", "PRIVMSG NickServ@services.dal.net :GHOST {nickname} {password}");
+		SetNV("RecoverCmd", "PRIVMSG NickServ@services.dal.net :RECOVER {nickname} {password}");
+		SetNV("ReleaseCmd", "PRIVMSG NickServ@services.dal.net :RELEASE {nickname} {password}");
+		SetNV("GroupCmd", "PRIVMSG NickServ@services.dal.net :GROUP {nickname} {password}");
+		PutModule("Commands have been set for the DALnet network");
+	}
+
+	void SetCommandsForDefaultCommand(const CString& sLine) {
+		SetNV("IdentifyCmd", "PRIVMSG NickServ :IDENTIFY {password}");
+		SetNV("GhostCmd", "PRIVMSG NickServ :GHOST {nickname} {password}");
+		SetNV("RecoverCmd", "PRIVMSG NickServ :RECOVER {nickname} {password}");
+		SetNV("ReleaseCmd", "PRIVMSG NickServ :RELEASE {nickname} {password}");
+		SetNV("GroupCmd", "PRIVMSG NickServ :GROUP {nickname} {password}");
+		PutModule("Commands have been set for other networks");
+	}
+
+	void ViewCommandsCommand(const CString& sLine) {
+		PutModule("IDENTIFY " + GetNV("IdentifyCmd"));
+		PutModule("GHOST " + GetNV("GhostCmd"));
+		PutModule("RECOVER " + GetNV("RecoverCmd"));
+		PutModule("RELEASE " + GetNV("ReleaseCmd"));
+		PutModule("GROUP " + GetNV("GroupCmd"));
+	}
+
+	void IdentifyCommand(const CString& sLine) {
+		if (!sLine.Token(1).empty()) {
+			PutModule("Syntax: identify");
+		} else {
+			DoCommand("IdentifyCmd");
+		}
 	}
 
 	void GhostCommand(const CString& sLine) {
@@ -75,56 +159,38 @@ public:
 		}
 	}
 
-	void ViewCommandsCommand(const CString& sLine) {
-		PutModule("IDENTIFY " + GetNV("IdentifyCmd"));
-		PutModule("GHOST " + GetNV("GhostCmd"));
-		PutModule("RECOVER " + GetNV("RecoverCmd"));
-		PutModule("RELEASE " + GetNV("ReleaseCmd"));
-		PutModule("GROUP " + GetNV("GroupCmd"));
-	}
-
-	void SetCommandCommand(const CString& sLine) {
-		CString sCmd = sLine.Token(1);
-		CString sNewCmd = sLine.Token(2, true);
-		if (sCmd.Equals("IDENTIFY")) {
-			SetNV("IdentifyCmd", sNewCmd);
-		} else if (sCmd.Equals("GHOST")) {
-			SetNV("GhostCmd", sNewCmd);
-		} else if (sCmd.Equals("RECOVER")) {
-			SetNV("RecoverCmd", sNewCmd);
-		} else if (sCmd.Equals("RELEASE")) {
-			SetNV("ReleaseCmd", sNewCmd);
-		} else if (sCmd.Equals("GROUP")) {
-			SetNV("GroupCmd", sNewCmd);
-		} else {
-			PutModule("No such editable command. See ViewCommands for list.");
-			return;
-		}
-		PutModule("Ok");
-	}
-
 	MODCONSTRUCTOR(CNickServ) {
 		AddHelpCommand();
-		AddCommand("Set", static_cast<CModCommand::ModCmdFunc>(&CNickServ::SetCommand),
-			"password");
-		AddCommand("Clear", static_cast<CModCommand::ModCmdFunc>(&CNickServ::ClearCommand),
-			"", "Clear your nickserv password");
-		AddCommand("SetNSName", static_cast<CModCommand::ModCmdFunc>(&CNickServ::SetNSNameCommand),
-			"nickname", "Set NickServ name (Useful on networks like EpiKnet, where NickServ is named Themis)");
-		AddCommand("ClearNSName", static_cast<CModCommand::ModCmdFunc>(&CNickServ::ClearNSNameCommand),
-			"", "Reset NickServ name to default (NickServ)");
+		AddCommand("SetPassword", static_cast<CModCommand::ModCmdFunc>(&CNickServ::SetPasswordCommand),
+			"password", "Set password");
+		AddCommand("ViewPassword", static_cast<CModCommand::ModCmdFunc>(&CNickServ::ViewPasswordCommand),
+			"", "View password");
+		AddCommand("ClearPassword", static_cast<CModCommand::ModCmdFunc>(&CNickServ::ClearPasswordCommand),
+			"", "Clear password");
+		AddCommand("SetNickServName", static_cast<CModCommand::ModCmdFunc>(&CNickServ::SetNickServNameCommand),
+			"nickname", "Set NickServ name; can be useful on networks like EpiKnet, where NickServ is named Themis");
+		AddCommand("ViewNickServName", static_cast<CModCommand::ModCmdFunc>(&CNickServ::ViewNickServNameCommand),
+			"", "View NickServ name");
+		AddCommand("ClearNickServName", static_cast<CModCommand::ModCmdFunc>(&CNickServ::ClearNickServNameCommand),
+			"", "Reset NickServ name to default, i.e., NickServ");
+		AddCommand("SetCommandsForDALnet", static_cast<CModCommand::ModCmdFunc>(&CNickServ::SetCommandsForDALnetCommand),
+			"", "Set command patterns for the DALnet network");
+		AddCommand("SetCommandsForDefault", static_cast<CModCommand::ModCmdFunc>(&CNickServ::SetCommandsForDefaultCommand),
+			"", "Set command patterns for other networks");
+		AddCommand("SetCommand", static_cast<CModCommand::ModCmdFunc>(&CNickServ::SetCommandCommand),
+			"cmd new-pattern", "Set command pattern for specific commands");
+		AddCommand("ViewCommands", static_cast<CModCommand::ModCmdFunc>(&CNickServ::ViewCommandsCommand),
+			"", "View patterns for lines, which are being sent to NickServ");
+		AddCommand("Identify", static_cast<CModCommand::ModCmdFunc>(&CNickServ::IdentifyCommand),
+			"", "Identify to NickServ");
 		AddCommand("Ghost", static_cast<CModCommand::ModCmdFunc>(&CNickServ::GhostCommand),
-			"nickname", "GHOST disconnects an old user session, or somebody attempting to use your nickname without authorization.");
+			"nickname", "Disconnect an old user session, or somebody attempting to use your nickname without authorization.");
 		AddCommand("Recover", static_cast<CModCommand::ModCmdFunc>(&CNickServ::RecoverCommand),
-			"nickname");
+			"nickname", "Stop another user from using your nickname");
 		AddCommand("Release", static_cast<CModCommand::ModCmdFunc>(&CNickServ::ReleaseCommand),
-			"nickname");
+			"nickname", "Ask NickServ to stop holding on to your nickname");
 		AddCommand("Group", static_cast<CModCommand::ModCmdFunc>(&CNickServ::GroupCommand),
 			"nickname");
-		AddCommand("ViewCommands", static_cast<CModCommand::ModCmdFunc>(&CNickServ::ViewCommandsCommand),
-			"", "Show patterns for lines, which are being sent to NickServ");
-		AddCommand("SetCommand", static_cast<CModCommand::ModCmdFunc>(&CNickServ::SetCommandCommand),
-			"cmd new-pattern", "Set pattern for commands");
 	}
 
 	virtual ~CNickServ() {}
