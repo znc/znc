@@ -1055,6 +1055,9 @@ void Csock::Copy( const Csock & cCopy )
 	if( m_ssl )
 	{
 		SSL_set_ex_data( m_ssl, GetCsockSSLIdx(), this );
+#if defined( SSL_CTX_set_tlsext_servername_callback )
+		SSL_CTX_set_tlsext_servername_arg( m_ssl_ctx, this );
+#endif /* SSL_CTX_set_tlsext_servername_callback */
 	}
 
 #endif /* HAVE_LIBSSL */
