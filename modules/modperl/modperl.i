@@ -52,6 +52,9 @@
 %}
 
 %apply long { off_t };
+%apply long { uint16_t };
+%apply long { uint32_t };
+%apply long { uint64_t };
 
 %begin %{
 #include "znc/zncconfig.h"
