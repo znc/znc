@@ -17,7 +17,7 @@ In detail, these are:
 
 ## Fixes
 
-* Fix a use-after-delete in webadmin.
+* Fix a use-after-delete in webadmin. CVE-2014-9403
 * Honor the BindHost whitelist when configuring BindHosts in controlpanel module.
 * Ignore trailing whitespace in <code>/znc jump</code> arguments.
 * Change formatting of startup messages so that we never overwrite part of a message when printing the result of an action.
