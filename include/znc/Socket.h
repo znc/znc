@@ -44,6 +44,8 @@ public:
 #endif
 	virtual CString GetRemoteIP() const { return Csock::GetRemoteIP(); }
 
+	static const CString g_sDefaultCipher;
+
 protected:
 	// All existing errno codes seem to be in range 1-300
 	enum {

@@ -26,14 +26,24 @@
 #include <unicode/ucnv_cb.h>
 #endif
 
+// Copypasted from https://wiki.mozilla.org/Security/Server_Side_TLS#Intermediate_compatibility_.28default.29 at 22 Dec 2014
+const CString CZNCSock::g_sDefaultCipher =
+	"ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-AES256-GCM-SHA384:"
+	"DHE-RSA-AES128-GCM-SHA256:DHE-DSS-AES128-GCM-SHA256:kEDH+AESGCM:ECDHE-RSA-AES128-SHA256:ECDHE-ECDSA-AES128-SHA256:"
+	"ECDHE-RSA-AES128-SHA:ECDHE-ECDSA-AES128-SHA:ECDHE-RSA-AES256-SHA384:ECDHE-ECDSA-AES256-SHA384:ECDHE-RSA-AES256-SHA:"
+	"ECDHE-ECDSA-AES256-SHA:DHE-RSA-AES128-SHA256:DHE-RSA-AES128-SHA:DHE-DSS-AES128-SHA256:DHE-RSA-AES256-SHA256:"
+	"DHE-DSS-AES256-SHA:DHE-RSA-AES256-SHA:AES128-GCM-SHA256:AES256-GCM-SHA384:AES128-SHA256:AES256-SHA256:AES128-SHA:"
+	"AES256-SHA:AES:CAMELLIA:DES-CBC3-SHA:!aNULL:!eNULL:!EXPORT:!DES:!RC4:!MD5:!PSK:!aECDH:!EDH-DSS-DES-CBC3-SHA:!EDH-RSA-DES-CBC3-SHA:!KRB5-DES-CBC3-SHA";
+
 CZNCSock::CZNCSock(int timeout) : Csock(timeout) {
 #ifdef HAVE_LIBSSL
 	DisableSSLCompression();
 	DisableSSLProtocols(CZNC::Get().GetDisabledSSLProtocols());
 	CString sCipher = CZNC::Get().GetSSLCiphers();
-	if (!sCipher.empty()) {
-		SetCipher(sCipher);
+	if (sCipher.empty()) {
+		sCipher = g_sDefaultCipher;
 	}
+	SetCipher(sCipher);
 #endif
 }
 
@@ -129,16 +139,7 @@ CString CZNCSock::GetSSLPeerFingerprint() const {
 		DEBUG(GetSockName() + ": GetSSLPeerFingerprint: Couldn't find digest");
 		return "";
 	}
-	CString sResult;
-	sResult.reserve(3*256/8);
-	for (unsigned char c : buf) {
-		char b[3];
-		snprintf(b, 3, "%02x", c);
-		sResult += b;
-		sResult += ":";
-	}
-	sResult.TrimRight(":");
-	return sResult;
+	return CString(reinterpret_cast<const char*>(buf), sizeof buf).Escape_n(CString::EASCII, CString::EHEXCOLON);
 #else
 	return "";
 #endif
@@ -380,9 +381,10 @@ void CSockManager::FinishConnect(const CString& sHostname, u_short iPort, const 
 	C.SetBindHost(sBindHost);
 #ifdef HAVE_LIBSSL
 	CString sCipher = CZNC::Get().GetSSLCiphers();
-	if (!sCipher.empty()) {
-		C.SetCipher(sCipher);
+	if (sCipher.empty()) {
+		sCipher = CZNCSock::g_sDefaultCipher;
 	}
+	C.SetCipher(sCipher);
 #endif
 
 	TSocketManager<CZNCSock>::Connect(C, pcSock);
