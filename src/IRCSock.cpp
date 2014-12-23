@@ -1148,7 +1148,7 @@ void CIRCSock::SockError(int iErrno, const CString& sDescription) {
 				}
 				CString sSHA1;
 				if (GetPeerFingerprint(sSHA1))
-					m_pNetwork->PutStatus("SHA1: " + sSHA1);
+					m_pNetwork->PutStatus("SHA1: " + sSHA1.Escape_n(CString::EHEXCOLON, CString::EHEXCOLON));
 				CString sSHA256 = GetSSLPeerFingerprint();
 				m_pNetwork->PutStatus("SHA-256: " + sSHA256);
 				m_pNetwork->PutStatus("If you trust this certificate, do /znc AddTrustedServerFingerprint " + sSHA256);

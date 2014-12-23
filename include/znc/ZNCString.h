@@ -78,7 +78,8 @@ public:
 		ESQL,
 		ENAMEDFMT,
 		EDEBUG,
-		EMSGTAG
+		EMSGTAG,
+		EHEXCOLON,
 	} EEscape;
 
 	static const CaseSensitivity CaseSensitive = CaseSensitivity::CaseSensitive;

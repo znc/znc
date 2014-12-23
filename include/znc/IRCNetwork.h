@@ -122,7 +122,7 @@ public:
 	bool IsLastServer() const;
 
 	const SCString& GetTrustedFingerprints() const { return m_ssTrustedFingerprints; }
-	void AddTrustedFingerprint(const CString& sFP) { m_ssTrustedFingerprints.insert(sFP.AsLower()); }
+	void AddTrustedFingerprint(const CString& sFP) { m_ssTrustedFingerprints.insert(sFP.Escape_n(CString::EHEXCOLON, CString::EHEXCOLON)); }
 	void DelTrustedFingerprint(const CString& sFP) { m_ssTrustedFingerprints.erase(sFP); }
 
 	void SetIRCConnectEnabled(bool b);
