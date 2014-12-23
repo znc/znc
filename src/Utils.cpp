@@ -105,7 +105,7 @@ void CUtils::GenerateCert(FILE *pOut, const CString& sHost) {
 		X509_set_subject_name(pCert, pName);
 		X509_set_issuer_name(pCert, pName);
 
-		if (!X509_sign(pCert, pKey, EVP_sha1())) {
+		if (!X509_sign(pCert, pKey, EVP_sha256())) {
 			X509_free(pCert);
 			EVP_PKEY_free(pKey);
 			return;
