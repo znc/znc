@@ -901,7 +901,7 @@ public:
 				CTemplate& l = Tmpl.AddRow("EncodingLoop");
 				l["Encoding"] = sEncoding;
 			}
-			const CString sEncoding = pNetwork ? pNetwork->GetEncoding() : "UTF-8";
+			const CString sEncoding = pNetwork ? pNetwork->GetEncoding() : "^UTF-8";
 			if (sEncoding.empty()) {
 				Tmpl["EncodingUtf"] = "legacy";
 			} else if (sEncoding[0] == '*') {
@@ -1230,7 +1230,7 @@ public:
 				CTemplate& l = Tmpl.AddRow("EncodingLoop");
 				l["Encoding"] = sEncoding;
 			}
-			const CString sEncoding = pUser ? pUser->GetClientEncoding() : "UTF-8";
+			const CString sEncoding = pUser ? pUser->GetClientEncoding() : "^UTF-8";
 			if (sEncoding.empty()) {
 				Tmpl["EncodingUtf"] = "legacy";
 			} else if (sEncoding[0] == '*') {
