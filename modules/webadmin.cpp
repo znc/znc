@@ -843,29 +843,6 @@ public:
 
 				Tmpl["IRCConnectEnabled"] = CString(pNetwork->GetIRCConnectEnabled());
 
-#ifdef HAVE_ICU
-				for (const CString& sEncoding : CUtils::GetEncodings()) {
-					CTemplate& l = Tmpl.AddRow("EncodingLoop");
-					l["Encoding"] = sEncoding;
-				}
-				const CString& sEncoding = pNetwork->GetEncoding();
-				if (sEncoding.empty()) {
-					Tmpl["EncodingUtf"] = "legacy";
-				} else if (sEncoding[0] == '*') {
-					Tmpl["EncodingUtf"] = "receive";
-					Tmpl["Encoding"] = sEncoding.substr(1);
-				} else if (sEncoding[0] == '^') {
-					Tmpl["EncodingUtf"] = "send";
-					Tmpl["Encoding"] = sEncoding.substr(1);
-				} else {
-					Tmpl["EncodingUtf"] = "simple";
-					Tmpl["Encoding"] = sEncoding;
-				}
-#else
-				Tmpl["EncodingDisabled"] = "true";
-				Tmpl["EncodingUtf"] = "legacy";
-#endif
-
 				const vector<CServer*>& vServers = pNetwork->GetServers();
 				for (unsigned int a = 0; a < vServers.size(); a++) {
 					CTemplate& l = Tmpl.AddRow("ServerLoop");
@@ -918,6 +895,29 @@ public:
 					mod["ModName"] = (*i)->GetModName();
 				}
 			}
+
+#ifdef HAVE_ICU
+			for (const CString& sEncoding : CUtils::GetEncodings()) {
+				CTemplate& l = Tmpl.AddRow("EncodingLoop");
+				l["Encoding"] = sEncoding;
+			}
+			const CString sEncoding = pNetwork ? pNetwork->GetEncoding() : "UTF-8";
+			if (sEncoding.empty()) {
+				Tmpl["EncodingUtf"] = "legacy";
+			} else if (sEncoding[0] == '*') {
+				Tmpl["EncodingUtf"] = "receive";
+				Tmpl["Encoding"] = sEncoding.substr(1);
+			} else if (sEncoding[0] == '^') {
+				Tmpl["EncodingUtf"] = "send";
+				Tmpl["Encoding"] = sEncoding.substr(1);
+			} else {
+				Tmpl["EncodingUtf"] = "simple";
+				Tmpl["Encoding"] = sEncoding;
+			}
+#else
+			Tmpl["EncodingDisabled"] = "true";
+			Tmpl["EncodingUtf"] = "legacy";
+#endif
 
 			return true;
 		}
@@ -1230,7 +1230,7 @@ public:
 				CTemplate& l = Tmpl.AddRow("EncodingLoop");
 				l["Encoding"] = sEncoding;
 			}
-			const CString& sEncoding = pUser->GetClientEncoding();
+			const CString sEncoding = pUser ? pUser->GetClientEncoding() : "UTF-8";
 			if (sEncoding.empty()) {
 				Tmpl["EncodingUtf"] = "legacy";
 			} else if (sEncoding[0] == '*') {
