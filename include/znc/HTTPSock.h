@@ -38,7 +38,7 @@ public:
 
 	// Hooks
 	virtual bool ForceLogin();
-	virtual bool OnLogin(const CString& sUser, const CString& sPass);
+	virtual bool OnLogin(const CString& sUser, const CString& sPass, bool bBasic);
 	virtual void OnPageRequest(const CString& sURI) = 0;
 	virtual bool PrintFile(const CString& sFileName, CString sContentType = "");
 	// !Hooks

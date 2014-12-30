@@ -121,9 +121,9 @@ public:
 	CWebSock(const CString& sURIPrefix);
 	virtual ~CWebSock();
 
-	virtual bool ForceLogin();
-	virtual bool OnLogin(const CString& sUser, const CString& sPass);
-	virtual void OnPageRequest(const CString& sURI);
+	bool ForceLogin() override;
+	bool OnLogin(const CString& sUser, const CString& sPass, bool bBasic) override;
+	void OnPageRequest(const CString& sURI) override;
 
 	EPageReqResult PrintTemplate(const CString& sPageName, CString& sPageRet, CModule* pModule = NULL);
 	EPageReqResult PrintStaticFile(const CString& sPath, CString& sPageRet, CModule* pModule = NULL);

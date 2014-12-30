@@ -122,7 +122,7 @@ void CHTTPSock::ReadLine(const CString& sData) {
 		sLine.Token(2).Base64Decode(sUnhashed);
 		m_sUser = sUnhashed.Token(0, false, ":");
 		m_sPass = sUnhashed.Token(1, true, ":");
-		m_bLoggedIn = OnLogin(m_sUser, m_sPass);
+		m_bLoggedIn = OnLogin(m_sUser, m_sPass, true);
 	} else if (sName.Equals("Content-Length:")) {
 		m_uPostLen = sLine.Token(1).ToULong();
 		if (m_uPostLen > MAX_POST_SIZE)
@@ -664,7 +664,7 @@ bool CHTTPSock::ForceLogin() {
 	return false;
 }
 
-bool CHTTPSock::OnLogin(const CString& sUser, const CString& sPass) {
+bool CHTTPSock::OnLogin(const CString& sUser, const CString& sPass, bool bBasic) {
 	return false;
 }
 

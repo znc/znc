@@ -50,7 +50,7 @@ static CSessionManager Sessions;
 
 class CWebAuth : public CAuthBase {
 public:
-	CWebAuth(CWebSock* pWebSock, const CString& sUsername, const CString& sPassword);
+	CWebAuth(CWebSock* pWebSock, const CString& sUsername, const CString& sPassword, bool bBasic);
 	virtual ~CWebAuth() {}
 
 	void SetWebSock(CWebSock* pWebSock) { m_pWebSock = pWebSock; }
@@ -60,6 +60,7 @@ public:
 private:
 protected:
 	CWebSock*   m_pWebSock;
+	bool m_bBasic;
 };
 
 void CWebSock::FinishUserSessions(const CUser& User) {
@@ -107,9 +108,10 @@ void CWebSession::UpdateLastActive() {
 
 bool CWebSession::IsAdmin() const { return IsLoggedIn() && m_pUser->IsAdmin(); }
 
-CWebAuth::CWebAuth(CWebSock* pWebSock, const CString& sUsername, const CString& sPassword)
+CWebAuth::CWebAuth(CWebSock* pWebSock, const CString& sUsername, const CString& sPassword, bool bBasic)
 	: CAuthBase(sUsername, sPassword, pWebSock) {
 	m_pWebSock = pWebSock;
+	m_bBasic = bBasic;
 }
 
 void CWebSession::ClearMessageLoops() {
@@ -159,7 +161,9 @@ void CWebAuth::AcceptedLogin(CUser& User) {
 
 		m_pWebSock->SetLoggedIn(true);
 		m_pWebSock->UnPauseRead();
-		m_pWebSock->Redirect("/?cookie_check=true");
+		if (!m_bBasic) {
+			m_pWebSock->Redirect("/?cookie_check=true");
+		}
 
 		DEBUG("Successful login attempt ==> USER [" + User.GetUserName() + "] ==> SESSION [" + spSession->GetId() + "]");
 	}
@@ -628,7 +632,7 @@ CWebSock::EPageReqResult CWebSock::OnPageRequestInternal(const CString& sURI, CS
 		if (GetParam("submitted").ToBool()) {
 			m_sUser = GetParam("user");
 			m_sPass = GetParam("pass");
-			m_bLoggedIn = OnLogin(m_sUser, m_sPass);
+			m_bLoggedIn = OnLogin(m_sUser, m_sPass, false);
 
 			// AcceptedLogin()/RefusedLogin() will call Redirect()
 			return PAGE_DEFERRED;
@@ -868,9 +872,9 @@ CString CWebSock::GetCSRFCheck() {
 	return pSession->GetId().MD5();
 }
 
-bool CWebSock::OnLogin(const CString& sUser, const CString& sPass) {
-	DEBUG("=================== CWebSock::OnLogin()");
-	m_spAuth = std::make_shared<CWebAuth>(this, sUser, sPass);
+bool CWebSock::OnLogin(const CString& sUser, const CString& sPass, bool bBasic) {
+	DEBUG("=================== CWebSock::OnLogin(), basic auth? " << std::boolalpha << bBasic);
+	m_spAuth = std::make_shared<CWebAuth>(this, sUser, sPass, bBasic);
 
 	// Some authentication module could need some time, block this socket
 	// until then. CWebAuth will UnPauseRead().
