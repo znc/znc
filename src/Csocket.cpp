@@ -1433,6 +1433,9 @@ bool Csock::ConfigureCTXOptions( SSL_CTX * pCTX )
 		if( m_bNoSSLCompression )
 			uCTXOptions |= SSL_OP_NO_COMPRESSION;
 #endif /* SSL_OP_NO_COMPRESSION */
+#ifdef SSL_OP_CIPHER_SERVER_PREFERENCE
+		uCTXOptions |= SSL_OP_CIPHER_SERVER_PREFERENCE;
+#endif /* SSL_OP_CIPHER_SERVER_PREFERENCE */
 		if( uCTXOptions )
 			SSL_CTX_set_options( pCTX, uCTXOptions );
 	}
