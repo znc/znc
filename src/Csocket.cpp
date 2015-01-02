@@ -1041,6 +1041,7 @@ void Csock::Copy( const Csock & cCopy )
 
 #ifdef HAVE_LIBSSL
 	m_bNoSSLCompression = cCopy.m_bNoSSLCompression;
+	m_bSSLCipherServerPreference = cCopy.m_bSSLCipherServerPreference;
 	m_uDisableProtocols = cCopy.m_uDisableProtocols;
 	m_iRequireClientCertFlags = cCopy.m_iRequireClientCertFlags;
 	m_sSSLBuffer	= cCopy.m_sSSLBuffer;
@@ -1433,6 +1434,10 @@ bool Csock::ConfigureCTXOptions( SSL_CTX * pCTX )
 		if( m_bNoSSLCompression )
 			uCTXOptions |= SSL_OP_NO_COMPRESSION;
 #endif /* SSL_OP_NO_COMPRESSION */
+#ifdef SSL_OP_CIPHER_SERVER_PREFERENCE
+		if( m_bSSLCipherServerPreference )
+			uCTXOptions |= SSL_OP_CIPHER_SERVER_PREFERENCE;
+#endif /* SSL_OP_CIPHER_SERVER_PREFERENCE */
 		if( uCTXOptions )
 			SSL_CTX_set_options( pCTX, uCTXOptions );
 	}
@@ -1708,7 +1713,7 @@ SSL_CTX * Csock::SetupServerCTX()
 		// Presumably PEM_read_DHparams failed, as there was no DH structure. Clearing those errors here so they are removed off the stack
 		ERR_clear_error();
 	}
-
+#ifndef OPENSSL_NO_ECDH
 	// Errors for the following block are non-fatal (ECDHE is nice to have
 	// but not a requirement)
 #if defined( SSL_CTX_set_ecdh_auto )
@@ -1725,8 +1730,11 @@ SSL_CTX * Csock::SetupServerCTX()
 		EC_KEY_free( ecdh );
 	}
 	else
+	{
 		ERR_clear_error();
-#endif
+	}
+#endif /* SSL_CTX_set_tmp_ecdh */
+#endif /* OPENSSL_NO_ECDH */
 
 	if( !ConfigureCTXOptions( pCTX ) )
 	{
@@ -2992,6 +3000,7 @@ void Csock::Init( const CS_STRING & sHostname, uint16_t uPort, int iTimeout )
 	m_iRequireClientCertFlags = 0;
 	m_uDisableProtocols = 0;
 	m_bNoSSLCompression = false;
+	m_bSSLCipherServerPreference = false;
 #endif /* HAVE_LIBSSL */
 	m_iTcount = 0;
 	m_iReadSock = CS_INVALID_SOCK;
