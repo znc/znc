@@ -18,14 +18,13 @@ matrix:
         #   env: CFGFLAGS=--enable-debug MYCXXFLAGS="-fsanitize=undefined -O1 -fPIE -fno-sanitize-recover" MYLDFLAGS="-fsanitize=undefined -pie -fno-sanitize-recover"
 before_install:
     - cat /proc/cpuinfo /proc/meminfo
+    - lsb_release -a
     - if [[ "$CXX" == "g++" ]]; then sudo add-apt-repository ppa:ubuntu-toolchain-r/test -y; fi
+    - sudo add-apt-repository ppa:darthgandalf/swig
     - sudo apt-get update -qq
-    - sudo apt-get install -qq libperl-dev python3-dev tcl-dev libsasl2-dev libgtest-dev libicu-dev
+    - sudo apt-get install -qq libperl-dev python3-dev tcl-dev libsasl2-dev libgtest-dev libicu-dev swig3.0 doxygen graphviz
     - if [[ "$CXX" == "g++" ]]; then sudo apt-get install -qq g++-4.8; fi
     - if [[ "$CXX" == "g++" ]]; then export CXX="g++-4.8" CC="gcc-4.8"; fi
-    - apt-cache show swig
-    - ( cd ~ && wget http://prdownloads.sourceforge.net/swig/swig-3.0.2.tar.gz && tar xvf swig-3.0.2.tar.gz && cd swig-3.0.2 && ./configure && make -j3 && sudo make install )
-    - sudo apt-get install doxygen graphviz
 script:
     - ./bootstrap.sh
     - mkdir build
