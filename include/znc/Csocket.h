@@ -859,6 +859,8 @@ public:
 	void DisableSSLProtocols( u_int uDisableOpts ) { m_uDisableProtocols = uDisableOpts; }
 	//! allow disabling compression
 	void DisableSSLCompression() { m_bNoSSLCompression = true; }
+	//! select the ciphers in server-preferred order
+	void FollowSSLCipherServerPreference() { m_bSSLCipherServerPreference = true; }
 	//! Set the cipher type ( openssl cipher [to see ciphers available] )
 	void SetCipher( const CS_STRING & sCipher );
 	const CS_STRING & GetCipher() const;
@@ -1186,6 +1188,7 @@ private:
 	uint32_t	m_iRequireClientCertFlags;
 	u_int		m_uDisableProtocols;
 	bool		m_bNoSSLCompression;
+	bool		m_bSSLCipherServerPreference;
 
 	FPCertVerifyCB		m_pCerVerifyCB;
 
