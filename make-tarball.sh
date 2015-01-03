@@ -5,7 +5,7 @@ TMPDIR=`mktemp -d`
 trap 'rm -rf $TMPDIR' EXIT
 
 if [ ! -f include/znc/main.h ] ; then
-    echo "Can't find source!"
+	echo "Can't find source!"
 	exit -1
 fi
 
@@ -39,15 +39,17 @@ TARGZ=`realpath $TARGZ`
 
 echo "Exporting . to $TMPDIR/$ZNCDIR..."
 git checkout-index --all --prefix=$TMPDIR/$ZNCDIR/
+sed -e 's:#include "Csocket.h":#include <znc/Csocket.h>:' third_party/Csocket/Csocket.cc > $TMPDIR/$ZNCDIR/src/Csocket.cpp
+sed -e 's:#include "defines.h":#include <znc/defines.h>:' third_party/Csocket/Csocket.h > $TMPDIR/$ZNCDIR/include/znc/Csocket.h
 (
 	cd $TMPDIR/$ZNCDIR
 	echo "Generating configure"
 	AUTOMAKE_FLAGS="--add-missing --copy" ./autogen.sh
 	rm -r autom4te.cache/
-    mkdir -p modules/.depend
-    make -C modules -f modperl/Makefile.gen srcdir=. SWIG=/usr/bin/swig PERL=/usr/bin/perl
-    make -C modules -f modpython/Makefile.gen srcdir=. SWIG=/usr/bin/swig PERL=/usr/bin/perl
-    rm -rf modules/.depend
+	mkdir -p modules/.depend
+	make -C modules -f modperl/Makefile.gen srcdir=. SWIG=/usr/bin/swig PERL=/usr/bin/perl
+	make -C modules -f modpython/Makefile.gen srcdir=. SWIG=/usr/bin/swig PERL=/usr/bin/perl
+	rm -rf modules/.depend
 	rm .travis*
 	rm make-tarball.sh
 	sed -e "s/THIS_IS_NOT_TARBALL//" -i Makefile.in

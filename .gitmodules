@@ -1,0 +1,3 @@
+[submodule "Csocket"]
+	path = third_party/Csocket
+	url = https://github.com/jimloco/Csocket.git
