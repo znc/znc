@@ -38,11 +38,12 @@ void CQuery::SendBuffer(CClient* pClient, const CBuffer& Buffer) {
 	if (m_pNetwork && m_pNetwork->IsUserAttached()) {
 		// Based on CChan::SendBuffer()
 		if (!Buffer.IsEmpty()) {
-			MCString msParams;
-			msParams["target"] = m_pNetwork->GetIRCNick().GetNick();
 			const vector<CClient*> & vClients = m_pNetwork->GetClients();
 			for (size_t uClient = 0; uClient < vClients.size(); ++uClient) {
 				CClient * pUseClient = (pClient ? pClient : vClients[uClient]);
+
+				MCString msParams;
+				msParams["target"] = pUseClient->GetNick();
 
 				bool bWasPlaybackActive = pUseClient->IsPlaybackActive();
 				pUseClient->SetPlaybackActive(true);

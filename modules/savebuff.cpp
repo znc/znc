@@ -30,9 +30,12 @@
 #include <znc/FileUtils.h>
 #include <znc/Query.h>
 
+using std::set;
 using std::vector;
 
-#define CRYPT_VERIFICATION_TOKEN "::__:SAVEBUFF:__::"
+#define LEGACY_VERIFICATION_TOKEN "::__:SAVEBUFF:__::"
+#define CHAN_VERIFICATION_TOKEN "::__:CHANBUFF:__::"
+#define QUERY_VERIFICATION_TOKEN "::__:QUERYBUFF:__::"
 // this is basically plain text, but so is having the pass in the command line so *shrug*
 // you could at least do something kind of cool like a bunch of unprintable text
 #define CRYPT_LAME_PASS "::__:NOPASS:__::"
@@ -58,7 +61,6 @@ public:
 	MODCONSTRUCTOR(CSaveBuff)
 	{
 		m_bBootError = false;
-		m_bFirstLoad = false;
 
 		AddHelpCommand();
 		AddCommand("SetPass", static_cast<CModCommand::ModCmdFunc>(&CSaveBuff::OnSetPassCommand), "<password>", "Sets the password");
@@ -69,7 +71,7 @@ public:
 	{
 		if (!m_bBootError)
 		{
-			SaveBufferToDisk();
+			SaveBuffersToDisk();
 		}
 	}
 
@@ -94,114 +96,127 @@ public:
 		return( !m_bBootError );
 	}
 
-	virtual void OnIRCConnected() override
+	virtual bool OnBoot() override
 	{
-		// dropped this into here because there seems to have been a changed where the module is loaded before the channels.
-		// this is a good trigger to tell it to backfill the channels
-		if( !m_bFirstLoad )
-		{
-			m_bFirstLoad = true;
-			AddTimer(new CSaveBuffJob(this, 60, 0, "SaveBuff", "Saves the current buffer to disk every 1 minute"));
-			const vector<CChan *>& vChans = GetNetwork()->GetChans();
-			for (u_int a = 0; a < vChans.size(); a++)
-			{
-				if (!BootStrap(vChans[a]))
-				{
-					PutUser(":***!znc@znc.in PRIVMSG " + vChans[a]->GetName() + " :Failed to decrypt this channel, did you change the encryption pass?");
+		AddTimer(new CSaveBuffJob(this, 60, 0, "SaveBuff", "Saves the current buffer to disk every 1 minute"));
+
+		CDir saveDir(GetSavePath());
+		for (CFile* pFile : saveDir) {
+			CString sName;
+			CString sBuffer;
+
+			EBufferType eType = DecryptBuffer(pFile->GetLongName(), sBuffer, sName);
+			switch (eType) {
+			case InvalidBuffer:
+				m_sPassword = "";
+				CUtils::PrintError("[" + GetModName() + ".so] Failed to Decrypt [" + pFile->GetLongName() + "]");
+				if (!sName.empty()) {
+					PutUser(":***!znc@znc.in PRIVMSG " + sName + " :Failed to decrypt this buffer, did you change the encryption pass?");
 				}
-			}
-			const vector<CQuery *>& vQueries = GetNetwork()->GetQueries();
-			for (u_int a = 0; a < vQueries.size(); a++)
-			{
-				if (!BootStrap(vQueries[a]))
-				{
-					PutUser(":***!znc@znc.in PRIVMSG " + vQueries[a]->GetName() + " :Failed to decrypt this query, did you change the encryption pass?");
+				break;
+			case ChanBuffer:
+				if (CChan *pChan = GetNetwork()->FindChan(sName)) {
+					BootStrap(pChan, sBuffer);
 				}
+				break;
+			case QueryBuffer:
+				if (CQuery* pQuery = GetNetwork()->AddQuery(sName)) {
+					BootStrap(pQuery, sBuffer);
+				}
+				break;
+			default:
+				break;
 			}
 		}
+		return true;
 	}
 
 	template<typename T>
-	bool BootStrap(T *pTarget)
+	void BootStrap(T *pTarget, const CString& sContent)
 	{
-		CString sFile;
-		if (DecryptBuffer(pTarget->GetName(), sFile))
-		{
-			if (!pTarget->GetBuffer().IsEmpty())
-				return(true); // reloaded a module probably in this case, so just verify we can decrypt the file
+		if (!pTarget->GetBuffer().IsEmpty())
+			return; // in this case the module was probably reloaded
 
-			VCString vsLines;
-			VCString::iterator it;
+		VCString vsLines;
+		VCString::iterator it;
 
-			sFile.Split("\n", vsLines);
+		sContent.Split("\n", vsLines);
 
-			for (it = vsLines.begin(); it != vsLines.end(); ++it) {
-				CString sLine(*it);
-				sLine.Trim();
-				if (sLine[0] == '@' && it+1 != vsLines.end())
-				{
-					CString sTimestamp = sLine.Token(0);
-					sTimestamp.TrimLeft("@");
-					timeval ts;
-					ts.tv_sec = sTimestamp.Token(0, false, ",").ToLongLong();
-					ts.tv_usec = sTimestamp.Token(1, false, ",").ToLong();
+		for (it = vsLines.begin(); it != vsLines.end(); ++it) {
+			CString sLine(*it);
+			sLine.Trim();
+			if (sLine[0] == '@' && it+1 != vsLines.end())
+			{
+				CString sTimestamp = sLine.Token(0);
+				sTimestamp.TrimLeft("@");
+				timeval ts;
+				ts.tv_sec = sTimestamp.Token(0, false, ",").ToLongLong();
+				ts.tv_usec = sTimestamp.Token(1, false, ",").ToLong();
 
-					CString sFormat = sLine.Token(1, true);
+				CString sFormat = sLine.Token(1, true);
 
-					CString sText(*++it);
-					sText.Trim();
+				CString sText(*++it);
+				sText.Trim();
 
-					pTarget->AddBuffer(sFormat, sText, &ts);
-				} else
-				{
-					// Old format, escape the line and use as is.
-					pTarget->AddBuffer(_NAMEDFMT(sLine));
-				}
+				pTarget->AddBuffer(sFormat, sText, &ts);
+			} else
+			{
+				// Old format, escape the line and use as is.
+				pTarget->AddBuffer(_NAMEDFMT(sLine));
 			}
-		} else
-		{
-			m_sPassword = "";
-			CUtils::PrintError("[" + GetModName() + ".so] Failed to Decrypt [" + pTarget->GetName() + "]");
-			return(false);
 		}
-
-		return(true);
 	}
 
-	void SaveBufferToDisk()
+	void SaveBufferToDisk(const CBuffer& Buffer, const CString& sPath, const CString& sHeader)
+	{
+		CFile File(sPath);
+		CString sContent = sHeader + "\n";
+
+		size_t uSize = Buffer.Size();
+		for (unsigned int uIdx = 0; uIdx < uSize; uIdx++) {
+			const CBufLine& Line = Buffer.GetBufLine(uIdx);
+			timeval ts = Line.GetTime();
+			sContent +=
+				"@" + CString(ts.tv_sec) + "," + CString(ts.tv_usec) + " " +
+				Line.GetFormat() + "\n" +
+				Line.GetText() + "\n";
+		}
+
+		CBlowfish c(m_sPassword, BF_ENCRYPT);
+		sContent = c.Crypt(sContent);
+
+		if (File.Open(O_WRONLY | O_CREAT | O_TRUNC, 0600)) {
+			File.Chmod(0600);
+			File.Write(sContent);
+		}
+		File.Close();
+	}
+
+	void SaveBuffersToDisk()
 	{
 		if (!m_sPassword.empty())
 		{
-			const vector<CChan *>& vChans = GetNetwork()->GetChans();
-			for (u_int a = 0; a < vChans.size(); a++)
-			{
-				CString sPath = GetPath(vChans[a]->GetName());
-				CFile File(sPath);
+			set<CString> ssPaths;
 
-				const CBuffer& Buffer = vChans[a]->GetBuffer();
-				CString sLine;
+			const vector<CChan*>& vChans = GetNetwork()->GetChans();
+			for (CChan* pChan : vChans) {
+				CString sPath = GetPath(pChan->GetName());
+				SaveBufferToDisk(pChan->GetBuffer(), sPath, CHAN_VERIFICATION_TOKEN + pChan->GetName());
+				ssPaths.insert(sPath);
+			}
 
-				CString sFile = CRYPT_VERIFICATION_TOKEN;
+			const vector<CQuery*>& vQueries = GetNetwork()->GetQueries();
+			for (CQuery* pQuery : vQueries) {
+				CString sPath = GetPath(pQuery->GetName());
+				SaveBufferToDisk(pQuery->GetBuffer(), sPath, QUERY_VERIFICATION_TOKEN + pQuery->GetName());
+				ssPaths.insert(sPath);
+			}
 
-				size_t uSize = Buffer.Size();
-				for (unsigned int uIdx = 0; uIdx < uSize; uIdx++) {
-					const CBufLine& Line = Buffer.GetBufLine(uIdx);
-					timeval ts = Line.GetTime();
-					sFile +=
-						"@" + CString(ts.tv_sec) + "," + CString(ts.tv_usec) + " " +
-						Line.GetFormat() + "\n" +
-						Line.GetText() + "\n";
-				}
-
-				CBlowfish c(m_sPassword, BF_ENCRYPT);
-				sFile = c.Crypt(sFile);
-				if (!sPath.empty())
-				{
-					if (File.Open(O_WRONLY | O_CREAT | O_TRUNC, 0600)) {
-						File.Chmod(0600);
-						File.Write(sFile);
-					}
-					File.Close();
+			// cleanup leftovers ie. cleared buffers
+			CDir saveDir(GetSavePath());
+			for (CFile* pFile : saveDir) {
+				if (ssPaths.count(pFile->GetLongName()) == 0) {
+					pFile->Delete();
 				}
 			}
 		}
@@ -230,7 +245,8 @@ public:
 		if (sCommand.Equals("dumpbuff")) {
 			// for testing purposes - hidden from help
 			CString sFile;
-			if (DecryptBuffer(sArgs, sFile))
+			CString sName;
+			if (DecryptBuffer(GetPath(sArgs), sFile, sName))
 			{
 				VCString vsLines;
 				VCString::iterator it;
@@ -259,15 +275,16 @@ public:
 
 	void OnSaveCommand(const CString& sCmdLine)
 	{
-		SaveBufferToDisk();
+		SaveBuffersToDisk();
 		PutModule("Done.");
 	}
 
 	void Replay(const CString & sBuffer)
 	{
 		CString sFile;
+		CString sName;
 		PutUser(":***!znc@znc.in PRIVMSG " + sBuffer + " :Buffer Playback...");
-		if (DecryptBuffer(sBuffer, sFile))
+		if (DecryptBuffer(GetPath(sBuffer), sFile, sName))
 		{
 			VCString vsLines;
 			VCString::iterator it;
@@ -283,12 +300,24 @@ public:
 		PutUser(":***!znc@znc.in PRIVMSG " + sBuffer + " :Playback Complete.");
 	}
 
-	CString GetPath(const CString & sChannel)
+	CString GetPath(const CString & sTarget) const
 	{
-		CString sBuffer = GetUser()->GetUserName() + sChannel.AsLower();
+		CString sBuffer = GetUser()->GetUserName() + sTarget.AsLower();
 		CString sRet = GetSavePath();
 		sRet += "/" + CBlowfish::MD5(sBuffer, true);
 		return(sRet);
+	}
+
+	CString FindLegacyBufferName(const CString & sPath) const
+	{
+		const vector<CChan*>& vChans = GetNetwork()->GetChans();
+		for (CChan* pChan : vChans) {
+			const CString& sName = pChan->GetName();
+			if (GetPath(sName).Equals(sPath)) {
+				return sName;
+			}
+		}
+		return CString();
 	}
 
 #ifdef LEGACY_SAVEBUFF /* event logging is deprecated now in savebuf. Use buffextras module along side of this */
@@ -317,7 +346,7 @@ public:
 			AddBuffer(*vChans[a], SpoofChanMsg(vChans[a]->GetName(), cNick.GetNickMask() + " QUIT " + sMessage));
 		}
 		if (cNick.NickEquals(GetUser()->GetNick()))
-			SaveBufferToDisk(); // need to force a save here to see this!
+			SaveBuffersToDisk(); // need to force a save here to see this!
 	}
 
 	virtual void OnNick(const CNick& cNick, const CString& sNewNick, const vector<CChan*>& vChans) override
@@ -345,41 +374,60 @@ public:
 	{
 		AddBuffer(cChannel, SpoofChanMsg(cChannel.GetName(), cNick.GetNickMask() + " PART"));
 		if (cNick.NickEquals(GetUser()->GetNick()))
-			SaveBufferToDisk(); // need to force a save here to see this!
+			SaveBuffersToDisk(); // need to force a save here to see this!
 	}
 #endif /* LEGACY_SAVEBUFF */
 
 private:
 	bool    m_bBootError;
-	bool    m_bFirstLoad;
 	CString m_sPassword;
-	bool DecryptBuffer(const CString & sName, CString & sBuffer)
+
+	enum EBufferType {
+		InvalidBuffer = 0,
+		EmptyBuffer,
+		ChanBuffer,
+		QueryBuffer
+	};
+
+	EBufferType DecryptBuffer(const CString& sPath, CString& sBuffer, CString& sName)
 	{
-		CString sPath = GetPath(sName);
-		CString sFile;
+		CString sContent;
 		sBuffer = "";
 
 		CFile File(sPath);
 
-		if (sPath.empty() || !File.Open() || !File.ReadFile(sFile))
-			 return(true); // gonna be successful here
+		if (sPath.empty() || !File.Open() || !File.ReadFile(sContent))
+			 return EmptyBuffer;
 
 		File.Close();
 
-		if (!sFile.empty())
+		if (!sContent.empty())
 		{
 			CBlowfish c(m_sPassword, BF_DECRYPT);
-			sBuffer = c.Crypt(sFile);
+			sBuffer = c.Crypt(sContent);
 
-			if (sBuffer.Left(strlen(CRYPT_VERIFICATION_TOKEN)) != CRYPT_VERIFICATION_TOKEN)
+			if (sBuffer.TrimPrefix(LEGACY_VERIFICATION_TOKEN))
 			{
-				// failed to decode :(
-				PutModule("Unable to decode Encrypted file [" + sPath + "]");
-				return(false);
+				sName = FindLegacyBufferName(sPath);
+				return ChanBuffer;
 			}
-			sBuffer.erase(0, strlen(CRYPT_VERIFICATION_TOKEN));
+			else if (sBuffer.TrimPrefix(CHAN_VERIFICATION_TOKEN))
+			{
+				sName = sBuffer.FirstLine();
+				if (sBuffer.TrimLeft(sName + "\n"))
+					return ChanBuffer;
+			}
+			else if (sBuffer.TrimPrefix(QUERY_VERIFICATION_TOKEN))
+			{
+				sName = sBuffer.FirstLine();
+				if (sBuffer.TrimLeft(sName + "\n"))
+					return QueryBuffer;
+			}
+
+			PutModule("Unable to decode Encrypted file [" + sPath + "]");
+			return InvalidBuffer;
 		}
-		return(true);
+		return EmptyBuffer;
 	}
 };
 
@@ -387,7 +435,7 @@ private:
 void CSaveBuffJob::RunJob()
 {
 	CSaveBuff *p = (CSaveBuff *)GetModule();
-	p->SaveBufferToDisk();
+	p->SaveBuffersToDisk();
 }
 
 template<> void TModInfo<CSaveBuff>(CModInfo& Info) {
