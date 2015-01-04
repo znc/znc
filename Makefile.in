@@ -163,6 +163,9 @@ include/znc/Csocket.h: third_party/Csocket/Csocket.h
 	@rm -f $@
 	@mkdir -p include/znc
 	@sed -e 's:#include "defines.h":#include <znc/defines.h>:' $^ > $@
+third_party/Csocket/Csocket.h third_party/Csocket/Csocket.cc:
+	@echo It looks like git submodules are not initialized. Run: git submodule update --init --recursive
+	@exit 1
 endif
 
 install: znc $(LIBZNC)
