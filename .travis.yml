@@ -30,7 +30,7 @@ script:
     - ./bootstrap.sh
     - mkdir build
     - cd build
-    - ../configure --enable-perl --enable-python --enable-tcl --enable-cyrus --with-gtest=/usr/src/gtest $CFGFLAGS CXXFLAGS="$CXXFLAGS $MYCXXFLAGS" LDFLAGS="$LDFLAGS $MYLDFLAGS"
+    - ../configure --enable-perl --enable-python --enable-tcl --enable-cyrus --enable-charset --with-gtest=/usr/src/gtest $CFGFLAGS CXXFLAGS="$CXXFLAGS $MYCXXFLAGS" LDFLAGS="$LDFLAGS $MYLDFLAGS"
     - cat config.log
     - make V=1 -j3
     - make V=1 test -j3
