@@ -1,39 +1,68 @@
 language: cpp
+os:
+    - linux
+    - osx
 compiler:
     - gcc
     - clang
 env:
       matrix:
-          - CFGFLAGS= MYCXXFLAGS= MYLDFLAGS=
+          - BUILD_TYPE=normal
+          - BUILD_TYPE=asan
+          - BUILD_TYPE=tsan
       global:
           - secure: "i2f2UVDnyHT/9z0U3XvgTj8eDERvnc1Wk7HpseEjb75JwGzqn/2R+RKHmoSrwK3hFgij2IMxZL19XtHFwMz9t5A/huAAKD74KMMI/QpeZEJ/sjT3CTLcE9HEVDdJOjc7dfLRxb2hZtgvx8clZIMrpeUdPhci8openff30KvXVbg="
 matrix:
-    include:
-        - compiler: clang
-          env: CFGFLAGS=--enable-debug MYCXXFLAGS="-fsanitize=address -O1 -fno-omit-frame-pointer -fno-optimize-sibling-calls -fPIE" MYLDFLAGS="-fsanitize=address -pie"
-        - compiler: clang
-          env: CFGFLAGS=--enable-debug MYCXXFLAGS="-fsanitize=thread -O1 -fPIE" MYLDFLAGS="-fsanitize=thread -pie"
-        # UBSan randomly crashes clang, and very often :(
-        # - compiler: clang
-        #   env: CFGFLAGS=--enable-debug MYCXXFLAGS="-fsanitize=undefined -O1 -fPIE -fno-sanitize-recover" MYLDFLAGS="-fsanitize=undefined -pie -fno-sanitize-recover"
+    exclude:
+        - os: osx
+          env: BUILD_TYPE=asan
+        - os: osx
+          env: BUILD_TYPE=tsan
+        - compiler: gcc
+          env: BUILD_TYPE=asan
+        - compiler: gcc
+          env: BUILD_TYPE=tsan
+        - os: osx
+          compiler: gcc
 before_install:
-    - cat /proc/cpuinfo /proc/meminfo
-    - lsb_release -a
-    - if [[ "$CXX" == "g++" ]]; then sudo add-apt-repository -y ppa:ubuntu-toolchain-r/test; fi
-    - sudo add-apt-repository -y ppa:teward/swig3.0
-    - sudo add-apt-repository -y ppa:teward/icu-backports
-    - sudo apt-get update -qq
-    - sudo apt-get install -qq libperl-dev python3-dev tcl-dev libsasl2-dev libgtest-dev libicu-dev swig3.0 doxygen graphviz
-    - if [[ "$CXX" == "g++" ]]; then sudo apt-get install -qq g++-4.8; fi
-    - if [[ "$CXX" == "g++" ]]; then export CXX="g++-4.8" CC="gcc-4.8"; fi
+    - "echo os: [$TRAVIS_OS_NAME] build: [$BUILD_TYPE]"
+    - if [[ "$BUILD_TYPE" == "normal" ]]; then export CFGFLAGS= MYCXXFLAGS= MYLDFLAGS=; fi
+    - if [[ "$BUILD_TYPE" == "asan" ]]; then export CFGFLAGS=--enable-debug MYCXXFLAGS="-fsanitize=address -O1 -fno-omit-frame-pointer -fno-optimize-sibling-calls -fPIE" MYLDFLAGS="-fsanitize=address -pie"; fi
+    - if [[ "$BUILD_TYPE" == "tsan" ]]; then export CFGFLAGS=--enable-debug MYCXXFLAGS="-fsanitize=thread -O1 -fPIE" MYLDFLAGS="-fsanitize=thread -pie"; fi
+      # UBSan randomly crashes clang, and very often :(
+      # CFGFLAGS=--enable-debug MYCXXFLAGS="-fsanitize=undefined -O1 -fPIE -fno-sanitize-recover" MYLDFLAGS="-fsanitize=undefined -pie -fno-sanitize-recover"
+    - if [[ "$TRAVIS_REPO_SLUG" == "znc/znc" && "$TRAVIS_PULL_REQUEST" == "false" && "$TRAVIS_BRANCH" == "master" ]]; then openssl aes-256-cbc -d -in .travis-github.enc -out ~/znc-docs-key -k ${SECRET_KEY}; fi
+    - export SECRET_KEY=no
+install:
+    - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then cat /proc/cpuinfo /proc/meminfo; fi
+    - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then lsb_release -a; fi
+    - if [[ "$TRAVIS_OS_NAME" == "linux" && "$CXX" == "g++" ]]; then sudo add-apt-repository -y ppa:ubuntu-toolchain-r/test; fi
+    - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then sudo add-apt-repository -y ppa:teward/swig3.0; fi
+    - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then sudo add-apt-repository -y ppa:teward/icu-backports; fi
+    - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then sudo apt-get update; fi
+    - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then sudo apt-get install libperl-dev python3-dev tcl-dev libsasl2-dev libgtest-dev libicu-dev swig3.0 doxygen graphviz; fi
+    - if [[ "$TRAVIS_OS_NAME" == "linux" && "$CXX" == "g++" ]]; then sudo apt-get install g++-4.8; fi
+    - if [[ "$TRAVIS_OS_NAME" == "linux" && "$CXX" == "g++" ]]; then export CXX="g++-4.8" CC="gcc-4.8"; fi
+    - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then export CFGFLAGS="$CFGFLAGS --with-gtest=/usr/src/gtest"; fi
+    - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then sw_vers; fi
+    - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then sysctl -a | grep cpu; fi
+    - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then sysctl -a | grep mem; fi
+    - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew config; fi
+    - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew list --versions; fi
+    - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew update; fi
+    - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew install swig python3 icu4c jq; fi
+    - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew info --json=v1 --installed | jq .; fi
+    - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then export PKG_CONFIG_PATH=$PKG_CONFIG_PATH:$(dirname $(find $(brew --cellar python3)/$(brew info --json=v1 python3 | jq -r '.[].installed | .[].version' | tail -n1) -name python3.pc)); fi
+    - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then export PKG_CONFIG_PATH=$PKG_CONFIG_PATH:$(dirname $(find $(brew --cellar icu4c  )/$(brew info --json=v1 icu4c   | jq -r '.[].installed | .[].version' | tail -n1) -name icu-uc.pc )); fi
+    - "echo pkg-config path: [$PKG_CONFIG_PATH]"
 script:
     - ./bootstrap.sh
     - mkdir build
     - cd build
-    - ../configure --enable-perl --enable-python --enable-tcl --enable-cyrus --enable-charset --with-gtest=/usr/src/gtest $CFGFLAGS CXXFLAGS="$CXXFLAGS $MYCXXFLAGS" LDFLAGS="$LDFLAGS $MYLDFLAGS"
+    - ../configure --enable-perl --enable-python --enable-tcl --enable-cyrus --enable-charset $CFGFLAGS CXXFLAGS="$CXXFLAGS $MYCXXFLAGS" LDFLAGS="$LDFLAGS $MYLDFLAGS"
     - cat config.log
     - make V=1 -j3
-    - make V=1 test -j3
+    - make V=1 test
     - sudo make install
     - cd ..
 after_success:
@@ -43,8 +72,6 @@ after_success:
     - |
           if [ "$BUILD_LEADER" == "YES" ] && [ "$BUILD_AGGREGATE_STATUS" == "others_succeeded" ] && [ "$TRAVIS_REPO_SLUG" == "znc/znc" ] && [ "$TRAVIS_PULL_REQUEST" == "false" ] && [ "$TRAVIS_BRANCH" == "master" ]; then
               echo "All builds passed!"
-              openssl aes-256-cbc -d -in .travis-github.enc -out ~/znc-docs-key -k ${SECRET_KEY}
-              export SECRET_KEY=no
               ./.travis-generate-docs.sh
           else
               echo "Not leader"
