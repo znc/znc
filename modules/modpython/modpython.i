@@ -14,7 +14,9 @@
  * limitations under the License.
  */
 
-%module znc_core %{
+%module znc_core
+
+%{
 #include <utility>
 #include "../include/znc/Utils.h"
 #include "../include/znc/Threads.h"
@@ -50,6 +52,14 @@ using std::allocator;
 %apply long { uint16_t };
 %apply long { uint32_t };
 %apply long { uint64_t };
+
+// Just makes generated python code slightly more beautiful.
+%feature("python:defaultargs");
+// Probably can be removed when swig is fixed to not produce bad code for some cases
+%feature("python:defaultargs", "0") CDir::MakeDir; // 0700 doesn't work in python3
+%feature("python:defaultargs", "0") CUtils::GetNumInput; // SyntaxError: non-default argument follows default argument
+%feature("python:defaultargs", "0") CModules::GetAvailableMods; // NameError: name 'UserModule' is not defined
+%feature("python:defaultargs", "0") CModules::GetDefaultMods; // NameError: name 'UserModule' is not defined
 
 %begin %{
 #include "znc/zncconfig.h"
