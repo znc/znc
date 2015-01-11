@@ -258,7 +258,8 @@ public:
 			m_bCloaked = true;
 			PutModule("Cloak successful: Your hostname is now cloaked.");
 
-			// Join channels immediately after our spoof is set.
+			// Join channels immediately after our spoof is set, but only if
+			// both UseCloakedHost and JoinAfterCloaked is enabled. See #602.
 			if (m_bJoinAfterCloaked) {
 				GetNetwork()->JoinChans();
 			}
@@ -275,7 +276,9 @@ public:
 	}
 
 	virtual EModRet OnJoining(CChan& Channel) override {
-		if (m_bJoinAfterCloaked && !m_bCloaked)
+		// Halt if are not already cloaked, but the user requres that we delay
+		// channel join till after we are cloaked.
+		if (!m_bCloaked && m_bUseCloakedHost && m_bJoinAfterCloaked)
 			return HALT;
 
 		return CONTINUE;
