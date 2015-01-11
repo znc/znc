@@ -80,6 +80,14 @@
 					<br /><span class="info">One server per line, "host [[+]port] [password]", + means SSL</span>
 				</div>
 
+				<div class="subsection twothird">
+					<div class="inputlabel">Trusted SSL fingerprints of this IRC network:</div>
+					<div><textarea name="fingerprints" cols="50" rows="5"><? LOOP TrustedFingerprints ?><? VAR FP ?>
+<? ENDLOOP ?>
+</textarea></div>
+					<br /><span class="info">When these certificates are encountered, checks for hostname, expiration date, CA are skipped</span>
+				</div>
+
 				<div class="subsection">
 					<div class="inputlabel">Flood protection:</div>
 					<div class="checkbox">

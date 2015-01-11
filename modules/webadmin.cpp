@@ -871,6 +871,10 @@ public:
 						l["InConfig"] = "true";
 					}
 				}
+				for (const CString& sFP : pNetwork->GetTrustedFingerprints()) {
+					CTemplate& l = Tmpl.AddRow("TrustedFingerprints");
+					l["FP"] = sFP;
+				}
 			} else {
 				if (!spSession->IsAdmin() && !pUser->HasSpaceForNewNetwork()) {
 					WebSock.PrintErrorPage("Network number limit reached. Ask an admin to increase the limit for you, or delete unneeded networks from Your Settings.");
@@ -1016,6 +1020,14 @@ public:
 		WebSock.GetRawParam("servers").Split("\n", vsArgs);
 		for (unsigned int a = 0; a < vsArgs.size(); a++) {
 			pNetwork->AddServer(vsArgs[a].Trim_n());
+		}
+
+		WebSock.GetRawParam("fingerprints").Split("\n", vsArgs);
+		while (!pNetwork->GetTrustedFingerprints().empty()) {
+			pNetwork->DelTrustedFingerprint(*pNetwork->GetTrustedFingerprints().begin());
+		}
+		for (const CString& sFP : vsArgs) {
+			pNetwork->AddTrustedFingerprint(sFP);
 		}
 
 		WebSock.GetParamValues("channel", vsArgs);
