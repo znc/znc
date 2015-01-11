@@ -1049,7 +1049,7 @@ void CIRCSock::TrySend() {
 		m_iSendsAllowed--;
 		bool bSkip = false;
 		CString& sLine = m_vsSendQueue.front();
-		ALLMODULECALL(OnSendToIRC(sLine), &bSkip);
+		IRCSOCKMODULECALL(OnSendToIRC(sLine), &bSkip);
 		if (!bSkip) {;
 			DEBUG("(" << m_pNetwork->GetUser()->GetUserName() << "/" << m_pNetwork->GetName() << ") ZNC -> IRC [" << sLine << "]");
 			Write(sLine + "\r\n");

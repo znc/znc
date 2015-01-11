@@ -770,7 +770,7 @@ CString CClient::GetFullName() const {
 void CClient::PutClient(const CString& sLine) {
 	bool bReturn = false;
 	CString sCopy = sLine;
-	ALLMODULECALL(OnSendToClient(sCopy, *this), &bReturn);
+	NETWORKMODULECALL(OnSendToClient(sCopy, *this), m_pUser, m_pNetwork, this, &bReturn);
 	if (bReturn) return;
 	DEBUG("(" << GetFullName() << ") ZNC -> CLI [" << sCopy << "]");
 	Write(sCopy + "\r\n");
