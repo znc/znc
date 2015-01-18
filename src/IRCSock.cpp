@@ -1152,8 +1152,6 @@ void CIRCSock::SockError(int iErrno, const CString& sDescription) {
 				CString sSHA256 = GetSSLPeerFingerprint();
 				m_pNetwork->PutStatus("SHA-256: " + sSHA256);
 				m_pNetwork->PutStatus("If you trust this certificate, do /znc AddTrustedServerFingerprint " + sSHA256);
-
-				m_pNetwork->PutStatus("Notice for early ZNC git/nightly adopters: if you previously added a fingerprint with lots of :ff: in it, please remove it. It was a bug, sorry. (This message will be removed before release)");
 			}
 		}
 #endif
