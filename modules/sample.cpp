@@ -291,5 +291,5 @@ template<> void TModInfo<CSampleMod>(CModInfo& Info) {
 	Info.SetArgsHelpText("Description of module arguments goes here.");
 }
 
-USERMODULEDEFS(CSampleMod, "To be used as a sample for writing modules")
+MODULEDEFS(CSampleMod, "To be used as a sample for writing modules")
 
