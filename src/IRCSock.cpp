@@ -916,7 +916,7 @@ bool CIRCSock::OnGeneralCTCP(CNick& Nick, CString& sMessage) {
 
 	if (!bHaveReply && !m_pNetwork->IsUserAttached()) {
 		if (sQuery == "VERSION") {
-			sReply = CZNC::GetTag(false);
+			sReply = CZNC::GetTag();
 		} else if (sQuery == "PING") {
 			sReply = sMessage.Token(1, true);
 		}
