@@ -47,8 +47,8 @@ sed -e 's:#include "defines.h":#include <znc/defines.h>:' third_party/Csocket/Cs
 	AUTOMAKE_FLAGS="--add-missing --copy" ./autogen.sh
 	rm -r autom4te.cache/
 	mkdir -p modules/.depend
-	make -C modules -f modperl/Makefile.gen srcdir=. SWIG=/usr/bin/swig PERL=/usr/bin/perl
-	make -C modules -f modpython/Makefile.gen srcdir=. SWIG=/usr/bin/swig PERL=/usr/bin/perl
+	make -C modules -f modperl/Makefile.gen srcdir=. SWIG=`which swig` PERL=`which perl`
+	make -C modules -f modpython/Makefile.gen srcdir=. SWIG=`which swig` PERL=`which perl`
 	rm -rf modules/.depend
 	rm .travis*
 	rm make-tarball.sh
