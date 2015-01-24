@@ -82,7 +82,7 @@ void CClient::SendRequiredPasswordNotice() {
 	PutClient(":irc.znc.in 464 " + GetNick() + " :Password required");
 	PutClient(":irc.znc.in NOTICE AUTH :*** "
 			  "You need to send your password. "
-			  "Try /quote PASS <username>:<password>");
+			  "Try /quote PASS <username>/<network>:<password>");
 }
 
 void CClient::ReadLine(const CString& sData) {
