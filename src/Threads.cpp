@@ -84,15 +84,12 @@ void CThreadPool::finishJob(CJob *job) const {
 }
 
 CThreadPool::~CThreadPool() {
-	/* Anyone has an idea how this can be done less ugly? */
 	CMutexLocker guard(m_mutex);
 	m_done = true;
 
-	while (m_num_threads > 0) {
+	if (m_num_threads > 0) {
 		m_cond.broadcast();
-		guard.unlock();
-		usleep(100);
-		guard.lock();
+		m_exit_cond.wait(m_mutex);
 	}
 }
 
@@ -134,6 +131,9 @@ void CThreadPool::threadFunc() {
 	assert(m_num_threads > 0 && m_num_idle > 0);
 	m_num_threads--;
 	m_num_idle--;
+
+	if (m_num_threads == 0 && m_done)
+		m_exit_cond.signal();
 }
 
 void CThreadPool::addJob(CJob *job) {

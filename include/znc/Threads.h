@@ -307,6 +307,9 @@ private:
 	// condition variable for reporting finished cancellation
 	CConditionVariable m_cancellationCond;
 
+	// condition variable for waiting running threads == 0
+	CConditionVariable m_exit_cond;
+
 	// when this is true, all threads should exit
 	bool m_done;
 
