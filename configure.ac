@@ -98,9 +98,6 @@ esac
 
 PKG_PROG_PKG_CONFIG()
 
-AC_ARG_WITH( [openssl],
-	AS_HELP_STRING([--with-openssl=DIR], [openssl installation prefix]),
-	[OPENSSL=$withval],)
 AC_ARG_ENABLE( [debug],
 	AS_HELP_STRING([--enable-debug], [enable debugging]),
 	[DEBUG="$enableval"],
@@ -293,13 +290,6 @@ fi
 
 SSL_TEXT="$SSL"
 if test "x$SSL" != "xno"; then
-	if test -n "$OPENSSL"; then
-		appendLib -L${OPENSSL}/lib
-		appendLib -L${OPENSSL}/lib64
-		appendCXX -I${OPENSSL}/include
-		PKG_CONFIG_PATH="$OPENSSL/lib/pkgconfig/:$OPENSSL/lib64/pkgconfig/:$PKG_CONFIG_PATH"
-	fi
-
 	old_SSL=$SSL
 	PKG_CHECK_MODULES([openssl], [openssl], [
 		appendLib "$openssl_LIBS"
