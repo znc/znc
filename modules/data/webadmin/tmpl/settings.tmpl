@@ -137,6 +137,13 @@
 				</div>
 
 
+				<div class="subsection">
+					<div class="inputlabel">Hide ZNC Version:</div>
+					<div class="checkbox"><input type="checkbox" name="hideversion" id="hideversion_checkbox"<? IF HideVersion ?> checked="checked"<? ENDIF ?> />
+						<label for="hideversion_checkbox">Hide version number from non-ZNC users</label></div>
+				</div>
+
+
 				<div class="subsection twothird">
 					<div class="inputlabel">MOTD:</div>
 					<textarea name="motd" cols="70" rows="5" class="monospace"><? LOOP MOTDLoop ?><? VAR Line ?>

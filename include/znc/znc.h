@@ -99,6 +99,7 @@ public:
 	void SetAnonIPLimit(unsigned int i) { m_uiAnonIPLimit = i; }
 	void SetServerThrottle(unsigned int i) { m_sConnectThrottle.SetTTL(i*1000); }
 	void SetProtectWebSessions(bool b) { m_bProtectWebSessions = b; }
+	void SetHideVersion(bool b) { m_bHideVersion = b; }
 	void SetConnectDelay(unsigned int i);
 	// !Setters
 
@@ -127,6 +128,7 @@ public:
 	unsigned int GetServerThrottle() const { return m_sConnectThrottle.GetTTL() / 1000; }
 	unsigned int GetConnectDelay() const { return m_uiConnectDelay; }
 	bool GetProtectWebSessions() const { return m_bProtectWebSessions; }
+	bool GetHideVersion() const { return m_bHideVersion; }
 	CString GetSSLCiphers() const { return m_sSSLCiphers; }
 	Csock::EDisableProtocol GetDisabledSSLProtocols() const { return static_cast<Csock::EDisableProtocol>(m_uDisabledSSLProtocols); }
 	// !Getters
@@ -229,6 +231,7 @@ protected:
 	unsigned int           m_uiConnectPaused;
 	TCacheMap<CString>     m_sConnectThrottle;
 	bool                   m_bProtectWebSessions;
+	bool                   m_bHideVersion;
 };
 
 #endif // !_ZNC_H

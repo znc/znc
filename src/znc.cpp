@@ -55,6 +55,7 @@ CZNC::CZNC() {
 	m_sConnectThrottle.SetTTL(30000);
 	m_pLockFile = NULL;
 	m_bProtectWebSessions = true;
+	m_bHideVersion = false;
 	m_uDisabledSSLProtocols = Csock::EDP_SSL;
 	m_sSSLProtocols = "";
 }
@@ -96,6 +97,9 @@ CString CZNC::GetVersion() {
 }
 
 CString CZNC::GetTag(bool bIncludeVersion, bool bHTML) {
+	if (!Get().m_bHideVersion) {
+		bIncludeVersion = true;
+	}
 	CString sAddress = bHTML ? "<a href=\"http://znc.in\">http://znc.in</a>" : "http://znc.in";
 
 	if (!bIncludeVersion) {
@@ -441,6 +445,7 @@ bool CZNC::WriteConfig() {
 	config.AddKeyValuePair("MaxBufferSize", CString(m_uiMaxBufferSize));
 	config.AddKeyValuePair("SSLCertFile", CString(m_sSSLCertFile));
 	config.AddKeyValuePair("ProtectWebSessions", CString(m_bProtectWebSessions));
+	config.AddKeyValuePair("HideVersion", CString(m_bHideVersion));
 	config.AddKeyValuePair("Version", CString(VERSION_STR));
 
 	for (size_t l = 0; l < m_vpListeners.size(); l++) {
@@ -1099,6 +1104,8 @@ bool CZNC::DoRehash(CString& sError)
 		m_uiMaxBufferSize = sVal.ToUInt();
 	if (config.FindStringEntry("protectwebsessions", sVal))
   		m_bProtectWebSessions = sVal.ToBool();
+	if (config.FindStringEntry("hideversion", sVal))
+		m_bHideVersion = sVal.ToBool();
 
 	if (config.FindStringEntry("sslprotocols", m_sSSLProtocols)) {
 		VCString vsProtocols;
