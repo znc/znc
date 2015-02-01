@@ -199,6 +199,7 @@ int main(int argc, char** argv) {
 #ifdef HAVE_LIBSSL
 	bool bMakePem = false;
 #endif
+	CZNC::CreateInstance();
 
 	while ((iArg = getopt_long(argc, argv, "hvnrcspd:Df", g_LongOpts, &iOptIndex)) != -1) {
 		switch (iArg) {
@@ -251,8 +252,6 @@ int main(int argc, char** argv) {
 		CUtils::PrintError("Use --datadir instead.");
 		return 1;
 	}
-
-	CZNC::CreateInstance();
 
 	CZNC* pZNC = &CZNC::Get();
 	pZNC->InitDirs(((argc) ? argv[0] : ""), sDataDir);
