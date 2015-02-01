@@ -234,6 +234,10 @@ void CClient::ReadLine(const CString& sData) {
 				sCTCP.LeftChomp();
 				sCTCP.RightChomp();
 
+				if (sCTCP.Token(0) == "VERSION") {
+					sCTCP += " via " + CZNC::GetTag(false);
+				}
+
 				NETWORKMODULECALL(OnUserCTCPReply(sTarget, sCTCP), m_pUser, m_pNetwork, this, &bContinue);
 				if (bContinue) continue;
 
