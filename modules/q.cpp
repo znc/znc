@@ -44,7 +44,7 @@ public:
 		m_bUseChallenge     = (sTmp = GetNV("UseChallenge")).empty()  ? true : sTmp.ToBool();
 		m_bRequestPerms     = GetNV("RequestPerms").ToBool();
 		m_bJoinOnInvite     = (sTmp = GetNV("JoinOnInvite")).empty() ? true : sTmp.ToBool();
-		m_bJoinAfterCloaked = (sTmp = GetNV("JoinAfterCloaked")).empty() ? true : sTmp.ToBool();
+		m_bJoinAfterCloaked = (sTmp = GetNV("JoinAfterCloaked")).empty() ? false : sTmp.ToBool();
 
 		// Make sure NVs are stored in config. Note: SetUseCloakedHost() is called further down.
 		SetUseChallenge(m_bUseChallenge);
