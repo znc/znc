@@ -70,7 +70,7 @@ public:
 		AddCommand("Help",        static_cast<CModCommand::ModCmdFunc>(&CSASLMod::PrintHelp),
 			"search", "Generate this output");
 		AddCommand("Set",         static_cast<CModCommand::ModCmdFunc>(&CSASLMod::Set),
-			"username password", "Set username and password for the PLAIN mechanism");
+			"<username> [<password>]", "Set username and password for the mechanisms that need them. You can also omit the password to only set username");
 		AddCommand("Mechanism",   static_cast<CModCommand::ModCmdFunc>(&CSASLMod::SetMechanismCommand),
 			"[mechanism[ ...]]", "Set the mechanisms to be attempted (in order)");
 		AddCommand("RequireAuth", static_cast<CModCommand::ModCmdFunc>(&CSASLMod::RequireAuthCommand),
