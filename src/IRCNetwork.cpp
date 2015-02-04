@@ -587,6 +587,7 @@ void CIRCNetwork::ClientConnected(CClient *pClient) {
 		const CString& sClientNick = pClient->GetNick(false);
 		MCString msParams;
 		msParams["target"] = sClientNick;
+		msParams["statusprefix"] = m_pUser->GetStatusPrefix();
 
 		uSize = m_RawBuffer.Size();
 		for (uIdx = 0; uIdx < uSize; uIdx++) {

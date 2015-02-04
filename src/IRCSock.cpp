@@ -59,6 +59,7 @@ CIRCSock::CIRCSock(CIRCNetwork* pNetwork) : CIRCSocket() {
 	m_bAuthed = false;
 	m_bNamesx = false;
 	m_bUHNames = false;
+	m_bPendingStatusPrefix = false;
 	m_fFloodRate = m_pNetwork->GetFloodRate();
 	m_uFloodBurst = m_pNetwork->GetFloodBurst();
 	m_bFloodProtection = IsFloodProtected(m_fFloodRate);
@@ -165,6 +166,11 @@ void CIRCSock::ReadLine(const CString& sData) {
 		CString sRest = sLine.Token(3, true);
 		CString sTmp;
 
+		if (uRaw > 5 && m_bPendingStatusPrefix) {
+			m_bPendingStatusPrefix = false;
+			m_pNetwork->UpdateExactRawBuffer(":" + _NAMEDFMT(sServer) + " 005 {target} ZNCPREFIX={statusprefix} :are supported by this server");
+		}
+
 		switch (uRaw) {
 			case 1: { // :irc.server.com 001 nick :Welcome to the Internet Relay Network nick
 				if (m_bAuthed && sServer == "irc.znc.in") {
@@ -179,6 +185,7 @@ void CIRCSock::ReadLine(const CString& sData) {
 				PutIRC("WHO " + sNick);
 
 				m_bAuthed = true;
+				m_bPendingStatusPrefix = true;
 				m_pNetwork->PutStatus("Connected!");
 
 				const vector<CClient*>& vClients = m_pNetwork->GetClients();
