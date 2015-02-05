@@ -88,6 +88,7 @@ public:
 	virtual void OnPart(const CNick& Nick, CChan& Channel, const CString& sMessage) override;
 	virtual void OnNick(const CNick& OldNick, const CString& sNewNick, const vector<CChan*>& vChans) override;
 	virtual EModRet OnTopic(CNick& Nick, CChan& Channel, CString& sTopic) override;
+	virtual EModRet OnWallops(const CNick& Nick, const CString& sMessage) override;
 
 	/* notices */
 	virtual EModRet OnUserNotice(CString& sTarget, CString& sMessage) override;
@@ -440,6 +441,12 @@ CModule::EModRet CLogMod::OnPrivMsg(CNick& Nick, CString& sMessage)
 CModule::EModRet CLogMod::OnChanMsg(CNick& Nick, CChan& Channel, CString& sMessage)
 {
 	PutLog("<" + Nick.GetNick() + "> " + sMessage, Channel);
+	return CONTINUE;
+}
+
+CModule::EModRet CLogMod::OnWallops(const CNick& Nick, const CString& sMessage)
+{
+	PutLog("<" + Nick.GetNick() + "> " + sMessage, "wallops");
 	return CONTINUE;
 }
 

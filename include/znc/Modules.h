@@ -575,6 +575,12 @@ public:
 	 *  @param sMessage The message which was sent.
 	 */
 	virtual void OnModCTCP(const CString& sMessage);
+	/** Called when we receive a wallop message.
+	 *  @param Nick The nick which sent the message.
+	 *  @param sMessage The wallops message.
+	 *  @return See CModule::EModRet.
+	 */
+	virtual EModRet OnWallops(const CNick& Nick, const CString& sMessage);
 
 	/** Called when a nick quit from IRC.
 	 *  @param Nick The nick which quit.
@@ -1162,6 +1168,7 @@ public:
 	bool OnModCommand(const CString& sCommand);
 	bool OnModNotice(const CString& sMessage);
 	bool OnModCTCP(const CString& sMessage);
+	bool OnWallops(const CNick& Nick, const CString& sMessage);
 
 	bool OnQuit(const CNick& Nick, const CString& sMessage, const std::vector<CChan*>& vChans);
 	bool OnNick(const CNick& Nick, const CString& sNewNick, const std::vector<CChan*>& vChans);
