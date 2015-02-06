@@ -408,7 +408,6 @@ public:
 
 	virtual EModRet OnChanMsg(CNick& nick, CChan& channel, CString& sMessage) override
 	{
-		CString currentNick = m_pNetwork->GetNick();
 		if(m_bIsAway && m_chanMessages && sMessage.AsLower().find(m_pNetwork->GetCurNick().AsLower()) != CString::npos) {
 			AddMessage(time(NULL), nick, channel.GetName() + " " + sMessage);
 		}
