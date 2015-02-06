@@ -38,8 +38,10 @@ CChan::CChan(const CString& sName, CIRCNetwork* pNetwork, bool bInConfig, CConfi
 	m_Nick.SetNetwork(m_pNetwork);
 	m_bDetached = false;
 	m_bDisabled = false;
+	m_bStripControls = false;
 	m_bHasBufferCountSet = false;
 	m_bHasAutoClearChanBufferSet = false;
+	m_bHasStripControlsSet = false;
 	m_Buffer.SetLineCount(m_pNetwork->GetUser()->GetBufferCount(), true);
 	m_bAutoClearChanBuffer = m_pNetwork->GetUser()->AutoClearChanBuffer();
 	Reset();
@@ -57,6 +59,8 @@ CChan::CChan(const CString& sName, CIRCNetwork* pNetwork, bool bInConfig, CConfi
 		if (pConfig->FindStringEntry("disabled", sValue))
 			if (sValue.ToBool())
 				Disable();
+		if (pConfig->FindStringEntry("stripcontrols", sValue))
+			SetStripControls(sValue.ToBool());
 		if (pConfig->FindStringEntry("autocycle", sValue))
 			if (sValue.Equals("true"))
 				CUtils::PrintError("WARNING: AutoCycle has been removed, instead try -> LoadModule = autocycle " + sName);
@@ -95,6 +99,8 @@ CConfig CChan::ToConfig() const {
 		config.AddKeyValuePair("Detached", "true");
 	if (IsDisabled())
 		config.AddKeyValuePair("Disabled", "true");
+	if (m_bHasStripControlsSet)
+		config.AddKeyValuePair("StripControls", CString(StripControls()));
 	if (!GetKey().empty())
 		config.AddKeyValuePair("Key", GetKey());
 	if (!GetDefaultModes().empty())
@@ -107,6 +113,7 @@ void CChan::Clone(CChan& chan) {
 	// We assume that m_sName and m_pNetwork are equal
 	SetBufferCount(chan.GetBufferCount(), true);
 	SetAutoClearChanBuffer(chan.AutoClearChanBuffer());
+	SetStripControls(chan.StripControls());
 	SetKey(chan.GetKey());
 	SetDefaultModes(chan.GetDefaultModes());
 
@@ -251,6 +258,17 @@ void CChan::InheritAutoClearChanBuffer(bool b) {
 	}
 }
 
+void CChan::SetStripControls(bool b) {
+	m_bHasStripControlsSet = true;
+	m_bStripControls = b;
+}
+
+void CChan::InheritStripControls(bool b) {
+	if (!m_bHasStripControlsSet) {
+		m_bStripControls = b;
+	}
+}
+
 void CChan::OnWho(const CString& sNick, const CString& sIdent, const CString& sHost) {
 	CNick* pNick = FindNick(sNick);
 
@@ -382,6 +400,14 @@ CString CChan::GetOptions() const {
 			vsRet.push_back("AutoClearChanBuffer");
 		} else {
 			vsRet.push_back("AutoClearChanBuffer (default)");
+		}
+	}
+
+	if (StripControls()) {
+		if (HasStripControlsSet()) {
+			vsRet.push_back("StripControls");
+		} else {
+			vsRet.push_back("StripControls (default)");
 		}
 	}
 

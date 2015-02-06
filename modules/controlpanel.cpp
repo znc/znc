@@ -121,6 +121,7 @@ class CAdminMod : public CModule {
 				{"Encoding",            str},
 #endif
 				{"QuitMsg",             str},
+				{"StripControls",       boolean},
 			};
 			PrintVarsHelp(sVarFilter, nvars, ARRAY_SIZE(nvars), "The following variables are available when using the SetNetwork/GetNetwork commands:");
 		}
@@ -132,7 +133,8 @@ class CAdminMod : public CModule {
 				{"Buffer",              integer},
 				{"InConfig",            boolean},
 				{"AutoClearChanBuffer", boolean},
-				{"Detached",            boolean}
+				{"Detached",            boolean},
+				{"StripControls",       boolean},
 			};
 			PrintVarsHelp(sVarFilter, cvars, ARRAY_SIZE(cvars), "The following variables are available when using the SetChan/GetChan commands:");
 		}
@@ -484,6 +486,8 @@ class CAdminMod : public CModule {
 #endif
 		} else if (sVar.Equals("quitmsg")) {
 			PutModule("QuitMsg = " + pNetwork->GetQuitMsg());
+		} else if (sVar.Equals("stripcontrols")) {
+			PutModule("StripControls = " + CString(pNetwork->StripControls()));
 		} else {
 			PutModule("Error: Unknown variable");
 		}
@@ -578,6 +582,10 @@ class CAdminMod : public CModule {
 		} else if (sVar.Equals("quitmsg")) {
 			pNetwork->SetQuitMsg(sValue);
 			PutModule("QuitMsg = " + pNetwork->GetQuitMsg());
+		} else if (sVar == "stripcontrols") {
+			bool b = sValue.ToBool();
+			pNetwork->SetStripControls(b);
+			PutModule("StripControls = " + CString(b));
 		} else {
 			PutModule("Error: Unknown variable");
 		}
@@ -700,6 +708,12 @@ class CAdminMod : public CModule {
 				PutModule(pChan->GetName() + ": AutoClearChanBuffer = " + sValue);
 			} else if (sVar == "detached") {
 				PutModule(pChan->GetName() + ": Detached = " + CString(pChan->IsDetached()));
+			} else if (sVar == "stripcontrols") {
+				CString sValue(pChan->StripControls());
+				if (!pChan->HasStripControlsSet()) {
+					sValue += " (default)";
+				}
+				PutModule(pChan->GetName() + ": StripControls = " + sValue);
 			} else if (sVar == "key") {
 				PutModule(pChan->GetName() + ": Key = " + pChan->GetKey());
 			} else {
@@ -772,6 +786,10 @@ class CAdminMod : public CModule {
 						pChan->AttachUser();
 				}
 				PutModule(pChan->GetName() + ": Detached = " + CString(b));
+			} else if (sVar == "stripcontrols") {
+				bool b = sValue.ToBool();
+				pChan->SetStripControls(b);
+				PutModule(pChan->GetName() + ": StripControls = " + CString(b));
 			} else if (sVar == "key") {
 				pChan->SetKey(sValue);
 				PutModule(pChan->GetName() + ": Key = " + sValue);
