@@ -26,9 +26,12 @@
 
 #define REQUIRESSL
 
+#include <znc/main.h>
 #include <znc/User.h>
 #include <znc/IRCNetwork.h>
 #include <znc/FileUtils.h>
+#include <znc/Modules.h>
+#include <znc/Chan.h>
 
 using std::vector;
 using std::map;
@@ -203,6 +206,7 @@ public:
 		m_bIsAway = false;
 		m_bBootError = false;
 		m_saveMessages = true;
+		m_chanMessages = false;
 		SetAwayTime(300);
 		AddTimer(new CAwayJob(this, 60, 0, "AwayJob", "Checks for idle and saves messages every 1 minute"));
 
@@ -241,6 +245,11 @@ public:
 		{
 			uIndex++;
 			m_saveMessages = false;
+		}
+		if (sMyArgs.Token(uIndex) == "-chans")
+		{
+			uIndex++;
+			m_chanMessages = true;
 		}
 		if (sMyArgs.Token(uIndex) == "-notimer")
 		{
@@ -397,6 +406,15 @@ public:
 		return(CONTINUE);
 	}
 
+	EModRet OnChanMsg(CNick& nick, CChan& channel, CString& sMessage) override
+	{
+		if(m_bIsAway && m_chanMessages && sMessage.AsLower().find(m_pNetwork->GetCurNick().AsLower()) != CString::npos) {
+			AddMessage(time(nullptr), nick, channel.GetName() + " " + sMessage);
+		}
+		
+		return(CONTINUE);
+	}
+
 	EModRet OnPrivAction(CNick& Nick, CString& sMessage) override
 	{
 		if (m_bIsAway) {
@@ -495,6 +513,7 @@ private:
 	vector<CString> m_vMessages;
 	CString         m_sReason;
 	bool            m_saveMessages;
+	bool            m_chanMessages;
 };
 
 
@@ -515,7 +534,7 @@ void CAwayJob::RunJob()
 template<> void TModInfo<CAway>(CModInfo& Info) {
 	Info.SetWikiPage("awaystore");
 	Info.SetHasArgs(true);
-	Info.SetArgsHelpText("[ -notimer | -timer N ]  passw0rd . N is number of seconds, 600 by default.");
+	Info.SetArgsHelpText("[ -notimer | -timer N ] [-chans]  passw0rd . N is number of seconds, 600 by default.");
 }
 
 NETWORKMODULEDEFS(CAway, "Adds auto-away with logging, useful when you use ZNC from different locations")
