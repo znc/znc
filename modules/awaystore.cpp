@@ -206,7 +206,7 @@ public:
 		m_bIsAway = false;
 		m_bBootError = false;
 		m_saveMessages = true;
-                m_chanMessages = false;
+		m_chanMessages = false;
 		SetAwayTime(300);
 		AddTimer(new CAwayJob(this, 60, 0, "AwayJob", "Checks for idle and saves messages every 1 minute"));
 
@@ -246,11 +246,11 @@ public:
 			uIndex++;
 			m_saveMessages = false;
 		}
-                if (sMyArgs.Token(uIndex) == "-chans")
-                {
-                    uIndex++;
-                    m_chanMessages = true;           
-                }
+		if (sMyArgs.Token(uIndex) == "-chans")
+		{
+			uIndex++;
+			m_chanMessages = true;
+		}
 		if (sMyArgs.Token(uIndex) == "-notimer")
 		{
 			SetAwayTime(0);
@@ -406,15 +406,15 @@ public:
 		return(CONTINUE);
 	}
 
-        virtual EModRet OnChanMsg(CNick& nick, CChan& channel, CString& sMessage) override
-        {
-            CString currentNick = m_pNetwork->GetNick();
-            if(m_bIsAway && m_chanMessages && sMessage.AsLower().find(m_pNetwork->GetCurNick().AsLower()) != CString::npos) {
-                AddMessage(time(NULL), nick, channel.GetName() + " " + sMessage);
-            }
-
-            return(CONTINUE);
-        }
+	virtual EModRet OnChanMsg(CNick& nick, CChan& channel, CString& sMessage) override
+	{
+		CString currentNick = m_pNetwork->GetNick();
+		if(m_bIsAway && m_chanMessages && sMessage.AsLower().find(m_pNetwork->GetCurNick().AsLower()) != CString::npos) {
+			AddMessage(time(NULL), nick, channel.GetName() + " " + sMessage);
+		}
+		
+		return(CONTINUE);
+	}
 
 	virtual EModRet OnPrivAction(CNick& Nick, CString& sMessage) override
 	{
@@ -514,7 +514,7 @@ private:
 	vector<CString> m_vMessages;
 	CString         m_sReason;
 	bool            m_saveMessages;
-        bool            m_chanMessages;
+	bool            m_chanMessages;
 };
 
 
