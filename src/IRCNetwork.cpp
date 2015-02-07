@@ -1285,7 +1285,7 @@ void CIRCNetwork::CheckIRCConnect() {
 
 void CIRCNetwork::SetStripControls(bool b) {
 	for (CChan* pChan : GetChans()) {
-			pChan->InheritStripControls(b);
+		pChan->InheritStripControls(b);
 	}
 
 	m_bStripControls = b;
