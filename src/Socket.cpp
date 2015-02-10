@@ -26,6 +26,11 @@
 #include <unicode/ucnv_cb.h>
 #endif
 
+#ifdef HAVE_DANE
+#include <validator/validator.h>
+#include <validator/val_dane.h>
+#endif
+
 #ifdef HAVE_LIBSSL
 // Copypasted from https://wiki.mozilla.org/Security/Server_Side_TLS#Intermediate_compatibility_.28default.29 at 22 Dec 2014
 static CString ZNC_DefaultCipher() {
@@ -106,10 +111,47 @@ void CZNCSock::SSLHandShakeFinished() {
 		return;
 	}
 	CString sHostVerifyError;
-	if (!ZNC_SSLVerifyHost(m_HostToVerifySSL, pCert, sHostVerifyError)) {
+	bool bSSLHostOk = ZNC_SSLVerifyHost(m_HostToVerifySSL, pCert, sHostVerifyError);
+	if (!bSSLHostOk) {
 		m_ssCertVerificationErrors.insert(sHostVerifyError);
 	}
 	X509_free(pCert);
+
+#ifdef HAVE_DANE
+	struct val_danestatus* pDaneStatus = nullptr;
+	struct val_daneparams pDaneParams;
+	pDaneParams.port = GetPort();
+	pDaneParams.proto = DANE_PARAM_PROTO_TCP;
+
+	if (val_getdaneinfo(nullptr, m_HostToVerifySSL.c_str(), &pDaneParams, &pDaneStatus) == VAL_DANE_NOERROR) {
+		if (pDaneStatus != nullptr) {
+			int iPkixValidation = 1;
+			int iDaneResult = val_dane_check(nullptr, GetSSLObject(), pDaneStatus, &iPkixValidation);
+
+			if (iDaneResult == VAL_DANE_NOERROR) {
+				// DANE is succesful
+				if (pDaneStatus->usage == DANE_USE_TA_ASSERTION && !bSSLHostOk) {
+					DEBUG(GetSockName() + ": DANE: Valid TLSA record, but certificate is not valid for this host and usage is DANE-TA");
+				} else if (iPkixValidation == 0) {
+					DEBUG(GetSockName() + ": DANE: Valid TLSA record, no need for X509 validation");
+					val_free_dane(pDaneStatus);
+					return;
+				} else {
+					DEBUG(GetSockName() + ": DANE: Valid TLSA record, but X509 validation required");
+				}
+			} else if (iDaneResult == VAL_DANE_CHECK_FAILED) {
+				DEBUG(GetSockName() + ": DANE: Invalid TLSA record");
+				m_ssCertVerificationErrors.insert("DANE: TLSA record forbids that certificate");
+			} else {
+				DEBUG(GetSockName() + ": DANE: Internal error while checking TLSA record");
+			}
+			val_free_dane(pDaneStatus);
+		}
+	} else {
+		DEBUG(GetSockName() + ": DANE: No TLSA record");
+	}
+#endif /* HAVE_DANE */
+
 	if (m_ssCertVerificationErrors.empty()) {
 		DEBUG(GetSockName() + ": Good cert");
 		return;
