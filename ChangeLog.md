@@ -48,78 +48,78 @@
 ## Modules
 
 * autoattach:
-** Make it also a network module.
+    * Make it also a network module.
 * autoreply:
-** Use NOTICE instead of PRIVMSG.
+    * Use NOTICE instead of PRIVMSG.
 * autoop:
-** Add support for multiple hostmasks per user.
+    * Add support for multiple hostmasks per user.
 * awaystore:
-** Store CTCP ACTIONs too.
-** Reset timer and return from away when a client does a CTCP ACTION.
-** Allows use of strftime formatting in away messages.
+    * Store CTCP ACTIONs too.
+    * Reset timer and return from away when a client does a CTCP ACTION.
+    * Allows use of strftime formatting in away messages.
 * bouncedcc:
-** Fix quotes in file names.
-** Fix check for "Connected" state.
+    * Fix quotes in file names.
+    * Fix check for "Connected" state.
 * buffextras:
-** Make it also a network module.
+    * Make it also a network module.
 * chansaver:
-** Fix saving channel keys.
-** Add support for loading as a global module.
+    * Fix saving channel keys.
+    * Add support for loading as a global module.
 * controlpanel:
-** Add AddChan, DelChan commands, useful for admins to edit other users' channels, was available only in webadmin before.
-** Check if adding a new channel succeeded.
-** Revise Help output.
-** Allow wildcards for GetChan and SetChan.
+    * Add AddChan, DelChan commands, useful for admins to edit other users' channels, was available only in webadmin before.
+    * Check if adding a new channel succeeded.
+    * Revise Help output.
+    * Allow wildcards for GetChan and SetChan.
 * flooddetach:
-** Show current value in Lines and Secs commands.
-** Add Silent [yes|no] command, similar to route_replies.
+    * Show current value in Lines and Secs commands.
+    * Add Silent [yes|no] command, similar to route_replies.
 * listsockets:
-** Show traffic stats.
+    * Show traffic stats.
 * log:
-** Use only lower case characters in log filenames.
-** Use directories and YYYY-MM-DD filename by default.
-** Add support for logging rules. E.g. /msg *log setrules #znc !#*
+    * Use only lower case characters in log filenames.
+    * Use directories and YYYY-MM-DD filename by default.
+    * Add support for logging rules. E.g. /msg *log setrules #znc !#*
 * modperl:
-** Fix some int_t types.
+    * Fix some int_t types.
 * modpython:
-** Fix calling overloaded methods with parameter CString&.
-** Support CZNC::GetUserMap().
-** Set has_args and args_help_text from module.
-** Release python/swig ownership when adding object created in python to ZNC container.
-** Fix some int_t types.
-** Enable default arguments feature of SWIG 3.0.4. No functionality change, it just makes generated code a bit more beautiful.
+    * Fix calling overloaded methods with parameter CString&.
+    * Support CZNC::GetUserMap().
+    * Set has_args and args_help_text from module.
+    * Release python/swig ownership when adding object created in python to ZNC container.
+    * Fix some int_t types.
+    * Enable default arguments feature of SWIG 3.0.4. No functionality change, it just makes generated code a bit more beautiful.
 * nickserv:
-** Support tddirc.net.
-** Remove commands Ghost, Recover, Release, Group. The same functionality is available via new alias module.
+    * Support tddirc.net.
+    * Remove commands Ghost, Recover, Release, Group. The same functionality is available via new alias module.
 * q:
-** Add JoinOnInvite, JoinAfterCloaked options.
-** Don't cloak host on first module load if already connected to IRC.
-** Add web configuration.
-** Use HMAC-SHA-256 instead of HMAC-MD5.
+    * Add JoinOnInvite, JoinAfterCloaked options.
+    * Don't cloak host on first module load if already connected to IRC.
+    * Add web configuration.
+    * Use HMAC-SHA-256 instead of HMAC-MD5.
 * route_replies:
-** Handle numerics 307 and 379 in /whois reply. Handle IRCv3.2 METADATA numerics.
+    * Handle numerics 307 and 379 in /whois reply. Handle IRCv3.2 METADATA numerics.
 * sample:
-** Make it a network module, which are easier to write.
+    * Make it a network module, which are easier to write.
 * sasl:
-** Remove DH-BLOWFISH and DH-AES. See http://nullroute.eu.org/~grawity/irc-sasl-dh.html and http://kaniini.dereferenced.org/2014/12/26/do-not-use-DH-AES-or-DH-BLOWFISH.html for details.
+    * Remove DH-BLOWFISH and DH-AES. See http://nullroute.eu.org/~grawity/irc-sasl-dh.html and http://kaniini.dereferenced.org/2014/12/26/do-not-use-DH-AES-or-DH-BLOWFISH.html for details.
 * savebuff:
-** Do not skip channels with AutoClearChanBuffer=true.
-** Handle empty password in SetPass the same way as during startup.
+    * Do not skip channels with AutoClearChanBuffer=true.
+    * Handle empty password in SetPass the same way as during startup.
 * simple_away:
-** Apply auto-away on load if no user is connected.
+    * Apply auto-away on load if no user is connected.
 * stickychan:
-** Don't join channels when not connected.
+    * Don't join channels when not connected.
 * watch:
-** Add support for detached-only clients, and detached-only channels.
+    * Add support for detached-only clients, and detached-only channels.
 * webadmin:
-** Combine "List Users" and "Add User".
-** Module argument autocomplete="off", for nickserv module, which contains password in argument before first save.
-** For every module show in which other levels that module is loaded (global/user/network).
-** Open links to wiki pages about modules in separate window/tab.
-** Support renaming a network (it was already possible outside of webadmin, via /znc MoveNetwork). However, it doesn't support moving networks between users yet, for that use /znc command.
-** Add missing page title on Traffic page.
-** Improve navigation: "Save and continue".
-** Clarify that timestamp format is useless with server-time.
+    * Combine "List Users" and "Add User".
+    * Module argument autocomplete="off", for nickserv module, which contains password in argument before first save.
+    * For every module show in which other levels that module is loaded (global/user/network).
+    * Open links to wiki pages about modules in separate window/tab.
+    * Support renaming a network (it was already possible outside of webadmin, via /znc MoveNetwork). However, it doesn't support moving networks between users yet, for that use /znc command.
+    * Add missing page title on Traffic page.
+    * Improve navigation: "Save and continue".
+    * Clarify that timestamp format is useless with server-time.
 
 
 ## Internal
