@@ -342,6 +342,11 @@ tr.evenrow td {
 	width: 585px;
 }
 
+.full .info {
+	width: 610px;
+	clear: both;
+}
+
 td.mod_descr,
 td.mod_name,
 td.mod_args input {
