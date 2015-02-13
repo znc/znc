@@ -1,3 +1,5 @@
+<? AddRow JSLoop HREF=/modfiles/global/webadmin/webadmin.js ?>
+<? AddRow CSSLoop HREF=/modfiles/global/webadmin/webadmin.css ?>
 <? INC Header.tmpl ?>
 
 		<?IF !UserLoop?>
@@ -6,10 +8,10 @@
 			</div>
 		<?ELSE?>
 			<div class="toptable">
-				<table>
+				<table class="sortable">
 					<thead>
 					<tr>
-						<td>[<a href="<? VAR URIPrefix TOP ?><? VAR ModPath TOP ?>adduser">Add</a>]</td>
+						<td class="ignore-sort">[<a href="<? VAR URIPrefix TOP ?><? VAR ModPath TOP ?>adduser">Add</a>]</td>
 						<td>Username</td>
                         <td>Networks</td>
 						<td>Clients</td>
@@ -34,6 +36,7 @@
 					</tbody>
 				</table>
 			</div>
+			<script>make_sortable();</script>
 		<?ENDIF?>
 
 <? INC Footer.tmpl ?>
