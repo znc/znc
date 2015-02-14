@@ -76,6 +76,8 @@ m4_define([_AX_CXX_COMPILE_STDCXX_11_testbody], [[
         template<typename T>
         void func(member<T>*) {}
 
+        void test();
+
         void test() {
             func<foo>(0);
         }
