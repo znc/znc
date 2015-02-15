@@ -119,7 +119,7 @@ inline char Curl_raw_toupper(char in)
 * The function is capable of comparing a-z case insensitively even for
 * non-ascii.
 */
-int Curl_raw_equal(const char *first, const char *second)
+static int Curl_raw_equal(const char *first, const char *second)
 {
 	while(*first && *second) {
 		if(Curl_raw_toupper(*first) != Curl_raw_toupper(*second))
@@ -133,7 +133,7 @@ int Curl_raw_equal(const char *first, const char *second)
 	   return this as a successful match */
 	return (Curl_raw_toupper(*first) == Curl_raw_toupper(*second));
 }
-int Curl_raw_nequal(const char *first, const char *second, size_t max)
+static int Curl_raw_nequal(const char *first, const char *second, size_t max)
 {
 	while(*first && *second && max) {
 		if(Curl_raw_toupper(*first) != Curl_raw_toupper(*second)) {
@@ -234,7 +234,7 @@ static int hostmatch(char *hostname, char *pattern)
     CURL_HOST_MATCH : CURL_HOST_NOMATCH;
 }
 
-int Curl_cert_hostcheck(const char *match_pattern, const char *hostname)
+static int Curl_cert_hostcheck(const char *match_pattern, const char *hostname)
 {
   char *matchp;
   char *hostp;
