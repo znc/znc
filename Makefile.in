@@ -51,7 +51,7 @@ BIN_OBJS  := $(patsubst %cpp,%o,$(BIN_SRCS))
 TESTS     := StringTest ConfigTest UtilsTest ThreadTest NickTest ClientTest
 TESTS     := $(addprefix test/,$(addsuffix .o,$(TESTS)))
 CLEAN     := znc src/*.o test/*.o core core.* .version_extra .depend modules/.depend unittest
-DISTCLEAN := Makefile config.log config.status znc-buildmod \
+DISTCLEAN := Makefile config.log config.status znc-buildmod include/znc/zncconfig.h \
 	modules/Makefile man/Makefile znc.pc znc-uninstalled.pc test/Makefile
 
 CXXFLAGS += -D_MODDIR_=\"$(MODDIR)\" -D_DATADIR_=\"$(DATADIR)\"
