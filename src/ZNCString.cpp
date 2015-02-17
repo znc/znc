@@ -95,9 +95,15 @@ bool CString::Equals(const CString& s, bool bCaseSensitive, CString::size_type u
 	}
 }
 
-bool CString::WildCmp(const CString& sWild, const CString& sString) {
+bool CString::WildCmp(const CString& sWild, const CString& sString, CaseSensitivity cs) {
+	// avoid a copy when cs == CaseSensitive (C++ deliberately specifies that binding
+	// a temporary object to a reference to const on the stack lengthens the lifetime
+	// of the temporary to the lifetime of the reference itself)
+	const CString& sWld = (cs == CaseSensitive ? sWild : sWild.AsLower());
+	const CString& sStr = (cs == CaseSensitive ? sString : sString.AsLower());
+
 	// Written by Jack Handy - jakkhandy@hotmail.com
-	const char *wild = sWild.c_str(), *CString = sString.c_str();
+	const char *wild = sWld.c_str(), *CString = sStr.c_str();
 	const char *cp = NULL, *mp = NULL;
 
 	while ((*CString) && (*wild != '*')) {
@@ -133,8 +139,8 @@ bool CString::WildCmp(const CString& sWild, const CString& sString) {
 	return (*wild == 0);
 }
 
-bool CString::WildCmp(const CString& sWild) const {
-	return CString::WildCmp(sWild, *this);
+bool CString::WildCmp(const CString& sWild, CaseSensitivity cs) const {
+	return CString::WildCmp(sWild, *this, cs);
 }
 
 CString& CString::MakeUpper() {
