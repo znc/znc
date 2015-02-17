@@ -93,13 +93,13 @@ public:
 		else
 			m_sPassword = CBlowfish::MD5(sArgs);
 
+		AddTimer(new CSaveBuffJob(this, 60, 0, "SaveBuff", "Saves the current buffer to disk every 1 minute"));
+
 		return( !m_bBootError );
 	}
 
 	virtual bool OnBoot() override
 	{
-		AddTimer(new CSaveBuffJob(this, 60, 0, "SaveBuff", "Saves the current buffer to disk every 1 minute"));
-
 		CDir saveDir(GetSavePath());
 		for (CFile* pFile : saveDir) {
 			CString sName;
