@@ -25,7 +25,7 @@ public:
 
 	bool IsOnlineModNick(const CString& sNick) {
 		const CString& sPrefix = GetUser()->GetStatusPrefix();
-		if (!sNick.Equals(sPrefix, false, sPrefix.length()))
+		if (!sNick.StartsWith(sPrefix))
 			return false;
 
 		CString sModNick = sNick.substr(sPrefix.length());

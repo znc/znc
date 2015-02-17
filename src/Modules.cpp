@@ -576,14 +576,13 @@ bool CModule::HandleCommand(const CString& sLine) {
 
 void CModule::HandleHelpCommand(const CString& sLine) {
 	CString sFilter = sLine.Token(1).AsLower();
-	CString::size_type  iFilterLength = sFilter.size();
 	CTable Table;
 	map<CString, CModCommand>::const_iterator it;
 
 	CModCommand::InitHelp(Table);
 	for (it = m_mCommands.begin(); it != m_mCommands.end(); ++it) {
 		CString sCmd = it->second.GetCommand().AsLower();
-		if (sFilter.empty() || (sCmd.Equals(sFilter, true, iFilterLength)) || sCmd.WildCmp(sFilter)) {
+		if (sFilter.empty() || (sCmd.StartsWith(sFilter, CString::CaseSensitive)) || sCmd.WildCmp(sFilter)) {
 			it->second.AddHelp(Table);
 		}
 	}

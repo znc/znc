@@ -177,7 +177,7 @@ CString CUtils::GetSaltedHashPass(CString& sSalt) {
 
 		CString pass2 = CUtils::GetPass("Confirm password");
 
-		if (!pass1.Equals(pass2, true)) {
+		if (!pass1.Equals(pass2, CString::CaseSensitive)) {
 			CUtils::PrintError("The supplied passwords did not match");
 		} else {
 			// Construct the salted pass

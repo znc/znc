@@ -159,7 +159,7 @@ public:
 	}
 
 	virtual EModRet OnUserCTCP(CString& sTarget, CString& sMessage) override {
-		if (sMessage.Equals("DCC ", false, 4)) {
+		if (sMessage.StartsWith("DCC ")) {
 			CString sType = sMessage.Token(1, false, " ", false, "\"", "\"", true);
 			CString sFile = sMessage.Token(2, false, " ", false, "\"", "\"", false);
 			unsigned long uLongIP = sMessage.Token(3, false, " ", false, "\"", "\"", true).ToULong();
@@ -214,7 +214,7 @@ public:
 
 	virtual EModRet OnPrivCTCP(CNick& Nick, CString& sMessage) override {
 		CIRCNetwork* pNetwork = GetNetwork();
-		if (sMessage.Equals("DCC ", false, 4) && pNetwork->IsUserAttached()) {
+		if (sMessage.StartsWith("DCC ") && pNetwork->IsUserAttached()) {
 			// DCC CHAT chat 2453612361 44592
 			CString sType = sMessage.Token(1, false, " ", false, "\"", "\"", true);
 			CString sFile = sMessage.Token(2, false, " ", false, "\"", "\"", false);

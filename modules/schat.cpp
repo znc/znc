@@ -147,7 +147,7 @@ public:
 
 	virtual EModRet OnUserRaw(CString & sLine) override
 	{
-		if (sLine.Equals("schat ", false, 6)) {
+		if (sLine.StartsWith("schat ")) {
 			OnModCommand("chat " + sLine.substr(6));
 			return(HALT);
 
@@ -240,7 +240,7 @@ public:
 				PutModule("No SDCCs currently in session");
 
 		} else if (sCom.Equals("close")) {
-			if (!sArgs.Equals("(s)", false, 3))
+			if (!sArgs.StartsWith("(s)"))
 				sArgs = "(s)" + sArgs;
 
 			set<CSocket*>::const_iterator it;
@@ -321,7 +321,7 @@ public:
 
 	virtual EModRet OnPrivCTCP(CNick& Nick, CString& sMessage) override
 	{
-		if (sMessage.Equals("DCC SCHAT ", false, 10)) {
+		if (sMessage.StartsWith("DCC SCHAT ")) {
 			// chat ip port
 			unsigned long iIP = sMessage.Token(3).ToULong();
 			unsigned short iPort = sMessage.Token(4).ToUShort();
