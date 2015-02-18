@@ -220,7 +220,7 @@ public:
 	}
 
 	virtual void OnModCTCP(const CString& sMessage) override {
-		if (sMessage.Equals("DCC RESUME ", false, 11)) {
+		if (sMessage.StartsWith("DCC RESUME ")) {
 			CString sFile = sMessage.Token(2);
 			unsigned short uResumePort = sMessage.Token(3).ToUShort();
 			unsigned long uResumeSize = sMessage.Token(4).ToULong();
@@ -239,7 +239,7 @@ public:
 				}
 
 			}
-		} else if (sMessage.Equals("DCC SEND ", false, 9)) {
+		} else if (sMessage.StartsWith("DCC SEND ")) {
 			CString sLocalFile = CDir::CheckPathPrefix(GetSavePath(), sMessage.Token(2));
 			if (sLocalFile.empty()) {
 				PutModule("Bad DCC file: " + sMessage.Token(2));

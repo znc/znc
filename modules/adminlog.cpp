@@ -61,7 +61,7 @@ public:
 	}
 
 	virtual EModRet OnRaw(CString& sLine) override {
-		if (sLine.Equals("ERROR ", false, 6)) {
+		if (sLine.StartsWith("ERROR ")) {
 			//ERROR :Closing Link: nick[24.24.24.24] (Excess Flood)
 			//ERROR :Closing Link: nick[24.24.24.24] Killer (Local kill by Killer (reason))
 			CString sError(sLine.substr(6));

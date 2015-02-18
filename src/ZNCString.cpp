@@ -1162,7 +1162,7 @@ CString CString::TrimRight_n(const CString& s) const {
 }
 
 bool CString::TrimPrefix(const CString& sPrefix) {
-	if (Equals(sPrefix, false, sPrefix.length())) {
+	if (StartsWith(sPrefix)) {
 		LeftChomp(sPrefix.length());
 		return true;
 	} else {

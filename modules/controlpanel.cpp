@@ -71,11 +71,9 @@ class CAdminMod : public CModule {
 		static const char* doublenum = "Double";
 
 		const CString sCmdFilter = sLine.Token(1, false);
-		const CString::size_type iCmdLength = sCmdFilter.size();
-
 		const CString sVarFilter = sLine.Token(2, true).AsLower();
 
-		if (sCmdFilter.empty() || sCmdFilter.Equals("Set", false, iCmdLength) || sCmdFilter.Equals("Get", false, iCmdLength)) {
+		if (sCmdFilter.empty() || sCmdFilter.StartsWith("Set") || sCmdFilter.StartsWith("Get")) {
 			static const char* vars[][2] = {
 				{"Nick",                str},
 				{"Altnick",             str},
@@ -109,7 +107,7 @@ class CAdminMod : public CModule {
 			PrintVarsHelp(sVarFilter, vars, ARRAY_SIZE(vars), "The following variables are available when using the Set/Get commands:");
 		}
 
-		if (sCmdFilter.empty() || sCmdFilter.Equals("SetNetwork", false, iCmdLength) || sCmdFilter.Equals("GetNetwork", false, iCmdLength)) {
+		if (sCmdFilter.empty() || sCmdFilter.StartsWith("SetNetwork") || sCmdFilter.StartsWith("GetNetwork")) {
 			static const char* nvars[][2] = {
 				{"Nick",                str},
 				{"Altnick",             str},
@@ -127,7 +125,7 @@ class CAdminMod : public CModule {
 			PrintVarsHelp(sVarFilter, nvars, ARRAY_SIZE(nvars), "The following variables are available when using the SetNetwork/GetNetwork commands:");
 		}
 
-		if (sCmdFilter.empty() || sCmdFilter.Equals("SetChan", false, iCmdLength) || sCmdFilter.Equals("GetChan", false, iCmdLength)) {
+		if (sCmdFilter.empty() || sCmdFilter.StartsWith("SetChan") || sCmdFilter.StartsWith("GetChan")) {
 			static const char* cvars[][2] = {
 				{"DefModes",            str},
 				{"Key",                 str},

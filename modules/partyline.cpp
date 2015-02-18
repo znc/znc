@@ -268,11 +268,11 @@ public:
 	}
 
 	virtual EModRet OnUserRaw(CString& sLine) override {
-		if (sLine.Equals("WHO " CHAN_PREFIX_1, false, 5)) {
+		if (sLine.StartsWith("WHO " CHAN_PREFIX_1)) {
 			return HALT;
-		} else if (sLine.Equals("MODE " CHAN_PREFIX_1, false, 6)) {
+		} else if (sLine.StartsWith("MODE " CHAN_PREFIX_1)) {
 			return HALT;
-		} else if (sLine.Equals("TOPIC " CHAN_PREFIX, false, 8)) {
+		} else if (sLine.StartsWith("TOPIC " CHAN_PREFIX)) {
 			CString sChannel = sLine.Token(1);
 			CString sTopic = sLine.Token(2, true);
 

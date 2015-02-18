@@ -344,7 +344,7 @@ bool CHTTPSock::PrintFile(const CString& sFileName, CString sContentType) {
 
 		if (!m_sIfNoneMatch.empty()) {
 			m_sIfNoneMatch.Trim("\\\"'");
-			bNotModified = (m_sIfNoneMatch.Equals(sETag, true));
+			bNotModified = (m_sIfNoneMatch.Equals(sETag, CString::CaseSensitive));
 		}
 	}
 

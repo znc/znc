@@ -391,7 +391,7 @@ bool CTemplate::Print(const CString& sFileName, ostream& oOut) {
 							for (unsigned int a = 1; a < vsArgs.size(); a++) {
 								const CString& sArg = vsArgs[a];
 
-								if (sArg.Equals("ESC=", false, 4)) {
+								if (sArg.StartsWith("ESC=")) {
 									eEscape = CString::ToEscape(sArg.LeftChomp_n(4));
 								} else {
 									CString sValue = GetValue(sArg);
