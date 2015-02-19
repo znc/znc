@@ -74,7 +74,7 @@ public:
 		AddCommand("Mechanism",   static_cast<CModCommand::ModCmdFunc>(&CSASLMod::SetMechanismCommand),
 			"[mechanism[ ...]]", "Set the mechanisms to be attempted (in order)");
 		AddCommand("RequireAuth", static_cast<CModCommand::ModCmdFunc>(&CSASLMod::RequireAuthCommand),
-			"[yes|no]", "Don't connect if SASL cannot be authenticated");
+			"[yes|no]", "Don't connect unless SASL authentication succeeds");
 
 		m_bAuthenticated = false;
 	}
