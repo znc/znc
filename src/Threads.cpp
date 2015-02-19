@@ -87,7 +87,7 @@ CThreadPool::~CThreadPool() {
 	CMutexLocker guard(m_mutex);
 	m_done = true;
 
-	if (m_num_threads > 0) {
+	while (m_num_threads > 0) {
 		m_cond.broadcast();
 		m_exit_cond.wait(m_mutex);
 	}

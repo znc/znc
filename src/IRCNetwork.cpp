@@ -787,8 +787,9 @@ CChan* CIRCNetwork::FindChan(CString sName) const {
 std::vector<CChan*> CIRCNetwork::FindChans(const CString& sWild) const {
 	std::vector<CChan*> vChans;
 	vChans.reserve(m_vChans.size());
+	const CString sLower = sWild.AsLower();
 	for (std::vector<CChan*>::const_iterator it = m_vChans.begin(); it != m_vChans.end(); ++it) {
-		if ((*it)->GetName().WildCmp(sWild))
+		if ((*it)->GetName().AsLower().WildCmp(sLower))
 			vChans.push_back(*it);
 	}
 	return vChans;
@@ -946,8 +947,9 @@ CQuery* CIRCNetwork::FindQuery(const CString& sName) const {
 std::vector<CQuery*> CIRCNetwork::FindQueries(const CString& sWild) const {
 	std::vector<CQuery*> vQueries;
 	vQueries.reserve(m_vQueries.size());
+	const CString sLower = sWild.AsLower();
 	for (std::vector<CQuery*>::const_iterator it = m_vQueries.begin(); it != m_vQueries.end(); ++it) {
-		if ((*it)->GetName().WildCmp(sWild))
+		if ((*it)->GetName().AsLower().WildCmp(sLower))
 			vQueries.push_back(*it);
 	}
 	return vQueries;

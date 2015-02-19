@@ -70,11 +70,11 @@ public:
 		AddCommand("Help",        static_cast<CModCommand::ModCmdFunc>(&CSASLMod::PrintHelp),
 			"search", "Generate this output");
 		AddCommand("Set",         static_cast<CModCommand::ModCmdFunc>(&CSASLMod::Set),
-			"username password", "Set username and password for the PLAIN mechanism");
+			"<username> [<password>]", "Set username and password for the mechanisms that need them. Password is optional");
 		AddCommand("Mechanism",   static_cast<CModCommand::ModCmdFunc>(&CSASLMod::SetMechanismCommand),
 			"[mechanism[ ...]]", "Set the mechanisms to be attempted (in order)");
 		AddCommand("RequireAuth", static_cast<CModCommand::ModCmdFunc>(&CSASLMod::RequireAuthCommand),
-			"[yes|no]", "Don't connect if SASL cannot be authenticated");
+			"[yes|no]", "Don't connect unless SASL authentication succeeds");
 
 		m_bAuthenticated = false;
 	}
