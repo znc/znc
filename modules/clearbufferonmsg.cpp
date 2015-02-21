@@ -105,9 +105,10 @@ public:
 		return CONTINUE;
 	}
 
-	virtual void OnUserQuit(CString& sMessage) override {
+	virtual EModRet OnUserQuit(CString& sMessage) override {
 		if (m_bRules[RULE_QUIT])
 			ClearAllBuffers();
+		return CONTINUE;
 	}
 
 	void SetAllRules(bool bVal) {

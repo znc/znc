@@ -722,8 +722,9 @@ public:
 	virtual EModRet OnUserTopicRequest(CString& sChannel);
 	/** This module hook is called when a user requests to quit from network.
 	 *  @param sMessage The quit message the client sent.
+	 *  @return See CModule::EModRet.
 	 */
-	virtual void OnUserQuit(CString& sMessage);
+	virtual EModRet OnUserQuit(CString& sMessage);
 
 	/** Called when we receive a CTCP reply <em>from IRC</em>.
 	 *  @param Nick The nick the CTCP reply is from.
