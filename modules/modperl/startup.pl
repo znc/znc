@@ -356,6 +356,7 @@ sub OnUserJoin {}
 sub OnUserPart {}
 sub OnUserTopic {}
 sub OnUserTopicRequest {}
+sub OnUserQuit {}
 sub OnCTCPReply {}
 sub OnPrivCTCP {}
 sub OnChanCTCP {}

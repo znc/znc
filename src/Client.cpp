@@ -198,6 +198,8 @@ void CClient::ReadLine(const CString& sData) {
 		// Block PONGs, we already responded to the pings
 		return;
 	} else if (sCommand.Equals("QUIT")) {
+		CString sMsg = sLine.Token(1, true).TrimPrefix_n();
+		NETWORKMODULECALL(OnUserQuit(sMsg), m_pUser, m_pNetwork, this, NOTHING);
 		Close(Csock::CLT_AFTERWRITE); // Treat a client quit as a detach
 		return;                       // Don't forward this msg.  We don't want the client getting us disconnected.
 	} else if (sCommand.Equals("PROTOCTL")) {
