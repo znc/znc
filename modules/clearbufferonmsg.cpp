@@ -15,72 +15,154 @@
  */
 
 #include <znc/IRCNetwork.h>
+#include <znc/User.h>
 #include <znc/Chan.h>
 #include <znc/Query.h>
 
 using std::vector;
 
+enum {
+	RULE_MSG,
+	RULE_CTCP,
+	RULE_ACTION,
+	RULE_NOTICE,
+	RULE_PART,
+	RULE_TOPIC,
+	RULE_QUIT,
+	RULE_MAX,
+};
+
 class CClearBufferOnMsgMod : public CModule {
 public:
-	MODCONSTRUCTOR(CClearBufferOnMsgMod) {}
+	MODCONSTRUCTOR(CClearBufferOnMsgMod) {
+		SetAllRules(true);
+		// false for backward compatibility
+		m_bRules[RULE_QUIT] = false;
+	}
 
 	void ClearAllBuffers() {
 		CIRCNetwork* pNetwork = GetNetwork();
+
 		if (pNetwork) {
 			const vector<CChan*>& vChans = pNetwork->GetChans();
 
-			for (vector<CChan*>::const_iterator it = vChans.begin(); it != vChans.end(); ++it) {
+			for (CChan* pChan : vChans) {
 				// Skip detached channels, they weren't read yet
-				if ((*it)->IsDetached())
+				if (pChan->IsDetached())
 					continue;
 
-				(*it)->ClearBuffer();
+				pChan->ClearBuffer();
 				// We deny AutoClearChanBuffer on all channels since this module
 				// doesn't make any sense with it
-				(*it)->SetAutoClearChanBuffer(false);
+				pChan->SetAutoClearChanBuffer(false);
 			}
 
 			vector<CQuery*> VQueries = pNetwork->GetQueries();
 
-			for (vector<CQuery*>::const_iterator it = VQueries.begin(); it != VQueries.end(); ++it) {
-				pNetwork->DelQuery((*it)->GetName());
+			for (CQuery* pQuery : VQueries) {
+				pNetwork->DelQuery(pQuery->GetName());
 			}
+
+			// We deny AutoClearQueryBuffer since this module
+			// doesn't make any sense with it
+			GetUser()->SetAutoClearQueryBuffer(false);
 		}
 	}
 
 	virtual EModRet OnUserMsg(CString& sTarget, CString& sMessage) override {
-		ClearAllBuffers();
+		if (m_bRules[RULE_MSG])
+			ClearAllBuffers();
 		return CONTINUE;
 	}
 
 	virtual EModRet OnUserCTCP(CString& sTarget, CString& sMessage) override {
-		ClearAllBuffers();
+		if (m_bRules[RULE_CTCP])
+			ClearAllBuffers();
 		return CONTINUE;
 	}
 
 	virtual EModRet OnUserAction(CString& sTarget, CString& sMessage) override {
-		ClearAllBuffers();
+		if (m_bRules[RULE_ACTION])
+			ClearAllBuffers();
 		return CONTINUE;
 	}
 
 	virtual EModRet OnUserNotice(CString& sTarget, CString& sMessage) override {
-		ClearAllBuffers();
+		if (m_bRules[RULE_NOTICE])
+			ClearAllBuffers();
 		return CONTINUE;
 	}
 
 	virtual EModRet OnUserPart(CString& sChannel, CString& sMessage) override {
-		ClearAllBuffers();
+		if (m_bRules[RULE_PART])
+			ClearAllBuffers();
 		return CONTINUE;
 	}
 
 	virtual EModRet OnUserTopic(CString& sChannel, CString& sTopic) override {
-		ClearAllBuffers();
+		if (m_bRules[RULE_TOPIC])
+			ClearAllBuffers();
 		return CONTINUE;
 	}
+
+	virtual EModRet OnUserQuit(CString& sMessage) override {
+		if (m_bRules[RULE_QUIT])
+			ClearAllBuffers();
+		return CONTINUE;
+	}
+
+	void SetAllRules(bool bVal) {
+		for (int i = 0; i < RULE_MAX; i++)
+			m_bRules[i] = bVal;
+	}
+
+	void SetRule(const CString& sOpt, bool bVal) {
+		static const struct {
+			CString sName;
+			int Index;
+		} Names[RULE_MAX] = {
+			{ "msg",	RULE_MSG },
+			{ "ctcp",	RULE_CTCP },
+			{ "action",	RULE_ACTION },
+			{ "notice",	RULE_NOTICE },
+			{ "part",	RULE_PART },
+			{ "topic",	RULE_TOPIC },
+			{ "quit",	RULE_QUIT },
+		};
+
+		if (sOpt.Equals("all")) {
+			SetAllRules(bVal);
+		} else {
+			for (int i = 0; i < RULE_MAX; i++) {
+				if (sOpt.Equals(Names[i].sName))
+					m_bRules[Names[i].Index] = bVal;
+			}
+		}
+	}
+
+	virtual bool OnLoad(const CString& sArgs, CString& sMessage) override {
+		VCString vsOpts;
+
+		sArgs.Split(" ", vsOpts, false);
+
+		for (CString& sOpt : vsOpts) {
+			if (sOpt.StartsWith("!"))
+				SetRule(sOpt.substr(1), false);
+			else if (!sOpt.empty())
+				SetRule(sOpt, true);
+		}
+
+		return true;
+	}
+
+private:
+	bool	m_bRules[RULE_MAX];
 };
 
 template<> void TModInfo<CClearBufferOnMsgMod>(CModInfo& Info) {
 	Info.SetWikiPage("clearbufferonmsg");
+	Info.SetHasArgs(true);
+	Info.SetArgsHelpText("[ [!]<msg|ctcp|action|notice|part|topic|quit|all> ]");
 }
 
 USERMODULEDEFS(CClearBufferOnMsgMod, "Clear all channel and query buffers whenever the user does something")

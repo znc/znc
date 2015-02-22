@@ -86,6 +86,7 @@ public:
 	virtual EModRet OnUserJoin(CString& sChannel, CString& sKey) override;
 	virtual EModRet OnUserPart(CString& sChannel, CString& sMessage) override;
 	virtual EModRet OnUserTopic(CString& sChannel, CString& sTopic) override;
+	virtual EModRet OnUserQuit(CString& sMessage) override;
 	virtual EModRet OnUserTopicRequest(CString& sChannel) override;
 	virtual EModRet OnCTCPReply(CNick& Nick, CString& sMessage) override;
 	virtual EModRet OnPrivCTCP(CNick& Nick, CString& sMessage) override;

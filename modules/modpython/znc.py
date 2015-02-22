@@ -339,6 +339,9 @@ class Module:
     def OnUserTopicRequest(self, sChannel):
         pass
 
+    def OnUserQuit(self, sMessage):
+        pass
+
     def OnCTCPReply(self, Nick, sMessage):
         pass
 
