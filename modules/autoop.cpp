@@ -64,7 +64,7 @@ public:
 
 	bool ChannelMatches(const CString& sChan) const {
 		for (set<CString>::const_iterator it = m_ssChans.begin(); it != m_ssChans.end(); ++it) {
-			if (sChan.AsLower().WildCmp(*it)) {
+			if (sChan.AsLower().WildCmp(*it, CString::CaseInsensitive)) {
 				return true;
 			}
 		}
@@ -74,7 +74,7 @@ public:
 
 	bool HostMatches(const CString& sHostmask) {
 		for (set<CString>::const_iterator it = m_ssHostmasks.begin(); it != m_ssHostmasks.end(); ++it) {
-			if (sHostmask.WildCmp(*it)) {
+			if (sHostmask.WildCmp(*it, CString::CaseInsensitive)) {
 				return true;
 			}
 		}
