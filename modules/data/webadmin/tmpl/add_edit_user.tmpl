@@ -206,7 +206,7 @@
 						<td align="center">
 							<? IF CanBeLoadedByNetwork ?>
 								<input type="checkbox" name="loaded_by_network" id="loaded_by_net_<? VAR Name ?>"
-								<? IF LoadedByAllNetworks ?>
+								<? IF LoadedBySomeNetworks && LoadedByAllNetworks ?>
 									checked="checked"
 								<? ENDIF ?>
 								disabled="disabled"/>
