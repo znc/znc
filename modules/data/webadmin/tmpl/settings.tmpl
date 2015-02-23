@@ -198,7 +198,7 @@
 						<td align="center">
 							<? IF CanBeLoadedByNetwork ?>
 								<input type="checkbox" name="loaded_by_network" id="loaded_by_net_<? VAR Name ?>"
-								<? IF LoadedByAllNetworks ?>
+								<? IF LoadedBySomeNetworks && LoadedByAllNetworks ?>
 									checked="checked"
 								<? ENDIF ?>
 								disabled="disabled"/>
@@ -212,7 +212,7 @@
 						<td align="center">
 							<? IF CanBeLoadedByUser ?>
 								<input type="checkbox" name="loaded_by_user" id="loaded_by_user_<? VAR Name ?>"
-								<? IF LoadedByAllUsers ?>
+								<? IF LoadedBySomeUsers && LoadedByAllUsers ?>
 									checked="checked"
 								<? ENDIF ?>
 								disabled="disabled"/>
