@@ -685,6 +685,10 @@ void CIRCSock::ReadLine(const CString& sData) {
 				sMsg.RightChomp();
 
 				if (sTarget.Equals(GetNick())) {
+					if (m_pNetwork->StripControls()) {
+						sMsg.StripControls();
+					}
+
 					if (OnCTCPReply(Nick, sMsg)) {
 						return;
 					}
@@ -694,10 +698,21 @@ void CIRCSock::ReadLine(const CString& sData) {
 				return;
 			} else {
 				if (sTarget.Equals(GetNick())) {
+					if (m_pNetwork->StripControls()) {
+						sMsg.StripControls();
+					}
+
 					if (OnPrivNotice(Nick, sMsg)) {
 						return;
 					}
 				} else {
+					CChan* pChan = m_pNetwork->FindChan(sTarget);
+					if (pChan) {
+						if (pChan->StripControls()) {
+							sMsg.StripControls();
+						}
+					}
+
 					if (OnChanNotice(Nick, sTarget, sMsg)) {
 						return;
 					}
@@ -742,10 +757,19 @@ void CIRCSock::ReadLine(const CString& sData) {
 				sMsg.RightChomp();
 
 				if (sTarget.Equals(GetNick())) {
+					if (m_pNetwork->StripControls()) {
+						sMsg.StripControls();
+					}
+
 					if (OnPrivCTCP(Nick, sMsg)) {
 						return;
 					}
 				} else {
+					CChan* pChan = m_pNetwork->FindChan(sTarget);
+					if (pChan->StripControls()) {
+						sMsg.StripControls();
+					}
+
 					if (OnChanCTCP(Nick, sTarget, sMsg)) {
 						return;
 					}
@@ -755,10 +779,19 @@ void CIRCSock::ReadLine(const CString& sData) {
 				return;
 			} else {
 				if (sTarget.Equals(GetNick())) {
+					if (m_pNetwork->StripControls()) {
+						sMsg.StripControls();
+					}
+
 					if (OnPrivMsg(Nick, sMsg)) {
 						return;
 					}
 				} else {
+					CChan* pChan = m_pNetwork->FindChan(sTarget);
+					if (pChan->StripControls()) {
+						sMsg.StripControls();
+					}
+
 					if (OnChanMsg(Nick, sTarget, sMsg)) {
 						return;
 					}
