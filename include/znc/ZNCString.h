@@ -169,20 +169,26 @@ public:
 	 */
 	bool Equals(const CString& s, bool bCaseSensitive, CString::size_type uLen = CString::npos) const;
 	/**
-	 * Do a wildcard comparision between two strings.
+	 * Do a wildcard comparison between two strings.
 	 * For example, the following returns true:
 	 * <code>WildCmp("*!?bar@foo", "I_am!~bar@foo");</code>
 	 * @param sWild The wildcards used for the comparison.
 	 * @param sString The string that is used for comparing.
+	 * @param cs CaseSensitive (default) if you want the comparison
+	 *           to be case sensitive, CaseInsensitive otherwise.
+	 * @todo Make cs CaseInsensitive by default.
 	 * @return true if the wildcard matches.
 	 */
-	static bool WildCmp(const CString& sWild, const CString& sString);
+	static bool WildCmp(const CString& sWild, const CString& sString, CaseSensitivity cs = CaseSensitive);
 	/**
 	 * Do a wild compare on this string.
 	 * @param sWild The wildcards used to for the comparison.
+	 * @param cs CaseSensitive (default) if you want the comparison
+	 *           to be case sensitive, CaseInsensitive otherwise.
+	 * @todo Make cs CaseInsensitive by default.
 	 * @return The result of <code>this->WildCmp(sWild, *this);</code>.
 	 */
-	bool WildCmp(const CString& sWild) const;
+	bool WildCmp(const CString& sWild, CaseSensitivity cs = CaseSensitive) const;
 
 	/**
 	 * Turn all characters in this string into their upper-case equivalent.

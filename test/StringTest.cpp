@@ -85,11 +85,32 @@ TEST(StringTest, Cmp) {
 }
 
 TEST(StringTest, Wild) {
-	EXPECT_TRUE(CString::WildCmp("*!?bar@foo", "I_am!~bar@foo"));
-	EXPECT_TRUE(CString::WildCmp("", ""));
-	EXPECT_TRUE(CString::WildCmp("*a*b*c*", "abc"));
-	EXPECT_TRUE(CString::WildCmp("*a*b*c*", "axbyc"));
-	EXPECT_FALSE(CString::WildCmp("*a*b*c*", "xy"));
+	EXPECT_TRUE(CString::WildCmp("", "", CString::CaseSensitive));
+	EXPECT_TRUE(CString::WildCmp("", "", CString::CaseInsensitive));
+
+	EXPECT_FALSE(CString::WildCmp("*a*b*c*", "xy", CString::CaseSensitive));
+	EXPECT_FALSE(CString::WildCmp("*a*b*c*", "xy", CString::CaseInsensitive));
+
+	EXPECT_TRUE(CString::WildCmp("*!?bar@foo", "I_am!~bar@foo", CString::CaseSensitive));
+	EXPECT_TRUE(CString::WildCmp("*!?bar@foo", "I_am!~bar@foo", CString::CaseInsensitive));
+
+	EXPECT_FALSE(CString::WildCmp("*!?BAR@foo", "I_am!~bar@foo", CString::CaseSensitive));
+	EXPECT_TRUE (CString::WildCmp("*!?BAR@foo", "I_am!~bar@foo", CString::CaseInsensitive));
+
+	EXPECT_TRUE(CString::WildCmp("*a*b*c*", "abc", CString::CaseSensitive));
+	EXPECT_TRUE(CString::WildCmp("*a*b*c*", "abc", CString::CaseInsensitive));
+
+	EXPECT_FALSE(CString::WildCmp("*A*b*c*", "abc", CString::CaseSensitive));
+	EXPECT_TRUE (CString::WildCmp("*A*b*c*", "abc", CString::CaseInsensitive));
+
+	EXPECT_FALSE(CString::WildCmp("*a*b*c*", "Abc", CString::CaseSensitive));
+	EXPECT_TRUE (CString::WildCmp("*a*b*c*", "Abc", CString::CaseInsensitive));
+
+	EXPECT_TRUE(CString::WildCmp("*a*b*c*", "axbyc", CString::CaseSensitive));
+	EXPECT_TRUE(CString::WildCmp("*a*b*c*", "axbyc", CString::CaseInsensitive));
+
+	EXPECT_FALSE(CString::WildCmp("*a*B*c*", "AxByC", CString::CaseSensitive));
+	EXPECT_TRUE (CString::WildCmp("*a*B*c*", "AxByC", CString::CaseInsensitive));
 }
 
 TEST(StringTest, Case) {
