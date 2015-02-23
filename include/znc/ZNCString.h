@@ -159,7 +159,7 @@ public:
 	/**
 	 * Check if this string is equal to some other string.
 	 * @param s The string to compare to.
-	 * @param cs CaseSensitive if you want the comparision to be case
+	 * @param cs CaseSensitive if you want the comparison to be case
 	 *                       sensitive, CaseInsensitive (default) otherwise.
 	 * @return True if the strings are equal.
 	 */
@@ -493,21 +493,21 @@ public:
 
 	/** Find the position of the given substring.
 	 * @param s The substring to search for.
-	 * @param cs CaseSensitive if you want the comparision to be case
+	 * @param cs CaseSensitive if you want the comparison to be case
 	 *                       sensitive, CaseInsensitive (default) otherwise.
 	 * @return The position of the substring if found, CString::npos otherwise.
 	 */
 	size_t Find(const CString& s, CaseSensitivity cs = CaseInsensitive) const;
 	/** Check whether the string starts with a given prefix.
 	 * @param sPrefix The prefix.
-	 * @param cs CaseSensitive if you want the comparision to be case
+	 * @param cs CaseSensitive if you want the comparison to be case
 	 *                       sensitive, CaseInsensitive (default) otherwise.
 	 * @return True if the string starts with prefix, false otherwise.
 	 */
 	bool StartsWith(const CString& sPrefix, CaseSensitivity cs = CaseInsensitive) const;
 	/** Check whether the string ends with a given suffix.
 	 * @param sSuffix The suffix.
-	 * @param cs CaseSensitive if you want the comparision to be case
+	 * @param cs CaseSensitive if you want the comparison to be case
 	 *                       sensitive, CaseInsensitive (default) otherwise.
 	 * @return True if the string ends with suffix, false otherwise.
 	 */
