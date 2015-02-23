@@ -53,6 +53,20 @@ public:
 		return CONTINUE;
 	}
 
+	virtual void OnMode(const CNick& pOpNick, CChan& Channel, char uMode, const CString& sArg, bool bAdded, bool bNoChange) override {
+		if (uMode == CChan::M_Key) {
+			if (bAdded) {
+				// We ignore channel key "*" because of some broken nets.
+				if (sArg != "*")
+				{
+					SetNV(Channel.GetName(), sArg, true);
+				}
+			} else {
+				SetNV(Channel.GetName(), "", true);
+			}
+		}
+	}
+
 	void OnStickCommand(const CString& sCommand)
 	{
 		CString sChannel = sCommand.Token(1).AsLower();
@@ -60,7 +74,7 @@ public:
 			PutModule("Usage: Stick <#channel> [key]");
 			return;
 		}
-		SetNV(sChannel, sCommand.Token(2));
+		SetNV(sChannel, sCommand.Token(2), true);
 		PutModule("Stuck " + sChannel);
 	}
 
@@ -70,9 +84,7 @@ public:
 			PutModule("Usage: Unstick <#channel>");
 			return;
 		}
-		MCString::iterator it = FindNV(sChannel);
-		if (it != EndNV())
-			DelNV(it);
+		DelNV(sChannel, true);
 		PutModule("Unstuck " + sChannel);
 	}
 
