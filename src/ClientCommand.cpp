@@ -1411,6 +1411,19 @@ void CClient::UserCommand(CString& sLine) {
 			m_pNetwork->DelQuery((*it)->GetName());
 		}
 		PutStatus("All query buffers have been cleared");
+	} else if (sCommand.Equals("CLEARALLBUFFERS")) {
+		if (!m_pNetwork) {
+			PutStatus("You must be connected with a network to use this command");
+			return;
+		}
+
+		for (CChan* pChan : m_pNetwork->GetChans()) {
+			pChan->ClearBuffer();
+		}
+		for (CQuery* pQuery : m_pNetwork->GetQueries()) {
+			m_pNetwork->DelQuery(pQuery->GetName());
+		}
+		PutStatus("All buffers have been cleared");
 	} else if (sCommand.Equals("SETBUFFER")) {
 		if (!m_pNetwork) {
 			PutStatus("You must be connected with a network to use this command");
