@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-#ifndef _HTTPSOCK_H
-#define _HTTPSOCK_H
+#ifndef ZNC_HTTPSOCK_H
+#define ZNC_HTTPSOCK_H
 
 #include <znc/zncconfig.h>
 #include <znc/Socket.h>
@@ -125,4 +125,4 @@ protected:
 	CString                  m_sURIPrefix;
 };
 
-#endif // !_HTTPSOCK_H
+#endif // !ZNC_HTTPSOCK_H

@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-#ifndef _FILEUTILS_H
-#define _FILEUTILS_H
+#ifndef ZNC_FILEUTILS_H
+#define ZNC_FILEUTILS_H
 
 #include <znc/zncconfig.h>
 #include <znc/ZNCString.h>
@@ -259,4 +259,4 @@ protected:
 	CFile::EFileAttr m_eSortAttr;
 	bool             m_bDesc;
 };
-#endif // !_FILEUTILS_H
+#endif // !ZNC_FILEUTILS_H

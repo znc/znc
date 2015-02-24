@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-#ifndef _BUFFER_H
-#define _BUFFER_H
+#ifndef ZNC_BUFFER_H
+#define ZNC_BUFFER_H
 
 #include <znc/zncconfig.h>
 #include <znc/ZNCString.h>
@@ -82,4 +82,4 @@ protected:
 	unsigned int m_uLineCount;
 };
 
-#endif // !_BUFFER_H
+#endif // !ZNC_BUFFER_H

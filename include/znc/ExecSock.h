@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-#ifndef EXEC_SOCK_H
-#define EXEC_SOCK_H
+#ifndef ZNC_EXECSOCK_H
+#define ZNC_EXECSOCK_H
 
 #include <znc/zncconfig.h>
 #include <znc/Socket.h>
@@ -52,4 +52,4 @@ private:
 	int  m_iPid;
 };
 
-#endif // !EXEC_SOCK_H
+#endif // !ZNC_EXECSOCK_H

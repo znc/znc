@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-#ifndef _IRCSOCK_H
-#define _IRCSOCK_H
+#ifndef ZNC_IRCSOCK_H
+#define ZNC_IRCSOCK_H
 
 #include <znc/zncconfig.h>
 #include <znc/Socket.h>
@@ -152,4 +152,4 @@ protected:
 	friend class CIRCFloodTimer;
 };
 
-#endif // !_IRCSOCK_H
+#endif // !ZNC_IRCSOCK_H

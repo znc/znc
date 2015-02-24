@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-#ifndef _DEFINES_H
-#define _DEFINES_H
+#ifndef ZNC_DEFINES_H
+#define ZNC_DEFINES_H
 
 #include <znc/zncconfig.h>
 
@@ -36,4 +36,4 @@
 #define PERROR(f)    DEBUG(__FILE__ << ":" << __LINE__ << " " << f << ": " << strerror(GetSockError()))
 
 
-#endif // !_DEFINES_H
+#endif // !ZNC_DEFINES_H
