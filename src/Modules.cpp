@@ -356,9 +356,7 @@ void CModule::ListTimers() {
 	Table.AddColumn("Cycles");
 	Table.AddColumn("Description");
 
-	set<CTimer*>::iterator it;
-	for (it = m_sTimers.begin(); it != m_sTimers.end(); ++it) {
-		CTimer* pTimer = *it;
+	for (auto pTimer : m_sTimers) {
 		unsigned int uCycles = pTimer->GetCyclesLeft();
 		timeval Interval = pTimer->GetInterval();
 
@@ -422,9 +420,7 @@ bool CModule::UnlinkSocket(CSocket* pSocket) {
 }
 
 CSocket* CModule::FindSocket(const CString& sSockName) {
-	set<CSocket*>::iterator it;
-	for (it = m_sSockets.begin(); it != m_sSockets.end(); ++it) {
-		CSocket* pSocket = *it;
+	for (auto pSocket : m_sSockets) {
 		if (pSocket->GetSockName().Equals(sSockName)) {
 			return pSocket;
 		}
@@ -447,10 +443,7 @@ void CModule::ListSockets() {
 	Table.AddColumn("RemoteIP");
 	Table.AddColumn("RemotePort");
 
-	set<CSocket*>::iterator it;
-	for (it = m_sSockets.begin(); it != m_sSockets.end(); ++it) {
-		CSocket* pSocket = *it;
-
+	for (auto pSocket : m_sSockets) {
 		Table.AddRow();
 		Table.SetCell("Name", pSocket->GetSockName());
 

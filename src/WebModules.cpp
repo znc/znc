@@ -352,13 +352,11 @@ void CWebSock::SetVars() {
 			AddModLoop("UserModLoop", *vMods[a]);
 		}
 
-		vector<CIRCNetwork*> vNetworks = GetSession()->GetUser()->GetNetworks();
-		vector<CIRCNetwork*>::iterator it;
-		for (it = vNetworks.begin(); it != vNetworks.end(); ++it) {
-			CModules& vnMods = (*it)->GetModules();
+		for (auto pNetwork : GetSession()->GetUser()->GetNetworks()) {
+			CModules& vnMods = pNetwork->GetModules();
 
 			CTemplate& Row = m_Template.AddRow("NetworkModLoop");
-			Row["NetworkName"] = (*it)->GetName();
+			Row["NetworkName"] = pNetwork->GetName();
 
 			for (unsigned int a = 0; a < vnMods.size(); a++) {
 				AddModLoop("ModLoop", *vnMods[a], &Row);
