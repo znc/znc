@@ -37,6 +37,9 @@ public:
 	CZNC();
 	~CZNC();
 
+	CZNC(const CZNC&) = delete;
+	CZNC& operator=(const CZNC&) = delete;
+
 	enum ConfigState {
 		ECONFIG_NOTHING,
 		ECONFIG_NEED_REHASH,

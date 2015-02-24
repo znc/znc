@@ -47,6 +47,9 @@ public:
 	CWebSession(const CString& sId, const CString& sIP);
 	~CWebSession();
 
+	CWebSession(const CWebSession&) = delete;
+	CWebSession& operator=(const CWebSession&) = delete;
+
 	const CString& GetId() const { return m_sId; }
 	const CString& GetIP() const { return m_sIP; }
 	CUser* GetUser() const { return m_pUser; }

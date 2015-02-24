@@ -33,6 +33,9 @@ public:
 	CNick(const CString& sNick);
 	~CNick();
 
+	CNick(const CNick&) = default;
+	CNick& operator=(const CNick&) = default;
+
 	void Reset();
 	void Parse(const CString& sNickMask);
 	CString GetHostMask() const;
