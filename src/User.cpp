@@ -39,9 +39,8 @@ private:
 protected:
 	virtual void RunJob() {
 		const vector<CClient*>& vUserClients = m_pUser->GetUserClients();
-		for (size_t c = 0; c < vUserClients.size(); ++c) {
-			CClient* pUserClient = vUserClients[c];
 
+		for (CClient* pUserClient : vUserClients) {
 			if (pUserClient->GetTimeSinceLastDataTransaction() >= CIRCNetwork::PING_FREQUENCY) {
 				pUserClient->PutClient("PING :ZNC");
 			}
@@ -130,14 +129,12 @@ bool CUser::ParseConfig(CConfig* pConfig, CString& sError) {
 		{ "skin", &CUser::SetSkinName },
 		{ "clientencoding", &CUser::SetClientEncoding },
 	};
-	size_t numStringOptions = sizeof(StringOptions) / sizeof(StringOptions[0]);
 	TOption<unsigned int> UIntOptions[] = {
 		{ "jointries", &CUser::SetJoinTries },
 		{ "maxnetworks", &CUser::SetMaxNetworks },
 		{ "maxquerybuffers", &CUser::SetMaxQueryBuffers },
 		{ "maxjoins", &CUser::SetMaxJoins },
 	};
-	size_t numUIntOptions = sizeof(UIntOptions) / sizeof(UIntOptions[0]);
 	TOption<bool> BoolOptions[] = {
 		{ "keepbuffer", &CUser::SetKeepBuffer }, // XXX compatibility crap from pre-0.207
 		{ "autoclearchanbuffer", &CUser::SetAutoClearChanBuffer },
@@ -150,34 +147,31 @@ bool CUser::ParseConfig(CConfig* pConfig, CString& sError) {
 		{ "appendtimestamp", &CUser::SetTimestampAppend },
 		{ "prependtimestamp", &CUser::SetTimestampPrepend },
 	};
-	size_t numBoolOptions = sizeof(BoolOptions) / sizeof(BoolOptions[0]);
 
-	for (size_t i = 0; i < numStringOptions; i++) {
+	for (const auto& Option : StringOptions) {
 		CString sValue;
-		if (pConfig->FindStringEntry(StringOptions[i].name, sValue))
-			(this->*StringOptions[i].pSetter)(sValue);
+		if (pConfig->FindStringEntry(Option.name, sValue))
+			(this->*Option.pSetter)(sValue);
 	}
-	for (size_t i = 0; i < numUIntOptions; i++) {
+	for (const auto& Option : UIntOptions) {
 		CString sValue;
-		if (pConfig->FindStringEntry(UIntOptions[i].name, sValue))
-			(this->*UIntOptions[i].pSetter)(sValue.ToUInt());
+		if (pConfig->FindStringEntry(Option.name, sValue))
+			(this->*Option.pSetter)(sValue.ToUInt());
 	}
-	for (size_t i = 0; i < numBoolOptions; i++) {
+	for (const auto& Option : BoolOptions) {
 		CString sValue;
-		if (pConfig->FindStringEntry(BoolOptions[i].name, sValue))
-			(this->*BoolOptions[i].pSetter)(sValue.ToBool());
+		if (pConfig->FindStringEntry(Option.name, sValue))
+			(this->*Option.pSetter)(sValue.ToBool());
 	}
 
 	VCString vsList;
-	VCString::const_iterator vit;
 	pConfig->FindStringVector("allow", vsList);
-	for (vit = vsList.begin(); vit != vsList.end(); ++vit) {
-		AddAllowedHost(*vit);
+	for (const CString& sHost : vsList) {
+		AddAllowedHost(sHost);
 	}
 	pConfig->FindStringVector("ctcpreply", vsList);
-	for (vit = vsList.begin(); vit != vsList.end(); ++vit) {
-		const CString& sValue = *vit;
-		AddCTCPReply(sValue.Token(0), sValue.Token(1, true));
+	for (const CString& sReply : vsList) {
+		AddCTCPReply(sReply.Token(0), sReply.Token(1, true));
 	}
 
 	CString sValue;
@@ -355,9 +349,8 @@ bool CUser::ParseConfig(CConfig* pConfig, CString& sError) {
 	}
 
 	pConfig->FindStringVector("loadmodule", vsList);
-	for (vit = vsList.begin(); vit != vsList.end(); ++vit) {
-		sValue = *vit;
-		CString sModName = sValue.Token(0);
+	for (const CString& sMod : vsList) {
+		CString sModName = sMod.Token(0);
 		CString sNotice = "Loading user module [" + sModName + "]";
 
 		// XXX Legacy crap, added in ZNC 0.089
@@ -394,26 +387,26 @@ bool CUser::ParseConfig(CConfig* pConfig, CString& sError) {
 		if (sModName == "charset") {
 			CUtils::PrintAction("NOTICE: Charset support was moved to core, importing old charset module settings");
 			size_t uIndex = 1;
-			if (sValue.Token(uIndex).Equals("-force")) {
+			if (sMod.Token(uIndex).Equals("-force")) {
 				uIndex++;
 			}
 			VCString vsClient, vsServer;
-			sValue.Token(uIndex).Split(",", vsClient);
-			sValue.Token(uIndex + 1).Split(",", vsServer);
+			sMod.Token(uIndex).Split(",", vsClient);
+			sMod.Token(uIndex + 1).Split(",", vsServer);
 			if (vsClient.empty() || vsServer.empty()) {
 				CUtils::PrintStatus(false, "charset module was loaded with wrong parameters.");
 				continue;
 			}
 			SetClientEncoding(vsClient[0]);
-			for (vector<CIRCNetwork*>::iterator it = m_vIRCNetworks.begin(); it != m_vIRCNetworks.end(); ++it) {
-				(*it)->SetEncoding(vsServer[0]);
+			for (CIRCNetwork* pNetwork : m_vIRCNetworks) {
+				pNetwork->SetEncoding(vsServer[0]);
 			}
 			CUtils::PrintStatus(true, "Using [" + vsClient[0] + "] for clients, and [" + vsServer[0] + "] for servers");
 			continue;
 		}
 
 		CString sModRet;
-		CString sArgs = sValue.Token(1, true);
+		CString sArgs = sMod.Token(1, true);
 
 		bool bModRet = LoadModule(sModName, sArgs, sNotice, sModRet);
 
@@ -438,8 +431,8 @@ bool CUser::ParseConfig(CConfig* pConfig, CString& sError) {
 
 	// Move ircconnectenabled to the networks
 	if (pConfig->FindStringEntry("ircconnectenabled", sValue)) {
-		for (vector<CIRCNetwork*>::iterator it = m_vIRCNetworks.begin(); it != m_vIRCNetworks.end(); ++it) {
-			(*it)->SetIRCConnectEnabled(sValue.ToBool());
+		for (CIRCNetwork* pNetwork : m_vIRCNetworks) {
+			pNetwork->SetIRCConnectEnabled(sValue.ToBool());
 		}
 	}
 
@@ -479,11 +472,9 @@ bool CUser::AddNetwork(CIRCNetwork *pNetwork) {
 }
 
 void CUser::RemoveNetwork(CIRCNetwork *pNetwork) {
-	for (vector<CIRCNetwork*>::iterator it = m_vIRCNetworks.begin(); it != m_vIRCNetworks.end(); ++it) {
-		if (pNetwork == *it) {
-			m_vIRCNetworks.erase(it);
-			return;
-		}
+	auto it = std::find(m_vIRCNetworks.begin(), m_vIRCNetworks.end(), pNetwork);
+	if (it != m_vIRCNetworks.end()) {
+		m_vIRCNetworks.erase(it);
 	}
 }
 
@@ -503,8 +494,7 @@ bool CUser::DeleteNetwork(const CString& sNetwork) {
 }
 
 CIRCNetwork* CUser::FindNetwork(const CString& sNetwork) const {
-	for (vector<CIRCNetwork*>::const_iterator it = m_vIRCNetworks.begin(); it != m_vIRCNetworks.end(); ++it) {
-		CIRCNetwork *pNetwork = *it;
+	for (CIRCNetwork* pNetwork : m_vIRCNetworks) {
 		if (pNetwork->GetName().Equals(sNetwork)) {
 			return pNetwork;
 		}
@@ -591,8 +581,8 @@ CString CUser::AddTimestamp(time_t tm, const CString& sStr) const {
 }
 
 void CUser::BounceAllClients() {
-	for (unsigned int a = 0; a < m_vClients.size(); a++) {
-		m_vClients[a]->BouncedOff();
+	for (CClient* pClient : m_vClients) {
+		pClient->BouncedOff();
 	}
 
 	m_vClients.clear();
@@ -609,40 +599,38 @@ void CUser::UserConnected(CClient* pClient) {
 }
 
 void CUser::UserDisconnected(CClient* pClient) {
-	for (unsigned int a = 0; a < m_vClients.size(); a++) {
-		if (m_vClients[a] == pClient) {
-			m_vClients.erase(m_vClients.begin() + a);
-			break;
-		}
+	auto it = std::find(m_vClients.begin(), m_vClients.end(), pClient);
+	if (it != m_vClients.end()) {
+		m_vClients.erase(it);
 	}
 }
 
 void CUser::CloneNetworks(const CUser& User) {
 	const vector<CIRCNetwork*>& vNetworks = User.GetNetworks();
-	for (vector<CIRCNetwork*>::const_iterator it = vNetworks.begin(); it != vNetworks.end(); ++it) {
-		CIRCNetwork *pNetwork = FindNetwork((*it)->GetName());
+	for (CIRCNetwork* pUserNetwork : vNetworks) {
+		CIRCNetwork *pNetwork = FindNetwork(pUserNetwork->GetName());
 
 		if (pNetwork) {
-			pNetwork->Clone(*(*it));
+			pNetwork->Clone(*pUserNetwork);
 		} else {
-			new CIRCNetwork(this, *(*it));
+			new CIRCNetwork(this, *pUserNetwork);
 		}
 	}
 
 	set<CString> ssDeleteNetworks;
-	for (vector<CIRCNetwork*>::const_iterator it = m_vIRCNetworks.begin(); it != m_vIRCNetworks.end(); ++it) {
-		if (!(User.FindNetwork((*it)->GetName()))) {
-			ssDeleteNetworks.insert((*it)->GetName());
+	for (CIRCNetwork* pNetwork : m_vIRCNetworks) {
+		if (!(User.FindNetwork(pNetwork->GetName()))) {
+			ssDeleteNetworks.insert(pNetwork->GetName());
 		}
 	}
 
-	for (set<CString>::const_iterator it = ssDeleteNetworks.begin(); it != ssDeleteNetworks.end(); ++it) {
+	for (const CString& sNetwork : ssDeleteNetworks) {
 		// The following will move all the clients to the user.
 		// So the clients are not disconnected. The client could
 		// have requested the rehash. Then when we do
 		// client->PutStatus("Rehashing succeeded!") we would
 		// crash if there was no client anymore.
-		const vector<CClient*>& vClients = FindNetwork(*it)->GetClients();
+		const vector<CClient*>& vClients = FindNetwork(sNetwork)->GetClients();
 
 		while (vClients.begin() != vClients.end()) {
 			CClient *pClient = vClients.front();
@@ -651,12 +639,11 @@ void CUser::CloneNetworks(const CUser& User) {
 			pClient->SetNetwork(NULL);
 		}
 
-		DeleteNetwork(*it);
+		DeleteNetwork(sNetwork);
 	}
 }
 
 bool CUser::Clone(const CUser& User, CString& sErrorRet, bool bCloneNetworks) {
-	unsigned int a = 0;
 	sErrorRet.clear();
 
 	if (!User.IsValid(sErrorRet, true)) {
@@ -694,13 +681,11 @@ bool CUser::Clone(const CUser& User, CString& sErrorRet, bool bCloneNetworks) {
 	// Allowed Hosts
 	m_ssAllowedHosts.clear();
 	const set<CString>& ssHosts = User.GetAllowedHosts();
-	for (set<CString>::const_iterator it = ssHosts.begin(); it != ssHosts.end(); ++it) {
-		AddAllowedHost(*it);
+	for (const CString& sHost : ssHosts) {
+		AddAllowedHost(sHost);
 	}
 
-	for (a = 0; a < m_vClients.size(); a++) {
-		CClient* pSock = m_vClients[a];
-
+	for (CClient* pSock : m_vClients) {
 		if (!IsHostAllowed(pSock->GetRemoteIP())) {
 			pSock->PutStatusNotice("You are being disconnected because your IP is no longer allowed to connect to this user");
 			pSock->Close();
@@ -718,8 +703,8 @@ bool CUser::Clone(const CUser& User, CString& sErrorRet, bool bCloneNetworks) {
 	// CTCP Replies
 	m_mssCTCPReplies.clear();
 	const MCString& msReplies = User.GetCTCPReplies();
-	for (MCString::const_iterator it = msReplies.begin(); it != msReplies.end(); ++it) {
-		AddCTCPReply(it->first, it->second);
+	for (const auto& it : msReplies) {
+		AddCTCPReply(it.first, it.second);
 	}
 	// !CTCP Replies
 
@@ -741,9 +726,8 @@ bool CUser::Clone(const CUser& User, CString& sErrorRet, bool bCloneNetworks) {
 	CModules& vCurMods = GetModules();
 	const CModules& vNewMods = User.GetModules();
 
-	for (a = 0; a < vNewMods.size(); a++) {
+	for (CModule* pNewMod : vNewMods) {
 		CString sModRet;
-		CModule* pNewMod = vNewMods[a];
 		CModule* pCurMod = vCurMods.FindModule(pNewMod->GetModName());
 
 		if (!pCurMod) {
@@ -753,8 +737,7 @@ bool CUser::Clone(const CUser& User, CString& sErrorRet, bool bCloneNetworks) {
 		}
 	}
 
-	for (a = 0; a < vCurMods.size(); a++) {
-		CModule* pCurMod = vCurMods[a];
+	for (CModule* pCurMod : vCurMods) {
 		CModule* pNewMod = vNewMods.FindModule(pCurMod->GetModName());
 
 		if (!pNewMod) {
@@ -762,8 +745,8 @@ bool CUser::Clone(const CUser& User, CString& sErrorRet, bool bCloneNetworks) {
 		}
 	}
 
-	for (set<CString>::iterator it = ssUnloadMods.begin(); it != ssUnloadMods.end(); ++it) {
-		vCurMods.UnloadModule(*it);
+	for (const CString& sMod : ssUnloadMods) {
+		vCurMods.UnloadModule(sMod);
 	}
 	// !Modules
 
@@ -785,8 +768,8 @@ bool CUser::IsHostAllowed(const CString& sHostMask) const {
 		return true;
 	}
 
-	for (set<CString>::const_iterator a = m_ssAllowedHosts.begin(); a != m_ssAllowedHosts.end(); ++a) {
-		if (sHostMask.WildCmp(*a)) {
+	for (const CString& sHost : m_ssAllowedHosts) {
+		if (sHostMask.WildCmp(sHost)) {
 			return true;
 		}
 	}
@@ -893,15 +876,15 @@ CConfig CUser::ToConfig() const {
 
 	// Allow Hosts
 	if (!m_ssAllowedHosts.empty()) {
-		for (set<CString>::iterator it = m_ssAllowedHosts.begin(); it != m_ssAllowedHosts.end(); ++it) {
-			config.AddKeyValuePair("Allow", *it);
+		for (const CString& sHost : m_ssAllowedHosts) {
+			config.AddKeyValuePair("Allow", sHost);
 		}
 	}
 
 	// CTCP Replies
 	if (!m_mssCTCPReplies.empty()) {
-		for (MCString::const_iterator itb = m_mssCTCPReplies.begin(); itb != m_mssCTCPReplies.end(); ++itb) {
-			config.AddKeyValuePair("CTCPReply", itb->first.AsUpper() + " " + itb->second);
+		for (const auto& itb : m_mssCTCPReplies) {
+			config.AddKeyValuePair("CTCPReply", itb.first.AsUpper() + " " + itb.second);
 		}
 	}
 
@@ -909,20 +892,19 @@ CConfig CUser::ToConfig() const {
 	const CModules& Mods = GetModules();
 
 	if (!Mods.empty()) {
-		for (unsigned int a = 0; a < Mods.size(); a++) {
-			CString sArgs = Mods[a]->GetArgs();
+		for (CModule* pMod : Mods) {
+			CString sArgs = pMod->GetArgs();
 
 			if (!sArgs.empty()) {
 				sArgs = " " + sArgs;
 			}
 
-			config.AddKeyValuePair("LoadModule", Mods[a]->GetModName() + sArgs);
+			config.AddKeyValuePair("LoadModule", pMod->GetModName() + sArgs);
 		}
 	}
 
 	// Networks
-	for (unsigned int d = 0; d < m_vIRCNetworks.size(); d++) {
-		CIRCNetwork *pNetwork = m_vIRCNetworks[d];
+	for (CIRCNetwork *pNetwork : m_vIRCNetworks) {
 		config.AddSubConfig("Network", pNetwork->GetName(), pNetwork->ToConfig());
 	}
 
@@ -963,8 +945,7 @@ CString CUser::GetLocalDCCIP() const {
 	if (!GetDCCBindHost().empty())
 		return GetDCCBindHost();
 
-	for (vector<CIRCNetwork*>::const_iterator it = m_vIRCNetworks.begin(); it != m_vIRCNetworks.end(); ++it) {
-		CIRCNetwork *pNetwork = *it;
+	for (CIRCNetwork* pNetwork : m_vIRCNetworks) {
 		CIRCSock* pIRCSock = pNetwork->GetIRCSock();
 		if (pIRCSock) {
 			return pIRCSock->GetLocalIP();
@@ -979,9 +960,9 @@ CString CUser::GetLocalDCCIP() const {
 }
 
 bool CUser::PutUser(const CString& sLine, CClient* pClient, CClient* pSkipClient) {
-	for (unsigned int a = 0; a < m_vClients.size(); a++) {
-		if ((!pClient || pClient == m_vClients[a]) && pSkipClient != m_vClients[a]) {
-			m_vClients[a]->PutClient(sLine);
+	for (CClient* pEachClient : m_vClients) {
+		if ((!pClient || pClient == pEachClient) && pSkipClient != pEachClient) {
+			pEachClient->PutClient(sLine);
 
 			if (pClient) {
 				return true;
@@ -995,8 +976,7 @@ bool CUser::PutUser(const CString& sLine, CClient* pClient, CClient* pSkipClient
 bool CUser::PutAllUser(const CString& sLine, CClient* pClient, CClient* pSkipClient) {
 	PutUser(sLine, pClient, pSkipClient);
 
-	for (vector<CIRCNetwork*>::iterator it = m_vIRCNetworks.begin(); it != m_vIRCNetworks.end(); ++it) {
-		CIRCNetwork* pNetwork = *it;
+	for (CIRCNetwork* pNetwork : m_vIRCNetworks) {
 		if (pNetwork->PutUser(sLine, pClient, pSkipClient)) {
 			return true;
 		}
@@ -1007,9 +987,9 @@ bool CUser::PutAllUser(const CString& sLine, CClient* pClient, CClient* pSkipCli
 
 bool CUser::PutStatus(const CString& sLine, CClient* pClient, CClient* pSkipClient) {
 	vector<CClient*> vClients = GetAllClients();
-	for (unsigned int a = 0; a < vClients.size(); a++) {
-		if ((!pClient || pClient == vClients[a]) && pSkipClient != vClients[a]) {
-			vClients[a]->PutStatus(sLine);
+	for (CClient* pEachClient : vClients) {
+		if ((!pClient || pClient == pEachClient) && pSkipClient != pEachClient) {
+			pEachClient->PutStatus(sLine);
 
 			if (pClient) {
 				return true;
@@ -1022,9 +1002,9 @@ bool CUser::PutStatus(const CString& sLine, CClient* pClient, CClient* pSkipClie
 
 bool CUser::PutStatusNotice(const CString& sLine, CClient* pClient, CClient* pSkipClient) {
 	vector<CClient*> vClients = GetAllClients();
-	for (unsigned int a = 0; a < vClients.size(); a++) {
-		if ((!pClient || pClient == vClients[a]) && pSkipClient != vClients[a]) {
-			vClients[a]->PutStatusNotice(sLine);
+	for (CClient* pEachClient : vClients) {
+		if ((!pClient || pClient == pEachClient) && pSkipClient != pEachClient) {
+			pEachClient->PutStatusNotice(sLine);
 
 			if (pClient) {
 				return true;
@@ -1036,9 +1016,9 @@ bool CUser::PutStatusNotice(const CString& sLine, CClient* pClient, CClient* pSk
 }
 
 bool CUser::PutModule(const CString& sModule, const CString& sLine, CClient* pClient, CClient* pSkipClient) {
-	for (unsigned int a = 0; a < m_vClients.size(); a++) {
-		if ((!pClient || pClient == m_vClients[a]) && pSkipClient != m_vClients[a]) {
-			m_vClients[a]->PutModule(sModule, sLine);
+	for (CClient* pEachClient : m_vClients) {
+		if ((!pClient || pClient == pEachClient) && pSkipClient != pEachClient) {
+			pEachClient->PutModule(sModule, sLine);
 
 			if (pClient) {
 				return true;
@@ -1050,9 +1030,9 @@ bool CUser::PutModule(const CString& sModule, const CString& sLine, CClient* pCl
 }
 
 bool CUser::PutModNotice(const CString& sModule, const CString& sLine, CClient* pClient, CClient* pSkipClient) {
-	for (unsigned int a = 0; a < m_vClients.size(); a++) {
-		if ((!pClient || pClient == m_vClients[a]) && pSkipClient != m_vClients[a]) {
-			m_vClients[a]->PutModNotice(sModule, sLine);
+	for (CClient* pEachClient : m_vClients) {
+		if ((!pClient || pClient == pEachClient) && pSkipClient != pEachClient) {
+			pEachClient->PutModNotice(sModule, sLine);
 
 			if (pClient) {
 				return true;
@@ -1072,8 +1052,8 @@ bool CUser::IsUserAttached() const {
 		return true;
 	}
 
-	for (vector<CIRCNetwork*>::const_iterator i = m_vIRCNetworks.begin(); i != m_vIRCNetworks.end(); ++i) {
-		if ((*i)->IsUserAttached()) {
+	for (const CIRCNetwork* pNetwork : m_vIRCNetworks) {
+		if (pNetwork->IsUserAttached()) {
 			return true;
 		}
 	}
@@ -1100,9 +1080,9 @@ bool CUser::LoadModule(const CString& sModName, const CString& sArgs, const CStr
 		// Do they have old NV?
 		CFile fNVFile = CFile(GetUserPath() + "/moddata/" + sModName + "/.registry");
 
-		for (vector<CIRCNetwork*>::iterator it = m_vIRCNetworks.begin(); it != m_vIRCNetworks.end(); ++it) {
+		for (CIRCNetwork* pNetwork : m_vIRCNetworks) {
 			if (fNVFile.Exists()) {
-				CString sNetworkModPath = (*it)->GetNetworkPath() + "/moddata/" + sModName;
+				CString sNetworkModPath = pNetwork->GetNetworkPath() + "/moddata/" + sModName;
 				if (!CFile::Exists(sNetworkModPath)) {
 					CDir::MakeDir(sNetworkModPath);
 				}
@@ -1110,7 +1090,7 @@ bool CUser::LoadModule(const CString& sModName, const CString& sArgs, const CStr
 				fNVFile.Copy(sNetworkModPath + "/.registry");
 			}
 
-			bModRet = (*it)->GetModules().LoadModule(sModName, sArgs, CModInfo::NetworkModule, this, *it, sModRet);
+			bModRet = pNetwork->GetModules().LoadModule(sModName, sArgs, CModInfo::NetworkModule, this, pNetwork, sModRet);
 			if (!bModRet) {
 				break;
 			}
@@ -1197,14 +1177,14 @@ bool CUser::SetStatusPrefix(const CString& s) {
 vector<CClient*> CUser::GetAllClients() const {
 	vector<CClient*> vClients;
 
-	for (unsigned int a = 0; a < m_vIRCNetworks.size(); a++) {
-		for (unsigned int b = 0; b < m_vIRCNetworks[a]->GetClients().size(); b++) {
-			vClients.push_back(m_vIRCNetworks[a]->GetClients()[b]);
+	for (CIRCNetwork* pNetwork : m_vIRCNetworks) {
+		for (CClient* pClient : pNetwork->GetClients()) {
+			vClients.push_back(pClient);
 		}
 	}
 
-	for (unsigned int a = 0; a < m_vClients.size(); a++) {
-		vClients.push_back(m_vClients[a]);
+	for (CClient* pClient : m_vClients) {
+		vClients.push_back(pClient);
 	}
 
 	return vClients;
