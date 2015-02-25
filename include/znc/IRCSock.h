@@ -36,6 +36,9 @@ public:
 	CIRCSock(CIRCNetwork* pNetwork);
 	virtual ~CIRCSock();
 
+	CIRCSock(const CIRCSock&) = delete;
+	CIRCSock& operator=(const CIRCSock&) = delete;
+
 	typedef enum {
 		// These values must line up with their position in the CHANMODE argument to raw 005
 		ListArg    = 0,

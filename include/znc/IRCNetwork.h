@@ -44,6 +44,9 @@ public:
 	CIRCNetwork(CUser *pUser, const CIRCNetwork& Network);
 	~CIRCNetwork();
 
+	CIRCNetwork(const CIRCNetwork&) = delete;
+	CIRCNetwork& operator=(const CIRCNetwork&) = delete;
+
 	enum {
 		JOIN_FREQUENCY = 30,
 		/** How long must an IRC connection be idle before ZNC sends a ping */

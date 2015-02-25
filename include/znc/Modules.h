@@ -142,6 +142,9 @@ public:
 
 	virtual ~CTimer();
 
+	CTimer(const CTimer&) = delete;
+	CTimer& operator=(const CTimer&) = delete;
+
 	// Setters
 	void SetModule(CModule* p);
 	void SetDescription(const CString& s);
@@ -190,6 +193,9 @@ public:
 		: CJob(), m_pModule(pModule), m_sName(sName), m_sDescription(sDesc) {
 	}
 	virtual ~CModuleJob();
+
+	CModuleJob(const CModuleJob&) = delete;
+	CModuleJob& operator=(const CModuleJob&) = delete;
 
 	// Getters
 	CModule* GetModule() const { return m_pModule; }
@@ -353,6 +359,9 @@ public:
 	CModule(ModHandle pDLL, CUser* pUser, CIRCNetwork* pNetwork, const CString& sModName,
 			const CString& sDataDir);
 	virtual ~CModule();
+
+	CModule(const CModule&) = delete;
+	CModule& operator=(const CModule&) = delete;
 
 	/** This enum is just used for return from module hooks. Based on this
 	 *  return, ZNC then decides what to do with the event which caused the
@@ -1126,6 +1135,9 @@ class CModules : public std::vector<CModule*> {
 public:
 	CModules();
 	~CModules();
+
+	CModules(const CModules&) = default;
+	CModules& operator=(const CModules&) = default;
 
 	void SetUser(CUser* pUser) { m_pUser = pUser; }
 	void SetNetwork(CIRCNetwork* pNetwork) { m_pNetwork = pNetwork; }

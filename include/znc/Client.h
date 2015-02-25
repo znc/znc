@@ -39,6 +39,9 @@ public:
 
 	virtual ~CAuthBase() {}
 
+	CAuthBase(const CAuthBase&) = delete;
+	CAuthBase& operator=(const CAuthBase&) = delete;
+
 	virtual void SetLoginInfo(const CString& sUsername, const CString& sPassword,
 			CZNCSock* pSock) {
 		m_sUsername = sUsername;
@@ -74,6 +77,9 @@ public:
 	CClientAuth(CClient* pClient, const CString& sUsername, const CString& sPassword);
 	virtual ~CClientAuth() {}
 
+	CClientAuth(const CClientAuth&) = delete;
+	CClientAuth& operator=(const CClientAuth&) = delete;
+
 	void Invalidate() { m_pClient = NULL; CAuthBase::Invalidate(); }
 	void AcceptedLogin(CUser& User);
 	void RefusedLogin(const CString& sReason);
@@ -107,6 +113,9 @@ public:
 	}
 
 	virtual ~CClient();
+
+	CClient(const CClient&) = delete;
+	CClient& operator=(const CClient&) = delete;
 
 	void SendRequiredPasswordNotice();
 	void AcceptLogin(CUser& User);

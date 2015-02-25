@@ -83,6 +83,9 @@ public:
 
 	virtual ~CTemplateLoopContext() {}
 
+	CTemplateLoopContext(const CTemplateLoopContext&) = default;
+	CTemplateLoopContext& operator=(const CTemplateLoopContext&) = default;
+
 	// Setters
 	void SetHasData(bool b = true) { m_bHasData = b; }
 	void SetName(const CString& s) { m_sName = s; }
@@ -131,6 +134,9 @@ public:
 	}
 
 	virtual ~CTemplate();
+
+	CTemplate(const CTemplate& other) = default;
+	CTemplate& operator=(const CTemplate& other) = default;
 
 	//! Class for implementing custom tags in subclasses
 	void AddTagHandler(std::shared_ptr<CTemplateTagHandler> spTagHandler) {

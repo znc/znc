@@ -39,6 +39,9 @@ public:
 	CUser(const CString& sUserName);
 	~CUser();
 
+	CUser(const CUser&) = delete;
+	CUser& operator=(const CUser&) = delete;
+
 	bool ParseConfig(CConfig* Config, CString& sError);
 
 	// TODO refactor this

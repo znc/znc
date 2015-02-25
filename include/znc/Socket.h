@@ -197,6 +197,9 @@ public:
 	CSocket(CModule* pModule, const CString& sHostname, unsigned short uPort, int iTimeout = 60);
 	virtual ~CSocket();
 
+	CSocket(const CSocket&) = delete;
+	CSocket& operator=(const CSocket&) = delete;
+
 	using Csock::Connect;
 	using Csock::Listen;
 

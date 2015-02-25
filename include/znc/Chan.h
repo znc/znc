@@ -59,6 +59,9 @@ public:
 	CChan(const CString& sName, CIRCNetwork* pNetwork, bool bInConfig, CConfig *pConfig = NULL);
 	~CChan();
 
+	CChan(const CChan&) = delete;
+	CChan& operator=(const CChan&) = delete;
+
 	void Reset();
 	CConfig ToConfig() const;
 	void Clone(CChan& chan);

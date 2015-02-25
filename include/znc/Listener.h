@@ -44,6 +44,9 @@ public:
 
 	~CListener();
 
+	CListener(const CListener&) = delete;
+	CListener& operator=(const CListener&) = delete;
+
 	// Getters
 	bool IsSSL() const { return m_bSSL; }
 	EAddrType GetAddrType() const { return m_eAddr; }
