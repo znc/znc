@@ -206,13 +206,13 @@ protected:
 
 	bool IsAutoCycle(const CString& sChan) {
 		for (unsigned int a = 0; a < m_vsNegChans.size(); a++) {
-			if (sChan.WildCmp(m_vsNegChans[a])) {
+			if (sChan.WildCmp(m_vsNegChans[a], CString::CaseInsensitive)) {
 				return false;
 			}
 		}
 
 		for (unsigned int b = 0; b < m_vsChans.size(); b++) {
-			if (sChan.WildCmp(m_vsChans[b])) {
+			if (sChan.WildCmp(m_vsChans[b], CString::CaseInsensitive)) {
 				return true;
 			}
 		}

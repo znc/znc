@@ -33,7 +33,7 @@ public:
 	void SetEnabled(bool bEnabled) { m_bEnabled = bEnabled; }
 
 	bool Compare(const CString& sTarget) const {
-		return sTarget.WildCmp(m_sRule);
+		return sTarget.WildCmp(m_sRule, CString::CaseInsensitive);
 	}
 
 	bool operator==(const CLogRule& sOther) const {

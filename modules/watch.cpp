@@ -81,7 +81,7 @@ public:
 			for (unsigned int a = 0; a < m_vsSources.size(); a++) {
 				const CWatchSource& WatchSource = m_vsSources[a];
 
-				if (sSource.AsLower().WildCmp(WatchSource.GetSource().AsLower())) {
+				if (sSource.WildCmp(WatchSource.GetSource(), CString::CaseInsensitive)) {
 					if (WatchSource.IsNegated()) {
 						return false;
 					} else {
@@ -93,9 +93,9 @@ public:
 
 		if (!bGoodSource)
 			return false;
-		if (!Nick.GetHostMask().AsLower().WildCmp(m_sHostMask.AsLower()))
+		if (!Nick.GetHostMask().WildCmp(m_sHostMask, CString::CaseInsensitive))
 			return false;
-		return (sText.AsLower().WildCmp(pNetwork->ExpandString(m_sPattern).AsLower()));
+		return (sText.WildCmp(pNetwork->ExpandString(m_sPattern), CString::CaseInsensitive));
 	}
 
 	bool operator ==(const CWatchEntry& WatchEntry) {
