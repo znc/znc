@@ -76,33 +76,33 @@ public:
 	void PutLog(const CString& sLine, const CNick& Nick);
 	CString GetServer();
 
-	virtual bool OnLoad(const CString& sArgs, CString& sMessage) override;
-	virtual void OnIRCConnected() override;
-	virtual void OnIRCDisconnected() override;
-	virtual EModRet OnBroadcast(CString& sMessage) override;
+	bool OnLoad(const CString& sArgs, CString& sMessage) override;
+	void OnIRCConnected() override;
+	void OnIRCDisconnected() override;
+	EModRet OnBroadcast(CString& sMessage) override;
 
-	virtual void OnRawMode2(const CNick* pOpNick, CChan& Channel, const CString& sModes, const CString& sArgs) override;
-	virtual void OnKick(const CNick& OpNick, const CString& sKickedNick, CChan& Channel, const CString& sMessage) override;
-	virtual void OnQuit(const CNick& Nick, const CString& sMessage, const vector<CChan*>& vChans) override;
-	virtual void OnJoin(const CNick& Nick, CChan& Channel) override;
-	virtual void OnPart(const CNick& Nick, CChan& Channel, const CString& sMessage) override;
-	virtual void OnNick(const CNick& OldNick, const CString& sNewNick, const vector<CChan*>& vChans) override;
-	virtual EModRet OnTopic(CNick& Nick, CChan& Channel, CString& sTopic) override;
+	void OnRawMode2(const CNick* pOpNick, CChan& Channel, const CString& sModes, const CString& sArgs) override;
+	void OnKick(const CNick& OpNick, const CString& sKickedNick, CChan& Channel, const CString& sMessage) override;
+	void OnQuit(const CNick& Nick, const CString& sMessage, const vector<CChan*>& vChans) override;
+	void OnJoin(const CNick& Nick, CChan& Channel) override;
+	void OnPart(const CNick& Nick, CChan& Channel, const CString& sMessage) override;
+	void OnNick(const CNick& OldNick, const CString& sNewNick, const vector<CChan*>& vChans) override;
+	EModRet OnTopic(CNick& Nick, CChan& Channel, CString& sTopic) override;
 
 	/* notices */
-	virtual EModRet OnUserNotice(CString& sTarget, CString& sMessage) override;
-	virtual EModRet OnPrivNotice(CNick& Nick, CString& sMessage) override;
-	virtual EModRet OnChanNotice(CNick& Nick, CChan& Channel, CString& sMessage) override;
+	EModRet OnUserNotice(CString& sTarget, CString& sMessage) override;
+	EModRet OnPrivNotice(CNick& Nick, CString& sMessage) override;
+	EModRet OnChanNotice(CNick& Nick, CChan& Channel, CString& sMessage) override;
 
 	/* actions */
-	virtual EModRet OnUserAction(CString& sTarget, CString& sMessage) override;
-	virtual EModRet OnPrivAction(CNick& Nick, CString& sMessage) override;
-	virtual EModRet OnChanAction(CNick& Nick, CChan& Channel, CString& sMessage) override;
+	EModRet OnUserAction(CString& sTarget, CString& sMessage) override;
+	EModRet OnPrivAction(CNick& Nick, CString& sMessage) override;
+	EModRet OnChanAction(CNick& Nick, CChan& Channel, CString& sMessage) override;
 
 	/* msgs */
-	virtual EModRet OnUserMsg(CString& sTarget, CString& sMessage) override;
-	virtual EModRet OnPrivMsg(CNick& Nick, CString& sMessage) override;
-	virtual EModRet OnChanMsg(CNick& Nick, CChan& Channel, CString& sMessage) override;
+	EModRet OnUserMsg(CString& sTarget, CString& sMessage) override;
+	EModRet OnPrivMsg(CNick& Nick, CString& sMessage) override;
+	EModRet OnChanMsg(CNick& Nick, CChan& Channel, CString& sMessage) override;
 
 private:
 	CString                 m_sLogPath;

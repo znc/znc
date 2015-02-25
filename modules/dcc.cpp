@@ -28,14 +28,14 @@ public:
 	CDCCSock(CDCCMod* pMod, const CString& sRemoteNick, const CString& sRemoteIP, unsigned short uRemotePort, const CString& sLocalFile, unsigned long uFileSize);
 	virtual ~CDCCSock();
 
-	virtual void ReadData(const char* data, size_t len) override;
-	virtual void ConnectionRefused() override;
-	virtual void SockError(int iErrno, const CString& sDescription) override;
-	virtual void Timeout() override;
-	virtual void Connected() override;
-	virtual void Disconnected() override;
+	void ReadData(const char* data, size_t len) override;
+	void ConnectionRefused() override;
+	void SockError(int iErrno, const CString& sDescription) override;
+	void Timeout() override;
+	void Connected() override;
+	void Disconnected() override;
 	void SendPacket();
-	virtual Csock* GetSockObj(const CString& sHost, unsigned short uPort) override;
+	Csock* GetSockObj(const CString& sHost, unsigned short uPort) override;
 	CFile* OpenFile(bool bWrite = true);
 	bool Seek(unsigned long int uPos);
 
@@ -86,7 +86,7 @@ public:
 	virtual ~CDCCMod() {}
 
 #ifndef MOD_DCC_ALLOW_EVERYONE
-	virtual bool OnLoad(const CString& sArgs, CString& sMessage) override {
+	bool OnLoad(const CString& sArgs, CString& sMessage) override {
 		if (!GetUser()->IsAdmin()) {
 			sMessage = "You must be admin to use the DCC module";
 			return false;
@@ -219,7 +219,7 @@ public:
 		}
 	}
 
-	virtual void OnModCTCP(const CString& sMessage) override {
+	void OnModCTCP(const CString& sMessage) override {
 		if (sMessage.StartsWith("DCC RESUME ")) {
 			CString sFile = sMessage.Token(2);
 			unsigned short uResumePort = sMessage.Token(3).ToUShort();

@@ -121,21 +121,21 @@ public:
 		return sPerf;
 	}
 
-	virtual bool OnLoad(const CString& sArgs, CString& sMessage) override {
+	bool OnLoad(const CString& sArgs, CString& sMessage) override {
 		GetNV("Perform").Split("\n", m_vPerform, false);
 
 		return true;
 	}
 
-	virtual void OnIRCConnected() override {
+	void OnIRCConnected() override {
 		for (VCString::const_iterator it = m_vPerform.begin(); it != m_vPerform.end(); ++it) {
 			PutIRC(ExpandString(*it));
 		}
 	}
 
-	virtual CString GetWebMenuTitle() override { return "Perform"; }
+	CString GetWebMenuTitle() override { return "Perform"; }
 
-	virtual bool OnWebRequest(CWebSock& WebSock, const CString& sPageName, CTemplate& Tmpl) override {
+	bool OnWebRequest(CWebSock& WebSock, const CString& sPageName, CTemplate& Tmpl) override {
 		if (sPageName != "index") {
 			// only accept requests to index
 			return false;

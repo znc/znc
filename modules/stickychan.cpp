@@ -32,9 +32,9 @@ public:
 	{
 	}
 
-	virtual bool OnLoad(const CString& sArgs, CString& sMessage) override;
+	bool OnLoad(const CString& sArgs, CString& sMessage) override;
 
-	virtual EModRet OnUserPart(CString& sChannel, CString& sMessage) override
+	EModRet OnUserPart(CString& sChannel, CString& sMessage) override
 	{
 		for (MCString::iterator it = BeginNV(); it != EndNV(); ++it)
 		{
@@ -116,9 +116,9 @@ public:
 		}
 	}
 
-	virtual CString GetWebMenuTitle() override { return "Sticky Chans"; }
+	CString GetWebMenuTitle() override { return "Sticky Chans"; }
 
-	virtual bool OnWebRequest(CWebSock& WebSock, const CString& sPageName, CTemplate& Tmpl) override {
+	bool OnWebRequest(CWebSock& WebSock, const CString& sPageName, CTemplate& Tmpl) override {
 		if (sPageName == "index") {
 			bool bSubmitted = (WebSock.GetParam("submitted").ToInt() != 0);
 
@@ -154,7 +154,7 @@ public:
 		return false;
 	}
 
-	virtual bool OnEmbeddedWebRequest(CWebSock& WebSock, const CString& sPageName, CTemplate& Tmpl) override {
+	bool OnEmbeddedWebRequest(CWebSock& WebSock, const CString& sPageName, CTemplate& Tmpl) override {
 		if (sPageName == "webadmin/channel") {
 			CString sChan = Tmpl["ChanName"];
 			bool bStick = FindNV(sChan) != EndNV();

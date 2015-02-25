@@ -204,11 +204,11 @@ public:
 	using Csock::Listen;
 
 	//! This defaults to closing the socket, feel free to override
-	virtual void ReachedMaxBuffer() override;
-	virtual void SockError(int iErrno, const CString& sDescription) override;
+	void ReachedMaxBuffer() override;
+	void SockError(int iErrno, const CString& sDescription) override;
 
 	//! This limits the global connections from this IP to defeat DoS attacks, feel free to override. The ACL used is provided by the main interface @see CZNC::AllowConnectionFrom
-	virtual bool ConnectionFrom(const CString& sHost, unsigned short uPort) override;
+	bool ConnectionFrom(const CString& sHost, unsigned short uPort) override;
 
 	//! Ease of use Connect, assigns to the manager and is subsequently tracked
 	bool Connect(const CString& sHostname, unsigned short uPort, bool bSSL = false, unsigned int uTimeout = 60);

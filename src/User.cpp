@@ -37,7 +37,7 @@ public:
 
 private:
 protected:
-	virtual void RunJob() override {
+	void RunJob() override {
 		const vector<CClient*>& vUserClients = m_pUser->GetUserClients();
 		for (size_t c = 0; c < vUserClients.size(); ++c) {
 			CClient* pUserClient = vUserClients[c];

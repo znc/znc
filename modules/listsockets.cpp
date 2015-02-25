@@ -69,7 +69,7 @@ public:
 		AddCommand("List", static_cast<CModCommand::ModCmdFunc>(&CListSockets::OnListCommand), "[-n]", "Show the list of active sockets. Pass -n to show IP addresses");
 	}
 
-	virtual bool OnLoad(const CString& sArgs, CString& sMessage) override
+	bool OnLoad(const CString& sArgs, CString& sMessage) override
 	{
 #ifndef MOD_LISTSOCKETS_ALLOW_EVERYONE
 		if (!GetUser()->IsAdmin()) {
@@ -99,10 +99,10 @@ public:
 		return ret;
 	}
 
-	virtual bool WebRequiresAdmin() override { return true; }
-	virtual CString GetWebMenuTitle() override { return "List sockets"; }
+	bool WebRequiresAdmin() override { return true; }
+	CString GetWebMenuTitle() override { return "List sockets"; }
 
-	virtual bool OnWebRequest(CWebSock& WebSock, const CString& sPageName, CTemplate& Tmpl) override {
+	bool OnWebRequest(CWebSock& WebSock, const CString& sPageName, CTemplate& Tmpl) override {
 		if (sPageName == "index") {
 			if (CZNC::Get().GetManager().empty()) {
 				return false;

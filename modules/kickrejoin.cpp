@@ -34,7 +34,7 @@ public:
 	virtual ~CRejoinJob() {}
 
 protected:
-	virtual void RunJob() override {
+	void RunJob() override {
 		CIRCNetwork* pNetwork = GetModule()->GetNetwork();
 		CChan* pChan = pNetwork->FindChan(GetName().Token(1, true));
 
@@ -57,7 +57,7 @@ public:
 	}
 	virtual ~CRejoinMod() {}
 
-	virtual bool OnLoad(const CString& sArgs, CString& sErrorMsg) override {
+	bool OnLoad(const CString& sArgs, CString& sErrorMsg) override {
 		if (sArgs.empty()) {
 			CString sDelay = GetNV("delay");
 
@@ -104,7 +104,7 @@ public:
 			PutModule("Rejoin delay disabled");
 	}
 
-	virtual void OnKick(const CNick& OpNick, const CString& sKickedNick, CChan& pChan, const CString& sMessage) override {
+	void OnKick(const CNick& OpNick, const CString& sKickedNick, CChan& pChan, const CString& sMessage) override {
 		if (GetNetwork()->GetCurNick().Equals(sKickedNick)) {
 			if (!delay) {
 				PutIRC("JOIN " + pChan.GetName() + " " + pChan.GetKey());

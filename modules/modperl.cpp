@@ -133,7 +133,7 @@ public:
 		return result;
 	}
 
-	virtual EModRet OnModuleUnloading(CModule* pModule, bool& bSuccess, CString& sRetMsg) override {
+	EModRet OnModuleUnloading(CModule* pModule, bool& bSuccess, CString& sRetMsg) override {
 		CPerlModule* pMod = AsPerlModule(pModule);
 		if (pMod) {
 			EModRet result = HALT;
@@ -208,7 +208,7 @@ public:
 		return result;
 	}
 
-	virtual void OnGetAvailableMods(set<CModInfo>& ssMods, CModInfo::EModuleType eType) override {
+	void OnGetAvailableMods(set<CModInfo>& ssMods, CModInfo::EModuleType eType) override {
 
 		unsigned int a = 0;
 		CDir Dir;

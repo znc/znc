@@ -31,7 +31,7 @@ public:
 
 	virtual ~CAutoCycleMod() {}
 
-	virtual bool OnLoad(const CString& sArgs, CString& sMessage) override {
+	bool OnLoad(const CString& sArgs, CString& sMessage) override {
 		VCString vsChans;
 		sArgs.Split(" ", vsChans, false);
 
@@ -96,16 +96,16 @@ public:
 		}
 	}
 
-	virtual void OnPart(const CNick& Nick, CChan& Channel, const CString& sMessage) override {
+	void OnPart(const CNick& Nick, CChan& Channel, const CString& sMessage) override {
 		AutoCycle(Channel);
 	}
 
-	virtual void OnQuit(const CNick& Nick, const CString& sMessage, const vector<CChan*>& vChans) override {
+	void OnQuit(const CNick& Nick, const CString& sMessage, const vector<CChan*>& vChans) override {
 		for (unsigned int i = 0; i < vChans.size(); i++)
 			AutoCycle(*vChans[i]);
 	}
 
-	virtual void OnKick(const CNick& Nick, const CString& sOpNick, CChan& Channel, const CString& sMessage) override {
+	void OnKick(const CNick& Nick, const CString& sOpNick, CChan& Channel, const CString& sMessage) override {
 		AutoCycle(Channel);
 	}
 

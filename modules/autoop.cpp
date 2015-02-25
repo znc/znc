@@ -37,7 +37,7 @@ public:
 
 private:
 protected:
-	virtual void RunJob() override;
+	void RunJob() override;
 
 	CAutoOpMod* m_pParent;
 };
@@ -160,7 +160,7 @@ public:
 		AddCommand("DelUser", static_cast<CModCommand::ModCmdFunc>(&CAutoOpMod::OnDelUserCommand), "<user>", "Removes a user");
 	}
 
-	virtual bool OnLoad(const CString& sArgs, CString& sMessage) override {
+	bool OnLoad(const CString& sArgs, CString& sMessage) override {
 		AddTimer(new CAutoOpTimer(this));
 
 		// Load the users
@@ -185,14 +185,14 @@ public:
 		m_msUsers.clear();
 	}
 
-	virtual void OnJoin(const CNick& Nick, CChan& Channel) override {
+	void OnJoin(const CNick& Nick, CChan& Channel) override {
 		// If we have ops in this chan
 		if (Channel.HasPerm(CChan::Op)) {
 			CheckAutoOp(Nick, Channel);
 		}
 	}
 
-	virtual void OnQuit(const CNick& Nick, const CString& sMessage, const vector<CChan*>& vChans) override {
+	void OnQuit(const CNick& Nick, const CString& sMessage, const vector<CChan*>& vChans) override {
 		MCString::iterator it = m_msQueue.find(Nick.GetNick().AsLower());
 
 		if (it != m_msQueue.end()) {
@@ -200,7 +200,7 @@ public:
 		}
 	}
 
-	virtual void OnNick(const CNick& OldNick, const CString& sNewNick, const vector<CChan*>& vChans) override {
+	void OnNick(const CNick& OldNick, const CString& sNewNick, const vector<CChan*>& vChans) override {
 		// Update the queue with nick changes
 		MCString::iterator it = m_msQueue.find(OldNick.GetNick().AsLower());
 
@@ -210,7 +210,7 @@ public:
 		}
 	}
 
-	virtual EModRet OnPrivNotice(CNick& Nick, CString& sMessage) override {
+	EModRet OnPrivNotice(CNick& Nick, CString& sMessage) override {
 		if (!sMessage.Token(0).Equals("!ZNCAO")) {
 			return CONTINUE;
 		}
@@ -226,7 +226,7 @@ public:
 		return HALTCORE;
 	}
 
-	virtual void OnOp2(const CNick* pOpNick, const CNick& Nick, CChan& Channel, bool bNoChange) override {
+	void OnOp2(const CNick* pOpNick, const CNick& Nick, CChan& Channel, bool bNoChange) override {
 		if (Nick.GetNick() == GetNetwork()->GetIRCNick().GetNick()) {
 			const map<CString,CNick>& msNicks = Channel.GetNicks();
 

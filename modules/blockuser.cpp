@@ -32,7 +32,7 @@ public:
 
 	virtual ~CBlockUser() {}
 
-	virtual bool OnLoad(const CString& sArgs, CString& sMessage) override {
+	bool OnLoad(const CString& sArgs, CString& sMessage) override {
 		VCString vArgs;
 		VCString::iterator it;
 		MCString::iterator it2;
@@ -56,7 +56,7 @@ public:
 		return true;
 	}
 
-	virtual EModRet OnLoginAttempt(std::shared_ptr<CAuthBase> Auth) override {
+	EModRet OnLoginAttempt(std::shared_ptr<CAuthBase> Auth) override {
 		if (IsBlocked(Auth->GetUsername())) {
 			Auth->RefuseLogin(MESSAGE);
 			return HALT;

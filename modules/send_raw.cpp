@@ -63,7 +63,7 @@ class CSendRaw_Mod: public CModule {
 public:
 	virtual ~CSendRaw_Mod() {}
 
-	virtual bool OnLoad(const CString& sArgs, CString& sErrorMsg) override {
+	bool OnLoad(const CString& sArgs, CString& sErrorMsg) override {
 		if (!GetUser()->IsAdmin()) {
 			sErrorMsg = "You must have admin privileges to load this module";
 			return false;
@@ -72,10 +72,10 @@ public:
 		return true;
 	}
 
-	virtual CString GetWebMenuTitle() override { return "Send Raw"; }
-	virtual bool WebRequiresAdmin() override { return true; }
+	CString GetWebMenuTitle() override { return "Send Raw"; }
+	bool WebRequiresAdmin() override { return true; }
 
-	virtual bool OnWebRequest(CWebSock& WebSock, const CString& sPageName, CTemplate& Tmpl) override {
+	bool OnWebRequest(CWebSock& WebSock, const CString& sPageName, CTemplate& Tmpl) override {
 		if (sPageName == "index") {
 			if (WebSock.IsPost()) {
 				CUser *pUser = CZNC::Get().FindUser(WebSock.GetParam("network").Token(0, false, "/"));

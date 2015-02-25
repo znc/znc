@@ -29,7 +29,7 @@ public:
 
 	virtual ~CAutoReplyMod() {}
 
-	virtual bool OnLoad(const CString& sArgs, CString& sMessage) override {
+	bool OnLoad(const CString& sArgs, CString& sMessage) override {
 		if (!sArgs.empty()) {
 			SetReply(sArgs);
 		}
@@ -68,7 +68,7 @@ public:
 		PutIRC("NOTICE " + sNick + " :" + GetReply());
 	}
 
-	virtual EModRet OnPrivMsg(CNick& Nick, CString& sMessage) override {
+	EModRet OnPrivMsg(CNick& Nick, CString& sMessage) override {
 		Handle(Nick.GetNick());
 		return CONTINUE;
 	}

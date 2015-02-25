@@ -77,7 +77,7 @@ public:
 
 	virtual ~CNickServ() {}
 
-	virtual bool OnLoad(const CString& sArgs, CString& sMessage) override {
+	bool OnLoad(const CString& sArgs, CString& sMessage) override {
 		if (!sArgs.empty() && sArgs != "<hidden>") {
 			SetNV("Password", sArgs);
 			SetArgs("<hidden>");
@@ -111,12 +111,12 @@ public:
 		}
 	}
 
-	virtual EModRet OnPrivMsg(CNick& Nick, CString& sMessage) override {
+	EModRet OnPrivMsg(CNick& Nick, CString& sMessage) override {
 		HandleMessage(Nick, sMessage);
 		return CONTINUE;
 	}
 
-	virtual EModRet OnPrivNotice(CNick& Nick, CString& sMessage) override {
+	EModRet OnPrivNotice(CNick& Nick, CString& sMessage) override {
 		HandleMessage(Nick, sMessage);
 		return CONTINUE;
 	}

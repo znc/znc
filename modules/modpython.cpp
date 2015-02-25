@@ -194,7 +194,7 @@ public:
 		return HALT;
 	}
 
-	virtual EModRet OnModuleUnloading(CModule* pModule, bool& bSuccess, CString& sRetMsg) override {
+	EModRet OnModuleUnloading(CModule* pModule, bool& bSuccess, CString& sRetMsg) override {
 		CPyModule* pMod = AsPyModule(pModule);
 		if (pMod) {
 			CString sModName = pMod->GetModName();
@@ -309,7 +309,7 @@ public:
 		}
 	}
 
-	virtual void OnGetAvailableMods(set<CModInfo>& ssMods, CModInfo::EModuleType eType) override {
+	void OnGetAvailableMods(set<CModInfo>& ssMods, CModInfo::EModuleType eType) override {
 		CDir Dir;
 		CModules::ModDirList dirs = CModules::GetModDirs();
 

@@ -156,7 +156,7 @@ public:
 		Add(CThreadPool::Get().getReadFD(), ECT_Read);
 	}
 
-	virtual bool FDsThatTriggered(const std::map<int, short>& miiReadyFds) override {
+	bool FDsThatTriggered(const std::map<int, short>& miiReadyFds) override {
 		if (miiReadyFds.find(CThreadPool::Get().getReadFD())->second) {
 			CThreadPool::Get().handlePipeReadable();
 		}

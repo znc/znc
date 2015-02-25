@@ -77,25 +77,25 @@ public:
 
 	// Event stuff:
 
-	virtual void OnClientLogin() override {
+	void OnClientLogin() override {
 		SetTime(GetUser());
 	}
 
-	virtual void OnClientDisconnect() override {
+	void OnClientDisconnect() override {
 		SetTime(GetUser());
 	}
 
-	virtual EModRet OnDeleteUser(CUser& User) override {
+	EModRet OnDeleteUser(CUser& User) override {
 		DelNV(User.GetUserName());
 		return CONTINUE;
 	}
 
 	// Web stuff:
 
-	virtual bool WebRequiresAdmin() override { return true; }
-	virtual CString GetWebMenuTitle() override { return "Last Seen"; }
+	bool WebRequiresAdmin() override { return true; }
+	CString GetWebMenuTitle() override { return "Last Seen"; }
 
-	virtual bool OnWebRequest(CWebSock& WebSock, const CString& sPageName, CTemplate& Tmpl) override {
+	bool OnWebRequest(CWebSock& WebSock, const CString& sPageName, CTemplate& Tmpl) override {
 		if (sPageName == "index") {
 			CModules& GModules = CZNC::Get().GetModules();
 			Tmpl["WebAdminLoaded"] = CString(GModules.FindModule("webadmin") != NULL);
@@ -122,7 +122,7 @@ public:
 		return false;
 	}
 
-	virtual bool OnEmbeddedWebRequest(CWebSock& WebSock, const CString& sPageName, CTemplate& Tmpl) override {
+	bool OnEmbeddedWebRequest(CWebSock& WebSock, const CString& sPageName, CTemplate& Tmpl) override {
 		if (sPageName == "webadmin/user" && WebSock.GetSession()->IsAdmin()) {
 			CUser* pUser = CZNC::Get().FindUser(Tmpl["Username"]);
 			if (pUser) {

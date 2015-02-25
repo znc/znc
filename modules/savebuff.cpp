@@ -52,7 +52,7 @@ public:
 	virtual ~CSaveBuffJob() {}
 
 protected:
-	virtual void RunJob() override;
+	void RunJob() override;
 };
 
 class CSaveBuff : public CModule
@@ -75,7 +75,7 @@ public:
 		}
 	}
 
-	virtual bool OnLoad(const CString& sArgs, CString& sMessage) override
+	bool OnLoad(const CString& sArgs, CString& sMessage) override
 	{
 		if( sArgs == CRYPT_ASK_PASS )
 		{
@@ -98,7 +98,7 @@ public:
 		return( !m_bBootError );
 	}
 
-	virtual bool OnBoot() override
+	bool OnBoot() override
 	{
 		CDir saveDir(GetSavePath());
 		for (CFile* pFile : saveDir) {
@@ -335,11 +335,11 @@ public:
 		chan.AddBuffer(sLine);
 	}
 
-	virtual void OnRawMode(const CNick& cOpNick, CChan& cChannel, const CString& sModes, const CString& sArgs) override
+	void OnRawMode(const CNick& cOpNick, CChan& cChannel, const CString& sModes, const CString& sArgs) override
 	{
 		AddBuffer(cChannel, SpoofChanMsg(cChannel.GetName(), cOpNick.GetNickMask() + " MODE " + sModes + " " + sArgs));
 	}
-	virtual void OnQuit(const CNick& cNick, const CString& sMessage, const vector<CChan*>& vChans) override
+	void OnQuit(const CNick& cNick, const CString& sMessage, const vector<CChan*>& vChans) override
 	{
 		for (size_t a = 0; a < vChans.size(); a++)
 		{
@@ -349,18 +349,18 @@ public:
 			SaveBuffersToDisk(); // need to force a save here to see this!
 	}
 
-	virtual void OnNick(const CNick& cNick, const CString& sNewNick, const vector<CChan*>& vChans) override
+	void OnNick(const CNick& cNick, const CString& sNewNick, const vector<CChan*>& vChans) override
 	{
 		for (size_t a = 0; a < vChans.size(); a++)
 		{
 			AddBuffer(*vChans[a], SpoofChanMsg(vChans[a]->GetName(), cNick.GetNickMask() + " NICK " + sNewNick));
 		}
 	}
-	virtual void OnKick(const CNick& cNick, const CString& sOpNick, CChan& cChannel, const CString& sMessage) override
+	void OnKick(const CNick& cNick, const CString& sOpNick, CChan& cChannel, const CString& sMessage) override
 	{
 		AddBuffer(cChannel, SpoofChanMsg(cChannel.GetName(), sOpNick + " KICK " + cNick.GetNickMask() + " " + sMessage));
 	}
-	virtual void OnJoin(const CNick& cNick, CChan& cChannel) override
+	void OnJoin(const CNick& cNick, CChan& cChannel) override
 	{
 		if (cNick.NickEquals(GetUser()->GetNick()) && cChannel.GetBuffer().empty())
 		{
@@ -370,7 +370,7 @@ public:
 		}
 		AddBuffer(cChannel, SpoofChanMsg(cChannel.GetName(), cNick.GetNickMask() + " JOIN"));
 	}
-	virtual void OnPart(const CNick& cNick, CChan& cChannel) override
+	void OnPart(const CNick& cNick, CChan& cChannel) override
 	{
 		AddBuffer(cChannel, SpoofChanMsg(cChannel.GetName(), cNick.GetNickMask() + " PART"));
 		if (cNick.NickEquals(GetUser()->GetNick()))

@@ -198,7 +198,7 @@ public:
 	virtual ~CRouteTimeout() {}
 
 protected:
-	virtual void RunJob() override;
+	void RunJob() override;
 };
 
 struct queued_req {
@@ -236,7 +236,7 @@ public:
 		}
 	}
 
-	virtual void OnIRCConnected() override
+	void OnIRCConnected() override
 	{
 		m_pDoing = NULL;
 		m_pReplies = NULL;
@@ -246,12 +246,12 @@ public:
 		RemTimer("RouteTimeout");
 	}
 
-	virtual void OnIRCDisconnected() override
+	void OnIRCDisconnected() override
 	{
 		OnIRCConnected(); // Let's keep it in one place
 	}
 
-	virtual void OnClientDisconnect() override
+	void OnClientDisconnect() override
 	{
 		requestQueue::iterator it;
 
@@ -271,7 +271,7 @@ public:
 		SendRequest();
 	}
 
-	virtual EModRet OnRaw(CString& sLine) override
+	EModRet OnRaw(CString& sLine) override
 	{
 		CString sCmd = sLine.Token(1).AsUpper();
 		size_t i = 0;
@@ -307,7 +307,7 @@ public:
 		return CONTINUE;
 	}
 
-	virtual EModRet OnUserRaw(CString& sLine) override
+	EModRet OnUserRaw(CString& sLine) override
 	{
 		CString sCmd = sLine.Token(0).AsUpper();
 

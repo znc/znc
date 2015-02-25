@@ -36,7 +36,7 @@ public:
 	CZNCTagHandler(CWebSock& pWebSock);
 	virtual ~CZNCTagHandler() {}
 
-	virtual bool HandleTag(CTemplate& Tmpl, const CString& sName, const CString& sArgs, CString& sOutput) override;
+	bool HandleTag(CTemplate& Tmpl, const CString& sName, const CString& sArgs, CString& sOutput) override;
 private:
 	CWebSock& m_WebSock;
 };
@@ -137,7 +137,7 @@ public:
 
 	std::shared_ptr<CWebSession> GetSession();
 
-	virtual Csock* GetSockObj(const CString& sHost, unsigned short uPort) override;
+	Csock* GetSockObj(const CString& sHost, unsigned short uPort) override;
 	static CString GetSkinPath(const CString& sSkinName);
 	void GetAvailSkins(VCString& vRet) const;
 	CString GetSkinName();

@@ -162,7 +162,7 @@ public:
 	virtual ~CChanAttach() {
 	}
 
-	virtual bool OnLoad(const CString& sArgs, CString& sMessage) override {
+	bool OnLoad(const CString& sArgs, CString& sMessage) override {
 		VCString vsChans;
 		sArgs.Split(" ", vsChans, false);
 
@@ -217,17 +217,17 @@ public:
 		}
 	}
 
-	virtual EModRet OnChanNotice(CNick& Nick, CChan& Channel, CString& sMessage) override {
+	EModRet OnChanNotice(CNick& Nick, CChan& Channel, CString& sMessage) override {
 		TryAttach(Nick, Channel, sMessage);
 		return CONTINUE;
 	}
 
-	virtual EModRet OnChanMsg(CNick& Nick, CChan& Channel, CString& sMessage) override {
+	EModRet OnChanMsg(CNick& Nick, CChan& Channel, CString& sMessage) override {
 		TryAttach(Nick, Channel, sMessage);
 		return CONTINUE;
 	}
 
-	virtual EModRet OnChanAction(CNick& Nick, CChan& Channel, CString& sMessage) override {
+	EModRet OnChanAction(CNick& Nick, CChan& Channel, CString& sMessage) override {
 		TryAttach(Nick, Channel, sMessage);
 		return CONTINUE;
 	}

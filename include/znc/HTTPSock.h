@@ -30,9 +30,9 @@ public:
 	virtual ~CHTTPSock();
 
 	// Csocket derived members
-	virtual void ReadData(const char* data, size_t len) override;
-	virtual void ReadLine(const CString& sData) override;
-	virtual void Connected() override;
+	void ReadData(const char* data, size_t len) override;
+	void ReadLine(const CString& sData) override;
+	void Connected() override;
 	virtual Csock* GetSockObj(const CString& sHost, unsigned short uPort) = 0;
 	// !Csocket derived members
 

@@ -42,7 +42,7 @@ class CIRCFloodTimer : public CCron {
 			m_pSock = pSock;
 			StartMaxCycles(m_pSock->m_fFloodRate, 0);
 		}
-		virtual void RunJob() override {
+		void RunJob() override {
 			if (m_pSock->m_iSendsAllowed < m_pSock->m_uFloodBurst) {
 				m_pSock->m_iSendsAllowed++;
 			}
