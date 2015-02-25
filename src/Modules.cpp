@@ -647,6 +647,7 @@ CModule::EModRet CModule::OnRaw(CString& sLine) { return CONTINUE; }
 CModule::EModRet CModule::OnStatusCommand(CString& sCommand) { return CONTINUE; }
 void CModule::OnModNotice(const CString& sMessage) {}
 void CModule::OnModCTCP(const CString& sMessage) {}
+CModule::EModRet CModule::OnWallops(const CNick& Nick, const CString& sMessage) { return CONTINUE; }
 
 void CModule::OnModCommand(const CString& sCommand) {
 	HandleCommand(sCommand);
@@ -889,6 +890,7 @@ bool CModules::OnStatusCommand(CString& sCommand) { MODHALTCHK(OnStatusCommand(s
 bool CModules::OnModCommand(const CString& sCommand) { MODUNLOADCHK(OnModCommand(sCommand)); return false; }
 bool CModules::OnModNotice(const CString& sMessage) { MODUNLOADCHK(OnModNotice(sMessage)); return false; }
 bool CModules::OnModCTCP(const CString& sMessage) { MODUNLOADCHK(OnModCTCP(sMessage)); return false; }
+bool CModules::OnWallops(const CNick& Nick, const CString& sMessage) { MODHALTCHK(OnWallops(Nick,  sMessage)); }
 
 // Why MODHALTCHK works only with functions returning EModRet ? :(
 bool CModules::OnServerCapAvailable(const CString& sCap) {

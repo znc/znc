@@ -802,6 +802,9 @@ void CIRCSock::ReadLine(const CString& sData) {
 			// :blub!dummy@rox-8DBEFE92 WALLOPS :this is a test
 			CString sMsg = sRest.Token(0, true).TrimPrefix_n();
 
+			IRCSOCKMODULECALL(OnWallops(Nick, sMsg), &bReturn);
+			if (bReturn) return;
+
 			if (!m_pNetwork->IsUserOnline()) {
 				m_pNetwork->AddNoticeBuffer(":" + _NAMEDFMT(Nick.GetNickMask()) + " WALLOPS :{text}", sMsg);
 			}
