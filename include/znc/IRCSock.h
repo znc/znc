@@ -59,13 +59,13 @@ public:
 	bool OnServerCapAvailable(const CString& sCap);
 	// !Message Handlers
 
-	virtual void ReadLine(const CString& sData);
-	virtual void Connected();
-	virtual void Disconnected();
-	virtual void ConnectionRefused();
-	virtual void SockError(int iErrno, const CString& sDescription);
-	virtual void Timeout();
-	virtual void ReachedMaxBuffer();
+	virtual void ReadLine(const CString& sData) override;
+	virtual void Connected() override;
+	virtual void Disconnected() override;
+	virtual void ConnectionRefused() override;
+	virtual void SockError(int iErrno, const CString& sDescription) override;
+	virtual void Timeout() override;
+	virtual void ReachedMaxBuffer() override;
 
 	void PutIRC(const CString& sLine);
 	void PutIRCQuick(const CString& sLine); //!< Should be used for PONG only

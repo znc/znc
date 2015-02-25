@@ -174,7 +174,7 @@ public:
 	void SetFPCallback(FPTimer_t p) { m_pFBCallback = p; }
 
 protected:
-	virtual void RunJob() {
+	virtual void RunJob() override {
 		if (m_pFBCallback) {
 			m_pFBCallback(m_pModule, this);
 		}

@@ -80,9 +80,9 @@ public:
 	CClientAuth(const CClientAuth&) = delete;
 	CClientAuth& operator=(const CClientAuth&) = delete;
 
-	void Invalidate() { m_pClient = nullptr; CAuthBase::Invalidate(); }
-	void AcceptedLogin(CUser& User);
-	void RefusedLogin(const CString& sReason);
+	void Invalidate() override { m_pClient = nullptr; CAuthBase::Invalidate(); }
+	void AcceptedLogin(CUser& User) override;
+	void RefusedLogin(const CString& sReason) override;
 private:
 protected:
 	CClient* m_pClient;
@@ -152,15 +152,15 @@ public:
 
 	bool IsCapEnabled(const CString& sCap) const { return 1 == m_ssAcceptedCaps.count(sCap); }
 
-	virtual void ReadLine(const CString& sData);
+	virtual void ReadLine(const CString& sData) override;
 	bool SendMotd();
 	void HelpUser(const CString& sFilter = "");
 	void AuthUser();
-	virtual void Connected();
-	virtual void Timeout();
-	virtual void Disconnected();
-	virtual void ConnectionRefused();
-	virtual void ReachedMaxBuffer();
+	virtual void Connected() override;
+	virtual void Timeout() override;
+	virtual void Disconnected() override;
+	virtual void ConnectionRefused() override;
+	virtual void ReachedMaxBuffer() override;
 
 	void SetNick(const CString& s);
 	void SetAway(bool bAway) { m_bAway = bAway; }

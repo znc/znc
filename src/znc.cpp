@@ -1874,7 +1874,7 @@ public:
 	}
 
 protected:
-	virtual void RunJob() {
+	virtual void RunJob() override {
 		list<CIRCNetwork*> ConnectionQueue;
 		list<CIRCNetwork*>& RealConnectionQueue = CZNC::Get().GetConnectionQueue();
 

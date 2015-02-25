@@ -161,8 +161,8 @@ private:
 		int           iRes;
 		addrinfo*     aiResult;
 
-		void runThread();
-		void runMain();
+		void runThread() override;
+		void runMain() override;
 	};
 	void StartTDNSThread(TDNSTask* task, bool bBind);
 	void SetTDNSThreadFinished(TDNSTask* task, bool bBind, addrinfo* aiResult);
@@ -204,11 +204,11 @@ public:
 	using Csock::Listen;
 
 	//! This defaults to closing the socket, feel free to override
-	virtual void ReachedMaxBuffer();
-	virtual void SockError(int iErrno, const CString& sDescription);
+	virtual void ReachedMaxBuffer() override;
+	virtual void SockError(int iErrno, const CString& sDescription) override;
 
 	//! This limits the global connections from this IP to defeat DoS attacks, feel free to override. The ACL used is provided by the main interface @see CZNC::AllowConnectionFrom
-	virtual bool ConnectionFrom(const CString& sHost, unsigned short uPort);
+	virtual bool ConnectionFrom(const CString& sHost, unsigned short uPort) override;
 
 	//! Ease of use Connect, assigns to the manager and is subsequently tracked
 	bool Connect(const CString& sHostname, unsigned short uPort, bool bSSL = false, unsigned int uTimeout = 60);

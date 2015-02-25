@@ -38,7 +38,7 @@ public:
 	virtual ~CIRCNetworkPingTimer() {}
 
 protected:
-	virtual void RunJob() {
+	virtual void RunJob() override {
 		CIRCSock* pIRCSock = m_pNetwork->GetIRCSock();
 
 		if (pIRCSock && pIRCSock->GetTimeSinceLastDataTransaction() >= CIRCNetwork::PING_FREQUENCY) {
@@ -74,7 +74,7 @@ public:
 	}
 
 protected:
-	virtual void RunJob() {
+	virtual void RunJob() override {
 		if (m_bDelayed) {
 			m_bDelayed = false;
 			Start(CIRCNetwork::JOIN_FREQUENCY);

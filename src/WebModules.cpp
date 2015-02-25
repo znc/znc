@@ -54,9 +54,9 @@ public:
 	virtual ~CWebAuth() {}
 
 	void SetWebSock(CWebSock* pWebSock) { m_pWebSock = pWebSock; }
-	void AcceptedLogin(CUser& User);
-	void RefusedLogin(const CString& sReason);
-	void Invalidate();
+	void AcceptedLogin(CUser& User) override;
+	void RefusedLogin(const CString& sReason) override;
+	void Invalidate() override;
 private:
 protected:
 	CWebSock*   m_pWebSock;
