@@ -73,7 +73,7 @@ void CQuery::SendBuffer(CClient* pClient, const CBuffer& Buffer) {
 						CUtils::SetMessageTags(sLine, msBatchTags);
 					}
 					bool bContinue = false;
-					NETWORKMODULECALL(OnPrivBufferPlayLine2(*pUseClient, sLine, BufLine.GetTime()), m_pNetwork->GetUser(), m_pNetwork, NULL, &bContinue);
+					NETWORKMODULECALL(OnPrivBufferPlayLine2(*pUseClient, sLine, BufLine.GetTime()), m_pNetwork->GetUser(), m_pNetwork, nullptr, &bContinue);
 					if (bContinue) continue;
 					m_pNetwork->PutUser(sLine, pUseClient);
 				}

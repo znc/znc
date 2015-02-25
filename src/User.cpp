@@ -100,7 +100,7 @@ CUser::~CUser() {
 
 	// Delete modules (unloads all modules!)
 	delete m_pModules;
-	m_pModules = NULL;
+	m_pModules = nullptr;
 
 	CZNC::Get().GetManager().DelCronByAddr(m_pUserTimer);
 
@@ -188,7 +188,7 @@ bool CUser::ParseConfig(CConfig* pConfig, CString& sError) {
 		if (sValue.ToBool()) {
 			CUtils::PrintAction("Loading Module [bouncedcc]");
 			CString sModRet;
-			bool bModRet = GetModules().LoadModule("bouncedcc", "", CModInfo::UserModule, this, NULL, sModRet);
+			bool bModRet = GetModules().LoadModule("bouncedcc", "", CModInfo::UserModule, this, nullptr, sModRet);
 
 			CUtils::PrintStatus(bModRet, sModRet);
 			if (!bModRet) {
@@ -449,20 +449,20 @@ bool CUser::ParseConfig(CConfig* pConfig, CString& sError) {
 CIRCNetwork* CUser::AddNetwork(const CString &sNetwork, CString& sErrorRet) {
 	if (!CIRCNetwork::IsValidNetwork(sNetwork)) {
 		sErrorRet = "Invalid network name. It should be alphanumeric. Not to be confused with server name";
-		return NULL;
+		return nullptr;
 	} else if (FindNetwork(sNetwork)) {
 		sErrorRet = "Network [" + sNetwork.Token(0) + "] already exists";
-		return NULL;
+		return nullptr;
 	}
 
 	CIRCNetwork* pNetwork = new CIRCNetwork(this, sNetwork);
 
 	bool bCancel = false;
-	USERMODULECALL(OnAddNetwork(*pNetwork, sErrorRet), this, NULL, &bCancel);
+	USERMODULECALL(OnAddNetwork(*pNetwork, sErrorRet), this, nullptr, &bCancel);
 	if(bCancel) {
 		RemoveNetwork(pNetwork);
 		delete pNetwork;
-		return NULL;
+		return nullptr;
 	}
 
 	return pNetwork;
@@ -492,7 +492,7 @@ bool CUser::DeleteNetwork(const CString& sNetwork) {
 
 	if (pNetwork) {
 		bool bCancel = false;
-		USERMODULECALL(OnDeleteNetwork(*pNetwork), this, NULL, &bCancel);
+		USERMODULECALL(OnDeleteNetwork(*pNetwork), this, nullptr, &bCancel);
 		if (!bCancel) {
 			delete pNetwork;
 			return true;
@@ -510,7 +510,7 @@ CIRCNetwork* CUser::FindNetwork(const CString& sNetwork) const {
 		}
 	}
 
-	return NULL;
+	return nullptr;
 }
 
 const vector<CIRCNetwork*>& CUser::GetNetworks() const {
@@ -523,7 +523,7 @@ CString CUser::ExpandString(const CString& sStr) const {
 }
 
 CString& CUser::ExpandString(const CString& sStr, CString& sRet) const {
-	CString sTime = CUtils::CTime(time(NULL), m_sTimezone);
+	CString sTime = CUtils::CTime(time(nullptr), m_sTimezone);
 
 	sRet = sStr;
 	sRet.Replace("%user%", GetUserName());
@@ -648,7 +648,7 @@ void CUser::CloneNetworks(const CUser& User) {
 			CClient *pClient = vClients.front();
 			// This line will remove pClient from vClients,
 			// because it's a reference to the internal Network's vector.
-			pClient->SetNetwork(NULL);
+			pClient->SetNetwork(nullptr);
 		}
 
 		DeleteNetwork(*it);
@@ -747,9 +747,9 @@ bool CUser::Clone(const CUser& User, CString& sErrorRet, bool bCloneNetworks) {
 		CModule* pCurMod = vCurMods.FindModule(pNewMod->GetModName());
 
 		if (!pCurMod) {
-			vCurMods.LoadModule(pNewMod->GetModName(), pNewMod->GetArgs(), CModInfo::UserModule, this, NULL, sModRet);
+			vCurMods.LoadModule(pNewMod->GetModName(), pNewMod->GetArgs(), CModInfo::UserModule, this, nullptr, sModRet);
 		} else if (pNewMod->GetArgs() != pCurMod->GetArgs()) {
-			vCurMods.ReloadModule(pNewMod->GetModName(), pNewMod->GetArgs(), this, NULL, sModRet);
+			vCurMods.ReloadModule(pNewMod->GetModName(), pNewMod->GetArgs(), this, nullptr, sModRet);
 		}
 	}
 
@@ -989,7 +989,7 @@ bool CUser::PutUser(const CString& sLine, CClient* pClient, CClient* pSkipClient
 		}
 	}
 
-	return (pClient == NULL);
+	return (pClient == nullptr);
 }
 
 bool CUser::PutAllUser(const CString& sLine, CClient* pClient, CClient* pSkipClient) {
@@ -1002,7 +1002,7 @@ bool CUser::PutAllUser(const CString& sLine, CClient* pClient, CClient* pSkipCli
 		}
 	}
 
-	return (pClient == NULL);
+	return (pClient == nullptr);
 }
 
 bool CUser::PutStatus(const CString& sLine, CClient* pClient, CClient* pSkipClient) {
@@ -1017,7 +1017,7 @@ bool CUser::PutStatus(const CString& sLine, CClient* pClient, CClient* pSkipClie
 		}
 	}
 
-	return (pClient == NULL);
+	return (pClient == nullptr);
 }
 
 bool CUser::PutStatusNotice(const CString& sLine, CClient* pClient, CClient* pSkipClient) {
@@ -1032,7 +1032,7 @@ bool CUser::PutStatusNotice(const CString& sLine, CClient* pClient, CClient* pSk
 		}
 	}
 
-	return (pClient == NULL);
+	return (pClient == nullptr);
 }
 
 bool CUser::PutModule(const CString& sModule, const CString& sLine, CClient* pClient, CClient* pSkipClient) {
@@ -1046,7 +1046,7 @@ bool CUser::PutModule(const CString& sModule, const CString& sLine, CClient* pCl
 		}
 	}
 
-	return (pClient == NULL);
+	return (pClient == nullptr);
 }
 
 bool CUser::PutModNotice(const CString& sModule, const CString& sLine, CClient* pClient, CClient* pSkipClient) {
@@ -1060,7 +1060,7 @@ bool CUser::PutModNotice(const CString& sModule, const CString& sLine, CClient* 
 		}
 	}
 
-	return (pClient == NULL);
+	return (pClient == nullptr);
 }
 
 CString CUser::MakeCleanUserName(const CString& sUserName) {
@@ -1116,7 +1116,7 @@ bool CUser::LoadModule(const CString& sModName, const CString& sArgs, const CStr
 			}
 		}
 	} else {
-		bModRet = GetModules().LoadModule(sModName, sArgs, CModInfo::UserModule, this, NULL, sModRet);
+		bModRet = GetModules().LoadModule(sModName, sArgs, CModInfo::UserModule, this, nullptr, sModRet);
 	}
 
 	if (!bModRet) {

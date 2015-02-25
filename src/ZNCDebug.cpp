@@ -29,7 +29,7 @@ bool CDebug::debug =
 
 CDebugStream::~CDebugStream() {
 	timeval tTime;
-	gettimeofday(&tTime, NULL);
+	gettimeofday(&tTime, nullptr);
 	time_t tSec = (time_t)tTime.tv_sec; // some systems (e.g. openbsd) define tv_sec as long int instead of time_t
 	tm tM;
 	tzset();// localtime_r requires this

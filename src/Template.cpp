@@ -48,7 +48,7 @@ CTemplate* CTemplateLoopContext::GetRow(unsigned int uIndex) {
 		}
 	}
 
-	return NULL;
+	return nullptr;
 }
 
 CString CTemplateLoopContext::GetValue(const CString& sName, bool bFromIf) {
@@ -104,7 +104,7 @@ void CTemplate::Init() {
 	*/
 
 	ClearPaths();
-	m_pParent = NULL;
+	m_pParent = nullptr;
 }
 
 CString CTemplate::ExpandFile(const CString& sFilename, bool bFromInc) {
@@ -241,7 +241,7 @@ CTemplate* CTemplate::GetRow(const CString& sName, unsigned int uIndex) {
 		}
 	}
 
-	return NULL;
+	return nullptr;
 }
 
 vector<CTemplate*>* CTemplate::GetLoop(const CString& sName) {
@@ -261,7 +261,7 @@ vector<CTemplate*>* CTemplate::GetLoop(const CString& sName) {
 		return &(it->second);
 	}
 
-	return NULL;
+	return nullptr;
 }
 
 bool CTemplate::PrintString(CString& sRet) {
@@ -456,7 +456,7 @@ bool CTemplate::Print(const CString& sFileName, ostream& oOut) {
 							bool bSort = (sArgs.Token(1).Left(4).Equals("SORT"));
 							vector<CTemplate*>* pvLoop = GetLoop(sLoopName);
 
-							if (bSort && pvLoop != NULL &&  pvLoop->size() > 1) {
+							if (bSort && pvLoop != nullptr &&  pvLoop->size() > 1) {
 								CString sKey;
 
 								if(sArgs.Token(1).TrimPrefix_n("SORT").Left(4).Equals("ASC=")) {
@@ -652,7 +652,7 @@ CTemplateLoopContext* CTemplate::GetCurLoopContext() {
 		return m_vLoopContexts.back();
 	}
 
-	return NULL;
+	return nullptr;
 }
 
 bool CTemplate::ValidIf(const CString& sArgs) {
@@ -749,7 +749,7 @@ bool CTemplate::IsTrue(const CString& sName) {
 }
 
 bool CTemplate::HasLoop(const CString& sName) {
-	return (GetLoop(sName) != NULL);
+	return (GetLoop(sName) != nullptr);
 }
 
 CTemplate* CTemplate::GetParent(bool bRoot) {

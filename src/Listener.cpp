@@ -46,7 +46,7 @@ bool CListener::Listen() {
 }
 
 void CListener::ResetRealListener() {
-	m_pListener = NULL;
+	m_pListener = nullptr;
 }
 
 CRealListener::~CRealListener() {
@@ -114,7 +114,7 @@ void CIncomingConnection::ReadLine(const CString& sLine) {
 		|| (m_eAcceptType == CListener::ACCEPT_HTTP);
 	bool bAcceptIRC = (m_eAcceptType == CListener::ACCEPT_ALL)
 		|| (m_eAcceptType == CListener::ACCEPT_IRC);
-	Csock *pSock = NULL;
+	Csock *pSock = nullptr;
 
 	if (!bIsHTTP) {
 		// Let's assume it's an IRC connection

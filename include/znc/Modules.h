@@ -166,7 +166,7 @@ class CFPTimer : public CTimer {
 public:
 	CFPTimer(CModule* pModule, unsigned int uInterval, unsigned int uCycles, const CString& sLabel, const CString& sDescription)
 		: CTimer(pModule, uInterval, uCycles, sLabel, sDescription) {
-		m_pFBCallback = NULL;
+		m_pFBCallback = nullptr;
 	}
 
 	virtual ~CFPTimer() {}
@@ -221,13 +221,13 @@ public:
 	} EModuleType;
 
 	CModInfo() {
-		m_fLoader = NULL;
+		m_fLoader = nullptr;
 		m_bHasArgs = false;
 	}
 	CModInfo(const CString& sName, const CString& sPath, EModuleType eType) {
 		m_sName = sName;
 		m_sPath = sPath;
-		m_fLoader = NULL;
+		m_fLoader = nullptr;
 		m_bHasArgs = false;
 	}
 	~CModInfo() {}

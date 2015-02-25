@@ -133,7 +133,7 @@ CModule::CModule(ModHandle pDLL, CUser* pUser, CIRCNetwork* pNetwork, const CStr
 	m_pManager = &(CZNC::Get().GetManager());;
 	m_pUser = pUser;
 	m_pNetwork = pNetwork;
-	m_pClient = NULL;
+	m_pClient = nullptr;
 	m_sModName = sModName;
 	m_sDataDir = sDataDir;
 
@@ -330,7 +330,7 @@ bool CModule::UnlinkTimer(CTimer* pTimer) {
 
 CTimer* CModule::FindTimer(const CString& sLabel) {
 	if (sLabel.empty()) {
-		return NULL;
+		return nullptr;
 	}
 
 	set<CTimer*>::iterator it;
@@ -341,7 +341,7 @@ CTimer* CModule::FindTimer(const CString& sLabel) {
 		}
 	}
 
-	return NULL;
+	return nullptr;
 }
 
 void CModule::ListTimers() {
@@ -430,7 +430,7 @@ CSocket* CModule::FindSocket(const CString& sSockName) {
 		}
 	}
 
-	return NULL;
+	return nullptr;
 }
 
 void CModule::ListSockets() {
@@ -483,7 +483,7 @@ void CModule::AddJob(CModuleJob *pJob)
 
 void CModule::CancelJob(CModuleJob *pJob)
 {
-	if (pJob == NULL)
+	if (pJob == nullptr)
 		return;
 	// Destructor calls UnlinkJob and removes the job from m_sJobs
 	CThreadPool::Get().cancelJob(pJob);
@@ -517,11 +517,11 @@ bool CModule::UnlinkJob(CModuleJob *pJob)
 
 bool CModule::AddCommand(const CModCommand& Command)
 {
-	if (Command.GetFunction() == NULL)
+	if (Command.GetFunction() == nullptr)
 		return false;
 	if (Command.GetCommand().find(' ') != CString::npos)
 		return false;
-	if (FindCommand(Command.GetCommand()) != NULL)
+	if (FindCommand(Command.GetCommand()) != nullptr)
 		return false;
 
 	m_mCommands[Command.GetCommand()] = Command;
@@ -557,7 +557,7 @@ const CModCommand* CModule::FindCommand(const CString& sCmd) const
 			continue;
 		return &it->second;
 	}
-	return NULL;
+	return nullptr;
 }
 
 bool CModule::HandleCommand(const CString& sLine) {
@@ -785,9 +785,9 @@ void CModule::OnGetAvailableMods(set<CModInfo>& ssMods, CModInfo::EModuleType eT
 
 
 CModules::CModules() {
-	m_pUser = NULL;
-	m_pNetwork = NULL;
-	m_pClient = NULL;
+	m_pUser = nullptr;
+	m_pNetwork = nullptr;
+	m_pClient = nullptr;
 }
 
 CModules::~CModules() {
@@ -1012,20 +1012,20 @@ CModule* CModules::FindModule(const CString& sModule) const {
 		}
 	}
 
-	return NULL;
+	return nullptr;
 }
 
 bool CModules::LoadModule(const CString& sModule, const CString& sArgs, CModInfo::EModuleType eType, CUser* pUser, CIRCNetwork *pNetwork, CString& sRetMsg) {
 	sRetMsg = "";
 
-	if (FindModule(sModule) != NULL) {
+	if (FindModule(sModule) != nullptr) {
 		sRetMsg = "Module [" + sModule + "] already loaded.";
 		return false;
 	}
 
 	bool bSuccess;
 	bool bHandled = false;
-	_GLOBALMODULECALL(OnModuleLoading(sModule, sArgs, eType, bSuccess, sRetMsg), pUser, pNetwork, NULL, &bHandled);
+	_GLOBALMODULECALL(OnModuleLoading(sModule, sArgs, eType, bSuccess, sRetMsg), pUser, pNetwork, nullptr, &bHandled);
 	if (bHandled) return bSuccess;
 
 	CString sModPath, sDataPath;
@@ -1115,7 +1115,7 @@ bool CModules::UnloadModule(const CString& sModule, CString& sRetMsg) {
 
 	bool bSuccess;
 	bool bHandled = false;
-	_GLOBALMODULECALL(OnModuleUnloading(pModule, bSuccess, sRetMsg), pModule->GetUser(), pModule->GetNetwork(), NULL, &bHandled);
+	_GLOBALMODULECALL(OnModuleUnloading(pModule, bSuccess, sRetMsg), pModule->GetUser(), pModule->GetNetwork(), nullptr, &bHandled);
 	if (bHandled) return bSuccess;
 
 	ModHandle p = pModule->GetDLL();
@@ -1150,7 +1150,7 @@ bool CModules::ReloadModule(const CString& sModule, const CString& sArgs, CUser*
 	}
 
 	CModInfo::EModuleType eType = pModule->GetType();
-	pModule = NULL;
+	pModule = nullptr;
 
 	sRetMsg = "";
 	if (!UnloadModule(sMod, sRetMsg)) {
@@ -1306,7 +1306,7 @@ ModHandle CModules::OpenModule(const CString& sModule, const CString& sModPath, 
 	for (unsigned int a = 0; a < sModule.length(); a++) {
 		if (((sModule[a] < '0') || (sModule[a] > '9')) && ((sModule[a] < 'a') || (sModule[a] > 'z')) && ((sModule[a] < 'A') || (sModule[a] > 'Z')) && (sModule[a] != '_')) {
 			sRetMsg = "Module names can only contain letters, numbers and underscores, [" + sModule + "] is invalid.";
-			return NULL;
+			return nullptr;
 		}
 	}
 
@@ -1330,7 +1330,7 @@ ModHandle CModules::OpenModule(const CString& sModule, const CString& sModPath, 
 		const char* cDlError = dlerror();
 		CString sDlError = cDlError ? cDlError : "Unknown error";
 		sRetMsg = "Unable to open module [" + sModule + "] [" + sDlError + "]";
-		return NULL;
+		return nullptr;
 	}
 
 	typedef bool (*InfoFP)(double, CModInfo&);
@@ -1339,7 +1339,7 @@ ModHandle CModules::OpenModule(const CString& sModule, const CString& sModPath, 
 	if (!ZNCModInfo) {
 		dlclose(p);
 		sRetMsg = "Could not find ZNCModInfo() in module [" + sModule + "]";
-		return NULL;
+		return nullptr;
 	}
 
 	if (ZNCModInfo(CModule::GetCoreVersion(), Info)) {
@@ -1354,7 +1354,7 @@ ModHandle CModules::OpenModule(const CString& sModule, const CString& sModPath, 
 }
 
 CModCommand::CModCommand()
-	: m_sCmd(), m_pFunc(NULL), m_sArgs(), m_sDesc()
+	: m_sCmd(), m_pFunc(nullptr), m_sArgs(), m_sDesc()
 {
 }
 

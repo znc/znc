@@ -38,7 +38,7 @@ public:
 		m_bSSL = bSSL;
 		m_eAddr = eAddr;
 		m_sURIPrefix = sURIPrefix;
-		m_pListener = NULL;
+		m_pListener = nullptr;
 		m_eAcceptType = eAccept;
 	}
 

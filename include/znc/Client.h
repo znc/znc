@@ -80,7 +80,7 @@ public:
 	CClientAuth(const CClientAuth&) = delete;
 	CClientAuth& operator=(const CClientAuth&) = delete;
 
-	void Invalidate() { m_pClient = NULL; CAuthBase::Invalidate(); }
+	void Invalidate() { m_pClient = nullptr; CAuthBase::Invalidate(); }
 	void AcceptedLogin(CUser& User);
 	void RefusedLogin(const CString& sReason);
 private:
@@ -91,8 +91,8 @@ protected:
 class CClient : public CIRCSocket {
 public:
 	CClient() : CIRCSocket() {
-		m_pUser = NULL;
-		m_pNetwork = NULL;
+		m_pUser = nullptr;
+		m_pNetwork = nullptr;
 		m_bGotPass = false;
 		m_bGotNick = false;
 		m_bGotUser = false;
@@ -137,7 +137,7 @@ public:
 	void UserPortCommand(CString& sLine);
 	void StatusCTCP(const CString& sCommand);
 	void BouncedOff();
-	bool IsAttached() const { return m_pUser != NULL; }
+	bool IsAttached() const { return m_pUser != nullptr; }
 
 	bool IsPlaybackActive() const { return m_bPlaybackActive; }
 	void SetPlaybackActive(bool bActive) { m_bPlaybackActive = bActive; }

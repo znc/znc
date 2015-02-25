@@ -293,7 +293,7 @@ void CChan::ModeChange(const CString& sModes, const CNick* pOpNick) {
 			pOpNick = OpNick;
 	}
 
-	NETWORKMODULECALL(OnRawMode2(pOpNick, *this, sModeArg, sArgs), m_pNetwork->GetUser(), m_pNetwork, NULL, NOTHING);
+	NETWORKMODULECALL(OnRawMode2(pOpNick, *this, sModeArg, sArgs), m_pNetwork->GetUser(), m_pNetwork, nullptr, NOTHING);
 
 	for (unsigned int a = 0; a < sModeArg.size(); a++) {
 		const unsigned char& uMode = sModeArg[a];
@@ -325,19 +325,19 @@ void CChan::ModeChange(const CString& sModes, const CNick* pOpNick) {
 						}
 					}
 
-					NETWORKMODULECALL(OnChanPermission2(pOpNick, *pNick, *this, uMode, bAdd, bNoChange), m_pNetwork->GetUser(), m_pNetwork, NULL, NOTHING);
+					NETWORKMODULECALL(OnChanPermission2(pOpNick, *pNick, *this, uMode, bAdd, bNoChange), m_pNetwork->GetUser(), m_pNetwork, nullptr, NOTHING);
 
 					if (uMode == CChan::M_Op) {
 						if (bAdd) {
-							NETWORKMODULECALL(OnOp2(pOpNick, *pNick, *this, bNoChange), m_pNetwork->GetUser(), m_pNetwork, NULL, NOTHING);
+							NETWORKMODULECALL(OnOp2(pOpNick, *pNick, *this, bNoChange), m_pNetwork->GetUser(), m_pNetwork, nullptr, NOTHING);
 						} else {
-							NETWORKMODULECALL(OnDeop2(pOpNick, *pNick, *this, bNoChange), m_pNetwork->GetUser(), m_pNetwork, NULL, NOTHING);
+							NETWORKMODULECALL(OnDeop2(pOpNick, *pNick, *this, bNoChange), m_pNetwork->GetUser(), m_pNetwork, nullptr, NOTHING);
 						}
 					} else if (uMode == CChan::M_Voice) {
 						if (bAdd) {
-							NETWORKMODULECALL(OnVoice2(pOpNick, *pNick, *this, bNoChange), m_pNetwork->GetUser(), m_pNetwork, NULL, NOTHING);
+							NETWORKMODULECALL(OnVoice2(pOpNick, *pNick, *this, bNoChange), m_pNetwork->GetUser(), m_pNetwork, nullptr, NOTHING);
 						} else {
-							NETWORKMODULECALL(OnDevoice2(pOpNick, *pNick, *this, bNoChange), m_pNetwork->GetUser(), m_pNetwork, NULL, NOTHING);
+							NETWORKMODULECALL(OnDevoice2(pOpNick, *pNick, *this, bNoChange), m_pNetwork->GetUser(), m_pNetwork, nullptr, NOTHING);
 						}
 					}
 				}
@@ -372,7 +372,7 @@ void CChan::ModeChange(const CString& sModes, const CNick* pOpNick) {
 			} else {
 				bNoChange = !HasMode(uMode);
 			}
-			NETWORKMODULECALL(OnMode2(pOpNick, *this, uMode, sArg, bAdd, bNoChange), m_pNetwork->GetUser(), m_pNetwork, NULL, NOTHING);
+			NETWORKMODULECALL(OnMode2(pOpNick, *this, uMode, sArg, bAdd, bNoChange), m_pNetwork->GetUser(), m_pNetwork, nullptr, NOTHING);
 
 			if (!bList) {
 				(bAdd) ? AddMode(uMode, sArg) : RemMode(uMode);
@@ -566,12 +566,12 @@ bool CChan::ChangeNick(const CString& sOldNick, const CString& sNewNick) {
 
 const CNick* CChan::FindNick(const CString& sNick) const {
 	map<CString,CNick>::const_iterator it = m_msNicks.find(sNick);
-	return (it != m_msNicks.end()) ? &it->second : NULL;
+	return (it != m_msNicks.end()) ? &it->second : nullptr;
 }
 
 CNick* CChan::FindNick(const CString& sNick) {
 	map<CString,CNick>::iterator it = m_msNicks.find(sNick);
-	return (it != m_msNicks.end()) ? &it->second : NULL;
+	return (it != m_msNicks.end()) ? &it->second : nullptr;
 }
 
 void CChan::SendBuffer(CClient* pClient) {
@@ -606,7 +606,7 @@ void CChan::SendBuffer(CClient* pClient, const CBuffer& Buffer) {
 				pUseClient->SetPlaybackActive(true);
 
 				bool bSkipStatusMsg = pUseClient->HasServerTime();
-				NETWORKMODULECALL(OnChanBufferStarting(*this, *pUseClient), m_pNetwork->GetUser(), m_pNetwork, NULL, &bSkipStatusMsg);
+				NETWORKMODULECALL(OnChanBufferStarting(*this, *pUseClient), m_pNetwork->GetUser(), m_pNetwork, nullptr, &bSkipStatusMsg);
 
 				if (!bSkipStatusMsg) {
 					m_pNetwork->PutUser(":***!znc@znc.in PRIVMSG " + GetName() + " :Buffer Playback...", pUseClient);
@@ -629,13 +629,13 @@ void CChan::SendBuffer(CClient* pClient, const CBuffer& Buffer) {
 						CUtils::SetMessageTags(sLine, msBatchTags);
 					}
 					bool bNotShowThisLine = false;
-					NETWORKMODULECALL(OnChanBufferPlayLine2(*this, *pUseClient, sLine, BufLine.GetTime()), m_pNetwork->GetUser(), m_pNetwork, NULL, &bNotShowThisLine);
+					NETWORKMODULECALL(OnChanBufferPlayLine2(*this, *pUseClient, sLine, BufLine.GetTime()), m_pNetwork->GetUser(), m_pNetwork, nullptr, &bNotShowThisLine);
 					if (bNotShowThisLine) continue;
 					m_pNetwork->PutUser(sLine, pUseClient);
 				}
 
 				bSkipStatusMsg = pUseClient->HasServerTime();
-				NETWORKMODULECALL(OnChanBufferEnding(*this, *pUseClient), m_pNetwork->GetUser(), m_pNetwork, NULL, &bSkipStatusMsg);
+				NETWORKMODULECALL(OnChanBufferEnding(*this, *pUseClient), m_pNetwork->GetUser(), m_pNetwork, nullptr, &bSkipStatusMsg);
 				if (!bSkipStatusMsg) {
 					m_pNetwork->PutUser(":***!znc@znc.in PRIVMSG " + GetName() + " :Playback Complete.", pUseClient);
 				}

@@ -29,7 +29,7 @@ class CClient;
 class CBufLine {
 public:
 	CBufLine() { throw 0; } // shouldn't be called, but is needed for compilation
-	CBufLine(const CString& sFormat, const CString& sText = "", const timeval* ts = 0);
+	CBufLine(const CString& sFormat, const CString& sText = "", const timeval* ts = nullptr);
 	~CBufLine();
 	CString GetLine(const CClient& Client, const MCString& msParams) const;
 	void UpdateTime();
@@ -58,7 +58,7 @@ public:
 	CBuffer(unsigned int uLineCount = 100);
 	~CBuffer();
 
-	size_type AddLine(const CString& sFormat, const CString& sText = "", const timeval* ts = 0);
+	size_type AddLine(const CString& sFormat, const CString& sText = "", const timeval* ts = nullptr);
 	/// Same as AddLine, but replaces a line whose format string starts with sMatch if there is one.
 	size_type UpdateLine(const CString& sMatch, const CString& sFormat, const CString& sText = "");
 	/// Same as UpdateLine, but does nothing if this exact line already exists.

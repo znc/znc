@@ -564,7 +564,7 @@ public:
 
 private:
 protected:
-	unsigned char* strnchr(const unsigned char* src, unsigned char c, unsigned int iMaxBytes, unsigned char* pFill = NULL, unsigned int* piCount = NULL) const;
+	unsigned char* strnchr(const unsigned char* src, unsigned char c, unsigned int iMaxBytes, unsigned char* pFill = nullptr, unsigned int* piCount = nullptr) const;
 };
 
 /**

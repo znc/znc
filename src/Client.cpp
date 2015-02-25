@@ -72,7 +72,7 @@ CClient::~CClient() {
 		CClientAuth* pAuth = (CClientAuth*) &(*m_spAuth);
 		pAuth->Invalidate();
 	}
-	if (m_pUser != NULL) {
+	if (m_pUser != nullptr) {
 		m_pUser->AddBytesRead(GetBytesRead());
 		m_pUser->AddBytesWritten(GetBytesWritten());
 	}
@@ -579,7 +579,7 @@ const CIRCSock* CClient::GetIRCSock() const {
 		return m_pNetwork->GetIRCSock();
 	}
 
-	return NULL;
+	return nullptr;
 }
 
 CIRCSock* CClient::GetIRCSock() {
@@ -587,7 +587,7 @@ CIRCSock* CClient::GetIRCSock() {
 		return m_pNetwork->GetIRCSock();
 	}
 
-	return NULL;
+	return nullptr;
 }
 
 void CClient::StatusCTCP(const CString& sLine) {
@@ -645,7 +645,7 @@ CString CAuthBase::GetRemoteIP() const {
 }
 
 void CAuthBase::Invalidate() {
-	m_pSock = NULL;
+	m_pSock = nullptr;
 }
 
 void CAuthBase::AcceptLogin(CUser& User) {
@@ -740,7 +740,7 @@ void CClient::ConnectionRefused() {
 void CClient::Disconnected() {
 	DEBUG(GetSockName() << " == Disconnected()");
 	CIRCNetwork* pNetwork = m_pNetwork;
-	SetNetwork(NULL, true, false);
+	SetNetwork(nullptr, true, false);
 
 	if (m_pUser) {
 		NETWORKMODULECALL(OnClientDisconnect(), m_pUser, pNetwork, this, NOTHING);

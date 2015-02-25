@@ -39,7 +39,7 @@ public:
 	friend class CConditionVariable;
 
 	CMutex() {
-		int i = pthread_mutex_init(&m_mutex, NULL);
+		int i = pthread_mutex_init(&m_mutex, nullptr);
 		if (i) {
 			CUtils::PrintError("Can't initialize mutex: " + CString(strerror(errno)));
 			exit(1);
@@ -124,7 +124,7 @@ private:
 class CConditionVariable {
 public:
 	CConditionVariable() {
-		int i = pthread_cond_init(&m_cond, NULL);
+		int i = pthread_cond_init(&m_cond, nullptr);
 		if (i) {
 			CUtils::PrintError("Can't initialize condition variable: "
 					+ CString(strerror(errno)));
@@ -188,8 +188,8 @@ public:
 		 */
 		int i = sigfillset(&sigmask);
 		i |= pthread_sigmask(SIG_SETMASK, &sigmask, &old_sigmask);
-		i |= pthread_create(&thr, NULL, func, arg);
-		i |= pthread_sigmask(SIG_SETMASK, &old_sigmask, NULL);
+		i |= pthread_create(&thr, nullptr, func, arg);
+		i |= pthread_sigmask(SIG_SETMASK, &old_sigmask, nullptr);
 		i |= pthread_detach(thr);
 		if (i) {
 			CUtils::PrintError("Can't start new thread: "
@@ -295,7 +295,7 @@ private:
 	static void *threadPoolFunc(void *arg) {
 		CThreadPool &pool = *reinterpret_cast<CThreadPool *>(arg);
 		pool.threadFunc();
-		return NULL;
+		return nullptr;
 	}
 
 	// mutex protecting all of these members
