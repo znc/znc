@@ -26,6 +26,7 @@
 #include <unicode/ucnv_cb.h>
 #endif
 
+#ifdef HAVE_LIBSSL
 // Copypasted from https://wiki.mozilla.org/Security/Server_Side_TLS#Intermediate_compatibility_.28default.29 at 22 Dec 2014
 static CString ZNC_DefaultCipher() {
     return
@@ -36,6 +37,7 @@ static CString ZNC_DefaultCipher() {
         "DHE-DSS-AES256-SHA:DHE-RSA-AES256-SHA:AES128-GCM-SHA256:AES256-GCM-SHA384:AES128-SHA256:AES256-SHA256:AES128-SHA:"
         "AES256-SHA:AES:CAMELLIA:DES-CBC3-SHA:!aNULL:!eNULL:!EXPORT:!DES:!RC4:!MD5:!PSK:!aECDH:!EDH-DSS-DES-CBC3-SHA:!EDH-RSA-DES-CBC3-SHA:!KRB5-DES-CBC3-SHA";
 }
+#endif
 
 CZNCSock::CZNCSock(int timeout) : Csock(timeout) {
 #ifdef HAVE_LIBSSL
