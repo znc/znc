@@ -464,13 +464,12 @@ namespace {
 	void FillTimezones(const CString& sPath, SCString& result, const CString& sPrefix) {
 		CDir Dir;
 		Dir.Fill(sPath);
-		for (unsigned int a = 0; a < Dir.size(); ++a) {
-			CFile& File = *Dir[a];
-			CString sName = File.GetShortName();
-			CString sFile = File.GetLongName();
+		for (CFile* pFile : Dir) {
+			CString sName = pFile->GetShortName();
+			CString sFile = pFile->GetLongName();
 			if (sName == "posix" || sName == "right") continue; // these 2 dirs contain the same filenames
 			if (sName.Right(4) == ".tab" || sName == "posixrules" || sName == "localtime") continue;
-			if (File.IsDir()) {
+			if (pFile->IsDir()) {
 				if (sName == "Etc") {
 					FillTimezones(sFile, result, sPrefix);
 				} else {
@@ -518,9 +517,9 @@ MCString CUtils::GetMessageTags(const CString& sLine) {
 		sLine.Token(0).TrimPrefix_n("@").Split(";", vsTags, false);
 
 		MCString mssTags;
-		for (VCString::const_iterator it = vsTags.begin(); it != vsTags.end(); ++it) {
-			CString sKey = it->Token(0, false, "=", true);
-			CString sValue = it->Token(1, true, "=", true);
+		for (const CString& sTag : vsTags) {
+			CString sKey = sTag.Token(0, false, "=", true);
+			CString sValue = sTag.Token(1, true, "=", true);
 			mssTags[sKey] = sValue.Escape(CString::EMSGTAG, CString::CString::EASCII);
 		}
 		return mssTags;
@@ -535,21 +534,21 @@ void CUtils::SetMessageTags(CString& sLine, const MCString& mssTags) {
 
 	if (!mssTags.empty()) {
 		CString sTags;
-		for (MCString::const_iterator it = mssTags.begin(); it != mssTags.end(); ++it) {
+		for (const auto& it : mssTags) {
 			if (!sTags.empty()) {
 				sTags += ";";
 			}
-			sTags += it->first;
-			if (!it->second.empty())
-				sTags += "=" + it->second.Escape_n(CString::EMSGTAG);
+			sTags += it.first;
+			if (!it.second.empty())
+				sTags += "=" + it.second.Escape_n(CString::EMSGTAG);
 		}
 		sLine = "@" + sTags + " " + sLine;
 	}
 }
 
 bool CTable::AddColumn(const CString& sName, bool bWrappable) {
-	for (unsigned int a = 0; a < m_vsHeaders.size(); a++) {
-		if (m_vsHeaders[a].Equals(sName)) {
+	for (const CString& sHeader : m_vsHeaders) {
+		if (sHeader.Equals(sName)) {
 			return false;
 		}
 	}
