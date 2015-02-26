@@ -1080,6 +1080,34 @@ class CAdminMod : public CModule {
 			PutModule("Could not add IRC server [" + sServer + "] for network [" + sNetwork + "] for user [" + pUser->GetUserName() + "].");
 	}
 
+	void DelServer(const CString& sLine) {
+		CString sUsername = sLine.Token(1);
+		CString sNetwork = sLine.Token(2);
+		CString sServer = sLine.Token(3, true);
+		unsigned short uPort = sLine.Token(4).ToUShort();
+		CString sPass = sLine.Token(5);
+
+		if (sServer.empty()) {
+			PutModule("Usage: DelServer <username> <network> <server>");
+			return;
+		}
+
+		CUser* pUser = FindUser(sUsername);
+		if (!pUser)
+			return;
+
+		CIRCNetwork* pNetwork = pUser->FindNetwork(sNetwork);
+		if (!pNetwork) {
+			PutModule("[" + sUsername + "] does not have a network with the name [" + sNetwork + "]");
+			return;
+		}
+
+		if (pNetwork->DelServer(sServer, uPort, sPass))
+			PutModule("Deleted IRC Server [" + sServer + "] for network [" + sNetwork + "] for user [" + pUser->GetUserName() + "].");
+		else
+			PutModule("Could not delete IRC server [" + sServer + "] for network [" + sNetwork + "] for user [" + pUser->GetUserName() + "].");
+	}
+
 	void ReconnectUser(const CString& sLine) {
 		CString sUserName = sLine.Token(1);
 		CString sNetwork = sLine.Token(2);
@@ -1430,6 +1458,8 @@ public:
 			"<old username> <new username>",                  "Clones a user");
 		AddCommand("AddServer",    static_cast<CModCommand::ModCmdFunc>(&CAdminMod::AddServer),
 			"<username> <network> <server>",                  "Adds a new IRC server for the given or current user");
+		AddCommand("DelServer",    static_cast<CModCommand::ModCmdFunc>(&CAdminMod::DelServer),
+			"<username> <network> <server>",                  "Deletes an IRC server from the given or current user");
 		AddCommand("Reconnect",    static_cast<CModCommand::ModCmdFunc>(&CAdminMod::ReconnectUser),
 			"<username> <network>",                           "Cycles the user's IRC server connection");
 		AddCommand("Disconnect",   static_cast<CModCommand::ModCmdFunc>(&CAdminMod::DisconnectUser),
