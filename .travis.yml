@@ -24,6 +24,11 @@ matrix:
           env: BUILD_TYPE=tsan
         - os: osx
           compiler: gcc
+    include:
+        - os: osx
+          compiler: clang
+          env: BUILD_TYPE=normal USE_SYSTEM_OPENSSL=true
+
 before_install:
     - "echo os: [$TRAVIS_OS_NAME] build: [$BUILD_TYPE]"
     - if [[ "$BUILD_TYPE" == "normal" ]]; then export CFGFLAGS= MYCXXFLAGS= MYLDFLAGS=; fi
@@ -50,10 +55,8 @@ install:
     - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew config; fi
     - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew list --versions; fi
     - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew update; fi
-    - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew install swig python3 icu4c jq; fi
+    - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew install swig python3 icu4c jq openssl; fi
     - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew info --json=v1 --installed | jq .; fi
-    - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then export PKG_CONFIG_PATH=$PKG_CONFIG_PATH:$(dirname $(find $(brew --cellar python3)/$(brew info --json=v1 python3 | jq -r '.[].installed | .[].version' | tail -n1) -name python3.pc)); fi
-    - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then export PKG_CONFIG_PATH=$PKG_CONFIG_PATH:$(dirname $(find $(brew --cellar icu4c  )/$(brew info --json=v1 icu4c   | jq -r '.[].installed | .[].version' | tail -n1) -name icu-uc.pc )); fi
     - "echo pkg-config path: [$PKG_CONFIG_PATH]"
 script:
     - ./bootstrap.sh
