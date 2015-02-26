@@ -440,14 +440,12 @@ class CAdminMod : public CModule {
 		const CString sUsername = sLine.Token(2);
 		const CString sNetwork = sLine.Token(3);
 
-		CUser *pUser = NULL;
 		CIRCNetwork *pNetwork = NULL;
 
 		if (sUsername.empty()) {
-			pUser = GetUser();
 			pNetwork = CModule::GetNetwork();
 		} else {
-			pUser = FindUser(sUsername);
+			CUser* pUser = FindUser(sUsername);
 			if (!pUser) {
 				return;
 			}

@@ -429,7 +429,6 @@ void CClient::UserCommand(CString& sLine) {
 			return;
 		}
 
-		CUser* pUser = m_pUser;
 		CIRCNetwork* pNetwork = m_pNetwork;
 
 		const CString sNick = sLine.Token(1);
@@ -441,7 +440,7 @@ void CClient::UserCommand(CString& sLine) {
 				return;
 			}
 
-			pUser = CZNC::Get().FindUser(sNick);
+			CUser* pUser = CZNC::Get().FindUser(sNick);
 
 			if (!pUser) {
 				PutStatus("No such user [" + sNick + "]");
