@@ -637,8 +637,8 @@ void CClient::UserCommand(CString& sLine) {
 			CString sNewModPath = pNewUser->GetUserPath() + "/networks/" + sNewNetwork + "/moddata/" + pMod->GetModName();
 
 			CDir oldDir(sOldModPath);
-			for (CDir::iterator it = oldDir.begin(); it != oldDir.end(); ++it) {
-				if ((*it)->GetShortName() != ".registry") {
+			for (CFile* pFile : oldDir) {
+				if (pFile->GetShortName() != ".registry") {
 					PutStatus("Some files seem to be in [" + sOldModPath + "]. You might want to move them to [" + sNewModPath + "]");
 					break;
 				}

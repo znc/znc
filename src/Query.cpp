@@ -36,8 +36,8 @@ void CQuery::SendBuffer(CClient* pClient, const CBuffer& Buffer) {
 		// Based on CChan::SendBuffer()
 		if (!Buffer.IsEmpty()) {
 			const vector<CClient*> & vClients = m_pNetwork->GetClients();
-			for (size_t uClient = 0; uClient < vClients.size(); ++uClient) {
-				CClient * pUseClient = (pClient ? pClient : vClients[uClient]);
+			for (CClient* pEachClient : vClients) {
+				CClient * pUseClient = (pClient ? pClient : pEachClient);
 
 				MCString msParams;
 				msParams["target"] = pUseClient->GetNick();

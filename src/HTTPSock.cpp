@@ -111,9 +111,7 @@ void CHTTPSock::ReadLine(const CString& sData) {
 
 		sLine.Token(1, true).Split(";", vsNV, false, "", "", true, true);
 
-		for (unsigned int a = 0; a < vsNV.size(); a++) {
-			CString s(vsNV[a]);
-
+		for (const CString& s : vsNV) {
 			m_msRequestCookies[s.Token(0, false, "=").Escape_n(CString::EURL, CString::EASCII)] =
 				s.Token(1, true, "=").Escape_n(CString::EURL, CString::EASCII);
 		}

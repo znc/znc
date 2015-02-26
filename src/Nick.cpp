@@ -61,12 +61,11 @@ size_t CNick::GetCommonChans(vector<CChan*>& vRetChans, CIRCNetwork* pNetwork) c
 
 	const vector<CChan*>& vChans = pNetwork->GetChans();
 
-	for (unsigned int a = 0; a < vChans.size(); a++) {
-		CChan* pChan = vChans[a];
+	for (CChan* pChan : vChans) {
 		const map<CString,CNick>& msNicks = pChan->GetNicks();
 
-		for (map<CString,CNick>::const_iterator it = msNicks.begin(); it != msNicks.end(); ++it) {
-			if (it->first.Equals(m_sNick)) {
+		for (const auto& it : msNicks) {
+			if (it.first.Equals(m_sNick)) {
 				vRetChans.push_back(pChan);
 				continue;
 			}
