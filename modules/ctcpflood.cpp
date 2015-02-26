@@ -66,8 +66,8 @@ public:
 		if (sMessage.Token(0).Equals("ACTION"))
 			return CONTINUE;
 
-		if (m_tLastCTCP + m_iThresholdSecs < time(NULL)) {
-			m_tLastCTCP = time(NULL);
+		if (m_tLastCTCP + m_iThresholdSecs < time(nullptr)) {
+			m_tLastCTCP = time(nullptr);
 			m_iNumCTCP = 0;
 		}
 
@@ -79,7 +79,7 @@ public:
 			PutModule("Limit reached by [" + Nick.GetHostMask() + "], blocking all CTCP");
 
 		// Reset the timeout so that we continue blocking messages
-		m_tLastCTCP = time(NULL);
+		m_tLastCTCP = time(nullptr);
 
 		return HALT;
 	}

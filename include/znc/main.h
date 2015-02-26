@@ -107,7 +107,7 @@ extern bool ZNC_NO_NEED_TO_DO_ANYTHING_ON_MODULE_CALL_EXITER;
 			*macEXITER = true;                 \
 			break;                                                \
 		}                                                            \
-		if (macNETWORK != NULL) {                                      \
+		if (macNETWORK != nullptr) {                                      \
 			CModules& NMods = macNETWORK->GetModules();            \
 			CClient* pOldNClient = NMods.GetClient();              \
 			NMods.SetClient(macCLIENT);                            \
@@ -120,10 +120,10 @@ extern bool ZNC_NO_NEED_TO_DO_ANYTHING_ON_MODULE_CALL_EXITER;
 	} while (false)
 
 #define GLOBALMODULECALL(macFUNC, macEXITER) \
-	_GLOBALMODULECALL(macFUNC, NULL, NULL, NULL, macEXITER)
+	_GLOBALMODULECALL(macFUNC, nullptr, nullptr, nullptr, macEXITER)
 
 #define USERMODULECALL(macFUNC, macUSER, macCLIENT, macEXITER) \
-	_USERMODULECALL(macFUNC, macUSER, NULL, macCLIENT, macEXITER)
+	_USERMODULECALL(macFUNC, macUSER, nullptr, macCLIENT, macEXITER)
 
 /** @mainpage
  *  Welcome to the API documentation for ZNC.

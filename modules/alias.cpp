@@ -72,7 +72,7 @@ public:
 	}
 
 	// constructors
-	CAlias() : parent(NULL) {}
+	CAlias() : parent(nullptr) {}
 	CAlias(CModule *new_parent, const CString &new_name) : parent(new_parent) { SetName(new_name); }
 
 	// produce a command string from this alias' command list
@@ -330,7 +330,7 @@ public:
 		}
 		catch (std::exception &e)
 		{
-			CString my_nick = (GetNetwork() == NULL ? "" : GetNetwork()->GetCurNick());
+			CString my_nick = (GetNetwork() == nullptr ? "" : GetNetwork()->GetCurNick());
 			if (my_nick.empty()) my_nick = "*";
 			PutUser(CString(":znc.in 461 " + my_nick + " " + current_alias.GetName() + " :ZNC alias error: ") + e.what());
 			return HALTCORE;

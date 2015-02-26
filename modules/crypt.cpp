@@ -69,7 +69,7 @@ public:
 			if (pChan) {
 				if (!pChan->AutoClearChanBuffer())
 					pChan->AddBuffer(":" + NickPrefix() + _NAMEDFMT(sNickMask) + " PRIVMSG " + _NAMEDFMT(sTarget) + " :{text}", sMessage);
-				GetUser()->PutUser(":" + NickPrefix() + sNickMask + " PRIVMSG " + sTarget + " :" + sMessage, NULL, GetClient());
+				GetUser()->PutUser(":" + NickPrefix() + sNickMask + " PRIVMSG " + sTarget + " :" + sMessage, nullptr, GetClient());
 			}
 
 			CString sMsg = MakeIvec() + sMessage;

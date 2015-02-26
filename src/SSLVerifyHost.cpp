@@ -190,7 +190,7 @@ static int hostmatch(char *hostname, char *pattern)
     pattern[len-1]=0;
 
   pattern_wildcard = strchr(pattern, '*');
-  if(pattern_wildcard == NULL)
+  if(pattern_wildcard == nullptr)
     return Curl_raw_equal(pattern, hostname) ?
       CURL_HOST_MATCH : CURL_HOST_NOMATCH;
 
@@ -206,7 +206,7 @@ static int hostmatch(char *hostname, char *pattern)
      match. */
   wildcard_enabled = 1;
   pattern_label_end = strchr(pattern, '.');
-  if(pattern_label_end == NULL || strchr(pattern_label_end+1, '.') == NULL ||
+  if(pattern_label_end == nullptr || strchr(pattern_label_end+1, '.') == nullptr ||
      pattern_wildcard > pattern_label_end ||
      Curl_raw_nequal(pattern, "xn--", 4)) {
     wildcard_enabled = 0;
@@ -216,7 +216,7 @@ static int hostmatch(char *hostname, char *pattern)
       CURL_HOST_MATCH : CURL_HOST_NOMATCH;
 
   hostname_label_end = strchr(hostname, '.');
-  if(hostname_label_end == NULL ||
+  if(hostname_label_end == nullptr ||
      !Curl_raw_equal(pattern_label_end, hostname_label_end))
     return CURL_HOST_NOMATCH;
 
@@ -303,9 +303,9 @@ typedef enum {
 */
 static HostnameValidationResult matches_common_name(const char *hostname, const X509 *server_cert) {
 	int common_name_loc = -1;
-	X509_NAME_ENTRY *common_name_entry = NULL;
-	ASN1_STRING *common_name_asn1 = NULL;
-	char *common_name_str = NULL;
+	X509_NAME_ENTRY *common_name_entry = nullptr;
+	ASN1_STRING *common_name_asn1 = nullptr;
+	char *common_name_str = nullptr;
 
 	// Find the position of the CN field in the Subject field of the certificate
 	common_name_loc = X509_NAME_get_index_by_NID(X509_get_subject_name((X509 *) server_cert), NID_commonName, -1);
@@ -315,13 +315,13 @@ static HostnameValidationResult matches_common_name(const char *hostname, const 
 
 	// Extract the CN field
 	common_name_entry = X509_NAME_get_entry(X509_get_subject_name((X509 *) server_cert), common_name_loc);
-	if (common_name_entry == NULL) {
+	if (common_name_entry == nullptr) {
 		return Error;
 	}
 
 	// Convert the CN field to a C string
 	common_name_asn1 = X509_NAME_ENTRY_get_data(common_name_entry);
-	if (common_name_asn1 == NULL) {
+	if (common_name_asn1 == nullptr) {
 		return Error;
 	}			
 	common_name_str = (char *) ASN1_STRING_data(common_name_asn1);
@@ -354,11 +354,11 @@ static HostnameValidationResult matches_subject_alternative_name(const char *hos
 	HostnameValidationResult result = MatchNotFound;
 	int i;
 	int san_names_nb = -1;
-	STACK_OF(GENERAL_NAME) *san_names = NULL;
+	STACK_OF(GENERAL_NAME) *san_names = nullptr;
 
 	// Try to extract the names within the SAN extension from the certificate
-	san_names = reinterpret_cast<STACK_OF(GENERAL_NAME) *>(X509_get_ext_d2i((X509 *) server_cert, NID_subject_alt_name, NULL, NULL));
-	if (san_names == NULL) {
+	san_names = reinterpret_cast<STACK_OF(GENERAL_NAME) *>(X509_get_ext_d2i((X509 *) server_cert, NID_subject_alt_name, nullptr, nullptr));
+	if (san_names == nullptr) {
 		return NoSANPresent;
 	}
 	san_names_nb = sk_GENERAL_NAME_num(san_names);
@@ -405,7 +405,7 @@ static HostnameValidationResult matches_subject_alternative_name(const char *hos
 static HostnameValidationResult validate_hostname(const char *hostname, const X509 *server_cert) {
 	HostnameValidationResult result;
 
-	if((hostname == NULL) || (server_cert == NULL))
+	if((hostname == nullptr) || (server_cert == nullptr))
 		return Error;
 
 	// First try the Subject Alternative Names extension

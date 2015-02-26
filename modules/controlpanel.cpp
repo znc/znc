@@ -149,11 +149,11 @@ class CAdminMod : public CModule {
 		CUser *pUser = CZNC::Get().FindUser(sUsername);
 		if (!pUser) {
 			PutModule("Error: User [" + sUsername + "] not found.");
-			return NULL;
+			return nullptr;
 		}
 		if (pUser != GetUser() && !GetUser()->IsAdmin()) {
 			PutModule("Error: You need to have admin rights to modify other users!");
-			return NULL;
+			return nullptr;
 		}
 		return pUser;
 	}
@@ -440,7 +440,7 @@ class CAdminMod : public CModule {
 		const CString sUsername = sLine.Token(2);
 		const CString sNetwork = sLine.Token(3);
 
-		CIRCNetwork *pNetwork = NULL;
+		CIRCNetwork *pNetwork = nullptr;
 
 		if (sUsername.empty()) {
 			pNetwork = CModule::GetNetwork();
@@ -497,8 +497,8 @@ class CAdminMod : public CModule {
 		const CString sNetwork = sLine.Token(3);
 		const CString sValue = sLine.Token(4, true);
 
-		CUser *pUser = NULL;
-		CIRCNetwork *pNetwork = NULL;
+		CUser *pUser = nullptr;
+		CIRCNetwork *pNetwork = nullptr;
 
 		if (sUsername.empty()) {
 			pUser = GetUser();
@@ -1285,7 +1285,7 @@ class CAdminMod : public CModule {
 		if (!pUser)
 			return;
 
-		LoadModuleFor(pUser->GetModules(), sModName, sArgs, CModInfo::UserModule, pUser, NULL);
+		LoadModuleFor(pUser->GetModules(), sModName, sArgs, CModInfo::UserModule, pUser, nullptr);
 	}
 
 	void LoadModuleForNetwork(const CString& sLine) {

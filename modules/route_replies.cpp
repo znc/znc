@@ -33,21 +33,21 @@ static const struct {
 		{"315", true},  /* rfc1459 RPL_ENDOFWHO */
 		{"354", false}, // e.g. Quaknet uses this for WHO #chan %n
 		{"403", true}, // No such chan
-		{NULL, true}
+		{nullptr, true}
 	}},
 	{"LIST", {
 		{"402", true},  /* rfc1459 ERR_NOSUCHSERVER */
 		{"321", false},  /* rfc1459 RPL_LISTSTART */
 		{"322", false},  /* rfc1459 RPL_LIST */
 		{"323", true},  /* rfc1459 RPL_LISTEND */
-		{NULL, true}
+		{nullptr, true}
 	}},
 	{"NAMES", {
 		{"353", false},  /* rfc1459 RPL_NAMREPLY */
 		{"366", true},  /* rfc1459 RPL_ENDOFNAMES */
 		// No such nick/channel
 		{"401", true},
-		{NULL, true},
+		{nullptr, true},
 	}},
 	{"LUSERS", {
 		{"251", false},  /* rfc1459 RPL_LUSERCLIENT */
@@ -59,7 +59,7 @@ static const struct {
 		{"266", true},
 		// We don't handle 250 here since some IRCds don't sent it
 		//{"250", true},
-		{NULL, true}
+		{nullptr, true}
 	}},
 	{"WHOIS", {
 		{"311", false},  /* rfc1459 RPL_WHOISUSER */
@@ -81,23 +81,23 @@ static const struct {
 		{"401", true},  /* rfc1459 ERR_NOSUCHNICK */
 		{"402", true},  /* rfc1459 ERR_NOSUCHSERVER */
 		{"431", true},  /* rfc1459 ERR_NONICKNAMEGIVEN */
-		{NULL, true}
+		{nullptr, true}
 	}},
 	{"PING", {
 		{"PONG", true},
 		{"402", true},  /* rfc1459 ERR_NOSUCHSERVER */
 		{"409", true},  /* rfc1459 ERR_NOORIGIN */
-		{NULL, true}
+		{nullptr, true}
 	}},
 	{"USERHOST", {
 		{"302", true},
 		{"461", true},  /* rfc1459 ERR_NEEDMOREPARAMS */
-		{NULL, true}
+		{nullptr, true}
 	}},
 	{"TIME", {
 		{"391", true},  /* rfc1459 RPL_TIME */
 		{"402", true},  /* rfc1459 ERR_NOSUCHSERVER */
-		{NULL, true}
+		{nullptr, true}
 	}},
 	{"WHOWAS", {
 		{"406", false},  /* rfc1459 ERR_WASNOSUCHNICK */
@@ -105,18 +105,18 @@ static const struct {
 		{"314", false},  /* rfc1459 RPL_WHOWASUSER */
 		{"369", true},  /* rfc1459 RPL_ENDOFWHOWAS */
 		{"431", true},  /* rfc1459 ERR_NONICKNAMEGIVEN */
-		{NULL, true}
+		{nullptr, true}
 	}},
 	{"ISON", {
 		{"303", true},  /* rfc1459 RPL_ISON */
 		{"461", true},  /* rfc1459 ERR_NEEDMOREPARAMS */
-		{NULL, true}
+		{nullptr, true}
 	}},
 	{"LINKS", {
 		{"364", false},  /* rfc1459 RPL_LINKS */
 		{"365", true},  /* rfc1459 RPL_ENDOFLINKS */
 		{"402", true},  /* rfc1459 ERR_NOSUCHSERVER */
-		{NULL, true}
+		{nullptr, true}
 	}},
 	{"MAP", {
 		{"006", false},
@@ -127,7 +127,7 @@ static const struct {
 		{"017", true},
 		{"007", true},
 		{"481", true},  /* rfc1459 ERR_NOPRIVILEGES */
-		{NULL, true}
+		{nullptr, true}
 	}},
 	{"TRACE", {
 		{"200", false},  /* rfc1459 RPL_TRACELINK */
@@ -141,7 +141,7 @@ static const struct {
 		{"261", false},  /* rfc1459 RPL_TRACELOG */
 		{"262", true},
 		{"402", true},  /* rfc1459 ERR_NOSUCHSERVER */
-		{NULL, true}
+		{nullptr, true}
 	}},
 	{"USERS", {
 		{"265", false},
@@ -153,7 +153,7 @@ static const struct {
 		{"402", true},  /* rfc1459 ERR_NOSUCHSERVER */
 		{"424", true},  /* rfc1459 ERR_FILEERROR */
 		{"446", true},  /* rfc1459 ERR_USERSDISABLED */
-		{NULL, true},
+		{nullptr, true},
 	}},
 	{"METADATA", {
 		{"761", false},  /* ircv3.2 RPL_KEYVALUE */
@@ -163,7 +163,7 @@ static const struct {
 		{"767", true},  /* ircv3.2 ERR_KEYINVALID */
 		{"768", true},  /* ircv3.2 ERR_KEYNOTSET */
 		{"769", true},  /* ircv3.2 ERR_KEYNOPERMISSION */
-		{NULL, true},
+		{nullptr, true},
 	}},
 	// This is just a list of all possible /mode replies stuffed together.
 	// Since there should never be more than one of these going on, this
@@ -184,10 +184,10 @@ static const struct {
 		{"472", true},  /* rfc1459 ERR_UNKNOWNMODE */
 		{"501", true},  /* rfc1459 ERR_UMODEUNKNOWNFLAG */
 		{"502", true},  /* rfc1459 ERR_USERSDONTMATCH */
-		{NULL, true},
+		{nullptr, true},
 	 }},
 	// END (last item!)
-	{NULL, {{NULL, true}}}
+	{nullptr, {{nullptr, true}}}
 };
 
 class CRouteTimeout : public CTimer {
@@ -213,8 +213,8 @@ class CRouteRepliesMod : public CModule
 public:
 	MODCONSTRUCTOR(CRouteRepliesMod)
 	{
-		m_pDoing = NULL;
-		m_pReplies = NULL;
+		m_pDoing = nullptr;
+		m_pReplies = nullptr;
 
 		AddHelpCommand();
 		AddCommand("Silent", static_cast<CModCommand::ModCmdFunc>(&CRouteRepliesMod::SilentCommand),
@@ -238,8 +238,8 @@ public:
 
 	void OnIRCConnected() override
 	{
-		m_pDoing = NULL;
-		m_pReplies = NULL;
+		m_pDoing = nullptr;
+		m_pReplies = nullptr;
 		m_vsPending.clear();
 
 		// No way we get a reply, so stop the timer (If it's running)
@@ -259,8 +259,8 @@ public:
 			// The replies which aren't received yet will be
 			// broadcasted to everyone, but at least nothing breaks
 			RemTimer("RouteTimeout");
-			m_pDoing = NULL;
-			m_pReplies = NULL;
+			m_pDoing = nullptr;
+			m_pReplies = nullptr;
 		}
 
 		it = m_vsPending.find(GetClient());
@@ -292,7 +292,7 @@ public:
 			}
 		}
 
-		while (m_pReplies[i].szReply != NULL) {
+		while (m_pReplies[i].szReply != nullptr) {
 			if (m_pReplies[i].szReply == sCmd) {
 				if (RouteReply(sLine, m_pReplies[i].bLastResponse, sCmd == "353"))
 					return HALTCORE;
@@ -349,7 +349,7 @@ public:
 			// Fall through to the next loop
 		}
 
-		for (size_t i = 0; vRouteReplies[i].szRequest != NULL; i++) {
+		for (size_t i = 0; vRouteReplies[i].szRequest != nullptr; i++) {
 			if (vRouteReplies[i].szRequest == sCmd) {
 				struct queued_req req = {
 					sLine, vRouteReplies[i].vReplies
@@ -375,7 +375,7 @@ public:
 			PutModule("Last request: " + m_sLastRequest);
 			PutModule("Expected replies: ");
 
-			for (size_t i = 0; m_pReplies[i].szReply != NULL; i++) {
+			for (size_t i = 0; m_pReplies[i].szReply != nullptr; i++) {
 				if (m_pReplies[i].bLastResponse)
 					PutModule(m_pReplies[i].szReply +
 							CString(" (last)"));
@@ -384,8 +384,8 @@ public:
 			}
 		}
 
-		m_pDoing = NULL;
-		m_pReplies = NULL;
+		m_pDoing = nullptr;
+		m_pReplies = nullptr;
 		SendRequest();
 	}
 
@@ -405,8 +405,8 @@ private:
 			// Stop the timeout
 			RemTimer("RouteTimeout");
 
-			m_pDoing = NULL;
-			m_pReplies = NULL;
+			m_pDoing = nullptr;
+			m_pReplies = nullptr;
 			SendRequest();
 		}
 

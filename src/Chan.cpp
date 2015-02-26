@@ -583,7 +583,7 @@ void CChan::SendBuffer(CClient* pClient) {
 
 void CChan::SendBuffer(CClient* pClient, const CBuffer& Buffer) {
 	if (m_pNetwork && m_pNetwork->IsUserAttached()) {
-		// in the event that pClient is NULL, need to send this to all clients for the user
+		// in the event that pClient is nullptr, need to send this to all clients for the user
 		// I'm presuming here that pClient is listed inside vClients thus vClients at this
 		// point can't be empty.
 		//
@@ -594,7 +594,7 @@ void CChan::SendBuffer(CClient* pClient, const CBuffer& Buffer) {
 		// 4. OnChanBufferEnding
 		//
 		// With the exception of ClearBuffer(), this needs to happen per client, and
-		// if pClient is not NULL, the loops break after the first iteration.
+		// if pClient is not nullptr, the loops break after the first iteration.
 		//
 		// Rework this if you like ...
 		if (!Buffer.IsEmpty()) {

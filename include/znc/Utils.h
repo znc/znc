@@ -310,9 +310,9 @@ public:
 	}
 
 	/**
-	 * @brief Performs a Cleanup() and returns a pointer to the object, or NULL
+	 * @brief Performs a Cleanup() and returns a pointer to the object, or nullptr
 	 * @param Item The item to check for
-	 * @return Pointer to the item or NULL if there is no suitable one
+	 * @return Pointer to the item or nullptr if there is no suitable one
 	 */
 	V* GetItem(const K& Item) {
 		Cleanup();

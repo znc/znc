@@ -122,7 +122,7 @@ void CShellSock::ReadLine(const CString& sData) {
 
 	m_pParent->SetClient(m_pClient);
 	m_pParent->PutShell(sLine);
-	m_pParent->SetClient(NULL);
+	m_pParent->SetClient(nullptr);
 }
 
 void CShellSock::Disconnected() {
@@ -134,7 +134,7 @@ void CShellSock::Disconnected() {
 
 	m_pParent->SetClient(m_pClient);
 	m_pParent->PutShell("znc$");
-	m_pParent->SetClient(NULL);
+	m_pParent->SetClient(nullptr);
 }
 
 template<> void TModInfo<CShellMod>(CModInfo& Info) {

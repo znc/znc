@@ -54,7 +54,7 @@ public:
 				ptraceback = Py_None;
 			}
 			PyErr_NormalizeException(&ptype, &pvalue, &ptraceback);
-			PyObject* strlist = PyObject_CallFunctionObjArgs(m_PyFormatException, ptype, pvalue, ptraceback, NULL);
+			PyObject* strlist = PyObject_CallFunctionObjArgs(m_PyFormatException, ptype, pvalue, ptraceback, nullptr);
 			Py_CLEAR(ptype);
 			Py_CLEAR(pvalue);
 			Py_CLEAR(ptraceback);
@@ -83,8 +83,8 @@ public:
 
 	MODCONSTRUCTOR(CModPython) {
 		Py_Initialize();
-		m_PyFormatException = NULL;
-		m_PyZNCModule = NULL;
+		m_PyFormatException = nullptr;
+		m_PyZNCModule = nullptr;
 	}
 
 	bool OnLoad(const CString& sArgsi, CString& sMessage) override {
@@ -205,7 +205,7 @@ public:
 				bSuccess = false;
 				return HALT;
 			}
-			PyObject* pyRes = PyObject_CallFunctionObjArgs(pyFunc, pMod->GetPyObj(), NULL);
+			PyObject* pyRes = PyObject_CallFunctionObjArgs(pyFunc, pMod->GetPyObj(), nullptr);
 			if (!pyRes) {
 				sRetMsg = GetPyExceptionStr();
 				DEBUG("modpython: " << sRetMsg);
@@ -351,7 +351,7 @@ public:
 			DEBUG("~CModPython(): couldn't find unload_all: " << sRetMsg);
 			return;
 		}
-		PyObject* pyRes = PyObject_CallFunctionObjArgs(pyFunc, NULL);
+		PyObject* pyRes = PyObject_CallFunctionObjArgs(pyFunc, nullptr);
 		if (!pyRes) {
 			CString sRetMsg = GetPyExceptionStr();
 			DEBUG("modpython tried to unload all modules in its destructor, but: " << sRetMsg);
@@ -434,7 +434,7 @@ void CPySocket::ReadLine(const CString& sLine) {
 }
 
 Csock* CPySocket::GetSockObj(const CString& sHost, unsigned short uPort) {
-	CPySocket* result = NULL;
+	CPySocket* result = nullptr;
 	PyObject* pyRes = PyObject_CallMethod(m_pyObj, const_cast<char*>("_Accepted"), const_cast<char*>("sH"), sHost.c_str(), uPort);
 	if (!pyRes) {
 		CString sRetMsg = m_pModPython->GetPyExceptionStr();
@@ -445,7 +445,7 @@ Csock* CPySocket::GetSockObj(const CString& sHost, unsigned short uPort) {
 	if (!SWIG_IsOK(res)) {
 		DEBUG("python socket was expected to return new socket from OnAccepted, but error=" << res);
 		Close();
-		result = NULL;
+		result = nullptr;
 	}
     if (!result) {
         DEBUG("modpython: OnAccepted didn't return new socket");

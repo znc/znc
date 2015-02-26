@@ -24,7 +24,7 @@ class CDCCMod;
 
 class CDCCSock : public CSocket {
 public:
-	CDCCSock(CDCCMod* pMod, const CString& sRemoteNick, const CString& sLocalFile, unsigned long uFileSize = 0, CFile* pFile = NULL);
+	CDCCSock(CDCCMod* pMod, const CString& sRemoteNick, const CString& sLocalFile, unsigned long uFileSize = 0, CFile* pFile = nullptr);
 	CDCCSock(CDCCMod* pMod, const CString& sRemoteNick, const CString& sRemoteIP, unsigned short uRemotePort, const CString& sLocalFile, unsigned long uFileSize);
 	virtual ~CDCCSock();
 
@@ -274,7 +274,7 @@ CDCCSock::CDCCSock(CDCCMod* pMod, const CString& sRemoteNick, const CString& sRe
 	m_uFileSize = uFileSize;
 	m_uBytesSoFar = 0;
 	m_pModule = pMod;
-	m_pFile = NULL;
+	m_pFile = nullptr;
 	m_sLocalFile = sLocalFile;
 	m_bSend = false;
 	m_bNoDelFile = false;
@@ -417,7 +417,7 @@ Csock* CDCCSock::GetSockObj(const CString& sHost, unsigned short uPort) {
 CFile* CDCCSock::OpenFile(bool bWrite) {
 	if ((m_pFile) || (m_sLocalFile.empty())) {
 		m_pModule->PutModule(((bWrite) ? "DCC <- [" : "DCC -> [") + m_sRemoteNick + "][" + m_sLocalFile + "] - Unable to open file.");
-		return NULL;
+		return nullptr;
 	}
 
 	m_pFile = new CFile(m_sLocalFile);
@@ -425,30 +425,30 @@ CFile* CDCCSock::OpenFile(bool bWrite) {
 	if (bWrite) {
 		if (m_pFile->Exists()) {
 			delete m_pFile;
-			m_pFile = NULL;
+			m_pFile = nullptr;
 			m_pModule->PutModule("DCC <- [" + m_sRemoteNick + "] - File already exists [" + m_sLocalFile + "]");
-			return NULL;
+			return nullptr;
 		}
 
 		if (!m_pFile->Open(O_WRONLY | O_TRUNC | O_CREAT)) {
 			delete m_pFile;
-			m_pFile = NULL;
+			m_pFile = nullptr;
 			m_pModule->PutModule("DCC <- [" + m_sRemoteNick + "] - Could not open file [" + m_sLocalFile + "]");
-			return NULL;
+			return nullptr;
 		}
 	} else {
 		if (!m_pFile->IsReg()) {
 			delete m_pFile;
-			m_pFile = NULL;
+			m_pFile = nullptr;
 			m_pModule->PutModule("DCC -> [" + m_sRemoteNick + "] - Not a file [" + m_sLocalFile + "]");
-			return NULL;
+			return nullptr;
 		}
 
 		if (!m_pFile->Open()) {
 			delete m_pFile;
-			m_pFile = NULL;
+			m_pFile = nullptr;
 			m_pModule->PutModule("DCC -> [" + m_sRemoteNick + "] - Could not open file [" + m_sLocalFile + "]");
-			return NULL;
+			return nullptr;
 		}
 
 		// The DCC specs only allow file transfers with files smaller
@@ -456,9 +456,9 @@ CFile* CDCCSock::OpenFile(bool bWrite) {
 		unsigned long long uFileSize = m_pFile->GetSize();
 		if (uFileSize > (unsigned long long) 0xffffffffULL) {
 			delete m_pFile;
-			m_pFile = NULL;
+			m_pFile = nullptr;
 			m_pModule->PutModule("DCC -> [" + m_sRemoteNick + "] - File too large (>4 GiB) [" + m_sLocalFile + "]");
-			return NULL;
+			return nullptr;
 		}
 
 		m_uFileSize = uFileSize;

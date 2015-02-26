@@ -401,7 +401,7 @@ public:
 	CAutoOpUser* FindUser(const CString& sUser) {
 		map<CString, CAutoOpUser*>::iterator it = m_msUsers.find(sUser.AsLower());
 
-		return (it != m_msUsers.end()) ? it->second : NULL;
+		return (it != m_msUsers.end()) ? it->second : nullptr;
 	}
 
 	CAutoOpUser* FindUserByHost(const CString& sHostmask, const CString& sChannel = "") {
@@ -413,7 +413,7 @@ public:
 			}
 		}
 
-		return NULL;
+		return nullptr;
 	}
 
 	bool CheckAutoOp(const CNick& Nick, CChan& Channel) {
@@ -452,7 +452,7 @@ public:
 	CAutoOpUser* AddUser(const CString& sUser, const CString& sKey, const CString& sHosts, const CString& sChans) {
 		if (m_msUsers.find(sUser) != m_msUsers.end()) {
 			PutModule("That user already exists");
-			return NULL;
+			return nullptr;
 		}
 
 		CAutoOpUser* pUser = new CAutoOpUser(sUser, sKey, sHosts, sChans);
@@ -465,7 +465,7 @@ public:
 		// Validate before responding - don't blindly trust everyone
 		bool bValid = false;
 		bool bMatchedHost = false;
-		CAutoOpUser* pUser = NULL;
+		CAutoOpUser* pUser = nullptr;
 
 		for (map<CString, CAutoOpUser*>::iterator it = m_msUsers.begin(); it != m_msUsers.end(); ++it) {
 			pUser = it->second;

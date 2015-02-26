@@ -431,7 +431,7 @@ public:
 				}
 			}
 
-			SendNickList(pUser, NULL, ssNicks, pChannel->GetName());
+			SendNickList(pUser, nullptr, ssNicks, pChannel->GetName());
 
 			/* Tell the other clients we have op or voice, the current user's clients already know from NAMES list */
 
@@ -464,7 +464,7 @@ public:
 		}
 
 		if (cPrefix == CHAN_PREFIX_1C) {
-			if (FindChannel(sTarget) == NULL) {
+			if (FindChannel(sTarget) == nullptr) {
 				pClient->PutClient(":" + GetIRCServer(pNetwork) + " 401 " + pClient->GetNick() + " " + sTarget + " :No such channel");
 				return HALT;
 			}
@@ -526,10 +526,10 @@ public:
 		return "irc.znc.in";
 	}
 
-	bool PutChan(const CString& sChan, const CString& sLine, bool bIncludeCurUser = true, bool bIncludeClient = true, CUser* pUser = NULL, CClient* pClient = NULL) {
+	bool PutChan(const CString& sChan, const CString& sLine, bool bIncludeCurUser = true, bool bIncludeClient = true, CUser* pUser = nullptr, CClient* pClient = nullptr) {
 		CPartylineChannel* pChannel = FindChannel(sChan);
 
-		if (pChannel != NULL) {
+		if (pChannel != nullptr) {
 			PutChan(pChannel->GetNicks(), sLine, bIncludeCurUser, bIncludeClient, pUser, pClient);
 			return true;
 		}
@@ -537,7 +537,7 @@ public:
 		return false;
 	}
 
-	void PutChan(const set<CString>& ssNicks, const CString& sLine, bool bIncludeCurUser = true, bool bIncludeClient = true, CUser* pUser = NULL, CClient* pClient = NULL) {
+	void PutChan(const set<CString>& ssNicks, const CString& sLine, bool bIncludeCurUser = true, bool bIncludeClient = true, CUser* pUser = nullptr, CClient* pClient = nullptr) {
 		const map<CString, CUser*>& msUsers = CZNC::Get().GetUserMap();
 
 		if (!pUser)
@@ -549,7 +549,7 @@ public:
 			if (ssNicks.find(it->first) != ssNicks.end()) {
 				if (it->second == pUser) {
 					if (bIncludeCurUser) {
-						it->second->PutAllUser(sLine, NULL, (bIncludeClient ? NULL : pClient));
+						it->second->PutAllUser(sLine, nullptr, (bIncludeClient ? nullptr : pClient));
 					}
 				} else {
 					it->second->PutAllUser(sLine);
@@ -609,7 +609,7 @@ public:
 				return *it;
 		}
 
-		return NULL;
+		return nullptr;
 	}
 
 	CPartylineChannel* GetChannel(const CString& sChannel) {

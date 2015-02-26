@@ -1862,7 +1862,7 @@ public:
 	}
 	virtual ~CConnectQueueTimer() {
 		// This is only needed when ZNC shuts down:
-		// CZNC::~CZNC() sets its CConnectQueueTimer pointer to NULL and
+		// CZNC::~CZNC() sets its CConnectQueueTimer pointer to nullptr and
 		// calls the manager's Cleanup() which destroys all sockets and
 		// timers. If something calls CZNC::EnableConnectQueue() here
 		// (e.g. because a CIRCSock is destroyed), the socket manager
