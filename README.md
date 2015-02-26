@@ -47,22 +47,31 @@ Note that this requires `automake` and `gettext` to be installed.
 Installation is done with the `./configure ; make ; make install` commands.
 
 You can use
+
 	./configure --help
+
 if you want to get a list of options, though the defaults should be suiting
 most needs. After you compiled it with make (or gmake if make doesn't work) you
 can install it with
+
 	make install
+
 though you don't need to as ZNC supports in-place execution.
 
 ## Setting up znc.conf
 
 For setting up a configuration file in `~/.znc` you can simply do
+
 	znc --makeconf
+
 or
+
 	./znc --makeconf
+
 for in-place execution.
 
 If you are using SSL you should do
+
 	znc --makepem
 
 ## Special config options
@@ -91,6 +100,7 @@ You should use `username:password` as the server password (e.g. `/pass user:pass
 
 Once you are connected you can do `/msg *status help` for some commands.
 Every module you have loaded (`/msg *status listmods`) should additionally provide
+	
 	/msg *modulename help
 
 ## File Locations
@@ -109,11 +119,11 @@ In the datadir are only two files:
 
 These directories are also in there:
 
-- configs - Contains `znc.conf` (ZNC's config file) and backups of older configs.
-- modules - ZNC also looks in here for a module.
-- moddata - Global modules save their settings here.
+- `configs` - Contains `znc.conf` (ZNC's config file) and backups of older configs.
+- `modules` - ZNC also looks in here for a module.
+- `moddata` - Global modules save their settings here.
   (e.g. webadmin saves the current skin name in here)
-- users   - This is per-user data and mainly contains just a moddata directory.
+- `users`   - This is per-user data and mainly contains just a moddata directory.
 
 ## ZNC's config file
 
@@ -122,13 +132,19 @@ items can be found on the [Configuration](http://wiki.znc.in/Configuration)-Page
 Warning: better not to edit config, while ZNC is running.
 
 To rehash the config file, you can send ZNC SIGHUP via
+	
 	pkill -SIGHUP znc
+	
 or you can login to ZNC and use
+
 	/msg *status rehash
 
 If you changed some settings while ZNC is running, a simple
+
 	pkill -SIGUSR1 znc
+	
 will make ZNC rewrite its config file. Alternatively you can use this:
+
 	/msg *status saveconfig
 
 ## Writing own modules
@@ -136,7 +152,7 @@ will make ZNC rewrite its config file. Alternatively you can use this:
 You can write your own modules in either C++, python or perl.
 
 C++ modules are compiled by either saving them in the modules source dir and
-running make or with the znc-buildmod shell script.
+running `make` or with the `znc-buildmod` shell script.
 
 For additional info look in the wiki:
 
@@ -151,4 +167,5 @@ Python modules are loaded through the global module [ModPython](http://wiki.znc.
 Please visit http://znc.in/ or #znc on EFNet or freenode if you still have questions.
 
 You can get the latest development version with git:
+
 	git clone git://github.com/znc/znc.git
