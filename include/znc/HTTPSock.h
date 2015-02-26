@@ -33,7 +33,7 @@ public:
 	void ReadData(const char* data, size_t len) override;
 	void ReadLine(const CString& sData) override;
 	void Connected() override;
-	virtual Csock* GetSockObj(const CString& sHost, unsigned short uPort) = 0;
+	Csock* GetSockObj(const CString& sHost, unsigned short uPort) override = 0;
 	// !Csocket derived members
 
 	// Hooks

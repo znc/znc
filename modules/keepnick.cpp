@@ -26,7 +26,7 @@ public:
 	CKeepNickTimer(CKeepNickMod *pMod);
 	~CKeepNickTimer() {}
 
-	void RunJob();
+	void RunJob() override;
 
 private:
 	CKeepNickMod* m_pMod;
