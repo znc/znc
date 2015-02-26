@@ -120,14 +120,14 @@ void CWebSession::ClearMessageLoops() {
 }
 
 void CWebSession::FillMessageLoops(CTemplate& Tmpl) {
-	for (unsigned int a = 0; a < m_vsErrorMsgs.size(); a++) {
+	for (const CString& sMessage : m_vsErrorMsgs) {
 		CTemplate& Row = Tmpl.AddRow("ErrorLoop");
-		Row["Message"] = m_vsErrorMsgs[a];
+		Row["Message"] = sMessage;
 	}
 
-	for (unsigned int b = 0; b < m_vsSuccessMsgs.size(); b++) {
+	for (const CString& sMessage : m_vsSuccessMsgs) {
 		CTemplate& Row = Tmpl.AddRow("SuccessLoop");
-		Row["Message"] = m_vsSuccessMsgs[b];
+		Row["Message"] = sMessage;
 	}
 }
 
@@ -232,20 +232,16 @@ void CWebSock::GetAvailSkins(VCString& vRet) const {
 	if (!sRoot.empty() && CFile::IsDir(sRoot)) {
 		CDir Dir(sRoot);
 
-		for (unsigned int d = 0; d < Dir.size(); d++) {
-			const CFile& SubDir = *Dir[d];
-
-			if (SubDir.IsDir() && SubDir.GetShortName() == "_default_") {
-				vRet.push_back(SubDir.GetShortName());
+		for (const CFile* pSubDir : Dir) {
+			if (pSubDir->IsDir() && pSubDir->GetShortName() == "_default_") {
+				vRet.push_back(pSubDir->GetShortName());
 				break;
 			}
 		}
 
-		for (unsigned int e = 0; e < Dir.size(); e++) {
-			const CFile& SubDir = *Dir[e];
-
-			if (SubDir.IsDir() && SubDir.GetShortName() != "_default_" && SubDir.GetShortName() != ".svn") {
-				vRet.push_back(SubDir.GetShortName());
+		for (const CFile* pSubDir : Dir) {
+			if (pSubDir->IsDir() && pSubDir->GetShortName() != "_default_" && pSubDir->GetShortName() != ".svn") {
+				vRet.push_back(pSubDir->GetShortName());
 			}
 		}
 	}
@@ -302,9 +298,9 @@ VCString CWebSock::GetDirs(CModule* pModule, bool bIsTemplate) {
 CString CWebSock::FindTmpl(CModule* pModule, const CString& sName) {
 	VCString vsDirs = GetDirs(pModule, true);
 	CString sFile = pModule->GetModName() + "_" + sName;
-	for (size_t i = 0; i < vsDirs.size(); ++i) {
-		if (CFile::Exists(CDir::ChangeDir(vsDirs[i], sFile))) {
-			m_Template.AppendPath(vsDirs[i]);
+	for (const CString& sDir : vsDirs) {
+		if (CFile::Exists(CDir::ChangeDir(sDir, sFile))) {
+			m_Template.AppendPath(sDir);
 			return sFile;
 		}
 	}
@@ -315,8 +311,8 @@ void CWebSock::SetPaths(CModule* pModule, bool bIsTemplate) {
 	m_Template.ClearPaths();
 
 	VCString vsDirs = GetDirs(pModule, bIsTemplate);
-	for (size_t i = 0; i < vsDirs.size(); ++i) {
-		m_Template.AppendPath(vsDirs[i]);
+	for (const CString& sDir : vsDirs) {
+		m_Template.AppendPath(sDir);
 	}
 
 	m_bPathsSet = true;
@@ -340,28 +336,27 @@ void CWebSock::SetVars() {
 
 	// Global Mods
 	CModules& vgMods = CZNC::Get().GetModules();
-	for (unsigned int a = 0; a < vgMods.size(); a++) {
-		AddModLoop("GlobalModLoop", *vgMods[a]);
+	for (CModule* pgMod : vgMods) {
+		AddModLoop("GlobalModLoop", *pgMod);
 	}
 
 	// User Mods
 	if (IsLoggedIn()) {
 		CModules& vMods = GetSession()->GetUser()->GetModules();
 
-		for (unsigned int a = 0; a < vMods.size(); a++) {
-			AddModLoop("UserModLoop", *vMods[a]);
+		for (CModule* pMod : vMods) {
+			AddModLoop("UserModLoop", *pMod);
 		}
 
 		vector<CIRCNetwork*> vNetworks = GetSession()->GetUser()->GetNetworks();
-		vector<CIRCNetwork*>::iterator it;
-		for (it = vNetworks.begin(); it != vNetworks.end(); ++it) {
-			CModules& vnMods = (*it)->GetModules();
+		for (CIRCNetwork* pNetwork : vNetworks) {
+			CModules& vnMods = pNetwork->GetModules();
 
 			CTemplate& Row = m_Template.AddRow("NetworkModLoop");
-			Row["NetworkName"] = (*it)->GetName();
+			Row["NetworkName"] = pNetwork->GetName();
 
-			for (unsigned int a = 0; a < vnMods.size(); a++) {
-				AddModLoop("ModLoop", *vnMods[a], &Row);
+			for (CModule* pnMod : vnMods) {
+				AddModLoop("ModLoop", *pnMod, &Row);
 			}
 		}
 	}
@@ -415,9 +410,7 @@ bool CWebSock::AddModLoop(const CString& sLoopName, CModule& Module, CTemplate *
 
 		VWebSubPages& vSubPages = Module.GetSubPages();
 
-		for (unsigned int a = 0; a < vSubPages.size(); a++) {
-			TWebSubPage& SubPage = vSubPages[a];
-
+		for (TWebSubPage& SubPage : vSubPages) {
 			// bActive is whether or not the current url matches this subpage (params will be checked below)
 			bool bActive = (m_sModName == Module.GetModName() && m_sPage == SubPage->GetName() && bActiveModule);
 
@@ -435,9 +428,7 @@ bool CWebSock::AddModLoop(const CString& sLoopName, CModule& Module, CTemplate *
 			CString& sParams = SubRow["Params"];
 
 			const VPair& vParams = SubPage->GetParams();
-			for (size_t b = 0; b < vParams.size(); b++) {
-				pair<CString, CString> ssNV = vParams[b];
-
+			for (const pair<CString, CString>& ssNV : vParams) {
 				if (!sParams.empty()) {
 					sParams += "&";
 				}
@@ -750,9 +741,7 @@ CWebSock::EPageReqResult CWebSock::OnPageRequestInternal(const CString& sURI, CS
 
 		VWebSubPages& vSubPages = pModule->GetSubPages();
 
-		for (unsigned int a = 0; a < vSubPages.size(); a++) {
-			TWebSubPage& SubPage = vSubPages[a];
-
+		for (TWebSubPage& SubPage : vSubPages) {
 			bool bActive = (m_sModName == pModule->GetModName() && m_sPage == SubPage->GetName());
 
 			if (bActive && SubPage->RequiresAdmin() && !GetSession()->IsAdmin()) {

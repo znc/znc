@@ -35,9 +35,8 @@ bool ZNC_NO_NEED_TO_DO_ANYTHING_ON_MODULE_CALL_EXITER;
 #endif
 
 #define MODUNLOADCHK(func)                                        \
-	for (unsigned int a = 0; a < size(); a++) {                      \
+	for (CModule* pMod : *this) {                      \
 		try {                                                    \
-			CModule* pMod = (CModule *) (*this)[a];                \
 			CClient* pOldClient = pMod->GetClient();         \
 			pMod->SetClient(m_pClient);                      \
 			CUser* pOldUser = NULL;                      \
@@ -58,7 +57,7 @@ bool ZNC_NO_NEED_TO_DO_ANYTHING_ON_MODULE_CALL_EXITER;
 			pMod->SetClient(pOldClient);                     \
 		} catch (const CModule::EModException& e) {                     \
 			if (e == CModule::UNLOAD) {                      \
-				UnloadModule((*this)[a]->GetModName());  \
+				UnloadModule(pMod->GetModName());  \
 			}                                                \
 		}                                                        \
 	}
@@ -66,9 +65,8 @@ bool ZNC_NO_NEED_TO_DO_ANYTHING_ON_MODULE_CALL_EXITER;
 
 #define MODHALTCHK(func)                                          \
 	bool bHaltCore = false;                                          \
-	for (unsigned int a = 0; a < size(); a++) {                      \
+	for (CModule* pMod : *this) {                      \
 		try {                                                    \
-			CModule* pMod = (CModule*) (*this)[a];                 \
 			CModule::EModRet e = CModule::CONTINUE;          \
 			CClient* pOldClient = pMod->GetClient();         \
 			pMod->SetClient(m_pClient);                      \
@@ -98,7 +96,7 @@ bool ZNC_NO_NEED_TO_DO_ANYTHING_ON_MODULE_CALL_EXITER;
 			}                                                \
 		} catch (const CModule::EModException& e) {                     \
 			if (e == CModule::UNLOAD) {                      \
-				UnloadModule((*this)[a]->GetModName());  \
+				UnloadModule(pMod->GetModName());  \
 			}                                                \
 		}                                                        \
 	}                                                                \
@@ -317,15 +315,7 @@ bool CModule::RemTimer(const CString& sLabel) {
 }
 
 bool CModule::UnlinkTimer(CTimer* pTimer) {
-	set<CTimer*>::iterator it;
-	for (it = m_sTimers.begin(); it != m_sTimers.end(); ++it) {
-		if (pTimer == *it) {
-			m_sTimers.erase(it);
-			return true;
-		}
-	}
-
-	return false;
+	return m_sTimers.erase(pTimer);
 }
 
 CTimer* CModule::FindTimer(const CString& sLabel) {
@@ -333,9 +323,7 @@ CTimer* CModule::FindTimer(const CString& sLabel) {
 		return NULL;
 	}
 
-	set<CTimer*>::iterator it;
-	for (it = m_sTimers.begin(); it != m_sTimers.end(); ++it) {
-		CTimer* pTimer = *it;
+	for (CTimer* pTimer : m_sTimers) {
 		if (pTimer->GetName().Equals(sLabel)) {
 			return pTimer;
 		}
@@ -356,9 +344,7 @@ void CModule::ListTimers() {
 	Table.AddColumn("Cycles");
 	Table.AddColumn("Description");
 
-	set<CTimer*>::iterator it;
-	for (it = m_sTimers.begin(); it != m_sTimers.end(); ++it) {
-		CTimer* pTimer = *it;
+	for (const CTimer* pTimer : m_sTimers) {
 		unsigned int uCycles = pTimer->GetCyclesLeft();
 		timeval Interval = pTimer->GetInterval();
 
@@ -382,25 +368,18 @@ bool CModule::AddSocket(CSocket* pSocket) {
 }
 
 bool CModule::RemSocket(CSocket* pSocket) {
-	set<CSocket*>::iterator it;
-	for (it = m_sSockets.begin(); it != m_sSockets.end(); ++it) {
-		if (*it == pSocket) {
-			m_sSockets.erase(it);
-			m_pManager->DelSockByAddr(pSocket);
-			return true;
-		}
+	if (m_sSockets.erase(pSocket)) {
+		m_pManager->DelSockByAddr(pSocket);
+		return true;
 	}
 
 	return false;
 }
 
 bool CModule::RemSocket(const CString& sSockName) {
-	set<CSocket*>::iterator it;
-	for (it = m_sSockets.begin(); it != m_sSockets.end(); ++it) {
-		CSocket* pSocket = *it;
-
+	for (CSocket* pSocket : m_sSockets) {
 		if (pSocket->GetSockName().Equals(sSockName)) {
-			m_sSockets.erase(it);
+			m_sSockets.erase(pSocket);
 			m_pManager->DelSockByAddr(pSocket);
 			return true;
 		}
@@ -410,21 +389,11 @@ bool CModule::RemSocket(const CString& sSockName) {
 }
 
 bool CModule::UnlinkSocket(CSocket* pSocket) {
-	set<CSocket*>::iterator it;
-	for (it = m_sSockets.begin(); it != m_sSockets.end(); ++it) {
-		if (pSocket == *it) {
-			m_sSockets.erase(it);
-			return true;
-		}
-	}
-
-	return false;
+	return m_sSockets.erase(pSocket);
 }
 
 CSocket* CModule::FindSocket(const CString& sSockName) {
-	set<CSocket*>::iterator it;
-	for (it = m_sSockets.begin(); it != m_sSockets.end(); ++it) {
-		CSocket* pSocket = *it;
+	for (CSocket* pSocket : m_sSockets) {
 		if (pSocket->GetSockName().Equals(sSockName)) {
 			return pSocket;
 		}
@@ -447,10 +416,7 @@ void CModule::ListSockets() {
 	Table.AddColumn("RemoteIP");
 	Table.AddColumn("RemotePort");
 
-	set<CSocket*>::iterator it;
-	for (it = m_sSockets.begin(); it != m_sSockets.end(); ++it) {
-		CSocket* pSocket = *it;
-
+	for (const CSocket* pSocket : m_sSockets) {
 		Table.AddRow();
 		Table.SetCell("Name", pSocket->GetSockName());
 
@@ -491,10 +457,9 @@ void CModule::CancelJob(CModuleJob *pJob)
 
 bool CModule::CancelJob(const CString& sJobName)
 {
-	set<CModuleJob*>::iterator it;
-	for (it = m_sJobs.begin(); it != m_sJobs.end(); ++it) {
-		if ((*it)->GetName().Equals(sJobName)) {
-			CancelJob(*it);
+	for (CModuleJob* pJob : m_sJobs) {
+		if (pJob->GetName().Equals(sJobName)) {
+			CancelJob(pJob);
 			return true;
 		}
 	}
@@ -551,11 +516,10 @@ bool CModule::RemCommand(const CString& sCmd)
 
 const CModCommand* CModule::FindCommand(const CString& sCmd) const
 {
-	map<CString, CModCommand>::const_iterator it;
-	for (it = m_mCommands.begin(); it != m_mCommands.end(); ++it) {
-		if (!it->first.Equals(sCmd))
+	for (const auto& it : m_mCommands) {
+		if (!it.first.Equals(sCmd))
 			continue;
-		return &it->second;
+		return &it.second;
 	}
 	return NULL;
 }
@@ -577,13 +541,12 @@ bool CModule::HandleCommand(const CString& sLine) {
 void CModule::HandleHelpCommand(const CString& sLine) {
 	CString sFilter = sLine.Token(1).AsLower();
 	CTable Table;
-	map<CString, CModCommand>::const_iterator it;
 
 	CModCommand::InitHelp(Table);
-	for (it = m_mCommands.begin(); it != m_mCommands.end(); ++it) {
-		CString sCmd = it->second.GetCommand().AsLower();
+	for (const auto& it : m_mCommands) {
+		CString sCmd = it.second.GetCommand().AsLower();
 		if (sFilter.empty() || (sCmd.StartsWith(sFilter, CString::CaseSensitive)) || sCmd.WildCmp(sFilter)) {
-			it->second.AddHelp(Table);
+			it.second.AddHelp(Table);
 		}
 	}
 	if (Table.empty()) {
@@ -803,14 +766,14 @@ void CModules::UnloadAll() {
 }
 
 bool CModules::OnBoot() {
-	for (unsigned int a = 0; a < size(); a++) {
+	for (CModule* pMod : *this) {
 		try {
-			if (!(*this)[a]->OnBoot()) {
+			if (!pMod->OnBoot()) {
 				return true;
 			}
 		} catch (const CModule::EModException& e) {
 			if (e == CModule::UNLOAD) {
-				UnloadModule((*this)[a]->GetModName());
+				UnloadModule(pMod->GetModName());
 			}
 		}
 	}
@@ -893,9 +856,8 @@ bool CModules::OnModCTCP(const CString& sMessage) { MODUNLOADCHK(OnModCTCP(sMess
 // Why MODHALTCHK works only with functions returning EModRet ? :(
 bool CModules::OnServerCapAvailable(const CString& sCap) {
 	bool bResult = false;
-	for (unsigned int a = 0; a < size(); ++a) {
+	for (CModule* pMod : *this) {
 		try {
-			CModule* pMod = (*this)[a];
 			CClient* pOldClient = pMod->GetClient();
 			pMod->SetClient(m_pClient);
 			if (m_pUser) {
@@ -910,7 +872,7 @@ bool CModules::OnServerCapAvailable(const CString& sCap) {
 			pMod->SetClient(pOldClient);
 		} catch (const CModule::EModException& e) {
 			if (CModule::UNLOAD == e) {
-				UnloadModule((*this)[a]->GetModName());
+				UnloadModule(pMod->GetModName());
 			}
 		}
 	}
@@ -956,9 +918,8 @@ bool CModules::OnClientCapLs(CClient* pClient, SCString& ssCaps) {
 // Maybe create new macro for this?
 bool CModules::IsClientCapSupported(CClient* pClient, const CString& sCap, bool bState) {
 	bool bResult = false;
-	for (unsigned int a = 0; a < size(); ++a) {
+	for (CModule* pMod : *this) {
 		try {
-			CModule* pMod = (CModule*) (*this)[a];
 			CClient* pOldClient = pMod->GetClient();
 			pMod->SetClient(m_pClient);
 			if (m_pUser) {
@@ -973,7 +934,7 @@ bool CModules::IsClientCapSupported(CClient* pClient, const CString& sCap, bool 
 			pMod->SetClient(pOldClient);
 		} catch (const CModule::EModException& e) {
 			if (CModule::UNLOAD == e) {
-				UnloadModule((*this)[a]->GetModName());
+				UnloadModule(pMod->GetModName());
 			}
 		}
 	}
@@ -1006,9 +967,9 @@ bool CModules::OnGetAvailableMods(set<CModInfo>& ssMods, CModInfo::EModuleType e
 
 
 CModule* CModules::FindModule(const CString& sModule) const {
-	for (unsigned int a = 0; a < size(); a++) {
-		if (sModule.Equals((*this)[a]->GetModName())) {
-			return (*this)[a];
+	for (CModule* pMod : *this) {
+		if (sModule.Equals(pMod->GetModName())) {
+			return pMod;
 		}
 	}
 
