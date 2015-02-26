@@ -34,7 +34,7 @@ CNick::~CNick() {}
 
 void CNick::Reset() {
 	m_sChanPerms.clear();
-	m_pNetwork = NULL;
+	m_pNetwork = nullptr;
 }
 
 void CNick::Parse(const CString& sNickMask) {
@@ -115,7 +115,7 @@ bool CNick::RemPerm(unsigned char uPerm) {
 }
 
 unsigned char CNick::GetPermChar() const {
-	CIRCSock* pIRCSock = (!m_pNetwork) ? NULL : m_pNetwork->GetIRCSock();
+	CIRCSock* pIRCSock = (!m_pNetwork) ? nullptr : m_pNetwork->GetIRCSock();
 	const CString& sChanPerms = (!pIRCSock) ? "@+" : pIRCSock->GetPerms();
 
 	for (unsigned int a = 0; a < sChanPerms.size(); a++) {
@@ -129,7 +129,7 @@ unsigned char CNick::GetPermChar() const {
 }
 
 CString CNick::GetPermStr() const {
-	CIRCSock* pIRCSock = (!m_pNetwork) ? NULL : m_pNetwork->GetIRCSock();
+	CIRCSock* pIRCSock = (!m_pNetwork) ? nullptr : m_pNetwork->GetIRCSock();
 	const CString& sChanPerms = (!pIRCSock) ? "@+" : pIRCSock->GetPerms();
 	CString sRet;
 

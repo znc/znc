@@ -74,7 +74,7 @@ public:
 	bool AddTrustedProxy(const CString& sHost);
 	bool RemTrustedProxy(const CString& sHost);
 	void Broadcast(const CString& sMessage, bool bAdminOnly = false,
-			CUser* pSkipUser = NULL, CClient* pSkipClient = NULL);
+			CUser* pSkipUser = nullptr, CClient* pSkipClient = nullptr);
 	void AddBytesRead(unsigned long long u) { m_uBytesRead += u; }
 	void AddBytesWritten(unsigned long long u) { m_uBytesWritten += u; }
 	unsigned long long BytesRead() const { return m_uBytesRead; }

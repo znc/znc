@@ -33,16 +33,16 @@ public:
 		Channel.AddBuffer(":" + GetModNick() + "!" + GetModName() + "@znc.in PRIVMSG " + _NAMEDFMT(Channel.GetName()) + " :{text}", sMessage);
 	}
 
-	virtual void OnRawMode2(const CNick* pOpNick, CChan& Channel, const CString& sModes, const CString& sArgs) override {
+	void OnRawMode2(const CNick* pOpNick, CChan& Channel, const CString& sModes, const CString& sArgs) override {
 		const CString sNickMask = pOpNick ? pOpNick->GetNickMask() : "Server";
 		AddBuffer(Channel, sNickMask + " set mode: " + sModes + " " + sArgs);
 	}
 
-	virtual void OnKick(const CNick& OpNick, const CString& sKickedNick, CChan& Channel, const CString& sMessage) override {
+	void OnKick(const CNick& OpNick, const CString& sKickedNick, CChan& Channel, const CString& sMessage) override {
 		AddBuffer(Channel, OpNick.GetNickMask() + " kicked " + sKickedNick + " Reason: [" + sMessage + "]");
 	}
 
-	virtual void OnQuit(const CNick& Nick, const CString& sMessage, const vector<CChan*>& vChans) override {
+	void OnQuit(const CNick& Nick, const CString& sMessage, const vector<CChan*>& vChans) override {
 		vector<CChan*>::const_iterator it;
 		CString sMsg = Nick.GetNickMask() + " quit with message: [" + sMessage + "]";
 		for (it = vChans.begin(); it != vChans.end(); ++it) {
@@ -50,15 +50,15 @@ public:
 		}
 	}
 
-	virtual void OnJoin(const CNick& Nick, CChan& Channel) override {
+	void OnJoin(const CNick& Nick, CChan& Channel) override {
 		AddBuffer(Channel, Nick.GetNickMask() + " joined");
 	}
 
-	virtual void OnPart(const CNick& Nick, CChan& Channel, const CString& sMessage) override {
+	void OnPart(const CNick& Nick, CChan& Channel, const CString& sMessage) override {
 		AddBuffer(Channel, Nick.GetNickMask() + " parted with message: [" + sMessage + "]");
 	}
 
-	virtual void OnNick(const CNick& OldNick, const CString& sNewNick, const vector<CChan*>& vChans) override {
+	void OnNick(const CNick& OldNick, const CString& sNewNick, const vector<CChan*>& vChans) override {
 		vector<CChan*>::const_iterator it;
 		CString sMsg = OldNick.GetNickMask() + " is now known as " + sNewNick;
 		for (it = vChans.begin(); it != vChans.end(); ++it) {
@@ -66,7 +66,7 @@ public:
 		}
 	}
 
-	virtual EModRet OnTopic(CNick& Nick, CChan& Channel, CString& sTopic) override {
+	EModRet OnTopic(CNick& Nick, CChan& Channel, CString& sTopic) override {
 		AddBuffer(Channel, Nick.GetNickMask() + " changed the topic to: " + sTopic);
 
 		return CONTINUE;

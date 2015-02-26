@@ -65,13 +65,13 @@ public:
 	static CString GetPass(const CString& sPrompt);
 	static bool GetInput(const CString& sPrompt, CString& sRet, const CString& sDefault = "", const CString& sHint = "");
 	static bool GetBoolInput(const CString& sPrompt, bool bDefault);
-	static bool GetBoolInput(const CString& sPrompt, bool *pbDefault = NULL);
+	static bool GetBoolInput(const CString& sPrompt, bool *pbDefault = nullptr);
 	static bool GetNumInput(const CString& sPrompt, unsigned int& uRet, unsigned int uMin = 0, unsigned int uMax = ~0, unsigned int uDefault = ~0);
 
 	static unsigned long long GetMillTime() {
 		struct timeval tv;
 		unsigned long long iTime = 0;
-		gettimeofday(&tv, NULL);
+		gettimeofday(&tv, nullptr);
 		iTime = (unsigned long long) tv.tv_sec * 1000;
 		iTime += ((unsigned long long) tv.tv_usec / 1000);
 		return iTime;
@@ -318,7 +318,7 @@ public:
 		Cleanup();
 		iterator it = m_mItems.find(Item);
 		if (it == m_mItems.end())
-			return NULL;
+			return nullptr;
 		return &it->second.second;
 	}
 

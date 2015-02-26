@@ -83,12 +83,12 @@ public:
 	bool HasSpaceForNewNetwork() const;
 	// !Networks
 
-	bool PutUser(const CString& sLine, CClient* pClient = NULL, CClient* pSkipClient = NULL);
-	bool PutAllUser(const CString& sLine, CClient* pClient = NULL, CClient* pSkipClient = NULL);
-	bool PutStatus(const CString& sLine, CClient* pClient = NULL, CClient* pSkipClient = NULL);
-	bool PutStatusNotice(const CString& sLine, CClient* pClient = NULL, CClient* pSkipClient = NULL);
-	bool PutModule(const CString& sModule, const CString& sLine, CClient* pClient = NULL, CClient* pSkipClient = NULL);
-	bool PutModNotice(const CString& sModule, const CString& sLine, CClient* pClient = NULL, CClient* pSkipClient = NULL);
+	bool PutUser(const CString& sLine, CClient* pClient = nullptr, CClient* pSkipClient = nullptr);
+	bool PutAllUser(const CString& sLine, CClient* pClient = nullptr, CClient* pSkipClient = nullptr);
+	bool PutStatus(const CString& sLine, CClient* pClient = nullptr, CClient* pSkipClient = nullptr);
+	bool PutStatusNotice(const CString& sLine, CClient* pClient = nullptr, CClient* pSkipClient = nullptr);
+	bool PutModule(const CString& sModule, const CString& sLine, CClient* pClient = nullptr, CClient* pSkipClient = nullptr);
+	bool PutModNotice(const CString& sModule, const CString& sLine, CClient* pClient = nullptr, CClient* pSkipClient = nullptr);
 
 	bool IsUserAttached() const;
 	void UserConnected(CClient* pClient);

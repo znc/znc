@@ -62,7 +62,7 @@ unsigned char* CString::strnchr(const unsigned char* src, unsigned char c, unsig
 		*piCount = 0;
 	}
 
-	return NULL;
+	return nullptr;
 }
 
 int CString::CaseCmp(const CString& s, CString::size_type uLen) const {
@@ -104,7 +104,7 @@ bool CString::WildCmp(const CString& sWild, const CString& sString, CaseSensitiv
 
 	// Written by Jack Handy - jakkhandy@hotmail.com
 	const char *wild = sWld.c_str(), *CString = sStr.c_str();
-	const char *cp = NULL, *mp = NULL;
+	const char *cp = nullptr, *mp = nullptr;
 
 	while ((*CString) && (*wild != '*')) {
 		if ((*wild != *CString) && (*wild != '?')) {
@@ -222,7 +222,7 @@ CString CString::Escape_n(EEscape eFrom, EEscape eTo) const {
 							base = 16;
 						}
 
-						char* endptr = NULL;
+						char* endptr = nullptr;
 						unsigned long int b = strtol((const char*) (pTmp +2 + (base == 16)), &endptr, base);
 
 						if ((*endptr == ';') && (b <= 255)) { // incase they do something like &#7777777777;
@@ -1105,15 +1105,15 @@ bool CString::ToBool() const {
 			!sTrimmed.Equals("n"));
 }
 
-short CString::ToShort() const { return (short int)strtol(this->c_str(), (char**) NULL, 10); }
-unsigned short CString::ToUShort() const { return (unsigned short int)strtoul(this->c_str(), (char**) NULL, 10); }
-unsigned int CString::ToUInt() const { return (unsigned int)strtoul(this->c_str(), (char**) NULL, 10); }
-int CString::ToInt() const { return (int)strtol(this->c_str(), (char**) NULL, 10); }
-long CString::ToLong() const { return strtol(this->c_str(), (char**) NULL, 10); }
-unsigned long CString::ToULong() const { return strtoul(c_str(), NULL, 10); }
-unsigned long long CString::ToULongLong() const { return strtoull(c_str(), NULL, 10); }
-long long CString::ToLongLong() const { return strtoll(c_str(), NULL, 10); }
-double CString::ToDouble() const { return strtod(c_str(), NULL); }
+short CString::ToShort() const { return (short int)strtol(this->c_str(), (char**) nullptr, 10); }
+unsigned short CString::ToUShort() const { return (unsigned short int)strtoul(this->c_str(), (char**) nullptr, 10); }
+unsigned int CString::ToUInt() const { return (unsigned int)strtoul(this->c_str(), (char**) nullptr, 10); }
+int CString::ToInt() const { return (int)strtol(this->c_str(), (char**) nullptr, 10); }
+long CString::ToLong() const { return strtol(this->c_str(), (char**) nullptr, 10); }
+unsigned long CString::ToULong() const { return strtoul(c_str(), nullptr, 10); }
+unsigned long long CString::ToULongLong() const { return strtoull(c_str(), nullptr, 10); }
+long long CString::ToLongLong() const { return strtoll(c_str(), nullptr, 10); }
+double CString::ToDouble() const { return strtod(c_str(), nullptr); }
 
 
 bool CString::Trim(const CString& s) {

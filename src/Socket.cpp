@@ -156,7 +156,7 @@ public:
 		Add(CThreadPool::Get().getReadFD(), ECT_Read);
 	}
 
-	virtual bool FDsThatTriggered(const std::map<int, short>& miiReadyFds) {
+	bool FDsThatTriggered(const std::map<int, short>& miiReadyFds) override {
 		if (miiReadyFds.find(CThreadPool::Get().getReadFD())->second) {
 			CThreadPool::Get().handlePipeReadable();
 		}
@@ -175,7 +175,7 @@ void CSockManager::CDNSJob::runThread() {
 		hints.ai_socktype = SOCK_STREAM;
 		hints.ai_protocol = IPPROTO_TCP;
 		hints.ai_flags = AI_ADDRCONFIG;
-		iRes = getaddrinfo(sHostname.c_str(), NULL, &hints, &aiResult);
+		iRes = getaddrinfo(sHostname.c_str(), nullptr, &hints, &aiResult);
 		if (EAGAIN != iRes) {
 			break;
 		}
@@ -195,7 +195,7 @@ void CSockManager::CDNSJob::runMain() {
 		if (this->aiResult) {
 			DEBUG("And aiResult is not NULL...");
 		}
-		this->aiResult = NULL; // just for case. Maybe to call freeaddrinfo()?
+		this->aiResult = nullptr; // just for case. Maybe to call freeaddrinfo()?
 	}
 	pManager->SetTDNSThreadFinished(this->task, this->bBind, this->aiResult);
 }
@@ -207,7 +207,7 @@ void CSockManager::StartTDNSThread(TDNSTask* task, bool bBind) {
 	arg->task      = task;
 	arg->bBind     = bBind;
 	arg->iRes      = 0;
-	arg->aiResult  = NULL;
+	arg->aiResult  = nullptr;
 	arg->pManager  = this;
 
 	CThreadPool::Get().addJob(arg);
@@ -256,7 +256,7 @@ void CSockManager::SetTDNSThreadFinished(TDNSTask* task, bool bBind, addrinfo* a
 	SCString ssTargets6;
 	for (addrinfo* ai = task->aiTarget; ai; ai = ai->ai_next) {
 		char s[INET6_ADDRSTRLEN] = {};
-		getnameinfo(ai->ai_addr, ai->ai_addrlen, s, sizeof(s), NULL, 0, NI_NUMERICHOST);
+		getnameinfo(ai->ai_addr, ai->ai_addrlen, s, sizeof(s), nullptr, 0, NI_NUMERICHOST);
 		switch (ai->ai_family) {
 			case AF_INET:
 				ssTargets4.insert(s);
@@ -272,7 +272,7 @@ void CSockManager::SetTDNSThreadFinished(TDNSTask* task, bool bBind, addrinfo* a
 	SCString ssBinds6;
 	for (addrinfo* ai = task->aiBind; ai; ai = ai->ai_next) {
 		char s[INET6_ADDRSTRLEN] = {};
-		getnameinfo(ai->ai_addr, ai->ai_addrlen, s, sizeof(s), NULL, 0, NI_NUMERICHOST);
+		getnameinfo(ai->ai_addr, ai->ai_addrlen, s, sizeof(s), nullptr, 0, NI_NUMERICHOST);
 		switch (ai->ai_family) {
 			case AF_INET:
 				ssBinds4.insert(s);
@@ -361,8 +361,8 @@ void CSockManager::Connect(const CString& sHostname, u_short iPort, const CStrin
 	task->bSSL        = bSSL;
 	task->sBindhost   = sBindHost;
 	task->pcSock      = pcSock;
-	task->aiTarget    = NULL;
-	task->aiBind      = NULL;
+	task->aiTarget    = nullptr;
+	task->aiBind      = nullptr;
 	task->bDoneTarget = false;
 	if (sBindHost.empty()) {
 		task->bDoneBind = true;
@@ -411,7 +411,7 @@ CSocket::CSocket(CModule* pModule, const CString& sHostname, unsigned short uPor
 }
 
 CSocket::~CSocket() {
-	CUser *pUser = NULL;
+	CUser *pUser = nullptr;
 
 	// CWebSock could cause us to have a NULL pointer here
 	if (m_pModule) {

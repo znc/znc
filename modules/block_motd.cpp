@@ -24,7 +24,7 @@ public:
 	virtual ~CBlockMotd() {
 	}
 
-	virtual EModRet OnRaw(CString &sLine) override {
+	EModRet OnRaw(CString &sLine) override {
 		const CString sCmd = sLine.Token(1);
 
 		if (sCmd == "375" /* begin of MOTD */

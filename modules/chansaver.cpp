@@ -62,13 +62,13 @@ public:
 		}
 	}
 
-	virtual void OnJoin(const CNick& Nick, CChan& Channel) override {
+	void OnJoin(const CNick& Nick, CChan& Channel) override {
 		if (!Channel.InConfig() && GetNetwork()->GetIRCNick().NickEquals(Nick.GetNick())) {
 			Channel.SetInConfig(true);
 		}
 	}
 
-	virtual void OnPart(const CNick& Nick, CChan& Channel, const CString& sMessage) override {
+	void OnPart(const CNick& Nick, CChan& Channel, const CString& sMessage) override {
 		if (Channel.InConfig() && GetNetwork()->GetIRCNick().NickEquals(Nick.GetNick())) {
 			Channel.SetInConfig(false);
 		}

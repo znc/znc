@@ -648,7 +648,7 @@ int CExecSock::popen2(int & iReadFD, int & iWriteFD, const CString & sCommand) {
 			"sh",
 			"-c",
 			sCommand.c_str(),
-			NULL
+			nullptr
 		};
 		execvp("sh", (char * const *) pArgv);
 		// if execvp returns, there was an error
@@ -668,9 +668,9 @@ int CExecSock::popen2(int & iReadFD, int & iWriteFD, const CString & sCommand) {
 void CExecSock::close2(int iPid, int iReadFD, int iWriteFD) {
 	close(iReadFD);
 	close(iWriteFD);
-	time_t iNow = time(NULL);
-	while (waitpid(iPid, NULL, WNOHANG) == 0) {
-		if ((time(NULL) - iNow) > 5)
+	time_t iNow = time(nullptr);
+	while (waitpid(iPid, nullptr, WNOHANG) == 0) {
+		if ((time(nullptr) - iNow) > 5)
 			break;  // giveup
 		usleep(100);
 	}

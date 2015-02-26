@@ -38,7 +38,7 @@ public:
 		m_bSSL = bSSL;
 		m_eAddr = eAddr;
 		m_sURIPrefix = sURIPrefix;
-		m_pListener = NULL;
+		m_pListener = nullptr;
 		m_eAcceptType = eAccept;
 	}
 
@@ -80,9 +80,9 @@ public:
 	CRealListener(CListener& listener) : CZNCSock(), m_Listener(listener) {}
 	virtual ~CRealListener();
 
-	virtual bool ConnectionFrom(const CString& sHost, unsigned short uPort);
-	virtual Csock* GetSockObj(const CString& sHost, unsigned short uPort);
-	virtual void SockError(int iErrno, const CString& sDescription);
+	bool ConnectionFrom(const CString& sHost, unsigned short uPort) override;
+	Csock* GetSockObj(const CString& sHost, unsigned short uPort) override;
+	void SockError(int iErrno, const CString& sDescription) override;
 
 private:
 	CListener& m_Listener;
@@ -92,8 +92,8 @@ class CIncomingConnection : public CZNCSock {
 public:
 	CIncomingConnection(const CString& sHostname, unsigned short uPort, CListener::EAcceptType eAcceptType, const CString& sURIPrefix);
 	virtual ~CIncomingConnection() {}
-	virtual void ReadLine(const CString& sData);
-	virtual void ReachedMaxBuffer();
+	void ReadLine(const CString& sData) override;
+	void ReachedMaxBuffer() override;
 
 private:
 	CListener::EAcceptType m_eAcceptType;

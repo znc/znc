@@ -21,11 +21,11 @@ class CNotifyConnectMod : public CModule {
 public:
 	MODCONSTRUCTOR(CNotifyConnectMod) {}
 
-	virtual void OnClientLogin() override {
+	void OnClientLogin() override {
 		SendAdmins(GetUser()->GetUserName() + " attached (from " + GetClient()->GetRemoteIP() + ")");
 	}
 
-	virtual void OnClientDisconnect() override {
+	void OnClientDisconnect() override {
 		SendAdmins(GetUser()->GetUserName() + " detached (from " + GetClient()->GetRemoteIP() + ")");
 	}
 

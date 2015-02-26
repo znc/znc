@@ -31,7 +31,7 @@ struct ConfigStackEntry {
 };
 
 CConfigEntry::CConfigEntry()
-	: m_pSubConfig(NULL) {
+	: m_pSubConfig(nullptr) {
 }
 
 CConfigEntry::CConfigEntry(const CConfig& Config)
@@ -39,7 +39,7 @@ CConfigEntry::CConfigEntry(const CConfig& Config)
 }
 
 CConfigEntry::CConfigEntry(const CConfigEntry& other)
-	: m_pSubConfig(NULL) {
+	: m_pSubConfig(nullptr) {
 	if (other.m_pSubConfig)
 		m_pSubConfig = new CConfig(*other.m_pSubConfig);
 }
@@ -54,7 +54,7 @@ CConfigEntry& CConfigEntry::operator=(const CConfigEntry& other) {
 	if (other.m_pSubConfig)
 		m_pSubConfig = new CConfig(*other.m_pSubConfig);
 	else
-		m_pSubConfig = NULL;
+		m_pSubConfig = nullptr;
 	return *this;
 }
 

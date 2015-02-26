@@ -42,7 +42,7 @@ class CIRCFloodTimer : public CCron {
 			m_pSock = pSock;
 			StartMaxCycles(m_pSock->m_fFloodRate, 0);
 		}
-		virtual void RunJob() {
+		void RunJob() override {
 			if (m_pSock->m_iSendsAllowed < m_pSock->m_uFloodBurst) {
 				m_pSock->m_iSendsAllowed++;
 			}
@@ -736,7 +736,7 @@ void CIRCSock::ReadLine(const CString& sData) {
 				if (bReturn) return;
 
 				pChan->SetTopicOwner(Nick.GetNick());
-				pChan->SetTopicDate((unsigned long) time(NULL));
+				pChan->SetTopicDate((unsigned long) time(nullptr));
 				pChan->SetTopic(sTopic);
 
 				if (pChan->IsDetached()) {
@@ -954,7 +954,7 @@ bool CIRCSock::OnGeneralCTCP(CNick& Nick, CString& sMessage) {
 	}
 
 	if (!sReply.empty()) {
-		time_t now = time(NULL);
+		time_t now = time(nullptr);
 		// If the last CTCP is older than m_uCTCPFloodTime, reset the counter
 		if (m_lastCTCP + m_uCTCPFloodTime < now)
 			m_uNumCTCP = 0;

@@ -21,7 +21,7 @@ public:
 	MODCONSTRUCTOR(CFailToBanMod) {}
 	virtual ~CFailToBanMod() {}
 
-	virtual bool OnLoad(const CString& sArgs, CString& sMessage) override {
+	bool OnLoad(const CString& sArgs, CString& sMessage) override {
 		CString sTimeout = sArgs.Token(0);
 		CString sAttempts = sArgs.Token(1);
 		unsigned int timeout = sTimeout.ToUInt();
@@ -46,7 +46,7 @@ public:
 		return true;
 	}
 
-	virtual void OnPostRehash() override {
+	void OnPostRehash() override {
 		m_Cache.Clear();
 	}
 
@@ -54,13 +54,13 @@ public:
 		m_Cache.AddItem(sHost, count, m_Cache.GetTTL());
 	}
 
-	virtual void OnModCommand(const CString& sCommand) override {
+	void OnModCommand(const CString& sCommand) override {
 		PutModule("This module can only be configured through its arguments.");
 		PutModule("The module argument is the number of minutes an IP");
 		PutModule("is blocked after a failed login.");
 	}
 
-	virtual void OnClientConnect(CZNCSock* pClient, const CString& sHost, unsigned short uPort) override {
+	void OnClientConnect(CZNCSock* pClient, const CString& sHost, unsigned short uPort) override {
 		unsigned int *pCount = m_Cache.GetItem(sHost);
 		if (sHost.empty() || pCount == NULL || *pCount < m_uiAllowedFailed) {
 			return;
@@ -73,7 +73,7 @@ public:
 		pClient->Close(Csock::CLT_AFTERWRITE);
 	}
 
-	virtual void OnFailedLogin(const CString& sUsername, const CString& sRemoteIP) override {
+	void OnFailedLogin(const CString& sUsername, const CString& sRemoteIP) override {
 		unsigned int *pCount = m_Cache.GetItem(sRemoteIP);
 		if (pCount)
 			Add(sRemoteIP, *pCount + 1);
@@ -81,7 +81,7 @@ public:
 			Add(sRemoteIP, 1);
 	}
 
-	virtual EModRet OnLoginAttempt(std::shared_ptr<CAuthBase> Auth) override {
+	EModRet OnLoginAttempt(std::shared_ptr<CAuthBase> Auth) override {
 		// e.g. webadmin ends up here
 		const CString& sRemoteIP = Auth->GetRemoteIP();
 

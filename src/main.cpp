@@ -99,17 +99,17 @@ static inline int getopt_long(int argc, char * const argv[], const char *optstri
 #endif
 
 static const struct option g_LongOpts[] = {
-	{ "help",        no_argument,       0, 'h' },
-	{ "version",     no_argument,       0, 'v' },
-	{ "debug",       no_argument,       0, 'D' },
-	{ "foreground",  no_argument,       0, 'f' },
-	{ "no-color",    no_argument,       0, 'n' },
-	{ "allow-root",  no_argument,       0, 'r' },
-	{ "makeconf",    no_argument,       0, 'c' },
-	{ "makepass",    no_argument,       0, 's' },
-	{ "makepem",     no_argument,       0, 'p' },
-	{ "datadir",     required_argument, 0, 'd' },
-	{ 0, 0, 0, 0 }
+	{ "help",        no_argument,       nullptr, 'h' },
+	{ "version",     no_argument,       nullptr, 'v' },
+	{ "debug",       no_argument,       nullptr, 'D' },
+	{ "foreground",  no_argument,       nullptr, 'f' },
+	{ "no-color",    no_argument,       nullptr, 'n' },
+	{ "allow-root",  no_argument,       nullptr, 'r' },
+	{ "makeconf",    no_argument,       nullptr, 'c' },
+	{ "makepass",    no_argument,       nullptr, 's' },
+	{ "makepem",     no_argument,       nullptr, 'p' },
+	{ "datadir",     required_argument, nullptr, 'd' },
+	{ nullptr, 0, nullptr, 0 }
 };
 
 static void GenerateHelp(const char *appname) {
@@ -164,14 +164,14 @@ static void seedPRNG() {
 
 	// Try to find a seed which can't be as easily guessed as only time()
 
-	if (gettimeofday(&tv, NULL) == 0) {
+	if (gettimeofday(&tv, nullptr) == 0) {
 		seed = (unsigned int)tv.tv_sec;
 
 		// This is in [0:1e6], which means that roughly 20 bits are
 		// actually used, let's try to shuffle the high bits.
 		seed ^= uint32_t((tv.tv_usec << 10) | tv.tv_usec);
 	} else
-		seed = (unsigned int)time(NULL);
+		seed = (unsigned int)time(nullptr);
 
 	seed ^= rand();
 	seed ^= getpid();
@@ -393,19 +393,19 @@ int main(int argc, char** argv) {
 	sigemptyset(&sa.sa_mask);
 
 	sa.sa_handler = SIG_IGN;
-	sigaction(SIGPIPE, &sa, (struct sigaction*) NULL);
+	sigaction(SIGPIPE, &sa, (struct sigaction*) nullptr);
 
 	sa.sa_handler = signalHandler;
-	sigaction(SIGHUP,  &sa, (struct sigaction*) NULL);
-	sigaction(SIGUSR1, &sa, (struct sigaction*) NULL);
+	sigaction(SIGHUP,  &sa, (struct sigaction*) nullptr);
+	sigaction(SIGUSR1, &sa, (struct sigaction*) nullptr);
 
 	// Once this signal is caught, the signal handler is reset
 	// to SIG_DFL. This avoids endless loop with signals.
 	sa.sa_flags = SA_RESETHAND;
 	sa.sa_handler = die;
-	sigaction(SIGINT,  &sa, (struct sigaction*) NULL);
-	sigaction(SIGQUIT, &sa, (struct sigaction*) NULL);
-	sigaction(SIGTERM, &sa, (struct sigaction*) NULL);
+	sigaction(SIGINT,  &sa, (struct sigaction*) nullptr);
+	sigaction(SIGQUIT, &sa, (struct sigaction*) nullptr);
+	sigaction(SIGTERM, &sa, (struct sigaction*) nullptr);
 
 	int iRet = 0;
 
@@ -422,10 +422,10 @@ int main(int argc, char** argv) {
 					strdup(argv[0]),
 					strdup("--datadir"),
 					strdup(pZNC->GetZNCPath().c_str()),
-					NULL,
-					NULL,
-					NULL,
-					NULL
+					nullptr,
+					nullptr,
+					nullptr,
+					nullptr
 				};
 				int pos = 3;
 				if (CDebug::Debug())

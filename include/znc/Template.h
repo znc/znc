@@ -128,7 +128,7 @@ public:
 		Init();
 	}
 
-	CTemplate(const std::shared_ptr<CTemplateOptions>& Options, CTemplate* pParent = NULL) : MCString(), m_spOptions(Options) {
+	CTemplate(const std::shared_ptr<CTemplateOptions>& Options, CTemplate* pParent = nullptr) : MCString(), m_spOptions(Options) {
 		Init();
 		m_pParent = pParent;
 	}

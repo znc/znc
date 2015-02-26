@@ -37,7 +37,7 @@ public:
 		return false;
 	}
 
-	virtual EModRet OnUserRaw(CString& sLine) override {
+	EModRet OnUserRaw(CString& sLine) override {
 		//Handle ISON
 		if (sLine.Token(0).Equals("ison")) {
 			VCString vsNicks;
@@ -83,7 +83,7 @@ public:
 		return CONTINUE;
 	}
 
-	virtual EModRet OnRaw(CString& sLine) override {
+	EModRet OnRaw(CString& sLine) override {
 		//Handle 303 reply if m_Requests is not empty
 		if (sLine.Token(1) == "303" && !m_ISONRequests.empty()) {
 			VCString::iterator it = m_ISONRequests.begin();

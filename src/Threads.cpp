@@ -68,7 +68,7 @@ void CThreadPool::handlePipeReadable() const {
 }
 
 CJob *CThreadPool::getJobFromPipe() const {
-	CJob* a = NULL;
+	CJob* a = nullptr;
 	ssize_t need = sizeof(a);
 	ssize_t r = read(m_iJobPipe[0], &a, need);
 	if (r != need) {

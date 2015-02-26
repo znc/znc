@@ -69,43 +69,43 @@ public:
 		}
 	}
 
-	virtual EModRet OnUserMsg(CString& sTarget, CString& sMessage) override {
+	EModRet OnUserMsg(CString& sTarget, CString& sMessage) override {
 		if (m_bRules[RULE_MSG])
 			ClearAllBuffers();
 		return CONTINUE;
 	}
 
-	virtual EModRet OnUserCTCP(CString& sTarget, CString& sMessage) override {
+	EModRet OnUserCTCP(CString& sTarget, CString& sMessage) override {
 		if (m_bRules[RULE_CTCP])
 			ClearAllBuffers();
 		return CONTINUE;
 	}
 
-	virtual EModRet OnUserAction(CString& sTarget, CString& sMessage) override {
+	EModRet OnUserAction(CString& sTarget, CString& sMessage) override {
 		if (m_bRules[RULE_ACTION])
 			ClearAllBuffers();
 		return CONTINUE;
 	}
 
-	virtual EModRet OnUserNotice(CString& sTarget, CString& sMessage) override {
+	EModRet OnUserNotice(CString& sTarget, CString& sMessage) override {
 		if (m_bRules[RULE_NOTICE])
 			ClearAllBuffers();
 		return CONTINUE;
 	}
 
-	virtual EModRet OnUserPart(CString& sChannel, CString& sMessage) override {
+	EModRet OnUserPart(CString& sChannel, CString& sMessage) override {
 		if (m_bRules[RULE_PART])
 			ClearAllBuffers();
 		return CONTINUE;
 	}
 
-	virtual EModRet OnUserTopic(CString& sChannel, CString& sTopic) override {
+	EModRet OnUserTopic(CString& sChannel, CString& sTopic) override {
 		if (m_bRules[RULE_TOPIC])
 			ClearAllBuffers();
 		return CONTINUE;
 	}
 
-	virtual EModRet OnUserQuit(CString& sMessage) override {
+	EModRet OnUserQuit(CString& sMessage) override {
 		if (m_bRules[RULE_QUIT])
 			ClearAllBuffers();
 		return CONTINUE;
@@ -140,7 +140,7 @@ public:
 		}
 	}
 
-	virtual bool OnLoad(const CString& sArgs, CString& sMessage) override {
+	bool OnLoad(const CString& sArgs, CString& sMessage) override {
 		VCString vsOpts;
 
 		sArgs.Split(" ", vsOpts, false);

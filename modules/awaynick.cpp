@@ -20,7 +20,7 @@ class CAwayNickMod : public CModule {
 public:
 	MODCONSTRUCTOR(CAwayNickMod) {}
 
-	virtual bool OnLoad(const CString&, CString& sMessage) override {
+	bool OnLoad(const CString&, CString& sMessage) override {
 		sMessage = "retired module - see http://wiki.znc.in/awaynick";
 		return false;
 	}

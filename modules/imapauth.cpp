@@ -36,7 +36,7 @@ public:
 		}
 	}
 
-	virtual void ReadLine(const CString& sLine) override;
+	void ReadLine(const CString& sLine) override;
 private:
 protected:
 	CIMAPAuthMod*              m_pIMAPMod;
@@ -57,11 +57,11 @@ public:
 
 	virtual ~CIMAPAuthMod() {}
 
-	virtual bool OnBoot() override {
+	bool OnBoot() override {
 		return true;
 	}
 
-	virtual bool OnLoad(const CString& sArgs, CString& sMessage) override {
+	bool OnLoad(const CString& sArgs, CString& sMessage) override {
 		if (sArgs.Trim_n().empty()) {
 			return true; // use defaults
 		}
@@ -84,7 +84,7 @@ public:
 		return true;
 	}
 
-	virtual EModRet OnLoginAttempt(std::shared_ptr<CAuthBase> Auth) override {
+	EModRet OnLoginAttempt(std::shared_ptr<CAuthBase> Auth) override {
 		CUser* pUser = CZNC::Get().FindUser(Auth->GetUsername());
 
 		if (!pUser) { // @todo Will want to do some sort of && !m_bAllowCreate in the future
@@ -104,7 +104,7 @@ public:
 		return HALT;
 	}
 
-	virtual void OnModCommand(const CString& sLine) override {
+	void OnModCommand(const CString& sLine) override {
 	}
 
 	void CacheLogin(const CString& sLogin) {

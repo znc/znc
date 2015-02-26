@@ -21,16 +21,16 @@ public:
 	MODCONSTRUCTOR(CRawMod) {}
 	virtual ~CRawMod() {}
 
-	virtual EModRet OnRaw(CString& sLine) override {
+	EModRet OnRaw(CString& sLine) override {
 		PutModule("IRC -> [" + sLine + "]");
 		return CONTINUE;
 	}
 
-	virtual void OnModCommand(const CString& sCommand) override {
+	void OnModCommand(const CString& sCommand) override {
 		PutIRC(sCommand);
 	}
 
-	virtual EModRet OnUserRaw(CString& sLine) override {
+	EModRet OnUserRaw(CString& sLine) override {
 		PutModule("YOU -> [" + sLine + "]");
 		return CONTINUE;
 	}

@@ -80,9 +80,9 @@ public:
 	CClientAuth(const CClientAuth&) = delete;
 	CClientAuth& operator=(const CClientAuth&) = delete;
 
-	void Invalidate() { m_pClient = NULL; CAuthBase::Invalidate(); }
-	void AcceptedLogin(CUser& User);
-	void RefusedLogin(const CString& sReason);
+	void Invalidate() override { m_pClient = nullptr; CAuthBase::Invalidate(); }
+	void AcceptedLogin(CUser& User) override;
+	void RefusedLogin(const CString& sReason) override;
 private:
 protected:
 	CClient* m_pClient;
@@ -91,8 +91,8 @@ protected:
 class CClient : public CIRCSocket {
 public:
 	CClient() : CIRCSocket() {
-		m_pUser = NULL;
-		m_pNetwork = NULL;
+		m_pUser = nullptr;
+		m_pNetwork = nullptr;
 		m_bGotPass = false;
 		m_bGotNick = false;
 		m_bGotUser = false;
@@ -137,7 +137,7 @@ public:
 	void UserPortCommand(CString& sLine);
 	void StatusCTCP(const CString& sCommand);
 	void BouncedOff();
-	bool IsAttached() const { return m_pUser != NULL; }
+	bool IsAttached() const { return m_pUser != nullptr; }
 
 	bool IsPlaybackActive() const { return m_bPlaybackActive; }
 	void SetPlaybackActive(bool bActive) { m_bPlaybackActive = bActive; }
@@ -152,15 +152,15 @@ public:
 
 	bool IsCapEnabled(const CString& sCap) const { return 1 == m_ssAcceptedCaps.count(sCap); }
 
-	virtual void ReadLine(const CString& sData);
+	void ReadLine(const CString& sData) override;
 	bool SendMotd();
 	void HelpUser(const CString& sFilter = "");
 	void AuthUser();
-	virtual void Connected();
-	virtual void Timeout();
-	virtual void Disconnected();
-	virtual void ConnectionRefused();
-	virtual void ReachedMaxBuffer();
+	void Connected() override;
+	void Timeout() override;
+	void Disconnected() override;
+	void ConnectionRefused() override;
+	void ReachedMaxBuffer() override;
 
 	void SetNick(const CString& s);
 	void SetAway(bool bAway) { m_bAway = bAway; }

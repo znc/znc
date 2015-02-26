@@ -312,7 +312,7 @@ void CClient::UserCommand(CString& sLine) {
 
 		CString sArgs = sLine.Token(1, true);
 		sArgs.Trim();
-		CServer *pServer = NULL;
+		CServer *pServer = nullptr;
 
 		if (!sArgs.empty()) {
 			pServer = m_pNetwork->FindServer(sArgs);
@@ -539,7 +539,7 @@ void CClient::UserCommand(CString& sLine) {
 		}
 
 		if (m_pNetwork && m_pNetwork->GetName().Equals(sNetwork)) {
-			SetNetwork(NULL);
+			SetNetwork(nullptr);
 		}
 
 		if (m_pUser->DeleteNetwork(sNetwork)) {
@@ -659,7 +659,7 @@ void CClient::UserCommand(CString& sLine) {
 		pNewNetwork->Clone(*pOldNetwork, false);
 
 		if (m_pNetwork && m_pNetwork->GetName().Equals(sOldNetwork) && m_pUser == pOldUser) {
-			SetNetwork(NULL);
+			SetNetwork(nullptr);
 		}
 
 		if (pOldUser->DeleteNetwork(sOldNetwork)) {
@@ -1003,10 +1003,10 @@ void CClient::UserCommand(CString& sLine) {
 
 		switch (eType) {
 		case CModInfo::GlobalModule:
-			b = CZNC::Get().GetModules().LoadModule(sMod, sArgs, eType, NULL, NULL, sModRet);
+			b = CZNC::Get().GetModules().LoadModule(sMod, sArgs, eType, nullptr, nullptr, sModRet);
 			break;
 		case CModInfo::UserModule:
-			b = m_pUser->GetModules().LoadModule(sMod, sArgs, eType, m_pUser, NULL, sModRet);
+			b = m_pUser->GetModules().LoadModule(sMod, sArgs, eType, m_pUser, nullptr, sModRet);
 			break;
 		case CModInfo::NetworkModule:
 				b = m_pNetwork->GetModules().LoadModule(sMod, sArgs, eType, m_pUser, m_pNetwork, sModRet);
@@ -1142,10 +1142,10 @@ void CClient::UserCommand(CString& sLine) {
 
 		switch (eType) {
 		case CModInfo::GlobalModule:
-			CZNC::Get().GetModules().ReloadModule(sMod, sArgs, NULL, NULL, sModRet);
+			CZNC::Get().GetModules().ReloadModule(sMod, sArgs, nullptr, nullptr, sModRet);
 			break;
 		case CModInfo::UserModule:
-			m_pUser->GetModules().ReloadModule(sMod, sArgs, m_pUser, NULL, sModRet);
+			m_pUser->GetModules().ReloadModule(sMod, sArgs, m_pUser, nullptr, sModRet);
 			break;
 		case CModInfo::NetworkModule:
 			m_pNetwork->GetModules().ReloadModule(sMod, sArgs, m_pUser, m_pNetwork, sModRet);

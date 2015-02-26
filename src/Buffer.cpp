@@ -20,7 +20,7 @@
 CBufLine::CBufLine(const CString& sFormat, const CString& sText, const timeval* ts) {
 	m_sFormat = sFormat;
 	m_sText = sText;
-	if (ts == NULL)
+	if (ts == nullptr)
 		UpdateTime();
 	else
 		m_time = *ts;
@@ -29,10 +29,10 @@ CBufLine::CBufLine(const CString& sFormat, const CString& sText, const timeval* 
 CBufLine::~CBufLine() {}
 
 void CBufLine::UpdateTime() {
-	if (0 == gettimeofday(&m_time, NULL)) {
+	if (0 == gettimeofday(&m_time, nullptr)) {
 		return;
 	}
-	m_time.tv_sec = time(NULL);
+	m_time.tv_sec = time(nullptr);
 	m_time.tv_usec = 0;
 }
 

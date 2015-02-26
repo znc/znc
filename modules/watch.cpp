@@ -177,12 +177,12 @@ public:
 
 	virtual ~CWatcherMod() {}
 
-	virtual void OnRawMode(const CNick& OpNick, CChan& Channel, const CString& sModes, const CString& sArgs) override {
+	void OnRawMode(const CNick& OpNick, CChan& Channel, const CString& sModes, const CString& sArgs) override {
 		Process(OpNick, "* " + OpNick.GetNick() + " sets mode: " + sModes + " " +
 			sArgs + " on " + Channel.GetName(), Channel.GetName());
 	}
 
-	virtual void OnClientLogin() override {
+	void OnClientLogin() override {
 		MCString msParams;
 		msParams["target"] = GetNetwork()->GetCurNick();
 
@@ -193,67 +193,67 @@ public:
 		m_Buffer.Clear();
 	}
 
-	virtual void OnKick(const CNick& OpNick, const CString& sKickedNick, CChan& Channel, const CString& sMessage) override {
+	void OnKick(const CNick& OpNick, const CString& sKickedNick, CChan& Channel, const CString& sMessage) override {
 		Process(OpNick, "* " + OpNick.GetNick() + " kicked " + sKickedNick + " from " +
 			Channel.GetName() + " because [" + sMessage + "]", Channel.GetName());
 	}
 
-	virtual void OnQuit(const CNick& Nick, const CString& sMessage, const vector<CChan*>& vChans) override {
+	void OnQuit(const CNick& Nick, const CString& sMessage, const vector<CChan*>& vChans) override {
 		Process(Nick, "* Quits: " + Nick.GetNick() + " (" + Nick.GetIdent() + "@" + Nick.GetHost() + ") "
 			"(" + sMessage + ")", "");
 	}
 
-	virtual void OnJoin(const CNick& Nick, CChan& Channel) override {
+	void OnJoin(const CNick& Nick, CChan& Channel) override {
 		Process(Nick, "* " + Nick.GetNick() + " (" + Nick.GetIdent() + "@" + Nick.GetHost() + ") joins " +
 			Channel.GetName(), Channel.GetName());
 	}
 
-	virtual void OnPart(const CNick& Nick, CChan& Channel, const CString& sMessage) override {
+	void OnPart(const CNick& Nick, CChan& Channel, const CString& sMessage) override {
 		Process(Nick, "* " + Nick.GetNick() + " (" + Nick.GetIdent() + "@" + Nick.GetHost() + ") parts " +
 			Channel.GetName() + "(" + sMessage + ")", Channel.GetName());
 	}
 
-	virtual void OnNick(const CNick& OldNick, const CString& sNewNick, const vector<CChan*>& vChans) override {
+	void OnNick(const CNick& OldNick, const CString& sNewNick, const vector<CChan*>& vChans) override {
 		Process(OldNick, "* " + OldNick.GetNick() + " is now known as " + sNewNick, "");
 	}
 
-	virtual EModRet OnCTCPReply(CNick& Nick, CString& sMessage) override {
+	EModRet OnCTCPReply(CNick& Nick, CString& sMessage) override {
 		Process(Nick, "* CTCP: " + Nick.GetNick() + " reply [" + sMessage + "]", "priv");
 		return CONTINUE;
 	}
 
-	virtual EModRet OnPrivCTCP(CNick& Nick, CString& sMessage) override {
+	EModRet OnPrivCTCP(CNick& Nick, CString& sMessage) override {
 		Process(Nick, "* CTCP: " + Nick.GetNick() + " [" + sMessage + "]", "priv");
 		return CONTINUE;
 	}
 
-	virtual EModRet OnChanCTCP(CNick& Nick, CChan& Channel, CString& sMessage) override {
+	EModRet OnChanCTCP(CNick& Nick, CChan& Channel, CString& sMessage) override {
 		Process(Nick, "* CTCP: " + Nick.GetNick() + " [" + sMessage + "] to "
 			"[" + Channel.GetName() + "]", Channel.GetName());
 		return CONTINUE;
 	}
 
-	virtual EModRet OnPrivNotice(CNick& Nick, CString& sMessage) override {
+	EModRet OnPrivNotice(CNick& Nick, CString& sMessage) override {
 		Process(Nick, "-" + Nick.GetNick() + "- " + sMessage, "priv");
 		return CONTINUE;
 	}
 
-	virtual EModRet OnChanNotice(CNick& Nick, CChan& Channel, CString& sMessage) override {
+	EModRet OnChanNotice(CNick& Nick, CChan& Channel, CString& sMessage) override {
 		Process(Nick, "-" + Nick.GetNick() + ":" + Channel.GetName() + "- " + sMessage, Channel.GetName());
 		return CONTINUE;
 	}
 
-	virtual EModRet OnPrivMsg(CNick& Nick, CString& sMessage) override {
+	EModRet OnPrivMsg(CNick& Nick, CString& sMessage) override {
 		Process(Nick, "<" + Nick.GetNick() + "> " + sMessage, "priv");
 		return CONTINUE;
 	}
 
-	virtual EModRet OnChanMsg(CNick& Nick, CChan& Channel, CString& sMessage) override {
+	EModRet OnChanMsg(CNick& Nick, CChan& Channel, CString& sMessage) override {
 		Process(Nick, "<" + Nick.GetNick() + ":" + Channel.GetName() + "> " + sMessage, Channel.GetName());
 		return CONTINUE;
 	}
 
-	virtual void OnModCommand(const CString& sCommand) override {
+	void OnModCommand(const CString& sCommand) override {
 		CString sCmdName = sCommand.Token(0);
 		if (sCmdName.Equals("ADD") || sCmdName.Equals("WATCH")) {
 			Watch(sCommand.Token(1), sCommand.Token(2), sCommand.Token(3, true));

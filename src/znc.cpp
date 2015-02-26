@@ -48,12 +48,12 @@ CZNC::CZNC() {
 	m_uBytesRead = 0;
 	m_uBytesWritten = 0;
 	m_uiMaxBufferSize = 500;
-	m_pConnectQueueTimer = NULL;
+	m_pConnectQueueTimer = nullptr;
 	m_uiConnectPaused = 0;
 	m_eConfigState = ECONFIG_NOTHING;
-	m_TimeStarted = time(NULL);
+	m_TimeStarted = time(nullptr);
 	m_sConnectThrottle.SetTTL(30000);
-	m_pLockFile = NULL;
+	m_pLockFile = nullptr;
 	m_bProtectWebSessions = true;
 	m_bHideVersion = false;
 	m_uDisabledSSLProtocols = Csock::EDP_SSL;
@@ -80,7 +80,7 @@ CZNC::~CZNC() {
 		a->second->SetBeingDeleted(true);
 	}
 
-	m_pConnectQueueTimer = NULL;
+	m_pConnectQueueTimer = nullptr;
 	// This deletes m_pConnectQueueTimer
 	m_Manager.Cleanup();
 	DeleteUsers();
@@ -141,7 +141,7 @@ CString CZNC::GetCompileOptionsString() {
 }
 
 CString CZNC::GetUptime() const {
-	time_t now = time(NULL);
+	time_t now = time(nullptr);
 	return CString::ToTimeStr(now - TimeStarted());
 }
 
@@ -235,12 +235,12 @@ CFile* CZNC::InitPidFile() {
 		return new CFile(sFile);
 	}
 
-	return NULL;
+	return nullptr;
 }
 
 bool CZNC::WritePidFile(int iPid) {
 	CFile* File = InitPidFile();
-	if (File == NULL)
+	if (File == nullptr)
 		return false;
 
 	CUtils::PrintAction("Writing pid file [" + File->GetLongName() + "]");
@@ -259,7 +259,7 @@ bool CZNC::WritePidFile(int iPid) {
 
 bool CZNC::DeletePidFile() {
 	CFile* File = InitPidFile();
-	if (File == NULL)
+	if (File == nullptr)
 		return false;
 
 	CUtils::PrintAction("Deleting pid file [" + File->GetLongName() + "]");
@@ -1015,7 +1015,7 @@ bool CZNC::DoRehash(CString& sError)
 		if (!pOldMod) {
 			CUtils::PrintAction("Loading global module [" + sModName + "]");
 
-			bool bModRet = GetModules().LoadModule(sModName, sArgs, CModInfo::GlobalModule, NULL, NULL, sModRet);
+			bool bModRet = GetModules().LoadModule(sModName, sArgs, CModInfo::GlobalModule, nullptr, nullptr, sModRet);
 
 			CUtils::PrintStatus(bModRet, sModRet);
 			if (!bModRet) {
@@ -1025,7 +1025,7 @@ bool CZNC::DoRehash(CString& sError)
 		} else if (pOldMod->GetArgs() != sArgs) {
 			CUtils::PrintAction("Reloading global module [" + sModName + "]");
 
-			bool bModRet = GetModules().ReloadModule(sModName, sArgs, NULL, NULL, sModRet);
+			bool bModRet = GetModules().ReloadModule(sModName, sArgs, nullptr, nullptr, sModRet);
 
 			CUtils::PrintStatus(bModRet, sModRet);
 			if (!bModRet) {
@@ -1047,7 +1047,7 @@ bool CZNC::DoRehash(CString& sError)
 			CUtils::PrintAction("Loading global Module [identfile]");
 
 			CString sModRet;
-			bool bModRet = GetModules().LoadModule("identfile", "", CModInfo::GlobalModule, NULL, NULL, sModRet);
+			bool bModRet = GetModules().LoadModule("identfile", "", CModInfo::GlobalModule, nullptr, nullptr, sModRet);
 
 			CUtils::PrintStatus(bModRet, sModRet);
 			if (!bModRet) {
@@ -1184,7 +1184,7 @@ bool CZNC::DoRehash(CString& sError)
 	for (subIt = subConf.begin(); subIt != subConf.end(); ++subIt) {
 		const CString& sUserName = subIt->first;
 		CConfig* pSubConf = subIt->second.m_pSubConfig;
-		CUser* pRealUser = NULL;
+		CUser* pRealUser = nullptr;
 
 		CUtils::PrintMessage("Loading user [" + sUserName + "]");
 
@@ -1209,7 +1209,7 @@ bool CZNC::DoRehash(CString& sError)
 		if (!pUser->ParseConfig(pSubConf, sError)) {
 			CUtils::PrintError(sError);
 			delete pUser;
-			pUser = NULL;
+			pUser = nullptr;
 			return false;
 		}
 
@@ -1230,7 +1230,7 @@ bool CZNC::DoRehash(CString& sError)
 			}
 			pUser->SetBeingDeleted(true);
 			delete pUser;
-			pUser = NULL;
+			pUser = nullptr;
 		} else if (!AddUser(pUser, sErr)) {
 			sError = "Invalid user [" + pUser->GetUserName() + "] " + sErr;
 		}
@@ -1240,13 +1240,13 @@ bool CZNC::DoRehash(CString& sError)
 			if (pUser) {
 				pUser->SetBeingDeleted(true);
 				delete pUser;
-				pUser = NULL;
+				pUser = nullptr;
 			}
 			return false;
 		}
 
-		pUser = NULL;
-		pRealUser = NULL;
+		pUser = nullptr;
+		pRealUser = nullptr;
 	}
 
 	if (!config.empty()) {
@@ -1385,10 +1385,10 @@ void CZNC::Broadcast(const CString& sMessage, bool bAdminOnly,
 			CString sMsg = sMessage;
 
 			bool bContinue = false;
-			USERMODULECALL(OnBroadcast(sMsg), a->second, NULL, &bContinue);
+			USERMODULECALL(OnBroadcast(sMsg), a->second, nullptr, &bContinue);
 			if (bContinue) continue;
 
-			a->second->PutStatusNotice("*** " + sMsg, NULL, pSkipClient);
+			a->second->PutStatusNotice("*** " + sMsg, nullptr, pSkipClient);
 		}
 	}
 }
@@ -1400,7 +1400,7 @@ CModule* CZNC::FindModule(const CString& sModName, const CString& sUsername) {
 
 	CUser* pUser = FindUser(sUsername);
 
-	return (!pUser) ? NULL : pUser->GetModules().FindModule(sModName);
+	return (!pUser) ? nullptr : pUser->GetModules().FindModule(sModName);
 }
 
 CModule* CZNC::FindModule(const CString& sModName, CUser* pUser) {
@@ -1461,7 +1461,7 @@ bool CZNC::UpdateModule(const CString &sModule) {
 
 	// Reload the global module
 	if (bGlobal) {
-		if (!GetModules().LoadModule(sModule, sGlobalArgs, CModInfo::GlobalModule, NULL, NULL, sErr)) {
+		if (!GetModules().LoadModule(sModule, sGlobalArgs, CModInfo::GlobalModule, nullptr, nullptr, sErr)) {
 			DEBUG("Failed to reload [" <<  sModule << "] globally [" << sErr << "]");
 			bError = true;
 		}
@@ -1472,7 +1472,7 @@ bool CZNC::UpdateModule(const CString &sModule) {
 		CUser *pUser = musIt->first;
 		CString& sArgs = musIt->second;
 
-		if (!pUser->GetModules().LoadModule(sModule, sArgs, CModInfo::UserModule, pUser, NULL, sErr)) {
+		if (!pUser->GetModules().LoadModule(sModule, sArgs, CModInfo::UserModule, pUser, nullptr, sErr)) {
 			DEBUG("Failed to reload [" <<  sModule << "] for ["
 					<< pUser->GetUserName() << "] [" << sErr << "]");
 			bError = true;
@@ -1502,7 +1502,7 @@ CUser* CZNC::FindUser(const CString& sUsername) {
 		return it->second;
 	}
 
-	return NULL;
+	return nullptr;
 }
 
 bool CZNC::DeleteUser(const CString& sUsername) {
@@ -1517,7 +1517,7 @@ bool CZNC::DeleteUser(const CString& sUsername) {
 }
 
 bool CZNC::AddUser(CUser* pUser, CString& sErrorRet) {
-	if (FindUser(pUser->GetUserName()) != NULL) {
+	if (FindUser(pUser->GetUserName()) != nullptr) {
 		sErrorRet = "User already exists";
 		DEBUG("User [" << pUser->GetUserName() << "] - already exists");
 		return false;
@@ -1550,7 +1550,7 @@ CListener* CZNC::FindListener(u_short uPort, const CString& sBindHost, EAddrType
 			continue;
 		return *it;
 	}
-	return NULL;
+	return nullptr;
 }
 
 bool CZNC::AddListener(const CString& sLine, CString& sError) {
@@ -1769,7 +1769,7 @@ bool CZNC::DelListener(CListener* pListener) {
 	return false;
 }
 
-static CZNC* s_pZNC = NULL;
+static CZNC* s_pZNC = nullptr;
 
 void CZNC::CreateInstance() {
 	if (s_pZNC)
@@ -1784,7 +1784,7 @@ CZNC& CZNC::Get() {
 
 void CZNC::DestroyInstance() {
 	delete s_pZNC;
-	s_pZNC = NULL;
+	s_pZNC = nullptr;
 }
 
 CZNC::TrafficStatsMap CZNC::GetTrafficStats(TrafficStatsPair &Users,
@@ -1804,7 +1804,7 @@ CZNC::TrafficStatsMap CZNC::GetTrafficStats(TrafficStatsPair &Users,
 	}
 
 	for (CSockManager::const_iterator it = m_Manager.begin(); it != m_Manager.end(); ++it) {
-		CUser *pUser = NULL;
+		CUser *pUser = nullptr;
 		if ((*it)->GetSockName().Left(5) == "IRC::") {
 			pUser = ((CIRCSock *) *it)->GetNetwork()->GetUser();
 		} else if ((*it)->GetSockName().Left(5) == "USR::") {
@@ -1874,7 +1874,7 @@ public:
 	}
 
 protected:
-	virtual void RunJob() {
+	void RunJob() override {
 		list<CIRCNetwork*> ConnectionQueue;
 		list<CIRCNetwork*>& RealConnectionQueue = CZNC::Get().GetConnectionQueue();
 
@@ -1913,7 +1913,7 @@ void CZNC::SetConnectDelay(unsigned int i) {
 		// Don't hammer server with our failed connects
 		i = 1;
 	}
-	if (m_uiConnectDelay != i && m_pConnectQueueTimer != NULL) {
+	if (m_uiConnectDelay != i && m_pConnectQueueTimer != nullptr) {
 		m_pConnectQueueTimer->Start(i);
 	}
 	m_uiConnectDelay = i;
@@ -1930,7 +1930,7 @@ void CZNC::DisableConnectQueue() {
 	if (m_pConnectQueueTimer) {
 		// This will kill the cron
 		m_pConnectQueueTimer->Stop();
-		m_pConnectQueueTimer = NULL;
+		m_pConnectQueueTimer = nullptr;
 	}
 }
 
@@ -1967,7 +1967,7 @@ void CZNC::AddNetworkToQueue(CIRCNetwork *pNetwork) {
 
 void CZNC::LeakConnectQueueTimer(CConnectQueueTimer *pTimer) {
 	if (m_pConnectQueueTimer == pTimer)
-		m_pConnectQueueTimer = NULL;
+		m_pConnectQueueTimer = nullptr;
 }
 
 bool CZNC::WaitForChildLock() {

@@ -270,7 +270,7 @@ bool CUtils::GetInput(const CString& sPrompt, CString& sRet, const CString& sDef
 	PrintPrompt(sPrompt + sExtra);
 	char szBuf[1024];
 	memset(szBuf, 0, 1024);
-	if (fgets(szBuf, 1024, stdin) == NULL) {
+	if (fgets(szBuf, 1024, stdin) == nullptr) {
 		// Reading failed (Error? EOF?)
 		PrintError("Error while reading from stdin. Exiting...");
 		exit(-1);

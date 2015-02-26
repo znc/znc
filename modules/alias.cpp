@@ -299,7 +299,7 @@ public:
 		AddCommand("Info", static_cast<CModCommand::ModCmdFunc>(&CAliasMod::InfoCommand), "<name>", "Reports the actions performed by an alias.");
 	}
 
-	virtual EModRet OnUserRaw(CString& sLine) override
+	EModRet OnUserRaw(CString& sLine) override
 	{
 		CAlias current_alias;
 

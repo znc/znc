@@ -188,7 +188,7 @@ public:
 
 		struct dirent * de;
 
-		while ((de = readdir(dir)) != 0) {
+		while ((de = readdir(dir)) != nullptr) {
 			if ((strcmp(de->d_name, ".") == 0) || (strcmp(de->d_name, "..") == 0)) {
 				continue;
 			}
@@ -249,7 +249,7 @@ public:
 
 	static CString GetCWD() {
 		CString sRet;
-		char * pszCurDir = getcwd(NULL, 0);
+		char * pszCurDir = getcwd(nullptr, 0);
 		if (pszCurDir) {
 			sRet = pszCurDir;
 			free(pszCurDir);

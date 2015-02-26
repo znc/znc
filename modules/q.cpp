@@ -30,7 +30,7 @@ public:
 	MODCONSTRUCTOR(CQModule) {}
 	virtual ~CQModule() {}
 
-	virtual bool OnLoad(const CString& sArgs, CString& sMessage) override {
+	bool OnLoad(const CString& sArgs, CString& sMessage) override {
 		if (!sArgs.empty()) {
 			SetUsername(sArgs.Token(0));
 			SetPassword(sArgs.Token(1));
@@ -82,7 +82,7 @@ public:
 		return true;
 	}
 
-	virtual void OnIRCDisconnected() override {
+	void OnIRCDisconnected() override {
 		m_bCloaked = false;
 		m_bAuthed  = false;
 		m_bRequestedWhoami    = false;
@@ -90,13 +90,13 @@ public:
 		m_bCatchResponse = false;
 	}
 
-	virtual void OnIRCConnected() override {
+	void OnIRCConnected() override {
 		if (m_bUseCloakedHost)
 			Cloak();
 		WhoAmI();
 	}
 
-	virtual void OnModCommand(const CString& sLine) override {
+	void OnModCommand(const CString& sLine) override {
 		CString sCommand = sLine.Token(0).AsLower();
 
 		if (sCommand == "help") {
@@ -252,7 +252,7 @@ public:
 		}
 	}
 
-	virtual EModRet OnRaw(CString& sLine) override {
+	EModRet OnRaw(CString& sLine) override {
 		// use OnRaw because OnUserMode is not defined (yet?)
 		if (sLine.Token(1) == "396" && sLine.Token(3).find("users.quakenet.org") != CString::npos) {
 			m_bCloaked = true;
@@ -267,15 +267,15 @@ public:
 		return CONTINUE;
 	}
 
-	virtual EModRet OnPrivMsg(CNick& Nick, CString& sMessage) override {
+	EModRet OnPrivMsg(CNick& Nick, CString& sMessage) override {
 		return HandleMessage(Nick, sMessage);
 	}
 
-	virtual EModRet OnPrivNotice(CNick& Nick, CString& sMessage) override {
+	EModRet OnPrivNotice(CNick& Nick, CString& sMessage) override {
 		return HandleMessage(Nick, sMessage);
 	}
 
-	virtual EModRet OnJoining(CChan& Channel) override {
+	EModRet OnJoining(CChan& Channel) override {
 		// Halt if are not already cloaked, but the user requres that we delay
 		// channel join till after we are cloaked.
 		if (!m_bCloaked && m_bUseCloakedHost && m_bJoinAfterCloaked)
@@ -284,22 +284,22 @@ public:
 		return CONTINUE;
 	}
 
-	virtual void OnJoin(const CNick& Nick, CChan& Channel) override {
+	void OnJoin(const CNick& Nick, CChan& Channel) override {
 		if (m_bRequestPerms && IsSelf(Nick))
 			HandleNeed(Channel, "ov");
 	}
 
-	virtual void OnDeop2(const CNick* pOpNick, const CNick& Nick, CChan& Channel, bool bNoChange) override {
+	void OnDeop2(const CNick* pOpNick, const CNick& Nick, CChan& Channel, bool bNoChange) override {
 		if (m_bRequestPerms && IsSelf(Nick) && (!pOpNick || !IsSelf(*pOpNick)))
 			HandleNeed(Channel, "o");
 	}
 
-	virtual void OnDevoice2(const CNick* pOpNick, const CNick& Nick, CChan& Channel, bool bNoChange) override {
+	void OnDevoice2(const CNick* pOpNick, const CNick& Nick, CChan& Channel, bool bNoChange) override {
 		if (m_bRequestPerms && IsSelf(Nick) && (!pOpNick || !IsSelf(*pOpNick)))
 			HandleNeed(Channel, "v");
 	}
 
-	virtual EModRet OnInvite(const CNick& Nick, const CString& sChan) override {
+	EModRet OnInvite(const CNick& Nick, const CString& sChan) override {
 		if (!Nick.NickEquals("Q") || !Nick.GetHost().Equals("CServe.quakenet.org"))
 			return CONTINUE;
 		if (m_bJoinOnInvite)
@@ -307,9 +307,9 @@ public:
 		return CONTINUE;
 	}
 
-	virtual CString GetWebMenuTitle() override { return "Q"; }
+	CString GetWebMenuTitle() override { return "Q"; }
 
-	virtual bool OnWebRequest(CWebSock& WebSock, const CString& sPageName, CTemplate& Tmpl) override {
+	bool OnWebRequest(CWebSock& WebSock, const CString& sPageName, CTemplate& Tmpl) override {
 		if (sPageName == "index") {
 			bool bSubmitted = (WebSock.GetParam("submitted").ToInt() != 0);
 

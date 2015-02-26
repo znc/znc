@@ -36,7 +36,7 @@ public:
 	CZNCTagHandler(CWebSock& pWebSock);
 	virtual ~CZNCTagHandler() {}
 
-	virtual bool HandleTag(CTemplate& Tmpl, const CString& sName, const CString& sArgs, CString& sOutput);
+	bool HandleTag(CTemplate& Tmpl, const CString& sName, const CString& sArgs, CString& sOutput) override;
 private:
 	CWebSock& m_WebSock;
 };
@@ -54,7 +54,7 @@ public:
 	const CString& GetIP() const { return m_sIP; }
 	CUser* GetUser() const { return m_pUser; }
 	time_t GetLastActive() const { return m_tmLastActive; }
-	bool IsLoggedIn() const { return m_pUser != NULL; }
+	bool IsLoggedIn() const { return m_pUser != nullptr; }
 	bool IsAdmin() const;
 	void UpdateLastActive();
 
@@ -128,8 +128,8 @@ public:
 	bool OnLogin(const CString& sUser, const CString& sPass, bool bBasic) override;
 	void OnPageRequest(const CString& sURI) override;
 
-	EPageReqResult PrintTemplate(const CString& sPageName, CString& sPageRet, CModule* pModule = NULL);
-	EPageReqResult PrintStaticFile(const CString& sPath, CString& sPageRet, CModule* pModule = NULL);
+	EPageReqResult PrintTemplate(const CString& sPageName, CString& sPageRet, CModule* pModule = nullptr);
+	EPageReqResult PrintStaticFile(const CString& sPath, CString& sPageRet, CModule* pModule = nullptr);
 
 	CString FindTmpl(CModule* pModule, const CString& sName);
 
@@ -137,7 +137,7 @@ public:
 
 	std::shared_ptr<CWebSession> GetSession();
 
-	virtual Csock* GetSockObj(const CString& sHost, unsigned short uPort);
+	Csock* GetSockObj(const CString& sHost, unsigned short uPort) override;
 	static CString GetSkinPath(const CString& sSkinName);
 	void GetAvailSkins(VCString& vRet) const;
 	CString GetSkinName();
@@ -150,7 +150,7 @@ public:
 protected:
 	using CHTTPSock::PrintErrorPage;
 
-	bool AddModLoop(const CString& sLoopName, CModule& Module, CTemplate *pTemplate = NULL);
+	bool AddModLoop(const CString& sLoopName, CModule& Module, CTemplate *pTemplate = nullptr);
 	VCString GetDirs(CModule* pModule, bool bIsTemplate);
 	void SetPaths(CModule* pModule, bool bIsTemplate = false);
 	void SetVars();

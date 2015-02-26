@@ -54,9 +54,9 @@ public:
 	virtual ~CWebAuth() {}
 
 	void SetWebSock(CWebSock* pWebSock) { m_pWebSock = pWebSock; }
-	void AcceptedLogin(CUser& User);
-	void RefusedLogin(const CString& sReason);
-	void Invalidate();
+	void AcceptedLogin(CUser& User) override;
+	void RefusedLogin(const CString& sReason) override;
+	void Invalidate() override;
 private:
 protected:
 	CWebSock*   m_pWebSock;
@@ -97,7 +97,7 @@ bool CZNCTagHandler::HandleTag(CTemplate& Tmpl, const CString& sName, const CStr
 }
 
 CWebSession::CWebSession(const CString& sId, const CString& sIP) : m_sId(sId), m_sIP(sIP) {
-	m_pUser = NULL;
+	m_pUser = nullptr;
 	Sessions.m_mIPSessions.insert(make_pair(sIP, this));
 	UpdateLastActive();
 }
@@ -174,7 +174,7 @@ void CWebAuth::RefusedLogin(const CString& sReason) {
 		std::shared_ptr<CWebSession> spSession = m_pWebSock->GetSession();
 
 		spSession->AddError("Invalid login!");
-		spSession->SetUser(NULL);
+		spSession->SetUser(nullptr);
 
 		m_pWebSock->SetLoggedIn(false);
 		m_pWebSock->UnPauseRead();
@@ -186,10 +186,10 @@ void CWebAuth::RefusedLogin(const CString& sReason) {
 
 void CWebAuth::Invalidate() {
 	CAuthBase::Invalidate();
-	m_pWebSock = NULL;
+	m_pWebSock = nullptr;
 }
 
-CWebSock::CWebSock(const CString& sURIPrefix) : CHTTPSock(NULL, sURIPrefix) {
+CWebSock::CWebSock(const CString& sURIPrefix) : CHTTPSock(nullptr, sURIPrefix) {
 	m_bPathsSet = false;
 
 	m_Template.AddTagHandler(std::make_shared<CZNCTagHandler>(*this));
@@ -321,7 +321,7 @@ void CWebSock::SetPaths(CModule* pModule, bool bIsTemplate) {
 void CWebSock::SetVars() {
 	m_Template["SessionUser"] = GetUser();
 	m_Template["SessionIP"] = GetRemoteIP();
-	m_Template["Tag"] = CZNC::GetTag(GetSession()->GetUser() != NULL, true);
+	m_Template["Tag"] = CZNC::GetTag(GetSession()->GetUser() != nullptr, true);
 	m_Template["Version"] = CZNC::GetVersion();
 	m_Template["SkinName"] = GetSkinName();
 	m_Template["_CSRF_Check"] = GetCSRFCheck();
@@ -613,7 +613,7 @@ CWebSock::EPageReqResult CWebSock::OnPageRequestInternal(const CString& sURI, CS
 	} else if (sURI == "/robots.txt") {
 		return PrintStaticFile("/pub/robots.txt", sPageRet);
 	} else if (sURI == "/logout") {
-		GetSession()->SetUser(NULL);
+		GetSession()->SetUser(nullptr);
 		SetLoggedIn(false);
 		Redirect("/");
 
@@ -685,7 +685,7 @@ CWebSock::EPageReqResult CWebSock::OnPageRequestInternal(const CString& sURI, CS
 			return PAGE_DONE;
 		}
 
-		CIRCNetwork *pNetwork = NULL;
+		CIRCNetwork *pNetwork = nullptr;
 		if (eModType == CModInfo::NetworkModule) {
 			CString sNetwork = m_sPath.Token(0, false, "/");
 			m_sPath = m_sPath.Token(1, true, "/");
@@ -707,7 +707,7 @@ CWebSock::EPageReqResult CWebSock::OnPageRequestInternal(const CString& sURI, CS
 
 		DEBUG("Path [" + m_sPath + "], Module [" + m_sModName + "], Page [" + m_sPage + "]");
 
-		CModule *pModule = NULL;
+		CModule *pModule = nullptr;
 
 		switch (eModType) {
 			case CModInfo::GlobalModule:
@@ -820,7 +820,7 @@ std::shared_ptr<CWebSession> CWebSock::GetSession() {
 	const CString sCookieSessionId = GetRequestCookie("SessionId");
 	std::shared_ptr<CWebSession> *pSession = Sessions.m_mspSessions.GetItem(sCookieSessionId);
 
-	if (pSession != NULL) {
+	if (pSession != nullptr) {
 		// Refresh the timeout
 		Sessions.m_mspSessions.AddItem((*pSession)->GetId(), *pSession);
 		(*pSession)->UpdateLastActive();
@@ -842,7 +842,7 @@ std::shared_ptr<CWebSession> CWebSock::GetSession() {
 		sSessionID = CString::RandomString(32);
 		sSessionID += ":" + GetRemoteIP() + ":" + CString(GetRemotePort());
 		sSessionID += ":" + GetLocalIP()  + ":" + CString(GetLocalPort());
-		sSessionID += ":" + CString(time(NULL));
+		sSessionID += ":" + CString(time(nullptr));
 		sSessionID = sSessionID.SHA256();
 
 		DEBUG("Auto generated session: [" + sSessionID + "]");
@@ -878,7 +878,7 @@ Csock* CWebSock::GetSockObj(const CString& sHost, unsigned short uPort) {
 	// All listening is done by CListener, thus CWebSock should never have
 	// to listen, but since GetSockObj() is pure virtual...
 	DEBUG("CWebSock::GetSockObj() called - this should never happen!");
-	return NULL;
+	return nullptr;
 }
 
 CString CWebSock::GetSkinName() {
