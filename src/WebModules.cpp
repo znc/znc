@@ -34,7 +34,7 @@ const unsigned int CWebSock::m_uiMaxSessions = 5;
 // destroyed in the order that we want.
 struct CSessionManager {
 	// Sessions are valid for a day, (24h, ...)
-	CSessionManager() : m_mspSessions(24 * 60 * 60 * 1000) {}
+	CSessionManager() : m_mspSessions(24 * 60 * 60 * 1000), m_mIPSessions() {}
 	~CSessionManager() {
 		// Make sure all sessions are destroyed before any of our maps
 		// are destroyed
@@ -96,8 +96,7 @@ bool CZNCTagHandler::HandleTag(CTemplate& Tmpl, const CString& sName, const CStr
 	return false;
 }
 
-CWebSession::CWebSession(const CString& sId, const CString& sIP) : m_sId(sId), m_sIP(sIP) {
-	m_pUser = nullptr;
+CWebSession::CWebSession(const CString& sId, const CString& sIP) : m_sId(sId), m_sIP(sIP), m_pUser(nullptr), m_vsErrorMsgs(), m_vsSuccessMsgs(), m_tmLastActive() {
 	Sessions.m_mIPSessions.insert(make_pair(sIP, this));
 	UpdateLastActive();
 }
@@ -109,9 +108,7 @@ void CWebSession::UpdateLastActive() {
 bool CWebSession::IsAdmin() const { return IsLoggedIn() && m_pUser->IsAdmin(); }
 
 CWebAuth::CWebAuth(CWebSock* pWebSock, const CString& sUsername, const CString& sPassword, bool bBasic)
-	: CAuthBase(sUsername, sPassword, pWebSock) {
-	m_pWebSock = pWebSock;
-	m_bBasic = bBasic;
+	: CAuthBase(sUsername, sPassword, pWebSock), m_pWebSock(pWebSock), m_bBasic(bBasic) {
 }
 
 void CWebSession::ClearMessageLoops() {
@@ -189,9 +186,9 @@ void CWebAuth::Invalidate() {
 	m_pWebSock = nullptr;
 }
 
-CWebSock::CWebSock(const CString& sURIPrefix) : CHTTPSock(nullptr, sURIPrefix) {
-	m_bPathsSet = false;
-
+CWebSock::CWebSock(const CString& sURIPrefix) : CHTTPSock(nullptr, sURIPrefix),
+	m_bPathsSet(false), m_Template(), m_spAuth(), m_sModName(""), m_sPath(""), m_sPage(""), m_spSession()
+{
 	m_Template.AddTagHandler(std::make_shared<CZNCTagHandler>(*this));
 }
 

@@ -24,9 +24,7 @@ struct ConfigStackEntry {
 	CString sName;
 	CConfig Config;
 
-	ConfigStackEntry(const CString& Tag, const CString Name) {
-		sTag = Tag;
-		sName = Name;
+	ConfigStackEntry(const CString& Tag, const CString Name) : sTag(Tag), sName(Name), Config() {
 	}
 };
 

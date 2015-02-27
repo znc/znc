@@ -774,10 +774,12 @@ void CTable::Clear() {
 }
 
 #ifdef HAVE_LIBSSL
-CBlowfish::CBlowfish(const CString & sPassword, int iEncrypt, const CString & sIvec) {
-	m_iEncrypt = iEncrypt;
-	m_ivec = (unsigned char *)calloc(sizeof(unsigned char), 8);
-	m_num = 0;
+CBlowfish::CBlowfish(const CString & sPassword, int iEncrypt, const CString & sIvec)
+		: m_ivec((unsigned char *)calloc(sizeof(unsigned char), 8)),
+		  m_bkey(),
+		  m_iEncrypt(iEncrypt),
+		  m_num(0)
+{
 
 	if (sIvec.length() >= 8) {
 		memcpy(m_ivec, sIvec.data(), 8);

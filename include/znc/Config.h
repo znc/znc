@@ -35,6 +35,8 @@ struct CConfigEntry {
 
 class CConfig {
 public:
+	CConfig() : m_ConfigEntries(), m_SubConfigs() {}
+
 	typedef std::map<CString, VCString> EntryMap;
 	typedef std::map<CString, CConfigEntry> SubConfig;
 	typedef std::map<CString, SubConfig> SubConfigMap;

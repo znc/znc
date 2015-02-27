@@ -17,9 +17,7 @@
 #include <znc/znc.h>
 #include <znc/User.h>
 
-CBufLine::CBufLine(const CString& sFormat, const CString& sText, const timeval* ts) {
-	m_sFormat = sFormat;
-	m_sText = sText;
+CBufLine::CBufLine(const CString& sFormat, const CString& sText, const timeval* ts) : m_sFormat(sFormat), m_sText(sText), m_time() {
 	if (ts == nullptr)
 		UpdateTime();
 	else
@@ -49,8 +47,7 @@ CString CBufLine::GetLine(const CClient& Client, const MCString& msParams) const
 	}
 }
 
-CBuffer::CBuffer(unsigned int uLineCount) {
-	m_uLineCount = uLineCount;
+CBuffer::CBuffer(unsigned int uLineCount) : m_uLineCount(uLineCount) {
 }
 
 CBuffer::~CBuffer() {}

@@ -37,28 +37,45 @@ static inline CString FormatBindError() {
 	return "Unable to bind [" + sError + "]";
 }
 
-CZNC::CZNC() {
+CZNC::CZNC()
+		: m_TimeStarted(time(nullptr)),
+		  m_eConfigState(ECONFIG_NOTHING),
+		  m_vpListeners(),
+		  m_msUsers(),
+		  m_msDelUsers(),
+		  m_Manager(),
+		  m_sCurPath(""),
+		  m_sZNCPath(""),
+		  m_sConfigFile(""),
+		  m_sSkinName(""),
+		  m_sStatusPrefix(""),
+		  m_sPidFile(""),
+		  m_sSSLCertFile(""),
+		  m_sSSLCiphers(""),
+		  m_sSSLProtocols(""),
+		  m_vsBindHosts(),
+		  m_vsTrustedProxies(),
+		  m_vsMotd(),
+		  m_pLockFile(nullptr),
+		  m_uiConnectDelay(5),
+		  m_uiAnonIPLimit(10),
+		  m_uiMaxBufferSize(500),
+		  m_uDisabledSSLProtocols(Csock::EDP_SSL),
+		  m_pModules(new CModules()),
+		  m_uBytesRead(0),
+		  m_uBytesWritten(0),
+		  m_lpConnectQueue(),
+		  m_pConnectQueueTimer(nullptr),
+		  m_uiConnectPaused(0),
+		  m_sConnectThrottle(),
+		  m_bProtectWebSessions(true),
+		  m_bHideVersion(false)
+{
 	if (!InitCsocket()) {
 		CUtils::PrintError("Could not initialize Csocket!");
 		exit(-1);
 	}
-
-	m_pModules = new CModules();
-	m_uiConnectDelay = 5;
-	m_uiAnonIPLimit = 10;
-	m_uBytesRead = 0;
-	m_uBytesWritten = 0;
-	m_uiMaxBufferSize = 500;
-	m_pConnectQueueTimer = nullptr;
-	m_uiConnectPaused = 0;
-	m_eConfigState = ECONFIG_NOTHING;
-	m_TimeStarted = time(nullptr);
 	m_sConnectThrottle.SetTTL(30000);
-	m_pLockFile = nullptr;
-	m_bProtectWebSessions = true;
-	m_bHideVersion = false;
-	m_uDisabledSSLProtocols = Csock::EDP_SSL;
-	m_sSSLProtocols = "";
 }
 
 CZNC::~CZNC() {

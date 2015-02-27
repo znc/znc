@@ -151,15 +151,11 @@ protected:
 class CDir : public std::vector<CFile*> {
 public:
 
-	CDir(const CString& sDir) {
-		m_bDesc = false;
-		m_eSortAttr = CFile::FA_Name;
+	CDir(const CString& sDir) : m_eSortAttr(CFile::FA_Name), m_bDesc(false) {
 		Fill(sDir);
 	}
 
-	CDir() {
-		m_bDesc = false;
-		m_eSortAttr = CFile::FA_Name;
+	CDir() : m_eSortAttr(CFile::FA_Name), m_bDesc(false) {
 	}
 
 	~CDir() {

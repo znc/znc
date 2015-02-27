@@ -25,25 +25,38 @@ using std::set;
 using std::vector;
 using std::map;
 
-CChan::CChan(const CString& sName, CIRCNetwork* pNetwork, bool bInConfig, CConfig *pConfig) {
-	m_sName = sName.Token(0);
-	m_sKey = sName.Token(1);
-	m_pNetwork = pNetwork;
+CChan::CChan(const CString& sName, CIRCNetwork* pNetwork, bool bInConfig, CConfig *pConfig)
+		: m_bDetached(false),
+		  m_bIsOn(false),
+		  m_bAutoClearChanBuffer(pNetwork->GetUser()->AutoClearChanBuffer()),
+		  m_bInConfig(bInConfig),
+		  m_bDisabled(false),
+		  m_bHasBufferCountSet(false),
+		  m_bHasAutoClearChanBufferSet(false),
+		  m_bStripControls(false),
+		  m_bHasStripControlsSet(false),
+		  m_sName(sName.Token(0)),
+		  m_sKey(sName.Token(1)),
+		  m_sTopic(""),
+		  m_sTopicOwner(""),
+		  m_ulTopicDate(0),
+		  m_ulCreationDate(0),
+		  m_pNetwork(pNetwork),
+		  m_Nick(),
+		  m_uJoinTries(0),
+		  m_sDefaultModes(""),
+		  m_msNicks(),
+		  m_Buffer(),
+		  m_bModeKnown(false),
+		  m_musModes()
+{
+	m_Nick.SetNetwork(m_pNetwork);
+	m_Buffer.SetLineCount(m_pNetwork->GetUser()->GetBufferCount(), true);
 
 	if (!m_pNetwork->IsChan(m_sName)) {
 		m_sName = "#" + m_sName;
 	}
 
-	m_bInConfig = bInConfig;
-	m_Nick.SetNetwork(m_pNetwork);
-	m_bDetached = false;
-	m_bDisabled = false;
-	m_bStripControls = false;
-	m_bHasBufferCountSet = false;
-	m_bHasAutoClearChanBufferSet = false;
-	m_bHasStripControlsSet = false;
-	m_Buffer.SetLineCount(m_pNetwork->GetUser()->GetBufferCount(), true);
-	m_bAutoClearChanBuffer = m_pNetwork->GetUser()->AutoClearChanBuffer();
 	Reset();
 
 	if (pConfig) {
