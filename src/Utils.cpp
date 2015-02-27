@@ -51,23 +51,23 @@ constexpr const char* szDefaultDH2048 =
 	"-----END DH PARAMETERS-----\n";
 
 void CUtils::GenerateCert(FILE *pOut, const CString& sHost) {
-	EVP_PKEY *pKey = NULL;
-	X509 *pCert = NULL;
-	X509_NAME *pName = NULL;
+	EVP_PKEY *pKey = nullptr;
+	X509 *pCert = nullptr;
+	X509_NAME *pName = nullptr;
 	const int days = 365;
 	const int years = 10;
 
-	unsigned int uSeed = (unsigned int)time(NULL);
+	unsigned int uSeed = (unsigned int)time(nullptr);
 	int serial = (rand_r(&uSeed) % 9999);
 
-	RSA *pRSA = RSA_generate_key(2048, 0x10001, NULL, NULL);
+	RSA *pRSA = RSA_generate_key(2048, 0x10001, nullptr, nullptr);
 	if ((pKey = EVP_PKEY_new())) {
 		if (!EVP_PKEY_assign_RSA(pKey, pRSA)) {
 			EVP_PKEY_free(pKey);
 			return;
 		}
 
-		PEM_write_RSAPrivateKey(pOut, pRSA, NULL, NULL, 0, NULL, NULL);
+		PEM_write_RSAPrivateKey(pOut, pRSA, nullptr, nullptr, 0, nullptr, nullptr);
 
 		if (!(pCert = X509_new())) {
 			EVP_PKEY_free(pKey);
@@ -83,7 +83,7 @@ void CUtils::GenerateCert(FILE *pOut, const CString& sHost) {
 		pName = X509_get_subject_name(pCert);
 
 		const char *pLogName = getenv("LOGNAME");
-		const char *pHostName = NULL;
+		const char *pHostName = nullptr;
 
 		if (!sHost.empty()) {
 			pHostName = sHost.c_str();
@@ -501,7 +501,7 @@ SCString CUtils::GetEncodings() {
 			for (int st = 0; st < ucnv_countStandards(); ++st) {
 				const char* pStdName = ucnv_getStandard(st, e);
 				icu::LocalUEnumerationPointer ue(ucnv_openStandardNames(pConvName, pStdName, e));
-				while (const char* pStdConvNameEnum = uenum_next(ue.getAlias(), NULL, e)) {
+				while (const char* pStdConvNameEnum = uenum_next(ue.getAlias(), nullptr, e)) {
 					ssResult.insert(pStdConvNameEnum);
 				}
 			}

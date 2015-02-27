@@ -44,7 +44,7 @@ public:
 	~CKeepNickMod() {}
 
 	bool OnLoad(const CString& sArgs, CString& sMessage) override {
-		m_pTimer = NULL;
+		m_pTimer = nullptr;
 
 		// Check if we need to start the timer
 		if (GetNetwork()->IsIRCConnected())
@@ -135,7 +135,7 @@ public:
 
 		m_pTimer->Stop();
 		RemTimer(m_pTimer);
-		m_pTimer = NULL;
+		m_pTimer = nullptr;
 	}
 
 	EModRet OnUserRaw(CString& sLine) override {
@@ -191,7 +191,7 @@ public:
 	}
 
 private:
-	// If this is NULL, we are turned off for some reason
+	// If this is nullptr, we are turned off for some reason
 	CKeepNickTimer* m_pTimer;
 };
 

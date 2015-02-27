@@ -65,7 +65,7 @@ namespace {
 			if (SWIG_IsOK(res)) {
 				return result;
 			}
-			return NULL;
+			return nullptr;
 		}
 	};
 
@@ -94,7 +94,7 @@ while (<$in>) {
 			when ('bool')			 { $default = 'true' }
 			when ('CModule::EModRet') { $default = 'CONTINUE' }
 			when ('CString')		  { $default = '""' }
-			when (/\*$/)			  { $default = "($type)NULL" }
+			when (/\*$/)			  { $default = "($type)nullptr" }
 		}
 	}
 	my @arg = map {

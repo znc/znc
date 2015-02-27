@@ -33,7 +33,7 @@ class CPyModule : public CModule {
 public:
 	CPyModule(CUser* pUser, CIRCNetwork* pNetwork, const CString& sModName, const CString& sDataPath,
 			PyObject* pyObj, CModPython* pModPython)
-			: CModule(NULL, pUser, pNetwork, sModName, sDataPath) {
+			: CModule(nullptr, pUser, pNetwork, sModName, sDataPath) {
 		m_pyObj = pyObj;
 		Py_INCREF(pyObj);
 		m_pModPython = pModPython;

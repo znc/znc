@@ -54,7 +54,7 @@ class PString : public CString {
 
 		SV* GetSV(bool bMakeMortal = true) const
 		{
-			SV* pSV = NULL;
+			SV* pSV = nullptr;
 			switch (GetType()) {
 				case NUM:
 					pSV = newSVnv(ToDouble());

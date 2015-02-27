@@ -39,12 +39,12 @@ bool ZNC_NO_NEED_TO_DO_ANYTHING_ON_MODULE_CALL_EXITER;
 		try {                                                    \
 			CClient* pOldClient = pMod->GetClient();         \
 			pMod->SetClient(m_pClient);                      \
-			CUser* pOldUser = NULL;                      \
+			CUser* pOldUser = nullptr;                      \
 			if (m_pUser) {                               \
 				pOldUser = pMod->GetUser();              \
 				pMod->SetUser(m_pUser);                  \
 			}                                            \
-			CIRCNetwork* pNetwork = NULL;                \
+			CIRCNetwork* pNetwork = nullptr;                \
 			if (m_pNetwork) {                            \
 				pNetwork = pMod->GetNetwork();           \
 				pMod->SetNetwork(m_pNetwork);            \
@@ -70,12 +70,12 @@ bool ZNC_NO_NEED_TO_DO_ANYTHING_ON_MODULE_CALL_EXITER;
 			CModule::EModRet e = CModule::CONTINUE;          \
 			CClient* pOldClient = pMod->GetClient();         \
 			pMod->SetClient(m_pClient);                      \
-			CUser* pOldUser = NULL;                      \
+			CUser* pOldUser = nullptr;                      \
 			if (m_pUser) {                               \
 				pOldUser = pMod->GetUser();              \
 				pMod->SetUser(m_pUser);                  \
 			}                                            \
-			CIRCNetwork* pNetwork = NULL;                \
+			CIRCNetwork* pNetwork = nullptr;                \
 			if (m_pNetwork) {                            \
 				pNetwork = pMod->GetNetwork();           \
 				pMod->SetNetwork(m_pNetwork);            \

@@ -70,7 +70,7 @@ public:
 
 	void Cleanup() {
 		Limits::iterator it;
-		time_t now = time(NULL);
+		time_t now = time(nullptr);
 
 		for (it = m_chans.begin(); it != m_chans.end(); ++it) {
 			// The timeout for this channel did not expire yet?
@@ -106,7 +106,7 @@ public:
 
 	void Message(CChan& Channel) {
 		Limits::iterator it;
-		time_t now = time(NULL);
+		time_t now = time(nullptr);
 
 		// First: Clean up old entries and reattach where necessary
 		Cleanup();

@@ -323,7 +323,7 @@ public:
 #ifdef LEGACY_SAVEBUFF /* event logging is deprecated now in savebuf. Use buffextras module along side of this */
 	CString SpoofChanMsg(const CString & sChannel, const CString & sMesg)
 	{
-		CString sReturn = ":*" + GetModName() + "!znc@znc.in PRIVMSG " + sChannel + " :" + CString(time(NULL)) + " " + sMesg;
+		CString sReturn = ":*" + GetModName() + "!znc@znc.in PRIVMSG " + sChannel + " :" + CString(time(nullptr)) + " " + sMesg;
 		return(sReturn);
 	}
 

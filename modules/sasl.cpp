@@ -24,7 +24,7 @@ static const struct {
 } SupportedMechanisms[] = {
 	{ "EXTERNAL",           "TLS certificate, for use with the *cert module", false },
 	{ "PLAIN",              "Plain text negotiation, this should work always if the network supports SASL", true },
-	{ NULL, NULL, false }
+	{ nullptr, nullptr, false }
 };
 
 #define NV_REQUIRE_AUTH     "require_auth"
@@ -86,7 +86,7 @@ public:
 		Mechanisms.AddColumn("Mechanism");
 		Mechanisms.AddColumn("Description");
 
-		for (size_t i = 0; SupportedMechanisms[i].szName != NULL; i++) {
+		for (size_t i = 0; SupportedMechanisms[i].szName != nullptr; i++) {
 			Mechanisms.AddRow();
 			Mechanisms.SetCell("Mechanism",   SupportedMechanisms[i].szName);
 			Mechanisms.SetCell("Description", SupportedMechanisms[i].szDescription);
@@ -137,7 +137,7 @@ public:
 	}
 
 	bool SupportsMechanism(const CString& sMechanism) const {
-		for (size_t i = 0; SupportedMechanisms[i].szName != NULL; i++) {
+		for (size_t i = 0; SupportedMechanisms[i].szName != nullptr; i++) {
 			if (sMechanism.Equals(SupportedMechanisms[i].szName)) {
 				return true;
 			}
@@ -150,7 +150,7 @@ public:
 		if (GetNV(NV_MECHANISMS).empty()) {
 			CString sDefaults = "";
 
-			for (size_t i = 0; SupportedMechanisms[i].szName != NULL; i++) {
+			for (size_t i = 0; SupportedMechanisms[i].szName != nullptr; i++) {
 				if (SupportedMechanisms[i].bDefault) {
 					if (!sDefaults.empty()) {
 						sDefaults += " ";

@@ -267,7 +267,7 @@ public:
 	CAutoVoiceUser* FindUser(const CString& sUser) {
 		map<CString, CAutoVoiceUser*>::iterator it = m_msUsers.find(sUser.AsLower());
 
-		return (it != m_msUsers.end()) ? it->second : NULL;
+		return (it != m_msUsers.end()) ? it->second : nullptr;
 	}
 
 	CAutoVoiceUser* FindUserByHost(const CString& sHostmask, const CString& sChannel = "") {
@@ -279,7 +279,7 @@ public:
 			}
 		}
 
-		return NULL;
+		return nullptr;
 	}
 
 	void DelUser(const CString& sUser) {
@@ -298,7 +298,7 @@ public:
 	CAutoVoiceUser* AddUser(const CString& sUser, const CString& sHost, const CString& sChans) {
 		if (m_msUsers.find(sUser) != m_msUsers.end()) {
 			PutModule("That user already exists");
-			return NULL;
+			return nullptr;
 		}
 
 		CAutoVoiceUser* pUser = new CAutoVoiceUser(sUser, sHost, sChans);

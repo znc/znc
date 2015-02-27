@@ -509,7 +509,7 @@ public:
 	virtual EModRet OnBroadcast(CString& sMessage);
 
 	/** This module hook is called when a user mode on a channel changes.
-	 *  @param pOpNick The nick who sent the mode change, or NULL if set by server.
+	 *  @param pOpNick The nick who sent the mode change, or nullptr if set by server.
 	 *  @param Nick The nick whose channel mode changes.
 	 *  @param Channel The channel on which the user mode is changed.
 	 *  @param uMode The mode character that is changed, e.g. '@' for op.
@@ -534,7 +534,7 @@ public:
 	virtual void OnDevoice2(const CNick* pOpNick, const CNick& Nick, CChan& Channel, bool bNoChange);
 	virtual void OnDevoice(const CNick& OpNick, const CNick& Nick, CChan& Channel, bool bNoChange);
 	/** Called on an individual channel mode change.
-	 *  @param pOpNick The nick who changes the channel mode, or NULL if set by server.
+	 *  @param pOpNick The nick who changes the channel mode, or nullptr if set by server.
 	 *  @param Channel The channel whose mode is changed.
 	 *  @param uMode The mode character that is changed.
 	 *  @param sArg The argument to the mode character, if any.
@@ -545,7 +545,7 @@ public:
 	virtual void OnMode(const CNick& OpNick, CChan& Channel, char uMode, const CString& sArg, bool bAdded, bool bNoChange);
 	/** Called on any channel mode change. This is called before the more
 	 *  detailed mode hooks like e.g. OnOp() and OnMode().
-	 *  @param pOpNick The nick who changes the channel mode, or NULL if set by server.
+	 *  @param pOpNick The nick who changes the channel mode, or nullptr if set by server.
 	 *  @param Channel The channel whose mode is changed.
 	 *  @param sModes The raw mode change, e.g. "+s-io".
 	 *  @param sArgs All arguments to the mode change from sModes.
@@ -953,7 +953,7 @@ public:
 	bool AddCommand(const CString& sCmd, const CString& sArgs, const CString& sDesc, std::function<void(const CString& sLine)> func);
 	/// @return True if the command was successfully removed.
 	bool RemCommand(const CString& sCmd);
-	/// @return The CModCommand instance or NULL if none was found.
+	/// @return The CModCommand instance or nullptr if none was found.
 	const CModCommand* FindCommand(const CString& sCmd) const;
 	/** This function tries to dispatch the given command via the correct
 	 * instance of CModCommand. Before this can be called, commands have to
@@ -999,12 +999,12 @@ public:
 	const CString& GetModPath() const { return m_sModPath; }
 
 	/** @returns For user modules this returns the user for which this
-	 *           module was loaded. For global modules this returns NULL,
+	 *           module was loaded. For global modules this returns nullptr,
 	 *           except when we are in a user-specific module hook in which
 	 *           case this is the user pointer.
 	 */
 	CUser* GetUser() const { return m_pUser; }
-	/** @returns NULL except when we are in a client-specific module hook in
+	/** @returns nullptr except when we are in a client-specific module hook in
 	 *           which case this is the client for which the hook is called.
 	 */
 	CIRCNetwork* GetNetwork() const { return m_pNetwork; }

@@ -28,7 +28,7 @@ private:
 	}
 
 	void SetTime(const CUser *pUser) {
-		SetNV(pUser->GetUserName(), CString(time(NULL)));
+		SetNV(pUser->GetUserName(), CString(time(nullptr)));
 	}
 
 	const CString FormatLastSeen(const CUser *pUser, const char* sDefault = "") {
@@ -98,7 +98,7 @@ public:
 	bool OnWebRequest(CWebSock& WebSock, const CString& sPageName, CTemplate& Tmpl) override {
 		if (sPageName == "index") {
 			CModules& GModules = CZNC::Get().GetModules();
-			Tmpl["WebAdminLoaded"] = CString(GModules.FindModule("webadmin") != NULL);
+			Tmpl["WebAdminLoaded"] = CString(GModules.FindModule("webadmin") != nullptr);
 
 			MTimeMulti mmSorted;
 			const MUsers& mUsers = CZNC::Get().GetUserMap();

@@ -31,7 +31,7 @@ public:
 
 private:
 	void SendAdmins(const CString &msg) {
-		CZNC::Get().Broadcast(msg, true, NULL, GetClient());
+		CZNC::Get().Broadcast(msg, true, nullptr, GetClient());
 	}
 };
 

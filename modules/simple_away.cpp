@@ -183,7 +183,7 @@ private:
 		if (sReason.empty())
 			sReason = SIMPLE_AWAY_DEFAULT_REASON;
 
-		time_t iTime = time(NULL);
+		time_t iTime = time(nullptr);
 		CString sTime = CUtils::CTime(iTime, GetUser()->GetTimezone());
 		sReason.Replace("%s", sTime);
 

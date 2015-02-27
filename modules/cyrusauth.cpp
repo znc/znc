@@ -72,7 +72,7 @@ public:
 			return false;
 		}
 
-		if (sasl_server_init(NULL, NULL) != SASL_OK) {
+		if (sasl_server_init(nullptr, nullptr) != SASL_OK) {
 			sMessage = "SASL Could Not Be Initialized - Halting Startup";
 			return false;
 		}
@@ -81,8 +81,8 @@ public:
 		m_cbs[0].proc = reinterpret_cast<int(*)()>(CSASLAuthMod::getopt);
 		m_cbs[0].context = this;
 		m_cbs[1].id = SASL_CB_LIST_END;
-		m_cbs[1].proc = NULL;
-		m_cbs[1].context = NULL;
+		m_cbs[1].proc = nullptr;
+		m_cbs[1].context = nullptr;
 
 		return true;
 	}
@@ -91,7 +91,7 @@ public:
 		const CString& sUsername = Auth->GetUsername();
 		const CString& sPassword = Auth->GetPassword();
 		CUser *pUser(CZNC::Get().FindUser(sUsername));
-		sasl_conn_t *sasl_conn(NULL);
+		sasl_conn_t *sasl_conn(nullptr);
 		bool bSuccess = false;
 
 		if (!pUser && !CreateUser()) {
@@ -102,7 +102,7 @@ public:
 		if (m_Cache.HasItem(sCacheKey)) {
 			bSuccess = true;
 			DEBUG("saslauth: Found [" + sUsername + "] in cache");
-		} else if (sasl_server_new("znc", NULL, NULL, NULL, NULL, m_cbs, 0, &sasl_conn) == SASL_OK &&
+		} else if (sasl_server_new("znc", nullptr, nullptr, nullptr, nullptr, m_cbs, 0, &sasl_conn) == SASL_OK &&
 				sasl_checkpass(sasl_conn, sUsername.c_str(), sUsername.size(), sPassword.c_str(), sPassword.size()) == SASL_OK) {
 			m_Cache.AddItem(sCacheKey);
 
@@ -124,13 +124,13 @@ public:
 					if (!pBaseUser) {
 						DEBUG("saslauth: Clone User [" << CloneUser() << "] User not found");
 						delete pUser;
-						pUser = NULL;
+						pUser = nullptr;
 					}
 
 					if (pUser && !pUser->Clone(*pBaseUser, sErr)) {
 						DEBUG("saslauth: Clone User [" << CloneUser() << "] failed: " << sErr);
 						delete pUser;
-						pUser = NULL;
+						pUser = nullptr;
 					}
 				}
 
@@ -142,7 +142,7 @@ public:
 				if (pUser && !CZNC::Get().AddUser(pUser, sErr)) {
 					DEBUG("saslauth: Add user [" << sUsername << "] failed: " << sErr);
 					delete pUser;
-					pUser = NULL;
+					pUser = nullptr;
 				}
 			}
 

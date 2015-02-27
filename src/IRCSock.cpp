@@ -25,7 +25,7 @@ using std::set;
 using std::vector;
 using std::map;
 
-#define IRCSOCKMODULECALL(macFUNC, macEXITER) NETWORKMODULECALL(macFUNC, m_pNetwork->GetUser(), m_pNetwork, NULL, macEXITER)
+#define IRCSOCKMODULECALL(macFUNC, macEXITER) NETWORKMODULECALL(macFUNC, m_pNetwork->GetUser(), m_pNetwork, nullptr, macEXITER)
 // These are used in OnGeneralCTCP()
 const time_t CIRCSock::m_uCTCPFloodTime = 5;
 const unsigned int CIRCSock::m_uCTCPFloodCount = 5;
@@ -622,7 +622,7 @@ void CIRCSock::ReadLine(const CString& sData) {
 				CString sModeArg = sModes.Token(0);
 				bool bAdd = true;
 /* no module call defined (yet?)
-				MODULECALL(OnRawUserMode(*pOpNick, *this, sModeArg, sArgs), m_pNetwork->GetUser(), NULL, );
+				MODULECALL(OnRawUserMode(*pOpNick, *this, sModeArg, sArgs), m_pNetwork->GetUser(), nullptr, );
 */
 				for (unsigned int a = 0; a < sModeArg.size(); a++) {
 					const unsigned char& uMode = sModeArg[a];

@@ -31,7 +31,7 @@ class CPerlModule : public CModule {
 public:
 	CPerlModule(CUser* pUser, CIRCNetwork* pNetwork, const CString& sModName, const CString& sDataPath,
 			SV* perlObj)
-			: CModule(NULL, pUser, pNetwork, sModName, sDataPath) {
+			: CModule(nullptr, pUser, pNetwork, sModName, sDataPath) {
 		m_perlObj = newSVsv(perlObj);
 	}
 	SV* GetPerlObj() {

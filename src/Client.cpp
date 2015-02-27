@@ -25,12 +25,12 @@ using std::map;
 using std::vector;
 
 #define CALLMOD(MOD, CLIENT, USER, NETWORK, FUNC) {  \
-	CModule *pModule = NULL;  \
+	CModule *pModule = nullptr;  \
 	if (NETWORK && (pModule = (NETWORK)->GetModules().FindModule(MOD))) {  \
 		try {  \
 			pModule->SetClient(CLIENT);  \
 			pModule->FUNC;  \
-			pModule->SetClient(NULL);  \
+			pModule->SetClient(nullptr);  \
 		} catch (const CModule::EModException& e) {  \
 			if (e == CModule::UNLOAD) {  \
 				(NETWORK)->GetModules().UnloadModule(MOD);  \
@@ -41,8 +41,8 @@ using std::vector;
 			pModule->SetClient(CLIENT);  \
 			pModule->SetNetwork(NETWORK);  \
 			pModule->FUNC;  \
-			pModule->SetClient(NULL);  \
-			pModule->SetNetwork(NULL);  \
+			pModule->SetClient(nullptr);  \
+			pModule->SetNetwork(nullptr);  \
 		} catch (const CModule::EModException& e) {  \
 			if (e == CModule::UNLOAD) {  \
 				(USER)->GetModules().UnloadModule(MOD);  \
@@ -54,9 +54,9 @@ using std::vector;
 			pModule->SetNetwork(NETWORK);  \
 			pModule->SetUser(USER);  \
 			pModule->FUNC;  \
-			pModule->SetClient(NULL);  \
-			pModule->SetNetwork(NULL);  \
-			pModule->SetUser(NULL);  \
+			pModule->SetClient(nullptr);  \
+			pModule->SetNetwork(nullptr);  \
+			pModule->SetUser(nullptr);  \
 		} catch (const CModule::EModException& e) {  \
 			if (e == CModule::UNLOAD) {  \
 					CZNC::Get().GetModules().UnloadModule(MOD);  \

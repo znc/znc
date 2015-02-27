@@ -278,7 +278,7 @@ CDCCBounce::CDCCBounce(CBounceDCCMod* pMod, unsigned long uLongIP, unsigned shor
 	m_pModule = pMod;
 	m_bIsChat = bIsChat;
 	m_sLocalIP = pMod->GetLocalDCCIP();
-	m_pPeer = NULL;
+	m_pPeer = nullptr;
 	m_bIsRemote = false;
 
 	if (bIsChat) {
@@ -294,7 +294,7 @@ CDCCBounce::CDCCBounce(CBounceDCCMod* pMod, const CString& sHostname, unsigned s
 	m_uRemotePort = 0;
 	m_bIsChat = bIsChat;
 	m_pModule = pMod;
-	m_pPeer = NULL;
+	m_pPeer = nullptr;
 	m_sRemoteNick = sRemoteNick;
 	m_sFileName = sFileName;
 	m_sRemoteIP = sRemoteIP;
@@ -311,7 +311,7 @@ CDCCBounce::CDCCBounce(CBounceDCCMod* pMod, const CString& sHostname, unsigned s
 CDCCBounce::~CDCCBounce() {
 	if (m_pPeer) {
 		m_pPeer->Shutdown();
-		m_pPeer = NULL;
+		m_pPeer = nullptr;
 	}
 }
 
@@ -409,7 +409,7 @@ void CDCCBounce::Disconnected() {
 }
 
 void CDCCBounce::Shutdown() {
-	m_pPeer = NULL;
+	m_pPeer = nullptr;
 	DEBUG(GetSockName() << " == Close(); because my peer told me to");
 	Close();
 }

@@ -62,7 +62,7 @@ public:
 
 	void OnClientConnect(CZNCSock* pClient, const CString& sHost, unsigned short uPort) override {
 		unsigned int *pCount = m_Cache.GetItem(sHost);
-		if (sHost.empty() || pCount == NULL || *pCount < m_uiAllowedFailed) {
+		if (sHost.empty() || pCount == nullptr || *pCount < m_uiAllowedFailed) {
 			return;
 		}
 

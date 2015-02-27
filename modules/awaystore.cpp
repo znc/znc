@@ -355,7 +355,7 @@ public:
 			else if (!sReason.empty())
 				m_sReason = sReason;
 
-			time_t iTime = time(NULL);
+			time_t iTime = time(nullptr);
 			char *pTime = ctime(&iTime);
 			CString sTime;
 			if (pTime)
@@ -393,14 +393,14 @@ public:
 	EModRet OnPrivMsg(CNick& Nick, CString& sMessage) override
 	{
 		if (m_bIsAway)
-			AddMessage(time(NULL), Nick, sMessage);
+			AddMessage(time(nullptr), Nick, sMessage);
 		return(CONTINUE);
 	}
 
 	EModRet OnPrivAction(CNick& Nick, CString& sMessage) override
 	{
 		if (m_bIsAway) {
-			AddMessage(time(NULL), Nick, "* " + sMessage);
+			AddMessage(time(nullptr), Nick, "* " + sMessage);
 		}
 		return(CONTINUE);
 	}
@@ -433,7 +433,7 @@ public:
 	}
 
 	time_t GetTimeStamp() const { return(m_iLastSentData); }
-	void Ping() { m_iLastSentData = time(NULL); }
+	void Ping() { m_iLastSentData = time(nullptr); }
 	time_t GetAwayTime() { return m_iAutoAway; }
 	void SetAwayTime(time_t u) { m_iAutoAway = u; }
 
@@ -505,7 +505,7 @@ void CAwayJob::RunJob()
 
 	if (!p->IsAway())
 	{
-		time_t iNow = time(NULL);
+		time_t iNow = time(nullptr);
 
 		if ((iNow - p->GetTimeStamp()) > p->GetAwayTime() && p->GetAwayTime() != 0)
 			p->Away();

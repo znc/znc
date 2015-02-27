@@ -193,7 +193,7 @@ void CSockManager::CDNSJob::runMain() {
 	if (0 != this->iRes) {
 		DEBUG("Error in threaded DNS: " << gai_strerror(this->iRes));
 		if (this->aiResult) {
-			DEBUG("And aiResult is not NULL...");
+			DEBUG("And aiResult is not nullptr...");
 		}
 		this->aiResult = nullptr; // just for case. Maybe to call freeaddrinfo()?
 	}
@@ -413,7 +413,7 @@ CSocket::CSocket(CModule* pModule, const CString& sHostname, unsigned short uPor
 CSocket::~CSocket() {
 	CUser *pUser = nullptr;
 
-	// CWebSock could cause us to have a NULL pointer here
+	// CWebSock could cause us to have a nullptr pointer here
 	if (m_pModule) {
 		pUser = m_pModule->GetUser();
 		m_pModule->UnlinkSocket(this);

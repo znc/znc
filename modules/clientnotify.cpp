@@ -35,10 +35,10 @@ protected:
 
 	void SendNotification(const CString& sMessage) {
 		if(m_sMethod == "message") {
-			GetUser()->PutStatus(sMessage, NULL, GetClient());
+			GetUser()->PutStatus(sMessage, nullptr, GetClient());
 		}
 		else if(m_sMethod == "notice") {
-			GetUser()->PutStatusNotice(sMessage, NULL, GetClient());
+			GetUser()->PutStatusNotice(sMessage, nullptr, GetClient());
 		}
 	}
 
