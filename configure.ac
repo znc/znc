@@ -93,6 +93,26 @@ case "${host_os}" in
 	;;
 	darwin*)
 		ISDARWIN=1
+
+		AC_ARG_VAR([USE_SYSTEM_OPENSSL],[set USE_SYSTEM_OPENSSL="true" to use the OpenSSL version provided by Mac OS X. Otherwise the Homebrew installed version is used if available. ])
+
+		AC_CHECK_PROG([BREW],brew, brew)
+		if test x$BREW = xbrew; then
+			dnl add default homebrew paths
+
+			icu4c_prefix=`$BREW --prefix icu4c`
+			export PKG_CONFIG_PATH="$icu4c_prefix/lib/pkgconfig:$PKG_CONFIG_PATH"
+
+			python3_prefix=`$BREW --prefix python3`
+			python3_prefix=`find "$python3_prefix/" -name python3.pc`
+			python3_prefix=`dirname "$python3_prefix"`
+			export PKG_CONFIG_PATH="$python3_prefix:$PKG_CONFIG_PATH"
+
+			if test -z "$USE_SYSTEM_OPENSSL" -o "$USE_SYSTEM_OPENSSL" = "false"; then
+				openssl_prefix=`$BREW --prefix openssl`
+				export PKG_CONFIG_PATH="$openssl_prefix/lib/pkgconfig:$PKG_CONFIG_PATH"
+			fi
+		fi
 	;;
 esac
 
@@ -321,7 +341,7 @@ if test "x$SSL" != "xno"; then
 			SSL=no
 			SSL_TEXT="no (openssl not usable)"
 		])
-		
+
 	fi
 
 	if test "x$SSL" = "xno" ; then
@@ -668,6 +688,11 @@ fi
 echo "charset:      $HAVE_ICU"
 echo "zlib:         $ZLIB_TEXT"
 echo "run from src: $RUNFROMSOURCE"
+echo
+echo "Used libraries:"
+echo "  openssl: $openssl_LIBS"
+echo "  python3: $python_LIBS"
+echo "  icu:     $icu_LIBS"
 echo
 echo "Now you can run \"$GNUMAKE\" to compile ZNC"
 
