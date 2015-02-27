@@ -140,8 +140,8 @@ void CHTTPSock::ReadLine(const CString& sData) {
 				// sIP told us that it got connection from vsIPs.back()
 				// check if sIP is trusted proxy
 				bool bTrusted = false;
-				for (VCString::const_iterator it = vsTrustedProxies.begin(); it != vsTrustedProxies.end(); ++it) {
-					if (sIP.WildCmp(*it)) {
+				for (const CString& sTrustedProxy : vsTrustedProxies) {
+					if (sIP.WildCmp(sTrustedProxy)) {
 						bTrusted = true;
 						break;
 					}
@@ -471,8 +471,7 @@ void CHTTPSock::ParseParams(const CString& sParams, map<CString, VCString> &msvs
 	VCString vsPairs;
 	sParams.Split("&", vsPairs, true);
 
-	for (unsigned int a = 0; a < vsPairs.size(); a++) {
-		const CString& sPair = vsPairs[a];
+	for (const CString& sPair : vsPairs) {
 		CString sName = sPair.Token(0, false, "=").Escape_n(CString::EURL, CString::EASCII);
 		CString sValue = sPair.Token(1, true, "=").Escape_n(CString::EURL, CString::EASCII);
 
@@ -562,8 +561,7 @@ size_t CHTTPSock::GetParamValues(const CString& sName, set<CString>& ssRet, cons
 	map<CString, VCString>::const_iterator it = msvsParams.find(sName);
 
 	if (it != msvsParams.end()) {
-		for (unsigned int a = 0; a < it->second.size(); a++) {
-			CString sParam = it->second[a];
+		for (CString sParam : it->second) {
 			sParam.Trim();
 
 			for (size_t i = 0; i < sFilter.length(); i++) {
@@ -588,8 +586,7 @@ size_t CHTTPSock::GetParamValues(const CString& sName, VCString& vsRet, const ma
 	map<CString, VCString>::const_iterator it = msvsParams.find(sName);
 
 	if (it != msvsParams.end()) {
-		for (unsigned int a = 0; a < it->second.size(); a++) {
-			CString sParam = it->second[a];
+		for (CString sParam : it->second) {
 			sParam.Trim();
 
 			for (size_t i = 0; i < sFilter.length(); i++) {
@@ -696,14 +693,12 @@ bool CHTTPSock::PrintHeader(off_t uContentLength, const CString& sContentType, u
 	}
 	Write("Content-Type: " + m_sContentType + "\r\n");
 
-	MCString::iterator it;
-
-	for (it = m_msResponseCookies.begin(); it != m_msResponseCookies.end(); ++it) {
-		Write("Set-Cookie: " + it->first.Escape_n(CString::EURL) + "=" + it->second.Escape_n(CString::EURL) + "; path=/;" + (GetSSL() ? "Secure;" : "") + "\r\n");
+	for (const auto& it : m_msResponseCookies) {
+		Write("Set-Cookie: " + it.first.Escape_n(CString::EURL) + "=" + it.second.Escape_n(CString::EURL) + "; path=/;" + (GetSSL() ? "Secure;" : "") + "\r\n");
 	}
 
-	for (it = m_msHeaders.begin(); it != m_msHeaders.end(); ++it) {
-		Write(it->first + ": " + it->second + "\r\n");
+	for (const auto& it : m_msHeaders) {
+		Write(it.first + ": " + it.second + "\r\n");
 	}
 
 	Write("Connection: Close\r\n");
