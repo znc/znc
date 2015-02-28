@@ -38,8 +38,7 @@ static const double FLOOD_MINIMAL_RATE = 0.3;
 class CIRCFloodTimer : public CCron {
 		CIRCSock* m_pSock;
 	public:
-		CIRCFloodTimer(CIRCSock* pSock) {
-			m_pSock = pSock;
+		CIRCFloodTimer(CIRCSock* pSock) : m_pSock(pSock) {
 			StartMaxCycles(m_pSock->m_fFloodRate, 0);
 		}
 		void RunJob() override {

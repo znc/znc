@@ -76,12 +76,10 @@ private:
 
 class CWebSubPage {
 public:
-	CWebSubPage(const CString& sName, const CString& sTitle = "", unsigned int uFlags = 0) : m_sName(sName), m_sTitle(sTitle) {
-		m_uFlags = uFlags;
+	CWebSubPage(const CString& sName, const CString& sTitle = "", unsigned int uFlags = 0) : m_uFlags(uFlags), m_sName(sName), m_sTitle(sTitle), m_vParams() {
 	}
 
-	CWebSubPage(const CString& sName, const CString& sTitle, const VPair& vParams, unsigned int uFlags = 0) : m_sName(sName), m_sTitle(sTitle), m_vParams(vParams) {
-		m_uFlags = uFlags;
+	CWebSubPage(const CString& sName, const CString& sTitle, const VPair& vParams, unsigned int uFlags = 0) : m_uFlags(uFlags), m_sName(sName), m_sTitle(sTitle), m_vParams(vParams) {
 	}
 
 	virtual ~CWebSubPage() {}

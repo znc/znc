@@ -28,8 +28,7 @@ using std::set;
 
 class CUserTimer : public CCron {
 public:
-	CUserTimer(CUser* pUser) : CCron() {
-		m_pUser = pUser;
+	CUserTimer(CUser* pUser) : CCron(), m_pUser(pUser) {
 		SetName("CUserTimer::" + m_pUser->GetUserName());
 		Start(CIRCNetwork::PING_SLACK);
 	}

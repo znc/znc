@@ -32,14 +32,14 @@ public:
 		ACCEPT_ALL
 	} EAcceptType;
 
-	CListener(unsigned short uPort, const CString& sBindHost, const CString& sURIPrefix, bool bSSL, EAddrType eAddr, EAcceptType eAccept) {
-		m_uPort = uPort;
-		m_sBindHost = sBindHost;
-		m_bSSL = bSSL;
-		m_eAddr = eAddr;
-		m_sURIPrefix = sURIPrefix;
-		m_pListener = nullptr;
-		m_eAcceptType = eAccept;
+	CListener(unsigned short uPort, const CString& sBindHost, const CString& sURIPrefix, bool bSSL, EAddrType eAddr, EAcceptType eAccept)
+			: m_bSSL(bSSL),
+			  m_eAddr(eAddr),
+			  m_uPort(uPort),
+			  m_sBindHost(sBindHost),
+			  m_sURIPrefix(sURIPrefix),
+			  m_pListener(nullptr),
+			  m_eAcceptType(eAccept) {
 	}
 
 	~CListener();

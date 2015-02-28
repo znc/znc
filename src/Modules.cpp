@@ -103,10 +103,8 @@ bool ZNC_NO_NEED_TO_DO_ANYTHING_ON_MODULE_CALL_EXITER;
 	return bHaltCore;
 
 /////////////////// Timer ///////////////////
-CTimer::CTimer(CModule* pModule, unsigned int uInterval, unsigned int uCycles, const CString& sLabel, const CString& sDescription) : CCron() {
+CTimer::CTimer(CModule* pModule, unsigned int uInterval, unsigned int uCycles, const CString& sLabel, const CString& sDescription) : CCron(), m_pModule(pModule), m_sDescription(sDescription) {
 	SetName(sLabel);
-	m_sDescription = sDescription;
-	m_pModule = pModule;
 
 	if (uCycles) {
 		StartMaxCycles(uInterval, uCycles);
@@ -747,10 +745,7 @@ CModule::EModRet CModule::OnGetModInfo(CModInfo& ModInfo, const CString& sModule
 void CModule::OnGetAvailableMods(set<CModInfo>& ssMods, CModInfo::EModuleType eType) {}
 
 
-CModules::CModules() {
-	m_pUser = nullptr;
-	m_pNetwork = nullptr;
-	m_pClient = nullptr;
+CModules::CModules() : m_pUser(nullptr), m_pNetwork(nullptr), m_pClient(nullptr) {
 }
 
 CModules::~CModules() {

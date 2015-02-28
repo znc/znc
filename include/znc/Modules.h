@@ -165,8 +165,7 @@ typedef void (*FPTimer_t)(CModule *, CFPTimer *);
 class CFPTimer : public CTimer {
 public:
 	CFPTimer(CModule* pModule, unsigned int uInterval, unsigned int uCycles, const CString& sLabel, const CString& sDescription)
-		: CTimer(pModule, uInterval, uCycles, sLabel, sDescription) {
-		m_pFBCallback = nullptr;
+		: CTimer(pModule, uInterval, uCycles, sLabel, sDescription), m_pFBCallback(nullptr) {
 	}
 
 	virtual ~CFPTimer() {}

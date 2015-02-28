@@ -33,8 +33,7 @@ class CClient;
 
 class CAuthBase {
 public:
-	CAuthBase(const CString& sUsername, const CString& sPassword, CZNCSock* pSock) {
-		SetLoginInfo(sUsername, sPassword, pSock);
+	CAuthBase(const CString& sUsername, const CString& sPassword, CZNCSock* pSock) : m_sUsername(sUsername), m_sPassword(sPassword), m_pSock(pSock) {
 	}
 
 	virtual ~CAuthBase() {}

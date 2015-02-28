@@ -85,8 +85,7 @@ void CRealListener::SockError(int iErrno, const CString& sDescription) {
 	}
 }
 
-CIncomingConnection::CIncomingConnection(const CString& sHostname, unsigned short uPort, CListener::EAcceptType eAcceptType, const CString& sURIPrefix) : CZNCSock(sHostname, uPort), m_sURIPrefix(sURIPrefix) {
-	m_eAcceptType = eAcceptType;
+CIncomingConnection::CIncomingConnection(const CString& sHostname, unsigned short uPort, CListener::EAcceptType eAcceptType, const CString& sURIPrefix) : CZNCSock(sHostname, uPort), m_eAcceptType(eAcceptType), m_sURIPrefix(sURIPrefix) {
 	// The socket will time out in 120 secs, no matter what.
 	// This has to be fixed up later, if desired.
 	SetTimeout(120, 0);
