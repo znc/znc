@@ -34,7 +34,7 @@ CThreadPool& CThreadPool::Get() {
 	return pool;
 }
 
-CThreadPool::CThreadPool() : m_done(false), m_num_threads(0), m_num_idle(0) {
+CThreadPool::CThreadPool() : m_mutex(), m_cond(), m_cancellationCond(), m_exit_cond(), m_done(false), m_num_threads(0), m_num_idle(0), m_iJobPipe{0,0}, m_jobs() {
 	if (pipe(m_iJobPipe)) {
 		DEBUG("Ouch, can't open pipe for thread pool: " << strerror(errno));
 		exit(1);

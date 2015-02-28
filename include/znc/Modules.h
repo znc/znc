@@ -165,8 +165,7 @@ typedef void (*FPTimer_t)(CModule *, CFPTimer *);
 class CFPTimer : public CTimer {
 public:
 	CFPTimer(CModule* pModule, unsigned int uInterval, unsigned int uCycles, const CString& sLabel, const CString& sDescription)
-		: CTimer(pModule, uInterval, uCycles, sLabel, sDescription) {
-		m_pFBCallback = nullptr;
+		: CTimer(pModule, uInterval, uCycles, sLabel, sDescription), m_pFBCallback(nullptr) {
 	}
 
 	virtual ~CFPTimer() {}
@@ -220,15 +219,18 @@ public:
 		NetworkModule
 	} EModuleType;
 
-	CModInfo() {
-		m_fLoader = nullptr;
-		m_bHasArgs = false;
+	CModInfo() : CModInfo("", "", NetworkModule) {
 	}
-	CModInfo(const CString& sName, const CString& sPath, EModuleType eType) {
-		m_sName = sName;
-		m_sPath = sPath;
-		m_fLoader = nullptr;
-		m_bHasArgs = false;
+	CModInfo(const CString& sName, const CString& sPath, EModuleType eType)
+			: m_seType(),
+			  m_eDefaultType(eType),
+			  m_sName(sName),
+			  m_sPath(sPath),
+			  m_sDescription(""),
+			  m_sWikiPage(""),
+			  m_sArgsHelpText(""),
+			  m_bHasArgs(false),
+			  m_fLoader(nullptr) {
 	}
 	~CModInfo() {}
 

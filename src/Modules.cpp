@@ -103,10 +103,8 @@ bool ZNC_NO_NEED_TO_DO_ANYTHING_ON_MODULE_CALL_EXITER;
 	return bHaltCore;
 
 /////////////////// Timer ///////////////////
-CTimer::CTimer(CModule* pModule, unsigned int uInterval, unsigned int uCycles, const CString& sLabel, const CString& sDescription) : CCron() {
+CTimer::CTimer(CModule* pModule, unsigned int uInterval, unsigned int uCycles, const CString& sLabel, const CString& sDescription) : CCron(), m_pModule(pModule), m_sDescription(sDescription) {
 	SetName(sLabel);
-	m_sDescription = sDescription;
-	m_pModule = pModule;
 
 	if (uCycles) {
 		StartMaxCycles(uInterval, uCycles);
@@ -126,14 +124,28 @@ const CString& CTimer::GetDescription() const { return m_sDescription; }
 /////////////////// !Timer ///////////////////
 
 
-CModule::CModule(ModHandle pDLL, CUser* pUser, CIRCNetwork* pNetwork, const CString& sModName, const CString& sDataDir) {
-	m_pDLL = pDLL;
-	m_pManager = &(CZNC::Get().GetManager());;
-	m_pUser = pUser;
-	m_pNetwork = pNetwork;
-	m_pClient = nullptr;
-	m_sModName = sModName;
-	m_sDataDir = sDataDir;
+CModule::CModule(ModHandle pDLL, CUser* pUser, CIRCNetwork* pNetwork, const CString& sModName, const CString& sDataDir)
+		: m_eType(CModInfo::NetworkModule),
+		  m_sDescription(""),
+		  m_sTimers(),
+		  m_sSockets(),
+#ifdef HAVE_PTHREAD
+		  m_sJobs(),
+#endif
+		  m_pDLL(pDLL),
+		  m_pManager(&(CZNC::Get().GetManager())),
+		  m_pUser(pUser),
+		  m_pNetwork(pNetwork),
+		  m_pClient(nullptr),
+		  m_sModName(sModName),
+		  m_sDataDir(sDataDir),
+		  m_sSavePath(""),
+		  m_sArgs(""),
+		  m_sModPath(""),
+		  m_mssRegistry(),
+		  m_vSubPages(),
+		  m_mCommands()
+{
 
 	if (m_pNetwork) {
 		m_sSavePath = m_pNetwork->GetNetworkPath() + "/moddata/" + m_sModName;
@@ -747,10 +759,7 @@ CModule::EModRet CModule::OnGetModInfo(CModInfo& ModInfo, const CString& sModule
 void CModule::OnGetAvailableMods(set<CModInfo>& ssMods, CModInfo::EModuleType eType) {}
 
 
-CModules::CModules() {
-	m_pUser = nullptr;
-	m_pNetwork = nullptr;
-	m_pClient = nullptr;
+CModules::CModules() : m_pUser(nullptr), m_pNetwork(nullptr), m_pClient(nullptr) {
 }
 
 CModules::~CModules() {

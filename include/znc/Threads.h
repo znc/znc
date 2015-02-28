@@ -38,7 +38,7 @@ class CMutex {
 public:
 	friend class CConditionVariable;
 
-	CMutex() {
+	CMutex() : m_mutex() {
 		int i = pthread_mutex_init(&m_mutex, nullptr);
 		if (i) {
 			CUtils::PrintError("Can't initialize mutex: " + CString(strerror(errno)));
@@ -123,7 +123,7 @@ private:
  */
 class CConditionVariable {
 public:
-	CConditionVariable() {
+	CConditionVariable() : m_cond() {
 		int i = pthread_cond_init(&m_cond, nullptr);
 		if (i) {
 			CUtils::PrintError("Can't initialize condition variable: "
