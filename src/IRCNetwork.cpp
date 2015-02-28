@@ -23,6 +23,7 @@
 #include <znc/Chan.h>
 #include <znc/Query.h>
 #include <algorithm>
+#include <memory>
 
 using std::vector;
 using std::set;
@@ -1277,6 +1278,11 @@ bool CIRCNetwork::PutIRC(const CString& sLine) {
 
 	pIRCSock->PutIRC(sLine);
 	return true;
+}
+
+void CIRCNetwork::ClearQueryBuffer() {
+	std::for_each(m_vQueries.begin(), m_vQueries.end(), std::default_delete<CQuery>());
+	m_vQueries.clear();
 }
 
 const CString& CIRCNetwork::GetNick(const bool bAllowDefault) const {

@@ -167,6 +167,8 @@ public:
 	void AddNoticeBuffer(const CString& sFormat, const CString& sText = "") { m_NoticeBuffer.AddLine(sFormat, sText); }
 	void UpdateNoticeBuffer(const CString& sMatch, const CString& sFormat, const CString& sText = "") { m_NoticeBuffer.UpdateLine(sMatch, sFormat, sText); }
 	void ClearNoticeBuffer() { m_NoticeBuffer.Clear(); }
+
+	void ClearQueryBuffer();
 	// !Buffers
 
 	// la
