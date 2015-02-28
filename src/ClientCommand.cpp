@@ -1386,7 +1386,8 @@ void CClient::UserCommand(CString& sLine) {
 			return;
 		}
 
-		for (CQuery* pQuery : m_pNetwork->GetQueries()) {
+		vector<CQuery*> vQueries = m_pNetwork->GetQueries();
+		for (CQuery* pQuery : vQueries) {
 			m_pNetwork->DelQuery(pQuery->GetName());
 		}
 		PutStatus("All query buffers have been cleared");
@@ -1399,7 +1400,8 @@ void CClient::UserCommand(CString& sLine) {
 		for (CChan* pChan : m_pNetwork->GetChans()) {
 			pChan->ClearBuffer();
 		}
-		for (CQuery* pQuery : m_pNetwork->GetQueries()) {
+		vector<CQuery*> vQueries = m_pNetwork->GetQueries();
+		for (CQuery* pQuery : vQueries) {
 			m_pNetwork->DelQuery(pQuery->GetName());
 		}
 		PutStatus("All buffers have been cleared");
