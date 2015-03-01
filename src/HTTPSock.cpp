@@ -28,23 +28,39 @@ using std::set;
 
 #define MAX_POST_SIZE	1024 * 1024
 
-CHTTPSock::CHTTPSock(CModule *pMod, const CString& sURIPrefix) : CSocket(pMod), m_sURIPrefix(sURIPrefix) {
+CHTTPSock::CHTTPSock(CModule *pMod, const CString& sURIPrefix) : CHTTPSock(pMod, sURIPrefix, "", 0) {
 	Init();
 }
 
-CHTTPSock::CHTTPSock(CModule *pMod, const CString& sURIPrefix, const CString& sHostname, unsigned short uPort, int iTimeout) : CSocket(pMod, sHostname, uPort, iTimeout), m_sURIPrefix(sURIPrefix) {
+CHTTPSock::CHTTPSock(CModule *pMod, const CString& sURIPrefix, const CString& sHostname, unsigned short uPort, int iTimeout)
+		: CSocket(pMod, sHostname, uPort, iTimeout),
+		  m_bSentHeader(false),
+		  m_bGotHeader(false),
+		  m_bLoggedIn(false),
+		  m_bPost(false),
+		  m_bDone(false),
+		  m_uPostLen(0),
+		  m_sPostData(""),
+		  m_sURI(""),
+		  m_sUser(""),
+		  m_sPass(""),
+		  m_sContentType(""),
+		  m_sDocRoot(""),
+		  m_sForwardedIP(""),
+		  m_msvsPOSTParams(),
+		  m_msvsGETParams(),
+		  m_msHeaders(),
+		  m_bHTTP10Client(false),
+		  m_sIfNoneMatch(""),
+		  m_bAcceptGzip(false),
+		  m_msRequestCookies(),
+		  m_msResponseCookies(),
+		  m_sURIPrefix(sURIPrefix)
+{
 	Init();
 }
 
 void CHTTPSock::Init() {
-	m_bSentHeader = false;
-	m_bGotHeader = false;
-	m_bLoggedIn = false;
-	m_bPost = false;
-	m_bDone = false;
-	m_bHTTP10Client = false;
-	m_bAcceptGzip = false;
-	m_uPostLen = 0;
 	EnableReadLine();
 	SetMaxBufferThreshold(10240);
 }

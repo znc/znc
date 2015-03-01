@@ -89,26 +89,33 @@ protected:
 
 class CClient : public CIRCSocket {
 public:
-	CClient() : CIRCSocket() {
-		m_pUser = nullptr;
-		m_pNetwork = nullptr;
-		m_bGotPass = false;
-		m_bGotNick = false;
-		m_bGotUser = false;
-		m_bInCap = false;
-		m_bNamesx = false;
-		m_bUHNames = false;
-		m_bAway = false;
-		m_bServerTime = false;
-		m_bBatch = false;
-		m_bSelfMessage = false;
-		m_bPlaybackActive = false;
+	CClient()
+			: CIRCSocket(),
+			  m_bGotPass(false),
+			  m_bGotNick(false),
+			  m_bGotUser(false),
+			  m_bInCap(false),
+			  m_bNamesx(false),
+			  m_bUHNames(false),
+			  m_bAway(false),
+			  m_bServerTime(false),
+			  m_bBatch(false),
+			  m_bSelfMessage(false),
+			  m_bPlaybackActive(false),
+			  m_pUser(nullptr),
+			  m_pNetwork(nullptr),
+			  m_sNick("unknown-nick"),
+			  m_sPass(""),
+			  m_sUser(""),
+			  m_sNetwork(""),
+			  m_sIdentifier(""),
+			  m_spAuth(),
+			  m_ssAcceptedCaps()
+	{
 		EnableReadLine();
 		// RFC says a line can have 512 chars max, but we are
 		// a little more gentle ;)
 		SetMaxBufferThreshold(1024);
-
-		SetNick("unknown-nick");
 	}
 
 	virtual ~CClient();

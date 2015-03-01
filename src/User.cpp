@@ -50,36 +50,48 @@ protected:
 };
 
 CUser::CUser(const CString& sUserName)
-		: m_sUserName(sUserName), m_sCleanUserName(MakeCleanUserName(sUserName))
+		: m_sUserName(sUserName),
+		  m_sCleanUserName(MakeCleanUserName(sUserName)),
+		  m_sNick(m_sCleanUserName),
+		  m_sAltNick(""),
+		  m_sIdent(m_sCleanUserName),
+		  m_sRealName(sUserName),
+		  m_sBindHost(""),
+		  m_sDCCBindHost(""),
+		  m_sPass(""),
+		  m_sPassSalt(""),
+		  m_sStatusPrefix("*"),
+		  m_sDefaultChanModes(""),
+		  m_sClientEncoding(""),
+		  m_sQuitMsg(""),
+		  m_mssCTCPReplies(),
+		  m_sTimestampFormat("[%H:%M:%S]"),
+		  m_sTimezone(""),
+		  m_eHashType(HASH_NONE),
+		  m_sUserPath(CZNC::Get().GetUserPath() + "/" + sUserName),
+		  m_bMultiClients(true),
+		  m_bDenyLoadMod(false),
+		  m_bAdmin(false),
+		  m_bDenySetBindHost(false),
+		  m_bAutoClearChanBuffer(true),
+		  m_bAutoClearQueryBuffer(true),
+		  m_bBeingDeleted(false),
+		  m_bAppendTimestamp(false),
+		  m_bPrependTimestamp(true),
+		  m_pUserTimer(nullptr),
+		  m_vIRCNetworks(),
+		  m_vClients(),
+		  m_ssAllowedHosts(),
+		  m_uBufferCount(50),
+		  m_uBytesRead(0),
+		  m_uBytesWritten(0),
+		  m_uMaxJoinTries(10),
+		  m_uMaxNetworks(1),
+		  m_uMaxQueryBuffers(50),
+		  m_uMaxJoins(0),
+		  m_sSkinName(""),
+		  m_pModules(new CModules)
 {
-	// set path that depends on the user name:
-	m_sUserPath = CZNC::Get().GetUserPath() + "/" + m_sUserName;
-
-	m_sTimezone = "";
-	m_sNick = m_sCleanUserName;
-	m_sIdent = m_sCleanUserName;
-	m_sRealName = sUserName;
-	m_uBytesRead = 0;
-	m_uBytesWritten = 0;
-	m_pModules = new CModules;
-	m_bMultiClients = true;
-	m_eHashType = HASH_NONE;
-	m_bDenyLoadMod = false;
-	m_bAdmin= false;
-	m_bDenySetBindHost= false;
-	m_sStatusPrefix = "*";
-	m_uBufferCount = 50;
-	m_uMaxJoinTries = 10;
-	m_bAutoClearChanBuffer = true;
-	m_bAutoClearQueryBuffer = true;
-	m_uMaxQueryBuffers = 50;
-	m_uMaxJoins = 0;
-	m_bBeingDeleted = false;
-	m_sTimestampFormat = "[%H:%M:%S]";
-	m_bAppendTimestamp = false;
-	m_bPrependTimestamp = true;
-	m_uMaxNetworks = 1;
-	m_sClientEncoding = "";
 	m_pUserTimer = new CUserTimer(this);
 	CZNC::Get().GetManager().AddCron(m_pUserTimer);
 }
