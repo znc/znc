@@ -21,6 +21,12 @@
 class CChanSaverMod : public CModule {
 public:
 	MODCONSTRUCTOR(CChanSaverMod) {
+	}
+
+	virtual ~CChanSaverMod() {
+	}
+
+	bool OnLoad(const CString& sArgsi, CString& sMessage) override {
 		switch (GetType()) {
 			case CModInfo::GlobalModule:
 				LoadUsers();
@@ -32,9 +38,7 @@ public:
 				LoadNetwork(GetNetwork());
 				break;
 		}
-	}
-
-	virtual ~CChanSaverMod() {
+		return true;
 	}
 
 	void LoadUsers() {
