@@ -144,8 +144,7 @@ bool CString::WildCmp(const CString& sWild, CaseSensitivity cs) const {
 }
 
 CString& CString::MakeUpper() {
-	for (size_type a = 0; a < length(); a++) {
-		char& c = (*this)[a];
+	for (char& c : *this) {
 		//TODO use unicode
 		c = (char)toupper(c);
 	}
@@ -154,8 +153,7 @@ CString& CString::MakeUpper() {
 }
 
 CString& CString::MakeLower() {
-	for (size_type a = 0; a < length(); a++) {
-		char& c = (*this)[a];
+	for (char& c : *this) {
 		//TODO use unicode
 		c = (char)tolower(c);
 	}
@@ -648,9 +646,7 @@ CString::size_type CString::URLSplit(MCString& msRet) const {
 	VCString vsPairs;
 	Split("&", vsPairs);
 
-	for (size_t a = 0; a < vsPairs.size(); a++) {
-		const CString& sPair = vsPairs[a];
-
+	for (const CString& sPair : vsPairs) {
 		msRet[sPair.Token(0, false, "=").Escape(CString::EURL, CString::EASCII)] = sPair.Token(1, true, "=").Escape(CString::EURL, CString::EASCII);
 	}
 
@@ -781,8 +777,8 @@ CString::size_type CString::Split(const CString& sDelim, SCString& ssRet, bool b
 
 	ssRet.clear();
 
-	for (size_t a = 0; a < vsTokens.size(); a++) {
-		ssRet.insert(vsTokens[a]);
+	for (const CString& sToken : vsTokens) {
+		ssRet.insert(sToken);
 	}
 
 	return ssRet.size();
@@ -1321,9 +1317,9 @@ MCString::status_t MCString::WriteToDisk(const CString& sPath, mode_t iMode) con
 		return MCS_EOPEN;
 	}
 
-	for (MCString::const_iterator it = this->begin(); it != this->end(); ++it) {
-		CString sKey = it->first;
-		CString sValue = it->second;
+	for (const auto& it : *this) {
+		CString sKey = it.first;
+		CString sValue = it.second;
 		if (!WriteFilter(sKey, sValue)) {
 			return MCS_EWRITEFIL;
 		}
@@ -1373,10 +1369,9 @@ static const char hexdigits[] = "0123456789abcdef";
 
 CString& MCString::Encode(CString& sValue) const {
 	CString sTmp;
-	for (CString::iterator it = sValue.begin(); it != sValue.end(); ++it) {
+	for (unsigned char c : sValue) {
 		// isalnum() needs unsigned char as argument and this code
 		// assumes unsigned, too.
-		unsigned char c = *it;
 		if (isalnum(c)) {
 			sTmp += c;
 		} else {

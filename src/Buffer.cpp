@@ -66,11 +66,11 @@ CBuffer::size_type CBuffer::AddLine(const CString& sFormat, const CString& sText
 }
 
 CBuffer::size_type CBuffer::UpdateLine(const CString& sMatch, const CString& sFormat, const CString& sText) {
-	for (iterator it = begin(); it != end(); ++it) {
-		if (it->GetFormat().compare(0, sMatch.length(), sMatch) == 0) {
-			it->SetFormat(sFormat);
-			it->SetText(sText);
-			it->UpdateTime();
+	for (CBufLine& Line : *this) {
+		if (Line.GetFormat().compare(0, sMatch.length(), sMatch) == 0) {
+			Line.SetFormat(sFormat);
+			Line.SetText(sText);
+			Line.UpdateTime();
 			return size();
 		}
 	}
@@ -79,8 +79,8 @@ CBuffer::size_type CBuffer::UpdateLine(const CString& sMatch, const CString& sFo
 }
 
 CBuffer::size_type CBuffer::UpdateExactLine(const CString& sFormat, const CString& sText) {
-	for (iterator it = begin(); it != end(); ++it) {
-		if (it->GetFormat() == sFormat && it->GetText() == sText) {
+	for (const CBufLine& Line : *this) {
+		if (Line.GetFormat() == sFormat && Line.GetText() == sText) {
 			return size();
 		}
 	}

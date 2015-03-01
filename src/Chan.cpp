@@ -156,10 +156,10 @@ void CChan::AttachUser(CClient* pClient) {
 	CString sPerm, sNick;
 
 	const vector<CClient*>& vpClients = m_pNetwork->GetClients();
-	for (vector<CClient*>::const_iterator it = vpClients.begin(); it != vpClients.end(); ++it) {
+	for (CClient* pEachClient : vpClients) {
 		CClient* pThisClient;
 		if (!pClient)
-			pThisClient = *it;
+			pThisClient = pEachClient;
 		else
 			pThisClient = pClient;
 
@@ -210,10 +210,10 @@ void CChan::DetachUser() {
 CString CChan::GetModeString() const {
 	CString sModes, sArgs;
 
-	for (map<unsigned char, CString>::const_iterator it = m_musModes.begin(); it != m_musModes.end(); ++it) {
-		sModes += it->first;
-		if (it->second.size()) {
-			sArgs += " " + it->second;
+	for (const auto& it : m_musModes) {
+		sModes += it.first;
+		if (it.second.size()) {
+			sArgs += " " + it.second;
 		}
 	}
 
@@ -223,10 +223,10 @@ CString CChan::GetModeString() const {
 CString CChan::GetModeForNames() const {
 	CString sMode;
 
-	for (map<unsigned char, CString>::const_iterator it = m_musModes.begin(); it != m_musModes.end(); ++it) {
-		if (it->first == 's') {
+	for (const auto& it : m_musModes) {
+		if (it.first == 's') {
 			sMode = "@";
-		} else if ((it->first == 'p') && sMode.empty()){
+		} else if ((it.first == 'p') && sMode.empty()){
 			sMode = "*";
 		}
 	}
@@ -457,12 +457,11 @@ void CChan::ClearNicks() {
 int CChan::AddNicks(const CString& sNicks) {
 	int iRet = 0;
 	VCString vsNicks;
-	VCString::iterator it;
 
 	sNicks.Split(" ", vsNicks, false);
 
-	for (it = vsNicks.begin(); it != vsNicks.end(); ++it) {
-		if (AddNick(*it)) {
+	for (const CString& sNick : vsNicks) {
+		if (AddNick(sNick)) {
 			iRet++;
 		}
 	}
@@ -521,9 +520,8 @@ bool CChan::AddNick(const CString& sNick) {
 map<char, unsigned int> CChan::GetPermCounts() const {
 	map<char, unsigned int> mRet;
 
-	map<CString,CNick>::const_iterator it;
-	for (it = m_msNicks.begin(); it != m_msNicks.end(); ++it) {
-		CString sPerms = it->second.GetPermStr();
+	for (const auto& it : m_msNicks) {
+		CString sPerms = it.second.GetPermStr();
 
 		for (unsigned int p = 0; p < sPerms.size(); p++) {
 			mRet[sPerms[p]]++;
@@ -599,8 +597,8 @@ void CChan::SendBuffer(CClient* pClient, const CBuffer& Buffer) {
 		// Rework this if you like ...
 		if (!Buffer.IsEmpty()) {
 			const vector<CClient*> & vClients = m_pNetwork->GetClients();
-			for (size_t uClient = 0; uClient < vClients.size(); ++uClient) {
-				CClient * pUseClient = (pClient ? pClient : vClients[uClient]);
+			for (CClient* pEachClient : vClients) {
+				CClient * pUseClient = (pClient ? pClient : pEachClient);
 
 				bool bWasPlaybackActive = pUseClient->IsPlaybackActive();
 				pUseClient->SetPlaybackActive(true);
