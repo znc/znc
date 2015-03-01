@@ -1386,9 +1386,7 @@ void CClient::UserCommand(CString& sLine) {
 			return;
 		}
 
-		for (CQuery* pQuery : m_pNetwork->GetQueries()) {
-			m_pNetwork->DelQuery(pQuery->GetName());
-		}
+		m_pNetwork->ClearQueryBuffer();
 		PutStatus("All query buffers have been cleared");
 	} else if (sCommand.Equals("CLEARALLBUFFERS")) {
 		if (!m_pNetwork) {
@@ -1399,9 +1397,7 @@ void CClient::UserCommand(CString& sLine) {
 		for (CChan* pChan : m_pNetwork->GetChans()) {
 			pChan->ClearBuffer();
 		}
-		for (CQuery* pQuery : m_pNetwork->GetQueries()) {
-			m_pNetwork->DelQuery(pQuery->GetName());
-		}
+		m_pNetwork->ClearQueryBuffer();
 		PutStatus("All buffers have been cleared");
 	} else if (sCommand.Equals("SETBUFFER")) {
 		if (!m_pNetwork) {
