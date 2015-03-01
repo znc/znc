@@ -24,9 +24,7 @@
 //! @author imaginos@imaginos.net
 class CExecSock : public CZNCSock {
 public:
-	CExecSock() : CZNCSock(0) {
-		m_iPid = -1;
-	}
+	CExecSock() : CZNCSock(0), m_iPid(-1) {}
 
 	int Execute(const CString & sExec) {
 		int iReadFD, iWriteFD;

@@ -100,8 +100,7 @@ public:
 		EX_Restart
 	} EType;
 
-	CException(EType e) {
-		m_eType = e;
+	CException(EType e) : m_eType(e) {
 	}
 	virtual ~CException() {}
 
@@ -143,7 +142,7 @@ public:
 	 *
 	 *  @param uPreferredWidth If width of table is bigger than this, text in cells will be wrapped to several lines, if possible
 	 */
-	explicit CTable(size_type uPreferredWidth = 110) : m_uPreferredWidth(uPreferredWidth) {}
+	explicit CTable(size_type uPreferredWidth = 110) : m_vsHeaders(), m_vuMaxWidths(), m_vuMinWidths(), m_vbWrappable(), m_uPreferredWidth(uPreferredWidth), m_vsOutput() {}
 	virtual ~CTable() {}
 
 	/** Adds a new column to the table.
@@ -252,9 +251,7 @@ private:
 template<typename K, typename V = bool>
 class TCacheMap {
 public:
-	TCacheMap(unsigned int uTTL = 5000) {
-		m_uTTL = uTTL;
-	}
+	TCacheMap(unsigned int uTTL = 5000) : m_mItems(), m_uTTL(uTTL) {}
 
 	virtual ~TCacheMap() {}
 

@@ -51,9 +51,7 @@ class CTemplate;
 
 class CTemplateOptions {
 public:
-	CTemplateOptions() {
-		m_eEscapeFrom = CString::EASCII;
-		m_eEscapeTo = CString::EASCII;
+	CTemplateOptions() : m_eEscapeFrom(CString::EASCII), m_eEscapeTo(CString::EASCII) {
 	}
 
 	virtual ~CTemplateOptions() {}
@@ -72,13 +70,8 @@ private:
 
 class CTemplateLoopContext {
 public:
-	CTemplateLoopContext(unsigned long uFilePos, const CString& sLoopName, bool bReverse, std::vector<CTemplate*>* pRows) {
-		m_uFilePosition = uFilePos;
-		m_sName = sLoopName;
-		m_uRowIndex = 0;
-		m_bReverse = bReverse;
-		m_pvRows = pRows;
-		m_bHasData = false;
+	CTemplateLoopContext(unsigned long uFilePos, const CString& sLoopName, bool bReverse, std::vector<CTemplate*>* pRows)
+			: m_bReverse(bReverse), m_bHasData(false), m_sName(sLoopName), m_uRowIndex(0), m_uFilePosition(uFilePos), m_pvRows(pRows) {
 	}
 
 	virtual ~CTemplateLoopContext() {}
@@ -120,17 +113,13 @@ private:
 
 class CTemplate : public MCString {
 public:
-	CTemplate() : MCString(), m_spOptions(new CTemplateOptions) {
-		Init();
+	CTemplate() : CTemplate("") {
 	}
 
-	CTemplate(const CString& sFileName) : MCString(), m_sFileName(sFileName), m_spOptions(new CTemplateOptions) {
-		Init();
+	CTemplate(const CString& sFileName) : MCString(), m_pParent(nullptr), m_sFileName(sFileName), m_lsbPaths(), m_mvLoops(), m_vLoopContexts(), m_spOptions(new CTemplateOptions), m_vspTagHandlers() {
 	}
 
-	CTemplate(const std::shared_ptr<CTemplateOptions>& Options, CTemplate* pParent = nullptr) : MCString(), m_spOptions(Options) {
-		Init();
-		m_pParent = pParent;
+	CTemplate(const std::shared_ptr<CTemplateOptions>& Options, CTemplate* pParent = nullptr) : MCString(), m_pParent(pParent), m_sFileName(""), m_lsbPaths(), m_mvLoops(), m_vLoopContexts(), m_spOptions(Options), m_vspTagHandlers() {
 	}
 
 	virtual ~CTemplate();

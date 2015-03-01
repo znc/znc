@@ -30,8 +30,7 @@ using std::set;
 
 class CIRCNetworkPingTimer : public CCron {
 public:
-	CIRCNetworkPingTimer(CIRCNetwork *pNetwork) : CCron() {
-		m_pNetwork = pNetwork;
+	CIRCNetworkPingTimer(CIRCNetwork *pNetwork) : CCron(), m_pNetwork(pNetwork) {
 		SetName("CIRCNetworkPingTimer::" + m_pNetwork->GetUser()->GetUserName() + "::" + m_pNetwork->GetName());
 		Start(CIRCNetwork::PING_SLACK);
 	}

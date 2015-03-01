@@ -21,12 +21,10 @@
 using std::vector;
 using std::map;
 
-CNick::CNick() {
-	Reset();
+CNick::CNick() : m_sChanPerms(""), m_pNetwork(nullptr), m_sNick(""), m_sIdent(""), m_sHost("") {
 }
 
-CNick::CNick(const CString& sNick) {
-	Reset();
+CNick::CNick(const CString& sNick) : CNick() {
 	Parse(sNick);
 }
 

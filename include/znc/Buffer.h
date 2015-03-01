@@ -28,7 +28,7 @@ class CClient;
 
 class CBufLine {
 public:
-	CBufLine() { throw 0; } // shouldn't be called, but is needed for compilation
+	CBufLine() : CBufLine("") { throw 0; } // shouldn't be called, but is needed for compilation
 	CBufLine(const CString& sFormat, const CString& sText = "", const timeval* ts = nullptr);
 	~CBufLine();
 	CString GetLine(const CClient& Client, const MCString& msParams) const;

@@ -33,15 +33,10 @@
 
 CString CFile::m_sHomePath;
 
-CFile::CFile() {
-	m_iFD = -1;
-	ResetError();
+CFile::CFile() : CFile("") {
 }
 
-CFile::CFile(const CString& sLongName) {
-	m_iFD = -1;
-
-	ResetError();
+CFile::CFile(const CString& sLongName) : m_sBuffer(""), m_iFD(-1), m_bHadError(false), m_sLongName(""), m_sShortName("") {
 	SetFileName(sLongName);
 }
 
