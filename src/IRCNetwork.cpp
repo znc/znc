@@ -106,26 +106,40 @@ bool CIRCNetwork::IsValidNetwork(const CString& sNetwork) {
 	return true;
 }
 
-CIRCNetwork::CIRCNetwork(CUser *pUser, const CString& sName) {
-	m_pUser = nullptr;
+CIRCNetwork::CIRCNetwork(CUser *pUser, const CString& sName)
+		: m_sName(sName),
+		  m_pUser(nullptr),
+		  m_sNick(""),
+		  m_sAltNick(""),
+		  m_sIdent(""),
+		  m_sRealName(""),
+		  m_sBindHost(""),
+		  m_sEncoding(""),
+		  m_sQuitMsg(""),
+		  m_ssTrustedFingerprints(),
+		  m_pModules(new CModules),
+		  m_vClients(),
+		  m_pIRCSock(nullptr),
+		  m_vChans(),
+		  m_vQueries(),
+		  m_sChanPrefixes(""),
+		  m_bIRCConnectEnabled(true),
+		  m_bStripControls(false),
+		  m_sIRCServer(""),
+		  m_vServers(),
+		  m_uServerIdx(0),
+		  m_IRCNick(),
+		  m_bIRCAway(false),
+		  m_fFloodRate(1),
+		  m_uFloodBurst(4),
+		  m_RawBuffer(),
+		  m_MotdBuffer(),
+		  m_NoticeBuffer(),
+		  m_pPingTimer(nullptr),
+		  m_pJoinTimer(nullptr),
+		  m_uJoinDelay(0)
+{
 	SetUser(pUser);
-	m_sName = sName;
-
-	m_pModules = new CModules;
-
-	m_pIRCSock = nullptr;
-	m_uServerIdx = 0;
-
-	m_sChanPrefixes = "";
-	m_bIRCAway = false;
-	m_sEncoding = "";
-
-	m_fFloodRate = 1;
-	m_uFloodBurst = 4;
-
-	m_uJoinDelay = 0;
-
-	SetStripControls(false);
 
 	m_RawBuffer.SetLineCount(100, true);   // This should be more than enough raws, especially since we are buffering the MOTD separately
 	m_MotdBuffer.SetLineCount(200, true);  // This should be more than enough motd lines
@@ -140,23 +154,7 @@ CIRCNetwork::CIRCNetwork(CUser *pUser, const CString& sName) {
 	SetIRCConnectEnabled(true);
 }
 
-CIRCNetwork::CIRCNetwork(CUser *pUser, const CIRCNetwork &Network) {
-	m_pUser = nullptr;
-	SetUser(pUser);
-
-	m_pModules = new CModules;
-
-	m_pIRCSock = nullptr;
-	m_uServerIdx = 0;
-
-	m_sChanPrefixes = "";
-	m_bIRCAway = false;
-	m_sEncoding = "";
-
-	m_RawBuffer.SetLineCount(100, true);   // This should be more than enough raws, especially since we are buffering the MOTD separately
-	m_MotdBuffer.SetLineCount(200, true);  // This should be more than enough motd lines
-	m_NoticeBuffer.SetLineCount(250, true);
-
+CIRCNetwork::CIRCNetwork(CUser *pUser, const CIRCNetwork &Network) : CIRCNetwork(pUser, "") {
 	Clone(Network);
 }
 
