@@ -84,7 +84,7 @@ public:
 		}
 
 		if (GetNV("IdentifyCmd").empty()) {
-			SetNV("IdentifyCmd", "PRIVMSG NickServ :IDENTIFY {password}");
+			SetNV("IdentifyCmd", "NICKSERV IDENTIFY {password}");
 		}
 
 		return true;
