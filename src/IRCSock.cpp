@@ -53,26 +53,37 @@ bool CIRCSock::IsFloodProtected(double fRate) {
 	return fRate > FLOOD_MINIMAL_RATE;
 }
 
-CIRCSock::CIRCSock(CIRCNetwork* pNetwork) : CIRCSocket() {
-	m_pNetwork = pNetwork;
-	m_bAuthed = false;
-	m_bNamesx = false;
-	m_bUHNames = false;
-	m_fFloodRate = m_pNetwork->GetFloodRate();
-	m_uFloodBurst = m_pNetwork->GetFloodBurst();
-	m_bFloodProtection = IsFloodProtected(m_fFloodRate);
-	m_iSendsAllowed = m_uFloodBurst;
+CIRCSock::CIRCSock(CIRCNetwork* pNetwork)
+		: CIRCSocket(),
+		  m_bAuthed(false),
+		  m_bNamesx(false),
+		  m_bUHNames(false),
+		  m_sPerms("*!@%+"),
+		  m_sPermModes("qaohv"),
+		  m_scUserModes(),
+		  m_mueChanModes(),
+		  m_pNetwork(pNetwork),
+		  m_Nick(),
+		  m_sPass(""),
+		  m_msChans(),
+		  m_uMaxNickLen(9),
+		  m_uCapPaused(0),
+		  m_ssAcceptedCaps(),
+		  m_ssPendingCaps(),
+		  m_lastCTCP(0),
+		  m_uNumCTCP(0),
+		  m_mISupport(),
+		  m_vsSendQueue(),
+		  m_iSendsAllowed(pNetwork->GetFloodBurst()),
+		  m_uFloodBurst(pNetwork->GetFloodBurst()),
+		  m_fFloodRate(pNetwork->GetFloodRate()),
+		  m_bFloodProtection(IsFloodProtected(pNetwork->GetFloodRate()))
+{
 	EnableReadLine();
 	m_Nick.SetIdent(m_pNetwork->GetIdent());
 	m_Nick.SetHost(m_pNetwork->GetBindHost());
 	SetEncoding(m_pNetwork->GetEncoding());
 
-	m_uMaxNickLen = 9;
-	m_uCapPaused = 0;
-	m_lastCTCP = 0;
-	m_uNumCTCP = 0;
-	m_sPerms = "*!@%+";
-	m_sPermModes = "qaohv";
 	m_mueChanModes['b'] = ListArg;
 	m_mueChanModes['e'] = ListArg;
 	m_mueChanModes['I'] = ListArg;

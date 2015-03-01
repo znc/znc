@@ -39,7 +39,7 @@ static CString ZNC_DefaultCipher() {
 }
 #endif
 
-CZNCSock::CZNCSock(int timeout) : Csock(timeout) {
+CZNCSock::CZNCSock(int timeout) : Csock(timeout), m_HostToVerifySSL(""), m_ssTrustedFingerprints(), m_ssCertVerificationErrors() {
 #ifdef HAVE_LIBSSL
 	DisableSSLCompression();
 	FollowSSLCipherServerPreference();
@@ -52,7 +52,7 @@ CZNCSock::CZNCSock(int timeout) : Csock(timeout) {
 #endif
 }
 
-CZNCSock::CZNCSock(const CString& sHost, u_short port, int timeout) : Csock(sHost, port, timeout) {
+CZNCSock::CZNCSock(const CString& sHost, u_short port, int timeout) : Csock(sHost, port, timeout), m_HostToVerifySSL(""), m_ssTrustedFingerprints(), m_ssCertVerificationErrors() {
 #ifdef HAVE_LIBSSL
 	DisableSSLCompression();
 	FollowSSLCipherServerPreference();
@@ -398,15 +398,13 @@ void CSockManager::FinishConnect(const CString& sHostname, u_short iPort, const 
 
 
 /////////////////// CSocket ///////////////////
-CSocket::CSocket(CModule* pModule) : CZNCSock() {
-	m_pModule = pModule;
+CSocket::CSocket(CModule* pModule) : CZNCSock(), m_pModule(pModule) {
 	if (m_pModule) m_pModule->AddSocket(this);
 	EnableReadLine();
 	SetMaxBufferThreshold(10240);
 }
 
-CSocket::CSocket(CModule* pModule, const CString& sHostname, unsigned short uPort, int iTimeout) : CZNCSock(sHostname, uPort, iTimeout) {
-	m_pModule = pModule;
+CSocket::CSocket(CModule* pModule, const CString& sHostname, unsigned short uPort, int iTimeout) : CZNCSock(sHostname, uPort, iTimeout), m_pModule(pModule) {
 	if (m_pModule) m_pModule->AddSocket(this);
 	EnableReadLine();
 	SetMaxBufferThreshold(10240);
