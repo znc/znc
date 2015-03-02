@@ -16,6 +16,7 @@
 
 #include <znc/IRCNetwork.h>
 #include <znc/IRCSock.h>
+#include <algorithm>
 
 static const struct {
 	const char *szName;
@@ -23,8 +24,7 @@ static const struct {
 	const bool  bDefault;
 } SupportedMechanisms[] = {
 	{ "EXTERNAL",           "TLS certificate, for use with the *cert module", false },
-	{ "PLAIN",              "Plain text negotiation, this should work always if the network supports SASL", true },
-	{ nullptr, nullptr, false }
+	{ "PLAIN",              "Plain text negotiation, this should work always if the network supports SASL", true }
 };
 
 #define NV_REQUIRE_AUTH     "require_auth"
@@ -86,10 +86,10 @@ public:
 		Mechanisms.AddColumn("Mechanism");
 		Mechanisms.AddColumn("Description");
 
-		for (size_t i = 0; SupportedMechanisms[i].szName != nullptr; i++) {
+		for (const auto& it : SupportedMechanisms) {
 			Mechanisms.AddRow();
-			Mechanisms.SetCell("Mechanism",   SupportedMechanisms[i].szName);
-			Mechanisms.SetCell("Description", SupportedMechanisms[i].szDescription);
+			Mechanisms.SetCell("Mechanism",   it.szName);
+			Mechanisms.SetCell("Description", it.szDescription);
 		}
 
 		PutModule("The following mechanisms are available:");
@@ -137,8 +137,8 @@ public:
 	}
 
 	bool SupportsMechanism(const CString& sMechanism) const {
-		for (size_t i = 0; SupportedMechanisms[i].szName != nullptr; i++) {
-			if (sMechanism.Equals(SupportedMechanisms[i].szName)) {
+		for (const auto& it : SupportedMechanisms) {
+			if (sMechanism.Equals(it.szName)) {
 				return true;
 			}
 		}
@@ -150,13 +150,13 @@ public:
 		if (GetNV(NV_MECHANISMS).empty()) {
 			CString sDefaults = "";
 
-			for (size_t i = 0; SupportedMechanisms[i].szName != nullptr; i++) {
-				if (SupportedMechanisms[i].bDefault) {
+			for (const auto& it : SupportedMechanisms) {
+				if (it.bDefault) {
 					if (!sDefaults.empty()) {
 						sDefaults += " ";
 					}
 
-					sDefaults += SupportedMechanisms[i].szName;
+					sDefaults += it.szName;
 				}
 			}
 
@@ -256,6 +256,51 @@ public:
 	void OnIRCDisconnected() override {
 		m_bAuthenticated = false;
 	}
+
+	CString GetWebMenuTitle() override { return "SASL"; }
+
+	bool OnWebRequest(CWebSock& WebSock, const CString& sPageName, CTemplate& Tmpl) override {
+		if (sPageName != "index") {
+			// only accept requests to index
+			return false;
+		}
+
+		if (WebSock.IsPost()) {
+			SetNV("username", WebSock.GetRawParam("username"));
+			CString sPassword = WebSock.GetRawParam("password");
+			if (!sPassword.empty()) {
+				SetNV("password", sPassword);
+			}
+			SetNV(NV_REQUIRE_AUTH, WebSock.GetRawParam(NV_REQUIRE_AUTH));
+
+			VCString vsMechanisms;
+			for (const auto& it : SupportedMechanisms) {
+				bool bChecked = WebSock.GetRawParam(it.szName).ToBool();
+				if (bChecked) {
+					vsMechanisms.push_back(it.szName);
+				}
+			}
+			SetNV(NV_MECHANISMS, CString(" ").Join(vsMechanisms.begin(), vsMechanisms.end()));
+		}
+
+		Tmpl["Username"] = GetNV("username");
+		Tmpl["Password"] = GetNV("password");
+		Tmpl["RequireAuth"] = GetNV(NV_REQUIRE_AUTH);
+
+		VCString vsMechanisms;
+		GetMechanismsString().Split(" ", vsMechanisms);
+
+		for (const auto& it : SupportedMechanisms) {
+			CTemplate& Row = Tmpl.AddRow("MechanismLoop");
+			CString sName(it.szName);
+			Row["Name"] = sName;
+			Row["Description"] = CString(it.szDescription);
+			Row["Checked"] = CString(std::find(vsMechanisms.begin(), vsMechanisms.end(), sName) != vsMechanisms.end());
+		}
+
+		return true;
+	}
+
 private:
 	Mechanisms m_Mechanisms;
 	bool m_bAuthenticated;
