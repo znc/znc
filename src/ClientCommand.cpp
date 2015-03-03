@@ -423,6 +423,67 @@ void CClient::UserCommand(CString& sLine) {
 			PutStatus("There were [" + CString(sChans.size()) + "] channels matching [" + sPatterns + "]");
 			PutStatus("Disabled [" + CString(uDisabled) + "] channels");
 		}
+	} else if (sCommand.Equals("SHOWCHAN")) {
+		if (!m_pNetwork) {
+			PutStatus("You must be connected with a network to use this command");
+			return;
+		}
+
+		CString sChan = sLine.Token(1, true);
+		if (sChan.empty()) {
+			PutStatus("Usage: ShowChan <#chan>");
+			return;
+		}
+
+		CChan* pChan = m_pNetwork->FindChan(sChan);
+		if (!pChan) {
+			PutStatus("No such channel [" + sChan + "]");
+			return;
+		}
+		sChan = pChan->GetPermStr() + pChan->GetName();
+		CString sStatus = pChan->IsOn() ? (pChan->IsDetached() ? "Detached" : "Joined") : (pChan->IsDisabled() ? "Disabled" : "Trying");
+
+		CTable Table;
+		Table.AddColumn(sChan, false);
+		Table.AddColumn(sStatus);
+
+		Table.AddRow();
+		Table.SetCell(sChan, "InConfig");
+		Table.SetCell(sStatus, CString(pChan->InConfig() ? "yes" : "no"));
+
+		Table.AddRow();
+		Table.SetCell(sChan, "Buffer");
+		Table.SetCell(sStatus, CString(pChan->GetBuffer().Size()) + "/" + CString(pChan->GetBufferCount()) + CString(pChan->HasBufferCountSet() ? "" : " (default)"));
+
+		Table.AddRow();
+		Table.SetCell(sChan, "AutoClearChanBuffer");
+		Table.SetCell(sStatus, CString(pChan->AutoClearChanBuffer() ? "yes" : "no") + CString(pChan->HasAutoClearChanBufferSet() ? "" : " (default)"));
+
+		if (pChan->IsOn()) {
+			Table.AddRow();
+			Table.SetCell(sChan, "Topic");
+			Table.SetCell(sStatus, pChan->GetTopic());
+
+			Table.AddRow();
+			Table.SetCell(sChan, "Modes");
+			Table.SetCell(sStatus, pChan->GetModeString());
+
+			Table.AddRow();
+			Table.SetCell(sChan, "Users");
+
+			VCString vsUsers;
+			vsUsers.push_back("All: " + CString(pChan->GetNickCount()));
+
+			CIRCSock* pIRCSock = m_pNetwork->GetIRCSock();
+			const CString& sPerms = pIRCSock ? pIRCSock->GetPerms() : "";
+			map<char, unsigned int> mPerms = pChan->GetPermCounts();
+			for (char cPerm : sPerms) {
+				vsUsers.push_back(CString(cPerm) + ": " + CString(mPerms[cPerm]));
+			}
+			Table.SetCell(sStatus, CString(", ").Join(vsUsers.begin(), vsUsers.end()));
+		}
+
+		PutStatus(Table);
 	} else if (sCommand.Equals("LISTCHANS")) {
 		if (!m_pNetwork) {
 			PutStatus("You must be connected with a network to use this command");
@@ -1633,6 +1694,7 @@ void CClient::HelpUser(const CString& sFilter) {
 	AddCommandHelp(Table, "DelTrustedServerFingerprint", "<fi:ng:er>", "Delete a trusted server SSL certificate from current IRC network.", sFilter);
 	AddCommandHelp(Table, "ListTrustedServerFingerprints", "", "List all trusted server SSL certificates of current IRC network.", sFilter);
 
+	AddCommandHelp(Table, "ShowChan", "<#chan>", "Show channel details", sFilter);
 	AddCommandHelp(Table, "EnableChan", "<#chans>", "Enable channels", sFilter);
 	AddCommandHelp(Table, "DisableChan", "<#chans>", "Disable channels", sFilter);
 	AddCommandHelp(Table, "Detach", "<#chans>", "Detach from channels", sFilter);
