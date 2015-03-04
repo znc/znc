@@ -208,8 +208,6 @@ void CSockManager::StartTDNSThread(TDNSTask* task, bool bBind) {
 	arg->sHostname = sHostname;
 	arg->task      = task;
 	arg->bBind     = bBind;
-	arg->iRes      = 0;
-	arg->aiResult  = nullptr;
 	arg->pManager  = this;
 
 	CThreadPool::Get().addJob(arg);
@@ -363,13 +361,9 @@ void CSockManager::Connect(const CString& sHostname, u_short iPort, const CStrin
 	task->bSSL        = bSSL;
 	task->sBindhost   = sBindHost;
 	task->pcSock      = pcSock;
-	task->aiTarget    = nullptr;
-	task->aiBind      = nullptr;
-	task->bDoneTarget = false;
 	if (sBindHost.empty()) {
 		task->bDoneBind = true;
 	} else {
-		task->bDoneBind = false;
 		StartTDNSThread(task, true);
 	}
 	StartTDNSThread(task, false);
