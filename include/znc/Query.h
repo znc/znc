@@ -31,6 +31,9 @@ public:
 	CQuery(const CString& sName, CIRCNetwork* pNetwork);
 	~CQuery();
 
+	CQuery(const CQuery&) = delete;
+	CQuery& operator=(const CQuery&) = delete;
+
 	// Buffer
 	const CBuffer& GetBuffer() const { return m_Buffer; }
 	unsigned int GetBufferCount() const { return m_Buffer.GetLineCount(); }

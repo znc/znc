@@ -222,6 +222,9 @@ public:
 	CBlowfish(const CString & sPassword, int iEncrypt, const CString & sIvec = "");
 	~CBlowfish();
 
+	CBlowfish(const CBlowfish&) = default;
+	CBlowfish& operator=(const CBlowfish&) = default;
+
 	//! output must be freed
 	static unsigned char *MD5(const unsigned char *input, u_int ilen);
 

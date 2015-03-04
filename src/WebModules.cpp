@@ -53,6 +53,9 @@ public:
 	CWebAuth(CWebSock* pWebSock, const CString& sUsername, const CString& sPassword, bool bBasic);
 	virtual ~CWebAuth() {}
 
+	CWebAuth(const CWebAuth&) = delete;
+	CWebAuth& operator=(const CWebAuth&) = delete;
+
 	void SetWebSock(CWebSock* pWebSock) { m_pWebSock = pWebSock; }
 	void AcceptedLogin(CUser& User) override;
 	void RefusedLogin(const CString& sReason) override;

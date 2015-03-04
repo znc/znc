@@ -34,6 +34,9 @@ public:
 	}
 	virtual ~CUserTimer() {}
 
+	CUserTimer(const CUserTimer&) = delete;
+	CUserTimer& operator=(const CUserTimer&) = delete;
+
 private:
 protected:
 	void RunJob() override {

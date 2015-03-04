@@ -140,6 +140,9 @@ private:
 	struct TDNSTask {
 		TDNSTask() : sHostname(""), iPort(0), sSockName(""), iTimeout(0), bSSL(false), sBindhost(""), pcSock(nullptr), bDoneTarget(false), bDoneBind(false), aiTarget(nullptr), aiBind(nullptr) {}
 
+		TDNSTask(const TDNSTask&) = delete;
+		TDNSTask& operator=(const TDNSTask&) = delete;
+
 		CString   sHostname;
 		u_short   iPort;
 		CString   sSockName;
@@ -156,6 +159,9 @@ private:
 	class CDNSJob : public CJob {
 	public:
 		CDNSJob() : sHostname(""), task(nullptr), pManager(nullptr), bBind(false), iRes(0), aiResult(nullptr) {}
+
+		CDNSJob(const CDNSJob&) = delete;
+		CDNSJob& operator=(const CDNSJob&) = delete;
 
 		CString       sHostname;
 		TDNSTask*     task;
