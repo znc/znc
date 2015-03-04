@@ -131,9 +131,6 @@ public:
 	void SetIRCConnectEnabled(bool b);
 	bool GetIRCConnectEnabled() const { return m_bIRCConnectEnabled; }
 
-	void SetStripControls(bool b);
-	bool StripControls() const { return m_bStripControls; }
-
 	CIRCSock* GetIRCSock() { return m_pIRCSock; }
 	const CIRCSock* GetIRCSock() const { return m_pIRCSock; }
 	const CString& GetIRCServer() const;
@@ -227,7 +224,6 @@ protected:
 	CString            m_sChanPrefixes;
 
 	bool               m_bIRCConnectEnabled;
-	bool               m_bStripControls;
 	CString            m_sIRCServer;
 	std::vector<CServer*>   m_vServers;
 	size_t             m_uServerIdx; ///< Index in m_vServers of our current server + 1

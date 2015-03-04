@@ -124,7 +124,6 @@ CIRCNetwork::CIRCNetwork(CUser *pUser, const CString& sName)
 		  m_vQueries(),
 		  m_sChanPrefixes(""),
 		  m_bIRCConnectEnabled(true),
-		  m_bStripControls(false),
 		  m_sIRCServer(""),
 		  m_vServers(),
 		  m_uServerIdx(0),
@@ -174,7 +173,6 @@ void CIRCNetwork::Clone(const CIRCNetwork& Network, bool bCloneName) {
 	SetBindHost(Network.GetBindHost());
 	SetEncoding(Network.GetEncoding());
 	SetQuitMsg(Network.GetQuitMsg());
-	SetStripControls(Network.StripControls());
 	m_ssTrustedFingerprints = Network.m_ssTrustedFingerprints;
 
 	// Servers
@@ -343,7 +341,6 @@ bool CIRCNetwork::ParseConfig(CConfig *pConfig, CString& sError, bool bUpgrade) 
 		};
 		TOption<bool> BoolOptions[] = {
 			{ "ircconnectenabled", &CIRCNetwork::SetIRCConnectEnabled },
-			{ "stripcontrols", &CIRCNetwork::SetStripControls },
 		};
 		TOption<double> DoubleOptions[] = {
 			{ "floodrate", &CIRCNetwork::SetFloodRate },
@@ -498,7 +495,6 @@ CConfig CIRCNetwork::ToConfig() const {
 	config.AddKeyValuePair("FloodBurst", CString(GetFloodBurst()));
 	config.AddKeyValuePair("JoinDelay", CString(GetJoinDelay()));
 	config.AddKeyValuePair("Encoding", m_sEncoding);
-	config.AddKeyValuePair("StripControls", CString(StripControls()));
 
 	if (!m_sQuitMsg.empty()) {
 		config.AddKeyValuePair("QuitMsg", m_sQuitMsg);
@@ -1256,14 +1252,6 @@ void CIRCNetwork::CheckIRCConnect() {
 	// Do we want to connect?
 	if (GetIRCConnectEnabled() && GetIRCSock() == nullptr)
 		CZNC::Get().AddNetworkToQueue(this);
-}
-
-void CIRCNetwork::SetStripControls(bool b) {
-	for (CChan* pChan : GetChans()) {
-		pChan->InheritStripControls(b);
-	}
-
-	m_bStripControls = b;
 }
 
 bool CIRCNetwork::PutIRC(const CString& sLine) {

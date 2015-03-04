@@ -120,8 +120,6 @@ public:
 	void SetDefaultModes(const CString& s) { m_sDefaultModes = s; }
 	void SetAutoClearChanBuffer(bool b);
 	void InheritAutoClearChanBuffer(bool b);
-	void SetStripControls(bool b);
-	void InheritStripControls(bool b);
 	void SetDetached(bool b = true) { m_bDetached = b; }
 	void SetInConfig(bool b);
 	void SetCreationDate(unsigned long u) { m_ulCreationDate = u; }
@@ -149,14 +147,12 @@ public:
 	size_t GetNickCount() const { return m_msNicks.size(); }
 	bool AutoClearChanBuffer() const { return m_bAutoClearChanBuffer; }
 	bool IsDetached() const { return m_bDetached; }
-	bool StripControls() const { return m_bStripControls; }
 	bool InConfig() const { return m_bInConfig; }
 	unsigned long GetCreationDate() const { return m_ulCreationDate; }
 	bool IsDisabled() const { return m_bDisabled; }
 	unsigned int GetJoinTries() const { return m_uJoinTries; }
 	bool HasBufferCountSet() const { return m_bHasBufferCountSet; }
 	bool HasAutoClearChanBufferSet() const { return m_bHasAutoClearChanBufferSet; }
-	bool HasStripControlsSet() const { return m_bHasStripControlsSet; }
 	// !Getters
 private:
 protected:
@@ -167,8 +163,6 @@ protected:
 	bool                         m_bDisabled;
 	bool                         m_bHasBufferCountSet;
 	bool                         m_bHasAutoClearChanBufferSet;
-	bool                         m_bStripControls;
-	bool                         m_bHasStripControlsSet;
 	CString                      m_sName;
 	CString                      m_sKey;
 	CString                      m_sTopic;
