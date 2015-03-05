@@ -1,4 +1,9 @@
 <div class="encoding-settings">
+	<? IF EncodingDisabled ?>
+	<div>
+		ZNC is compiled without encodings support. <a href="http://icu-project.org/">ICU</a> is required for it.
+	</div>
+	<? ENDIF ?>
 	<div>
 		<div class="checkboxandlabel checkbox">
 			<input type="radio" name="encoding_utf" id="encoding_utf_legacy" value="legacy" <? IF EncodingUtf == "legacy" ?>checked="checked"<? ENDIF ?> <? IF EncodingDisabled ?>disabled="disabled"<? ENDIF ?> />
