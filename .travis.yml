@@ -61,7 +61,7 @@ script:
     - cd build
     - ../configure --enable-perl --enable-python --enable-tcl --enable-cyrus --enable-charset $CFGFLAGS CXXFLAGS="$CXXFLAGS $MYCXXFLAGS" LDFLAGS="$LDFLAGS $MYLDFLAGS"
     - cat config.log
-    - make V=1 -j3
+    - make V=1
     - make V=1 test
     - sudo make install
     - cd ..
