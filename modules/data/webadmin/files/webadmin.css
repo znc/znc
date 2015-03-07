@@ -8,8 +8,8 @@
 }
 
 table .sorted::after {
-	content:" ▼";
+	content:" ▾";
 }
 table .reverse-sorted::after {
-	content:" ▲";
+	content:" ▴";
 }
