@@ -30,8 +30,8 @@ class CPerlModule : public CModule {
 	VWebSubPages* _GetSubPages();
 public:
 	CPerlModule(CUser* pUser, CIRCNetwork* pNetwork, const CString& sModName, const CString& sDataPath,
-			SV* perlObj)
-			: CModule(nullptr, pUser, pNetwork, sModName, sDataPath) {
+			CModInfo::EModuleType eType, SV* perlObj)
+			: CModule(nullptr, pUser, pNetwork, sModName, sDataPath, eType) {
 		m_perlObj = newSVsv(perlObj);
 	}
 	SV* GetPerlObj() {

@@ -538,12 +538,11 @@ def load_module(modname, args, module_type, user, network, retmsg, modpython):
         return 1
 
     module = cl()
-    module._cmod = CreatePyModule(user, network, modname, datapath, module, modpython)
+    module._cmod = CreatePyModule(user, network, modname, datapath, module_type, module, modpython)
     module.nv = ModuleNV(module._cmod)
     module.SetDescription(cl.description)
     module.SetArgs(args)
     module.SetModPath(pymodule.__file__)
-    module.SetType(module_type)
     _py_modules.add(module)
 
     if module_type == CModInfo.UserModule:
