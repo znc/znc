@@ -32,8 +32,8 @@ class CPyModule : public CModule {
 	VWebSubPages* _GetSubPages();
 public:
 	CPyModule(CUser* pUser, CIRCNetwork* pNetwork, const CString& sModName, const CString& sDataPath,
-			PyObject* pyObj, CModPython* pModPython)
-			: CModule(nullptr, pUser, pNetwork, sModName, sDataPath) {
+			CModInfo::EModuleType eType, PyObject* pyObj, CModPython* pModPython)
+			: CModule(nullptr, pUser, pNetwork, sModName, sDataPath, eType) {
 		m_pyObj = pyObj;
 		Py_INCREF(pyObj);
 		m_pModPython = pModPython;
@@ -145,8 +145,8 @@ static inline CPyModule* AsPyModule(CModule* p) {
 	return dynamic_cast<CPyModule*>(p);
 }
 
-inline CPyModule* CreatePyModule(CUser* pUser, CIRCNetwork* pNetwork, const CString& sModName, const CString& sDataPath, PyObject* pyObj, CModPython* pModPython) {
-	return new CPyModule(pUser, pNetwork, sModName, sDataPath, pyObj, pModPython);
+inline CPyModule* CreatePyModule(CUser* pUser, CIRCNetwork* pNetwork, const CString& sModName, const CString& sDataPath, CModInfo::EModuleType eType, PyObject* pyObj, CModPython* pModPython) {
+	return new CPyModule(pUser, pNetwork, sModName, sDataPath, eType, pyObj, pModPython);
 }
 
 class CPyTimer : public CTimer {

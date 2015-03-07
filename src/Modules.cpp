@@ -124,15 +124,28 @@ const CString& CTimer::GetDescription() const { return m_sDescription; }
 /////////////////// !Timer ///////////////////
 
 
-CModule::CModule(ModHandle pDLL, CUser* pUser, CIRCNetwork* pNetwork, const CString& sModName, const CString& sDataDir) {
-	m_pDLL = pDLL;
-	m_pManager = &(CZNC::Get().GetManager());;
-	m_pUser = pUser;
-	m_pNetwork = pNetwork;
-	m_pClient = nullptr;
-	m_sModName = sModName;
-	m_sDataDir = sDataDir;
-
+CModule::CModule(ModHandle pDLL, CUser* pUser, CIRCNetwork* pNetwork, const CString& sModName, const CString& sDataDir, CModInfo::EModuleType eType)
+		: m_eType(eType),
+		  m_sDescription(""),
+		  m_sTimers(),
+		  m_sSockets(),
+#ifdef HAVE_PTHREAD
+		  m_sJobs(),
+#endif
+		  m_pDLL(pDLL),
+		  m_pManager(&(CZNC::Get().GetManager())),
+		  m_pUser(pUser),
+		  m_pNetwork(pNetwork),
+		  m_pClient(nullptr),
+		  m_sModName(sModName),
+		  m_sDataDir(sDataDir),
+		  m_sSavePath(""),
+		  m_sArgs(""),
+		  m_sModPath(""),
+		  m_mssRegistry(),
+		  m_vSubPages(),
+		  m_mCommands()
+{
 	if (m_pNetwork) {
 		m_sSavePath = m_pNetwork->GetNetworkPath() + "/moddata/" + m_sModName;
 	} else if (m_pUser) {
@@ -1023,9 +1036,8 @@ bool CModules::LoadModule(const CString& sModule, const CString& sArgs, CModInfo
 		return false;
 	}
 
-	CModule* pModule = Info.GetLoader()(p, pUser, pNetwork, sModule, sDataPath);
+	CModule* pModule = Info.GetLoader()(p, pUser, pNetwork, sModule, sDataPath, eType);
 	pModule->SetDescription(Info.GetDescription());
-	pModule->SetType(eType);
 	pModule->SetArgs(sArgs);
 	pModule->SetModPath(CDir::ChangeDir(CZNC::Get().GetCurPath(), sModPath));
 	push_back(pModule);

@@ -41,6 +41,8 @@ class CIRCFloodTimer : public CCron {
 		CIRCFloodTimer(CIRCSock* pSock) : m_pSock(pSock) {
 			StartMaxCycles(m_pSock->m_fFloodRate, 0);
 		}
+		CIRCFloodTimer(const CIRCFloodTimer&) = delete;
+		CIRCFloodTimer& operator=(const CIRCFloodTimer&) = delete;
 		void RunJob() override {
 			if (m_pSock->m_iSendsAllowed < m_pSock->m_uFloodBurst) {
 				m_pSock->m_iSendsAllowed++;

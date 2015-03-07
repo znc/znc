@@ -37,6 +37,9 @@ public:
 
 	virtual ~CIRCNetworkPingTimer() {}
 
+	CIRCNetworkPingTimer(const CIRCNetworkPingTimer&) = delete;
+	CIRCNetworkPingTimer& operator=(const CIRCNetworkPingTimer&) = delete;
+
 protected:
 	void RunJob() override {
 		CIRCSock* pIRCSock = m_pNetwork->GetIRCSock();
@@ -65,6 +68,9 @@ public:
 	}
 
 	virtual ~CIRCNetworkJoinTimer() {}
+
+	CIRCNetworkJoinTimer(const CIRCNetworkJoinTimer&) = delete;
+	CIRCNetworkJoinTimer& operator=(const CIRCNetworkJoinTimer&) = delete;
 
 	void Delay(unsigned short int uDelay) {
 		m_bDelayed = true;

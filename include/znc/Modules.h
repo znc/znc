@@ -49,16 +49,6 @@ class CModInfo;
 #endif
 #endif
 
-typedef void* ModHandle;
-
-template<class M> void TModInfo(CModInfo& Info) {}
-
-template<class M> CModule* TModLoad(ModHandle p, CUser* pUser,
-		CIRCNetwork* pNetwork, const CString& sModName,
-		const CString& sModPath) {
-	return new M(p, pUser, pNetwork, sModName, sModPath);
-}
-
 #if HAVE_VISIBILITY
 # define MODULE_EXPORT __attribute__((__visibility__("default")))
 #else
@@ -97,8 +87,8 @@ template<class M> CModule* TModLoad(ModHandle p, CUser* pUser,
  */
 #define MODCONSTRUCTOR(CLASS) \
 	CLASS(ModHandle pDLL, CUser* pUser, CIRCNetwork* pNetwork, const CString& sModName, \
-			const CString& sModPath) \
-			: CModule(pDLL, pUser, pNetwork, sModName, sModPath)
+			const CString& sModPath, CModInfo::EModuleType eType) \
+			: CModule(pDLL, pUser, pNetwork, sModName, sModPath, eType)
 
 // User Module Macros
 /** This works exactly like MODULEDEFS, but for user modules. */
@@ -209,25 +199,30 @@ protected:
 };
 #endif
 
+typedef void* ModHandle;
+
 class CModInfo {
 public:
-	typedef CModule* (*ModLoader)(ModHandle p, CUser* pUser, CIRCNetwork* pNetwork, const CString& sModName, const CString& sModPath);
-
 	typedef enum {
 		GlobalModule,
 		UserModule,
 		NetworkModule
 	} EModuleType;
 
-	CModInfo() {
-		m_fLoader = nullptr;
-		m_bHasArgs = false;
+	typedef CModule* (*ModLoader)(ModHandle p, CUser* pUser, CIRCNetwork* pNetwork, const CString& sModName, const CString& sModPath, EModuleType eType);
+
+	CModInfo() : CModInfo("", "", NetworkModule) {
 	}
-	CModInfo(const CString& sName, const CString& sPath, EModuleType eType) {
-		m_sName = sName;
-		m_sPath = sPath;
-		m_fLoader = nullptr;
-		m_bHasArgs = false;
+	CModInfo(const CString& sName, const CString& sPath, EModuleType eType)
+			: m_seType(),
+			  m_eDefaultType(eType),
+			  m_sName(sName),
+			  m_sPath(sPath),
+			  m_sDescription(""),
+			  m_sWikiPage(""),
+			  m_sArgsHelpText(""),
+			  m_bHasArgs(false),
+			  m_fLoader(nullptr) {
 	}
 	~CModInfo() {}
 
@@ -285,6 +280,14 @@ protected:
 	bool            m_bHasArgs;
 	ModLoader       m_fLoader;
 };
+
+template<class M> void TModInfo(CModInfo& Info) {}
+
+template<class M> CModule* TModLoad(ModHandle p, CUser* pUser,
+		CIRCNetwork* pNetwork, const CString& sModName,
+		const CString& sModPath, CModInfo::EModuleType eType) {
+	return new M(p, pUser, pNetwork, sModName, sModPath, eType);
+}
 
 /** A helper class for handling commands in modules. */
 class CModCommand {
@@ -356,7 +359,7 @@ private:
 class CModule {
 public:
 	CModule(ModHandle pDLL, CUser* pUser, CIRCNetwork* pNetwork, const CString& sModName,
-			const CString& sDataDir);
+			const CString& sDataDir, CModInfo::EModuleType eType = CModInfo::NetworkModule); // TODO: remove default value in ZNC 2.x
 	virtual ~CModule();
 
 	CModule(const CModule&) = delete;
