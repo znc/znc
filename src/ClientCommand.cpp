@@ -69,8 +69,6 @@ void CClient::UserCommand(CString& sLine) {
 		}
 
 		const map<CString,CNick>& msNicks = pChan->GetNicks();
-		CIRCSock* pIRCSock = m_pNetwork->GetIRCSock();
-		const CString& sPerms = (pIRCSock) ? pIRCSock->GetPerms() : "";
 
 		if (msNicks.empty()) {
 			PutStatus("No nicks on [" + sChan + "]");
@@ -78,31 +76,13 @@ void CClient::UserCommand(CString& sLine) {
 		}
 
 		CTable Table;
-
-		for (unsigned int p = 0; p < sPerms.size(); p++) {
-			CString sPerm;
-			sPerm += sPerms[p];
-			Table.AddColumn(sPerm);
-		}
-
 		Table.AddColumn("Nick");
-		Table.AddColumn("Ident");
-		Table.AddColumn("Host");
+		Table.AddColumn("Mask");
 
 		for (const auto& it : msNicks) {
 			Table.AddRow();
-
-			for (unsigned int b = 0; b < sPerms.size(); b++) {
-				if (it.second.HasPerm(sPerms[b])) {
-					CString sPerm;
-					sPerm += sPerms[b];
-					Table.SetCell(sPerm, sPerm);
-				}
-			}
-
-			Table.SetCell("Nick", it.second.GetNick());
-			Table.SetCell("Ident", it.second.GetIdent());
-			Table.SetCell("Host", it.second.GetHost());
+			Table.SetCell("Nick", it.second.GetPermStr() + it.second.GetNick());
+			Table.SetCell("Mask", it.second.GetHostMask());
 		}
 
 		PutStatus(Table);
