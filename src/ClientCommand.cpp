@@ -196,37 +196,14 @@ void CClient::UserCommand(CString& sLine) {
 		CTable Table;
 		Table.AddColumn("Username");
 		Table.AddColumn("Network");
-		Table.AddColumn("Clients");
-		Table.AddColumn("OnIRC");
-		Table.AddColumn("IRC Server");
-		Table.AddColumn("IRC User");
-		Table.AddColumn("Channels");
 
 		for (const auto& it : msUsers) {
-			Table.AddRow();
-			Table.SetCell("Username", it.first);
-			Table.SetCell("Network", "N/A");
-			Table.SetCell("Clients", CString(it.second->GetUserClients().size()));
-
 			const vector<CIRCNetwork*>& vNetworks = it.second->GetNetworks();
 
 			for (const CIRCNetwork* pNetwork : vNetworks) {
 				Table.AddRow();
-				if (pNetwork == vNetworks.back()) {
-					Table.SetCell("Username", "`-");
-				} else {
-					Table.SetCell("Username", "|-");
-				}
-				Table.SetCell("Network", pNetwork->GetName());
-				Table.SetCell("Clients", CString(pNetwork->GetClients().size()));
-				if (pNetwork->IsIRCConnected()) {
-					Table.SetCell("OnIRC", "Yes");
-					Table.SetCell("IRC Server", pNetwork->GetIRCServer());
-					Table.SetCell("IRC User", pNetwork->GetIRCNick().GetNickMask());
-					Table.SetCell("Channels", CString(pNetwork->GetChans().size()));
-				} else {
-					Table.SetCell("OnIRC", "No");
-				}
+				Table.SetCell("Username", it.first);
+				Table.SetCell("Network", pNetwork->GetName() + (pNetwork->IsIRCConnected() ? " (online)" : (pNetwork->GetIRCConnectEnabled() ? " (offline)" : " (disabled)")));
 			}
 		}
 
