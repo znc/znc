@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-#ifndef _UTILS_H
-#define _UTILS_H
+#ifndef ZNC_UTILS_H
+#define ZNC_UTILS_H
 
 #include <znc/zncconfig.h>
 #include <znc/ZNCString.h>
@@ -363,4 +363,4 @@ protected:
 	unsigned int         m_uTTL;     //!< Default time-to-live duration
 };
 
-#endif // !_UTILS_H
+#endif // !ZNC_UTILS_H

@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-#ifndef _WEBMODULES_H
-#define _WEBMODULES_H
+#ifndef ZNC_WEBMODULES_H
+#define ZNC_WEBMODULES_H
 
 #include <znc/zncconfig.h>
 #include <znc/Template.h>
@@ -168,4 +168,4 @@ private:
 	static const unsigned int m_uiMaxSessions;
 };
 
-#endif // !_WEBMODULES_H
+#endif // !ZNC_WEBMODULES_H

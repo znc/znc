@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-#ifndef _IRCNETWORK_H
-#define _IRCNETWORK_H
+#ifndef ZNC_IRCNETWORK_H
+#define ZNC_IRCNETWORK_H
 
 #include <znc/zncconfig.h>
 #include <znc/ZNCString.h>
@@ -244,4 +244,4 @@ protected:
 	unsigned short int m_uJoinDelay;
 };
 
-#endif // !_IRCNETWORK_H
+#endif // !ZNC_IRCNETWORK_H

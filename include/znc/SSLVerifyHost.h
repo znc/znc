@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-#ifndef SSLVERIFYHOST_H
-#define SSLVERIFYHOST_H
+#ifndef ZNC_SSLVERIFYHOST_H
+#define ZNC_SSLVERIFYHOST_H
 
 #ifdef HAVE_LIBSSL
 
@@ -26,4 +26,4 @@ bool ZNC_SSLVerifyHost(const CString& sHost, const X509* pCert, CString& sError)
 
 #endif /* HAVE_LIBSSL */
 
-#endif /* SSLVERIFYHOST_H */
+#endif /* ZNC_SSLVERIFYHOST_H */

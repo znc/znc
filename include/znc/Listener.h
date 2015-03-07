@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-#ifndef _LISTENER_H
-#define _LISTENER_H
+#ifndef ZNC_LISTENER_H
+#define ZNC_LISTENER_H
 
 #include <znc/zncconfig.h>
 #include <znc/Socket.h>
@@ -100,4 +100,4 @@ private:
 	const CString m_sURIPrefix;
 };
 
-#endif // !_LISTENER_H
+#endif // !ZNC_LISTENER_H

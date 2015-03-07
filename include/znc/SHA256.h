@@ -31,8 +31,8 @@
  * SUCH DAMAGE.
  */
 
-#ifndef SHA2_H
-#define SHA2_H
+#ifndef ZNC_SHA2_H
+#define ZNC_SHA2_H
 
 #define SHA256_DIGEST_SIZE ( 256 / 8)
 #define SHA256_BLOCK_SIZE  ( 512 / 8)
@@ -60,5 +60,5 @@ void sha256_final(sha256_ctx *ctx, unsigned char *digest);
 void sha256(const unsigned char *message, size_t len,
             unsigned char *digest);
 
-#endif /* !SHA2_H */
+#endif /* !ZNC_SHA2_H */
 

@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-#ifndef _CLIENT_H
-#define _CLIENT_H
+#ifndef ZNC_CLIENT_H
+#define ZNC_CLIENT_H
 
 #include <znc/zncconfig.h>
 #include <znc/Socket.h>
@@ -209,4 +209,4 @@ protected:
 	friend class ClientTest;
 };
 
-#endif // !_CLIENT_H
+#endif // !ZNC_CLIENT_H

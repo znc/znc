@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-#ifndef CONFIG_H
-#define CONFIG_H
+#ifndef ZNC_CONFIG_H
+#define ZNC_CONFIG_H
 
 #include <znc/zncconfig.h>
 #include <znc/ZNCString.h>
@@ -171,4 +171,4 @@ private:
 	SubConfigMap m_SubConfigs;
 };
 
-#endif // !CONFIG_H
+#endif // !ZNC_CONFIG_H

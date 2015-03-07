@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-#ifndef _SERVER_H
-#define _SERVER_H
+#ifndef ZNC_SERVER_H
+#define ZNC_SERVER_H
 
 #include <znc/zncconfig.h>
 #include <znc/ZNCString.h>
@@ -39,4 +39,4 @@ protected:
 	bool            m_bSSL;
 };
 
-#endif // !_SERVER_H
+#endif // !ZNC_SERVER_H

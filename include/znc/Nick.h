@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-#ifndef _NICK_H
-#define _NICK_H
+#ifndef ZNC_NICK_H
+#define ZNC_NICK_H
 
 #include <znc/zncconfig.h>
 #include <znc/ZNCString.h>
@@ -71,4 +71,4 @@ protected:
 	CString      m_sHost;
 };
 
-#endif // !_NICK_H
+#endif // !ZNC_NICK_H

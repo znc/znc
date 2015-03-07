@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-#ifndef _MODULES_H
-#define _MODULES_H
+#ifndef ZNC_MODULES_H
+#define ZNC_MODULES_H
 
 #include <znc/zncconfig.h>
 #include <znc/WebModules.h>
@@ -1277,4 +1277,4 @@ protected:
 	CClient*      m_pClient;
 };
 
-#endif // !_MODULES_H
+#endif // !ZNC_MODULES_H

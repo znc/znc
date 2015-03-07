@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-#ifndef _QUERY_H
-#define _QUERY_H
+#ifndef ZNC_QUERY_H
+#define ZNC_QUERY_H
 
 #include <znc/zncconfig.h>
 #include <znc/ZNCString.h>
@@ -51,4 +51,4 @@ private:
 	CBuffer                      m_Buffer;
 };
 
-#endif // !_QUERY_H
+#endif // !ZNC_QUERY_H

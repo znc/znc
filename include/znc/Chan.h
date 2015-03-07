@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-#ifndef _CHAN_H
-#define _CHAN_H
+#ifndef ZNC_CHAN_H
+#define ZNC_CHAN_H
 
 #include <znc/zncconfig.h>
 #include <znc/Nick.h>
@@ -180,4 +180,4 @@ protected:
 	std::map<unsigned char, CString> m_musModes;
 };
 
-#endif // !_CHAN_H
+#endif // !ZNC_CHAN_H
