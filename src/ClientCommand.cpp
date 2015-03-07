@@ -576,22 +576,12 @@ void CClient::UserCommand(CString& sLine) {
 
 		CTable Table;
 		Table.AddColumn("Network");
-		Table.AddColumn("OnIRC");
-		Table.AddColumn("IRC Server");
-		Table.AddColumn("IRC User");
-		Table.AddColumn("Channels");
+		Table.AddColumn("Status");
 
 		for (const CIRCNetwork* pNetwork : vNetworks) {
 			Table.AddRow();
 			Table.SetCell("Network", pNetwork->GetName());
-			if (pNetwork->IsIRCConnected()) {
-				Table.SetCell("OnIRC", "Yes");
-				Table.SetCell("IRC Server", pNetwork->GetIRCServer());
-				Table.SetCell("IRC User", pNetwork->GetIRCNick().GetNickMask());
-				Table.SetCell("Channels", CString(pNetwork->GetChans().size()));
-			} else {
-				Table.SetCell("OnIRC", "No");
-			}
+			Table.SetCell("Status", pNetwork->IsIRCConnected() ? "Online" : (pNetwork->GetIRCConnectEnabled() ? "Offline" : "Disabled"));
 		}
 
 		if (PutStatus(Table) == 0) {
