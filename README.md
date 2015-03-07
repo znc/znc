@@ -1,4 +1,4 @@
-#[![ZNC](http://wiki.znc.in/resources/assets/wiki.png)](http://znc.in) - An advanced IRC bouncer
+#[![ZNC](http://wiki.znc.in/resources/assets/wiki.png)](http://znc.in) - An advanced IRC bouncer [![Build Status](https://travis-ci.org/znc/znc.svg?branch=master)](https://travis-ci.org/znc/znc)
 
 ## Table of contents
 
