@@ -167,16 +167,12 @@ void CClient::UserCommand(CString& sLine) {
 
 		CTable Table;
 		Table.AddColumn("Host");
-		Table.AddColumn("Network");
-		Table.AddColumn("Identifier");
+		Table.AddColumn("Name");
 
 		for (const CClient* pClient : vClients) {
 			Table.AddRow();
 			Table.SetCell("Host", pClient->GetRemoteIP());
-			if (pClient->GetNetwork()) {
-				Table.SetCell("Network", pClient->GetNetwork()->GetName());
-			}
-			Table.SetCell("Identifier", pClient->GetIdentifier());
+			Table.SetCell("Name", pClient->GetFullName());
 		}
 
 		PutStatus(Table);
