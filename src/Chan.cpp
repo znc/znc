@@ -374,7 +374,7 @@ void CChan::ModeChange(const CString& sModes, const CNick* pOpNick) {
 			// This is called when we join (ZNC requests the channel modes
 			// on join) *and* when someone changes the channel keys.
 			// We ignore channel key "*" because of some broken nets.
-			if (uMode == 'k' && !bNoChange && bAdd && sArg != "*") {
+			if (uMode == M_Key && !bNoChange && bAdd && sArg != "*") {
 				SetKey(sArg);
 			}
 		}
