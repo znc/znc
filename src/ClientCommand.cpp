@@ -597,6 +597,51 @@ void CClient::UserCommand(CString& sLine) {
 		if (PutStatus(Table) == 0) {
 			PutStatus("No networks");
 		}
+	} else if (sCommand.Equals("SHOWNETWORK")) {
+		CUser *pUser = m_pUser;
+		CString sName;
+
+		if (m_pUser->IsAdmin() && !sLine.Token(2).empty()) {
+			sName = sLine.Token(2);
+			pUser = CZNC::Get().FindUser(sLine.Token(1));
+
+			if (!pUser) {
+				PutStatus("User not found " + sLine.Token(1));
+				return;
+			}
+		} else {
+			sName = sLine.Token(1);
+		}
+
+		CIRCNetwork *pNetwork = pUser->FindNetwork(sName);
+		if (!pNetwork) {
+			PutStatus("Network not found " + sName);
+			return;
+		}
+		sName = pNetwork->GetName();
+		CString sStatus = pNetwork->IsIRCConnected() ? "Online" : (pNetwork->GetIRCConnectEnabled() ? "Offline" : "Disabled");
+
+		CTable Table;
+		Table.AddColumn(sName);
+		Table.AddColumn(sStatus);
+
+		Table.AddRow();
+		Table.SetCell(sName, "IRC Server");
+		Table.SetCell(sStatus, pNetwork->GetIRCServer());
+
+		Table.AddRow();
+		Table.SetCell(sName, "IRC User");
+		Table.SetCell(sStatus, pNetwork->GetIRCNick().GetNickMask());
+
+		Table.AddRow();
+		Table.SetCell(sName, "Clients");
+		Table.SetCell(sStatus, CString(pNetwork->GetClients().size()));
+
+		Table.AddRow();
+		Table.SetCell(sName, "Channels");
+		Table.SetCell(sStatus, CString(pNetwork->GetChans().size()));
+
+		PutStatus(Table);
 	} else if (sCommand.Equals("MOVENETWORK")) {
 		if (!m_pUser->IsAdmin()) {
 			PutStatus("Access Denied.");
@@ -1634,6 +1679,9 @@ void CClient::HelpUser(const CString& sFilter) {
 	AddCommandHelp(Table, "AddNetwork", "<name>", "Add a network to your user", sFilter);
 	AddCommandHelp(Table, "DelNetwork", "<name>", "Delete a network from your user", sFilter);
 	AddCommandHelp(Table, "ListNetworks", "", "List all networks", sFilter);
+	if (!m_pUser->IsAdmin()) {
+		AddCommandHelp(Table, "ShowNetwork", "<name>", "Show network details", sFilter);
+	}
 	if (m_pUser->IsAdmin()) {
 		AddCommandHelp(Table, "MoveNetwork", "<old user> <old network> <new user> [new network]", "Move an IRC network from one user to another", sFilter);
 	}
@@ -1698,6 +1746,7 @@ void CClient::HelpUser(const CString& sFilter) {
 		AddCommandHelp(Table, "Rehash", "", "Reload znc.conf from disk", sFilter);
 		AddCommandHelp(Table, "SaveConfig", "", "Save the current settings to disk", sFilter);
 		AddCommandHelp(Table, "ListUsers", "", "List all ZNC users and their connection status", sFilter);
+		AddCommandHelp(Table, "ShowNetwork", "[user] <name>", "Show network details", sFilter);
 		AddCommandHelp(Table, "ListAllUserNetworks", "", "List all ZNC users and their networks", sFilter);
 		AddCommandHelp(Table, "ListChans", "[user <network>]", "List all channels", sFilter);
 		AddCommandHelp(Table, "ListClients", "[user]", "List all connected clients", sFilter);
