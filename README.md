@@ -1,4 +1,4 @@
-#[![ZNC](http://wiki.znc.in/resources/assets/wiki.png)](http://znc.in) - An advanced IRC bouncer
+#[![ZNC](http://wiki.znc.in/resources/assets/wiki.png)](http://znc.in) - An advanced IRC bouncer [![Build Status](https://travis-ci.org/znc/znc.svg?branch=master)](https://travis-ci.org/znc/znc)
 
 ## Table of contents
 
@@ -17,53 +17,53 @@
 
 Core:
 
- - GNU make (try gmake if make fails)
- - GCC 4 or later
+* GNU make
+* pkg-config
+* GCC 4.7 or clang 3.2
+* autoconf and automake (if building from git)
 
 ## Optional Requirements
 
-SSL support:
-
- - openssl 0.9.7d or later (try installing openssl-dev, openssl-devel or
-   libssl-dev)
+SSL/TLS support:
+* openssl 0.9.7d or later
+    * try installing openssl-dev, openssl-devel or libssl-dev
+    * Mac OS X: OpenSSL from Homebrew is prefered over system
+        * use `USE_SYSTEM_OPENSSL=true` as environment variable to force `configure` to use the (deprecated) Mac OS X version
 
 modperl:
-
- - This needs perl and its bundled libperl
+* perl and its bundled libperl
+* SWIG if building from git
 
 modpython:
-
- - This needs perl(!) and python's bundled libpython
+* python and its bundled libpython
+* perl is required
+* Mac OS X: Python from Homebrew is preferred over system version
+* SWIG if building from git
 
 cyrusauth:
+* This module needs cyrus-sasl2
 
- - This module needs cyrus-sasl2
+Character Encodings:
+* To get proper character encoding and charsets install ICU (`libicu4-dev`)
 
 ## Installing ZNC
 
-If you are building from git, you will need to run `./autogen.sh` first to produce the `configure` script.
-Note that this requires `automake` and `gettext` to be installed.
+Installation from source code is performed via `automake` tool chain:
+Run `./autogen.sh` if building from git first to generate the `configure` script.
 
-Installation is done with the `./configure ; make ; make install` commands.
+```shell
+./configure
+make
+make install
+```
 
-You can use
-	./configure --help
-if you want to get a list of options, though the defaults should be suiting
-most needs. After you compiled it with make (or gmake if make doesn't work) you
-can install it with
-	make install
-though you don't need to as ZNC supports in-place execution.
+You can use `./configure --help` if you want to get a list of options, though the defaults should be suiting most needs. 
 
 ## Setting up znc.conf
 
-For setting up a configuration file in `~/.znc` you can simply do
-	znc --makeconf
-or
-	./znc --makeconf
-for in-place execution.
+Before starting ZNC the first time you need to generate a configuration file in `~/.znc/` by running `znc --makeconf`.
 
-If you are using SSL you should do
-	znc --makepem
+If you want to connect to ZNC via TLS generate a certificate first by running `znc --makepem`.
 
 ## Special config options
 
