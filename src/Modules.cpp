@@ -1348,13 +1348,11 @@ CModCommand& CModCommand::operator=(const CModCommand& other)
 
 void CModCommand::InitHelp(CTable& Table) {
 	Table.AddColumn("Command");
-	Table.AddColumn("Arguments");
 	Table.AddColumn("Description");
 }
 
 void CModCommand::AddHelp(CTable& Table) const {
 	Table.AddRow();
-	Table.SetCell("Command", GetCommand());
-	Table.SetCell("Arguments", GetArgs());
+	Table.SetCell("Command", GetCommand() + " " + GetArgs());
 	Table.SetCell("Description", GetDescription());
 }
