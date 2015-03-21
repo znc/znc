@@ -893,42 +893,23 @@ void CZNC::BackupConfigOnce(const CString& sSuffix) {
 		CUtils::PrintStatus(false, strerror(errno));
 }
 
-bool CZNC::ParseConfig(const CString& sConfig, CString& sError)
-{
+bool CZNC::ParseConfig(const CString& sConfig, CString& sError) {
 	m_sConfigFile = ExpandConfigPath(sConfig, false);
 
-	return DoRehash(sError);
+	CConfig config;
+	if (!ReadConfig(config, sError))
+		return false;
+
+	if (!LoadGlobal(config, sError))
+		return false;
+
+	if (!LoadUsers(config, sError))
+		return false;
+
+	return true;
 }
 
-bool CZNC::RehashConfig(CString& sError)
-{
-	ALLMODULECALL(OnPreRehash(), NOTHING);
-
-	// This clears m_msDelUsers
-	HandleUserDeletion();
-
-	// Mark all users as going-to-be deleted
-	m_msDelUsers = m_msUsers;
-	m_msUsers.clear();
-
-	if (DoRehash(sError)) {
-		ALLMODULECALL(OnPostRehash(), NOTHING);
-
-		return true;
-	}
-
-	// Rehashing failed, try to recover
-	CString s;
-	while (!m_msDelUsers.empty()) {
-		AddUser(m_msDelUsers.begin()->second, s);
-		m_msDelUsers.erase(m_msDelUsers.begin());
-	}
-
-	return false;
-}
-
-bool CZNC::DoRehash(CString& sError)
-{
+bool CZNC::ReadConfig(CConfig& config, CString& sError) {
 	sError.clear();
 
 	CUtils::PrintAction("Opening config [" + m_sConfigFile + "]");
@@ -969,37 +950,47 @@ bool CZNC::DoRehash(CString& sError)
 	m_pLockFile = pFile;
 	CFile &File = *pFile;
 
-	CConfig config;
 	if (!config.Parse(File, sError)) {
 		CUtils::PrintStatus(false, sError);
 		return false;
 	}
 	CUtils::PrintStatus(true);
 
+	// check if config is from old ZNC version and
+	// create a backup file if neccessary
 	CString sSavedVersion;
 	config.FindStringEntry("version", sSavedVersion);
 	tuple<unsigned int, unsigned int> tSavedVersion = make_tuple(sSavedVersion.Token(0, false, ".").ToUInt(),
 																 sSavedVersion.Token(1, false, ".").ToUInt());
 	tuple<unsigned int, unsigned int> tCurrentVersion = make_tuple(VERSION_MAJOR, VERSION_MINOR);
 	if (tSavedVersion < tCurrentVersion) {
-		if (sSavedVersion.empty()) {
-			sSavedVersion = "< 0.203";
-		}
 		CUtils::PrintMessage("Found old config from ZNC " + sSavedVersion + ". Saving a backup of it.");
 		BackupConfigOnce("pre-" + CString(VERSION_STR));
 	} else if (tSavedVersion > tCurrentVersion) {
 		CUtils::PrintError("Config was saved from ZNC " + sSavedVersion + ". It may or may not work with current ZNC " + GetVersion());
 	}
 
-	m_vsBindHosts.clear();
-	m_vsTrustedProxies.clear();
-	m_vsMotd.clear();
+	return true;
+}
 
-	// Delete all listeners
-	while (!m_vpListeners.empty()) {
-		delete m_vpListeners[0];
-		m_vpListeners.erase(m_vpListeners.begin());
-	}
+bool CZNC::RehashConfig(CString& sError) {
+	ALLMODULECALL(OnPreRehash(), NOTHING);
+
+	CConfig config;
+	if (!ReadConfig(config, sError))
+		return false;
+
+	if (!LoadGlobal(config, sError))
+		return false;
+
+	// do not reload users - it's dangerous!
+
+	ALLMODULECALL(OnPostRehash(), NOTHING);
+	return true;
+}
+
+bool CZNC::LoadGlobal(CConfig& config, CString& sError) {
+	sError.clear();
 
 	MCString msModules;          // Modules are queued for later loading
 
@@ -1009,15 +1000,8 @@ bool CZNC::DoRehash(CString& sError)
 		CString sModName = sModLine.Token(0);
 		CString sArgs = sModLine.Token(1, true);
 
-		if (sModName == "saslauth" && tSavedVersion < make_tuple(0, 207)) {
-			// XXX compatibility crap, added in 0.207
-			CUtils::PrintMessage("saslauth module was renamed to cyrusauth. Loading cyrusauth instead.");
-			sModName = "cyrusauth";
-		}
-
 		if (msModules.find(sModName) != msModules.end()) {
-			sError = "Module [" + sModName +
-				"] already loaded";
+			sError = "Module [" + sModName + "] already loaded";
 			CUtils::PrintError(sError);
 			return false;
 		}
@@ -1051,41 +1035,19 @@ bool CZNC::DoRehash(CString& sError)
 		msModules[sModName] = sArgs;
 	}
 
-	CString sISpoofFormat, sISpoofFile;
-	config.FindStringEntry("ispoofformat", sISpoofFormat);
-	config.FindStringEntry("ispooffile", sISpoofFile);
-	if (!sISpoofFormat.empty() || !sISpoofFile.empty()) {
-		CModule *pIdentFileMod = GetModules().FindModule("identfile");
-		if (!pIdentFileMod) {
-			CUtils::PrintAction("Loading global Module [identfile]");
-
-			CString sModRet;
-			bool bModRet = GetModules().LoadModule("identfile", "", CModInfo::GlobalModule, nullptr, nullptr, sModRet);
-
-			CUtils::PrintStatus(bModRet, sModRet);
-			if (!bModRet) {
-				sError = sModRet;
-				return false;
-			}
-
-			pIdentFileMod = GetModules().FindModule("identfile");
-			msModules["identfile"] = "";
-		}
-
-		pIdentFileMod->SetNV("File", sISpoofFile);
-		pIdentFileMod->SetNV("Format", sISpoofFormat);
-	}
-
+	m_vsMotd.clear();
 	config.FindStringVector("motd", vsList);
 	for (const CString& sMotd : vsList) {
 		AddMotd(sMotd);
 	}
 
+	m_vsBindHosts.clear();
 	config.FindStringVector("bindhost", vsList);
 	for (const CString& sHost : vsList) {
 		AddBindHost(sHost);
 	}
 
+	m_vsTrustedProxies.clear();
 	config.FindStringVector("trustedproxy", vsList);
 	for (const CString& sProxy : vsList) {
 		AddTrustedProxy(sProxy);
@@ -1116,7 +1078,7 @@ bool CZNC::DoRehash(CString& sError)
 	if (config.FindStringEntry("maxbuffersize", sVal))
 		m_uiMaxBufferSize = sVal.ToUInt();
 	if (config.FindStringEntry("protectwebsessions", sVal))
-  		m_bProtectWebSessions = sVal.ToBool();
+		m_bProtectWebSessions = sVal.ToBool();
 	if (config.FindStringEntry("hideversion", sVal))
 		m_bHideVersion = sVal.ToBool();
 
@@ -1125,7 +1087,6 @@ bool CZNC::DoRehash(CString& sError)
 		m_sSSLProtocols.Split(" ", vsProtocols, false, "", "", true, true);
 
 		for (CString& sProtocol : vsProtocols) {
-
 			unsigned int uFlag = 0;
 			bool bEnable = sProtocol.TrimPrefix("+");
 			bool bDisable = sProtocol.TrimPrefix("-");
@@ -1159,52 +1120,27 @@ bool CZNC::DoRehash(CString& sError)
 		}
 	}
 
-	// This has to be after SSLCertFile is handled since it uses that value
-	const char *szListenerEntries[] = {
-		"listen", "listen6", "listen4",
-		"listener", "listener6", "listener4"
-	};
+	UnloadRemovedModules(msModules);
 
-	for (const char* szEntry : szListenerEntries) {
-		config.FindStringVector(szEntry, vsList);
-		for (const CString& sListener : vsList) {
-			if (!AddListener(szEntry + CString(" ") + sListener, sError))
-				return false;
-		}
-	}
+	if (!LoadListeners(config, sError))
+		return false;
+
+	return true;
+}
+
+bool CZNC::LoadUsers(CConfig& config, CString& sError) {
+	sError.clear();
+
+	m_msUsers.clear();
 
 	CConfig::SubConfig subConf;
-	CConfig::SubConfig::const_iterator subIt;
-
-	config.FindSubConfig("listener", subConf);
-	for (subIt = subConf.begin(); subIt != subConf.end(); ++subIt) {
-		CConfig* pSubConf = subIt->second.m_pSubConfig;
-		if (!AddListener(pSubConf, sError))
-			return false;
-		if (!pSubConf->empty()) {
-			sError = "Unhandled lines in Listener config!";
-			CUtils::PrintError(sError);
-
-			CZNC::DumpConfig(pSubConf);
-			return false;
-		}
-	}
-
 	config.FindSubConfig("user", subConf);
-	for (subIt = subConf.begin(); subIt != subConf.end(); ++subIt) {
-		const CString& sUserName = subIt->first;
-		CConfig* pSubConf = subIt->second.m_pSubConfig;
-		CUser* pRealUser = nullptr;
+
+	for (const auto& subIt : subConf) {
+		const CString& sUserName = subIt.first;
+		CConfig* pSubConf = subIt.second.m_pSubConfig;
 
 		CUtils::PrintMessage("Loading user [" + sUserName + "]");
-
-		// Either create a CUser* or use an existing one
-		map<CString, CUser*>::iterator it = m_msDelUsers.find(sUserName);
-
-		if (it != m_msDelUsers.end()) {
-			pRealUser = it->second;
-			m_msDelUsers.erase(it);
-		}
 
 		CUser* pUser = new CUser(sUserName);
 
@@ -1232,16 +1168,7 @@ bool CZNC::DoRehash(CString& sError)
 		}
 
 		CString sErr;
-		if (pRealUser) {
-			if (!pRealUser->Clone(*pUser, sErr)
-					|| !AddUser(pRealUser, sErr)) {
-				sError = "Invalid user [" + pUser->GetUserName() + "] " + sErr;
-				DEBUG("CUser::Clone() failed in rehash");
-			}
-			pUser->SetBeingDeleted(true);
-			delete pUser;
-			pUser = nullptr;
-		} else if (!AddUser(pUser, sErr)) {
+		if (!AddUser(pUser, sErr)) {
 			sError = "Invalid user [" + pUser->GetUserName() + "] " + sErr;
 		}
 
@@ -1256,19 +1183,54 @@ bool CZNC::DoRehash(CString& sError)
 		}
 
 		pUser = nullptr;
-		pRealUser = nullptr;
 	}
 
-	if (!config.empty()) {
-		sError = "Unhandled lines in config!";
+	if (m_msUsers.empty()) {
+		sError = "You must define at least one user in your config.";
 		CUtils::PrintError(sError);
-
-		DumpConfig(&config);
 		return false;
 	}
 
+	return true;
+}
 
-	// Unload modules which are no longer in the config
+bool CZNC::LoadListeners(CConfig& config, CString& sError) {
+	sError.clear();
+
+	// Delete all listeners
+	while (!m_vpListeners.empty()) {
+		delete m_vpListeners[0];
+		m_vpListeners.erase(m_vpListeners.begin());
+	}
+
+	CConfig::SubConfig subConf;
+	config.FindSubConfig("listener", subConf);
+
+	for (const auto& subIt : subConf) {
+		CConfig* pSubConf = subIt.second.m_pSubConfig;
+		if (!AddListener(pSubConf, sError))
+			return false;
+		if (!pSubConf->empty()) {
+			sError = "Unhandled lines in Listener config!";
+			CUtils::PrintError(sError);
+
+			CZNC::DumpConfig(pSubConf);
+			return false;
+		}
+	}
+
+	if (m_vpListeners.empty()) {
+		sError = "You must supply at least one Listener in your config.";
+		CUtils::PrintError(sError);
+		return false;
+	}
+
+	return true;
+}
+
+void CZNC::UnloadRemovedModules(const MCString& msModules) {
+	// unload modules which are no longer in the config
+
 	set<CString> ssUnload;
 	for (CModule *pCurMod : GetModules()) {
 		if (msModules.find(pCurMod->GetModName()) == msModules.end())
@@ -1281,20 +1243,6 @@ bool CZNC::DoRehash(CString& sError)
 		else
 			CUtils::PrintMessage("Could not unload [" + sMod + "]");
 	}
-
-	if (m_msUsers.empty()) {
-		sError = "You must define at least one user in your config.";
-		CUtils::PrintError(sError);
-		return false;
-	}
-
-	if (m_vpListeners.empty()) {
-		sError = "You must supply at least one Listen port in your config.";
-		CUtils::PrintError(sError);
-		return false;
-	}
-
-	return true;
 }
 
 void CZNC::DumpConfig(const CConfig* pConfig) {
