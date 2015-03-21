@@ -36,6 +36,7 @@ __pycache__
 
 # Compiled Object files
 *.o
+*.o-*
 
 # Compiled Dynamic libraries
 *.so
