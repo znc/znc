@@ -154,7 +154,7 @@ public:
 	bool UpdateModule(const CString &sModule);
 
 	bool DeleteUser(const CString& sUsername);
-	bool AddUser(CUser* pUser, CString& sErrorRet);
+	bool AddUser(CUser* pUser, CString& sErrorRet, bool bStartup = false);
 	const std::map<CString,CUser*> & GetUserMap() const { return(m_msUsers); }
 
 	// Listener yummy

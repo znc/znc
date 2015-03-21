@@ -1168,7 +1168,7 @@ bool CZNC::LoadUsers(CConfig& config, CString& sError) {
 		}
 
 		CString sErr;
-		if (!AddUser(pUser, sErr)) {
+		if (!AddUser(pUser, sErr, true)) {
 			sError = "Invalid user [" + pUser->GetUserName() + "] " + sErr;
 		}
 
@@ -1466,7 +1466,7 @@ bool CZNC::DeleteUser(const CString& sUsername) {
 	return true;
 }
 
-bool CZNC::AddUser(CUser* pUser, CString& sErrorRet) {
+bool CZNC::AddUser(CUser* pUser, CString& sErrorRet, bool bStartup) {
 	if (FindUser(pUser->GetUserName()) != nullptr) {
 		sErrorRet = "User already exists";
 		DEBUG("User [" << pUser->GetUserName() << "] - already exists");
@@ -1478,7 +1478,12 @@ bool CZNC::AddUser(CUser* pUser, CString& sErrorRet) {
 		return false;
 	}
 	bool bFailed = false;
-	GLOBALMODULECALL(OnAddUser(*pUser, sErrorRet), &bFailed);
+
+	// do not call OnAddUser hook during ZNC startup
+	if (!bStartup) {
+		GLOBALMODULECALL(OnAddUser(*pUser, sErrorRet), &bFailed);
+	}
+
 	if (bFailed) {
 		DEBUG("AddUser [" << pUser->GetUserName() << "] aborted by a module ["
 			<< sErrorRet << "]");
