@@ -1000,6 +1000,17 @@ bool CZNC::LoadGlobal(CConfig& config, CString& sError) {
 		CString sModName = sModLine.Token(0);
 		CString sArgs = sModLine.Token(1, true);
 
+		// compatibility for pre-1.0 configs
+		CString sSavedVersion;
+		config.FindStringEntry("version", sSavedVersion);
+		tuple<unsigned int, unsigned int> tSavedVersion = make_tuple(sSavedVersion.Token(0, false, ".").ToUInt(),
+																	 sSavedVersion.Token(1, false, ".").ToUInt());
+		if (sModName == "saslauth" && tSavedVersion < make_tuple(0, 207)) {
+			CUtils::PrintMessage("saslauth module was renamed to cyrusauth. Loading cyrusauth instead.");
+			sModName = "cyrusauth";
+		}
+		// end-compatibility for pre-1.0 configs
+
 		if (msModules.find(sModName) != msModules.end()) {
 			sError = "Module [" + sModName + "] already loaded";
 			CUtils::PrintError(sError);
@@ -1202,6 +1213,25 @@ bool CZNC::LoadListeners(CConfig& config, CString& sError) {
 		delete m_vpListeners[0];
 		m_vpListeners.erase(m_vpListeners.begin());
 	}
+
+	// compatibility for pre-1.0 configs
+	const char *szListenerEntries[] = {
+		"listen", "listen6", "listen4",
+		"listener", "listener6", "listener4"
+	};
+
+	VCString vsList;
+	config.FindStringVector("loadmodule", vsList);
+
+	// This has to be after SSLCertFile is handled since it uses that value
+	for (const char* szEntry : szListenerEntries) {
+		config.FindStringVector(szEntry, vsList);
+		for (const CString& sListener : vsList) {
+			if (!AddListener(szEntry + CString(" ") + sListener, sError))
+				return false;
+		}
+	}
+	// end-compatibility for pre-1.0 configs
 
 	CConfig::SubConfig subConf;
 	config.FindSubConfig("listener", subConf);
