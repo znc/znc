@@ -884,7 +884,7 @@ class CAdminMod : public CModule {
 			return;
 		}
 
-		PutModule("User " + sUsername + " deleted!");
+		PutModule("User [" + sUsername + "] deleted!");
 		return;
 	}
 
