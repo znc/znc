@@ -573,7 +573,7 @@ then
 
 	# This will need to be extended in the future, but I don't think
 	# it's a good idea to stuff a shitload of random stuff in here right now
-	for path in $TCL_DIR /usr/lib /usr/lib/tcl8.4 /usr/lib/tcl8.5
+	for path in $TCL_DIR /usr/lib /usr/lib/tcl8.4 /usr/lib/tcl8.5 /usr/lib/tcl8.6
 	do
 		file="${path}/tclConfig.sh"
 		AC_MSG_CHECKING([for ${file}])
