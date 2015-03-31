@@ -960,6 +960,11 @@ bool CZNC::ReadConfig(CConfig& config, CString& sError) {
 	// create a backup file if neccessary
 	CString sSavedVersion;
 	config.FindStringEntry("version", sSavedVersion);
+	if (sSavedVersion.empty()) {
+		CUtils::PrintError("Config does not contain a version identifier. It may be be too old or corrupt.");
+		return false;
+	}
+
 	tuple<unsigned int, unsigned int> tSavedVersion = make_tuple(sSavedVersion.Token(0, false, ".").ToUInt(),
 																 sSavedVersion.Token(1, false, ".").ToUInt());
 	tuple<unsigned int, unsigned int> tCurrentVersion = make_tuple(VERSION_MAJOR, VERSION_MINOR);
