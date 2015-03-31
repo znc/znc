@@ -653,8 +653,6 @@ void CChan::SetKey(const CString& s) {
 void CChan::SetInConfig(bool b) {
 	if (m_bInConfig != b) {
 		m_bInConfig = b;
-		if (m_bInConfig) {
-			CZNC::Get().SetConfigState(CZNC::ECONFIG_NEED_WRITE);
-		}
+		CZNC::Get().SetConfigState(CZNC::ECONFIG_NEED_WRITE);
 	}
 }
