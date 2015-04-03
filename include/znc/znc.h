@@ -154,7 +154,7 @@ public:
 	bool UpdateModule(const CString &sModule);
 
 	bool DeleteUser(const CString& sUsername);
-	bool AddUser(CUser* pUser, CString& sErrorRet);
+	bool AddUser(CUser* pUser, CString& sErrorRet, bool bStartup = false);
 	const std::map<CString,CUser*> & GetUserMap() const { return(m_msUsers); }
 
 	// Listener yummy
@@ -192,8 +192,13 @@ public:
 
 private:
 	CFile* InitPidFile();
-	bool DoRehash(CString& sError);
-	// Returns true if something was done
+
+	bool ReadConfig(CConfig& config, CString& sError);
+	bool LoadGlobal(CConfig& config, CString& sError);
+	bool LoadUsers(CConfig& config, CString& sError);
+	bool LoadListeners(CConfig& config, CString& sError);
+	void UnloadRemovedModules(const MCString& msModules);
+
 	bool HandleUserDeletion();
 	CString MakeConfigHeader();
 	bool AddListener(const CString& sLine, CString& sError);

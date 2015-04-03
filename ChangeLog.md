@@ -1,3 +1,15 @@
+# (unreleased)
+
+## Changes
+
+* workarounds during config parsing for old ZNC versions removed
+    * incompatible configs give an error during startup indicating the problem
+    * versions including 0.206 and newer are still supported
+* rehash only reloads global settings, including global modules and listeners
+    * users are not reloaded any more - which makes rehash less dangerous
+* OnAddUser hook is only called if actually a new user added
+    * it is not called during ZNC startup any more
+
 # ZNC 1.6.0 (2015-02-12)
 
 ## New

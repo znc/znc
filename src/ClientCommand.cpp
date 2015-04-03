@@ -1720,7 +1720,7 @@ void CClient::HelpUser(const CString& sFilter) {
 		AddCommandHelp(Table, "ListPorts", "", "Show all active listeners", sFilter);
 		AddCommandHelp(Table, "AddPort", "<[+]port> <ipv4|ipv6|all> <web|irc|all> [bindhost [uriprefix]]", "Add another port for ZNC to listen on", sFilter);
 		AddCommandHelp(Table, "DelPort", "<port> <ipv4|ipv6|all> [bindhost]", "Remove a port from ZNC", sFilter);
-		AddCommandHelp(Table, "Rehash", "", "Reload znc.conf from disk", sFilter);
+		AddCommandHelp(Table, "Rehash", "", "Reload global settings, modules, and listeners from znc.conf", sFilter);
 		AddCommandHelp(Table, "SaveConfig", "", "Save the current settings to disk", sFilter);
 		AddCommandHelp(Table, "ListUsers", "", "List all ZNC users and their connection status", sFilter);
 		AddCommandHelp(Table, "ListAllUserNetworks", "", "List all ZNC users and their networks", sFilter);
