@@ -12,6 +12,8 @@ ZNC includes modified code of MD5 implementation by Christophe Devine, licensed 
 ZNC includes resized External Wikipedia icon (https://commons.wikimedia.org/wiki/File:External.svg), licensed by public domain license.
 ZNC includes modified code for SSL verification by Alban Diquet (https://github.com/iSECPartners/ssl-conservatory/) and Daniel Stenberg (https://github.com/bagder/curl/blob/master/lib/), licensed by MIT.
 ZNC includes code from jQuery, licensed by MIT.
+ZNC includes code from jQuery UI, licensed by MIT.
+ZNC includes code from Selectize, licensed by Apache 2.0.
 
 ZNC is developed by these people:
 

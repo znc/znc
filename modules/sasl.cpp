@@ -266,36 +266,25 @@ public:
 		}
 
 		if (WebSock.IsPost()) {
-			SetNV("username", WebSock.GetRawParam("username"));
-			CString sPassword = WebSock.GetRawParam("password");
+			SetNV("username", WebSock.GetParam("username"));
+			CString sPassword = WebSock.GetParam("password");
 			if (!sPassword.empty()) {
 				SetNV("password", sPassword);
 			}
-			SetNV(NV_REQUIRE_AUTH, WebSock.GetRawParam(NV_REQUIRE_AUTH));
-
-			VCString vsMechanisms;
-			for (const auto& it : SupportedMechanisms) {
-				bool bChecked = WebSock.GetRawParam(it.szName).ToBool();
-				if (bChecked) {
-					vsMechanisms.push_back(it.szName);
-				}
-			}
-			SetNV(NV_MECHANISMS, CString(" ").Join(vsMechanisms.begin(), vsMechanisms.end()));
+			SetNV(NV_REQUIRE_AUTH, WebSock.GetParam("require_auth"));
+			SetNV(NV_MECHANISMS, WebSock.GetParam("mechanisms"));
 		}
 
 		Tmpl["Username"] = GetNV("username");
 		Tmpl["Password"] = GetNV("password");
 		Tmpl["RequireAuth"] = GetNV(NV_REQUIRE_AUTH);
-
-		VCString vsMechanisms;
-		GetMechanismsString().Split(" ", vsMechanisms);
+		Tmpl["Mechanisms"] = GetMechanismsString();
 
 		for (const auto& it : SupportedMechanisms) {
 			CTemplate& Row = Tmpl.AddRow("MechanismLoop");
 			CString sName(it.szName);
 			Row["Name"] = sName;
 			Row["Description"] = CString(it.szDescription);
-			Row["Checked"] = CString(std::find(vsMechanisms.begin(), vsMechanisms.end(), sName) != vsMechanisms.end());
 		}
 
 		return true;
