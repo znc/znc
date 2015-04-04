@@ -104,6 +104,7 @@ class MCString : public std::map<CString, CString> {};
 %template(VListeners) std::vector<CListener*>;
 %template(BufLines) std::deque<CBufLine>;
 %template(VVString) std::vector<VCString>;
+%template(VClients) std::vector<CClient*>;
 
 %typemap(in) CString& {
 	String* p;
