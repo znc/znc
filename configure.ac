@@ -618,8 +618,7 @@ AC_CACHE_CHECK([for GNU make], [ac_cv_path_GNUMAKE], [
 		]], [AC_MSG_ERROR([could not find GNU make])]
 	)
 ])
-GNUMAKE_DIRNAME=`AS_DIRNAME(["$ac_cv_path_GNUMAKE"])`
-GNUMAKE=`echo $ac_cv_path_GNUMAKE | $SED "s%$GNUMAKE_DIRNAME/%%"`
+GNUMAKE=`echo $ac_cv_path_GNUMAKE | $SED "s%.*/%%"`
 
 # this is in the end, for not trying to include it when it doesn't exist yet
 appendCXX "-include znc/zncconfig.h"
