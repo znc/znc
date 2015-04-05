@@ -1,0 +1,77 @@
+<? INC Header.tmpl ?>
+
+<form action="<? VAR URIPrefix TOP ?><? VAR ModPath TOP ?>" method="post">
+	<? INC _csrf_check.tmpl ?>
+	<div class="section">
+		<h3>SASL</h3>
+		<div class="sectionbg">
+			<div class="sectionbody">
+				<div class="subsection">
+					<div class="inputlabel">Username:</div>
+					<input type="text" name="username" value="<? VAR Username ?>" class="half" maxlength="128"
+							   title="Please enter a username." />
+				</div>
+				<div class="subsection">
+					<div class="inputlabel">Password:</div>
+					<input type="password" name="password" class="half"
+						   title="Please enter a password." autocomplete="off" />
+				</div>
+			</div>
+		</div>
+		<h3>Options</h3>
+		<div class="sectionbg">
+			<div class="sectionbody lotsofcheckboxes">
+				<span class="checkboxandlabel" title="Connect only if SASL authentication succeeds.">
+					<input type="checkbox" name="require_auth" id="opt_require_auth" value="1"<? IF RequireAuth ?> checked="checked"<? ENDIF ?> />
+					<label for="opt_require_auth">Require authentication</label>
+				</span>
+				<div style="clear:both;"></div>
+			</div>
+		</div>
+	</div>
+
+	<div class="section">
+		<h3>Mechanisms</h3>
+		<div class="sectionbg">
+			<div class="sectionbody">
+				<div class="subsection">
+					<table class="data">
+						<thead>
+							<tr>
+								<td>Name</td>
+								<td>Description</td>
+							</tr>
+						</thead>
+						<tbody>
+							<? LOOP MechanismLoop SORTASC=Name ?>
+							<tr class="<? IF __EVEN__ ?>evenrow<? ELSE ?>oddrow<? ENDIF ?>">
+								<td><? VAR Name ?></td>
+								<td><? VAR Description ?></td>
+							</tr>
+							<? ENDLOOP ?>
+						</tbody>
+					</table>
+				</div>
+				<div class="subsection">
+					<div class="inputlabel">Selected mechanisms and their order:</div>
+					<input type="text" name="mechanisms" id="mechanisms" value="<? VAR Mechanisms ?>" class="half"/>
+					<script>
+					$("#mechanisms").selectize({
+						plugins: ["drag_drop"],
+						delimiter: " ",
+						options: [<? LOOP MechanismLoop SORTASC=Name ?>{value:"<? VAR Name ?>",text:"<? VAR Name ?>"},<? ENDLOOP ?>],
+					});
+					</script>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div style="clear:both;"></div>
+
+	<div class="submitline">
+		<input type="hidden" name="submitted" value="1" />
+		<input type="submit" value="Save" />
+	</div>
+</form>
+
+<? INC Footer.tmpl ?>
