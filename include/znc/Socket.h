@@ -27,7 +27,7 @@ class CZNCSock : public Csock {
 public:
 	CZNCSock(int timeout = 60);
 	CZNCSock(const CString& sHost, u_short port, int timeout = 60);
-	~CZNCSock() {}
+	virtual ~CZNCSock();
 
 	int ConvertAddress(const struct sockaddr_storage * pAddr, socklen_t iAddrLen, CS_STRING & sIP, u_short * piPort) const override;
 #ifdef HAVE_LIBSSL
@@ -37,6 +37,10 @@ public:
 	void SetHostToVerifySSL(const CString& sHost) { m_HostToVerifySSL = sHost; }
 	CString GetSSLPeerFingerprint() const;
 	void SetSSLTrustedPeerFingerprints(const SCString& ssFPs) { m_ssTrustedFingerprints = ssFPs; }
+
+#ifdef HAVE_DANE
+	void SetDaneLookupResult(int iResult, struct val_danestatus* pDaneStatus);
+#endif
 
 #ifndef HAVE_ICU
 	// Don't fail to compile when ICU is not enabled
@@ -51,6 +55,15 @@ protected:
 	};
 
 private:
+	void Init();
+
+#ifdef HAVE_DANE
+	bool VerifyDaneAuthentication(SSL* pSSL, bool bSSLHostOk);
+	
+	int m_iDaneLookupResult;
+	struct val_danestatus* m_pDaneStatus;
+#endif /* HAVE_DANE */
+
 	CString m_HostToVerifySSL;
 	SCString m_ssTrustedFingerprints;
 	SCString m_ssCertVerificationErrors;
@@ -138,7 +151,23 @@ private:
 	friend class CTDNSMonitorFD;
 #ifdef HAVE_THREADED_DNS
 	struct TDNSTask {
-		TDNSTask() : sHostname(""), iPort(0), sSockName(""), iTimeout(0), bSSL(false), sBindhost(""), pcSock(nullptr), bDoneTarget(false), bDoneBind(false), aiTarget(nullptr), aiBind(nullptr) {}
+		TDNSTask()
+			: sHostname(""),
+			  iPort(0),
+			  sSockName(""),
+			  iTimeout(0),
+			  bSSL(false),
+			  sBindhost(""),
+			  pcSock(nullptr),
+#ifdef HAVE_DANE
+			  iDaneResult(0),
+			  pDaneStatus(nullptr),
+#endif
+			  bDoneTarget(false),
+			  bDoneBind(false),
+			  bDoneDane(false),
+			  aiTarget(nullptr),
+			  aiBind(nullptr) {}
 
 		TDNSTask(const TDNSTask&) = delete;
 		TDNSTask& operator=(const TDNSTask&) = delete;
@@ -151,8 +180,14 @@ private:
 		CString   sBindhost;
 		CZNCSock* pcSock;
 
+#ifdef HAVE_DANE
+		int       iDaneResult;
+		struct val_danestatus* pDaneStatus;
+#endif
+
 		bool      bDoneTarget;
 		bool      bDoneBind;
+		bool	  bDoneDane;
 		addrinfo* aiTarget;
 		addrinfo* aiBind;
 	};
@@ -175,9 +210,31 @@ private:
 		void runMain() override;
 	};
 	void StartTDNSThread(TDNSTask* task, bool bBind);
-	void SetTDNSThreadFinished(TDNSTask* task, bool bBind, addrinfo* aiResult);
+	void SetTDNSThreadFinished(TDNSTask* task, bool bBind, addrinfo* aiResult, bool bDane);
 	static void* TDNSThread(void* argument);
-#endif
+
+#ifdef HAVE_DANE
+	class CDaneJob : public CJob {
+	public:
+		CDaneJob() : sHostname(""), iPort(0), task(nullptr), pManager(nullptr), iDaneResult(0), pDaneStatus(nullptr) {}
+
+		CDaneJob(const CDaneJob&) = delete;
+		CDaneJob& operator=(const CDaneJob&) = delete;
+
+		CString       sHostname;
+		u_short       iPort;
+		TDNSTask*     task;
+		CSockManager* pManager;
+
+		int           iDaneResult;
+		struct val_danestatus* pDaneStatus;
+
+		void runThread() override;
+		void runMain() override;
+	};
+	void StartDaneThread(TDNSTask* task);
+#endif 
+#endif /* HAVE_THREADED_DNS */
 protected:
 };
 

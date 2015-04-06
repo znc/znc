@@ -26,6 +26,11 @@
 #include <unicode/ucnv_cb.h>
 #endif
 
+#ifdef HAVE_DANE
+#include <validator/validator.h>
+#include <validator/val_dane.h>
+#endif
+
 #ifdef HAVE_LIBSSL
 // Copypasted from https://wiki.mozilla.org/Security/Server_Side_TLS#Intermediate_compatibility_.28default.29 at 22 Dec 2014
 static CString ZNC_DefaultCipher() {
@@ -39,11 +44,19 @@ static CString ZNC_DefaultCipher() {
 }
 #endif
 
-CZNCSock::CZNCSock(int timeout) : Csock(timeout), m_HostToVerifySSL(""), m_ssTrustedFingerprints(), m_ssCertVerificationErrors() {
+CZNCSock::CZNCSock(int timeout)
+		: Csock(timeout),
+#ifdef HAVE_DANE
+		  m_iDaneLookupResult(VAL_DANE_INTERNAL_ERROR),
+		  m_pDaneStatus(nullptr),
+#endif
+		  m_HostToVerifySSL(""),
+		  m_ssTrustedFingerprints(),
+		  m_ssCertVerificationErrors()
+{
+	Init();
+
 #ifdef HAVE_LIBSSL
-	DisableSSLCompression();
-	FollowSSLCipherServerPreference();
-	DisableSSLProtocols(CZNC::Get().GetDisabledSSLProtocols());
 	CString sCipher = CZNC::Get().GetSSLCiphers();
 	if (sCipher.empty()) {
 		sCipher = ZNC_DefaultCipher();
@@ -52,11 +65,33 @@ CZNCSock::CZNCSock(int timeout) : Csock(timeout), m_HostToVerifySSL(""), m_ssTru
 #endif
 }
 
-CZNCSock::CZNCSock(const CString& sHost, u_short port, int timeout) : Csock(sHost, port, timeout), m_HostToVerifySSL(""), m_ssTrustedFingerprints(), m_ssCertVerificationErrors() {
+CZNCSock::CZNCSock(const CString& sHost, u_short port, int timeout)
+		: Csock(sHost, port, timeout),
+#ifdef HAVE_DANE
+		  m_iDaneLookupResult(VAL_DANE_INTERNAL_ERROR),
+		  m_pDaneStatus(nullptr),
+#endif
+		  m_HostToVerifySSL(""),
+		  m_ssTrustedFingerprints(),
+		  m_ssCertVerificationErrors()
+{
+	Init();
+}
+
+void CZNCSock::Init() {
 #ifdef HAVE_LIBSSL
 	DisableSSLCompression();
 	FollowSSLCipherServerPreference();
 	DisableSSLProtocols(CZNC::Get().GetDisabledSSLProtocols());
+#endif
+}
+
+CZNCSock::~CZNCSock() {
+#ifdef HAVE_DANE
+	if (m_pDaneStatus != nullptr) {
+		val_free_dane(m_pDaneStatus);
+		m_pDaneStatus = nullptr;
+	}
 #endif
 }
 
@@ -93,6 +128,74 @@ int CZNCSock::VerifyPeerCertificate(int iPreVerify, X509_STORE_CTX * pStoreCTX) 
 	return 1;
 }
 
+#ifdef HAVE_DANE
+void CZNCSock::SetDaneLookupResult(int iResult, struct val_danestatus* pDaneStatus) {
+	m_iDaneLookupResult = iResult;
+	m_pDaneStatus = pDaneStatus;
+}
+
+bool CZNCSock::VerifyDaneAuthentication(SSL* pSSL, bool bSSLHostOk) {
+#ifndef HAVE_THREADED_DNS
+	u_short iPort = GetPort();
+
+	DEBUG(GetSockName() + ": DANE: initiating TLSA lookup for [" << m_HostToVerifySSL << "], port [" << iPort << "]");
+
+	struct val_daneparams daneParams;
+	daneParams.port = iPort;
+	daneParams.proto = DANE_PARAM_PROTO_TCP;
+	
+	m_iDaneLookupResult = val_getdaneinfo(nullptr, m_HostToVerifySSL.c_str(), &daneParams, &m_pDaneStatus);
+
+	DEBUG(GetSockName() + ": DANE: finished TLSA lookup for [" << m_HostToVerifySSL << "], port [" << iPort << "]");
+#endif /* !HAVE_THREADED_DNS */
+
+	if (m_pDaneStatus == nullptr) {
+		DEBUG(GetSockName() + ": DANE: No usable TLSA record");
+		return false;		
+	} else if (m_iDaneLookupResult != VAL_DANE_NOERROR) {
+		val_free_dane(m_pDaneStatus);
+		m_pDaneStatus = nullptr;
+
+		DEBUG(GetSockName() + ": DANE: Error while fetching TLSA record");
+		return false;
+	}
+
+	int iPkixValidation = 1;
+	int iDaneResult = val_dane_check(nullptr, pSSL, m_pDaneStatus, &iPkixValidation);
+
+	bool bCertVerified = false;
+	if (iDaneResult == VAL_DANE_NOERROR) {
+		// DANE is succesful
+		DEBUG(GetSockName() + ": DANE: Found TLSA record [" << m_pDaneStatus->usage << " " << m_pDaneStatus->selector << " " << m_pDaneStatus->type << "]");
+
+		if (m_pDaneStatus->usage == DANE_USE_TA_ASSERTION && !bSSLHostOk) {
+			/* Usage DANE-TA(2) explicitly requires the provided certificate to match the server name.
+			 * It has already been checked as part of the PKIX validation, so reuse that error and let
+			 * the validation fails normally.
+			 */
+			DEBUG(GetSockName() + ": DANE: Valid TLSA record, but certificate is not valid for this hostname");
+		} else if (iPkixValidation == 0) {
+			DEBUG(GetSockName() + ": DANE: Valid TLSA record, no need for X509 validation");
+
+			bCertVerified = true;
+		} else {
+			DEBUG(GetSockName() + ": DANE: Valid TLSA record, but X509 validation required");
+		}
+	} else if (iDaneResult == VAL_DANE_CHECK_FAILED) {
+		DEBUG(GetSockName() + ": DANE: Invalid TLSA record");
+
+		m_ssCertVerificationErrors.insert("DANE: TLSA record forbids that certificate");
+	} else {
+		DEBUG(GetSockName() + ": DANE: Internal error while checking TLSA record");
+	}
+
+	val_free_dane(m_pDaneStatus);
+	m_pDaneStatus = nullptr;
+	
+	return bCertVerified;
+}
+#endif /* HAVE_DANE */
+
 void CZNCSock::SSLHandShakeFinished() {
 	if (GetType() != ETConn::OUTBOUND) {
 		return;
@@ -106,10 +209,17 @@ void CZNCSock::SSLHandShakeFinished() {
 		return;
 	}
 	CString sHostVerifyError;
-	if (!ZNC_SSLVerifyHost(m_HostToVerifySSL, pCert, sHostVerifyError)) {
+	bool bSSLHostOk = ZNC_SSLVerifyHost(m_HostToVerifySSL, pCert, sHostVerifyError);
+	if (!bSSLHostOk) {
 		m_ssCertVerificationErrors.insert(sHostVerifyError);
 	}
 	X509_free(pCert);
+#ifdef HAVE_DANE
+	if (VerifyDaneAuthentication(GetSSLObject(), bSSLHostOk)) {
+		DEBUG(GetSockName() + ": Cert verified by DANE");
+		return;
+	}
+#endif
 	if (m_ssCertVerificationErrors.empty()) {
 		DEBUG(GetSockName() + ": Good cert");
 		return;
@@ -199,7 +309,7 @@ void CSockManager::CDNSJob::runMain() {
 		}
 		this->aiResult = nullptr; // just for case. Maybe to call freeaddrinfo()?
 	}
-	pManager->SetTDNSThreadFinished(this->task, this->bBind, this->aiResult);
+	pManager->SetTDNSThreadFinished(this->task, this->bBind, this->aiResult, false);
 }
 
 void CSockManager::StartTDNSThread(TDNSTask* task, bool bBind) {
@@ -212,6 +322,36 @@ void CSockManager::StartTDNSThread(TDNSTask* task, bool bBind) {
 
 	CThreadPool::Get().addJob(arg);
 }
+
+#ifdef HAVE_DANE
+void CSockManager::CDaneJob::runThread() {
+	struct val_daneparams daneParams;
+	daneParams.port = iPort;
+	daneParams.proto = DANE_PARAM_PROTO_TCP;
+
+	iDaneResult = val_getdaneinfo(nullptr, sHostname.c_str(), &daneParams, &pDaneStatus);
+}
+
+void CSockManager::CDaneJob::runMain() {
+	DEBUG("DANE: finished TLSA lookup for [" << sHostname << "], port [" << iPort << "]");
+	task->iDaneResult = this->iDaneResult;
+	task->pDaneStatus = this->pDaneStatus;
+	pManager->SetTDNSThreadFinished(this->task, false, nullptr, true);
+}
+
+void CSockManager::StartDaneThread(TDNSTask* task) {
+	DEBUG("DANE: initiating async TLSA lookup for [" << task->sHostname << "], port [" << task->iPort << "]");
+
+	CDaneJob* arg = new CDaneJob;
+	arg->sHostname   = task->sHostname;
+	arg->iPort       = task->iPort;
+	arg->task        = task;
+	arg->iDaneResult = VAL_DANE_INTERNAL_ERROR;
+	arg->pManager    = this;
+
+	CThreadPool::Get().addJob(arg);
+}
+#endif /* HAVE_DANE */
 
 static CString RandomFromSet(const SCString& sSet, std::default_random_engine& gen) {
 	std::uniform_int_distribution<> distr(0, sSet.size() - 1);
@@ -237,8 +377,10 @@ static std::tuple<CString, bool> RandomFrom2SetsWithBias(const SCString& ss4, co
 	return std::make_tuple(RandomFromSet(sSet, gen), bUseIPv6);
 }
 
-void CSockManager::SetTDNSThreadFinished(TDNSTask* task, bool bBind, addrinfo* aiResult) {
-	if (bBind) {
+void CSockManager::SetTDNSThreadFinished(TDNSTask* task, bool bBind, addrinfo* aiResult, bool bDane) {
+	if (bDane) {
+		task->bDoneDane = true;
+	} else if (bBind) {
 		task->aiBind = aiResult;
 		task->bDoneBind = true;
 	} else {
@@ -247,9 +389,13 @@ void CSockManager::SetTDNSThreadFinished(TDNSTask* task, bool bBind, addrinfo* a
 	}
 
 	// Now that something is done, check if everything we needed is done
-	if (!task->bDoneBind || !task->bDoneTarget) {
+	if (!task->bDoneBind || !task->bDoneTarget || !task->bDoneDane) {
 		return;
 	}
+
+#ifdef HAVE_DANE
+	task->pcSock->SetDaneLookupResult(task->iDaneResult, task->pDaneStatus);
+#endif
 
 	// All needed DNS is done, now collect the results
 	SCString ssTargets4;
@@ -361,12 +507,22 @@ void CSockManager::Connect(const CString& sHostname, u_short iPort, const CStrin
 	task->bSSL        = bSSL;
 	task->sBindhost   = sBindHost;
 	task->pcSock      = pcSock;
+#ifdef HAVE_DANE
+	task->bDoneDane   = false;
+	task->iDaneResult = VAL_DANE_INTERNAL_ERROR;
+#else
+	task->bDoneDane   = true;
+#endif
+	task->bDoneTarget = false;
 	if (sBindHost.empty()) {
 		task->bDoneBind = true;
 	} else {
 		StartTDNSThread(task, true);
 	}
 	StartTDNSThread(task, false);
+#ifdef HAVE_DANE
+	StartDaneThread(task);
+#endif
 #else /* HAVE_THREADED_DNS */
 	// Just let Csocket handle DNS itself
 	FinishConnect(sHostname, iPort, sSockName, iTimeout, bSSL, sBindHost, pcSock);

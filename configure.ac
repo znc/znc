@@ -130,6 +130,10 @@ AC_ARG_ENABLE( [openssl],
 	AS_HELP_STRING([--disable-openssl], [disable openssl]),
 	[SSL="$enableval"],
 	[SSL="auto"])
+AC_ARG_ENABLE( [dane],
+	AS_HELP_STRING([--enable-dane], [enable dane]),
+	[DANE="$enableval"],
+	[DANE="no"])
 AC_ARG_ENABLE( [zlib],
 	AS_HELP_STRING([--disable-zlib], [disable zlib]),
 	[ZLIB="$enableval"],
@@ -357,6 +361,65 @@ if test "x$SSL" != "xno"; then
 else
 	NOSSL=1
 	SSL_TEXT="no (explicitly disabled)"
+fi
+
+# ----- Check for libval if openssl was found
+
+DANE_TEXT="$DANE"
+if test "x$DANE" != "xno"; then
+	if test "x$SSL" = "xyes" ; then
+		old_DANE="$DANE"
+
+		my_saved_LIBS="$LIBS"
+		appendLib "-lval-threads -lsres"
+
+		AC_CHECK_LIB(val-threads, val_dane_check,
+			[ DANE=yes ],
+			DANE="no" ; DANE_TEXT="no (libval not found)"
+		)
+
+		if test "x$DANE" != "xno"; then
+			my_saved_LIBS="$LIBS"
+			appendLib "-lval-threads -lsres"
+
+			AC_MSG_CHECKING([whether libval is usable])
+			AC_LINK_IFELSE([
+				AC_LANG_PROGRAM([[
+					#include <validator/validator.h>
+					#include <validator/val_dane.h>
+				]], [[
+					struct val_daneparams params;
+					struct val_danestatus *dres = nullptr;
+			
+					params.port = 80;
+					params.proto = DANE_PARAM_PROTO_TCP;
+
+					val_getdaneinfo(nullptr, "localhost", &params, &dres);
+					val_free_dane(dres);
+				]])
+			], [
+				AC_MSG_RESULT([yes])
+			], [
+				AC_MSG_RESULT([no])
+				DANE=no
+				DANE_TEXT="no (libval not usable)"
+			])
+		fi
+
+		if test "x$DANE" = "xno" ; then
+			ZNC_AUTO_FAIL([DANE],
+				[libval not found. Try --disable-dane.],
+				[libval was not found and thus DANE is disabled])
+			LIBS="$my_saved_LIBS"
+		else
+			AC_DEFINE([HAVE_DANE], [1], [Define if DANE is enabled])
+			DANE=yes
+			DANE_TEXT=yes
+		fi
+	else
+		DANE=no
+		DANE_TEXT="no (require openssl)"
+	fi
 fi
 
 # ----- Check for zlib
@@ -670,6 +733,7 @@ echo "prefix:       $prefix"
 echo "debug:        $DEBUG"
 echo "ipv6:         $IPV6"
 echo "openssl:      $SSL_TEXT"
+echo "dane:         $DANE_TEXT"
 echo "dns:          $DNS_TEXT"
 echo "perl:         $PERL_TEXT"
 echo "python:       $PYTHON_TEXT"
