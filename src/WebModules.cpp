@@ -474,11 +474,18 @@ CWebSock::EPageReqResult CWebSock::PrintTemplate(const CString& sPageName, CStri
 
 	if (pModule) {
 		CUser* pUser = pModule->GetUser();
-		m_Template["ModUser"] = pUser ? pUser->GetUserName() : "";
 		m_Template["ModName"] = pModule->GetModName();
 
 		if (m_Template.find("Title") == m_Template.end()) {
 			m_Template["Title"] = pModule->GetWebMenuTitle();
+		}
+
+		std::vector<CTemplate*>* breadcrumbs = m_Template.GetLoop("BreadCrumbs");
+		if (breadcrumbs->size() == 1 && m_Template["Title"] != pModule->GetModName()) {
+			// Module didn't add its own breadcrumbs, so add a generic one...
+			// But it'll be useless if it's the same as module name
+			CTemplate& bread = m_Template.AddRow("BreadCrumbs");
+			bread["Text"] = m_Template["Title"];
 		}
 	}
 
@@ -765,6 +772,10 @@ CWebSock::EPageReqResult CWebSock::OnPageRequestInternal(const CString& sURI, CS
 			}
 		} else {
 			SetPaths(pModule, true);
+
+			CTemplate& breadModule = m_Template.AddRow("BreadCrumbs");
+			breadModule["Text"] = pModule->GetModName();
+			breadModule["URL"] = pModule->GetWebPath();
 
 			/* if a module returns false from OnWebRequest, it does not
 			   want the template to be printed, usually because it did a redirect. */
