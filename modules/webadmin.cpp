@@ -628,6 +628,14 @@ public:
 			Tmpl["User"] = pUser->GetUserName();
 			Tmpl["Network"] = pNetwork->GetName();
 
+			CTemplate& breadUser = Tmpl.AddRow("BreadCrumbs");
+			breadUser["Text"] = "Edit User [" + pUser->GetUserName() + "]";
+			breadUser["URL"] = GetWebPath() + "edituser?user=" + pUser->GetUserName();
+			CTemplate& breadNet = Tmpl.AddRow("BreadCrumbs");
+			breadNet["Text"] = "Edit Network [" + pNetwork->GetName() + "]";
+			breadNet["URL"] = GetWebPath() + "editnetwork?user=" + pUser->GetUserName() + "&network=" + pNetwork->GetName();
+			CTemplate& breadChan = Tmpl.AddRow("BreadCrumbs");
+
 			if (pChan) {
 				Tmpl["Action"] = "editchan";
 				Tmpl["Edit"] = "true";
@@ -636,6 +644,7 @@ public:
 				Tmpl["BufferCount"] = CString(pChan->GetBufferCount());
 				Tmpl["DefModes"] = pChan->GetDefaultModes();
 				Tmpl["Key"] = pChan->GetKey();
+				breadChan["Text"] = "Edit Channel [" + pChan->GetName() + "]";
 
 				if (pChan->InConfig()) {
 					Tmpl["InConfig"] = "true";
@@ -646,6 +655,7 @@ public:
 				Tmpl["BufferCount"] = CString(pUser->GetBufferCount());
 				Tmpl["DefModes"] = CString(pUser->GetDefaultChanModes());
 				Tmpl["InConfig"] = "true";
+				breadChan["Text"] = "Add Channel";
 			}
 
 			// o1 used to be AutoCycle which was removed
@@ -822,6 +832,11 @@ public:
 				}
 			}
 
+			CTemplate& breadUser = Tmpl.AddRow("BreadCrumbs");
+			breadUser["Text"] = "Edit User [" + pUser->GetUserName() + "]";
+			breadUser["URL"] = GetWebPath() + "edituser?user=" + pUser->GetUserName();
+			CTemplate& breadNet = Tmpl.AddRow("BreadCrumbs");
+
 			if (pNetwork) {
 				Tmpl["Action"] = "editnetwork";
 				Tmpl["Edit"] = "true";
@@ -842,6 +857,8 @@ public:
 				Tmpl["JoinDelay"] = CString(pNetwork->GetJoinDelay());
 
 				Tmpl["IRCConnectEnabled"] = CString(pNetwork->GetIRCConnectEnabled());
+
+				breadNet["Text"] = "Edit Network [" + pNetwork->GetName() + "]";
 
 				const vector<CServer*>& vServers = pNetwork->GetServers();
 				for (unsigned int a = 0; a < vServers.size(); a++) {
@@ -888,6 +905,7 @@ public:
 				Tmpl["FloodRate"] = "1.0";
 				Tmpl["FloodBurst"] = "4";
 				Tmpl["JoinDelay"] = "0";
+				breadNet["Text"] = "Add Network";
 			}
 
 			FOR_EACH_MODULE(i, make_pair(pUser, pNetwork)) {
