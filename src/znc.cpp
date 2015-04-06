@@ -126,7 +126,7 @@ CString CZNC::GetTag(bool bIncludeVersion, bool bHTML) {
 
 	CString sVersion = GetVersion();
 
-	return "ZNC - " + sVersion + " - " + sAddress;
+	return "ZNC " + sVersion + " - " + sAddress;
 }
 
 CString CZNC::GetCompileOptionsString() {
