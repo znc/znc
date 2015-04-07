@@ -9,6 +9,8 @@
     * users are not reloaded any more - which makes rehash less dangerous
 * OnAddUser hook is only called if actually a new user added
     * it is not called during ZNC startup any more
+* Fix build on Solaris 10
+* Fix build with LibreSSL
 
 # ZNC 1.6.0 (2015-02-12)
 
