@@ -69,8 +69,6 @@ void CClient::UserCommand(CString& sLine) {
 		}
 
 		const map<CString,CNick>& msNicks = pChan->GetNicks();
-		CIRCSock* pIRCSock = m_pNetwork->GetIRCSock();
-		const CString& sPerms = (pIRCSock) ? pIRCSock->GetPerms() : "";
 
 		if (msNicks.empty()) {
 			PutStatus("No nicks on [" + sChan + "]");
@@ -78,31 +76,13 @@ void CClient::UserCommand(CString& sLine) {
 		}
 
 		CTable Table;
-
-		for (unsigned int p = 0; p < sPerms.size(); p++) {
-			CString sPerm;
-			sPerm += sPerms[p];
-			Table.AddColumn(sPerm);
-		}
-
 		Table.AddColumn("Nick");
-		Table.AddColumn("Ident");
-		Table.AddColumn("Host");
+		Table.AddColumn("Mask");
 
 		for (const auto& it : msNicks) {
 			Table.AddRow();
-
-			for (unsigned int b = 0; b < sPerms.size(); b++) {
-				if (it.second.HasPerm(sPerms[b])) {
-					CString sPerm;
-					sPerm += sPerms[b];
-					Table.SetCell(sPerm, sPerm);
-				}
-			}
-
-			Table.SetCell("Nick", it.second.GetNick());
-			Table.SetCell("Ident", it.second.GetIdent());
-			Table.SetCell("Host", it.second.GetHost());
+			Table.SetCell("Nick", it.second.GetPermStr() + it.second.GetNick());
+			Table.SetCell("Mask", it.second.GetHostMask());
 		}
 
 		PutStatus(Table);
@@ -187,16 +167,12 @@ void CClient::UserCommand(CString& sLine) {
 
 		CTable Table;
 		Table.AddColumn("Host");
-		Table.AddColumn("Network");
-		Table.AddColumn("Identifier");
+		Table.AddColumn("Name");
 
 		for (const CClient* pClient : vClients) {
 			Table.AddRow();
 			Table.SetCell("Host", pClient->GetRemoteIP());
-			if (pClient->GetNetwork()) {
-				Table.SetCell("Network", pClient->GetNetwork()->GetName());
-			}
-			Table.SetCell("Identifier", pClient->GetIdentifier());
+			Table.SetCell("Name", pClient->GetFullName());
 		}
 
 		PutStatus(Table);
@@ -220,37 +196,14 @@ void CClient::UserCommand(CString& sLine) {
 		CTable Table;
 		Table.AddColumn("Username");
 		Table.AddColumn("Network");
-		Table.AddColumn("Clients");
-		Table.AddColumn("OnIRC");
-		Table.AddColumn("IRC Server");
-		Table.AddColumn("IRC User");
-		Table.AddColumn("Channels");
 
 		for (const auto& it : msUsers) {
-			Table.AddRow();
-			Table.SetCell("Username", it.first);
-			Table.SetCell("Network", "N/A");
-			Table.SetCell("Clients", CString(it.second->GetUserClients().size()));
-
 			const vector<CIRCNetwork*>& vNetworks = it.second->GetNetworks();
 
 			for (const CIRCNetwork* pNetwork : vNetworks) {
 				Table.AddRow();
-				if (pNetwork == vNetworks.back()) {
-					Table.SetCell("Username", "`-");
-				} else {
-					Table.SetCell("Username", "|-");
-				}
-				Table.SetCell("Network", pNetwork->GetName());
-				Table.SetCell("Clients", CString(pNetwork->GetClients().size()));
-				if (pNetwork->IsIRCConnected()) {
-					Table.SetCell("OnIRC", "Yes");
-					Table.SetCell("IRC Server", pNetwork->GetIRCServer());
-					Table.SetCell("IRC User", pNetwork->GetIRCNick().GetNickMask());
-					Table.SetCell("Channels", CString(pNetwork->GetChans().size()));
-				} else {
-					Table.SetCell("OnIRC", "No");
-				}
+				Table.SetCell("Username", it.first);
+				Table.SetCell("Network", pNetwork->GetName() + (pNetwork->IsIRCConnected() ? " (online)" : (pNetwork->GetIRCConnectEnabled() ? " (offline)" : " (disabled)")));
 			}
 		}
 
@@ -600,27 +553,62 @@ void CClient::UserCommand(CString& sLine) {
 
 		CTable Table;
 		Table.AddColumn("Network");
-		Table.AddColumn("OnIRC");
-		Table.AddColumn("IRC Server");
-		Table.AddColumn("IRC User");
-		Table.AddColumn("Channels");
+		Table.AddColumn("Status");
 
 		for (const CIRCNetwork* pNetwork : vNetworks) {
 			Table.AddRow();
 			Table.SetCell("Network", pNetwork->GetName());
-			if (pNetwork->IsIRCConnected()) {
-				Table.SetCell("OnIRC", "Yes");
-				Table.SetCell("IRC Server", pNetwork->GetIRCServer());
-				Table.SetCell("IRC User", pNetwork->GetIRCNick().GetNickMask());
-				Table.SetCell("Channels", CString(pNetwork->GetChans().size()));
-			} else {
-				Table.SetCell("OnIRC", "No");
-			}
+			Table.SetCell("Status", pNetwork->IsIRCConnected() ? "Online" : (pNetwork->GetIRCConnectEnabled() ? "Offline" : "Disabled"));
 		}
 
 		if (PutStatus(Table) == 0) {
 			PutStatus("No networks");
 		}
+	} else if (sCommand.Equals("SHOWNETWORK")) {
+		CUser *pUser = m_pUser;
+		CString sName;
+
+		if (m_pUser->IsAdmin() && !sLine.Token(2).empty()) {
+			sName = sLine.Token(2);
+			pUser = CZNC::Get().FindUser(sLine.Token(1));
+
+			if (!pUser) {
+				PutStatus("User not found " + sLine.Token(1));
+				return;
+			}
+		} else {
+			sName = sLine.Token(1);
+		}
+
+		CIRCNetwork *pNetwork = pUser->FindNetwork(sName);
+		if (!pNetwork) {
+			PutStatus("Network not found " + sName);
+			return;
+		}
+		sName = pNetwork->GetName();
+		CString sStatus = pNetwork->IsIRCConnected() ? "Online" : (pNetwork->GetIRCConnectEnabled() ? "Offline" : "Disabled");
+
+		CTable Table;
+		Table.AddColumn(sName);
+		Table.AddColumn(sStatus);
+
+		Table.AddRow();
+		Table.SetCell(sName, "IRC Server");
+		Table.SetCell(sStatus, pNetwork->GetIRCServer());
+
+		Table.AddRow();
+		Table.SetCell(sName, "IRC User");
+		Table.SetCell(sStatus, pNetwork->GetIRCNick().GetNickMask());
+
+		Table.AddRow();
+		Table.SetCell(sName, "Clients");
+		Table.SetCell(sStatus, CString(pNetwork->GetClients().size()));
+
+		Table.AddRow();
+		Table.SetCell(sName, "Channels");
+		Table.SetCell(sStatus, CString(pNetwork->GetChans().size()));
+
+		PutStatus(Table);
 	} else if (sCommand.Equals("MOVENETWORK")) {
 		if (!m_pUser->IsAdmin()) {
 			PutStatus("Access Denied.");
@@ -1625,8 +1613,7 @@ static void AddCommandHelp(CTable& Table, const CString& sCmd, const CString& sA
 {
 	if (sFilter.empty() || sCmd.StartsWith(sFilter) || sCmd.AsLower().WildCmp(sFilter.AsLower())) {
 		Table.AddRow();
-		Table.SetCell("Command", sCmd);
-		Table.SetCell("Arguments", sArgs);
+		Table.SetCell("Command", sCmd + " " + sArgs);
 		Table.SetCell("Description", sDesc);
 	}
 }
@@ -1634,7 +1621,6 @@ static void AddCommandHelp(CTable& Table, const CString& sCmd, const CString& sA
 void CClient::HelpUser(const CString& sFilter) {
 	CTable Table;
 	Table.AddColumn("Command");
-	Table.AddColumn("Arguments");
 	Table.AddColumn("Description");
 
 	if (sFilter.empty()) {
@@ -1658,6 +1644,9 @@ void CClient::HelpUser(const CString& sFilter) {
 	AddCommandHelp(Table, "AddNetwork", "<name>", "Add a network to your user", sFilter);
 	AddCommandHelp(Table, "DelNetwork", "<name>", "Delete a network from your user", sFilter);
 	AddCommandHelp(Table, "ListNetworks", "", "List all networks", sFilter);
+	if (!m_pUser->IsAdmin()) {
+		AddCommandHelp(Table, "ShowNetwork", "<name>", "Show network details", sFilter);
+	}
 	if (m_pUser->IsAdmin()) {
 		AddCommandHelp(Table, "MoveNetwork", "<old user> <old network> <new user> [new network]", "Move an IRC network from one user to another", sFilter);
 	}
@@ -1723,6 +1712,7 @@ void CClient::HelpUser(const CString& sFilter) {
 		AddCommandHelp(Table, "Rehash", "", "Reload global settings, modules, and listeners from znc.conf", sFilter);
 		AddCommandHelp(Table, "SaveConfig", "", "Save the current settings to disk", sFilter);
 		AddCommandHelp(Table, "ListUsers", "", "List all ZNC users and their connection status", sFilter);
+		AddCommandHelp(Table, "ShowNetwork", "[user] <name>", "Show network details", sFilter);
 		AddCommandHelp(Table, "ListAllUserNetworks", "", "List all ZNC users and their networks", sFilter);
 		AddCommandHelp(Table, "ListChans", "[user <network>]", "List all channels", sFilter);
 		AddCommandHelp(Table, "ListClients", "[user]", "List all connected clients", sFilter);
