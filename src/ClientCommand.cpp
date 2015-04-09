@@ -444,7 +444,7 @@ void CClient::UserCommand(CString& sLine) {
 		CString sStatus = pChan->IsOn() ? (pChan->IsDetached() ? "Detached" : "Joined") : (pChan->IsDisabled() ? "Disabled" : "Trying");
 
 		CTable Table;
-		Table.AddColumn(sChan, false);
+		Table.AddColumn(sChan);
 		Table.AddColumn(sStatus);
 
 		Table.AddRow();

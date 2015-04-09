@@ -142,17 +142,16 @@ public:
 	 *
 	 *  @param uPreferredWidth If width of table is bigger than this, text in cells will be wrapped to several lines, if possible
 	 */
-	explicit CTable(size_type uPreferredWidth = 110) : m_vsHeaders(), m_vuMaxWidths(), m_vuMinWidths(), m_vbWrappable(), m_uPreferredWidth(uPreferredWidth), m_vsOutput() {}
+	CTable() : m_vsHeaders(), m_vsOutput() {}
 	virtual ~CTable() {}
 
 	/** Adds a new column to the table.
 	 *  Please note that you should add all columns before starting to fill
 	 *  the table!
 	 *  @param sName The name of the column.
-	 *  @param bWrappable True if long lines can be wrapped in the same cell.
 	 *  @return false if a column by that name already existed.
 	 */
-	bool AddColumn(const CString& sName, bool bWrappable = true);
+	bool AddColumn(const CString& sName);
 
 	/** Adds a new row to the table.
 	 *  After calling this you can fill the row with content.
@@ -176,14 +175,6 @@ public:
 	 */
 	bool GetLine(unsigned int uIdx, CString& sLine) const;
 
-	/** Return the width of the given column.
-	 *  Please note that adding and filling new rows might change the
-	 *  result of this function!
-	 *  @param uIdx The index of the column you are interested in.
-	 *  @return The width of the column.
-	 */
-	CString::size_type GetColumnWidth(unsigned int uIdx) const;
-
 	/// Completely clear the table.
 	void Clear();
 
@@ -195,15 +186,10 @@ public:
 private:
 	unsigned int GetColumnIndex(const CString& sName) const;
 	VCString Render() const;
-	static VCString WrapWords(const CString& s, size_type uWidth);
 
 protected:
 	// TODO: cleanup these fields before 1.7.0 (I don't want to break ABI)
 	VCString m_vsHeaders;
-	std::vector<CString::size_type> m_vuMaxWidths;  // Column don't need to be bigger than this
-	std::vector<CString::size_type> m_vuMinWidths;  // Column can't be thiner than this
-	std::vector<bool> m_vbWrappable;
-	size_type m_uPreferredWidth;
 	mutable VCString m_vsOutput;  // Rendered table
 };
 

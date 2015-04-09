@@ -546,7 +546,7 @@ void CUtils::SetMessageTags(CString& sLine, const MCString& mssTags) {
 	}
 }
 
-bool CTable::AddColumn(const CString& sName, bool bWrappable) {
+bool CTable::AddColumn(const CString& sName) {
 	for (const CString& sHeader : m_vsHeaders) {
 		if (sHeader.Equals(sName)) {
 			return false;
@@ -554,7 +554,6 @@ bool CTable::AddColumn(const CString& sName, bool bWrappable) {
 	}
 
 	m_vsHeaders.push_back(sName);
-	m_vbWrappable.push_back(bWrappable);
 
 	return true;
 }
@@ -618,10 +617,6 @@ VCString CTable::Render() const {
 	return vsOutput;
 }
 
-VCString CTable::WrapWords(const CString& s, size_type uWidth) {
-	return VCString();
-}
-
 unsigned int CTable::GetColumnIndex(const CString& sName) const {
 	for (unsigned int i = 0; i < m_vsHeaders.size(); i++) {
 		if (m_vsHeaders[i] == sName)
@@ -633,16 +628,9 @@ unsigned int CTable::GetColumnIndex(const CString& sName) const {
 	return (unsigned int) -1;
 }
 
-CString::size_type CTable::GetColumnWidth(unsigned int uIdx) const {
-	return 0;
-}
-
 void CTable::Clear() {
 	clear();
 	m_vsHeaders.clear();
-	m_vuMaxWidths.clear();
-	m_vuMinWidths.clear();
-	m_vbWrappable.clear();
 	m_vsOutput.clear();
 }
 
