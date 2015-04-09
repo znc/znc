@@ -1602,8 +1602,7 @@ static void AddCommandHelp(CTable& Table, const CString& sCmd, const CString& sA
 	const CString::size_type iFilterLength = sFilter.size();
 	if (sFilter.empty() || sCmd.Equals(sFilter, false, iFilterLength) || sCmd.AsLower().WildCmp(sFilter.AsLower())) {
 		Table.AddRow();
-		Table.SetCell("Command", sCmd);
-		Table.SetCell("Arguments", sArgs);
+		Table.SetCell("Command", sCmd + " " + sArgs);
 		Table.SetCell("Description", sDesc);
 	}
 }
@@ -1611,7 +1610,6 @@ static void AddCommandHelp(CTable& Table, const CString& sCmd, const CString& sA
 void CClient::HelpUser(const CString& sFilter) {
 	CTable Table;
 	Table.AddColumn("Command");
-	Table.AddColumn("Arguments");
 	Table.AddColumn("Description");
 
 	if (sFilter.empty()) {
