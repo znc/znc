@@ -601,7 +601,10 @@ CWebSock::EPageReqResult CWebSock::OnPageRequestInternal(const CString& sURI, CS
 	// know the "secret" CSRF check value. Don't do this for login since
 	// CSRF against the login form makes no sense and the login form does a
 	// cookies-enabled check which would break otherwise.
-	if (IsPost() && GetParam("_CSRF_Check") != GetCSRFCheck() && sURI != "/login") {
+	// Don't do this, if user authenticated using http-basic auth, because:
+	// 1. they obviously know the password,
+	// 2. it's easier to automate some tasks e.g. user creation, without need to care about cookies and csrf
+	if (IsPost() && !m_bBasicAuth && GetParam("_CSRF_Check") != GetCSRFCheck() && sURI != "/login") {
 		DEBUG("Expected _CSRF_Check: " << GetCSRFCheck());
 		DEBUG("Actual _CSRF_Check:   " << GetParam("_CSRF_Check"));
 		PrintErrorPage(403, "Access denied", "POST requests need to send "

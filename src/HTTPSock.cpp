@@ -39,6 +39,7 @@ CHTTPSock::CHTTPSock(CModule *pMod, const CString& sURIPrefix, const CString& sH
 		  m_bLoggedIn(false),
 		  m_bPost(false),
 		  m_bDone(false),
+		  m_bBasicAuth(false),
 		  m_uPostLen(0),
 		  m_sPostData(""),
 		  m_sURI(""),
@@ -136,6 +137,7 @@ void CHTTPSock::ReadLine(const CString& sData) {
 		sLine.Token(2).Base64Decode(sUnhashed);
 		m_sUser = sUnhashed.Token(0, false, ":");
 		m_sPass = sUnhashed.Token(1, true, ":");
+		m_bBasicAuth = true;
 		// Postpone authorization attempt until end of headers, because cookies should be read before that, otherwise session id will be overwritten in GetSession()
 	} else if (sName.Equals("Content-Length:")) {
 		m_uPostLen = sLine.Token(1).ToULong();
@@ -182,9 +184,10 @@ void CHTTPSock::ReadLine(const CString& sData) {
 		sLine.Token(1, true).Split(",", ssEncodings, false, "", "", false, true);
 		m_bAcceptGzip = (ssEncodings.find("gzip") != ssEncodings.end());
 	} else if (sLine.empty()) {
-		if (!m_sUser.empty() && !m_bLoggedIn) {
+		if (m_bBasicAuth && !m_bLoggedIn) {
 			m_bLoggedIn = OnLogin(m_sUser, m_sPass, true);
 			// After successful login ReadLine("") will be called again to trigger "else" block
+			// Failed login sends error and closes socket, so no infinite loop here
 		} else {
 			m_bGotHeader = true;
 

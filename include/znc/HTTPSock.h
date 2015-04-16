@@ -106,6 +106,7 @@ protected:
 	bool                     m_bLoggedIn;
 	bool                     m_bPost;
 	bool                     m_bDone;
+	bool                     m_bBasicAuth;
 	unsigned long            m_uPostLen;
 	CString                  m_sPostData;
 	CString                  m_sURI;
