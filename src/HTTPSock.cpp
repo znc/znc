@@ -182,24 +182,21 @@ void CHTTPSock::ReadLine(const CString& sData) {
 		sLine.Token(1, true).Split(",", ssEncodings, false, "", "", false, true);
 		m_bAcceptGzip = (ssEncodings.find("gzip") != ssEncodings.end());
 	} else if (sLine.empty()) {
-		m_bGotHeader = true;
-
-		if (!m_sUser.empty()) {
+		if (!m_sUser.empty() && !m_bLoggedIn) {
 			m_bLoggedIn = OnLogin(m_sUser, m_sPass, true);
-			if (!m_bLoggedIn) {
-				// Error message already was sent
-				return;
-			}
-		}
-
-		if (m_bPost) {
-			m_sPostData = GetInternalReadBuffer();
-			CheckPost();
+			// After successful login ReadLine("") will be called again to trigger "else" block
 		} else {
-			GetPage();
-		}
+			m_bGotHeader = true;
 
-		DisableReadLine();
+			if (m_bPost) {
+				m_sPostData = GetInternalReadBuffer();
+				CheckPost();
+			} else {
+				GetPage();
+			}
+
+			DisableReadLine();
+		}
 	}
 }
 

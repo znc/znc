@@ -161,7 +161,9 @@ void CWebAuth::AcceptedLogin(CUser& User) {
 
 		m_pWebSock->SetLoggedIn(true);
 		m_pWebSock->UnPauseRead();
-		if (!m_bBasic) {
+		if (m_bBasic) {
+			m_pWebSock->ReadLine("");
+		} else {
 			m_pWebSock->Redirect("/?cookie_check=true");
 		}
 
@@ -178,7 +180,13 @@ void CWebAuth::RefusedLogin(const CString& sReason) {
 
 		m_pWebSock->SetLoggedIn(false);
 		m_pWebSock->UnPauseRead();
-		m_pWebSock->Redirect("/?cookie_check=true");
+		if (m_bBasic) {
+			m_pWebSock->AddHeader("WWW-Authenticate", "Basic realm=\"ZNC\"");
+			m_pWebSock->CHTTPSock::PrintErrorPage(401, "Unauthorized", "HTTP Basic authentication attemped with invalid credentials");
+			// Why CWebSock makes this function protected?..
+		} else {
+			m_pWebSock->Redirect("/?cookie_check=true");
+		}
 
 		DEBUG("UNSUCCESSFUL login attempt ==> REASON [" + sReason + "] ==> SESSION [" + spSession->GetId() + "]");
 	}
