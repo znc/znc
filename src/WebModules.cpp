@@ -482,7 +482,6 @@ CWebSock::EPageReqResult CWebSock::PrintTemplate(const CString& sPageName, CStri
 	m_Template["PageName"] = sPageName;
 
 	if (pModule) {
-		CUser* pUser = pModule->GetUser();
 		m_Template["ModName"] = pModule->GetModName();
 
 		if (m_Template.find("Title") == m_Template.end()) {
