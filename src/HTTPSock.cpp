@@ -122,7 +122,7 @@ void CHTTPSock::ReadLine(const CString& sData) {
 		sLine.Token(2).Base64Decode(sUnhashed);
 		m_sUser = sUnhashed.Token(0, false, ":");
 		m_sPass = sUnhashed.Token(1, true, ":");
-		m_bLoggedIn = OnLogin(m_sUser, m_sPass, true);
+		// Postpone authorization attempt until end of headers, because cookies should be read before that, otherwise session id will be overwritten in GetSession()
 	} else if (sName.Equals("Content-Length:")) {
 		m_uPostLen = sLine.Token(1).ToULong();
 		if (m_uPostLen > MAX_POST_SIZE)
@@ -169,6 +169,14 @@ void CHTTPSock::ReadLine(const CString& sData) {
 		m_bAcceptGzip = (ssEncodings.find("gzip") != ssEncodings.end());
 	} else if (sLine.empty()) {
 		m_bGotHeader = true;
+
+		if (!m_sUser.empty()) {
+			m_bLoggedIn = OnLogin(m_sUser, m_sPass, true);
+			if (!m_bLoggedIn) {
+				// Error message already was sent
+				return;
+			}
+		}
 
 		if (m_bPost) {
 			m_sPostData = GetInternalReadBuffer();
