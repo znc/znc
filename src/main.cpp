@@ -248,8 +248,9 @@ int main(int argc, char** argv) {
 	}
 
 	if (optind < argc) {
-		CUtils::PrintError("Specifying a config file as an argument isn't supported anymore.");
-		CUtils::PrintError("Use --datadir instead.");
+		CUtils::PrintError("Unrecognized command line arguments.");
+		CUtils::PrintError("Did you mean to run `/znc " + CString(argv[optind]) + "' in IRC client instead?");
+		CUtils::PrintError("Hint: `/znc " + CString(argv[optind]) + "' is an alias for `/msg *status " + CString(argv[optind]) + "'");
 		return 1;
 	}
 
