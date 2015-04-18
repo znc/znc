@@ -199,7 +199,6 @@ private:
 	static VCString WrapWords(const CString& s, size_type uWidth);
 
 protected:
-	// TODO: cleanup these fields before 1.7.0 (I don't want to break ABI)
 	VCString m_vsHeaders;
 	std::vector<CString::size_type> m_vuMaxWidths;  // Column don't need to be bigger than this
 	std::vector<CString::size_type> m_vuMinWidths;  // Column can't be thiner than this
