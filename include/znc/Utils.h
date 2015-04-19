@@ -111,7 +111,7 @@ protected:
 };
 
 
-/** Generate a grid-like output from a given input.
+/** Previously this generated a grid-like output from a given input.
  *
  *  @code
  *  CTable table;
@@ -128,13 +128,7 @@ protected:
  *  }
  *  @endcode
  *
- *  The above code would generate the following output:
- *  @verbatim
-+-------+-------+
-| a     | b     |
-+-------+-------+
-| hello | world |
-+-------+-------+@endverbatim
+ *  But tables look awful in IRC. So now it puts every cell on separate line.
  */
 class CTable : protected std::vector<std::vector<CString> > {
 public:
