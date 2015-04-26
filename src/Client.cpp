@@ -268,7 +268,7 @@ void CClient::ReadLine(const CString& sData) {
 				const vector<CClient*>& vClients = GetClients();
 
 				for (CClient* pClient : vClients) {
-					if (pClient != this && (m_pNetwork->IsChan(sTarget) || pClient->HasSelfMessage())) {
+					if (pClient->HasEchoMessage() || (pClient != this && (m_pNetwork->IsChan(sTarget) || pClient->HasSelfMessage()))) {
 						pClient->PutClient(":" + GetNickMask() + " NOTICE " + sTarget + " :" + sMsg);
 					}
 				}
@@ -327,7 +327,7 @@ void CClient::ReadLine(const CString& sData) {
 						const vector<CClient*>& vClients = GetClients();
 
 						for (CClient* pClient : vClients) {
-							if (pClient != this && (m_pNetwork->IsChan(sTarget) || pClient->HasSelfMessage())) {
+							if (pClient->HasEchoMessage() || (pClient != this && (m_pNetwork->IsChan(sTarget) || pClient->HasSelfMessage()))) {
 								pClient->PutClient(":" + GetNickMask() + " PRIVMSG " + sTarget + " :\001" + sCTCP + "\001");
 							}
 						}
@@ -384,7 +384,7 @@ void CClient::ReadLine(const CString& sData) {
 				const vector<CClient*>& vClients = GetClients();
 
 				for (CClient* pClient : vClients) {
-					if (pClient != this && (m_pNetwork->IsChan(sTarget) || pClient->HasSelfMessage())) {
+					if (pClient->HasEchoMessage() || (pClient != this && (m_pNetwork->IsChan(sTarget) || pClient->HasSelfMessage()))) {
 						pClient->PutClient(":" + GetNickMask() + " PRIVMSG " + sTarget + " :" + sMsg);
 					}
 				}
@@ -879,6 +879,7 @@ void CClient::HandleCap(const CString& sLine)
 		GLOBALMODULECALL(OnClientCapLs(this, ssOfferCaps), NOTHING);
 		ssOfferCaps.insert("userhost-in-names");
 		ssOfferCaps.insert("multi-prefix");
+		ssOfferCaps.insert("echo-message");
 		ssOfferCaps.insert("znc.in/server-time-iso");
 		ssOfferCaps.insert("znc.in/batch");
 		ssOfferCaps.insert("znc.in/self-message");
@@ -904,7 +905,7 @@ void CClient::HandleCap(const CString& sLine)
 			if (sCap.TrimPrefix("-"))
 				bVal = false;
 
-			bool bAccepted = ("multi-prefix" == sCap) || ("userhost-in-names" == sCap) || ("znc.in/server-time-iso" == sCap) || ("znc.in/batch" == sCap) || ("znc.in/self-message" == sCap);
+			bool bAccepted = ("multi-prefix" == sCap) || ("userhost-in-names" == sCap) || ("echo-message" == sCap) || ("znc.in/server-time-iso" == sCap) || ("znc.in/batch" == sCap) || ("znc.in/self-message" == sCap);
 			GLOBALMODULECALL(IsClientCapSupported(this, sCap, bVal), &bAccepted);
 
 			if (!bAccepted) {
@@ -925,6 +926,8 @@ void CClient::HandleCap(const CString& sLine)
 				m_bNamesx = bVal;
 			} else if ("userhost-in-names" == sCap) {
 				m_bUHNames = bVal;
+			} else if ("echo-message" == sCap) {
+				m_bEchoMessage = bVal;
 			} else if ("znc.in/server-time-iso" == sCap) {
 				m_bServerTime = bVal;
 			} else if ("znc.in/batch" == sCap) {
@@ -962,6 +965,10 @@ void CClient::HandleCap(const CString& sLine)
 		if (m_bUHNames) {
 			m_bUHNames = false;
 			ssRemoved.insert("userhost-in-names");
+		}
+		if (m_bEchoMessage) {
+			m_bEchoMessage = false;
+			ssRemoved.insert("echo-message");
 		}
 		if (m_bServerTime) {
 			m_bServerTime = false;
