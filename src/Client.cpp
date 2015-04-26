@@ -948,46 +948,6 @@ void CClient::HandleCap(const CString& sLine)
 	} else if (sSubCmd.Equals("LIST")) {
 		CString sList = CString(" ").Join(m_ssAcceptedCaps.begin(), m_ssAcceptedCaps.end());
 		RespondCap("LIST :" + sList);
-	} else if (sSubCmd.Equals("CLEAR")) {
-		SCString ssRemoved;
-		for (const CString& sCap : m_ssAcceptedCaps) {
-			bool bRemoving = false;
-			GLOBALMODULECALL(IsClientCapSupported(this, sCap, false), &bRemoving);
-			if (bRemoving) {
-				GLOBALMODULECALL(OnClientCapRequest(this, sCap, false), NOTHING);
-				ssRemoved.insert(sCap);
-			}
-		}
-		if (m_bNamesx) {
-			m_bNamesx = false;
-			ssRemoved.insert("multi-prefix");
-		}
-		if (m_bUHNames) {
-			m_bUHNames = false;
-			ssRemoved.insert("userhost-in-names");
-		}
-		if (m_bEchoMessage) {
-			m_bEchoMessage = false;
-			ssRemoved.insert("echo-message");
-		}
-		if (m_bServerTime) {
-			m_bServerTime = false;
-			ssRemoved.insert("znc.in/server-time-iso");
-		}
-		if (m_bBatch) {
-			m_bBatch = false;
-			ssRemoved.insert("znc.in/batch");
-		}
-		if (m_bSelfMessage) {
-			m_bSelfMessage = false;
-			ssRemoved.insert("znc.in/self-message");
-		}
-		CString sList = "";
-		for (const CString& sCap : ssRemoved) {
-			m_ssAcceptedCaps.erase(sCap);
-			sList += "-" + sCap + " ";
-		}
-		RespondCap("ACK :" + sList.TrimSuffix_n(" "));
 	} else {
 		PutClient(":irc.znc.in 410 " + GetNick() + " " + sSubCmd + " :Invalid CAP subcommand");
 	}
