@@ -100,6 +100,7 @@ public:
 			  m_bAway(false),
 			  m_bServerTime(false),
 			  m_bBatch(false),
+			  m_bEchoMessage(false),
 			  m_bSelfMessage(false),
 			  m_bPlaybackActive(false),
 			  m_pUser(nullptr),
@@ -135,6 +136,7 @@ public:
 	bool IsAway() const { return m_bAway; }
 	bool HasServerTime() const { return m_bServerTime; }
 	bool HasBatch() const { return m_bBatch; }
+	bool HasEchoMessage() const { return m_bEchoMessage; }
 	bool HasSelfMessage() const { return m_bSelfMessage; }
 
 	static bool IsValidIdentifier(const CString& sIdentifier);
@@ -194,6 +196,7 @@ protected:
 	bool                 m_bAway;
 	bool                 m_bServerTime;
 	bool                 m_bBatch;
+	bool                 m_bEchoMessage;
 	bool                 m_bSelfMessage;
 	bool                 m_bPlaybackActive;
 	CUser*               m_pUser;
