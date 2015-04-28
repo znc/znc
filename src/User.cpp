@@ -1095,6 +1095,11 @@ bool CUser::LoadModule(const CString& sModName, const CString& sArgs, const CStr
 		CFile fNVFile = CFile(GetUserPath() + "/moddata/" + sModName + "/.registry");
 
 		for (CIRCNetwork* pNetwork : m_vIRCNetworks) {
+			// Check whether the network already has this module loaded (#954)
+			if (pNetwork->GetModules().FindModule(sModName)) {
+				continue;
+			}
+
 			if (fNVFile.Exists()) {
 				CString sNetworkModPath = pNetwork->GetNetworkPath() + "/moddata/" + sModName;
 				if (!CFile::Exists(sNetworkModPath)) {
