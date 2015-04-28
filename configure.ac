@@ -32,7 +32,7 @@ AC_PROG_CXX
 # "Optional" because we want custom error message
 AX_CXX_COMPILE_STDCXX_11([noext], [optional])
 if test x"$HAVE_CXX11" != x1; then
-	AC_MSG_ERROR([Either upgrade your compiler, or use ZNC 1.4])
+	AC_MSG_ERROR([Either upgrade your gcc to 4.7+ or clang to 3.2+])
 fi
 
 AC_PROG_INSTALL
