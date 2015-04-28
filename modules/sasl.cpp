@@ -23,7 +23,7 @@ static const struct {
 	const char *szDescription;
 	const bool  bDefault;
 } SupportedMechanisms[] = {
-	{ "EXTERNAL",           "TLS certificate, for use with the *cert module", false },
+	{ "EXTERNAL",           "TLS certificate, for use with the *cert module", true },
 	{ "PLAIN",              "Plain text negotiation, this should work always if the network supports SASL", true }
 };
 
