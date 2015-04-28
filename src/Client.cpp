@@ -874,15 +874,24 @@ void CClient::HandleCap(const CString& sLine)
 	//TODO support ~ and = modifiers
 	CString sSubCmd = sLine.Token(1);
 
+	std::map<CString, std::function<void(bool bVal)>> mCoreCaps = {
+		{"multi-prefix", [this](bool bVal) { m_bNamesx = bVal; }},
+		{"userhost-in-names", [this](bool bVal) { m_bUHNames = bVal; }},
+		{"echo-message", [this](bool bVal) { m_bEchoMessage = bVal; }},
+		{"server-time", [this](bool bVal) { m_bServerTime = bVal; }},
+		{"batch", [this](bool bVal) { m_bBatch = bVal; }},
+	};
+	// For compatibility with older clients
+	mCoreCaps["znc.in/server-time-iso"] = mCoreCaps["server-time"];
+	mCoreCaps["znc.in/batch"] = mCoreCaps["batch"];
+	mCoreCaps["znc.in/self-message"] = [this](bool bVal) { m_bSelfMessage = bVal; };
+
 	if (sSubCmd.Equals("LS")) {
 		SCString ssOfferCaps;
+		for (const auto& it : mCoreCaps) {
+			ssOfferCaps.insert(it.first);
+		}
 		GLOBALMODULECALL(OnClientCapLs(this, ssOfferCaps), NOTHING);
-		ssOfferCaps.insert("userhost-in-names");
-		ssOfferCaps.insert("multi-prefix");
-		ssOfferCaps.insert("echo-message");
-		ssOfferCaps.insert("znc.in/server-time-iso");
-		ssOfferCaps.insert("znc.in/batch");
-		ssOfferCaps.insert("znc.in/self-message");
 		CString sRes = CString(" ").Join(ssOfferCaps.begin(), ssOfferCaps.end());
 		RespondCap("LS :" + sRes);
 		m_bInCap = true;
@@ -905,7 +914,7 @@ void CClient::HandleCap(const CString& sLine)
 			if (sCap.TrimPrefix("-"))
 				bVal = false;
 
-			bool bAccepted = ("multi-prefix" == sCap) || ("userhost-in-names" == sCap) || ("echo-message" == sCap) || ("znc.in/server-time-iso" == sCap) || ("znc.in/batch" == sCap) || ("znc.in/self-message" == sCap);
+			bool bAccepted = mCoreCaps.count(sCap) > 0;
 			GLOBALMODULECALL(IsClientCapSupported(this, sCap, bVal), &bAccepted);
 
 			if (!bAccepted) {
@@ -922,18 +931,9 @@ void CClient::HandleCap(const CString& sLine)
 			if (sCap.TrimPrefix("-"))
 				bVal = false;
 
-			if ("multi-prefix" == sCap) {
-				m_bNamesx = bVal;
-			} else if ("userhost-in-names" == sCap) {
-				m_bUHNames = bVal;
-			} else if ("echo-message" == sCap) {
-				m_bEchoMessage = bVal;
-			} else if ("znc.in/server-time-iso" == sCap) {
-				m_bServerTime = bVal;
-			} else if ("znc.in/batch" == sCap) {
-				m_bBatch = bVal;
-			} else if ("znc.in/self-message" == sCap) {
-				m_bSelfMessage = bVal;
+			auto handler_it = mCoreCaps.find(sCap);
+			if (mCoreCaps.end() != handler_it) {
+				handler_it->second(bVal);
 			}
 			GLOBALMODULECALL(OnClientCapRequest(this, sCap, bVal), NOTHING);
 
@@ -948,46 +948,6 @@ void CClient::HandleCap(const CString& sLine)
 	} else if (sSubCmd.Equals("LIST")) {
 		CString sList = CString(" ").Join(m_ssAcceptedCaps.begin(), m_ssAcceptedCaps.end());
 		RespondCap("LIST :" + sList);
-	} else if (sSubCmd.Equals("CLEAR")) {
-		SCString ssRemoved;
-		for (const CString& sCap : m_ssAcceptedCaps) {
-			bool bRemoving = false;
-			GLOBALMODULECALL(IsClientCapSupported(this, sCap, false), &bRemoving);
-			if (bRemoving) {
-				GLOBALMODULECALL(OnClientCapRequest(this, sCap, false), NOTHING);
-				ssRemoved.insert(sCap);
-			}
-		}
-		if (m_bNamesx) {
-			m_bNamesx = false;
-			ssRemoved.insert("multi-prefix");
-		}
-		if (m_bUHNames) {
-			m_bUHNames = false;
-			ssRemoved.insert("userhost-in-names");
-		}
-		if (m_bEchoMessage) {
-			m_bEchoMessage = false;
-			ssRemoved.insert("echo-message");
-		}
-		if (m_bServerTime) {
-			m_bServerTime = false;
-			ssRemoved.insert("znc.in/server-time-iso");
-		}
-		if (m_bBatch) {
-			m_bBatch = false;
-			ssRemoved.insert("znc.in/batch");
-		}
-		if (m_bSelfMessage) {
-			m_bSelfMessage = false;
-			ssRemoved.insert("znc.in/self-message");
-		}
-		CString sList = "";
-		for (const CString& sCap : ssRemoved) {
-			m_ssAcceptedCaps.erase(sCap);
-			sList += "-" + sCap + " ";
-		}
-		RespondCap("ACK :" + sList.TrimSuffix_n(" "));
 	} else {
 		PutClient(":irc.znc.in 410 " + GetNick() + " " + sSubCmd + " :Invalid CAP subcommand");
 	}
