@@ -148,7 +148,7 @@ endif
 ifneq "THIS_IS_NOT_TARBALL" ""
 # If git commit was changed since previous build, add a phony target to dependencies, forcing version.o to be recompiled
 # Nightlies have pregenerated version.cpp
-src/version.cpp: Makefile version.sh $(shell if [ x`cat .version_extra 2> /dev/null` != x`$(srcdir)/version.sh $(GIT) 3>&2 2> /dev/null` ]; then echo version_extra_recompile; fi)
+src/version.cpp: Makefile version.sh $(shell if [ x`cat .version_extra 2> /dev/null` != x`$(srcdir)/version.sh "$(GIT)" 3>&2 2> /dev/null` ]; then echo version_extra_recompile; fi)
 	@mkdir -p .depend src
 	$(E) Building source file version.cpp...
 	$(Q)WRITE_OUTPUT=yes $(srcdir)/version.sh "$(GIT)" > .version_extra 2> /dev/null

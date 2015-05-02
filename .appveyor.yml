@@ -1,0 +1,31 @@
+# There is a pre-installed cygwin: http://help.appveyor.com/discussions/suggestions/427-pre-install-cygwin
+# But it's old and misses some stuff anyway
+#
+# TODO: test both x86 and x86_64
+# TODO: test msvc
+version: 0.0.0.0.1-branch-{branch}-build-{build}
+clone_depth: 10
+cache:
+    - c:\cygwin\var\cache\setup
+install:
+    - ps: Invoke-WebRequest https://cygwin.com/setup-x86.exe -OutFile c:\cygwin-setup-x86.exe
+    - c:\cygwin-setup-x86.exe --quiet-mode --no-shortcuts --no-startmenu --no-desktop --upgrade-also --only-site --site http://cygwin.mirror.constant.com --root c:\cygwin --local-package-dir c:\cygwin\var\cache\setup --packages aclocal,automake,gcc-g++,make,pkg-config,wget,openssl-devel,libicu-devel > cygwin-install.log 2>&1
+    - ps: Push-AppveyorArtifact cygwin-install.log
+    - c:\cygwin\bin\sh -lc "uname -a"
+    - c:\cygwin\bin\sh -lc "cat /proc/cpuinfo"
+    - c:\cygwin\bin\sh -lc "cat /proc/meminfo"
+    - c:\cygwin\bin\sh -lc "ls -l /bin"
+    - c:\cygwin\bin\sh -lc "cygcheck -s -v > $APPVEYOR_BUILD_FOLDER/cygcheck.log 2>&1"
+    - ps: Push-AppveyorArtifact cygcheck.log
+# stdin is broken at AppVeyor, so we open it explicitly as /dev/null
+build_script:
+    - git submodule update --init
+    - c:\cygwin\bin\sh -lc "cd $APPVEYOR_BUILD_FOLDER; ./autogen.sh < /dev/null"
+    - mkdir build
+    - c:\cygwin\bin\sh -lc "cd $APPVEYOR_BUILD_FOLDER/build; ../configure < /dev/null"
+    - ps: Push-AppveyorArtifact build\config.log
+    - c:\cygwin\bin\sh -lc "cd $APPVEYOR_BUILD_FOLDER/build; make VERBOSE=1 -j2 < /dev/null"
+    - c:\cygwin\bin\sh -lc "cd $APPVEYOR_BUILD_FOLDER/build; make install < /dev/null"
+    - c:\cygwin\bin\sh -lc "znc --version"
+test_script:
+    - c:\cygwin\bin\sh -lc "cd $APPVEYOR_BUILD_FOLDER/build; make VERBOSE=1 test < /dev/null"
