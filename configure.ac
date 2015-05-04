@@ -35,14 +35,6 @@ if test x"$HAVE_CXX11" != x1; then
 	AC_MSG_ERROR([Upgrade your compiler. GCC 4.7+ and Clang 3.2+ are known to work.])
 fi
 
-AC_PROG_INSTALL
-AC_PROG_GREP
-AC_PROG_SED
-AC_CANONICAL_HOST
-AC_SYS_LARGEFILE
-ZNC_VISIBILITY
-AC_PATH_PROG([GIT], [git])
-
 appendLib () {
 	if test "$LIBS" != ""; then
 		LIBS="$LIBS $*"
@@ -75,47 +67,13 @@ appendLD () {
 	fi
 }
 
-case "${host_os}" in
-	freebsd*)
-		# -D__GNU_LIBRARY__ makes this work on fbsd 4.11
-		appendCXX -I/usr/local/include -D__GNU_LIBRARY__
-		appendLib -L/usr/local/lib -lcompat
-		appendMod -L/usr/local/lib
-	;;
-	solaris*)
-		appendLib -lsocket -lnsl -lresolv
-		ISSUN=1
-	;;
-	cygwin)
-		# We don't want to use -std=gnu++11 instead of -std=c++11, but among other things, -std=c++11 defines __STRICT_ANSI__ which makes cygwin not to compile: undefined references to strerror_r, to fdopen, to strcasecmp, etc (their declarations in system headers are between ifdef)
-		appendCXX -U__STRICT_ANSI__
-		ISCYGWIN=1
-	;;
-	darwin*)
-		ISDARWIN=1
-
-		AC_ARG_VAR([USE_SYSTEM_OPENSSL],[set USE_SYSTEM_OPENSSL="true" to use the OpenSSL version provided by Mac OS X. Otherwise the Homebrew installed version is used if available. ])
-
-		AC_CHECK_PROG([BREW],brew, brew)
-		if test x$BREW = xbrew; then
-			dnl add default homebrew paths
-
-			icu4c_prefix=`$BREW --prefix icu4c`
-			export PKG_CONFIG_PATH="$icu4c_prefix/lib/pkgconfig:$PKG_CONFIG_PATH"
-
-			python3_prefix=`$BREW --prefix python3`
-			python3_prefix=`find "$python3_prefix/" -name python3.pc`
-			python3_prefix=`dirname "$python3_prefix"`
-			export PKG_CONFIG_PATH="$python3_prefix:$PKG_CONFIG_PATH"
-
-			if test -z "$USE_SYSTEM_OPENSSL" -o "$USE_SYSTEM_OPENSSL" = "false"; then
-				openssl_prefix=`$BREW --prefix openssl`
-				export PKG_CONFIG_PATH="$openssl_prefix/lib/pkgconfig:$PKG_CONFIG_PATH"
-			fi
-		fi
-	;;
-esac
-
+AC_PROG_INSTALL
+AC_PROG_GREP
+AC_PROG_SED
+AC_CANONICAL_HOST
+AC_SYS_LARGEFILE
+ZNC_VISIBILITY
+AC_PATH_PROG([GIT], [git])
 PKG_PROG_PKG_CONFIG()
 
 AC_ARG_ENABLE( [debug],
@@ -193,6 +151,82 @@ if test "x$with_systemdsystemunitdir" != xno; then
 	AC_SUBST([systemdsystemunitdir], [$with_systemdsystemunitdir])
 fi
 AM_CONDITIONAL(HAVE_SYSTEMD, [test -n "$with_systemdsystemunitdir" -a "x$with_systemdsystemunitdir" != xno ])
+
+case "${host_os}" in
+	freebsd*)
+		# -D__GNU_LIBRARY__ makes this work on fbsd 4.11
+		appendCXX -I/usr/local/include -D__GNU_LIBRARY__
+		appendLib -L/usr/local/lib -lcompat
+		appendMod -L/usr/local/lib
+	;;
+	solaris*)
+		appendLib -lsocket -lnsl -lresolv
+		ISSUN=1
+	;;
+	cygwin)
+		# We don't want to use -std=gnu++11 instead of -std=c++11, but among other things, -std=c++11 defines __STRICT_ANSI__ which makes cygwin not to compile: undefined references to strerror_r, to fdopen, to strcasecmp, etc (their declarations in system headers are between ifdef)
+		appendCXX -U__STRICT_ANSI__
+		ISCYGWIN=1
+	;;
+	darwin*)
+		ISDARWIN=1
+
+		AC_ARG_VAR([USE_SYSTEM_OPENSSL],[set USE_SYSTEM_OPENSSL="true" to use the OpenSSL version provided by Mac OS X. Otherwise the Homebrew installed version is used if available. ])
+
+		AC_PATH_PROG([BREW], [brew])
+		if test -n "$BREW"; then
+			# add default homebrew paths
+
+			if test "x$HAVE_ICU" != "xno"; then
+				AC_MSG_CHECKING([icu4c via homebrew])
+				icu4c_prefix=`$BREW --prefix icu4c`
+				if test -n "$icu4c_prefix"; then
+					export PKG_CONFIG_PATH="$icu4c_prefix/lib/pkgconfig:$PKG_CONFIG_PATH"
+					AC_MSG_RESULT([$icu4c_prefix])
+				else
+					AC_MSG_RESULT([no])
+				fi
+			fi
+
+			if test "x$PYTHON" != "xno"; then
+				brew_python_pc="$PYTHON"
+				# This is duplication of non-darwin python logic below...
+				if test "x$brew_python_pc" = "xyes"; then
+					brew_python_pc="python3"
+				fi
+				AC_MSG_CHECKING([python3 via homebrew])
+				python3_prefix=`$BREW --prefix python3`
+				if test -n "$python3_prefix"; then
+					python3_prefix=`find "$python3_prefix/" -name $brew_python_pc.pc | head -n1`
+					if test -n "$python3_prefix"; then
+						python3_prefix=`dirname "$python3_prefix"`
+						export PKG_CONFIG_PATH="$python3_prefix:$PKG_CONFIG_PATH"
+						AC_MSG_RESULT([$python3_prefix])
+					else
+						AC_MSG_RESULT([no $brew_python_pc.pc found])
+					fi
+				else
+					AC_MSG_RESULT([no])
+				fi
+			fi
+
+			if test "x$SSL" != "xno"; then
+				AC_MSG_CHECKING([openssl via homebrew])
+				if test -z "$USE_SYSTEM_OPENSSL" -o "$USE_SYSTEM_OPENSSL" = "false"; then
+					openssl_prefix=`$BREW --prefix openssl`
+					if test -n "$openssl_prefix"; then
+						export PKG_CONFIG_PATH="$openssl_prefix/lib/pkgconfig:$PKG_CONFIG_PATH"
+						AC_MSG_RESULT([$openssl_prefix])
+					else
+						AC_MSG_RESULT([no])
+					fi
+				else
+					AC_MSG_RESULT([user forced system openssl])
+				fi
+			fi
+		fi
+	;;
+esac
 
 # In old times needed to define _FORTIFY_SOURCE to 2 ourself.
 # Then GCC started to define it itself to 2. It was ok.
@@ -687,11 +721,6 @@ fi
 echo "charset:      $HAVE_ICU"
 echo "zlib:         $ZLIB_TEXT"
 echo "run from src: $RUNFROMSOURCE"
-echo
-echo "Used libraries:"
-echo "  openssl: $openssl_LIBS"
-echo "  python3: $python_LIBS"
-echo "  icu:     $icu_LIBS"
 echo
 echo "Now you can run \"$GNUMAKE\" to compile ZNC"
 
