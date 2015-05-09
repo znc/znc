@@ -181,7 +181,7 @@ case "${host_os}" in
 				AC_MSG_CHECKING([icu4c via homebrew])
 				icu4c_prefix=`$BREW --prefix icu4c`
 				if test -n "$icu4c_prefix"; then
-					export PKG_CONFIG_PATH="$icu4c_prefix/lib/pkgconfig:$PKG_CONFIG_PATH"
+					export PKG_CONFIG_PATH="$PKG_CONFIG_PATH:$icu4c_prefix/lib/pkgconfig"
 					AC_MSG_RESULT([$icu4c_prefix])
 				else
 					AC_MSG_RESULT([no])
@@ -200,7 +200,7 @@ case "${host_os}" in
 					python3_prefix=`find "$python3_prefix/" -name $brew_python_pc.pc | head -n1`
 					if test -n "$python3_prefix"; then
 						python3_prefix=`dirname "$python3_prefix"`
-						export PKG_CONFIG_PATH="$python3_prefix:$PKG_CONFIG_PATH"
+						export PKG_CONFIG_PATH="$PKG_CONFIG_PATH:$python3_prefix"
 						AC_MSG_RESULT([$python3_prefix])
 					else
 						AC_MSG_RESULT([no $brew_python_pc.pc found])
@@ -215,7 +215,7 @@ case "${host_os}" in
 				if test -z "$USE_SYSTEM_OPENSSL" -o "$USE_SYSTEM_OPENSSL" = "false"; then
 					openssl_prefix=`$BREW --prefix openssl`
 					if test -n "$openssl_prefix"; then
-						export PKG_CONFIG_PATH="$openssl_prefix/lib/pkgconfig:$PKG_CONFIG_PATH"
+						export PKG_CONFIG_PATH="$PKG_CONFIG_PATH:$openssl_prefix/lib/pkgconfig"
 						AC_MSG_RESULT([$openssl_prefix])
 					else
 						AC_MSG_RESULT([no])
