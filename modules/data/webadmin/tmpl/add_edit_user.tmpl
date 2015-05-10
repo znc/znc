@@ -1,3 +1,4 @@
+<? AddRow JSLoop HREF=/modfiles/global/webadmin/webadmin.js ?>
 <? AddRow CSSLoop HREF=/modfiles/global/webadmin/webadmin.css ?>
 <? INC Header.tmpl ?>
 
@@ -126,10 +127,10 @@
 		<? IF Edit ?>
 		<div class="sectionbg">
 			<div class="sectionbody">
-				<table>
+				<table class="sortable">
 					<thead>
 					<tr>
-						<td>[<a href="<? VAR URIPrefix TOP ?><? VAR ModPath TOP ?>addnetwork?user=<? VAR Username ESC=URL ?>">Add</a>]</td>
+						<td class="ignore-sort">[<a href="<? VAR URIPrefix TOP ?><? VAR ModPath TOP ?>addnetwork?user=<? VAR Username ESC=URL ?>">Add</a>]</td>
 				<? IF NetworkLoop ?>
 						<td>Name</td>
 						<td>Clients</td>
@@ -353,5 +354,6 @@
 		<? ENDIF ?>
 	</div>
 </form>
+<script>make_sortable();</script>
 
 <? INC Footer.tmpl ?>

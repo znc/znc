@@ -6,3 +6,10 @@
 .encoding-settings {
 	width: 500px;
 }
+
+table .sorted::after {
+	content:" ▾";
+}
+table .reverse-sorted::after {
+	content:" ▴";
+}
