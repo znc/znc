@@ -72,13 +72,33 @@
 						<label for="doconnect_checkbox">Connect to IRC &amp; automatically re-connect</label></div>
 				</div>
 
-				<div class="subsection half">
+				<div class="subsection half" id="servers_plain">
 					<div class="inputlabel">Servers of this IRC network:</div>
-					<div><textarea name="servers" cols="70" rows="5"><? LOOP ServerLoop ?><? VAR Server ?>
+					<div><textarea name="servers" cols="70" rows="5" id="servers_text"><? LOOP ServerLoop ?><? VAR Server ?>
 <? ENDLOOP ?>
 </textarea></div>
-					<br /><span class="info">One server per line, "host [[+]port] [password]", + means SSL</span>
+					<br/><span class="info">One server per line, "host [[+]port] [password]", + means SSL</span>
 				</div>
+				<div class="subsection" id="servers_js" style="display:none">
+					<div>Servers of this IRC network:</div>
+					<div>
+						<table style="width:100%">
+							<thead>
+								<tr>
+									<th>Hostname</th>
+									<th>Port</th>
+									<th>SSL</th>
+									<th>Password</th>
+									<th/>
+								</tr>
+							</thead>
+							<tbody id="servers_tbody">
+							</tbody>
+						</table>
+						<input type="button" value="Add" id="servers_add"/>
+					</div>
+				</div>
+				<script type="text/javascript">serverlist_init(jQuery);</script>
 
 				<div class="subsection full">
 					<div class="inputlabel">Trusted SSL fingerprints of this IRC network:</div>
