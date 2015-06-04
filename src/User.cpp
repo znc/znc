@@ -376,6 +376,7 @@ bool CUser::ParseConfig(CConfig* pConfig, CString& sError) {
 		// XXX Legacy crap, added in ZNC 0.099
 		if (sModName == "fixfreenode") {
 			sNotice = "NOTICE: [fixfreenode] doesn't do anything useful anymore, ignoring it";
+			CUtils::PrintMessage(sNotice);
 			continue;
 		}
 
@@ -416,6 +417,13 @@ bool CUser::ParseConfig(CConfig* pConfig, CString& sError) {
 				pNetwork->SetEncoding(vsServer[0]);
 			}
 			CUtils::PrintStatus(true, "Using [" + vsClient[0] + "] for clients, and [" + vsServer[0] + "] for servers");
+			continue;
+		}
+
+		// XXX Legacy crap, added in 1.7
+		if (sModName == "disconkick") {
+			sNotice = "NOTICE: [disconkick] is integrated to core now, ignoring it";
+			CUtils::PrintMessage(sNotice);
 			continue;
 		}
 

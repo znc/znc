@@ -1102,6 +1102,13 @@ void CIRCSock::Disconnected() {
 	m_pNetwork->ClearRawBuffer();
 	m_pNetwork->ClearMotdBuffer();
 
+	for (CChan* pChan : m_pNetwork->GetChans()) {
+		if(pChan->IsOn()) {
+			m_pNetwork->PutUser(":ZNC!znc@znc.in KICK " + pChan->GetName() + " " + GetNick()
+				+ " :You have been disconnected from the IRC server");
+		}
+	}
+
 	ResetChans();
 
 	// send a "reset user modes" cmd to the client.
