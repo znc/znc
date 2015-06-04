@@ -13,3 +13,11 @@ table .sorted::after {
 table .reverse-sorted::after {
 	content:" ▴";
 }
+
+.ctcpreplies_row_request {
+	width: 100px;
+}
+.ctcpreplies_row_response {
+	width: 400px;
+}
+

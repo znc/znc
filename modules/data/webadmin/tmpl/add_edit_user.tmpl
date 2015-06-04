@@ -309,13 +309,44 @@
 					<input type="number" name="maxquerybuffers" value="<? VAR MaxQueryBuffers ?>" class="third" min="0"
 					       title="Maximum number of query buffers. 0 is unlimited."/>
 				</div>
-				<div class="subsection half">
+
+				<div class="subsection half" id="ctcpreplies_plain">
 					<div class="inputlabel">CTCP Replies:</div>
-					<div><textarea name="ctcpreplies" cols="70" rows="3"><? LOOP CTCPLoop ?><? VAR CTCP ?>
+					<div><textarea name="ctcpreplies" cols="70" rows="3" id="ctcpreplies_text"><? LOOP CTCPLoop ?><? VAR CTCP ?>
 <? ENDLOOP ?>
 </textarea></div>
 					<br /><span class="info">One reply per line. Example: TIME Buy a watch!</span>
 				</div>
+				<div class="subsection" id="ctcpreplies_js" style="display:none">
+					<div>CTCP Replies:</div>
+					<div>
+						<table style="width:100%">
+							<thead>
+								<tr>
+									<th>Request</th>
+									<th>Response</th>
+									<th/>
+								</tr>
+							</thead>
+							<tbody id="ctcpreplies_tbody"/>
+						</table>
+						<input type="button" value="Add" id="ctcpreplies_add"/>
+						<datalist id="ctcpreplies_list">
+							<option value="PING"/>
+							<option value="FINGER"/>
+							<option value="CLIENTINFO"/>
+							<option value="USERINFO"/>
+							<option value="VERSION"/>
+							<option value="SOURCE"/>
+							<option value="TIME"/>
+							<option value="PAGE"/>
+							<option value="DCC"/>
+							<option value="UPTIME"/>
+						</datalist>
+					</div>
+				</div>
+				<script type="text/javascript">ctcpreplies_init(jQuery);</script>
+
 				<div class="subsection">
 					<div class="inputlabel">Skin:</div>
 
