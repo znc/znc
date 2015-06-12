@@ -16,6 +16,7 @@ Makefile
 *.pc
 /include/znc/zncconfig.h
 /znc-buildmod
+/znc.service
 
 # modperl and modpython generated code
 /modules/modperl/functions.cpp
