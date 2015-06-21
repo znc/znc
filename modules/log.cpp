@@ -239,7 +239,7 @@ void CLogMod::PutLog(const CString& sLine, const CString& sWindow /*= "Status"*/
 	if (!CFile::Exists(sLogDir)) CDir::MakeDir(sLogDir, ModDirInfo.st_mode);
 	if (LogFile.Open(O_WRONLY | O_APPEND | O_CREAT))
 	{
-		LogFile.Write(CUtils::FormatTime(curtime, "[%H:%M:%S] ", GetUser()->GetTimezone()) + (m_bSanitize ? sLine.StripControls_n() : sLine) + "\n");
+		LogFile.Write(CUtils::FormatTime(curtime, m_sTimestamp, GetUser()->GetTimezone()) + " " + (m_bSanitize ? sLine.StripControls_n() : sLine) + "\n");
 	} else
 		DEBUG("Could not open log file [" << sPath << "]: " << strerror(errno));
 }
@@ -270,33 +270,32 @@ CString CLogMod::GetServer()
 bool CLogMod::OnLoad(const CString& sArgs, CString& sMessage)
 {
 	VCString vsArgs;
-	sArgs.Split(" ", vsArgs);
+	sArgs.QuoteSplit(vsArgs);
 
-	bool bHaveTimestamp = false;
+	bool bReadingTimestamp = false;
 	bool bHaveLogPath = false;
+
 	for (CString& sArg : vsArgs) {
-		if (sArg.Equals("-sanitize")) {
+		if (bReadingTimestamp) {
+			m_sTimestamp = sArg;
+			bReadingTimestamp = false;
+		} else if (sArg.Equals("-sanitize")) {
 			m_bSanitize = true;
 		} else if (sArg.Equals("-timestamp")) {
-			// Everything after this must be timestamp
-			bHaveTimestamp = true;
+			bReadingTimestamp = true;
 		} else {
-			if (bHaveTimestamp) {
-				m_sTimestamp += sArg + " ";
-			} else {
-				// Only one arg may be LogPath
-				if (bHaveLogPath) {
-					sMessage = "Invalid args [" + sArgs + "]. Only one log path allowed.  Check that there are no spaces in the path.";
-					return false;
-				}
-				m_sLogPath = sArg;
-				bHaveLogPath = true;
+			// Only one arg may be LogPath
+			if (bHaveLogPath) {
+				sMessage = "Invalid args [" + sArgs + "]. Only one log path allowed.  Check that there are no spaces in the path.";
+				return false;
 			}
+			m_sLogPath = sArg;
+			bHaveLogPath = true;
 		}
 	}
 
 	if (m_sTimestamp.empty()) {
-		m_sTimestamp = "[%H:%M:%S] ";
+		m_sTimestamp = "[%H:%M:%S]";
 	}
 
 	// Add default filename to path if it's a folder
@@ -329,12 +328,11 @@ bool CLogMod::OnLoad(const CString& sArgs, CString& sMessage)
 
 	// Check if it's allowed to write in this path in general
 	m_sLogPath = CDir::CheckPathPrefix(GetSavePath(), m_sLogPath);
-	if (m_sLogPath.empty())
-	{
+	if (m_sLogPath.empty()) {
 		sMessage = "Invalid log path ["+m_sLogPath+"].";
 		return false;
 	} else {
-		sMessage = "Logging to ["+m_sLogPath+"]. Using timestamp ["+m_sTimestamp+"]";
+		sMessage = "Logging to ["+m_sLogPath+"]. Using timestamp format '"+m_sTimestamp+"'";
 		return true;
 	}
 }
