@@ -1006,10 +1006,13 @@ public:
 	 *           case this is the user pointer.
 	 */
 	CUser* GetUser() const { return m_pUser; }
+	/** @returns nullptr except when we are in a network-specific module hook in
+	 *           which case this is the network for which the hook is called.
+	 */
+	CIRCNetwork* GetNetwork() const { return m_pNetwork; }
 	/** @returns nullptr except when we are in a client-specific module hook in
 	 *           which case this is the client for which the hook is called.
 	 */
-	CIRCNetwork* GetNetwork() const { return m_pNetwork; }
 	CClient* GetClient() const { return m_pClient; }
 	CSockManager* GetManager() const { return m_pManager; }
 	// !Getters
