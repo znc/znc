@@ -34,6 +34,11 @@ public:
 		DelNV("Password");
 	}
 
+	void SetNSMaskCommand(const CString& sLine) {
+		SetNV("NickServMask", sLine.Token(1, true));
+		PutModule("NickServ mask set");
+	}
+
 	void SetNSNameCommand(const CString& sLine) {
 		SetNV("NickServName", sLine.Token(1, true));
 		PutModule("NickServ name set");
@@ -58,7 +63,6 @@ public:
 		}
 		PutModule("Ok");
 	}
-
 	MODCONSTRUCTOR(CNickServ) {
 		AddHelpCommand();
 		AddCommand("Set", static_cast<CModCommand::ModCmdFunc>(&CNickServ::SetCommand),
@@ -67,6 +71,8 @@ public:
 			"", "Clear your nickserv password");
 		AddCommand("SetNSName", static_cast<CModCommand::ModCmdFunc>(&CNickServ::SetNSNameCommand),
 			"nickname", "Set NickServ name (Useful on networks like EpiKnet, where NickServ is named Themis)");
+		AddCommand("SetNSMask", static_cast<CModCommand::ModCmdFunc>(&CNickServ::SetNSMaskCommand), 
+			"NickServ!services@hostname.org", "Set NickServ mask (Useful for ensuring password is not sent to service impersonator(s))");
 		AddCommand("ClearNSName", static_cast<CModCommand::ModCmdFunc>(&CNickServ::ClearNSNameCommand),
 			"", "Reset NickServ name to default (NickServ)");
 		AddCommand("ViewCommands", static_cast<CModCommand::ModCmdFunc>(&CNickServ::ViewCommandsCommand),
@@ -92,8 +98,10 @@ public:
 
 	void HandleMessage(CNick& Nick, const CString& sMessage) {
 		CString sNickServName = (!GetNV("NickServName").empty()) ? GetNV("NickServName") : "NickServ";
+		CString sNickServMask = (!GetNV("NickServMask").empty()) ? GetNV("NickServMask") : Nick.GetNickMask();
 		if (!GetNV("Password").empty()
 				&& Nick.NickEquals(sNickServName)
+				&& Nick.GetNickMask() == sNickServMask
 				&& (sMessage.find("msg") != CString::npos
 				 || sMessage.find("authenticate") != CString::npos
 				 || sMessage.find("choose a different nickname") != CString::npos
