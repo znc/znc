@@ -20,6 +20,7 @@
 #include <znc/IRCNetwork.h>
 #include <znc/Server.h>
 #include <znc/Query.h>
+#include <znc/Utils.h>
 
 using std::set;
 using std::vector;
@@ -79,7 +80,8 @@ CIRCSock::CIRCSock(CIRCNetwork* pNetwork)
 		  m_iSendsAllowed(pNetwork->GetFloodBurst()),
 		  m_uFloodBurst(pNetwork->GetFloodBurst()),
 		  m_fFloodRate(pNetwork->GetFloodRate()),
-		  m_bFloodProtection(IsFloodProtected(pNetwork->GetFloodRate()))
+		  m_bFloodProtection(IsFloodProtected(pNetwork->GetFloodRate())),
+		  m_msCurrentTags()
 {
 	EnableReadLine();
 	m_Nick.SetIdent(m_pNetwork->GetIdent());
@@ -147,6 +149,15 @@ void CIRCSock::ReadLine(const CString& sData) {
 	sLine.TrimRight("\n\r");
 
 	DEBUG("(" << m_pNetwork->GetUser()->GetUserName() << "/" << m_pNetwork->GetName() << ") IRC -> ZNC [" << sLine << "]");
+
+	COnDelete clearTags([this]() {
+		m_msCurrentTags.clear();
+	});
+
+	if (sLine.StartsWith("@")) {
+		m_msCurrentTags = CUtils::GetMessageTags(sLine);
+		sLine = sLine.Token(1, true);
+	}
 
 	bool bReturn = false;
 	IRCSOCKMODULECALL(OnRaw(sLine), &bReturn);
