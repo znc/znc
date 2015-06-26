@@ -987,6 +987,11 @@ public:
 	CString ExpandString(const CString& sStr) const;
 	CString& ExpandString(const CString& sStr, CString& sRet) const;
 
+	bool HasCurrentTags() const;
+	MCString GetCurrentTags() const;
+	bool HasCurrentTagValue(const CString &sKey) const;
+	CString GetCurrentTagValue(const CString &sKey) const;
+
 	// Setters
 	void SetType(CModInfo::EModuleType eType) { m_eType = eType; }
 	void SetDescription(const CString& s) { m_sDescription = s; }

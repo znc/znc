@@ -19,6 +19,7 @@
 #include <znc/Template.h>
 #include <znc/User.h>
 #include <znc/IRCNetwork.h>
+#include <znc/IRCSock.h>
 #include <znc/WebModules.h>
 #include <znc/znc.h>
 #include <dlfcn.h>
@@ -200,6 +201,45 @@ const CString& CModule::GetSavePath() const {
 		CDir::MakeDir(m_sSavePath);
 	}
 	return m_sSavePath;
+}
+
+bool CModule::HasCurrentTags() const {
+	if (!m_pNetwork || !m_pNetwork->GetIRCSock())
+		return false;
+
+	return !m_pNetwork->GetIRCSock()->GetCurrentTags().empty();
+}
+
+MCString CModule::GetCurrentTags() const {
+	if (!m_pNetwork || !m_pNetwork->GetIRCSock())
+		return MCString();
+
+	return m_pNetwork->GetIRCSock()->GetCurrentTags();
+}
+
+bool CModule::HasCurrentTagValue(const CString &sKey) const {
+	if (!m_pNetwork || !m_pNetwork->GetIRCSock())
+		return false;
+
+	if (m_pNetwork->GetIRCSock()->GetCurrentTags().count(sKey)) {
+		return true;
+	} else {
+		return false;
+	}
+}
+
+CString CModule::GetCurrentTagValue(const CString &sKey) const {
+	if (!m_pNetwork || !m_pNetwork->GetIRCSock())
+		return "";
+
+	auto map = m_pNetwork->GetIRCSock()->GetCurrentTags();
+	auto it = map.find(sKey);
+
+	if (it == map.end()) {
+		return "";
+	} else {
+		return it->second;
+	}
 }
 
 CString CModule::GetWebPath() {
