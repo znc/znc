@@ -96,6 +96,7 @@ public:
 			  m_bGotUser(false),
 			  m_bInCap(false),
 			  m_bCapNotify(false),
+			  m_bAwayNotify(false),
 			  m_bNamesx(false),
 			  m_bUHNames(false),
 			  m_bAway(false),
@@ -119,6 +120,7 @@ public:
 			               {"server-time", {false, [this](bool bVal) { m_bServerTime = bVal; }}},
 			               {"batch", {false, [this](bool bVal) { m_bBatch = bVal; }}},
 			               {"cap-notify", {false, [this](bool bVal) { m_bCapNotify = bVal; }}},
+			               {"away-notify", {true, [this](bool bVal) { m_bAwayNotify = bVal; }}},
 			              })
 	{
 		EnableReadLine();
@@ -145,6 +147,7 @@ public:
 	CString GetNickMask() const;
 	CString GetIdentifier() const { return m_sIdentifier; }
 	bool HasCapNotify() const { return m_bCapNotify; }
+	bool HasAwayNotify() const { return m_bAwayNotify; }
 	bool HasNamesx() const { return m_bNamesx; }
 	bool HasUHNames() const { return m_bUHNames; }
 	bool IsAway() const { return m_bAway; }
@@ -209,6 +212,7 @@ protected:
 	bool                 m_bGotUser;
 	bool                 m_bInCap;
 	bool                 m_bCapNotify;
+	bool                 m_bAwayNotify;
 	bool                 m_bNamesx;
 	bool                 m_bUHNames;
 	bool                 m_bAway;

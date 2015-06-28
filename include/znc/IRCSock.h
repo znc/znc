@@ -101,6 +101,7 @@ public:
 	CIRCNetwork* GetNetwork() const { return m_pNetwork; }
 	bool HasNamesx() const { return m_bNamesx; }
 	bool HasUHNames() const { return m_bUHNames; }
+	bool HasAwayNotify() const { return m_bAwayNotify; }
 	const std::set<unsigned char>& GetUserModes() const { return m_scUserModes; }
 	// This is true if we are past raw 001
 	bool IsAuthed() const { return m_bAuthed; }
@@ -127,6 +128,7 @@ protected:
 	bool                                m_bAuthed;
 	bool                                m_bNamesx;
 	bool                                m_bUHNames;
+	bool                                m_bAwayNotify;
 	CString                             m_sPerms;
 	CString                             m_sPermModes;
 	std::set<unsigned char>             m_scUserModes;
