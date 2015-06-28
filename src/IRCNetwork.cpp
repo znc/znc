@@ -567,6 +567,10 @@ void CIRCNetwork::ClientConnected(CClient *pClient) {
 
 	size_t uIdx, uSize;
 
+	if (m_pIRCSock) {
+		pClient->NotifyServerDependentCaps(m_pIRCSock->GetAcceptedCaps());
+	}
+
 	pClient->SetPlaybackActive(true);
 
 	if (m_RawBuffer.IsEmpty()) {
@@ -659,6 +663,7 @@ void CIRCNetwork::ClientDisconnected(CClient *pClient) {
 	if (it != m_vClients.end()) {
 		m_vClients.erase(it);
 	}
+	pClient->ClearServerDependentCaps();
 }
 
 CUser* CIRCNetwork::GetUser() const {
@@ -1223,6 +1228,10 @@ void CIRCNetwork::SetIRCSocket(CIRCSock* pIRCSock) {
 }
 
 void CIRCNetwork::IRCConnected() {
+	const SCString& ssCaps = m_pIRCSock->GetAcceptedCaps();
+	for (CClient* pClient : m_vClients) {
+		pClient->NotifyServerDependentCaps(ssCaps);
+	}
 	if (m_uJoinDelay > 0) {
 		m_pJoinTimer->Delay(m_uJoinDelay);
 	} else {
@@ -1231,6 +1240,9 @@ void CIRCNetwork::IRCConnected() {
 }
 
 void CIRCNetwork::IRCDisconnected() {
+	for (CClient* pClient : m_vClients) {
+		pClient->ClearServerDependentCaps();
+	}
 	m_pIRCSock = nullptr;
 
 	SetIRCServer("");

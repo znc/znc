@@ -104,6 +104,7 @@ public:
 	const std::set<unsigned char>& GetUserModes() const { return m_scUserModes; }
 	// This is true if we are past raw 001
 	bool IsAuthed() const { return m_bAuthed; }
+	const SCString& GetAcceptedCaps() const { return m_ssAcceptedCaps; }
 	bool IsCapAccepted(const CString& sCap) { return 1 == m_ssAcceptedCaps.count(sCap); }
 	const MCString& GetISupport() const { return m_mISupport; }
 	CString GetISupport(const CString& sKey, const CString& sDefault = "") const;
