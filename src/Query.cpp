@@ -24,7 +24,8 @@ CQuery::CQuery(const CString& sName, CIRCNetwork* pNetwork) {
 	m_sName = sName;
 	m_pNetwork = pNetwork;
 
-	SetBufferCount(m_pNetwork->GetUser()->GetBufferCount(), true);
+	// Bandaid for users who upgrade from <=1.4 and have 0 in "default channel buffer size" setting.
+	SetBufferCount(std::max(100, m_pNetwork->GetUser()->GetBufferCount()), true);
 }
 
 CQuery::~CQuery() {
