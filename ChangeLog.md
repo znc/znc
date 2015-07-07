@@ -1,3 +1,50 @@
+# ZNC 1.6.1 (2015-MM-DD)
+
+## Fixes
+
+* Fix sublists in the changelog
+* Remove zncconfig.h in distclean
+* ~CThreadPool(): Handle spurious wakeups
+* SSLVerifyHost: Make some functions static
+* Fix CIRCNetwork::FindChans() and FindQueries() to be case-insensitive
+* configure: Fix C++11 test with -Werror=missing-declarations
+* CString: fix 'comparision' typos in the docs
+* Fix compilation warning when HAVE_LIBSSL is not defined
+* #932: Write config file when channel is removed
+* Remove "-" between "ZNC" and version number
+* #946: Fix rare conflict of HTTP-Basic auth and cookies
+* Update error message about --datadir
+* #895: Main ZNC IRC channel is on freenode
+* Add non-minified jQuery's source
+* #954: Fix startup failure when simple_away is loaded after awaynick
+* #956: configure.ac: specify required compiler versions
+* #944: Don't print local ip address on 404 page
+* #967: Fix query buffer size for users who have 0 in default channel buffer size
+
+
+## Modules
+
+* chansaver:
+    * Fix loading
+
+* modpython:
+    * Fix CUser::GetUserClients() and CUser::GetAllClients()
+
+* sasl:
+    * #875: fix help text for requireauth
+    * update help for "set"
+
+* savebuff:
+    * #868: fix timer initialization
+
+* webadmin:
+    * #872: webadmin checkboxes
+    * Explain why encoding settings are disabled
+    * Improve breadcrumbs
+    * Mention ExpandString in CTCP replies
+
+
+
 # ZNC 1.6.0 (2015-02-12)
 
 ## New
