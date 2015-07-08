@@ -262,6 +262,11 @@ void CChan::InheritAutoClearChanBuffer(bool b) {
 	}
 }
 
+void CChan::ResetAutoClearChanBuffer() {
+	SetAutoClearChanBuffer(m_pNetwork->GetUser()->AutoClearChanBuffer());
+	m_bHasAutoClearChanBufferSet = false;
+}
+
 void CChan::OnWho(const CString& sNick, const CString& sIdent, const CString& sHost) {
 	CNick* pNick = FindNick(sNick);
 
@@ -655,4 +660,9 @@ void CChan::SetInConfig(bool b) {
 		m_bInConfig = b;
 		CZNC::Get().SetConfigState(CZNC::ECONFIG_NEED_WRITE);
 	}
+}
+
+void CChan::ResetBufferCount() {
+	SetBufferCount(m_pNetwork->GetUser()->GetBufferCount());
+	m_bHasBufferCountSet = false;
 }

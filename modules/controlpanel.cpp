@@ -750,8 +750,11 @@ class CAdminMod : public CModule {
 				PutModule(pChan->GetName() + ": DefModes = " + sValue);
 			} else if (sVar == "buffer") {
 				unsigned int i = sValue.ToUInt();
+				if (sValue.Equals("-")) {
+					pChan->ResetBufferCount();
+					PutModule(pChan->GetName() + ": Buffer = " + CString(pChan->GetBufferCount()));
 				// Admins don't have to honour the buffer limit
-				if (pChan->SetBufferCount(i, GetUser()->IsAdmin())) {
+				} else if (pChan->SetBufferCount(i, GetUser()->IsAdmin())) {
 					PutModule(pChan->GetName() + ": Buffer = " + sValue);
 				} else {
 					PutModule("Setting failed, limit is " +
@@ -767,9 +770,13 @@ class CAdminMod : public CModule {
 				pChan->SetAutoClearChanBuffer(b);
 				PutModule(pChan->GetName() + ": AutoClearChanBuffer = " + CString(b));
 			} else if (sVar == "autoclearchanbuffer") {
-				bool b = sValue.ToBool();
-				pChan->SetAutoClearChanBuffer(b);
-				PutModule(pChan->GetName() + ": AutoClearChanBuffer = " + CString(b));
+				if (sValue.Equals("-")) {
+					pChan->ResetAutoClearChanBuffer();
+				} else {
+					bool b = sValue.ToBool();
+					pChan->SetAutoClearChanBuffer(b);
+				}
+				PutModule(pChan->GetName() + ": AutoClearChanBuffer = " + CString(pChan->AutoClearChanBuffer()));
 			} else if (sVar == "detached") {
 				bool b = sValue.ToBool();
 				if (pChan->IsDetached() != b) {
