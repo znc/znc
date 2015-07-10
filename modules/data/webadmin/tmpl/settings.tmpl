@@ -17,6 +17,7 @@
 						    <td>IRC</td>
 						    <td>Web</td>
 						    <td>URIPrefix</td>
+							<td>Delete</td>
 						</tr>
 					</thead>
 
@@ -50,6 +51,8 @@
 								<input name="ipv6" type="hidden" value="<? VAR IsIPV6 ?>"/>
 								<input type="submit" value="Del"/>
 							</form>
+							<? ELSE ?>
+							<input type="button" disabled="disabled" title="To delete port which you use to access webadmin itself, either connect to webadmin via another port, or do it in IRC (/znc DelPort)" value="Current"/>
 							<? ENDIF ?>
 						</td>
 					</tr>
