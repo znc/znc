@@ -458,6 +458,19 @@ CString CUtils::FormatServerTime(const timeval& tv) {
 	return CString(sTime) + "." + s_msec + "Z";
 }
 
+timeval CUtils::ParseServerTime(const CString& sTime) {
+	struct tm stm;
+	memset(&stm, 0, sizeof(stm));
+	const char* cp = strptime(sTime.c_str(), "%Y-%m-%dT%H:%M:%S", &stm);
+	struct timeval tv;
+	tv.tv_sec = mktime(&stm);
+	CString s_usec(cp);
+	if (s_usec.TrimPrefix(".") && s_usec.TrimSuffix("Z")) {
+		tv.tv_usec = s_usec.ToULong() * 1000;
+	}
+	return tv;
+}
+
 namespace {
 	void FillTimezones(const CString& sPath, SCString& result, const CString& sPrefix) {
 		CDir Dir;

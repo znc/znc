@@ -75,3 +75,32 @@ TEST(IRC32, SetMessageTags) {
 	EXPECT_EQ(R"(@a=\:\s\\\r\n :rest)", sLine);
 }
 
+TEST(UtilsTest, ServerTime) {
+	char* oldTZ = getenv("TZ");
+	if (oldTZ) oldTZ = strdup(oldTZ);
+	setenv("TZ", "UTC", 1);
+	tzset();
+
+	timeval tv1 = CUtils::ParseServerTime("2011-10-19T16:40:51.620Z");
+	CString str1 = CUtils::FormatServerTime(tv1);
+	EXPECT_EQ("2011-10-19T16:40:51.620Z", str1);
+
+	timeval now;
+	if (!gettimeofday(&now, nullptr)) {
+		now.tv_sec = time(nullptr);
+		now.tv_usec = 0;
+	}
+
+	CString str2 = CUtils::FormatServerTime(now);
+	timeval tv2 = CUtils::ParseServerTime(str2);
+	EXPECT_EQ(now.tv_sec, tv2.tv_sec);
+	EXPECT_EQ(now.tv_usec, tv2.tv_usec);
+
+	if (oldTZ) {
+		setenv("TZ", oldTZ, 1);
+		free(oldTZ);
+	} else {
+		unsetenv("TZ");
+	}
+	tzset();
+}

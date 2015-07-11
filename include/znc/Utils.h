@@ -83,6 +83,7 @@ public:
 	static CString CTime(time_t t, const CString& sTZ);
 	static CString FormatTime(time_t t, const CString& sFormat, const CString& sTZ);
 	static CString FormatServerTime(const timeval& tv);
+	static timeval ParseServerTime(const CString& sTime);
 	static SCString GetTimezones();
 	static SCString GetEncodings();
 
