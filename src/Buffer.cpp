@@ -19,7 +19,7 @@
 #include <znc/User.h>
 #include <time.h>
 
-CBufLine::CBufLine(const CString& sFormat, const CString& sText, const timeval* ts) : m_sFormat(sFormat), m_sText(sText), m_time() {
+CBufLine::CBufLine(const CString& sFormat, const CString& sText, const timeval* ts, const MCString& mssTags) : m_sFormat(sFormat), m_sText(sText), m_time(), m_mssTags(mssTags) {
 	if (ts == nullptr)
 		UpdateTime();
 	else
@@ -54,7 +54,7 @@ CBuffer::CBuffer(unsigned int uLineCount) : m_uLineCount(uLineCount) {
 
 CBuffer::~CBuffer() {}
 
-CBuffer::size_type CBuffer::AddLine(const CString& sFormat, const CString& sText, const timeval* ts) {
+CBuffer::size_type CBuffer::AddLine(const CString& sFormat, const CString& sText, const timeval* ts, const MCString& mssTags) {
 	if (!m_uLineCount) {
 		return 0;
 	}
@@ -63,7 +63,7 @@ CBuffer::size_type CBuffer::AddLine(const CString& sFormat, const CString& sText
 		erase(begin());
 	}
 
-	push_back(CBufLine(sFormat, sText, ts));
+	push_back(CBufLine(sFormat, sText, ts, mssTags));
 	return size();
 }
 

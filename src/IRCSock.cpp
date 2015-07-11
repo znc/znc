@@ -932,7 +932,7 @@ bool CIRCSock::OnPrivCTCP(CMessage& Message) {
 			const CNick& Nick = PrivAction.GetNick();
 			CQuery* pQuery = m_pNetwork->AddQuery(Nick.GetNick());
 			if (pQuery) {
-				pQuery->AddBuffer(":" + _NAMEDFMT(Nick.GetNickMask()) + " PRIVMSG {target} :\001ACTION {text}\001", PrivAction.GetText());
+				pQuery->AddBuffer(":" + _NAMEDFMT(Nick.GetNickMask()) + " PRIVMSG {target} :\001ACTION {text}\001", PrivAction.GetText(), &PrivAction.GetTime(), PrivAction.GetTags());
 			}
 		}
 	}
@@ -1011,7 +1011,7 @@ bool CIRCSock::OnPrivMsg(CMessage& Message) {
 		const CNick& Nick = PrivMsg.GetNick();
 		CQuery* pQuery = m_pNetwork->AddQuery(Nick.GetNick());
 		if (pQuery) {
-			pQuery->AddBuffer(":" + _NAMEDFMT(Nick.GetNickMask()) + " PRIVMSG {target} :{text}", PrivMsg.GetText());
+			pQuery->AddBuffer(":" + _NAMEDFMT(Nick.GetNickMask()) + " PRIVMSG {target} :{text}", PrivMsg.GetText(), &PrivMsg.GetTime(), PrivMsg.GetTags());
 		}
 	}
 
@@ -1034,7 +1034,7 @@ bool CIRCSock::OnChanCTCP(CMessage& Message) {
 			IRCSOCKMODULECALL(OnChanActionMessage(ChanAction), &bResult);
 			if (bResult) return true;
 			if (!pChan->AutoClearChanBuffer() || !m_pNetwork->IsUserOnline() || pChan->IsDetached()) {
-				pChan->AddBuffer(":" + _NAMEDFMT(Message.GetNick().GetNickMask()) + " PRIVMSG " + _NAMEDFMT(pChan->GetName()) + " :\001ACTION {text}\001", ChanAction.GetText());
+				pChan->AddBuffer(":" + _NAMEDFMT(Message.GetNick().GetNickMask()) + " PRIVMSG " + _NAMEDFMT(pChan->GetName()) + " :\001ACTION {text}\001", ChanAction.GetText(), &ChanAction.GetTime(), ChanAction.GetTags());
 			}
 		}
 	}
@@ -1055,7 +1055,7 @@ bool CIRCSock::OnChanNotice(CMessage& Message) {
 		if (bResult) return true;
 
 		if (!pChan->AutoClearChanBuffer() || !m_pNetwork->IsUserOnline() || pChan->IsDetached()) {
-			pChan->AddBuffer(":" + _NAMEDFMT(ChanNotice.GetNick().GetNickMask()) + " NOTICE " + _NAMEDFMT(pChan->GetName()) + " :{text}", ChanNotice.GetText());
+			pChan->AddBuffer(":" + _NAMEDFMT(ChanNotice.GetNick().GetNickMask()) + " NOTICE " + _NAMEDFMT(pChan->GetName()) + " :{text}", ChanNotice.GetText(), &ChanNotice.GetTime(), ChanNotice.GetTags());
 		}
 	}
 
@@ -1072,7 +1072,7 @@ bool CIRCSock::OnChanMsg(CMessage& Message) {
 		if (bResult) return true;
 
 		if (!pChan->AutoClearChanBuffer() || !m_pNetwork->IsUserOnline() || pChan->IsDetached()) {
-			pChan->AddBuffer(":" + _NAMEDFMT(ChanMsg.GetNick().GetNickMask()) + " PRIVMSG " + _NAMEDFMT(pChan->GetName()) + " :{text}", ChanMsg.GetText());
+			pChan->AddBuffer(":" + _NAMEDFMT(ChanMsg.GetNick().GetNickMask()) + " PRIVMSG " + _NAMEDFMT(pChan->GetName()) + " :{text}", ChanMsg.GetText(), &ChanMsg.GetTime(), ChanMsg.GetTags());
 		}
 	}
 
