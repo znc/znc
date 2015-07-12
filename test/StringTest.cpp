@@ -161,18 +161,15 @@ TEST(StringTest, Split) {
 	CS("a b c").Split(" ", vresult);
 	EXPECT_EQ(vexpected, vresult);
 
-	MCString mexpected;
+	MCString mexpected = { {"a","b"}, {"c","d"} };
 	MCString mresult;
 
-	mexpected["a"] = "b";
-	mexpected["c"] = "d";
 	CS("a=x&c=d&a=b").URLSplit(mresult);
 	EXPECT_EQ(mexpected, mresult) << "URLSplit";
 }
 
 TEST(StringTest, NamedFormat) {
-	MCString m;
-	m["a"] = "b";
+	MCString m = { {"a","b"} };
 	EXPECT_EQ("{xbyb", CString::NamedFormat(CS("\\{x{a}y{a}"), m));
 }
 
