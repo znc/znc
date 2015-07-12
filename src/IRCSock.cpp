@@ -60,6 +60,7 @@ CIRCSock::CIRCSock(CIRCNetwork* pNetwork)
 		  m_bAuthed(false),
 		  m_bNamesx(false),
 		  m_bUHNames(false),
+		  m_bAwayNotify(false),
 		  m_sPerms("*!@%+"),
 		  m_sPermModes("qaohv"),
 		  m_scUserModes(),
@@ -809,7 +810,7 @@ void CIRCSock::ReadLine(const CString& sData) {
 					sArgs.Split(" ", vsTokens, false);
 
 					for (const CString& sCap : vsTokens) {
-						if (OnServerCapAvailable(sCap) || sCap == "multi-prefix" || sCap == "userhost-in-names") {
+						if (OnServerCapAvailable(sCap) || sCap == "multi-prefix" || sCap == "userhost-in-names" || sCap == "away-notify") {
 							m_ssPendingCaps.insert(sCap);
 						}
 					}
@@ -820,6 +821,8 @@ void CIRCSock::ReadLine(const CString& sData) {
 						m_bNamesx = true;
 					} else if ("userhost-in-names" == sArgs) {
 						m_bUHNames = true;
+					} else if ("away-notify" == sArgs) {
+						m_bAwayNotify = true;
 					}
 					m_ssAcceptedCaps.insert(sArgs);
 				} else if (sSubCmd == "NAK") {
@@ -836,6 +839,14 @@ void CIRCSock::ReadLine(const CString& sData) {
 		} else if (sCmd.Equals("INVITE")) {
 			IRCSOCKMODULECALL(OnInvite(Nick, sLine.Token(3).TrimPrefix_n(":")), &bReturn);
 			if (bReturn) return;
+		} else if (sCmd.Equals("AWAY")) {
+			const vector<CClient*>& vClients = m_pNetwork->GetClients();
+			for (CClient* pClient : vClients) {
+				if (pClient->HasAwayNotify()) {
+					m_pNetwork->PutUser(sLine, pClient);
+				}
+			}
+			return;
 		}
 	}
 

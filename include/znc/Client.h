@@ -95,6 +95,8 @@ public:
 			  m_bGotNick(false),
 			  m_bGotUser(false),
 			  m_bInCap(false),
+			  m_bCapNotify(false),
+			  m_bAwayNotify(false),
 			  m_bNamesx(false),
 			  m_bUHNames(false),
 			  m_bAway(false),
@@ -111,12 +113,25 @@ public:
 			  m_sNetwork(""),
 			  m_sIdentifier(""),
 			  m_spAuth(),
-			  m_ssAcceptedCaps()
+			  m_ssAcceptedCaps(),
+			  m_mCoreCaps({{"multi-prefix", {false, [this](bool bVal) { m_bNamesx = bVal; }}},
+			               {"userhost-in-names", {false, [this](bool bVal) { m_bUHNames = bVal; }}},
+			               {"echo-message", {false, [this](bool bVal) { m_bEchoMessage = bVal; }}},
+			               {"server-time", {false, [this](bool bVal) { m_bServerTime = bVal; }}},
+			               {"batch", {false, [this](bool bVal) { m_bBatch = bVal; }}},
+			               {"cap-notify", {false, [this](bool bVal) { m_bCapNotify = bVal; }}},
+			               {"away-notify", {true, [this](bool bVal) { m_bAwayNotify = bVal; }}},
+			              })
 	{
 		EnableReadLine();
 		// RFC says a line can have 512 chars max, but we are
 		// a little more gentle ;)
 		SetMaxBufferThreshold(1024);
+
+		// For compatibility with older clients
+		m_mCoreCaps["znc.in/server-time-iso"] = m_mCoreCaps["server-time"];
+		m_mCoreCaps["znc.in/batch"] = m_mCoreCaps["batch"];
+		m_mCoreCaps["znc.in/self-message"] = {false, [this](bool bVal) { m_bSelfMessage = bVal; }};
 	}
 
 	virtual ~CClient();
@@ -131,6 +146,8 @@ public:
 	CString GetNick(bool bAllowIRCNick = true) const;
 	CString GetNickMask() const;
 	CString GetIdentifier() const { return m_sIdentifier; }
+	bool HasCapNotify() const { return m_bCapNotify; }
+	bool HasAwayNotify() const { return m_bAwayNotify; }
 	bool HasNamesx() const { return m_bNamesx; }
 	bool HasUHNames() const { return m_bUHNames; }
 	bool IsAway() const { return m_bAway; }
@@ -159,6 +176,9 @@ public:
 	void PutModNotice(const CString& sModule, const CString& sLine);
 
 	bool IsCapEnabled(const CString& sCap) const { return 1 == m_ssAcceptedCaps.count(sCap); }
+
+	void NotifyServerDependentCaps(const SCString& ssCaps);
+	void ClearServerDependentCaps();
 
 	void ReadLine(const CString& sData) override;
 	bool SendMotd();
@@ -191,6 +211,8 @@ protected:
 	bool                 m_bGotNick;
 	bool                 m_bGotUser;
 	bool                 m_bInCap;
+	bool                 m_bCapNotify;
+	bool                 m_bAwayNotify;
 	bool                 m_bNamesx;
 	bool                 m_bUHNames;
 	bool                 m_bAway;
@@ -208,6 +230,13 @@ protected:
 	CString              m_sIdentifier;
 	std::shared_ptr<CAuthBase> m_spAuth;
 	SCString             m_ssAcceptedCaps;
+	// The capabilities supported by the ZNC core - capability names mapped
+	// to a pair which contains a bool describing whether the capability is
+	// server-dependent, and a capability value change handler.
+	std::map<CString, std::pair<bool, std::function<void(bool bVal)>>> m_mCoreCaps;
+	// A subset of CIRCSock::GetAcceptedCaps(), the caps that can be listed
+	// in CAP LS and may be notified to the client with CAP NEW (cap-notify).
+	SCString             m_ssServerDependentCaps;
 
 	friend class ClientTest;
 };
