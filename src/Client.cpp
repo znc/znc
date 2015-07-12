@@ -794,6 +794,36 @@ void CClient::PutClient(const CString& sLine) {
 	Write(sCopy + "\r\n");
 }
 
+void CClient::PutClient(const CMessage& Message)
+{
+	CString sLine = Message.ToString(CMessage::ExcludeTags);
+
+	// TODO: introduce a module hook that gives control over the tags that are sent
+	MCString mssTags;
+
+	if (HasServerTime()) {
+		CString sServerTime = Message.GetTag("time");
+		if (!sServerTime.empty()) {
+			mssTags["time"] = sServerTime;
+		} else {
+			mssTags["time"] = CUtils::FormatServerTime(Message.GetTime());
+		}
+	}
+
+	if (HasBatch()) {
+		CString sBatch = Message.GetTag("batch");
+		if (!sBatch.empty()) {
+			mssTags["batch"] = sBatch;
+		}
+	}
+
+	if (!mssTags.empty()) {
+		CUtils::SetMessageTags(sLine, mssTags);
+	}
+
+	PutClient(sLine);
+}
+
 void CClient::PutStatusNotice(const CString& sLine) {
 	PutModNotice("status", sLine);
 }

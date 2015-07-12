@@ -369,7 +369,7 @@ void CIRCSock::ReadLine(const CString& sData) {
 					const vector<CClient*>& vClients = m_pNetwork->GetClients();
 					for (CClient* pClient : vClients) {
 						if (pClient->HasNamesx()) {
-							m_pNetwork->PutUser(sLine, pClient);
+							m_pNetwork->PutUser(Message, pClient);
 						} else {
 							// The client doesn't support multi-prefix so we need to remove
 							// the other prefixes.
@@ -379,6 +379,7 @@ void CIRCSock::ReadLine(const CString& sData) {
 							if (pos >= 2 && pos != CString::npos) {
 								sNewNick = sNick[0] + sNick.substr(pos);
 							}
+							// TODO: CMessage
 							CString sNewLine = sServer + " 352 " + sLine.Token(2) + " " +
 								sChan + " " + sIdent + " " + sHost + " " +
 								sLine.Token(6)  + " " + sNewNick + " " +
@@ -528,7 +529,7 @@ void CIRCSock::ReadLine(const CString& sData) {
 				// We are changing our own nick, the clients always must see this!
 				bIsVisible = false;
 				SetNick(sNewNick);
-				m_pNetwork->PutUser(sLine);
+				m_pNetwork->PutUser(Message);
 			}
 
 			IRCSOCKMODULECALL(OnNickMessage(NickMsg, vFoundChans), NOTHING);
@@ -749,8 +750,6 @@ void CIRCSock::ReadLine(const CString& sData) {
 				if (pChan->IsDetached()) {
 					return; // Don't forward this
 				}
-
-				sLine = ":" + Nick.GetNickMask() + " TOPIC " + pChan->GetName() + " :" + pChan->GetTopic();
 			}
 		} else if (sCmd.Equals("PRIVMSG")) {
 			// :nick!ident@host.com PRIVMSG #chan :Message
@@ -878,7 +877,7 @@ void CIRCSock::ReadLine(const CString& sData) {
 		}
 	}
 
-	m_pNetwork->PutUser(sLine);
+	m_pNetwork->PutUser(Message);
 }
 
 void CIRCSock::SendNextCap() {

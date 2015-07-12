@@ -726,6 +726,20 @@ bool CIRCNetwork::PutUser(const CString& sLine, CClient* pClient, CClient* pSkip
 	return (pClient == nullptr);
 }
 
+bool CIRCNetwork::PutUser(const CMessage& Message, CClient* pClient, CClient* pSkipClient) {
+	for (CClient* pEachClient : m_vClients) {
+		if ((!pClient || pClient == pEachClient) && pSkipClient != pEachClient) {
+			pEachClient->PutClient(Message);
+
+			if (pClient) {
+				return true;
+			}
+		}
+	}
+
+	return (pClient == nullptr);
+}
+
 bool CIRCNetwork::PutStatus(const CString& sLine, CClient* pClient, CClient* pSkipClient) {
 	for (CClient* pEachClient : m_vClients) {
 		if ((!pClient || pClient == pEachClient) && pSkipClient != pEachClient) {

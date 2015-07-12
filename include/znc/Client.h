@@ -29,6 +29,7 @@ class CUser;
 class CIRCNetwork;
 class CIRCSock;
 class CClient;
+class CMessage;
 // !Forward Declarations
 
 class CAuthBase {
@@ -175,6 +176,7 @@ public:
 
 	void PutIRC(const CString& sLine);
 	void PutClient(const CString& sLine);
+	void PutClient(const CMessage& Message);
 	unsigned int PutStatus(const CTable& table);
 	void PutStatus(const CString& sLine);
 	void PutStatusNotice(const CString& sLine);

@@ -114,6 +114,7 @@ public:
 	CString GetISupport(const CString& sKey, const CString& sDefault = "") const;
 	// !Getters
 
+	// TODO: CMessage
 	// This handles NAMESX and UHNAMES in a raw 353 reply
 	void ForwardRaw353(const CString& sLine) const;
 	void ForwardRaw353(const CString& sLine, CClient* pClient) const;
