@@ -658,6 +658,7 @@ public:
 	 */
 	virtual EModRet OnChanBufferPlayLine2(CChan& Chan, CClient& Client, CString& sLine, const timeval& tv);
 	virtual EModRet OnChanBufferPlayLine(CChan& Chan, CClient& Client, CString& sLine);
+	virtual EModRet OnChanBufferPlayMessage(CMessage& Message);
 	/** Called when a line from the query buffer is played back.
 	 *  @param Client The client this line will go to.
 	 *  @param sLine The raw IRC traffic line from the buffer.
@@ -666,6 +667,7 @@ public:
 	 */
 	virtual EModRet OnPrivBufferPlayLine2(CClient& Client, CString& sLine, const timeval& tv);
 	virtual EModRet OnPrivBufferPlayLine(CClient& Client, CString& sLine);
+	virtual EModRet OnPrivBufferPlayMessage(CMessage& Message);
 
 	/** Called when a client successfully logged in to ZNC. */
 	virtual void OnClientLogin();
@@ -1219,6 +1221,8 @@ public:
 	bool OnChanBufferPlayLine(CChan& Chan, CClient& Client, CString& sLine);
 	bool OnPrivBufferPlayLine2(CClient& Client, CString& sLine, const timeval& tv);
 	bool OnPrivBufferPlayLine(CClient& Client, CString& sLine);
+	bool OnChanBufferPlayMessage(CMessage& Message);
+	bool OnPrivBufferPlayMessage(CMessage& Message);
 
 	bool OnClientLogin();
 	bool OnClientDisconnect();

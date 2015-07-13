@@ -660,6 +660,25 @@ CModule::EModRet CModule::OnPrivBufferPlayLine2(CClient& Client, CString& sLine,
 	return OnPrivBufferPlayLine(Client, sLine);
 }
 
+CModule::EModRet CModule::OnChanBufferPlayMessage(CMessage& Message) {
+	CString sOriginal, sModified;
+	sOriginal = sModified = Message.ToString(CMessage::ExcludeTags);
+	EModRet ret = OnChanBufferPlayLine2(*Message.GetChan(), *Message.GetClient(), sModified, Message.GetTime());
+	if (ret == CONTINUE && sOriginal != sModified) {
+		Message.Parse(sModified);
+	}
+	return ret;
+}
+CModule::EModRet CModule::OnPrivBufferPlayMessage(CMessage& Message) {
+	CString sOriginal, sModified;
+	sOriginal = sModified = Message.ToString(CMessage::ExcludeTags);
+	EModRet ret = OnPrivBufferPlayLine2(*Message.GetClient(), sModified, Message.GetTime());
+	if (ret == CONTINUE && sOriginal != sModified) {
+		Message.Parse(sModified);
+	}
+	return ret;
+}
+
 void CModule::OnClientLogin() {}
 void CModule::OnClientDisconnect() {}
 CModule::EModRet CModule::OnUserRaw(CString& sLine) { return CONTINUE; }
@@ -905,6 +924,8 @@ bool CModules::OnChanBufferPlayLine2(CChan& Chan, CClient& Client, CString& sLin
 bool CModules::OnChanBufferPlayLine(CChan& Chan, CClient& Client, CString& sLine) { MODHALTCHK(OnChanBufferPlayLine(Chan, Client, sLine)); }
 bool CModules::OnPrivBufferPlayLine2(CClient& Client, CString& sLine, const timeval& tv) { MODHALTCHK(OnPrivBufferPlayLine2(Client, sLine, tv)); }
 bool CModules::OnPrivBufferPlayLine(CClient& Client, CString& sLine) { MODHALTCHK(OnPrivBufferPlayLine(Client, sLine)); }
+bool CModules::OnChanBufferPlayMessage(CMessage& Message) { MODHALTCHK(OnChanBufferPlayMessage(Message)); }
+bool CModules::OnPrivBufferPlayMessage(CMessage& Message) { MODHALTCHK(OnPrivBufferPlayMessage(Message)); }
 bool CModules::OnCTCPReply(CNick& Nick, CString& sMessage) { MODHALTCHK(OnCTCPReply(Nick, sMessage)); }
 bool CModules::OnPrivCTCP(CNick& Nick, CString& sMessage) { MODHALTCHK(OnPrivCTCP(Nick, sMessage)); }
 bool CModules::OnPrivCTCPMessage(CPrivCTCP& Message) { MODHALTCHK(OnPrivCTCPMessage(Message)); }
