@@ -18,7 +18,11 @@
 
 class CFailToBanMod : public CModule {
 public:
-	MODCONSTRUCTOR(CFailToBanMod) {}
+	MODCONSTRUCTOR(CFailToBanMod) {
+		AddHelpCommand();
+		AddCommand("Timeout",  static_cast<CModCommand::ModCmdFunc>(&CFailToBanMod::OnTimeoutCommand), "(<minutes>)", "The number of minutes IPs are blocked after a failed login.");
+		AddCommand("Attempts", static_cast<CModCommand::ModCmdFunc>(&CFailToBanMod::OnAttemptsCommand), "(<count>)", "The number of allowed failed login attempts.");
+	}
 	virtual ~CFailToBanMod() {}
 
 	bool OnLoad(const CString& sArgs, CString& sMessage) override {
@@ -54,10 +58,36 @@ public:
 		m_Cache.AddItem(sHost, count, m_Cache.GetTTL());
 	}
 
-	void OnModCommand(const CString& sCommand) override {
-		PutModule("This module can only be configured through its arguments.");
-		PutModule("The module argument is the number of minutes an IP");
-		PutModule("is blocked after a failed login.");
+	void OnTimeoutCommand(const CString& sCommand) {
+		CString sArg = sCommand.Token(1);
+
+		if (!sArg.empty()) {
+			unsigned int uTimeout = sArg.ToUInt();
+			if (uTimeout == 0) {
+				PutModule("Usage: Timeout (<minutes>)");
+			} else {
+				m_Cache.SetTTL(uTimeout * 60 * 1000);
+				PutModule("Timeout: " + CString(uTimeout) + " min");
+			}
+		} else {
+			PutModule("Timeout: " + CString(m_Cache.GetTTL() / 60 / 1000) + " min");
+		}
+	}
+
+	void OnAttemptsCommand(const CString& sCommand) {
+		CString sArg = sCommand.Token(1);
+
+		if (!sArg.empty()) {
+			unsigned int uiAttempts = sArg.ToUInt();
+			if (uiAttempts == 0) {
+				PutModule("Usage: Attempts (<count>)");
+			} else {
+				m_uiAllowedFailed = uiAttempts;
+				PutModule("Attempts: " + CString(uiAttempts));
+			}
+		} else {
+			PutModule("Attempts: " + CString(m_uiAllowedFailed));
+		}
 	}
 
 	void OnClientConnect(CZNCSock* pClient, const CString& sHost, unsigned short uPort) override {
