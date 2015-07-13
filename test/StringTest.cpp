@@ -193,13 +193,13 @@ TEST(StringTest, Equals) {
 }
 
 TEST(StringTest, Find) {
-	EXPECT_EQ(CString("Hello, I'm Bob").Find("Hello"), 0u);
-	EXPECT_EQ(CString("Hello, I'm Bob").Find("Hello", CString::CaseInsensitive), 0u);
-	EXPECT_EQ(CString("Hello, I'm Bob").Find("Hello", CString::CaseSensitive), 0u);
+	EXPECT_EQ(0u, CString("Hello, I'm Bob").Find("Hello"));
+	EXPECT_EQ(0u, CString("Hello, I'm Bob").Find("Hello", CString::CaseInsensitive));
+	EXPECT_EQ(0u, CString("Hello, I'm Bob").Find("Hello", CString::CaseSensitive));
 
-	EXPECT_EQ(CString("Hello, I'm Bob").Find("i'm"), 7u);
-	EXPECT_EQ(CString("Hello, I'm Bob").Find("i'm", CString::CaseInsensitive), 7u);
-	EXPECT_EQ(CString("Hello, I'm Bob").Find("i'm", CString::CaseSensitive), CString::npos);
+	EXPECT_EQ(7u, CString("Hello, I'm Bob").Find("i'm"));
+	EXPECT_EQ(7u, CString("Hello, I'm Bob").Find("i'm", CString::CaseInsensitive));
+	EXPECT_EQ(CString::npos, CString("Hello, I'm Bob").Find("i'm", CString::CaseSensitive));
 }
 
 TEST(StringTest, StartsWith) {
