@@ -334,6 +334,18 @@ public:
 		m_mItems.clear();
 	}
 
+	/**
+	 * @brief Returns all entries
+	 */
+	std::map<K,V> GetItems() {
+		Cleanup();
+		std::map<K,V> mItems;
+		for (const auto& it : m_mItems) {
+			mItems[it.first] = it.second.second;
+		}
+		return mItems;
+	}
+
 	// Setters
 	void SetTTL(unsigned int u) { m_uTTL = u; }
 	// !Setters
