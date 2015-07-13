@@ -22,6 +22,9 @@ public:
 		AddHelpCommand();
 		AddCommand("Timeout",  static_cast<CModCommand::ModCmdFunc>(&CFailToBanMod::OnTimeoutCommand), "(<minutes>)", "The number of minutes IPs are blocked after a failed login.");
 		AddCommand("Attempts", static_cast<CModCommand::ModCmdFunc>(&CFailToBanMod::OnAttemptsCommand), "(<count>)", "The number of allowed failed login attempts.");
+		AddCommand("Ban",      static_cast<CModCommand::ModCmdFunc>(&CFailToBanMod::OnBanCommand), "<hosts>", "Ban the specified hosts.");
+		AddCommand("Unban",    static_cast<CModCommand::ModCmdFunc>(&CFailToBanMod::OnUnbanCommand), "<hosts>", "Unban the specified hosts.");
+		AddCommand("List",     static_cast<CModCommand::ModCmdFunc>(&CFailToBanMod::OnListCommand), "", "List banned hosts.");
 	}
 	virtual ~CFailToBanMod() {}
 
@@ -58,6 +61,10 @@ public:
 		m_Cache.AddItem(sHost, count, m_Cache.GetTTL());
 	}
 
+	bool Remove(const CString& sHost) {
+		return m_Cache.RemItem(sHost);
+	}
+
 	void OnTimeoutCommand(const CString& sCommand) {
 		CString sArg = sCommand.Token(1);
 
@@ -87,6 +94,63 @@ public:
 			}
 		} else {
 			PutModule("Attempts: " + CString(m_uiAllowedFailed));
+		}
+	}
+
+	void OnBanCommand(const CString& sCommand) {
+		CString sHosts = sCommand.Token(1, true);
+
+		if (sHosts.empty()) {
+			PutStatus("Usage: Ban <hosts>");
+			return;
+		}
+
+		VCString vsHosts;
+		sHosts.Replace(",", " ");
+		sHosts.Split(" ", vsHosts, false, "", "", true, true);
+
+		for (const CString& sHost : vsHosts) {
+			Add(sHost, 0);
+			PutModule("Banned: " + sHost);
+		}
+	}
+
+	void OnUnbanCommand(const CString& sCommand) {
+		CString sHosts = sCommand.Token(1, true);
+
+		if (sHosts.empty()) {
+			PutStatus("Usage: Unban <hosts>");
+			return;
+		}
+
+		VCString vsHosts;
+		sHosts.Replace(",", " ");
+		sHosts.Split(" ", vsHosts, false, "", "", true, true);
+
+		for (const CString& sHost : vsHosts) {
+			if (Remove(sHost)) {
+				PutModule("Unbanned: " + sHost);
+			} else {
+				PutModule("Ignored: " + sHost);
+			}
+		}
+	}
+
+	void OnListCommand(const CString& sCommand) {
+		CTable Table;
+		Table.AddColumn("Host");
+		Table.AddColumn("Attempts");
+
+		for (const auto& it : m_Cache.GetItems()) {
+			Table.AddRow();
+			Table.SetCell("Host", it.first);
+			Table.SetCell("Attempts", CString(it.second));
+		}
+
+		if (Table.empty()) {
+			PutModule("No bans");
+		} else {
+			PutModule(Table);
 		}
 	}
 
