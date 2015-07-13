@@ -87,4 +87,107 @@ private:
 	CChan*       m_pChan = nullptr;
 };
 
+class CChanAction : public CMessage {
+public:
+	CString GetText() const { return GetParam(1).TrimLeft_n("\001ACTION ").TrimRight_n("\001"); }
+	void SetText(const CString& sText) { SetParam(1, "\001ACTION " + sText + "\001"); }
+};
+
+class CChanCTCP : public CMessage {
+public:
+	CString GetText() const { return GetParam(1).TrimLeft_n("\001").TrimRight_n("\001"); }
+	void SetText(const CString& sText) { SetParam(1, "\001" + sText + "\001"); }
+};
+
+class CChanMessage : public CMessage {
+public:
+	CString GetText() const { return GetParam(1); }
+	void SetText(const CString& sText) { SetParam(1, sText); }
+};
+
+class CChanNotice : public CMessage {
+public:
+	CString GetText() const { return GetParam(1); }
+	void SetText(const CString& sText) { SetParam(1, sText); }
+};
+
+class CJoinMessage : public CMessage {
+public:
+};
+
+class CNickMessage : public CMessage {
+public:
+	CString GetOldNick() const { return GetNick().GetNick(); }
+	CString GetNewNick() const { return GetParam(0); }
+	void SetNewNick(const CString& sNick) { SetParam(0, sNick); }
+};
+
+class CKickMessage : public CMessage {
+public:
+	CString GetKickedNick() const { return GetParam(1); }
+	void SetKickedNick(const CString& sNick) { SetParam(1, sNick); }
+	CString GetReason() const { return GetParam(2); }
+	void SetReason(const CString& sReason) { SetParam(2, sReason); }
+};
+
+class CPartMessage : public CMessage {
+public:
+	CString GetReason() const { return GetParam(1); }
+	void SetReason(const CString& sReason) { SetParam(1, sReason); }
+};
+
+class CPrivAction : public CMessage {
+public:
+	CString GetText() const { return GetParam(1).TrimLeft_n("\001ACTION ").TrimRight_n("\001"); }
+	void SetText(const CString& sText) { SetParam(1, "\001ACTION " + sText + "\001"); }
+};
+
+class CPrivCTCP : public CMessage {
+public:
+	CString GetText() const { return GetParam(1).TrimLeft_n("\001").TrimRight_n("\001"); }
+	void SetText(const CString& sText) { SetParam(1, "\001" + sText + "\001"); }
+};
+
+class CPrivMessage : public CMessage {
+public:
+	CString GetText() const { return GetParam(1); }
+	void SetText(const CString& sText) { SetParam(1, sText); }
+};
+
+class CPrivNotice : public CMessage {
+public:
+	CString GetText() const { return GetParam(1); }
+	void SetText(const CString& sText) { SetParam(1, sText); }
+};
+
+class CQuitMessage : public CMessage {
+public:
+	CString GetReason() const { return GetParam(0); }
+	void SetReason(const CString& sReason) { SetParam(0, sReason); }
+};
+
+class CTopicMessage : public CMessage {
+public:
+	CString GetTopic() const { return GetParam(1); }
+	void SetTopic(const CString& sTopic) { SetParam(1, sTopic); }
+};
+
+// The various CMessage subclasses are "mutable views" to the data held by CMessage.
+// They provide convenient access to message type speficic attributes, but are not
+// allowed to hold extra data of their own.
+static_assert(sizeof(CChanAction) == sizeof(CMessage), "No data members allowed in CMessage subclasses.");
+static_assert(sizeof(CChanCTCP) == sizeof(CMessage), "No data members allowed in CMessage subclasses.");
+static_assert(sizeof(CChanMessage) == sizeof(CMessage), "No data members allowed in CMessage subclasses.");
+static_assert(sizeof(CChanNotice) == sizeof(CMessage), "No data members allowed in CMessage subclasses.");
+static_assert(sizeof(CJoinMessage) == sizeof(CMessage), "No data members allowed in CMessage subclasses.");
+static_assert(sizeof(CPartMessage) == sizeof(CMessage), "No data members allowed in CMessage subclasses.");
+static_assert(sizeof(CPrivAction) == sizeof(CMessage), "No data members allowed in CMessage subclasses.");
+static_assert(sizeof(CPrivCTCP) == sizeof(CMessage), "No data members allowed in CMessage subclasses.");
+static_assert(sizeof(CPrivMessage) == sizeof(CMessage), "No data members allowed in CMessage subclasses.");
+static_assert(sizeof(CPrivNotice) == sizeof(CMessage), "No data members allowed in CMessage subclasses.");
+static_assert(sizeof(CNickMessage) == sizeof(CMessage), "No data members allowed in CMessage subclasses.");
+static_assert(sizeof(CKickMessage) == sizeof(CMessage), "No data members allowed in CMessage subclasses.");
+static_assert(sizeof(CQuitMessage) == sizeof(CMessage), "No data members allowed in CMessage subclasses.");
+static_assert(sizeof(CTopicMessage) == sizeof(CMessage), "No data members allowed in CMessage subclasses.");
+
 #endif // !_MESSAGE_H

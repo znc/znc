@@ -28,6 +28,7 @@ class CChan;
 class CUser;
 class CIRCNetwork;
 class CClient;
+class CMessage;
 // !Forward Declarations
 
 // TODO: This class needs new name
@@ -49,13 +50,13 @@ public:
 
 	// Message Handlers
 	bool OnCTCPReply(CNick& Nick, CString& sMessage);
-	bool OnPrivCTCP(CNick& Nick, CString& sMessage);
-	bool OnChanCTCP(CNick& Nick, const CString& sChan, CString& sMessage);
-	bool OnGeneralCTCP(CNick& Nick, CString& sMessage);
-	bool OnPrivMsg(CNick& Nick, CString& sMessage);
-	bool OnChanMsg(CNick& Nick, const CString& sChan, CString& sMessage);
-	bool OnPrivNotice(CNick& Nick, CString& sMessage);
-	bool OnChanNotice(CNick& Nick, const CString& sChan, CString& sMessage);
+	bool OnPrivCTCP(CMessage& Message);
+	bool OnChanCTCP(CMessage& Message);
+	bool OnGeneralCTCP(CMessage& Message);
+	bool OnPrivMsg(CMessage& Message);
+	bool OnChanMsg(CMessage& Message);
+	bool OnPrivNotice(CMessage& Message);
+	bool OnChanNotice(CMessage& Message);
 	bool OnServerCapAvailable(const CString& sCap);
 	// !Message Handlers
 
