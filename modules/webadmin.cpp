@@ -261,12 +261,20 @@ public:
 			pNewUser->SetDCCBindHost(pUser->GetDCCBindHost());
 		}
 
-		sArg = WebSock.GetParam("bufsize"); if (!sArg.empty()) pNewUser->SetBufferCount(sArg.ToUInt(), spSession->IsAdmin());
+		sArg = WebSock.GetParam("chanbufsize");
 		if (!sArg.empty()) {
 			// First apply the old limit in case the new one is too high
 			if (pUser)
-				pNewUser->SetBufferCount(pUser->GetBufferCount(), true);
-			pNewUser->SetBufferCount(sArg.ToUInt(), spSession->IsAdmin());
+				pNewUser->SetChanBufferSize(pUser->GetChanBufferSize(), true);
+			pNewUser->SetChanBufferSize(sArg.ToUInt(), spSession->IsAdmin());
+		}
+
+		sArg = WebSock.GetParam("querybufsize");
+		if (!sArg.empty()) {
+			// First apply the old limit in case the new one is too high
+			if (pUser)
+				pNewUser->SetQueryBufferSize(pUser->GetQueryBufferSize(), true);
+			pNewUser->SetQueryBufferSize(sArg.ToUInt(), spSession->IsAdmin());
 		}
 
 		pNewUser->SetSkinName(WebSock.GetParam("skin"));
@@ -1211,7 +1219,8 @@ public:
 				Tmpl["RealName"] = pUser->GetRealName();
 				Tmpl["QuitMsg"] = pUser->GetQuitMsg();
 				Tmpl["DefaultChanModes"] = pUser->GetDefaultChanModes();
-				Tmpl["BufferCount"] = CString(pUser->GetBufferCount());
+				Tmpl["ChanBufferSize"] = CString(pUser->GetChanBufferSize());
+				Tmpl["QueryBufferSize"] = CString(pUser->GetQueryBufferSize());
 				Tmpl["TimestampFormat"] = pUser->GetTimestampFormat();
 				Tmpl["Timezone"] = pUser->GetTimezone();
 				Tmpl["JoinTries"] = CString(pUser->JoinTries());

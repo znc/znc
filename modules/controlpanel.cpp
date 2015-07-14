@@ -85,7 +85,8 @@ class CAdminMod : public CModule {
 				{"DenySetBindHost",     boolean},
 				{"DefaultChanModes",    str},
 				{"QuitMsg",             str},
-				{"BufferCount",         integer},
+				{"ChanBufferSize",      integer},
+				{"QueryBufferSize",     integer},
 				{"AutoClearChanBuffer", boolean},
 				{"AutoClearQueryBuffer",boolean},
 				{"Password",            str},
@@ -212,6 +213,10 @@ class CAdminMod : public CModule {
 			PutModule("QuitMsg = " + pUser->GetQuitMsg());
 		else if (sVar == "buffercount")
 			PutModule("BufferCount = " + CString(pUser->GetBufferCount()));
+		else if (sVar == "chanbuffersize")
+			PutModule("ChanBufferSize = " + CString(pUser->GetChanBufferSize()));
+		else if (sVar == "querybuffersize")
+			PutModule("QueryBufferSize = " + CString(pUser->GetQueryBufferSize()));
 		else if (sVar == "keepbuffer")
 			PutModule("KeepBuffer = " + CString(!pUser->AutoClearChanBuffer())); // XXX compatibility crap, added in 0.207
 		else if (sVar == "autoclearchanbuffer")
@@ -340,11 +345,21 @@ class CAdminMod : public CModule {
 			pUser->SetQuitMsg(sValue);
 			PutModule("QuitMsg = " + sValue);
 		}
-		else if (sVar == "buffercount") {
+		else if (sVar == "chanbuffersize" || sVar == "buffercount") {
 			unsigned int i = sValue.ToUInt();
 			// Admins don't have to honour the buffer limit
-			if (pUser->SetBufferCount(i, GetUser()->IsAdmin())) {
-				PutModule("BufferCount = " + sValue);
+			if (pUser->SetChanBufferSize(i, GetUser()->IsAdmin())) {
+				PutModule("ChanBufferSize = " + sValue);
+			} else {
+				PutModule("Setting failed, limit is " +
+						CString(CZNC::Get().GetMaxBufferSize()));
+			}
+		}
+		else if (sVar == "querybuffersize") {
+			unsigned int i = sValue.ToUInt();
+			// Admins don't have to honour the buffer limit
+			if (pUser->SetQueryBufferSize(i, GetUser()->IsAdmin())) {
+				PutModule("QueryBufferSize = " + sValue);
 			} else {
 				PutModule("Setting failed, limit is " +
 						CString(CZNC::Get().GetMaxBufferSize()));

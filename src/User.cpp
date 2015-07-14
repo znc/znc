@@ -20,6 +20,7 @@
 #include <znc/IRCNetwork.h>
 #include <znc/IRCSock.h>
 #include <znc/Chan.h>
+#include <znc/Query.h>
 #include <math.h>
 #include <algorithm>
 
@@ -85,7 +86,8 @@ CUser::CUser(const CString& sUserName)
 		  m_vIRCNetworks(),
 		  m_vClients(),
 		  m_ssAllowedHosts(),
-		  m_uBufferCount(50),
+		  m_uChanBufferSize(50),
+		  m_uQueryBufferSize(50),
 		  m_uBytesRead(0),
 		  m_uBytesWritten(0),
 		  m_uMaxJoinTries(10),
@@ -211,6 +213,10 @@ bool CUser::ParseConfig(CConfig* pConfig, CString& sError) {
 	}
 	if (pConfig->FindStringEntry("buffer", sValue))
 		SetBufferCount(sValue.ToUInt(), true);
+	if (pConfig->FindStringEntry("chanbuffersize", sValue))
+		SetChanBufferSize(sValue.ToUInt(), true);
+	if (pConfig->FindStringEntry("querybuffersize", sValue))
+		SetQueryBufferSize(sValue.ToUInt(), true);
 	if (pConfig->FindStringEntry("awaysuffix", sValue)) {
 		CUtils::PrintMessage("WARNING: AwaySuffix has been deprecated, instead try -> LoadModule = awaynick %nick%_" + sValue);
 	}
@@ -693,7 +699,8 @@ bool CUser::Clone(const CUser& User, CString& sErrorRet, bool bCloneNetworks) {
 	SetQuitMsg(User.GetQuitMsg());
 	SetSkinName(User.GetSkinName());
 	SetDefaultChanModes(User.GetDefaultChanModes());
-	SetBufferCount(User.GetBufferCount(), true);
+	SetChanBufferSize(User.GetChanBufferSize(), true);
+	SetQueryBufferSize(User.GetQueryBufferSize(), true);
 	SetJoinTries(User.JoinTries());
 	SetMaxNetworks(User.MaxNetworks());
 	SetMaxQueryBuffers(User.MaxQueryBuffers());
@@ -879,7 +886,8 @@ CConfig CUser::ToConfig() const {
 		config.AddKeyValuePair("StatusPrefix", GetStatusPrefix());
 	config.AddKeyValuePair("Skin", GetSkinName());
 	config.AddKeyValuePair("ChanModes", GetDefaultChanModes());
-	config.AddKeyValuePair("Buffer", CString(GetBufferCount()));
+	config.AddKeyValuePair("ChanBufferSize", CString(GetChanBufferSize()));
+	config.AddKeyValuePair("QueryBufferSize", CString(GetQueryBufferSize()));
 	config.AddKeyValuePair("AutoClearChanBuffer", CString(AutoClearChanBuffer()));
 	config.AddKeyValuePair("AutoClearQueryBuffer", CString(AutoClearQueryBuffer()));
 	config.AddKeyValuePair("MultiClients", CString(MultiClients()));
@@ -1162,6 +1170,10 @@ void CUser::SetAutoClearChanBuffer(bool b) {
 void CUser::SetAutoClearQueryBuffer(bool b) { m_bAutoClearQueryBuffer = b; }
 
 bool CUser::SetBufferCount(unsigned int u, bool bForce) {
+	return SetChanBufferSize(u, bForce);
+}
+
+bool CUser::SetChanBufferSize(unsigned int u, bool bForce) {
 	if (!bForce && u > CZNC::Get().GetMaxBufferSize())
 		return false;
 	for (CIRCNetwork* pNetwork : m_vIRCNetworks) {
@@ -1169,7 +1181,19 @@ bool CUser::SetBufferCount(unsigned int u, bool bForce) {
 			pChan->InheritBufferCount(u, bForce);
 		}
 	}
-	m_uBufferCount = u;
+	m_uChanBufferSize = u;
+	return true;
+}
+
+bool CUser::SetQueryBufferSize(unsigned int u, bool bForce) {
+	if (!bForce && u > CZNC::Get().GetMaxBufferSize())
+		return false;
+	for (CIRCNetwork* pNetwork : m_vIRCNetworks) {
+		for (CQuery* pQuery : pNetwork->GetQueries()) {
+			pQuery->SetBufferCount(u, bForce);
+		}
+	}
+	m_uQueryBufferSize = u;
 	return true;
 }
 
@@ -1239,7 +1263,9 @@ bool CUser::HasSpaceForNewNetwork() const { return GetNetworks().size() < MaxNet
 
 CString CUser::GetQuitMsg() const { return (!m_sQuitMsg.Trim_n().empty()) ? m_sQuitMsg : CZNC::GetTag(false); }
 const MCString& CUser::GetCTCPReplies() const { return m_mssCTCPReplies; }
-unsigned int CUser::GetBufferCount() const { return m_uBufferCount; }
+unsigned int CUser::GetBufferCount() const { return GetChanBufferSize(); }
+unsigned int CUser::GetChanBufferSize() const { return m_uChanBufferSize; }
+unsigned int CUser::GetQueryBufferSize() const { return m_uQueryBufferSize; }
 bool CUser::AutoClearChanBuffer() const { return m_bAutoClearChanBuffer; }
 bool CUser::AutoClearQueryBuffer() const { return m_bAutoClearQueryBuffer; }
 //CString CUser::GetSkinName() const { return (!m_sSkinName.empty()) ? m_sSkinName : CZNC::Get().GetSkinName(); }

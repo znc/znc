@@ -228,19 +228,38 @@
 	</div>
 
 	<div class="section">
-		<h3>Default Settings</h3>
+		<h3>Channels</h3>
 		<div class="sectionbg">
 			<div class="sectionbody">
 				<div class="subsection third">
-					<div class="inputlabel">Channel Modes:</div>
+					<div class="inputlabel">Default Modes:</div>
 					<input type="text" name="chanmodes" value="<? VAR DefaultChanModes ?>" maxlength="32"
 						   title="These are the default modes ZNC will set when you join an empty channel." />
 					<br /><span class="info">Empty = use standard value</span>
 				</div>
 				<div class="subsection third">
 					<div class="inputlabel">Buffer Size:</div>
-					<input type="number" name="bufsize" value="<? VAR BufferCount ?>" min="0"
-						   title="This is the amount of lines that the playback buffer will store before dropping off the oldest line. The buffers are stored in the memory by default." />
+					<input type="number" name="chanbufsize" value="<? VAR ChanBufferSize ?>" min="0"
+						   title="This is the amount of lines that the playback buffer will store for channels before dropping off the oldest line. The buffers are stored in the memory by default." />
+					<br /><span class="info">Empty = use standard value</span>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div class="section">
+		<h3>Queries</h3>
+		<div class="sectionbg">
+			<div class="sectionbody">
+				<div class="subsection third">
+					<div class="inputlabel">Max Buffers:</div>
+					<input type="number" name="maxquerybuffers" value="<? VAR MaxQueryBuffers ?>" class="third" min="0"
+						   title="Maximum number of query buffers. 0 is unlimited."/>
+				</div>
+				<div class="subsection third">
+					<div class="inputlabel">Buffer Size:</div>
+					<input type="number" name="querybufsize" value="<? VAR QueryBufferSize ?>" min="0"
+						   title="This is the amount of lines that the playback buffer will store for queries before dropping off the oldest line. The buffers are stored in the memory by default." />
 					<br /><span class="info">Empty = use standard value</span>
 				</div>
 			</div>
@@ -303,11 +322,6 @@
 					<div class="inputlabel">Max IRC Networks Number:</div>
 					<input type="number" name="maxnetworks" value="<? VAR MaxNetworks ?>" class="third" min="0"
 					       title="Maximum number of IRC networks allowed for this user." <? IF !ImAdmin ?>disabled="disabled"<? ENDIF ?> />
-				</div>
-				<div class="subsection">
-					<div class="inputlabel">Max Query Buffers:</div>
-					<input type="number" name="maxquerybuffers" value="<? VAR MaxQueryBuffers ?>" class="third" min="0"
-					       title="Maximum number of query buffers. 0 is unlimited."/>
 				</div>
 
 				<div class="subsection half" id="ctcpreplies_plain">
