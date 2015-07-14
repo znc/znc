@@ -805,24 +805,27 @@ void CIRCSock::ReadLine(const CString& sData) {
 					sArgs = sRest.Token(2, true).TrimPrefix_n();
 				}
 
+				std::map<CString, std::function<void(bool bVal)>> mSupportedCaps = {
+						{"multi-prefix", [this](bool bVal) { m_bNamesx = bVal; }},
+						{"userhost-in-names", [this](bool bVal) { m_bUHNames = bVal; }},
+						{"away-notify", [this](bool bVal) { m_bAwayNotify = bVal; }},
+				};
+
 				if (sSubCmd == "LS") {
 					VCString vsTokens;
 					sArgs.Split(" ", vsTokens, false);
 
 					for (const CString& sCap : vsTokens) {
-						if (OnServerCapAvailable(sCap) || sCap == "multi-prefix" || sCap == "userhost-in-names" || sCap == "away-notify") {
+						if (OnServerCapAvailable(sCap) || mSupportedCaps.count(sCap)) {
 							m_ssPendingCaps.insert(sCap);
 						}
 					}
 				} else if (sSubCmd == "ACK") {
 					sArgs.Trim();
 					IRCSOCKMODULECALL(OnServerCapResult(sArgs, true), NOTHING);
-					if ("multi-prefix" == sArgs) {
-						m_bNamesx = true;
-					} else if ("userhost-in-names" == sArgs) {
-						m_bUHNames = true;
-					} else if ("away-notify" == sArgs) {
-						m_bAwayNotify = true;
+					const auto& it = mSupportedCaps.find(sArgs);
+					if (it != mSupportedCaps.end()) {
+						it->second(true);
 					}
 					m_ssAcceptedCaps.insert(sArgs);
 				} else if (sSubCmd == "NAK") {
