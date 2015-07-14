@@ -62,6 +62,7 @@ CIRCSock::CIRCSock(CIRCNetwork* pNetwork)
 		  m_bUHNames(false),
 		  m_bAwayNotify(false),
 		  m_bAccountNotify(false),
+		  m_bExtendedJoin(false),
 		  m_sPerms("*!@%+"),
 		  m_sPermModes("qaohv"),
 		  m_scUserModes(),
@@ -591,6 +592,21 @@ void CIRCSock::ReadLine(const CString& sData) {
 				if (pChan->IsDetached()) {
 					return;
 				}
+
+				if (HasExtendedJoin()) {
+					CString sExtendedLine = sLine;
+					sLine = ":" + Nick.GetNickMask() + " JOIN " + pChan->GetName();
+
+					const vector<CClient*>& vClients = m_pNetwork->GetClients();
+					for (CClient* pClient : vClients) {
+						if (pClient->HasExtendedJoin()) {
+							m_pNetwork->PutUser(sExtendedLine, pClient);
+						} else {
+							m_pNetwork->PutUser(sLine, pClient);
+						}
+					}
+					return;
+				}
 			}
 		} else if (sCmd.Equals("PART")) {
 			CString sChan = sRest.Token(0).TrimPrefix_n();
@@ -811,6 +827,7 @@ void CIRCSock::ReadLine(const CString& sData) {
 						{"userhost-in-names", [this](bool bVal) { m_bUHNames = bVal; }},
 						{"away-notify", [this](bool bVal) { m_bAwayNotify = bVal; }},
 						{"account-notify", [this](bool bVal) { m_bAccountNotify = bVal; }},
+						{"extended-join", [this](bool bVal) { m_bExtendedJoin = bVal; }},
 				};
 
 				if (sSubCmd == "LS") {

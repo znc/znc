@@ -103,6 +103,7 @@ public:
 	bool HasUHNames() const { return m_bUHNames; }
 	bool HasAwayNotify() const { return m_bAwayNotify; }
 	bool HasAccountNotify() const { return m_bAccountNotify; }
+	bool HasExtendedJoin() const { return m_bExtendedJoin; }
 	const std::set<unsigned char>& GetUserModes() const { return m_scUserModes; }
 	// This is true if we are past raw 001
 	bool IsAuthed() const { return m_bAuthed; }
@@ -131,6 +132,7 @@ protected:
 	bool                                m_bUHNames;
 	bool                                m_bAwayNotify;
 	bool                                m_bAccountNotify;
+	bool                                m_bExtendedJoin;
 	CString                             m_sPerms;
 	CString                             m_sPermModes;
 	std::set<unsigned char>             m_scUserModes;

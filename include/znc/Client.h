@@ -98,6 +98,7 @@ public:
 			  m_bCapNotify(false),
 			  m_bAwayNotify(false),
 			  m_bAccountNotify(false),
+			  m_bExtendedJoin(false),
 			  m_bNamesx(false),
 			  m_bUHNames(false),
 			  m_bAway(false),
@@ -123,6 +124,7 @@ public:
 			               {"cap-notify", {false, [this](bool bVal) { m_bCapNotify = bVal; }}},
 			               {"away-notify", {true, [this](bool bVal) { m_bAwayNotify = bVal; }}},
 			               {"account-notify", {true, [this](bool bVal) { m_bAccountNotify = bVal; }}},
+			               {"extended-join", {true, [this](bool bVal) { m_bExtendedJoin = bVal; }}},
 			              })
 	{
 		EnableReadLine();
@@ -151,6 +153,7 @@ public:
 	bool HasCapNotify() const { return m_bCapNotify; }
 	bool HasAwayNotify() const { return m_bAwayNotify; }
 	bool HasAccountNotify() const { return m_bAccountNotify; }
+	bool HasExtendedJoin() const { return m_bExtendedJoin; }
 	bool HasNamesx() const { return m_bNamesx; }
 	bool HasUHNames() const { return m_bUHNames; }
 	bool IsAway() const { return m_bAway; }
@@ -217,6 +220,7 @@ protected:
 	bool                 m_bCapNotify;
 	bool                 m_bAwayNotify;
 	bool                 m_bAccountNotify;
+	bool                 m_bExtendedJoin;
 	bool                 m_bNamesx;
 	bool                 m_bUHNames;
 	bool                 m_bAway;
