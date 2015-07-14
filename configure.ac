@@ -228,24 +228,6 @@ case "${host_os}" in
 	;;
 esac
 
-# In old times needed to define _FORTIFY_SOURCE to 2 ourself.
-# Then GCC started to define it itself to 2. It was ok.
-# But then GCC 4.7 started to define it to 0 or 2 depending on optimization level, and it started to conflict with our define.
-AC_MSG_CHECKING([whether compiler predefines _FORTIFY_SOURCE])
-AC_COMPILE_IFELSE([
-	AC_LANG_PROGRAM([[
-	]], [[
-		#ifndef _FORTIFY_SOURCE
-		#error "Just checking, nothing fatal here"
-		#endif
-	]])
-], [
-	AC_MSG_RESULT([yes])
-], [
-	AC_MSG_RESULT([no])
-	appendCXX "-D_FORTIFY_SOURCE=2"
-])
-
 if test "$DEBUG" != "no"; then
 	appendCXX -ggdb3
 	AC_DEFINE([_DEBUG], [1], [Define for debugging])
@@ -258,6 +240,24 @@ if test "$DEBUG" != "no"; then
 else
 	if test "x$OPTIMIZE" = "xyes"; then
 		appendCXX -O2
+
+		# In old times needed to define _FORTIFY_SOURCE to 2 ourself.
+		# Then GCC started to define it itself to 2. It was ok.
+		# But then GCC 4.7 started to define it to 0 or 2 depending on optimization level, and it started to conflict with our define.
+		AC_MSG_CHECKING([whether compiler predefines _FORTIFY_SOURCE])
+		AC_COMPILE_IFELSE([
+			AC_LANG_PROGRAM([[
+			]], [[
+				#ifndef _FORTIFY_SOURCE
+				#error "Just checking, nothing fatal here"
+				#endif
+			]])
+		], [
+			AC_MSG_RESULT([yes])
+		], [
+			AC_MSG_RESULT([no])
+			appendCXX "-D_FORTIFY_SOURCE=2"
+		])
 	fi
 fi
 
