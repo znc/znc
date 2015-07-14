@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+#include <znc/Listener.h>
 #include <znc/znc.h>
 
 CListener::~CListener() {

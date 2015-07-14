@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+#include <znc/znc.h>
 #include <znc/FileUtils.h>
 #include <znc/IRCSock.h>
 #include <znc/Server.h>

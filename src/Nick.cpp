@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+#include <znc/Nick.h>
 #include <znc/Chan.h>
 #include <znc/IRCSock.h>
 #include <znc/IRCNetwork.h>

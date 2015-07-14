@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+#include <znc/ZNCString.h>
 #include <znc/FileUtils.h>
 #include <znc/Utils.h>
 #include <znc/MD5.h>

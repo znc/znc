@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+#include <znc/Client.h>
 #include <znc/Chan.h>
 #include <znc/FileUtils.h>
 #include <znc/IRCNetwork.h>

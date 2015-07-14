@@ -16,6 +16,7 @@
 
 #include <random>
 
+#include <znc/Socket.h>
 #include <znc/User.h>
 #include <znc/IRCNetwork.h>
 #include <znc/SSLVerifyHost.h>
