@@ -97,6 +97,7 @@ public:
 			  m_bInCap(false),
 			  m_bCapNotify(false),
 			  m_bAwayNotify(false),
+			  m_bAccountNotify(false),
 			  m_bNamesx(false),
 			  m_bUHNames(false),
 			  m_bAway(false),
@@ -121,6 +122,7 @@ public:
 			               {"batch", {false, [this](bool bVal) { m_bBatch = bVal; }}},
 			               {"cap-notify", {false, [this](bool bVal) { m_bCapNotify = bVal; }}},
 			               {"away-notify", {true, [this](bool bVal) { m_bAwayNotify = bVal; }}},
+			               {"account-notify", {true, [this](bool bVal) { m_bAccountNotify = bVal; }}},
 			              })
 	{
 		EnableReadLine();
@@ -148,6 +150,7 @@ public:
 	CString GetIdentifier() const { return m_sIdentifier; }
 	bool HasCapNotify() const { return m_bCapNotify; }
 	bool HasAwayNotify() const { return m_bAwayNotify; }
+	bool HasAccountNotify() const { return m_bAccountNotify; }
 	bool HasNamesx() const { return m_bNamesx; }
 	bool HasUHNames() const { return m_bUHNames; }
 	bool IsAway() const { return m_bAway; }
@@ -213,6 +216,7 @@ protected:
 	bool                 m_bInCap;
 	bool                 m_bCapNotify;
 	bool                 m_bAwayNotify;
+	bool                 m_bAccountNotify;
 	bool                 m_bNamesx;
 	bool                 m_bUHNames;
 	bool                 m_bAway;

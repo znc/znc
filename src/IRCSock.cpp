@@ -61,6 +61,7 @@ CIRCSock::CIRCSock(CIRCNetwork* pNetwork)
 		  m_bNamesx(false),
 		  m_bUHNames(false),
 		  m_bAwayNotify(false),
+		  m_bAccountNotify(false),
 		  m_sPerms("*!@%+"),
 		  m_sPermModes("qaohv"),
 		  m_scUserModes(),
@@ -809,6 +810,7 @@ void CIRCSock::ReadLine(const CString& sData) {
 						{"multi-prefix", [this](bool bVal) { m_bNamesx = bVal; }},
 						{"userhost-in-names", [this](bool bVal) { m_bUHNames = bVal; }},
 						{"away-notify", [this](bool bVal) { m_bAwayNotify = bVal; }},
+						{"account-notify", [this](bool bVal) { m_bAccountNotify = bVal; }},
 				};
 
 				if (sSubCmd == "LS") {
@@ -846,6 +848,14 @@ void CIRCSock::ReadLine(const CString& sData) {
 			const vector<CClient*>& vClients = m_pNetwork->GetClients();
 			for (CClient* pClient : vClients) {
 				if (pClient->HasAwayNotify()) {
+					m_pNetwork->PutUser(sLine, pClient);
+				}
+			}
+			return;
+		} else if (sCmd.Equals("ACCOUNT")) {
+			const vector<CClient*>& vClients = m_pNetwork->GetClients();
+			for (CClient* pClient : vClients) {
+				if (pClient->HasAccountNotify()) {
 					m_pNetwork->PutUser(sLine, pClient);
 				}
 			}
