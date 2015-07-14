@@ -173,6 +173,12 @@ public:
 		return CONTINUE;
 	}
 
+	void OnNick(const CNick& Nick, const CString& sNewNick, const std::vector<CChan*>& vChans) override {
+		for (CChan* pChan : vChans) {
+			Message(*pChan);
+		}
+	}
+
 	void ShowCommand(const CString& sLine) {
 		PutModule("Current limit is " + CString(m_iThresholdMsgs) + " lines "
 				"in " + CString(m_iThresholdSecs) + " secs.");
