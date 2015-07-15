@@ -109,6 +109,7 @@ public:
 	bool IsCapAccepted(const CString& sCap) { return 1 == m_ssAcceptedCaps.count(sCap); }
 	const MCString& GetISupport() const { return m_mISupport; }
 	CString GetISupport(const CString& sKey, const CString& sDefault = "") const;
+	const MCString& GetCurrentTags() const { return m_msCurrentTags; }
 	// !Getters
 
 	// This handles NAMESX and UHNAMES in a raw 353 reply
@@ -151,6 +152,7 @@ protected:
 	unsigned short int                  m_uFloodBurst;
 	double                              m_fFloodRate;
 	bool                                m_bFloodProtection;
+	MCString                            m_msCurrentTags;
 
 	friend class CIRCFloodTimer;
 };

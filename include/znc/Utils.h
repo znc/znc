@@ -27,6 +27,7 @@
 #include <sys/time.h>
 #include <unistd.h>
 #include <vector>
+#include <functional>
 
 static inline void SetFdCloseOnExec(int fd)
 {
@@ -345,6 +346,21 @@ protected:
 	typedef typename std::map<K, value>::iterator iterator;
 	std::map<K, value>   m_mItems;   //!< Map of cached items.  The value portion of the map is for the expire time
 	unsigned int         m_uTTL;     //!< Default time-to-live duration
+};
+
+/**
+ * @class COnDelete
+ * @author BtbN <btbn@btbn.de>
+ * @brief Helper class that calls the functor passed to its constructor when it goes out of scope
+ */
+class COnDelete {
+	COnDelete(const COnDelete&) = delete;
+public:
+	COnDelete():m_f([]() {}) {}
+	COnDelete(std::function<void()> f):m_f(std::move(f)) {}
+	~COnDelete() { m_f(); }
+private:
+	std::function<void()> m_f;
 };
 
 #endif // !ZNC_UTILS_H
