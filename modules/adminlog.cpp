@@ -46,7 +46,11 @@ public:
 		else
 			m_eLogMode = LOG_TO_FILE;
 
-		m_sLogFile = GetSavePath() + "/znc.log";
+		CString sPath = GetNV("path");
+		if (sPath.Equals(""))
+			m_sLogFile = GetSavePath() + "/znc.log";
+		else
+			m_sLogFile = sPath;
 
 		Log("Logging started. ZNC PID[" + CString(getpid()) + "] UID/GID[" + CString(getuid()) + ":" + CString(getgid()) + "]");
 		return true;
