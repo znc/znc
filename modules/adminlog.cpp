@@ -27,6 +27,7 @@ public:
 		AddHelpCommand();
 		AddCommand("Show", static_cast<CModCommand::ModCmdFunc>(&CAdminLogMod::OnShowCommand), "", "Show the logging target");
 		AddCommand("Target", static_cast<CModCommand::ModCmdFunc>(&CAdminLogMod::OnTargetCommand), "<file|syslog|both>", "Set the logging target");
+		AddCommand("Path", static_cast<CModCommand::ModCmdFunc>(&CAdminLogMod::OnPathCommand), "<path>", "If using the file target, set the log file path");
 		openlog("znc", LOG_PID, LOG_DAEMON);
 	}
 
@@ -47,10 +48,7 @@ public:
 			m_eLogMode = LOG_TO_FILE;
 
 		CString sPath = GetNV("path");
-		if (sPath.Equals(""))
-			m_sLogFile = GetSavePath() + "/znc.log";
-		else
-			m_sLogFile = sPath;
+		SetLogFilePath(sPath);
 
 		Log("Logging started. ZNC PID[" + CString(getpid()) + "] UID/GID[" + CString(getuid()) + ":" + CString(getgid()) + "]");
 		return true;
@@ -87,6 +85,30 @@ public:
 
 	void OnFailedLogin(const CString& sUsername, const CString& sRemoteIP) override {
 		Log("[" + sUsername + "] failed to login from " + sRemoteIP, LOG_WARNING);
+	}
+
+	void SetLogFilePath(CString& sPath) {
+		CString sMessage;
+
+		if (sPath.empty()) {
+			sPath = GetSavePath() + "/znc.log";
+		}
+
+		CFile LogFile(sPath);
+		CString sLogDir = LogFile.GetDir();
+		struct stat ModDirInfo;
+		CFile::GetInfo(GetSavePath(), ModDirInfo);
+		if (!CFile::Exists(sLogDir)) {
+			CDir::MakeDir(sLogDir, ModDirInfo.st_mode);
+		}
+
+		if (!sPath.empty()) {
+			m_sLogFile = sPath;
+			SetNV("path", sPath);
+			sMessage = "adminlog file path set to [" + sPath + "]";
+			Log(sMessage);
+			PutModule(sMessage);
+		}
 	}
 
 	void Log(CString sLine, int iPrio = LOG_INFO) {
@@ -150,6 +172,11 @@ public:
 		SetNV("target", sTarget);
 		m_eLogMode = mode;
 		PutModule(sMessage);
+	}
+
+	void OnPathCommand(const CString& sCommand) {
+		CString sPath = sCommand.Token(1, true);
+		SetLogFilePath(sPath);
 	}
 
 	void OnShowCommand(const CString& sCommand) {
