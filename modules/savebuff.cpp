@@ -320,64 +320,6 @@ public:
 		return CString();
 	}
 
-#ifdef LEGACY_SAVEBUFF /* event logging is deprecated now in savebuf. Use buffextras module along side of this */
-	CString SpoofChanMsg(const CString & sChannel, const CString & sMesg)
-	{
-		CString sReturn = ":*" + GetModName() + "!znc@znc.in PRIVMSG " + sChannel + " :" + CString(time(nullptr)) + " " + sMesg;
-		return(sReturn);
-	}
-
-	void AddBuffer(CChan& chan, const CString &sLine)
-	{
-		// If they have AutoClearChanBuffer enabled, only add messages if no client is connected
-		if (chan.AutoClearChanBuffer() && GetNetwork()->IsUserAttached())
-			return;
-		chan.AddBuffer(sLine);
-	}
-
-	void OnRawMode(const CNick& cOpNick, CChan& cChannel, const CString& sModes, const CString& sArgs) override
-	{
-		AddBuffer(cChannel, SpoofChanMsg(cChannel.GetName(), cOpNick.GetNickMask() + " MODE " + sModes + " " + sArgs));
-	}
-	void OnQuit(const CNick& cNick, const CString& sMessage, const vector<CChan*>& vChans) override
-	{
-		for (size_t a = 0; a < vChans.size(); a++)
-		{
-			AddBuffer(*vChans[a], SpoofChanMsg(vChans[a]->GetName(), cNick.GetNickMask() + " QUIT " + sMessage));
-		}
-		if (cNick.NickEquals(GetUser()->GetNick()))
-			SaveBuffersToDisk(); // need to force a save here to see this!
-	}
-
-	void OnNick(const CNick& cNick, const CString& sNewNick, const vector<CChan*>& vChans) override
-	{
-		for (size_t a = 0; a < vChans.size(); a++)
-		{
-			AddBuffer(*vChans[a], SpoofChanMsg(vChans[a]->GetName(), cNick.GetNickMask() + " NICK " + sNewNick));
-		}
-	}
-	void OnKick(const CNick& cNick, const CString& sOpNick, CChan& cChannel, const CString& sMessage) override
-	{
-		AddBuffer(cChannel, SpoofChanMsg(cChannel.GetName(), sOpNick + " KICK " + cNick.GetNickMask() + " " + sMessage));
-	}
-	void OnJoin(const CNick& cNick, CChan& cChannel) override
-	{
-		if (cNick.NickEquals(GetUser()->GetNick()) && cChannel.GetBuffer().empty())
-		{
-			BootStrap((CChan *)&cChannel);
-			if (!cChannel.GetBuffer().empty())
-				Replay(cChannel.GetName());
-		}
-		AddBuffer(cChannel, SpoofChanMsg(cChannel.GetName(), cNick.GetNickMask() + " JOIN"));
-	}
-	void OnPart(const CNick& cNick, CChan& cChannel) override
-	{
-		AddBuffer(cChannel, SpoofChanMsg(cChannel.GetName(), cNick.GetNickMask() + " PART"));
-		if (cNick.NickEquals(GetUser()->GetNick()))
-			SaveBuffersToDisk(); // need to force a save here to see this!
-	}
-#endif /* LEGACY_SAVEBUFF */
-
 private:
 	bool    m_bBootError;
 	CString m_sPassword;
