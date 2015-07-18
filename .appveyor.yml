@@ -1,31 +1,35 @@
 # There is a pre-installed cygwin: http://help.appveyor.com/discussions/suggestions/427-pre-install-cygwin
 # But it's old and misses some stuff anyway
 #
-# TODO: test both x86 and x86_64
 # TODO: test msvc
 version: 0.0.0.0.1-branch-{branch}-build-{build}
 clone_depth: 10
 cache:
-    - c:\cygwin\var\cache\setup
+    - c:\cygwin-setup-cache
+environment:
+    matrix:
+        - cygwin_url: https://cygwin.com/setup-x86_64.exe
+        - cygwin_url: https://cygwin.com/setup-x86.exe
 install:
-    - ps: Invoke-WebRequest https://cygwin.com/setup-x86.exe -OutFile c:\cygwin-setup-x86.exe
-    - c:\cygwin-setup-x86.exe --quiet-mode --no-shortcuts --no-startmenu --no-desktop --upgrade-also --only-site --site http://cygwin.mirror.constant.com --root c:\cygwin --local-package-dir c:\cygwin\var\cache\setup --packages aclocal,automake,gcc-g++,make,pkg-config,wget,openssl-devel,libicu-devel > cygwin-install.log 2>&1
-    - ps: Push-AppveyorArtifact cygwin-install.log
-    - c:\cygwin\bin\sh -lc "uname -a"
-    - c:\cygwin\bin\sh -lc "cat /proc/cpuinfo"
-    - c:\cygwin\bin\sh -lc "cat /proc/meminfo"
-    - c:\cygwin\bin\sh -lc "ls -l /bin"
-    - c:\cygwin\bin\sh -lc "cygcheck -s -v > $APPVEYOR_BUILD_FOLDER/cygcheck.log 2>&1"
+    - ps: Invoke-WebRequest $env:cygwin_url -OutFile c:\cygwin-setup.exe
+      # libcrypt-devel is needed only on x86_64 and only for modperl... probably some dependency problem.
+    - c:\cygwin-setup.exe --quiet-mode --no-shortcuts --no-startmenu --no-desktop --upgrade-also --only-site --site http://mirrors.kernel.org/sourceware/cygwin/ --root c:\cygwin-root --local-package-dir c:\cygwin-setup-cache --packages automake,gcc-g++,make,pkg-config,wget,openssl-devel,libicu-devel,zlib-devel,libcrypt-devel,perl,python3,swig,libsasl2-dev
+    - c:\cygwin-root\bin\sh -lc "echo Hi"
+    - c:\cygwin-root\bin\sh -lc "uname -a"
+    - c:\cygwin-root\bin\sh -lc "cat /proc/cpuinfo"
+    - c:\cygwin-root\bin\sh -lc "cat /proc/meminfo"
+    - c:\cygwin-root\bin\sh -lc "ls -l /bin"
+    - c:\cygwin-root\bin\sh -lc "cygcheck -s -v > $APPVEYOR_BUILD_FOLDER/cygcheck.log 2>&1"
     - ps: Push-AppveyorArtifact cygcheck.log
 # stdin is broken at AppVeyor, so we open it explicitly as /dev/null
 build_script:
     - git submodule update --init
-    - c:\cygwin\bin\sh -lc "cd $APPVEYOR_BUILD_FOLDER; ./autogen.sh < /dev/null"
+    - c:\cygwin-root\bin\sh -lc "cd $APPVEYOR_BUILD_FOLDER; ./autogen.sh < /dev/null"
     - mkdir build
-    - c:\cygwin\bin\sh -lc "cd $APPVEYOR_BUILD_FOLDER/build; ../configure < /dev/null"
+    - c:\cygwin-root\bin\sh -lc "cd $APPVEYOR_BUILD_FOLDER/build; ../configure --enable-charset --enable-zlib --enable-openssl --enable-perl --enable-python --enable-cyrus < /dev/null"
     - ps: Push-AppveyorArtifact build\config.log
-    - c:\cygwin\bin\sh -lc "cd $APPVEYOR_BUILD_FOLDER/build; make VERBOSE=1 -j2 < /dev/null"
-    - c:\cygwin\bin\sh -lc "cd $APPVEYOR_BUILD_FOLDER/build; make install < /dev/null"
-    - c:\cygwin\bin\sh -lc "znc --version"
+    - c:\cygwin-root\bin\sh -lc "cd $APPVEYOR_BUILD_FOLDER/build; make VERBOSE=1 -j2 < /dev/null"
+    - c:\cygwin-root\bin\sh -lc "cd $APPVEYOR_BUILD_FOLDER/build; make install < /dev/null"
+    - c:\cygwin-root\bin\sh -lc "znc --version"
 test_script:
-    - c:\cygwin\bin\sh -lc "cd $APPVEYOR_BUILD_FOLDER/build; make VERBOSE=1 test < /dev/null"
+    - c:\cygwin-root\bin\sh -lc "cd $APPVEYOR_BUILD_FOLDER/build; make VERBOSE=1 test < /dev/null"
