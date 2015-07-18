@@ -18,7 +18,6 @@ install:
     - c:\cygwin-root\bin\sh -lc "uname -a"
     - c:\cygwin-root\bin\sh -lc "cat /proc/cpuinfo"
     - c:\cygwin-root\bin\sh -lc "cat /proc/meminfo"
-    - c:\cygwin-root\bin\sh -lc "ls -l /bin"
     - c:\cygwin-root\bin\sh -lc "cygcheck -s -v > $APPVEYOR_BUILD_FOLDER/cygcheck.log 2>&1"
     - ps: Push-AppveyorArtifact cygcheck.log
 # stdin is broken at AppVeyor, so we open it explicitly as /dev/null
