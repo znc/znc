@@ -8,6 +8,7 @@ dnl Needed for AC_PATH_PROGS_FEATURE_CHECK which was added in 2.62
 AC_PREREQ([2.62])
 dnl Keep the version number in sync with main.h!
 AC_INIT([znc], [1.7.x])
+LIBZNC_VERSION=1.7
 AC_CONFIG_MACRO_DIR([m4])
 AC_CONFIG_SRCDIR([src/znc.cpp])
 AC_LANG([C++])
@@ -473,7 +474,7 @@ if test -z "$ISCYGWIN" ; then
 	appendMod -fPIC
 else
 	# But cygwin does want most of ZNC in a shared lib
-	LIBZNC="libznc.dll"
+	LIBZNC="cygznc-${LIBZNC_VERSION}.dll"
 	LIBZNCDIR="$bindir"
 fi
 
@@ -665,6 +666,7 @@ AC_SUBST([LDFLAGS])
 AC_SUBST([LIBS])
 AC_SUBST([LIBZNC])
 AC_SUBST([LIBZNCDIR])
+AC_SUBST([LIBZNC_VERSION])
 AC_SUBST([ISCYGWIN])
 AC_SUBST([MODLINK])
 AC_SUBST([NOSSL])
