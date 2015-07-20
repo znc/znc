@@ -474,6 +474,7 @@ if test -z "$ISCYGWIN" ; then
 	appendMod -fPIC
 else
 	# But cygwin does want most of ZNC in a shared lib
+	# See https://cygwin.com/ml/cygwin-apps/2015-07/msg00108.html for the reasoning behind the name.
 	LIBZNC="cygznc-${LIBZNC_VERSION}.dll"
 	LIBZNCDIR="$bindir"
 fi
