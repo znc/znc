@@ -53,7 +53,7 @@ fi
 if [ "x$WRITE_OUTPUT" = "xyes" ]
 then
 	echo '#include <znc/version.h>' > src/version.cpp
-	echo "const char* ZNC_VERSION_EXTRA = \"$EXTRA\";" >> src/version.cpp
+	echo "const char* ZNC_VERSION_EXTRA = VERSION_EXTRA \"$EXTRA\";" >> src/version.cpp
 fi
 
 echo "$EXTRA"

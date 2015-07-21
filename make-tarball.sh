@@ -54,7 +54,7 @@ sed -e 's:#include "defines.h":#include <znc/defines.h>:' third_party/Csocket/Cs
 	rm make-tarball.sh
 	sed -e "s/THIS_IS_NOT_TARBALL//" -i Makefile.in
 	echo '#include <znc/version.h>' > src/version.cpp
-	echo "const char* ZNC_VERSION_EXTRA = \"$DESC\";" >> src/version.cpp
+	echo "const char* ZNC_VERSION_EXTRA = VERSION_EXTRA \"$DESC\";" >> src/version.cpp
 )
 (
 	cd $TMPDIR

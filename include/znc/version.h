@@ -11,6 +11,9 @@
 #define VERSION        (VERSION_MAJOR + VERSION_MINOR / 10.0)
 
 // You can add -DVERSION_EXTRA="stuff" to your CXXFLAGS!
+#ifndef VERSION_EXTRA
+# define VERSION_EXTRA ""
+#endif
 extern const char* ZNC_VERSION_EXTRA;
 
 #endif
