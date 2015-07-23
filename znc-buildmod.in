@@ -39,7 +39,7 @@ LIBZNCDIR="@LIBZNCDIR@"
 if test "x" = "x$LIBZNC"; then
     LIBZNCFLAGS=""
 else
-    LIBZNCFLAGS="-L\"$LIBZNCDIR\" -lznc"
+    LIBZNCFLAGS="-L$LIBZNCDIR -lznc"
 fi
 
 LDFLAGS="$LIBZNCFLAGS $LDFLAGS"
