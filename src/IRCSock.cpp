@@ -1113,9 +1113,10 @@ void CIRCSock::Disconnected() {
 	m_pNetwork->ClearRawBuffer();
 	m_pNetwork->ClearMotdBuffer();
 
+	CString sPrefix = m_pNetwork->GetUser()->GetStatusPrefix();
 	for (CChan* pChan : m_pNetwork->GetChans()) {
 		if(pChan->IsOn()) {
-			m_pNetwork->PutUser(":ZNC!znc@znc.in KICK " + pChan->GetName() + " " + GetNick()
+			m_pNetwork->PutUser(":" + sPrefix + "status!znc@znc.in KICK " + pChan->GetName() + " " + GetNick()
 				+ " :You have been disconnected from the IRC server");
 		}
 	}
