@@ -127,7 +127,10 @@ public:
 	void SetQuitMsg(const CString& s);
 	bool AddCTCPReply(const CString& sCTCP, const CString& sReply);
 	bool DelCTCPReply(const CString& sCTCP);
+	/** @deprecated Use SetChanBufferSize() or SetQueryBufferSize() instead. */
 	bool SetBufferCount(unsigned int u, bool bForce = false);
+	bool SetChanBufferSize(unsigned int u, bool bForce = false);
+	bool SetQueryBufferSize(unsigned int u, bool bForce = false);
 	void SetAutoClearChanBuffer(bool b);
 	void SetAutoClearQueryBuffer(bool b);
 
@@ -174,7 +177,10 @@ public:
 
 	CString GetQuitMsg() const;
 	const MCString& GetCTCPReplies() const;
+	/** @deprecated Use GetChanBufferSize() or GetQueryBufferSize() instead. */
 	unsigned int GetBufferCount() const;
+	unsigned int GetChanBufferSize() const;
+	unsigned int GetQueryBufferSize() const;
 	bool AutoClearChanBuffer() const;
 	bool AutoClearQueryBuffer() const;
 	bool IsBeingDeleted() const { return m_bBeingDeleted; }
@@ -228,7 +234,8 @@ protected:
 	std::vector<CIRCNetwork*>  m_vIRCNetworks;
 	std::vector<CClient*>      m_vClients;
 	std::set<CString>     m_ssAllowedHosts;
-	unsigned int          m_uBufferCount;
+	unsigned int          m_uChanBufferSize;
+	unsigned int          m_uQueryBufferSize;
 	unsigned long long    m_uBytesRead;
 	unsigned long long    m_uBytesWritten;
 	unsigned int          m_uMaxJoinTries;
