@@ -21,7 +21,7 @@
 
 using std::vector;
 
-CQuery::CQuery(const CString& sName, CIRCNetwork* pNetwork) : m_sName(sName), m_pNetwork(pNetwork), m_Buffer() {
+CQuery::CQuery(const CString& sName, CIRCNetwork* pNetwork) : m_bDetached(false), m_sName(sName), m_pNetwork(pNetwork), m_Buffer() {
 	SetBufferCount(m_pNetwork->GetUser()->GetQueryBufferSize(), true);
 }
 
@@ -84,4 +84,15 @@ void CQuery::SendBuffer(CClient* pClient, const CBuffer& Buffer) {
 			}
 		}
 	}
+}
+
+void CQuery::AttachUser(CClient* pClient)
+{
+	SetDetached(false);
+	SendBuffer(pClient);
+}
+
+void CQuery::DetachUser()
+{
+	SetDetached(true);
 }

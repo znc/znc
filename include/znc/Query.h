@@ -48,9 +48,18 @@ public:
 
 	// Getters
 	const CString& GetName() const { return m_sName; }
+	bool IsDetached() const { return m_bDetached; }
 	// !Getters
 
+	// Setters
+	void SetDetached(bool b = true) { m_bDetached = b; }
+	// !Setters
+
+	void AttachUser(CClient* pClient = nullptr);
+	void DetachUser();
+
 private:
+	bool                         m_bDetached;
 	CString                      m_sName;
 	CIRCNetwork*                 m_pNetwork;
 	CBuffer                      m_Buffer;
