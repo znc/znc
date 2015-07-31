@@ -141,7 +141,7 @@ void CChan::Cycle() const {
 }
 
 void CChan::JoinUser(const CString& sKey) {
-	if (!sKey.empty()) {
+	if (!IsOn() && !sKey.empty()) {
 		SetKey(sKey);
 	}
 	m_pNetwork->PutIRC("JOIN " + GetName() + " " + GetKey());
