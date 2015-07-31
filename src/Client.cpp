@@ -428,14 +428,19 @@ void CClient::ReadLine(const CString& sData) {
 		return;
 	} else if (sCommand.Equals("JOIN")) {
 		CString sChans = sLine.Token(1).TrimPrefix_n();
-		CString sKey = sLine.Token(2);
+		CString sKeys = sLine.Token(2);
 
 		VCString vChans;
 		sChans.Split(",", vChans, false);
 		sChans.clear();
 
+		VCString vKeys;
+		sKeys.Split(",", vKeys, true);
+		sKeys.clear();
+
 		for (unsigned int a = 0; a < vChans.size(); a++) {
 			CString sChannel = vChans[a];
+			CString sKey = (a < vKeys.size()) ? vKeys[a] : "";
 			bool bContinue = false;
 			NETWORKMODULECALL(OnUserJoin(sChannel, sKey), m_pUser, m_pNetwork, this, &bContinue);
 			if (bContinue) continue;
@@ -451,6 +456,10 @@ void CClient::ReadLine(const CString& sData) {
 
 			if (!sChannel.empty()) {
 				sChans += (sChans.empty()) ? sChannel : CString("," + sChannel);
+
+				if (!vKeys.empty()) {
+					sKeys += (sKeys.empty()) ? sKey : CString("," + sKey);
+				}
 			}
 		}
 
@@ -460,8 +469,8 @@ void CClient::ReadLine(const CString& sData) {
 
 		sLine = "JOIN " + sChans;
 
-		if (!sKey.empty()) {
-			sLine += " " + sKey;
+		if (!sKeys.empty()) {
+			sLine += " " + sKeys;
 		}
 	} else if (sCommand.Equals("PART")) {
 		CString sChans = sLine.Token(1).TrimPrefix_n();
