@@ -24,6 +24,7 @@
 #include <vector>
 #include <sstream>
 #include <sys/types.h>
+#include <initializer_list>
 
 #define _SQL(s) CString("'" + CString(s).Escape_n(CString::ESQL) + "'")
 #define _URL(s) CString(s).Escape_n(CString::EURL)
@@ -104,6 +105,7 @@ public:
 	CString(const char* c, size_t l) : std::string(c, l) {}
 	CString(const std::string& s) : std::string(s) {}
 	CString(size_t n, char c) : std::string(n, c) {}
+	CString(std::initializer_list<char> list) : std::string(list) {}
 	~CString() {}
 	
 	/**
@@ -569,6 +571,7 @@ protected:
 
 /**
  * @brief A dictionary for strings.
+ * @todo Replace with "using MCString = std::map<CString, CString>;" in ZNC 2.0
  *
  * This class maps strings to other strings.
  */
@@ -576,6 +579,8 @@ class MCString : public std::map<CString, CString> {
 public:
 	/** Construct an empty MCString. */
 	MCString() : std::map<CString, CString>() {}
+	/** Construct a MCString using an initializer list eg. MCString m = { {"key1", "val1"}, {"key2", "val2"} }; */
+	MCString(std::initializer_list<std::pair<const CString, CString>> list) : std::map<CString, CString>(list) {}
 	/** Destruct this MCString. */
 	virtual ~MCString() { clear(); }
 
