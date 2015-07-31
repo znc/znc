@@ -61,6 +61,8 @@ CIRCSock::CIRCSock(CIRCNetwork* pNetwork)
 		  m_bNamesx(false),
 		  m_bUHNames(false),
 		  m_bAwayNotify(false),
+		  m_bAccountNotify(false),
+		  m_bExtendedJoin(false),
 		  m_sPerms("*!@%+"),
 		  m_sPermModes("qaohv"),
 		  m_scUserModes(),
@@ -590,6 +592,21 @@ void CIRCSock::ReadLine(const CString& sData) {
 				if (pChan->IsDetached()) {
 					return;
 				}
+
+				if (HasExtendedJoin()) {
+					CString sExtendedLine = sLine;
+					sLine = ":" + Nick.GetNickMask() + " JOIN " + pChan->GetName();
+
+					const vector<CClient*>& vClients = m_pNetwork->GetClients();
+					for (CClient* pClient : vClients) {
+						if (pClient->HasExtendedJoin()) {
+							m_pNetwork->PutUser(sExtendedLine, pClient);
+						} else {
+							m_pNetwork->PutUser(sLine, pClient);
+						}
+					}
+					return;
+				}
 			}
 		} else if (sCmd.Equals("PART")) {
 			CString sChan = sRest.Token(0).TrimPrefix_n();
@@ -805,24 +822,29 @@ void CIRCSock::ReadLine(const CString& sData) {
 					sArgs = sRest.Token(2, true).TrimPrefix_n();
 				}
 
+				std::map<CString, std::function<void(bool bVal)>> mSupportedCaps = {
+						{"multi-prefix", [this](bool bVal) { m_bNamesx = bVal; }},
+						{"userhost-in-names", [this](bool bVal) { m_bUHNames = bVal; }},
+						{"away-notify", [this](bool bVal) { m_bAwayNotify = bVal; }},
+						{"account-notify", [this](bool bVal) { m_bAccountNotify = bVal; }},
+						{"extended-join", [this](bool bVal) { m_bExtendedJoin = bVal; }},
+				};
+
 				if (sSubCmd == "LS") {
 					VCString vsTokens;
 					sArgs.Split(" ", vsTokens, false);
 
 					for (const CString& sCap : vsTokens) {
-						if (OnServerCapAvailable(sCap) || sCap == "multi-prefix" || sCap == "userhost-in-names" || sCap == "away-notify") {
+						if (OnServerCapAvailable(sCap) || mSupportedCaps.count(sCap)) {
 							m_ssPendingCaps.insert(sCap);
 						}
 					}
 				} else if (sSubCmd == "ACK") {
 					sArgs.Trim();
 					IRCSOCKMODULECALL(OnServerCapResult(sArgs, true), NOTHING);
-					if ("multi-prefix" == sArgs) {
-						m_bNamesx = true;
-					} else if ("userhost-in-names" == sArgs) {
-						m_bUHNames = true;
-					} else if ("away-notify" == sArgs) {
-						m_bAwayNotify = true;
+					const auto& it = mSupportedCaps.find(sArgs);
+					if (it != mSupportedCaps.end()) {
+						it->second(true);
 					}
 					m_ssAcceptedCaps.insert(sArgs);
 				} else if (sSubCmd == "NAK") {
@@ -843,6 +865,14 @@ void CIRCSock::ReadLine(const CString& sData) {
 			const vector<CClient*>& vClients = m_pNetwork->GetClients();
 			for (CClient* pClient : vClients) {
 				if (pClient->HasAwayNotify()) {
+					m_pNetwork->PutUser(sLine, pClient);
+				}
+			}
+			return;
+		} else if (sCmd.Equals("ACCOUNT")) {
+			const vector<CClient*>& vClients = m_pNetwork->GetClients();
+			for (CClient* pClient : vClients) {
+				if (pClient->HasAccountNotify()) {
 					m_pNetwork->PutUser(sLine, pClient);
 				}
 			}
