@@ -879,6 +879,43 @@ unsigned int CClient::DetachChans(const std::set<CChan*>& sChans)
 	return uDetached;
 }
 
+set<CQuery*> CClient::MatchQueries(const CString& sPatterns) const
+{
+	VCString vsPatterns;
+	sPatterns.Replace_n(",", " ").Split(" ", vsPatterns, false, "", "", true, true);
+
+	set<CQuery*> sQueries;
+	for (const CString& sPattern : vsPatterns) {
+		vector<CQuery*> vQueries = m_pNetwork->FindQueries(sPattern);
+		sQueries.insert(vQueries.begin(), vQueries.end());
+	}
+	return sQueries;
+}
+
+unsigned int CClient::AttachQueries(const std::set<CQuery*>& sQueries)
+{
+	unsigned int uAttached = 0;
+	for (CQuery* pQuery : sQueries) {
+		if (!pQuery->IsDetached())
+			continue;
+		uAttached++;
+		pQuery->AttachUser();
+	}
+	return uAttached;
+}
+
+unsigned int CClient::DetachQueries(const std::set<CQuery*>& sQueries)
+{
+	unsigned int uDetached = 0;
+	for (CQuery* pQuery : sQueries) {
+		if (pQuery->IsDetached())
+			continue;
+		uDetached++;
+		pQuery->DetachUser();
+	}
+	return uDetached;
+}
+
 bool CClient::OnActionMessage(CActionMessage& Message)
 {
 	CString sTargets = Message.GetTarget();

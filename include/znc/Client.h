@@ -32,6 +32,7 @@ class CIRCSock;
 class CClient;
 class CMessage;
 class CChan;
+class CQuery;
 // !Forward Declarations
 
 class CAuthBase {
@@ -278,6 +279,10 @@ private:
 	std::set<CChan*> MatchChans(const CString& sPatterns) const;
 	unsigned int AttachChans(const std::set<CChan*>& sChans);
 	unsigned int DetachChans(const std::set<CChan*>& sChans);
+
+	std::set<CQuery*> MatchQueries(const CString& sPatterns) const;
+	unsigned int AttachQueries(const std::set<CQuery*>& sQueries);
+	unsigned int DetachQueries(const std::set<CQuery*>& sQueries);
 
 	bool OnActionMessage(CActionMessage& Message);
 	bool OnCTCPMessage(CCTCPMessage& Message);
