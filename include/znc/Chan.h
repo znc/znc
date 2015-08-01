@@ -97,6 +97,7 @@ public:
 	unsigned int GetBufferCount() const { return m_Buffer.GetLineCount(); }
 	bool SetBufferCount(unsigned int u, bool bForce = false) { m_bHasBufferCountSet = true; return m_Buffer.SetLineCount(u, bForce); }
 	void InheritBufferCount(unsigned int u, bool bForce = false) { if (!m_bHasBufferCountSet) m_Buffer.SetLineCount(u, bForce); }
+	void ResetBufferCount();
 	size_t AddBuffer(const CString& sFormat, const CString& sText = "", const timeval* ts = nullptr) { return m_Buffer.AddLine(sFormat, sText, ts); }
 	void ClearBuffer() { m_Buffer.Clear(); }
 	void SendBuffer(CClient* pClient);
@@ -120,6 +121,7 @@ public:
 	void SetDefaultModes(const CString& s) { m_sDefaultModes = s; }
 	void SetAutoClearChanBuffer(bool b);
 	void InheritAutoClearChanBuffer(bool b);
+	void ResetAutoClearChanBuffer();
 	void SetDetached(bool b = true) { m_bDetached = b; }
 	void SetInConfig(bool b);
 	void SetCreationDate(unsigned long u) { m_ulCreationDate = u; }
