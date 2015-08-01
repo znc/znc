@@ -882,8 +882,8 @@ void CClient::RespondCap(const CString& sResponse)
 
 void CClient::HandleCap(const CString& sLine)
 {
-	//TODO support ~ and = modifiers
-	CString sSubCmd = sLine.Token(1);
+	// This is not exactly correct, but this is protection from "CAP :END"
+	CString sSubCmd = sLine.Token(1).TrimPrefix_n(":");
 
 	if (sSubCmd.Equals("LS")) {
 		SCString ssOfferCaps;
