@@ -132,6 +132,7 @@ public:
 	// !Setters
 
 	// Getters
+	CIRCNetwork* GetNetwork() const { return m_pNetwork; }
 	bool IsModeKnown() const { return m_bModeKnown; }
 	bool HasMode(unsigned char uMode) const;
 	CString GetOptions() const;
