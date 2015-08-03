@@ -26,8 +26,7 @@ public:
 	MODCONSTRUCTOR(CAdminLogMod) {
 		AddHelpCommand();
 		AddCommand("Show", static_cast<CModCommand::ModCmdFunc>(&CAdminLogMod::OnShowCommand), "", "Show the logging target");
-		AddCommand("Target", static_cast<CModCommand::ModCmdFunc>(&CAdminLogMod::OnTargetCommand), "<file|syslog|both>", "Set the logging target");
-		AddCommand("Path", static_cast<CModCommand::ModCmdFunc>(&CAdminLogMod::OnPathCommand), "<path>", "If using the file target, set the log file path");
+		AddCommand("Target", static_cast<CModCommand::ModCmdFunc>(&CAdminLogMod::OnTargetCommand), "<file|syslog|both> [path]", "Set the logging target");
 		openlog("znc", LOG_PID, LOG_DAEMON);
 	}
 
@@ -88,8 +87,6 @@ public:
 	}
 
 	void SetLogFilePath(CString& sPath) {
-		CString sMessage;
-
 		if (sPath.empty()) {
 			sPath = GetSavePath() + "/znc.log";
 		}
@@ -102,13 +99,8 @@ public:
 			CDir::MakeDir(sLogDir, ModDirInfo.st_mode);
 		}
 
-		if (!sPath.empty()) {
-			m_sLogFile = sPath;
-			SetNV("path", sPath);
-			sMessage = "adminlog file path set to [" + sPath + "]";
-			Log(sMessage);
-			PutModule(sMessage);
-		}
+		m_sLogFile = sPath;
+		SetNV("path", sPath);
 	}
 
 	void Log(CString sLine, int iPrio = LOG_INFO) {
@@ -142,14 +134,14 @@ public:
 	}
 
 	void OnTargetCommand(const CString& sCommand) {
-		CString sArg = sCommand.Token(1, true);
+		CString sArg = sCommand.Token(1, false);
 		CString sTarget;
 		CString sMessage;
 		LogMode mode;
 
 		if (sArg.Equals("file")) {
 			sTarget = "file";
-			sMessage = "Now only logging to file";
+			sMessage = "Now logging to file";
 			mode = LOG_TO_FILE;
 		} else if (sArg.Equals("syslog")) {
 			sTarget = "syslog";
@@ -157,26 +149,27 @@ public:
 			mode = LOG_TO_SYSLOG;
 		} else if (sArg.Equals("both")) {
 			sTarget = "both";
-			sMessage = "Now logging to file and syslog";
+			sMessage = "Now logging to syslog and file";
 			mode = LOG_TO_BOTH;
 		} else {
 			if (sArg.empty()) {
-				PutModule("Usage: Target <file|syslog|both>");
+				PutModule("Usage: Target <file|syslog|both> [path]");
 			} else {
 				PutModule("Unknown target");
 			}
 			return;
 		}
 
+		if (mode != LOG_TO_SYSLOG) {
+			CString sPath = sCommand.Token(2, true);
+			SetLogFilePath(sPath);
+			sMessage += " [" + sPath + "]";
+		}
+
 		Log(sMessage);
 		SetNV("target", sTarget);
 		m_eLogMode = mode;
 		PutModule(sMessage);
-	}
-
-	void OnPathCommand(const CString& sCommand) {
-		CString sPath = sCommand.Token(1, true);
-		SetLogFilePath(sPath);
 	}
 
 	void OnShowCommand(const CString& sCommand) {
