@@ -1,3 +1,46 @@
+# ZNC 1.6.1 (2015-08-04)
+
+## Fixes
+
+* Fixed the problem that channels were no longer removed from the config despite of chansaver being loaded.
+* Fixed query buffer size for users who have the default channel buffer size set to 0.
+* Fixed a startup failure when simple_away was loaded after awaynick.
+* Fixed channel matching commands, such as DETACH, to be case insensitive.
+* Specified the required compiler versions in the configure script.
+* Fixed a rare conflict of HTTP-Basic auth and cookies.
+* Hid local IP address from the 404 page.
+* Fixed a build failure for users who have `-Werror=missing-declarations` in their `CXXFLAGS`.
+* Fixed `CXXFLAGS=-DVERSION_EXTRA="foo"` which is used by some distros to package ZNC.
+* Fixed `znc-buildmod` on Cygwin.
+
+## Modules
+
+* chansaver:
+    * Fixed random loading behavior due to an uninitialized member variable.
+* modpython:
+    * Fixed access to `CUser::GetUserClients()` and `CUser::GetAllClients()`.
+* sasl:
+    * Improved help texts for the SET and REQUIREAUTH commands.
+* savebuff:
+    * Fixed periodical writes on the disk when the module is loaded after startup.
+* webadmin:
+    * Fixed module checkboxes not to claim that all networks/users have loaded a module when there are no networks/users.
+    * Added an explanation that ZNC was built without ICU support, when encoding settings are disabled for that reason.
+    * Improved the breadcrumbs.
+    * Mentioned ExpandString in CTCP replies.
+    * Added an explanation how to delete port which is used to access webadmin.
+
+## Internal
+
+* Fixed `CThreadPool` destructor to handle spurious wakeups.
+* Fixed `make distclean` to remove `zncconfig.h`.
+* Improved the error message about `--datadir`.
+* Fixed a compilation warning when `HAVE_LIBSSL` is not defined.
+* Fixed 'comparision' typos in CString documentation.
+* Added a non-minified version of the jQuery source code to make Linux distributions (Debian) happy, even though the jQuery license does not require this.
+
+
+
 # ZNC 1.6.0 (2015-02-12)
 
 ## New
