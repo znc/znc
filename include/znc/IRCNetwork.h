@@ -127,7 +127,7 @@ public:
 	const SCString& GetTrustedFingerprints() const { return m_ssTrustedFingerprints; }
 	void AddTrustedFingerprint(const CString& sFP) { m_ssTrustedFingerprints.insert(sFP.Escape_n(CString::EHEXCOLON, CString::EHEXCOLON)); }
 	void DelTrustedFingerprint(const CString& sFP) { m_ssTrustedFingerprints.erase(sFP); }
-	void ClearTrustedFingerPrints() { m_ssTrustedFingerprints.clear(); }
+	void ClearTrustedFingerprints() { m_ssTrustedFingerprints.clear(); }
 
 	void SetIRCConnectEnabled(bool b);
 	bool GetIRCConnectEnabled() const { return m_bIRCConnectEnabled; }
