@@ -75,6 +75,7 @@ CZNC::CZNC()
       m_uiForceEncoding(0),
       m_sConnectThrottle(),
       m_bProtectWebSessions(true),
+      m_bSystemWideConfig(false),
       m_bHideVersion(false),
       m_Translation("znc") {
     if (!InitCsocket()) {
@@ -969,7 +970,7 @@ bool CZNC::WriteNewConfig(const CString& sConfigFile) {
         // installed.
         // See https://github.com/znc/znc/pull/257
         char* szNoLaunch = getenv("ZNC_NO_LAUNCH_AFTER_MAKECONF");
-        if (szNoLaunch && *szNoLaunch == '1') {
+        if (szNoLaunch && *szNoLaunch == '1' || m_bSystemWideConfig) {
             bWantLaunch = false;
         }
     }
@@ -2121,3 +2122,7 @@ void CZNC::LeakConnectQueueTimer(CConnectQueueTimer* pTimer) {
 }
 
 bool CZNC::WaitForChildLock() { return m_pLockFile && m_pLockFile->ExLock(); }
+
+void CZNC::SetSystemWideConfig(bool systemWideConfig) {
+    m_bSystemWideConfig = systemWideConfig;
+}

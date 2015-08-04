@@ -18,6 +18,9 @@
 #include <signal.h>
 #include <time.h>
 #include <thread>
+#include <sys/types.h>
+#include <pwd.h>
+#include <grp.h>
 
 #if defined(HAVE_LIBSSL) && defined(HAVE_PTHREAD)
 #include <znc/Threads.h>
@@ -114,6 +117,7 @@ static const struct option g_LongOpts[] = {
     {"makepass", no_argument, nullptr, 's'},
     {"makepem", no_argument, nullptr, 'p'},
     {"datadir", required_argument, nullptr, 'd'},
+    {"system-wide-config-as", required_argument, nullptr, 'S' },
     {nullptr, 0, nullptr, 0}};
 
 static void GenerateHelp(const char* appname) {
@@ -141,6 +145,9 @@ static void GenerateHelp(const char* appname) {
     CUtils::PrintMessage(
         "\t-d, --datadir      Set a different ZNC repository (default is "
         "~/.znc)");
+    CUtils::PrintMessage(
+        "\t-S, --system-wide-config-as   Create a system-wide ZNC daemon "
+        "configuration");
 }
 
 class CSignalHandler {
@@ -282,6 +289,8 @@ int main(int argc, char** argv) {
     bool bMakeConf = false;
     bool bMakePass = false;
     bool bAllowRoot = false;
+    bool bSystemWideConfig = false;
+    CString sSystemWideConfigUser = "znc";
     bool bForeground = false;
 #ifdef ALWAYS_RUN_IN_FOREGROUND
     bForeground = true;
@@ -309,6 +318,10 @@ int main(int argc, char** argv) {
                 break;
             case 'c':
                 bMakeConf = true;
+                break;
+            case 'S':
+                bSystemWideConfig = true;
+                sSystemWideConfigUser = optarg;
                 break;
             case 's':
                 bMakePass = true;
@@ -348,8 +361,39 @@ int main(int argc, char** argv) {
         return 1;
     }
 
+    if (bSystemWideConfig && getuid() == 0) {
+        struct passwd *pwd;
+
+        pwd = getpwnam(sSystemWideConfigUser.c_str());
+        if (pwd == NULL) {
+            CUtils::PrintError("Daemon user not found.");
+            return 1;
+        }
+
+        if ((long) pwd->pw_uid == 0) {
+            CUtils::PrintError("Please define a daemon user other than root.");
+            return 1;
+        }
+
+        if (setgroups(0, NULL) != 0) {
+            CUtils::PrintError("setgroups: Unable to clear supplementary group IDs");
+            return 1;
+        }
+
+        if (setgid((long) pwd->pw_gid) != 0) {
+            CUtils::PrintError("setgid: Unable to drop group privileges");
+            return 1;
+        }
+
+        if (setuid((long) pwd->pw_uid) != 0) {
+            CUtils::PrintError("setuid: Unable to drop user privileges");
+            return 1;
+        }
+    }
+
     CZNC* pZNC = &CZNC::Get();
     pZNC->InitDirs(((argc) ? argv[0] : ""), sDataDir);
+    pZNC->SetSystemWideConfig(bSystemWideConfig);
 
 #ifdef HAVE_LIBSSL
     if (bMakePem) {
@@ -410,7 +454,7 @@ int main(int argc, char** argv) {
         CUtils::PrintStatus(true, "");
     }
 
-    if (isRoot()) {
+    if (isRoot() && !bSystemWideConfig) {
         CUtils::PrintError(
             "You are running ZNC as root! Don't do that! There are not many "
             "valid");

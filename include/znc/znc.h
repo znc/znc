@@ -244,6 +244,8 @@ class CZNC {
 
     static void DumpConfig(const CConfig* Config);
 
+    void SetSystemWideConfig(bool systemWideConfig);
+
   private:
     CFile* InitPidFile();
 
@@ -298,6 +300,7 @@ class CZNC {
     unsigned int m_uiForceEncoding;
     TCacheMap<CString> m_sConnectThrottle;
     bool m_bProtectWebSessions;
+    bool m_bSystemWideConfig;
     bool m_bHideVersion;
     CTranslationDomainRefHolder m_Translation;
 };
