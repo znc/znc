@@ -629,6 +629,7 @@ bool CZNC::WriteNewConfig(const CString& sConfigFile) {
     VCString vsLines;
 
     vsLines.push_back(MakeConfigHeader());
+    vsLines.push_back("PidFile = /run/znc/znc.pid");
     vsLines.push_back("Version = " + CString(VERSION_STR));
 
     m_sConfigFile = ExpandConfigPath(sConfigFile);
