@@ -63,6 +63,8 @@ public:
 	CConfig ToConfig() const;
 	bool CheckPass(const CString& sPass) const;
 	bool AddAllowedHost(const CString& sHostMask);
+	bool RemAllowedHost(const CString& sHostMask);
+	void ClearAllowedHosts();
 	bool IsHostAllowed(const CString& sHostMask) const;
 	bool IsValid(CString& sErrMsg, bool bSkipPass = false) const;
 	static bool IsValidUserName(const CString& sUserName);
