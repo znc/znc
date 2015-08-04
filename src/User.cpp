@@ -791,6 +791,12 @@ bool CUser::AddAllowedHost(const CString& sHostMask) {
 	m_ssAllowedHosts.insert(sHostMask);
 	return true;
 }
+bool CUser::RemAllowedHost(const CString& sHostMask) {
+	return m_ssAllowedHosts.erase(sHostMask) > 0;
+}
+void CUser::ClearAllowedHosts() {
+	m_ssAllowedHosts.clear();
+}
 
 bool CUser::IsHostAllowed(const CString& sHostMask) const {
 	if (m_ssAllowedHosts.empty()) {
