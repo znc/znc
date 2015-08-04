@@ -1049,9 +1049,7 @@ public:
 		}
 
 		WebSock.GetRawParam("fingerprints").Split("\n", vsArgs);
-		while (!pNetwork->GetTrustedFingerprints().empty()) {
-			pNetwork->DelTrustedFingerprint(*pNetwork->GetTrustedFingerprints().begin());
-		}
+		pNetwork->ClearTrustedFingerprints();
 		for (const CString& sFP : vsArgs) {
 			pNetwork->AddTrustedFingerprint(sFP);
 		}
