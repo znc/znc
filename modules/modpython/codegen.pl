@@ -156,12 +156,12 @@ namespace {
 		return SWIG_TypeError;
 	}
 
-	inline int SWIG_AsPtr_std_string (PyObject * obj, CString **val) {
+	inline int SWIG_AsPtr_CString (PyObject * obj, CString **val) {
 		char* buf = 0 ; size_t size = 0; int alloc = SWIG_OLDOBJ;
 		if (SWIG_IsOK((SWIG_AsCharPtrAndSize(obj, &buf, &size, &alloc)))) {
 			if (buf) {
 				if (val) *val = new CString(buf, size - 1);
-				if (alloc == SWIG_NEWOBJ) free((char*)buf);
+				if (alloc == SWIG_NEWOBJ) delete[] buf;
 				return SWIG_NEWOBJ;
 			} else {
 				if (val) *val = 0;
@@ -394,7 +394,7 @@ while (<$in>) {
 			}
 			when ('CString') {
 				say $out "\t\tCString* p = nullptr;";
-				say $out "\t\tint res = SWIG_AsPtr_std_string(pyRes, &p);";
+				say $out "\t\tint res = SWIG_AsPtr_CString(pyRes, &p);";
 				say $out "\t\tif (!SWIG_IsOK(res)) {";
 				say $out "\t\t\tDEBUG(\"modpython: \" << (GetUser() ? GetUser()->GetUserName() : CString(\"<no user>\")) << \"/\" << GetModName() << \"/$name was expected to return '$type' but error=\" << res);";
 				say $out "\t\t\tresult = $default;";
@@ -402,7 +402,7 @@ while (<$in>) {
 				say $out "\t\t\tDEBUG(\"modpython: \" << (GetUser() ? GetUser()->GetUserName() : CString(\"<no user>\")) << \"/\" << GetModName() << \"/$name was expected to return '$type' but returned nullptr\");";
 				say $out "\t\t\tresult = $default;";
 				say $out "\t\t} else result = *p;";
-				say $out "\t\tif (SWIG_IsNewObj(res)) free((char*)p); // Don't ask me, that's how SWIG works...";
+				say $out "\t\tif (SWIG_IsNewObj(res)) delete p;";
 			}
 			when ('CModule::EModRet') {
 				say $out "\t\tlong int x = PyLong_AsLong(pyRes);";
