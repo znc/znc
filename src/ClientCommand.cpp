@@ -1266,21 +1266,9 @@ void CClient::UserCommand(CString& sLine) {
 			return;
 		}
 
-		const VCString& vsHosts = CZNC::Get().GetBindHosts();
-		if (!m_pUser->IsAdmin() && !vsHosts.empty()) {
-			bool bFound = false;
-
-			for (const CString& sHost : vsHosts) {
-				if (sArg.Equals(sHost)) {
-					bFound = true;
-					break;
-				}
-			}
-
-			if (!bFound) {
-				PutStatus("You may not use this bind host. See [ListBindHosts] for a list");
-				return;
-			}
+		if (!m_pUser->IsAdmin() && !CZNC::Get().IsBindHostAllowed(sArg)) {
+			PutStatus("You may not use this bind host. See [ListBindHosts] for a list");
+			return;
 		}
 
 		m_pNetwork->SetBindHost(sArg);
@@ -1298,21 +1286,9 @@ void CClient::UserCommand(CString& sLine) {
 			return;
 		}
 
-		const VCString& vsHosts = CZNC::Get().GetBindHosts();
-		if (!m_pUser->IsAdmin() && !vsHosts.empty()) {
-			bool bFound = false;
-
-			for (const CString& sHost : vsHosts) {
-				if (sArg.Equals(sHost)) {
-					bFound = true;
-					break;
-				}
-			}
-
-			if (!bFound) {
-				PutStatus("You may not use this bind host. See [ListBindHosts] for a list");
-				return;
-			}
+		if (!m_pUser->IsAdmin() && !CZNC::Get().IsBindHostAllowed(sArg)) {
+			PutStatus("You may not use this bind host. See [ListBindHosts] for a list");
+			return;
 		}
 
 		m_pUser->SetBindHost(sArg);

@@ -290,22 +290,9 @@ class CAdminMod : public CModule {
 					return;
 				}
 
-				const VCString& vsHosts = CZNC::Get().GetBindHosts();
-				if (!GetUser()->IsAdmin() && !vsHosts.empty()) {
-					VCString::const_iterator it;
-					bool bFound = false;
-
-					for (it = vsHosts.begin(); it != vsHosts.end(); ++it) {
-						if (sValue.Equals(*it)) {
-							bFound = true;
-							break;
-						}
-					}
-
-					if (!bFound) {
-						PutModule("You may not use this bind host. See /msg " + GetUser()->GetStatusPrefix() + "status ListBindHosts for a list");
-						return;
-					}
+				if (!GetUser()->IsAdmin() && !CZNC::Get().IsBindHostAllowed(sValue)) {
+					PutModule("You may not use this bind host. See /msg " + GetUser()->GetStatusPrefix() + "status ListBindHosts for a list");
+					return;
 				}
 
 				pUser->SetBindHost(sValue);
@@ -564,22 +551,9 @@ class CAdminMod : public CModule {
 					return;
 				}
 
-				const VCString& vsHosts = CZNC::Get().GetBindHosts();
-				if (!GetUser()->IsAdmin() && !vsHosts.empty()) {
-					VCString::const_iterator it;
-					bool bFound = false;
-
-					for (it = vsHosts.begin(); it != vsHosts.end(); ++it) {
-						if (sValue.Equals(*it)) {
-							bFound = true;
-							break;
-						}
-					}
-
-					if (!bFound) {
-						PutModule("You may not use this bind host. See /msg " + GetUser()->GetStatusPrefix() + "status ListBindHosts for a list");
-						return;
-					}
+				if (!GetUser()->IsAdmin() && !CZNC::Get().IsBindHostAllowed(sValue)) {
+					PutModule("You may not use this bind host. See /msg " + GetUser()->GetStatusPrefix() + "status ListBindHosts for a list");
+					return;
 				}
 
 				pNetwork->SetBindHost(sValue);

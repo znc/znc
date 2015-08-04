@@ -994,21 +994,9 @@ public:
 		// To change BindHosts be admin or don't have DenySetBindHost
 		if (spSession->IsAdmin() || !spSession->GetUser()->DenySetBindHost()) {
 			CString sHost = WebSock.GetParam("bindhost");
-			const VCString& vsHosts = CZNC::Get().GetBindHosts();
-			if (!spSession->IsAdmin() && !vsHosts.empty()) {
-				VCString::const_iterator it;
-				bool bFound = false;
-
-				for (it = vsHosts.begin(); it != vsHosts.end(); ++it) {
-					if (sHost.Equals(*it)) {
-						bFound = true;
-						break;
-					}
-				}
-
-				if (!bFound) {
-					sHost = pNetwork->GetBindHost();
-				}
+			if (!spSession->IsAdmin() && !CZNC::Get().IsBindHostAllowed(sHost)) {
+				WebSock.PrintErrorPage("The bind host is not allowed");
+				return true;
 			}
 			pNetwork->SetBindHost(sHost);
 		}

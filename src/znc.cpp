@@ -338,6 +338,18 @@ bool CZNC::IsHostAllowed(const CString& sHostMask) const {
 	return false;
 }
 
+bool CZNC::IsBindHostAllowed(const CString& sBindHost) const {
+	if (!sBindHost.empty() && !m_vsBindHosts.empty()) {
+		for (const CString& sHost : m_vsBindHosts) {
+			if (sHost.Equals(sBindHost)) {
+				return true;
+			}
+		}
+		return false;
+	}
+	return true;
+}
+
 bool CZNC::AllowConnectionFrom(const CString& sIP) const {
 	if (m_uiAnonIPLimit == 0)
 		return true;

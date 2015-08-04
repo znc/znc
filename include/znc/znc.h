@@ -53,6 +53,7 @@ public:
 	bool DeletePidFile();
 	bool WaitForChildLock();
 	bool IsHostAllowed(const CString& sHostMask) const;
+	bool IsBindHostAllowed(const CString& sBindHost) const;
 	// This returns false if there are too many anonymous connections from this ip
 	bool AllowConnectionFrom(const CString& sIP) const;
 	void InitDirs(const CString& sArgvPath, const CString& sDataDir);
