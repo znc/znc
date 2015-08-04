@@ -1098,42 +1098,13 @@ bool CZNC::LoadGlobal(CConfig& config, CString& sError) {
 		m_bProtectWebSessions = sVal.ToBool();
 	if (config.FindStringEntry("hideversion", sVal))
 		m_bHideVersion = sVal.ToBool();
-
-	if (config.FindStringEntry("sslprotocols", m_sSSLProtocols)) {
-		VCString vsProtocols;
-		m_sSSLProtocols.Split(" ", vsProtocols, false, "", "", true, true);
-
-		for (CString& sProtocol : vsProtocols) {
-			unsigned int uFlag = 0;
-			bool bEnable = sProtocol.TrimPrefix("+");
-			bool bDisable = sProtocol.TrimPrefix("-");
-
-			if (sProtocol.Equals("All")) {
-				uFlag = ~0;
-			} else if (sProtocol.Equals("SSLv2")) {
-				uFlag = Csock::EDP_SSLv2;
-			} else if (sProtocol.Equals("SSLv3")) {
-				uFlag = Csock::EDP_SSLv3;
-			} else if (sProtocol.Equals("TLSv1")) {
-				uFlag = Csock::EDP_TLSv1;
-			} else if (sProtocol.Equals("TLSv1.1")) {
-				uFlag = Csock::EDP_TLSv1_1;
-			} else if (sProtocol.Equals("TLSv1.2")) {
-				uFlag = Csock::EDP_TLSv1_2;
-			} else {
-				CUtils::PrintError("Invalid SSLProtocols value [" + sProtocol + "]");
-				CUtils::PrintError("The syntax is [SSLProtocols = [+|-]<protocol> ...]");
-				CUtils::PrintError("Available protocols are [SSLv2, SSLv3, TLSv1, TLSv1.1, TLSv1.2]");
-				return false;
-			}
-
-			if (bEnable) {
-				m_uDisabledSSLProtocols &= ~uFlag;
-			} else if (bDisable) {
-				m_uDisabledSSLProtocols |= uFlag;
-			} else {
-				m_uDisabledSSLProtocols = ~uFlag;
-			}
+	if (config.FindStringEntry("sslprotocols", sVal)) {
+		if (!SetSSLProtocols(sVal)) {
+			VCString vsProtocols = GetAvailableSSLProtocols();
+			CUtils::PrintError("Invalid SSLProtocols value [" + sVal + "]");
+			CUtils::PrintError("The syntax is [SSLProtocols = [+|-]<protocol> ...]");
+			CUtils::PrintError("Available protocols are [" + CString(", ").Join(vsProtocols.begin(), vsProtocols.end()) + "]");
+			return false;
 		}
 	}
 
@@ -1903,6 +1874,54 @@ void CZNC::SetConnectDelay(unsigned int i) {
 		m_pConnectQueueTimer->Start(i);
 	}
 	m_uiConnectDelay = i;
+}
+
+VCString CZNC::GetAvailableSSLProtocols()
+{
+	// NOTE: keep in sync with SetSSLProtocols()
+	return {"SSLv2", "SSLv3", "TLSv1", "TLSV1.1", "TLSv1.2"};
+}
+
+bool CZNC::SetSSLProtocols(const CString& sProtocols)
+{
+	VCString vsProtocols;
+	sProtocols.Split(" ", vsProtocols, false, "", "", true, true);
+
+	unsigned int uDisabledProtocols = Csock::EDP_SSL;
+	for (CString& sProtocol : vsProtocols) {
+		unsigned int uFlag = 0;
+		bool bEnable = sProtocol.TrimPrefix("+");
+		bool bDisable = sProtocol.TrimPrefix("-");
+
+		// NOTE: keep in sync with GetAvailableSSLProtocols()
+		if (sProtocol.Equals("All")) {
+			uFlag = ~0;
+		} else if (sProtocol.Equals("SSLv2")) {
+			uFlag = Csock::EDP_SSLv2;
+		} else if (sProtocol.Equals("SSLv3")) {
+			uFlag = Csock::EDP_SSLv3;
+		} else if (sProtocol.Equals("TLSv1")) {
+			uFlag = Csock::EDP_TLSv1;
+		} else if (sProtocol.Equals("TLSv1.1")) {
+			uFlag = Csock::EDP_TLSv1_1;
+		} else if (sProtocol.Equals("TLSv1.2")) {
+			uFlag = Csock::EDP_TLSv1_2;
+		} else {
+			return false;
+		}
+
+		if (bEnable) {
+			uDisabledProtocols &= ~uFlag;
+		} else if (bDisable) {
+			uDisabledProtocols |= uFlag;
+		} else {
+			uDisabledProtocols = ~uFlag;
+		}
+	}
+
+	m_sSSLProtocols = sProtocols;
+	m_uDisabledSSLProtocols = uDisabledProtocols;
+	return true;
 }
 
 void CZNC::EnableConnectQueue() {

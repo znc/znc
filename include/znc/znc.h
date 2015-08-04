@@ -104,6 +104,9 @@ public:
 	void SetProtectWebSessions(bool b) { m_bProtectWebSessions = b; }
 	void SetHideVersion(bool b) { m_bHideVersion = b; }
 	void SetConnectDelay(unsigned int i);
+	void SetSSLCiphers(const CString& sCiphers) { m_sSSLCiphers = sCiphers; }
+	bool SetSSLProtocols(const CString& sProtocols);
+	void SetSSLCertFile(const CString& sFile) { m_sSSLCertFile = sFile; }
 	// !Setters
 
 	// Getters
@@ -133,7 +136,10 @@ public:
 	bool GetProtectWebSessions() const { return m_bProtectWebSessions; }
 	bool GetHideVersion() const { return m_bHideVersion; }
 	CString GetSSLCiphers() const { return m_sSSLCiphers; }
+	CString GetSSLProtocols() const { return m_sSSLProtocols; }
 	Csock::EDisableProtocol GetDisabledSSLProtocols() const { return static_cast<Csock::EDisableProtocol>(m_uDisabledSSLProtocols); }
+	CString GetSSLCertFile() const { return m_sSSLCertFile; }
+	static VCString GetAvailableSSLProtocols();
 	// !Getters
 
 	// Static allocator
