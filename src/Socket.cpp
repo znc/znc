@@ -407,14 +407,19 @@ CSocket::CSocket(CModule* pModule, const CString& sHostname, unsigned short uPor
 
 CSocket::~CSocket() {
 	CUser *pUser = nullptr;
+	CIRCNetwork* pNetwork = nullptr;
 
 	// CWebSock could cause us to have a nullptr pointer here
 	if (m_pModule) {
 		pUser = m_pModule->GetUser();
+		pNetwork = m_pModule->GetNetwork();
 		m_pModule->UnlinkSocket(this);
 	}
 
-	if (pUser && m_pModule && (m_pModule->GetType() != CModInfo::GlobalModule)) {
+	if (pNetwork && m_pModule && (m_pModule->GetType() == CModInfo::NetworkModule)) {
+		pNetwork->AddBytesWritten(GetBytesWritten());
+		pNetwork->AddBytesRead(GetBytesRead());
+	} else if (pUser && m_pModule && (m_pModule->GetType() == CModInfo::UserModule)) {
 		pUser->AddBytesWritten(GetBytesWritten());
 		pUser->AddBytesRead(GetBytesRead());
 	} else {

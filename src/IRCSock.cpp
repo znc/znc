@@ -130,8 +130,8 @@ CIRCSock::~CIRCSock() {
 
 	Quit();
 	m_msChans.clear();
-	m_pNetwork->GetUser()->AddBytesRead(GetBytesRead());
-	m_pNetwork->GetUser()->AddBytesWritten(GetBytesWritten());
+	m_pNetwork->AddBytesRead(GetBytesRead());
+	m_pNetwork->AddBytesWritten(GetBytesWritten());
 }
 
 void CIRCSock::Quit(const CString& sQuitMsg) {

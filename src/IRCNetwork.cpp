@@ -143,7 +143,9 @@ CIRCNetwork::CIRCNetwork(CUser *pUser, const CString& sName)
 		  m_NoticeBuffer(),
 		  m_pPingTimer(nullptr),
 		  m_pJoinTimer(nullptr),
-		  m_uJoinDelay(0)
+		  m_uJoinDelay(0),
+		  m_uBytesRead(0),
+		  m_uBytesWritten(0)
 {
 	SetUser(pUser);
 
@@ -301,6 +303,7 @@ CIRCNetwork::~CIRCNetwork() {
 	}
 	m_vQueries.clear();
 
+	CUser* pUser = GetUser();
 	SetUser(nullptr);
 
 	// Make sure we are not in the connection queue
@@ -308,6 +311,14 @@ CIRCNetwork::~CIRCNetwork() {
 
 	CZNC::Get().GetManager().DelCronByAddr(m_pPingTimer);
 	CZNC::Get().GetManager().DelCronByAddr(m_pJoinTimer);
+
+	if (pUser) {
+		pUser->AddBytesRead(m_uBytesRead);
+		pUser->AddBytesWritten(m_uBytesWritten);
+	} else {
+		CZNC::Get().AddBytesRead(m_uBytesRead);
+		CZNC::Get().AddBytesWritten(m_uBytesWritten);
+	}
 }
 
 void CIRCNetwork::DelServers() {
