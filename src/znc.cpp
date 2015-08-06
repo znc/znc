@@ -21,6 +21,7 @@
 #include <znc/User.h>
 #include <znc/IRCNetwork.h>
 #include <znc/Config.h>
+#include <time.h>
 #include <tuple>
 #include <algorithm>
 

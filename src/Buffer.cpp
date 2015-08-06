@@ -17,6 +17,7 @@
 #include <znc/Buffer.h>
 #include <znc/znc.h>
 #include <znc/User.h>
+#include <time.h>
 
 CBufLine::CBufLine(const CString& sFormat, const CString& sText, const timeval* ts) : m_sFormat(sFormat), m_sText(sText), m_time() {
 	if (ts == nullptr)

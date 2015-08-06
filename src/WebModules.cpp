@@ -19,6 +19,7 @@
 #include <znc/User.h>
 #include <znc/IRCNetwork.h>
 #include <znc/znc.h>
+#include <time.h>
 #include <algorithm>
 #include <sstream>
 

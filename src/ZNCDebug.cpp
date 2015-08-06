@@ -18,6 +18,7 @@
 #include <iostream>
 #include <sys/time.h>
 #include <stdio.h>
+#include <time.h>
 
 bool CDebug::stdoutIsTTY = true;
 bool CDebug::debug =

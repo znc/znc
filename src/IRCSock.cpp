@@ -20,6 +20,7 @@
 #include <znc/IRCNetwork.h>
 #include <znc/Server.h>
 #include <znc/Query.h>
+#include <time.h>
 
 using std::set;
 using std::vector;

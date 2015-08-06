@@ -20,6 +20,7 @@
 #include <znc/IRCNetwork.h>
 #include <znc/Chan.h>
 #include <znc/Server.h>
+#include <time.h>
 #include <algorithm>
 
 using std::vector;
