@@ -1475,6 +1475,17 @@ public:
 			l["In"] = CString::ToByteStr(it.second.first);
 			l["Out"] = CString::ToByteStr(it.second.second);
 			l["Total"] = CString::ToByteStr(it.second.first + it.second.second);
+
+			CZNC::TrafficStatsPair NetworkTotal;
+			CZNC::TrafficStatsMap NetworkTraffic = CZNC::Get().GetNetworkTrafficStats(it.first, NetworkTotal);
+			for (const auto& it2 : NetworkTraffic) {
+				CTemplate& l2 = Tmpl.AddRow("TrafficLoop");
+
+				l2["Network"] = it2.first;
+				l2["In"] = CString::ToByteStr(it2.second.first);
+				l2["Out"] = CString::ToByteStr(it2.second.second);
+				l2["Total"] = CString::ToByteStr(it2.second.first + it2.second.second);
+			}
 		}
 
 		Tmpl["UserIn"] = CString::ToByteStr(Users.first);

@@ -40,51 +40,70 @@
 	</div>
 </div>
 
-<? IF IsAdmin && TrafficLoop ?>
+<? IF IsAdmin ?>
 <div class="section">
-	<h3>Traffic</h3>
+	<h3>Total</h3>
 	<div class="sectionbg">
 		<div class="sectionbody">
 			<table>
 				<thead>
 					<tr>
-						<td>Username</td>
+						<td></td>
 						<td>In</td>
 						<td>Out</td>
 						<td>Total</td>
 					</tr>
 				</thead>
 				<tbody>
-				<? LOOP TrafficLoop SORTASC=Username ?>
-					<tr class="<? IF __EVEN__ ?>evenrow<? ELSE ?>oddrow<? ENDIF ?>">
-						<td><? VAR Username ?></td>
-						<td><? VAR In ?></td>
-						<td><? VAR Out ?></td>
-						<td><? VAR Total ?></td>
-					</tr>
-					<? REM ?>Add the totals separately so that if sort is ever used they stay at the bottom
-								 By keeping them inside the loop we can figure out even/odd classes though.
-					<? ENDREM ?>
-					<? IF __LAST__ ?>
-					<tr class="<? IF __EVEN__ ?>oddrow<? ELSE ?>evenrow<? ENDIF ?>">
-						<td>User Total</td>
+					<tr class="evenrow">
+						<td>Users</td>
 						<td><? VAR UserIn TOP ?></td>
 						<td><? VAR UserOut TOP ?></td>
 						<td><? VAR UserTotal TOP ?></td>
 					</tr>
-					<tr class="<? IF __EVEN__ ?>evenrow<? ELSE ?>oddrow<? ENDIF ?>">
-						<td>ZNC Total</td>
+					<tr class="oddrow">
+						<td>ZNC</td>
 						<td><? VAR ZNCIn TOP ?></td>
 						<td><? VAR ZNCOut TOP ?></td>
 						<td><? VAR ZNCTotal TOP ?></td>
 					</tr>
-					<tr class="<? IF __EVEN__ ?>oddrow<? ELSE ?>evenrow<? ENDIF ?>">
-						<td>Grand Total</td>
+					<tr class="evenrow">
+						<td>Total</td>
 						<td><? VAR AllIn TOP ?></td>
 						<td><? VAR AllOut TOP ?></td>
 						<td><? VAR AllTotal TOP ?></td>
 					</tr>
-					<? ENDIF ?>
+				</tbody>
+			</table>
+		</div>
+	</div>
+</div>
+<? ENDIF ?>
+
+<? IF IsAdmin && TrafficLoop ?>
+<div class="section">
+	<h3>Users</h3>
+	<div class="sectionbg">
+		<div class="sectionbody">
+			<table>
+				<thead>
+					<tr>
+						<td>Username</td>
+						<td>Network</td>
+						<td>In</td>
+						<td>Out</td>
+						<td>Total</td>
+					</tr>
+				</thead>
+				<tbody>
+				<? LOOP TrafficLoop ?>
+					<tr class="<? IF __EVEN__ ?>evenrow<? ELSE ?>oddrow<? ENDIF ?>">
+						<td><? VAR Username ?></td>
+						<td><? VAR Network ?></td>
+						<td><? VAR In ?></td>
+						<td><? VAR Out ?></td>
+						<td><? VAR Total ?></td>
+					</tr>
 				<? ENDLOOP ?>
 				</tbody>
 			</table>
