@@ -1753,6 +1753,38 @@ CZNC::TrafficStatsMap CZNC::GetTrafficStats(TrafficStatsPair &Users,
 	return ret;
 }
 
+CZNC::TrafficStatsMap CZNC::GetNetworkTrafficStats(const CString& sUsername, TrafficStatsPair& Total) {
+	TrafficStatsMap Networks;
+
+	CUser* pUser = FindUser(sUsername);
+	if (pUser) {
+		for (const CIRCNetwork* pNetwork : pUser->GetNetworks()) {
+			Networks[pNetwork->GetName()].first = pNetwork->BytesRead();
+			Networks[pNetwork->GetName()].second = pNetwork->BytesWritten();
+			Total.first += pNetwork->BytesRead();
+			Total.second += pNetwork->BytesWritten();
+		}
+
+		for (Csock* pSock : m_Manager) {
+			CIRCNetwork *pNetwork = nullptr;
+			if (pSock->GetSockName().StartsWith("IRC::")) {
+				pNetwork = ((CIRCSock *) pSock)->GetNetwork();
+			} else if (pSock->GetSockName().StartsWith("USR::")) {
+				pNetwork = ((CClient *) pSock)->GetNetwork();
+			}
+
+			if (pNetwork && pNetwork->GetUser() == pUser) {
+				Networks[pNetwork->GetName()].first = pSock->GetBytesRead();
+				Networks[pNetwork->GetName()].second = pSock->GetBytesWritten();
+				Total.first += pSock->GetBytesRead();
+				Total.second += pSock->GetBytesWritten();
+			}
+		}
+	}
+
+	return Networks;
+}
+
 void CZNC::AuthUser(std::shared_ptr<CAuthBase> AuthClass) {
 	// TODO unless the auth module calls it, CUser::IsHostAllowed() is not honoured
 	bool bReturn = false;

@@ -92,6 +92,7 @@ public:
 	// generated through ZNC.
 	TrafficStatsMap GetTrafficStats(TrafficStatsPair &Users,
 			TrafficStatsPair &ZNC, TrafficStatsPair &Total);
+	TrafficStatsMap GetNetworkTrafficStats(const CString& sUsername, TrafficStatsPair& Total);
 
 	// Authenticate a user.
 	// The result is passed back via callbacks to CAuthBase.
