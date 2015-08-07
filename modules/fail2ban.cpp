@@ -36,7 +36,7 @@ public:
 		if (sAttempts.empty())
 			m_uiAllowedFailed = 2;
 		else
-			m_uiAllowedFailed = sAttempts.ToUInt();;
+			m_uiAllowedFailed = sAttempts.ToUInt();
 
 		if (sArgs.empty()) {
 			timeout = 1;

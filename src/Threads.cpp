@@ -224,7 +224,7 @@ void CThreadPool::cancelJobs(const std::set<CJob *> &jobs) {
 			if ((*it)->m_eState != CJob::CANCELLED) {
 				assert((*it)->m_eState == CJob::DONE);
 				// Re-set state for the destructor
-				(*it)->m_eState = CJob::CANCELLED;;
+				(*it)->m_eState = CJob::CANCELLED;
 				deleteLater.insert(*it);
 				wait.erase(it++);
 			} else
