@@ -20,6 +20,7 @@
 #include <znc/User.h>
 
 #include <syslog.h>
+#include <time.h>
 
 class CAdminLogMod : public CModule {
 public:

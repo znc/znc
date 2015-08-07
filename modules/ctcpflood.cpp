@@ -16,6 +16,7 @@
 
 #include <znc/Modules.h>
 #include <znc/Chan.h>
+#include <time.h>
 
 class CCtcpFloodMod : public CModule {
 public:

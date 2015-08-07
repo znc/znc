@@ -22,6 +22,7 @@
 #include <znc/Chan.h>
 #include <znc/Query.h>
 #include <math.h>
+#include <time.h>
 #include <algorithm>
 
 using std::vector;

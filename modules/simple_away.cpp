@@ -16,6 +16,7 @@
 
 #include <znc/User.h>
 #include <znc/IRCNetwork.h>
+#include <time.h>
 
 #define SIMPLE_AWAY_DEFAULT_REASON "Auto away at %s"
 #define SIMPLE_AWAY_DEFAULT_TIME   60
