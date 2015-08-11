@@ -114,12 +114,10 @@ public:
 
 		for (map<CString, CUser*>::const_iterator it = msUsers.begin(); it != msUsers.end(); ++it) {
 			CUser* pUser = it->second;
-			for (vector<CIRCNetwork*>::const_iterator i = pUser->GetNetworks().begin(); i != pUser->GetNetworks().end(); ++i) {
-				CIRCNetwork* pNetwork = *i;
-				if (pNetwork->GetIRCSock()) {
-					if (pNetwork->GetChanPrefixes().find(CHAN_PREFIX_1) == CString::npos) {
-						pNetwork->PutUser(":" + GetIRCServer(pNetwork) + " 005 " + pNetwork->GetIRCNick().GetNick() + " CHANTYPES=" + pNetwork->GetChanPrefixes() + CHAN_PREFIX_1 " :are supported by this server.");
-					}
+			for (CClient* pClient : pUser->GetAllClients()) {
+				CIRCNetwork* pNetwork = pClient->GetNetwork();
+				if (!pNetwork || !pNetwork->IsIRCConnected() || !pNetwork->GetChanPrefixes().Contains(CHAN_PREFIX_1)) {
+					pClient->PutClient(":" + GetIRCServer(pNetwork) + " 005 " + pClient->GetNick() + " CHANTYPES=" + (pNetwork ? pNetwork->GetChanPrefixes() : "") + CHAN_PREFIX_1 " :are supported by this server.");
 				}
 			}
 		}
@@ -188,33 +186,26 @@ public:
 		return CONTINUE;
 	}
 
-	virtual EModRet OnRaw(CString& sLine) override {
-		if (sLine.Token(1) == "005") {
+	EModRet OnSendToClient(CString& sLine, CClient& Client) override {
+		if ((sLine.StartsWith(":") && sLine.Token(1) == "005") || (sLine.StartsWith("@") && sLine.Token(2) == "005")) {
 			CString::size_type uPos = sLine.AsUpper().find("CHANTYPES=");
 			if (uPos != CString::npos) {
-				uPos = sLine.find(" ", uPos);
+				CString sChanTypes = sLine.substr(uPos, sLine.find(" ", uPos) - uPos);
 
-				if (uPos == CString::npos)
-					sLine.append(CHAN_PREFIX_1);
-				else
-					sLine.insert(uPos, CHAN_PREFIX_1);
-				m_spInjectedPrefixes.insert(GetNetwork());
+				if (!sChanTypes.Contains(CHAN_PREFIX_1))
+					sLine.insert(uPos + sChanTypes.size(), CHAN_PREFIX_1);
 			}
 		}
 
 		return CONTINUE;
 	}
 
-	virtual void OnIRCDisconnected() override {
-		m_spInjectedPrefixes.erase(GetNetwork());
-	}
-
 	virtual void OnClientLogin() override {
 		CUser* pUser = GetUser();
 		CClient* pClient = GetClient();
 		CIRCNetwork* pNetwork = GetNetwork();
-		if (m_spInjectedPrefixes.find(pNetwork) == m_spInjectedPrefixes.end() && pNetwork && !pNetwork->GetChanPrefixes().empty()) {
-			pClient->PutClient(":" + GetIRCServer(pNetwork) + " 005 " + pClient->GetNick() + " CHANTYPES=" + pNetwork->GetChanPrefixes() + CHAN_PREFIX_1 " :are supported by this server.");
+		if (!pNetwork || !pNetwork->IsIRCConnected()) {
+			pClient->PutClient(":" + GetIRCServer(pNetwork) + " 005 " + pClient->GetNick() + " CHANTYPES=" + CHAN_PREFIX_1 " :are supported by this server.");
 		}
 
 		// Make sure this user is in the default channels
@@ -625,7 +616,6 @@ public:
 
 private:
 	set<CPartylineChannel*> m_ssChannels;
-	set<CIRCNetwork*>       m_spInjectedPrefixes;
 	set<CString>            m_ssDefaultChans;
 };
 
