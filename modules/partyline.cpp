@@ -128,7 +128,7 @@ public:
 
 		for (it = vsChans.begin(); it != vsChans.end(); ++it) {
 			if (it->Left(2) == CHAN_PREFIX) {
-				m_ssDefaultChans.insert(it->Left(32));
+				m_ssDefaultChans.insert(*it);
 			}
 		}
 
@@ -386,7 +386,6 @@ public:
 			return HALT;
 		}
 
-		sChannel = sChannel.Left(32);
 		CPartylineChannel* pChannel = GetChannel(sChannel);
 
 		JoinUser(GetUser(), pChannel);
