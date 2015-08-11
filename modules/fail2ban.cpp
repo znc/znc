@@ -74,6 +74,7 @@ public:
 				PutModule("Usage: Timeout (<minutes>)");
 			} else {
 				m_Cache.SetTTL(uTimeout * 60 * 1000);
+				SetArgs(CString(m_Cache.GetTTL() / 60 / 1000) + " " + CString(m_uiAllowedFailed));
 				PutModule("Timeout: " + CString(uTimeout) + " min");
 			}
 		} else {
@@ -90,6 +91,7 @@ public:
 				PutModule("Usage: Attempts (<count>)");
 			} else {
 				m_uiAllowedFailed = uiAttempts;
+				SetArgs(CString(m_Cache.GetTTL() / 60 / 1000) + " " + CString(m_uiAllowedFailed));
 				PutModule("Attempts: " + CString(uiAttempts));
 			}
 		} else {
