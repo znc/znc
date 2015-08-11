@@ -114,12 +114,10 @@ public:
 
 		for (map<CString, CUser*>::const_iterator it = msUsers.begin(); it != msUsers.end(); ++it) {
 			CUser* pUser = it->second;
-			for (vector<CIRCNetwork*>::const_iterator i = pUser->GetNetworks().begin(); i != pUser->GetNetworks().end(); ++i) {
-				CIRCNetwork* pNetwork = *i;
-				if (pNetwork->GetIRCSock()) {
-					if (pNetwork->GetChanPrefixes().find(CHAN_PREFIX_1) == CString::npos) {
-						pNetwork->PutUser(":" + GetIRCServer(pNetwork) + " 005 " + pNetwork->GetIRCNick().GetNick() + " CHANTYPES=" + pNetwork->GetChanPrefixes() + CHAN_PREFIX_1 " :are supported by this server.");
-					}
+			for (CClient* pClient : pUser->GetAllClients()) {
+				CIRCNetwork* pNetwork = pClient->GetNetwork();
+				if (!pNetwork || !pNetwork->IsIRCConnected() || !pNetwork->GetChanPrefixes().Contains(CHAN_PREFIX_1)) {
+					pClient->PutClient(":" + GetIRCServer(pNetwork) + " 005 " + pClient->GetNick() + " CHANTYPES=" + (pNetwork ? pNetwork->GetChanPrefixes() : "") + CHAN_PREFIX_1 " :are supported by this server.");
 				}
 			}
 		}
@@ -213,8 +211,8 @@ public:
 		CUser* pUser = GetUser();
 		CClient* pClient = GetClient();
 		CIRCNetwork* pNetwork = GetNetwork();
-		if (m_spInjectedPrefixes.find(pNetwork) == m_spInjectedPrefixes.end() && pNetwork && !pNetwork->GetChanPrefixes().empty()) {
-			pClient->PutClient(":" + GetIRCServer(pNetwork) + " 005 " + pClient->GetNick() + " CHANTYPES=" + pNetwork->GetChanPrefixes() + CHAN_PREFIX_1 " :are supported by this server.");
+		if (!pNetwork || !pNetwork->IsIRCConnected()) {
+			pClient->PutClient(":" + GetIRCServer(pNetwork) + " 005 " + pClient->GetNick() + " CHANTYPES=" + CHAN_PREFIX_1 " :are supported by this server.");
 		}
 
 		// Make sure this user is in the default channels
