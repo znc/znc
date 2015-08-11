@@ -259,7 +259,13 @@ public:
 	}
 
 	virtual EModRet OnUserRaw(CString& sLine) override {
-		if (sLine.Equals("WHO " CHAN_PREFIX_1, false, 5)) {
+		if (sLine.StartsWith("PRIVMSG ") || sLine.StartsWith("NOTICE ")) {
+			return HandleMessage(sLine.Token(0), sLine.Token(1), sLine.Token(2, true).TrimPrefix_n(":"));
+		} else if (sLine.StartsWith("JOIN ")) {
+			return HandleJoin(sLine.Token(1), sLine.Token(2));
+		} else if (sLine.StartsWith("PART ")) {
+			return HandlePart(sLine.Token(1), sLine.Token(2, true).TrimPrefix_n(":"));
+		} else if (sLine.Equals("WHO " CHAN_PREFIX_1, false, 5)) {
 			return HALT;
 		} else if (sLine.Equals("MODE " CHAN_PREFIX_1, false, 6)) {
 			return HALT;
@@ -301,7 +307,7 @@ public:
 		return CONTINUE;
 	}
 
-	virtual EModRet OnUserPart(CString& sChannel, CString& sMessage) override {
+	EModRet HandlePart(const CString& sChannel, const CString& sMessage) {
 		if (sChannel.Left(1) != CHAN_PREFIX_1) {
 			return CONTINUE;
 		}
@@ -376,7 +382,7 @@ public:
 		}
 	}
 
-	virtual EModRet OnUserJoin(CString& sChannel, CString& sKey) override {
+	EModRet HandleJoin(const CString& sChannel, const CString& sKey) {
 		if (sChannel.Left(1) != CHAN_PREFIX_1) {
 			return CONTINUE;
 		}
@@ -483,26 +489,6 @@ public:
 		}
 
 		return HALT;
-	}
-
-	virtual EModRet OnUserMsg(CString& sTarget, CString& sMessage) override {
-		return HandleMessage("PRIVMSG", sTarget, sMessage);
-	}
-
-	virtual EModRet OnUserNotice(CString& sTarget, CString& sMessage) override {
-		return HandleMessage("NOTICE", sTarget, sMessage);
-	}
-
-	virtual EModRet OnUserAction(CString& sTarget, CString& sMessage) override {
-		return HandleMessage("PRIVMSG", sTarget, "\001ACTION " + sMessage + "\001");
-	}
-
-	virtual EModRet OnUserCTCP(CString& sTarget, CString& sMessage) override {
-		return HandleMessage("PRIVMSG", sTarget, "\001" + sMessage + "\001");
-	}
-
-	virtual EModRet OnUserCTCPReply(CString& sTarget, CString& sMessage) override {
-		return HandleMessage("NOTICE", sTarget, "\001" + sMessage + "\001");
 	}
 
 	const CString GetIRCServer(CIRCNetwork *pNetwork) {
