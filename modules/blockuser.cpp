@@ -19,14 +19,14 @@
 
 using std::vector;
 
-#define MESSAGE "Your account has been disabled. Contact your administrator."
+#define DEFAULT_REASON "Your account has been disabled. Contact your administrator."
 
 class CBlockUser : public CModule {
 public:
 	MODCONSTRUCTOR(CBlockUser) {
 		AddHelpCommand();
 		AddCommand("List", static_cast<CModCommand::ModCmdFunc>(&CBlockUser::OnListCommand), "", "List blocked users");
-		AddCommand("Block", static_cast<CModCommand::ModCmdFunc>(&CBlockUser::OnBlockCommand), "<user>", "Block a user");
+		AddCommand("Block", static_cast<CModCommand::ModCmdFunc>(&CBlockUser::OnBlockCommand), "<user> [reason]", "Block a user");
 		AddCommand("Unblock", static_cast<CModCommand::ModCmdFunc>(&CBlockUser::OnUnblockCommand), "<user>", "Unblock a user");
 	}
 
@@ -40,7 +40,7 @@ public:
 		// Load saved settings
 		for (it2 = BeginNV(); it2 != EndNV(); ++it2) {
 			// Ignore errors
-			Block(it2->first);
+			Block(it2->first, it2->second);
 		}
 
 		// Parse arguments, each argument is a user name to block
@@ -58,7 +58,8 @@ public:
 
 	EModRet OnLoginAttempt(std::shared_ptr<CAuthBase> Auth) override {
 		if (IsBlocked(Auth->GetUsername())) {
-			Auth->RefuseLogin(MESSAGE);
+			CString sReason = GetNV(Auth->GetUsername());
+			Auth->RefuseLogin("Blocked: " + (sReason.empty() ? DEFAULT_REASON : sReason));
 			return HALT;
 		}
 
@@ -77,11 +78,17 @@ public:
 		CTable Table;
 		MCString::iterator it;
 
-		Table.AddColumn("Blocked user");
+		Table.AddColumn("User");
+		Table.AddColumn("Reason");
 
 		for (it = BeginNV(); it != EndNV(); ++it) {
 			Table.AddRow();
-			Table.SetCell("Blocked user", it->first);
+			Table.SetCell("User", it->first);
+			if (it->second.empty()) {
+				Table.SetCell("Reason", DEFAULT_REASON + CString(" (default)"));
+			} else {
+				Table.SetCell("Reason", it->second);
+			}
 		}
 
 		if (PutModule(Table) == 0)
@@ -89,10 +96,11 @@ public:
 	}
 
 	void OnBlockCommand(const CString& sCommand) {
-		CString sUser = sCommand.Token(1, true);
+		CString sUser = sCommand.Token(1);
+		CString sReason = sCommand.Token(2, true);
 
 		if (sUser.empty()) {
-			PutModule("Usage: Block <user>");
+			PutModule("Usage: Block <user> [reason]");
 			return;
 		}
 
@@ -101,7 +109,7 @@ public:
 			return;
 		}
 
-		if (Block(sUser))
+		if (Block(sUser, sReason))
 			PutModule("Blocked [" + sUser + "]");
 		else
 			PutModule("Could not block [" + sUser + "] (misspelled?)");
@@ -126,6 +134,7 @@ public:
 			CString sAction = Tmpl["WebadminAction"];
 			if (sAction == "display") {
 				Tmpl["Blocked"] = CString(IsBlocked(Tmpl["Username"]));
+				Tmpl["Reason"] = CString(GetNV(Tmpl["Username"]));
 				Tmpl["Self"] = CString(Tmpl["Username"].Equals(WebSock.GetSession()->GetUser()->GetUserName()));
 				return true;
 			}
@@ -134,8 +143,8 @@ public:
 						WebSock.GetParam("embed_blockuser_block").ToBool()) {
 					WebSock.GetSession()->AddError("You can't block yourself");
 				} else if (WebSock.GetParam("embed_blockuser_block").ToBool()) {
-					if (!WebSock.GetParam("embed_blockuser_old").ToBool()) {
-						if (Block(Tmpl["Username"])) {
+					if (!WebSock.GetParam("embed_blockuser_old").ToBool() || WebSock.GetParam("embed_blockuser_reason") != GetNV(Tmpl["Username"])) {
+						if (Block(Tmpl["Username"], WebSock.GetParam("embed_blockuser_reason"))) {
 							WebSock.GetSession()->AddSuccess("Blocked [" + Tmpl["Username"] + "]");
 						} else {
 							WebSock.GetSession()->AddError("Couldn't block [" + Tmpl["Username"] + "]");
@@ -165,7 +174,7 @@ private:
 		return false;
 	}
 
-	bool Block(const CString& sUser) {
+	bool Block(const CString& sUser, const CString& sReason = "") {
 		CUser *pUser = CZNC::Get().FindUser(sUser);
 
 		if (!pUser)
@@ -175,7 +184,7 @@ private:
 		vector<CClient*> vpClients = pUser->GetAllClients();
 		vector<CClient*>::iterator it;
 		for (it = vpClients.begin(); it != vpClients.end(); ++it) {
-			(*it)->PutStatusNotice(MESSAGE);
+			(*it)->PutStatusNotice("Blocked: " + (sReason.empty() ? DEFAULT_REASON : sReason));
 			(*it)->Close(Csock::CLT_AFTERWRITE);
 		}
 
@@ -185,9 +194,11 @@ private:
 			(*it2)->SetIRCConnectEnabled(false);
 		}
 
-		SetNV(pUser->GetUserName(), "");
+		SetNV(pUser->GetUserName(), sReason);
 		return true;
 	}
+
+
 };
 
 template<> void TModInfo<CBlockUser>(CModInfo& Info) {
