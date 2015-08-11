@@ -23,6 +23,7 @@ do_cmd() {
 }
 
 test -f configure.ac || die "No configure.ac found."
+which pkg-config > /dev/null || die "ERROR: pkg-config not found. Install pkg-config and run $0 again"
 
 # Generate aclocal.m4 for use by autoconf
 do_cmd $ACLOCAL    $ACLOCAL_FLAGS
@@ -30,12 +31,6 @@ do_cmd $ACLOCAL    $ACLOCAL_FLAGS
 do_cmd $AUTOHEADER $AUTOHEADER_FLAGS
 # Generate configure
 do_cmd $AUTOCONF   $AUTOCONF_FLAGS
-
-if grep PKG_CHECK_MODULES configure > /dev/null
-then
-	rm configure
-	die "ERROR: pkg-config not found. Install pkg-config and run $0 again"
-fi
 
 # Copy config.sub, config.guess, install.sh, ...
 # This will complain that we don't use automake, let's just ignore that
