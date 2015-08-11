@@ -853,7 +853,7 @@ CString CClient::GetNickMask() const {
 		sHost = "irc.znc.in";
 	}
 
-	return GetNick() + "!" + (m_pNetwork ? m_pNetwork->GetBindHost() : m_pUser->GetIdent()) + "@" + sHost;
+	return GetNick() + "!" + (m_pNetwork ? m_pNetwork->GetIdent() : m_pUser->GetIdent()) + "@" + sHost;
 }
 
 bool CClient::IsValidIdentifier(const CString& sIdentifier) {
