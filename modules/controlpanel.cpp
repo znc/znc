@@ -292,11 +292,10 @@ class CAdminMod : public CModule {
 
 				const VCString& vsHosts = CZNC::Get().GetBindHosts();
 				if (!GetUser()->IsAdmin() && !vsHosts.empty()) {
-					VCString::const_iterator it;
 					bool bFound = false;
 
-					for (it = vsHosts.begin(); it != vsHosts.end(); ++it) {
-						if (sValue.Equals(*it)) {
+					for (const CString& sHost : vsHosts) {
+						if (sValue.Equals(sHost)) {
 							bFound = true;
 							break;
 						}
@@ -569,8 +568,8 @@ class CAdminMod : public CModule {
 					VCString::const_iterator it;
 					bool bFound = false;
 
-					for (it = vsHosts.begin(); it != vsHosts.end(); ++it) {
-						if (sValue.Equals(*it)) {
+					for (const CString& sHost : vsHosts) {
+						if (sValue.Equals(sHost)) {
 							bFound = true;
 							break;
 						}
@@ -825,18 +824,18 @@ class CAdminMod : public CModule {
 		Table.AddColumn("Ident");
 		Table.AddColumn("BindHost");
 
-		for (map<CString, CUser*>::const_iterator it = msUsers.begin(); it != msUsers.end(); ++it) {
+		for (const auto& it : msUsers) {
 			Table.AddRow();
-			Table.SetCell("Username", it->first);
-			Table.SetCell("Realname", it->second->GetRealName());
-			if (!it->second->IsAdmin())
+			Table.SetCell("Username", it.first);
+			Table.SetCell("Realname", it.second->GetRealName());
+			if (!it.second->IsAdmin())
 				Table.SetCell("IsAdmin", "No");
 			else
 				Table.SetCell("IsAdmin", "Yes");
-			Table.SetCell("Nick", it->second->GetNick());
-			Table.SetCell("AltNick", it->second->GetAltNick());
-			Table.SetCell("Ident", it->second->GetIdent());
-			Table.SetCell("BindHost", it->second->GetBindHost());
+			Table.SetCell("Nick", it.second->GetNick());
+			Table.SetCell("AltNick", it.second->GetAltNick());
+			Table.SetCell("Ident", it.second->GetIdent());
+			Table.SetCell("BindHost", it.second->GetBindHost());
 		}
 
 		PutModule(Table);
@@ -1044,8 +1043,7 @@ class CAdminMod : public CModule {
 		Table.AddColumn("IRC User");
 		Table.AddColumn("Channels");
 
-		for (unsigned int a = 0; a < vNetworks.size(); a++) {
-			CIRCNetwork* pNetwork = vNetworks[a];
+		for (const CIRCNetwork* pNetwork : vNetworks) {
 			Table.AddRow();
 			Table.SetCell("Network", pNetwork->GetName());
 			if (pNetwork->IsIRCConnected()) {
@@ -1189,10 +1187,10 @@ class CAdminMod : public CModule {
 		CTable Table;
 		Table.AddColumn("Request");
 		Table.AddColumn("Reply");
-		for (MCString::const_iterator it = msCTCPReplies.begin(); it != msCTCPReplies.end(); ++it) {
+		for (const auto& it : msCTCPReplies) {
 			Table.AddRow();
-			Table.SetCell("Request", it->first);
-			Table.SetCell("Reply", it->second);
+			Table.SetCell("Request", it.first);
+			Table.SetCell("Reply", it.second);
 		}
 
 		if (Table.empty()) {
@@ -1384,10 +1382,10 @@ class CAdminMod : public CModule {
 			Table.AddColumn("Name");
 			Table.AddColumn("Arguments");
 
-			for (unsigned int b = 0; b < Modules.size(); b++) {
+			for (const CModule* pMod : Modules) {
 				Table.AddRow();
-				Table.SetCell("Name", Modules[b]->GetModName());
-				Table.SetCell("Arguments", Modules[b]->GetArgs());
+				Table.SetCell("Name", pMod->GetModName());
+				Table.SetCell("Arguments", pMod->GetArgs());
 			}
 
 			PutModule(Table);
