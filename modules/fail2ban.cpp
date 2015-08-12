@@ -20,8 +20,8 @@ class CFailToBanMod : public CModule {
 public:
 	MODCONSTRUCTOR(CFailToBanMod) {
 		AddHelpCommand();
-		AddCommand("Timeout",  static_cast<CModCommand::ModCmdFunc>(&CFailToBanMod::OnTimeoutCommand), "(<minutes>)", "The number of minutes IPs are blocked after a failed login.");
-		AddCommand("Attempts", static_cast<CModCommand::ModCmdFunc>(&CFailToBanMod::OnAttemptsCommand), "(<count>)", "The number of allowed failed login attempts.");
+		AddCommand("Timeout",  static_cast<CModCommand::ModCmdFunc>(&CFailToBanMod::OnTimeoutCommand), "[minutes]", "The number of minutes IPs are blocked after a failed login.");
+		AddCommand("Attempts", static_cast<CModCommand::ModCmdFunc>(&CFailToBanMod::OnAttemptsCommand), "[count]", "The number of allowed failed login attempts.");
 		AddCommand("Ban",      static_cast<CModCommand::ModCmdFunc>(&CFailToBanMod::OnBanCommand), "<hosts>", "Ban the specified hosts.");
 		AddCommand("Unban",    static_cast<CModCommand::ModCmdFunc>(&CFailToBanMod::OnUnbanCommand), "<hosts>", "Unban the specified hosts.");
 		AddCommand("List",     static_cast<CModCommand::ModCmdFunc>(&CFailToBanMod::OnListCommand), "", "List banned hosts.");
@@ -71,7 +71,7 @@ public:
 		if (!sArg.empty()) {
 			unsigned int uTimeout = sArg.ToUInt();
 			if (uTimeout == 0) {
-				PutModule("Usage: Timeout (<minutes>)");
+				PutModule("Usage: Timeout [minutes]");
 			} else {
 				m_Cache.SetTTL(uTimeout * 60 * 1000);
 				SetArgs(CString(m_Cache.GetTTL() / 60 / 1000) + " " + CString(m_uiAllowedFailed));
@@ -88,7 +88,7 @@ public:
 		if (!sArg.empty()) {
 			unsigned int uiAttempts = sArg.ToUInt();
 			if (uiAttempts == 0) {
-				PutModule("Usage: Attempts (<count>)");
+				PutModule("Usage: Attempts [count]");
 			} else {
 				m_uiAllowedFailed = uiAttempts;
 				SetArgs(CString(m_Cache.GetTTL() / 60 / 1000) + " " + CString(m_uiAllowedFailed));
