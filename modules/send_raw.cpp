@@ -107,15 +107,15 @@ public:
 			}
 
 			const map<CString,CUser*>& msUsers = CZNC::Get().GetUserMap();
-			for (map<CString,CUser*>::const_iterator it = msUsers.begin(); it != msUsers.end(); ++it) {
+			for (const auto& it : msUsers) {
 				CTemplate& l = Tmpl.AddRow("UserLoop");
-				l["Username"] = (*it->second).GetUserName();
+				l["Username"] = it.second->GetUserName();
 
-				vector<CIRCNetwork*> vNetworks = (*it->second).GetNetworks();
-				for (vector<CIRCNetwork*>::const_iterator it2 = vNetworks.begin(); it2 != vNetworks.end(); ++it2) {
+				vector<CIRCNetwork*> vNetworks = it.second->GetNetworks();
+				for (const CIRCNetwork* pNetwork : vNetworks) {
 					CTemplate& NetworkLoop = l.AddRow("NetworkLoop");
-					NetworkLoop["Username"] = (*it->second).GetUserName();
-					NetworkLoop["Network"] = (*it2)->GetName();
+					NetworkLoop["Username"] = it.second->GetUserName();
+					NetworkLoop["Network"] = pNetwork->GetName();
 				}
 			}
 

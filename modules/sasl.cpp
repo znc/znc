@@ -111,9 +111,9 @@ public:
 			VCString vsMechanisms;
 			sMechanisms.Split(" ", vsMechanisms);
 
-			for (VCString::const_iterator it = vsMechanisms.begin(); it != vsMechanisms.end(); ++it) {
-				if (!SupportsMechanism(*it)) {
-					PutModule("Unsupported mechanism: " + *it);
+			for (const CString& sMechanism : vsMechanisms) {
+				if (!SupportsMechanism(sMechanism)) {
+					PutModule("Unsupported mechanism: " + sMechanism);
 					return;
 				}
 			}

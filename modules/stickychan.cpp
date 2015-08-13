@@ -135,8 +135,8 @@ public:
 			bool bSubmitted = (WebSock.GetParam("submitted").ToInt() != 0);
 
 			const vector<CChan*>& Channels = GetNetwork()->GetChans();
-			for (unsigned int c = 0; c < Channels.size(); c++) {
-				const CString sChan = Channels[c]->GetName();
+			for (CChan* pChan : Channels) {
+				const CString sChan = pChan->GetName();
 				bool bStick = FindNV(sChan) != EndNV();
 
 				if(bSubmitted) {
@@ -198,12 +198,11 @@ static void RunTimer(CModule * pModule, CFPTimer *pTimer)
 bool CStickyChan::OnLoad(const CString& sArgs, CString& sMessage)
 {
 	VCString vsChans;
-	VCString::iterator it;
 	sArgs.Split(",", vsChans, false);
 
-	for (it = vsChans.begin(); it != vsChans.end(); ++it) {
-		CString sChan = it->Token(0);
-		CString sKey = it->Token(1, true);
+	for (const CString& s : vsChans) {
+		CString sChan = s.Token(0);
+		CString sKey = s.Token(1, true);
 		SetNV(sChan, sKey);
 	}
 

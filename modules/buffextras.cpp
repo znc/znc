@@ -43,10 +43,9 @@ public:
 	}
 
 	void OnQuit(const CNick& Nick, const CString& sMessage, const vector<CChan*>& vChans) override {
-		vector<CChan*>::const_iterator it;
 		CString sMsg = Nick.GetNickMask() + " quit with message: [" + sMessage + "]";
-		for (it = vChans.begin(); it != vChans.end(); ++it) {
-			AddBuffer(**it, sMsg);
+		for (CChan* pChan : vChans) {
+			AddBuffer(*pChan, sMsg);
 		}
 	}
 
@@ -59,10 +58,9 @@ public:
 	}
 
 	void OnNick(const CNick& OldNick, const CString& sNewNick, const vector<CChan*>& vChans) override {
-		vector<CChan*>::const_iterator it;
 		CString sMsg = OldNick.GetNickMask() + " is now known as " + sNewNick;
-		for (it = vChans.begin(); it != vChans.end(); ++it) {
-			AddBuffer(**it, sMsg);
+		for (CChan* pChan : vChans) {
+			AddBuffer(*pChan, sMsg);
 		}
 	}
 
