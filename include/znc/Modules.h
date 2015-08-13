@@ -976,6 +976,7 @@ public:
 	bool MoveRegistry(const CString& sPath);
 	bool SetNV(const CString & sName, const CString & sValue, bool bWriteToDisk = true);
 	CString GetNV(const CString & sName) const;
+        bool HasNV(const CString & sName) const { return m_mssRegistry.find(sName) != m_mssRegistry.end(); }
 	bool DelNV(const CString & sName, bool bWriteToDisk = true);
 	MCString::iterator FindNV(const CString & sName) { return m_mssRegistry.find(sName); }
 	MCString::iterator EndNV() { return m_mssRegistry.end(); }
