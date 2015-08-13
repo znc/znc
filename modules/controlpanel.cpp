@@ -130,7 +130,7 @@ class CAdminMod : public CModule {
 			static const char* cvars[][2] = {
 				{"DefModes",            str},
 				{"Key",                 str},
-				{"Buffer",              integer},
+				{"BufferSize",          integer},
 				{"InConfig",            boolean},
 				{"AutoClearChanBuffer", boolean},
 				{"Detached",            boolean}
@@ -704,12 +704,12 @@ class CAdminMod : public CModule {
 		for (CChan* pChan : vChans) {
 			if (sVar == "defmodes") {
 				PutModule(pChan->GetName() + ": DefModes = " + pChan->GetDefaultModes());
-			} else if (sVar == "buffer") {
+			} else if (sVar == "buffersize" || sVar == "buffer") {
 				CString sValue(pChan->GetBufferCount());
 				if (!pChan->HasBufferCountSet()) {
 					sValue += " (default)";
 				}
-				PutModule(pChan->GetName() + ": Buffer = " + sValue);
+				PutModule(pChan->GetName() + ": BufferSize = " + sValue);
 			} else if (sVar == "inconfig") {
 				PutModule(pChan->GetName() + ": InConfig = " + CString(pChan->InConfig()));
 			} else if (sVar == "keepbuffer") {
@@ -762,14 +762,14 @@ class CAdminMod : public CModule {
 			if (sVar == "defmodes") {
 				pChan->SetDefaultModes(sValue);
 				PutModule(pChan->GetName() + ": DefModes = " + sValue);
-			} else if (sVar == "buffer") {
+			} else if (sVar == "buffersize" || sVar == "buffer") {
 				unsigned int i = sValue.ToUInt();
 				if (sValue.Equals("-")) {
 					pChan->ResetBufferCount();
-					PutModule(pChan->GetName() + ": Buffer = " + CString(pChan->GetBufferCount()));
+					PutModule(pChan->GetName() + ": BufferSize = " + CString(pChan->GetBufferCount()));
 				// Admins don't have to honour the buffer limit
 				} else if (pChan->SetBufferCount(i, GetUser()->IsAdmin())) {
-					PutModule(pChan->GetName() + ": Buffer = " + sValue);
+					PutModule(pChan->GetName() + ": BufferSize = " + sValue);
 				} else {
 					PutModule("Setting failed, limit is " +
 							CString(CZNC::Get().GetMaxBufferSize()));
