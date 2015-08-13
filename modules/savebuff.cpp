@@ -249,14 +249,10 @@ public:
 			if (DecryptBuffer(GetPath(sArgs), sFile, sName))
 			{
 				VCString vsLines;
-				VCString::iterator it;
-
 				sFile.Split("\n", vsLines);
 
-				for (it = vsLines.begin(); it != vsLines.end(); ++it) {
-					CString sLine(*it);
-					sLine.Trim();
-					PutModule("[" + sLine + "]");
+				for (const CString& sLine : vsLines) {
+					PutModule("[" + sLine.Trim_n() + "]");
 				}
 			}
 			PutModule("//!-- EOF " + sArgs);
@@ -287,14 +283,10 @@ public:
 		if (DecryptBuffer(GetPath(sBuffer), sFile, sName))
 		{
 			VCString vsLines;
-			VCString::iterator it;
-
 			sFile.Split("\n", vsLines);
 
-			for (it = vsLines.begin(); it != vsLines.end(); ++it) {
-				CString sLine(*it);
-				sLine.Trim();
-				PutUser(sLine);
+			for (const CString& sLine : vsLines) {
+				PutUser(sLine.Trim_n());
 			}
 		}
 		PutUser(":***!znc@znc.in PRIVMSG " + sBuffer + " :Playback Complete.");
