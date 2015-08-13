@@ -143,9 +143,8 @@ public:
 		if (!bShareIRCPorts) {
 			// Make all existing listeners IRC-only
 			const vector<CListener*>& vListeners = CZNC::Get().GetListeners();
-			vector<CListener*>::const_iterator it;
-			for (it = vListeners.begin(); it != vListeners.end(); ++it) {
-				(*it)->SetAcceptType(CListener::ACCEPT_IRC);
+			for (CListener* pListener : vListeners) {
+				pListener->SetAcceptType(CListener::ACCEPT_IRC);
 			}
 		}
 
@@ -197,20 +196,18 @@ public:
 		}
 
 		VCString vsArgs;
-		unsigned int a = 0;
 
 		WebSock.GetRawParam("allowedips").Split("\n", vsArgs);
 		if (vsArgs.size()) {
-			for (a = 0; a < vsArgs.size(); a++) {
-				pNewUser->AddAllowedHost(vsArgs[a].Trim_n());
+			for (const CString& sHost : vsArgs) {
+				pNewUser->AddAllowedHost(sHost.Trim_n());
 			}
 		} else {
 			pNewUser->AddAllowedHost("*");
 		}
 
 		WebSock.GetRawParam("ctcpreplies").Split("\n", vsArgs);
-		for (a = 0; a < vsArgs.size(); a++) {
-			CString sReply = vsArgs[a].TrimRight_n("\r");
+		for (const CString& sReply : vsArgs) {
 			pNewUser->AddCTCPReply(sReply.Token(0).Trim_n(), sReply.Token(1, true).Trim_n());
 		}
 
@@ -236,15 +233,14 @@ public:
 
 			const VCString& vsHosts = CZNC::Get().GetBindHosts();
 			if (!spSession->IsAdmin() && !vsHosts.empty()) {
-				VCString::const_iterator it;
 				bool bFound = false;
 				bool bFoundDCC = false;
 
-				for (it = vsHosts.begin(); it != vsHosts.end(); ++it) {
-					if (sArg.Equals(*it)) {
+				for (const CString& sHost : vsHosts) {
+					if (sArg.Equals(sHost)) {
 						bFound = true;
 					}
-					if (sArg2.Equals(*it)) {
+					if (sArg2.Equals(sHost)) {
 						bFoundDCC = true;
 					}
 				}
@@ -330,8 +326,8 @@ public:
 			// disallow unload webadmin from itself
 			if (CModInfo::UserModule == GetType() && pUser == CZNC::Get().FindUser(WebSock.GetUser())) {
 				bool bLoadedWebadmin = false;
-				for (a = 0; a < vsArgs.size(); ++a) {
-					CString sModName = vsArgs[a].TrimRight_n("\r");
+				for (const CString& s : vsArgs) {
+					CString sModName = s.TrimRight_n("\r");
 					if (sModName == GetModName()) {
 						bLoadedWebadmin = true;
 						break;
@@ -342,9 +338,9 @@ public:
 				}
 			}
 
-			for (a = 0; a < vsArgs.size(); a++) {
+			for (const CString& s : vsArgs) {
 				CString sModRet;
-				CString sModName = vsArgs[a].TrimRight_n("\r");
+				CString sModName = s.TrimRight_n("\r");
 				CString sModLoadError;
 
 				if (!sModName.empty()) {
@@ -367,9 +363,9 @@ public:
 		} else if (pUser) {
 			CModules& Modules = pUser->GetModules();
 
-			for (a = 0; a < Modules.size(); a++) {
-				CString sModName = Modules[a]->GetModName();
-				CString sArgs = Modules[a]->GetArgs();
+			for (const CModule* pMod : Modules) {
+				CString sModName = pMod->GetModName();
+				CString sArgs = pMod->GetArgs();
 				CString sModRet;
 				CString sModLoadError;
 
@@ -777,8 +773,7 @@ public:
 
 			set<CModInfo> ssNetworkMods;
 			CZNC::Get().GetModules().GetAvailableMods(ssNetworkMods, CModInfo::NetworkModule);
-			for (set<CModInfo>::iterator it = ssNetworkMods.begin(); it != ssNetworkMods.end(); ++it) {
-				const CModInfo& Info = *it;
+			for (const CModInfo& Info : ssNetworkMods) {
 				CTemplate& l = Tmpl.AddRow("ModuleLoop");
 
 				l["Name"] = Info.GetName();
@@ -818,8 +813,7 @@ public:
 					}
 				} else {
 					bool bFoundBindHost = false;
-					for (unsigned int b = 0; b < vsBindHosts.size(); b++) {
-						const CString& sBindHost = vsBindHosts[b];
+					for (const CString& sBindHost : vsBindHosts) {
 						CTemplate& l = Tmpl.AddRow("BindHostLoop");
 
 						l["BindHost"] = sBindHost;
@@ -869,14 +863,13 @@ public:
 				breadNet["Text"] = "Edit Network [" + pNetwork->GetName() + "]";
 
 				const vector<CServer*>& vServers = pNetwork->GetServers();
-				for (unsigned int a = 0; a < vServers.size(); a++) {
+				for (const CServer* pServer : vServers) {
 					CTemplate& l = Tmpl.AddRow("ServerLoop");
-					l["Server"] = vServers[a]->GetString();
+					l["Server"] = pServer->GetString();
 				}
 
 				const vector<CChan*>& Channels = pNetwork->GetChans();
-				for (unsigned int c = 0; c < Channels.size(); c++) {
-					CChan* pChan = Channels[c];
+				for (const CChan* pChan : Channels) {
 					CTemplate& l = Tmpl.AddRow("ChannelLoop");
 
 					l["Network"] = pNetwork->GetName();
@@ -996,11 +989,10 @@ public:
 			CString sHost = WebSock.GetParam("bindhost");
 			const VCString& vsHosts = CZNC::Get().GetBindHosts();
 			if (!spSession->IsAdmin() && !vsHosts.empty()) {
-				VCString::const_iterator it;
 				bool bFound = false;
 
-				for (it = vsHosts.begin(); it != vsHosts.end(); ++it) {
-					if (sHost.Equals(*it)) {
+				for (const CString& s : vsHosts) {
+					if (sHost.Equals(s)) {
 						bFound = true;
 						break;
 					}
@@ -1044,8 +1036,8 @@ public:
 
 		pNetwork->DelServers();
 		WebSock.GetRawParam("servers").Split("\n", vsArgs);
-		for (unsigned int a = 0; a < vsArgs.size(); a++) {
-			pNetwork->AddServer(vsArgs[a].Trim_n());
+		for (const CString& sServer : vsArgs) {
+			pNetwork->AddServer(sServer.Trim_n());
 		}
 
 		WebSock.GetRawParam("fingerprints").Split("\n", vsArgs);
@@ -1055,8 +1047,7 @@ public:
 		}
 
 		WebSock.GetParamValues("channel", vsArgs);
-		for (unsigned int a = 0; a < vsArgs.size(); a++) {
-			const CString& sChan = vsArgs[a];
+		for (const CString& sChan : vsArgs) {
 			CChan *pChan = pNetwork->FindChan(sChan.TrimRight_n("\r"));
 			if (pChan) {
 				pChan->SetInConfig(WebSock.GetParam("save_" + sChan).ToBool());
@@ -1066,9 +1057,9 @@ public:
 		set<CString> ssArgs;
 		WebSock.GetParamValues("loadmod", ssArgs);
 		if (spSession->IsAdmin() || !pUser->DenyLoadMod()) {
-			for (set<CString>::iterator it = ssArgs.begin(); it != ssArgs.end(); ++it) {
+			for (const CString& s : ssArgs) {
 				CString sModRet;
-				CString sModName = (*it).TrimRight_n("\r");
+				CString sModName = s.TrimRight_n("\r");
 				CString sModLoadError;
 
 				if (!sModName.empty()) {
@@ -1097,16 +1088,14 @@ public:
 		const CModules& vCurMods = pNetwork->GetModules();
 		set<CString> ssUnloadMods;
 
-		for (unsigned int a = 0; a < vCurMods.size(); a++) {
-			CModule* pCurMod = vCurMods[a];
-
+		for (const CModule* pCurMod : vCurMods) {
 			if (ssArgs.find(pCurMod->GetModName()) == ssArgs.end() && pCurMod->GetModName() != GetModName()) {
 				ssUnloadMods.insert(pCurMod->GetModName());
 			}
 		}
 
-		for (set<CString>::iterator it2 = ssUnloadMods.begin(); it2 != ssUnloadMods.end(); ++it2) {
-			pNetwork->GetModules().UnloadModule(*it2);
+		for (const CString& sMod : ssUnloadMods) {
+			pNetwork->GetModules().UnloadModule(sMod);
 		}
 
 		CTemplate TmplMod;
@@ -1227,28 +1216,28 @@ public:
 				Tmpl["MaxQueryBuffers"] = CString(pUser->MaxQueryBuffers());
 
 				const set<CString>& ssAllowedHosts = pUser->GetAllowedHosts();
-				for (set<CString>::const_iterator it = ssAllowedHosts.begin(); it != ssAllowedHosts.end(); ++it) {
+				for (const CString& sHost : ssAllowedHosts) {
 					CTemplate& l = Tmpl.AddRow("AllowedHostLoop");
-					l["Host"] = *it;
+					l["Host"] = sHost;
 				}
 
 				const vector<CIRCNetwork*>& vNetworks = pUser->GetNetworks();
-				for (unsigned int a = 0; a < vNetworks.size(); a++) {
+				for (const CIRCNetwork* pNetwork : vNetworks) {
 					CTemplate& l = Tmpl.AddRow("NetworkLoop");
-					l["Name"] = vNetworks[a]->GetName();
+					l["Name"] = pNetwork->GetName();
 					l["Username"] = pUser->GetUserName();
-					l["Clients"] = CString(vNetworks[a]->GetClients().size());
-					l["IRCNick"] = vNetworks[a]->GetIRCNick().GetNick();
-					CServer* pServer = vNetworks[a]->GetCurrentServer();
+					l["Clients"] = CString(pNetwork->GetClients().size());
+					l["IRCNick"] = pNetwork->GetIRCNick().GetNick();
+					CServer* pServer = pNetwork->GetCurrentServer();
 					if (pServer) {
 						l["Server"] = pServer->GetName() + ":" + (pServer->IsSSL() ? "+" : "") + CString(pServer->GetPort());
 					}
 				}
 
 				const MCString& msCTCPReplies = pUser->GetCTCPReplies();
-				for (MCString::const_iterator it2 = msCTCPReplies.begin(); it2 != msCTCPReplies.end(); ++it2) {
+				for (const auto& it : msCTCPReplies) {
 					CTemplate& l = Tmpl.AddRow("CTCPLoop");
-					l["CTCP"] = it2->first + " " + it2->second;
+					l["CTCP"] = it.first + " " + it.second;
 				}
 			} else {
 				Tmpl["Action"] = "adduser";
@@ -1257,9 +1246,9 @@ public:
 			}
 
 			SCString ssTimezones = CUtils::GetTimezones();
-			for (SCString::iterator i = ssTimezones.begin(); i != ssTimezones.end(); ++i) {
+			for (const CString& sTZ : ssTimezones) {
 				CTemplate& l = Tmpl.AddRow("TZLoop");
-				l["TZ"] = *i;
+				l["TZ"] = sTZ;
 			}
 
 #ifdef HAVE_ICU
@@ -1297,8 +1286,7 @@ public:
 				} else {
 					bool bFoundBindHost = false;
 					bool bFoundDCCBindHost = false;
-					for (unsigned int b = 0; b < vsBindHosts.size(); b++) {
-						const CString& sBindHost = vsBindHosts[b];
+					for (const CString& sBindHost : vsBindHosts) {
 						CTemplate& l = Tmpl.AddRow("BindHostLoop");
 						CTemplate& k = Tmpl.AddRow("DCCBindHostLoop");
 
@@ -1335,8 +1323,7 @@ public:
 			vector<CString> vDirs;
 			WebSock.GetAvailSkins(vDirs);
 
-			for (unsigned int d = 0; d < vDirs.size(); d++) {
-				const CString& SubDir = vDirs[d];
+			for (const CString& SubDir : vDirs) {
 				CTemplate& l = Tmpl.AddRow("SkinLoop");
 				l["Name"] = SubDir;
 
@@ -1348,8 +1335,7 @@ public:
 			set<CModInfo> ssUserMods;
 			CZNC::Get().GetModules().GetAvailableMods(ssUserMods);
 
-			for (set<CModInfo>::iterator it = ssUserMods.begin(); it != ssUserMods.end(); ++it) {
-				const CModInfo& Info = *it;
+			for (const CModInfo& Info : ssUserMods) {
 				CTemplate& l = Tmpl.AddRow("ModuleLoop");
 
 				l["Name"] = Info.GetName();
@@ -1364,8 +1350,7 @@ public:
 					// Check if module is loaded by all or some networks
 					const vector<CIRCNetwork*>& userNetworks = pUser->GetNetworks();
 					unsigned int networksWithRenderedModuleCount = 0;
-					for (unsigned int networkIndex = 0; networkIndex < userNetworks.size(); ++networkIndex) {
-						const CIRCNetwork* pCurrentNetwork = userNetworks[networkIndex];
+					for (const CIRCNetwork* pCurrentNetwork : userNetworks) {
 						const CModules& networkModules = pCurrentNetwork->GetModules();
 						if (networkModules.FindModule(Info.GetName())) {
 							networksWithRenderedModuleCount++;
@@ -1523,17 +1508,15 @@ public:
 		Tmpl["Title"] = "Manage Users";
 		Tmpl["Action"] = "listusers";
 
-		unsigned int a = 0;
-
-		for (map<CString,CUser*>::const_iterator it = msUsers.begin(); it != msUsers.end(); ++it, a++) {
+		for (const auto& it : msUsers) {
 			CTemplate& l = Tmpl.AddRow("UserLoop");
-			CUser& User = *it->second;
+			CUser* pUser = it.second;
 
-			l["Username"] = User.GetUserName();
-			l["Clients"] = CString(User.GetAllClients().size());
-			l["Networks"] = CString(User.GetNetworks().size());
+			l["Username"] = pUser->GetUserName();
+			l["Clients"] = CString(pUser->GetAllClients().size());
+			l["Networks"] = CString(pUser->GetNetworks().size());
 
-			if (&User == spSession->GetUser()) {
+			if (pUser == spSession->GetUser()) {
 				l["IsSelf"] = "true";
 			}
 		}
@@ -1550,12 +1533,11 @@ public:
 
 		size_t uiNetworks = 0, uiAttached = 0, uiClients = 0, uiServers = 0;
 
-		for (map<CString,CUser*>::const_iterator it = msUsers.begin(); it != msUsers.end(); ++it) {
-			CUser& User = *it->second;
-			vector<CIRCNetwork*> vNetworks = User.GetNetworks();
+		for (const auto& it : msUsers) {
+			CUser* pUser = it.second;
+			vector<CIRCNetwork*> vNetworks = pUser->GetNetworks();
 
-			for (vector<CIRCNetwork*>::const_iterator it2 = vNetworks.begin(); it2 != vNetworks.end(); ++it2) {
-				CIRCNetwork *pNetwork = *it2;
+			for (const CIRCNetwork* pNetwork : vNetworks) {
 				uiNetworks++;
 
 				if (pNetwork->IsIRCConnected()) {
@@ -1569,7 +1551,7 @@ public:
 				uiClients += pNetwork->GetClients().size();
 			}
 
-			uiClients += User.GetUserClients().size();
+			uiClients += pUser->GetUserClients().size();
 		}
 
 		Tmpl["TotalNetworks"] = CString(uiNetworks);
@@ -1579,15 +1561,14 @@ public:
 
 		CZNC::TrafficStatsPair Users, ZNC, Total;
 		CZNC::TrafficStatsMap traffic = CZNC::Get().GetTrafficStats(Users, ZNC, Total);
-		CZNC::TrafficStatsMap::const_iterator it;
 
-		for (it = traffic.begin(); it != traffic.end(); ++it) {
+		for (const auto& it : traffic) {
 			CTemplate& l = Tmpl.AddRow("TrafficLoop");
 
-			l["Username"] = it->first;
-			l["In"] = CString::ToByteStr(it->second.first);
-			l["Out"] = CString::ToByteStr(it->second.second);
-			l["Total"] = CString::ToByteStr(it->second.first + it->second.second);
+			l["Username"] = it.first;
+			l["In"] = CString::ToByteStr(it.second.first);
+			l["Out"] = CString::ToByteStr(it.second.second);
+			l["Total"] = CString::ToByteStr(it.second.first + it.second.second);
 		}
 
 		Tmpl["UserIn"] = CString::ToByteStr(Users.first);
@@ -1712,20 +1693,19 @@ public:
 			Tmpl["HideVersion"] = CString(CZNC::Get().GetHideVersion());
 
 			const VCString& vsBindHosts = CZNC::Get().GetBindHosts();
-			for (unsigned int a = 0; a < vsBindHosts.size(); a++) {
+			for (const CString& sHost : vsBindHosts) {
 				CTemplate& l = Tmpl.AddRow("BindHostLoop");
-				l["BindHost"] = vsBindHosts[a];
+				l["BindHost"] = sHost;
 			}
 
 			const VCString& vsMotd = CZNC::Get().GetMotd();
-			for (unsigned int b = 0; b < vsMotd.size(); b++) {
+			for (const CString& sMotd : vsMotd) {
 				CTemplate& l = Tmpl.AddRow("MOTDLoop");
-				l["Line"] = vsMotd[b];
+				l["Line"] = sMotd;
 			}
 
 			const vector<CListener*>& vpListeners = CZNC::Get().GetListeners();
-			for (unsigned int c = 0; c < vpListeners.size(); c++) {
-				CListener* pListener = vpListeners[c];
+			for (const CListener* pListener : vpListeners) {
 				CTemplate& l = Tmpl.AddRow("ListenLoop");
 
 				l["Port"] = CString(pListener->GetPort());
@@ -1768,8 +1748,7 @@ public:
 			vector<CString> vDirs;
 			WebSock.GetAvailSkins(vDirs);
 
-			for (unsigned int d = 0; d < vDirs.size(); d++) {
-				const CString& SubDir = vDirs[d];
+			for (const CString& SubDir : vDirs) {
 				CTemplate& l = Tmpl.AddRow("SkinLoop");
 				l["Name"] = SubDir;
 
@@ -1781,8 +1760,7 @@ public:
 			set<CModInfo> ssGlobalMods;
 			CZNC::Get().GetModules().GetAvailableMods(ssGlobalMods, CModInfo::GlobalModule);
 
-			for (set<CModInfo>::iterator it = ssGlobalMods.begin(); it != ssGlobalMods.end(); ++it) {
-				const CModInfo& Info = *it;
+			for (const CModInfo& Info : ssGlobalMods) {
 				CTemplate& l = Tmpl.AddRow("ModuleLoop");
 
 				CModule *pModule = CZNC::Get().GetModules().FindModule(Info.GetName());
@@ -1805,20 +1783,19 @@ public:
 				unsigned int networksWithRenderedModuleCount = 0;
 				unsigned int networksCount = 0;
 				const map<CString,CUser*>& allUsers = CZNC::Get().GetUserMap();
-				for (map<CString,CUser*>::const_iterator usersIt = allUsers.begin(); usersIt != allUsers.end(); ++usersIt) {
-					const CUser& User = *usersIt->second;
+				for (const auto& it : allUsers) {
+					const CUser* pUser = it.second;
 					
 					// Count users which has loaded a render module
-					const CModules& userModules = User.GetModules();
+					const CModules& userModules = pUser->GetModules();
 					if (userModules.FindModule(Info.GetName())) {
 						usersWithRenderedModuleCount++;
 					}
 					// Count networks which has loaded a render module
-					const vector<CIRCNetwork*>& userNetworks = User.GetNetworks();
+					const vector<CIRCNetwork*>& userNetworks = pUser->GetNetworks();
 					networksCount += userNetworks.size();
-					for (unsigned int networkIndex = 0; networkIndex < userNetworks.size(); ++networkIndex)
+					for (const CIRCNetwork* pCurrentNetwork : userNetworks)
 					{
-						const CIRCNetwork *pCurrentNetwork = userNetworks[networkIndex];
 						if (pCurrentNetwork->GetModules().FindModule(Info.GetName())) {
 							networksWithRenderedModuleCount++;
 						}
@@ -1849,16 +1826,15 @@ public:
 		WebSock.GetRawParam("motd").Split("\n", vsArgs);
 		CZNC::Get().ClearMotd();
 
-		unsigned int a = 0;
-		for (a = 0; a < vsArgs.size(); a++) {
-			CZNC::Get().AddMotd(vsArgs[a].TrimRight_n());
+		for (const CString& sMotd : vsArgs) {
+			CZNC::Get().AddMotd(sMotd.TrimRight_n());
 		}
 
 		WebSock.GetRawParam("bindhosts").Split("\n", vsArgs);
 		CZNC::Get().ClearBindHosts();
 
-		for (a = 0; a < vsArgs.size(); a++) {
-			CZNC::Get().AddBindHost(vsArgs[a].Trim_n());
+		for (const CString& sHost : vsArgs) {
+			CZNC::Get().AddBindHost(sHost.Trim_n());
 		}
 
 		CZNC::Get().SetSkinName(WebSock.GetParam("skin"));
@@ -1866,9 +1842,9 @@ public:
 		set<CString> ssArgs;
 		WebSock.GetParamValues("loadmod", ssArgs);
 
-		for (set<CString>::iterator it = ssArgs.begin(); it != ssArgs.end(); ++it) {
+		for (const CString& s : ssArgs) {
 			CString sModRet;
-			CString sModName = (*it).TrimRight_n("\r");
+			CString sModName = s.TrimRight_n("\r");
 			CString sModLoadError;
 
 			if (!sModName.empty()) {
@@ -1895,17 +1871,15 @@ public:
 		const CModules& vCurMods = CZNC::Get().GetModules();
 		set<CString> ssUnloadMods;
 
-		for (a = 0; a < vCurMods.size(); a++) {
-			CModule* pCurMod = vCurMods[a];
-
+		for (const CModule* pCurMod : vCurMods) {
 			if (ssArgs.find(pCurMod->GetModName()) == ssArgs.end() &&
 					(CModInfo::GlobalModule != GetType() || pCurMod->GetModName() != GetModName())) {
 				ssUnloadMods.insert(pCurMod->GetModName());
 			}
 		}
 
-		for (set<CString>::iterator it2 = ssUnloadMods.begin(); it2 != ssUnloadMods.end(); ++it2) {
-			CZNC::Get().GetModules().UnloadModule(*it2);
+		for (const CString& sMod : ssUnloadMods) {
+			CZNC::Get().GetModules().UnloadModule(sMod);
 		}
 
 		if (!CZNC::Get().WriteConfig()) {
