@@ -51,14 +51,14 @@ class CPerform : public CModule {
 		Table.AddColumn("Perform");
 		Table.AddColumn("Expanded");
 
-		for (VCString::const_iterator it = m_vPerform.begin(); it != m_vPerform.end(); ++it, index++) {
+		for (const CString& sPerf : m_vPerform) {
 			Table.AddRow();
-			Table.SetCell("Id", CString(index));
-			Table.SetCell("Perform", *it);
+			Table.SetCell("Id", CString(index++));
+			Table.SetCell("Perform", sPerf);
 
-			CString sExpanded = ExpandString(*it);
+			CString sExpanded = ExpandString(sPerf);
 
-			if (sExpanded != *it) {
+			if (sExpanded != sPerf) {
 				Table.SetCell("Expanded", sExpanded);
 			}
 		}
@@ -128,8 +128,8 @@ public:
 	}
 
 	void OnIRCConnected() override {
-		for (VCString::const_iterator it = m_vPerform.begin(); it != m_vPerform.end(); ++it) {
-			PutIRC(ExpandString(*it));
+		for (const CString& sPerf : m_vPerform) {
+			PutIRC(ExpandString(sPerf));
 		}
 	}
 
@@ -146,15 +146,15 @@ public:
 			WebSock.GetRawParam("perform", true).Split("\n", vsPerf, false);
 			m_vPerform.clear();
 
-			for (VCString::const_iterator it = vsPerf.begin(); it != vsPerf.end(); ++it)
-				m_vPerform.push_back(ParsePerform(*it));
+			for (const CString& sPerf : vsPerf)
+				m_vPerform.push_back(ParsePerform(sPerf));
 
 			Save();
 		}
 
-		for (VCString::const_iterator it = m_vPerform.begin(); it != m_vPerform.end(); ++it) {
+		for (const CString& sPerf : m_vPerform) {
 			CTemplate& Row = Tmpl.AddRow("PerformLoop");
-			Row["Perform"] = *it;
+			Row["Perform"] = sPerf;
 		}
 
 		return true;
@@ -164,8 +164,8 @@ private:
 	void Save() {
 		CString sBuffer = "";
 
-		for (VCString::const_iterator it = m_vPerform.begin(); it != m_vPerform.end(); ++it) {
-			sBuffer += *it + "\n";
+		for (const CString& sPerf : m_vPerform) {
+			sBuffer += sPerf + "\n";
 		}
 		SetNV("Perform", sBuffer);
 	}
