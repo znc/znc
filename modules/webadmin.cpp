@@ -649,7 +649,7 @@ public:
 				Tmpl["Edit"] = "true";
 				Tmpl["Title"] = "Edit Channel" + CString(" [" + pChan->GetName() + "]") + " of Network [" + pNetwork->GetName() + "] of User [" + pNetwork->GetUser()->GetUserName() + "]";
 				Tmpl["ChanName"] = pChan->GetName();
-				Tmpl["BufferCount"] = CString(pChan->GetBufferCount());
+				Tmpl["BufferSize"] = CString(pChan->GetBufferCount());
 				Tmpl["DefModes"] = pChan->GetDefaultModes();
 				Tmpl["Key"] = pChan->GetKey();
 				breadChan["Text"] = "Edit Channel [" + pChan->GetName() + "]";
@@ -660,7 +660,7 @@ public:
 			} else {
 				Tmpl["Action"] = "addchan";
 				Tmpl["Title"] = "Add Channel" + CString(" for User [" + pUser->GetUserName() + "]");
-				Tmpl["BufferCount"] = CString(pUser->GetBufferCount());
+				Tmpl["BufferSize"] = CString(pUser->GetBufferCount());
 				Tmpl["DefModes"] = CString(pUser->GetDefaultChanModes());
 				Tmpl["InConfig"] = "true";
 				breadChan["Text"] = "Add Channel";
@@ -720,9 +720,9 @@ public:
 			}
 		}
 
-		unsigned int uBufferCount = WebSock.GetParam("buffercount").ToUInt();
-		if (pChan->GetBufferCount() != uBufferCount) {
-			pChan->SetBufferCount(uBufferCount, spSession->IsAdmin());
+		unsigned int uBufferSize = WebSock.GetParam("buffersize").ToUInt();
+		if (pChan->GetBufferCount() != uBufferSize) {
+			pChan->SetBufferCount(uBufferSize, spSession->IsAdmin());
 		}
 		pChan->SetDefaultModes(WebSock.GetParam("defmodes"));
 		pChan->SetInConfig(WebSock.GetParam("save").ToBool());
@@ -886,9 +886,9 @@ public:
 					l["CurModes"] = pChan->GetModeString();
 					l["DefModes"] = pChan->GetDefaultModes();
 					if (pChan->HasBufferCountSet()) {
-						l["BufferCount"] = CString(pChan->GetBufferCount());
+						l["BufferSize"] = CString(pChan->GetBufferCount());
 					} else {
-						l["BufferCount"] = CString(pChan->GetBufferCount()) + " (default)";
+						l["BufferSize"] = CString(pChan->GetBufferCount()) + " (default)";
 					}
 					l["Options"] = pChan->GetOptions();
 
