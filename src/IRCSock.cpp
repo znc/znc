@@ -638,9 +638,7 @@ void CIRCSock::ReadLine(const CString& sData) {
 			}
 		} else if (sCmd.Equals("MODE")) {
 			CString sTarget = sRest.Token(0);
-			CString sModes = sRest.Token(1, true);
-			if (sModes.Left(1) == ":")
-				sModes = sModes.substr(1);
+			CString sModes = sRest.Token(1, true).TrimPrefix_n(":");
 
 			CChan* pChan = m_pNetwork->FindChan(sTarget);
 			if (pChan) {

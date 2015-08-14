@@ -107,9 +107,7 @@ bool CConfig::Parse(CFile& file, CString& sErrorMsg)
 			sTag.Trim();
 			sValue.Trim();
 
-			if (sTag.Left(1) == "/") {
-				sTag = sTag.substr(1);
-
+			if (sTag.TrimPrefix("/")) {
 				if (!sValue.empty())
 					ERROR("Malformated closing tag. Expected \"</" << sTag << ">\".");
 				if (ConfigStack.empty())
@@ -153,8 +151,7 @@ bool CConfig::Parse(CFile& file, CString& sErrorMsg)
 
 		// Only remove the first space, people might want
 		// leading spaces (e.g. in the MOTD).
-		if (sValue.Left(1) == " ")
-			sValue.LeftChomp();
+		sValue.TrimPrefix(" ");
 
 		// We don't have any names with spaces, trim all
 		// leading/trailing spaces.

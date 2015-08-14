@@ -1055,9 +1055,8 @@ bool CIRCNetwork::AddServer(const CString& sName) {
 	CString sHost = sLine.Token(0);
 	CString sPort = sLine.Token(1);
 
-	if (sPort.Left(1) == "+") {
+	if (sPort.TrimPrefix("+")) {
 		bSSL = true;
-		sPort.LeftChomp();
 	}
 
 	unsigned short uPort = sPort.ToUShort();

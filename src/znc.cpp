@@ -1547,8 +1547,7 @@ bool CZNC::AddListener(const CString& sLine, CString& sError) {
 		sPort = sValue;
 	}
 
-	if (sPort.Left(1) == "+") {
-		sPort.LeftChomp();
+	if (sPort.TrimPrefix("+")) {
 		bSSL = true;
 	}
 

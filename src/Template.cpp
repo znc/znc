@@ -695,9 +695,8 @@ bool CTemplate::ValidExpr(const CString& sExpression) {
 	CString sName;
 	CString sValue;
 
-	if (sExpr.Left(1) == "!") {
+	if (sExpr.TrimPrefix("!")) {
 		bNegate = true;
-		sExpr.LeftChomp();
 	}
 
 	if (sExpr.find("!=") != CString::npos) {
@@ -810,8 +809,7 @@ CString CTemplate::GetValue(const CString& sArgs, bool bFromIf) {
 			return sRet;
 		}
 	} else {
-		if (sName.Left(1) == "*") {
-			sName.LeftChomp(1);
+		if (sName.TrimPrefix("*")) {
 			MCString::iterator it = find(sName);
 			sName = (it != end()) ? it->second : "";
 		}
