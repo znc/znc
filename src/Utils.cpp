@@ -277,9 +277,7 @@ bool CUtils::GetInput(const CString& sPrompt, CString& sRet, const CString& sDef
 	}
 	sInput = szBuf;
 
-	if (sInput.Right(1) == "\n") {
-		sInput.RightChomp();
-	}
+	sInput.TrimSuffix("\n");
 
 	if (sInput.empty()) {
 		sRet = sDefault;

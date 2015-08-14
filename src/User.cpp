@@ -269,10 +269,8 @@ bool CUser::ParseConfig(CConfig* pConfig, CString& sError) {
 	// Pass = <hash name>#<salted hash>#<salt>#
 	// 'Salted hash' means hash of 'password' + 'salt'
 	// Possible hashes are md5 and sha256
-	if (sValue.Right(1) == "-") {
-		sValue.RightChomp();
-		sValue.Trim();
-		SetPass(sValue, CUser::HASH_MD5);
+	if (sValue.TrimSuffix("-")) {
+		SetPass(sValue.Trim_n(), CUser::HASH_MD5);
 	} else {
 		CString sMethod = sValue.Token(0, false, "#");
 		CString sPass = sValue.Token(1, true, "#");

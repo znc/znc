@@ -533,9 +533,7 @@ CString CDir::ChangeDir(const CString& sPath, const CString& sAdd, const CString
 	sAddDir += "/";
 	CString sCurDir;
 
-	if (sRet.Right(1) == "/") {
-		sRet.RightChomp();
-	}
+	sRet.TrimSuffix("/");
 
 	for (unsigned int a = 0; a < sAddDir.size(); a++) {
 		switch (sAddDir[a]) {
