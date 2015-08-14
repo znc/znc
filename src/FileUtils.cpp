@@ -483,7 +483,7 @@ CString CFile::GetShortName() const { return m_sShortName; }
 CString CFile::GetDir() const {
 	CString sDir(m_sLongName);
 
-	while (!sDir.empty() && sDir.Right(1) != "/" && sDir.Right(1) != "\\") {
+	while (!sDir.empty() && !sDir.EndsWith("/") && !sDir.EndsWith("\\")) {
 		sDir.RightChomp();
 	}
 

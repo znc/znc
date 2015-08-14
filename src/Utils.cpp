@@ -466,7 +466,7 @@ namespace {
 			CString sName = pFile->GetShortName();
 			CString sFile = pFile->GetLongName();
 			if (sName == "posix" || sName == "right") continue; // these 2 dirs contain the same filenames
-			if (sName.Right(4) == ".tab" || sName == "posixrules" || sName == "localtime") continue;
+			if (sName.EndsWith(".tab") || sName == "posixrules" || sName == "localtime") continue;
 			if (pFile->IsDir()) {
 				if (sName == "Etc") {
 					FillTimezones(sFile, result, sPrefix);

@@ -119,7 +119,7 @@ CString CTemplate::ExpandFile(const CString& sFilename, bool bFromInc) {
 		CString sFilePath(CDir::ChangeDir(sRoot, sFile));
 
 		// Make sure path ends with a slash because "/foo/pub*" matches "/foo/public_keep_out/" but "/foo/pub/*" doesn't
-		if (!sRoot.empty() && sRoot.Right(1) != "/") {
+		if (!sRoot.empty() && !sRoot.EndsWith("/")) {
 			sRoot += "/";
 		}
 
@@ -164,7 +164,7 @@ void CTemplate::SetPath(const CString& sPaths) {
 CString CTemplate::MakePath(const CString& sPath) const {
 	CString sRet(CDir::ChangeDir("./", sPath + "/"));
 
-	if (!sRet.empty() && sRet.Right(1) != "/") {
+	if (!sRet.empty() && !sRet.EndsWith("/")) {
 		sRet += "/";
 	}
 

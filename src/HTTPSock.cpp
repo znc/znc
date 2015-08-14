@@ -333,21 +333,21 @@ bool CHTTPSock::PrintFile(const CString& sFileName, CString sContentType) {
 	}
 
 	if (sContentType.empty()) {
-		if (sFileName.Right(5).Equals(".html") || sFileName.Right(4).Equals(".htm")) {
+		if (sFileName.EndsWith(".html") || sFileName.EndsWith(".htm")) {
 			sContentType = "text/html; charset=utf-8";
-		} else if (sFileName.Right(4).Equals(".css")) {
+		} else if (sFileName.EndsWith(".css")) {
 			sContentType = "text/css; charset=utf-8";
-		} else if (sFileName.Right(3).Equals(".js")) {
+		} else if (sFileName.EndsWith(".js")) {
 			sContentType = "application/x-javascript; charset=utf-8";
-		} else if (sFileName.Right(4).Equals(".jpg")) {
+		} else if (sFileName.EndsWith(".jpg")) {
 			sContentType = "image/jpeg";
-		} else if (sFileName.Right(4).Equals(".gif")) {
+		} else if (sFileName.EndsWith(".gif")) {
 			sContentType = "image/gif";
-		} else if (sFileName.Right(4).Equals(".ico")) {
+		} else if (sFileName.EndsWith(".ico")) {
 			sContentType = "image/x-icon";
-		} else if (sFileName.Right(4).Equals(".png")) {
+		} else if (sFileName.EndsWith(".png")) {
 			sContentType = "image/png";
-		} else if (sFileName.Right(4).Equals(".bmp")) {
+		} else if (sFileName.EndsWith(".bmp")) {
 			sContentType = "image/bmp";
 		} else {
 			sContentType = "text/plain; charset=utf-8";
@@ -385,7 +385,7 @@ bool CHTTPSock::PrintFile(const CString& sFileName, CString sContentType) {
 		}
 
 #ifdef HAVE_ZLIB
-		bool bGzip = m_bAcceptGzip && (sContentType.StartsWith("text/") || sFileName.Right(3).Equals(".js"));
+		bool bGzip = m_bAcceptGzip && (sContentType.StartsWith("text/") || sFileName.EndsWith(".js"));
 
 		if (bGzip) {
 			DEBUG("- Sending gzip-compressed.");

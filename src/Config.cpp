@@ -87,7 +87,7 @@ bool CConfig::Parse(CFile& file, CString& sErrorMsg)
 
 		if (bCommented || sLine.StartsWith("/*")) {
 			/* Does this comment end on the same line again? */
-			bCommented = (sLine.Right(2) != "*/");
+			bCommented = (!sLine.EndsWith("*/"));
 
 			continue;
 		}
@@ -96,7 +96,7 @@ bool CConfig::Parse(CFile& file, CString& sErrorMsg)
 			continue;
 		}
 
-		if ((sLine.StartsWith("<")) && (sLine.Right(1) == ">")) {
+		if ((sLine.StartsWith("<")) && (sLine.EndsWith(">"))) {
 			sLine.LeftChomp();
 			sLine.RightChomp();
 			sLine.Trim();
