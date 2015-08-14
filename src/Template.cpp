@@ -343,7 +343,7 @@ bool CTemplate::Print(const CString& sFileName, ostream& oOut) {
 			CString sMid = CString(sLine.substr(0, iPos2)).Trim_n();
 
 			// Make sure we don't have a nested tag
-			if (sMid.find("<?") == CString::npos) {
+			if (!sMid.Contains("<?")) {
 				sLine = sLine.substr(iPos2 +2);
 				CString sAction = sMid.Token(0);
 				CString sArgs = sMid.Token(1, true);
@@ -699,26 +699,26 @@ bool CTemplate::ValidExpr(const CString& sExpression) {
 		bNegate = true;
 	}
 
-	if (sExpr.find("!=") != CString::npos) {
+	if (sExpr.Contains("!=")) {
 		sName = sExpr.Token(0, false, "!=").Trim_n();
 		sValue = sExpr.Token(1, true, "!=", false, "\"", "\"", true).Trim_n();
 		bNegate = !bNegate;
-	} else if (sExpr.find("==") != CString::npos) {
+	} else if (sExpr.Contains("==")) {
 		sName = sExpr.Token(0, false, "==").Trim_n();
 		sValue = sExpr.Token(1, true, "==", false, "\"", "\"", true).Trim_n();
-	} else if (sExpr.find(">=") != CString::npos) {
+	} else if (sExpr.Contains(">=")) {
 		sName = sExpr.Token(0, false, ">=").Trim_n();
 		sValue = sExpr.Token(1, true, ">=", false, "\"", "\"", true).Trim_n();
 		return (GetValue(sName, true).ToLong() >= sValue.ToLong());
-	} else if (sExpr.find("<=") != CString::npos) {
+	} else if (sExpr.Contains("<=")) {
 		sName = sExpr.Token(0, false, "<=").Trim_n();
 		sValue = sExpr.Token(1, true, "<=", false, "\"", "\"", true).Trim_n();
 		return (GetValue(sName, true).ToLong() <= sValue.ToLong());
-	} else if (sExpr.find(">") != CString::npos) {
+	} else if (sExpr.Contains(">")) {
 		sName = sExpr.Token(0, false, ">").Trim_n();
 		sValue = sExpr.Token(1, true, ">", false, "\"", "\"", true).Trim_n();
 		return (GetValue(sName, true).ToLong() > sValue.ToLong());
-	} else if (sExpr.find("<") != CString::npos) {
+	} else if (sExpr.Contains("<")) {
 		sName = sExpr.Token(0, false, "<").Trim_n();
 		sValue = sExpr.Token(1, true, "<", false, "\"", "\"", true).Trim_n();
 		return (GetValue(sName, true).ToLong() < sValue.ToLong());

@@ -1220,7 +1220,7 @@ bool CUser::DelCTCPReply(const CString& sCTCP) {
 }
 
 bool CUser::SetStatusPrefix(const CString& s) {
-	if ((!s.empty()) && (s.length() < 6) && (s.find(' ') == CString::npos)) {
+	if ((!s.empty()) && (s.length() < 6) && (!s.Contains(" "))) {
 		m_sStatusPrefix = (s.empty()) ? "*" : s;
 		return true;
 	}

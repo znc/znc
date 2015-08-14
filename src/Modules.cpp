@@ -495,7 +495,7 @@ bool CModule::AddCommand(const CModCommand& Command)
 {
 	if (Command.GetFunction() == nullptr)
 		return false;
-	if (Command.GetCommand().find(' ') != CString::npos)
+	if (Command.GetCommand().Contains(" "))
 		return false;
 	if (FindCommand(Command.GetCommand()) != nullptr)
 		return false;
@@ -1226,7 +1226,7 @@ bool CModules::FindModPath(const CString& sModule, CString& sModPath,
 		CString& sDataPath) {
 	CString sMod = sModule;
 	CString sDir = sMod;
-	if (sModule.find(".") == CString::npos)
+	if (!sModule.Contains("."))
 		sMod += ".so";
 
 	ModDirList dirs = GetModDirs();

@@ -670,7 +670,7 @@ CWebSock::EPageReqResult CWebSock::OnPageRequestInternal(const CString& sURI, CS
 		return PAGE_NOTFOUND;
 	} else if (sURI.StartsWith("/mods/") || sURI.StartsWith("/modfiles/")) {
 		// Make sure modules are treated as directories
-		if (!sURI.EndsWith("/") && sURI.find(".") == CString::npos && sURI.TrimLeft_n("/mods/").TrimLeft_n("/").find("/") == CString::npos) {
+		if (!sURI.EndsWith("/") && !sURI.Contains(".") && !sURI.TrimLeft_n("/mods/").TrimLeft_n("/").Contains("/")) {
 			Redirect(sURI + "/");
 			return PAGE_DONE;
 		}

@@ -1540,7 +1540,7 @@ bool CZNC::AddListener(const CString& sLine, CString& sError) {
 		sValue.Replace(":", " ");
 	}
 
-	if (sValue.find(" ") != CString::npos) {
+	if (sValue.Contains(" ")) {
 		sBindHost = sValue.Token(0, false, " ");
 		sPort = sValue.Token(1, true, " ");
 	} else {
