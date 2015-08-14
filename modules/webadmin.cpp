@@ -716,9 +716,13 @@ public:
 			}
 		}
 
-		unsigned int uBufferSize = WebSock.GetParam("buffersize").ToUInt();
-		if (pChan->GetBufferCount() != uBufferSize) {
-			pChan->SetBufferCount(uBufferSize, spSession->IsAdmin());
+		if (WebSock.GetParam("buffersize").empty()) {
+			pChan->ResetBufferCount();
+		} else {
+			unsigned int uBufferSize = WebSock.GetParam("buffersize").ToUInt();
+			if (pChan->GetBufferCount() != uBufferSize) {
+				pChan->SetBufferCount(uBufferSize, spSession->IsAdmin());
+			}
 		}
 		pChan->SetDefaultModes(WebSock.GetParam("defmodes"));
 		pChan->SetInConfig(WebSock.GetParam("save").ToBool());
