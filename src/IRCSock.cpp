@@ -1393,7 +1393,7 @@ void CIRCSock::SendAltNick(const CString& sBadNick) {
 			return;
 		}
 
-		cLetter = sBadNick.Right(1)[0];
+		cLetter = sBadNick.back();
 
 		if (cLetter == 'z') {
 			m_pNetwork->PutUser("No free nick found");
