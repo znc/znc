@@ -96,7 +96,7 @@ void CClient::ReadLine(const CString& sData) {
 
 	DEBUG("(" << GetFullName() << ") CLI -> ZNC [" << sLine << "]");
 
-	if (sLine.Left(1) == "@") {
+	if (sLine.StartsWith("@")) {
 		// TODO support message-tags properly
 		sLine = sLine.Token(1, true);
 	}
@@ -110,7 +110,7 @@ void CClient::ReadLine(const CString& sData) {
 	if (bReturn) return;
 
 	CString sCommand = sLine.Token(0);
-	if (sCommand.Left(1) == ":") {
+	if (sCommand.StartsWith(":")) {
 		// Evil client! Sending a nickmask prefix on client's command
 		// is bad, bad, bad, bad, bad, bad, bad, bad, BAD, B A D!
 		sLine = sLine.Token(1, true);

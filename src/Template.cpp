@@ -108,7 +108,7 @@ void CTemplate::Init() {
 }
 
 CString CTemplate::ExpandFile(const CString& sFilename, bool bFromInc) {
-	/*if (sFilename.Left(1) == "/" || sFilename.Left(2) == "./") {
+	/*if (sFilename.StartsWith("/") || sFilename.StartsWith("./")) {
 		return sFilename;
 	}*/
 
@@ -129,7 +129,7 @@ CString CTemplate::ExpandFile(const CString& sFilename, bool bFromInc) {
 		}
 
 		if (CFile::Exists(sFilePath)) {
-			if (sRoot.empty() || sFilePath.Left(sRoot.length()) == sRoot) {
+			if (sRoot.empty() || sFilePath.StartsWith(sRoot)) {
 				DEBUG("    Found  [" + sFilePath + "]");
 				return sFilePath;
 			} else {
@@ -451,15 +451,15 @@ bool CTemplate::Print(const CString& sFileName, ostream& oOut) {
 
 							CString sLoopName = sArgs.Token(0);
 							bool bReverse = (sArgs.Token(1).Equals("REVERSE"));
-							bool bSort = (sArgs.Token(1).Left(4).Equals("SORT"));
+							bool bSort = (sArgs.Token(1).StartsWith("SORT"));
 							vector<CTemplate*>* pvLoop = GetLoop(sLoopName);
 
 							if (bSort && pvLoop != nullptr &&  pvLoop->size() > 1) {
 								CString sKey;
 
-								if(sArgs.Token(1).TrimPrefix_n("SORT").Left(4).Equals("ASC=")) {
+								if(sArgs.Token(1).TrimPrefix_n("SORT").StartsWith("ASC=")) {
 									sKey = sArgs.Token(1).TrimPrefix_n("SORTASC=");
-								} else if(sArgs.Token(1).TrimPrefix_n("SORT").Left(5).Equals("DESC=")) {
+								} else if(sArgs.Token(1).TrimPrefix_n("SORT").StartsWith("DESC=")) {
 									sKey = sArgs.Token(1).TrimPrefix_n("SORTDESC=");
 									bReverse = true;
 								}
@@ -766,10 +766,10 @@ CTemplate* CTemplate::GetCurTemplate() {
 }
 
 CString CTemplate::ResolveLiteral(const CString& sString) {
-	if (sString.Left(2) == "**") {
+	if (sString.StartsWith("**")) {
 		// Allow string to start with a literal * by using two in a row
 		return sString.substr(1);
-	} else if (sString.Left(1) == "*") {
+	} else if (sString.StartsWith("*")) {
 		// If it starts with only one * then treat it as a var and do a lookup
 		return GetValue(sString.substr(1));
 	}

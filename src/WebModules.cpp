@@ -649,9 +649,9 @@ CWebSock::EPageReqResult CWebSock::OnPageRequestInternal(const CString& sURI, CS
 
 		Redirect("/"); // the login form is here
 		return PAGE_DONE;
-	} else if (sURI.Left(5) == "/pub/") {
+	} else if (sURI.StartsWith("/pub/")) {
 		return PrintStaticFile(sURI, sPageRet);
-	} else if (sURI.Left(11) == "/skinfiles/") {
+	} else if (sURI.StartsWith("/skinfiles/")) {
 		CString sSkinName = sURI.substr(11);
 		CString::size_type uPathStart = sSkinName.find("/");
 		if (uPathStart != CString::npos) {
@@ -668,7 +668,7 @@ CWebSock::EPageReqResult CWebSock::OnPageRequestInternal(const CString& sURI, CS
 			}
 		}
 		return PAGE_NOTFOUND;
-	} else if (sURI.Left(6) == "/mods/" || sURI.Left(10) == "/modfiles/") {
+	} else if (sURI.StartsWith("/mods/") || sURI.StartsWith("/modfiles/")) {
 		// Make sure modules are treated as directories
 		if (sURI.Right(1) != "/" && sURI.find(".") == CString::npos && sURI.TrimLeft_n("/mods/").TrimLeft_n("/").find("/") == CString::npos) {
 			Redirect(sURI + "/");
@@ -772,7 +772,7 @@ CWebSock::EPageReqResult CWebSock::OnPageRequestInternal(const CString& sURI, CS
 			AddModLoop("UserModLoop", *pModule);
 		}
 
-		if (sURI.Left(10) == "/modfiles/") {
+		if (sURI.StartsWith("/modfiles/")) {
 			m_Template.AppendPath(GetSkinPath(GetSkinName()) + "/mods/" + m_sModName + "/files/");
 			m_Template.AppendPath(pModule->GetModDataDir() + "/files/");
 

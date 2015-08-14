@@ -417,9 +417,9 @@ CString CZNC::ExpandConfigPath(const CString& sConfigFile, bool bAllowMkDir) {
 	if (sConfigFile.empty()) {
 		sRetPath = GetConfPath(bAllowMkDir) + "/znc.conf";
 	} else {
-		if (sConfigFile.Left(2) == "./" || sConfigFile.Left(3) == "../") {
+		if (sConfigFile.StartsWith("./") || sConfigFile.StartsWith("../")) {
 			sRetPath = GetCurPath() + "/" + sConfigFile;
-		} else if (sConfigFile.Left(1) != "/") {
+		} else if (!sConfigFile.StartsWith("/")) {
 			sRetPath = GetConfPath(bAllowMkDir) + "/" + sConfigFile;
 		} else {
 			sRetPath = sConfigFile;
@@ -1762,9 +1762,9 @@ CZNC::TrafficStatsMap CZNC::GetTrafficStats(TrafficStatsPair &Users,
 
 	for (Csock* pSock : m_Manager) {
 		CUser *pUser = nullptr;
-		if (pSock->GetSockName().Left(5) == "IRC::") {
+		if (pSock->GetSockName().StartsWith("IRC::")) {
 			pUser = ((CIRCSock *) pSock)->GetNetwork()->GetUser();
-		} else if (pSock->GetSockName().Left(5) == "USR::") {
+		} else if (pSock->GetSockName().StartsWith("USR::")) {
 			pUser = ((CClient*) pSock)->GetUser();
 		}
 

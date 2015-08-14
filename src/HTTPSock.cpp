@@ -385,7 +385,7 @@ bool CHTTPSock::PrintFile(const CString& sFileName, CString sContentType) {
 		}
 
 #ifdef HAVE_ZLIB
-		bool bGzip = m_bAcceptGzip && (sContentType.Left(5).Equals("text/") || sFileName.Right(3).Equals(".js"));
+		bool bGzip = m_bAcceptGzip && (sContentType.StartsWith("text/") || sFileName.Right(3).Equals(".js"));
 
 		if (bGzip) {
 			DEBUG("- Sending gzip-compressed.");

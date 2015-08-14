@@ -371,7 +371,7 @@ namespace {
 	 * ahead/east of GMT.)"
 	 */
 	inline CString FixGMT(CString sTZ) {
-		if (sTZ.length() >= 4 && sTZ.Left(3) == "GMT") {
+		if (sTZ.length() >= 4 && sTZ.StartsWith("GMT")) {
 			if (sTZ[3] == '+') {
 				sTZ[3] = '-';
 			} else if (sTZ[3] == '-') {

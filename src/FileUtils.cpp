@@ -46,7 +46,7 @@ CFile::~CFile() {
 }
 
 void CFile::SetFileName(const CString& sLongName) {
-	if (sLongName.Left(2) == "~/") {
+	if (sLongName.StartsWith("~/")) {
 		m_sLongName = CFile::GetHomePath() + sLongName.substr(1);
 	} else
 		m_sLongName = sLongName;
@@ -524,7 +524,7 @@ CString CDir::ChangeDir(const CString& sPath, const CString& sAdd, const CString
 
 	CString sAddDir(sAdd);
 
-	if (sAddDir.Left(2) == "~/") {
+	if (sAddDir.StartsWith("~/")) {
 		sAddDir.LeftChomp();
 		sAddDir = sHomeDir + sAddDir;
 	}
@@ -559,7 +559,7 @@ CString CDir::CheckPathPrefix(const CString& sPath, const CString& sAdd, const C
 	CString sPrefix = sPath.Replace_n("//", "/").TrimRight_n("/") + "/";
 	CString sAbsolutePath = ChangeDir(sPrefix, sAdd, sHomeDir);
 
-	if (sAbsolutePath.Left(sPrefix.length()) != sPrefix)
+	if (!sAbsolutePath.StartsWith(sPrefix))
 		return "";
 	return sAbsolutePath;
 }
@@ -576,7 +576,7 @@ bool CDir::MakeDir(const CString& sPath, mode_t iMode) {
 	}
 
 	// If this is an absolute path, we need to handle this now!
-	if (sPath.Left(1) == "/")
+	if (sPath.StartsWith("/"))
 		sDir = "/";
 
 	// For every single subpath, do...

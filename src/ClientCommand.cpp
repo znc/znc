@@ -1588,7 +1588,7 @@ void CClient::UserPortCommand(CString& sLine) {
 		if (sPort.empty() || sAddr.empty() || sAccept.empty()) {
 			PutStatus("Usage: AddPort <[+]port> <ipv4|ipv6|all> <web|irc|all> [bindhost [uriprefix]]");
 		} else {
-			bool bSSL = (sPort.Left(1).Equals("+"));
+			bool bSSL = (sPort.StartsWith("+"));
 			const CString sBindHost = sLine.Token(4);
 			const CString sURIPrefix = sLine.Token(5);
 
