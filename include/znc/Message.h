@@ -107,6 +107,8 @@ public:
 
 class CJoinMessage : public CTargetMessage {
 public:
+	CString GetKey() const { return GetParam(1); }
+	void SetKey(const CString& sKey) { SetParam(1, sKey); }
 };
 
 class CNickMessage : public CMessage {
