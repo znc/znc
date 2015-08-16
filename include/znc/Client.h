@@ -175,7 +175,45 @@ public:
 	void SetPlaybackActive(bool bActive) { m_bPlaybackActive = bActive; }
 
 	void PutIRC(const CString& sLine);
+	/** Sends a raw data line to the client.
+	 *  @param sLine The line to be sent.
+	 *
+	 *  The line is first passed \e unmodified to the \ref CModule::OnSendToClient()
+	 *  module hook. If no module halts the process, the line is then sent to the client.
+	 *
+	 *  These lines appear in the debug output in the following syntax:
+	 *  \code [time] (user/network) ZNC -> CLI [line] \endcode
+	 */
 	void PutClient(const CString& sLine);
+	/** Sends a message to the client.
+	 *  @param Message The message to be sent.
+	 *  @note  Only known and compatible message tags are sent.
+	 *
+	 *  Not all IRC clients are capable of handling arbitrary sets of message
+	 *  tags. For example, some older versions of some popular clients were
+	 *  prepared to parse just one interesting tag, \c time, and would break
+	 *  if multiple tags were included. Thus, in order to stay compatible with
+	 *  a variety of IRC clients, ZNC has to filter out message tags that the
+	 *  client has not explicitly requested.
+	 *
+	 *  The following table documents currently supported message tags, and
+	 *  which capabilities the client is required to have requested to receive
+	 *  the respective message tags.
+	 *
+	 *  Message tag | Capability
+	 *  ----------- | ----------
+	 *  \c time     | \l CClient::HasServerTime() (<a href="http://ircv3.net/specs/extensions/server-time-3.2.html">server-time</a>)
+	 *  \c batch    | \l CClient::HasBatch() (<a href="http://ircv3.net/specs/extensions/batch-3.2.html">batch</a>)
+	 *
+	 *  @warning Bypassing the filter may cause troubles to some older IRC clients.
+	 *
+	 *  It is possible to bypass the filter by converting a message to a string
+	 *  using \l CMessage::ToString(), and passing the resulting raw line to the
+	 *  \l CClient::PutClient(const CString& sLine) overload:
+	 *  \code
+	 *  pClient->PutClient(Message.ToString());
+	 *  \endcode
+	 */
 	void PutClient(const CMessage& Message);
 	unsigned int PutStatus(const CTable& table);
 	void PutStatus(const CString& sLine);
