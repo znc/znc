@@ -17,6 +17,7 @@
 #include <znc/Query.h>
 #include <znc/User.h>
 #include <znc/IRCNetwork.h>
+#include <znc/Message.h>
 
 using std::vector;
 
@@ -55,24 +56,23 @@ void CQuery::SendBuffer(CClient* pClient, const CBuffer& Buffer) {
 				size_t uSize = Buffer.Size();
 				for (size_t uIdx = 0; uIdx < uSize; uIdx++) {
 					const CBufLine& BufLine = Buffer.GetBufLine(uIdx);
-
+					CMessage Message(BufLine.GetLine(*pUseClient, MCString::EmptyMap));
 					if (!pUseClient->HasEchoMessage() && !pUseClient->HasSelfMessage()) {
-						CNick Sender(BufLine.GetFormat().Token(0));
-						if (Sender.NickEquals(pUseClient->GetNick())) {
+						if (Message.GetNick().NickEquals(pUseClient->GetNick())) {
 							continue;
 						}
 					}
-
-					CString sLine = BufLine.GetLine(*pUseClient, msParams);
+					Message.SetNetwork(m_pNetwork);
+					Message.SetClient(pUseClient);
+					Message.SetTime(BufLine.GetTime());
+					Message.SetTags(BufLine.GetTags());
 					if (bBatch) {
-						MCString msBatchTags = CUtils::GetMessageTags(sLine);
-						msBatchTags["batch"] = sBatchName;
-						CUtils::SetMessageTags(sLine, msBatchTags);
+						Message.SetTag("batch", sBatchName);
 					}
 					bool bContinue = false;
-					NETWORKMODULECALL(OnPrivBufferPlayLine2(*pUseClient, sLine, BufLine.GetTime()), m_pNetwork->GetUser(), m_pNetwork, nullptr, &bContinue);
+					NETWORKMODULECALL(OnPrivBufferPlayMessage(Message), m_pNetwork->GetUser(), m_pNetwork, nullptr, &bContinue);
 					if (bContinue) continue;
-					m_pNetwork->PutUser(sLine, pUseClient);
+					m_pNetwork->PutUser(Message, pUseClient);
 				}
 
 				if (bBatch) {

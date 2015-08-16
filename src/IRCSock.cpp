@@ -20,6 +20,7 @@
 #include <znc/IRCNetwork.h>
 #include <znc/Server.h>
 #include <znc/Query.h>
+#include <znc/Message.h>
 #include <time.h>
 
 using std::set;
@@ -156,29 +157,31 @@ void CIRCSock::ReadLine(const CString& sData) {
 	IRCSOCKMODULECALL(OnRaw(sLine), &bReturn);
 	if (bReturn) return;
 
-	if (sLine.StartsWith("PING ")) {
+	CMessage Message(sLine);
+	Message.SetNetwork(m_pNetwork);
+
+	CString sCmd = Message.GetCommand();
+
+	if (sCmd.Equals("PING")) {
 		// Generate a reply and don't forward this to any user,
 		// we don't want any PING forwarded
-		PutIRCQuick("PONG " + sLine.substr(5));
+		PutIRCQuick("PONG " + Message.GetParam(0));
 		return;
-	} else if (sLine.Token(1).Equals("PONG")) {
+	} else if (sCmd.Equals("PONG")) {
 		// Block PONGs, we already responded to the pings
 		return;
-	} else if (sLine.StartsWith("ERROR ")) {
+	} else if (sCmd.Equals("ERROR")) {
 		//ERROR :Closing Link: nick[24.24.24.24] (Excess Flood)
-		CString sError(sLine.substr(6));
-		sError.TrimPrefix();
+		CString sError = Message.GetParam(0);
 		m_pNetwork->PutStatus("Error from Server [" + sError + "]");
 		return;
 	}
 
-	CString sCmd = sLine.Token(1);
-
 	if ((sCmd.length() == 3) && (isdigit(sCmd[0])) && (isdigit(sCmd[1])) && (isdigit(sCmd[2]))) {
-		CString sServer = sLine.Token(0).LeftChomp_n();
+		CString sServer = Message.GetNick().GetHostMask();
 		unsigned int uRaw = sCmd.ToUInt();
-		CString sNick = sLine.Token(2);
-		CString sRest = sLine.Token(3, true);
+		CString sNick = Message.GetParam(0);
+		CString sRest = Message.GetParams(1);
 		CString sTmp;
 
 		switch (uRaw) {
@@ -224,9 +227,9 @@ void CIRCSock::ReadLine(const CString& sData) {
 				m_pNetwork->UpdateExactRawBuffer(":" + _NAMEDFMT(sServer) + " " + sCmd + " {target} " + _NAMEDFMT(sRest));
 				break;
 			case 10: { // :irc.server.com 010 nick <hostname> <port> :<info>
-				CString sHost = sRest.Token(0);
-				CString sPort = sRest.Token(1);
-				CString sInfo = sRest.Token(2, true).TrimPrefix_n();
+				CString sHost = Message.GetParam(1);
+				CString sPort = Message.GetParam(2);
+				CString sInfo = Message.GetParam(3);
 				m_pNetwork->PutStatus("Server [" + m_pNetwork->GetCurrentServer()->GetString(false) +
 						"] redirects us to [" + sHost + ":" + sPort + "] with reason [" + sInfo + "]");
 				m_pNetwork->PutStatus("Perhaps you want to add it as a new server.");
@@ -278,7 +281,7 @@ void CIRCSock::ReadLine(const CString& sData) {
 				CChan* pChan = m_pNetwork->FindChan(sRest.Token(0));
 
 				if (pChan) {
-					unsigned long ulDate = sLine.Token(4).ToULong();
+					unsigned long ulDate = Message.GetParam(2).ToULong();
 					pChan->SetCreationDate(ulDate);
 
 					if (!pChan->IsModeKnown()) {
@@ -296,7 +299,7 @@ void CIRCSock::ReadLine(const CString& sData) {
 				break;
 			case 331: {
 				// :irc.server.com 331 yournick #chan :No topic is set.
-				CChan* pChan = m_pNetwork->FindChan(sLine.Token(3));
+				CChan* pChan = m_pNetwork->FindChan(Message.GetParam(1));
 
 				if (pChan) {
 					pChan->SetTopic("");
@@ -309,11 +312,10 @@ void CIRCSock::ReadLine(const CString& sData) {
 			}
 			case 332: {
 				// :irc.server.com 332 yournick #chan :This is a topic
-				CChan* pChan = m_pNetwork->FindChan(sLine.Token(3));
+				CChan* pChan = m_pNetwork->FindChan(Message.GetParam(1));
 
 				if (pChan) {
-					CString sTopic = sLine.Token(4, true);
-					sTopic.LeftChomp();
+					CString sTopic = Message.GetParam(2);
 					pChan->SetTopic(sTopic);
 					if (pChan->IsDetached()) {
 						return;
@@ -324,11 +326,11 @@ void CIRCSock::ReadLine(const CString& sData) {
 			}
 			case 333: {
 				// :irc.server.com 333 yournick #chan setternick 1112320796
-				CChan* pChan = m_pNetwork->FindChan(sLine.Token(3));
+				CChan* pChan = m_pNetwork->FindChan(Message.GetParam(1));
 
 				if (pChan) {
-					sNick = sLine.Token(4);
-					unsigned long ulDate = sLine.Token(5).ToULong();
+					sNick = Message.GetParam(2);
+					unsigned long ulDate = Message.GetParam(3).ToULong();
 
 					pChan->SetTopicOwner(sNick);
 					pChan->SetTopicDate(ulDate);
@@ -342,13 +344,10 @@ void CIRCSock::ReadLine(const CString& sData) {
 			}
 			case 352: {  // WHO
 				// :irc.yourserver.com 352 yournick #chan ident theirhost.com irc.theirserver.com theirnick H :0 Real Name
-				sServer = sLine.Token(0);
-				sNick = sLine.Token(7);
-				CString sChan = sLine.Token(3);
-				CString sIdent = sLine.Token(4);
-				CString sHost = sLine.Token(5);
-
-				sServer.LeftChomp();
+				sNick = Message.GetParam(5);
+				CString sChan = Message.GetParam(1);
+				CString sIdent = Message.GetParam(2);
+				CString sHost = Message.GetParam(3);
 
 				if (sNick.Equals(GetNick())) {
 					m_Nick.SetIdent(sIdent);
@@ -370,7 +369,7 @@ void CIRCSock::ReadLine(const CString& sData) {
 					const vector<CClient*>& vClients = m_pNetwork->GetClients();
 					for (CClient* pClient : vClients) {
 						if (pClient->HasNamesx()) {
-							m_pNetwork->PutUser(sLine, pClient);
+							m_pNetwork->PutUser(Message, pClient);
 						} else {
 							// The client doesn't support multi-prefix so we need to remove
 							// the other prefixes.
@@ -380,6 +379,7 @@ void CIRCSock::ReadLine(const CString& sData) {
 							if (pos >= 2 && pos != CString::npos) {
 								sNewNick = sNick[0] + sNick.substr(pos);
 							}
+							// TODO: CMessage
 							CString sNewLine = sServer + " 352 " + sLine.Token(2) + " " +
 								sChan + " " + sIdent + " " + sHost + " " +
 								sLine.Token(6)  + " " + sNewNick + " " +
@@ -505,12 +505,11 @@ void CIRCSock::ReadLine(const CString& sData) {
 				return;
 		}
 	} else {
-		CNick Nick(sLine.Token(0).TrimPrefix_n());
-		sCmd = sLine.Token(1);
-		CString sRest = sLine.Token(2, true);
+		CNick Nick = Message.GetNick();
 
 		if (sCmd.Equals("NICK")) {
-			CString sNewNick = sRest.TrimPrefix_n();
+			CNickMessage& NickMsg = static_cast<CNickMessage&>(Message);
+			CString sNewNick = NickMsg.GetNewNick();
 			bool bIsVisible = false;
 
 			vector<CChan*> vFoundChans;
@@ -530,22 +529,22 @@ void CIRCSock::ReadLine(const CString& sData) {
 				// We are changing our own nick, the clients always must see this!
 				bIsVisible = false;
 				SetNick(sNewNick);
-				m_pNetwork->PutUser(sLine);
+				m_pNetwork->PutUser(Message);
 			}
 
-			IRCSOCKMODULECALL(OnNick(Nick, sNewNick, vFoundChans), NOTHING);
+			IRCSOCKMODULECALL(OnNickMessage(NickMsg, vFoundChans), NOTHING);
 
 			if (!bIsVisible) {
 				return;
 			}
 		} else if (sCmd.Equals("QUIT")) {
-			CString sMessage = sRest.TrimPrefix_n();
+			CQuitMessage& QuitMsg = static_cast<CQuitMessage&>(Message);
 			bool bIsVisible = false;
 
 			// :nick!ident@host.com QUIT :message
 
 			if (Nick.NickEquals(GetNick())) {
-				m_pNetwork->PutStatus("You quit [" + sMessage + "]");
+				m_pNetwork->PutStatus("You quit [" + QuitMsg.GetReason() + "]");
 				// We don't call module hooks and we don't
 				// forward this quit to clients (Some clients
 				// disconnect if they receive such a QUIT)
@@ -565,14 +564,15 @@ void CIRCSock::ReadLine(const CString& sData) {
 				}
 			}
 
-			IRCSOCKMODULECALL(OnQuit(Nick, sMessage, vFoundChans), NOTHING);
+			IRCSOCKMODULECALL(OnQuitMessage(QuitMsg, vFoundChans), NOTHING);
 
 			if (!bIsVisible) {
 				return;
 			}
 		} else if (sCmd.Equals("JOIN")) {
-			CString sChan = sRest.Token(0).TrimPrefix_n();
-			CChan* pChan;
+			CJoinMessage& JoinMsg = static_cast<CJoinMessage&>(Message);
+			CString sChan = JoinMsg.GetParam(0);
+			CChan* pChan = nullptr;
 
 			if (Nick.NickEquals(GetNick())) {
 				m_pNetwork->AddChan(sChan, false);
@@ -588,7 +588,8 @@ void CIRCSock::ReadLine(const CString& sData) {
 
 			if (pChan) {
 				pChan->AddNick(Nick.GetNickMask());
-				IRCSOCKMODULECALL(OnJoin(Nick.GetNickMask(), *pChan), NOTHING);
+				JoinMsg.SetChan(pChan);
+				IRCSOCKMODULECALL(OnJoinMessage(JoinMsg), NOTHING);
 
 				if (pChan->IsDetached()) {
 					return;
@@ -610,14 +611,15 @@ void CIRCSock::ReadLine(const CString& sData) {
 				}
 			}
 		} else if (sCmd.Equals("PART")) {
-			CString sChan = sRest.Token(0).TrimPrefix_n();
-			CString sMsg = sRest.Token(1, true).TrimPrefix_n();
+			CPartMessage& PartMsg = static_cast<CPartMessage&>(Message);
+			CString sChan = PartMsg.GetParam(0);
 
 			CChan* pChan = m_pNetwork->FindChan(sChan);
 			bool bDetached = false;
 			if (pChan) {
 				pChan->RemNick(Nick.GetNick());
-				IRCSOCKMODULECALL(OnPart(Nick.GetNickMask(), *pChan, sMsg), NOTHING);
+				PartMsg.SetChan(pChan);
+				IRCSOCKMODULECALL(OnPartMessage(PartMsg), NOTHING);
 
 				if (pChan->IsDetached())
 					bDetached = true;
@@ -637,8 +639,8 @@ void CIRCSock::ReadLine(const CString& sData) {
 				return;
 			}
 		} else if (sCmd.Equals("MODE")) {
-			CString sTarget = sRest.Token(0);
-			CString sModes = sRest.Token(1, true).TrimPrefix_n(":");
+			CString sTarget = Message.GetParam(0);
+			CString sModes = Message.GetParams(1);
 
 			CChan* pChan = m_pNetwork->FindChan(sTarget);
 			if (pChan) {
@@ -670,16 +672,16 @@ void CIRCSock::ReadLine(const CString& sData) {
 				}
 			}
 		} else if (sCmd.Equals("KICK")) {
+			CKickMessage& KickMsg = static_cast<CKickMessage&>(Message);
 			// :opnick!ident@host.com KICK #chan nick :msg
-			CString sChan = sRest.Token(0);
-			CString sKickedNick = sRest.Token(1);
-			CString sMsg = sRest.Token(2, true);
-			sMsg.LeftChomp();
+			CString sChan = KickMsg.GetParam(0);
+			CString sKickedNick = KickMsg.GetKickedNick();
 
 			CChan* pChan = m_pNetwork->FindChan(sChan);
 
 			if (pChan) {
-				IRCSOCKMODULECALL(OnKick(Nick, sKickedNick, *pChan, sMsg), NOTHING);
+				KickMsg.SetChan(pChan);
+				IRCSOCKMODULECALL(OnKickMessage(KickMsg), NOTHING);
 				// do not remove the nick till after the OnKick call, so modules
 				// can do Chan.FindNick or something to get more info.
 				pChan->RemNick(sKickedNick);
@@ -697,9 +699,8 @@ void CIRCSock::ReadLine(const CString& sData) {
 			}
 		} else if (sCmd.Equals("NOTICE")) {
 			// :nick!ident@host.com NOTICE #chan :Message
-			CString sTarget = sRest.Token(0);
-			CString sMsg = sRest.Token(1, true);
-			sMsg.LeftChomp();
+			CString sTarget = Message.GetParam(0);
+			CString sMsg = Message.GetParam(1);
 
 			if (sMsg.WildCmp("\001*\001")) {
 				sMsg.LeftChomp();
@@ -715,11 +716,11 @@ void CIRCSock::ReadLine(const CString& sData) {
 				return;
 			} else {
 				if (sTarget.Equals(GetNick())) {
-					if (OnPrivNotice(Nick, sMsg)) {
+					if (OnPrivNotice(Message)) {
 						return;
 					}
 				} else {
-					if (OnChanNotice(Nick, sTarget, sMsg)) {
+					if (OnChanNotice(Message)) {
 						return;
 					}
 				}
@@ -733,41 +734,38 @@ void CIRCSock::ReadLine(const CString& sData) {
 
 			return;
 		} else if (sCmd.Equals("TOPIC")) {
+			CTopicMessage& TopicMsg = static_cast<CTopicMessage&>(Message);
 			// :nick!ident@host.com TOPIC #chan :This is a topic
-			CChan* pChan = m_pNetwork->FindChan(sLine.Token(2));
+			CChan* pChan = m_pNetwork->FindChan(TopicMsg.GetParam(0));
 
 			if (pChan) {
-				CString sTopic = sLine.Token(3, true);
-				sTopic.LeftChomp();
-
-				IRCSOCKMODULECALL(OnTopic(Nick, *pChan, sTopic), &bReturn);
+				TopicMsg.SetChan(pChan);
+				IRCSOCKMODULECALL(OnTopicMessage(TopicMsg), &bReturn);
 				if (bReturn) return;
 
 				pChan->SetTopicOwner(Nick.GetNick());
 				pChan->SetTopicDate((unsigned long) time(nullptr));
-				pChan->SetTopic(sTopic);
+				pChan->SetTopic(TopicMsg.GetTopic());
 
 				if (pChan->IsDetached()) {
 					return; // Don't forward this
 				}
-
-				sLine = ":" + Nick.GetNickMask() + " TOPIC " + pChan->GetName() + " :" + sTopic;
 			}
 		} else if (sCmd.Equals("PRIVMSG")) {
 			// :nick!ident@host.com PRIVMSG #chan :Message
-			CString sTarget = sRest.Token(0);
-			CString sMsg = sRest.Token(1, true).TrimPrefix_n();
+			CString sTarget = Message.GetParam(0);
+			CString sMsg = Message.GetParam(1);
 
 			if (sMsg.WildCmp("\001*\001")) {
 				sMsg.LeftChomp();
 				sMsg.RightChomp();
 
 				if (sTarget.Equals(GetNick())) {
-					if (OnPrivCTCP(Nick, sMsg)) {
+					if (OnPrivCTCP(Message)) {
 						return;
 					}
 				} else {
-					if (OnChanCTCP(Nick, sTarget, sMsg)) {
+					if (OnChanCTCP(Message)) {
 						return;
 					}
 				}
@@ -776,11 +774,11 @@ void CIRCSock::ReadLine(const CString& sData) {
 				return;
 			} else {
 				if (sTarget.Equals(GetNick())) {
-					if (OnPrivMsg(Nick, sMsg)) {
+					if (OnPrivMsg(Message)) {
 						return;
 					}
 				} else {
-					if (OnChanMsg(Nick, sTarget, sMsg)) {
+					if (OnChanMsg(Message)) {
 						return;
 					}
 				}
@@ -790,7 +788,7 @@ void CIRCSock::ReadLine(const CString& sData) {
 			}
 		} else if (sCmd.Equals("WALLOPS")) {
 			// :blub!dummy@rox-8DBEFE92 WALLOPS :this is a test
-			CString sMsg = sRest.Token(0, true).TrimPrefix_n();
+			CString sMsg = Message.GetParam(0);
 
 			if (!m_pNetwork->IsUserOnline()) {
 				m_pNetwork->AddNoticeBuffer(":" + _NAMEDFMT(Nick.GetNickMask()) + " WALLOPS :{text}", sMsg);
@@ -798,10 +796,10 @@ void CIRCSock::ReadLine(const CString& sData) {
 		} else if (sCmd.Equals("CAP")) {
 			// CAPs are supported only before authorization.
 			if (!m_bAuthed) {
-				// sRest.Token(0) is most likely "*". No idea why, the
+				// The first parameter is most likely "*". No idea why, the
 				// CAP spec don't mention this, but all implementations
 				// I've seen add this extra asterisk
-				CString sSubCmd = sRest.Token(1);
+				CString sSubCmd = Message.GetParam(1);
 
 				// If the caplist of a reply is too long, it's split
 				// into multiple replies. A "*" is prepended to show
@@ -815,10 +813,10 @@ void CIRCSock::ReadLine(const CString& sData) {
 				// to recognize past request of NAK by 100 chars
 				// of this reply.
 				CString sArgs;
-				if (sRest.Token(2) == "*") {
-					sArgs = sRest.Token(3, true).TrimPrefix_n();
+				if (Message.GetParam(2) == "*") {
+					sArgs = Message.GetParam(3);
 				} else {
-					sArgs = sRest.Token(2, true).TrimPrefix_n();
+					sArgs = Message.GetParam(2);
 				}
 
 				std::map<CString, std::function<void(bool bVal)>> mSupportedCaps = {
@@ -879,7 +877,7 @@ void CIRCSock::ReadLine(const CString& sData) {
 		}
 	}
 
-	m_pNetwork->PutUser(sLine);
+	m_pNetwork->PutUser(Message);
 }
 
 void CIRCSock::SendNextCap() {
@@ -917,31 +915,34 @@ bool CIRCSock::OnCTCPReply(CNick& Nick, CString& sMessage) {
 	return bResult;
 }
 
-bool CIRCSock::OnPrivCTCP(CNick& Nick, CString& sMessage) {
+bool CIRCSock::OnPrivCTCP(CMessage& Message) {
+	CPrivCTCP& PrivCTCP = static_cast<CPrivCTCP&>(Message);
 	bool bResult = false;
-	IRCSOCKMODULECALL(OnPrivCTCP(Nick, sMessage), &bResult);
+	IRCSOCKMODULECALL(OnPrivCTCPMessage(PrivCTCP), &bResult);
 	if (bResult) return true;
 
-	if (sMessage.TrimPrefix("ACTION ")) {
+	if (PrivCTCP.GetText().StartsWith("ACTION ")) {
 		bResult = false;
-		IRCSOCKMODULECALL(OnPrivAction(Nick, sMessage), &bResult);
+		CPrivAction& PrivAction = static_cast<CPrivAction&>(Message);
+		IRCSOCKMODULECALL(OnPrivActionMessage(PrivAction), &bResult);
 		if (bResult) return true;
 
 		if (!m_pNetwork->IsUserOnline() || !m_pNetwork->GetUser()->AutoClearQueryBuffer()) {
+			const CNick& Nick = PrivAction.GetNick();
 			CQuery* pQuery = m_pNetwork->AddQuery(Nick.GetNick());
 			if (pQuery) {
-				pQuery->AddBuffer(":" + _NAMEDFMT(Nick.GetNickMask()) + " PRIVMSG {target} :\001ACTION {text}\001", sMessage);
+				pQuery->AddBuffer(":" + _NAMEDFMT(Nick.GetNickMask()) + " PRIVMSG {target} :\001ACTION {text}\001", PrivAction.GetText(), &PrivAction.GetTime(), PrivAction.GetTags());
 			}
 		}
-
-		sMessage = "ACTION " + sMessage;
 	}
 
 	// This handles everything which wasn't handled yet
-	return OnGeneralCTCP(Nick, sMessage);
+	return OnGeneralCTCP(Message);
 }
 
-bool CIRCSock::OnGeneralCTCP(CNick& Nick, CString& sMessage) {
+bool CIRCSock::OnGeneralCTCP(CMessage& Message) {
+	const CNick& Nick = Message.GetNick();
+	const CString& sMessage = Message.GetParam(1);
 	const MCString& mssCTCPReplies = m_pNetwork->GetUser()->GetCTCPReplies();
 	CString sQuery = sMessage.Token(0).AsUpper();
 	MCString::const_iterator it = mssCTCPReplies.find(sQuery);
@@ -985,83 +986,92 @@ bool CIRCSock::OnGeneralCTCP(CNick& Nick, CString& sMessage) {
 	return false;
 }
 
-bool CIRCSock::OnPrivNotice(CNick& Nick, CString& sMessage) {
+bool CIRCSock::OnPrivNotice(CMessage& Message) {
+	CPrivNotice& PrivNotice = static_cast<CPrivNotice&>(Message);
 	bool bResult = false;
-	IRCSOCKMODULECALL(OnPrivNotice(Nick, sMessage), &bResult);
+	IRCSOCKMODULECALL(OnPrivNoticeMessage(PrivNotice), &bResult);
 	if (bResult) return true;
 
 	if (!m_pNetwork->IsUserOnline()) {
 		// If the user is detached, add to the buffer
-		m_pNetwork->AddNoticeBuffer(":" + _NAMEDFMT(Nick.GetNickMask()) + " NOTICE {target} :{text}", sMessage);
+		m_pNetwork->AddNoticeBuffer(":" + _NAMEDFMT(PrivNotice.GetNick().GetNickMask()) + " NOTICE {target} :{text}", PrivNotice.GetText());
 	}
 
 	return false;
 }
 
-bool CIRCSock::OnPrivMsg(CNick& Nick, CString& sMessage) {
+bool CIRCSock::OnPrivMsg(CMessage& Message) {
+	CPrivMessage& PrivMsg = static_cast<CPrivMessage&>(Message);
 	bool bResult = false;
-	IRCSOCKMODULECALL(OnPrivMsg(Nick, sMessage), &bResult);
+	IRCSOCKMODULECALL(OnPrivMessage(PrivMsg), &bResult);
 	if (bResult) return true;
 
 	if (!m_pNetwork->IsUserOnline() || !m_pNetwork->GetUser()->AutoClearQueryBuffer()) {
+		const CNick& Nick = PrivMsg.GetNick();
 		CQuery* pQuery = m_pNetwork->AddQuery(Nick.GetNick());
 		if (pQuery) {
-			pQuery->AddBuffer(":" + _NAMEDFMT(Nick.GetNickMask()) + " PRIVMSG {target} :{text}", sMessage);
+			pQuery->AddBuffer(":" + _NAMEDFMT(Nick.GetNickMask()) + " PRIVMSG {target} :{text}", PrivMsg.GetText(), &PrivMsg.GetTime(), PrivMsg.GetTags());
 		}
 	}
 
 	return false;
 }
 
-bool CIRCSock::OnChanCTCP(CNick& Nick, const CString& sChan, CString& sMessage) {
-	CChan* pChan = m_pNetwork->FindChan(sChan);
+bool CIRCSock::OnChanCTCP(CMessage& Message) {
+	CChanCTCP& ChanCTCP = static_cast<CChanCTCP&>(Message);
+	CChan* pChan = m_pNetwork->FindChan(ChanCTCP.GetParam(0));
 	if (pChan) {
 		bool bResult = false;
-		IRCSOCKMODULECALL(OnChanCTCP(Nick, *pChan, sMessage), &bResult);
+		ChanCTCP.SetChan(pChan);
+		IRCSOCKMODULECALL(OnChanCTCPMessage(ChanCTCP), &bResult);
 		if (bResult) return true;
 
 		// Record a /me
-		if (sMessage.TrimPrefix("ACTION ")) {
+		if (ChanCTCP.GetText().StartsWith("ACTION ")) {
 			bResult = false;
-			IRCSOCKMODULECALL(OnChanAction(Nick, *pChan, sMessage), &bResult);
+			CChanAction& ChanAction = static_cast<CChanAction&>(Message);
+			IRCSOCKMODULECALL(OnChanActionMessage(ChanAction), &bResult);
 			if (bResult) return true;
 			if (!pChan->AutoClearChanBuffer() || !m_pNetwork->IsUserOnline() || pChan->IsDetached()) {
-				pChan->AddBuffer(":" + _NAMEDFMT(Nick.GetNickMask()) + " PRIVMSG " + _NAMEDFMT(sChan) + " :\001ACTION {text}\001", sMessage);
+				pChan->AddBuffer(":" + _NAMEDFMT(Message.GetNick().GetNickMask()) + " PRIVMSG " + _NAMEDFMT(pChan->GetName()) + " :\001ACTION {text}\001", ChanAction.GetText(), &ChanAction.GetTime(), ChanAction.GetTags());
 			}
-			sMessage = "ACTION " + sMessage;
 		}
 	}
 
-	if (OnGeneralCTCP(Nick, sMessage))
+	if (OnGeneralCTCP(Message))
 		return true;
 
 	return (pChan && pChan->IsDetached());
 }
 
-bool CIRCSock::OnChanNotice(CNick& Nick, const CString& sChan, CString& sMessage) {
-	CChan* pChan = m_pNetwork->FindChan(sChan);
+bool CIRCSock::OnChanNotice(CMessage& Message) {
+	CChanNotice& ChanNotice = static_cast<CChanNotice&>(Message);
+	CChan* pChan = m_pNetwork->FindChan(ChanNotice.GetParam(0));
 	if (pChan) {
 		bool bResult = false;
-		IRCSOCKMODULECALL(OnChanNotice(Nick, *pChan, sMessage), &bResult);
+		ChanNotice.SetChan(pChan);
+		IRCSOCKMODULECALL(OnChanNoticeMessage(ChanNotice), &bResult);
 		if (bResult) return true;
 
 		if (!pChan->AutoClearChanBuffer() || !m_pNetwork->IsUserOnline() || pChan->IsDetached()) {
-			pChan->AddBuffer(":" + _NAMEDFMT(Nick.GetNickMask()) + " NOTICE " + _NAMEDFMT(sChan) + " :{text}", sMessage);
+			pChan->AddBuffer(":" + _NAMEDFMT(ChanNotice.GetNick().GetNickMask()) + " NOTICE " + _NAMEDFMT(pChan->GetName()) + " :{text}", ChanNotice.GetText(), &ChanNotice.GetTime(), ChanNotice.GetTags());
 		}
 	}
 
 	return ((pChan) && (pChan->IsDetached()));
 }
 
-bool CIRCSock::OnChanMsg(CNick& Nick, const CString& sChan, CString& sMessage) {
-	CChan* pChan = m_pNetwork->FindChan(sChan);
+bool CIRCSock::OnChanMsg(CMessage& Message) {
+	CChanMessage& ChanMsg = static_cast<CChanMessage&>(Message);
+	CChan* pChan = m_pNetwork->FindChan(ChanMsg.GetParam(0));
 	if (pChan) {
 		bool bResult = false;
-		IRCSOCKMODULECALL(OnChanMsg(Nick, *pChan, sMessage), &bResult);
+		ChanMsg.SetChan(pChan);
+		IRCSOCKMODULECALL(OnChanMessage(ChanMsg), &bResult);
 		if (bResult) return true;
 
 		if (!pChan->AutoClearChanBuffer() || !m_pNetwork->IsUserOnline() || pChan->IsDetached()) {
-			pChan->AddBuffer(":" + _NAMEDFMT(Nick.GetNickMask()) + " PRIVMSG " + _NAMEDFMT(sChan) + " :{text}", sMessage);
+			pChan->AddBuffer(":" + _NAMEDFMT(ChanMsg.GetNick().GetNickMask()) + " PRIVMSG " + _NAMEDFMT(pChan->GetName()) + " :{text}", ChanMsg.GetText(), &ChanMsg.GetTime(), ChanMsg.GetTags());
 		}
 	}
 

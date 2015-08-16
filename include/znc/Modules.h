@@ -21,6 +21,7 @@
 #include <znc/WebModules.h>
 #include <znc/Utils.h>
 #include <znc/Threads.h>
+#include <znc/Message.h>
 #include <znc/main.h>
 #include <functional>
 #include <set>
@@ -593,6 +594,7 @@ public:
 	 *  @param vChans List of channels which you and nick share.
 	 */
 	virtual void OnQuit(const CNick& Nick, const CString& sMessage, const std::vector<CChan*>& vChans);
+	virtual void OnQuitMessage(CQuitMessage& Message, const std::vector<CChan*>& vChans);
 	/** Called when a nickname change occurs. If we are changing our nick,
 	 *  sNewNick will equal m_pIRCSock->GetNick().
 	 *  @param Nick The nick which changed its nickname
@@ -600,6 +602,7 @@ public:
 	 *  @param vChans Channels which we and nick share.
 	 */
 	virtual void OnNick(const CNick& Nick, const CString& sNewNick, const std::vector<CChan*>& vChans);
+	virtual void OnNickMessage(CNickMessage& Message, const std::vector<CChan*>& vChans);
 	/** Called when a nick is kicked from a channel.
 	 *  @param OpNick The nick which generated the kick.
 	 *  @param sKickedNick The nick which was kicked.
@@ -607,6 +610,7 @@ public:
 	 *  @param sMessage The kick message.
 	 */
 	virtual void OnKick(const CNick& OpNick, const CString& sKickedNick, CChan& Channel, const CString& sMessage);
+	virtual void OnKickMessage(CKickMessage& Message);
 	/** This module hook is called just before ZNC tries to join an IRC channel.
 	 *  @param Chan The channel which is about to get joined.
 	 *  @return See CModule::EModRet.
@@ -617,12 +621,14 @@ public:
 	 *  @param Channel The channel which was joined.
 	 */
 	virtual void OnJoin(const CNick& Nick, CChan& Channel);
+	virtual void OnJoinMessage(CJoinMessage& Message);
 	/** Called when a nick parts a channel.
 	 *  @param Nick The nick who parted.
 	 *  @param Channel The channel which was parted.
 	 *  @param sMessage The part message.
 	 */
 	virtual void OnPart(const CNick& Nick, CChan& Channel, const CString& sMessage);
+	virtual void OnPartMessage(CPartMessage& Message);
 	/** Called when user is invited into a channel
 	 *  @param Nick The nick who invited you.
 	 *  @param sChan The channel the user got invited into
@@ -652,6 +658,7 @@ public:
 	 */
 	virtual EModRet OnChanBufferPlayLine2(CChan& Chan, CClient& Client, CString& sLine, const timeval& tv);
 	virtual EModRet OnChanBufferPlayLine(CChan& Chan, CClient& Client, CString& sLine);
+	virtual EModRet OnChanBufferPlayMessage(CMessage& Message);
 	/** Called when a line from the query buffer is played back.
 	 *  @param Client The client this line will go to.
 	 *  @param sLine The raw IRC traffic line from the buffer.
@@ -660,6 +667,7 @@ public:
 	 */
 	virtual EModRet OnPrivBufferPlayLine2(CClient& Client, CString& sLine, const timeval& tv);
 	virtual EModRet OnPrivBufferPlayLine(CClient& Client, CString& sLine);
+	virtual EModRet OnPrivBufferPlayMessage(CMessage& Message);
 
 	/** Called when a client successfully logged in to ZNC. */
 	virtual void OnClientLogin();
@@ -749,6 +757,7 @@ public:
 	 *  @return See CModule::EModRet.
 	 */
 	virtual EModRet OnPrivCTCP(CNick& Nick, CString& sMessage);
+	virtual EModRet OnPrivCTCPMessage(CPrivCTCP& Message);
 	/** Called when we receive a channel CTCP request <em>from IRC</em>.
 	 *  @param Nick The nick the CTCP request is from.
 	 *  @param Channel The channel to which the request was sent.
@@ -756,6 +765,7 @@ public:
 	 *  @return See CModule::EModRet.
 	 */
 	virtual EModRet OnChanCTCP(CNick& Nick, CChan& Channel, CString& sMessage);
+	virtual EModRet OnChanCTCPMessage(CChanCTCP& Message);
 	/** Called when we receive a private CTCP ACTION ("/me" in query) <em>from IRC</em>.
 	 *  This is called after CModule::OnPrivCTCP().
 	 *  @param Nick The nick the action came from.
@@ -763,6 +773,7 @@ public:
 	 *  @return See CModule::EModRet.
 	 */
 	virtual EModRet OnPrivAction(CNick& Nick, CString& sMessage);
+	virtual EModRet OnPrivActionMessage(CPrivAction& Message);
 	/** Called when we receive a channel CTCP ACTION ("/me" in a channel) <em>from IRC</em>.
 	 *  This is called after CModule::OnChanCTCP().
 	 *  @param Nick The nick the action came from.
@@ -771,12 +782,14 @@ public:
 	 *  @return See CModule::EModRet.
 	 */
 	virtual EModRet OnChanAction(CNick& Nick, CChan& Channel, CString& sMessage);
+	virtual EModRet OnChanActionMessage(CChanAction& Message);
 	/** Called when we receive a private message <em>from IRC</em>.
 	 *  @param Nick The nick which sent the message.
 	 *  @param sMessage The message.
 	 *  @return See CModule::EModRet.
 	 */
 	virtual EModRet OnPrivMsg(CNick& Nick, CString& sMessage);
+	virtual EModRet OnPrivMessage(CPrivMessage& Message);
 	/** Called when we receive a channel message <em>from IRC</em>.
 	 *  @param Nick The nick which sent the message.
 	 *  @param Channel The channel to which the message was sent.
@@ -784,12 +797,14 @@ public:
 	 *  @return See CModule::EModRet.
 	 */
 	virtual EModRet OnChanMsg(CNick& Nick, CChan& Channel, CString& sMessage);
+	virtual EModRet OnChanMessage(CChanMessage& Message);
 	/** Called when we receive a private notice.
 	 *  @param Nick The nick which sent the notice.
 	 *  @param sMessage The notice message.
 	 *  @return See CModule::EModRet.
 	 */
 	virtual EModRet OnPrivNotice(CNick& Nick, CString& sMessage);
+	virtual EModRet OnPrivNoticeMessage(CPrivNotice& Message);
 	/** Called when we receive a channel notice.
 	 *  @param Nick The nick which sent the notice.
 	 *  @param Channel The channel to which the notice was sent.
@@ -797,6 +812,7 @@ public:
 	 *  @return See CModule::EModRet.
 	 */
 	virtual EModRet OnChanNotice(CNick& Nick, CChan& Channel, CString& sMessage);
+	virtual EModRet OnChanNoticeMessage(CChanNotice& Message);
 	/** Called when we receive a channel topic change <em>from IRC</em>.
 	 *  @param Nick The nick which changed the topic.
 	 *  @param Channel The channel whose topic was changed.
@@ -804,6 +820,7 @@ public:
 	 *  @return See CModule::EModRet.
 	 */
 	virtual EModRet OnTopic(CNick& Nick, CChan& Channel, CString& sTopic);
+	virtual EModRet OnTopicMessage(CTopicMessage& Message);
 
 	/** Called for every CAP received via CAP LS from server.
 	 *  @param sCap capability supported by server.
@@ -1186,11 +1203,16 @@ public:
 	bool OnModCTCP(const CString& sMessage);
 
 	bool OnQuit(const CNick& Nick, const CString& sMessage, const std::vector<CChan*>& vChans);
+	bool OnQuitMessage(CQuitMessage& Message, const std::vector<CChan*>& vChans);
 	bool OnNick(const CNick& Nick, const CString& sNewNick, const std::vector<CChan*>& vChans);
+	bool OnNickMessage(CNickMessage& Message, const std::vector<CChan*>& vChans);
 	bool OnKick(const CNick& Nick, const CString& sOpNick, CChan& Channel, const CString& sMessage);
+	bool OnKickMessage(CKickMessage& Message);
 	bool OnJoining(CChan& Channel);
 	bool OnJoin(const CNick& Nick, CChan& Channel);
+	bool OnJoinMessage(CJoinMessage& Message);
 	bool OnPart(const CNick& Nick, CChan& Channel, const CString& sMessage);
+	bool OnPartMessage(CPartMessage& Message);
 	bool OnInvite(const CNick& Nick, const CString& sChan);
 
 	bool OnChanBufferStarting(CChan& Chan, CClient& Client);
@@ -1199,6 +1221,8 @@ public:
 	bool OnChanBufferPlayLine(CChan& Chan, CClient& Client, CString& sLine);
 	bool OnPrivBufferPlayLine2(CClient& Client, CString& sLine, const timeval& tv);
 	bool OnPrivBufferPlayLine(CClient& Client, CString& sLine);
+	bool OnChanBufferPlayMessage(CMessage& Message);
+	bool OnPrivBufferPlayMessage(CMessage& Message);
 
 	bool OnClientLogin();
 	bool OnClientDisconnect();
@@ -1216,14 +1240,23 @@ public:
 
 	bool OnCTCPReply(CNick& Nick, CString& sMessage);
 	bool OnPrivCTCP(CNick& Nick, CString& sMessage);
+	bool OnPrivCTCPMessage(CPrivCTCP& Message);
 	bool OnChanCTCP(CNick& Nick, CChan& Channel, CString& sMessage);
+	bool OnChanCTCPMessage(CChanCTCP& Message);
 	bool OnPrivAction(CNick& Nick, CString& sMessage);
+	bool OnPrivActionMessage(CPrivAction& Message);
 	bool OnChanAction(CNick& Nick, CChan& Channel, CString& sMessage);
+	bool OnChanActionMessage(CChanAction& Message);
 	bool OnPrivMsg(CNick& Nick, CString& sMessage);
+	bool OnPrivMessage(CPrivMessage& Message);
 	bool OnChanMsg(CNick& Nick, CChan& Channel, CString& sMessage);
+	bool OnChanMessage(CChanMessage& Message);
 	bool OnPrivNotice(CNick& Nick, CString& sMessage);
+	bool OnPrivNoticeMessage(CPrivNotice& Message);
 	bool OnChanNotice(CNick& Nick, CChan& Channel, CString& sMessage);
+	bool OnChanNoticeMessage(CChanNotice& Message);
 	bool OnTopic(CNick& Nick, CChan& Channel, CString& sTopic);
+	bool OnTopicMessage(CTopicMessage& Message);
 	bool OnTimerAutoJoin(CChan& Channel);
 
 	bool OnAddNetwork(CIRCNetwork& Network, CString& sErrorRet);

@@ -44,12 +44,12 @@ LIB_SRCS  := ZNCString.cpp Csocket.cpp znc.cpp IRCNetwork.cpp User.cpp IRCSock.c
 	Client.cpp Chan.cpp Nick.cpp Server.cpp Modules.cpp MD5.cpp Buffer.cpp Utils.cpp \
 	FileUtils.cpp HTTPSock.cpp Template.cpp ClientCommand.cpp Socket.cpp SHA256.cpp \
 	WebModules.cpp Listener.cpp Config.cpp ZNCDebug.cpp Threads.cpp version.cpp Query.cpp \
-	SSLVerifyHost.cpp
+	SSLVerifyHost.cpp Message.cpp
 LIB_SRCS  := $(addprefix src/,$(LIB_SRCS))
 BIN_SRCS  := src/main.cpp
 LIB_OBJS  := $(patsubst %cpp,%o,$(LIB_SRCS))
 BIN_OBJS  := $(patsubst %cpp,%o,$(BIN_SRCS))
-TESTS     := StringTest ConfigTest UtilsTest ThreadTest NickTest ClientTest NetworkTest
+TESTS     := StringTest ConfigTest UtilsTest ThreadTest NickTest ClientTest NetworkTest MessageTest
 TESTS     := $(addprefix test/,$(addsuffix .o,$(TESTS)))
 CLEAN     := znc src/*.o test/*.o core core.* .version_extra .depend modules/.depend \
 	unittest $(LIBZNC)

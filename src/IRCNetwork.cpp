@@ -22,6 +22,7 @@
 #include <znc/Server.h>
 #include <znc/Chan.h>
 #include <znc/Query.h>
+#include <znc/Message.h>
 #include <algorithm>
 #include <memory>
 
@@ -642,11 +643,15 @@ void CIRCNetwork::ClientConnected(CClient *pClient) {
 	uSize = m_NoticeBuffer.Size();
 	for (uIdx = 0; uIdx < uSize; uIdx++) {
 		const CBufLine& BufLine = m_NoticeBuffer.GetBufLine(uIdx);
-		CString sLine = BufLine.GetLine(*pClient, msParams);
+		CMessage Message(BufLine.GetLine(*pClient, msParams));
+		Message.SetNetwork(this);
+		Message.SetClient(pClient);
+		Message.SetTime(BufLine.GetTime());
+		Message.SetTags(BufLine.GetTags());
 		bool bContinue = false;
-		NETWORKMODULECALL(OnPrivBufferPlayLine2(*pClient, sLine, BufLine.GetTime()), m_pUser, this, nullptr, &bContinue);
+		NETWORKMODULECALL(OnPrivBufferPlayMessage(Message), m_pUser, this, nullptr, &bContinue);
 		if (bContinue) continue;
-		pClient->PutClient(sLine);
+		pClient->PutClient(Message);
 	}
 	m_NoticeBuffer.Clear();
 
@@ -716,6 +721,20 @@ bool CIRCNetwork::PutUser(const CString& sLine, CClient* pClient, CClient* pSkip
 	for (CClient* pEachClient : m_vClients) {
 		if ((!pClient || pClient == pEachClient) && pSkipClient != pEachClient) {
 			pEachClient->PutClient(sLine);
+
+			if (pClient) {
+				return true;
+			}
+		}
+	}
+
+	return (pClient == nullptr);
+}
+
+bool CIRCNetwork::PutUser(const CMessage& Message, CClient* pClient, CClient* pSkipClient) {
+	for (CClient* pEachClient : m_vClients) {
+		if ((!pClient || pClient == pEachClient) && pSkipClient != pEachClient) {
+			pEachClient->PutClient(Message);
 
 			if (pClient) {
 				return true;

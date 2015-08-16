@@ -96,8 +96,9 @@ void CClient::ReadLine(const CString& sData) {
 
 	DEBUG("(" << GetFullName() << ") CLI -> ZNC [" << sLine << "]");
 
+	MCString mssTags;
 	if (sLine.StartsWith("@")) {
-		// TODO support message-tags properly
+		mssTags = CUtils::GetMessageTags(sLine);
 		sLine = sLine.Token(1, true);
 	}
 
@@ -262,7 +263,7 @@ void CClient::ReadLine(const CString& sData) {
 				CChan* pChan = m_pNetwork->FindChan(sTarget);
 
 				if ((pChan) && (!pChan->AutoClearChanBuffer())) {
-					pChan->AddBuffer(":" + _NAMEDFMT(GetNickMask()) + " NOTICE " + _NAMEDFMT(sTarget) + " :{text}", sMsg);
+					pChan->AddBuffer(":" + _NAMEDFMT(GetNickMask()) + " NOTICE " + _NAMEDFMT(sTarget) + " :{text}", sMsg, nullptr, mssTags);
 				}
 
 				// Relay to the rest of the clients that may be connected to this user
@@ -313,13 +314,13 @@ void CClient::ReadLine(const CString& sData) {
 							CChan* pChan = m_pNetwork->FindChan(sTarget);
 
 							if (pChan && (!pChan->AutoClearChanBuffer() || !m_pNetwork->IsUserOnline())) {
-								pChan->AddBuffer(":" + _NAMEDFMT(GetNickMask()) + " PRIVMSG " + _NAMEDFMT(sTarget) + " :\001ACTION {text}\001", sMessage);
+								pChan->AddBuffer(":" + _NAMEDFMT(GetNickMask()) + " PRIVMSG " + _NAMEDFMT(sTarget) + " :\001ACTION {text}\001", sMessage, nullptr, mssTags);
 							}
 						} else {
 							if (!m_pUser->AutoClearQueryBuffer() || !m_pNetwork->IsUserOnline()) {
 								CQuery* pQuery = m_pNetwork->AddQuery(sTarget);
 								if (pQuery) {
-									pQuery->AddBuffer(":" + _NAMEDFMT(GetNickMask()) + " PRIVMSG " + _NAMEDFMT(sTarget) + " :\001ACTION {text}\001", sMessage);
+									pQuery->AddBuffer(":" + _NAMEDFMT(GetNickMask()) + " PRIVMSG " + _NAMEDFMT(sTarget) + " :\001ACTION {text}\001", sMessage, nullptr, mssTags);
 								}
 							}
 						}
@@ -368,13 +369,13 @@ void CClient::ReadLine(const CString& sData) {
 					CChan* pChan = m_pNetwork->FindChan(sTarget);
 
 					if ((pChan) && (!pChan->AutoClearChanBuffer() || !m_pNetwork->IsUserOnline())) {
-						pChan->AddBuffer(":" + _NAMEDFMT(GetNickMask()) + " PRIVMSG " + _NAMEDFMT(sTarget) + " :{text}", sMsg);
+						pChan->AddBuffer(":" + _NAMEDFMT(GetNickMask()) + " PRIVMSG " + _NAMEDFMT(sTarget) + " :{text}", sMsg, nullptr, mssTags);
 					}
 				} else {
 					if (!m_pUser->AutoClearQueryBuffer() || !m_pNetwork->IsUserOnline()) {
 						CQuery* pQuery = m_pNetwork->AddQuery(sTarget);
 						if (pQuery) {
-							pQuery->AddBuffer(":" + _NAMEDFMT(GetNickMask()) + " PRIVMSG " + _NAMEDFMT(sTarget) + " :{text}", sMsg);
+							pQuery->AddBuffer(":" + _NAMEDFMT(GetNickMask()) + " PRIVMSG " + _NAMEDFMT(sTarget) + " :{text}", sMsg, nullptr, mssTags);
 						}
 					}
 				}
@@ -791,6 +792,36 @@ void CClient::PutClient(const CString& sLine) {
 	if (bReturn) return;
 	DEBUG("(" << GetFullName() << ") ZNC -> CLI [" << sCopy << "]");
 	Write(sCopy + "\r\n");
+}
+
+void CClient::PutClient(const CMessage& Message)
+{
+	CString sLine = Message.ToString(CMessage::ExcludeTags);
+
+	// TODO: introduce a module hook that gives control over the tags that are sent
+	MCString mssTags;
+
+	if (HasServerTime()) {
+		CString sServerTime = Message.GetTag("time");
+		if (!sServerTime.empty()) {
+			mssTags["time"] = sServerTime;
+		} else {
+			mssTags["time"] = CUtils::FormatServerTime(Message.GetTime());
+		}
+	}
+
+	if (HasBatch()) {
+		CString sBatch = Message.GetTag("batch");
+		if (!sBatch.empty()) {
+			mssTags["batch"] = sBatch;
+		}
+	}
+
+	if (!mssTags.empty()) {
+		CUtils::SetMessageTags(sLine, mssTags);
+	}
+
+	PutClient(sLine);
 }
 
 void CClient::PutStatusNotice(const CString& sLine) {

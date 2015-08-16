@@ -20,6 +20,7 @@
 #include <znc/IRCNetwork.h>
 #include <znc/Config.h>
 #include <znc/znc.h>
+#include <znc/Message.h>
 
 using std::set;
 using std::vector;
@@ -610,16 +611,19 @@ void CChan::SendBuffer(CClient* pClient, const CBuffer& Buffer) {
 				size_t uSize = Buffer.Size();
 				for (size_t uIdx = 0; uIdx < uSize; uIdx++) {
 					const CBufLine& BufLine = Buffer.GetBufLine(uIdx);
-					CString sLine = BufLine.GetLine(*pUseClient, MCString::EmptyMap);
+					CMessage Message(BufLine.GetLine(*pUseClient, MCString::EmptyMap));
+					Message.SetChan(this);
+					Message.SetNetwork(m_pNetwork);
+					Message.SetClient(pClient);
+					Message.SetTime(BufLine.GetTime());
+					Message.SetTags(BufLine.GetTags());
 					if (bBatch) {
-						MCString msBatchTags = CUtils::GetMessageTags(sLine);
-						msBatchTags["batch"] = sBatchName;
-						CUtils::SetMessageTags(sLine, msBatchTags);
+						Message.SetTag("batch", sBatchName);
 					}
 					bool bNotShowThisLine = false;
-					NETWORKMODULECALL(OnChanBufferPlayLine2(*this, *pUseClient, sLine, BufLine.GetTime()), m_pNetwork->GetUser(), m_pNetwork, nullptr, &bNotShowThisLine);
+					NETWORKMODULECALL(OnChanBufferPlayMessage(Message), m_pNetwork->GetUser(), m_pNetwork, nullptr, &bNotShowThisLine);
 					if (bNotShowThisLine) continue;
-					m_pNetwork->PutUser(sLine, pUseClient);
+					m_pNetwork->PutUser(Message, pUseClient);
 				}
 
 				bSkipStatusMsg = pUseClient->HasServerTime();
