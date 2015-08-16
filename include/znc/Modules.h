@@ -679,6 +679,7 @@ public:
 	 *  @return See CModule::EModRet.
 	 */
 	virtual EModRet OnUserRaw(CString& sLine);
+	virtual EModRet OnUserRawMessage(CMessage& Message);
 	/** This module hook is called when a client sends a CTCP reply.
 	 *  @param sTarget The target for the CTCP reply. Could be a channel
 	 *                 name or a nick name.
@@ -686,6 +687,7 @@ public:
 	 *  @return See CModule::EModRet.
 	 */
 	virtual EModRet OnUserCTCPReply(CString& sTarget, CString& sMessage);
+	virtual EModRet OnUserCTCPReplyMessage(CCTCPMessage& Message);
 	/** This module hook is called when a client sends a CTCP request.
 	 *  @param sTarget The target for the CTCP request. Could be a channel
 	 *                 name or a nick name.
@@ -695,6 +697,7 @@ public:
 	 *        CModule::OnUserAction() instead.
 	 */
 	virtual EModRet OnUserCTCP(CString& sTarget, CString& sMessage);
+	virtual EModRet OnUserCTCPMessage(CCTCPMessage& Message);
 	/** Called when a client sends a CTCP ACTION request ("/me").
 	 *  @param sTarget The target for the CTCP ACTION. Could be a channel
 	 *                 name or a nick name.
@@ -703,6 +706,7 @@ public:
 	 *  @note CModule::OnUserCTCP() will not be called for this message.
 	 */
 	virtual EModRet OnUserAction(CString& sTarget, CString& sMessage);
+	virtual EModRet OnUserActionMessage(CActionMessage& Message);
 	/** This module hook is called when a user sends a normal IRC message.
 	 *  @param sTarget The target of the message. Could be a channel name or
 	 *                 a nick name.
@@ -710,6 +714,7 @@ public:
 	 *  @return See CModule::EModRet.
 	 */
 	virtual EModRet OnUserMsg(CString& sTarget, CString& sMessage);
+	virtual EModRet OnUserTextMessage(CTextMessage& Message);
 	/** This module hook is called when a user sends a notice message.
 	 *  @param sTarget The target of the message. Could be a channel name or
 	 *                 a nick name.
@@ -717,24 +722,28 @@ public:
 	 *  @return See CModule::EModRet.
 	 */
 	virtual EModRet OnUserNotice(CString& sTarget, CString& sMessage);
+	virtual EModRet OnUserNoticeMessage(CNoticeMessage& Message);
 	/** This hooks is called when a user sends a JOIN message.
 	 *  @param sChannel The channel name the join is for.
 	 *  @param sKey The key for the channel.
 	 *  @return See CModule::EModRet.
 	 */
 	virtual EModRet OnUserJoin(CString& sChannel, CString& sKey);
+	virtual EModRet OnUserJoinMessage(CJoinMessage& Message);
 	/** This hooks is called when a user sends a PART message.
 	 *  @param sChannel The channel name the part is for.
 	 *  @param sMessage The part message the client sent.
 	 *  @return See CModule::EModRet.
 	 */
 	virtual EModRet OnUserPart(CString& sChannel, CString& sMessage);
+	virtual EModRet OnUserPartMessage(CPartMessage& Message);
 	/** This module hook is called when a user wants to change a channel topic.
 	 *  @param sChannel The channel.
 	 *  @param sTopic The new topic which the user sent.
 	 *  @return See CModule::EModRet.
 	 */
 	virtual EModRet OnUserTopic(CString& sChannel, CString& sTopic);
+	virtual EModRet OnUserTopicMessage(CTopicMessage& Message);
 	/** This hook is called when a user requests a channel's topic.
 	 *  @param sChannel The channel for which the request is.
 	 *  @return See CModule::EModRet.
@@ -745,6 +754,7 @@ public:
 	 *  @return See CModule::EModRet.
 	 */
 	virtual EModRet OnUserQuit(CString& sMessage);
+	virtual EModRet OnUserQuitMessage(CQuitMessage& Message);
 
 	/** Called when we receive a CTCP reply <em>from IRC</em>.
 	 *  @param Nick The nick the CTCP reply is from.
@@ -1075,6 +1085,7 @@ public:
 	 *  @param sLine The raw traffic line which the client sent.
 	 */
 	virtual EModRet OnUnknownUserRaw(CClient* pClient, CString& sLine);
+	virtual EModRet OnUnknownUserRawMessage(CMessage& Message);
 
 	/** Called when a client told us CAP LS. Use ssCaps.insert("cap-name")
 	 *  for announcing capabilities which your module supports.
@@ -1230,16 +1241,26 @@ public:
 	bool OnClientLogin();
 	bool OnClientDisconnect();
 	bool OnUserRaw(CString& sLine);
+	bool OnUserRawMessage(CMessage& Message);
 	bool OnUserCTCPReply(CString& sTarget, CString& sMessage);
+	bool OnUserCTCPReplyMessage(CCTCPMessage& Message);
 	bool OnUserCTCP(CString& sTarget, CString& sMessage);
+	bool OnUserCTCPMessage(CCTCPMessage& Message);
 	bool OnUserAction(CString& sTarget, CString& sMessage);
+	bool OnUserActionMessage(CActionMessage& Message);
 	bool OnUserMsg(CString& sTarget, CString& sMessage);
+	bool OnUserTextMessage(CTextMessage& Message);
 	bool OnUserNotice(CString& sTarget, CString& sMessage);
+	bool OnUserNoticeMessage(CNoticeMessage& Message);
 	bool OnUserJoin(CString& sChannel, CString& sKey);
+	bool OnUserJoinMessage(CJoinMessage& Message);
 	bool OnUserPart(CString& sChannel, CString& sMessage);
+	bool OnUserPartMessage(CPartMessage& Message);
 	bool OnUserTopic(CString& sChannel, CString& sTopic);
+	bool OnUserTopicMessage(CTopicMessage& Message);
 	bool OnUserTopicRequest(CString& sChannel);
 	bool OnUserQuit(CString& sMessage);
+	bool OnUserQuitMessage(CQuitMessage& Message);
 
 	bool OnCTCPReply(CNick& Nick, CString& sMessage);
 	bool OnPrivCTCP(CNick& Nick, CString& sMessage);
@@ -1298,6 +1319,7 @@ public:
 	bool OnLoginAttempt(std::shared_ptr<CAuthBase> Auth);
 	bool OnFailedLogin(const CString& sUsername, const CString& sRemoteIP);
 	bool OnUnknownUserRaw(CClient* pClient, CString& sLine);
+	bool OnUnknownUserRawMessage(CMessage& Message);
 	bool OnClientCapLs(CClient* pClient, SCString& ssCaps);
 	bool IsClientCapSupported(CClient* pClient, const CString& sCap, bool bState);
 	bool OnClientCapRequest(CClient* pClient, const CString& sCap, bool bState);

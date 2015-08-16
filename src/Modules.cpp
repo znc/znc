@@ -683,16 +683,87 @@ CModule::EModRet CModule::OnPrivBufferPlayMessage(CMessage& Message) {
 void CModule::OnClientLogin() {}
 void CModule::OnClientDisconnect() {}
 CModule::EModRet CModule::OnUserRaw(CString& sLine) { return CONTINUE; }
+CModule::EModRet CModule::OnUserRawMessage(CMessage& Message) { return CONTINUE; }
 CModule::EModRet CModule::OnUserCTCPReply(CString& sTarget, CString& sMessage) { return CONTINUE; }
+CModule::EModRet CModule::OnUserCTCPReplyMessage(CCTCPMessage& Message) {
+	CString sTarget = Message.GetTarget();
+	CString sText = Message.GetText();
+	EModRet ret = OnUserCTCPReply(sTarget, sText);
+	Message.SetTarget(sTarget);
+	Message.SetText(sText);
+	return ret;
+}
 CModule::EModRet CModule::OnUserCTCP(CString& sTarget, CString& sMessage) { return CONTINUE; }
+CModule::EModRet CModule::OnUserCTCPMessage(CCTCPMessage& Message) {
+	CString sTarget = Message.GetTarget();
+	CString sText = Message.GetText();
+	EModRet ret = OnUserCTCP(sTarget, sText);
+	Message.SetTarget(sTarget);
+	Message.SetText(sText);
+	return ret;
+}
 CModule::EModRet CModule::OnUserAction(CString& sTarget, CString& sMessage) { return CONTINUE; }
+CModule::EModRet CModule::OnUserActionMessage(CActionMessage& Message) {
+	CString sTarget = Message.GetTarget();
+	CString sText = Message.GetText();
+	EModRet ret = OnUserAction(sTarget, sText);
+	Message.SetTarget(sTarget);
+	Message.SetText(sText);
+	return ret;
+}
 CModule::EModRet CModule::OnUserMsg(CString& sTarget, CString& sMessage) { return CONTINUE; }
+CModule::EModRet CModule::OnUserTextMessage(CTextMessage& Message) {
+	CString sTarget = Message.GetTarget();
+	CString sText = Message.GetText();
+	EModRet ret = OnUserMsg(sTarget, sText);
+	Message.SetTarget(sTarget);
+	Message.SetText(sText);
+	return ret;
+}
 CModule::EModRet CModule::OnUserNotice(CString& sTarget, CString& sMessage) { return CONTINUE; }
+CModule::EModRet CModule::OnUserNoticeMessage(CNoticeMessage& Message) {
+	CString sTarget = Message.GetTarget();
+	CString sText = Message.GetText();
+	EModRet ret = OnUserNotice(sTarget, sText);
+	Message.SetTarget(sTarget);
+	Message.SetText(sText);
+	return ret;
+}
 CModule::EModRet CModule::OnUserJoin(CString& sChannel, CString& sKey) { return CONTINUE; }
+CModule::EModRet CModule::OnUserJoinMessage(CJoinMessage& Message) {
+	CString sChan = Message.GetTarget();
+	CString sKey = Message.GetKey();
+	EModRet ret = OnUserJoin(sChan, sKey);
+	Message.SetTarget(sChan);
+	Message.SetKey(sKey);
+	return ret;
+}
 CModule::EModRet CModule::OnUserPart(CString& sChannel, CString& sMessage) { return CONTINUE; }
+CModule::EModRet CModule::OnUserPartMessage(CPartMessage& Message) {
+	CString sChan = Message.GetTarget();
+	CString sReason = Message.GetReason();
+	EModRet ret = OnUserPart(sChan, sReason);
+	Message.SetTarget(sChan);
+	Message.SetReason(sReason);
+	return ret;
+}
 CModule::EModRet CModule::OnUserTopic(CString& sChannel, CString& sTopic) { return CONTINUE; }
+CModule::EModRet CModule::OnUserTopicMessage(CTopicMessage& Message) {
+	CString sChan = Message.GetTarget();
+	CString sTopic = Message.GetTopic();
+	EModRet ret = OnUserTopic(sChan, sTopic);
+	Message.SetTarget(sChan);
+	Message.SetTopic(sTopic);
+	return ret;
+}
 CModule::EModRet CModule::OnUserTopicRequest(CString& sChannel) { return CONTINUE; }
 CModule::EModRet CModule::OnUserQuit(CString& sMessage) { return CONTINUE; }
+CModule::EModRet CModule::OnUserQuitMessage(CQuitMessage& Message) {
+	CString sReason = Message.GetReason();
+	EModRet ret = OnUserQuit(sReason);
+	Message.SetReason(sReason);
+	return ret;
+}
 
 CModule::EModRet CModule::OnCTCPReply(CNick& Nick, CString& sMessage) { return CONTINUE; }
 CModule::EModRet CModule::OnPrivCTCP(CNick& Nick, CString& sMessage) { return CONTINUE; }
@@ -824,6 +895,7 @@ void CModule::OnClientConnect(CZNCSock* pClient, const CString& sHost, unsigned 
 CModule::EModRet CModule::OnLoginAttempt(std::shared_ptr<CAuthBase> Auth) { return CONTINUE; }
 void CModule::OnFailedLogin(const CString& sUsername, const CString& sRemoteIP) {}
 CModule::EModRet CModule::OnUnknownUserRaw(CClient* pClient, CString& sLine) { return CONTINUE; }
+CModule::EModRet CModule::OnUnknownUserRawMessage(CMessage& Message) { return CONTINUE; }
 void CModule::OnClientCapLs(CClient* pClient, SCString& ssCaps) {}
 bool CModule::IsClientCapSupported(CClient* pClient, const CString& sCap, bool bState) { return false; }
 void CModule::OnClientCapRequest(CClient* pClient, const CString& sCap, bool bState) {}
@@ -897,16 +969,26 @@ bool CModules::OnRawMessage(CMessage& Message) { MODHALTCHK(OnRawMessage(Message
 bool CModules::OnClientLogin() { MODUNLOADCHK(OnClientLogin()); return false; }
 bool CModules::OnClientDisconnect() { MODUNLOADCHK(OnClientDisconnect()); return false; }
 bool CModules::OnUserRaw(CString& sLine) { MODHALTCHK(OnUserRaw(sLine)); }
+bool CModules::OnUserRawMessage(CMessage& Message) { MODHALTCHK(OnUserRawMessage(Message)); }
 bool CModules::OnUserCTCPReply(CString& sTarget, CString& sMessage) { MODHALTCHK(OnUserCTCPReply(sTarget, sMessage)); }
+bool CModules::OnUserCTCPReplyMessage(CCTCPMessage& Message) { MODHALTCHK(OnUserCTCPReplyMessage(Message)); }
 bool CModules::OnUserCTCP(CString& sTarget, CString& sMessage) { MODHALTCHK(OnUserCTCP(sTarget, sMessage)); }
+bool CModules::OnUserCTCPMessage(CCTCPMessage& Message) { MODHALTCHK(OnUserCTCPMessage(Message)); }
 bool CModules::OnUserAction(CString& sTarget, CString& sMessage) { MODHALTCHK(OnUserAction(sTarget, sMessage)); }
+bool CModules::OnUserActionMessage(CActionMessage& Message) { MODHALTCHK(OnUserActionMessage(Message)); }
 bool CModules::OnUserMsg(CString& sTarget, CString& sMessage) { MODHALTCHK(OnUserMsg(sTarget, sMessage)); }
+bool CModules::OnUserTextMessage(CTextMessage& Message) { MODHALTCHK(OnUserTextMessage(Message)); }
 bool CModules::OnUserNotice(CString& sTarget, CString& sMessage) { MODHALTCHK(OnUserNotice(sTarget, sMessage)); }
+bool CModules::OnUserNoticeMessage(CNoticeMessage& Message) { MODHALTCHK(OnUserNoticeMessage(Message)); }
 bool CModules::OnUserJoin(CString& sChannel, CString& sKey) { MODHALTCHK(OnUserJoin(sChannel, sKey)); }
+bool CModules::OnUserJoinMessage(CJoinMessage& Message) { MODHALTCHK(OnUserJoinMessage(Message)); }
 bool CModules::OnUserPart(CString& sChannel, CString& sMessage) { MODHALTCHK(OnUserPart(sChannel, sMessage)); }
+bool CModules::OnUserPartMessage(CPartMessage& Message) { MODHALTCHK(OnUserPartMessage(Message)); }
 bool CModules::OnUserTopic(CString& sChannel, CString& sTopic) { MODHALTCHK(OnUserTopic(sChannel, sTopic)); }
+bool CModules::OnUserTopicMessage(CTopicMessage& Message) { MODHALTCHK(OnUserTopicMessage(Message)); }
 bool CModules::OnUserTopicRequest(CString& sChannel) { MODHALTCHK(OnUserTopicRequest(sChannel)); }
 bool CModules::OnUserQuit(CString& sMessage) { MODHALTCHK(OnUserQuit(sMessage)); }
+bool CModules::OnUserQuitMessage(CQuitMessage& Message) { MODHALTCHK(OnUserQuitMessage(Message)); }
 
 bool CModules::OnQuit(const CNick& Nick, const CString& sMessage, const vector<CChan*>& vChans) { MODUNLOADCHK(OnQuit(Nick, sMessage, vChans)); return false; }
 bool CModules::OnQuitMessage(CQuitMessage& Message, const vector<CChan*>& vChans) { MODUNLOADCHK(OnQuitMessage(Message, vChans)); return false; }
@@ -1012,6 +1094,10 @@ bool CModules::OnFailedLogin(const CString& sUsername, const CString& sRemoteIP)
 
 bool CModules::OnUnknownUserRaw(CClient* pClient, CString& sLine) {
 	MODHALTCHK(OnUnknownUserRaw(pClient, sLine));
+}
+
+bool CModules::OnUnknownUserRawMessage(CMessage& Message) {
+	MODHALTCHK(OnUnknownUserRawMessage(Message));
 }
 
 bool CModules::OnClientCapLs(CClient* pClient, SCString& ssCaps) {
