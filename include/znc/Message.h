@@ -87,19 +87,25 @@ private:
 	CChan*       m_pChan = nullptr;
 };
 
-class CActionMessage : public CMessage {
+class CTargetMessage : public CMessage {
+public:
+	CString GetTarget() const { return GetParam(0); }
+	void SetTarget(const CString& sTarget) { SetParam(0, sTarget); }
+};
+
+class CActionMessage : public CTargetMessage {
 public:
 	CString GetText() const { return GetParam(1).TrimPrefix_n("\001ACTION ").TrimSuffix_n("\001"); }
 	void SetText(const CString& sText) { SetParam(1, "\001ACTION " + sText + "\001"); }
 };
 
-class CCTCPMessage : public CMessage {
+class CCTCPMessage : public CTargetMessage {
 public:
 	CString GetText() const { return GetParam(1).TrimPrefix_n("\001").TrimSuffix_n("\001"); }
 	void SetText(const CString& sText) { SetParam(1, "\001" + sText + "\001"); }
 };
 
-class CJoinMessage : public CMessage {
+class CJoinMessage : public CTargetMessage {
 public:
 };
 
@@ -110,13 +116,13 @@ public:
 	void SetNewNick(const CString& sNick) { SetParam(0, sNick); }
 };
 
-class CNoticeMessage : public CMessage {
+class CNoticeMessage : public CTargetMessage {
 public:
 	CString GetText() const { return GetParam(1); }
 	void SetText(const CString& sText) { SetParam(1, sText); }
 };
 
-class CKickMessage : public CMessage {
+class CKickMessage : public CTargetMessage {
 public:
 	CString GetKickedNick() const { return GetParam(1); }
 	void SetKickedNick(const CString& sNick) { SetParam(1, sNick); }
@@ -124,7 +130,7 @@ public:
 	void SetReason(const CString& sReason) { SetParam(2, sReason); }
 };
 
-class CPartMessage : public CMessage {
+class CPartMessage : public CTargetMessage {
 public:
 	CString GetReason() const { return GetParam(1); }
 	void SetReason(const CString& sReason) { SetParam(1, sReason); }
@@ -136,13 +142,13 @@ public:
 	void SetReason(const CString& sReason) { SetParam(0, sReason); }
 };
 
-class CTextMessage : public CMessage {
+class CTextMessage : public CTargetMessage {
 public:
 	CString GetText() const { return GetParam(1); }
 	void SetText(const CString& sText) { SetParam(1, sText); }
 };
 
-class CTopicMessage : public CMessage {
+class CTopicMessage : public CTargetMessage {
 public:
 	CString GetTopic() const { return GetParam(1); }
 	void SetTopic(const CString& sTopic) { SetParam(1, sTopic); }
@@ -159,6 +165,7 @@ static_assert(sizeof(CPartMessage) == sizeof(CMessage), "No data members allowed
 static_assert(sizeof(CNickMessage) == sizeof(CMessage), "No data members allowed in CMessage subclasses.");
 static_assert(sizeof(CKickMessage) == sizeof(CMessage), "No data members allowed in CMessage subclasses.");
 static_assert(sizeof(CQuitMessage) == sizeof(CMessage), "No data members allowed in CMessage subclasses.");
+static_assert(sizeof(CTargetMessage) == sizeof(CMessage), "No data members allowed in CMessage subclasses.");
 static_assert(sizeof(CTextMessage) == sizeof(CMessage), "No data members allowed in CMessage subclasses.");
 static_assert(sizeof(CTopicMessage) == sizeof(CMessage), "No data members allowed in CMessage subclasses.");
 
