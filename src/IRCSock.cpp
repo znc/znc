@@ -1002,7 +1002,7 @@ bool CIRCSock::OnPrivNotice(CMessage& Message) {
 }
 
 bool CIRCSock::OnPrivMsg(CMessage& Message) {
-	CPrivMessage& PrivMsg = static_cast<CPrivMessage&>(Message);
+	CTextMessage& PrivMsg = static_cast<CTextMessage&>(Message);
 	bool bResult = false;
 	IRCSOCKMODULECALL(OnPrivMessage(PrivMsg), &bResult);
 	if (bResult) return true;
@@ -1087,7 +1087,7 @@ bool CIRCSock::OnChanNotice(CMessage& Message) {
 }
 
 bool CIRCSock::OnChanMsg(CMessage& Message) {
-	CChanMessage& ChanMsg = static_cast<CChanMessage&>(Message);
+	CTextMessage& ChanMsg = static_cast<CTextMessage&>(Message);
 	CChan* pChan = m_pNetwork->FindChan(ChanMsg.GetParam(0));
 	if (pChan) {
 		FixupChanNick(Message.GetNick(), pChan);

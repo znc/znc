@@ -93,7 +93,7 @@ TEST(MessageTest, ChanCTCP) {
 
 TEST(MessageTest, ChanMsg) {
 	CMessage msg(":sender PRIVMSG #chan :text");
-	CChanMessage& priv = static_cast<CChanMessage&>(msg);
+	CTextMessage& priv = static_cast<CTextMessage&>(msg);
 	EXPECT_EQ("sender", priv.GetNick().GetNick());
 	EXPECT_EQ("PRIVMSG", priv.GetCommand());
 	EXPECT_EQ("text", priv.GetText());
@@ -176,7 +176,7 @@ TEST(MessageTest, PrivCTCP) {
 
 TEST(MessageTest, PrivMsg) {
 	CMessage msg(":sender PRIVMSG receiver :foo bar");
-	CPrivMessage& priv = static_cast<CPrivMessage&>(msg);
+	CTextMessage& priv = static_cast<CTextMessage&>(msg);
 	EXPECT_EQ("sender", priv.GetNick().GetNick());
 	EXPECT_EQ("PRIVMSG", priv.GetCommand());
 	EXPECT_EQ("foo bar", priv.GetText());

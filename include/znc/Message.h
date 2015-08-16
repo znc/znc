@@ -93,12 +93,6 @@ public:
 	void SetText(const CString& sText) { SetParam(1, "\001ACTION " + sText + "\001"); }
 };
 
-class CChanMessage : public CMessage {
-public:
-	CString GetText() const { return GetParam(1); }
-	void SetText(const CString& sText) { SetParam(1, sText); }
-};
-
 class CCTCPMessage : public CMessage {
 public:
 	CString GetText() const { return GetParam(1).TrimPrefix_n("\001").TrimSuffix_n("\001"); }
@@ -136,16 +130,16 @@ public:
 	void SetReason(const CString& sReason) { SetParam(1, sReason); }
 };
 
-class CPrivMessage : public CMessage {
-public:
-	CString GetText() const { return GetParam(1); }
-	void SetText(const CString& sText) { SetParam(1, sText); }
-};
-
 class CQuitMessage : public CMessage {
 public:
 	CString GetReason() const { return GetParam(0); }
 	void SetReason(const CString& sReason) { SetParam(0, sReason); }
+};
+
+class CTextMessage : public CMessage {
+public:
+	CString GetText() const { return GetParam(1); }
+	void SetText(const CString& sText) { SetParam(1, sText); }
 };
 
 class CTopicMessage : public CMessage {
@@ -158,15 +152,14 @@ public:
 // They provide convenient access to message type speficic attributes, but are not
 // allowed to hold extra data of their own.
 static_assert(sizeof(CActionMessage) == sizeof(CMessage), "No data members allowed in CMessage subclasses.");
-static_assert(sizeof(CChanMessage) == sizeof(CMessage), "No data members allowed in CMessage subclasses.");
 static_assert(sizeof(CCTCPMessage) == sizeof(CMessage), "No data members allowed in CMessage subclasses.");
 static_assert(sizeof(CJoinMessage) == sizeof(CMessage), "No data members allowed in CMessage subclasses.");
 static_assert(sizeof(CNoticeMessage) == sizeof(CMessage), "No data members allowed in CMessage subclasses.");
 static_assert(sizeof(CPartMessage) == sizeof(CMessage), "No data members allowed in CMessage subclasses.");
-static_assert(sizeof(CPrivMessage) == sizeof(CMessage), "No data members allowed in CMessage subclasses.");
 static_assert(sizeof(CNickMessage) == sizeof(CMessage), "No data members allowed in CMessage subclasses.");
 static_assert(sizeof(CKickMessage) == sizeof(CMessage), "No data members allowed in CMessage subclasses.");
 static_assert(sizeof(CQuitMessage) == sizeof(CMessage), "No data members allowed in CMessage subclasses.");
+static_assert(sizeof(CTextMessage) == sizeof(CMessage), "No data members allowed in CMessage subclasses.");
 static_assert(sizeof(CTopicMessage) == sizeof(CMessage), "No data members allowed in CMessage subclasses.");
 
 #endif // !_MESSAGE_H

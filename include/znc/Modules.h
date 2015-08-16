@@ -790,7 +790,7 @@ public:
 	 *  @return See CModule::EModRet.
 	 */
 	virtual EModRet OnPrivMsg(CNick& Nick, CString& sMessage);
-	virtual EModRet OnPrivMessage(CPrivMessage& Message);
+	virtual EModRet OnPrivMessage(CTextMessage& Message);
 	/** Called when we receive a channel message <em>from IRC</em>.
 	 *  @param Nick The nick which sent the message.
 	 *  @param Channel The channel to which the message was sent.
@@ -798,7 +798,7 @@ public:
 	 *  @return See CModule::EModRet.
 	 */
 	virtual EModRet OnChanMsg(CNick& Nick, CChan& Channel, CString& sMessage);
-	virtual EModRet OnChanMessage(CChanMessage& Message);
+	virtual EModRet OnChanMessage(CTextMessage& Message);
 	/** Called when we receive a private notice.
 	 *  @param Nick The nick which sent the notice.
 	 *  @param sMessage The notice message.
@@ -1251,9 +1251,9 @@ public:
 	bool OnChanAction(CNick& Nick, CChan& Channel, CString& sMessage);
 	bool OnChanActionMessage(CActionMessage& Message);
 	bool OnPrivMsg(CNick& Nick, CString& sMessage);
-	bool OnPrivMessage(CPrivMessage& Message);
+	bool OnPrivMessage(CTextMessage& Message);
 	bool OnChanMsg(CNick& Nick, CChan& Channel, CString& sMessage);
-	bool OnChanMessage(CChanMessage& Message);
+	bool OnChanMessage(CTextMessage& Message);
 	bool OnPrivNotice(CNick& Nick, CString& sMessage);
 	bool OnPrivNoticeMessage(CNoticeMessage& Message);
 	bool OnChanNotice(CNick& Nick, CChan& Channel, CString& sMessage);

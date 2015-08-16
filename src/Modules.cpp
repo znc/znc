@@ -724,14 +724,14 @@ CModule::EModRet CModule::OnChanActionMessage(CActionMessage& Message) {
 	return ret;
 }
 CModule::EModRet CModule::OnPrivMsg(CNick& Nick, CString& sMessage) { return CONTINUE; }
-CModule::EModRet CModule::OnPrivMessage(CPrivMessage& Message) {
+CModule::EModRet CModule::OnPrivMessage(CTextMessage& Message) {
 	CString sText = Message.GetText();
 	EModRet ret = OnPrivMsg(Message.GetNick(), sText);
 	Message.SetText(sText);
 	return ret;
 }
 CModule::EModRet CModule::OnChanMsg(CNick& Nick, CChan& Channel, CString& sMessage) { return CONTINUE; }
-CModule::EModRet CModule::OnChanMessage(CChanMessage& Message) {
+CModule::EModRet CModule::OnChanMessage(CTextMessage& Message) {
 	CString sText = Message.GetText();
 	EModRet ret = OnChanMsg(Message.GetNick(), *Message.GetChan(), sText);
 	Message.SetText(sText);
@@ -938,9 +938,9 @@ bool CModules::OnPrivActionMessage(CActionMessage& Message) { MODHALTCHK(OnPrivA
 bool CModules::OnChanAction(CNick& Nick, CChan& Channel, CString& sMessage) { MODHALTCHK(OnChanAction(Nick, Channel, sMessage)); }
 bool CModules::OnChanActionMessage(CActionMessage& Message) { MODHALTCHK(OnChanActionMessage(Message)); }
 bool CModules::OnPrivMsg(CNick& Nick, CString& sMessage) { MODHALTCHK(OnPrivMsg(Nick, sMessage)); }
-bool CModules::OnPrivMessage(CPrivMessage& Message) { MODHALTCHK(OnPrivMessage(Message)); }
+bool CModules::OnPrivMessage(CTextMessage& Message) { MODHALTCHK(OnPrivMessage(Message)); }
 bool CModules::OnChanMsg(CNick& Nick, CChan& Channel, CString& sMessage) { MODHALTCHK(OnChanMsg(Nick, Channel, sMessage)); }
-bool CModules::OnChanMessage(CChanMessage& Message) { MODHALTCHK(OnChanMessage(Message)); }
+bool CModules::OnChanMessage(CTextMessage& Message) { MODHALTCHK(OnChanMessage(Message)); }
 bool CModules::OnPrivNotice(CNick& Nick, CString& sMessage) { MODHALTCHK(OnPrivNotice(Nick, sMessage)); }
 bool CModules::OnPrivNoticeMessage(CNoticeMessage& Message) { MODHALTCHK(OnPrivNoticeMessage(Message)); }
 bool CModules::OnChanNotice(CNick& Nick, CChan& Channel, CString& sMessage) { MODHALTCHK(OnChanNotice(Nick, Channel, sMessage)); }
