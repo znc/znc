@@ -31,6 +31,8 @@ public:
 	explicit CMessage(const CString& sMessage = "");
 	CMessage(const CNick& Nick, const CString& sCommand, const VCString& vsParams = VCString(), const MCString& mssTags = MCString::EmptyMap);
 
+	void Clone(const CMessage& Other);
+
 	// ZNC <-> IRC
 	CIRCNetwork* GetNetwork() const { return m_pNetwork; }
 	void SetNetwork(CIRCNetwork* pNetwork) { m_pNetwork = pNetwork; }

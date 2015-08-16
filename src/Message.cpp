@@ -29,6 +29,13 @@ CMessage::CMessage(const CNick& Nick, const CString& sCommand, const VCString& v
 	InitTime();
 }
 
+void CMessage::Clone(const CMessage& Message)
+{
+	if (&Message != this) {
+		*this = Message;
+	}
+}
+
 CString CMessage::GetParams(unsigned int uIdx, unsigned int uLen) const
 {
 	VCString vsParams;
