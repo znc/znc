@@ -758,7 +758,7 @@ public:
 	 *  @return See CModule::EModRet.
 	 */
 	virtual EModRet OnPrivCTCP(CNick& Nick, CString& sMessage);
-	virtual EModRet OnPrivCTCPMessage(CPrivCTCP& Message);
+	virtual EModRet OnPrivCTCPMessage(CCTCPMessage& Message);
 	/** Called when we receive a channel CTCP request <em>from IRC</em>.
 	 *  @param Nick The nick the CTCP request is from.
 	 *  @param Channel The channel to which the request was sent.
@@ -766,7 +766,7 @@ public:
 	 *  @return See CModule::EModRet.
 	 */
 	virtual EModRet OnChanCTCP(CNick& Nick, CChan& Channel, CString& sMessage);
-	virtual EModRet OnChanCTCPMessage(CChanCTCP& Message);
+	virtual EModRet OnChanCTCPMessage(CCTCPMessage& Message);
 	/** Called when we receive a private CTCP ACTION ("/me" in query) <em>from IRC</em>.
 	 *  This is called after CModule::OnPrivCTCP().
 	 *  @param Nick The nick the action came from.
@@ -774,7 +774,7 @@ public:
 	 *  @return See CModule::EModRet.
 	 */
 	virtual EModRet OnPrivAction(CNick& Nick, CString& sMessage);
-	virtual EModRet OnPrivActionMessage(CPrivAction& Message);
+	virtual EModRet OnPrivActionMessage(CActionMessage& Message);
 	/** Called when we receive a channel CTCP ACTION ("/me" in a channel) <em>from IRC</em>.
 	 *  This is called after CModule::OnChanCTCP().
 	 *  @param Nick The nick the action came from.
@@ -783,7 +783,7 @@ public:
 	 *  @return See CModule::EModRet.
 	 */
 	virtual EModRet OnChanAction(CNick& Nick, CChan& Channel, CString& sMessage);
-	virtual EModRet OnChanActionMessage(CChanAction& Message);
+	virtual EModRet OnChanActionMessage(CActionMessage& Message);
 	/** Called when we receive a private message <em>from IRC</em>.
 	 *  @param Nick The nick which sent the message.
 	 *  @param sMessage The message.
@@ -805,7 +805,7 @@ public:
 	 *  @return See CModule::EModRet.
 	 */
 	virtual EModRet OnPrivNotice(CNick& Nick, CString& sMessage);
-	virtual EModRet OnPrivNoticeMessage(CPrivNotice& Message);
+	virtual EModRet OnPrivNoticeMessage(CNoticeMessage& Message);
 	/** Called when we receive a channel notice.
 	 *  @param Nick The nick which sent the notice.
 	 *  @param Channel The channel to which the notice was sent.
@@ -813,7 +813,7 @@ public:
 	 *  @return See CModule::EModRet.
 	 */
 	virtual EModRet OnChanNotice(CNick& Nick, CChan& Channel, CString& sMessage);
-	virtual EModRet OnChanNoticeMessage(CChanNotice& Message);
+	virtual EModRet OnChanNoticeMessage(CNoticeMessage& Message);
 	/** Called when we receive a channel topic change <em>from IRC</em>.
 	 *  @param Nick The nick which changed the topic.
 	 *  @param Channel The channel whose topic was changed.
@@ -1243,21 +1243,21 @@ public:
 
 	bool OnCTCPReply(CNick& Nick, CString& sMessage);
 	bool OnPrivCTCP(CNick& Nick, CString& sMessage);
-	bool OnPrivCTCPMessage(CPrivCTCP& Message);
+	bool OnPrivCTCPMessage(CCTCPMessage& Message);
 	bool OnChanCTCP(CNick& Nick, CChan& Channel, CString& sMessage);
-	bool OnChanCTCPMessage(CChanCTCP& Message);
+	bool OnChanCTCPMessage(CCTCPMessage& Message);
 	bool OnPrivAction(CNick& Nick, CString& sMessage);
-	bool OnPrivActionMessage(CPrivAction& Message);
+	bool OnPrivActionMessage(CActionMessage& Message);
 	bool OnChanAction(CNick& Nick, CChan& Channel, CString& sMessage);
-	bool OnChanActionMessage(CChanAction& Message);
+	bool OnChanActionMessage(CActionMessage& Message);
 	bool OnPrivMsg(CNick& Nick, CString& sMessage);
 	bool OnPrivMessage(CPrivMessage& Message);
 	bool OnChanMsg(CNick& Nick, CChan& Channel, CString& sMessage);
 	bool OnChanMessage(CChanMessage& Message);
 	bool OnPrivNotice(CNick& Nick, CString& sMessage);
-	bool OnPrivNoticeMessage(CPrivNotice& Message);
+	bool OnPrivNoticeMessage(CNoticeMessage& Message);
 	bool OnChanNotice(CNick& Nick, CChan& Channel, CString& sMessage);
-	bool OnChanNoticeMessage(CChanNotice& Message);
+	bool OnChanNoticeMessage(CNoticeMessage& Message);
 	bool OnTopic(CNick& Nick, CChan& Channel, CString& sTopic);
 	bool OnTopicMessage(CTopicMessage& Message);
 	bool OnTimerAutoJoin(CChan& Channel);

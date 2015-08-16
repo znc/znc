@@ -69,7 +69,7 @@ TEST(MessageTest, FormatFlags) {
 
 TEST(MessageTest, ChanAction) {
 	CMessage msg(":sender PRIVMSG #chan :\001ACTION ACTS\001");
-	CChanAction& chan = static_cast<CChanAction&>(msg);
+	CActionMessage& chan = static_cast<CActionMessage&>(msg);
 	EXPECT_EQ("sender", chan.GetNick().GetNick());
 	EXPECT_EQ("PRIVMSG", chan.GetCommand());
 	EXPECT_EQ("ACTS", chan.GetText());
@@ -81,7 +81,7 @@ TEST(MessageTest, ChanAction) {
 
 TEST(MessageTest, ChanCTCP) {
 	CMessage msg(":sender PRIVMSG #chan :\001text\001");
-	CChanCTCP& chan = static_cast<CChanCTCP&>(msg);
+	CCTCPMessage& chan = static_cast<CCTCPMessage&>(msg);
 	EXPECT_EQ("sender", chan.GetNick().GetNick());
 	EXPECT_EQ("PRIVMSG", chan.GetCommand());
 	EXPECT_EQ("text", chan.GetText());
@@ -152,7 +152,7 @@ TEST(MessageTest, Part) {
 
 TEST(MessageTest, PrivAction) {
 	CMessage msg(":sender PRIVMSG receiver :\001ACTION ACTS\001");
-	CPrivAction& priv = static_cast<CPrivAction&>(msg);
+	CActionMessage& priv = static_cast<CActionMessage&>(msg);
 	EXPECT_EQ("sender", priv.GetNick().GetNick());
 	EXPECT_EQ("PRIVMSG", priv.GetCommand());
 	EXPECT_EQ("ACTS", priv.GetText());
@@ -164,7 +164,7 @@ TEST(MessageTest, PrivAction) {
 
 TEST(MessageTest, PrivCTCP) {
 	CMessage msg(":sender PRIVMSG receiver :\001text\001");
-	CPrivCTCP& priv = static_cast<CPrivCTCP&>(msg);
+	CCTCPMessage& priv = static_cast<CCTCPMessage&>(msg);
 	EXPECT_EQ("sender", priv.GetNick().GetNick());
 	EXPECT_EQ("PRIVMSG", priv.GetCommand());
 	EXPECT_EQ("text", priv.GetText());

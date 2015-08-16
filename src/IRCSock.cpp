@@ -917,22 +917,22 @@ bool CIRCSock::OnCTCPReply(CNick& Nick, CString& sMessage) {
 }
 
 bool CIRCSock::OnPrivCTCP(CMessage& Message) {
-	CPrivCTCP& PrivCTCP = static_cast<CPrivCTCP&>(Message);
+	CCTCPMessage& CTCP = static_cast<CCTCPMessage&>(Message);
 	bool bResult = false;
-	IRCSOCKMODULECALL(OnPrivCTCPMessage(PrivCTCP), &bResult);
+	IRCSOCKMODULECALL(OnPrivCTCPMessage(CTCP), &bResult);
 	if (bResult) return true;
 
-	if (PrivCTCP.GetText().StartsWith("ACTION ")) {
+	if (CTCP.GetText().StartsWith("ACTION ")) {
 		bResult = false;
-		CPrivAction& PrivAction = static_cast<CPrivAction&>(Message);
-		IRCSOCKMODULECALL(OnPrivActionMessage(PrivAction), &bResult);
+		CActionMessage& Action = static_cast<CActionMessage&>(Message);
+		IRCSOCKMODULECALL(OnPrivActionMessage(Action), &bResult);
 		if (bResult) return true;
 
 		if (!m_pNetwork->IsUserOnline() || !m_pNetwork->GetUser()->AutoClearQueryBuffer()) {
-			const CNick& Nick = PrivAction.GetNick();
+			const CNick& Nick = Action.GetNick();
 			CQuery* pQuery = m_pNetwork->AddQuery(Nick.GetNick());
 			if (pQuery) {
-				pQuery->AddBuffer(":" + _NAMEDFMT(Nick.GetNickMask()) + " PRIVMSG {target} :\001ACTION {text}\001", PrivAction.GetText(), &PrivAction.GetTime(), PrivAction.GetTags());
+				pQuery->AddBuffer(":" + _NAMEDFMT(Nick.GetNickMask()) + " PRIVMSG {target} :\001ACTION {text}\001", Action.GetText(), &Action.GetTime(), Action.GetTags());
 			}
 		}
 	}
@@ -988,14 +988,14 @@ bool CIRCSock::OnGeneralCTCP(CMessage& Message) {
 }
 
 bool CIRCSock::OnPrivNotice(CMessage& Message) {
-	CPrivNotice& PrivNotice = static_cast<CPrivNotice&>(Message);
+	CNoticeMessage& Notice = static_cast<CNoticeMessage&>(Message);
 	bool bResult = false;
-	IRCSOCKMODULECALL(OnPrivNoticeMessage(PrivNotice), &bResult);
+	IRCSOCKMODULECALL(OnPrivNoticeMessage(Notice), &bResult);
 	if (bResult) return true;
 
 	if (!m_pNetwork->IsUserOnline()) {
 		// If the user is detached, add to the buffer
-		m_pNetwork->AddNoticeBuffer(":" + _NAMEDFMT(PrivNotice.GetNick().GetNickMask()) + " NOTICE {target} :{text}", PrivNotice.GetText());
+		m_pNetwork->AddNoticeBuffer(":" + _NAMEDFMT(Notice.GetNick().GetNickMask()) + " NOTICE {target} :{text}", Notice.GetText());
 	}
 
 	return false;
@@ -1039,24 +1039,24 @@ static void FixupChanNick(CNick& Nick, CChan* pChan) {
 }
 
 bool CIRCSock::OnChanCTCP(CMessage& Message) {
-	CChanCTCP& ChanCTCP = static_cast<CChanCTCP&>(Message);
-	CChan* pChan = m_pNetwork->FindChan(ChanCTCP.GetParam(0));
+	CCTCPMessage& CTCP = static_cast<CCTCPMessage&>(Message);
+	CChan* pChan = m_pNetwork->FindChan(CTCP.GetParam(0));
 	if (pChan) {
 		FixupChanNick(Message.GetNick(), pChan);
 
 		bool bResult = false;
-		ChanCTCP.SetChan(pChan);
-		IRCSOCKMODULECALL(OnChanCTCPMessage(ChanCTCP), &bResult);
+		CTCP.SetChan(pChan);
+		IRCSOCKMODULECALL(OnChanCTCPMessage(CTCP), &bResult);
 		if (bResult) return true;
 
 		// Record a /me
-		if (ChanCTCP.GetText().StartsWith("ACTION ")) {
+		if (CTCP.GetText().StartsWith("ACTION ")) {
 			bResult = false;
-			CChanAction& ChanAction = static_cast<CChanAction&>(Message);
-			IRCSOCKMODULECALL(OnChanActionMessage(ChanAction), &bResult);
+			CActionMessage& Action = static_cast<CActionMessage&>(Message);
+			IRCSOCKMODULECALL(OnChanActionMessage(Action), &bResult);
 			if (bResult) return true;
 			if (!pChan->AutoClearChanBuffer() || !m_pNetwork->IsUserOnline() || pChan->IsDetached()) {
-				pChan->AddBuffer(":" + _NAMEDFMT(Message.GetNick().GetNickMask()) + " PRIVMSG " + _NAMEDFMT(pChan->GetName()) + " :\001ACTION {text}\001", ChanAction.GetText(), &ChanAction.GetTime(), ChanAction.GetTags());
+				pChan->AddBuffer(":" + _NAMEDFMT(Message.GetNick().GetNickMask()) + " PRIVMSG " + _NAMEDFMT(pChan->GetName()) + " :\001ACTION {text}\001", Action.GetText(), &Action.GetTime(), Action.GetTags());
 			}
 		}
 	}
@@ -1068,18 +1068,18 @@ bool CIRCSock::OnChanCTCP(CMessage& Message) {
 }
 
 bool CIRCSock::OnChanNotice(CMessage& Message) {
-	CChanNotice& ChanNotice = static_cast<CChanNotice&>(Message);
-	CChan* pChan = m_pNetwork->FindChan(ChanNotice.GetParam(0));
+	CNoticeMessage& Notice = static_cast<CNoticeMessage&>(Message);
+	CChan* pChan = m_pNetwork->FindChan(Notice.GetParam(0));
 	if (pChan) {
 		FixupChanNick(Message.GetNick(), pChan);
 
 		bool bResult = false;
-		ChanNotice.SetChan(pChan);
-		IRCSOCKMODULECALL(OnChanNoticeMessage(ChanNotice), &bResult);
+		Notice.SetChan(pChan);
+		IRCSOCKMODULECALL(OnChanNoticeMessage(Notice), &bResult);
 		if (bResult) return true;
 
 		if (!pChan->AutoClearChanBuffer() || !m_pNetwork->IsUserOnline() || pChan->IsDetached()) {
-			pChan->AddBuffer(":" + _NAMEDFMT(ChanNotice.GetNick().GetNickMask()) + " NOTICE " + _NAMEDFMT(pChan->GetName()) + " :{text}", ChanNotice.GetText(), &ChanNotice.GetTime(), ChanNotice.GetTags());
+			pChan->AddBuffer(":" + _NAMEDFMT(Notice.GetNick().GetNickMask()) + " NOTICE " + _NAMEDFMT(pChan->GetName()) + " :{text}", Notice.GetText(), &Notice.GetTime(), Notice.GetTags());
 		}
 	}
 
