@@ -230,28 +230,6 @@ public:
 			if (!sArg2.empty()) {
 				pNewUser->SetDCCBindHost(sArg2);
 			}
-
-			const VCString& vsHosts = CZNC::Get().GetBindHosts();
-			if (!spSession->IsAdmin() && !vsHosts.empty()) {
-				bool bFound = false;
-				bool bFoundDCC = false;
-
-				for (const CString& sHost : vsHosts) {
-					if (sArg.Equals(sHost)) {
-						bFound = true;
-					}
-					if (sArg2.Equals(sHost)) {
-						bFoundDCC = true;
-					}
-				}
-
-				if (!bFound) {
-					pNewUser->SetBindHost(pUser ? pUser->GetBindHost() : "");
-				}
-				if (!bFoundDCC) {
-					pNewUser->SetDCCBindHost(pUser ? pUser->GetDCCBindHost() : "");
-				}
-			}
 		} else if (pUser){
 			pNewUser->SetBindHost(pUser->GetBindHost());
 			pNewUser->SetDCCBindHost(pUser->GetDCCBindHost());
@@ -810,31 +788,8 @@ public:
 			// To change BindHosts be admin or don't have DenySetBindHost
 			if (spSession->IsAdmin() || !spSession->GetUser()->DenySetBindHost()) {
 				Tmpl["BindHostEdit"] = "true";
-				const VCString& vsBindHosts = CZNC::Get().GetBindHosts();
-				if (vsBindHosts.empty()) {
-					if (pNetwork) {
-						Tmpl["BindHost"] = pNetwork->GetBindHost();
-					}
-				} else {
-					bool bFoundBindHost = false;
-					for (const CString& sBindHost : vsBindHosts) {
-						CTemplate& l = Tmpl.AddRow("BindHostLoop");
-
-						l["BindHost"] = sBindHost;
-
-						if (pNetwork && pNetwork->GetBindHost() == sBindHost) {
-							l["Checked"] = "true";
-							bFoundBindHost = true;
-						}
-					}
-
-					// If our current bindhost is not in the global list...
-					if (pNetwork && !bFoundBindHost && !pNetwork->GetBindHost().empty()) {
-						CTemplate& l = Tmpl.AddRow("BindHostLoop");
-
-						l["BindHost"] = pNetwork->GetBindHost();
-						l["Checked"] = "true";
-					}
+				if (pNetwork) {
+					Tmpl["BindHost"] = pNetwork->GetBindHost();
 				}
 			}
 
@@ -990,23 +945,7 @@ public:
 		sArg = WebSock.GetParam("bindhost");
 		// To change BindHosts be admin or don't have DenySetBindHost
 		if (spSession->IsAdmin() || !spSession->GetUser()->DenySetBindHost()) {
-			CString sHost = WebSock.GetParam("bindhost");
-			const VCString& vsHosts = CZNC::Get().GetBindHosts();
-			if (!spSession->IsAdmin() && !vsHosts.empty()) {
-				bool bFound = false;
-
-				for (const CString& s : vsHosts) {
-					if (sHost.Equals(s)) {
-						bFound = true;
-						break;
-					}
-				}
-
-				if (!bFound) {
-					sHost = pNetwork->GetBindHost();
-				}
-			}
-			pNetwork->SetBindHost(sHost);
+			pNetwork->SetBindHost(WebSock.GetParam("bindhost"));
 		}
 
 		if (WebSock.GetParam("floodprotection").ToBool()) {
@@ -1281,46 +1220,9 @@ public:
 			// To change BindHosts be admin or don't have DenySetBindHost
 			if (spSession->IsAdmin() || !spSession->GetUser()->DenySetBindHost()) {
 				Tmpl["BindHostEdit"] = "true";
-				const VCString& vsBindHosts = CZNC::Get().GetBindHosts();
-				if (vsBindHosts.empty()) {
-					if (pUser) {
-						Tmpl["BindHost"] = pUser->GetBindHost();
-						Tmpl["DCCBindHost"] = pUser->GetDCCBindHost();
-					}
-				} else {
-					bool bFoundBindHost = false;
-					bool bFoundDCCBindHost = false;
-					for (const CString& sBindHost : vsBindHosts) {
-						CTemplate& l = Tmpl.AddRow("BindHostLoop");
-						CTemplate& k = Tmpl.AddRow("DCCBindHostLoop");
-
-						l["BindHost"] = sBindHost;
-						k["BindHost"] = sBindHost;
-
-						if (pUser && pUser->GetBindHost() == sBindHost) {
-							l["Checked"] = "true";
-							bFoundBindHost = true;
-						}
-
-						if (pUser && pUser->GetDCCBindHost() == sBindHost) {
-							k["Checked"] = "true";
-							bFoundDCCBindHost = true;
-						}
-					}
-
-					// If our current bindhost is not in the global list...
-					if (pUser && !bFoundBindHost && !pUser->GetBindHost().empty()) {
-						CTemplate& l = Tmpl.AddRow("BindHostLoop");
-
-						l["BindHost"] = pUser->GetBindHost();
-						l["Checked"] = "true";
-					}
-					if (pUser && !bFoundDCCBindHost && !pUser->GetDCCBindHost().empty()) {
-						CTemplate& l = Tmpl.AddRow("DCCBindHostLoop");
-
-						l["BindHost"] = pUser->GetDCCBindHost();
-						l["Checked"] = "true";
-					}
+				if (pUser) {
+					Tmpl["BindHost"] = pUser->GetBindHost();
+					Tmpl["DCCBindHost"] = pUser->GetDCCBindHost();
 				}
 			}
 
@@ -1696,12 +1598,6 @@ public:
 			Tmpl["ProtectWebSessions"] = CString(CZNC::Get().GetProtectWebSessions());
 			Tmpl["HideVersion"] = CString(CZNC::Get().GetHideVersion());
 
-			const VCString& vsBindHosts = CZNC::Get().GetBindHosts();
-			for (const CString& sHost : vsBindHosts) {
-				CTemplate& l = Tmpl.AddRow("BindHostLoop");
-				l["BindHost"] = sHost;
-			}
-
 			const VCString& vsMotd = CZNC::Get().GetMotd();
 			for (const CString& sMotd : vsMotd) {
 				CTemplate& l = Tmpl.AddRow("MOTDLoop");
@@ -1832,13 +1728,6 @@ public:
 
 		for (const CString& sMotd : vsArgs) {
 			CZNC::Get().AddMotd(sMotd.TrimRight_n());
-		}
-
-		WebSock.GetRawParam("bindhosts").Split("\n", vsArgs);
-		CZNC::Get().ClearBindHosts();
-
-		for (const CString& sHost : vsArgs) {
-			CZNC::Get().AddBindHost(sHost.Trim_n());
 		}
 
 		CZNC::Get().SetSkinName(WebSock.GetParam("skin"));

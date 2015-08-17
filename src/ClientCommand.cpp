@@ -1207,48 +1207,6 @@ void CClient::UserCommand(CString& sLine) {
 		} else {
 			PutStatus("Done, but there were errors, [" + sMod + "] could not be loaded everywhere.");
 		}
-	} else if ((sCommand.Equals("ADDBINDHOST") || sCommand.Equals("ADDVHOST")) && m_pUser->IsAdmin()) {
-		CString sHost = sLine.Token(1);
-
-		if (sHost.empty()) {
-			PutStatus("Usage: AddBindHost <host>");
-			return;
-		}
-
-		if (CZNC::Get().AddBindHost(sHost)) {
-			PutStatus("Done");
-		} else {
-			PutStatus("The host [" + sHost + "] is already in the list");
-		}
-	} else if ((sCommand.Equals("REMBINDHOST") || sCommand.Equals("DELBINDHOST") || sCommand.Equals("REMVHOST") || sCommand.Equals("DELVHOST")) && m_pUser->IsAdmin()) {
-		CString sHost = sLine.Token(1);
-
-		if (sHost.empty()) {
-			PutStatus("Usage: DelBindHost <host>");
-			return;
-		}
-
-		if (CZNC::Get().RemBindHost(sHost)) {
-			PutStatus("Done");
-		} else {
-			PutStatus("The host [" + sHost + "] is not in the list");
-		}
-	} else if ((sCommand.Equals("LISTBINDHOSTS") || sCommand.Equals("LISTVHOSTS")) && (m_pUser->IsAdmin() || !m_pUser->DenySetBindHost())) {
-		const VCString& vsHosts = CZNC::Get().GetBindHosts();
-
-		if (vsHosts.empty()) {
-			PutStatus("No bind hosts configured");
-			return;
-		}
-
-		CTable Table;
-		Table.AddColumn("Host");
-
-		for (const CString& sHost : vsHosts) {
-			Table.AddRow();
-			Table.SetCell("Host", sHost);
-		}
-		PutStatus(Table);
 	} else if ((sCommand.Equals("SETBINDHOST") || sCommand.Equals("SETVHOST")) && (m_pUser->IsAdmin() || !m_pUser->DenySetBindHost())) {
 		if (!m_pNetwork) {
 			PutStatus("You must be connected with a network to use this command. Try SetUserBindHost instead");
@@ -1266,23 +1224,6 @@ void CClient::UserCommand(CString& sLine) {
 			return;
 		}
 
-		const VCString& vsHosts = CZNC::Get().GetBindHosts();
-		if (!m_pUser->IsAdmin() && !vsHosts.empty()) {
-			bool bFound = false;
-
-			for (const CString& sHost : vsHosts) {
-				if (sArg.Equals(sHost)) {
-					bFound = true;
-					break;
-				}
-			}
-
-			if (!bFound) {
-				PutStatus("You may not use this bind host. See [ListBindHosts] for a list");
-				return;
-			}
-		}
-
 		m_pNetwork->SetBindHost(sArg);
 		PutStatus("Set bind host for network [" + m_pNetwork->GetName() + "] to [" + m_pNetwork->GetBindHost() + "]");
 	} else if (sCommand.Equals("SETUSERBINDHOST") && (m_pUser->IsAdmin() || !m_pUser->DenySetBindHost())) {
@@ -1296,23 +1237,6 @@ void CClient::UserCommand(CString& sLine) {
 		if (sArg.Equals(m_pUser->GetBindHost())) {
 			PutStatus("You already have this bind host!");
 			return;
-		}
-
-		const VCString& vsHosts = CZNC::Get().GetBindHosts();
-		if (!m_pUser->IsAdmin() && !vsHosts.empty()) {
-			bool bFound = false;
-
-			for (const CString& sHost : vsHosts) {
-				if (sArg.Equals(sHost)) {
-					bFound = true;
-					break;
-				}
-			}
-
-			if (!bFound) {
-				PutStatus("You may not use this bind host. See [ListBindHosts] for a list");
-				return;
-			}
 		}
 
 		m_pUser->SetBindHost(sArg);
@@ -1682,13 +1606,7 @@ void CClient::HelpUser(const CString& sFilter) {
 	AddCommandHelp(Table, "ClearAllQueryBuffers", "", "Clear the query buffers", sFilter);
 	AddCommandHelp(Table, "SetBuffer", "<#chan|query> [linecount]", "Set the buffer count", sFilter);
 
-	if (m_pUser->IsAdmin()) {
-		AddCommandHelp(Table, "AddBindHost", "<host (IP preferred)>", "Adds a bind host for normal users to use", sFilter);
-		AddCommandHelp(Table, "DelBindHost", "<host>", "Removes a bind host from the list", sFilter);
-	}
-
 	if (m_pUser->IsAdmin() || !m_pUser->DenySetBindHost()) {
-		AddCommandHelp(Table, "ListBindHosts", "", "Shows the configured list of bind hosts", sFilter);
 		AddCommandHelp(Table, "SetBindHost", "<host (IP preferred)>", "Set the bind host for this connection", sFilter);
 		AddCommandHelp(Table, "SetUserBindHost", "<host (IP preferred)>", "Set the default bind host for this user", sFilter);
 		AddCommandHelp(Table, "ClearBindHost", "", "Clear the bind host for this connection", sFilter);

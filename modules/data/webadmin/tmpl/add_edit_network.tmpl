@@ -48,14 +48,7 @@
 				<? IF BindHostEdit ?>
 				<div class="subsection">
 					<div class="inputlabel">BindHost:</div>
-					<? IF BindHostLoop ?>
-						<select name="bindhost">
-							<option value="">- Default -</option>
-							<? LOOP BindHostLoop ?><option value="<? VAR BindHost ?>"<? IF Checked ?> selected="selected"<? ENDIF ?>><? VAR BindHost ?></option><? ENDLOOP ?>
-						</select>
-					<? ELSE ?>
-						<input type="text" name="bindhost" value="<? VAR BindHost ?>"/>
-					<? ENDIF ?>
+					<input type="text" name="bindhost" value="<? VAR BindHost ?>"/>
 				</div>
 				<div style="clear: both;"></div>
 				<? ENDIF ?>
