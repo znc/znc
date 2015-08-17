@@ -510,10 +510,6 @@ bool CZNC::WriteConfig() {
 		config.AddKeyValuePair("Motd", sLine.FirstLine());
 	}
 
-	for (const CString& sHost : m_vsBindHosts) {
-		config.AddKeyValuePair("BindHost", sHost.FirstLine());
-	}
-
 	for (const CString& sProxy : m_vsTrustedProxies) {
 		config.AddKeyValuePair("TrustedProxy", sProxy.FirstLine());
 	}
@@ -1059,21 +1055,23 @@ bool CZNC::LoadGlobal(CConfig& config, CString& sError) {
 		AddMotd(sMotd);
 	}
 
-	m_vsBindHosts.clear();
-	config.FindStringVector("bindhost", vsList);
-	for (const CString& sHost : vsList) {
-		AddBindHost(sHost);
+	if (config.FindStringVector("bindhost", vsList)) {
+		CUtils::PrintStatus(false, "WARNING: the global BindHost list is deprecated. Ignoring the following lines:");
+		for (const CString& sHost : vsList) {
+			CUtils::PrintStatus(false, "BindHost = " + sHost);
+		}
+	}
+	if (config.FindStringVector("vhost", vsList)) {
+		CUtils::PrintStatus(false, "WARNING: the global vHost list is deprecated. Ignoring the following lines:");
+		for (const CString& sHost : vsList) {
+			CUtils::PrintStatus(false, "vHost = " + sHost);
+		}
 	}
 
 	m_vsTrustedProxies.clear();
 	config.FindStringVector("trustedproxy", vsList);
 	for (const CString& sProxy : vsList) {
 		AddTrustedProxy(sProxy);
-	}
-
-	config.FindStringVector("vhost", vsList);
-	for (const CString& sHost : vsList) {
-		AddBindHost(sHost);
 	}
 
 	CString sVal;
@@ -1275,37 +1273,6 @@ void CZNC::DumpConfig(const CConfig* pConfig) {
 			DumpConfig(it->second.m_pSubConfig);
 		}
 	}
-}
-
-void CZNC::ClearBindHosts() {
-	m_vsBindHosts.clear();
-}
-
-bool CZNC::AddBindHost(const CString& sHost) {
-	if (sHost.empty()) {
-		return false;
-	}
-
-	for (const CString& sBindHost : m_vsBindHosts) {
-		if (sBindHost.Equals(sHost)) {
-			return false;
-		}
-	}
-
-	m_vsBindHosts.push_back(sHost);
-	return true;
-}
-
-bool CZNC::RemBindHost(const CString& sHost) {
-	VCString::iterator it;
-	for (it = m_vsBindHosts.begin(); it != m_vsBindHosts.end(); ++it) {
-		if (sHost.Equals(*it)) {
-			m_vsBindHosts.erase(it);
-			return true;
-		}
-	}
-
-	return false;
 }
 
 void CZNC::ClearTrustedProxies() {

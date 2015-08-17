@@ -67,9 +67,12 @@ public:
 	static CString GetTag(bool bIncludeVersion = true, bool bHTML = false);
 	static CString GetCompileOptionsString();
 	CString GetUptime() const;
-	void ClearBindHosts();
-	bool AddBindHost(const CString& sHost);
-	bool RemBindHost(const CString& sHost);
+	/** @deprecated Since 1.7.0. List of allowed bind hosts was a flawed design. */
+	void ClearBindHosts() { }
+	/** @deprecated Since 1.7.0. List of allowed bind hosts was a flawed design. */
+	bool AddBindHost(const CString& sHost) { return false; }
+	/** @deprecated Since 1.7.0. List of allowed bind hosts was a flawed design. */
+	bool RemBindHost(const CString& sHost) { return false; }
 	void ClearTrustedProxies();
 	bool AddTrustedProxy(const CString& sHost);
 	bool RemTrustedProxy(const CString& sHost);
@@ -125,6 +128,7 @@ public:
 	CString GetPemLocation() const;
 	const CString& GetConfigFile() const { return m_sConfigFile; }
 	bool WritePemFile();
+	/** @deprecated Since 1.7.0. List of allowed bind hosts was a flawed design. */
 	const VCString& GetBindHosts() const { return m_vsBindHosts; }
 	const VCString& GetTrustedProxies() const { return m_vsTrustedProxies; }
 	const std::vector<CListener*>& GetListeners() const { return m_vpListeners; }
@@ -229,7 +233,7 @@ protected:
 	CString                m_sSSLCertFile;
 	CString                m_sSSLCiphers;
 	CString                m_sSSLProtocols;
-	VCString               m_vsBindHosts;
+	VCString               m_vsBindHosts; // TODO: remove (deprecated in 1.7.0)
 	VCString               m_vsTrustedProxies;
 	VCString               m_vsMotd;
 	CFile*                 m_pLockFile;
