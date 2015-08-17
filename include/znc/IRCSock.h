@@ -105,6 +105,7 @@ public:
 	bool HasAwayNotify() const { return m_bAwayNotify; }
 	bool HasAccountNotify() const { return m_bAccountNotify; }
 	bool HasExtendedJoin() const { return m_bExtendedJoin; }
+	bool HasServerTime() const { return m_bServerTime; }
 	const std::set<unsigned char>& GetUserModes() const { return m_scUserModes; }
 	// This is true if we are past raw 001
 	bool IsAuthed() const { return m_bAuthed; }
@@ -135,6 +136,7 @@ protected:
 	bool                                m_bAwayNotify;
 	bool                                m_bAccountNotify;
 	bool                                m_bExtendedJoin;
+	bool                                m_bServerTime;
 	CString                             m_sPerms;
 	CString                             m_sPermModes;
 	std::set<unsigned char>             m_scUserModes;

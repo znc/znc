@@ -65,6 +65,7 @@ CIRCSock::CIRCSock(CIRCNetwork* pNetwork)
 		  m_bAwayNotify(false),
 		  m_bAccountNotify(false),
 		  m_bExtendedJoin(false),
+		  m_bServerTime(false),
 		  m_sPerms("*!@%+"),
 		  m_sPermModes("qaohv"),
 		  m_scUserModes(),
@@ -825,6 +826,8 @@ void CIRCSock::ReadLine(const CString& sData) {
 						{"away-notify", [this](bool bVal) { m_bAwayNotify = bVal; }},
 						{"account-notify", [this](bool bVal) { m_bAccountNotify = bVal; }},
 						{"extended-join", [this](bool bVal) { m_bExtendedJoin = bVal; }},
+						{"server-time", [this](bool bVal) { m_bServerTime = bVal; }},
+						{"znc.in/server-time-iso", [this](bool bVal) { m_bServerTime = bVal; }},
 				};
 
 				if (sSubCmd == "LS") {
