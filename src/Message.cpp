@@ -96,9 +96,11 @@ CString CMessage::ToString(unsigned int uFlags) const
 	}
 
 	// <params>
-	for (const CString& sParam : m_vsParams) {
+	unsigned uParams = m_vsParams.size();
+	for (unsigned int uIdx = 0; uIdx < uParams; ++uIdx) {
+		const CString& sParam = m_vsParams[uIdx];
 		sMessage += " ";
-		if (sParam.Contains(" ")) {
+		if (uIdx == uParams - 1 && (sParam.StartsWith(":") || sParam.Contains(" "))) {
 			sMessage += ":";
 		}
 		sMessage += sParam;
