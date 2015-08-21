@@ -78,7 +78,7 @@ public:
 		vParams.push_back(make_pair("user", ""));
 		AddSubPage(std::make_shared<CWebSubPage>("settings", "Global Settings", CWebSubPage::F_ADMIN));
 		AddSubPage(std::make_shared<CWebSubPage>("edituser", "Your Settings", vParams));
-		AddSubPage(std::make_shared<CWebSubPage>("traffic", "Traffic Info", CWebSubPage::F_ADMIN));
+		AddSubPage(std::make_shared<CWebSubPage>("traffic", "Traffic Info", vParams));
 		AddSubPage(std::make_shared<CWebSubPage>("listusers", "Manage Users", CWebSubPage::F_ADMIN));
 	}
 
@@ -573,7 +573,7 @@ public:
 			return true;
 		} else if (sPageName == "listusers" && spSession->IsAdmin()) {
 			return ListUsersPage(WebSock, Tmpl);
-		} else if (sPageName == "traffic" && spSession->IsAdmin()) {
+		} else if (sPageName == "traffic") {
 			return TrafficPage(WebSock, Tmpl);
 		} else if (sPageName == "index") {
 			return true;
@@ -1431,6 +1431,7 @@ public:
 	}
 
 	bool TrafficPage(CWebSock& WebSock, CTemplate& Tmpl) {
+		std::shared_ptr<CWebSession> spSession = WebSock.GetSession();
 		Tmpl["Title"] = "Traffic Info";
 		Tmpl["Uptime"] = CZNC::Get().GetUptime();
 
@@ -1441,6 +1442,11 @@ public:
 
 		for (const auto& it : msUsers) {
 			CUser* pUser = it.second;
+
+			if (!spSession->IsAdmin() && spSession->GetUser() != it.second) {
+				continue;
+			}
+
 			vector<CIRCNetwork*> vNetworks = pUser->GetNetworks();
 
 			for (const CIRCNetwork* pNetwork : vNetworks) {
@@ -1469,6 +1475,10 @@ public:
 		CZNC::TrafficStatsMap traffic = CZNC::Get().GetTrafficStats(Users, ZNC, Total);
 
 		for (const auto& it : traffic) {
+			if (!spSession->IsAdmin() && !spSession->GetUser()->GetUserName().Equals(it.first)) {
+				continue;
+			}
+
 			CTemplate& l = Tmpl.AddRow("TrafficLoop");
 
 			l["Username"] = it.first;

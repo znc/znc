@@ -33,6 +33,23 @@
 						<th>Total IRC Connections</th>
 						<td><? VAR TotalIRCConnections ?></td>
 					</tr>
+				<? ELSE ?>
+					<tr class="evenrow">
+						<th>Networks</th>
+						<td><? VAR TotalNetworks ?></td>
+					</tr>
+					<tr class="oddrow">
+						<th>Attached Networks</th>
+						<td><? VAR AttachedNetworks ?></td>
+					</tr>
+					<tr class="evenrow">
+						<th>Client Connections</th>
+						<td><? VAR TotalCConnections ?></td>
+					</tr>
+					<tr class="oddrow">
+						<th>IRC Connections</th>
+						<td><? VAR TotalIRCConnections ?></td>
+					</tr>
 				<? ENDIF ?>
 				</tbody>
 			</table>
@@ -80,9 +97,13 @@
 </div>
 <? ENDIF ?>
 
-<? IF IsAdmin && TrafficLoop ?>
+<? IF TrafficLoop ?>
 <div class="section">
+	<? IF IsAdmin ?>
 	<h3>Users</h3>
+	<? ELSE ?>
+	<h3>Traffic</h3>
+	<? ENDIF ?>
 	<div class="sectionbg">
 		<div class="sectionbody">
 			<table>
