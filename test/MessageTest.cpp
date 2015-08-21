@@ -163,15 +163,15 @@ TEST(MessageTest, PrivCTCP) {
 }
 
 TEST(MessageTest, PrivMsg) {
-	CMessage msg(":sender PRIVMSG receiver :text");
+	CMessage msg(":sender PRIVMSG receiver :foo bar");
 	CPrivMessage& priv = static_cast<CPrivMessage&>(msg);
 	EXPECT_EQ("sender", priv.GetNick().GetNick());
 	EXPECT_EQ("PRIVMSG", priv.GetCommand());
-	EXPECT_EQ("text", priv.GetText());
-
-	priv.SetText("foo bar");
 	EXPECT_EQ("foo bar", priv.GetText());
-	EXPECT_EQ(":sender PRIVMSG receiver :foo bar", priv.ToString());
+
+	priv.SetText(":)");
+	EXPECT_EQ(":)", priv.GetText());
+	EXPECT_EQ(":sender PRIVMSG receiver ::)", priv.ToString());
 }
 
 TEST(MessageTest, Quit) {
