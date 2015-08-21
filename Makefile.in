@@ -182,7 +182,7 @@ install: znc $(LIBZNC)
 	$(INSTALL_PROGRAM) znc $(DESTDIR)$(bindir)
 	$(INSTALL_SCRIPT) znc-buildmod $(DESTDIR)$(bindir)
 	$(INSTALL_DATA) $(srcdir)/include/znc/*.h $(DESTDIR)$(includedir)/znc
-	$(INSTALL_DATA) include/znc/zncconfig.h $(DESTDIR)$(includedir)/znc
+	$(INSTALL_DATA) include/znc/*.h $(DESTDIR)$(includedir)/znc
 	$(INSTALL_DATA) znc.pc $(DESTDIR)$(PKGCONFIGDIR)
 	@$(MAKE) -C modules install DESTDIR=$(DESTDIR);
 	if test -n "$(LIBZNC)"; then \
