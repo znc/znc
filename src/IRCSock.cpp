@@ -1020,10 +1020,32 @@ bool CIRCSock::OnPrivMsg(CMessage& Message) {
 	return false;
 }
 
+// #124: OnChanMsg(): nick doesn't have perms
+static void FixupChanNick(CNick& Nick, CChan* pChan) {
+	// A channel nick has up-to-date channel perms, but might be
+	// lacking (usernames-in-host) the associated ident & host.
+	// An incoming message, on the other hand, has normally a full
+	// nick!ident@host prefix. Sync the two so that channel nicks
+	// get the potentially missing piece of info and module hooks
+	// get the perms.
+	CNick* pChanNick = pChan->FindNick(Nick.GetNick());
+	if (pChanNick) {
+		if (!Nick.GetIdent().empty()) {
+			pChanNick->SetIdent(Nick.GetIdent());
+		}
+		if (!Nick.GetHost().empty()) {
+			pChanNick->SetHost(Nick.GetHost());
+		}
+		Nick.Clone(*pChanNick);
+	}
+}
+
 bool CIRCSock::OnChanCTCP(CMessage& Message) {
 	CChanCTCP& ChanCTCP = static_cast<CChanCTCP&>(Message);
 	CChan* pChan = m_pNetwork->FindChan(ChanCTCP.GetParam(0));
 	if (pChan) {
+		FixupChanNick(Message.GetNick(), pChan);
+
 		bool bResult = false;
 		ChanCTCP.SetChan(pChan);
 		IRCSOCKMODULECALL(OnChanCTCPMessage(ChanCTCP), &bResult);
@@ -1051,6 +1073,8 @@ bool CIRCSock::OnChanNotice(CMessage& Message) {
 	CChanNotice& ChanNotice = static_cast<CChanNotice&>(Message);
 	CChan* pChan = m_pNetwork->FindChan(ChanNotice.GetParam(0));
 	if (pChan) {
+		FixupChanNick(Message.GetNick(), pChan);
+
 		bool bResult = false;
 		ChanNotice.SetChan(pChan);
 		IRCSOCKMODULECALL(OnChanNoticeMessage(ChanNotice), &bResult);
@@ -1068,6 +1092,8 @@ bool CIRCSock::OnChanMsg(CMessage& Message) {
 	CChanMessage& ChanMsg = static_cast<CChanMessage&>(Message);
 	CChan* pChan = m_pNetwork->FindChan(ChanMsg.GetParam(0));
 	if (pChan) {
+		FixupChanNick(Message.GetNick(), pChan);
+
 		bool bResult = false;
 		ChanMsg.SetChan(pChan);
 		IRCSOCKMODULECALL(OnChanMessage(ChanMsg), &bResult);
