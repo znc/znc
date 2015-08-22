@@ -56,11 +56,11 @@ TEST(MessageTest, FormatFlags) {
 }
 
 TEST(MessageTest, ChanAction) {
-	CMessage msg(":sender PRIVMSG #chan :\001ACTION text\001");
+	CMessage msg(":sender PRIVMSG #chan :\001ACTION ACTS\001");
 	CChanAction& chan = static_cast<CChanAction&>(msg);
 	EXPECT_EQ("sender", chan.GetNick().GetNick());
 	EXPECT_EQ("PRIVMSG", chan.GetCommand());
-	EXPECT_EQ("text", chan.GetText());
+	EXPECT_EQ("ACTS", chan.GetText());
 
 	chan.SetText("foo bar");
 	EXPECT_EQ("foo bar", chan.GetText());
@@ -139,11 +139,11 @@ TEST(MessageTest, Part) {
 }
 
 TEST(MessageTest, PrivAction) {
-	CMessage msg(":sender PRIVMSG receiver :\001ACTION text\001");
+	CMessage msg(":sender PRIVMSG receiver :\001ACTION ACTS\001");
 	CPrivAction& priv = static_cast<CPrivAction&>(msg);
 	EXPECT_EQ("sender", priv.GetNick().GetNick());
 	EXPECT_EQ("PRIVMSG", priv.GetCommand());
-	EXPECT_EQ("text", priv.GetText());
+	EXPECT_EQ("ACTS", priv.GetText());
 
 	priv.SetText("foo bar");
 	EXPECT_EQ("foo bar", priv.GetText());

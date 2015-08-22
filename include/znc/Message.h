@@ -89,13 +89,13 @@ private:
 
 class CChanAction : public CMessage {
 public:
-	CString GetText() const { return GetParam(1).TrimLeft_n("\001ACTION ").TrimRight_n("\001"); }
+	CString GetText() const { return GetParam(1).TrimPrefix_n("\001ACTION ").TrimSuffix_n("\001"); }
 	void SetText(const CString& sText) { SetParam(1, "\001ACTION " + sText + "\001"); }
 };
 
 class CChanCTCP : public CMessage {
 public:
-	CString GetText() const { return GetParam(1).TrimLeft_n("\001").TrimRight_n("\001"); }
+	CString GetText() const { return GetParam(1).TrimPrefix_n("\001").TrimSuffix_n("\001"); }
 	void SetText(const CString& sText) { SetParam(1, "\001" + sText + "\001"); }
 };
 
@@ -138,13 +138,13 @@ public:
 
 class CPrivAction : public CMessage {
 public:
-	CString GetText() const { return GetParam(1).TrimLeft_n("\001ACTION ").TrimRight_n("\001"); }
+	CString GetText() const { return GetParam(1).TrimPrefix_n("\001ACTION ").TrimSuffix_n("\001"); }
 	void SetText(const CString& sText) { SetParam(1, "\001ACTION " + sText + "\001"); }
 };
 
 class CPrivCTCP : public CMessage {
 public:
-	CString GetText() const { return GetParam(1).TrimLeft_n("\001").TrimRight_n("\001"); }
+	CString GetText() const { return GetParam(1).TrimPrefix_n("\001").TrimSuffix_n("\001"); }
 	void SetText(const CString& sText) { SetParam(1, "\001" + sText + "\001"); }
 };
 
