@@ -133,7 +133,7 @@ void CMessage::Parse(CString sMessage)
 	//                   NUL or CR or LF>
 
 	// <prefix>
-	if (sMessage.TrimLeft(":")) {
+	if (sMessage.TrimPrefix(":")) {
 		m_Nick.Parse(sMessage.Token(0));
 		sMessage = sMessage.Token(1, true);
 	}
@@ -145,7 +145,7 @@ void CMessage::Parse(CString sMessage)
 	// <params>
 	m_vsParams.clear();
 	while (!sMessage.empty()) {
-		if (sMessage.TrimLeft(":")) {
+		if (sMessage.TrimPrefix(":")) {
 			m_vsParams.push_back(sMessage);
 			sMessage.clear();
 		} else {

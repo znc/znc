@@ -198,6 +198,14 @@ TEST(MessageTest, Topic) {
 	EXPECT_EQ(":nick TOPIC #chan test", topic.ToString());
 }
 
+TEST(MessageTest, Parse) {
+	CMessage msg;
+
+	// #1037
+	msg.Parse(":irc.znc.in PRIVMSG ::)");
+	EXPECT_EQ(":)", msg.GetParam(0));
+}
+
 // The test data for MessageTest.Parse originates from https://github.com/SaberUK/ircparser
 //
 // IRCParser - Internet Relay Chat Message Parser
