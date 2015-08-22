@@ -3,6 +3,7 @@ prefix=@prefix@
 exec_prefix=@exec_prefix@
 datarootdir=@datarootdir@
 bindir=@bindir@
+libdir=@libdir@
 datadir=@datadir@
 includedir=@includedir@
 

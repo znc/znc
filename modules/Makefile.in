@@ -63,7 +63,7 @@ C=
 endif
 
 ifneq "$(LIBZNC)" ""
-LDFLAGS += -L.. -lznc-$(LIBZNC_VERSION) -Wl,-rpath,$(LIBZNCDIR)
+LIBS += -L.. -lznc-$(LIBZNC_VERSION) -Wl,-rpath,$(LIBZNCDIR)
 endif
 
 CLEAN    :=

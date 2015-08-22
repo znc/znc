@@ -30,22 +30,19 @@ if test -z "$1"; then
 fi
 
 CXXFLAGS="@CPPFLAGS@ @MODFLAGS@ -I@prefix@/include $CXXFLAGS"
+LIBS="@LIBS@ $LIBS"
 MODLINK="@MODLINK@ $MODLINK"
 VERSION="@PACKAGE_VERSION@"
 
 # Ugly cygwin stuff :(
-LIBZNC="@LIBZNC@"
-LIBZNCDIR="@LIBZNCDIR@"
-LIBZNC_VERSION="@LIBZNC_VERSION@"
-if test "x" = "x$LIBZNC"; then
-    LIBZNCFLAGS=""
-else
-    LIBZNCFLAGS="-L$LIBZNCDIR -lznc-$LIBZNC_VERSION"
+if test -n "@LIBZNC@"; then
+	prefix="@prefix@"
+	exec_prefix="@exec_prefix@"
+	LDFLAGS="-L@libdir@ $LDFLAGS"
+	LIBS="-lznc $LIBS"
 fi
 
-LDFLAGS="$LIBZNCFLAGS $LDFLAGS"
-
-while test ! -z "$1"
+while test -n "$1"
 do
 	FILE=$1
 	shift

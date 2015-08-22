@@ -52,7 +52,7 @@ modpython/_znc_core.o: modpython/_znc_core.cpp Makefile
 
 modpython/_znc_core.$(PYCEXT_EXT): modpython/_znc_core.o Makefile modpython.so
 	$(E) Linking ZNC python bindings library...
-	$(Q)$(CXX) $(MODFLAGS) $(LDFLAGS) $(MODLINK) -o $@ $< $(PY_LDFLAGS) $(PYDEPONMOD)
+	$(Q)$(CXX) $(MODFLAGS) $(LDFLAGS) $(MODLINK) -o $@ $< $(PY_LDFLAGS) $(PYDEPONMOD) $(LIBS)
 
 ifneq "$(SWIG)" ""
 include $(srcdir)/modpython/Makefile.gen

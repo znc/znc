@@ -93,7 +93,7 @@ znc: $(BIN_OBJS) $(LIBZNC)
 
 $(LIBZNC): $(LIB_OBJS)
 	$(E) Linking $(LIBZNC)...
-	$(Q)$(CXX) $(LDFLAGS) -shared -o $@ $(LIB_OBJS) $(LIBS)
+	$(Q)$(CXX) $(LDFLAGS) -shared -o $@ $(LIB_OBJS) $(LIBS) -Wl,--out-implib=libznc.dll.a
 endif
 
 unittest: $(LIB_OBJS) test/gtest-all.o test/gtest-main.o $(TESTS)
@@ -188,6 +188,7 @@ install: znc $(LIBZNC)
 	if test -n "$(LIBZNC)"; then \
 		test -d $(DESTDIR)$(LIBZNCDIR) || $(INSTALL) -d $(DESTDIR)$(LIBZNCDIR) || exit 1 ; \
 		$(INSTALL_PROGRAM) $(LIBZNC) $(DESTDIR)$(LIBZNCDIR) || exit 1 ; \
+		$(INSTALL_PROGRAM) libznc.dll.a $(DESTDIR)$(libdir) || exit 1 ; \
 	fi
 	@$(MAKE) -C man install DESTDIR=$(DESTDIR)
 	@HAVE_SYSTEMD_TRUE@test -d $(DESTDIR)$(systemdsystemunitdir) || $(INSTALL) -d $(DESTDIR)$(systemdsystemunitdir)
