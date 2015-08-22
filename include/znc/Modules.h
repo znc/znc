@@ -561,6 +561,7 @@ public:
 	 *  @return See CModule::EModRet.
 	 */
 	virtual EModRet OnRaw(CString& sLine);
+	virtual EModRet OnRawMessage(CMessage& Message);
 
 	/** Called when a command to *status is sent.
 	 *  @param sCommand The command sent.
@@ -1196,6 +1197,7 @@ public:
 	bool OnMode(const CNick& OpNick, CChan& Channel, char uMode, const CString& sArg, bool bAdded, bool bNoChange);
 
 	bool OnRaw(CString& sLine);
+	bool OnRawMessage(CMessage& Message);
 
 	bool OnStatusCommand(CString& sCommand);
 	bool OnModCommand(const CString& sCommand);

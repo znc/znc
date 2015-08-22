@@ -161,6 +161,9 @@ void CIRCSock::ReadLine(const CString& sData) {
 	CMessage Message(sLine);
 	Message.SetNetwork(m_pNetwork);
 
+	IRCSOCKMODULECALL(OnRawMessage(Message), &bReturn);
+	if (bReturn) return;
+
 	CString sCmd = Message.GetCommand();
 
 	if (sCmd.Equals("PING")) {
