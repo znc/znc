@@ -186,6 +186,16 @@ static const struct {
 		{"502", true},  /* rfc1459 ERR_USERSDONTMATCH */
 		{nullptr, true},
 	 }},
+	{"HELP", {
+		// Hybrid/ratbox/Charybdis
+		{"704", false},  /* RPL_HELPSTART */
+		{"705", false},  /* RPL_HELPTXT */
+		{"706", true},  /* RPL_ENDOFHELP */
+		{"524", true},  /* ERR_HELPNOTFOUND */
+		// Unreal not included -- it uses different numerics and does not
+		// send any "End of /HELP" numeric, so it wouldn't work here.
+		{NULL, true},
+	 }},
 	// END (last item!)
 	{nullptr, {{nullptr, true}}}
 };
