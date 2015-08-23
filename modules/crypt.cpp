@@ -40,7 +40,7 @@
 class CCryptMod : public CModule {
 	CString NickPrefix() {
 		MCString::iterator it = FindNV(NICK_PREFIX_KEY);
-		return it != EndNV() ? it->second : "*";
+		return it != EndNV() ? it->second : "+";
 	}
 
 public:
