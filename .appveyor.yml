@@ -26,7 +26,7 @@ install:
           echo "using gtest from cache"
         } else {
           (New-Object Net.WebClient).DownloadFile('http://googletest.googlecode.com/files/gtest-1.7.0.zip', 'c:\gtest-1.7.0.zip')
-          7z x -oc:/ c:/gtest-1.7.0.zip
+          7z x -oc:\ c:\gtest-1.7.0.zip
         }
 # stdin is broken at AppVeyor, so we open it explicitly as /dev/null
 build_script:
