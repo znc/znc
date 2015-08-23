@@ -1,0 +1,31 @@
+<? INC Header.tmpl ?>
+
+<? IF !LogsLoop ?>
+<p>You have no logs to display.</p>
+<? ELSE ?>
+
+<ul class="data">
+  <? LOOP LogsLoop ?>
+  <li class="<? IF __EVEN__ ?>evenrow<? ELSE ?>oddrow<? ENDIF ?>">
+    <a href="<? VAR ModPath TOP ?>?file=<? VAR File ESC=URL,HTML ?>">
+    <? VAR File ?>
+    </a>
+  </li>
+  <? ENDLOOP ?>
+</ul>
+<? ENDIF ?>
+
+<? IF Log ?>
+<div>
+<? IF Prev > -1 ?>
+<a href="?file=<? VAR Curr ESC=URL,HTML ?>&page=<? VAR Prev ?>">Previous</a>
+<? ENDIF ?>
+<a href="?file=<? VAR Curr ESC=URL,HTML ?>&page=<? VAR Next ?>">Next</a>
+</div>
+
+<pre>
+<? VAR Log ?>
+</pre>
+<? ENDIF ?>
+
+<? INC Footer.tmpl ?>

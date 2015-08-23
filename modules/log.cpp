@@ -117,6 +117,10 @@ public:
 	EModRet OnPrivMsg(CNick& Nick, CString& sMessage) override;
 	EModRet OnChanMsg(CNick& Nick, CChan& Channel, CString& sMessage) override;
 
+  /* web */
+	virtual CString GetWebMenuTitle() { return "Logs"; }
+	virtual bool OnWebRequest(CWebSock& WebSock, const CString& sPageName, CTemplate& Tmpl);
+
 private:
 	CString                 m_sLogPath;
 	CString                 m_sTimestamp;
@@ -403,6 +407,43 @@ void CLogMod::OnNick(const CNick& OldNick, const CString& sNewNick, const vector
 		for (CChan* pChan : vChans)
 			PutLog("*** " + OldNick.GetNick() + " is now known as " + sNewNick, *pChan);
 	}
+}
+
+bool CLogMod::OnWebRequest(CWebSock& WebSock, const CString& sPageName, CTemplate& Tmpl) {
+	CFile LogFile(m_sLogPath);
+  CDir  LogDir (LogFile.GetDir());
+  for(std::vector<CFile*>::iterator it = LogDir.begin(); it != LogDir.end(); ++it) {
+    CTemplate& Row = Tmpl.AddRow("LogsLoop");
+    Row["File"] = (**it).GetShortName();
+  }
+  if (WebSock.HasParam("file", false)) {
+    CString path = CDir::CheckPathPrefix(GetSavePath(), LogFile.GetDir() + WebSock.GetParam("file", false));
+    if (path.empty()) {
+      WebSock.PrintErrorPage("Invalid Path");
+      return true;
+    }
+
+    CFile DisplayFile(path);
+    CString content;
+
+    DisplayFile.Open();
+
+    int PageSize = 1024 * 1024;
+    int Page = 0;
+    if (WebSock.HasParam("page", false)) {
+      Page = WebSock.GetParam("page", false).ToInt();
+      DisplayFile.Seek(Page * PageSize);
+    }
+    Tmpl["Prev"] = CString(Page - 1);
+    Tmpl["Next"] = CString(Page + 1);
+    Tmpl["Curr"] = WebSock.GetParam("file", false);
+
+    DisplayFile.ReadFile(content, PageSize);
+    DisplayFile.Close();
+    
+    Tmpl["Log"] = content;
+  }
+  return true;
 }
 
 CModule::EModRet CLogMod::OnTopic(CNick& Nick, CChan& Channel, CString& sTopic)
