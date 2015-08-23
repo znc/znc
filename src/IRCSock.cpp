@@ -730,12 +730,7 @@ void CIRCSock::ReadLine(const CString& sData) {
 				}
 			}
 
-			if (Nick.NickEquals(m_pNetwork->GetIRCServer())) {
-				m_pNetwork->PutUser(":" + Nick.GetNick() + " NOTICE " + sTarget + " :" + sMsg);
-			} else {
-				m_pNetwork->PutUser(":" + Nick.GetNickMask() + " NOTICE " + sTarget + " :" + sMsg);
-			}
-
+			m_pNetwork->PutUser(Message);
 			return;
 		} else if (sCmd.Equals("TOPIC")) {
 			CTopicMessage& TopicMsg = static_cast<CTopicMessage&>(Message);
@@ -774,7 +769,7 @@ void CIRCSock::ReadLine(const CString& sData) {
 					}
 				}
 
-				m_pNetwork->PutUser(":" + Nick.GetNickMask() + " PRIVMSG " + sTarget + " :\001" + sMsg + "\001");
+				m_pNetwork->PutUser(Message);
 				return;
 			} else {
 				if (sTarget.Equals(GetNick())) {
@@ -787,7 +782,7 @@ void CIRCSock::ReadLine(const CString& sData) {
 					}
 				}
 
-				m_pNetwork->PutUser(":" + Nick.GetNickMask() + " PRIVMSG " + sTarget + " :" + sMsg);
+				m_pNetwork->PutUser(Message);
 				return;
 			}
 		} else if (sCmd.Equals("WALLOPS")) {
