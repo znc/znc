@@ -873,7 +873,21 @@ bool CZNC::WriteNewConfig(const CString& sConfigFile) {
 	CUtils::PrintMessage("");
 
 	File.UnLock();
-	return bFileOpen && CUtils::GetBoolInput("Launch ZNC now?", true);
+
+	bool bWantLaunch = bFileOpen;
+	if (bWantLaunch) {
+		// "export ZNC_NO_LAUNCH_AFTER_MAKECONF=1" would cause znc --makeconf to not offer immediate launch.
+		// Useful for distros which want to create config when znc package is installed.
+		// See https://github.com/znc/znc/pull/257
+		char* szNoLaunch = getenv("ZNC_NO_LAUNCH_AFTER_MAKECONF");
+		if (szNoLaunch && *szNoLaunch == '1') {
+			bWantLaunch = false;
+		}
+	}
+	if (bWantLaunch) {
+		bWantLaunch = CUtils::GetBoolInput("Launch ZNC now?", true);
+	}
+	return bWantLaunch;
 }
 
 void CZNC::BackupConfigOnce(const CString& sSuffix) {
