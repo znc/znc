@@ -46,8 +46,7 @@ public:
 		else
 			m_eLogMode = LOG_TO_FILE;
 
-		CString sPath = GetNV("path");
-		SetLogFilePath(sPath);
+		SetLogFilePath(GetNV("path"));
 
 		Log("Logging started. ZNC PID[" + CString(getpid()) + "] UID/GID[" + CString(getuid()) + ":" + CString(getgid()) + "]");
 		return true;
@@ -86,7 +85,7 @@ public:
 		Log("[" + sUsername + "] failed to login from " + sRemoteIP, LOG_WARNING);
 	}
 
-	void SetLogFilePath(CString& sPath) {
+	void SetLogFilePath(CString sPath) {
 		if (sPath.empty()) {
 			sPath = GetSavePath() + "/znc.log";
 		}
