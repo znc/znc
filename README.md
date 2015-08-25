@@ -3,6 +3,7 @@
 [![Travis Build Status](https://travis-ci.org/znc/znc.svg?branch=master)](https://travis-ci.org/znc/znc)
 [![AppVeyor Build status](https://ci.appveyor.com/api/projects/status/7danes7dj5h2iv4p/branch/master?svg=true)](https://ci.appveyor.com/project/DarthGandalf/znc/branch/master)
 [![Bountysource](https://www.bountysource.com/badge/tracker?tracker_id=1759)](https://www.bountysource.com/trackers/1759-znc?utm_source=1759&utm_medium=shield&utm_campaign=TRACKER_BADGE)
+[![Coverage Status](https://coveralls.io/repos/znc/znc/badge.svg?branch=master&service=github)](https://coveralls.io/github/znc/znc?branch=master)
 
 ## Table of contents
 

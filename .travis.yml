@@ -10,6 +10,7 @@ env:
           - BUILD_TYPE=normal
           - BUILD_TYPE=asan
           - BUILD_TYPE=tsan
+          - BUILD_TYPE=cov
       global:
           - secure: "i2f2UVDnyHT/9z0U3XvgTj8eDERvnc1Wk7HpseEjb75JwGzqn/2R+RKHmoSrwK3hFgij2IMxZL19XtHFwMz9t5A/huAAKD74KMMI/QpeZEJ/sjT3CTLcE9HEVDdJOjc7dfLRxb2hZtgvx8clZIMrpeUdPhci8openff30KvXVbg="
 matrix:
@@ -18,10 +19,14 @@ matrix:
           env: BUILD_TYPE=asan
         - os: osx
           env: BUILD_TYPE=tsan
+        - os: osx
+          env: BUILD_TYPE=cov
         - compiler: gcc
           env: BUILD_TYPE=asan
         - compiler: gcc
           env: BUILD_TYPE=tsan
+        - compiler: gcc
+          env: BUILD_TYPE=cov
         - os: osx
           compiler: gcc
     include:
@@ -34,6 +39,7 @@ before_install:
     - if [[ "$BUILD_TYPE" == "normal" ]]; then export CFGFLAGS= MYCXXFLAGS= MYLDFLAGS=; fi
     - if [[ "$BUILD_TYPE" == "asan" ]]; then export CFGFLAGS=--enable-debug MYCXXFLAGS="-fsanitize=address -O1 -fno-omit-frame-pointer -fno-optimize-sibling-calls -fPIE" MYLDFLAGS="-fsanitize=address -pie"; fi
     - if [[ "$BUILD_TYPE" == "tsan" ]]; then export CFGFLAGS=--enable-debug MYCXXFLAGS="-fsanitize=thread -O1 -fPIE" MYLDFLAGS="-fsanitize=thread -pie"; fi
+    - if [[ "$BUILD_TYPE" == "cov" ]]; then export CFGFLAGS=--enable-debug MYCXXFLAGS=--coverage MYLDFLAGS=--coverage; fi
       # UBSan randomly crashes clang, and very often :(
       # CFGFLAGS=--enable-debug MYCXXFLAGS="-fsanitize=undefined -O1 -fPIE -fno-sanitize-recover" MYLDFLAGS="-fsanitize=undefined -pie -fno-sanitize-recover"
     - if [[ "$TRAVIS_REPO_SLUG" == "znc/znc" && "$TRAVIS_PULL_REQUEST" == "false" && "$TRAVIS_BRANCH" == "master" ]]; then openssl aes-256-cbc -d -in .travis-github.enc -out ~/znc-docs-key -k ${SECRET_KEY}; fi
@@ -49,6 +55,7 @@ install:
     - if [[ "$TRAVIS_OS_NAME" == "linux" && "$CXX" == "g++" ]]; then sudo apt-get install g++-4.8; fi
     - if [[ "$TRAVIS_OS_NAME" == "linux" && "$CXX" == "g++" ]]; then export CXX="g++-4.8" CC="gcc-4.8"; fi
     - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then export CFGFLAGS="$CFGFLAGS --with-gtest=/usr/src/gtest"; fi
+    - if [[ "$TRAVIS_OS_NAME" == "linux" && "$BUILD_TYPE" == "cov" ]]; then sudo apt-get install lcov; gem install coveralls-lcov; fi
     - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then sw_vers; fi
     - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then sysctl -a | grep cpu; fi
     - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then sysctl -a | grep mem; fi
@@ -78,6 +85,12 @@ after_success:
               ./.travis-generate-docs.sh
           else
               echo "Not leader"
+          fi
+    - |
+          if [[ "$BUILD_TYPE" == "cov" ]]; then
+              lcov --directory . --capture --output-file coverage.info
+              lcov --remove coverage.info '/usr/*' 'test/*' --output-file coverage.info
+              coveralls-lcov coverage.info
           fi
 notifications:
     irc:
