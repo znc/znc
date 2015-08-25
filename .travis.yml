@@ -88,9 +88,11 @@ after_success:
           fi
     - |
           if [[ "$BUILD_TYPE" == "cov" ]]; then
+              cd build/
               lcov --directory . --capture --output-file coverage.info
               lcov --remove coverage.info '/usr/*' 'test/*' --output-file coverage.info
               coveralls-lcov coverage.info
+              cd ..
           fi
 notifications:
     irc:
