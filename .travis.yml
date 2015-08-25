@@ -29,7 +29,13 @@ matrix:
           env: BUILD_TYPE=coverage
         - os: osx
           compiler: gcc
-    include:
+            # remove below before push
+        - os: osx
+        - compiler: clang
+        - env: BUILD_TYPE=normal
+        - env: BUILD_TYPE=asan
+        - env: BUILD_TYPE=tsan
+          #    include:
         - os: osx
           compiler: clang
           env: BUILD_TYPE=normal USE_SYSTEM_OPENSSL=true
@@ -39,7 +45,7 @@ before_install:
     - if [[ "$BUILD_TYPE" == "normal" ]]; then export CFGFLAGS= MYCXXFLAGS= MYLDFLAGS=; fi
     - if [[ "$BUILD_TYPE" == "asan" ]]; then export CFGFLAGS=--enable-debug MYCXXFLAGS="-fsanitize=address -O1 -fno-omit-frame-pointer -fno-optimize-sibling-calls -fPIE" MYLDFLAGS="-fsanitize=address -pie"; fi
     - if [[ "$BUILD_TYPE" == "tsan" ]]; then export CFGFLAGS=--enable-debug MYCXXFLAGS="-fsanitize=thread -O1 -fPIE" MYLDFLAGS="-fsanitize=thread -pie"; fi
-    - if [[ "$BUILD_TYPE" == "coverage" ]]; then export CFGFLAGS=--enable-debug MYCXXFLAGS=--coverage MYLDFLAGS=--coverage; fi
+    - if [[ "$BUILD_TYPE" == "coverage" ]]; then export CFGFLAGS="--enable-debug --disable-perl --disable-python" MYCXXFLAGS=--coverage MYLDFLAGS=--coverage; fi
       # UBSan randomly crashes clang, and very often :(
       # CFGFLAGS=--enable-debug MYCXXFLAGS="-fsanitize=undefined -O1 -fPIE -fno-sanitize-recover" MYLDFLAGS="-fsanitize=undefined -pie -fno-sanitize-recover"
     - if [[ "$TRAVIS_REPO_SLUG" == "znc/znc" && "$TRAVIS_PULL_REQUEST" == "false" && "$TRAVIS_BRANCH" == "master" ]]; then openssl aes-256-cbc -d -in .travis-github.enc -out ~/znc-docs-key -k ${SECRET_KEY}; fi
@@ -55,7 +61,16 @@ install:
     - if [[ "$TRAVIS_OS_NAME" == "linux" && "$CXX" == "g++" ]]; then sudo apt-get install g++-4.8; fi
     - if [[ "$TRAVIS_OS_NAME" == "linux" && "$CXX" == "g++" ]]; then export CXX="g++-4.8" CC="gcc-4.8"; fi
     - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then export CFGFLAGS="$CFGFLAGS --with-gtest=/usr/src/gtest"; fi
-    - if [[ "$TRAVIS_OS_NAME" == "linux" && "$BUILD_TYPE" == "coverage" ]]; then sudo apt-get install lcov; gem install coveralls-lcov; fi
+    - |
+          if [[ "$TRAVIS_OS_NAME" == "linux" && "$BUILD_TYPE" == "coverage" ]]; then
+              # when travis upgrades ubuntu, install lcov from apt-get instead
+              sudo apt-get build-dep lcov
+              wget http://archive.ubuntu.com/ubuntu/pool/main/l/lcov/lcov_1.11.orig.tar.gz
+              tar xf lcov_1.11.orig.tar.gz
+              sudo make -C lcov-1.11/ install
+              gem install coveralls-lcov
+              lcov --directory . --zerocounters
+          fi
     - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then sw_vers; fi
     - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then sysctl -a | grep cpu; fi
     - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then sysctl -a | grep mem; fi
@@ -88,10 +103,12 @@ after_success:
           fi
     - |
           if [[ "$BUILD_TYPE" == "coverage" ]]; then
-              cd build/
-              lcov --directory . --capture --output-file coverage.info
-              lcov --remove coverage.info '/usr/*' 'test/*' --output-file coverage.info
-              coveralls-lcov coverage.info
+              ls -l /usr/bin|grep gcov
+              cd build
+              lcov --directory . --capture --output-file coverage.info --base-directory $(pwd) --gcov-tool /usr/bin/gcov-4.8 || exit 1
+              lcov --remove coverage.info '/usr/*' 'test/*' --output-file coverage.info || exit 1
+              lcov --list coverage.info || exit 1
+              coveralls-lcov coverage.info || exit 1
               cd ..
           fi
 notifications:
