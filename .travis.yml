@@ -92,7 +92,7 @@ after_success:
           if [[ "$BUILD_TYPE" == "coverage" ]]; then
               cd build/
               ls -l /usr/bin|grep gcov
-              lcov --directory . --capture --output-file coverage.info --base-directory $(pwd) --gcov-tool /usr/bin/gcov-4.8 || exit 1
+              lcov --directory . --capture --output-file coverage.info --gcov-tool /usr/bin/gcov-4.8 || exit 1
               lcov --remove coverage.info '/usr/*' 'test/*' --output-file coverage.info || exit 1
               lcov --list coverage.info || exit 1
               coveralls-lcov coverage.info || exit 1
