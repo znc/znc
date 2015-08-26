@@ -222,5 +222,10 @@ uninstall:
 
 test: unittest
 	$(Q)./unittest
+	# The following is only for coverage to see that we also have modules, which (theoretically) should be tested too.
+	# It exploits the fact that ZNC opens every module on startup to check whether it was installed properly or not.
+	# This should be replaced by a better integration test at some point.
+	# Also it uses files at <prefix>/lib/znc, which is less than ideal, especially from build scripts of distros.
+	$(Q)./znc --makeconf --datadir $(shell pwd)/empty-dir-for-test < /dev/null || true
 
 -include $(wildcard .depend/*.dep)
