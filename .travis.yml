@@ -81,8 +81,9 @@ script:
     - ../configure --enable-perl --enable-python --enable-tcl --enable-cyrus --enable-charset $CFGFLAGS CXXFLAGS="$CXXFLAGS $MYCXXFLAGS" LDFLAGS="$LDFLAGS $MYLDFLAGS"
     - cat config.log
     - make V=1
-    - make V=1 test
     - sudo make install
+      # test after install, because make test currently relies on modules to be installed
+    - make V=1 test
     - cd ..
 after_success:
     - test -r .travis_after_all.py && python .travis_after_all.py || echo No .travis_after_all.py found
