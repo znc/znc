@@ -29,7 +29,7 @@ class CIRCNetwork;
 class CMessage {
 public:
 	explicit CMessage(const CString& sMessage = "");
-	CMessage(const CNick& Nick, const CString& sCommand, const VCString& vsParams, const MCString& mssTags = MCString::EmptyMap);
+	CMessage(const CNick& Nick, const CString& sCommand, const VCString& vsParams = VCString(), const MCString& mssTags = MCString::EmptyMap);
 
 	// ZNC <-> IRC
 	CIRCNetwork* GetNetwork() const { return m_pNetwork; }
