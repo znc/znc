@@ -43,6 +43,7 @@ TEST(MessageTest, ToString) {
 	EXPECT_EQ(":irc.znc.in CMD p1", CMessage(":irc.znc.in CMD p1").ToString());
 	EXPECT_EQ(":irc.znc.in CMD p1 p2", CMessage(":irc.znc.in CMD p1 p2").ToString());
 	EXPECT_EQ(":irc.znc.in CMD :p p p", CMessage(":irc.znc.in CMD :p p p").ToString());
+	EXPECT_EQ(":irc.znc.in CMD :", CMessage(":irc.znc.in CMD :").ToString());
 
 	EXPECT_EQ("CMD", CMessage(CNick(), "CMD", {}).ToString());
 	EXPECT_EQ("CMD p1", CMessage(CNick(), "CMD", {"p1"}).ToString());
@@ -53,6 +54,7 @@ TEST(MessageTest, ToString) {
 	EXPECT_EQ(":irc.znc.in CMD p1", CMessage(CNick(":irc.znc.in"), "CMD", {"p1"}).ToString());
 	EXPECT_EQ(":irc.znc.in CMD p1 p2", CMessage(CNick(":irc.znc.in"), "CMD", {"p1", "p2"}).ToString());
 	EXPECT_EQ(":irc.znc.in CMD :p p p", CMessage(CNick(":irc.znc.in"), "CMD", {"p p p"}).ToString());
+	EXPECT_EQ(":irc.znc.in CMD :", CMessage(CNick(":irc.znc.in"), "CMD", {""}).ToString());
 }
 
 TEST(MessageTest, FormatFlags) {
