@@ -40,3 +40,4 @@ build_script:
     - c:\cygwin-root\bin\sh -lc "znc --version"
 test_script:
     - c:\cygwin-root\bin\sh -lc "cd $APPVEYOR_BUILD_FOLDER/build; make VERBOSE=1 test < /dev/null"
+    - c:\cygwin-root\bin\sh -lc "cd $APPVEYOR_BUILD_FOLDER/build; make VERBOSE=1 test2 < /dev/null"
