@@ -1,39 +1,30 @@
 language: cpp
-os:
-    - linux
-    - osx
-compiler:
-    - gcc
-    - clang
 env:
-      matrix:
-          - BUILD_TYPE=normal
-          - BUILD_TYPE=asan
-          - BUILD_TYPE=tsan
-          - BUILD_TYPE=coverage
-      global:
-          - secure: "i2f2UVDnyHT/9z0U3XvgTj8eDERvnc1Wk7HpseEjb75JwGzqn/2R+RKHmoSrwK3hFgij2IMxZL19XtHFwMz9t5A/huAAKD74KMMI/QpeZEJ/sjT3CTLcE9HEVDdJOjc7dfLRxb2hZtgvx8clZIMrpeUdPhci8openff30KvXVbg="
+    global:
+        - secure: "i2f2UVDnyHT/9z0U3XvgTj8eDERvnc1Wk7HpseEjb75JwGzqn/2R+RKHmoSrwK3hFgij2IMxZL19XtHFwMz9t5A/huAAKD74KMMI/QpeZEJ/sjT3CTLcE9HEVDdJOjc7dfLRxb2hZtgvx8clZIMrpeUdPhci8openff30KvXVbg="
 matrix:
-    exclude:
-        - os: osx
-          env: BUILD_TYPE=asan
-        - os: osx
-          env: BUILD_TYPE=tsan
-        - os: osx
-          env: BUILD_TYPE=coverage
-        - compiler: gcc
-          env: BUILD_TYPE=asan
-        - compiler: gcc
-          env: BUILD_TYPE=tsan
-        - compiler: clang
-          env: BUILD_TYPE=coverage
-        - os: osx
-          compiler: gcc
     include:
+        - os: linux
+          compiler: gcc
+          env: BUILD_TYPE=coverage
+        - os: linux
+          compiler: gcc
+          env: BUILD_TYPE=normal
+        - os: linux
+          compiler: clang
+          env: BUILD_TYPE=normal
+        - os: linux
+          compiler: clang
+          env: BUILD_TYPE=asan
+        - os: linux
+          compiler: clang
+          env: BUILD_TYPE=tsan
+        - os: osx
+          compiler: clang
+          env: BUILD_TYPE=normal
         - os: osx
           compiler: clang
           env: BUILD_TYPE=normal USE_SYSTEM_OPENSSL=true
-
 before_install:
     - "echo os: [$TRAVIS_OS_NAME] build: [$BUILD_TYPE]"
     - if [[ "$BUILD_TYPE" == "normal" ]]; then export CFGFLAGS= MYCXXFLAGS= MYLDFLAGS=; fi
