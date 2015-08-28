@@ -6,10 +6,10 @@ matrix:
     include:
         - os: linux
           compiler: gcc
-          env: BUILD_TYPE=coverage
+          env: BUILD_TYPE=normal
         - os: linux
           compiler: gcc
-          env: BUILD_TYPE=normal
+          env: BUILD_TYPE=coverage
         - os: linux
           compiler: clang
           env: BUILD_TYPE=normal
