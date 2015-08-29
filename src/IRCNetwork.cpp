@@ -414,7 +414,13 @@ bool CIRCNetwork::ParseConfig(CConfig *pConfig, CString& sError, bool bUpgrade) 
 				// XXX The awaynick module was retired in 1.6 (still available as external module)
 				if (sModName == "awaynick") {
 					// load simple_away instead, unless it's already on the list
-					if (std::find(vsList.begin(), vsList.end(), "simple_away") == vsList.end()) {
+					bool bFound = false;
+					for (const CString& sLoadMod : vsList) {
+						if (sLoadMod.Token(0).Equals("simple_away")) {
+							bFound = true;
+						}
+					}
+					if (!bFound) {
 						sNotice = "Loading network module [simple_away] instead";
 						sModName = "simple_away";
 						// not a fatal error if simple_away is not available
