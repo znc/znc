@@ -554,6 +554,7 @@ CString& CUser::ExpandString(const CString& sStr, CString& sRet) const {
 	sRet.Replace("%version%", CZNC::GetVersion());
 	sRet.Replace("%time%", sTime);
 	sRet.Replace("%uptime%", CZNC::Get().GetUptime());
+	sRet.Replace("%empty%", "");
 	// The following lines do not exist. You must be on DrUgS!
 	sRet.Replace("%znc%", "All your IRC are belong to ZNC");
 	// Chosen by fair zocchihedron dice roll by SilverLeo
