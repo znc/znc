@@ -4,6 +4,8 @@ Reporting bugs
 * When reporting a bug:
     * Please ensure that you are on the latest version in case the bug you
       are reporting is already fixed.
+    * If you did some custom modification to ZNC, please make sure that
+      the bug isn't caused by that modification.
     * Please include the following information:
         * OS/distribution version
         * `/znc version`
