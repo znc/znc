@@ -452,6 +452,11 @@ class CAdminMod : public CModule {
 
 		CIRCNetwork *pNetwork = nullptr;
 
+		if (sVar.empty()) {
+			PutModule("Usage: GetNetwork <variable> [username] [network]");
+			return;
+		}
+
 		if (sUsername.empty()) {
 			pNetwork = CModule::GetNetwork();
 		} else {
@@ -464,11 +469,6 @@ class CAdminMod : public CModule {
 			if (!pNetwork && !sNetwork.empty()) {
 				return;
 			}
-		}
-
-		if (!pNetwork) {
-			PutModule("Usage: GetNetwork <variable> <username> <network>");
-			return;
 		}
 
 		if (sVar.Equals("nick")) {
@@ -507,6 +507,11 @@ class CAdminMod : public CModule {
 		CUser *pUser = nullptr;
 		CIRCNetwork *pNetwork = nullptr;
 
+		if (sValue.empty()) {
+			PutModule("Usage: SetNetwork <variable> <username> <network> <value>");
+			return;
+		}
+
 		if (sUsername.empty()) {
 			pUser = GetUser();
 			pNetwork = CModule::GetNetwork();
@@ -520,11 +525,6 @@ class CAdminMod : public CModule {
 			if (!pNetwork && !sNetwork.empty()) {
 				return;
 			}
-		}
-
-		if (!pNetwork) {
-			PutModule("Usage: SetNetwork <variable> <username> <network> <value>");
-			return;
 		}
 
 		if (sVar.Equals("nick")) {
