@@ -942,8 +942,9 @@ bool CIRCSock::OnPrivCTCP(CMessage& Message) {
 }
 
 bool CIRCSock::OnGeneralCTCP(CMessage& Message) {
+	CCTCPMessage& CTCP = static_cast<CCTCPMessage&>(Message);
 	const CNick& Nick = Message.GetNick();
-	const CString& sMessage = Message.GetParam(1);
+	const CString& sMessage = CTCP.GetText();
 	const MCString& mssCTCPReplies = m_pNetwork->GetUser()->GetCTCPReplies();
 	CString sQuery = sMessage.Token(0).AsUpper();
 	MCString::const_iterator it = mssCTCPReplies.find(sQuery);
