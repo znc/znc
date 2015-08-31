@@ -1185,7 +1185,7 @@ bool CUser::AddCTCPReply(const CString& sCTCP, const CString& sReply) {
 }
 
 bool CUser::DelCTCPReply(const CString& sCTCP) {
-	return m_mssCTCPReplies.erase(sCTCP) > 0;
+	return m_mssCTCPReplies.erase(sCTCP.AsUpper()) > 0;
 }
 
 bool CUser::SetStatusPrefix(const CString& s) {
