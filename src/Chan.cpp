@@ -611,12 +611,10 @@ void CChan::SendBuffer(CClient* pClient, const CBuffer& Buffer) {
 				size_t uSize = Buffer.Size();
 				for (size_t uIdx = 0; uIdx < uSize; uIdx++) {
 					const CBufLine& BufLine = Buffer.GetBufLine(uIdx);
-					CMessage Message(BufLine.GetLine(*pUseClient, MCString::EmptyMap));
+					CMessage Message = BufLine.ToMessage(*pUseClient, MCString::EmptyMap);
 					Message.SetChan(this);
 					Message.SetNetwork(m_pNetwork);
 					Message.SetClient(pClient);
-					Message.SetTime(BufLine.GetTime());
-					Message.SetTags(BufLine.GetTags());
 					if (bBatch) {
 						Message.SetTag("batch", sBatchName);
 					}

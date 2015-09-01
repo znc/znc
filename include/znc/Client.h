@@ -252,6 +252,10 @@ private:
 	void ParseUser(const CString& sAuthLine);
 	void ParseIdentifier(const CString& sAuthLine);
 
+	template <typename T>
+	void AddBuffer(const T& Message);
+	void EchoMessage(const CMessage& Message);
+
 protected:
 	bool                 m_bGotPass;
 	bool                 m_bGotNick;
