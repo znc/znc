@@ -36,6 +36,12 @@ void CMessage::Clone(const CMessage& Message)
 	}
 }
 
+void CMessage::SetCommand(const CString& sCommand)
+{
+	m_sCommand = sCommand;
+	InitType();
+}
+
 CString CMessage::GetParams(unsigned int uIdx, unsigned int uLen) const
 {
 	if (m_vsParams.empty() || uLen == 0) {
@@ -56,6 +62,15 @@ CString CMessage::GetParams(unsigned int uIdx, unsigned int uLen) const
 	return CString(" ").Join(vsParams.begin(), vsParams.end());
 }
 
+void CMessage::SetParams(const VCString& vsParams)
+{
+	m_vsParams = vsParams;
+
+	if (m_eType == Type::Text || m_eType == Type::Notice || m_eType == Type::Action || m_eType == Type::CTCP) {
+		InitType();
+	}
+}
+
 CString CMessage::GetParam(unsigned int uIdx) const
 {
 	if (uIdx >= m_vsParams.size()) {
@@ -70,6 +85,10 @@ void CMessage::SetParam(unsigned int uIdx, const CString& sParam)
 		m_vsParams.resize(uIdx + 1);
 	}
 	m_vsParams[uIdx] = sParam;
+
+	if (uIdx == 1 && (m_eType == Type::Text || m_eType == Type::Notice || m_eType == Type::Action || m_eType == Type::CTCP)) {
+		InitType();
+	}
 }
 
 CString CMessage::GetTag(const CString& sKey) const
@@ -164,6 +183,8 @@ void CMessage::Parse(CString sMessage)
 			sMessage = sMessage.Token(1, true);
 		}
 	}
+
+	InitType();
 }
 
 void CMessage::InitTime()
@@ -186,5 +207,54 @@ void CMessage::InitTime()
 	if (!gettimeofday(&m_time, nullptr)) {
 		m_time.tv_sec = time(nullptr);
 		m_time.tv_usec = 0;
+	}
+}
+
+void CMessage::InitType()
+{
+	if (m_sCommand.length() == 3 && isdigit(m_sCommand[0]) && isdigit(m_sCommand[1]) && isdigit(m_sCommand[2])) {
+		m_eType = Type::Numeric;
+	} else if (m_sCommand.Equals("PRIVMSG")) {
+		CString sParam = GetParam(1);
+		if (sParam.TrimPrefix("\001") && sParam.EndsWith("\001")) {
+			if (sParam.StartsWith("ACTION ")) {
+				m_eType = Type::Action;
+			} else {
+				m_eType = Type::CTCP;
+			}
+		} else {
+			m_eType = Type::Text;
+		}
+	} else if (m_sCommand.Equals("NOTICE")) {
+		CString sParam = GetParam(1);
+		if (sParam.StartsWith("\001") && sParam.EndsWith("\001")) {
+			m_eType = Type::CTCP;
+		} else {
+			m_eType = Type::Notice;
+		}
+	} else {
+		std::map<CString, Type> mTypes = {
+			{"ACCOUNT", Type::Account},
+			{"AWAY", Type::Away},
+			{"CAP", Type::Capability},
+			{"ERROR", Type::Error},
+			{"INVITE", Type::Invite},
+			{"JOIN", Type::Join},
+			{"KICK", Type::Kick},
+			{"MODE", Type::Mode},
+			{"NICK", Type::Nick},
+			{"PART", Type::Part},
+			{"PING", Type::Ping},
+			{"PONG", Type::Pong},
+			{"QUIT", Type::Quit},
+			{"TOPIC", Type::Topic},
+			{"WALLOPS", Type::Wallops},
+		};
+		auto it = mTypes.find(m_sCommand.AsUpper());
+		if (it != mTypes.end()) {
+			m_eType = it->second;
+		} else {
+			m_eType = Type::Unknown;
+		}
 	}
 }

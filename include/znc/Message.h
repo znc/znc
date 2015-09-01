@@ -31,6 +31,31 @@ public:
 	explicit CMessage(const CString& sMessage = "");
 	CMessage(const CNick& Nick, const CString& sCommand, const VCString& vsParams = VCString(), const MCString& mssTags = MCString::EmptyMap);
 
+	enum class Type {
+		Unknown,
+		Account,
+		Action,
+		Away,
+		Capability,
+		CTCP,
+		Error,
+		Invite,
+		Join,
+		Kick,
+		Mode,
+		Nick,
+		Notice,
+		Numeric,
+		Part,
+		Ping,
+		Pong,
+		Quit,
+		Text,
+		Topic,
+		Wallops,
+	};
+	Type GetType() const { return m_eType; }
+
 	void Clone(const CMessage& Other);
 
 	// ZNC <-> IRC
@@ -49,11 +74,11 @@ public:
 	void SetNick(const CNick& Nick) { m_Nick = Nick; }
 
 	const CString& GetCommand() const { return m_sCommand; }
-	void SetCommand(const CString& sCommand) { m_sCommand = sCommand; }
+	void SetCommand(const CString& sCommand);
 
 	const VCString& GetParams() const { return m_vsParams; }
 	CString GetParams(unsigned int uIdx, unsigned int uLen = -1) const;
-	void SetParams(const VCString& vsParams) { m_vsParams = vsParams; }
+	void SetParams(const VCString& vsParams);
 
 	CString GetParam(unsigned int uIdx) const;
 	void SetParam(unsigned int uIdx, const CString& sParam);
@@ -78,6 +103,7 @@ public:
 
 private:
 	void InitTime();
+	void InitType();
 
 	CNick        m_Nick;
 	CString      m_sCommand;
@@ -87,6 +113,7 @@ private:
 	CIRCNetwork* m_pNetwork = nullptr;
 	CClient*     m_pClient = nullptr;
 	CChan*       m_pChan = nullptr;
+	Type         m_eType = Type::Unknown;
 };
 
 class CTargetMessage : public CMessage {
