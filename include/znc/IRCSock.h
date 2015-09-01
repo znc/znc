@@ -49,7 +49,7 @@ public:
 	} EChanModeArgs;
 
 	// Message Handlers
-	bool OnCTCPReply(CNick& Nick, CString& sMessage);
+	bool OnCTCPReply(CMessage& Message);
 	bool OnPrivCTCP(CMessage& Message);
 	bool OnChanCTCP(CMessage& Message);
 	bool OnGeneralCTCP(CMessage& Message);

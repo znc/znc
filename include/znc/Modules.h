@@ -762,6 +762,7 @@ public:
 	 *  @return See CModule::EModRet.
 	 */
 	virtual EModRet OnCTCPReply(CNick& Nick, CString& sMessage);
+	virtual EModRet OnCTCPReplyMessage(CCTCPMessage& Message);
 	/** Called when we receive a private CTCP request <em>from IRC</em>.
 	 *  @param Nick The nick the CTCP request is from.
 	 *  @param sMessage The CTCP request message.
@@ -1263,6 +1264,7 @@ public:
 	bool OnUserQuitMessage(CQuitMessage& Message);
 
 	bool OnCTCPReply(CNick& Nick, CString& sMessage);
+	bool OnCTCPReplyMessage(CCTCPMessage& Message);
 	bool OnPrivCTCP(CNick& Nick, CString& sMessage);
 	bool OnPrivCTCPMessage(CCTCPMessage& Message);
 	bool OnChanCTCP(CNick& Nick, CChan& Channel, CString& sMessage);

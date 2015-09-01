@@ -38,6 +38,7 @@ public:
 	EModRet OnUserTopic(CString& sChannel, CString& sTopic) override { sChannel = "#legacy"; sTopic = "CLegacyModule::OnUserTopic"; return eAction; }
 	EModRet OnUserQuit(CString& sMessage) override { sMessage = "CLegacyModule::OnUserQuit"; return eAction; }
 
+	EModRet OnCTCPReply(CNick& Nick, CString& sMessage) override { Nick.Parse("legacy!znc@znc.in"); sMessage = "CLegacyModule::OnCTCPReply"; return eAction; }
 	EModRet OnPrivCTCP(CNick& Nick, CString& sMessage) override { Nick.Parse("legacy!znc@znc.in"); sMessage = "CLegacyModule::OnPrivCTCP"; return eAction; }
 	EModRet OnChanCTCP(CNick& Nick, CChan& Channel, CString& sMessage) override { Nick.Parse("legacy!znc@znc.in"); sMessage = "CLegacyModule::OnChanCTCP"; return eAction; }
 	EModRet OnPrivAction(CNick& Nick, CString& sMessage) override { Nick.Parse("legacy!znc@znc.in"); sMessage = "CLegacyModule::OnPrivAction"; return eAction; }
@@ -65,6 +66,7 @@ public:
 	EModRet OnUserTopicMessage(CTopicMessage& Message) override { Message.SetTarget("#target"); Message.SetTopic("CMessageModule::OnUserTopicMessage"); return eAction; }
 	EModRet OnUserQuitMessage(CQuitMessage& Message) override { Message.SetReason("CMessageModule::OnUserQuitMessage"); return eAction; }
 
+	EModRet OnCTCPReplyMessage(CCTCPMessage& Message) override { Message.GetNick().SetNick("nick"); Message.SetText("CMessageModule::OnCTCPReplyMessage"); return eAction; }
 	EModRet OnPrivCTCPMessage(CCTCPMessage& Message) override { Message.GetNick().SetNick("nick"); Message.SetText("CMessageModule::OnPrivCTCPMessage"); return eAction; }
 	EModRet OnChanCTCPMessage(CCTCPMessage& Message) override { Message.GetNick().SetNick("nick"); Message.SetText("CMessageModule::OnChanCTCPMessage"); return eAction; }
 	EModRet OnPrivActionMessage(CActionMessage& Message) override { Message.GetNick().SetNick("nick"); Message.SetText("CMessageModule::OnPrivActionMessage"); return eAction; }
@@ -174,6 +176,16 @@ TEST_F(ModulesTest, Hooks) {
 	LegacyMod.eAction = CModule::CONTINUE;
 	Modules.OnUserQuitMessage(UserQuitMsg);
 	EXPECT_EQ("CMessageModule::OnUserQuitMessage", UserQuitMsg.GetReason());
+
+	CCTCPMessage CTCPReply;
+	LegacyMod.eAction = CModule::HALT;
+	Modules.OnCTCPReplyMessage(CTCPReply);
+	EXPECT_EQ("legacy", CTCPReply.GetNick().GetNick());
+	EXPECT_EQ("CLegacyModule::OnCTCPReply", CTCPReply.GetText());
+	LegacyMod.eAction = CModule::CONTINUE;
+	Modules.OnCTCPReplyMessage(CTCPReply);
+	EXPECT_EQ("nick", CTCPReply.GetNick().GetNick());
+	EXPECT_EQ("CMessageModule::OnCTCPReplyMessage", CTCPReply.GetText());
 
 	CCTCPMessage PrivCTCP;
 	LegacyMod.eAction = CModule::HALT;
