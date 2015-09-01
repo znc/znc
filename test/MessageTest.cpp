@@ -68,178 +68,178 @@ TEST(MessageTest, FormatFlags) {
 }
 
 TEST(MessageTest, ChanAction) {
-	CMessage msg(":sender PRIVMSG #chan :\001ACTION ACTS\001");
-	CActionMessage& chan = static_cast<CActionMessage&>(msg);
-	EXPECT_EQ("sender", chan.GetNick().GetNick());
-	EXPECT_EQ("PRIVMSG", chan.GetCommand());
-	EXPECT_EQ("#chan", chan.GetTarget());
-	EXPECT_EQ("ACTS", chan.GetText());
+	CActionMessage msg;
+	msg.Parse(":sender PRIVMSG #chan :\001ACTION ACTS\001");
+	EXPECT_EQ("sender", msg.GetNick().GetNick());
+	EXPECT_EQ("PRIVMSG", msg.GetCommand());
+	EXPECT_EQ("#chan", msg.GetTarget());
+	EXPECT_EQ("ACTS", msg.GetText());
 
-	chan.SetTarget("#znc");
-	EXPECT_EQ("#znc", chan.GetTarget());
-	chan.SetText("foo bar");
-	EXPECT_EQ("foo bar", chan.GetText());
-	EXPECT_EQ(":sender PRIVMSG #znc :\001ACTION foo bar\001", chan.ToString());
+	msg.SetTarget("#znc");
+	EXPECT_EQ("#znc", msg.GetTarget());
+	msg.SetText("foo bar");
+	EXPECT_EQ("foo bar", msg.GetText());
+	EXPECT_EQ(":sender PRIVMSG #znc :\001ACTION foo bar\001", msg.ToString());
 }
 
 TEST(MessageTest, ChanCTCP) {
-	CMessage msg(":sender PRIVMSG #chan :\001text\001");
-	CCTCPMessage& chan = static_cast<CCTCPMessage&>(msg);
-	EXPECT_EQ("sender", chan.GetNick().GetNick());
-	EXPECT_EQ("PRIVMSG", chan.GetCommand());
-	EXPECT_EQ("#chan", chan.GetTarget());
-	EXPECT_EQ("text", chan.GetText());
+	CCTCPMessage msg;
+	msg.Parse(":sender PRIVMSG #chan :\001text\001");
+	EXPECT_EQ("sender", msg.GetNick().GetNick());
+	EXPECT_EQ("PRIVMSG", msg.GetCommand());
+	EXPECT_EQ("#chan", msg.GetTarget());
+	EXPECT_EQ("text", msg.GetText());
 
-	chan.SetTarget("#znc");
-	EXPECT_EQ("#znc", chan.GetTarget());
-	chan.SetText("foo bar");
-	EXPECT_EQ("foo bar", chan.GetText());
-	EXPECT_EQ(":sender PRIVMSG #znc :\001foo bar\001", chan.ToString());
+	msg.SetTarget("#znc");
+	EXPECT_EQ("#znc", msg.GetTarget());
+	msg.SetText("foo bar");
+	EXPECT_EQ("foo bar", msg.GetText());
+	EXPECT_EQ(":sender PRIVMSG #znc :\001foo bar\001", msg.ToString());
 }
 
 TEST(MessageTest, ChanMsg) {
-	CMessage msg(":sender PRIVMSG #chan :text");
-	CTextMessage& chan = static_cast<CTextMessage&>(msg);
-	EXPECT_EQ("sender", chan.GetNick().GetNick());
-	EXPECT_EQ("PRIVMSG", chan.GetCommand());
-	EXPECT_EQ("#chan", chan.GetTarget());
-	EXPECT_EQ("text", chan.GetText());
+	CTextMessage msg;
+	msg.Parse(":sender PRIVMSG #chan :text");
+	EXPECT_EQ("sender", msg.GetNick().GetNick());
+	EXPECT_EQ("PRIVMSG", msg.GetCommand());
+	EXPECT_EQ("#chan", msg.GetTarget());
+	EXPECT_EQ("text", msg.GetText());
 
-	chan.SetTarget("#znc");
-	EXPECT_EQ("#znc", chan.GetTarget());
-	chan.SetText("foo bar");
-	EXPECT_EQ("foo bar", chan.GetText());
-	EXPECT_EQ(":sender PRIVMSG #znc :foo bar", chan.ToString());
+	msg.SetTarget("#znc");
+	EXPECT_EQ("#znc", msg.GetTarget());
+	msg.SetText("foo bar");
+	EXPECT_EQ("foo bar", msg.GetText());
+	EXPECT_EQ(":sender PRIVMSG #znc :foo bar", msg.ToString());
 }
 
 TEST(MessageTest, Kick) {
-	CMessage msg(":nick KICK #chan person :reason");
-	CKickMessage& kick = static_cast<CKickMessage&>(msg);
-	EXPECT_EQ("nick", kick.GetNick().GetNick());
-	EXPECT_EQ("KICK", kick.GetCommand());
-	EXPECT_EQ("#chan", kick.GetTarget());
-	EXPECT_EQ("person", kick.GetKickedNick());
-	EXPECT_EQ("reason", kick.GetReason());
+	CKickMessage msg;
+	msg.Parse(":nick KICK #chan person :reason");
+	EXPECT_EQ("nick", msg.GetNick().GetNick());
+	EXPECT_EQ("KICK", msg.GetCommand());
+	EXPECT_EQ("#chan", msg.GetTarget());
+	EXPECT_EQ("person", msg.GetKickedNick());
+	EXPECT_EQ("reason", msg.GetReason());
 
-	kick.SetTarget("#znc");
-	EXPECT_EQ("#znc", kick.GetTarget());
-	kick.SetKickedNick("noone");
-	EXPECT_EQ("noone", kick.GetKickedNick());
-	kick.SetReason("test");
-	EXPECT_EQ("test", kick.GetReason());
-	EXPECT_EQ(":nick KICK #znc noone test", kick.ToString());
+	msg.SetTarget("#znc");
+	EXPECT_EQ("#znc", msg.GetTarget());
+	msg.SetKickedNick("noone");
+	EXPECT_EQ("noone", msg.GetKickedNick());
+	msg.SetReason("test");
+	EXPECT_EQ("test", msg.GetReason());
+	EXPECT_EQ(":nick KICK #znc noone test", msg.ToString());
 }
 
 TEST(MessageTest, Join) {
-	CMessage msg(":nick JOIN #chan");
-	CJoinMessage& join = static_cast<CJoinMessage&>(msg);
-	EXPECT_EQ("nick", join.GetNick().GetNick());
-	EXPECT_EQ("JOIN", join.GetCommand());
-	EXPECT_EQ("#chan", join.GetTarget());
+	CJoinMessage msg;
+	msg.Parse(":nick JOIN #chan");
+	EXPECT_EQ("nick", msg.GetNick().GetNick());
+	EXPECT_EQ("JOIN", msg.GetCommand());
+	EXPECT_EQ("#chan", msg.GetTarget());
 
-	join.SetTarget("#znc");
-	EXPECT_EQ("#znc", join.GetTarget());
-	EXPECT_EQ(":nick JOIN #znc", join.ToString());
+	msg.SetTarget("#znc");
+	EXPECT_EQ("#znc", msg.GetTarget());
+	EXPECT_EQ(":nick JOIN #znc", msg.ToString());
 }
 
 TEST(MessageTest, Nick) {
-	CMessage msg(":nick NICK person");
-	CNickMessage& nick = static_cast<CNickMessage&>(msg);
-	EXPECT_EQ("nick", nick.GetNick().GetNick());
-	EXPECT_EQ("NICK", nick.GetCommand());
-	EXPECT_EQ("nick", nick.GetOldNick());
-	EXPECT_EQ("person", nick.GetNewNick());
+	CNickMessage msg;
+	msg.Parse(":nick NICK person");
+	EXPECT_EQ("nick", msg.GetNick().GetNick());
+	EXPECT_EQ("NICK", msg.GetCommand());
+	EXPECT_EQ("nick", msg.GetOldNick());
+	EXPECT_EQ("person", msg.GetNewNick());
 
-	nick.SetNewNick("test");
-	EXPECT_EQ("test", nick.GetNewNick());
-	EXPECT_EQ(":nick NICK test", nick.ToString());
+	msg.SetNewNick("test");
+	EXPECT_EQ("test", msg.GetNewNick());
+	EXPECT_EQ(":nick NICK test", msg.ToString());
 }
 
 TEST(MessageTest, Part) {
-	CMessage msg(":nick PART #chan :reason");
-	CPartMessage& part = static_cast<CPartMessage&>(msg);
-	EXPECT_EQ("nick", part.GetNick().GetNick());
-	EXPECT_EQ("PART", part.GetCommand());
-	EXPECT_EQ("#chan", part.GetTarget());
-	EXPECT_EQ("reason", part.GetReason());
+	CPartMessage msg;
+	msg.Parse(":nick PART #chan :reason");
+	EXPECT_EQ("nick", msg.GetNick().GetNick());
+	EXPECT_EQ("PART", msg.GetCommand());
+	EXPECT_EQ("#chan", msg.GetTarget());
+	EXPECT_EQ("reason", msg.GetReason());
 
-	part.SetTarget("#znc");
-	EXPECT_EQ("#znc", part.GetTarget());
-	part.SetReason("test");
-	EXPECT_EQ("test", part.GetReason());
-	EXPECT_EQ(":nick PART #znc test", part.ToString());
+	msg.SetTarget("#znc");
+	EXPECT_EQ("#znc", msg.GetTarget());
+	msg.SetReason("test");
+	EXPECT_EQ("test", msg.GetReason());
+	EXPECT_EQ(":nick PART #znc test", msg.ToString());
 }
 
 TEST(MessageTest, PrivAction) {
-	CMessage msg(":sender PRIVMSG receiver :\001ACTION ACTS\001");
-	CActionMessage& priv = static_cast<CActionMessage&>(msg);
-	EXPECT_EQ("sender", priv.GetNick().GetNick());
-	EXPECT_EQ("PRIVMSG", priv.GetCommand());
-	EXPECT_EQ("receiver", priv.GetTarget());
-	EXPECT_EQ("ACTS", priv.GetText());
+	CActionMessage msg;
+	msg.Parse(":sender PRIVMSG receiver :\001ACTION ACTS\001");
+	EXPECT_EQ("sender", msg.GetNick().GetNick());
+	EXPECT_EQ("PRIVMSG", msg.GetCommand());
+	EXPECT_EQ("receiver", msg.GetTarget());
+	EXPECT_EQ("ACTS", msg.GetText());
 
-	priv.SetTarget("noone");
-	EXPECT_EQ("noone", priv.GetTarget());
-	priv.SetText("foo bar");
-	EXPECT_EQ("foo bar", priv.GetText());
-	EXPECT_EQ(":sender PRIVMSG noone :\001ACTION foo bar\001", priv.ToString());
+	msg.SetTarget("noone");
+	EXPECT_EQ("noone", msg.GetTarget());
+	msg.SetText("foo bar");
+	EXPECT_EQ("foo bar", msg.GetText());
+	EXPECT_EQ(":sender PRIVMSG noone :\001ACTION foo bar\001", msg.ToString());
 }
 
 TEST(MessageTest, PrivCTCP) {
-	CMessage msg(":sender PRIVMSG receiver :\001text\001");
-	CCTCPMessage& priv = static_cast<CCTCPMessage&>(msg);
-	EXPECT_EQ("sender", priv.GetNick().GetNick());
-	EXPECT_EQ("PRIVMSG", priv.GetCommand());
-	EXPECT_EQ("receiver", priv.GetTarget());
-	EXPECT_EQ("text", priv.GetText());
+	CCTCPMessage msg;
+	msg.Parse(":sender PRIVMSG receiver :\001text\001");
+	EXPECT_EQ("sender", msg.GetNick().GetNick());
+	EXPECT_EQ("PRIVMSG", msg.GetCommand());
+	EXPECT_EQ("receiver", msg.GetTarget());
+	EXPECT_EQ("text", msg.GetText());
 
-	priv.SetTarget("noone");
-	EXPECT_EQ("noone", priv.GetTarget());
-	priv.SetText("foo bar");
-	EXPECT_EQ("foo bar", priv.GetText());
-	EXPECT_EQ(":sender PRIVMSG noone :\001foo bar\001", priv.ToString());
+	msg.SetTarget("noone");
+	EXPECT_EQ("noone", msg.GetTarget());
+	msg.SetText("foo bar");
+	EXPECT_EQ("foo bar", msg.GetText());
+	EXPECT_EQ(":sender PRIVMSG noone :\001foo bar\001", msg.ToString());
 }
 
 TEST(MessageTest, PrivMsg) {
-	CMessage msg(":sender PRIVMSG receiver :foo bar");
-	CTextMessage& priv = static_cast<CTextMessage&>(msg);
-	EXPECT_EQ("sender", priv.GetNick().GetNick());
-	EXPECT_EQ("PRIVMSG", priv.GetCommand());
-	EXPECT_EQ("receiver", priv.GetTarget());
-	EXPECT_EQ("foo bar", priv.GetText());
+	CTextMessage msg;
+	msg.Parse(":sender PRIVMSG receiver :foo bar");
+	EXPECT_EQ("sender", msg.GetNick().GetNick());
+	EXPECT_EQ("PRIVMSG", msg.GetCommand());
+	EXPECT_EQ("receiver", msg.GetTarget());
+	EXPECT_EQ("foo bar", msg.GetText());
 
-	priv.SetTarget("noone");
-	EXPECT_EQ("noone", priv.GetTarget());
-	priv.SetText(":)");
-	EXPECT_EQ(":)", priv.GetText());
-	EXPECT_EQ(":sender PRIVMSG noone ::)", priv.ToString());
+	msg.SetTarget("noone");
+	EXPECT_EQ("noone", msg.GetTarget());
+	msg.SetText(":)");
+	EXPECT_EQ(":)", msg.GetText());
+	EXPECT_EQ(":sender PRIVMSG noone ::)", msg.ToString());
 }
 
 TEST(MessageTest, Quit) {
-	CMessage msg(":nick QUIT :reason");
-	CQuitMessage& quit = static_cast<CQuitMessage&>(msg);
-	EXPECT_EQ("nick", quit.GetNick().GetNick());
-	EXPECT_EQ("QUIT", quit.GetCommand());
-	EXPECT_EQ("reason", quit.GetReason());
+	CQuitMessage msg;
+	msg.Parse(":nick QUIT :reason");
+	EXPECT_EQ("nick", msg.GetNick().GetNick());
+	EXPECT_EQ("QUIT", msg.GetCommand());
+	EXPECT_EQ("reason", msg.GetReason());
 
-	quit.SetReason("test");
-	EXPECT_EQ("test", quit.GetReason());
-	EXPECT_EQ(":nick QUIT test", quit.ToString());
+	msg.SetReason("test");
+	EXPECT_EQ("test", msg.GetReason());
+	EXPECT_EQ(":nick QUIT test", msg.ToString());
 }
 
 TEST(MessageTest, Topic) {
-	CMessage msg(":nick TOPIC #chan :topic");
-	CTopicMessage& topic = static_cast<CTopicMessage&>(msg);
-	EXPECT_EQ("nick", topic.GetNick().GetNick());
-	EXPECT_EQ("TOPIC", topic.GetCommand());
-	EXPECT_EQ("#chan", topic.GetTarget());
-	EXPECT_EQ("topic", topic.GetTopic());
+	CTopicMessage msg;
+	msg.Parse(":nick TOPIC #chan :topic");
+	EXPECT_EQ("nick", msg.GetNick().GetNick());
+	EXPECT_EQ("TOPIC", msg.GetCommand());
+	EXPECT_EQ("#chan", msg.GetTarget());
+	EXPECT_EQ("topic", msg.GetTopic());
 
-	topic.SetTarget("#znc");
-	EXPECT_EQ("#znc", topic.GetTarget());
-	topic.SetTopic("test");
-	EXPECT_EQ("test", topic.GetTopic());
-	EXPECT_EQ(":nick TOPIC #znc test", topic.ToString());
+	msg.SetTarget("#znc");
+	EXPECT_EQ("#znc", msg.GetTarget());
+	msg.SetTopic("test");
+	EXPECT_EQ("test", msg.GetTopic());
+	EXPECT_EQ(":nick TOPIC #znc test", msg.ToString());
 }
 
 TEST(MessageTest, Parse) {
