@@ -196,6 +196,12 @@ public:
 	unsigned short int GetJoinDelay() const { return m_uJoinDelay; }
 	void SetJoinDelay(unsigned short int uJoinDelay) { m_uJoinDelay = uJoinDelay; }
 
+	unsigned long long BytesRead() const { return m_uBytesRead; }
+	unsigned long long BytesWritten() const { return m_uBytesWritten; }
+
+	void AddBytesRead(unsigned long long u) { m_uBytesRead += u; }
+	void AddBytesWritten(unsigned long long u) { m_uBytesWritten += u; }
+
 	CString ExpandString(const CString& sStr) const;
 	CString& ExpandString(const CString& sStr, CString& sRet) const;
 private:
@@ -245,6 +251,8 @@ protected:
 	CIRCNetworkJoinTimer* m_pJoinTimer;
 
 	unsigned short int m_uJoinDelay;
+	unsigned long long m_uBytesRead;
+	unsigned long long m_uBytesWritten;
 };
 
 #endif // !ZNC_IRCNETWORK_H

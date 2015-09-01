@@ -120,8 +120,8 @@ CUser::~CUser() {
 
 	CZNC::Get().GetManager().DelCronByAddr(m_pUserTimer);
 
-	CZNC::Get().AddBytesRead(BytesRead());
-	CZNC::Get().AddBytesWritten(BytesWritten());
+	CZNC::Get().AddBytesRead(m_uBytesRead);
+	CZNC::Get().AddBytesWritten(m_uBytesWritten);
 }
 
 template<class T>
@@ -1278,3 +1278,19 @@ bool CUser::AutoClearQueryBuffer() const { return m_bAutoClearQueryBuffer; }
 CString CUser::GetSkinName() const { return m_sSkinName; }
 const CString& CUser::GetUserPath() const { if (!CFile::Exists(m_sUserPath)) { CDir::MakeDir(m_sUserPath); } return m_sUserPath; }
 // !Getters
+
+unsigned long long CUser::BytesRead() const {
+	unsigned long long uBytes = m_uBytesRead;
+	for (const CIRCNetwork* pNetwork : m_vIRCNetworks) {
+		uBytes += pNetwork->BytesRead();
+	}
+	return uBytes;
+}
+
+unsigned long long CUser::BytesWritten() const {
+	unsigned long long uBytes = m_uBytesWritten;
+	for (const CIRCNetwork* pNetwork : m_vIRCNetworks) {
+		uBytes += pNetwork->BytesWritten();
+	}
+	return uBytes;
+}

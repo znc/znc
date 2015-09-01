@@ -187,8 +187,8 @@ public:
 	bool AutoClearQueryBuffer() const;
 	bool IsBeingDeleted() const { return m_bBeingDeleted; }
 	CString GetTimezone() const { return m_sTimezone; }
-	unsigned long long BytesRead() const { return m_uBytesRead; }
-	unsigned long long BytesWritten() const { return m_uBytesWritten; }
+	unsigned long long BytesRead() const;
+	unsigned long long BytesWritten() const;
 	unsigned int JoinTries() const { return m_uMaxJoinTries; }
 	unsigned int MaxJoins() const { return m_uMaxJoins; }
 	CString GetSkinName() const;
