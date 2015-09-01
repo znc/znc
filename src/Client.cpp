@@ -296,24 +296,24 @@ void CClient::ReadLine(const CString& sData) {
 					continue;
 				}
 
-				if (m_pNetwork) {
-					if (sCTCP.Token(0).Equals("ACTION")) {
-						CActionMessage& ActionMsg = static_cast<CActionMessage&>(Message);
+				if (sCTCP.Token(0).Equals("ACTION")) {
+					CActionMessage& ActionMsg = static_cast<CActionMessage&>(Message);
 
-						NETWORKMODULECALL(OnUserActionMessage(ActionMsg), m_pUser, m_pNetwork, this, &bContinue);
-						if (bContinue) continue;
+					NETWORKMODULECALL(OnUserActionMessage(ActionMsg), m_pUser, m_pNetwork, this, &bContinue);
+					if (bContinue) continue;
 
+					if (m_pNetwork) {
 						AddBuffer(ActionMsg);
 						EchoMessage(ActionMsg);
-						PutIRC(ActionMsg.ToString(CMessage::ExcludePrefix | CMessage::ExcludeTags));
-					} else {
-						NETWORKMODULECALL(OnUserCTCPMessage(CTCPMsg), m_pUser, m_pNetwork, this, &bContinue);
-						if (bContinue) continue;
-
-						PutIRC(CTCPMsg.ToString(CMessage::ExcludePrefix | CMessage::ExcludeTags));
 					}
+				} else {
+					NETWORKMODULECALL(OnUserCTCPMessage(CTCPMsg), m_pUser, m_pNetwork, this, &bContinue);
+					if (bContinue) continue;
 				}
 
+				if (m_pNetwork) {
+					PutIRC(Message.ToString(CMessage::ExcludePrefix | CMessage::ExcludeTags));
+				}
 				continue;
 			}
 
@@ -348,11 +348,11 @@ void CClient::ReadLine(const CString& sData) {
 		return;
 	}
 
-	if (!m_pNetwork) {
-		return; // The following commands require a network
-	}
-
 	if (sCommand.Equals("DETACH")) {
+		if (!m_pNetwork) {
+			return;
+		}
+
 		CString sPatterns = Message.GetParams(0);
 
 		if (sPatterns.empty()) {
@@ -405,7 +405,7 @@ void CClient::ReadLine(const CString& sData) {
 			CString sChannel = JoinMsg.GetTarget();
 			CString sKey = JoinMsg.GetKey();
 
-			CChan* pChan = m_pNetwork->FindChan(sChannel);
+			CChan* pChan = m_pNetwork ? m_pNetwork->FindChan(sChannel) : nullptr;
 			if (pChan) {
 				if (pChan->IsDetached())
 					pChan->AttachUser(this);
@@ -445,7 +445,7 @@ void CClient::ReadLine(const CString& sData) {
 
 			sChan = PartMsg.GetTarget();
 
-			CChan* pChan = m_pNetwork->FindChan(sChan);
+			CChan* pChan = m_pNetwork ? m_pNetwork->FindChan(sChan) : nullptr;
 
 			if (pChan && !pChan->IsOn()) {
 				PutStatusNotice("Removing channel [" + sChan + "]");
@@ -478,7 +478,7 @@ void CClient::ReadLine(const CString& sData) {
 		CString sTarget = Message.GetParam(0);
 		CString sModes = Message.GetParams(1);
 
-		if (m_pNetwork->IsChan(sTarget) && sModes.empty()) {
+		if (m_pNetwork && m_pNetwork->IsChan(sTarget) && sModes.empty()) {
 			// If we are on that channel and already received a
 			// /mode reply from the server, we can answer this
 			// request ourself.
