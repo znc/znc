@@ -14,7 +14,7 @@ environment:
 install:
     - ps: Invoke-WebRequest $env:cygwin_url -OutFile c:\cygwin-setup.exe
       # libcrypt-devel is needed only on x86_64 and only for modperl... probably some dependency problem.
-    - c:\cygwin-setup.exe --quiet-mode --no-shortcuts --no-startmenu --no-desktop --upgrade-also --only-site --site http://mirrors.kernel.org/sourceware/cygwin/ --root c:\cygwin-root --local-package-dir c:\cygwin-setup-cache --packages automake,gcc-g++,make,pkg-config,wget,openssl-devel,libicu-devel,zlib-devel,libcrypt-devel,perl,python3,swig,libsasl2-devel
+    - c:\cygwin-setup.exe --quiet-mode --no-shortcuts --no-startmenu --no-desktop --upgrade-also --only-site --site http://mirrors.kernel.org/sourceware/cygwin/ --root c:\cygwin-root --local-package-dir c:\cygwin-setup-cache --packages automake,gcc-g++,make,pkg-config,wget,openssl-devel,libicu-devel,zlib-devel,libcrypt-devel,perl,python3,swig,libsasl2-devel,python3-setuptools,socat
     - c:\cygwin-root\bin\sh -lc "echo Hi"
     - c:\cygwin-root\bin\sh -lc "uname -a"
     - c:\cygwin-root\bin\sh -lc "cat /proc/cpuinfo"
@@ -28,6 +28,7 @@ install:
           (New-Object Net.WebClient).DownloadFile('http://googletest.googlecode.com/files/gtest-1.7.0.zip', 'c:\gtest-1.7.0.zip')
           7z x -oc:\ c:\gtest-1.7.0.zip
         }
+    - c:\cygwin-root\bin\sh -lc "/bin/easy_install* pexpect"
 # stdin is broken at AppVeyor, so we open it explicitly as /dev/null
 build_script:
     - git submodule update --init
