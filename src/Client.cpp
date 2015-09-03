@@ -324,6 +324,7 @@ void CClient::ReadLine(const CString& sData) {
 				} else {
 					CALLMOD(sTarget, this, m_pUser, m_pNetwork, OnModCommand(TextMsg.GetText()));
 				}
+				EchoMessage(Message);
 				continue;
 			}
 
