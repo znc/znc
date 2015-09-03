@@ -766,6 +766,12 @@ CModule::EModRet CModule::OnUserQuitMessage(CQuitMessage& Message) {
 }
 
 CModule::EModRet CModule::OnCTCPReply(CNick& Nick, CString& sMessage) { return CONTINUE; }
+CModule::EModRet CModule::OnCTCPReplyMessage(CCTCPMessage& Message) {
+	CString sText = Message.GetText();
+	EModRet ret = OnCTCPReply(Message.GetNick(), sText);
+	Message.SetText(sText);
+	return ret;
+}
 CModule::EModRet CModule::OnPrivCTCP(CNick& Nick, CString& sMessage) { return CONTINUE; }
 CModule::EModRet CModule::OnPrivCTCPMessage(CCTCPMessage& Message) {
 	CString sText = Message.GetText();
@@ -1011,6 +1017,7 @@ bool CModules::OnPrivBufferPlayLine(CClient& Client, CString& sLine) { MODHALTCH
 bool CModules::OnChanBufferPlayMessage(CMessage& Message) { MODHALTCHK(OnChanBufferPlayMessage(Message)); }
 bool CModules::OnPrivBufferPlayMessage(CMessage& Message) { MODHALTCHK(OnPrivBufferPlayMessage(Message)); }
 bool CModules::OnCTCPReply(CNick& Nick, CString& sMessage) { MODHALTCHK(OnCTCPReply(Nick, sMessage)); }
+bool CModules::OnCTCPReplyMessage(CCTCPMessage& Message) { MODHALTCHK(OnCTCPReplyMessage(Message)); }
 bool CModules::OnPrivCTCP(CNick& Nick, CString& sMessage) { MODHALTCHK(OnPrivCTCP(Nick, sMessage)); }
 bool CModules::OnPrivCTCPMessage(CCTCPMessage& Message) { MODHALTCHK(OnPrivCTCPMessage(Message)); }
 bool CModules::OnChanCTCP(CNick& Nick, CChan& Channel, CString& sMessage) { MODHALTCHK(OnChanCTCP(Nick, Channel, sMessage)); }
