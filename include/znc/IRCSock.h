@@ -58,6 +58,7 @@ public:
 	bool OnPrivNotice(CMessage& Message);
 	bool OnChanNotice(CMessage& Message);
 	bool OnNickMessage(CNickMessage& Message);
+	bool OnQuitMessage(CQuitMessage& Message);
 	bool OnServerCapAvailable(const CString& sCap);
 	// !Message Handlers
 

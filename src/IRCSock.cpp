@@ -515,34 +515,7 @@ void CIRCSock::ReadLine(const CString& sData) {
 			}
 		} else if (Message.GetType() == CMessage::Type::Quit) {
 			CQuitMessage& QuitMsg = static_cast<CQuitMessage&>(Message);
-			bool bIsVisible = false;
-
-			// :nick!ident@host.com QUIT :message
-
-			if (Nick.NickEquals(GetNick())) {
-				m_pNetwork->PutStatus("You quit [" + QuitMsg.GetReason() + "]");
-				// We don't call module hooks and we don't
-				// forward this quit to clients (Some clients
-				// disconnect if they receive such a QUIT)
-				return;
-			}
-
-			vector<CChan*> vFoundChans;
-			const vector<CChan*>& vChans = m_pNetwork->GetChans();
-
-			for (CChan* pChan : vChans) {
-				if (pChan->RemNick(Nick.GetNick())) {
-					vFoundChans.push_back(pChan);
-
-					if (!pChan->IsDetached()) {
-						bIsVisible = true;
-					}
-				}
-			}
-
-			IRCSOCKMODULECALL(OnQuitMessage(QuitMsg, vFoundChans), NOTHING);
-
-			if (!bIsVisible) {
+			if (OnQuitMessage(QuitMsg)) {
 				return;
 			}
 		} else if (Message.GetType() == CMessage::Type::Join) {
@@ -1085,6 +1058,36 @@ bool CIRCSock::OnNickMessage(CNickMessage& Message) {
 	}
 
 	IRCSOCKMODULECALL(OnNickMessage(Message, vFoundChans), NOTHING);
+
+	return !bIsVisible;
+}
+
+bool CIRCSock::OnQuitMessage(CQuitMessage& Message) {
+	const CNick& Nick = Message.GetNick();
+	bool bIsVisible = false;
+
+	if (Nick.NickEquals(GetNick())) {
+		m_pNetwork->PutStatus("You quit [" + Message.GetReason() + "]");
+		// We don't call module hooks and we don't
+		// forward this quit to clients (Some clients
+		// disconnect if they receive such a QUIT)
+		return true;
+	}
+
+	vector<CChan*> vFoundChans;
+	const vector<CChan*>& vChans = m_pNetwork->GetChans();
+
+	for (CChan* pChan : vChans) {
+		if (pChan->RemNick(Nick.GetNick())) {
+			vFoundChans.push_back(pChan);
+
+			if (!pChan->IsDetached()) {
+				bIsVisible = true;
+			}
+		}
+	}
+
+	IRCSOCKMODULECALL(OnQuitMessage(Message, vFoundChans), NOTHING);
 
 	return !bIsVisible;
 }
