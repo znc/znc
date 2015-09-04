@@ -166,22 +166,22 @@ void CIRCSock::ReadLine(const CString& sData) {
 
 	CString sCmd = Message.GetCommand();
 
-	if (sCmd.Equals("PING")) {
+	if (Message.GetType() == CMessage::Type::Ping) {
 		// Generate a reply and don't forward this to any user,
 		// we don't want any PING forwarded
 		PutIRCQuick("PONG " + Message.GetParam(0));
 		return;
-	} else if (sCmd.Equals("PONG")) {
+	} else if (Message.GetType() == CMessage::Type::Pong) {
 		// Block PONGs, we already responded to the pings
 		return;
-	} else if (sCmd.Equals("ERROR")) {
+	} else if (Message.GetType() == CMessage::Type::Error) {
 		//ERROR :Closing Link: nick[24.24.24.24] (Excess Flood)
 		CString sError = Message.GetParam(0);
 		m_pNetwork->PutStatus("Error from Server [" + sError + "]");
 		return;
 	}
 
-	if ((sCmd.length() == 3) && (isdigit(sCmd[0])) && (isdigit(sCmd[1])) && (isdigit(sCmd[2]))) {
+	if (Message.GetType() == CMessage::Type::Numeric) {
 		CNumericMessage& NumericMsg = static_cast<CNumericMessage&>(Message);
 		CString sServer = Message.GetNick().GetHostMask();
 		unsigned int uRaw = NumericMsg.GetCode();
@@ -509,7 +509,7 @@ void CIRCSock::ReadLine(const CString& sData) {
 	} else {
 		CNick Nick = Message.GetNick();
 
-		if (sCmd.Equals("NICK")) {
+		if (Message.GetType() == CMessage::Type::Nick) {
 			CNickMessage& NickMsg = static_cast<CNickMessage&>(Message);
 			CString sNewNick = NickMsg.GetNewNick();
 			bool bIsVisible = false;
@@ -539,7 +539,7 @@ void CIRCSock::ReadLine(const CString& sData) {
 			if (!bIsVisible) {
 				return;
 			}
-		} else if (sCmd.Equals("QUIT")) {
+		} else if (Message.GetType() == CMessage::Type::Quit) {
 			CQuitMessage& QuitMsg = static_cast<CQuitMessage&>(Message);
 			bool bIsVisible = false;
 
@@ -571,7 +571,7 @@ void CIRCSock::ReadLine(const CString& sData) {
 			if (!bIsVisible) {
 				return;
 			}
-		} else if (sCmd.Equals("JOIN")) {
+		} else if (Message.GetType() == CMessage::Type::Join) {
 			CJoinMessage& JoinMsg = static_cast<CJoinMessage&>(Message);
 			CString sChan = JoinMsg.GetParam(0);
 			CChan* pChan = nullptr;
@@ -612,7 +612,7 @@ void CIRCSock::ReadLine(const CString& sData) {
 					return;
 				}
 			}
-		} else if (sCmd.Equals("PART")) {
+		} else if (Message.GetType() == CMessage::Type::Part) {
 			CPartMessage& PartMsg = static_cast<CPartMessage&>(Message);
 			CString sChan = PartMsg.GetParam(0);
 
@@ -640,7 +640,7 @@ void CIRCSock::ReadLine(const CString& sData) {
 			if (bDetached) {
 				return;
 			}
-		} else if (sCmd.Equals("MODE")) {
+		} else if (Message.GetType() == CMessage::Type::Mode) {
 			CString sTarget = Message.GetParam(0);
 			CString sModes = Message.GetParams(1);
 
@@ -673,7 +673,7 @@ void CIRCSock::ReadLine(const CString& sData) {
 					}
 				}
 			}
-		} else if (sCmd.Equals("KICK")) {
+		} else if (Message.GetType() == CMessage::Type::Kick) {
 			CKickMessage& KickMsg = static_cast<CKickMessage&>(Message);
 			// :opnick!ident@host.com KICK #chan nick :msg
 			CString sChan = KickMsg.GetParam(0);
@@ -699,32 +699,21 @@ void CIRCSock::ReadLine(const CString& sData) {
 			if ((pChan) && (pChan->IsDetached())) {
 				return;
 			}
-		} else if (sCmd.Equals("NOTICE")) {
+		} else if (Message.GetType() == CMessage::Type::Notice) {
+			CNoticeMessage& NoticeMsg = static_cast<CNoticeMessage&>(Message);
 			// :nick!ident@host.com NOTICE #chan :Message
-			CString sTarget = Message.GetParam(0);
-			CString sMsg = Message.GetParam(1);
+			CString sTarget = NoticeMsg.GetTarget();
 
-			if (sMsg.WildCmp("\001*\001")) {
-				if (sTarget.Equals(GetNick())) {
-					if (OnCTCPReply(Message)) {
-						return;
-					}
+			if (sTarget.Equals(GetNick())) {
+				if (OnPrivNotice(Message)) {
+					return;
 				}
 			} else {
-				if (sTarget.Equals(GetNick())) {
-					if (OnPrivNotice(Message)) {
-						return;
-					}
-				} else {
-					if (OnChanNotice(Message)) {
-						return;
-					}
+				if (OnChanNotice(Message)) {
+					return;
 				}
 			}
-
-			m_pNetwork->PutUser(Message);
-			return;
-		} else if (sCmd.Equals("TOPIC")) {
+		} else if (Message.GetType() == CMessage::Type::Topic) {
 			CTopicMessage& TopicMsg = static_cast<CTopicMessage&>(Message);
 			// :nick!ident@host.com TOPIC #chan :This is a topic
 			CChan* pChan = m_pNetwork->FindChan(TopicMsg.GetParam(0));
@@ -742,49 +731,46 @@ void CIRCSock::ReadLine(const CString& sData) {
 					return; // Don't forward this
 				}
 			}
-		} else if (sCmd.Equals("PRIVMSG")) {
-			// :nick!ident@host.com PRIVMSG #chan :Message
-			CString sTarget = Message.GetParam(0);
-			CString sMsg = Message.GetParam(1);
-
-			if (sMsg.WildCmp("\001*\001")) {
-				sMsg.LeftChomp();
-				sMsg.RightChomp();
-
-				if (sTarget.Equals(GetNick())) {
+		} else if (Message.GetType() == CMessage::Type::CTCP) {
+			CCTCPMessage& CTCPMsg = static_cast<CCTCPMessage&>(Message);
+			CString sTarget = CTCPMsg.GetTarget();
+			if (sTarget.Equals(GetNick())) {
+				if (CTCPMsg.IsReply()) {
+					if (OnCTCPReply(Message)) {
+						return;
+					}
+				} else {
 					if (OnPrivCTCP(Message)) {
 						return;
 					}
-				} else {
-					if (OnChanCTCP(Message)) {
-						return;
-					}
 				}
-
-				m_pNetwork->PutUser(Message);
-				return;
 			} else {
-				if (sTarget.Equals(GetNick())) {
-					if (OnPrivMsg(Message)) {
-						return;
-					}
-				} else {
-					if (OnChanMsg(Message)) {
-						return;
-					}
+				if (OnChanCTCP(Message)) {
+					return;
 				}
-
-				m_pNetwork->PutUser(Message);
-				return;
 			}
-		} else if (sCmd.Equals("WALLOPS")) {
+		} else if (Message.GetType() == CMessage::Type::Text) {
+			CTextMessage& TextMsg = static_cast<CTextMessage&>(Message);
+			// :nick!ident@host.com PRIVMSG #chan :Message
+			CString sTarget = TextMsg.GetTarget();
+
+			if (sTarget.Equals(GetNick())) {
+				if (OnPrivMsg(Message)) {
+					return;
+				}
+			} else {
+				if (OnChanMsg(Message)) {
+					return;
+				}
+			}
+		} else if (Message.GetType() == CMessage::Type::Wallops) {
 			// :blub!dummy@rox-8DBEFE92 WALLOPS :this is a test
 			CString sMsg = Message.GetParam(0);
 
 			if (!m_pNetwork->IsUserOnline()) {
 				m_pNetwork->AddNoticeBuffer(":" + _NAMEDFMT(Nick.GetNickMask()) + " WALLOPS :{text}", sMsg);
 			}
-		} else if (sCmd.Equals("CAP")) {
+		} else if (Message.GetType() == CMessage::Type::Capability) {
 			// CAPs are supported only before authorization.
 			if (!m_bAuthed) {
 				// The first parameter is most likely "*". No idea why, the
@@ -848,10 +834,10 @@ void CIRCSock::ReadLine(const CString& sData) {
 			}
 			// Don't forward any CAP stuff to the client
 			return;
-		} else if (sCmd.Equals("INVITE")) {
+		} else if (Message.GetType() == CMessage::Type::Invite) {
 			IRCSOCKMODULECALL(OnInvite(Nick, sLine.Token(3).TrimPrefix_n(":")), &bReturn);
 			if (bReturn) return;
-		} else if (sCmd.Equals("AWAY")) {
+		} else if (Message.GetType() == CMessage::Type::Away) {
 			const vector<CClient*>& vClients = m_pNetwork->GetClients();
 			for (CClient* pClient : vClients) {
 				if (pClient->HasAwayNotify()) {
@@ -859,7 +845,7 @@ void CIRCSock::ReadLine(const CString& sData) {
 				}
 			}
 			return;
-		} else if (sCmd.Equals("ACCOUNT")) {
+		} else if (Message.GetType() == CMessage::Type::Account) {
 			const vector<CClient*>& vClients = m_pNetwork->GetClients();
 			for (CClient* pClient : vClients) {
 				if (pClient->HasAccountNotify()) {
