@@ -36,6 +36,10 @@ public:
 
 	EModRet OnUserPart(CString& sChannel, CString& sMessage) override
 	{
+		if (!GetNetwork()) {
+			return CONTINUE;
+		}
+
 		for (MCString::iterator it = BeginNV(); it != EndNV(); ++it)
 		{
 			if (sChannel.Equals(it->first))
