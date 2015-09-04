@@ -20,6 +20,7 @@
 #include <znc/zncconfig.h>
 #include <znc/Socket.h>
 #include <znc/Nick.h>
+#include <znc/Message.h>
 
 #include <deque>
 
@@ -28,7 +29,6 @@ class CChan;
 class CUser;
 class CIRCNetwork;
 class CClient;
-class CMessage;
 // !Forward Declarations
 
 // TODO: This class needs new name
@@ -57,6 +57,7 @@ public:
 	bool OnChanMsg(CMessage& Message);
 	bool OnPrivNotice(CMessage& Message);
 	bool OnChanNotice(CMessage& Message);
+	bool OnNickMessage(CNickMessage& Message);
 	bool OnServerCapAvailable(const CString& sCap);
 	// !Message Handlers
 

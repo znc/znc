@@ -20,7 +20,6 @@
 #include <znc/IRCNetwork.h>
 #include <znc/Server.h>
 #include <znc/Query.h>
-#include <znc/Message.h>
 #include <time.h>
 
 using std::set;
@@ -511,32 +510,7 @@ void CIRCSock::ReadLine(const CString& sData) {
 
 		if (Message.GetType() == CMessage::Type::Nick) {
 			CNickMessage& NickMsg = static_cast<CNickMessage&>(Message);
-			CString sNewNick = NickMsg.GetNewNick();
-			bool bIsVisible = false;
-
-			vector<CChan*> vFoundChans;
-			const vector<CChan*>& vChans = m_pNetwork->GetChans();
-
-			for (CChan* pChan : vChans) {
-				if (pChan->ChangeNick(Nick.GetNick(), sNewNick)) {
-					vFoundChans.push_back(pChan);
-
-					if (!pChan->IsDetached()) {
-						bIsVisible = true;
-					}
-				}
-			}
-
-			if (Nick.NickEquals(GetNick())) {
-				// We are changing our own nick, the clients always must see this!
-				bIsVisible = false;
-				SetNick(sNewNick);
-				m_pNetwork->PutUser(Message);
-			}
-
-			IRCSOCKMODULECALL(OnNickMessage(NickMsg, vFoundChans), NOTHING);
-
-			if (!bIsVisible) {
+			if (OnNickMessage(NickMsg)) {
 				return;
 			}
 		} else if (Message.GetType() == CMessage::Type::Quit) {
@@ -1083,6 +1057,36 @@ bool CIRCSock::OnChanMsg(CMessage& Message) {
 	}
 
 	return ((pChan) && (pChan->IsDetached()));
+}
+
+bool CIRCSock::OnNickMessage(CNickMessage& Message) {
+	const CNick& Nick = Message.GetNick();
+	CString sNewNick = Message.GetNewNick();
+	bool bIsVisible = false;
+
+	vector<CChan*> vFoundChans;
+	const vector<CChan*>& vChans = m_pNetwork->GetChans();
+
+	for (CChan* pChan : vChans) {
+		if (pChan->ChangeNick(Nick.GetNick(), sNewNick)) {
+			vFoundChans.push_back(pChan);
+
+			if (!pChan->IsDetached()) {
+				bIsVisible = true;
+			}
+		}
+	}
+
+	if (Nick.NickEquals(GetNick())) {
+		// We are changing our own nick, the clients always must see this!
+		bIsVisible = false;
+		SetNick(sNewNick);
+		m_pNetwork->PutUser(Message);
+	}
+
+	IRCSOCKMODULECALL(OnNickMessage(Message, vFoundChans), NOTHING);
+
+	return !bIsVisible;
 }
 
 void CIRCSock::PutIRC(const CString& sLine) {
