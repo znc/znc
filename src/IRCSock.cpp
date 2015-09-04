@@ -707,17 +707,11 @@ void CIRCSock::ReadLine(const CString& sData) {
 			CString sMsg = Message.GetParam(1);
 
 			if (sMsg.WildCmp("\001*\001")) {
-				sMsg.LeftChomp();
-				sMsg.RightChomp();
-
 				if (sTarget.Equals(GetNick())) {
-					if (OnCTCPReply(Nick, sMsg)) {
+					if (OnCTCPReply(Message)) {
 						return;
 					}
 				}
-
-				m_pNetwork->PutUser(":" + Nick.GetNickMask() + " NOTICE " + sTarget + " :\001" + sMsg + "\001");
-				return;
 			} else {
 				if (sTarget.Equals(GetNick())) {
 					if (OnPrivNotice(Message)) {
@@ -909,9 +903,10 @@ bool CIRCSock::OnServerCapAvailable(const CString& sCap) {
 	return bResult;
 }
 
-bool CIRCSock::OnCTCPReply(CNick& Nick, CString& sMessage) {
+bool CIRCSock::OnCTCPReply(CMessage& Message) {
+	CCTCPMessage& CTCP = static_cast<CCTCPMessage&>(Message);
 	bool bResult = false;
-	IRCSOCKMODULECALL(OnCTCPReply(Nick, sMessage), &bResult);
+	IRCSOCKMODULECALL(OnCTCPReplyMessage(CTCP), &bResult);
 
 	return bResult;
 }
