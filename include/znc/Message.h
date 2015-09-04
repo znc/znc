@@ -103,6 +103,7 @@ public:
 
 class CCTCPMessage : public CTargetMessage {
 public:
+	bool IsReply() const { return GetCommand().Equals("NOTICE"); }
 	CString GetText() const { return GetParam(1).TrimPrefix_n("\001").TrimSuffix_n("\001"); }
 	void SetText(const CString& sText) { SetParam(1, "\001" + sText + "\001"); }
 };

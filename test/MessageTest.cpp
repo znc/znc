@@ -123,6 +123,7 @@ TEST(MessageTest, ChanCTCP) {
 	EXPECT_EQ("PRIVMSG", msg.GetCommand());
 	EXPECT_EQ("#chan", msg.GetTarget());
 	EXPECT_EQ("text", msg.GetText());
+	EXPECT_FALSE(msg.IsReply());
 
 	msg.SetTarget("#znc");
 	EXPECT_EQ("#znc", msg.GetTarget());
@@ -144,6 +145,22 @@ TEST(MessageTest, ChanMsg) {
 	msg.SetText("foo bar");
 	EXPECT_EQ("foo bar", msg.GetText());
 	EXPECT_EQ(":sender PRIVMSG #znc :foo bar", msg.ToString());
+}
+
+TEST(MessageTest, CTCPReply) {
+	CCTCPMessage msg;
+	msg.Parse(":sender NOTICE nick :\001FOO bar\001");
+	EXPECT_EQ("sender", msg.GetNick().GetNick());
+	EXPECT_EQ("NOTICE", msg.GetCommand());
+	EXPECT_EQ("nick", msg.GetTarget());
+	EXPECT_EQ("FOO bar", msg.GetText());
+	EXPECT_TRUE(msg.IsReply());
+
+	msg.SetTarget("noone");
+	EXPECT_EQ("noone", msg.GetTarget());
+	msg.SetText("BAR foo");
+	EXPECT_EQ("BAR foo", msg.GetText());
+	EXPECT_EQ(":sender NOTICE noone :\001BAR foo\001", msg.ToString());
 }
 
 TEST(MessageTest, Kick) {
@@ -248,6 +265,7 @@ TEST(MessageTest, PrivCTCP) {
 	EXPECT_EQ("PRIVMSG", msg.GetCommand());
 	EXPECT_EQ("receiver", msg.GetTarget());
 	EXPECT_EQ("text", msg.GetText());
+	EXPECT_FALSE(msg.IsReply());
 
 	msg.SetTarget("noone");
 	EXPECT_EQ("noone", msg.GetTarget());
