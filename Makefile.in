@@ -227,6 +227,6 @@ test: unittest
 test2:
 	# This test uses files at <prefix>/lib/znc, which is less than ideal, especially from build scripts of distros.
 	# That's why it's a separate make target.
-	$(Q)$(srcdir)/test/makeconf.py
+	$(Q)$(srcdir)/test/integration.py -v
 
 -include $(wildcard .depend/*.dep)
