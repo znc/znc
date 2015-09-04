@@ -563,28 +563,7 @@ void CIRCSock::ReadLine(const CString& sData) {
 			}
 		} else if (Message.GetType() == CMessage::Type::Kick) {
 			CKickMessage& KickMsg = static_cast<CKickMessage&>(Message);
-			// :opnick!ident@host.com KICK #chan nick :msg
-			CString sChan = KickMsg.GetParam(0);
-			CString sKickedNick = KickMsg.GetKickedNick();
-
-			CChan* pChan = m_pNetwork->FindChan(sChan);
-
-			if (pChan) {
-				KickMsg.SetChan(pChan);
-				IRCSOCKMODULECALL(OnKickMessage(KickMsg), NOTHING);
-				// do not remove the nick till after the OnKick call, so modules
-				// can do Chan.FindNick or something to get more info.
-				pChan->RemNick(sKickedNick);
-			}
-
-			if (GetNick().Equals(sKickedNick) && pChan) {
-				pChan->SetIsOn(false);
-
-				// Don't try to rejoin!
-				pChan->Disable();
-			}
-
-			if ((pChan) && (pChan->IsDetached())) {
+			if (OnKickMessage(KickMsg)) {
 				return;
 			}
 		} else if (Message.GetType() == CMessage::Type::Notice) {
@@ -1015,6 +994,30 @@ bool CIRCSock::OnJoinMessage(CJoinMessage& Message) {
 	}
 
 	return false;
+}
+
+bool CIRCSock::OnKickMessage(CKickMessage& Message) {
+	CString sChan = Message.GetParam(0);
+	CString sKickedNick = Message.GetKickedNick();
+
+	CChan* pChan = m_pNetwork->FindChan(sChan);
+
+	if (pChan) {
+		Message.SetChan(pChan);
+		IRCSOCKMODULECALL(OnKickMessage(Message), NOTHING);
+		// do not remove the nick till after the OnKick call, so modules
+		// can do Chan.FindNick or something to get more info.
+		pChan->RemNick(sKickedNick);
+	}
+
+	if (GetNick().Equals(sKickedNick) && pChan) {
+		pChan->SetIsOn(false);
+
+		// Don't try to rejoin!
+		pChan->Disable();
+	}
+
+	return (pChan && pChan->IsDetached());
 }
 
 bool CIRCSock::OnNickMessage(CNickMessage& Message) {

@@ -58,6 +58,7 @@ public:
 	bool OnPrivNotice(CMessage& Message);
 	bool OnChanNotice(CMessage& Message);
 	bool OnJoinMessage(CJoinMessage& Message);
+	bool OnKickMessage(CKickMessage& Message);
 	bool OnNickMessage(CNickMessage& Message);
 	bool OnPartMessage(CPartMessage& Message);
 	bool OnQuitMessage(CQuitMessage& Message);
