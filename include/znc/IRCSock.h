@@ -59,6 +59,7 @@ public:
 	bool OnChanNotice(CMessage& Message);
 	bool OnJoinMessage(CJoinMessage& Message);
 	bool OnNickMessage(CNickMessage& Message);
+	bool OnPartMessage(CPartMessage& Message);
 	bool OnQuitMessage(CQuitMessage& Message);
 	bool OnServerCapAvailable(const CString& sCap);
 	// !Message Handlers

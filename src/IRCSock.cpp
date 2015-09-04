@@ -525,30 +525,7 @@ void CIRCSock::ReadLine(const CString& sData) {
 			}
 		} else if (Message.GetType() == CMessage::Type::Part) {
 			CPartMessage& PartMsg = static_cast<CPartMessage&>(Message);
-			CString sChan = PartMsg.GetParam(0);
-
-			CChan* pChan = m_pNetwork->FindChan(sChan);
-			bool bDetached = false;
-			if (pChan) {
-				pChan->RemNick(Nick.GetNick());
-				PartMsg.SetChan(pChan);
-				IRCSOCKMODULECALL(OnPartMessage(PartMsg), NOTHING);
-
-				if (pChan->IsDetached())
-					bDetached = true;
-			}
-
-			if (Nick.NickEquals(GetNick())) {
-				m_pNetwork->DelChan(sChan);
-			}
-
-			/*
-			 * We use this boolean because
-			 * m_pNetwork->DelChan() will delete this channel
-			 * and thus we would dereference an
-			 * already-freed pointer!
-			 */
-			if (bDetached) {
+			if (OnPartMessage(PartMsg)) {
 				return;
 			}
 		} else if (Message.GetType() == CMessage::Type::Mode) {
@@ -1068,6 +1045,34 @@ bool CIRCSock::OnNickMessage(CNickMessage& Message) {
 	IRCSOCKMODULECALL(OnNickMessage(Message, vFoundChans), NOTHING);
 
 	return !bIsVisible;
+}
+
+bool CIRCSock::OnPartMessage(CPartMessage& Message) {
+	const CNick& Nick = Message.GetNick();
+	CString sChan = Message.GetTarget();
+
+	CChan* pChan = m_pNetwork->FindChan(sChan);
+	bool bDetached = false;
+	if (pChan) {
+		pChan->RemNick(Nick.GetNick());
+		Message.SetChan(pChan);
+		IRCSOCKMODULECALL(OnPartMessage(Message), NOTHING);
+
+		if (pChan->IsDetached())
+			bDetached = true;
+	}
+
+	if (Nick.NickEquals(GetNick())) {
+		m_pNetwork->DelChan(sChan);
+	}
+
+	/*
+	 * We use this boolean because
+	 * m_pNetwork->DelChan() will delete this channel
+	 * and thus we would dereference an
+	 * already-freed pointer!
+	 */
+	return bDetached;
 }
 
 bool CIRCSock::OnQuitMessage(CQuitMessage& Message) {
