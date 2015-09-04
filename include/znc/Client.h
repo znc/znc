@@ -246,7 +246,7 @@ public:
 	CIRCSock* GetIRCSock();
 	CString GetFullName() const;
 private:
-	void HandleCap(const CString& sLine);
+	void HandleCap(const CMessage& Message);
 	void RespondCap(const CString& sResponse);
 	void ParsePass(const CString& sAuthLine);
 	void ParseUser(const CString& sAuthLine);

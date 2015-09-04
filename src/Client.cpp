@@ -159,7 +159,7 @@ void CClient::ReadLine(const CString& sData) {
 	}
 
 	if (sCommand.Equals("CAP")) {
-		HandleCap(sLine);
+		HandleCap(Message);
 
 		// Don't let the client talk to the server directly about CAP,
 		// we don't want anything enabled that ZNC does not support.
@@ -866,10 +866,9 @@ void CClient::RespondCap(const CString& sResponse)
 	PutClient(":irc.znc.in CAP " + GetNick() + " " + sResponse);
 }
 
-void CClient::HandleCap(const CString& sLine)
+void CClient::HandleCap(const CMessage& Message)
 {
-	// This is not exactly correct, but this is protection from "CAP :END"
-	CString sSubCmd = sLine.Token(1).TrimPrefix_n(":");
+	CString sSubCmd = Message.GetParam(0);
 
 	if (sSubCmd.Equals("LS")) {
 		SCString ssOfferCaps;
@@ -882,7 +881,7 @@ void CClient::HandleCap(const CString& sLine)
 		CString sRes = CString(" ").Join(ssOfferCaps.begin(), ssOfferCaps.end());
 		RespondCap("LS :" + sRes);
 		m_bInCap = true;
-		if (sLine.Token(2).ToInt() >= 302) {
+		if (Message.GetParam(1).ToInt() >= 302) {
 			m_bCapNotify = true;
 		}
 	} else if (sSubCmd.Equals("END")) {
@@ -896,7 +895,7 @@ void CClient::HandleCap(const CString& sLine)
 		}
 	} else if (sSubCmd.Equals("REQ")) {
 		VCString vsTokens;
-		sLine.Token(2, true).TrimPrefix_n(":").Split(" ", vsTokens, false);
+		Message.GetParam(1).Split(" ", vsTokens, false);
 
 		for (const CString& sToken : vsTokens) {
 			bool bVal = true;
@@ -914,7 +913,7 @@ void CClient::HandleCap(const CString& sLine)
 
 			if (!bAccepted) {
 				// Some unsupported capability is requested
-				RespondCap("NAK :" + sLine.Token(2, true).TrimPrefix_n(":"));
+				RespondCap("NAK :" + Message.GetParam(1));
 				return;
 			}
 		}
@@ -940,7 +939,7 @@ void CClient::HandleCap(const CString& sLine)
 			}
 		}
 
-		RespondCap("ACK :" + sLine.Token(2, true).TrimPrefix_n(":"));
+		RespondCap("ACK :" + Message.GetParam(1));
 	} else if (sSubCmd.Equals("LIST")) {
 		CString sList = CString(" ").Join(m_ssAcceptedCaps.begin(), m_ssAcceptedCaps.end());
 		RespondCap("LIST :" + sList);
