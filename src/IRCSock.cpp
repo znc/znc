@@ -520,44 +520,8 @@ void CIRCSock::ReadLine(const CString& sData) {
 			}
 		} else if (Message.GetType() == CMessage::Type::Join) {
 			CJoinMessage& JoinMsg = static_cast<CJoinMessage&>(Message);
-			CString sChan = JoinMsg.GetParam(0);
-			CChan* pChan = nullptr;
-
-			if (Nick.NickEquals(GetNick())) {
-				m_pNetwork->AddChan(sChan, false);
-				pChan = m_pNetwork->FindChan(sChan);
-				if (pChan) {
-					pChan->Enable();
-					pChan->SetIsOn(true);
-					PutIRC("MODE " + sChan);
-				}
-			} else {
-				pChan = m_pNetwork->FindChan(sChan);
-			}
-
-			if (pChan) {
-				pChan->AddNick(Nick.GetNickMask());
-				JoinMsg.SetChan(pChan);
-				IRCSOCKMODULECALL(OnJoinMessage(JoinMsg), NOTHING);
-
-				if (pChan->IsDetached()) {
-					return;
-				}
-
-				if (HasExtendedJoin()) {
-					CString sExtendedLine = sLine;
-					sLine = ":" + Nick.GetNickMask() + " JOIN " + pChan->GetName();
-
-					const vector<CClient*>& vClients = m_pNetwork->GetClients();
-					for (CClient* pClient : vClients) {
-						if (pClient->HasExtendedJoin()) {
-							m_pNetwork->PutUser(sExtendedLine, pClient);
-						} else {
-							m_pNetwork->PutUser(sLine, pClient);
-						}
-					}
-					return;
-				}
+			if (OnJoinMessage(JoinMsg)) {
+				return;
 			}
 		} else if (Message.GetType() == CMessage::Type::Part) {
 			CPartMessage& PartMsg = static_cast<CPartMessage&>(Message);
@@ -1030,6 +994,50 @@ bool CIRCSock::OnChanMsg(CMessage& Message) {
 	}
 
 	return ((pChan) && (pChan->IsDetached()));
+}
+
+bool CIRCSock::OnJoinMessage(CJoinMessage& Message) {
+	const CNick& Nick = Message.GetNick();
+	CString sChan = Message.GetParam(0);
+	CChan* pChan = nullptr;
+
+	if (Nick.NickEquals(GetNick())) {
+		m_pNetwork->AddChan(sChan, false);
+		pChan = m_pNetwork->FindChan(sChan);
+		if (pChan) {
+			pChan->Enable();
+			pChan->SetIsOn(true);
+			PutIRC("MODE " + sChan);
+		}
+	} else {
+		pChan = m_pNetwork->FindChan(sChan);
+	}
+
+	if (pChan) {
+		pChan->AddNick(Nick.GetNickMask());
+		Message.SetChan(pChan);
+		IRCSOCKMODULECALL(OnJoinMessage(Message), NOTHING);
+
+		if (pChan->IsDetached()) {
+			return true;
+		}
+
+		if (HasExtendedJoin()) {
+			CString sLine = ":" + Nick.GetNickMask() + " JOIN " + pChan->GetName();
+
+			const vector<CClient*>& vClients = m_pNetwork->GetClients();
+			for (CClient* pClient : vClients) {
+				if (pClient->HasExtendedJoin()) {
+					m_pNetwork->PutUser(Message, pClient);
+				} else {
+					m_pNetwork->PutUser(sLine, pClient);
+				}
+			}
+			return true;
+		}
+	}
+
+	return false;
 }
 
 bool CIRCSock::OnNickMessage(CNickMessage& Message) {
