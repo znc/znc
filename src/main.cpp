@@ -132,25 +132,20 @@ static void GenerateHelp(const char *appname) {
 
 static void die(int sig) {
 	signal(SIGPIPE, SIG_DFL);
-
-	CUtils::PrintMessage("Exiting on SIG [" + CString(sig) + "]");
-
-	CZNC::DestroyInstance();
-	exit(sig);
+	CZNC::Get().SetConfigState(CZNC::ECONFIG_NEED_QUIT);
 }
 
 static void signalHandler(int sig) {
 	switch (sig) {
 	case SIGHUP:
-		CUtils::PrintMessage("Caught SIGHUP");
 		CZNC::Get().SetConfigState(CZNC::ECONFIG_NEED_REHASH);
 		break;
 	case SIGUSR1:
-		CUtils::PrintMessage("Caught SIGUSR1");
 		CZNC::Get().SetConfigState(CZNC::ECONFIG_NEED_VERBOSE_WRITE);
 		break;
 	default:
-		CUtils::PrintMessage("WTF? Signal handler called for a signal it doesn't know?");
+		// WTF? Signal handler called for a signal it doesn't know?
+		abort();
 	}
 }
 
@@ -451,6 +446,8 @@ int main(int argc, char** argv) {
 	}
 
 	CZNC::DestroyInstance();
+
+	CUtils::PrintMessage("Exiting");
 
 	return iRet;
 }

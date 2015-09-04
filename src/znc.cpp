@@ -224,6 +224,8 @@ void CZNC::Loop() {
 			break;
 		case ECONFIG_NOTHING:
 			break;
+		case ECONFIG_NEED_QUIT:
+			return;
 		}
 
 		// Check for users that need to be deleted
