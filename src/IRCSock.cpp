@@ -182,8 +182,9 @@ void CIRCSock::ReadLine(const CString& sData) {
 	}
 
 	if ((sCmd.length() == 3) && (isdigit(sCmd[0])) && (isdigit(sCmd[1])) && (isdigit(sCmd[2]))) {
+		CNumericMessage& NumericMsg = static_cast<CNumericMessage&>(Message);
 		CString sServer = Message.GetNick().GetHostMask();
-		unsigned int uRaw = sCmd.ToUInt();
+		unsigned int uRaw = NumericMsg.GetCode();
 		CString sNick = Message.GetParam(0);
 		CString sRest = Message.GetParams(1);
 		CString sTmp;

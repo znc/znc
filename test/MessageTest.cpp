@@ -189,6 +189,15 @@ TEST(MessageTest, Nick) {
 	EXPECT_EQ(":nick NICK test", msg.ToString());
 }
 
+TEST(MessageTest, Numeric) {
+	CNumericMessage msg;
+	msg.Parse(":server 123 user :foo bar");
+	EXPECT_EQ("server", msg.GetNick().GetNick());
+	EXPECT_EQ("123", msg.GetCommand());
+	EXPECT_EQ(123u, msg.GetCode());
+	EXPECT_EQ(CMessage::Type::Numeric, msg.GetType());
+}
+
 TEST(MessageTest, Part) {
 	CPartMessage msg;
 	msg.Parse(":nick PART #chan :reason");

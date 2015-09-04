@@ -126,6 +126,11 @@ public:
 	void SetText(const CString& sText) { SetParam(1, sText); }
 };
 
+class CNumericMessage : public CMessage {
+public:
+	unsigned int GetCode() const { return GetCommand().ToUInt(); }
+};
+
 class CKickMessage : public CTargetMessage {
 public:
 	CString GetKickedNick() const { return GetParam(1); }
