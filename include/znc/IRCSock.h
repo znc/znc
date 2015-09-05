@@ -53,6 +53,7 @@ public:
 	bool OnActionMessage(CActionMessage& Message);
 	bool OnAwayMessage(CMessage& Message);
 	bool OnCTCPMessage(CCTCPMessage& Message);
+	bool OnInviteMessage(CMessage& Message);
 	bool OnJoinMessage(CJoinMessage& Message);
 	bool OnKickMessage(CKickMessage& Message);
 	bool OnNickMessage(CNickMessage& Message);

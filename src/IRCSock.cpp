@@ -663,8 +663,9 @@ void CIRCSock::ReadLine(const CString& sData) {
 			// Don't forward any CAP stuff to the client
 			return;
 		} else if (Message.GetType() == CMessage::Type::Invite) {
-			IRCSOCKMODULECALL(OnInvite(Nick, sLine.Token(3).TrimPrefix_n(":")), &bReturn);
-			if (bReturn) return;
+			if (OnInviteMessage(Message)) {
+				return;
+			}
 		} else if (Message.GetType() == CMessage::Type::Away) {
 			if (OnAwayMessage(Message)) {
 				return;
@@ -844,6 +845,12 @@ bool CIRCSock::OnCTCPMessage(CCTCPMessage& Message) {
 	}
 
 	return (pChan && pChan->IsDetached());
+}
+
+bool CIRCSock::OnInviteMessage(CMessage& Message) {
+	bool bResult = false;
+	IRCSOCKMODULECALL(OnInvite(Message.GetNick(), Message.GetParam(1)), &bResult);
+	return bResult;
 }
 
 bool CIRCSock::OnJoinMessage(CJoinMessage& Message) {
