@@ -62,6 +62,8 @@ public:
 	bool OnNoticeMessage(CNoticeMessage& Message);
 	bool OnNumericMessage(CNumericMessage& Message);
 	bool OnPartMessage(CPartMessage& Message);
+	bool OnPingMessage(CMessage& Message);
+	bool OnPongMessage(CMessage& Message);
 	bool OnQuitMessage(CQuitMessage& Message);
 	bool OnTextMessage(CTextMessage& Message);
 	bool OnTopicMessage(CTopicMessage& Message);

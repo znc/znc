@@ -166,13 +166,13 @@ void CIRCSock::ReadLine(const CString& sData) {
 	CString sCmd = Message.GetCommand();
 
 	if (Message.GetType() == CMessage::Type::Ping) {
-		// Generate a reply and don't forward this to any user,
-		// we don't want any PING forwarded
-		PutIRCQuick("PONG " + Message.GetParam(0));
-		return;
+		if (OnPingMessage(Message)) {
+			return;
+		}
 	} else if (Message.GetType() == CMessage::Type::Pong) {
-		// Block PONGs, we already responded to the pings
-		return;
+		if (OnPongMessage(Message)) {
+			return;
+		}
 	} else if (Message.GetType() == CMessage::Type::Error) {
 		//ERROR :Closing Link: nick[24.24.24.24] (Excess Flood)
 		CString sError = Message.GetParam(0);
@@ -1029,6 +1029,18 @@ bool CIRCSock::OnPartMessage(CPartMessage& Message) {
 	 * already-freed pointer!
 	 */
 	return bDetached;
+}
+
+bool CIRCSock::OnPingMessage(CMessage& Message) {
+	// Generate a reply and don't forward this to any user,
+	// we don't want any PING forwarded
+	PutIRCQuick("PONG " + Message.GetParam(0));
+	return true;
+}
+
+bool CIRCSock::OnPongMessage(CMessage& Message) {
+	// Block PONGs, we already responded to the pings
+	return true;
 }
 
 bool CIRCSock::OnQuitMessage(CQuitMessage& Message) {
