@@ -51,6 +51,7 @@ public:
 	// Message Handlers
 	bool OnPrivMsg(CMessage& Message);
 	bool OnChanMsg(CMessage& Message);
+	bool OnActionMessage(CActionMessage& Message);
 	bool OnCTCPMessage(CCTCPMessage& Message);
 	bool OnJoinMessage(CJoinMessage& Message);
 	bool OnKickMessage(CKickMessage& Message);

@@ -576,6 +576,11 @@ void CIRCSock::ReadLine(const CString& sData) {
 			if (OnTopicMessage(TopicMsg)) {
 				return;
 			}
+		} else if (Message.GetType() == CMessage::Type::Action) {
+			CActionMessage& ActionMsg = static_cast<CActionMessage&>(Message);
+			if (OnActionMessage(ActionMsg)) {
+				return;
+			}
 		} else if (Message.GetType() == CMessage::Type::CTCP) {
 			CCTCPMessage& CTCPMsg = static_cast<CCTCPMessage&>(Message);
 			if (OnCTCPMessage(CTCPMsg)) {
@@ -773,6 +778,38 @@ bool CIRCSock::OnChanMsg(CMessage& Message) {
 	}
 
 	return ((pChan) && (pChan->IsDetached()));
+}
+
+bool CIRCSock::OnActionMessage(CActionMessage& Message) {
+	bool bResult = false;
+	CChan* pChan = nullptr;
+	CString sTarget = Message.GetTarget();
+	if (sTarget.Equals(GetNick())) {
+		IRCSOCKMODULECALL(OnPrivActionMessage(Message), &bResult);
+		if (bResult) return true;
+
+		if (!m_pNetwork->IsUserOnline() || !m_pNetwork->GetUser()->AutoClearQueryBuffer()) {
+			const CNick& Nick = Message.GetNick();
+			CQuery* pQuery = m_pNetwork->AddQuery(Nick.GetNick());
+			if (pQuery) {
+				pQuery->AddBuffer(":" + _NAMEDFMT(Nick.GetNickMask()) + " PRIVMSG {target} :\001ACTION {text}\001", Message.GetText(), &Message.GetTime(), Message.GetTags());
+			}
+		}
+	} else {
+		pChan = m_pNetwork->FindChan(sTarget);
+		if (pChan) {
+			Message.SetChan(pChan);
+			FixupChanNick(Message.GetNick(), pChan);
+			IRCSOCKMODULECALL(OnChanActionMessage(Message), &bResult);
+			if (bResult) return true;
+
+			if (!pChan->AutoClearChanBuffer() || !m_pNetwork->IsUserOnline() || pChan->IsDetached()) {
+				pChan->AddBuffer(":" + _NAMEDFMT(Message.GetNick().GetNickMask()) + " PRIVMSG " + _NAMEDFMT(pChan->GetName()) + " :\001ACTION {text}\001", Message.GetText(), &Message.GetTime(), Message.GetTags());
+			}
+		}
+	}
+
+	return (pChan && pChan->IsDetached());
 }
 
 bool CIRCSock::OnCTCPMessage(CCTCPMessage& Message) {
