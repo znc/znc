@@ -529,37 +529,9 @@ void CIRCSock::ReadLine(const CString& sData) {
 				return;
 			}
 		} else if (Message.GetType() == CMessage::Type::Mode) {
-			CString sTarget = Message.GetParam(0);
-			CString sModes = Message.GetParams(1);
-
-			CChan* pChan = m_pNetwork->FindChan(sTarget);
-			if (pChan) {
-				pChan->ModeChange(sModes, &Nick);
-
-				if (pChan->IsDetached()) {
-					return;
-				}
-			} else if (sTarget == m_Nick.GetNick()) {
-				CString sModeArg = sModes.Token(0);
-				bool bAdd = true;
-/* no module call defined (yet?)
-				MODULECALL(OnRawUserMode(*pOpNick, *this, sModeArg, sArgs), m_pNetwork->GetUser(), nullptr, );
-*/
-				for (unsigned int a = 0; a < sModeArg.size(); a++) {
-					const unsigned char& uMode = sModeArg[a];
-
-					if (uMode == '+') {
-						bAdd = true;
-					} else if (uMode == '-') {
-						bAdd = false;
-					} else {
-						if (bAdd) {
-							m_scUserModes.insert(uMode);
-						} else {
-							m_scUserModes.erase(uMode);
-						}
-					}
-				}
+			CModeMessage& ModeMsg = static_cast<CModeMessage&>(Message);
+			if (OnModeMessage(ModeMsg)) {
+				return;
 			}
 		} else if (Message.GetType() == CMessage::Type::Kick) {
 			CKickMessage& KickMsg = static_cast<CKickMessage&>(Message);
@@ -922,6 +894,43 @@ bool CIRCSock::OnKickMessage(CKickMessage& Message) {
 	}
 
 	return (pChan && pChan->IsDetached());
+}
+
+bool CIRCSock::OnModeMessage(CModeMessage& Message) {
+	const CNick& Nick = Message.GetNick();
+	CString sTarget = Message.GetTarget();
+	CString sModes = Message.GetModes();
+
+	CChan* pChan = m_pNetwork->FindChan(sTarget);
+	if (pChan) {
+		pChan->ModeChange(sModes, &Nick);
+
+		if (pChan->IsDetached()) {
+			return true;
+		}
+	} else if (sTarget == m_Nick.GetNick()) {
+		CString sModeArg = sModes.Token(0);
+		bool bAdd = true;
+/* no module call defined (yet?)
+		MODULECALL(OnRawUserMode(*pOpNick, *this, sModeArg, sArgs), m_pNetwork->GetUser(), nullptr, );
+*/
+		for (unsigned int a = 0; a < sModeArg.size(); a++) {
+			const unsigned char& uMode = sModeArg[a];
+
+			if (uMode == '+') {
+				bAdd = true;
+			} else if (uMode == '-') {
+				bAdd = false;
+			} else {
+				if (bAdd) {
+					m_scUserModes.insert(uMode);
+				} else {
+					m_scUserModes.erase(uMode);
+				}
+			}
+		}
+	}
+	return false;
 }
 
 bool CIRCSock::OnNickMessage(CNickMessage& Message) {

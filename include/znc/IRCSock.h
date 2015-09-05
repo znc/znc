@@ -57,6 +57,7 @@ public:
 	bool OnInviteMessage(CMessage& Message);
 	bool OnJoinMessage(CJoinMessage& Message);
 	bool OnKickMessage(CKickMessage& Message);
+	bool OnModeMessage(CModeMessage& Message);
 	bool OnNickMessage(CNickMessage& Message);
 	bool OnNoticeMessage(CNoticeMessage& Message);
 	bool OnPartMessage(CPartMessage& Message);
