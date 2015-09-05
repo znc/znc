@@ -113,6 +113,11 @@ public:
 	void SetKey(const CString& sKey) { SetParam(1, sKey); }
 };
 
+class CModeMessage : public CTargetMessage {
+public:
+	CString GetModes() const { return GetParams(1); }
+};
+
 class CNickMessage : public CMessage {
 public:
 	CString GetOldNick() const { return GetNick().GetNick(); }

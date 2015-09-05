@@ -176,6 +176,19 @@ TEST(MessageTest, Join) {
 	EXPECT_EQ(":nick JOIN #znc", msg.ToString());
 }
 
+TEST(MessageTest, Mode) {
+	CModeMessage msg;
+	msg.Parse(":nick MODE #chan +k foo");
+	EXPECT_EQ("nick", msg.GetNick().GetNick());
+	EXPECT_EQ("MODE", msg.GetCommand());
+	EXPECT_EQ("#chan", msg.GetTarget());
+	EXPECT_EQ("+k foo", msg.GetModes());
+
+	msg.SetTarget("#znc");
+	EXPECT_EQ("#znc", msg.GetTarget());
+	EXPECT_EQ(":nick MODE #znc +k foo", msg.ToString());
+}
+
 TEST(MessageTest, Nick) {
 	CNickMessage msg;
 	msg.Parse(":nick NICK person");
