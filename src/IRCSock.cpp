@@ -592,11 +592,8 @@ void CIRCSock::ReadLine(const CString& sData) {
 				return;
 			}
 		} else if (Message.GetType() == CMessage::Type::Wallops) {
-			// :blub!dummy@rox-8DBEFE92 WALLOPS :this is a test
-			CString sMsg = Message.GetParam(0);
-
-			if (!m_pNetwork->IsUserOnline()) {
-				m_pNetwork->AddNoticeBuffer(":" + _NAMEDFMT(Nick.GetNickMask()) + " WALLOPS :{text}", sMsg);
+			if (OnWallopsMessage(Message)) {
+				return;
 			}
 		} else if (Message.GetType() == CMessage::Type::Capability) {
 			if (OnCapabilityMessage(Message)) {
@@ -1095,6 +1092,16 @@ bool CIRCSock::OnTopicMessage(CTopicMessage& Message) {
 	}
 
 	return (pChan && pChan->IsDetached());
+}
+
+bool CIRCSock::OnWallopsMessage(CMessage& Message) {
+	// :blub!dummy@rox-8DBEFE92 WALLOPS :this is a test
+	CString sMsg = Message.GetParam(0);
+
+	if (!m_pNetwork->IsUserOnline()) {
+		m_pNetwork->AddNoticeBuffer(":" + _NAMEDFMT(Message.GetNick().GetNickMask()) + " WALLOPS :{text}", sMsg);
+	}
+	return false;
 }
 
 void CIRCSock::PutIRC(const CString& sLine) {

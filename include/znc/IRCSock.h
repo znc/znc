@@ -63,6 +63,7 @@ public:
 	bool OnQuitMessage(CQuitMessage& Message);
 	bool OnTextMessage(CTextMessage& Message);
 	bool OnTopicMessage(CTopicMessage& Message);
+	bool OnWallopsMessage(CMessage& Message);
 	bool OnServerCapAvailable(const CString& sCap);
 	// !Message Handlers
 
