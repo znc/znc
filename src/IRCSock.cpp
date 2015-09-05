@@ -163,105 +163,71 @@ void CIRCSock::ReadLine(const CString& sData) {
 	IRCSOCKMODULECALL(OnRawMessage(Message), &bReturn);
 	if (bReturn) return;
 
-	CString sCmd = Message.GetCommand();
-
-	if (Message.GetType() == CMessage::Type::Ping) {
-		if (OnPingMessage(Message)) {
-			return;
-		}
-	} else if (Message.GetType() == CMessage::Type::Pong) {
-		if (OnPongMessage(Message)) {
-			return;
-		}
-	} else if (Message.GetType() == CMessage::Type::Error) {
-		if (OnErrorMessage(Message)) {
-			return;
-		}
-	} else if (Message.GetType() == CMessage::Type::Numeric) {
-		CNumericMessage& NumericMsg = static_cast<CNumericMessage&>(Message);
-		if (OnNumericMessage(NumericMsg)) {
-			return;
-		}
-	} else {
-		CNick Nick = Message.GetNick();
-
-		if (Message.GetType() == CMessage::Type::Nick) {
-			CNickMessage& NickMsg = static_cast<CNickMessage&>(Message);
-			if (OnNickMessage(NickMsg)) {
-				return;
-			}
-		} else if (Message.GetType() == CMessage::Type::Quit) {
-			CQuitMessage& QuitMsg = static_cast<CQuitMessage&>(Message);
-			if (OnQuitMessage(QuitMsg)) {
-				return;
-			}
-		} else if (Message.GetType() == CMessage::Type::Join) {
-			CJoinMessage& JoinMsg = static_cast<CJoinMessage&>(Message);
-			if (OnJoinMessage(JoinMsg)) {
-				return;
-			}
-		} else if (Message.GetType() == CMessage::Type::Part) {
-			CPartMessage& PartMsg = static_cast<CPartMessage&>(Message);
-			if (OnPartMessage(PartMsg)) {
-				return;
-			}
-		} else if (Message.GetType() == CMessage::Type::Mode) {
-			CModeMessage& ModeMsg = static_cast<CModeMessage&>(Message);
-			if (OnModeMessage(ModeMsg)) {
-				return;
-			}
-		} else if (Message.GetType() == CMessage::Type::Kick) {
-			CKickMessage& KickMsg = static_cast<CKickMessage&>(Message);
-			if (OnKickMessage(KickMsg)) {
-				return;
-			}
-		} else if (Message.GetType() == CMessage::Type::Notice) {
-			CNoticeMessage& NoticeMsg = static_cast<CNoticeMessage&>(Message);
-			if (OnNoticeMessage(NoticeMsg)) {
-				return;
-			}
-		} else if (Message.GetType() == CMessage::Type::Topic) {
-			CTopicMessage& TopicMsg = static_cast<CTopicMessage&>(Message);
-			if (OnTopicMessage(TopicMsg)) {
-				return;
-			}
-		} else if (Message.GetType() == CMessage::Type::Action) {
-			CActionMessage& ActionMsg = static_cast<CActionMessage&>(Message);
-			if (OnActionMessage(ActionMsg)) {
-				return;
-			}
-		} else if (Message.GetType() == CMessage::Type::CTCP) {
-			CCTCPMessage& CTCPMsg = static_cast<CCTCPMessage&>(Message);
-			if (OnCTCPMessage(CTCPMsg)) {
-				return;
-			}
-		} else if (Message.GetType() == CMessage::Type::Text) {
-			CTextMessage& TextMsg = static_cast<CTextMessage&>(Message);
-			if (OnTextMessage(TextMsg)) {
-				return;
-			}
-		} else if (Message.GetType() == CMessage::Type::Wallops) {
-			if (OnWallopsMessage(Message)) {
-				return;
-			}
-		} else if (Message.GetType() == CMessage::Type::Capability) {
-			if (OnCapabilityMessage(Message)) {
-				return;
-			}
-		} else if (Message.GetType() == CMessage::Type::Invite) {
-			if (OnInviteMessage(Message)) {
-				return;
-			}
-		} else if (Message.GetType() == CMessage::Type::Away) {
-			if (OnAwayMessage(Message)) {
-				return;
-			}
-		} else if (Message.GetType() == CMessage::Type::Account) {
-			if (OnAccountMessage(Message)) {
-				return;
-			}
-		}
+	switch (Message.GetType()) {
+		case CMessage::Type::Account:
+			bReturn = OnAccountMessage(Message);
+			break;
+		case CMessage::Type::Action:
+			bReturn = OnActionMessage(static_cast<CActionMessage&>(Message));
+			break;
+		case CMessage::Type::Away:
+			bReturn = OnAwayMessage(Message);
+			break;
+		case CMessage::Type::Capability:
+			bReturn = OnCapabilityMessage(Message);
+			break;
+		case CMessage::Type::CTCP:
+			bReturn = OnCTCPMessage(static_cast<CCTCPMessage&>(Message));
+			break;
+		case CMessage::Type::Error:
+			bReturn = OnErrorMessage(Message);
+			break;
+		case CMessage::Type::Invite:
+			bReturn = OnInviteMessage(Message);
+			break;
+		case CMessage::Type::Join:
+			bReturn = OnJoinMessage(static_cast<CJoinMessage&>(Message));
+			break;
+		case CMessage::Type::Kick:
+			bReturn = OnKickMessage(static_cast<CKickMessage&>(Message));
+			break;
+		case CMessage::Type::Mode:
+			bReturn = OnModeMessage(static_cast<CModeMessage&>(Message));
+			break;
+		case CMessage::Type::Nick:
+			bReturn = OnNickMessage(static_cast<CNickMessage&>(Message));
+			break;
+		case CMessage::Type::Notice:
+			bReturn = OnNoticeMessage(static_cast<CNoticeMessage&>(Message));
+			break;
+		case CMessage::Type::Numeric:
+			bReturn = OnNumericMessage(static_cast<CNumericMessage&>(Message));
+			break;
+		case CMessage::Type::Part:
+			bReturn = OnPartMessage(static_cast<CPartMessage&>(Message));
+			break;
+		case CMessage::Type::Ping:
+			bReturn = OnPingMessage(Message);
+			break;
+		case CMessage::Type::Pong:
+			bReturn = OnPongMessage(Message);
+			break;
+		case CMessage::Type::Quit:
+			bReturn = OnQuitMessage(static_cast<CQuitMessage&>(Message));
+			break;
+		case CMessage::Type::Text:
+			bReturn = OnTextMessage(static_cast<CTextMessage&>(Message));
+			break;
+		case CMessage::Type::Topic:
+			bReturn = OnTopicMessage(static_cast<CTopicMessage&>(Message));
+			break;
+		case CMessage::Type::Wallops:
+			bReturn = OnWallopsMessage(Message);
+			break;
+		default:
+			break;
 	}
+	if (bReturn) return;
 
 	m_pNetwork->PutUser(Message);
 }
