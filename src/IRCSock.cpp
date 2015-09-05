@@ -417,7 +417,7 @@ void CIRCSock::ReadLine(const CString& sData) {
 					}
 				}
 
-				ForwardRaw353(sLine);
+				ForwardRaw353(Message);
 
 				// We forwarded it already, so return
 				return;
@@ -1342,29 +1342,25 @@ CString CIRCSock::GetISupport(const CString& sKey, const CString& sDefault) cons
 	}
 }
 
-void CIRCSock::ForwardRaw353(const CString& sLine) const {
+void CIRCSock::ForwardRaw353(const CMessage& Message) const {
 	const vector<CClient*>& vClients = m_pNetwork->GetClients();
 
 	for (CClient* pClient : vClients) {
-		ForwardRaw353(sLine, pClient);
+		ForwardRaw353(Message, pClient);
 	}
 }
 
-void CIRCSock::ForwardRaw353(const CString& sLine, CClient* pClient) const {
-	CString sNicks = sLine.Token(5, true).TrimPrefix_n();
-
+void CIRCSock::ForwardRaw353(const CMessage& Message, CClient* pClient) const {
 	if ((!m_bNamesx || pClient->HasNamesx()) && (!m_bUHNames || pClient->HasUHNames())) {
 		// Client and server have both the same UHNames and Namesx stuff enabled
-		m_pNetwork->PutUser(sLine, pClient);
+		m_pNetwork->PutUser(Message, pClient);
 	} else {
-		// Get everything except the actual user list
-		CString sTmp = sLine.Token(0, false, " :") + " :";
-
+		CString sNicks = Message.GetParam(3);
 		VCString vsNicks;
+		sNicks.Split(" ", vsNicks, false);
 
 		// This loop runs once for every nick on the channel
-		sNicks.Split(" ", vsNicks, false);
-		for (CString sNick : vsNicks) {
+		for (CString& sNick : vsNicks) {
 			if (sNick.empty())
 				break;
 
@@ -1381,12 +1377,11 @@ void CIRCSock::ForwardRaw353(const CString& sLine, CClient* pClient) const {
 				// so we strip away ident and host.
 				sNick = sNick.Token(0, false, "!");
 			}
-
-			sTmp += sNick + " ";
 		}
-		// Strip away the spaces we inserted at the end
-		sTmp.TrimRight(" ");
-		m_pNetwork->PutUser(sTmp, pClient);
+
+		CMessage NamesMsg(Message);
+		NamesMsg.SetParam(3, sNicks);
+		m_pNetwork->PutUser(NamesMsg, pClient);
 	}
 }
 

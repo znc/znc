@@ -115,10 +115,9 @@ public:
 	CString GetISupport(const CString& sKey, const CString& sDefault = "") const;
 	// !Getters
 
-	// TODO: CMessage
 	// This handles NAMESX and UHNAMES in a raw 353 reply
-	void ForwardRaw353(const CString& sLine) const;
-	void ForwardRaw353(const CString& sLine, CClient* pClient) const;
+	void ForwardRaw353(const CMessage& Message) const;
+	void ForwardRaw353(const CMessage& Message, CClient* pClient) const;
 
 	// TODO move this function to CIRCNetwork and make it non-static?
 	static bool IsFloodProtected(double fRate);
