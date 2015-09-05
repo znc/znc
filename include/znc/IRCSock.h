@@ -49,6 +49,7 @@ public:
 	} EChanModeArgs;
 
 	// Message Handlers
+	bool OnAccountMessage(CMessage& Message);
 	bool OnActionMessage(CActionMessage& Message);
 	bool OnAwayMessage(CMessage& Message);
 	bool OnCTCPMessage(CCTCPMessage& Message);

@@ -670,13 +670,9 @@ void CIRCSock::ReadLine(const CString& sData) {
 				return;
 			}
 		} else if (Message.GetType() == CMessage::Type::Account) {
-			const vector<CClient*>& vClients = m_pNetwork->GetClients();
-			for (CClient* pClient : vClients) {
-				if (pClient->HasAccountNotify()) {
-					m_pNetwork->PutUser(sLine, pClient);
-				}
+			if (OnAccountMessage(Message)) {
+				return;
 			}
-			return;
 		}
 	}
 
@@ -729,6 +725,16 @@ static void FixupChanNick(CNick& Nick, CChan* pChan) {
 		}
 		Nick.Clone(*pChanNick);
 	}
+}
+
+bool CIRCSock::OnAccountMessage(CMessage& Message) {
+	const vector<CClient*>& vClients = m_pNetwork->GetClients();
+	for (CClient* pClient : vClients) {
+		if (pClient->HasAccountNotify()) {
+			m_pNetwork->PutUser(Message, pClient);
+		}
+	}
+	return true;
 }
 
 bool CIRCSock::OnActionMessage(CActionMessage& Message) {
