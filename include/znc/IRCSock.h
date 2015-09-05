@@ -49,12 +49,9 @@ public:
 	} EChanModeArgs;
 
 	// Message Handlers
-	bool OnCTCPReply(CMessage& Message);
-	bool OnPrivCTCP(CMessage& Message);
-	bool OnChanCTCP(CMessage& Message);
-	bool OnGeneralCTCP(CMessage& Message);
 	bool OnPrivMsg(CMessage& Message);
 	bool OnChanMsg(CMessage& Message);
+	bool OnCTCPMessage(CCTCPMessage& Message);
 	bool OnJoinMessage(CJoinMessage& Message);
 	bool OnKickMessage(CKickMessage& Message);
 	bool OnNickMessage(CNickMessage& Message);

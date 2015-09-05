@@ -578,21 +578,8 @@ void CIRCSock::ReadLine(const CString& sData) {
 			}
 		} else if (Message.GetType() == CMessage::Type::CTCP) {
 			CCTCPMessage& CTCPMsg = static_cast<CCTCPMessage&>(Message);
-			CString sTarget = CTCPMsg.GetTarget();
-			if (sTarget.Equals(GetNick())) {
-				if (CTCPMsg.IsReply()) {
-					if (OnCTCPReply(Message)) {
-						return;
-					}
-				} else {
-					if (OnPrivCTCP(Message)) {
-						return;
-					}
-				}
-			} else {
-				if (OnChanCTCP(Message)) {
-					return;
-				}
+			if (OnCTCPMessage(CTCPMsg)) {
+				return;
 			}
 		} else if (Message.GetType() == CMessage::Type::Text) {
 			CTextMessage& TextMsg = static_cast<CTextMessage&>(Message);
@@ -732,43 +719,86 @@ bool CIRCSock::OnServerCapAvailable(const CString& sCap) {
 	return bResult;
 }
 
-bool CIRCSock::OnCTCPReply(CMessage& Message) {
-	CCTCPMessage& CTCP = static_cast<CCTCPMessage&>(Message);
+bool CIRCSock::OnPrivMsg(CMessage& Message) {
+	CTextMessage& PrivMsg = static_cast<CTextMessage&>(Message);
 	bool bResult = false;
-	IRCSOCKMODULECALL(OnCTCPReplyMessage(CTCP), &bResult);
-
-	return bResult;
-}
-
-bool CIRCSock::OnPrivCTCP(CMessage& Message) {
-	CCTCPMessage& CTCP = static_cast<CCTCPMessage&>(Message);
-	bool bResult = false;
-	IRCSOCKMODULECALL(OnPrivCTCPMessage(CTCP), &bResult);
+	IRCSOCKMODULECALL(OnPrivMessage(PrivMsg), &bResult);
 	if (bResult) return true;
 
-	if (CTCP.GetText().StartsWith("ACTION ")) {
-		bResult = false;
-		CActionMessage& Action = static_cast<CActionMessage&>(Message);
-		IRCSOCKMODULECALL(OnPrivActionMessage(Action), &bResult);
-		if (bResult) return true;
-
-		if (!m_pNetwork->IsUserOnline() || !m_pNetwork->GetUser()->AutoClearQueryBuffer()) {
-			const CNick& Nick = Action.GetNick();
-			CQuery* pQuery = m_pNetwork->AddQuery(Nick.GetNick());
-			if (pQuery) {
-				pQuery->AddBuffer(":" + _NAMEDFMT(Nick.GetNickMask()) + " PRIVMSG {target} :\001ACTION {text}\001", Action.GetText(), &Action.GetTime(), Action.GetTags());
-			}
+	if (!m_pNetwork->IsUserOnline() || !m_pNetwork->GetUser()->AutoClearQueryBuffer()) {
+		const CNick& Nick = PrivMsg.GetNick();
+		CQuery* pQuery = m_pNetwork->AddQuery(Nick.GetNick());
+		if (pQuery) {
+			pQuery->AddBuffer(":" + _NAMEDFMT(Nick.GetNickMask()) + " PRIVMSG {target} :{text}", PrivMsg.GetText(), &PrivMsg.GetTime(), PrivMsg.GetTags());
 		}
 	}
 
-	// This handles everything which wasn't handled yet
-	return OnGeneralCTCP(Message);
+	return false;
 }
 
-bool CIRCSock::OnGeneralCTCP(CMessage& Message) {
-	CCTCPMessage& CTCP = static_cast<CCTCPMessage&>(Message);
+// #124: OnChanMsg(): nick doesn't have perms
+static void FixupChanNick(CNick& Nick, CChan* pChan) {
+	// A channel nick has up-to-date channel perms, but might be
+	// lacking (usernames-in-host) the associated ident & host.
+	// An incoming message, on the other hand, has normally a full
+	// nick!ident@host prefix. Sync the two so that channel nicks
+	// get the potentially missing piece of info and module hooks
+	// get the perms.
+	CNick* pChanNick = pChan->FindNick(Nick.GetNick());
+	if (pChanNick) {
+		if (!Nick.GetIdent().empty()) {
+			pChanNick->SetIdent(Nick.GetIdent());
+		}
+		if (!Nick.GetHost().empty()) {
+			pChanNick->SetHost(Nick.GetHost());
+		}
+		Nick.Clone(*pChanNick);
+	}
+}
+
+bool CIRCSock::OnChanMsg(CMessage& Message) {
+	CTextMessage& ChanMsg = static_cast<CTextMessage&>(Message);
+	CChan* pChan = m_pNetwork->FindChan(ChanMsg.GetParam(0));
+	if (pChan) {
+		FixupChanNick(Message.GetNick(), pChan);
+
+		bool bResult = false;
+		ChanMsg.SetChan(pChan);
+		IRCSOCKMODULECALL(OnChanMessage(ChanMsg), &bResult);
+		if (bResult) return true;
+
+		if (!pChan->AutoClearChanBuffer() || !m_pNetwork->IsUserOnline() || pChan->IsDetached()) {
+			pChan->AddBuffer(":" + _NAMEDFMT(ChanMsg.GetNick().GetNickMask()) + " PRIVMSG " + _NAMEDFMT(pChan->GetName()) + " :{text}", ChanMsg.GetText(), &ChanMsg.GetTime(), ChanMsg.GetTags());
+		}
+	}
+
+	return ((pChan) && (pChan->IsDetached()));
+}
+
+bool CIRCSock::OnCTCPMessage(CCTCPMessage& Message) {
+	bool bResult = false;
+	CChan* pChan = nullptr;
+	CString sTarget = Message.GetTarget();
+	if (sTarget.Equals(GetNick())) {
+		if (Message.IsReply()) {
+			IRCSOCKMODULECALL(OnCTCPReplyMessage(Message), &bResult);
+			return bResult;
+		} else {
+			IRCSOCKMODULECALL(OnPrivCTCPMessage(Message), &bResult);
+			if (bResult) return true;
+		}
+	} else {
+		pChan = m_pNetwork->FindChan(sTarget);
+		if (pChan) {
+			Message.SetChan(pChan);
+			FixupChanNick(Message.GetNick(), pChan);
+			IRCSOCKMODULECALL(OnChanCTCPMessage(Message), &bResult);
+			if (bResult) return true;
+		}
+	}
+
 	const CNick& Nick = Message.GetNick();
-	const CString& sMessage = CTCP.GetText();
+	const CString& sMessage = Message.GetText();
 	const MCString& mssCTCPReplies = m_pNetwork->GetUser()->GetCTCPReplies();
 	CString sQuery = sMessage.Token(0).AsUpper();
 	MCString::const_iterator it = mssCTCPReplies.find(sQuery);
@@ -809,92 +839,7 @@ bool CIRCSock::OnGeneralCTCP(CMessage& Message) {
 		return true;
 	}
 
-	return false;
-}
-
-bool CIRCSock::OnPrivMsg(CMessage& Message) {
-	CTextMessage& PrivMsg = static_cast<CTextMessage&>(Message);
-	bool bResult = false;
-	IRCSOCKMODULECALL(OnPrivMessage(PrivMsg), &bResult);
-	if (bResult) return true;
-
-	if (!m_pNetwork->IsUserOnline() || !m_pNetwork->GetUser()->AutoClearQueryBuffer()) {
-		const CNick& Nick = PrivMsg.GetNick();
-		CQuery* pQuery = m_pNetwork->AddQuery(Nick.GetNick());
-		if (pQuery) {
-			pQuery->AddBuffer(":" + _NAMEDFMT(Nick.GetNickMask()) + " PRIVMSG {target} :{text}", PrivMsg.GetText(), &PrivMsg.GetTime(), PrivMsg.GetTags());
-		}
-	}
-
-	return false;
-}
-
-// #124: OnChanMsg(): nick doesn't have perms
-static void FixupChanNick(CNick& Nick, CChan* pChan) {
-	// A channel nick has up-to-date channel perms, but might be
-	// lacking (usernames-in-host) the associated ident & host.
-	// An incoming message, on the other hand, has normally a full
-	// nick!ident@host prefix. Sync the two so that channel nicks
-	// get the potentially missing piece of info and module hooks
-	// get the perms.
-	CNick* pChanNick = pChan->FindNick(Nick.GetNick());
-	if (pChanNick) {
-		if (!Nick.GetIdent().empty()) {
-			pChanNick->SetIdent(Nick.GetIdent());
-		}
-		if (!Nick.GetHost().empty()) {
-			pChanNick->SetHost(Nick.GetHost());
-		}
-		Nick.Clone(*pChanNick);
-	}
-}
-
-bool CIRCSock::OnChanCTCP(CMessage& Message) {
-	CCTCPMessage& CTCP = static_cast<CCTCPMessage&>(Message);
-	CChan* pChan = m_pNetwork->FindChan(CTCP.GetParam(0));
-	if (pChan) {
-		FixupChanNick(Message.GetNick(), pChan);
-
-		bool bResult = false;
-		CTCP.SetChan(pChan);
-		IRCSOCKMODULECALL(OnChanCTCPMessage(CTCP), &bResult);
-		if (bResult) return true;
-
-		// Record a /me
-		if (CTCP.GetText().StartsWith("ACTION ")) {
-			bResult = false;
-			CActionMessage& Action = static_cast<CActionMessage&>(Message);
-			IRCSOCKMODULECALL(OnChanActionMessage(Action), &bResult);
-			if (bResult) return true;
-			if (!pChan->AutoClearChanBuffer() || !m_pNetwork->IsUserOnline() || pChan->IsDetached()) {
-				pChan->AddBuffer(":" + _NAMEDFMT(Message.GetNick().GetNickMask()) + " PRIVMSG " + _NAMEDFMT(pChan->GetName()) + " :\001ACTION {text}\001", Action.GetText(), &Action.GetTime(), Action.GetTags());
-			}
-		}
-	}
-
-	if (OnGeneralCTCP(Message))
-		return true;
-
 	return (pChan && pChan->IsDetached());
-}
-
-bool CIRCSock::OnChanMsg(CMessage& Message) {
-	CTextMessage& ChanMsg = static_cast<CTextMessage&>(Message);
-	CChan* pChan = m_pNetwork->FindChan(ChanMsg.GetParam(0));
-	if (pChan) {
-		FixupChanNick(Message.GetNick(), pChan);
-
-		bool bResult = false;
-		ChanMsg.SetChan(pChan);
-		IRCSOCKMODULECALL(OnChanMessage(ChanMsg), &bResult);
-		if (bResult) return true;
-
-		if (!pChan->AutoClearChanBuffer() || !m_pNetwork->IsUserOnline() || pChan->IsDetached()) {
-			pChan->AddBuffer(":" + _NAMEDFMT(ChanMsg.GetNick().GetNickMask()) + " PRIVMSG " + _NAMEDFMT(pChan->GetName()) + " :{text}", ChanMsg.GetText(), &ChanMsg.GetTime(), ChanMsg.GetTags());
-		}
-	}
-
-	return ((pChan) && (pChan->IsDetached()));
 }
 
 bool CIRCSock::OnJoinMessage(CJoinMessage& Message) {
