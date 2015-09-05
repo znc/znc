@@ -384,12 +384,9 @@ void CIRCSock::ReadLine(const CString& sData) {
 							if (pos >= 2 && pos != CString::npos) {
 								sNewNick = sNick[0] + sNick.substr(pos);
 							}
-							// TODO: CMessage
-							CString sNewLine = sServer + " 352 " + sLine.Token(2) + " " +
-								sChan + " " + sIdent + " " + sHost + " " +
-								sLine.Token(6)  + " " + sNewNick + " " +
-								sLine.Token(8, true);
-							m_pNetwork->PutUser(sNewLine, pClient);
+							CMessage Copy(Message);
+							Copy.SetParam(5, sNewNick);
+							m_pNetwork->PutUser(Copy, pClient);
 						}
 					}
 
