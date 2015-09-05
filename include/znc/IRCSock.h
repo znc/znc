@@ -60,6 +60,7 @@ public:
 	bool OnModeMessage(CModeMessage& Message);
 	bool OnNickMessage(CNickMessage& Message);
 	bool OnNoticeMessage(CNoticeMessage& Message);
+	bool OnNumericMessage(CNumericMessage& Message);
 	bool OnPartMessage(CPartMessage& Message);
 	bool OnQuitMessage(CQuitMessage& Message);
 	bool OnTextMessage(CTextMessage& Message);

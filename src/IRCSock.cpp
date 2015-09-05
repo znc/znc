@@ -182,328 +182,8 @@ void CIRCSock::ReadLine(const CString& sData) {
 
 	if (Message.GetType() == CMessage::Type::Numeric) {
 		CNumericMessage& NumericMsg = static_cast<CNumericMessage&>(Message);
-		CString sServer = Message.GetNick().GetHostMask();
-		unsigned int uRaw = NumericMsg.GetCode();
-		CString sNick = Message.GetParam(0);
-		CString sRest = Message.GetParams(1);
-		CString sTmp;
-
-		switch (uRaw) {
-			case 1: { // :irc.server.com 001 nick :Welcome to the Internet Relay Network nick
-				if (m_bAuthed && sServer == "irc.znc.in") {
-					// m_bAuthed == true => we already received another 001 => we might be in a traffic loop
-					m_pNetwork->PutStatus("ZNC seems to be connected to itself, disconnecting...");
-					Quit();
-					return;
-				}
-
-				m_pNetwork->SetIRCServer(sServer);
-				SetTimeout(CIRCNetwork::NO_TRAFFIC_TIMEOUT, TMO_READ);  // Now that we are connected, let nature take its course
-				PutIRC("WHO " + sNick);
-
-				m_bAuthed = true;
-				m_pNetwork->PutStatus("Connected!");
-
-				const vector<CClient*>& vClients = m_pNetwork->GetClients();
-
-				for (CClient* pClient : vClients) {
-					CString sClientNick = pClient->GetNick(false);
-
-					if (!sClientNick.Equals(sNick)) {
-						// If they connected with a nick that doesn't match the one we got on irc, then we need to update them
-						pClient->PutClient(":" + sClientNick + "!" + m_Nick.GetIdent() + "@" + m_Nick.GetHost() + " NICK :" + sNick);
-					}
-				}
-
-				SetNick(sNick);
-
-				IRCSOCKMODULECALL(OnIRCConnected(), NOTHING);
-
-				m_pNetwork->ClearRawBuffer();
-				m_pNetwork->AddRawBuffer(":" + _NAMEDFMT(sServer) + " " + sCmd + " {target} " + _NAMEDFMT(sRest));
-
-				m_pNetwork->IRCConnected();
-
-				break;
-			}
-			case 5:
-				ParseISupport(sRest);
-				m_pNetwork->UpdateExactRawBuffer(":" + _NAMEDFMT(sServer) + " " + sCmd + " {target} " + _NAMEDFMT(sRest));
-				break;
-			case 10: { // :irc.server.com 010 nick <hostname> <port> :<info>
-				CString sHost = Message.GetParam(1);
-				CString sPort = Message.GetParam(2);
-				CString sInfo = Message.GetParam(3);
-				m_pNetwork->PutStatus("Server [" + m_pNetwork->GetCurrentServer()->GetString(false) +
-						"] redirects us to [" + sHost + ":" + sPort + "] with reason [" + sInfo + "]");
-				m_pNetwork->PutStatus("Perhaps you want to add it as a new server.");
-				// Don't send server redirects to the client
-				return;
-			}
-			case 2:
-			case 3:
-			case 4:
-			case 250:  // highest connection count
-			case 251:  // user count
-			case 252:  // oper count
-			case 254:  // channel count
-			case 255:  // client count
-			case 265:  // local users
-			case 266:  // global users
-				sTmp = ":" + _NAMEDFMT(sServer) + " " + sCmd;
-				m_pNetwork->UpdateRawBuffer(sTmp, sTmp + " {target} " + _NAMEDFMT(sRest));
-				break;
-			case 305:
-				m_pNetwork->SetIRCAway(false);
-				break;
-			case 306:
-				m_pNetwork->SetIRCAway(true);
-				break;
-			case 324: {  // MODE
-				sRest.Trim();
-				CChan* pChan = m_pNetwork->FindChan(sRest.Token(0));
-
-				if (pChan) {
-					pChan->SetModes(sRest.Token(1, true));
-
-					// We don't SetModeKnown(true) here,
-					// because a 329 will follow
-					if (!pChan->IsModeKnown()) {
-						// When we JOIN, we send a MODE
-						// request. This makes sure the
-						// reply isn't forwarded.
-						return;
-					}
-					if (pChan->IsDetached()) {
-						return;
-					}
-				}
-			}
-				break;
-			case 329: {
-				sRest.Trim();
-				CChan* pChan = m_pNetwork->FindChan(sRest.Token(0));
-
-				if (pChan) {
-					unsigned long ulDate = Message.GetParam(2).ToULong();
-					pChan->SetCreationDate(ulDate);
-
-					if (!pChan->IsModeKnown()) {
-						pChan->SetModeKnown(true);
-						// When we JOIN, we send a MODE
-						// request. This makes sure the
-						// reply isn't forwarded.
-						return;
-					}
-					if (pChan->IsDetached()) {
-						return;
-					}
-				}
-			}
-				break;
-			case 331: {
-				// :irc.server.com 331 yournick #chan :No topic is set.
-				CChan* pChan = m_pNetwork->FindChan(Message.GetParam(1));
-
-				if (pChan) {
-					pChan->SetTopic("");
-					if (pChan->IsDetached()) {
-						return;
-					}
-				}
-
-				break;
-			}
-			case 332: {
-				// :irc.server.com 332 yournick #chan :This is a topic
-				CChan* pChan = m_pNetwork->FindChan(Message.GetParam(1));
-
-				if (pChan) {
-					CString sTopic = Message.GetParam(2);
-					pChan->SetTopic(sTopic);
-					if (pChan->IsDetached()) {
-						return;
-					}
-				}
-
-				break;
-			}
-			case 333: {
-				// :irc.server.com 333 yournick #chan setternick 1112320796
-				CChan* pChan = m_pNetwork->FindChan(Message.GetParam(1));
-
-				if (pChan) {
-					sNick = Message.GetParam(2);
-					unsigned long ulDate = Message.GetParam(3).ToULong();
-
-					pChan->SetTopicOwner(sNick);
-					pChan->SetTopicDate(ulDate);
-
-					if (pChan->IsDetached()) {
-						return;
-					}
-				}
-
-				break;
-			}
-			case 352: {  // WHO
-				// :irc.yourserver.com 352 yournick #chan ident theirhost.com irc.theirserver.com theirnick H :0 Real Name
-				sNick = Message.GetParam(5);
-				CString sChan = Message.GetParam(1);
-				CString sIdent = Message.GetParam(2);
-				CString sHost = Message.GetParam(3);
-
-				if (sNick.Equals(GetNick())) {
-					m_Nick.SetIdent(sIdent);
-					m_Nick.SetHost(sHost);
-				}
-
-				m_pNetwork->SetIRCNick(m_Nick);
-				m_pNetwork->SetIRCServer(sServer);
-
-				const vector<CChan*>& vChans = m_pNetwork->GetChans();
-
-				for (CChan* pChan : vChans) {
-					pChan->OnWho(sNick, sIdent, sHost);
-				}
-
-				if (m_bNamesx && (sNick.size() > 1) && IsPermChar(sNick[1])) {
-					// sLine uses multi-prefix
-
-					const vector<CClient*>& vClients = m_pNetwork->GetClients();
-					for (CClient* pClient : vClients) {
-						if (pClient->HasNamesx()) {
-							m_pNetwork->PutUser(Message, pClient);
-						} else {
-							// The client doesn't support multi-prefix so we need to remove
-							// the other prefixes.
-
-							CString sNewNick = sNick;
-							size_t pos = sNick.find_first_not_of(GetPerms());
-							if (pos >= 2 && pos != CString::npos) {
-								sNewNick = sNick[0] + sNick.substr(pos);
-							}
-							CMessage Copy(Message);
-							Copy.SetParam(5, sNewNick);
-							m_pNetwork->PutUser(Copy, pClient);
-						}
-					}
-
-					return;
-				}
-
-				CChan* pChan = m_pNetwork->FindChan(sChan);
-				if (pChan && pChan->IsDetached()) {
-					return;
-				}
-
-				break;
-			}
-			case 353: {  // NAMES
-				sRest.Trim();
-				// Todo: allow for non @+= server msgs
-				CChan* pChan = m_pNetwork->FindChan(sRest.Token(1));
-				// If we don't know that channel, some client might have
-				// requested a /names for it and we really should forward this.
-				if (pChan) {
-					CString sNicks = sRest.Token(2, true).TrimPrefix_n();
-					pChan->AddNicks(sNicks);
-					if (pChan->IsDetached()) {
-						return;
-					}
-				}
-
-				ForwardRaw353(Message);
-
-				// We forwarded it already, so return
-				return;
-			}
-			case 366: {  // end of names list
-				// :irc.server.com 366 nick #chan :End of /NAMES list.
-				CChan* pChan = m_pNetwork->FindChan(sRest.Token(0));
-
-				if (pChan) {
-					if (pChan->IsOn()) {
-						// If we are the only one in the chan, set our default modes
-						if (pChan->GetNickCount() == 1) {
-							CString sModes = pChan->GetDefaultModes();
-
-							if (sModes.empty()) {
-								sModes = m_pNetwork->GetUser()->GetDefaultChanModes();
-							}
-
-							if (!sModes.empty()) {
-								PutIRC("MODE " + pChan->GetName() + " " + sModes);
-							}
-						}
-					}
-					if (pChan->IsDetached()) {
-						// don't put it to clients
-						return;
-					}
-				}
-
-				break;
-			}
-			case 375:  // begin motd
-			case 422:  // MOTD File is missing
-				if (m_pNetwork->GetIRCServer().Equals(sServer)) {
-					m_pNetwork->ClearMotdBuffer();
-				}
-			case 372:  // motd
-			case 376:  // end motd
-				if (m_pNetwork->GetIRCServer().Equals(sServer)) {
-					m_pNetwork->AddMotdBuffer(":" + _NAMEDFMT(sServer) + " " + sCmd + " {target} " + _NAMEDFMT(sRest));
-				}
-				break;
-			case 437:
-				// :irc.server.net 437 * badnick :Nick/channel is temporarily unavailable
-				// :irc.server.net 437 mynick badnick :Nick/channel is temporarily unavailable
-				// :irc.server.net 437 mynick badnick :Cannot change nickname while banned on channel
-				if (m_pNetwork->IsChan(sRest.Token(0)) || sNick != "*")
-					break;
-			case 432: // :irc.server.com 432 * nick :Erroneous Nickname: Illegal characters
-			case 433: {
-				CString sBadNick = sRest.Token(0);
-
-				if (!m_bAuthed) {
-					SendAltNick(sBadNick);
-					return;
-				}
-				break;
-			}
-			case 451:
-				// :irc.server.com 451 CAP :You have not registered
-				// Servers that dont support CAP will give us this error, dont send it to the client
-				if (sNick.Equals("CAP"))
-					return;
-			case 470: {
-				// :irc.unreal.net 470 mynick [Link] #chan1 has become full, so you are automatically being transferred to the linked channel #chan2
-				// :mccaffrey.freenode.net 470 mynick #electronics ##electronics :Forwarding to another channel
-
-				// freenode style numeric
-				CChan* pChan = m_pNetwork->FindChan(sRest.Token(0));
-				if (!pChan) {
-					// unreal style numeric
-					pChan = m_pNetwork->FindChan(sRest.Token(1));
-				}
-				if (pChan) {
-					pChan->Disable();
-					m_pNetwork->PutStatus("Channel [" + pChan->GetName() + "] is linked to "
-							"another channel and was thus disabled.");
-				}
-				break;
-			}
-			case 670:
-				// :hydra.sector5d.org 670 kylef :STARTTLS successful, go ahead with TLS handshake
-				// 670 is a response to `STARTTLS` telling the client to switch to TLS
-
-				if (!GetSSL()) {
-					StartTLS();
-					m_pNetwork->PutStatus("Switched to SSL (STARTTLS)");
-				}
-
-				return;
+		if (OnNumericMessage(NumericMsg)) {
+			return;
 		}
 	} else {
 		CNick Nick = Message.GetNick();
@@ -992,6 +672,335 @@ bool CIRCSock::OnNoticeMessage(CNoticeMessage& Message) {
 
 		return (pChan && pChan->IsDetached());
 	}
+}
+
+bool CIRCSock::OnNumericMessage(CNumericMessage& Message) {
+	const CString& sCmd = Message.GetCommand();
+	CString sServer = Message.GetNick().GetHostMask();
+	unsigned int uRaw = Message.GetCode();
+	CString sNick = Message.GetParam(0);
+	CString sRest = Message.GetParams(1);
+	CString sTmp;
+
+	switch (uRaw) {
+		case 1: { // :irc.server.com 001 nick :Welcome to the Internet Relay Network nick
+			if (m_bAuthed && sServer == "irc.znc.in") {
+				// m_bAuthed == true => we already received another 001 => we might be in a traffic loop
+				m_pNetwork->PutStatus("ZNC seems to be connected to itself, disconnecting...");
+				Quit();
+				return true;
+			}
+
+			m_pNetwork->SetIRCServer(sServer);
+			SetTimeout(CIRCNetwork::NO_TRAFFIC_TIMEOUT, TMO_READ);  // Now that we are connected, let nature take its course
+			PutIRC("WHO " + sNick);
+
+			m_bAuthed = true;
+			m_pNetwork->PutStatus("Connected!");
+
+			const vector<CClient*>& vClients = m_pNetwork->GetClients();
+
+			for (CClient* pClient : vClients) {
+				CString sClientNick = pClient->GetNick(false);
+
+				if (!sClientNick.Equals(sNick)) {
+					// If they connected with a nick that doesn't match the one we got on irc, then we need to update them
+					pClient->PutClient(":" + sClientNick + "!" + m_Nick.GetIdent() + "@" + m_Nick.GetHost() + " NICK :" + sNick);
+				}
+			}
+
+			SetNick(sNick);
+
+			IRCSOCKMODULECALL(OnIRCConnected(), NOTHING);
+
+			m_pNetwork->ClearRawBuffer();
+			m_pNetwork->AddRawBuffer(":" + _NAMEDFMT(sServer) + " " + sCmd + " {target} " + _NAMEDFMT(sRest));
+
+			m_pNetwork->IRCConnected();
+
+			break;
+		}
+		case 5:
+			ParseISupport(sRest);
+			m_pNetwork->UpdateExactRawBuffer(":" + _NAMEDFMT(sServer) + " " + sCmd + " {target} " + _NAMEDFMT(sRest));
+			break;
+		case 10: { // :irc.server.com 010 nick <hostname> <port> :<info>
+			CString sHost = Message.GetParam(1);
+			CString sPort = Message.GetParam(2);
+			CString sInfo = Message.GetParam(3);
+			m_pNetwork->PutStatus("Server [" + m_pNetwork->GetCurrentServer()->GetString(false) +
+					"] redirects us to [" + sHost + ":" + sPort + "] with reason [" + sInfo + "]");
+			m_pNetwork->PutStatus("Perhaps you want to add it as a new server.");
+			// Don't send server redirects to the client
+			return true;
+		}
+		case 2:
+		case 3:
+		case 4:
+		case 250:  // highest connection count
+		case 251:  // user count
+		case 252:  // oper count
+		case 254:  // channel count
+		case 255:  // client count
+		case 265:  // local users
+		case 266:  // global users
+			sTmp = ":" + _NAMEDFMT(sServer) + " " + sCmd;
+			m_pNetwork->UpdateRawBuffer(sTmp, sTmp + " {target} " + _NAMEDFMT(sRest));
+			break;
+		case 305:
+			m_pNetwork->SetIRCAway(false);
+			break;
+		case 306:
+			m_pNetwork->SetIRCAway(true);
+			break;
+		case 324: {  // MODE
+			sRest.Trim();
+			CChan* pChan = m_pNetwork->FindChan(sRest.Token(0));
+
+			if (pChan) {
+				pChan->SetModes(sRest.Token(1, true));
+
+				// We don't SetModeKnown(true) here,
+				// because a 329 will follow
+				if (!pChan->IsModeKnown()) {
+					// When we JOIN, we send a MODE
+					// request. This makes sure the
+					// reply isn't forwarded.
+					return true;
+				}
+				if (pChan->IsDetached()) {
+					return true;
+				}
+			}
+		}
+			break;
+		case 329: {
+			sRest.Trim();
+			CChan* pChan = m_pNetwork->FindChan(sRest.Token(0));
+
+			if (pChan) {
+				unsigned long ulDate = Message.GetParam(2).ToULong();
+				pChan->SetCreationDate(ulDate);
+
+				if (!pChan->IsModeKnown()) {
+					pChan->SetModeKnown(true);
+					// When we JOIN, we send a MODE
+					// request. This makes sure the
+					// reply isn't forwarded.
+					return true;
+				}
+				if (pChan->IsDetached()) {
+					return true;
+				}
+			}
+		}
+			break;
+		case 331: {
+			// :irc.server.com 331 yournick #chan :No topic is set.
+			CChan* pChan = m_pNetwork->FindChan(Message.GetParam(1));
+
+			if (pChan) {
+				pChan->SetTopic("");
+				if (pChan->IsDetached()) {
+					return true;
+				}
+			}
+
+			break;
+		}
+		case 332: {
+			// :irc.server.com 332 yournick #chan :This is a topic
+			CChan* pChan = m_pNetwork->FindChan(Message.GetParam(1));
+
+			if (pChan) {
+				CString sTopic = Message.GetParam(2);
+				pChan->SetTopic(sTopic);
+				if (pChan->IsDetached()) {
+					return true;
+				}
+			}
+
+			break;
+		}
+		case 333: {
+			// :irc.server.com 333 yournick #chan setternick 1112320796
+			CChan* pChan = m_pNetwork->FindChan(Message.GetParam(1));
+
+			if (pChan) {
+				sNick = Message.GetParam(2);
+				unsigned long ulDate = Message.GetParam(3).ToULong();
+
+				pChan->SetTopicOwner(sNick);
+				pChan->SetTopicDate(ulDate);
+
+				if (pChan->IsDetached()) {
+					return true;
+				}
+			}
+
+			break;
+		}
+		case 352: {  // WHO
+			// :irc.yourserver.com 352 yournick #chan ident theirhost.com irc.theirserver.com theirnick H :0 Real Name
+			sNick = Message.GetParam(5);
+			CString sChan = Message.GetParam(1);
+			CString sIdent = Message.GetParam(2);
+			CString sHost = Message.GetParam(3);
+
+			if (sNick.Equals(GetNick())) {
+				m_Nick.SetIdent(sIdent);
+				m_Nick.SetHost(sHost);
+			}
+
+			m_pNetwork->SetIRCNick(m_Nick);
+			m_pNetwork->SetIRCServer(sServer);
+
+			const vector<CChan*>& vChans = m_pNetwork->GetChans();
+
+			for (CChan* pChan : vChans) {
+				pChan->OnWho(sNick, sIdent, sHost);
+			}
+
+			if (m_bNamesx && (sNick.size() > 1) && IsPermChar(sNick[1])) {
+				// sLine uses multi-prefix
+
+				const vector<CClient*>& vClients = m_pNetwork->GetClients();
+				for (CClient* pClient : vClients) {
+					if (pClient->HasNamesx()) {
+						m_pNetwork->PutUser(Message, pClient);
+					} else {
+						// The client doesn't support multi-prefix so we need to remove
+						// the other prefixes.
+
+						CString sNewNick = sNick;
+						size_t pos = sNick.find_first_not_of(GetPerms());
+						if (pos >= 2 && pos != CString::npos) {
+							sNewNick = sNick[0] + sNick.substr(pos);
+						}
+						CMessage WhoMsg(Message);
+						WhoMsg.SetParam(5, sNewNick);
+						m_pNetwork->PutUser(WhoMsg, pClient);
+					}
+				}
+
+				return true;
+			}
+
+			CChan* pChan = m_pNetwork->FindChan(sChan);
+			if (pChan && pChan->IsDetached()) {
+				return true;
+			}
+
+			break;
+		}
+		case 353: {  // NAMES
+			sRest.Trim();
+			// Todo: allow for non @+= server msgs
+			CChan* pChan = m_pNetwork->FindChan(sRest.Token(1));
+			// If we don't know that channel, some client might have
+			// requested a /names for it and we really should forward this.
+			if (pChan) {
+				CString sNicks = sRest.Token(2, true).TrimPrefix_n();
+				pChan->AddNicks(sNicks);
+				if (pChan->IsDetached()) {
+					return true;
+				}
+			}
+
+			ForwardRaw353(Message);
+
+			// We forwarded it already, so return
+			return true;
+		}
+		case 366: {  // end of names list
+			// :irc.server.com 366 nick #chan :End of /NAMES list.
+			CChan* pChan = m_pNetwork->FindChan(sRest.Token(0));
+
+			if (pChan) {
+				if (pChan->IsOn()) {
+					// If we are the only one in the chan, set our default modes
+					if (pChan->GetNickCount() == 1) {
+						CString sModes = pChan->GetDefaultModes();
+
+						if (sModes.empty()) {
+							sModes = m_pNetwork->GetUser()->GetDefaultChanModes();
+						}
+
+						if (!sModes.empty()) {
+							PutIRC("MODE " + pChan->GetName() + " " + sModes);
+						}
+					}
+				}
+				if (pChan->IsDetached()) {
+					// don't put it to clients
+					return true;
+				}
+			}
+
+			break;
+		}
+		case 375:  // begin motd
+		case 422:  // MOTD File is missing
+			if (m_pNetwork->GetIRCServer().Equals(sServer)) {
+				m_pNetwork->ClearMotdBuffer();
+			}
+		case 372:  // motd
+		case 376:  // end motd
+			if (m_pNetwork->GetIRCServer().Equals(sServer)) {
+				m_pNetwork->AddMotdBuffer(":" + _NAMEDFMT(sServer) + " " + sCmd + " {target} " + _NAMEDFMT(sRest));
+			}
+			break;
+		case 437:
+			// :irc.server.net 437 * badnick :Nick/channel is temporarily unavailable
+			// :irc.server.net 437 mynick badnick :Nick/channel is temporarily unavailable
+			// :irc.server.net 437 mynick badnick :Cannot change nickname while banned on channel
+			if (m_pNetwork->IsChan(sRest.Token(0)) || sNick != "*")
+				break;
+		case 432: // :irc.server.com 432 * nick :Erroneous Nickname: Illegal characters
+		case 433: {
+			CString sBadNick = sRest.Token(0);
+
+			if (!m_bAuthed) {
+				SendAltNick(sBadNick);
+				return true;
+			}
+			break;
+		}
+		case 451:
+			// :irc.server.com 451 CAP :You have not registered
+			// Servers that dont support CAP will give us this error, dont send it to the client
+			if (sNick.Equals("CAP"))
+				return true;
+		case 470: {
+			// :irc.unreal.net 470 mynick [Link] #chan1 has become full, so you are automatically being transferred to the linked channel #chan2
+			// :mccaffrey.freenode.net 470 mynick #electronics ##electronics :Forwarding to another channel
+
+			// freenode style numeric
+			CChan* pChan = m_pNetwork->FindChan(sRest.Token(0));
+			if (!pChan) {
+				// unreal style numeric
+				pChan = m_pNetwork->FindChan(sRest.Token(1));
+			}
+			if (pChan) {
+				pChan->Disable();
+				m_pNetwork->PutStatus("Channel [" + pChan->GetName() + "] is linked to "
+						"another channel and was thus disabled.");
+			}
+			break;
+		}
+		case 670:
+			// :hydra.sector5d.org 670 kylef :STARTTLS successful, go ahead with TLS handshake
+			// 670 is a response to `STARTTLS` telling the client to switch to TLS
+
+			if (!GetSSL()) {
+				StartTLS();
+				m_pNetwork->PutStatus("Switched to SSL (STARTTLS)");
+			}
+
+			return true;
+	}
+
+	return false;
 }
 
 bool CIRCSock::OnPartMessage(CPartMessage& Message) {
