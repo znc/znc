@@ -52,6 +52,7 @@ public:
 	bool OnAccountMessage(CMessage& Message);
 	bool OnActionMessage(CActionMessage& Message);
 	bool OnAwayMessage(CMessage& Message);
+	bool OnCapabilityMessage(CMessage& Message);
 	bool OnCTCPMessage(CCTCPMessage& Message);
 	bool OnInviteMessage(CMessage& Message);
 	bool OnJoinMessage(CJoinMessage& Message);
