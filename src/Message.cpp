@@ -38,13 +38,17 @@ void CMessage::Clone(const CMessage& Message)
 
 CString CMessage::GetParams(unsigned int uIdx, unsigned int uLen) const
 {
-	VCString vsParams;
-	if (uLen > m_vsParams.size() - uIdx - 1) {
-		uLen = m_vsParams.size() - uIdx - 1;
+	if (m_vsParams.empty() || uLen == 0) {
+		return "";
 	}
-	for (unsigned int i = uIdx; i <= uIdx + uLen; ++i) {
+	if (uLen > m_vsParams.size() - uIdx - 1) {
+		uLen = m_vsParams.size() - uIdx;
+	}
+	VCString vsParams;
+	unsigned uParams = m_vsParams.size();
+	for (unsigned int i = uIdx; i < uIdx + uLen; ++i) {
 		CString sParam = m_vsParams[i];
-		if (sParam.Contains(" ")) {
+		if (i > uIdx && i == uParams - 1 && (sParam.empty() || sParam.StartsWith(":") || sParam.Contains(" "))) {
 			sParam = ":" + sParam;
 		}
 		vsParams.push_back(sParam);
