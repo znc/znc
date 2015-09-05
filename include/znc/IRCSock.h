@@ -62,6 +62,7 @@ public:
 	bool OnNickMessage(CNickMessage& Message);
 	bool OnPartMessage(CPartMessage& Message);
 	bool OnQuitMessage(CQuitMessage& Message);
+	bool OnTopicMessage(CTopicMessage& Message);
 	bool OnServerCapAvailable(const CString& sCap);
 	// !Message Handlers
 

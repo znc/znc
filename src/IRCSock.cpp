@@ -582,21 +582,8 @@ void CIRCSock::ReadLine(const CString& sData) {
 			}
 		} else if (Message.GetType() == CMessage::Type::Topic) {
 			CTopicMessage& TopicMsg = static_cast<CTopicMessage&>(Message);
-			// :nick!ident@host.com TOPIC #chan :This is a topic
-			CChan* pChan = m_pNetwork->FindChan(TopicMsg.GetParam(0));
-
-			if (pChan) {
-				TopicMsg.SetChan(pChan);
-				IRCSOCKMODULECALL(OnTopicMessage(TopicMsg), &bReturn);
-				if (bReturn) return;
-
-				pChan->SetTopicOwner(Nick.GetNick());
-				pChan->SetTopicDate((unsigned long) time(nullptr));
-				pChan->SetTopic(TopicMsg.GetTopic());
-
-				if (pChan->IsDetached()) {
-					return; // Don't forward this
-				}
+			if (OnTopicMessage(TopicMsg)) {
+				return;
 			}
 		} else if (Message.GetType() == CMessage::Type::CTCP) {
 			CCTCPMessage& CTCPMsg = static_cast<CCTCPMessage&>(Message);
@@ -1106,6 +1093,24 @@ bool CIRCSock::OnQuitMessage(CQuitMessage& Message) {
 	IRCSOCKMODULECALL(OnQuitMessage(Message, vFoundChans), NOTHING);
 
 	return !bIsVisible;
+}
+
+bool CIRCSock::OnTopicMessage(CTopicMessage& Message) {
+	const CNick& Nick = Message.GetNick();
+	CChan* pChan = m_pNetwork->FindChan(Message.GetParam(0));
+
+	if (pChan) {
+		Message.SetChan(pChan);
+		bool bReturn = false;
+		IRCSOCKMODULECALL(OnTopicMessage(Message), &bReturn);
+		if (bReturn) return true;
+
+		pChan->SetTopicOwner(Nick.GetNick());
+		pChan->SetTopicDate((unsigned long) time(nullptr));
+		pChan->SetTopic(Message.GetTopic());
+	}
+
+	return (pChan && pChan->IsDetached());
 }
 
 void CIRCSock::PutIRC(const CString& sLine) {
