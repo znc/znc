@@ -54,6 +54,7 @@ public:
 	bool OnAwayMessage(CMessage& Message);
 	bool OnCapabilityMessage(CMessage& Message);
 	bool OnCTCPMessage(CCTCPMessage& Message);
+	bool OnErrorMessage(CMessage& Message);
 	bool OnInviteMessage(CMessage& Message);
 	bool OnJoinMessage(CJoinMessage& Message);
 	bool OnKickMessage(CKickMessage& Message);

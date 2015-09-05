@@ -174,13 +174,10 @@ void CIRCSock::ReadLine(const CString& sData) {
 			return;
 		}
 	} else if (Message.GetType() == CMessage::Type::Error) {
-		//ERROR :Closing Link: nick[24.24.24.24] (Excess Flood)
-		CString sError = Message.GetParam(0);
-		m_pNetwork->PutStatus("Error from Server [" + sError + "]");
-		return;
-	}
-
-	if (Message.GetType() == CMessage::Type::Numeric) {
+		if (OnErrorMessage(Message)) {
+			return;
+		}
+	} else if (Message.GetType() == CMessage::Type::Numeric) {
 		CNumericMessage& NumericMsg = static_cast<CNumericMessage&>(Message);
 		if (OnNumericMessage(NumericMsg)) {
 			return;
@@ -500,6 +497,13 @@ bool CIRCSock::OnCTCPMessage(CCTCPMessage& Message) {
 	}
 
 	return (pChan && pChan->IsDetached());
+}
+
+bool CIRCSock::OnErrorMessage(CMessage& Message) {
+	//ERROR :Closing Link: nick[24.24.24.24] (Excess Flood)
+	CString sError = Message.GetParam(0);
+	m_pNetwork->PutStatus("Error from Server [" + sError + "]");
+	return true;
 }
 
 bool CIRCSock::OnInviteMessage(CMessage& Message) {
