@@ -568,17 +568,8 @@ void CIRCSock::ReadLine(const CString& sData) {
 			}
 		} else if (Message.GetType() == CMessage::Type::Notice) {
 			CNoticeMessage& NoticeMsg = static_cast<CNoticeMessage&>(Message);
-			// :nick!ident@host.com NOTICE #chan :Message
-			CString sTarget = NoticeMsg.GetTarget();
-
-			if (sTarget.Equals(GetNick())) {
-				if (OnPrivNotice(Message)) {
-					return;
-				}
-			} else {
-				if (OnChanNotice(Message)) {
-					return;
-				}
+			if (OnNoticeMessage(NoticeMsg)) {
+				return;
 			}
 		} else if (Message.GetType() == CMessage::Type::Topic) {
 			CTopicMessage& TopicMsg = static_cast<CTopicMessage&>(Message);
@@ -821,20 +812,6 @@ bool CIRCSock::OnGeneralCTCP(CMessage& Message) {
 	return false;
 }
 
-bool CIRCSock::OnPrivNotice(CMessage& Message) {
-	CNoticeMessage& Notice = static_cast<CNoticeMessage&>(Message);
-	bool bResult = false;
-	IRCSOCKMODULECALL(OnPrivNoticeMessage(Notice), &bResult);
-	if (bResult) return true;
-
-	if (!m_pNetwork->IsUserOnline()) {
-		// If the user is detached, add to the buffer
-		m_pNetwork->AddNoticeBuffer(":" + _NAMEDFMT(Notice.GetNick().GetNickMask()) + " NOTICE {target} :{text}", Notice.GetText());
-	}
-
-	return false;
-}
-
 bool CIRCSock::OnPrivMsg(CMessage& Message) {
 	CTextMessage& PrivMsg = static_cast<CTextMessage&>(Message);
 	bool bResult = false;
@@ -899,25 +876,6 @@ bool CIRCSock::OnChanCTCP(CMessage& Message) {
 		return true;
 
 	return (pChan && pChan->IsDetached());
-}
-
-bool CIRCSock::OnChanNotice(CMessage& Message) {
-	CNoticeMessage& Notice = static_cast<CNoticeMessage&>(Message);
-	CChan* pChan = m_pNetwork->FindChan(Notice.GetParam(0));
-	if (pChan) {
-		FixupChanNick(Message.GetNick(), pChan);
-
-		bool bResult = false;
-		Notice.SetChan(pChan);
-		IRCSOCKMODULECALL(OnChanNoticeMessage(Notice), &bResult);
-		if (bResult) return true;
-
-		if (!pChan->AutoClearChanBuffer() || !m_pNetwork->IsUserOnline() || pChan->IsDetached()) {
-			pChan->AddBuffer(":" + _NAMEDFMT(Notice.GetNick().GetNickMask()) + " NOTICE " + _NAMEDFMT(pChan->GetName()) + " :{text}", Notice.GetText(), &Notice.GetTime(), Notice.GetTags());
-		}
-	}
-
-	return ((pChan) && (pChan->IsDetached()));
 }
 
 bool CIRCSock::OnChanMsg(CMessage& Message) {
@@ -1035,6 +993,37 @@ bool CIRCSock::OnNickMessage(CNickMessage& Message) {
 	IRCSOCKMODULECALL(OnNickMessage(Message, vFoundChans), NOTHING);
 
 	return !bIsVisible;
+}
+
+bool CIRCSock::OnNoticeMessage(CNoticeMessage& Message) {
+	CString sTarget = Message.GetTarget();
+	bool bResult = false;
+
+	if (sTarget.Equals(GetNick())) {
+		IRCSOCKMODULECALL(OnPrivNoticeMessage(Message), &bResult);
+		if (bResult) return true;
+
+		if (!m_pNetwork->IsUserOnline()) {
+			// If the user is detached, add to the buffer
+			m_pNetwork->AddNoticeBuffer(":" + _NAMEDFMT(Message.GetNick().GetNickMask()) + " NOTICE {target} :{text}", Message.GetText());
+		}
+
+		return false;
+	} else {
+		CChan* pChan = m_pNetwork->FindChan(sTarget);
+		if (pChan) {
+			Message.SetChan(pChan);
+			FixupChanNick(Message.GetNick(), pChan);
+			IRCSOCKMODULECALL(OnChanNoticeMessage(Message), &bResult);
+			if (bResult) return true;
+
+			if (!pChan->AutoClearChanBuffer() || !m_pNetwork->IsUserOnline() || pChan->IsDetached()) {
+				pChan->AddBuffer(":" + _NAMEDFMT(Message.GetNick().GetNickMask()) + " NOTICE " + _NAMEDFMT(pChan->GetName()) + " :{text}", Message.GetText(), &Message.GetTime(), Message.GetTags());
+			}
+		}
+
+		return (pChan && pChan->IsDetached());
+	}
 }
 
 bool CIRCSock::OnPartMessage(CPartMessage& Message) {

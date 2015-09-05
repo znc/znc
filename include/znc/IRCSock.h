@@ -55,11 +55,10 @@ public:
 	bool OnGeneralCTCP(CMessage& Message);
 	bool OnPrivMsg(CMessage& Message);
 	bool OnChanMsg(CMessage& Message);
-	bool OnPrivNotice(CMessage& Message);
-	bool OnChanNotice(CMessage& Message);
 	bool OnJoinMessage(CJoinMessage& Message);
 	bool OnKickMessage(CKickMessage& Message);
 	bool OnNickMessage(CNickMessage& Message);
+	bool OnNoticeMessage(CNoticeMessage& Message);
 	bool OnPartMessage(CPartMessage& Message);
 	bool OnQuitMessage(CQuitMessage& Message);
 	bool OnTopicMessage(CTopicMessage& Message);
