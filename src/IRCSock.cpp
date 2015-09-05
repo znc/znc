@@ -666,13 +666,9 @@ void CIRCSock::ReadLine(const CString& sData) {
 			IRCSOCKMODULECALL(OnInvite(Nick, sLine.Token(3).TrimPrefix_n(":")), &bReturn);
 			if (bReturn) return;
 		} else if (Message.GetType() == CMessage::Type::Away) {
-			const vector<CClient*>& vClients = m_pNetwork->GetClients();
-			for (CClient* pClient : vClients) {
-				if (pClient->HasAwayNotify()) {
-					m_pNetwork->PutUser(sLine, pClient);
-				}
+			if (OnAwayMessage(Message)) {
+				return;
 			}
-			return;
 		} else if (Message.GetType() == CMessage::Type::Account) {
 			const vector<CClient*>& vClients = m_pNetwork->GetClients();
 			for (CClient* pClient : vClients) {
@@ -765,6 +761,16 @@ bool CIRCSock::OnActionMessage(CActionMessage& Message) {
 	}
 
 	return (pChan && pChan->IsDetached());
+}
+
+bool CIRCSock::OnAwayMessage(CMessage& Message) {
+	const vector<CClient*>& vClients = m_pNetwork->GetClients();
+	for (CClient* pClient : vClients) {
+		if (pClient->HasAwayNotify()) {
+			m_pNetwork->PutUser(Message, pClient);
+		}
+	}
+	return true;
 }
 
 bool CIRCSock::OnCTCPMessage(CCTCPMessage& Message) {

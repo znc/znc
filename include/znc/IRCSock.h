@@ -50,6 +50,7 @@ public:
 
 	// Message Handlers
 	bool OnActionMessage(CActionMessage& Message);
+	bool OnAwayMessage(CMessage& Message);
 	bool OnCTCPMessage(CCTCPMessage& Message);
 	bool OnJoinMessage(CJoinMessage& Message);
 	bool OnKickMessage(CKickMessage& Message);
