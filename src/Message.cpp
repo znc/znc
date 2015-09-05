@@ -48,7 +48,7 @@ CString CMessage::GetParams(unsigned int uIdx, unsigned int uLen) const
 	unsigned uParams = m_vsParams.size();
 	for (unsigned int i = uIdx; i < uIdx + uLen; ++i) {
 		CString sParam = m_vsParams[i];
-		if (i > uIdx && i == uParams - 1 && (sParam.empty() || sParam.StartsWith(":") || sParam.Contains(" "))) {
+		if (i == uParams - 1 && (sParam.empty() || sParam.StartsWith(":") || sParam.Contains(" "))) {
 			sParam = ":" + sParam;
 		}
 		vsParams.push_back(sParam);

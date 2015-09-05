@@ -51,7 +51,7 @@ TEST(MessageTest, GetParams) {
 	EXPECT_EQ("", CMessage("CMD").GetParams(-1, 10));
 
 	EXPECT_EQ("p1 :p2 p3", CMessage("CMD p1 :p2 p3").GetParams(0));
-	EXPECT_EQ("p2 p3", CMessage("CMD p1 :p2 p3").GetParams(1));
+	EXPECT_EQ(":p2 p3", CMessage("CMD p1 :p2 p3").GetParams(1));
 	EXPECT_EQ("", CMessage("CMD p1 :p2 p3").GetParams(-1));
 
 	EXPECT_EQ("", CMessage("CMD p1 :p2 p3").GetParams(0, 0));
@@ -59,11 +59,11 @@ TEST(MessageTest, GetParams) {
 	EXPECT_EQ("", CMessage("CMD p1 :p2 p3").GetParams(-1, 0));
 
 	EXPECT_EQ("p1", CMessage("CMD p1 :p2 p3").GetParams(0, 1));
-	EXPECT_EQ("p2 p3", CMessage("CMD p1 :p2 p3").GetParams(1, 1));
+	EXPECT_EQ(":p2 p3", CMessage("CMD p1 :p2 p3").GetParams(1, 1));
 	EXPECT_EQ("", CMessage("CMD p1 :p2 p3").GetParams(-1, 1));
 
 	EXPECT_EQ("p1 :p2 p3", CMessage("CMD p1 :p2 p3").GetParams(0, 10));
-	EXPECT_EQ("p2 p3", CMessage("CMD p1 :p2 p3").GetParams(1, 10));
+	EXPECT_EQ(":p2 p3", CMessage("CMD p1 :p2 p3").GetParams(1, 10));
 	EXPECT_EQ("", CMessage("CMD p1 :p2 p3").GetParams(-1, 10));
 }
 
