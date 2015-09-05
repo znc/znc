@@ -49,8 +49,6 @@ public:
 	} EChanModeArgs;
 
 	// Message Handlers
-	bool OnPrivMsg(CMessage& Message);
-	bool OnChanMsg(CMessage& Message);
 	bool OnActionMessage(CActionMessage& Message);
 	bool OnCTCPMessage(CCTCPMessage& Message);
 	bool OnJoinMessage(CJoinMessage& Message);
@@ -59,6 +57,7 @@ public:
 	bool OnNoticeMessage(CNoticeMessage& Message);
 	bool OnPartMessage(CPartMessage& Message);
 	bool OnQuitMessage(CQuitMessage& Message);
+	bool OnTextMessage(CTextMessage& Message);
 	bool OnTopicMessage(CTopicMessage& Message);
 	bool OnServerCapAvailable(const CString& sCap);
 	// !Message Handlers
