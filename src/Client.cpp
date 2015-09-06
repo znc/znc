@@ -318,13 +318,13 @@ void CClient::ReadLine(const CString& sData) {
 			}
 
 			if (sTarget.TrimPrefix(m_pUser->GetStatusPrefix())) {
+				EchoMessage(Message);
 				if (sTarget.Equals("status")) {
 					CString sMsg = TextMsg.GetText();
 					UserCommand(sMsg);
 				} else {
 					CALLMOD(sTarget, this, m_pUser, m_pNetwork, OnModCommand(TextMsg.GetText()));
 				}
-				EchoMessage(Message);
 				continue;
 			}
 
