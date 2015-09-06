@@ -141,6 +141,15 @@ TEST(MessageTest, Type) {
 	EXPECT_EQ(CMessage::Type::Notice, msg.GetType());
 }
 
+TEST(MessageTest, Target) {
+	CTargetMessage msg;
+	msg.Parse(":sender PRIVMSG #chan :foo bar");
+	EXPECT_EQ("#chan", msg.GetTarget());
+	msg.SetTarget("#znc");
+	EXPECT_EQ("#znc", msg.GetTarget());
+	EXPECT_EQ(":sender PRIVMSG #znc :foo bar", msg.ToString());
+}
+
 TEST(MessageTest, ChanAction) {
 	CActionMessage msg;
 	msg.Parse(":sender PRIVMSG #chan :\001ACTION ACTS\001");
@@ -150,11 +159,9 @@ TEST(MessageTest, ChanAction) {
 	EXPECT_EQ("ACTS", msg.GetText());
 	EXPECT_EQ(CMessage::Type::Action, msg.GetType());
 
-	msg.SetTarget("#znc");
-	EXPECT_EQ("#znc", msg.GetTarget());
 	msg.SetText("foo bar");
 	EXPECT_EQ("foo bar", msg.GetText());
-	EXPECT_EQ(":sender PRIVMSG #znc :\001ACTION foo bar\001", msg.ToString());
+	EXPECT_EQ(":sender PRIVMSG #chan :\001ACTION foo bar\001", msg.ToString());
 }
 
 TEST(MessageTest, ChanCTCP) {
@@ -167,11 +174,9 @@ TEST(MessageTest, ChanCTCP) {
 	EXPECT_FALSE(msg.IsReply());
 	EXPECT_EQ(CMessage::Type::CTCP, msg.GetType());
 
-	msg.SetTarget("#znc");
-	EXPECT_EQ("#znc", msg.GetTarget());
 	msg.SetText("foo bar");
 	EXPECT_EQ("foo bar", msg.GetText());
-	EXPECT_EQ(":sender PRIVMSG #znc :\001foo bar\001", msg.ToString());
+	EXPECT_EQ(":sender PRIVMSG #chan :\001foo bar\001", msg.ToString());
 }
 
 TEST(MessageTest, ChanMsg) {
@@ -183,11 +188,9 @@ TEST(MessageTest, ChanMsg) {
 	EXPECT_EQ("text", msg.GetText());
 	EXPECT_EQ(CMessage::Type::Text, msg.GetType());
 
-	msg.SetTarget("#znc");
-	EXPECT_EQ("#znc", msg.GetTarget());
 	msg.SetText("foo bar");
 	EXPECT_EQ("foo bar", msg.GetText());
-	EXPECT_EQ(":sender PRIVMSG #znc :foo bar", msg.ToString());
+	EXPECT_EQ(":sender PRIVMSG #chan :foo bar", msg.ToString());
 }
 
 TEST(MessageTest, CTCPReply) {
@@ -200,11 +203,9 @@ TEST(MessageTest, CTCPReply) {
 	EXPECT_TRUE(msg.IsReply());
 	EXPECT_EQ(CMessage::Type::CTCP, msg.GetType());
 
-	msg.SetTarget("noone");
-	EXPECT_EQ("noone", msg.GetTarget());
 	msg.SetText("BAR foo");
 	EXPECT_EQ("BAR foo", msg.GetText());
-	EXPECT_EQ(":sender NOTICE noone :\001BAR foo\001", msg.ToString());
+	EXPECT_EQ(":sender NOTICE nick :\001BAR foo\001", msg.ToString());
 }
 
 TEST(MessageTest, Kick) {
@@ -217,13 +218,11 @@ TEST(MessageTest, Kick) {
 	EXPECT_EQ("reason", msg.GetReason());
 	EXPECT_EQ(CMessage::Type::Kick, msg.GetType());
 
-	msg.SetTarget("#znc");
-	EXPECT_EQ("#znc", msg.GetTarget());
 	msg.SetKickedNick("noone");
 	EXPECT_EQ("noone", msg.GetKickedNick());
 	msg.SetReason("test");
 	EXPECT_EQ("test", msg.GetReason());
-	EXPECT_EQ(":nick KICK #znc noone test", msg.ToString());
+	EXPECT_EQ(":nick KICK #chan noone test", msg.ToString());
 }
 
 TEST(MessageTest, Join) {
@@ -234,9 +233,7 @@ TEST(MessageTest, Join) {
 	EXPECT_EQ("#chan", msg.GetTarget());
 	EXPECT_EQ(CMessage::Type::Join, msg.GetType());
 
-	msg.SetTarget("#znc");
-	EXPECT_EQ("#znc", msg.GetTarget());
-	EXPECT_EQ(":nick JOIN #znc", msg.ToString());
+	EXPECT_EQ(":nick JOIN #chan", msg.ToString());
 }
 
 TEST(MessageTest, Mode) {
@@ -247,9 +244,7 @@ TEST(MessageTest, Mode) {
 	EXPECT_EQ("#chan", msg.GetTarget());
 	EXPECT_EQ("+k foo", msg.GetModes());
 
-	msg.SetTarget("#znc");
-	EXPECT_EQ("#znc", msg.GetTarget());
-	EXPECT_EQ(":nick MODE #znc +k foo", msg.ToString());
+	EXPECT_EQ(":nick MODE #chan +k foo", msg.ToString());
 }
 
 TEST(MessageTest, Nick) {
@@ -273,6 +268,8 @@ TEST(MessageTest, Numeric) {
 	EXPECT_EQ("123", msg.GetCommand());
 	EXPECT_EQ(123u, msg.GetCode());
 	EXPECT_EQ(CMessage::Type::Numeric, msg.GetType());
+
+	EXPECT_EQ(":server 123 user :foo bar", msg.ToString());
 }
 
 TEST(MessageTest, Part) {
@@ -284,11 +281,9 @@ TEST(MessageTest, Part) {
 	EXPECT_EQ("reason", msg.GetReason());
 	EXPECT_EQ(CMessage::Type::Part, msg.GetType());
 
-	msg.SetTarget("#znc");
-	EXPECT_EQ("#znc", msg.GetTarget());
 	msg.SetReason("test");
 	EXPECT_EQ("test", msg.GetReason());
-	EXPECT_EQ(":nick PART #znc test", msg.ToString());
+	EXPECT_EQ(":nick PART #chan test", msg.ToString());
 }
 
 TEST(MessageTest, PrivAction) {
@@ -300,11 +295,9 @@ TEST(MessageTest, PrivAction) {
 	EXPECT_EQ("ACTS", msg.GetText());
 	EXPECT_EQ(CMessage::Type::Action, msg.GetType());
 
-	msg.SetTarget("noone");
-	EXPECT_EQ("noone", msg.GetTarget());
 	msg.SetText("foo bar");
 	EXPECT_EQ("foo bar", msg.GetText());
-	EXPECT_EQ(":sender PRIVMSG noone :\001ACTION foo bar\001", msg.ToString());
+	EXPECT_EQ(":sender PRIVMSG receiver :\001ACTION foo bar\001", msg.ToString());
 }
 
 TEST(MessageTest, PrivCTCP) {
@@ -317,11 +310,9 @@ TEST(MessageTest, PrivCTCP) {
 	EXPECT_FALSE(msg.IsReply());
 	EXPECT_EQ(CMessage::Type::CTCP, msg.GetType());
 
-	msg.SetTarget("noone");
-	EXPECT_EQ("noone", msg.GetTarget());
 	msg.SetText("foo bar");
 	EXPECT_EQ("foo bar", msg.GetText());
-	EXPECT_EQ(":sender PRIVMSG noone :\001foo bar\001", msg.ToString());
+	EXPECT_EQ(":sender PRIVMSG receiver :\001foo bar\001", msg.ToString());
 }
 
 TEST(MessageTest, PrivMsg) {
@@ -333,11 +324,9 @@ TEST(MessageTest, PrivMsg) {
 	EXPECT_EQ("foo bar", msg.GetText());
 	EXPECT_EQ(CMessage::Type::Text, msg.GetType());
 
-	msg.SetTarget("noone");
-	EXPECT_EQ("noone", msg.GetTarget());
 	msg.SetText(":)");
 	EXPECT_EQ(":)", msg.GetText());
-	EXPECT_EQ(":sender PRIVMSG noone ::)", msg.ToString());
+	EXPECT_EQ(":sender PRIVMSG receiver ::)", msg.ToString());
 }
 
 TEST(MessageTest, Quit) {
@@ -362,11 +351,9 @@ TEST(MessageTest, Topic) {
 	EXPECT_EQ("topic", msg.GetTopic());
 	EXPECT_EQ(CMessage::Type::Topic, msg.GetType());
 
-	msg.SetTarget("#znc");
-	EXPECT_EQ("#znc", msg.GetTarget());
 	msg.SetTopic("test");
 	EXPECT_EQ("test", msg.GetTopic());
-	EXPECT_EQ(":nick TOPIC #znc test", msg.ToString());
+	EXPECT_EQ(":nick TOPIC #chan test", msg.ToString());
 }
 
 TEST(MessageTest, Parse) {
