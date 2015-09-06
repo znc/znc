@@ -6,7 +6,6 @@ version: 0.0.0.0.1-branch-{branch}-build-{build}
 clone_depth: 10
 cache:
     - c:\cygwin-setup-cache
-    - c:\gtest-1.7.0
 environment:
     matrix:
         - cygwin_url: https://cygwin.com/setup-x86_64.exe
@@ -21,20 +20,13 @@ install:
     - c:\cygwin-root\bin\sh -lc "cat /proc/meminfo"
     - c:\cygwin-root\bin\sh -lc "cygcheck -s -v > $APPVEYOR_BUILD_FOLDER/cygcheck.log 2>&1"
     - ps: Push-AppveyorArtifact cygcheck.log
-    - ps: |
-        if (Test-Path "c:\gtest-1.7.0\src\gtest-all.cc") {
-          echo "using gtest from cache"
-        } else {
-          (New-Object Net.WebClient).DownloadFile('http://googletest.googlecode.com/files/gtest-1.7.0.zip', 'c:\gtest-1.7.0.zip')
-          7z x -oc:\ c:\gtest-1.7.0.zip
-        }
     - c:\cygwin-root\bin\sh -lc "/bin/easy_install* pexpect"
 # stdin is broken at AppVeyor, so we open it explicitly as /dev/null
 build_script:
     - git submodule update --init
     - c:\cygwin-root\bin\sh -lc "cd $APPVEYOR_BUILD_FOLDER; ./autogen.sh < /dev/null"
     - mkdir build
-    - c:\cygwin-root\bin\sh -lc "cd $APPVEYOR_BUILD_FOLDER/build; ../configure --enable-charset --enable-zlib --enable-openssl --enable-perl --enable-python --enable-cyrus --with-gtest=/cygdrive/c/gtest-1.7.0 < /dev/null"
+    - c:\cygwin-root\bin\sh -lc "cd $APPVEYOR_BUILD_FOLDER/build; ../configure --enable-charset --enable-zlib --enable-openssl --enable-perl --enable-python --enable-cyrus < /dev/null"
     - ps: Push-AppveyorArtifact build\config.log
     - c:\cygwin-root\bin\sh -lc "cd $APPVEYOR_BUILD_FOLDER/build; make VERBOSE=1 -j2 < /dev/null"
     - c:\cygwin-root\bin\sh -lc "cd $APPVEYOR_BUILD_FOLDER/build; make install < /dev/null"

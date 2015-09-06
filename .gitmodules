@@ -1,3 +1,6 @@
 [submodule "Csocket"]
 	path = third_party/Csocket
 	url = https://github.com/jimloco/Csocket.git
+[submodule "third_party/googletest"]
+	path = third_party/googletest
+	url = https://github.com/google/googletest
