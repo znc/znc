@@ -397,7 +397,7 @@ private:
 
 		// 353 needs special treatment due to NAMESX and UHNAMES
 		if (bIsRaw353)
-			GetNetwork()->GetIRCSock()->ForwardRaw353(sLine, m_pDoing);
+			GetNetwork()->GetIRCSock()->ForwardRaw353(CMessage(sLine), m_pDoing);
 		else
 			m_pDoing->PutClient(sLine);
 

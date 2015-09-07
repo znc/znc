@@ -20,6 +20,7 @@
 #include <znc/zncconfig.h>
 #include <znc/Socket.h>
 #include <znc/Nick.h>
+#include <znc/Message.h>
 
 #include <deque>
 
@@ -28,7 +29,6 @@ class CChan;
 class CUser;
 class CIRCNetwork;
 class CClient;
-class CMessage;
 // !Forward Declarations
 
 // TODO: This class needs new name
@@ -47,18 +47,6 @@ public:
 		ArgWhenSet = 2,
 		NoArg      = 3
 	} EChanModeArgs;
-
-	// Message Handlers
-	bool OnCTCPReply(CMessage& Message);
-	bool OnPrivCTCP(CMessage& Message);
-	bool OnChanCTCP(CMessage& Message);
-	bool OnGeneralCTCP(CMessage& Message);
-	bool OnPrivMsg(CMessage& Message);
-	bool OnChanMsg(CMessage& Message);
-	bool OnPrivNotice(CMessage& Message);
-	bool OnChanNotice(CMessage& Message);
-	bool OnServerCapAvailable(const CString& sCap);
-	// !Message Handlers
 
 	void ReadLine(const CString& sData) override;
 	void Connected() override;
@@ -115,14 +103,38 @@ public:
 	CString GetISupport(const CString& sKey, const CString& sDefault = "") const;
 	// !Getters
 
-	// TODO: CMessage
 	// This handles NAMESX and UHNAMES in a raw 353 reply
-	void ForwardRaw353(const CString& sLine) const;
-	void ForwardRaw353(const CString& sLine, CClient* pClient) const;
+	void ForwardRaw353(const CMessage& Message) const;
+	void ForwardRaw353(const CMessage& Message, CClient* pClient) const;
 
 	// TODO move this function to CIRCNetwork and make it non-static?
 	static bool IsFloodProtected(double fRate);
+
 private:
+	// Message Handlers
+	bool OnAccountMessage(CMessage& Message);
+	bool OnActionMessage(CActionMessage& Message);
+	bool OnAwayMessage(CMessage& Message);
+	bool OnCapabilityMessage(CMessage& Message);
+	bool OnCTCPMessage(CCTCPMessage& Message);
+	bool OnErrorMessage(CMessage& Message);
+	bool OnInviteMessage(CMessage& Message);
+	bool OnJoinMessage(CJoinMessage& Message);
+	bool OnKickMessage(CKickMessage& Message);
+	bool OnModeMessage(CModeMessage& Message);
+	bool OnNickMessage(CNickMessage& Message);
+	bool OnNoticeMessage(CNoticeMessage& Message);
+	bool OnNumericMessage(CNumericMessage& Message);
+	bool OnPartMessage(CPartMessage& Message);
+	bool OnPingMessage(CMessage& Message);
+	bool OnPongMessage(CMessage& Message);
+	bool OnQuitMessage(CQuitMessage& Message);
+	bool OnTextMessage(CTextMessage& Message);
+	bool OnTopicMessage(CTopicMessage& Message);
+	bool OnWallopsMessage(CMessage& Message);
+	bool OnServerCapAvailable(const CString& sCap);
+	// !Message Handlers
+
 	void SetNick(const CString& sNick);
 	void ParseISupport(const CString& sLine);
 	// This is called when we connect and the nick we want is already taken
