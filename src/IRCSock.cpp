@@ -728,11 +728,11 @@ bool CIRCSock::OnNumericMessage(CNumericMessage& Message) {
 			m_pNetwork->SetIRCAway(true);
 			break;
 		case 324: {  // MODE
-			sRest.Trim();
-			CChan* pChan = m_pNetwork->FindChan(sRest.Token(0));
+			// :irc.server.com 324 nick #chan +nstk key
+			CChan* pChan = m_pNetwork->FindChan(Message.GetParam(1));
 
 			if (pChan) {
-				pChan->SetModes(sRest.Token(1, true));
+				pChan->SetModes(Message.GetParams(2));
 
 				// We don't SetModeKnown(true) here,
 				// because a 329 will follow
@@ -749,8 +749,8 @@ bool CIRCSock::OnNumericMessage(CNumericMessage& Message) {
 		}
 			break;
 		case 329: {
-			sRest.Trim();
-			CChan* pChan = m_pNetwork->FindChan(sRest.Token(0));
+			// :irc.server.com 329 nick #chan 1234567890
+			CChan* pChan = m_pNetwork->FindChan(Message.GetParam(1));
 
 			if (pChan) {
 				unsigned long ulDate = Message.GetParam(2).ToULong();
@@ -868,13 +868,13 @@ bool CIRCSock::OnNumericMessage(CNumericMessage& Message) {
 			break;
 		}
 		case 353: {  // NAMES
-			sRest.Trim();
+			// :irc.server.com 353 nick @ #chan :nick1 nick2
 			// Todo: allow for non @+= server msgs
-			CChan* pChan = m_pNetwork->FindChan(sRest.Token(1));
+			CChan* pChan = m_pNetwork->FindChan(Message.GetParam(2));
 			// If we don't know that channel, some client might have
 			// requested a /names for it and we really should forward this.
 			if (pChan) {
-				CString sNicks = sRest.Token(2, true).TrimPrefix_n();
+				CString sNicks = Message.GetParam(3);
 				pChan->AddNicks(sNicks);
 				if (pChan->IsDetached()) {
 					return true;
@@ -888,7 +888,7 @@ bool CIRCSock::OnNumericMessage(CNumericMessage& Message) {
 		}
 		case 366: {  // end of names list
 			// :irc.server.com 366 nick #chan :End of /NAMES list.
-			CChan* pChan = m_pNetwork->FindChan(sRest.Token(0));
+			CChan* pChan = m_pNetwork->FindChan(Message.GetParam(1));
 
 			if (pChan) {
 				if (pChan->IsOn()) {
@@ -928,11 +928,11 @@ bool CIRCSock::OnNumericMessage(CNumericMessage& Message) {
 			// :irc.server.net 437 * badnick :Nick/channel is temporarily unavailable
 			// :irc.server.net 437 mynick badnick :Nick/channel is temporarily unavailable
 			// :irc.server.net 437 mynick badnick :Cannot change nickname while banned on channel
-			if (m_pNetwork->IsChan(sRest.Token(0)) || sNick != "*")
+			if (m_pNetwork->IsChan(Message.GetParam(1)) || sNick != "*")
 				break;
 		case 432: // :irc.server.com 432 * nick :Erroneous Nickname: Illegal characters
 		case 433: {
-			CString sBadNick = sRest.Token(0);
+			CString sBadNick = Message.GetParam(1);
 
 			if (!m_bAuthed) {
 				SendAltNick(sBadNick);
@@ -950,10 +950,10 @@ bool CIRCSock::OnNumericMessage(CNumericMessage& Message) {
 			// :mccaffrey.freenode.net 470 mynick #electronics ##electronics :Forwarding to another channel
 
 			// freenode style numeric
-			CChan* pChan = m_pNetwork->FindChan(sRest.Token(0));
+			CChan* pChan = m_pNetwork->FindChan(Message.GetParam(1));
 			if (!pChan) {
 				// unreal style numeric
-				pChan = m_pNetwork->FindChan(sRest.Token(1));
+				pChan = m_pNetwork->FindChan(Message.GetParam(2));
 			}
 			if (pChan) {
 				pChan->Disable();
