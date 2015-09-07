@@ -121,14 +121,7 @@ void CClient::UserCommand(CString& sLine) {
 		}
 
 		set<CChan*> sChans = MatchChans(sPatterns);
-
-		unsigned int uDetached = 0;
-		for (CChan* pChan : sChans) {
-			if (pChan->IsDetached())
-				continue;
-			uDetached++;
-			pChan->DetachUser();
-		}
+		unsigned int uDetached = DetachChans(sChans);
 
 		PutStatus("There were [" + CString(sChans.size()) + "] channels matching [" + sPatterns + "]");
 		PutStatus("Detached [" + CString(uDetached) + "] channels");

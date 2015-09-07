@@ -258,6 +258,7 @@ private:
 	void EchoMessage(const CMessage& Message);
 
 	std::set<CChan*> MatchChans(const CString& sPatterns) const;
+	unsigned int DetachChans(const std::set<CChan*>& sChans);
 
 protected:
 	bool                 m_bGotPass;

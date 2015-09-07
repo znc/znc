@@ -362,14 +362,7 @@ void CClient::ReadLine(const CString& sData) {
 		}
 
 		set<CChan*> sChans = MatchChans(sPatterns);
-
-		unsigned int uDetached = 0;
-		for (CChan* pChan : sChans) {
-			if (pChan->IsDetached())
-				continue;
-			uDetached++;
-			pChan->DetachUser();
-		}
+		unsigned int uDetached = DetachChans(sChans);
 
 		PutStatusNotice("There were [" + CString(sChans.size()) + "] channels matching [" + sPatterns + "]");
 		PutStatusNotice("Detached [" + CString(uDetached) + "] channels");
@@ -1066,4 +1059,16 @@ set<CChan*> CClient::MatchChans(const CString& sPatterns) const
 		sChans.insert(vChans.begin(), vChans.end());
 	}
 	return sChans;
+}
+
+unsigned int CClient::DetachChans(const std::set<CChan*>& sChans)
+{
+	unsigned int uDetached = 0;
+	for (CChan* pChan : sChans) {
+		if (pChan->IsDetached())
+			continue;
+		uDetached++;
+		pChan->DetachUser();
+	}
+	return uDetached;
 }
