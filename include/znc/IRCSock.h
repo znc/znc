@@ -136,7 +136,7 @@ private:
 	// !Message Handlers
 
 	void SetNick(const CString& sNick);
-	void ParseISupport(const CString& sLine);
+	void ParseISupport(const CMessage& Message);
 	// This is called when we connect and the nick we want is already taken
 	void SendAltNick(const CString& sBadNick);
 	void SendNextCap();
