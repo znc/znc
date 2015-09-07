@@ -652,6 +652,10 @@ bool CIRCSock::OnNumericMessage(CNumericMessage& Message) {
 	CString sRest = Message.GetParams(1);
 	CString sTmp;
 
+	bool bResult = false;
+	IRCSOCKMODULECALL(OnNumericMessage(Message), &bResult);
+	if (bResult) return true;
+
 	switch (uRaw) {
 		case 1: { // :irc.server.com 001 nick :Welcome to the Internet Relay Network nick
 			if (m_bAuthed && sServer == "irc.znc.in") {

@@ -618,6 +618,7 @@ void CModule::OnMode(const CNick& pOpNick, CChan& Channel, char uMode, const CSt
 
 CModule::EModRet CModule::OnRaw(CString& sLine) { return CONTINUE; }
 CModule::EModRet CModule::OnRawMessage(CMessage& Message) { return CONTINUE; }
+CModule::EModRet CModule::OnNumericMessage(CNumericMessage& Message) { return CONTINUE; }
 
 CModule::EModRet CModule::OnStatusCommand(CString& sCommand) { return CONTINUE; }
 void CModule::OnModNotice(const CString& sMessage) {}
@@ -971,6 +972,7 @@ bool CModules::OnMode2(const CNick* pOpNick, CChan& Channel, char uMode, const C
 bool CModules::OnMode(const CNick& OpNick, CChan& Channel, char uMode, const CString& sArg, bool bAdded, bool bNoChange) { MODUNLOADCHK(OnMode(OpNick, Channel, uMode, sArg, bAdded, bNoChange)); return false; }
 bool CModules::OnRaw(CString& sLine) { MODHALTCHK(OnRaw(sLine)); }
 bool CModules::OnRawMessage(CMessage& Message) { MODHALTCHK(OnRawMessage(Message)); }
+bool CModules::OnNumericMessage(CNumericMessage& Message) { MODHALTCHK(OnNumericMessage(Message)); }
 
 bool CModules::OnClientLogin() { MODUNLOADCHK(OnClientLogin()); return false; }
 bool CModules::OnClientDisconnect() { MODUNLOADCHK(OnClientDisconnect()); return false; }

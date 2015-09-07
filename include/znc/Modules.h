@@ -563,6 +563,12 @@ public:
 	virtual EModRet OnRaw(CString& sLine);
 	virtual EModRet OnRawMessage(CMessage& Message);
 
+	/** Called when a numeric message is received from the <em>IRC server</em>.
+	 *  @param Message The received message.
+	 *  @return See CModule::EModRet.
+	 */
+	virtual EModRet OnNumericMessage(CNumericMessage& Message);
+
 	/** Called when a command to *status is sent.
 	 *  @param sCommand The command sent.
 	 *  @return See CModule::EModRet.
@@ -1211,6 +1217,7 @@ public:
 
 	bool OnRaw(CString& sLine);
 	bool OnRawMessage(CMessage& Message);
+	bool OnNumericMessage(CNumericMessage& Message);
 
 	bool OnStatusCommand(CString& sCommand);
 	bool OnModCommand(const CString& sCommand);

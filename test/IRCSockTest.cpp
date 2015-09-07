@@ -58,6 +58,7 @@ public:
 	EModRet OnPrivNoticeMessage(CNoticeMessage& msg) override { vsHooks.push_back("OnPrivNoticeMessage"); vsMessages.push_back(msg.ToString()); vNetworks.push_back(msg.GetNetwork()); vChannels.push_back(msg.GetChan()); return eAction; }
 	EModRet OnChanNoticeMessage(CNoticeMessage& msg) override { vsHooks.push_back("OnChanNoticeMessage"); vsMessages.push_back(msg.ToString()); vNetworks.push_back(msg.GetNetwork()); vChannels.push_back(msg.GetChan()); return eAction; }
 	EModRet OnTopicMessage(CTopicMessage& msg) override { vsHooks.push_back("OnTopicMessage"); vsMessages.push_back(msg.ToString()); vNetworks.push_back(msg.GetNetwork()); vChannels.push_back(msg.GetChan()); return eAction; }
+	EModRet OnNumericMessage(CNumericMessage& msg) override { vsHooks.push_back("OnNumericMessage"); vsMessages.push_back(msg.ToString()); vNetworks.push_back(msg.GetNetwork()); vChannels.push_back(msg.GetChan()); return eAction; }
 	void OnJoinMessage(CJoinMessage& msg) override { vsHooks.push_back("OnJoinMessage"); vsMessages.push_back(msg.ToString()); vNetworks.push_back(msg.GetNetwork()); vChannels.push_back(msg.GetChan()); }
 	void OnKickMessage(CKickMessage& msg) override { vsHooks.push_back("OnKickMessage"); vsMessages.push_back(msg.ToString()); vNetworks.push_back(msg.GetNetwork()); vChannels.push_back(msg.GetChan()); }
 	void OnNickMessage(CNickMessage& msg, const std::vector<CChan*>& vChans) override { vsHooks.push_back("OnNickMessage"); vsMessages.push_back(msg.ToString()); vNetworks.push_back(msg.GetNetwork()); vChannels.push_back(msg.GetChan()); }
@@ -314,6 +315,23 @@ TEST_F(IRCSockTest, OnNoticeMessage) {
 	m_pTestSock->ReadLine(msg.ToString());
 
 	EXPECT_THAT(m_pTestModule->vsHooks, ElementsAre("OnPrivNoticeMessage"));
+	EXPECT_THAT(m_pTestModule->vsMessages, ElementsAre(msg.ToString()));
+	EXPECT_THAT(m_pTestModule->vNetworks, ElementsAre(m_pTestNetwork));
+	EXPECT_THAT(m_pTestModule->vChannels, ElementsAre(nullptr));
+	EXPECT_THAT(m_pTestClient->vsLines, IsEmpty()); // halt
+
+	m_pTestModule->eAction = CModule::CONTINUE;
+	m_pTestSock->ReadLine(msg.ToString());
+
+	EXPECT_THAT(m_pTestClient->vsLines, ElementsAre(msg.ToString()));
+}
+
+TEST_F(IRCSockTest, OnNumericMessage) {
+	CMessage msg(":irc.server.com 372 nick :motd");
+	m_pTestModule->eAction = CModule::HALT;
+	m_pTestSock->ReadLine(msg.ToString());
+
+	EXPECT_THAT(m_pTestModule->vsHooks, ElementsAre("OnNumericMessage"));
 	EXPECT_THAT(m_pTestModule->vsMessages, ElementsAre(msg.ToString()));
 	EXPECT_THAT(m_pTestModule->vNetworks, ElementsAre(m_pTestNetwork));
 	EXPECT_THAT(m_pTestModule->vChannels, ElementsAre(nullptr));

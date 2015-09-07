@@ -76,6 +76,7 @@ public:
 	EModRet OnPrivNoticeMessage(CNoticeMessage& Message) override { Message.GetNick().SetNick("nick"); Message.SetText("CMessageModule::OnPrivNoticeMessage"); return eAction; }
 	EModRet OnChanNoticeMessage(CNoticeMessage& Message) override { Message.GetNick().SetNick("nick"); Message.SetText("CMessageModule::OnChanNoticeMessage"); return eAction; }
 	EModRet OnTopicMessage(CTopicMessage& Message) override { Message.GetNick().SetNick("nick"); Message.SetTopic("CMessageModule::OnTopicMessage"); return eAction; }
+	EModRet OnNumericMessage(CNumericMessage& Message) override { Message.GetNick().SetNick("nick"); Message.SetCommand("123"); return eAction; }
 
 	EModRet eAction = CONTINUE;
 };
@@ -276,6 +277,11 @@ TEST_F(ModulesTest, Hooks) {
 	Modules.OnTopicMessage(TopicMsg);
 	EXPECT_EQ("nick", TopicMsg.GetNick().GetNick());
 	EXPECT_EQ("CMessageModule::OnTopicMessage", TopicMsg.GetTopic());
+
+	CNumericMessage NumericMsg;
+	Modules.OnNumericMessage(NumericMsg);
+	EXPECT_EQ("nick", TopicMsg.GetNick().GetNick());
+	EXPECT_EQ(123u, NumericMsg.GetCode());
 
 	Modules.clear();
 }
