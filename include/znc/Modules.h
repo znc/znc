@@ -558,12 +558,19 @@ public:
 
 	/** Called on any raw IRC line received from the <em>IRC server</em>.
 	 *  @param sLine The line read from the server.
+	 *  @note The line does not include message tags. Use OnRawMessage() to access them.
 	 *  @return See CModule::EModRet.
 	 */
 	virtual EModRet OnRaw(CString& sLine);
+	/** Called on any raw message received from the <em>IRC server</em>.
+	 *  @since 1.7.0
+	 *  @param Message The received message.
+	 *  @return See CModule::EModRet.
+	 */
 	virtual EModRet OnRawMessage(CMessage& Message);
 
 	/** Called when a numeric message is received from the <em>IRC server</em>.
+	 *  @since 1.7.0
 	 *  @param Message The received message.
 	 *  @return See CModule::EModRet.
 	 */
@@ -596,50 +603,58 @@ public:
 	virtual void OnModCTCP(const CString& sMessage);
 
 	/** Called when a nick quit from IRC.
-	 *  @param Nick The nick which quit.
-	 *  @param sMessage The quit message.
+	 *  @since 1.7.0
+	 *  @param Message The quit message.
 	 *  @param vChans List of channels which you and nick share.
 	 */
-	virtual void OnQuit(const CNick& Nick, const CString& sMessage, const std::vector<CChan*>& vChans);
 	virtual void OnQuitMessage(CQuitMessage& Message, const std::vector<CChan*>& vChans);
-	/** Called when a nickname change occurs. If we are changing our nick,
-	 *  sNewNick will equal m_pIRCSock->GetNick().
-	 *  @param Nick The nick which changed its nickname
-	 *  @param sNewNick The new nickname.
+	/// @deprecated Use OnQuitMessage() instead.
+	virtual void OnQuit(const CNick& Nick, const CString& sMessage, const std::vector<CChan*>& vChans);
+
+	/** Called when a nickname change occurs.
+	 *  @since 1.7.0
+	 *  @param Message The nick message.
 	 *  @param vChans Channels which we and nick share.
 	 */
-	virtual void OnNick(const CNick& Nick, const CString& sNewNick, const std::vector<CChan*>& vChans);
 	virtual void OnNickMessage(CNickMessage& Message, const std::vector<CChan*>& vChans);
+	/// @deprecated Use OnNickMessage() instead.
+	virtual void OnNick(const CNick& Nick, const CString& sNewNick, const std::vector<CChan*>& vChans);
+
 	/** Called when a nick is kicked from a channel.
-	 *  @param OpNick The nick which generated the kick.
-	 *  @param sKickedNick The nick which was kicked.
-	 *  @param Channel The channel on which this kick occurs.
-	 *  @param sMessage The kick message.
+	 *  @since 1.7.0
+	 *  @param Message The kick message.
 	 */
-	virtual void OnKick(const CNick& OpNick, const CString& sKickedNick, CChan& Channel, const CString& sMessage);
 	virtual void OnKickMessage(CKickMessage& Message);
+	/// @deprecated Use OnKickMessage() instead.
+	virtual void OnKick(const CNick& OpNick, const CString& sKickedNick, CChan& Channel, const CString& sMessage);
+
 	/** This module hook is called just before ZNC tries to join an IRC channel.
 	 *  @param Chan The channel which is about to get joined.
 	 *  @return See CModule::EModRet.
 	 */
 	virtual EModRet OnJoining(CChan& Channel);
+
 	/** Called when a nick joins a channel.
-	 *  @param Nick The nick who joined.
-	 *  @param Channel The channel which was joined.
+	 *  @since 1.7.0
+	 *  @param Message The join message.
 	 */
-	virtual void OnJoin(const CNick& Nick, CChan& Channel);
 	virtual void OnJoinMessage(CJoinMessage& Message);
+	/// @deprecated Use OnJoinMessage() instead.
+	virtual void OnJoin(const CNick& Nick, CChan& Channel);
+
 	/** Called when a nick parts a channel.
-	 *  @param Nick The nick who parted.
-	 *  @param Channel The channel which was parted.
-	 *  @param sMessage The part message.
+	 *  @since 1.7.0
+	 *  @param Message The part message.
 	 */
-	virtual void OnPart(const CNick& Nick, CChan& Channel, const CString& sMessage);
 	virtual void OnPartMessage(CPartMessage& Message);
+	/// @deprecated Use OnPartMessage() instead.
+	virtual void OnPart(const CNick& Nick, CChan& Channel, const CString& sMessage);
+
 	/** Called when user is invited into a channel
 	 *  @param Nick The nick who invited you.
 	 *  @param sChan The channel the user got invited into
 	 *  @return See CModule::EModRet.
+	 *  @todo Add OnInviteMessage() hook
 	 */
 	virtual EModRet OnInvite(const CNick& Nick, const CString& sChan);
 
@@ -655,190 +670,226 @@ public:
 	 *  @return See CModule::EModRet.
 	 */
 	virtual EModRet OnChanBufferEnding(CChan& Chan, CClient& Client);
-	/** Called when for each line during a channel's buffer play back.
-	 *  @param Chan The channel this playback is from.
-	 *  @param Client The client the buffer is played back to.
-	 *  @param sLine The current line of buffer playback. This is a raw IRC
-	 *               traffic line!
-	 *  @param tv The timestamp of the message.
+
+	/** Called for each message during a channel's buffer play back.
+	 *  @since 1.7.0
+	 *  @param Message The playback message.
 	 *  @return See CModule::EModRet.
 	 */
-	virtual EModRet OnChanBufferPlayLine2(CChan& Chan, CClient& Client, CString& sLine, const timeval& tv);
-	virtual EModRet OnChanBufferPlayLine(CChan& Chan, CClient& Client, CString& sLine);
 	virtual EModRet OnChanBufferPlayMessage(CMessage& Message);
-	/** Called when a line from the query buffer is played back.
-	 *  @param Client The client this line will go to.
-	 *  @param sLine The raw IRC traffic line from the buffer.
-	 *  @param tv The timestamp of the message.
+	/// @deprecated Use OnChanBufferPlayMessage() instead.
+	virtual EModRet OnChanBufferPlayLine2(CChan& Chan, CClient& Client, CString& sLine, const timeval& tv);
+	/// @deprecated Use OnChanBufferPlayMessage() instead.
+	virtual EModRet OnChanBufferPlayLine(CChan& Chan, CClient& Client, CString& sLine);
+
+	/** Called for each message during a query's buffer play back.
+	 *  @since 1.7.0
+	 *  @param Message The playback message.
 	 *  @return See CModule::EModRet.
 	 */
-	virtual EModRet OnPrivBufferPlayLine2(CClient& Client, CString& sLine, const timeval& tv);
-	virtual EModRet OnPrivBufferPlayLine(CClient& Client, CString& sLine);
 	virtual EModRet OnPrivBufferPlayMessage(CMessage& Message);
+	/// @deprecated Use OnPrivBufferPlayMessage() instead.
+	virtual EModRet OnPrivBufferPlayLine2(CClient& Client, CString& sLine, const timeval& tv);
+	/// @deprecated Use OnPrivBufferPlayMessage() instead.
+	virtual EModRet OnPrivBufferPlayLine(CClient& Client, CString& sLine);
 
 	/** Called when a client successfully logged in to ZNC. */
 	virtual void OnClientLogin();
 	/** Called when a client disconnected from ZNC. */
 	virtual void OnClientDisconnect();
+
 	/** This module hook is called when a client sends a raw traffic line to ZNC.
 	 *  @param sLine The raw traffic line sent.
+	 *  @note The line does not include message tags. Use OnUserRawMessage() to access them.
 	 *  @return See CModule::EModRet.
 	 */
 	virtual EModRet OnUserRaw(CString& sLine);
-	virtual EModRet OnUserRawMessage(CMessage& Message);
-	/** This module hook is called when a client sends a CTCP reply.
-	 *  @param sTarget The target for the CTCP reply. Could be a channel
-	 *                 name or a nick name.
-	 *  @param sMessage The CTCP reply message.
+	/** This module hook is called when a client sends any message to ZNC.
+	 *  @since 1.7.0
+	 *  @param Message The message sent.
 	 *  @return See CModule::EModRet.
 	 */
-	virtual EModRet OnUserCTCPReply(CString& sTarget, CString& sMessage);
+	virtual EModRet OnUserRawMessage(CMessage& Message);
+
+	/** This module hook is called when a client sends a CTCP reply.
+	 *  @since 1.7.0
+	 *  @param Message The CTCP reply message.
+	 *  @return See CModule::EModRet.
+	 */
 	virtual EModRet OnUserCTCPReplyMessage(CCTCPMessage& Message);
+	/// @deprecated Use OnUserCTCPReplyMessage() instead.
+	virtual EModRet OnUserCTCPReply(CString& sTarget, CString& sMessage);
+
 	/** This module hook is called when a client sends a CTCP request.
-	 *  @param sTarget The target for the CTCP request. Could be a channel
-	 *                 name or a nick name.
-	 *  @param sMessage The CTCP request message.
+	 *  @since 1.7.0
+	 *  @param Message The CTCP request message.
 	 *  @return See CModule::EModRet.
 	 *  @note This is not called for CTCP ACTION messages, use
-	 *        CModule::OnUserAction() instead.
+	 *        CModule::OnUserActionMessage() instead.
 	 */
-	virtual EModRet OnUserCTCP(CString& sTarget, CString& sMessage);
 	virtual EModRet OnUserCTCPMessage(CCTCPMessage& Message);
+	/// @deprecated Use OnUserCTCPMessage() instead.
+	virtual EModRet OnUserCTCP(CString& sTarget, CString& sMessage);
+
 	/** Called when a client sends a CTCP ACTION request ("/me").
-	 *  @param sTarget The target for the CTCP ACTION. Could be a channel
-	 *                 name or a nick name.
-	 *  @param sMessage The action message.
+	 *  @since 1.7.0
+	 *  @param Message The action message.
 	 *  @return See CModule::EModRet.
-	 *  @note CModule::OnUserCTCP() will not be called for this message.
+	 *  @note CModule::OnUserCTCPMessage() will not be called for this message.
 	 */
-	virtual EModRet OnUserAction(CString& sTarget, CString& sMessage);
 	virtual EModRet OnUserActionMessage(CActionMessage& Message);
+	/// @deprecated Use OnUserActionMessage() instead.
+	virtual EModRet OnUserAction(CString& sTarget, CString& sMessage);
+
 	/** This module hook is called when a user sends a normal IRC message.
-	 *  @param sTarget The target of the message. Could be a channel name or
-	 *                 a nick name.
-	 *  @param sMessage The message which was sent.
+	 *  @since 1.7.0
+	 *  @param Message The message which was sent.
 	 *  @return See CModule::EModRet.
 	 */
-	virtual EModRet OnUserMsg(CString& sTarget, CString& sMessage);
 	virtual EModRet OnUserTextMessage(CTextMessage& Message);
+	/// @deprecated Use OnUserTextMessage() instead.
+	virtual EModRet OnUserMsg(CString& sTarget, CString& sMessage);
+
 	/** This module hook is called when a user sends a notice message.
-	 *  @param sTarget The target of the message. Could be a channel name or
-	 *                 a nick name.
-	 *  @param sMessage The message which was sent.
+	 *  @since 1.7.0
+	 *  @param Message The message which was sent.
 	 *  @return See CModule::EModRet.
 	 */
-	virtual EModRet OnUserNotice(CString& sTarget, CString& sMessage);
 	virtual EModRet OnUserNoticeMessage(CNoticeMessage& Message);
+	/// @deprecated Use OnUserNoticeMessage() instead.
+	virtual EModRet OnUserNotice(CString& sTarget, CString& sMessage);
+
 	/** This hooks is called when a user sends a JOIN message.
-	 *  @param sChannel The channel name the join is for.
-	 *  @param sKey The key for the channel.
+	 *  @since 1.7.0
+	 *  @param Message The join message.
 	 *  @return See CModule::EModRet.
 	 */
-	virtual EModRet OnUserJoin(CString& sChannel, CString& sKey);
 	virtual EModRet OnUserJoinMessage(CJoinMessage& Message);
+	/// @deprecated Use OnUserJoinMessage() instead.
+	virtual EModRet OnUserJoin(CString& sChannel, CString& sKey);
+
 	/** This hooks is called when a user sends a PART message.
-	 *  @param sChannel The channel name the part is for.
-	 *  @param sMessage The part message the client sent.
+	 *  @since 1.7.0
+	 *  @param Message The part message.
 	 *  @return See CModule::EModRet.
 	 */
-	virtual EModRet OnUserPart(CString& sChannel, CString& sMessage);
 	virtual EModRet OnUserPartMessage(CPartMessage& Message);
+	/// @deprecated Use OnUserPartMessage() instead.
+	virtual EModRet OnUserPart(CString& sChannel, CString& sMessage);
+
 	/** This module hook is called when a user wants to change a channel topic.
-	 *  @param sChannel The channel.
-	 *  @param sTopic The new topic which the user sent.
+	 *  @since 1.7.0
+	 *  @param Message The topic message.
 	 *  @return See CModule::EModRet.
 	 */
-	virtual EModRet OnUserTopic(CString& sChannel, CString& sTopic);
 	virtual EModRet OnUserTopicMessage(CTopicMessage& Message);
+	/// @deprecated Use OnUserTopicMessage() instead.
+	virtual EModRet OnUserTopic(CString& sChannel, CString& sTopic);
+
 	/** This hook is called when a user requests a channel's topic.
 	 *  @param sChannel The channel for which the request is.
 	 *  @return See CModule::EModRet.
 	 */
 	virtual EModRet OnUserTopicRequest(CString& sChannel);
+
 	/** This module hook is called when a user requests to quit from network.
-	 *  @param sMessage The quit message the client sent.
+	 *  @since 1.7.0
+	 *  @param Message The quit message the client sent.
 	 *  @return See CModule::EModRet.
 	 */
-	virtual EModRet OnUserQuit(CString& sMessage);
 	virtual EModRet OnUserQuitMessage(CQuitMessage& Message);
+	/// @deprecated Use OnUserQuitMessage() instead.
+	virtual EModRet OnUserQuit(CString& sMessage);
 
 	/** Called when we receive a CTCP reply <em>from IRC</em>.
-	 *  @param Nick The nick the CTCP reply is from.
-	 *  @param sMessage The CTCP reply message.
+	 *  @since 1.7.0
+	 *  @param Message The CTCP reply message.
 	 *  @return See CModule::EModRet.
 	 */
-	virtual EModRet OnCTCPReply(CNick& Nick, CString& sMessage);
 	virtual EModRet OnCTCPReplyMessage(CCTCPMessage& Message);
+	/// @deprecated Use OnCTCPReplyMessage() instead.
+	virtual EModRet OnCTCPReply(CNick& Nick, CString& sMessage);
+
 	/** Called when we receive a private CTCP request <em>from IRC</em>.
-	 *  @param Nick The nick the CTCP request is from.
-	 *  @param sMessage The CTCP request message.
+	 *  @since 1.7.0
+	 *  @param Message The CTCP request message.
 	 *  @return See CModule::EModRet.
 	 */
-	virtual EModRet OnPrivCTCP(CNick& Nick, CString& sMessage);
 	virtual EModRet OnPrivCTCPMessage(CCTCPMessage& Message);
+	/// @deprecated Use OnPrivCTCPMessage() instead.
+	virtual EModRet OnPrivCTCP(CNick& Nick, CString& sMessage);
+
 	/** Called when we receive a channel CTCP request <em>from IRC</em>.
-	 *  @param Nick The nick the CTCP request is from.
-	 *  @param Channel The channel to which the request was sent.
-	 *  @param sMessage The CTCP request message.
+	 *  @since 1.7.0
+	 *  @param Message The CTCP request message.
 	 *  @return See CModule::EModRet.
 	 */
-	virtual EModRet OnChanCTCP(CNick& Nick, CChan& Channel, CString& sMessage);
 	virtual EModRet OnChanCTCPMessage(CCTCPMessage& Message);
+	/// @deprecated Use OnChanCTCPMessage() instead.
+	virtual EModRet OnChanCTCP(CNick& Nick, CChan& Channel, CString& sMessage);
+
 	/** Called when we receive a private CTCP ACTION ("/me" in query) <em>from IRC</em>.
-	 *  This is called after CModule::OnPrivCTCP().
-	 *  @param Nick The nick the action came from.
-	 *  @param sMessage The action message
+	 *  @since 1.7.0
+	 *  @param Message The action message
 	 *  @return See CModule::EModRet.
 	 */
-	virtual EModRet OnPrivAction(CNick& Nick, CString& sMessage);
 	virtual EModRet OnPrivActionMessage(CActionMessage& Message);
+	/// @deprecated Use OnPrivActionMessage() instead.
+	virtual EModRet OnPrivAction(CNick& Nick, CString& sMessage);
+
 	/** Called when we receive a channel CTCP ACTION ("/me" in a channel) <em>from IRC</em>.
-	 *  This is called after CModule::OnChanCTCP().
-	 *  @param Nick The nick the action came from.
-	 *  @param Channel The channel the action was sent to.
-	 *  @param sMessage The action message
+	 *  @since 1.7.0
+	 *  @param Message The action message
 	 *  @return See CModule::EModRet.
 	 */
-	virtual EModRet OnChanAction(CNick& Nick, CChan& Channel, CString& sMessage);
 	virtual EModRet OnChanActionMessage(CActionMessage& Message);
+	/// @deprecated Use OnChanActionMessage() instead.
+	virtual EModRet OnChanAction(CNick& Nick, CChan& Channel, CString& sMessage);
+
 	/** Called when we receive a private message <em>from IRC</em>.
-	 *  @param Nick The nick which sent the message.
-	 *  @param sMessage The message.
+	 *  @since 1.7.0
+	 *  @param Message The private message.
 	 *  @return See CModule::EModRet.
 	 */
-	virtual EModRet OnPrivMsg(CNick& Nick, CString& sMessage);
 	virtual EModRet OnPrivMessage(CTextMessage& Message);
+	/// @deprecated Use OnPrivMessage() instead.
+	virtual EModRet OnPrivMsg(CNick& Nick, CString& sMessage);
+
 	/** Called when we receive a channel message <em>from IRC</em>.
-	 *  @param Nick The nick which sent the message.
-	 *  @param Channel The channel to which the message was sent.
-	 *  @param sMessage The message.
+	 *  @since 1.7.0
+	 *  @param Message The channel message.
 	 *  @return See CModule::EModRet.
 	 */
-	virtual EModRet OnChanMsg(CNick& Nick, CChan& Channel, CString& sMessage);
 	virtual EModRet OnChanMessage(CTextMessage& Message);
+	/// @deprecated Use OnChanMessage() instead.
+	virtual EModRet OnChanMsg(CNick& Nick, CChan& Channel, CString& sMessage);
+
 	/** Called when we receive a private notice.
-	 *  @param Nick The nick which sent the notice.
-	 *  @param sMessage The notice message.
+	 *  @since 1.7.0
+	 *  @param Message The notice message.
 	 *  @return See CModule::EModRet.
 	 */
-	virtual EModRet OnPrivNotice(CNick& Nick, CString& sMessage);
 	virtual EModRet OnPrivNoticeMessage(CNoticeMessage& Message);
+	/// @deprecated Use OnPrivNoticeMessage() instead.
+	virtual EModRet OnPrivNotice(CNick& Nick, CString& sMessage);
+
 	/** Called when we receive a channel notice.
-	 *  @param Nick The nick which sent the notice.
-	 *  @param Channel The channel to which the notice was sent.
-	 *  @param sMessage The notice message.
+	 *  @since 1.7.0
+	 *  @param Message The notice message.
 	 *  @return See CModule::EModRet.
 	 */
-	virtual EModRet OnChanNotice(CNick& Nick, CChan& Channel, CString& sMessage);
 	virtual EModRet OnChanNoticeMessage(CNoticeMessage& Message);
+	/// @deprecated Use OnChanNoticeMessage() instead.
+	virtual EModRet OnChanNotice(CNick& Nick, CChan& Channel, CString& sMessage);
+
 	/** Called when we receive a channel topic change <em>from IRC</em>.
-	 *  @param Nick The nick which changed the topic.
-	 *  @param Channel The channel whose topic was changed.
-	 *  @param sTopic The new topic.
+	 *  @since 1.7.0
+	 *  @param Message The topic message.
 	 *  @return See CModule::EModRet.
 	 */
-	virtual EModRet OnTopic(CNick& Nick, CChan& Channel, CString& sTopic);
 	virtual EModRet OnTopicMessage(CTopicMessage& Message);
+	/// @deprecated Use OnTopicMessage() instead.
+	virtual EModRet OnTopic(CNick& Nick, CChan& Channel, CString& sTopic);
 
 	/** Called for every CAP received via CAP LS from server.
 	 *  @param sCap capability supported by server.
