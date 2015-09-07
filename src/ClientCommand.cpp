@@ -107,6 +107,24 @@ void CClient::UserCommand(CString& sLine) {
 		}
 
 		PutStatus(Table);
+	} else if (sCommand.Equals("ATTACH")) {
+		if (!m_pNetwork) {
+			PutStatus("You must be connected with a network to use this command");
+			return;
+		}
+
+		CString sPatterns = sLine.Token(1, true);
+
+		if (sPatterns.empty()) {
+			PutStatus("Usage: Attach <#chans|queries>");
+			return;
+		}
+
+		set<CChan*> sChans = MatchChans(sPatterns);
+		unsigned int uAttachedChans = AttachChans(sChans);
+
+		PutStatus("There were [" + CString(sChans.size()) + "] channels  matching [" + sPatterns + "]");
+		PutStatus("Attached [" + CString(uAttachedChans) + "] channels");
 	} else if (sCommand.Equals("DETACH")) {
 		if (!m_pNetwork) {
 			PutStatus("You must be connected with a network to use this command");
@@ -1565,6 +1583,7 @@ void CClient::HelpUser(const CString& sFilter) {
 	AddCommandHelp(Table, "ShowChan", "<#chan>", "Show channel details", sFilter);
 	AddCommandHelp(Table, "EnableChan", "<#chans>", "Enable channels", sFilter);
 	AddCommandHelp(Table, "DisableChan", "<#chans>", "Disable channels", sFilter);
+	AddCommandHelp(Table, "Attach", "<#chans>", "Attach to channels", sFilter);
 	AddCommandHelp(Table, "Detach", "<#chans>", "Detach from channels", sFilter);
 	AddCommandHelp(Table, "Topics", "", "Show topics in all your channels", sFilter);
 

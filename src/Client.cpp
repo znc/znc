@@ -349,7 +349,22 @@ void CClient::ReadLine(const CString& sData) {
 		return;
 	}
 
-	if (sCommand.Equals("DETACH")) {
+	if (sCommand.Equals("ATTACH")) {
+		CString sPatterns = sLine.Token(1, true);
+
+		if (sPatterns.empty()) {
+			PutStatusNotice("Usage: /attach <#chans|queries>");
+			return;
+		}
+
+		set<CChan*> sChans = MatchChans(sPatterns);
+		unsigned int uAttachedChans = AttachChans(sChans);
+
+		PutStatusNotice("There were [" + CString(sChans.size()) + "] channels matching [" + sPatterns + "]");
+		PutStatusNotice("Attached [" + CString(uAttachedChans) + "] channels");
+
+		return;
+	} else if (sCommand.Equals("DETACH")) {
 		if (!m_pNetwork) {
 			return;
 		}
@@ -1059,6 +1074,18 @@ set<CChan*> CClient::MatchChans(const CString& sPatterns) const
 		sChans.insert(vChans.begin(), vChans.end());
 	}
 	return sChans;
+}
+
+unsigned int CClient::AttachChans(const std::set<CChan*>& sChans)
+{
+	unsigned int uAttached = 0;
+	for (CChan* pChan : sChans) {
+		if (!pChan->IsDetached())
+			continue;
+		uAttached++;
+		pChan->AttachUser();
+	}
+	return uAttached;
 }
 
 unsigned int CClient::DetachChans(const std::set<CChan*>& sChans)
