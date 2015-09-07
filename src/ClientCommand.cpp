@@ -120,15 +120,7 @@ void CClient::UserCommand(CString& sLine) {
 			return;
 		}
 
-		VCString vsChans;
-		sPatterns.Replace(",", " ");
-		sPatterns.Split(" ", vsChans, false, "", "", true, true);
-
-		set<CChan*> sChans;
-		for (const CString& sChan : vsChans) {
-			vector<CChan*> vChans = m_pNetwork->FindChans(sChan);
-			sChans.insert(vChans.begin(), vChans.end());
-		}
+		set<CChan*> sChans = MatchChans(sPatterns);
 
 		unsigned int uDetached = 0;
 		for (CChan* pChan : sChans) {
@@ -371,15 +363,7 @@ void CClient::UserCommand(CString& sLine) {
 		if (sPatterns.empty()) {
 			PutStatus("Usage: EnableChan <#chans>");
 		} else {
-			VCString vsChans;
-			sPatterns.Replace(",", " ");
-			sPatterns.Split(" ", vsChans, false, "", "", true, true);
-
-			set<CChan*> sChans;
-			for (const CString& sChan : vsChans) {
-				vector<CChan*> vChans = m_pNetwork->FindChans(sChan);
-				sChans.insert(vChans.begin(), vChans.end());
-			}
+			set<CChan*> sChans = MatchChans(sPatterns);
 
 			unsigned int uEnabled = 0;
 			for (CChan* pChan : sChans) {
@@ -403,15 +387,7 @@ void CClient::UserCommand(CString& sLine) {
 		if (sPatterns.empty()) {
 			PutStatus("Usage: DisableChan <#chans>");
 		} else {
-			VCString vsChans;
-			sPatterns.Replace(",", " ");
-			sPatterns.Split(" ", vsChans, false, "", "", true, true);
-
-			set<CChan*> sChans;
-			for (const CString& sChan : vsChans) {
-				vector<CChan*> vChans = m_pNetwork->FindChans(sChan);
-				sChans.insert(vChans.begin(), vChans.end());
-			}
+			set<CChan*> sChans = MatchChans(sPatterns);
 
 			unsigned int uDisabled = 0;
 			for (CChan* pChan : sChans) {

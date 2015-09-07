@@ -30,6 +30,7 @@ class CIRCNetwork;
 class CIRCSock;
 class CClient;
 class CMessage;
+class CChan;
 // !Forward Declarations
 
 class CAuthBase {
@@ -255,6 +256,8 @@ private:
 	template <typename T>
 	void AddBuffer(const T& Message);
 	void EchoMessage(const CMessage& Message);
+
+	std::set<CChan*> MatchChans(const CString& sPatterns) const;
 
 protected:
 	bool                 m_bGotPass;
