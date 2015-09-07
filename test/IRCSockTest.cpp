@@ -24,9 +24,11 @@
 #include <znc/User.h>
 #include <znc/Chan.h>
 #include <znc/znc.h>
+#include <algorithm>
 
 using ::testing::IsEmpty;
 using ::testing::ElementsAre;
+using ::testing::ContainerEq;
 
 class TestClient : public CClient {
 public:
@@ -442,4 +444,72 @@ TEST_F(IRCSockTest, OnWallopsMessage) {
 
 	EXPECT_THAT(m_pTestModule->vsHooks, IsEmpty()); // no OnWallopsMessage() hook (yet?)
 	EXPECT_THAT(m_pTestClient->vsLines, ElementsAre(msg.ToString()));
+}
+
+TEST_F(IRCSockTest, ISupport) {
+	MCString m1 = {
+		{"CHANTYPES", "#"},
+		{"EXCEPTS", ""},
+		{"INVEX", ""},
+		{"CHANMODES", "eIbq,k,flj,CFLMPQScgimnprstz"},
+		{"CHANLIMIT", "#:120"},
+		{"PREFIX", "(ov)@+"},
+		{"MAXLIST", "bqeI:100"},
+		{"MODES", "4"},
+		{"NETWORK", "znc"},
+		{"KNOCK", ""},
+		{"STATUSMSG", "@+"},
+		{"CALLERID", "g"},
+	};
+
+	m_pTestSock->ReadLine(":irc.znc.in 005 user CHANTYPES=# EXCEPTS INVEX CHANMODES=eIbq,k,flj,CFLMPQScgimnprstz CHANLIMIT=#:120 PREFIX=(ov)@+ MAXLIST=bqeI:100 MODES=4 NETWORK=znc KNOCK STATUSMSG=@+ CALLERID=g :are supported by this server");
+	EXPECT_THAT(m_pTestSock->GetISupport(), ContainerEq(m1));
+	for (const auto& it : m1) {
+		EXPECT_EQ(it.second, m_pTestSock->GetISupport(it.first));
+	}
+
+	MCString m2 = {
+		{"CASEMAPPING", "rfc1459"},
+		{"CHARSET", "ascii"},
+		{"NICKLEN", "16"},
+		{"CHANNELLEN", "50"},
+		{"TOPICLEN", "390"},
+		{"ETRACE", ""},
+		{"CPRIVMSG", ""},
+		{"CNOTICE", ""},
+		{"DEAF", "D"},
+		{"MONITOR", "100"},
+		{"FNC", ""},
+		{"TARGMAX", "NAMES:1,LIST:1,KICK:1,WHOIS:1,PRIVMSG:4,NOTICE:4,ACCEPT:,MONITOR:"},
+	};
+
+	MCString m12;
+	std::merge(m1.begin(), m1.end(), m2.begin(), m2.end(), std::inserter(m12, m12.begin()));
+
+	m_pTestSock->ReadLine(":server 005 user CASEMAPPING=rfc1459 CHARSET=ascii NICKLEN=16 CHANNELLEN=50 TOPICLEN=390 ETRACE CPRIVMSG CNOTICE DEAF=D MONITOR=100 FNC TARGMAX=NAMES:1,LIST:1,KICK:1,WHOIS:1,PRIVMSG:4,NOTICE:4,ACCEPT:,MONITOR: :are supported by this server");
+	EXPECT_THAT(m_pTestSock->GetISupport(), ContainerEq(m12));
+	for (const auto& it : m2) {
+		EXPECT_EQ(it.second, m_pTestSock->GetISupport(it.first));
+	}
+
+	MCString m3 = {
+		{"EXTBAN", "$,ajrxz"},
+		{"WHOX", ""},
+		{"CLIENTVER", "3.0"},
+		{"SAFELIST", ""},
+		{"ELIST", "CTU"},
+	};
+
+	MCString m123;
+	std::merge(m12.begin(), m12.end(), m3.begin(), m3.end(), std::inserter(m123, m123.begin()));
+
+	m_pTestSock->ReadLine(":server 005 zzzzzz EXTBAN=$,ajrxz WHOX CLIENTVER=3.0 SAFELIST ELIST=CTU :are supported by this server");
+	EXPECT_THAT(m_pTestSock->GetISupport(), ContainerEq(m123));
+	for (const auto& it : m3) {
+		EXPECT_EQ(it.second, m_pTestSock->GetISupport(it.first));
+	}
+
+	EXPECT_EQ("default", m_pTestSock->GetISupport("FOOBAR", "default"));
+	EXPECT_EQ("3.0", m_pTestSock->GetISupport("CLIENTVER", "default"));
+	EXPECT_EQ("", m_pTestSock->GetISupport("SAFELIST", "default"));
 }

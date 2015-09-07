@@ -695,7 +695,7 @@ bool CIRCSock::OnNumericMessage(CNumericMessage& Message) {
 			break;
 		}
 		case 5:
-			ParseISupport(sRest);
+			ParseISupport(Message);
 			m_pNetwork->UpdateExactRawBuffer(":" + _NAMEDFMT(sServer) + " " + sCmd + " {target} " + _NAMEDFMT(sRest));
 			break;
 		case 10: { // :irc.server.com 010 nick <hostname> <port> :<info>
@@ -1281,14 +1281,13 @@ void CIRCSock::ReachedMaxBuffer() {
 	Quit();
 }
 
-void CIRCSock::ParseISupport(const CString& sLine) {
-	VCString vsTokens;
+void CIRCSock::ParseISupport(const CMessage& Message) {
+	const VCString vsParams = Message.GetParams();
 
-	sLine.Split(" ", vsTokens, false);
-
-	for (const CString& sToken : vsTokens) {
-		CString sName = sToken.Token(0, false, "=");
-		CString sValue = sToken.Token(1, true, "=");
+	for (size_t i = 1; i < vsParams.size() - 1; ++i) {
+		const CString& sParam = vsParams[i];
+		CString sName = sParam.Token(0, false, "=");
+		CString sValue = sParam.Token(1, true, "=");
 
 		if (0 < sName.length() && ':' == sName[0]) {
 			break;
