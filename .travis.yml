@@ -82,3 +82,6 @@ notifications:
             - "irc.freenode.net#znc"
         on_success: always
         on_failure: always
+    email:
+        on_success: change
+        on_failure: always
