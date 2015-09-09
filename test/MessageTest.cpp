@@ -89,6 +89,10 @@ TEST(MessageTest, ToString) {
 	EXPECT_EQ(":irc.znc.in CMD p1 p2", CMessage(CNick(":irc.znc.in"), "CMD", {"p1", "p2"}).ToString());
 	EXPECT_EQ(":irc.znc.in CMD :p p p", CMessage(CNick(":irc.znc.in"), "CMD", {"p p p"}).ToString());
 	EXPECT_EQ(":irc.znc.in CMD :", CMessage(CNick(":irc.znc.in"), "CMD", {""}).ToString());
+
+	// #1045 - retain the colon if it was there
+	EXPECT_EQ(":services. 328 user #chan http://znc.in", CMessage(":services. 328 user #chan http://znc.in").ToString());
+	EXPECT_EQ(":services. 328 user #chan :http://znc.in", CMessage(":services. 328 user #chan :http://znc.in").ToString());
 }
 
 TEST(MessageTest, FormatFlags) {
@@ -222,7 +226,7 @@ TEST(MessageTest, Kick) {
 	EXPECT_EQ("noone", msg.GetKickedNick());
 	msg.SetReason("test");
 	EXPECT_EQ("test", msg.GetReason());
-	EXPECT_EQ(":nick KICK #chan noone test", msg.ToString());
+	EXPECT_EQ(":nick KICK #chan noone :test", msg.ToString());
 }
 
 TEST(MessageTest, Join) {
@@ -283,7 +287,7 @@ TEST(MessageTest, Part) {
 
 	msg.SetReason("test");
 	EXPECT_EQ("test", msg.GetReason());
-	EXPECT_EQ(":nick PART #chan test", msg.ToString());
+	EXPECT_EQ(":nick PART #chan :test", msg.ToString());
 }
 
 TEST(MessageTest, PrivAction) {
@@ -339,7 +343,7 @@ TEST(MessageTest, Quit) {
 
 	msg.SetReason("test");
 	EXPECT_EQ("test", msg.GetReason());
-	EXPECT_EQ(":nick QUIT test", msg.ToString());
+	EXPECT_EQ(":nick QUIT :test", msg.ToString());
 }
 
 TEST(MessageTest, Topic) {
@@ -353,7 +357,7 @@ TEST(MessageTest, Topic) {
 
 	msg.SetTopic("test");
 	EXPECT_EQ("test", msg.GetTopic());
-	EXPECT_EQ(":nick TOPIC #chan test", msg.ToString());
+	EXPECT_EQ(":nick TOPIC #chan :test", msg.ToString());
 }
 
 TEST(MessageTest, Parse) {

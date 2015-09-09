@@ -114,6 +114,7 @@ private:
 	CClient*     m_pClient = nullptr;
 	CChan*       m_pChan = nullptr;
 	Type         m_eType = Type::Unknown;
+	bool         m_bColon = false;
 };
 
 class CTargetMessage : public CMessage {

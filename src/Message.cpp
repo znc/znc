@@ -54,7 +54,7 @@ CString CMessage::GetParams(unsigned int uIdx, unsigned int uLen) const
 	unsigned uParams = m_vsParams.size();
 	for (unsigned int i = uIdx; i < uIdx + uLen; ++i) {
 		CString sParam = m_vsParams[i];
-		if (i == uParams - 1 && (sParam.empty() || sParam.StartsWith(":") || sParam.Contains(" "))) {
+		if (i == uParams - 1 && (m_bColon || sParam.empty() || sParam.StartsWith(":") || sParam.Contains(" "))) {
 			sParam = ":" + sParam;
 		}
 		vsParams.push_back(sParam);
@@ -130,7 +130,7 @@ CString CMessage::ToString(unsigned int uFlags) const
 	for (unsigned int uIdx = 0; uIdx < uParams; ++uIdx) {
 		const CString& sParam = m_vsParams[uIdx];
 		sMessage += " ";
-		if (uIdx == uParams - 1 && (sParam.empty() || sParam.StartsWith(":") || sParam.Contains(" "))) {
+		if (uIdx == uParams - 1 && (m_bColon || sParam.empty() || sParam.StartsWith(":") || sParam.Contains(" "))) {
 			sMessage += ":";
 		}
 		sMessage += sParam;
@@ -173,9 +173,11 @@ void CMessage::Parse(CString sMessage)
 	sMessage = sMessage.Token(1, true);
 
 	// <params>
+	m_bColon = false;
 	m_vsParams.clear();
 	while (!sMessage.empty()) {
-		if (sMessage.TrimPrefix(":")) {
+		m_bColon = sMessage.TrimPrefix(":");
+		if (m_bColon) {
 			m_vsParams.push_back(sMessage);
 			sMessage.clear();
 		} else {
