@@ -123,8 +123,11 @@ void CClient::UserCommand(CString& sLine) {
 		set<CChan*> sChans = MatchChans(sPatterns);
 		unsigned int uAttachedChans = AttachChans(sChans);
 
-		PutStatus("There were [" + CString(sChans.size()) + "] channels  matching [" + sPatterns + "]");
-		PutStatus("Attached [" + CString(uAttachedChans) + "] channels");
+		set<CQuery*> sQueries = MatchQueries(sPatterns);
+		unsigned int uAttachedQueries = AttachQueries(sQueries);
+
+		PutStatus("There were [" + CString(sChans.size()) + "] channels and [" + CString(sQueries.size()) + "] queries matching [" + sPatterns + "]");
+		PutStatus("Attached [" + CString(uAttachedChans) + "] channels and [" + CString(uAttachedQueries) + "] queries");
 	} else if (sCommand.Equals("DETACH")) {
 		if (!m_pNetwork) {
 			PutStatus("You must be connected with a network to use this command");
@@ -139,10 +142,13 @@ void CClient::UserCommand(CString& sLine) {
 		}
 
 		set<CChan*> sChans = MatchChans(sPatterns);
-		unsigned int uDetached = DetachChans(sChans);
+		unsigned int uDetachedChans = DetachChans(sChans);
 
-		PutStatus("There were [" + CString(sChans.size()) + "] channels matching [" + sPatterns + "]");
-		PutStatus("Detached [" + CString(uDetached) + "] channels");
+		set<CQuery*> sQueries = MatchQueries(sPatterns);
+		unsigned int uDetachedQueries = DetachQueries(sQueries);
+
+		PutStatus("There were [" + CString(sChans.size()) + "] channels and [" + CString(sQueries.size()) + "] queries matching [" + sPatterns + "]");
+		PutStatus("Detached [" + CString(uDetachedChans) + "] channels and [" + CString(uDetachedQueries) + "] queries");
 	} else if (sCommand.Equals("VERSION")) {
 		PutStatus(CZNC::GetTag());
 		PutStatus(CZNC::GetCompileOptionsString());
@@ -1583,8 +1589,8 @@ void CClient::HelpUser(const CString& sFilter) {
 	AddCommandHelp(Table, "ShowChan", "<#chan>", "Show channel details", sFilter);
 	AddCommandHelp(Table, "EnableChan", "<#chans>", "Enable channels", sFilter);
 	AddCommandHelp(Table, "DisableChan", "<#chans>", "Disable channels", sFilter);
-	AddCommandHelp(Table, "Attach", "<#chans>", "Attach to channels", sFilter);
-	AddCommandHelp(Table, "Detach", "<#chans>", "Detach from channels", sFilter);
+	AddCommandHelp(Table, "Attach", "<#chans|queries>", "Attach to channels and queries", sFilter);
+	AddCommandHelp(Table, "Detach", "<#chans|queries>", "Detach from channels and queries", sFilter);
 	AddCommandHelp(Table, "Topics", "", "Show topics in all your channels", sFilter);
 
 	AddCommandHelp(Table, "PlayBuffer", "<#chan|query>", "Play back the specified buffer", sFilter);
