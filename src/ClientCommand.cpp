@@ -536,6 +536,66 @@ void CClient::UserCommand(CString& sLine) {
 		PutStatus(Table);
 		PutStatus("Total: " + CString(vChans.size()) + " - Joined: " + CString(uNumJoined) +
 			" - Detached: " + CString(uNumDetached) + " - Disabled: " + CString(uNumDisabled));
+	} else if (sCommand.Equals("LISTQUERIES")) {
+		if (!m_pNetwork) {
+			PutStatus("You must be connected with a network to use this command");
+			return;
+		}
+
+		CIRCNetwork* pNetwork = m_pNetwork;
+
+		const CString sNick = sLine.Token(1);
+		const CString sNetwork = sLine.Token(2);
+
+		if (!sNick.empty()) {
+			if (!m_pUser->IsAdmin()) {
+				PutStatus("Usage: ListQueries");
+				return;
+			}
+
+			CUser* pUser = CZNC::Get().FindUser(sNick);
+
+			if (!pUser) {
+				PutStatus("No such user [" + sNick + "]");
+				return;
+			}
+
+			pNetwork = pUser->FindNetwork(sNetwork);
+			if (!pNetwork) {
+				PutStatus("No such network for user [" + sNetwork + "]");
+				return;
+			}
+		}
+
+		const vector<CQuery*>& vQueries = pNetwork->GetQueries();
+
+		if (vQueries.empty()) {
+			if (pNetwork->GetUser()->AutoClearQueryBuffer()) {
+				PutStatus("Queries are not buffered.");
+			} else {
+				PutStatus("There are no active queries.");
+			}
+			return;
+		}
+
+		CTable Table;
+		Table.AddColumn("Name");
+		Table.AddColumn("Status");
+
+		unsigned int uNumDetached = 0;
+
+		for (const CQuery *pQuery : vQueries) {
+			Table.AddRow();
+			Table.SetCell("Name", pQuery->GetName());
+			Table.SetCell("Status", (pQuery->IsDetached() ? "Detached" : "Attached"));
+
+			if (pQuery->IsDetached()) {
+				++uNumDetached;
+			}
+		}
+
+		PutStatus(Table);
+		PutStatus("Total: " + CString(vQueries.size()) + " - Detached: " + CString(uNumDetached));
 	} else if (sCommand.Equals("ADDNETWORK")) {
 		if (!m_pUser->IsAdmin() && !m_pUser->HasSpaceForNewNetwork()) {
 			PutStatus("Network number limit reached. Ask an admin to increase the limit for you, or delete unneeded networks using /znc DelNetwork <name>");
@@ -1564,6 +1624,7 @@ void CClient::HelpUser(const CString& sFilter) {
 	AddCommandHelp(Table, "ListAvailMods", "", "List all available modules", sFilter);
 	if (!m_pUser->IsAdmin()) { // If they are an admin we will add this command below with an argument
 		AddCommandHelp(Table, "ListChans", "", "List all channels", sFilter);
+		AddCommandHelp(Table, "ListQueries", "", "List all queries", sFilter);
 	}
 	AddCommandHelp(Table, "ListNicks", "<#chan>", "List all nicks on a channel", sFilter);
 	if (!m_pUser->IsAdmin()) {
@@ -1636,6 +1697,7 @@ void CClient::HelpUser(const CString& sFilter) {
 		AddCommandHelp(Table, "ListUsers", "", "List all ZNC users and their connection status", sFilter);
 		AddCommandHelp(Table, "ListAllUserNetworks", "", "List all ZNC users and their networks", sFilter);
 		AddCommandHelp(Table, "ListChans", "[user <network>]", "List all channels", sFilter);
+		AddCommandHelp(Table, "ListQueries", "[user <network>]", "List all queries", sFilter);
 		AddCommandHelp(Table, "ListClients", "[user]", "List all connected clients", sFilter);
 		AddCommandHelp(Table, "Traffic", "", "Show basic traffic stats for all ZNC users", sFilter);
 		AddCommandHelp(Table, "Broadcast", "[message]", "Broadcast a message to all ZNC users", sFilter);
