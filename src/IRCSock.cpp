@@ -287,26 +287,31 @@ bool CIRCSock::OnAccountMessage(CMessage& Message) {
 
 bool CIRCSock::OnActionMessage(CActionMessage& Message) {
 	bool bResult = false;
-	CChan* pChan = nullptr;
+	bool bDetached = false;
 	CString sTarget = Message.GetTarget();
+
 	if (sTarget.Equals(GetNick())) {
 		IRCSOCKMODULECALL(OnPrivActionMessage(Message), &bResult);
 		if (bResult) return true;
 
-		if (!m_pNetwork->IsUserOnline() || !m_pNetwork->GetUser()->AutoClearQueryBuffer()) {
-			const CNick& Nick = Message.GetNick();
-			CQuery* pQuery = m_pNetwork->AddQuery(Nick.GetNick());
-			if (pQuery) {
-				CActionMessage Format;
-				Format.Clone(Message);
-				Format.SetNick(_NAMEDFMT(Nick.GetNickMask()));
-				Format.SetTarget("{target}");
-				Format.SetText("{text}");
-				pQuery->AddBuffer(Format, Message.GetText());
+		const CNick& Nick = Message.GetNick();
+		CQuery* pQuery = m_pNetwork->FindQuery(Nick.GetNick());
+		if ((pQuery && pQuery->IsDetached()) || !m_pNetwork->IsUserOnline() || !m_pNetwork->GetUser()->AutoClearQueryBuffer()) {
+			if (!pQuery) {
+				pQuery = m_pNetwork->AddQuery(Nick.GetNick());
 			}
+
+			CActionMessage Format;
+			Format.Clone(Message);
+			Format.SetNick(_NAMEDFMT(Nick.GetNickMask()));
+			Format.SetTarget("{target}");
+			Format.SetText("{text}");
+			pQuery->AddBuffer(Format, Message.GetText());
+
+			bDetached = pQuery->IsDetached();
 		}
 	} else {
-		pChan = m_pNetwork->FindChan(sTarget);
+		CChan* pChan = m_pNetwork->FindChan(sTarget);
 		if (pChan) {
 			Message.SetChan(pChan);
 			FixupChanNick(Message.GetNick(), pChan);
@@ -321,10 +326,11 @@ bool CIRCSock::OnActionMessage(CActionMessage& Message) {
 				Format.SetText("{text}");
 				pChan->AddBuffer(Format, Message.GetText());
 			}
+			bDetached = pChan->IsDetached();
 		}
 	}
 
-	return (pChan && pChan->IsDetached());
+	return bDetached;
 }
 
 bool CIRCSock::OnAwayMessage(CMessage& Message) {
@@ -1025,27 +1031,31 @@ bool CIRCSock::OnQuitMessage(CQuitMessage& Message) {
 
 bool CIRCSock::OnTextMessage(CTextMessage& Message) {
 	bool bResult = false;
-	CChan* pChan = nullptr;
+	bool bDetached = false;
 	CString sTarget = Message.GetTarget();
 
 	if (sTarget.Equals(GetNick())) {
 		IRCSOCKMODULECALL(OnPrivMessage(Message), &bResult);
 		if (bResult) return true;
 
-		if (!m_pNetwork->IsUserOnline() || !m_pNetwork->GetUser()->AutoClearQueryBuffer()) {
-			const CNick& Nick = Message.GetNick();
-			CQuery* pQuery = m_pNetwork->AddQuery(Nick.GetNick());
-			if (pQuery) {
-				CTextMessage Format;
-				Format.Clone(Message);
-				Format.SetNick(_NAMEDFMT(Nick.GetNickMask()));
-				Format.SetTarget("{target}");
-				Format.SetText("{text}");
-				pQuery->AddBuffer(Format, Message.GetText());
+		const CNick& Nick = Message.GetNick();
+		CQuery* pQuery = m_pNetwork->FindQuery(Nick.GetNick());
+		if ((pQuery && pQuery->IsDetached()) || !m_pNetwork->IsUserOnline() || !m_pNetwork->GetUser()->AutoClearQueryBuffer()) {
+			if (!pQuery) {
+				pQuery = m_pNetwork->AddQuery(Nick.GetNick());
 			}
+
+			CTextMessage Format;
+			Format.Clone(Message);
+			Format.SetNick(_NAMEDFMT(Nick.GetNickMask()));
+			Format.SetTarget("{target}");
+			Format.SetText("{text}");
+			pQuery->AddBuffer(Format, Message.GetText());
+
+			bDetached = pQuery->IsDetached();
 		}
 	} else {
-		pChan = m_pNetwork->FindChan(sTarget);
+		CChan* pChan = m_pNetwork->FindChan(sTarget);
 		if (pChan) {
 			Message.SetChan(pChan);
 			FixupChanNick(Message.GetNick(), pChan);
@@ -1060,10 +1070,11 @@ bool CIRCSock::OnTextMessage(CTextMessage& Message) {
 				Format.SetText("{text}");
 				pChan->AddBuffer(Format, Message.GetText());
 			}
+			bDetached = pChan->IsDetached();
 		}
 	}
 
-	return (pChan && pChan->IsDetached());
+	return bDetached;
 }
 
 bool CIRCSock::OnTopicMessage(CTopicMessage& Message) {
