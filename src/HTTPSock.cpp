@@ -714,7 +714,7 @@ bool CHTTPSock::PrintHeader(off_t uContentLength, const CString& sContentType, u
 	Write("Content-Type: " + m_sContentType + "\r\n");
 
 	for (const auto& it : m_msResponseCookies) {
-		Write("Set-Cookie: " + it.first.Escape_n(CString::EURL) + "=" + it.second.Escape_n(CString::EURL) + "; path=/;" + (GetSSL() ? "Secure;" : "") + "\r\n");
+		Write("Set-Cookie: " + it.first.Escape_n(CString::EURL) + "=" + it.second.Escape_n(CString::EURL) + "; HttpOnly; path=/;" + (GetSSL() ? "Secure;" : "") + "\r\n");
 	}
 
 	for (const auto& it : m_msHeaders) {
