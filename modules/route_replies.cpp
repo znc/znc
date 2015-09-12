@@ -294,7 +294,7 @@ public:
 
 		while (m_pReplies[i].szReply != nullptr) {
 			if (m_pReplies[i].szReply == sCmd) {
-				if (RouteReply(sLine, m_pReplies[i].bLastResponse, sCmd == "353"))
+				if (RouteReply(sLine, m_pReplies[i].bLastResponse))
 					return HALTCORE;
 				return CONTINUE;
 			}
@@ -390,16 +390,13 @@ public:
 	}
 
 private:
-	bool RouteReply(const CString& sLine, bool bFinished = false, bool bIsRaw353 = false)
+	bool RouteReply(const CString& sLine, bool bFinished = false)
 	{
 		if (!m_pDoing)
 			return false;
 
-		// 353 needs special treatment due to NAMESX and UHNAMES
-		if (bIsRaw353)
-			GetNetwork()->GetIRCSock()->ForwardRaw353(CMessage(sLine), m_pDoing);
-		else
-			m_pDoing->PutClient(sLine);
+		// TODO: RouteReply(const CMessage& Message, bool bFinished = false)
+		m_pDoing->PutClient(CMessage(sLine));
 
 		if (bFinished) {
 			// Stop the timeout

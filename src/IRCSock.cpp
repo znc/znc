@@ -871,10 +871,7 @@ bool CIRCSock::OnNumericMessage(CNumericMessage& Message) {
 				}
 			}
 
-			ForwardRaw353(Message);
-
-			// We forwarded it already, so return
-			return true;
+			break;
 		}
 		case 366: {  // end of names list
 			// :irc.server.com 366 nick #chan :End of /NAMES list.
@@ -1334,49 +1331,6 @@ CString CIRCSock::GetISupport(const CString& sKey, const CString& sDefault) cons
 		return sDefault;
 	} else {
 		return i->second;
-	}
-}
-
-void CIRCSock::ForwardRaw353(const CMessage& Message) const {
-	const vector<CClient*>& vClients = m_pNetwork->GetClients();
-
-	for (CClient* pClient : vClients) {
-		ForwardRaw353(Message, pClient);
-	}
-}
-
-void CIRCSock::ForwardRaw353(const CMessage& Message, CClient* pClient) const {
-	if ((!m_bNamesx || pClient->HasNamesx()) && (!m_bUHNames || pClient->HasUHNames())) {
-		// Client and server have both the same UHNames and Namesx stuff enabled
-		m_pNetwork->PutUser(Message, pClient);
-	} else {
-		CString sNicks = Message.GetParam(3);
-		VCString vsNicks;
-		sNicks.Split(" ", vsNicks, false);
-
-		// This loop runs once for every nick on the channel
-		for (CString& sNick : vsNicks) {
-			if (sNick.empty())
-				break;
-
-			if (m_bNamesx && !pClient->HasNamesx() && IsPermChar(sNick[0])) {
-				// Server has, client doesn't have NAMESX, so we just use the first perm char
-				size_t pos = sNick.find_first_not_of(GetPerms());
-				if (pos >= 2 && pos != CString::npos) {
-					sNick = sNick[0] + sNick.substr(pos);
-				}
-			}
-
-			if (m_bUHNames && !pClient->HasUHNames()) {
-				// Server has, client hasnt UHNAMES,
-				// so we strip away ident and host.
-				sNick = sNick.Token(0, false, "!");
-			}
-		}
-
-		CMessage NamesMsg(Message);
-		NamesMsg.SetParam(3, sNicks);
-		m_pNetwork->PutUser(NamesMsg, pClient);
 	}
 }
 

@@ -757,22 +757,60 @@ bool CClient::PutClient(const CMessage& Message)
 		return false;
 	}
 
-	CString sLine = Message.ToString(CMessage::ExcludeTags);
+	CMessage Msg(Message);
+
+	const CIRCSock* pIRCSock = GetIRCSock();
+	if (pIRCSock) {
+		if (Msg.GetType() == CMessage::Type::Numeric) {
+			unsigned int uCode = static_cast<CNumericMessage&>(Msg).GetCode();
+
+			if (uCode == 353) { // RPL_NAMES
+				if ((!m_bNamesx && pIRCSock->HasNamesx()) || (!m_bUHNames && pIRCSock->HasUHNames())) {
+					// The server has either UHNAMES or NAMESX, but the client is missing either or both
+					CString sNicks = Msg.GetParam(3);
+					VCString vsNicks;
+					sNicks.Split(" ", vsNicks, false);
+
+					for (CString& sNick : vsNicks) {
+						if (sNick.empty())
+							break;
+
+						if (!m_bNamesx && pIRCSock->HasNamesx() && pIRCSock->IsPermChar(sNick[0])) {
+							// The server has NAMESX, but the client doesn't, so we just use the first perm char
+							size_t pos = sNick.find_first_not_of(pIRCSock->GetPerms());
+							if (pos >= 2 && pos != CString::npos) {
+								sNick = sNick[0] + sNick.substr(pos);
+							}
+						}
+
+						if (!m_bUHNames && pIRCSock->HasUHNames()) {
+							// The server has UHNAMES, but the client doesn't, so we strip away ident and host
+							sNick = sNick.Token(0, false, "!");
+						}
+					}
+
+					Msg.SetParam(3, CString(" ").Join(vsNicks.begin(), vsNicks.end()));
+				}
+			}
+		}
+	}
+
+	CString sLine = Msg.ToString(CMessage::ExcludeTags);
 
 	// TODO: introduce a module hook that gives control over the tags that are sent
 	MCString mssTags;
 
 	if (HasServerTime()) {
-		CString sServerTime = Message.GetTag("time");
+		CString sServerTime = Msg.GetTag("time");
 		if (!sServerTime.empty()) {
 			mssTags["time"] = sServerTime;
 		} else {
-			mssTags["time"] = CUtils::FormatServerTime(Message.GetTime());
+			mssTags["time"] = CUtils::FormatServerTime(Msg.GetTime());
 		}
 	}
 
 	if (HasBatch()) {
-		CString sBatch = Message.GetTag("batch");
+		CString sBatch = Msg.GetTag("batch");
 		if (!sBatch.empty()) {
 			mssTags["batch"] = sBatch;
 		}
