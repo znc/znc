@@ -187,15 +187,32 @@ public:
 	 */
 	void PutClient(const CString& sLine);
 	/** Sends a message to the client.
-	 *  @param Message The message to be sent.
-	 *  @note  Only known and compatible message tags are sent.
+	 *  @param  Message The message to be sent.
+	 *  @note   Only known and compatible messages and tags are sent.
+	 *  @return \c true if the message was sent, or \c false if it was ignored.
 	 *
-	 *  Not all IRC clients are capable of handling arbitrary sets of message
-	 *  tags. For example, some older versions of some popular clients were
-	 *  prepared to parse just one interesting tag, \c time, and would break
-	 *  if multiple tags were included. Thus, in order to stay compatible with
-	 *  a variety of IRC clients, ZNC has to filter out message tags that the
-	 *  client has not explicitly requested.
+	 *  This method ensures that only messages and tags, that the client has
+	 *  explicitly requested, are sent. Not all IRC clients are capable of
+	 *  handling all messages and tags. For example, some older versions of
+	 *  popular clients were prepared to parse just one interesting tag,
+	 *  \c time, and would break if multiple tags were included. Furthermore,
+	 *  messages that are specific to a certain capability, should not be sent
+	 *  to a client that has not requested the respective capability. Thus, in
+	 *  order to stay compatible with a variety of IRC clients, ZNC has to
+	 *  filter out messages and tags that the client has not explicitly
+	 *  requested.
+	 *
+	 *  ### Message types
+	 *
+	 *  The following table documents which capabilities the client is required
+	 *  to have requested in order to receive certain types of messages.
+	 *
+	 *  Message type | Capability
+	 *  ------------ | ----------
+	 *  \c ACCOUNT   | \l CClient::HasAccountNotify() (<a href="http://ircv3.net/specs/extensions/account-notify-3.1.html">account-notify</a>)
+	 *  \c AWAY      | \l CClient::HasAwayNotify() (<a href="http://ircv3.net/specs/extensions/away-notify-3.1.html">away-notify</a>)
+	 *
+	 *  ### Message tags
 	 *
 	 *  The following table documents currently supported message tags, and
 	 *  which capabilities the client is required to have requested to receive
@@ -215,7 +232,7 @@ public:
 	 *  pClient->PutClient(Message.ToString());
 	 *  \endcode
 	 */
-	void PutClient(const CMessage& Message);
+	bool PutClient(const CMessage& Message);
 	unsigned int PutStatus(const CTable& table);
 	void PutStatus(const CString& sLine);
 	void PutStatusNotice(const CString& sLine);

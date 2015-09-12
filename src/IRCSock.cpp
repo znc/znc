@@ -281,13 +281,8 @@ static void FixupChanNick(CNick& Nick, CChan* pChan) {
 }
 
 bool CIRCSock::OnAccountMessage(CMessage& Message) {
-	const vector<CClient*>& vClients = m_pNetwork->GetClients();
-	for (CClient* pClient : vClients) {
-		if (pClient->HasAccountNotify()) {
-			m_pNetwork->PutUser(Message, pClient);
-		}
-	}
-	return true;
+	// TODO: IRCSOCKMODULECALL(OnAccountMessage(Message)) ?
+	return false;
 }
 
 bool CIRCSock::OnActionMessage(CActionMessage& Message) {
@@ -323,13 +318,8 @@ bool CIRCSock::OnActionMessage(CActionMessage& Message) {
 }
 
 bool CIRCSock::OnAwayMessage(CMessage& Message) {
-	const vector<CClient*>& vClients = m_pNetwork->GetClients();
-	for (CClient* pClient : vClients) {
-		if (pClient->HasAwayNotify()) {
-			m_pNetwork->PutUser(Message, pClient);
-		}
-	}
-	return true;
+	// TODO: IRCSOCKMODULECALL(OnAwayMessage(Message)) ?
+	return false;
 }
 
 bool CIRCSock::OnCapabilityMessage(CMessage& Message) {

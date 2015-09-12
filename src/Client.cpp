@@ -749,8 +749,14 @@ void CClient::PutClient(const CString& sLine) {
 	Write(sCopy + "\r\n");
 }
 
-void CClient::PutClient(const CMessage& Message)
+bool CClient::PutClient(const CMessage& Message)
 {
+	if (!m_bAwayNotify && Message.GetType() == CMessage::Type::Away) {
+		return false;
+	} else if (!m_bAccountNotify && Message.GetType() == CMessage::Type::Account) {
+		return false;
+	}
+
 	CString sLine = Message.ToString(CMessage::ExcludeTags);
 
 	// TODO: introduce a module hook that gives control over the tags that are sent
@@ -777,6 +783,7 @@ void CClient::PutClient(const CMessage& Message)
 	}
 
 	PutClient(sLine);
+	return true;
 }
 
 void CClient::PutStatusNotice(const CString& sLine) {
