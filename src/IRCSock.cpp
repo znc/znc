@@ -811,31 +811,6 @@ bool CIRCSock::OnNumericMessage(CNumericMessage& Message) {
 				pChan->OnWho(sNick, sIdent, sHost);
 			}
 
-			if (m_bNamesx && (sNick.size() > 1) && IsPermChar(sNick[1])) {
-				// sLine uses multi-prefix
-
-				const vector<CClient*>& vClients = m_pNetwork->GetClients();
-				for (CClient* pClient : vClients) {
-					if (pClient->HasNamesx()) {
-						m_pNetwork->PutUser(Message, pClient);
-					} else {
-						// The client doesn't support multi-prefix so we need to remove
-						// the other prefixes.
-
-						CString sNewNick = sNick;
-						size_t pos = sNick.find_first_not_of(GetPerms());
-						if (pos >= 2 && pos != CString::npos) {
-							sNewNick = sNick[0] + sNick.substr(pos);
-						}
-						CMessage WhoMsg(Message);
-						WhoMsg.SetParam(5, sNewNick);
-						m_pNetwork->PutUser(WhoMsg, pClient);
-					}
-				}
-
-				return true;
-			}
-
 			CChan* pChan = m_pNetwork->FindChan(sChan);
 			if (pChan && pChan->IsDetached()) {
 				return true;
