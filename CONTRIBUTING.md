@@ -11,6 +11,9 @@ Reporting bugs
         * `/znc version`
     * If you are reporting a crash, please see [the debugging page] on
       wiki.znc.in.
+    * If you are reporting an issue with connectivity, please run ZNC
+      in debug mode and include the relevant part of the output. To enable
+      debug mode, run ZNC with the `-D` flag.
 
 [The debugging page]:http://wiki.znc.in/Debugging
 
