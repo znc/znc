@@ -16,13 +16,8 @@
 
 #include <gtest/gtest.h>
 #include <gmock/gmock.h>
+#include "IRCTest.h"
 #include <znc/Query.h>
-#include <znc/User.h>
-#include <znc/Client.h>
-#include <znc/IRCNetwork.h>
-#include <znc/ZNCString.h>
-#include <znc/ZNCDebug.h>
-#include <znc/znc.h>
 
 using ::testing::SizeIs;
 using ::testing::ElementsAre;
@@ -73,15 +68,6 @@ TEST_F(QueryTest, BufferSize) {
 	EXPECT_EQ(1000u, query.GetBufferCount());
 }
 
-class TestClient : public CClient {
-public:
-	bool Write(const CString& sData) override {
-		lines.push_back(sData);
-		return true;
-	}
-	VCString lines;
-};
-
 TEST_F(QueryTest, SendBuffer) {
 	CUser user("user");
 	CIRCNetwork network(&user, "network");
@@ -90,28 +76,28 @@ TEST_F(QueryTest, SendBuffer) {
 	TestClient client;
 	client.SetNick("me");
 	client.AcceptLogin(user);
-	client.lines.clear();
+	client.Reset();
 
 	CQuery query("query", &network);
 	query.AddBuffer(":sender PRIVMSG {target} :{text}", "a message");
 	query.AddBuffer(":me PRIVMSG someone :{text}", "a self-message");
 	query.AddBuffer(":sender NOTICE #znc :{text}", "a notice");
 
-	client.lines.clear();
+	client.Reset();
 	query.SendBuffer(&client);
-	EXPECT_THAT(client.lines, ElementsAre(MatchesRegex(R"(:sender PRIVMSG me :\[\d\d:\d\d:\d\d\] a message)"),
-	                                      MatchesRegex(R"(:sender NOTICE #znc :\[\d\d:\d\d:\d\d\] a notice)")));
+	EXPECT_THAT(client.vsLines, ElementsAre(MatchesRegex(R"(:sender PRIVMSG me :\[\d\d:\d\d:\d\d\] a message)"),
+	                                        MatchesRegex(R"(:sender NOTICE #znc :\[\d\d:\d\d:\d\d\] a notice)")));
 
-	client.lines.clear();
+	client.Reset();
 	user.SetTimestampPrepend(false);
 	query.SendBuffer(&client);
-	EXPECT_THAT(client.lines, ElementsAre(":sender PRIVMSG me :a message", ":sender NOTICE #znc :a notice"));
+	EXPECT_THAT(client.vsLines, ElementsAre(":sender PRIVMSG me :a message", ":sender NOTICE #znc :a notice"));
 
-	client.lines.clear();
+	client.Reset();
 	user.SetTimestampAppend(true);
 	query.SendBuffer(&client);
-	EXPECT_THAT(client.lines, ElementsAre(MatchesRegex(R"(:sender PRIVMSG me :a message \[\d\d:\d\d:\d\d\])"),
-	                                      MatchesRegex(R"(:sender NOTICE #znc :a notice \[\d\d:\d\d:\d\d\])")));
+	EXPECT_THAT(client.vsLines, ElementsAre(MatchesRegex(R"(:sender PRIVMSG me :a message \[\d\d:\d\d:\d\d\])"),
+	                                        MatchesRegex(R"(:sender NOTICE #znc :a notice \[\d\d:\d\d:\d\d\])")));
 
 	network.ClientDisconnected(&client);
 }
