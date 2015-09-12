@@ -764,7 +764,20 @@ bool CClient::PutClient(const CMessage& Message)
 		if (Msg.GetType() == CMessage::Type::Numeric) {
 			unsigned int uCode = static_cast<CNumericMessage&>(Msg).GetCode();
 
-			if (uCode == 353) { // RPL_NAMES
+			if (uCode == 352) { // RPL_WHOREPLY
+				if (!m_bNamesx && pIRCSock->HasNamesx()) {
+					// The server has NAMESX, but the client doesn't, so we need to remove extra prefixes
+					CString sNick = Msg.GetParam(6);
+					if (sNick.size() > 1 && pIRCSock->IsPermChar(sNick[1])) {
+						CString sNewNick = sNick;
+						size_t pos = sNick.find_first_not_of(pIRCSock->GetPerms());
+						if (pos >= 2 && pos != CString::npos) {
+							sNewNick = sNick[0] + sNick.substr(pos);
+						}
+						Msg.SetParam(6, sNewNick);
+					}
+				}
+			} else if (uCode == 353) { // RPL_NAMES
 				if ((!m_bNamesx && pIRCSock->HasNamesx()) || (!m_bUHNames && pIRCSock->HasUHNames())) {
 					// The server has either UHNAMES or NAMESX, but the client is missing either or both
 					CString sNicks = Msg.GetParam(3);
