@@ -792,6 +792,10 @@ bool CClient::PutClient(const CMessage& Message)
 					Msg.SetParam(3, CString(" ").Join(vsNicks.begin(), vsNicks.end()));
 				}
 			}
+		} else if (Msg.GetType() == CMessage::Type::Join) {
+			if (!m_bExtendedJoin && pIRCSock->HasExtendedJoin()) {
+				Msg.SetParams({static_cast<CJoinMessage&>(Msg).GetTarget()});
+			}
 		}
 	}
 

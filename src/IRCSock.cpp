@@ -493,20 +493,6 @@ bool CIRCSock::OnJoinMessage(CJoinMessage& Message) {
 		if (pChan->IsDetached()) {
 			return true;
 		}
-
-		if (HasExtendedJoin()) {
-			CString sLine = ":" + Nick.GetNickMask() + " JOIN " + pChan->GetName();
-
-			const vector<CClient*>& vClients = m_pNetwork->GetClients();
-			for (CClient* pClient : vClients) {
-				if (pClient->HasExtendedJoin()) {
-					m_pNetwork->PutUser(Message, pClient);
-				} else {
-					m_pNetwork->PutUser(sLine, pClient);
-				}
-			}
-			return true;
-		}
 	}
 
 	return false;
