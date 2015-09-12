@@ -35,6 +35,11 @@ public:
 		return true;
 	}
 	void Reset() { vsLines.clear(); }
+	void SetAccountNotify(bool bEnabled) { m_bAccountNotify = bEnabled; }
+	void SetAwayNotify(bool bEnabled) { m_bAwayNotify = bEnabled; }
+	void SetExtendedJoin(bool bEnabled) { m_bExtendedJoin = bEnabled; }
+	void SetNamesx(bool bEnabled) { m_bNamesx = bEnabled; }
+	void SetUHNames(bool bEnabled) { m_bUHNames = bEnabled; }
 	VCString vsLines;
 };
 
