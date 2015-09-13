@@ -49,9 +49,9 @@ TEST_F(QueryTest, AddClearBuffer) {
 	CQuery query("query", &network);
 	EXPECT_TRUE(query.GetBuffer().IsEmpty());
 	query.AddBuffer("foo");
-	EXPECT_EQ(1, query.GetBuffer().Size());
+	EXPECT_EQ(1u, query.GetBuffer().Size());
 	query.AddBuffer("bar");
-	EXPECT_EQ(2, query.GetBuffer().Size());
+	EXPECT_EQ(2u, query.GetBuffer().Size());
 	query.ClearBuffer();
 	EXPECT_TRUE(query.GetBuffer().IsEmpty());
 }
@@ -61,16 +61,16 @@ TEST_F(QueryTest, BufferSize) {
 	CIRCNetwork network(&user, "network");
 
 	CQuery query("query", &network);
-	EXPECT_EQ(50, user.GetQueryBufferSize());
-	EXPECT_EQ(50, query.GetBufferCount());
+	EXPECT_EQ(50u, user.GetQueryBufferSize());
+	EXPECT_EQ(50u, query.GetBufferCount());
 
-	EXPECT_EQ(500, CZNC::Get().GetMaxBufferSize());
+	EXPECT_EQ(500u, CZNC::Get().GetMaxBufferSize());
 	EXPECT_FALSE(query.SetBufferCount(1000, false));
-	EXPECT_EQ(50, query.GetBufferCount());
+	EXPECT_EQ(50u, query.GetBufferCount());
 	EXPECT_TRUE(query.SetBufferCount(500, false));
-	EXPECT_EQ(500, query.GetBufferCount());
+	EXPECT_EQ(500u, query.GetBufferCount());
 	EXPECT_TRUE(query.SetBufferCount(1000, true));
-	EXPECT_EQ(1000, query.GetBufferCount());
+	EXPECT_EQ(1000u, query.GetBufferCount());
 }
 
 class TestClient : public CClient {
