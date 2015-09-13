@@ -65,6 +65,7 @@ CString CMessage::GetParams(unsigned int uIdx, unsigned int uLen) const
 void CMessage::SetParams(const VCString& vsParams)
 {
 	m_vsParams = vsParams;
+	m_bColon = false;
 
 	if (m_eType == Type::Text || m_eType == Type::Notice || m_eType == Type::Action || m_eType == Type::CTCP) {
 		InitType();
