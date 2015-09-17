@@ -463,10 +463,13 @@ timeval CUtils::ParseServerTime(const CString& sTime) {
 	memset(&stm, 0, sizeof(stm));
 	const char* cp = strptime(sTime.c_str(), "%Y-%m-%dT%H:%M:%S", &stm);
 	struct timeval tv;
-	tv.tv_sec = mktime(&stm);
-	CString s_usec(cp);
-	if (s_usec.TrimPrefix(".") && s_usec.TrimSuffix("Z")) {
-		tv.tv_usec = s_usec.ToULong() * 1000;
+	memset(&tv, 0, sizeof(stm));
+	if (cp) {
+		tv.tv_sec = mktime(&stm);
+		CString s_usec(cp);
+		if (s_usec.TrimPrefix(".") && s_usec.TrimSuffix("Z")) {
+			tv.tv_usec = s_usec.ToULong() * 1000;
+		}
 	}
 	return tv;
 }

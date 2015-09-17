@@ -96,6 +96,10 @@ TEST(UtilsTest, ServerTime) {
 	EXPECT_EQ(now.tv_sec, tv2.tv_sec);
 	EXPECT_EQ(now.tv_usec, tv2.tv_usec);
 
+	timeval tv3 = CUtils::ParseServerTime("invalid");
+	CString str3 = CUtils::FormatServerTime(tv3);
+	EXPECT_EQ("1970-01-01T00:00:00.000Z", str3);
+
 	if (oldTZ) {
 		setenv("TZ", oldTZ, 1);
 		free(oldTZ);
