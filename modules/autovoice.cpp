@@ -174,11 +174,11 @@ public:
 	}
 
 	void OnOp2(const CNick* pOpNick, const CNick& Nick, CChan& Channel, bool bNoChange) override {
-		if (Nick.GetNick() == GetNetwork()->GetIRCNick().GetNick()) {
+		if (Nick.NickEquals(GetNetwork()->GetNick())) {
 			const map<CString,CNick>& msNicks = Channel.GetNicks();
 
 			for (const auto& it : msNicks) {
-				if (!it.second.HasPerm(CChan::Op)) {
+				if (!it.second.HasPerm(CChan::Voice)) {
 					CheckAutoVoice(it.second, Channel);
 				}
 			}
@@ -187,11 +187,6 @@ public:
 
 	bool CheckAutoVoice(const CNick& Nick, CChan& Channel) {
 		CAutoVoiceUser *pUser = FindUserByHost(Nick.GetHostMask(), Channel.GetName());
-
-		if (!pUser) {
-			return false;
-		}
-
 		if (pUser) {
 			PutIRC("MODE " + Channel.GetName() + " +v " + Nick.GetNick());
 		}
