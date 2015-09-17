@@ -54,7 +54,7 @@ BIN_SRCS  := src/main.cpp
 LIB_OBJS  := $(patsubst %cpp,%o,$(LIB_SRCS))
 BIN_OBJS  := $(patsubst %cpp,%o,$(BIN_SRCS))
 TESTS     := StringTest ConfigTest UtilsTest ThreadTest NickTest ClientTest NetworkTest \
-	MessageTest ModulesTest IRCSockTest QueryTest
+	MessageTest ModulesTest IRCSockTest QueryTest BufferTest
 TESTS     := $(addprefix test/,$(addsuffix .o,$(TESTS)))
 CLEAN     := znc src/*.o test/*.o core core.* .version_extra .depend modules/.depend \
 	unittest $(LIBZNC)

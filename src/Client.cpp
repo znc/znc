@@ -1104,13 +1104,13 @@ void CClient::AddBuffer(const T& Message)
 	if (m_pNetwork->IsChan(sTarget)) {
 		CChan* pChan = m_pNetwork->FindChan(sTarget);
 		if (pChan && (!pChan->AutoClearChanBuffer() || !m_pNetwork->IsUserOnline())) {
-			pChan->AddBuffer(Format.ToString(CMessage::ExcludeTags), Message.GetText(), &Message.GetTime(), Message.GetTags());
+			pChan->AddBuffer(Format, Message.GetText());
 		}
 	} else if (Message.GetType() != CMessage::Type::Notice) {
 		if (!m_pUser->AutoClearQueryBuffer() || !m_pNetwork->IsUserOnline()) {
 			CQuery* pQuery = m_pNetwork->AddQuery(sTarget);
 			if (pQuery) {
-				pQuery->AddBuffer(Format.ToString(CMessage::ExcludeTags), Message.GetText(), &Message.GetTime(), Message.GetTags());
+				pQuery->AddBuffer(Format, Message.GetText());
 			}
 		}
 	}

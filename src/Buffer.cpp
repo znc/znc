@@ -89,7 +89,7 @@ CBuffer::CBuffer(unsigned int uLineCount) : m_uLineCount(uLineCount) {
 
 CBuffer::~CBuffer() {}
 
-CBuffer::size_type CBuffer::AddLine(const CString& sFormat, const CString& sText, const timeval* ts, const MCString& mssTags) {
+CBuffer::size_type CBuffer::AddLine(const CMessage& Format, const CString& sText) {
 	if (!m_uLineCount) {
 		return 0;
 	}
@@ -98,31 +98,46 @@ CBuffer::size_type CBuffer::AddLine(const CString& sFormat, const CString& sText
 		erase(begin());
 	}
 
-	push_back(CBufLine(sFormat, sText, ts, mssTags));
+	push_back(CBufLine(Format, sText));
 	return size();
 }
 
-CBuffer::size_type CBuffer::UpdateLine(const CString& sMatch, const CString& sFormat, const CString& sText) {
+CBuffer::size_type CBuffer::UpdateLine(const CString& sCommand, const CMessage& Format, const CString& sText) {
 	for (CBufLine& Line : *this) {
-		if (Line.GetFormat().compare(0, sMatch.length(), sMatch) == 0) {
-			Line.SetFormat(sFormat);
-			Line.SetText(sText);
-			Line.UpdateTime();
+		if (Line.GetCommand().Equals(sCommand)) {
+			Line = CBufLine(Format, sText);
 			return size();
 		}
 	}
 
-	return AddLine(sFormat, sText);
+	return AddLine(Format, sText);
+}
+
+CBuffer::size_type CBuffer::UpdateExactLine(const CMessage& Format, const CString& sText) {
+	for (CBufLine& Line : *this) {
+		if (Line.Equals(Format)) {
+			return size();
+		}
+	}
+
+	return AddLine(Format, sText);
+}
+
+CBuffer::size_type CBuffer::AddLine(const CString& sFormat, const CString& sText, const timeval* ts, const MCString& mssTags) {
+	CMessage Message(sFormat);
+	if (ts) {
+		Message.SetTime(*ts);
+	}
+	Message.SetTags(mssTags);
+	return AddLine(Message, sText);
+}
+
+CBuffer::size_type CBuffer::UpdateLine(const CString& sMatch, const CString& sFormat, const CString& sText) {
+	return UpdateLine(CMessage(sMatch).GetCommand(), CMessage(sFormat), sText);
 }
 
 CBuffer::size_type CBuffer::UpdateExactLine(const CString& sFormat, const CString& sText) {
-	for (const CBufLine& Line : *this) {
-		if (Line.GetFormat() == sFormat && Line.GetText() == sText) {
-			return size();
-		}
-	}
-
-	return AddLine(sFormat, sText);
+	return UpdateExactLine(CMessage(sFormat, sText));
 }
 
 const CBufLine& CBuffer::GetBufLine(unsigned int uIdx) const {

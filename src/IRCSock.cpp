@@ -297,7 +297,12 @@ bool CIRCSock::OnActionMessage(CActionMessage& Message) {
 			const CNick& Nick = Message.GetNick();
 			CQuery* pQuery = m_pNetwork->AddQuery(Nick.GetNick());
 			if (pQuery) {
-				pQuery->AddBuffer(":" + _NAMEDFMT(Nick.GetNickMask()) + " PRIVMSG {target} :\001ACTION {text}\001", Message.GetText(), &Message.GetTime(), Message.GetTags());
+				CActionMessage Format;
+				Format.Clone(Message);
+				Format.SetNick(_NAMEDFMT(Nick.GetNickMask()));
+				Format.SetTarget("{target}");
+				Format.SetText("{text}");
+				pQuery->AddBuffer(Format, Message.GetText());
 			}
 		}
 	} else {
@@ -309,7 +314,12 @@ bool CIRCSock::OnActionMessage(CActionMessage& Message) {
 			if (bResult) return true;
 
 			if (!pChan->AutoClearChanBuffer() || !m_pNetwork->IsUserOnline() || pChan->IsDetached()) {
-				pChan->AddBuffer(":" + _NAMEDFMT(Message.GetNick().GetNickMask()) + " PRIVMSG " + _NAMEDFMT(pChan->GetName()) + " :\001ACTION {text}\001", Message.GetText(), &Message.GetTime(), Message.GetTags());
+				CActionMessage Format;
+				Format.Clone(Message);
+				Format.SetNick(_NAMEDFMT(Message.GetNick().GetNickMask()));
+				Format.SetTarget(_NAMEDFMT(pChan->GetName()));
+				Format.SetText("{text}");
+				pChan->AddBuffer(Format, Message.GetText());
 			}
 		}
 	}
@@ -599,7 +609,12 @@ bool CIRCSock::OnNoticeMessage(CNoticeMessage& Message) {
 
 		if (!m_pNetwork->IsUserOnline()) {
 			// If the user is detached, add to the buffer
-			m_pNetwork->AddNoticeBuffer(":" + _NAMEDFMT(Message.GetNick().GetNickMask()) + " NOTICE {target} :{text}", Message.GetText());
+			CNoticeMessage Format;
+			Format.Clone(Message);
+			Format.SetNick(CNick(_NAMEDFMT(Message.GetNick().GetNickMask())));
+			Format.SetTarget("{target}");
+			Format.SetText("{text}");
+			m_pNetwork->AddNoticeBuffer(Format, Message.GetText());
 		}
 
 		return false;
@@ -612,7 +627,12 @@ bool CIRCSock::OnNoticeMessage(CNoticeMessage& Message) {
 			if (bResult) return true;
 
 			if (!pChan->AutoClearChanBuffer() || !m_pNetwork->IsUserOnline() || pChan->IsDetached()) {
-				pChan->AddBuffer(":" + _NAMEDFMT(Message.GetNick().GetNickMask()) + " NOTICE " + _NAMEDFMT(pChan->GetName()) + " :{text}", Message.GetText(), &Message.GetTime(), Message.GetTags());
+				CNoticeMessage Format;
+				Format.Clone(Message);
+				Format.SetNick(_NAMEDFMT(Message.GetNick().GetNickMask()));
+				Format.SetTarget(_NAMEDFMT(pChan->GetName()));
+				Format.SetText("{text}");
+				pChan->AddBuffer(Format, Message.GetText());
 			}
 		}
 
@@ -620,13 +640,22 @@ bool CIRCSock::OnNoticeMessage(CNoticeMessage& Message) {
 	}
 }
 
+static CMessage BufferMessage(const CNumericMessage& Message) {
+	CMessage Format(Message);
+	Format.SetNick(CNick(_NAMEDFMT(Message.GetNick().GetHostMask())));
+	Format.SetParam(0, "{target}");
+	unsigned uParams = Format.GetParams().size();
+	for (unsigned int i = 1; i < uParams; ++i) {
+		Format.SetParam(i, _NAMEDFMT(Format.GetParam(i)));
+	}
+	return Format;
+}
+
 bool CIRCSock::OnNumericMessage(CNumericMessage& Message) {
 	const CString& sCmd = Message.GetCommand();
 	CString sServer = Message.GetNick().GetHostMask();
 	unsigned int uRaw = Message.GetCode();
 	CString sNick = Message.GetParam(0);
-	CString sRest = Message.GetParams(1);
-	CString sTmp;
 
 	bool bResult = false;
 	IRCSOCKMODULECALL(OnNumericMessage(Message), &bResult);
@@ -664,7 +693,7 @@ bool CIRCSock::OnNumericMessage(CNumericMessage& Message) {
 			IRCSOCKMODULECALL(OnIRCConnected(), NOTHING);
 
 			m_pNetwork->ClearRawBuffer();
-			m_pNetwork->AddRawBuffer(":" + _NAMEDFMT(sServer) + " " + sCmd + " {target} " + _NAMEDFMT(sRest));
+			m_pNetwork->AddRawBuffer(BufferMessage(Message));
 
 			m_pNetwork->IRCConnected();
 
@@ -672,7 +701,7 @@ bool CIRCSock::OnNumericMessage(CNumericMessage& Message) {
 		}
 		case 5:
 			ParseISupport(Message);
-			m_pNetwork->UpdateExactRawBuffer(":" + _NAMEDFMT(sServer) + " " + sCmd + " {target} " + _NAMEDFMT(sRest));
+			m_pNetwork->UpdateExactRawBuffer(BufferMessage(Message));
 			break;
 		case 10: { // :irc.server.com 010 nick <hostname> <port> :<info>
 			CString sHost = Message.GetParam(1);
@@ -694,8 +723,7 @@ bool CIRCSock::OnNumericMessage(CNumericMessage& Message) {
 		case 255:  // client count
 		case 265:  // local users
 		case 266:  // global users
-			sTmp = ":" + _NAMEDFMT(sServer) + " " + sCmd;
-			m_pNetwork->UpdateRawBuffer(sTmp, sTmp + " {target} " + _NAMEDFMT(sRest));
+			m_pNetwork->UpdateRawBuffer(sCmd, BufferMessage(Message));
 			break;
 		case 305:
 			m_pNetwork->SetIRCAway(false);
@@ -869,7 +897,7 @@ bool CIRCSock::OnNumericMessage(CNumericMessage& Message) {
 		case 372:  // motd
 		case 376:  // end motd
 			if (m_pNetwork->GetIRCServer().Equals(sServer)) {
-				m_pNetwork->AddMotdBuffer(":" + _NAMEDFMT(sServer) + " " + sCmd + " {target} " + _NAMEDFMT(sRest));
+				m_pNetwork->AddMotdBuffer(BufferMessage(Message));
 			}
 			break;
 		case 437:
@@ -1008,7 +1036,12 @@ bool CIRCSock::OnTextMessage(CTextMessage& Message) {
 			const CNick& Nick = Message.GetNick();
 			CQuery* pQuery = m_pNetwork->AddQuery(Nick.GetNick());
 			if (pQuery) {
-				pQuery->AddBuffer(":" + _NAMEDFMT(Nick.GetNickMask()) + " PRIVMSG {target} :{text}", Message.GetText(), &Message.GetTime(), Message.GetTags());
+				CTextMessage Format;
+				Format.Clone(Message);
+				Format.SetNick(_NAMEDFMT(Nick.GetNickMask()));
+				Format.SetTarget("{target}");
+				Format.SetText("{text}");
+				pQuery->AddBuffer(Format, Message.GetText());
 			}
 		}
 	} else {
@@ -1020,7 +1053,12 @@ bool CIRCSock::OnTextMessage(CTextMessage& Message) {
 			if (bResult) return true;
 
 			if (!pChan->AutoClearChanBuffer() || !m_pNetwork->IsUserOnline() || pChan->IsDetached()) {
-				pChan->AddBuffer(":" + _NAMEDFMT(Message.GetNick().GetNickMask()) + " PRIVMSG " + _NAMEDFMT(pChan->GetName()) + " :{text}", Message.GetText(), &Message.GetTime(), Message.GetTags());
+				CTextMessage Format;
+				Format.Clone(Message);
+				Format.SetNick(_NAMEDFMT(Message.GetNick().GetNickMask()));
+				Format.SetTarget(_NAMEDFMT(pChan->GetName()));
+				Format.SetText("{text}");
+				pChan->AddBuffer(Format, Message.GetText());
 			}
 		}
 	}
@@ -1051,7 +1089,10 @@ bool CIRCSock::OnWallopsMessage(CMessage& Message) {
 	CString sMsg = Message.GetParam(0);
 
 	if (!m_pNetwork->IsUserOnline()) {
-		m_pNetwork->AddNoticeBuffer(":" + _NAMEDFMT(Message.GetNick().GetNickMask()) + " WALLOPS :{text}", sMsg);
+		CMessage Format(Message);
+		Format.SetNick(CNick(_NAMEDFMT(Message.GetNick().GetHostMask())));
+		Format.SetParam(0, "{text}");
+		m_pNetwork->AddNoticeBuffer(Format, sMsg);
 	}
 	return false;
 }

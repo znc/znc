@@ -155,18 +155,35 @@ public:
 	bool PutIRC(const CString& sLine);
 
 	// Buffers
-	void AddRawBuffer(const CString& sFormat, const CString& sText = "") { m_RawBuffer.AddLine(sFormat, sText); }
-	void UpdateRawBuffer(const CString& sMatch, const CString& sFormat, const CString& sText = "") { m_RawBuffer.UpdateLine(sMatch, sFormat, sText); }
-	void UpdateExactRawBuffer(const CString& sFormat, const CString& sText = "") { m_RawBuffer.UpdateExactLine(sFormat, sText); }
+	void AddRawBuffer(const CMessage& Format, const CString& sText = "") { m_RawBuffer.AddLine(Format, sText); }
+	void UpdateRawBuffer(const CString& sCommand, const CMessage& Format, const CString& sText = "") { m_RawBuffer.UpdateLine(sCommand, Format, sText); }
+	void UpdateExactRawBuffer(const CMessage& Format, const CString& sText = "") { m_RawBuffer.UpdateExactLine(Format, sText); }
 	void ClearRawBuffer() { m_RawBuffer.Clear(); }
 
-	void AddMotdBuffer(const CString& sFormat, const CString& sText = "") { m_MotdBuffer.AddLine(sFormat, sText); }
-	void UpdateMotdBuffer(const CString& sMatch, const CString& sFormat, const CString& sText = "") { m_MotdBuffer.UpdateLine(sMatch, sFormat, sText); }
+	/// @deprecated
+	void AddRawBuffer(const CString& sFormat, const CString& sText = "") { m_RawBuffer.AddLine(sFormat, sText); }
+	/// @deprecated
+	void UpdateRawBuffer(const CString& sMatch, const CString& sFormat, const CString& sText = "") { m_RawBuffer.UpdateLine(sMatch, sFormat, sText); }
+	/// @deprecated
+	void UpdateExactRawBuffer(const CString& sFormat, const CString& sText = "") { m_RawBuffer.UpdateExactLine(sFormat, sText); }
+
+	void AddMotdBuffer(const CMessage& Format, const CString& sText = "") { m_MotdBuffer.AddLine(Format, sText); }
+	void UpdateMotdBuffer(const CString& sCommand, const CMessage& Format, const CString& sText = "") { m_MotdBuffer.UpdateLine(sCommand, Format, sText); }
 	void ClearMotdBuffer() { m_MotdBuffer.Clear(); }
 
-	void AddNoticeBuffer(const CString& sFormat, const CString& sText = "") { m_NoticeBuffer.AddLine(sFormat, sText); }
-	void UpdateNoticeBuffer(const CString& sMatch, const CString& sFormat, const CString& sText = "") { m_NoticeBuffer.UpdateLine(sMatch, sFormat, sText); }
+	/// @deprecated
+	void AddMotdBuffer(const CString& sFormat, const CString& sText = "") { m_MotdBuffer.AddLine(sFormat, sText); }
+	/// @deprecated
+	void UpdateMotdBuffer(const CString& sMatch, const CString& sFormat, const CString& sText = "") { m_MotdBuffer.UpdateLine(sMatch, sFormat, sText); }
+
+	void AddNoticeBuffer(const CMessage& Format, const CString& sText = "") { m_NoticeBuffer.AddLine(Format, sText); }
+	void UpdateNoticeBuffer(const CString& sCommand, const CMessage& Format, const CString& sText = "") { m_NoticeBuffer.UpdateLine(sCommand, Format, sText); }
 	void ClearNoticeBuffer() { m_NoticeBuffer.Clear(); }
+
+	/// @deprecated
+	void AddNoticeBuffer(const CString& sFormat, const CString& sText = "") { m_NoticeBuffer.AddLine(sFormat, sText); }
+	/// @deprecated
+	void UpdateNoticeBuffer(const CString& sMatch, const CString& sFormat, const CString& sText = "") { m_NoticeBuffer.UpdateLine(sMatch, sFormat, sText); }
 
 	void ClearQueryBuffer();
 	// !Buffers

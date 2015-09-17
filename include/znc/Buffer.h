@@ -31,12 +31,16 @@ class CBufLine {
 public:
 	CBufLine() : CBufLine("") { throw 0; } // shouldn't be called, but is needed for compilation
 	CBufLine(const CMessage& Format, const CString& sText = "");
+	/// @deprecated
 	CBufLine(const CString& sFormat, const CString& sText = "", const timeval* ts = nullptr, const MCString& mssTags = MCString::EmptyMap);
 	~CBufLine();
 	CMessage ToMessage(const CClient& Client, const MCString& mssParams) const;
 	/// @deprecated Use ToMessage() instead
 	CString GetLine(const CClient& Client, const MCString& mssParams) const;
+	/// @deprecated
 	void UpdateTime();
+
+	bool Equals(const CMessage& Format) const { return m_Message.Equals(Format); }
 
 	// Setters
 	void SetFormat(const CString& sFormat) { m_Message.Parse(sFormat); }
@@ -46,6 +50,7 @@ public:
 	// !Setters
 
 	// Getters
+	const CString& GetCommand() const { return m_Message.GetCommand(); }
 	CString GetFormat() const { return m_Message.ToString(CMessage::ExcludeTags); }
 	const CString& GetText() const { return m_sText; }
 	timeval GetTime() const { return m_Message.GetTime(); }
@@ -63,7 +68,9 @@ public:
 	CBuffer(unsigned int uLineCount = 100);
 	~CBuffer();
 
-	// TODO: CMessage-based API
+	size_type AddLine(const CMessage& Format, const CString& sText = "");
+	size_type UpdateLine(const CString& sCommand, const CMessage& Format, const CString& sText = "");
+	size_type UpdateExactLine(const CMessage& Format, const CString& sText = "");
 
 	size_type AddLine(const CString& sFormat, const CString& sText = "", const timeval* ts = nullptr, const MCString& mssTags = MCString::EmptyMap);
 	/// Same as AddLine, but replaces a line whose format string starts with sMatch if there is one.
