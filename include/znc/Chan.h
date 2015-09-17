@@ -98,6 +98,8 @@ public:
 	bool SetBufferCount(unsigned int u, bool bForce = false) { m_bHasBufferCountSet = true; return m_Buffer.SetLineCount(u, bForce); }
 	void InheritBufferCount(unsigned int u, bool bForce = false) { if (!m_bHasBufferCountSet) m_Buffer.SetLineCount(u, bForce); }
 	void ResetBufferCount();
+	size_t AddBuffer(const CMessage& Format, const CString& sText = "") { return m_Buffer.AddLine(Format, sText); }
+	/// @deprecated
 	size_t AddBuffer(const CString& sFormat, const CString& sText = "", const timeval* ts = nullptr, const MCString& mssTags = MCString::EmptyMap) { return m_Buffer.AddLine(sFormat, sText, ts, mssTags); }
 	void ClearBuffer() { m_Buffer.Clear(); }
 	void SendBuffer(CClient* pClient);
