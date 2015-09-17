@@ -15,22 +15,23 @@
  */
 
 #include <gtest/gtest.h>
+#include <gmock/gmock.h>
 #include <znc/ZNCString.h>
 #include <znc/Message.h>
+
+using ::testing::ContainerEq;
 
 TEST(MessageTest, SetParam) {
 	CMessage msg;
 
 	msg.SetParam(1, "bar");
-	msg.SetParam(0, "foo");
+	EXPECT_THAT(msg.GetParams(), ContainerEq(VCString{"", "bar"}));
 
-	VCString params = {"foo", "bar"};
-	EXPECT_EQ(params, msg.GetParams());
+	msg.SetParam(0, "foo");
+	EXPECT_THAT(msg.GetParams(), ContainerEq(VCString{"foo", "bar"}));
 
 	msg.SetParam(3, "baz");
-
-	params = {"foo", "bar", "", "baz"};
-	EXPECT_EQ(params, msg.GetParams());
+	EXPECT_THAT(msg.GetParams(), ContainerEq(VCString{"foo", "bar", "", "baz"}));
 }
 
 TEST(MessageTest, GetParams) {
@@ -394,54 +395,36 @@ TEST(MessageTest, Parse) {
 TEST(MessageTest, ParseWithTags) {
 	const CString line = "@tag1=value1;tag2;vendor1/tag3=value2;vendor2/tag4 :irc.example.com COMMAND param1 param2 :param3 param3";
 
-	MCString tags;
-	tags["tag1"] = "value1";
-	tags["tag2"] = "";
-	tags["vendor1/tag3"] = "value2";
-	tags["vendor2/tag4"] = "";
-
-	VCString params = {"param1", "param2", "param3 param3"};
-
 	CMessage msg(line);
 	EXPECT_EQ(line, msg.ToString());
-	EXPECT_EQ(tags, msg.GetTags());
+	EXPECT_THAT(msg.GetTags(), ContainerEq(MCString{{"tag1","value1"},{"tag2",""},{"vendor1/tag3","value2"},{"vendor2/tag4",""}}));
 	EXPECT_EQ("irc.example.com", msg.GetNick().GetNick());
 	EXPECT_EQ("COMMAND", msg.GetCommand());
-	EXPECT_EQ(params, msg.GetParams());
+	EXPECT_THAT(msg.GetParams(), ContainerEq(VCString{"param1", "param2", "param3 param3"}));
 }
 
 // when checking a valid message with a source but no tags
 TEST(MessageTest, ParseWithoutTags) {
 	const CString line = ":irc.example.com COMMAND param1 param2 :param3 param3";
 
-	VCString params = {"param1", "param2", "param3 param3"};
-
 	CMessage msg(line);
 	EXPECT_EQ(line, msg.ToString());
 	EXPECT_EQ(MCString(), msg.GetTags());
 	EXPECT_EQ("irc.example.com", msg.GetNick().GetNick());
 	EXPECT_EQ("COMMAND", msg.GetCommand());
-	EXPECT_EQ(params, msg.GetParams());
+	EXPECT_THAT(msg.GetParams(), ContainerEq(VCString{"param1", "param2", "param3 param3"}));
 }
 
 // when checking a valid message with tags but no source
 TEST(MessageTest, ParseWithoutSource) {
 	const CString line = "@tag1=value1;tag2;vendor1/tag3=value2;vendor2/tag4 COMMAND param1 param2 :param3 param3";
 
-	MCString tags;
-	tags["tag1"] = "value1";
-	tags["tag2"] = "";
-	tags["vendor1/tag3"] = "value2";
-	tags["vendor2/tag4"] = "";
-
-	VCString params = {"param1", "param2", "param3 param3"};
-
 	CMessage msg(line);
 	EXPECT_EQ(line, msg.ToString());
-	EXPECT_EQ(tags, msg.GetTags());
+	EXPECT_THAT(msg.GetTags(), ContainerEq(MCString{{"tag1","value1"},{"tag2",""},{"vendor1/tag3","value2"},{"vendor2/tag4",""}}));
 	EXPECT_EQ("", msg.GetNick().GetNick());
 	EXPECT_EQ("COMMAND", msg.GetCommand());
-	EXPECT_EQ(params, msg.GetParams());
+	EXPECT_THAT(msg.GetParams(), ContainerEq(VCString{"param1", "param2", "param3 param3"}));
 }
 
 // when checking a valid message with no tags, source or parameters
