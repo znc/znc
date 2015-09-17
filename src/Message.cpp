@@ -29,6 +29,13 @@ CMessage::CMessage(const CNick& Nick, const CString& sCommand, const VCString& v
 	InitTime();
 }
 
+bool CMessage::Equals(const CMessage& Other) const
+{
+	return m_Nick.NickEquals(Other.GetNick().GetNick()) &&
+	       m_sCommand.Equals(Other.GetCommand()) &&
+	       m_vsParams == Other.GetParams();
+}
+
 void CMessage::Clone(const CMessage& Message)
 {
 	if (&Message != this) {

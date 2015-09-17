@@ -56,6 +56,7 @@ public:
 	};
 	Type GetType() const { return m_eType; }
 
+	bool Equals(const CMessage& Other) const;
 	void Clone(const CMessage& Other);
 
 	// ZNC <-> IRC
