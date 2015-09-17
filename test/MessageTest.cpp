@@ -106,6 +106,27 @@ TEST(MessageTest, FormatFlags) {
 	EXPECT_EQ("COMMAND param", msg.ToString(CMessage::ExcludePrefix|CMessage::ExcludeTags));
 }
 
+TEST(MessageTest, Equals) {
+	EXPECT_TRUE(CMessage("JOIN #chan").Equals(CMessage("JOIN #chan")));
+	EXPECT_FALSE(CMessage("JOIN #chan").Equals(CMessage("JOIN #znc")));
+
+	EXPECT_TRUE(CMessage(":nick JOIN #chan").Equals(CMessage(":nick JOIN #chan")));
+	EXPECT_FALSE(CMessage(":nick JOIN #chan").Equals(CMessage(":nick JOIN #znc")));
+	EXPECT_FALSE(CMessage(":nick JOIN #chan").Equals(CMessage(":someone JOIN #chan")));
+
+	EXPECT_TRUE(CMessage("PRIVMSG nick :hi").Equals(CMessage("PRIVMSG nick :hi")));
+	EXPECT_TRUE(CMessage("PRIVMSG nick hi").Equals(CMessage("PRIVMSG nick :hi")));
+	EXPECT_TRUE(CMessage("PRIVMSG nick :hi").Equals(CMessage("PRIVMSG nick hi")));
+	EXPECT_TRUE(CMessage("PRIVMSG nick hi").Equals(CMessage("PRIVMSG nick hi")));
+
+	EXPECT_TRUE(CMessage("CMD nick p1 p2").Equals(CMessage("CMD nick p1 p2")));
+	EXPECT_TRUE(CMessage("CMD nick :p1 p2").Equals(CMessage("CMD nick :p1 p2")));
+	EXPECT_TRUE(CMessage("CMD nick p1 :p2").Equals(CMessage("CMD nick p1 p2")));
+	EXPECT_FALSE(CMessage("CMD nick :p1 p2").Equals(CMessage("CMD nick p1 p2")));
+
+	EXPECT_TRUE(CMessage("@t=now :sender CMD p").Equals(CMessage("@t=then :sender CMD p")));
+}
+
 TEST(MessageTest, Type) {
 	EXPECT_EQ(CMessage::Type::Unknown, CMessage("FOO").GetType());
 	EXPECT_EQ(CMessage::Type::Account, CMessage("ACCOUNT").GetType());
