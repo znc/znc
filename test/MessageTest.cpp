@@ -249,6 +249,11 @@ TEST(MessageTest, Mode) {
 	EXPECT_EQ("+k foo", msg.GetModes());
 
 	EXPECT_EQ(":nick MODE #chan +k foo", msg.ToString());
+
+	msg.Parse(":nick MODE nick :+i");
+	EXPECT_EQ("+i", msg.GetModes());
+
+	EXPECT_EQ(":nick MODE nick :+i", msg.ToString());
 }
 
 TEST(MessageTest, Nick) {

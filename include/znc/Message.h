@@ -144,7 +144,7 @@ public:
 
 class CModeMessage : public CTargetMessage {
 public:
-	CString GetModes() const { return GetParams(1); }
+	CString GetModes() const { return GetParams(1).TrimPrefix_n(":"); }
 };
 
 class CNickMessage : public CMessage {
