@@ -219,10 +219,9 @@ void CClient::ReadLine(const CString& sData) {
 			}
 		}
 		return;  // If the server understands it, we already enabled namesx / uhnames
-	} else if (sCommand.Equals("NOTICE")) {
+	} else if (Message.GetType() == CMessage::Type::Notice) {
 		CNoticeMessage& NoticeMsg = static_cast<CNoticeMessage&>(Message);
 		CString sTargets = NoticeMsg.GetTarget();
-		bool bIsCTCP = NoticeMsg.GetParam(1).WildCmp("\001*\001");
 
 		VCString vTargets;
 		sTargets.Split(",", vTargets, false);
@@ -238,21 +237,8 @@ void CClient::ReadLine(const CString& sData) {
 			}
 
 			bool bContinue = false;
-
-			if (bIsCTCP) {
-				CCTCPMessage& CTCPMsg = static_cast<CCTCPMessage&>(Message);
-				CString sCTCP = CTCPMsg.GetText();
-
-				if (sCTCP.Token(0) == "VERSION") {
-					CTCPMsg.SetText(sCTCP + " via " + CZNC::GetTag(false));
-				}
-
-				NETWORKMODULECALL(OnUserCTCPReplyMessage(CTCPMsg), m_pUser, m_pNetwork, this, &bContinue);
-				if (bContinue) continue;
-			} else {
-				NETWORKMODULECALL(OnUserNoticeMessage(NoticeMsg), m_pUser, m_pNetwork, this, &bContinue);
-				if (bContinue) continue;
-			}
+			NETWORKMODULECALL(OnUserNoticeMessage(NoticeMsg), m_pUser, m_pNetwork, this, &bContinue);
+			if (bContinue) continue;
 
 			if (!GetIRCSock()) {
 				// Some lagmeters do a NOTICE to their own nick, ignore those.
@@ -270,52 +256,56 @@ void CClient::ReadLine(const CString& sData) {
 		}
 
 		return;
-	} else if (sCommand.Equals("PRIVMSG")) {
+	} else if (Message.GetType() == CMessage::Type::CTCP) {
+		CCTCPMessage& CTCPMsg = static_cast<CCTCPMessage&>(Message);
+		CString sTargets = CTCPMsg.GetTarget();
+
+		VCString vTargets;
+		sTargets.Split(",", vTargets, false);
+
+		if (CTCPMsg.IsReply()) {
+			CString sCTCP = CTCPMsg.GetText();
+			if (sCTCP.Token(0) == "VERSION") {
+				CTCPMsg.SetText(sCTCP + " via " + CZNC::GetTag(false));
+			}
+		}
+
+		for (CString& sTarget : vTargets) {
+			CTCPMsg.SetTarget(sTarget);
+
+			bool bContinue = false;
+			if (CTCPMsg.IsReply()) {
+				NETWORKMODULECALL(OnUserCTCPReplyMessage(CTCPMsg), m_pUser, m_pNetwork, this, &bContinue);
+			} else {
+				NETWORKMODULECALL(OnUserCTCPMessage(CTCPMsg), m_pUser, m_pNetwork, this, &bContinue);
+			}
+			if (bContinue) continue;
+
+			if (!GetIRCSock()) {
+				// Some lagmeters do a NOTICE to their own nick, ignore those.
+				if (!sTarget.Equals(m_sNick))
+					PutStatus("Your CTCP to [" + CTCPMsg.GetTarget() + "] got lost, "
+							"you are not connected to IRC!");
+				continue;
+			}
+
+			if (m_pNetwork) {
+				AddBuffer(CTCPMsg);
+				EchoMessage(CTCPMsg);
+				PutIRC(CTCPMsg.ToString(CMessage::ExcludePrefix | CMessage::ExcludeTags));
+			}
+		}
+
+		return;
+	} else if (Message.GetType() == CMessage::Type::Text) {
 		CTextMessage& TextMsg = static_cast<CTextMessage&>(Message);
 		CString sTargets = TextMsg.GetTarget();
-		bool bIsCTCP = Message.GetParam(1).WildCmp("\001*\001");
 
 		VCString vTargets;
 		sTargets.Split(",", vTargets, false);
 
 		for (CString& sTarget : vTargets) {
 			TextMsg.SetTarget(sTarget);
-
-			bool bContinue = false;
-
-			if (bIsCTCP) {
-				CCTCPMessage& CTCPMsg = static_cast<CCTCPMessage&>(Message);
-				CString sCTCP = CTCPMsg.GetText();
-
-				if (sTarget.TrimPrefix(m_pUser->GetStatusPrefix())) {
-					if (sTarget.Equals("status")) {
-						StatusCTCP(sCTCP);
-					} else {
-						CALLMOD(sTarget, this, m_pUser, m_pNetwork, OnModCTCP(sCTCP));
-					}
-					continue;
-				}
-
-				if (sCTCP.Token(0).Equals("ACTION")) {
-					CActionMessage& ActionMsg = static_cast<CActionMessage&>(Message);
-
-					NETWORKMODULECALL(OnUserActionMessage(ActionMsg), m_pUser, m_pNetwork, this, &bContinue);
-					if (bContinue) continue;
-
-					if (m_pNetwork) {
-						AddBuffer(ActionMsg);
-						EchoMessage(ActionMsg);
-					}
-				} else {
-					NETWORKMODULECALL(OnUserCTCPMessage(CTCPMsg), m_pUser, m_pNetwork, this, &bContinue);
-					if (bContinue) continue;
-				}
-
-				if (m_pNetwork) {
-					PutIRC(Message.ToString(CMessage::ExcludePrefix | CMessage::ExcludeTags));
-				}
-				continue;
-			}
 
 			if (sTarget.TrimPrefix(m_pUser->GetStatusPrefix())) {
 				EchoMessage(Message);
@@ -328,6 +318,7 @@ void CClient::ReadLine(const CString& sData) {
 				continue;
 			}
 
+			bool bContinue = false;
 			NETWORKMODULECALL(OnUserTextMessage(TextMsg), m_pUser, m_pNetwork, this, &bContinue);
 			if (bContinue) continue;
 
@@ -343,6 +334,28 @@ void CClient::ReadLine(const CString& sData) {
 				AddBuffer(TextMsg);
 				EchoMessage(TextMsg);
 				PutIRC(TextMsg.ToString(CMessage::ExcludePrefix | CMessage::ExcludeTags));
+			}
+		}
+
+		return;
+	} else if (Message.GetType() == CMessage::Type::Action) {
+		CActionMessage& ActionMsg = static_cast<CActionMessage&>(Message);
+		CString sTargets = ActionMsg.GetTarget();
+
+		VCString vTargets;
+		sTargets.Split(",", vTargets, false);
+
+		for (CString& sTarget : vTargets) {
+			ActionMsg.SetTarget(sTarget);
+
+			bool bContinue = false;
+			NETWORKMODULECALL(OnUserActionMessage(ActionMsg), m_pUser, m_pNetwork, this, &bContinue);
+			if (bContinue) continue;
+
+			if (m_pNetwork) {
+				AddBuffer(ActionMsg);
+				EchoMessage(ActionMsg);
+				PutIRC(ActionMsg.ToString(CMessage::ExcludePrefix | CMessage::ExcludeTags));
 			}
 		}
 
