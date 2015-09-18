@@ -475,9 +475,9 @@ void CClient::ReadLine(const CString& sData) {
 			TopicMsg.SetTarget(sChan);
 		}
 	} else if (Message.GetType() == CMessage::Type::Mode) {
-		// TODO: introduce CModeMessage?
-		CString sTarget = Message.GetParam(0);
-		CString sModes = Message.GetParams(1);
+		CModeMessage& ModeMsg = static_cast<CModeMessage&>(Message);
+		CString sTarget = ModeMsg.GetTarget();
+		CString sModes = ModeMsg.GetModes();
 
 		if (m_pNetwork && m_pNetwork->IsChan(sTarget) && sModes.empty()) {
 			// If we are on that channel and already received a
