@@ -33,8 +33,6 @@ SSL/TLS support:
 * openssl 0.9.7d or later
     * try installing openssl-dev, openssl-devel or libssl-dev
     * Mac OS X: OpenSSL from Homebrew is prefered over system
-        * use `USE_SYSTEM_OPENSSL=true` as environment variable to force
-          `configure` to use the (deprecated) Mac OS X version
 
 modperl:
 * perl and its bundled libperl

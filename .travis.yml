@@ -12,9 +12,6 @@ matrix:
           env: BUILD_TYPE=coverage
         - os: linux
           compiler: clang
-          env: BUILD_TYPE=normal
-        - os: linux
-          compiler: clang
           env: BUILD_TYPE=asan
         - os: linux
           compiler: clang
@@ -22,9 +19,6 @@ matrix:
         - os: osx
           compiler: clang
           env: BUILD_TYPE=normal
-        - os: osx
-          compiler: clang
-          env: BUILD_TYPE=normal USE_SYSTEM_OPENSSL=true
 before_install:
     - "echo os: [$TRAVIS_OS_NAME] build: [$BUILD_TYPE]"
     - if [[ "$BUILD_TYPE" == "normal" ]]; then export CFGFLAGS= MYCXXFLAGS= MYLDFLAGS=; fi

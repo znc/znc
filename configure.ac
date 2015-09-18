@@ -182,8 +182,6 @@ case "${host_os}" in
 	darwin*)
 		ISDARWIN=1
 
-		AC_ARG_VAR([USE_SYSTEM_OPENSSL],[set USE_SYSTEM_OPENSSL="true" to use the OpenSSL version provided by Mac OS X. Otherwise the Homebrew installed version is used if available. ])
-
 		AC_PATH_PROG([BREW], [brew])
 		if test -n "$BREW"; then
 			# add default homebrew paths
@@ -223,16 +221,12 @@ case "${host_os}" in
 
 			if test "x$SSL" != "xno"; then
 				AC_MSG_CHECKING([openssl via homebrew])
-				if test -z "$USE_SYSTEM_OPENSSL" -o "$USE_SYSTEM_OPENSSL" = "false"; then
-					openssl_prefix=`$BREW --prefix openssl`
-					if test -n "$openssl_prefix"; then
-						export PKG_CONFIG_PATH="$PKG_CONFIG_PATH:$openssl_prefix/lib/pkgconfig"
-						AC_MSG_RESULT([$openssl_prefix])
-					else
-						AC_MSG_RESULT([no])
-					fi
+				openssl_prefix=`$BREW --prefix openssl`
+				if test -n "$openssl_prefix"; then
+					export PKG_CONFIG_PATH="$PKG_CONFIG_PATH:$openssl_prefix/lib/pkgconfig"
+					AC_MSG_RESULT([$openssl_prefix])
 				else
-					AC_MSG_RESULT([user forced system openssl])
+					AC_MSG_RESULT([no])
 				fi
 			fi
 		fi
