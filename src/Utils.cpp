@@ -17,6 +17,7 @@
 #include <znc/Utils.h>
 #include <znc/ZNCDebug.h>
 #include <znc/FileUtils.h>
+#include <znc/Message.h>
 #ifdef HAVE_LIBSSL
 #include <openssl/ssl.h>
 #endif /* HAVE_LIBSSL */
@@ -527,37 +528,15 @@ SCString CUtils::GetEncodings() {
 
 MCString CUtils::GetMessageTags(const CString& sLine) {
 	if (sLine.StartsWith("@")) {
-		VCString vsTags;
-		sLine.Token(0).TrimPrefix_n("@").Split(";", vsTags, false);
-
-		MCString mssTags;
-		for (const CString& sTag : vsTags) {
-			CString sKey = sTag.Token(0, false, "=", true);
-			CString sValue = sTag.Token(1, true, "=", true);
-			mssTags[sKey] = sValue.Escape(CString::EMSGTAG, CString::CString::EASCII);
-		}
-		return mssTags;
+		return CMessage(sLine).GetTags();
 	}
 	return MCString::EmptyMap;
 }
 
 void CUtils::SetMessageTags(CString& sLine, const MCString& mssTags) {
-	if (sLine.StartsWith("@")) {
-		sLine.LeftChomp(sLine.Token(0).length() + 1);
-	}
-
-	if (!mssTags.empty()) {
-		CString sTags;
-		for (const auto& it : mssTags) {
-			if (!sTags.empty()) {
-				sTags += ";";
-			}
-			sTags += it.first;
-			if (!it.second.empty())
-				sTags += "=" + it.second.Escape_n(CString::EMSGTAG);
-		}
-		sLine = "@" + sTags + " " + sLine;
-	}
+	CMessage Message(sLine);
+	Message.SetTags(mssTags);
+	sLine = Message.ToString();
 }
 
 bool CTable::AddColumn(const CString& sName) {

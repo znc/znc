@@ -87,7 +87,9 @@ public:
 	static SCString GetTimezones();
 	static SCString GetEncodings();
 
+	/// @deprecated Use CMessage instead
 	static MCString GetMessageTags(const CString& sLine);
+	/// @deprecated Use CMessage instead
 	static void SetMessageTags(CString& sLine, const MCString& mssTags);
 
 private:

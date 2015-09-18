@@ -19,6 +19,7 @@
 #include <znc/ZNCString.h>
 #include <znc/Message.h>
 
+using ::testing::IsEmpty;
 using ::testing::ContainerEq;
 
 TEST(MessageTest, SetParam) {
@@ -94,6 +95,41 @@ TEST(MessageTest, ToString) {
 	// #1045 - retain the colon if it was there
 	EXPECT_EQ(":services. 328 user #chan http://znc.in", CMessage(":services. 328 user #chan http://znc.in").ToString());
 	EXPECT_EQ(":services. 328 user #chan :http://znc.in", CMessage(":services. 328 user #chan :http://znc.in").ToString());
+}
+
+TEST(MessageTest, Tags) {
+	EXPECT_THAT(CMessage("").GetTags(), IsEmpty());
+	EXPECT_THAT(CMessage(":nick!ident@host PRIVMSG #chan :hello world").GetTags(), IsEmpty());
+
+	EXPECT_THAT(CMessage("@a=b").GetTags(), ContainerEq(MCString{{"a","b"}}));
+	EXPECT_THAT(CMessage("@a=b :nick!ident@host PRIVMSG #chan :hello world").GetTags(), ContainerEq(MCString{{"a","b"}}));
+	EXPECT_THAT(CMessage("@a=b :rest").GetTags(), ContainerEq(MCString{{"a","b"}}));
+
+	EXPECT_THAT(CMessage("@ab=cdef;znc.in/gh-ij=klmn,op :rest").GetTags(), ContainerEq(MCString{{"ab","cdef"},{"znc.in/gh-ij","klmn,op"}}));
+	EXPECT_THAT(CMessage("@a===b== :rest").GetTags(), ContainerEq(MCString{{"a","==b=="}}));
+
+	EXPECT_THAT(CMessage("@a;b=c;d :rest").GetTags(), ContainerEq(MCString{{"a",""},{"b","c"},{"d",""}}));
+
+	EXPECT_THAT(CMessage(R"(@semi-colon=\:;space=\s;NUL=\0;backslash=\\;CR=\r;LF=\n :rest)").GetTags(),
+	            ContainerEq(MCString{{"semi-colon",";"},{"space"," "},{"NUL",{'\0'}},{"backslash","\\"},{"CR",{'\r'}},{"LF",{'\n'}}}));
+
+	EXPECT_THAT(CMessage(R"(@a=\:\s\\\r\n :rest)").GetTags(), ContainerEq(MCString{{"a","; \\\r\n"}}));
+
+	CMessage msg(":rest");
+	msg.SetTags({{"a","b"}});
+	EXPECT_EQ("@a=b :rest", msg.ToString());
+
+	msg.SetTags({{"a","b"}, {"c","d"}});
+	EXPECT_EQ("@a=b;c=d :rest", msg.ToString());
+
+	msg.SetTags({{"a","b"},{"c","d"},{"e",""}});
+	EXPECT_EQ("@a=b;c=d;e :rest", msg.ToString());
+
+	msg.SetTags({{"semi-colon",";"},{"space"," "},{"NUL",{'\0'}},{"backslash","\\"},{"CR",{'\r'}},{"LF",{'\n'}}});
+	EXPECT_EQ(R"(@CR=\r;LF=\n;NUL=\0;backslash=\\;semi-colon=\:;space=\s :rest)", msg.ToString());
+
+	msg.SetTags({{"a","; \\\r\n"}});
+	EXPECT_EQ(R"(@a=\:\s\\\r\n :rest)", msg.ToString());
 }
 
 TEST(MessageTest, FormatFlags) {

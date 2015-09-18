@@ -117,10 +117,27 @@ CString CMessage::ToString(unsigned int uFlags) const
 {
 	CString sMessage;
 
+	// <tags>
+	if (!(uFlags & ExcludeTags) && !m_mssTags.empty()) {
+		CString sTags;
+		for (const auto& it : m_mssTags) {
+			if (!sTags.empty()) {
+				sTags += ";";
+			}
+			sTags += it.first;
+			if (!it.second.empty())
+				sTags += "=" + it.second.Escape_n(CString::EMSGTAG);
+		}
+		sMessage = "@" + sTags;
+	}
+
 	// <prefix>
 	if (!(uFlags & ExcludePrefix)) {
 		CString sPrefix = m_Nick.GetHostMask();
 		if (!sPrefix.empty()) {
+			if (!sMessage.empty()) {
+				sMessage += " ";
+			}
 			sMessage += ":" + sPrefix;
 		}
 	}
@@ -144,19 +161,21 @@ CString CMessage::ToString(unsigned int uFlags) const
 		sMessage += sParam;
 	}
 
-	// <tags>
-	if (!(uFlags & ExcludeTags)) {
-		CUtils::SetMessageTags(sMessage, m_mssTags);
-	}
-
 	return sMessage;
 }
 
 void CMessage::Parse(CString sMessage)
 {
 	// <tags>
+	m_mssTags.clear();
 	if (sMessage.StartsWith("@")) {
-		m_mssTags = CUtils::GetMessageTags(sMessage);
+		VCString vsTags;
+		sMessage.Token(0).TrimPrefix_n("@").Split(";", vsTags, false);
+		for (const CString& sTag : vsTags) {
+			CString sKey = sTag.Token(0, false, "=", true);
+			CString sValue = sTag.Token(1, true, "=", true);
+			m_mssTags[sKey] = sValue.Escape(CString::EMSGTAG, CString::CString::EASCII);
+		}
 		sMessage = sMessage.Token(1, true);
 	}
 
