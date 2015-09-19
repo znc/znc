@@ -1,6 +1,6 @@
 [Unit]
 Description=ZNC, an advanced IRC bouncer
-After=network.target
+After=network-online.target
 
 [Service]
 ExecStart=@bindir@/znc -f
