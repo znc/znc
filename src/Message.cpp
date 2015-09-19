@@ -151,14 +151,11 @@ CString CMessage::ToString(unsigned int uFlags) const
 	}
 
 	// <params>
-	unsigned uParams = m_vsParams.size();
-	for (unsigned int uIdx = 0; uIdx < uParams; ++uIdx) {
-		const CString& sParam = m_vsParams[uIdx];
-		sMessage += " ";
-		if (uIdx == uParams - 1 && (m_bColon || sParam.empty() || sParam.StartsWith(":") || sParam.Contains(" "))) {
-			sMessage += ":";
+	if (!m_vsParams.empty()) {
+		if (!sMessage.empty()) {
+			sMessage += " ";
 		}
-		sMessage += sParam;
+		sMessage += GetParams(0);
 	}
 
 	return sMessage;
