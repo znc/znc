@@ -92,11 +92,11 @@ public:
 		AddCommand("Add",     static_cast<CModCommand::ModCmdFunc>(&CPerform::Add),
 			"<command>");
 		AddCommand("Del",     static_cast<CModCommand::ModCmdFunc>(&CPerform::Del),
-			"<nr>");
+			"<number>");
 		AddCommand("List",    static_cast<CModCommand::ModCmdFunc>(&CPerform::List));
 		AddCommand("Execute", static_cast<CModCommand::ModCmdFunc>(&CPerform::Execute));
 		AddCommand("Swap",    static_cast<CModCommand::ModCmdFunc>(&CPerform::Swap),
-			"<nr> <nr>");
+			"<number> <number>");
 	}
 
 	virtual ~CPerform() {}
