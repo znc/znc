@@ -20,6 +20,7 @@
 #include <znc/zncconfig.h>
 #include <znc/Socket.h>
 #include <znc/Utils.h>
+#include <znc/Message.h>
 #include <znc/main.h>
 #include <memory>
 
@@ -277,6 +278,19 @@ private:
 	std::set<CChan*> MatchChans(const CString& sPatterns) const;
 	unsigned int AttachChans(const std::set<CChan*>& sChans);
 	unsigned int DetachChans(const std::set<CChan*>& sChans);
+
+	bool OnActionMessage(CActionMessage& Message);
+	bool OnCTCPMessage(CCTCPMessage& Message);
+	bool OnJoinMessage(CJoinMessage& Message);
+	bool OnModeMessage(CModeMessage& Message);
+	bool OnNoticeMessage(CNoticeMessage& Message);
+	bool OnPartMessage(CPartMessage& Message);
+	bool OnPingMessage(CMessage& Message);
+	bool OnPongMessage(CMessage& Message);
+	bool OnQuitMessage(CQuitMessage& Message);
+	bool OnTextMessage(CTextMessage& Message);
+	bool OnTopicMessage(CTopicMessage& Message);
+	bool OnOtherMessage(CMessage& Message);
 
 protected:
 	bool                 m_bGotPass;
