@@ -200,7 +200,7 @@ public:
 		return CONTINUE;
 	}
 
-	EModRet OnRaw(CString& sLine) {
+	EModRet OnRaw(CString& sLine) override {
 		if (!sLine.Token(1).Equals("332")) {
 			return CONTINUE;
 		}
