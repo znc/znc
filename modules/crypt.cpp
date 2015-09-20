@@ -18,6 +18,9 @@
 //
 // The encryption here was designed to be compatible with mircryption's CBC mode.
 //
+// Latest tested against:
+// MircryptionSuite - Mircryption ver 1.19.01 (dll v1.15.01 , mirc v7.32) CBC loaded and ready.
+//
 // TODO:
 //
 // 1) Encrypt key storage file
@@ -54,10 +57,9 @@ public:
 	virtual ~CCryptMod() {}
 
 	EModRet OnUserMsg(CString& sTarget, CString& sMessage) override {
-		sTarget.TrimLeft(NickPrefix());
+		sTarget.TrimPrefix(NickPrefix());
 
-		if (sMessage.Left(2) == "``") {
-			sMessage.LeftChomp(2);
+		if (sMessage.TrimPrefix("``")) {
 			return CONTINUE;
 		}
 
@@ -84,7 +86,96 @@ public:
 		return CONTINUE;
 	}
 
+	EModRet OnUserNotice(CString& sTarget, CString& sMessage) override {
+		sTarget.TrimPrefix(NickPrefix());
+
+		if (sMessage.TrimPrefix("``")) {
+			return CONTINUE;
+		}
+
+		MCString::iterator it = FindNV(sTarget.AsLower());
+
+		if (it != EndNV()) {
+			CChan* pChan = GetNetwork()->FindChan(sTarget);
+			CString sNickMask = GetNetwork()->GetIRCNick().GetNickMask();
+			if (pChan) {
+				if (!pChan->AutoClearChanBuffer())
+					pChan->AddBuffer(":" + NickPrefix() + _NAMEDFMT(sNickMask) + " NOTICE " + _NAMEDFMT(sTarget) + " :{text}", sMessage);
+				GetUser()->PutUser(":" + NickPrefix() + sNickMask + " NOTICE " + sTarget + " :" + sMessage, NULL, GetClient());
+			}
+
+			CString sMsg = MakeIvec() + sMessage;
+			sMsg.Encrypt(it->second);
+			sMsg.Base64Encode();
+			sMsg = "+OK *" + sMsg;
+
+			PutIRC("NOTICE " + sTarget + " :" + sMsg);
+			return HALTCORE;
+		}
+
+		return CONTINUE;
+	}
+
+	EModRet OnUserAction(CString& sTarget, CString& sMessage) override {
+		sTarget.TrimPrefix(NickPrefix());
+
+		if (sMessage.TrimPrefix("``")) {
+			return CONTINUE;
+		}
+
+		MCString::iterator it = FindNV(sTarget.AsLower());
+
+		if (it != EndNV()) {
+			CChan* pChan = GetNetwork()->FindChan(sTarget);
+			CString sNickMask = GetNetwork()->GetIRCNick().GetNickMask();
+			if (pChan) {
+				if (!pChan->AutoClearChanBuffer())
+					pChan->AddBuffer(":" + NickPrefix() + _NAMEDFMT(sNickMask) + " PRIVMSG " + _NAMEDFMT(sTarget) + " :\001ACTION {text}\001", sMessage);
+				GetUser()->PutUser(":" + NickPrefix() + sNickMask + " PRIVMSG " + sTarget + " :\001ACTION " + sMessage + "\001", NULL, GetClient());
+			}
+
+			CString sMsg = MakeIvec() + sMessage;
+			sMsg.Encrypt(it->second);
+			sMsg.Base64Encode();
+			sMsg = "+OK *" + sMsg;
+
+			PutIRC("PRIVMSG " + sTarget + " :\001ACTION " + sMsg + "\001");
+			return HALTCORE;
+		}
+
+		return CONTINUE;
+	}
+
+	EModRet OnUserTopic(CString& sTarget, CString& sMessage) override {
+		sTarget.TrimPrefix(NickPrefix());
+
+		if (sMessage.TrimPrefix("``")) {
+			return CONTINUE;
+		}
+
+		MCString::iterator it = FindNV(sTarget.AsLower());
+
+		if (it != EndNV()) {
+			sMessage = MakeIvec() + sMessage;
+			sMessage.Encrypt(it->second);
+			sMessage.Base64Encode();
+			sMessage = "+OK *" + sMessage;
+		}
+
+		return CONTINUE;
+	}
+
 	EModRet OnPrivMsg(CNick& Nick, CString& sMessage) override {
+		FilterIncoming(Nick.GetNick(), Nick, sMessage);
+		return CONTINUE;
+	}
+
+	EModRet OnPrivNotice(CNick& Nick, CString& sMessage) override {
+		FilterIncoming(Nick.GetNick(), Nick, sMessage);
+		return CONTINUE;
+	}
+
+	EModRet OnPrivAction(CNick& Nick, CString& sMessage) override {
 		FilterIncoming(Nick.GetNick(), Nick, sMessage);
 		return CONTINUE;
 	}
@@ -94,12 +185,45 @@ public:
 		return CONTINUE;
 	}
 
+	EModRet OnChanNotice(CNick& Nick, CChan& Channel, CString& sMessage) override {
+		FilterIncoming(Channel.GetName(), Nick, sMessage);
+		return CONTINUE;
+	}
+
+	EModRet OnChanAction(CNick& Nick, CChan& Channel, CString& sMessage) override {
+		FilterIncoming(Channel.GetName(), Nick, sMessage);
+		return CONTINUE;
+	}
+
+	EModRet OnTopic(CNick& Nick, CChan& Channel, CString& sMessage) override {
+		FilterIncoming(Channel.GetName(), Nick, sMessage);
+		return CONTINUE;
+	}
+
+	EModRet OnRaw(CString& sLine) {
+		if (!sLine.Token(1).Equals("332")) {
+			return CONTINUE;
+		}
+
+		CChan* pChan = GetNetwork()->FindChan(sLine.Token(3));
+		if (pChan) {
+			CNick* Nick = pChan->FindNick(sLine.Token(2));
+			CString sTopic = sLine.Token(4, true);
+			sTopic.TrimPrefix(":");
+
+			FilterIncoming(pChan->GetName(), *Nick, sTopic);
+			sLine = sLine.Token(0) + " " + sLine.Token(1) + " " + sLine.Token(2) + " " + pChan->GetName() + " :" + sTopic;
+
+		}
+
+		return CONTINUE;
+}
+
 	void FilterIncoming(const CString& sTarget, CNick& Nick, CString& sMessage) {
-		if (sMessage.Left(5) == "+OK *") {
+		if (sMessage.TrimPrefix("+OK *")) {
 			MCString::iterator it = FindNV(sTarget.AsLower());
 
 			if (it != EndNV()) {
-				sMessage.LeftChomp(5);
 				sMessage.Base64Decode();
 				sMessage.Decrypt(it->second);
 				sMessage.LeftChomp(8);
