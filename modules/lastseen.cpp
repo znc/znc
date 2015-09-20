@@ -71,7 +71,7 @@ private:
 public:
 	MODCONSTRUCTOR(CLastSeenMod) {
 		AddHelpCommand();
-		AddCommand("Show", static_cast<CModCommand::ModCmdFunc>(&CLastSeenMod::ShowCommand));
+		AddCommand("Show", static_cast<CModCommand::ModCmdFunc>(&CLastSeenMod::ShowCommand),"", "Shows list of users and when they last logged in");
 	}
 
 	virtual ~CLastSeenMod() {}

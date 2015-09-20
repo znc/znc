@@ -46,7 +46,7 @@ public:
 		AddHelpCommand();
 		AddCommand("delete", static_cast<CModCommand::ModCmdFunc>(&CCertMod::Delete),
 			"", "Delete the current certificate");
-		AddCommand("info", static_cast<CModCommand::ModCmdFunc>(&CCertMod::Info));
+		AddCommand("info", static_cast<CModCommand::ModCmdFunc>(&CCertMod::Info), "", "Show the current certificate");
 	}
 
 	virtual ~CCertMod() {}

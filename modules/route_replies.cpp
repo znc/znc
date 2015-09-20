@@ -218,7 +218,7 @@ public:
 
 		AddHelpCommand();
 		AddCommand("Silent", static_cast<CModCommand::ModCmdFunc>(&CRouteRepliesMod::SilentCommand),
-			"[yes|no]");
+			"[yes|no]", "Decides whether to show the timeout messages or not");
 	}
 
 	virtual ~CRouteRepliesMod() {
@@ -369,7 +369,8 @@ public:
 		// The timer will be deleted after this by the event loop
 
 		if (!GetNV("silent_timeouts").ToBool()) {
-			PutModule("This module hit a timeout which is possibly a bug.");
+			PutModule("This module hit a timeout which is probably a connectivity issue.");
+			PutModule("However, if you can provide steps to reproduce this issue, please do report a bug.");
 			PutModule("To disable this message, do \"/msg " + GetModNick()
 					+ " silent yes\"");
 			PutModule("Last request: " + m_sLastRequest);
