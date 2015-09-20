@@ -156,7 +156,7 @@ public:
 	const CString& GetNick(bool bAllowDefault = true) const;
 	const CString& GetAltNick(bool bAllowDefault = true) const;
 	const CString& GetIdent(bool bAllowDefault = true) const;
-	const CString& GetRealName() const;
+	CString GetRealName() const;
 	const CString& GetBindHost() const;
 	const CString& GetDCCBindHost() const;
 	const CString& GetPass() const;

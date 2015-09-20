@@ -60,7 +60,7 @@ CUser::CUser(const CString& sUserName)
 		  m_sNick(m_sCleanUserName),
 		  m_sAltNick(""),
 		  m_sIdent(m_sCleanUserName),
-		  m_sRealName(sUserName),
+		  m_sRealName(""),
 		  m_sBindHost(""),
 		  m_sDCCBindHost(""),
 		  m_sPass(""),
@@ -884,7 +884,9 @@ CConfig CUser::ToConfig() const {
 	config.AddKeyValuePair("Nick", GetNick());
 	config.AddKeyValuePair("AltNick", GetAltNick());
 	config.AddKeyValuePair("Ident", GetIdent());
-	config.AddKeyValuePair("RealName", GetRealName());
+	if (!m_sRealName.empty()) {
+		config.AddKeyValuePair("RealName", GetRealName());
+	}
 	config.AddKeyValuePair("BindHost", GetBindHost());
 	config.AddKeyValuePair("DCCBindHost", GetDCCBindHost());
 	config.AddKeyValuePair("QuitMsg", GetQuitMsg());
@@ -1247,12 +1249,13 @@ vector<CClient*> CUser::GetAllClients() const {
 	return vClients;
 }
 
+
 const CString& CUser::GetUserName() const { return m_sUserName; }
 const CString& CUser::GetCleanUserName() const { return m_sCleanUserName; }
 const CString& CUser::GetNick(bool bAllowDefault) const { return (bAllowDefault && m_sNick.empty()) ? GetCleanUserName() : m_sNick; }
 const CString& CUser::GetAltNick(bool bAllowDefault) const { return (bAllowDefault && m_sAltNick.empty()) ? GetCleanUserName() : m_sAltNick; }
 const CString& CUser::GetIdent(bool bAllowDefault) const { return (bAllowDefault && m_sIdent.empty()) ? GetCleanUserName() : m_sIdent; }
-const CString& CUser::GetRealName() const { return m_sRealName.empty() ? m_sUserName : m_sRealName; }
+CString CUser::GetRealName() const { return (!m_sRealName.Trim_n().empty()) ? m_sRealName : CZNC::GetTag(false); }
 const CString& CUser::GetBindHost() const { return m_sBindHost; }
 const CString& CUser::GetDCCBindHost() const { return m_sDCCBindHost; }
 const CString& CUser::GetPass() const { return m_sPass; }
