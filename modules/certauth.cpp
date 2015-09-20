@@ -32,7 +32,7 @@ public:
 			"[pubkey]", "If pubkey is not provided will use the current key");
 		AddCommand("Del",  static_cast<CModCommand::ModCmdFunc>(&CSSLClientCertMod::HandleDelCommand),
 			"id");
-		AddCommand("List", static_cast<CModCommand::ModCmdFunc>(&CSSLClientCertMod::HandleListCommand));
+		AddCommand("List", static_cast<CModCommand::ModCmdFunc>(&CSSLClientCertMod::HandleListCommand),"", "List your public keys");
 		AddCommand("Show", static_cast<CModCommand::ModCmdFunc>(&CSSLClientCertMod::HandleShowCommand),
 			"", "Print your current key");
 	}
