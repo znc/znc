@@ -218,7 +218,7 @@ public:
 
 		AddHelpCommand();
 		AddCommand("Silent", static_cast<CModCommand::ModCmdFunc>(&CRouteRepliesMod::SilentCommand),
-			"[yes|no]");
+			"[yes|no]", "Decides whether to show the timeout messages or not");
 	}
 
 	virtual ~CRouteRepliesMod() {
