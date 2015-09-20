@@ -175,7 +175,7 @@ public:
 	const CString& GetNick(const bool bAllowDefault = true) const;
 	const CString& GetAltNick(const bool bAllowDefault = true) const;
 	const CString& GetIdent(const bool bAllowDefault = true) const;
-	const CString& GetRealName() const;
+	CString GetRealName() const;
 	const CString& GetBindHost() const;
 	const CString& GetEncoding() const;
 	CString GetQuitMsg() const;

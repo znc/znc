@@ -702,8 +702,10 @@ bool CZNC::WriteNewConfig(const CString& sConfigFile) {
 	}
 	CUtils::GetInput("Ident", sAnswer, sUser);
 	vsLines.push_back("\tIdent      = " + sAnswer);
-	CUtils::GetInput("Real name", sAnswer, "Got ZNC?");
-	vsLines.push_back("\tRealName   = " + sAnswer);
+	CUtils::GetInput("Real name", sAnswer, "", "optional");
+	if (!sAnswer.empty()) {
+		vsLines.push_back("\tRealName   = " + sAnswer);
+	}
 	CUtils::GetInput("Bind host", sAnswer, "", "optional");
 	if (!sAnswer.empty()) {
 		vsLines.push_back("\tBindHost   = " + sAnswer);

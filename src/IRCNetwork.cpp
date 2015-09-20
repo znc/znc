@@ -1347,7 +1347,7 @@ const CString& CIRCNetwork::GetIdent(const bool bAllowDefault) const {
 	return m_sIdent;
 }
 
-const CString& CIRCNetwork::GetRealName() const {
+CString CIRCNetwork::GetRealName() const {
 	if (m_sRealName.empty()) {
 		return m_pUser->GetRealName();
 	}
