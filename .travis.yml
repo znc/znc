@@ -80,5 +80,6 @@ notifications:
     irc:
         channels:
             - "irc.freenode.net#znc"
-        on_success: always
+            - "irc.freenode.net#znc-dev"
+        on_success: change
         on_failure: always
