@@ -33,7 +33,7 @@ public:
 
 	static unsigned short DCCRequest(const CString& sNick, unsigned long uLongIP, unsigned short uPort, const CString& sFileName, bool bIsChat, CBounceDCCMod* pMod, const CString& sRemoteIP);
 
-	void ReadLine(const CString& sData);
+	void ReadLine(const CString& sData) override;
 	virtual void ReadData(const char* data, size_t len) override;
 	virtual void ReadPaused() override;
 	virtual void Timeout() override;

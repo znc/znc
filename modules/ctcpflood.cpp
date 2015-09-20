@@ -42,7 +42,7 @@ public:
 		SetArgs(CString(m_iThresholdMsgs) + " " + CString(m_iThresholdSecs));
 	}
 
-	bool OnLoad(const CString& sArgs, CString& sMessage) {
+	bool OnLoad(const CString& sArgs, CString& sMessage) override {
 		m_iThresholdMsgs = sArgs.Token(0).ToUInt();
 		m_iThresholdSecs = sArgs.Token(1).ToUInt();
 
