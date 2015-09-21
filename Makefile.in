@@ -43,6 +43,9 @@ endif
 # Force the simple internal regex engine to get consistent behavior on all platforms.
 # See https://code.google.com/p/chromium/issues/detail?id=317224 for more details.
 GTEST_FLAGS := -DGTEST_HAS_POSIX_RE=0 -I$(GMOCK_DIR)/include -I$(GTEST_DIR)/include
+# Silence warnings about overload virtual Csock::Write(), and missing field
+# initializers in both gtest and gmock
+GTEST_FLAGS += -Wno-overloaded-virtual -Wno-missing-field-initializers
 
 LIB_SRCS  := ZNCString.cpp Csocket.cpp znc.cpp IRCNetwork.cpp User.cpp IRCSock.cpp \
 	Client.cpp Chan.cpp Nick.cpp Server.cpp Modules.cpp MD5.cpp Buffer.cpp Utils.cpp \

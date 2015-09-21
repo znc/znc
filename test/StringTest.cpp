@@ -58,8 +58,8 @@ TEST_F(EscapeTest, Test) {
 }
 
 TEST(StringTest, Bool) {
-	EXPECT_EQ(true, CString(true).ToBool());
-	EXPECT_EQ(false, CString(false).ToBool());
+	EXPECT_TRUE(CString(true).ToBool());
+	EXPECT_FALSE(CString(false).ToBool());
 }
 
 #define CS(s) (CString((s), sizeof(s)-1))
