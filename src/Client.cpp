@@ -818,9 +818,9 @@ void CClient::AddBuffer(const T& Message)
 	Format.SetTarget(_NAMEDFMT(sTarget));
 	Format.SetText("{text}");
 
-	if (m_pNetwork->IsChan(sTarget)) {
-		CChan* pChan = m_pNetwork->FindChan(sTarget);
-		if (pChan && (!pChan->AutoClearChanBuffer() || !m_pNetwork->IsUserOnline())) {
+	CChan* pChan = m_pNetwork->FindChan(sTarget);
+	if (pChan) {
+		if (!pChan->AutoClearChanBuffer() || !m_pNetwork->IsUserOnline()) {
 			pChan->AddBuffer(Format, Message.GetText());
 		}
 	} else if (Message.GetType() != CMessage::Type::Notice) {

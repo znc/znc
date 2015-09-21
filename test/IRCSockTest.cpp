@@ -419,3 +419,16 @@ TEST_F(IRCSockTest, ISupport) {
 	EXPECT_EQ("3.0", m_pTestSock->GetISupport("CLIENTVER", "default"));
 	EXPECT_EQ("", m_pTestSock->GetISupport("SAFELIST", "default"));
 }
+
+TEST_F(IRCSockTest, StatusMsg) {
+	m_pTestSock->ReadLine(":irc.znc.in 001 me :Welcome to the Internet Relay Network me");
+	m_pTestSock->ReadLine(":irc.znc.in 005 me CHANTYPES=# PREFIX=(ov)@+ STATUSMSG=@+ :are supported by this server");
+
+	m_pTestUser->SetAutoClearChanBuffer(false);
+	m_pTestSock->ReadLine(":someone PRIVMSG @#chan :hello ops");
+
+	EXPECT_EQ(1u, m_pTestChan->GetBuffer().Size());
+
+	m_pTestUser->SetTimestampPrepend(false);
+	EXPECT_EQ(":someone PRIVMSG @#chan :hello ops", m_pTestChan->GetBuffer().GetLine(0, *m_pTestClient));
+}

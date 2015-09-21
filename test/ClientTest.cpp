@@ -145,3 +145,16 @@ TEST_F(ClientTest, ExtendedJoin) {
 	m_pTestClient->PutClient(extmsg);
 	EXPECT_THAT(m_pTestClient->vsLines, ElementsAre(msg.ToString(), extmsg.ToString()));
 }
+
+TEST_F(ClientTest, StatusMsg) {
+	m_pTestSock->ReadLine(":irc.znc.in 001 me :Welcome to the Internet Relay Network me");
+	m_pTestSock->ReadLine(":irc.znc.in 005 me CHANTYPES=# PREFIX=(ov)@+ STATUSMSG=@+ :are supported by this server");
+
+	m_pTestUser->SetAutoClearChanBuffer(false);
+	m_pTestClient->ReadLine("PRIVMSG @#chan :hello ops");
+
+	EXPECT_EQ(1u, m_pTestChan->GetBuffer().Size());
+
+	m_pTestUser->SetTimestampPrepend(false);
+	EXPECT_EQ(":me PRIVMSG @#chan :hello ops", m_pTestChan->GetBuffer().GetLine(0, *m_pTestClient));
+}

@@ -317,7 +317,7 @@ bool CIRCSock::OnActionMessage(CActionMessage& Message) {
 				CActionMessage Format;
 				Format.Clone(Message);
 				Format.SetNick(_NAMEDFMT(Message.GetNick().GetNickMask()));
-				Format.SetTarget(_NAMEDFMT(pChan->GetName()));
+				Format.SetTarget(_NAMEDFMT(Message.GetTarget()));
 				Format.SetText("{text}");
 				pChan->AddBuffer(Format, Message.GetText());
 			}
@@ -630,7 +630,7 @@ bool CIRCSock::OnNoticeMessage(CNoticeMessage& Message) {
 				CNoticeMessage Format;
 				Format.Clone(Message);
 				Format.SetNick(_NAMEDFMT(Message.GetNick().GetNickMask()));
-				Format.SetTarget(_NAMEDFMT(pChan->GetName()));
+				Format.SetTarget(_NAMEDFMT(Message.GetTarget()));
 				Format.SetText("{text}");
 				pChan->AddBuffer(Format, Message.GetText());
 			}
@@ -1056,7 +1056,7 @@ bool CIRCSock::OnTextMessage(CTextMessage& Message) {
 				CTextMessage Format;
 				Format.Clone(Message);
 				Format.SetNick(_NAMEDFMT(Message.GetNick().GetNickMask()));
-				Format.SetTarget(_NAMEDFMT(pChan->GetName()));
+				Format.SetTarget(_NAMEDFMT(Message.GetTarget()));
 				Format.SetText("{text}");
 				pChan->AddBuffer(Format, Message.GetText());
 			}
