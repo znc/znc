@@ -158,3 +158,158 @@ TEST_F(ClientTest, StatusMsg) {
 	m_pTestUser->SetTimestampPrepend(false);
 	EXPECT_EQ(":me PRIVMSG @#chan :hello ops", m_pTestChan->GetBuffer().GetLine(0, *m_pTestClient));
 }
+
+TEST_F(ClientTest, OnUserCTCPReplyMessage) {
+	CMessage msg("NOTICE someone :\001VERSION 123\001");
+	m_pTestModule->eAction = CModule::HALT;
+	m_pTestClient->ReadLine(msg.ToString());
+
+	CString sReply = "NOTICE someone :\x01VERSION 123 via " + CZNC::GetTag(false) + "\x01";
+
+	EXPECT_THAT(m_pTestModule->vsHooks, ElementsAre("OnUserCTCPReplyMessage"));
+	EXPECT_THAT(m_pTestModule->vsMessages, ElementsAre(sReply));
+	EXPECT_THAT(m_pTestModule->vNetworks, ElementsAre(nullptr));
+	EXPECT_THAT(m_pTestModule->vClients, ElementsAre(m_pTestClient));
+	EXPECT_THAT(m_pTestModule->vChannels, ElementsAre(nullptr));
+	EXPECT_THAT(m_pTestSock->vsLines, IsEmpty()); // halt
+
+	m_pTestModule->eAction = CModule::CONTINUE;
+	m_pTestClient->ReadLine(msg.ToString());
+	EXPECT_THAT(m_pTestSock->vsLines, ElementsAre(sReply));
+}
+
+TEST_F(ClientTest, OnUserCTCPMessage) {
+	CMessage msg("PRIVMSG someone :\001VERSION\001");
+	m_pTestModule->eAction = CModule::HALT;
+	m_pTestClient->ReadLine(msg.ToString());
+
+	EXPECT_THAT(m_pTestModule->vsHooks, ElementsAre("OnUserCTCPMessage"));
+	EXPECT_THAT(m_pTestModule->vsMessages, ElementsAre(msg.ToString()));
+	EXPECT_THAT(m_pTestModule->vNetworks, ElementsAre(nullptr));
+	EXPECT_THAT(m_pTestModule->vClients, ElementsAre(m_pTestClient));
+	EXPECT_THAT(m_pTestModule->vChannels, ElementsAre(nullptr));
+	EXPECT_THAT(m_pTestSock->vsLines, IsEmpty()); // halt
+
+	m_pTestModule->eAction = CModule::CONTINUE;
+	m_pTestClient->ReadLine(msg.ToString());
+	EXPECT_THAT(m_pTestSock->vsLines, ElementsAre(msg.ToString()));
+}
+
+TEST_F(ClientTest, OnUserActionMessage) {
+	CMessage msg("PRIVMSG #chan :\001ACTION acts\001");
+	m_pTestModule->eAction = CModule::HALT;
+	m_pTestClient->ReadLine(msg.ToString());
+
+	EXPECT_THAT(m_pTestModule->vsHooks, ElementsAre("OnUserActionMessage"));
+	EXPECT_THAT(m_pTestModule->vsMessages, ElementsAre(msg.ToString()));
+	EXPECT_THAT(m_pTestModule->vNetworks, ElementsAre(nullptr));
+	EXPECT_THAT(m_pTestModule->vClients, ElementsAre(m_pTestClient));
+	EXPECT_THAT(m_pTestModule->vChannels, ElementsAre(nullptr));
+	EXPECT_THAT(m_pTestSock->vsLines, IsEmpty()); // halt
+
+	m_pTestModule->eAction = CModule::CONTINUE;
+	m_pTestClient->ReadLine(msg.ToString());
+	EXPECT_THAT(m_pTestSock->vsLines, ElementsAre(msg.ToString()));
+}
+
+TEST_F(ClientTest, OnUserTextMessage) {
+	CMessage msg("PRIVMSG #chan :text");
+	m_pTestModule->eAction = CModule::HALT;
+	m_pTestClient->ReadLine(msg.ToString());
+
+	EXPECT_THAT(m_pTestModule->vsHooks, ElementsAre("OnUserTextMessage"));
+	EXPECT_THAT(m_pTestModule->vsMessages, ElementsAre(msg.ToString()));
+	EXPECT_THAT(m_pTestModule->vNetworks, ElementsAre(nullptr));
+	EXPECT_THAT(m_pTestModule->vClients, ElementsAre(m_pTestClient));
+	EXPECT_THAT(m_pTestModule->vChannels, ElementsAre(nullptr));
+	EXPECT_THAT(m_pTestSock->vsLines, IsEmpty()); // halt
+
+	m_pTestModule->eAction = CModule::CONTINUE;
+	m_pTestClient->ReadLine(msg.ToString());
+	EXPECT_THAT(m_pTestSock->vsLines, ElementsAre(msg.ToString()));
+}
+
+TEST_F(ClientTest, OnUserNoticeMessage) {
+	CMessage msg("NOTICE #chan :text");
+	m_pTestModule->eAction = CModule::HALT;
+	m_pTestClient->ReadLine(msg.ToString());
+
+	EXPECT_THAT(m_pTestModule->vsHooks, ElementsAre("OnUserNoticeMessage"));
+	EXPECT_THAT(m_pTestModule->vsMessages, ElementsAre(msg.ToString()));
+	EXPECT_THAT(m_pTestModule->vNetworks, ElementsAre(nullptr));
+	EXPECT_THAT(m_pTestModule->vClients, ElementsAre(m_pTestClient));
+	EXPECT_THAT(m_pTestModule->vChannels, ElementsAre(nullptr));
+	EXPECT_THAT(m_pTestSock->vsLines, IsEmpty()); // halt
+
+	m_pTestModule->eAction = CModule::CONTINUE;
+	m_pTestClient->ReadLine(msg.ToString());
+	EXPECT_THAT(m_pTestSock->vsLines, ElementsAre(msg.ToString()));
+}
+
+TEST_F(ClientTest, OnUserJoinMessage) {
+	CMessage msg("JOIN #chan key");
+	m_pTestModule->eAction = CModule::HALT;
+	m_pTestClient->ReadLine(msg.ToString());
+
+	EXPECT_THAT(m_pTestModule->vsHooks, ElementsAre("OnUserJoinMessage"));
+	EXPECT_THAT(m_pTestModule->vsMessages, ElementsAre(msg.ToString()));
+	EXPECT_THAT(m_pTestModule->vNetworks, ElementsAre(nullptr));
+	EXPECT_THAT(m_pTestModule->vClients, ElementsAre(m_pTestClient));
+	EXPECT_THAT(m_pTestModule->vChannels, ElementsAre(nullptr));
+	EXPECT_THAT(m_pTestSock->vsLines, IsEmpty()); // halt
+
+	m_pTestModule->eAction = CModule::CONTINUE;
+	m_pTestClient->ReadLine(msg.ToString());
+	EXPECT_THAT(m_pTestSock->vsLines, ElementsAre(msg.ToString()));
+}
+
+TEST_F(ClientTest, OnUserPartMessage) {
+	CMessage msg("PART #znc");
+	m_pTestModule->eAction = CModule::HALT;
+	m_pTestClient->ReadLine(msg.ToString());
+
+	EXPECT_THAT(m_pTestModule->vsHooks, ElementsAre("OnUserPartMessage"));
+	EXPECT_THAT(m_pTestModule->vsMessages, ElementsAre(msg.ToString()));
+	EXPECT_THAT(m_pTestModule->vNetworks, ElementsAre(nullptr));
+	EXPECT_THAT(m_pTestModule->vClients, ElementsAre(m_pTestClient));
+	EXPECT_THAT(m_pTestModule->vChannels, ElementsAre(nullptr));
+	EXPECT_THAT(m_pTestSock->vsLines, IsEmpty()); // halt
+
+	m_pTestModule->eAction = CModule::CONTINUE;
+	m_pTestClient->ReadLine(msg.ToString());
+	EXPECT_THAT(m_pTestSock->vsLines, ElementsAre(msg.ToString()));
+}
+
+TEST_F(ClientTest, OnUserTopicMessage) {
+	CMessage msg("TOPIC #chan :topic");
+	m_pTestModule->eAction = CModule::HALT;
+	m_pTestClient->ReadLine(msg.ToString());
+
+	EXPECT_THAT(m_pTestModule->vsHooks, ElementsAre("OnUserTopicMessage"));
+	EXPECT_THAT(m_pTestModule->vsMessages, ElementsAre(msg.ToString()));
+	EXPECT_THAT(m_pTestModule->vNetworks, ElementsAre(nullptr));
+	EXPECT_THAT(m_pTestModule->vClients, ElementsAre(m_pTestClient));
+	EXPECT_THAT(m_pTestModule->vChannels, ElementsAre(nullptr));
+	EXPECT_THAT(m_pTestSock->vsLines, IsEmpty()); // halt
+
+	m_pTestModule->eAction = CModule::CONTINUE;
+	m_pTestClient->ReadLine(msg.ToString());
+	EXPECT_THAT(m_pTestSock->vsLines, ElementsAre(msg.ToString()));
+}
+
+TEST_F(ClientTest, OnUserQuitMessage) {
+	CMessage msg("QUIT :reason");
+	m_pTestModule->eAction = CModule::HALT;
+	m_pTestClient->ReadLine(msg.ToString());
+
+	EXPECT_THAT(m_pTestModule->vsHooks, ElementsAre("OnUserQuitMessage"));
+	EXPECT_THAT(m_pTestModule->vsMessages, ElementsAre(msg.ToString()));
+	EXPECT_THAT(m_pTestModule->vNetworks, ElementsAre(nullptr));
+	EXPECT_THAT(m_pTestModule->vClients, ElementsAre(m_pTestClient));
+	EXPECT_THAT(m_pTestModule->vChannels, ElementsAre(nullptr));
+	EXPECT_THAT(m_pTestSock->vsLines, IsEmpty()); // halt
+
+	m_pTestModule->eAction = CModule::CONTINUE;
+	m_pTestClient->ReadLine(msg.ToString());
+	EXPECT_THAT(m_pTestSock->vsLines, IsEmpty()); // quit is never forwarded
+}
