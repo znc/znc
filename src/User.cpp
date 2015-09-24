@@ -437,7 +437,7 @@ bool CUser::ParseConfig(CConfig* pConfig, CString& sError) {
 
 		bool bModRet = LoadModule(sModName, sArgs, sNotice, sModRet);
 
-		CUtils::PrintStatus(bModRet, sModRet);
+		CUtils::PrintStatus(bModRet, bModRet ? "User module [" + sModName + "] loaded successfully." : sModRet);
 		if (!bModRet) {
 			// XXX The awaynick module was retired in 1.6 (still available as external module)
 			if (sModName == "awaynick") {

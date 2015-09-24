@@ -56,7 +56,7 @@ do
 	else
 		printf "Building \"${MOD}.so\" for ZNC $VERSION... "
 		if ${CXX} ${CXXFLAGS} ${INCLUDES} ${LDFLAGS} ${MODLINK} -o "${MOD}.so" "${FILE}" ${LIBS} ; then
-			echo "${OK}"
+			echo "${OK} Successfully built ${MOD}.so"
 		else
 			echo "${ERROR} Error while building \"${MOD}.so\""
 			exit 1

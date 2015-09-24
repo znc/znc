@@ -448,7 +448,9 @@ bool CIRCNetwork::ParseConfig(CConfig *pConfig, CString& sError, bool bUpgrade) 
 	pConfig->FindStringVector("server", vsList);
 	for (const CString& sServer : vsList) {
 		CUtils::PrintAction("Adding server [" + sServer + "]");
-		CUtils::PrintStatus(AddServer(sServer));
+		
+		bool bResult = AddServer(sServer);
+		CUtils::PrintStatus(bResult, bResult ? "Added server [" + sServer + "]" : "Failed to add server [" + sServer + "].");
 	}
 
 	pConfig->FindStringVector("trustedserverfingerprint", vsList);
