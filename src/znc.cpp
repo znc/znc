@@ -269,7 +269,7 @@ bool CZNC::WritePidFile(int iPid) {
 	}
 
 	delete File;
-	CUtils::PrintStatus(bRet);
+	CUtils::PrintStatus(bRet, bRet ? "Created pid file." : "Failed to create pid file.");
 	return bRet;
 }
 
@@ -283,7 +283,7 @@ bool CZNC::DeletePidFile() {
 	bool bRet = File->Delete();
 
 	delete File;
-	CUtils::PrintStatus(bRet);
+	CUtils::PrintStatus(bRet, bRet ? "Deleted pid file." : "Failed to delete pid file.");
 	return bRet;
 }
 
@@ -296,9 +296,9 @@ bool CZNC::WritePemFile() {
 
 	CUtils::PrintAction("Writing Pem file [" + sPemFile + "]");
 #ifndef _WIN32
-    int fd = creat(sPemFile.c_str(), 0600);
+	int fd = creat(sPemFile.c_str(), 0600);
 	if (fd == -1) {
-		CUtils::PrintStatus(false, "Unable to open");
+		CUtils::PrintStatus(false, "Unable to open Pem file");
 		return false;
 	}
     FILE *f = fdopen(fd, "w");
@@ -307,14 +307,14 @@ bool CZNC::WritePemFile() {
 #endif
 
 	if (!f) {
-		CUtils::PrintStatus(false, "Unable to open");
+		CUtils::PrintStatus(false, "Unable to open Pem file");
 		return false;
 	}
 
 	CUtils::GenerateCert(f, "");
 	fclose(f);
 
-	CUtils::PrintStatus(true);
+	CUtils::PrintStatus(true, "Wrote to Pem file.");
 	return true;
 #endif
 }
@@ -644,7 +644,7 @@ bool CZNC::WriteNewConfig(const CString& sConfigFile) {
 			CUtils::PrintStatus(false, FormatBindError());
 			bSuccess = false;
 		} else
-			CUtils::PrintStatus(true);
+			CUtils::PrintStatus(true, "Verified listener...");
 		delete pListener;
 	} while (!bSuccess);
 
@@ -845,7 +845,7 @@ bool CZNC::WriteNewConfig(const CString& sConfigFile) {
 		if (File.HadError())
 			CUtils::PrintStatus(false, "There was an error while writing the config");
 		else
-			CUtils::PrintStatus(true);
+			CUtils::PrintStatus(true, "No errors occurred while writing the config.");
 	} else {
 		cout << endl << "----------------------------------------------------------------------------" << endl << endl;
 	}
@@ -968,7 +968,7 @@ bool CZNC::ReadConfig(CConfig& config, CString& sError) {
 		CUtils::PrintStatus(false, sError);
 		return false;
 	}
-	CUtils::PrintStatus(true);
+	CUtils::PrintStatus(true, "Reading config...");
 
 	// check if config is from old ZNC version and
 	// create a backup file if neccessary
@@ -1044,7 +1044,7 @@ bool CZNC::LoadGlobal(CConfig& config, CString& sError) {
 
 			bool bModRet = GetModules().LoadModule(sModName, sArgs, CModInfo::GlobalModule, nullptr, nullptr, sModRet);
 
-			CUtils::PrintStatus(bModRet, sModRet);
+			CUtils::PrintStatus(bModRet, bModRet ? "Global module [" + sModName + "] loaded successfully." : sModRet);
 			if (!bModRet) {
 				sError = sModRet;
 				return false;
@@ -1624,7 +1624,7 @@ bool CZNC::AddListener(unsigned short uPort, const CString& sBindHost,
 	}
 
 	m_vpListeners.push_back(pListener);
-	CUtils::PrintStatus(true);
+	CUtils::PrintStatus(true, "Listening on " + CString(bSSL ? "secure " : "") + "port [" + CString(bSSL ? "+" : "") + CString(uPort) + "].");
 
 	return true;
 }
