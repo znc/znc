@@ -1044,7 +1044,7 @@ bool CZNC::LoadGlobal(CConfig& config, CString& sError) {
 
 			bool bModRet = GetModules().LoadModule(sModName, sArgs, CModInfo::GlobalModule, nullptr, nullptr, sModRet);
 
-			CUtils::PrintStatus(bModRet, sModRet);
+			CUtils::PrintStatus(bModRet, bModRet ? "" : sModRet);
 			if (!bModRet) {
 				sError = sModRet;
 				return false;

@@ -339,11 +339,10 @@ void CUtils::PrintAction(const CString& sMessage) {
 void CUtils::PrintStatus(bool bSuccess, const CString& sMessage) {
 	if (CDebug::StdoutIsTTY()) {
 		if (bSuccess) {
-			fprintf(stdout,  BOLD BLU "[" GRN " >> " BLU "]" DFL NORM);
-			fprintf(stdout, " %s\n", sMessage.empty() ? "ok" : sMessage.c_str());
+			if (!sMessage.empty()) 
+				fprintf(stdout, BOLD BLU "[" GRN " >> " BLU "]" DFL NORM " %s\n", sMessage.c_str());
 		} else {
-			fprintf(stdout,  BOLD BLU "[" RED " !! " BLU "]" DFL NORM);
-			fprintf(stdout,  BOLD RED " %s" DFL NORM "\n", sMessage.empty() ? "failed" : sMessage.c_str());
+			fprintf(stdout, sMessage.empty() ? " failed\n" : BOLD BLU "[" RED " !! " BLU "]" DFL NORM BOLD RED " %s" DFL NORM "\n", sMessage.c_str());
 		}
 	} else {
 		if (bSuccess) {
