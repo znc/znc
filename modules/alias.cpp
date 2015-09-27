@@ -267,6 +267,34 @@ public:
 		PutModule(output);
 	}
 
+	void DumpCommand(const CString& sLine) 
+	{
+		MCString::iterator i = BeginNV();
+	
+		if (i == EndNV()) { 
+			PutModule("There are no aliases.");
+			return;
+		}
+	
+		PutModule("-----------------------");
+		PutModule("/ZNC-CLEAR-ALL-ALIASES!");		
+		for (; i != EndNV(); ++i)
+		{
+			PutModule("/msg " + GetModNick() + " Create " + i->first);
+			if (!i->second.empty()) {
+				VCString it;
+				uint idx;
+				i->second.Split("\n", it);
+				
+				for (idx = 0; idx < it.size(); ++idx)
+				{
+					PutModule("/msg " + GetModNick() + " Add " + i->first + " " + it[idx]);
+				} 
+			}
+		}
+		PutModule("-----------------------");
+	}
+
 	void InfoCommand(const CString& sLine)
 	{
 		CString name = sLine.Token(1, false, " ");
@@ -293,10 +321,12 @@ public:
 		AddCommand("Delete", static_cast<CModCommand::ModCmdFunc>(&CAliasMod::DeleteCommand), "<name>", "Deletes an existing alias.");
 		AddCommand("Add", static_cast<CModCommand::ModCmdFunc>(&CAliasMod::AddCmd), "<name> <action ...>", "Adds a line to an existing alias.");
 		AddCommand("Insert", static_cast<CModCommand::ModCmdFunc>(&CAliasMod::InsertCommand), "<name> <pos> <action ...>", "Inserts a line into an existing alias.");
-		AddCommand("Remove", static_cast<CModCommand::ModCmdFunc>(&CAliasMod::RemoveCommand), "<name> <linenum>", "Removes a line from an existing alias.");
+		AddCommand("Remove", static_cast<CModCommand::ModCmdFunc>(&CAliasMod::RemoveCommand), "<name> <pos>", "Removes a line from an existing alias.");
 		AddCommand("Clear", static_cast<CModCommand::ModCmdFunc>(&CAliasMod::ClearCommand), "<name>", "Removes all line from an existing alias.");
 		AddCommand("List", static_cast<CModCommand::ModCmdFunc>(&CAliasMod::ListCommand), "", "Lists all aliases by name.");
 		AddCommand("Info", static_cast<CModCommand::ModCmdFunc>(&CAliasMod::InfoCommand), "<name>", "Reports the actions performed by an alias.");
+		AddCommand("Dump", static_cast<CModCommand::ModCmdFunc>(&CAliasMod::DumpCommand), "", "Generate a list of commands to copy your alias config.");
+
 	}
 
 	EModRet OnUserRaw(CString& sLine) override
