@@ -18,7 +18,7 @@
 #include <znc/IRCNetwork.h>
 #include <time.h>
 
-#define SIMPLE_AWAY_DEFAULT_REASON "Auto away at %s"
+#define SIMPLE_AWAY_DEFAULT_REASON "Auto away at %awaytime%"
 #define SIMPLE_AWAY_DEFAULT_TIME   60
 
 
@@ -50,7 +50,7 @@ public:
 		m_bWeSetAway     = false;
 
 		AddHelpCommand();
-		AddCommand("Reason", static_cast<CModCommand::ModCmdFunc>(&CSimpleAway::OnReasonCommand), "[<text>]", "Prints or sets the away reason (%s is replaced with the time you were set away)");
+		AddCommand("Reason", static_cast<CModCommand::ModCmdFunc>(&CSimpleAway::OnReasonCommand), "[<text>]", "Prints or sets the away reason (%awaytime% is replaced with the time you were set away, supports substitutions using ExpandString)");
 		AddCommand("Timer", static_cast<CModCommand::ModCmdFunc>(&CSimpleAway::OnTimerCommand), "", "Prints the current time to wait before setting you away");
 		AddCommand("SetTimer", static_cast<CModCommand::ModCmdFunc>(&CSimpleAway::OnSetTimerCommand), "<seconds>", "Sets the time to wait before setting you away");
 		AddCommand("DisableTimer", static_cast<CModCommand::ModCmdFunc>(&CSimpleAway::OnDisableTimerCommand), "", "Disables the wait time before setting you away");
@@ -186,7 +186,9 @@ private:
 
 		time_t iTime = time(nullptr);
 		CString sTime = CUtils::CTime(iTime, GetUser()->GetTimezone());
-		sReason.Replace("%s", sTime);
+		sReason.Replace("%awaytime%", sTime);
+		sReason = ExpandString(sReason);
+		sReason.Replace("%s", sTime); // Backwards compatibility with previous syntax, where %s was substituted with sTime. ZNC <= 1.6.x
 
 		return sReason;
 	}
