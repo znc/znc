@@ -46,8 +46,8 @@ public:
 	MODCONSTRUCTOR(CClientNotifyMod) {
 		AddHelpCommand();
 		AddCommand("Method", static_cast<CModCommand::ModCmdFunc>(&CClientNotifyMod::OnMethodCommand), "<message|notice|off>", "Sets the notify method");
-		AddCommand("NewOnly", static_cast<CModCommand::ModCmdFunc>(&CClientNotifyMod::OnNewOnlyCommand), "<on|off>", "Turns notifies for unseen IP addresses only on or off");
-		AddCommand("OnDisconnect", static_cast<CModCommand::ModCmdFunc>(&CClientNotifyMod::OnDisconnectCommand), "<on|off>", "Turns notifies on disconnecting clients on or off");
+		AddCommand("NewOnly", static_cast<CModCommand::ModCmdFunc>(&CClientNotifyMod::OnNewOnlyCommand), "<on|off>", "Turns notifications for unseen IP addresses on or off");
+		AddCommand("OnDisconnect", static_cast<CModCommand::ModCmdFunc>(&CClientNotifyMod::OnDisconnectCommand), "<on|off>", "Turns notifications for clients disconnecting on or off");
 		AddCommand("Show", static_cast<CModCommand::ModCmdFunc>(&CClientNotifyMod::OnShowCommand), "", "Show the current settings");
 	}
 
