@@ -1434,12 +1434,14 @@ CString CIRCNetwork::ExpandString(const CString& sStr) const {
 
 CString& CIRCNetwork::ExpandString(const CString& sStr, CString& sRet) const {
 	sRet = sStr;
-	sRet.Replace("%defnick%", GetNick());
-	sRet.Replace("%nick%", GetCurNick());
+
 	sRet.Replace("%altnick%", GetAltNick());
-	sRet.Replace("%ident%", GetIdent());
-	sRet.Replace("%realname%", GetRealName());
 	sRet.Replace("%bindhost%", GetBindHost());
+	sRet.Replace("%defnick%", GetNick());
+	sRet.Replace("%ident%", GetIdent());
+	sRet.Replace("%network%", GetName());
+	sRet.Replace("%nick%", GetCurNick());
+	sRet.Replace("%realname%", GetRealName());
 
 	return m_pUser->ExpandString(sRet, sRet);
 }
