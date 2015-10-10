@@ -9,7 +9,7 @@ cache:
 environment:
     matrix:
         - cygwin_url: https://cygwin.com/setup-x86_64.exe
-          do_test2: yes
+          do_test2: no
         - cygwin_url: https://cygwin.com/setup-x86.exe
           # For some reason pexpect fails on 32bit cygwin very often on appveyor, I don't know why
           do_test2: no

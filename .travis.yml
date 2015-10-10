@@ -69,7 +69,6 @@ script:
     - make V=1
     - make V=1 test
     - sudo make install
-    - make test2
     - cd ..
 after_success:
     - test -r .travis_after_all.py && python .travis_after_all.py || echo No .travis_after_all.py found
