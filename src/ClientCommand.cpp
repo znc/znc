@@ -334,6 +334,10 @@ void CClient::UserCommand(CString& sLine) {
 			}
 		}
 
+		if (!pServer) {
+			pServer = m_pNetwork->GetNextServer();
+		}
+
 		if (GetIRCSock()) {
 			GetIRCSock()->Quit();
 			if (pServer)
