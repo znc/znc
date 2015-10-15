@@ -296,7 +296,7 @@ if test "$POLL" = "yes"; then
 fi
 
 AC_CHECK_LIB( gnugetopt, getopt_long,)
-AC_CHECK_FUNCS([lstat getopt_long getpassphrase clock_gettime])
+AC_CHECK_FUNCS([lstat getopt_long getpassphrase clock_gettime tcsetattr])
 
 # ----- Check for dlopen
 
