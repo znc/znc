@@ -543,17 +543,20 @@ CString& CUser::ExpandString(const CString& sStr, CString& sRet) const {
 	CString sTime = CUtils::CTime(time(nullptr), m_sTimezone);
 
 	sRet = sStr;
-	sRet.Replace("%user%", GetUserName());
-	sRet.Replace("%defnick%", GetNick());
-	sRet.Replace("%nick%", GetNick());
 	sRet.Replace("%altnick%", GetAltNick());
-	sRet.Replace("%ident%", GetIdent());
-	sRet.Replace("%realname%", GetRealName());
-	sRet.Replace("%vhost%", GetBindHost());
 	sRet.Replace("%bindhost%", GetBindHost());
-	sRet.Replace("%version%", CZNC::GetVersion());
+	sRet.Replace("%defnick%", GetNick());
+	sRet.Replace("%ident%", GetIdent());
+	sRet.Replace("%nick%", GetNick());
+	sRet.Replace("%realname%", GetRealName());
 	sRet.Replace("%time%", sTime);
 	sRet.Replace("%uptime%", CZNC::Get().GetUptime());
+	sRet.Replace("%user%", GetUserName());
+	sRet.Replace("%version%", CZNC::GetVersion());
+	sRet.Replace("%vhost%", GetBindHost());
+
+	// Allows for escaping ExpandString if necessary, or to prevent
+	// defaults from kicking in if you don't want them.
 	sRet.Replace("%empty%", "");
 	// The following lines do not exist. You must be on DrUgS!
 	sRet.Replace("%znc%", "All your IRC are belong to ZNC");
