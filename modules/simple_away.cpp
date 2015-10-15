@@ -152,10 +152,10 @@ public:
 
 	void OnMinClientsCommand(const CString& sLine) {
 		if (sLine.Token(1).empty()) {
-			PutModule(CString(m_iMinClients));
+			PutModule("Current MinClients setting: " + CString(m_iMinClients));
 		} else {
 			SetMinClients(sLine.Token(1).ToUInt());
-			PutModule("MinClients set");
+			PutModule("MinClients set to " + CString(m_iMinClients));
 		}
 	}
 
