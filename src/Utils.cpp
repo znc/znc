@@ -31,6 +31,10 @@
 #include <unistd.h>
 #include <time.h>
 
+#ifdef HAVE_TCSETATTR
+#include <termios.h>
+#endif
+
 #ifdef HAVE_ICU
 #include <unicode/ucnv.h>
 #include <unicode/errorcode.h>
@@ -197,11 +201,28 @@ CString CUtils::SaltedSHA256Hash(const CString& sPass, const CString& sSalt) {
 }
 
 CString CUtils::GetPass(const CString& sPrompt) {
+#ifdef HAVE_TCSETATTR
+	// Disable echo
+	struct termios t;
+	tcgetattr(1, &t);
+	struct termios t2 = t;
+	t2.c_lflag &= ~ECHO;
+	tcsetattr(1, TCSANOW, &t2);
+	// Read pass
+	CString r;
+	GetInput(sPrompt, r);
+	// Restore echo and go to new line
+	tcsetattr(1, TCSANOW, &t);
+	fprintf(stdout, "\n");
+	fflush(stdout);
+	return r;
+#else
 	PrintPrompt(sPrompt);
 #ifdef HAVE_GETPASSPHRASE
 	return getpassphrase("");
 #else
 	return getpass("");
+#endif
 #endif
 }
 
