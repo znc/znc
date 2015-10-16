@@ -90,13 +90,13 @@ public:
 	MODCONSTRUCTOR(CPerform) {
 		AddHelpCommand();
 		AddCommand("Add",     static_cast<CModCommand::ModCmdFunc>(&CPerform::Add),
-			"<command>");
+			"<command>", "Adds perform command to be sent to the server on connect");
 		AddCommand("Del",     static_cast<CModCommand::ModCmdFunc>(&CPerform::Del),
-			"<number>");
-		AddCommand("List",    static_cast<CModCommand::ModCmdFunc>(&CPerform::List));
-		AddCommand("Execute", static_cast<CModCommand::ModCmdFunc>(&CPerform::Execute));
+			"<number>", "Delete a perform command");
+		AddCommand("List",    static_cast<CModCommand::ModCmdFunc>(&CPerform::List),"", "List the perform commands");
+		AddCommand("Execute", static_cast<CModCommand::ModCmdFunc>(&CPerform::Execute),"", "Send the perform commands to the server now");
 		AddCommand("Swap",    static_cast<CModCommand::ModCmdFunc>(&CPerform::Swap),
-			"<number> <number>");
+			"<number> <number>", "Swap two perform commands");
 	}
 
 	virtual ~CPerform() {}

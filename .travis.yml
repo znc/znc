@@ -3,6 +3,7 @@ env:
     global:
         - secure: "i2f2UVDnyHT/9z0U3XvgTj8eDERvnc1Wk7HpseEjb75JwGzqn/2R+RKHmoSrwK3hFgij2IMxZL19XtHFwMz9t5A/huAAKD74KMMI/QpeZEJ/sjT3CTLcE9HEVDdJOjc7dfLRxb2hZtgvx8clZIMrpeUdPhci8openff30KvXVbg="
 matrix:
+    fast_finish: true
     include:
         - os: linux
           compiler: gcc
@@ -32,13 +33,9 @@ before_install:
 install:
     - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then cat /proc/cpuinfo /proc/meminfo; fi
     - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then lsb_release -a; fi
-    - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then sudo add-apt-repository -y ppa:ubuntu-toolchain-r/test; fi  # for gcc-4.8
     - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then sudo add-apt-repository -y ppa:teward/swig3.0; fi
-    - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then sudo add-apt-repository -y ppa:teward/icu-backports; fi
     - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then sudo apt-get update; fi
     - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then sudo apt-get install libperl-dev python3-dev tcl-dev libsasl2-dev libicu-dev swig3.0 doxygen graphviz python3-setuptools socat; fi
-    - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then sudo apt-get install g++-4.8; fi
-    - if [[ "$TRAVIS_OS_NAME" == "linux" && "$CXX" == "g++" ]]; then export CXX="g++-4.8" CC="gcc-4.8"; fi
     - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then sudo easy_install3 pexpect; fi
     - |
           if [[ "$TRAVIS_OS_NAME" == "linux" && "$BUILD_TYPE" == "coverage" ]]; then
@@ -96,6 +93,8 @@ after_success:
 notifications:
     irc:
         channels:
-            - "irc.freenode.net#znc"
+            - "irc.freenode.net#znc-dev"
         on_success: always
         on_failure: always
+sudo: required
+dist: trusty
