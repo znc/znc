@@ -40,11 +40,7 @@ install:
     - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then source /opt/qt55/bin/qt55-env.sh; fi
     - |
           if [[ "$TRAVIS_OS_NAME" == "linux" && "$BUILD_TYPE" == "coverage" ]]; then
-              # when travis upgrades ubuntu, install lcov from apt-get instead
-              sudo apt-get build-dep lcov
-              wget http://archive.ubuntu.com/ubuntu/pool/main/l/lcov/lcov_1.11.orig.tar.gz
-              tar xf lcov_1.11.orig.tar.gz
-              sudo make -C lcov-1.11/ install
+              sudo apt-get install -y lcov
               gem install coveralls-lcov
               lcov --directory . --zerocounters
           fi
