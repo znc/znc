@@ -34,9 +34,10 @@ install:
     - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then cat /proc/cpuinfo /proc/meminfo; fi
     - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then lsb_release -a; fi
     - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then sudo add-apt-repository -y ppa:teward/swig3.0; fi
+    - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then sudo add-apt-repository -y ppa:beineri/opt-qt551-trusty; fi  # default qt5.2 from trusty doesn't support QByteArray::toStdString()
     - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then sudo apt-get update; fi
-    - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then sudo apt-get install libperl-dev python3-dev tcl-dev libsasl2-dev libicu-dev swig3.0 doxygen graphviz python3-setuptools socat; fi
-    - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then sudo easy_install3 pexpect; fi
+    - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then sudo apt-get install -y libperl-dev python3-dev tcl-dev libsasl2-dev libicu-dev swig3.0 doxygen graphviz qt55base; fi
+    - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then source /opt/qt55/bin/qt55-env.sh; fi
     - |
           if [[ "$TRAVIS_OS_NAME" == "linux" && "$BUILD_TYPE" == "coverage" ]]; then
               # when travis upgrades ubuntu, install lcov from apt-get instead
@@ -53,9 +54,9 @@ install:
     - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew config; fi
     - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew list --versions; fi
     - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew update; fi
-    - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew install swig python3 icu4c jq openssl socat; fi
+    - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew install swig python3 icu4c jq openssl qt5; fi
     - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew info --json=v1 --installed | jq .; fi
-    - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then pip3 install pexpect; fi
+    - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then export PKG_CONFIG_PATH="$(brew --prefix qt5)/lib/pkgconfig:$PKG_CONFIG_PATH"; fi
     - "echo pkg-config path: [$PKG_CONFIG_PATH]"
 script:
     - ./bootstrap.sh
@@ -63,9 +64,10 @@ script:
     - cd build
     - ../configure --enable-perl --enable-python --enable-tcl --enable-cyrus --enable-charset $CFGFLAGS CXXFLAGS="$CXXFLAGS $MYCXXFLAGS" LDFLAGS="$LDFLAGS $MYLDFLAGS"
     - cat config.log
-    - make V=1
-    - make V=1 test
+    - make VERBOSE=1
+    - make VERBOSE=1 test
     - sudo make install
+    - make VERBOSE=1 test2
     - cd ..
 after_success:
     - test -r .travis_after_all.py && python .travis_after_all.py || echo No .travis_after_all.py found

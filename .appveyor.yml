@@ -9,21 +9,17 @@ cache:
 environment:
     matrix:
         - cygwin_url: https://cygwin.com/setup-x86_64.exe
-          do_test2: no
         - cygwin_url: https://cygwin.com/setup-x86.exe
-          # For some reason pexpect fails on 32bit cygwin very often on appveyor, I don't know why
-          do_test2: no
 install:
     - ps: Invoke-WebRequest $env:cygwin_url -OutFile c:\cygwin-setup.exe
       # libcrypt-devel is needed only on x86_64 and only for modperl... probably some dependency problem.
-    - c:\cygwin-setup.exe --quiet-mode --no-shortcuts --no-startmenu --no-desktop --upgrade-also --only-site --site http://cygwin.mirror.constant.com/ --root c:\cygwin-root --local-package-dir c:\cygwin-setup-cache --packages automake,gcc-g++,make,pkg-config,wget,openssl-devel,libicu-devel,zlib-devel,libcrypt-devel,perl,python3,swig,libsasl2-devel,python3-setuptools,socat
+    - c:\cygwin-setup.exe --quiet-mode --no-shortcuts --no-startmenu --no-desktop --upgrade-also --only-site --site http://cygwin.mirror.constant.com/ --root c:\cygwin-root --local-package-dir c:\cygwin-setup-cache --packages automake,gcc-g++,make,pkg-config,wget,openssl-devel,libicu-devel,zlib-devel,libcrypt-devel,perl,python3,swig,libsasl2-devel,libQt5Core-devel
     - c:\cygwin-root\bin\sh -lc "echo Hi"
     - c:\cygwin-root\bin\sh -lc "uname -a"
     - c:\cygwin-root\bin\sh -lc "cat /proc/cpuinfo"
     - c:\cygwin-root\bin\sh -lc "cat /proc/meminfo"
     - c:\cygwin-root\bin\sh -lc "cygcheck -s -v > $APPVEYOR_BUILD_FOLDER/cygcheck.log 2>&1"
     - ps: Push-AppveyorArtifact cygcheck.log
-    - c:\cygwin-root\bin\sh -lc "/bin/easy_install* pexpect"
 # stdin is broken at AppVeyor, so we open it explicitly as /dev/null
 build_script:
     - git submodule update --init
@@ -35,4 +31,4 @@ build_script:
     - c:\cygwin-root\bin\sh -lc "znc --version"
 test_script:
     - c:\cygwin-root\bin\sh -lc "cd $APPVEYOR_BUILD_FOLDER/build; make VERBOSE=1 test < /dev/null"
-    - c:\cygwin-root\bin\sh -lc "cd $APPVEYOR_BUILD_FOLDER/build; if [[ $do_test2 == yes ]]; then make VERBOSE=1 test2 < /dev/null; else true; fi"
+    - c:\cygwin-root\bin\sh -lc "cd $APPVEYOR_BUILD_FOLDER/build; make VERBOSE=1 test2 < /dev/null"

@@ -453,6 +453,9 @@ then
 	])
 fi
 
+# For integration test only
+PKG_CHECK_MODULES([qt], [Qt5Network >= 5.4], [], [:])
+
 AC_ARG_WITH( [module-prefix],
 	AS_HELP_STRING([--with-module-prefix], [module object code [LIBDIR/znc]]),
 	[MODDIR=$withval],
@@ -481,6 +484,8 @@ else
 	# See https://cygwin.com/ml/cygwin-apps/2015-07/msg00108.html for the reasoning behind the name.
 	LIBZNC="cygznc-${LIBZNC_VERSION}.dll"
 	LIBZNCDIR="$bindir"
+	# See above about __STRICT_ANSI__
+	qt_CFLAGS="$qt_CFLAGS -U__STRICT_ANSI__"
 fi
 
 if test -z "$ISDARWIN"; then
@@ -683,6 +688,8 @@ AC_SUBST([PYTHON])
 AC_SUBST([SWIG])
 AC_SUBST([python_CFLAGS])
 AC_SUBST([python_LIBS])
+AC_SUBST([qt_CFLAGS])
+AC_SUBST([qt_LIBS])
 AC_CONFIG_FILES([Makefile])
 AC_CONFIG_FILES([znc-buildmod])
 AC_CONFIG_FILES([man/Makefile])
