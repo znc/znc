@@ -37,13 +37,9 @@ before_install:
 install:
     - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then cat /proc/cpuinfo /proc/meminfo; fi
     - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then lsb_release -a; fi
-    - if [[ "$TRAVIS_OS_NAME" == "linux" && "$CXX" == "g++" ]]; then sudo add-apt-repository -y ppa:ubuntu-toolchain-r/test; fi
     - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then sudo add-apt-repository -y ppa:teward/swig3.0; fi
-    - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then sudo add-apt-repository -y ppa:teward/icu-backports; fi
     - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then sudo apt-get update; fi
-    - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then sudo apt-get install libperl-dev python3-dev tcl-dev libsasl2-dev libgtest-dev libicu-dev swig3.0 doxygen graphviz; fi
-    - if [[ "$TRAVIS_OS_NAME" == "linux" && "$CXX" == "g++" ]]; then sudo apt-get install g++-4.8; fi
-    - if [[ "$TRAVIS_OS_NAME" == "linux" && "$CXX" == "g++" ]]; then export CXX="g++-4.8" CC="gcc-4.8"; fi
+    - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then sudo apt-get -y install libperl-dev python3-dev tcl-dev libsasl2-dev libgtest-dev libicu-dev swig3.0 doxygen graphviz; fi
     - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then export CFGFLAGS="$CFGFLAGS --with-gtest=/usr/src/gtest"; fi
     - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then sw_vers; fi
     - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then sysctl -a | grep cpu; fi
@@ -80,6 +76,8 @@ after_success:
 notifications:
     irc:
         channels:
-            - "irc.freenode.net#znc"
+            - "irc.freenode.net#znc-dev"
         on_success: always
         on_failure: always
+sudo: required
+dist: trusty
