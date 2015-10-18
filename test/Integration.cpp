@@ -24,13 +24,14 @@
 #include <QTemporaryDir>
 #include <QTextStream>
 
-#define Z if (::testing::Test::HasFatalFailure()) return
+#define Z do { if (::testing::Test::HasFatalFailure()) { std::cerr << "At: " << __FILE__ << ":" << __LINE__ << std::endl; return; } } while (0)
 
 namespace {
 
+template <typename Device>
 class IO {
 public:
-	IO(QIODevice* device, bool verbose = false) : m_device(device), m_verbose(verbose) {}
+	IO(Device* device, bool verbose = false) : m_device(device), m_verbose(verbose) {}
 	virtual ~IO() {}
 	void ReadUntil(QByteArray pattern) {
 		auto deadline = QDateTime::currentDateTime().addSecs(30);
@@ -44,8 +45,8 @@ public:
 				m_readed = m_readed.right(pattern.length());
 			}
 			const int timeout_ms = QDateTime::currentDateTime().msecsTo(deadline);
-			ASSERT_GT(timeout_ms, 0) << pattern.toStdString();
-			ASSERT_TRUE(m_device->waitForReadyRead(timeout_ms)) << pattern.toStdString();
+			ASSERT_GT(timeout_ms, 0) << "Wanted:" << pattern.toStdString();
+			ASSERT_TRUE(m_device->waitForReadyRead(timeout_ms)) << "Wanted: " << pattern.toStdString();
 			QByteArray chunk = m_device->readAll();
 			if (m_verbose) {
 				std::cout << chunk.toStdString() << std::flush;
@@ -58,17 +59,31 @@ public:
 		if (m_verbose) {
 			std::cout << s.toStdString() << std::flush;
 		}
-		QTextStream str(m_device);
-		str << s;
+		{
+			QTextStream str(m_device);
+			str << s;
+		}
+		FlushIfCan(m_device);
 	}
 
 private:
-	QIODevice* m_device;
+	// QTextStream doesn't flush QTcpSocket, and QIODevice doesn't have flush() at all...
+	static void FlushIfCan(QIODevice*) {}
+	static void FlushIfCan(QTcpSocket* sock) {
+		sock->flush();
+	}
+
+	Device* m_device;
 	bool m_verbose;
 	QByteArray m_readed;
 };
 
-class Process : public IO {
+template <typename Device>
+IO<Device> WrapIO(Device* d) {
+	return IO<Device>(d);
+}
+
+class Process : public IO<QProcess> {
 public:
 	Process(QString cmd, QStringList args, bool interactive) : IO(&m_proc, true) {
 		if (!interactive) {
@@ -77,15 +92,18 @@ public:
 		m_proc.start(cmd, args);
 	}
 	~Process() {
-		if (m_kill) m_proc.terminate();
-		EXPECT_TRUE(m_proc.waitForFinished());
-		m_proc.kill();  // for case if it didn't finish yet
+		Destroy();
 	}
 	void ShouldFinishItself() {
 		m_kill = false;
 	}
 
 private:
+	void Destroy() {
+		if (m_kill) m_proc.terminate();
+		ASSERT_TRUE(m_proc.waitForFinished());
+	}
+
 	bool m_kill = true;
 	QProcess m_proc;
 };
@@ -109,24 +127,35 @@ void WriteConfig(QString path) {
 	p.ReadUntil("Server uses SSL?");Z;        p.Write();
 	p.ReadUntil("6667");Z;                    p.Write();
 	p.ReadUntil("password");Z;                p.Write();
-	p.ReadUntil("channels");Z;                p.Write();
+	p.ReadUntil("channels");Z;                p.Write("#znc");
 	p.ReadUntil("Launch ZNC now?");Z;         p.Write("no");
 	p.ShouldFinishItself();
+}
+
+TEST(ZNC, ConfigAlreadyExists) {
+	QTemporaryDir dir;
+	WriteConfig(dir.path());Z;
+	Process p("./znc", QStringList() << "--debug" << "--datadir" << dir.path() << "--makeconf", true);
+	p.ReadUntil("already exists");Z;
 }
 
 TEST(ZNC, Connect) {
 	QTemporaryDir dir;
 	WriteConfig(dir.path());Z;
+
 	QTcpServer ser;
 	ASSERT_TRUE(ser.listen(QHostAddress::LocalHost, 6667)) << ser.errorString().toStdString();
+
 	Process znc("./znc", QStringList() << "--debug" << "--datadir" << dir.path(), false);
+
 	ASSERT_TRUE(ser.waitForNewConnection(30000 /* msec */));
-	IO ircd(ser.nextPendingConnection());
+	auto ircd = WrapIO(ser.nextPendingConnection());
 	ircd.ReadUntil("CAP LS");Z;
+
 	QTcpSocket cli;
 	cli.connectToHost("127.0.0.1", 12345);
 	ASSERT_TRUE(cli.waitForConnected()) << cli.errorString().toStdString();
-	IO cl(&cli);
+	auto cl = WrapIO(&cli);
 	cl.Write("PASS :hunter2");
 	cl.Write("NICK nick");
 	cl.Write("USER user/test x x :x");
