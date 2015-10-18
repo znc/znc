@@ -57,6 +57,7 @@ public:
 		}
 	}
 	void Write(QString s = "") {
+		if (!m_device) return;
 		s += "\n";
 		if (m_verbose) {
 			std::cout << s.toStdString() << std::flush;
@@ -66,6 +67,9 @@ public:
 			str << s;
 		}
 		FlushIfCan(m_device);
+	}
+	void Close() {
+		m_device->close();
 	}
 
 private:
@@ -125,7 +129,7 @@ void WriteConfig(QString path) {
 	p.ReadUntil("Server uses SSL?");Z;        p.Write();
 	p.ReadUntil("6667");Z;                    p.Write();
 	p.ReadUntil("password");Z;                p.Write();
-	p.ReadUntil("channels");Z;                p.Write("#znc");
+	p.ReadUntil("channels");Z;                p.Write();
 	p.ReadUntil("Launch ZNC now?");Z;         p.Write("no");
 	p.ShouldFinishItself();
 }
@@ -161,6 +165,14 @@ protected:
 		return std::unique_ptr<Process>(new Process("./znc", QStringList() << "--debug" << "--datadir" << m_dir.path(), false));
 	}
 
+	IO<QTcpSocket> LoginClient() {
+		auto client = ConnectClient();
+		client.Write("PASS :hunter2");
+		client.Write("NICK nick");
+		client.Write("USER user/test x x :x");
+		return client;
+	}
+
 	QTemporaryDir m_dir;
 	QTcpServer m_server;
 	std::list<QTcpSocket> m_clients;
@@ -177,6 +189,32 @@ TEST_F(ZNCTest, Connect) {
 	client.Write("NICK nick");
 	client.Write("USER user/test x x :x");
 	client.ReadUntil("Welcome");Z;
+	client.Close();
+
+	client = ConnectClient();Z;
+	client.Write("PASS :user:hunter2");
+	client.Write("NICK nick");
+	client.Write("USER u x x x");
+	client.ReadUntil("Welcome");Z;
+}
+
+TEST_F(ZNCTest, Channel) {
+	auto znc = Run();Z;
+	auto ircd = ConnectIRCd();Z;
+
+	auto client = LoginClient();Z;
+	client.ReadUntil("Welcome");Z;
+	client.Write("JOIN #znc");
+	client.Close();
+
+	ircd.Write(":server 001 nick :Hello");
+	ircd.ReadUntil("JOIN #znc");Z;
+	ircd.Write(":nick JOIN #znc nick :Real");
+	ircd.Write(":server 353 nick #znc :nick");
+	ircd.Write(":server 366 nick #znc :End of /NAMES list");
+
+	client = LoginClient();Z;
+	client.ReadUntil(":nick JOIN :#znc");Z;
 }
 
 }  // namespace

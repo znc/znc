@@ -127,7 +127,7 @@ void CClient::ReadLine(const CString& sData) {
 		if (sCommand.Equals("PASS")) {
 			m_bGotPass = true;
 
-			CString sAuthLine = Message.GetParams(0);
+			CString sAuthLine = Message.GetParam(0);
 			ParsePass(sAuthLine);
 
 			AuthUser();
