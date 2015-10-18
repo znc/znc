@@ -24,6 +24,8 @@
 #include <QTemporaryDir>
 #include <QTextStream>
 
+#include <memory>
+
 #define Z do { if (::testing::Test::HasFatalFailure()) { std::cerr << "At: " << __FILE__ << ":" << __LINE__ << std::endl; return; } } while (0)
 
 namespace {
@@ -92,18 +94,14 @@ public:
 		m_proc.start(cmd, args);
 	}
 	~Process() {
-		Destroy();
+		if (m_kill) m_proc.terminate();
+		[this]() { ASSERT_TRUE(m_proc.waitForFinished()); }();
 	}
 	void ShouldFinishItself() {
 		m_kill = false;
 	}
 
 private:
-	void Destroy() {
-		if (m_kill) m_proc.terminate();
-		ASSERT_TRUE(m_proc.waitForFinished());
-	}
-
 	bool m_kill = true;
 	QProcess m_proc;
 };
@@ -132,34 +130,53 @@ void WriteConfig(QString path) {
 	p.ShouldFinishItself();
 }
 
-TEST(ZNC, ConfigAlreadyExists) {
+TEST(Config, AlreadyExists) {
 	QTemporaryDir dir;
 	WriteConfig(dir.path());Z;
 	Process p("./znc", QStringList() << "--debug" << "--datadir" << dir.path() << "--makeconf", true);
 	p.ReadUntil("already exists");Z;
 }
 
-TEST(ZNC, Connect) {
-	QTemporaryDir dir;
-	WriteConfig(dir.path());Z;
+class ZNCTest : public testing::Test {
+protected:
+	void SetUp() override {
+		WriteConfig(m_dir.path());Z;
+		ASSERT_TRUE(m_server.listen(QHostAddress::LocalHost, 6667)) << m_server.errorString().toStdString();Z;
+	}
 
-	QTcpServer ser;
-	ASSERT_TRUE(ser.listen(QHostAddress::LocalHost, 6667)) << ser.errorString().toStdString();
+	IO<QTcpSocket> ConnectIRCd() {
+		[this]{ ASSERT_TRUE(m_server.waitForNewConnection(30000 /* msec */)); }();
+		return WrapIO(m_server.nextPendingConnection());
+	}
 
-	Process znc("./znc", QStringList() << "--debug" << "--datadir" << dir.path(), false);
+	IO<QTcpSocket> ConnectClient() {
+		m_clients.emplace_back();
+		QTcpSocket& sock = m_clients.back();
+		sock.connectToHost("127.0.0.1", 12345);
+		[&]{ ASSERT_TRUE(sock.waitForConnected()) << sock.errorString().toStdString(); }();
+		return WrapIO(&sock);
+	}
 
-	ASSERT_TRUE(ser.waitForNewConnection(30000 /* msec */));
-	auto ircd = WrapIO(ser.nextPendingConnection());
+	std::unique_ptr<Process> Run() {
+		return std::unique_ptr<Process>(new Process("./znc", QStringList() << "--debug" << "--datadir" << m_dir.path(), false));
+	}
+
+	QTemporaryDir m_dir;
+	QTcpServer m_server;
+	std::list<QTcpSocket> m_clients;
+};
+
+TEST_F(ZNCTest, Connect) {
+	auto znc = Run();Z;
+
+	auto ircd = ConnectIRCd();Z;
 	ircd.ReadUntil("CAP LS");Z;
 
-	QTcpSocket cli;
-	cli.connectToHost("127.0.0.1", 12345);
-	ASSERT_TRUE(cli.waitForConnected()) << cli.errorString().toStdString();
-	auto cl = WrapIO(&cli);
-	cl.Write("PASS :hunter2");
-	cl.Write("NICK nick");
-	cl.Write("USER user/test x x :x");
-	cl.ReadUntil("Welcome");Z;
+	auto client = ConnectClient();Z;
+	client.Write("PASS :hunter2");
+	client.Write("NICK nick");
+	client.Write("USER user/test x x :x");
+	client.ReadUntil("Welcome");Z;
 }
 
 }  // namespace
