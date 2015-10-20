@@ -56,12 +56,15 @@ public:
 			m_readed += chunk;
 		}
 	}
-	void Write(QString s = "") {
+	void Write(QString s = "", bool new_line = true) {
 		if (!m_device) return;
-		s += "\n";
 		if (m_verbose) {
 			std::cout << s.toStdString() << std::flush;
+			if (new_line) {
+				std::cout << std::endl;
+			}
 		}
+		s += "\n";
 		{
 			QTextStream str(m_device);
 			str << s;
@@ -116,8 +119,8 @@ void WriteConfig(QString path) {
 	p.ReadUntil("Listen using SSL");Z;        p.Write();
 	p.ReadUntil("IPv6");Z;                    p.Write();
 	p.ReadUntil("Username");Z;                p.Write("user");
-	p.ReadUntil("password");Z;                p.Write("hunter2");
-	p.ReadUntil("Confirm");Z;                 p.Write("hunter2");
+	p.ReadUntil("password");Z;                p.Write("hunter2", false);
+	p.ReadUntil("Confirm");Z;                 p.Write("hunter2", false);
 	p.ReadUntil("Nick [user]");Z;             p.Write();
 	p.ReadUntil("Alternate nick [user_]");Z;  p.Write();
 	p.ReadUntil("Ident [user]");Z;            p.Write();
