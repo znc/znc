@@ -39,6 +39,7 @@ class CSimpleAway : public CModule {
 private:
 	CString      m_sReason;
 	unsigned int m_iAwayWait;
+	unsigned int m_iMinClients;
 	bool         m_bClientSetAway;
 	bool         m_bWeSetAway;
 
@@ -46,6 +47,7 @@ public:
 	MODCONSTRUCTOR(CSimpleAway) {
 		m_sReason        = SIMPLE_AWAY_DEFAULT_REASON;
 		m_iAwayWait      = SIMPLE_AWAY_DEFAULT_TIME;
+		m_iMinClients    = 1;
 		m_bClientSetAway = false;
 		m_bWeSetAway     = false;
 
@@ -54,6 +56,7 @@ public:
 		AddCommand("Timer", static_cast<CModCommand::ModCmdFunc>(&CSimpleAway::OnTimerCommand), "", "Prints the current time to wait before setting you away");
 		AddCommand("SetTimer", static_cast<CModCommand::ModCmdFunc>(&CSimpleAway::OnSetTimerCommand), "<seconds>", "Sets the time to wait before setting you away");
 		AddCommand("DisableTimer", static_cast<CModCommand::ModCmdFunc>(&CSimpleAway::OnDisableTimerCommand), "", "Disables the wait time before setting you away");
+		AddCommand("MinClients", static_cast<CModCommand::ModCmdFunc>(&CSimpleAway::OnMinClientsCommand), "", "Get or set the minimum number of clients before going away");
 	}
 
 	virtual ~CSimpleAway() {}
@@ -85,27 +88,33 @@ public:
 				SetReason(sSavedReason, false);
 		}
 
+		// MinClients
+		CString sMinClients = GetNV("minclients");
+		if (!sMinClients.empty())
+			SetMinClients(sMinClients.ToUInt(), false);
+
 		// Set away on load, required if loaded via webadmin
-		if (GetNetwork()->IsIRCConnected() && !GetNetwork()->IsUserAttached())
+		if (GetNetwork()->IsIRCConnected() && MinClientsConnected())
 			SetAway(false);
 
 		return true;
 	}
 
 	void OnIRCConnected() override {
-		if (GetNetwork()->IsUserAttached())
+		if (MinClientsConnected())
 			SetBack();
 		else
 			SetAway(false);
 	}
 
 	void OnClientLogin() override {
-		SetBack();
+		if (MinClientsConnected())
+			SetBack();
 	}
 
 	void OnClientDisconnect() override {
 		/* There might still be other clients */
-		if (!GetNetwork()->IsUserAttached())
+		if (!MinClientsConnected())
 			SetAway();
 	}
 
@@ -139,6 +148,15 @@ public:
 	void OnDisableTimerCommand(const CString& sLine) {
 		SetAwayWait(0);
 		PutModule("Timer disabled");
+	}
+
+	void OnMinClientsCommand(const CString& sLine) {
+		if (sLine.Token(1).empty()) {
+			PutModule("Current MinClients setting: " + CString(m_iMinClients));
+		} else {
+			SetMinClients(sLine.Token(1).ToUInt());
+			PutModule("MinClients set to " + CString(m_iMinClients));
+		}
 	}
 
 	EModRet OnUserRaw(CString &sLine) override {
@@ -179,6 +197,11 @@ public:
 	}
 
 private:
+	bool MinClientsConnected()
+	{
+		return GetNetwork()->GetClients().size() >= m_iMinClients;
+	}
+
 	CString ExpandReason() {
 		CString sReason = m_sReason;
 		if (sReason.empty())
@@ -206,6 +229,11 @@ private:
 		m_iAwayWait = iAwayWait;
 	}
 
+	void SetMinClients(unsigned int iMinClients, bool bSave = true) {
+		if (bSave)
+			SetNV("minclients", CString(iMinClients));
+		m_iMinClients = iMinClients;
+	}
 };
 
 void CSimpleAwayJob::RunJob() {
