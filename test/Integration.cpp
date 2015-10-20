@@ -92,6 +92,8 @@ IO<Device> WrapIO(Device* d) {
 	return IO<Device>(d);
 }
 
+using Socket = IO<QTcpSocket>;
+
 class Process : public IO<QProcess> {
 public:
 	Process(QString cmd, QStringList args, bool interactive) : IO(&m_proc, true) {
@@ -151,12 +153,12 @@ protected:
 		ASSERT_TRUE(m_server.listen(QHostAddress::LocalHost, 6667)) << m_server.errorString().toStdString();Z;
 	}
 
-	IO<QTcpSocket> ConnectIRCd() {
+	Socket ConnectIRCd() {
 		[this]{ ASSERT_TRUE(m_server.waitForNewConnection(30000 /* msec */)); }();
 		return WrapIO(m_server.nextPendingConnection());
 	}
 
-	IO<QTcpSocket> ConnectClient() {
+	Socket ConnectClient() {
 		m_clients.emplace_back();
 		QTcpSocket& sock = m_clients.back();
 		sock.connectToHost("127.0.0.1", 12345);
@@ -168,7 +170,7 @@ protected:
 		return std::unique_ptr<Process>(new Process("./znc", QStringList() << "--debug" << "--datadir" << m_dir.path(), false));
 	}
 
-	IO<QTcpSocket> LoginClient() {
+	Socket LoginClient() {
 		auto client = ConnectClient();
 		client.Write("PASS :hunter2");
 		client.Write("NICK nick");
