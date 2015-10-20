@@ -201,6 +201,16 @@ TEST_F(ZNCTest, Connect) {
 	client.Write("NICK nick");
 	client.Write("USER u x x x");
 	client.ReadUntil("Welcome");Z;
+	client.Close();
+
+	client = ConnectClient();Z;
+	client.Write("NICK nick");
+	client.Write("USER user x x x");
+	client.ReadUntil("Configure your client to send a server password");
+	client.Close();
+
+	ircd.Write(":server 001 nick :Hello");
+	ircd.ReadUntil("WHO");Z;
 }
 
 TEST_F(ZNCTest, Channel) {
