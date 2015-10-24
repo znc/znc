@@ -72,7 +72,13 @@ public:
 		FlushIfCan(m_device);
 	}
 	void Close() {
-		m_device->close();
+#ifdef __CYGWIN__
+#ifdef __x86_64__
+		// Qt on cygwin64 silently doesn't send the rest of buffer from socket without this line
+		sleep(1);
+#endif
+#endif
+		m_device->disconnectFromHost();
 	}
 
 private:
