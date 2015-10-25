@@ -1142,7 +1142,7 @@ bool CIRCNetwork::AddServer(const CString& sName, unsigned short uPort, const CS
 	return true;
 }
 
-CServer* CIRCNetwork::GetNextServer() {
+CServer* CIRCNetwork::GetNextServer(bool bAdvance) {
 	if (m_vServers.empty()) {
 		return nullptr;
 	}
@@ -1151,7 +1151,11 @@ CServer* CIRCNetwork::GetNextServer() {
 		m_uServerIdx = 0;
 	}
 
-	return m_vServers[m_uServerIdx++];
+	if (bAdvance) {
+		return m_vServers[m_uServerIdx++];
+	} else {
+		return m_vServers[m_uServerIdx];
+	}
 }
 
 CServer* CIRCNetwork::GetCurrentServer() const {

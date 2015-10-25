@@ -120,7 +120,7 @@ public:
 	bool DelServer(const CString& sName, unsigned short uPort, const CString& sPass);
 	bool AddServer(const CString& sName);
 	bool AddServer(const CString& sName, unsigned short uPort, const CString& sPass = "", bool bSSL = false);
-	CServer* GetNextServer();
+	CServer* GetNextServer(bool bAdvance = true);
 	CServer* GetCurrentServer() const;
 	void SetIRCServer(const CString& s);
 	bool SetNextServer(const CServer* pServer);
