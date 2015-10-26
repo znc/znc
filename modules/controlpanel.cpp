@@ -451,6 +451,7 @@ class CAdminMod : public CModule {
 		const CString sNetwork = sLine.Token(3);
 
 		CIRCNetwork *pNetwork = nullptr;
+		CUser* pUser;
 
 		if (sVar.empty()) {
 			PutModule("Usage: GetNetwork <variable> [username] [network]");
@@ -458,15 +459,31 @@ class CAdminMod : public CModule {
 		}
 
 		if (sUsername.empty()) {
-			pNetwork = CModule::GetNetwork();
+			pUser = GetUser();
 		} else {
-			CUser* pUser = FindUser(sUsername);
-			if (!pUser) {
+			pUser = FindUser(sUsername);
+		}
+
+		if (!pUser) {
+			return;
+		}
+
+		if (sNetwork.empty()) {
+			if (pUser == GetUser()) {
+				pNetwork = CModule::GetNetwork();
+			} else {
+				PutModule("Error: A network must be specified to get another users settings.");
 				return;
 			}
 
+			if (!pNetwork) {
+				PutModule("You are not currently attached to a network.");
+				return;
+			}
+		} else {
 			pNetwork = FindNetwork(pUser, sNetwork);
-			if (!pNetwork && !sNetwork.empty()) {
+			if (!pNetwork) {
+				PutModule("Error: Invalid network.");
 				return;
 			}
 		}
