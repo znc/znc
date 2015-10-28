@@ -11,7 +11,7 @@ addons:
       name: "znc/coverity"
       description: "Build submitted via Travis CI"
     notification_email: coverity@znc.in
-    build_command_prepend: "./configure --enable-perl --enable-python --enable-tcl"
+    build_command_prepend: "./bootstrap.sh; ./configure --enable-perl --enable-python --enable-tcl"
     build_command: "make"
     branch_pattern: coverity_scan
 
