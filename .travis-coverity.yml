@@ -1,0 +1,19 @@
+language: cpp
+env:
+  global:
+   # The next declaration is the encrypted COVERITY_SCAN_TOKEN, created
+   #   via the "travis encrypt" command using the project repo's public key
+   - secure: "ZtgnBbHMNPeSLXMT3WQu732YntCUloBr/fLF1mfSZwAoSQxfVz+RMZEwhMKhtZ9r3hTudQoAC5RTBJ7MalFBMLqsH12yK5mHSm7DujlrTG2J6LNZAz+37ZIIUzsfHoMzkCO+EGlrBhSICr7k3AaNYshL2gcaIXhf4CXX0E3Kj5H4NIuyFN8pHOYUKxnf2pwed49q3KGZq1fVnpU725jF97xv+c6G7H2aAtPOjWlV60kOQJNr7mv2fcjrx809108A7Q30ULDG5i1u5h1SN8zydh5grI/6e7BcRs0ZsV1f0H2oOg3JLNHWd1xVw0vEKyfZfr92FYTvz24YaIk2ApIeJyfu5KHrb00yYiYulZpeIyXLYswxVnQTNLGriVgUAFXa0j0MwcPg4lLQWpAQvbldYsJh9Xn+D/2qkOG0EqZbgXciCg57ZbPEhDokejmX3cjxXlJp5KwCupWLb8oSrXkRd3tnimTE9r/eV6GwFb5gmMeGEel6jsHs/AwpVds7vnaOXbfNFiQOZOK8gpmnk9K2zZxxFtrTDvJMUn/qTJ+NcUbSJX+aDj++WRZI9Rv9fdzF1m4C6tFmxyo0WdcT9ZN3pZXCWNFoMe3wt4ad72XNCBrZ8fLGmxnx0UdNURQO/C0EESakomNaIkUq3TAJXiWhFYUfu9w6Ve9mDrGtjGQkM7k="
+
+addons:
+  coverity_scan:
+    project:
+      name: "znc/coverity"
+      description: "Build submitted via Travis CI"
+    notification_email: coverity@znc.in
+    build_command_prepend: "./configure --enable-perl --enable-python --enable-tcl"
+    build_command: "make"
+    branch_pattern: coverity_scan
+
+sudo: required
+dist: trusty

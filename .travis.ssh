@@ -1,0 +1,7 @@
+Host github
+HostName github.com
+User git
+IdentityFile ~/znc-github-key
+StrictHostKeyChecking no
+UserKnownHostsFile /dev/null
+
