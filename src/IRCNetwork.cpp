@@ -472,6 +472,7 @@ bool CIRCNetwork::ParseConfig(CConfig *pConfig, CString& sError, bool bUpgrade) 
 			CUtils::PrintError(sError);
 
 			CZNC::DumpConfig(pSubConf);
+			delete pChan;
 			return false;
 		}
 
