@@ -115,18 +115,40 @@ public:
 		if (!interactive) {
 			m_proc.setProcessChannelMode(QProcess::ForwardedChannels);
 		}
+		auto env = QProcessEnvironment::systemEnvironment();
+		// Default exit codes of sanitizers upon error:
+		// ASAN - 1
+		// LSAN - 23 (part of ASAN, but uses a different value)
+		// TSAN - 66
+		//
+		// ZNC uses 1 too to report startup failure.
+		// But we don't want to confuse expected starup failure with ASAN error.
+		env.insert("ASAN_OPTIONS", "exitcode=57");
+		m_proc.setProcessEnvironment(env);
 		m_proc.start(cmd, args);
 	}
 	~Process() {
 		if (m_kill) m_proc.terminate();
-		[this]() { ASSERT_TRUE(m_proc.waitForFinished()); }();
+		[this]() {
+			ASSERT_TRUE(m_proc.waitForFinished());
+			if (!m_allowDie) {
+				ASSERT_EQ(QProcess::NormalExit, m_proc.exitStatus());
+				ASSERT_EQ(m_exit, m_proc.exitCode());
+			}
+		}();
 	}
-	void ShouldFinishItself() {
+	void ShouldFinishItself(int code = 0) {
 		m_kill = false;
+		m_exit = code;
+	}
+	void CanDie() {
+		m_allowDie = true;
 	}
 
 private:
 	bool m_kill = true;
+	int m_exit = 0;
+	bool m_allowDie = false;
 	QProcess m_proc;
 };
 
@@ -159,6 +181,7 @@ TEST(Config, AlreadyExists) {
 	WriteConfig(dir.path());Z;
 	Process p("./znc", QStringList() << "--debug" << "--datadir" << dir.path() << "--makeconf", true);
 	p.ReadUntil("already exists");Z;
+	p.CanDie();
 }
 
 // Can't use QEventLoop without existing QCoreApplication
@@ -338,6 +361,24 @@ TEST_F(ZNCTest, FixFixOfCVE20149403) {
 		{"name", "@#znc"},
 	});
 	EXPECT_THAT(reply->readAll().toStdString(), HasSubstr("Could not add channel [@#znc]"));
+}
+
+TEST_F(ZNCTest, InvalidConfigInChan) {
+	QFile conf(m_dir.path() + "/configs/znc.conf");
+	ASSERT_TRUE(conf.open(QIODevice::Append | QIODevice::Text));
+	QTextStream out(&conf);
+	out << R"(
+		<User foo>
+			<Network bar>
+				<Chan #baz>
+					Invalid = Line
+				</Chan>
+			</Network>
+		</User>
+	)";
+	out.flush();
+	auto znc = Run();Z;
+	znc->ShouldFinishItself(1);
 }
 
 }  // namespace
