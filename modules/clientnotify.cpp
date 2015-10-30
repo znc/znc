@@ -22,8 +22,8 @@ using std::set;
 class CClientNotifyMod : public CModule {
 protected:
 	CString m_sMethod;
-	bool m_bNewOnly;
-	bool m_bOnDisconnect;
+	bool m_bNewOnly{};
+	bool m_bOnDisconnect{};
 
 	set<CString> m_sClientsSeen;
 

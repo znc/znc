@@ -198,7 +198,7 @@ private:
 		LOG_TO_SYSLOG = 1 << 1,
 		LOG_TO_BOTH   = LOG_TO_FILE | LOG_TO_SYSLOG
 	};
-	LogMode m_eLogMode;
+	LogMode m_eLogMode = LOG_TO_FILE;
 	CString m_sLogFile;
 };
 

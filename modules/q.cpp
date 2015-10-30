@@ -372,11 +372,11 @@ public:
 	}
 
 private:
-	bool m_bCloaked;
-	bool m_bAuthed;
-	bool m_bRequestedWhoami;
-	bool m_bRequestedChallenge;
-	bool m_bCatchResponse;
+	bool m_bCloaked{};
+	bool m_bAuthed{};
+	bool m_bRequestedWhoami{};
+	bool m_bRequestedChallenge{};
+	bool m_bCatchResponse{};
 	MCString m_msChanModes;
 
 	void PutQ(const CString& sMessage) {
@@ -590,11 +590,11 @@ private:
 /* Settings */
 	CString m_sUsername;
 	CString m_sPassword;
-	bool    m_bUseCloakedHost;
-	bool    m_bUseChallenge;
-	bool    m_bRequestPerms;
-	bool    m_bJoinOnInvite;
-	bool    m_bJoinAfterCloaked;
+	bool    m_bUseCloakedHost{};
+	bool    m_bUseChallenge{};
+	bool    m_bRequestPerms{};
+	bool    m_bJoinOnInvite{};
+	bool    m_bJoinAfterCloaked{};
 
 	void SetUsername(const CString& sUsername) {
 		m_sUsername = sUsername;
