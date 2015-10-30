@@ -15,6 +15,7 @@ addons:
     build_command: "make VERBOSE=1"
     branch_pattern: coverity_scan
 
-script: off
+script:
+  - /bin/true
 sudo: required
 dist: trusty
