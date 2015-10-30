@@ -17,16 +17,25 @@
 #include <gtest/gtest.h>
 #include <gmock/gmock.h>
 
+#include <QCoreApplication>
 #include <QDateTime>
+#include <QNetworkAccessManager>
+#include <QNetworkRequest>
+#include <QNetworkReply>
 #include <QProcess>
 #include <QTcpServer>
 #include <QTcpSocket>
 #include <QTemporaryDir>
 #include <QTextStream>
+#include <QTimer>
+#include <QUrl>
+#include <QUrlQuery>
 
 #include <memory>
 
 #define Z do { if (::testing::Test::HasFatalFailure()) { std::cerr << "At: " << __FILE__ << ":" << __LINE__ << std::endl; return; } } while (0)
+
+using testing::HasSubstr;
 
 namespace {
 
@@ -152,6 +161,17 @@ TEST(Config, AlreadyExists) {
 	p.ReadUntil("already exists");Z;
 }
 
+// Can't use QEventLoop without existing QCoreApplication
+class App {
+public:
+	App() : m_argv(new char{}), m_app(m_argc, &m_argv) {}
+	~App() { delete m_argv; }
+private:
+	int m_argc = 1;
+	char* m_argv;
+	QCoreApplication m_app;
+};
+
 class ZNCTest : public testing::Test {
 protected:
 	void SetUp() override {
@@ -184,6 +204,33 @@ protected:
 		return client;
 	}
 
+	std::unique_ptr<QNetworkReply> HttpGet(QNetworkRequest request) {
+		return HandleHttp(m_network.get(request));
+	}
+	std::unique_ptr<QNetworkReply> HttpPost(QNetworkRequest request, QList<QPair<QString, QString>> data) {
+		request.setHeader(QNetworkRequest::ContentTypeHeader, "application/x-www-form-urlencoded");
+		QUrlQuery q;
+		q.setQueryItems(data);
+		return HandleHttp(m_network.post(request, q.toString().toUtf8()));
+	}
+	std::unique_ptr<QNetworkReply> HandleHttp(QNetworkReply* reply) {
+		QEventLoop loop;
+		QObject::connect(reply, &QNetworkReply::finished, [&]() {
+			loop.quit();
+		});
+		QObject::connect(reply, static_cast<void(QNetworkReply::*)(QNetworkReply::NetworkError)>(&QNetworkReply::error), [&](QNetworkReply::NetworkError e) {
+			ADD_FAILURE() << reply->errorString().toStdString();
+		});
+		QTimer::singleShot(30000 /* msec */, &loop, [&]() {
+			ADD_FAILURE() << "connection timeout";
+			loop.quit();
+		});
+		loop.exec();
+		return std::unique_ptr<QNetworkReply>(reply);
+	}
+
+	App m_app;
+	QNetworkAccessManager m_network;
 	QTemporaryDir m_dir;
 	QTcpServer m_server;
 	std::list<QTcpSocket> m_clients;
@@ -236,6 +283,61 @@ TEST_F(ZNCTest, Channel) {
 
 	client = LoginClient();Z;
 	client.ReadUntil(":nick JOIN :#znc");Z;
+}
+
+TEST_F(ZNCTest, HTTP) {
+	auto znc = Run();Z;
+	auto ircd = ConnectIRCd();Z;
+	auto reply = HttpGet(QNetworkRequest(QUrl("http://127.0.0.1:12345/")));Z;
+	EXPECT_THAT(reply->rawHeader("Server").toStdString(), HasSubstr("ZNC"));
+}
+
+TEST_F(ZNCTest, FixCVE20149403) {
+	auto znc = Run();Z;
+	auto ircd = ConnectIRCd();Z;
+	ircd.Write(":server 001 nick :Hello");
+	ircd.Write(":server 005 nick CHANTYPES=# :supports");
+	ircd.Write(":server PING :1");
+	ircd.ReadUntil("PONG 1");Z;
+
+	QNetworkRequest request;
+	request.setRawHeader("Authorization", "Basic " + QByteArray("user:hunter2").toBase64());
+	request.setUrl(QUrl("http://127.0.0.1:12345/mods/global/webadmin/addchan"));
+	HttpPost(request, {
+		{"user", "user"},
+		{"network", "test"},
+		{"submitted", "1"},
+		{"name", "znc"},
+	});
+	ircd.ReadUntil("JOIN #znc");Z;
+	EXPECT_THAT(HttpPost(request, {
+		{"user", "user"},
+		{"network", "test"},
+		{"submitted", "1"},
+		{"name", "znc"},
+	})->readAll().toStdString(), HasSubstr("Channel [#znc] already exists"));
+}
+
+TEST_F(ZNCTest, FixFixOfCVE20149403) {
+	auto znc = Run();Z;
+	auto ircd = ConnectIRCd();Z;
+	ircd.Write(":server 001 nick :Hello");
+	ircd.Write(":nick JOIN @#znc nick :Real");
+	ircd.ReadUntil("MODE @#znc");Z;
+	ircd.Write(":server 005 nick STATUSMSG=@ :supports");
+	ircd.Write(":server PING :12345");
+	ircd.ReadUntil("PONG 12345");Z;
+
+	QNetworkRequest request;
+	request.setRawHeader("Authorization", "Basic " + QByteArray("user:hunter2").toBase64());
+	request.setUrl(QUrl("http://127.0.0.1:12345/mods/global/webadmin/addchan"));
+	auto reply = HttpPost(request, {
+		{"user", "user"},
+		{"network", "test"},
+		{"submitted", "1"},
+		{"name", "@#znc"},
+	});
+	EXPECT_THAT(reply->readAll().toStdString(), HasSubstr("Could not add channel [@#znc]"));
 }
 
 }  // namespace
