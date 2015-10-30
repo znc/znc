@@ -47,7 +47,7 @@ protected:
 
 class CRejoinMod : public CModule {
 private:
-	unsigned int delay;
+	unsigned int delay = 10;
 
 public:
 	MODCONSTRUCTOR(CRejoinMod) {

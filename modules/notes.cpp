@@ -19,7 +19,7 @@
 using std::stringstream;
 
 class CNotesMod : public CModule {
-	bool bShowNotesOnLogin;
+	bool m_bShowNotesOnLogin{};
 
 	void ListCommand(const CString &sLine) {
 		ListNotes();
@@ -85,14 +85,14 @@ public:
 	virtual ~CNotesMod() {}
 
 	virtual bool OnLoad(const CString& sArgs, CString& sMessage) override {
-		bShowNotesOnLogin = !sArgs.Equals("-disableNotesOnLogin");
+		m_bShowNotesOnLogin = !sArgs.Equals("-disableNotesOnLogin");
 		return true;
 	}
 
 	virtual CString GetWebMenuTitle() override { return "Notes"; }
 
 	virtual void OnClientLogin() override {
-		if (bShowNotesOnLogin) {
+		if (m_bShowNotesOnLogin) {
 			ListNotes(true);
 		}
 	}

@@ -192,7 +192,7 @@ public:
 
 private:
 	// If this is NULL, we are turned off for some reason
-	CKeepNickTimer* m_pTimer;
+	CKeepNickTimer* m_pTimer = nullptr;
 };
 
 CKeepNickTimer::CKeepNickTimer(CKeepNickMod *pMod) : CTimer(pMod, 30, 0,

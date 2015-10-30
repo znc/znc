@@ -31,6 +31,13 @@ public:
 	MODCONSTRUCTOR(CSASLAuthMod) {
 		m_Cache.SetTTL(60000/*ms*/);
 
+		m_cbs[0].id = SASL_CB_GETOPT;
+		m_cbs[0].proc = reinterpret_cast<int(*)()>(CSASLAuthMod::getopt);
+		m_cbs[0].context = this;
+		m_cbs[1].id = SASL_CB_LIST_END;
+		m_cbs[1].proc = NULL;
+		m_cbs[1].context = NULL;
+
 		AddHelpCommand();
 		AddCommand("CreateUser",       static_cast<CModCommand::ModCmdFunc>(&CSASLAuthMod::CreateUserCommand),
 			"[yes|no]");
@@ -76,13 +83,6 @@ public:
 			sMessage = "SASL Could Not Be Initialized - Halting Startup";
 			return false;
 		}
-
-		m_cbs[0].id = SASL_CB_GETOPT;
-		m_cbs[0].proc = reinterpret_cast<int(*)()>(CSASLAuthMod::getopt);
-		m_cbs[0].context = this;
-		m_cbs[1].id = SASL_CB_LIST_END;
-		m_cbs[1].proc = NULL;
-		m_cbs[1].context = NULL;
 
 		return true;
 	}

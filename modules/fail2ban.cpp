@@ -100,7 +100,7 @@ public:
 
 private:
 	TCacheMap<CString, unsigned int> m_Cache;
-	unsigned int                     m_uiAllowedFailed;
+	unsigned int                     m_uiAllowedFailed{};
 };
 
 template<> void TModInfo<CFailToBanMod>(CModInfo& Info) {

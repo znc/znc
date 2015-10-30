@@ -61,7 +61,7 @@ public:
 	}
 
 private:
-	unsigned int m_uiIndex;
+	unsigned int m_uiIndex = 0;
 };
 
 class CSASLMod : public CModule {
