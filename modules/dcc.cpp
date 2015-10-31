@@ -293,6 +293,7 @@ void CDCCSock::ReadData(const char* data, size_t len) {
 		DEBUG("File not open! closing get.");
 		m_pModule->PutModule(((m_bSend) ? "DCC -> [" : "DCC <- [") + m_sRemoteNick + "][" + m_sFileName + "] - File not open!");
 		Close();
+		return;
 	}
 
 	// DCC specs says the receiving end sends the number of bytes it
