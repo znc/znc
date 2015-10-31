@@ -381,4 +381,14 @@ TEST_F(ZNCTest, InvalidConfigInChan) {
 	znc->ShouldFinishItself(1);
 }
 
+TEST_F(ZNCTest, ShellModule) {
+	auto znc = Run();Z;
+	auto ircd = ConnectIRCd();Z;
+	auto client = LoginClient();Z;
+	client.Write("znc loadmod shell");
+	client.Write("PRIVMSG *shell :echo blahblah");
+	client.ReadUntil("PRIVMSG nick :blahblah");
+	client.ReadUntil("PRIVMSG nick :znc$");
+}
+
 }  // namespace
