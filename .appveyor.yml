@@ -29,6 +29,9 @@ build_script:
     - c:\cygwin-root\bin\sh -lc "cd $APPVEYOR_BUILD_FOLDER/build; make VERBOSE=1 -j2 < /dev/null"
     - c:\cygwin-root\bin\sh -lc "cd $APPVEYOR_BUILD_FOLDER/build; make install < /dev/null"
     - c:\cygwin-root\bin\sh -lc "znc --version"
+      # fix fork()
+    - c:\cygwin-root\bin\sh -lc "find /usr/local/lib/znc -iname '*.dll' -o -iname '*.so' | tee /tmp/files-to-rebase"
+    - c:\cygwin-root\bin\sh -lc "rebaseall -v -T /tmp/files-to-rebase"
 test_script:
     - c:\cygwin-root\bin\sh -lc "cd $APPVEYOR_BUILD_FOLDER/build; make VERBOSE=1 test < /dev/null"
     - c:\cygwin-root\bin\sh -lc "cd $APPVEYOR_BUILD_FOLDER/build; make VERBOSE=1 test2 < /dev/null"
