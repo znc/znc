@@ -50,7 +50,7 @@ sed -e 's:#include "defines.h":#include <znc/defines.h>:' third_party/Csocket/Cs
 	make -C modules -f modperl/Makefile.gen srcdir=. SWIG=`which swig` PERL=`which perl`
 	make -C modules -f modpython/Makefile.gen srcdir=. SWIG=`which swig` PERL=`which perl`
 	rm -rf modules/.depend
-	rm .travis*
+	rm .travis* .appveyor*
 	rm make-tarball.sh
 	sed -e "s/THIS_IS_NOT_TARBALL//" -i Makefile.in
 	echo '#include <znc/version.h>' > src/version.cpp
