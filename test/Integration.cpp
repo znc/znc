@@ -300,12 +300,12 @@ TEST_F(ZNCTest, Channel) {
 
 	ircd.Write(":server 001 nick :Hello");
 	ircd.ReadUntil("JOIN #znc");Z;
-	ircd.Write(":nick JOIN #znc");
+	ircd.Write(":nick JOIN :#znc");
 	ircd.Write(":server 353 nick #znc :nick");
 	ircd.Write(":server 366 nick #znc :End of /NAMES list");
 
 	client = LoginClient();Z;
-	client.ReadUntil(":nick JOIN #znc");Z;
+	client.ReadUntil(":nick JOIN :#znc");Z;
 }
 
 TEST_F(ZNCTest, HTTP) {
