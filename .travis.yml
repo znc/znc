@@ -98,7 +98,9 @@ after_success:
 notifications:
     irc:
         channels:
-            - "irc.freenode.net#znc-dev"
+            # travis encrypt "irc.freenode.net#znc-dev" -r znc/znc
+            # prevents forks from spamming #znc-dev by just enabling Travis
+            - secure: "ACdKvJT+gvuzDTfQkhnHI8aQNtXHI1tJOgFPss9XpF8025KYxrvhuff15VRhYuDCuNSuqhZYG9Oz+ZCQzu85ravkXVa3X+ze8SRoIIwAN2tpkr7KTfbJc4gD2S/RZUi432ICiQznHWnhV209XSLXY4qBhnR0OkCg5/pY8zievYw="
         on_success: always
         on_failure: always
 sudo: required
