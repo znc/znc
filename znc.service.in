@@ -3,7 +3,11 @@ Description=ZNC, an advanced IRC bouncer
 After=network-online.target
 
 [Service]
-ExecStart=@bindir@/znc -f
+# To create user znc:
+# `sudo useradd -m -d /var/lib/znc -r -s /sbin/nologin -U znc`
+# To create the config file:
+# `sudo -u znc znc --datadir /var/lib/znc --makeconf`
+ExecStart=@bindir@/znc -f --datadir /var/lib/znc
 User=znc
 
 [Install]
