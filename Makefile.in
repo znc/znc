@@ -194,7 +194,12 @@ third_party/Csocket/Csocket.h third_party/Csocket/Csocket.cc:
 	@exit 1
 endif
 
-install: znc $(LIBZNC)
+znc.service: znc.service.in
+	@sed -e "s:\@bindir\@:$(bindir):" $^ > $@
+
+CLEAN += znc.service
+
+install: znc znc.service $(LIBZNC)
 	test -d $(DESTDIR)$(bindir) || $(INSTALL) -d $(DESTDIR)$(bindir)
 	test -d $(DESTDIR)$(includedir)/znc || $(INSTALL) -d $(DESTDIR)$(includedir)/znc
 	test -d $(DESTDIR)$(PKGCONFIGDIR) || $(INSTALL) -d $(DESTDIR)$(PKGCONFIGDIR)
