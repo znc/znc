@@ -383,6 +383,170 @@ TEST_F(ZNCTest, InvalidConfigInChan) {
 	znc->ShouldFinishItself(1);
 }
 
+TEST_F(ZNCTest, AutoOpModule) {
+	auto znc = Run();Z;
+	auto ircd = ConnectIRCd();Z;
+	auto client = LoginClient();Z;
+
+	const QString request = "PRIVMSG *autoop :";
+	const QByteArray response = ":*autoop!znc@znc.in PRIVMSG nick :";
+
+	client.Write("PRIVMSG *status :LoadModule autoop");
+	client.ReadUntil(":*status!znc@znc.in PRIVMSG nick :Loaded module [autoop]");Z;
+
+	client.Write(request + "AddUser");
+	client.ReadUntil(response + "Usage: AddUser <user> <hostmask>[,<hostmasks>...] <key> [channels]");Z;
+
+	client.Write(request + "AddUser KindOne");
+	client.ReadUntil(response + "Usage: AddUser <user> <hostmask>[,<hostmasks>...] <key> [channels]");Z;
+
+	client.Write(request + "AddUser KindOne *!*@colchester-lug/silly-fool/donut __NOKEY__ #znc");
+	client.ReadUntil(response + "User [KindOne] added with hostmask(s) [*!*@colchester-lug/silly-fool/donut]");Z;
+
+	client.Write(request + "AddUser KindOne_key *!*@colchester-lug/silly-fool/donut pr0z&fr4nkp4ss #znc");
+	client.ReadUntil(response + "User [KindOne_key] added with hostmask(s) [*!*@colchester-lug/silly-fool/donut]");Z;
+
+	client.Write(request + "AddMasks");
+	client.ReadUntil(response + "Usage: AddMasks <user> <mask>,[mask] ...");Z;
+
+	client.Write(request + "AddMasks KindOne");
+	client.ReadUntil(response + "Usage: AddMasks <user> <mask>,[mask] ...");Z;
+
+	client.Write(request + "AddMasks KindOne *!*@znc/user/KindOne");
+	client.ReadUntil(response + "Hostmasks(s) added to user [KindOne]");Z;
+
+	client.Write(request + "AddMasks KindOne *!*@znc/tester/KindOne,*!*@znc/KindOne");
+	client.ReadUntil(response + "Hostmasks(s) added to user [KindOne]");Z;
+
+	client.Write(request + "AddMasks Nobody *!*@dev/null");
+	client.ReadUntil(response + "No such user");Z;
+
+	client.Write(request + "AddChans");
+	client.ReadUntil(response + "Usage: AddChans <user> <channel> [channel] ...");Z;
+
+	client.Write(request + "AddChans KindOne");
+	client.ReadUntil(response + "Usage: AddChans <user> <channel> [channel] ...");Z;
+
+	client.Write(request + "AddChans KindOne #znc-dev");
+	client.ReadUntil(response + "Channel(s) added to user [KindOne]");Z;
+
+	client.Write(request + "AddChans KindOne #znc-test #znc-foobar");
+	client.ReadUntil(response + "Channel(s) added to user [KindOne]");Z;
+
+	client.Write(request + "AddChans Nobody");
+	client.ReadUntil(response + "Usage: AddChans <user> <channel> [channel] ...");Z;
+
+	client.Write(request + "AddChans Nobody #znc");
+	client.ReadUntil(response + "No such user");Z;
+
+	client.Write(request + "AddUser ZNC-Linker *!*@znc/bot/znc-linker __NOKEY__ #znc");
+	client.ReadUntil(response + "User [ZNC-Linker] added with hostmask(s) [*!*@znc/bot/znc-linker]");Z;
+
+	client.Write(request + "DelChans");
+	client.ReadUntil(response + "Usage: DelChans <user> <channel> [channel] ...");Z;
+
+	client.Write(request + "DelChans KindOne");
+	client.ReadUntil(response + "Usage: DelChans <user> <channel> [channel] ...");Z;
+
+	client.Write(request + "DelChans KindOne #znc-dev");
+	client.ReadUntil(response + "Channel(s) Removed from user [KindOne]");Z;
+
+	client.Write(request + "DelChans KindOne #znc-test #znc-foobar");
+	client.ReadUntil(response + "Channel(s) Removed from user [KindOne]");Z;
+
+	client.Write(request + "DelChans Nobody #znc");
+	client.ReadUntil(response + "No such user");Z;
+
+	client.Write(request + "DelMasks");
+	client.ReadUntil(response + "Usage: DelMasks <user> <mask>,[mask] ...");Z;
+
+	client.Write(request + "DelMasks KindOne");
+	client.ReadUntil(response + "Usage: DelMasks <user> <mask>,[mask] ...");Z;
+
+	client.Write(request + "DelMasks KindOne *!*@znc/KindOne");
+	client.ReadUntil(response + "Hostmasks(s) Removed from user [KindOne]");Z;
+
+	client.Write(request + "DelMasks KindOne *!*@znc/KindOne,*!*@znc/tester/KindOne");
+	client.ReadUntil(response + "Hostmasks(s) Removed from user [KindOne]");Z;
+
+	client.Write(request + "DelMasks Nobody *!*@dev/null");
+	client.ReadUntil(response + "No such user");Z;
+
+	client.Write(request + "DelUser");
+	client.ReadUntil(response + "Usage: DelUser <user>");Z;
+
+	client.Write(request + "DelUser ZNC-Linker");
+	client.ReadUntil(response + "User [ZNC-Linker] removed");Z;
+
+	client.Write(request + "DelUser ZNC-Linker");
+	client.ReadUntil(response + "That user does not exist");Z;
+
+}
+
+TEST_F(ZNCTest, AutoVoiceModule) {
+	auto znc = Run();Z;
+	auto ircd = ConnectIRCd();Z;
+	auto client = LoginClient();Z;
+
+	const QString request = "PRIVMSG *autovoice :";
+	const QByteArray response = ":*autovoice!znc@znc.in PRIVMSG nick :";
+
+	client.Write("PRIVMSG *status :LoadModule autovoice");
+	client.ReadUntil(":*status!znc@znc.in PRIVMSG nick :Loaded module [autovoice]");Z;
+
+	client.Write(request + "AddUser");
+	client.ReadUntil(response + "Usage: AddUser <user> <hostmask> [channels]");Z;
+
+	client.Write(request + "AddUser KindOne");
+	client.ReadUntil(response + "Usage: AddUser <user> <hostmask> [channels]");Z;
+
+	client.Write(request + "AddUser KindOne *!*@colchester-lug/silly-fool/donut #znc");
+	client.ReadUntil(response + "User [KindOne] added with hostmask [*!*@colchester-lug/silly-fool/donut]");Z;
+
+	client.Write(request + "AddChans");
+	client.ReadUntil(response + "Usage: AddChans <user> <channel> [channel] ...");Z;
+
+	client.Write(request + "AddChans KindOne");
+	client.ReadUntil(response + "Usage: AddChans <user> <channel> [channel] ...");Z;
+
+	client.Write(request + "AddChans KindOne #znc-dev");
+	client.ReadUntil(response + "Channel(s) added to user [KindOne]");Z;
+
+	client.Write(request + "AddChans KindOne #znc-test #znc-foobar");
+	client.ReadUntil(response + "Channel(s) added to user [KindOne]");Z;
+
+	client.Write(request + "AddChans Nobody #znc");
+	client.ReadUntil(response + "No such user");Z;
+
+	client.Write(request + "AddUser ZNC-Linker *!*@znc/bot/znc-linker #znc");
+	client.ReadUntil(response + "User [ZNC-Linker] added with hostmask [*!*@znc/bot/znc-linker]");Z;
+
+	client.Write(request + "DelChans");
+	client.ReadUntil(response + "Usage: DelChans <user> <channel> [channel] ...");Z;
+
+	client.Write(request + "DelChans KindOne");
+	client.ReadUntil(response + "Usage: DelChans <user> <channel> [channel] ...");Z;
+
+	client.Write(request + "DelChans KindOne #znc-dev");
+	client.ReadUntil(response + "Channel(s) Removed from user [KindOne]");Z;
+
+	client.Write(request + "DelChans KindOne #znc-test #znc-foobar");
+	client.ReadUntil(response + "Channel(s) Removed from user [KindOne]");Z;
+
+	client.Write(request + "DelChans Nobody #znc");
+	client.ReadUntil(response + "No such user");Z;
+
+	client.Write(request + "DelUser");
+	client.ReadUntil(response + "Usage: DelUser <user>");Z;
+
+	client.Write(request + "DelUser ZNC-Linker");
+	client.ReadUntil(response + "User [ZNC-Linker] removed");Z;
+
+	client.Write(request + "DelUser ZNC-Linker");
+	client.ReadUntil(response + "That user does not exist");Z;
+
+}
+
 TEST_F(ZNCTest, ControlpanelModule) {
 	auto znc = Run();Z;
 	auto ircd = ConnectIRCd();Z;
