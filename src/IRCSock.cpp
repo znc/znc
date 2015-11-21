@@ -168,7 +168,7 @@ void CIRCSock::ReadLine(const CString& sData) {
 			bReturn = OnAccountMessage(Message);
 			break;
 		case CMessage::Type::Action:
-			bReturn = OnActionMessage(static_cast<CActionMessage&>(Message));
+			bReturn = OnActionMessage(Message);
 			break;
 		case CMessage::Type::Away:
 			bReturn = OnAwayMessage(Message);
@@ -177,7 +177,7 @@ void CIRCSock::ReadLine(const CString& sData) {
 			bReturn = OnCapabilityMessage(Message);
 			break;
 		case CMessage::Type::CTCP:
-			bReturn = OnCTCPMessage(static_cast<CCTCPMessage&>(Message));
+			bReturn = OnCTCPMessage(Message);
 			break;
 		case CMessage::Type::Error:
 			bReturn = OnErrorMessage(Message);
@@ -186,25 +186,25 @@ void CIRCSock::ReadLine(const CString& sData) {
 			bReturn = OnInviteMessage(Message);
 			break;
 		case CMessage::Type::Join:
-			bReturn = OnJoinMessage(static_cast<CJoinMessage&>(Message));
+			bReturn = OnJoinMessage(Message);
 			break;
 		case CMessage::Type::Kick:
-			bReturn = OnKickMessage(static_cast<CKickMessage&>(Message));
+			bReturn = OnKickMessage(Message);
 			break;
 		case CMessage::Type::Mode:
-			bReturn = OnModeMessage(static_cast<CModeMessage&>(Message));
+			bReturn = OnModeMessage(Message);
 			break;
 		case CMessage::Type::Nick:
-			bReturn = OnNickMessage(static_cast<CNickMessage&>(Message));
+			bReturn = OnNickMessage(Message);
 			break;
 		case CMessage::Type::Notice:
-			bReturn = OnNoticeMessage(static_cast<CNoticeMessage&>(Message));
+			bReturn = OnNoticeMessage(Message);
 			break;
 		case CMessage::Type::Numeric:
-			bReturn = OnNumericMessage(static_cast<CNumericMessage&>(Message));
+			bReturn = OnNumericMessage(Message);
 			break;
 		case CMessage::Type::Part:
-			bReturn = OnPartMessage(static_cast<CPartMessage&>(Message));
+			bReturn = OnPartMessage(Message);
 			break;
 		case CMessage::Type::Ping:
 			bReturn = OnPingMessage(Message);
@@ -213,13 +213,13 @@ void CIRCSock::ReadLine(const CString& sData) {
 			bReturn = OnPongMessage(Message);
 			break;
 		case CMessage::Type::Quit:
-			bReturn = OnQuitMessage(static_cast<CQuitMessage&>(Message));
+			bReturn = OnQuitMessage(Message);
 			break;
 		case CMessage::Type::Text:
-			bReturn = OnTextMessage(static_cast<CTextMessage&>(Message));
+			bReturn = OnTextMessage(Message);
 			break;
 		case CMessage::Type::Topic:
-			bReturn = OnTopicMessage(static_cast<CTopicMessage&>(Message));
+			bReturn = OnTopicMessage(Message);
 			break;
 		case CMessage::Type::Wallops:
 			bReturn = OnWallopsMessage(Message);

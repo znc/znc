@@ -173,22 +173,22 @@ void CClient::ReadLine(const CString& sData) {
 
 	switch (Message.GetType()) {
 		case CMessage::Type::Action:
-			bReturn = OnActionMessage(static_cast<CActionMessage&>(Message));
+			bReturn = OnActionMessage(Message);
 			break;
 		case CMessage::Type::CTCP:
-			bReturn = OnCTCPMessage(static_cast<CCTCPMessage&>(Message));
+			bReturn = OnCTCPMessage(Message);
 			break;
 		case CMessage::Type::Join:
-			bReturn = OnJoinMessage(static_cast<CJoinMessage&>(Message));
+			bReturn = OnJoinMessage(Message);
 			break;
 		case CMessage::Type::Mode:
-			bReturn = OnModeMessage(static_cast<CModeMessage&>(Message));
+			bReturn = OnModeMessage(Message);
 			break;
 		case CMessage::Type::Notice:
-			bReturn = OnNoticeMessage(static_cast<CNoticeMessage&>(Message));
+			bReturn = OnNoticeMessage(Message);
 			break;
 		case CMessage::Type::Part:
-			bReturn = OnPartMessage(static_cast<CPartMessage&>(Message));
+			bReturn = OnPartMessage(Message);
 			break;
 		case CMessage::Type::Ping:
 			bReturn = OnPingMessage(Message);
@@ -197,13 +197,13 @@ void CClient::ReadLine(const CString& sData) {
 			bReturn = OnPongMessage(Message);
 			break;
 		case CMessage::Type::Quit:
-			bReturn = OnQuitMessage(static_cast<CQuitMessage&>(Message));
+			bReturn = OnQuitMessage(Message);
 			break;
 		case CMessage::Type::Text:
-			bReturn = OnTextMessage(static_cast<CTextMessage&>(Message));
+			bReturn = OnTextMessage(Message);
 			break;
 		case CMessage::Type::Topic:
-			bReturn = OnTopicMessage(static_cast<CTopicMessage&>(Message));
+			bReturn = OnTopicMessage(Message);
 			break;
 		default:
 			bReturn = OnOtherMessage(Message);
@@ -479,7 +479,7 @@ bool CClient::PutClient(const CMessage& Message)
 	const CIRCSock* pIRCSock = GetIRCSock();
 	if (pIRCSock) {
 		if (Msg.GetType() == CMessage::Type::Numeric) {
-			unsigned int uCode = static_cast<CNumericMessage&>(Msg).GetCode();
+			unsigned int uCode = Msg.As<CNumericMessage>().GetCode();
 
 			if (uCode == 352) { // RPL_WHOREPLY
 				if (!m_bNamesx && pIRCSock->HasNamesx()) {
@@ -524,7 +524,7 @@ bool CClient::PutClient(const CMessage& Message)
 			}
 		} else if (Msg.GetType() == CMessage::Type::Join) {
 			if (!m_bExtendedJoin && pIRCSock->HasExtendedJoin()) {
-				Msg.SetParams({static_cast<CJoinMessage&>(Msg).GetTarget()});
+				Msg.SetParams({Msg.As<CJoinMessage>().GetTarget()});
 			}
 		}
 	}

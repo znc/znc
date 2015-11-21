@@ -102,6 +102,28 @@ public:
 	CString ToString(unsigned int uFlags = IncludeAll) const;
 	void Parse(CString sMessage);
 
+	// Implicit and explicit conversion to a subclass reference.
+	template <typename M>
+	M& As() & {
+		static_assert(sizeof(M) == sizeof(CMessage), "No data members allowed in CMessage subclasses.");
+		return static_cast<M&>(*this);
+	}
+
+	template <typename M>
+	const M& As() const & {
+		static_assert(sizeof(M) == sizeof(CMessage), "No data members allowed in CMessage subclasses.");
+		return static_cast<const M&>(*this);
+	}
+
+	template <typename M>
+	operator M&() & {
+		return As<M>();
+	}
+	template <typename M>
+	operator const M&() const & {
+		return As<M>();
+	}
+
 private:
 	void InitTime();
 	void InitType();
@@ -126,14 +148,12 @@ public:
 	CString GetTarget() const { return GetParam(0); }
 	void SetTarget(const CString& sTarget) { SetParam(0, sTarget); }
 };
-static_assert(sizeof(CTargetMessage) == sizeof(CMessage), "No data members allowed in CMessage subclasses.");
 
 class CActionMessage : public CTargetMessage {
 public:
 	CString GetText() const { return GetParam(1).TrimPrefix_n("\001ACTION ").TrimSuffix_n("\001"); }
 	void SetText(const CString& sText) { SetParam(1, "\001ACTION " + sText + "\001"); }
 };
-static_assert(sizeof(CActionMessage) == sizeof(CMessage), "No data members allowed in CMessage subclasses.");
 
 class CCTCPMessage : public CTargetMessage {
 public:
@@ -141,20 +161,17 @@ public:
 	CString GetText() const { return GetParam(1).TrimPrefix_n("\001").TrimSuffix_n("\001"); }
 	void SetText(const CString& sText) { SetParam(1, "\001" + sText + "\001"); }
 };
-static_assert(sizeof(CCTCPMessage) == sizeof(CMessage), "No data members allowed in CMessage subclasses.");
 
 class CJoinMessage : public CTargetMessage {
 public:
 	CString GetKey() const { return GetParam(1); }
 	void SetKey(const CString& sKey) { SetParam(1, sKey); }
 };
-static_assert(sizeof(CJoinMessage) == sizeof(CMessage), "No data members allowed in CMessage subclasses.");
 
 class CModeMessage : public CTargetMessage {
 public:
 	CString GetModes() const { return GetParams(1).TrimPrefix_n(":"); }
 };
-static_assert(sizeof(CModeMessage) == sizeof(CMessage), "No data members allowed in CMessage subclasses.");
 
 class CNickMessage : public CMessage {
 public:
@@ -162,20 +179,17 @@ public:
 	CString GetNewNick() const { return GetParam(0); }
 	void SetNewNick(const CString& sNick) { SetParam(0, sNick); }
 };
-static_assert(sizeof(CNickMessage) == sizeof(CMessage), "No data members allowed in CMessage subclasses.");
 
 class CNoticeMessage : public CTargetMessage {
 public:
 	CString GetText() const { return GetParam(1); }
 	void SetText(const CString& sText) { SetParam(1, sText); }
 };
-static_assert(sizeof(CNoticeMessage) == sizeof(CMessage), "No data members allowed in CMessage subclasses.");
 
 class CNumericMessage : public CMessage {
 public:
 	unsigned int GetCode() const { return GetCommand().ToUInt(); }
 };
-static_assert(sizeof(CNumericMessage) == sizeof(CMessage), "No data members allowed in CMessage subclasses.");
 
 class CKickMessage : public CTargetMessage {
 public:
@@ -184,34 +198,29 @@ public:
 	CString GetReason() const { return GetParam(2); }
 	void SetReason(const CString& sReason) { SetParam(2, sReason); }
 };
-static_assert(sizeof(CKickMessage) == sizeof(CMessage), "No data members allowed in CMessage subclasses.");
 
 class CPartMessage : public CTargetMessage {
 public:
 	CString GetReason() const { return GetParam(1); }
 	void SetReason(const CString& sReason) { SetParam(1, sReason); }
 };
-static_assert(sizeof(CPartMessage) == sizeof(CMessage), "No data members allowed in CMessage subclasses.");
 
 class CQuitMessage : public CMessage {
 public:
 	CString GetReason() const { return GetParam(0); }
 	void SetReason(const CString& sReason) { SetParam(0, sReason); }
 };
-static_assert(sizeof(CQuitMessage) == sizeof(CMessage), "No data members allowed in CMessage subclasses.");
 
 class CTextMessage : public CTargetMessage {
 public:
 	CString GetText() const { return GetParam(1); }
 	void SetText(const CString& sText) { SetParam(1, sText); }
 };
-static_assert(sizeof(CTextMessage) == sizeof(CMessage), "No data members allowed in CMessage subclasses.");
 
 class CTopicMessage : public CTargetMessage {
 public:
 	CString GetTopic() const { return GetParam(1); }
 	void SetTopic(const CString& sTopic) { SetParam(1, sTopic); }
 };
-static_assert(sizeof(CTopicMessage) == sizeof(CMessage), "No data members allowed in CMessage subclasses.");
 
 #endif // !ZNC_MESSAGE_H
