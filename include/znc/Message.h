@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-#ifndef _MESSAGE_H
-#define _MESSAGE_H
+#ifndef ZNC_MESSAGE_H
+#define ZNC_MESSAGE_H
 
 #include <znc/zncconfig.h>
 #include <znc/ZNCString.h>
@@ -213,4 +213,4 @@ static_assert(sizeof(CTargetMessage) == sizeof(CMessage), "No data members allow
 static_assert(sizeof(CTextMessage) == sizeof(CMessage), "No data members allowed in CMessage subclasses.");
 static_assert(sizeof(CTopicMessage) == sizeof(CMessage), "No data members allowed in CMessage subclasses.");
 
-#endif // !_MESSAGE_H
+#endif // !ZNC_MESSAGE_H
