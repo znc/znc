@@ -666,7 +666,7 @@ CModule::EModRet CModule::OnChanBufferPlayMessage(CMessage& Message) {
 	CString sOriginal, sModified;
 	sOriginal = sModified = Message.ToString(CMessage::ExcludeTags);
 	EModRet ret = OnChanBufferPlayLine2(*Message.GetChan(), *Message.GetClient(), sModified, Message.GetTime());
-	if (ret == CONTINUE && sOriginal != sModified) {
+	if (sOriginal != sModified) {
 		Message.Parse(sModified);
 	}
 	return ret;
@@ -675,7 +675,7 @@ CModule::EModRet CModule::OnPrivBufferPlayMessage(CMessage& Message) {
 	CString sOriginal, sModified;
 	sOriginal = sModified = Message.ToString(CMessage::ExcludeTags);
 	EModRet ret = OnPrivBufferPlayLine2(*Message.GetClient(), sModified, Message.GetTime());
-	if (ret == CONTINUE && sOriginal != sModified) {
+	if (sOriginal != sModified) {
 		Message.Parse(sModified);
 	}
 	return ret;
