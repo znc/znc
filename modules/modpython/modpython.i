@@ -106,6 +106,9 @@ class MCString : public std::map<CString, CString> {};
 %template(VVString) std::vector<VCString>;
 %template(VClients) std::vector<CClient*>;
 
+#define REGISTER_ZNC_MESSAGE(M) \
+    %template(As_ ## M) CMessage::As<M>;
+
 %typemap(in) CString& {
 	String* p;
 	int res = SWIG_IsOK(SWIG_ConvertPtr($input, (void**)&p, SWIG_TypeQuery("String*"), 0));
@@ -153,6 +156,7 @@ class MCString : public std::map<CString, CString> {};
 %template(ZNCSocketManager) TSocketManager<CZNCSock>;
 %include "../include/znc/Socket.h"
 %include "../include/znc/FileUtils.h"
+%include "../include/znc/Message.h"
 %include "../include/znc/Modules.h"
 %include "../include/znc/Nick.h"
 %include "../include/znc/Chan.h"
@@ -289,6 +293,15 @@ class CPyRetBool {
 	CString __repr__() {
 		return "<CNick " + $self->GetHostMask() + ">";
 	}
+};
+
+%extend CMessage {
+    CString __str__() {
+        return $self->ToString();
+    }
+    CString __repr__() {
+        return $self->ToString();
+    }
 };
 
 %extend CZNC {

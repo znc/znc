@@ -458,6 +458,180 @@ class Module:
     def OnRawMode2(self, OpNick, Channel, sModes, sArgs):
         return self.OnRawMode(OpNick, Channel, sModes, sArgs)
 
+    def OnRawMessage(self, msg):
+        pass
+
+    def OnNumericMessage(self, msg):
+        pass
+
+    # Deprecated non-Message functions should still work, for now.
+    def OnQuitMessage(self, msg, vChans):
+        return self.OnQuit(msg.GetNick(), msg.GetReason(), vChans)
+
+    def OnNickMessage(self, msg, vChans):
+        return self.OnNick(msg.GetNick(), msg.GetNewNick(), vChans)
+
+    def OnKickMessage(self, msg):
+        return self.OnKick(msg.GetNick(), msg.GetKickedNick(), msg.GetChan(), msg.GetReason())
+
+    def OnJoinMessage(self, msg):
+        return self.OnJoin(msg.GetNick(), msg.GetChan())
+
+    def OnPartMessage(self, msg):
+        return self.OnPart(msg.GetNick(), msg.GetChan(), msg.GetReason())
+
+    def OnChanBufferPlayMessage(self, msg):
+        modified = String()
+        old = modified.s = msg.ToString(CMessage.ExcludeTags)
+        ret = self.OnChanBufferPlayLine(msg.GetChan(), msg.GetClient(), modified)
+        if old != modified.s:
+            msg.Parse(modified.s)
+        return ret
+
+    def OnPrivBufferPlayMessage(self, msg):
+        modified = String()
+        old = modified.s = msg.ToString(CMessage.ExcludeTags)
+        ret = self.OnPrivBufferPlayLine(msg.GetClient(), modified)
+        if old != modified.s:
+            msg.Parse(modified.s)
+        return ret
+
+    def OnUserRawMessage(self, msg):
+        pass
+
+    def OnUserCTCPReplyMessage(self, msg):
+        target = String(msg.GetTarget())
+        text = String(msg.GetText())
+        ret = self.OnUserCTCPReply(target, text)
+        msg.SetTarget(target.s)
+        msg.SetText(text.s)
+        return ret
+
+    def OnUserCTCPMessage(self, msg):
+        target = String(msg.GetTarget())
+        text = String(msg.GetText())
+        ret = self.OnUserCTCP(target, text)
+        msg.SetTarget(target.s)
+        msg.SetText(text.s)
+        return ret
+
+    def OnUserActionMessage(self, msg):
+        target = String(msg.GetTarget())
+        text = String(msg.GetText())
+        ret = self.OnUserAction(target, text)
+        msg.SetTarget(target.s)
+        msg.SetText(text.s)
+        return ret
+
+    def OnUserTextMessage(self, msg):
+        target = String(msg.GetTarget())
+        text = String(msg.GetText())
+        ret = self.OnUserMsg(target, text)
+        msg.SetTarget(target.s)
+        msg.SetText(text.s)
+        return ret
+
+    def OnUserNoticeMessage(self, msg):
+        target = String(msg.GetTarget())
+        text = String(msg.GetText())
+        ret = self.OnUserNotice(target, text)
+        msg.SetTarget(target.s)
+        msg.SetText(text.s)
+        return ret
+
+    def OnUserJoinMessage(self, msg):
+        chan = String(msg.GetTarget())
+        key = String(msg.GetKey())
+        ret = self.OnUserJoin(chan, key)
+        msg.SetTarget(chan.s)
+        msg.SetKey(key.s)
+        return ret
+
+    def OnUserPartMessage(self, msg):
+        chan = String(msg.GetTarget())
+        reason = String(msg.GetReason())
+        ret = self.OnUserPart(chan, reason)
+        msg.SetTarget(chan.s)
+        msg.SetReason(reason.s)
+        return ret
+
+    def OnUserTopicMessage(self, msg):
+        chan = String(msg.GetTarget())
+        topic = String(msg.GetTopic())
+        ret = self.OnUserTopic(chan, topic)
+        msg.SetTarget(chan.s)
+        msg.SetTopic(topic.s)
+        return ret
+
+    def OnUserQuitMessage(self, msg):
+        reason = String(msg.GetReason())
+        ret = self.OnUserQuit(reason)
+        msg.SetReason(reason.s)
+        return ret
+
+    def OnCTCPReplyMessage(self, msg):
+        text = String(msg.GetText())
+        ret = self.OnCTCPReply(msg.GetNick(), text)
+        msg.SetText(text.s)
+        return ret
+
+    def OnPrivCTCPMessage(self, msg):
+        text = String(msg.GetText())
+        ret = self.OnPrivCTCP(msg.GetNick(), text)
+        msg.SetText(text.s)
+        return ret
+
+    def OnChanCTCPMessage(self, msg):
+        text = String(msg.GetText())
+        ret = self.OnChanCTCP(msg.GetNick(), msg.GetChan(), text)
+        msg.SetText(text.s)
+        return ret
+
+    def OnPrivActionMessage(self, msg):
+        text = String(msg.GetText())
+        ret = self.OnPrivAction(msg.GetNick(), text)
+        msg.SetText(text.s)
+        return ret
+
+    def OnChanActionMessage(self, msg):
+        text = String(msg.GetText())
+        ret = self.OnChanAction(msg.GetNick(), msg.GetChan(), text)
+        msg.SetText(text.s)
+        return ret
+
+    def OnPrivMessage(self, msg):
+        text = String(msg.GetText())
+        ret = self.OnPrivMsg(msg.GetNick(), text)
+        msg.SetText(text.s)
+        return ret
+
+    def OnChanMessage(self, msg):
+        text = String(msg.GetText())
+        ret = self.OnChanMsg(msg.GetNick(), msg.GetChan(), text)
+        msg.SetText(text.s)
+        return ret
+
+    def OnPrivNoticeMessage(self, msg):
+        text = String(msg.GetText())
+        ret = self.OnPrivNotice(msg.GetNick(), text)
+        msg.SetText(text.s)
+        return ret
+
+    def OnChanNoticeMessage(self, msg):
+        text = String(msg.GetText())
+        ret = self.OnChanNotice(msg.GetNick(), msg.GetChan(), text)
+        msg.SetText(text.s)
+        return ret
+
+    def OnTopicMessage(self, msg):
+        topic = String(msg.GetTopic())
+        ret = self.OnTopic(msg.GetNick(), msg.GetChan(), topic)
+        msg.SetTopic(topic.s)
+        return ret
+
+    def OnUnknownUserRawMessage(self, msg):
+        pass
+
 
 def make_inherit(cl, parent, attr):
     def make_caller(parent, name, attr):
@@ -753,6 +927,12 @@ class ModulesIter(collections.Iterator):
         self._cmod.plusplus()
         return module
 CModules.__iter__ = lambda cmod: ModulesIter(CModulesIter(cmod))
+
+
+# e.g. msg.As(znc.CNumericMessage)
+def _CMessage_As(self, cl):
+    return getattr(self, 'As_' + cl.__name__, lambda: self)()
+CMessage.As = _CMessage_As
 
 
 def str_eq(self, other):

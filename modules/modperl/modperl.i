@@ -105,6 +105,9 @@ class MCString : public std::map<CString, CString> {};
 %template(BufLines) std::deque<CBufLine>;
 %template(VVString) std::vector<VCString>;
 
+#define REGISTER_ZNC_MESSAGE(M) \
+    %template(As_ ## M) CMessage::As<M>;
+
 %typemap(out) std::map<CString, CNick> {
 	HV* myhv = newHV();
 	for (std::map<CString, CNick>::const_iterator i = $1.begin(); i != $1.end(); ++i) {
@@ -129,6 +132,7 @@ class MCString : public std::map<CString, CString> {};
 %template(ZNCSocketManager) TSocketManager<CZNCSock>;
 %include "../include/znc/Socket.h"
 %include "../include/znc/FileUtils.h"
+%include "../include/znc/Message.h"
 %include "../include/znc/Modules.h"
 %include "../include/znc/Nick.h"
 %include "../include/znc/Chan.h"

@@ -16,9 +16,13 @@
 
 #pragma once
 
+// This class is used from python to call functions which accept CString&
+// __str__ is added to it in modpython.i
 class String {
 public:
 	CString s;
+
+	String(const CString& s = "") : s(s) {}
 };
 
 class CModPython;
@@ -123,12 +127,43 @@ public:
 	EModRet OnSendToClient(CString& sLine, CClient& Client) override;
 	EModRet OnSendToIRC(CString& sLine) override;
 
+	EModRet OnRawMessage(CMessage& Message) override;
+	EModRet OnNumericMessage(CNumericMessage& Message) override;
+	void OnQuitMessage(CQuitMessage& Message, const std::vector<CChan*>& vChans) override;
+	void OnNickMessage(CNickMessage& Message, const std::vector<CChan*>& vChans) override;
+	void OnKickMessage(CKickMessage& Message) override;
+	void OnJoinMessage(CJoinMessage& Message) override;
+	void OnPartMessage(CPartMessage& Message) override;
+	EModRet OnChanBufferPlayMessage(CMessage& Message) override;
+	EModRet OnPrivBufferPlayMessage(CMessage& Message) override;
+	EModRet OnUserRawMessage(CMessage& Message) override;
+	EModRet OnUserCTCPReplyMessage(CCTCPMessage& Message) override;
+	EModRet OnUserCTCPMessage(CCTCPMessage& Message) override;
+	EModRet OnUserActionMessage(CActionMessage& Message) override;
+	EModRet OnUserTextMessage(CTextMessage& Message) override;
+	EModRet OnUserNoticeMessage(CNoticeMessage& Message) override;
+	EModRet OnUserJoinMessage(CJoinMessage& Message) override;
+	EModRet OnUserPartMessage(CPartMessage& Message) override;
+	EModRet OnUserTopicMessage(CTopicMessage& Message) override;
+	EModRet OnUserQuitMessage(CQuitMessage& Message) override;
+	EModRet OnCTCPReplyMessage(CCTCPMessage& Message) override;
+	EModRet OnPrivCTCPMessage(CCTCPMessage& Message) override;
+	EModRet OnChanCTCPMessage(CCTCPMessage& Message) override;
+	EModRet OnPrivActionMessage(CActionMessage& Message) override;
+	EModRet OnChanActionMessage(CActionMessage& Message) override;
+	EModRet OnPrivMessage(CTextMessage& Message) override;
+	EModRet OnChanMessage(CTextMessage& Message) override;
+	EModRet OnPrivNoticeMessage(CNoticeMessage& Message) override;
+	EModRet OnChanNoticeMessage(CNoticeMessage& Message) override;
+	EModRet OnTopicMessage(CTopicMessage& Message) override;
+
 	// Global Modules
 	EModRet OnAddUser(CUser& User, CString& sErrorRet) override;
 	EModRet OnDeleteUser(CUser& User) override;
 	void OnClientConnect(CZNCSock* pSock, const CString& sHost, unsigned short uPort) override;
 	void OnFailedLogin(const CString& sUsername, const CString& sRemoteIP) override;
 	EModRet OnUnknownUserRaw(CClient* pClient, CString& sLine) override;
+	EModRet OnUnknownUserRawMessage(CMessage& Message) override;
 	bool IsClientCapSupported(CClient* pClient, const CString& sCap, bool bState) override;
 	void OnClientCapRequest(CClient* pClient, const CString& sCap, bool bState) override;
 	virtual EModRet OnModuleLoading(const CString& sModName, const CString& sArgs,

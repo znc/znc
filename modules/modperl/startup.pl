@@ -21,6 +21,14 @@ use ZNC;
 use IO::File;
 use feature 'switch', 'say';
 
+package ZNC::CMessage;
+sub As {
+	# e.g. $msg->As('CNumericMessage')
+	my ($self, $name) = @_;
+	my $method = "As_$name";
+	$self->$method;
+}
+
 package ZNC::Core;
 
 my %modrefcount;
@@ -374,6 +382,181 @@ sub OnAddNetwork {}
 sub OnDeleteNetwork {}
 sub OnSendToClient {}
 sub OnSendToIRC {}
+
+# Deprecated non-Message functions should still work, for now.
+sub OnRawMessage {}
+sub OnNumericMessage {}
+sub OnQuitMessage { my ($self, $msg, @chans) = @_; $self->OnQuit($msg->GetNick, $msg->GetReason, @chans) }
+sub OnNickMessage { my ($self, $msg, @chans) = @_; $self->OnNick($msg->GetNick, $msg->GetNewNick, @chans) }
+sub OnKickMessage { my ($self, $msg) = @_; $self->OnKick($msg->GetNick, $msg->GetKickedNick, $msg->GetChan, $msg->GetReason) }
+sub OnJoinMessage { my ($self, $msg) = @_; $self->OnJoin($msg->GetNick, $msg->GetChan) }
+sub OnPartMessage { my ($self, $msg) = @_; $self->OnPart($msg->GetNick, $msg->GetChan, $msg->GetReason) }
+sub OnChanBufferPlayMessage {
+	my ($self, $msg) = @_;
+	my $old = $msg->ToString($ZNC::CMessage::ExcludeTags);
+	my $modified = $old;
+	my ($ret) = $self->OnChanBufferPlayLine($msg->GetChan, $msg->GetClient, $modified);
+	$msg->Parse($modified) if $old ne $modified;
+	return $ret;
+}
+sub OnPrivBufferPlayMessage {
+	my ($self, $msg) = @_;
+	my $old = $msg->ToString($ZNC::CMessage::ExcludeTags);
+	my $modified = $old;
+	my ($ret) = $self->OnPrivBufferPlayLine($msg->GetClient, $modified);
+	$msg->Parse($modified) if $old ne $modified;
+	return $ret;
+}
+sub OnUserRawMessage {}
+sub OnUserCTCPReplyMessage {
+	my ($self, $msg) = @_;
+	my $target = $msg->GetTarget;
+	my $text = $msg->GetText;
+	my ($ret) = $self->OnUserCTCPReply($target, $text);
+	$msg->SetTarget($target);
+	$msg->SetText($text);
+	return $ret;
+}
+sub OnUserCTCPMessage {
+	my ($self, $msg) = @_;
+	my $target = $msg->GetTarget;
+	my $text = $msg->GetText;
+	my ($ret) = $self->OnUserCTCP($target, $text);
+	$msg->SetTarget($target);
+	$msg->SetText($text);
+	return $ret;
+}
+sub OnUserActionMessage {
+	my ($self, $msg) = @_;
+	my $target = $msg->GetTarget;
+	my $text = $msg->GetText;
+	my ($ret) = $self->OnUserAction($target, $text);
+	$msg->SetTarget($target);
+	$msg->SetText($text);
+	return $ret;
+}
+sub OnUserTextMessage {
+	my ($self, $msg) = @_;
+	my $target = $msg->GetTarget;
+	my $text = $msg->GetText;
+	my ($ret) = $self->OnUserMsg($target, $text);
+	$msg->SetTarget($target);
+	$msg->SetText($text);
+	return $ret;
+}
+sub OnUserNoticeMessage {
+	my ($self, $msg) = @_;
+	my $target = $msg->GetTarget;
+	my $text = $msg->GetText;
+	my ($ret) = $self->OnUserNotice($target, $text);
+	$msg->SetTarget($target);
+	$msg->SetText($text);
+	return $ret;
+}
+sub OnUserJoinMessage {
+	my ($self, $msg) = @_;
+	my $chan = $msg->GetTarget;
+	my $key = $msg->GetKey;
+	my ($ret) = $self->OnUserJoin($chan, $key);
+	$msg->SetTarget($chan);
+	$msg->SetKey($key);
+	return $ret;
+}
+sub OnUserPartMessage {
+	my ($self, $msg) = @_;
+	my $chan = $msg->GetTarget;
+	my $reason = $msg->GetReason;
+	my ($ret) = $self->OnUserPart($chan, $reason);
+	$msg->SetTarget($chan);
+	$msg->SetReason($reason);
+	return $ret;
+}
+sub OnUserTopicMessage {
+	my ($self, $msg) = @_;
+	my $chan = $msg->GetTarget;
+	my $topic = $msg->GetTopic;
+	my ($ret) = $self->OnUserTopic($chan, $topic);
+	$msg->SetTarget($chan);
+	$msg->SetTopic($topic);
+	return $ret;
+}
+sub OnUserQuitMessage {
+	my ($self, $msg) = @_;
+	my $reason = $msg->GetReason;
+	my ($ret) = $self->OnUserQuit($reason);
+	$msg->SetReason($reason);
+	return $ret;
+}
+sub OnCTCPReplyMessage {
+	my ($self, $msg) = @_;
+	my $text = $msg->GetText;
+	my ($ret) = $self->OnCTCPReply($msg->GetNick, $text);
+	$msg->SetText($text);
+	return $ret;
+}
+sub OnPrivCTCPMessage {
+	my ($self, $msg) = @_;
+	my $text = $msg->GetText;
+	my ($ret) = $self->OnPrivCTCP($msg->GetNick, $text);
+	$msg->SetText($text);
+	return $ret;
+}
+sub OnChanCTCPMessage {
+	my ($self, $msg) = @_;
+	my $text = $msg->GetText;
+	my ($ret) = $self->OnChanCTCP($msg->GetNick, $msg->GetChan, $text);
+	$msg->SetText($text);
+	return $ret;
+}
+sub OnPrivActionMessage {
+	my ($self, $msg) = @_;
+	my $text = $msg->GetText;
+	my ($ret) = $self->OnPrivAction($msg->GetNick, $text);
+	$msg->SetText($text);
+	return $ret;
+}
+sub OnChanActionMessage {
+	my ($self, $msg) = @_;
+	my $text = $msg->GetText;
+	my ($ret) = $self->OnChanAction($msg->GetNick, $msg->GetChan, $text);
+	$msg->SetText($text);
+	return $ret;
+}
+sub OnPrivMessage {
+	my ($self, $msg) = @_;
+	my $text = $msg->GetText;
+	my ($ret) = $self->OnPrivMsg($msg->GetNick, $text);
+	$msg->SetText($text);
+	return $ret;
+}
+sub OnChanMessage {
+	my ($self, $msg) = @_;
+	my $text = $msg->GetText;
+	my ($ret) = $self->OnChanMsg($msg->GetNick, $msg->GetChan, $text);
+	$msg->SetText($text);
+	return $ret;
+}
+sub OnPrivNoticeMessage {
+	my ($self, $msg) = @_;
+	my $text = $msg->GetText;
+	my ($ret) = $self->OnPrivNotice($msg->GetNick, $text);
+	$msg->SetText($text);
+	return $ret;
+}
+sub OnChanNoticeMessage {
+	my ($self, $msg) = @_;
+	my $text = $msg->GetText;
+	my ($ret) = $self->OnChanNotice($msg->GetNick, $msg->GetChan, $text);
+	$msg->SetText($text);
+	return $ret;
+}
+sub OnTopicMessage {
+	my ($self, $msg) = @_;
+	my $topic = $msg->GetTopic;
+	my ($ret) = $self->OnTopic($msg->GetNick, $msg->GetChan, $topic);
+	$msg->SetTopic($topic);
+	return $ret;
+}
 
 # In Perl "undefined" is allowed value, so perl modules may continue using OnMode and not OnMode2
 sub OnChanPermission2 { my $self = shift; $self->OnChanPermission(@_) }

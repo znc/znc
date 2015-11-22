@@ -103,6 +103,7 @@ public:
 	void Parse(CString sMessage);
 
 	// Implicit and explicit conversion to a subclass reference.
+#ifndef SWIG
 	template <typename M>
 	M& As() & {
 		static_assert(sizeof(M) == sizeof(CMessage), "No data members allowed in CMessage subclasses.");
@@ -123,6 +124,12 @@ public:
 	operator const M&() const & {
 		return As<M>();
 	}
+	// REGISTER_ZNC_MESSAGE allows SWIG to instantiate correct .As<> calls.
+#define REGISTER_ZNC_MESSAGE(M)
+#else
+	// SWIG doesn't parse ref-qualifiers, and doesn't differentiate constness.
+	template <typename M> M& As();
+#endif
 
 private:
 	void InitTime();
@@ -148,12 +155,14 @@ public:
 	CString GetTarget() const { return GetParam(0); }
 	void SetTarget(const CString& sTarget) { SetParam(0, sTarget); }
 };
+REGISTER_ZNC_MESSAGE(CTargetMessage);
 
 class CActionMessage : public CTargetMessage {
 public:
 	CString GetText() const { return GetParam(1).TrimPrefix_n("\001ACTION ").TrimSuffix_n("\001"); }
 	void SetText(const CString& sText) { SetParam(1, "\001ACTION " + sText + "\001"); }
 };
+REGISTER_ZNC_MESSAGE(CActionMessage);
 
 class CCTCPMessage : public CTargetMessage {
 public:
@@ -161,17 +170,20 @@ public:
 	CString GetText() const { return GetParam(1).TrimPrefix_n("\001").TrimSuffix_n("\001"); }
 	void SetText(const CString& sText) { SetParam(1, "\001" + sText + "\001"); }
 };
+REGISTER_ZNC_MESSAGE(CCTCPMessage);
 
 class CJoinMessage : public CTargetMessage {
 public:
 	CString GetKey() const { return GetParam(1); }
 	void SetKey(const CString& sKey) { SetParam(1, sKey); }
 };
+REGISTER_ZNC_MESSAGE(CJoinMessage);
 
 class CModeMessage : public CTargetMessage {
 public:
 	CString GetModes() const { return GetParams(1).TrimPrefix_n(":"); }
 };
+REGISTER_ZNC_MESSAGE(CModeMessage);
 
 class CNickMessage : public CMessage {
 public:
@@ -179,17 +191,20 @@ public:
 	CString GetNewNick() const { return GetParam(0); }
 	void SetNewNick(const CString& sNick) { SetParam(0, sNick); }
 };
+REGISTER_ZNC_MESSAGE(CNickMessage);
 
 class CNoticeMessage : public CTargetMessage {
 public:
 	CString GetText() const { return GetParam(1); }
 	void SetText(const CString& sText) { SetParam(1, sText); }
 };
+REGISTER_ZNC_MESSAGE(CNoticeMessage);
 
 class CNumericMessage : public CMessage {
 public:
 	unsigned int GetCode() const { return GetCommand().ToUInt(); }
 };
+REGISTER_ZNC_MESSAGE(CNumericMessage);
 
 class CKickMessage : public CTargetMessage {
 public:
@@ -198,29 +213,34 @@ public:
 	CString GetReason() const { return GetParam(2); }
 	void SetReason(const CString& sReason) { SetParam(2, sReason); }
 };
+REGISTER_ZNC_MESSAGE(CKickMessage);
 
 class CPartMessage : public CTargetMessage {
 public:
 	CString GetReason() const { return GetParam(1); }
 	void SetReason(const CString& sReason) { SetParam(1, sReason); }
 };
+REGISTER_ZNC_MESSAGE(CPartMessage);
 
 class CQuitMessage : public CMessage {
 public:
 	CString GetReason() const { return GetParam(0); }
 	void SetReason(const CString& sReason) { SetParam(0, sReason); }
 };
+REGISTER_ZNC_MESSAGE(CQuitMessage);
 
 class CTextMessage : public CTargetMessage {
 public:
 	CString GetText() const { return GetParam(1); }
 	void SetText(const CString& sText) { SetParam(1, sText); }
 };
+REGISTER_ZNC_MESSAGE(CTextMessage);
 
 class CTopicMessage : public CTargetMessage {
 public:
 	CString GetTopic() const { return GetParam(1); }
 	void SetTopic(const CString& sTopic) { SetParam(1, sTopic); }
 };
+REGISTER_ZNC_MESSAGE(CTopicMessage);
 
 #endif // !ZNC_MESSAGE_H

@@ -106,6 +106,36 @@ public:
 	EModRet OnDeleteNetwork(CIRCNetwork& Network) override;
 	EModRet OnSendToClient(CString& sLine, CClient& Client) override;
 	EModRet OnSendToIRC(CString& sLine) override;
+
+	EModRet OnRawMessage(CMessage& Message) override;
+	EModRet OnNumericMessage(CNumericMessage& Message) override;
+	void OnQuitMessage(CQuitMessage& Message, const std::vector<CChan*>& vChans) override;
+	void OnNickMessage(CNickMessage& Message, const std::vector<CChan*>& vChans) override;
+	void OnKickMessage(CKickMessage& Message) override;
+	void OnJoinMessage(CJoinMessage& Message) override;
+	void OnPartMessage(CPartMessage& Message) override;
+	EModRet OnChanBufferPlayMessage(CMessage& Message) override;
+	EModRet OnPrivBufferPlayMessage(CMessage& Message) override;
+	EModRet OnUserRawMessage(CMessage& Message) override;
+	EModRet OnUserCTCPReplyMessage(CCTCPMessage& Message) override;
+	EModRet OnUserCTCPMessage(CCTCPMessage& Message) override;
+	EModRet OnUserActionMessage(CActionMessage& Message) override;
+	EModRet OnUserTextMessage(CTextMessage& Message) override;
+	EModRet OnUserNoticeMessage(CNoticeMessage& Message) override;
+	EModRet OnUserJoinMessage(CJoinMessage& Message) override;
+	EModRet OnUserPartMessage(CPartMessage& Message) override;
+	EModRet OnUserTopicMessage(CTopicMessage& Message) override;
+	EModRet OnUserQuitMessage(CQuitMessage& Message) override;
+	EModRet OnCTCPReplyMessage(CCTCPMessage& Message) override;
+	EModRet OnPrivCTCPMessage(CCTCPMessage& Message) override;
+	EModRet OnChanCTCPMessage(CCTCPMessage& Message) override;
+	EModRet OnPrivActionMessage(CActionMessage& Message) override;
+	EModRet OnChanActionMessage(CActionMessage& Message) override;
+	EModRet OnPrivMessage(CTextMessage& Message) override;
+	EModRet OnChanMessage(CTextMessage& Message) override;
+	EModRet OnPrivNoticeMessage(CNoticeMessage& Message) override;
+	EModRet OnChanNoticeMessage(CNoticeMessage& Message) override;
+	EModRet OnTopicMessage(CTopicMessage& Message) override;
 };
 
 static inline CPerlModule* AsPerlModule(CModule* p) {
