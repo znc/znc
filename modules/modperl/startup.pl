@@ -21,6 +21,17 @@ use ZNC;
 use IO::File;
 use feature 'switch', 'say';
 
+package ZNC::String;
+use overload '""' => sub {
+    my $self = shift;
+    my @caller = caller;
+    # When called from internal SWIG subroutines, return default stringification (e.g. 'ZNC::String=SCALAR(0x6210002fe090)') instead of the stored string.
+    # Otherwise, ZNC crashes with use-after-free.
+    # SWIG uses it as key for a hash, so without the number in the returned string, different strings which happen to represent the same value, collide.
+    return $self if $caller[0] eq 'ZNC::String';
+    return $self->GetPerlStr;
+};
+
 package ZNC::CMessage;
 sub As {
 	# e.g. $msg->As('CNumericMessage')
