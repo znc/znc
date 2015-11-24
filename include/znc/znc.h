@@ -128,6 +128,8 @@ public:
 	CString GetUserPath() const;
 	CString GetModPath() const;
 	CString GetPemLocation() const;
+	CString GetKeyLocation() const;
+	CString GetDHParamLocation() const;
 	const CString& GetConfigFile() const { return m_sConfigFile; }
 	bool WritePemFile();
 	/** @deprecated Since 1.7.0. List of allowed bind hosts was a flawed design. */
@@ -233,6 +235,8 @@ protected:
 	CString                m_sStatusPrefix;
 	CString                m_sPidFile;
 	CString                m_sSSLCertFile;
+	CString                m_sSSLKeyFile;
+	CString                m_sSSLDHParamFile;
 	CString                m_sSSLCiphers;
 	CString                m_sSSLProtocols;
 	VCString               m_vsBindHosts; // TODO: remove (deprecated in 1.7.0)
