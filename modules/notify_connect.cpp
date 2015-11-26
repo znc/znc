@@ -22,16 +22,27 @@ public:
 	MODCONSTRUCTOR(CNotifyConnectMod) {}
 
 	void OnClientLogin() override {
-		SendAdmins(GetUser()->GetUserName() + " attached (from " + GetClient()->GetRemoteIP() + ")");
+		NotifyAdmins("attached");
 	}
 
 	void OnClientDisconnect() override {
-		SendAdmins(GetUser()->GetUserName() + " detached (from " + GetClient()->GetRemoteIP() + ")");
+		NotifyAdmins("detached");
 	}
 
 private:
 	void SendAdmins(const CString &msg) {
 		CZNC::Get().Broadcast(msg, true, nullptr, GetClient());
+	}
+
+	void NotifyAdmins(const CString &event) {
+		CString client = GetUser()->GetUserName();
+		if (GetClient()->GetIdentifier() != "") {
+			client += "@";
+			client += GetClient()->GetIdentifier();
+		}
+		CString ip = GetClient()->GetRemoteIP();
+
+		SendAdmins(client + " " + event + " (from " + ip + ")");
 	}
 };
 
