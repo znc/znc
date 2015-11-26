@@ -17,6 +17,17 @@
 #ifndef ZNC_MESSAGE_H
 #define ZNC_MESSAGE_H
 
+// Remove this after Feb 2016 when Debian 7 is EOL
+#if __cpp_ref_qualifiers >= 200710
+# define ZNC_LVREFQUAL &
+#elif defined(__clang__)
+# define ZNC_LVREFQUAL &
+#elif __GNUC__ > 4 || __GNUC__ == 4 && (__GNUC_MINOR__ > 8 || __GNUC_MINOR__ == 8 && __GNUC_PATCHLEVEL__ >= 1)
+# define ZNC_LVREFQUAL &
+#else
+# define ZNC_LVREFQUAL
+#endif
+
 #include <znc/zncconfig.h>
 #include <znc/ZNCString.h>
 #include <znc/Nick.h>
@@ -105,29 +116,29 @@ public:
 	// Implicit and explicit conversion to a subclass reference.
 #ifndef SWIG
 	template <typename M>
-	M& As() & {
+	M& As() ZNC_LVREFQUAL {
 		static_assert(sizeof(M) == sizeof(CMessage), "No data members allowed in CMessage subclasses.");
 		return static_cast<M&>(*this);
 	}
 
 	template <typename M>
-	const M& As() const & {
+	const M& As() const ZNC_LVREFQUAL {
 		static_assert(sizeof(M) == sizeof(CMessage), "No data members allowed in CMessage subclasses.");
 		return static_cast<const M&>(*this);
 	}
 
 	template <typename M>
-	operator M&() & {
+	operator M&() ZNC_LVREFQUAL {
 		return As<M>();
 	}
 	template <typename M>
-	operator const M&() const & {
+	operator const M&() const ZNC_LVREFQUAL {
 		return As<M>();
 	}
 	// REGISTER_ZNC_MESSAGE allows SWIG to instantiate correct .As<> calls.
 #define REGISTER_ZNC_MESSAGE(M)
 #else
-	// SWIG doesn't parse ref-qualifiers, and doesn't differentiate constness.
+	// SWIG (as of 3.0.7) doesn't parse ref-qualifiers, and doesn't differentiate constness.
 	template <typename M> M& As();
 #endif
 
