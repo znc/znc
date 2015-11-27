@@ -1252,4 +1252,30 @@ TEST_F(ZNCTest, ShellModule) {
 	client.ReadUntil("PRIVMSG nick :znc$");
 }
 
+TEST_F(ZNCTest, NotifyConnectModule) {
+	auto znc = Run();Z;
+	auto ircd = ConnectIRCd();Z;
+	auto client = LoginClient();Z;
+	client.Write("znc loadmod notify_connect");
+
+	auto client2 = ConnectClient();
+	client2.Write("PASS :hunter2");
+	client2.Write("NICK nick");
+	client2.Write("USER user/test x x :x");
+	client.ReadUntil("NOTICE nick :*** user attached (from 127.0.0.1)");Z;
+
+	auto client3 = ConnectClient();
+	client3.Write("PASS :hunter2");
+	client3.Write("NICK nick");
+	client3.Write("USER user@identifier/test x x :x");
+	client.ReadUntil("NOTICE nick :*** user@identifier attached (from 127.0.0.1)");Z;
+	client2.ReadUntil("NOTICE nick :*** user@identifier attached (from 127.0.0.1)");Z;
+
+	client2.Write("QUIT");
+	client.ReadUntil("NOTICE nick :*** user detached (from 127.0.0.1)");Z;
+
+	client3.Write("QUIT");
+	client.ReadUntil("NOTICE nick :*** user@identifier detached (from 127.0.0.1)");Z;
+}
+
 }  // namespace
