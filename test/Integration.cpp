@@ -1252,4 +1252,19 @@ TEST_F(ZNCTest, ShellModule) {
 	client.ReadUntil("PRIVMSG nick :znc$");
 }
 
+TEST_F(ZNCTest, WatchModule) {
+	// TODO test other messages
+	// TODO test options
+	auto znc = Run();Z;
+	auto ircd = ConnectIRCd();Z;
+	auto client = LoginClient();Z;
+	client.Write("znc loadmod watch");
+	client.Write("PRIVMSG *watch :add *");
+	client.ReadUntil("Adding entry:");
+	ircd.Write(":server 001 nick :Hello");
+	ircd.Write(":nick JOIN :#znc");
+	ircd.Write(":n!i@h PRIVMSG #znc :\001ACTION foo\001");
+	client.ReadUntil(":$*!watch@znc.in PRIVMSG nick :* CTCP: n [ACTION foo] to [#znc]");
+}
+
 }  // namespace
