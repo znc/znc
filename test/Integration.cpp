@@ -1274,7 +1274,7 @@ TEST_F(ZNCTest, NotifyConnectModule) {
 	client2.Write("QUIT");
 	client.ReadUntil("NOTICE nick :*** user detached (from 127.0.0.1)");Z;
 
-	client3.Write("QUIT");
+	client3.Close();
 	client.ReadUntil("NOTICE nick :*** user@identifier detached (from 127.0.0.1)");Z;
 }
 
