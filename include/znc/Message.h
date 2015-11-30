@@ -117,21 +117,23 @@ public:
 #ifndef SWIG
 	template <typename M>
 	M& As() ZNC_LVREFQUAL {
+		static_assert(std::is_base_of<CMessage, M>{}, "Must be subclass of CMessage");
 		static_assert(sizeof(M) == sizeof(CMessage), "No data members allowed in CMessage subclasses.");
 		return static_cast<M&>(*this);
 	}
 
 	template <typename M>
 	const M& As() const ZNC_LVREFQUAL {
+		static_assert(std::is_base_of<CMessage, M>{}, "Must be subclass of CMessage");
 		static_assert(sizeof(M) == sizeof(CMessage), "No data members allowed in CMessage subclasses.");
 		return static_cast<const M&>(*this);
 	}
 
-	template <typename M>
+	template <typename M, typename = typename std::enable_if<std::is_base_of<CMessage, M>{}>::type>
 	operator M&() ZNC_LVREFQUAL {
 		return As<M>();
 	}
-	template <typename M>
+	template <typename M, typename = typename std::enable_if<std::is_base_of<CMessage, M>{}>::type>
 	operator const M&() const ZNC_LVREFQUAL {
 		return As<M>();
 	}
@@ -157,6 +159,14 @@ private:
 	Type         m_eType = Type::Unknown;
 	bool         m_bColon = false;
 };
+
+// For gtest
+#ifdef GTEST_FAIL
+template <typename M, typename = typename std::enable_if<std::is_base_of<CMessage, M>{}>::type>
+inline ::std::ostream& operator<<(::std::ostream& os, const M& msg) {
+	return os << msg.ToString().Escape_n(CString::EDEBUG);
+}
+#endif
 
 // The various CMessage subclasses are "mutable views" to the data held by CMessage.
 // They provide convenient access to message type speficic attributes, but are not

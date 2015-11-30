@@ -53,6 +53,8 @@ CZNC::CZNC()
 		  m_sStatusPrefix(""),
 		  m_sPidFile(""),
 		  m_sSSLCertFile(""),
+		  m_sSSLKeyFile(""),
+		  m_sSSLDHParamFile(""),
 		  m_sSSLCiphers(""),
 		  m_sSSLProtocols(""),
 		  m_vsBindHosts(),
@@ -364,7 +366,7 @@ void CZNC::InitDirs(const CString& sArgvPath, const CString& sDataDir) {
 		m_sZNCPath = sDataDir;
 	}
 
-	m_sSSLCertFile = m_sZNCPath + "/znc.pem";
+	m_sSSLCertFile = m_sSSLKeyFile = m_sSSLDHParamFile = m_sZNCPath + "/znc.pem";
 }
 
 CString CZNC::GetConfPath(bool bAllowMkDir) const {
@@ -411,6 +413,14 @@ const CString& CZNC::GetZNCPath() const {
 
 CString CZNC::GetPemLocation() const {
 	return CDir::ChangeDir("", m_sSSLCertFile);
+}
+
+CString CZNC::GetKeyLocation() const {
+	return CDir::ChangeDir("", m_sSSLKeyFile);
+}
+
+CString CZNC::GetDHParamLocation() const {
+	return CDir::ChangeDir("", m_sSSLDHParamFile);
 }
 
 CString CZNC::ExpandConfigPath(const CString& sConfigFile, bool bAllowMkDir) {
@@ -462,6 +472,8 @@ bool CZNC::WriteConfig() {
 	config.AddKeyValuePair("AnonIPLimit", CString(m_uiAnonIPLimit));
 	config.AddKeyValuePair("MaxBufferSize", CString(m_uiMaxBufferSize));
 	config.AddKeyValuePair("SSLCertFile", CString(m_sSSLCertFile));
+	config.AddKeyValuePair("SSLKeyFile", CString(m_sSSLKeyFile));
+	config.AddKeyValuePair("SSLDHParamFile", CString(m_sSSLDHParamFile));
 	config.AddKeyValuePair("ProtectWebSessions", CString(m_bProtectWebSessions));
 	config.AddKeyValuePair("HideVersion", CString(m_bHideVersion));
 	config.AddKeyValuePair("Version", CString(VERSION_STR));
@@ -1099,6 +1111,10 @@ bool CZNC::LoadGlobal(CConfig& config, CString& sError) {
 		m_sStatusPrefix = sVal;
 	if (config.FindStringEntry("sslcertfile", sVal))
 		m_sSSLCertFile = sVal;
+	if (config.FindStringEntry("sslkeyfile", sVal))
+		m_sSSLKeyFile = sVal;
+	if (config.FindStringEntry("ssldhparamfile", sVal))
+		m_sSSLDHParamFile = sVal;
 	if (config.FindStringEntry("sslciphers", sVal))
 		m_sSSLCiphers = sVal;
 	if (config.FindStringEntry("skin", sVal))

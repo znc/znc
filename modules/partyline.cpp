@@ -501,10 +501,6 @@ public:
 		return HandleMessage("NOTICE", sTarget, sMessage);
 	}
 
-	EModRet OnUserAction(CString& sTarget, CString& sMessage) override {
-		return HandleMessage("PRIVMSG", sTarget, "\001ACTION " + sMessage + "\001");
-	}
-
 	EModRet OnUserCTCP(CString& sTarget, CString& sMessage) override {
 		return HandleMessage("PRIVMSG", sTarget, "\001" + sMessage + "\001");
 	}

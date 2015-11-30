@@ -290,6 +290,8 @@ bool CIRCSock::OnActionMessage(CActionMessage& Message) {
 	CChan* pChan = nullptr;
 	CString sTarget = Message.GetTarget();
 	if (sTarget.Equals(GetNick())) {
+		IRCSOCKMODULECALL(OnPrivCTCPMessage(Message), &bResult);
+		if (bResult) return true;
 		IRCSOCKMODULECALL(OnPrivActionMessage(Message), &bResult);
 		if (bResult) return true;
 
@@ -310,6 +312,8 @@ bool CIRCSock::OnActionMessage(CActionMessage& Message) {
 		if (pChan) {
 			Message.SetChan(pChan);
 			FixupChanNick(Message.GetNick(), pChan);
+			IRCSOCKMODULECALL(OnChanCTCPMessage(Message), &bResult);
+			if (bResult) return true;
 			IRCSOCKMODULECALL(OnChanActionMessage(Message), &bResult);
 			if (bResult) return true;
 

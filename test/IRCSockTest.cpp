@@ -19,9 +19,14 @@
 #include "IRCTest.h"
 #include <algorithm>
 
-using ::testing::IsEmpty;
-using ::testing::ElementsAre;
-using ::testing::ContainerEq;
+using testing::ElementsAre;
+using testing::ContainerEq;
+using testing::InSequence;
+using testing::Invoke;
+using testing::IsEmpty;
+using testing::Mock;
+using testing::ResultOf;
+using testing::_;
 
 class IRCSockTest : public IRCTest {
 protected:
@@ -36,38 +41,92 @@ TEST_F(IRCSockTest, OnAccountMessage) {
 }
 
 TEST_F(IRCSockTest, OnActionMessage) {
+	// 2 callbacks are called in row: OnCTCP, OnAction.
+	// If OnCTCP returns HALT, OnAction isn't called.
+	struct ActionModule : TestModule {
+		ActionModule() {
+			Reset();
+		}
+		void Reset() {
+			Mock::VerifyAndClear(this);
+			EXPECT_CALL(*this, OnPrivCTCPMessage(_)).Times(0);
+			EXPECT_CALL(*this, OnChanCTCPMessage(_)).Times(0);
+			EXPECT_CALL(*this, OnPrivActionMessage(_)).Times(0);
+			EXPECT_CALL(*this, OnChanActionMessage(_)).Times(0);
+			TestModule::Reset();
+		}
+		MOCK_METHOD1(OnPrivCTCPMessage, EModRet(CCTCPMessage&));
+		MOCK_METHOD1(OnChanCTCPMessage, EModRet(CCTCPMessage&));
+		MOCK_METHOD1(OnPrivActionMessage, EModRet(CActionMessage&));
+		MOCK_METHOD1(OnChanActionMessage, EModRet(CActionMessage&));
+	};
+	ActionModule testModule;
+	CZNC::Get().GetModules().push_back(&testModule);
+	CChan* pExpectedChan = m_pTestChan;
+
 	CMessage msg(":nick PRIVMSG #chan :\001ACTION hello\001");
-	m_pTestModule->eAction = CModule::HALT;
+	auto CON = Invoke([&](CMessage& m) {
+		EXPECT_EQ(msg.ToString(), m.ToString());
+		EXPECT_EQ(m_pTestNetwork, m.GetNetwork());
+		EXPECT_EQ(pExpectedChan, m.GetChan());
+		return CModule::CONTINUE;
+	});
+	auto HAL = Invoke([&](CMessage& m) {
+		EXPECT_EQ(msg.ToString(), m.ToString());
+		EXPECT_EQ(m_pTestNetwork, m.GetNetwork());
+		EXPECT_EQ(pExpectedChan, m.GetChan());
+		return CModule::HALT;
+	});
+	auto Reset = [&]() { testModule.Reset(); m_pTestClient->Reset(); };
+
+	Reset();
+	{
+		InSequence seq;
+		EXPECT_CALL(testModule, OnChanCTCPMessage(_)).WillOnce(CON);
+		EXPECT_CALL(testModule, OnChanActionMessage(_)).WillOnce(CON);
+	}
 	m_pTestSock->ReadLine(msg.ToString());
-
-	EXPECT_THAT(m_pTestModule->vsHooks, ElementsAre("OnChanActionMessage"));
-	EXPECT_THAT(m_pTestModule->vsMessages, ElementsAre(msg.ToString()));
-	EXPECT_THAT(m_pTestModule->vNetworks, ElementsAre(m_pTestNetwork));
-	EXPECT_THAT(m_pTestModule->vChannels, ElementsAre(m_pTestChan));
-	EXPECT_THAT(m_pTestClient->vsLines, IsEmpty()); // halt
-
-	m_pTestModule->eAction = CModule::CONTINUE;
-	m_pTestSock->ReadLine(msg.ToString());
-
 	EXPECT_THAT(m_pTestClient->vsLines, ElementsAre(msg.ToString()));
 
-	m_pTestClient->Reset();
-	m_pTestModule->Reset();
+	Reset();
+	{
+		InSequence seq;
+		EXPECT_CALL(testModule, OnChanCTCPMessage(_)).WillOnce(CON);
+		EXPECT_CALL(testModule, OnChanActionMessage(_)).WillOnce(HAL);
+	}
+	m_pTestSock->ReadLine(msg.ToString());
+	EXPECT_THAT(m_pTestClient->vsLines, IsEmpty());
+
+	Reset();
+	EXPECT_CALL(testModule, OnChanCTCPMessage(_)).WillOnce(HAL);
+	m_pTestSock->ReadLine(msg.ToString());
+	EXPECT_THAT(m_pTestClient->vsLines, IsEmpty());
 
 	msg.Parse(":nick PRIVMSG me :\001ACTION hello\001");
-	m_pTestModule->eAction = CModule::HALT;
+	pExpectedChan = nullptr;
+
+	Reset();
+	{
+		InSequence seq;
+		EXPECT_CALL(testModule, OnPrivCTCPMessage(_)).WillOnce(CON);
+		EXPECT_CALL(testModule, OnPrivActionMessage(_)).WillOnce(CON);
+	}
 	m_pTestSock->ReadLine(msg.ToString());
-
-	EXPECT_THAT(m_pTestModule->vsHooks, ElementsAre("OnPrivActionMessage"));
-	EXPECT_THAT(m_pTestModule->vsMessages, ElementsAre(msg.ToString()));
-	EXPECT_THAT(m_pTestModule->vNetworks, ElementsAre(m_pTestNetwork));
-	EXPECT_THAT(m_pTestModule->vChannels, ElementsAre(nullptr));
-	EXPECT_THAT(m_pTestClient->vsLines, IsEmpty()); // halt
-
-	m_pTestModule->eAction = CModule::CONTINUE;
-	m_pTestSock->ReadLine(msg.ToString());
-
 	EXPECT_THAT(m_pTestClient->vsLines, ElementsAre(msg.ToString()));
+
+	Reset();
+	{
+		InSequence seq;
+		EXPECT_CALL(testModule, OnPrivCTCPMessage(_)).WillOnce(CON);
+		EXPECT_CALL(testModule, OnPrivActionMessage(_)).WillOnce(HAL);
+	}
+	m_pTestSock->ReadLine(msg.ToString());
+	EXPECT_THAT(m_pTestClient->vsLines, IsEmpty());
+
+	Reset();
+	EXPECT_CALL(testModule, OnPrivCTCPMessage(_)).WillOnce(HAL);
+	m_pTestSock->ReadLine(msg.ToString());
+	EXPECT_THAT(m_pTestClient->vsLines, IsEmpty());
 }
 
 TEST_F(IRCSockTest, OnAwayMessage) {

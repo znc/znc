@@ -35,6 +35,8 @@ bool CListener::Listen() {
 	if (IsSSL()) {
 		bSSL = true;
 		m_pListener->SetPemLocation(CZNC::Get().GetPemLocation());
+		m_pListener->SetKeyLocation(CZNC::Get().GetKeyLocation());
+		m_pListener->SetDHParamLocation(CZNC::Get().GetDHParamLocation());
 	}
 #endif
 
