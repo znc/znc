@@ -126,6 +126,12 @@ void CZNCSock::SSLHandShakeFinished() {
 	CallSockError(errnoBadSSLCert, sErrorMsg);
 	Close();
 }
+
+bool CZNCSock::SNIConfigureClient(CS_STRING& sHostname)
+{
+	sHostname = m_HostToVerifySSL;
+	return true;
+}
 #endif
 
 CString CZNCSock::GetSSLPeerFingerprint() const {
