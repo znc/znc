@@ -33,6 +33,7 @@ public:
 #ifdef HAVE_LIBSSL
 	int VerifyPeerCertificate(int iPreVerify, X509_STORE_CTX * pStoreCTX) override;
 	void SSLHandShakeFinished() override;
+	bool SNIConfigureClient(CS_STRING& sHostname) override;
 #endif
 	void SetHostToVerifySSL(const CString& sHost) { m_HostToVerifySSL = sHost; }
 	CString GetSSLPeerFingerprint() const;
