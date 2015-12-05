@@ -29,13 +29,13 @@ public:
 	CZNCSock(const CString& sHost, u_short port, int timeout = 60);
 	~CZNCSock() {}
 
-	int ConvertAddress(const struct sockaddr_storage * pAddr, socklen_t iAddrLen, CS_STRING & sIP, u_short * piPort) const override;
+	int ConvertAddress(const struct sockaddr_storage* pAddr, socklen_t iAddrLen, CString& sIP, u_short* piPort) const override;
 #ifdef HAVE_LIBSSL
 	int VerifyPeerCertificate(int iPreVerify, X509_STORE_CTX * pStoreCTX) override;
 	void SSLHandShakeFinished() override;
 	bool SNIConfigureClient(CString& sHostname) override;
 #endif
-	void SetHostToVerifySSL(const CString& sHost) { m_HostToVerifySSL = sHost; }
+	void SetHostToVerifySSL(const CString& sHost) { m_sHostToVerifySSL = sHost; }
 	CString GetSSLPeerFingerprint() const;
 	void SetSSLTrustedPeerFingerprints(const SCString& ssFPs) { m_ssTrustedFingerprints = ssFPs; }
 
@@ -52,7 +52,7 @@ protected:
 	};
 
 private:
-	CString m_HostToVerifySSL;
+	CString m_sHostToVerifySSL;
 	SCString m_ssTrustedFingerprints;
 	SCString m_ssCertVerificationErrors;
 };

@@ -40,7 +40,7 @@ static CString ZNC_DefaultCipher() {
 }
 #endif
 
-CZNCSock::CZNCSock(int timeout) : Csock(timeout), m_HostToVerifySSL(""), m_ssTrustedFingerprints(), m_ssCertVerificationErrors() {
+CZNCSock::CZNCSock(int timeout) : Csock(timeout), m_sHostToVerifySSL(""), m_ssTrustedFingerprints(), m_ssCertVerificationErrors() {
 #ifdef HAVE_LIBSSL
 	DisableSSLCompression();
 	FollowSSLCipherServerPreference();
@@ -53,7 +53,7 @@ CZNCSock::CZNCSock(int timeout) : Csock(timeout), m_HostToVerifySSL(""), m_ssTru
 #endif
 }
 
-CZNCSock::CZNCSock(const CString& sHost, u_short port, int timeout) : Csock(sHost, port, timeout), m_HostToVerifySSL(""), m_ssTrustedFingerprints(), m_ssCertVerificationErrors() {
+CZNCSock::CZNCSock(const CString& sHost, u_short port, int timeout) : Csock(sHost, port, timeout), m_sHostToVerifySSL(""), m_ssTrustedFingerprints(), m_ssCertVerificationErrors() {
 #ifdef HAVE_LIBSSL
 	DisableSSLCompression();
 	FollowSSLCipherServerPreference();
@@ -79,7 +79,7 @@ unsigned int CSockManager::GetAnonConnectionCount(const CString &sIP) const {
 	return ret;
 }
 
-int CZNCSock::ConvertAddress(const struct sockaddr_storage * pAddr, socklen_t iAddrLen, CS_STRING & sIP, u_short * piPort) const {
+int CZNCSock::ConvertAddress(const struct sockaddr_storage* pAddr, socklen_t iAddrLen, CString& sIP, u_short* piPort) const {
 	int ret = Csock::ConvertAddress(pAddr, iAddrLen, sIP, piPort);
 	if (ret == 0)
 		sIP.TrimPrefix("::ffff:");
@@ -107,7 +107,7 @@ void CZNCSock::SSLHandShakeFinished() {
 		return;
 	}
 	CString sHostVerifyError;
-	if (!ZNC_SSLVerifyHost(m_HostToVerifySSL, pCert, sHostVerifyError)) {
+	if (!ZNC_SSLVerifyHost(m_sHostToVerifySSL, pCert, sHostVerifyError)) {
 		m_ssCertVerificationErrors.insert(sHostVerifyError);
 	}
 	X509_free(pCert);
@@ -128,7 +128,7 @@ void CZNCSock::SSLHandShakeFinished() {
 }
 
 bool CZNCSock::SNIConfigureClient(CString& sHostname) {
-	sHostname = m_HostToVerifySSL;
+	sHostname = m_sHostToVerifySSL;
 	return true;
 }
 #endif
