@@ -25,88 +25,88 @@ using ::testing::MatchesRegex;
 
 class QueryTest : public ::testing::Test {
   protected:
-	void SetUp() { CZNC::CreateInstance(); }
-	void TearDown() { CZNC::DestroyInstance(); }
+    void SetUp() { CZNC::CreateInstance(); }
+    void TearDown() { CZNC::DestroyInstance(); }
 };
 
 TEST_F(QueryTest, Name) {
-	CUser user("user");
-	CIRCNetwork network(&user, "network");
+    CUser user("user");
+    CIRCNetwork network(&user, "network");
 
-	CQuery query("query", &network);
-	EXPECT_EQ("query", query.GetName());
+    CQuery query("query", &network);
+    EXPECT_EQ("query", query.GetName());
 }
 
 TEST_F(QueryTest, AddClearBuffer) {
-	CUser user("user");
-	CIRCNetwork network(&user, "network");
+    CUser user("user");
+    CIRCNetwork network(&user, "network");
 
-	CQuery query("query", &network);
-	EXPECT_TRUE(query.GetBuffer().IsEmpty());
-	query.AddBuffer("foo");
-	EXPECT_EQ(1u, query.GetBuffer().Size());
-	query.AddBuffer("bar");
-	EXPECT_EQ(2u, query.GetBuffer().Size());
-	query.ClearBuffer();
-	EXPECT_TRUE(query.GetBuffer().IsEmpty());
+    CQuery query("query", &network);
+    EXPECT_TRUE(query.GetBuffer().IsEmpty());
+    query.AddBuffer("foo");
+    EXPECT_EQ(1u, query.GetBuffer().Size());
+    query.AddBuffer("bar");
+    EXPECT_EQ(2u, query.GetBuffer().Size());
+    query.ClearBuffer();
+    EXPECT_TRUE(query.GetBuffer().IsEmpty());
 }
 
 TEST_F(QueryTest, BufferSize) {
-	CUser user("user");
-	CIRCNetwork network(&user, "network");
+    CUser user("user");
+    CIRCNetwork network(&user, "network");
 
-	CQuery query("query", &network);
-	EXPECT_EQ(50u, user.GetQueryBufferSize());
-	EXPECT_EQ(50u, query.GetBufferCount());
+    CQuery query("query", &network);
+    EXPECT_EQ(50u, user.GetQueryBufferSize());
+    EXPECT_EQ(50u, query.GetBufferCount());
 
-	EXPECT_EQ(500u, CZNC::Get().GetMaxBufferSize());
-	EXPECT_FALSE(query.SetBufferCount(1000, false));
-	EXPECT_EQ(50u, query.GetBufferCount());
-	EXPECT_TRUE(query.SetBufferCount(500, false));
-	EXPECT_EQ(500u, query.GetBufferCount());
-	EXPECT_TRUE(query.SetBufferCount(1000, true));
-	EXPECT_EQ(1000u, query.GetBufferCount());
+    EXPECT_EQ(500u, CZNC::Get().GetMaxBufferSize());
+    EXPECT_FALSE(query.SetBufferCount(1000, false));
+    EXPECT_EQ(50u, query.GetBufferCount());
+    EXPECT_TRUE(query.SetBufferCount(500, false));
+    EXPECT_EQ(500u, query.GetBufferCount());
+    EXPECT_TRUE(query.SetBufferCount(1000, true));
+    EXPECT_EQ(1000u, query.GetBufferCount());
 }
 
 TEST_F(QueryTest, SendBuffer) {
-	CUser user("user");
-	CIRCNetwork network(&user, "network");
-	CDebug::SetDebug(false);
+    CUser user("user");
+    CIRCNetwork network(&user, "network");
+    CDebug::SetDebug(false);
 
-	TestClient client;
-	client.SetNick("me");
-	client.AcceptLogin(user);
-	client.Reset();
+    TestClient client;
+    client.SetNick("me");
+    client.AcceptLogin(user);
+    client.Reset();
 
-	CQuery query("query", &network);
-	query.AddBuffer(":sender PRIVMSG {target} :{text}", "a message");
-	query.AddBuffer(":me PRIVMSG someone :{text}", "a self-message");
-	query.AddBuffer(":sender NOTICE #znc :{text}", "a notice");
+    CQuery query("query", &network);
+    query.AddBuffer(":sender PRIVMSG {target} :{text}", "a message");
+    query.AddBuffer(":me PRIVMSG someone :{text}", "a self-message");
+    query.AddBuffer(":sender NOTICE #znc :{text}", "a notice");
 
-	client.Reset();
-	query.SendBuffer(&client);
-	EXPECT_THAT(
-	    client.vsLines,
-	    ElementsAre(
-	        MatchesRegex(R"(:sender PRIVMSG me :\[\d\d:\d\d:\d\d\] a message)"),
-	        MatchesRegex(
-	            R"(:sender NOTICE #znc :\[\d\d:\d\d:\d\d\] a notice)")));
+    client.Reset();
+    query.SendBuffer(&client);
+    EXPECT_THAT(
+        client.vsLines,
+        ElementsAre(
+            MatchesRegex(R"(:sender PRIVMSG me :\[\d\d:\d\d:\d\d\] a message)"),
+            MatchesRegex(
+                R"(:sender NOTICE #znc :\[\d\d:\d\d:\d\d\] a notice)")));
 
-	client.Reset();
-	user.SetTimestampPrepend(false);
-	query.SendBuffer(&client);
-	EXPECT_THAT(client.vsLines, ElementsAre(":sender PRIVMSG me :a message",
-	                                        ":sender NOTICE #znc :a notice"));
+    client.Reset();
+    user.SetTimestampPrepend(false);
+    query.SendBuffer(&client);
+    EXPECT_THAT(client.vsLines, ElementsAre(":sender PRIVMSG me :a message",
+                                            ":sender NOTICE #znc :a notice"));
 
-	client.Reset();
-	user.SetTimestampAppend(true);
-	query.SendBuffer(&client);
-	EXPECT_THAT(
-	    client.vsLines,
-	    ElementsAre(
-	        MatchesRegex(R"(:sender PRIVMSG me :a message \[\d\d:\d\d:\d\d\])"),
-	        MatchesRegex(
-	            R"(:sender NOTICE #znc :a notice \[\d\d:\d\d:\d\d\])")));
+    client.Reset();
+    user.SetTimestampAppend(true);
+    query.SendBuffer(&client);
+    EXPECT_THAT(
+        client.vsLines,
+        ElementsAre(
+            MatchesRegex(R"(:sender PRIVMSG me :a message \[\d\d:\d\d:\d\d\])"),
+            MatchesRegex(
+                R"(:sender NOTICE #znc :a notice \[\d\d:\d\d:\d\d\])")));
 
-	network.ClientDisconnected(&client);
+    network.ClientDisconnected(&client);
 }

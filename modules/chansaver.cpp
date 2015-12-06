@@ -20,71 +20,71 @@
 
 class CChanSaverMod : public CModule {
   public:
-	MODCONSTRUCTOR(CChanSaverMod) {}
+    MODCONSTRUCTOR(CChanSaverMod) {}
 
-	virtual ~CChanSaverMod() {}
+    virtual ~CChanSaverMod() {}
 
-	bool OnLoad(const CString& sArgsi, CString& sMessage) override {
-		switch (GetType()) {
-			case CModInfo::GlobalModule:
-				LoadUsers();
-				break;
-			case CModInfo::UserModule:
-				LoadUser(GetUser());
-				break;
-			case CModInfo::NetworkModule:
-				LoadNetwork(GetNetwork());
-				break;
-		}
-		return true;
-	}
+    bool OnLoad(const CString& sArgsi, CString& sMessage) override {
+        switch (GetType()) {
+            case CModInfo::GlobalModule:
+                LoadUsers();
+                break;
+            case CModInfo::UserModule:
+                LoadUser(GetUser());
+                break;
+            case CModInfo::NetworkModule:
+                LoadNetwork(GetNetwork());
+                break;
+        }
+        return true;
+    }
 
-	void LoadUsers() {
-		const std::map<CString, CUser*>& vUsers = CZNC::Get().GetUserMap();
-		for (const auto& user : vUsers) {
-			LoadUser(user.second);
-		}
-	}
+    void LoadUsers() {
+        const std::map<CString, CUser*>& vUsers = CZNC::Get().GetUserMap();
+        for (const auto& user : vUsers) {
+            LoadUser(user.second);
+        }
+    }
 
-	void LoadUser(CUser* pUser) {
-		const std::vector<CIRCNetwork*>& vNetworks = pUser->GetNetworks();
-		for (const CIRCNetwork* pNetwork : vNetworks) {
-			LoadNetwork(pNetwork);
-		}
-	}
+    void LoadUser(CUser* pUser) {
+        const std::vector<CIRCNetwork*>& vNetworks = pUser->GetNetworks();
+        for (const CIRCNetwork* pNetwork : vNetworks) {
+            LoadNetwork(pNetwork);
+        }
+    }
 
-	void LoadNetwork(const CIRCNetwork* pNetwork) {
-		const std::vector<CChan*>& vChans = pNetwork->GetChans();
-		for (CChan* pChan : vChans) {
-			// If that channel isn't yet in the config,
-			// we'll have to add it...
-			if (!pChan->InConfig()) {
-				pChan->SetInConfig(true);
-			}
-		}
-	}
+    void LoadNetwork(const CIRCNetwork* pNetwork) {
+        const std::vector<CChan*>& vChans = pNetwork->GetChans();
+        for (CChan* pChan : vChans) {
+            // If that channel isn't yet in the config,
+            // we'll have to add it...
+            if (!pChan->InConfig()) {
+                pChan->SetInConfig(true);
+            }
+        }
+    }
 
-	void OnJoin(const CNick& Nick, CChan& Channel) override {
-		if (!Channel.InConfig() &&
-		    GetNetwork()->GetIRCNick().NickEquals(Nick.GetNick())) {
-			Channel.SetInConfig(true);
-		}
-	}
+    void OnJoin(const CNick& Nick, CChan& Channel) override {
+        if (!Channel.InConfig() &&
+            GetNetwork()->GetIRCNick().NickEquals(Nick.GetNick())) {
+            Channel.SetInConfig(true);
+        }
+    }
 
-	void OnPart(const CNick& Nick, CChan& Channel,
-	            const CString& sMessage) override {
-		if (Channel.InConfig() &&
-		    GetNetwork()->GetIRCNick().NickEquals(Nick.GetNick())) {
-			Channel.SetInConfig(false);
-		}
-	}
+    void OnPart(const CNick& Nick, CChan& Channel,
+                const CString& sMessage) override {
+        if (Channel.InConfig() &&
+            GetNetwork()->GetIRCNick().NickEquals(Nick.GetNick())) {
+            Channel.SetInConfig(false);
+        }
+    }
 };
 
 template <>
 void TModInfo<CChanSaverMod>(CModInfo& Info) {
-	Info.SetWikiPage("chansaver");
-	Info.AddType(CModInfo::NetworkModule);
-	Info.AddType(CModInfo::GlobalModule);
+    Info.SetWikiPage("chansaver");
+    Info.AddType(CModInfo::NetworkModule);
+    Info.AddType(CModInfo::GlobalModule);
 }
 
 USERMODULEDEFS(CChanSaverMod, "Keep config up-to-date when user joins/parts.")

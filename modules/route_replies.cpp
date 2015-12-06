@@ -18,14 +18,14 @@
 #include <znc/IRCSock.h>
 
 struct reply {
-	const char* szReply;
-	bool bLastResponse;
+    const char* szReply;
+    bool bLastResponse;
 };
 
 // TODO this list is far from complete, no errors are handled
 static const struct {
-	const char* szRequest;
-	struct reply vReplies[19];
+    const char* szRequest;
+    struct reply vReplies[19];
 } vRouteReplies[] = {
       {"WHO",
        {{"402", true},   /* rfc1459 ERR_NOSUCHSERVER */
@@ -182,272 +182,272 @@ static const struct {
 
 class CRouteTimeout : public CTimer {
   public:
-	CRouteTimeout(CModule* pModule, unsigned int uInterval,
-	              unsigned int uCycles, const CString& sLabel,
-	              const CString& sDescription)
-	    : CTimer(pModule, uInterval, uCycles, sLabel, sDescription) {}
-	virtual ~CRouteTimeout() {}
+    CRouteTimeout(CModule* pModule, unsigned int uInterval,
+                  unsigned int uCycles, const CString& sLabel,
+                  const CString& sDescription)
+        : CTimer(pModule, uInterval, uCycles, sLabel, sDescription) {}
+    virtual ~CRouteTimeout() {}
 
   protected:
-	void RunJob() override;
+    void RunJob() override;
 };
 
 struct queued_req {
-	CString sLine;
-	const struct reply* reply;
+    CString sLine;
+    const struct reply* reply;
 };
 
 typedef std::map<CClient*, std::vector<struct queued_req>> requestQueue;
 
 class CRouteRepliesMod : public CModule {
   public:
-	MODCONSTRUCTOR(CRouteRepliesMod) {
-		m_pDoing = nullptr;
-		m_pReplies = nullptr;
+    MODCONSTRUCTOR(CRouteRepliesMod) {
+        m_pDoing = nullptr;
+        m_pReplies = nullptr;
 
-		AddHelpCommand();
-		AddCommand("Silent", static_cast<CModCommand::ModCmdFunc>(
-		                         &CRouteRepliesMod::SilentCommand),
-		           "[yes|no]",
-		           "Decides whether to show the timeout messages or not");
-	}
+        AddHelpCommand();
+        AddCommand("Silent", static_cast<CModCommand::ModCmdFunc>(
+                                 &CRouteRepliesMod::SilentCommand),
+                   "[yes|no]",
+                   "Decides whether to show the timeout messages or not");
+    }
 
-	virtual ~CRouteRepliesMod() {
-		requestQueue::iterator it;
+    virtual ~CRouteRepliesMod() {
+        requestQueue::iterator it;
 
-		while (!m_vsPending.empty()) {
-			it = m_vsPending.begin();
+        while (!m_vsPending.empty()) {
+            it = m_vsPending.begin();
 
-			while (!it->second.empty()) {
-				PutIRC(it->second[0].sLine);
-				it->second.erase(it->second.begin());
-			}
+            while (!it->second.empty()) {
+                PutIRC(it->second[0].sLine);
+                it->second.erase(it->second.begin());
+            }
 
-			m_vsPending.erase(it);
-		}
-	}
+            m_vsPending.erase(it);
+        }
+    }
 
-	void OnIRCConnected() override {
-		m_pDoing = nullptr;
-		m_pReplies = nullptr;
-		m_vsPending.clear();
+    void OnIRCConnected() override {
+        m_pDoing = nullptr;
+        m_pReplies = nullptr;
+        m_vsPending.clear();
 
-		// No way we get a reply, so stop the timer (If it's running)
-		RemTimer("RouteTimeout");
-	}
+        // No way we get a reply, so stop the timer (If it's running)
+        RemTimer("RouteTimeout");
+    }
 
-	void OnIRCDisconnected() override {
-		OnIRCConnected();  // Let's keep it in one place
-	}
+    void OnIRCDisconnected() override {
+        OnIRCConnected();  // Let's keep it in one place
+    }
 
-	void OnClientDisconnect() override {
-		requestQueue::iterator it;
+    void OnClientDisconnect() override {
+        requestQueue::iterator it;
 
-		if (GetClient() == m_pDoing) {
-			// The replies which aren't received yet will be
-			// broadcasted to everyone, but at least nothing breaks
-			RemTimer("RouteTimeout");
-			m_pDoing = nullptr;
-			m_pReplies = nullptr;
-		}
+        if (GetClient() == m_pDoing) {
+            // The replies which aren't received yet will be
+            // broadcasted to everyone, but at least nothing breaks
+            RemTimer("RouteTimeout");
+            m_pDoing = nullptr;
+            m_pReplies = nullptr;
+        }
 
-		it = m_vsPending.find(GetClient());
+        it = m_vsPending.find(GetClient());
 
-		if (it != m_vsPending.end()) m_vsPending.erase(it);
+        if (it != m_vsPending.end()) m_vsPending.erase(it);
 
-		SendRequest();
-	}
+        SendRequest();
+    }
 
-	EModRet OnRaw(CString& sLine) override {
-		CString sCmd = sLine.Token(1).AsUpper();
-		size_t i = 0;
+    EModRet OnRaw(CString& sLine) override {
+        CString sCmd = sLine.Token(1).AsUpper();
+        size_t i = 0;
 
-		if (!m_pReplies) return CONTINUE;
+        if (!m_pReplies) return CONTINUE;
 
-		// Is this a "not enough arguments" error?
-		if (sCmd == "461") {
-			// :server 461 nick WHO :Not enough parameters
-			CString sOrigCmd = sLine.Token(3);
+        // Is this a "not enough arguments" error?
+        if (sCmd == "461") {
+            // :server 461 nick WHO :Not enough parameters
+            CString sOrigCmd = sLine.Token(3);
 
-			if (m_sLastRequest.Token(0).Equals(sOrigCmd)) {
-				// This is the reply to the last request
-				if (RouteReply(sLine, true)) return HALTCORE;
-				return CONTINUE;
-			}
-		}
+            if (m_sLastRequest.Token(0).Equals(sOrigCmd)) {
+                // This is the reply to the last request
+                if (RouteReply(sLine, true)) return HALTCORE;
+                return CONTINUE;
+            }
+        }
 
-		while (m_pReplies[i].szReply != nullptr) {
-			if (m_pReplies[i].szReply == sCmd) {
-				if (RouteReply(sLine, m_pReplies[i].bLastResponse))
-					return HALTCORE;
-				return CONTINUE;
-			}
-			i++;
-		}
+        while (m_pReplies[i].szReply != nullptr) {
+            if (m_pReplies[i].szReply == sCmd) {
+                if (RouteReply(sLine, m_pReplies[i].bLastResponse))
+                    return HALTCORE;
+                return CONTINUE;
+            }
+            i++;
+        }
 
-		// TODO HALTCORE is wrong, it should not be passed to
-		// the clients, but the core itself should still handle it!
+        // TODO HALTCORE is wrong, it should not be passed to
+        // the clients, but the core itself should still handle it!
 
-		return CONTINUE;
-	}
+        return CONTINUE;
+    }
 
-	EModRet OnUserRaw(CString& sLine) override {
-		CString sCmd = sLine.Token(0).AsUpper();
+    EModRet OnUserRaw(CString& sLine) override {
+        CString sCmd = sLine.Token(0).AsUpper();
 
-		if (!GetNetwork()->GetIRCSock()) return CONTINUE;
+        if (!GetNetwork()->GetIRCSock()) return CONTINUE;
 
-		if (sCmd.Equals("MODE")) {
-			// Check if this is a mode request that needs to be handled
+        if (sCmd.Equals("MODE")) {
+            // Check if this is a mode request that needs to be handled
 
-			// If there are arguments to a mode change,
-			// we must not route it.
-			if (!sLine.Token(3, true).empty()) return CONTINUE;
+            // If there are arguments to a mode change,
+            // we must not route it.
+            if (!sLine.Token(3, true).empty()) return CONTINUE;
 
-			// Grab the mode change parameter
-			CString sMode = sLine.Token(2);
+            // Grab the mode change parameter
+            CString sMode = sLine.Token(2);
 
-			// If this is a channel mode request, znc core replies to it
-			if (sMode.empty()) return CONTINUE;
+            // If this is a channel mode request, znc core replies to it
+            if (sMode.empty()) return CONTINUE;
 
-			// Check if this is a mode change or a specific
-			// mode request (the later needs to be routed).
-			sMode.TrimPrefix("+");
-			if (sMode.length() != 1) return CONTINUE;
+            // Check if this is a mode change or a specific
+            // mode request (the later needs to be routed).
+            sMode.TrimPrefix("+");
+            if (sMode.length() != 1) return CONTINUE;
 
-			// Now just check if it's one of the supported modes
-			switch (sMode[0]) {
-				case 'I':
-				case 'b':
-				case 'e':
-					break;
-				default:
-					return CONTINUE;
-			}
+            // Now just check if it's one of the supported modes
+            switch (sMode[0]) {
+                case 'I':
+                case 'b':
+                case 'e':
+                    break;
+                default:
+                    return CONTINUE;
+            }
 
-			// Ok, this looks like we should route it.
-			// Fall through to the next loop
-		}
+            // Ok, this looks like we should route it.
+            // Fall through to the next loop
+        }
 
-		for (size_t i = 0; vRouteReplies[i].szRequest != nullptr; i++) {
-			if (vRouteReplies[i].szRequest == sCmd) {
-				struct queued_req req = {sLine, vRouteReplies[i].vReplies};
-				m_vsPending[GetClient()].push_back(req);
-				SendRequest();
+        for (size_t i = 0; vRouteReplies[i].szRequest != nullptr; i++) {
+            if (vRouteReplies[i].szRequest == sCmd) {
+                struct queued_req req = {sLine, vRouteReplies[i].vReplies};
+                m_vsPending[GetClient()].push_back(req);
+                SendRequest();
 
-				return HALTCORE;
-			}
-		}
+                return HALTCORE;
+            }
+        }
 
-		return CONTINUE;
-	}
+        return CONTINUE;
+    }
 
-	void Timeout() {
-		// The timer will be deleted after this by the event loop
+    void Timeout() {
+        // The timer will be deleted after this by the event loop
 
-		if (!GetNV("silent_timeouts").ToBool()) {
-			PutModule(
-			    "This module hit a timeout which is probably a connectivity "
-			    "issue.");
-			PutModule(
-			    "However, if you can provide steps to reproduce this issue, "
-			    "please do report a bug.");
-			PutModule("To disable this message, do \"/msg " + GetModNick() +
-			          " silent yes\"");
-			PutModule("Last request: " + m_sLastRequest);
-			PutModule("Expected replies: ");
+        if (!GetNV("silent_timeouts").ToBool()) {
+            PutModule(
+                "This module hit a timeout which is probably a connectivity "
+                "issue.");
+            PutModule(
+                "However, if you can provide steps to reproduce this issue, "
+                "please do report a bug.");
+            PutModule("To disable this message, do \"/msg " + GetModNick() +
+                      " silent yes\"");
+            PutModule("Last request: " + m_sLastRequest);
+            PutModule("Expected replies: ");
 
-			for (size_t i = 0; m_pReplies[i].szReply != nullptr; i++) {
-				if (m_pReplies[i].bLastResponse)
-					PutModule(m_pReplies[i].szReply + CString(" (last)"));
-				else
-					PutModule(m_pReplies[i].szReply);
-			}
-		}
+            for (size_t i = 0; m_pReplies[i].szReply != nullptr; i++) {
+                if (m_pReplies[i].bLastResponse)
+                    PutModule(m_pReplies[i].szReply + CString(" (last)"));
+                else
+                    PutModule(m_pReplies[i].szReply);
+            }
+        }
 
-		m_pDoing = nullptr;
-		m_pReplies = nullptr;
-		SendRequest();
-	}
+        m_pDoing = nullptr;
+        m_pReplies = nullptr;
+        SendRequest();
+    }
 
   private:
-	bool RouteReply(const CString& sLine, bool bFinished = false) {
-		if (!m_pDoing) return false;
+    bool RouteReply(const CString& sLine, bool bFinished = false) {
+        if (!m_pDoing) return false;
 
-		// TODO: RouteReply(const CMessage& Message, bool bFinished = false)
-		m_pDoing->PutClient(CMessage(sLine));
+        // TODO: RouteReply(const CMessage& Message, bool bFinished = false)
+        m_pDoing->PutClient(CMessage(sLine));
 
-		if (bFinished) {
-			// Stop the timeout
-			RemTimer("RouteTimeout");
+        if (bFinished) {
+            // Stop the timeout
+            RemTimer("RouteTimeout");
 
-			m_pDoing = nullptr;
-			m_pReplies = nullptr;
-			SendRequest();
-		}
+            m_pDoing = nullptr;
+            m_pReplies = nullptr;
+            SendRequest();
+        }
 
-		return true;
-	}
+        return true;
+    }
 
-	void SendRequest() {
-		requestQueue::iterator it;
+    void SendRequest() {
+        requestQueue::iterator it;
 
-		if (m_pDoing || m_pReplies) return;
+        if (m_pDoing || m_pReplies) return;
 
-		if (m_vsPending.empty()) return;
+        if (m_vsPending.empty()) return;
 
-		it = m_vsPending.begin();
+        it = m_vsPending.begin();
 
-		if (it->second.empty()) {
-			m_vsPending.erase(it);
-			SendRequest();
-			return;
-		}
+        if (it->second.empty()) {
+            m_vsPending.erase(it);
+            SendRequest();
+            return;
+        }
 
-		// When we are called from the timer, we need to remove it.
-		// We can't delete it (segfault on return), thus we
-		// just stop it. The main loop will delete it.
-		CTimer* pTimer = FindTimer("RouteTimeout");
-		if (pTimer) {
-			pTimer->Stop();
-			UnlinkTimer(pTimer);
-		}
-		AddTimer(
-		    new CRouteTimeout(this, 60, 1, "RouteTimeout",
-		                      "Recover from missing / wrong server replies"));
+        // When we are called from the timer, we need to remove it.
+        // We can't delete it (segfault on return), thus we
+        // just stop it. The main loop will delete it.
+        CTimer* pTimer = FindTimer("RouteTimeout");
+        if (pTimer) {
+            pTimer->Stop();
+            UnlinkTimer(pTimer);
+        }
+        AddTimer(
+            new CRouteTimeout(this, 60, 1, "RouteTimeout",
+                              "Recover from missing / wrong server replies"));
 
-		m_pDoing = it->first;
-		m_pReplies = it->second[0].reply;
-		m_sLastRequest = it->second[0].sLine;
-		PutIRC(it->second[0].sLine);
-		it->second.erase(it->second.begin());
-	}
+        m_pDoing = it->first;
+        m_pReplies = it->second[0].reply;
+        m_sLastRequest = it->second[0].sLine;
+        PutIRC(it->second[0].sLine);
+        it->second.erase(it->second.begin());
+    }
 
-	void SilentCommand(const CString& sLine) {
-		const CString sValue = sLine.Token(1);
+    void SilentCommand(const CString& sLine) {
+        const CString sValue = sLine.Token(1);
 
-		if (!sValue.empty()) {
-			SetNV("silent_timeouts", sValue);
-		}
+        if (!sValue.empty()) {
+            SetNV("silent_timeouts", sValue);
+        }
 
-		CString sPrefix = GetNV("silent_timeouts").ToBool() ? "dis" : "en";
-		PutModule("Timeout messages are " + sPrefix + "abled.");
-	}
+        CString sPrefix = GetNV("silent_timeouts").ToBool() ? "dis" : "en";
+        PutModule("Timeout messages are " + sPrefix + "abled.");
+    }
 
-	CClient* m_pDoing;
-	const struct reply* m_pReplies;
-	requestQueue m_vsPending;
-	// This field is only used for display purpose.
-	CString m_sLastRequest;
+    CClient* m_pDoing;
+    const struct reply* m_pReplies;
+    requestQueue m_vsPending;
+    // This field is only used for display purpose.
+    CString m_sLastRequest;
 };
 
 void CRouteTimeout::RunJob() {
-	CRouteRepliesMod* pMod = (CRouteRepliesMod*)GetModule();
-	pMod->Timeout();
+    CRouteRepliesMod* pMod = (CRouteRepliesMod*)GetModule();
+    pMod->Timeout();
 }
 
 template <>
 void TModInfo<CRouteRepliesMod>(CModInfo& Info) {
-	Info.SetWikiPage("route_replies");
+    Info.SetWikiPage("route_replies");
 }
 
 NETWORKMODULEDEFS(CRouteRepliesMod,

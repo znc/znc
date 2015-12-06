@@ -2,7 +2,6 @@
 BasedOnStyle: Google
 Standard: Cpp11
 
-UseTab: ForIndentation
 IndentWidth: 4
 TabWidth: 4
 AccessModifierOffset: -2

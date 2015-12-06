@@ -47,10 +47,10 @@
 #include <cstddef>
 
 typedef struct {
-	size_t tot_len;
-	size_t len;
-	unsigned char block[2 * SHA256_BLOCK_SIZE];
-	uint32_t h[8];
+    size_t tot_len;
+    size_t len;
+    unsigned char block[2 * SHA256_BLOCK_SIZE];
+    uint32_t h[8];
 } sha256_ctx;
 
 void sha256_init(sha256_ctx* ctx);

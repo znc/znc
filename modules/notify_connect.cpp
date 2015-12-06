@@ -19,32 +19,32 @@
 
 class CNotifyConnectMod : public CModule {
   public:
-	MODCONSTRUCTOR(CNotifyConnectMod) {}
+    MODCONSTRUCTOR(CNotifyConnectMod) {}
 
-	void OnClientLogin() override { NotifyAdmins("attached"); }
+    void OnClientLogin() override { NotifyAdmins("attached"); }
 
-	void OnClientDisconnect() override { NotifyAdmins("detached"); }
+    void OnClientDisconnect() override { NotifyAdmins("detached"); }
 
   private:
-	void SendAdmins(const CString& msg) {
-		CZNC::Get().Broadcast(msg, true, nullptr, GetClient());
-	}
+    void SendAdmins(const CString& msg) {
+        CZNC::Get().Broadcast(msg, true, nullptr, GetClient());
+    }
 
-	void NotifyAdmins(const CString& event) {
-		CString client = GetUser()->GetUserName();
-		if (GetClient()->GetIdentifier() != "") {
-			client += "@";
-			client += GetClient()->GetIdentifier();
-		}
-		CString ip = GetClient()->GetRemoteIP();
+    void NotifyAdmins(const CString& event) {
+        CString client = GetUser()->GetUserName();
+        if (GetClient()->GetIdentifier() != "") {
+            client += "@";
+            client += GetClient()->GetIdentifier();
+        }
+        CString ip = GetClient()->GetRemoteIP();
 
-		SendAdmins(client + " " + event + " (from " + ip + ")");
-	}
+        SendAdmins(client + " " + event + " (from " + ip + ")");
+    }
 };
 
 template <>
 void TModInfo<CNotifyConnectMod>(CModInfo& Info) {
-	Info.SetWikiPage("notify_connect");
+    Info.SetWikiPage("notify_connect");
 }
 
 GLOBALMODULEDEFS(

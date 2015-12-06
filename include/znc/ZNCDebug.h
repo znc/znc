@@ -33,28 +33,28 @@
  *  @param f The expression you want to display.
  */
 #define DEBUG(f)                 \
-	do {                         \
-		if (CDebug::Debug()) {   \
-			CDebugStream sDebug; \
-			sDebug << f;         \
-		}                        \
-	} while (0)
+    do {                         \
+        if (CDebug::Debug()) {   \
+            CDebugStream sDebug; \
+            sDebug << f;         \
+        }                        \
+    } while (0)
 
 class CDebug {
   public:
-	static void SetStdoutIsTTY(bool b) { stdoutIsTTY = b; }
-	static bool StdoutIsTTY() { return stdoutIsTTY; }
-	static void SetDebug(bool b) { debug = b; }
-	static bool Debug() { return debug; }
+    static void SetStdoutIsTTY(bool b) { stdoutIsTTY = b; }
+    static bool StdoutIsTTY() { return stdoutIsTTY; }
+    static void SetDebug(bool b) { debug = b; }
+    static bool Debug() { return debug; }
 
   protected:
-	static bool stdoutIsTTY;
-	static bool debug;
+    static bool stdoutIsTTY;
+    static bool debug;
 };
 
 class CDebugStream : public std::ostringstream {
   public:
-	~CDebugStream();
+    ~CDebugStream();
 };
 
 #endif  // !ZNCDEBUG_H

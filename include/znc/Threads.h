@@ -66,102 +66,102 @@ using CConditionVariable = std::condition_variable_any;
  */
 class CJob {
   public:
-	friend class CThreadPool;
+    friend class CThreadPool;
 
-	enum EJobState { READY, RUNNING, DONE, CANCELLED };
+    enum EJobState { READY, RUNNING, DONE, CANCELLED };
 
-	CJob() : m_eState(READY) {}
+    CJob() : m_eState(READY) {}
 
-	/// Destructor, always called from the main thread.
-	virtual ~CJob() {}
+    /// Destructor, always called from the main thread.
+    virtual ~CJob() {}
 
-	/// This function is called in a separate thread and can do heavy, blocking work.
-	virtual void runThread() = 0;
+    /// This function is called in a separate thread and can do heavy, blocking work.
+    virtual void runThread() = 0;
 
-	/// This function is called from the main thread after runThread()
-	/// finishes. It can be used to handle the results from runThread()
-	/// without needing synchronization primitives.
-	virtual void runMain() = 0;
+    /// This function is called from the main thread after runThread()
+    /// finishes. It can be used to handle the results from runThread()
+    /// without needing synchronization primitives.
+    virtual void runMain() = 0;
 
-	/// This can be used to check if the job was cancelled. For example,
-	/// runThread() can return early if this returns true.
-	bool wasCancelled() const;
+    /// This can be used to check if the job was cancelled. For example,
+    /// runThread() can return early if this returns true.
+    bool wasCancelled() const;
 
   private:
-	// Undefined copy constructor and assignment operator
-	CJob(const CJob&);
-	CJob& operator=(const CJob&);
+    // Undefined copy constructor and assignment operator
+    CJob(const CJob&);
+    CJob& operator=(const CJob&);
 
-	// Synchronized via the thread pool's mutex! Do not access without that
-	// mutex!
-	EJobState m_eState;
+    // Synchronized via the thread pool's mutex! Do not access without that
+    // mutex!
+    EJobState m_eState;
 };
 
 class CThreadPool {
   private:
-	friend class CJob;
+    friend class CJob;
 
-	CThreadPool();
-	~CThreadPool();
+    CThreadPool();
+    ~CThreadPool();
 
   public:
-	static CThreadPool& Get();
+    static CThreadPool& Get();
 
-	/// Add a job to the thread pool and run it. The job will be deleted when done.
-	void addJob(CJob* job);
+    /// Add a job to the thread pool and run it. The job will be deleted when done.
+    void addJob(CJob* job);
 
-	/// Cancel a job that was previously passed to addJob(). This *might*
-	/// mean that runThread() and/or runMain() will not be called on the job.
-	/// This function BLOCKS until the job finishes!
-	void cancelJob(CJob* job);
+    /// Cancel a job that was previously passed to addJob(). This *might*
+    /// mean that runThread() and/or runMain() will not be called on the job.
+    /// This function BLOCKS until the job finishes!
+    void cancelJob(CJob* job);
 
-	/// Cancel some jobs that were previously passed to addJob(). This *might*
-	/// mean that runThread() and/or runMain() will not be called on some of
-	/// the jobs. This function BLOCKS until all jobs finish!
-	void cancelJobs(const std::set<CJob*>& jobs);
+    /// Cancel some jobs that were previously passed to addJob(). This *might*
+    /// mean that runThread() and/or runMain() will not be called on some of
+    /// the jobs. This function BLOCKS until all jobs finish!
+    void cancelJobs(const std::set<CJob*>& jobs);
 
-	int getReadFD() const { return m_iJobPipe[0]; }
+    int getReadFD() const { return m_iJobPipe[0]; }
 
-	void handlePipeReadable() const;
+    void handlePipeReadable() const;
 
   private:
-	void jobDone(CJob* pJob);
+    void jobDone(CJob* pJob);
 
-	// Check if the calling thread is still needed, must be called with m_mutex
-	// held
-	bool threadNeeded() const;
+    // Check if the calling thread is still needed, must be called with m_mutex
+    // held
+    bool threadNeeded() const;
 
-	CJob* getJobFromPipe() const;
-	void finishJob(CJob*) const;
+    CJob* getJobFromPipe() const;
+    void finishJob(CJob*) const;
 
-	void threadFunc();
+    void threadFunc();
 
-	// mutex protecting all of these members
-	CMutex m_mutex;
+    // mutex protecting all of these members
+    CMutex m_mutex;
 
-	// condition variable for waiting idle threads
-	CConditionVariable m_cond;
+    // condition variable for waiting idle threads
+    CConditionVariable m_cond;
 
-	// condition variable for reporting finished cancellation
-	CConditionVariable m_cancellationCond;
+    // condition variable for reporting finished cancellation
+    CConditionVariable m_cancellationCond;
 
-	// condition variable for waiting running threads == 0
-	CConditionVariable m_exit_cond;
+    // condition variable for waiting running threads == 0
+    CConditionVariable m_exit_cond;
 
-	// when this is true, all threads should exit
-	bool m_done;
+    // when this is true, all threads should exit
+    bool m_done;
 
-	// total number of running threads
-	size_t m_num_threads;
+    // total number of running threads
+    size_t m_num_threads;
 
-	// number of idle threads waiting on the condition variable
-	size_t m_num_idle;
+    // number of idle threads waiting on the condition variable
+    size_t m_num_idle;
 
-	// pipe for waking up the main thread
-	int m_iJobPipe[2];
+    // pipe for waking up the main thread
+    int m_iJobPipe[2];
 
-	// list of pending jobs
-	std::list<CJob*> m_jobs;
+    // list of pending jobs
+    std::list<CJob*> m_jobs;
 };
 
 #endif  // HAVE_PTHREAD

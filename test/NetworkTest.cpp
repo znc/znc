@@ -21,76 +21,76 @@
 
 class NetworkTest : public ::testing::Test {
   protected:
-	void SetUp() { CZNC::CreateInstance(); }
-	void TearDown() { CZNC::DestroyInstance(); }
+    void SetUp() { CZNC::CreateInstance(); }
+    void TearDown() { CZNC::DestroyInstance(); }
 };
 
 TEST_F(NetworkTest, FindChan) {
-	CUser user("user");
-	CIRCNetwork network(&user, "network");
+    CUser user("user");
+    CIRCNetwork network(&user, "network");
 
-	EXPECT_TRUE(network.AddChan("#foo", false));
-	EXPECT_TRUE(network.AddChan("#Bar", false));
-	EXPECT_TRUE(network.AddChan("#BAZ", false));
+    EXPECT_TRUE(network.AddChan("#foo", false));
+    EXPECT_TRUE(network.AddChan("#Bar", false));
+    EXPECT_TRUE(network.AddChan("#BAZ", false));
 
-	EXPECT_TRUE(network.FindChan("#foo"));
-	EXPECT_TRUE(network.FindChan("#Bar"));
-	EXPECT_TRUE(network.FindChan("#BAZ"));
+    EXPECT_TRUE(network.FindChan("#foo"));
+    EXPECT_TRUE(network.FindChan("#Bar"));
+    EXPECT_TRUE(network.FindChan("#BAZ"));
 
-	EXPECT_TRUE(network.FindChan("#Foo"));
-	EXPECT_TRUE(network.FindChan("#BAR"));
-	EXPECT_TRUE(network.FindChan("#baz"));
+    EXPECT_TRUE(network.FindChan("#Foo"));
+    EXPECT_TRUE(network.FindChan("#BAR"));
+    EXPECT_TRUE(network.FindChan("#baz"));
 
-	EXPECT_FALSE(network.FindChan("#f"));
-	EXPECT_FALSE(network.FindChan("&foo"));
-	EXPECT_FALSE(network.FindChan("##foo"));
+    EXPECT_FALSE(network.FindChan("#f"));
+    EXPECT_FALSE(network.FindChan("&foo"));
+    EXPECT_FALSE(network.FindChan("##foo"));
 }
 
 TEST_F(NetworkTest, FindChans) {
-	CUser user("user");
-	CIRCNetwork network(&user, "network");
+    CUser user("user");
+    CIRCNetwork network(&user, "network");
 
-	EXPECT_TRUE(network.AddChan("#foo", false));
-	EXPECT_TRUE(network.AddChan("#Bar", false));
-	EXPECT_TRUE(network.AddChan("#BAZ", false));
+    EXPECT_TRUE(network.AddChan("#foo", false));
+    EXPECT_TRUE(network.AddChan("#Bar", false));
+    EXPECT_TRUE(network.AddChan("#BAZ", false));
 
-	EXPECT_EQ(1u, network.FindChans("#f*").size());
-	EXPECT_EQ(2u, network.FindChans("#b*").size());
-	EXPECT_EQ(2u, network.FindChans("#?A*").size());
-	EXPECT_EQ(1u, network.FindChans("*z").size());
+    EXPECT_EQ(1u, network.FindChans("#f*").size());
+    EXPECT_EQ(2u, network.FindChans("#b*").size());
+    EXPECT_EQ(2u, network.FindChans("#?A*").size());
+    EXPECT_EQ(1u, network.FindChans("*z").size());
 }
 
 TEST_F(NetworkTest, FindQuery) {
-	CUser user("user");
-	CIRCNetwork network(&user, "network");
+    CUser user("user");
+    CIRCNetwork network(&user, "network");
 
-	EXPECT_TRUE(network.AddQuery("foo"));
-	EXPECT_TRUE(network.AddQuery("Bar"));
-	EXPECT_TRUE(network.AddQuery("BAZ"));
+    EXPECT_TRUE(network.AddQuery("foo"));
+    EXPECT_TRUE(network.AddQuery("Bar"));
+    EXPECT_TRUE(network.AddQuery("BAZ"));
 
-	EXPECT_TRUE(network.FindQuery("foo"));
-	EXPECT_TRUE(network.FindQuery("Bar"));
-	EXPECT_TRUE(network.FindQuery("BAZ"));
+    EXPECT_TRUE(network.FindQuery("foo"));
+    EXPECT_TRUE(network.FindQuery("Bar"));
+    EXPECT_TRUE(network.FindQuery("BAZ"));
 
-	EXPECT_TRUE(network.FindQuery("Foo"));
-	EXPECT_TRUE(network.FindQuery("BAR"));
-	EXPECT_TRUE(network.FindQuery("baz"));
+    EXPECT_TRUE(network.FindQuery("Foo"));
+    EXPECT_TRUE(network.FindQuery("BAR"));
+    EXPECT_TRUE(network.FindQuery("baz"));
 
-	EXPECT_FALSE(network.FindQuery("f"));
-	EXPECT_FALSE(network.FindQuery("fo"));
-	EXPECT_FALSE(network.FindQuery("FF"));
+    EXPECT_FALSE(network.FindQuery("f"));
+    EXPECT_FALSE(network.FindQuery("fo"));
+    EXPECT_FALSE(network.FindQuery("FF"));
 }
 
 TEST_F(NetworkTest, FindQueries) {
-	CUser user("user");
-	CIRCNetwork network(&user, "network");
+    CUser user("user");
+    CIRCNetwork network(&user, "network");
 
-	EXPECT_TRUE(network.AddQuery("foo"));
-	EXPECT_TRUE(network.AddQuery("Bar"));
-	EXPECT_TRUE(network.AddQuery("BAZ"));
+    EXPECT_TRUE(network.AddQuery("foo"));
+    EXPECT_TRUE(network.AddQuery("Bar"));
+    EXPECT_TRUE(network.AddQuery("BAZ"));
 
-	EXPECT_EQ(1u, network.FindQueries("f*").size());
-	EXPECT_EQ(2u, network.FindQueries("b*").size());
-	EXPECT_EQ(2u, network.FindQueries("?A*").size());
-	EXPECT_EQ(1u, network.FindQueries("*z").size());
+    EXPECT_EQ(1u, network.FindQueries("f*").size());
+    EXPECT_EQ(2u, network.FindQueries("b*").size());
+    EXPECT_EQ(2u, network.FindQueries("?A*").size());
+    EXPECT_EQ(1u, network.FindQueries("*z").size());
 }

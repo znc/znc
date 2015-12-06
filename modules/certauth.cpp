@@ -26,265 +26,265 @@ using std::pair;
 
 class CSSLClientCertMod : public CModule {
   public:
-	MODCONSTRUCTOR(CSSLClientCertMod) {
-		AddHelpCommand();
-		AddCommand("Add", static_cast<CModCommand::ModCmdFunc>(
-		                      &CSSLClientCertMod::HandleAddCommand),
-		           "[pubkey]",
-		           "If pubkey is not provided will use the current key");
-		AddCommand("Del", static_cast<CModCommand::ModCmdFunc>(
-		                      &CSSLClientCertMod::HandleDelCommand),
-		           "id");
-		AddCommand("List", static_cast<CModCommand::ModCmdFunc>(
-		                       &CSSLClientCertMod::HandleListCommand),
-		           "", "List your public keys");
-		AddCommand("Show", static_cast<CModCommand::ModCmdFunc>(
-		                       &CSSLClientCertMod::HandleShowCommand),
-		           "", "Print your current key");
-	}
+    MODCONSTRUCTOR(CSSLClientCertMod) {
+        AddHelpCommand();
+        AddCommand("Add", static_cast<CModCommand::ModCmdFunc>(
+                              &CSSLClientCertMod::HandleAddCommand),
+                   "[pubkey]",
+                   "If pubkey is not provided will use the current key");
+        AddCommand("Del", static_cast<CModCommand::ModCmdFunc>(
+                              &CSSLClientCertMod::HandleDelCommand),
+                   "id");
+        AddCommand("List", static_cast<CModCommand::ModCmdFunc>(
+                               &CSSLClientCertMod::HandleListCommand),
+                   "", "List your public keys");
+        AddCommand("Show", static_cast<CModCommand::ModCmdFunc>(
+                               &CSSLClientCertMod::HandleShowCommand),
+                   "", "Print your current key");
+    }
 
-	virtual ~CSSLClientCertMod() {}
+    virtual ~CSSLClientCertMod() {}
 
-	bool OnBoot() override {
-		const vector<CListener*>& vListeners = CZNC::Get().GetListeners();
+    bool OnBoot() override {
+        const vector<CListener*>& vListeners = CZNC::Get().GetListeners();
 
-		// We need the SSL_VERIFY_PEER flag on all listeners, or else
-		// the client doesn't send a ssl cert
-		for (CListener* pListener : vListeners)
-			pListener->GetRealListener()->SetRequireClientCertFlags(
-			    SSL_VERIFY_PEER);
+        // We need the SSL_VERIFY_PEER flag on all listeners, or else
+        // the client doesn't send a ssl cert
+        for (CListener* pListener : vListeners)
+            pListener->GetRealListener()->SetRequireClientCertFlags(
+                SSL_VERIFY_PEER);
 
-		for (MCString::const_iterator it = BeginNV(); it != EndNV(); ++it) {
-			VCString vsKeys;
+        for (MCString::const_iterator it = BeginNV(); it != EndNV(); ++it) {
+            VCString vsKeys;
 
-			if (CZNC::Get().FindUser(it->first) == nullptr) {
-				DEBUG("Unknown user in saved data [" + it->first + "]");
-				continue;
-			}
+            if (CZNC::Get().FindUser(it->first) == nullptr) {
+                DEBUG("Unknown user in saved data [" + it->first + "]");
+                continue;
+            }
 
-			it->second.Split(" ", vsKeys, false);
-			for (const CString& sKey : vsKeys) {
-				m_PubKeys[it->first].insert(sKey.AsLower());
-			}
-		}
+            it->second.Split(" ", vsKeys, false);
+            for (const CString& sKey : vsKeys) {
+                m_PubKeys[it->first].insert(sKey.AsLower());
+            }
+        }
 
-		return true;
-	}
+        return true;
+    }
 
-	void OnPostRehash() override { OnBoot(); }
+    void OnPostRehash() override { OnBoot(); }
 
-	bool OnLoad(const CString& sArgs, CString& sMessage) override {
-		OnBoot();
+    bool OnLoad(const CString& sArgs, CString& sMessage) override {
+        OnBoot();
 
-		return true;
-	}
+        return true;
+    }
 
-	bool Save() {
-		ClearNV(false);
-		for (const auto& it : m_PubKeys) {
-			CString sVal;
-			for (const CString& sKey : it.second) {
-				sVal += sKey + " ";
-			}
+    bool Save() {
+        ClearNV(false);
+        for (const auto& it : m_PubKeys) {
+            CString sVal;
+            for (const CString& sKey : it.second) {
+                sVal += sKey + " ";
+            }
 
-			if (!sVal.empty()) SetNV(it.first, sVal, false);
-		}
+            if (!sVal.empty()) SetNV(it.first, sVal, false);
+        }
 
-		return SaveRegistry();
-	}
+        return SaveRegistry();
+    }
 
-	bool AddKey(CUser* pUser, const CString& sKey) {
-		const pair<SCString::const_iterator, bool> pair =
-		    m_PubKeys[pUser->GetUserName()].insert(sKey.AsLower());
+    bool AddKey(CUser* pUser, const CString& sKey) {
+        const pair<SCString::const_iterator, bool> pair =
+            m_PubKeys[pUser->GetUserName()].insert(sKey.AsLower());
 
-		if (pair.second) {
-			Save();
-		}
+        if (pair.second) {
+            Save();
+        }
 
-		return pair.second;
-	}
+        return pair.second;
+    }
 
-	EModRet OnLoginAttempt(std::shared_ptr<CAuthBase> Auth) override {
-		const CString sUser = Auth->GetUsername();
-		Csock* pSock = Auth->GetSocket();
-		CUser* pUser = CZNC::Get().FindUser(sUser);
+    EModRet OnLoginAttempt(std::shared_ptr<CAuthBase> Auth) override {
+        const CString sUser = Auth->GetUsername();
+        Csock* pSock = Auth->GetSocket();
+        CUser* pUser = CZNC::Get().FindUser(sUser);
 
-		if (pSock == nullptr || pUser == nullptr) return CONTINUE;
+        if (pSock == nullptr || pUser == nullptr) return CONTINUE;
 
-		const CString sPubKey = GetKey(pSock);
-		DEBUG("User: " << sUser << " Key: " << sPubKey);
+        const CString sPubKey = GetKey(pSock);
+        DEBUG("User: " << sUser << " Key: " << sPubKey);
 
-		if (sPubKey.empty()) {
-			DEBUG("Peer got no public key, ignoring");
-			return CONTINUE;
-		}
+        if (sPubKey.empty()) {
+            DEBUG("Peer got no public key, ignoring");
+            return CONTINUE;
+        }
 
-		MSCString::const_iterator it = m_PubKeys.find(sUser);
-		if (it == m_PubKeys.end()) {
-			DEBUG("No saved pubkeys for this client");
-			return CONTINUE;
-		}
+        MSCString::const_iterator it = m_PubKeys.find(sUser);
+        if (it == m_PubKeys.end()) {
+            DEBUG("No saved pubkeys for this client");
+            return CONTINUE;
+        }
 
-		SCString::const_iterator it2 = it->second.find(sPubKey);
-		if (it2 == it->second.end()) {
-			DEBUG("Invalid pubkey");
-			return CONTINUE;
-		}
+        SCString::const_iterator it2 = it->second.find(sPubKey);
+        if (it2 == it->second.end()) {
+            DEBUG("Invalid pubkey");
+            return CONTINUE;
+        }
 
-		// This client uses a valid pubkey for this user, let them in
-		DEBUG("Accepted pubkey auth");
-		Auth->AcceptLogin(*pUser);
+        // This client uses a valid pubkey for this user, let them in
+        DEBUG("Accepted pubkey auth");
+        Auth->AcceptLogin(*pUser);
 
-		return HALT;
-	}
+        return HALT;
+    }
 
-	void HandleShowCommand(const CString& sLine) {
-		const CString sPubKey = GetKey(GetClient());
+    void HandleShowCommand(const CString& sLine) {
+        const CString sPubKey = GetKey(GetClient());
 
-		if (sPubKey.empty()) {
-			PutModule("You are not connected with any valid public key");
-		} else {
-			PutModule("Your current public key is: " + sPubKey);
-		}
-	}
+        if (sPubKey.empty()) {
+            PutModule("You are not connected with any valid public key");
+        } else {
+            PutModule("Your current public key is: " + sPubKey);
+        }
+    }
 
-	void HandleAddCommand(const CString& sLine) {
-		CString sPubKey = sLine.Token(1);
+    void HandleAddCommand(const CString& sLine) {
+        CString sPubKey = sLine.Token(1);
 
-		if (sPubKey.empty()) {
-			sPubKey = GetKey(GetClient());
-		}
+        if (sPubKey.empty()) {
+            sPubKey = GetKey(GetClient());
+        }
 
-		if (sPubKey.empty()) {
-			PutModule("You did not supply a public key or connect with one.");
-		} else {
-			if (AddKey(GetUser(), sPubKey)) {
-				PutModule("'" + sPubKey + "' added.");
-			} else {
-				PutModule("The key '" + sPubKey + "' is already added.");
-			}
-		}
-	}
+        if (sPubKey.empty()) {
+            PutModule("You did not supply a public key or connect with one.");
+        } else {
+            if (AddKey(GetUser(), sPubKey)) {
+                PutModule("'" + sPubKey + "' added.");
+            } else {
+                PutModule("The key '" + sPubKey + "' is already added.");
+            }
+        }
+    }
 
-	void HandleListCommand(const CString& sLine) {
-		CTable Table;
+    void HandleListCommand(const CString& sLine) {
+        CTable Table;
 
-		Table.AddColumn("Id");
-		Table.AddColumn("Key");
+        Table.AddColumn("Id");
+        Table.AddColumn("Key");
 
-		MSCString::const_iterator it = m_PubKeys.find(GetUser()->GetUserName());
-		if (it == m_PubKeys.end()) {
-			PutModule("No keys set for your user");
-			return;
-		}
+        MSCString::const_iterator it = m_PubKeys.find(GetUser()->GetUserName());
+        if (it == m_PubKeys.end()) {
+            PutModule("No keys set for your user");
+            return;
+        }
 
-		unsigned int id = 1;
-		for (const CString& sKey : it->second) {
-			Table.AddRow();
-			Table.SetCell("Id", CString(id++));
-			Table.SetCell("Key", sKey);
-		}
+        unsigned int id = 1;
+        for (const CString& sKey : it->second) {
+            Table.AddRow();
+            Table.SetCell("Id", CString(id++));
+            Table.SetCell("Key", sKey);
+        }
 
-		if (PutModule(Table) == 0) {
-			// This double check is necessary, because the
-			// set could be empty.
-			PutModule("No keys set for your user");
-		}
-	}
+        if (PutModule(Table) == 0) {
+            // This double check is necessary, because the
+            // set could be empty.
+            PutModule("No keys set for your user");
+        }
+    }
 
-	void HandleDelCommand(const CString& sLine) {
-		unsigned int id = sLine.Token(1, true).ToUInt();
-		MSCString::iterator it = m_PubKeys.find(GetUser()->GetUserName());
+    void HandleDelCommand(const CString& sLine) {
+        unsigned int id = sLine.Token(1, true).ToUInt();
+        MSCString::iterator it = m_PubKeys.find(GetUser()->GetUserName());
 
-		if (it == m_PubKeys.end()) {
-			PutModule("No keys set for your user");
-			return;
-		}
+        if (it == m_PubKeys.end()) {
+            PutModule("No keys set for your user");
+            return;
+        }
 
-		if (id == 0 || id > it->second.size()) {
-			PutModule("Invalid #, check \"list\"");
-			return;
-		}
+        if (id == 0 || id > it->second.size()) {
+            PutModule("Invalid #, check \"list\"");
+            return;
+        }
 
-		SCString::const_iterator it2 = it->second.begin();
-		while (id > 1) {
-			++it2;
-			id--;
-		}
+        SCString::const_iterator it2 = it->second.begin();
+        while (id > 1) {
+            ++it2;
+            id--;
+        }
 
-		it->second.erase(it2);
-		if (it->second.size() == 0) m_PubKeys.erase(it);
-		PutModule("Removed");
+        it->second.erase(it2);
+        if (it->second.size() == 0) m_PubKeys.erase(it);
+        PutModule("Removed");
 
-		Save();
-	}
+        Save();
+    }
 
-	CString GetKey(Csock* pSock) {
-		CString sRes;
-		long int res = pSock->GetPeerFingerprint(sRes);
+    CString GetKey(Csock* pSock) {
+        CString sRes;
+        long int res = pSock->GetPeerFingerprint(sRes);
 
-		DEBUG("GetKey() returned status " << res << " with key " << sRes);
+        DEBUG("GetKey() returned status " << res << " with key " << sRes);
 
-		// This is 'inspired' by charybdis' libratbox
-		switch (res) {
-			case X509_V_OK:
-			case X509_V_ERR_SELF_SIGNED_CERT_IN_CHAIN:
-			case X509_V_ERR_UNABLE_TO_VERIFY_LEAF_SIGNATURE:
-			case X509_V_ERR_DEPTH_ZERO_SELF_SIGNED_CERT:
-				return sRes.AsLower();
-			default:
-				return "";
-		}
-	}
+        // This is 'inspired' by charybdis' libratbox
+        switch (res) {
+            case X509_V_OK:
+            case X509_V_ERR_SELF_SIGNED_CERT_IN_CHAIN:
+            case X509_V_ERR_UNABLE_TO_VERIFY_LEAF_SIGNATURE:
+            case X509_V_ERR_DEPTH_ZERO_SELF_SIGNED_CERT:
+                return sRes.AsLower();
+            default:
+                return "";
+        }
+    }
 
-	CString GetWebMenuTitle() override { return "certauth"; }
+    CString GetWebMenuTitle() override { return "certauth"; }
 
-	bool OnWebRequest(CWebSock& WebSock, const CString& sPageName,
-	                  CTemplate& Tmpl) override {
-		CUser* pUser = WebSock.GetSession()->GetUser();
+    bool OnWebRequest(CWebSock& WebSock, const CString& sPageName,
+                      CTemplate& Tmpl) override {
+        CUser* pUser = WebSock.GetSession()->GetUser();
 
-		if (sPageName == "index") {
-			MSCString::const_iterator it = m_PubKeys.find(pUser->GetUserName());
-			if (it != m_PubKeys.end()) {
-				for (const CString& sKey : it->second) {
-					CTemplate& row = Tmpl.AddRow("KeyLoop");
-					row["Key"] = sKey;
-				}
-			}
+        if (sPageName == "index") {
+            MSCString::const_iterator it = m_PubKeys.find(pUser->GetUserName());
+            if (it != m_PubKeys.end()) {
+                for (const CString& sKey : it->second) {
+                    CTemplate& row = Tmpl.AddRow("KeyLoop");
+                    row["Key"] = sKey;
+                }
+            }
 
-			return true;
-		} else if (sPageName == "add") {
-			AddKey(pUser, WebSock.GetParam("key"));
-			WebSock.Redirect(GetWebPath());
-			return true;
-		} else if (sPageName == "delete") {
-			MSCString::iterator it = m_PubKeys.find(pUser->GetUserName());
-			if (it != m_PubKeys.end()) {
-				if (it->second.erase(WebSock.GetParam("key", false))) {
-					if (it->second.size() == 0) {
-						m_PubKeys.erase(it);
-					}
+            return true;
+        } else if (sPageName == "add") {
+            AddKey(pUser, WebSock.GetParam("key"));
+            WebSock.Redirect(GetWebPath());
+            return true;
+        } else if (sPageName == "delete") {
+            MSCString::iterator it = m_PubKeys.find(pUser->GetUserName());
+            if (it != m_PubKeys.end()) {
+                if (it->second.erase(WebSock.GetParam("key", false))) {
+                    if (it->second.size() == 0) {
+                        m_PubKeys.erase(it);
+                    }
 
-					Save();
-				}
-			}
+                    Save();
+                }
+            }
 
-			WebSock.Redirect(GetWebPath());
-			return true;
-		}
+            WebSock.Redirect(GetWebPath());
+            return true;
+        }
 
-		return false;
-	}
+        return false;
+    }
 
   private:
-	// Maps user names to a list of allowed pubkeys
-	typedef map<CString, set<CString>> MSCString;
-	MSCString m_PubKeys;
+    // Maps user names to a list of allowed pubkeys
+    typedef map<CString, set<CString>> MSCString;
+    MSCString m_PubKeys;
 };
 
 template <>
 void TModInfo<CSSLClientCertMod>(CModInfo& Info) {
-	Info.SetWikiPage("certauth");
+    Info.SetWikiPage("certauth");
 }
 
 GLOBALMODULEDEFS(CSSLClientCertMod,

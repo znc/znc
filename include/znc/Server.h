@@ -22,23 +22,23 @@
 
 class CServer {
   public:
-	CServer(const CString& sName, unsigned short uPort = 6667,
-	        const CString& sPass = "", bool bSSL = false);
-	~CServer();
+    CServer(const CString& sName, unsigned short uPort = 6667,
+            const CString& sPass = "", bool bSSL = false);
+    ~CServer();
 
-	const CString& GetName() const;
-	unsigned short GetPort() const;
-	const CString& GetPass() const;
-	bool IsSSL() const;
-	CString GetString(bool bIncludePassword = true) const;
-	static bool IsValidHostName(const CString& sHostName);
+    const CString& GetName() const;
+    unsigned short GetPort() const;
+    const CString& GetPass() const;
+    bool IsSSL() const;
+    CString GetString(bool bIncludePassword = true) const;
+    static bool IsValidHostName(const CString& sHostName);
 
   private:
   protected:
-	CString m_sName;
-	unsigned short m_uPort;
-	CString m_sPass;
-	bool m_bSSL;
+    CString m_sName;
+    unsigned short m_uPort;
+    CString m_sPass;
+    bool m_bSSL;
 };
 
 #endif  // !ZNC_SERVER_H

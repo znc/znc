@@ -27,109 +27,109 @@
 
 class CRejoinJob : public CTimer {
   public:
-	CRejoinJob(CModule* pModule, unsigned int uInterval, unsigned int uCycles,
-	           const CString& sLabel, const CString& sDescription)
-	    : CTimer(pModule, uInterval, uCycles, sLabel, sDescription) {}
+    CRejoinJob(CModule* pModule, unsigned int uInterval, unsigned int uCycles,
+               const CString& sLabel, const CString& sDescription)
+        : CTimer(pModule, uInterval, uCycles, sLabel, sDescription) {}
 
-	virtual ~CRejoinJob() {}
+    virtual ~CRejoinJob() {}
 
   protected:
-	void RunJob() override {
-		CIRCNetwork* pNetwork = GetModule()->GetNetwork();
-		CChan* pChan = pNetwork->FindChan(GetName().Token(1, true));
+    void RunJob() override {
+        CIRCNetwork* pNetwork = GetModule()->GetNetwork();
+        CChan* pChan = pNetwork->FindChan(GetName().Token(1, true));
 
-		if (pChan) {
-			pChan->Enable();
-			GetModule()->PutIRC("JOIN " + pChan->GetName() + " " +
-			                    pChan->GetKey());
-		}
-	}
+        if (pChan) {
+            pChan->Enable();
+            GetModule()->PutIRC("JOIN " + pChan->GetName() + " " +
+                                pChan->GetKey());
+        }
+    }
 };
 
 class CRejoinMod : public CModule {
   private:
-	unsigned int delay = 10;
+    unsigned int delay = 10;
 
   public:
-	MODCONSTRUCTOR(CRejoinMod) {
-		AddHelpCommand();
-		AddCommand("SetDelay", static_cast<CModCommand::ModCmdFunc>(
-		                           &CRejoinMod::OnSetDelayCommand),
-		           "<secs>", "Set the rejoin delay");
-		AddCommand("ShowDelay", static_cast<CModCommand::ModCmdFunc>(
-		                            &CRejoinMod::OnShowDelayCommand),
-		           "", "Show the rejoin delay");
-	}
-	virtual ~CRejoinMod() {}
+    MODCONSTRUCTOR(CRejoinMod) {
+        AddHelpCommand();
+        AddCommand("SetDelay", static_cast<CModCommand::ModCmdFunc>(
+                                   &CRejoinMod::OnSetDelayCommand),
+                   "<secs>", "Set the rejoin delay");
+        AddCommand("ShowDelay", static_cast<CModCommand::ModCmdFunc>(
+                                    &CRejoinMod::OnShowDelayCommand),
+                   "", "Show the rejoin delay");
+    }
+    virtual ~CRejoinMod() {}
 
-	bool OnLoad(const CString& sArgs, CString& sErrorMsg) override {
-		if (sArgs.empty()) {
-			CString sDelay = GetNV("delay");
+    bool OnLoad(const CString& sArgs, CString& sErrorMsg) override {
+        if (sArgs.empty()) {
+            CString sDelay = GetNV("delay");
 
-			if (sDelay.empty())
-				delay = 10;
-			else
-				delay = sDelay.ToUInt();
-		} else {
-			int i = sArgs.ToInt();
-			if ((i == 0 && sArgs == "0") || i > 0)
-				delay = i;
-			else {
-				sErrorMsg =
-				    "Illegal argument, "
-				    "must be a positive number or 0";
-				return false;
-			}
-		}
+            if (sDelay.empty())
+                delay = 10;
+            else
+                delay = sDelay.ToUInt();
+        } else {
+            int i = sArgs.ToInt();
+            if ((i == 0 && sArgs == "0") || i > 0)
+                delay = i;
+            else {
+                sErrorMsg =
+                    "Illegal argument, "
+                    "must be a positive number or 0";
+                return false;
+            }
+        }
 
-		return true;
-	}
+        return true;
+    }
 
-	void OnSetDelayCommand(const CString& sCommand) {
-		int i;
-		i = sCommand.Token(1).ToInt();
+    void OnSetDelayCommand(const CString& sCommand) {
+        int i;
+        i = sCommand.Token(1).ToInt();
 
-		if (i < 0) {
-			PutModule("Negative delays don't make any sense!");
-			return;
-		}
+        if (i < 0) {
+            PutModule("Negative delays don't make any sense!");
+            return;
+        }
 
-		delay = i;
-		SetNV("delay", CString(delay));
+        delay = i;
+        SetNV("delay", CString(delay));
 
-		if (delay)
-			PutModule("Rejoin delay set to " + CString(delay) + " seconds");
-		else
-			PutModule("Rejoin delay disabled");
-	}
+        if (delay)
+            PutModule("Rejoin delay set to " + CString(delay) + " seconds");
+        else
+            PutModule("Rejoin delay disabled");
+    }
 
-	void OnShowDelayCommand(const CString& sCommand) {
-		if (delay)
-			PutModule("Rejoin delay enabled, " + CString(delay) + " seconds");
-		else
-			PutModule("Rejoin delay disabled");
-	}
+    void OnShowDelayCommand(const CString& sCommand) {
+        if (delay)
+            PutModule("Rejoin delay enabled, " + CString(delay) + " seconds");
+        else
+            PutModule("Rejoin delay disabled");
+    }
 
-	void OnKick(const CNick& OpNick, const CString& sKickedNick, CChan& pChan,
-	            const CString& sMessage) override {
-		if (GetNetwork()->GetCurNick().Equals(sKickedNick)) {
-			if (!delay) {
-				PutIRC("JOIN " + pChan.GetName() + " " + pChan.GetKey());
-				pChan.Enable();
-				return;
-			}
-			AddTimer(new CRejoinJob(this, delay, 1, "Rejoin " + pChan.GetName(),
-			                        "Rejoin channel after a delay"));
-		}
-	}
+    void OnKick(const CNick& OpNick, const CString& sKickedNick, CChan& pChan,
+                const CString& sMessage) override {
+        if (GetNetwork()->GetCurNick().Equals(sKickedNick)) {
+            if (!delay) {
+                PutIRC("JOIN " + pChan.GetName() + " " + pChan.GetKey());
+                pChan.Enable();
+                return;
+            }
+            AddTimer(new CRejoinJob(this, delay, 1, "Rejoin " + pChan.GetName(),
+                                    "Rejoin channel after a delay"));
+        }
+    }
 };
 
 template <>
 void TModInfo<CRejoinMod>(CModInfo& Info) {
-	Info.SetWikiPage("kickrejoin");
-	Info.SetHasArgs(true);
-	Info.SetArgsHelpText(
-	    "You might enter the number of seconds to wait before rejoining.");
+    Info.SetWikiPage("kickrejoin");
+    Info.SetHasArgs(true);
+    Info.SetArgsHelpText(
+        "You might enter the number of seconds to wait before rejoining.");
 }
 
 NETWORKMODULEDEFS(CRejoinMod, "Autorejoin on kick")

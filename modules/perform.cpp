@@ -17,174 +17,174 @@
 #include <znc/IRCNetwork.h>
 
 class CPerform : public CModule {
-	void Add(const CString& sCommand) {
-		CString sPerf = sCommand.Token(1, true);
+    void Add(const CString& sCommand) {
+        CString sPerf = sCommand.Token(1, true);
 
-		if (sPerf.empty()) {
-			PutModule("Usage: add <command>");
-			return;
-		}
+        if (sPerf.empty()) {
+            PutModule("Usage: add <command>");
+            return;
+        }
 
-		m_vPerform.push_back(ParsePerform(sPerf));
-		PutModule("Added!");
-		Save();
-	}
+        m_vPerform.push_back(ParsePerform(sPerf));
+        PutModule("Added!");
+        Save();
+    }
 
-	void Del(const CString& sCommand) {
-		u_int iNum = sCommand.Token(1, true).ToUInt();
+    void Del(const CString& sCommand) {
+        u_int iNum = sCommand.Token(1, true).ToUInt();
 
-		if (iNum > m_vPerform.size() || iNum <= 0) {
-			PutModule("Illegal # Requested");
-			return;
-		} else {
-			m_vPerform.erase(m_vPerform.begin() + iNum - 1);
-			PutModule("Command Erased.");
-		}
-		Save();
-	}
+        if (iNum > m_vPerform.size() || iNum <= 0) {
+            PutModule("Illegal # Requested");
+            return;
+        } else {
+            m_vPerform.erase(m_vPerform.begin() + iNum - 1);
+            PutModule("Command Erased.");
+        }
+        Save();
+    }
 
-	void List(const CString& sCommand) {
-		CTable Table;
-		unsigned int index = 1;
+    void List(const CString& sCommand) {
+        CTable Table;
+        unsigned int index = 1;
 
-		Table.AddColumn("Id");
-		Table.AddColumn("Perform");
-		Table.AddColumn("Expanded");
+        Table.AddColumn("Id");
+        Table.AddColumn("Perform");
+        Table.AddColumn("Expanded");
 
-		for (const CString& sPerf : m_vPerform) {
-			Table.AddRow();
-			Table.SetCell("Id", CString(index++));
-			Table.SetCell("Perform", sPerf);
+        for (const CString& sPerf : m_vPerform) {
+            Table.AddRow();
+            Table.SetCell("Id", CString(index++));
+            Table.SetCell("Perform", sPerf);
 
-			CString sExpanded = ExpandString(sPerf);
+            CString sExpanded = ExpandString(sPerf);
 
-			if (sExpanded != sPerf) {
-				Table.SetCell("Expanded", sExpanded);
-			}
-		}
+            if (sExpanded != sPerf) {
+                Table.SetCell("Expanded", sExpanded);
+            }
+        }
 
-		if (PutModule(Table) == 0) {
-			PutModule("No commands in your perform list.");
-		}
-	}
+        if (PutModule(Table) == 0) {
+            PutModule("No commands in your perform list.");
+        }
+    }
 
-	void Execute(const CString& sCommand) {
-		OnIRCConnected();
-		PutModule("perform commands sent");
-	}
+    void Execute(const CString& sCommand) {
+        OnIRCConnected();
+        PutModule("perform commands sent");
+    }
 
-	void Swap(const CString& sCommand) {
-		u_int iNumA = sCommand.Token(1).ToUInt();
-		u_int iNumB = sCommand.Token(2).ToUInt();
+    void Swap(const CString& sCommand) {
+        u_int iNumA = sCommand.Token(1).ToUInt();
+        u_int iNumB = sCommand.Token(2).ToUInt();
 
-		if (iNumA > m_vPerform.size() || iNumA <= 0 ||
-		    iNumB > m_vPerform.size() || iNumB <= 0) {
-			PutModule("Illegal # Requested");
-		} else {
-			std::iter_swap(m_vPerform.begin() + (iNumA - 1),
-			               m_vPerform.begin() + (iNumB - 1));
-			PutModule("Commands Swapped.");
-			Save();
-		}
-	}
+        if (iNumA > m_vPerform.size() || iNumA <= 0 ||
+            iNumB > m_vPerform.size() || iNumB <= 0) {
+            PutModule("Illegal # Requested");
+        } else {
+            std::iter_swap(m_vPerform.begin() + (iNumA - 1),
+                           m_vPerform.begin() + (iNumB - 1));
+            PutModule("Commands Swapped.");
+            Save();
+        }
+    }
 
   public:
-	MODCONSTRUCTOR(CPerform) {
-		AddHelpCommand();
-		AddCommand("Add", static_cast<CModCommand::ModCmdFunc>(&CPerform::Add),
-		           "<command>",
-		           "Adds perform command to be sent to the server on connect");
-		AddCommand("Del", static_cast<CModCommand::ModCmdFunc>(&CPerform::Del),
-		           "<number>", "Delete a perform command");
-		AddCommand("List",
-		           static_cast<CModCommand::ModCmdFunc>(&CPerform::List), "",
-		           "List the perform commands");
-		AddCommand("Execute",
-		           static_cast<CModCommand::ModCmdFunc>(&CPerform::Execute), "",
-		           "Send the perform commands to the server now");
-		AddCommand("Swap",
-		           static_cast<CModCommand::ModCmdFunc>(&CPerform::Swap),
-		           "<number> <number>", "Swap two perform commands");
-	}
+    MODCONSTRUCTOR(CPerform) {
+        AddHelpCommand();
+        AddCommand("Add", static_cast<CModCommand::ModCmdFunc>(&CPerform::Add),
+                   "<command>",
+                   "Adds perform command to be sent to the server on connect");
+        AddCommand("Del", static_cast<CModCommand::ModCmdFunc>(&CPerform::Del),
+                   "<number>", "Delete a perform command");
+        AddCommand("List",
+                   static_cast<CModCommand::ModCmdFunc>(&CPerform::List), "",
+                   "List the perform commands");
+        AddCommand("Execute",
+                   static_cast<CModCommand::ModCmdFunc>(&CPerform::Execute), "",
+                   "Send the perform commands to the server now");
+        AddCommand("Swap",
+                   static_cast<CModCommand::ModCmdFunc>(&CPerform::Swap),
+                   "<number> <number>", "Swap two perform commands");
+    }
 
-	virtual ~CPerform() {}
+    virtual ~CPerform() {}
 
-	CString ParsePerform(const CString& sArg) const {
-		CString sPerf = sArg;
+    CString ParsePerform(const CString& sArg) const {
+        CString sPerf = sArg;
 
-		if (sPerf.Left(1) == "/") sPerf.LeftChomp();
+        if (sPerf.Left(1) == "/") sPerf.LeftChomp();
 
-		if (sPerf.Token(0).Equals("MSG")) {
-			sPerf = "PRIVMSG " + sPerf.Token(1, true);
-		}
+        if (sPerf.Token(0).Equals("MSG")) {
+            sPerf = "PRIVMSG " + sPerf.Token(1, true);
+        }
 
-		if ((sPerf.Token(0).Equals("PRIVMSG") ||
-		     sPerf.Token(0).Equals("NOTICE")) &&
-		    sPerf.Token(2).Left(1) != ":") {
-			sPerf = sPerf.Token(0) + " " + sPerf.Token(1) + " :" +
-			        sPerf.Token(2, true);
-		}
+        if ((sPerf.Token(0).Equals("PRIVMSG") ||
+             sPerf.Token(0).Equals("NOTICE")) &&
+            sPerf.Token(2).Left(1) != ":") {
+            sPerf = sPerf.Token(0) + " " + sPerf.Token(1) + " :" +
+                    sPerf.Token(2, true);
+        }
 
-		return sPerf;
-	}
+        return sPerf;
+    }
 
-	bool OnLoad(const CString& sArgs, CString& sMessage) override {
-		GetNV("Perform").Split("\n", m_vPerform, false);
+    bool OnLoad(const CString& sArgs, CString& sMessage) override {
+        GetNV("Perform").Split("\n", m_vPerform, false);
 
-		return true;
-	}
+        return true;
+    }
 
-	void OnIRCConnected() override {
-		for (const CString& sPerf : m_vPerform) {
-			PutIRC(ExpandString(sPerf));
-		}
-	}
+    void OnIRCConnected() override {
+        for (const CString& sPerf : m_vPerform) {
+            PutIRC(ExpandString(sPerf));
+        }
+    }
 
-	CString GetWebMenuTitle() override { return "Perform"; }
+    CString GetWebMenuTitle() override { return "Perform"; }
 
-	bool OnWebRequest(CWebSock& WebSock, const CString& sPageName,
-	                  CTemplate& Tmpl) override {
-		if (sPageName != "index") {
-			// only accept requests to index
-			return false;
-		}
+    bool OnWebRequest(CWebSock& WebSock, const CString& sPageName,
+                      CTemplate& Tmpl) override {
+        if (sPageName != "index") {
+            // only accept requests to index
+            return false;
+        }
 
-		if (WebSock.IsPost()) {
-			VCString vsPerf;
-			WebSock.GetRawParam("perform", true).Split("\n", vsPerf, false);
-			m_vPerform.clear();
+        if (WebSock.IsPost()) {
+            VCString vsPerf;
+            WebSock.GetRawParam("perform", true).Split("\n", vsPerf, false);
+            m_vPerform.clear();
 
-			for (const CString& sPerf : vsPerf)
-				m_vPerform.push_back(ParsePerform(sPerf));
+            for (const CString& sPerf : vsPerf)
+                m_vPerform.push_back(ParsePerform(sPerf));
 
-			Save();
-		}
+            Save();
+        }
 
-		for (const CString& sPerf : m_vPerform) {
-			CTemplate& Row = Tmpl.AddRow("PerformLoop");
-			Row["Perform"] = sPerf;
-		}
+        for (const CString& sPerf : m_vPerform) {
+            CTemplate& Row = Tmpl.AddRow("PerformLoop");
+            Row["Perform"] = sPerf;
+        }
 
-		return true;
-	}
+        return true;
+    }
 
   private:
-	void Save() {
-		CString sBuffer = "";
+    void Save() {
+        CString sBuffer = "";
 
-		for (const CString& sPerf : m_vPerform) {
-			sBuffer += sPerf + "\n";
-		}
-		SetNV("Perform", sBuffer);
-	}
+        for (const CString& sPerf : m_vPerform) {
+            sBuffer += sPerf + "\n";
+        }
+        SetNV("Perform", sBuffer);
+    }
 
-	VCString m_vPerform;
+    VCString m_vPerform;
 };
 
 template <>
 void TModInfo<CPerform>(CModInfo& Info) {
-	Info.AddType(CModInfo::UserModule);
-	Info.SetWikiPage("perform");
+    Info.AddType(CModInfo::UserModule);
+    Info.SetWikiPage("perform");
 }
 
 NETWORKMODULEDEFS(

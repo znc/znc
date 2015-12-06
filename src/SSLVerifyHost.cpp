@@ -52,61 +52,61 @@ namespace ZNC_Curl {
 /* Portable, consistent toupper (remember EBCDIC). Do not use toupper() because
    its behavior is altered by the current locale. */
 inline char Curl_raw_toupper(char in) {
-	switch (in) {
-		case 'a':
-			return 'A';
-		case 'b':
-			return 'B';
-		case 'c':
-			return 'C';
-		case 'd':
-			return 'D';
-		case 'e':
-			return 'E';
-		case 'f':
-			return 'F';
-		case 'g':
-			return 'G';
-		case 'h':
-			return 'H';
-		case 'i':
-			return 'I';
-		case 'j':
-			return 'J';
-		case 'k':
-			return 'K';
-		case 'l':
-			return 'L';
-		case 'm':
-			return 'M';
-		case 'n':
-			return 'N';
-		case 'o':
-			return 'O';
-		case 'p':
-			return 'P';
-		case 'q':
-			return 'Q';
-		case 'r':
-			return 'R';
-		case 's':
-			return 'S';
-		case 't':
-			return 'T';
-		case 'u':
-			return 'U';
-		case 'v':
-			return 'V';
-		case 'w':
-			return 'W';
-		case 'x':
-			return 'X';
-		case 'y':
-			return 'Y';
-		case 'z':
-			return 'Z';
-	}
-	return in;
+    switch (in) {
+        case 'a':
+            return 'A';
+        case 'b':
+            return 'B';
+        case 'c':
+            return 'C';
+        case 'd':
+            return 'D';
+        case 'e':
+            return 'E';
+        case 'f':
+            return 'F';
+        case 'g':
+            return 'G';
+        case 'h':
+            return 'H';
+        case 'i':
+            return 'I';
+        case 'j':
+            return 'J';
+        case 'k':
+            return 'K';
+        case 'l':
+            return 'L';
+        case 'm':
+            return 'M';
+        case 'n':
+            return 'N';
+        case 'o':
+            return 'O';
+        case 'p':
+            return 'P';
+        case 'q':
+            return 'Q';
+        case 'r':
+            return 'R';
+        case 's':
+            return 'S';
+        case 't':
+            return 'T';
+        case 'u':
+            return 'U';
+        case 'v':
+            return 'V';
+        case 'w':
+            return 'W';
+        case 'x':
+            return 'X';
+        case 'y':
+            return 'Y';
+        case 'z':
+            return 'Z';
+    }
+    return in;
 }
 
 /*
@@ -119,30 +119,30 @@ inline char Curl_raw_toupper(char in) {
 * non-ascii.
 */
 static int Curl_raw_equal(const char* first, const char* second) {
-	while (*first && *second) {
-		if (Curl_raw_toupper(*first) != Curl_raw_toupper(*second))
-			/* get out of the loop as soon as they don't match */
-			break;
-		first++;
-		second++;
-	}
-	/* we do the comparison here (possibly again), just to make sure that if the
-	   loop above is skipped because one of the strings reached zero, we must
-	   not
-	   return this as a successful match */
-	return (Curl_raw_toupper(*first) == Curl_raw_toupper(*second));
+    while (*first && *second) {
+        if (Curl_raw_toupper(*first) != Curl_raw_toupper(*second))
+            /* get out of the loop as soon as they don't match */
+            break;
+        first++;
+        second++;
+    }
+    /* we do the comparison here (possibly again), just to make sure that if the
+       loop above is skipped because one of the strings reached zero, we must
+       not
+       return this as a successful match */
+    return (Curl_raw_toupper(*first) == Curl_raw_toupper(*second));
 }
 static int Curl_raw_nequal(const char* first, const char* second, size_t max) {
-	while (*first && *second && max) {
-		if (Curl_raw_toupper(*first) != Curl_raw_toupper(*second)) {
-			break;
-		}
-		max--;
-		first++;
-		second++;
-	}
-	if (0 == max) return 1; /* they are equal this far */
-	return Curl_raw_toupper(*first) == Curl_raw_toupper(*second);
+    while (*first && *second && max) {
+        if (Curl_raw_toupper(*first) != Curl_raw_toupper(*second)) {
+            break;
+        }
+        max--;
+        first++;
+        second++;
+    }
+    if (0 == max) return 1; /* they are equal this far */
+    return Curl_raw_toupper(*first) == Curl_raw_toupper(*second);
 }
 
 static const int CURL_HOST_NOMATCH = 0;
@@ -169,87 +169,87 @@ static const int CURL_HOST_MATCH = 1;
  */
 
 static int hostmatch(char* hostname, char* pattern) {
-	const char* pattern_label_end, *pattern_wildcard, *hostname_label_end;
-	int wildcard_enabled;
-	size_t prefixlen, suffixlen;
-	struct in_addr ignored;
+    const char* pattern_label_end, *pattern_wildcard, *hostname_label_end;
+    int wildcard_enabled;
+    size_t prefixlen, suffixlen;
+    struct in_addr ignored;
 #ifdef ENABLE_IPV6
-	struct sockaddr_in6 si6;
+    struct sockaddr_in6 si6;
 #endif
 
-	/* normalize pattern and hostname by stripping off trailing dots */
-	size_t len = strlen(hostname);
-	if (hostname[len - 1] == '.') hostname[len - 1] = 0;
-	len = strlen(pattern);
-	if (pattern[len - 1] == '.') pattern[len - 1] = 0;
+    /* normalize pattern and hostname by stripping off trailing dots */
+    size_t len = strlen(hostname);
+    if (hostname[len - 1] == '.') hostname[len - 1] = 0;
+    len = strlen(pattern);
+    if (pattern[len - 1] == '.') pattern[len - 1] = 0;
 
-	pattern_wildcard = strchr(pattern, '*');
-	if (pattern_wildcard == nullptr)
-		return Curl_raw_equal(pattern, hostname) ? CURL_HOST_MATCH
-		                                         : CURL_HOST_NOMATCH;
+    pattern_wildcard = strchr(pattern, '*');
+    if (pattern_wildcard == nullptr)
+        return Curl_raw_equal(pattern, hostname) ? CURL_HOST_MATCH
+                                                 : CURL_HOST_NOMATCH;
 
-	/* detect IP address as hostname and fail the match if so */
-	if (inet_pton(AF_INET, hostname, &ignored) > 0) return CURL_HOST_NOMATCH;
+    /* detect IP address as hostname and fail the match if so */
+    if (inet_pton(AF_INET, hostname, &ignored) > 0) return CURL_HOST_NOMATCH;
 #ifdef ENABLE_IPV6
-	else if (Curl_inet_pton(AF_INET6, hostname, &si6.sin6_addr) > 0)
-		return CURL_HOST_NOMATCH;
+    else if (Curl_inet_pton(AF_INET6, hostname, &si6.sin6_addr) > 0)
+        return CURL_HOST_NOMATCH;
 #endif
 
-	/* We require at least 2 dots in pattern to avoid too wide wildcard
-	   match. */
-	wildcard_enabled = 1;
-	pattern_label_end = strchr(pattern, '.');
-	if (pattern_label_end == nullptr ||
-	    strchr(pattern_label_end + 1, '.') == nullptr ||
-	    pattern_wildcard > pattern_label_end ||
-	    Curl_raw_nequal(pattern, "xn--", 4)) {
-		wildcard_enabled = 0;
-	}
-	if (!wildcard_enabled)
-		return Curl_raw_equal(pattern, hostname) ? CURL_HOST_MATCH
-		                                         : CURL_HOST_NOMATCH;
+    /* We require at least 2 dots in pattern to avoid too wide wildcard
+       match. */
+    wildcard_enabled = 1;
+    pattern_label_end = strchr(pattern, '.');
+    if (pattern_label_end == nullptr ||
+        strchr(pattern_label_end + 1, '.') == nullptr ||
+        pattern_wildcard > pattern_label_end ||
+        Curl_raw_nequal(pattern, "xn--", 4)) {
+        wildcard_enabled = 0;
+    }
+    if (!wildcard_enabled)
+        return Curl_raw_equal(pattern, hostname) ? CURL_HOST_MATCH
+                                                 : CURL_HOST_NOMATCH;
 
-	hostname_label_end = strchr(hostname, '.');
-	if (hostname_label_end == nullptr ||
-	    !Curl_raw_equal(pattern_label_end, hostname_label_end))
-		return CURL_HOST_NOMATCH;
+    hostname_label_end = strchr(hostname, '.');
+    if (hostname_label_end == nullptr ||
+        !Curl_raw_equal(pattern_label_end, hostname_label_end))
+        return CURL_HOST_NOMATCH;
 
-	/* The wildcard must match at least one character, so the left-most
-	   label of the hostname is at least as large as the left-most label
-	   of the pattern. */
-	if (hostname_label_end - hostname < pattern_label_end - pattern)
-		return CURL_HOST_NOMATCH;
+    /* The wildcard must match at least one character, so the left-most
+       label of the hostname is at least as large as the left-most label
+       of the pattern. */
+    if (hostname_label_end - hostname < pattern_label_end - pattern)
+        return CURL_HOST_NOMATCH;
 
-	prefixlen = pattern_wildcard - pattern;
-	suffixlen = pattern_label_end - (pattern_wildcard + 1);
-	return Curl_raw_nequal(pattern, hostname, prefixlen) &&
-	               Curl_raw_nequal(pattern_wildcard + 1,
-	                               hostname_label_end - suffixlen, suffixlen)
-	           ? CURL_HOST_MATCH
-	           : CURL_HOST_NOMATCH;
+    prefixlen = pattern_wildcard - pattern;
+    suffixlen = pattern_label_end - (pattern_wildcard + 1);
+    return Curl_raw_nequal(pattern, hostname, prefixlen) &&
+                   Curl_raw_nequal(pattern_wildcard + 1,
+                                   hostname_label_end - suffixlen, suffixlen)
+               ? CURL_HOST_MATCH
+               : CURL_HOST_NOMATCH;
 }
 
 static int Curl_cert_hostcheck(const char* match_pattern,
                                const char* hostname) {
-	char* matchp;
-	char* hostp;
-	int res = 0;
-	if (!match_pattern || !*match_pattern || !hostname ||
-	    !*hostname) /* sanity check */
-		;
-	else {
-		matchp = strdup(match_pattern);
-		if (matchp) {
-			hostp = strdup(hostname);
-			if (hostp) {
-				if (hostmatch(hostp, matchp) == CURL_HOST_MATCH) res = 1;
-				free(hostp);
-			}
-			free(matchp);
-		}
-	}
+    char* matchp;
+    char* hostp;
+    int res = 0;
+    if (!match_pattern || !*match_pattern || !hostname ||
+        !*hostname) /* sanity check */
+        ;
+    else {
+        matchp = strdup(match_pattern);
+        if (matchp) {
+            hostp = strdup(hostname);
+            if (hostp) {
+                if (hostmatch(hostp, matchp) == CURL_HOST_MATCH) res = 1;
+                free(hostp);
+            }
+            free(matchp);
+        }
+    }
 
-	return res;
+    return res;
 }
 
 //
@@ -278,11 +278,11 @@ namespace ZNC_iSECPartners {
  */
 
 typedef enum {
-	MatchFound,
-	MatchNotFound,
-	NoSANPresent,
-	MalformedCertificate,
-	Error
+    MatchFound,
+    MatchNotFound,
+    NoSANPresent,
+    MalformedCertificate,
+    Error
 } HostnameValidationResult;
 
 #define HOSTNAME_MAX_SIZE 255
@@ -297,45 +297,45 @@ typedef enum {
 */
 static HostnameValidationResult matches_common_name(const char* hostname,
                                                     const X509* server_cert) {
-	int common_name_loc = -1;
-	X509_NAME_ENTRY* common_name_entry = nullptr;
-	ASN1_STRING* common_name_asn1 = nullptr;
-	char* common_name_str = nullptr;
+    int common_name_loc = -1;
+    X509_NAME_ENTRY* common_name_entry = nullptr;
+    ASN1_STRING* common_name_asn1 = nullptr;
+    char* common_name_str = nullptr;
 
-	// Find the position of the CN field in the Subject field of the certificate
-	common_name_loc = X509_NAME_get_index_by_NID(
-	    X509_get_subject_name((X509*)server_cert), NID_commonName, -1);
-	if (common_name_loc < 0) {
-		return Error;
-	}
+    // Find the position of the CN field in the Subject field of the certificate
+    common_name_loc = X509_NAME_get_index_by_NID(
+        X509_get_subject_name((X509*)server_cert), NID_commonName, -1);
+    if (common_name_loc < 0) {
+        return Error;
+    }
 
-	// Extract the CN field
-	common_name_entry = X509_NAME_get_entry(
-	    X509_get_subject_name((X509*)server_cert), common_name_loc);
-	if (common_name_entry == nullptr) {
-		return Error;
-	}
+    // Extract the CN field
+    common_name_entry = X509_NAME_get_entry(
+        X509_get_subject_name((X509*)server_cert), common_name_loc);
+    if (common_name_entry == nullptr) {
+        return Error;
+    }
 
-	// Convert the CN field to a C string
-	common_name_asn1 = X509_NAME_ENTRY_get_data(common_name_entry);
-	if (common_name_asn1 == nullptr) {
-		return Error;
-	}
-	common_name_str = (char*)ASN1_STRING_data(common_name_asn1);
+    // Convert the CN field to a C string
+    common_name_asn1 = X509_NAME_ENTRY_get_data(common_name_entry);
+    if (common_name_asn1 == nullptr) {
+        return Error;
+    }
+    common_name_str = (char*)ASN1_STRING_data(common_name_asn1);
 
-	// Make sure there isn't an embedded NUL character in the CN
-	if (ASN1_STRING_length(common_name_asn1) !=
-	    static_cast<int>(strlen(common_name_str))) {
-		return MalformedCertificate;
-	}
+    // Make sure there isn't an embedded NUL character in the CN
+    if (ASN1_STRING_length(common_name_asn1) !=
+        static_cast<int>(strlen(common_name_str))) {
+        return MalformedCertificate;
+    }
 
-	DEBUG("SSLVerifyHost: Found CN " << common_name_str);
-	// Compare expected hostname with the CN
-	if (ZNC_Curl::Curl_cert_hostcheck(common_name_str, hostname)) {
-		return MatchFound;
-	} else {
-		return MatchNotFound;
-	}
+    DEBUG("SSLVerifyHost: Found CN " << common_name_str);
+    // Compare expected hostname with the CN
+    if (ZNC_Curl::Curl_cert_hostcheck(common_name_str, hostname)) {
+        return MatchFound;
+    } else {
+        return MatchNotFound;
+    }
 }
 
 /**
@@ -348,44 +348,44 @@ static HostnameValidationResult matches_common_name(const char* hostname,
 */
 static HostnameValidationResult matches_subject_alternative_name(
     const char* hostname, const X509* server_cert) {
-	HostnameValidationResult result = MatchNotFound;
-	int i;
-	int san_names_nb = -1;
-	STACK_OF(GENERAL_NAME)* san_names = nullptr;
+    HostnameValidationResult result = MatchNotFound;
+    int i;
+    int san_names_nb = -1;
+    STACK_OF(GENERAL_NAME)* san_names = nullptr;
 
-	// Try to extract the names within the SAN extension from the certificate
-	san_names = reinterpret_cast<STACK_OF(GENERAL_NAME)*>(X509_get_ext_d2i(
-	    (X509*)server_cert, NID_subject_alt_name, nullptr, nullptr));
-	if (san_names == nullptr) {
-		return NoSANPresent;
-	}
-	san_names_nb = sk_GENERAL_NAME_num(san_names);
+    // Try to extract the names within the SAN extension from the certificate
+    san_names = reinterpret_cast<STACK_OF(GENERAL_NAME)*>(X509_get_ext_d2i(
+        (X509*)server_cert, NID_subject_alt_name, nullptr, nullptr));
+    if (san_names == nullptr) {
+        return NoSANPresent;
+    }
+    san_names_nb = sk_GENERAL_NAME_num(san_names);
 
-	// Check each name within the extension
-	for (i = 0; i < san_names_nb; i++) {
-		const GENERAL_NAME* current_name = sk_GENERAL_NAME_value(san_names, i);
+    // Check each name within the extension
+    for (i = 0; i < san_names_nb; i++) {
+        const GENERAL_NAME* current_name = sk_GENERAL_NAME_value(san_names, i);
 
-		if (current_name->type == GEN_DNS) {
-			// Current name is a DNS name, let's check it
-			char* dns_name = (char*)ASN1_STRING_data(current_name->d.dNSName);
+        if (current_name->type == GEN_DNS) {
+            // Current name is a DNS name, let's check it
+            char* dns_name = (char*)ASN1_STRING_data(current_name->d.dNSName);
 
-			// Make sure there isn't an embedded NUL character in the DNS name
-			if (ASN1_STRING_length(current_name->d.dNSName) !=
-			    static_cast<int>(strlen(dns_name))) {
-				result = MalformedCertificate;
-				break;
-			} else {  // Compare expected hostname with the DNS name
-				DEBUG("SSLVerifyHost: Found SAN " << dns_name);
-				if (ZNC_Curl::Curl_cert_hostcheck(dns_name, hostname)) {
-					result = MatchFound;
-					break;
-				}
-			}
-		}
-	}
-	sk_GENERAL_NAME_pop_free(san_names, GENERAL_NAME_free);
+            // Make sure there isn't an embedded NUL character in the DNS name
+            if (ASN1_STRING_length(current_name->d.dNSName) !=
+                static_cast<int>(strlen(dns_name))) {
+                result = MalformedCertificate;
+                break;
+            } else {  // Compare expected hostname with the DNS name
+                DEBUG("SSLVerifyHost: Found SAN " << dns_name);
+                if (ZNC_Curl::Curl_cert_hostcheck(dns_name, hostname)) {
+                    result = MatchFound;
+                    break;
+                }
+            }
+        }
+    }
+    sk_GENERAL_NAME_pop_free(san_names, GENERAL_NAME_free);
 
-	return result;
+    return result;
 }
 
 /**
@@ -401,18 +401,18 @@ static HostnameValidationResult matches_subject_alternative_name(
 */
 static HostnameValidationResult validate_hostname(const char* hostname,
                                                   const X509* server_cert) {
-	HostnameValidationResult result;
+    HostnameValidationResult result;
 
-	if ((hostname == nullptr) || (server_cert == nullptr)) return Error;
+    if ((hostname == nullptr) || (server_cert == nullptr)) return Error;
 
-	// First try the Subject Alternative Names extension
-	result = matches_subject_alternative_name(hostname, server_cert);
-	if (result == NoSANPresent) {
-		// Extension was not found: try the Common Name
-		result = matches_common_name(hostname, server_cert);
-	}
+    // First try the Subject Alternative Names extension
+    result = matches_subject_alternative_name(hostname, server_cert);
+    if (result == NoSANPresent) {
+        // Extension was not found: try the Common Name
+        result = matches_common_name(hostname, server_cert);
+    }
 
-	return result;
+    return result;
 }
 
 //
@@ -423,26 +423,26 @@ static HostnameValidationResult validate_hostname(const char* hostname,
 
 bool ZNC_SSLVerifyHost(const CString& sHost, const X509* pCert,
                        CString& sError) {
-	DEBUG("SSLVerifyHost: checking " << sHost);
-	ZNC_iSECPartners::HostnameValidationResult eResult =
-	    ZNC_iSECPartners::validate_hostname(sHost.c_str(), pCert);
-	switch (eResult) {
-		case ZNC_iSECPartners::MatchFound:
-			DEBUG("SSLVerifyHost: verified");
-			return true;
-		case ZNC_iSECPartners::MatchNotFound:
-			DEBUG("SSLVerifyHost: host doesn't match");
-			sError = "hostname doesn't match";
-			return false;
-		case ZNC_iSECPartners::MalformedCertificate:
-			DEBUG("SSLVerifyHost: malformed cert");
-			sError = "malformed hostname in certificate";
-			return false;
-		default:
-			DEBUG("SSLVerifyHost: error");
-			sError = "hostname verification error";
-			return false;
-	}
+    DEBUG("SSLVerifyHost: checking " << sHost);
+    ZNC_iSECPartners::HostnameValidationResult eResult =
+        ZNC_iSECPartners::validate_hostname(sHost.c_str(), pCert);
+    switch (eResult) {
+        case ZNC_iSECPartners::MatchFound:
+            DEBUG("SSLVerifyHost: verified");
+            return true;
+        case ZNC_iSECPartners::MatchNotFound:
+            DEBUG("SSLVerifyHost: host doesn't match");
+            sError = "hostname doesn't match";
+            return false;
+        case ZNC_iSECPartners::MalformedCertificate:
+            DEBUG("SSLVerifyHost: malformed cert");
+            sError = "malformed hostname in certificate";
+            return false;
+        default:
+            DEBUG("SSLVerifyHost: error");
+            sError = "hostname verification error";
+            return false;
+    }
 }
 
 #endif /* HAVE_LIBSSL */

@@ -18,17 +18,17 @@
 
 class CAwayNickMod : public CModule {
   public:
-	MODCONSTRUCTOR(CAwayNickMod) {}
+    MODCONSTRUCTOR(CAwayNickMod) {}
 
-	bool OnLoad(const CString&, CString& sMessage) override {
-		sMessage = "retired module - see http://wiki.znc.in/awaynick";
-		return false;
-	}
+    bool OnLoad(const CString&, CString& sMessage) override {
+        sMessage = "retired module - see http://wiki.znc.in/awaynick";
+        return false;
+    }
 };
 
 template <>
 void TModInfo<CAwayNickMod>(CModInfo& Info) {
-	Info.SetWikiPage("awaynick");
+    Info.SetWikiPage("awaynick");
 }
 
 NETWORKMODULEDEFS(CAwayNickMod,

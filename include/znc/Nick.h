@@ -28,48 +28,48 @@ class CChan;
 
 class CNick {
   public:
-	CNick();
-	CNick(const CString& sNick);
-	~CNick();
+    CNick();
+    CNick(const CString& sNick);
+    ~CNick();
 
-	CNick(const CNick&) = default;
-	CNick& operator=(const CNick&) = default;
+    CNick(const CNick&) = default;
+    CNick& operator=(const CNick&) = default;
 
-	void Reset();
-	void Parse(const CString& sNickMask);
-	CString GetHostMask() const;
-	size_t GetCommonChans(std::vector<CChan*>& vChans,
-	                      CIRCNetwork* pNetwork) const;
-	bool NickEquals(const CString& nickname) const;
+    void Reset();
+    void Parse(const CString& sNickMask);
+    CString GetHostMask() const;
+    size_t GetCommonChans(std::vector<CChan*>& vChans,
+                          CIRCNetwork* pNetwork) const;
+    bool NickEquals(const CString& nickname) const;
 
-	// Setters
-	void SetNetwork(CIRCNetwork* pNetwork);
-	void SetNick(const CString& s);
-	void SetIdent(const CString& s);
-	void SetHost(const CString& s);
-	bool AddPerm(unsigned char uPerm);
-	bool RemPerm(unsigned char uPerm);
-	// !Setters
+    // Setters
+    void SetNetwork(CIRCNetwork* pNetwork);
+    void SetNick(const CString& s);
+    void SetIdent(const CString& s);
+    void SetHost(const CString& s);
+    bool AddPerm(unsigned char uPerm);
+    bool RemPerm(unsigned char uPerm);
+    // !Setters
 
-	// Getters
-	CString GetPermStr() const;
-	unsigned char GetPermChar() const;
-	bool HasPerm(unsigned char uPerm) const;
-	const CString& GetNick() const;
-	const CString& GetIdent() const;
-	const CString& GetHost() const;
-	CString GetNickMask() const;
-	// !Getters
+    // Getters
+    CString GetPermStr() const;
+    unsigned char GetPermChar() const;
+    bool HasPerm(unsigned char uPerm) const;
+    const CString& GetNick() const;
+    const CString& GetIdent() const;
+    const CString& GetHost() const;
+    CString GetNickMask() const;
+    // !Getters
 
-	void Clone(const CNick& SourceNick);
+    void Clone(const CNick& SourceNick);
 
   private:
   protected:
-	CString m_sChanPerms;
-	CIRCNetwork* m_pNetwork;
-	CString m_sNick;
-	CString m_sIdent;
-	CString m_sHost;
+    CString m_sChanPerms;
+    CIRCNetwork* m_pNetwork;
+    CString m_sNick;
+    CString m_sIdent;
+    CString m_sHost;
 };
 
 #endif  // !ZNC_NICK_H

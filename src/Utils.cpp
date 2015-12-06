@@ -56,120 +56,120 @@ constexpr const char* szDefaultDH2048 =
     "-----END DH PARAMETERS-----\n";
 
 void CUtils::GenerateCert(FILE* pOut, const CString& sHost) {
-	EVP_PKEY* pKey = nullptr;
-	X509* pCert = nullptr;
-	X509_NAME* pName = nullptr;
-	const int days = 365;
-	const int years = 10;
+    EVP_PKEY* pKey = nullptr;
+    X509* pCert = nullptr;
+    X509_NAME* pName = nullptr;
+    const int days = 365;
+    const int years = 10;
 
-	unsigned int uSeed = (unsigned int)time(nullptr);
-	int serial = (rand_r(&uSeed) % 9999);
+    unsigned int uSeed = (unsigned int)time(nullptr);
+    int serial = (rand_r(&uSeed) % 9999);
 
-	RSA* pRSA = RSA_generate_key(2048, 0x10001, nullptr, nullptr);
-	if ((pKey = EVP_PKEY_new())) {
-		if (!EVP_PKEY_assign_RSA(pKey, pRSA)) {
-			EVP_PKEY_free(pKey);
-			return;
-		}
+    RSA* pRSA = RSA_generate_key(2048, 0x10001, nullptr, nullptr);
+    if ((pKey = EVP_PKEY_new())) {
+        if (!EVP_PKEY_assign_RSA(pKey, pRSA)) {
+            EVP_PKEY_free(pKey);
+            return;
+        }
 
-		PEM_write_RSAPrivateKey(pOut, pRSA, nullptr, nullptr, 0, nullptr,
-		                        nullptr);
+        PEM_write_RSAPrivateKey(pOut, pRSA, nullptr, nullptr, 0, nullptr,
+                                nullptr);
 
-		if (!(pCert = X509_new())) {
-			EVP_PKEY_free(pKey);
-			return;
-		}
+        if (!(pCert = X509_new())) {
+            EVP_PKEY_free(pKey);
+            return;
+        }
 
-		X509_set_version(pCert, 2);
-		ASN1_INTEGER_set(X509_get_serialNumber(pCert), serial);
-		X509_gmtime_adj(X509_get_notBefore(pCert), 0);
-		X509_gmtime_adj(X509_get_notAfter(pCert),
-		                (long)60 * 60 * 24 * days * years);
-		X509_set_pubkey(pCert, pKey);
+        X509_set_version(pCert, 2);
+        ASN1_INTEGER_set(X509_get_serialNumber(pCert), serial);
+        X509_gmtime_adj(X509_get_notBefore(pCert), 0);
+        X509_gmtime_adj(X509_get_notAfter(pCert),
+                        (long)60 * 60 * 24 * days * years);
+        X509_set_pubkey(pCert, pKey);
 
-		pName = X509_get_subject_name(pCert);
+        pName = X509_get_subject_name(pCert);
 
-		const char* pLogName = getenv("LOGNAME");
-		const char* pHostName = nullptr;
+        const char* pLogName = getenv("LOGNAME");
+        const char* pHostName = nullptr;
 
-		if (!sHost.empty()) {
-			pHostName = sHost.c_str();
-		}
+        if (!sHost.empty()) {
+            pHostName = sHost.c_str();
+        }
 
-		if (!pHostName) {
-			pHostName = getenv("HOSTNAME");
-		}
+        if (!pHostName) {
+            pHostName = getenv("HOSTNAME");
+        }
 
-		if (!pLogName) {
-			pLogName = "Unknown";
-		}
+        if (!pLogName) {
+            pLogName = "Unknown";
+        }
 
-		if (!pHostName) {
-			pHostName = "host.unknown";
-		}
+        if (!pHostName) {
+            pHostName = "host.unknown";
+        }
 
-		CString sEmailAddr = pLogName;
-		sEmailAddr += "@";
-		sEmailAddr += pHostName;
+        CString sEmailAddr = pLogName;
+        sEmailAddr += "@";
+        sEmailAddr += pHostName;
 
-		X509_NAME_add_entry_by_txt(pName, "OU", MBSTRING_ASC,
-		                           (unsigned char*)pLogName, -1, -1, 0);
-		X509_NAME_add_entry_by_txt(pName, "CN", MBSTRING_ASC,
-		                           (unsigned char*)pHostName, -1, -1, 0);
-		X509_NAME_add_entry_by_txt(pName, "emailAddress", MBSTRING_ASC,
-		                           (unsigned char*)sEmailAddr.c_str(), -1, -1,
-		                           0);
+        X509_NAME_add_entry_by_txt(pName, "OU", MBSTRING_ASC,
+                                   (unsigned char*)pLogName, -1, -1, 0);
+        X509_NAME_add_entry_by_txt(pName, "CN", MBSTRING_ASC,
+                                   (unsigned char*)pHostName, -1, -1, 0);
+        X509_NAME_add_entry_by_txt(pName, "emailAddress", MBSTRING_ASC,
+                                   (unsigned char*)sEmailAddr.c_str(), -1, -1,
+                                   0);
 
-		X509_set_subject_name(pCert, pName);
-		X509_set_issuer_name(pCert, pName);
+        X509_set_subject_name(pCert, pName);
+        X509_set_issuer_name(pCert, pName);
 
-		if (!X509_sign(pCert, pKey, EVP_sha256())) {
-			X509_free(pCert);
-			EVP_PKEY_free(pKey);
-			return;
-		}
+        if (!X509_sign(pCert, pKey, EVP_sha256())) {
+            X509_free(pCert);
+            EVP_PKEY_free(pKey);
+            return;
+        }
 
-		PEM_write_X509(pOut, pCert);
-		X509_free(pCert);
-		EVP_PKEY_free(pKey);
+        PEM_write_X509(pOut, pCert);
+        X509_free(pCert);
+        EVP_PKEY_free(pKey);
 
-		fprintf(pOut, "%s", szDefaultDH2048);
-	}
+        fprintf(pOut, "%s", szDefaultDH2048);
+    }
 }
 #endif /* HAVE_LIBSSL */
 
 CString CUtils::GetIP(unsigned long addr) {
-	char szBuf[16];
-	memset((char*)szBuf, 0, 16);
+    char szBuf[16];
+    memset((char*)szBuf, 0, 16);
 
-	if (addr >= (1 << 24)) {
-		unsigned long ip[4];
-		ip[0] = addr >> 24 & 255;
-		ip[1] = addr >> 16 & 255;
-		ip[2] = addr >> 8 & 255;
-		ip[3] = addr & 255;
-		sprintf(szBuf, "%lu.%lu.%lu.%lu", ip[0], ip[1], ip[2], ip[3]);
-	}
+    if (addr >= (1 << 24)) {
+        unsigned long ip[4];
+        ip[0] = addr >> 24 & 255;
+        ip[1] = addr >> 16 & 255;
+        ip[2] = addr >> 8 & 255;
+        ip[3] = addr & 255;
+        sprintf(szBuf, "%lu.%lu.%lu.%lu", ip[0], ip[1], ip[2], ip[3]);
+    }
 
-	return szBuf;
+    return szBuf;
 }
 
 unsigned long CUtils::GetLongIP(const CString& sIP) {
-	unsigned long ret;
-	char ip[4][4];
-	unsigned int i;
+    unsigned long ret;
+    char ip[4][4];
+    unsigned int i;
 
-	i = sscanf(sIP.c_str(), "%3[0-9].%3[0-9].%3[0-9].%3[0-9]", ip[0], ip[1],
-	           ip[2], ip[3]);
-	if (i != 4) return 0;
+    i = sscanf(sIP.c_str(), "%3[0-9].%3[0-9].%3[0-9].%3[0-9]", ip[0], ip[1],
+               ip[2], ip[3]);
+    if (i != 4) return 0;
 
-	// Beware that atoi("200") << 24 would overflow and turn negative!
-	ret = atol(ip[0]) << 24;
-	ret += atol(ip[1]) << 16;
-	ret += atol(ip[2]) << 8;
-	ret += atol(ip[3]) << 0;
+    // Beware that atoi("200") << 24 would overflow and turn negative!
+    ret = atol(ip[0]) << 24;
+    ret += atol(ip[1]) << 16;
+    ret += atol(ip[2]) << 8;
+    ret += atol(ip[3]) << 0;
 
-	return ret;
+    return ret;
 }
 
 // If you change this here and in GetSaltedHashPass(),
@@ -177,143 +177,143 @@ unsigned long CUtils::GetLongIP(const CString& sIP) {
 // TODO refactor this
 const CString CUtils::sDefaultHash = "sha256";
 CString CUtils::GetSaltedHashPass(CString& sSalt) {
-	sSalt = GetSalt();
+    sSalt = GetSalt();
 
-	while (true) {
-		CString pass1;
-		do {
-			pass1 = CUtils::GetPass("Enter password");
-		} while (pass1.empty());
+    while (true) {
+        CString pass1;
+        do {
+            pass1 = CUtils::GetPass("Enter password");
+        } while (pass1.empty());
 
-		CString pass2 = CUtils::GetPass("Confirm password");
+        CString pass2 = CUtils::GetPass("Confirm password");
 
-		if (!pass1.Equals(pass2, CString::CaseSensitive)) {
-			CUtils::PrintError("The supplied passwords did not match");
-		} else {
-			// Construct the salted pass
-			return SaltedSHA256Hash(pass1, sSalt);
-		}
-	}
+        if (!pass1.Equals(pass2, CString::CaseSensitive)) {
+            CUtils::PrintError("The supplied passwords did not match");
+        } else {
+            // Construct the salted pass
+            return SaltedSHA256Hash(pass1, sSalt);
+        }
+    }
 }
 
 CString CUtils::GetSalt() { return CString::RandomString(20); }
 
 CString CUtils::SaltedMD5Hash(const CString& sPass, const CString& sSalt) {
-	return CString(sPass + sSalt).MD5();
+    return CString(sPass + sSalt).MD5();
 }
 
 CString CUtils::SaltedSHA256Hash(const CString& sPass, const CString& sSalt) {
-	return CString(sPass + sSalt).SHA256();
+    return CString(sPass + sSalt).SHA256();
 }
 
 CString CUtils::GetPass(const CString& sPrompt) {
 #ifdef HAVE_TCSETATTR
-	// Disable echo
-	struct termios t;
-	tcgetattr(1, &t);
-	struct termios t2 = t;
-	t2.c_lflag &= ~ECHO;
-	tcsetattr(1, TCSANOW, &t2);
-	// Read pass
-	CString r;
-	GetInput(sPrompt, r);
-	// Restore echo and go to new line
-	tcsetattr(1, TCSANOW, &t);
-	fprintf(stdout, "\n");
-	fflush(stdout);
-	return r;
+    // Disable echo
+    struct termios t;
+    tcgetattr(1, &t);
+    struct termios t2 = t;
+    t2.c_lflag &= ~ECHO;
+    tcsetattr(1, TCSANOW, &t2);
+    // Read pass
+    CString r;
+    GetInput(sPrompt, r);
+    // Restore echo and go to new line
+    tcsetattr(1, TCSANOW, &t);
+    fprintf(stdout, "\n");
+    fflush(stdout);
+    return r;
 #else
-	PrintPrompt(sPrompt);
+    PrintPrompt(sPrompt);
 #ifdef HAVE_GETPASSPHRASE
-	return getpassphrase("");
+    return getpassphrase("");
 #else
-	return getpass("");
+    return getpass("");
 #endif
 #endif
 }
 
 bool CUtils::GetBoolInput(const CString& sPrompt, bool bDefault) {
-	return CUtils::GetBoolInput(sPrompt, &bDefault);
+    return CUtils::GetBoolInput(sPrompt, &bDefault);
 }
 
 bool CUtils::GetBoolInput(const CString& sPrompt, bool* pbDefault) {
-	CString sRet, sDefault;
+    CString sRet, sDefault;
 
-	if (pbDefault) {
-		sDefault = (*pbDefault) ? "yes" : "no";
-	}
+    if (pbDefault) {
+        sDefault = (*pbDefault) ? "yes" : "no";
+    }
 
-	while (true) {
-		GetInput(sPrompt, sRet, sDefault, "yes/no");
+    while (true) {
+        GetInput(sPrompt, sRet, sDefault, "yes/no");
 
-		if (sRet.Equals("y") || sRet.Equals("yes")) {
-			return true;
-		} else if (sRet.Equals("n") || sRet.Equals("no")) {
-			return false;
-		}
-	}
+        if (sRet.Equals("y") || sRet.Equals("yes")) {
+            return true;
+        } else if (sRet.Equals("n") || sRet.Equals("no")) {
+            return false;
+        }
+    }
 }
 
 bool CUtils::GetNumInput(const CString& sPrompt, unsigned int& uRet,
                          unsigned int uMin, unsigned int uMax,
                          unsigned int uDefault) {
-	if (uMin > uMax) {
-		return false;
-	}
+    if (uMin > uMax) {
+        return false;
+    }
 
-	CString sDefault = (uDefault != (unsigned int)~0) ? CString(uDefault) : "";
-	CString sNum, sHint;
+    CString sDefault = (uDefault != (unsigned int)~0) ? CString(uDefault) : "";
+    CString sNum, sHint;
 
-	if (uMax != (unsigned int)~0) {
-		sHint = CString(uMin) + " to " + CString(uMax);
-	} else if (uMin > 0) {
-		sHint = CString(uMin) + " and up";
-	}
+    if (uMax != (unsigned int)~0) {
+        sHint = CString(uMin) + " to " + CString(uMax);
+    } else if (uMin > 0) {
+        sHint = CString(uMin) + " and up";
+    }
 
-	while (true) {
-		GetInput(sPrompt, sNum, sDefault, sHint);
-		if (sNum.empty()) {
-			return false;
-		}
+    while (true) {
+        GetInput(sPrompt, sNum, sDefault, sHint);
+        if (sNum.empty()) {
+            return false;
+        }
 
-		uRet = sNum.ToUInt();
+        uRet = sNum.ToUInt();
 
-		if ((uRet >= uMin && uRet <= uMax)) {
-			break;
-		}
+        if ((uRet >= uMin && uRet <= uMax)) {
+            break;
+        }
 
-		CUtils::PrintError("Number must be " + sHint);
-	}
+        CUtils::PrintError("Number must be " + sHint);
+    }
 
-	return true;
+    return true;
 }
 
 bool CUtils::GetInput(const CString& sPrompt, CString& sRet,
                       const CString& sDefault, const CString& sHint) {
-	CString sExtra;
-	CString sInput;
-	sExtra += (!sHint.empty()) ? (" (" + sHint + ")") : "";
-	sExtra += (!sDefault.empty()) ? (" [" + sDefault + "]") : "";
+    CString sExtra;
+    CString sInput;
+    sExtra += (!sHint.empty()) ? (" (" + sHint + ")") : "";
+    sExtra += (!sDefault.empty()) ? (" [" + sDefault + "]") : "";
 
-	PrintPrompt(sPrompt + sExtra);
-	char szBuf[1024];
-	memset(szBuf, 0, 1024);
-	if (fgets(szBuf, 1024, stdin) == nullptr) {
-		// Reading failed (Error? EOF?)
-		PrintError("Error while reading from stdin. Exiting...");
-		exit(-1);
-	}
-	sInput = szBuf;
+    PrintPrompt(sPrompt + sExtra);
+    char szBuf[1024];
+    memset(szBuf, 0, 1024);
+    if (fgets(szBuf, 1024, stdin) == nullptr) {
+        // Reading failed (Error? EOF?)
+        PrintError("Error while reading from stdin. Exiting...");
+        exit(-1);
+    }
+    sInput = szBuf;
 
-	sInput.TrimSuffix("\n");
+    sInput.TrimSuffix("\n");
 
-	if (sInput.empty()) {
-		sRet = sDefault;
-	} else {
-		sRet = sInput;
-	}
+    if (sInput.empty()) {
+        sRet = sDefault;
+    } else {
+        sRet = sInput;
+    }
 
-	return !sRet.empty();
+    return !sRet.empty();
 }
 
 #define BOLD "\033[1m"
@@ -326,73 +326,73 @@ bool CUtils::GetInput(const CString& sPrompt, CString& sRet,
 #define DFL "\033[39m"
 
 void CUtils::PrintError(const CString& sMessage) {
-	if (CDebug::StdoutIsTTY())
-		fprintf(stdout, BOLD BLU "[" RED " ** " BLU "]" DFL NORM " %s\n",
-		        sMessage.c_str());
-	else
-		fprintf(stdout, "%s\n", sMessage.c_str());
-	fflush(stdout);
+    if (CDebug::StdoutIsTTY())
+        fprintf(stdout, BOLD BLU "[" RED " ** " BLU "]" DFL NORM " %s\n",
+                sMessage.c_str());
+    else
+        fprintf(stdout, "%s\n", sMessage.c_str());
+    fflush(stdout);
 }
 
 void CUtils::PrintPrompt(const CString& sMessage) {
-	if (CDebug::StdoutIsTTY())
-		fprintf(stdout, BOLD BLU "[" YEL " ?? " BLU "]" DFL NORM " %s: ",
-		        sMessage.c_str());
-	else
-		fprintf(stdout, "[ ?? ] %s: ", sMessage.c_str());
-	fflush(stdout);
+    if (CDebug::StdoutIsTTY())
+        fprintf(stdout, BOLD BLU "[" YEL " ?? " BLU "]" DFL NORM " %s: ",
+                sMessage.c_str());
+    else
+        fprintf(stdout, "[ ?? ] %s: ", sMessage.c_str());
+    fflush(stdout);
 }
 
 void CUtils::PrintMessage(const CString& sMessage, bool bStrong) {
-	if (CDebug::StdoutIsTTY()) {
-		if (bStrong)
-			fprintf(stdout,
-			        BOLD BLU "[" YEL " ** " BLU "]" DFL BOLD " %s" NORM "\n",
-			        sMessage.c_str());
-		else
-			fprintf(stdout, BOLD BLU "[" YEL " ** " BLU "]" DFL NORM " %s\n",
-			        sMessage.c_str());
-	} else
-		fprintf(stdout, "%s\n", sMessage.c_str());
+    if (CDebug::StdoutIsTTY()) {
+        if (bStrong)
+            fprintf(stdout,
+                    BOLD BLU "[" YEL " ** " BLU "]" DFL BOLD " %s" NORM "\n",
+                    sMessage.c_str());
+        else
+            fprintf(stdout, BOLD BLU "[" YEL " ** " BLU "]" DFL NORM " %s\n",
+                    sMessage.c_str());
+    } else
+        fprintf(stdout, "%s\n", sMessage.c_str());
 
-	fflush(stdout);
+    fflush(stdout);
 }
 
 void CUtils::PrintAction(const CString& sMessage) {
-	if (CDebug::StdoutIsTTY())
-		fprintf(stdout, BOLD BLU "[ .. " BLU "]" DFL NORM " %s...\n",
-		        sMessage.c_str());
-	else
-		fprintf(stdout, "%s... ", sMessage.c_str());
-	fflush(stdout);
+    if (CDebug::StdoutIsTTY())
+        fprintf(stdout, BOLD BLU "[ .. " BLU "]" DFL NORM " %s...\n",
+                sMessage.c_str());
+    else
+        fprintf(stdout, "%s... ", sMessage.c_str());
+    fflush(stdout);
 }
 
 void CUtils::PrintStatus(bool bSuccess, const CString& sMessage) {
-	if (CDebug::StdoutIsTTY()) {
-		if (bSuccess) {
-			if (!sMessage.empty())
-				fprintf(stdout,
-				        BOLD BLU "[" GRN " >> " BLU "]" DFL NORM " %s\n",
-				        sMessage.c_str());
-		} else {
-			fprintf(stdout, sMessage.empty() ? " failed\n" : BOLD BLU
-			                    "[" RED " !! " BLU "]" DFL NORM BOLD RED
-			                    " %s" DFL NORM "\n",
-			        sMessage.c_str());
-		}
-	} else {
-		if (bSuccess) {
-			fprintf(stdout, "%s\n", sMessage.c_str());
-		} else {
-			if (!sMessage.empty()) {
-				fprintf(stdout, "[ %s ]", sMessage.c_str());
-			}
+    if (CDebug::StdoutIsTTY()) {
+        if (bSuccess) {
+            if (!sMessage.empty())
+                fprintf(stdout,
+                        BOLD BLU "[" GRN " >> " BLU "]" DFL NORM " %s\n",
+                        sMessage.c_str());
+        } else {
+            fprintf(stdout, sMessage.empty() ? " failed\n" : BOLD BLU
+                                "[" RED " !! " BLU "]" DFL NORM BOLD RED
+                                " %s" DFL NORM "\n",
+                    sMessage.c_str());
+        }
+    } else {
+        if (bSuccess) {
+            fprintf(stdout, "%s\n", sMessage.c_str());
+        } else {
+            if (!sMessage.empty()) {
+                fprintf(stdout, "[ %s ]", sMessage.c_str());
+            }
 
-			fprintf(stdout, "\n");
-		}
-	}
+            fprintf(stdout, "\n");
+        }
+    }
 
-	fflush(stdout);
+    fflush(stdout);
 }
 
 namespace {
@@ -407,267 +407,267 @@ namespace {
  * ahead/east of GMT.)"
  */
 inline CString FixGMT(CString sTZ) {
-	if (sTZ.length() >= 4 && sTZ.StartsWith("GMT")) {
-		if (sTZ[3] == '+') {
-			sTZ[3] = '-';
-		} else if (sTZ[3] == '-') {
-			sTZ[3] = '+';
-		}
-	}
-	return sTZ;
+    if (sTZ.length() >= 4 && sTZ.StartsWith("GMT")) {
+        if (sTZ[3] == '+') {
+            sTZ[3] = '-';
+        } else if (sTZ[3] == '-') {
+            sTZ[3] = '+';
+        }
+    }
+    return sTZ;
 }
 }
 
 CString CUtils::CTime(time_t t, const CString& sTimezone) {
-	char s[30] = {};  // should have at least 26 bytes
-	if (sTimezone.empty()) {
-		ctime_r(&t, s);
-		// ctime() adds a trailing newline
-		return CString(s).Trim_n();
-	}
-	CString sTZ = FixGMT(sTimezone);
+    char s[30] = {};  // should have at least 26 bytes
+    if (sTimezone.empty()) {
+        ctime_r(&t, s);
+        // ctime() adds a trailing newline
+        return CString(s).Trim_n();
+    }
+    CString sTZ = FixGMT(sTimezone);
 
-	// backup old value
-	char* oldTZ = getenv("TZ");
-	if (oldTZ) oldTZ = strdup(oldTZ);
-	setenv("TZ", sTZ.c_str(), 1);
-	tzset();
+    // backup old value
+    char* oldTZ = getenv("TZ");
+    if (oldTZ) oldTZ = strdup(oldTZ);
+    setenv("TZ", sTZ.c_str(), 1);
+    tzset();
 
-	ctime_r(&t, s);
+    ctime_r(&t, s);
 
-	// restore old value
-	if (oldTZ) {
-		setenv("TZ", oldTZ, 1);
-		free(oldTZ);
-	} else {
-		unsetenv("TZ");
-	}
-	tzset();
+    // restore old value
+    if (oldTZ) {
+        setenv("TZ", oldTZ, 1);
+        free(oldTZ);
+    } else {
+        unsetenv("TZ");
+    }
+    tzset();
 
-	return CString(s).Trim_n();
+    return CString(s).Trim_n();
 }
 
 CString CUtils::FormatTime(time_t t, const CString& sFormat,
                            const CString& sTimezone) {
-	char s[1024] = {};
-	tm m;
-	if (sTimezone.empty()) {
-		localtime_r(&t, &m);
-		strftime(s, sizeof(s), sFormat.c_str(), &m);
-		return s;
-	}
-	CString sTZ = FixGMT(sTimezone);
+    char s[1024] = {};
+    tm m;
+    if (sTimezone.empty()) {
+        localtime_r(&t, &m);
+        strftime(s, sizeof(s), sFormat.c_str(), &m);
+        return s;
+    }
+    CString sTZ = FixGMT(sTimezone);
 
-	// backup old value
-	char* oldTZ = getenv("TZ");
-	if (oldTZ) oldTZ = strdup(oldTZ);
-	setenv("TZ", sTZ.c_str(), 1);
-	tzset();
+    // backup old value
+    char* oldTZ = getenv("TZ");
+    if (oldTZ) oldTZ = strdup(oldTZ);
+    setenv("TZ", sTZ.c_str(), 1);
+    tzset();
 
-	localtime_r(&t, &m);
-	strftime(s, sizeof(s), sFormat.c_str(), &m);
+    localtime_r(&t, &m);
+    strftime(s, sizeof(s), sFormat.c_str(), &m);
 
-	// restore old value
-	if (oldTZ) {
-		setenv("TZ", oldTZ, 1);
-		free(oldTZ);
-	} else {
-		unsetenv("TZ");
-	}
-	tzset();
+    // restore old value
+    if (oldTZ) {
+        setenv("TZ", oldTZ, 1);
+        free(oldTZ);
+    } else {
+        unsetenv("TZ");
+    }
+    tzset();
 
-	return s;
+    return s;
 }
 
 CString CUtils::FormatServerTime(const timeval& tv) {
-	CString s_msec(tv.tv_usec / 1000);
-	while (s_msec.length() < 3) {
-		s_msec = "0" + s_msec;
-	}
-	// TODO support leap seconds properly
-	// TODO support message-tags properly
-	struct tm stm;
-	memset(&stm, 0, sizeof(stm));
-	// OpenBSD has tv_sec as int, so explicitly convert it to time_t to make
-	// gmtime_r() happy
-	const time_t secs = tv.tv_sec;
-	gmtime_r(&secs, &stm);
-	char sTime[20] = {};
-	strftime(sTime, sizeof(sTime), "%Y-%m-%dT%H:%M:%S", &stm);
-	return CString(sTime) + "." + s_msec + "Z";
+    CString s_msec(tv.tv_usec / 1000);
+    while (s_msec.length() < 3) {
+        s_msec = "0" + s_msec;
+    }
+    // TODO support leap seconds properly
+    // TODO support message-tags properly
+    struct tm stm;
+    memset(&stm, 0, sizeof(stm));
+    // OpenBSD has tv_sec as int, so explicitly convert it to time_t to make
+    // gmtime_r() happy
+    const time_t secs = tv.tv_sec;
+    gmtime_r(&secs, &stm);
+    char sTime[20] = {};
+    strftime(sTime, sizeof(sTime), "%Y-%m-%dT%H:%M:%S", &stm);
+    return CString(sTime) + "." + s_msec + "Z";
 }
 
 timeval CUtils::ParseServerTime(const CString& sTime) {
-	struct tm stm;
-	memset(&stm, 0, sizeof(stm));
-	const char* cp = strptime(sTime.c_str(), "%Y-%m-%dT%H:%M:%S", &stm);
-	struct timeval tv;
-	memset(&tv, 0, sizeof(tv));
-	if (cp) {
-		tv.tv_sec = mktime(&stm);
-		CString s_usec(cp);
-		if (s_usec.TrimPrefix(".") && s_usec.TrimSuffix("Z")) {
-			tv.tv_usec = s_usec.ToULong() * 1000;
-		}
-	}
-	return tv;
+    struct tm stm;
+    memset(&stm, 0, sizeof(stm));
+    const char* cp = strptime(sTime.c_str(), "%Y-%m-%dT%H:%M:%S", &stm);
+    struct timeval tv;
+    memset(&tv, 0, sizeof(tv));
+    if (cp) {
+        tv.tv_sec = mktime(&stm);
+        CString s_usec(cp);
+        if (s_usec.TrimPrefix(".") && s_usec.TrimSuffix("Z")) {
+            tv.tv_usec = s_usec.ToULong() * 1000;
+        }
+    }
+    return tv;
 }
 
 namespace {
 void FillTimezones(const CString& sPath, SCString& result,
                    const CString& sPrefix) {
-	CDir Dir;
-	Dir.Fill(sPath);
-	for (CFile* pFile : Dir) {
-		CString sName = pFile->GetShortName();
-		CString sFile = pFile->GetLongName();
-		if (sName == "posix" || sName == "right")
-			continue;  // these 2 dirs contain the same filenames
-		if (sName.EndsWith(".tab") || sName == "posixrules" ||
-		    sName == "localtime")
-			continue;
-		if (pFile->IsDir()) {
-			if (sName == "Etc") {
-				FillTimezones(sFile, result, sPrefix);
-			} else {
-				FillTimezones(sFile, result, sPrefix + sName + "/");
-			}
-		} else {
-			result.insert(sPrefix + sName);
-		}
-	}
+    CDir Dir;
+    Dir.Fill(sPath);
+    for (CFile* pFile : Dir) {
+        CString sName = pFile->GetShortName();
+        CString sFile = pFile->GetLongName();
+        if (sName == "posix" || sName == "right")
+            continue;  // these 2 dirs contain the same filenames
+        if (sName.EndsWith(".tab") || sName == "posixrules" ||
+            sName == "localtime")
+            continue;
+        if (pFile->IsDir()) {
+            if (sName == "Etc") {
+                FillTimezones(sFile, result, sPrefix);
+            } else {
+                FillTimezones(sFile, result, sPrefix + sName + "/");
+            }
+        } else {
+            result.insert(sPrefix + sName);
+        }
+    }
 }
 }
 
 SCString CUtils::GetTimezones() {
-	static SCString result;
-	if (result.empty()) {
-		FillTimezones("/usr/share/zoneinfo", result, "");
-	}
-	return result;
+    static SCString result;
+    if (result.empty()) {
+        FillTimezones("/usr/share/zoneinfo", result, "");
+    }
+    return result;
 }
 
 SCString CUtils::GetEncodings() {
-	static SCString ssResult;
+    static SCString ssResult;
 #ifdef HAVE_ICU
-	if (ssResult.empty()) {
-		for (int i = 0; i < ucnv_countAvailable(); ++i) {
-			const char* pConvName = ucnv_getAvailableName(i);
-			ssResult.insert(pConvName);
-			icu::ErrorCode e;
-			for (int st = 0; st < ucnv_countStandards(); ++st) {
-				const char* pStdName = ucnv_getStandard(st, e);
-				icu::LocalUEnumerationPointer ue(
-				    ucnv_openStandardNames(pConvName, pStdName, e));
-				while (const char* pStdConvNameEnum =
-				           uenum_next(ue.getAlias(), nullptr, e)) {
-					ssResult.insert(pStdConvNameEnum);
-				}
-			}
-		}
-	}
+    if (ssResult.empty()) {
+        for (int i = 0; i < ucnv_countAvailable(); ++i) {
+            const char* pConvName = ucnv_getAvailableName(i);
+            ssResult.insert(pConvName);
+            icu::ErrorCode e;
+            for (int st = 0; st < ucnv_countStandards(); ++st) {
+                const char* pStdName = ucnv_getStandard(st, e);
+                icu::LocalUEnumerationPointer ue(
+                    ucnv_openStandardNames(pConvName, pStdName, e));
+                while (const char* pStdConvNameEnum =
+                           uenum_next(ue.getAlias(), nullptr, e)) {
+                    ssResult.insert(pStdConvNameEnum);
+                }
+            }
+        }
+    }
 #endif
-	return ssResult;
+    return ssResult;
 }
 
 MCString CUtils::GetMessageTags(const CString& sLine) {
-	if (sLine.StartsWith("@")) {
-		return CMessage(sLine).GetTags();
-	}
-	return MCString::EmptyMap;
+    if (sLine.StartsWith("@")) {
+        return CMessage(sLine).GetTags();
+    }
+    return MCString::EmptyMap;
 }
 
 void CUtils::SetMessageTags(CString& sLine, const MCString& mssTags) {
-	CMessage Message(sLine);
-	Message.SetTags(mssTags);
-	sLine = Message.ToString();
+    CMessage Message(sLine);
+    Message.SetTags(mssTags);
+    sLine = Message.ToString();
 }
 
 bool CTable::AddColumn(const CString& sName) {
-	for (const CString& sHeader : m_vsHeaders) {
-		if (sHeader.Equals(sName)) {
-			return false;
-		}
-	}
+    for (const CString& sHeader : m_vsHeaders) {
+        if (sHeader.Equals(sName)) {
+            return false;
+        }
+    }
 
-	m_vsHeaders.push_back(sName);
+    m_vsHeaders.push_back(sName);
 
-	return true;
+    return true;
 }
 
 CTable::size_type CTable::AddRow() {
-	// Don't add a row if no headers are defined
-	if (m_vsHeaders.empty()) {
-		return (size_type)-1;
-	}
+    // Don't add a row if no headers are defined
+    if (m_vsHeaders.empty()) {
+        return (size_type)-1;
+    }
 
-	// Add a vector with enough space for each column
-	push_back(vector<CString>(m_vsHeaders.size()));
-	return size() - 1;
+    // Add a vector with enough space for each column
+    push_back(vector<CString>(m_vsHeaders.size()));
+    return size() - 1;
 }
 
 bool CTable::SetCell(const CString& sColumn, const CString& sValue,
                      size_type uRowIdx) {
-	if (uRowIdx == (size_type)~0) {
-		if (empty()) {
-			return false;
-		}
+    if (uRowIdx == (size_type)~0) {
+        if (empty()) {
+            return false;
+        }
 
-		uRowIdx = size() - 1;
-	}
+        uRowIdx = size() - 1;
+    }
 
-	unsigned int uColIdx = GetColumnIndex(sColumn);
+    unsigned int uColIdx = GetColumnIndex(sColumn);
 
-	if (uColIdx == (unsigned int)-1) return false;
+    if (uColIdx == (unsigned int)-1) return false;
 
-	(*this)[uRowIdx][uColIdx] = sValue;
+    (*this)[uRowIdx][uColIdx] = sValue;
 
-	return true;
+    return true;
 }
 
 bool CTable::GetLine(unsigned int uIdx, CString& sLine) const {
-	if (empty()) {
-		return false;
-	}
-	if (m_vsOutput.empty()) {
-		m_vsOutput = Render();
-	}
-	if (uIdx >= m_vsOutput.size()) {
-		return false;
-	}
-	sLine = m_vsOutput[uIdx];
-	return true;
+    if (empty()) {
+        return false;
+    }
+    if (m_vsOutput.empty()) {
+        m_vsOutput = Render();
+    }
+    if (uIdx >= m_vsOutput.size()) {
+        return false;
+    }
+    sLine = m_vsOutput[uIdx];
+    return true;
 }
 
 VCString CTable::Render() const {
-	VCString vsOutput;
-	vsOutput.reserve((m_vsHeaders.size() + 1) * size() + 1);
-	for (const VCString& vsRow : *this) {
-		vsOutput.emplace_back("------");
-		for (unsigned int i = 0; i < m_vsHeaders.size(); ++i) {
-			if (!vsRow[i].empty()) {
-				vsOutput.emplace_back(m_vsHeaders[i] + ": " + vsRow[i]);
-			}
-		}
-	}
-	vsOutput.emplace_back("------");
-	return vsOutput;
+    VCString vsOutput;
+    vsOutput.reserve((m_vsHeaders.size() + 1) * size() + 1);
+    for (const VCString& vsRow : *this) {
+        vsOutput.emplace_back("------");
+        for (unsigned int i = 0; i < m_vsHeaders.size(); ++i) {
+            if (!vsRow[i].empty()) {
+                vsOutput.emplace_back(m_vsHeaders[i] + ": " + vsRow[i]);
+            }
+        }
+    }
+    vsOutput.emplace_back("------");
+    return vsOutput;
 }
 
 unsigned int CTable::GetColumnIndex(const CString& sName) const {
-	for (unsigned int i = 0; i < m_vsHeaders.size(); i++) {
-		if (m_vsHeaders[i] == sName) return i;
-	}
+    for (unsigned int i = 0; i < m_vsHeaders.size(); i++) {
+        if (m_vsHeaders[i] == sName) return i;
+    }
 
-	DEBUG("CTable::GetColumnIndex(" + sName + ") failed");
+    DEBUG("CTable::GetColumnIndex(" + sName + ") failed");
 
-	return (unsigned int)-1;
+    return (unsigned int)-1;
 }
 
 void CTable::Clear() {
-	clear();
-	m_vsHeaders.clear();
-	m_vsOutput.clear();
+    clear();
+    m_vsHeaders.clear();
+    m_vsOutput.clear();
 }
 
 #ifdef HAVE_LIBSSL
@@ -677,63 +677,63 @@ CBlowfish::CBlowfish(const CString& sPassword, int iEncrypt,
       m_bkey(),
       m_iEncrypt(iEncrypt),
       m_num(0) {
-	if (sIvec.length() >= 8) {
-		memcpy(m_ivec, sIvec.data(), 8);
-	}
+    if (sIvec.length() >= 8) {
+        memcpy(m_ivec, sIvec.data(), 8);
+    }
 
-	BF_set_key(&m_bkey, (unsigned int)sPassword.length(),
-	           (unsigned char*)sPassword.data());
+    BF_set_key(&m_bkey, (unsigned int)sPassword.length(),
+               (unsigned char*)sPassword.data());
 }
 
 CBlowfish::~CBlowfish() { free(m_ivec); }
 
 //! output must be freed
 unsigned char* CBlowfish::MD5(const unsigned char* input, u_int ilen) {
-	unsigned char* output = (unsigned char*)malloc(MD5_DIGEST_LENGTH);
-	::MD5(input, ilen, output);
-	return output;
+    unsigned char* output = (unsigned char*)malloc(MD5_DIGEST_LENGTH);
+    ::MD5(input, ilen, output);
+    return output;
 }
 
 //! returns an md5 of the CString (not hex encoded)
 CString CBlowfish::MD5(const CString& sInput, bool bHexEncode) {
-	CString sRet;
-	unsigned char* data =
-	    MD5((const unsigned char*)sInput.data(), (unsigned int)sInput.length());
+    CString sRet;
+    unsigned char* data =
+        MD5((const unsigned char*)sInput.data(), (unsigned int)sInput.length());
 
-	if (!bHexEncode) {
-		sRet.append((const char*)data, MD5_DIGEST_LENGTH);
-	} else {
-		for (int a = 0; a < MD5_DIGEST_LENGTH; a++) {
-			sRet += g_HexDigits[data[a] >> 4];
-			sRet += g_HexDigits[data[a] & 0xf];
-		}
-	}
+    if (!bHexEncode) {
+        sRet.append((const char*)data, MD5_DIGEST_LENGTH);
+    } else {
+        for (int a = 0; a < MD5_DIGEST_LENGTH; a++) {
+            sRet += g_HexDigits[data[a] >> 4];
+            sRet += g_HexDigits[data[a] & 0xf];
+        }
+    }
 
-	free(data);
-	return sRet;
+    free(data);
+    return sRet;
 }
 
 //! output must be the same size as input
 void CBlowfish::Crypt(unsigned char* input, unsigned char* output,
                       u_int uBytes) {
-	BF_cfb64_encrypt(input, output, uBytes, &m_bkey, m_ivec, &m_num,
-	                 m_iEncrypt);
+    BF_cfb64_encrypt(input, output, uBytes, &m_bkey, m_ivec, &m_num,
+                     m_iEncrypt);
 }
 
 //! must free result
 unsigned char* CBlowfish::Crypt(unsigned char* input, u_int uBytes) {
-	unsigned char* buff = (unsigned char*)malloc(uBytes);
-	Crypt(input, buff, uBytes);
-	return buff;
+    unsigned char* buff = (unsigned char*)malloc(uBytes);
+    Crypt(input, buff, uBytes);
+    return buff;
 }
 
 CString CBlowfish::Crypt(const CString& sData) {
-	unsigned char* buff =
-	    Crypt((unsigned char*)sData.data(), (unsigned int)sData.length());
-	CString sOutput;
-	sOutput.append((const char*)buff, sData.length());
-	free(buff);
-	return sOutput;
+    unsigned char* buff =
+        Crypt((unsigned char*)sData.data(), (unsigned int)sData.length());
+    CString sOutput;
+    sOutput.append((const char*)buff, sData.length());
+    free(buff);
+    return sOutput;
 }
 
 #endif  // HAVE_LIBSSL
