@@ -40,14 +40,14 @@ public:
 
 		// and signal it to exit
 		m_bThreadDone = true;
-		m_CV.broadcast();
+		m_CV.notify_all();
 	}
 
 	virtual void runThread() {
 		CMutexLocker locker(m_Mutex);
 		// We are running
 		m_bThreadReady = true;
-		m_CV.broadcast();
+		m_CV.notify_all();
 
 		// wait for our exit signal
 		while (!m_bThreadDone)
@@ -97,7 +97,7 @@ public:
 		m_Mutex.lock();
 		// We are running, tell the main thread
 		m_bThreadReady = true;
-		m_CVThreadReady.broadcast();
+		m_CVThreadReady.notify_all();
 		// Have to unlock here so that wait() can get the mutex
 		m_Mutex.unlock();
 

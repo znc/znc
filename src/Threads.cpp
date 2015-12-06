@@ -20,6 +20,7 @@
 
 #include <znc/ZNCDebug.h>
 #include <algorithm>
+#include <thread>
 
 /* Just an arbitrary limit for the number of idle threads */
 static const size_t MAX_IDLE_THREADS = 3;
@@ -49,7 +50,7 @@ void CThreadPool::jobDone(CJob* job) {
 
 	if (oldState == CJob::CANCELLED) {
 		// Signal the main thread that cancellation is done
-		m_cancellationCond.signal();
+		m_cancellationCond.notify_one();
 		return;
 	}
 
@@ -88,7 +89,7 @@ CThreadPool::~CThreadPool() {
 	m_done = true;
 
 	while (m_num_threads > 0) {
-		m_cond.broadcast();
+		m_cond.notify_all();
 		m_exit_cond.wait(m_mutex);
 	}
 }
@@ -133,7 +134,7 @@ void CThreadPool::threadFunc() {
 	m_num_idle--;
 
 	if (m_num_threads == 0 && m_done)
-		m_exit_cond.signal();
+		m_exit_cond.notify_one();
 }
 
 void CThreadPool::addJob(CJob *job) {
@@ -142,7 +143,7 @@ void CThreadPool::addJob(CJob *job) {
 
 	// Do we already have a thread which can handle this job?
 	if (m_num_idle > 0) {
-		m_cond.signal();
+		m_cond.notify_one();
 		return;
 	}
 
@@ -153,7 +154,9 @@ void CThreadPool::addJob(CJob *job) {
 
 	// Start a new thread for our pool
 	m_num_threads++;
-	CThread::startThread(threadPoolFunc, this);
+	std::thread([this]() {
+		threadFunc();
+	}).detach();
 }
 
 void CThreadPool::cancelJob(CJob *job) {

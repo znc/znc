@@ -22,6 +22,7 @@
 #include <znc/Threads.h>
 #include <openssl/crypto.h>
 #include <memory>
+#include <thread>
 
 static std::vector<std::unique_ptr<CMutex> > lock_cs;
 
@@ -130,24 +131,64 @@ static void GenerateHelp(const char *appname) {
 	CUtils::PrintMessage("\t-d, --datadir      Set a different ZNC repository (default is ~/.znc)");
 }
 
-static void die(int sig) {
-	signal(SIGPIPE, SIG_DFL);
-	CZNC::Get().SetConfigState(CZNC::ECONFIG_NEED_QUIT);
-}
-
-static void signalHandler(int sig) {
-	switch (sig) {
-	case SIGHUP:
-		CZNC::Get().SetConfigState(CZNC::ECONFIG_NEED_REHASH);
-		break;
-	case SIGUSR1:
-		CZNC::Get().SetConfigState(CZNC::ECONFIG_NEED_VERBOSE_WRITE);
-		break;
-	default:
-		// WTF? Signal handler called for a signal it doesn't know?
-		abort();
+class CSignalHandler {
+public:
+	CSignalHandler(CZNC* pZNC) {
+		sigset_t signals;
+		sigfillset(&signals);
+		pthread_sigmask(SIG_SETMASK, &signals, nullptr);
+		m_thread = std::thread([=]() {
+			HandleSignals(pZNC);
+		});
 	}
-}
+	~CSignalHandler() {
+		pthread_cancel(m_thread.native_handle());
+		m_thread.join();
+	}
+private:
+	void HandleSignals(CZNC* pZNC) {
+		sigset_t signals;
+		sigemptyset(&signals);
+		sigaddset(&signals, SIGHUP);
+		sigaddset(&signals, SIGUSR1);
+		sigaddset(&signals, SIGINT);
+		sigaddset(&signals, SIGQUIT);
+		sigaddset(&signals, SIGTERM);
+		sigaddset(&signals, SIGPIPE);
+		// Handle only these signals specially; the rest will have their default action, but in this thread
+		pthread_sigmask(SIG_SETMASK, &signals, nullptr);
+		while (true) {
+			int sig;
+			pthread_setcancelstate(PTHREAD_CANCEL_ENABLE, nullptr);
+			if (sigwait(&signals, &sig) == -1) continue;
+			pthread_setcancelstate(PTHREAD_CANCEL_DISABLE, nullptr);
+			switch (sig) {
+				case SIGHUP:
+					pZNC->SetConfigState(CZNC::ECONFIG_NEED_REHASH);
+					break;
+				case SIGUSR1:
+					pZNC->SetConfigState(CZNC::ECONFIG_NEED_VERBOSE_WRITE);
+					break;
+				case SIGINT:
+				case SIGQUIT:
+				case SIGTERM:
+					pZNC->SetConfigState(CZNC::ECONFIG_NEED_QUIT);
+					// Reset handler to default by:
+					// * not blocking it
+					// * not waiting for it
+					// So, if ^C is pressed, but for some reason it didn't work, second ^C will kill the process for sure.
+					sigdelset(&signals, sig);
+					pthread_sigmask(SIG_SETMASK, &signals, nullptr);
+					break;
+				case SIGPIPE:
+				default:
+					break;
+			}
+		}
+	}
+
+	std::thread m_thread;
+};
 
 static bool isRoot() {
 	// User root? If one of these were root, we could switch the others to root, too
@@ -385,24 +426,8 @@ int main(int argc, char** argv) {
 		// controlling terminal). We are independent!
 	}
 
-	struct sigaction sa;
-	sa.sa_flags = 0;
-	sigemptyset(&sa.sa_mask);
-
-	sa.sa_handler = SIG_IGN;
-	sigaction(SIGPIPE, &sa, (struct sigaction*) nullptr);
-
-	sa.sa_handler = signalHandler;
-	sigaction(SIGHUP,  &sa, (struct sigaction*) nullptr);
-	sigaction(SIGUSR1, &sa, (struct sigaction*) nullptr);
-
-	// Once this signal is caught, the signal handler is reset
-	// to SIG_DFL. This avoids endless loop with signals.
-	sa.sa_flags = SA_RESETHAND;
-	sa.sa_handler = die;
-	sigaction(SIGINT,  &sa, (struct sigaction*) nullptr);
-	sigaction(SIGQUIT, &sa, (struct sigaction*) nullptr);
-	sigaction(SIGTERM, &sa, (struct sigaction*) nullptr);
+	// Handle all signals in separate thread
+	std::unique_ptr<CSignalHandler> SignalHandler(new CSignalHandler(pZNC));
 
 	int iRet = 0;
 
@@ -436,6 +461,7 @@ int main(int argc, char** argv) {
 				// The above code adds 3 entries to args tops
 				// which means the array should be big enough
 
+				SignalHandler.reset();
 				CZNC::DestroyInstance();
 				execvp(args[0], args);
 				CUtils::PrintError("Unable to restart ZNC [" + CString(strerror(errno)) + "]");
@@ -445,6 +471,7 @@ int main(int argc, char** argv) {
 		}
 	}
 
+	SignalHandler.reset();
 	CZNC::DestroyInstance();
 
 	CUtils::PrintMessage("Exiting");

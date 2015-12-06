@@ -22,6 +22,7 @@
 #include <znc/Modules.h>
 #include <znc/Socket.h>
 #include <znc/Listener.h>
+#include <mutex>
 #include <map>
 #include <list>
 
@@ -100,7 +101,7 @@ public:
 	void AuthUser(std::shared_ptr<CAuthBase> AuthClass);
 
 	// Setters
-	void SetConfigState(enum ConfigState e) { m_eConfigState = e; }
+	void SetConfigState(enum ConfigState e) { std::lock_guard<std::mutex> guard(m_mutexConfigState); m_eConfigState = e; }
 	void SetSkinName(const CString& s) { m_sSkinName = s; }
 	void SetStatusPrefix(const CString& s) { m_sStatusPrefix = (s.empty()) ? "*" : s; }
 	void SetMaxBufferSize(unsigned int i) { m_uiMaxBufferSize = i; }
@@ -115,7 +116,7 @@ public:
 	// !Setters
 
 	// Getters
-	enum ConfigState GetConfigState() const { return m_eConfigState; }
+	enum ConfigState GetConfigState() { std::lock_guard<std::mutex> guard(m_mutexConfigState); return m_eConfigState; }
 	CSockManager& GetManager() { return m_Manager; }
 	const CSockManager& GetManager() const { return m_Manager; }
 	CModules& GetModules() { return *m_pModules; }
@@ -222,7 +223,9 @@ protected:
 	time_t                 m_TimeStarted;
 
 	enum ConfigState       m_eConfigState;
-	std::vector<CListener*>     m_vpListeners;
+	std::mutex             m_mutexConfigState;
+
+	std::vector<CListener*>  m_vpListeners;
 	std::map<CString,CUser*> m_msUsers;
 	std::map<CString,CUser*> m_msDelUsers;
 	CSockManager           m_Manager;
