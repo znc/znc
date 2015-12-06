@@ -135,8 +135,10 @@ public:
 private:
 	void FinishConnect(const CString& sHostname, u_short iPort, const CString& sSockName, int iTimeout, bool bSSL, const CString& sBindHost, CZNCSock *pcSock);
 
-	class CTDNSMonitorFD;
-	friend class CTDNSMonitorFD;
+#ifdef HAVE_PTHREAD
+	class CThreadMonitorFD;
+	friend class CThreadMonitorFD;
+#endif
 #ifdef HAVE_THREADED_DNS
 	struct TDNSTask {
 		TDNSTask() : sHostname(""), iPort(0), sSockName(""), iTimeout(0), bSSL(false), sBindhost(""), pcSock(nullptr), bDoneTarget(false), bDoneBind(false), aiTarget(nullptr), aiBind(nullptr) {}

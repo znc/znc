@@ -158,9 +158,9 @@ CString CZNCSock::GetSSLPeerFingerprint() const {
 }
 
 #ifdef HAVE_PTHREAD
-class CSockManager::CTDNSMonitorFD : public CSMonitorFD {
+class CSockManager::CThreadMonitorFD : public CSMonitorFD {
 public:
-	CTDNSMonitorFD() {
+	CThreadMonitorFD() {
 		Add(CThreadPool::Get().getReadFD(), ECT_Read);
 	}
 
@@ -346,7 +346,7 @@ void CSockManager::SetTDNSThreadFinished(TDNSTask* task, bool bBind, addrinfo* a
 
 CSockManager::CSockManager() {
 #ifdef HAVE_PTHREAD
-	MonitorFD(new CTDNSMonitorFD());
+	MonitorFD(new CThreadMonitorFD());
 #endif
 }
 

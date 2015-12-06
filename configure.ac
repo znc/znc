@@ -305,33 +305,36 @@ AC_SEARCH_LIBS([dlopen], [dl], [],
 
 # ----- Check for pthreads
 
+AX_PTHREAD([
+	AC_DEFINE([HAVE_PTHREAD], [1], [Define if you have POSIX threads libraries and header files.])
+	appendCXX "$PTHREAD_CFLAGS"
+	appendLib "$PTHREAD_LIBS"
+], [
+	AC_MSG_ERROR([This compiler/OS doesn't seem to support pthreads.])
+])
+
+# Note that old broken systems, such as OpenBSD, NetBSD, which don't support AI_ADDRCONFIG, also have thread-unsafe getaddrinfo().
+# Gladly, they fixed thread-safety before support of AI_ADDRCONFIG, so this can be abused to detect the thread-safe getaddrinfo().
+#
+# TODO: drop support of blocking DNS at some point. OpenBSD supports AI_ADDRCONFIG since Nov 2014, and their getaddrinfo() is thread-safe since Nov 2013. NetBSD's one is thread-safe since ages ago.
 DNS_TEXT=blocking
 if test "x$TDNS" != "xno"; then
 	old_TDNS=$TDNS
-	AX_PTHREAD([
-        	AC_DEFINE([HAVE_PTHREAD], [1], [Define if you have POSIX threads libraries and header files.])
-		appendCXX "$PTHREAD_CFLAGS"
-		appendLib "$PTHREAD_LIBS"
-		AC_MSG_CHECKING([whether getaddrinfo() supports AI_ADDRCONFIG])
-		AC_COMPILE_IFELSE([
-			AC_LANG_PROGRAM([[
-				#include <sys/types.h>
-				#include <sys/socket.h>
-				#include <netdb.h>
-			]], [[
-				int x = AI_ADDRCONFIG;
-				(void) x;
-			]])
-		], [
-			AC_MSG_RESULT([yes])
-			TDNS=yes
-		], [
-			AC_MSG_RESULT([no])
-			TDNS=no
-			# Note that broken systems, such as OpenBSD, NetBSD, which don't support AI_ADDRCONFIG,
-			# also have thread-unsafe getaddrinfo().
-		])
+	AC_MSG_CHECKING([whether getaddrinfo() supports AI_ADDRCONFIG])
+	AC_COMPILE_IFELSE([
+		AC_LANG_PROGRAM([[
+			#include <sys/types.h>
+			#include <sys/socket.h>
+			#include <netdb.h>
+		]], [[
+			int x = AI_ADDRCONFIG;
+			(void) x;
+		]])
 	], [
+		AC_MSG_RESULT([yes])
+		TDNS=yes
+	], [
+		AC_MSG_RESULT([no])
 		TDNS=no
 	])
 	if test "x$TDNS" = "xyes"; then
