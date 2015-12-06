@@ -270,8 +270,9 @@ class TCacheMap {
 	 * @param uTTL the time-to-live for this specific item
 	 */
 	void AddItem(const K& Item, const V& Val, unsigned int uTTL) {
-		if (!uTTL) {  // If time-to-live is zero we don't want to waste our time
-		              // adding it
+		if (!uTTL) {
+			// If time-to-live is zero we don't want to waste our time adding
+			// it
 			RemItem(Item);  // Remove the item incase it already exists
 			return;
 		}

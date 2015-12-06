@@ -520,8 +520,9 @@ bool CTemplate::Print(const CString& sFileName, ostream& oOut) {
 								    new CTemplateLoopContext(uAfterLoopTag,
 								                             sLoopName,
 								                             bReverse, pvLoop));
-							} else {  // If we don't have data, just skip this
-							          // loop and everything inside
+							} else {
+								// If we don't have data, just skip this loop
+								// and everything inside
 								uSkip++;
 							}
 						}
@@ -622,9 +623,8 @@ bool CTemplate::Print(const CString& sFileName, ostream& oOut) {
 					vector<std::shared_ptr<CTemplateTagHandler>>&
 					    vspTagHandlers = GetTagHandlers();
 
-					if (!vspTagHandlers.empty()) {  // @todo this should go up
-					                                // to the top to grab
-					                                // handlers
+					if (!vspTagHandlers.empty()) {
+						// @todo this should go up to the top to grab handlers
 						CTemplate* pTmpl = GetCurTemplate();
 						CString sCustomOutput;
 

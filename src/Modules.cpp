@@ -1663,8 +1663,9 @@ bool CModules::UnloadModule(const CString& sModule) {
 }
 
 bool CModules::UnloadModule(const CString& sModule, CString& sRetMsg) {
-	CString sMod = sModule;  // Make a copy incase the reference passed in is
-	                         // from CModule::GetModName()
+	// Make a copy incase the reference passed in is from CModule::GetModName()
+	CString sMod = sModule;
+
 	CModule* pModule = FindModule(sMod);
 	sRetMsg = "";
 
@@ -1705,8 +1706,9 @@ bool CModules::UnloadModule(const CString& sModule, CString& sRetMsg) {
 bool CModules::ReloadModule(const CString& sModule, const CString& sArgs,
                             CUser* pUser, CIRCNetwork* pNetwork,
                             CString& sRetMsg) {
-	CString sMod = sModule;  // Make a copy incase the reference passed in is
-	                         // from CModule::GetModName()
+	// Make a copy incase the reference passed in is from CModule::GetModName()
+	CString sMod = sModule;
+
 	CModule* pModule = FindModule(sMod);
 
 	if (!pModule) {
@@ -1894,17 +1896,14 @@ ModHandle CModules::OpenModule(const CString& sModule, const CString& sModPath,
 	// performance impact.
 	//
 	// RTLD_GLOBAL vs. RTLD_LOCAL: If perl is loaded with RTLD_LOCAL and later
-	// on
-	// loads own modules (which it apparently does with RTLD_LAZY), we will die
-	// in a
-	// name lookup since one of perl's symbols isn't found. That's worse
-	// than any theoretical issue with RTLD_GLOBAL.
+	// on loads own modules (which it apparently does with RTLD_LAZY), we will
+	// die in a name lookup since one of perl's symbols isn't found. That's
+	// worse than any theoretical issue with RTLD_GLOBAL.
 	ModHandle p = dlopen((sModPath).c_str(), RTLD_NOW | RTLD_GLOBAL);
 
 	if (!p) {
 		// dlerror() returns pointer to static buffer, which may be overwritten
-		// very soon with another dl call
-		// also it may just return null.
+		// very soon with another dl call also it may just return null.
 		const char* cDlError = dlerror();
 		CString sDlError = cDlError ? cDlError : "Unknown error";
 		sRetMsg = "Unable to open module [" + sModule + "] [" + sDlError + "]";

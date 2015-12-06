@@ -675,7 +675,6 @@ bool CIRCSock::OnNumericMessage(CNumericMessage& Message) {
 
 	switch (uRaw) {
 		case 1: {  // :irc.server.com 001 nick :Welcome to the Internet Relay
-		           // Network nick
 			if (m_bAuthed && sServer == "irc.znc.in") {
 				// m_bAuthed == true => we already received another 001 => we
 				// might be in a traffic loop
@@ -686,9 +685,8 @@ bool CIRCSock::OnNumericMessage(CNumericMessage& Message) {
 			}
 
 			m_pNetwork->SetIRCServer(sServer);
-			SetTimeout(CIRCNetwork::NO_TRAFFIC_TIMEOUT,
-			           TMO_READ);  // Now that we are connected, let nature take
-			                       // its course
+			// Now that we are connected, let nature take its course
+			SetTimeout(CIRCNetwork::NO_TRAFFIC_TIMEOUT, TMO_READ);
 			PutIRC("WHO " + sNick);
 
 			m_bAuthed = true;
@@ -840,8 +838,7 @@ bool CIRCSock::OnNumericMessage(CNumericMessage& Message) {
 			break;
 		}
 		case 352: {  // WHO
-			// :irc.yourserver.com 352 yournick #chan ident theirhost.com
-			// irc.theirserver.com theirnick H :0 Real Name
+			// :irc.yourserver.com 352 yournick #chan ident theirhost.com irc.theirserver.com theirnick H :0 Real Name
 			sNick = Message.GetParam(5);
 			CString sChan = Message.GetParam(1);
 			CString sIdent = Message.GetParam(2);
@@ -924,15 +921,12 @@ bool CIRCSock::OnNumericMessage(CNumericMessage& Message) {
 			}
 			break;
 		case 437:
-			// :irc.server.net 437 * badnick :Nick/channel is temporarily
-			// unavailable
-			// :irc.server.net 437 mynick badnick :Nick/channel is temporarily
-			// unavailable
-			// :irc.server.net 437 mynick badnick :Cannot change nickname while
-			// banned on channel
+			// :irc.server.net 437 * badnick :Nick/channel is temporarily unavailable
+			// :irc.server.net 437 mynick badnick :Nick/channel is temporarily unavailable
+			// :irc.server.net 437 mynick badnick :Cannot change nickname while banned on channel
 			if (m_pNetwork->IsChan(Message.GetParam(1)) || sNick != "*") break;
-		case 432:  // :irc.server.com 432 * nick :Erroneous Nickname: Illegal
-		           // characters
+		case 432:
+		// :irc.server.com 432 * nick :Erroneous Nickname: Illegal chars
 		case 433: {
 			CString sBadNick = Message.GetParam(1);
 
@@ -948,10 +942,8 @@ bool CIRCSock::OnNumericMessage(CNumericMessage& Message) {
 			// it to the client
 			if (sNick.Equals("CAP")) return true;
 		case 470: {
-			// :irc.unreal.net 470 mynick [Link] #chan1 has become full, so you
-			// are automatically being transferred to the linked channel #chan2
-			// :mccaffrey.freenode.net 470 mynick #electronics ##electronics
-			// :Forwarding to another channel
+			// :irc.unreal.net 470 mynick [Link] #chan1 has become full, so you are automatically being transferred to the linked channel #chan2
+			// :mccaffrey.freenode.net 470 mynick #electronics ##electronics :Forwarding to another channel
 
 			// freenode style numeric
 			CChan* pChan = m_pNetwork->FindChan(Message.GetParam(1));
@@ -968,11 +960,10 @@ bool CIRCSock::OnNumericMessage(CNumericMessage& Message) {
 			break;
 		}
 		case 670:
-			// :hydra.sector5d.org 670 kylef :STARTTLS successful, go ahead with
-			// TLS handshake
+			// :hydra.sector5d.org 670 kylef :STARTTLS successful, go ahead with TLS handshake
+			//
 			// 670 is a response to `STARTTLS` telling the client to switch to
 			// TLS
-
 			if (!GetSSL()) {
 				StartTLS();
 				m_pNetwork->PutStatus("Switched to SSL (STARTTLS)");

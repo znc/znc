@@ -296,11 +296,13 @@ class CAway : public CModule {
 	}
 
 	void OnIRCConnected() override {
-		if (m_bIsAway)
+		if (m_bIsAway) {
 			Away(true);  // reset away if we are reconnected
-		else
-			Back();  // ircd seems to remember your away if you killed the
-			         // client and came back
+		} else {
+			// ircd seems to remember your away if you killed the client and
+			// came back
+			Back();
+		}
 	}
 
 	bool BootStrap() {

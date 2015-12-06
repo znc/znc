@@ -152,10 +152,9 @@ bool CString::Equals(const CString& s, bool bCaseSensitive,
 bool CString::WildCmp(const CString& sWild, const CString& sString,
                       CaseSensitivity cs) {
 	// avoid a copy when cs == CaseSensitive (C++ deliberately specifies that
-	// binding
-	// a temporary object to a reference to const on the stack lengthens the
-	// lifetime
-	// of the temporary to the lifetime of the reference itself)
+	// binding a temporary object to a reference to const on the stack
+	// lengthens the lifetime of the temporary to the lifetime of the reference
+	// itself)
 	const CString& sWld = (cs == CaseSensitive ? sWild : sWild.AsLower());
 	const CString& sStr = (cs == CaseSensitive ? sString : sString.AsLower());
 
@@ -286,9 +285,8 @@ CString CString::Escape_n(EEscape eFrom, EEscape eTo) const {
 						    strtol((const char*)(pTmp + 2 + (base == 16)),
 						           &endptr, base);
 
-						if ((*endptr == ';') && (b <= 255)) {  // incase they do
-						                                       // something like
-						                                       // &#7777777777;
+						if ((*endptr == ';') && (b <= 255)) {
+							// incase they do something like &#7777777777;
 							ch = (unsigned char)b;
 							a += iCounted;
 							break;
@@ -1423,9 +1421,9 @@ CString CString::StripControls_n() const {
 
 			colorCode = false;
 
-			if (digits == 0 && comma) {  // There was a ',' which wasn't
-			                             // followed by digits, we should print
-			                             // it.
+			if (digits == 0 && comma) {
+				// There was a ',' which wasn't followed by digits, we should
+				// print it.
 				sRet += ',';
 			}
 		}

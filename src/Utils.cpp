@@ -488,9 +488,9 @@ CString CUtils::FormatServerTime(const timeval& tv) {
 	// TODO support message-tags properly
 	struct tm stm;
 	memset(&stm, 0, sizeof(stm));
-	const time_t secs = tv.tv_sec;  // OpenBSD has tv_sec as int, so explicitly
-	                                // convert it to time_t to make gmtime_r()
-	                                // happy
+	// OpenBSD has tv_sec as int, so explicitly convert it to time_t to make
+	// gmtime_r() happy
+	const time_t secs = tv.tv_sec;
 	gmtime_r(&secs, &stm);
 	char sTime[20] = {};
 	strftime(sTime, sizeof(sTime), "%Y-%m-%dT%H:%M:%S", &stm);

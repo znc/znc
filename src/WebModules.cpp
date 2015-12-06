@@ -458,8 +458,9 @@ bool CWebSock::AddModLoop(const CString& sLoopName, CModule& Module,
 			                m_sPage == SubPage->GetName() && bActiveModule);
 
 			if (SubPage->RequiresAdmin() && !GetSession()->IsAdmin()) {
-				continue;  // Don't add admin-only subpages to requests from
-				           // non-admin users
+				// Don't add admin-only subpages to requests from non-admin
+				// users
+				continue;
 			}
 
 			CTemplate& SubRow = Row.AddRow("SubPageLoop");

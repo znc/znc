@@ -86,8 +86,9 @@ class CIMAPAuthMod : public CModule {
 	EModRet OnLoginAttempt(std::shared_ptr<CAuthBase> Auth) override {
 		CUser* pUser = CZNC::Get().FindUser(Auth->GetUsername());
 
-		if (!pUser) {  // @todo Will want to do some sort of && !m_bAllowCreate
-		               // in the future
+		if (!pUser) {
+			// @todo Will want to do some sort of && !m_bAllowCreate in the
+			// future
 			Auth->RefuseLogin("Invalid User - Halting IMAP Lookup");
 			return HALT;
 		}
@@ -146,10 +147,9 @@ void CIMAPSock::ReadLine(const CString& sLine) {
 
 		if (pUser && sLine.StartsWith("AUTH OK")) {
 			m_spAuth->AcceptLogin(*pUser);
-			m_pIMAPMod->CacheLogin(
-			    CString(m_spAuth->GetUsername() + ":" + m_spAuth->GetPassword())
-			        .MD5());  // Use MD5 so passes don't sit in memory in plain
-			                  // text
+			// Use MD5 so passes don't sit in memory in plain text
+			m_pIMAPMod->CacheLogin(CString(m_spAuth->GetUsername() + ":" +
+			                               m_spAuth->GetPassword()).MD5());
 			DEBUG("+++ Successful IMAP lookup");
 		} else {
 			m_spAuth->RefuseLogin("Invalid Password");

@@ -144,7 +144,7 @@ class CStickyChan : public CModule {
 					    WebSock.GetParam("stick_" + sChan).ToBool();
 					if (bNewStick && !bStick)
 						SetNV(sChan, "");  // no password support for now unless
-						                   // chansaver is active too
+					                       // chansaver is active too
 					else if (!bNewStick && bStick) {
 						MCString::iterator it = FindNV(sChan);
 						if (it != EndNV()) DelNV(it);
@@ -179,8 +179,9 @@ class CStickyChan : public CModule {
 				bool bNewStick =
 				    WebSock.GetParam("embed_stickychan_sticky").ToBool();
 				if (bNewStick && !bStick) {
-					SetNV(sChan, "");  // no password support for now unless
-					                   // chansaver is active too
+					// no password support for now unless chansaver is active
+					// too
+					SetNV(sChan, "");
 					WebSock.GetSession()->AddSuccess("Channel become sticky!");
 				} else if (!bNewStick && bStick) {
 					DelNV(sChan);

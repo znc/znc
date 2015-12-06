@@ -111,11 +111,14 @@ class CAlias {
 		{
 			while (alias_data.length() > index && alias_data[index] >= '0' &&
 			       alias_data[index] <= '9')
-				++index;  // skip any numeric digits in string
-		}                 // (supposed to fail if whitespace precedes integer)
-		else
-			return;  // token was malformed. leave caret unchanged, and flag
-			         // first character for skipping
+				++index;
+			// skip any numeric digits in string (supposed to fail if
+			// whitespace precedes integer)
+		} else {
+			// token was malformed. leave caret unchanged, and flag first
+			// character for skipping
+			return;
+		}
 		if (alias_data.length() > index && alias_data[index] == '+') {
 			subsequent = true;
 			++index;
@@ -126,11 +129,10 @@ class CAlias {
 		else
 			return;
 
-		CString stok = line.Token(token, subsequent, " ");  // if we get here,
-		                                                    // we're definitely
-		                                                    // dealing with a
-		                                                    // token, so get the
-		                                                    // token's value
+		// if we get here, we're definitely dealing with a token, so get the
+		// token's value
+		CString stok = line.Token(token, subsequent, " ");
+
 		if (stok.empty() && !optional)
 			throw std::invalid_argument(
 			    CString("missing required parameter: ") +
@@ -162,17 +164,15 @@ class CAlias {
 		// adding + makes the substitution contain all tokens from the nth to
 		// the end of the line
 		while (true) {
-			// if (found >= (int) alias_data.length()) break; 		// shouldn't be
-			// possible.
+			// if (found >= (int) alias_data.length()) break;
+			// ^ shouldn't be possible.
 			size_t found = alias_data.find("%", lastfound + skip);
 			if (found == CString::npos) break;  // if we found nothing, break
-			output.append(alias_data.substr(
-			    lastfound, found - lastfound));  // capture everything between
-			                                     // the last stopping point and
-			                                     // here
-			ParseToken(alias_data, line, output, found,
-			           skip);  // attempt to read a token, updates indices based
-			                   // on success/failure
+			// capture everything between the last stopping point and here
+			output.append(alias_data.substr(lastfound, found - lastfound));
+			// attempt to read a token, updates indices based on
+			// success/failure
+			ParseToken(alias_data, line, output, found, skip);
 			lastfound = found;
 		}
 

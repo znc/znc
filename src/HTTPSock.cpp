@@ -178,8 +178,7 @@ void CHTTPSock::ReadLine(const CString& sData) {
 			}
 
 			// either sIP is not trusted proxy, or it's in the beginning of the
-			// X-Forwarded-For list
-			// in both cases use it as the endpoind
+			// X-Forwarded-For list in both cases use it as the endpoind
 			m_sForwardedIP = sIP;
 		}
 	} else if (sName.Equals("If-None-Match:")) {
@@ -195,9 +194,8 @@ void CHTTPSock::ReadLine(const CString& sData) {
 		if (m_bBasicAuth && !m_bLoggedIn) {
 			m_bLoggedIn = OnLogin(m_sUser, m_sPass, true);
 			// After successful login ReadLine("") will be called again to
-			// trigger "else" block
-			// Failed login sends error and closes socket, so no infinite loop
-			// here
+			// trigger "else" block Failed login sends error and closes socket,
+			// so no infinite loop here
 		} else {
 			m_bGotHeader = true;
 

@@ -63,8 +63,8 @@ CChan::CChan(const CString& sName, CIRCNetwork* pNetwork, bool bInConfig,
 		if (pConfig->FindStringEntry("autoclearchanbuffer", sValue))
 			SetAutoClearChanBuffer(sValue.ToBool());
 		if (pConfig->FindStringEntry("keepbuffer", sValue))
-			SetAutoClearChanBuffer(
-			    !sValue.ToBool());  // XXX Compatibility crap, added in 0.207
+			// XXX Compatibility crap, added in 0.207
+			SetAutoClearChanBuffer(!sValue.ToBool());
 		if (pConfig->FindStringEntry("detached", sValue))
 			SetDetached(sValue.ToBool());
 		if (pConfig->FindStringEntry("disabled", sValue))
@@ -606,10 +606,8 @@ void CChan::SendBuffer(CClient* pClient) {
 void CChan::SendBuffer(CClient* pClient, const CBuffer& Buffer) {
 	if (m_pNetwork && m_pNetwork->IsUserAttached()) {
 		// in the event that pClient is nullptr, need to send this to all
-		// clients for the user
-		// I'm presuming here that pClient is listed inside vClients thus
-		// vClients at this
-		// point can't be empty.
+		// clients for the user I'm presuming here that pClient is listed
+		// inside vClients thus vClients at this point can't be empty.
 		//
 		// This loop has to be cycled twice to maintain the existing behavior
 		// which is
@@ -618,9 +616,9 @@ void CChan::SendBuffer(CClient* pClient, const CBuffer& Buffer) {
 		// 3. ClearBuffer() if not keeping the buffer
 		// 4. OnChanBufferEnding
 		//
-		// With the exception of ClearBuffer(), this needs to happen per client,
-		// and
-		// if pClient is not nullptr, the loops break after the first iteration.
+		// With the exception of ClearBuffer(), this needs to happen per
+		// client, and if pClient is not nullptr, the loops break after the
+		// first iteration.
 		//
 		// Rework this if you like ...
 		if (!Buffer.IsEmpty()) {

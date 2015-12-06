@@ -1718,8 +1718,8 @@ void CClient::HelpUser(const CString& sFilter) {
 	AddCommandHelp(Table, "ListMods", "", "List all loaded modules", sFilter);
 	AddCommandHelp(Table, "ListAvailMods", "", "List all available modules",
 	               sFilter);
-	if (!m_pUser->IsAdmin()) {  // If they are an admin we will add this command
-	                            // below with an argument
+	if (!m_pUser->IsAdmin()) {
+		// If they are an admin we will add this command below with an argument
 		AddCommandHelp(Table, "ListChans", "", "List all channels", sFilter);
 	}
 	AddCommandHelp(Table, "ListNicks", "<#chan>", "List all nicks on a channel",

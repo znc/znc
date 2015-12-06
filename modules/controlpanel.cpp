@@ -234,11 +234,8 @@ class CAdminMod : public CModule {
 			PutModule("QueryBufferSize = " +
 			          CString(pUser->GetQueryBufferSize()));
 		else if (sVar == "keepbuffer")
-			PutModule("KeepBuffer = " +
-			          CString(!pUser->AutoClearChanBuffer()));  // XXX
-			                                                    // compatibility
-			                                                    // crap, added
-			                                                    // in 0.207
+			// XXX compatibility crap, added in 0.207
+			PutModule("KeepBuffer = " + CString(!pUser->AutoClearChanBuffer()));
 		else if (sVar == "autoclearchanbuffer")
 			PutModule("AutoClearChanBuffer = " +
 			          CString(pUser->AutoClearChanBuffer()));
@@ -358,8 +355,8 @@ class CAdminMod : public CModule {
 				PutModule("Setting failed, limit is " +
 				          CString(CZNC::Get().GetMaxBufferSize()));
 			}
-		} else if (sVar ==
-		           "keepbuffer") {  // XXX compatibility crap, added in 0.207
+		} else if (sVar == "keepbuffer") {
+			// XXX compatibility crap, added in 0.207
 			bool b = !sValue.ToBool();
 			pUser->SetAutoClearChanBuffer(b);
 			PutModule("AutoClearChanBuffer = " + CString(b));
@@ -701,12 +698,9 @@ class CAdminMod : public CModule {
 				PutModule(pChan->GetName() + ": InConfig = " +
 				          CString(pChan->InConfig()));
 			} else if (sVar == "keepbuffer") {
-				PutModule(
-				    pChan->GetName() + ": KeepBuffer = " +
-				    CString(!pChan->AutoClearChanBuffer()));  // XXX
-				                                              // compatibility
-				                                              // crap, added in
-				                                              // 0.207
+				// XXX compatibility crap, added in 0.207
+				PutModule(pChan->GetName() + ": KeepBuffer = " +
+				          CString(!pChan->AutoClearChanBuffer()));
 			} else if (sVar == "autoclearchanbuffer") {
 				CString sValue(pChan->AutoClearChanBuffer());
 				if (!pChan->HasAutoClearChanBufferSet()) {
@@ -764,8 +758,8 @@ class CAdminMod : public CModule {
 					pChan->ResetBufferCount();
 					PutModule(pChan->GetName() + ": BufferSize = " +
 					          CString(pChan->GetBufferCount()));
-					// Admins don't have to honour the buffer limit
 				} else if (pChan->SetBufferCount(i, GetUser()->IsAdmin())) {
+					// Admins don't have to honour the buffer limit
 					PutModule(pChan->GetName() + ": BufferSize = " + sValue);
 				} else {
 					PutModule("Setting failed, limit is " +
@@ -776,8 +770,8 @@ class CAdminMod : public CModule {
 				bool b = sValue.ToBool();
 				pChan->SetInConfig(b);
 				PutModule(pChan->GetName() + ": InConfig = " + CString(b));
-			} else if (sVar == "keepbuffer") {  // XXX compatibility crap, added
-			                                    // in 0.207
+			} else if (sVar == "keepbuffer") {
+				// XXX compatibility crap, added in 0.207
 				bool b = !sValue.ToBool();
 				pChan->SetAutoClearChanBuffer(b);
 				PutModule(pChan->GetName() + ": AutoClearChanBuffer = " +

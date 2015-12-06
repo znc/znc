@@ -129,8 +129,8 @@ void CClient::ReadLine(const CString& sData) {
 
 	CString sCommand = Message.GetCommand();
 
-	if (!IsAttached()) {  // The following commands happen before authentication
-	                      // with ZNC
+	if (!IsAttached()) {
+		// The following commands happen before authentication with ZNC
 		if (sCommand.Equals("PASS")) {
 			m_bGotPass = true;
 
@@ -138,7 +138,8 @@ void CClient::ReadLine(const CString& sData) {
 			ParsePass(sAuthLine);
 
 			AuthUser();
-			return;  // Don't forward this msg.  ZNC has already registered us.
+			// Don't forward this msg.  ZNC has already registered us.
+			return;
 		} else if (sCommand.Equals("NICK")) {
 			CString sNick = Message.GetParam(0);
 
@@ -146,8 +147,9 @@ void CClient::ReadLine(const CString& sData) {
 			m_bGotNick = true;
 
 			AuthUser();
-			return;  // Don't forward this msg.  ZNC will handle nick changes
-			         // until auth is complete
+			// Don't forward this msg.  ZNC will handle nick changes until auth
+			// is complete
+			return;
 		} else if (sCommand.Equals("USER")) {
 			CString sAuthLine = Message.GetParam(0);
 
@@ -162,7 +164,8 @@ void CClient::ReadLine(const CString& sData) {
 				SendRequiredPasswordNotice();
 			}
 
-			return;  // Don't forward this msg.  ZNC has already registered us.
+			// Don't forward this msg.  ZNC has already registered us.
+			return;
 		}
 	}
 
@@ -961,7 +964,7 @@ bool CClient::OnCTCPMessage(CCTCPMessage& Message) {
 			// b) CTCP reply for VERSION is set.
 			// 1. ZNC receives CTCP VERSION from someone
 			// 2. ZNC replies with the configured reply (or just drops it if
-			// empty), without forwarding anything to client
+			//    empty), without forwarding anything to client
 			// 3. Client does not see any CTCP request, and does not reply
 			//
 			// So, if user doesn't want "via ZNC" in CTCP VERSION reply, they

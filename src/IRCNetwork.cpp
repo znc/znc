@@ -157,11 +157,11 @@ CIRCNetwork::CIRCNetwork(CUser* pUser, const CString& sName)
       m_uBytesWritten(0) {
 	SetUser(pUser);
 
-	m_RawBuffer.SetLineCount(100, true);  // This should be more than enough
-	                                      // raws, especially since we are
-	                                      // buffering the MOTD separately
-	m_MotdBuffer.SetLineCount(
-	    200, true);  // This should be more than enough motd lines
+	// This should be more than enough raws, especially since we are buffering
+	// the MOTD separately
+	m_RawBuffer.SetLineCount(100, true);
+	// This should be more than enough motd lines
+	m_MotdBuffer.SetLineCount(200, true);
 	m_NoticeBuffer.SetLineCount(250, true);
 
 	m_pPingTimer = new CIRCNetworkPingTimer(this);

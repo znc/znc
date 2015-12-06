@@ -127,7 +127,7 @@ class CWebSock : public CHTTPSock {
 		PAGE_NOTFOUND,  // print 404 and Close()
 		PAGE_PRINT,     // print page contents and Close()
 		PAGE_DEFERRED,  // async processing, Close() will be called from a
-	                    // different place
+		                // different place
 		PAGE_DONE       // all stuff has been done
 	};
 

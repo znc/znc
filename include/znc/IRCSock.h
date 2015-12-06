@@ -42,7 +42,7 @@ class CIRCSock : public CIRCSocket {
 
 	typedef enum {
 		// These values must line up with their position in the CHANMODE
-	    // argument to raw 005
+		// argument to raw 005
 		ListArg = 0,
 		HasArg = 1,
 		ArgWhenSet = 2,
