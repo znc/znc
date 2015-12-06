@@ -160,6 +160,8 @@ private:
 		while (true) {
 			int sig;
 			pthread_setcancelstate(PTHREAD_CANCEL_ENABLE, nullptr);
+			// This thread can be cancelled, but only during this function.
+			// Such cancel will be the only way to finish this thread.
 			if (sigwait(&signals, &sig) == -1) continue;
 			pthread_setcancelstate(PTHREAD_CANCEL_DISABLE, nullptr);
 			switch (sig) {
